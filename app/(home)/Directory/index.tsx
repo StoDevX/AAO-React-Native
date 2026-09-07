@@ -1,6 +1,7 @@
 import * as React from 'react'
-import {Alert, FlatList, Image, StyleSheet, useWindowDimensions, View} from 'react-native'
+import {Alert, FlatList, Image, StyleSheet, useWindowDimensions} from 'react-native'
 import {Stack, useLocalSearchParams, useRouter} from 'expo-router'
+import {useDispatch, useSelector} from 'react-redux'
 import {useQuery} from '@tanstack/react-query'
 import {
 	Button,
@@ -8,8 +9,8 @@ import {
 	HStack,
 	Host,
 	Image as UIImage,
+	List,
 	ProgressView,
-	ScrollView,
 	Spacer,
 	Text as UIText,
 	VStack,
@@ -22,6 +23,10 @@ import {
 	font,
 	foregroundStyle,
 	frame,
+	listRowBackground,
+	listRowInsets,
+	listRowSeparator,
+	listStyle,
 	padding,
 	refreshable,
 } from '@expo/ui/swift-ui/modifiers'
@@ -30,10 +35,15 @@ import {Detail, ListRow, ListSectionHeader, ListSeparator, Title} from '@frogpon
 import * as c from '@frogpond/colors'
 import {useDebounce} from '@frogpond/use-debounce'
 import {LoadingView, NoticeView} from '@frogpond/notice'
-import {openUrl} from '@frogpond/open-url'
-import {callPhone} from '../../../source/components/call-phone'
 import {SearchBar} from '../../../source/components/search-bar'
+import {
+	selectDirectoryResultsView,
+	setDirectoryResultsView,
+} from '../../../source/redux/parts/settings'
 import {contactsOptions} from '../../../source/features/directory/contacts-query'
+import {DepartmentsList} from '../../../source/features/directory/departments-list'
+import {directoryDepartmentsOptions} from '../../../source/features/directory/departments-query'
+import {DirectoryResultsGrid} from '../../../source/features/directory/directory-results-grid'
 import {formatResults} from '../../../source/features/directory/helpers'
 import {directoryEntriesOptions} from '../../../source/features/directory/query'
 import {resolveSearch, searchHeading} from '../../../source/features/directory/resolve-search'
@@ -43,15 +53,13 @@ import {
 	inRows,
 	TILE_SPACING,
 } from '../../../source/features/directory/tile-layout'
-import type {
-	ContactType,
-	DirectoryItem,
-	DirectorySearchTypeEnum,
-} from '../../../source/features/directory/types'
+import type {DirectoryItem, DirectorySearchTypeEnum} from '../../../source/features/directory/types'
 import {FILL_WIDTH, SCREEN_MARGIN} from '../../../source/features/home/button'
 
 function DirectoryView(): React.ReactNode {
 	let router = useRouter()
+	let dispatch = useDispatch()
+	let resultsView = useSelector(selectDirectoryResultsView)
 
 	let params = useLocalSearchParams<{
 		queryType?: DirectorySearchTypeEnum
@@ -82,6 +90,17 @@ function DirectoryView(): React.ReactNode {
 		isLoading,
 	} = useQuery(directoryEntriesOptions(searchQuery, searchQueryType))
 
+	let items = data.results ? formatResults(data.results) : []
+
+	// The results toggle only earns toolbar space once there are results to
+	// re-lay-out -- it stays hidden on the landing, the too-short notice, the
+	// error, and the empty states.
+	let hasResults =
+		searchQuery.length >= 2 &&
+		!isLoading &&
+		!(isError && error instanceof Error) &&
+		items.length > 0
+
 	// The search chrome is bound to component state (the change handler
 	// updates typedQuery), so it can't move to a static outer component.
 	// Compute it once and render it in every branch, so the user always has a
@@ -92,6 +111,18 @@ function DirectoryView(): React.ReactNode {
 		<>
 			<Stack.Toolbar placement="bottom">
 				<Stack.Toolbar.SearchBarSlot />
+				<Stack.Toolbar.Spacer />
+				{/* Always mounted, hidden until there are results to re-lay-out:
+				    `Stack.Toolbar` only reads direct Button/Spacer children, so a
+				    conditionally-rendered fragment of them is dropped entirely. */}
+				<Stack.Toolbar.Button
+					accessibilityLabel={resultsView === 'tiles' ? 'Show as list' : 'Show as tiles'}
+					hidden={!hasResults}
+					icon={resultsView === 'tiles' ? 'list.bullet' : 'square.grid.2x2'}
+					onPress={() =>
+						dispatch(setDirectoryResultsView(resultsView === 'tiles' ? 'list' : 'tiles'))
+					}
+				/>
 			</Stack.Toolbar>
 
 			<SearchBar onChangeText={setTypedQuery} value={typedQuery} />
@@ -101,7 +132,7 @@ function DirectoryView(): React.ReactNode {
 	if (!searchQuery) {
 		return (
 			<>
-				<ImportantContacts />
+				<DirectoryLanding />
 				{searchChrome}
 			</>
 		)
@@ -116,47 +147,47 @@ function DirectoryView(): React.ReactNode {
 		)
 	}
 
-	const items = data.results ? formatResults(data.results) : []
+	let openResult = (index: number) =>
+		router.push({
+			pathname: '/Directory/[index]',
+			params: {index: String(index), query: searchQuery, type: searchQueryType},
+		})
 
+	// The scrollable is the first child, with no wrapping View: a native large
+	// title only collapses against a scroll view the stack can see directly,
+	// and searchChrome (which ends in the bottom toolbar) comes after it.
 	return (
 		<>
-			<View style={styles.wrapper}>
-				{isLoading ? (
-					<LoadingView />
-				) : isError && error instanceof Error ? (
-					<NoticeView text={String(error)} />
-				) : !items.length ? (
-					<NoticeView text={`No results found for "${searchQuery}".`} />
-				) : (
-					<FlatList
-						ItemSeparatorComponent={IndentedListSeparator}
-						ListHeaderComponent={heading ? <ListSectionHeader title={heading} /> : null}
-						contentInsetAdjustmentBehavior="automatic"
-						data={items}
-						keyExtractor={(_item, index) => String(index)}
-						keyboardDismissMode="on-drag"
-						keyboardShouldPersistTaps="never"
-						onRefresh={refetch}
-						refreshing={isRefetching}
-						renderItem={({item, index}) => (
-							<DirectoryItemRow
-								index={index}
-								item={item}
-								onPress={() =>
-									router.push({
-										pathname: '/Directory/[index]',
-										params: {
-											index: String(index),
-											query: searchQuery,
-											type: searchQueryType,
-										},
-									})
-								}
-							/>
-						)}
-					/>
-				)}
-			</View>
+			{isLoading ? (
+				<LoadingView />
+			) : isError && error instanceof Error ? (
+				<NoticeView text={String(error)} />
+			) : !items.length ? (
+				<NoticeView text={`No results found for "${searchQuery}".`} />
+			) : resultsView === 'tiles' ? (
+				<DirectoryResultsGrid
+					heading={heading}
+					items={items}
+					onRefresh={refetch}
+					onSelectIndex={openResult}
+				/>
+			) : (
+				<FlatList
+					ItemSeparatorComponent={IndentedListSeparator}
+					ListHeaderComponent={heading ? <ListSectionHeader title={heading} /> : null}
+					contentInsetAdjustmentBehavior="automatic"
+					data={items}
+					keyExtractor={(_item, index) => String(index)}
+					keyboardDismissMode="on-drag"
+					keyboardShouldPersistTaps="never"
+					onRefresh={refetch}
+					refreshing={isRefetching}
+					renderItem={({item, index}) => (
+						<DirectoryItemRow index={index} item={item} onPress={() => openResult(index)} />
+					)}
+					style={styles.wrapper}
+				/>
+			)}
 			{searchChrome}
 		</>
 	)
@@ -181,64 +212,73 @@ const CONTACT_GRID_ID = 'directory-contact-grid'
 const STALE_CONTACTS_LABEL = 'Contacts may be out of date'
 
 /**
- * What the Directory screen shows before a search: the curated campus
- * contacts, as tiles.
+ * What the Directory screen shows before a search: the curated campus contacts
+ * as tiles, and the full campus department roster as an inset-grouped list.
  *
- * The contacts are cached to disk by `PersistQueryClientProvider`, so a device
- * that opens this offline still gets the grid. A failed refresh over a good
- * cache is a badge beside the heading rather than an error page -- searching,
- * which is this screen's real job, does not depend on it.
+ * Both queries are cached to disk by `PersistQueryClientProvider`, so a device
+ * that opens this offline still gets both. A failed refresh over good caches is
+ * absorbed -- searching, which is this screen's real job, depends on neither.
  */
-function ImportantContacts(): React.ReactNode {
+function DirectoryLanding(): React.ReactNode {
 	let router = useRouter()
-	let {data: contacts, error, isLoading, refetch} = useQuery(contactsOptions)
+	let {
+		data: contacts,
+		error: contactsError,
+		isLoading: contactsLoading,
+		refetch: refetchContacts,
+	} = useQuery(contactsOptions)
+	let {
+		data: departments,
+		isLoading: departmentsLoading,
+		refetch: refetchDepartments,
+	} = useQuery(directoryDepartmentsOptions)
 	let {fontScale} = useWindowDimensions()
 	let columns = columnsForFontScale(fontScale)
 
-	let onAct = React.useCallback((contact: ContactType) => {
-		if (contact.buttonLink) {
-			openUrl(contact.buttonLink)
-		} else if (contact.phoneNumber) {
-			callPhone(contact.phoneNumber, {title: contact.buttonText})
-		}
-	}, [])
-
-	let showError = React.useCallback(() => {
+	let showContactsError = React.useCallback(() => {
 		Alert.alert(
 			"Couldn't refresh contacts",
-			error instanceof Error ? error.message : 'Unknown error',
+			contactsError instanceof Error ? contactsError.message : 'Unknown error',
 			[
-				{text: 'Try Again', onPress: () => void refetch()},
+				{text: 'Try Again', onPress: () => void refetchContacts()},
 				{text: 'OK', style: 'cancel'},
 			],
 		)
-	}, [error, refetch])
+	}, [contactsError, refetchContacts])
 
-	// headerLargeTitleEnabled has nothing to collapse against here: the only
-	// scrollable in this branch is the SwiftUI ScrollView below, and
-	// react-native-screens has no handle into a Host's content to track it.
-	// Harmless while eight tiles never overflow the screen -- worth knowing
-	// before that stops being true.
+	let refresh = React.useCallback(async () => {
+		await Promise.all([refetchContacts(), refetchDepartments()])
+	}, [refetchContacts, refetchDepartments])
+
 	return (
 		<Host matchContents={false} style={styles.host}>
-			<ScrollView
+			<List
 				modifiers={[
+					listStyle('insetGrouped'),
 					refreshable(async () => {
-						await refetch()
+						await refresh()
 					}),
 				]}
 			>
 				<VStack
-					modifiers={[padding({all: SCREEN_MARGIN}), frame({maxWidth: FILL_WIDTH})]}
+					modifiers={[
+						listRowBackground('clear'),
+						listRowInsets({top: 0, leading: 0, bottom: 0, trailing: 0}),
+						listRowSeparator('hidden'),
+						// Horizontal + top only: the enclosing List owns the gap down
+						// to the Departments section below.
+						padding({horizontal: SCREEN_MARGIN, top: SCREEN_MARGIN}),
+						frame({maxWidth: FILL_WIDTH}),
+					]}
 					spacing={TILE_SPACING}
 				>
 					<HStack modifiers={[frame({maxWidth: FILL_WIDTH})]}>
 						<UIText modifiers={[font({textStyle: 'headline'})]}>Important Contacts</UIText>
 						<Spacer />
-						{error && contacts ? (
+						{contactsError && contacts ? (
 							<Button
 								modifiers={[buttonStyle('plain'), accessibilityLabel(STALE_CONTACTS_LABEL)]}
-								onPress={showError}
+								onPress={showContactsError}
 							>
 								<UIImage color={c.orange} systemName="exclamationmark.triangle.fill" />
 							</Button>
@@ -266,7 +306,6 @@ function ImportantContacts(): React.ReactNode {
 										<ContactTile
 											key={contact.title}
 											contact={contact}
-											onAct={() => onAct(contact)}
 											onPress={() =>
 												router.push({
 													pathname: '/Directory/named/[title]',
@@ -285,7 +324,7 @@ function ImportantContacts(): React.ReactNode {
 								</Grid.Row>
 							))}
 						</Grid>
-					) : isLoading ? (
+					) : contactsLoading ? (
 						<ProgressView />
 					) : (
 						<UIText modifiers={[foregroundStyle(c.secondaryLabel)]}>
@@ -293,7 +332,18 @@ function ImportantContacts(): React.ReactNode {
 						</UIText>
 					)}
 				</VStack>
-			</ScrollView>
+
+				<DepartmentsList
+					departments={departments}
+					isLoading={departmentsLoading}
+					onSelectDepartment={(name) =>
+						router.push({
+							pathname: '/Directory',
+							params: {queryType: 'department', queryParam: name},
+						})
+					}
+				/>
+			</List>
 		</Host>
 	)
 }

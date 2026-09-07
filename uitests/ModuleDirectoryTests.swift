@@ -24,14 +24,6 @@ class ModuleDirectoryTests: UITestCase {
 			.verifyDetailAction(TestIdentifiers.Directory.aContactAction)
 	}
 
-	func testLongPressingAContactOffersItsAction() throws {
-		DirectoryScreen(app: app)
-			.navigate()
-			.verifyContactMenu(
-				for: TestIdentifiers.Directory.aContact,
-				offers: TestIdentifiers.Directory.aContactAction)
-	}
-
 	/// At an accessibility Dynamic Type size the label and glyph both grow,
 	/// but a fixed column count's width would not -- columnsForFontScale is
 	/// what narrows the grid to keep it readable there instead of clipping.
@@ -73,11 +65,11 @@ class ModuleDirectoryTests: UITestCase {
 			.openDepartment(
 				of: TestIdentifiers.Directory.departmentalEntry, named: department)
 			.verifyDepartmentHeading(department)
-			.verifyResultsListed()
+			.verifyResultsShown()
 			.cancelSearch()
 			.capture("Directory department screen after cancelling search")
 			.verifyDepartmentHeading(department)
-			.verifyResultsListed()
+			.verifyResultsShown()
 	}
 
 	/// The title stays "Directory" wherever the screen was opened from, so a
@@ -94,6 +86,34 @@ class ModuleDirectoryTests: UITestCase {
 			.capture("Directory opened from a department link")
 			.verifyDirectoryTitle()
 			.verifyDepartmentHeading(department)
-			.verifyResultsListed()
+			.verifyResultsShown()
 	}
+
+	/// Faces read faster than a column of names, so a search opens on the tile
+	/// gallery unless the reader has switched away from it before.
+	func testSearchResultsOpenAsTiles() throws {
+		DirectoryScreen(app: app)
+			.navigate()
+			.search(for: "olaf")
+			.verifyResultsGalleried()
+			.capture("Directory search results as a tile gallery")
+	}
+
+	/// The toolbar button swaps the results between the gallery and the list,
+	/// both ways.
+  /// TODO: note that if <SearchBar hideNavigationBar={false} />
+  /// then we can achieve this, but the toggle moves to the top right of the view
+  /// which isn't as nice, so I'd rather settle for department toggling than full search
+  /// toggling for now, until we change our minds, or play with expo more.
+//	func testTheResultsToggleSwitchesTheView() throws {
+//		DirectoryScreen(app: app)
+//			.navigate()
+//			.search(for: "olaf")
+//			.verifyResultsGalleried()
+//			.showAsList()
+//			.verifyResultsListed()
+//			.capture("Directory search results as a list")
+//			.showAsTiles()
+//			.verifyResultsGalleried()
+//	}
 }

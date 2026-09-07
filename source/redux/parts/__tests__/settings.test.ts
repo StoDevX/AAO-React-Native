@@ -1,6 +1,12 @@
 import {describe, expect, test} from '@jest/globals'
 
-import {reducer, selectEnabledCalendarSources, toggleCalendarSource} from '../settings'
+import {
+	reducer,
+	selectDirectoryResultsView,
+	selectEnabledCalendarSources,
+	setDirectoryResultsView,
+	toggleCalendarSource,
+} from '../settings'
 import type {RootState} from '../../store'
 
 function initial() {
@@ -56,6 +62,35 @@ describe('calendar source selection', () => {
 			let state = reducer(staleRehydratedState, toggleCalendarSource('northfield'))
 
 			expect(state.enabledCalendarSources).toEqual(['uitest', 'northfield'])
+		})
+	})
+})
+
+describe('directory results view', () => {
+	test('starts as the tile gallery', () => {
+		expect(initial().directoryResultsView).toBe('tiles')
+	})
+
+	test('setting the view changes it', () => {
+		let state = reducer(initial(), setDirectoryResultsView('list'))
+
+		expect(state.directoryResultsView).toBe('list')
+	})
+
+	// autoMergeLevel1 swaps the whole `settings` slice in from storage, so an
+	// install that persisted `settings` before this field existed rehydrates
+	// without it.
+	describe('rehydrating settings persisted before this field existed', () => {
+		const staleRehydratedState = {
+			unofficialityAcknowledged: true,
+			devModeOverride: false,
+			enabledCalendarSources: ['uitest'],
+		} as ReturnType<typeof reducer>
+
+		test('the selector falls back to the tile gallery', () => {
+			let rootState = {settings: staleRehydratedState} as RootState
+
+			expect(selectDirectoryResultsView(rootState)).toBe('tiles')
 		})
 	})
 })

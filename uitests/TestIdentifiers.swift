@@ -244,9 +244,18 @@ struct TestIdentifiers {
 		/// A contact from data/contact-info/, so its tile is in the grid
 		/// whatever the server is serving.
 		static let aContact = "PubSafe"
-		/// That contact's own action, which its tile offers on long-press.
+		/// That contact's own action, shown on its detail screen.
 		static let aContactAction = "Call Public Safety"
+
+		/// Search results in list mode: `directory-row-<index>`. Mirrors
+		/// DIRECTORY_ROW_PREFIX in app/(home)/Directory/index.tsx.
 		static let rowPrefix = "directory-row-"
+		/// Search results in the tile gallery: `directory-tile-<index>`. Mirrors
+		/// TILE_PREFIX in source/features/directory/directory-results-grid.tsx.
+		static let tilePrefix = "directory-tile-"
+		/// The bottom-toolbar button's accessibilityLabel in each direction.
+		static let showAsList = "Show as list"
+		static let showAsTiles = "Show as tiles"
 
 		/// A directory entry with no title, email or profile, so its detail
 		/// screen carries exactly one element labelled with its department --

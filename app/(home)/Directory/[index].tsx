@@ -5,7 +5,7 @@ import {useQuery} from '@tanstack/react-query'
 import {openUrl} from '@frogpond/open-url'
 import {callPhone} from '../../../source/components/call-phone'
 import {sendEmail} from '../../../source/components/send-email'
-import {Title, Detail} from '@frogpond/lists'
+import {Detail} from '@frogpond/lists'
 import {TableView, Section, Cell} from '@frogpond/tableview'
 import {MultiLineLeftDetailCell} from '@frogpond/tableview/cells'
 import * as c from '@frogpond/colors'
@@ -33,7 +33,14 @@ export default function DirectoryDetailPage(): React.ReactNode {
 		refetch,
 	} = useQuery(directoryContactOptions(query, type as DirectorySearchTypeEnum, Number(index)))
 
-	let screenTitle = <Stack.Title>{contact?.displayName ?? 'Contact'}</Stack.Title>
+	// The screen's only copy of the name: a large title that collapses on
+	// scroll, rather than a static heading repeated in the body.
+	let screenTitle = (
+		<>
+			<Stack.Screen options={{headerLargeTitleEnabled: true}} />
+			<Stack.Title>{contact?.displayName ?? 'Contact'}</Stack.Title>
+		</>
+	)
 
 	if (isLoading) {
 		return (
@@ -69,7 +76,6 @@ export default function DirectoryDetailPage(): React.ReactNode {
 	}
 
 	const {
-		displayName,
 		campusLocations,
 		displayTitle,
 		photo,
@@ -90,7 +96,6 @@ export default function DirectoryDetailPage(): React.ReactNode {
 					source={{uri: photo}}
 					style={styles.image}
 				/>
-				<Title style={[styles.header, styles.headerName]}>{displayName}</Title>
 				<Detail style={[styles.header, styles.headerTitle]}>{displayTitle}</Detail>
 
 				<TableView>
@@ -203,12 +208,8 @@ const styles = StyleSheet.create({
 		textAlign: 'center',
 		marginHorizontal: 30,
 	},
-	headerName: {
-		marginTop: 10,
-		fontSize: 22,
-		fontWeight: 'bold',
-	},
 	headerTitle: {
+		marginTop: 10,
 		marginBottom: 10,
 		fontSize: 14,
 	},

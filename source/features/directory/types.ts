@@ -121,3 +121,22 @@ export type ContactType = {
 	/** A name from `GRADIENT_NAMES`, or an explicit `[inner, outer]` pair. */
 	gradient?: string | Gradient
 }
+
+/**
+ * One row from `directory/departments` -- the campus department roster.
+ *
+ * The directory returns whatever it deployed; consumers treat this as an
+ * assertion, not a check. Only `name` is used in the app today.
+ */
+export type DepartmentListing = {
+	name: string
+	buildingabbr: string | null
+	buildingname: string | null
+	buildingroom: string | null
+	email: string | null
+	extension: number | null
+	fax: string | null
+	headcount: number
+	text: string | null
+	website: string | null
+}

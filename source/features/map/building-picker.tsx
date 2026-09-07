@@ -84,11 +84,12 @@ export function BuildingPicker({onSelect}: Props): React.ReactNode {
 				) : visible.length === 0 ? (
 					<Text>No buildings to show.</Text>
 				) : (
-					<List.ForEach>
-						{visible.map((building) => (
-							<BuildingRow key={building.id} building={building} onSelect={onSelect} />
-						))}
-					</List.ForEach>
+					// Rendered directly, not wrapped in `List.ForEach`: that component
+					// attaches `.onDelete`/`.onMove` unconditionally, which would put
+					// swipe-to-delete and drag-to-reorder on this read-only picker.
+					visible.map((building) => (
+						<BuildingRow key={building.id} building={building} onSelect={onSelect} />
+					))
 				)}
 			</Section>
 		</List>

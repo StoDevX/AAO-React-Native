@@ -1,6 +1,6 @@
 import * as React from 'react'
 import {useColorScheme} from 'react-native'
-import {Button, ContextMenu, Image, RoundedRectangle, Text, VStack, ZStack} from '@expo/ui/swift-ui'
+import {Button, Image, RoundedRectangle, Text, VStack, ZStack} from '@expo/ui/swift-ui'
 import {
 	accessibilityLabel,
 	aspectRatio,
@@ -17,16 +17,9 @@ import type {SFSymbol} from 'sf-symbols-typescript'
 import * as c from '@frogpond/colors'
 import {FILL_WIDTH} from '../home/button'
 import {homescreenIconDark, homescreenIconLight} from '../home/colors'
+import {TILE_ASPECT, TILE_RADIUS} from './tile-layout'
 import type {ContactType} from './types'
 
-/// Phone.app draws a favourite a little taller than 3:2 -- 109 x 167pt,
-/// measured off a screenshot of a 393pt-wide screen. The ratio is what is
-/// pinned rather than the width, so the row still fills a wider phone.
-const TILE_ASPECT = 109 / 167
-/// Measured from the same screenshot of Phone.app's favourites. This version
-/// of @expo/ui's RoundedRectangleView has no cornerStyle prop, so the corners
-/// are drawn circular regardless of any style specified in modifiers.
-const TILE_RADIUS = 26
 /// The gradient starts at the top edge's centre and has to reach the two
 /// bottom corners, hypot(109 / 2, 167) ~= 176pt away on that card. Same
 /// construction as the home cards; features/home/button.tsx explains it.
@@ -53,98 +46,69 @@ type Props = {
 	contact: ContactType
 	/** Opens the contact's detail screen. */
 	onPress: () => void
-	/** Runs the contact's own action -- its call or its link. */
-	onAct: () => void
 }
 
 /**
  * One curated campus contact, in the shape of a Phone.app favorite: a portrait
  * gradient card carrying a single SF Symbol, with the name beneath it.
  *
- * Tapping opens the detail screen. Long-pressing offers the contact's own
- * action, labelled the way its detail screen labels the button.
+ * Tapping opens the detail screen, where the contact's call/link action lives.
+ * There is no long-press menu: SwiftUI hoists a `.contextMenu` from a `List`
+ * row's content to the whole row, and the landing renders this grid as one row
+ * of an inset-grouped list, so a per-tile menu would lift the entire grid.
  */
-export function ContactTile({contact, onPress, onAct}: Props): React.ReactNode {
+export function ContactTile({contact, onPress}: Props): React.ReactNode {
 	let dark = useColorScheme() === 'dark'
 	let iconColor = dark ? homescreenIconDark : homescreenIconLight
 	let [inner, outer] = c.resolveGradient(contact.gradient)
 
 	return (
-		<ContextMenu>
-			<ContextMenu.Trigger>
-				<Button
-					modifiers={[buttonStyle('plain'), accessibilityLabel(contact.title)]}
-					onPress={onPress}
+		<Button modifiers={[buttonStyle('plain'), accessibilityLabel(contact.title)]} onPress={onPress}>
+			{/* The hit shape belongs on the label, not the Button: SwiftUI
+			    derives a button's tappable region from its label, and without
+			    a content shape only the drawn glyph and text hit-test -- the
+			    gradient and the gap between card and name do not.
+			    features/home/button.tsx carries the same note. */}
+			<VStack modifiers={[contentShape(shapes.rectangle())]} spacing={LABEL_GAP}>
+				{/* maxWidth first: the ratio only decides the height once the
+				    card has taken the column's full width. */}
+				<ZStack
+					modifiers={[
+						frame({maxWidth: FILL_WIDTH}),
+						aspectRatio({ratio: TILE_ASPECT, contentMode: 'fit'}),
+					]}
 				>
-					{/* The hit shape belongs on the label, not the Button: SwiftUI
-					    derives a button's tappable region from its label, and without
-					    a content shape only the drawn glyph and text hit-test -- the
-					    gradient and the gap between card and name do not.
-					    features/home/button.tsx carries the same note. */}
-					<VStack
+					<RoundedRectangle
+						cornerRadius={TILE_RADIUS}
 						modifiers={[
-							contentShape(shapes.rectangle()),
-							// The long-press preview lifts the card's own shape rather
-							// than a square around it.
-							contentShape(
-								shapes.roundedRectangle({
-									cornerRadius: TILE_RADIUS,
-									roundedCornerStyle: 'continuous',
-								}),
-								'contextMenuPreview',
-							),
+							foregroundStyle({
+								type: 'radialGradient',
+								colors: [c.displayP3(inner), c.displayP3(outer)],
+								center: {x: 0.5, y: 0},
+								startRadius: 0,
+								endRadius: TILE_GRADIENT_RADIUS,
+							}),
 						]}
-						spacing={LABEL_GAP}
-					>
-						{/* maxWidth first: the ratio only decides the height once the
-						    card has taken the column's full width. */}
-						<ZStack
-							modifiers={[
-								frame({maxWidth: FILL_WIDTH}),
-								aspectRatio({ratio: TILE_ASPECT, contentMode: 'fit'}),
-							]}
-						>
-							<RoundedRectangle
-								cornerRadius={TILE_RADIUS}
-								modifiers={[
-									foregroundStyle({
-										type: 'radialGradient',
-										colors: [c.displayP3(inner), c.displayP3(outer)],
-										center: {x: 0.5, y: 0},
-										startRadius: 0,
-										endRadius: TILE_GRADIENT_RADIUS,
-									}),
-								]}
-							/>
-							<Image
-								color={iconColor}
-								modifiers={[font({textStyle: ICON_TEXT_STYLE})]}
-								systemName={contact.icon ?? FALLBACK_ICON}
-							/>
-						</ZStack>
+					/>
+					<Image
+						color={iconColor}
+						modifiers={[font({textStyle: ICON_TEXT_STYLE})]}
+						systemName={contact.icon ?? FALLBACK_ICON}
+					/>
+				</ZStack>
 
-						<Text
-							modifiers={[
-								font({textStyle: 'subheadline'}),
-								foregroundStyle(c.secondaryLabel),
-								multilineTextAlignment('center'),
-								lineLimit(LABEL_LINES),
-								frame({maxWidth: FILL_WIDTH}),
-							]}
-						>
-							{contact.title}
-						</Text>
-					</VStack>
-				</Button>
-			</ContextMenu.Trigger>
-
-			<ContextMenu.Items>
-				<Button
-					label={contact.buttonText}
-					onPress={onAct}
-					systemImage={contact.buttonLink ? 'link' : 'phone.fill'}
-				/>
-			</ContextMenu.Items>
-		</ContextMenu>
+				<Text
+					modifiers={[
+						font({textStyle: 'subheadline'}),
+						foregroundStyle(c.secondaryLabel),
+						multilineTextAlignment('center'),
+						lineLimit(LABEL_LINES),
+						frame({maxWidth: FILL_WIDTH}),
+					]}
+				>
+					{contact.title}
+				</Text>
+			</VStack>
+		</Button>
 	)
 }

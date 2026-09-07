@@ -1,7 +1,15 @@
-import type {ContactType} from './types'
-
 /// Matches the home grid's gap, so the two screens sit at the same rhythm.
 export const TILE_SPACING = 10
+
+/// Phone.app draws a favourite a little taller than 3:2 -- 109 x 167pt,
+/// measured off a screenshot of a 393pt-wide screen. The ratio is what is
+/// pinned rather than the width, so the row still fills a wider phone.
+export const TILE_ASPECT = 109 / 167
+
+/// Measured from the same screenshot of Phone.app's favourites. This version
+/// of @expo/ui's RoundedRectangleView has no cornerStyle prop, so the corners
+/// are drawn circular regardless of any style specified in modifiers.
+export const TILE_RADIUS = 26
 
 /// A column count fixed at four fits the label at default text size but not
 /// at an accessibility size: the icon and the label both grow with Dynamic
@@ -18,14 +26,15 @@ export function columnsForFontScale(fontScale: number): number {
 	return 2
 }
 
-/// Groups the contacts into the rows a SwiftUI Grid wants: its API takes
+/// Groups a flat list into the rows a SwiftUI Grid wants: its API takes
 /// children pre-split into `Grid.Row`s rather than a flat list. `columns`
 /// varies with Dynamic Type (see `columnsForFontScale`), so it is a parameter
-/// rather than a closed-over constant.
-export function inRows(contacts: ContactType[], columns: number): ContactType[][] {
-	let rows: ContactType[][] = []
-	for (let i = 0; i < contacts.length; i += columns) {
-		rows.push(contacts.slice(i, i + columns))
+/// rather than a closed-over constant. Generic over the row type -- the
+/// contact grid passes `ContactType`, the search-results grid `DirectoryItem`.
+export function inRows<T>(items: T[], columns: number): T[][] {
+	let rows: T[][] = []
+	for (let i = 0; i < items.length; i += columns) {
+		rows.push(items.slice(i, i + columns))
 	}
 	return rows
 }
