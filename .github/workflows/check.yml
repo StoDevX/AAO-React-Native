@@ -15,7 +15,7 @@ concurrency:
 
 env:
   xcode_version: 'Xcode_26.4'
-  cache_epoch: '1'
+  cache_epoch: '2'
   MISE_RUBY_COMPILE: 'false'
 
 jobs:
