@@ -99,8 +99,8 @@ function DirectoryView(): React.ReactNode {
 	if (!searchQuery) {
 		return (
 			<>
-				{searchChrome}
 				<ImportantContacts />
+				{searchChrome}
 			</>
 		)
 	}
@@ -108,8 +108,8 @@ function DirectoryView(): React.ReactNode {
 	if (searchQuery.length < 2) {
 		return (
 			<>
-				{searchChrome}
 				<NoticeView text="Your search is too short." />
+				{searchChrome}
 			</>
 		)
 	}
@@ -118,8 +118,6 @@ function DirectoryView(): React.ReactNode {
 
 	return (
 		<>
-			{searchChrome}
-
 			<View style={styles.wrapper}>
 				{isLoading ? (
 					<LoadingView />
@@ -157,6 +155,7 @@ function DirectoryView(): React.ReactNode {
 					/>
 				)}
 			</View>
+			{searchChrome}
 		</>
 	)
 }
@@ -164,6 +163,7 @@ function DirectoryView(): React.ReactNode {
 export default function DirectoryPage(): React.ReactNode {
 	return (
 		<>
+			<Stack.Screen options={{headerLargeTitleEnabled: true}} />
 			<Stack.Title>Directory</Stack.Title>
 			<DirectoryView />
 		</>
