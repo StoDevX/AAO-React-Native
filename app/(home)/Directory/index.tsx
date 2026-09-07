@@ -85,7 +85,9 @@ function DirectoryView(): React.ReactNode {
 	// The search chrome is bound to component state (the change handler
 	// updates typedQuery), so it can't move to a static outer component.
 	// Compute it once and render it in every branch, so the user always has a
-	// search bar to type into or clear.
+	// search bar to type into or clear. It renders last in each branch on
+	// purpose -- headerLargeTitleEnabled collapses the title against whichever
+	// scrollable mounts above the toolbar, so the scrollable has to come first.
 	let searchChrome = (
 		<>
 			<Stack.Toolbar placement="bottom">
@@ -176,7 +178,6 @@ function IndentedListSeparator() {
 
 /// Mirrored by TestIdentifiers.Directory.contactGrid.
 const CONTACT_GRID_ID = 'directory-contact-grid'
-/// Mirrored by TestIdentifiers.Directory.staleContacts.
 const STALE_CONTACTS_LABEL = 'Contacts may be out of date'
 
 /**
@@ -213,6 +214,11 @@ function ImportantContacts(): React.ReactNode {
 		)
 	}, [error, refetch])
 
+	// headerLargeTitleEnabled has nothing to collapse against here: the only
+	// scrollable in this branch is the SwiftUI ScrollView below, and
+	// react-native-screens has no handle into a Host's content to track it.
+	// Harmless while eight tiles never overflow the screen -- worth knowing
+	// before that stops being true.
 	return (
 		<Host matchContents={false} style={styles.host}>
 			<ScrollView

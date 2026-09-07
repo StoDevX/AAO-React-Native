@@ -7,7 +7,7 @@ import {load} from 'js-yaml'
 
 const DATA_DIR = join(__dirname, '../../../../data/contact-info')
 
-type ContactFile = {icon?: unknown; gradient?: unknown}
+type ContactFile = {title?: unknown; icon?: unknown; gradient?: unknown}
 
 const contacts: [string, ContactFile][] = readdirSync(DATA_DIR)
 	.filter((file) => file.endsWith('.yaml'))
@@ -18,7 +18,18 @@ describe('contact-info data', () => {
 		expect(contacts.length).toBeGreaterThan(0)
 	})
 
-	test.each(contacts)('%s names an SF Symbol', (_file, contact) => {
+	// title is the join key for the React `key`, the router param,
+	// contactByTitleOptions's `.find`, and a UI-test identifier, so a
+	// duplicate breaks several of those at once rather than just looking odd.
+	test('every contact has a distinct title', () => {
+		let titles = contacts.map(([, contact]) => contact.title)
+		expect(new Set(titles).size).toBe(titles.length)
+	})
+
+	// This only checks the field is a non-empty string, not that it names a
+	// real SF Symbol: sf-symbols-typescript ships no runtime value to check
+	// it against, and a wrong name draws nothing rather than failing loudly.
+	test.each(contacts)('%s names a non-empty icon field', (_file, contact) => {
 		expect(typeof contact.icon).toBe('string')
 		expect(contact.icon).not.toBe('')
 	})

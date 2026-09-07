@@ -19,8 +19,6 @@ import {FILL_WIDTH} from '../home/button'
 import {homescreenIconDark, homescreenIconLight} from '../home/colors'
 import type {ContactType} from './types'
 
-export {columnsForFontScale, TILE_SPACING} from './tile-layout'
-
 /// Phone.app draws a favourite a little taller than 3:2 -- 109 x 167pt,
 /// measured off a screenshot of a 393pt-wide screen. The ratio is what is
 /// pinned rather than the width, so the row still fills a wider phone.
@@ -46,7 +44,9 @@ const LABEL_GAP = 8
 /// shorter label pulls its card down to match the tallest one beside it.
 const LABEL_LINES = 2
 
-/// Drawn when a contact names no symbol, or names one this iOS does not carry.
+/// Drawn when a contact names no icon. A named icon this iOS does not carry
+/// draws nothing instead -- `Image(systemName:)` validates nothing and just
+/// renders empty, so this fallback never reaches that case.
 const FALLBACK_ICON: SFSymbol = 'phone.fill'
 
 type Props = {

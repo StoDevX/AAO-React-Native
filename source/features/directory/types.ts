@@ -103,9 +103,15 @@ export type ContactType = {
 	phoneNumber?: string
 	buttonText: string
 	buttonLink?: string
+	/**
+	 * Required by the schema; read by nothing here. Its consumer was the list
+	 * screen and row this feature replaced. `synopsis` below is retained for
+	 * the same reason -- dropping either means a data deploy, not a code one.
+	 */
 	category: string
 	image?: string
 	text: string
+	/** See the note on `category` above. */
 	synopsis: string
 	/**
 	 * The tile's SF Symbol. Optional in TypeScript though the schema requires

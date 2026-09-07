@@ -241,9 +241,6 @@ struct TestIdentifiers {
 		static let importantContacts = "Important Contacts"
 		/// Matches CONTACT_GRID_ID in app/(home)/Directory/index.tsx.
 		static let contactGrid = "directory-contact-grid"
-		/// Matches STALE_CONTACTS_LABEL in the same file. Only present when a
-		/// refresh failed over cached contacts.
-		static let staleContacts = "Contacts may be out of date"
 		/// A contact from data/contact-info/, so its tile is in the grid
 		/// whatever the server is serving.
 		static let aContact = "PubSafe"

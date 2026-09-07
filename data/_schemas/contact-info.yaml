@@ -17,12 +17,14 @@ properties:
   text: {type: string}
   # An SF Symbol name. sf-symbols-typescript ships no runtime value -- the
   # package is one declaration file -- so nothing can check this name here.
-  # A wrong one draws the tile's fallback symbol.
+  # A wrong one draws nothing; only a missing icon falls back.
   icon: {type: string}
   # Either a name from GRADIENT_NAMES in modules/colors/resolve-gradient.ts, or
   # an explicit [inner, outer] pair. The pair must be written in the CSS Color 4
-  # display-p3 syntax: hex would make a P3 value indistinguishable from an sRGB
-  # one and render the wrong colour without erroring. See gradients.ts.
+  # display-p3 syntax: a P3 colour written as hex is syntactically valid but
+  # numerically wrong -- indistinguishable in source from an sRGB colour, and
+  # silently rendering less saturated than the one that was sampled. See
+  # gradients.ts and modules/colors/display-p3.ts.
   gradient:
     oneOf:
       - type: string

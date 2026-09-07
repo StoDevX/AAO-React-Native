@@ -26,7 +26,8 @@ async function fetchContacts({signal}: {signal: AbortSignal}) {
 	let response = await client.get('contacts', {signal}).json()
 	// The server sends whatever the data repo deployed, so this is an
 	// assertion, not a check. `icon` in particular claims to be an SFSymbol on
-	// no evidence; the tile draws a fallback when it is wrong.
+	// no evidence; the tile falls back only when it is missing -- a wrong name
+	// draws nothing, since SwiftUI's Image(systemName:) does not validate it.
 	return (response as {data: ContactType[]}).data
 }
 

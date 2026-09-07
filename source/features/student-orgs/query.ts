@@ -8,8 +8,8 @@ export const keys = {
 
 // Student org data changes rarely (org listings are updated a handful of
 // times per year) -- matches the 5-minute staleTime precedent set by
-// Contacts' query.ts, avoiding a redundant background refetch every time
-// someone opens an org's detail screen right after the list.
+// directory/contacts-query.ts, avoiding a redundant background refetch every
+// time someone opens an org's detail screen right after the list.
 const staleTime = 1000 * 60 * 5
 
 async function fetchStudentOrgs({signal}: {signal: AbortSignal}) {

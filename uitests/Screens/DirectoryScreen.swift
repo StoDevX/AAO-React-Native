@@ -145,6 +145,20 @@ struct DirectoryScreen: Screen {
 		return self
 	}
 
+	/// Assert the contact's own action button is on screen. It appears only on
+	/// the detail screen (the grid offers it through a long-press menu instead),
+	/// so finding it here is proof navigation actually happened -- unlike the
+	/// contact's name, which SwiftUI collapses onto the grid's own tile button
+	/// too, so asserting on that would pass without navigating anywhere.
+	@discardableResult
+	func verifyDetailAction(_ action: String) -> Self {
+		let button = app.buttons[action].firstMatch
+		XCTAssertTrue(
+			button.waitForExistence(timeout: 30),
+			"\(action) should be on the contact's detail screen")
+		return self
+	}
+
 	/// A tile's long-press menu offers the contact's own action. The menu is
 	/// presented by iOS, so nothing short of pressing it proves it is there.
 	@discardableResult

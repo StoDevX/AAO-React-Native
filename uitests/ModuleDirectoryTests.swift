@@ -21,7 +21,7 @@ class ModuleDirectoryTests: UITestCase {
 		DirectoryScreen(app: app)
 			.navigate()
 			.openContact(TestIdentifiers.Directory.aContact)
-			.verifyTitle(TestIdentifiers.Directory.aContact)
+			.verifyDetailAction(TestIdentifiers.Directory.aContactAction)
 	}
 
 	func testLongPressingAContactOffersItsAction() throws {
