@@ -101,15 +101,19 @@ class ModuleDirectoryTests: UITestCase {
 
 	/// The toolbar button swaps the results between the gallery and the list,
 	/// both ways.
-	func testTheResultsToggleSwitchesTheView() throws {
-		DirectoryScreen(app: app)
-			.navigate()
-			.search(for: "olaf")
-			.verifyResultsGalleried()
-			.showAsList()
-			.verifyResultsListed()
-			.capture("Directory search results as a list")
-			.showAsTiles()
-			.verifyResultsGalleried()
-	}
+  /// TODO: note that if <SearchBar hideNavigationBar={false} />
+  /// then we can achieve this, but the toggle moves to the top right of the view
+  /// which isn't as nice, so I'd rather settle for department toggling than full search
+  /// toggling for now, until we change our minds, or play with expo more.
+//	func testTheResultsToggleSwitchesTheView() throws {
+//		DirectoryScreen(app: app)
+//			.navigate()
+//			.search(for: "olaf")
+//			.verifyResultsGalleried()
+//			.showAsList()
+//			.verifyResultsListed()
+//			.capture("Directory search results as a list")
+//			.showAsTiles()
+//			.verifyResultsGalleried()
+//	}
 }
