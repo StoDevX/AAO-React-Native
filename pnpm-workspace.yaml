@@ -74,14 +74,8 @@ catalog:
 
 # dependency version overrides (used to live in package.json)
 overrides:
-  # Nothing here uses @react-native/metro-config: metro.config.js builds on
-  # @expo/metro-config instead, and says why. It arrives only as a peer of
-  # react-native and the libraries around it, most declaring a range loose
-  # enough to float past the version react-native is pinned to -- and
-  # @react-native/community-cli-plugin asks for exactly 0.86.2, so a lockfile
-  # refresh that floats it fails the install outright rather than warning.
-  # Dropping it settles that for good; a version pin would only be one more
-  # thing to keep in lockstep.
+  # Nothing uses this package; we use Expo's version, instead. This is
+  # dragged in by react-native itself.
   '@react-native/metro-config': '-'
   'brace-expansion@1': '1.1.18'
   'brace-expansion@2': '2.1.4'
