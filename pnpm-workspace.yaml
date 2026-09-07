@@ -74,6 +74,15 @@ catalog:
 
 # dependency version overrides (used to live in package.json)
 overrides:
+  # Nothing here uses @react-native/metro-config: metro.config.js builds on
+  # @expo/metro-config instead, and says why. It arrives only as a peer of
+  # react-native and the libraries around it, most declaring a range loose
+  # enough to float past the version react-native is pinned to -- and
+  # @react-native/community-cli-plugin asks for exactly 0.86.2, so a lockfile
+  # refresh that floats it fails the install outright rather than warning.
+  # Dropping it settles that for good; a version pin would only be one more
+  # thing to keep in lockstep.
+  '@react-native/metro-config': '-'
   'brace-expansion@1': '1.1.18'
   'brace-expansion@2': '2.1.4'
   'brace-expansion@5': '5.0.9'
@@ -99,9 +108,6 @@ overrides:
   # devDependency, already bumped to a patched version in package.json.)
   'js-yaml@3': 'catalog:'
   'js-yaml@4': 'catalog:' # just throw v4 in here as well
-  # qs@6.15.1 (via our own `url` polyfill devDependency): fixed within the
-  # same 6.15.x line (GHSA-q8mj-m7cp-5q26).
-  'qs@': '6.15.3'
   # @babel/core resolves twice: our own devDependency (already bumped in
   # package.json) and a separate transitive instance pulled in via Jest's
   # babel-jest/istanbul instrumentation chain, which independently pinned
