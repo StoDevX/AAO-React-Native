@@ -14,6 +14,7 @@ import {useDebounce} from '@frogpond/use-debounce'
 
 import {SearchBar} from '../../../source/components/search-bar'
 import {EntryDefinition} from '../../../source/features/dictionary/entry-definition'
+import {EntryEditor} from '../../../source/features/dictionary/entry-editor'
 import {EntryList} from '../../../source/features/dictionary/entry-list'
 import {
 	filterEntries,
@@ -47,6 +48,7 @@ function DictionaryView(): React.ReactNode {
 
 	let [selected, setSelected] = React.useState<NormalizedEntry | null>(null)
 	let [detent, setDetent] = React.useState<PresentationDetent>('medium')
+	let [editing, setEditing] = React.useState(false)
 
 	/**
 	 * Puts the sheet back to its rest state: no entry selected, detent back
@@ -68,6 +70,7 @@ function DictionaryView(): React.ReactNode {
 	let dismissSheet = React.useCallback(() => {
 		setSelected(null)
 		setDetent('medium')
+		setEditing(false)
 	}, [])
 
 	return (
@@ -117,8 +120,30 @@ function DictionaryView(): React.ReactNode {
 						]}
 					>
 						{selected ? (
-							<EntryDefinition entry={selected} onClose={dismissSheet} onEdit={() => undefined} />
+							<EntryDefinition
+								entry={selected}
+								onClose={dismissSheet}
+								onEdit={() => setEditing(true)}
+							/>
 						) : null}
+
+						{/* Mounted whenever an entry is selected, with `isPresented`
+						    doing the work. Rendering it away conditionally is how
+						    nested SwiftUI sheets stop presenting. */}
+						<BottomSheet isPresented={editing} onIsPresentedChange={setEditing}>
+							<Group modifiers={[presentationDetents(['large'])]}>
+								{/* Keyed on the word: `useNativeState` captures its initial
+								    value on first render only, so without a remount the
+								    fields would still hold the previously-opened entry. */}
+								{selected ? (
+									<EntryEditor
+										entry={selected}
+										key={selected.word}
+										onDone={() => setEditing(false)}
+									/>
+								) : null}
+							</Group>
+						</BottomSheet>
 					</Group>
 				</BottomSheet>
 			</Host>

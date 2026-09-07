@@ -45,6 +45,11 @@ export const autocorrectionDisabled = (disabled = true): Modifier => ({
 	disabled,
 })
 
+export const textInputAutocapitalization = (autocapitalization: string): Modifier => ({
+	$type: 'textInputAutocapitalization',
+	autocapitalization,
+})
+
 export const listRowInsets = (params: Record<string, number> = {}): Modifier => ({
 	$type: 'listRowInsets',
 	...params,
