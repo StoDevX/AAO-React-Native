@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@callstack/react-theme-provider": "3.0.9",
-    "@expo/ui": "57.0.15",
+    "@expo/ui": "57.0.14",
     "@frogpond/colors": "workspace:*",
     "@frogpond/constants": "workspace:*",
     "@frogpond/filter": "workspace:*",

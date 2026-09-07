@@ -47,8 +47,8 @@ importers:
         specifier: 57.0.15
         version: 57.0.15(@expo/log-box@57.0.4)(expo@57.0.19)(react-native@0.86.2)(react@19.2.8)
       '@expo/ui':
-        specifier: 57.0.15
-        version: 57.0.15(@babel/core@7.29.7)(expo@57.0.19)(react-native-worklets@0.10.4)(react-native@0.86.2)(react@19.2.8)
+        specifier: 57.0.14
+        version: 57.0.14(@babel/core@7.29.7)(expo@57.0.19)(react-native-worklets@0.10.4)(react-native@0.86.2)(react@19.2.8)
       '@frogpond/add-to-device-calendar':
         specifier: workspace:*
         version: link:modules/add-to-device-calendar
@@ -162,7 +162,7 @@ importers:
         version: 2.12.0(react-redux@9.3.0)(react@19.2.8)
       '@sentry/react-native':
         specifier: 8.24.0
-        version: 8.24.0(@expo/env@2.4.2)(dotenv@17.4.2)(expo@57.0.19)(react-native@0.86.2)(react@19.2.8)(supports-color@8.1.1)
+        version: 8.24.0(@expo/env@2.4.3)(dotenv@17.4.2)(expo@57.0.19)(react-native@0.86.2)(react@19.2.8)(supports-color@8.1.1)
       '@tanstack/query-async-storage-persister':
         specifier: 5.101.4
         version: 5.101.4
@@ -602,8 +602,8 @@ importers:
   modules/datepicker:
     dependencies:
       '@expo/ui':
-        specifier: 57.0.15
-        version: 57.0.15(@babel/core@7.29.7)(expo@57.0.19)(react-native-worklets@0.10.4)(react-native@0.86.2)(react@19.2.8)
+        specifier: 57.0.14
+        version: 57.0.14(@babel/core@7.29.7)(expo@57.0.19)(react-native-worklets@0.10.4)(react-native@0.86.2)(react@19.2.8)
       moment-timezone:
         specifier: ^0.6.3
         version: 0.6.3
@@ -653,8 +653,8 @@ importers:
   modules/filter:
     dependencies:
       '@expo/ui':
-        specifier: 57.0.15
-        version: 57.0.15(@babel/core@7.29.7)(expo@57.0.19)(react-native-worklets@0.10.4)(react-native@0.86.2)(react@19.2.8)
+        specifier: 57.0.14
+        version: 57.0.14(@babel/core@7.29.7)(expo@57.0.19)(react-native-worklets@0.10.4)(react-native@0.86.2)(react@19.2.8)
       '@frogpond/colors':
         specifier: workspace:*
         version: link:../colors
@@ -677,8 +677,8 @@ importers:
         specifier: 3.0.9
         version: 3.0.9(react@19.2.8)
       '@expo/ui':
-        specifier: 57.0.15
-        version: 57.0.15(@babel/core@7.29.7)(expo@57.0.19)(react-native-worklets@0.10.4)(react-native@0.86.2)(react@19.2.8)
+        specifier: 57.0.14
+        version: 57.0.14(@babel/core@7.29.7)(expo@57.0.19)(react-native-worklets@0.10.4)(react-native@0.86.2)(react@19.2.8)
       '@frogpond/colors':
         specifier: workspace:*
         version: link:../colors
@@ -1508,10 +1508,6 @@ packages:
       react: '*'
       react-native: '*'
 
-  '@expo/env@2.4.2':
-    resolution: {integrity: sha512-28pqaEqwnmLduZ00Pq9HkSzE5wbj1MTwp5/n8nm8rD8MCjR9eUnVOwmNksPI3Be2ReAPO/DbPn1puy0mvoocsQ==}
-    engines: {node: '>=20.12.0'}
-
   '@expo/env@2.4.3':
     resolution: {integrity: sha512-M1NXeZCA1mkMkYOyIe7PlyRX0/jqFtMoJgyblnlq/vpCRfmueFT7RnGSQG8uEFDF5WHOFGijAQ3fogPh3/n5Ng==}
     engines: {node: '>=20.12.0'}
@@ -1624,6 +1620,23 @@ packages:
 
   '@expo/sudo-prompt@9.3.2':
     resolution: {integrity: sha512-HHQigo3rQWKMDzYDLkubN5WQOYXJJE2eNqIQC2axC2iO3mHdwnIR7FgZVvHWtBwAdzBgAP0ECp8KqS8TiMKvgw==}
+
+  '@expo/ui@57.0.14':
+    resolution: {integrity: sha512-m8Z5dCplkOOQ70lu/xfB67qhk00Muw4U1T9frHBIW3LxxJeJZQ+jOmV6vCk6O6zVgoG/ib1et7PeX6etxI4Rsw==}
+    peerDependencies:
+      '@babel/core': 7.29.7
+      expo: '*'
+      react: '*'
+      react-dom: '*'
+      react-native: '*'
+      react-native-worklets: '*'
+    peerDependenciesMeta:
+      '@babel/core':
+        optional: true
+      react-dom:
+        optional: true
+      react-native-worklets:
+        optional: true
 
   '@expo/ui@57.0.15':
     resolution: {integrity: sha512-qNntEAbDEq0VGkAUMaopIZLJEZofQMDJNjx8YBngqeG3oZJKjpQFOSI8ui951NbN8nABzJ5Jd55SXdZKYWslDw==}
@@ -6377,15 +6390,6 @@ snapshots:
       react: 19.2.8
       react-native: 0.86.2(patch_hash=6ca2e1225f38672b073b92b9d13f24feebbe9e37ba67708a3f1569275ce99191)(@babel/core@7.29.7)(@react-native/jest-preset@0.86.2)(@react-native/metro-config@0.86.2)(@types/react@19.2.18)(react@19.2.8)(supports-color@8.1.1)
 
-  '@expo/env@2.4.2(supports-color@8.1.1)':
-    dependencies:
-      chalk: 4.1.2
-      debug: 4.4.3(supports-color@8.1.1)
-      getenv: 2.0.0
-    transitivePeerDependencies:
-      - supports-color
-    optional: true
-
   '@expo/env@2.4.3(supports-color@8.1.1)':
     dependencies:
       chalk: 4.1.2
@@ -6522,7 +6526,7 @@ snapshots:
       metro-resolver: 0.84.5
       metro-runtime: 0.84.5
       metro-source-map: 0.84.5(supports-color@8.1.1)
-      metro-symbolicate: 0.84.5
+      metro-symbolicate: 0.84.5(supports-color@8.1.1)
       metro-transform-plugins: 0.84.5(supports-color@8.1.1)
       metro-transform-worker: 0.84.5(supports-color@8.1.1)
     transitivePeerDependencies:
@@ -6598,6 +6602,16 @@ snapshots:
       cross-spawn: 7.0.6
 
   '@expo/sudo-prompt@9.3.2': {}
+
+  '@expo/ui@57.0.14(@babel/core@7.29.7)(expo@57.0.19)(react-native-worklets@0.10.4)(react-native@0.86.2)(react@19.2.8)':
+    dependencies:
+      expo: 57.0.19(@babel/core@7.29.7)(@expo/dom-webview@57.0.1)(@expo/metro-runtime@57.0.15)(expo-router@57.0.18)(react-native-webview@13.16.1)(react-native-worklets@0.10.4)(react-native@0.86.2)(react@19.2.8)(supports-color@8.1.1)(typescript@7.0.2)
+      react: 19.2.8
+      react-native: 0.86.2(patch_hash=6ca2e1225f38672b073b92b9d13f24feebbe9e37ba67708a3f1569275ce99191)(@babel/core@7.29.7)(@react-native/jest-preset@0.86.2)(@react-native/metro-config@0.86.2)(@types/react@19.2.18)(react@19.2.8)(supports-color@8.1.1)
+      sf-symbols-typescript: 2.2.0
+    optionalDependencies:
+      '@babel/core': 7.29.7(supports-color@8.1.1)
+      react-native-worklets: 0.10.4(@babel/core@7.29.7)(@react-native/metro-config@0.86.2)(react-native@0.86.2)(react@19.2.8)(supports-color@8.1.1)
 
   '@expo/ui@57.0.15(@babel/core@7.29.7)(expo@57.0.19)(react-native-worklets@0.10.4)(react-native@0.86.2)(react@19.2.8)':
     dependencies:
@@ -7445,21 +7459,21 @@ snapshots:
     dependencies:
       '@sentry/conventions': 0.16.0
 
-  '@sentry/expo-upload-sourcemaps@8.24.0(@expo/env@2.4.2)(dotenv@17.4.2)':
+  '@sentry/expo-upload-sourcemaps@8.24.0(@expo/env@2.4.3)(dotenv@17.4.2)':
     optionalDependencies:
-      '@expo/env': 2.4.2(supports-color@8.1.1)
+      '@expo/env': 2.4.3(supports-color@8.1.1)
       dotenv: 17.4.2
 
   '@sentry/feedback@10.71.0':
     dependencies:
       '@sentry/core': 10.71.0
 
-  '@sentry/react-native@8.24.0(@expo/env@2.4.2)(dotenv@17.4.2)(expo@57.0.19)(react-native@0.86.2)(react@19.2.8)(supports-color@8.1.1)':
+  '@sentry/react-native@8.24.0(@expo/env@2.4.3)(dotenv@17.4.2)(expo@57.0.19)(react-native@0.86.2)(react@19.2.8)(supports-color@8.1.1)':
     dependencies:
       '@sentry/browser': 10.71.0
       '@sentry/bundler-plugins': 10.71.0(supports-color@8.1.1)
       '@sentry/core': 10.71.0
-      '@sentry/expo-upload-sourcemaps': 8.24.0(@expo/env@2.4.2)(dotenv@17.4.2)
+      '@sentry/expo-upload-sourcemaps': 8.24.0(@expo/env@2.4.3)(dotenv@17.4.2)
       '@sentry/react': 10.71.0(react@19.2.8)
       react: 19.2.8
       react-native: 0.86.2(patch_hash=6ca2e1225f38672b073b92b9d13f24feebbe9e37ba67708a3f1569275ce99191)(@babel/core@7.29.7)(@react-native/jest-preset@0.86.2)(@react-native/metro-config@0.86.2)(@types/react@19.2.18)(react@19.2.8)(supports-color@8.1.1)
@@ -9662,7 +9676,7 @@ snapshots:
       '@babel/types': 7.29.8
       flow-enums-runtime: 0.0.6
       invariant: 2.2.4
-      metro-symbolicate: 0.84.4
+      metro-symbolicate: 0.84.4(supports-color@8.1.1)
       nullthrows: 1.1.1
       ob1: 0.84.4
       source-map: 0.5.7
@@ -9676,7 +9690,7 @@ snapshots:
       '@babel/types': 7.29.8
       flow-enums-runtime: 0.0.6
       invariant: 2.2.4
-      metro-symbolicate: 0.84.5
+      metro-symbolicate: 0.84.5(supports-color@8.1.1)
       nullthrows: 1.1.1
       ob1: 0.84.5
       source-map: 0.5.7
@@ -9684,7 +9698,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  metro-symbolicate@0.84.4:
+  metro-symbolicate@0.84.4(supports-color@8.1.1):
     dependencies:
       flow-enums-runtime: 0.0.6
       invariant: 2.2.4
@@ -9692,8 +9706,10 @@ snapshots:
       nullthrows: 1.1.1
       source-map: 0.5.7
       vlq: 1.0.1
+    transitivePeerDependencies:
+      - supports-color
 
-  metro-symbolicate@0.84.5:
+  metro-symbolicate@0.84.5(supports-color@8.1.1):
     dependencies:
       flow-enums-runtime: 0.0.6
       invariant: 2.2.4
@@ -9701,6 +9717,8 @@ snapshots:
       nullthrows: 1.1.1
       source-map: 0.5.7
       vlq: 1.0.1
+    transitivePeerDependencies:
+      - supports-color
 
   metro-transform-plugins@0.84.4(supports-color@8.1.1):
     dependencies:
@@ -9795,7 +9813,7 @@ snapshots:
       metro-resolver: 0.84.4
       metro-runtime: 0.84.4
       metro-source-map: 0.84.4(supports-color@8.1.1)
-      metro-symbolicate: 0.84.4
+      metro-symbolicate: 0.84.4(supports-color@8.1.1)
       metro-transform-plugins: 0.84.4(supports-color@8.1.1)
       metro-transform-worker: 0.84.4(supports-color@8.1.1)
       mime-types: 3.0.2
@@ -9840,7 +9858,7 @@ snapshots:
       metro-resolver: 0.84.5
       metro-runtime: 0.84.5
       metro-source-map: 0.84.5(supports-color@8.1.1)
-      metro-symbolicate: 0.84.5
+      metro-symbolicate: 0.84.5(supports-color@8.1.1)
       metro-transform-plugins: 0.84.5(supports-color@8.1.1)
       metro-transform-worker: 0.84.5(supports-color@8.1.1)
       mime-types: 3.0.2
