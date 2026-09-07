@@ -44,6 +44,20 @@ function BuildingHoursView(): React.ReactNode {
 		[router],
 	)
 
+	// The search chrome is bound to component state (the change handler
+	// updates query), so it can't move to a static outer component.
+	// Compute it once and render it in every branch, so the user always
+	// has a search bar to type into or clear.
+	let searchChrome = (
+		<>
+			<Stack.Toolbar placement="bottom">
+				<Stack.Toolbar.SearchBarSlot />
+			</Stack.Toolbar>
+
+			<SearchBar onChangeText={setQuery} value={query} />
+		</>
+	)
+
 	if (isError) {
 		return (
 			<NoticeView
@@ -55,16 +69,17 @@ function BuildingHoursView(): React.ReactNode {
 	}
 
 	if (isLoading) {
-		return <LoadingView />
+		return (
+			<>
+				{searchChrome}
+				<LoadingView />
+			</>
+		)
 	}
 
 	return (
 		<>
-			<Stack.Toolbar placement="bottom">
-				<Stack.Toolbar.SearchBarSlot />
-			</Stack.Toolbar>
-
-			<SearchBar onChangeText={setQuery} value={query} />
+			{searchChrome}
 			<BuildingList
 				favorites={favorites}
 				isLoading={isLoading}
@@ -72,6 +87,7 @@ function BuildingHoursView(): React.ReactNode {
 				onRefresh={refetch}
 				onReport={onReport}
 				onToggleFavorite={onToggleFavorite}
+				searchQuery={searchQuery}
 				sections={sections}
 			/>
 		</>
