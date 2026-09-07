@@ -80,6 +80,18 @@ export default function BuildingHoursDetailPage(): React.ReactNode {
 		)
 	}
 
+	// This screen's root inside the formSheet is BuildingDetailSwiftUI's
+	// @expo/ui `Host`, not a React Native ScrollView -- the spike's "root
+	// element must be a scroll view" rule doesn't apply here. That rule exists
+	// because RNSScreenContentWrapper only knows how to manually resize a
+	// direct RCTScrollViewComponentView child when a sheet's detent changes
+	// natively, bypassing Fabric/Yoga entirely. `Host`'s hosting-controller
+	// view sidesteps that whole problem: expo-modules-core gives it a plain
+	// UIKit `autoresizingMask` (SwiftUIHostingView.swift), so it tracks its
+	// superview's frame through ordinary UIKit view geometry, independent of
+	// Fabric. Confirmed on device: dragging to the larger detent lays out the
+	// full detail screen, footnote included (see
+	// testDraggingTheDetailSheetRevealsTheRestOfItsContent).
 	return (
 		<>
 			{screen}

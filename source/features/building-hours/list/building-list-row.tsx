@@ -64,77 +64,73 @@ export const BuildingListRow = React.memo(function BuildingListRow({
 	let firstNote = schedules.find((s) => s.notes)?.notes
 
 	return (
-		<VStack alignment="leading">
-			<SwipeActions>
-				<Button
-					modifiers={[
-						buttonStyle('plain'),
-						accessibilityIdentifier(`${BUILDING_ROW_PREFIX}${building.name}`),
-						accessibilityLabel(`${building.name}, ${statusText}`),
-					]}
-					onPress={() => onSelect(building)}
+		<SwipeActions>
+			<Button
+				modifiers={[
+					buttonStyle('plain'),
+					accessibilityIdentifier(`${BUILDING_ROW_PREFIX}${building.name}`),
+					accessibilityLabel(`${building.name}, ${statusText}`),
+				]}
+				onPress={() => onSelect(building)}
+			>
+				<HStack
+					modifiers={[contentShape(shapes.rectangle()), fixedSize({vertical: true})]}
+					spacing={8}
 				>
-					<HStack
-						modifiers={[contentShape(shapes.rectangle()), fixedSize({vertical: true})]}
-						spacing={8}
-					>
-						<VStack alignment="leading">
-							<HStack alignment="center" spacing={8}>
-								<Text
-									modifiers={[
-										font({textStyle: 'body', weight: 'medium'}),
-										foregroundStyle(c.label),
-										...SINGLE_LINE,
-									]}
-								>
-									{building.name}
-								</Text>
-								<Spacer />
-								<Text
-									modifiers={[
-										font({textStyle: 'body'}),
-										foregroundStyle(c.secondaryLabel),
-										layoutPriority(1),
-									]}
-								>
-									{hasHours ? statusText : (firstNote ?? '')}
-								</Text>
-								<Image
-									modifiers={[foregroundStyle(accentBg), font({textStyle: 'caption2'})]}
-									systemName="circle.fill"
-								/>
-								{hasHours ? (
-									<Image
-										modifiers={[font({textStyle: 'footnote'}), foregroundStyle(c.tertiaryLabel)]}
-										systemName="chevron.right"
-									/>
-								) : null}
-							</HStack>
+					<VStack alignment="leading">
+						<HStack alignment="center" spacing={8}>
+							<Text
+								modifiers={[
+									font({textStyle: 'body', weight: 'medium'}),
+									foregroundStyle(c.label),
+									...SINGLE_LINE,
+								]}
+							>
+								{building.name}
+							</Text>
+							<Spacer />
+							<Text
+								modifiers={[
+									font({textStyle: 'body'}),
+									foregroundStyle(c.secondaryLabel),
+									layoutPriority(1),
+								]}
+							>
+								{hasHours ? statusText : (firstNote ?? '')}
+							</Text>
+							<Image
+								modifiers={[foregroundStyle(accentBg), font({textStyle: 'caption2'})]}
+								systemName="circle.fill"
+							/>
+							<Image
+								modifiers={[font({textStyle: 'footnote'}), foregroundStyle(c.tertiaryLabel)]}
+								systemName="chevron.right"
+							/>
+						</HStack>
 
-							{subtitle ? (
-								<Text
-									modifiers={[
-										font({textStyle: 'subheadline'}),
-										foregroundStyle(c.secondaryLabel),
-										...SINGLE_LINE,
-									]}
-								>
-									{subtitle}
-								</Text>
-							) : null}
-						</VStack>
-					</HStack>
+						{subtitle ? (
+							<Text
+								modifiers={[
+									font({textStyle: 'subheadline'}),
+									foregroundStyle(c.secondaryLabel),
+									...SINGLE_LINE,
+								]}
+							>
+								{subtitle}
+							</Text>
+						) : null}
+					</VStack>
+				</HStack>
+			</Button>
+
+			<SwipeActions.Actions edge="trailing" allowsFullSwipe={false}>
+				<Button modifiers={[tint(c.systemBlue)]} onPress={() => onToggleFavorite(building)}>
+					<Image systemName={isFavorite ? 'heart.slash' : 'heart'} />
 				</Button>
-
-				<SwipeActions.Actions edge="trailing" allowsFullSwipe={false}>
-					<Button modifiers={[tint(c.systemBlue)]} onPress={() => onToggleFavorite(building)}>
-						<Image systemName={isFavorite ? 'heart.slash' : 'heart'} />
-					</Button>
-					<Button modifiers={[tint(c.systemOrange)]} onPress={() => onReport(building)}>
-						<Image systemName="exclamationmark.bubble" />
-					</Button>
-				</SwipeActions.Actions>
-			</SwipeActions>
-		</VStack>
+				<Button modifiers={[tint(c.systemOrange)]} onPress={() => onReport(building)}>
+					<Image systemName="exclamationmark.bubble" />
+				</Button>
+			</SwipeActions.Actions>
+		</SwipeActions>
 	)
 })

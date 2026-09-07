@@ -88,9 +88,38 @@ struct BuildingHoursScreen: Screen {
 	@discardableResult
 	func verifyDetailSheetPresented(for name: String) -> Self {
 		XCTAssertTrue(
+			app.staticTexts[name].waitForExistence(timeout: 30),
+			"The detail sheet should be titled \(name)")
+		XCTAssertTrue(
 			app.staticTexts[TestIdentifiers.BuildingHours.detailSchedule]
 				.waitForExistence(timeout: 30),
 			"The detail sheet should show \(name)'s schedule")
+		return self
+	}
+
+	/// Drags the sheet from its half detent up to its larger one, the way
+	/// `CarletonMapScreen.expandSheet` drags the map's building sheet.
+	@discardableResult
+	func expandDetailSheet() -> Self {
+		app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.93))
+			.press(
+				forDuration: 0.1,
+				thenDragTo: app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.08)))
+		return self
+	}
+
+	/// Assert the sheet's last element -- the disclaimer footnote at the very
+	/// bottom of the detail screen -- is hittable after expanding to the
+	/// larger detent. `RNSScreenContentWrapper` only resizes a direct
+	/// `RCTScrollViewComponentView` child; a SwiftUI `Host`/`List` is not one,
+	/// so this is the test that would catch content stuck laid out at the
+	/// smaller detent's height instead of the larger one's.
+	@discardableResult
+	func verifyDetailSheetFullyLaidOut() -> Self {
+		let footnote = app.elementWithLabel(startingWith: "Building hours subject to change")
+		XCTAssertTrue(
+			footnote.waitForExistence(timeout: 30) && footnote.isHittable,
+			"The sheet's closing footnote should be reachable once expanded to the larger detent")
 		return self
 	}
 
