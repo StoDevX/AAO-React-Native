@@ -111,15 +111,10 @@ function DirectoryView(): React.ReactNode {
 		<>
 			<Stack.Toolbar placement="bottom">
 				<Stack.Toolbar.SearchBarSlot />
-			</Stack.Toolbar>
-
-			{/* The results toggle goes in the nav bar, not the bottom toolbar: an
-			    active search bar puts its own cancel button in the bottom
-			    trailing slot and would sit on top of it. Always mounted, hidden
-			    until there are results to re-lay-out -- `Stack.Toolbar` only
-			    reads direct Button children, so a conditional fragment of one is
-			    dropped whole. */}
-			<Stack.Toolbar placement="right">
+				<Stack.Toolbar.Spacer />
+				{/* Always mounted, hidden until there are results to re-lay-out:
+				    `Stack.Toolbar` only reads direct Button/Spacer children, so a
+				    conditionally-rendered fragment of them is dropped entirely. */}
 				<Stack.Toolbar.Button
 					accessibilityLabel={resultsView === 'tiles' ? 'Show as list' : 'Show as tiles'}
 					hidden={!hasResults}
@@ -130,10 +125,7 @@ function DirectoryView(): React.ReactNode {
 				/>
 			</Stack.Toolbar>
 
-			{/* `hideNavigationBar={false}`: iOS hides the whole nav bar while a
-			    search is active by default, which would take the results toggle
-			    down with it. */}
-			<SearchBar hideNavigationBar={false} onChangeText={setTypedQuery} value={typedQuery} />
+			<SearchBar onChangeText={setTypedQuery} value={typedQuery} />
 		</>
 	)
 
