@@ -9,7 +9,11 @@ function normalize(text: string): string {
 	return deburr(text).toLowerCase()
 }
 
-/** The text of a building a reader might plausibly type to find it. */
+/**
+ * A building's name, subtitle, abbreviation and category, joined into one
+ * haystack. `filterBuildings` substring-matches the whole thing, so a query
+ * can span two fields at once, the way "cage food" matches The Cage.
+ */
 function searchableText(building: BuildingType): string {
 	return [building.name, building.subtitle, building.abbreviation, building.category]
 		.filter(Boolean)

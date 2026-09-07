@@ -15,7 +15,12 @@ const sections = [
 		title: 'Libraries',
 		data: [
 			makeBuilding({name: 'Rølvaag Library', category: 'Libraries'}),
-			makeBuilding({name: 'DiSCO', abbreviation: 'DSC', category: 'Libraries'}),
+			makeBuilding({
+				name: 'DiSCO',
+				abbreviation: 'DSC',
+				category: 'Libraries',
+				subtitle: 'Digital Scholarship Center',
+			}),
 		],
 	},
 ]
@@ -45,6 +50,20 @@ describe('filterBuildings', () => {
 		let actual = filterBuildings(sections, 'dsc')
 
 		expect(actual).toEqual([{title: 'Libraries', data: [sections[1]?.data[1]]}])
+	})
+
+	test('matches a subtitle', () => {
+		let actual = filterBuildings(sections, 'digital scholarship')
+
+		expect(actual).toEqual([{title: 'Libraries', data: [sections[1]?.data[1]]}])
+	})
+
+	test('matches a category', () => {
+		// Neither building's name mentions "food", so this only passes if
+		// category is one of the fields being searched.
+		let actual = filterBuildings(sections, 'food')
+
+		expect(actual).toEqual([{title: 'Food', data: [sections[0]?.data[0]]}])
 	})
 
 	test('drops sections left with nothing in them', () => {
