@@ -1,34 +1,36 @@
 import * as React from 'react'
-import {StyleSheet, SectionList} from 'react-native'
-import {BuildingRow} from '../../../source/features/building-hours/row'
 import {useGroupedBuildings} from '../../../source/features/building-hours/query'
 import {BuildingType} from '../../../source/features/building-hours/types'
+import {BuildingList} from '../../../source/features/building-hours/list'
+import {useAppDispatch, useAppSelector} from '../../../source/redux/hooks'
+import {
+	selectFavoriteBuildings,
+	toggleFavoriteBuilding,
+} from '../../../source/redux/parts/buildings'
 
-import * as c from '@frogpond/colors'
 import {timezone} from '@frogpond/constants'
-import {ListSeparator, ListSectionHeader} from '@frogpond/lists'
 import {LoadingView, NoticeView} from '@frogpond/notice'
 import {Stack, useRouter} from 'expo-router'
 import {useMomentTimer} from '@frogpond/timer'
 
-const styles = StyleSheet.create({
-	container: {
-		backgroundColor: c.systemBackground,
-		flexGrow: 1,
-	},
-})
-
 function BuildingHoursView(): React.ReactNode {
 	let router = useRouter()
+	let dispatch = useAppDispatch()
+	let favorites = useAppSelector(selectFavoriteBuildings)
 
 	let {now} = useMomentTimer({intervalMs: 60000, startOf: 'minute', timezone: timezone()})
 
-	let {data = [], error, refetch, isLoading, isError, isRefetching} = useGroupedBuildings()
+	let {data = [], error, refetch, isLoading, isError} = useGroupedBuildings()
 
-	let onPressRow = React.useCallback(
+	let onToggleFavorite = React.useCallback(
+		(building: BuildingType) => dispatch(toggleFavoriteBuilding(building.name)),
+		[dispatch],
+	)
+
+	let onReport = React.useCallback(
 		(building: BuildingType) =>
 			router.push({
-				pathname: '/BuildingHours/[name]',
+				pathname: '/BuildingHoursProblemReport',
 				params: {name: building.name},
 			}),
 		[router],
@@ -44,19 +46,18 @@ function BuildingHoursView(): React.ReactNode {
 		)
 	}
 
+	if (isLoading) {
+		return <LoadingView />
+	}
+
 	return (
-		<SectionList
-			ItemSeparatorComponent={ListSeparator}
-			ListEmptyComponent={isLoading ? <LoadingView /> : <NoticeView text="No hours." />}
-			contentContainerStyle={styles.container}
-			contentInsetAdjustmentBehavior="automatic"
-			keyExtractor={(item) => item.name}
+		<BuildingList
+			favorites={favorites}
+			isLoading={isLoading}
+			now={now}
 			onRefresh={refetch}
-			refreshing={isRefetching}
-			renderItem={({item}) => (
-				<BuildingRow info={item} now={now} onPress={() => onPressRow(item)} />
-			)}
-			renderSectionHeader={({section: {title}}) => <ListSectionHeader title={title} />}
+			onReport={onReport}
+			onToggleFavorite={onToggleFavorite}
 			sections={data}
 		/>
 	)
