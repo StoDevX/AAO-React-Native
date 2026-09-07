@@ -95,4 +95,38 @@ describe('EntryList', () => {
 		expect(screen.getByText('Couldn’t load the dictionary')).toBeTruthy()
 		expect(screen.queryByLabelText('Loading')).toBeNull()
 	})
+
+	it('keeps the pull-to-refresh handler pending until onRetry settles', async () => {
+		let resolveRetry!: () => void
+		let retryPromise = new Promise<void>((resolve) => {
+			resolveRetry = resolve
+		})
+		let onRetry = jest.fn(() => retryPromise)
+		await renderList({onRetry})
+
+		// Read straight off the rendered element rather than going through
+		// `fireEvent`, which would adopt the handler's own returned promise
+		// as its result and hang here until onRetry settles.
+		let refresh = screen.getByTestId('refreshable').props.onRefresh as () => Promise<void>
+
+		let settled = false
+		refresh().then(() => {
+			settled = true
+		})
+
+		// The handler calls onRetry synchronously, before its first await.
+		expect(onRetry).toHaveBeenCalled()
+
+		// Let already-resolved microtasks run without resolving onRetry, so a
+		// handler that forgets to await onRetry would already show settled
+		// here instead of only after resolveRetry runs below.
+		await Promise.resolve()
+		await Promise.resolve()
+		expect(settled).toBe(false)
+
+		resolveRetry()
+		await Promise.resolve()
+		await Promise.resolve()
+		expect(settled).toBe(true)
+	})
 })

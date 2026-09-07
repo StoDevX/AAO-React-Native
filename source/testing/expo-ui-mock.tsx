@@ -69,6 +69,13 @@ function labelOf(modifiers?: Modifier[]): string | undefined {
 	return typeof found?.label === 'string' ? found.label : undefined
 }
 
+/// The handler a `refreshable(…)` modifier registers, read out the same way
+/// `labelOf` reads an `accessibilityLabel(…)` modifier.
+function refreshHandlerOf(modifiers?: Modifier[]): (() => Promise<void>) | undefined {
+	let found = modifiers?.find((m) => m.$type === 'refreshable')
+	return typeof found?.handler === 'function' ? (found.handler as () => Promise<void>) : undefined
+}
+
 export function Host({children}: WithModifiers): React.ReactNode {
 	return <View>{children}</View>
 }
@@ -77,8 +84,22 @@ export function Text({children, modifiers}: WithModifiers): React.ReactNode {
 	return <RNText accessibilityLabel={labelOf(modifiers)}>{children}</RNText>
 }
 
-export function List({children}: WithModifiers): React.ReactNode {
-	return <View>{children}</View>
+/// `View` forwards any prop it doesn't recognise straight onto the host
+/// node, unlike `Pressable`, which rebuilds its own `onPress`/`onClick` and
+/// does not preserve the original function or its return value. This alias
+/// types that one extra prop so `List` can hand a test the raw
+/// `refreshable(…)` handler -- promise and all -- with nothing in between.
+const RefreshableView = View as unknown as React.ComponentType<
+	WithModifiers & {testID?: string; onRefresh?: () => Promise<void>}
+>
+
+export function List({children, modifiers}: WithModifiers): React.ReactNode {
+	let onRefresh = refreshHandlerOf(modifiers)
+	return (
+		<RefreshableView onRefresh={onRefresh} testID={onRefresh ? 'refreshable' : undefined}>
+			{children}
+		</RefreshableView>
+	)
 }
 
 List.ForEach = function ListForEach({children}: WithModifiers): React.ReactNode {
