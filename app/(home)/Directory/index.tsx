@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {Alert, FlatList, Image, StyleSheet, View} from 'react-native'
+import {Alert, FlatList, Image, StyleSheet, useWindowDimensions, View} from 'react-native'
 import {Stack, useLocalSearchParams, useRouter} from 'expo-router'
 import {useQuery} from '@tanstack/react-query'
 import {
@@ -36,7 +36,11 @@ import {SearchBar} from '../../../source/components/search-bar'
 import {contactsOptions} from '../../../source/features/directory/contacts-query'
 import {formatResults} from '../../../source/features/directory/helpers'
 import {directoryEntriesOptions} from '../../../source/features/directory/query'
-import {ContactTile, TILE_COLUMNS, TILE_SPACING} from '../../../source/features/directory/tile'
+import {
+	columnsForFontScale,
+	ContactTile,
+	TILE_SPACING,
+} from '../../../source/features/directory/tile'
 import type {
 	ContactType,
 	DirectoryItem,
@@ -177,11 +181,13 @@ const CONTACT_GRID_ID = 'directory-contact-grid'
 const STALE_CONTACTS_LABEL = 'Contacts may be out of date'
 
 /// Groups the contacts into the rows a SwiftUI Grid wants: its API takes
-/// children pre-split into `Grid.Row`s rather than a flat list.
-function inRows(contacts: ContactType[]): ContactType[][] {
+/// children pre-split into `Grid.Row`s rather than a flat list. `columns`
+/// varies with Dynamic Type (see `columnsForFontScale`), so it is a parameter
+/// rather than a closed-over constant.
+function inRows(contacts: ContactType[], columns: number): ContactType[][] {
 	let rows: ContactType[][] = []
-	for (let i = 0; i < contacts.length; i += TILE_COLUMNS) {
-		rows.push(contacts.slice(i, i + TILE_COLUMNS))
+	for (let i = 0; i < contacts.length; i += columns) {
+		rows.push(contacts.slice(i, i + columns))
 	}
 	return rows
 }
@@ -198,6 +204,8 @@ function inRows(contacts: ContactType[]): ContactType[][] {
 function ImportantContacts(): React.ReactNode {
 	let router = useRouter()
 	let {data: contacts, error, isLoading, refetch} = useQuery(contactsOptions)
+	let {fontScale} = useWindowDimensions()
+	let columns = columnsForFontScale(fontScale)
 
 	let onAct = React.useCallback((contact: ContactType) => {
 		if (contact.buttonLink) {
@@ -259,7 +267,7 @@ function ImportantContacts(): React.ReactNode {
 							]}
 							verticalSpacing={TILE_SPACING}
 						>
-							{inRows(contacts).map((row, i) => (
+							{inRows(contacts, columns).map((row, i) => (
 								<Grid.Row key={i}>
 									{row.map((contact) => (
 										<ContactTile
@@ -275,8 +283,10 @@ function ImportantContacts(): React.ReactNode {
 										/>
 									))}
 									{/* A short last row leaves its columns empty rather than
-									    stretching the tiles in it. */}
-									{Array.from({length: TILE_COLUMNS - row.length}, (_, j) => (
+									    stretching the tiles in it. 8 contacts divide evenly by
+									    4 and 2 columns but not by 3, so this padding matters at
+									    every column count, not just the edge cases. */}
+									{Array.from({length: columns - row.length}, (_, j) => (
 										<Spacer key={j} />
 									))}
 								</Grid.Row>

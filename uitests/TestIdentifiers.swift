@@ -12,6 +12,17 @@ struct TestIdentifiers {
 	enum LaunchArguments {
 		static let uiTesting = "--uitesting"
 		static let resetState = "--reset-state"
+		/// The value half of `-UIPreferredContentSizeCategoryName`, UIKit's
+		/// command-line override for the app's Dynamic Type size. This is AX5,
+		/// the largest accessibility size, so a test launching with it proves a
+		/// layout past the whole ordinary type ramp, not just one step into it.
+		///
+		/// UIKit's `UIContentSizeCategory` values are abbreviated, not spelled
+		/// out -- "XXXL", not "ExtraExtraExtraLarge". The spelled-out form reads
+		/// as a plausible constant name but names nothing UIKit recognises, and
+		/// RCTAccessibilityManager fails to find a multiplier for it silently
+		/// rather than refusing to launch.
+		static let accessibilityExtraExtraExtraLarge = "UICTContentSizeCategoryAccessibilityXXXL"
 	}
 
 	// MARK: - testID-based identifiers
