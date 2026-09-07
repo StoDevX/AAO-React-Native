@@ -321,8 +321,23 @@ struct TestIdentifiers {
 		/// fails if the filter stops stripping diacritics.
 		static let deburredQuery = "rolvaag"
 		/// A building that must fall out of the list when `deburredQuery` is
-		/// typed, so the test proves narrowing rather than mere survival.
+		/// typed, so the test proves narrowing rather than mere survival. Also
+		/// the name shown as the detail sheet's own title once tapped, and its
+		/// schedule has enough content to overflow the sheet's half detent.
 		static let anExcludedBuilding = "The Cage"
+		/// Another Food-category building, in the same unscrolled viewport as
+		/// `anExcludedBuilding` -- so a tap aimed at it while a sheet is up lands
+		/// on the dimmed list behind the sheet rather than on content the sheet
+		/// itself covers. Its schedule sections are titled Breakfast/Lunch/Dinner,
+		/// never "Hours", which is what makes its detail content an unambiguous
+		/// tell for a second sheet: nothing else on this screen shows those words.
+		static let aSecondBuilding = "Stav Hall"
+		/// A building with two schedule sections and a resource link -- enough
+		/// combined content to overflow the sheet's smaller detent, unlike
+		/// `anExcludedBuilding`'s single short section. One of its sections is
+		/// still titled "Hours", so `tapRow`'s own detection of a successful tap
+		/// still applies.
+		static let aBuildingWithLongSchedule = "The Pause Kitchen"
 		/// A query no building matches, so the screen must say no results were
 		/// found rather than claim the data is missing -- the two states read
 		/// differently, or a broken search looks like a server outage.
@@ -330,14 +345,24 @@ struct TestIdentifiers {
 		/// Mirrors BUILDING_ROW_PREFIX in
 		/// source/features/building-hours/list/building-list-row.tsx.
 		static let rowPrefix = "building-row-"
-		/// The sheet's own title, which is the building's name.
-		static let detailTitle = "The Cage"
-		/// A schedule section heading on the detail sheet, which the collapsed
-		/// row never showed.
+		/// A schedule section heading on the detail sheet, shown only once a
+		/// building is open in the sheet.
 		static let detailSchedule = "HOURS"
-		/// The detail sheet's overflow menu, and the one action in it.
-		static let detailMenu = "More"
+		/// The detail sheet's overflow menu button. UIKit gives an unlabelled
+		/// `ellipsis.circle` bar item the default accessibility label "More" --
+		/// the same string as `Buttons.more`, the Home screen's own tile, purely
+		/// by coincidence of wording rather than a shared identifier. The two
+		/// screens are never on screen together, so today's bare-label match in
+		/// `openDetailMenu` cannot collide with the tile, but reusing the
+		/// constant keeps that coincidence from drifting into two truths.
+		static let detailMenu = Buttons.more
+		/// The one action the detail sheet's overflow menu offers.
 		static let reportAction = "Report a Problem"
+		/// The report screen's own `InfoHeader` title -- distinct from
+		/// `reportAction`, which labels the menu button that opens it, so a test
+		/// can tell the screen actually came up rather than the menu item merely
+		/// existing.
+		static let reportScreenPrompt = "Thanks for spotting a problem!"
 	}
 
 	// MARK: - Course Catalog
