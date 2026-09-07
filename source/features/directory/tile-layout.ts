@@ -1,5 +1,3 @@
-import type {ContactType} from './types'
-
 /// Matches the home grid's gap, so the two screens sit at the same rhythm.
 export const TILE_SPACING = 10
 
@@ -18,14 +16,15 @@ export function columnsForFontScale(fontScale: number): number {
 	return 2
 }
 
-/// Groups the contacts into the rows a SwiftUI Grid wants: its API takes
+/// Groups a flat list into the rows a SwiftUI Grid wants: its API takes
 /// children pre-split into `Grid.Row`s rather than a flat list. `columns`
 /// varies with Dynamic Type (see `columnsForFontScale`), so it is a parameter
-/// rather than a closed-over constant.
-export function inRows(contacts: ContactType[], columns: number): ContactType[][] {
-	let rows: ContactType[][] = []
-	for (let i = 0; i < contacts.length; i += columns) {
-		rows.push(contacts.slice(i, i + columns))
+/// rather than a closed-over constant. Generic over the row type -- the
+/// contact grid passes `ContactType`, the search-results grid `DirectoryItem`.
+export function inRows<T>(items: T[], columns: number): T[][] {
+	let rows: T[][] = []
+	for (let i = 0; i < items.length; i += columns) {
+		rows.push(items.slice(i, i + columns))
 	}
 	return rows
 }
