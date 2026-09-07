@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {StyleSheet, Image} from 'react-native'
+import {StyleSheet, Image, View} from 'react-native'
 import {Host, List, Section, Text, Button, HStack, VStack} from '@expo/ui/swift-ui'
 import {
 	background,
@@ -50,7 +50,12 @@ export function BuildingDetailSwiftUI({building, now}: Props): React.ReactNode {
 	let links = building.links || []
 
 	return (
-		<Host style={styles.host}>
+		// An RN view and a SwiftUI view can't be stacked as siblings inside one
+		// Host -- Host bridges its children into SwiftUI, and Image isn't a
+		// SwiftUI view, so the two would draw on top of each other instead of
+		// stacking in a column. Pinning the banner as the Host's sibling here,
+		// rather than its child, keeps the photo above the list instead of under it.
+		<View style={styles.container}>
 			{headerImage ? (
 				<Image
 					accessibilityIgnoresInvertColors={true}
@@ -60,78 +65,86 @@ export function BuildingDetailSwiftUI({building, now}: Props): React.ReactNode {
 				/>
 			) : null}
 
-			<List modifiers={[listStyle('insetGrouped')]}>
-				<Section>
-					<HStack alignment="center" spacing={BAR_GAP}>
-						<VStack
-							modifiers={[
-								frame({minWidth: 4, maxWidth: 4, minHeight: 24}),
-								background(accentColor),
-								clipShape('capsule'),
-							]}
-						>
-							{null}
-						</VStack>
-						<Text
-							modifiers={[font({textStyle: 'body', weight: 'semibold'}), foregroundStyle(c.label)]}
-						>
-							{statusText}
-						</Text>
-					</HStack>
-				</Section>
-
-				{schedules.map((schedule) => (
-					<Section
-						key={schedule.title}
-						footer={schedule.notes ? <Text>{schedule.notes}</Text> : undefined}
-						title={schedule.title.toUpperCase()}
-					>
-						{schedule.hours.map((set, i) => (
-							<ScheduleRowSwiftUI
-								key={i}
-								accentColor={accentColor}
-								isActive={
-									schedule.isPhysicallyOpen !== false &&
-									set.days.includes(dayOfWeek) &&
-									isScheduleOpenAtMoment(set, now)
-								}
-								now={now}
-								schedule={set}
-							/>
-						))}
-					</Section>
-				))}
-
-				{links.length > 0 ? (
-					<Section title="RESOURCES">
-						{links.map((link, i) => (
-							<Button
-								key={i}
-								modifiers={[buttonStyle('plain')]}
-								onPress={() => openUrl(link.url.toString())}
+			<Host style={styles.host}>
+				<List modifiers={[listStyle('insetGrouped')]}>
+					<Section>
+						<HStack alignment="center" spacing={BAR_GAP}>
+							<VStack
+								modifiers={[
+									frame({minWidth: 4, maxWidth: 4, minHeight: 24}),
+									background(accentColor),
+									clipShape('capsule'),
+								]}
 							>
-								<Text modifiers={[foregroundStyle(c.systemBlue)]}>{link.title}</Text>
-							</Button>
-						))}
+								{null}
+							</VStack>
+							<Text
+								modifiers={[
+									font({textStyle: 'body', weight: 'semibold'}),
+									foregroundStyle(c.label),
+								]}
+							>
+								{statusText}
+							</Text>
+						</HStack>
 					</Section>
-				) : null}
 
-				<Text
-					modifiers={[
-						font({textStyle: 'footnote'}),
-						foregroundStyle(c.secondaryLabel),
-						padding({top: 16, horizontal: 16}),
-					]}
-				>
-					Building hours subject to change without notice{'\n\n'}Data collected by the humans of All
-					About Olaf
-				</Text>
-			</List>
-		</Host>
+					{schedules.map((schedule) => (
+						<Section
+							key={schedule.title}
+							footer={schedule.notes ? <Text>{schedule.notes}</Text> : undefined}
+							title={schedule.title.toUpperCase()}
+						>
+							{schedule.hours.map((set, i) => (
+								<ScheduleRowSwiftUI
+									key={i}
+									accentColor={accentColor}
+									isActive={
+										schedule.isPhysicallyOpen !== false &&
+										set.days.includes(dayOfWeek) &&
+										isScheduleOpenAtMoment(set, now)
+									}
+									now={now}
+									schedule={set}
+								/>
+							))}
+						</Section>
+					))}
+
+					{links.length > 0 ? (
+						<Section title="RESOURCES">
+							{links.map((link, i) => (
+								<Button
+									key={i}
+									modifiers={[buttonStyle('plain')]}
+									onPress={() => openUrl(link.url.toString())}
+								>
+									<Text modifiers={[foregroundStyle(c.systemBlue)]}>{link.title}</Text>
+								</Button>
+							))}
+						</Section>
+					) : null}
+
+					<Text
+						modifiers={[
+							font({textStyle: 'footnote'}),
+							foregroundStyle(c.secondaryLabel),
+							padding({top: 16, horizontal: 16}),
+						]}
+					>
+						Building hours subject to change without notice{'\n\n'}Data collected by the humans of
+						All About Olaf
+					</Text>
+				</List>
+			</Host>
+		</View>
 	)
 }
 
 const styles = StyleSheet.create({
+	container: {
+		flex: 1,
+	},
 	host: {
 		flex: 1,
 		backgroundColor: c.systemGroupedBackground,

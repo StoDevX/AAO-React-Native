@@ -62,9 +62,10 @@ describe('BuildingDetailSwiftUI', () => {
 
 		let {queryByText} = await render(<BuildingDetailSwiftUI building={building} now={NOW} />)
 
-		// A schedule with no `notes` must pass `undefined` as Section's footer,
-		// not another schedule's text or a placeholder -- either mistake would
-		// leak content that was never meant for this section.
+		// A schedule with no `notes` must not render another schedule's note
+		// text as its footer. This only catches a footer that renders the wrong
+		// string; it can't tell `<Text>{undefined}</Text>` apart from omitting
+		// the ternary entirely, since both render nothing here.
 		expect(queryByText(noteText)).toBeNull()
 	})
 })
