@@ -99,19 +99,23 @@ patching a zone mismatch that has been removed upstream.
 
 ### UI tests
 
+*Superseded — see **Open risk / Resolved** below.*
+
 `TestIdentifiers.Calendar.dayCell()` formats in `campusTimeZone`. It changes
 to `TimeZone.current`, so the tests read days the way the app under test does.
 
-`campusTimeZone` itself stays: `frozenNow` is a fixed instant and some
-assertions are about campus's calendar, not the device's. Its doc comment
-gains a note saying which is which, so the next reader does not reach for the
-wrong one.
+`campusTimeZone` itself does not stay: both of its readers, `dayCell`
+(`TestIdentifiers.swift`) and `sundayCell` (`CalendarScreen.swift`), moved to
+`TimeZone.current`, leaving it with none. It was deleted from
+`uitests/TestIdentifiers.swift` rather than kept for assertions that never
+materialised.
 
-Two pieces of new coverage:
+Two pieces of new coverage were planned:
 
 1. **A zone-shift XCUITest** — run the calendar under a deliberately
    non-Central zone and assert that "today" and an all-day event still land on
-   the right day.
+   the right day. This was attempted and could not be built — see **Open risk
+   / Resolved** below.
 2. **A Jest zone matrix** — `deriveDays`, `groupEvents` and `convertEvents`
    exercised with the device zone set east and west of campus, including the
    midnight-crossing case. These are pure functions, so this is where the
@@ -137,7 +141,10 @@ than shift days silently.
 
 **XCUITest.** That the strip and the list agree about today under a shifted
 zone, and that an all-day event appears under its own section header. Both are
-statements about the rendered screen, and both are invisible to Jest.
+statements about the rendered screen, and both are invisible to Jest. The
+shifted-zone half of this was attempted and could not be built — the simulator
+would not move under `TZ` — so it is not part of what shipped. See **Open risk
+/ Resolved** below.
 
 Every new test is to be seen failing before it is trusted, against the code
 without the fix.
