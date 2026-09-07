@@ -37,6 +37,10 @@ export const BuildingList = React.memo(function BuildingList({
 	searchQuery,
 }: Props): React.ReactNode {
 	let isEmpty = sections.every((s) => s.data.length === 0)
+	// Trimmed to match `filterBuildings`, which treats a blank query as no
+	// query at all. Without it, spaces typed over an empty list would claim
+	// they were what filtered it.
+	let activeQuery = searchQuery.trim()
 
 	return (
 		<Host style={styles.host}>
@@ -54,8 +58,8 @@ export const BuildingList = React.memo(function BuildingList({
 			>
 				{isEmpty && !isLoading ? (
 					<Text modifiers={[foregroundStyle(c.secondaryLabel), padding({vertical: 16})]}>
-						{searchQuery
-							? `No results found for "${searchQuery}".`
+						{activeQuery
+							? `No results found for "${activeQuery}".`
 							: 'No building hours available.'}
 					</Text>
 				) : (
