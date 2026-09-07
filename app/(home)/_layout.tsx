@@ -14,7 +14,9 @@ export default function HomeLayout(): React.ReactNode {
 				options={{
 					presentation: 'formSheet',
 					headerShown: false,
-					sheetAllowedDetents: [0.5, 0.999],
+					// Two thirds rather than a half: at a half the hours sat low enough
+					// that the sheet read as cramped.
+					sheetAllowedDetents: [0.68, 0.999],
 					sheetGrabberVisible: true,
 					// 'none' rather than 'last': the list behind has nothing worth
 					// touching once the sheet is up, and an undimmed detent lets UIKit

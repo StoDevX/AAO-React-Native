@@ -28,8 +28,15 @@ export const padding = modifier('padding')
 export const background = modifier('background')
 export const buttonStyle = modifier('buttonStyle')
 export const listStyle = modifier('listStyle')
+export const listRowBackground = modifier('listRowBackground')
+export const listRowInsets = modifier('listRowInsets')
+export const listRowSeparator = modifier('listRowSeparator')
 
 export function Host({children}: WithModifiers): React.ReactNode {
+	return <View>{children}</View>
+}
+
+export function RNHostView({children}: WithModifiers): React.ReactNode {
 	return <View>{children}</View>
 }
 
