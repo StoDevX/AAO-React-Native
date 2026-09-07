@@ -7,7 +7,7 @@
     "@callstack/react-theme-provider": "3.0.9",
     "@expo/log-box": "57.0.4",
     "@expo/metro-runtime": "57.0.15",
-    "@expo/ui": "57.0.15",
+    "@expo/ui": "57.0.14",
     "@frogpond/add-to-device-calendar": "workspace:*",
     "@frogpond/api": "workspace:*",
     "@frogpond/app-theme": "workspace:*",
