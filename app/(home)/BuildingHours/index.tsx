@@ -2,6 +2,8 @@ import * as React from 'react'
 import {useGroupedBuildings} from '../../../source/features/building-hours/query'
 import {BuildingType} from '../../../source/features/building-hours/types'
 import {BuildingList} from '../../../source/features/building-hours/list'
+import {filterBuildings} from '../../../source/features/building-hours/lib'
+import {SearchBar} from '../../../source/components/search-bar'
 import {useAppDispatch, useAppSelector} from '../../../source/redux/hooks'
 import {
 	selectFavoriteBuildings,
@@ -10,6 +12,7 @@ import {
 
 import {timezone} from '@frogpond/constants'
 import {LoadingView, NoticeView} from '@frogpond/notice'
+import {useDebounce} from '@frogpond/use-debounce'
 import {Stack, useRouter} from 'expo-router'
 import {useMomentTimer} from '@frogpond/timer'
 
@@ -21,6 +24,11 @@ function BuildingHoursView(): React.ReactNode {
 	let {now} = useMomentTimer({intervalMs: 60000, startOf: 'minute', timezone: timezone()})
 
 	let {data = [], error, refetch, isLoading, isError} = useGroupedBuildings()
+
+	let [query, setQuery] = React.useState('')
+	let searchQuery = useDebounce(query, 200)
+
+	let sections = React.useMemo(() => filterBuildings(data, searchQuery), [data, searchQuery])
 
 	let onToggleFavorite = React.useCallback(
 		(building: BuildingType) => dispatch(toggleFavoriteBuilding(building.name)),
@@ -51,15 +59,18 @@ function BuildingHoursView(): React.ReactNode {
 	}
 
 	return (
-		<BuildingList
-			favorites={favorites}
-			isLoading={isLoading}
-			now={now}
-			onRefresh={refetch}
-			onReport={onReport}
-			onToggleFavorite={onToggleFavorite}
-			sections={data}
-		/>
+		<>
+			<SearchBar onChangeText={setQuery} value={query} />
+			<BuildingList
+				favorites={favorites}
+				isLoading={isLoading}
+				now={now}
+				onRefresh={refetch}
+				onReport={onReport}
+				onToggleFavorite={onToggleFavorite}
+				sections={sections}
+			/>
+		</>
 	)
 }
 
