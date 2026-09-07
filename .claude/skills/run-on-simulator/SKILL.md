@@ -98,7 +98,12 @@ a server is only half the job:
 | --- | --- |
 | `npx expo run:ios --port $PORT` | baked in at build time; the log then reads `Waiting on http://localhost:$PORT` |
 | `simctl openurl …expo-development-client/?url=…` | carried in the URL, percent-encoded (step 4 below) |
-| XCUITest (`run-uitests`) | the app resolves it the same way; the port must be serving before the run |
+| XCUITest | **it does not** — always 8081, see below |
+
+**XCUITest cannot be pointed at your port.** `RCT_METRO_PORT` is a compile-time
+macro and this project ships React core precompiled, so a UITest build fetches
+from `localhost:8081` whoever owns it. Do not try to solve that with a port;
+embed the bundle instead — `run-uitests` has the recipe.
 
 If the app comes up on a red `No script URL provided` screen, or shows a screen
 that does not match your edits, suspect the port before you suspect your code.
