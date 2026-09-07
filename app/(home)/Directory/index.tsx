@@ -1,6 +1,7 @@
 import * as React from 'react'
 import {Alert, FlatList, Image, StyleSheet, useWindowDimensions, View} from 'react-native'
 import {Stack, useLocalSearchParams, useRouter} from 'expo-router'
+import {useDispatch, useSelector} from 'react-redux'
 import {useQuery} from '@tanstack/react-query'
 import {
 	Button,
@@ -35,9 +36,14 @@ import * as c from '@frogpond/colors'
 import {useDebounce} from '@frogpond/use-debounce'
 import {LoadingView, NoticeView} from '@frogpond/notice'
 import {SearchBar} from '../../../source/components/search-bar'
+import {
+	selectDirectoryResultsView,
+	setDirectoryResultsView,
+} from '../../../source/redux/parts/settings'
 import {contactsOptions} from '../../../source/features/directory/contacts-query'
 import {DepartmentsList} from '../../../source/features/directory/departments-list'
 import {directoryDepartmentsOptions} from '../../../source/features/directory/departments-query'
+import {DirectoryResultsGrid} from '../../../source/features/directory/directory-results-grid'
 import {formatResults} from '../../../source/features/directory/helpers'
 import {directoryEntriesOptions} from '../../../source/features/directory/query'
 import {resolveSearch, searchHeading} from '../../../source/features/directory/resolve-search'
@@ -52,6 +58,8 @@ import {FILL_WIDTH, SCREEN_MARGIN} from '../../../source/features/home/button'
 
 function DirectoryView(): React.ReactNode {
 	let router = useRouter()
+	let dispatch = useDispatch()
+	let resultsView = useSelector(selectDirectoryResultsView)
 
 	let params = useLocalSearchParams<{
 		queryType?: DirectorySearchTypeEnum
@@ -82,6 +90,17 @@ function DirectoryView(): React.ReactNode {
 		isLoading,
 	} = useQuery(directoryEntriesOptions(searchQuery, searchQueryType))
 
+	let items = data.results ? formatResults(data.results) : []
+
+	// The results toggle only earns toolbar space once there are results to
+	// re-lay-out -- it stays hidden on the landing, the too-short notice, the
+	// error, and the empty states.
+	let hasResults =
+		searchQuery.length >= 2 &&
+		!isLoading &&
+		!(isError && error instanceof Error) &&
+		items.length > 0
+
 	// The search chrome is bound to component state (the change handler
 	// updates typedQuery), so it can't move to a static outer component.
 	// Compute it once and render it in every branch, so the user always has a
@@ -92,6 +111,18 @@ function DirectoryView(): React.ReactNode {
 		<>
 			<Stack.Toolbar placement="bottom">
 				<Stack.Toolbar.SearchBarSlot />
+				{hasResults ? (
+					<>
+						<Stack.Toolbar.Spacer />
+						<Stack.Toolbar.Button
+							accessibilityLabel={resultsView === 'tiles' ? 'Show as list' : 'Show as tiles'}
+							icon={resultsView === 'tiles' ? 'list.bullet' : 'square.grid.2x2'}
+							onPress={() =>
+								dispatch(setDirectoryResultsView(resultsView === 'tiles' ? 'list' : 'tiles'))
+							}
+						/>
+					</>
+				) : null}
 			</Stack.Toolbar>
 
 			<SearchBar onChangeText={setTypedQuery} value={typedQuery} />
@@ -116,7 +147,11 @@ function DirectoryView(): React.ReactNode {
 		)
 	}
 
-	const items = data.results ? formatResults(data.results) : []
+	let openResult = (index: number) =>
+		router.push({
+			pathname: '/Directory/[index]',
+			params: {index: String(index), query: searchQuery, type: searchQueryType},
+		})
 
 	return (
 		<>
@@ -127,6 +162,13 @@ function DirectoryView(): React.ReactNode {
 					<NoticeView text={String(error)} />
 				) : !items.length ? (
 					<NoticeView text={`No results found for "${searchQuery}".`} />
+				) : resultsView === 'tiles' ? (
+					<DirectoryResultsGrid
+						heading={heading}
+						items={items}
+						onRefresh={refetch}
+						onSelectIndex={openResult}
+					/>
 				) : (
 					<FlatList
 						ItemSeparatorComponent={IndentedListSeparator}
@@ -139,20 +181,7 @@ function DirectoryView(): React.ReactNode {
 						onRefresh={refetch}
 						refreshing={isRefetching}
 						renderItem={({item, index}) => (
-							<DirectoryItemRow
-								index={index}
-								item={item}
-								onPress={() =>
-									router.push({
-										pathname: '/Directory/[index]',
-										params: {
-											index: String(index),
-											query: searchQuery,
-											type: searchQueryType,
-										},
-									})
-								}
-							/>
+							<DirectoryItemRow index={index} item={item} onPress={() => openResult(index)} />
 						)}
 					/>
 				)}

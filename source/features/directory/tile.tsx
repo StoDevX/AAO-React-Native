@@ -17,16 +17,9 @@ import type {SFSymbol} from 'sf-symbols-typescript'
 import * as c from '@frogpond/colors'
 import {FILL_WIDTH} from '../home/button'
 import {homescreenIconDark, homescreenIconLight} from '../home/colors'
+import {TILE_ASPECT, TILE_RADIUS} from './tile-layout'
 import type {ContactType} from './types'
 
-/// Phone.app draws a favourite a little taller than 3:2 -- 109 x 167pt,
-/// measured off a screenshot of a 393pt-wide screen. The ratio is what is
-/// pinned rather than the width, so the row still fills a wider phone.
-const TILE_ASPECT = 109 / 167
-/// Measured from the same screenshot of Phone.app's favourites. This version
-/// of @expo/ui's RoundedRectangleView has no cornerStyle prop, so the corners
-/// are drawn circular regardless of any style specified in modifiers.
-const TILE_RADIUS = 26
 /// The gradient starts at the top edge's centre and has to reach the two
 /// bottom corners, hypot(109 / 2, 167) ~= 176pt away on that card. Same
 /// construction as the home cards; features/home/button.tsx explains it.

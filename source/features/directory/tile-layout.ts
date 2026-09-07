@@ -1,6 +1,16 @@
 /// Matches the home grid's gap, so the two screens sit at the same rhythm.
 export const TILE_SPACING = 10
 
+/// Phone.app draws a favourite a little taller than 3:2 -- 109 x 167pt,
+/// measured off a screenshot of a 393pt-wide screen. The ratio is what is
+/// pinned rather than the width, so the row still fills a wider phone.
+export const TILE_ASPECT = 109 / 167
+
+/// Measured from the same screenshot of Phone.app's favourites. This version
+/// of @expo/ui's RoundedRectangleView has no cornerStyle prop, so the corners
+/// are drawn circular regardless of any style specified in modifiers.
+export const TILE_RADIUS = 26
+
 /// A column count fixed at four fits the label at default text size but not
 /// at an accessibility size: the icon and the label both grow with Dynamic
 /// Type (see ICON_TEXT_STYLE), while the column width does not, so a wide
