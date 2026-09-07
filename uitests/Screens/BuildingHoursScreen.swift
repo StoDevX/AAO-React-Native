@@ -124,6 +124,25 @@ struct BuildingHoursScreen: Screen {
 	}
 
 	@discardableResult
+	func openDetailMenu() -> Self {
+		let menu = app.buttons[TestIdentifiers.BuildingHours.detailMenu].firstMatch
+		XCTAssertTrue(
+			menu.waitForExistence(timeout: 30),
+			"The detail sheet should offer an overflow menu")
+		menu.tap()
+		return self
+	}
+
+	@discardableResult
+	func verifyReportActionOffered() -> Self {
+		XCTAssertTrue(
+			app.buttons[TestIdentifiers.BuildingHours.reportAction]
+				.waitForExistence(timeout: 30),
+			"The menu should offer Report a Problem")
+		return self
+	}
+
+	@discardableResult
 	func verifyListStillBehind() -> Self {
 		let row = app.element(
 			matching: TestIdentifiers.BuildingHours.rowPrefix

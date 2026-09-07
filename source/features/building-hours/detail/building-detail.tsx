@@ -1,6 +1,6 @@
 import * as React from 'react'
 import {StyleSheet, Image} from 'react-native'
-import {Host, List, Section, Text, Button, HStack, VStack, Spacer} from '@expo/ui/swift-ui'
+import {Host, List, Section, Text, Button, HStack, VStack} from '@expo/ui/swift-ui'
 import {
 	background,
 	buttonStyle,
@@ -31,14 +31,13 @@ const BAR_GAP = 8
 type Props = {
 	building: BuildingType
 	now: Moment
-	onProblemReport: () => void
 }
 
 /**
  * The building detail screen: header image, current status, one section per
- * schedule, a "Suggest an Edit" action, and any links for the building.
+ * schedule, and any links for the building.
  */
-export function BuildingDetailSwiftUI({building, now, onProblemReport}: Props): React.ReactNode {
+export function BuildingDetailSwiftUI({building, now}: Props): React.ReactNode {
 	let headerImage =
 		building.image && buildingImages.has(building.image) ? buildingImages.get(building.image) : null
 
@@ -102,16 +101,6 @@ export function BuildingDetailSwiftUI({building, now, onProblemReport}: Props): 
 						))}
 					</Section>
 				))}
-
-				<Section>
-					<Button modifiers={[buttonStyle('plain')]} onPress={onProblemReport}>
-						<HStack>
-							<Text modifiers={[foregroundStyle(c.label)]}>Suggest an Edit</Text>
-							<Spacer />
-							<Text modifiers={[foregroundStyle(c.tertiaryLabel)]}>›</Text>
-						</HStack>
-					</Button>
-				</Section>
 
 				{links.length > 0 ? (
 					<Section title="RESOURCES">

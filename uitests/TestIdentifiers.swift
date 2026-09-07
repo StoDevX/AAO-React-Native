@@ -335,6 +335,9 @@ struct TestIdentifiers {
 		/// A schedule section heading on the detail sheet, which the collapsed
 		/// row never showed.
 		static let detailSchedule = "HOURS"
+		/// The detail sheet's overflow menu, and the one action in it.
+		static let detailMenu = "More"
+		static let reportAction = "Report a Problem"
 	}
 
 	// MARK: - Course Catalog

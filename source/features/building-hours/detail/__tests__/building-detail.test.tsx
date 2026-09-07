@@ -46,9 +46,7 @@ describe('BuildingDetailSwiftUI', () => {
 	test('renders a schedule with notes without throwing', () => {
 		let building = makeBuilding()
 
-		expect(() =>
-			render(<BuildingDetailSwiftUI building={building} now={NOW} onProblemReport={jest.fn()} />),
-		).not.toThrow()
+		expect(() => render(<BuildingDetailSwiftUI building={building} now={NOW} />)).not.toThrow()
 	})
 
 	test('renders a schedule with no notes without throwing', () => {
@@ -61,8 +59,6 @@ describe('BuildingDetailSwiftUI', () => {
 			],
 		})
 
-		expect(() =>
-			render(<BuildingDetailSwiftUI building={building} now={NOW} onProblemReport={jest.fn()} />),
-		).not.toThrow()
+		expect(() => render(<BuildingDetailSwiftUI building={building} now={NOW} />)).not.toThrow()
 	})
 })

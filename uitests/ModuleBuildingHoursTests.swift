@@ -46,4 +46,13 @@ class ModuleBuildingHoursTests: UITestCase {
 			.capture("Building Hours detail sheet after dragging to the larger detent")
 			.verifyDetailSheetFullyLaidOut()
 	}
+
+	func testDetailSheetMenuOffersReportAProblem() throws {
+		BuildingHoursScreen(app: app)
+			.navigate()
+			.tapRow(TestIdentifiers.BuildingHours.anExcludedBuilding)
+			.verifyDetailSheetPresented(for: TestIdentifiers.BuildingHours.anExcludedBuilding)
+			.openDetailMenu()
+			.verifyReportActionOffered()
+	}
 }

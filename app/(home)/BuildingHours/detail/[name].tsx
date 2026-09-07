@@ -41,6 +41,13 @@ export default function BuildingHoursDetailPage(): React.ReactNode {
 		<>
 			<Stack.Title>{building?.name ?? name}</Stack.Title>
 			<Stack.Screen options={{headerLargeTitle: true}} />
+			<Stack.Toolbar placement="left">
+				<Stack.Toolbar.Menu icon="ellipsis.circle">
+					<Stack.Toolbar.MenuAction icon="exclamationmark.bubble" onPress={reportProblem}>
+						Report a Problem
+					</Stack.Toolbar.MenuAction>
+				</Stack.Toolbar.Menu>
+			</Stack.Toolbar>
 			<Stack.Toolbar placement="right">
 				<Stack.Toolbar.Button icon={favorited ? 'heart.fill' : 'heart'} onPress={onFavorite} />
 			</Stack.Toolbar>
@@ -95,7 +102,7 @@ export default function BuildingHoursDetailPage(): React.ReactNode {
 	return (
 		<>
 			{screen}
-			<BuildingDetailSwiftUI building={building} now={now} onProblemReport={reportProblem} />
+			<BuildingDetailSwiftUI building={building} now={now} />
 		</>
 	)
 }
