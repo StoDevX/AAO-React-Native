@@ -5,7 +5,7 @@
 All About Olaf is a React Native mobile app for the St. Olaf College community. It provides students, faculty, and staff with access to campus info, dining menus, course catalogs, campus maps, and more.
 
 - **React Native 0.86.2** with **TypeScript**
-- **React Navigation 7** for navigation (typed via `source/navigation/types.ts`)
+- **Expo Router 57** for navigation — file-based, with `experiments.typedRoutes` set in `app.config.ts`
 - **Redux Toolkit** for global state, **React Query 5** for server state
 - **Jest** + **React Native Testing Library** for testing
 - **Fastlane** for CI/CD
