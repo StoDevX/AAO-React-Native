@@ -35,15 +35,6 @@ function BuildingHoursView(): React.ReactNode {
 		[dispatch],
 	)
 
-	let onReport = React.useCallback(
-		(building: BuildingType) =>
-			router.push({
-				pathname: '/BuildingHoursProblemReport',
-				params: {name: building.name},
-			}),
-		[router],
-	)
-
 	let onSelect = React.useCallback(
 		(building: BuildingType) =>
 			router.push({
@@ -94,7 +85,6 @@ function BuildingHoursView(): React.ReactNode {
 				isLoading={isLoading}
 				now={now}
 				onRefresh={refetch}
-				onReport={onReport}
 				onSelect={onSelect}
 				onToggleFavorite={onToggleFavorite}
 				searchQuery={searchQuery}

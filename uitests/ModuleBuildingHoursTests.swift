@@ -79,6 +79,7 @@ class ModuleBuildingHoursTests: UITestCase {
 			.verifyReportActionOffered()
 			.tapReportAction()
 			.verifyReportScreenPresented()
+			.verifyReportPushedIntoSheet()
 			.capture("Building Hours report screen")
 			// Presenting a modal while a formSheet is already up can silently
 			// no-op on iOS -- dismissing back to the detail sheet, rather than

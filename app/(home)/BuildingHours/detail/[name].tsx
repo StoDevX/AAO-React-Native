@@ -29,7 +29,7 @@ export default function BuildingHoursDetailPage(): React.ReactNode {
 	let reportProblem = React.useCallback(
 		() =>
 			router.push({
-				pathname: '/BuildingHoursProblemReport',
+				pathname: '/BuildingHours/detail/report',
 				params: {name},
 			}),
 		[name, router],

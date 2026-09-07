@@ -33,12 +33,11 @@ type Props = {
 	now: Moment
 	isFavorite: boolean
 	onToggleFavorite: (building: BuildingType) => void
-	onReport: (building: BuildingType) => void
 	onSelect: (building: BuildingType) => void
 }
 
 /**
- * A single building row: swipe-left reveals favorite/report actions.
+ * A single building row: swipe-left reveals the favorite action.
  * Tapping opens the building's detail sheet.
  */
 export const BuildingListRow = React.memo(function BuildingListRow({
@@ -46,7 +45,6 @@ export const BuildingListRow = React.memo(function BuildingListRow({
 	now,
 	isFavorite,
 	onToggleFavorite,
-	onReport,
 	onSelect,
 }: Props): React.ReactNode {
 	let status = getShortBuildingStatus(building, now)
@@ -126,9 +124,6 @@ export const BuildingListRow = React.memo(function BuildingListRow({
 			<SwipeActions.Actions edge="trailing" allowsFullSwipe={false}>
 				<Button modifiers={[tint(c.systemBlue)]} onPress={() => onToggleFavorite(building)}>
 					<Image systemName={isFavorite ? 'heart.slash' : 'heart'} />
-				</Button>
-				<Button modifiers={[tint(c.systemOrange)]} onPress={() => onReport(building)}>
-					<Image systemName="exclamationmark.bubble" />
 				</Button>
 			</SwipeActions.Actions>
 		</SwipeActions>

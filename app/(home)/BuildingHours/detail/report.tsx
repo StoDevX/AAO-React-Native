@@ -10,15 +10,15 @@ import {InfoHeader} from '@frogpond/info-header'
 import {TableView, Section, Cell} from '@frogpond/tableview'
 import {CellTextField, CellToggle, DeleteButtonCell, ButtonCell} from '@frogpond/tableview/cells'
 
-import {buildingByNameOptions} from '../../source/features/building-hours/query'
+import {buildingByNameOptions} from '../../../../source/features/building-hours/query'
 import type {
 	BuildingType,
 	NamedBuildingScheduleType,
 	SingleBuildingScheduleType,
-} from '../../source/features/building-hours/types'
-import {summarizeDays, formatBuildingTimes} from '../../source/features/building-hours/lib'
-import {submitReport} from '../../source/features/building-hours/report/submit'
-import type {BuildingAction} from '../../source/features/building-hours/report/building-reducer'
+} from '../../../../source/features/building-hours/types'
+import {summarizeDays, formatBuildingTimes} from '../../../../source/features/building-hours/lib'
+import {submitReport} from '../../../../source/features/building-hours/report/submit'
+import type {BuildingAction} from '../../../../source/features/building-hours/report/building-reducer'
 import {
 	applyBuildingAction,
 	clearReport,
@@ -27,7 +27,7 @@ import {
 	startReport,
 	useAppDispatch,
 	useAppSelector,
-} from '../../source/redux'
+} from '../../../../source/redux'
 import {LoadingView, NoticeView} from '@frogpond/notice'
 
 function useBuildingEditor(initialBuilding: BuildingType) {
@@ -41,10 +41,11 @@ function useBuildingEditor(initialBuilding: BuildingType) {
 	let [submitted, setSubmitted] = React.useState(false)
 
 	/**
-	 * checking for unsaved edits
+	 * Checks for unsaved edits before this screen leaves the stack.
 	 *
-	 * noting that we also have `gestureEnabled` set to false in the navigation options
-	 * (ios only) to prevent dismissing the modal without prompting.
+	 * `beforeRemove` intercepts a pop however it was triggered -- the back
+	 * button or the edge-swipe gesture -- since this screen is pushed rather
+	 * than presented as a modal.
 	 * https://reactnavigation.org/docs/preventing-going-back
 	 */
 	React.useEffect(
@@ -312,10 +313,15 @@ export default function BuildingHoursProblemReportPage(): React.ReactNode {
 	return (
 		<>
 			<Stack.Title>Report a Problem</Stack.Title>
-			<Stack.Toolbar placement="right">
+			{/* The default native back button pops before `beforeRemove` gets a
+			 * say, which can leave the unsaved-changes guard unable to cancel
+			 * the pop it just intercepted. A JS-driven `goBack()` call, same as
+			 * the guard's own re-dispatch on Discard, keeps the two in sync. */}
+			<Stack.Screen options={{gestureEnabled: false}} />
+			<Stack.Toolbar placement="left">
 				<Stack.Toolbar.Button
-					accessibilityLabel="Close Screen"
-					icon="xmark"
+					accessibilityLabel="Back"
+					icon="chevron.left"
 					onPress={() => navigation.goBack()}
 				/>
 			</Stack.Toolbar>

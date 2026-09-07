@@ -17,7 +17,6 @@ type Props = {
 	now: Moment
 	favorites: string[]
 	onToggleFavorite: (building: BuildingType) => void
-	onReport: (building: BuildingType) => void
 	onSelect: (building: BuildingType) => void
 	onRefresh?: () => unknown
 	isLoading?: boolean
@@ -32,7 +31,6 @@ export const BuildingList = React.memo(function BuildingList({
 	now,
 	favorites,
 	onToggleFavorite,
-	onReport,
 	onSelect,
 	onRefresh,
 	isLoading,
@@ -75,7 +73,6 @@ export const BuildingList = React.memo(function BuildingList({
 										building={building}
 										isFavorite={favorites.includes(building.name)}
 										now={now}
-										onReport={onReport}
 										onSelect={onSelect}
 										onToggleFavorite={onToggleFavorite}
 									/>

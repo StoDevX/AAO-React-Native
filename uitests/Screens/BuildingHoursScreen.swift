@@ -249,16 +249,39 @@ struct BuildingHoursScreen: Screen {
 		return self
 	}
 
-	/// Dismisses the report screen via its own close button, per
-	/// `gestureEnabled: false` on that route -- the swipe-to-dismiss gesture is
-	/// off, so this is the only way out.
+	/// Assert the report screen pushed into the sheet's own stack rather than
+	/// presenting as a modal over it. `element(boundBy: 0)` alone cannot tell a
+	/// back chevron from a close button -- both are just "a button" in the nav
+	/// bar -- so this also asserts the close button used by the old modal
+	/// route is gone, which the push route's leading button positively is not.
+	@discardableResult
+	func verifyReportPushedIntoSheet() -> Self {
+		XCTAssertTrue(
+			app.staticTexts[TestIdentifiers.BuildingHours.reportScreenPrompt]
+				.waitForExistence(timeout: 30),
+			"The report screen should be up")
+
+		XCTAssertFalse(
+			app.buttons[TestIdentifiers.Navigation.closeScreen].exists,
+			"A pushed screen should not carry the modal's close button")
+
+		let back = app.navigationBars.buttons.element(boundBy: 0)
+		XCTAssertTrue(
+			back.exists && back.isHittable,
+			"The report should push into the sheet's stack, so it carries a back button")
+		return self
+	}
+
+	/// Dismisses the report screen via its navigation bar's leading button --
+	/// a back button, since the report is pushed into the sheet's own stack
+	/// rather than presented as a modal.
 	@discardableResult
 	func dismissReportScreen() -> Self {
-		let close = app.buttons[TestIdentifiers.Navigation.closeScreen].firstMatch
+		let back = app.navigationBars.buttons.element(boundBy: 0)
 		XCTAssertTrue(
-			close.waitForExistence(timeout: 30),
-			"The report screen should offer a way to close it")
-		close.tap()
+			back.waitForExistence(timeout: 30),
+			"The report screen should offer a way to go back")
+		back.tap()
 		return self
 	}
 
