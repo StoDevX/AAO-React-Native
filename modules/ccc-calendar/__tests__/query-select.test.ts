@@ -240,4 +240,40 @@ describe('all-day events', () => {
 		// 17:00Z is 02:00 on the 16th in Tokyo.
 		expect(sections.map((section) => section.key)).toEqual(['2030-01-16'])
 	})
+
+	// TEC's real wire shape: campus midnight expressed in UTC, not UTC midnight.
+	// The start and end fall on different UTC dates here, so each anchors to
+	// its own local midnight without help from the collapse guard below.
+	test('lands on its own date for TEC’s real wire shape', () => {
+		moment.tz.setDefault('America/Chicago')
+		let event = makeWireEvent({
+			startTime: '2030-01-15T05:00:00.000Z',
+			endTime: '2030-01-16T04:59:59.000Z',
+			isAllDay: true,
+			config: {startTime: false, endTime: false, subtitle: 'location'},
+		})
+
+		let [selected] = selectNamed('stolaf')([event])
+
+		expect(selected?.event.startTime.format('YYYY-MM-DD HH:mm')).toBe('2030-01-15 00:00')
+		expect(selected?.event.endTime.format('YYYY-MM-DD HH:mm')).toBe('2030-01-16 00:00')
+	})
+
+	// An all-day event whose wire start and end share a UTC date collapses to
+	// local midnight on both ends, which reads as already over everywhere. It
+	// must still cover its day.
+	test('still spans a full day when start and end share a UTC date', () => {
+		moment.tz.setDefault('America/Chicago')
+		let event = makeWireEvent({
+			startTime: '2030-01-15T00:00:00.000Z',
+			endTime: '2030-01-15T23:59:59.000Z',
+			isAllDay: true,
+			config: {startTime: false, endTime: false, subtitle: 'location'},
+		})
+
+		let [selected] = selectNamed('stolaf')([event])
+
+		expect(selected?.event.startTime.format('YYYY-MM-DD HH:mm')).toBe('2030-01-15 00:00')
+		expect(selected?.event.endTime.format('YYYY-MM-DD HH:mm')).toBe('2030-01-16 00:00')
+	})
 })
