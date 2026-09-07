@@ -93,12 +93,11 @@ describe('deriveDays', () => {
 		expect(isoDays(result)).toContain('2026-08-26')
 	})
 
-	// `now` is campus time (`useMomentTimer({timezone: timezone()})`) while an
-	// event's `startTime` is device-local (`moment(event.startTime)` in
-	// `modules/ccc-calendar/query.ts`), so the range end has to be measured as a
+	// `deriveDays`' signature takes two `Moment`s and promises nothing about
+	// which zone either was built in, so the range end has to be measured as a
 	// calendar date rather than as an instant. Measuring it as an instant runs
-	// the range a day long or a day short depending on which side of campus the
-	// device sits, and the strip's snapping assumes whole weeks.
+	// the range a day long or a day short depending on which zone each argument
+	// actually carries, and the strip's snapping assumes whole weeks.
 	describe('when the events and the clock are in different zones', () => {
 		let chicagoSunday = () => moment.tz('2026-09-06T12:00:00', 'America/Chicago')
 
