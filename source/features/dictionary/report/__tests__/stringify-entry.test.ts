@@ -35,3 +35,30 @@ test('handles newlines in the definition', () => {
 	}
 	expect(stringifyDictionaryEntry(def)).toMatchSnapshot()
 })
+
+test('handles an entry with senses', () => {
+	expect(
+		stringifyDictionaryEntry({
+			word: 'ACM',
+			senses: [
+				{definition: 'The Association for Computing Machinery.'},
+				{definition: 'The student chapter.', example: 'ACM runs workshops.'},
+			],
+		}),
+	).toMatchSnapshot()
+})
+
+test('handles pronunciation and part of speech', () => {
+	expect(
+		stringifyDictionaryEntry({
+			word: 'Ytterboe',
+			pronunciation: 'ˈɪtərboʊ',
+			partOfSpeech: 'noun',
+			definition: 'A residence hall.',
+		}),
+	).toMatchSnapshot()
+})
+
+test('emits no definition key for an entry with neither field', () => {
+	expect(stringifyDictionaryEntry({word: 'Bogus'})).toBe('word: Bogus\n')
+})

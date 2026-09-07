@@ -7,6 +7,18 @@ definition: |
 "
 `;
 
+exports[`handles an entry with senses 1`] = `
+"word: ACM
+senses:
+  - definition: |
+      The Association for Computing Machinery.
+  - definition: |
+      The student chapter.
+    example: |
+      ACM runs workshops.
+"
+`;
+
 exports[`handles long definitions 1`] = `
 "word: ACE
 definition: |
@@ -36,5 +48,14 @@ definition: |
   community with non-profit or
   
   governmental partners.
+"
+`;
+
+exports[`handles pronunciation and part of speech 1`] = `
+"word: Ytterboe
+pronunciation: ˈɪtərboʊ
+partOfSpeech: noun
+definition: |
+  A residence hall.
 "
 `;
