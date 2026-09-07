@@ -84,6 +84,70 @@ class ModuleCalendarTests: UITestCase {
 			.verifyDayCellsAreTappable()
 	}
 
+	/// Swiping the strip settles on a week boundary: the Sunday of whichever week
+	/// it lands on comes to rest at the same leading edge, with no partial week
+	/// behind it.
+	///
+	/// The last week is the one that matters. It only reaches the leading edge
+	/// because of the trailing scroll inset -- without it the strip runs out of
+	/// content and the week comes to rest short, still showing a Sunday but not
+	/// at the edge. Hence measuring where the Sunday lands rather than only
+	/// which day it is. Neither the inset nor the snap offsets are visible to
+	/// Jest: a strip rendered there has no layout pass and no scroll view.
+	func testSwipingTheStripSettlesOnASunday() throws {
+		let screen = CalendarScreen(app: app)
+			.navigate()
+			.verifySundayLeadsTheStrip()
+
+		screen
+			.swipeStripToNextWeek()
+			.verifySundayLeadsTheStrip(weeksOn: 1)
+			.capture("24-strip-second-week")
+
+		// The resting edge of a snapped week, read off the one week that is
+		// certainly reachable, so the last week is measured against the app's own
+		// layout rather than against a number written down here.
+		guard let edge = screen.leadingDayCellEdge() else {
+			XCTFail("The strip should have a visible day cell")
+			return
+		}
+
+		screen
+			.swipeStripToNextWeek()
+			.verifySundayLeadsTheStrip(weeksOn: 2, atEdge: edge)
+			.capture("25-strip-last-week")
+	}
+
+	/// The strip runs to the Saturday of the last event's week, so its final
+	/// days can have no events behind them. Tapping one still has to move the
+	/// selection somewhere the list can show, rather than selecting a day no
+	/// section answers to and leaving the strip fighting itself.
+	///
+	/// The fixture's last event is Fri 2026-09-18, which leaves Sat 2026-09-19
+	/// empty.
+	///
+	/// The fixture states its events in campus time, but the app reads them in
+	/// the device's, so which day the last one falls on moves with the zone. Its
+	/// events are timed to keep Friday's on Friday from UTC-8 through UTC+2,
+	/// which covers a CI runner (UTC) and a machine on campus alike. Further
+	/// east than that they cross midnight, Saturday stops being empty, and this
+	/// test has nothing left to check -- so keep the fixture's last day well
+	/// clear of midnight if you move it.
+	func testTappingADayPastTheLastEventSelectsTheLastDayWithOne() throws {
+		let screen = CalendarScreen(app: app)
+			.navigate()
+			.verifyStripIsPresent()
+
+		screen.swipeStripToNextWeek().swipeStripToNextWeek()
+
+		screen
+			.tapDay("2026-09-19")
+			.verifySelectedDay(
+				TestIdentifiers.Calendar.dayCellPrefix + "2026-09-18",
+				message: "Tapping the empty Saturday should select the last day that has events")
+			.capture("26-strip-trailing-day")
+	}
+
 	/// Scrolling the list moves the strip's selection to whichever day the list
 	/// settled on. The two views drive each other, so this is the direction that
 	/// a naive fix breaks first.

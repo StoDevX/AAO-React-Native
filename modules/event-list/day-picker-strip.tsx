@@ -30,6 +30,7 @@ const CELL_MARGIN = 4
 const CELL_TOTAL_WIDTH = CELL_WIDTH + CELL_MARGIN * 2
 const PADDING_HORIZONTAL = 8
 const CIRCLE_SIZE = 32
+const DAYS_PER_WEEK = 7
 
 /**
  * Generates a continuous range of whole weeks, from Sunday of the current week
@@ -62,17 +63,36 @@ export function deriveDays(events: readonly SourcedEvent[], now: Moment): Moment
 	}
 
 	let sunday = today.clone().startOf('week')
-	let rangeEnd = lastDay.clone().endOf('week')
+
+	// `now` is campus time while an event's `startTime` is device-local, so the
+	// last day is compared as a calendar date rather than as an instant.
+	// Comparing the two as instants runs the range a day long or a day short
+	// depending on which side of campus the device sits, and whole weeks is the
+	// contract the strip's snapping is built on.
+	let lastDate = lastDay.format('YYYY-MM-DD')
 
 	let days: Moment[] = []
 	let current = sunday.clone()
+	let weekEnd = ''
 
-	while (current.isSameOrBefore(rangeEnd, 'day')) {
-		days.push(current.clone())
-		current.add(1, 'day')
-	}
+	do {
+		for (let i = 0; i < DAYS_PER_WEEK; i++) {
+			days.push(current.clone())
+			weekEnd = current.format('YYYY-MM-DD')
+			current.add(1, 'day')
+		}
+	} while (weekEnd < lastDate)
 
 	return days
+}
+
+/**
+ * Whether `day` opens its week, by the rule `deriveDays` and `scrollToDay`
+ * both use. Moment's week boundary is locale-driven, so testing for Sunday
+ * outright would leave a second definition to drift from this one.
+ */
+function isWeekStart(day: Moment): boolean {
+	return day.isSame(day.clone().startOf('week'), 'day')
 }
 
 type Props = {
@@ -154,19 +174,31 @@ export let DayPickerStrip = React.forwardRef<DayPickerStripHandle, Props>(functi
 	// Trailing room so the last week's Sunday can still pull to the leading
 	// edge -- scroll inset, not day cells, so there is no empty week to swipe
 	// into. A full week already fills a phone; wider screens need the rest.
-	let trailingInset = Math.max(0, containerWidth - 7 * CELL_TOTAL_WIDTH)
+	// Sized so the scroll bottoms out exactly on that Sunday's offset: any more
+	// and the strip drags into blank space and rubber-bands back.
+	let trailingInset = Math.max(
+		0,
+		containerWidth - (DAYS_PER_WEEK * CELL_TOTAL_WIDTH + PADDING_HORIZONTAL * 2 - CELL_MARGIN),
+	)
 
 	let maxScroll = Math.max(
 		0,
 		PADDING_HORIZONTAL * 2 + trailingInset + days.length * CELL_TOTAL_WIDTH - containerWidth,
 	)
 
+	/**
+	 * Where a cell sits in the content, before the scroll range clamps it. The
+	 * unclamped form is what says whether that cell can reach the leading edge
+	 * at all, which is why it is separate from `offsetForIndex`.
+	 */
+	let rawOffsetForIndex = React.useCallback(
+		(index: number) => PADDING_HORIZONTAL + index * CELL_TOTAL_WIDTH - CELL_MARGIN,
+		[],
+	)
+
 	let offsetForIndex = React.useCallback(
-		(index: number) => {
-			let x = PADDING_HORIZONTAL + index * CELL_TOTAL_WIDTH - CELL_MARGIN
-			return Math.max(0, Math.min(x, maxScroll))
-		},
-		[maxScroll],
+		(index: number) => Math.max(0, Math.min(rawOffsetForIndex(index), maxScroll)),
+		[rawOffsetForIndex, maxScroll],
 	)
 
 	/**
@@ -181,11 +213,11 @@ export let DayPickerStrip = React.forwardRef<DayPickerStripHandle, Props>(functi
 			.map((day, index) => ({day, index}))
 			.filter(({day, index}) => {
 				if (index === 0) return true
-				if (day.day() !== 0) return false
-				return PADDING_HORIZONTAL + index * CELL_TOTAL_WIDTH - CELL_MARGIN <= maxScroll
+				if (!isWeekStart(day)) return false
+				return rawOffsetForIndex(index) <= maxScroll
 			})
 			.map(({day, index}) => ({day, offset: offsetForIndex(index)}))
-	}, [days, offsetForIndex, maxScroll])
+	}, [days, offsetForIndex, rawOffsetForIndex, maxScroll])
 
 	let scrollToDay = React.useCallback(
 		(day: Moment) => {
@@ -261,7 +293,7 @@ export let DayPickerStrip = React.forwardRef<DayPickerStripHandle, Props>(functi
 			<ScrollView
 				contentContainerStyle={[
 					styles.scrollContent,
-					{paddingRight: PADDING_HORIZONTAL + trailingInset},
+					{paddingEnd: PADDING_HORIZONTAL + trailingInset},
 				]}
 				decelerationRate="fast"
 				horizontal={true}
