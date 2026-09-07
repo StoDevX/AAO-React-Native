@@ -12,6 +12,17 @@ struct TestIdentifiers {
 	enum LaunchArguments {
 		static let uiTesting = "--uitesting"
 		static let resetState = "--reset-state"
+		/// The value half of `-UIPreferredContentSizeCategoryName`, UIKit's
+		/// command-line override for the app's Dynamic Type size. This is AX5,
+		/// the largest accessibility size, so a test launching with it proves a
+		/// layout past the whole ordinary type ramp, not just one step into it.
+		///
+		/// UIKit's `UIContentSizeCategory` values are abbreviated, not spelled
+		/// out -- "XXXL", not "ExtraExtraExtraLarge". The spelled-out form reads
+		/// as a plausible constant name but names nothing UIKit recognises, and
+		/// RCTAccessibilityManager fails to find a multiplier for it silently
+		/// rather than refusing to launch.
+		static let accessibilityExtraExtraExtraLarge = "UICTContentSizeCategoryAccessibilityXXXL"
 	}
 
 	// MARK: - testID-based identifiers
@@ -50,7 +61,6 @@ struct TestIdentifiers {
 		static let carletonMap = "Carleton Map"
 		static let courseCatalog = "Course Catalog"
 		static let directory = "Directory"
-		static let importantContacts = "Important Contacts"
 		static let more = "More"
 		static let news = "News"
 		static let stoPrint = "stoPrint"
@@ -227,7 +237,15 @@ struct TestIdentifiers {
 	// MARK: - Directory
 
 	enum Directory {
-		static let searchPrompt = "Search the Directory"
+		/// The heading above the contact tiles on the Directory screen.
+		static let importantContacts = "Important Contacts"
+		/// Matches CONTACT_GRID_ID in app/(home)/Directory/index.tsx.
+		static let contactGrid = "directory-contact-grid"
+		/// A contact from data/contact-info/, so its tile is in the grid
+		/// whatever the server is serving.
+		static let aContact = "PubSafe"
+		/// That contact's own action, which its tile offers on long-press.
+		static let aContactAction = "Call Public Safety"
 		static let rowPrefix = "directory-row-"
 
 		/// A directory entry with no title, email or profile, so its detail

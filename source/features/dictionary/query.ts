@@ -7,9 +7,9 @@ export const keys = {
 }
 
 // Dictionary entries change rarely -- matches the 5-minute staleTime
-// precedent set by Contacts'/Student Orgs' query.ts, avoiding a redundant
-// background refetch every time someone opens a word's detail or editor
-// screen right after the list.
+// precedent set by directory/contacts-query.ts and student-orgs/query.ts,
+// avoiding a redundant background refetch every time someone opens a word's
+// detail or editor screen right after the list.
 const staleTime = 1000 * 60 * 5
 
 async function fetchDictionary({signal}: {signal: AbortSignal}) {

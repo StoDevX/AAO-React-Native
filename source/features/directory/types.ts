@@ -1,5 +1,8 @@
 import {StyleProp, ViewStyle} from 'react-native'
 
+import type {Gradient} from '@frogpond/colors'
+import type {SFSymbol} from 'sf-symbols-typescript'
+
 export type CampusLocation = {
 	display: string
 	buildingabbr: string
@@ -92,4 +95,29 @@ export type DirectoryIconName =
 export interface DirectoryIconProps {
 	color: string
 	style?: StyleProp<ViewStyle>
+}
+
+/** A curated campus contact, from `data/contact-info/*.yaml`. */
+export type ContactType = {
+	title: string
+	phoneNumber?: string
+	buttonText: string
+	buttonLink?: string
+	/**
+	 * Required by the schema; read by nothing here. Its consumer was the list
+	 * screen and row this feature replaced. `synopsis` below is retained for
+	 * the same reason -- dropping either means a data deploy, not a code one.
+	 */
+	category: string
+	image?: string
+	text: string
+	/** See the note on `category` above. */
+	synopsis: string
+	/**
+	 * The tile's SF Symbol. Optional in TypeScript though the schema requires
+	 * it: a released app can meet data deployed before this field existed.
+	 */
+	icon?: SFSymbol
+	/** A name from `GRADIENT_NAMES`, or an explicit `[inner, outer]` pair. */
+	gradient?: string | Gradient
 }

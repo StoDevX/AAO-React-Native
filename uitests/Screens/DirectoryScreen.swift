@@ -119,11 +119,60 @@ struct DirectoryScreen: Screen {
 	}
 
 	@discardableResult
-	func checkSearchPromptVisible() -> Self {
-		let searchPrompt = app.staticTexts[TestIdentifiers.Directory.searchPrompt].firstMatch
+	func verifyContactsHeading() -> Self {
+		verifyTitle(TestIdentifiers.Directory.importantContacts)
+	}
+
+	@discardableResult
+	func verifyContactTiles(count: Int) -> Self {
+		let grid = app.element(matching: TestIdentifiers.Directory.contactGrid)
 		XCTAssertTrue(
-			searchPrompt.waitForExistence(timeout: 30),
-			"Search the Directory prompt should be visible")
+			grid.waitForExistence(timeout: 30),
+			"The contact grid should be visible before a search")
+		XCTAssertEqual(
+			grid.buttons.count, count,
+			"The grid should hold \(count) contact tiles")
+		return self
+	}
+
+	@discardableResult
+	func openContact(_ title: String) -> Self {
+		let tile = app.buttons[title].firstMatch
+		XCTAssertTrue(
+			tile.waitForExistence(timeout: 30),
+			"\(title) should have a tile in the grid")
+		tile.tap()
+		return self
+	}
+
+	/// Assert the contact's own action button is on screen. It appears only on
+	/// the detail screen (the grid offers it through a long-press menu instead),
+	/// so finding it here is proof navigation actually happened -- unlike the
+	/// contact's name, which SwiftUI collapses onto the grid's own tile button
+	/// too, so asserting on that would pass without navigating anywhere.
+	@discardableResult
+	func verifyDetailAction(_ action: String) -> Self {
+		let button = app.buttons[action].firstMatch
+		XCTAssertTrue(
+			button.waitForExistence(timeout: 30),
+			"\(action) should be on the contact's detail screen")
+		return self
+	}
+
+	/// A tile's long-press menu offers the contact's own action. The menu is
+	/// presented by iOS, so nothing short of pressing it proves it is there.
+	@discardableResult
+	func verifyContactMenu(for title: String, offers action: String) -> Self {
+		let tile = app.buttons[title].firstMatch
+		XCTAssertTrue(
+			tile.waitForExistence(timeout: 30),
+			"\(title) should have a tile in the grid")
+		tile.press(forDuration: 1.0)
+
+		let item = app.buttons[action].firstMatch
+		XCTAssertTrue(
+			item.waitForExistence(timeout: 10),
+			"Long-pressing \(title) should offer \(action)")
 		return self
 	}
 }

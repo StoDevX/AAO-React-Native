@@ -1,0 +1,150 @@
+import * as React from 'react'
+import {useColorScheme} from 'react-native'
+import {Button, ContextMenu, Image, RoundedRectangle, Text, VStack, ZStack} from '@expo/ui/swift-ui'
+import {
+	accessibilityLabel,
+	aspectRatio,
+	buttonStyle,
+	contentShape,
+	font,
+	foregroundStyle,
+	frame,
+	lineLimit,
+	multilineTextAlignment,
+	shapes,
+} from '@expo/ui/swift-ui/modifiers'
+import type {SFSymbol} from 'sf-symbols-typescript'
+import * as c from '@frogpond/colors'
+import {FILL_WIDTH} from '../home/button'
+import {homescreenIconDark, homescreenIconLight} from '../home/colors'
+import type {ContactType} from './types'
+
+/// Phone.app draws a favourite a little taller than 3:2 -- 109 x 167pt,
+/// measured off a screenshot of a 393pt-wide screen. The ratio is what is
+/// pinned rather than the width, so the row still fills a wider phone.
+const TILE_ASPECT = 109 / 167
+/// Measured from the same screenshot of Phone.app's favourites. This version
+/// of @expo/ui's RoundedRectangleView has no cornerStyle prop, so the corners
+/// are drawn circular regardless of any style specified in modifiers.
+const TILE_RADIUS = 26
+/// The gradient starts at the top edge's centre and has to reach the two
+/// bottom corners, hypot(109 / 2, 167) ~= 176pt away on that card. Same
+/// construction as the home cards; features/home/button.tsx explains it.
+const TILE_GRADIENT_RADIUS = 176
+/// The glyph sized against the card rather than in points, so it grows with
+/// Dynamic Type. `Image`'s `size` prop is ignored when a `font` modifier
+/// carries a `textStyle`.
+const ICON_TEXT_STYLE = 'largeTitle'
+/// Space between the card and the name beneath it.
+const LABEL_GAP = 8
+/// Two lines, with an ellipsis for whatever still doesn't fit, rather than
+/// one: most titles read better wrapped than clipped at this width. The
+/// `Grid`'s `alignment="top"` is what keeps a one-line tile's card level with
+/// a two-line neighbour's -- without it every card centres in its row and a
+/// shorter label pulls its card down to match the tallest one beside it.
+const LABEL_LINES = 2
+
+/// Drawn when a contact names no icon. A named icon this iOS does not carry
+/// draws nothing instead -- `Image(systemName:)` validates nothing and just
+/// renders empty, so this fallback never reaches that case.
+const FALLBACK_ICON: SFSymbol = 'phone.fill'
+
+type Props = {
+	contact: ContactType
+	/** Opens the contact's detail screen. */
+	onPress: () => void
+	/** Runs the contact's own action -- its call or its link. */
+	onAct: () => void
+}
+
+/**
+ * One curated campus contact, in the shape of a Phone.app favorite: a portrait
+ * gradient card carrying a single SF Symbol, with the name beneath it.
+ *
+ * Tapping opens the detail screen. Long-pressing offers the contact's own
+ * action, labelled the way its detail screen labels the button.
+ */
+export function ContactTile({contact, onPress, onAct}: Props): React.ReactNode {
+	let dark = useColorScheme() === 'dark'
+	let iconColor = dark ? homescreenIconDark : homescreenIconLight
+	let [inner, outer] = c.resolveGradient(contact.gradient)
+
+	return (
+		<ContextMenu>
+			<ContextMenu.Trigger>
+				<Button
+					modifiers={[buttonStyle('plain'), accessibilityLabel(contact.title)]}
+					onPress={onPress}
+				>
+					{/* The hit shape belongs on the label, not the Button: SwiftUI
+					    derives a button's tappable region from its label, and without
+					    a content shape only the drawn glyph and text hit-test -- the
+					    gradient and the gap between card and name do not.
+					    features/home/button.tsx carries the same note. */}
+					<VStack
+						modifiers={[
+							contentShape(shapes.rectangle()),
+							// The long-press preview lifts the card's own shape rather
+							// than a square around it.
+							contentShape(
+								shapes.roundedRectangle({
+									cornerRadius: TILE_RADIUS,
+									roundedCornerStyle: 'continuous',
+								}),
+								'contextMenuPreview',
+							),
+						]}
+						spacing={LABEL_GAP}
+					>
+						{/* maxWidth first: the ratio only decides the height once the
+						    card has taken the column's full width. */}
+						<ZStack
+							modifiers={[
+								frame({maxWidth: FILL_WIDTH}),
+								aspectRatio({ratio: TILE_ASPECT, contentMode: 'fit'}),
+							]}
+						>
+							<RoundedRectangle
+								cornerRadius={TILE_RADIUS}
+								modifiers={[
+									foregroundStyle({
+										type: 'radialGradient',
+										colors: [c.displayP3(inner), c.displayP3(outer)],
+										center: {x: 0.5, y: 0},
+										startRadius: 0,
+										endRadius: TILE_GRADIENT_RADIUS,
+									}),
+								]}
+							/>
+							<Image
+								color={iconColor}
+								modifiers={[font({textStyle: ICON_TEXT_STYLE})]}
+								systemName={contact.icon ?? FALLBACK_ICON}
+							/>
+						</ZStack>
+
+						<Text
+							modifiers={[
+								font({textStyle: 'subheadline'}),
+								foregroundStyle(c.secondaryLabel),
+								multilineTextAlignment('center'),
+								lineLimit(LABEL_LINES),
+								frame({maxWidth: FILL_WIDTH}),
+							]}
+						>
+							{contact.title}
+						</Text>
+					</VStack>
+				</Button>
+			</ContextMenu.Trigger>
+
+			<ContextMenu.Items>
+				<Button
+					label={contact.buttonText}
+					onPress={onAct}
+					systemImage={contact.buttonLink ? 'link' : 'phone.fill'}
+				/>
+			</ContextMenu.Items>
+		</ContextMenu>
+	)
+}
