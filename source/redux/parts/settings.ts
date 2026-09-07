@@ -8,6 +8,7 @@ type State = {
 	unofficialityAcknowledged: boolean
 	devModeOverride: boolean
 	enabledCalendarSources: string[]
+	directoryResultsView: 'list' | 'tiles'
 }
 
 // why `as`? see https://redux-toolkit.js.org/tutorials/typescript#:~:text=In%20some%20cases%2C%20TypeScript
@@ -17,6 +18,8 @@ const initialState = {
 	// St. Olaf alone: the college whose app this is, and the only calendar most
 	// people want on by default. UI test mode uses only the fixture calendar.
 	enabledCalendarSources: isUITesting ? ['uitest'] : ['stolaf'],
+	// The Directory search results opened as a list before the tile view existed.
+	directoryResultsView: 'list',
 } as State
 
 const slice = createSlice({
@@ -39,10 +42,18 @@ const slice = createSlice({
 				? enabledCalendarSources.filter((id) => id !== payload)
 				: [...enabledCalendarSources, payload]
 		},
+		setDirectoryResultsView(state, {payload}: PayloadAction<'list' | 'tiles'>) {
+			state.directoryResultsView = payload
+		},
 	},
 })
 
-export const {acknowledgeAcknowledgement, setDevModeOverride, toggleCalendarSource} = slice.actions
+export const {
+	acknowledgeAcknowledgement,
+	setDevModeOverride,
+	toggleCalendarSource,
+	setDirectoryResultsView,
+} = slice.actions
 export const reducer = slice.reducer
 
 export const selectAcknowledgement = (state: RootState): State['unofficialityAcknowledged'] =>
@@ -53,3 +64,6 @@ export const selectDevModeOverride = (state: RootState): State['devModeOverride'
 
 export const selectEnabledCalendarSources = (state: RootState): State['enabledCalendarSources'] =>
 	state.settings.enabledCalendarSources ?? initialState.enabledCalendarSources
+
+export const selectDirectoryResultsView = (state: RootState): State['directoryResultsView'] =>
+	state.settings.directoryResultsView ?? initialState.directoryResultsView
