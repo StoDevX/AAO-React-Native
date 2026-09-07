@@ -4,14 +4,14 @@ import {useQuery} from '@tanstack/react-query'
 import {useMomentTimer} from '@frogpond/timer'
 import {timezone} from '@frogpond/constants'
 
-import {BuildingDetailSwiftUI} from '../../../source/features/building-hours/detail/building-detail'
-import {buildingByNameOptions} from '../../../source/features/building-hours/query'
+import {BuildingDetailSwiftUI} from '../../../../source/features/building-hours/detail/building-detail'
+import {buildingByNameOptions} from '../../../../source/features/building-hours/query'
 import {LoadingView, NoticeView} from '@frogpond/notice'
-import {useAppDispatch, useAppSelector} from '../../../source/redux/hooks'
+import {useAppDispatch, useAppSelector} from '../../../../source/redux/hooks'
 import {
 	selectFavoriteBuildings,
 	toggleFavoriteBuilding,
-} from '../../../source/redux/parts/buildings'
+} from '../../../../source/redux/parts/buildings'
 
 export default function BuildingHoursDetailPage(): React.ReactNode {
 	let dispatch = useAppDispatch()

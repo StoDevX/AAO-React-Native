@@ -10,6 +10,16 @@ export default function HomeLayout(): React.ReactNode {
 			<Stack.Screen name="Transportation" options={{title: 'Transportation'}} />
 			<Stack.Screen name="BuildingHours" />
 			<Stack.Screen
+				name="BuildingHours/detail"
+				options={{
+					presentation: 'formSheet',
+					headerShown: false,
+					sheetAllowedDetents: [0.5, 0.999],
+					sheetGrabberVisible: true,
+					sheetLargestUndimmedDetentIndex: 'last',
+				}}
+			/>
+			<Stack.Screen
 				name="BuildingHoursProblemReport"
 				options={{presentation: 'modal', gestureEnabled: false}}
 			/>

@@ -330,6 +330,11 @@ struct TestIdentifiers {
 		/// Mirrors BUILDING_ROW_PREFIX in
 		/// source/features/building-hours/list/building-list-row.tsx.
 		static let rowPrefix = "building-row-"
+		/// The sheet's own title, which is the building's name.
+		static let detailTitle = "The Cage"
+		/// A schedule section heading on the detail sheet, which the collapsed
+		/// row never showed.
+		static let detailSchedule = "HOURS"
 	}
 
 	// MARK: - Course Catalog

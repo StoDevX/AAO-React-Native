@@ -84,7 +84,7 @@ export function BuildingDetailSwiftUI({building, now, onProblemReport}: Props): 
 				{schedules.map((schedule) => (
 					<Section
 						key={schedule.title}
-						footer={schedule.notes}
+						footer={schedule.notes ? <Text>{schedule.notes}</Text> : undefined}
 						title={schedule.title.toUpperCase()}
 					>
 						{schedule.hours.map((set, i) => (

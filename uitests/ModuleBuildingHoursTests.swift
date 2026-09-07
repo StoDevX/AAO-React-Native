@@ -23,4 +23,12 @@ class ModuleBuildingHoursTests: UITestCase {
 			.verifyNoResultsShown(for: TestIdentifiers.BuildingHours.unmatchedQuery)
 			.capture("Building Hours no-results state")
 	}
+
+	func testTappingARowPresentsTheDetailSheet() throws {
+		BuildingHoursScreen(app: app)
+			.navigate()
+			.tapRow(TestIdentifiers.BuildingHours.anExcludedBuilding)
+			.verifyDetailSheetPresented(for: TestIdentifiers.BuildingHours.anExcludedBuilding)
+			.verifyListStillBehind()
+	}
 }

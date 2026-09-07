@@ -63,4 +63,45 @@ struct BuildingHoursScreen: Screen {
 			"Building Hours should report no results for \"\(query)\"")
 		return self
 	}
+
+	@discardableResult
+	func tapRow(_ name: String) -> Self {
+		let row = app.element(matching: TestIdentifiers.BuildingHours.rowPrefix + name)
+		XCTAssertTrue(
+			row.waitForExistence(timeout: 30),
+			"\(name) should be listed before it can be tapped")
+
+		// Retried for the reason navigateFromHome retries: a synthesized press on
+		// a row whose host has mounted but whose action still has to reach
+		// JavaScript lands natively and does nothing.
+		for _ in 1...3 {
+			row.tap()
+			if app.staticTexts[TestIdentifiers.BuildingHours.detailSchedule]
+				.waitForExistence(timeout: 10)
+			{
+				break
+			}
+		}
+		return self
+	}
+
+	@discardableResult
+	func verifyDetailSheetPresented(for name: String) -> Self {
+		XCTAssertTrue(
+			app.staticTexts[TestIdentifiers.BuildingHours.detailSchedule]
+				.waitForExistence(timeout: 30),
+			"The detail sheet should show \(name)'s schedule")
+		return self
+	}
+
+	@discardableResult
+	func verifyListStillBehind() -> Self {
+		let row = app.element(
+			matching: TestIdentifiers.BuildingHours.rowPrefix
+				+ TestIdentifiers.BuildingHours.anExcludedBuilding)
+		XCTAssertTrue(
+			row.exists,
+			"The list should still be behind the sheet, not replaced by it")
+		return self
+	}
 }

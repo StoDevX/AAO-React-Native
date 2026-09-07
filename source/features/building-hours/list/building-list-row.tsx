@@ -18,14 +18,7 @@ import {
 import * as c from '@frogpond/colors'
 import type {Moment} from 'moment-timezone'
 import type {BuildingType} from '../types'
-import {
-	getShortBuildingStatus,
-	getAccentBackgroundColor,
-	contextualStatus,
-	isScheduleOpenAtMoment,
-	getDayOfWeek,
-} from '../lib'
-import {ScheduleRowSwiftUI} from '../detail/schedule-row-swiftui'
+import {getShortBuildingStatus, getAccentBackgroundColor, contextualStatus} from '../lib'
 
 /**
  * Every building row carries this prefix so XCUITest can query them directly
@@ -41,11 +34,12 @@ type Props = {
 	isFavorite: boolean
 	onToggleFavorite: (building: BuildingType) => void
 	onReport: (building: BuildingType) => void
+	onSelect: (building: BuildingType) => void
 }
 
 /**
  * A single building row: swipe-left reveals favorite/report actions.
- * Tapping expands to show schedule inline.
+ * Tapping opens the building's detail sheet.
  */
 export const BuildingListRow = React.memo(function BuildingListRow({
 	building,
@@ -53,13 +47,11 @@ export const BuildingListRow = React.memo(function BuildingListRow({
 	isFavorite,
 	onToggleFavorite,
 	onReport,
+	onSelect,
 }: Props): React.ReactNode {
-	let [isOpen, setIsOpen] = React.useState(false)
-
 	let status = getShortBuildingStatus(building, now)
 	let accentBg: ColorValue = getAccentBackgroundColor(status)
 	let statusText = contextualStatus(building, now)
-	let dayOfWeek = getDayOfWeek(now)
 
 	let subtitle = building.subtitle
 		? building.subtitle
@@ -80,7 +72,7 @@ export const BuildingListRow = React.memo(function BuildingListRow({
 						accessibilityIdentifier(`${BUILDING_ROW_PREFIX}${building.name}`),
 						accessibilityLabel(`${building.name}, ${statusText}`),
 					]}
-					onPress={hasHours ? () => setIsOpen((o) => !o) : undefined}
+					onPress={() => onSelect(building)}
 				>
 					<HStack
 						modifiers={[contentShape(shapes.rectangle()), fixedSize({vertical: true})]}
@@ -114,7 +106,7 @@ export const BuildingListRow = React.memo(function BuildingListRow({
 								{hasHours ? (
 									<Image
 										modifiers={[font({textStyle: 'footnote'}), foregroundStyle(c.tertiaryLabel)]}
-										systemName={isOpen ? 'chevron.up' : 'chevron.down'}
+										systemName="chevron.right"
 									/>
 								) : null}
 							</HStack>
@@ -143,44 +135,6 @@ export const BuildingListRow = React.memo(function BuildingListRow({
 					</Button>
 				</SwipeActions.Actions>
 			</SwipeActions>
-
-			{isOpen && hasHours
-				? schedules.map((schedule) => (
-						<VStack key={schedule.title} alignment="leading">
-							{schedules.length > 1 || schedule.hours.length === 0 ? (
-								<Text
-									modifiers={[
-										font({textStyle: 'caption', weight: 'semibold'}),
-										foregroundStyle(c.secondaryLabel),
-									]}
-								>
-									{schedule.title.toUpperCase()}
-								</Text>
-							) : null}
-							{schedule.hours.map((set, i) => (
-								<ScheduleRowSwiftUI
-									key={i}
-									accentColor={accentBg}
-									isActive={
-										schedule.isPhysicallyOpen !== false &&
-										set.days.includes(dayOfWeek) &&
-										isScheduleOpenAtMoment(set, now)
-									}
-									now={now}
-									schedule={set}
-									showAccentBar={false}
-								/>
-							))}
-							{schedule.notes ? (
-								<Text
-									modifiers={[font({textStyle: 'footnote'}), foregroundStyle(c.secondaryLabel)]}
-								>
-									{schedule.notes}
-								</Text>
-							) : null}
-						</VStack>
-					))
-				: null}
 		</VStack>
 	)
 })
