@@ -224,9 +224,9 @@ describe('all-day events', () => {
 
 	// The calendar reads `now` from the device too, so a day boundary has to
 	// hold when the device is far enough east to be on tomorrow already. This
-	// belongs here rather than in an XCUITest because the simulator inherits
-	// the host's zone and cannot be moved -- see the design note in
-	// docs/superpowers/specs/2026-09-06-calendar-device-timezone-design.md.
+	// belongs here rather than in an XCUITest because `app.launchEnvironment["TZ"]`
+	// does not move Hermes' clock on the simulator, so the simulator cannot be
+	// put in another zone -- the zone matrix has to live in Jest instead.
 	test('an event groups under the device day, not campus day', () => {
 		moment.tz.setDefault('Asia/Tokyo')
 		let event = makeWireEvent({
