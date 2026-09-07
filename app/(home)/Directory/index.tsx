@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {Alert, FlatList, Image, StyleSheet, useWindowDimensions, View} from 'react-native'
+import {Alert, FlatList, Image, StyleSheet, useWindowDimensions} from 'react-native'
 import {Stack, useLocalSearchParams, useRouter} from 'expo-router'
 import {useDispatch, useSelector} from 'react-redux'
 import {useQuery} from '@tanstack/react-query'
@@ -153,39 +153,41 @@ function DirectoryView(): React.ReactNode {
 			params: {index: String(index), query: searchQuery, type: searchQueryType},
 		})
 
+	// The scrollable is the first child, with no wrapping View: a native large
+	// title only collapses against a scroll view the stack can see directly,
+	// and searchChrome (which ends in the bottom toolbar) comes after it.
 	return (
 		<>
-			<View style={styles.wrapper}>
-				{isLoading ? (
-					<LoadingView />
-				) : isError && error instanceof Error ? (
-					<NoticeView text={String(error)} />
-				) : !items.length ? (
-					<NoticeView text={`No results found for "${searchQuery}".`} />
-				) : resultsView === 'tiles' ? (
-					<DirectoryResultsGrid
-						heading={heading}
-						items={items}
-						onRefresh={refetch}
-						onSelectIndex={openResult}
-					/>
-				) : (
-					<FlatList
-						ItemSeparatorComponent={IndentedListSeparator}
-						ListHeaderComponent={heading ? <ListSectionHeader title={heading} /> : null}
-						contentInsetAdjustmentBehavior="automatic"
-						data={items}
-						keyExtractor={(_item, index) => String(index)}
-						keyboardDismissMode="on-drag"
-						keyboardShouldPersistTaps="never"
-						onRefresh={refetch}
-						refreshing={isRefetching}
-						renderItem={({item, index}) => (
-							<DirectoryItemRow index={index} item={item} onPress={() => openResult(index)} />
-						)}
-					/>
-				)}
-			</View>
+			{isLoading ? (
+				<LoadingView />
+			) : isError && error instanceof Error ? (
+				<NoticeView text={String(error)} />
+			) : !items.length ? (
+				<NoticeView text={`No results found for "${searchQuery}".`} />
+			) : resultsView === 'tiles' ? (
+				<DirectoryResultsGrid
+					heading={heading}
+					items={items}
+					onRefresh={refetch}
+					onSelectIndex={openResult}
+				/>
+			) : (
+				<FlatList
+					ItemSeparatorComponent={IndentedListSeparator}
+					ListHeaderComponent={heading ? <ListSectionHeader title={heading} /> : null}
+					contentInsetAdjustmentBehavior="automatic"
+					data={items}
+					keyExtractor={(_item, index) => String(index)}
+					keyboardDismissMode="on-drag"
+					keyboardShouldPersistTaps="never"
+					onRefresh={refetch}
+					refreshing={isRefetching}
+					renderItem={({item, index}) => (
+						<DirectoryItemRow index={index} item={item} onPress={() => openResult(index)} />
+					)}
+					style={styles.wrapper}
+				/>
+			)}
 			{searchChrome}
 		</>
 	)
