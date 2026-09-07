@@ -153,4 +153,19 @@ class ModuleCalendarTests: UITestCase {
 			.verifyAddToCalendarButton()
 			.capture("17-event-detail-add-to-calendar")
 	}
+
+	/// The sheet's bottom bar has to survive being reopened. react-native-screens
+	/// reuses one navigation controller for every presentation of a modal, so a
+	/// screen that leaves its toolbar showing on the way out makes the next
+	/// screen's unhide a no-op -- and that screen's bar items never reach the
+	/// bar, leaving the button drawn but untitled. It looked fine the first time
+	/// and blank every time after, which is why one presentation never caught it.
+	func testAddToCalendarSurvivesReopeningTheSheet() throws {
+		let screen = CalendarScreen(app: app).navigate()
+
+		screen.openFirstEvent().verifyAddToCalendarButton().closeEventDetail()
+
+		screen.openFirstEvent().capture("18-add-to-calendar-after-reopening")
+		screen.verifyAddToCalendarButton()
+	}
 }

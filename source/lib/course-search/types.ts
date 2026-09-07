@@ -13,7 +13,7 @@ export type RawCourseType = {
 	description?: string[]
 	enrolled: number
 	gereqs?: string[]
-	instructors: string[]
+	instructors?: string[]
 	level: number
 	max: number
 	name: string
@@ -39,7 +39,7 @@ export type CourseType = {
 	description?: string[]
 	enrolled: number
 	gereqs?: string[]
-	instructors: string[]
+	instructors?: string[]
 	level: number
 	max: number
 	name: string

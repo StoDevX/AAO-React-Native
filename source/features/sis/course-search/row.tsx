@@ -3,6 +3,7 @@ import {StyleSheet} from 'react-native'
 import type {CourseType} from '../../../lib/course-search/types'
 import {ListRow, Title, Detail} from '@frogpond/lists'
 import {deptNum} from './lib/format-dept-num'
+import {formatCourseNotes} from './lib/format-course-notes'
 import {Row} from '@frogpond/layout'
 
 type Props = {
@@ -31,7 +32,7 @@ export const CourseRow = (props: Props): React.ReactNode => {
 
 			{course.notes && (
 				<Detail lines={1} style={[styles.italics, styles.row]}>
-					{course.notes.join(' ')}
+					{formatCourseNotes(course.notes)}
 				</Detail>
 			)}
 		</ListRow>

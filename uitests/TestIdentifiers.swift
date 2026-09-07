@@ -37,6 +37,13 @@ struct TestIdentifiers {
 		static let closeScreen = "Close Screen"
 	}
 
+	/// Labels UIKit gives a `Stack.SearchBar`'s own controls. In the bottom
+	/// placement this app uses, the cancel button is the round one beside the
+	/// field, and UIKit labels it "close" rather than "Cancel".
+	enum Search {
+		static let cancelButton = "close"
+	}
+
 	enum Streaming {
 		static let list = "stream-list"
 		static let webcams = "screen-streaming-webcams"
@@ -164,6 +171,9 @@ struct TestIdentifiers {
 		/// The bottom-bar action on the event detail sheet. A bar item's
 		/// identifier is its title, which is what XCUITest matches on.
 		static let addToCalendar = "Add to Calendar"
+		/// Dismisses the event detail sheet. A header bar item carrying only an
+		/// SF Symbol, so its accessibility label is the only thing to find it by.
+		static let closeEventDetail = "Close"
 		/// Returns the list to the top. A bar item, so its title is its
 		/// identifier.
 		static let today = "Today"
@@ -206,11 +216,8 @@ struct TestIdentifiers {
 		/// Matches NEWS_ROW_PREFIX in source/features/news/news-row.tsx.
 		static let rowPrefix = "news-row-"
 
-		/// The bottom-right toolbar menu's accessibilityLabel, in news-list.tsx.
-		static let picker = "News Sources"
-
-		/// The bottom-left toolbar menu's accessibilityLabel, in news-list.tsx.
-		static let categoryFilter = "Categories"
+		/// The bottom toolbar menu's accessibilityLabel, in news-picker.tsx.
+		static let picker = "News filter"
 	}
 
 	// MARK: - Streaming Media
@@ -242,6 +249,14 @@ struct TestIdentifiers {
 		static let aContact = "PubSafe"
 		/// That contact's own action, which its tile offers on long-press.
 		static let aContactAction = "Call Public Safety"
+		static let rowPrefix = "directory-row-"
+
+		/// A directory entry with no title, email or profile, so its detail
+		/// screen carries exactly one element labelled with its department --
+		/// and it is a desk rather than a person, so the college is unlikely to
+		/// rename it out from under this test.
+		static let departmentalEntry = "Registrar Fax"
+		static let department = "Registrar\u{2019}s Office"
 	}
 
 	// MARK: - Course Catalog

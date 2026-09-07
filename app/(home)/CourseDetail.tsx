@@ -15,6 +15,7 @@ import {
 } from '@frogpond/tableview/cells'
 import * as c from '@frogpond/colors'
 import {deptNum} from '../../source/features/sis/course-search/lib/format-dept-num'
+import {formatCourseNotes} from '../../source/features/sis/course-search/lib/format-course-notes'
 import groupBy from 'lodash/groupBy'
 import map from 'lodash/map'
 import zip from 'lodash/zip'
@@ -130,7 +131,7 @@ function Notes({course}: {course: CourseType}) {
 		return null
 	}
 
-	let notesText = course.notes.join(' ')
+	let notesText = formatCourseNotes(course.notes)
 
 	let notes =
 		Platform.OS === 'ios' ? (

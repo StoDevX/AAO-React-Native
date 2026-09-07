@@ -26,6 +26,13 @@ extension XCUIApplication {
 				TestIdentifiers.Menus.foodRowPrefix, label))
 	}
 
+	/// Find a button by the label UIKit gave it. Buttons the system builds --
+	/// a search bar's cancel button, say -- carry no accessibility identifier,
+	/// so the usual subscript, which matches identifiers, never finds them.
+	func buttonLabelled(_ label: String) -> XCUIElement {
+		buttons.matching(NSPredicate(format: "label == %@", label)).firstMatch
+	}
+
 	/// Find any accessible element whose label starts with the given text.
 	/// Useful for React Native Pressable-wrapped elements whose accessibility
 	/// label is the concatenation of child text content (which may include
