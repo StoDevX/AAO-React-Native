@@ -177,6 +177,10 @@ run = "node scripts/validate-bus-schedules.mjs"
 description = "Validate data files"
 run = "node scripts/validate-data.mjs"
 
+# An undeclared -- or orphaned -- @frogpond dependency resolves fine locally
+# through the root node_modules hoist, so format, lint, tsc and test all pass
+# and CI is the first thing to say otherwise. Same reasoning as
+# validate-lockfile below: cheap here, a red pipeline anywhere else.
 [tasks."validate-deps"]
 description = "Check that modules declare the @frogpond packages they import"
 run = "node scripts/validate-workspace-deps.mjs"
@@ -221,5 +225,5 @@ description = "Set up the development environment for AI agents"
 depends = ["pnpm:install:frozen", "bundle-data"]
 
 [tasks."agent:pre-commit"]
-description = "Run pre-commit checks: format, lint, typecheck, test, lockfile"
-depends = ["format", "lint", "tsc", "test", "validate-lockfile"]
+description = "Run pre-commit checks: format, lint, typecheck, test, deps, lockfile"
+depends = ["format", "lint", "tsc", "test", "validate-deps", "validate-lockfile"]
