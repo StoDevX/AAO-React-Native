@@ -42,10 +42,12 @@ const TILE_GRADIENT_RADIUS = 176
 const ICON_TEXT_STYLE = 'largeTitle'
 /// Space between the card and the name beneath it.
 const LABEL_GAP = 8
-/// One line, with an ellipsis for whatever doesn't fit: titles are meant to be
-/// shortened to fit this width rather than wrapped, and a truncated name is
-/// the signal for which ones still need it.
-const LABEL_LINES = 1
+/// Two lines, with an ellipsis for whatever still doesn't fit, rather than
+/// one: most titles read better wrapped than clipped at this width. The
+/// `Grid`'s `alignment="top"` is what keeps a one-line tile's card level with
+/// a two-line neighbour's -- without it every card centres in its row and a
+/// shorter label pulls its card down to match the tallest one beside it.
+const LABEL_LINES = 2
 
 /// Drawn when a contact names no symbol, or names one this iOS does not carry.
 const FALLBACK_ICON: SFSymbol = 'phone.fill'

@@ -246,6 +246,7 @@ function ImportantContacts(): React.ReactNode {
 
 					{contacts ? (
 						<Grid
+							alignment="top"
 							horizontalSpacing={TILE_SPACING}
 							// The Grid itself carries no accessibility presence of its
 							// own, so accessibilityIdentifier alone lands on its first
