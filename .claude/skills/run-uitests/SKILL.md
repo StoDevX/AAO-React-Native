@@ -14,17 +14,20 @@ tap target or a native control is asserting the props we passed in.
 
 ```bash
 # 1. Build the app and the test bundle. Slow the first time, incremental after.
+#    Pin -destination: see "Pin the destination" below.
 SKIP_BUNDLING=true CODE_SIGNING_DISABLED=true xcodebuild build-for-testing \
   -workspace ios/AllAboutOlaf.xcworkspace -scheme AllAboutOlaf \
   -configuration Debug -sdk iphonesimulator -derivedDataPath ios/build \
+  -destination "id=$UDID" \
   -only-testing:AllAboutOlafUITests \
   CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO
 
 # 2. Boot a simulator and wait for it.
 xcrun simctl list devices available | grep iPhone   # pick a UDID
-xcrun simctl boot <UDID>; xcrun simctl bootstatus <UDID> -b
+xcrun simctl boot $UDID; xcrun simctl bootstatus $UDID -b
 
-# 3. Serve the JavaScript. Background it, then wait until it answers.
+# 3. Serve the JavaScript on 8081. The port is NOT negotiable here — see
+#    "Metro's port is baked in" below. In a lone worktree, this is enough.
 npx expo start --port 8081 &
 until curl -sf http://localhost:8081/status | grep -q running; do sleep 1; done
 
@@ -40,6 +43,91 @@ xcodebuild test-without-building \
 Pipe step 4 through `grep -E "^Test Case|error:|XCTAssert|Executed|\*\*"`.
 Unfiltered xcodebuild output is thousands of lines, most of it exported build
 settings, and it will bury the one assertion message you ran the test for.
+
+## Metro's port is baked in — embed the bundle instead
+
+**A UITest build always fetches JS from `localhost:8081`, and you cannot talk it
+out of that at run time.** `RCT_METRO_PORT` is a *compile-time* macro defaulting
+to 8081 (`node_modules/react-native/React/Base/RCTDefines.h:112`), and
+`ios/Podfile.properties.json` sets `EXPO_USE_PRECOMPILED_MODULES`, so
+`RCTBundleURLProvider` arrives precompiled — passing the macro to `xcodebuild`
+recompiles nothing. `UITestCase.setUp` also launches with `--reset-state`, and
+`AppDelegate` answers that by wiping the persistent defaults domain, taking any
+`RCT_jsLocation` override with it.
+
+So with parallel worktrees, the run-on-simulator advice to take your own port
+does **not** carry over: your tests will silently load whichever checkout owns
+8081. The build succeeds, the tests run, the screenshots look plausible, and
+none of it is your code.
+
+The fix is to stop using Metro. `AppDelegate.bundleURL()` prefers an embedded
+bundle even in DEBUG, precisely so UITest runs can pin their JS:
+
+```swift
+#if DEBUG
+  if let bundled = Bundle.main.url(forResource: "main", withExtension: "jsbundle") {
+    return bundled
+  }
+  return RCTBundleURLProvider.sharedSettings().jsBundleURL(forBundleRoot: "index")
+```
+
+Between step 1 and step 4, put this worktree's JS inside the `.app`:
+
+```bash
+mise run bundle:ios     # writes ios/AllAboutOlaf/main.jsbundle from THIS checkout
+
+APP=ios/build/Build/Products/Debug-iphonesimulator/AllAboutOlaf.app
+cp ios/AllAboutOlaf/main.jsbundle "$APP/"
+rm -rf "$APP/assets" && cp -R ios/assets "$APP/"
+ls "$APP/main.jsbundle"   # confirm before trusting any run
+```
+
+(`mise run embed-jsbundle:ios` does this for `Debug-iphoneos`; the simulator
+needs the `Debug-iphonesimulator` path above.) Then skip step 3 entirely — no
+Metro, no port, and the JS provably came from this checkout. It is also what CI
+does, so a local pass and a CI pass mean the same thing.
+
+Two consequences:
+
+- `bundle:ios` runs `expo export:embed --dev false`, so it is a production-mode
+  bundle: no dev menu, no fast refresh, redboxes become plain crashes.
+- **JS edits stop hot-reloading.** The red-green loop below still works, but each
+  iteration needs a re-bundle and re-copy, not just a re-run. Nothing is talking
+  to Metro any more, so a Metro reload changes nothing.
+
+Symptom that you skipped this: the UI hierarchy in the `.xcresult` shows a
+screen you do not recognise — an older layout, or elements your identifiers do
+not match. Dump the hierarchy before assuming your selectors are wrong.
+
+## Pin the destination
+
+Both xcodebuild steps take `-destination "id=$UDID"`, and step 1 needs it as
+much as step 4. Without one, xcodebuild picks for you and says so:
+
+```
+xcodebuild: WARNING: Using the first of multiple matching destinations
+```
+
+With several simulators booted — likely, since parallel worktrees each make
+their own — "the first" is a coin toss, and you can build for one device and
+run on another. Take the UDID once and use it everywhere. `run-on-simulator`
+covers making a branch-specific device.
+
+## Watching a build from a script
+
+If you background a build and poll its log, match **every** terminal state:
+
+```bash
+until grep -qE '\*\* (TEST )?BUILD (SUCCEEDED|FAILED|INTERRUPTED) \*\*|^error: ' log; do
+  sleep 20
+done
+```
+
+`** BUILD INTERRUPTED **` is the one people forget. A build killed part-way —
+by a session limit, a competing build, a signal — prints it and stops writing,
+so a watcher that greps only for SUCCEEDED/FAILED waits on a dead log forever.
+It also hides the real error: an interrupted run may never reach the line that
+says why it was doomed.
 
 Three things that bite on the second run:
 
@@ -109,11 +197,30 @@ Screen objects live in `uitests/Screens/`, one struct per screen conforming to
 `Screen`, with `@discardableResult` methods returning `Self` so tests read as a
 chain. See `uitests/CLAUDE.md` for the conventions.
 
-**A brand-new `.swift` file needs `mise run prebuild` before it will build.**
-`plugins/with-xcuitest-target.ts` walks `uitests/` at prebuild time and writes
-one `PBXFileReference` per file, so the Xcode project lists them individually —
-a file added afterwards is invisible to the build, and nothing warns you.
-Editing an existing file needs no prebuild.
+**Adding *or deleting* a `.swift` file needs `mise run prebuild` before it will
+build.** `plugins/with-xcuitest-target.ts` walks `uitests/` at prebuild time and
+writes one `PBXFileReference` per file, so the Xcode project lists them
+individually. Editing an existing file needs no prebuild.
+
+The two directions fail differently, and the deletion is the nastier one:
+
+- **Added and not prebuilt:** the file is invisible to the build. Your new test
+  simply does not run, and nothing warns you.
+- **Deleted and not prebuilt:** the reference outlives the file and the build
+  dies on something you never wrote:
+
+  ```
+  error: Build input file cannot be found: '.../uitests/ScratchProbeTests.swift'
+  ** TEST BUILD FAILED **
+  ```
+
+  This reads like a missing dependency and sends you looking for a file you
+  deliberately removed. `ios/` is generated and gitignored, so `mise run
+  prebuild` is the whole fix. Grep the project if you want to confirm before
+  rebuilding: `grep -c ScratchProbe ios/AllAboutOlaf.xcodeproj/project.pbxproj`.
+
+Throwaway probe tests earn this twice over — the temptation is to delete the
+file and move on, which is exactly the case that breaks the next build.
 
 ### Gestures the simulator can actually express
 

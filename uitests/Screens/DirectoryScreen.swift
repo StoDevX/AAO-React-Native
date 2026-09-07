@@ -32,6 +32,15 @@ struct DirectoryScreen: Screen {
 	@discardableResult
 	func verifySearchText(_ text: String) -> Self {
 		let field = searchField
+
+		// An interactive pop tears the search field down and rebuilds it, so
+		// for a moment after a cancelled swipe there is no SearchField to
+		// query at all. Waiting for the element before asking about its value
+		// keeps that window from reading as "the query was lost".
+		XCTAssertTrue(
+			field.waitForExistence(timeout: 10),
+			"Search field should come back after a cancelled swipe back")
+
 		let predicate = NSPredicate(format: "value == %@", text)
 		let settled = XCTWaiter().wait(
 			for: [XCTNSPredicateExpectation(predicate: predicate, object: field)],

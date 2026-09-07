@@ -7,6 +7,32 @@ definition: |
 "
 `;
 
+exports[`handles an entry with senses 1`] = `
+"word: ACM
+senses:
+  - definition: The Association for Computing Machinery.
+  - definition: The student chapter.
+    examples:
+      - ACM runs workshops.
+"
+`;
+
+exports[`handles grammar labels, several citations, and nested sub-senses 1`] = `
+"word: change
+senses:
+  - grammar: with object
+    definition: make (someone or something) different; alter or modify
+    examples:
+      - both parties voted against proposals to change the law
+      - fame hasn't changed her one bit.
+    subsenses:
+      - grammar: no object
+        definition: become different; be altered or modified
+        examples:
+          - my opinion hasn't changed
+"
+`;
+
 exports[`handles long definitions 1`] = `
 "word: ACE
 definition: |
@@ -36,5 +62,14 @@ definition: |
   community with non-profit or
   
   governmental partners.
+"
+`;
+
+exports[`handles pronunciation and part of speech 1`] = `
+"word: Ytterboe
+pronunciation: ˈɪtərboʊ
+partOfSpeech: noun
+definition: |
+  A residence hall.
 "
 `;

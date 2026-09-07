@@ -1,5 +1,5 @@
 import {dump} from 'js-yaml'
-import type {WordType} from '../types'
+import type {Sense, WordType} from '../types'
 import {sendEmail} from '../../../components/send-email'
 import {GH_NEW_ISSUE_URL, SUPPORT_EMAIL} from '../../../lib/constants'
 import wrap from 'wordwrap'
@@ -63,12 +63,33 @@ function makeIssueLink(before: string, after: string, title: string): string {
 }
 
 export function stringifyDictionaryEntry(entry: WordType): string {
-	// let js-yaml handle dumping the word, just in case
-	let initialData = dump({word: entry.word}, {flowLevel: 4})
+	// let js-yaml handle dumping the scalars, just in case
+	let head = dump(
+		{
+			word: entry.word,
+			...(entry.pronunciation ? {pronunciation: entry.pronunciation} : {}),
+			...(entry.partOfSpeech ? {partOfSpeech: entry.partOfSpeech} : {}),
+		},
+		{flowLevel: 4},
+	)
 
-	let definition = `definition: |
+	if (entry.senses) {
+		return `${head}${stringifySenses(entry.senses)}`
+	}
+
+	if (entry.definition === undefined) {
+		return head
+	}
+
+	return `${head}definition: |
 ${wrap(2, 80)(entry.definition)}
 `
+}
 
-	return `${initialData}${definition}`
+/** Dumps senses as YAML block scalars under a list item, indented to match the `- ` that opens it. */
+function stringifySenses(senses: Sense[]): string {
+	// Senses nest, so hand-rolled indentation stops being trustworthy past the
+	// first level. js-yaml already knows how deep it is; the width keeps the
+	// result readable in an email rather than one line per citation.
+	return dump({senses}, {lineWidth: 80, noRefs: true})
 }

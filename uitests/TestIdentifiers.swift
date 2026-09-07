@@ -69,6 +69,28 @@ struct TestIdentifiers {
 		static let transportation = "Transportation"
 	}
 
+	// MARK: - Dictionary
+
+	enum Dictionary {
+		static let list = "dictionary-list"
+		static let definitionSheet = "dictionary-definition-sheet"
+		static let editorSheet = "dictionary-editor-sheet"
+		static let actionsMenu = "More actions"
+		static let suggestAnEdit = "Suggest an Edit"
+		static let close = "Close"
+		static let wordField = "Word"
+		/// The one entry carrying phonetics, and a Norwegian name whose
+		/// diacritic an ASCII query has to get past to find it.
+		static let phoneticEntry = "Rølvaag"
+		static let phoneticEntryQuery = "Rolvaag"
+		static let phoneticEntryIPA = "ˈrø̂ːlvoːɡ"
+		static let phoneticEntryPartOfSpeech = "noun"
+		/// A copy of the iOS dictionary's own "change" entry, present only under
+		/// `--uitesting`, for comparing this sheet against a screenshot of
+		/// Apple's.
+		static let referenceEntry = "change"
+	}
+
 	// MARK: - Carleton Map
 
 	enum CarletonMap {
