@@ -60,6 +60,10 @@ function BuildingHoursView(): React.ReactNode {
 
 	return (
 		<>
+			<Stack.Toolbar placement="bottom">
+				<Stack.Toolbar.SearchBarSlot />
+			</Stack.Toolbar>
+
 			<SearchBar onChangeText={setQuery} value={query} />
 			<BuildingList
 				favorites={favorites}
