@@ -314,8 +314,8 @@ struct TestIdentifiers {
 	// MARK: - Building Hours
 
 	enum BuildingHours {
-		/// A building from data/building-hours/, so it is in the list whatever
-		/// the server is serving.
+		/// A building ccc-server serves from this repo's data, so it is in the
+		/// list whatever host the app is pointed at.
 		static let aBuilding = "Rølvaag Library"
 		/// A query that matches `aBuilding` only through deburring, so the test
 		/// fails if the filter stops stripping diacritics.
@@ -323,6 +323,10 @@ struct TestIdentifiers {
 		/// A building that must fall out of the list when `deburredQuery` is
 		/// typed, so the test proves narrowing rather than mere survival.
 		static let anExcludedBuilding = "The Cage"
+		/// A query no building matches, so the screen must say no results were
+		/// found rather than claim the data is missing -- the two states read
+		/// differently, or a broken search looks like a server outage.
+		static let unmatchedQuery = "zzznomatch"
 		/// Mirrors BUILDING_ROW_PREFIX in
 		/// source/features/building-hours/list/building-list-row.tsx.
 		static let rowPrefix = "building-row-"
