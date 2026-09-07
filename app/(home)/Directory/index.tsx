@@ -111,18 +111,18 @@ function DirectoryView(): React.ReactNode {
 		<>
 			<Stack.Toolbar placement="bottom">
 				<Stack.Toolbar.SearchBarSlot />
-				{hasResults ? (
-					<>
-						<Stack.Toolbar.Spacer />
-						<Stack.Toolbar.Button
-							accessibilityLabel={resultsView === 'tiles' ? 'Show as list' : 'Show as tiles'}
-							icon={resultsView === 'tiles' ? 'list.bullet' : 'square.grid.2x2'}
-							onPress={() =>
-								dispatch(setDirectoryResultsView(resultsView === 'tiles' ? 'list' : 'tiles'))
-							}
-						/>
-					</>
-				) : null}
+				<Stack.Toolbar.Spacer />
+				{/* Always mounted, hidden until there are results to re-lay-out:
+				    `Stack.Toolbar` only reads direct Button/Spacer children, so a
+				    conditionally-rendered fragment of them is dropped entirely. */}
+				<Stack.Toolbar.Button
+					accessibilityLabel={resultsView === 'tiles' ? 'Show as list' : 'Show as tiles'}
+					hidden={!hasResults}
+					icon={resultsView === 'tiles' ? 'list.bullet' : 'square.grid.2x2'}
+					onPress={() =>
+						dispatch(setDirectoryResultsView(resultsView === 'tiles' ? 'list' : 'tiles'))
+					}
+				/>
 			</Stack.Toolbar>
 
 			<SearchBar onChangeText={setTypedQuery} value={typedQuery} />
