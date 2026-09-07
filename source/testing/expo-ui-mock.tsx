@@ -119,12 +119,16 @@ export function Image({
 
 export function Button({
 	children,
+	label,
 	modifiers,
 	onPress,
-}: WithModifiers & {onPress?: () => void}): React.ReactNode {
+}: WithModifiers & {label?: string; onPress?: () => void}): React.ReactNode {
+	// The real Button takes either a `label` string (a simple text button) or
+	// custom `children`, never both -- mirror that so a row's text lands the
+	// same way a query would find it on device.
 	return (
 		<Pressable accessibilityLabel={labelOf(modifiers)} onPress={onPress}>
-			{children}
+			{label ? <RNText>{label}</RNText> : children}
 		</Pressable>
 	)
 }
@@ -196,3 +200,89 @@ export const menuActionDismissBehavior = (behavior: string): Modifier => ({
 	behavior,
 })
 export const tint = (color: unknown): Modifier => ({$type: 'tint', color})
+
+export const listStyle = (style: string): Modifier => ({$type: 'listStyle', style})
+export const lineLimit = (value: unknown): Modifier => ({$type: 'lineLimit', value})
+export const lineSpacing = (value: number): Modifier => ({$type: 'lineSpacing', value})
+export const italic = (): Modifier => ({$type: 'italic'})
+export const bold = (): Modifier => ({$type: 'bold'})
+export const textSelection = (value: boolean): Modifier => ({$type: 'textSelection', value})
+export const refreshable = (handler: () => Promise<void>): Modifier => ({
+	$type: 'refreshable',
+	handler,
+})
+export const background = (color: unknown): Modifier => ({$type: 'background', color})
+export const presentationDetents = (detents: unknown[], options?: unknown): Modifier => ({
+	$type: 'presentationDetents',
+	detents,
+	options,
+})
+export const presentationDragIndicator = (visibility: string): Modifier => ({
+	$type: 'presentationDragIndicator',
+	visibility,
+})
+export const accessibilityIdentifier = (id: string): Modifier => ({
+	$type: 'accessibilityIdentifier',
+	id,
+})
+export const padding = (params: Record<string, number>): Modifier => ({$type: 'padding', ...params})
+
+export function ScrollView({children}: WithModifiers): React.ReactNode {
+	return <View>{children}</View>
+}
+
+export function Group({children}: WithModifiers): React.ReactNode {
+	return <View>{children}</View>
+}
+
+export function Form({children}: WithModifiers): React.ReactNode {
+	return <View>{children}</View>
+}
+
+export function ProgressView(): React.ReactNode {
+	return <View accessibilityLabel="Loading" />
+}
+
+/// Renders only what the title and description would say, which is all a
+/// branch assertion needs -- the artwork and layout are an XCUITest's job.
+export function ContentUnavailableView({
+	title,
+	description,
+}: {
+	title?: string
+	systemImage?: string
+	description?: string
+}): React.ReactNode {
+	return (
+		<View>
+			{title ? <RNText>{title}</RNText> : null}
+			{description ? <RNText>{description}</RNText> : null}
+		</View>
+	)
+}
+
+/// A sheet is either presented or it is not; when it is, its children are in
+/// the tree. That is the only part of a sheet Jest can see.
+export function BottomSheet({
+	children,
+	isPresented,
+}: WithModifiers & {
+	isPresented?: boolean
+	onIsPresentedChange?: (presented: boolean) => void
+}): React.ReactNode {
+	return isPresented ? <View>{children}</View> : null
+}
+
+/// Mirrors the shape of the real `ObservableState<T>`: `value` is the
+/// property, `get()`/`set()` are the React-Compiler-safe accessors. The
+/// stand-in `TextField` ignores it and works off `onTextChange`, so this only
+/// needs to satisfy the call sites.
+export function useNativeState<T>(initial: T): {
+	value: T
+	get: () => T
+	set: (value: T) => void
+	onChange: null
+} {
+	let [value, setValue] = React.useState(initial)
+	return {value, get: () => value, set: setValue, onChange: null}
+}
