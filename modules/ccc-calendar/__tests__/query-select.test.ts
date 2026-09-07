@@ -5,6 +5,7 @@ import type {WireEvent} from '../parsers/events'
 import {deviceCalendarOptions, namedCalendarOptions} from '../query'
 import {EventType} from '@frogpond/event-type'
 import {groupEvents} from '@frogpond/event-list/sections'
+import {now} from '@frogpond/timer'
 
 // `query.ts` reaches EventKit for the device queries, and the shared query
 // client it imports subscribes to network reachability at module load. Neither
@@ -14,6 +15,12 @@ jest.mock('@react-native-community/netinfo', () =>
 	// oxlint-disable-next-line typescript/no-require-imports
 	require('@react-native-community/netinfo/jest/netinfo-mock'),
 )
+// Wraps the real clock so a single test can stand `now` on a fixed date --
+// every other test falls through to the real implementation untouched.
+jest.mock('@frogpond/timer', () => {
+	let actual = jest.requireActual('@frogpond/timer') as object
+	return {...actual, now: jest.fn((actual as {now: () => unknown}).now)}
+})
 
 // `queryOptions` types `select` as optional, so these name the assertion once
 // rather than at every call below.
@@ -164,10 +171,12 @@ describe('deviceCalendarOptions select', () => {
 })
 
 /**
- * An all-day event is a calendar date, not an instant, and both web sources
- * anchor one at UTC midnight. Read back in the device's zone that lands a day
- * early west of UTC and at the wrong time east of it, so the boundary
- * re-anchors it to local midnight on its own date.
+ * An all-day event is a calendar date, not an instant. The wire instant's UTC
+ * date has to be that calendar date -- iCal satisfies this by emitting UTC
+ * midnight, TEC by emitting campus midnight expressed in UTC. Read back in
+ * the device's zone that lands a day early west of UTC and at the wrong time
+ * east of it, so the boundary re-anchors it to local midnight on its own
+ * date.
  */
 describe('all-day events', () => {
 	afterEach(() => {
@@ -275,5 +284,25 @@ describe('all-day events', () => {
 
 		expect(selected?.event.startTime.format('YYYY-MM-DD HH:mm')).toBe('2030-01-15 00:00')
 		expect(selected?.event.endTime.format('YYYY-MM-DD HH:mm')).toBe('2030-01-16 00:00')
+	})
+
+	// Without the collapse guard, the re-anchored span is zero-length, and
+	// `namedCalendarOptions`'s own "has it ended?" filter drops it -- the event
+	// vanishes from the list all day, in every zone, rather than merely
+	// rendering the wrong span.
+	test('a collapsed all-day event still shows up in the list instead of vanishing as already over', () => {
+		moment.tz.setDefault('America/Chicago')
+		jest.mocked(now).mockReturnValueOnce(moment('2030-01-15T12:00:00.000Z'))
+
+		let event = makeWireEvent({
+			startTime: '2030-01-15T00:00:00.000Z',
+			endTime: '2030-01-15T23:59:59.000Z',
+			isAllDay: true,
+			config: {startTime: false, endTime: false, subtitle: 'location'},
+		})
+
+		let selected = selectNamed('stolaf')([event])
+
+		expect(selected).toHaveLength(1)
 	})
 })
