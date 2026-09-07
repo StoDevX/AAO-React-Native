@@ -221,4 +221,23 @@ describe('all-day events', () => {
 
 		expect(sections.map((section) => section.key)).toEqual(['2030-01-15'])
 	})
+
+	// The calendar reads `now` from the device too, so a day boundary has to
+	// hold when the device is far enough east to be on tomorrow already. This
+	// belongs here rather than in an XCUITest because the simulator inherits
+	// the host's zone and cannot be moved -- see the design note in
+	// docs/superpowers/specs/2026-09-06-calendar-device-timezone-design.md.
+	test('an event groups under the device day, not campus day', () => {
+		moment.tz.setDefault('Asia/Tokyo')
+		let event = makeWireEvent({
+			startTime: '2030-01-15T17:00:00.000Z',
+			endTime: '2030-01-15T18:00:00.000Z',
+		})
+
+		let selected = selectNamed('stolaf')([event])
+		let sections = groupEvents(selected, moment('2030-01-10T12:00:00Z'))
+
+		// 17:00Z is 02:00 on the 16th in Tokyo.
+		expect(sections.map((section) => section.key)).toEqual(['2030-01-16'])
+	})
 })

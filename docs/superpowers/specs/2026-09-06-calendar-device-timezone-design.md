@@ -157,6 +157,18 @@ delete, and a test driving that seam would prove only that the seam works. The
 fallback is to cover the zone matrix in Jest alone and record here, plainly,
 that the simulator cannot express the case.
 
+**Resolved.** `app.launchEnvironment["TZ"]` was tried against the running
+simulator and did not move Hermes' clock: relaunching under `Asia/Tokyo` still
+left the strip leading with `day-cell-2026-08-30`, the same cell as an
+unmodified launch. No zone-override seam was added to the app to work around
+this — doing so would rebuild the forced-zone machinery this change exists to
+remove, and a test driving such a seam would prove only that the seam works.
+This does not prove Hermes can never have its clock moved, only that this
+mechanism did not work here. The zone matrix therefore lives in Jest, in
+`modules/ccc-calendar/__tests__/query-select.test.ts`, and the simulator's
+inability to shift zones is an accepted gap: no XCUITest proves the strip and
+list agree about "today" under a non-host zone.
+
 ## Consequences
 
 A student outside Central now sees campus events on their own clock. A 10 AM
