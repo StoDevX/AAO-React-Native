@@ -52,7 +52,7 @@ struct TestIdentifiers {
 		static let transportation = "Transportation"
 	}
 
-	// MARK: - Carleton Map
+	// MARK: - Dictionary
 
 	enum Dictionary {
 		static let list = "dictionary-list"
@@ -68,6 +68,10 @@ struct TestIdentifiers {
 		static let phoneticEntryQuery = "Rolvaag"
 		static let phoneticEntryIPA = "ˈrø̂ːlvoːɡ"
 		static let phoneticEntryPartOfSpeech = "noun"
+		/// A copy of the iOS dictionary's own "change" entry, present only under
+		/// `--uitesting`, for comparing this sheet against a screenshot of
+		/// Apple's.
+		static let referenceEntry = "change"
 	}
 
 	// MARK: - Carleton Map

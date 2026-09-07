@@ -24,19 +24,31 @@ import type {NormalizedEntry} from './types'
 
 /// The xmark glyph, and the disc it sits on. The ellipsis rides the same disc
 /// so the two ends of the title row balance.
-const CLOSE_GLYPH_SIZE = 13
-const MENU_GLYPH_SIZE = 15
-const CLOSE_GLYPH_DIAMETER = 30
-/// Apple's dictionary sets its body with noticeably open leading.
-const BODY_LINE_SPACING = 4
-const CONTENT_PADDING = 20
+const CLOSE_GLYPH_SIZE = 16
+const MENU_GLYPH_SIZE = 17
+const CLOSE_GLYPH_DIAMETER = 44
+/// Measured off a screenshot of the iOS dictionary sheet, in points: the
+/// system sets its entries with a wide margin, a headword a little larger than
+/// `title`, and senses stepped in again from the headword.
+const BODY_LINE_SPACING = 0
+const HEADWORD_SIZE = 24
+const PRONUNCIATION_SIZE = 19
+/// The part of speech is set smaller than the entry's own text.
+const PART_OF_SPEECH_SIZE = 15
+/// The title row's buttons sit closer to the edge than the entry's text, so
+/// the sheet pads to the buttons and the text steps in from there.
+const SHEET_PADDING = 23
+const SHEET_TOP_PADDING = 13
+const TEXT_INDENT = 10
+/// Senses step in again, with the number hung in the gutter so wrapped lines
+/// align under the first rather than under the number.
+const SENSE_INDENT = 26
+const SENSE_NUMBER_WIDTH = 15
+/// The entry starts well below the title row.
+const HEADING_TOP_SPACE = 30
 /// The headword, its phonetics and its part of speech read as one block, so
 /// they sit closer together than the gaps between blocks.
-const HEADING_SPACING = 4
-/// Apple hangs the sense number in the margin and indents the sense body past
-/// it, so wrapped lines align with the first rather than with the number.
-const SENSE_NUMBER_WIDTH = 18
-const SENSE_GUTTER = 8
+const HEADING_SPACING = 13
 
 /**
  * Drops a single trailing full stop, so a definition written as a sentence can
@@ -71,7 +83,7 @@ export function EntryDefinition({entry, onEdit, onClose}: Props): React.ReactNod
 				alignment="leading"
 				spacing={12}
 				modifiers={[
-					padding({all: CONTENT_PADDING}),
+					padding({horizontal: SHEET_PADDING, top: SHEET_TOP_PADDING, bottom: 32}),
 					accessibilityIdentifier('dictionary-definition-sheet'),
 				]}
 			>
@@ -116,15 +128,21 @@ export function EntryDefinition({entry, onEdit, onClose}: Props): React.ReactNod
 					</Button>
 				</HStack>
 
-				<VStack alignment="leading" spacing={HEADING_SPACING}>
+				<VStack
+					alignment="leading"
+					modifiers={[padding({leading: TEXT_INDENT, top: HEADING_TOP_SPACE})]}
+					spacing={HEADING_SPACING}
+				>
 					{/* Headword and phonetics share a line, sitting on a common
 					    baseline so the smaller phonetics do not ride high. */}
-					<HStack alignment="firstTextBaseline" spacing={SENSE_GUTTER}>
+					<HStack alignment="firstTextBaseline" spacing={6}>
 						{/* `textStyle` rather than a fixed `size`, so the headword still
 						    scales with Dynamic Type -- a bare `size` does not. */}
 						<Text
 							modifiers={[
-								font({textStyle: 'largeTitle', design: 'serif', weight: 'bold'}),
+								// Size and style together: the size is the measurement, the
+								// style is the curve it scales along with Dynamic Type.
+								font({size: HEADWORD_SIZE, design: 'serif', weight: 'bold'}),
 								textSelection(true),
 							]}
 						>
@@ -134,7 +152,7 @@ export function EntryDefinition({entry, onEdit, onClose}: Props): React.ReactNod
 						{entry.pronunciation ? (
 							<Text
 								modifiers={[
-									font({textStyle: 'title3', design: 'serif'}),
+									font({size: PRONUNCIATION_SIZE, design: 'serif'}),
 									foregroundStyle(c.secondaryLabel),
 									textSelection(true),
 								]}
@@ -147,44 +165,59 @@ export function EntryDefinition({entry, onEdit, onClose}: Props): React.ReactNod
 					{/* The one line set in the system face: it is a label about the
 					    entry rather than part of the entry's own text. */}
 					{entry.partOfSpeech ? (
-						<Text modifiers={[font({textStyle: 'body'})]}>{entry.partOfSpeech}</Text>
+						<Text modifiers={[font({size: PART_OF_SPEECH_SIZE})]}>{entry.partOfSpeech}</Text>
 					) : null}
 				</VStack>
 
-				{entry.senses.map((sense, index) => (
-					<HStack alignment="firstTextBaseline" key={index} spacing={SENSE_GUTTER}>
-						{/* Numbered even when there is only one, so a single-sense entry
-						    still reads as a dictionary entry rather than a paragraph. */}
-						<Text
-							modifiers={[
-								font({textStyle: 'body', design: 'serif'}),
-								bold(),
-								frame({width: SENSE_NUMBER_WIDTH, alignment: 'leading'}),
-							]}
+				{/* One block, so consecutive senses read on with the same leading
+				    as the lines inside them rather than a paragraph gap. */}
+				<VStack alignment="leading" spacing={0}>
+					{entry.senses.map((sense, index) => (
+						<HStack
+							alignment="firstTextBaseline"
+							key={index}
+							modifiers={[padding({leading: SENSE_INDENT})]}
+							spacing={0}
 						>
-							{String(index + 1)}
-						</Text>
-						{/* The example runs on from its definition after a colon, set
+							{/* Numbered even when there is only one, so a single-sense entry
+						    still reads as a dictionary entry rather than a paragraph. */}
+							<Text
+								modifiers={[
+									font({textStyle: 'body', design: 'serif'}),
+									bold(),
+									frame({width: SENSE_NUMBER_WIDTH, alignment: 'leading'}),
+								]}
+							>
+								{String(index + 1)}
+							</Text>
+							{/* The example runs on from its definition after a colon, set
 						    in italic, the way a dictionary sets a citation -- rather
 						    than breaking to its own line. */}
-						<Text
-							modifiers={[
-								font({textStyle: 'body', design: 'serif'}),
-								lineSpacing(BODY_LINE_SPACING),
-								textSelection(true),
-							]}
-						>
-							<Text>{sense.example ? withoutFullStop(sense.definition) : sense.definition}</Text>
-							{sense.example ? (
-								<Text modifiers={[italic(), foregroundStyle(c.secondaryLabel)]}>
-									{`: ${sense.example}`}
-								</Text>
-							) : null}
-						</Text>
-					</HStack>
-				))}
+							<Text
+								modifiers={[
+									font({textStyle: 'body', design: 'serif'}),
+									lineSpacing(BODY_LINE_SPACING),
+									textSelection(true),
+								]}
+							>
+								<Text>{sense.example ? withoutFullStop(sense.definition) : sense.definition}</Text>
+								{sense.example ? (
+									<Text modifiers={[italic(), foregroundStyle(c.secondaryLabel)]}>
+										{`: ${sense.example}`}
+									</Text>
+								) : null}
+							</Text>
+						</HStack>
+					))}
+				</VStack>
 
-				<Text modifiers={[font({textStyle: 'footnote'}), foregroundStyle(c.tertiaryLabel)]}>
+				<Text
+					modifiers={[
+						font({textStyle: 'footnote'}),
+						foregroundStyle(c.tertiaryLabel),
+						padding({leading: TEXT_INDENT}),
+					]}
+				>
 					Collected by the humans of All About Olaf
 				</Text>
 			</VStack>

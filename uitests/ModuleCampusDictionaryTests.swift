@@ -74,4 +74,16 @@ class ModuleCampusDictionaryTests: UITestCase {
 			.verifyPartOfSpeech(TestIdentifiers.Dictionary.phoneticEntryPartOfSpeech)
 			.capture("Dictionary entry with phonetics")
 	}
+
+	/// Renders the reference entry so its screenshot can be measured against
+	/// Apple's. Asserts only that the entry is up -- the comparison itself is
+	/// done by eye and by pixel, not by an assertion.
+	func testReferenceEntryForComparison() throws {
+		CampusDictionaryScreen(app: app)
+			.navigate()
+			.search(for: TestIdentifiers.Dictionary.referenceEntry)
+			.openWord(TestIdentifiers.Dictionary.referenceEntry)
+			.verifyDefinitionSheetIsPresented()
+			.capture("Reference entry")
+	}
 }
