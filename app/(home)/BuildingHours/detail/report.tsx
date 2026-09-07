@@ -1,5 +1,6 @@
 import * as React from 'react'
 import {Stack, useLocalSearchParams, useNavigation, useRouter} from 'expo-router'
+import {usePreventRemove} from 'expo-router/react-navigation'
 import {useQuery} from '@tanstack/react-query'
 import {Alert, ScrollView, View} from 'react-native'
 import moment from 'moment-timezone'
@@ -41,37 +42,33 @@ function useBuildingEditor(initialBuilding: BuildingType) {
 	let [submitted, setSubmitted] = React.useState(false)
 
 	/**
-	 * Checks for unsaved edits before this screen leaves the stack.
+	 * Checks for unsaved edits before this screen leaves the stack, whether
+	 * from its own back button or from the detail sheet itself being dragged
+	 * down or dismissed by its backdrop. The edge-swipe gesture is not a path
+	 * out here -- it is turned off below, on the same route -- so it needs no
+	 * guarding.
 	 *
-	 * `beforeRemove` intercepts a pop however it was triggered -- the back
-	 * button or the edge-swipe gesture -- since this screen is pushed rather
-	 * than presented as a modal.
+	 * A plain `beforeRemove` listener only ever sees a pop of this screen; it
+	 * has no way to tell UIKit to refuse a dismissal of the *sheet*, a level
+	 * up. `usePreventRemove` additionally registers this screen's route with
+	 * the navigator's `PreventRemoveProvider`, which bubbles the block up to
+	 * the formSheet's own route so a native sheet dismissal is refused too.
 	 * https://reactnavigation.org/docs/preventing-going-back
 	 */
-	React.useEffect(
-		() =>
-			navigation.addListener('beforeRemove', (event) => {
-				if (!hasUnsavedChanges || submitted) {
-					return
-				}
-
-				event.preventDefault()
-
-				Alert.alert(
-					'Discard changes?',
-					'You have made unsaved changes. Are you sure you want to discard them?',
-					[
-						{text: 'Edit', style: 'cancel', onPress: noop},
-						{
-							text: 'Discard',
-							style: 'destructive',
-							onPress: () => navigation.dispatch(event.data.action),
-						},
-					],
-				)
-			}),
-		[navigation, hasUnsavedChanges, submitted],
-	)
+	usePreventRemove(hasUnsavedChanges && !submitted, ({data}) => {
+		Alert.alert(
+			'Discard changes?',
+			'You have made unsaved changes. Are you sure you want to discard them?',
+			[
+				{text: 'Edit', style: 'cancel', onPress: noop},
+				{
+					text: 'Discard',
+					style: 'destructive',
+					onPress: () => navigation.dispatch(data.action),
+				},
+			],
+		)
+	})
 
 	let dispatchAction = React.useCallback(
 		(action: BuildingAction) => dispatch(applyBuildingAction(action)),
@@ -313,12 +310,15 @@ export default function BuildingHoursProblemReportPage(): React.ReactNode {
 	return (
 		<>
 			<Stack.Title>Report a Problem</Stack.Title>
-			{/* The default native back button pops before `beforeRemove` gets a
-			 * say, which can leave the unsaved-changes guard unable to cancel
-			 * the pop it just intercepted. A JS-driven `goBack()` call, same as
-			 * the guard's own re-dispatch on Discard, keeps the two in sync. */}
+			{/* The edge-swipe gesture pops natively, ahead of anything in JS,
+			 * so the unsaved-changes guard above can't refuse it in time --
+			 * turned off here rather than guarded. */}
 			<Stack.Screen options={{gestureEnabled: false}} />
 			<Stack.Toolbar placement="left">
+				{/* The default native back button has the same problem: it pops
+				 * before `beforeRemove` gets a say. A JS-driven `goBack()` call,
+				 * the same dispatch the guard's own Discard button uses, keeps
+				 * the pop and the guard in sync. */}
 				<Stack.Toolbar.Button
 					accessibilityLabel="Back"
 					icon="chevron.left"

@@ -121,8 +121,19 @@ export const BuildingListRow = React.memo(function BuildingListRow({
 				</HStack>
 			</Button>
 
-			<SwipeActions.Actions edge="trailing" allowsFullSwipe={false}>
-				<Button modifiers={[tint(c.systemBlue)]} onPress={() => onToggleFavorite(building)}>
+			{/* A full swipe now triggers this directly: with only one action left,
+			 * and a reversible one, that is the ordinary iOS pattern (Mail's
+			 * single-action swipe behaves the same way), not the two-action
+			 * "swipe reveals both, full swipe does neither" balance the report
+			 * action used to need. */}
+			<SwipeActions.Actions edge="trailing" allowsFullSwipe={true}>
+				<Button
+					modifiers={[
+						tint(c.systemBlue),
+						accessibilityLabel(isFavorite ? 'Remove from Favorites' : 'Add to Favorites'),
+					]}
+					onPress={() => onToggleFavorite(building)}
+				>
 					<Image systemName={isFavorite ? 'heart.slash' : 'heart'} />
 				</Button>
 			</SwipeActions.Actions>

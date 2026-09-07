@@ -35,6 +35,10 @@ struct TestIdentifiers {
 	enum Navigation {
 		static let openSettings = "Open Settings"
 		static let closeScreen = "Close Screen"
+		/// Matches the report screen's own explicit back button, whose
+		/// accessibilityLabel is fixed rather than the previous screen's title,
+		/// so tests can assert on it regardless of which building is open.
+		static let backButton = "Back"
 	}
 
 	/// Labels UIKit gives a `Stack.SearchBar`'s own controls. In the bottom
