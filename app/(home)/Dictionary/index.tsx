@@ -1,16 +1,14 @@
 import * as React from 'react'
-import {StyleSheet} from 'react-native'
+import {StyleSheet, useColorScheme} from 'react-native'
 import {BottomSheet, Group, Host} from '@expo/ui/swift-ui'
 import {
-	background,
-	ignoreSafeArea,
+	presentationBackground,
 	presentationDetents,
 	presentationDragIndicator,
 	type PresentationDetent,
 } from '@expo/ui/swift-ui/modifiers'
 import {useQuery} from '@tanstack/react-query'
 import {Stack} from 'expo-router'
-import * as c from '@frogpond/colors'
 import {useDebounce} from '@frogpond/use-debounce'
 
 import {SearchBar} from '../../../source/components/search-bar'
@@ -26,6 +24,10 @@ import {dictionaryOptions} from '../../../source/features/dictionary/query'
 import type {NormalizedEntry} from '../../../source/features/dictionary/types'
 
 const SHEET_DETENTS: PresentationDetent[] = ['medium', 'large']
+/// `systemGroupedBackground`, resolved: the sheet's own chrome takes a hex
+/// rather than a PlatformColor.
+const LIGHT_SHEET_BACKGROUND = '#F2F2F7'
+const DARK_SHEET_BACKGROUND = '#000000'
 
 const styles = StyleSheet.create({
 	host: {
@@ -37,6 +39,7 @@ const styles = StyleSheet.create({
 })
 
 function DictionaryView(): React.ReactNode {
+	let scheme = useColorScheme()
 	let [query, setQuery] = React.useState('')
 	let searchQuery = useDebounce(query.toLowerCase(), 200)
 
@@ -112,11 +115,22 @@ function DictionaryView(): React.ReactNode {
 				>
 					<Group
 						modifiers={[
-							// The sheet's content stops at the bottom safe area, so
-							// without letting the fill run past it, the sheet's own
-							// backing shows through beneath the entry as a pale band.
-							background(c.systemGroupedBackground),
-							ignoreSafeArea({edges: 'bottom'}),
+							// The sheet's own chrome is a translucent material, so the
+							// list reads through anywhere the entry does not cover. A
+							// PlatformColor rather than the hex `presentationBackground`
+							// wants, so the sheet still follows the system appearance --
+							// and carried under the home indicator, which the content's
+							// own safe-area inset would otherwise leave bare.
+							// `background()` stops at the safe-area inset, leaving the
+							// sheet's translucent chrome showing as a grey band over the
+							// home indicator. `presentationBackground` paints the chrome
+							// itself, and is the only modifier that reaches it -- but it
+							// takes a hex rather than a PlatformColor, so the scheme has
+							// to be resolved here to keep the sheet following the system
+							// appearance.
+							presentationBackground(
+								scheme === 'dark' ? DARK_SHEET_BACKGROUND : LIGHT_SHEET_BACKGROUND,
+							),
 							presentationDetents(SHEET_DETENTS, {
 								selection: detent,
 								onSelectionChange: setDetent,

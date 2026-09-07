@@ -27,7 +27,7 @@ describe('EntryDefinition', () => {
 		expect(screen.getByText('The dining hall.')).toBeTruthy()
 	})
 
-	it('numbers senses only when there is more than one', async () => {
+	it('numbers a lone sense too, so it reads as an entry not a paragraph', async () => {
 		await render(
 			<EntryDefinition
 				entry={normalizeEntry({word: 'Caf', definition: 'The dining hall.'})}
@@ -36,7 +36,7 @@ describe('EntryDefinition', () => {
 			/>,
 		)
 
-		expect(screen.queryByText('1')).toBeNull()
+		expect(screen.getByText('1')).toBeTruthy()
 	})
 
 	it('numbers every sense when there are several', async () => {

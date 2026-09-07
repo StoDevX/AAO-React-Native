@@ -18,6 +18,8 @@ import {
 } from '@expo/ui/swift-ui/modifiers'
 import * as c from '@frogpond/colors'
 
+import {FILL_WIDTH} from '../home/button'
+
 import type {NormalizedEntry} from './types'
 
 /// The xmark glyph, and the disc it sits on. The ellipsis rides the same disc
@@ -59,10 +61,12 @@ type Props = {
  * Presentational — the sheet that presents it belongs to the list screen.
  */
 export function EntryDefinition({entry, onEdit, onClose}: Props): React.ReactNode {
-	let numbered = entry.senses.length > 1
-
 	return (
-		<ScrollView>
+		// The sheet hands its content a Group holding both this view and the
+		// editor sheet's anchor, so this one does not fill the sheet on its
+		// own. The sheet's own chrome is a translucent material, which shows
+		// through as a grey band anywhere the content does not reach.
+		<ScrollView modifiers={[frame({maxWidth: FILL_WIDTH, maxHeight: FILL_WIDTH})]}>
 			<VStack
 				alignment="leading"
 				spacing={12}
@@ -130,7 +134,7 @@ export function EntryDefinition({entry, onEdit, onClose}: Props): React.ReactNod
 						{entry.pronunciation ? (
 							<Text
 								modifiers={[
-									font({textStyle: 'body', design: 'serif'}),
+									font({textStyle: 'title3', design: 'serif'}),
 									foregroundStyle(c.secondaryLabel),
 									textSelection(true),
 								]}
@@ -140,26 +144,26 @@ export function EntryDefinition({entry, onEdit, onClose}: Props): React.ReactNod
 						) : null}
 					</HStack>
 
+					{/* The one line set in the system face: it is a label about the
+					    entry rather than part of the entry's own text. */}
 					{entry.partOfSpeech ? (
-						<Text modifiers={[font({textStyle: 'body', design: 'serif'})]}>
-							{entry.partOfSpeech}
-						</Text>
+						<Text modifiers={[font({textStyle: 'body'})]}>{entry.partOfSpeech}</Text>
 					) : null}
 				</VStack>
 
 				{entry.senses.map((sense, index) => (
 					<HStack alignment="firstTextBaseline" key={index} spacing={SENSE_GUTTER}>
-						{numbered ? (
-							<Text
-								modifiers={[
-									font({textStyle: 'body', design: 'serif'}),
-									bold(),
-									frame({width: SENSE_NUMBER_WIDTH, alignment: 'leading'}),
-								]}
-							>
-								{String(index + 1)}
-							</Text>
-						) : null}
+						{/* Numbered even when there is only one, so a single-sense entry
+						    still reads as a dictionary entry rather than a paragraph. */}
+						<Text
+							modifiers={[
+								font({textStyle: 'body', design: 'serif'}),
+								bold(),
+								frame({width: SENSE_NUMBER_WIDTH, alignment: 'leading'}),
+							]}
+						>
+							{String(index + 1)}
+						</Text>
 						{/* The example runs on from its definition after a colon, set
 						    in italic, the way a dictionary sets a citation -- rather
 						    than breaking to its own line. */}

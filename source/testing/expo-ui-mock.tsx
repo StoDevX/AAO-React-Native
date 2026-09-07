@@ -262,6 +262,10 @@ export const presentationDetents = (detents: unknown[], options?: unknown): Modi
 	detents,
 	options,
 })
+export const presentationBackground = (color: string): Modifier => ({
+	$type: 'presentationBackground',
+	color,
+})
 export const presentationDragIndicator = (visibility: string): Modifier => ({
 	$type: 'presentationDragIndicator',
 	visibility,
