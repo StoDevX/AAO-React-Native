@@ -1,6 +1,12 @@
 import {describe, expect, it} from '@jest/globals'
 
-import {filterEntries, groupEntries, normalizeEntry, searchableTerms} from '../lib/entry'
+import {
+	filterEntries,
+	flattenDefinitions,
+	groupEntries,
+	normalizeEntry,
+	searchableTerms,
+} from '../lib/entry'
 
 describe('normalizeEntry', () => {
 	it('collapses a legacy definition into a single sense', () => {
@@ -66,6 +72,22 @@ describe('searchableTerms', () => {
 		)
 	})
 
+	it('reaches words that appear only in a sub-sense', () => {
+		let terms = searchableTerms(
+			normalizeEntry({
+				word: 'change',
+				senses: [
+					{
+						definition: 'alter or modify.',
+						subsenses: [{definition: 'become different.', examples: ['the creeper turned gold']}],
+					},
+				],
+			}),
+		)
+
+		expect(terms).toEqual(expect.arrayContaining(['different', 'creeper', 'gold']))
+	})
+
 	it('deburrs accents so a plain-ASCII query still matches', () => {
 		expect(
 			searchableTerms(normalizeEntry({word: 'Rølvaag', definition: 'The library.'})),
@@ -76,6 +98,43 @@ describe('searchableTerms', () => {
 		let terms = searchableTerms(normalizeEntry({word: 'Caf', definition: 'The Caf is a hall.'}))
 
 		expect(terms.filter((term) => term === 'caf')).toHaveLength(1)
+	})
+})
+
+describe('flattenDefinitions', () => {
+	it('joins several senses with a blank line between them', () => {
+		expect(flattenDefinitions([{definition: 'first.'}, {definition: 'second.'}])).toBe(
+			'first.\n\nsecond.',
+		)
+	})
+
+	it('follows each sense with the senses nested under it, in reading order', () => {
+		expect(
+			flattenDefinitions([
+				{
+					definition: 'parent one.',
+					subsenses: [{definition: 'child A.'}, {definition: 'child B.'}],
+				},
+				{definition: 'parent two.'},
+			]),
+		).toBe('parent one.\n\nchild A.\n\nchild B.\n\nparent two.')
+	})
+
+	it('descends more than one level', () => {
+		expect(
+			flattenDefinitions([
+				{
+					definition: 'top.',
+					subsenses: [{definition: 'middle.', subsenses: [{definition: 'bottom.'}]}],
+				},
+			]),
+		).toBe('top.\n\nmiddle.\n\nbottom.')
+	})
+
+	it('leaves citations out — the field holds definitions', () => {
+		expect(flattenDefinitions([{definition: 'alter or modify.', examples: ['a citation']}])).toBe(
+			'alter or modify.',
+		)
 	})
 })
 
