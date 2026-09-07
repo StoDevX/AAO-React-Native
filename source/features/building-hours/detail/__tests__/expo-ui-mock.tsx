@@ -29,15 +29,6 @@ export const background = modifier('background')
 export const buttonStyle = modifier('buttonStyle')
 export const listStyle = modifier('listStyle')
 
-/**
- * The label an `accessibilityLabel(…)` modifier asks for, which is what
- * VoiceOver -- and therefore `getByLabelText` -- would report natively.
- */
-function labelOf(modifiers?: Modifier[]): string | undefined {
-	let found = modifiers?.find((m) => m.$type === 'accessibilityLabel')
-	return typeof found?.label === 'string' ? found.label : undefined
-}
-
 export function Host({children}: WithModifiers): React.ReactNode {
 	return <View>{children}</View>
 }
@@ -58,16 +49,8 @@ export function Spacer(): React.ReactNode {
 	return null
 }
 
-/**
- * Decorative in every call site this module has, so the mock renders nothing
- * rather than a text node that would confuse a query for the text beside it.
- */
-export function Image(): React.ReactNode {
-	return null
-}
-
-export function Text({children, modifiers}: WithModifiers): React.ReactNode {
-	return <RNText accessibilityLabel={labelOf(modifiers)}>{children}</RNText>
+export function Text({children}: WithModifiers): React.ReactNode {
+	return <RNText>{children}</RNText>
 }
 
 /**
@@ -108,16 +91,11 @@ export function Section({
  */
 export function Button({
 	children,
-	modifiers,
 	onPress,
 }: WithModifiers & {onPress?: () => void}): React.ReactNode {
 	if (typeof children === 'string') {
 		throw new Error('Button children must be nested elements, not a plain string')
 	}
 
-	return (
-		<Pressable accessibilityLabel={labelOf(modifiers)} onPress={onPress}>
-			{children}
-		</Pressable>
-	)
+	return <Pressable onPress={onPress}>{children}</Pressable>
 }

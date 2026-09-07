@@ -39,17 +39,18 @@ function makeBuilding(overrides: Partial<BuildingType> = {}): BuildingType {
 }
 
 describe('BuildingDetailSwiftUI', () => {
-	// Regression test: a schedule's `notes` used to be handed straight to
-	// Section's `footer` prop, a bare string in a SwiftUI slot that crashes at
-	// mount. Every building with notes -- "The Cage" among them -- hit this on
-	// every render once the detail screen became reachable.
+	// Regression test: Section's `footer` is a SwiftUI slot, and handing it a
+	// bare string -- rather than wrapping it in `Text` -- crashes at mount.
+	// Every building with notes -- "The Cage" among them -- hit this on every
+	// render once the detail screen became reachable.
 	test('renders a schedule with notes without throwing', () => {
 		let building = makeBuilding()
 
 		expect(() => render(<BuildingDetailSwiftUI building={building} now={NOW} />)).not.toThrow()
 	})
 
-	test('renders a schedule with no notes without throwing', () => {
+	test('renders a schedule with no notes and skips the footer', async () => {
+		let noteText = 'The kitchen stops cooking at 8 p.m.'
 		let building = makeBuilding({
 			schedule: [
 				{
@@ -59,6 +60,11 @@ describe('BuildingDetailSwiftUI', () => {
 			],
 		})
 
-		expect(() => render(<BuildingDetailSwiftUI building={building} now={NOW} />)).not.toThrow()
+		let {queryByText} = await render(<BuildingDetailSwiftUI building={building} now={NOW} />)
+
+		// A schedule with no `notes` must pass `undefined` as Section's footer,
+		// not another schedule's text or a placeholder -- either mistake would
+		// leak content that was never meant for this section.
+		expect(queryByText(noteText)).toBeNull()
 	})
 })
