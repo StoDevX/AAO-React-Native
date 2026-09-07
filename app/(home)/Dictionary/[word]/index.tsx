@@ -9,6 +9,7 @@ import * as c from '@frogpond/colors'
 import {LoadingView, NoticeView} from '@frogpond/notice'
 
 import {wordByTermOptions} from '../../../../source/features/dictionary/query'
+import {normalizeEntry} from '../../../../source/features/dictionary/lib/entry'
 
 const paragraphMarkdownStyle: MarkdownStyle = {paragraph: {fontSize: 16}}
 
@@ -85,7 +86,12 @@ export default function DictionaryDetailPage(): React.ReactNode {
 			{screenTitle}
 			<Container>
 				<Term selectable={true}>{entry.word}</Term>
-				<Markdown markdownStyle={paragraphMarkdownStyle} source={entry.definition} />
+				<Markdown
+					markdownStyle={paragraphMarkdownStyle}
+					source={normalizeEntry(entry)
+						.senses.map((sense) => sense.definition)
+						.join('\n\n')}
+				/>
 
 				<Button onPress={handleEditButtonPress} title="Suggest an Edit" />
 

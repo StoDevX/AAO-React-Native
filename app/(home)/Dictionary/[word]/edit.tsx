@@ -9,6 +9,7 @@ import {LoadingView, NoticeView} from '@frogpond/notice'
 
 import {wordByTermOptions} from '../../../../source/features/dictionary/query'
 import {submitReport} from '../../../../source/features/dictionary/report/submit'
+import {normalizeEntry} from '../../../../source/features/dictionary/lib/entry'
 import type {WordType} from '../../../../source/features/dictionary/types'
 
 type TextFieldProps = {text: string; onChange: (text: string) => void}
@@ -42,7 +43,11 @@ type DictionaryEditorViewProps = {
 
 function DictionaryEditorView({word: item}: DictionaryEditorViewProps): React.ReactNode {
 	let [term, setTerm] = React.useState(item.word)
-	let [definition, setDefinition] = React.useState(item.definition)
+	let [definition, setDefinition] = React.useState(
+		normalizeEntry(item)
+			.senses.map((sense) => sense.definition)
+			.join('\n\n'),
+	)
 
 	let submit = () => {
 		submitReport(item, {
