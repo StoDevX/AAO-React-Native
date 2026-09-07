@@ -46,6 +46,21 @@ describe('EntryEditor', () => {
 		)
 	})
 
+	it('carries sub-senses into the field a reader edits', async () => {
+		let nested = normalizeEntry({
+			word: 'change',
+			senses: [{definition: 'alter or modify.', subsenses: [{definition: 'become different.'}]}],
+		})
+
+		await render(<EntryEditor entry={nested} onDone={jest.fn()} />)
+		await fireEvent.press(screen.getByText('Submit Report'))
+
+		expect(mockSubmit).toHaveBeenCalledWith(
+			expect.objectContaining({word: 'change'}),
+			expect.objectContaining({definition: 'alter or modify.\n\nbecome different.'}),
+		)
+	})
+
 	it('submits the edited text, trimmed', async () => {
 		await render(<EntryEditor entry={entry} onDone={jest.fn()} />)
 

@@ -42,7 +42,7 @@ test('handles an entry with senses', () => {
 			word: 'ACM',
 			senses: [
 				{definition: 'The Association for Computing Machinery.'},
-				{definition: 'The student chapter.', example: 'ACM runs workshops.'},
+				{definition: 'The student chapter.', examples: ['ACM runs workshops.']},
 			],
 		}),
 	).toMatchSnapshot()
@@ -61,4 +61,29 @@ test('handles pronunciation and part of speech', () => {
 
 test('emits no definition key for an entry with neither field', () => {
 	expect(stringifyDictionaryEntry({word: 'Bogus'})).toBe('word: Bogus\n')
+})
+
+test('handles grammar labels, several citations, and nested sub-senses', () => {
+	expect(
+		stringifyDictionaryEntry({
+			word: 'change',
+			senses: [
+				{
+					grammar: 'with object',
+					definition: 'make (someone or something) different; alter or modify',
+					examples: [
+						'both parties voted against proposals to change the law',
+						"fame hasn't changed her one bit.",
+					],
+					subsenses: [
+						{
+							grammar: 'no object',
+							definition: 'become different; be altered or modified',
+							examples: ["my opinion hasn't changed"],
+						},
+					],
+				},
+			],
+		}),
+	).toMatchSnapshot()
 })

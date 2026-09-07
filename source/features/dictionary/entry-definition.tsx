@@ -20,7 +20,7 @@ import * as c from '@frogpond/colors'
 
 import {FILL_WIDTH} from '../home/button'
 
-import type {NormalizedEntry} from './types'
+import type {NormalizedEntry, Sense} from './types'
 
 /// The xmark glyph, and the disc it sits on. The ellipsis rides the same disc
 /// so the two ends of the title row balance.
@@ -44,6 +44,9 @@ const TEXT_INDENT = 10
 /// align under the first rather than under the number.
 const SENSE_INDENT = 26
 const SENSE_NUMBER_WIDTH = 15
+/// A dictionary divides several citations for one sense with a vertical bar.
+const EXAMPLE_SEPARATOR = ' | '
+const SUBSENSE_MARKER = '•'
 /// The entry starts well below the title row.
 const HEADING_TOP_SPACE = 30
 /// The headword, its phonetics and its part of speech read as one block, so
@@ -64,6 +67,62 @@ type Props = {
 	entry: NormalizedEntry
 	onEdit: () => void
 	onClose: () => void
+}
+
+/// A sense and everything under it. Sub-senses take a bullet rather than a
+/// number and step in by one gutter, so the hierarchy reads off the left edge.
+function SenseRow({
+	sense,
+	marker,
+	indent,
+}: {
+	sense: Sense
+	marker: string
+	indent: number
+}): React.ReactNode {
+	let citations = sense.examples?.length ? sense.examples.join(EXAMPLE_SEPARATOR) : undefined
+
+	return (
+		<>
+			<HStack alignment="firstTextBaseline" modifiers={[padding({leading: indent})]} spacing={0}>
+				<Text
+					modifiers={[
+						font({textStyle: 'body', design: 'serif'}),
+						bold(),
+						frame({width: SENSE_NUMBER_WIDTH, alignment: 'leading'}),
+					]}
+				>
+					{marker}
+				</Text>
+				{/* Grammar, definition and citations are one paragraph: a dictionary
+				    runs them together rather than breaking a line between them. */}
+				<Text
+					modifiers={[
+						font({textStyle: 'body', design: 'serif'}),
+						lineSpacing(BODY_LINE_SPACING),
+						textSelection(true),
+					]}
+				>
+					{sense.grammar ? <Text modifiers={[italic()]}>{`[${sense.grammar}] `}</Text> : null}
+					<Text>{citations ? withoutFullStop(sense.definition) : sense.definition}</Text>
+					{citations ? (
+						<Text modifiers={[italic(), foregroundStyle(c.secondaryLabel)]}>
+							{`: ${citations}`}
+						</Text>
+					) : null}
+				</Text>
+			</HStack>
+
+			{sense.subsenses?.map((subsense, index) => (
+				<SenseRow
+					indent={indent + SENSE_NUMBER_WIDTH}
+					key={index}
+					marker={SUBSENSE_MARKER}
+					sense={subsense}
+				/>
+			))}
+		</>
+	)
 }
 
 /**
@@ -173,41 +232,7 @@ export function EntryDefinition({entry, onEdit, onClose}: Props): React.ReactNod
 				    as the lines inside them rather than a paragraph gap. */}
 				<VStack alignment="leading" spacing={0}>
 					{entry.senses.map((sense, index) => (
-						<HStack
-							alignment="firstTextBaseline"
-							key={index}
-							modifiers={[padding({leading: SENSE_INDENT})]}
-							spacing={0}
-						>
-							{/* Numbered even when there is only one, so a single-sense entry
-						    still reads as a dictionary entry rather than a paragraph. */}
-							<Text
-								modifiers={[
-									font({textStyle: 'body', design: 'serif'}),
-									bold(),
-									frame({width: SENSE_NUMBER_WIDTH, alignment: 'leading'}),
-								]}
-							>
-								{String(index + 1)}
-							</Text>
-							{/* The example runs on from its definition after a colon, set
-						    in italic, the way a dictionary sets a citation -- rather
-						    than breaking to its own line. */}
-							<Text
-								modifiers={[
-									font({textStyle: 'body', design: 'serif'}),
-									lineSpacing(BODY_LINE_SPACING),
-									textSelection(true),
-								]}
-							>
-								<Text>{sense.example ? withoutFullStop(sense.definition) : sense.definition}</Text>
-								{sense.example ? (
-									<Text modifiers={[italic(), foregroundStyle(c.secondaryLabel)]}>
-										{`: ${sense.example}`}
-									</Text>
-								) : null}
-							</Text>
-						</HStack>
+						<SenseRow indent={SENSE_INDENT} key={index} marker={String(index + 1)} sense={sense} />
 					))}
 				</VStack>
 

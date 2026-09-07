@@ -7,6 +7,7 @@ import {
 	textInputAutocapitalization,
 } from '@expo/ui/swift-ui/modifiers'
 
+import {flattenDefinitions} from './lib/entry'
 import {submitReport} from './report/submit'
 import type {NormalizedEntry} from './types'
 
@@ -26,7 +27,7 @@ type Props = {
  * boundaries costs nothing a person cannot restore.
  */
 export function EntryEditor({entry, onDone}: Props): React.ReactNode {
-	let joined = entry.senses.map((sense) => sense.definition).join('\n\n')
+	let joined = flattenDefinitions(entry.senses)
 
 	let [word, setWord] = React.useState(entry.word)
 	let [definition, setDefinition] = React.useState(joined)

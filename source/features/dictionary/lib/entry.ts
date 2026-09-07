@@ -20,19 +20,35 @@ export function normalizeEntry(raw: WordType): NormalizedEntry {
 }
 
 /**
+ * Every definition in a sense and the senses under it, in reading order. The
+ * edit form shows one block of prose, so a nested entry has to arrive flat or
+ * its sub-senses would be missing from the suggestion a reader sends back.
+ */
+export function flattenDefinitions(senses: Sense[]): string {
+	let walk = (sense: Sense): string[] => [
+		sense.definition,
+		...(sense.subsenses ?? []).flatMap(walk),
+	]
+	return senses.flatMap(walk).join('\n\n')
+}
+
+/// Every string a sense contributes to search, including those of the senses
+/// nested under it.
+function senseText(sense: Sense): string[] {
+	return [
+		sense.definition,
+		...(sense.examples ?? []),
+		...(sense.subsenses ?? []).flatMap(senseText),
+	]
+}
+
+/**
  * Every word a reader might search this entry by: the headword plus each
- * sense and example, lowercased and stripped of accents so an ASCII query
- * still finds "Rølvaag".
+ * sense, citation and sub-sense, lowercased and stripped of accents so an
+ * ASCII query still finds "Rølvaag".
  */
 export function searchableTerms(entry: NormalizedEntry): string[] {
-	let sources = [entry.word]
-	for (let sense of entry.senses) {
-		sources.push(sense.definition)
-		if (sense.example) {
-			sources.push(sense.example)
-		}
-	}
-
+	let sources = [entry.word, ...entry.senses.flatMap(senseText)]
 	let terms = sources.flatMap((source) => words(deburr(source.toLowerCase())))
 	return Array.from(new Set(terms))
 }

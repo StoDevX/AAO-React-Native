@@ -88,20 +88,8 @@ ${wrap(2, 80)(entry.definition)}
 
 /** Dumps senses as YAML block scalars under a list item, indented to match the `- ` that opens it. */
 function stringifySenses(senses: Sense[]): string {
-	let body = senses
-		.map((sense) => {
-			let lines = `  - definition: |
-${wrap(6, 80)(sense.definition)}
-`
-			if (!sense.example) {
-				return lines
-			}
-			return `${lines}    example: |
-${wrap(6, 80)(sense.example)}
-`
-		})
-		.join('')
-
-	return `senses:
-${body}`
+	// Senses nest, so hand-rolled indentation stops being trustworthy past the
+	// first level. js-yaml already knows how deep it is; the width keeps the
+	// result readable in an email rather than one line per citation.
+	return dump({senses}, {lineWidth: 80, noRefs: true})
 }

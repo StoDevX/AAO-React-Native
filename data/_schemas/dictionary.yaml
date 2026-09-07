@@ -1,5 +1,25 @@
 $schema: http://json-schema.org/draft-07/schema#
 
+definitions:
+  sense:
+    type: object
+    additionalProperties: false
+    required: [definition]
+    properties:
+      # How the word is used here -- "with object", "no object".
+      grammar: {type: string}
+      definition: {type: string}
+      # Citations, shown run-on after the definition.
+      examples:
+        type: array
+        minItems: 1
+        items: {type: string}
+      # Senses under this one, drawn against a bullet rather than a number.
+      subsenses:
+        type: array
+        minItems: 1
+        items: {$ref: '#/definitions/sense'}
+
 type: object
 additionalProperties: false
 required: [word]
@@ -14,10 +34,4 @@ properties:
   senses:
     type: array
     minItems: 1
-    items:
-      type: object
-      additionalProperties: false
-      required: [definition]
-      properties:
-        definition: {type: string}
-        example: {type: string}
+    items: {$ref: '#/definitions/sense'}

@@ -88,7 +88,7 @@ describe('EntryDefinition', () => {
 			<EntryDefinition
 				entry={normalizeEntry({
 					word: 'Pause',
-					senses: [{definition: 'The venue.', example: 'Grab mozzarella sticks.'}],
+					senses: [{definition: 'The venue.', examples: ['Grab mozzarella sticks.']}],
 				})}
 				onClose={jest.fn()}
 				onEdit={jest.fn()}
@@ -105,7 +105,7 @@ describe('EntryDefinition', () => {
 			<EntryDefinition
 				entry={normalizeEntry({
 					word: 'Pause',
-					senses: [{definition: 'The venue.', example: 'Grab a snack.'}],
+					senses: [{definition: 'The venue.', examples: ['Grab a snack.']}],
 				})}
 				onClose={jest.fn()}
 				onEdit={jest.fn()}
@@ -126,6 +126,58 @@ describe('EntryDefinition', () => {
 		)
 
 		expect(screen.getByText('The dining hall.')).toBeTruthy()
+	})
+
+	it('brackets a grammar label ahead of the definition', async () => {
+		await render(
+			<EntryDefinition
+				entry={normalizeEntry({
+					word: 'change',
+					senses: [{grammar: 'with object', definition: 'alter or modify.'}],
+				})}
+				onClose={jest.fn()}
+				onEdit={jest.fn()}
+			/>,
+		)
+
+		expect(screen.getByText('[with object] ')).toBeTruthy()
+	})
+
+	it('divides several citations with a vertical bar', async () => {
+		await render(
+			<EntryDefinition
+				entry={normalizeEntry({
+					word: 'change',
+					senses: [{definition: 'alter or modify.', examples: ['first one', 'second one.']}],
+				})}
+				onClose={jest.fn()}
+				onEdit={jest.fn()}
+			/>,
+		)
+
+		expect(screen.getByText(': first one | second one.')).toBeTruthy()
+	})
+
+	it('marks a sub-sense with a bullet rather than a number', async () => {
+		await render(
+			<EntryDefinition
+				entry={normalizeEntry({
+					word: 'change',
+					senses: [
+						{
+							definition: 'alter or modify.',
+							subsenses: [{definition: 'become different.'}],
+						},
+					],
+				})}
+				onClose={jest.fn()}
+				onEdit={jest.fn()}
+			/>,
+		)
+
+		expect(screen.getByText('1')).toBeTruthy()
+		expect(screen.getByText('•')).toBeTruthy()
+		expect(screen.getByText('become different.')).toBeTruthy()
 	})
 
 	it('reports a request to edit', async () => {

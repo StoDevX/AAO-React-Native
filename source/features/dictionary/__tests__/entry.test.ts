@@ -15,7 +15,7 @@ describe('normalizeEntry', () => {
 			word: 'ACM',
 			senses: [
 				{definition: 'The Association for Computing Machinery.'},
-				{definition: 'The student chapter.', example: 'ACM runs workshops.'},
+				{definition: 'The student chapter.', examples: ['ACM runs workshops.']},
 			],
 		}
 
@@ -56,7 +56,7 @@ describe('searchableTerms', () => {
 				word: 'Pause',
 				senses: [
 					{definition: 'The student-run venue.'},
-					{definition: 'A snack counter.', example: 'Grab mozzarella sticks.'},
+					{definition: 'A snack counter.', examples: ['Grab mozzarella sticks.']},
 				],
 			}),
 		)
