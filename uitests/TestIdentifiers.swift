@@ -175,12 +175,6 @@ struct TestIdentifiers {
 		/// Mirrored by `EVENT_ROW_PREFIX` in `modules/event-list/event-list-row.tsx`.
 		static let eventRowPrefix = "event-row-"
 
-		/// Campus time. The app anchors every day to it (`setTimezone`
-		/// in `source/init/constants.ts`) so a student in another zone still sees
-		/// campus dates; a test reasoning about "today" or a week boundary works
-		/// in the same zone.
-		static let campusTimeZone = TimeZone(identifier: "America/Chicago")!
-
 		/// The instant the app freezes its clock to under `isUITesting`, so a
 		/// test reasons about "today" the way the app does rather than off the
 		/// live wall clock. Mirrors `UITEST_FROZEN_DATE` in
@@ -188,16 +182,19 @@ struct TestIdentifiers {
 		///
 		/// Parsed from the same string the app parses rather than rebuilt from
 		/// its parts: the constant carries a fixed offset, so rebuilding it as a
-		/// wall time in `campusTimeZone` would agree only while that date sits in
+		/// wall time in campus's zone would agree only while that date sits in
 		/// daylight time.
 		static let frozenNow = ISO8601DateFormatter().date(from: "2026-09-05T12:00:00-05:00")!
 
-		/// The identifier of the cell for a given day, formatted in campus time.
+		/// The identifier of the cell for a given day, formatted in the device's
+		/// own zone. The calendar reads its clock and its events from the device,
+		/// so a test naming days any other way is asserting against a zone the
+		/// app does not use.
 		static func dayCell(_ date: Date) -> String {
 			let formatter = DateFormatter()
 			formatter.calendar = Foundation.Calendar(identifier: .gregorian)
 			formatter.locale = Locale(identifier: "en_US_POSIX")
-			formatter.timeZone = campusTimeZone
+			formatter.timeZone = TimeZone.current
 			formatter.dateFormat = "yyyy-MM-dd"
 			return dayCellPrefix + formatter.string(from: date)
 		}
