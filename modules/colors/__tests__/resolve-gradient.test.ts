@@ -39,6 +39,7 @@ describe('resolveGradient', () => {
 		['a one-colour array', ['color(display-p3 1 1 1)']],
 		['a three-colour array', [...INLINE, 'color(display-p3 1 1 1)']],
 		['a pair that is not strings', [1, 2]],
+		['a pair of hex colours', ['#ff0000', '#aa0000']],
 		['nothing at all', undefined],
 		['an object', {inner: 'red'}],
 	])('falls back on %s', (_label, value) => {

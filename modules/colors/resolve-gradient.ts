@@ -1,3 +1,4 @@
+import {displayP3Components} from './display-p3'
 import {
 	blueGradient,
 	goldGradient,
@@ -46,13 +47,25 @@ export const GRADIENT_NAMES: readonly string[] = [...NAMED_GRADIENTS.keys()]
 /** Painted when a data file names a gradient that does not exist. */
 export const FALLBACK_GRADIENT: Gradient = grayGradient
 
+/** Whether `css` is a `color(display-p3 ...)` string `displayP3` can parse. */
+function isDisplayP3(css: string): boolean {
+	try {
+		displayP3Components(css)
+		return true
+	} catch {
+		return false
+	}
+}
+
 /**
  * Resolves the `gradient` a data file carries: either one of `GRADIENT_NAMES`,
  * or an explicit `[inner, outer]` pair of Display P3 colours.
  *
  * Takes `unknown` because the value arrives as parsed JSON from the server,
  * where nothing has checked it. Falls back rather than throwing, so a typo
- * upstream paints a dull tile instead of taking the screen down.
+ * upstream paints a dull tile instead of taking the screen down. That
+ * includes a pair that parses as strings but not as `display-p3` colours --
+ * hex, for instance -- since `displayP3` throws on anything else.
  */
 export function resolveGradient(value: unknown): Gradient {
 	if (typeof value === 'string') {
@@ -61,7 +74,12 @@ export function resolveGradient(value: unknown): Gradient {
 
 	if (Array.isArray(value) && value.length === 2) {
 		let [inner, outer] = value
-		if (typeof inner === 'string' && typeof outer === 'string') {
+		if (
+			typeof inner === 'string' &&
+			typeof outer === 'string' &&
+			isDisplayP3(inner) &&
+			isDisplayP3(outer)
+		) {
 			return [inner, outer]
 		}
 	}
