@@ -36,11 +36,12 @@ import {SearchBar} from '../../../source/components/search-bar'
 import {contactsOptions} from '../../../source/features/directory/contacts-query'
 import {formatResults} from '../../../source/features/directory/helpers'
 import {directoryEntriesOptions} from '../../../source/features/directory/query'
+import {ContactTile} from '../../../source/features/directory/tile'
 import {
 	columnsForFontScale,
-	ContactTile,
+	inRows,
 	TILE_SPACING,
-} from '../../../source/features/directory/tile'
+} from '../../../source/features/directory/tile-layout'
 import type {
 	ContactType,
 	DirectoryItem,
@@ -179,18 +180,6 @@ function IndentedListSeparator() {
 const CONTACT_GRID_ID = 'directory-contact-grid'
 /// Mirrored by TestIdentifiers.Directory.staleContacts.
 const STALE_CONTACTS_LABEL = 'Contacts may be out of date'
-
-/// Groups the contacts into the rows a SwiftUI Grid wants: its API takes
-/// children pre-split into `Grid.Row`s rather than a flat list. `columns`
-/// varies with Dynamic Type (see `columnsForFontScale`), so it is a parameter
-/// rather than a closed-over constant.
-function inRows(contacts: ContactType[], columns: number): ContactType[][] {
-	let rows: ContactType[][] = []
-	for (let i = 0; i < contacts.length; i += columns) {
-		rows.push(contacts.slice(i, i + columns))
-	}
-	return rows
-}
 
 /**
  * What the Directory screen shows before a search: the curated campus
