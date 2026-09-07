@@ -125,6 +125,14 @@ class ModuleCalendarTests: UITestCase {
 	///
 	/// The fixture's last event is Fri 2026-09-18, which leaves Sat 2026-09-19
 	/// empty.
+	///
+	/// The fixture states its events in campus time, but the app reads them in
+	/// the device's, so which day the last one falls on moves with the zone. Its
+	/// events are timed to keep Friday's on Friday from UTC-8 through UTC+2,
+	/// which covers a CI runner (UTC) and a machine on campus alike. Further
+	/// east than that they cross midnight, Saturday stops being empty, and this
+	/// test has nothing left to check -- so keep the fixture's last day well
+	/// clear of midnight if you move it.
 	func testTappingADayPastTheLastEventSelectsTheLastDayWithOne() throws {
 		let screen = CalendarScreen(app: app)
 			.navigate()
