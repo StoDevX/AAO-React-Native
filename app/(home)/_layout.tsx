@@ -16,7 +16,11 @@ export default function HomeLayout(): React.ReactNode {
 					headerShown: false,
 					sheetAllowedDetents: [0.5, 0.999],
 					sheetGrabberVisible: true,
-					sheetLargestUndimmedDetentIndex: 'last',
+					// 'none' rather than 'last': the list behind has nothing worth
+					// touching once the sheet is up, and an undimmed detent lets UIKit
+					// pass taps through to it -- a second tap on another row would push
+					// a second detail sheet on top of the first.
+					sheetLargestUndimmedDetentIndex: 'none',
 				}}
 			/>
 			<Stack.Screen
