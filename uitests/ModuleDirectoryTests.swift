@@ -24,14 +24,6 @@ class ModuleDirectoryTests: UITestCase {
 			.verifyDetailAction(TestIdentifiers.Directory.aContactAction)
 	}
 
-	func testLongPressingAContactOffersItsAction() throws {
-		DirectoryScreen(app: app)
-			.navigate()
-			.verifyContactMenu(
-				for: TestIdentifiers.Directory.aContact,
-				offers: TestIdentifiers.Directory.aContactAction)
-	}
-
 	/// At an accessibility Dynamic Type size the label and glyph both grow,
 	/// but a fixed column count's width would not -- columnsForFontScale is
 	/// what narrows the grid to keep it readable there instead of clipping.

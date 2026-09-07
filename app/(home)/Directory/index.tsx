@@ -8,8 +8,8 @@ import {
 	HStack,
 	Host,
 	Image as UIImage,
+	List,
 	ProgressView,
-	ScrollView,
 	Spacer,
 	Text as UIText,
 	VStack,
@@ -22,6 +22,10 @@ import {
 	font,
 	foregroundStyle,
 	frame,
+	listRowBackground,
+	listRowInsets,
+	listRowSeparator,
+	listStyle,
 	padding,
 	refreshable,
 } from '@expo/ui/swift-ui/modifiers'
@@ -30,10 +34,10 @@ import {Detail, ListRow, ListSectionHeader, ListSeparator, Title} from '@frogpon
 import * as c from '@frogpond/colors'
 import {useDebounce} from '@frogpond/use-debounce'
 import {LoadingView, NoticeView} from '@frogpond/notice'
-import {openUrl} from '@frogpond/open-url'
-import {callPhone} from '../../../source/components/call-phone'
 import {SearchBar} from '../../../source/components/search-bar'
 import {contactsOptions} from '../../../source/features/directory/contacts-query'
+import {DepartmentsList} from '../../../source/features/directory/departments-list'
+import {directoryDepartmentsOptions} from '../../../source/features/directory/departments-query'
 import {formatResults} from '../../../source/features/directory/helpers'
 import {directoryEntriesOptions} from '../../../source/features/directory/query'
 import {resolveSearch, searchHeading} from '../../../source/features/directory/resolve-search'
@@ -43,11 +47,7 @@ import {
 	inRows,
 	TILE_SPACING,
 } from '../../../source/features/directory/tile-layout'
-import type {
-	ContactType,
-	DirectoryItem,
-	DirectorySearchTypeEnum,
-} from '../../../source/features/directory/types'
+import type {DirectoryItem, DirectorySearchTypeEnum} from '../../../source/features/directory/types'
 import {FILL_WIDTH, SCREEN_MARGIN} from '../../../source/features/home/button'
 
 function DirectoryView(): React.ReactNode {
@@ -101,7 +101,7 @@ function DirectoryView(): React.ReactNode {
 	if (!searchQuery) {
 		return (
 			<>
-				<ImportantContacts />
+				<DirectoryLanding />
 				{searchChrome}
 			</>
 		)
@@ -181,64 +181,73 @@ const CONTACT_GRID_ID = 'directory-contact-grid'
 const STALE_CONTACTS_LABEL = 'Contacts may be out of date'
 
 /**
- * What the Directory screen shows before a search: the curated campus
- * contacts, as tiles.
+ * What the Directory screen shows before a search: the curated campus contacts
+ * as tiles, and the full campus department roster as an inset-grouped list.
  *
- * The contacts are cached to disk by `PersistQueryClientProvider`, so a device
- * that opens this offline still gets the grid. A failed refresh over a good
- * cache is a badge beside the heading rather than an error page -- searching,
- * which is this screen's real job, does not depend on it.
+ * Both queries are cached to disk by `PersistQueryClientProvider`, so a device
+ * that opens this offline still gets both. A failed refresh over good caches is
+ * absorbed -- searching, which is this screen's real job, depends on neither.
  */
-function ImportantContacts(): React.ReactNode {
+function DirectoryLanding(): React.ReactNode {
 	let router = useRouter()
-	let {data: contacts, error, isLoading, refetch} = useQuery(contactsOptions)
+	let {
+		data: contacts,
+		error: contactsError,
+		isLoading: contactsLoading,
+		refetch: refetchContacts,
+	} = useQuery(contactsOptions)
+	let {
+		data: departments,
+		isLoading: departmentsLoading,
+		refetch: refetchDepartments,
+	} = useQuery(directoryDepartmentsOptions)
 	let {fontScale} = useWindowDimensions()
 	let columns = columnsForFontScale(fontScale)
 
-	let onAct = React.useCallback((contact: ContactType) => {
-		if (contact.buttonLink) {
-			openUrl(contact.buttonLink)
-		} else if (contact.phoneNumber) {
-			callPhone(contact.phoneNumber, {title: contact.buttonText})
-		}
-	}, [])
-
-	let showError = React.useCallback(() => {
+	let showContactsError = React.useCallback(() => {
 		Alert.alert(
 			"Couldn't refresh contacts",
-			error instanceof Error ? error.message : 'Unknown error',
+			contactsError instanceof Error ? contactsError.message : 'Unknown error',
 			[
-				{text: 'Try Again', onPress: () => void refetch()},
+				{text: 'Try Again', onPress: () => void refetchContacts()},
 				{text: 'OK', style: 'cancel'},
 			],
 		)
-	}, [error, refetch])
+	}, [contactsError, refetchContacts])
 
-	// headerLargeTitleEnabled has nothing to collapse against here: the only
-	// scrollable in this branch is the SwiftUI ScrollView below, and
-	// react-native-screens has no handle into a Host's content to track it.
-	// Harmless while eight tiles never overflow the screen -- worth knowing
-	// before that stops being true.
+	let refresh = React.useCallback(async () => {
+		await Promise.all([refetchContacts(), refetchDepartments()])
+	}, [refetchContacts, refetchDepartments])
+
 	return (
 		<Host matchContents={false} style={styles.host}>
-			<ScrollView
+			<List
 				modifiers={[
+					listStyle('insetGrouped'),
 					refreshable(async () => {
-						await refetch()
+						await refresh()
 					}),
 				]}
 			>
 				<VStack
-					modifiers={[padding({all: SCREEN_MARGIN}), frame({maxWidth: FILL_WIDTH})]}
+					modifiers={[
+						listRowBackground('clear'),
+						listRowInsets({top: 0, leading: 0, bottom: 0, trailing: 0}),
+						listRowSeparator('hidden'),
+						// Horizontal + top only: the enclosing List owns the gap down
+						// to the Departments section below.
+						padding({horizontal: SCREEN_MARGIN, top: SCREEN_MARGIN}),
+						frame({maxWidth: FILL_WIDTH}),
+					]}
 					spacing={TILE_SPACING}
 				>
 					<HStack modifiers={[frame({maxWidth: FILL_WIDTH})]}>
 						<UIText modifiers={[font({textStyle: 'headline'})]}>Important Contacts</UIText>
 						<Spacer />
-						{error && contacts ? (
+						{contactsError && contacts ? (
 							<Button
 								modifiers={[buttonStyle('plain'), accessibilityLabel(STALE_CONTACTS_LABEL)]}
-								onPress={showError}
+								onPress={showContactsError}
 							>
 								<UIImage color={c.orange} systemName="exclamationmark.triangle.fill" />
 							</Button>
@@ -266,7 +275,6 @@ function ImportantContacts(): React.ReactNode {
 										<ContactTile
 											key={contact.title}
 											contact={contact}
-											onAct={() => onAct(contact)}
 											onPress={() =>
 												router.push({
 													pathname: '/Directory/named/[title]',
@@ -285,7 +293,7 @@ function ImportantContacts(): React.ReactNode {
 								</Grid.Row>
 							))}
 						</Grid>
-					) : isLoading ? (
+					) : contactsLoading ? (
 						<ProgressView />
 					) : (
 						<UIText modifiers={[foregroundStyle(c.secondaryLabel)]}>
@@ -293,7 +301,18 @@ function ImportantContacts(): React.ReactNode {
 						</UIText>
 					)}
 				</VStack>
-			</ScrollView>
+
+				<DepartmentsList
+					departments={departments}
+					isLoading={departmentsLoading}
+					onSelectDepartment={(name) =>
+						router.push({
+							pathname: '/Directory',
+							params: {queryType: 'department', queryParam: name},
+						})
+					}
+				/>
+			</List>
 		</Host>
 	)
 }

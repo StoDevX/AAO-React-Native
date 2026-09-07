@@ -244,7 +244,7 @@ struct TestIdentifiers {
 		/// A contact from data/contact-info/, so its tile is in the grid
 		/// whatever the server is serving.
 		static let aContact = "PubSafe"
-		/// That contact's own action, which its tile offers on long-press.
+		/// That contact's own action, shown on its detail screen.
 		static let aContactAction = "Call Public Safety"
 		static let rowPrefix = "directory-row-"
 
