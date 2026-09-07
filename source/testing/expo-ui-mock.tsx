@@ -273,6 +273,10 @@ export const accessibilityIdentifier = (id: string): Modifier => ({
 export const padding = (params: Record<string, number>): Modifier => ({$type: 'padding', ...params})
 export const frame = (params: Record<string, unknown>): Modifier => ({$type: 'frame', ...params})
 export const hidden = (isHidden = true): Modifier => ({$type: 'hidden', isHidden})
+export const ignoreSafeArea = (params: Record<string, unknown> = {}): Modifier => ({
+	$type: 'ignoreSafeArea',
+	...params,
+})
 
 export function ScrollView({children}: WithModifiers): React.ReactNode {
 	return <View>{children}</View>

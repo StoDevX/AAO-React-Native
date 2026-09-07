@@ -3,6 +3,7 @@ import {StyleSheet} from 'react-native'
 import {BottomSheet, Group, Host} from '@expo/ui/swift-ui'
 import {
 	background,
+	ignoreSafeArea,
 	presentationDetents,
 	presentationDragIndicator,
 	type PresentationDetent,
@@ -111,7 +112,11 @@ function DictionaryView(): React.ReactNode {
 				>
 					<Group
 						modifiers={[
+							// The sheet's content stops at the bottom safe area, so
+							// without letting the fill run past it, the sheet's own
+							// backing shows through beneath the entry as a pale band.
 							background(c.systemGroupedBackground),
+							ignoreSafeArea({edges: 'bottom'}),
 							presentationDetents(SHEET_DETENTS, {
 								selection: detent,
 								onSelectionChange: setDetent,

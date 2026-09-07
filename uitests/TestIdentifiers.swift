@@ -54,6 +54,24 @@ struct TestIdentifiers {
 
 	// MARK: - Carleton Map
 
+	enum Dictionary {
+		static let list = "dictionary-list"
+		static let definitionSheet = "dictionary-definition-sheet"
+		static let editorSheet = "dictionary-editor-sheet"
+		static let actionsMenu = "More actions"
+		static let suggestAnEdit = "Suggest an Edit"
+		static let close = "Close"
+		static let wordField = "Word"
+		/// The one entry carrying phonetics, and a Norwegian name whose
+		/// diacritic an ASCII query has to get past to find it.
+		static let phoneticEntry = "Rølvaag"
+		static let phoneticEntryQuery = "Rolvaag"
+		static let phoneticEntryIPA = "ˈrø̂ːlvoːɡ"
+		static let phoneticEntryPartOfSpeech = "noun"
+	}
+
+	// MARK: - Carleton Map
+
 	enum CarletonMap {
 		/// The sheet's search field. Its placeholder is its accessibility label,
 		/// which is what a SwiftUI TextField reports when it has no other.

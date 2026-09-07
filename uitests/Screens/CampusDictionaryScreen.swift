@@ -14,12 +14,72 @@ struct CampusDictionaryScreen: Screen {
 	/// `element(matching:)` is type-agnostic and takes the first match, which
 	/// is enough to prove the sheet is up and to read its top edge.
 	private var definitionSheet: XCUIElement {
-		app.element(matching: "dictionary-definition-sheet")
+		app.element(matching: TestIdentifiers.Dictionary.definitionSheet)
+	}
+
+	private var searchField: XCUIElement {
+		app.searchFields.firstMatch
 	}
 
 	@discardableResult
 	func navigate() -> Self {
 		navigateFromHome(to: TestIdentifiers.Buttons.dictionary)
+	}
+
+	@discardableResult
+	func search(for text: String) -> Self {
+		XCTAssertTrue(
+			searchField.waitForExistence(timeout: 30),
+			"the dictionary should offer a search field")
+		searchField.tap()
+		searchField.typeText(text)
+
+		// The field holds the query, so read it back: a test that typed into
+		// nothing would filter nothing and still find the first row.
+		XCTAssertEqual(
+			searchField.value as? String, text,
+			"typing should put the query in the search field")
+
+		// The keyboard covers the lower half of the results, and a row it hides
+		// is neither rendered nor hittable.
+		app.keyboards.buttons["search"].firstMatch.tap()
+		return self
+	}
+
+	/// Opens an entry by name. Distinct from `openFirstWord`, which takes
+	/// whatever happens to be at the top of the list.
+	@discardableResult
+	func openWord(_ word: String) -> Self {
+		// A query matches every entry that *mentions* the word, not just the
+		// entry named for it, so the row wanted can sit well down the results
+		// -- and a SwiftUI List gives XCUITest nothing to match until the row
+		// is actually rendered. Scroll until it is.
+		//
+		// A row reads its headword and then its definition preview as one
+		// label, so match the start of it rather than the whole thing.
+		let row = app.elementWithLabel(startingWith: word)
+		scrollUntilExists(row)
+		XCTAssertTrue(row.exists, "no row for \(word)")
+		row.tap()
+		return self
+	}
+
+	/// The phonetics a dictionary sets between pipes, next to the headword.
+	@discardableResult
+	func verifyPronunciation(_ ipa: String) -> Self {
+		let phonetics = app.staticTexts["| \(ipa) |"]
+		XCTAssertTrue(
+			phonetics.waitForExistence(timeout: 5),
+			"the sheet showed no phonetics for \(ipa)")
+		return self
+	}
+
+	@discardableResult
+	func verifyPartOfSpeech(_ part: String) -> Self {
+		XCTAssertTrue(
+			app.staticTexts[part].waitForExistence(timeout: 5),
+			"the sheet showed no part of speech")
+		return self
 	}
 
 	@discardableResult
@@ -33,7 +93,7 @@ struct CampusDictionaryScreen: Screen {
 		// is an implementation detail rather than a promise. If this query
 		// finds nothing on the first run, dump `app.debugDescription` and use
 		// whichever element type actually carries the identifier.
-		let list = app.collectionViews["dictionary-list"]
+		let list = app.collectionViews[TestIdentifiers.Dictionary.list]
 		XCTAssertTrue(list.waitForExistence(timeout: 10), "the dictionary list never appeared")
 
 		let firstWord = list.buttons.firstMatch
@@ -49,7 +109,7 @@ struct CampusDictionaryScreen: Screen {
 	/// whatever detent the first was left at.
 	@discardableResult
 	func openSecondWord() -> Self {
-		let list = app.collectionViews["dictionary-list"]
+		let list = app.collectionViews[TestIdentifiers.Dictionary.list]
 		XCTAssertTrue(list.waitForExistence(timeout: 10), "the dictionary list never appeared")
 
 		let secondWord = list.buttons.element(boundBy: 1)
@@ -72,10 +132,6 @@ struct CampusDictionaryScreen: Screen {
 	func verifySheetIsHalfHeight() -> Self {
 		let screen = app.windows.firstMatch.frame
 		let top = definitionSheet.frame.minY
-
-		print("DEBUG app.frame = \(app.frame)")
-		print("DEBUG app.windows.firstMatch.frame = \(screen)")
-		print("DEBUG definitionSheet.frame = \(definitionSheet.frame)")
 
 		XCTAssertGreaterThan(
 			top, screen.height * 0.3,
@@ -123,11 +179,11 @@ struct CampusDictionaryScreen: Screen {
 	/// The sheet's actions sit behind the ellipsis in the title row, so reaching
 	/// the editor takes two taps: open the menu, then choose from it.
 	func openEditor() -> Self {
-		let menu = app.buttons["More actions"]
+		let menu = app.buttons[TestIdentifiers.Dictionary.actionsMenu]
 		XCTAssertTrue(menu.waitForExistence(timeout: 5), "the sheet had no actions menu")
 		menu.tap()
 
-		let button = app.buttons["Suggest an Edit"]
+		let button = app.buttons[TestIdentifiers.Dictionary.suggestAnEdit]
 		XCTAssertTrue(button.waitForExistence(timeout: 5), "Suggest an Edit was not in the menu")
 		button.tap()
 		return self
@@ -135,9 +191,9 @@ struct CampusDictionaryScreen: Screen {
 
 	@discardableResult
 	func verifyEditorIsPresented() -> Self {
-		let editor = app.element(matching: "dictionary-editor-sheet")
+		let editor = app.element(matching: TestIdentifiers.Dictionary.editorSheet)
 		XCTAssertTrue(editor.waitForExistence(timeout: 5), "the editor sheet never appeared")
-		XCTAssertTrue(app.textFields["Word"].exists, "the editor had no word field")
+		XCTAssertTrue(app.textFields[TestIdentifiers.Dictionary.wordField].exists, "the editor had no word field")
 		return self
 	}
 
@@ -146,7 +202,7 @@ struct CampusDictionaryScreen: Screen {
 	/// leaves the least room to find out.
 	@discardableResult
 	func focusWordField() -> Self {
-		app.textFields["Word"].tap()
+		app.textFields[TestIdentifiers.Dictionary.wordField].tap()
 		XCTAssertTrue(
 			app.keyboards.element.waitForExistence(timeout: 5), "the keyboard never appeared")
 		return self
