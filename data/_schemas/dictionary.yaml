@@ -2,7 +2,22 @@ $schema: http://json-schema.org/draft-07/schema#
 
 type: object
 additionalProperties: false
-required: [word, definition]
+required: [word]
+oneOf:
+  - required: [definition]
+  - required: [senses]
 properties:
   word: {type: string}
+  pronunciation: {type: string}
+  partOfSpeech: {type: string}
   definition: {type: string}
+  senses:
+    type: array
+    minItems: 1
+    items:
+      type: object
+      additionalProperties: false
+      required: [definition]
+      properties:
+        definition: {type: string}
+        example: {type: string}
