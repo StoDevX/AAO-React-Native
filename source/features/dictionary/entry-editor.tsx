@@ -1,6 +1,7 @@
 import * as React from 'react'
 import {Button, Form, Section, Text, TextField, useNativeState} from '@expo/ui/swift-ui'
 import {
+	accessibilityIdentifier,
 	accessibilityLabel,
 	lineLimit,
 	textInputAutocapitalization,
@@ -41,7 +42,7 @@ export function EntryEditor({entry, onDone}: Props): React.ReactNode {
 	}
 
 	return (
-		<Form>
+		<Form modifiers={[accessibilityIdentifier('dictionary-editor-sheet')]}>
 			<Section title="Word">
 				<TextField
 					modifiers={[accessibilityLabel('Word'), textInputAutocapitalization('words')]}

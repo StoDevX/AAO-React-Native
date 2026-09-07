@@ -60,7 +60,10 @@ export const contentShape = (shape: unknown): Modifier => ({
 	shape,
 })
 
-export const shapes = {rectangle: (): Modifier => ({$type: 'rectangle'})}
+export const shapes = {
+	rectangle: (): Modifier => ({$type: 'rectangle'}),
+	circle: (): Modifier => ({$type: 'circle'}),
+}
 
 export const buttonStyle = (style: string): Modifier => ({
 	$type: 'buttonStyle',
@@ -252,6 +255,8 @@ export const accessibilityIdentifier = (id: string): Modifier => ({
 	id,
 })
 export const padding = (params: Record<string, number>): Modifier => ({$type: 'padding', ...params})
+export const frame = (params: Record<string, unknown>): Modifier => ({$type: 'frame', ...params})
+export const hidden = (isHidden = true): Modifier => ({$type: 'hidden', isHidden})
 
 export function ScrollView({children}: WithModifiers): React.ReactNode {
 	return <View>{children}</View>

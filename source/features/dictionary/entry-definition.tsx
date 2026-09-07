@@ -1,25 +1,48 @@
 import * as React from 'react'
 import {Button, HStack, Image, ScrollView, Spacer, Text, VStack} from '@expo/ui/swift-ui'
 import {
+	accessibilityIdentifier,
 	accessibilityLabel,
+	background,
 	bold,
 	buttonStyle,
 	font,
 	foregroundStyle,
+	frame,
+	hidden,
 	italic,
 	lineSpacing,
 	padding,
+	shapes,
 	textSelection,
 } from '@expo/ui/swift-ui/modifiers'
 import * as c from '@frogpond/colors'
 
 import type {NormalizedEntry} from './types'
 
-/// Matches the glyph Apple's sheets close with, and the size building-info uses.
-const CLOSE_GLYPH_SIZE = 26
+/// The xmark glyph, and the disc it sits on.
+const CLOSE_GLYPH_SIZE = 13
+const CLOSE_GLYPH_DIAMETER = 30
 /// Apple's dictionary sets its body with noticeably open leading.
 const BODY_LINE_SPACING = 4
 const CONTENT_PADDING = 20
+/// The headword, its phonetics and its part of speech read as one block, so
+/// they sit closer together than the gaps between blocks.
+const HEADING_SPACING = 4
+/// Apple hangs the sense number in the margin and indents the sense body past
+/// it, so wrapped lines align with the first rather than with the number.
+const SENSE_NUMBER_WIDTH = 18
+const SENSE_GUTTER = 8
+
+/**
+ * Drops a single trailing full stop, so a definition written as a sentence can
+ * still be followed by `: example` without reading as `modify.: both parties`.
+ * Question and exclamation marks stay: they carry meaning a colon does not
+ * replace.
+ */
+function withoutFullStop(definition: string): string {
+	return definition.endsWith('.') ? definition.slice(0, -1) : definition
+}
 
 type Props = {
 	entry: NormalizedEntry
@@ -38,76 +61,103 @@ export function EntryDefinition({entry, onEdit, onClose}: Props): React.ReactNod
 
 	return (
 		<ScrollView>
-			<VStack alignment="leading" spacing={12} modifiers={[padding({all: CONTENT_PADDING})]}>
+			<VStack
+				alignment="leading"
+				spacing={12}
+				modifiers={[
+					padding({all: CONTENT_PADDING}),
+					accessibilityIdentifier('dictionary-definition-sheet'),
+				]}
+			>
+				{/* The title is centred on the sheet, not on the space left over
+				    beside the close button, so a hidden glyph of the same size
+				    balances the real one on the other end. */}
 				<HStack alignment="center">
+					<Image modifiers={[hidden(true)]} size={CLOSE_GLYPH_DIAMETER} systemName="xmark" />
+					<Spacer />
 					<Text modifiers={[font({textStyle: 'headline'})]}>Dictionary</Text>
 					<Spacer />
+					{/* A dark glyph on a light disc, which is how the system draws a
+					    sheet's close button -- rather than `xmark.circle.fill`,
+					    whose disc is the tinted part and reads inverted here. */}
 					<Button modifiers={[accessibilityLabel('Close'), buttonStyle('plain')]} onPress={onClose}>
 						<Image
-							modifiers={[foregroundStyle({type: 'hierarchical', style: 'secondary'})]}
-							size={CLOSE_GLYPH_SIZE}
-							systemName="xmark.circle.fill"
+							modifiers={[
+								font({size: CLOSE_GLYPH_SIZE, weight: 'bold'}),
+								foregroundStyle(c.secondaryLabel),
+								frame({width: CLOSE_GLYPH_DIAMETER, height: CLOSE_GLYPH_DIAMETER}),
+								background(c.quaternarySystemFill, shapes.circle()),
+							]}
+							systemName="xmark"
 						/>
 					</Button>
 				</HStack>
 
-				{/* `textStyle` rather than a fixed `size`, so the headword still
-				    scales with Dynamic Type -- a bare `size` does not. */}
-				<Text
-					modifiers={[
-						font({textStyle: 'largeTitle', design: 'serif', weight: 'bold'}),
-						textSelection(true),
-					]}
-				>
-					{entry.word}
-				</Text>
+				<VStack alignment="leading" spacing={HEADING_SPACING}>
+					{/* Headword and phonetics share a line, sitting on a common
+					    baseline so the smaller phonetics do not ride high. */}
+					<HStack alignment="firstTextBaseline" spacing={SENSE_GUTTER}>
+						{/* `textStyle` rather than a fixed `size`, so the headword still
+						    scales with Dynamic Type -- a bare `size` does not. */}
+						<Text
+							modifiers={[
+								font({textStyle: 'largeTitle', design: 'serif', weight: 'bold'}),
+								textSelection(true),
+							]}
+						>
+							{entry.word}
+						</Text>
 
-				{entry.pronunciation ? (
-					<Text
-						modifiers={[
-							font({textStyle: 'body', design: 'serif'}),
-							foregroundStyle(c.secondaryLabel),
-						]}
-					>
-						{`| ${entry.pronunciation} |`}
-					</Text>
-				) : null}
-
-				{entry.partOfSpeech ? (
-					<Text modifiers={[font({textStyle: 'subheadline', design: 'serif'})]}>
-						{entry.partOfSpeech}
-					</Text>
-				) : null}
-
-				{entry.senses.map((sense, index) => (
-					<HStack alignment="top" key={index} spacing={8}>
-						{numbered ? (
-							<Text modifiers={[font({textStyle: 'body', design: 'serif'}), bold()]}>
-								{String(index + 1)}
-							</Text>
-						) : null}
-						<VStack alignment="leading" spacing={6}>
+						{entry.pronunciation ? (
 							<Text
 								modifiers={[
 									font({textStyle: 'body', design: 'serif'}),
-									lineSpacing(BODY_LINE_SPACING),
+									foregroundStyle(c.secondaryLabel),
 									textSelection(true),
 								]}
 							>
-								{sense.definition}
+								{`| ${entry.pronunciation} |`}
 							</Text>
+						) : null}
+					</HStack>
+
+					{entry.partOfSpeech ? (
+						<Text modifiers={[font({textStyle: 'body', design: 'serif'})]}>
+							{entry.partOfSpeech}
+						</Text>
+					) : null}
+				</VStack>
+
+				{entry.senses.map((sense, index) => (
+					<HStack alignment="firstTextBaseline" key={index} spacing={SENSE_GUTTER}>
+						{numbered ? (
+							<Text
+								modifiers={[
+									font({textStyle: 'body', design: 'serif'}),
+									bold(),
+									frame({width: SENSE_NUMBER_WIDTH, alignment: 'leading'}),
+								]}
+							>
+								{String(index + 1)}
+							</Text>
+						) : null}
+						{/* The example runs on from its definition after a colon, set
+						    in italic, the way a dictionary sets a citation -- rather
+						    than breaking to its own line. */}
+						<Text
+							modifiers={[
+								font({textStyle: 'body', design: 'serif'}),
+								lineSpacing(BODY_LINE_SPACING),
+								textSelection(true),
+							]}
+						>
+							<Text>{sense.example ? withoutFullStop(sense.definition) : sense.definition}</Text>
 							{sense.example ? (
-								<Text
-									modifiers={[
-										font({textStyle: 'body', design: 'serif'}),
-										italic(),
-										foregroundStyle(c.secondaryLabel),
-									]}
-								>
-									{sense.example}
+								<Text modifiers={[italic(), foregroundStyle(c.secondaryLabel)]}>
+									{`: ${sense.example}`}
 								</Text>
 							) : null}
-						</VStack>
+						</Text>
 					</HStack>
 				))}
 

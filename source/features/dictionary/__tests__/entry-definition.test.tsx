@@ -95,7 +95,37 @@ describe('EntryDefinition', () => {
 			/>,
 		)
 
-		expect(screen.getByText('Grab mozzarella sticks.')).toBeTruthy()
+		// The example runs on from its definition after a colon, so it is not a
+		// standalone string in the tree.
+		expect(screen.getByText(': Grab mozzarella sticks.')).toBeTruthy()
+	})
+
+	it('drops the definition’s full stop before an example runs on from it', async () => {
+		await render(
+			<EntryDefinition
+				entry={normalizeEntry({
+					word: 'Pause',
+					senses: [{definition: 'The venue.', example: 'Grab a snack.'}],
+				})}
+				onClose={jest.fn()}
+				onEdit={jest.fn()}
+			/>,
+		)
+
+		expect(screen.getByText('The venue')).toBeTruthy()
+		expect(screen.queryByText('The venue.')).toBeNull()
+	})
+
+	it('keeps the full stop when the sense has no example', async () => {
+		await render(
+			<EntryDefinition
+				entry={normalizeEntry({word: 'Caf', definition: 'The dining hall.'})}
+				onClose={jest.fn()}
+				onEdit={jest.fn()}
+			/>,
+		)
+
+		expect(screen.getByText('The dining hall.')).toBeTruthy()
 	})
 
 	it('reports a request to edit', async () => {
