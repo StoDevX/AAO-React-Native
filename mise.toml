@@ -1,11 +1,10 @@
 [tools]
 node = "24.20.0"
-pnpm = "12.3.0"
+pnpm = "12.3.2"
 hk = "latest"
 ruby = "3.4.10"
-"gem:bundler" = "4.0.19"
+"gem:bundler" = "4.0.20"
 "gem:fastlane" = "2.237.0"
-cocoapods = "1.17.0"
 "gem:rubocop" = "1.90.0"
 sentry = "3.7.0"
 
@@ -54,6 +53,11 @@ fi
 
 shim="$(mktemp -d)"
 cp -R ios/ci_scripts/. "$shim/"
+
+# CocoaPods comes from the Gemfile, so that its json pin applies -- see the
+# comment there. Expo runs `bundle exec pod` only once `bundle exec pod
+# --version` answers, so the gems have to be in place before prebuild.
+bundle install --quiet
 
 expo prebuild --platform ios
 

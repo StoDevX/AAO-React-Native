@@ -32,6 +32,12 @@ mise install node
 # since MISE_AUTO_INSTALL is off.
 mise install pnpm
 
+# The prebuild task runs `bundle install` to get CocoaPods from the Gemfile,
+# so ruby and bundler have to be installed too. Also explicit, for the same
+# reason as node and pnpm above.
+mise install ruby
+mise install 'gem:bundler'
+
 # `mise which` returns an absolute path, which is what xcodebuild needs below.
 NODE_PATH="$(mise which node)"
 
@@ -41,7 +47,7 @@ echo "node path: ${NODE_PATH}"
 # Put node on PATH for the rest of this script
 export PATH="$(dirname "${NODE_PATH}"):$PATH"
 
-# Activate mise shims for pnpm/ruby/cocoapods tools used in task runs
+# Activate mise shims for the pnpm and ruby tools used in task runs
 eval "$(mise activate bash --shims)"
 
 # install node modules. Patches in patchedDependencies (pnpm-workspace.yaml)
