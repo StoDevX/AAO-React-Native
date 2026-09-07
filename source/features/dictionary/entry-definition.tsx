@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {Button, HStack, Image, ScrollView, Spacer, Text, VStack} from '@expo/ui/swift-ui'
+import {Button, HStack, Image, Menu, ScrollView, Spacer, Text, VStack} from '@expo/ui/swift-ui'
 import {
 	accessibilityIdentifier,
 	accessibilityLabel,
@@ -9,9 +9,9 @@ import {
 	font,
 	foregroundStyle,
 	frame,
-	hidden,
 	italic,
 	lineSpacing,
+	menuIndicator,
 	padding,
 	shapes,
 	textSelection,
@@ -20,8 +20,10 @@ import * as c from '@frogpond/colors'
 
 import type {NormalizedEntry} from './types'
 
-/// The xmark glyph, and the disc it sits on.
+/// The xmark glyph, and the disc it sits on. The ellipsis rides the same disc
+/// so the two ends of the title row balance.
 const CLOSE_GLYPH_SIZE = 13
+const MENU_GLYPH_SIZE = 15
 const CLOSE_GLYPH_DIAMETER = 30
 /// Apple's dictionary sets its body with noticeably open leading.
 const BODY_LINE_SPACING = 4
@@ -69,11 +71,28 @@ export function EntryDefinition({entry, onEdit, onClose}: Props): React.ReactNod
 					accessibilityIdentifier('dictionary-definition-sheet'),
 				]}
 			>
-				{/* The title is centred on the sheet, not on the space left over
-				    beside the close button, so a hidden glyph of the same size
-				    balances the real one on the other end. */}
+				{/* Actions at one end, Close at the other, both on discs of the
+				    same size -- so the title sits centred on the sheet rather than
+				    on whatever space the buttons leave over. */}
 				<HStack alignment="center">
-					<Image modifiers={[hidden(true)]} size={CLOSE_GLYPH_DIAMETER} systemName="xmark" />
+					{/* The sheet's actions live behind one glyph, the way a system
+					    sheet keeps everything but Close out of the title row. */}
+					<Menu
+						label={
+							<Image
+								modifiers={[
+									font({size: MENU_GLYPH_SIZE, weight: 'bold'}),
+									foregroundStyle(c.secondaryLabel),
+									frame({width: CLOSE_GLYPH_DIAMETER, height: CLOSE_GLYPH_DIAMETER}),
+									background(c.quaternarySystemFill, shapes.circle()),
+								]}
+								systemName="ellipsis"
+							/>
+						}
+						modifiers={[accessibilityLabel('More actions'), menuIndicator('hidden')]}
+					>
+						<Button label="Suggest an Edit" onPress={onEdit} systemImage="pencil" />
+					</Menu>
 					<Spacer />
 					<Text modifiers={[font({textStyle: 'headline'})]}>Dictionary</Text>
 					<Spacer />
@@ -160,8 +179,6 @@ export function EntryDefinition({entry, onEdit, onClose}: Props): React.ReactNod
 						</Text>
 					</HStack>
 				))}
-
-				<Button label="Suggest an Edit" onPress={onEdit} />
 
 				<Text modifiers={[font({textStyle: 'footnote'}), foregroundStyle(c.tertiaryLabel)]}>
 					Collected by the humans of All About Olaf

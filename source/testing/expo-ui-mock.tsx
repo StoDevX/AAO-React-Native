@@ -135,6 +135,22 @@ export function Spacer(): React.ReactNode {
 	return <View />
 }
 
+/// A menu's items are only on screen once it is opened, which a stand-in
+/// cannot model. Rendering both the trigger and the items keeps the actions
+/// reachable, so a test can still assert what tapping one does.
+export function Menu({
+	children,
+	label,
+	modifiers,
+}: WithModifiers & {label?: React.ReactNode}): React.ReactNode {
+	return (
+		<View accessibilityLabel={labelOf(modifiers)}>
+			{typeof label === 'string' ? <RNText>{label}</RNText> : label}
+			{children}
+		</View>
+	)
+}
+
 export function RNHostView({children}: WithModifiers): React.ReactNode {
 	return <View>{children}</View>
 }
