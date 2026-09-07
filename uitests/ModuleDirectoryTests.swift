@@ -65,11 +65,11 @@ class ModuleDirectoryTests: UITestCase {
 			.openDepartment(
 				of: TestIdentifiers.Directory.departmentalEntry, named: department)
 			.verifyDepartmentHeading(department)
-			.verifyResultsListed()
+			.verifyResultsShown()
 			.cancelSearch()
 			.capture("Directory department screen after cancelling search")
 			.verifyDepartmentHeading(department)
-			.verifyResultsListed()
+			.verifyResultsShown()
 	}
 
 	/// The title stays "Directory" wherever the screen was opened from, so a
@@ -86,6 +86,30 @@ class ModuleDirectoryTests: UITestCase {
 			.capture("Directory opened from a department link")
 			.verifyDirectoryTitle()
 			.verifyDepartmentHeading(department)
+			.verifyResultsShown()
+	}
+
+	/// Faces read faster than a column of names, so a search opens on the tile
+	/// gallery unless the reader has switched away from it before.
+	func testSearchResultsOpenAsTiles() throws {
+		DirectoryScreen(app: app)
+			.navigate()
+			.search(for: "olaf")
+			.verifyResultsGalleried()
+			.capture("Directory search results as a tile gallery")
+	}
+
+	/// The toolbar button swaps the results between the gallery and the list,
+	/// both ways.
+	func testTheResultsToggleSwitchesTheView() throws {
+		DirectoryScreen(app: app)
+			.navigate()
+			.search(for: "olaf")
+			.verifyResultsGalleried()
+			.showAsList()
 			.verifyResultsListed()
+			.capture("Directory search results as a list")
+			.showAsTiles()
+			.verifyResultsGalleried()
 	}
 }

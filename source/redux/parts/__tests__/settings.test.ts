@@ -67,14 +67,14 @@ describe('calendar source selection', () => {
 })
 
 describe('directory results view', () => {
-	test('starts as the list', () => {
-		expect(initial().directoryResultsView).toBe('list')
+	test('starts as the tile gallery', () => {
+		expect(initial().directoryResultsView).toBe('tiles')
 	})
 
 	test('setting the view changes it', () => {
-		let state = reducer(initial(), setDirectoryResultsView('tiles'))
+		let state = reducer(initial(), setDirectoryResultsView('list'))
 
-		expect(state.directoryResultsView).toBe('tiles')
+		expect(state.directoryResultsView).toBe('list')
 	})
 
 	// autoMergeLevel1 swaps the whole `settings` slice in from storage, so an
@@ -87,10 +87,10 @@ describe('directory results view', () => {
 			enabledCalendarSources: ['uitest'],
 		} as ReturnType<typeof reducer>
 
-		test('the selector falls back to the list', () => {
+		test('the selector falls back to the tile gallery', () => {
 			let rootState = {settings: staleRehydratedState} as RootState
 
-			expect(selectDirectoryResultsView(rootState)).toBe('list')
+			expect(selectDirectoryResultsView(rootState)).toBe('tiles')
 		})
 	})
 })

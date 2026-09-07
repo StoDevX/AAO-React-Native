@@ -107,14 +107,63 @@ struct DirectoryScreen: Screen {
 		return self
 	}
 
-	/// Assert the list has results in it, without naming any of them: which
-	/// people a department holds is the college's business, not this test's.
+	/// Switch the results to the row list. The toggle only exists once a search
+	/// has results, so this is called after one.
+	@discardableResult
+	func showAsList() -> Self {
+		let toggle = app.buttonLabelled(TestIdentifiers.Directory.showAsList)
+		XCTAssertTrue(
+			toggle.waitForExistence(timeout: 30),
+			"The results should offer a list/tiles toggle")
+		toggle.tap()
+		return self
+	}
+
+	/// Switch the results to the tile gallery.
+	@discardableResult
+	func showAsTiles() -> Self {
+		let toggle = app.buttonLabelled(TestIdentifiers.Directory.showAsTiles)
+		XCTAssertTrue(
+			toggle.waitForExistence(timeout: 30),
+			"The results should offer a list/tiles toggle")
+		toggle.tap()
+		return self
+	}
+
+	/// Assert the results have something in them, in whichever view is showing,
+	/// without naming any of them: which people a department holds is the
+	/// college's business, not this test's.
+	@discardableResult
+	func verifyResultsShown() -> Self {
+		let firstRow = app.element(matching: "\(TestIdentifiers.Directory.rowPrefix)0")
+		let firstTile = app.element(matching: "\(TestIdentifiers.Directory.tilePrefix)0")
+		let deadline = Date().addingTimeInterval(30)
+		while Date() < deadline && !firstRow.exists && !firstTile.exists {
+			usleep(200_000)
+		}
+		XCTAssertTrue(
+			firstRow.exists || firstTile.exists,
+			"The directory results should have something in them")
+		return self
+	}
+
+	/// Assert the results are showing as the row list.
 	@discardableResult
 	func verifyResultsListed() -> Self {
 		let firstRow = app.element(matching: "\(TestIdentifiers.Directory.rowPrefix)0")
 		XCTAssertTrue(
 			firstRow.waitForExistence(timeout: 30),
 			"The directory list should have results in it")
+		return self
+	}
+
+	/// Assert the results are showing as the tile gallery.
+	@discardableResult
+	func verifyResultsGalleried() -> Self {
+		let firstTile = app.element(matching: "\(TestIdentifiers.Directory.tilePrefix)0")
+		XCTAssertTrue(
+			firstTile.waitForExistence(timeout: 30),
+			"The directory gallery should have tiles in it")
 		return self
 	}
 

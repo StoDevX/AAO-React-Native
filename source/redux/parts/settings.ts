@@ -18,8 +18,8 @@ const initialState = {
 	// St. Olaf alone: the college whose app this is, and the only calendar most
 	// people want on by default. UI test mode uses only the fixture calendar.
 	enabledCalendarSources: isUITesting ? ['uitest'] : ['stolaf'],
-	// The Directory search results opened as a list before the tile view existed.
-	directoryResultsView: 'list',
+	// Faces read faster than a list of names, so search results open as tiles.
+	directoryResultsView: 'tiles',
 } as State
 
 const slice = createSlice({

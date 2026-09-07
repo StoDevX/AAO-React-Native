@@ -2,6 +2,7 @@ import * as React from 'react'
 import {Image, StyleSheet} from 'react-native'
 import {Button, RoundedRectangle, RNHostView, Text, VStack, ZStack} from '@expo/ui/swift-ui'
 import {
+	accessibilityIdentifier,
 	accessibilityLabel,
 	aspectRatio,
 	buttonStyle,
@@ -23,6 +24,8 @@ type Props = {
 	person: DirectoryItem
 	/** The column width, in points, so a lone tile in a short row stays one column wide. */
 	width: number
+	/** Mirrors `TestIdentifiers.Directory.tilePrefix` so XCUITest can find a tile by position. */
+	testID: string
 	onPress: () => void
 }
 
@@ -31,12 +34,16 @@ type Props = {
  * card carrying the person's photo (or their initials when the directory has no
  * image), with the name beneath. Tapping opens the person's detail screen.
  */
-export function PersonTile({person, width, onPress}: Props): React.ReactNode {
+export function PersonTile({person, width, testID, onPress}: Props): React.ReactNode {
 	let photo = person.photo || person.thumbnail
 
 	return (
 		<Button
-			modifiers={[buttonStyle('plain'), accessibilityLabel(person.displayName)]}
+			modifiers={[
+				buttonStyle('plain'),
+				accessibilityLabel(person.displayName),
+				accessibilityIdentifier(testID),
+			]}
 			onPress={onPress}
 		>
 			<VStack modifiers={[frame({width}), contentShape(shapes.rectangle())]} spacing={8}>

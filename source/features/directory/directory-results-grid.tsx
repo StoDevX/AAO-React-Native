@@ -9,6 +9,9 @@ import {columnsForFontScale, inRows, TILE_SPACING} from './tile-layout'
 import {PersonTile} from './person-tile'
 import type {DirectoryItem} from './types'
 
+/// Mirrored by TestIdentifiers.Directory.tilePrefix.
+const TILE_PREFIX = 'directory-tile-'
+
 type Props = {
 	items: DirectoryItem[]
 	/** The name over the results, when the search was opened from something named. */
@@ -72,6 +75,7 @@ export function DirectoryResultsGrid({
 										key={index}
 										onPress={() => onSelectIndex(index)}
 										person={person}
+										testID={`${TILE_PREFIX}${index}`}
 										width={tileWidth}
 									/>
 								))}
