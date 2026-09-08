@@ -77,10 +77,12 @@ struct CarletonMapScreen: Screen {
 	/// out as a quietly short field rather than a console warning. Measuring is
 	/// the only thing that would notice.
 	///
-	/// Measured at a full-width stop. Something applies a 0.8607 scale to the
-	/// collapsed sheet's content -- what applies it has not been identified --
-	/// so every frame read there is smaller than the layout that produced it,
-	/// and 44pt would be the wrong number to expect.
+	/// Measured at a full-width stop. UIKit applies a detent-dependent shrink to
+	/// any presented sheet's content -- Apple Maps' own small-detent drop shadow
+	/// carries the same 0.8607 scale -- so a frame read at a smaller detent is
+	/// smaller than the layout that produced it, and 44pt would be the wrong
+	/// number to expect there. See "Sizing the collapsed detent" in
+	/// `docs/superpowers/specs/2026-09-07-map-sheet-search-bar-design.md`.
 	@discardableResult
 	func verifySearchFieldHeight() -> Self {
 		let height = searchField.frame.height
@@ -207,9 +209,10 @@ struct CarletonMapScreen: Screen {
 		return self
 	}
 
-	/// A move is a change of at least a hundred points: the stops are 76pt,
-	/// half the screen, and nearly all of it, so anything smaller is a scroll
-	/// or a wobble, not a detent change.
+	/// A move is a change of at least a hundred points: the collapsed stop
+	/// renders at about 65pt, medium at half the screen, and large at nearly
+	/// all of it, so anything smaller is a scroll or a wobble, not a detent
+	/// change.
 	@discardableResult
 	func verifySheetMoved(from before: CGFloat, direction: String, _ message: String) -> Self {
 		let after = searchFieldTop()

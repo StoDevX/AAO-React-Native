@@ -48,8 +48,8 @@ export function nextSheetDetent(event: SheetEvent, state: SheetState): SheetStat
 		case 'dragged':
 			return {current: event.to, previous: state.previous}
 		default: {
-			const never: never = event
-			return never
+			let _exhaustive: never = event
+			throw new Error(`Unhandled sheet event: ${JSON.stringify(_exhaustive)}`)
 		}
 	}
 }

@@ -3,7 +3,9 @@ import SwiftUI
 import UIKit
 
 /// Apple Maps' search field is 44pt tall. UIKit's default is shorter, so the
-/// height is pinned rather than inherited.
+/// height is pinned rather than inherited. The picker's margins, the
+/// collapsed detent's height, and `CarletonMapScreen.swift`'s scale
+/// derivation are all sized against this constant.
 private let fieldHeight: CGFloat = 44
 
 final class CampusSearchBarProps: ExpoSwiftUI.ViewProps {
@@ -62,6 +64,11 @@ private struct SearchBar: UIViewRepresentable {
 	func updateUIView(_ bar: UISearchBar, context: Context) {
 		context.coordinator.props = props
 		bar.placeholder = props.placeholder
+		// Set on both the bar and its text field, not tidied down to one: a test
+		// needs the bar's own identifier to scope a query for its Cancel button
+		// (`app.otherElements[id].buttons[...]`) and the text field's identifier
+		// to find the field itself (`app.searchFields[id]`) -- two different
+		// XCUITest element types, each keyed off this same testID.
 		bar.accessibilityIdentifier = props.testID
 		bar.searchTextField.accessibilityIdentifier = props.testID
 		// `props.text` can be an echo of a keystroke this coordinator already

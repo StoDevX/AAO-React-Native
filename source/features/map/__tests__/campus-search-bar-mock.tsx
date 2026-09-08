@@ -7,6 +7,10 @@ import type {CampusSearchBarProps} from '@frogpond/campus-search-bar'
 /// not exist under Jest, so the picker's tests render this instead. A text
 /// input for the field and a pressable for Cancel are enough to drive the
 /// branches the picker decides in JavaScript.
+///
+/// Cancel renders unconditionally here, where the real bar hides it until the
+/// field is focused or holds text -- so a Jest test is never evidence about
+/// whether Cancel is visible, only about what happens when it is pressed.
 export function CampusSearchBar({
 	onCancel,
 	onFocusChange,
