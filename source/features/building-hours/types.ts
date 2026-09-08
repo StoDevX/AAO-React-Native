@@ -37,6 +37,10 @@ export type BuildingType = {
 	name: string
 	subtitle?: string
 	abbreviation?: string
+	/** The map feature id this venue sits in, e.g. `toh` for Tomson Hall. Several
+	 * venues can share one id — Registrar and Financial Aid both live in Tomson
+	 * Hall. Carleton venues carry none; their hours live outside this repo. */
+	building?: string
 	isNotice?: boolean
 	noticeMessage?: string
 	image?: string
