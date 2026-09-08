@@ -1,6 +1,7 @@
 name: The Cage
 image: cage
 category: Food
+building: thecage
 
 schedule:
   - title: Hours

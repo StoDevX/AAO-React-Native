@@ -1,5 +1,6 @@
 name: Ice Arena
 category: Gym
+building: tostrudcenter
 
 schedule:
   - title: Open Skate

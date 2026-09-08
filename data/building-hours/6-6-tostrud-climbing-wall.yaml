@@ -1,5 +1,6 @@
 name: Tostrud Climbing Wall
 category: Gym
+building: tostrudcenter
 
 schedule:
   - title: Hours

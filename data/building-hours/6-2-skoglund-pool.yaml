@@ -1,5 +1,6 @@
 name: Skoglund Pool
 category: Gym
+building: sac
 
 schedule:
   - title: Lap Swim

@@ -1,5 +1,6 @@
 name: Admissions
 category: Offices
+building: admissionsoffice
 
 schedule:
   - title: Hours

@@ -1,6 +1,7 @@
 name: Stav Hall
 image: stav
 category: Food
+building: stavhall
 
 schedule:
   - title: Breakfast

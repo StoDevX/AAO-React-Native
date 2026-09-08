@@ -1,6 +1,7 @@
 name: OSA
 subtitle: Office of Student Activities
 category: Offices
+building: bc
 
 schedule:
   - title: Hours

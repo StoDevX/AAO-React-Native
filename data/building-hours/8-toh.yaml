@@ -1,6 +1,7 @@
 name: Tomson Hall
 image: tomson
 category: Academia
+building: toh
 
 schedule:
   - title: Hours

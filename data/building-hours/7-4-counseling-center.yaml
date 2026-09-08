@@ -1,5 +1,6 @@
 name: Counseling Center
 category: Health and Wellness
+building: bc
 
 schedule:
   - title: Hours

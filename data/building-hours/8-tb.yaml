@@ -1,6 +1,7 @@
 name: Theater Building
 image: theater
 category: Academia
+building: tb
 
 schedule:
   - title: Hours
