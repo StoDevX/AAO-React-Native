@@ -64,25 +64,45 @@ private struct SearchBar: UIViewRepresentable {
 		bar.placeholder = props.placeholder
 		bar.accessibilityIdentifier = props.testID
 		bar.searchTextField.accessibilityIdentifier = props.testID
-		// `props.text` after a keystroke is just JS echoing what the user typed,
-		// arriving one round-trip late. Writing it back would overwrite whatever
-		// the user has typed since, so only text JS actually originated (a value
-		// this coordinator did not just send) is allowed to move the caret.
-		if props.text != context.coordinator.lastSentText, bar.text != props.text {
-			bar.text = props.text
+		// `props.text` can be an echo of a keystroke this coordinator already
+		// sent, arriving late. If it matches a still-pending sent value, drop
+		// that value (and anything queued before it, now unreachable) and leave
+		// the field alone; otherwise it is a genuine JS-originated change — a
+		// paste, a cleared search, a tapped suggestion — and must be written,
+		// which also means anything still in flight is now stale and moot.
+		if let echoedIndex = context.coordinator.pendingSent.firstIndex(of: props.text) {
+			context.coordinator.pendingSent.removeFirst(echoedIndex + 1)
+		} else {
+			if bar.text != props.text {
+				bar.text = props.text
+			}
+			context.coordinator.pendingSent.removeAll()
 		}
 		context.coordinator.updateCancelButton(on: bar, animated: false)
 	}
 
 	final class Coordinator: NSObject, UISearchBarDelegate {
 		var props: CampusSearchBarProps
-		/// The last value this coordinator sent to JS via `onTextChange`, so
-		/// `updateUIView` can tell "JS echoing what the user just typed" apart
-		/// from "JS actually changed the text" and only act on the latter.
-		var lastSentText: String?
+		/// Values sent to JS via `onTextChange` that have not yet come back
+		/// through `props.text`, oldest first. A single remembered value is not
+		/// enough: two keystrokes sent before either echoes back need their own
+		/// slots, or the second keystroke's echo is mistaken for the first's and
+		/// the first is dropped. Capped so a JS side that never echoes — a bug
+		/// on that end — cannot grow this without bound.
+		var pendingSent: [String] = []
 
 		init(props: CampusSearchBarProps) {
 			self.props = props
+		}
+
+		/// Queues a value this coordinator is about to report to JS, so its
+		/// eventual echo through `props.text` can be told apart from a change
+		/// JS made on its own.
+		func recordSent(_ text: String) {
+			pendingSent.append(text)
+			if pendingSent.count > 32 {
+				pendingSent.removeFirst()
+			}
 		}
 
 		/// Cancel is there whenever there is something to cancel: an active
@@ -95,7 +115,7 @@ private struct SearchBar: UIViewRepresentable {
 		}
 
 		func searchBar(_ bar: UISearchBar, textDidChange text: String) {
-			lastSentText = text
+			recordSent(text)
 			props.onTextChange(["value": text])
 			updateCancelButton(on: bar, animated: true)
 		}
@@ -118,7 +138,7 @@ private struct SearchBar: UIViewRepresentable {
 			bar.text = ""
 			bar.resignFirstResponder()
 			bar.setShowsCancelButton(false, animated: true)
-			lastSentText = ""
+			recordSent("")
 			props.onTextChange(["value": ""])
 			props.onCancel()
 		}
