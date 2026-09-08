@@ -30,6 +30,10 @@ import {mapDataOptions} from '../../../source/features/map/query'
 import type {Coordinate, Point} from '../../../source/features/map/types'
 import {MAP_STYLE_URL} from '../../../source/features/map/urls'
 
+// The screen doesn't yet read a campus from the route -- that lands in a
+// later change. Hardcoded here so the query keeps its current behaviour.
+const CAMPUS = 'carleton'
+
 const ORIGINAL_CENTER: Coordinate = [-93.15488752015, 44.460800862266]
 const DEFAULT_ZOOM = 15
 const SELECTION_ZOOM = 17
@@ -62,7 +66,7 @@ export default function MapPage(): React.ReactNode {
 	let cameraRef = React.useRef<CameraRef>(null)
 	// The sheet is the map's, not a route's, so its selection is the map's too.
 	let [selectedBuildingId, setSelectedBuildingId] = React.useState<string | null>(null)
-	let {data: buildings = [], error} = useQuery(mapDataOptions)
+	let {data: buildings = [], error} = useQuery(mapDataOptions(CAMPUS))
 	let {height: windowHeight} = useWindowDimensions()
 	let [sheetPresented, setSheetPresented] = React.useState(true)
 	// Which stop the sheet rests at. Driven by selecting a building, and by the
@@ -247,6 +251,7 @@ export default function MapPage(): React.ReactNode {
 							/>
 						) : (
 							<BuildingPicker
+								campus={CAMPUS}
 								onSelect={(id) => {
 									setSelectedBuildingId(id)
 									moveSheet('medium')

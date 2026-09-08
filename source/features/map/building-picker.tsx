@@ -22,6 +22,7 @@ import {useQuery} from '@tanstack/react-query'
 import {useDebounce} from '@frogpond/use-debounce'
 import fuzzyfind from 'fuzzyfind'
 
+import type {Campus} from '../building-hours/query'
 import {CategoryPicker, LABEL_TO_CATEGORY, type CategoryLabel} from './category-picker'
 import {mapDataOptions} from './query'
 import type {Building, Feature} from './types'
@@ -30,17 +31,18 @@ import type {Building, Feature} from './types'
 const SEARCH_DEBOUNCE_MS = 200
 
 type Props = {
+	campus: Campus
 	onSelect: (id: string) => void
 }
 
 /// The picker's contents, as SwiftUI. The sheet that presents them, and the
 /// `Host` they render into, both belong to the map screen.
-export function BuildingPicker({onSelect}: Props): React.ReactNode {
+export function BuildingPicker({campus, onSelect}: Props): React.ReactNode {
 	let [category, setCategory] = React.useState<CategoryLabel>('Buildings')
 	let [typedQuery, setTypedQuery] = React.useState('')
 	let query = useDebounce(typedQuery.trim(), SEARCH_DEBOUNCE_MS)
 
-	let {data: buildings = [], error, isError, isLoading, refetch} = useQuery(mapDataOptions)
+	let {data: buildings = [], error, isError, isLoading, refetch} = useQuery(mapDataOptions(campus))
 
 	let visible = React.useMemo(() => {
 		// fuzzyfind is subsequence-based and lowercases both sides itself, so
