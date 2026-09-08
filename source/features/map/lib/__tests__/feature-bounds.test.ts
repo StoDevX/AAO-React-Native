@@ -59,11 +59,14 @@ describe('featureBounds', () => {
 		expect(featureBounds(feature)).toEqual([-93.2, 44.4, -93.14, 44.51])
 	})
 
-	test('ignores Point geometry when a Polygon is also present', () => {
+	// The point is deliberately outside the footprint. Every St. Olaf feature
+	// currently carries one inside its own outline, which would leave the
+	// bounds identical either way and make this test unable to fail.
+	test('stretches to cover a Point lying outside the Polygon', () => {
 		let feature = withGeometry({
 			type: 'GeometryCollection',
 			geometries: [
-				{type: 'Point', coordinates: [-93.175, 44.465]},
+				{type: 'Point', coordinates: [-93.19, 44.455]},
 				{
 					type: 'Polygon',
 					coordinates: [
@@ -78,7 +81,7 @@ describe('featureBounds', () => {
 			],
 		})
 
-		expect(featureBounds(feature)).toEqual([-93.18, 44.46, -93.17, 44.47])
+		expect(featureBounds(feature)).toEqual([-93.19, 44.455, -93.17, 44.47])
 	})
 
 	test('falls back to a Point when no polygon exists', () => {

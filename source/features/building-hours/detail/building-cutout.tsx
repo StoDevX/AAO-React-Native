@@ -33,7 +33,12 @@ type Props = {
  * `featureBounds` signals by returning `undefined`.
  */
 export function BuildingCutout({campus, feature}: Props): React.ReactNode {
-	let bounds = featureBounds(feature)
+	// Framed on the same geometry the layers below draw, so the two cannot
+	// disagree. Callers are expected to have checked `hasFootprint` already --
+	// this guard is the belt to that braces, and keeps the component honest on
+	// its own.
+	let footprints = toBuildingFootprints([feature])
+	let bounds = footprints.features.length > 0 ? featureBounds(feature) : undefined
 	if (!bounds) {
 		return null
 	}
@@ -74,7 +79,7 @@ export function BuildingCutout({campus, feature}: Props): React.ReactNode {
 				    puts the subject beyond doubt: `text-allow-overlap` and
 				    `text-ignore-placement` keep the label from being dropped in
 				    favour of a neighbour's. */}
-				<GeoJSONSource data={toBuildingFootprints([feature])} id="cutout-building">
+				<GeoJSONSource data={footprints} id="cutout-building">
 					<Layer
 						id="cutout-building-fill"
 						paint={{'fill-color': c.gold, 'fill-opacity': 0.35}}

@@ -9,9 +9,11 @@ import type {Building, Coordinate, Feature} from '../types'
  * building and a sprawling one both fill the cutout sensibly: a large
  * building's bounds are wide, so the camera backs off further to fit them.
  *
- * Returns `undefined` for a feature with no coordinates at all -- a
- * points-only, geometry-free record has nothing to frame -- so a caller can
- * skip drawing rather than pass MapLibre an empty box.
+ * Returns `undefined` only for a feature carrying no coordinates whatsoever.
+ * A points-only record yields a real but zero-area box, which MapLibre fits by
+ * clamping to maximum zoom -- a blank tile, not a building. A caller that needs
+ * something worth framing should ask whether there is a footprint first; see
+ * `BuildingCutout`.
  */
 export function featureBounds(feature: Feature<Building>): LngLatBounds | undefined {
 	let west = Infinity
