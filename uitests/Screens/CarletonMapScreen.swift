@@ -20,7 +20,21 @@ struct CarletonMapScreen: Screen {
 		XCTAssertTrue(
 			mapButton.waitForExistence(timeout: 30),
 			"Carleton's Campus screen should offer a map button")
-		mapButton.tap()
+
+		// Retried for the reason navigateFromHome retries: a synthesized press
+		// on a button whose host has mounted but whose action still has to
+		// reach JavaScript lands natively and does nothing.
+		for attempt in 1...3 {
+			mapButton.tap()
+			if searchField.waitForExistence(timeout: 10) {
+				return self
+			}
+			XCTContext.runActivity(
+				named: "Tap \(attempt) on the map button did not open the map; retrying"
+			) { _ in }
+		}
+
+		XCTFail("Tapping the map button never opened the map")
 		return self
 	}
 

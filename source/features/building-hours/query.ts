@@ -17,9 +17,10 @@ export function parseCampus(value: string | undefined): Campus {
 }
 
 export const keys = {
-	/// Campus first, so everything for one campus invalidates together -- which
-	/// is what a change of server URL asks for. The map's geojson joins this
-	/// namespace when St. Olaf's lands.
+	/** Campus first, so it namespaces by campus -- the two campuses' cached
+	 * buildings can never collide, even though several venue names (Bookstore,
+	 * Post Office, ...) exist on both. The map's geojson joins this namespace
+	 * when St. Olaf's lands. */
 	all: (campus: Campus) => [campus, 'buildings'] as const,
 }
 
@@ -61,9 +62,12 @@ export function useGroupedBuildings(
 	return useQuery({
 		...buildingsOptions(campus),
 		select: (buildings) => {
+			let favoriteNames = new Set(
+				favoriteBuildings.filter((f) => f.campus === campus).map((f) => f.name),
+			)
 			let favoritesGroup = {
 				title: 'Favorites',
-				data: buildings.filter((b) => favoriteBuildings.includes(b.name)),
+				data: buildings.filter((b) => favoriteNames.has(b.name)),
 			}
 
 			let grouped = groupBy(buildings, (b) => b.category || 'Other')

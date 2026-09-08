@@ -55,6 +55,19 @@ struct CampusScreen: Screen {
 		return self
 	}
 
+	/// Assert the top-right map button is absent. St. Olaf's Campus screen
+	/// offers no map button today -- `Buttons.mapButton` is Carleton-only
+	/// (`campus === 'carleton'` in `app/(home)/Campus/index.tsx`) -- so this is
+	/// what proves that condition still exists, rather than the button having
+	/// quietly become unconditional.
+	@discardableResult
+	func verifyNoMapButton() -> Self {
+		XCTAssertFalse(
+			app.buttons[TestIdentifiers.Campus.mapButton].firstMatch.waitForExistence(timeout: 5),
+			"St. Olaf's Campus screen should not offer a map button")
+		return self
+	}
+
 	/// Assert the screen reports that `query` matched nothing, as distinct from
 	/// the genuine no-data message -- a search with no matches should never
 	/// read as a data outage.
@@ -74,17 +87,40 @@ struct CampusScreen: Screen {
 			row.waitForExistence(timeout: 30),
 			"\(name) should be listed before it can be tapped")
 
-		// Retried for the reason navigateFromHome retries: a synthesized press on
-		// a row whose host has mounted but whose action still has to reach
-		// JavaScript lands natively and does nothing.
+		// Tapped by coordinate, not `row.tap()`: XCUITest's own hittability
+		// check can read a just-mounted row as not yet hittable even though it
+		// is fully drawn and would take a real tap fine, which would abort the
+		// test outright rather than let this loop retry. The row's centre is
+		// what `selectBuilding` in CarletonMapScreen taps for the same reason.
+		//
+		// The loop itself is retried for the reason navigateFromHome retries: a
+		// synthesized press on a row whose host has mounted but whose action
+		// still has to reach JavaScript lands natively and does nothing.
+		//
+		// Success is the sheet's own nav-bar title, not `detailSchedule` --
+		// that heading's text is a schedule's own title, and not every
+		// building titles its schedule "Hours" (Carleton's Sayles Café titles
+		// its section "Café").
 		for _ in 1...3 {
-			row.tap()
-			if app.staticTexts[TestIdentifiers.Campus.detailSchedule]
-				.waitForExistence(timeout: 10)
-			{
+			row.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
+			if app.navigationBars.staticTexts[name].waitForExistence(timeout: 10) {
 				break
 			}
 		}
+		return self
+	}
+
+	/// Asserts the detail sheet's own title is up, without assuming its
+	/// schedule section is titled "Hours" the way `verifyDetailSheetPresented`
+	/// does -- not every building's schedule uses that title (Carleton's
+	/// Sayles Café titles its section "Café"). Scoped to `navigationBars`
+	/// rather than a bare `staticTexts` lookup: the building's name is also a
+	/// list row's own label, which never goes away.
+	@discardableResult
+	func verifyDetailSheetTitled(_ name: String) -> Self {
+		XCTAssertTrue(
+			app.navigationBars.staticTexts[name].waitForExistence(timeout: 30),
+			"The detail sheet should be titled \(name)")
 		return self
 	}
 

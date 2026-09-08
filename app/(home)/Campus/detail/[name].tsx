@@ -9,6 +9,7 @@ import {buildingByNameOptions, parseCampus} from '../../../../source/features/bu
 import {LoadingView, NoticeView} from '@frogpond/notice'
 import {useAppDispatch, useAppSelector} from '../../../../source/redux/hooks'
 import {
+	isFavoriteBuilding,
 	selectFavoriteBuildings,
 	toggleFavoriteBuilding,
 } from '../../../../source/redux/parts/buildings'
@@ -25,7 +26,10 @@ export default function CampusDetailPage(): React.ReactNode {
 
 	let {now} = useMomentTimer({intervalMs: 60000, timezone: timezone()})
 
-	let onFavorite = React.useCallback(() => dispatch(toggleFavoriteBuilding(name)), [dispatch, name])
+	let onFavorite = React.useCallback(
+		() => dispatch(toggleFavoriteBuilding({campus, name})),
+		[campus, dispatch, name],
+	)
 
 	let reportProblem = React.useCallback(
 		() =>
@@ -36,7 +40,7 @@ export default function CampusDetailPage(): React.ReactNode {
 		[campus, name, router],
 	)
 
-	let favorited = favorites.includes(name)
+	let favorited = isFavoriteBuilding(favorites, campus, name)
 
 	let screen = (
 		<>
@@ -107,7 +111,7 @@ export default function CampusDetailPage(): React.ReactNode {
 	return (
 		<>
 			{screen}
-			<BuildingDetailSwiftUI building={building} now={now} />
+			<BuildingDetailSwiftUI building={building} campus={campus} now={now} />
 		</>
 	)
 }

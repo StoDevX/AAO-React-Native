@@ -27,7 +27,9 @@ export function isBuildingOpen(info: BuildingType, m: Moment): boolean {
 			return false
 		}
 
-		return filteredSchedules.map((schedule) => isScheduleOpenAtMoment(schedule, m))
+		return filteredSchedules.map((schedule) =>
+			isScheduleOpenAtMoment(schedule, m, set.closedForChapelTime),
+		)
 	})
 
 	return flatten(results).find((status) => status !== false) || false

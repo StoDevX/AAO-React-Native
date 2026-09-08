@@ -49,7 +49,7 @@ export function getDetailedBuildingStatus(info: BuildingType, m: Moment): Buildi
 		}
 
 		return filteredSchedules.map((schedule) => {
-			let isActive = isScheduleOpenAtMoment(schedule, m)
+			let isActive = isScheduleOpenAtMoment(schedule, m, set.closedForChapelTime)
 			let status = formatBuildingTimes(schedule, m)
 			if (set.isPhysicallyOpen === false) {
 				isActive = false

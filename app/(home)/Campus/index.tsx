@@ -27,7 +27,14 @@ type Props = {
 function CampusView({campus}: Props): React.ReactNode {
 	let router = useRouter()
 	let dispatch = useAppDispatch()
-	let favorites = useAppSelector(selectFavoriteBuildings)
+	let allFavorites = useAppSelector(selectFavoriteBuildings)
+	// The list below only ever shows one campus at a time, so it only needs
+	// this campus's favourites -- scoping here keeps `BuildingList` itself
+	// campus-agnostic, working from plain names the way it always has.
+	let favorites = React.useMemo(
+		() => allFavorites.filter((f) => f.campus === campus).map((f) => f.name),
+		[allFavorites, campus],
+	)
 
 	let {now} = useMomentTimer({intervalMs: 60000, startOf: 'minute', timezone: timezone()})
 
@@ -39,8 +46,8 @@ function CampusView({campus}: Props): React.ReactNode {
 	let sections = React.useMemo(() => filterBuildings(data, searchQuery), [data, searchQuery])
 
 	let onToggleFavorite = React.useCallback(
-		(building: BuildingType) => dispatch(toggleFavoriteBuilding(building.name)),
-		[dispatch],
+		(building: BuildingType) => dispatch(toggleFavoriteBuilding({campus, name: building.name})),
+		[campus, dispatch],
 	)
 
 	let onSelect = React.useCallback(
@@ -80,11 +87,14 @@ function CampusView({campus}: Props): React.ReactNode {
 
 	if (isError) {
 		return (
-			<NoticeView
-				buttonText="Try Again"
-				onPress={refetch}
-				text={`A problem occured while loading: ${error}`}
-			/>
+			<>
+				{chrome}
+				<NoticeView
+					buttonText="Try Again"
+					onPress={refetch}
+					text={`A problem occured while loading: ${error}`}
+				/>
+			</>
 		)
 	}
 

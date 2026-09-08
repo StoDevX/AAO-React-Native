@@ -11,11 +11,38 @@ class ModuleCampusTests: UITestCase {
 	/// venue list: `carletonBuilding` exists in Carleton's `spaces/hours` but
 	/// not St. Olaf's, so this fails if the Carleton tile's `?campus=carleton`
 	/// were ignored and St. Olaf's list loaded instead.
+	///
+	/// The reverse direction matters too: `aBuilding` (Rølvaag Library) is
+	/// St. Olaf-only, so also asserting its absence here is what would fail if
+	/// the two campuses' lists were ever merged rather than kept separate.
 	func testCarletonTileShowsCarletonVenues() throws {
 		CampusScreen(app: app)
 			.navigateToCarleton()
 			.verifyTitle(TestIdentifiers.Buttons.carletonCampus)
 			.verifyRowShown(TestIdentifiers.Campus.carletonBuilding)
+			.verifyRowHidden(TestIdentifiers.Campus.aBuilding)
+	}
+
+	/// "St. Olaf gets no map button yet" is a recorded decision, not an
+	/// accident -- without this test, deleting the `campus === 'carleton'`
+	/// guard in `app/(home)/Campus/index.tsx` would pass every other test in
+	/// this file.
+	func testStolafScreenHasNoMapButton() throws {
+		CampusScreen(app: app)
+			.navigate()
+			.verifyTitle(TestIdentifiers.Buttons.campus)
+			.verifyNoMapButton()
+	}
+
+	/// Every other detail-sheet test in this file goes through St. Olaf's
+	/// tile. This is the one that proves the `campus` param actually survives
+	/// the push into `/Campus/detail/[name]` for a Carleton venue too, rather
+	/// than the sheet only ever having been exercised for St. Olaf.
+	func testTappingACarletonRowPresentsItsDetailSheet() throws {
+		CampusScreen(app: app)
+			.navigateToCarleton()
+			.tapRow(TestIdentifiers.Campus.carletonBuilding)
+			.verifyDetailSheetTitled(TestIdentifiers.Campus.carletonBuilding)
 	}
 
 	func testSearchNarrowsTheList() throws {
