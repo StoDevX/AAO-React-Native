@@ -71,10 +71,16 @@ const MARKER_HIT_SLOP = (MIN_TOUCH_TARGET - MARKER_SIZE) / 2
 /// that drops a layer from the tree.
 const FOOTPRINT_OPACITY = 0
 
-/// Apple Maps' collapsed stop is its 44pt search field with 16pt above and
-/// below, and the grabber inside the top margin. The picker lays the field out
-/// with exactly those margins, so the two must move together.
-const SHEET_COLLAPSED_HEIGHT = 76
+/// Apple Maps' collapsed stop lays its field out at 16 + 44 + 16 = 76pt in
+/// LAYOUT space. UIKit shrinks whatever a sheet presents by a scale tied to
+/// a detent's role among the sheet's detents, not to this detent's own
+/// height, so this constant is a SCREEN-space number, unrelated in value to
+/// the picker's own layout margins even though both describe the same
+/// field. 53 is what measuring the field's on-screen margins on an iPhone
+/// 17 Pro simulator converges to; see
+/// `.superpowers/sdd/2026-09-07-map-sheet-search-bar/task-8-report.md` for
+/// the measurements and whether that holds at another window size.
+const SHEET_COLLAPSED_HEIGHT = 53
 const COLLAPSED_DETENT: PresentationDetent = {height: SHEET_COLLAPSED_HEIGHT}
 
 /// A fraction rather than UIKit's own `medium`, which is exactly a half and

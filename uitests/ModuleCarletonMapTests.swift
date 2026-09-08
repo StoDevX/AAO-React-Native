@@ -86,6 +86,16 @@ class ModuleCarletonMapTests: UITestCase {
 			.verifyCardAtMedium()
 	}
 
+	/// UIKit shrinks the presented sheet by a scale that depends on the
+	/// detent, so the collapsed content's margins have to be checked in
+	/// screen space rather than assumed from the layout numbers that went in.
+	func testCollapsedSheetHasSymmetricMargins() throws {
+		CarletonMapScreen(app: app)
+			.navigate()
+			.checkSheetPresented()
+			.verifyCollapsedMarginsSymmetric()
+	}
+
 	func testTappingAFootprintWhileCollapsedRaisesTheCardToMedium() throws {
 		CarletonMapScreen(app: app)
 			.navigate()

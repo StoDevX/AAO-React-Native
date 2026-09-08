@@ -173,6 +173,32 @@ struct CarletonMapScreen: Screen {
 		return self
 	}
 
+	/// UIKit shrinks a presented sheet by a detent-dependent scale, so the
+	/// design's 16 + 44 + 16 = 76pt of layout content lands on screen smaller
+	/// than it was laid out. The field's own frame is what the scale and the
+	/// margins around it come back as, once that shrink has already happened.
+	@discardableResult
+	func verifyCollapsedMarginsSymmetric() -> Self {
+		let field = searchField.frame
+		let window = app.windows.firstMatch.frame
+		let scale = field.height / 44
+		// Maps insets all four sides of the sheet equally, so the field's own
+		// left inset gives the scaled inset directly.
+		let inset = field.origin.x - 16 * scale
+		let sheetBottom = window.height - inset
+		let bottomMargin = sheetBottom - (field.origin.y + field.height)
+		let topMargin = 16 * scale
+		XCTContext.runActivity(
+			named: "scale \(scale), inset \(inset), sheetBottom \(sheetBottom), "
+				+ "topMargin \(topMargin), bottomMargin \(bottomMargin)"
+		) { _ in }
+		XCTAssertEqual(
+			bottomMargin, topMargin, accuracy: 1,
+			"The collapsed sheet should leave the same margin below the field as "
+				+ "above it: top \(topMargin), bottom \(bottomMargin)")
+		return self
+	}
+
 	/// A move is a change of at least a hundred points: the stops are 76pt,
 	/// half the screen, and nearly all of it, so anything smaller is a scroll
 	/// or a wobble, not a detent change.
