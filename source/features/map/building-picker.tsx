@@ -21,13 +21,14 @@ import type {Building, Feature} from './types'
 /// Matches the debounce every other search screen in the app uses.
 const SEARCH_DEBOUNCE_MS = 200
 
-/// The picker lays the search bar out with this margin above and below it, in
-/// LAYOUT space. `UISearchBar` is 64pt tall and centres its 44pt text field in
-/// itself, so the space around the visible field is this plus the bar's own
-/// 10pt -- 26pt, where Apple Maps has 16. The sheet's collapsed detent
-/// (`SHEET_COLLAPSED_HEIGHT` in `Map/index.tsx`) is a SCREEN-space number
-/// UIKit's presentation shrink sits between, not a multiple of this one; see
-/// that constant's own comment for the numbers.
+/// The margin above and below the search field, in LAYOUT space, and the
+/// margin the field visibly gets: `CampusSearchBarView` pins the bar to a 44pt
+/// slot, and although `UISearchBar` draws 64pt tall -- its 44pt text field
+/// centred, 10pt of its own chrome above and below -- that overflow takes no
+/// layout space and the bar's `.minimal` style paints none of it. So the
+/// picker's header block is `16 + 44 + 16 = 76`pt, which is what the sheet's
+/// collapsed stop is sized to hold; see `SHEET_COLLAPSED_HEIGHT` in
+/// `Map/index.tsx`.
 const SEARCH_MARGIN = 16
 const SEARCH_PLACEHOLDER = 'Search for a place'
 
@@ -43,6 +44,13 @@ const SEARCH_BAR_HORIZONTAL_PADDING = SEARCH_MARGIN - 8
 
 type Props = {
 	campus: Campus
+	/// True when the sheet is at a stop with room for the search field and
+	/// nothing else. Drawing the category segments there would not merely hide
+	/// them: a `VStack` taller than the stop it is presented in is centred in
+	/// it rather than clipped at the bottom, so the segments would take the
+	/// top of the field off with them. The list stays, and compresses to
+	/// nothing.
+	compact: boolean
 	onSelect: (id: string) => void
 	/// Focus is what raises the sheet, and losing it may lower it -- but only
 	/// when the field is empty, since a typed query still needs the room to
@@ -61,6 +69,7 @@ type Props = {
 /// the padding modifier and nothing else.
 export function BuildingPicker({
 	campus,
+	compact,
 	onSelect,
 	onSearchFocusChange,
 	onSearchCancel,
@@ -108,7 +117,7 @@ export function BuildingPicker({
 
 			{/* Pinned under the field rather than scrolling with the list, so
 			    the header reads as one block: grabber, field, segments. */}
-			{query ? null : (
+			{compact || query ? null : (
 				<VStack modifiers={[padding({horizontal: SEARCH_MARGIN, bottom: 8})]}>
 					<CategoryPicker onChange={setCategory} selected={category} />
 				</VStack>

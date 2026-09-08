@@ -72,20 +72,22 @@ const MARKER_HIT_SLOP = (MIN_TOUCH_TARGET - MARKER_SIZE) / 2
 const FOOTPRINT_OPACITY = 0
 
 /// The collapsed detent, requested in the sheet content's own layout space.
-/// UIKit shrinks whatever a sheet presents by a scale tied to the detent's
-/// role among the sheet's detents -- 0.860697 on an iPhone 17 Pro simulator --
-/// so the stop renders at `SHEET_COLLAPSED_HEIGHT * scale` and this is not the
-/// height it takes on screen.
+/// UIKit shrinks whatever a sheet presents by a scale tied to the detent --
+/// 0.86 at this one on an iPhone 17 Pro simulator -- so the stop renders at
+/// `SHEET_COLLAPSED_HEIGHT * scale` and this is not the height it takes on
+/// screen.
 ///
-/// **This value does not yet buy the collapsed stop the design asks for.** The
-/// picker's content is taller than the stop and SwiftUI centres what overflows,
-/// so the stop shows the middle of that content rather than its top: at 37 the
-/// search field is sliced across the top by 19.9pt. Every value swept between
-/// 37 and 110 trades that slice against a strip of category segments below the
-/// field, and no value avoids both. See "Sizing the collapsed detent" in
-/// `docs/superpowers/specs/2026-09-07-map-sheet-search-bar-design.md` for the
-/// measurements and what the stop would have to hold instead.
-const SHEET_COLLAPSED_HEIGHT = 37
+/// It matches the picker's header block, `16 + 44 + 16` (see `SEARCH_MARGIN`
+/// in `building-picker.tsx`), which at this stop is all the picker draws. A
+/// shorter stop cannot hold the block, and SwiftUI centres content too tall
+/// for the box it is presented in rather than clipping its bottom, so the
+/// field's top edge is what a shorter stop cuts off; a taller one gives the
+/// slack to the list, and the space below the field grows.
+///
+/// Found by sweeping and looking at the captures, since none of that shows up
+/// in a frame, and solved for one simulator. See "Sizing the collapsed detent"
+/// in `docs/superpowers/specs/2026-09-07-map-sheet-search-bar-design.md`.
+const SHEET_COLLAPSED_HEIGHT = 76
 const COLLAPSED_DETENT: PresentationDetent = {height: SHEET_COLLAPSED_HEIGHT}
 
 /// A fraction rather than UIKit's own `medium`, which is exactly a half and
@@ -298,6 +300,7 @@ export default function MapPage(): React.ReactNode {
 						) : (
 							<BuildingPicker
 								campus={campus}
+								compact={sheet.current === 'collapsed'}
 								onSearchCancel={() => dispatchSheet({type: 'search-cancelled'})}
 								onSearchFocusChange={(focused, hasText) =>
 									dispatchSheet(

@@ -3,6 +3,7 @@ import {fireEvent, render, screen, waitFor} from '@testing-library/react-native'
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query'
 
 import {BuildingPicker} from '../building-picker'
+import {CATEGORY_LABELS} from '../category-picker'
 import {keys} from '../query'
 import {makeBuilding} from './fixtures'
 
@@ -40,11 +41,12 @@ afterEach(() => {
 	trackedQueryClients.length = 0
 })
 
-async function renderPicker(
+async function renderPicker({
+	compact = false,
 	onSelect = jest.fn(),
 	onSearchFocusChange = jest.fn(),
 	onSearchCancel = jest.fn(),
-) {
+} = {}) {
 	let client = new QueryClient({defaultOptions: {queries: {retry: false}}})
 	trackedQueryClients.push(client)
 	// Seeding the cache rather than mocking the query module keeps the
@@ -54,6 +56,7 @@ async function renderPicker(
 		<QueryClientProvider client={client}>
 			<BuildingPicker
 				campus="carleton"
+				compact={compact}
 				onSearchCancel={onSearchCancel}
 				onSearchFocusChange={onSearchFocusChange}
 				onSelect={onSelect}
@@ -69,6 +72,21 @@ describe('BuildingPicker', () => {
 		expect(screen.getByText('Alpha Hall')).toBeTruthy()
 		expect(screen.queryByText('Beta Lot')).toBeNull()
 		expect(screen.queryByText('Gamma Field')).toBeNull()
+	})
+
+	it('draws the search field alone when the sheet has room for nothing else', async () => {
+		await renderPicker({compact: true})
+		expect(screen.getByLabelText('Search for a place')).toBeTruthy()
+		for (let label of CATEGORY_LABELS) {
+			expect(screen.queryByText(label)).toBeNull()
+		}
+	})
+
+	it('draws the categories once the sheet has room for them', async () => {
+		await renderPicker({compact: false})
+		for (let label of CATEGORY_LABELS) {
+			expect(screen.getByText(label)).toBeTruthy()
+		}
 	})
 
 	it('switches the visible list when a different category is chosen', async () => {
