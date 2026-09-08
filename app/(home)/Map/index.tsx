@@ -71,6 +71,10 @@ const MARKER_HIT_SLOP = (MIN_TOUCH_TARGET - MARKER_SIZE) / 2
 /// that drops a layer from the tree.
 const FOOTPRINT_OPACITY = 0
 
+/// Under the header, clear of the sheet at every stop but `large`, which
+/// covers the whole map anyway.
+const ATTRIBUTION_POSITION = {top: 8, right: 8}
+
 /// The collapsed detent, requested in the sheet content's own layout space.
 /// UIKit shrinks whatever a sheet presents by a scale tied to the detent --
 /// 0.86 at this one on an iPhone 17 Pro simulator -- so the stop renders at
@@ -220,7 +224,15 @@ export default function MapPage(): React.ReactNode {
 	return (
 		<View style={StyleSheet.absoluteFill}>
 			<Stack.Title>{CAMPUS_TITLE[campus]}</Stack.Title>
-			<Map logo={false} mapStyle={mapStyleUrl(campus)} style={StyleSheet.absoluteFill}>
+			{/* The attribution button carries the OpenStreetMap credit the tiles'
+			    licence requires, so it stays; it moves to the top corner because
+			    the sheet's floating collapsed stop sat on top of it at the bottom. */}
+			<Map
+				attributionPosition={ATTRIBUTION_POSITION}
+				logo={false}
+				mapStyle={mapStyleUrl(campus)}
+				style={StyleSheet.absoluteFill}
+			>
 				<Camera
 					ref={cameraRef}
 					initialViewState={{center: CAMPUS_CENTER[campus], zoom: DEFAULT_ZOOM}}

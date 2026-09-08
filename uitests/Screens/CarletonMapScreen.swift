@@ -261,6 +261,24 @@ struct CarletonMapScreen: Screen {
 		return self
 	}
 
+	/// The attribution button sits over the map, and the collapsed sheet
+	/// floats over the bottom of it, so the two have to be kept apart: the
+	/// button's whole frame above the sheet's top edge, and still tappable.
+	@discardableResult
+	func verifyAttributionClearOfSheet() -> Self {
+		let button = app.buttons[TestIdentifiers.CarletonMap.attribution].firstMatch
+		XCTAssertTrue(
+			button.waitForExistence(timeout: 30) && button.isHittable,
+			"The map's attribution button should be on screen and tappable")
+		let sheet = sheetFrame()
+		XCTContext.runActivity(named: "attribution \(button.frame) sheet \(sheet)") { _ in }
+		XCTAssertTrue(
+			button.frame.maxY < sheet.minY,
+			"The attribution button should sit clear of the sheet, not under it: "
+				+ "button \(button.frame), sheet \(sheet)")
+		return self
+	}
+
 	/// A move is a change of at least a hundred points: the collapsed stop
 	/// renders at about 65pt, medium at half the screen, and large at nearly
 	/// all of it, so anything smaller is a scroll or a wobble, not a detent

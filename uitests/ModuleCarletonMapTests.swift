@@ -29,6 +29,7 @@ class ModuleCarletonMapTests: UITestCase {
 			.capture("Carleton map sheet collapsed")
 			.verifyCollapsed()
 			.verifyFieldWithinSheet()
+			.verifyAttributionClearOfSheet()
 	}
 
 	/// The module pins the field at 44pt with a constraint UIKit is free to
