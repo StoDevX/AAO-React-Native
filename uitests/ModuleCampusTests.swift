@@ -23,15 +23,20 @@ class ModuleCampusTests: UITestCase {
 			.verifyRowHidden(TestIdentifiers.Campus.aBuilding)
 	}
 
-	/// "St. Olaf gets no map button yet" is a recorded decision, not an
-	/// accident -- without this test, deleting the `campus === 'carleton'`
-	/// guard in `app/(home)/Campus/index.tsx` would pass every other test in
-	/// this file.
-	func testStolafScreenHasNoMapButton() throws {
-		CampusScreen(app: app)
-			.navigate()
-			.verifyTitle(TestIdentifiers.Buttons.campus)
-			.verifyNoMapButton()
+	/// The map now serves both campuses -- St. Olaf's Campus screen offers the
+	/// same map button Carleton's already had, and it has to open St. Olaf's
+	/// own map data. `aStolafBuilding` is absent from Carleton's map, so this
+	/// fails if the button forwarded the wrong campus, or none at all, to
+	/// `/Map`.
+	func testStolafMapButtonOpensStolafMap() throws {
+		CarletonMapScreen(app: app)
+			.navigate(from: TestIdentifiers.Buttons.campus)
+			.checkSheetPresented()
+			.capture("St. Olaf map with its building sheet")
+			.expandSheet()
+			.selectBuilding(named: TestIdentifiers.CarletonMap.aStolafBuilding)
+			.checkBuildingCardPresented()
+			.capture("St. Olaf map showing a building's card")
 	}
 
 	/// Every other detail-sheet test in this file goes through St. Olaf's

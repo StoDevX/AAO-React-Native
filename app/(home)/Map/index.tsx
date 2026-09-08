@@ -20,21 +20,31 @@ import {
 	type PressEventWithFeatures,
 } from '@maplibre/maplibre-react-native'
 import {useQuery} from '@tanstack/react-query'
+import {Stack, useLocalSearchParams} from 'expo-router'
 import * as c from '@frogpond/colors'
 import {NoticeView} from '@frogpond/notice'
 
+import {parseCampus, type Campus} from '../../../source/features/building-hours/query'
 import {BuildingInfo} from '../../../source/features/map/building-info'
 import {BuildingPicker} from '../../../source/features/map/building-picker'
 import {toBuildingFootprints} from '../../../source/features/map/lib/building-footprints'
 import {mapDataOptions} from '../../../source/features/map/query'
 import type {Coordinate, Point} from '../../../source/features/map/types'
-import {MAP_STYLE_URL} from '../../../source/features/map/urls'
+import {mapStyleUrl} from '../../../source/features/map/urls'
 
-// The screen doesn't yet read a campus from the route -- that lands in a
-// later change. Hardcoded here so the query keeps its current behaviour.
-const CAMPUS = 'carleton'
+/** Each campus's starting camera position. Carleton's predates this file
+ * reading a campus from the route, and is kept exactly as it was. St. Olaf's
+ * is the median of its 128 map features. */
+const CAMPUS_CENTER: Record<Campus, Coordinate> = {
+	carleton: [-93.15488752015, 44.460800862266],
+	stolaf: [-93.1839, 44.4618],
+}
 
-const ORIGINAL_CENTER: Coordinate = [-93.15488752015, 44.460800862266]
+const CAMPUS_TITLE: Record<Campus, string> = {
+	carleton: 'Carleton Map',
+	stolaf: 'St. Olaf Map',
+}
+
 const DEFAULT_ZOOM = 15
 const SELECTION_ZOOM = 17
 const CAMERA_ANIMATION_MS = 500
@@ -63,10 +73,25 @@ const COLLAPSED_DETENT: PresentationDetent = {height: SHEET_COLLAPSED_HEIGHT}
 const SHEET_DETENTS: PresentationDetent[] = [COLLAPSED_DETENT, 'medium', 'large']
 
 export default function MapPage(): React.ReactNode {
+	// `/Map` has served Carleton alone since before it read the route, so a
+	// missing param keeps that default rather than falling through to
+	// parseCampus' own St. Olaf default, which belongs to `/Campus`. A param
+	// that is present but unrecognised still falls back through parseCampus
+	// rather than crashing.
+	let {campus: campusParam} = useLocalSearchParams<{campus?: string}>()
+	// Wrapped in useMemo, rather than a plain `let`, so the React Compiler
+	// treats it as one reactive value with a clear dependency -- otherwise it
+	// loses track of `setSelectedBuildingId`'s stability below and refuses to
+	// preserve handleBuildingPress's manual memoization.
+	let campus = React.useMemo(
+		() => (campusParam === undefined ? 'carleton' : parseCampus(campusParam)),
+		[campusParam],
+	)
+
 	let cameraRef = React.useRef<CameraRef>(null)
 	// The sheet is the map's, not a route's, so its selection is the map's too.
 	let [selectedBuildingId, setSelectedBuildingId] = React.useState<string | null>(null)
-	let {data: buildings = [], error} = useQuery(mapDataOptions(CAMPUS))
+	let {data: buildings = [], error} = useQuery(mapDataOptions(campus))
 	let {height: windowHeight} = useWindowDimensions()
 	let [sheetPresented, setSheetPresented] = React.useState(true)
 	// Which stop the sheet rests at. Driven by selecting a building, and by the
@@ -174,8 +199,12 @@ export default function MapPage(): React.ReactNode {
 
 	return (
 		<View style={StyleSheet.absoluteFill}>
-			<Map logo={false} mapStyle={MAP_STYLE_URL} style={StyleSheet.absoluteFill}>
-				<Camera ref={cameraRef} initialViewState={{center: ORIGINAL_CENTER, zoom: DEFAULT_ZOOM}} />
+			<Stack.Title>{CAMPUS_TITLE[campus]}</Stack.Title>
+			<Map logo={false} mapStyle={mapStyleUrl(campus)} style={StyleSheet.absoluteFill}>
+				<Camera
+					ref={cameraRef}
+					initialViewState={{center: CAMPUS_CENTER[campus], zoom: DEFAULT_ZOOM}}
+				/>
 				<UserLocation />
 
 				{/* carls-app/map-tiles serves the footprints and their labels as
@@ -251,7 +280,7 @@ export default function MapPage(): React.ReactNode {
 							/>
 						) : (
 							<BuildingPicker
-								campus={CAMPUS}
+								campus={campus}
 								onSelect={(id) => {
 									setSelectedBuildingId(id)
 									moveSheet('medium')

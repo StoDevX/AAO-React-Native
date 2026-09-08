@@ -78,13 +78,6 @@ export const AllViews = (): Array<ViewType> => {
 			gradient: c.purpleGradient,
 		},
 		{
-			type: 'url',
-			url: 'https://map.stolaf.edu/',
-			title: 'Campus Map',
-			icon: 'map.fill',
-			gradient: c.indigoGradient,
-		},
-		{
 			type: 'view',
 			view: '/Campus?campus=carleton',
 			title: 'Carleton Campus',

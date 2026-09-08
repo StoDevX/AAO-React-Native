@@ -62,24 +62,22 @@ function CampusView({campus}: Props): React.ReactNode {
 	// The search chrome is bound to component state (the change handler
 	// updates query), so it can't move to a static outer component. Compute
 	// it once and render it in every branch, so the user always has a search
-	// bar to type into or clear. Carleton's map has no inline mode here -- its
-	// button only navigates to the existing hand-hosted `/Map` screen -- so it
-	// renders only for the campus that has one.
+	// bar to type into or clear. Both campuses have a map now, so the button
+	// forwards whichever campus this screen is showing to the hand-hosted
+	// `/Map` screen -- it has no inline mode here.
 	let chrome = (
 		<>
 			<Stack.Toolbar placement="bottom">
 				<Stack.Toolbar.SearchBarSlot />
 			</Stack.Toolbar>
 
-			{campus === 'carleton' && (
-				<Stack.Toolbar placement="right">
-					<Stack.Toolbar.Button
-						accessibilityLabel="Map"
-						icon="map"
-						onPress={() => router.push('/Map')}
-					/>
-				</Stack.Toolbar>
-			)}
+			<Stack.Toolbar placement="right">
+				<Stack.Toolbar.Button
+					accessibilityLabel="Map"
+					icon="map"
+					onPress={() => router.push({pathname: '/Map', params: {campus}})}
+				/>
+			</Stack.Toolbar>
 
 			<SearchBar onChangeText={setQuery} value={query} />
 		</>
