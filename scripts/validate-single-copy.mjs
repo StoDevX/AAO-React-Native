@@ -1,13 +1,12 @@
 #!/usr/bin/env node
 
 // Some packages have to appear exactly once in the lockfile. Metro is the
-// reason this exists: `metro-config` is a direct dependency pinned to an exact
-// version, while `metro` itself is only ever transitive and floats, so the one
-// package that must move in lockstep with metro is the one thing frozen. Left
-// alone, that pin drags a second copy of all fourteen metro packages into the
-// install, and a config merged by one metro version is handed to another.
+// reason this exists: it arrives from two directions, pinned by @expo/metro
+// and floated by react-native, and for a while the install carried three
+// copies of all fourteen metro packages. @expo/metro's is the one that bundles
+// the app, so `pnpm-workspace.yaml` converges the rest onto it.
 //
-// Nothing fails when it happens — the bundle builds, the tests pass — so the
+// Nothing fails when that slips — the bundle builds, the tests pass — so the
 // duplication only shows up if someone goes looking at the lockfile. This
 // makes it an error instead.
 
@@ -26,8 +25,11 @@ const byName = (a, b) => a.localeCompare(b)
 const SINGLE_COPY = new Map([
 	[
 		'metro-config',
-		'must match the metro that @expo/metro pins, or the bundler merges a config across two metro versions',
+		'metro.config.js merges a config into whichever metro is bundling, so a second copy merges across two of them',
 	],
+	['metro-runtime', 'ships inside the bundle, so it has to be the metro that produced the bundle'],
+	['metro-source-map', 'reads what metro-runtime writes, and the two travel together'],
+	['metro-symbolicate', 'resolves a stack against metro-source-map, and the two travel together'],
 ])
 
 /** `name@1.2.3` and `'@scope/name@1.2.3(peer@4)'` both yield their name and version. */
