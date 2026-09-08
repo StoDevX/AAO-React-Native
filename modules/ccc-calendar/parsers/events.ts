@@ -20,6 +20,7 @@ const WireEventSchema = z.object({
 	isOngoing: z.boolean(),
 	links: z.array(z.string()),
 	categories: z.array(z.string()).default([]),
+	organization: z.string().optional(),
 	config: z.object({
 		startTime: z.boolean(),
 		endTime: z.boolean(),

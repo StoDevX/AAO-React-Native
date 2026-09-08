@@ -13,6 +13,13 @@ export type EventType = {
 	readonly isOngoing: boolean
 	readonly links: Array<string>
 	readonly categories: readonly string[]
+	/**
+	 * The organisation sponsoring the event. Only Presence names one -- the
+	 * campus calendar, iCal feeds, and EventKit have no equivalent, so this
+	 * is optional rather than an empty string every other source has to
+	 * invent.
+	 */
+	readonly organization?: string
 	readonly config: {
 		readonly startTime: boolean
 		readonly endTime: boolean
