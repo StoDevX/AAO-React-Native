@@ -31,6 +31,12 @@ import {BuildingPicker} from '../../../source/features/map/building-picker'
 import {SHEET_RESTING_FRACTION} from '../../../source/lib/constants'
 import {sheetHeightFor} from '../../../source/features/map/lib/sheet-height'
 import {toBuildingFootprints} from '../../../source/features/map/lib/building-footprints'
+import {
+	nextSheetDetent,
+	type SheetDetent,
+	type SheetEvent,
+	type SheetState,
+} from '../../../source/features/map/lib/sheet-moves'
 import {mapDataOptions} from '../../../source/features/map/query'
 import type {Coordinate, Point} from '../../../source/features/map/types'
 import {mapStyleUrl} from '../../../source/features/map/urls'
@@ -65,19 +71,36 @@ const MARKER_HIT_SLOP = (MIN_TOUCH_TARGET - MARKER_SIZE) / 2
 /// that drops a layer from the tree.
 const FOOTPRINT_OPACITY = 0
 
-/// Apple Maps' three stops, and the sheet never dismisses: the search field
-/// alone, half the screen, and `large`.
-/// Leaves 34pt above the search field and 20pt below it. Not symmetric, and
-/// not freely tunable: the gap below only grows by moving the sheet up, and by
-/// the time it matches the 34pt above, the category tabs below have risen into
-/// view. Symmetry here needs the tabs section's margins moved too.
-const SHEET_COLLAPSED_HEIGHT = 100
+/// Apple Maps' collapsed stop is its 44pt search field with 16pt above and
+/// below, and the grabber inside the top margin. The picker lays the field out
+/// with exactly those margins, so the two must move together.
+const SHEET_COLLAPSED_HEIGHT = 76
 const COLLAPSED_DETENT: PresentationDetent = {height: SHEET_COLLAPSED_HEIGHT}
 
 /// A fraction rather than UIKit's own `medium`, which is exactly a half and
 /// leaves the list feeling cut off at the point most people stop dragging.
 const MIDDLE_DETENT: PresentationDetent = {fraction: SHEET_RESTING_FRACTION}
 const SHEET_DETENTS: PresentationDetent[] = [COLLAPSED_DETENT, MIDDLE_DETENT, 'large']
+
+/// The rules speak in names; the modifier speaks in detents. The rules' middle
+/// stop is `MIDDLE_DETENT`, not UIKit's `medium`.
+const DETENT_FOR: Record<SheetDetent, PresentationDetent> = {
+	collapsed: COLLAPSED_DETENT,
+	medium: MIDDLE_DETENT,
+	large: 'large',
+}
+
+/// Structural like `sheetHeightFor`, since a detent handed back by the sheet
+/// is not promised to be the object that went in.
+function nameOf(detent: PresentationDetent): SheetDetent {
+	if (detent === 'large') {
+		return 'large'
+	}
+	if (detent === 'medium' || 'fraction' in detent) {
+		return 'medium'
+	}
+	return 'collapsed'
+}
 
 export default function MapPage(): React.ReactNode {
 	// `/Map` has served Carleton alone since before it read the route, so a
@@ -102,27 +125,11 @@ export default function MapPage(): React.ReactNode {
 	let {height: windowHeight} = useWindowDimensions()
 	let insets = useSafeAreaInsets()
 	let [sheetPresented, setSheetPresented] = React.useState(true)
-	// Which stop the sheet rests at. Driven by selecting a building, and by the
-	// user dragging it, which is why it is state rather than derived.
-	let [detent, setDetent] = React.useState<PresentationDetent>(COLLAPSED_DETENT)
-	// Bumped only when we move the sheet ourselves, and used to key the Group.
-	// See `moveSheet`.
-	let [sheetNonce, setSheetNonce] = React.useState(0)
-
-	/// Moves the sheet, which takes more than setting the detent.
-	///
-	/// `presentationDetents`' `selection` is honoured when the SwiftUI view is
-	/// first built -- it seeds an `@State` -- but not when it changes after:
-	/// the new value never reaches the modifier instance, so its `onChange`
-	/// never fires. Remounting the Group rebuilds the modifier and the seed
-	/// path runs again with the value we want.
-	///
-	/// Keyed on a nonce rather than on the detent itself, because the detent
-	/// also changes when the user drags the sheet, and remounting then would
-	/// throw away their search text and scroll position mid-gesture.
-	let moveSheet = React.useCallback((to: PresentationDetent) => {
-		setDetent(to)
-		setSheetNonce((n) => n + 1)
+	// Where the sheet rests, and where a search focus lifted it from. Every
+	// move goes through `nextSheetDetent`, including the user's own drags.
+	let [sheet, setSheet] = React.useState<SheetState>({current: 'collapsed', previous: null})
+	let dispatchSheet = React.useCallback((event: SheetEvent) => {
+		setSheet((state) => nextSheetDetent(event, state))
 	}, [])
 
 	// The sheet has no dismissed state. `interactiveDismissDisabled` should keep
@@ -144,7 +151,7 @@ export default function MapPage(): React.ReactNode {
 	// camera has to keep clear.
 	// A fraction is measured against the window less the top inset, so the
 	// camera is padded against the same thing rather than the whole window.
-	let sheetHeight = sheetHeightFor(detent, windowHeight - insets.top)
+	let sheetHeight = sheetHeightFor(DETENT_FOR[sheet.current], windowHeight - insets.top)
 
 	let footprints = React.useMemo(() => toBuildingFootprints(buildings), [buildings])
 
@@ -162,11 +169,9 @@ export default function MapPage(): React.ReactNode {
 			// One sheet, whose contents swap. Tapping a second building while the
 			// card is up is a state change, not a presentation.
 			setSelectedBuildingId(id)
-			// Apple Maps raises its sheet to half height when you pick a place,
-			// which is also the stop the camera pads for.
-			moveSheet(MIDDLE_DETENT)
+			dispatchSheet({type: 'footprint-tapped'})
 		},
-		[moveSheet],
+		[dispatchSheet],
 	)
 
 	let selectedBuilding = React.useMemo(
@@ -255,7 +260,6 @@ export default function MapPage(): React.ReactNode {
 			<Host pointerEvents="none" style={StyleSheet.absoluteFill}>
 				<BottomSheet isPresented={sheetPresented} onIsPresentedChange={setSheetPresented}>
 					<Group
-						key={sheetNonce}
 						modifiers={[
 							// The sheet's own chrome is a translucent material, and the
 							// map read straight through the list. A PlatformColor rather
@@ -263,8 +267,8 @@ export default function MapPage(): React.ReactNode {
 							// still follows the system appearance.
 							background(c.systemGroupedBackground),
 							presentationDetents(SHEET_DETENTS, {
-								selection: detent,
-								onSelectionChange: setDetent,
+								selection: DETENT_FOR[sheet.current],
+								onSelectionChange: (to) => dispatchSheet({type: 'dragged', to: nameOf(to)}),
 							}),
 							presentationDragIndicator('visible'),
 							// The map behind the sheet stays live at every stop, which is
@@ -278,21 +282,20 @@ export default function MapPage(): React.ReactNode {
 						{selectedBuildingId ? (
 							<BuildingInfo
 								building={selectedBuilding}
-								onClose={() => {
-									setSelectedBuildingId(null)
-									moveSheet(COLLAPSED_DETENT)
-								}}
+								onClose={() => setSelectedBuildingId(null)}
 							/>
 						) : (
 							<BuildingPicker
 								campus={campus}
-								// oxlint-disable-next-line typescript/no-empty-function
-								onSearchCancel={() => {}}
-								// oxlint-disable-next-line typescript/no-empty-function
-								onSearchFocusChange={() => {}}
+								onSearchCancel={() => dispatchSheet({type: 'search-cancelled'})}
+								onSearchFocusChange={(focused, hasText) =>
+									dispatchSheet(
+										focused ? {type: 'search-focused'} : {type: 'search-blurred', hasText},
+									)
+								}
 								onSelect={(id) => {
 									setSelectedBuildingId(id)
-									moveSheet(MIDDLE_DETENT)
+									dispatchSheet({type: 'row-tapped'})
 								}}
 							/>
 						)}
