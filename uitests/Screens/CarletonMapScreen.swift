@@ -17,8 +17,12 @@ struct CarletonMapScreen: Screen {
 			.buttons[TestIdentifiers.CarletonMap.cancel].firstMatch
 	}
 
+	/// Its own `testID` rather than a label query: the search bar's Cancel
+	/// carries the same "Close" label, and the picker is still mounted while
+	/// this is waited on, so a label-only query could be satisfied by the
+	/// wrong element.
 	private var closeButton: XCUIElement {
-		app.buttons[TestIdentifiers.CarletonMap.close].firstMatch
+		app.buttons[TestIdentifiers.CarletonMap.cardCloseButton].firstMatch
 	}
 
 	/// The map has no home tile of its own -- both campuses' Campus screens

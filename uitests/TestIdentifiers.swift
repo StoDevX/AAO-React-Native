@@ -108,7 +108,12 @@ struct TestIdentifiers {
 		/// draws it as a circular glyph beside the field and labels it "Close"
 		/// rather than "Cancel", which is the label a `UISearchBar` used to carry.
 		static let cancel = "Close"
-		static let close = "Close"
+		/// The building card's own dismiss button, a `testID` rather than a
+		/// label -- it shares the "Close" label with the search bar's Cancel
+		/// (`cancel`, above), and the picker is still mounted while the card's
+		/// query runs, so a label-only query could answer for either. Matches
+		/// `CARD_CLOSE_BUTTON_ID` in `source/features/map/building-info.tsx`.
+		static let cardCloseButton = "card-close-button"
 		/// A building near the top of the alphabetical list, so the expanded
 		/// sheet shows it without scrolling.
 		static let aBuilding = "Allen House"
