@@ -54,7 +54,7 @@ private struct SearchBar: UIViewRepresentable {
 		// Required would fight UISearchBar's own (private, undocumented) layout
 		// of the text field within the bar; 999 lets that layout win instead of
 		// throwing constraint-conflict warnings, at the cost of possibly falling
-		// short of 44pt — Task 5 measures the resulting height.
+		// short of 44pt — testTheSearchFieldIsAppleMapsHeight verifies the resulting height.
 		let textFieldHeight = bar.searchTextField.heightAnchor.constraint(equalToConstant: fieldHeight)
 		textFieldHeight.priority = UILayoutPriority(999)
 		textFieldHeight.isActive = true
