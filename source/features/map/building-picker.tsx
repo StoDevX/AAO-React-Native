@@ -111,7 +111,6 @@ export function BuildingPicker({
 					onTextChange={setTypedQuery}
 					placeholder={SEARCH_PLACEHOLDER}
 					testID={SEARCH_PLACEHOLDER}
-					text={typedQuery}
 				/>
 			</VStack>
 

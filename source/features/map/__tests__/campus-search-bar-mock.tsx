@@ -11,13 +11,13 @@ import type {CampusSearchBarProps} from '@frogpond/campus-search-bar'
 /// Cancel renders unconditionally here, where the real bar hides it until the
 /// field is focused or holds text -- so a Jest test is never evidence about
 /// whether Cancel is visible, only about what happens when it is pressed.
+/// Like the real bar, the input owns its text: nothing writes it from JS.
 export function CampusSearchBar({
 	onCancel,
 	onFocusChange,
 	onTextChange,
 	placeholder,
 	testID,
-	text,
 }: CampusSearchBarProps): React.ReactNode {
 	return (
 		<View>
@@ -27,7 +27,6 @@ export function CampusSearchBar({
 				onChangeText={onTextChange}
 				onFocus={() => onFocusChange(true)}
 				placeholder={placeholder}
-				value={text}
 			/>
 			<Pressable accessibilityRole="button" onPress={onCancel}>
 				<Text>Cancel</Text>

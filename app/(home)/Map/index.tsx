@@ -77,16 +77,13 @@ const FOOTPRINT_OPACITY = 0
 /// `SHEET_COLLAPSED_HEIGHT * scale` and this is not the height it takes on
 /// screen.
 ///
-/// It matches the picker's header block, `16 + 44 + 16` (see `SEARCH_MARGIN`
-/// in `building-picker.tsx`), which at this stop is all the picker draws. A
-/// shorter stop cannot hold the block, and SwiftUI centres content too tall
-/// for the box it is presented in rather than clipping its bottom, so the
-/// field's top edge is what a shorter stop cuts off; a taller one gives the
-/// slack to the list, and the space below the field grows.
-///
-/// Found by sweeping and looking at the captures, since none of that shows up
-/// in a frame, and solved for one simulator. See "Sizing the collapsed detent"
-/// in `docs/superpowers/specs/2026-09-07-map-sheet-search-bar-design.md`.
+/// It is the picker's header block, `16 + 44 + 16` (see `SEARCH_MARGIN` in
+/// `building-picker.tsx`), which at this stop is all the picker draws, so it
+/// holds on any device. A shorter stop cannot hold the block, and SwiftUI
+/// centres content too tall for the box it is presented in rather than
+/// clipping its bottom, so the field's top edge is what a shorter stop cuts
+/// off; a taller one gives the slack to the list, and the space below the
+/// field grows. `testSheetOpensOnItsCollapsedStop` checks the field is whole.
 const SHEET_COLLAPSED_HEIGHT = 76
 const COLLAPSED_DETENT: PresentationDetent = {height: SHEET_COLLAPSED_HEIGHT}
 

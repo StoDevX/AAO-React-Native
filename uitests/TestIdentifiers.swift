@@ -105,8 +105,7 @@ struct TestIdentifiers {
 		/// `searchFields` query.
 		static let search = "Search for a place"
 		/// UIKit's own dismiss button on the search bar, found by label. iOS 26
-		/// draws it as a circular glyph beside the field and labels it "Close"
-		/// rather than "Cancel", which is the label a `UISearchBar` used to carry.
+		/// draws it as a circular glyph beside the field and labels it "Close".
 		static let cancel = "Close"
 		/// The building card's own dismiss button, a `testID` rather than a
 		/// label -- it shares the "Close" label with the search bar's Cancel

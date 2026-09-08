@@ -2,9 +2,10 @@ import * as React from 'react'
 import type {NativeSyntheticEvent} from 'react-native'
 import {requireNativeView} from 'expo'
 
+/// No `text` prop: the bar owns its text and reports changes. Cancel clears
+/// it natively and reports the empty string before `onCancel`.
 export type CampusSearchBarProps = {
 	placeholder: string
-	text: string
 	onTextChange: (text: string) => void
 	onFocusChange: (focused: boolean) => void
 	onCancel: () => void
@@ -13,7 +14,6 @@ export type CampusSearchBarProps = {
 
 type NativeProps = {
 	placeholder: string
-	text: string
 	testID?: string
 	onTextChange: (event: NativeSyntheticEvent<{value: string}>) => void
 	onFocusChange: (event: NativeSyntheticEvent<{value: boolean}>) => void

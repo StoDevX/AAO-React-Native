@@ -8,9 +8,13 @@ import UIKit
 /// derivation are all sized against this constant.
 private let fieldHeight: CGFloat = 44
 
+/// The bar owns its text. JavaScript hears every change through
+/// `onTextChange` and never writes text back: the one change it could want,
+/// clearing on Cancel, the bar does itself before reporting it. A `text` prop
+/// would make every keystroke a round trip whose echo has to be told apart
+/// from a real write, and nothing here needs that.
 final class CampusSearchBarProps: ExpoSwiftUI.ViewProps {
 	@Field var placeholder: String = ""
-	@Field var text: String = ""
 	@Field var testID: String?
 	var onTextChange = EventDispatcher()
 	var onFocusChange = EventDispatcher()
@@ -48,8 +52,10 @@ private struct SearchBar: UIViewRepresentable {
 		bar.searchBarStyle = .minimal
 		bar.autocorrectionType = .no
 		bar.returnKeyType = .search
-		// Zero: the sheet content supplies the 16pt margins, so the bar must
-		// not add its own.
+		// The bar still insets its text field about 8pt from each side on top
+		// of this; the picker's horizontal padding is trimmed by that much so
+		// the field's visible margin matches Maps'. See
+		// `SEARCH_BAR_HORIZONTAL_PADDING` in `building-picker.tsx`.
 		bar.directionalLayoutMargins = .zero
 		// Required would fight UISearchBar's own (private, undocumented) layout
 		// of the text field within the bar; 999 lets that layout win instead of
@@ -71,45 +77,14 @@ private struct SearchBar: UIViewRepresentable {
 		// XCUITest element types, each keyed off this same testID.
 		bar.accessibilityIdentifier = props.testID
 		bar.searchTextField.accessibilityIdentifier = props.testID
-		// `props.text` can be an echo of a keystroke this coordinator already
-		// sent, arriving late. If it matches a still-pending sent value, drop
-		// that value (and anything queued before it, now unreachable) and leave
-		// the field alone; otherwise it is a genuine JS-originated change — a
-		// paste, a cleared search, a tapped suggestion — and must be written,
-		// which also means anything still in flight is now stale and moot.
-		if let echoedIndex = context.coordinator.pendingSent.firstIndex(of: props.text) {
-			context.coordinator.pendingSent.removeFirst(echoedIndex + 1)
-		} else {
-			if bar.text != props.text {
-				bar.text = props.text
-			}
-			context.coordinator.pendingSent.removeAll()
-		}
 		context.coordinator.updateCancelButton(on: bar, animated: false)
 	}
 
 	final class Coordinator: NSObject, UISearchBarDelegate {
 		var props: CampusSearchBarProps
-		/// Values sent to JS via `onTextChange` that have not yet come back
-		/// through `props.text`, oldest first. A single remembered value is not
-		/// enough: two keystrokes sent before either echoes back need their own
-		/// slots, or the second keystroke's echo is mistaken for the first's and
-		/// the first is dropped. Capped so a JS side that never echoes — a bug
-		/// on that end — cannot grow this without bound.
-		var pendingSent: [String] = []
 
 		init(props: CampusSearchBarProps) {
 			self.props = props
-		}
-
-		/// Queues a value this coordinator is about to report to JS, so its
-		/// eventual echo through `props.text` can be told apart from a change
-		/// JS made on its own.
-		func recordSent(_ text: String) {
-			pendingSent.append(text)
-			if pendingSent.count > 32 {
-				pendingSent.removeFirst()
-			}
 		}
 
 		/// Cancel is there whenever there is something to cancel: an active
@@ -122,7 +97,6 @@ private struct SearchBar: UIViewRepresentable {
 		}
 
 		func searchBar(_ bar: UISearchBar, textDidChange text: String) {
-			recordSent(text)
 			props.onTextChange(["value": text])
 			updateCancelButton(on: bar, animated: true)
 		}
@@ -145,7 +119,6 @@ private struct SearchBar: UIViewRepresentable {
 			bar.text = ""
 			bar.resignFirstResponder()
 			bar.setShowsCancelButton(false, animated: true)
-			recordSent("")
 			props.onTextChange(["value": ""])
 			props.onCancel()
 		}
