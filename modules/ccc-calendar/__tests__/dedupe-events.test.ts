@@ -11,7 +11,12 @@ jest.mock('../query', () => ({
 	deviceCalendarOptions: jest.fn(),
 }))
 
-function sourced(sourceId: string, title: string, startTime: string): SourcedEvent {
+function sourced(
+	sourceId: string,
+	title: string,
+	startTime: string,
+	organization?: string,
+): SourcedEvent {
 	return {
 		sourceId,
 		key: `${startTime}|${title}`,
@@ -27,6 +32,7 @@ function sourced(sourceId: string, title: string, startTime: string): SourcedEve
 			isOngoing: false,
 			links: [],
 			categories: [],
+			organization,
 			config: {startTime: true, endTime: true, subtitle: 'location'},
 		},
 	}
@@ -84,4 +90,37 @@ test('preserves the order it was given', () => {
 		sourced('presence', 'B', KICKOFF),
 	])
 	expect(merged.map((entry) => entry.event.title)).toStrictEqual(['B', 'A'])
+})
+
+test('the survivor inherits the sponsoring organisation of the copy it displaced', () => {
+	let [survivor] = dedupeEvents([
+		sourced('stolaf', 'Men’s Soccer vs Carroll University', SOCCER),
+		sourced('presence', "Men's Soccer vs. Carroll University", SOCCER, 'St. Olaf Athletics'),
+	])
+	expect(survivor.event.organization).toBe('St. Olaf Athletics')
+})
+
+test('inheriting an organisation changes nothing else about the survivor', () => {
+	let [survivor] = dedupeEvents([
+		sourced('stolaf', 'Men’s Soccer vs Carroll University', SOCCER),
+		sourced('presence', "Men's Soccer vs. Carroll University", SOCCER, 'St. Olaf Athletics'),
+	])
+	expect(survivor.sourceId).toBe('stolaf')
+	expect(survivor.event.title).toBe('Men’s Soccer vs Carroll University')
+})
+
+test('a survivor that names its own organisation keeps it', () => {
+	let [survivor] = dedupeEvents([
+		sourced('stolaf', 'Men’s Soccer vs Carroll University', SOCCER, 'Athletics Department'),
+		sourced('presence', "Men's Soccer vs. Carroll University", SOCCER, 'St. Olaf Athletics'),
+	])
+	expect(survivor.event.organization).toBe('Athletics Department')
+})
+
+test('an event no calendar sponsors stays unsponsored', () => {
+	let [survivor] = dedupeEvents([
+		sourced('stolaf', 'Men’s Soccer vs Carroll University', SOCCER),
+		sourced('presence', "Men's Soccer vs. Carroll University", SOCCER),
+	])
+	expect(survivor.event.organization).toBeUndefined()
 })

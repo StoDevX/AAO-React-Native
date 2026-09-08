@@ -23,15 +23,36 @@ type MergedEvents = {
  * the winner is whichever source `REMOTE_SOURCES` lists first -- the campus
  * calendar over Presence. The survivor keeps its own `sourceId`, so the row's
  * tint and the detail route it opens stay the source the user is looking at.
+ *
+ * The one thing a survivor takes from the copy it displaced is a sponsoring
+ * organisation it has none of its own. Only Presence names one, so a game both
+ * calendars carry would otherwise drop out of the organisation filter -- the
+ * copy that knew the sponsor is the one that loses. A survivor that already
+ * names an organisation keeps its own.
  */
 export function dedupeEvents(events: SourcedEvent[]): SourcedEvent[] {
-	let seen = new Set<string>()
-	return events.filter((entry) => {
+	let survivors = new Map<string, SourcedEvent>()
+
+	for (let entry of events) {
 		let key = dedupeKey(entry.event)
-		if (seen.has(key)) return false
-		seen.add(key)
-		return true
-	})
+		let survivor = survivors.get(key)
+
+		if (!survivor) {
+			survivors.set(key, entry)
+			continue
+		}
+
+		if (!survivor.event.organization && entry.event.organization) {
+			// Re-setting an existing key leaves it where it was, so the merged
+			// list stays in the order it was given.
+			survivors.set(key, {
+				...survivor,
+				event: {...survivor.event, organization: entry.event.organization},
+			})
+		}
+	}
+
+	return [...survivors.values()]
 }
 
 export function useMergedEvents(sources: CalendarSource[]): MergedEvents {
