@@ -79,8 +79,9 @@ const FOOTPRINT_OPACITY = 0
 /// despite its name, this is NOT the sheet's rendered height. It is the
 /// particular request that puts the field's position inside that fixed
 /// on-screen sheet at symmetric margins: 37 is what measuring those margins
-/// on an iPhone 17 Pro simulator converges to; see
-/// `.superpowers/sdd/2026-09-07-map-sheet-search-bar/task-8-report.md` for
+/// on an iPhone 17 Pro simulator converges to; see "Sizing the collapsed
+/// detent" in
+/// `docs/superpowers/specs/2026-09-07-map-sheet-search-bar-design.md` for
 /// the arithmetic and whether that holds at another window size.
 const SHEET_COLLAPSED_HEIGHT = 37
 const COLLAPSED_DETENT: PresentationDetent = {height: SHEET_COLLAPSED_HEIGHT}

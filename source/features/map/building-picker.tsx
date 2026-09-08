@@ -32,8 +32,10 @@ const SEARCH_PLACEHOLDER = 'Search for a place'
 
 /// `UISearchBar` insets its own text field about 8pt from the edges it is
 /// given, on top of whatever padding wraps it -- measured by comparing the
-/// field's on-screen x to Apple Maps' at the same scale (Task 8's report has
-/// the numbers). Trimming the wrapper's horizontal padding by that 8 is what
+/// field's on-screen x to Apple Maps' at the same scale (see "Sizing the
+/// collapsed detent" in
+/// `docs/superpowers/specs/2026-09-07-map-sheet-search-bar-design.md` for the
+/// numbers). Trimming the wrapper's horizontal padding by that 8 is what
 /// keeps the field's visible margin at `SEARCH_MARGIN`, which the collapsed
 /// detent is sized against; `SEARCH_MARGIN` itself stays untouched.
 const SEARCH_BAR_HORIZONTAL_PADDING = SEARCH_MARGIN - 8
