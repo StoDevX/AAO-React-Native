@@ -30,7 +30,7 @@ class ModuleBuildingHoursTests: UITestCase {
 			.tapRow(TestIdentifiers.BuildingHours.anExcludedBuilding)
 			.verifyDetailSheetPresented(for: TestIdentifiers.BuildingHours.anExcludedBuilding)
 			.verifyListStillBehind()
-			.capture("Building Hours detail sheet at half detent")
+			.capture("Building Hours detail sheet at the smaller detent")
 	}
 
 	/// `sheetLargestUndimmedDetentIndex: 'none'` is what makes this true: UIKit
@@ -49,7 +49,7 @@ class ModuleBuildingHoursTests: UITestCase {
 	}
 
 	/// `aBuildingWithLongSchedule` has two schedule sections plus a resource
-	/// link -- enough combined content to overflow the sheet's 0.5 detent,
+	/// link -- enough combined content to overflow the sheet's smaller detent,
 	/// unlike `anExcludedBuilding`'s single short section, which already fits
 	/// it entirely. Dragging it open is the case that would catch content
 	/// stuck laid out at the smaller detent's height.
@@ -86,6 +86,28 @@ class ModuleBuildingHoursTests: UITestCase {
 			// stack instead of replacing it.
 			.dismissReportScreen()
 			.verifyDetailSheetPresented(for: TestIdentifiers.BuildingHours.anExcludedBuilding)
+	}
+
+	/// The detail sheet offers no close control of its own -- only an overflow
+	/// menu and a favourite button -- so drag and backdrop are its only exits.
+	/// `preventNativeDismiss` on the report route makes this worth proving
+	/// directly: a `preventedRoutes` entry that outlived the report screen
+	/// would trap the user in a sheet nothing could close. This goes back with
+	/// no edits (so no alert should appear) and then drags the sheet itself
+	/// closed, confirming the exit still works once the report route is gone.
+	func testDismissingTheDetailSheetAfterVisitingReportWithNoEditsWorks() throws {
+		BuildingHoursScreen(app: app)
+			.navigate()
+			.tapRow(TestIdentifiers.BuildingHours.anExcludedBuilding)
+			.verifyDetailSheetPresented(for: TestIdentifiers.BuildingHours.anExcludedBuilding)
+			.openDetailMenu()
+			.tapReportAction()
+			.verifyReportScreenPresented()
+			.dismissReportScreen()
+			.verifyNoDiscardChangesAlertPresented()
+			.verifyDetailSheetPresented(for: TestIdentifiers.BuildingHours.anExcludedBuilding)
+			.attemptToDragSheetClosed()
+			.verifyDetailSheetGone(for: TestIdentifiers.BuildingHours.anExcludedBuilding)
 	}
 
 	/// The report screen's unsaved-changes guard has to survive every way out,
@@ -129,7 +151,7 @@ class ModuleBuildingHoursTests: UITestCase {
 			.attemptToTapDimmedBackdrop()
 			.verifyDiscardChangesAlertPresented()
 			.chooseToDiscardChanges()
-			.verifyReportScreenGone()
+			.verifyReportScreenGone(buildingName: TestIdentifiers.BuildingHours.anExcludedBuilding)
 	}
 
 	/// `BuildingHoursScheduleEditor` still presents as a `modal` on the OUTER

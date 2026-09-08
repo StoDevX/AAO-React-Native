@@ -140,7 +140,7 @@ struct BuildingHoursScreen: Screen {
 		return self
 	}
 
-	/// Assert the sheet is still at its smaller (0.5) detent: the closing
+	/// Assert the sheet is still at its smaller detent: the closing
 	/// footnote, the last thing on the detail screen, is not yet reachable --
 	/// whether because it exists but sits off-screen, or because the SwiftUI
 	/// `List` has not mounted content that far below the fold yet. Either way
@@ -160,7 +160,7 @@ struct BuildingHoursScreen: Screen {
 		return self
 	}
 
-	/// Drags the sheet from its half detent up to its larger one, the way
+	/// Drags the sheet from its smaller detent up to its larger one, the way
 	/// `CarletonMapScreen.expandSheet` drags the map's building sheet.
 	@discardableResult
 	func expandDetailSheet() -> Self {
@@ -251,10 +251,9 @@ struct BuildingHoursScreen: Screen {
 	/// presenting as a modal over it. Queried by the back button's own label
 	/// rather than `element(boundBy: 0)` -- the list's nav bar is still in the
 	/// hierarchy behind the sheet, so an unscoped positional query can match
-	/// the wrong bar's button. Also assert the list is still visible behind
-	/// the sheet, which is the "still a sheet, not a modal that replaced it"
-	/// half of the discriminator: a modal presented on the outer stack would
-	/// cover the list entirely.
+	/// the wrong bar's button. The back button carrying the sheet's own label
+	/// is the actual discriminator: a modal presented on the outer stack would
+	/// not carry a back button that pops into the sheet's nested stack.
 	@discardableResult
 	func verifyReportPushedIntoSheet() -> Self {
 		XCTAssertTrue(
@@ -267,7 +266,6 @@ struct BuildingHoursScreen: Screen {
 			back.exists && back.isHittable,
 			"The report should push into the sheet's stack, so it carries a back button")
 
-		verifyListStillBehind()
 		return self
 	}
 
@@ -343,13 +341,22 @@ struct BuildingHoursScreen: Screen {
 
 	/// Assert the report screen -- and, since a discarded sheet dismissal
 	/// closes the whole formSheet rather than just popping the report screen,
-	/// the sheet itself -- is gone.
+	/// the sheet itself -- is gone. Checking only `reportScreenPrompt` would
+	/// pass equally for a plain pop back to the building detail screen, with
+	/// the sheet still up behind it -- so this also asserts the sheet's own
+	/// title is gone, which only a real dismissal of the formSheet produces.
+	/// Scoped to `navigationBars` rather than a bare `staticTexts` lookup: the
+	/// building's name is also a list row's own label, which never goes away.
 	@discardableResult
-	func verifyReportScreenGone() -> Self {
+	func verifyReportScreenGone(buildingName: String) -> Self {
 		XCTAssertTrue(
 			app.staticTexts[TestIdentifiers.BuildingHours.reportScreenPrompt]
 				.waitForNonExistence(timeout: 15),
 			"Confirming the discard should have let the dismissal go through")
+		XCTAssertTrue(
+			app.navigationBars.staticTexts[buildingName].waitForNonExistence(timeout: 15),
+			"The sheet itself, titled \(buildingName), should have closed too, not just popped "
+				+ "back to it")
 		return self
 	}
 
@@ -386,6 +393,13 @@ struct BuildingHoursScreen: Screen {
 		return self
 	}
 
+	/// Distinguishes a sheet from a full-screen push: a pushed screen replaces
+	/// the list in the hierarchy, while a sheet leaves it present underneath.
+	/// `XCUIElement.exists` is true for a merely-covered element as much as a
+	/// visible one, so this does NOT tell a sheet apart from a modal that
+	/// covers the list -- react-native-screens' `modal` is a pageSheet that
+	/// also leaves the list in the hierarchy. Only meaningful where the
+	/// alternative under test is a full-screen push.
 	@discardableResult
 	func verifyListStillBehind() -> Self {
 		let row = app.element(
@@ -394,6 +408,18 @@ struct BuildingHoursScreen: Screen {
 		XCTAssertTrue(
 			row.exists,
 			"The list should still be behind the sheet, not replaced by it")
+		return self
+	}
+
+	/// Assert the detail sheet itself -- not just whatever screen was pushed
+	/// inside it -- has closed, by its own title going away. Scoped to
+	/// `navigationBars` rather than a bare `staticTexts` lookup: the building's
+	/// name is also a list row's own label, which never goes away.
+	@discardableResult
+	func verifyDetailSheetGone(for name: String) -> Self {
+		XCTAssertTrue(
+			app.navigationBars.staticTexts[name].waitForNonExistence(timeout: 15),
+			"The detail sheet, titled \(name), should have closed")
 		return self
 	}
 }

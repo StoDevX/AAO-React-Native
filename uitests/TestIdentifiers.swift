@@ -326,8 +326,10 @@ struct TestIdentifiers {
 		static let deburredQuery = "rolvaag"
 		/// A building that must fall out of the list when `deburredQuery` is
 		/// typed, so the test proves narrowing rather than mere survival. Also
-		/// the name shown as the detail sheet's own title once tapped, and its
-		/// schedule has enough content to overflow the sheet's half detent.
+		/// the name shown as the detail sheet's own title once tapped. Its
+		/// schedule is a single short section that already fits the sheet's
+		/// smaller detent -- see `aBuildingWithLongSchedule` for the one that
+		/// overflows it.
 		static let anExcludedBuilding = "The Cage"
 		/// Another Food-category building, in the same unscrolled viewport as
 		/// `anExcludedBuilding` -- so a tap aimed at it while a sheet is up lands
@@ -352,10 +354,9 @@ struct TestIdentifiers {
 		/// A schedule section heading on the detail sheet, shown only once a
 		/// building is open in the sheet.
 		static let detailSchedule = "HOURS"
-		/// The detail sheet's overflow menu button. UIKit gives an unlabelled
-		/// `ellipsis.circle` bar item the default accessibility label "More" --
-		/// the same string as `Buttons.more`, the Home screen's own tile, purely
-		/// by coincidence of wording rather than a shared identifier. The two
+		/// The detail sheet's overflow menu button, labelled "More" -- the same
+		/// string as `Buttons.more`, the Home screen's own tile, purely by
+		/// coincidence of wording rather than a shared identifier. The two
 		/// screens are never on screen together, so today's bare-label match in
 		/// `openDetailMenu` cannot collide with the tile, but reusing the
 		/// constant keeps that coincidence from drifting into two truths.
