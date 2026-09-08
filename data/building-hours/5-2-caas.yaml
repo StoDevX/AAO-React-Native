@@ -1,6 +1,7 @@
 name: CAAS
 subtitle: Center for Advising and Academic Support
 category: Help and Support
+building: toh
 
 schedule:
   - title: Hours
