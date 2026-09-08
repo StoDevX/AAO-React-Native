@@ -8,7 +8,10 @@ import {BuildingType} from './types'
 export type Campus = 'stolaf' | 'carleton'
 
 export const keys = {
-	all: (campus: Campus) => ['buildings', campus] as const,
+	/// Campus first, so everything for one campus invalidates together -- which
+	/// is what a change of server URL asks for. The map's geojson joins this
+	/// namespace when St. Olaf's lands.
+	all: (campus: Campus) => [campus, 'buildings'] as const,
 }
 
 // Both campuses run identical `spaces/hours` schemas on their own ccc-server

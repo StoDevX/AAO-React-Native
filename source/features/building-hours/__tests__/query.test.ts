@@ -15,8 +15,8 @@ import {buildingByNameOptions, buildingsOptions, keys} from '../query'
 
 describe('keys', () => {
 	test('scopes the cache key by campus', () => {
-		expect(keys.all('stolaf')).toEqual(['buildings', 'stolaf'])
-		expect(keys.all('carleton')).toEqual(['buildings', 'carleton'])
+		expect(keys.all('stolaf')).toEqual(['stolaf', 'buildings'])
+		expect(keys.all('carleton')).toEqual(['carleton', 'buildings'])
 	})
 
 	test('gives the two campuses different keys', () => {
