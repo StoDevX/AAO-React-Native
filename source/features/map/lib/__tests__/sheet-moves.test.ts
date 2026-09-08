@@ -69,6 +69,10 @@ describe('nextSheetDetent', () => {
 			expect(nextSheetDetent({type: 'row-tapped'}, at('medium'))).toEqual(at('medium'))
 		})
 
+		it('leaves a collapsed sheet where it is', () => {
+			expect(nextSheetDetent({type: 'row-tapped'}, at('collapsed'))).toEqual(at('collapsed'))
+		})
+
 		it('forgets a pending return, since the search is over', () => {
 			expect(nextSheetDetent({type: 'row-tapped'}, at('large', 'collapsed'))).toEqual(at('medium'))
 		})
