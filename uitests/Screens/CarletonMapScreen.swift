@@ -280,9 +280,9 @@ struct CarletonMapScreen: Screen {
 	}
 
 	/// A move is a change of at least a hundred points: the collapsed stop
-	/// renders at about 65pt, medium at half the screen, and large at nearly
-	/// all of it, so anything smaller is a scroll or a wobble, not a detent
-	/// change.
+	/// renders at about 65pt, the middle stop at `SHEET_RESTING_FRACTION` of
+	/// the screen, and large at nearly all of it, so anything smaller is a
+	/// scroll or a wobble, not a detent change.
 	@discardableResult
 	func verifySheetMoved(from before: CGFloat, direction: String, _ message: String) -> Self {
 		let after = searchFieldTop()
@@ -378,15 +378,17 @@ struct CarletonMapScreen: Screen {
 		return self
 	}
 
-	/// The medium stop is half the window. A card whose top is in the middle
-	/// third of the screen is at it; one hugging the bottom is still collapsed.
+	/// The middle stop is `SHEET_RESTING_FRACTION` (0.68) of the window, so the
+	/// card's top lands about a third of the way down. A top in the band from
+	/// a fifth to a half of the screen is at it: higher is `large`, lower is
+	/// still collapsed.
 	@discardableResult
 	func verifyCardAtMedium() -> Self {
 		let top = closeButtonTop()
 		let height = app.windows.firstMatch.frame.height
 		XCTAssertTrue(
-			top > height * 0.33 && top < height * 0.66,
-			"A footprint tapped while collapsed should raise the card to medium; its top is at \(top) of \(height)")
+			top > height * 0.2 && top < height * 0.5,
+			"The card should be at the middle stop; its top is at \(top) of \(height)")
 		return self
 	}
 }
