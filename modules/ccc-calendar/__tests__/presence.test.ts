@@ -24,9 +24,9 @@ test('maps the event name to the title', () => {
 	expect(parsed.title).toBe('OrgEssentials Training')
 })
 
-test('carries the sponsoring organisation', () => {
+test('carries the sponsoring organisation as the only one', () => {
 	let [parsed] = parsePresenceEvents([event()])
-	expect(parsed.organization).toBe('Office of Student Activities')
+	expect(parsed.organization).toStrictEqual(['Office of Student Activities'])
 })
 
 test('strips the HTML out of the description', () => {

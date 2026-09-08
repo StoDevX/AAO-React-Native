@@ -87,7 +87,7 @@
     "isOngoing": false,
     "links": [],
     "categories": ["SGA and Student Life"],
-    "organization": "Student Government",
+    "organization": ["Student Government"],
     "config": {"startTime": true, "endTime": true, "subtitle": "location"}
   },
   {
@@ -118,7 +118,7 @@
     "isOngoing": false,
     "links": [],
     "categories": ["Music"],
-    "organization": "Music Organizations",
+    "organization": ["Music Organizations"],
     "config": {"startTime": true, "endTime": true, "subtitle": "location"}
   },
   {
@@ -134,7 +134,7 @@
     "isOngoing": false,
     "links": [],
     "categories": ["Music"],
-    "organization": "Music Organizations",
+    "organization": ["Music Organizations"],
     "config": {"startTime": true, "endTime": true, "subtitle": "location"}
   },
   {
@@ -240,7 +240,7 @@
     "isOngoing": false,
     "links": [],
     "categories": ["Music"],
-    "organization": "Music Organizations",
+    "organization": ["Music Organizations"],
     "config": {"startTime": true, "endTime": true, "subtitle": "location"}
   },
   {

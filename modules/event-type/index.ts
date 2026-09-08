@@ -14,12 +14,14 @@ export type EventType = {
 	readonly links: Array<string>
 	readonly categories: readonly string[]
 	/**
-	 * The organisation sponsoring the event. Only Presence names one -- the
-	 * campus calendar, iCal feeds, and EventKit have no equivalent, so this
-	 * is optional rather than an empty string every other source has to
-	 * invent.
+	 * The organisations sponsoring the event. Presence names exactly one; the
+	 * campus calendar names however many co-host it, which is sometimes none
+	 * and sometimes two. iCal feeds and EventKit have no equivalent, so this
+	 * is optional rather than a list every other source has to invent -- and
+	 * a source naming none leaves it absent rather than empty, so
+	 * "unsponsored" reads one way everywhere downstream.
 	 */
-	readonly organization?: string
+	readonly organization?: readonly string[]
 	readonly config: {
 		readonly startTime: boolean
 		readonly endTime: boolean

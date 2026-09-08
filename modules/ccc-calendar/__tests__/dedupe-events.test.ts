@@ -15,7 +15,7 @@ function sourced(
 	sourceId: string,
 	title: string,
 	startTime: string,
-	organization?: string,
+	organization?: string[],
 ): SourcedEvent {
 	return {
 		sourceId,
@@ -95,26 +95,50 @@ test('preserves the order it was given', () => {
 test('the survivor inherits the sponsoring organisation of the copy it displaced', () => {
 	let [survivor] = dedupeEvents([
 		sourced('stolaf', 'Men’s Soccer vs Carroll University', SOCCER),
-		sourced('presence', "Men's Soccer vs. Carroll University", SOCCER, 'St. Olaf Athletics'),
+		sourced('presence', "Men's Soccer vs. Carroll University", SOCCER, ['St. Olaf Athletics']),
 	])
-	expect(survivor.event.organization).toBe('St. Olaf Athletics')
+	expect(survivor.event.organization).toStrictEqual(['St. Olaf Athletics'])
 })
 
 test('inheriting an organisation changes nothing else about the survivor', () => {
 	let [survivor] = dedupeEvents([
 		sourced('stolaf', 'Men’s Soccer vs Carroll University', SOCCER),
-		sourced('presence', "Men's Soccer vs. Carroll University", SOCCER, 'St. Olaf Athletics'),
+		sourced('presence', "Men's Soccer vs. Carroll University", SOCCER, ['St. Olaf Athletics']),
 	])
 	expect(survivor.sourceId).toBe('stolaf')
 	expect(survivor.event.title).toBe('Men’s Soccer vs Carroll University')
 })
 
-test('a survivor that names its own organisation keeps it', () => {
+test('a survivor that names its own organisation keeps it, ahead of the ones it gains', () => {
 	let [survivor] = dedupeEvents([
-		sourced('stolaf', 'Men’s Soccer vs Carroll University', SOCCER, 'Athletics Department'),
-		sourced('presence', "Men's Soccer vs. Carroll University", SOCCER, 'St. Olaf Athletics'),
+		sourced('stolaf', 'Men’s Soccer vs Carroll University', SOCCER, ['College Events']),
+		sourced('presence', "Men's Soccer vs. Carroll University", SOCCER, ['St. Olaf Athletics']),
 	])
-	expect(survivor.event.organization).toBe('Athletics Department')
+	expect(survivor.event.organization).toStrictEqual(['College Events', 'St. Olaf Athletics'])
+})
+
+test('an organisation both copies name is listed once', () => {
+	let [survivor] = dedupeEvents([
+		sourced('stolaf', 'Men’s Soccer vs Carroll University', SOCCER, ['St. Olaf Athletics']),
+		sourced('presence', "Men's Soccer vs. Carroll University", SOCCER, [
+			'St. Olaf Athletics',
+			'SOAR',
+		]),
+	])
+	expect(survivor.event.organization).toStrictEqual(['St. Olaf Athletics', 'SOAR'])
+})
+
+test('a third copy adds its organisations too', () => {
+	let [survivor] = dedupeEvents([
+		sourced('stolaf', 'Men’s Soccer vs Carroll University', SOCCER, ['College Events']),
+		sourced('presence', "Men's Soccer vs. Carroll University", SOCCER, ['St. Olaf Athletics']),
+		sourced('presence', 'Men’s soccer vs Carroll University', SOCCER, ['SOAR']),
+	])
+	expect(survivor.event.organization).toStrictEqual([
+		'College Events',
+		'St. Olaf Athletics',
+		'SOAR',
+	])
 })
 
 test('an event no calendar sponsors stays unsponsored', () => {
@@ -123,4 +147,12 @@ test('an event no calendar sponsors stays unsponsored', () => {
 		sourced('presence', "Men's Soccer vs. Carroll University", SOCCER),
 	])
 	expect(survivor.event.organization).toBeUndefined()
+})
+
+test('a copy that names no organisation leaves the survivor alone', () => {
+	let [survivor] = dedupeEvents([
+		sourced('stolaf', 'Men’s Soccer vs Carroll University', SOCCER, ['College Events']),
+		sourced('presence', "Men's Soccer vs. Carroll University", SOCCER),
+	])
+	expect(survivor.event.organization).toStrictEqual(['College Events'])
 })

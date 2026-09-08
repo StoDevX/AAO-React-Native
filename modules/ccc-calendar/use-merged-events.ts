@@ -24,11 +24,13 @@ type MergedEvents = {
  * calendar over Presence. The survivor keeps its own `sourceId`, so the row's
  * tint and the detail route it opens stay the source the user is looking at.
  *
- * The one thing a survivor takes from the copy it displaced is a sponsoring
- * organisation it has none of its own. Only Presence names one, so a game both
- * calendars carry would otherwise drop out of the organisation filter -- the
- * copy that knew the sponsor is the one that loses. A survivor that already
- * names an organisation keeps its own.
+ * The one thing a survivor takes from the copy it displaced is the sponsoring
+ * organisations that copy names and it does not. Both calendars name sponsors,
+ * and each is authoritative about the ones it lists, so a game both carry is
+ * genuinely sponsored by the union -- dropping the loser's would hide the event
+ * from a filter on an organisation that really does sponsor it. Nothing is
+ * overwritten: the survivor's own names stay, in its own order, and one both
+ * copies name is listed once.
  */
 export function dedupeEvents(events: SourcedEvent[]): SourcedEvent[] {
 	let survivors = new Map<string, SourcedEvent>()
@@ -42,12 +44,15 @@ export function dedupeEvents(events: SourcedEvent[]): SourcedEvent[] {
 			continue
 		}
 
-		if (!survivor.event.organization && entry.event.organization) {
+		let sponsors = survivor.event.organization ?? []
+		let gained = (entry.event.organization ?? []).filter((name) => !sponsors.includes(name))
+
+		if (gained.length > 0) {
 			// Re-setting an existing key leaves it where it was, so the merged
 			// list stays in the order it was given.
 			survivors.set(key, {
 				...survivor,
-				event: {...survivor.event, organization: entry.event.organization},
+				event: {...survivor.event, organization: [...sponsors, ...gained]},
 			})
 		}
 	}

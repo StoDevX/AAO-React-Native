@@ -251,3 +251,106 @@ test('returns empty categories when none are present', () => {
 	})
 	expect(event.categories).toStrictEqual([])
 })
+
+test('names the sponsoring organisation', () => {
+	const [event] = parseTecEvents({
+		events: [
+			{
+				title: 'Christmas Festival',
+				description: '',
+				url: 'https://wp.stolaf.edu/calendar/event/christmas-festival/',
+				all_day: false,
+				utc_start_date: '2026-08-17 19:00:00',
+				utc_end_date: '2026-08-17 21:00:00',
+				organizer: [
+					{
+						id: 72957,
+						organizer: 'College Events',
+						url: 'https://wp.stolaf.edu/calendar/organizer/college-events/',
+						email: 'events@stolaf.edu',
+					},
+				],
+			},
+		],
+	})
+	expect(event.organization).toStrictEqual(['College Events'])
+})
+
+test('names every organisation co-sponsoring an event', () => {
+	const [event] = parseTecEvents({
+		events: [
+			{
+				title: 'Reunion Weekend Exhibition',
+				description: '',
+				url: 'https://wp.stolaf.edu/calendar/event/reunion-exhibition/',
+				all_day: false,
+				utc_start_date: '2026-08-17 19:00:00',
+				utc_end_date: '2026-08-17 21:00:00',
+				organizer: [{organizer: 'Flaten Art Museum'}, {organizer: 'Alumni and Parent Relations'}],
+			},
+		],
+	})
+	expect(event.organization).toStrictEqual(['Flaten Art Museum', 'Alumni and Parent Relations'])
+})
+
+test('treats an empty organizer array as no organisation', () => {
+	// TEC's own representation of "no organiser": the key is always present,
+	// and an unsponsored event carries `organizer: []`.
+	const [event] = parseTecEvents({
+		events: [
+			{
+				title: 'A',
+				description: '',
+				url: 'https://wp.stolaf.edu/calendar/event/a/',
+				all_day: false,
+				utc_start_date: '2026-08-17 13:00:00',
+				utc_end_date: '2026-08-17 14:00:00',
+				organizer: [],
+			},
+		],
+	})
+	expect(event.organization).toBeUndefined()
+})
+
+test('treats an event with no organizer field at all as no organisation', () => {
+	const [event] = parseTecEvents({
+		events: [
+			{
+				title: 'A',
+				description: '',
+				url: 'https://wp.stolaf.edu/calendar/event/a/',
+				all_day: false,
+				utc_start_date: '2026-08-17 13:00:00',
+				utc_end_date: '2026-08-17 14:00:00',
+			},
+		],
+	})
+	expect(event.organization).toBeUndefined()
+})
+
+test('decodes HTML entities in an organisation name', () => {
+	const [event] = parseTecEvents({
+		events: [
+			{
+				title: 'A',
+				description: '',
+				url: 'https://wp.stolaf.edu/calendar/event/a/',
+				all_day: false,
+				utc_start_date: '2026-08-17 13:00:00',
+				utc_end_date: '2026-08-17 14:00:00',
+				organizer: [{organizer: 'Alumni &#038; Parent Relations'}],
+			},
+		],
+	})
+	expect(event.organization).toStrictEqual(['Alumni & Parent Relations'])
+})
+
+test('carries the organisations the live fixture names', () => {
+	const events = parseTecEvents(fixture)
+	const sponsored = events.flatMap((event) => event.organization ?? [])
+	expect(sponsored).toContain('College Events')
+	expect(sponsored).toContain('Flaten Art Museum')
+	// An unsponsored event is unsponsored, not sponsored by nobody: the parser
+	// never emits an empty list, so "no organisation" has one representation.
+	expect(events.every((event) => event.organization?.length !== 0)).toBe(true)
+})

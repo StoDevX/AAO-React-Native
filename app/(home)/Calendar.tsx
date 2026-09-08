@@ -29,14 +29,14 @@ export default function CalendarPage(): React.ReactNode {
 	}, [events])
 
 	let availableOrganizations = useMemo(() => {
-		let orgs = new Set(events.flatMap((e) => (e.event.organization ? [e.event.organization] : [])))
+		let orgs = new Set(events.flatMap((e) => e.event.organization ?? []))
 		return [...orgs].sort((a, b) => b.localeCompare(a))
 	}, [events])
 
 	let filteredEvents = useMemo(() => {
 		if (filter === null) return events
 		if (filter.axis === 'organization') {
-			return events.filter((e) => e.event.organization === filter.value)
+			return events.filter((e) => e.event.organization?.includes(filter.value) ?? false)
 		}
 		return events.filter((e) => e.event.categories?.includes(filter.value))
 	}, [events, filter])

@@ -8,6 +8,11 @@ import type {WireEvent} from './events'
 // it out — TEC's REST API represents "no venue" as an empty collection.
 const VenueSchema = z.union([z.object({venue: z.string().optional()}), z.tuple([])]).optional()
 
+// The key is always present and always an array -- an event no organiser
+// sponsors carries `organizer: []`. Unlike `venue`, TEC never collapses it to
+// a bare object, so this needs no union.
+const OrganizerSchema = z.array(z.object({organizer: z.string().optional()})).default([])
+
 const TecCategorySchema = z.object({
 	name: z.string(),
 })
@@ -20,6 +25,7 @@ const TecEventSchema = z.object({
 	utc_start_date: z.string(),
 	utc_end_date: z.string(),
 	venue: VenueSchema,
+	organizer: OrganizerSchema,
 	categories: z.array(TecCategorySchema).default([]),
 })
 
@@ -30,6 +36,19 @@ const TecEventSchema = z.object({
  */
 function venueName(venue: z.infer<typeof VenueSchema>): string {
 	return decode(Array.isArray(venue) ? '' : (venue?.venue ?? ''))
+}
+
+/**
+ * Decoded like the venue name is, and for the same reason: TEC escapes the
+ * free text it sends, so an ampersand arrives as `&#038;`.
+ *
+ * An event no organiser sponsors names none at all rather than an empty list
+ * -- absent is how `EventType` spells "unsponsored", and `[]` would be a
+ * second spelling of it.
+ */
+function organizationNames(organizers: z.infer<typeof OrganizerSchema>): string[] | undefined {
+	let names = organizers.flatMap((entry) => (entry.organizer ? [decode(entry.organizer)] : []))
+	return names.length > 0 ? names : undefined
 }
 
 const TecEventsSchema = z.object({events: z.array(z.unknown())})
@@ -72,6 +91,7 @@ function toWireEvent(event: z.infer<typeof TecEventSchema>, now: Date): WireEven
 		// sources can produce the same href twice.
 		links: [...new Set([...descriptionLinks, event.url])],
 		categories: event.categories.map((c) => c.name),
+		organization: organizationNames(event.organizer),
 		config: {
 			startTime: !event.all_day,
 			endTime: !event.all_day,

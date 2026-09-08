@@ -20,7 +20,9 @@ const WireEventSchema = z.object({
 	isOngoing: z.boolean(),
 	links: z.array(z.string()),
 	categories: z.array(z.string()).default([]),
-	organization: z.string().optional(),
+	// Absent, never empty: a source that names no sponsor omits the field, so
+	// nothing downstream has to read `[]` and a missing key as the same thing.
+	organization: z.array(z.string()).optional(),
 	config: z.object({
 		startTime: z.boolean(),
 		endTime: z.boolean(),

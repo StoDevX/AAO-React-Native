@@ -56,9 +56,10 @@ function toWireEvent(event: z.infer<typeof PresenceEventSchema>, now: Date): Wir
 		links: [...new Set([...descriptionLinks, `${EVENT_PAGE}${event.uri}`])],
 		// Presence attaches categories to the organisation, not the event, and
 		// reaching them means a second request; the sponsoring organisation is
-		// what this source contributes to filtering.
+		// what this source contributes to filtering. Presence gives each event
+		// exactly one, so the list it fills is always a single name.
 		categories: [],
-		organization: event.organizationName,
+		organization: [event.organizationName],
 		config: {
 			startTime: true,
 			endTime: true,
