@@ -10,6 +10,7 @@ import {getFullCalendarAccess, listDeviceEvents} from './device-calendar'
 import uitestFixtures from './fixtures/uitest-events.json'
 import {parseEvents, type WireEvent} from './parsers/events'
 import {parseIcalEvents} from './parsers/ical'
+import {parsePresenceEvents} from './parsers/presence'
 import {parseTecEvents} from './parsers/tec-events'
 import {deviceSourceId, toDeviceSource, type SourcedEvent} from './sources'
 import {NamedCalendar} from './types'
@@ -60,6 +61,7 @@ function convertEvents(data: WireEvent[], options: {eventMapper?: EventMapper}):
 const TEC_EVENTS = 'application/vnd.tribe.events.v1+json'
 const FROGPOND_EVENTS = 'application/vnd.frogpond.events+json'
 const ICAL_EVENTS = 'text/calendar'
+const PRESENCE_EVENTS = 'application/vnd.presence.events+json'
 
 interface CalendarParser {
 	format: 'json' | 'text'
@@ -72,6 +74,7 @@ const CALENDAR_PARSERS: Record<string, CalendarParser> = {
 	[TEC_EVENTS]: {format: 'json', parse: parseTecEvents},
 	[FROGPOND_EVENTS]: {format: 'json', parse: parseEvents},
 	[ICAL_EVENTS]: {format: 'text', parse: parseIcalEvents},
+	[PRESENCE_EVENTS]: {format: 'json', parse: parsePresenceEvents},
 }
 
 export const CALENDAR_TYPES = Object.keys(CALENDAR_PARSERS)

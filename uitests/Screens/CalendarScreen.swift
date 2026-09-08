@@ -37,15 +37,29 @@ struct CalendarScreen: Screen {
 		return self
 	}
 
+	/// Tap an item in the open menu. A category, an organisation and All Events
+	/// are all Toggles inside a Menu, which reach XCUITest as buttons labelled
+	/// with their titles.
+	@discardableResult
+	private func tapMenuItem(_ title: String) -> Self {
+		let item = app.buttons[title]
+		XCTAssertTrue(
+			item.waitForExistence(timeout: 30),
+			"\(title) should be offered in the picker")
+		item.tap()
+		return self
+	}
+
 	/// Tap a category in the open menu.
 	@discardableResult
 	func selectCategory(_ category: String) -> Self {
-		let item = app.buttons[category]
-		XCTAssertTrue(
-			item.waitForExistence(timeout: 30),
-			"\(category) should be offered in the picker")
-		item.tap()
-		return self
+		tapMenuItem(category)
+	}
+
+	/// Tap an organisation in the open menu's ORGANIZATION section.
+	@discardableResult
+	func selectOrganization(_ organization: String) -> Self {
+		tapMenuItem(organization)
 	}
 
 	/// Assert a category is selected in the open menu.
@@ -61,8 +75,17 @@ struct CalendarScreen: Screen {
 	}
 
 	/// Whether the menu is still on screen.
+	///
+	/// Keyed on the CALENDARS header rather than on a category: categories come
+	/// from the events, so a test that has switched every calendar off would
+	/// otherwise read an open menu as closed.
+	///
+	/// This reads a menu that is taller than the screen as closed. iOS makes an
+	/// over-tall menu scroll, and a header scrolled out of the viewport leaves
+	/// the accessibility hierarchy entirely -- so the fixture calendar keeps the
+	/// menu short enough to draw whole. See `TestIdentifiers.Calendar`.
 	func menuIsPresented() -> Bool {
-		app.buttons[TestIdentifiers.Calendar.categories[0]].exists
+		app.staticTexts[TestIdentifiers.Calendar.calendarsSection].exists
 	}
 
 	/// Close the menu by tapping well away from it -- the toolbar button is at
@@ -72,7 +95,8 @@ struct CalendarScreen: Screen {
 	func dismissMenu() -> Self {
 		if menuIsPresented() {
 			app.coordinate(withNormalizedOffset: CGVector(dx: 0.1, dy: 0.2)).tap()
-			_ = app.buttons[TestIdentifiers.Calendar.categories[0]].waitForNonExistence(timeout: 10)
+			_ = app.staticTexts[TestIdentifiers.Calendar.calendarsSection]
+				.waitForNonExistence(timeout: 10)
 		}
 		return self
 	}
@@ -423,6 +447,62 @@ struct CalendarScreen: Screen {
 		XCTAssertTrue(
 			app.buttons[TestIdentifiers.Calendar.picker].waitForExistence(timeout: 30),
 			"Dismissing the event detail should land back on the calendar")
+		return self
+	}
+
+	/// A section header inside the open menu.
+	@discardableResult
+	func verifyMenuSection(_ title: String) -> Self {
+		XCTAssertTrue(
+			app.staticTexts[title].waitForExistence(timeout: 30),
+			"\(title) should be a section of the open menu")
+		return self
+	}
+
+	/// Switch a calendar on or off in the open menu's CALENDARS section. A
+	/// Toggle inside a Menu is a button, the same as a category is.
+	@discardableResult
+	func toggleCalendar(_ title: String) -> Self {
+		let item = app.buttons[title]
+		XCTAssertTrue(
+			item.waitForExistence(timeout: 30),
+			"\(title) should be offered as a calendar in the picker")
+		item.tap()
+		return self
+	}
+
+	/// How many event rows are on screen.
+	///
+	/// A count of what is rendered, not of what the calendar holds -- the list
+	/// is lazy. Enough to tell "some rows" from "none", and to tell a narrowed
+	/// list from an unnarrowed one, which is all any assertion here claims.
+	func visibleRowCount() -> Int {
+		app.buttons.matching(
+			NSPredicate(format: "identifier BEGINSWITH %@", TestIdentifiers.Calendar.eventRowPrefix)
+		).count
+	}
+
+	/// The list merges several calendars, so it can credit none of them.
+	@discardableResult
+	func verifyNoAttribution() -> Self {
+		let caption = app.staticTexts.matching(
+			NSPredicate(format: "label BEGINSWITH %@", TestIdentifiers.Calendar.attributionPrefix)
+		).firstMatch
+		XCTAssertFalse(
+			caption.exists,
+			"The calendar list should carry no attribution footer")
+		return self
+	}
+
+	/// The detail screen knows which calendar its event came from, so it says.
+	@discardableResult
+	func verifyAttributionOnDetail() -> Self {
+		let caption = app.staticTexts.matching(
+			NSPredicate(format: "label BEGINSWITH %@", TestIdentifiers.Calendar.attributionPrefix)
+		).firstMatch
+		XCTAssertTrue(
+			caption.waitForExistence(timeout: 30),
+			"The event detail should credit the calendar the event came from")
 		return self
 	}
 }

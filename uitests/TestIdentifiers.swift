@@ -182,11 +182,35 @@ struct TestIdentifiers {
 	// MARK: - Calendar
 
 	enum Calendar {
-		static let picker = "Category filter"
+		static let picker = "Calendar filter"
 		/// Categories from the St. Olaf calendar. Unlike calendar sources, these
 		/// come from the event data itself, so the exact set depends on what the
 		/// calendar is serving. These two appear reliably.
 		static let categories = ["Music", "Academic Year"]
+		/// The picker menu's section headers. SwiftUI draws a Menu section title
+		/// as static text, uppercased by the caller rather than by the platform.
+		static let calendarsSection = "CALENDARS"
+		static let categorySection = "CATEGORY"
+		static let organizationSection = "ORGANIZATION"
+		/// A sponsoring organisation named by the fixture calendar's events. It
+		/// sponsors three of them, so filtering to it leaves the list narrowed
+		/// rather than empty.
+		///
+		/// The fixture names two organisations, and short ones. iOS scrolls a
+		/// menu taller than the screen, and a section header scrolled out of the
+		/// viewport is absent from the accessibility hierarchy rather than
+		/// merely offscreen -- so `verifyMenuSection` fails on a menu that is
+		/// only too long. A name long enough to wrap its row costs half again
+		/// the height of one that does not.
+		static let organization = "Music Organizations"
+		/// Clears whichever axis is filtered. Rendered inside the CATEGORY
+		/// section, at its visual top.
+		static let allEvents = "All Events"
+		/// The one calendar UI test mode enables, from `REMOTE_SOURCES`.
+		static let uitestCalendar = "UI Test Fixtures"
+		/// Every attribution caption opens with this. The list should carry
+		/// none and the event detail exactly one.
+		static let attributionPrefix = "Powered by"
 		/// Only the event detail screen carries this, so it is how a test knows
 		/// the push landed.
 		static let shareEvent = "Share Event"

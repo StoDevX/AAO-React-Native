@@ -11,28 +11,25 @@ import {
 import {EventList} from '@frogpond/event-list'
 import {useMomentTimer} from '@frogpond/timer'
 
-import {STOLAF_POWERED_BY} from '../../source/features/calendar/constants'
+import {
+	availableCategories,
+	availableOrganizations,
+	filterEvents,
+} from '../../source/features/calendar/filter'
 import {useCalendarFilterStore} from '../../source/features/calendar/store'
 
 export default function CalendarPage(): React.ReactNode {
 	let router = useRouter()
 	let {now} = useMomentTimer({intervalMs: 60000})
-	let {enabled} = useCalendarSources()
+	let {all, enabled, toggle, canOfferDevice, deviceAvailable, requestDevice} = useCalendarSources()
 	let {events, failed, isLoading, isRefetching, refetchAll} = useMergedEvents(enabled)
 	let eventListRef = React.useRef<EventList.EventListHandle>(null)
 
-	let {selectedCategory, selectCategory} = useCalendarFilterStore()
+	let {filter, selectFilter} = useCalendarFilterStore()
 
-	let availableCategories = useMemo(() => {
-		let cats = new Set(events.flatMap((e) => e.event.categories ?? []))
-		// Z-A in code → A-Z visually: SwiftUI Menu Section renders bottom-to-top
-		return [...cats].sort((a, b) => b.localeCompare(a))
-	}, [events])
-
-	let filteredEvents = useMemo(() => {
-		if (selectedCategory === null) return events
-		return events.filter((e) => e.event.categories?.includes(selectedCategory))
-	}, [events, selectedCategory])
+	let categories = useMemo(() => availableCategories(events), [events])
+	let organizations = useMemo(() => availableOrganizations(events), [events])
+	let filteredEvents = useMemo(() => filterEvents(events, filter), [events, filter])
 
 	let onPressEvent = (entry: SourcedEvent) => {
 		router.push({
@@ -45,6 +42,8 @@ export default function CalendarPage(): React.ReactNode {
 		eventListRef.current?.scrollToToday()
 	}, [])
 
+	let enabledIds = useMemo(() => enabled.map((source) => source.id), [enabled])
+
 	return (
 		<>
 			<EventList.EventList
@@ -55,15 +54,19 @@ export default function CalendarPage(): React.ReactNode {
 				now={now}
 				onPressEvent={onPressEvent}
 				onRefresh={refetchAll}
-				poweredBy={STOLAF_POWERED_BY}
 				refreshing={isRefetching}
 				sources={enabled}
 			/>
 			<CalendarPicker
-				categories={availableCategories}
-				onSelectCategory={selectCategory}
+				categories={categories}
+				enabledIds={enabledIds}
+				filter={filter}
+				onRequestDeviceCalendars={canOfferDevice && !deviceAvailable ? requestDevice : undefined}
+				onSelectFilter={selectFilter}
+				onToggleSource={toggle}
 				onTodayPress={onTodayPress}
-				selectedCategory={selectedCategory}
+				organizations={organizations}
+				sources={all}
 			/>
 		</>
 	)

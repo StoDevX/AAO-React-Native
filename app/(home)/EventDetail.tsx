@@ -21,16 +21,19 @@ import {
 	useMergedEvents,
 } from '@frogpond/ccc-calendar'
 import {LoadingView, NoticeView} from '@frogpond/notice'
-import {STOLAF_POWERED_BY} from '../../source/features/calendar/constants'
+import {PRESENCE_POWERED_BY, STOLAF_POWERED_BY} from '../../source/features/calendar/constants'
 import {KSTO_POWERED_BY, KRLX_POWERED_BY} from '../../source/features/streaming/radio/constants'
 import {Host} from '@expo/ui/swift-ui'
 
-type EventSource = 'stolaf' | 'uitest' | 'ksto-schedule' | 'krlx-schedule'
+type EventSource = 'stolaf' | 'presence' | 'uitest' | 'ksto-schedule' | 'krlx-schedule'
 
-const UITEST_POWERED_BY = {title: '', href: ''} as const
+// A stand-in for a real remote source, so its detail screen attributes exactly
+// like `stolaf`'s or `presence`'s does.
+const UITEST_POWERED_BY = {title: 'Powered by UI Test Fixtures', href: ''} as const
 
 const POWERED_BY: Record<EventSource, {title: string; href: string}> = {
 	stolaf: STOLAF_POWERED_BY,
+	presence: PRESENCE_POWERED_BY,
 	uitest: UITEST_POWERED_BY,
 	'ksto-schedule': KSTO_POWERED_BY,
 	'krlx-schedule': KRLX_POWERED_BY,
@@ -46,7 +49,7 @@ const NO_ATTRIBUTION = {title: '', href: ''} as const
  * The sources that contribute to the merged calendar, and so have neighbours
  * to show. KSTO's and KRLX's broadcast schedules do not.
  */
-const REMOTE_SOURCE_IDS = new Set(['stolaf', 'uitest'])
+const REMOTE_SOURCE_IDS = new Set(['stolaf', 'presence', 'uitest'])
 
 export default function EventDetailPage(): React.ReactNode {
 	let {source, eventKey} = useLocalSearchParams<{

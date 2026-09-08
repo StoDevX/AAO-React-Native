@@ -16,7 +16,6 @@ jest.mock('@expo/ui/swift-ui/modifiers', () => {
 	return require('./expo-ui-mock') as typeof import('./expo-ui-mock')
 })
 
-const POWERED_BY = {title: 'Powered by the St. Olaf calendar', href: 'https://example.com'}
 const NOW = moment('2026-08-17T12:00:00Z')
 
 const STOLAF_SOURCE = {id: 'stolaf', title: 'St. Olaf', color: 'blue', kind: 'remote' as const}
@@ -64,7 +63,6 @@ describe('EventList', () => {
 				now={NOW}
 				onPressEvent={jest.fn()}
 				onRefresh={jest.fn()}
-				poweredBy={POWERED_BY}
 				refreshing={false}
 				sources={[STOLAF_SOURCE]}
 			/>,
@@ -87,7 +85,6 @@ describe('EventList', () => {
 				now={NOW}
 				onPressEvent={jest.fn()}
 				onRefresh={jest.fn()}
-				poweredBy={POWERED_BY}
 				refreshing={false}
 				sources={[STOLAF_SOURCE]}
 			/>,
@@ -107,7 +104,6 @@ describe('EventList', () => {
 				now={NOW}
 				onPressEvent={jest.fn()}
 				onRefresh={jest.fn()}
-				poweredBy={POWERED_BY}
 				refreshing={false}
 				sources={[STOLAF_SOURCE]}
 			/>,
@@ -128,7 +124,6 @@ describe('EventList', () => {
 				now={NOW}
 				onPressEvent={jest.fn()}
 				onRefresh={jest.fn()}
-				poweredBy={POWERED_BY}
 				refreshing={false}
 				sources={[STOLAF_SOURCE]}
 			/>,
@@ -155,7 +150,6 @@ describe('EventList', () => {
 				now={NOW}
 				onPressEvent={jest.fn()}
 				onRefresh={jest.fn()}
-				poweredBy={POWERED_BY}
 				refreshing={false}
 				sources={[STOLAF_SOURCE]}
 			/>,
@@ -173,7 +167,6 @@ describe('EventList', () => {
 				now={NOW}
 				onPressEvent={jest.fn()}
 				onRefresh={jest.fn()}
-				poweredBy={POWERED_BY}
 				refreshing={false}
 				sources={[STOLAF_SOURCE]}
 			/>,
@@ -191,7 +184,6 @@ describe('EventList', () => {
 				now={NOW}
 				onPressEvent={jest.fn()}
 				onRefresh={jest.fn()}
-				poweredBy={POWERED_BY}
 				refreshing={false}
 				sources={[STOLAF_SOURCE]}
 			/>,
@@ -211,7 +203,6 @@ describe('EventList', () => {
 				now={NOW}
 				onPressEvent={onPressEvent}
 				onRefresh={jest.fn()}
-				poweredBy={POWERED_BY}
 				refreshing={false}
 				sources={[STOLAF_SOURCE]}
 			/>,
@@ -233,7 +224,6 @@ describe('EventList', () => {
 				now={NOW}
 				onPressEvent={jest.fn()}
 				onRefresh={jest.fn()}
-				poweredBy={POWERED_BY}
 				refreshing={false}
 				sources={sources}
 			/>,
@@ -257,7 +247,6 @@ describe('EventList', () => {
 				now={NOW}
 				onPressEvent={jest.fn()}
 				onRefresh={jest.fn()}
-				poweredBy={POWERED_BY}
 				refreshing={false}
 				sources={sources}
 			/>,
@@ -282,7 +271,6 @@ describe('EventList', () => {
 				now={NOW}
 				onPressEvent={jest.fn()}
 				onRefresh={onRefresh}
-				poweredBy={POWERED_BY}
 				refreshing={false}
 				sources={[source]}
 			/>,
@@ -303,7 +291,6 @@ describe('EventList', () => {
 				now={NOW}
 				onPressEvent={jest.fn()}
 				onRefresh={onRefresh}
-				poweredBy={POWERED_BY}
 				refreshing={false}
 				sources={[STOLAF_SOURCE]}
 			/>,
@@ -323,7 +310,6 @@ describe('EventList', () => {
 				now={NOW}
 				onPressEvent={jest.fn()}
 				onRefresh={jest.fn()}
-				poweredBy={POWERED_BY}
 				refreshing={false}
 				sources={[]}
 			/>,
@@ -355,7 +341,6 @@ describe('EventList', () => {
 				now={NOW}
 				onPressEvent={jest.fn()}
 				onRefresh={jest.fn()}
-				poweredBy={POWERED_BY}
 				refreshing={false}
 				sources={[STOLAF_SOURCE]}
 			/>,
@@ -377,7 +362,6 @@ describe('EventList', () => {
 				now={NOW}
 				onPressEvent={jest.fn()}
 				onRefresh={jest.fn()}
-				poweredBy={POWERED_BY}
 				refreshing={false}
 				sources={[]}
 			/>,

@@ -168,3 +168,13 @@ test('fetchManifest resolves to the bundled document rather than hanging while o
 		onlineManager.setOnline(wasOnline)
 	}
 })
+
+test('the bundled manifest offers Presence as a calendar', () => {
+	let link = bundled.links.find(
+		(entry) =>
+			entry.rel === 'https://frogpond.tech/rel/calendar' &&
+			entry.properties['https://frogpond.tech/ns/id'] === 'presence',
+	)
+	expect(link?.href).toBe('https://api.presence.io/stolaf/v1/events')
+	expect(link?.type).toBe('application/vnd.presence.events+json')
+})

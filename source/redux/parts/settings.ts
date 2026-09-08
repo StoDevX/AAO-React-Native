@@ -11,13 +11,23 @@ type State = {
 	directoryResultsView: 'list' | 'tiles'
 }
 
+/**
+ * The calendars an install starts with. The campus calendar plus Presence,
+ * where the student organisations post: between them they are the whole of
+ * what happens on campus, so both are on. UI test mode uses only the fixture
+ * calendar.
+ *
+ * The one definition of that list. `initialState`, the two rehydration
+ * fallbacks below, and the redux migration all read it, and a second copy
+ * would let them drift.
+ */
+export const DEFAULT_CALENDAR_SOURCES: string[] = isUITesting ? ['uitest'] : ['stolaf', 'presence']
+
 // why `as`? see https://redux-toolkit.js.org/tutorials/typescript#:~:text=In%20some%20cases%2C%20TypeScript
 const initialState = {
 	unofficialityAcknowledged: false,
 	devModeOverride: false,
-	// St. Olaf alone: the college whose app this is, and the only calendar most
-	// people want on by default. UI test mode uses only the fixture calendar.
-	enabledCalendarSources: isUITesting ? ['uitest'] : ['stolaf'],
+	enabledCalendarSources: DEFAULT_CALENDAR_SOURCES,
 	// Faces read faster than a list of names, so search results open as tiles.
 	directoryResultsView: 'tiles',
 } as State
@@ -36,8 +46,7 @@ const slice = createSlice({
 			// `autoMergeLevel1` (the default redux-persist reconciler) swaps this
 			// whole slice in from storage rather than merging field-by-field, so
 			// state persisted before this field existed rehydrates without it.
-			const enabledCalendarSources =
-				state.enabledCalendarSources ?? initialState.enabledCalendarSources
+			const enabledCalendarSources = state.enabledCalendarSources ?? DEFAULT_CALENDAR_SOURCES
 			state.enabledCalendarSources = enabledCalendarSources.includes(payload)
 				? enabledCalendarSources.filter((id) => id !== payload)
 				: [...enabledCalendarSources, payload]
@@ -63,7 +72,7 @@ export const selectDevModeOverride = (state: RootState): State['devModeOverride'
 	state.settings.devModeOverride
 
 export const selectEnabledCalendarSources = (state: RootState): State['enabledCalendarSources'] =>
-	state.settings.enabledCalendarSources ?? initialState.enabledCalendarSources
+	state.settings.enabledCalendarSources ?? DEFAULT_CALENDAR_SOURCES
 
 export const selectDirectoryResultsView = (state: RootState): State['directoryResultsView'] =>
 	state.settings.directoryResultsView ?? initialState.directoryResultsView

@@ -5,10 +5,12 @@ import {reducer as buildings} from './parts/buildings'
 import {reducer as buildingHoursReport} from './parts/building-hours-report'
 import {reducer as courses} from './parts/courses'
 import {sentryReduxEnhancer} from './sentry-enhancer'
+import {migrations} from './migrations'
 
 import {
 	persistStore,
 	persistReducer,
+	createMigrate,
 	FLUSH,
 	REHYDRATE,
 	PAUSE,
@@ -20,7 +22,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 
 const persistConfig = {
 	key: 'root',
-	version: 1,
+	version: 2,
+	migrate: createMigrate(migrations),
 	storage: AsyncStorage,
 	// A report draft is a mid-edit scratch buffer, not durable app state --
 	// resurrecting a half-finished bug report days after the app was closed

@@ -5,7 +5,7 @@ import {eventKey} from '@frogpond/event-list'
 import {useQuery} from '@tanstack/react-query'
 import {EventType} from '@frogpond/event-type'
 
-import {eventMapper, KRLX_POWERED_BY} from '../../source/features/streaming/radio/constants'
+import {eventMapper} from '../../source/features/streaming/radio/constants'
 
 export default function KRLXSchedulePage(): React.ReactNode {
 	let router = useRouter()
@@ -25,7 +25,6 @@ export default function KRLXSchedulePage(): React.ReactNode {
 			<Stack.Title>KRLX Schedule</Stack.Title>
 			<ScheduleView
 				onPressEvent={onPressEvent}
-				poweredBy={KRLX_POWERED_BY}
 				query={useQuery(namedCalendarOptions('krlx-schedule', {eventMapper}))}
 			/>
 		</>
