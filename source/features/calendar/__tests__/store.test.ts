@@ -1,33 +1,50 @@
-import {useCalendarFilterStore} from '../store'
+import {migrate, useCalendarFilterStore} from '../store'
 
 beforeEach(() => {
-	useCalendarFilterStore.setState({selectedCategory: null})
+	useCalendarFilterStore.setState({filter: null})
 })
 
-test('starts with no category selected', () => {
-	let {selectedCategory} = useCalendarFilterStore.getState()
-	expect(selectedCategory).toBeNull()
+test('starts with nothing filtered', () => {
+	expect(useCalendarFilterStore.getState().filter).toBeNull()
 })
 
-test('selectCategory sets the category', () => {
-	let {selectCategory} = useCalendarFilterStore.getState()
-	selectCategory('Music Events')
-	let {selectedCategory} = useCalendarFilterStore.getState()
-	expect(selectedCategory).toBe('Music Events')
+test('selects a category', () => {
+	useCalendarFilterStore.getState().selectFilter({axis: 'category', value: 'Music'})
+	expect(useCalendarFilterStore.getState().filter).toStrictEqual({
+		axis: 'category',
+		value: 'Music',
+	})
 })
 
-test('selectCategory can change to a different category', () => {
-	useCalendarFilterStore.setState({selectedCategory: 'Music Events'})
-	let {selectCategory} = useCalendarFilterStore.getState()
-	selectCategory('Lectures')
-	let {selectedCategory} = useCalendarFilterStore.getState()
-	expect(selectedCategory).toBe('Lectures')
+test('selects an organisation', () => {
+	useCalendarFilterStore.getState().selectFilter({axis: 'organization', value: 'Wellness Center'})
+	expect(useCalendarFilterStore.getState().filter).toStrictEqual({
+		axis: 'organization',
+		value: 'Wellness Center',
+	})
 })
 
-test('selectCategory with null clears the selection', () => {
-	useCalendarFilterStore.setState({selectedCategory: 'Music Events'})
-	let {selectCategory} = useCalendarFilterStore.getState()
-	selectCategory(null)
-	let {selectedCategory} = useCalendarFilterStore.getState()
-	expect(selectedCategory).toBeNull()
+test('choosing an organisation replaces a category, rather than adding to it', () => {
+	useCalendarFilterStore.setState({filter: {axis: 'category', value: 'Athletics'}})
+	useCalendarFilterStore.getState().selectFilter({axis: 'organization', value: 'Music Department'})
+	expect(useCalendarFilterStore.getState().filter).toStrictEqual({
+		axis: 'organization',
+		value: 'Music Department',
+	})
+})
+
+test('null clears the filter', () => {
+	useCalendarFilterStore.setState({filter: {axis: 'category', value: 'Athletics'}})
+	useCalendarFilterStore.getState().selectFilter(null)
+	expect(useCalendarFilterStore.getState().filter).toBeNull()
+})
+
+test('migrating a persisted category carries the selection over', () => {
+	expect(migrate({selectedCategory: 'Athletics'}, 2)).toStrictEqual({
+		filter: {axis: 'category', value: 'Athletics'},
+	})
+})
+
+test('migrating a persisted empty selection stays empty', () => {
+	expect(migrate({selectedCategory: null}, 2)).toStrictEqual({filter: null})
 })

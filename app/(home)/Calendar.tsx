@@ -16,22 +16,30 @@ import {useCalendarFilterStore} from '../../source/features/calendar/store'
 export default function CalendarPage(): React.ReactNode {
 	let router = useRouter()
 	let {now} = useMomentTimer({intervalMs: 60000})
-	let {enabled} = useCalendarSources()
+	let {all, enabled, toggle, canOfferDevice, deviceAvailable, requestDevice} = useCalendarSources()
 	let {events, failed, isLoading, isRefetching, refetchAll} = useMergedEvents(enabled)
 	let eventListRef = React.useRef<EventList.EventListHandle>(null)
 
-	let {selectedCategory, selectCategory} = useCalendarFilterStore()
+	let {filter, selectFilter} = useCalendarFilterStore()
 
+	// Z-A in code -> A-Z visually: SwiftUI Menu Section renders bottom-to-top
 	let availableCategories = useMemo(() => {
 		let cats = new Set(events.flatMap((e) => e.event.categories ?? []))
-		// Z-A in code → A-Z visually: SwiftUI Menu Section renders bottom-to-top
 		return [...cats].sort((a, b) => b.localeCompare(a))
 	}, [events])
 
+	let availableOrganizations = useMemo(() => {
+		let orgs = new Set(events.flatMap((e) => (e.event.organization ? [e.event.organization] : [])))
+		return [...orgs].sort((a, b) => b.localeCompare(a))
+	}, [events])
+
 	let filteredEvents = useMemo(() => {
-		if (selectedCategory === null) return events
-		return events.filter((e) => e.event.categories?.includes(selectedCategory))
-	}, [events, selectedCategory])
+		if (filter === null) return events
+		if (filter.axis === 'organization') {
+			return events.filter((e) => e.event.organization === filter.value)
+		}
+		return events.filter((e) => e.event.categories?.includes(filter.value))
+	}, [events, filter])
 
 	let onPressEvent = (entry: SourcedEvent) => {
 		router.push({
@@ -43,6 +51,8 @@ export default function CalendarPage(): React.ReactNode {
 	let onTodayPress = React.useCallback(() => {
 		eventListRef.current?.scrollToToday()
 	}, [])
+
+	let enabledIds = useMemo(() => enabled.map((source) => source.id), [enabled])
 
 	return (
 		<>
@@ -59,9 +69,14 @@ export default function CalendarPage(): React.ReactNode {
 			/>
 			<CalendarPicker
 				categories={availableCategories}
-				onSelectCategory={selectCategory}
+				enabledIds={enabledIds}
+				filter={filter}
+				onRequestDeviceCalendars={canOfferDevice && !deviceAvailable ? requestDevice : undefined}
+				onSelectFilter={selectFilter}
+				onToggleSource={toggle}
 				onTodayPress={onTodayPress}
-				selectedCategory={selectedCategory}
+				organizations={availableOrganizations}
+				sources={all}
 			/>
 		</>
 	)

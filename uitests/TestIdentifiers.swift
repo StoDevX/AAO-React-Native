@@ -182,7 +182,7 @@ struct TestIdentifiers {
 	// MARK: - Calendar
 
 	enum Calendar {
-		static let picker = "Category filter"
+		static let picker = "Calendar filter"
 		/// Categories from the St. Olaf calendar. Unlike calendar sources, these
 		/// come from the event data itself, so the exact set depends on what the
 		/// calendar is serving. These two appear reliably.
