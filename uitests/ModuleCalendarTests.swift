@@ -233,8 +233,8 @@ class ModuleCalendarTests: UITestCase {
 		screen.verifyAddToCalendarButton()
 	}
 
-	/// The picker is three lists in one now: which calendars contribute events,
-	/// and the axes the list can be narrowed along. SwiftUI renders a Menu's
+	/// The picker is three lists in one: which calendars contribute events, and
+	/// the two axes the list can be narrowed along. SwiftUI renders a Menu's
 	/// contents bottom-to-top, so only a screenshot settles the order they
 	/// actually reach the screen in.
 	func testPickerMenuShowsItsSections() throws {
@@ -243,6 +243,7 @@ class ModuleCalendarTests: UITestCase {
 			.openPicker()
 			.verifyMenuSection(TestIdentifiers.Calendar.calendarsSection)
 			.verifyMenuSection(TestIdentifiers.Calendar.categorySection)
+			.verifyMenuSection(TestIdentifiers.Calendar.organizationSection)
 			.capture("30-picker-sections")
 	}
 
@@ -295,6 +296,39 @@ class ModuleCalendarTests: UITestCase {
 			.selectCategory(TestIdentifiers.Calendar.allEvents)
 			.dismissMenu()
 			.capture("32-filter-cleared")
+
+		XCTAssertEqual(
+			screen.visibleRowCount(), unfiltered,
+			"All Events should restore the whole list")
+	}
+
+	/// Organisation is the second filter axis, and the only one whose values
+	/// come from Presence rather than from the campus calendar. Nothing in Jest
+	/// reaches the rendered menu, so this is the only check that choosing one
+	/// narrows the list the way a category does.
+	func testFilteringByOrganizationNarrowsTheList() throws {
+		let screen = CalendarScreen(app: app).navigate()
+		let unfiltered = screen.visibleRowCount()
+
+		screen
+			.openPicker()
+			.selectOrganization(TestIdentifiers.Calendar.organization)
+			.dismissMenu()
+			.capture("34-filtered-by-organization")
+
+		let filtered = screen.visibleRowCount()
+
+		XCTAssertLessThan(
+			filtered, unfiltered,
+			"Choosing an organisation should narrow the list")
+		XCTAssertGreaterThan(
+			filtered, 0,
+			"The organisation sponsors several events, so rows should remain")
+
+		screen
+			.openPicker()
+			.selectCategory(TestIdentifiers.Calendar.allEvents)
+			.dismissMenu()
 
 		XCTAssertEqual(
 			screen.visibleRowCount(), unfiltered,

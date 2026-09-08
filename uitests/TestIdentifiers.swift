@@ -191,6 +191,18 @@ struct TestIdentifiers {
 		/// as static text, uppercased by the caller rather than by the platform.
 		static let calendarsSection = "CALENDARS"
 		static let categorySection = "CATEGORY"
+		static let organizationSection = "ORGANIZATION"
+		/// A sponsoring organisation named by the fixture calendar's events. It
+		/// sponsors three of them, so filtering to it leaves the list narrowed
+		/// rather than empty.
+		///
+		/// The fixture names two organisations, and short ones. iOS scrolls a
+		/// menu taller than the screen, and a section header scrolled out of the
+		/// viewport is absent from the accessibility hierarchy rather than
+		/// merely offscreen -- so `verifyMenuSection` fails on a menu that is
+		/// only too long. A name long enough to wrap its row costs half again
+		/// the height of one that does not.
+		static let organization = "Music Organizations"
 		/// Clears whichever axis is filtered. Rendered inside the CATEGORY
 		/// section, at its visual top.
 		static let allEvents = "All Events"

@@ -37,15 +37,29 @@ struct CalendarScreen: Screen {
 		return self
 	}
 
+	/// Tap an item in the open menu. A category, an organisation and All Events
+	/// are all Toggles inside a Menu, which reach XCUITest as buttons labelled
+	/// with their titles.
+	@discardableResult
+	private func tapMenuItem(_ title: String) -> Self {
+		let item = app.buttons[title]
+		XCTAssertTrue(
+			item.waitForExistence(timeout: 30),
+			"\(title) should be offered in the picker")
+		item.tap()
+		return self
+	}
+
 	/// Tap a category in the open menu.
 	@discardableResult
 	func selectCategory(_ category: String) -> Self {
-		let item = app.buttons[category]
-		XCTAssertTrue(
-			item.waitForExistence(timeout: 30),
-			"\(category) should be offered in the picker")
-		item.tap()
-		return self
+		tapMenuItem(category)
+	}
+
+	/// Tap an organisation in the open menu's ORGANIZATION section.
+	@discardableResult
+	func selectOrganization(_ organization: String) -> Self {
+		tapMenuItem(organization)
 	}
 
 	/// Assert a category is selected in the open menu.
@@ -65,6 +79,11 @@ struct CalendarScreen: Screen {
 	/// Keyed on the CALENDARS header rather than on a category: categories come
 	/// from the events, so a test that has switched every calendar off would
 	/// otherwise read an open menu as closed.
+	///
+	/// This reads a menu that is taller than the screen as closed. iOS makes an
+	/// over-tall menu scroll, and a header scrolled out of the viewport leaves
+	/// the accessibility hierarchy entirely -- so the fixture calendar keeps the
+	/// menu short enough to draw whole. See `TestIdentifiers.Calendar`.
 	func menuIsPresented() -> Bool {
 		app.staticTexts[TestIdentifiers.Calendar.calendarsSection].exists
 	}
