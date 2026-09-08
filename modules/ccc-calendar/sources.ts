@@ -22,7 +22,10 @@ import {isUITesting} from '@frogpond/launch-arguments'
  */
 export const REMOTE_SOURCES: CalendarSource[] = isUITesting
 	? [{id: 'uitest', title: 'UI Test Fixtures', color: c.systemBlue, kind: 'remote'}]
-	: [{id: 'stolaf', title: 'St. Olaf', color: c.systemBlue, kind: 'remote'}]
+	: [
+			{id: 'stolaf', title: 'St. Olaf', color: c.systemBlue, kind: 'remote'},
+			{id: 'presence', title: 'Presence', color: c.systemIndigo, kind: 'remote'},
+		]
 
 const DEVICE_PREFIX = 'device:'
 

@@ -15,9 +15,10 @@ type State = {
 const initialState = {
 	unofficialityAcknowledged: false,
 	devModeOverride: false,
-	// St. Olaf alone: the college whose app this is, and the only calendar most
-	// people want on by default. UI test mode uses only the fixture calendar.
-	enabledCalendarSources: isUITesting ? ['uitest'] : ['stolaf'],
+	// The campus calendar plus Presence, where the student organisations post.
+	// Between them they are the whole of what happens on campus, so both are on
+	// by default. UI test mode uses only the fixture calendar.
+	enabledCalendarSources: isUITesting ? ['uitest'] : ['stolaf', 'presence'],
 	// Faces read faster than a list of names, so search results open as tiles.
 	directoryResultsView: 'tiles',
 } as State
