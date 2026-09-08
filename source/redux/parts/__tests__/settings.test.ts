@@ -14,9 +14,9 @@ function initial() {
 }
 
 describe('calendar source selection', () => {
-	// A fresh install lands on St. Olaf today; defaulting both on would change
-	// what every existing user sees on first launch.
-	test('starts with St. Olaf alone', () => {
+	// The shared jest setup reports UI-test mode, and that mode narrows the
+	// default list to the fixture calendar so a test run reads no network.
+	test('starts with the default list', () => {
 		expect(initial().enabledCalendarSources).toEqual(['uitest'])
 	})
 
@@ -50,13 +50,13 @@ describe('calendar source selection', () => {
 			devModeOverride: false,
 		} as ReturnType<typeof reducer>
 
-		test('the selector falls back to St. Olaf alone', () => {
+		test('the selector falls back to the default list', () => {
 			let rootState = {settings: staleRehydratedState} as RootState
 
 			expect(selectEnabledCalendarSources(rootState)).toEqual(['uitest'])
 		})
 
-		test('toggling does not throw, and starts from St. Olaf alone', () => {
+		test('toggling does not throw, and starts from the default list', () => {
 			expect(() => reducer(staleRehydratedState, toggleCalendarSource('northfield'))).not.toThrow()
 
 			let state = reducer(staleRehydratedState, toggleCalendarSource('northfield'))
