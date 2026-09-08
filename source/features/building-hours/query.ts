@@ -7,6 +7,15 @@ import {BuildingType} from './types'
 /** The two campuses that serve building hours through this feature. */
 export type Campus = 'stolaf' | 'carleton'
 
+/**
+ * Narrows a route's `?campus=` param to a known `Campus`, falling back to
+ * St. Olaf for anything else -- an unrecognised value should never crash the
+ * screen or reach a client picked by casting an arbitrary string.
+ */
+export function parseCampus(value: string | undefined): Campus {
+	return value === 'carleton' ? 'carleton' : 'stolaf'
+}
+
 export const keys = {
 	/// Campus first, so everything for one campus invalidates together -- which
 	/// is what a change of server URL asks for. The map's geojson joins this

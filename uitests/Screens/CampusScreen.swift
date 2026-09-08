@@ -1,16 +1,19 @@
 import XCTest
 
-struct BuildingHoursScreen: Screen {
+struct CampusScreen: Screen {
 	let app: XCUIApplication
 
+	/// Opens the St. Olaf Campus tile, which defaults to `'stolaf'` with no
+	/// `?campus=` param.
 	@discardableResult
 	func navigate() -> Self {
-		navigateFromHome(to: TestIdentifiers.Buttons.buildingHours)
+		navigateFromHome(to: TestIdentifiers.Buttons.campus)
 	}
 
+	/// Opens the Carleton Campus tile, which pushes `/Campus?campus=carleton`.
 	@discardableResult
-	func verifyBuildingHoursTitle() -> Self {
-		verifyTitle(TestIdentifiers.Buttons.buildingHours)
+	func navigateToCarleton() -> Self {
+		navigateFromHome(to: TestIdentifiers.Buttons.carletonCampus)
 	}
 
 	private var searchField: XCUIElement {
@@ -21,7 +24,7 @@ struct BuildingHoursScreen: Screen {
 	func search(for text: String) -> Self {
 		XCTAssertTrue(
 			searchField.waitForExistence(timeout: 30),
-			"Building Hours should offer a search field")
+			"Campus should offer a search field")
 		searchField.tap()
 		searchField.typeText(text)
 
@@ -36,7 +39,7 @@ struct BuildingHoursScreen: Screen {
 
 	@discardableResult
 	func verifyRowShown(_ name: String) -> Self {
-		let row = app.element(matching: TestIdentifiers.BuildingHours.rowPrefix + name)
+		let row = app.element(matching: TestIdentifiers.Campus.rowPrefix + name)
 		XCTAssertTrue(
 			row.waitForExistence(timeout: 30),
 			"\(name) should be listed")
@@ -45,7 +48,7 @@ struct BuildingHoursScreen: Screen {
 
 	@discardableResult
 	func verifyRowHidden(_ name: String) -> Self {
-		let row = app.element(matching: TestIdentifiers.BuildingHours.rowPrefix + name)
+		let row = app.element(matching: TestIdentifiers.Campus.rowPrefix + name)
 		XCTAssertTrue(
 			row.waitForNonExistence(timeout: 30),
 			"\(name) should have been filtered out")
@@ -60,13 +63,13 @@ struct BuildingHoursScreen: Screen {
 		let message = app.staticTexts["No results found for \"\(query)\"."]
 		XCTAssertTrue(
 			message.waitForExistence(timeout: 30),
-			"Building Hours should report no results for \"\(query)\"")
+			"Campus should report no results for \"\(query)\"")
 		return self
 	}
 
 	@discardableResult
 	func tapRow(_ name: String) -> Self {
-		let row = app.element(matching: TestIdentifiers.BuildingHours.rowPrefix + name)
+		let row = app.element(matching: TestIdentifiers.Campus.rowPrefix + name)
 		XCTAssertTrue(
 			row.waitForExistence(timeout: 30),
 			"\(name) should be listed before it can be tapped")
@@ -76,7 +79,7 @@ struct BuildingHoursScreen: Screen {
 		// JavaScript lands natively and does nothing.
 		for _ in 1...3 {
 			row.tap()
-			if app.staticTexts[TestIdentifiers.BuildingHours.detailSchedule]
+			if app.staticTexts[TestIdentifiers.Campus.detailSchedule]
 				.waitForExistence(timeout: 10)
 			{
 				break
@@ -91,7 +94,7 @@ struct BuildingHoursScreen: Screen {
 			app.staticTexts[name].waitForExistence(timeout: 30),
 			"The detail sheet should be titled \(name)")
 		XCTAssertTrue(
-			app.staticTexts[TestIdentifiers.BuildingHours.detailSchedule]
+			app.staticTexts[TestIdentifiers.Campus.detailSchedule]
 				.waitForExistence(timeout: 30),
 			"The detail sheet should show \(name)'s schedule")
 		return self
@@ -112,7 +115,7 @@ struct BuildingHoursScreen: Screen {
 	/// which is a different claim than the one this test makes.
 	@discardableResult
 	func attemptToTapRowBehindSheet(_ name: String) -> Self {
-		let row = app.element(matching: TestIdentifiers.BuildingHours.rowPrefix + name)
+		let row = app.element(matching: TestIdentifiers.Campus.rowPrefix + name)
 		XCTAssertTrue(
 			row.waitForExistence(timeout: 30),
 			"\(name) should still be in the list behind the sheet")
@@ -204,7 +207,7 @@ struct BuildingHoursScreen: Screen {
 
 	@discardableResult
 	func openDetailMenu() -> Self {
-		let menu = app.buttons[TestIdentifiers.BuildingHours.detailMenu].firstMatch
+		let menu = app.buttons[TestIdentifiers.Campus.detailMenu].firstMatch
 		XCTAssertTrue(
 			menu.waitForExistence(timeout: 30),
 			"The detail sheet should offer an overflow menu")
@@ -215,7 +218,7 @@ struct BuildingHoursScreen: Screen {
 	@discardableResult
 	func verifyReportActionOffered() -> Self {
 		XCTAssertTrue(
-			app.buttons[TestIdentifiers.BuildingHours.reportAction]
+			app.buttons[TestIdentifiers.Campus.reportAction]
 				.waitForExistence(timeout: 30),
 			"The menu should offer Report a Problem")
 		return self
@@ -226,7 +229,7 @@ struct BuildingHoursScreen: Screen {
 	/// rather than the action merely existing as a menu item.
 	@discardableResult
 	func tapReportAction() -> Self {
-		let action = app.buttons[TestIdentifiers.BuildingHours.reportAction]
+		let action = app.buttons[TestIdentifiers.Campus.reportAction]
 		XCTAssertTrue(
 			action.waitForExistence(timeout: 30),
 			"The menu should offer Report a Problem before it can be tapped")
@@ -241,7 +244,7 @@ struct BuildingHoursScreen: Screen {
 	@discardableResult
 	func verifyReportScreenPresented() -> Self {
 		XCTAssertTrue(
-			app.staticTexts[TestIdentifiers.BuildingHours.reportScreenPrompt]
+			app.staticTexts[TestIdentifiers.Campus.reportScreenPrompt]
 				.waitForExistence(timeout: 30),
 			"Report a Problem should present the report screen")
 		return self
@@ -279,7 +282,7 @@ struct BuildingHoursScreen: Screen {
 	@discardableResult
 	func verifyReportPushedIntoSheet() -> Self {
 		XCTAssertTrue(
-			app.staticTexts[TestIdentifiers.BuildingHours.reportScreenPrompt]
+			app.staticTexts[TestIdentifiers.Campus.reportScreenPrompt]
 				.waitForExistence(timeout: 30),
 			"The report screen should be up")
 
@@ -372,7 +375,7 @@ struct BuildingHoursScreen: Screen {
 	@discardableResult
 	func verifyReportScreenGone(buildingName: String) -> Self {
 		XCTAssertTrue(
-			app.staticTexts[TestIdentifiers.BuildingHours.reportScreenPrompt]
+			app.staticTexts[TestIdentifiers.Campus.reportScreenPrompt]
 				.waitForNonExistence(timeout: 15),
 			"Confirming the discard should have let the dismissal go through")
 		XCTAssertTrue(
@@ -425,8 +428,8 @@ struct BuildingHoursScreen: Screen {
 	@discardableResult
 	func verifyListStillBehind() -> Self {
 		let row = app.element(
-			matching: TestIdentifiers.BuildingHours.rowPrefix
-				+ TestIdentifiers.BuildingHours.anExcludedBuilding)
+			matching: TestIdentifiers.Campus.rowPrefix
+				+ TestIdentifiers.Campus.anExcludedBuilding)
 		XCTAssertTrue(
 			row.exists,
 			"The list should still be behind the sheet, not replaced by it")

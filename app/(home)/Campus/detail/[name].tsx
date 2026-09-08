@@ -5,7 +5,7 @@ import {useMomentTimer} from '@frogpond/timer'
 import {timezone} from '@frogpond/constants'
 
 import {BuildingDetailSwiftUI} from '../../../../source/features/building-hours/detail/building-detail'
-import {buildingByNameOptions} from '../../../../source/features/building-hours/query'
+import {buildingByNameOptions, parseCampus} from '../../../../source/features/building-hours/query'
 import {LoadingView, NoticeView} from '@frogpond/notice'
 import {useAppDispatch, useAppSelector} from '../../../../source/redux/hooks'
 import {
@@ -13,13 +13,13 @@ import {
 	toggleFavoriteBuilding,
 } from '../../../../source/redux/parts/buildings'
 
-export default function BuildingHoursDetailPage(): React.ReactNode {
+export default function CampusDetailPage(): React.ReactNode {
 	let dispatch = useAppDispatch()
 	let router = useRouter()
 
-	let {name} = useLocalSearchParams<{name: string}>()
-	// Hard-coded until the route supplies a campus (Task 2).
-	let {data: building, isLoading, error, refetch} = useQuery(buildingByNameOptions('stolaf', name))
+	let {name, campus: campusParam} = useLocalSearchParams<{name: string; campus?: string}>()
+	let campus = parseCampus(campusParam)
+	let {data: building, isLoading, error, refetch} = useQuery(buildingByNameOptions(campus, name))
 
 	let favorites = useAppSelector(selectFavoriteBuildings)
 
@@ -30,10 +30,10 @@ export default function BuildingHoursDetailPage(): React.ReactNode {
 	let reportProblem = React.useCallback(
 		() =>
 			router.push({
-				pathname: '/BuildingHours/detail/report',
-				params: {name},
+				pathname: '/Campus/detail/report',
+				params: {name, campus},
 			}),
-		[name, router],
+		[campus, name, router],
 	)
 
 	let favorited = favorites.includes(name)

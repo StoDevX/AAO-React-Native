@@ -59,10 +59,10 @@ struct TestIdentifiers {
 		static let menus = "Menus"
 		static let calendar = "Calendar"
 		static let sis = "SIS"
-		static let buildingHours = "Building Hours"
+		static let campus = "Campus"
 		static let dictionary = "Dictionary"
 		static let campusMap = "Campus Map"
-		static let carletonMap = "Carleton Map"
+		static let carletonCampus = "Carleton Campus"
 		static let courseCatalog = "Course Catalog"
 		static let directory = "Directory"
 		static let more = "More"
@@ -315,9 +315,9 @@ struct TestIdentifiers {
 		static let department = "Registrar\u{2019}s Office"
 	}
 
-	// MARK: - Building Hours
+	// MARK: - Campus
 
-	enum BuildingHours {
+	enum Campus {
 		/// A building ccc-server serves from this repo's data, so it is in the
 		/// list whatever host the app is pointed at.
 		static let aBuilding = "Rølvaag Library"
@@ -370,6 +370,16 @@ struct TestIdentifiers {
 		static let reportScreenPrompt = "Thanks for spotting a problem!"
 		/// The report screen's own submit control, in the navigation bar.
 		static let submitReportAction = "Submit Report"
+
+		/// A Carleton-only venue: present in Carleton's live `spaces/hours` but
+		/// absent from St. Olaf's, so a test tapping into the Carleton tile fails
+		/// if the campus parameter is ignored and St. Olaf's list loads instead.
+		static let carletonBuilding = "Sayles Café"
+
+		/// The Carleton Campus screen's top-right toolbar button, which pushes
+		/// to `/Map` -- the hand-hosted map screen stays where it is, so this is
+		/// a navigation, not a mode switch.
+		static let mapButton = "Map"
 	}
 
 	// MARK: - Course Catalog

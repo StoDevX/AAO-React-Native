@@ -1,5 +1,9 @@
 import * as React from 'react'
-import {useGroupedBuildings} from '../../../source/features/building-hours/query'
+import {
+	Campus,
+	parseCampus,
+	useGroupedBuildings,
+} from '../../../source/features/building-hours/query'
 import {BuildingType} from '../../../source/features/building-hours/types'
 import {BuildingList} from '../../../source/features/building-hours/list'
 import {filterBuildings} from '../../../source/features/building-hours/lib'
@@ -13,18 +17,21 @@ import {
 import {timezone} from '@frogpond/constants'
 import {LoadingView, NoticeView} from '@frogpond/notice'
 import {useDebounce} from '@frogpond/use-debounce'
-import {Stack, useRouter} from 'expo-router'
+import {Stack, useLocalSearchParams, useRouter} from 'expo-router'
 import {useMomentTimer} from '@frogpond/timer'
 
-function BuildingHoursView(): React.ReactNode {
+type Props = {
+	campus: Campus
+}
+
+function CampusView({campus}: Props): React.ReactNode {
 	let router = useRouter()
 	let dispatch = useAppDispatch()
 	let favorites = useAppSelector(selectFavoriteBuildings)
 
 	let {now} = useMomentTimer({intervalMs: 60000, startOf: 'minute', timezone: timezone()})
 
-	// Hard-coded until the route supplies a campus (Task 2).
-	let {data = [], error, refetch, isLoading, isError} = useGroupedBuildings('stolaf')
+	let {data = [], error, refetch, isLoading, isError} = useGroupedBuildings(campus)
 
 	let [query, setQuery] = React.useState('')
 	let searchQuery = useDebounce(query, 200)
@@ -39,21 +46,33 @@ function BuildingHoursView(): React.ReactNode {
 	let onSelect = React.useCallback(
 		(building: BuildingType) =>
 			router.push({
-				pathname: '/BuildingHours/detail/[name]',
-				params: {name: building.name},
+				pathname: '/Campus/detail/[name]',
+				params: {name: building.name, campus},
 			}),
-		[router],
+		[campus, router],
 	)
 
 	// The search chrome is bound to component state (the change handler
-	// updates query), so it can't move to a static outer component.
-	// Compute it once and render it in every branch, so the user always
-	// has a search bar to type into or clear.
-	let searchChrome = (
+	// updates query), so it can't move to a static outer component. Compute
+	// it once and render it in every branch, so the user always has a search
+	// bar to type into or clear. Carleton's map has no inline mode here -- its
+	// button only navigates to the existing hand-hosted `/Map` screen -- so it
+	// renders only for the campus that has one.
+	let chrome = (
 		<>
 			<Stack.Toolbar placement="bottom">
 				<Stack.Toolbar.SearchBarSlot />
 			</Stack.Toolbar>
+
+			{campus === 'carleton' && (
+				<Stack.Toolbar placement="right">
+					<Stack.Toolbar.Button
+						accessibilityLabel="Map"
+						icon="map"
+						onPress={() => router.push('/Map')}
+					/>
+				</Stack.Toolbar>
+			)}
 
 			<SearchBar onChangeText={setQuery} value={query} />
 		</>
@@ -72,7 +91,7 @@ function BuildingHoursView(): React.ReactNode {
 	if (isLoading) {
 		return (
 			<>
-				{searchChrome}
+				{chrome}
 				<LoadingView />
 			</>
 		)
@@ -80,7 +99,7 @@ function BuildingHoursView(): React.ReactNode {
 
 	return (
 		<>
-			{searchChrome}
+			{chrome}
 			<BuildingList
 				favorites={favorites}
 				isLoading={isLoading}
@@ -95,11 +114,14 @@ function BuildingHoursView(): React.ReactNode {
 	)
 }
 
-export default function BuildingHoursPage(): React.ReactNode {
+export default function CampusPage(): React.ReactNode {
+	let {campus: campusParam} = useLocalSearchParams<{campus?: string}>()
+	let campus = parseCampus(campusParam)
+
 	return (
 		<>
-			<Stack.Title>Building Hours</Stack.Title>
-			<BuildingHoursView />
+			<Stack.Title>{campus === 'carleton' ? 'Carleton Campus' : 'Campus'}</Stack.Title>
+			<CampusView campus={campus} />
 		</>
 	)
 }

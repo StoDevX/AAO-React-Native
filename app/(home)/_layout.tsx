@@ -8,9 +8,9 @@ export default function HomeLayout(): React.ReactNode {
 			<Stack.Screen name="Streaming Media" options={{title: 'Streaming Media'}} />
 			<Stack.Screen name="News" options={{title: 'News', headerLargeTitleEnabled: true}} />
 			<Stack.Screen name="Transportation" options={{title: 'Transportation'}} />
-			<Stack.Screen name="BuildingHours" />
+			<Stack.Screen name="Campus" />
 			<Stack.Screen
-				name="BuildingHours/detail"
+				name="Campus/detail"
 				options={{
 					presentation: 'formSheet',
 					headerShown: false,

@@ -11,7 +11,7 @@ import {InfoHeader} from '@frogpond/info-header'
 import {TableView, Section, Cell} from '@frogpond/tableview'
 import {CellTextField, CellToggle, DeleteButtonCell} from '@frogpond/tableview/cells'
 
-import {buildingByNameOptions} from '../../../../source/features/building-hours/query'
+import {buildingByNameOptions, parseCampus} from '../../../../source/features/building-hours/query'
 import type {
 	BuildingType,
 	NamedBuildingScheduleType,
@@ -99,7 +99,7 @@ type Props = {
 	initialBuilding: BuildingType
 }
 
-let BuildingHoursProblemReportView = ({initialBuilding}: Props): React.ReactNode => {
+let CampusProblemReportView = ({initialBuilding}: Props): React.ReactNode => {
 	let appDispatch = useAppDispatch()
 
 	React.useEffect(() => {
@@ -285,10 +285,10 @@ const TimesCell = (props: TimesCellProps) => {
 	)
 }
 
-function BuildingHoursProblemReportLoader(): React.ReactNode {
-	let {name} = useLocalSearchParams<{name: string}>()
-	// Hard-coded until the route supplies a campus (Task 2).
-	let {data: building, isLoading, error, refetch} = useQuery(buildingByNameOptions('stolaf', name))
+function CampusProblemReportLoader(): React.ReactNode {
+	let {name, campus: campusParam} = useLocalSearchParams<{name: string; campus?: string}>()
+	let campus = parseCampus(campusParam)
+	let {data: building, isLoading, error, refetch} = useQuery(buildingByNameOptions(campus, name))
 
 	if (isLoading) {
 		return <LoadingView />
@@ -310,10 +310,10 @@ function BuildingHoursProblemReportLoader(): React.ReactNode {
 		return <NoticeView text={`Could not find the "${name}" building.`} />
 	}
 
-	return <BuildingHoursProblemReportView initialBuilding={building} />
+	return <CampusProblemReportView initialBuilding={building} />
 }
 
-export default function BuildingHoursProblemReportPage(): React.ReactNode {
+export default function CampusProblemReportPage(): React.ReactNode {
 	const navigation = useNavigation()
 
 	return (
@@ -333,7 +333,7 @@ export default function BuildingHoursProblemReportPage(): React.ReactNode {
 				/>
 			</Stack.Toolbar>
 
-			<BuildingHoursProblemReportLoader />
+			<CampusProblemReportLoader />
 		</>
 	)
 }
