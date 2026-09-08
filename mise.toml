@@ -164,6 +164,10 @@ run = "tsc --noEmit"
 
 [tasks.test]
 description = "Run Jest tests"
+# Same reason as tsc above: source/features/building-hours/query.ts imports
+# docs/building-hours.json, which bundle-data generates, so the suite cannot
+# run against a clean checkout without it.
+depends = ["bundle-data"]
 run = "jest"
 
 # --- Data ---
