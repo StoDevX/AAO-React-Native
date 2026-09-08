@@ -198,6 +198,14 @@ run = "node scripts/validate-workspace-deps.mjs"
 # the registry and takes over a minute on a cold cache. That check belongs in
 # CI, where the network is a given; here the question is only whether the
 # lockfile still describes the package.json files.
+# metro-config is a direct dependency pinned exactly while metro itself is
+# only ever transitive and floats, so the two drift apart and the install ends
+# up carrying two copies of every metro package. Nothing fails when it happens,
+# which is why it needs checking.
+[tasks."validate-single-copy"]
+description = "Check that watched packages resolve to one version in the lockfile"
+run = "node scripts/validate-single-copy.mjs"
+
 [tasks."validate-lockfile"]
 description = "Check that pnpm-lock.yaml matches the package.json files"
 run = "pnpm install --frozen-lockfile --lockfile-only --trust-lockfile"
@@ -230,4 +238,12 @@ depends = ["pnpm:install:frozen", "bundle-data"]
 
 [tasks."agent:pre-commit"]
 description = "Run pre-commit checks: format, lint, typecheck, test, deps, lockfile"
-depends = ["format", "lint", "tsc", "test", "validate-deps", "validate-lockfile"]
+depends = [
+	"format",
+	"lint",
+	"tsc",
+	"test",
+	"validate-deps",
+	"validate-lockfile",
+	"validate-single-copy",
+]
