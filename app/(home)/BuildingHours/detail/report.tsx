@@ -310,15 +310,13 @@ export default function BuildingHoursProblemReportPage(): React.ReactNode {
 	return (
 		<>
 			<Stack.Title>Report a Problem</Stack.Title>
-			{/* The edge-swipe gesture pops natively, ahead of anything in JS,
-			 * so the unsaved-changes guard above can't refuse it in time --
-			 * turned off here rather than guarded. */}
+			{/* On device, the edge-swipe gesture did not reliably surface the
+			 * unsaved-changes alert -- turned off here rather than guarded. */}
 			<Stack.Screen options={{gestureEnabled: false}} />
 			<Stack.Toolbar placement="left">
-				{/* The default native back button has the same problem: it pops
-				 * before `beforeRemove` gets a say. A JS-driven `goBack()` call,
-				 * the same dispatch the guard's own Discard button uses, keeps
-				 * the pop and the guard in sync. */}
+				{/* The default native back button had the same problem on device.
+				 * A JS-driven `goBack()` call, the same dispatch the guard's own
+				 * Discard button uses, keeps the pop and the guard in sync. */}
 				<Stack.Toolbar.Button
 					accessibilityLabel="Back"
 					icon="chevron.left"
