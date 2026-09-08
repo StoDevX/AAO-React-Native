@@ -49,7 +49,13 @@ private struct SearchBar: UIViewRepresentable {
 		// Zero: the sheet content supplies the 16pt margins, so the bar must
 		// not add its own.
 		bar.directionalLayoutMargins = .zero
-		bar.searchTextField.heightAnchor.constraint(equalToConstant: fieldHeight).isActive = true
+		// Required would fight UISearchBar's own (private, undocumented) layout
+		// of the text field within the bar; 999 lets that layout win instead of
+		// throwing constraint-conflict warnings, at the cost of possibly falling
+		// short of 44pt — Task 5 measures the resulting height.
+		let textFieldHeight = bar.searchTextField.heightAnchor.constraint(equalToConstant: fieldHeight)
+		textFieldHeight.priority = UILayoutPriority(999)
+		textFieldHeight.isActive = true
 		return bar
 	}
 
@@ -58,7 +64,11 @@ private struct SearchBar: UIViewRepresentable {
 		bar.placeholder = props.placeholder
 		bar.accessibilityIdentifier = props.testID
 		bar.searchTextField.accessibilityIdentifier = props.testID
-		if bar.text != props.text {
+		// `props.text` after a keystroke is just JS echoing what the user typed,
+		// arriving one round-trip late. Writing it back would overwrite whatever
+		// the user has typed since, so only text JS actually originated (a value
+		// this coordinator did not just send) is allowed to move the caret.
+		if props.text != context.coordinator.lastSentText, bar.text != props.text {
 			bar.text = props.text
 		}
 		context.coordinator.updateCancelButton(on: bar, animated: false)
@@ -66,19 +76,26 @@ private struct SearchBar: UIViewRepresentable {
 
 	final class Coordinator: NSObject, UISearchBarDelegate {
 		var props: CampusSearchBarProps
+		/// The last value this coordinator sent to JS via `onTextChange`, so
+		/// `updateUIView` can tell "JS echoing what the user just typed" apart
+		/// from "JS actually changed the text" and only act on the latter.
+		var lastSentText: String?
 
 		init(props: CampusSearchBarProps) {
 			self.props = props
 		}
 
 		/// Cancel is there whenever there is something to cancel: an active
-		/// edit, or text left in the field after tapping away.
+		/// edit, or text left in the field after tapping away. `UISearchBar`
+		/// itself never becomes first responder — it forwards focus to its
+		/// inner text field — so that field is what must be asked.
 		func updateCancelButton(on bar: UISearchBar, animated: Bool) {
 			let hasText = !(bar.text ?? "").isEmpty
-			bar.setShowsCancelButton(bar.isFirstResponder || hasText, animated: animated)
+			bar.setShowsCancelButton(bar.searchTextField.isFirstResponder || hasText, animated: animated)
 		}
 
 		func searchBar(_ bar: UISearchBar, textDidChange text: String) {
+			lastSentText = text
 			props.onTextChange(["value": text])
 			updateCancelButton(on: bar, animated: true)
 		}
@@ -101,6 +118,7 @@ private struct SearchBar: UIViewRepresentable {
 			bar.text = ""
 			bar.resignFirstResponder()
 			bar.setShowsCancelButton(false, animated: true)
+			lastSentText = ""
 			props.onTextChange(["value": ""])
 			props.onCancel()
 		}
