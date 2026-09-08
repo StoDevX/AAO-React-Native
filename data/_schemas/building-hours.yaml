@@ -20,6 +20,7 @@ properties:
     items: {$ref: '#/definitions/schedule'}
   breakSchedule:
     type: object
+    propertyNames: {enum: [fall, thanksgiving, winter, interim, spring, easter, summer]}
 
 definitions:
   links:

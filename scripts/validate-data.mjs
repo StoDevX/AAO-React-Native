@@ -3,7 +3,7 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import {load as loadYaml} from 'js-yaml'
-import {isNotJunk} from './junk.mjs'
+import {isDataEntry} from './data-entries.mjs'
 import {parseArgs} from 'node:util'
 import {validate} from './validate.mjs'
 import {SCHEMA_BASE, DATA_BASE} from './paths.mjs'
@@ -20,11 +20,7 @@ const readYamlPipe = (pth) =>
 		|> JSON.parse(%)
 */
 
-const readDir = (pth) =>
-	fs
-		.readdirSync(pth)
-		.filter(isNotJunk)
-		.filter((entry) => !entry.startsWith('_'))
+const readDir = (pth) => fs.readdirSync(pth).filter(isDataEntry)
 
 /// MARK: program
 

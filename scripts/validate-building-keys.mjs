@@ -14,7 +14,7 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import {load as loadYaml} from 'js-yaml'
-import {isNotJunk} from './junk.mjs'
+import {isDataEntry} from './data-entries.mjs'
 import {DATA_BASE} from './paths.mjs'
 
 const GEOJSON_URL = 'https://stolaf.api.frogpond.tech/v1/map/geojson'
@@ -46,7 +46,15 @@ async function fetchFeatureIds() {
 		throw new UnreachableError(`${GEOJSON_URL} did not return valid JSON: ${err.message}`)
 	}
 
-	let ids = (geojson.features ?? []).map((feature) => feature.id).filter(Boolean)
+	// No campus has zero map features, so an empty or absent list means the feed
+	// changed shape or is serving nothing -- not that all our keys went bad. The
+	// difference matters: blaming the data would fail every pull request in the
+	// repository with a message pointing at the wrong thing.
+	if (!Array.isArray(geojson.features) || geojson.features.length === 0) {
+		throw new UnreachableError(`${GEOJSON_URL} returned no features`)
+	}
+
+	let ids = geojson.features.map((feature) => feature.id).filter(Boolean)
 	return new Set(ids)
 }
 
@@ -55,13 +63,13 @@ class UnreachableError extends Error {}
 function readBuildingHoursFiles() {
 	return fs
 		.readdirSync(BUILDING_HOURS_DIR)
-		.filter(isNotJunk)
+		.filter(isDataEntry)
+		.filter((filename) => filename.endsWith('.yaml'))
 		.map((filename) => {
 			let filepath = path.join(BUILDING_HOURS_DIR, filename)
 			let data = loadYaml(fs.readFileSync(filepath, 'utf-8'), {filename: filepath})
 			return {filename, name: data.name, building: data.building}
 		})
-		.filter((entry) => entry.building)
 }
 
 // Levenshtein distance, so a typo'd key ("stavhal") points the report at the
@@ -101,7 +109,22 @@ async function main() {
 		throw err
 	}
 
-	let entries = readBuildingHoursFiles()
+	let files = readBuildingHoursFiles()
+	let entries = files.filter((entry) => entry.building)
+
+	// A run that checked nothing is the failure nobody investigates: it prints a
+	// success line and exits clean. Renaming the key, dropping it in a bad merge,
+	// or moving the directory would all read as "all resolve".
+	if (files.length === 0) {
+		console.error(`No data files in ${BUILDING_HOURS_DIR} -- nothing to check`)
+		process.exit(EXIT_INVALID_KEY)
+	}
+
+	if (entries.length === 0) {
+		console.error(`None of the ${files.length} files in ${BUILDING_HOURS_DIR} carry a building key`)
+		process.exit(EXIT_INVALID_KEY)
+	}
+
 	let failures = entries.filter((entry) => !featureIds.has(entry.building))
 
 	for (let entry of failures) {
@@ -117,8 +140,14 @@ async function main() {
 		process.exit(EXIT_INVALID_KEY)
 	}
 
-	console.log(`${entries.length} building keys all resolve`)
+	console.log(`${entries.length} of ${files.length} venues carry a building key, all resolving`)
 	process.exit(EXIT_OK)
 }
 
-main()
+main().catch((err) => {
+	// Anything unplanned -- an unreadable file, a directory where a file was
+	// expected -- is a "could not check", not a verdict on the data. Exiting 1
+	// here would accuse a key that may be perfectly fine.
+	console.error(`Could not verify building keys: ${err.message}`)
+	process.exit(EXIT_UNREACHABLE)
+})
