@@ -181,6 +181,13 @@ run = "node scripts/validate-bus-schedules.mjs"
 description = "Validate data files"
 run = "node scripts/validate-data.mjs"
 
+# Needs the network -- it fetches the live campus geojson -- so it stays out
+# of validate-data, which gates three workflows including deploy-data. A
+# ccc-server blip should not block an unrelated pull request from merging.
+[tasks."validate-building-keys"]
+description = "Check that every building: key resolves to a real map feature"
+run = "node scripts/validate-building-keys.mjs"
+
 # An undeclared -- or orphaned -- @frogpond dependency resolves fine locally
 # through the root node_modules hoist, so format, lint, tsc and test all pass
 # and CI is the first thing to say otherwise. Same reasoning as
