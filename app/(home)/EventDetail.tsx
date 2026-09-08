@@ -27,9 +27,8 @@ import {Host} from '@expo/ui/swift-ui'
 
 type EventSource = 'stolaf' | 'presence' | 'uitest' | 'ksto-schedule' | 'krlx-schedule'
 
-// A stand-in for a real remote source, so its detail screen attributes
-// exactly like `stolaf`'s or `presence`'s does -- there is no real site to
-// link to, hence the empty href.
+// A stand-in for a real remote source, so its detail screen attributes exactly
+// like `stolaf`'s or `presence`'s does.
 const UITEST_POWERED_BY = {title: 'Powered by UI Test Fixtures', href: ''} as const
 
 const POWERED_BY: Record<EventSource, {title: string; href: string}> = {
