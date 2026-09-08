@@ -9,6 +9,35 @@ struct CarletonMapScreen: Screen {
 		app.searchFields[TestIdentifiers.CarletonMap.search].firstMatch
 	}
 
+	/// The box the sheet actually draws, which is what its content is clipped
+	/// to. `app.sheets` is empty for this presentation: UIKit exposes the sheet
+	/// as an `otherElement` holding the grabber button, and the window-sized
+	/// host holds that button too, so the shortest of the elements holding it
+	/// is the sheet.
+	///
+	/// Descendants rather than frames decide this. The grabber's own frame is
+	/// padded out for hit testing and reaches above the sheet's top edge, so
+	/// asking which frames contain it finds the sheet nowhere.
+	///
+	/// Fails rather than falling back to the window if nothing answers. A box
+	/// the whole screen tall contains anything, so a fallback would turn
+	/// `verifyFieldWithinSheet` green on a query that had stopped working.
+	private func sheetFrame() -> CGRect {
+		let window = app.windows.firstMatch.frame
+		let candidates = app.otherElements
+			.containing(NSPredicate(format: "label == %@", TestIdentifiers.CarletonMap.sheetGrabber))
+			.allElementsBoundByIndex
+			.map(\.frame)
+			.filter { $0.height < window.height }
+		guard let sheet = candidates.min(by: { $0.height < $1.height }) else {
+			XCTFail(
+				"The presented sheet's own box should be findable as the shortest element "
+					+ "holding the \(TestIdentifiers.CarletonMap.sheetGrabber)")
+			return .null
+		}
+		return sheet
+	}
+
 	/// Scoped to the search bar rather than the whole screen: the building
 	/// card's own dismiss button carries the same label, so an unscoped query
 	/// could answer for either.
@@ -160,12 +189,9 @@ struct CarletonMapScreen: Screen {
 	/// The collapsed stop rests at the foot of the screen with the field on it,
 	/// which is what tells it apart from medium and large.
 	///
-	/// That the field is the *only* thing on it is not asserted, because it
-	/// cannot be from here. The category segments beneath the field answer
-	/// `isHittable` at every collapsed height tried -- 44, 60, 76 and 160 --
-	/// while the screen visibly changes between them, so the hit test is not
-	/// measuring what the sheet shows. The capture is what that half has to be
-	/// judged on.
+	/// How much of the field the stop shows is `verifyFieldWithinSheet`'s
+	/// question, not this one: `isHittable` answers true for content the sheet
+	/// clips away, so it measures reachability rather than what is drawn.
 	@discardableResult
 	func verifyCollapsed() -> Self {
 		XCTAssertTrue(searchField.isHittable, "The search field should be reachable while collapsed")
@@ -183,21 +209,11 @@ struct CarletonMapScreen: Screen {
 	/// The field's own frame is what the scale and the margins around it come
 	/// back as, once that shrink has already happened.
 	///
-	/// **This cannot see the field being clipped.** XCUITest reports an
-	/// element's frame whether or not an ancestor draws over it or cuts it off,
-	/// so a stop too short to hold the field passes here: at the collapsed
-	/// height the app ships, the field's own frame starts 19.9pt above the
-	/// sheet's top edge and the capture shows its top sliced away, while this
-	/// assertion is green. Whether the stop holds the field whole, and holds
-	/// nothing else, is judged on the screenshot.
-	///
-	/// The sheet's own box is queryable -- an `otherElement` whose frame is
-	/// what the sheet shows, the smaller of the two that contain the
-	/// `Sheet Grabber` button -- so comparing the field's frame against it
-	/// would catch the clipping directly. That check belongs here as soon as
-	/// the collapsed stop has content it can contain; see "Sizing the collapsed
-	/// detent" in
-	/// `docs/superpowers/specs/2026-09-07-map-sheet-search-bar-design.md`.
+	/// **This cannot see the field being clipped**, because XCUITest reports an
+	/// element's frame whether or not an ancestor cuts it off: a stop too short
+	/// to hold the field leaves the margins around it symmetric and this
+	/// assertion green. `verifyFieldWithinSheet` is the one that catches that,
+	/// and the two belong together.
 	@discardableResult
 	func verifyCollapsedMarginsSymmetric() -> Self {
 		let field = searchField.frame
@@ -221,6 +237,27 @@ struct CarletonMapScreen: Screen {
 			bottomMargin, topMargin, accuracy: 1,
 			"The collapsed sheet should leave the same margin below the field as "
 				+ "above it: top \(topMargin), bottom \(bottomMargin)")
+		return self
+	}
+
+	/// The stop has to *hold* the field, not merely position it well. A `VStack`
+	/// taller than the stop it is presented in is centred in it rather than
+	/// clipped at the bottom, so a stop that cannot fit the picker's header
+	/// block slices the field's top edge off -- which
+	/// `verifyCollapsedMarginsSymmetric` reads as symmetric and passes.
+	///
+	/// Measured against the sheet's own box rather than the window's: the sheet
+	/// floats clear of the screen's edges, so the window would call a field
+	/// hanging off the sheet contained.
+	@discardableResult
+	func verifyFieldWithinSheet() -> Self {
+		let field = searchField.frame
+		let sheet = sheetFrame()
+		XCTContext.runActivity(named: "field \(field) in sheet \(sheet)") { _ in }
+		XCTAssertTrue(
+			field.minY >= sheet.minY && field.maxY <= sheet.maxY,
+			"The collapsed sheet should hold the whole search field, not clip it: "
+				+ "field \(field), sheet \(sheet)")
 		return self
 	}
 

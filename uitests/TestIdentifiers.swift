@@ -114,6 +114,10 @@ struct TestIdentifiers {
 		/// query runs, so a label-only query could answer for either. Matches
 		/// `CARD_CLOSE_BUTTON_ID` in `source/features/map/building-info.tsx`.
 		static let cardCloseButton = "card-close-button"
+		/// UIKit's own drag indicator on the presented sheet, found by label --
+		/// it carries no identifier. Its element is the sheet's child, which is
+		/// how the sheet's own box is found.
+		static let sheetGrabber = "Sheet Grabber"
 		/// A building near the top of the alphabetical list, so the expanded
 		/// sheet shows it without scrolling.
 		static let aBuilding = "Allen House"

@@ -19,15 +19,16 @@ class ModuleCarletonMapTests: UITestCase {
 			.capture("Carleton map sheet at its middle detent, showing a building's card")
 	}
 
-	/// The sheet opens on its smallest stop, at the foot of the screen. Whether
-	/// that stop holds the field and nothing else is a question for the capture:
-	/// see `verifyCollapsed` for why no assertion can answer it.
+	/// The sheet opens on its smallest stop, at the foot of the screen, holding
+	/// the whole search field. That the field is the only thing on the stop is
+	/// still a question for the capture.
 	func testSheetOpensOnItsCollapsedStop() throws {
 		CarletonMapScreen(app: app)
 			.navigate()
 			.checkSheetPresented()
 			.capture("Carleton map sheet collapsed")
 			.verifyCollapsed()
+			.verifyFieldWithinSheet()
 	}
 
 	/// The module pins the field at 44pt with a constraint UIKit is free to
@@ -94,6 +95,7 @@ class ModuleCarletonMapTests: UITestCase {
 			.navigate()
 			.checkSheetPresented()
 			.verifyCollapsedMarginsSymmetric()
+			.verifyFieldWithinSheet()
 	}
 
 	func testTappingAFootprintWhileCollapsedRaisesTheCardToMedium() throws {
