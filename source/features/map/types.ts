@@ -44,7 +44,9 @@ export type Building = {
 	accessibility: 'none' | 'wheelchair' | 'unknown'
 	address: string | null
 	categories: Array<Category>
-	departments: Array<LabelLinkString>
+	/** Carleton serves these as `LabelLinkString`s; St. Olaf serves them as
+	 * `LabelLink` objects already split apart. */
+	departments: Array<LabelLinkString | LabelLink>
 	description: string
 	floors: Array<LabelLinkString>
 	name: string

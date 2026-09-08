@@ -1,6 +1,6 @@
 import {expect, it} from '@jest/globals'
 import {toBuildingFootprints} from '../building-footprints'
-import type {Building, Feature, Polygon, Ring} from '../../types'
+import type {Building, Feature, MultiPolygon, Polygon, Ring} from '../../types'
 
 const ring = (x: number): Ring => [
 	[x, 0],
@@ -13,6 +13,11 @@ const ring = (x: number): Ring => [
 const polygon = (x: number): Polygon => ({
 	type: 'Polygon',
 	coordinates: [ring(x)],
+})
+
+const multiPolygon = (...xs: number[]): MultiPolygon => ({
+	type: 'MultiPolygon',
+	coordinates: xs.map((x) => [ring(x)]),
 })
 
 const make = (
@@ -76,4 +81,20 @@ it('returns an empty collection for no buildings', () => {
 		type: 'FeatureCollection',
 		features: [],
 	})
+})
+
+it('flattens a MultiPolygon into the same ring-set shape a Polygon produces', () => {
+	let result = toBuildingFootprints([make('field-kleinfield', [multiPolygon(0, 10)])])
+
+	expect(result.features).toHaveLength(1)
+	expect(result.features[0].geometry.type).toBe('MultiPolygon')
+	expect(result.features[0].geometry.coordinates).toHaveLength(2)
+	expect(result.features[0].geometry.coordinates).toEqual([[ring(0)], [ring(10)]])
+})
+
+it('combines a Polygon and a MultiPolygon on the same building into one feature', () => {
+	let result = toBuildingFootprints([make('mixed', [polygon(0), multiPolygon(10, 20)])])
+
+	expect(result.features).toHaveLength(1)
+	expect(result.features[0].geometry.coordinates).toHaveLength(3)
 })
