@@ -86,7 +86,7 @@ overrides:
   # @expo/metro pins. Expo's metro is the one that bundles the app, and
   # metro-runtime ends up inside that bundle, so these follow Expo rather than
   # react-native.
-  'metro-runtime@': '0.84.5'
+  'metro-runtime@': '0.87.0'
   'metro-source-map@': '0.84.5'
   'metro-symbolicate@': '0.84.5'
   '@react-native/metro-config': '-'

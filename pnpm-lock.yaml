@@ -12,7 +12,7 @@ catalogs:
       version: 5.4.1
 
 overrides:
-  metro-runtime@: 0.84.5
+  metro-runtime@: 0.87.0
   metro-source-map@: 0.84.5
   metro-symbolicate@: 0.84.5
   '@react-native/metro-config': '-'
