@@ -11,7 +11,6 @@ import {
 import {EventList} from '@frogpond/event-list'
 import {useMomentTimer} from '@frogpond/timer'
 
-import {STOLAF_POWERED_BY} from '../../source/features/calendar/constants'
 import {useCalendarFilterStore} from '../../source/features/calendar/store'
 
 export default function CalendarPage(): React.ReactNode {
@@ -55,7 +54,6 @@ export default function CalendarPage(): React.ReactNode {
 				now={now}
 				onPressEvent={onPressEvent}
 				onRefresh={refetchAll}
-				poweredBy={STOLAF_POWERED_BY}
 				refreshing={isRefetching}
 				sources={enabled}
 			/>

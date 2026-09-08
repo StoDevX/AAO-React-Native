@@ -25,7 +25,7 @@ import {NoticeView} from '@frogpond/notice'
 import {DayPickerStrip, deriveDays, type DayPickerStripHandle} from './day-picker-strip'
 import {EventListRow} from './event-list-row'
 import {groupEvents} from './sections'
-import {CalendarSource, PoweredBy, SourcedEvent} from './types'
+import {CalendarSource, SourcedEvent} from './types'
 
 type Props = {
 	events: SourcedEvent[]
@@ -36,7 +36,6 @@ type Props = {
 	refreshing: boolean
 	onRefresh: () => unknown
 	now: Moment
-	poweredBy: PoweredBy
 	onPressEvent: (entry: SourcedEvent) => void
 }
 

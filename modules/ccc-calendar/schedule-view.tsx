@@ -1,4 +1,4 @@
-import {EventList, type CalendarSource, type PoweredBy} from '@frogpond/event-list'
+import {EventList, type CalendarSource} from '@frogpond/event-list'
 import type {EventType} from '@frogpond/event-type'
 import {NoticeView} from '@frogpond/notice'
 import {useMomentTimer} from '@frogpond/timer'
@@ -8,7 +8,6 @@ import * as React from 'react'
 import type {SourcedEvent} from './sources'
 
 type Props = {
-	poweredBy: PoweredBy
 	query: UseQueryResult<SourcedEvent[]>
 	onPressEvent: (event: EventType) => void
 }
@@ -40,7 +39,6 @@ export function ScheduleView(props: Props): React.ReactNode {
 			now={now}
 			onPressEvent={(entry) => props.onPressEvent(entry.event)}
 			onRefresh={refetch}
-			poweredBy={props.poweredBy}
 			refreshing={isRefetching}
 			sources={SOURCES}
 		/>

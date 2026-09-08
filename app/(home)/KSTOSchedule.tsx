@@ -5,7 +5,7 @@ import {eventKey} from '@frogpond/event-list'
 import {useQuery} from '@tanstack/react-query'
 import {EventType} from '@frogpond/event-type'
 
-import {eventMapper, KSTO_POWERED_BY} from '../../source/features/streaming/radio/constants'
+import {eventMapper} from '../../source/features/streaming/radio/constants'
 
 export default function KSTOSchedulePage(): React.ReactNode {
 	let router = useRouter()
@@ -25,7 +25,6 @@ export default function KSTOSchedulePage(): React.ReactNode {
 			<Stack.Title>KSTO Schedule</Stack.Title>
 			<ScheduleView
 				onPressEvent={onPressEvent}
-				poweredBy={KSTO_POWERED_BY}
 				query={useQuery(namedCalendarOptions('ksto-schedule', {eventMapper}))}
 			/>
 		</>
