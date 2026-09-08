@@ -11,6 +11,11 @@ import {
 import {EventList} from '@frogpond/event-list'
 import {useMomentTimer} from '@frogpond/timer'
 
+import {
+	availableCategories,
+	availableOrganizations,
+	filterEvents,
+} from '../../source/features/calendar/filter'
 import {useCalendarFilterStore} from '../../source/features/calendar/store'
 
 export default function CalendarPage(): React.ReactNode {
@@ -22,24 +27,9 @@ export default function CalendarPage(): React.ReactNode {
 
 	let {filter, selectFilter} = useCalendarFilterStore()
 
-	// Z-A in code -> A-Z visually: SwiftUI Menu Section renders bottom-to-top
-	let availableCategories = useMemo(() => {
-		let cats = new Set(events.flatMap((e) => e.event.categories ?? []))
-		return [...cats].sort((a, b) => b.localeCompare(a))
-	}, [events])
-
-	let availableOrganizations = useMemo(() => {
-		let orgs = new Set(events.flatMap((e) => e.event.organization ?? []))
-		return [...orgs].sort((a, b) => b.localeCompare(a))
-	}, [events])
-
-	let filteredEvents = useMemo(() => {
-		if (filter === null) return events
-		if (filter.axis === 'organization') {
-			return events.filter((e) => e.event.organization?.includes(filter.value) ?? false)
-		}
-		return events.filter((e) => e.event.categories?.includes(filter.value))
-	}, [events, filter])
+	let categories = useMemo(() => availableCategories(events), [events])
+	let organizations = useMemo(() => availableOrganizations(events), [events])
+	let filteredEvents = useMemo(() => filterEvents(events, filter), [events, filter])
 
 	let onPressEvent = (entry: SourcedEvent) => {
 		router.push({
@@ -68,14 +58,14 @@ export default function CalendarPage(): React.ReactNode {
 				sources={enabled}
 			/>
 			<CalendarPicker
-				categories={availableCategories}
+				categories={categories}
 				enabledIds={enabledIds}
 				filter={filter}
 				onRequestDeviceCalendars={canOfferDevice && !deviceAvailable ? requestDevice : undefined}
 				onSelectFilter={selectFilter}
 				onToggleSource={toggle}
 				onTodayPress={onTodayPress}
-				organizations={availableOrganizations}
+				organizations={organizations}
 				sources={all}
 			/>
 		</>
