@@ -9,6 +9,7 @@ properties:
   abbreviation: {type: string}
   category: {type: string}
   image: {type: string}
+  building: {type: string, pattern: '^[a-z0-9-]+$'}
   isNotice: {type: boolean}
   noticeMessage: {type: string}
   links:

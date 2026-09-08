@@ -1,6 +1,7 @@
 name: Buntrock Commons
 image: buntrock
 category: Academia
+building: bc
 
 schedule:
   - title: Hours
