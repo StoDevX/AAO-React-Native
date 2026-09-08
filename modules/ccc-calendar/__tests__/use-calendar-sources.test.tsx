@@ -181,8 +181,11 @@ describe('useCalendarSources', () => {
 			result.current.toggle('uitest')
 		})
 
-		// Falls back to first remote source when nothing is explicitly enabled
-		expect(result.current.enabled.map((s) => s.id)).toEqual(['uitest'])
+		// Switching off the last calendar leaves none enabled. The list draws its
+		// own "no calendars are showing" notice for that, which is a truthful
+		// answer -- quietly re-enabling a calendar the user just switched off
+		// would read as a broken toggle.
+		expect(result.current.enabled).toEqual([])
 	})
 
 	// The detail screen arrives knowing only an id, and must reach the same

@@ -232,4 +232,83 @@ class ModuleCalendarTests: UITestCase {
 		screen.openFirstEvent().capture("18-add-to-calendar-after-reopening")
 		screen.verifyAddToCalendarButton()
 	}
+
+	/// The picker is three lists in one now: which calendars contribute events,
+	/// and the axes the list can be narrowed along. SwiftUI renders a Menu's
+	/// contents bottom-to-top, so only a screenshot settles the order they
+	/// actually reach the screen in.
+	func testPickerMenuShowsItsSections() throws {
+		CalendarScreen(app: app)
+			.navigate()
+			.openPicker()
+			.verifyMenuSection(TestIdentifiers.Calendar.calendarsSection)
+			.verifyMenuSection(TestIdentifiers.Calendar.categorySection)
+			.capture("30-picker-sections")
+	}
+
+	/// The CALENDARS section is what makes a source controllable. UI test mode
+	/// enables one calendar, so switching it off should leave nothing to draw.
+	func testTogglingACalendarOffEmptiesTheList() throws {
+		let screen = CalendarScreen(app: app).navigate()
+
+		XCTAssertGreaterThan(
+			screen.visibleRowCount(), 0,
+			"The fixture calendar should put rows on screen to begin with")
+
+		screen
+			.openPicker()
+			.toggleCalendar(TestIdentifiers.Calendar.uitestCalendar)
+			.dismissMenu()
+			.capture("31-no-calendars-enabled")
+
+		XCTAssertEqual(
+			screen.visibleRowCount(), 0,
+			"With no calendar enabled the list should have no rows")
+
+		screen
+			.openPicker()
+			.toggleCalendar(TestIdentifiers.Calendar.uitestCalendar)
+			.dismissMenu()
+
+		XCTAssertGreaterThan(
+			screen.visibleRowCount(), 0,
+			"Switching the calendar back on should restore its rows")
+	}
+
+	/// "All Events" clears whichever axis is filtered, and is the only way back
+	/// to the whole list without hunting for the selected item to untick.
+	func testAllEventsClearsTheFilter() throws {
+		let screen = CalendarScreen(app: app).navigate()
+		let unfiltered = screen.visibleRowCount()
+
+		screen
+			.openPicker()
+			.selectCategory(TestIdentifiers.Calendar.categories[0])
+			.dismissMenu()
+
+		XCTAssertLessThan(
+			screen.visibleRowCount(), unfiltered,
+			"Choosing a category should narrow the list")
+
+		screen
+			.openPicker()
+			.selectCategory(TestIdentifiers.Calendar.allEvents)
+			.dismissMenu()
+			.capture("32-filter-cleared")
+
+		XCTAssertEqual(
+			screen.visibleRowCount(), unfiltered,
+			"All Events should restore the whole list")
+	}
+
+	/// The list merges several calendars and so credits none of them; the
+	/// detail screen credits the one its event came from.
+	func testAttributionOnlyOnTheDetailScreen() throws {
+		CalendarScreen(app: app)
+			.navigate()
+			.verifyNoAttribution()
+			.openFirstEvent()
+			.verifyAttributionOnDetail()
+			.capture("33-detail-attribution")
+	}
 }

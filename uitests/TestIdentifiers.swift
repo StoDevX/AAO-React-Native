@@ -187,6 +187,18 @@ struct TestIdentifiers {
 		/// come from the event data itself, so the exact set depends on what the
 		/// calendar is serving. These two appear reliably.
 		static let categories = ["Music", "Academic Year"]
+		/// The picker menu's section headers. SwiftUI draws a Menu section title
+		/// as static text, uppercased by the caller rather than by the platform.
+		static let calendarsSection = "CALENDARS"
+		static let categorySection = "CATEGORY"
+		/// Clears whichever axis is filtered. Rendered inside the CATEGORY
+		/// section, at its visual top.
+		static let allEvents = "All Events"
+		/// The one calendar UI test mode enables, from `REMOTE_SOURCES`.
+		static let uitestCalendar = "UI Test Fixtures"
+		/// Every attribution caption opens with this. The list should carry
+		/// none and the event detail exactly one.
+		static let attributionPrefix = "Powered by"
 		/// Only the event detail screen carries this, so it is how a test knows
 		/// the push landed.
 		static let shareEvent = "Share Event"

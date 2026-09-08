@@ -14,6 +14,13 @@ import type {CalendarSource} from './sources'
  * The calendar's bottom-toolbar menu: which calendars contribute events, and
  * what the list is narrowed to. Category and organisation are one selection
  * between them, not one each -- see `CalendarFilter`.
+ *
+ * The sections are written ORGANIZATION, CATEGORY, CALENDARS and reach the
+ * screen in the opposite order -- CALENDARS at the top -- because SwiftUI
+ * draws a Menu's contents bottom-to-top. Confirmed against a screenshot from
+ * `testPickerMenuShowsItsSections`, which is also why the category list is
+ * sorted Z-A to read A-Z. Reordering these to match the rendered order would
+ * invert the menu.
  */
 type Props = {
 	sources: CalendarSource[]

@@ -58,14 +58,6 @@ export function useCalendarSources(): CalendarSourcesState {
 		[all, enabledIds, allIds],
 	)
 
-	// If nothing is enabled but remote sources exist, default to the first remote.
-	// This handles the case where persisted state has only invalid IDs.
-	let effectiveEnabled = React.useMemo(() => {
-		if (enabled.length > 0) return enabled
-		let fallback = REMOTE_SOURCES[0]
-		return fallback ? [fallback] : []
-	}, [enabled])
-
 	let toggle = React.useCallback(
 		(id: string) => {
 			dispatch(toggleCalendarSource(id))
@@ -77,7 +69,7 @@ export function useCalendarSources(): CalendarSourcesState {
 		remote: REMOTE_SOURCES,
 		device,
 		all,
-		enabled: effectiveEnabled,
+		enabled,
 		deviceAvailable: devMode && granted,
 		canOfferDevice: devMode,
 		toggle,
