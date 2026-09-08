@@ -73,13 +73,15 @@ const FOOTPRINT_OPACITY = 0
 
 /// Apple Maps' collapsed stop lays its field out at 16 + 44 + 16 = 76pt in
 /// LAYOUT space. UIKit shrinks whatever a sheet presents by a scale tied to
-/// a detent's role among the sheet's detents, not to this detent's own
-/// height, so this constant is a SCREEN-space number, unrelated in value to
-/// the picker's own layout margins even though both describe the same
-/// field. 37 is what measuring the field's on-screen margins on an iPhone
-/// 17 Pro simulator converges to; see
+/// a detent's role among the sheet's detents, and that same shrink pins the
+/// sheet's own on-screen height near Maps' small-detent height (about
+/// 65.41pt on this simulator) no matter what this constant requests -- so,
+/// despite its name, this is NOT the sheet's rendered height. It is the
+/// particular request that puts the field's position inside that fixed
+/// on-screen sheet at symmetric margins: 37 is what measuring those margins
+/// on an iPhone 17 Pro simulator converges to; see
 /// `.superpowers/sdd/2026-09-07-map-sheet-search-bar/task-8-report.md` for
-/// the measurements and whether that holds at another window size.
+/// the arithmetic and whether that holds at another window size.
 const SHEET_COLLAPSED_HEIGHT = 37
 const COLLAPSED_DETENT: PresentationDetent = {height: SHEET_COLLAPSED_HEIGHT}
 
