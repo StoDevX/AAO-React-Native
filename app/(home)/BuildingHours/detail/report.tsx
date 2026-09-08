@@ -287,7 +287,8 @@ const TimesCell = (props: TimesCellProps) => {
 
 function BuildingHoursProblemReportLoader(): React.ReactNode {
 	let {name} = useLocalSearchParams<{name: string}>()
-	let {data: building, isLoading, error, refetch} = useQuery(buildingByNameOptions(name))
+	// Hard-coded until the route supplies a campus (Task 2).
+	let {data: building, isLoading, error, refetch} = useQuery(buildingByNameOptions('stolaf', name))
 
 	if (isLoading) {
 		return <LoadingView />

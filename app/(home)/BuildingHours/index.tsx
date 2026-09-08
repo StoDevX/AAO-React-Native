@@ -23,7 +23,8 @@ function BuildingHoursView(): React.ReactNode {
 
 	let {now} = useMomentTimer({intervalMs: 60000, startOf: 'minute', timezone: timezone()})
 
-	let {data = [], error, refetch, isLoading, isError} = useGroupedBuildings()
+	// Hard-coded until the route supplies a campus (Task 2).
+	let {data = [], error, refetch, isLoading, isError} = useGroupedBuildings('stolaf')
 
 	let [query, setQuery] = React.useState('')
 	let searchQuery = useDebounce(query, 200)
