@@ -87,7 +87,7 @@ overrides:
   # metro-runtime ends up inside that bundle, so these follow Expo rather than
   # react-native.
   'metro-runtime@': '0.84.5'
-  'metro-source-map@': '0.84.5'
+  'metro-source-map@': '0.87.0'
   'metro-symbolicate@': '0.84.5'
   '@react-native/metro-config': '-'
   '@react-native/community-cli-plugin': '-'
