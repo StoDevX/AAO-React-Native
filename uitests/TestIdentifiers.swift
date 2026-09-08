@@ -100,9 +100,14 @@ struct TestIdentifiers {
 	// it is the shared map screen's own identifiers, not Carleton-specific ones.
 
 	enum CarletonMap {
-		/// The sheet's search field. Its placeholder is its accessibility label,
-		/// which is what a SwiftUI TextField reports when it has no other.
+		/// The sheet's search field. The bar's testID is its placeholder, and
+		/// UIKit puts the identifier on the text field, so this is a
+		/// `searchFields` query.
 		static let search = "Search for a place"
+		/// UIKit's own dismiss button on the search bar, found by label. iOS 26
+		/// draws it as a circular glyph beside the field and labels it "Close"
+		/// rather than "Cancel", which is the label a `UISearchBar` used to carry.
+		static let cancel = "Close"
 		static let close = "Close"
 		/// A building near the top of the alphabetical list, so the expanded
 		/// sheet shows it without scrolling.

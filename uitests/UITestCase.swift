@@ -43,7 +43,19 @@ class UITestCase: XCTestCase {
 		// depend on what ran before it -- testLongPressNoticeTogglesDevMode
 		// inverts if dev mode is already on, and failed only in long runs.
 		app.launchArguments.append(TestIdentifiers.LaunchArguments.resetState)
+		appendJsLocationIfProvided()
 		app.launch()
+	}
+
+	/// Points the app at a Metro other than the default localhost:8081, when
+	/// the test runner was started with `TEST_RUNNER_AAO_JS_LOCATION=host:port`.
+	/// `-RCT_jsLocation` is read by React Native as a command-line default;
+	/// without it, a Metro that some other checkout left on 8081 would serve
+	/// this app someone else's JavaScript.
+	func appendJsLocationIfProvided() {
+		if let location = ProcessInfo.processInfo.environment["AAO_JS_LOCATION"] {
+			app.launchArguments.append(contentsOf: ["-RCT_jsLocation", location])
+		}
 	}
 
 	/// Terminate and relaunch the app with `--reset-state` to clear persisted
@@ -54,6 +66,7 @@ class UITestCase: XCTestCase {
 			TestIdentifiers.LaunchArguments.uiTesting,
 			TestIdentifiers.LaunchArguments.resetState,
 		]
+		appendJsLocationIfProvided()
 		app.launch()
 	}
 
@@ -69,6 +82,7 @@ class UITestCase: XCTestCase {
 			TestIdentifiers.LaunchArguments.resetState,
 			"-UIPreferredContentSizeCategoryName", category,
 		]
+		appendJsLocationIfProvided()
 		app.launch()
 	}
 }

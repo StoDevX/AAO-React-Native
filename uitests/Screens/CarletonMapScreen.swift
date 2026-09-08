@@ -3,10 +3,22 @@ import XCTest
 struct CarletonMapScreen: Screen {
 	let app: XCUIApplication
 
-	/// The picker sheet's search field, which is the sheet's only content at
-	/// the collapsed detent it opens at.
+	/// The picker sheet's search field: a UISearchBar's text field, which is
+	/// the sheet's only content at the collapsed detent it opens at.
 	private var searchField: XCUIElement {
-		app.textFields[TestIdentifiers.CarletonMap.search].firstMatch
+		app.searchFields[TestIdentifiers.CarletonMap.search].firstMatch
+	}
+
+	/// Scoped to the search bar rather than the whole screen: the building
+	/// card's own dismiss button carries the same label, so an unscoped query
+	/// could answer for either.
+	private var cancelButton: XCUIElement {
+		app.otherElements[TestIdentifiers.CarletonMap.search]
+			.buttons[TestIdentifiers.CarletonMap.cancel].firstMatch
+	}
+
+	private var closeButton: XCUIElement {
+		app.buttons[TestIdentifiers.CarletonMap.close].firstMatch
 	}
 
 	/// The map has no home tile of its own -- both campuses' Campus screens
@@ -49,6 +61,32 @@ struct CarletonMapScreen: Screen {
 		return self
 	}
 
+	/// Where the field's top edge sits on screen. Only a detent change moves
+	/// it: it is pinned above the list, so a scroll never does.
+	func searchFieldTop() -> CGFloat {
+		searchField.frame.minY
+	}
+
+	/// Apple Maps' field is 44pt, and the collapsed detent is that plus 16pt
+	/// above and below. The bar pins the height at priority 999 so UIKit's own
+	/// layout of the text field wins any conflict, which means a conflict comes
+	/// out as a quietly short field rather than a console warning. Measuring is
+	/// the only thing that would notice.
+	///
+	/// Measured at a full-width stop. A floating sheet draws its content scaled
+	/// to the inset it floats in, so every frame read at the collapsed stop is
+	/// smaller than the layout that produced it, and 44pt would be the wrong
+	/// number to expect there.
+	@discardableResult
+	func verifySearchFieldHeight() -> Self {
+		let height = searchField.frame.height
+		XCTContext.runActivity(named: "The search field measures \(height)pt tall") { _ in }
+		XCTAssertEqual(
+			height, 44, accuracy: 1,
+			"The search field should be Apple Maps' 44pt, not \(height)")
+		return self
+	}
+
 	/// Drags the sheet from its collapsed detent up to full height, where the
 	/// building list is.
 	@discardableResult
@@ -61,13 +99,97 @@ struct CarletonMapScreen: Screen {
 		return self
 	}
 
+	@discardableResult
+	func focusSearch() -> Self {
+		searchField.tap()
+		XCTAssertTrue(
+			cancelButton.waitForExistence(timeout: 10),
+			"Focusing the search field should show its Cancel button")
+		return self
+	}
+
+	@discardableResult
+	func cancelSearch() -> Self {
+		cancelButton.tap()
+		XCTAssertTrue(
+			cancelButton.waitForNonExistence(timeout: 10),
+			"Cancel should hide itself once there is nothing to cancel")
+		return self
+	}
+
+	/// Types into the focused field one character at a time, the way a person
+	/// does, and reads the whole string back. The bar reports each keystroke to
+	/// JavaScript and takes the echo back as a prop, so a character lost to
+	/// that round trip would show up here and nowhere else.
+	@discardableResult
+	func typeIntoSearch(_ text: String) -> Self {
+		searchField.typeText(text)
+		let arrived = searchField.value as? String
+		XCTAssertEqual(
+			arrived, text,
+			"Every character typed should survive the round trip to JavaScript")
+		return self
+	}
+
+	/// The list is what the query is for, so a filtered row proves the text
+	/// reached JavaScript rather than only the field.
+	@discardableResult
+	func verifySearchFound(_ name: String) -> Self {
+		XCTAssertTrue(
+			app.buttons[name].firstMatch.waitForExistence(timeout: 30),
+			"Searching should narrow the list to \(name)")
+		return self
+	}
+
+	/// The collapsed stop rests at the foot of the screen with the field on it,
+	/// which is what tells it apart from medium and large.
+	///
+	/// That the field is the *only* thing on it is not asserted, because it
+	/// cannot be from here. A sheet clips what it draws but not what it
+	/// hit-tests, so the category segments beneath the field answer
+	/// `isHittable` at every collapsed height tried -- 44, 60, 76 and 160 --
+	/// while the screen visibly changes between them. The capture is what that
+	/// half has to be judged on.
+	@discardableResult
+	func verifyCollapsed() -> Self {
+		XCTAssertTrue(searchField.isHittable, "The search field should be reachable while collapsed")
+		let top = searchFieldTop()
+		let windowHeight = app.windows.firstMatch.frame.height
+		XCTAssertTrue(
+			top > windowHeight * 0.8,
+			"The collapsed sheet should rest at the foot of the screen; the field's top is at \(top) of \(windowHeight)")
+		XCTAssertFalse(cancelButton.exists, "An empty, unfocused field has nothing to cancel")
+		return self
+	}
+
+	/// A move is a change of at least a hundred points: the stops are 76pt,
+	/// half the screen, and nearly all of it, so anything smaller is a scroll
+	/// or a wobble, not a detent change.
+	@discardableResult
+	func verifySheetMoved(from before: CGFloat, direction: String, _ message: String) -> Self {
+		let after = searchFieldTop()
+		let moved = direction == "up" ? before - after : after - before
+		XCTAssertTrue(
+			moved > 100,
+			"\(message): the field's top went from \(before) to \(after)")
+		return self
+	}
+
+	@discardableResult
+	func verifySheetReturned(to before: CGFloat) -> Self {
+		let after = searchFieldTop()
+		XCTAssertTrue(
+			abs(after - before) < 2,
+			"Cancel should put the sheet back where it was, at \(before), not \(after)")
+		return self
+	}
+
 	/// Taps a named row rather than the first button on screen, which is the
 	/// navigation bar's rather than the list's.
 	///
 	/// Retried, for the reason `navigateFromHome` retries: a synthesized press
 	/// on a row whose host has mounted but whose action still has to reach
-	/// JavaScript lands natively and does nothing. The row is found, the event
-	/// is delivered, and the sheet stays on the list. Waiting longer does not
+	/// JavaScript lands natively and does nothing. Waiting longer does not
 	/// help a dropped tap; tapping again does.
 	/// Matched on the label's prefix, not the whole label: a building carrying
 	/// an abbreviation reads as "Buntrock Commons, BC", so an exact match finds
@@ -79,14 +201,13 @@ struct CarletonMapScreen: Screen {
 			row.waitForExistence(timeout: 30),
 			"The expanded sheet should list \(name)")
 
-		let close = app.buttons[TestIdentifiers.CarletonMap.close].firstMatch
 		for attempt in 1...3 {
 			// The row's centre on purpose. It falls on the Spacer between the
 			// name and the chevron, which is outside what a SwiftUI button's
 			// label draws -- the row carries a contentShape so the whole of it
 			// responds, and tapping over the name would pass either way.
 			row.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
-			if close.waitForExistence(timeout: 10) {
+			if closeButton.waitForExistence(timeout: 10) {
 				return self
 			}
 			XCTContext.runActivity(
@@ -98,12 +219,45 @@ struct CarletonMapScreen: Screen {
 		return self
 	}
 
+	/// Taps the map itself, in the strip above the collapsed sheet. The
+	/// initial camera frames campus, so the screen's centre lands on a
+	/// footprint; which one does not matter, only that a card opens.
+	@discardableResult
+	func tapAFootprint() -> Self {
+		for attempt in 1...3 {
+			app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
+			if closeButton.waitForExistence(timeout: 10) {
+				return self
+			}
+			XCTContext.runActivity(named: "Tap \(attempt) on the map opened no card; retrying") { _ in }
+		}
+		XCTFail("Tapping the map never opened a building card")
+		return self
+	}
+
 	@discardableResult
 	func checkBuildingCardPresented() -> Self {
-		let close = app.buttons[TestIdentifiers.CarletonMap.close].firstMatch
 		XCTAssertTrue(
-			close.waitForExistence(timeout: 30),
+			closeButton.waitForExistence(timeout: 30),
 			"Selecting a building should show its card, which offers a way out")
+		return self
+	}
+
+	/// The card's close button is the card's top edge for measuring purposes,
+	/// the way the field is the picker's.
+	func closeButtonTop() -> CGFloat {
+		closeButton.frame.minY
+	}
+
+	/// The medium stop is half the window. A card whose top is in the middle
+	/// third of the screen is at it; one hugging the bottom is still collapsed.
+	@discardableResult
+	func verifyCardAtMedium() -> Self {
+		let top = closeButtonTop()
+		let height = app.windows.firstMatch.frame.height
+		XCTAssertTrue(
+			top > height * 0.33 && top < height * 0.66,
+			"A footprint tapped while collapsed should raise the card to medium; its top is at \(top) of \(height)")
 		return self
 	}
 }
