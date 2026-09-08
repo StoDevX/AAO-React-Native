@@ -71,11 +71,10 @@ struct CarletonMapScreen: Screen {
 		searchField.frame.minY
 	}
 
-	/// Apple Maps' field is 44pt, and the collapsed detent is that plus 16pt
-	/// above and below. The bar pins the height at priority 999 so UIKit's own
-	/// layout of the text field wins any conflict, which means a conflict comes
-	/// out as a quietly short field rather than a console warning. Measuring is
-	/// the only thing that would notice.
+	/// Apple Maps' field is 44pt. The bar pins the height at priority 999 so
+	/// UIKit's own layout of the text field wins any conflict, which means a
+	/// conflict comes out as a quietly short field rather than a console
+	/// warning. Measuring is the only thing that would notice.
 	///
 	/// Measured at a full-width stop. UIKit applies a detent-dependent shrink to
 	/// any presented sheet's content -- Apple Maps' own small-detent drop shadow
@@ -180,9 +179,25 @@ struct CarletonMapScreen: Screen {
 	}
 
 	/// UIKit shrinks a presented sheet by a detent-dependent scale, so the
-	/// design's 16 + 44 + 16 = 76pt of layout content lands on screen smaller
-	/// than it was laid out. The field's own frame is what the scale and the
-	/// margins around it come back as, once that shrink has already happened.
+	/// design's layout content lands on screen smaller than it was laid out.
+	/// The field's own frame is what the scale and the margins around it come
+	/// back as, once that shrink has already happened.
+	///
+	/// **This cannot see the field being clipped.** XCUITest reports an
+	/// element's frame whether or not an ancestor draws over it or cuts it off,
+	/// so a stop too short to hold the field passes here: at the collapsed
+	/// height the app ships, the field's own frame starts 19.9pt above the
+	/// sheet's top edge and the capture shows its top sliced away, while this
+	/// assertion is green. Whether the stop holds the field whole, and holds
+	/// nothing else, is judged on the screenshot.
+	///
+	/// The sheet's own box is queryable -- an `otherElement` whose frame is
+	/// what the sheet shows, the smaller of the two that contain the
+	/// `Sheet Grabber` button -- so comparing the field's frame against it
+	/// would catch the clipping directly. That check belongs here as soon as
+	/// the collapsed stop has content it can contain; see "Sizing the collapsed
+	/// detent" in
+	/// `docs/superpowers/specs/2026-09-07-map-sheet-search-bar-design.md`.
 	@discardableResult
 	func verifyCollapsedMarginsSymmetric() -> Self {
 		let field = searchField.frame

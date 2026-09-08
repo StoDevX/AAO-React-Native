@@ -21,9 +21,10 @@ import type {Building, Feature} from './types'
 /// Matches the debounce every other search screen in the app uses.
 const SEARCH_DEBOUNCE_MS = 200
 
-/// The picker lays the field out with this margin above and below it, in
-/// LAYOUT space -- Apple Maps' own 16pt on every side, with the grabber
-/// inside the top margin. The sheet's collapsed detent
+/// The picker lays the search bar out with this margin above and below it, in
+/// LAYOUT space. `UISearchBar` is 64pt tall and centres its 44pt text field in
+/// itself, so the space around the visible field is this plus the bar's own
+/// 10pt -- 26pt, where Apple Maps has 16. The sheet's collapsed detent
 /// (`SHEET_COLLAPSED_HEIGHT` in `Map/index.tsx`) is a SCREEN-space number
 /// UIKit's presentation shrink sits between, not a multiple of this one; see
 /// that constant's own comment for the numbers.

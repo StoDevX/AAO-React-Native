@@ -71,18 +71,20 @@ const MARKER_HIT_SLOP = (MIN_TOUCH_TARGET - MARKER_SIZE) / 2
 /// that drops a layer from the tree.
 const FOOTPRINT_OPACITY = 0
 
-/// Apple Maps' collapsed stop lays its field out at 16 + 44 + 16 = 76pt in
-/// LAYOUT space. UIKit shrinks whatever a sheet presents by a scale tied to
-/// a detent's role among the sheet's detents, and that same shrink pins the
-/// sheet's own on-screen height near Maps' small-detent height (about
-/// 65.41pt on this simulator) no matter what this constant requests -- so,
-/// despite its name, this is NOT the sheet's rendered height. It is the
-/// particular request that puts the field's position inside that fixed
-/// on-screen sheet at symmetric margins: 37 is what measuring those margins
-/// on an iPhone 17 Pro simulator converges to; see "Sizing the collapsed
-/// detent" in
-/// `docs/superpowers/specs/2026-09-07-map-sheet-search-bar-design.md` for
-/// the arithmetic and whether that holds at another window size.
+/// The collapsed detent, requested in the sheet content's own layout space.
+/// UIKit shrinks whatever a sheet presents by a scale tied to the detent's
+/// role among the sheet's detents -- 0.860697 on an iPhone 17 Pro simulator --
+/// so the stop renders at `SHEET_COLLAPSED_HEIGHT * scale` and this is not the
+/// height it takes on screen.
+///
+/// **This value does not yet buy the collapsed stop the design asks for.** The
+/// picker's content is taller than the stop and SwiftUI centres what overflows,
+/// so the stop shows the middle of that content rather than its top: at 37 the
+/// search field is sliced across the top by 19.9pt. Every value swept between
+/// 37 and 110 trades that slice against a strip of category segments below the
+/// field, and no value avoids both. See "Sizing the collapsed detent" in
+/// `docs/superpowers/specs/2026-09-07-map-sheet-search-bar-design.md` for the
+/// measurements and what the stop would have to hold instead.
 const SHEET_COLLAPSED_HEIGHT = 37
 const COLLAPSED_DETENT: PresentationDetent = {height: SHEET_COLLAPSED_HEIGHT}
 
