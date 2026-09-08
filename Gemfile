@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
 
 gem 'netrc', '0.11.0'
-gem 'json', '2.21.2'
+gem 'json', '3.0.1'
 
 # CocoaPods lives here rather than in mise's [tools] so this json pin reaches
 # it. json 3.0.0 dropped the quirks_mode keyword that activesupport still
