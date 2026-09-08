@@ -76,11 +76,11 @@ const FOOTPRINT_OPACITY = 0
 /// a detent's role among the sheet's detents, not to this detent's own
 /// height, so this constant is a SCREEN-space number, unrelated in value to
 /// the picker's own layout margins even though both describe the same
-/// field. 53 is what measuring the field's on-screen margins on an iPhone
+/// field. 37 is what measuring the field's on-screen margins on an iPhone
 /// 17 Pro simulator converges to; see
 /// `.superpowers/sdd/2026-09-07-map-sheet-search-bar/task-8-report.md` for
 /// the measurements and whether that holds at another window size.
-const SHEET_COLLAPSED_HEIGHT = 53
+const SHEET_COLLAPSED_HEIGHT = 37
 const COLLAPSED_DETENT: PresentationDetent = {height: SHEET_COLLAPSED_HEIGHT}
 
 /// A fraction rather than UIKit's own `medium`, which is exactly a half and

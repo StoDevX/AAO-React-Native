@@ -182,9 +182,13 @@ struct CarletonMapScreen: Screen {
 		let field = searchField.frame
 		let window = app.windows.firstMatch.frame
 		let scale = field.height / 44
-		// Maps insets all four sides of the sheet equally, so the field's own
-		// left inset gives the scaled inset directly.
-		let inset = field.origin.x - 16 * scale
+		// The floating sheet's inset comes from the shrink alone -- a scaled
+		// box centred in the window leaves (1 - scale) of the width split
+		// evenly on both sides -- not from wherever the field itself sits.
+		// `UISearchBar` insets its own text field further in than Maps' field
+		// sits, so deriving the inset from the field's x would fold that extra
+		// margin into "inset" and hide it there instead of in bottomMargin.
+		let inset = window.width * (1 - scale) / 2
 		let sheetBottom = window.height - inset
 		let bottomMargin = sheetBottom - (field.origin.y + field.height)
 		let topMargin = 16 * scale

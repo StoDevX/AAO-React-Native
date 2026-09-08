@@ -27,6 +27,14 @@ const SEARCH_DEBOUNCE_MS = 200
 const SEARCH_MARGIN = 16
 const SEARCH_PLACEHOLDER = 'Search for a place'
 
+/// `UISearchBar` insets its own text field about 8pt from the edges it is
+/// given, on top of whatever padding wraps it -- measured by comparing the
+/// field's on-screen x to Apple Maps' at the same scale (Task 8's report has
+/// the numbers). Trimming the wrapper's horizontal padding by that 8 is what
+/// keeps the field's visible margin at `SEARCH_MARGIN`, which the collapsed
+/// detent is sized against; `SEARCH_MARGIN` itself stays untouched.
+const SEARCH_BAR_HORIZONTAL_PADDING = SEARCH_MARGIN - 8
+
 type Props = {
 	campus: Campus
 	onSelect: (id: string) => void
@@ -79,7 +87,9 @@ export function BuildingPicker({
 		<VStack spacing={0}>
 			{/* CampusSearchBar takes no modifiers, so its margins live on the
 			    stack around it. */}
-			<VStack modifiers={[padding({horizontal: SEARCH_MARGIN, vertical: SEARCH_MARGIN})]}>
+			<VStack
+				modifiers={[padding({horizontal: SEARCH_BAR_HORIZONTAL_PADDING, vertical: SEARCH_MARGIN})]}
+			>
 				<CampusSearchBar
 					onCancel={cancelSearch}
 					onFocusChange={(focused) => onSearchFocusChange(focused, typedQuery.trim() !== '')}
