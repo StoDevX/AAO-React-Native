@@ -88,7 +88,7 @@ overrides:
   # react-native.
   'metro-runtime@': '0.84.5'
   'metro-source-map@': '0.84.5'
-  'metro-symbolicate@': '0.84.5'
+  'metro-symbolicate@': '0.87.0'
   '@react-native/metro-config': '-'
   '@react-native/community-cli-plugin': '-'
   'brace-expansion@1': '1.1.18'
