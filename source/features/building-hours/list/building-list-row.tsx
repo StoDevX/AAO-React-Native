@@ -121,11 +121,9 @@ export const BuildingListRow = React.memo(function BuildingListRow({
 				</HStack>
 			</Button>
 
-			{/* A full swipe now triggers this directly: with only one action left,
-			 * and a reversible one, that is the ordinary iOS pattern (Mail's
-			 * single-action swipe behaves the same way), not the two-action
-			 * "swipe reveals both, full swipe does neither" balance the report
-			 * action used to need. */}
+			{/* One action, and a reversible one, so a full swipe triggers it
+			 * directly -- the ordinary iOS pattern, the same way Mail's
+			 * single-action swipe behaves. */}
 			<SwipeActions.Actions edge="trailing" allowsFullSwipe={true}>
 				<Button
 					modifiers={[
