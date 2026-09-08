@@ -17,5 +17,6 @@ class ModuleCarletonMapTests: UITestCase {
 			.expandSheet()
 			.selectBuilding(named: TestIdentifiers.CarletonMap.aBuilding)
 			.checkBuildingCardPresented()
+			.capture("Carleton map sheet at its middle detent, showing a building's card")
 	}
 }

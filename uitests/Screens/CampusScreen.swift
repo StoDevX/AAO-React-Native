@@ -470,4 +470,34 @@ struct CampusScreen: Screen {
 			"The detail sheet, titled \(name), should have closed")
 		return self
 	}
+
+	/// Assert the detail sheet shows a cutout map framing `buildingName` --
+	/// `BuildingCutout`'s own accessibility label, not a testID, since the
+	/// element XCUITest gets back for a plain accessibility-labelled native
+	/// view carries no identifier. Scrolls first: short content (Registrar's,
+	/// say) can already show everything the smaller detent offers, but nothing
+	/// here assumes that -- the list is scrolled toward the cutout's expected
+	/// position the same way `scrollUntilExists` proves any lazily-built row.
+	@discardableResult
+	func verifyCutoutShown(for buildingName: String) -> Self {
+		let cutout = app.elementWithLabel(startingWith: TestIdentifiers.Campus.cutoutLabelPrefix + buildingName)
+		scrollUntilExists(cutout)
+		XCTAssertTrue(
+			cutout.waitForExistence(timeout: 30),
+			"The detail sheet should show a cutout map framing \(buildingName)")
+		return self
+	}
+
+	/// Assert no cutout map appears anywhere in the detail sheet -- the case
+	/// for every Carleton venue, which carries no `building` key at all. Not
+	/// scoped to one building's label: no cutout should exist for any building
+	/// here, so this checks for the shared label prefix instead.
+	@discardableResult
+	func verifyNoCutoutShown() -> Self {
+		let cutout = app.elementWithLabel(startingWith: TestIdentifiers.Campus.cutoutLabelPrefix)
+		XCTAssertFalse(
+			cutout.waitForExistence(timeout: 5),
+			"No cutout map should appear for a venue with no building key")
+		return self
+	}
 }

@@ -113,6 +113,35 @@ class ModuleCampusTests: UITestCase {
 				for: TestIdentifiers.Campus.aBuildingWithLongSchedule, titleBefore: titleBefore)
 	}
 
+	/// Registrar's `building` key (`toh`) resolves to a feature named Tomson
+	/// Hall, not Registrar -- so this only passes if the cutout actually joined
+	/// on the key, rather than coincidentally matching a feature sharing the
+	/// venue's own name. See `TestIdentifiers.Campus.aBuildingWithCutout`.
+	func testDetailSheetShowsACutoutMapForAVenueWithABuildingKey() throws {
+		CampusScreen(app: app)
+			.navigate()
+			// Registrar's category sits well below the list's initial viewport,
+			// so it is searched into view rather than assumed reachable the way
+			// `anExcludedBuilding` and its Food-category neighbours are.
+			.search(for: TestIdentifiers.Campus.aBuildingWithCutout)
+			.tapRow(TestIdentifiers.Campus.aBuildingWithCutout)
+			.verifyDetailSheetTitled(TestIdentifiers.Campus.aBuildingWithCutout)
+			.verifyCutoutShown(for: TestIdentifiers.Campus.aBuildingWithCutoutFrames)
+			.capture("Campus detail sheet showing a building cutout")
+	}
+
+	/// Every Carleton venue carries no `building` key -- its hours data lives
+	/// outside this repo -- so the absence of a cutout has to read as
+	/// deliberate, not as a broken map that silently failed to draw.
+	func testDetailSheetShowsNoCutoutForACarletonVenue() throws {
+		CampusScreen(app: app)
+			.navigateToCarleton()
+			.tapRow(TestIdentifiers.Campus.carletonBuilding)
+			.verifyDetailSheetTitled(TestIdentifiers.Campus.carletonBuilding)
+			.verifyNoCutoutShown()
+			.capture("Campus detail sheet for a Carleton venue, with no cutout")
+	}
+
 	func testDetailSheetMenuOffersReportAProblem() throws {
 		CampusScreen(app: app)
 			.navigate()

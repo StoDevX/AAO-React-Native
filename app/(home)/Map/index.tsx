@@ -70,7 +70,30 @@ const FOOTPRINT_OPACITY = 0
 /// view. Symmetry here needs the tabs section's margins moved too.
 const SHEET_COLLAPSED_HEIGHT = 100
 const COLLAPSED_DETENT: PresentationDetent = {height: SHEET_COLLAPSED_HEIGHT}
-const SHEET_DETENTS: PresentationDetent[] = [COLLAPSED_DETENT, 'medium', 'large']
+
+/// Two thirds rather than UIKit's own `medium`, which is exactly a half and
+/// leaves the list feeling cut off at the point most people stop dragging.
+const MIDDLE_DETENT: PresentationDetent = {fraction: 0.67}
+const SHEET_DETENTS: PresentationDetent[] = [COLLAPSED_DETENT, MIDDLE_DETENT, 'large']
+
+/// How tall a detent actually is, which the camera needs so it can keep that
+/// much of the map clear.
+///
+/// Read structurally rather than by identity: the sheet hands its selection
+/// back through `onSelectionChange`, and nothing promises that is the same
+/// object we passed in.
+function sheetHeightFor(detent: PresentationDetent, windowHeight: number): number {
+	if (detent === 'large') {
+		return windowHeight
+	}
+	if (detent === 'medium') {
+		return windowHeight / 2
+	}
+	if ('fraction' in detent) {
+		return windowHeight * detent.fraction
+	}
+	return detent.height
+}
 
 export default function MapPage(): React.ReactNode {
 	// `/Map` has served Carleton alone since before it read the route, so a
@@ -134,12 +157,7 @@ export default function MapPage(): React.ReactNode {
 
 	// How much of the map the sheet is covering right now, which is what the
 	// camera has to keep clear.
-	let sheetHeight =
-		detent === 'medium'
-			? windowHeight / 2
-			: detent === 'large'
-				? windowHeight
-				: SHEET_COLLAPSED_HEIGHT
+	let sheetHeight = sheetHeightFor(detent, windowHeight)
 
 	let footprints = React.useMemo(() => toBuildingFootprints(buildings), [buildings])
 
@@ -159,7 +177,7 @@ export default function MapPage(): React.ReactNode {
 			setSelectedBuildingId(id)
 			// Apple Maps raises its sheet to half height when you pick a place,
 			// which is also the stop the camera pads for.
-			moveSheet('medium')
+			moveSheet(MIDDLE_DETENT)
 		},
 		[moveSheet],
 	)
@@ -283,7 +301,7 @@ export default function MapPage(): React.ReactNode {
 								campus={campus}
 								onSelect={(id) => {
 									setSelectedBuildingId(id)
-									moveSheet('medium')
+									moveSheet(MIDDLE_DETENT)
 								}}
 							/>
 						)}

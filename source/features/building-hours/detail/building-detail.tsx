@@ -14,10 +14,14 @@ import {
 	listStyle,
 	padding,
 } from '@expo/ui/swift-ui/modifiers'
+import {useQuery} from '@tanstack/react-query'
 import * as c from '@frogpond/colors'
 import type {Moment} from 'moment-timezone'
+import {BuildingCutout} from './building-cutout'
+import {findBuildingFeature} from '../lib/find-building-feature'
 import type {BuildingType} from '../types'
 import type {Campus} from '../query'
+import {mapDataOptions} from '../../map/query'
 import {images as buildingImages} from '../../../../images/spaces'
 import {
 	getShortBuildingStatus,
@@ -59,6 +63,17 @@ export function BuildingDetailSwiftUI({building, now, campus}: Props): React.Rea
 
 	let schedules = building.schedule || []
 	let links = building.links || []
+
+	// Every Carleton venue, and any St. Olaf one not yet keyed to a building,
+	// carries no `building` id -- skip the fetch entirely rather than warm a
+	// cache no lookup will ever use. Where a key does exist, this query shares
+	// `mapDataOptions`' cache key with `/Map`, so the sheet usually hits a warm
+	// cache instead of a spinner.
+	let {data: mapFeatures} = useQuery({
+		...mapDataOptions(campus),
+		enabled: Boolean(building.building),
+	})
+	let feature = mapFeatures ? findBuildingFeature(mapFeatures, building) : undefined
 
 	return (
 		// A Host doesn't need a React Native scroll view under it: the hosting
@@ -106,6 +121,17 @@ export function BuildingDetailSwiftUI({building, now, campus}: Props): React.Rea
 						))}
 					</Section>
 				))}
+
+				{feature ? (
+					<Section>
+						{/* Zeroed the same way the photo below is: RNHostView takes no
+						    modifiers of its own, so the inset has to come from the
+						    wrapping stack. */}
+						<VStack modifiers={[listRowInsets({top: 0, bottom: 0, leading: 0, trailing: 0})]}>
+							<BuildingCutout campus={campus} feature={feature} />
+						</VStack>
+					</Section>
+				) : null}
 
 				{buildingPhoto ? (
 					<Section>

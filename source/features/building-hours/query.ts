@@ -1,7 +1,9 @@
 import {carletonClient, client} from '@frogpond/api'
+import {isUITesting} from '@frogpond/launch-arguments'
 import {queryOptions, useQuery, UseQueryResult} from '@tanstack/react-query'
 import {groupBy} from 'lodash'
 import {selectFavoriteBuildings, useAppSelector} from '../../redux'
+import bundledBuildings from '../../../docs/building-hours.json'
 import {BuildingType} from './types'
 
 /** The two campuses that serve building hours through this feature. */
@@ -32,6 +34,19 @@ function clientFor(campus: Campus): typeof client {
 
 function fetchBuildings(campus: Campus) {
 	return async ({signal}: {signal: AbortSignal}): Promise<BuildingType[]> => {
+		// UI tests assert against what a screen does with a venue, so they need
+		// the same venues every run, and they need this repository's copy rather
+		// than the deployed one -- a `building` key added here only reaches the
+		// server once it merges, and a test for it would fail in between for a
+		// reason nobody could act on. Carleton's data lives outside this
+		// repository, so it still comes over the wire.
+		if (isUITesting && campus === 'stolaf') {
+			// Through `unknown` because a link's `url` is a string in JSON and a
+			// `URL` in `BuildingType` -- the same gap the network path casts over
+			// one line below, since the server sends the same JSON.
+			return (bundledBuildings as unknown as {data: BuildingType[]}).data
+		}
+
 		let response = await clientFor(campus).get('spaces/hours', {signal}).json()
 		return (response as {data: BuildingType[]}).data
 	}
