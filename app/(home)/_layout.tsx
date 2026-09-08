@@ -1,6 +1,8 @@
 import * as React from 'react'
 import {Stack} from 'expo-router'
 
+import {SHEET_RESTING_FRACTION} from '../../source/lib/constants'
+
 export default function HomeLayout(): React.ReactNode {
 	return (
 		<Stack screenOptions={{headerBackButtonDisplayMode: 'minimal'}}>
@@ -14,9 +16,9 @@ export default function HomeLayout(): React.ReactNode {
 				options={{
 					presentation: 'formSheet',
 					headerShown: false,
-					// Two thirds rather than a half: at a half the hours sat low enough
-					// that the sheet read as cramped.
-					sheetAllowedDetents: [0.68, 0.999],
+					// Shared with the campus map's sheet so the two rest at the same
+					// height; at a half the hours sat low enough to read as cramped.
+					sheetAllowedDetents: [SHEET_RESTING_FRACTION, 0.999],
 					sheetGrabberVisible: true,
 					// 'none' rather than 'last': the list behind has nothing worth
 					// touching once the sheet is up, and an undimmed detent lets UIKit

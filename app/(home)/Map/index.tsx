@@ -27,6 +27,7 @@ import {NoticeView} from '@frogpond/notice'
 import {parseCampus, type Campus} from '../../../source/features/building-hours/query'
 import {BuildingInfo} from '../../../source/features/map/building-info'
 import {BuildingPicker} from '../../../source/features/map/building-picker'
+import {SHEET_RESTING_FRACTION} from '../../../source/lib/constants'
 import {toBuildingFootprints} from '../../../source/features/map/lib/building-footprints'
 import {mapDataOptions} from '../../../source/features/map/query'
 import type {Coordinate, Point} from '../../../source/features/map/types'
@@ -71,9 +72,9 @@ const FOOTPRINT_OPACITY = 0
 const SHEET_COLLAPSED_HEIGHT = 100
 const COLLAPSED_DETENT: PresentationDetent = {height: SHEET_COLLAPSED_HEIGHT}
 
-/// Two thirds rather than UIKit's own `medium`, which is exactly a half and
+/// A fraction rather than UIKit's own `medium`, which is exactly a half and
 /// leaves the list feeling cut off at the point most people stop dragging.
-const MIDDLE_DETENT: PresentationDetent = {fraction: 0.67}
+const MIDDLE_DETENT: PresentationDetent = {fraction: SHEET_RESTING_FRACTION}
 const SHEET_DETENTS: PresentationDetent[] = [COLLAPSED_DETENT, MIDDLE_DETENT, 'large']
 
 /// How tall a detent actually is, which the camera needs so it can keep that
