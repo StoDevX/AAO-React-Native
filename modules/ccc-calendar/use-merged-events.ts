@@ -1,5 +1,6 @@
 import {useQueries} from '@tanstack/react-query'
 
+import {dedupeKey} from '@frogpond/event-list/calendar-util'
 import {deviceCalendarOptions, namedCalendarOptions} from './query'
 import {
 	type CalendarSource,
@@ -14,6 +15,23 @@ type MergedEvents = {
 	isLoading: boolean
 	isRefetching: boolean
 	refetchAll: () => Promise<void>
+}
+
+/**
+ * One row per event, where more than one calendar carries it. The first
+ * occurrence wins, and `useMergedEvents` concatenates in `sources` order, so
+ * the winner is whichever source `REMOTE_SOURCES` lists first -- the campus
+ * calendar over Presence. The survivor keeps its own `sourceId`, so the row's
+ * tint and the detail route it opens stay the source the user is looking at.
+ */
+export function dedupeEvents(events: SourcedEvent[]): SourcedEvent[] {
+	let seen = new Set<string>()
+	return events.filter((entry) => {
+		let key = dedupeKey(entry.event)
+		if (seen.has(key)) return false
+		seen.add(key)
+		return true
+	})
 }
 
 export function useMergedEvents(sources: CalendarSource[]): MergedEvents {
@@ -33,7 +51,7 @@ export function useMergedEvents(sources: CalendarSource[]): MergedEvents {
 	// No branching: each query tagged its own results in `select`, so a device
 	// result and a remote one already have the same shape by the time they get
 	// here. `sources` is needed below only to name what failed.
-	let events = results.flatMap((result) => result.data ?? [])
+	let events = dedupeEvents(results.flatMap((result) => result.data ?? []))
 	let failed = sources.filter((_, index) => results[index]?.isError)
 	let isLoading = results.some((result) => result.isLoading)
 	let isRefetching = results.some((result) => result.isRefetching)
