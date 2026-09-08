@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {render, screen} from '@testing-library/react-native'
+import {fireEvent, render, screen} from '@testing-library/react-native'
 import {CalendarPicker} from '../calendar-picker'
 import type {CalendarSource} from '../sources'
 
@@ -54,7 +54,38 @@ test('omits the organisation section when no source names one', async () => {
 	expect(screen.queryByText('ORGANIZATION')).toBeNull()
 })
 
-test('offers to clear the filter', async () => {
-	await render(picker({filter: {axis: 'category', value: 'Athletics'}}))
-	expect(screen.getByText('All Events')).toBeTruthy()
+test('All Events clears whichever axis is filtered', async () => {
+	let onSelectFilter = jest.fn()
+	await render(picker({filter: {axis: 'category', value: 'Athletics'}, onSelectFilter}))
+
+	fireEvent.press(screen.getByText('All Events'))
+
+	expect(onSelectFilter).toHaveBeenCalledWith(null)
+})
+
+test('choosing an unselected organisation filters on it', async () => {
+	let onSelectFilter = jest.fn()
+	await render(picker({onSelectFilter}))
+
+	fireEvent.press(screen.getByText('Wellness Center'))
+
+	expect(onSelectFilter).toHaveBeenCalledWith({axis: 'organization', value: 'Wellness Center'})
+})
+
+test('choosing the category already filtered on clears the filter', async () => {
+	let onSelectFilter = jest.fn()
+	await render(picker({filter: {axis: 'category', value: 'Athletics'}, onSelectFilter}))
+
+	fireEvent.press(screen.getByText('Athletics'))
+
+	expect(onSelectFilter).toHaveBeenCalledWith(null)
+})
+
+test('a category on one axis does not read as selected on the other', async () => {
+	let onSelectFilter = jest.fn()
+	await render(picker({filter: {axis: 'organization', value: 'Athletics'}, onSelectFilter}))
+
+	fireEvent.press(screen.getByText('Athletics'))
+
+	expect(onSelectFilter).toHaveBeenCalledWith({axis: 'category', value: 'Athletics'})
 })

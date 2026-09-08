@@ -54,3 +54,11 @@ test('a combined listing does not match either half', () => {
 	expect(combined).not.toBe(dedupeKey(event("Men's Cross Country vs Alumni 5K Meet")))
 	expect(combined).not.toBe(dedupeKey(event("Women's Cross Country vs Alumni 5K Meet")))
 })
+
+// `.normalize('NFKD')` splits a letter from its diacritic, and the
+// letters-and-digits fold then drops the diacritic. Nothing else in the key
+// does that, so removing the call would quietly stop an accented title from
+// matching its unaccented twin.
+test('an accented title matches its unaccented twin', () => {
+	expect(dedupeKey(event('Café Concert'))).toBe(dedupeKey(event('Cafe Concert')))
+})
