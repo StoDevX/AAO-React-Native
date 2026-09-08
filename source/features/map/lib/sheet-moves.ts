@@ -23,7 +23,10 @@ export type SheetState = {current: SheetDetent; previous: SheetDetent | null}
 export function nextSheetDetent(event: SheetEvent, state: SheetState): SheetState {
 	switch (event.type) {
 		case 'search-focused':
-			return {current: 'large', previous: state.current}
+			return {
+				current: 'large',
+				previous: state.current === 'large' ? state.previous : state.current,
+			}
 		case 'search-cancelled':
 			// A drag after the focus means the user chose a stop themselves;
 			// returning would override that choice.

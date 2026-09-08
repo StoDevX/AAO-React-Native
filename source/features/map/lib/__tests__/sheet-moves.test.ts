@@ -10,7 +10,7 @@ const at = (
 
 describe('nextSheetDetent', () => {
 	describe('focusing the search bar', () => {
-		it.each(['collapsed', 'medium', 'large'] as const)(
+		it.each(['collapsed', 'medium'] as const)(
 			'raises the sheet to large from %s and remembers where it was',
 			(from) => {
 				expect(nextSheetDetent({type: 'search-focused'}, at(from))).toEqual({
@@ -19,6 +19,20 @@ describe('nextSheetDetent', () => {
 				})
 			},
 		)
+
+		it('leaves nothing to return to when focused while already at large', () => {
+			expect(nextSheetDetent({type: 'search-focused'}, at('large'))).toEqual({
+				current: 'large',
+				previous: null,
+			})
+		})
+
+		it('re-focusing keeps the stop the search began from', () => {
+			expect(nextSheetDetent({type: 'search-focused'}, at('large', 'collapsed'))).toEqual({
+				current: 'large',
+				previous: 'collapsed',
+			})
+		})
 	})
 
 	describe('cancelling the search', () => {
