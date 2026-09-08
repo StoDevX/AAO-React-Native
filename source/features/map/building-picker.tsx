@@ -1,24 +1,15 @@
 import * as React from 'react'
+import {Button, HStack, Image, List, Section, Spacer, Text, VStack} from '@expo/ui/swift-ui'
 import {
-	Button,
-	HStack,
-	Image,
-	List,
-	Section,
-	Spacer,
-	Text,
-	TextField,
-	VStack,
-} from '@expo/ui/swift-ui'
-import {
-	autocorrectionDisabled,
 	buttonStyle,
 	contentShape,
 	font,
 	foregroundStyle,
+	padding,
 	shapes,
 } from '@expo/ui/swift-ui/modifiers'
 import {useQuery} from '@tanstack/react-query'
+import {CampusSearchBar} from '@frogpond/campus-search-bar'
 import {useDebounce} from '@frogpond/use-debounce'
 import fuzzyfind from 'fuzzyfind'
 
@@ -30,14 +21,36 @@ import type {Building, Feature} from './types'
 /// Matches the debounce every other search screen in the app uses.
 const SEARCH_DEBOUNCE_MS = 200
 
+/// Apple Maps' collapsed sheet is its search field with 16pt on every side,
+/// and the grabber sits inside the top 16. The sheet's collapsed detent is
+/// sized to exactly this, so these three numbers move together.
+const SEARCH_MARGIN = 16
+const SEARCH_PLACEHOLDER = 'Search for a place'
+
 type Props = {
 	campus: Campus
 	onSelect: (id: string) => void
+	/// Focus is what raises the sheet, and losing it may lower it -- but only
+	/// when the field is empty, since a typed query still needs the room to
+	/// show its results. The screen that owns the sheet decides; the picker
+	/// only reports what happened.
+	onSearchFocusChange: (focused: boolean, hasText: boolean) => void
+	onSearchCancel: () => void
 }
 
 /// The picker's contents, as SwiftUI. The sheet that presents them, and the
 /// `Host` they render into, both belong to the map screen.
-export function BuildingPicker({campus, onSelect}: Props): React.ReactNode {
+///
+/// A VStack rather than a List with the field inside it: a grouped List adds
+/// its own section insets around anything it holds, which is what made the
+/// old field's margins uneven and untunable. Out here the field's margins are
+/// the padding modifier and nothing else.
+export function BuildingPicker({
+	campus,
+	onSelect,
+	onSearchFocusChange,
+	onSearchCancel,
+}: Props): React.ReactNode {
 	let [category, setCategory] = React.useState<CategoryLabel>('Buildings')
 	let [typedQuery, setTypedQuery] = React.useState('')
 	let query = useDebounce(typedQuery.trim(), SEARCH_DEBOUNCE_MS)
@@ -57,44 +70,58 @@ export function BuildingPicker({campus, onSelect}: Props): React.ReactNode {
 		return buildings.filter((b) => b.properties.categories?.includes(key))
 	}, [buildings, category, query])
 
-	return (
-		<List>
-			<Section>
-				<TextField
-					modifiers={[autocorrectionDisabled(true)]}
-					onTextChange={setTypedQuery}
-					placeholder="Search for a place"
-				/>
-			</Section>
+	let cancelSearch = React.useCallback(() => {
+		setTypedQuery('')
+		onSearchCancel()
+	}, [onSearchCancel])
 
+	return (
+		<VStack spacing={0}>
+			{/* CampusSearchBar takes no modifiers, so its margins live on the
+			    stack around it. */}
+			<VStack modifiers={[padding({horizontal: SEARCH_MARGIN, vertical: SEARCH_MARGIN})]}>
+				<CampusSearchBar
+					onCancel={cancelSearch}
+					onFocusChange={(focused) => onSearchFocusChange(focused, typedQuery.trim() !== '')}
+					onTextChange={setTypedQuery}
+					placeholder={SEARCH_PLACEHOLDER}
+					testID={SEARCH_PLACEHOLDER}
+					text={typedQuery}
+				/>
+			</VStack>
+
+			{/* Pinned under the field rather than scrolling with the list, so
+			    the header reads as one block: grabber, field, segments. */}
 			{query ? null : (
-				<Section>
+				<VStack modifiers={[padding({horizontal: SEARCH_MARGIN, bottom: 8})]}>
 					<CategoryPicker onChange={setCategory} selected={category} />
-				</Section>
+				</VStack>
 			)}
 
-			<Section>
-				{isError ? (
-					<Button onPress={() => void refetch()}>
-						<VStack alignment="leading" spacing={2}>
-							<Text>{`A problem occured while loading: ${error}`}</Text>
-							<Text>Tap to try again.</Text>
-						</VStack>
-					</Button>
-				) : isLoading ? (
-					<Text>Loading…</Text>
-				) : visible.length === 0 ? (
-					<Text>No buildings to show.</Text>
-				) : (
-					// Rendered directly, not wrapped in `List.ForEach`: that component
-					// attaches `.onDelete`/`.onMove` unconditionally, which would put
-					// swipe-to-delete and drag-to-reorder on this read-only picker.
-					visible.map((building) => (
-						<BuildingRow key={building.id} building={building} onSelect={onSelect} />
-					))
-				)}
-			</Section>
-		</List>
+			<List>
+				<Section>
+					{isError ? (
+						<Button onPress={() => void refetch()}>
+							<VStack alignment="leading" spacing={2}>
+								<Text>{`A problem occured while loading: ${error}`}</Text>
+								<Text>Tap to try again.</Text>
+							</VStack>
+						</Button>
+					) : isLoading ? (
+						<Text>Loading…</Text>
+					) : visible.length === 0 ? (
+						<Text>No buildings to show.</Text>
+					) : (
+						// Rendered directly, not wrapped in `List.ForEach`: that component
+						// attaches `.onDelete`/`.onMove` unconditionally, which would put
+						// swipe-to-delete and drag-to-reorder on this read-only picker.
+						visible.map((building) => (
+							<BuildingRow key={building.id} building={building} onSelect={onSelect} />
+						))
+					)}
+				</Section>
+			</List>
+		</VStack>
 	)
 }
 

@@ -14,6 +14,10 @@ jest.mock('@expo/ui/swift-ui/modifiers', () => {
 	// oxlint-disable-next-line typescript/no-require-imports
 	return require('../../../testing/expo-ui-mock') as typeof import('../../../testing/expo-ui-mock')
 })
+jest.mock('@frogpond/campus-search-bar', () => {
+	// oxlint-disable-next-line typescript/no-require-imports
+	return require('./campus-search-bar-mock') as typeof import('./campus-search-bar-mock')
+})
 
 const fixtures = [
 	makeBuilding({id: 'a', name: 'Alpha Hall', categories: ['building']}),
@@ -36,7 +40,11 @@ afterEach(() => {
 	trackedQueryClients.length = 0
 })
 
-async function renderPicker(onSelect = jest.fn()) {
+async function renderPicker(
+	onSelect = jest.fn(),
+	onSearchFocusChange = jest.fn(),
+	onSearchCancel = jest.fn(),
+) {
 	let client = new QueryClient({defaultOptions: {queries: {retry: false}}})
 	trackedQueryClients.push(client)
 	// Seeding the cache rather than mocking the query module keeps the
@@ -44,10 +52,15 @@ async function renderPicker(onSelect = jest.fn()) {
 	client.setQueryData(keys.all('carleton'), fixtures)
 	await render(
 		<QueryClientProvider client={client}>
-			<BuildingPicker campus="carleton" onSelect={onSelect} />
+			<BuildingPicker
+				campus="carleton"
+				onSearchCancel={onSearchCancel}
+				onSearchFocusChange={onSearchFocusChange}
+				onSelect={onSelect}
+			/>
 		</QueryClientProvider>,
 	)
-	return onSelect
+	return {onSelect, onSearchFocusChange, onSearchCancel}
 }
 
 describe('BuildingPicker', () => {
@@ -80,5 +93,36 @@ describe('BuildingPicker', () => {
 		await waitFor(() => {
 			expect(screen.getByText('Gamma Field')).toBeTruthy()
 		})
+	})
+
+	it('reports focus changes on the search field to the screen', async () => {
+		let {onSearchFocusChange} = await renderPicker()
+		let field = screen.getByLabelText('Search for a place')
+		await fireEvent(field, 'focus')
+		expect(onSearchFocusChange).toHaveBeenLastCalledWith(true, false)
+		await fireEvent(field, 'blur')
+		expect(onSearchFocusChange).toHaveBeenLastCalledWith(false, false)
+	})
+
+	it('tells the screen a blurred field still holds a query', async () => {
+		let {onSearchFocusChange} = await renderPicker()
+		let field = screen.getByLabelText('Search for a place')
+		await fireEvent.changeText(field, 'gamma')
+		await fireEvent(field, 'blur')
+		expect(onSearchFocusChange).toHaveBeenLastCalledWith(false, true)
+	})
+
+	it('clears the query and shows the categories again when the search is cancelled', async () => {
+		let {onSearchCancel} = await renderPicker()
+		await fireEvent.changeText(screen.getByLabelText('Search for a place'), 'gamma')
+		await waitFor(() => {
+			expect(screen.queryByText('Outdoors')).toBeNull()
+		})
+		await fireEvent.press(screen.getByText('Cancel'))
+		expect(onSearchCancel).toHaveBeenCalledTimes(1)
+		await waitFor(() => {
+			expect(screen.getByText('Outdoors')).toBeTruthy()
+		})
+		expect(screen.getByText('Alpha Hall')).toBeTruthy()
 	})
 })

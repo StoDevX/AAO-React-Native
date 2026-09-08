@@ -286,6 +286,10 @@ export default function MapPage(): React.ReactNode {
 						) : (
 							<BuildingPicker
 								campus={campus}
+								// oxlint-disable-next-line typescript/no-empty-function
+								onSearchCancel={() => {}}
+								// oxlint-disable-next-line typescript/no-empty-function
+								onSearchFocusChange={() => {}}
 								onSelect={(id) => {
 									setSelectedBuildingId(id)
 									moveSheet(MIDDLE_DETENT)
