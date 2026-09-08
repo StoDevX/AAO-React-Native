@@ -30,6 +30,12 @@ peerDependencyRules:
 
 publicHoistPattern:
   - expo-module-scripts
+  # metro.config.js needs mergeConfig, which @expo/metro-config does not
+  # re-export. Declaring metro-config directly means pinning a version, and
+  # the pin then drifts from the metro @expo/metro resolves -- which is the
+  # metro that actually bundles the app. Hoisting takes whichever one Expo
+  # brought instead, so the two cannot disagree.
+  - metro-config
 
 # theoretically, this configures pnpm to avoid installing optionalDependencies for
 # systems other than the current one
@@ -76,7 +82,15 @@ catalog:
 overrides:
   # Nothing uses this package; we use Expo's version, instead. This is
   # dragged in by react-native itself.
+  # react-native asks for these three itself and floats past the metro that
+  # @expo/metro pins. Expo's metro is the one that bundles the app, and
+  # metro-runtime ends up inside that bundle, so these follow Expo rather than
+  # react-native.
+  'metro-runtime@': '0.84.5'
+  'metro-source-map@': '0.84.5'
+  'metro-symbolicate@': '0.84.5'
   '@react-native/metro-config': '-'
+  '@react-native/community-cli-plugin': '-'
   'brace-expansion@1': '1.1.18'
   'brace-expansion@2': '2.1.4'
   'brace-expansion@5': '5.0.9'

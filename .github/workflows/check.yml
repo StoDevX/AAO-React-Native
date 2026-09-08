@@ -81,6 +81,9 @@ jobs:
       # A module that imports a @frogpond package without declaring it still
       # resolves, via the root node_modules hoist, until it doesn't.
       - run: mise run validate-deps
+      # A second copy of a package that has to be singular resolves fine and
+      # builds fine; only the lockfile shows it.
+      - run: mise run validate-single-copy
       # bundled.json is generated from data/sources.yaml and committed, since
       # the app needs it at build time. Fail if someone edited one and not
       # the other.
