@@ -116,6 +116,12 @@ struct TestIdentifiers {
 		/// -- absent from Carleton's map data, so selecting it is what would
 		/// fail if the map's campus parameter were ignored.
 		static let aStolafBuilding = "Buntrock Commons"
+		/// A second building, high enough in the list to be on screen even with
+		/// the keyboard up, and not a match for `aBuilding` under the picker's
+		/// subsequence search -- so typing that query has to drop it. Carleton can
+		/// rename either of these; a failure here is worth checking against the
+		/// list before it is blamed on the filter.
+		static let anotherBuilding = "216 College Street"
 	}
 
 	// MARK: - SIS

@@ -57,15 +57,19 @@ class ModuleCarletonMapTests: UITestCase {
 
 	/// The bar reports each keystroke to JavaScript and takes the echo back as
 	/// a prop, which is a round trip with a race in it. Typing a whole name is
-	/// what shows whether a character was lost on the way.
+	/// what shows whether a character was lost on the way: the field is read
+	/// back, and a building the query cannot match has to leave the list, which
+	/// is the half that can only happen if the text arrived in JavaScript.
 	func testTypingIntoSearchKeepsEveryCharacter() throws {
 		CarletonMapScreen(app: app)
 			.navigate()
 			.checkSheetPresented()
 			.focusSearch()
+			.capture("Carleton map list before a query is typed")
+			.verifyListed(TestIdentifiers.CarletonMap.anotherBuilding)
 			.typeIntoSearch(TestIdentifiers.CarletonMap.aBuilding)
 			.capture("Carleton map sheet with a typed query")
-			.verifySearchFound(TestIdentifiers.CarletonMap.aBuilding)
+			.verifyFilteredOut(TestIdentifiers.CarletonMap.anotherBuilding)
 	}
 
 	func testTappingARowFromTheFullSheetDropsItToMedium() throws {
@@ -78,13 +82,8 @@ class ModuleCarletonMapTests: UITestCase {
 		screen
 			.selectBuilding(named: TestIdentifiers.CarletonMap.aBuilding)
 			.capture("Carleton map card after a row tap from large")
-		// The picker is gone once the card is up, so the card's own top edge
-		// stands in for the field's.
-		let cardTop = screen.closeButtonTop()
-		XCTAssertTrue(
-			cardTop - largeTop > 100,
-			"A row tapped from the full sheet should drop it to medium; the content's top went from \(largeTop) to \(cardTop)")
-		screen.verifyCardAtMedium()
+			.verifyCardDroppedFrom(largeTop)
+			.verifyCardAtMedium()
 	}
 
 	func testTappingAFootprintWhileCollapsedRaisesTheCardToMedium() throws {

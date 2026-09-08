@@ -73,10 +73,10 @@ struct CarletonMapScreen: Screen {
 	/// out as a quietly short field rather than a console warning. Measuring is
 	/// the only thing that would notice.
 	///
-	/// Measured at a full-width stop. A floating sheet draws its content scaled
-	/// to the inset it floats in, so every frame read at the collapsed stop is
-	/// smaller than the layout that produced it, and 44pt would be the wrong
-	/// number to expect there.
+	/// Measured at a full-width stop. Something applies a 0.8607 scale to the
+	/// collapsed sheet's content -- what applies it has not been identified --
+	/// so every frame read there is smaller than the layout that produced it,
+	/// and 44pt would be the wrong number to expect.
 	@discardableResult
 	func verifySearchFieldHeight() -> Self {
 		let height = searchField.frame.height
@@ -104,7 +104,7 @@ struct CarletonMapScreen: Screen {
 		searchField.tap()
 		XCTAssertTrue(
 			cancelButton.waitForExistence(timeout: 10),
-			"Focusing the search field should show its Cancel button")
+			"Focusing the search field should show its cancel button, which iOS labels Close")
 		return self
 	}
 
@@ -131,13 +131,24 @@ struct CarletonMapScreen: Screen {
 		return self
 	}
 
-	/// The list is what the query is for, so a filtered row proves the text
-	/// reached JavaScript rather than only the field.
+	/// Reads a row off the unfiltered list, so that its absence later means the
+	/// filter dropped it rather than that it was never there.
 	@discardableResult
-	func verifySearchFound(_ name: String) -> Self {
+	func verifyListed(_ name: String) -> Self {
 		XCTAssertTrue(
 			app.buttons[name].firstMatch.waitForExistence(timeout: 30),
-			"Searching should narrow the list to \(name)")
+			"The expanded sheet should list \(name) before anything is typed")
+		return self
+	}
+
+	/// A row the query cannot match has to leave the list, which is what shows
+	/// the typed text reached JavaScript. A row that still matches would stay
+	/// put whether the filter ran or not, so it proves nothing.
+	@discardableResult
+	func verifyFilteredOut(_ name: String) -> Self {
+		XCTAssertTrue(
+			app.buttons[name].firstMatch.waitForNonExistence(timeout: 30),
+			"Searching should drop \(name) from the list")
 		return self
 	}
 
@@ -145,11 +156,11 @@ struct CarletonMapScreen: Screen {
 	/// which is what tells it apart from medium and large.
 	///
 	/// That the field is the *only* thing on it is not asserted, because it
-	/// cannot be from here. A sheet clips what it draws but not what it
-	/// hit-tests, so the category segments beneath the field answer
+	/// cannot be from here. The category segments beneath the field answer
 	/// `isHittable` at every collapsed height tried -- 44, 60, 76 and 160 --
-	/// while the screen visibly changes between them. The capture is what that
-	/// half has to be judged on.
+	/// while the screen visibly changes between them, so the hit test is not
+	/// measuring what the sheet shows. The capture is what that half has to be
+	/// judged on.
 	@discardableResult
 	func verifyCollapsed() -> Self {
 		XCTAssertTrue(searchField.isHittable, "The search field should be reachable while collapsed")
@@ -247,6 +258,17 @@ struct CarletonMapScreen: Screen {
 	/// the way the field is the picker's.
 	func closeButtonTop() -> CGFloat {
 		closeButton.frame.minY
+	}
+
+	/// The picker is gone once the card is up, so the card's own top edge stands
+	/// in for the field's. Same hundred-point rule as `verifySheetMoved`.
+	@discardableResult
+	func verifyCardDroppedFrom(_ before: CGFloat) -> Self {
+		let after = closeButtonTop()
+		XCTAssertTrue(
+			after - before > 100,
+			"A row tapped from the full sheet should drop it to medium; the content's top went from \(before) to \(after)")
+		return self
 	}
 
 	/// The medium stop is half the window. A card whose top is in the middle
