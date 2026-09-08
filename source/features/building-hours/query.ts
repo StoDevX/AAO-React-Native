@@ -41,10 +41,7 @@ function fetchBuildings(campus: Campus) {
 		// reason nobody could act on. Carleton's data lives outside this
 		// repository, so it still comes over the wire.
 		if (isUITesting && campus === 'stolaf') {
-			// Through `unknown` because a link's `url` is a string in JSON and a
-			// `URL` in `BuildingType` -- the same gap the network path casts over
-			// one line below, since the server sends the same JSON.
-			return (bundledBuildings as unknown as {data: BuildingType[]}).data
+			return (bundledBuildings as {data: BuildingType[]}).data
 		}
 
 		let response = await clientFor(campus).get('spaces/hours', {signal}).json()

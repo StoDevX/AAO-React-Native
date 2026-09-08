@@ -324,8 +324,9 @@ struct TestIdentifiers {
 	// MARK: - Campus
 
 	enum Campus {
-		/// A building ccc-server serves from this repo's data, so it is in the
-		/// list whatever host the app is pointed at.
+		/// A St. Olaf venue. Under test the app reads St. Olaf's hours from this
+		/// repository's bundled copy rather than a server, so this is whatever
+		/// `data/building-hours/` says today.
 		static let aBuilding = "Rølvaag Library"
 		/// A query that matches `aBuilding` only through deburring, so the test
 		/// fails if the filter stops stripping diacritics.

@@ -26,7 +26,16 @@ export type NamedBuildingScheduleType = {
 	hours: SingleBuildingScheduleType[]
 }
 
-export type BreakScheduleContainerType = Record<BreakNameEnumType, NamedBuildingScheduleType[]>
+/**
+ * Break schedules, keyed by break.
+ *
+ * Partial because neither campus publishes every break: both servers send seven
+ * of the eight, omitting `christmasfest`. Requiring the full set made the type
+ * a claim about the data that was never true.
+ */
+export type BreakScheduleContainerType = Partial<
+	Record<BreakNameEnumType, NamedBuildingScheduleType[]>
+>
 
 export type BuildingLinkType = {
 	title: string

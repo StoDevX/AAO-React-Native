@@ -23,11 +23,11 @@ export function Camera(): React.ReactNode {
 	return null
 }
 
-/// Renders its children so a test can still reach whatever the source wraps.
-/// The GeoJSON it carries is data, and belongs to `toBuildingFootprints`' own
-/// tests rather than to a render assertion here.
-export function GeoJSONSource({children}: {children?: React.ReactNode}): React.ReactNode {
-	return <>{children}</>
+/// Draws nothing, like the layers it wraps. The GeoJSON it carries is data,
+/// and belongs to `toBuildingFootprints`' own tests rather than to a render
+/// assertion here.
+export function GeoJSONSource(): React.ReactNode {
+	return null
 }
 
 /// A layer's whole job is paint and layout the renderer applies. There is

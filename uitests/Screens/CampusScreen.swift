@@ -492,11 +492,17 @@ struct CampusScreen: Screen {
 	/// for every Carleton venue, which carries no `building` key at all. Not
 	/// scoped to one building's label: no cutout should exist for any building
 	/// here, so this checks for the shared label prefix instead.
+	///
+	/// Checks `exists` outright rather than waiting one out. A missing key
+	/// disables the map query, so the sheet decides against a cutout from the
+	/// same venue data that gave it the title -- and callers assert that title
+	/// first. There is no later moment for a cutout to arrive in, so a wait
+	/// here would only spend its full timeout on every passing run.
 	@discardableResult
 	func verifyNoCutoutShown() -> Self {
 		let cutout = app.elementWithLabel(startingWith: TestIdentifiers.Campus.cutoutLabelPrefix)
 		XCTAssertFalse(
-			cutout.waitForExistence(timeout: 5),
+			cutout.exists,
 			"No cutout map should appear for a venue with no building key")
 		return self
 	}

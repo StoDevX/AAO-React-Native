@@ -9,9 +9,12 @@ import type {Building, Feature} from '../../map/types'
 import {mapStyleUrl} from '../../map/urls'
 import type {Campus} from '../query'
 
+/** How tall the cutout draws. */
 const CUTOUT_HEIGHT = 160
-/// Both campuses' styles ship the same Noto Sans stacks, so one font name
-/// works against either glyph endpoint.
+/**
+ * Both campuses' styles ship the same Noto Sans stacks, so one font name works
+ * against either glyph endpoint.
+ */
 const LABEL_FONT = ['Noto Sans Medium']
 /** Points of breathing room around the framed building, so its footprint
  * doesn't run flush against the cutout's edges. */

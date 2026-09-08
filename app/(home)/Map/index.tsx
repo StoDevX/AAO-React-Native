@@ -1,5 +1,6 @@
 import * as React from 'react'
 import {StyleSheet, useWindowDimensions, View, type NativeSyntheticEvent} from 'react-native'
+import {useSafeAreaInsets} from 'react-native-safe-area-context'
 import {BottomSheet, Group, Host} from '@expo/ui/swift-ui'
 import {
 	background,
@@ -28,6 +29,7 @@ import {parseCampus, type Campus} from '../../../source/features/building-hours/
 import {BuildingInfo} from '../../../source/features/map/building-info'
 import {BuildingPicker} from '../../../source/features/map/building-picker'
 import {SHEET_RESTING_FRACTION} from '../../../source/lib/constants'
+import {sheetHeightFor} from '../../../source/features/map/lib/sheet-height'
 import {toBuildingFootprints} from '../../../source/features/map/lib/building-footprints'
 import {mapDataOptions} from '../../../source/features/map/query'
 import type {Coordinate, Point} from '../../../source/features/map/types'
@@ -77,25 +79,6 @@ const COLLAPSED_DETENT: PresentationDetent = {height: SHEET_COLLAPSED_HEIGHT}
 const MIDDLE_DETENT: PresentationDetent = {fraction: SHEET_RESTING_FRACTION}
 const SHEET_DETENTS: PresentationDetent[] = [COLLAPSED_DETENT, MIDDLE_DETENT, 'large']
 
-/// How tall a detent actually is, which the camera needs so it can keep that
-/// much of the map clear.
-///
-/// Read structurally rather than by identity: the sheet hands its selection
-/// back through `onSelectionChange`, and nothing promises that is the same
-/// object we passed in.
-function sheetHeightFor(detent: PresentationDetent, windowHeight: number): number {
-	if (detent === 'large') {
-		return windowHeight
-	}
-	if (detent === 'medium') {
-		return windowHeight / 2
-	}
-	if ('fraction' in detent) {
-		return windowHeight * detent.fraction
-	}
-	return detent.height
-}
-
 export default function MapPage(): React.ReactNode {
 	// `/Map` has served Carleton alone since before it read the route, so a
 	// missing param keeps that default rather than falling through to
@@ -117,6 +100,7 @@ export default function MapPage(): React.ReactNode {
 	let [selectedBuildingId, setSelectedBuildingId] = React.useState<string | null>(null)
 	let {data: buildings = [], error} = useQuery(mapDataOptions(campus))
 	let {height: windowHeight} = useWindowDimensions()
+	let insets = useSafeAreaInsets()
 	let [sheetPresented, setSheetPresented] = React.useState(true)
 	// Which stop the sheet rests at. Driven by selecting a building, and by the
 	// user dragging it, which is why it is state rather than derived.
@@ -158,7 +142,9 @@ export default function MapPage(): React.ReactNode {
 
 	// How much of the map the sheet is covering right now, which is what the
 	// camera has to keep clear.
-	let sheetHeight = sheetHeightFor(detent, windowHeight)
+	// A fraction is measured against the window less the top inset, so the
+	// camera is padded against the same thing rather than the whole window.
+	let sheetHeight = sheetHeightFor(detent, windowHeight - insets.top)
 
 	let footprints = React.useMemo(() => toBuildingFootprints(buildings), [buildings])
 

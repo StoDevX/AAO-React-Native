@@ -19,30 +19,10 @@ function withGeometry(geometry: GeometryCollection): Feature<Building> {
 	return {...makeBuilding({id: 'toh', name: 'Tomson Hall'}), geometry}
 }
 
+// The rendered case lives in `building-detail.test.tsx`, which asserts the same
+// label plus the join and the query wiring that put the feature here. These two
+// cover what only this component decides: when to draw nothing.
 describe('BuildingCutout', () => {
-	test('renders a labelled map for a feature with a real footprint', async () => {
-		let feature = withGeometry({
-			type: 'GeometryCollection',
-			geometries: [
-				{
-					type: 'Polygon',
-					coordinates: [
-						[
-							[-93.18, 44.46],
-							[-93.17, 44.46],
-							[-93.17, 44.47],
-							[-93.18, 44.47],
-						],
-					],
-				},
-			],
-		})
-
-		let {getByLabelText} = await render(<BuildingCutout campus="stolaf" feature={feature} />)
-
-		expect(getByLabelText('Map showing Tomson Hall')).toBeTruthy()
-	})
-
 	// Six St. Olaf venues -- The Cage, Stav Hall and the rest of Buntrock's
 	// dining rooms among them -- key to a point-of-interest record whose only
 	// geometry is a Point. There is no footprint to fill, outline or label, and
