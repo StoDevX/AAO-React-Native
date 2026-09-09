@@ -71,3 +71,15 @@ export function toBuildingFootprints(
 
 	return {type: 'FeatureCollection', features}
 }
+
+/**
+ * Whether a feature has an outline a map can draw.
+ *
+ * Several St. Olaf venues key to a point-of-interest record whose only geometry
+ * is a Point -- Buntrock's dining rooms, the bookstore, admissions. There is
+ * nothing to fill, outline or label, so anything that would frame or highlight
+ * a building has to ask this first rather than discovering it halfway down.
+ */
+export function hasFootprint(building: Feature<Building>): boolean {
+	return toBuildingFootprints([building]).features.length > 0
+}

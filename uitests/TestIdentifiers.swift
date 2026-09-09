@@ -324,8 +324,9 @@ struct TestIdentifiers {
 	// MARK: - Campus
 
 	enum Campus {
-		/// A building ccc-server serves from this repo's data, so it is in the
-		/// list whatever host the app is pointed at.
+		/// A St. Olaf venue. Under test the app reads St. Olaf's hours from this
+		/// repository's bundled copy rather than a server, so this is whatever
+		/// `data/building-hours/` says today.
 		static let aBuilding = "Rølvaag Library"
 		/// A query that matches `aBuilding` only through deburring, so the test
 		/// fails if the filter stops stripping diacritics.
@@ -387,6 +388,20 @@ struct TestIdentifiers {
 		/// hand-hosted map screen stays where it is, so this is a navigation,
 		/// not a mode switch.
 		static let mapButton = "Map"
+
+		/// A St. Olaf venue whose `building` key (`toh`) resolves to a
+		/// differently-named feature -- Tomson Hall, not Registrar -- so a test
+		/// asserting the cutout frames `aBuildingWithCutoutFrames` only passes if
+		/// the join actually used the key. `The Cage`, whose key (`thecage`)
+		/// happens to share wording with its own name, would pass even with a
+		/// broken join that fell back to matching on name.
+		static let aBuildingWithCutout = "Registrar"
+		static let aBuildingWithCutoutFrames = "Tomson Hall"
+
+		/// The prefix `BuildingCutout` sets as its accessibility label, naming
+		/// the building it frames. Mirrors the template literal in
+		/// source/features/building-hours/detail/building-cutout.tsx.
+		static let cutoutLabelPrefix = "Map showing "
 	}
 
 	// MARK: - Course Catalog

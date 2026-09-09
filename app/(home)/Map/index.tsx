@@ -1,5 +1,6 @@
 import * as React from 'react'
 import {StyleSheet, useWindowDimensions, View, type NativeSyntheticEvent} from 'react-native'
+import {useSafeAreaInsets} from 'react-native-safe-area-context'
 import {BottomSheet, Group, Host} from '@expo/ui/swift-ui'
 import {
 	background,
@@ -27,6 +28,8 @@ import {NoticeView} from '@frogpond/notice'
 import {parseCampus, type Campus} from '../../../source/features/building-hours/query'
 import {BuildingInfo} from '../../../source/features/map/building-info'
 import {BuildingPicker} from '../../../source/features/map/building-picker'
+import {SHEET_RESTING_FRACTION} from '../../../source/lib/constants'
+import {sheetHeightFor} from '../../../source/features/map/lib/sheet-height'
 import {toBuildingFootprints} from '../../../source/features/map/lib/building-footprints'
 import {mapDataOptions} from '../../../source/features/map/query'
 import type {Coordinate, Point} from '../../../source/features/map/types'
@@ -70,7 +73,11 @@ const FOOTPRINT_OPACITY = 0
 /// view. Symmetry here needs the tabs section's margins moved too.
 const SHEET_COLLAPSED_HEIGHT = 100
 const COLLAPSED_DETENT: PresentationDetent = {height: SHEET_COLLAPSED_HEIGHT}
-const SHEET_DETENTS: PresentationDetent[] = [COLLAPSED_DETENT, 'medium', 'large']
+
+/// A fraction rather than UIKit's own `medium`, which is exactly a half and
+/// leaves the list feeling cut off at the point most people stop dragging.
+const MIDDLE_DETENT: PresentationDetent = {fraction: SHEET_RESTING_FRACTION}
+const SHEET_DETENTS: PresentationDetent[] = [COLLAPSED_DETENT, MIDDLE_DETENT, 'large']
 
 export default function MapPage(): React.ReactNode {
 	// `/Map` has served Carleton alone since before it read the route, so a
@@ -93,6 +100,7 @@ export default function MapPage(): React.ReactNode {
 	let [selectedBuildingId, setSelectedBuildingId] = React.useState<string | null>(null)
 	let {data: buildings = [], error} = useQuery(mapDataOptions(campus))
 	let {height: windowHeight} = useWindowDimensions()
+	let insets = useSafeAreaInsets()
 	let [sheetPresented, setSheetPresented] = React.useState(true)
 	// Which stop the sheet rests at. Driven by selecting a building, and by the
 	// user dragging it, which is why it is state rather than derived.
@@ -134,12 +142,9 @@ export default function MapPage(): React.ReactNode {
 
 	// How much of the map the sheet is covering right now, which is what the
 	// camera has to keep clear.
-	let sheetHeight =
-		detent === 'medium'
-			? windowHeight / 2
-			: detent === 'large'
-				? windowHeight
-				: SHEET_COLLAPSED_HEIGHT
+	// A fraction is measured against the window less the top inset, so the
+	// camera is padded against the same thing rather than the whole window.
+	let sheetHeight = sheetHeightFor(detent, windowHeight - insets.top)
 
 	let footprints = React.useMemo(() => toBuildingFootprints(buildings), [buildings])
 
@@ -159,7 +164,7 @@ export default function MapPage(): React.ReactNode {
 			setSelectedBuildingId(id)
 			// Apple Maps raises its sheet to half height when you pick a place,
 			// which is also the stop the camera pads for.
-			moveSheet('medium')
+			moveSheet(MIDDLE_DETENT)
 		},
 		[moveSheet],
 	)
@@ -283,7 +288,7 @@ export default function MapPage(): React.ReactNode {
 								campus={campus}
 								onSelect={(id) => {
 									setSelectedBuildingId(id)
-									moveSheet('medium')
+									moveSheet(MIDDLE_DETENT)
 								}}
 							/>
 						)}
