@@ -43,51 +43,59 @@ import {
 type Modifier = ReturnType<typeof foregroundStyle>
 
 /**
- * One marked run, styled the way the preview marks an insertion or a
+ * One `<Text>` per run, styled the way the preview marks an insertion or a
  * deletion: green and underlined for an addition, red and struck through for
  * a deletion, plain for a run the reader left untouched.
  *
- * Only six modifiers survive SwiftUI's `Text` concatenation --
- * `foregroundStyle`, `bold`, `italic`, `monospacedDigit`, `font`, plus the
- * `strikethrough`/`underline` this package patches in -- so a run's own mark
- * can only ever be colour and decoration, never a background.
+ * A plain function, not a component. SwiftUI's `Text` concatenation walks its
+ * children and keeps only a string/number or an element whose type is
+ * literally `Text` -- everything else, a custom component or a `Fragment`
+ * included, is dropped with no warning. A `<MarkedRuns runs={…}/>` between
+ * this and its parent `<Text>` would therefore render nothing on device; an
+ * array of real `<Text>` elements, spread straight into the parent's
+ * children, is the one shape that survives. `expo-ui-mock`'s `Text` enforces
+ * the same filter under Jest, so getting this wrong now fails a test instead
+ * of shipping a blank sentence.
+ *
+ * `keyPrefix` distinguishes one call's keys from another's when several
+ * calls' results are concatenated into one array -- the citations below join
+ * one `markedRuns` call per example, and each starts counting from zero on
+ * its own.
  */
-function MarkedRun({run}: {run: Run}): React.ReactNode {
-	if (run.mark === 'added') {
-		return (
-			<Text
-				modifiers={[foregroundStyle(c.systemGreen), underline({isActive: true, pattern: 'solid'})]}
-			>
-				{run.text}
-			</Text>
-		)
-	}
+function markedRuns(runs: Run[], keyPrefix = ''): React.ReactNode[] {
+	return runs.map((run, index) => {
+		let key = `${keyPrefix}${index}`
 
-	if (run.mark === 'removed') {
-		return (
-			<Text
-				modifiers={[
-					foregroundStyle(c.systemRed),
-					strikethrough({isActive: true, pattern: 'solid'}),
-				]}
-			>
-				{run.text}
-			</Text>
-		)
-	}
+		if (run.mark === 'added') {
+			return (
+				<Text
+					key={key}
+					modifiers={[
+						foregroundStyle(c.systemGreen),
+						underline({isActive: true, pattern: 'solid'}),
+					]}
+				>
+					{run.text}
+				</Text>
+			)
+		}
 
-	return <Text>{run.text}</Text>
-}
+		if (run.mark === 'removed') {
+			return (
+				<Text
+					key={key}
+					modifiers={[
+						foregroundStyle(c.systemRed),
+						strikethrough({isActive: true, pattern: 'solid'}),
+					]}
+				>
+					{run.text}
+				</Text>
+			)
+		}
 
-/** A field's runs, laid end to end as a sequence of `MarkedRun`s. */
-function Marked({runs}: {runs: Run[]}): React.ReactNode {
-	return (
-		<>
-			{runs.map((run, index) => (
-				<MarkedRun key={index} run={run} />
-			))}
-		</>
-	)
+		return <Text key={key}>{run.text}</Text>
+	})
 }
 
 /**
@@ -106,14 +114,33 @@ function washFor(status: DiffStatus): Modifier[] {
 	return []
 }
 
+/// The pre-edit text a run array stood for, reconstructed from every run
+/// that was already there before the edit -- `same` and `removed` runs, in
+/// order, skipping only what the edit itself inserted.
+function beforeText(runs: Run[]): string {
+	return runs
+		.filter((run) => run.mark !== 'added')
+		.map((run) => run.text)
+		.join('')
+}
+
 /**
- * Mirrors `withoutFullStop` in `EntryDefinition`: dropped only when the
- * trailing run is untouched, since trimming a period out of an added or
- * removed run would misstate what that run's mark is reporting.
+ * Mirrors `withoutFullStop` in `EntryDefinition`, widened for marked runs: a
+ * definition's own last word is exactly what an edit is most likely to touch,
+ * which puts its trailing full stop inside a marked run more often than not.
+ *
+ * Trimmed only when the full stop survived the edit unremarked -- the last
+ * run ends in `.` *and* the pre-edit text already ended in `.` too, so the
+ * character carries no information about what changed. `"modify"` →
+ * `"modify."` fails that second test and keeps its full stop, since there the
+ * period *is* the edit. `"modify."` → `"change."` passes it: the removed run
+ * keeps its own trailing `.` (it is exactly what was struck through), and
+ * only the last run's redundant one -- the one that would otherwise collide
+ * with the colon ahead of a citation -- is dropped.
  */
-function withoutTrailingFullStop(runs: Run[]): Run[] {
+export function withoutTrailingFullStop(runs: Run[]): Run[] {
 	let last = runs[runs.length - 1]
-	if (!last || last.mark !== 'same' || !last.text.endsWith('.')) {
+	if (!last || !last.text.endsWith('.') || !beforeText(runs).endsWith('.')) {
 		return runs
 	}
 	return [...runs.slice(0, -1), {...last, text: last.text.slice(0, -1)}]
@@ -122,8 +149,10 @@ function withoutTrailingFullStop(runs: Run[]): Run[] {
 /// A sense and everything under it, marked up the way `SenseRow` draws one
 /// plainly -- same gutter, same run-on paragraph, marked runs standing in for
 /// plain strings. `marker` is supplied by the caller, exactly as in
-/// `SenseRow`: the top level reads its own position number, a sub-sense reads
-/// `SUBSENSE_MARKER`, and either goes blank when `sense.number` is absent,
+/// `SenseRow`: the top level reads its own position number, a sub-sense
+/// always reads `SUBSENSE_MARKER` -- a bullet carries no position, so unlike
+/// a number it cannot collide, and a removed sub-sense keeps it. The top
+/// level's own marker goes blank only there, when `sense.number` is absent --
 /// which happens only for a sense the reader's edit removed.
 function DiffSenseRow({
 	sense,
@@ -136,6 +165,13 @@ function DiffSenseRow({
 }): React.ReactNode {
 	let hasCitations = sense.examples.length > 0
 	let definition = hasCitations ? withoutTrailingFullStop(sense.definition) : sense.definition
+
+	/// A citation whose own text held still but whose position did not gets a
+	/// caption of its own, the same as a sense that moved -- otherwise a
+	/// reorder with no other edit would preview as no edit at all. Named
+	/// distinctly from the sense's own caption so the two are never read as
+	/// the same move.
+	let movedCitations = sense.examples.filter((example) => example.movedFrom !== undefined)
 
 	return (
 		<>
@@ -165,21 +201,18 @@ function DiffSenseRow({
 				>
 					{sense.grammar.length > 0 ? (
 						<Text modifiers={[italic()]}>
-							[
-							<Marked runs={sense.grammar} />
+							[{markedRuns(sense.grammar)}
 							{'] '}
 						</Text>
 					) : null}
-					<Marked runs={definition} />
+					{markedRuns(definition)}
 					{hasCitations ? (
 						<Text modifiers={[italic(), foregroundStyle(c.secondaryLabel)]}>
 							{': '}
-							{sense.examples.map((example, index) => (
-								<React.Fragment key={index}>
-									{index > 0 ? EXAMPLE_SEPARATOR : null}
-									<Marked runs={example.runs} />
-								</React.Fragment>
-							))}
+							{sense.examples.flatMap((example, index) => [
+								index > 0 ? EXAMPLE_SEPARATOR : null,
+								...markedRuns(example.runs, `${index}-`),
+							])}
 						</Text>
 					) : null}
 				</Text>
@@ -197,11 +230,24 @@ function DiffSenseRow({
 				</Text>
 			) : null}
 
+			{movedCitations.map((example, index) => (
+				<Text
+					key={index}
+					modifiers={[
+						font({textStyle: 'footnote'}),
+						foregroundStyle(c.secondaryLabel),
+						padding({leading: indent + SENSE_NUMBER_WIDTH}),
+					]}
+				>
+					{`citation moved from ${example.movedFrom}`}
+				</Text>
+			))}
+
 			{sense.subsenses.map((subsense, index) => (
 				<DiffSenseRow
 					indent={indent + SENSE_NUMBER_WIDTH}
 					key={index}
-					marker={subsense.number === undefined ? '' : SUBSENSE_MARKER}
+					marker={SUBSENSE_MARKER}
 					sense={subsense}
 				/>
 			))}
@@ -244,11 +290,13 @@ export function EntryDiff({diff}: Props): React.ReactNode {
 					<HStack alignment="firstTextBaseline" spacing={6}>
 						<Text
 							modifiers={[
+								// Size and style together: the size is the measurement, the
+								// style is the curve it scales along with Dynamic Type.
 								font({size: HEADWORD_SIZE, design: 'serif', weight: 'bold'}),
 								textSelection(true),
 							]}
 						>
-							<Marked runs={diff.word} />
+							{markedRuns(diff.word)}
 						</Text>
 
 						{diff.pronunciation.length > 0 ? (
@@ -260,7 +308,7 @@ export function EntryDiff({diff}: Props): React.ReactNode {
 								]}
 							>
 								{'| '}
-								<Marked runs={diff.pronunciation} />
+								{markedRuns(diff.pronunciation)}
 								{' |'}
 							</Text>
 						) : null}
@@ -268,7 +316,7 @@ export function EntryDiff({diff}: Props): React.ReactNode {
 
 					{diff.partOfSpeech.length > 0 ? (
 						<Text modifiers={[font({size: PART_OF_SPEECH_SIZE})]}>
-							<Marked runs={diff.partOfSpeech} />
+							{markedRuns(diff.partOfSpeech)}
 						</Text>
 					) : null}
 				</VStack>

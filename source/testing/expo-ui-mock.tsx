@@ -88,8 +88,19 @@ export function Host({children}: WithModifiers): React.ReactNode {
 	return <View>{children}</View>
 }
 
+/// Mirrors the real `Text`'s children filter: SwiftUI's `Text` concatenation
+/// only accepts a string/number or a nested `Text` element, and silently
+/// drops anything else -- a custom component, a `Fragment` -- with no warning
+/// on device. Filtering here the same way turns that into a Jest failure
+/// instead of a blank sentence discovered on a phone.
 export function Text({children, modifiers}: WithModifiers): React.ReactNode {
-	return <RNText accessibilityLabel={labelOf(modifiers)}>{children}</RNText>
+	let kept = React.Children.toArray(children).filter(
+		(child) =>
+			typeof child === 'string' ||
+			typeof child === 'number' ||
+			(React.isValidElement(child) && child.type === Text),
+	)
+	return <RNText accessibilityLabel={labelOf(modifiers)}>{kept}</RNText>
 }
 
 /// `View` forwards any prop it doesn't recognise straight onto the host
