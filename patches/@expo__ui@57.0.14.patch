@@ -2,15 +2,16 @@ diff --git a/ios/Modifiers/ViewModifierRegistry.swift b/ios/Modifiers/ViewModifi
 index 8c426dffff1df73809436999f23a6155b0a72ef8..b9fae10f136d433f874969392e3519318d32abef 100644
 --- a/ios/Modifiers/ViewModifierRegistry.swift
 +++ b/ios/Modifiers/ViewModifierRegistry.swift
-@@ -1157,6 +1157,22 @@ internal enum TextLinePattern: String, Enumerable {
+@@ -1157,6 +1157,23 @@ internal enum TextLinePattern: String, Enumerable {
    case dashDotDot
  }
  
 +@available(iOS 16.0, macOS 13.0, tvOS 16.0, *)
 +internal extension TextLinePattern {
 +  /// The SwiftUI pattern this maps to. `TextUnderLine` and `TextStrikeThrough`
-+  /// each switch over all five cases inline; the nested-`Text` arms need the
-+  /// same mapping and there is no reason for a third copy.
++  /// each still switch over all five cases inline, upstream's own code and
++  /// left alone; the nested-`Text` arms below need the same mapping, so it is
++  /// factored out here rather than written inline a third time.
 +  var lineStyle: Text.LineStyle.Pattern {
 +    switch self {
 +    case .solid: return .solid

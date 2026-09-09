@@ -390,10 +390,11 @@ type NativeStateHandle<T> = {
 
 /// Mirrors the shape of the real `ObservableState<T>`: `value` is the
 /// property, `get()`/`set()` are the React-Compiler-safe accessors. The
-/// stand-in `TextField` reads its initial `.value` -- matching the real
-/// field's captured-once-on-mount handle -- and otherwise works off
-/// `onTextChange`, so this only needs to satisfy the call sites' shape, not
-/// reproduce the real `SharedObject` underneath it.
+/// stand-in `TextField` reads `.value` on every render, where the real field
+/// captures its handle's value once on mount; the two agree only because
+/// `set()` is the sole thing that ever changes what the handle holds. It
+/// otherwise works off `onTextChange`, so this only needs to satisfy the call
+/// sites' shape, not reproduce the real `SharedObject` underneath it.
 ///
 /// One handle per component, kept across renders rather than rebuilt on each
 /// one: the real hook returns a shared object held for the component's whole
