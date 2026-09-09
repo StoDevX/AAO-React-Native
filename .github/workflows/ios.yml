@@ -268,6 +268,23 @@ jobs:
         if: always()
         run: ccache --show-stats
 
+      # ccache enforces max_size only while it writes, and a build that hits
+      # everything writes nothing -- so the limit never applies on exactly the
+      # runs it is working best on. A 100%-hit build measured the cache at
+      # 5.3 GB against the 2 GB configured above, 264% over, carried into every
+      # save and every restore.
+      #
+      # --cleanup applies the limit now. It evicts least-recently-used, and the
+      # objects this build just hit are the most recently used, so the working
+      # set is what survives; what goes is what no build has wanted in a while.
+      # Only master saves, so only master needs trimming, and the stats print
+      # again afterwards to show what it cost.
+      - name: Trim the ccache to its configured size
+        if: always() && github.ref == 'refs/heads/master'
+        run: |
+          ccache --cleanup
+          ccache --show-stats
+
       # Saved under a key no read will ever match, so every build writes a new
       # entry and the prefixes above restore the newest. A key that could be hit
       # cannot be written again, which suits a cache of build output but not
