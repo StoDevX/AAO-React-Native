@@ -260,7 +260,7 @@ jobs:
         uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: ~/Library/Caches/ccache
-          key: ccache/e=${{ env.cache_epoch }}/host=macOS@26/target=ios/xcode=${{ env.xcode_version }}/ref=${{ github.head_ref || github.ref_name }}/hash=${{ hashFiles('app.config.ts', 'plugins/**', 'uitests/**', 'images/**', 'pnpm-lock.yaml', 'mise.toml') }}/run=${{ github.run_id }}-${{ github.run_attempt }}
+          key: ccache/e=${{ env.cache_epoch }}/host=macOS@26/target=ios/xcode=${{ env.xcode_version }}/ref=${{ github.head_ref || github.ref_name }}/run=${{ github.run_id }}-${{ github.run_attempt }}
           restore-keys: |
             ccache/e=${{ env.cache_epoch }}/host=macOS@26/target=ios/xcode=${{ env.xcode_version }}/ref=${{ github.head_ref || github.ref_name }}/
             ccache/e=${{ env.cache_epoch }}/host=macOS@26/target=ios/xcode=${{ env.xcode_version }}/ref=master/
@@ -334,17 +334,26 @@ jobs:
         run: ccache --show-stats
 
       # Saved under a key no read will ever match, so every build writes a new
-      # entry and the prefixes above restore the newest. actions/cache declines
-      # to save when the restore hit its primary key, which suits a cache of
-      # build output but not this one: ccache grows with every compile, so a
-      # single matching key would freeze it at whatever it held first. Ours had
-      # frozen at 19kB, written before the compiler wrapper worked.
+      # entry and the prefixes above restore the newest. A key that could be hit
+      # cannot be written again, which suits a cache of build output but not
+      # this one: ccache grows with every compile, so a stable key would freeze
+      # it at whatever it held first. Ours had frozen at 19kB, written before
+      # the compiler wrapper worked.
+      #
+      # Only master writes. Every run saving its own copy meant a ~1 GB entry
+      # per branch per run, and the repository's 10 GB of cache is shared: over
+      # the limit GitHub evicts the least recently used, which took out the app
+      # and jsbundle caches the UITest shards restore with fail-on-cache-miss,
+      # so shards went red having never run a test. A pull request still reads
+      # master's cache through the ref=master prefix above, and ccache is
+      # content-addressed -- a neighbouring branch's objects answer its compiles
+      # just as well.
       - name: Save ccache
-        if: always()
+        if: always() && github.ref == 'refs/heads/master'
         uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: ~/Library/Caches/ccache
-          key: ccache/e=${{ env.cache_epoch }}/host=macOS@26/target=ios/xcode=${{ env.xcode_version }}/ref=${{ github.head_ref || github.ref_name }}/hash=${{ hashFiles('app.config.ts', 'plugins/**', 'uitests/**', 'images/**', 'pnpm-lock.yaml', 'mise.toml') }}/run=${{ github.run_id }}-${{ github.run_attempt }}
+          key: ccache/e=${{ env.cache_epoch }}/host=macOS@26/target=ios/xcode=${{ env.xcode_version }}/ref=${{ github.head_ref || github.ref_name }}/run=${{ github.run_id }}-${{ github.run_attempt }}
 
       - name: Save iOS app to cache
         uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
