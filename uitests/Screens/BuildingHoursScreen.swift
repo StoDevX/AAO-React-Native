@@ -140,7 +140,7 @@ struct BuildingHoursScreen: Screen {
 		return self
 	}
 
-	/// Assert the sheet is still at its smaller (0.5) detent: the closing
+	/// Assert the sheet is still at its smaller detent: the closing
 	/// footnote, the last thing on the detail screen, is not yet reachable --
 	/// whether because it exists but sits off-screen, or because the SwiftUI
 	/// `List` has not mounted content that far below the fold yet. Either way
@@ -160,7 +160,7 @@ struct BuildingHoursScreen: Screen {
 		return self
 	}
 
-	/// Drags the sheet from its half detent up to its larger one, the way
+	/// Drags the sheet from its smaller detent up to its larger one, the way
 	/// `CarletonMapScreen.expandSheet` drags the map's building sheet.
 	@discardableResult
 	func expandDetailSheet() -> Self {
@@ -221,11 +221,9 @@ struct BuildingHoursScreen: Screen {
 		return self
 	}
 
-	/// Taps Report a Problem in the detail sheet's overflow menu. This action
-	/// presents a `modal` route on the OUTER stack while a `formSheet` is
-	/// already up -- exactly the class of presentation that can silently no-op
-	/// on iOS -- so `verifyReportScreenPresented` is what proves it actually
-	/// worked rather than merely existing as a menu item.
+	/// Taps Report a Problem in the detail sheet's overflow menu.
+	/// `verifyReportScreenPresented` is what proves the push actually worked,
+	/// rather than the action merely existing as a menu item.
 	@discardableResult
 	func tapReportAction() -> Self {
 		let action = app.buttons[TestIdentifiers.BuildingHours.reportAction]
@@ -249,19 +247,181 @@ struct BuildingHoursScreen: Screen {
 		return self
 	}
 
-	/// Dismisses the report screen via its own close button, per
-	/// `gestureEnabled: false` on that route -- the swipe-to-dismiss gesture is
-	/// off, so this is the only way out.
+	/// Assert the report screen's submit control is on screen and can be tapped
+	/// the moment the screen appears.
+	///
+	/// `isHittable`, not `exists`: the control used to be the last cell of a
+	/// form whose length grows with every schedule a venue has, inside a sheet
+	/// that shows about half a screen -- so it existed in the hierarchy while
+	/// being off-screen for the venues that need it most. Sending the report
+	/// itself hands off to the system mail composer, which is outside the app
+	/// and outside what this can assert; that it can be reached at all is the
+	/// part that broke.
 	@discardableResult
-	func dismissReportScreen() -> Self {
-		let close = app.buttons[TestIdentifiers.Navigation.closeScreen].firstMatch
+	func verifySubmitReportReachable() -> Self {
+		let submit = app.navigationBars.buttons[TestIdentifiers.BuildingHours.submitReportAction]
 		XCTAssertTrue(
-			close.waitForExistence(timeout: 30),
-			"The report screen should offer a way to close it")
-		close.tap()
+			submit.waitForExistence(timeout: 30),
+			"The report screen should offer Submit Report")
+		XCTAssertTrue(
+			submit.isHittable,
+			"Submit Report should be reachable without scrolling the form")
 		return self
 	}
 
+	/// Assert the report screen pushed into the sheet's own stack rather than
+	/// presenting as a modal over it. Queried by the back button's own label
+	/// rather than `element(boundBy: 0)` -- the list's nav bar is still in the
+	/// hierarchy behind the sheet, so an unscoped positional query can match
+	/// the wrong bar's button. The back button carrying the sheet's own label
+	/// is the actual discriminator: a modal presented on the outer stack would
+	/// not carry a back button that pops into the sheet's nested stack.
+	@discardableResult
+	func verifyReportPushedIntoSheet() -> Self {
+		XCTAssertTrue(
+			app.staticTexts[TestIdentifiers.BuildingHours.reportScreenPrompt]
+				.waitForExistence(timeout: 30),
+			"The report screen should be up")
+
+		let back = app.navigationBars.buttons[TestIdentifiers.Navigation.backButton]
+		XCTAssertTrue(
+			back.exists && back.isHittable,
+			"The report should push into the sheet's stack, so it carries a back button")
+
+		return self
+	}
+
+	/// Dismisses the report screen via its own back button. Queried by label
+	/// rather than position -- see `verifyReportPushedIntoSheet`.
+	@discardableResult
+	func dismissReportScreen() -> Self {
+		let back = app.navigationBars.buttons[TestIdentifiers.Navigation.backButton]
+		XCTAssertTrue(
+			back.waitForExistence(timeout: 30),
+			"The report screen should offer a way to go back")
+		back.tap()
+		return self
+	}
+
+	/// Types a change into the report screen's Name field, the simplest way to
+	/// put the unsaved-changes guard into its "armed" state.
+	@discardableResult
+	func makeUnsavedEditOnReportScreen() -> Self {
+		let nameField = app.textFields.firstMatch
+		XCTAssertTrue(nameField.waitForExistence(timeout: 30), "The report screen should have a Name field")
+		nameField.tap()
+		nameField.typeText(" edited")
+		return self
+	}
+
+	private var discardChangesAlert: XCUIElement {
+		app.alerts["Discard changes?"]
+	}
+
+	@discardableResult
+	func verifyDiscardChangesAlertPresented() -> Self {
+		XCTAssertTrue(
+			discardChangesAlert.waitForExistence(timeout: 15),
+			"The unsaved-changes guard should have raised its alert")
+		return self
+	}
+
+	@discardableResult
+	func verifyNoDiscardChangesAlertPresented() -> Self {
+		XCTAssertFalse(
+			discardChangesAlert.waitForExistence(timeout: 5),
+			"No alert should appear -- this gesture should have been a no-op")
+		return self
+	}
+
+	/// Cancels the discard, staying on the screen with edits intact.
+	@discardableResult
+	func chooseToKeepEditing() -> Self {
+		discardChangesAlert.buttons["Edit"].tap()
+		return self
+	}
+
+	/// Confirms the discard, letting the pending navigation go through.
+	@discardableResult
+	func chooseToDiscardChanges() -> Self {
+		discardChangesAlert.buttons["Discard"].tap()
+		return self
+	}
+
+	/// Attempts to drag the detail sheet closed from inside the report screen,
+	/// the same drag `expandDetailSheet` uses to change detents, but downward
+	/// and past the bottom of the screen so it asks UIKit to dismiss the sheet
+	/// entirely rather than merely shrink it.
+	@discardableResult
+	func attemptToDragSheetClosed() -> Self {
+		app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.4))
+			.press(
+				forDuration: 0.1,
+				thenDragTo: app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 1.05)))
+		return self
+	}
+
+	/// Assert the report screen -- and, since a discarded sheet dismissal
+	/// closes the whole formSheet rather than just popping the report screen,
+	/// the sheet itself -- is gone. Checking only `reportScreenPrompt` would
+	/// pass equally for a plain pop back to the building detail screen, with
+	/// the sheet still up behind it -- so this also asserts the sheet's own
+	/// title is gone, which only a real dismissal of the formSheet produces.
+	/// Scoped to `navigationBars` rather than a bare `staticTexts` lookup: the
+	/// building's name is also a list row's own label, which never goes away.
+	@discardableResult
+	func verifyReportScreenGone(buildingName: String) -> Self {
+		XCTAssertTrue(
+			app.staticTexts[TestIdentifiers.BuildingHours.reportScreenPrompt]
+				.waitForNonExistence(timeout: 15),
+			"Confirming the discard should have let the dismissal go through")
+		XCTAssertTrue(
+			app.navigationBars.staticTexts[buildingName].waitForNonExistence(timeout: 15),
+			"The sheet itself, titled \(buildingName), should have closed too, not just popped "
+				+ "back to it")
+		return self
+	}
+
+	/// Opens `BuildingHoursScheduleEditor` from one of the report screen's
+	/// editable hours rows -- "Weekdays" on `anExcludedBuilding`'s schedule.
+	/// The row is a single Pressable carrying a concatenated label (title and
+	/// detail together, e.g. "Weekdays, 7:30 AM — 8:00 PM"), not a standalone
+	/// "Weekdays" text, hence the prefix match.
+	@discardableResult
+	func openScheduleEditorFromReportScreen() -> Self {
+		let weekdaysRow = app.elementWithLabel(startingWith: "Weekdays")
+		XCTAssertTrue(
+			weekdaysRow.waitForExistence(timeout: 15),
+			"The report screen should list an editable Weekdays row")
+		weekdaysRow.tap()
+		return self
+	}
+
+	@discardableResult
+	func verifyScheduleEditorPresented() -> Self {
+		XCTAssertTrue(
+			app.staticTexts["Edit Schedule"].waitForExistence(timeout: 15),
+			"Tapping a schedule row should present the schedule editor")
+		return self
+	}
+
+	/// Taps the dimmed backdrop above the sheet -- the list behind it, which
+	/// `sheetLargestUndimmedDetentIndex: 'none'` keeps dimmed and untouchable
+	/// at every detent. A normal sheet dismisses on this tap; the guard should
+	/// refuse it the same as a drag.
+	@discardableResult
+	func attemptToTapDimmedBackdrop() -> Self {
+		app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.1)).tap()
+		return self
+	}
+
+	/// Distinguishes a sheet from a full-screen push: a pushed screen replaces
+	/// the list in the hierarchy, while a sheet leaves it present underneath.
+	/// `XCUIElement.exists` is true for a merely-covered element as much as a
+	/// visible one, so this does NOT tell a sheet apart from a modal that
+	/// covers the list -- react-native-screens' `modal` is a pageSheet that
+	/// also leaves the list in the hierarchy. Only meaningful where the
+	/// alternative under test is a full-screen push.
 	@discardableResult
 	func verifyListStillBehind() -> Self {
 		let row = app.element(
@@ -270,6 +430,18 @@ struct BuildingHoursScreen: Screen {
 		XCTAssertTrue(
 			row.exists,
 			"The list should still be behind the sheet, not replaced by it")
+		return self
+	}
+
+	/// Assert the detail sheet itself -- not just whatever screen was pushed
+	/// inside it -- has closed, by its own title going away. Scoped to
+	/// `navigationBars` rather than a bare `staticTexts` lookup: the building's
+	/// name is also a list row's own label, which never goes away.
+	@discardableResult
+	func verifyDetailSheetGone(for name: String) -> Self {
+		XCTAssertTrue(
+			app.navigationBars.staticTexts[name].waitForNonExistence(timeout: 15),
+			"The detail sheet, titled \(name), should have closed")
 		return self
 	}
 }

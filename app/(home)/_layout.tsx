@@ -25,10 +25,6 @@ export default function HomeLayout(): React.ReactNode {
 					sheetLargestUndimmedDetentIndex: 'none',
 				}}
 			/>
-			<Stack.Screen
-				name="BuildingHoursProblemReport"
-				options={{presentation: 'modal', gestureEnabled: false}}
-			/>
 			<Stack.Screen name="BuildingHoursScheduleEditor" options={{presentation: 'modal'}} />
 			<Stack.Screen name="Communities" />
 			<Stack.Screen name="Map" options={{title: 'Carleton Map'}} />

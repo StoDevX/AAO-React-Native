@@ -29,7 +29,7 @@ export default function BuildingHoursDetailPage(): React.ReactNode {
 	let reportProblem = React.useCallback(
 		() =>
 			router.push({
-				pathname: '/BuildingHoursProblemReport',
+				pathname: '/BuildingHours/detail/report',
 				params: {name},
 			}),
 		[name, router],
@@ -42,14 +42,18 @@ export default function BuildingHoursDetailPage(): React.ReactNode {
 			<Stack.Title>{building?.name ?? name}</Stack.Title>
 			<Stack.Screen options={{headerLargeTitle: true}} />
 			<Stack.Toolbar placement="left">
-				<Stack.Toolbar.Menu icon="ellipsis.circle">
+				<Stack.Toolbar.Menu accessibilityLabel="More" icon="ellipsis.circle">
 					<Stack.Toolbar.MenuAction icon="exclamationmark.bubble" onPress={reportProblem}>
 						Report a Problem
 					</Stack.Toolbar.MenuAction>
 				</Stack.Toolbar.Menu>
 			</Stack.Toolbar>
 			<Stack.Toolbar placement="right">
-				<Stack.Toolbar.Button icon={favorited ? 'heart.fill' : 'heart'} onPress={onFavorite} />
+				<Stack.Toolbar.Button
+					accessibilityLabel={favorited ? 'Remove from Favorites' : 'Add to Favorites'}
+					icon={favorited ? 'heart.fill' : 'heart'}
+					onPress={onFavorite}
+				/>
 			</Stack.Toolbar>
 		</>
 	)

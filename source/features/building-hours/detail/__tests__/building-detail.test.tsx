@@ -1,10 +1,11 @@
 import React from 'react'
 import moment from 'moment-timezone'
-import {describe, expect, test} from '@jest/globals'
+import {afterEach, describe, expect, test} from '@jest/globals'
 import {render} from '@testing-library/react-native'
 
 import type {BuildingType} from '../../types'
 import {BuildingDetailSwiftUI} from '../building-detail'
+import {images as buildingImages} from '../../../../../images/spaces'
 
 jest.mock('@expo/ui/swift-ui', () => {
 	// oxlint-disable-next-line typescript/no-require-imports
@@ -18,7 +19,9 @@ jest.mock('@frogpond/open-url', () => ({openUrl: jest.fn()}))
 
 // images/spaces imports every building photo through Metro's @2x/@3x density
 // resolution, which Jest's resolver does not implement -- mocked here so this
-// suite isn't the one to first trip over that unrelated gap.
+// suite isn't the one to first trip over that unrelated gap. The mocked Map is
+// mutable, so tests that need a resolvable photo populate it directly rather
+// than re-mocking the module.
 jest.mock('../../../../../images/spaces', () => ({images: new Map()}))
 
 const NOW = moment('2026-09-07T12:00:00')
@@ -67,5 +70,26 @@ describe('BuildingDetailSwiftUI', () => {
 		// string; it can't tell `<Text>{undefined}</Text>` apart from omitting
 		// the ternary entirely, since both render nothing here.
 		expect(queryByText(noteText)).toBeNull()
+	})
+
+	afterEach(() => {
+		buildingImages.clear()
+	})
+
+	test('renders the building photo when the building has one', async () => {
+		buildingImages.set('cage', {uri: 'cage.jpg', width: 100, height: 100, scale: 1})
+		let building = makeBuilding({image: 'cage'})
+
+		let {getByTestId} = await render(<BuildingDetailSwiftUI building={building} now={NOW} />)
+
+		expect(getByTestId('building-photo')).toBeTruthy()
+	})
+
+	test('renders no photo when the building has none', async () => {
+		let building = makeBuilding({image: undefined})
+
+		let {queryByTestId} = await render(<BuildingDetailSwiftUI building={building} now={NOW} />)
+
+		expect(queryByTestId('building-photo')).toBeNull()
 	})
 })

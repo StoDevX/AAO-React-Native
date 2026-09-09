@@ -37,11 +37,11 @@ type Props = {
 }
 
 /**
- * The building detail screen: header image, current status, one section per
- * schedule, and any links for the building.
+ * The building detail screen: current status, one section per schedule, the
+ * building's photo, and any links for the building.
  */
 export function BuildingDetailSwiftUI({building, now}: Props): React.ReactNode {
-	let headerImage =
+	let buildingPhoto =
 		building.image && buildingImages.has(building.image) ? buildingImages.get(building.image) : null
 
 	let status = getShortBuildingStatus(building, now)
@@ -99,7 +99,7 @@ export function BuildingDetailSwiftUI({building, now}: Props): React.ReactNode {
 					</Section>
 				))}
 
-				{headerImage ? (
+				{buildingPhoto ? (
 					<Section>
 						{/* The insets are zeroed on a wrapping stack because RNHostView
 						    takes no modifiers of its own, and they are zeroed so the photo
@@ -109,8 +109,9 @@ export function BuildingDetailSwiftUI({building, now}: Props): React.ReactNode {
 								<Image
 									accessibilityIgnoresInvertColors={true}
 									resizeMode="cover"
-									source={headerImage}
+									source={buildingPhoto}
 									style={styles.image}
+									testID="building-photo"
 								/>
 							</RNHostView>
 						</VStack>

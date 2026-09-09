@@ -30,7 +30,7 @@ class ModuleBuildingHoursTests: UITestCase {
 			.tapRow(TestIdentifiers.BuildingHours.anExcludedBuilding)
 			.verifyDetailSheetPresented(for: TestIdentifiers.BuildingHours.anExcludedBuilding)
 			.verifyListStillBehind()
-			.capture("Building Hours detail sheet at half detent")
+			.capture("Building Hours detail sheet at the smaller detent")
 	}
 
 	/// `sheetLargestUndimmedDetentIndex: 'none'` is what makes this true: UIKit
@@ -49,7 +49,7 @@ class ModuleBuildingHoursTests: UITestCase {
 	}
 
 	/// `aBuildingWithLongSchedule` has two schedule sections plus a resource
-	/// link -- enough combined content to overflow the sheet's 0.5 detent,
+	/// link -- enough combined content to overflow the sheet's smaller detent,
 	/// unlike `anExcludedBuilding`'s single short section, which already fits
 	/// it entirely. Dragging it open is the case that would catch content
 	/// stuck laid out at the smaller detent's height.
@@ -79,12 +79,98 @@ class ModuleBuildingHoursTests: UITestCase {
 			.verifyReportActionOffered()
 			.tapReportAction()
 			.verifyReportScreenPresented()
+			.verifyReportPushedIntoSheet()
+			.verifySubmitReportReachable()
 			.capture("Building Hours report screen")
-			// Presenting a modal while a formSheet is already up can silently
-			// no-op on iOS -- dismissing back to the detail sheet, rather than
-			// straight to the list, is what proves it actually stacked on top
-			// of the sheet instead of replacing it or failing to present.
+			// Dismissing back to the detail sheet, rather than straight to the
+			// list, is what proves the report pushed into the sheet's own
+			// stack instead of replacing it.
 			.dismissReportScreen()
 			.verifyDetailSheetPresented(for: TestIdentifiers.BuildingHours.anExcludedBuilding)
+	}
+
+	/// The detail sheet offers no close control of its own -- only an overflow
+	/// menu and a favourite button -- so drag and backdrop are its only exits.
+	/// `preventNativeDismiss` on the report route makes this worth proving
+	/// directly: a `preventedRoutes` entry that outlived the report screen
+	/// would trap the user in a sheet nothing could close. This goes back with
+	/// no edits (so no alert should appear) and then drags the sheet itself
+	/// closed, confirming the exit still works once the report route is gone.
+	func testDismissingTheDetailSheetAfterVisitingReportWithNoEditsWorks() throws {
+		BuildingHoursScreen(app: app)
+			.navigate()
+			.tapRow(TestIdentifiers.BuildingHours.anExcludedBuilding)
+			.verifyDetailSheetPresented(for: TestIdentifiers.BuildingHours.anExcludedBuilding)
+			.openDetailMenu()
+			.tapReportAction()
+			.verifyReportScreenPresented()
+			.dismissReportScreen()
+			.verifyNoDiscardChangesAlertPresented()
+			.verifyDetailSheetPresented(for: TestIdentifiers.BuildingHours.anExcludedBuilding)
+			.attemptToDragSheetClosed()
+			.verifyDetailSheetGone(for: TestIdentifiers.BuildingHours.anExcludedBuilding)
+	}
+
+	/// The report screen's unsaved-changes guard has to survive every way out,
+	/// not just the ones a plain `beforeRemove` listener can see. Dragging the
+	/// sheet down or tapping its dimmed backdrop asks UIKit to dismiss the
+	/// *formSheet* natively -- a level up from the report screen's own pushed
+	/// stack -- which `beforeRemove` alone cannot refuse. This is the scenario
+	/// that motivated moving the guard to `usePreventRemove`.
+	func testUnsavedChangesGuardSurvivesEveryWayToLeave() throws {
+		let screen = BuildingHoursScreen(app: app)
+			.navigate()
+			.tapRow(TestIdentifiers.BuildingHours.anExcludedBuilding)
+			.verifyDetailSheetPresented(for: TestIdentifiers.BuildingHours.anExcludedBuilding)
+			.openDetailMenu()
+			.tapReportAction()
+			.verifyReportScreenPresented()
+			.makeUnsavedEditOnReportScreen()
+
+		// The back button: cancelling keeps the edit and the report screen up.
+		screen
+			.dismissReportScreen()
+			.verifyDiscardChangesAlertPresented()
+			.chooseToKeepEditing()
+			.verifyReportScreenPresented()
+
+		// Dragging the sheet closed attempts a native dismissal of the whole
+		// formSheet, not just a pop of the report screen -- the path the
+		// Critical this test guards against found unguarded.
+		screen
+			.attemptToDragSheetClosed()
+			.verifyDiscardChangesAlertPresented()
+			.capture("Building Hours guard blocks a sheet drag")
+			.chooseToKeepEditing()
+			.verifyReportScreenPresented()
+
+		// The dimmed backdrop is the sheet's other native dismissal path.
+		// Confirming the discard this time proves the guard's "let it go"
+		// branch still actually lets the sheet close, rather than the guard
+		// having accidentally made the sheet undismissable outright.
+		screen
+			.attemptToTapDimmedBackdrop()
+			.verifyDiscardChangesAlertPresented()
+			.chooseToDiscardChanges()
+			.verifyReportScreenGone(buildingName: TestIdentifiers.BuildingHours.anExcludedBuilding)
+	}
+
+	/// `BuildingHoursScheduleEditor` still presents as a `modal` on the OUTER
+	/// stack, pushed from the report screen two levels inside the formSheet.
+	/// A modal presented while a formSheet is already up is exactly the class
+	/// of presentation this task moved Report a Problem off of because it can
+	/// silently no-op on iOS -- this asserts whether the editor actually comes
+	/// up from its new, deeper starting point.
+	func testScheduleEditorPresentsFromWithinTheReportScreen() throws {
+		BuildingHoursScreen(app: app)
+			.navigate()
+			.tapRow(TestIdentifiers.BuildingHours.anExcludedBuilding)
+			.verifyDetailSheetPresented(for: TestIdentifiers.BuildingHours.anExcludedBuilding)
+			.openDetailMenu()
+			.tapReportAction()
+			.verifyReportScreenPresented()
+			.openScheduleEditorFromReportScreen()
+			.capture("Building Hours schedule editor opened from the report screen")
+			.verifyScheduleEditorPresented()
 	}
 }

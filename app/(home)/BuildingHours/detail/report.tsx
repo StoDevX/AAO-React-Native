@@ -1,5 +1,6 @@
 import * as React from 'react'
 import {Stack, useLocalSearchParams, useNavigation, useRouter} from 'expo-router'
+import {usePreventRemove} from 'expo-router/react-navigation'
 import {useQuery} from '@tanstack/react-query'
 import {Alert, ScrollView, View} from 'react-native'
 import moment from 'moment-timezone'
@@ -8,17 +9,17 @@ import noop from 'lodash/noop'
 import {timezone} from '@frogpond/constants'
 import {InfoHeader} from '@frogpond/info-header'
 import {TableView, Section, Cell} from '@frogpond/tableview'
-import {CellTextField, CellToggle, DeleteButtonCell, ButtonCell} from '@frogpond/tableview/cells'
+import {CellTextField, CellToggle, DeleteButtonCell} from '@frogpond/tableview/cells'
 
-import {buildingByNameOptions} from '../../source/features/building-hours/query'
+import {buildingByNameOptions} from '../../../../source/features/building-hours/query'
 import type {
 	BuildingType,
 	NamedBuildingScheduleType,
 	SingleBuildingScheduleType,
-} from '../../source/features/building-hours/types'
-import {summarizeDays, formatBuildingTimes} from '../../source/features/building-hours/lib'
-import {submitReport} from '../../source/features/building-hours/report/submit'
-import type {BuildingAction} from '../../source/features/building-hours/report/building-reducer'
+} from '../../../../source/features/building-hours/types'
+import {summarizeDays, formatBuildingTimes} from '../../../../source/features/building-hours/lib'
+import {submitReport} from '../../../../source/features/building-hours/report/submit'
+import type {BuildingAction} from '../../../../source/features/building-hours/report/building-reducer'
 import {
 	applyBuildingAction,
 	clearReport,
@@ -27,7 +28,7 @@ import {
 	startReport,
 	useAppDispatch,
 	useAppSelector,
-} from '../../source/redux'
+} from '../../../../source/redux'
 import {LoadingView, NoticeView} from '@frogpond/notice'
 
 function useBuildingEditor(initialBuilding: BuildingType) {
@@ -41,36 +42,33 @@ function useBuildingEditor(initialBuilding: BuildingType) {
 	let [submitted, setSubmitted] = React.useState(false)
 
 	/**
-	 * checking for unsaved edits
+	 * Checks for unsaved edits before this screen leaves the stack, whether
+	 * from its own back button or from the detail sheet itself being dragged
+	 * down or dismissed by its backdrop. The edge-swipe gesture is not a path
+	 * out here -- it is turned off below, on the same route -- so it needs no
+	 * guarding.
 	 *
-	 * noting that we also have `gestureEnabled` set to false in the navigation options
-	 * (ios only) to prevent dismissing the modal without prompting.
+	 * A plain `beforeRemove` listener only ever sees a pop of this screen; it
+	 * has no way to tell UIKit to refuse a dismissal of the *sheet*, a level
+	 * up. `usePreventRemove` additionally registers this screen's route with
+	 * the navigator's `PreventRemoveProvider`, which bubbles the block up to
+	 * the formSheet's own route so a native sheet dismissal is refused too.
 	 * https://reactnavigation.org/docs/preventing-going-back
 	 */
-	React.useEffect(
-		() =>
-			navigation.addListener('beforeRemove', (event) => {
-				if (!hasUnsavedChanges || submitted) {
-					return
-				}
-
-				event.preventDefault()
-
-				Alert.alert(
-					'Discard changes?',
-					'You have made unsaved changes. Are you sure you want to discard them?',
-					[
-						{text: 'Edit', style: 'cancel', onPress: noop},
-						{
-							text: 'Discard',
-							style: 'destructive',
-							onPress: () => navigation.dispatch(event.data.action),
-						},
-					],
-				)
-			}),
-		[navigation, hasUnsavedChanges, submitted],
-	)
+	usePreventRemove(hasUnsavedChanges && !submitted, ({data}) => {
+		Alert.alert(
+			'Discard changes?',
+			'You have made unsaved changes. Are you sure you want to discard them?',
+			[
+				{text: 'Edit', style: 'cancel', onPress: noop},
+				{
+					text: 'Discard',
+					style: 'destructive',
+					onPress: () => navigation.dispatch(data.action),
+				},
+			],
+		)
+	})
 
 	let dispatchAction = React.useCallback(
 		(action: BuildingAction) => dispatch(applyBuildingAction(action)),
@@ -118,6 +116,18 @@ let BuildingHoursProblemReportView = ({initialBuilding}: Props): React.ReactNode
 
 	return (
 		<ScrollView contentInsetAdjustmentBehavior="automatic">
+			{/* In the header rather than at the foot of the form: this screen
+			 * exists to send the report, and every schedule a venue has pushes a
+			 * cell at the bottom further down a sheet that shows about half a
+			 * screen. Here it is reachable at any detent, whatever the venue. */}
+			<Stack.Toolbar placement="right">
+				<Stack.Toolbar.Button
+					accessibilityLabel="Submit Report"
+					icon="paperplane.fill"
+					onPress={submit}
+				/>
+			</Stack.Toolbar>
+
 			<InfoHeader
 				message="If you could change what is incorrect and share it with us we&rsquo;d greatly appreciate it."
 				title="Thanks for spotting a problem!"
@@ -147,10 +157,6 @@ let BuildingHoursProblemReportView = ({initialBuilding}: Props): React.ReactNode
 						onPress={() => dispatch({type: 'ADD_SCHEDULE'})}
 						title="Add New Schedule"
 					/>
-				</Section>
-
-				<Section footer="Thanks for reporting!">
-					<ButtonCell accessoryIcon="paperplane.fill" onPress={submit} title="Submit Report" />
 				</Section>
 			</TableView>
 		</ScrollView>
@@ -312,10 +318,16 @@ export default function BuildingHoursProblemReportPage(): React.ReactNode {
 	return (
 		<>
 			<Stack.Title>Report a Problem</Stack.Title>
-			<Stack.Toolbar placement="right">
+			{/* On device, the edge-swipe gesture did not reliably surface the
+			 * unsaved-changes alert -- turned off here rather than guarded. */}
+			<Stack.Screen options={{gestureEnabled: false}} />
+			<Stack.Toolbar placement="left">
+				{/* The default native back button had the same problem on device.
+				 * A JS-driven `goBack()` call, the same dispatch the guard's own
+				 * Discard button uses, keeps the pop and the guard in sync. */}
 				<Stack.Toolbar.Button
-					accessibilityLabel="Close Screen"
-					icon="xmark"
+					accessibilityLabel="Back"
+					icon="chevron.left"
 					onPress={() => navigation.goBack()}
 				/>
 			</Stack.Toolbar>
