@@ -49,7 +49,9 @@ describe('BuildingDetailSwiftUI', () => {
 	test('renders a schedule with notes without throwing', () => {
 		let building = makeBuilding()
 
-		expect(() => render(<BuildingDetailSwiftUI building={building} now={NOW} />)).not.toThrow()
+		expect(() =>
+			render(<BuildingDetailSwiftUI building={building} campus="stolaf" now={NOW} />),
+		).not.toThrow()
 	})
 
 	test('renders a schedule with no notes and skips the footer', async () => {
@@ -63,7 +65,9 @@ describe('BuildingDetailSwiftUI', () => {
 			],
 		})
 
-		let {queryByText} = await render(<BuildingDetailSwiftUI building={building} now={NOW} />)
+		let {queryByText} = await render(
+			<BuildingDetailSwiftUI building={building} campus="stolaf" now={NOW} />,
+		)
 
 		// A schedule with no `notes` must not render another schedule's note
 		// text as its footer. This only catches a footer that renders the wrong
@@ -80,7 +84,9 @@ describe('BuildingDetailSwiftUI', () => {
 		buildingImages.set('cage', {uri: 'cage.jpg', width: 100, height: 100, scale: 1})
 		let building = makeBuilding({image: 'cage'})
 
-		let {getByTestId} = await render(<BuildingDetailSwiftUI building={building} now={NOW} />)
+		let {getByTestId} = await render(
+			<BuildingDetailSwiftUI building={building} campus="stolaf" now={NOW} />,
+		)
 
 		expect(getByTestId('building-photo')).toBeTruthy()
 	})
@@ -88,7 +94,25 @@ describe('BuildingDetailSwiftUI', () => {
 	test('renders no photo when the building has none', async () => {
 		let building = makeBuilding({image: undefined})
 
-		let {queryByTestId} = await render(<BuildingDetailSwiftUI building={building} now={NOW} />)
+		let {queryByTestId} = await render(
+			<BuildingDetailSwiftUI building={building} campus="stolaf" now={NOW} />,
+		)
+
+		expect(queryByTestId('building-photo')).toBeNull()
+	})
+
+	// CRITICAL regression: `buildingImages` only ever holds St. Olaf's photos.
+	// Carleton's Bookstore and Post Office collide with St. Olaf slugs of the
+	// same name, and Carleton's Writing Center collides with St. Olaf's
+	// `disco` slug -- so a Carleton building whose `image` happens to match
+	// one of those keys must still show no photo.
+	test('never resolves a photo for a Carleton building, even when its image key collides with a St. Olaf slug', async () => {
+		buildingImages.set('disco', {uri: 'disco.jpg', width: 100, height: 100, scale: 1})
+		let building = makeBuilding({name: 'Writing Center', image: 'disco'})
+
+		let {queryByTestId} = await render(
+			<BuildingDetailSwiftUI building={building} campus="carleton" now={NOW} />,
+		)
 
 		expect(queryByTestId('building-photo')).toBeNull()
 	})

@@ -44,8 +44,8 @@ export const AllViews = (): Array<ViewType> => {
 		},
 		{
 			type: 'view',
-			view: '/BuildingHours',
-			title: 'Building Hours',
+			view: '/Campus',
+			title: 'Campus',
 			icon: 'clock.fill',
 			gradient: c.blueGradient,
 		},
@@ -86,9 +86,9 @@ export const AllViews = (): Array<ViewType> => {
 		},
 		{
 			type: 'view',
-			view: '/Map',
-			title: 'Carleton Map',
-			icon: 'map.circle.fill',
+			view: '/Campus?campus=carleton',
+			title: 'Carleton Campus',
+			icon: 'building.2.fill',
 			gradient: c.blueGradient,
 		},
 		{

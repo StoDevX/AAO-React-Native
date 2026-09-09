@@ -8,6 +8,6 @@ import {Stack} from 'expo-router'
  * button — a flat sibling route pushed while the sheet is up renders inside it
  * with no way back out.
  */
-export default function BuildingHoursDetailLayout(): React.ReactNode {
+export default function CampusDetailLayout(): React.ReactNode {
 	return <Stack />
 }

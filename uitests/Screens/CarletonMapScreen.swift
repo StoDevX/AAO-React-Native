@@ -9,11 +9,32 @@ struct CarletonMapScreen: Screen {
 		app.textFields[TestIdentifiers.CarletonMap.search].firstMatch
 	}
 
-	/// The map's home tile is always present, so this is an ordinary tap on the
-	/// home screen.
+	/// The map has no home tile of its own -- Carleton's Campus screen carries
+	/// the map button now, so getting to `/Map` means opening that screen first
+	/// and tapping its top-right button.
 	@discardableResult
 	func navigate() -> Self {
-		navigateFromHome(to: TestIdentifiers.Buttons.carletonMap)
+		navigateFromHome(to: TestIdentifiers.Buttons.carletonCampus)
+
+		let mapButton = app.buttons[TestIdentifiers.Campus.mapButton].firstMatch
+		XCTAssertTrue(
+			mapButton.waitForExistence(timeout: 30),
+			"Carleton's Campus screen should offer a map button")
+
+		// Retried for the reason navigateFromHome retries: a synthesized press
+		// on a button whose host has mounted but whose action still has to
+		// reach JavaScript lands natively and does nothing.
+		for attempt in 1...3 {
+			mapButton.tap()
+			if searchField.waitForExistence(timeout: 10) {
+				return self
+			}
+			XCTContext.runActivity(
+				named: "Tap \(attempt) on the map button did not open the map; retrying"
+			) { _ in }
+		}
+
+		XCTFail("Tapping the map button never opened the map")
 		return self
 	}
 

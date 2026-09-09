@@ -17,6 +17,7 @@ import {
 import * as c from '@frogpond/colors'
 import type {Moment} from 'moment-timezone'
 import type {BuildingType} from '../types'
+import type {Campus} from '../query'
 import {images as buildingImages} from '../../../../images/spaces'
 import {
 	getShortBuildingStatus,
@@ -34,15 +35,22 @@ const BAR_GAP = 8
 type Props = {
 	building: BuildingType
 	now: Moment
+	campus: Campus
 }
 
 /**
  * The building detail screen: current status, one section per schedule, the
  * building's photo, and any links for the building.
  */
-export function BuildingDetailSwiftUI({building, now}: Props): React.ReactNode {
+export function BuildingDetailSwiftUI({building, now, campus}: Props): React.ReactNode {
+	// `buildingImages` only ever holds St. Olaf's photos. Some slugs collide
+	// with Carleton venues that happen to share a name (Bookstore, Post
+	// Office) or an unrelated slug (Carleton's Writing Center -> `disco`), so
+	// a Carleton building must never resolve a photo through this map.
 	let buildingPhoto =
-		building.image && buildingImages.has(building.image) ? buildingImages.get(building.image) : null
+		campus === 'stolaf' && building.image && buildingImages.has(building.image)
+			? buildingImages.get(building.image)
+			: null
 
 	let status = getShortBuildingStatus(building, now)
 	let accentColor = getAccentBackgroundColor(status)
@@ -90,7 +98,7 @@ export function BuildingDetailSwiftUI({building, now}: Props): React.ReactNode {
 								isActive={
 									schedule.isPhysicallyOpen !== false &&
 									set.days.includes(dayOfWeek) &&
-									isScheduleOpenAtMoment(set, now)
+									isScheduleOpenAtMoment(set, now, schedule.closedForChapelTime)
 								}
 								now={now}
 								schedule={set}

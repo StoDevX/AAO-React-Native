@@ -1,36 +1,74 @@
 import XCTest
 
-class ModuleBuildingHoursTests: UITestCase {
+class ModuleCampusTests: UITestCase {
 	func testIsReachableFromHomescreen() throws {
-		BuildingHoursScreen(app: app)
+		CampusScreen(app: app)
 			.navigate()
-			.verifyBuildingHoursTitle()
+			.verifyTitle(TestIdentifiers.Buttons.campus)
+	}
+
+	/// The campus parameter, not just the route, has to actually select the
+	/// venue list: `carletonBuilding` exists in Carleton's `spaces/hours` but
+	/// not St. Olaf's, so this fails if the Carleton tile's `?campus=carleton`
+	/// were ignored and St. Olaf's list loaded instead.
+	///
+	/// The reverse direction matters too: `aBuilding` (Rølvaag Library) is
+	/// St. Olaf-only, so also asserting its absence here is what would fail if
+	/// the two campuses' lists were ever merged rather than kept separate.
+	func testCarletonTileShowsCarletonVenues() throws {
+		CampusScreen(app: app)
+			.navigateToCarleton()
+			.verifyTitle(TestIdentifiers.Buttons.carletonCampus)
+			.verifyRowShown(TestIdentifiers.Campus.carletonBuilding)
+			.verifyRowHidden(TestIdentifiers.Campus.aBuilding)
+	}
+
+	/// "St. Olaf gets no map button yet" is a recorded decision, not an
+	/// accident -- without this test, deleting the `campus === 'carleton'`
+	/// guard in `app/(home)/Campus/index.tsx` would pass every other test in
+	/// this file.
+	func testStolafScreenHasNoMapButton() throws {
+		CampusScreen(app: app)
+			.navigate()
+			.verifyTitle(TestIdentifiers.Buttons.campus)
+			.verifyNoMapButton()
+	}
+
+	/// Every other detail-sheet test in this file goes through St. Olaf's
+	/// tile. This is the one that proves the `campus` param actually survives
+	/// the push into `/Campus/detail/[name]` for a Carleton venue too, rather
+	/// than the sheet only ever having been exercised for St. Olaf.
+	func testTappingACarletonRowPresentsItsDetailSheet() throws {
+		CampusScreen(app: app)
+			.navigateToCarleton()
+			.tapRow(TestIdentifiers.Campus.carletonBuilding)
+			.verifyDetailSheetTitled(TestIdentifiers.Campus.carletonBuilding)
 	}
 
 	func testSearchNarrowsTheList() throws {
-		BuildingHoursScreen(app: app)
+		CampusScreen(app: app)
 			.navigate()
-			.verifyRowShown(TestIdentifiers.BuildingHours.anExcludedBuilding)
-			.search(for: TestIdentifiers.BuildingHours.deburredQuery)
-			.verifyRowShown(TestIdentifiers.BuildingHours.aBuilding)
-			.verifyRowHidden(TestIdentifiers.BuildingHours.anExcludedBuilding)
+			.verifyRowShown(TestIdentifiers.Campus.anExcludedBuilding)
+			.search(for: TestIdentifiers.Campus.deburredQuery)
+			.verifyRowShown(TestIdentifiers.Campus.aBuilding)
+			.verifyRowHidden(TestIdentifiers.Campus.anExcludedBuilding)
 	}
 
 	func testSearchWithNoMatchesShowsNoResults() throws {
-		BuildingHoursScreen(app: app)
+		CampusScreen(app: app)
 			.navigate()
-			.search(for: TestIdentifiers.BuildingHours.unmatchedQuery)
-			.verifyNoResultsShown(for: TestIdentifiers.BuildingHours.unmatchedQuery)
-			.capture("Building Hours no-results state")
+			.search(for: TestIdentifiers.Campus.unmatchedQuery)
+			.verifyNoResultsShown(for: TestIdentifiers.Campus.unmatchedQuery)
+			.capture("Campus no-results state")
 	}
 
 	func testTappingARowPresentsTheDetailSheet() throws {
-		BuildingHoursScreen(app: app)
+		CampusScreen(app: app)
 			.navigate()
-			.tapRow(TestIdentifiers.BuildingHours.anExcludedBuilding)
-			.verifyDetailSheetPresented(for: TestIdentifiers.BuildingHours.anExcludedBuilding)
+			.tapRow(TestIdentifiers.Campus.anExcludedBuilding)
+			.verifyDetailSheetPresented(for: TestIdentifiers.Campus.anExcludedBuilding)
 			.verifyListStillBehind()
-			.capture("Building Hours detail sheet at the smaller detent")
+			.capture("Campus detail sheet at the smaller detent")
 	}
 
 	/// `sheetLargestUndimmedDetentIndex: 'none'` is what makes this true: UIKit
@@ -39,12 +77,12 @@ class ModuleBuildingHoursTests: UITestCase {
 	/// building's row lands on the list and pushes a second detail sheet on
 	/// top of the first.
 	func testTappingARowBehindTheSheetDoesNotStackASecondSheet() throws {
-		BuildingHoursScreen(app: app)
+		CampusScreen(app: app)
 			.navigate()
-			.tapRow(TestIdentifiers.BuildingHours.anExcludedBuilding)
-			.verifyDetailSheetPresented(for: TestIdentifiers.BuildingHours.anExcludedBuilding)
-			.attemptToTapRowBehindSheet(TestIdentifiers.BuildingHours.aSecondBuilding)
-			.capture("Building Hours after tapping a row behind the sheet")
+			.tapRow(TestIdentifiers.Campus.anExcludedBuilding)
+			.verifyDetailSheetPresented(for: TestIdentifiers.Campus.anExcludedBuilding)
+			.attemptToTapRowBehindSheet(TestIdentifiers.Campus.aSecondBuilding)
+			.capture("Campus after tapping a row behind the sheet")
 			.verifyNoSecondSheetForStavHall()
 	}
 
@@ -54,39 +92,39 @@ class ModuleBuildingHoursTests: UITestCase {
 	/// it entirely. Dragging it open is the case that would catch content
 	/// stuck laid out at the smaller detent's height.
 	func testDraggingTheDetailSheetRevealsTheRestOfItsContent() throws {
-		let screen = BuildingHoursScreen(app: app)
+		let screen = CampusScreen(app: app)
 			.navigate()
-			.tapRow(TestIdentifiers.BuildingHours.aBuildingWithLongSchedule)
-			.verifyDetailSheetPresented(for: TestIdentifiers.BuildingHours.aBuildingWithLongSchedule)
-			.capture("Building Hours detail sheet before dragging to the larger detent")
+			.tapRow(TestIdentifiers.Campus.aBuildingWithLongSchedule)
+			.verifyDetailSheetPresented(for: TestIdentifiers.Campus.aBuildingWithLongSchedule)
+			.capture("Campus detail sheet before dragging to the larger detent")
 
 		let titleBefore = screen.detailTitleFrame(
-			for: TestIdentifiers.BuildingHours.aBuildingWithLongSchedule)
+			for: TestIdentifiers.Campus.aBuildingWithLongSchedule)
 
 		screen
 			.expandDetailSheet()
-			.capture("Building Hours detail sheet after dragging to the larger detent")
+			.capture("Campus detail sheet after dragging to the larger detent")
 			.verifyDetailSheetFullyLaidOut(
-				for: TestIdentifiers.BuildingHours.aBuildingWithLongSchedule, titleBefore: titleBefore)
+				for: TestIdentifiers.Campus.aBuildingWithLongSchedule, titleBefore: titleBefore)
 	}
 
 	func testDetailSheetMenuOffersReportAProblem() throws {
-		BuildingHoursScreen(app: app)
+		CampusScreen(app: app)
 			.navigate()
-			.tapRow(TestIdentifiers.BuildingHours.anExcludedBuilding)
-			.verifyDetailSheetPresented(for: TestIdentifiers.BuildingHours.anExcludedBuilding)
+			.tapRow(TestIdentifiers.Campus.anExcludedBuilding)
+			.verifyDetailSheetPresented(for: TestIdentifiers.Campus.anExcludedBuilding)
 			.openDetailMenu()
 			.verifyReportActionOffered()
 			.tapReportAction()
 			.verifyReportScreenPresented()
 			.verifyReportPushedIntoSheet()
 			.verifySubmitReportReachable()
-			.capture("Building Hours report screen")
+			.capture("Campus report screen")
 			// Dismissing back to the detail sheet, rather than straight to the
 			// list, is what proves the report pushed into the sheet's own
 			// stack instead of replacing it.
 			.dismissReportScreen()
-			.verifyDetailSheetPresented(for: TestIdentifiers.BuildingHours.anExcludedBuilding)
+			.verifyDetailSheetPresented(for: TestIdentifiers.Campus.anExcludedBuilding)
 	}
 
 	/// The detail sheet offers no close control of its own -- only an overflow
@@ -97,18 +135,18 @@ class ModuleBuildingHoursTests: UITestCase {
 	/// no edits (so no alert should appear) and then drags the sheet itself
 	/// closed, confirming the exit still works once the report route is gone.
 	func testDismissingTheDetailSheetAfterVisitingReportWithNoEditsWorks() throws {
-		BuildingHoursScreen(app: app)
+		CampusScreen(app: app)
 			.navigate()
-			.tapRow(TestIdentifiers.BuildingHours.anExcludedBuilding)
-			.verifyDetailSheetPresented(for: TestIdentifiers.BuildingHours.anExcludedBuilding)
+			.tapRow(TestIdentifiers.Campus.anExcludedBuilding)
+			.verifyDetailSheetPresented(for: TestIdentifiers.Campus.anExcludedBuilding)
 			.openDetailMenu()
 			.tapReportAction()
 			.verifyReportScreenPresented()
 			.dismissReportScreen()
 			.verifyNoDiscardChangesAlertPresented()
-			.verifyDetailSheetPresented(for: TestIdentifiers.BuildingHours.anExcludedBuilding)
+			.verifyDetailSheetPresented(for: TestIdentifiers.Campus.anExcludedBuilding)
 			.attemptToDragSheetClosed()
-			.verifyDetailSheetGone(for: TestIdentifiers.BuildingHours.anExcludedBuilding)
+			.verifyDetailSheetGone(for: TestIdentifiers.Campus.anExcludedBuilding)
 	}
 
 	/// The report screen's unsaved-changes guard has to survive every way out,
@@ -118,10 +156,10 @@ class ModuleBuildingHoursTests: UITestCase {
 	/// stack -- which `beforeRemove` alone cannot refuse. This is the scenario
 	/// that motivated moving the guard to `usePreventRemove`.
 	func testUnsavedChangesGuardSurvivesEveryWayToLeave() throws {
-		let screen = BuildingHoursScreen(app: app)
+		let screen = CampusScreen(app: app)
 			.navigate()
-			.tapRow(TestIdentifiers.BuildingHours.anExcludedBuilding)
-			.verifyDetailSheetPresented(for: TestIdentifiers.BuildingHours.anExcludedBuilding)
+			.tapRow(TestIdentifiers.Campus.anExcludedBuilding)
+			.verifyDetailSheetPresented(for: TestIdentifiers.Campus.anExcludedBuilding)
 			.openDetailMenu()
 			.tapReportAction()
 			.verifyReportScreenPresented()
@@ -140,7 +178,7 @@ class ModuleBuildingHoursTests: UITestCase {
 		screen
 			.attemptToDragSheetClosed()
 			.verifyDiscardChangesAlertPresented()
-			.capture("Building Hours guard blocks a sheet drag")
+			.capture("Campus guard blocks a sheet drag")
 			.chooseToKeepEditing()
 			.verifyReportScreenPresented()
 
@@ -152,7 +190,7 @@ class ModuleBuildingHoursTests: UITestCase {
 			.attemptToTapDimmedBackdrop()
 			.verifyDiscardChangesAlertPresented()
 			.chooseToDiscardChanges()
-			.verifyReportScreenGone(buildingName: TestIdentifiers.BuildingHours.anExcludedBuilding)
+			.verifyReportScreenGone(buildingName: TestIdentifiers.Campus.anExcludedBuilding)
 	}
 
 	/// `BuildingHoursScheduleEditor` still presents as a `modal` on the OUTER
@@ -162,15 +200,15 @@ class ModuleBuildingHoursTests: UITestCase {
 	/// silently no-op on iOS -- this asserts whether the editor actually comes
 	/// up from its new, deeper starting point.
 	func testScheduleEditorPresentsFromWithinTheReportScreen() throws {
-		BuildingHoursScreen(app: app)
+		CampusScreen(app: app)
 			.navigate()
-			.tapRow(TestIdentifiers.BuildingHours.anExcludedBuilding)
-			.verifyDetailSheetPresented(for: TestIdentifiers.BuildingHours.anExcludedBuilding)
+			.tapRow(TestIdentifiers.Campus.anExcludedBuilding)
+			.verifyDetailSheetPresented(for: TestIdentifiers.Campus.anExcludedBuilding)
 			.openDetailMenu()
 			.tapReportAction()
 			.verifyReportScreenPresented()
 			.openScheduleEditorFromReportScreen()
-			.capture("Building Hours schedule editor opened from the report screen")
+			.capture("Campus schedule editor opened from the report screen")
 			.verifyScheduleEditorPresented()
 	}
 }

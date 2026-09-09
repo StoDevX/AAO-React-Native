@@ -5,37 +5,42 @@ import {useMomentTimer} from '@frogpond/timer'
 import {timezone} from '@frogpond/constants'
 
 import {BuildingDetailSwiftUI} from '../../../../source/features/building-hours/detail/building-detail'
-import {buildingByNameOptions} from '../../../../source/features/building-hours/query'
+import {buildingByNameOptions, parseCampus} from '../../../../source/features/building-hours/query'
 import {LoadingView, NoticeView} from '@frogpond/notice'
 import {useAppDispatch, useAppSelector} from '../../../../source/redux/hooks'
 import {
+	isFavoriteBuilding,
 	selectFavoriteBuildings,
 	toggleFavoriteBuilding,
 } from '../../../../source/redux/parts/buildings'
 
-export default function BuildingHoursDetailPage(): React.ReactNode {
+export default function CampusDetailPage(): React.ReactNode {
 	let dispatch = useAppDispatch()
 	let router = useRouter()
 
-	let {name} = useLocalSearchParams<{name: string}>()
-	let {data: building, isLoading, error, refetch} = useQuery(buildingByNameOptions(name))
+	let {name, campus: campusParam} = useLocalSearchParams<{name: string; campus?: string}>()
+	let campus = parseCampus(campusParam)
+	let {data: building, isLoading, error, refetch} = useQuery(buildingByNameOptions(campus, name))
 
 	let favorites = useAppSelector(selectFavoriteBuildings)
 
 	let {now} = useMomentTimer({intervalMs: 60000, timezone: timezone()})
 
-	let onFavorite = React.useCallback(() => dispatch(toggleFavoriteBuilding(name)), [dispatch, name])
+	let onFavorite = React.useCallback(
+		() => dispatch(toggleFavoriteBuilding({campus, name})),
+		[campus, dispatch, name],
+	)
 
 	let reportProblem = React.useCallback(
 		() =>
 			router.push({
-				pathname: '/BuildingHours/detail/report',
-				params: {name},
+				pathname: '/Campus/detail/report',
+				params: {name, campus},
 			}),
-		[name, router],
+		[campus, name, router],
 	)
 
-	let favorited = favorites.includes(name)
+	let favorited = isFavoriteBuilding(favorites, campus, name)
 
 	let screen = (
 		<>
@@ -106,7 +111,7 @@ export default function BuildingHoursDetailPage(): React.ReactNode {
 	return (
 		<>
 			{screen}
-			<BuildingDetailSwiftUI building={building} now={now} />
+			<BuildingDetailSwiftUI building={building} campus={campus} now={now} />
 		</>
 	)
 }

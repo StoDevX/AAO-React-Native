@@ -36,7 +36,7 @@ struct HomeScreen: Screen {
 			"\(label) tile should be visible")
 		// Top-right: the icon is centred and narrow, so this corner is empty
 		// fill. The bottom of the tile is riskier -- a long title like
-		// "Building Hours" runs most of the width.
+		// "Carleton Campus" runs most of the width.
 		tile.coordinate(withNormalizedOffset: CGVector(dx: 0.9, dy: 0.15)).tap()
 		return self
 	}

@@ -11,7 +11,8 @@ import {InfoHeader} from '@frogpond/info-header'
 import {TableView, Section, Cell} from '@frogpond/tableview'
 import {CellTextField, CellToggle, DeleteButtonCell} from '@frogpond/tableview/cells'
 
-import {buildingByNameOptions} from '../../../../source/features/building-hours/query'
+import type {Campus} from '../../../../source/features/building-hours/query'
+import {buildingByNameOptions, parseCampus} from '../../../../source/features/building-hours/query'
 import type {
 	BuildingType,
 	NamedBuildingScheduleType,
@@ -31,7 +32,7 @@ import {
 } from '../../../../source/redux'
 import {LoadingView, NoticeView} from '@frogpond/notice'
 
-function useBuildingEditor(initialBuilding: BuildingType) {
+function useBuildingEditor(initialBuilding: BuildingType, campus: Campus) {
 	let dispatch = useAppDispatch()
 	let router = useRouter()
 	let navigation = useNavigation()
@@ -89,17 +90,18 @@ function useBuildingEditor(initialBuilding: BuildingType) {
 
 	let submit = React.useCallback((): void => {
 		setSubmitted(true)
-		submitReport(initialBuilding, building)
-	}, [building, initialBuilding])
+		submitReport(initialBuilding, building, campus)
+	}, [building, campus, initialBuilding])
 
 	return {building, dispatch: dispatchAction, openEditor, submit}
 }
 
 type Props = {
 	initialBuilding: BuildingType
+	campus: Campus
 }
 
-let BuildingHoursProblemReportView = ({initialBuilding}: Props): React.ReactNode => {
+let CampusProblemReportView = ({initialBuilding, campus}: Props): React.ReactNode => {
 	let appDispatch = useAppDispatch()
 
 	React.useEffect(() => {
@@ -110,7 +112,7 @@ let BuildingHoursProblemReportView = ({initialBuilding}: Props): React.ReactNode
 		// oxlint-disable-next-line react/exhaustive-deps
 	}, [])
 
-	let {building, dispatch, openEditor, submit} = useBuildingEditor(initialBuilding)
+	let {building, dispatch, openEditor, submit} = useBuildingEditor(initialBuilding, campus)
 
 	let {schedule: schedules, name} = building
 
@@ -285,9 +287,10 @@ const TimesCell = (props: TimesCellProps) => {
 	)
 }
 
-function BuildingHoursProblemReportLoader(): React.ReactNode {
-	let {name} = useLocalSearchParams<{name: string}>()
-	let {data: building, isLoading, error, refetch} = useQuery(buildingByNameOptions(name))
+function CampusProblemReportLoader(): React.ReactNode {
+	let {name, campus: campusParam} = useLocalSearchParams<{name: string; campus?: string}>()
+	let campus = parseCampus(campusParam)
+	let {data: building, isLoading, error, refetch} = useQuery(buildingByNameOptions(campus, name))
 
 	if (isLoading) {
 		return <LoadingView />
@@ -309,10 +312,10 @@ function BuildingHoursProblemReportLoader(): React.ReactNode {
 		return <NoticeView text={`Could not find the "${name}" building.`} />
 	}
 
-	return <BuildingHoursProblemReportView initialBuilding={building} />
+	return <CampusProblemReportView campus={campus} initialBuilding={building} />
 }
 
-export default function BuildingHoursProblemReportPage(): React.ReactNode {
+export default function CampusProblemReportPage(): React.ReactNode {
 	const navigation = useNavigation()
 
 	return (
@@ -332,7 +335,7 @@ export default function BuildingHoursProblemReportPage(): React.ReactNode {
 				/>
 			</Stack.Toolbar>
 
-			<BuildingHoursProblemReportLoader />
+			<CampusProblemReportLoader />
 		</>
 	)
 }

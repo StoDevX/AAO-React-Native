@@ -22,7 +22,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 
 const persistConfig = {
 	key: 'root',
-	version: 2,
+	// Bumped for the campus-scoped favourites migration -- see ./migrations.
+	version: 3,
 	migrate: createMigrate(migrations),
 	storage: AsyncStorage,
 	// A report draft is a mid-edit scratch buffer, not durable app state --

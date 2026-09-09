@@ -98,7 +98,7 @@ is required, not stylistic, when flattening the loader into the screen would
 change behaviour: a `useState` initialiser seeded from loaded data (React
 only evaluates it on first mount), or the screen's own ungated `useQuery`
 calls that must not fire until the loader's data resolves. See
-`app/(home)/BuildingHours/detail/report.tsx` for the reference three-component
+`app/(home)/Campus/detail/report.tsx` for the reference three-component
 shape, and `app/(settings)/Credits.tsx` for the simple chrome-plus-body shape.
 
 **Nothing may be added to `app/` that is not a route.** Every `.ts`/`.tsx`
@@ -243,7 +243,7 @@ If you encounter issues:
 See existing routes for reference implementations:
 - `app/(settings)/Credits.tsx` — simple chrome-plus-body screen, no data loading
 - `app/(home)/Contacts/index.tsx` — chrome plus an inner `…View` with a query
-- `app/(home)/BuildingHours/detail/report.tsx` — the full three-component shape (chrome, loader, view)
+- `app/(home)/Campus/detail/report.tsx` — the full three-component shape (chrome, loader, view)
 - `source/features/home/` — the home screen's support components
 - `source/features/menus/` — a feature with several routes sharing support code
 - `source/features/settings/` — a feature with many sub-screens
