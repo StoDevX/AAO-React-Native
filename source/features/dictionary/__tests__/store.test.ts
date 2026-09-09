@@ -1,5 +1,5 @@
 import {normalizeEntry} from '../lib/entry'
-import {hasChanges, useDictionaryDraftStore} from '../store'
+import {hasChanges, hasDefinition, useDictionaryDraftStore} from '../store'
 
 const entry = normalizeEntry({word: 'Caf', definition: 'The dining hall.'})
 
@@ -73,5 +73,39 @@ describe('the dictionary draft store', () => {
 		expect(state.original).toBeNull()
 		expect(state.draft).toBeNull()
 		expect(state.submitted).toBe(false)
+	})
+})
+
+// An entry with every definition cleared normalises to `word: Caf, senses: []`
+// -- a suggestion that names the word and says nothing about it. That is a
+// change, so `hasChanges` alone would let it be previewed and sent.
+describe('whether a draft says anything', () => {
+	it('has nothing to send once its only definition is cleared', () => {
+		useDictionaryDraftStore.getState().startDraft(entry)
+		useDictionaryDraftStore.getState().setSenseField('1', {definition: '   '})
+
+		expect(hasDefinition(useDictionaryDraftStore.getState())).toBe(false)
+		expect(hasChanges(useDictionaryDraftStore.getState())).toBe(true)
+	})
+
+	it('still has something to send while another sense keeps its definition', () => {
+		useDictionaryDraftStore
+			.getState()
+			.startDraft(
+				normalizeEntry({word: 'ACM', senses: [{definition: 'One.'}, {definition: 'Two.'}]}),
+			)
+		useDictionaryDraftStore.getState().setSenseField('1', {definition: ''})
+
+		expect(hasDefinition(useDictionaryDraftStore.getState())).toBe(true)
+	})
+
+	it('has something to send for an entry as it was opened', () => {
+		useDictionaryDraftStore.getState().startDraft(entry)
+
+		expect(hasDefinition(useDictionaryDraftStore.getState())).toBe(true)
+	})
+
+	it('has nothing to send with no draft started', () => {
+		expect(hasDefinition(useDictionaryDraftStore.getState())).toBe(false)
 	})
 })

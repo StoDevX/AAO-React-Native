@@ -15,7 +15,11 @@ import {NoticeView} from '@frogpond/notice'
 
 import {DEFINITION_LINES} from '../../../../source/features/dictionary/constants'
 import type {DraftSense} from '../../../../source/features/dictionary/lib/draft'
-import {hasChanges, useDictionaryDraftStore} from '../../../../source/features/dictionary/store'
+import {
+	hasChanges,
+	hasDefinition,
+	useDictionaryDraftStore,
+} from '../../../../source/features/dictionary/store'
 
 const styles = StyleSheet.create({
 	host: {flex: 1},
@@ -32,6 +36,10 @@ export default function DictionaryEditPage(): React.ReactNode {
 	React.useEffect(() => () => useDictionaryDraftStore.getState().clearDraft(), [])
 
 	let changed = hasChanges(store)
+	// An entry stripped of every definition is a change, and a report saying
+	// only what the word is called. Preview refuses it rather than sending one.
+	let defined = hasDefinition(store)
+	let previewable = changed && defined
 
 	/**
 	 * Blocks any exit that would lose the draft — this screen's own Back, and,
@@ -68,6 +76,16 @@ export default function DictionaryEditPage(): React.ReactNode {
 
 	let manySenses = draft.senses.length > 1
 
+	// What the Senses footer says, in the three states the draft can be in: not
+	// yet edited, edited into something that cannot be sent, and ready. Each of
+	// the first two leaves Preview disabled, so the wording is the only thing
+	// telling the two apart.
+	let footerText = !changed
+		? 'No changes yet'
+		: defined
+			? 'Ready to preview'
+			: 'Add a definition to preview'
+
 	return (
 		<>
 			<Stack.Title>Suggest an Edit</Stack.Title>
@@ -100,7 +118,7 @@ export default function DictionaryEditPage(): React.ReactNode {
 				    a sense or two. */}
 				<Stack.Toolbar.Button
 					accessibilityLabel="Preview"
-					disabled={!changed}
+					disabled={!previewable}
 					icon="eye"
 					onPress={() => router.push('/Dictionary/entry/preview')}
 				/>
@@ -152,13 +170,10 @@ export default function DictionaryEditPage(): React.ReactNode {
 					    stays mounted to say it: swapping a footer in and out on the first
 					    edit rebuilds this Section natively, and keystrokes already in
 					    flight are dropped when it does -- typing "indeed " into a
-					    definition arrived as "ind". Both states carry wording for the
+					    definition arrived as "ind". Every state carries wording for the
 					    same reason: an empty footer is still a view, of a height nobody
 					    has looked at. */}
-					<Section
-						footer={<Text>{changed ? 'Ready to preview' : 'No changes yet'}</Text>}
-						title="Senses"
-					>
+					<Section footer={<Text>{footerText}</Text>} title="Senses">
 						<List.ForEach
 							onDelete={(indices) =>
 								indices.forEach((index) => store.deleteSense(draft.senses[index].id))

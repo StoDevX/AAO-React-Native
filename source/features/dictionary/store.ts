@@ -105,3 +105,21 @@ export function hasChanges(state: Pick<DictionaryDraftStore, 'original' | 'draft
 		draftLib.normalizeDraft(draftLib.startDraft(state.original)),
 	)
 }
+
+/**
+ * Whether the draft still defines the word.
+ *
+ * Clearing every definition is a change, so `hasChanges` alone would happily
+ * send `word: Caf` with an empty `senses` — a suggestion naming a word and
+ * saying nothing about it, which a maintainer can do nothing with. Asked of
+ * the *normalised* draft, so a definition of nothing but spaces counts for as
+ * much as an empty one.
+ */
+export function hasDefinition(state: Pick<DictionaryDraftStore, 'draft'>): boolean {
+	if (!state.draft) {
+		return false
+	}
+
+	let entry = draftLib.normalizeDraft(state.draft)
+	return entry.definition !== undefined || (entry.senses?.length ?? 0) > 0
+}

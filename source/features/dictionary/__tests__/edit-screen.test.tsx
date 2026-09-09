@@ -93,6 +93,19 @@ describe('the dictionary edit screen', () => {
 		expect(screen.getByText('No changes yet')).toBeTruthy()
 	})
 
+	// Clearing the last definition *is* a change, so a Preview keyed off
+	// `hasChanges` alone would offer to send `word: Caf` and nothing else. The
+	// footer is the only place the form can say why the button went quiet.
+	it('refuses to preview a draft left with no definition', async () => {
+		useDictionaryDraftStore.getState().startDraft(entry)
+		await render(<EditScreen />)
+
+		await fireEvent.changeText(screen.getByLabelText('Definition 1'), '')
+
+		expect(screen.getByLabelText('Preview').props.accessibilityState.disabled).toBe(true)
+		expect(screen.getByText('Add a definition to preview')).toBeTruthy()
+	})
+
 	it('offers the preview once something changed', async () => {
 		useDictionaryDraftStore.getState().startDraft(entry)
 		await render(<EditScreen />)
