@@ -104,6 +104,10 @@ struct TestIdentifiers {
 		/// UIKit puts the identifier on the text field, so this is a
 		/// `searchFields` query.
 		static let search = "Search for a place"
+		/// The map view itself. MapLibre publishes one element for the whole map --
+		/// labelled "Map", valued with the zoom -- and nothing per building, so
+		/// this is the only handle a test has on where the map is on screen.
+		static let map = "Map"
 		/// UIKit's own dismiss button on the search bar, found by label. iOS 26
 		/// draws it as a circular glyph beside the field and labels it "Close".
 		static let cancel = "Close"

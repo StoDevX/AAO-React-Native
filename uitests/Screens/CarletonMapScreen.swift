@@ -337,19 +337,59 @@ struct CarletonMapScreen: Screen {
 		return self
 	}
 
-	/// Taps the map itself, in the strip above the collapsed sheet. The
-	/// initial camera frames campus, so the screen's centre lands on a
-	/// footprint; which one does not matter, only that a card opens.
+	/// The map view. MapLibre publishes a single element for the whole map and
+	/// nothing per building -- a hierarchy dump from a failing run shows one
+	/// `Other` labelled "Map", valued `Zoom 16x.`, and no footprints -- so a
+	/// test cannot ask for a building. It can ask where the map is.
+	private var mapView: XCUIElement {
+		app.otherElements[TestIdentifiers.CarletonMap.map].firstMatch
+	}
+
+	/// Points within the map's own bounds, tried in turn until one lands on a
+	/// building.
+	///
+	/// Normalised against the map rather than the screen, so they mean what
+	/// they say: the map occupies the space between the navigation bar and the
+	/// collapsed sheet, and a screen-relative offset moves off it whenever
+	/// either changes height.
+	///
+	/// The map's centre is not among them on its own, because it is not a
+	/// building: on a hosted runner the initial camera puts Gould Lane there,
+	/// and the road between two footprints is what the tap hit. Which building
+	/// answers does not matter -- the test is about what a footprint tap does
+	/// to the sheet -- but some building has to.
+	private static let footprintProbes: [CGVector] = [
+		CGVector(dx: 0.50, dy: 0.45),
+		CGVector(dx: 0.30, dy: 0.52),
+		CGVector(dx: 0.70, dy: 0.48),
+		CGVector(dx: 0.45, dy: 0.62),
+		CGVector(dx: 0.62, dy: 0.67),
+		CGVector(dx: 0.28, dy: 0.70),
+	]
+
+	/// Taps the map until a building card opens.
+	///
+	/// Retrying one coordinate, which this did before, cannot succeed where the
+	/// first tap found no building: the camera has not moved, so every attempt
+	/// hits the same patch of ground. Each attempt here tries somewhere else.
 	@discardableResult
 	func tapAFootprint() -> Self {
-		for attempt in 1...3 {
-			app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
+		XCTAssertTrue(
+			mapView.waitForExistence(timeout: 30),
+			"The map should be on screen before anything tries to tap it")
+
+		for (index, probe) in Self.footprintProbes.enumerated() {
+			mapView.coordinate(withNormalizedOffset: probe).tap()
 			if closeButton.waitForExistence(timeout: 10) {
 				return self
 			}
-			XCTContext.runActivity(named: "Tap \(attempt) on the map opened no card; retrying") { _ in }
+			XCTContext.runActivity(
+				named: "Tap \(index + 1) at \(probe) opened no card; trying elsewhere"
+			) { _ in }
 		}
-		XCTFail("Tapping the map never opened a building card")
+
+		XCTFail(
+			"None of \(Self.footprintProbes.count) points on the map opened a building card")
 		return self
 	}
 
