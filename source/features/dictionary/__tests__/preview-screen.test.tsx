@@ -1,4 +1,5 @@
 import * as React from 'react'
+import {Alert} from 'react-native'
 import {fireEvent, render, screen} from '@testing-library/react-native'
 
 import PreviewScreen from '../../../../app/(home)/Dictionary/entry/preview'
@@ -24,11 +25,13 @@ jest.mock('expo-router', () => {
 })
 
 const mockSubmit = jest.mocked(submitReport)
+let alertSpy = jest.spyOn(Alert, 'alert').mockReturnValue(undefined)
 
 const entry = normalizeEntry({word: 'Caf', definition: 'The dining hall.'})
 
 beforeEach(() => {
 	mockSubmit.mockReset()
+	alertSpy.mockClear()
 	useDictionaryDraftStore.getState().clearDraft()
 })
 
@@ -73,7 +76,12 @@ describe('the dictionary preview screen', () => {
 	// -- that would stand the unsaved-changes guard down for good over a
 	// report that never actually sent, so the next sheet drag-down would
 	// discard the reader's draft with no prompt at all.
-	it('leaves the draft unsubmitted when the send itself throws', async () => {
+	//
+	// Nor may the throw simply escape: this handler is called from a native
+	// toolbar button with no error boundary above it, so an escaping throw is
+	// a red box in debug and nothing whatsoever in release, leaving a preview
+	// that looks exactly like a report that sent.
+	it('tells the reader and keeps the draft when the send itself throws', async () => {
 		useDictionaryDraftStore.getState().startDraft(entry)
 		useDictionaryDraftStore.getState().setSenseField('1', {definition: 'The caf.'})
 		mockSubmit.mockImplementationOnce(() => {
@@ -81,10 +89,13 @@ describe('the dictionary preview screen', () => {
 		})
 		await render(<PreviewScreen />)
 
-		await expect(fireEvent.press(screen.getByLabelText('Submit Report'))).rejects.toThrow(
-			'mail composer unavailable',
-		)
+		await fireEvent.press(screen.getByLabelText('Submit Report'))
 
+		expect(alertSpy).toHaveBeenCalledWith(
+			'Could not send the report',
+			expect.stringMatching(/still here/iu),
+		)
 		expect(useDictionaryDraftStore.getState().submitted).toBe(false)
+		expect(useDictionaryDraftStore.getState().draft?.senses[0].definition).toBe('The caf.')
 	})
 })

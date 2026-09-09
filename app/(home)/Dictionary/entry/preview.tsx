@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {StyleSheet} from 'react-native'
+import {Alert, StyleSheet} from 'react-native'
 import {Host} from '@expo/ui/swift-ui'
 import {Stack} from 'expo-router'
 import {NoticeView} from '@frogpond/notice'
@@ -47,10 +47,24 @@ export default function DictionaryPreviewPage(): React.ReactNode {
 		// than sending -- `edit.tsx`'s cleanup only drops it when that screen
 		// itself unmounts.
 		//
-		// `markSubmitted()` runs only once the send itself has returned, so a
-		// throw from `submitReport` leaves the guard armed rather than stranding
-		// it down over a report that never actually went out.
-		submitReport(normalizeDraft(startDraft(original)), normalizeDraft(draft))
+		// `submitReport` dumps YAML and hands off to Mail without a try of its
+		// own, and this callback is the press handler of a native toolbar
+		// button, with no error boundary anywhere above it -- an escaping throw
+		// would be a red box in debug and silence in release, over a preview
+		// that still looks exactly like a report that sent, with Submit ready
+		// to be pressed again. So say so, and leave `submitted` alone: the
+		// draft survives and the guard stays armed over a report that never
+		// went out.
+		try {
+			submitReport(normalizeDraft(startDraft(original)), normalizeDraft(draft))
+		} catch {
+			Alert.alert(
+				'Could not send the report',
+				'Something went wrong preparing the email. Your edit is still here — try again.',
+			)
+			return
+		}
+
 		markSubmitted()
 	}, [draft, markSubmitted, original])
 
