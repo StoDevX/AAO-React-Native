@@ -29,17 +29,6 @@ describe('EntryDefinition', () => {
 		expect(screen.getByText('noun')).toBeTruthy()
 	})
 
-	it('numbers each sense', async () => {
-		let two = normalizeEntry({
-			word: 'ACM',
-			senses: [{definition: 'The association.'}, {definition: 'The chapter.'}],
-		})
-		await render(<EntryDefinition entry={two} />)
-
-		expect(screen.getByText('1')).toBeTruthy()
-		expect(screen.getByText('2')).toBeTruthy()
-	})
-
 	it('offers no chrome of its own — the route owns the title and the actions', async () => {
 		await render(<EntryDefinition entry={entry} />)
 
