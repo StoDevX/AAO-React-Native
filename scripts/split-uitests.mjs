@@ -68,6 +68,27 @@ export function weigh(classes, durations) {
 }
 
 /**
+ * Weigh each test method on its own.
+ *
+ * A class can hold more of the suite than one shard's share, and no packing can
+ * divide a class — only naming its methods individually can.
+ * @param {Array<{className: string, methods: string[]}>} classes
+ * @param {Record<string, number>} durations
+ * @returns {Array<{name: string, weight: number}>}
+ */
+export function weighMethods(classes, durations) {
+	const known = Object.values(durations)
+	const fallback = known.length === 0 ? 1 : median(known)
+
+	return classes.flatMap((testClass) =>
+		testClass.methods.map((method) => ({
+			name: `${testClass.className}/${method}`,
+			weight: durations[`${testClass.className}/${method}()`] ?? fallback,
+		})),
+	)
+}
+
+/**
  * Distribute items across shards, heaviest first into the lightest shard.
  *
  * The classic LPT heuristic. Sorting descending first is what keeps one heavy
@@ -119,6 +140,7 @@ function main() {
 	const testDir = valueOf('--test-dir', null)
 	const shardCount = Number(valueOf('--shards', '2'))
 	const target = valueOf('--target', 'AllAboutOlafUITests')
+	const granularity = valueOf('--granularity', 'class')
 
 	if (!testDir || !fs.existsSync(testDir)) {
 		console.error(`usage: split-uitests.mjs --test-dir <dir> [--shards N]`)
@@ -147,7 +169,8 @@ function main() {
 		process.exit(1)
 	}
 
-	const items = weigh(classes, durations)
+	const items =
+		granularity === 'method' ? weighMethods(classes, durations) : weigh(classes, durations)
 	const shards = packShards(items, shardCount)
 
 	const total = items.reduce((n, i) => n + i.weight, 0)

@@ -1,6 +1,12 @@
 import {readdirSync, readFileSync} from 'node:fs'
 import {join} from 'node:path'
-import {discoverTests, packShards, formatMatrix, weigh} from '../scripts/split-uitests.mjs'
+import {
+	discoverTests,
+	packShards,
+	formatMatrix,
+	weigh,
+	weighMethods,
+} from '../scripts/split-uitests.mjs'
 
 function swiftFile(name: string, text: string): {name: string; text: string} {
 	return {name, text}
@@ -155,6 +161,26 @@ describe('weigh', () => {
 			{name: 'ModuleBTests', weight: 9},
 			{name: 'ModuleCTests', weight: 10},
 			{name: 'ModuleDTests', weight: 9},
+		])
+	})
+})
+
+describe('weighMethods', () => {
+	it('weighs each method on its own so a heavy class can be split', () => {
+		expect(
+			weighMethods([{className: 'ModuleATests', methods: ['testOne', 'testTwo']}], {
+				'ModuleATests/testOne()': 10,
+				'ModuleATests/testTwo()': 20,
+			}),
+		).toEqual([
+			{name: 'ModuleATests/testOne', weight: 10},
+			{name: 'ModuleATests/testTwo', weight: 20},
+		])
+	})
+
+	it('falls back the same way class weighing does', () => {
+		expect(weighMethods([{className: 'ModuleATests', methods: ['testOne']}], {})).toEqual([
+			{name: 'ModuleATests/testOne', weight: 1},
 		])
 	})
 })

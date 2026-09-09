@@ -333,7 +333,7 @@ jobs:
       - name: Split tests across shards
         id: split
         run: |
-          echo "matrix=$(node scripts/split-uitests.mjs --test-dir uitests --shards 3 --durations uitest-durations.json)" >> "$GITHUB_OUTPUT"
+          echo "matrix=$(node scripts/split-uitests.mjs --test-dir uitests --shards 3 --granularity method --durations uitest-durations.json)" >> "$GITHUB_OUTPUT"
 
   ios-uitest:
     name: Native UITest for iOS (${{ matrix.shard }})
