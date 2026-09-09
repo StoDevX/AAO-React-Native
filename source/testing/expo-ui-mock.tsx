@@ -207,11 +207,17 @@ export function TextField({
 	text,
 }: WithModifiers & {
 	placeholder?: string
-	text?: string | {value: string}
+	text?: {value: string}
 	onTextChange?: (text: string) => void
 }): React.ReactNode {
-	// The real field takes either a plain string or a `useNativeState` handle.
-	let value = typeof text === 'object' && text !== null ? text.value : text
+	// A SwiftUI TextField reports its placeholder as its accessibility label
+	// when it has no separate one, which is how the sheet's search field is
+	// found both on device and here.
+	//
+	// `text` is a `useNativeState` handle, never a plain string -- the real
+	// field's `text` prop is typed `ObservableState<string>`, a class from
+	// expo-modules-core, and a string is not assignable to it.
+	let value = text?.value
 	return (
 		<TextInput
 			accessibilityLabel={labelOf(modifiers) ?? placeholder}
@@ -366,8 +372,10 @@ export function BottomSheet({
 
 /// Mirrors the shape of the real `ObservableState<T>`: `value` is the
 /// property, `get()`/`set()` are the React-Compiler-safe accessors. The
-/// stand-in `TextField` ignores it and works off `onTextChange`, so this only
-/// needs to satisfy the call sites.
+/// stand-in `TextField` reads its initial `.value` -- matching the real
+/// field's captured-once-on-mount handle -- and otherwise works off
+/// `onTextChange`, so this only needs to satisfy the call sites' shape, not
+/// reproduce the real `SharedObject` underneath it.
 export function useNativeState<T>(initial: T): {
 	value: T
 	get: () => T

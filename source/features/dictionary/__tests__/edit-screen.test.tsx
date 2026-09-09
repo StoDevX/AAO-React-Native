@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {fireEvent, render, screen} from '@testing-library/react-native'
+import {act, fireEvent, render, screen} from '@testing-library/react-native'
 
 import EditScreen from '../../../../app/(home)/Dictionary/entry/edit'
 import SenseScreen from '../../../../app/(home)/Dictionary/entry/sense'
@@ -80,6 +80,25 @@ describe('the dictionary edit screen', () => {
 		expect(screen.getByLabelText('Definition 1').props.value).toBe('The hall.')
 	})
 
+	// The three headword fields are copy-paste shaped -- same `TextField`,
+	// same `onTextChange={store.setX}` line -- which invites wiring one
+	// field's `onTextChange` to a different field's setter. Checking only
+	// each field's seeded `value` (above) would not catch that; a crossed
+	// wire there still shows the right initial text.
+	it("writes each headword field to its own store setter, not a neighbour's", async () => {
+		useDictionaryDraftStore.getState().startDraft(entry)
+		await render(<EditScreen />)
+
+		await fireEvent.changeText(screen.getByLabelText('Word'), 'Caff')
+		await fireEvent.changeText(screen.getByLabelText('Pronunciation'), 'kaf')
+		await fireEvent.changeText(screen.getByLabelText('Part of Speech'), 'noun')
+
+		let draft = useDictionaryDraftStore.getState().draft
+		expect(draft?.word).toBe('Caff')
+		expect(draft?.pronunciation).toBe('kaf')
+		expect(draft?.partOfSpeech).toBe('noun')
+	})
+
 	it('refuses to preview an untouched draft', async () => {
 		useDictionaryDraftStore.getState().startDraft(entry)
 		await render(<EditScreen />)
@@ -97,6 +116,28 @@ describe('the dictionary edit screen', () => {
 		expect(screen.getByLabelText('Preview').props.accessibilityState.disabled).toBe(false)
 		await fireEvent.press(screen.getByLabelText('Preview'))
 		expect(mockPush).toHaveBeenCalledWith('/Dictionary/entry/preview')
+	})
+
+	// Regression: `sense.tsx` edits the same definition through its own field
+	// while this screen stays mounted underneath it. A `useNativeState`
+	// handle captures its initial value once on mount, so without a sync
+	// pulling the row back into line, this row would keep showing whatever it
+	// showed before the reader left for the sense screen -- see
+	// `SenseDefinitionField` in `edit.tsx`.
+	it("keeps a sense's row in sync when its definition changes elsewhere", async () => {
+		useDictionaryDraftStore.getState().startDraft(entry)
+		await render(<EditScreen />)
+
+		// Stands in for `sense.tsx`'s own Definition field calling this same
+		// store action -- not a `fireEvent` on this screen's own row, which
+		// would leave the handle and the store agreeing from the start and
+		// never exercise the sync at all. Wrapped in `act` because, unlike
+		// `fireEvent`, a direct store call is not wrapped for us.
+		await act(() => {
+			useDictionaryDraftStore.getState().setSenseField('1', {definition: 'Foo'})
+		})
+
+		expect(await screen.findByLabelText('Definition 1')).toHaveProperty('props.value', 'Foo')
 	})
 
 	it('adds a sense, and numbers the fields', async () => {
@@ -129,7 +170,9 @@ describe('the dictionary edit screen', () => {
 
 		fireEvent(screen.getByTestId('for-each'), 'onDelete', [0])
 
-		expect(useDictionaryDraftStore.getState().draft?.senses).toHaveLength(1)
+		// Asserting only the surviving length would still pass a handler that
+		// deleted the wrong sense -- assert which one is left.
+		expect(useDictionaryDraftStore.getState().draft?.senses.map((sense) => sense.id)).toEqual(['2'])
 	})
 
 	it('reorders senses via the list handler', async () => {

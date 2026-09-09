@@ -13,11 +13,9 @@ import {usePreventRemove} from 'expo-router/react-navigation'
 import noop from 'lodash/noop'
 import {NoticeView} from '@frogpond/notice'
 
+import {DEFINITION_LINES} from '../../../../source/features/dictionary/constants'
 import type {DraftSense} from '../../../../source/features/dictionary/lib/draft'
 import {hasChanges, useDictionaryDraftStore} from '../../../../source/features/dictionary/store'
-
-/// How many lines of a definition stay on screen before the field scrolls.
-const DEFINITION_LINES = {min: 2, max: 10}
 
 const styles = StyleSheet.create({
 	host: {flex: 1},
@@ -74,11 +72,16 @@ export default function DictionaryEditPage(): React.ReactNode {
 	return (
 		<>
 			<Stack.Title>Suggest an Edit</Stack.Title>
-			{/* The native back button did not reliably surface the guard's alert
-			    on device, so Back is driven through the same dispatch the guard's
-			    own Discard button uses. See Campus/detail/report.tsx. */}
+			{/* On device, the edge-swipe gesture did not reliably surface the
+			    unsaved-changes alert -- turned off here rather than guarded.
+			    See Campus/detail/report.tsx. */}
 			<Stack.Screen options={{gestureEnabled: false}} />
 			<Stack.Toolbar placement="left">
+				{/* The default native back button had the same problem on device.
+				    Routing Back through an explicit `goBack()` call here lets the
+				    guard intercept it -- the guard's own Discard button then
+				    dispatches the very action `goBack()` triggered and the guard
+				    caught, rather than sharing a dispatch with it up front. */}
 				<Stack.Toolbar.Button
 					accessibilityLabel="Back"
 					icon="chevron.left"
@@ -127,10 +130,18 @@ export default function DictionaryEditPage(): React.ReactNode {
 						/>
 					</Section>
 
-					{/* Every row is the sense's own definition. Under an active edit
-					    mode SwiftUI makes row content inert, so the fields stop taking
-					    taps while the reorder handles are up -- which is why the
-					    toolbar toggles between the two rather than showing both. */}
+					{/* This section's rows are the sense definitions, each followed
+					    below by one "Options" chevron per sense (see the second
+					    `.map()` further down). The chevron belongs inside its own
+					    field's row -- that is the design -- but whether a SwiftUI
+					    `TextField` still takes taps sharing a row with a `Button` is
+					    unproven, so this flat, two-`.map()` form is the deliberate
+					    fallback until Task 8 settles it on the simulator; fold the
+					    chevron into the row and delete the second `.map()` if it
+					    works. Under an active edit mode SwiftUI also makes row
+					    content inert, so the fields stop taking taps while the
+					    reorder handles are up -- which is why the toolbar toggles
+					    between the two rather than showing both. */}
 					<Section
 						footer={changed ? undefined : <Text>No changes yet</Text>}
 						modifiers={reordering ? [environment({key: 'editMode', value: 'active'})] : []}
@@ -140,6 +151,10 @@ export default function DictionaryEditPage(): React.ReactNode {
 							onDelete={(indices) =>
 								indices.forEach((index) => store.deleteSense(draft.senses[index].id))
 							}
+							// `from` can only ever hold one index here: this `List` sets no
+							// `selection`, so nothing lets a reader multi-select senses
+							// before dragging, and a single-row drag is the only gesture
+							// SwiftUI's `onMove` offers without it.
 							onMove={(from, to) => store.moveSense(null, from[0], to)}
 						>
 							{draft.senses.map((sense, index) => (
@@ -184,7 +199,7 @@ type SenseDefinitionFieldProps = {
  * One sense's definition row.
  *
  * Its own component rather than a `TextField` written straight into the
- * `map` below: a `useNativeState` handle's initial value is captured once on
+ * `map` above: a `useNativeState` handle's initial value is captured once on
  * mount, so it needs a hook call whose count does not change as senses are
  * added, deleted or reordered. A component keyed by the sense's id gives each
  * row a stable hook of its own; called inline in the loop, adding or removing
@@ -197,6 +212,22 @@ function SenseDefinitionField({
 	onChange,
 }: SenseDefinitionFieldProps): React.ReactNode {
 	let text = useNativeState(sense.definition)
+
+	/**
+	 * This screen stays mounted underneath `sense.tsx`, which edits the same
+	 * definition through its own field. `text`'s initial value was captured
+	 * once on mount, so a change made over there leaves this row showing
+	 * whatever it showed before the reader navigated away -- until the guard
+	 * below notices the store disagrees with the handle and pulls it back into
+	 * line. It only writes when they differ, so it never fights a keystroke
+	 * typed into *this* row, where store and handle already agree.
+	 */
+	React.useEffect(() => {
+		if (text.get() !== sense.definition) {
+			text.set(sense.definition)
+		}
+	}, [sense.definition, text])
+
 	return (
 		<TextField
 			axis="vertical"

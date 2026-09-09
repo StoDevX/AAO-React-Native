@@ -10,11 +10,10 @@ import {
 import {Stack, useLocalSearchParams, useRouter} from 'expo-router'
 import {NoticeView} from '@frogpond/notice'
 
+import {DEFINITION_LINES} from '../../../../source/features/dictionary/constants'
 import type {DraftExample} from '../../../../source/features/dictionary/lib/draft'
 import {findSense} from '../../../../source/features/dictionary/lib/draft'
 import {useDictionaryDraftStore} from '../../../../source/features/dictionary/store'
-
-const DEFINITION_LINES = {min: 2, max: 10}
 
 const styles = StyleSheet.create({
 	host: {flex: 1},
@@ -75,6 +74,10 @@ export default function DictionarySensePage(): React.ReactNode {
 							onDelete={(indices) =>
 								indices.forEach((index) => store.deleteExample(sense.id, sense.examples[index].id))
 							}
+							// `from` can only ever hold one index here: this `List` sets no
+							// `selection`, so nothing lets a reader multi-select examples
+							// before dragging, and a single-row drag is the only gesture
+							// SwiftUI's `onMove` offers without it.
 							onMove={(from, to) => store.moveExample(sense.id, from[0], to)}
 						>
 							{sense.examples.map((example, index) => (
@@ -148,6 +151,13 @@ type ExampleFieldProps = {
  * sense currently has. A component keyed by the example's id gives each row
  * a hook of its own that adding, deleting or reordering examples cannot
  * change the count of.
+ *
+ * Unlike that sibling, this one does not also need a sync effect pulling its
+ * handle back into line with the store: a definition is edited from two
+ * screens at once (this one and `edit.tsx`, mounted underneath it), but no
+ * second screen ever writes a given example's text -- only this field's own
+ * `onChange` does -- so the handle and the store can never disagree while
+ * this component is mounted.
  */
 function ExampleField({example, index, onChange}: ExampleFieldProps): React.ReactNode {
 	let text = useNativeState(example.text)
