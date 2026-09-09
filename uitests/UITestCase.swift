@@ -6,7 +6,34 @@ import XCTest
 class UITestCase: XCTestCase {
 	var app: XCUIApplication!
 
-	override func setUp() {
+	/// The test that failed, once one has, as `-[Class method]`.
+	///
+	/// A shard that has already failed cannot go green, so every test after the
+	/// failure only adds wall-clock: each one cold-launches the app, and a full
+	/// shard runs about twenty-five minutes. Reporting the failure sooner is
+	/// worth more than the results of tests nobody will read until it is fixed.
+	private static var failedTest: String?
+
+	override func record(_ issue: XCTIssue) {
+		// `isFailure` rather than the issue's type: a skip arrives here as an
+		// issue too, and treating one as a failure would let the first skipped
+		// test stand in for the failure that caused it. XCTest documents this
+		// property as the way to ask the question, over reading `severity`.
+		if issue.isFailure {
+			UITestCase.failedTest = name
+		}
+		super.record(issue)
+	}
+
+	override func setUpWithError() throws {
+		// Only bail once a *different* test has failed. `-retry-tests-on-failure`
+		// re-runs a failing test in this same process, and those repetitions
+		// carry the same `name` -- skipping them would turn the retry the CI
+		// step relies on into a no-op, and a launch flake back into a failure.
+		if let failed = UITestCase.failedTest, failed != name {
+			throw XCTSkip("\(failed) failed; skipping the rest of this run so it reports sooner")
+		}
+
 		continueAfterFailure = false
 
 		app = XCUIApplication()
