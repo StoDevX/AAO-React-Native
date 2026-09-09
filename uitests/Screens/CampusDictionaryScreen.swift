@@ -200,22 +200,65 @@ struct CampusDictionaryScreen: Screen {
 
 	/// Types into the first sense's definition field and confirms the
 	/// keyboard actually rose -- the one check this suite has that the field
-	/// takes taps at all, since it sits in a row beside a separate "Options"
-	/// chevron `Button`, and whether a `TextField` still responds sharing a
-	/// row with a `Button` was unproven before this test ran.
+	/// takes taps at all. This field sits in a flat list, separate from the
+	/// "Options" chevron buttons below it (see the two-`.map()` layout in
+	/// `edit.tsx`); it proves that flat layout takes taps, not the in-row
+	/// arrangement the same comment leaves open as a separate question.
+	///
+	/// Named `prepending`, not `appending`: a tap on this field -- a wrapped,
+	/// multi-line `TextField` -- lands the caret at the very start of its
+	/// existing text, not the end, so typed text is inserted before it, not
+	/// after. Reads the field's value back both before and after typing and
+	/// asserts they combine exactly as `text + before`, so a keystroke
+	/// XCUITest's synthesized typing drops -- or the field losing keyboard
+	/// focus outright mid-type, both seen while writing this suite -- fails
+	/// the test outright instead of quietly producing whatever string
+	/// happened to survive. See the callers' own comments for what this
+	/// traced back to.
 	@discardableResult
-	func editFirstDefinition(appending text: String) -> Self {
-		let field = app.element(matching: TestIdentifiers.Dictionary.definitionField)
+	func editFirstDefinition(prepending text: String) -> Self {
+		let field = app.element(matching: TestIdentifiers.Dictionary.firstDefinitionField)
 		XCTAssertTrue(
 			field.waitForExistence(timeout: 15), "the first definition field never appeared")
-		field.tap()
+		let before = (field.value as? String) ?? ""
 
+		field.tap()
 		XCTAssertTrue(
 			app.keyboards.firstMatch.waitForExistence(timeout: 10),
 			"tapping the definition field should raise the keyboard -- if it did not, the field "
-				+ "beside the Options chevron is not taking taps")
+				+ "is not taking taps")
 
 		field.typeText(text)
+
+		let after = field.value as? String
+		XCTAssertEqual(
+			after, text + before,
+			"typing should have prepended \"\(text)\" to the field's existing text -- got "
+				+ "\(String(describing: after)), which means a keystroke was dropped or the field "
+				+ "lost focus mid-type")
+		return self
+	}
+
+	/// Types into the second sense's definition field, the one `addSense()`
+	/// produces -- unlike `editFirstDefinition`, that field starts empty, so
+	/// there is no existing text to combine with: the field's value after
+	/// typing is asserted to equal exactly what was typed.
+	@discardableResult
+	func fillSecondDefinition(with text: String) -> Self {
+		let field = app.element(matching: TestIdentifiers.Dictionary.secondDefinitionField)
+		XCTAssertTrue(
+			field.waitForExistence(timeout: 15), "the second definition field never appeared")
+
+		field.tap()
+		XCTAssertTrue(
+			app.keyboards.firstMatch.waitForExistence(timeout: 10),
+			"tapping the second definition field should raise the keyboard")
+
+		field.typeText(text)
+
+		XCTAssertEqual(
+			field.value as? String, text,
+			"the second definition field should read back exactly what was typed")
 		return self
 	}
 
@@ -247,9 +290,41 @@ struct CampusDictionaryScreen: Screen {
 		return self
 	}
 
+	/// Asserts the preview container is up. On its own this proves nothing
+	/// about what is drawn inside it -- `dictionary-preview-sheet` sits on the
+	/// outer `VStack` (`entry-diff.tsx`), which exists whether or not a single
+	/// run rendered -- so this is a precondition for `verifyPreviewShows`, not
+	/// a substitute for it.
 	@discardableResult
 	func verifyPreviewPresented() -> Self {
 		XCTAssertTrue(previewSheet.waitForExistence(timeout: 15), "the preview never appeared")
+		return self
+	}
+
+	/// Asserts some element inside the preview carries `text` in its label.
+	/// This is the one check that words actually survived `@expo/ui`'s `Text`
+	/// concatenation: its whitelist keeps only strings and literal `Text`
+	/// elements, so a marked run built any other way is dropped silently, and
+	/// `verifyPreviewPresented` would keep passing over a blank screen.
+	///
+	/// Matched on the preview's own identifier as well as the label. The
+	/// identifier is set on a `VStack`, which has no view of its own to carry
+	/// it, so it flattens onto every descendant element (the same behaviour
+	/// `definitionSheet` documents) -- which is what makes it usable as a
+	/// scope here. Without it this query would also reach the entry sheet
+	/// still sitting underneath in the navigation stack, and would find the
+	/// entry's own wording there whether or not the diff drew anything.
+	@discardableResult
+	func verifyPreviewShows(_ text: String) -> Self {
+		let element = app.descendants(matching: .any).matching(
+			NSPredicate(
+				format: "identifier == %@ AND label CONTAINS %@",
+				TestIdentifiers.Dictionary.previewSheet, text)
+		).firstMatch
+		XCTAssertTrue(
+			element.waitForExistence(timeout: 15),
+			"the preview should show \"\(text)\" -- if it is missing, @expo/ui's Text silently "
+				+ "dropped a run")
 		return self
 	}
 
@@ -275,12 +350,35 @@ struct CampusDictionaryScreen: Screen {
 		return self
 	}
 
+	/// Asserts the Reorder toggle is absent before there are two senses --
+	/// the "change" reference entry has exactly one top-level sense, so this
+	/// is meaningful the moment the form is up, before `addSense()` runs.
+	@discardableResult
+	func verifyReorderToggleHidden() -> Self {
+		XCTAssertFalse(
+			reorderButton.exists,
+			"the Reorder toggle should stay hidden for a single-sense entry")
+		return self
+	}
+
+	/// Taps Add Sense and confirms a second sense actually appeared, retrying
+	/// the tap the way `navigateFromHome` does: a tap can land on an already
+	/// -hittable button before its action has reached JavaScript, and be lost
+	/// entirely.
 	@discardableResult
 	func addSense() -> Self {
 		let button = app.buttons[TestIdentifiers.Dictionary.addSense]
 		scrollUntilExists(button)
 		XCTAssertTrue(button.waitForExistence(timeout: 15), "the edit form should offer Add Sense")
-		button.tap()
+
+		let secondDefinition = app.element(matching: TestIdentifiers.Dictionary.secondDefinitionField)
+		for _ in 1...3 {
+			button.tap()
+			if secondDefinition.waitForExistence(timeout: 5) {
+				return self
+			}
+		}
+		XCTFail("tapping Add Sense never produced a second sense")
 		return self
 	}
 
@@ -289,6 +387,21 @@ struct CampusDictionaryScreen: Screen {
 		XCTAssertTrue(
 			reorderButton.waitForExistence(timeout: 15),
 			"the Reorder toggle should appear once the entry has two or more senses")
+		return self
+	}
+
+	/// Asserts no drag handle exists yet, scoped the same way
+	/// `verifyReorderHandlesAppear` is -- called after `addSense()` but
+	/// before `toggleReorderMode()`, so a build that hard-coded `editMode`
+	/// active (the same bug this suite already found once, in the other
+	/// direction) would fail this rather than pass unnoticed.
+	@discardableResult
+	func verifyNoReorderHandlesYet() -> Self {
+		let handles = editForm.descendants(matching: .any).matching(
+			NSPredicate(format: "label CONTAINS[c] %@", "Reorder"))
+		XCTAssertEqual(
+			handles.count, 0,
+			"no drag handle should exist before Reorder is toggled on -- found \(handles.count)")
 		return self
 	}
 

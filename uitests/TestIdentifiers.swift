@@ -91,13 +91,15 @@ struct TestIdentifiers {
 		static let referenceEntry = "change"
 
 		static let editForm = "dictionary-edit-form"
-		static let senseForm = "dictionary-sense-form"
 		static let previewSheet = "dictionary-preview-sheet"
 		static let preview = "Preview"
-		static let submitReport = "Submit Report"
 		static let reorder = "Reorder"
 		static let addSense = "Add Sense"
-		static let definitionField = "Definition 1"
+		static let firstDefinitionField = "Definition 1"
+		/// The field `addSense()` produces -- always empty when it first
+		/// appears, unlike `firstDefinitionField`, which the reference entry
+		/// seeds with real text.
+		static let secondDefinitionField = "Definition 2"
 		/// The marker `@expo/ui` splices into a sentence under DEBUG when a
 		/// modifier is not in its nested-`Text` whitelist. Our patch adds
 		/// strikethrough and underline to that list; if a version bump ever drops

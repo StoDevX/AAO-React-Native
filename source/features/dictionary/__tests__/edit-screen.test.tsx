@@ -145,8 +145,8 @@ describe('the dictionary edit screen', () => {
 	// `List.ForEach`'s drag gesture cannot run under Jest, but the mock still
 	// forwards `onDelete`/`onMove` onto `testID="for-each"` so the wiring from
 	// there into the store -- as opposed to the drag itself -- can be checked
-	// here. A top-level sense in particular: Task 3's own tests only ever
-	// deleted a sense nested under another one.
+	// here. A top-level sense in particular: the other coverage here only ever
+	// deletes a sense nested under another one.
 	it('deletes a top-level sense via the list handler', async () => {
 		useDictionaryDraftStore.getState().startDraft(entry)
 		useDictionaryDraftStore.getState().addSense()

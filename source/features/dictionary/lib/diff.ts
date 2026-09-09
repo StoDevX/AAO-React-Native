@@ -231,8 +231,8 @@ function diffExamples(
 }
 
 /// A sense the reader never touched, drawn as it stands. An added sense is
-/// numbered at every depth, the same as any other added sense would be —
-/// Task 6 renders a numbered outline regardless of depth. A removed sense
+/// numbered at every depth, the same as any other added sense —
+/// the diff renders a numbered outline regardless of depth. A removed sense
 /// stays unnumbered at every depth: see `DiffedSense`'s docstring for why.
 function unchangedSense(sense: DraftSense, mark: Mark): DiffedSense {
 	return {

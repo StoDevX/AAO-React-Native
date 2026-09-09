@@ -112,8 +112,7 @@ export default function DictionaryEditPage(): React.ReactNode {
 					modifiers={[
 						accessibilityIdentifier('dictionary-edit-form'),
 						// SwiftUI's reorder machinery reads `editMode` from the
-						// `List`/`Form` itself, not from a `Section` inside it -- set
-						// on the `Section` below, it changed nothing SwiftUI acted on.
+						// `List`/`Form` itself, not from a `Section` inside it.
 						environment({key: 'editMode', value: reordering ? 'active' : 'inactive'}),
 					]}
 				>
@@ -141,15 +140,15 @@ export default function DictionaryEditPage(): React.ReactNode {
 					{/* This section's rows are the sense definitions, each followed
 					    below by one "Options" chevron per sense (see the second
 					    `.map()` further down). The chevron belongs inside its own
-					    field's row -- that is the design -- but whether a SwiftUI
-					    `TextField` still takes taps sharing a row with a `Button` is
-					    unproven, so this flat, two-`.map()` form is the deliberate
-					    fallback until Task 8 settles it on the simulator; fold the
-					    chevron into the row and delete the second `.map()` if it
-					    works. Under an active edit mode SwiftUI also makes row
-					    content inert, so the fields stop taking taps while the
-					    reorder handles are up -- which is why the toolbar toggles
-					    between the two rather than showing both. */}
+					    field's row -- that is the design -- but a flat, two-`.map()`
+					    layout is what an XCUITest has actually proven still takes
+					    taps; whether a SwiftUI `TextField` responds sharing a row
+					    with a `Button` remains open, so fold the chevron into the
+					    row and delete the second `.map()` only once that in-row
+					    arrangement is proven too. Under an active edit mode SwiftUI
+					    also makes row content inert, so the fields stop taking taps
+					    while the reorder handles are up -- which is why the toolbar
+					    toggles between the two rather than showing both. */}
 					<Section footer={changed ? undefined : <Text>No changes yet</Text>} title="Senses">
 						<List.ForEach
 							onDelete={(indices) =>

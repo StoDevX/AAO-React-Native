@@ -54,9 +54,10 @@ describe('the dictionary preview screen', () => {
 
 	// Not a claim that the sheet's own unsaved-changes guard actually stands
 	// down -- that guard is native `usePreventRemove` machinery this mock
-	// cannot exercise, and belongs to Task 8's XCUITests instead. This checks
-	// only the one thing decided in JavaScript: the store flips `submitted`
-	// once the send has gone out.
+	// cannot exercise; it is covered by an XCUITest instead
+	// (uitests/ModuleCampusDictionaryTests.swift). This checks only the one
+	// thing decided in JavaScript: the store flips `submitted` once the send
+	// has gone out.
 	it('marks the draft submitted once the report is sent', async () => {
 		useDictionaryDraftStore.getState().startDraft(entry)
 		useDictionaryDraftStore.getState().setSenseField('1', {definition: 'The caf.'})
