@@ -1,6 +1,7 @@
 name: Print Center
 image: print
 category: Mail and Packages
+building: bc
 
 schedule:
   - title: Hours

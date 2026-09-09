@@ -1,5 +1,6 @@
 name: College Ministry
 category: Offices
+building: bmc
 
 schedule:
   - title: Hours

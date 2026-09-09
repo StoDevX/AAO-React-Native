@@ -1,6 +1,7 @@
 name: Skifter Hall
 image: skifter-studioa
 category: Academia
+building: skh
 
 schedule:
   - title: Hours

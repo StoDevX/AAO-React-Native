@@ -1,6 +1,7 @@
 name: Boe Chapel
 image: boe
 category: Academia
+building: bmc
 
 schedule:
   - title: Hours

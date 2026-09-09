@@ -2,6 +2,7 @@ name: DiSCO
 subtitle: Digital Scholarship Center at St. Olaf
 image: disco
 category: Libraries
+building: rml
 
 schedule:
   - title: Hours

@@ -1,6 +1,7 @@
 name: Wellness Center
 image: wellness
 category: Health and Wellness
+building: bc
 
 schedule:
   - title: Hours

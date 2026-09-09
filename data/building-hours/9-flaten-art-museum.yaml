@@ -1,5 +1,6 @@
 name: Flaten Art Museum
 category: Museums
+building: cad
 
 schedule:
   - title: Hours

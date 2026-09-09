@@ -9,6 +9,7 @@ properties:
   abbreviation: {type: string}
   category: {type: string}
   image: {type: string}
+  building: {type: string, pattern: '^[a-z0-9-]+$'}
   isNotice: {type: boolean}
   noticeMessage: {type: string}
   links:
@@ -19,6 +20,7 @@ properties:
     items: {$ref: '#/definitions/schedule'}
   breakSchedule:
     type: object
+    propertyNames: {enum: [fall, thanksgiving, winter, interim, spring, easter, summer]}
 
 definitions:
   links:

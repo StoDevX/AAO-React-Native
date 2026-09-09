@@ -1,6 +1,7 @@
 name: Rølvaag Library
 image: rolvaag-library
 category: Libraries
+building: rml
 
 schedule:
   - title: Hours
