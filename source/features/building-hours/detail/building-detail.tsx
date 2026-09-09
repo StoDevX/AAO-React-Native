@@ -18,8 +18,7 @@ import {useQuery} from '@tanstack/react-query'
 import * as c from '@frogpond/colors'
 import type {Moment} from 'moment-timezone'
 import {BuildingCutout} from './building-cutout'
-import {hasFootprint} from '../../map/lib/building-footprints'
-import {findBuildingFeature} from '../lib/find-building-feature'
+import {resolveCutoutFeature} from '../lib/find-building-feature'
 import type {BuildingType} from '../types'
 import type {Campus} from '../query'
 import {mapDataOptions} from '../../map/query'
@@ -74,11 +73,12 @@ export function BuildingDetailSwiftUI({building, now, campus}: Props): React.Rea
 		...mapDataOptions(campus),
 		enabled: Boolean(building.building),
 	})
-	let joined = mapFeatures ? findBuildingFeature(mapFeatures, building) : undefined
 	// A venue can join to a record with no outline -- a point of interest rather
-	// than a building. There is nothing to frame, so the section goes too: an
-	// empty row reads as a broken image, not as an absent one.
-	let feature = joined && hasFootprint(joined) ? joined : undefined
+	// than a building -- in which case this follows its `parent` to the building
+	// it sits in. Undefined when nothing in that chain has an outline, and the
+	// section goes with it: an empty row reads as a broken image, not an absent
+	// one.
+	let feature = mapFeatures ? resolveCutoutFeature(mapFeatures, building) : undefined
 
 	return (
 		// A Host doesn't need a React Native scroll view under it: the hosting
