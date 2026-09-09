@@ -140,10 +140,21 @@ function mapSense(
 	)
 }
 
+/**
+ * One row moved within a list, the way SwiftUI reports the drag.
+ *
+ * `to` is an `onMove` destination, not a splice index: SwiftUI counts the gap
+ * the row was dropped into against the list as it stood *before* the row was
+ * lifted out, so dragging row 0 below row 1 arrives as `to: 2`. Apple's own
+ * `move(fromOffsets:toOffset:)` subtracts the lifted row when it sat above the
+ * destination, and so does this — drop that subtraction and every downward
+ * drag lands one place too far.
+ */
 function moved<T>(items: T[], from: number, to: number): T[] {
+	let at = to > from ? to - 1 : to
 	let next = [...items]
 	let [item] = next.splice(from, 1)
-	next.splice(to, 0, item)
+	next.splice(at, 0, item)
 	return next
 }
 
@@ -203,6 +214,8 @@ export function deleteSense(draft: DraftEntry, id: string): DraftEntry {
 	return {...draft, senses: prune(draft.senses)}
 }
 
+/// `to` is a SwiftUI `onMove` destination rather than a splice index — see
+/// `moved`.
 export function moveSense(
 	draft: DraftEntry,
 	parentId: string | null,
@@ -258,6 +271,8 @@ export function deleteExample(draft: DraftEntry, senseId: string, exampleId: str
 	}
 }
 
+/// `to` is a SwiftUI `onMove` destination rather than a splice index — see
+/// `moved`.
 export function moveExample(
 	draft: DraftEntry,
 	senseId: string,

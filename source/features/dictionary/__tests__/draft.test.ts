@@ -99,6 +99,14 @@ describe('normalizeDraft', () => {
 const twoSenses = () =>
 	startDraft(normalizeEntry({word: 'ACM', senses: [{definition: 'One.'}, {definition: 'Two.'}]}))
 
+const threeSenses = () =>
+	startDraft(
+		normalizeEntry({
+			word: 'ACM',
+			senses: [{definition: 'One.'}, {definition: 'Two.'}, {definition: 'Three.'}],
+		}),
+	)
+
 describe('editing a draft', () => {
 	it('finds a sense at any depth', () => {
 		let draft = startDraft(
@@ -142,12 +150,29 @@ describe('editing a draft', () => {
 		expect(draft.senses.map((s) => s.definition)).toEqual(['Two.', 'One.'])
 	})
 
+	// A downward drag is where SwiftUI's destination and a plain splice index
+	// part company, and a two-item list cannot tell them apart: dragging the
+	// first row to the end is the same move either way. Three rows is the
+	// shortest list where landing second and landing last differ.
+	it('lands a sense dragged below its neighbour second, not last', () => {
+		let draft = moveSense(threeSenses(), null, 0, 2)
+
+		expect(draft.senses.map((s) => s.definition)).toEqual(['Two.', 'One.', 'Three.'])
+	})
+
 	it('reorders the senses under a parent', () => {
 		let draft = addSubsense(addSubsense(twoSenses(), '1'), '1')
 		draft = setSenseField(draft, '4', {definition: 'second'})
 		draft = moveSense(draft, '1', 1, 0)
 
 		expect(draft.senses[0].subsenses.map((s) => s.id)).toEqual(['4', '3'])
+	})
+
+	it('lands a sub-sense dragged below its neighbour second, not last', () => {
+		let draft = addSubsense(addSubsense(addSubsense(twoSenses(), '1'), '1'), '1')
+		draft = moveSense(draft, '1', 0, 2)
+
+		expect(draft.senses[0].subsenses.map((s) => s.id)).toEqual(['4', '3', '5'])
 	})
 
 	it('adds, edits, reorders and deletes an example', () => {
@@ -161,6 +186,17 @@ describe('editing a draft', () => {
 
 		draft = deleteExample(draft, '1', '3')
 		expect(draft.senses[0].examples.map((e) => e.id)).toEqual(['4'])
+	})
+
+	it('lands an example dragged below its neighbour second, not last', () => {
+		let draft = addExample(addExample(addExample(twoSenses(), '1'), '1'), '1')
+		draft = setExampleText(draft, '1', '3', 'first')
+		draft = setExampleText(draft, '1', '4', 'second')
+		draft = setExampleText(draft, '1', '5', 'third')
+
+		draft = moveExample(draft, '1', 0, 2)
+
+		expect(draft.senses[0].examples.map((e) => e.text)).toEqual(['second', 'first', 'third'])
 	})
 
 	it('leaves the draft it was given untouched', () => {

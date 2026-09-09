@@ -214,11 +214,12 @@ describe('diffEntry', () => {
 	})
 
 	it('wedges a deleted last sense between a moved predecessor and its new successor, instead of leaving it at the end — a known trade-off, not a bug', () => {
-		// before: One, Two, Three. One and Two swap, then Three (the last
-		// sense, with no successor of its own) is deleted. Three's predecessor
-		// was Two, and Two has moved to the front, so Three follows it there —
-		// landing between Two and One rather than staying at the very end.
-		let swapped = moveSense(threeSenses(), null, 0, 1)
+		// before: One, Two, Three. One is dragged below Two so the two swap,
+		// then Three (the last sense, with no successor of its own) is
+		// deleted. Three's predecessor was Two, and Two has moved to the
+		// front, so Three follows it there — landing between Two and One
+		// rather than staying at the very end.
+		let swapped = moveSense(threeSenses(), null, 0, 2)
 		let after = deleteSense(swapped, '3')
 		let diff = diffEntry(threeSenses(), after)
 

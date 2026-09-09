@@ -187,8 +187,14 @@ describe('the dictionary edit screen', () => {
 		expect(useDictionaryDraftStore.getState().draft?.senses.map((sense) => sense.id)).toEqual(['2'])
 	})
 
+	// Three senses, not two: `onMove`'s destination counts positions in the
+	// list before the dragged row is lifted out, and in a two-item list a
+	// downward drag lands last under that reading and under a plain splice
+	// alike -- so a two-item list cannot tell a correct handler from one that
+	// drops the sense a place too far.
 	it('reorders senses via the list handler', async () => {
 		useDictionaryDraftStore.getState().startDraft(entry)
+		useDictionaryDraftStore.getState().addSense()
 		useDictionaryDraftStore.getState().addSense()
 		let idsBefore = useDictionaryDraftStore.getState().draft?.senses.map((sense) => sense.id)
 		await render(<EditScreen />)
@@ -196,7 +202,7 @@ describe('the dictionary edit screen', () => {
 		fireEvent(screen.getByTestId('for-each'), 'onMove', [0], 2)
 
 		let idsAfter = useDictionaryDraftStore.getState().draft?.senses.map((sense) => sense.id)
-		expect(idsAfter).toEqual([idsBefore?.[1], idsBefore?.[0]])
+		expect(idsAfter).toEqual([idsBefore?.[1], idsBefore?.[0], idsBefore?.[2]])
 	})
 })
 
@@ -251,8 +257,12 @@ describe('the dictionary sense screen', () => {
 		expect(useDictionaryDraftStore.getState().draft?.senses[0].examples).toHaveLength(0)
 	})
 
+	// Three examples for the same reason the sense reorder above uses three
+	// senses: two rows cannot distinguish a downward drag that lands second
+	// from one that lands last.
 	it('reorders examples via the list handler', async () => {
 		useDictionaryDraftStore.getState().startDraft(entry)
+		useDictionaryDraftStore.getState().addExample('1')
 		useDictionaryDraftStore.getState().addExample('1')
 		useDictionaryDraftStore.getState().addExample('1')
 		let idsBefore = useDictionaryDraftStore
@@ -265,6 +275,6 @@ describe('the dictionary sense screen', () => {
 		let idsAfter = useDictionaryDraftStore
 			.getState()
 			.draft?.senses[0].examples.map((example) => example.id)
-		expect(idsAfter).toEqual([idsBefore?.[1], idsBefore?.[0]])
+		expect(idsAfter).toEqual([idsBefore?.[1], idsBefore?.[0], idsBefore?.[2]])
 	})
 })
