@@ -209,12 +209,11 @@ struct CampusDictionaryScreen: Screen {
 	/// multi-line `TextField` -- lands the caret at the very start of its
 	/// existing text, not the end, so typed text is inserted before it, not
 	/// after. Reads the field's value back both before and after typing and
-	/// asserts they combine exactly as `text + before`, so a keystroke
-	/// XCUITest's synthesized typing drops -- or the field losing keyboard
-	/// focus outright mid-type, both seen while writing this suite -- fails
-	/// the test outright instead of quietly producing whatever string
-	/// happened to survive. See the callers' own comments for what this
-	/// traced back to.
+	/// asserts they combine exactly as `text + before`, so a dropped keystroke
+	/// or a field that lost keyboard focus mid-type fails the test outright
+	/// rather than quietly leaving whatever string survived. That read-back is
+	/// this suite's detector for the write race `SenseDefinitionField` guards
+	/// against; see the caller's comment for the length it takes to trip it.
 	@discardableResult
 	func editFirstDefinition(prepending text: String) -> Self {
 		let field = app.element(matching: TestIdentifiers.Dictionary.firstDefinitionField)

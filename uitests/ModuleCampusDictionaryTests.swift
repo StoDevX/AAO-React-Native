@@ -42,19 +42,15 @@ class ModuleCampusDictionaryTests: UITestCase {
 	/// Preview should refuse to open until the draft actually differs from
 	/// the entry as opened -- retyping nothing is not a suggestion.
 	///
-	/// `prepending` a short word ("new ") rather than a longer one: a longer
-	/// string typed into this field lost characters, or lost keyboard focus
-	/// outright partway through, while writing this suite -- `editFirstDefinition`'s
-	/// own read-back assertion is what caught it. The likely cause is
-	/// `SenseDefinitionField`'s cross-screen sync effect in `edit.tsx`, which
-	/// resets this field's native handle to `sense.definition` whenever they
-	/// disagree; its own comment assumes that never fires for a keystroke
-	/// typed into this same row, but the store update `onTextChange` triggers
-	/// is asynchronous, and a re-render landing mid-type can catch the native
-	/// handle ahead of a `sense.definition` that has not caught up yet. A
-	/// short burst is far less likely to straddle that window than a long
-	/// one; it is a mitigation, not a fix, and the underlying race is still
-	/// open.
+	/// `"indeed "` rather than a shorter word, here and in every other test
+	/// that types into this field: a burst this long used to arrive as
+	/// `indmake`, `indemake` or `indeedmake`, because `SenseDefinitionField`
+	/// reconciled its native handle against the store on every change and so
+	/// overwrote the field with a value one keystroke out of date. Seven
+	/// characters is what it took to straddle that window reliably, which
+	/// makes it the length worth keeping now the reconcile hangs off focus
+	/// instead -- `editFirstDefinition`'s read-back is what fails if it ever
+	/// comes back.
 	func testPreviewIsRefusedUntilSomethingChanges() throws {
 		CampusDictionaryScreen(app: app)
 			.navigate()
@@ -64,7 +60,7 @@ class ModuleCampusDictionaryTests: UITestCase {
 			.openEditor()
 			.verifyEditFormPushedIntoSheet()
 			.verifyPreviewDisabled()
-			.editFirstDefinition(prepending: "new ")
+			.editFirstDefinition(prepending: "indeed ")
 			.verifyPreviewEnabled()
 	}
 
@@ -82,13 +78,13 @@ class ModuleCampusDictionaryTests: UITestCase {
 			.verifyDefinitionSheetIsPresented()
 			.openEditor()
 			.verifyEditFormPushedIntoSheet()
-			.editFirstDefinition(prepending: "new ")
+			.editFirstDefinition(prepending: "indeed ")
 			.verifyPreviewEnabled()
 			.openPreview()
 			.verifyPreviewPresented()
 			.capture("Dictionary suggestion diff")
 			.verifyPreviewShows("something")
-			.verifyPreviewShows("new")
+			.verifyPreviewShows("indeed")
 			.verifyNoUnsupportedNestedModifierMarker()
 	}
 
@@ -126,7 +122,7 @@ class ModuleCampusDictionaryTests: UITestCase {
 			.verifyDefinitionSheetIsPresented()
 			.openEditor()
 			.verifyEditFormPushedIntoSheet()
-			.editFirstDefinition(prepending: "new ")
+			.editFirstDefinition(prepending: "indeed ")
 			.attemptToDragSheetClosed()
 			.verifyDiscardChangesAlertPresented()
 			.chooseToKeepEditing()

@@ -30,3 +30,31 @@ export const Stack = Object.assign(({children}: {children?: React.ReactNode}) =>
 		},
 	}),
 })
+
+/// Every focus effect currently mounted, with its last cleanup. `edit.tsx`
+/// reconciles a sense's field against the store on focus rather than on every
+/// change, so a test needs a way to say "the reader came back to this screen".
+const focusEffects = new Map<() => void | (() => void), (() => void) | void>()
+
+/// Stand-in for `expo-router`'s `useFocusEffect`. A screen under test is
+/// focused from the moment it renders, so the effect runs on mount, and again
+/// for each `simulateFocus()` -- there is no navigator here to fire a real
+/// focus event.
+export function useFocusEffect(effect: () => void | (() => void)): void {
+	React.useEffect(() => {
+		focusEffects.set(effect, effect())
+		return () => {
+			focusEffects.get(effect)?.()
+			focusEffects.delete(effect)
+		}
+	}, [effect])
+}
+
+/// Runs every mounted focus effect again, standing in for the reader
+/// returning to this screen from one pushed on top of it.
+export function simulateFocus(): void {
+	for (let [effect, cleanup] of focusEffects) {
+		cleanup?.()
+		focusEffects.set(effect, effect())
+	}
+}

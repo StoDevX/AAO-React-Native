@@ -8,7 +8,7 @@ import {
 	lineLimit,
 	textInputAutocapitalization,
 } from '@expo/ui/swift-ui/modifiers'
-import {Stack, useNavigation, useRouter} from 'expo-router'
+import {Stack, useFocusEffect, useNavigation, useRouter} from 'expo-router'
 import {usePreventRemove} from 'expo-router/react-navigation'
 import noop from 'lodash/noop'
 import {NoticeView} from '@frogpond/notice'
@@ -216,20 +216,37 @@ function SenseDefinitionField({
 }: SenseDefinitionFieldProps): React.ReactNode {
 	let text = useNativeState(sense.definition)
 
+	// Held in a ref so the reconcile below can read the current definition
+	// without taking it as a dependency -- a dependency would re-run the effect
+	// on every store write, which is exactly what must not happen here.
+	let definition = React.useRef(sense.definition)
+	React.useEffect(() => {
+		definition.current = sense.definition
+	}, [sense.definition])
+
 	/**
 	 * This screen stays mounted underneath `sense.tsx`, which edits the same
 	 * definition through its own field. `text`'s initial value was captured
 	 * once on mount, so a change made over there leaves this row showing
-	 * whatever it showed before the reader navigated away -- until the guard
-	 * below notices the store disagrees with the handle and pulls it back into
-	 * line. It only writes when they differ, so it never fights a keystroke
-	 * typed into *this* row, where store and handle already agree.
+	 * whatever it showed before the reader navigated away, until this pulls the
+	 * handle back into line.
+	 *
+	 * Keyed on focus, not on `sense.definition`: another screen can only have
+	 * changed the definition while it sat on top of this one, so regaining
+	 * focus is the single moment reconciling is needed -- and it is never while
+	 * the reader is typing here. Reconciling on every change would race their
+	 * own keystrokes, because `onTextChange`'s store write crosses the bridge:
+	 * a second keystroke landing before the first one's echo returns leaves the
+	 * handle ahead of the store, and `text.set` would overwrite the field with
+	 * the stale value, dropping the character.
 	 */
-	React.useEffect(() => {
-		if (text.get() !== sense.definition) {
-			text.set(sense.definition)
-		}
-	}, [sense.definition, text])
+	useFocusEffect(
+		React.useCallback(() => {
+			if (text.get() !== definition.current) {
+				text.set(definition.current)
+			}
+		}, [text]),
+	)
 
 	return (
 		<TextField

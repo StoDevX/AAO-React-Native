@@ -381,18 +381,43 @@ export function BottomSheet({
 	return isPresented ? <View>{children}</View> : null
 }
 
+type NativeStateHandle<T> = {
+	value: T
+	get: () => T
+	set: (value: T) => void
+	onChange: null
+}
+
 /// Mirrors the shape of the real `ObservableState<T>`: `value` is the
 /// property, `get()`/`set()` are the React-Compiler-safe accessors. The
 /// stand-in `TextField` reads its initial `.value` -- matching the real
 /// field's captured-once-on-mount handle -- and otherwise works off
 /// `onTextChange`, so this only needs to satisfy the call sites' shape, not
 /// reproduce the real `SharedObject` underneath it.
-export function useNativeState<T>(initial: T): {
-	value: T
-	get: () => T
-	set: (value: T) => void
-	onChange: null
-} {
-	let [value, setValue] = React.useState(initial)
-	return {value, get: () => value, set: setValue, onChange: null}
+///
+/// One handle per component, kept across renders rather than rebuilt on each
+/// one: the real hook returns a shared object held for the component's whole
+/// life, and a caller may depend on that identity -- `SenseDefinitionField`
+/// memoises its focus effect on it, and a fresh object every render would run
+/// that effect every render instead.
+export function useNativeState<T>(initial: T): NativeStateHandle<T> {
+	let [, rerender] = React.useReducer((count: number) => count + 1, 0)
+	let [handle] = React.useState<NativeStateHandle<T>>(() => {
+		// The value lives in this closure rather than in React state, so
+		// `get()` reads back what `set()` just wrote, as the real handle does.
+		// The re-render is what makes the stand-in `TextField` read it again.
+		let current = initial
+		return {
+			get value(): T {
+				return current
+			},
+			get: () => current,
+			set: (next: T) => {
+				current = next
+				rerender()
+			},
+			onChange: null,
+		}
+	})
+	return handle
 }

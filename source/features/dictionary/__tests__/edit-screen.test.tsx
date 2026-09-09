@@ -6,6 +6,7 @@ import SenseScreen from '../../../../app/(home)/Dictionary/entry/sense'
 import {normalizeEntry} from '../lib/entry'
 import {useDictionaryDraftStore} from '../store'
 import type * as ExpoRouterMock from '../../../testing/expo-router-mock'
+import {simulateFocus} from '../../../testing/expo-router-mock'
 
 jest.mock('@expo/ui/swift-ui', () => {
 	// oxlint-disable-next-line typescript/no-require-imports
@@ -23,9 +24,10 @@ const mockPush = jest.fn()
 
 jest.mock('expo-router', () => {
 	// oxlint-disable-next-line typescript/no-require-imports
-	let {Stack}: typeof ExpoRouterMock = require('../../../testing/expo-router-mock')
+	let {Stack, useFocusEffect}: typeof ExpoRouterMock = require('../../../testing/expo-router-mock')
 	return {
 		Stack,
+		useFocusEffect,
 		useRouter: () => ({push: mockPush}),
 		useNavigation: () => ({goBack: jest.fn()}),
 		useLocalSearchParams: () => ({senseId: '1'}),
@@ -108,7 +110,7 @@ describe('the dictionary edit screen', () => {
 	// pulling the row back into line, this row would keep showing whatever it
 	// showed before the reader left for the sense screen -- see
 	// `SenseDefinitionField` in `edit.tsx`.
-	it("keeps a sense's row in sync when its definition changes elsewhere", async () => {
+	it("picks up a sense's definition changed elsewhere when it comes back to the front", async () => {
 		useDictionaryDraftStore.getState().startDraft(entry)
 		await render(<EditScreen />)
 
@@ -120,8 +122,27 @@ describe('the dictionary edit screen', () => {
 		await act(() => {
 			useDictionaryDraftStore.getState().setSenseField('1', {definition: 'Foo'})
 		})
+		await act(() => simulateFocus())
 
 		expect(await screen.findByLabelText('Definition 1')).toHaveProperty('props.value', 'Foo')
+	})
+
+	// The other half of that sync, and the reason it hangs off focus rather
+	// than off `sense.definition`: a store write landing while this screen is
+	// the one in front belongs to a keystroke the reader just made here, and
+	// the field already holds it. Writing the store's value back over the
+	// field at that moment overwrites whatever arrived after the keystroke
+	// being echoed -- on device that dropped characters out of the middle of
+	// a typed word.
+	it("leaves a sense's row alone while this screen is the one in front", async () => {
+		useDictionaryDraftStore.getState().startDraft(entry)
+		await render(<EditScreen />)
+
+		await act(() => {
+			useDictionaryDraftStore.getState().setSenseField('1', {definition: 'Foo'})
+		})
+
+		expect(screen.getByLabelText('Definition 1')).toHaveProperty('props.value', 'The dining hall.')
 	})
 
 	it('adds a sense, and numbers the fields', async () => {
