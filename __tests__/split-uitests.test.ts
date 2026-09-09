@@ -110,6 +110,53 @@ describe('weigh', () => {
 			{name: 'ModuleBTests', weight: 1},
 		])
 	})
+
+	it('uses the true middle value for an odd number of known durations, not an average', () => {
+		const classes = [
+			{className: 'ModuleATests', methods: ['testOne']},
+			{className: 'ModuleBTests', methods: ['testTwo']},
+			{className: 'ModuleCTests', methods: ['testThree']},
+			{className: 'ModuleDTests', methods: ['testFour']},
+		]
+		// Known: 1, 5, 100. The true median is 5; an average would be ~35.3.
+		// testFour is new, so it takes the median.
+		expect(
+			weigh(classes, {
+				'ModuleATests/testOne()': 1,
+				'ModuleBTests/testTwo()': 5,
+				'ModuleCTests/testThree()': 100,
+			}),
+		).toEqual([
+			{name: 'ModuleATests', weight: 1},
+			{name: 'ModuleBTests', weight: 5},
+			{name: 'ModuleCTests', weight: 100},
+			{name: 'ModuleDTests', weight: 5},
+		])
+	})
+
+	it('sorts durations numerically, not lexicographically, when finding the median', () => {
+		const classes = [
+			{className: 'ModuleATests', methods: ['testOne']},
+			{className: 'ModuleBTests', methods: ['testTwo']},
+			{className: 'ModuleCTests', methods: ['testThree']},
+			{className: 'ModuleDTests', methods: ['testFour']},
+		]
+		// Known: 1, 9, 10. The numeric median is 9; a lexicographic sort orders
+		// "1", "10", "9" and would pick 10 instead. testFour is new, so it
+		// takes the median.
+		expect(
+			weigh(classes, {
+				'ModuleATests/testOne()': 1,
+				'ModuleBTests/testTwo()': 9,
+				'ModuleCTests/testThree()': 10,
+			}),
+		).toEqual([
+			{name: 'ModuleATests', weight: 1},
+			{name: 'ModuleBTests', weight: 9},
+			{name: 'ModuleCTests', weight: 10},
+			{name: 'ModuleDTests', weight: 9},
+		])
+	})
 })
 
 describe('formatMatrix', () => {

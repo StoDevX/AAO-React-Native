@@ -125,10 +125,20 @@ function main() {
 		process.exit(1)
 	}
 
+	// This table only tunes the balance of the shards; it must never be able to
+	// fail the job. A truncated or corrupt cache entry falls back to an empty
+	// table (equal weights) rather than throwing out of main().
 	const durationsPath = valueOf('--durations', null)
 	let durations = {}
 	if (durationsPath && fs.existsSync(durationsPath)) {
-		durations = JSON.parse(fs.readFileSync(durationsPath, 'utf8'))
+		try {
+			durations = JSON.parse(fs.readFileSync(durationsPath, 'utf8'))
+		} catch (error) {
+			console.error(
+				`Warning: could not read ${durationsPath}, packing with equal weights: ${error.message}`,
+			)
+			durations = {}
+		}
 	}
 
 	const classes = discoverTests(readTestDir(testDir))
