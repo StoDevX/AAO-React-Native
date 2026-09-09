@@ -29,8 +29,7 @@ export default function DictionaryEditPage(): React.ReactNode {
 
 	// The draft outlives this screen's push to a sense or the preview, and is
 	// dropped only when the form itself leaves the stack.
-	// oxlint-disable-next-line react/exhaustive-deps
-	React.useEffect(() => () => store.clearDraft(), [])
+	React.useEffect(() => () => useDictionaryDraftStore.getState().clearDraft(), [])
 
 	let changed = hasChanges(store)
 
