@@ -46,6 +46,18 @@ class UITestCase: XCTestCase {
 		app.launch()
 	}
 
+	/// Release the latch when the test that set it turns out to have passed.
+	///
+	/// `-retry-tests-on-failure` re-runs a failed test in this same process, so
+	/// a failure recorded on one attempt is not a failure of the run. Without
+	/// this, a rescued flake skips every test after it and the shard reports
+	/// green having run almost nothing.
+	override func tearDownWithError() throws {
+		if UITestCase.failedTest == name, testRun?.failureCount == 0 {
+			UITestCase.failedTest = nil
+		}
+	}
+
 	/// Terminate and relaunch the app with `--reset-state` to clear persisted
 	/// data (AsyncStorage, UserDefaults).
 	func relaunchWithFreshState() {
