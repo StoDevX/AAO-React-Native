@@ -519,7 +519,14 @@ jobs:
     # Master alone writes. A branch reads master's table through the planner's
     # restore-key; letting every branch save one would crowd the repository's
     # shared cache and evict what the shards restore with fail-on-cache-miss.
-    if: always() && github.ref == 'refs/heads/master'
+    #
+    # ios-uitest skips, rather than fails, when an upstream job (ios-build,
+    # ios-bundle, uitest-plan, ios-cache-check) fails on master, and job-level
+    # always() overrides GitHub's default of skipping a job whose need was
+    # itself skipped. An empty table saved under this run's fresh key would
+    # still outrank a good historical one on the planner's prefix restore, so
+    # this only runs once ios-uitest has actually run.
+    if: always() && github.ref == 'refs/heads/master' && needs.ios-uitest.result != 'skipped'
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
@@ -533,13 +540,21 @@ jobs:
       # Later shards win on a duplicate key, which is fine: a test appears in
       # exactly one shard, so there are no duplicates to arbitrate.
       - name: Merge them into one table
+        id: merge
         run: |
           find durations -name uitest-durations.json -print0 \
             | xargs -0 cat \
             | jq -s 'add // {}' > uitest-durations.json
-          echo "$(jq 'length' uitest-durations.json) tests timed"
+          count=$(jq 'length' uitest-durations.json)
+          echo "$count tests timed"
+          echo "count=$count" >> "$GITHUB_OUTPUT"
 
+      # A run that timed nothing -- every shard skipped, or ran but recorded
+      # no durations -- would still save under this run's fresh key and
+      # outrank a good table on the planner's prefix restore. Skip the save
+      # rather than let an empty table win.
       - name: Save the table for later runs
+        if: steps.merge.outputs.count != '0'
         uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: uitest-durations.json
