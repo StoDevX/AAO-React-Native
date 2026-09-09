@@ -207,6 +207,22 @@ describe('the real suite', () => {
 		expect(placed.sort()).toEqual(classes.map((c) => c.className).sort())
 	})
 
+	it('places every method in exactly one shard', () => {
+		const classes = discoverTests(realTestFiles())
+		const items = weighMethods(classes, {})
+		const placed = packShards(items, 3)
+			.flat()
+			.map((i) => i.name)
+
+		const expected = classes.flatMap((c) => c.methods.map((method) => `${c.className}/${method}`))
+
+		// Length first: two equal sets built from arrays of different length
+		// would still pass a set-only comparison, hiding a dropped method that
+		// was balanced out by a duplicated one.
+		expect(placed).toHaveLength(expected.length)
+		expect(new Set(placed)).toEqual(new Set(expected))
+	})
+
 	it('finds the UITest classes and nothing else', () => {
 		const found = discoverTests(realTestFiles()).map((c) => c.className)
 
