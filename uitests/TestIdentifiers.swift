@@ -89,6 +89,20 @@ struct TestIdentifiers {
 		/// `--uitesting`, for comparing this sheet against a screenshot of
 		/// Apple's.
 		static let referenceEntry = "change"
+
+		static let editForm = "dictionary-edit-form"
+		static let senseForm = "dictionary-sense-form"
+		static let previewSheet = "dictionary-preview-sheet"
+		static let preview = "Preview"
+		static let submitReport = "Submit Report"
+		static let reorder = "Reorder"
+		static let addSense = "Add Sense"
+		static let definitionField = "Definition 1"
+		/// The marker `@expo/ui` splices into a sentence under DEBUG when a
+		/// modifier is not in its nested-`Text` whitelist. Our patch adds
+		/// strikethrough and underline to that list; if a version bump ever drops
+		/// the patch, this string appears in the preview instead of the markup.
+		static let unsupportedNestedModifier = "not supported for nested Text"
 	}
 
 	// MARK: - Carleton Map

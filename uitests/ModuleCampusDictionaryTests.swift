@@ -25,12 +25,88 @@ class ModuleCampusDictionaryTests: UITestCase {
 			.verifyEntrySheetIsGone()
 	}
 
-	/// Suggest an Edit pushes `/Dictionary/entry/edit`, which does not exist
-	/// until Task 4 adds it -- Task 8 deletes this test once its replacement
-	/// lands. Skipped rather than left red so a reader of CI does not mistake
-	/// the gap for a fresh regression.
-	func testTheEditorOpensOverTheDefinition() throws {
-		throw XCTSkip("Task 4 has not added /Dictionary/entry/edit yet")
+	/// Suggest an Edit pushes the edit form into the entry sheet's own stack,
+	/// rather than presenting some other way -- its own Back button is what
+	/// proves that.
+	func testTheFormPushesIntoTheEntrySheet() throws {
+		CampusDictionaryScreen(app: app)
+			.navigate()
+			.search(for: TestIdentifiers.Dictionary.referenceEntry)
+			.openWord(TestIdentifiers.Dictionary.referenceEntry)
+			.verifyDefinitionSheetIsPresented()
+			.openEditor()
+			.verifyEditFormPushedIntoSheet()
+			.capture("Dictionary edit form")
+	}
+
+	/// Preview should refuse to open until the draft actually differs from
+	/// the entry as opened -- retyping nothing is not a suggestion.
+	func testPreviewIsRefusedUntilSomethingChanges() throws {
+		CampusDictionaryScreen(app: app)
+			.navigate()
+			.search(for: TestIdentifiers.Dictionary.referenceEntry)
+			.openWord(TestIdentifiers.Dictionary.referenceEntry)
+			.verifyDefinitionSheetIsPresented()
+			.openEditor()
+			.verifyEditFormPushedIntoSheet()
+			.verifyPreviewDisabled()
+			.editFirstDefinition(appending: " indeed")
+			.verifyPreviewEnabled()
+	}
+
+	/// The whole point of the flow: an edit previews as a marked-up diff, with
+	/// every word `@expo/ui`'s `Text` would otherwise have silently dropped
+	/// still on screen, and no DEBUG marker standing in for markup our patch
+	/// should have supported.
+	func testAnEditIsPreviewedAsAMarkedUpDiff() throws {
+		CampusDictionaryScreen(app: app)
+			.navigate()
+			.search(for: TestIdentifiers.Dictionary.referenceEntry)
+			.openWord(TestIdentifiers.Dictionary.referenceEntry)
+			.verifyDefinitionSheetIsPresented()
+			.openEditor()
+			.verifyEditFormPushedIntoSheet()
+			.editFirstDefinition(appending: " indeed")
+			.verifyPreviewEnabled()
+			.openPreview()
+			.verifyPreviewPresented()
+			.capture("Dictionary suggestion diff")
+			.verifyNoUnsupportedNestedModifierMarker()
+	}
+
+	/// A second sense is what makes reordering meaningful -- the toggle should
+	/// stay hidden for a single-sense entry and appear once there are two.
+	func testASecondSenseOffersReordering() throws {
+		CampusDictionaryScreen(app: app)
+			.navigate()
+			.search(for: TestIdentifiers.Dictionary.referenceEntry)
+			.openWord(TestIdentifiers.Dictionary.referenceEntry)
+			.verifyDefinitionSheetIsPresented()
+			.openEditor()
+			.verifyEditFormPushedIntoSheet()
+			.addSense()
+			.verifyReorderToggleVisible()
+			.capture("Dictionary edit form with two senses")
+			.toggleReorderMode()
+			.verifyReorderHandlesAppear(senseCount: 2)
+	}
+
+	/// `usePreventRemove` should catch a sheet drag-down mid-edit the same way
+	/// it catches the form's own Back button -- nothing in Jest exercises this
+	/// gesture at all.
+	func testDraggingTheSheetAwayMidEditIsRefused() throws {
+		CampusDictionaryScreen(app: app)
+			.navigate()
+			.search(for: TestIdentifiers.Dictionary.referenceEntry)
+			.openWord(TestIdentifiers.Dictionary.referenceEntry)
+			.verifyDefinitionSheetIsPresented()
+			.openEditor()
+			.verifyEditFormPushedIntoSheet()
+			.editFirstDefinition(appending: " indeed")
+			.attemptToDragSheetClosed()
+			.verifyDiscardChangesAlertPresented()
+			.chooseToKeepEditing()
+			.verifyEditFormPushedIntoSheet()
 	}
 
 	/// Rolvaag is the one entry carrying phonetics, so it is the only place
