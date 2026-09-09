@@ -117,6 +117,45 @@ class ModuleCampusDictionaryTests: UITestCase {
 			.verifyReorderHandlesAppear(senseCount: 2)
 	}
 
+	/// The drag itself, and where it leaves the sense.
+	/// `testASecondSenseOffersReordering` proves only that handles are drawn;
+	/// until this test nothing anywhere performed a reorder and looked at the
+	/// result, which is how a handler that put every downward drag one place
+	/// too far survived to review.
+	///
+	/// Three senses, because two cannot tell a correct reorder from one that
+	/// overshoots: drag the first of two rows down and it lands last either
+	/// way. With three, dropping the first row onto the second must leave it
+	/// second -- a handler reading SwiftUI's destination as a plain array
+	/// index puts it last instead.
+	func testDraggingASenseLandsItWhereItWasDropped() throws {
+		let second = "a second meaning"
+		let third = "a third meaning"
+
+		CampusDictionaryScreen(app: app)
+			.navigate()
+			.search(for: TestIdentifiers.Dictionary.referenceEntry)
+			.openWord(TestIdentifiers.Dictionary.referenceEntry)
+			.verifyDefinitionSheetIsPresented()
+			.openEditor()
+			.verifyEditFormPushedIntoSheet()
+			.addSense()
+			.fillDefinition(2, with: second)
+			.addSense(expectingDefinition: 3)
+			.fillDefinition(3, with: third)
+			.toggleReorderMode()
+			.verifyReorderHandlesAppear(senseCount: 3)
+			.dragSenseDownOneRow(from: 0)
+			// Back out of reorder mode before reading: an active `editMode`
+			// makes row content inert, and the fields are what carry the text.
+			.toggleReorderMode()
+			.verifyDefinitionOrder([
+				second,
+				TestIdentifiers.Dictionary.referenceEntryFirstDefinition,
+				third,
+			])
+	}
+
 	/// `usePreventRemove` should catch a sheet drag-down mid-edit the same way
 	/// it catches the form's own Back button -- nothing in Jest exercises this
 	/// gesture at all.
@@ -162,7 +201,7 @@ class ModuleCampusDictionaryTests: UITestCase {
 			.openEditor()
 			.verifyEditFormPushedIntoSheet()
 			.addSense()
-			.fillSecondDefinition(with: newSenseDefinition)
+			.fillDefinition(2, with: newSenseDefinition)
 			.verifyPreviewEnabled()
 			.openPreview()
 			.verifyPreviewPresented()

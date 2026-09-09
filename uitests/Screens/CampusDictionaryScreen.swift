@@ -33,6 +33,16 @@ struct CampusDictionaryScreen: Screen {
 		app.navigationBars.buttons[TestIdentifiers.Dictionary.reorder]
 	}
 
+	/// The drag handles SwiftUI draws inside the form once `editMode` goes
+	/// active. Scoped to the form itself, not `app` at large -- an unscoped
+	/// query for a "Reorder"-labelled element also matches the toolbar's own
+	/// toggle, which sits in the navigation bar rather than in the List, and
+	/// would answer for it whether or not the List drew a single handle.
+	private var reorderHandles: XCUIElementQuery {
+		editForm.descendants(matching: .any).matching(
+			NSPredicate(format: "label CONTAINS[c] %@", "Reorder"))
+	}
+
 	private var discardChangesAlert: XCUIElement {
 		app.alerts["Discard changes?"]
 	}
@@ -257,26 +267,27 @@ struct CampusDictionaryScreen: Screen {
 		return self
 	}
 
-	/// Types into the second sense's definition field, the one `addSense()`
-	/// produces -- unlike `editFirstDefinition`, that field starts empty, so
-	/// there is no existing text to combine with: the field's value after
-	/// typing is asserted to equal exactly what was typed.
+	/// Types into a definition field `addSense()` produced -- unlike
+	/// `editFirstDefinition`, those fields start empty, so there is no
+	/// existing text to combine with: the field's value after typing is
+	/// asserted to equal exactly what was typed.
 	@discardableResult
-	func fillSecondDefinition(with text: String) -> Self {
-		let field = app.element(matching: TestIdentifiers.Dictionary.secondDefinitionField)
+	func fillDefinition(_ position: Int, with text: String) -> Self {
+		let field = app.element(matching: TestIdentifiers.Dictionary.definitionField(position))
 		XCTAssertTrue(
-			field.waitForExistence(timeout: 15), "the second definition field never appeared")
+			field.waitForExistence(timeout: 15),
+			"definition field \(position) never appeared")
 
 		field.tap()
 		XCTAssertTrue(
 			app.keyboards.firstMatch.waitForExistence(timeout: 10),
-			"tapping the second definition field should raise the keyboard")
+			"tapping definition field \(position) should raise the keyboard")
 
 		field.typeText(text)
 
 		XCTAssertEqual(
 			field.value as? String, text,
-			"the second definition field should read back exactly what was typed")
+			"definition field \(position) should read back exactly what was typed")
 		return self
 	}
 
@@ -423,19 +434,19 @@ struct CampusDictionaryScreen: Screen {
 	/// -hittable button before its action has reached JavaScript, and be lost
 	/// entirely.
 	@discardableResult
-	func addSense() -> Self {
+	func addSense(expectingDefinition position: Int = 2) -> Self {
 		let button = app.buttons[TestIdentifiers.Dictionary.addSense]
 		scrollUntilExists(button)
 		XCTAssertTrue(button.waitForExistence(timeout: 15), "the edit form should offer Add Sense")
 
-		let secondDefinition = app.element(matching: TestIdentifiers.Dictionary.secondDefinitionField)
+		let newDefinition = app.element(matching: TestIdentifiers.Dictionary.definitionField(position))
 		for _ in 1...3 {
 			button.tap()
-			if secondDefinition.waitForExistence(timeout: 5) {
+			if newDefinition.waitForExistence(timeout: 5) {
 				return self
 			}
 		}
-		XCTFail("tapping Add Sense never produced a second sense")
+		XCTFail("tapping Add Sense never produced definition field \(position)")
 		return self
 	}
 
@@ -454,8 +465,7 @@ struct CampusDictionaryScreen: Screen {
 	/// direction) would fail this rather than pass unnoticed.
 	@discardableResult
 	func verifyNoReorderHandlesYet() -> Self {
-		let handles = editForm.descendants(matching: .any).matching(
-			NSPredicate(format: "label CONTAINS[c] %@", "Reorder"))
+		let handles = reorderHandles
 		XCTAssertEqual(
 			handles.count, 0,
 			"no drag handle should exist before Reorder is toggled on -- found \(handles.count)")
@@ -468,6 +478,58 @@ struct CampusDictionaryScreen: Screen {
 			reorderButton.waitForExistence(timeout: 15),
 			"Reorder should exist before it can be toggled")
 		reorderButton.tap()
+		return self
+	}
+
+	/// Drags one sense's handle down onto the row below it, and lets go.
+	///
+	/// SwiftUI reports the drop as a destination counted against the list as
+	/// it stood *before* the row was lifted out, so dropping the first row
+	/// onto the second arrives as `2` even though the sense lands second.
+	/// Nothing but a real drag exercises that: `onMove` never fires under
+	/// Jest, and a mocked call there is only ever the number the test chose
+	/// to pass.
+	///
+	/// Slow, with a hold at each end: a reorder drag has to press long enough
+	/// for the List to pick the row up, and a flick released the moment it
+	/// arrives is dropped back where it started.
+	@discardableResult
+	func dragSenseDownOneRow(from position: Int) -> Self {
+		let source = reorderHandles.element(boundBy: position)
+		let target = reorderHandles.element(boundBy: position + 1)
+		XCTAssertTrue(
+			source.waitForExistence(timeout: 15),
+			"the form should draw a drag handle for sense \(position + 1)")
+		XCTAssertTrue(
+			target.waitForExistence(timeout: 15),
+			"the form should draw a drag handle for sense \(position + 2)")
+
+		source.press(
+			forDuration: 0.8, thenDragTo: target, withVelocity: .slow, thenHoldForDuration: 1.0)
+		return self
+	}
+
+	/// Reads each sense's definition back off the form, in form order.
+	///
+	/// The fields are labelled by position, so which field holds which text
+	/// is precisely what a reorder changes -- and reading them back is the
+	/// only way to see on screen where a drag actually put a sense.
+	@discardableResult
+	func verifyDefinitionOrder(_ expected: [String]) -> Self {
+		capture("Dictionary edit form after a reorder drag")
+
+		var actual: [String] = []
+		for position in 1...expected.count {
+			let field = app.element(matching: TestIdentifiers.Dictionary.definitionField(position))
+			XCTAssertTrue(
+				field.waitForExistence(timeout: 15),
+				"the form should still show definition field \(position)")
+			actual.append((field.value as? String) ?? "")
+		}
+
+		XCTAssertEqual(
+			actual, expected,
+			"the senses should read in the order the drag left them")
 		return self
 	}
 
@@ -489,16 +551,11 @@ struct CampusDictionaryScreen: Screen {
 		treeDump.lifetime = .keepAlways
 		XCTContext.runActivity(named: "Reorder mode accessibility tree") { $0.add(treeDump) }
 
-		// Scoped to the form itself, not `app` at large -- an unscoped query
-		// for a "Reorder"-labelled button also matches the toolbar's own
-		// toggle, which sits in the navigation bar rather than in the List,
-		// and would pass this assertion whether or not the List drew a single
-		// drag handle. Asserting an exact count, not merely `> 0`, closes the
-		// same loophole a second way: a query that happened to still catch the
-		// toolbar button alongside zero real handles would read as "greater
-		// than zero" too.
-		let handles = editForm.descendants(matching: .any).matching(
-			NSPredicate(format: "label CONTAINS[c] %@", "Reorder"))
+		// Asserting an exact count, not merely `> 0`, closes the loophole
+		// `reorderHandles` scopes away a second time: a query that happened to
+		// still catch the toolbar's own toggle alongside zero real handles
+		// would read as "greater than zero" too.
+		let handles = reorderHandles
 		XCTAssertEqual(
 			handles.count, expectedCount,
 			"toggling Reorder should draw one drag handle per sense inside the form itself (the "

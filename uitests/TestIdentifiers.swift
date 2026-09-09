@@ -95,11 +95,20 @@ struct TestIdentifiers {
 		static let preview = "Preview"
 		static let reorder = "Reorder"
 		static let addSense = "Add Sense"
-		static let firstDefinitionField = "Definition 1"
+		/// Each sense's definition field carries its position in the form, so
+		/// which field holds which text is exactly what a reorder changes --
+		/// and the only place on screen a drag's result can be read.
+		static func definitionField(_ position: Int) -> String { "Definition \(position)" }
+		static let firstDefinitionField = definitionField(1)
 		/// The field `addSense()` produces -- always empty when it first
 		/// appears, unlike `firstDefinitionField`, which the reference entry
 		/// seeds with real text.
-		static let secondDefinitionField = "Definition 2"
+		static let secondDefinitionField = definitionField(2)
+		/// The reference entry's own first definition, so a reorder test can
+		/// say where that sense ended up. Matches `REFERENCE_ENTRY` in
+		/// `source/features/dictionary/lib/reference-entry.ts`.
+		static let referenceEntryFirstDefinition =
+			"make (someone or something) different; alter or modify"
 		/// The marker `@expo/ui` splices into a sentence under DEBUG when a
 		/// modifier is not in its nested-`Text` whitelist. Our patch adds
 		/// strikethrough and underline to that list; if a version bump ever drops
