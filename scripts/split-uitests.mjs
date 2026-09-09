@@ -33,6 +33,40 @@ export function discoverTests(files) {
 	return classes
 }
 
+/** The middle value, or 0 for an empty list. */
+function median(numbers) {
+	if (numbers.length === 0) {
+		return 0
+	}
+
+	const sorted = [...numbers].sort((a, b) => a - b)
+	const middle = Math.floor(sorted.length / 2)
+	return sorted.length % 2 === 0 ? (sorted[middle - 1] + sorted[middle]) / 2 : sorted[middle]
+}
+
+/**
+ * Weigh each class by how long its tests take.
+ *
+ * A test the table has never seen weighs the median of the ones it has, so a
+ * newly added test does not read as free. With no table at all every test
+ * weighs one, which is how the shards were packed before durations existed.
+ * @param {Array<{className: string, methods: string[]}>} classes
+ * @param {Record<string, number>} durations
+ * @returns {Array<{name: string, weight: number}>}
+ */
+export function weigh(classes, durations) {
+	const known = Object.values(durations)
+	const fallback = known.length === 0 ? 1 : median(known)
+
+	return classes.map((testClass) => ({
+		name: testClass.className,
+		weight: testClass.methods.reduce(
+			(total, method) => total + (durations[`${testClass.className}/${method}()`] ?? fallback),
+			0,
+		),
+	}))
+}
+
 /**
  * Distribute items across shards, heaviest first into the lightest shard.
  *
@@ -91,23 +125,32 @@ function main() {
 		process.exit(1)
 	}
 
+	const durationsPath = valueOf('--durations', null)
+	let durations = {}
+	if (durationsPath && fs.existsSync(durationsPath)) {
+		durations = JSON.parse(fs.readFileSync(durationsPath, 'utf8'))
+	}
+
 	const classes = discoverTests(readTestDir(testDir))
 	if (classes.length === 0) {
 		console.error(`Error: no test classes found in ${testDir}`)
 		process.exit(1)
 	}
 
-	const items = classes.map((c) => ({name: c.className, weight: c.methods.length}))
+	const items = weigh(classes, durations)
 	const shards = packShards(items, shardCount)
 
 	const total = items.reduce((n, i) => n + i.weight, 0)
 	console.error(
-		`Found ${classes.length} test classes with ${total} tests, ` +
+		`Found ${classes.length} test classes weighing ${total.toFixed(0)} units, ` +
 			`splitting across ${shards.length} shards`,
 	)
 	for (const [index, shard] of shards.entries()) {
 		const weight = shard.reduce((n, i) => n + i.weight, 0)
-		console.error(`  Shard ${index + 1} (${weight} tests): ${shard.map((i) => i.name).join(', ')}`)
+		console.error(
+			`  Shard ${index + 1} (${weight.toFixed(0)} units): ` +
+				`${shard.map((i) => i.name).join(', ')}`,
+		)
 	}
 
 	console.log(JSON.stringify(formatMatrix(shards, target)))

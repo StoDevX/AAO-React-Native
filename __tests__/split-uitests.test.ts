@@ -1,6 +1,6 @@
 import {readdirSync, readFileSync} from 'node:fs'
 import {join} from 'node:path'
-import {discoverTests, packShards, formatMatrix} from '../scripts/split-uitests.mjs'
+import {discoverTests, packShards, formatMatrix, weigh} from '../scripts/split-uitests.mjs'
 
 function swiftFile(name: string, text: string): {name: string; text: string} {
 	return {name, text}
@@ -69,6 +69,46 @@ describe('packShards', () => {
 
 	it('never returns more shards than items', () => {
 		expect(packShards([{name: 'a', weight: 1}], 3)).toHaveLength(1)
+	})
+})
+
+const CLASSES = [
+	{className: 'ModuleATests', methods: ['testOne', 'testTwo']},
+	{className: 'ModuleBTests', methods: ['testThree']},
+]
+
+describe('weigh', () => {
+	it('weighs a class by the seconds its tests took', () => {
+		expect(
+			weigh(CLASSES, {
+				'ModuleATests/testOne()': 10,
+				'ModuleATests/testTwo()': 20,
+				'ModuleBTests/testThree()': 5,
+			}),
+		).toEqual([
+			{name: 'ModuleATests', weight: 30},
+			{name: 'ModuleBTests', weight: 5},
+		])
+	})
+
+	it('gives a test with no recorded time the median of the ones that have', () => {
+		// Known: 10 and 20, median 15. testTwo is new, so it weighs 15.
+		expect(
+			weigh(CLASSES, {
+				'ModuleATests/testOne()': 10,
+				'ModuleBTests/testThree()': 20,
+			}),
+		).toEqual([
+			{name: 'ModuleATests', weight: 25},
+			{name: 'ModuleBTests', weight: 20},
+		])
+	})
+
+	it('falls back to one unit per test when nothing is known', () => {
+		expect(weigh(CLASSES, {})).toEqual([
+			{name: 'ModuleATests', weight: 2},
+			{name: 'ModuleBTests', weight: 1},
+		])
 	})
 })
 

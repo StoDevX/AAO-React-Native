@@ -320,10 +320,20 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
+      # A miss is not a failure: the planner falls back to one unit per test,
+      # which is how it packed before durations existed.
+      - name: Restore the UITest duration table
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: uitest-durations.json
+          key: uitest-durations/e=${{ env.cache_epoch }}/ref=master/
+          restore-keys: |
+            uitest-durations/e=${{ env.cache_epoch }}/ref=master/
+
       - name: Split tests across shards
         id: split
         run: |
-          echo "matrix=$(node scripts/split-uitests.mjs --test-dir uitests --shards 3)" >> "$GITHUB_OUTPUT"
+          echo "matrix=$(node scripts/split-uitests.mjs --test-dir uitests --shards 3 --durations uitest-durations.json)" >> "$GITHUB_OUTPUT"
 
   ios-uitest:
     name: Native UITest for iOS (${{ matrix.shard }})
