@@ -62,6 +62,12 @@ class ModuleCampusDictionaryTests: UITestCase {
 			.verifyPreviewDisabled()
 			.editFirstDefinition(prepending: "indeed ")
 			.verifyPreviewEnabled()
+			// The form once an edit has landed. Its footer is the one place the
+			// second wording is drawn, and it sits under the keyboard until the
+			// form is scrolled -- so revealing it is what makes the capture show
+			// the state this test just put the draft into.
+			.revealInForm("Ready to preview")
+			.capture("Dictionary edit form with a change made")
 	}
 
 	/// The whole point of the flow: an edit previews as a marked-up diff, with

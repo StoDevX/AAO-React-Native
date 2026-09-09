@@ -100,6 +100,13 @@ describe('the dictionary edit screen', () => {
 		await fireEvent.changeText(screen.getByLabelText('Definition 1'), 'The caf.')
 
 		expect(screen.getByLabelText('Preview').props.accessibilityState.disabled).toBe(false)
+
+		// The footer stays mounted either way, so only its wording says which
+		// state the draft is in -- assert both halves, or a footer stuck on
+		// "No changes yet" reads as untouched next to an enabled Preview.
+		expect(screen.queryByText('No changes yet')).toBeNull()
+		expect(screen.getByText('Ready to preview')).toBeTruthy()
+
 		await fireEvent.press(screen.getByLabelText('Preview'))
 		expect(mockPush).toHaveBeenCalledWith('/Dictionary/entry/preview')
 	})

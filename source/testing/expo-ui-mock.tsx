@@ -403,9 +403,19 @@ type NativeStateHandle<T> = {
 export function useNativeState<T>(initial: T): NativeStateHandle<T> {
 	let [, rerender] = React.useReducer((count: number) => count + 1, 0)
 	let [handle] = React.useState<NativeStateHandle<T>>(() => {
-		// The value lives in this closure rather than in React state, so
-		// `get()` reads back what `set()` just wrote, as the real handle does.
-		// The re-render is what makes the stand-in `TextField` read it again.
+		// The value lives in this closure rather than in React state, so a
+		// `set()` here is readable immediately. The real handle promises that
+		// only for a write from a UI worklet; a write from the JS thread is
+		// scheduled onto the UI thread and is not readable until it lands.
+		// Reproducing that lag would mean an async boundary Jest has no way to
+		// wait on, so this stand-in resolves it synchronously -- a test that
+		// turns on the timing of a JS-thread write is asking a question this
+		// mock cannot answer, and belongs in a UI test.
+		//
+		// `set()` also re-renders, which the real one does not: native state
+		// drives the SwiftUI view directly, whereas the stand-in `TextField` is
+		// an ordinary React component and only reads `.value` when React draws
+		// it again.
 		let current = initial
 		return {
 			get value(): T {

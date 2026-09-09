@@ -149,11 +149,17 @@ export default function DictionaryEditPage(): React.ReactNode {
 					    also makes row content inert, so the fields stop taking taps
 					    while the reorder handles are up -- which is why the toolbar
 					    toggles between the two rather than showing both. */}
-					{/* The footer stays mounted and only its wording changes. Swapping
-					    it in and out on the first edit rebuilds this Section natively,
-					    and keystrokes already in flight are dropped when it does --
-					    typing "indeed " into a definition arrived as "ind". */}
-					<Section footer={<Text>{changed ? '' : 'No changes yet'}</Text>} title="Senses">
+					{/* The footer says whether there is a suggestion to preview yet, and
+					    stays mounted to say it: swapping a footer in and out on the first
+					    edit rebuilds this Section natively, and keystrokes already in
+					    flight are dropped when it does -- typing "indeed " into a
+					    definition arrived as "ind". Both states carry wording for the
+					    same reason: an empty footer is still a view, of a height nobody
+					    has looked at. */}
+					<Section
+						footer={<Text>{changed ? 'Ready to preview' : 'No changes yet'}</Text>}
+						title="Senses"
+					>
 						<List.ForEach
 							onDelete={(indices) =>
 								indices.forEach((index) => store.deleteSense(draft.senses[index].id))

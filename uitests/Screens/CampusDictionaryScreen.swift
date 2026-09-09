@@ -238,6 +238,25 @@ struct CampusDictionaryScreen: Screen {
 		return self
 	}
 
+	/// Scrolls the edit form until `text` is on screen and unobstructed.
+	/// After typing, the keyboard covers the bottom of the form -- including
+	/// the Senses section's footer, the last thing in it -- so a capture taken
+	/// where `editFirstDefinition` leaves off shows neither the footer nor the
+	/// wording it carries. Swiping the form both dismisses the keyboard and
+	/// scrolls, which is what lets one loop do both jobs.
+	@discardableResult
+	func revealInForm(_ text: String) -> Self {
+		let label = app.staticTexts[text]
+		for _ in 1...8 {
+			if label.exists && label.isHittable {
+				return self
+			}
+			app.swipeUp()
+		}
+		XCTFail("scrolling the form never revealed \"\(text)\"")
+		return self
+	}
+
 	/// Types into the second sense's definition field, the one `addSense()`
 	/// produces -- unlike `editFirstDefinition`, that field starts empty, so
 	/// there is no existing text to combine with: the field's value after
