@@ -210,6 +210,15 @@ run = "node scripts/validate-single-copy.mjs"
 description = "Check that pnpm-lock.yaml matches the package.json files"
 run = "pnpm install --frozen-lockfile --lockfile-only --trust-lockfile"
 
+# CI keys its toolchain cache on mise.lock alone, so a lock that has drifted
+# from mise.toml would otherwise restore a cache that satisfies neither. The
+# dry run resolves every tool against the lock without installing anything:
+# it exits 1 for a tool the lock does not name, or a version it names
+# differently, and 0 when they agree -- whether or not the tools are present.
+[tasks."validate-mise-lock"]
+description = "Check that mise.lock matches mise.toml"
+run = "mise install --locked --dry-run"
+
 [tasks."compress-data"]
 description = "Compress data files"
 run = "gzip --keep docs/*.json"
@@ -245,5 +254,6 @@ depends = [
 	"test",
 	"validate-deps",
 	"validate-lockfile",
+	"validate-mise-lock",
 	"validate-single-copy",
 ]

@@ -25,6 +25,18 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: jdx/mise-action@c2a87611a18de5b3828c5652fe268e992400cb5c # v4.3.0
+        # Keyed on mise.lock alone. mise.toml also carries every task definition,
+        # so editing a script invalidated a toolchain cache that had not changed --
+        # three versions of this file across one stack of pull requests meant three
+        # copies of the same tools. The lock pins the versions and per-platform
+        # checksums, which is what `mise install` actually reads.
+        #
+        # A lock that disagrees with mise.toml still fails the job rather than
+        # passing on a stale cache: mise-action installs with `--locked` whenever a
+        # lock file is present, and that refuses any tool or version the lock does
+        # not name. The install runs on every job, cache hit or not.
+        with:
+          cache_key: mise-v2-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('mise.lock') }}
       - run: pnpm install --frozen-lockfile
       - run: mise run bundle-data
       - run: hk check
@@ -35,6 +47,8 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: jdx/mise-action@c2a87611a18de5b3828c5652fe268e992400cb5c # v4.3.0
+        with:
+          cache_key: mise-v2-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('mise.lock') }}
       - run: pnpm install --frozen-lockfile
       - run: mise run format:check
 
@@ -44,6 +58,8 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: jdx/mise-action@c2a87611a18de5b3828c5652fe268e992400cb5c # v4.3.0
+        with:
+          cache_key: mise-v2-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('mise.lock') }}
       - run: pnpm install --frozen-lockfile
       - run: mise run bundle-data
       - run: mise run lint
@@ -54,6 +70,8 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: jdx/mise-action@c2a87611a18de5b3828c5652fe268e992400cb5c # v4.3.0
+        with:
+          cache_key: mise-v2-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('mise.lock') }}
       - run: pnpm install --frozen-lockfile
       - name: Run tests
         run: mise run test -- --coverage
@@ -66,6 +84,8 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: jdx/mise-action@c2a87611a18de5b3828c5652fe268e992400cb5c # v4.3.0
+        with:
+          cache_key: mise-v2-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('mise.lock') }}
       - run: pnpm install --frozen-lockfile
       - run: mise run bundle-data
       - run: mise run tsc
@@ -76,7 +96,14 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: jdx/mise-action@c2a87611a18de5b3828c5652fe268e992400cb5c # v4.3.0
+        with:
+          cache_key: mise-v2-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('mise.lock') }}
       - run: pnpm install --frozen-lockfile
+      # The toolchain cache is keyed on mise.lock, so a lock that has drifted
+      # from mise.toml would restore a cache satisfying neither. Checked here
+      # rather than left to the install: every job would fail on it, but this
+      # one says which invariant broke.
+      - run: mise run validate-mise-lock
       - run: mise run validate-data
       # A module that imports a @frogpond package without declaring it still
       # resolves, via the root node_modules hoist, until it doesn't.
@@ -118,6 +145,8 @@ jobs:
             jsbundle/e=${{ env.cache_epoch }}/host=ubuntu@24.04/target=ios/ref=master/hash=${{ hashFiles('mise.toml', 'package.json', 'pnpm-lock.yaml', 'pnpm-workspace.yaml', 'tsconfig.json', 'babel.config.js', 'index.js', 'data/**', 'images/**', 'modules/**/*.ts', 'modules/**/*.tsx', 'source/**/*.ts', 'source/**/*.tsx', 'app/**/*.ts', 'app/**/*.tsx') }}
 
       - uses: jdx/mise-action@c2a87611a18de5b3828c5652fe268e992400cb5c # v4.3.0
+        with:
+          cache_key: mise-v2-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('mise.lock') }}
         if: steps.jsbundle-cache.outputs.cache-matched-key == ''
 
       - name: Install pnpm dependencies
@@ -203,6 +232,8 @@ jobs:
         run: sudo xcode-select -s /Applications/${{ env.xcode_version }}.app
 
       - uses: jdx/mise-action@c2a87611a18de5b3828c5652fe268e992400cb5c # v4.3.0
+        with:
+          cache_key: mise-v2-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('mise.lock') }}
 
       - name: Install pnpm dependencies
         run: pnpm install --frozen-lockfile
