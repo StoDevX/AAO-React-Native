@@ -472,6 +472,21 @@ jobs:
         if: always()
         run: node scripts/report-flaky-uitests.mjs uitest-results.xcresult
 
+      # `if: always()` so a shard that went red still contributes the timings of
+      # the tests that did run before it stopped.
+      - name: Record test durations
+        if: always()
+        run: node scripts/collect-uitest-durations.mjs uitest-results.xcresult uitest-durations.json
+
+      - name: Upload test durations
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        if: always()
+        with:
+          name: uitest-durations-${{ matrix.shard }}
+          path: uitest-durations.json
+          if-no-files-found: ignore
+          retention-days: 1
+
       - name: Extract failure attachments
         if: failure() || steps.flaky.outputs.flaky == 'true'
         run: |
