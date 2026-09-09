@@ -80,6 +80,7 @@ class ModuleBuildingHoursTests: UITestCase {
 			.tapReportAction()
 			.verifyReportScreenPresented()
 			.verifyReportPushedIntoSheet()
+			.verifySubmitReportReachable()
 			.capture("Building Hours report screen")
 			// Dismissing back to the detail sheet, rather than straight to the
 			// list, is what proves the report pushed into the sheet's own

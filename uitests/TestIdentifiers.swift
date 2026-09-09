@@ -368,6 +368,8 @@ struct TestIdentifiers {
 		/// can tell the screen actually came up rather than the menu item merely
 		/// existing.
 		static let reportScreenPrompt = "Thanks for spotting a problem!"
+		/// The report screen's own submit control, in the navigation bar.
+		static let submitReportAction = "Submit Report"
 	}
 
 	// MARK: - Course Catalog

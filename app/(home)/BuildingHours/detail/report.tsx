@@ -9,7 +9,7 @@ import noop from 'lodash/noop'
 import {timezone} from '@frogpond/constants'
 import {InfoHeader} from '@frogpond/info-header'
 import {TableView, Section, Cell} from '@frogpond/tableview'
-import {CellTextField, CellToggle, DeleteButtonCell, ButtonCell} from '@frogpond/tableview/cells'
+import {CellTextField, CellToggle, DeleteButtonCell} from '@frogpond/tableview/cells'
 
 import {buildingByNameOptions} from '../../../../source/features/building-hours/query'
 import type {
@@ -116,6 +116,18 @@ let BuildingHoursProblemReportView = ({initialBuilding}: Props): React.ReactNode
 
 	return (
 		<ScrollView contentInsetAdjustmentBehavior="automatic">
+			{/* In the header rather than at the foot of the form: this screen
+			 * exists to send the report, and every schedule a venue has pushes a
+			 * cell at the bottom further down a sheet that shows about half a
+			 * screen. Here it is reachable at any detent, whatever the venue. */}
+			<Stack.Toolbar placement="right">
+				<Stack.Toolbar.Button
+					accessibilityLabel="Submit Report"
+					icon="paperplane.fill"
+					onPress={submit}
+				/>
+			</Stack.Toolbar>
+
 			<InfoHeader
 				message="If you could change what is incorrect and share it with us we&rsquo;d greatly appreciate it."
 				title="Thanks for spotting a problem!"
@@ -145,10 +157,6 @@ let BuildingHoursProblemReportView = ({initialBuilding}: Props): React.ReactNode
 						onPress={() => dispatch({type: 'ADD_SCHEDULE'})}
 						title="Add New Schedule"
 					/>
-				</Section>
-
-				<Section footer="Thanks for reporting!">
-					<ButtonCell accessoryIcon="paperplane.fill" onPress={submit} title="Submit Report" />
 				</Section>
 			</TableView>
 		</ScrollView>

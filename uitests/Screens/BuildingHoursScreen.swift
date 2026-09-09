@@ -247,6 +247,28 @@ struct BuildingHoursScreen: Screen {
 		return self
 	}
 
+	/// Assert the report screen's submit control is on screen and can be tapped
+	/// the moment the screen appears.
+	///
+	/// `isHittable`, not `exists`: the control used to be the last cell of a
+	/// form whose length grows with every schedule a venue has, inside a sheet
+	/// that shows about half a screen -- so it existed in the hierarchy while
+	/// being off-screen for the venues that need it most. Sending the report
+	/// itself hands off to the system mail composer, which is outside the app
+	/// and outside what this can assert; that it can be reached at all is the
+	/// part that broke.
+	@discardableResult
+	func verifySubmitReportReachable() -> Self {
+		let submit = app.navigationBars.buttons[TestIdentifiers.BuildingHours.submitReportAction]
+		XCTAssertTrue(
+			submit.waitForExistence(timeout: 30),
+			"The report screen should offer Submit Report")
+		XCTAssertTrue(
+			submit.isHittable,
+			"Submit Report should be reachable without scrolling the form")
+		return self
+	}
+
 	/// Assert the report screen pushed into the sheet's own stack rather than
 	/// presenting as a modal over it. Queried by the back button's own label
 	/// rather than `element(boundBy: 0)` -- the list's nav bar is still in the
