@@ -22,6 +22,17 @@ describe('uitestsNeeded', () => {
 		expect(uitestsNeeded(['pnpm-lock.yaml'])).toBe(true)
 	})
 
+	it('runs for a data/ file despite its extension', () => {
+		// data/ is compiled into docs/ by `mise run bundle-data`, and the app
+		// imports the result -- app/(settings)/Privacy.tsx renders
+		// docs/privacy.json, compiled from this exact file.
+		expect(uitestsNeeded(['data/privacy.md'])).toBe(true)
+	})
+
+	it('skips a data/_schemas/ file, which only the validation scripts read', () => {
+		expect(uitestsNeeded(['data/_schemas/faq.json'])).toBe(false)
+	})
+
 	it('runs when a native dependency pin changed', () => {
 		// Package.resolved is ios_scripts/'s SwiftPM equivalent of
 		// pnpm-lock.yaml, and ios.yml diffs it against a fresh resolve to

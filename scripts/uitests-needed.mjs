@@ -38,7 +38,6 @@ const INERT = [
 	/^renovate\.json$/u,
 	/^jest\.config\.js$/u,
 	/^scripts\/jest-setup\.js$/u,
-	/^data\/_schemas\//u,
 ]
 
 /**
@@ -46,6 +45,17 @@ const INERT = [
  */
 function isInertWorkflow(file) {
 	return file.startsWith('.github/') && file !== '.github/workflows/ios.yml'
+}
+
+/**
+ * `mise run bundle-data` compiles data/ into docs/, and the app imports that
+ * output directly -- e.g. app/(settings)/Privacy.tsx renders docs/privacy.json,
+ * compiled from data/privacy.md. So no pattern keyed on extension (`.md$`,
+ * among others) may call a file under data/ inert. data/_schemas/ is the one
+ * exception: only the validation scripts read it, never the app.
+ */
+function isInertData(file) {
+	return file.startsWith('data/_schemas/')
 }
 
 /**
@@ -60,8 +70,10 @@ export function uitestsNeeded(changedFiles) {
 		return true
 	}
 
-	return !changedFiles.every(
-		(file) => isInertWorkflow(file) || INERT.some((pattern) => pattern.test(file)),
+	return !changedFiles.every((file) =>
+		file.startsWith('data/')
+			? isInertData(file)
+			: isInertWorkflow(file) || INERT.some((pattern) => pattern.test(file)),
 	)
 }
 
