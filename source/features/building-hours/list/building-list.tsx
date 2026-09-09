@@ -20,6 +20,10 @@ type Props = {
 	onReport: (building: BuildingType) => void
 	onRefresh?: () => unknown
 	isLoading?: boolean
+	/** The active search query, or `''` when no search is in progress. Distinguishes
+	 * a search with no matches from the genuine no-data case, which need different
+	 * wording. */
+	searchQuery: string
 }
 
 export const BuildingList = React.memo(function BuildingList({
@@ -30,8 +34,13 @@ export const BuildingList = React.memo(function BuildingList({
 	onReport,
 	onRefresh,
 	isLoading,
+	searchQuery,
 }: Props): React.ReactNode {
 	let isEmpty = sections.every((s) => s.data.length === 0)
+	// Trimmed to match `filterBuildings`, which treats a blank query as no
+	// query at all. Without it, spaces typed over an empty list would claim
+	// they were what filtered it.
+	let activeQuery = searchQuery.trim()
 
 	return (
 		<Host style={styles.host}>
@@ -49,7 +58,9 @@ export const BuildingList = React.memo(function BuildingList({
 			>
 				{isEmpty && !isLoading ? (
 					<Text modifiers={[foregroundStyle(c.secondaryLabel), padding({vertical: 16})]}>
-						No building hours available.
+						{activeQuery
+							? `No results found for "${activeQuery}".`
+							: 'No building hours available.'}
 					</Text>
 				) : (
 					sections
