@@ -26,14 +26,14 @@ SKIP_BUNDLING=true CODE_SIGNING_DISABLED=true xcodebuild build-for-testing \
 xcrun simctl list devices available | grep iPhone   # pick a UDID
 xcrun simctl boot $UDID; xcrun simctl bootstatus $UDID -b
 
-# 3. Serve the JavaScript on 8081. The port is NOT negotiable here — see
-#    "Metro's port is baked in" below. In a lone worktree, this is enough.
-npx expo start --port 8081 &
-until curl -sf http://localhost:8081/status | grep -q running; do sleep 1; done
+# 3. Serve the JavaScript. Any free port; 8091 here because another checkout
+#    may own 8081 — see "Sharing a machine with other checkouts" below.
+npx expo start --port 8091 &
+until curl -sf http://localhost:8091/status | grep -q running; do sleep 1; done
 
 # 4. Run one test, or a suite, or the lot.
 rm -rf /tmp/results.xcresult
-xcodebuild test-without-building \
+TEST_RUNNER_AAO_JS_LOCATION=localhost:8091 xcodebuild test-without-building \
   -xctestrun $(find ios/build/Build/Products -name '*.xctestrun' -print -quit) \
   -destination "platform=iOS Simulator,id=<UDID>" \
   -only-testing:AllAboutOlafUITests/ModuleDirectoryTests/testSomething \
@@ -44,34 +44,33 @@ Pipe step 4 through `grep -E "^Test Case|error:|XCTAssert|Executed|\*\*"`.
 Unfiltered xcodebuild output is thousands of lines, most of it exported build
 settings, and it will bury the one assertion message you ran the test for.
 
-## Metro's port is baked in — embed the bundle instead
+## Sharing a machine with other checkouts
 
-**A UITest build always fetches JS from `localhost:8081`, and you cannot talk it
-out of that at run time.** `RCT_METRO_PORT` is a *compile-time* macro defaulting
-to 8081 (`node_modules/react-native/React/Base/RCTDefines.h:112`), and
-`ios/Podfile.properties.json` sets `EXPO_USE_PRECOMPILED_MODULES`, so
-`RCTBundleURLProvider` arrives precompiled — passing the macro to `xcodebuild`
-recompiles nothing. `UITestCase.setUp` also launches with `--reset-state`, and
-`AppDelegate` answers that by wiping the persistent defaults domain, taking any
-`RCT_jsLocation` override with it.
+A Debug build with no bundle inside asks `localhost:8081` for its JavaScript,
+and takes whatever answers. With parallel worktrees, that is whichever checkout
+started Metro first: the build succeeds, the tests run, and none of the JS is
+yours. Two ways out, and both are proven rather than assumed.
 
-So with parallel worktrees, the run-on-simulator advice to take your own port
-does **not** carry over: your tests will silently load whichever checkout owns
-8081. The build succeeds, the tests run, the screenshots look plausible, and
-none of it is your code.
+**Tell the app where your Metro is.** `-RCT_jsLocation host:port` is a launch
+argument React Native reads through `NSUserDefaults` before it guesses 8081
+(`RCTBundleURLProvider.mm`, `jsLocation`). `UITestCase` appends it whenever the
+test runner is started with `TEST_RUNNER_AAO_JS_LOCATION=host:port`, which is
+what step 4 does. It survives `--reset-state`: that flag removes the
+persistent defaults domain, and launch arguments live in the argument domain,
+which it does not touch. Verified on the simulator by reading the app's
+network log: every launch fetched `http://localhost:8091/index.bundle` and
+never asked 8081. It is not compiled in -- `RCT_METRO_PORT` is only the
+default the guess falls back to.
 
-The fix is to stop using Metro. `AppDelegate.bundleURL()` prefers an embedded
-bundle even in DEBUG, precisely so UITest runs can pin their JS:
+If the flag names a Metro that is not answering, the app falls back to guessing
+8081 again, so the `until` loop in step 3 is not optional. Neither is a clean
+cache after a `pnpm install` that purged `node_modules`: a Metro started before
+the purge serves "Unable to resolve" for every module until restarted with
+`--clear`.
 
-```swift
-#if DEBUG
-  if let bundled = Bundle.main.url(forResource: "main", withExtension: "jsbundle") {
-    return bundled
-  }
-  return RCTBundleURLProvider.sharedSettings().jsBundleURL(forBundleRoot: "index")
-```
-
-Between step 1 and step 4, put this worktree's JS inside the `.app`:
+**Or embed the bundle and use no Metro at all.** `AppDelegate.bundleURL()`
+prefers a `main.jsbundle` inside the `.app` even in DEBUG, which is how CI
+runs. Between step 1 and step 4:
 
 ```bash
 mise run bundle:ios     # writes ios/AllAboutOlaf/main.jsbundle from THIS checkout
@@ -82,22 +81,14 @@ rm -rf "$APP/assets" && cp -R ios/assets "$APP/"
 ls "$APP/main.jsbundle"   # confirm before trusting any run
 ```
 
-(`mise run embed-jsbundle:ios` does this for `Debug-iphoneos`; the simulator
-needs the `Debug-iphonesimulator` path above.) Then skip step 3 entirely — no
-Metro, no port, and the JS provably came from this checkout. It is also what CI
-does, so a local pass and a CI pass mean the same thing.
+Then skip step 3. The cost: `bundle:ios` is a production-mode bundle, so no dev
+menu, redboxes become plain crashes, and every JS edit needs a re-bundle and
+re-copy rather than a re-run. Take this route when a run must match CI
+exactly; take the flag when you are iterating.
 
-Two consequences:
-
-- `bundle:ios` runs `expo export:embed --dev false`, so it is a production-mode
-  bundle: no dev menu, no fast refresh, redboxes become plain crashes.
-- **JS edits stop hot-reloading.** The red-green loop below still works, but each
-  iteration needs a re-bundle and re-copy, not just a re-run. Nothing is talking
-  to Metro any more, so a Metro reload changes nothing.
-
-Symptom that you skipped this: the UI hierarchy in the `.xcresult` shows a
-screen you do not recognise — an older layout, or elements your identifiers do
-not match. Dump the hierarchy before assuming your selectors are wrong.
+Symptom that neither happened: the UI hierarchy in the `.xcresult` shows a
+screen you do not recognise -- an older layout, or elements your identifiers
+do not match. Dump the hierarchy before assuming your selectors are wrong.
 
 ## Pin the destination
 

@@ -53,8 +53,11 @@ earlier one will match both.
 **A `Stack.SearchBar` is `app.searchFields.firstMatch`**, wherever the screen
 puts it — the bottom-toolbar placement most screens use here is reached the same
 way as a header one. `searchField.value as? String` returns the placeholder, not
-`nil`, when the field is empty. The SwiftUI `TextField` on the Carleton map is
-the exception: that one is `app.textFields[...]`.
+`nil`, when the field is empty. The Carleton map's field is a `UISearchBar`
+inside an `@expo/ui` sheet, so it is `app.searchFields[...]` too. Its cancel
+button carries no identifier and, on iOS 26, the label `Close` — which the
+building card's own dismiss button also has — so query it inside the bar rather
+than across the whole screen.
 
 **Retry a dropped tap; do not lengthen the timeout.** A row is hittable as soon
 as its host mounts, but its action has to reach JavaScript — a tap synthesized

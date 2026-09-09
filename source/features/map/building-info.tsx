@@ -27,6 +27,12 @@ import {buildingPhotoUrl} from './urls'
 /// Matches the glyph Apple uses to close a sheet.
 const CLOSE_GLYPH_SIZE = 26
 
+/// The card's own dismiss button. The search bar's Cancel carries the same
+/// "Close" accessibility label, so a screen-wide query for that label could
+/// answer for either; this testID scopes a test to the card alone. Matches
+/// `TestIdentifiers.CarletonMap.cardCloseButton` in `TestIdentifiers.swift`.
+const CARD_CLOSE_BUTTON_ID = 'card-close-button'
+
 type Props = {
 	building: Feature<Building> | undefined
 	onClose: () => void
@@ -40,7 +46,11 @@ export function BuildingInfo({building, onClose}: Props): React.ReactNode {
 			<List>
 				<Section>
 					<Text>Building not found.</Text>
-					<Button modifiers={[accessibilityLabel('Close'), buttonStyle('plain')]} onPress={onClose}>
+					<Button
+						modifiers={[accessibilityLabel('Close'), buttonStyle('plain')]}
+						onPress={onClose}
+						testID={CARD_CLOSE_BUTTON_ID}
+					>
 						{/* The filled xmark Apple's sheets close with now, rather than a
 						    text button. */}
 						<Image
@@ -87,7 +97,11 @@ export function BuildingInfo({building, onClose}: Props): React.ReactNode {
 						) : null}
 					</VStack>
 					<Spacer />
-					<Button modifiers={[accessibilityLabel('Close'), buttonStyle('plain')]} onPress={onClose}>
+					<Button
+						modifiers={[accessibilityLabel('Close'), buttonStyle('plain')]}
+						onPress={onClose}
+						testID={CARD_CLOSE_BUTTON_ID}
+					>
 						{/* The filled xmark Apple's sheets close with now, rather than a
 						    text button. */}
 						<Image

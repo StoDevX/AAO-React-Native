@@ -100,10 +100,30 @@ struct TestIdentifiers {
 	// it is the shared map screen's own identifiers, not Carleton-specific ones.
 
 	enum CarletonMap {
-		/// The sheet's search field. Its placeholder is its accessibility label,
-		/// which is what a SwiftUI TextField reports when it has no other.
+		/// The sheet's search field. The bar's testID is its placeholder, and
+		/// UIKit puts the identifier on the text field, so this is a
+		/// `searchFields` query.
 		static let search = "Search for a place"
-		static let close = "Close"
+		/// The map view itself. MapLibre publishes one element for the whole map --
+		/// labelled "Map", valued with the zoom -- and nothing per building, so
+		/// this is the only handle a test has on where the map is on screen.
+		static let map = "Map"
+		/// UIKit's own dismiss button on the search bar, found by label. iOS 26
+		/// draws it as a circular glyph beside the field and labels it "Close".
+		static let cancel = "Close"
+		/// The building card's own dismiss button, a `testID` rather than a
+		/// label -- it shares the "Close" label with the search bar's Cancel
+		/// (`cancel`, above), and the picker is still mounted while the card's
+		/// query runs, so a label-only query could answer for either. Matches
+		/// `CARD_CLOSE_BUTTON_ID` in `source/features/map/building-info.tsx`.
+		static let cardCloseButton = "card-close-button"
+		/// MapLibre's attribution button, found by the label it gives itself. It
+		/// carries the OpenStreetMap credit, so it has to stay reachable.
+		static let attribution = "About this map"
+		/// UIKit's own drag indicator on the presented sheet, found by label --
+		/// it carries no identifier. Its element is the sheet's child, which is
+		/// how the sheet's own box is found.
+		static let sheetGrabber = "Sheet Grabber"
 		/// A building near the top of the alphabetical list, so the expanded
 		/// sheet shows it without scrolling.
 		static let aBuilding = "Allen House"
@@ -111,6 +131,12 @@ struct TestIdentifiers {
 		/// -- absent from Carleton's map data, so selecting it is what would
 		/// fail if the map's campus parameter were ignored.
 		static let aStolafBuilding = "Buntrock Commons"
+		/// A second building, high enough in the list to be on screen even with
+		/// the keyboard up, and not a match for `aBuilding` under the picker's
+		/// subsequence search -- so typing that query has to drop it. Carleton can
+		/// rename either of these; a failure here is worth checking against the
+		/// list before it is blamed on the filter.
+		static let anotherBuilding = "216 College Street"
 	}
 
 	// MARK: - SIS
