@@ -8,7 +8,9 @@ export type Run = {text: string; mark: Mark}
 export type DiffStatus = 'same' | 'changed' | 'added' | 'removed'
 
 /// Words, each carrying the whitespace that follows it, so joining the runs
-/// back together reproduces the original string.
+/// back together reproduces the string except for whitespace before the
+/// first word -- dictionary text never leads with a space, so that gap never
+/// comes up in practice.
 function tokenize(text: string): string[] {
 	return text.match(/\S+\s*/gu) ?? []
 }
@@ -91,6 +93,13 @@ export type DiffedExample = {status: DiffStatus; movedFrom?: number; runs: Run[]
  * `number` is the position a reader will see it at, and is absent for a sense
  * that was removed — a removed sense keeping its old number would put two of
  * the same number on screen a line apart.
+ *
+ * `status` never reflects motion by itself: a sense (or an example, or a
+ * subsense) that only moved keeps `status: 'same'` and carries the move in
+ * `movedFrom` instead. That means a sense whose subsenses were only
+ * reordered is itself still `'same'` too, even though something under it
+ * changed position — do not read `'same'` as "nothing happened here or
+ * below."
  */
 export type DiffedSense = {
 	status: DiffStatus
@@ -111,19 +120,92 @@ export type DiffedEntry = {
 
 const allSame = (runs: Run[]): boolean => runs.every((run) => run.mark === 'same')
 
-/// Every run marked one way, for a sense that arrived whole or left whole. An
-/// empty field stays an empty array under every mark, so "never had one" and
-/// "arrived/left empty" both read the same way a filled field would if it had
-/// been cleared out entirely by the edit.
+/// Every run marked one way, for a field that arrived or left with content.
+/// Empty text stays `[]` under any mark: that is the "never had one" case. A
+/// field that held text and was cleared goes through diffWords instead, so
+/// clearing shows up as non-empty `removed` runs, not as this empty array —
+/// that distinction is what a reader needs to tell "no grammar" from
+/// "grammar was removed."
 const wholly = (text: string, mark: Mark): Run[] => (text ? [{text, mark}] : [])
+
+/// Ranks, within each list, of only the ids the two lists share. Comparing
+/// these ranks — rather than raw index — tells whether an item actually
+/// moved relative to its still-present neighbours, as opposed to merely
+/// shifting because something else was added or removed above it.
+function survivorRanks<T extends {id: string}>(
+	before: T[],
+	after: T[],
+): {rankBefore: Map<string, number>; rankAfter: Map<string, number>} {
+	let beforeIds = new Set(before.map((item) => item.id))
+	let afterIds = new Set(after.map((item) => item.id))
+
+	let rank = (list: T[], keep: (id: string) => boolean): Map<string, number> => {
+		let ranks = new Map<string, number>()
+		let next = 0
+		for (let item of list) {
+			if (keep(item.id)) {
+				ranks.set(item.id, next++)
+			}
+		}
+		return ranks
+	}
+
+	return {
+		rankBefore: rank(before, (id) => afterIds.has(id)),
+		rankAfter: rank(after, (id) => beforeIds.has(id)),
+	}
+}
+
+/**
+ * Splices removed items back into the kept/added list: each removed item
+ * renders right after whichever item preceded it in the original list (or
+ * first, if nothing did), so a run of several removals keeps its original
+ * order.
+ *
+ * This is a heuristic, not the one true ordering. When a removal combines
+ * with a reorder, the item that preceded it can itself have moved, so a
+ * removed item follows its predecessor to its new spot rather than staying
+ * between its two original neighbours. That reads right when the successor
+ * also stayed put, but can wedge a removed *last* item between a moved
+ * predecessor and whatever now follows it, instead of leaving it at the end
+ * — see the "wedges a deleted last sense" test in diff.test.ts. No ordering
+ * this produces is incoherent to a reader; this is simply the trade-off this
+ * implementation picked.
+ */
+function spliceRemovals<Before extends {id: string}, Kept>(
+	before: Before[],
+	after: Before[],
+	kept: Kept[],
+	toRemoved: (item: Before) => Kept,
+): Kept[] {
+	let merged = [...kept]
+	let mergedIds = after.map((item) => item.id)
+	let insertAfter = -1
+
+	for (let item of before) {
+		let survivorIndex = mergedIds.indexOf(item.id)
+		if (survivorIndex !== -1) {
+			insertAfter = survivorIndex
+			continue
+		}
+
+		let at = insertAfter + 1
+		merged.splice(at, 0, toRemoved(item))
+		mergedIds.splice(at, 0, item.id)
+		insertAfter = at
+	}
+
+	return merged
+}
 
 function diffExamples(
 	before: DraftSense['examples'],
 	after: DraftSense['examples'],
 ): DiffedExample[] {
 	let byId = new Map(before.map((example, index) => [example.id, {example, index}]))
+	let {rankBefore, rankAfter} = survivorRanks(before, after)
 
-	let kept = after.map((example, position): DiffedExample => {
+	let kept = after.map((example): DiffedExample => {
 		let previous = byId.get(example.id)
 		if (!previous) {
 			return {status: 'added', runs: wholly(example.text, 'added')}
@@ -131,24 +213,27 @@ function diffExamples(
 
 		let runs = diffWords(previous.example.text, example.text)
 		let changed = !allSame(runs)
+		let moved = rankBefore.get(example.id) !== rankAfter.get(example.id)
 
 		return {
 			status: changed ? 'changed' : 'same',
 			// Only when the text held still. If it changed too, the word-level
 			// marks already say so and a caption is noise.
-			...(!changed && previous.index !== position ? {movedFrom: previous.index + 1} : {}),
+			...(!changed && moved ? {movedFrom: previous.index + 1} : {}),
 			runs,
 		}
 	})
 
-	let removed = before
-		.filter((example) => !after.some((e) => e.id === example.id))
-		.map((example): DiffedExample => ({status: 'removed', runs: wholly(example.text, 'removed')}))
-
-	return [...kept, ...removed]
+	return spliceRemovals(before, after, kept, (example) => ({
+		status: 'removed',
+		runs: wholly(example.text, 'removed'),
+	}))
 }
 
-/// A sense the reader never touched, drawn as it stands.
+/// A sense the reader never touched, drawn as it stands. An added sense is
+/// numbered at every depth, the same as any other added sense would be —
+/// Task 6 renders a numbered outline regardless of depth. A removed sense
+/// stays unnumbered at every depth: see `DiffedSense`'s docstring for why.
 function unchangedSense(sense: DraftSense, mark: Mark): DiffedSense {
 	return {
 		status: mark === 'added' ? 'added' : 'removed',
@@ -158,22 +243,16 @@ function unchangedSense(sense: DraftSense, mark: Mark): DiffedSense {
 			status: mark === 'added' ? 'added' : 'removed',
 			runs: wholly(example.text, mark),
 		})),
-		subsenses: sense.subsenses.map((subsense) => unchangedSense(subsense, mark)),
+		subsenses: sense.subsenses.map((subsense, index) => ({
+			...unchangedSense(subsense, mark),
+			...(mark === 'added' ? {number: index + 1} : {}),
+		})),
 	}
 }
 
-/**
- * Merges two sense lists into the order a diff reads in: the new order, with
- * each removed sense spliced back beside the neighbour it actually had.
- *
- * Walking `before` left to right and tracking where the last-seen sense (kept
- * or already-spliced-back) ended up in `merged` handles a run of several
- * deletions in their original relative order, and — unlike re-indexing a
- * removed sense against its raw original position — still lands it next to
- * its true neighbour once that neighbour has itself moved.
- */
 function diffSenses(before: DraftSense[], after: DraftSense[]): DiffedSense[] {
 	let byId = new Map(before.map((sense, index) => [sense.id, {sense, index}]))
+	let {rankBefore, rankAfter} = survivorRanks(before, after)
 
 	let kept = after.map((sense, position): DiffedSense => {
 		let previous = byId.get(sense.id)
@@ -192,10 +271,12 @@ function diffSenses(before: DraftSense[], after: DraftSense[]): DiffedSense[] {
 			examples.some((e) => e.status !== 'same') ||
 			subsenses.some((s) => s.status !== 'same')
 
+		let moved = rankBefore.get(sense.id) !== rankAfter.get(sense.id)
+
 		return {
 			status: changed ? 'changed' : 'same',
 			number: position + 1,
-			...(previous.index !== position ? {movedFrom: previous.index + 1} : {}),
+			...(moved ? {movedFrom: previous.index + 1} : {}),
 			grammar,
 			definition,
 			examples,
@@ -203,24 +284,7 @@ function diffSenses(before: DraftSense[], after: DraftSense[]): DiffedSense[] {
 		}
 	})
 
-	let merged = [...kept]
-	let mergedIds = after.map((sense) => sense.id)
-	let insertAfter = -1
-
-	for (let sense of before) {
-		let survivorIndex = mergedIds.indexOf(sense.id)
-		if (survivorIndex !== -1) {
-			insertAfter = survivorIndex
-			continue
-		}
-
-		let at = insertAfter + 1
-		merged.splice(at, 0, unchangedSense(sense, 'removed'))
-		mergedIds.splice(at, 0, sense.id)
-		insertAfter = at
-	}
-
-	return merged
+	return spliceRemovals(before, after, kept, (sense) => unchangedSense(sense, 'removed'))
 }
 
 /**
