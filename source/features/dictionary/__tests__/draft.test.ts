@@ -75,6 +75,64 @@ describe('normalizeDraft', () => {
 		})
 	})
 
+	// The form holds every optional field, so a field the reader never opened
+	// still passes through here on its way to the email. A sense's citations and
+	// its sub-senses are the ones with nowhere else to be checked: `diffEntry`
+	// covers them, so a dropped one would preview as sent and arrive missing.
+	it('carries a rich sense whole, structure and all', () => {
+		let entry = normalizeEntry({
+			word: 'change',
+			pronunciation: 'tʃeɪndʒ',
+			partOfSpeech: 'verb',
+			senses: [
+				{
+					grammar: 'with object',
+					definition: 'alter or modify.',
+					examples: ['change gears', 'change your mind'],
+					subsenses: [{definition: 'become different.', examples: ['the light changed']}],
+				},
+			],
+		})
+
+		expect(normalizeDraft(startDraft(entry))).toEqual({
+			word: 'change',
+			pronunciation: 'tʃeɪndʒ',
+			partOfSpeech: 'verb',
+			senses: [
+				{
+					grammar: 'with object',
+					definition: 'alter or modify.',
+					examples: ['change gears', 'change your mind'],
+					subsenses: [{definition: 'become different.', examples: ['the light changed']}],
+				},
+			],
+		})
+	})
+
+	it('carries a citation added through the sense screen', () => {
+		let draft = startDraft(normalizeEntry({word: 'Caf', definition: 'The dining hall.'}))
+		let added = addExample(draft, '1')
+		draft = setExampleText(added, '1', added.senses[0].examples[0].id, ' meet me at the caf ')
+
+		// A citation is structure, so the lone sense no longer collapses back to
+		// a bare `definition:`.
+		expect(normalizeDraft(draft)).toEqual({
+			word: 'Caf',
+			senses: [{definition: 'The dining hall.', examples: ['meet me at the caf']}],
+		})
+	})
+
+	it('carries a sub-sense added through the sense screen', () => {
+		let draft = startDraft(normalizeEntry({word: 'Caf', definition: 'The dining hall.'}))
+		let added = addSubsense(draft, '1')
+		draft = setSenseField(added, added.senses[0].subsenses[0].id, {definition: ' The Cage. '})
+
+		expect(normalizeDraft(draft)).toEqual({
+			word: 'Caf',
+			senses: [{definition: 'The dining hall.', subsenses: [{definition: 'The Cage.'}]}],
+		})
+	})
+
 	it('trims every field and drops the ones left empty', () => {
 		let draft = startDraft(normalizeEntry({word: ' Caf ', definition: ' The hall. '}))
 		draft = {...draft, pronunciation: '   ', partOfSpeech: ' noun '}
@@ -84,6 +142,7 @@ describe('normalizeDraft', () => {
 			partOfSpeech: 'noun',
 			definition: 'The hall.',
 		})
+		expect(normalizeDraft({...draft, pronunciation: ' kaf '})).toMatchObject({pronunciation: 'kaf'})
 	})
 
 	it('drops a sense whose definition is blank', () => {
