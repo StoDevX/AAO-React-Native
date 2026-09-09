@@ -122,10 +122,10 @@ function SenseRow({
  */
 export function EntryDefinition({entry}: Props): React.ReactNode {
 	return (
-		// The sheet hands its content a Group holding both this view and the
-		// editor sheet's anchor, so this one does not fill the sheet on its
-		// own. The sheet's own chrome is a translucent material, which shows
-		// through as a grey band anywhere the content does not reach.
+		// FILL_WIDTH is the usual SwiftUI trick for a view with no "fill the
+		// available space" constant of its own: the route's Host wraps this in
+		// `flex: 1`, and this frame is what lets the ScrollView actually grow
+		// into that space rather than shrinking to its content.
 		<ScrollView modifiers={[frame({maxWidth: FILL_WIDTH, maxHeight: FILL_WIDTH})]}>
 			<VStack
 				alignment="leading"

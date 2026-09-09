@@ -77,11 +77,8 @@ struct TestIdentifiers {
 	enum Dictionary {
 		static let list = "dictionary-list"
 		static let definitionSheet = "dictionary-definition-sheet"
-		static let editorSheet = "dictionary-editor-sheet"
 		static let actionsMenu = "More actions"
 		static let suggestAnEdit = "Suggest an Edit"
-		static let close = "Close"
-		static let wordField = "Word"
 		/// The one entry carrying phonetics, and a Norwegian name whose
 		/// diacritic an ASCII query has to get past to find it.
 		static let phoneticEntry = "Rølvaag"
