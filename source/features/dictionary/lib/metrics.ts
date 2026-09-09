@@ -1,3 +1,6 @@
+// How the read-only entry sheet is laid out. Constants the edit forms turn
+// on live in `../constants.ts` instead.
+
 /// Measured off a screenshot of the iOS dictionary sheet, in points: the
 /// system sets its entries with a wide margin, a headword a little larger than
 /// `title`, and senses stepped in again from the headword.
