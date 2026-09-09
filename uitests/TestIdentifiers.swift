@@ -61,7 +61,6 @@ struct TestIdentifiers {
 		static let sis = "SIS"
 		static let campus = "Campus"
 		static let dictionary = "Dictionary"
-		static let campusMap = "Campus Map"
 		static let carletonCampus = "Carleton Campus"
 		static let courseCatalog = "Course Catalog"
 		static let directory = "Directory"
@@ -96,6 +95,9 @@ struct TestIdentifiers {
 	}
 
 	// MARK: - Carleton Map
+	//
+	// `/Map` now serves both campuses; this enum keeps its original name since
+	// it is the shared map screen's own identifiers, not Carleton-specific ones.
 
 	enum CarletonMap {
 		/// The sheet's search field. Its placeholder is its accessibility label,
@@ -105,6 +107,10 @@ struct TestIdentifiers {
 		/// A building near the top of the alphabetical list, so the expanded
 		/// sheet shows it without scrolling.
 		static let aBuilding = "Allen House"
+		/// A St. Olaf-only building, also near the top of the alphabetical list
+		/// -- absent from Carleton's map data, so selecting it is what would
+		/// fail if the map's campus parameter were ignored.
+		static let aStolafBuilding = "Buntrock Commons"
 	}
 
 	// MARK: - SIS
@@ -376,9 +382,10 @@ struct TestIdentifiers {
 		/// if the campus parameter is ignored and St. Olaf's list loads instead.
 		static let carletonBuilding = "Sayles Café"
 
-		/// The Carleton Campus screen's top-right toolbar button, which pushes
-		/// to `/Map` -- the hand-hosted map screen stays where it is, so this is
-		/// a navigation, not a mode switch.
+		/// Both campuses' Campus screens carry this top-right toolbar button,
+		/// which pushes to `/Map` for whichever campus is showing -- the
+		/// hand-hosted map screen stays where it is, so this is a navigation,
+		/// not a mode switch.
 		static let mapButton = "Map"
 	}
 

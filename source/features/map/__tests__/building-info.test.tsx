@@ -64,6 +64,40 @@ describe('BuildingInfo', () => {
 		expect(mockOpenUrl).toHaveBeenCalledWith('https://wp.stolaf.edu/registrar')
 	})
 
+	it('opens a St. Olaf department given as a {label, href} object', async () => {
+		await render(
+			<BuildingInfo
+				building={makeBuilding({
+					id: 'a',
+					name: 'Alpha Hall',
+					departments: [{label: 'Admissions', href: 'https://wp.stolaf.edu/admissions'}],
+				})}
+				onClose={jest.fn()}
+			/>,
+		)
+
+		await fireEvent.press(screen.getByText('Admissions'))
+
+		expect(mockOpenUrl).toHaveBeenCalledWith('https://wp.stolaf.edu/admissions')
+	})
+
+	it('renders St. Olaf-only links', async () => {
+		await render(
+			<BuildingInfo
+				building={makeBuilding({
+					id: 'a',
+					name: 'Alpha Hall',
+					links: [{label: 'Directions', href: 'https://wp.stolaf.edu/directions'}],
+				})}
+				onClose={jest.fn()}
+			/>,
+		)
+
+		await fireEvent.press(screen.getByText('Directions'))
+
+		expect(mockOpenUrl).toHaveBeenCalledWith('https://wp.stolaf.edu/directions')
+	})
+
 	it('resolves a photo filename against the photo host', async () => {
 		await render(
 			<BuildingInfo

@@ -55,19 +55,6 @@ struct CampusScreen: Screen {
 		return self
 	}
 
-	/// Assert the top-right map button is absent. St. Olaf's Campus screen
-	/// offers no map button today -- `Buttons.mapButton` is Carleton-only
-	/// (`campus === 'carleton'` in `app/(home)/Campus/index.tsx`) -- so this is
-	/// what proves that condition still exists, rather than the button having
-	/// quietly become unconditional.
-	@discardableResult
-	func verifyNoMapButton() -> Self {
-		XCTAssertFalse(
-			app.buttons[TestIdentifiers.Campus.mapButton].firstMatch.waitForExistence(timeout: 5),
-			"St. Olaf's Campus screen should not offer a map button")
-		return self
-	}
-
 	/// Assert the screen reports that `query` matched nothing, as distinct from
 	/// the genuine no-data message -- a search with no matches should never
 	/// read as a data outage.

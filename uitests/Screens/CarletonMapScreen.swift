@@ -9,17 +9,18 @@ struct CarletonMapScreen: Screen {
 		app.textFields[TestIdentifiers.CarletonMap.search].firstMatch
 	}
 
-	/// The map has no home tile of its own -- Carleton's Campus screen carries
-	/// the map button now, so getting to `/Map` means opening that screen first
-	/// and tapping its top-right button.
+	/// The map has no home tile of its own -- both campuses' Campus screens
+	/// carry the map button now, so getting to `/Map` means opening one of
+	/// those screens first and tapping its top-right button. Defaults to
+	/// Carleton's tile; pass `TestIdentifiers.Buttons.campus` for St. Olaf's.
 	@discardableResult
-	func navigate() -> Self {
-		navigateFromHome(to: TestIdentifiers.Buttons.carletonCampus)
+	func navigate(from campusTile: String = TestIdentifiers.Buttons.carletonCampus) -> Self {
+		navigateFromHome(to: campusTile)
 
 		let mapButton = app.buttons[TestIdentifiers.Campus.mapButton].firstMatch
 		XCTAssertTrue(
 			mapButton.waitForExistence(timeout: 30),
-			"Carleton's Campus screen should offer a map button")
+			"\(campusTile)'s Campus screen should offer a map button")
 
 		// Retried for the reason navigateFromHome retries: a synthesized press
 		// on a button whose host has mounted but whose action still has to
@@ -68,9 +69,12 @@ struct CarletonMapScreen: Screen {
 	/// JavaScript lands natively and does nothing. The row is found, the event
 	/// is delivered, and the sheet stays on the list. Waiting longer does not
 	/// help a dropped tap; tapping again does.
+	/// Matched on the label's prefix, not the whole label: a building carrying
+	/// an abbreviation reads as "Buntrock Commons, BC", so an exact match finds
+	/// St. Olaf's rows only by accident of them not having one.
 	@discardableResult
 	func selectBuilding(named name: String) -> Self {
-		let row = app.buttons[name].firstMatch
+		let row = app.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", name)).firstMatch
 		XCTAssertTrue(
 			row.waitForExistence(timeout: 30),
 			"The expanded sheet should list \(name)")

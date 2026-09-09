@@ -41,10 +41,10 @@ async function renderPicker(onSelect = jest.fn()) {
 	trackedQueryClients.push(client)
 	// Seeding the cache rather than mocking the query module keeps the
 	// component on its real data path.
-	client.setQueryData(keys.all, fixtures)
+	client.setQueryData(keys.all('carleton'), fixtures)
 	await render(
 		<QueryClientProvider client={client}>
-			<BuildingPicker onSelect={onSelect} />
+			<BuildingPicker campus="carleton" onSelect={onSelect} />
 		</QueryClientProvider>,
 	)
 	return onSelect
