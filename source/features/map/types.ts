@@ -59,6 +59,16 @@ export type Building = {
 	links?: Array<LabelLink>
 	/** St. Olaf-only: a human-readable category summary, e.g. "Administrative & Academic". */
 	type?: string | null
+	/**
+	 * The building this place sits inside, as a feature id.
+	 *
+	 * St. Olaf publishes its dining rooms, its bookstore, its visitor desk and
+	 * its admissions office as points in the points-of-interest layer rather
+	 * than as footprints, so there is nothing to frame or highlight for them;
+	 * this names something there is. Null for anything that is a building
+	 * itself, or is in none. Carleton's feed carries no parents at all.
+	 */
+	parent?: string | null
 }
 
 export type Longitude = number
