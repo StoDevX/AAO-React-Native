@@ -311,10 +311,43 @@ jobs:
           name: ios-app
           path: ios-app.tar
 
+  uitest-gate:
+    name: Decide whether UITests must run
+    runs-on: ubuntu-24.04
+    outputs:
+      needed: ${{ steps.gate.outputs.needed }}
+    steps:
+      # The full history, because the diff is taken against the merge base.
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+
+      # Only a pull request gets to skip. A push to master and a merge-queue run
+      # always run the whole suite, so a gate that is wrong is caught before it
+      # ships rather than after.
+      - name: Decide
+        id: gate
+        run: |
+          set -o pipefail
+          if [ "${{ github.event_name }}" != "pull_request" ]; then
+            echo 'needed=true' | tee -a "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          git diff --name-only \
+            '${{ github.event.pull_request.base.sha }}...${{ github.event.pull_request.head.sha }}' \
+            > changed.txt
+          echo "Changed files:"
+          cat changed.txt
+          xargs -a changed.txt node scripts/uitests-needed.mjs \
+            | tee -a "$GITHUB_OUTPUT"
+
   uitest-plan:
     name: Plan UITest shards
     runs-on: ubuntu-24.04
-    if: ${{ !contains(github.event.pull_request.labels.*.name, 'ci/skip-e2e') }}
+    needs: [uitest-gate]
+    if: |
+      needs.uitest-gate.outputs.needed == 'true' &&
+      !contains(github.event.pull_request.labels.*.name, 'ci/skip-e2e')
     outputs:
       matrix: ${{ steps.split.outputs.matrix }}
     steps:
@@ -337,10 +370,11 @@ jobs:
 
   ios-uitest:
     name: Native UITest for iOS (${{ matrix.shard }})
-    needs: [uitest-plan, ios-build, ios-bundle, ios-cache-check]
+    needs: [uitest-gate, uitest-plan, ios-build, ios-bundle, ios-cache-check]
     runs-on: macos-26
     if: |
       !failure() && !cancelled() &&
+      needs.uitest-gate.outputs.needed == 'true' &&
       !contains(github.event.pull_request.labels.*.name, 'ci/skip-e2e')
     strategy:
       fail-fast: false

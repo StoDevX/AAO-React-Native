@@ -1,0 +1,37 @@
+import {uitestsNeeded} from '../scripts/uitests-needed.mjs'
+
+describe('uitestsNeeded', () => {
+	it('skips a documentation-only change', () => {
+		expect(uitestsNeeded(['README.md', 'docs/notes.md'])).toBe(false)
+	})
+
+	it('skips a Jest-only change', () => {
+		expect(
+			uitestsNeeded([
+				'modules/ccc-calendar/__tests__/query-select.test.ts',
+				'source/testing/render.tsx',
+			]),
+		).toBe(false)
+	})
+
+	it('runs when any app code changed', () => {
+		expect(uitestsNeeded(['README.md', 'app/(home)/Dictionary/index.tsx'])).toBe(true)
+	})
+
+	it('runs when a dependency changed', () => {
+		expect(uitestsNeeded(['pnpm-lock.yaml'])).toBe(true)
+	})
+
+	it('skips an unrelated workflow but runs for the iOS one', () => {
+		expect(uitestsNeeded(['.github/workflows/check.yml'])).toBe(false)
+		expect(uitestsNeeded(['.github/workflows/ios.yml'])).toBe(true)
+	})
+
+	it('runs when the UITests themselves changed', () => {
+		expect(uitestsNeeded(['uitests/ModuleMoreTests.swift'])).toBe(true)
+	})
+
+	it('runs on an empty list, which means we could not work out the diff', () => {
+		expect(uitestsNeeded([])).toBe(true)
+	})
+})
