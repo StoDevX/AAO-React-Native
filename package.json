@@ -13,6 +13,7 @@
     "@frogpond/app-theme": "workspace:*",
     "@frogpond/badge": "workspace:*",
     "@frogpond/button": "workspace:*",
+    "@frogpond/campus-search-bar": "workspace:*",
     "@frogpond/ccc-calendar": "workspace:*",
     "@frogpond/ccc-jobs": "workspace:*",
     "@frogpond/colors": "workspace:*",

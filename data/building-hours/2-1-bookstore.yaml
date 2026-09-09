@@ -1,6 +1,7 @@
 name: Bookstore
 image: bookstore
 category: Supplies and Books
+building: stolafcollegebookstore
 
 schedule:
   - title: Hours

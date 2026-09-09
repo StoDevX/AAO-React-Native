@@ -35,6 +35,10 @@ struct TestIdentifiers {
 	enum Navigation {
 		static let openSettings = "Open Settings"
 		static let closeScreen = "Close Screen"
+		/// Matches the report screen's own explicit back button, whose
+		/// accessibilityLabel is fixed rather than the previous screen's title,
+		/// so tests can assert on it regardless of which building is open.
+		static let backButton = "Back"
 	}
 
 	/// Labels UIKit gives a `Stack.SearchBar`'s own controls. In the bottom
@@ -55,10 +59,9 @@ struct TestIdentifiers {
 		static let menus = "Menus"
 		static let calendar = "Calendar"
 		static let sis = "SIS"
-		static let buildingHours = "Building Hours"
+		static let campus = "Campus"
 		static let dictionary = "Dictionary"
-		static let campusMap = "Campus Map"
-		static let carletonMap = "Carleton Map"
+		static let carletonCampus = "Carleton Campus"
 		static let courseCatalog = "Course Catalog"
 		static let directory = "Directory"
 		static let more = "More"
@@ -92,15 +95,48 @@ struct TestIdentifiers {
 	}
 
 	// MARK: - Carleton Map
+	//
+	// `/Map` now serves both campuses; this enum keeps its original name since
+	// it is the shared map screen's own identifiers, not Carleton-specific ones.
 
 	enum CarletonMap {
-		/// The sheet's search field. Its placeholder is its accessibility label,
-		/// which is what a SwiftUI TextField reports when it has no other.
+		/// The sheet's search field. The bar's testID is its placeholder, and
+		/// UIKit puts the identifier on the text field, so this is a
+		/// `searchFields` query.
 		static let search = "Search for a place"
-		static let close = "Close"
+		/// The map view itself. MapLibre publishes one element for the whole map --
+		/// labelled "Map", valued with the zoom -- and nothing per building, so
+		/// this is the only handle a test has on where the map is on screen.
+		static let map = "Map"
+		/// UIKit's own dismiss button on the search bar, found by label. iOS 26
+		/// draws it as a circular glyph beside the field and labels it "Close".
+		static let cancel = "Close"
+		/// The building card's own dismiss button, a `testID` rather than a
+		/// label -- it shares the "Close" label with the search bar's Cancel
+		/// (`cancel`, above), and the picker is still mounted while the card's
+		/// query runs, so a label-only query could answer for either. Matches
+		/// `CARD_CLOSE_BUTTON_ID` in `source/features/map/building-info.tsx`.
+		static let cardCloseButton = "card-close-button"
+		/// MapLibre's attribution button, found by the label it gives itself. It
+		/// carries the OpenStreetMap credit, so it has to stay reachable.
+		static let attribution = "About this map"
+		/// UIKit's own drag indicator on the presented sheet, found by label --
+		/// it carries no identifier. Its element is the sheet's child, which is
+		/// how the sheet's own box is found.
+		static let sheetGrabber = "Sheet Grabber"
 		/// A building near the top of the alphabetical list, so the expanded
 		/// sheet shows it without scrolling.
 		static let aBuilding = "Allen House"
+		/// A St. Olaf-only building, also near the top of the alphabetical list
+		/// -- absent from Carleton's map data, so selecting it is what would
+		/// fail if the map's campus parameter were ignored.
+		static let aStolafBuilding = "Buntrock Commons"
+		/// A second building, high enough in the list to be on screen even with
+		/// the keyboard up, and not a match for `aBuilding` under the picker's
+		/// subsequence search -- so typing that query has to drop it. Carleton can
+		/// rename either of these; a failure here is worth checking against the
+		/// list before it is blamed on the filter.
+		static let anotherBuilding = "216 College Street"
 	}
 
 	// MARK: - SIS
@@ -309,6 +345,89 @@ struct TestIdentifiers {
 		/// rename it out from under this test.
 		static let departmentalEntry = "Registrar Fax"
 		static let department = "Registrar\u{2019}s Office"
+	}
+
+	// MARK: - Campus
+
+	enum Campus {
+		/// A St. Olaf venue. Under test the app reads St. Olaf's hours from this
+		/// repository's bundled copy rather than a server, so this is whatever
+		/// `data/building-hours/` says today.
+		static let aBuilding = "Rølvaag Library"
+		/// A query that matches `aBuilding` only through deburring, so the test
+		/// fails if the filter stops stripping diacritics.
+		static let deburredQuery = "rolvaag"
+		/// A building that must fall out of the list when `deburredQuery` is
+		/// typed, so the test proves narrowing rather than mere survival. Also
+		/// the name shown as the detail sheet's own title once tapped. Its
+		/// schedule is a single short section that already fits the sheet's
+		/// smaller detent -- see `aBuildingWithLongSchedule` for the one that
+		/// overflows it.
+		static let anExcludedBuilding = "The Cage"
+		/// Another Food-category building, in the same unscrolled viewport as
+		/// `anExcludedBuilding` -- so a tap aimed at it while a sheet is up lands
+		/// on the dimmed list behind the sheet rather than on content the sheet
+		/// itself covers. Its schedule sections are titled Breakfast/Lunch/Dinner,
+		/// never "Hours", which is what makes its detail content an unambiguous
+		/// tell for a second sheet: nothing else on this screen shows those words.
+		static let aSecondBuilding = "Stav Hall"
+		/// A building with two schedule sections and a resource link -- enough
+		/// combined content to overflow the sheet's smaller detent, unlike
+		/// `anExcludedBuilding`'s single short section. One of its sections is
+		/// still titled "Hours", so `tapRow`'s own detection of a successful tap
+		/// still applies.
+		static let aBuildingWithLongSchedule = "The Pause Kitchen"
+		/// A query no building matches, so the screen must say no results were
+		/// found rather than claim the data is missing -- the two states read
+		/// differently, or a broken search looks like a server outage.
+		static let unmatchedQuery = "zzznomatch"
+		/// Mirrors BUILDING_ROW_PREFIX in
+		/// source/features/building-hours/list/building-list-row.tsx.
+		static let rowPrefix = "building-row-"
+		/// A schedule section heading on the detail sheet, shown only once a
+		/// building is open in the sheet.
+		static let detailSchedule = "HOURS"
+		/// The detail sheet's overflow menu button, labelled "More" -- the same
+		/// string as `Buttons.more`, the Home screen's own tile, purely by
+		/// coincidence of wording rather than a shared identifier. The two
+		/// screens are never on screen together, so today's bare-label match in
+		/// `openDetailMenu` cannot collide with the tile, but reusing the
+		/// constant keeps that coincidence from drifting into two truths.
+		static let detailMenu = Buttons.more
+		/// The one action the detail sheet's overflow menu offers.
+		static let reportAction = "Report a Problem"
+		/// The report screen's own `InfoHeader` title -- distinct from
+		/// `reportAction`, which labels the menu button that opens it, so a test
+		/// can tell the screen actually came up rather than the menu item merely
+		/// existing.
+		static let reportScreenPrompt = "Thanks for spotting a problem!"
+		/// The report screen's own submit control, in the navigation bar.
+		static let submitReportAction = "Submit Report"
+
+		/// A Carleton-only venue: present in Carleton's live `spaces/hours` but
+		/// absent from St. Olaf's, so a test tapping into the Carleton tile fails
+		/// if the campus parameter is ignored and St. Olaf's list loads instead.
+		static let carletonBuilding = "Sayles Café"
+
+		/// Both campuses' Campus screens carry this top-right toolbar button,
+		/// which pushes to `/Map` for whichever campus is showing -- the
+		/// hand-hosted map screen stays where it is, so this is a navigation,
+		/// not a mode switch.
+		static let mapButton = "Map"
+
+		/// A St. Olaf venue whose `building` key (`toh`) resolves to a
+		/// differently-named feature -- Tomson Hall, not Registrar -- so a test
+		/// asserting the cutout frames `aBuildingWithCutoutFrames` only passes if
+		/// the join actually used the key. `The Cage`, whose key (`thecage`)
+		/// happens to share wording with its own name, would pass even with a
+		/// broken join that fell back to matching on name.
+		static let aBuildingWithCutout = "Registrar"
+		static let aBuildingWithCutoutFrames = "Tomson Hall"
+
+		/// The prefix `BuildingCutout` sets as its accessibility label, naming
+		/// the building it frames. Mirrors the template literal in
+		/// source/features/building-hours/detail/building-cutout.tsx.
+		static let cutoutLabelPrefix = "Map showing "
 	}
 
 	// MARK: - Course Catalog

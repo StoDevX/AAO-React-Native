@@ -98,7 +98,7 @@ is required, not stylistic, when flattening the loader into the screen would
 change behaviour: a `useState` initialiser seeded from loaded data (React
 only evaluates it on first mount), or the screen's own ungated `useQuery`
 calls that must not fire until the loader's data resolves. See
-`app/(home)/BuildingHoursProblemReport.tsx` for the reference three-component
+`app/(home)/Campus/detail/report.tsx` for the reference three-component
 shape, and `app/(settings)/Credits.tsx` for the simple chrome-plus-body shape.
 
 **Nothing may be added to `app/` that is not a route.** Every `.ts`/`.tsx`
@@ -180,8 +180,11 @@ Any `.navigate(literal)` call site needs
 ## Common Patterns and Best Practices
 
 ### Screen Naming Conventions
-- Route files are PascalCase, matching the screen title (`Credits.tsx`,
-  `BuildingHoursProblemReport.tsx`)
+- A standalone route file is PascalCase, matching the screen title
+  (`Credits.tsx`). A route nested inside a feature's own directory takes the
+  file-system name of its segment instead — lowercase for a fixed segment
+  (`detail/report.tsx`), bracketed for a dynamic one (`detail/[name].tsx`) —
+  the same convention expo-router itself uses for the segment.
 - Support files under `source/features/` are kebab-case
 - Component names inside a route file follow the `ScreenNamePage` /
   `ScreenNameView` / `ScreenNameLoader` convention from Step 2
@@ -240,7 +243,7 @@ If you encounter issues:
 See existing routes for reference implementations:
 - `app/(settings)/Credits.tsx` — simple chrome-plus-body screen, no data loading
 - `app/(home)/Contacts/index.tsx` — chrome plus an inner `…View` with a query
-- `app/(home)/BuildingHoursProblemReport.tsx` — the full three-component shape (chrome, loader, view)
+- `app/(home)/Campus/detail/report.tsx` — the full three-component shape (chrome, loader, view)
 - `source/features/home/` — the home screen's support components
 - `source/features/menus/` — a feature with several routes sharing support code
 - `source/features/settings/` — a feature with many sub-screens

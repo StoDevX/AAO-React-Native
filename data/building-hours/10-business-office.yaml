@@ -1,5 +1,6 @@
 name: Business Office
 category: Offices
+building: ahl
 
 schedule:
   - title: Hours

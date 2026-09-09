@@ -2,6 +2,7 @@ name: HOM
 subtitle: Hall of Music
 image: hall-of-music
 category: Academia
+building: hom
 
 schedule:
   - title: Hours

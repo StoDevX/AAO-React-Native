@@ -1,6 +1,7 @@
 name: STORP
 subtitle: St. Olaf Outdoor Recreation Program
 category: Gym
+building: tostrudcenter
 
 schedule:
   - title: Hours

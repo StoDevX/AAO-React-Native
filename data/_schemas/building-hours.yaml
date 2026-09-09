@@ -9,6 +9,7 @@ properties:
   abbreviation: {type: string}
   category: {type: string}
   image: {type: string}
+  building: {type: string, pattern: '^[a-z0-9-]+$'}
   isNotice: {type: boolean}
   noticeMessage: {type: string}
   links:
@@ -19,6 +20,14 @@ properties:
     items: {$ref: '#/definitions/schedule'}
   breakSchedule:
     type: object
+    # The break names from _schemas/breaks.yaml, plus `summer`. Constrained so a
+    # key mis-indented into this block -- `building:`, say -- is rejected rather
+    # than silently swallowed. `christmasfest` is listed though no building
+    # currently sets hours for it: it is a real St. Olaf break, and the schema
+    # should not be what stops someone recording that the library closes early
+    # for it.
+    propertyNames:
+      enum: [fall, thanksgiving, christmasfest, winter, interim, spring, easter, summer]
 
 definitions:
   links:

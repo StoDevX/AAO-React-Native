@@ -98,12 +98,12 @@ a server is only half the job:
 | --- | --- |
 | `npx expo run:ios --port $PORT` | baked in at build time; the log then reads `Waiting on http://localhost:$PORT` |
 | `simctl openurl …expo-development-client/?url=…` | carried in the URL, percent-encoded (step 4 below) |
-| XCUITest | **it does not** — always 8081, see below |
+| XCUITest | `TEST_RUNNER_AAO_JS_LOCATION=localhost:$PORT` on the `xcodebuild test` command; `UITestCase` turns it into `-RCT_jsLocation` |
+| `simctl launch <UDID> <bundle id> -RCT_jsLocation localhost:$PORT` | a launch argument React Native reads before it guesses 8081 |
 
-**XCUITest cannot be pointed at your port.** `RCT_METRO_PORT` is a compile-time
-macro and this project ships React core precompiled, so a UITest build fetches
-from `localhost:8081` whoever owns it. Do not try to solve that with a port;
-embed the bundle instead — `run-uitests` has the recipe.
+`RCT_METRO_PORT` is only the compile-time default the guess falls back to; a
+launch argument overrides it at run time, and `--reset-state` does not clear
+it. `run-uitests` has the details and the embed-the-bundle alternative.
 
 If the app comes up on a red `No script URL provided` screen, or shows a screen
 that does not match your edits, suspect the port before you suspect your code.

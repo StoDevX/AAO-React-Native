@@ -116,3 +116,31 @@ jobs:
       # the other.
       - run: mise run bundle-data
       - run: git diff --exit-code modules/data-sources/bundled.json
+
+  # Separate from the data job above because this one needs the network --
+  # it fetches the live campus geojson to confirm every building: key
+  # resolves. validate-data gates three workflows including deploy-data, and
+  # a ccc-server blip must not block an unrelated pull request from merging.
+  building-keys:
+    name: Building keys
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: jdx/mise-action@c2a87611a18de5b3828c5652fe268e992400cb5c # v4.3.0
+      - run: pnpm install --frozen-lockfile
+      - name: Validate building keys
+        run: |
+          set +e
+          mise run validate-building-keys
+          status=$?
+          set -e
+          # Exit 2 means the geojson endpoint was unreachable -- a network
+          # blip, not a bad key -- so warn instead of failing the job. Exit 1
+          # means a key actually failed to resolve, which must still fail it;
+          # a bad key should never pass silently just because the network
+          # happened to work.
+          if [ "$status" -eq 2 ]; then
+            echo "::warning::Could not reach the campus geojson endpoint; building-key validation was skipped for this run."
+            exit 0
+          fi
+          exit "$status"

@@ -20,12 +20,18 @@ import {
 } from '@expo/ui/swift-ui/modifiers'
 import {openUrl} from '@frogpond/open-url'
 
-import {parseLinkString} from './lib/parse-link-string'
-import type {Building, Feature, LabelLinkString} from './types'
+import {normalizeLinks} from './lib/normalize-link'
+import type {Building, Feature, LabelLink, LabelLinkString} from './types'
 import {buildingPhotoUrl} from './urls'
 
 /// Matches the glyph Apple uses to close a sheet.
 const CLOSE_GLYPH_SIZE = 26
+
+/// The card's own dismiss button. The search bar's Cancel carries the same
+/// "Close" accessibility label, so a screen-wide query for that label could
+/// answer for either; this testID scopes a test to the card alone. Matches
+/// `TestIdentifiers.CarletonMap.cardCloseButton` in `TestIdentifiers.swift`.
+const CARD_CLOSE_BUTTON_ID = 'card-close-button'
 
 type Props = {
 	building: Feature<Building> | undefined
@@ -40,7 +46,11 @@ export function BuildingInfo({building, onClose}: Props): React.ReactNode {
 			<List>
 				<Section>
 					<Text>Building not found.</Text>
-					<Button modifiers={[accessibilityLabel('Close'), buttonStyle('plain')]} onPress={onClose}>
+					<Button
+						modifiers={[accessibilityLabel('Close'), buttonStyle('plain')]}
+						onPress={onClose}
+						testID={CARD_CLOSE_BUTTON_ID}
+					>
 						{/* The filled xmark Apple's sheets close with now, rather than a
 						    text button. */}
 						<Image
@@ -54,8 +64,18 @@ export function BuildingInfo({building, onClose}: Props): React.ReactNode {
 		)
 	}
 
-	let {accessibility, address, departments, description, floors, name, nickname, offices, photos} =
-		building.properties
+	let {
+		accessibility,
+		address,
+		departments,
+		description,
+		floors,
+		links,
+		name,
+		nickname,
+		offices,
+		photos,
+	} = building.properties
 
 	return (
 		<List>
@@ -77,7 +97,11 @@ export function BuildingInfo({building, onClose}: Props): React.ReactNode {
 						) : null}
 					</VStack>
 					<Spacer />
-					<Button modifiers={[accessibilityLabel('Close'), buttonStyle('plain')]} onPress={onClose}>
+					<Button
+						modifiers={[accessibilityLabel('Close'), buttonStyle('plain')]}
+						onPress={onClose}
+						testID={CARD_CLOSE_BUTTON_ID}
+					>
 						{/* The filled xmark Apple's sheets close with now, rather than a
 						    text button. */}
 						<Image
@@ -129,6 +153,7 @@ export function BuildingInfo({building, onClose}: Props): React.ReactNode {
 			<LinkSection items={departments} title="Departments" />
 			<LinkSection items={offices} title="Offices" />
 			<LinkSection items={floors} title="Floors" />
+			<LinkSection items={links} title="Links" />
 		</List>
 	)
 }
@@ -157,21 +182,27 @@ function LinkSection({
 	title: string
 	// The server is not schema-validated at the boundary, so a record that
 	// omits the field arrives as undefined rather than as an empty array.
-	items: Array<LabelLinkString> | undefined
+	// St. Olaf serves these as {label, href} objects where Carleton serves
+	// "Label <url>" strings, hence the union -- normalizeLinks reconciles them.
+	items: Array<LabelLinkString | LabelLink> | undefined
 }): React.ReactNode {
-	if (!items?.length) {
+	let normalized = normalizeLinks(items)
+	if (normalized.length === 0) {
 		return null
 	}
 	return (
 		<Section title={title}>
-			{items.map((raw) => {
-				let {label, href} = parseLinkString(raw)
+			{normalized.map(({label, href}, index) => {
+				// Neither field is unique on its own -- two entries can share a
+				// label, and a label-only entry has no href at all -- so the key
+				// combines both with the row's position.
+				let key = `${label}-${href}-${index}`
 				if (!href) {
-					return <Text key={raw}>{label}</Text>
+					return <Text key={key}>{label}</Text>
 				}
 				return (
 					<Button
-						key={raw}
+						key={key}
 						modifiers={[accessibilityLabel(`Open ${label}`)]}
 						onPress={() => openUrl(href)}
 					>

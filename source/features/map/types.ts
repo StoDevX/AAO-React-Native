@@ -1,29 +1,74 @@
+// The union of both campuses' live values -- read out of the two feeds
+// directly rather than assumed, since the two campuses categorise their
+// buildings independently and share only about a third of these values.
 export type Category =
-	| 'administrative'
 	| 'academic'
-	| 'outdoors'
-	| 'building'
-	| 'employee-housing'
-	| 'student-housing'
-	| 'hall'
-	| 'parking'
-	| 'house'
+	| 'accessible-parking'
+	| 'administrative'
+	| 'admissions'
+	| 'admissions-parking'
 	| 'athletics'
+	| 'bookstore'
+	| 'building'
+	| 'campus-parking'
+	| 'dining'
+	| 'employee-housing'
+	| 'ev-charging'
+	| 'field'
+	| 'hall'
+	| 'house'
+	| 'housing'
+	| 'landmark'
+	| 'memorial'
+	| 'outdoors'
+	| 'parking'
+	| 'point-of-interest'
+	| 'residence-hall'
+	| 'student-center'
+	| 'student-housing'
+	| 'visitor-center'
+	| 'visitor-information'
+	| 'visitor-parking'
 
 // Stored as a string of the form "Label <https://example.com>".
 export type LabelLinkString = string
+
+/** A label/href pair, already split apart. St. Olaf's `links` field arrives
+ * in this shape rather than as a `LabelLinkString`. */
+export type LabelLink = {
+	label: string
+	href: string
+}
 
 export type Building = {
 	accessibility: 'none' | 'wheelchair' | 'unknown'
 	address: string | null
 	categories: Array<Category>
-	departments: Array<LabelLinkString>
+	/** Carleton serves these as `LabelLinkString`s; St. Olaf serves them as
+	 * `LabelLink` objects already split apart. */
+	departments: Array<LabelLinkString | LabelLink>
 	description: string
 	floors: Array<LabelLinkString>
 	name: string
 	nickname: string
 	offices: Array<LabelLinkString>
 	photos?: Array<string>
+	/** St. Olaf-only: the building's short code, e.g. "AB" for Flaten Art Barn. */
+	abbreviation?: string | null
+	/** St. Olaf-only: further links the campus map surfaces per building. */
+	links?: Array<LabelLink>
+	/** St. Olaf-only: a human-readable category summary, e.g. "Administrative & Academic". */
+	type?: string | null
+	/**
+	 * The building this place sits inside, as a feature id.
+	 *
+	 * St. Olaf publishes its dining rooms, its bookstore, its visitor desk and
+	 * its admissions office as points in the points-of-interest layer rather
+	 * than as footprints, so there is nothing to frame or highlight for them;
+	 * this names something there is. Null for anything that is a building
+	 * itself, or is in none. Carleton's feed carries no parents at all.
+	 */
+	parent?: string | null
 }
 
 export type Longitude = number
@@ -36,13 +81,21 @@ export type Polygon = {
 	type: 'Polygon'
 }
 
+/** A handful of St. Olaf features (e.g. the field house, the townhouses) are
+ * several disjoint rings under one id, which GeoJSON models as one
+ * MultiPolygon rather than several Polygons. */
+export type MultiPolygon = {
+	coordinates: Array<Array<Ring>>
+	type: 'MultiPolygon'
+}
+
 export type Point = {
 	coordinates: Coordinate
 	type: 'Point'
 }
 
 export type GeometryCollection = {
-	geometries: Array<Polygon | Point>
+	geometries: Array<Polygon | Point | MultiPolygon>
 	type: 'GeometryCollection'
 }
 

@@ -1,5 +1,6 @@
 name: Financial Aid
 category: Offices
+building: toh
 
 schedule:
   - title: Hours

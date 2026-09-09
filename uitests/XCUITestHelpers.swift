@@ -26,9 +26,13 @@ extension XCUIApplication {
 				TestIdentifiers.Menus.foodRowPrefix, label))
 	}
 
-	/// Find a button by the label UIKit gave it. Buttons the system builds --
-	/// a search bar's cancel button, say -- carry no accessibility identifier,
-	/// so the usual subscript, which matches identifiers, never finds them.
+	/// Find a button by the label UIKit gave it, matching on the label alone.
+	///
+	/// The plain subscript is not confined to identifiers: it answers with a
+	/// system button that has only a label, which is how `CarletonMapScreen`
+	/// reaches the search bar's Close button. What it will not do is tell the
+	/// two attributes apart, so use this wherever a label is the only thing
+	/// that should count.
 	func buttonLabelled(_ label: String) -> XCUIElement {
 		buttons.matching(NSPredicate(format: "label == %@", label)).firstMatch
 	}

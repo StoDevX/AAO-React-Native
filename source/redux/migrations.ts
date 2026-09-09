@@ -1,15 +1,17 @@
 import type {MigrationManifest, PersistedState} from 'redux-persist'
 
+import type {FavoriteBuilding} from './parts/buildings'
 import {DEFAULT_CALENDAR_SOURCES} from './parts/settings'
 
 /**
- * The shape of persisted root state that this migration actually reads and
- * writes. `redux-persist`'s own `PersistedState` type is deliberately opaque
- * -- it knows nothing about the app's slices -- so this describes the slice
- * this migration cares about instead.
+ * The shape of persisted root state that these migrations actually read and
+ * write. `redux-persist`'s own `PersistedState` type is deliberately opaque
+ * -- it knows nothing about the app's slices -- so this describes the slices
+ * the migrations care about instead.
  */
 interface PersistedRootState {
 	settings?: {enabledCalendarSources?: string[]; [key: string]: unknown}
+	buildings?: {favorites?: Array<string> | Array<FavoriteBuilding>; [key: string]: unknown}
 	[key: string]: unknown
 }
 
@@ -49,11 +51,47 @@ function addPresenceCalendar(
 	return {...state, settings: {...settings, enabledCalendarSources: [...enabled, 'presence']}}
 }
 
+/** Distinguishes the old bare-name shape from the migrated `{campus, name}` shape. */
+function isPreCampusFavorites(
+	favorites: Array<string> | Array<FavoriteBuilding>,
+): favorites is Array<string> {
+	return typeof favorites[0] === 'string'
+}
+
+/**
+ * Favourites were stored as bare building names, which five venues share across
+ * the two campuses -- favouriting Carleton's Bookstore lit up St. Olaf's. They
+ * are keyed by campus now.
+ *
+ * Every favourite persisted before this version was a St. Olaf favourite,
+ * because Carleton hours had never shipped, so the conversion is unambiguous.
+ */
+function scopeFavoritesToCampus(
+	state: PersistedRootState | undefined,
+): PersistedRootState | undefined {
+	let buildings = state?.buildings
+	if (!state || !buildings) return state
+
+	let favorites = buildings.favorites
+	if (!favorites || favorites.length === 0 || !isPreCampusFavorites(favorites)) {
+		return state
+	}
+
+	return {
+		...state,
+		buildings: {
+			...buildings,
+			favorites: favorites.map((name) => ({campus: 'stolaf' as const, name})),
+		},
+	}
+}
+
 export const migrations: MigrationManifest = {
 	// `MigrationManifest` types every entry as taking and returning
 	// redux-persist's own opaque `PersistedState`, which cannot describe the
-	// app's slices -- this cast is the one place that fiction lives.
+	// app's slices -- these casts are the one place that fiction lives.
 	2: addPresenceCalendar as unknown as (state: PersistedState) => PersistedState,
+	3: scopeFavoritesToCampus as unknown as (state: PersistedState) => PersistedState,
 }
 
-export {addPresenceCalendar}
+export {addPresenceCalendar, scopeFavoritesToCampus}

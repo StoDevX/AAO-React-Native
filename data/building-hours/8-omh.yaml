@@ -1,6 +1,7 @@
 name: Old Main
 image: old-main
 category: Academia
+building: om
 
 schedule:
   - title: Hours

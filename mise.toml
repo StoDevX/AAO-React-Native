@@ -164,6 +164,10 @@ run = "tsc --noEmit"
 
 [tasks.test]
 description = "Run Jest tests"
+# Same reason as tsc above: source/features/building-hours/query.ts imports
+# docs/building-hours.json, which bundle-data generates, so the suite cannot
+# run against a clean checkout without it.
+depends = ["bundle-data"]
 run = "jest"
 
 # --- Data ---
@@ -180,6 +184,13 @@ run = "node scripts/validate-bus-schedules.mjs"
 [tasks."validate-data"]
 description = "Validate data files"
 run = "node scripts/validate-data.mjs"
+
+# Needs the network -- it fetches the live campus geojson -- so it stays out
+# of validate-data, which gates three workflows including deploy-data. A
+# ccc-server blip should not block an unrelated pull request from merging.
+[tasks."validate-building-keys"]
+description = "Check that every building: key resolves to a real map feature"
+run = "node scripts/validate-building-keys.mjs"
 
 # An undeclared -- or orphaned -- @frogpond dependency resolves fine locally
 # through the root node_modules hoist, so format, lint, tsc and test all pass
