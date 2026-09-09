@@ -33,16 +33,19 @@ export default function DictionaryPreviewPage(): React.ReactNode {
 		// only where the reader actually edited -- not in how the two were built.
 		//
 		// No navigation here, on purpose -- match `Campus/detail/report.tsx`'s own
-		// report screen. `usePreventRemove`'s guard arms off committed state, not
-		// off however far this callback has run: `markSubmitted()`'s zustand write
-		// is batched until this handler returns, but a stack action like
-		// `popToTop()` fires its `beforeRemove` check synchronously, before the
-		// batch flushes -- so the guard would still see `submitted: false` and
-		// block the very pop this call just triggered, throwing up a "Discard
-		// changes?" alert over a report that already sent. Staying put also keeps
-		// the draft alive if the reader cancels out of the Mail compose sheet
-		// rather than sending -- `edit.tsx`'s cleanup only drops it when that
-		// screen itself unmounts.
+		// report screen. `usePreventRemove`'s guard arms off committed React
+		// state, not off however far this callback has run: it registers the
+		// route from an effect keyed on its own argument, and its `beforeRemove`
+		// listener reads the value the last render captured. `markSubmitted()`
+		// writes to zustand synchronously, but neither of those sees the new
+		// value until React has re-rendered this tree -- while a stack action
+		// like `popToTop()` runs its `beforeRemove` check inside the dispatch,
+		// well before that. So the guard would still be armed and would block
+		// the very pop this call just triggered, throwing up a "Discard changes?"
+		// alert over a report that already sent. Staying put also keeps the
+		// draft alive if the reader cancels out of the Mail compose sheet rather
+		// than sending -- `edit.tsx`'s cleanup only drops it when that screen
+		// itself unmounts.
 		//
 		// `markSubmitted()` runs only once the send itself has returned, so a
 		// throw from `submitReport` leaves the guard armed rather than stranding
