@@ -27,6 +27,20 @@ export default function HomeLayout(): React.ReactNode {
 					sheetLargestUndimmedDetentIndex: 'none',
 				}}
 			/>
+			<Stack.Screen
+				name="Dictionary/entry"
+				options={{
+					presentation: 'formSheet',
+					headerShown: false,
+					// The same stops as the campus sheets, so every sheet in the app
+					// rests at one height.
+					sheetAllowedDetents: [SHEET_RESTING_FRACTION, 0.999],
+					sheetGrabberVisible: true,
+					// The list behind has nothing worth touching while an entry is up,
+					// and an undimmed detent would let a second tap push a second sheet.
+					sheetLargestUndimmedDetentIndex: 'none',
+				}}
+			/>
 			<Stack.Screen name="BuildingHoursScheduleEditor" options={{presentation: 'modal'}} />
 			<Stack.Screen name="Communities" />
 			<Stack.Screen name="Map" />

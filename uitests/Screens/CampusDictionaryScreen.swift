@@ -176,10 +176,11 @@ struct CampusDictionaryScreen: Screen {
 	}
 
 	@discardableResult
-	/// The sheet's actions sit behind the ellipsis in the title row, so reaching
-	/// the editor takes two taps: open the menu, then choose from it.
+	/// The sheet's actions sit behind the ellipsis in the entry's own
+	/// navigation bar, so reaching the editor takes two taps: open the menu,
+	/// then choose from it.
 	func openEditor() -> Self {
-		let menu = app.buttons[TestIdentifiers.Dictionary.actionsMenu]
+		let menu = app.navigationBars.buttons[TestIdentifiers.Dictionary.actionsMenu]
 		XCTAssertTrue(menu.waitForExistence(timeout: 5), "the sheet had no actions menu")
 		menu.tap()
 
@@ -208,17 +209,22 @@ struct CampusDictionaryScreen: Screen {
 		return self
 	}
 
+	/// Dismisses the entry sheet by dragging it past the bottom of the screen,
+	/// the gesture UIKit reads as a dismissal rather than a change of detent.
 	@discardableResult
-	func closeDefinitionSheet() -> Self {
-		app.buttons["Close"].tap()
+	func dismissEntrySheet() -> Self {
+		app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.4))
+			.press(
+				forDuration: 0.1,
+				thenDragTo: app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 1.05)))
 		return self
 	}
 
 	@discardableResult
-	func verifyDefinitionSheetIsGone() -> Self {
+	func verifyEntrySheetIsGone() -> Self {
 		XCTAssertTrue(
 			definitionSheet.waitForNonExistence(timeout: 5),
-			"the definition sheet stayed up after Close"
+			"the entry sheet stayed up after the dismiss gesture"
 		)
 		return self
 	}

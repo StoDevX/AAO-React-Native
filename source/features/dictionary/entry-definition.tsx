@@ -1,19 +1,14 @@
 import * as React from 'react'
-import {Button, HStack, Image, Menu, ScrollView, Spacer, Text, VStack} from '@expo/ui/swift-ui'
+import {HStack, ScrollView, Text, VStack} from '@expo/ui/swift-ui'
 import {
 	accessibilityIdentifier,
-	accessibilityLabel,
-	background,
 	bold,
-	buttonStyle,
 	font,
 	foregroundStyle,
 	frame,
 	italic,
 	lineSpacing,
-	menuIndicator,
 	padding,
-	shapes,
 	textSelection,
 } from '@expo/ui/swift-ui/modifiers'
 import * as c from '@frogpond/colors'
@@ -22,11 +17,6 @@ import {FILL_WIDTH} from '../home/button'
 
 import type {NormalizedEntry, Sense} from './types'
 
-/// The xmark glyph, and the disc it sits on. The ellipsis rides the same disc
-/// so the two ends of the title row balance.
-const CLOSE_GLYPH_SIZE = 16
-const MENU_GLYPH_SIZE = 17
-const CLOSE_GLYPH_DIAMETER = 44
 /// Measured off a screenshot of the iOS dictionary sheet, in points: the
 /// system sets its entries with a wide margin, a headword a little larger than
 /// `title`, and senses stepped in again from the headword.
@@ -35,9 +25,10 @@ const HEADWORD_SIZE = 24
 const PRONUNCIATION_SIZE = 19
 /// The part of speech is set smaller than the entry's own text.
 const PART_OF_SPEECH_SIZE = 15
-/// The title row's buttons sit closer to the edge than the entry's text, so
-/// the sheet pads to the buttons and the text steps in from there.
+/// The sheet pads to the route's own title and toolbar, so the entry's text
+/// steps in by the same margin.
 const SHEET_PADDING = 23
+/// The gap above the headword, below whatever chrome the route above draws.
 const SHEET_TOP_PADDING = 13
 const TEXT_INDENT = 10
 /// Senses step in again, with the number hung in the gutter so wrapped lines
@@ -47,7 +38,7 @@ const SENSE_NUMBER_WIDTH = 15
 /// A dictionary divides several citations for one sense with a vertical bar.
 const EXAMPLE_SEPARATOR = ' | '
 const SUBSENSE_MARKER = '•'
-/// The entry starts well below the title row.
+/// The entry starts well below the sheet's own top edge.
 const HEADING_TOP_SPACE = 30
 /// The headword, its phonetics and its part of speech read as one block, so
 /// they sit closer together than the gaps between blocks.
@@ -65,8 +56,6 @@ function withoutFullStop(definition: string): string {
 
 type Props = {
 	entry: NormalizedEntry
-	onEdit: () => void
-	onClose: () => void
 }
 
 /// A sense and everything under it. Sub-senses take a bullet rather than a
@@ -129,9 +118,9 @@ function SenseRow({
  * One dictionary entry, set the way the iOS Look Up popup sets one: a serif
  * headword, bracketed phonetics, and numbered senses with italic examples.
  *
- * Presentational — the sheet that presents it belongs to the list screen.
+ * Presentational — the route that hosts it owns the title and the toolbar.
  */
-export function EntryDefinition({entry, onEdit, onClose}: Props): React.ReactNode {
+export function EntryDefinition({entry}: Props): React.ReactNode {
 	return (
 		// The sheet hands its content a Group holding both this view and the
 		// editor sheet's anchor, so this one does not fill the sheet on its
@@ -146,47 +135,6 @@ export function EntryDefinition({entry, onEdit, onClose}: Props): React.ReactNod
 					accessibilityIdentifier('dictionary-definition-sheet'),
 				]}
 			>
-				{/* Actions at one end, Close at the other, both on discs of the
-				    same size -- so the title sits centred on the sheet rather than
-				    on whatever space the buttons leave over. */}
-				<HStack alignment="center">
-					{/* The sheet's actions live behind one glyph, the way a system
-					    sheet keeps everything but Close out of the title row. */}
-					<Menu
-						label={
-							<Image
-								modifiers={[
-									font({size: MENU_GLYPH_SIZE, weight: 'bold'}),
-									foregroundStyle(c.secondaryLabel),
-									frame({width: CLOSE_GLYPH_DIAMETER, height: CLOSE_GLYPH_DIAMETER}),
-									background(c.quaternarySystemFill, shapes.circle()),
-								]}
-								systemName="ellipsis"
-							/>
-						}
-						modifiers={[accessibilityLabel('More actions'), menuIndicator('hidden')]}
-					>
-						<Button label="Suggest an Edit" onPress={onEdit} systemImage="pencil" />
-					</Menu>
-					<Spacer />
-					<Text modifiers={[font({textStyle: 'headline'})]}>Dictionary</Text>
-					<Spacer />
-					{/* A dark glyph on a light disc, which is how the system draws a
-					    sheet's close button -- rather than `xmark.circle.fill`,
-					    whose disc is the tinted part and reads inverted here. */}
-					<Button modifiers={[accessibilityLabel('Close'), buttonStyle('plain')]} onPress={onClose}>
-						<Image
-							modifiers={[
-								font({size: CLOSE_GLYPH_SIZE, weight: 'bold'}),
-								foregroundStyle(c.secondaryLabel),
-								frame({width: CLOSE_GLYPH_DIAMETER, height: CLOSE_GLYPH_DIAMETER}),
-								background(c.quaternarySystemFill, shapes.circle()),
-							]}
-							systemName="xmark"
-						/>
-					</Button>
-				</HStack>
-
 				<VStack
 					alignment="leading"
 					modifiers={[padding({leading: TEXT_INDENT, top: HEADING_TOP_SPACE})]}
