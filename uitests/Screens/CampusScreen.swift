@@ -298,7 +298,7 @@ struct CampusScreen: Screen {
 	/// part that broke.
 	@discardableResult
 	func verifySubmitReportReachable() -> Self {
-		let submit = app.navigationBars.buttons[TestIdentifiers.BuildingHours.submitReportAction]
+		let submit = app.navigationBars.buttons[TestIdentifiers.Campus.submitReportAction]
 		XCTAssertTrue(
 			submit.waitForExistence(timeout: 30),
 			"The report screen should offer Submit Report")
