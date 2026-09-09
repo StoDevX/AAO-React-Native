@@ -300,6 +300,45 @@ struct CampusDictionaryScreen: Screen {
 		return self
 	}
 
+	/// Drags the sheet from its resting detent up to the full-height one the
+	/// route also allows. The resting detent leaves about a third of the
+	/// screen for the preview, which is not enough to show a washed sense and
+	/// an unwashed one together in a single still image.
+	@discardableResult
+	func expandSheetToFullHeight() -> Self {
+		let grabber = app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.30))
+		grabber.press(
+			forDuration: 0.2,
+			thenDragTo: app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.02)))
+		return self
+	}
+
+	/// Scrolls the preview until the run carrying `text` sits wholly inside
+	/// the window. A sense the edit added comes after every sense the entry
+	/// already had, so on this reference entry it starts below the fold --
+	/// and an element only half on screen still reports as existing and
+	/// hittable, which is why this measures the frame instead.
+	@discardableResult
+	func scrollPreviewInto(view text: String) -> Self {
+		let element = app.descendants(matching: .any).matching(
+			NSPredicate(
+				format: "identifier == %@ AND label CONTAINS %@",
+				TestIdentifiers.Dictionary.previewSheet, text)
+		).firstMatch
+		XCTAssertTrue(element.waitForExistence(timeout: 15), "the preview never showed \"\(text)\"")
+
+		let window = app.windows.firstMatch.frame
+		for _ in 1...8 {
+			let frame = element.frame
+			if frame.minY >= window.minY && frame.maxY <= window.maxY {
+				return self
+			}
+			app.swipeUp()
+		}
+		XCTFail("scrolling the preview never brought \"\(text)\" wholly into view")
+		return self
+	}
+
 	/// Asserts some element inside the preview carries `text` in its label.
 	/// This is the one check that words actually survived `@expo/ui`'s `Text`
 	/// concatenation: its whitelist keeps only strings and literal `Text`

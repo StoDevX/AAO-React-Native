@@ -160,6 +160,8 @@ class ModuleCampusDictionaryTests: UITestCase {
 			.verifyPreviewEnabled()
 			.openPreview()
 			.verifyPreviewPresented()
+			.expandSheetToFullHeight()
+			.scrollPreviewInto(view: newSenseDefinition)
 			.capture(named)
 			// The original sense, redrawn unchanged, and the added one beside
 			// it -- the pairing the screenshot is meant to show.
