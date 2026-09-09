@@ -110,15 +110,37 @@ export function List({children, modifiers}: WithModifiers): React.ReactNode {
 	)
 }
 
-List.ForEach = function ListForEach({children}: WithModifiers): React.ReactNode {
-	return <View>{children}</View>
+List.ForEach = function ListForEach({
+	children,
+	onDelete,
+	onMove,
+}: WithModifiers & {
+	onDelete?: (indices: number[]) => void
+	onMove?: (sourceIndices: number[], destination: number) => void
+}): React.ReactNode {
+	// `View` forwards unrecognised props onto the host node, so a test can read
+	// the handlers back off `testID="for-each"` and call them directly. There
+	// is no drag gesture to simulate here; the drag itself is a UI test.
+	let Forwarding = View as unknown as React.ComponentType<
+		WithModifiers & {testID?: string; onDelete?: unknown; onMove?: unknown}
+	>
+	return (
+		<Forwarding onDelete={onDelete} onMove={onMove} testID="for-each">
+			{children}
+		</Forwarding>
+	)
 }
 
-export function Section({children, title}: WithModifiers & {title?: string}): React.ReactNode {
+export function Section({
+	children,
+	footer,
+	title,
+}: WithModifiers & {title?: string; footer?: React.ReactNode}): React.ReactNode {
 	return (
 		<View>
 			{title ? <RNText>{title}</RNText> : null}
 			{children}
+			{footer}
 		</View>
 	)
 }
@@ -182,18 +204,20 @@ export function TextField({
 	modifiers,
 	onTextChange,
 	placeholder,
+	text,
 }: WithModifiers & {
 	placeholder?: string
+	text?: string | {value: string}
 	onTextChange?: (text: string) => void
 }): React.ReactNode {
-	// A SwiftUI TextField reports its placeholder as its accessibility label
-	// when it has no separate one, which is how the sheet's search field is
-	// found both on device and here.
+	// The real field takes either a plain string or a `useNativeState` handle.
+	let value = typeof text === 'object' && text !== null ? text.value : text
 	return (
 		<TextInput
 			accessibilityLabel={labelOf(modifiers) ?? placeholder}
 			onChangeText={onTextChange}
 			placeholder={placeholder}
+			value={value}
 		/>
 	)
 }
@@ -279,6 +303,18 @@ export const frame = (params: Record<string, unknown>): Modifier => ({$type: 'fr
 export const hidden = (isHidden = true): Modifier => ({$type: 'hidden', isHidden})
 export const ignoreSafeArea = (params: Record<string, unknown> = {}): Modifier => ({
 	$type: 'ignoreSafeArea',
+	...params,
+})
+export const strikethrough = (params: Record<string, unknown>): Modifier => ({
+	$type: 'strikethrough',
+	...params,
+})
+export const underline = (params: Record<string, unknown>): Modifier => ({
+	$type: 'underline',
+	...params,
+})
+export const environment = (params: Record<string, unknown>): Modifier => ({
+	$type: 'environment',
 	...params,
 })
 
