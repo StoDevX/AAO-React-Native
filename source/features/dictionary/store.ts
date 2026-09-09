@@ -14,7 +14,10 @@ type DictionaryDraftStore = {
 	 */
 	original: NormalizedEntry | null
 	draft: DraftEntry | null
-	/** Set once the report is away, so the unsaved-changes guard stands down. */
+	/**
+	 * Set once the report is away, so the unsaved-changes guard stands down.
+	 * Any further edit clears it again — see `onDraft`.
+	 */
 	submitted: boolean
 
 	startDraft: (entry: NormalizedEntry) => void
@@ -37,12 +40,19 @@ type DictionaryDraftStore = {
 	moveExample: (senseId: string, from: number, to: number) => void
 }
 
-/// Applies a pure transform to whatever draft is in hand, and does nothing if
-/// there is none — every action below is a no-op before `startDraft`.
+/**
+ * Applies a pure transform to whatever draft is in hand, and does nothing if
+ * there is none — every action below is a no-op before `startDraft`.
+ *
+ * Clears `submitted` as it goes. A reader can walk back from the preview into
+ * the form and keep editing, and what they type there has not been sent; left
+ * set, the unsaved-changes guard would stay down and the next sheet drag-down
+ * would take that second round of edits with it, silently.
+ */
 const onDraft =
 	(change: (draft: DraftEntry) => DraftEntry) =>
 	(state: DictionaryDraftStore): Partial<DictionaryDraftStore> =>
-		state.draft ? {draft: change(state.draft)} : {}
+		state.draft ? {draft: change(state.draft), submitted: false} : {}
 
 /**
  * The suggestion a reader is composing. Unpersisted: a half-finished
