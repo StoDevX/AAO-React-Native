@@ -14,6 +14,11 @@ const METHOD_PATTERN = /func\s+(test\w+)\s*\(/gu
 
 /**
  * Find the test classes in a set of Swift sources.
+ *
+ * Assumes one test class per file: every `func test…` in a file is
+ * attributed to the first class matched there. A second class in the same
+ * file would have its methods misattributed to the first, producing a
+ * `-only-testing` identifier that does not exist.
  * @param {Array<{name: string, text: string}>} files
  * @returns {Array<{className: string, methods: string[]}>}
  */
