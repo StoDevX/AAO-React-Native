@@ -66,7 +66,7 @@ function median(numbers) {
  *
  * A test the table has never seen weighs the median of the ones it has, so a
  * newly added test does not read as free. With no table at all every test
- * weighs one, which is how the shards were packed before durations existed.
+ * weighs one, giving every test an equal share of the split.
  * @param {Array<{className: string, methods: string[]}>} classes
  * @param {Record<string, number>} durations
  * @returns {Array<{name: string, weight: number}>}

@@ -229,8 +229,7 @@ describe('formatMatrix', () => {
 
 describe('the real suite', () => {
 	// Invariants rather than a snapshot of today's packing: a snapshot would go
-	// red every time someone adds a test, which is not a bug. Step 5 of this
-	// task diffs the two planners' actual output, which is the exact check.
+	// red every time someone adds a test, which is not a bug.
 	it('places every class in exactly one shard', () => {
 		const classes = discoverTests(realTestFiles())
 		const items = classes.map((c) => ({name: c.className, weight: c.methods.length}))
