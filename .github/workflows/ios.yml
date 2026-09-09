@@ -553,6 +553,10 @@ jobs:
       # no durations -- would still save under this run's fresh key and
       # outrank a good table on the planner's prefix restore. Skip the save
       # rather than let an empty table win.
+      #
+      # No explicit success() needed: a condition with no status check
+      # function keeps the implicit success(), so a failed merge step skips
+      # this one rather than caching whatever partial file it left behind.
       - name: Save the table for later runs
         if: steps.merge.outputs.count != '0'
         uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
