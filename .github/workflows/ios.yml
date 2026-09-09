@@ -127,15 +127,33 @@ jobs:
       # build time, so they change the compiled binary without touching any
       # tracked iOS file, and pnpm-lock.yaml records each patch's checksum.
       # Omitting it meant a patch-only change reused a cache built without it.
+      # Restores rather than merely looking up, so that a hit can be republished
+      # as this run's artifact below. On a miss there is nothing to download and
+      # this costs nothing.
       - name: Check for cached iOS app
         id: app-cache
         uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
-          lookup-only: true
           path: ios/build/Build/Products/
           key: ios-app/e=${{ env.cache_epoch }}/host=macOS@26/target=ios/xcode=${{ env.xcode_version }}/job=${{ steps.build-job.outputs.fingerprint }}/ref=${{ github.head_ref || github.ref_name }}/hash=${{ hashFiles('app.config.ts', 'plugins/**', 'uitests/**', 'images/**', 'pnpm-lock.yaml', 'pnpm-workspace.yaml', 'mise.toml') }}
           restore-keys: |
             ios-app/e=${{ env.cache_epoch }}/host=macOS@26/target=ios/xcode=${{ env.xcode_version }}/job=${{ steps.build-job.outputs.fingerprint }}/ref=master/hash=${{ hashFiles('app.config.ts', 'plugins/**', 'uitests/**', 'images/**', 'pnpm-lock.yaml', 'pnpm-workspace.yaml', 'mise.toml') }}
+
+      # ios-build is skipped on a hit, so nothing else would publish an
+      # artifact for the shards and they would be back to restoring a cache
+      # entry that can be evicted in the half hour they spend queueing for a
+      # macOS runner. Republishing here costs an upload on a plentiful ubuntu
+      # runner and lets the shards read an artifact on every path.
+      - name: Pack the cached app for the shards
+        if: steps.app-cache.outputs.cache-matched-key != ''
+        run: tar -C ios/build/Build/Products -cf ios-app.tar .
+
+      - name: Republish the cached app as this run's artifact
+        if: steps.app-cache.outputs.cache-matched-key != ''
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: ios-app
+          path: ios-app.tar
 
   ios-build:
     name: Build for iOS
@@ -279,11 +297,19 @@ jobs:
           path: ios/build/Build/Products/
           key: ${{ needs.ios-cache-check.outputs.cache-primary-key }}
 
+      # Tarred, not uploaded as a tree. An artifact is a zip, and a zip does
+      # not carry the executable bit or symlinks -- both of which a .app needs
+      # to launch, and the frameworks inside it are symlinks. The build is
+      # unsigned (CODE_SIGNING_DISABLED above), so modes and links are the
+      # whole of what has to survive, and tar carries them.
+      - name: Pack the app and UITest bundle
+        run: tar -C ios/build/Build/Products -cf ios-app.tar .
+
       - name: Save iOS app as workflow artifact
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: ios-app
-          path: ios/build/Build/Products/
+          path: ios-app.tar
 
   uitest-plan:
     name: Plan UITest shards
@@ -314,26 +340,18 @@ jobs:
 
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
-      # ios-build uploads the app it just built, so prefer that: it belongs to
-      # this run. It is absent when ios-build was skipped because the cache
-      # already held a matching app, which is the case the restore below
-      # covers -- and the only case where a miss is worth failing on.
+      # Always an artifact now: ios-build publishes what it built, and
+      # ios-cache-check republishes what the cache held when the build was
+      # skipped. Neither can be evicted while this job waits for a runner.
       - name: Download the iOS app and UITest bundle
-        id: app-artifact
         uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
-        continue-on-error: true
         with:
           name: ios-app
-          path: ios/build/Build/Products/
 
-      - name: Load the cached iOS app and UITest bundle
-        if: steps.app-artifact.outcome != 'success'
-        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
-        id: app-cache
-        with:
-          fail-on-cache-miss: true
-          path: ios/build/Build/Products/
-          key: ${{ needs.ios-cache-check.outputs.cache-key }}
+      - name: Unpack the app and UITest bundle
+        run: |
+          mkdir -p ios/build/Build/Products
+          tar -C ios/build/Build/Products -xf ios-app.tar
 
       - name: Download the iOS jsbundle
         uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
