@@ -44,6 +44,15 @@ function BuildingHoursView(): React.ReactNode {
 		[router],
 	)
 
+	let onSelect = React.useCallback(
+		(building: BuildingType) =>
+			router.push({
+				pathname: '/BuildingHours/detail/[name]',
+				params: {name: building.name},
+			}),
+		[router],
+	)
+
 	// The search chrome is bound to component state (the change handler
 	// updates query), so it can't move to a static outer component.
 	// Compute it once and render it in every branch, so the user always
@@ -86,6 +95,7 @@ function BuildingHoursView(): React.ReactNode {
 				now={now}
 				onRefresh={refetch}
 				onReport={onReport}
+				onSelect={onSelect}
 				onToggleFavorite={onToggleFavorite}
 				searchQuery={searchQuery}
 				sections={sections}

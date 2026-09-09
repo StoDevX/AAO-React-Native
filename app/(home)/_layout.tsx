@@ -10,6 +10,22 @@ export default function HomeLayout(): React.ReactNode {
 			<Stack.Screen name="Transportation" options={{title: 'Transportation'}} />
 			<Stack.Screen name="BuildingHours" />
 			<Stack.Screen
+				name="BuildingHours/detail"
+				options={{
+					presentation: 'formSheet',
+					headerShown: false,
+					// Two thirds rather than a half: at a half the hours sat low enough
+					// that the sheet read as cramped.
+					sheetAllowedDetents: [0.68, 0.999],
+					sheetGrabberVisible: true,
+					// 'none' rather than 'last': the list behind has nothing worth
+					// touching once the sheet is up, and an undimmed detent lets UIKit
+					// pass taps through to it -- a second tap on another row would push
+					// a second detail sheet on top of the first.
+					sheetLargestUndimmedDetentIndex: 'none',
+				}}
+			/>
+			<Stack.Screen
 				name="BuildingHoursProblemReport"
 				options={{presentation: 'modal', gestureEnabled: false}}
 			/>

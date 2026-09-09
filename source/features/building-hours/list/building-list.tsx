@@ -18,6 +18,7 @@ type Props = {
 	favorites: string[]
 	onToggleFavorite: (building: BuildingType) => void
 	onReport: (building: BuildingType) => void
+	onSelect: (building: BuildingType) => void
 	onRefresh?: () => unknown
 	isLoading?: boolean
 	/** The active search query, or `''` when no search is in progress. Distinguishes
@@ -32,6 +33,7 @@ export const BuildingList = React.memo(function BuildingList({
 	favorites,
 	onToggleFavorite,
 	onReport,
+	onSelect,
 	onRefresh,
 	isLoading,
 	searchQuery,
@@ -74,6 +76,7 @@ export const BuildingList = React.memo(function BuildingList({
 										isFavorite={favorites.includes(building.name)}
 										now={now}
 										onReport={onReport}
+										onSelect={onSelect}
 										onToggleFavorite={onToggleFavorite}
 									/>
 								))}

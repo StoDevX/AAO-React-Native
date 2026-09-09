@@ -1,6 +1,6 @@
 import * as React from 'react'
 import {StyleSheet, Image} from 'react-native'
-import {Host, List, Section, Text, Button, HStack, VStack, Spacer} from '@expo/ui/swift-ui'
+import {Host, List, RNHostView, Section, Text, Button, HStack, VStack} from '@expo/ui/swift-ui'
 import {
 	background,
 	buttonStyle,
@@ -8,6 +8,9 @@ import {
 	font,
 	foregroundStyle,
 	frame,
+	listRowBackground,
+	listRowInsets,
+	listRowSeparator,
 	listStyle,
 	padding,
 } from '@expo/ui/swift-ui/modifiers'
@@ -31,14 +34,13 @@ const BAR_GAP = 8
 type Props = {
 	building: BuildingType
 	now: Moment
-	onProblemReport: () => void
 }
 
 /**
  * The building detail screen: header image, current status, one section per
- * schedule, a "Suggest an Edit" action, and any links for the building.
+ * schedule, and any links for the building.
  */
-export function BuildingDetailSwiftUI({building, now, onProblemReport}: Props): React.ReactNode {
+export function BuildingDetailSwiftUI({building, now}: Props): React.ReactNode {
 	let headerImage =
 		building.image && buildingImages.has(building.image) ? buildingImages.get(building.image) : null
 
@@ -51,16 +53,10 @@ export function BuildingDetailSwiftUI({building, now, onProblemReport}: Props): 
 	let links = building.links || []
 
 	return (
+		// A Host doesn't need a React Native scroll view under it: the hosting
+		// view carries a UIKit autoresizing mask, so it fills its superview on
+		// its own, without the Fabric coercion an RN scroll view would need.
 		<Host style={styles.host}>
-			{headerImage ? (
-				<Image
-					accessibilityIgnoresInvertColors={true}
-					resizeMode="cover"
-					source={headerImage}
-					style={styles.image}
-				/>
-			) : null}
-
 			<List modifiers={[listStyle('insetGrouped')]}>
 				<Section>
 					<HStack alignment="center" spacing={BAR_GAP}>
@@ -84,7 +80,7 @@ export function BuildingDetailSwiftUI({building, now, onProblemReport}: Props): 
 				{schedules.map((schedule) => (
 					<Section
 						key={schedule.title}
-						footer={schedule.notes}
+						footer={schedule.notes ? <Text>{schedule.notes}</Text> : undefined}
 						title={schedule.title.toUpperCase()}
 					>
 						{schedule.hours.map((set, i) => (
@@ -103,15 +99,23 @@ export function BuildingDetailSwiftUI({building, now, onProblemReport}: Props): 
 					</Section>
 				))}
 
-				<Section>
-					<Button modifiers={[buttonStyle('plain')]} onPress={onProblemReport}>
-						<HStack>
-							<Text modifiers={[foregroundStyle(c.label)]}>Suggest an Edit</Text>
-							<Spacer />
-							<Text modifiers={[foregroundStyle(c.tertiaryLabel)]}>›</Text>
-						</HStack>
-					</Button>
-				</Section>
+				{headerImage ? (
+					<Section>
+						{/* The insets are zeroed on a wrapping stack because RNHostView
+						    takes no modifiers of its own, and they are zeroed so the photo
+						    meets the row's edges the way an image row reads on iOS. */}
+						<VStack modifiers={[listRowInsets({top: 0, bottom: 0, leading: 0, trailing: 0})]}>
+							<RNHostView matchContents={true}>
+								<Image
+									accessibilityIgnoresInvertColors={true}
+									resizeMode="cover"
+									source={headerImage}
+									style={styles.image}
+								/>
+							</RNHostView>
+						</VStack>
+					</Section>
+				) : null}
 
 				{links.length > 0 ? (
 					<Section title="RESOURCES">
@@ -132,6 +136,9 @@ export function BuildingDetailSwiftUI({building, now, onProblemReport}: Props): 
 						font({textStyle: 'footnote'}),
 						foregroundStyle(c.secondaryLabel),
 						padding({top: 16, horizontal: 16}),
+						listRowBackground(c.systemGroupedBackground),
+						listRowInsets({top: 0, bottom: 0, leading: 0, trailing: 0}),
+						listRowSeparator('hidden'),
 					]}
 				>
 					Building hours subject to change without notice{'\n\n'}Data collected by the humans of All
