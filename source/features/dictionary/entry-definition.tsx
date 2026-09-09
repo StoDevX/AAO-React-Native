@@ -15,34 +15,22 @@ import * as c from '@frogpond/colors'
 
 import {FILL_WIDTH} from '../home/button'
 
+import {
+	BODY_LINE_SPACING,
+	EXAMPLE_SEPARATOR,
+	HEADING_SPACING,
+	HEADING_TOP_SPACE,
+	HEADWORD_SIZE,
+	PART_OF_SPEECH_SIZE,
+	PRONUNCIATION_SIZE,
+	SENSE_INDENT,
+	SENSE_NUMBER_WIDTH,
+	SHEET_PADDING,
+	SHEET_TOP_PADDING,
+	SUBSENSE_MARKER,
+	TEXT_INDENT,
+} from './lib/metrics'
 import type {NormalizedEntry, Sense} from './types'
-
-/// Measured off a screenshot of the iOS dictionary sheet, in points: the
-/// system sets its entries with a wide margin, a headword a little larger than
-/// `title`, and senses stepped in again from the headword.
-const BODY_LINE_SPACING = 0
-const HEADWORD_SIZE = 24
-const PRONUNCIATION_SIZE = 19
-/// The part of speech is set smaller than the entry's own text.
-const PART_OF_SPEECH_SIZE = 15
-/// The sheet pads to the route's own title and toolbar, so the entry's text
-/// steps in by the same margin.
-const SHEET_PADDING = 23
-/// The gap above the headword, below whatever chrome the route above draws.
-const SHEET_TOP_PADDING = 13
-const TEXT_INDENT = 10
-/// Senses step in again, with the number hung in the gutter so wrapped lines
-/// align under the first rather than under the number.
-const SENSE_INDENT = 26
-const SENSE_NUMBER_WIDTH = 15
-/// A dictionary divides several citations for one sense with a vertical bar.
-const EXAMPLE_SEPARATOR = ' | '
-const SUBSENSE_MARKER = '•'
-/// The entry starts well below the sheet's own top edge.
-const HEADING_TOP_SPACE = 30
-/// The headword, its phonetics and its part of speech read as one block, so
-/// they sit closer together than the gaps between blocks.
-const HEADING_SPACING = 13
 
 /**
  * Drops a single trailing full stop, so a definition written as a sentence can
