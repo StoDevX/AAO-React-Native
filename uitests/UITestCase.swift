@@ -15,10 +15,11 @@ class UITestCase: XCTestCase {
 	private static var failedTest: String?
 
 	override func record(_ issue: XCTIssue) {
-		// A skip is delivered here as a thrown `XCTSkip`, and treating one as a
-		// failure would let the first skipped test stand in for the failure that
-		// caused it -- and pin the wrong test name in every later message.
-		if !(issue.error is XCTSkip) {
+		// `isFailure` rather than the issue's type: a skip arrives here as an
+		// issue too, and treating one as a failure would let the first skipped
+		// test stand in for the failure that caused it. XCTest documents this
+		// property as the way to ask the question, over reading `severity`.
+		if issue.isFailure {
 			UITestCase.failedTest = name
 		}
 		super.record(issue)
