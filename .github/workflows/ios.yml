@@ -511,3 +511,36 @@ jobs:
         with:
           name: uitest-results-${{ matrix.shard }}.xcresult
           path: uitest-results.xcresult/
+
+  uitest-durations:
+    name: Publish UITest durations
+    needs: [ios-uitest]
+    runs-on: ubuntu-24.04
+    # Master alone writes. A branch reads master's table through the planner's
+    # restore-key; letting every branch save one would crowd the repository's
+    # shared cache and evict what the shards restore with fail-on-cache-miss.
+    if: always() && github.ref == 'refs/heads/master'
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Download every shard's durations
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
+        with:
+          pattern: uitest-durations-*
+          path: durations/
+          merge-multiple: false
+
+      # Later shards win on a duplicate key, which is fine: a test appears in
+      # exactly one shard, so there are no duplicates to arbitrate.
+      - name: Merge them into one table
+        run: |
+          find durations -name uitest-durations.json -print0 \
+            | xargs -0 cat \
+            | jq -s 'add // {}' > uitest-durations.json
+          echo "$(jq 'length' uitest-durations.json) tests timed"
+
+      - name: Save the table for later runs
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: uitest-durations.json
+          key: uitest-durations/e=${{ env.cache_epoch }}/ref=master/run=${{ github.run_id }}-${{ github.run_attempt }}
