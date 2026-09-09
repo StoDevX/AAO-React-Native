@@ -108,7 +108,15 @@ export default function DictionaryEditPage(): React.ReactNode {
 			</Stack.Toolbar>
 
 			<Host style={styles.host}>
-				<Form modifiers={[accessibilityIdentifier('dictionary-edit-form')]}>
+				<Form
+					modifiers={[
+						accessibilityIdentifier('dictionary-edit-form'),
+						// SwiftUI's reorder machinery reads `editMode` from the
+						// `List`/`Form` itself, not from a `Section` inside it -- set
+						// on the `Section` below, it changed nothing SwiftUI acted on.
+						environment({key: 'editMode', value: reordering ? 'active' : 'inactive'}),
+					]}
+				>
 					<Section title="Word">
 						<TextField
 							modifiers={[accessibilityLabel('Word'), textInputAutocapitalization('words')]}
@@ -142,11 +150,7 @@ export default function DictionaryEditPage(): React.ReactNode {
 					    content inert, so the fields stop taking taps while the
 					    reorder handles are up -- which is why the toolbar toggles
 					    between the two rather than showing both. */}
-					<Section
-						footer={changed ? undefined : <Text>No changes yet</Text>}
-						modifiers={reordering ? [environment({key: 'editMode', value: 'active'})] : []}
-						title="Senses"
-					>
+					<Section footer={changed ? undefined : <Text>No changes yet</Text>} title="Senses">
 						<List.ForEach
 							onDelete={(indices) =>
 								indices.forEach((index) => store.deleteSense(draft.senses[index].id))
