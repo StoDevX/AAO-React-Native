@@ -8,6 +8,7 @@
  * the suite be skipped, and anything unrecognised runs it.
  */
 
+import {readFileSync} from 'node:fs'
 import path from 'node:path'
 
 /**
@@ -77,11 +78,18 @@ export function uitestsNeeded(changedFiles) {
 	)
 }
 
+// A very large pull request's changed-file list can exceed a shell's ARG_MAX,
+// so the file goes to this script as a path (one file per line) rather than
+// as argv entries the caller would have to chunk.
 function main() {
-	const changedFiles = process.argv.slice(2).filter(Boolean)
+	const listPath = process.argv[2]
+	const changedFiles = listPath ? readFileSync(listPath, 'utf8').split('\n').filter(Boolean) : []
 	const needed = uitestsNeeded(changedFiles)
 
-	console.log(needed ? 'UITests are needed.' : 'No changed file can reach the UITests.')
+	// The message is not machine-readable, so it goes to stderr; stdout is
+	// exactly one line, `needed=true` or `needed=false`, so the workflow can
+	// use it as $GITHUB_OUTPUT verbatim without extracting it from anything.
+	console.error(needed ? 'UITests are needed.' : 'No changed file can reach the UITests.')
 	console.log(`needed=${needed}`)
 }
 
