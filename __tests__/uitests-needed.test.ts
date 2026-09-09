@@ -22,6 +22,13 @@ describe('uitestsNeeded', () => {
 		expect(uitestsNeeded(['pnpm-lock.yaml'])).toBe(true)
 	})
 
+	it('runs when a native dependency pin changed', () => {
+		// Package.resolved is ios_scripts/'s SwiftPM equivalent of
+		// pnpm-lock.yaml, and ios.yml diffs it against a fresh resolve to
+		// catch a stale pin -- exactly the case above, one directory over.
+		expect(uitestsNeeded(['ios_scripts/Package.resolved'])).toBe(true)
+	})
+
 	it('skips an unrelated workflow but runs for the iOS one', () => {
 		expect(uitestsNeeded(['.github/workflows/check.yml'])).toBe(false)
 		expect(uitestsNeeded(['.github/workflows/ios.yml'])).toBe(true)

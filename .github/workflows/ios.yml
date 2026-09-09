@@ -314,6 +314,16 @@ jobs:
   uitest-gate:
     name: Decide whether UITests must run
     runs-on: ubuntu-24.04
+    # A job-level `if:` on uitest-plan and ios-uitest replaces GitHub's implicit
+    # success() gate, so this job's own failure or cancellation would otherwise
+    # leave `needed` unset and both of them would quietly skip -- a skip
+    # nobody asked for, under a green check. continue-on-error keeps that
+    # failure from reaching needs.uitest-gate.result downstream (the job
+    # still shows red here, so a human still sees it), and the Decide step
+    # below defaults to needed=true before it risks anything that could fail,
+    # so this job's own output tells the same "run it" story even without
+    # the masking.
+    continue-on-error: true
     outputs:
       needed: ${{ steps.gate.outputs.needed }}
     steps:
@@ -325,28 +335,47 @@ jobs:
       # Only a pull request gets to skip. A push to master and a merge-queue run
       # always run the whole suite, so a gate that is wrong is caught before it
       # ships rather than after.
+      #
+      # `if: always()` so this still runs after a failed checkout, and every
+      # path below ends by reporting the `needed=true` set on line one --
+      # only a confident, successful "false" from the gate script overrides
+      # it. A crashed step here must run the suite, not silently cancel it.
       - name: Decide
         id: gate
+        if: always()
         run: |
           set -o pipefail
-          if [ "${{ github.event_name }}" != "pull_request" ]; then
-            echo 'needed=true' | tee -a "$GITHUB_OUTPUT"
-            exit 0
+          needed=true
+
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            if git diff --name-only \
+              '${{ github.event.pull_request.base.sha }}...${{ github.event.pull_request.head.sha }}' \
+              > changed.txt
+            then
+              echo "Changed files:"
+              cat changed.txt
+              if output=$(xargs -a changed.txt node scripts/uitests-needed.mjs); then
+                echo "$output"
+                needed=$(sed -n 's/^needed=//p' <<< "$output")
+              else
+                echo "scripts/uitests-needed.mjs failed; running the suite."
+              fi
+            else
+              echo "git diff failed; running the suite."
+            fi
           fi
-          git diff --name-only \
-            '${{ github.event.pull_request.base.sha }}...${{ github.event.pull_request.head.sha }}' \
-            > changed.txt
-          echo "Changed files:"
-          cat changed.txt
-          xargs -a changed.txt node scripts/uitests-needed.mjs \
-            | tee -a "$GITHUB_OUTPUT"
+
+          echo "needed=$needed" | tee -a "$GITHUB_OUTPUT"
 
   uitest-plan:
     name: Plan UITest shards
     runs-on: ubuntu-24.04
     needs: [uitest-gate]
+    # Anything other than an explicit "false" from the gate means run it --
+    # empty (the gate died before it could answer) defaults to needed, same
+    # as 'true' does.
     if: |
-      needs.uitest-gate.outputs.needed == 'true' &&
+      needs.uitest-gate.outputs.needed != 'false' &&
       !contains(github.event.pull_request.labels.*.name, 'ci/skip-e2e')
     outputs:
       matrix: ${{ steps.split.outputs.matrix }}
@@ -372,9 +401,14 @@ jobs:
     name: Native UITest for iOS (${{ matrix.shard }})
     needs: [uitest-gate, uitest-plan, ios-build, ios-bundle, ios-cache-check]
     runs-on: macos-26
+    # Same "false" is the only skip signal as uitest-plan above -- see there
+    # for why. uitest-gate's continue-on-error keeps its own status out of
+    # !failure(), so that guard is still only about ios-build/ios-bundle/
+    # ios-cache-check/uitest-plan, which genuinely must have built something
+    # to test.
     if: |
       !failure() && !cancelled() &&
-      needs.uitest-gate.outputs.needed == 'true' &&
+      needs.uitest-gate.outputs.needed != 'false' &&
       !contains(github.event.pull_request.labels.*.name, 'ci/skip-e2e')
     strategy:
       fail-fast: false

@@ -20,7 +20,6 @@ const INERT = [
 	/^docs\//u,
 	/\.md$/u,
 	/^fastlane\//u,
-	/^ios_scripts\//u,
 	/(^|\/)__tests__\//u,
 	/\.test\.tsx?$/u,
 	/^source\/testing\//u,
