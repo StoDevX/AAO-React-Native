@@ -4,6 +4,7 @@ import {
 	discoverTests,
 	packShards,
 	formatMatrix,
+	sanitizeDurations,
 	weigh,
 	weighMethods,
 } from '../scripts/split-uitests.mjs'
@@ -162,6 +163,39 @@ describe('weigh', () => {
 			{name: 'ModuleCTests', weight: 10},
 			{name: 'ModuleDTests', weight: 9},
 		])
+	})
+})
+
+describe('sanitizeDurations', () => {
+	it('drops a non-numeric entry, keeping the finite ones', () => {
+		expect(
+			sanitizeDurations({
+				'ModuleATests/testOne()': 10,
+				'ModuleATests/testTwo()': 'oops',
+			}),
+		).toEqual({'ModuleATests/testOne()': 10})
+	})
+
+	it('drops NaN and Infinity, which are numbers but not finite ones', () => {
+		expect(
+			sanitizeDurations({
+				'ModuleATests/testOne()': Number.NaN,
+				'ModuleATests/testTwo()': Number.POSITIVE_INFINITY,
+				'ModuleATests/testThree()': 5,
+			}),
+		).toEqual({'ModuleATests/testThree()': 5})
+	})
+
+	it('packs without throwing once a corrupt table has been sanitized', () => {
+		// A NaN weight sends packShards' totals to NaN, and Math.min(...totals)
+		// then finds none of them -- an unsanitized table throws here instead of
+		// falling back to the median, which is the crash this guards against.
+		const durations = sanitizeDurations({
+			'ModuleATests/testOne()': 'oops',
+			'ModuleBTests/testThree()': 5,
+		})
+
+		expect(() => packShards(weigh(CLASSES, durations), 2)).not.toThrow()
 	})
 })
 

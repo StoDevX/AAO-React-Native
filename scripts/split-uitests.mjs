@@ -33,6 +33,18 @@ export function discoverTests(files) {
 	return classes
 }
 
+/**
+ * Drop any duration that is not a finite number.
+ *
+ * A weight of NaN (or Infinity) propagates into `packShards`'s
+ * `Math.min(...totals)` and turns every shard total NaN, so `indexOf` finds
+ * none of them and the next push throws. A corrupt entry reads as an unknown
+ * test instead -- it takes the median, same as a test the table never saw.
+ */
+export function sanitizeDurations(durations) {
+	return Object.fromEntries(Object.entries(durations).filter(([, value]) => Number.isFinite(value)))
+}
+
 /** The middle value, or 0 for an empty list. */
 function median(numbers) {
 	if (numbers.length === 0) {
@@ -154,7 +166,7 @@ function main() {
 	let durations = {}
 	if (durationsPath && fs.existsSync(durationsPath)) {
 		try {
-			durations = JSON.parse(fs.readFileSync(durationsPath, 'utf8'))
+			durations = sanitizeDurations(JSON.parse(fs.readFileSync(durationsPath, 'utf8')))
 		} catch (error) {
 			console.error(
 				`Warning: could not read ${durationsPath}, packing with equal weights: ${error.message}`,
