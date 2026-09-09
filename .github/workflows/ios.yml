@@ -330,26 +330,116 @@ jobs:
           path: ios-app.tar
           retention-days: 3
 
+  uitest-gate:
+    name: Decide whether UITests must run
+    runs-on: ubuntu-24.04
+    # uitest-plan and ios-uitest key off needs.uitest-gate.outputs.needed, not
+    # this job's own result -- their job-level `if:` replaces GitHub's implicit
+    # success() gate, so a failure here does not skip them. The Decide step
+    # below runs with `if: always()` and defaults to needed=true before it
+    # risks anything that could fail, so a failed checkout still leaves that
+    # default output in place; a runner that never starts leaves the output
+    # unset instead, which downstream reads the same way, since only an
+    # explicit "false" skips. Either way the suite still runs. Nothing here
+    # needs continue-on-error to make that true, so this job's own conclusion
+    # is free to report a real failure honestly instead of masking it.
+    outputs:
+      needed: ${{ steps.gate.outputs.needed }}
+    steps:
+      # The full history, because the diff is taken against the merge base.
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+
+      # Only a pull request gets to skip. A push to master and a merge-queue run
+      # always run the whole suite, so a gate that is wrong is caught before it
+      # ships rather than after.
+      #
+      # `if: always()` so this still runs after a failed checkout, and every
+      # path below ends by reporting the `needed=true` set on line one --
+      # only a confident, successful "false" from the gate script overrides
+      # it. A crashed step here must run the suite, not silently cancel it.
+      - name: Decide
+        id: gate
+        if: always()
+        run: |
+          set -o pipefail
+          needed_line=needed=true
+
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            if git diff --name-only \
+              '${{ github.event.pull_request.base.sha }}...${{ github.event.pull_request.head.sha }}' \
+              > changed.txt
+            then
+              echo "Changed files:"
+              cat changed.txt
+              # A pull request large enough to blow past a shell's ARG_MAX would
+              # make xargs invoke this once per chunk, each printing its own
+              # `needed=` line -- changed.txt goes in as a path instead, so this
+              # always runs the script exactly once.
+              if needed_line=$(node scripts/uitests-needed.mjs changed.txt); then
+                echo "$needed_line"
+              else
+                echo "scripts/uitests-needed.mjs failed; running the suite."
+                needed_line=needed=true
+              fi
+            else
+              echo "git diff failed; running the suite."
+            fi
+          fi
+
+          echo "$needed_line" | tee -a "$GITHUB_OUTPUT"
+
   uitest-plan:
     name: Plan UITest shards
     runs-on: ubuntu-24.04
-    if: ${{ !contains(github.event.pull_request.labels.*.name, 'ci/skip-e2e') }}
+    needs: [uitest-gate]
+    # Anything other than an explicit "false" from the gate means run it --
+    # empty (the gate died before it could answer) defaults to needed, same
+    # as 'true' does.
+    if: |
+      needs.uitest-gate.outputs.needed != 'false' &&
+      !contains(github.event.pull_request.labels.*.name, 'ci/skip-e2e')
     outputs:
       matrix: ${{ steps.split.outputs.matrix }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
+      # A miss is not a failure: the planner falls back to one unit per test,
+      # giving every test an equal share of the split.
+      - name: Restore the UITest duration table
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: uitest-durations.json
+          key: uitest-durations/e=${{ env.cache_epoch }}/ref=master/
+          restore-keys: |
+            uitest-durations/e=${{ env.cache_epoch }}/ref=master/
+
       - name: Split tests across shards
         id: split
         run: |
-          echo "matrix=$(python3 scripts/split-uitests.py --test-dir uitests --shards 3)" >> "$GITHUB_OUTPUT"
+          echo "matrix=$(node scripts/split-uitests.mjs --test-dir uitests --shards 3 --granularity method --durations uitest-durations.json)" >> "$GITHUB_OUTPUT"
 
   ios-uitest:
     name: Native UITest for iOS (${{ matrix.shard }})
-    needs: [uitest-plan, ios-build, ios-bundle, ios-cache-check]
+    needs: [uitest-gate, uitest-plan, ios-build, ios-bundle, ios-cache-check]
     runs-on: macos-26
+    # A job-level `if:` replaces GitHub's implicit success()-of-needs gate, so
+    # each dependency this job actually relies on is checked explicitly rather
+    # than through !failure(), which would also depend on undocumented
+    # behaviour of continue-on-error to keep a failed uitest-gate out of it.
+    # ios-build is checked against 'failure' rather than for 'success', because
+    # a cache hit skips it legitimately -- ios-cache-check republishes what the
+    # cache held in that case, so ios-build not having run is not a problem.
+    # Same "false" is the only skip signal as uitest-plan above -- see there
+    # for why.
     if: |
-      !failure() && !cancelled() &&
+      !cancelled() &&
+      needs.uitest-plan.result == 'success' &&
+      needs.ios-bundle.result == 'success' &&
+      needs.ios-cache-check.result == 'success' &&
+      needs.ios-build.result != 'failure' &&
+      needs.uitest-gate.outputs.needed != 'false' &&
       !contains(github.event.pull_request.labels.*.name, 'ci/skip-e2e')
     strategy:
       fail-fast: false
@@ -491,6 +581,21 @@ jobs:
         if: always()
         run: node scripts/report-flaky-uitests.mjs uitest-results.xcresult
 
+      # `if: always()` so a shard that went red still contributes the timings of
+      # the tests that did run before it stopped.
+      - name: Record test durations
+        if: always()
+        run: node scripts/collect-uitest-durations.mjs uitest-results.xcresult uitest-durations.json
+
+      - name: Upload test durations
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        if: always()
+        with:
+          name: uitest-durations-${{ matrix.shard }}
+          path: uitest-durations.json
+          if-no-files-found: ignore
+          retention-days: 1
+
       - name: Extract failure attachments
         if: failure() || steps.flaky.outputs.flaky == 'true'
         run: |
@@ -515,3 +620,55 @@ jobs:
         with:
           name: uitest-results-${{ matrix.shard }}.xcresult
           path: uitest-results.xcresult/
+
+  uitest-durations:
+    name: Publish UITest durations
+    needs: [ios-uitest]
+    runs-on: ubuntu-24.04
+    # Master alone writes. A branch reads master's table through the planner's
+    # restore-key; letting every branch save one would crowd the repository's
+    # shared cache and evict what the shards restore with fail-on-cache-miss.
+    #
+    # ios-uitest skips, rather than fails, when an upstream job (ios-build,
+    # ios-bundle, uitest-plan, ios-cache-check) fails on master, and job-level
+    # always() overrides GitHub's default of skipping a job whose need was
+    # itself skipped. An empty table saved under this run's fresh key would
+    # still outrank a good historical one on the planner's prefix restore, so
+    # this only runs once ios-uitest has actually run.
+    if: always() && github.ref == 'refs/heads/master' && needs.ios-uitest.result != 'skipped'
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Download every shard's durations
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          pattern: uitest-durations-*
+          path: durations/
+          merge-multiple: false
+
+      # Later shards win on a duplicate key, which is fine: a test appears in
+      # exactly one shard, so there are no duplicates to arbitrate.
+      - name: Merge them into one table
+        id: merge
+        run: |
+          find durations -name uitest-durations.json -print0 \
+            | xargs -0 cat \
+            | jq -s 'add // {}' > uitest-durations.json
+          count=$(jq 'length' uitest-durations.json)
+          echo "$count tests timed"
+          echo "count=$count" >> "$GITHUB_OUTPUT"
+
+      # A run that timed nothing -- every shard skipped, or ran but recorded
+      # no durations -- would still save under this run's fresh key and
+      # outrank a good table on the planner's prefix restore. Skip the save
+      # rather than let an empty table win.
+      #
+      # No explicit success() needed: a condition with no status check
+      # function keeps the implicit success(), so a failed merge step skips
+      # this one rather than caching whatever partial file it left behind.
+      - name: Save the table for later runs
+        if: steps.merge.outputs.count != '0'
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: uitest-durations.json
+          key: uitest-durations/e=${{ env.cache_epoch }}/ref=master/run=${{ github.run_id }}-${{ github.run_attempt }}

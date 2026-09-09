@@ -47,6 +47,18 @@ class UITestCase: XCTestCase {
 		app.launch()
 	}
 
+	/// Release the latch when the test that set it turns out to have passed.
+	///
+	/// `-retry-tests-on-failure` re-runs a failed test in this same process, so
+	/// a failure recorded on one attempt is not a failure of the run. Without
+	/// this, a rescued flake skips every test after it and the shard reports
+	/// green having run almost nothing.
+	override func tearDownWithError() throws {
+		if UITestCase.failedTest == name, testRun?.failureCount == 0 {
+			UITestCase.failedTest = nil
+		}
+	}
+
 	/// Points the app at a Metro other than the default localhost:8081, when
 	/// the test runner was started with `TEST_RUNNER_AAO_JS_LOCATION=host:port`.
 	/// `-RCT_jsLocation` is read by React Native as a command-line default;
