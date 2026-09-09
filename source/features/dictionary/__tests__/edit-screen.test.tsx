@@ -5,6 +5,7 @@ import EditScreen from '../../../../app/(home)/Dictionary/entry/edit'
 import SenseScreen from '../../../../app/(home)/Dictionary/entry/sense'
 import {normalizeEntry} from '../lib/entry'
 import {useDictionaryDraftStore} from '../store'
+import type * as ExpoRouterMock from '../../../testing/expo-router-mock'
 
 jest.mock('@expo/ui/swift-ui', () => {
 	// oxlint-disable-next-line typescript/no-require-imports
@@ -20,33 +21,16 @@ jest.mock('@expo/ui/swift-ui/modifiers', () => {
 // exemption to the "no uninitialised mock variable" guard.
 const mockPush = jest.fn()
 
-jest.mock('expo-router', () => ({
-	Stack: Object.assign(({children}: {children?: React.ReactNode}) => children ?? null, {
-		// `Stack.Title` configures the native header the same way
-		// `Stack.Screen`'s options do -- it names a string, not a view --
-		// so, like `Screen`, it renders nothing into the tree under test.
-		Title: () => null,
-		Screen: () => null,
-		Toolbar: Object.assign(({children}: {children?: React.ReactNode}) => children ?? null, {
-			Button: (props: {accessibilityLabel: string; onPress: () => void; disabled?: boolean}) => {
-				// oxlint-disable-next-line typescript/no-require-imports
-				let {Pressable, Text} = require('react-native')
-				return (
-					<Pressable
-						accessibilityLabel={props.accessibilityLabel}
-						accessibilityState={{disabled: Boolean(props.disabled)}}
-						onPress={props.onPress}
-					>
-						<Text>{props.accessibilityLabel}</Text>
-					</Pressable>
-				)
-			},
-		}),
-	}),
-	useRouter: () => ({push: mockPush}),
-	useNavigation: () => ({goBack: jest.fn()}),
-	useLocalSearchParams: () => ({senseId: '1'}),
-}))
+jest.mock('expo-router', () => {
+	// oxlint-disable-next-line typescript/no-require-imports
+	let {Stack}: typeof ExpoRouterMock = require('../../../testing/expo-router-mock')
+	return {
+		Stack,
+		useRouter: () => ({push: mockPush}),
+		useNavigation: () => ({goBack: jest.fn()}),
+		useLocalSearchParams: () => ({senseId: '1'}),
+	}
+})
 jest.mock('expo-router/react-navigation', () => ({usePreventRemove: jest.fn()}))
 
 const entry = normalizeEntry({word: 'Caf', definition: 'The dining hall.'})

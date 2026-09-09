@@ -5,6 +5,7 @@ import PreviewScreen from '../../../../app/(home)/Dictionary/entry/preview'
 import {normalizeEntry} from '../lib/entry'
 import {submitReport} from '../report/submit'
 import {useDictionaryDraftStore} from '../store'
+import type * as ExpoRouterMock from '../../../testing/expo-router-mock'
 
 jest.mock('@expo/ui/swift-ui', () => {
 	// oxlint-disable-next-line typescript/no-require-imports
@@ -16,45 +17,28 @@ jest.mock('@expo/ui/swift-ui/modifiers', () => {
 })
 jest.mock('../report/submit', () => ({submitReport: jest.fn()}))
 
-// Jest's mock hoisting forbids a `jest.mock()` factory from closing over an
-// out-of-scope variable unless its name starts with "mock" -- the one
-// exemption to the "no uninitialised mock variable" guard.
-const mockPopToTop = jest.fn()
-
-jest.mock('expo-router', () => ({
-	Stack: Object.assign(({children}: {children?: React.ReactNode}) => children ?? null, {
-		Title: () => null,
-		Screen: () => null,
-		Toolbar: Object.assign(({children}: {children?: React.ReactNode}) => children ?? null, {
-			Button: (props: {accessibilityLabel: string; onPress: () => void; disabled?: boolean}) => {
-				// oxlint-disable-next-line typescript/no-require-imports
-				let {Pressable, Text} = require('react-native')
-				return (
-					<Pressable
-						accessibilityLabel={props.accessibilityLabel}
-						accessibilityState={{disabled: Boolean(props.disabled)}}
-						onPress={props.onPress}
-					>
-						<Text>{props.accessibilityLabel}</Text>
-					</Pressable>
-				)
-			},
-		}),
-	}),
-	useNavigation: () => ({popToTop: mockPopToTop}),
-}))
+jest.mock('expo-router', () => {
+	// oxlint-disable-next-line typescript/no-require-imports
+	let {Stack}: typeof ExpoRouterMock = require('../../../testing/expo-router-mock')
+	return {Stack}
+})
 
 const mockSubmit = jest.mocked(submitReport)
 
 const entry = normalizeEntry({word: 'Caf', definition: 'The dining hall.'})
 
 beforeEach(() => {
-	mockSubmit.mockClear()
-	mockPopToTop.mockClear()
+	mockSubmit.mockReset()
 	useDictionaryDraftStore.getState().clearDraft()
 })
 
 describe('the dictionary preview screen', () => {
+	it('says so when there is nothing to preview', async () => {
+		await render(<PreviewScreen />)
+
+		expect(screen.getByText(/nothing to preview/iu)).toBeTruthy()
+	})
+
 	it('reports both sides through the same normalisation', async () => {
 		useDictionaryDraftStore.getState().startDraft(entry)
 		useDictionaryDraftStore.getState().setSenseField('1', {definition: 'The caf.'})
@@ -68,7 +52,12 @@ describe('the dictionary preview screen', () => {
 		)
 	})
 
-	it('stands the unsaved-changes guard down once the report is away', async () => {
+	// Not a claim that the sheet's own unsaved-changes guard actually stands
+	// down -- that guard is native `usePreventRemove` machinery this mock
+	// cannot exercise, and belongs to Task 8's XCUITests instead. This checks
+	// only the one thing decided in JavaScript: the store flips `submitted`
+	// once the send has gone out.
+	it('marks the draft submitted once the report is sent', async () => {
 		useDictionaryDraftStore.getState().startDraft(entry)
 		useDictionaryDraftStore.getState().setSenseField('1', {definition: 'The caf.'})
 		await render(<PreviewScreen />)
@@ -78,13 +67,23 @@ describe('the dictionary preview screen', () => {
 		expect(useDictionaryDraftStore.getState().submitted).toBe(true)
 	})
 
-	it('returns to the entry once the report is away', async () => {
+	// `submitReport` dumps YAML and opens a `mailto:` URL outside any try of
+	// its own. A throw partway through must not leave `submitted` stuck `true`
+	// -- that would stand the unsaved-changes guard down for good over a
+	// report that never actually sent, so the next sheet drag-down would
+	// discard the reader's draft with no prompt at all.
+	it('leaves the draft unsubmitted when the send itself throws', async () => {
 		useDictionaryDraftStore.getState().startDraft(entry)
 		useDictionaryDraftStore.getState().setSenseField('1', {definition: 'The caf.'})
+		mockSubmit.mockImplementationOnce(() => {
+			throw new Error('mail composer unavailable')
+		})
 		await render(<PreviewScreen />)
 
-		await fireEvent.press(screen.getByLabelText('Submit Report'))
+		await expect(fireEvent.press(screen.getByLabelText('Submit Report'))).rejects.toThrow(
+			'mail composer unavailable',
+		)
 
-		expect(mockPopToTop).toHaveBeenCalled()
+		expect(useDictionaryDraftStore.getState().submitted).toBe(false)
 	})
 })
