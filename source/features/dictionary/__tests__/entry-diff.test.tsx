@@ -8,6 +8,7 @@ import {
 	addExample,
 	deleteExample,
 	deleteSense,
+	moveExample,
 	moveSense,
 	setExampleText,
 	setSenseField,
@@ -127,6 +128,14 @@ describe('EntryDiff', () => {
 
 		expect(screen.getByText('first.')).toBeTruthy()
 		expect(screen.getByText('third.')).toBeTruthy()
+	})
+
+	it('says where a moved citation came from, when only its position changed', async () => {
+		let before = withExamples()
+		let diff = diffEntry(before, moveExample(before, '1', 1, 0))
+		await render(<EntryDiff diff={diff} />)
+
+		expect(screen.getByText('citation moved from 2')).toBeTruthy()
 	})
 })
 
