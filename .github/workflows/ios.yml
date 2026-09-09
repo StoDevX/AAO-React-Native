@@ -314,16 +314,16 @@ jobs:
   uitest-gate:
     name: Decide whether UITests must run
     runs-on: ubuntu-24.04
-    # A job-level `if:` on uitest-plan and ios-uitest replaces GitHub's implicit
-    # success() gate, so this job's own failure or cancellation would otherwise
-    # leave `needed` unset and both of them would quietly skip -- a skip
-    # nobody asked for, under a green check. continue-on-error keeps that
-    # failure from reaching needs.uitest-gate.result downstream (the job
-    # still shows red here, so a human still sees it), and the Decide step
-    # below defaults to needed=true before it risks anything that could fail,
-    # so this job's own output tells the same "run it" story even without
-    # the masking.
-    continue-on-error: true
+    # uitest-plan and ios-uitest key off needs.uitest-gate.outputs.needed, not
+    # this job's own result -- their job-level `if:` replaces GitHub's implicit
+    # success() gate, so a failure here does not skip them. The Decide step
+    # below runs with `if: always()` and defaults to needed=true before it
+    # risks anything that could fail, so a failed checkout still leaves that
+    # default output in place; a runner that never starts leaves the output
+    # unset instead, which downstream reads the same way, since only an
+    # explicit "false" skips. Either way the suite still runs. Nothing here
+    # needs continue-on-error to make that true, so this job's own conclusion
+    # is free to report a real failure honestly instead of masking it.
     outputs:
       needed: ${{ steps.gate.outputs.needed }}
     steps:
@@ -405,13 +405,21 @@ jobs:
     name: Native UITest for iOS (${{ matrix.shard }})
     needs: [uitest-gate, uitest-plan, ios-build, ios-bundle, ios-cache-check]
     runs-on: macos-26
+    # A job-level `if:` replaces GitHub's implicit success()-of-needs gate, so
+    # each dependency this job actually relies on is checked explicitly rather
+    # than through !failure(), which would also depend on undocumented
+    # behaviour of continue-on-error to keep a failed uitest-gate out of it.
+    # ios-build is checked against 'failure' rather than for 'success', because
+    # a cache hit skips it legitimately -- ios-cache-check republishes what the
+    # cache held in that case, so ios-build not having run is not a problem.
     # Same "false" is the only skip signal as uitest-plan above -- see there
-    # for why. uitest-gate's continue-on-error keeps its own status out of
-    # !failure(), so that guard is still only about ios-build/ios-bundle/
-    # ios-cache-check/uitest-plan, which genuinely must have built something
-    # to test.
+    # for why.
     if: |
-      !failure() && !cancelled() &&
+      !cancelled() &&
+      needs.uitest-plan.result == 'success' &&
+      needs.ios-bundle.result == 'success' &&
+      needs.ios-cache-check.result == 'success' &&
+      needs.ios-build.result != 'failure' &&
       needs.uitest-gate.outputs.needed != 'false' &&
       !contains(github.event.pull_request.labels.*.name, 'ci/skip-e2e')
     strategy:
