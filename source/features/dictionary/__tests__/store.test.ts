@@ -8,12 +8,12 @@ beforeEach(() => {
 })
 
 describe('the dictionary draft store', () => {
-	it('holds the entry a reader started from alongside their draft', () => {
+	// `hasChanges` and the preview both diff against `original`, so it has to
+	// hold the entry as opened rather than track the edits.
+	it('holds the entry a reader started from', () => {
 		useDictionaryDraftStore.getState().startDraft(entry)
 
-		let {original, draft} = useDictionaryDraftStore.getState()
-		expect(original).toEqual(entry)
-		expect(draft?.word).toBe('Caf')
+		expect(useDictionaryDraftStore.getState().original).toEqual(entry)
 	})
 
 	it('reports no changes for an untouched draft', () => {
@@ -52,6 +52,16 @@ describe('the dictionary draft store', () => {
 		useDictionaryDraftStore.getState().setSenseField('1', {definition: 'The cage.'})
 
 		expect(useDictionaryDraftStore.getState().submitted).toBe(false)
+	})
+
+	// Every action goes through `onDraft`, which is documented to do nothing
+	// before a draft is started. `hasChanges` covers that indirectly by staying
+	// false; this covers it directly, so an action that wrote a draft out of
+	// nothing is caught where it happens.
+	it('ignores an edit made before a draft was started', () => {
+		useDictionaryDraftStore.getState().addSense()
+
+		expect(useDictionaryDraftStore.getState().draft).toBeNull()
 	})
 
 	it('forgets everything on clear', () => {

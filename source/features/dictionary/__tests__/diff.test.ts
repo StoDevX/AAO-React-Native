@@ -305,13 +305,14 @@ describe('diffEntry', () => {
 		expect(diff.senses[0].examples.map((e) => e.runs[0]?.text)).toEqual(['a', 'b', 'c'])
 	})
 
-	it('diffs pronunciation and part of speech independently, not swapped', () => {
+	it('diffs headword, pronunciation and part of speech independently, not swapped', () => {
 		let before = startDraft(
 			normalizeEntry({word: 'w', pronunciation: 'WORD', partOfSpeech: 'noun', definition: 'd'}),
 		)
-		let after = {...before, pronunciation: 'WERD', partOfSpeech: 'verb'}
+		let after = {...before, word: 'ward', pronunciation: 'WERD', partOfSpeech: 'verb'}
 		let diff = diffEntry(before, after)
 
+		expect(diff.word).toEqual(diffWords('w', 'ward'))
 		expect(diff.pronunciation).toEqual(diffWords('WORD', 'WERD'))
 		expect(diff.partOfSpeech).toEqual(diffWords('noun', 'verb'))
 	})

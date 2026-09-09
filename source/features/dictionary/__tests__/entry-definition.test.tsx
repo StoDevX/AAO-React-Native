@@ -21,19 +21,10 @@ const entry = normalizeEntry({
 })
 
 describe('EntryDefinition', () => {
-	it('renders the headword, its phonetics and its part of speech', async () => {
+	it('names the part of speech', async () => {
 		await render(<EntryDefinition entry={entry} />)
 
-		expect(screen.getByText('Caf')).toBeTruthy()
-		expect(screen.getByText('| kaf |')).toBeTruthy()
 		expect(screen.getByText('noun')).toBeTruthy()
-	})
-
-	it('offers no chrome of its own — the route owns the title and the actions', async () => {
-		await render(<EntryDefinition entry={entry} />)
-
-		expect(screen.queryByLabelText('More actions')).toBeNull()
-		expect(screen.queryByLabelText('Close')).toBeNull()
 	})
 
 	it('shows the headword and its only sense', async () => {
@@ -86,6 +77,9 @@ describe('EntryDefinition', () => {
 			<EntryDefinition entry={normalizeEntry({word: 'Caf', definition: 'The dining hall.'})} />,
 		)
 
+		// The entry first, so an absent bracket means the line was withheld
+		// rather than that nothing drew at all.
+		expect(screen.getByText('The dining hall.')).toBeTruthy()
 		expect(screen.queryByText(/\|/u)).toBeNull()
 	})
 

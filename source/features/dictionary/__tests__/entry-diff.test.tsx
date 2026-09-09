@@ -86,6 +86,9 @@ describe('EntryDiff', () => {
 		let diff = diffEntry(twoSenses(), twoSenses())
 		await render(<EntryDiff diff={diff} />)
 
+		// The senses first, so an absent bracket means the line was withheld
+		// rather than that nothing drew at all.
+		expect(screen.getByText('One.')).toBeTruthy()
 		expect(screen.queryByText(/\|/u)).toBeNull()
 	})
 
@@ -128,6 +131,17 @@ describe('EntryDiff', () => {
 
 		expect(screen.getByText('first.')).toBeTruthy()
 		expect(screen.getByText('third.')).toBeTruthy()
+	})
+
+	// The unit tests below cover `withoutTrailingFullStop` itself. This covers
+	// that the row calls it: the same thing `EntryDefinition` does for a plain
+	// sense, so the preview and the entry read alike where a citation runs on.
+	it('drops the definition’s full stop before a citation runs on from it', async () => {
+		let diff = diffEntry(withExamples(), withExamples())
+		await render(<EntryDiff diff={diff} />)
+
+		expect(screen.getByText('One')).toBeTruthy()
+		expect(screen.queryByText('One.')).toBeNull()
 	})
 
 	it('says where a moved citation came from, when only its position changed', async () => {
