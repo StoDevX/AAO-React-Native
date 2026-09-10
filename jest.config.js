@@ -52,6 +52,7 @@ const config = {
 	// among them Hermes' own Jest snapshots -- which jest counts as obsolete
 	// snapshot files belonging to suites that do not exist, and fails on.
 	modulePathIgnorePatterns: ['<rootDir>/.claude/worktrees/', '<rootDir>/ios/'],
+	globalSetup: './scripts/jest-global-setup.js',
 	setupFiles: ['./scripts/jest-setup.js'],
 	transform: {
 		'^.+\\.mjs$': 'babel-jest',
