@@ -4,7 +4,7 @@ import {trackedOpenUrl} from '@frogpond/open-url'
 import {GH_BASE_URL} from '../../../../lib/constants'
 import * as storage from '../../../../lib/storage'
 import {useRouter} from 'expo-router'
-import {ActionRow, NavigationRow} from '../../components/rows'
+import {ActionRow, NavigationRow} from '../../../../components/rows'
 
 export let MiscellanySection = (): React.ReactNode => {
 	let router = useRouter()

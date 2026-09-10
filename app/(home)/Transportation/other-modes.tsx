@@ -1,31 +1,16 @@
 import * as React from 'react'
-import {OtherModesRow} from '../../../source/features/transportation/other-modes/row'
+import {StyleSheet} from 'react-native'
+import {ContentUnavailableView, Host, List, Section} from '@expo/ui/swift-ui'
+import {listStyle, refreshable} from '@expo/ui/swift-ui/modifiers'
 import * as c from '@frogpond/colors'
-import {SectionList, StyleSheet} from 'react-native'
-import {ListEmpty, ListSectionHeader, ListSeparator} from '@frogpond/lists'
-import {openUrl} from '@frogpond/open-url'
-import {otherModesGroupedOptions} from '../../../source/features/transportation/other-modes/query'
-import {useQuery} from '@tanstack/react-query'
 import {LoadingView, NoticeView} from '@frogpond/notice'
-
-const styles = StyleSheet.create({
-	listContainer: {
-		backgroundColor: c.systemBackground,
-	},
-	contentContainer: {
-		flexGrow: 1,
-	},
-})
+import {openUrl} from '@frogpond/open-url'
+import {useQuery} from '@tanstack/react-query'
+import {DisclosureRow} from '../../../source/components/rows'
+import {otherModesGroupedOptions} from '../../../source/features/transportation/other-modes/query'
 
 export default function OtherModesPage(): React.ReactNode {
-	let {
-		data = [],
-		error,
-		refetch,
-		isRefetching,
-		isLoading,
-		isError,
-	} = useQuery(otherModesGroupedOptions)
+	let {data = [], error, refetch, isLoading, isError} = useQuery(otherModesGroupedOptions)
 
 	if (isError) {
 		return (
@@ -37,19 +22,48 @@ export default function OtherModesPage(): React.ReactNode {
 		)
 	}
 
+	if (isLoading) {
+		return <LoadingView />
+	}
+
 	return (
-		<SectionList
-			ItemSeparatorComponent={ListSeparator}
-			ListEmptyComponent={isLoading ? <LoadingView /> : <ListEmpty mode="bug" />}
-			contentContainerStyle={styles.contentContainer}
-			contentInsetAdjustmentBehavior="automatic"
-			keyExtractor={(item) => item.name}
-			onRefresh={refetch}
-			refreshing={isRefetching}
-			renderItem={({item}) => <OtherModesRow mode={item} onPress={(mode) => openUrl(mode.url)} />}
-			renderSectionHeader={({section: {title}}) => <ListSectionHeader title={title} />}
-			sections={data}
-			style={styles.listContainer}
-		/>
+		<Host style={styles.host}>
+			<List
+				modifiers={[
+					listStyle('insetGrouped'),
+					refreshable(async () => {
+						await refetch()
+					}),
+				]}
+			>
+				{data.length === 0 ? (
+					<ContentUnavailableView
+						description="Check back once the college publishes its transit options."
+						systemImage="bus"
+						title="No Other Modes"
+					/>
+				) : (
+					data.map((section) => (
+						<Section key={section.title} title={section.title}>
+							{section.data.map((mode) => (
+								<DisclosureRow
+									key={mode.name}
+									detail={mode.synopsis}
+									onPress={() => openUrl(mode.url)}
+									title={mode.name}
+								/>
+							))}
+						</Section>
+					))
+				)}
+			</List>
+		</Host>
 	)
 }
+
+const styles = StyleSheet.create({
+	host: {
+		flex: 1,
+		backgroundColor: c.systemGroupedBackground,
+	},
+})
