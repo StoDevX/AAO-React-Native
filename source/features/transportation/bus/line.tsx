@@ -4,7 +4,8 @@ import {FlatList, StyleSheet, Text, TouchableOpacity, View} from 'react-native'
 import type {BusSchedule, UnprocessedBusLine, DayOfWeek} from './types'
 import {
 	BusStateEnum,
-	calculateBusProgress,
+	BusTarget,
+	findBusTarget,
 	getCurrentBusIteration,
 	getScheduleForNow,
 	processBusLine,
@@ -83,59 +84,6 @@ function startsIn(now: Moment, start?: Moment | null) {
 	return `Starts ${nowCopy.seconds(0).to(start)}`
 }
 
-type BusTarget = {targetIndex: number; progress: number; atStop: boolean}
-
-function findBusTarget(
-	schedule: BusSchedule,
-	currentBusIteration: number | null,
-	now: Moment,
-): BusTarget | null {
-	if (currentBusIteration === null) {
-		return null
-	}
-
-	let times = schedule.times[currentBusIteration]
-	if (!times) {
-		return null
-	}
-
-	let targetIndex: number | null = null
-	let previousIndex: number | null = null
-
-	for (let i = 0; i < times.length; i++) {
-		let time = times[i]
-		if (time === null) {
-			continue
-		}
-
-		if (now.isSame(time, 'minute')) {
-			return {targetIndex: i, progress: 1, atStop: true}
-		}
-
-		if (now.isBefore(time, 'minute')) {
-			targetIndex = i
-			break
-		}
-
-		previousIndex = i
-	}
-
-	if (targetIndex === null || previousIndex === null) {
-		return null
-	}
-
-	let previousTime = times[previousIndex]
-	let nextTime = times[targetIndex]
-
-	if (!previousTime || !nextTime) {
-		return null
-	}
-
-	let progress = calculateBusProgress(previousTime, nextTime, now)
-
-	return {targetIndex, progress, atStop: false}
-}
-
 /**
  * Hands the bus to the row it is heading for, which draws the whole leg from the
  * stop above down to its own.
@@ -156,12 +104,16 @@ export function deriveFromProps({line, now}: {line: UnprocessedBusLine; now: Mom
 	status: BusStateEnum
 	schedule: BusSchedule
 	currentBusIteration: number | null
+	parkedStopIndex: number | null
 } {
 	// Finds the stuff that's shared between FlatList and renderItem
 	let processedLine = processBusLine(line, now)
 
 	let scheduleForToday = getScheduleForNow(processedLine.schedules, now)
-	let {times, status, index, nextStart} = getCurrentBusIteration(scheduleForToday, now)
+	let {times, status, index, nextStart, parkedStopIndex} = getCurrentBusIteration(
+		scheduleForToday,
+		now,
+	)
 
 	let isLastBus = index === scheduleForToday.times.length - 1
 
@@ -211,6 +163,7 @@ export function deriveFromProps({line, now}: {line: UnprocessedBusLine; now: Mom
 		status: status,
 		schedule: scheduleForToday,
 		currentBusIteration: index,
+		parkedStopIndex: parkedStopIndex,
 	}
 }
 
@@ -227,13 +180,16 @@ export function BusLine(props: Props): React.ReactNode {
 
 	const momentForSelectedDay = createMomentForDay(now, selectedDay)
 
-	let {schedule, subtitle, currentBusIteration, status} = deriveFromProps({
+	let {schedule, subtitle, currentBusIteration, parkedStopIndex, status} = deriveFromProps({
 		line,
 		now: momentForSelectedDay,
 	})
 
-	let busTarget =
-		status === 'running' ? findBusTarget(schedule, currentBusIteration, momentForSelectedDay) : null
+	let busTarget = findBusTarget(
+		schedule,
+		{status, index: currentBusIteration, parkedStopIndex},
+		momentForSelectedDay,
+	)
 
 	let INFO_EL = (
 		<View style={styles.headerContainer}>

@@ -139,3 +139,11 @@ test('handles a time when the bus is not running', () => {
 	let actual = findBusStopStatus({stop, departureIndex, busStatus, now})
 	expect(actual).toBe('skip')
 })
+
+test('marks the stop the bus is parked at as "at", whatever the timetable says', () => {
+	let now = dayAndTime('Mo 1:20pm')
+	let {schedule, busStatus, departureIndex} = makeSchedule(now)
+	let stop = schedule.timetable[2]
+	expect(findBusStopStatus({stop, departureIndex, busStatus, now})).toBe('before')
+	expect(findBusStopStatus({stop, departureIndex, busStatus, now, busAtStop: true})).toBe('at')
+})

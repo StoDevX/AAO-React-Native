@@ -80,3 +80,44 @@ test('handles the given time being between two iterations', () => {
 	expect(actual.status).toBe('between-rounds')
 	expect(actual.index).toBe(1)
 })
+
+test('parks the bus at the last stop of the round that just ended', () => {
+	let now = time('1:55pm')
+	let input = buildBusSchedules(now)
+	let actual = getCurrentBusIteration(input, now)
+	expect(actual.status).toBe('between-rounds')
+	expect(actual.parkedStopIndex).toBe(7)
+})
+
+test('parks the bus at the last stop the finished round actually served', () => {
+	// prettier-ignore
+	let schedule: UnprocessedBusSchedule = {
+		days: ['Mo'],
+		coordinates: {},
+		stops: ['St. Olaf', 'Carleton', 'Food Co-op'],
+		times: [['1:00pm', '1:05pm', false],
+		        ['2:00pm', '2:05pm', '2:10pm'],
+		],
+	}
+	let now = time('1:30pm')
+	let input = processBusSchedule(now)(schedule)
+	let actual = getCurrentBusIteration(input, now)
+	expect(actual.status).toBe('between-rounds')
+	expect(actual.parkedStopIndex).toBe(1)
+})
+
+test('parks the bus nowhere while a round is under way', () => {
+	let now = time('1:05pm')
+	let input = buildBusSchedules(now)
+	let actual = getCurrentBusIteration(input, now)
+	expect(actual.status).toBe('running')
+	expect(actual.parkedStopIndex).toBe(null)
+})
+
+test('parks the bus nowhere once the day is over', () => {
+	let now = time('5:00pm')
+	let input = buildBusSchedules(now)
+	let actual = getCurrentBusIteration(input, now)
+	expect(actual.status).toBe('after-end')
+	expect(actual.parkedStopIndex).toBe(null)
+})

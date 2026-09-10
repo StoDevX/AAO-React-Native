@@ -59,7 +59,7 @@ export function BusStopRow(props: Props): React.ReactNode {
 		busAtStop,
 	} = props
 
-	let stopStatus = findStopStatus({stop, busStatus, departureIndex, now})
+	let stopStatus = findStopStatus({stop, busStatus, departureIndex, now, busAtStop})
 	let times = findRemainingDepartures({stop, busStatus, departureIndex})
 
 	let rowTextStyle = [
