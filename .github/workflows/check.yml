@@ -74,7 +74,9 @@ jobs:
           cache_key: mise-v2-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('mise.lock') }}
       - run: pnpm install --frozen-lockfile
       - name: Run tests
-        run: mise run test -- --coverage
+        run: mise run test:jest -- --coverage
+      - name: Run script tests
+        run: mise run test:scripts
       - name: Upload coverage
         uses: codecov/codecov-action@fb8b3582c8e4def4969c97caa2f19720cb33a72f # v7.0.0
 
@@ -111,11 +113,23 @@ jobs:
       # A second copy of a package that has to be singular resolves fine and
       # builds fine; only the lockfile shows it.
       - run: mise run validate-single-copy
+      # One manifest naming its own react version is enough to put two copies
+      # of the runtime in the tree, and only the lockfile would show it.
+      - run: mise run validate-catalog-refs
+      # Expo pins a version of every package it knows about, and prebuild
+      # mentions one mismatch in passing. Nothing else looks, so this does --
+      # against the list inside the installed SDK, so it cannot turn red
+      # because Expo published something.
+      - run: mise run validate-expo-versions
       # bundled.json is generated from data/sources.yaml and committed, since
       # the app needs it at build time. Fail if someone edited one and not
       # the other.
       - run: mise run bundle-data
       - run: git diff --exit-code modules/data-sources/bundled.json
+      # Same bargain for renovate.json's version ceilings, which come from the
+      # installed SDK's list: regenerate and fail if the commit did not.
+      - run: mise run bundle-renovate-expo
+      - run: git diff --exit-code renovate.json
 
   # Separate from the data job above because this one needs the network --
   # it fetches the live campus geojson to confirm every building: key

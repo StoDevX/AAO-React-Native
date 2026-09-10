@@ -59,6 +59,10 @@ These patterns are especially important in this codebase:
 ## Testing
 
 - Jest + React Native Testing Library for component tests
+- Build and CI tooling under `scripts/` is plain Node, so its tests run on
+  `node:test` and live beside the script as `scripts/<name>.test.mjs`. Jest's
+  `testMatch` covers `__tests__/` and `.js`/`.ts`/`.tsx` only, so the two
+  runners cannot both claim a file.
 - Tests live adjacent to source files or in `__tests__/` directories
 - Mock native modules and external APIs
 - Descriptive test names; group with `describe` blocks
@@ -92,11 +96,13 @@ pnpm is the package manager. npm and yarn both choke on the `workspace:*`
 protocol the modules use.
 
 ```bash
-mise run lint   # oxlint
-mise run format # oxfmt; run `format:check` to validate instead
-mise run test   # Jest, unit tests
-mise run tsc    # Type check
-mise run prebuild # Generate ios/ from app.config.ts, and install pods
+mise run lint         # oxlint
+mise run format       # oxfmt; run `format:check` to validate instead
+mise run test         # every test
+mise run test:jest    # Jest: app, source, modules
+mise run test:scripts # node:test: scripts/
+mise run tsc          # Type check
+mise run prebuild     # Generate ios/ from app.config.ts, and install pods
 ```
 
 ### App Variants
