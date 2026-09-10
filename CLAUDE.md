@@ -59,10 +59,14 @@ These patterns are especially important in this codebase:
 ## Testing
 
 - Jest + React Native Testing Library for component tests
-- Build and CI tooling under `scripts/` is plain Node, so its tests run on
-  `node:test` and live beside the script as `scripts/<name>.test.mjs`. Jest's
-  `testMatch` covers `__tests__/` and `.js`/`.ts`/`.tsx` only, so the two
-  runners cannot both claim a file.
+- Build and CI tooling is plain Node, so its tests run on `node:test` and live
+  beside their subject: `scripts/<name>.test.mjs` and `plugins/<name>.test.ts`.
+  Jest's `testMatch` requires a `__tests__/` segment, so a test sitting beside
+  its subject cannot end up under both runners.
+- A `plugins/*.test.ts` imports its subject with the extension —
+  `./with-alternate-icons.ts` — because Node strips the types and loads the
+  result as ESM. For the same reason a plugin importing a type as a value
+  breaks at runtime, so type imports there are `import type`.
 - Tests live adjacent to source files or in `__tests__/` directories
 - Mock native modules and external APIs
 - Descriptive test names; group with `describe` blocks
@@ -100,7 +104,7 @@ mise run lint         # oxlint
 mise run format       # oxfmt; run `format:check` to validate instead
 mise run test         # every test
 mise run test:jest    # Jest: app, source, modules
-mise run test:scripts # node:test: scripts/
+mise run test:node    # node:test: scripts/, plugins/
 mise run tsc          # Type check
 mise run prebuild     # Generate ios/ from app.config.ts, and install pods
 ```

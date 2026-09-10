@@ -206,8 +206,6 @@ function main() {
 	console.log(JSON.stringify(formatMatrix(shards, target)))
 }
 
-// A literal `import.meta` here would fail Jest's CommonJS transform of this
-// file, so the entry-point check goes by argv instead.
-if (process.argv[1] && path.basename(process.argv[1]) === 'split-uitests.mjs') {
+if (import.meta.main) {
 	main()
 }

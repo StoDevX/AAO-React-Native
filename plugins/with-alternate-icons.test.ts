@@ -1,9 +1,12 @@
-import {ALTERNATE_ICON_FILES, addAlternateIcons} from '../with-alternate-icons'
+import assert from 'node:assert/strict'
+import {describe, it} from 'node:test'
+
+import {ALTERNATE_ICON_FILES, addAlternateIcons} from './with-alternate-icons.ts'
 
 describe('addAlternateIcons', () => {
 	it('registers the Old Main icon for iPhone', () => {
 		let result = addAlternateIcons({})
-		expect(result.CFBundleIcons.CFBundleAlternateIcons.icon_type_old_main).toEqual({
+		assert.deepEqual(result.CFBundleIcons.CFBundleAlternateIcons.icon_type_old_main, {
 			CFBundleIconFiles: ['old-main'],
 			UIPrerenderedIcon: true,
 		})
@@ -11,7 +14,7 @@ describe('addAlternateIcons', () => {
 
 	it('registers the Old Main icon for iPad', () => {
 		let result = addAlternateIcons({})
-		expect(result['CFBundleIcons~ipad'].CFBundleAlternateIcons.icon_type_old_main).toEqual({
+		assert.deepEqual(result['CFBundleIcons~ipad'].CFBundleAlternateIcons.icon_type_old_main, {
 			CFBundleIconFiles: ['old-main'],
 			UIPrerenderedIcon: true,
 		})
@@ -19,18 +22,18 @@ describe('addAlternateIcons', () => {
 
 	it('preserves unrelated keys', () => {
 		let result = addAlternateIcons({CFBundleName: 'AllAboutOlaf'})
-		expect(result.CFBundleName).toBe('AllAboutOlaf')
+		assert.equal(result.CFBundleName, 'AllAboutOlaf')
 	})
 
 	it('is idempotent', () => {
 		let once = addAlternateIcons({})
-		expect(addAlternateIcons(once)).toEqual(once)
+		assert.deepEqual(addAlternateIcons(once), once)
 	})
 })
 
 describe('ALTERNATE_ICON_FILES', () => {
 	it('names every scale UIKit looks for, including the iPad variants', () => {
-		expect(ALTERNATE_ICON_FILES).toEqual([
+		assert.deepEqual(ALTERNATE_ICON_FILES, [
 			'old-main@2x.png',
 			'old-main@3x.png',
 			'old-main@2x~iPad.png',

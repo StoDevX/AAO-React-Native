@@ -9,7 +9,6 @@
  */
 
 import {readFileSync} from 'node:fs'
-import path from 'node:path'
 
 /**
  * Paths that cannot change what the app under test does.
@@ -22,7 +21,9 @@ const INERT = [
 	/\.md$/u,
 	/^fastlane\//u,
 	/(^|\/)__tests__\//u,
-	/\.test\.tsx?$/u,
+	// A node:test file sits beside its subject rather than in __tests__/, so
+	// the directory rule above never sees it.
+	/\.test\.(mjs|tsx?)$/u,
 	/^source\/testing\//u,
 	/^source\/__mocks__\//u,
 	/^\.vscode\//u,
@@ -93,8 +94,6 @@ function main() {
 	console.log(`needed=${needed}`)
 }
 
-// A literal `import.meta` here would fail Jest's CommonJS transform of this
-// file, so the entry-point check goes by argv instead.
-if (process.argv[1] && path.basename(process.argv[1]) === 'uitests-needed.mjs') {
+if (import.meta.main) {
 	main()
 }

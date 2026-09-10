@@ -1,5 +1,8 @@
 {
   "compilerOptions": {
+    // The plugin tests run on node:test, where Node loads the .ts sources
+    // directly and so demands the extension in the specifier.
+    "allowImportingTsExtensions": true,
     "allowJs": true,
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,

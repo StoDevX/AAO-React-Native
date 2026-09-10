@@ -22,10 +22,7 @@ export function buildFaqs({sourceFile, outputFile}) {
 	fs.writeFileSync(outputFile, JSON.stringify(payload) + '\n')
 }
 
-const isMain =
-	process.argv[1] && path.resolve(process.argv[1]) === new URL(import.meta.url).pathname
-
-if (isMain) {
+if (import.meta.main) {
 	let [, , sourceFile, outputFile] = process.argv
 	if (!sourceFile || !outputFile) {
 		console.error('usage: node build-faqs.mjs <source> <output>')

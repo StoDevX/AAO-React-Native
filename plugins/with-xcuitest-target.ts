@@ -1,7 +1,8 @@
 import {readFileSync, readdirSync, writeFileSync} from 'node:fs'
 import {join, relative} from 'node:path'
 
-import {ConfigPlugin, withDangerousMod, withXcodeProject} from '@expo/config-plugins'
+import {withDangerousMod, withXcodeProject} from '@expo/config-plugins'
+import type {ConfigPlugin} from '@expo/config-plugins'
 import type {XcodeProject} from 'xcode'
 
 const APP_TARGET = 'AllAboutOlaf'

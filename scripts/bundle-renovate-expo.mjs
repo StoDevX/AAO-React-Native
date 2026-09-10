@@ -98,10 +98,8 @@ function main() {
 	)
 }
 
-// argv[1] is the path as typed, while import.meta.filename is resolved
-// through symlinks. Comparing them raw makes this quietly never fire. The
-// guard matters more here than in a validator: without it, importing this
+// The guard matters more here than in a validator: without it, importing this
 // module from its own test rewrites renovate.json.
-if (process.argv[1] && fs.realpathSync(process.argv[1]) === import.meta.filename) {
+if (import.meta.main) {
 	main()
 }

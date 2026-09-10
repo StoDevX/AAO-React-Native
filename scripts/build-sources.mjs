@@ -21,10 +21,7 @@ export function buildSources({sourceFile, outputFile}) {
 	fs.writeFileSync(BUNDLED_COPY, serialized)
 }
 
-const isMain =
-	process.argv[1] && path.resolve(process.argv[1]) === new URL(import.meta.url).pathname
-
-if (isMain) {
+if (import.meta.main) {
 	let [, , sourceFile, outputFile] = process.argv
 	if (!sourceFile || !outputFile) {
 		console.error('usage: node build-sources.mjs <source> <output>')
