@@ -14,7 +14,8 @@ import type {
 } from './types'
 import sample from 'lodash/sample'
 import {reduce} from 'lodash'
-import moment, {type Moment} from 'moment-timezone'
+import {type Moment} from 'moment-timezone'
+import {now as currentMoment} from '@frogpond/timer'
 import {bonAppCafeOptions, bonAppMenuOptions, prepareFood} from './query'
 import {useQuery} from '@tanstack/react-query'
 import {useRouter} from 'expo-router'
@@ -140,7 +141,9 @@ function getErrorMessage(error: Error | undefined) {
 }
 
 export function BonAppHostedMenu(props: Props): React.ReactNode {
-	let now = moment.tz(timezone())
+	// Which meal a cafe opens on is read off the clock, so a UI test run takes
+	// the frozen one its fixtures are anchored to. Noon lands in lunch.
+	let now = currentMoment().tz(timezone())
 	let router = useRouter()
 
 	let {

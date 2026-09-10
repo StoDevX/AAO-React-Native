@@ -1,8 +1,12 @@
 import {client} from '@frogpond/api'
+import {isUITesting} from '@frogpond/launch-arguments'
 import {queryOptions} from '@tanstack/react-query'
 import {groupBy, mapValues} from 'lodash'
 import {decode, innerTextWithSpaces, parseHtml} from '@frogpond/html-lib'
 import {toLaxTitleCase} from '@frogpond/titlecase'
+import bundledPauseMenu from '../../../docs/pause-menu.json'
+import stavCafeFixture from './fixtures/uitest-stav-cafe.json'
+import stavMenuFixture from './fixtures/uitest-stav-menu.json'
 import {trimItemLabel, trimStationName} from './lib/trim-names'
 import {upgradeMenuItem, upgradeStation} from './lib/process-menu-shorthands'
 import type {
@@ -63,11 +67,34 @@ export function prepareFood(cafeMenu: EditedBonAppMenuInfoType): MenuItemContain
 	}))
 }
 
+/**
+ * The cafes a UI test run serves from a fixture, keyed by the path that would
+ * otherwise be fetched.
+ *
+ * Only Stav Hall is captured, because it is the cafe the tests land on. A cafe
+ * absent from here still goes to the wire, which is what The Cage and the
+ * Carleton halls do.
+ */
+const UITEST_BONAPP_MENUS: Record<string, unknown> = {
+	'food/named/menu/stav-hall': stavMenuFixture,
+}
+
+const UITEST_BONAPP_CAFES: Record<string, unknown> = {
+	'food/named/cafe/stav-hall': stavCafeFixture,
+}
+
 async function fetchBonAppMenu(
 	cafeParam: string | {id: string},
 	signal?: AbortSignal,
 ): Promise<EditedBonAppMenuInfoType> {
-	let response = await client.get(buildMenuPath(cafeParam), {signal}).json()
+	let path = buildMenuPath(cafeParam)
+
+	let fixture = isUITesting ? UITEST_BONAPP_MENUS[path] : undefined
+	if (fixture) {
+		return fixture as EditedBonAppMenuInfoType
+	}
+
+	let response = await client.get(path, {signal}).json()
 	return response as EditedBonAppMenuInfoType
 }
 
@@ -76,7 +103,14 @@ export const bonAppCafeOptions = (cafeParam: string | {id: string}) =>
 	queryOptions({
 		queryKey: cafeKeys.bonAppCcc(buildCafePath(cafeParam)),
 		queryFn: async ({signal}) => {
-			let response = await client.get(buildCafePath(cafeParam), {signal}).json()
+			let path = buildCafePath(cafeParam)
+
+			let fixture = isUITesting ? UITEST_BONAPP_CAFES[path] : undefined
+			if (fixture) {
+				return fixture as EditedBonAppCafeInfoType
+			}
+
+			let response = await client.get(path, {signal}).json()
 			return response as EditedBonAppCafeInfoType
 		},
 		staleTime: 1000 * 60 * 60, // 1 hour
@@ -107,6 +141,13 @@ export const bonAppMenuItemOptions = (cafeParam: string | {id: string}, itemId: 
 //
 
 async function fetchPauseMenu({signal}: {signal: AbortSignal}): Promise<GithubMenuResponse> {
+	// The same menu the server would answer with: `bundle-data` builds
+	// `docs/pause-menu.json` from `data/pause-menu.yaml`, and deploying that
+	// directory is what publishes it.
+	if (isUITesting) {
+		return (bundledPauseMenu as {data: GithubMenuResponse}).data
+	}
+
 	let response = await client.get('food/named/menu/the-pause', {signal}).json()
 	return (response as {data: GithubMenuResponse}).data
 }
