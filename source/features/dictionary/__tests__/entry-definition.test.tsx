@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {fireEvent, render, screen} from '@testing-library/react-native'
+import {render, screen} from '@testing-library/react-native'
 
 import {EntryDefinition} from '../entry-definition'
 import {normalizeEntry} from '../lib/entry'
@@ -13,14 +13,23 @@ jest.mock('@expo/ui/swift-ui/modifiers', () => {
 	return require('../../../testing/expo-ui-mock') as typeof import('../../../testing/expo-ui-mock')
 })
 
+const entry = normalizeEntry({
+	word: 'Caf',
+	pronunciation: 'kaf',
+	partOfSpeech: 'noun',
+	senses: [{definition: 'The dining hall.', examples: ['meet me at the caf']}],
+})
+
 describe('EntryDefinition', () => {
+	it('names the part of speech', async () => {
+		await render(<EntryDefinition entry={entry} />)
+
+		expect(screen.getByText('noun')).toBeTruthy()
+	})
+
 	it('shows the headword and its only sense', async () => {
 		await render(
-			<EntryDefinition
-				entry={normalizeEntry({word: 'Caf', definition: 'The dining hall.'})}
-				onClose={jest.fn()}
-				onEdit={jest.fn()}
-			/>,
+			<EntryDefinition entry={normalizeEntry({word: 'Caf', definition: 'The dining hall.'})} />,
 		)
 
 		expect(screen.getByText('Caf')).toBeTruthy()
@@ -29,11 +38,7 @@ describe('EntryDefinition', () => {
 
 	it('numbers a lone sense too, so it reads as an entry not a paragraph', async () => {
 		await render(
-			<EntryDefinition
-				entry={normalizeEntry({word: 'Caf', definition: 'The dining hall.'})}
-				onClose={jest.fn()}
-				onEdit={jest.fn()}
-			/>,
+			<EntryDefinition entry={normalizeEntry({word: 'Caf', definition: 'The dining hall.'})} />,
 		)
 
 		expect(screen.getByText('1')).toBeTruthy()
@@ -46,8 +51,6 @@ describe('EntryDefinition', () => {
 					word: 'ACM',
 					senses: [{definition: 'The association.'}, {definition: 'The student chapter.'}],
 				})}
-				onClose={jest.fn()}
-				onEdit={jest.fn()}
 			/>,
 		)
 
@@ -63,8 +66,6 @@ describe('EntryDefinition', () => {
 					pronunciation: 'ˈɪtərboʊ',
 					definition: 'A residence hall.',
 				})}
-				onClose={jest.fn()}
-				onEdit={jest.fn()}
 			/>,
 		)
 
@@ -73,13 +74,12 @@ describe('EntryDefinition', () => {
 
 	it('omits the pronunciation line entirely when there is none', async () => {
 		await render(
-			<EntryDefinition
-				entry={normalizeEntry({word: 'Caf', definition: 'The dining hall.'})}
-				onClose={jest.fn()}
-				onEdit={jest.fn()}
-			/>,
+			<EntryDefinition entry={normalizeEntry({word: 'Caf', definition: 'The dining hall.'})} />,
 		)
 
+		// The entry first, so an absent bracket means the line was withheld
+		// rather than that nothing drew at all.
+		expect(screen.getByText('The dining hall.')).toBeTruthy()
 		expect(screen.queryByText(/\|/u)).toBeNull()
 	})
 
@@ -90,8 +90,6 @@ describe('EntryDefinition', () => {
 					word: 'Pause',
 					senses: [{definition: 'The venue.', examples: ['Grab mozzarella sticks.']}],
 				})}
-				onClose={jest.fn()}
-				onEdit={jest.fn()}
 			/>,
 		)
 
@@ -107,8 +105,6 @@ describe('EntryDefinition', () => {
 					word: 'Pause',
 					senses: [{definition: 'The venue.', examples: ['Grab a snack.']}],
 				})}
-				onClose={jest.fn()}
-				onEdit={jest.fn()}
 			/>,
 		)
 
@@ -118,11 +114,7 @@ describe('EntryDefinition', () => {
 
 	it('keeps the full stop when the sense has no example', async () => {
 		await render(
-			<EntryDefinition
-				entry={normalizeEntry({word: 'Caf', definition: 'The dining hall.'})}
-				onClose={jest.fn()}
-				onEdit={jest.fn()}
-			/>,
+			<EntryDefinition entry={normalizeEntry({word: 'Caf', definition: 'The dining hall.'})} />,
 		)
 
 		expect(screen.getByText('The dining hall.')).toBeTruthy()
@@ -135,8 +127,6 @@ describe('EntryDefinition', () => {
 					word: 'change',
 					senses: [{grammar: 'with object', definition: 'alter or modify.'}],
 				})}
-				onClose={jest.fn()}
-				onEdit={jest.fn()}
 			/>,
 		)
 
@@ -150,8 +140,6 @@ describe('EntryDefinition', () => {
 					word: 'change',
 					senses: [{definition: 'alter or modify.', examples: ['first one', 'second one.']}],
 				})}
-				onClose={jest.fn()}
-				onEdit={jest.fn()}
 			/>,
 		)
 
@@ -170,43 +158,11 @@ describe('EntryDefinition', () => {
 						},
 					],
 				})}
-				onClose={jest.fn()}
-				onEdit={jest.fn()}
 			/>,
 		)
 
 		expect(screen.getByText('1')).toBeTruthy()
 		expect(screen.getByText('•')).toBeTruthy()
 		expect(screen.getByText('become different.')).toBeTruthy()
-	})
-
-	it('reports a request to edit', async () => {
-		let onEdit = jest.fn()
-		await render(
-			<EntryDefinition
-				entry={normalizeEntry({word: 'Caf', definition: 'The dining hall.'})}
-				onClose={jest.fn()}
-				onEdit={onEdit}
-			/>,
-		)
-
-		await fireEvent.press(screen.getByText('Suggest an Edit'))
-
-		expect(onEdit).toHaveBeenCalled()
-	})
-
-	it('reports a request to close', async () => {
-		let onClose = jest.fn()
-		await render(
-			<EntryDefinition
-				entry={normalizeEntry({word: 'Caf', definition: 'The dining hall.'})}
-				onClose={onClose}
-				onEdit={jest.fn()}
-			/>,
-		)
-
-		await fireEvent.press(screen.getByLabelText('Close'))
-
-		expect(onClose).toHaveBeenCalled()
 	})
 })

@@ -77,11 +77,8 @@ struct TestIdentifiers {
 	enum Dictionary {
 		static let list = "dictionary-list"
 		static let definitionSheet = "dictionary-definition-sheet"
-		static let editorSheet = "dictionary-editor-sheet"
 		static let actionsMenu = "More actions"
 		static let suggestAnEdit = "Suggest an Edit"
-		static let close = "Close"
-		static let wordField = "Word"
 		/// The one entry carrying phonetics, and a Norwegian name whose
 		/// diacritic an ASCII query has to get past to find it.
 		static let phoneticEntry = "Rølvaag"
@@ -92,6 +89,31 @@ struct TestIdentifiers {
 		/// `--uitesting`, for comparing this sheet against a screenshot of
 		/// Apple's.
 		static let referenceEntry = "change"
+
+		static let editForm = "dictionary-edit-form"
+		static let previewSheet = "dictionary-preview-sheet"
+		static let preview = "Preview"
+		static let reorder = "Reorder"
+		static let addSense = "Add Sense"
+		/// Each sense's definition field carries its position in the form, so
+		/// which field holds which text is exactly what a reorder changes --
+		/// and the only place on screen a drag's result can be read.
+		static func definitionField(_ position: Int) -> String { "Definition \(position)" }
+		static let firstDefinitionField = definitionField(1)
+		/// The field `addSense()` produces -- always empty when it first
+		/// appears, unlike `firstDefinitionField`, which the reference entry
+		/// seeds with real text.
+		static let secondDefinitionField = definitionField(2)
+		/// The reference entry's own first definition, so a reorder test can
+		/// say where that sense ended up. Matches `REFERENCE_ENTRY` in
+		/// `source/features/dictionary/lib/reference-entry.ts`.
+		static let referenceEntryFirstDefinition =
+			"make (someone or something) different; alter or modify"
+		/// The marker `@expo/ui` splices into a sentence under DEBUG when a
+		/// modifier is not in its nested-`Text` whitelist. Our patch adds
+		/// strikethrough and underline to that list; if a version bump ever drops
+		/// the patch, this string appears in the preview instead of the markup.
+		static let unsupportedNestedModifier = "not supported for nested Text"
 	}
 
 	// MARK: - Carleton Map
