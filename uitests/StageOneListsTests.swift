@@ -117,4 +117,14 @@ class StageOneListsTests: UITestCase {
 		filterTab.tap()
 		screen.capture("Athletics - Filter")
 	}
+
+	/// The scores tab, which draws two remote crests per row through
+	/// `RNHostView`. Athletics opens on Today, which may legitimately have no
+	/// games -- the capture is taken either way, since an empty state is worth
+	/// seeing too.
+	func testAthleticsScoresList() throws {
+		AthleticsScreen(app: app)
+			.navigate()
+			.capture("Athletics - Scores")
+	}
 }
