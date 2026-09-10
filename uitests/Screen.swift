@@ -58,6 +58,12 @@ extension Screen {
 	/// SwiftUI's `Form` builds its rows lazily: anything below the fold is
 	/// absent from the tree entirely, not merely offscreen, so a query for it
 	/// fails outright rather than returning something unhittable.
+	///
+	/// Good only for a screen with no keyboard up. A swipe spans the whole
+	/// element it is sent to, so once a keyboard is showing it begins on the
+	/// keyboard, the keyboard takes it, and this returns quietly having scrolled
+	/// nothing. Every caller scrolls with the keyboard down; one that cannot
+	/// wants the press-and-drag `CampusDictionaryScreen.revealInForm` uses.
 	@discardableResult
 	func scrollUntilExists(_ element: XCUIElement, swipes: Int = 8) -> Self {
 		for _ in 0..<swipes {

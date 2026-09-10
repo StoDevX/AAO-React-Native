@@ -252,18 +252,32 @@ struct CampusDictionaryScreen: Screen {
 	/// After typing, the keyboard covers the bottom of the form -- including
 	/// the Senses section's footer, the last thing in it -- so a capture taken
 	/// where `editFirstDefinition` leaves off shows neither the footer nor the
-	/// wording it carries. Swiping the form both dismisses the keyboard and
-	/// scrolls, which is what lets one loop do both jobs.
+	/// wording it carries.
+	///
+	/// A press-and-drag between two points above the keyboard, rather than
+	/// `app.swipeUp()`. A swipe spans the whole element it is sent to, so with
+	/// the keyboard up it begins on the keyboard, and the keyboard takes it:
+	/// the form sits at offset 0 however many swipes it is given, and this
+	/// helper then reports content that was scrollable all along as
+	/// unreachable.
 	@discardableResult
 	func revealInForm(_ text: String) -> Self {
 		let label = app.staticTexts[text]
+		// Both ends lie in the strip the keyboard leaves visible, between the
+		// navigation bar and the top of the keys.
+		let start = app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.43))
+		let end = app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.18))
 		for _ in 1...8 {
 			if label.exists && label.isHittable {
 				return self
 			}
-			app.swipeUp()
+			start.press(forDuration: 0.05, thenDragTo: end)
 		}
-		XCTFail("scrolling the form never revealed \"\(text)\"")
+		XCTFail(
+			label.exists
+				? "\"\(text)\" is in the form but never became hittable -- something is drawn "
+					+ "over it"
+				: "eight drags up the form never produced an element reading \"\(text)\"")
 		return self
 	}
 
