@@ -16,12 +16,12 @@ import type {CalendarSource} from './sources'
  * what the list is narrowed to. Category and organisation are one selection
  * between them, not one each -- see `CalendarFilter`.
  *
- * The sections are written ORGANIZATION, CATEGORY, CALENDARS and reach the
- * screen in the opposite order -- CALENDARS at the top -- because SwiftUI
- * draws a Menu's contents bottom-to-top. Confirmed against a screenshot from
- * `testPickerMenuShowsItsSections`, which is also why the category list is
- * sorted Z-A to read A-Z. Reordering these to match the rendered order would
- * invert the menu.
+ * The children are written RESET, ORGANIZATION, CATEGORY, CALENDARS and reach
+ * the screen in the opposite order -- CALENDARS at the top, Reset Filters at
+ * the bottom -- because SwiftUI draws a Menu's contents bottom-to-top.
+ * Confirmed against a screenshot from `testPickerMenuShowsItsRows`, which is
+ * also why each axis's choices are sorted Z-A to read A-Z. Reordering these to
+ * match the rendered order would invert the menu.
  */
 type Props = {
 	sources: CalendarSource[]
@@ -39,6 +39,19 @@ const STAYS_OPEN = [menuActionDismissBehavior('disabled')]
 // Mirrored by `TestIdentifiers.Calendar.picker` in the XCUITest target: it is
 // the only handle those tests have on the toolbar menu.
 const LABEL = accessibilityLabel('Calendar filter')
+
+/**
+ * What a collapsed submenu row reads. It names its axis, and names the
+ * selection too when that axis is the one filtered -- otherwise the only way
+ * to see what the list is narrowed to is to open both submenus.
+ */
+function axisLabel(
+	axis: CalendarFilter['axis'],
+	title: string,
+	filter: CalendarFilter | null,
+): string {
+	return filter?.axis === axis ? `${title}: ${filter.value}` : title
+}
 
 export function CalendarPicker({
 	sources,
@@ -73,8 +86,13 @@ export function CalendarPicker({
 			<Stack.Toolbar.View>
 				<Host matchContents={true}>
 					<Menu label={<Image systemName="calendar" />} modifiers={menuModifiers}>
+						{/* Rendered first so it sits at the visual bottom, below both axes */}
+						{filter ? <Button label="Reset Filters" onPress={() => onSelectFilter(null)} /> : null}
 						{organizations.length > 0 ? (
-							<Section modifiers={STAYS_OPEN} title="ORGANIZATION">
+							<Menu
+								label={axisLabel('organization', 'Organization', filter)}
+								modifiers={STAYS_OPEN}
+							>
 								{organizations.map((organization) => (
 									<Toggle
 										isOn={filter?.axis === 'organization' && filter.value === organization.value}
@@ -83,9 +101,9 @@ export function CalendarPicker({
 										onIsOnChange={() => toggleFilter('organization', organization.value)}
 									/>
 								))}
-							</Section>
+							</Menu>
 						) : null}
-						<Section modifiers={STAYS_OPEN} title="CATEGORY">
+						<Menu label={axisLabel('category', 'Category', filter)} modifiers={STAYS_OPEN}>
 							{categories.map((category) => (
 								<Toggle
 									isOn={filter?.axis === 'category' && filter.value === category.value}
@@ -94,14 +112,7 @@ export function CalendarPicker({
 									onIsOnChange={() => toggleFilter('category', category.value)}
 								/>
 							))}
-							{/* Rendered last so it sits at the visual top of the section */}
-							<Toggle
-								isOn={filter === null}
-								key="__all__"
-								label="All Events"
-								onIsOnChange={() => onSelectFilter(null)}
-							/>
-						</Section>
+						</Menu>
 						<Section modifiers={STAYS_OPEN} title="CALENDARS">
 							{onRequestDeviceCalendars ? (
 								<Button label="Add Device Calendars…" onPress={onRequestDeviceCalendars} />

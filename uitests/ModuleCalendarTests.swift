@@ -12,6 +12,7 @@ class ModuleCalendarTests: UITestCase {
 			.navigate()
 			.openPicker()
 			.checkCategoriesListed()
+			.capture("33-category-submenu")
 	}
 
 	/// Selecting a category filters the list; selecting it again clears the filter.
@@ -234,17 +235,24 @@ class ModuleCalendarTests: UITestCase {
 	}
 
 	/// The picker is three lists in one: which calendars contribute events, and
-	/// the two axes the list can be narrowed along. SwiftUI renders a Menu's
+	/// a row per axis the list can be narrowed along. SwiftUI renders a Menu's
 	/// contents bottom-to-top, so only a screenshot settles the order they
 	/// actually reach the screen in.
-	func testPickerMenuShowsItsSections() throws {
-		CalendarScreen(app: app)
+	func testPickerMenuShowsItsRows() throws {
+		let screen = CalendarScreen(app: app)
 			.navigate()
 			.openPicker()
 			.verifyMenuSection(TestIdentifiers.Calendar.calendarsSection)
-			.verifyMenuSection(TestIdentifiers.Calendar.categorySection)
-			.verifyMenuSection(TestIdentifiers.Calendar.organizationSection)
-			.capture("30-picker-sections")
+
+		for row in [
+			TestIdentifiers.Calendar.categoryMenu, TestIdentifiers.Calendar.organizationMenu,
+		] {
+			XCTAssertTrue(
+				app.buttons[row].waitForExistence(timeout: 30),
+				"\(row) should be a row of the open picker")
+		}
+
+		screen.capture("30-picker-rows")
 	}
 
 	/// The CALENDARS section is what makes a source controllable. UI test mode
@@ -276,9 +284,9 @@ class ModuleCalendarTests: UITestCase {
 			"Switching the calendar back on should restore its rows")
 	}
 
-	/// "All Events" clears whichever axis is filtered, and is the only way back
-	/// to the whole list without hunting for the selected item to untick.
-	func testAllEventsClearsTheFilter() throws {
+	/// Reset Filters clears whichever axis is filtered, and is the only way back
+	/// to the whole list without hunting for the selected choice to untick.
+	func testResetFiltersClearsTheFilter() throws {
 		let screen = CalendarScreen(app: app).navigate()
 		let unfiltered = screen.visibleRowCount()
 
@@ -293,13 +301,21 @@ class ModuleCalendarTests: UITestCase {
 
 		screen
 			.openPicker()
-			.selectCategory(TestIdentifiers.Calendar.allEvents)
-			.dismissMenu()
+			.tapResetFilters()
 			.capture("32-filter-cleared")
 
 		XCTAssertEqual(
 			screen.visibleRowCount(), unfiltered,
-			"All Events should restore the whole list")
+			"Reset Filters should restore the whole list")
+	}
+
+	/// Reset Filters is an undo, so it has nothing to offer an unfiltered list.
+	func testResetFiltersIsAbsentWhileUnfiltered() throws {
+		CalendarScreen(app: app).navigate().openPicker()
+
+		XCTAssertFalse(
+			app.buttons[TestIdentifiers.Calendar.resetFilters].exists,
+			"Reset Filters should be absent while the list is unfiltered")
 	}
 
 	/// Organisation is the second filter axis, and the only one whose values
@@ -327,12 +343,11 @@ class ModuleCalendarTests: UITestCase {
 
 		screen
 			.openPicker()
-			.selectCategory(TestIdentifiers.Calendar.allEvents)
-			.dismissMenu()
+			.tapResetFilters()
 
 		XCTAssertEqual(
 			screen.visibleRowCount(), unfiltered,
-			"All Events should restore the whole list")
+			"Reset Filters should restore the whole list")
 	}
 
 	/// The list merges several calendars and so credits none of them; the

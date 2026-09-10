@@ -24,9 +24,10 @@ struct CalendarScreen: Screen {
 		return self
 	}
 
-	/// Every category is a menu item, so a UIMenu action is a button.
+	/// Every category is a submenu item, so a UIMenu action is a button.
 	@discardableResult
 	func checkCategoriesListed() -> Self {
+		openSubmenu(TestIdentifiers.Calendar.categoryMenu)
 		for category in TestIdentifiers.Calendar.categories {
 			XCTContext.runActivity(named: category) { _ in
 				XCTAssertTrue(
@@ -37,9 +38,9 @@ struct CalendarScreen: Screen {
 		return self
 	}
 
-	/// Tap an item in the open menu. A category, an organisation and All Events
-	/// are all Toggles inside a Menu, which reach XCUITest as buttons labelled
-	/// with their titles.
+	/// Tap an item in whichever menu is open. A category and an organisation are
+	/// Toggles inside a Menu and Reset Filters is a Button; all three reach
+	/// XCUITest as buttons labelled with their titles.
 	@discardableResult
 	private func tapMenuItem(_ title: String) -> Self {
 		let item = app.buttons[title]
@@ -50,16 +51,46 @@ struct CalendarScreen: Screen {
 		return self
 	}
 
-	/// Tap a category in the open menu.
+	/// Open one of the picker's two filter submenus. A nested Menu reaches
+	/// XCUITest as a button, and its choices only enter the hierarchy once it
+	/// has been tapped.
+	///
+	/// Matched on the prefix: a row names its selection after a colon once that
+	/// axis is filtered, so the exact label depends on the state of the list.
 	@discardableResult
-	func selectCategory(_ category: String) -> Self {
-		tapMenuItem(category)
+	func openSubmenu(_ title: String) -> Self {
+		let row = app.buttons.matching(
+			NSPredicate(format: "label BEGINSWITH %@", title)
+		).firstMatch
+		XCTAssertTrue(
+			row.waitForExistence(timeout: 30),
+			"\(title) should be a row of the open picker")
+		row.tap()
+		return self
 	}
 
-	/// Tap an organisation in the open menu's ORGANIZATION section.
+	/// Clear the filter from the open picker. The action dismisses the menu, so
+	/// nothing after it needs to.
+	@discardableResult
+	func tapResetFilters() -> Self {
+		tapMenuItem(TestIdentifiers.Calendar.resetFilters)
+		_ = app.staticTexts[TestIdentifiers.Calendar.calendarsSection]
+			.waitForNonExistence(timeout: 10)
+		return self
+	}
+
+	/// Tap a category, opening the Category submenu to reach it.
+	@discardableResult
+	func selectCategory(_ category: String) -> Self {
+		openSubmenu(TestIdentifiers.Calendar.categoryMenu)
+		return tapMenuItem(category)
+	}
+
+	/// Tap an organisation, opening the Organization submenu to reach it.
 	@discardableResult
 	func selectOrganization(_ organization: String) -> Self {
-		tapMenuItem(organization)
+		openSubmenu(TestIdentifiers.Calendar.organizationMenu)
+		return tapMenuItem(organization)
 	}
 
 	/// Assert a category is selected in the open menu.
@@ -88,14 +119,28 @@ struct CalendarScreen: Screen {
 		app.staticTexts[TestIdentifiers.Calendar.calendarsSection].exists
 	}
 
+	/// Whether the picker is up, counting a submenu drawn over its parent.
+	///
+	/// Opening a submenu replaces the parent's contents, taking the CALENDARS
+	/// header with it, so a choice that exists only inside a submenu stands in
+	/// for the header while one is open.
+	func pickerIsPresented() -> Bool {
+		if menuIsPresented() {
+			return true
+		}
+		return app.buttons[TestIdentifiers.Calendar.categories[0]].exists
+	}
+
 	/// Close the menu by tapping well away from it -- the toolbar button is at
 	/// the bottom right and the menu opens upward from it, so the top left is
 	/// clear of both.
 	@discardableResult
 	func dismissMenu() -> Self {
-		if menuIsPresented() {
+		if pickerIsPresented() {
 			app.coordinate(withNormalizedOffset: CGVector(dx: 0.1, dy: 0.2)).tap()
 			_ = app.staticTexts[TestIdentifiers.Calendar.calendarsSection]
+				.waitForNonExistence(timeout: 10)
+			_ = app.buttons[TestIdentifiers.Calendar.categories[0]]
 				.waitForNonExistence(timeout: 10)
 		}
 		return self

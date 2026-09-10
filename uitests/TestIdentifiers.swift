@@ -246,11 +246,18 @@ struct TestIdentifiers {
 		/// `modules/ccc-calendar/fixtures/uitest-events.json` read at the app's
 		/// frozen clock, so they hold for as long as that fixture does.
 		static let categories = ["Music (10)", "Academic Year (6)"]
-		/// The picker menu's section headers. SwiftUI draws a Menu section title
-		/// as static text, uppercased by the caller rather than by the platform.
+		/// The picker menu's one section header. SwiftUI draws a Menu section
+		/// title as static text, uppercased by the caller rather than by the
+		/// platform.
 		static let calendarsSection = "CALENDARS"
-		static let categorySection = "CATEGORY"
-		static let organizationSection = "ORGANIZATION"
+		/// The rows that open each axis's submenu. A row names its selection
+		/// after a colon once that axis is filtered, so a test matching one has
+		/// to match on the prefix.
+		static let categoryMenu = "Category"
+		static let organizationMenu = "Organization"
+		/// Clears whichever axis is filtered, from the bottom of the picker.
+		/// Present only while something is filtered, and it dismisses the menu.
+		static let resetFilters = "Reset Filters"
 		/// A sponsoring organisation named by the fixture calendar's events,
 		/// written as the menu draws it. It sponsors three of them, so filtering
 		/// to it leaves the list narrowed rather than empty.
@@ -262,9 +269,6 @@ struct TestIdentifiers {
 		/// only too long. A name long enough to wrap its row costs half again
 		/// the height of one that does not.
 		static let organization = "Music Organizations (3)"
-		/// Clears whichever axis is filtered. Rendered inside the CATEGORY
-		/// section, at its visual top.
-		static let allEvents = "All Events"
 		/// The one calendar UI test mode enables, from `REMOTE_SOURCES`.
 		static let uitestCalendar = "UI Test Fixtures"
 		/// Every attribution caption opens with this. The list should carry
