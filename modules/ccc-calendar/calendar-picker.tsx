@@ -1,6 +1,6 @@
 import * as React from 'react'
 import {Stack} from 'expo-router'
-import {Button, Host, Image, Menu, Section, Toggle} from '@expo/ui/swift-ui'
+import {Button, Divider, Host, Image, Menu, Section, Toggle} from '@expo/ui/swift-ui'
 import {
 	accessibilityLabel,
 	foregroundStyle,
@@ -18,7 +18,9 @@ import type {CalendarSource} from './sources'
  *
  * The children are written RESET, ORGANIZATION, CATEGORY, CALENDARS and reach
  * the screen in the opposite order -- CALENDARS at the top, Reset Filters at
- * the bottom -- because SwiftUI draws a Menu's contents bottom-to-top.
+ * the bottom -- because SwiftUI draws a Menu's contents bottom-to-top. The rule
+ * separating Reset Filters from the axes above it is written after it for the
+ * same reason.
  * Confirmed against a screenshot from `testPickerMenuShowsItsRows`, which is
  * also why each axis's choices are sorted Z-A to read A-Z. Reordering these to
  * match the rendered order would invert the menu.
@@ -87,7 +89,12 @@ export function CalendarPicker({
 				<Host matchContents={true}>
 					<Menu label={<Image systemName="calendar" />} modifiers={menuModifiers}>
 						{/* Rendered first so it sits at the visual bottom, below both axes */}
-						{filter ? <Button label="Reset Filters" onPress={() => onSelectFilter(null)} /> : null}
+						{filter ? (
+							<>
+								<Button label="Reset Filters" onPress={() => onSelectFilter(null)} />
+								<Divider />
+							</>
+						) : null}
 						{organizations.length > 0 ? (
 							<Menu
 								label={axisLabel('organization', 'Organization', filter)}
