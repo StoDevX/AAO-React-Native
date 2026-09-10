@@ -30,11 +30,16 @@ export const DAY_DOT_PREFIX = 'day-dot-'
 
 const DOT_SIZE = 5
 
-const CELL_WIDTH = 44
 const CELL_MARGIN = 4
-const CELL_TOTAL_WIDTH = CELL_WIDTH + CELL_MARGIN * 2
 const PADDING_HORIZONTAL = 8
 const CIRCLE_SIZE = 32
+
+/**
+ * The smallest a cell is allowed to shrink to, so a narrow phone never drops
+ * below the 44pt minimum tap target.
+ */
+const MIN_CELL_WIDTH = 44
+const MIN_CELL_TOTAL_WIDTH = MIN_CELL_WIDTH + CELL_MARGIN * 2
 
 /**
  * Whether `day` opens its week, by the rule `deriveDays` and `scrollToDay`
@@ -63,19 +68,31 @@ function DayCell({
 	isSelected,
 	hasEvents,
 	onPress,
+	width,
 }: {
 	day: Moment
 	isToday: boolean
 	isSelected: boolean
 	hasEvents: boolean
 	onPress: () => void
+	width: number
 }): React.ReactNode {
 	let weekdayLetter = day.format('dd').charAt(0).toUpperCase()
 	let dateNumber = day.format('D')
 
-	let showTodayCircle = isToday
+	// Today keeps its own circle only while it is also the selection -- worn
+	// at all times, it competed with the selection circle and left two days
+	// looking chosen at once. Off today, unselected, red carries the "today"
+	// meaning on its own, the way Calendar.app does it.
+	let showTodayCircle = isToday && isSelected
 	let showSelectionCircle = isSelected && !isToday
-	let textColor = isToday ? '#FFFFFF' : showSelectionCircle ? selectionTextColor : c.label
+	let textColor = showTodayCircle
+		? '#FFFFFF'
+		: isToday
+			? c.systemRed
+			: showSelectionCircle
+				? selectionTextColor
+				: c.label
 	let weekdayColor = isToday ? c.systemRed : c.secondaryLabel
 
 	return (
@@ -89,7 +106,7 @@ function DayCell({
 			accessibilityState={{selected: isSelected}}
 			hitSlop={4}
 			onPress={onPress}
-			style={styles.cell}
+			style={({pressed}) => [styles.cell, {width}, pressed && styles.cellPressed]}
 			testID={`${DAY_CELL_PREFIX}${day.format('YYYY-MM-DD')}`}
 		>
 			<Text style={[styles.weekday, {color: weekdayColor}]}>{weekdayLetter}</Text>
@@ -123,6 +140,17 @@ export let DayPickerStrip = React.forwardRef<DayPickerStripHandle, Props>(functi
 		setContainerWidth(event.nativeEvent.layout.width)
 	}, [])
 
+	// A week has to fill the viewport exactly, or the next week's first cell
+	// sits in the leftover space and shows at the strip's trailing edge. A
+	// fixed cell width can't promise that on every phone, so the width is
+	// derived from what actually got measured -- floored at the 44pt minimum
+	// tap target for a phone too narrow to reach it otherwise.
+	let cellTotalWidth =
+		containerWidth > 0
+			? Math.max(MIN_CELL_TOTAL_WIDTH, (containerWidth - PADDING_HORIZONTAL * 2) / DAYS_PER_WEEK)
+			: MIN_CELL_TOTAL_WIDTH
+	let cellWidth = cellTotalWidth - CELL_MARGIN * 2
+
 	// Trailing room so the last week's Sunday can still pull to the leading
 	// edge -- scroll inset, not day cells, so there is no empty week to swipe
 	// into. A full week already fills a phone; wider screens need the rest.
@@ -130,12 +158,12 @@ export let DayPickerStrip = React.forwardRef<DayPickerStripHandle, Props>(functi
 	// and the strip drags into blank space and rubber-bands back.
 	let trailingInset = Math.max(
 		0,
-		containerWidth - (DAYS_PER_WEEK * CELL_TOTAL_WIDTH + PADDING_HORIZONTAL * 2 - CELL_MARGIN),
+		containerWidth - (DAYS_PER_WEEK * cellTotalWidth + PADDING_HORIZONTAL * 2 - CELL_MARGIN),
 	)
 
 	let maxScroll = Math.max(
 		0,
-		PADDING_HORIZONTAL * 2 + trailingInset + days.length * CELL_TOTAL_WIDTH - containerWidth,
+		PADDING_HORIZONTAL * 2 + trailingInset + days.length * cellTotalWidth - containerWidth,
 	)
 
 	/**
@@ -144,8 +172,8 @@ export let DayPickerStrip = React.forwardRef<DayPickerStripHandle, Props>(functi
 	 * at all, which is why it is separate from `offsetForIndex`.
 	 */
 	let rawOffsetForIndex = React.useCallback(
-		(index: number) => PADDING_HORIZONTAL + index * CELL_TOTAL_WIDTH - CELL_MARGIN,
-		[],
+		(index: number) => PADDING_HORIZONTAL + index * cellTotalWidth - CELL_MARGIN,
+		[cellTotalWidth],
 	)
 
 	let offsetForIndex = React.useCallback(
@@ -219,6 +247,7 @@ export let DayPickerStrip = React.forwardRef<DayPickerStripHandle, Props>(functi
 							isToday={isToday}
 							key={day.format('YYYY-MM-DD')}
 							onPress={() => onSelectDay(day)}
+							width={cellWidth}
 						/>
 					)
 				})}
@@ -237,9 +266,15 @@ const styles = StyleSheet.create({
 		paddingVertical: 8,
 	},
 	cell: {
-		width: CELL_WIDTH,
 		alignItems: 'center',
+		borderRadius: 12,
 		marginHorizontal: CELL_MARGIN,
+	},
+	// A press has to read at a glance and with no delay, since a tap on this
+	// small a target is often over before a fade would finish -- a flat fill
+	// swapped in and out with the touch is what makes that visible.
+	cellPressed: {
+		backgroundColor: c.systemFill,
 	},
 	weekday: {
 		fontSize: 11,

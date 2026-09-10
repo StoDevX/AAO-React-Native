@@ -85,6 +85,29 @@ class ModuleCalendarTests: UITestCase {
 			.verifyDayCellsAreTappable()
 	}
 
+	/// Today wears its own filled circle only while it is also the selection;
+	/// off the selection it stays red with no circle, so it never looks chosen
+	/// alongside whichever day actually is. None of this is something Jest can
+	/// see -- it has no layout pass -- so a screenshot is the only artifact that
+	/// proves it.
+	///
+	/// Two captures carry all four cell states between them: the first shows
+	/// today circled and selected against every other visible cell, plain and
+	/// unselected; the second, taken after selecting a different day, shows
+	/// today red but uncircled next to the newly selected day's own circle.
+	func testTodayCircleOnlyShowsWhenSelected() throws {
+		let calendar = CalendarScreen(app: app)
+		calendar.navigate().verifyStripIsPresent()
+		calendar.capture("today-selected-others-plain")
+
+		let other = "2026-09-01"
+		calendar.tapDay(other)
+		calendar.verifySelectedDay(
+			TestIdentifiers.Calendar.dayCellPrefix + other,
+			message: "Tapping another day should select it")
+		calendar.capture("today-unselected-other-selected")
+	}
+
 	/// Swiping the strip settles on a week boundary: the Sunday of whichever week
 	/// it lands on comes to rest at the same leading edge, with no partial week
 	/// behind it.
@@ -396,6 +419,35 @@ class ModuleCalendarTests: UITestCase {
 			message: "Tapping an empty day should select it rather than skip past it")
 		calendar.verifyStripIsPresent()
 		calendar.verifyNoticeVisible(TestIdentifiers.Calendar.emptyDayNotice)
+	}
+
+	/// Every other test here selects a day with `XCUIElement.tap()`, which can
+	/// activate a `Pressable` through the accessibility layer without landing a
+	/// real touch where the cell is drawn. A coordinate tap always synthesizes a
+	/// touch through UIKit's actual `hitTest(_:with:)`, which is what a finger on
+	/// a physical device does -- and reports from a physical iPhone 14 Pro say
+	/// that almost never selects a day, even though the strip scrolls fine.
+	///
+	/// Several targets, in sequence, and one after a scroll: a single tap could
+	/// pass by luck on a bug this intermittent, so the loop is what would have
+	/// caught a hit-testing problem that only shows up some of the time.
+	func testTappingADayCellByCoordinateSelectsIt() throws {
+		let calendar = CalendarScreen(app: app)
+		calendar.navigate().verifyStripIsPresent()
+
+		for target in ["2026-08-31", "2026-09-01", "2026-08-30", "2026-09-02", "2026-09-03"] {
+			calendar.tapDayAtItsCenter(target)
+			calendar.verifySelectedDay(
+				TestIdentifiers.Calendar.dayCellPrefix + target,
+				message: "A coordinate tap on \(target)'s cell should select it, the way a real touch does")
+		}
+
+		calendar.swipeStripToNextWeek()
+		let afterScroll = "2026-09-07"
+		calendar.tapDayAtItsCenter(afterScroll)
+		calendar.verifySelectedDay(
+			TestIdentifiers.Calendar.dayCellPrefix + afterScroll,
+			message: "A coordinate tap after scrolling the strip should still select the cell it lands on")
 	}
 
 	/// A dot is what replaces scrolling to find out whether a day has anything,

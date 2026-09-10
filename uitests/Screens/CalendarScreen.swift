@@ -425,6 +425,25 @@ struct CalendarScreen: Screen {
 		return self
 	}
 
+	/// Taps the cell for a given ISO day at its visual centre, the way a
+	/// finger does.
+	///
+	/// `XCUIElement.tap()` can activate an accessible element through the
+	/// accessibility layer -- it does not have to land a real touch at that
+	/// point on screen. `XCUICoordinate.tap()` always synthesizes a touch and
+	/// goes through UIKit's actual `hitTest(_:with:)`, so it is the only way
+	/// here to prove a cell is tappable where it is drawn, not merely present
+	/// in the hierarchy.
+	@discardableResult
+	func tapDayAtItsCenter(_ isoDay: String) -> Self {
+		let cell = app.buttons[TestIdentifiers.Calendar.dayCellPrefix + isoDay]
+		XCTAssertTrue(
+			cell.waitForExistence(timeout: 10),
+			"The strip should offer \(isoDay)")
+		cell.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
+		return self
+	}
+
 	/// The day cells at the head of the strip should each clear the 44pt minimum
 	/// for a touch target.
 	///
