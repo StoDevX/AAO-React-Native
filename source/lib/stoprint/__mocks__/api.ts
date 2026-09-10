@@ -2,6 +2,7 @@
 /* stoprint and papercut api mock data */
 
 import {mockAllPrinters} from './data/all-printers'
+import {mockColorPrinters} from './data/color-printers'
 import {mockHeldJobs} from './data/held-jobs'
 import {mockJobs} from './data/jobs'
 import {mockRecent} from './data/recent'
@@ -10,6 +11,7 @@ import {mockRelease} from './data/release'
 import {SharedWebCredentials} from 'react-native-keychain'
 import type {
 	AllPrintersResponse,
+	CancelResponse,
 	HeldJobsResponse,
 	PrintJobsResponse,
 	RecentPopularPrintersResponse,
@@ -28,6 +30,13 @@ export function logIn(
 }
 
 export const fetchJobs = (username: string): Promise<PrintJobsResponse> => Promise.resolve(mockJobs)
+
+export const fetchColorPrinters = (): Promise<string[]> => Promise.resolve(mockColorPrinters)
+
+/// `CancelResponse` is an alias for the fetch `Response`, so this hands back a
+/// real one rather than the JSON body the caller actually reads.
+export const cancelPrintJobForUser = (): Promise<CancelResponse> =>
+	Promise.resolve(new Response(JSON.stringify({success: true})))
 
 export const fetchAllPrinters = (username: string): Promise<AllPrintersResponse> =>
 	Promise.resolve(mockAllPrinters)

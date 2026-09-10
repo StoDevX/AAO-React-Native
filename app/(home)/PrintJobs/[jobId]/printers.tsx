@@ -34,10 +34,8 @@ type PrinterListViewProps = {
 function PrinterListView({job}: PrinterListViewProps): React.ReactNode {
 	let router = useRouter()
 
-	let {data: username = ''} = useQuery({
-		...credentialsOptions,
-		select: (data) => stoprintUsername(data, isStoprintMocked),
-	})
+	let {data: credentials} = useQuery(credentialsOptions)
+	let username = stoprintUsername(credentials, isStoprintMocked)
 
 	let {
 		data: allPrinters = [],
@@ -179,10 +177,8 @@ function PrinterListView({job}: PrinterListViewProps): React.ReactNode {
 function PrinterListLoader(): React.ReactNode {
 	let {jobId} = useLocalSearchParams<{jobId: string}>()
 
-	let {data: username = '', isLoading: credentialsLoading} = useQuery({
-		...credentialsOptions,
-		select: (data) => stoprintUsername(data, isStoprintMocked),
-	})
+	let {data: credentials, isLoading: credentialsLoading} = useQuery(credentialsOptions)
+	let username = stoprintUsername(credentials, isStoprintMocked)
 
 	let {
 		data: job,
@@ -191,7 +187,7 @@ function PrinterListLoader(): React.ReactNode {
 		refetch: jobRefetch,
 	} = useQuery(jobByIdOptions(username, jobId))
 
-	if (credentialsLoading || jobLoading) {
+	if ((credentialsLoading && !isStoprintMocked) || jobLoading) {
 		return <LoadingView text="Loading…" />
 	}
 

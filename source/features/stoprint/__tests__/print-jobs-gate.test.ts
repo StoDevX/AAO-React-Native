@@ -28,11 +28,12 @@ describe('printJobsGate', () => {
 		).toBe('jobs')
 	})
 
-	/// The mock does not make the credentials read instant; a gate that ignored
-	/// that would flash the job list before the screen knew who it was for.
-	it('still waits for the credentials read even when mocked', () => {
+	/// A mocked run prints as the stand-in account whatever the keychain holds,
+	/// so there is nothing to wait for. Waiting anyway hung the printer screen
+	/// on the simulator, where that read did not always come back.
+	it('does not wait on the credentials read when mocked', () => {
 		expect(printJobsGate({isLoadingCredentials: true, hasCredentials: false, isMocked: true})).toBe(
-			'loading',
+			'jobs',
 		)
 	})
 })
@@ -55,5 +56,13 @@ describe('stoprintUsername', () => {
 
 	it('still prefers a real account over the stand-in', () => {
 		expect(stoprintUsername({username: 'ole'}, true)).toBe('ole')
+	})
+
+	/// A keychain with nothing in it leaves the credentials query with no data
+	/// at all, not a null. React Query skips `select` entirely in that case, so
+	/// this has to be applied to the query's result rather than inside it --
+	/// undefined is the input that actually reaches it on a mocked run.
+	it('stands in an account when the credentials read yielded nothing', () => {
+		expect(stoprintUsername(undefined, true)).toBe(MOCK_STOPRINT_USERNAME)
 	})
 })

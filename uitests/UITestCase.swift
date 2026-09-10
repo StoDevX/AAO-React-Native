@@ -54,9 +54,31 @@ class UITestCase: XCTestCase {
 	/// this, a rescued flake skips every test after it and the shard reports
 	/// green having run almost nothing.
 	override func tearDownWithError() throws {
+		if (testRun?.failureCount ?? 0) > 0 {
+			captureFailureScreen()
+		}
+
 		if UITestCase.failedTest == name, testRun?.failureCount == 0 {
 			UITestCase.failedTest = nil
 		}
+	}
+
+	/// Attach a screenshot of wherever the app ended up, for a test that failed.
+	///
+	/// `continueAfterFailure` is false, so a failed test stops at its assertion
+	/// and the screen is still whatever the assertion was unhappy about --
+	/// which is the one picture worth having and the one nobody thinks to take
+	/// in advance. Xcode's own automatic screenshots need a test plan this
+	/// project does not have, and the scheme defaults throw them away.
+	///
+	/// `.keepAlways` rather than `.deleteOnSuccess`: this only runs for a
+	/// failure, so there is no success for the latter to key off, and CI's
+	/// "Extract failure attachments" step reads whatever is in the bundle.
+	private func captureFailureScreen() {
+		let attachment = XCTAttachment(screenshot: XCUIScreen.main.screenshot())
+		attachment.name = "Failure - \(name)"
+		attachment.lifetime = .keepAlways
+		add(attachment)
 	}
 
 	/// Points the app at a Metro other than the default localhost:8081, when

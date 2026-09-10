@@ -34,6 +34,34 @@ class StageOneListsTests: UITestCase {
 		screen.capture("Print Jobs")
 	}
 
+	func testStudentOrgsList() throws {
+		StudentOrgsScreen(app: app)
+			.navigate()
+			.capture("Student Orgs")
+	}
+
+	/// Reaching the printer list means releasing a job, so this taps a mocked
+	/// job that is Pending Release -- the only status whose row pushes here
+	/// rather than to the release screen.
+	func testPrinterList() throws {
+		let screen = StoPrintScreen(app: app).navigate()
+
+		let job = app.buttons
+			.matching(NSPredicate(format: "label BEGINSWITH %@", "IMG_2259-COLLAGE.jpg"))
+			.firstMatch
+		XCTAssertTrue(job.waitForExistence(timeout: 30), "A pending-release job should be listed")
+		job.tap()
+
+		// Every printer in the fixtures is named mfc-<something>; their location
+		// is blank, so a row is its name alone.
+		let anyPrinter = app.buttons
+			.matching(NSPredicate(format: "label BEGINSWITH %@", "mfc-"))
+			.firstMatch
+		XCTAssertTrue(anyPrinter.waitForExistence(timeout: 30), "The printer list should be shown")
+
+		screen.capture("Printers")
+	}
+
 	func testMoreList() throws {
 		MoreScreen(app: app)
 			.navigate()
