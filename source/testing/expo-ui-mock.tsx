@@ -88,8 +88,19 @@ export function Host({children}: WithModifiers): React.ReactNode {
 	return <View>{children}</View>
 }
 
+/// Mirrors the real `Text`'s children filter: SwiftUI's `Text` concatenation
+/// only accepts a string/number or a nested `Text` element, and silently
+/// drops anything else -- a custom component, a `Fragment` -- with no warning
+/// on device. Filtering here the same way turns that into a Jest failure
+/// instead of a blank sentence discovered on a phone.
 export function Text({children, modifiers}: WithModifiers): React.ReactNode {
-	return <RNText accessibilityLabel={labelOf(modifiers)}>{children}</RNText>
+	let kept = React.Children.toArray(children).filter(
+		(child) =>
+			typeof child === 'string' ||
+			typeof child === 'number' ||
+			(React.isValidElement(child) && child.type === Text),
+	)
+	return <RNText accessibilityLabel={labelOf(modifiers)}>{kept}</RNText>
 }
 
 /// `View` forwards any prop it doesn't recognise straight onto the host
@@ -110,15 +121,37 @@ export function List({children, modifiers}: WithModifiers): React.ReactNode {
 	)
 }
 
-List.ForEach = function ListForEach({children}: WithModifiers): React.ReactNode {
-	return <View>{children}</View>
+List.ForEach = function ListForEach({
+	children,
+	onDelete,
+	onMove,
+}: WithModifiers & {
+	onDelete?: (indices: number[]) => void
+	onMove?: (sourceIndices: number[], destination: number) => void
+}): React.ReactNode {
+	// `View` forwards unrecognised props onto the host node, so a test can read
+	// the handlers back off `testID="for-each"` and call them directly. There
+	// is no drag gesture to simulate here; the drag itself is a UI test.
+	let Forwarding = View as unknown as React.ComponentType<
+		WithModifiers & {testID?: string; onDelete?: unknown; onMove?: unknown}
+	>
+	return (
+		<Forwarding onDelete={onDelete} onMove={onMove} testID="for-each">
+			{children}
+		</Forwarding>
+	)
 }
 
-export function Section({children, title}: WithModifiers & {title?: string}): React.ReactNode {
+export function Section({
+	children,
+	footer,
+	title,
+}: WithModifiers & {title?: string; footer?: React.ReactNode}): React.ReactNode {
 	return (
 		<View>
 			{title ? <RNText>{title}</RNText> : null}
 			{children}
+			{footer}
 		</View>
 	)
 }
@@ -182,18 +215,26 @@ export function TextField({
 	modifiers,
 	onTextChange,
 	placeholder,
+	text,
 }: WithModifiers & {
 	placeholder?: string
+	text?: {value: string}
 	onTextChange?: (text: string) => void
 }): React.ReactNode {
 	// A SwiftUI TextField reports its placeholder as its accessibility label
 	// when it has no separate one, which is how the sheet's search field is
 	// found both on device and here.
+	//
+	// `text` is a `useNativeState` handle, never a plain string -- the real
+	// field's `text` prop is typed `ObservableState<string>`, a class from
+	// expo-modules-core, and a string is not assignable to it.
+	let value = text?.value
 	return (
 		<TextInput
 			accessibilityLabel={labelOf(modifiers) ?? placeholder}
 			onChangeText={onTextChange}
 			placeholder={placeholder}
+			value={value}
 		/>
 	)
 }
@@ -281,6 +322,18 @@ export const ignoreSafeArea = (params: Record<string, unknown> = {}): Modifier =
 	$type: 'ignoreSafeArea',
 	...params,
 })
+export const strikethrough = (params: Record<string, unknown>): Modifier => ({
+	$type: 'strikethrough',
+	...params,
+})
+export const underline = (params: Record<string, unknown>): Modifier => ({
+	$type: 'underline',
+	...params,
+})
+export const environment = (params: Record<string, unknown>): Modifier => ({
+	$type: 'environment',
+	...params,
+})
 
 export function ScrollView({children}: WithModifiers): React.ReactNode {
 	return <View>{children}</View>
@@ -328,16 +381,54 @@ export function BottomSheet({
 	return isPresented ? <View>{children}</View> : null
 }
 
-/// Mirrors the shape of the real `ObservableState<T>`: `value` is the
-/// property, `get()`/`set()` are the React-Compiler-safe accessors. The
-/// stand-in `TextField` ignores it and works off `onTextChange`, so this only
-/// needs to satisfy the call sites.
-export function useNativeState<T>(initial: T): {
+type NativeStateHandle<T> = {
 	value: T
 	get: () => T
 	set: (value: T) => void
 	onChange: null
-} {
-	let [value, setValue] = React.useState(initial)
-	return {value, get: () => value, set: setValue, onChange: null}
+}
+
+/// Mirrors the shape of the real `ObservableState<T>`: `value` is the
+/// property, `get()`/`set()` are the React-Compiler-safe accessors. The
+/// stand-in `TextField` reads `.value` on every render, where the real field
+/// captures its handle's value once on mount; the two agree only because
+/// `set()` is the sole thing that ever changes what the handle holds. It
+/// otherwise works off `onTextChange`, so this only needs to satisfy the call
+/// sites' shape, not reproduce the real `SharedObject` underneath it.
+///
+/// One handle per component, kept across renders rather than rebuilt on each
+/// one: the real hook returns a shared object held for the component's whole
+/// life, and a caller may depend on that identity -- `SenseDefinitionField`
+/// memoises its focus effect on it, and a fresh object every render would run
+/// that effect every render instead.
+export function useNativeState<T>(initial: T): NativeStateHandle<T> {
+	let [, rerender] = React.useReducer((count: number) => count + 1, 0)
+	let [handle] = React.useState<NativeStateHandle<T>>(() => {
+		// The value lives in this closure rather than in React state, so a
+		// `set()` here is readable immediately. The real handle promises that
+		// only for a write from a UI worklet; a write from the JS thread is
+		// scheduled onto the UI thread and is not readable until it lands.
+		// Reproducing that lag would mean an async boundary Jest has no way to
+		// wait on, so this stand-in resolves it synchronously -- a test that
+		// turns on the timing of a JS-thread write is asking a question this
+		// mock cannot answer, and belongs in a UI test.
+		//
+		// `set()` also re-renders, which the real one does not: native state
+		// drives the SwiftUI view directly, whereas the stand-in `TextField` is
+		// an ordinary React component and only reads `.value` when React draws
+		// it again.
+		let current = initial
+		return {
+			get value(): T {
+				return current
+			},
+			get: () => current,
+			set: (next: T) => {
+				current = next
+				rerender()
+			},
+			onChange: null,
+		}
+	})
+	return handle
 }

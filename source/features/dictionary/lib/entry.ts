@@ -19,19 +19,6 @@ export function normalizeEntry(raw: WordType): NormalizedEntry {
 	}
 }
 
-/**
- * Every definition in a sense and the senses under it, in reading order. The
- * edit form shows one block of prose, so a nested entry has to arrive flat or
- * its sub-senses would be missing from the suggestion a reader sends back.
- */
-export function flattenDefinitions(senses: Sense[]): string {
-	let walk = (sense: Sense): string[] => [
-		sense.definition,
-		...(sense.subsenses ?? []).flatMap(walk),
-	]
-	return senses.flatMap(walk).join('\n\n')
-}
-
 /// Every string a sense contributes to search, including those of the senses
 /// nested under it.
 function senseText(sense: Sense): string[] {

@@ -306,3 +306,14 @@ export const clear = PlatformColor('clear')
  * - Dark mode:  `#DDDDDD` — light enough for readable body paragraphs on dark backgrounds
  */
 export const bodyText = DynamicColorIOS({light: '#555555', dark: '#DDDDDD'})
+
+/**
+ * The wash behind a whole sense a suggestion adds, and the one behind a sense
+ * it removes.
+ *
+ * `DynamicColorIOS` rather than `systemGreen`/`systemRed`: those are
+ * `PlatformColor`s with no alpha, and a fixed pale tint would glare against a
+ * dark background.
+ */
+export const diffAdditionFill = DynamicColorIOS({light: '#E4F5E9', dark: '#12351F'})
+export const diffDeletionFill = DynamicColorIOS({light: '#FBE9E7', dark: '#3B1513'})
