@@ -7,12 +7,17 @@ import type {SourcedEvent} from '../types'
 // A Sunday, so "this week" runs 2026-08-23 (Sun) through 2026-08-29 (Sat).
 const NOW = moment('2026-08-23T12:00:00Z')
 
-function event(start: string, end = start, isOngoing = false): SourcedEvent {
-	let startTime = moment(start)
+function event(
+	start: string | moment.Moment,
+	end: string | moment.Moment = start,
+	isOngoing = false,
+): SourcedEvent {
+	let startTime = moment.isMoment(start) ? start : moment(start)
+	let endTime = moment.isMoment(end) ? end : moment(end)
 	return {
 		sourceId: 'a',
-		key: start,
-		event: {startTime, endTime: moment(end), isOngoing},
+		key: startTime.toISOString(),
+		event: {startTime, endTime, isOngoing},
 	} as unknown as SourcedEvent
 }
 
@@ -110,7 +115,7 @@ describe('deriveDays', () => {
 
 		test('spans whole weeks for a device west of campus', () => {
 			let losAngeles = moment.tz('2026-09-19T15:00:00-05:00', 'America/Los_Angeles')
-			let result = deriveDays([event(losAngeles.toISOString())], chicagoSunday())
+			let result = deriveDays([event(losAngeles)], chicagoSunday())
 
 			expect(result).toHaveLength(14)
 			expect(isoDays(result).at(-1)).toBe('2026-09-19')
@@ -121,7 +126,7 @@ describe('deriveDays', () => {
 			// 19th on campus but already the 20th on the device, and the list keys
 			// its sections off the device's reading.
 			let tokyo = moment.tz('2026-09-20T13:00:00+09:00', 'Asia/Tokyo')
-			let result = deriveDays([event(tokyo.toISOString())], chicagoSunday())
+			let result = deriveDays([event(tokyo)], chicagoSunday())
 
 			expect(result).toHaveLength(21)
 			expect(isoDays(result)).toContain('2026-09-20')
@@ -198,8 +203,12 @@ describe('eventsOnDay', () => {
 
 describe('daysWithEvents', () => {
 	test('names the ISO dates that carry at least one event', () => {
-		let days = deriveDays([], NOW)
-		let events = [event('2026-08-24T09:00:00Z'), event('2026-08-24T18:00:00Z')]
+		// `days` and the events both have to carry the same explicit zone: a day
+		// label comes from the day moment's own zone, so a mismatched zone can
+		// shift an event's match onto the day next to it.
+		let now = moment.tz('2026-08-23T12:00:00', 'America/Chicago')
+		let days = deriveDays([], now)
+		let events = [eventInZone('2026-08-24T09:00:00'), eventInZone('2026-08-24T18:00:00')]
 		expect(daysWithEvents(events, days)).toEqual(new Set(['2026-08-24']))
 	})
 
