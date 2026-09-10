@@ -9,7 +9,13 @@ import {
 	cancelPrintJobForUser,
 	releasePrintJobToPrinterForUser,
 } from '../../../../source/lib/stoprint/api'
-import {showGeneralError, type Printer, type PrintJob} from '../../../../source/lib/stoprint'
+import {
+	isStoprintMocked,
+	showGeneralError,
+	type Printer,
+	type PrintJob,
+} from '../../../../source/lib/stoprint'
+import {stoprintUsername} from '../../../../source/features/stoprint/lib'
 import {
 	heldJobsOptions,
 	jobByIdOptions,
@@ -76,7 +82,7 @@ function PrintJobReleaseView({job, printer}: PrintJobReleaseViewProps): React.Re
 
 	let {data: username = '', isLoading: loadingUsername} = useQuery({
 		...credentialsOptions,
-		select: (data) => data?.username,
+		select: (data) => stoprintUsername(data, isStoprintMocked),
 	})
 
 	let {data: heldJobs = []} = useQuery(heldJobsOptions(username, printer?.printerName))
@@ -220,7 +226,7 @@ function PrintJobReleaseLoader(): React.ReactNode {
 
 	let {data: username = '', isLoading: credentialsLoading} = useQuery({
 		...credentialsOptions,
-		select: (data) => data?.username,
+		select: (data) => stoprintUsername(data, isStoprintMocked),
 	})
 
 	let {

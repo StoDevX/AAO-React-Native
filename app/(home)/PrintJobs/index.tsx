@@ -13,7 +13,11 @@ import {StoPrintErrorView, StoPrintNoticeView} from '../../../source/features/st
 import groupBy from 'lodash/groupBy'
 import toPairs from 'lodash/toPairs'
 import sortBy from 'lodash/sortBy'
-import {getTimeRemaining, printJobsGate} from '../../../source/features/stoprint/lib'
+import {
+	getTimeRemaining,
+	printJobsGate,
+	stoprintUsername,
+} from '../../../source/features/stoprint/lib'
 import {Stack, useRouter} from 'expo-router'
 import {useMomentTimer} from '@frogpond/timer'
 import {printJobsOptions} from '../../../source/features/stoprint/query'
@@ -25,7 +29,7 @@ function PrintJobsView(): React.ReactNode {
 	let {data: credentials, isLoading: hasCredentialsLoading} = useQuery(credentialsOptions)
 
 	let hasCredentials = Boolean(credentials)
-	let username = credentials?.username ?? ''
+	let username = stoprintUsername(credentials, isStoprintMocked)
 
 	let {
 		data: jobsData = {jobs: []},

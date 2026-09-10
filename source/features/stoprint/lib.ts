@@ -47,3 +47,26 @@ export function printJobsGate(state: {
 
 	return hasCredentials || isMocked ? 'jobs' : 'signed-out'
 }
+
+/**
+ * The account a mocked run prints as. Matches `mockLogin.realName`, so the
+ * fixtures agree with each other.
+ */
+export const MOCK_STOPRINT_USERNAME = 'olethelion'
+
+/**
+ * The account stoPrint's queries should ask about.
+ *
+ * Every one of them is `enabled: Boolean(username)`, so a mocked run with no
+ * signed-in account would leave them disabled and the screen on its spinner
+ * forever -- mocking the API is not on its own enough to reach a job list.
+ */
+export function stoprintUsername(
+	credentials: {username: string} | null | undefined,
+	isMocked: boolean,
+): string {
+	if (credentials?.username) {
+		return credentials.username
+	}
+	return isMocked ? MOCK_STOPRINT_USERNAME : ''
+}
