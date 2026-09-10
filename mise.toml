@@ -235,6 +235,19 @@ run = "node scripts/validate-workspace-deps.mjs"
 description = "Check that watched packages resolve to one version in the lockfile"
 run = "node scripts/validate-single-copy.mjs"
 
+# Renovate has no Expo datasource, so it only ever offers the newest release
+# and will walk a package past the range this SDK was tested against. The
+# ceilings it needs come from the installed SDK's own list, which changes only
+# when package.json does -- so they are generated and committed here, the same
+# way bundle-data commits bundled.json, rather than by a job on a timer.
+[tasks."bundle-renovate-expo"]
+description = "Write Renovate a version ceiling per package the Expo SDK pins"
+wait_for = ["pnpm:install:*"]
+# oxfmt has opinions about JSON that JSON.stringify does not share -- it packs
+# a short array onto one line. Formatting here means the committed file is
+# byte-for-byte what CI regenerates, so `git diff --exit-code` means something.
+run = ["node scripts/bundle-renovate-expo.mjs", "oxfmt --write renovate.json"]
+
 # react and react-native are named once, in the catalog, because every module
 # declares them as peers and autoInstallPeers turns each declaration into a
 # real install -- so one manifest naming its own version is enough to leave two

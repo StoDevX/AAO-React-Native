@@ -126,6 +126,10 @@ jobs:
       # the other.
       - run: mise run bundle-data
       - run: git diff --exit-code modules/data-sources/bundled.json
+      # Same bargain for renovate.json's version ceilings, which come from the
+      # installed SDK's list: regenerate and fail if the commit did not.
+      - run: mise run bundle-renovate-expo
+      - run: git diff --exit-code renovate.json
 
   # Separate from the data job above because this one needs the network --
   # it fetches the live campus geojson to confirm every building: key
