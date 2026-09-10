@@ -4,7 +4,7 @@ import {FlatList, StyleSheet, Text, TouchableOpacity, View} from 'react-native'
 import type {BusSchedule, UnprocessedBusLine, DayOfWeek} from './types'
 import {
 	BusStateEnum,
-	BusTarget,
+	busPropsForRow,
 	findBusTarget,
 	getCurrentBusIteration,
 	getScheduleForNow,
@@ -82,21 +82,6 @@ function startsIn(now: Moment, start?: Moment | null) {
 
 	let nowCopy = now.clone()
 	return `Starts ${nowCopy.seconds(0).to(start)}`
-}
-
-/**
- * Hands the bus to the row it is heading for, which draws the whole leg from the
- * stop above down to its own.
- */
-function busPropsForRow(
-	busTarget: BusTarget | null,
-	index: number,
-): {busProgress?: number; busAtStop?: boolean} {
-	if (!busTarget || index !== busTarget.targetIndex) {
-		return {}
-	}
-
-	return busTarget.atStop ? {busAtStop: true} : {busProgress: busTarget.progress}
 }
 
 export function deriveFromProps({line, now}: {line: UnprocessedBusLine; now: Moment}): {

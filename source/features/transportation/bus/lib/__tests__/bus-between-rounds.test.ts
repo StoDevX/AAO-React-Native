@@ -1,6 +1,6 @@
 import {expect, test} from '@jest/globals'
 import {findBusStopStatus} from '../find-bus-stop-status'
-import {findBusTarget} from '../find-bus-target'
+import {busPropsForRow, findBusTarget} from '../find-bus-target'
 import {getCurrentBusIteration} from '../get-current-bus-iteration'
 import {processBusSchedule} from '../process-bus-line'
 import {time} from './moment.helper'
@@ -27,7 +27,7 @@ function rowStatuses(now: Moment) {
 	let busTarget = findBusTarget(schedule, {status, index, parkedStopIndex}, now)
 
 	return schedule.timetable.map((stop, i) => {
-		let busAtStop = busTarget?.atStop === true && busTarget.targetIndex === i
+		let {busAtStop} = busPropsForRow(busTarget, i)
 		return findBusStopStatus({stop, busStatus: status, departureIndex: index, now, busAtStop})
 	})
 }

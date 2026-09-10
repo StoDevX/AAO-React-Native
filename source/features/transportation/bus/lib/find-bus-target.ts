@@ -19,8 +19,8 @@ export function findBusTarget(
 ): BusTarget | null {
 	let {status, index, parkedStopIndex} = iteration
 
-	// Between rounds the bus is sitting at the end of the loop it just finished,
-	// so draw it there rather than taking it off the line until the next round.
+	// Between rounds the bus is sitting at the end of the loop it just finished.
+	// It is somewhere, so the line shows it there.
 	if (status === 'between-rounds' && parkedStopIndex !== null) {
 		return {targetIndex: parkedStopIndex, progress: 1, atStop: true}
 	}
@@ -69,4 +69,19 @@ export function findBusTarget(
 	let progress = calculateBusProgress(previousTime, nextTime, now)
 
 	return {targetIndex, progress, atStop: false}
+}
+
+/**
+ * Hands the bus to the row it is heading for, which draws the whole leg from the
+ * stop above down to its own.
+ */
+export function busPropsForRow(
+	busTarget: BusTarget | null,
+	index: number,
+): {busProgress?: number; busAtStop?: boolean} {
+	if (!busTarget || index !== busTarget.targetIndex) {
+		return {}
+	}
+
+	return busTarget.atStop ? {busAtStop: true} : {busProgress: busTarget.progress}
 }

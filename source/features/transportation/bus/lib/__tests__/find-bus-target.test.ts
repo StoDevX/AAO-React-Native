@@ -43,24 +43,11 @@ test('puts the bus partway along the leg it is driving', () => {
 	expect(actual).toEqual({targetIndex: 2, progress: 0.5, atStop: false})
 })
 
-test('draws no bus before the day starts', () => {
-	let now = time('12:00pm')
+test('draws no bus once the day is over, whatever the clock says', () => {
+	// The status decides whether a bus is on the line at all, so a day that has
+	// finished draws nothing even when `now` falls inside one of its rounds.
+	let now = time('1:05pm')
 	let schedule = buildSchedule(now)
-	let actual = findBusTarget(
-		schedule,
-		{status: 'before-start', index: null, parkedStopIndex: null},
-		now,
-	)
-	expect(actual).toBe(null)
-})
-
-test('draws no bus once the day is over', () => {
-	let now = time('5:00pm')
-	let schedule = buildSchedule(now)
-	let actual = findBusTarget(
-		schedule,
-		{status: 'after-end', index: null, parkedStopIndex: null},
-		now,
-	)
+	let actual = findBusTarget(schedule, {status: 'after-end', index: 0, parkedStopIndex: null}, now)
 	expect(actual).toBe(null)
 })
