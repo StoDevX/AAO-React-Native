@@ -30,6 +30,14 @@ const SINGLE_COPY = new Map([
 	['metro-runtime', 'ships inside the bundle, so it has to be the metro that produced the bundle'],
 	['metro-source-map', 'reads what metro-runtime writes, and the two travel together'],
 	['metro-symbolicate', 'resolves a stack against metro-source-map, and the two travel together'],
+	[
+		'react-native',
+		'one app cannot run two copies of the runtime; the catalog keeps every module on one, and this is what notices if anything gets past it',
+	],
+	[
+		'react',
+		'the renderer and the runtime have to agree, so it forks exactly when react-native does',
+	],
 ])
 
 /** `name@1.2.3` and `'@scope/name@1.2.3(peer@4)'` both yield their name and version. */

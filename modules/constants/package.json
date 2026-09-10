@@ -10,6 +10,6 @@
   },
   "dependencies": {},
   "peerDependencies": {
-    "react-native": "^0.86.2"
+    "react-native": "catalog:"
   }
 }
