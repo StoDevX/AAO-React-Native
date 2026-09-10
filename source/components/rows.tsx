@@ -38,6 +38,11 @@ type RowProps = {
 	disabled?: boolean
 }
 
+type ActionRowProps = RowProps & {
+	/** Draws the action in red, for one that destroys something. */
+	destructive?: boolean
+}
+
 /**
  * A row that pushes another screen via React Navigation. `@expo/ui` has no
  * `NavigationLink` (it mounts its destination as a SwiftUI view inside a
@@ -70,8 +75,8 @@ export function NavigationRow(props: RowProps): React.ReactNode {
  * A row that fires an action (open a URL, show an alert, mutate) rather than
  * pushing a screen. Tinted text and no chevron, since there is nowhere to go.
  */
-export function ActionRow(props: RowProps): React.ReactNode {
-	let {title, onPress, disabled = false} = props
+export function ActionRow(props: ActionRowProps): React.ReactNode {
+	let {title, onPress, disabled = false, destructive = false} = props
 
 	return (
 		<Button
@@ -79,7 +84,7 @@ export function ActionRow(props: RowProps): React.ReactNode {
 			onPress={onPress}
 		>
 			<HStack modifiers={[contentShape(shapes.rectangle())]}>
-				<Text modifiers={[foregroundStyle(c.systemBlue)]}>{title}</Text>
+				<Text modifiers={[foregroundStyle(destructive ? c.systemRed : c.systemBlue)]}>{title}</Text>
 				<Spacer />
 			</HStack>
 		</Button>
