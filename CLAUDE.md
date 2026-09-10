@@ -8,7 +8,7 @@ All About Olaf is a React Native mobile app for the St. Olaf College community. 
 - **Expo Router 57** for navigation — file-based, with `experiments.typedRoutes` set in `app.config.ts`
 - **Redux Toolkit** for global state, **React Query 5** for server state
 - **Jest** + **React Native Testing Library** for testing
-- **Fastlane** for CI/CD
+- **Xcode Cloud** for builds and TestFlight submissions
 - Monorepo with internal packages in `modules/`
 
 ## Commit Messages
@@ -142,9 +142,6 @@ magick /tmp/base.png /tmp/devtext.png -geometry +753+44 -composite \
 Run the result through `oxipng -o max --strip safe --zopfli`; ImageMagick's own
 output is roughly a third larger.
 
-[`HazAT/badge`](https://github.com/HazAT/badge) and its fastlane plugin automate
-this per build; it is not worth the dependency for one committed file.
-
 **A build to a local device needs nothing beyond `mise run device "<DEVICE
 NAME>"`.** Sending the dev variant through TestFlight or the App Store is a
 different matter: that bundle identifier would need its own App Store Connect
@@ -167,7 +164,7 @@ The feature uses `react-native-zeroconf` (native pod). If the pod hasn't been li
 
 **Before committing:** Always run `mise run agent:pre-commit` before committing any changes. This formats code with oxfmt, runs oxlint, checks TypeScript types, runs Jest tests, and checks that every module's `@frogpond` dependencies and the lockfile match its package.json. Do not commit if any step fails.
 
-**Dependency upgrades:** Whenever you upgrade a dependency whose version is mentioned in this file (e.g., React Native, React Navigation, React Query, Redux Toolkit, TypeScript, Jest, Fastlane), update the version reference in CLAUDE.md as part of the same change. Stale version references in this file mislead future sessions about the project's current state.
+**Dependency upgrades:** Whenever you upgrade a dependency whose version is mentioned in this file (e.g., React Native, React Navigation, React Query, Redux Toolkit, TypeScript, Jest), update the version reference in CLAUDE.md as part of the same change. Stale version references in this file mislead future sessions about the project's current state.
 
 ## Superpowers Skills Framework
 

@@ -20,7 +20,6 @@ import path from 'node:path'
 const INERT = [
 	/^docs\//u,
 	/\.md$/u,
-	/^fastlane\//u,
 	/(^|\/)__tests__\//u,
 	/\.test\.tsx?$/u,
 	/^source\/testing\//u,

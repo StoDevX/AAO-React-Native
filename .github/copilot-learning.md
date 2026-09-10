@@ -113,7 +113,6 @@ Study these key directories to understand the app structure:
 - [Chrome DevTools](https://reactnative.dev/docs/debugging)
 
 ### Build and Deployment
-- [Fastlane Documentation](https://docs.fastlane.tools/)
 - [App Store Deployment](https://reactnative.dev/docs/publishing-to-app-store)
 - [Google Play Deployment](https://reactnative.dev/docs/signed-apk-android)
 

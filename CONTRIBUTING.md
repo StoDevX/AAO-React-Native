@@ -38,7 +38,7 @@ Even though they may seem unorganized, there's a method to the madness.
 - <kbd>release-note-worthy</kbd> &ndash; Not entirely sure why this exists.
   I think it's so that we can use it to filter down the PRs that were merged when we write up the release notes?
 - <kbd>status/*</kbd> &ndash; The different states that an issue or PR can be in: blocked, dup, in progress, on hold(?), or pending an upstream update
-- <kbd>tool/*</kbd> &ndash; Issues/PRs that affect our various tools: fastlane, CircleCI, Danger, ESLint, Flow, Gradle, a custom script, or Testflight
+- <kbd>tool/*</kbd> &ndash; Issues/PRs that affect our various tools: Xcode Cloud, CircleCI, Danger, ESLint, Flow, Gradle, a custom script, or Testflight
 - <kbd>triage</kbd> &ndash; Automatically applied to issues that are filed without any labels
 - <kbd>type/*</kbd>
   - <kbd>type/bugfix</kbd> &ndash; used for PRs that fix bugs

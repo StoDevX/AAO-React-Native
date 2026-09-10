@@ -7,16 +7,6 @@ version = "4.0.20"
 backend = "gem:bundler"
 specifiers = ["4.0.20"]
 
-[[tools."gem:fastlane"]]
-version = "2.237.0"
-backend = "gem:fastlane"
-specifiers = ["2.237.0"]
-
-[[tools."gem:rubocop"]]
-version = "1.90.0"
-backend = "gem:rubocop"
-specifiers = ["1.90.0"]
-
 [[tools.hk]]
 version = "1.58.1"
 backend = "packslip:github.com/jdx/hk"
@@ -172,43 +162,3 @@ provenance = "github-attestations"
 [tools.ruby."platforms.macos-x64"]
 checksum = "sha256:ecee2d072a14f2d14347dd56dfd8fe5c3130abf5117bfaacbda0f4ef9cc429ec"
 url = "https://cache.ruby-lang.org/pub/ruby/3.4/ruby-3.4.10.tar.gz"
-
-[[tools.sentry]]
-version = "3.7.0"
-backend = "aqua:getsentry/sentry-cli"
-specifiers = ["3.7.0"]
-
-[tools.sentry."platforms.linux-arm64"]
-checksum = "sha256:69cc0e951f663a332fd3bb3069e443cb3748abbfce497ae2caac6d5a9ec7ae65"
-url = "https://github.com/getsentry/sentry-cli/releases/download/3.7.0/sentry-cli-Linux-aarch64"
-url_api = "https://api.github.com/repos/getsentry/sentry-cli/releases/assets/533547545"
-
-[tools.sentry."platforms.linux-arm64-musl"]
-checksum = "sha256:69cc0e951f663a332fd3bb3069e443cb3748abbfce497ae2caac6d5a9ec7ae65"
-url = "https://github.com/getsentry/sentry-cli/releases/download/3.7.0/sentry-cli-Linux-aarch64"
-url_api = "https://api.github.com/repos/getsentry/sentry-cli/releases/assets/533547545"
-
-[tools.sentry."platforms.linux-x64"]
-checksum = "sha256:cec71d46a7cc394c94b6e75f1601985c710d457376c546ef3975567b3671563b"
-url = "https://github.com/getsentry/sentry-cli/releases/download/3.7.0/sentry-cli-Linux-x86_64"
-url_api = "https://api.github.com/repos/getsentry/sentry-cli/releases/assets/533547553"
-
-[tools.sentry."platforms.linux-x64-musl"]
-checksum = "sha256:cec71d46a7cc394c94b6e75f1601985c710d457376c546ef3975567b3671563b"
-url = "https://github.com/getsentry/sentry-cli/releases/download/3.7.0/sentry-cli-Linux-x86_64"
-url_api = "https://api.github.com/repos/getsentry/sentry-cli/releases/assets/533547553"
-
-[tools.sentry."platforms.macos-arm64"]
-checksum = "sha256:c66564094fbe56ee3b359f7574541f858b8d1df0328a0a759da972fbf1886048"
-url = "https://github.com/getsentry/sentry-cli/releases/download/3.7.0/sentry-cli-Darwin-arm64"
-url_api = "https://api.github.com/repos/getsentry/sentry-cli/releases/assets/533547542"
-
-[tools.sentry."platforms.macos-x64"]
-checksum = "sha256:fcd74786b4d95c6b7531662607897aadd5ab5d64c5d0468a6f4bd97ad04bedb8"
-url = "https://github.com/getsentry/sentry-cli/releases/download/3.7.0/sentry-cli-Darwin-x86_64"
-url_api = "https://api.github.com/repos/getsentry/sentry-cli/releases/assets/533547551"
-
-[tools.sentry."platforms.windows-x64"]
-checksum = "sha256:8643986aec8d8cf8d69cd476d67427578e5dbbda378eba506d199681082abe5a"
-url = "https://github.com/getsentry/sentry-cli/releases/download/3.7.0/sentry-cli-Windows-x86_64.exe"
-url_api = "https://api.github.com/repos/getsentry/sentry-cli/releases/assets/533547552"
