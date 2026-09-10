@@ -49,6 +49,15 @@ describe('uitestsNeeded', () => {
 		assert.equal(uitestsNeeded(['.github/workflows/ios.yml']), true)
 	})
 
+	it('skips a node:test file, which sits beside its subject rather than in __tests__/', () => {
+		assert.equal(uitestsNeeded(['scripts/split-uitests.test.mjs']), false)
+		assert.equal(uitestsNeeded(['plugins/with-binary-stripping.test.ts']), false)
+	})
+
+	it('runs when the script under one of those tests changed', () => {
+		assert.equal(uitestsNeeded(['scripts/split-uitests.mjs']), true)
+	})
+
 	it('runs when the UITests themselves changed', () => {
 		assert.equal(uitestsNeeded(['uitests/ModuleMoreTests.swift']), true)
 	})

@@ -21,7 +21,9 @@ const INERT = [
 	/\.md$/u,
 	/^fastlane\//u,
 	/(^|\/)__tests__\//u,
-	/\.test\.tsx?$/u,
+	// A node:test file sits beside its subject rather than in __tests__/, so
+	// the directory rule above never sees it.
+	/\.test\.(mjs|tsx?)$/u,
 	/^source\/testing\//u,
 	/^source\/__mocks__\//u,
 	/^\.vscode\//u,
