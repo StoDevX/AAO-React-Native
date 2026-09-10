@@ -9,7 +9,6 @@
 
 import {execFileSync} from 'node:child_process'
 import fs from 'node:fs'
-import path from 'node:path'
 
 /**
  * Map every test that genuinely ran to the seconds it took.
@@ -84,8 +83,8 @@ function main() {
 	console.log(`Recorded ${Object.keys(durations).length} test durations`)
 }
 
-// A literal `import.meta` here would fail Jest's CommonJS transform of this
-// file, so the entry-point check goes by argv instead.
-if (process.argv[1] && path.basename(process.argv[1]) === 'collect-uitest-durations.mjs') {
+// argv[1] is the path as typed, while import.meta.filename is resolved
+// through symlinks. Comparing them raw makes this quietly never fire.
+if (process.argv[1] && fs.realpathSync(process.argv[1]) === import.meta.filename) {
 	main()
 }

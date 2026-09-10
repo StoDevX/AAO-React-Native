@@ -1,7 +1,10 @@
-import {collectDurations} from '../scripts/collect-uitest-durations.mjs'
+import assert from 'node:assert/strict'
+import {describe, it} from 'node:test'
+
+import {collectDurations} from './collect-uitest-durations.mjs'
 
 /** A `Test Case` node as `xcresulttool get test-results tests` emits it. */
-function testCase(name: string, result: string, durationInSeconds: number): object {
+function testCase(name, result, durationInSeconds) {
 	return {
 		name: `${name}()`,
 		nodeIdentifier: `SomeTests/${name}()`,
@@ -12,7 +15,7 @@ function testCase(name: string, result: string, durationInSeconds: number): obje
 }
 
 /** Wrap cases in the suite/target nesting the real tree has. */
-function tree(...cases: object[]): object[] {
+function tree(...cases) {
 	return [
 		{
 			name: 'AllAboutOlaf',
@@ -24,29 +27,30 @@ function tree(...cases: object[]): object[] {
 
 describe('collectDurations', () => {
 	it('records the duration of a passing test', () => {
-		expect(collectDurations(tree(testCase('testOne', 'Passed', 12.5)))).toEqual({
+		assert.deepEqual(collectDurations(tree(testCase('testOne', 'Passed', 12.5))), {
 			'SomeTests/testOne()': 12.5,
 		})
 	})
 
 	it('ignores skipped tests, whose near-zero duration is not a measurement', () => {
-		expect(
+		assert.deepEqual(
 			collectDurations(
 				tree(testCase('testOne', 'Passed', 12.5), testCase('testTwo', 'Skipped', 0.4)),
 			),
-		).toEqual({'SomeTests/testOne()': 12.5})
+			{'SomeTests/testOne()': 12.5},
+		)
 	})
 
 	it('ignores failed tests, which stop early and under-report', () => {
-		expect(collectDurations(tree(testCase('testOne', 'Failed', 3)))).toEqual({})
+		assert.deepEqual(collectDurations(tree(testCase('testOne', 'Failed', 3))), {})
 	})
 
 	it('ignores a passing test with no duration recorded', () => {
-		expect(collectDurations(tree(testCase('testOne', 'Passed', 0)))).toEqual({})
+		assert.deepEqual(collectDurations(tree(testCase('testOne', 'Passed', 0))), {})
 	})
 
 	it('returns an empty table for an empty tree', () => {
-		expect(collectDurations([])).toEqual({})
-		expect(collectDurations(undefined)).toEqual({})
+		assert.deepEqual(collectDurations([]), {})
+		assert.deepEqual(collectDurations(undefined), {})
 	})
 })

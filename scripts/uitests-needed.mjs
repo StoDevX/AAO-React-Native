@@ -8,8 +8,7 @@
  * the suite be skipped, and anything unrecognised runs it.
  */
 
-import {readFileSync} from 'node:fs'
-import path from 'node:path'
+import {readFileSync, realpathSync} from 'node:fs'
 
 /**
  * Paths that cannot change what the app under test does.
@@ -93,8 +92,8 @@ function main() {
 	console.log(`needed=${needed}`)
 }
 
-// A literal `import.meta` here would fail Jest's CommonJS transform of this
-// file, so the entry-point check goes by argv instead.
-if (process.argv[1] && path.basename(process.argv[1]) === 'uitests-needed.mjs') {
+// argv[1] is the path as typed, while import.meta.filename is resolved
+// through symlinks. Comparing them raw makes this quietly never fire.
+if (process.argv[1] && realpathSync(process.argv[1]) === import.meta.filename) {
 	main()
 }

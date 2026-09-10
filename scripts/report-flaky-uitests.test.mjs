@@ -1,12 +1,10 @@
-import {findFlakyTests, formatReport} from '../scripts/report-flaky-uitests.mjs'
+import assert from 'node:assert/strict'
+import {describe, it} from 'node:test'
+
+import {findFlakyTests, formatReport} from './report-flaky-uitests.mjs'
 
 /** A `Test Case` node as `xcresulttool get test-results tests` emits it. */
-function testCase(
-	name: string,
-	result: string,
-	repetitions: string[] = [],
-	extraChildren: object[] = [],
-): object {
+function testCase(name, result, repetitions = [], extraChildren = []) {
 	return {
 		name,
 		nodeIdentifier: `SomeTests/${name}`,
@@ -25,7 +23,7 @@ function testCase(
 }
 
 /** Wrap cases in the suite/target nesting the real tree has. */
-function tree(...cases: object[]): object[] {
+function tree(...cases) {
 	return [
 		{
 			name: 'AllAboutOlaf',
@@ -45,13 +43,13 @@ describe('findFlakyTests', () => {
 	it('reports nothing when no test was retried', () => {
 		const nodes = tree(testCase('testAlwaysPasses()', 'Passed'))
 
-		expect(findFlakyTests(nodes)).toEqual([])
+		assert.deepEqual(findFlakyTests(nodes), [])
 	})
 
 	it('reports a test that passed after a failed attempt', () => {
 		const nodes = tree(testCase('testPassesOnRetry()', 'Passed', ['Failed', 'Passed']))
 
-		expect(findFlakyTests(nodes)).toEqual([
+		assert.deepEqual(findFlakyTests(nodes), [
 			{
 				identifier: 'SomeTests/testPassesOnRetry()',
 				attempts: 2,
@@ -62,13 +60,13 @@ describe('findFlakyTests', () => {
 	it('does not report a test that failed every attempt', () => {
 		const nodes = tree(testCase('testAlwaysFails()', 'Failed', ['Failed', 'Failed', 'Failed']))
 
-		expect(findFlakyTests(nodes)).toEqual([])
+		assert.deepEqual(findFlakyTests(nodes), [])
 	})
 
 	it('does not report a test whose repetitions all passed', () => {
 		const nodes = tree(testCase('testPassesEveryTime()', 'Passed', ['Passed', 'Passed']))
 
-		expect(findFlakyTests(nodes)).toEqual([])
+		assert.deepEqual(findFlakyTests(nodes), [])
 	})
 
 	it('does not report a test whose failing child is not a Repetition', () => {
@@ -87,13 +85,13 @@ describe('findFlakyTests', () => {
 			),
 		)
 
-		expect(findFlakyTests(nodes)).toEqual([])
+		assert.deepEqual(findFlakyTests(nodes), [])
 	})
 })
 
 describe('formatReport', () => {
 	it('produces nothing when no test flaked', () => {
-		expect(formatReport([])).toEqual({annotations: [], summary: ''})
+		assert.deepEqual(formatReport([]), {annotations: [], summary: ''})
 	})
 
 	it('warns once per flaky test', () => {
@@ -102,7 +100,7 @@ describe('formatReport', () => {
 			{identifier: 'B/testTwo()', attempts: 3},
 		])
 
-		expect(annotations).toEqual([
+		assert.deepEqual(annotations, [
 			'::warning title=Flaky UITest::A/testOne() passed only after a retry (2 attempts)',
 			'::warning title=Flaky UITest::B/testTwo() passed only after a retry (3 attempts)',
 		])
@@ -111,8 +109,8 @@ describe('formatReport', () => {
 	it('tabulates the flaky tests in the summary', () => {
 		const {summary} = formatReport([{identifier: 'A/testOne()', attempts: 2}])
 
-		expect(summary).toContain('1 test passed only after a retry')
-		expect(summary).toContain('| `A/testOne()` | 2 |')
+		assert.ok(summary.includes('1 test passed only after a retry'))
+		assert.ok(summary.includes('| `A/testOne()` | 2 |'))
 	})
 
 	it('counts more than one flaky test in plural', () => {
@@ -121,6 +119,6 @@ describe('formatReport', () => {
 			{identifier: 'B/testTwo()', attempts: 2},
 		])
 
-		expect(summary).toContain('2 tests passed only after a retry')
+		assert.ok(summary.includes('2 tests passed only after a retry'))
 	})
 })

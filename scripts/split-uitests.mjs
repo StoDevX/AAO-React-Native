@@ -206,8 +206,8 @@ function main() {
 	console.log(JSON.stringify(formatMatrix(shards, target)))
 }
 
-// A literal `import.meta` here would fail Jest's CommonJS transform of this
-// file, so the entry-point check goes by argv instead.
-if (process.argv[1] && path.basename(process.argv[1]) === 'split-uitests.mjs') {
+// argv[1] is the path as typed, while import.meta.filename is resolved
+// through symlinks. Comparing them raw makes this quietly never fire.
+if (process.argv[1] && fs.realpathSync(process.argv[1]) === import.meta.filename) {
 	main()
 }

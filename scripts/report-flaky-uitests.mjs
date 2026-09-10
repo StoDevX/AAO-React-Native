@@ -10,7 +10,6 @@
 
 import {execFileSync} from 'node:child_process'
 import fs from 'node:fs'
-import path from 'node:path'
 
 /**
  * Find the tests a retry rescued.
@@ -144,8 +143,8 @@ function main() {
 	}
 }
 
-// A literal `import.meta` in this file would fail Jest's CommonJS transform
-// of it, so the entry-point check goes by argv instead.
-if (process.argv[1] && path.basename(process.argv[1]) === 'report-flaky-uitests.mjs') {
+// argv[1] is the path as typed, while import.meta.filename is resolved
+// through symlinks. Comparing them raw makes this quietly never fire.
+if (process.argv[1] && fs.realpathSync(process.argv[1]) === import.meta.filename) {
 	main()
 }
