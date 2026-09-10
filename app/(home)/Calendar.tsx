@@ -3,12 +3,13 @@ import {useMemo} from 'react'
 import {useRouter} from 'expo-router'
 
 import {
+	CalendarModePicker,
 	CalendarPicker,
 	type SourcedEvent,
 	useCalendarSources,
 	useMergedEvents,
 } from '@frogpond/ccc-calendar'
-import {type CalendarBodyHandle, EventList} from '@frogpond/event-list'
+import {type CalendarBodyHandle, DayView, EventList} from '@frogpond/event-list'
 import {useMomentTimer} from '@frogpond/timer'
 
 import {
@@ -23,9 +24,9 @@ export default function CalendarPage(): React.ReactNode {
 	let {now} = useMomentTimer({intervalMs: 60000})
 	let {all, enabled, toggle, canOfferDevice, deviceAvailable, requestDevice} = useCalendarSources()
 	let {events, failed, isLoading, isRefetching, refetchAll} = useMergedEvents(enabled)
-	let eventListRef = React.useRef<CalendarBodyHandle>(null)
+	let bodyRef = React.useRef<CalendarBodyHandle>(null)
 
-	let {filter, selectFilter} = useCalendarFilterStore()
+	let {filter, selectFilter, mode, selectMode} = useCalendarFilterStore()
 
 	let categories = useMemo(() => availableCategories(events), [events])
 	let organizations = useMemo(() => availableOrganizations(events), [events])
@@ -39,15 +40,17 @@ export default function CalendarPage(): React.ReactNode {
 	}
 
 	let onTodayPress = React.useCallback(() => {
-		eventListRef.current?.showToday()
+		bodyRef.current?.showToday()
 	}, [])
 
 	let enabledIds = useMemo(() => enabled.map((source) => source.id), [enabled])
 
+	let Body = mode === 'day' ? DayView.DayView : EventList.EventList
+
 	return (
 		<>
-			<EventList.EventList
-				ref={eventListRef}
+			<Body
+				ref={bodyRef}
 				events={filteredEvents}
 				failed={failed}
 				isLoading={isLoading}
@@ -57,6 +60,7 @@ export default function CalendarPage(): React.ReactNode {
 				refreshing={isRefetching}
 				sources={enabled}
 			/>
+			<CalendarModePicker mode={mode} onSelectMode={selectMode} />
 			<CalendarPicker
 				categories={categories}
 				enabledIds={enabledIds}
