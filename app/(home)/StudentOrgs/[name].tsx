@@ -155,7 +155,7 @@ export default function StudentOrgsDetailPage(): React.ReactNode {
 					) : null}
 
 					<Section>
-						<Text modifiers={CREDIT_MODIFIERS}>Powered by Presence.io</Text>
+						<Text modifiers={CREDIT_MODIFIERS}>Powered by Presence</Text>
 					</Section>
 				</List>
 			</Host>
