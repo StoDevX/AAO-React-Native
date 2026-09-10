@@ -8,7 +8,14 @@ import {
 	Text,
 	VStack,
 } from '@expo/ui/swift-ui'
-import {background, font, foregroundStyle, padding, refreshable} from '@expo/ui/swift-ui/modifiers'
+import {
+	background,
+	font,
+	foregroundStyle,
+	frame,
+	padding,
+	refreshable,
+} from '@expo/ui/swift-ui/modifiers'
 import * as c from '@frogpond/colors'
 import type {Moment} from 'moment-timezone'
 import {NoticeView} from '@frogpond/notice'
@@ -121,7 +128,17 @@ export let DayView = React.forwardRef<CalendarBodyHandle, Props>(function DayVie
 					// Below the strip rather than in place of it: replacing the whole
 					// view would strand someone on a blank day with nothing to
 					// navigate away with.
-					<RNHostView matchContents={true}>{notice()}</RNHostView>
+					//
+					// `matchContents={false}` rather than `true`: the notice's
+					// container is `flex: 1`, which has no intrinsic size for a
+					// content-matching host to measure, so it drew at zero height.
+					// `false` makes the host take the size SwiftUI offers it instead --
+					// and `frame(maxHeight: Infinity)` on the wrapping VStack is what
+					// makes SwiftUI actually offer it the space the strip left behind,
+					// rather than the VStack's own default of hugging its content.
+					<VStack modifiers={[frame({maxHeight: Infinity})]}>
+						<RNHostView matchContents={false}>{notice()}</RNHostView>
+					</VStack>
 				) : (
 					<SwiftUIScrollView
 						modifiers={[
