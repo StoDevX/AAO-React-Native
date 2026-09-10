@@ -37,10 +37,10 @@ struct TransportationScreen: Screen {
 	func checkTabs() -> Self {
 		for tab in TestIdentifiers.Transportation.tabs {
 			XCTContext.runActivity(named: tab) { _ in
-				let tabElement = app.staticTexts[tab].firstMatch
+				let tabButton = app.tabButton(tab)
 				XCTAssertTrue(
-					tabElement.waitForExistence(timeout: 30),
-					"\(tab) tab should be visible")
+					tabButton.waitForExistence(timeout: 30),
+					"\(tab) tab button should be visible")
 			}
 		}
 		return self
