@@ -62,7 +62,12 @@ export type DayPickerStripHandle = {
 	scrollToDay: (day: Moment) => void
 }
 
-function DayCell({
+// Memoized, and taking `day` plus a stable `onPress` rather than a
+// ready-made closure: with 100+ cells in the strip, an unmemoized cell (or a
+// fresh closure per cell per render) means every cell re-renders and crosses
+// the SwiftUI bridge on every tap, just to move which cell has a circle
+// behind it.
+let DayCell = React.memo(function DayCell({
 	day,
 	isToday,
 	isSelected,
@@ -74,11 +79,12 @@ function DayCell({
 	isToday: boolean
 	isSelected: boolean
 	hasEvents: boolean
-	onPress: () => void
+	onPress: (day: Moment) => void
 	width: number
 }): React.ReactNode {
 	let weekdayLetter = day.format('dd').charAt(0).toUpperCase()
 	let dateNumber = day.format('D')
+	let handlePress = React.useCallback(() => onPress(day), [onPress, day])
 
 	// Today keeps its own circle only while it is also the selection -- worn
 	// at all times, it competed with the selection circle and left two days
@@ -105,7 +111,7 @@ function DayCell({
 			// to VoiceOver. This is what actually announces the active day.
 			accessibilityState={{selected: isSelected}}
 			hitSlop={4}
-			onPress={onPress}
+			onPress={handlePress}
 			style={({pressed}) => [styles.cell, {width}, pressed && styles.cellPressed]}
 			testID={`${DAY_CELL_PREFIX}${day.format('YYYY-MM-DD')}`}
 		>
@@ -127,7 +133,7 @@ function DayCell({
 			)}
 		</Pressable>
 	)
-}
+})
 
 export let DayPickerStrip = React.forwardRef<DayPickerStripHandle, Props>(function DayPickerStrip(
 	{days, selectedDay, onSelectDay, daysWithEvents, now},
@@ -246,7 +252,7 @@ export let DayPickerStrip = React.forwardRef<DayPickerStripHandle, Props>(functi
 							isSelected={isSelected}
 							isToday={isToday}
 							key={day.format('YYYY-MM-DD')}
-							onPress={() => onSelectDay(day)}
+							onPress={onSelectDay}
 							width={cellWidth}
 						/>
 					)
