@@ -26,7 +26,7 @@ class ModuleCalendarTests: UITestCase {
 
 		screen.selectCategory(TestIdentifiers.Calendar.categories[0])
 
-		let stayedOpen = screen.menuIsPresented()
+		let stayedOpen = screen.pickerIsPresented()
 		XCTContext.runActivity(
 			named: stayedOpen
 				? "Menu stayed presented after selecting category"

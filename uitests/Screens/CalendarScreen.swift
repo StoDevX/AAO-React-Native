@@ -119,16 +119,26 @@ struct CalendarScreen: Screen {
 		app.staticTexts[TestIdentifiers.Calendar.calendarsSection].exists
 	}
 
+	/// Either axis's row, wherever the picker currently is. The parent menu
+	/// draws both as the rows that open its submenus; an open submenu draws its
+	/// own as the title above its choices, with the same label.
+	private func axisRow() -> XCUIElement {
+		app.buttons.matching(
+			NSPredicate(
+				format: "label BEGINSWITH %@ OR label BEGINSWITH %@",
+				TestIdentifiers.Calendar.categoryMenu,
+				TestIdentifiers.Calendar.organizationMenu)
+		).firstMatch
+	}
+
 	/// Whether the picker is up, counting a submenu drawn over its parent.
 	///
-	/// Opening a submenu replaces the parent's contents, taking the CALENDARS
-	/// header with it, so a choice that exists only inside a submenu stands in
-	/// for the header while one is open.
+	/// Opening a submenu replaces everything the parent drew, CALENDARS header
+	/// included, so `menuIsPresented` reads an open submenu as no menu at all.
+	/// An axis row survives both states, and unlike a category it is drawn
+	/// whatever the enabled calendars happen to hold.
 	func pickerIsPresented() -> Bool {
-		if menuIsPresented() {
-			return true
-		}
-		return app.buttons[TestIdentifiers.Calendar.categories[0]].exists
+		axisRow().exists
 	}
 
 	/// Close the menu by tapping well away from it -- the toolbar button is at
@@ -138,10 +148,9 @@ struct CalendarScreen: Screen {
 	func dismissMenu() -> Self {
 		if pickerIsPresented() {
 			app.coordinate(withNormalizedOffset: CGVector(dx: 0.1, dy: 0.2)).tap()
-			_ = app.staticTexts[TestIdentifiers.Calendar.calendarsSection]
-				.waitForNonExistence(timeout: 10)
-			_ = app.buttons[TestIdentifiers.Calendar.categories[0]]
-				.waitForNonExistence(timeout: 10)
+			XCTAssertTrue(
+				axisRow().waitForNonExistence(timeout: 10),
+				"Tapping away from the picker should close it, submenu and all")
 		}
 		return self
 	}
