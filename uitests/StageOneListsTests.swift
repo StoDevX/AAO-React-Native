@@ -105,6 +105,11 @@ class StageOneListsTests: UITestCase {
 		XCTAssertTrue(contact.waitForExistence(timeout: 30), "A contact tile should be shown")
 		contact.tap()
 
+		// Wait for something only the pushed screen has: a capture taken
+		// straight after the tap lands mid-animation, with both screens in it.
+		let action = app.staticTexts[TestIdentifiers.Directory.aContactAction].firstMatch
+		XCTAssertTrue(action.waitForExistence(timeout: 30), "The contact detail should be shown")
+
 		screen.capture("Directory - contact detail")
 	}
 
@@ -136,6 +141,25 @@ class StageOneListsTests: UITestCase {
 		screen.capture("Course detail")
 	}
 
+	/// A job that is not pending release goes to the release screen rather than
+	/// the printer picker, which is the screen this reaches.
+	func testPrintReleaseScreen() throws {
+		let screen = StoPrintScreen(app: app).navigate()
+
+		// "test.pdf" is Sent to Printer in the fixtures, so tapping it opens the
+		// release screen; a Pending Release job would open the printer list.
+		let job = app.buttons
+			.matching(NSPredicate(format: "label BEGINSWITH %@", "test.pdf"))
+			.firstMatch
+		XCTAssertTrue(job.waitForExistence(timeout: 30), "A sent job should be listed")
+		job.tap()
+
+		let jobInfo = app.staticTexts["JOB INFO"].firstMatch
+		XCTAssertTrue(jobInfo.waitForExistence(timeout: 30), "The release screen should be shown")
+
+		screen.capture("Print release")
+	}
+
 	func testMoreList() throws {
 		MoreScreen(app: app)
 			.navigate()
@@ -151,6 +175,9 @@ class StageOneListsTests: UITestCase {
 			otherTab.waitForExistence(timeout: 30),
 			"Other tab should be visible on Transportation")
 		otherTab.tap()
+
+		let section = app.staticTexts["Bus"].firstMatch
+		XCTAssertTrue(section.waitForExistence(timeout: 30), "The Other tab should be showing")
 
 		screen.capture("Transportation - Other Modes")
 	}
@@ -180,6 +207,10 @@ class StageOneListsTests: UITestCase {
 		XCTAssertTrue(found, "Filter tab should be visible on Athletics")
 
 		filterTab.tap()
+
+		let sports = app.staticTexts["Women's Sports"].firstMatch
+		XCTAssertTrue(sports.waitForExistence(timeout: 30), "The Filter tab should be showing")
+
 		screen.capture("Athletics - Filter")
 	}
 
