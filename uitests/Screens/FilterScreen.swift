@@ -80,6 +80,23 @@ struct FilterScreen: Screen {
 		return self
 	}
 
+	/// Turn a toggle filter off, whether or not it started on.
+	///
+	/// A toggle whose default is drawn from the day's data cannot be assumed
+	/// either way, so this reads the trigger before deciding to tap it. Tapping
+	/// unconditionally would switch an already-off filter on.
+	@discardableResult
+	func clearTrigger(_ key: String) -> Self {
+		waitForTrigger(key)
+		if trigger(key).isSelected {
+			tapTrigger(key)
+		}
+		XCTAssertTrue(
+			trigger(key).waitForSelected(false),
+			"the \(key) trigger should be off")
+		return self
+	}
+
 	/// Open a filter, and wait for something inside its presentation.
 	///
 	/// The tap goes by coordinate rather than `.tap()`: a trigger draws its

@@ -80,6 +80,13 @@ class ModuleFilterTests: UITestCase {
 		let filters = FilterScreen(app: app)
 		let vegan = TestIdentifiers.Menus.vegan
 
+		// Specials Only applies itself whenever the meal carries a special, and
+		// Stav's breakfast can carry a single one that is not vegan -- leaving
+		// the menu empty once the vegan filter lands, for a reason that is
+		// about the day's food rather than about the swipe. Clearing it runs
+		// the swipe against the whole meal, which always has vegan dishes.
+		filters.clearTrigger(Keys.specials)
+
 		// The unfiltered menu states the case this test would not otherwise
 		// distinguish from success: rows that do not carry the icon exist
 		// right now, and the swipe is what has to remove them.
