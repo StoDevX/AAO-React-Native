@@ -14,7 +14,7 @@ import * as c from '@frogpond/colors'
 const selectionCircleFill = DynamicColorIOS({light: '#000000', dark: '#FFFFFF'})
 const selectionTextColor = DynamicColorIOS({light: '#FFFFFF', dark: '#000000'})
 
-import type {SourcedEvent} from './types'
+import {DAYS_PER_WEEK} from './days'
 
 /**
  * Each day cell is identified by its own ISO date, so a UI test can reach a
@@ -36,61 +36,6 @@ const CELL_MARGIN = 4
 const CELL_TOTAL_WIDTH = CELL_WIDTH + CELL_MARGIN * 2
 const PADDING_HORIZONTAL = 8
 const CIRCLE_SIZE = 32
-const DAYS_PER_WEEK = 7
-
-/**
- * Generates a continuous range of whole weeks, from Sunday of the current week
- * through the Saturday of the last event's week. Whole weeks keep every day
- * sitting under a Sunday the strip can snap to. Returns an empty array if
- * there are no future events.
- */
-export function deriveDays(events: readonly SourcedEvent[], now: Moment): Moment[] {
-	let today = now.clone().startOf('day')
-	let lastDay: Moment | null = null
-
-	for (let entry of events) {
-		if (entry.event.isOngoing) {
-			continue
-		}
-
-		let day = entry.event.startTime.clone().startOf('day')
-
-		if (day.isBefore(today, 'day')) {
-			continue
-		}
-
-		if (!lastDay || day.isAfter(lastDay, 'day')) {
-			lastDay = day
-		}
-	}
-
-	if (!lastDay) {
-		return []
-	}
-
-	let sunday = today.clone().startOf('week')
-
-	// Compared as a calendar date rather than as an instant. `now` and an
-	// event's `startTime` are both device-local, but nothing in this
-	// function's signature says so, and comparing two moments in different
-	// zones as instants runs the range a day long or a day short. Whole weeks
-	// is the contract the strip's snapping is built on.
-	let lastDate = lastDay.format('YYYY-MM-DD')
-
-	let days: Moment[] = []
-	let current = sunday.clone()
-	let weekEnd = ''
-
-	do {
-		for (let i = 0; i < DAYS_PER_WEEK; i++) {
-			days.push(current.clone())
-			weekEnd = current.format('YYYY-MM-DD')
-			current.add(1, 'day')
-		}
-	} while (weekEnd < lastDate)
-
-	return days
-}
 
 /**
  * Whether `day` opens its week, by the rule `deriveDays` and `scrollToDay`
