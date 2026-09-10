@@ -138,44 +138,61 @@ describe('deriveDays', () => {
 	})
 })
 
+// `occursOn` decides same-day-ness with `startTime.isSame(day, 'day')`, and
+// that comparison resolves in `startTime`'s own zone. A bare `Z` instant reads
+// back in the process's zone, so a moment built that way for a day boundary
+// would follow whichever machine ran the test -- the same trap the zone-crossing
+// `deriveDays` cases above exist to catch. Building the day and its events in
+// one explicit zone, campus's own, keeps the comparison the same everywhere.
+function eventInZone(start: string, end = start, isOngoing = false): SourcedEvent {
+	return {
+		sourceId: 'a',
+		key: start,
+		event: {
+			startTime: moment.tz(start, 'America/Chicago'),
+			endTime: moment.tz(end, 'America/Chicago'),
+			isOngoing,
+		},
+	} as unknown as SourcedEvent
+}
+
 describe('occursOn', () => {
-	let sunday = moment('2026-08-23T00:00:00Z')
+	let sunday = moment.tz('2026-08-23T00:00:00', 'America/Chicago')
 
 	test('an event starting that day occurs on it', () => {
-		expect(occursOn(event('2026-08-23T18:00:00Z'), sunday)).toBe(true)
+		expect(occursOn(eventInZone('2026-08-23T18:00:00'), sunday)).toBe(true)
 	})
 
 	test('an event starting another day does not', () => {
-		expect(occursOn(event('2026-08-24T18:00:00Z'), sunday)).toBe(false)
+		expect(occursOn(eventInZone('2026-08-24T18:00:00'), sunday)).toBe(false)
 	})
 
 	test('an ongoing event spanning that day occurs on it', () => {
-		let spanning = event('2026-08-20T10:00:00Z', '2026-08-26T10:00:00Z', true)
+		let spanning = eventInZone('2026-08-20T10:00:00', '2026-08-26T10:00:00', true)
 		expect(occursOn(spanning, sunday)).toBe(true)
 	})
 
 	test('an ongoing event that ended before that day does not', () => {
-		let past = event('2026-08-18T10:00:00Z', '2026-08-20T10:00:00Z', true)
+		let past = eventInZone('2026-08-18T10:00:00', '2026-08-20T10:00:00', true)
 		expect(occursOn(past, sunday)).toBe(false)
 	})
 })
 
 describe('eventsOnDay', () => {
+	let day = moment.tz('2026-08-23T00:00:00', 'America/Chicago')
+
 	test('keeps only the events on that day, in start order', () => {
 		let events = [
-			event('2026-08-24T09:00:00Z'),
-			event('2026-08-23T18:00:00Z'),
-			event('2026-08-23T09:00:00Z'),
+			eventInZone('2026-08-24T09:00:00'),
+			eventInZone('2026-08-23T18:00:00'),
+			eventInZone('2026-08-23T09:00:00'),
 		]
-		let result = eventsOnDay(events, moment('2026-08-23T00:00:00Z'))
-		expect(result.map((entry) => entry.key)).toEqual([
-			'2026-08-23T09:00:00Z',
-			'2026-08-23T18:00:00Z',
-		])
+		let result = eventsOnDay(events, day)
+		expect(result.map((entry) => entry.key)).toEqual(['2026-08-23T09:00:00', '2026-08-23T18:00:00'])
 	})
 
 	test('returns nothing for a day with no events', () => {
-		expect(eventsOnDay([event('2026-08-24T09:00:00Z')], moment('2026-08-23T00:00:00Z'))).toEqual([])
+		expect(eventsOnDay([eventInZone('2026-08-24T09:00:00')], day)).toEqual([])
 	})
 })
 
