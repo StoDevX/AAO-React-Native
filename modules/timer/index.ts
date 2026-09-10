@@ -1,4 +1,5 @@
 import {useCallback, useEffect, useRef, useState} from 'react'
+import {AppState} from 'react-native'
 import {default as moment, unitOfTime, type Moment} from 'moment-timezone'
 
 import {isUITesting} from '@frogpond/launch-arguments'
@@ -33,6 +34,11 @@ interface MomentProps extends BasicProps {
  *
  * Boundaries are measured against the epoch, which lines up with local time
  * because every timezone offset is a whole number of minutes.
+ *
+ * Timers do not run while the app is in the background, so `onTick` also runs
+ * on the way back to the foreground — otherwise the screen keeps whatever time
+ * it showed when the user left, for as long as it takes the next boundary to
+ * come around.
  */
 function useBoundaryInterval(onTick: () => void, intervalMs: number): void {
 	let savedTick = useRef(onTick)
@@ -56,7 +62,14 @@ function useBoundaryInterval(onTick: () => void, intervalMs: number): void {
 
 		scheduleTick()
 
-		return () => clearTimeout(timeout)
+		let subscription = AppState.addEventListener('change', (status) => {
+			if (status === 'active') savedTick.current()
+		})
+
+		return () => {
+			clearTimeout(timeout)
+			subscription.remove()
+		}
 	}, [intervalMs])
 }
 
