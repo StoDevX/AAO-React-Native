@@ -1,5 +1,9 @@
 import * as React from 'react'
-import {Cell} from '@frogpond/tableview'
+import {LabeledContent, Text} from '@expo/ui/swift-ui'
+import {foregroundStyle} from '@expo/ui/swift-ui/modifiers'
+import * as c from '@frogpond/colors'
+import {DisclosureRow} from '../../../../components/rows'
+import {describeValue} from './lib'
 
 type Props = {
 	data: {key: string | number; value: unknown}
@@ -8,38 +12,19 @@ type Props = {
 
 export const DebugRow = (props: Props): React.ReactNode => {
 	let {data, onPress} = props
+	let {detail, isDrillable} = describeValue(data.value)
 
-	let rowDetail = '<unknown>'
-	let isDrillable = false
-
-	if (Array.isArray(data.value)) {
-		// Array(0), Array(100), etc
-		rowDetail = `Array(${data.value.length})`
-		isDrillable = true
-	} else if (typeof data.value === 'object' && data.value !== null) {
-		// [object Object], [object Symbol], etc
-		// oxlint-disable-next-line typescript/no-base-to-string
-		rowDetail = data.value.toString()
-		isDrillable = true
-	} else if (typeof data.value === 'string') {
-		if (data.value.length > 20) {
-			rowDetail = `"${data.value.substring(0, 20)}…"`
-		} else {
-			rowDetail = JSON.stringify(data.value)
-		}
-	} else {
-		rowDetail = JSON.stringify(data.value)
+	// Only a value with something inside it, and a handler to open it, is worth
+	// drawing as something you can tap.
+	if (isDrillable && onPress) {
+		return (
+			<DisclosureRow detail={detail} onPress={() => onPress(data.key)} title={String(data.key)} />
+		)
 	}
 
-	let showArrow = isDrillable && onPress != null
-
 	return (
-		<Cell
-			accessory={showArrow ? 'DisclosureIndicator' : false}
-			cellStyle="RightDetail"
-			detail={rowDetail}
-			onPress={showArrow ? () => onPress?.(data.key) : undefined}
-			title={data.key}
-		/>
+		<LabeledContent label={String(data.key)}>
+			<Text modifiers={[foregroundStyle(c.secondaryLabel)]}>{detail}</Text>
+		</LabeledContent>
 	)
 }

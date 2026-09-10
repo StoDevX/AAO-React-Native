@@ -1,10 +1,10 @@
 import * as React from 'react'
-import {FlatList, ScrollView, StyleSheet, Text} from 'react-native'
+import {StyleSheet, Text as RNText} from 'react-native'
+import {ContentUnavailableView, Host, List, Section, Text} from '@expo/ui/swift-ui'
+import {listStyle, textSelection} from '@expo/ui/swift-ui/modifiers'
+import * as c from '@frogpond/colors'
 import {DebugRow} from './row'
-import {NoticeView} from '@frogpond/notice'
-import {ListSeparator} from '@frogpond/lists'
 import {useAppSelector} from '../../../../redux'
-import {Section, TableView} from 'react-native-tableview-simple'
 
 export const NavigationKey = 'DebugView' as const
 
@@ -46,32 +46,36 @@ export const DebugView = (props: Props = {}): React.ReactNode => {
 		case 'undefined':
 			return <DebugSimpleItem item={state} />
 		default: {
-			return <Text>unknown type: {typeof state}</Text>
+			return <RNText>unknown type: {typeof state}</RNText>
 		}
 	}
 }
 
 export const DebugSimpleItem = ({item}: {item: unknown}): React.ReactNode => {
 	return (
-		<ScrollView contentInsetAdjustmentBehavior="automatic">
-			<TableView style={styles.table}>
-				<Section header={typeof item} hideSurroundingSeparators={true} roundedCorners={true}>
-					<Text>{String(item)}</Text>
+		<Host style={styles.host}>
+			<List modifiers={[listStyle('insetGrouped')]}>
+				<Section title={typeof item}>
+					{/* Selectable: the whole point of this screen is copying a
+					    value out of it. */}
+					<Text modifiers={[textSelection(true)]}>{String(item)}</Text>
 				</Section>
-			</TableView>
-		</ScrollView>
+			</List>
+		</Host>
 	)
 }
 
 export const DebugToStringItem = ({item}: {item: unknown}): React.ReactNode => {
 	return (
-		<ScrollView contentInsetAdjustmentBehavior="automatic">
-			<TableView style={styles.table}>
-				<Section header={typeof item} hideSurroundingSeparators={true} roundedCorners={true}>
-					<Text>{String(item)}</Text>
+		<Host style={styles.host}>
+			<List modifiers={[listStyle('insetGrouped')]}>
+				<Section title={typeof item}>
+					{/* Selectable: the whole point of this screen is copying a
+					    value out of it. */}
+					<Text modifiers={[textSelection(true)]}>{String(item)}</Text>
 				</Section>
-			</TableView>
-		</ScrollView>
+			</List>
+		</Host>
 	)
 }
 
@@ -85,13 +89,19 @@ export const DebugArrayItem = ({
 	let keyed = item.map((value, key) => ({key, value}))
 
 	return (
-		<FlatList
-			ItemSeparatorComponent={ListSeparator}
-			ListEmptyComponent={<NoticeView text="Nothing found." />}
-			contentInsetAdjustmentBehavior="automatic"
-			data={keyed}
-			renderItem={({item: debugItem}) => <DebugRow data={debugItem} onPress={onDrillDown} />}
-		/>
+		<Host style={styles.host}>
+			<List modifiers={[listStyle('insetGrouped')]}>
+				{keyed.length === 0 ? (
+					<ContentUnavailableView systemImage="curlybraces" title="Nothing found." />
+				) : (
+					<Section>
+						{keyed.map((debugItem) => (
+							<DebugRow key={String(debugItem.key)} data={debugItem} onPress={onDrillDown} />
+						))}
+					</Section>
+				)}
+			</List>
+		</Host>
 	)
 }
 
@@ -105,16 +115,25 @@ export const DebugObjectItem = ({
 	let keyed = Object.entries(item).map(([key, value]) => ({key, value}))
 
 	return (
-		<FlatList
-			ItemSeparatorComponent={ListSeparator}
-			ListEmptyComponent={<NoticeView text="Nothing found." />}
-			contentInsetAdjustmentBehavior="automatic"
-			data={keyed}
-			renderItem={({item: debugItem}) => <DebugRow data={debugItem} onPress={onDrillDown} />}
-		/>
+		<Host style={styles.host}>
+			<List modifiers={[listStyle('insetGrouped')]}>
+				{keyed.length === 0 ? (
+					<ContentUnavailableView systemImage="curlybraces" title="Nothing found." />
+				) : (
+					<Section>
+						{keyed.map((debugItem) => (
+							<DebugRow key={String(debugItem.key)} data={debugItem} onPress={onDrillDown} />
+						))}
+					</Section>
+				)}
+			</List>
+		</Host>
 	)
 }
 
 let styles = StyleSheet.create({
-	table: {marginHorizontal: 15},
+	host: {
+		flex: 1,
+		backgroundColor: c.systemGroupedBackground,
+	},
 })
