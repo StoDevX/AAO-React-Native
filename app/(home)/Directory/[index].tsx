@@ -1,6 +1,6 @@
 import * as React from 'react'
 import {StyleSheet, Image as RNImage} from 'react-native'
-import {Host, HStack, List, RNHostView, Section, Spacer, Text} from '@expo/ui/swift-ui'
+import {Host, HStack, List, RNHostView, Section, Text, VStack} from '@expo/ui/swift-ui'
 import {
 	font,
 	foregroundStyle,
@@ -84,6 +84,7 @@ export default function DirectoryDetailPage(): React.ReactNode {
 
 	const {
 		campusLocations,
+		displayName,
 		displayTitle,
 		photo,
 		officeHours,
@@ -99,23 +100,36 @@ export default function DirectoryDetailPage(): React.ReactNode {
 			<Host style={styles.host}>
 				<List modifiers={[listStyle('insetGrouped')]}>
 					<Section>
-						{/* The photo is a network image, so React Native draws it and
-						    SwiftUI hosts it. Spacers either side rather than the RN
-						    `alignSelf`, which a hosted view sizing to its own contents
-						    has nothing to align within. */}
-						<HStack modifiers={[frame({maxWidth: Infinity})]}>
-							<Spacer />
-							<RNHostView matchContents={true}>
-								<RNImage
-									accessibilityIgnoresInvertColors={true}
-									resizeMode="cover"
-									source={{uri: photo}}
-									style={styles.image}
-								/>
-							</RNHostView>
-							<Spacer />
+						{/* Name leading, photo trailing, both hung from the top -- so a
+						    long name wraps down the left of the photo rather than
+						    pushing it about. The VStack fills what the photo leaves,
+						    which is what gives the name somewhere to wrap within. */}
+						<HStack alignment="top" spacing={12}>
+							<VStack
+								alignment="leading"
+								modifiers={[frame({maxWidth: Infinity, alignment: 'leading'})]}
+								spacing={2}
+							>
+								<Text modifiers={NAME_MODIFIERS}>{displayName}</Text>
+								{displayTitle ? <Text modifiers={HEADER_MODIFIERS}>{displayTitle}</Text> : null}
+							</VStack>
+
+							{photo ? (
+								/* A network image, so React Native draws it and SwiftUI
+								   hosts it -- at a stated size, since a hosted view has no
+								   bounds of its own. */
+								<HStack modifiers={[frame({width: PHOTO_WIDTH, height: PHOTO_HEIGHT})]}>
+									<RNHostView matchContents={false}>
+										<RNImage
+											accessibilityIgnoresInvertColors={true}
+											resizeMode="cover"
+											source={{uri: photo}}
+											style={styles.image}
+										/>
+									</RNHostView>
+								</HStack>
+							) : null}
 						</HStack>
-						<Text modifiers={HEADER_MODIFIERS}>{displayTitle}</Text>
 					</Section>
 
 					{/* An empty array of pronouns is still an array, so asking whether
@@ -186,11 +200,14 @@ export default function DirectoryDetailPage(): React.ReactNode {
 	)
 }
 
-const HEADER_MODIFIERS = [
-	font({textStyle: 'subheadline'}),
-	foregroundStyle(c.secondaryLabel),
-	multilineTextAlignment('center'),
-]
+/// Portrait rather than square: a directory photo is a head-and-shoulders
+/// shot, and a square crops it to the chin.
+const PHOTO_WIDTH = 80
+const PHOTO_HEIGHT = 104
+
+const NAME_MODIFIERS = [font({textStyle: 'title2', weight: 'semibold'}), foregroundStyle(c.label)]
+
+const HEADER_MODIFIERS = [font({textStyle: 'subheadline'}), foregroundStyle(c.secondaryLabel)]
 
 /// No card behind the credit: it names where the data came from, and is not a
 /// row of it. Matches the org detail.
@@ -208,11 +225,8 @@ const styles = StyleSheet.create({
 		backgroundColor: c.systemGroupedBackground,
 	},
 	image: {
-		width: 100,
-		height: 100,
-		alignSelf: 'center',
-		borderRadius: 4,
-		borderWidth: 0.2,
-		borderColor: c.label,
+		width: PHOTO_WIDTH,
+		height: PHOTO_HEIGHT,
+		borderRadius: 6,
 	},
 })
