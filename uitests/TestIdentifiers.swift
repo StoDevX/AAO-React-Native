@@ -241,18 +241,19 @@ struct TestIdentifiers {
 
 	enum Calendar {
 		static let picker = "Calendar filter"
-		/// Categories from the St. Olaf calendar. Unlike calendar sources, these
-		/// come from the event data itself, so the exact set depends on what the
-		/// calendar is serving. These two appear reliably.
-		static let categories = ["Music", "Academic Year"]
+		/// Categories the picker offers, written as the menu draws them: the
+		/// name, then how many events carry it. The counts come from
+		/// `modules/ccc-calendar/fixtures/uitest-events.json` read at the app's
+		/// frozen clock, so they hold for as long as that fixture does.
+		static let categories = ["Music (10)", "Academic Year (6)"]
 		/// The picker menu's section headers. SwiftUI draws a Menu section title
 		/// as static text, uppercased by the caller rather than by the platform.
 		static let calendarsSection = "CALENDARS"
 		static let categorySection = "CATEGORY"
 		static let organizationSection = "ORGANIZATION"
-		/// A sponsoring organisation named by the fixture calendar's events. It
-		/// sponsors three of them, so filtering to it leaves the list narrowed
-		/// rather than empty.
+		/// A sponsoring organisation named by the fixture calendar's events,
+		/// written as the menu draws it. It sponsors three of them, so filtering
+		/// to it leaves the list narrowed rather than empty.
 		///
 		/// The fixture names two organisations, and short ones. iOS scrolls a
 		/// menu taller than the screen, and a section header scrolled out of the
@@ -260,7 +261,7 @@ struct TestIdentifiers {
 		/// merely offscreen -- so `verifyMenuSection` fails on a menu that is
 		/// only too long. A name long enough to wrap its row costs half again
 		/// the height of one that does not.
-		static let organization = "Music Organizations"
+		static let organization = "Music Organizations (3)"
 		/// Clears whichever axis is filtered. Rendered inside the CATEGORY
 		/// section, at its visual top.
 		static let allEvents = "All Events"

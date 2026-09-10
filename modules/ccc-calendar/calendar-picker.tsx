@@ -7,6 +7,7 @@ import {
 	menuActionDismissBehavior,
 } from '@expo/ui/swift-ui/modifiers'
 import * as c from '@frogpond/colors'
+import type {CalendarFilterOption} from '../../source/features/calendar/filter'
 import type {CalendarFilter} from '../../source/features/calendar/store'
 import type {CalendarSource} from './sources'
 
@@ -26,8 +27,8 @@ type Props = {
 	sources: CalendarSource[]
 	enabledIds: string[]
 	onToggleSource: (id: string) => void
-	categories: string[]
-	organizations: string[]
+	categories: CalendarFilterOption[]
+	organizations: CalendarFilterOption[]
 	filter: CalendarFilter | null
 	onSelectFilter: (filter: CalendarFilter | null) => void
 	onTodayPress?: () => void
@@ -76,10 +77,10 @@ export function CalendarPicker({
 							<Section modifiers={STAYS_OPEN} title="ORGANIZATION">
 								{organizations.map((organization) => (
 									<Toggle
-										isOn={filter?.axis === 'organization' && filter.value === organization}
-										key={organization}
-										label={organization}
-										onIsOnChange={() => toggleFilter('organization', organization)}
+										isOn={filter?.axis === 'organization' && filter.value === organization.value}
+										key={organization.value}
+										label={`${organization.value} (${organization.count})`}
+										onIsOnChange={() => toggleFilter('organization', organization.value)}
 									/>
 								))}
 							</Section>
@@ -87,10 +88,10 @@ export function CalendarPicker({
 						<Section modifiers={STAYS_OPEN} title="CATEGORY">
 							{categories.map((category) => (
 								<Toggle
-									isOn={filter?.axis === 'category' && filter.value === category}
-									key={category}
-									label={category}
-									onIsOnChange={() => toggleFilter('category', category)}
+									isOn={filter?.axis === 'category' && filter.value === category.value}
+									key={category.value}
+									label={`${category.value} (${category.count})`}
+									onIsOnChange={() => toggleFilter('category', category.value)}
 								/>
 							))}
 							{/* Rendered last so it sits at the visual top of the section */}
