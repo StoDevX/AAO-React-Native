@@ -1,6 +1,7 @@
 export type {CalendarBodyHandle, CalendarSource, PoweredBy, SourcedEvent} from './types'
 
 export * as EventList from './event-list'
+export * as DayView from './day-view'
 export * as EventDetail from './event-detail'
 export {shareEvent, eventKey} from './calendar-util'
 export {daysWithEvents, deriveDays, eventsOnDay, occursOn} from './days'
