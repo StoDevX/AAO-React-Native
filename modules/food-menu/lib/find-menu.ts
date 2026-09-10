@@ -4,6 +4,8 @@ import findIndex from 'lodash/findIndex'
 import {timezone} from '@frogpond/constants'
 import type {DayPartMenuType, DayPartsCollectionType, ProcessedMealType} from '../types'
 
+const TIME_FORMATS = ['H:mm', 'HH:mm']
+
 export function findMenu(dayparts: DayPartsCollectionType, now: Moment): void | DayPartMenuType {
 	// `dayparts` is, conceptually, a collection of bonapp menus for a
 	// location. It's a single-element array of arrays, so we first check
@@ -48,9 +50,12 @@ function findMenuIndex(dayparts: DayPartMenuType[], now: Moment): number {
 	// Otherwise, we make ourselves a list of {starttime, endtime} pairs so we
 	// can query times relative to `now`. Also make sure to set dayOfYear to
 	// `now`, so that we don't have our days wandering all over the place.
+	// Both spellings of the hour: BonApp pads it ("07:15") while our own
+	// fallback menus do not ("0:00"), and strict parsing accepts a format
+	// only for the spelling it names.
 	const times = dayparts.map(({starttime, endtime}) => ({
-		start: moment.tz(starttime, 'H:mm', true, timezone()).dayOfYear(now.dayOfYear()),
-		end: moment.tz(endtime, 'H:mm', true, timezone()).dayOfYear(now.dayOfYear()),
+		start: moment.tz(starttime, TIME_FORMATS, true, timezone()).dayOfYear(now.dayOfYear()),
+		end: moment.tz(endtime, TIME_FORMATS, true, timezone()).dayOfYear(now.dayOfYear()),
 	}))
 
 	// We grab the first meal that ends sometime after `now`. The only time

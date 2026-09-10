@@ -20,6 +20,13 @@ const MEALS: ProcessedMealType[] = [
 	{label: 'Dinner', starttime: '17:00', endtime: '20:00', stations: [station('Home')]},
 ]
 
+/// The times BonApp actually serves, which pad the hour out to two digits.
+const PADDED_MEALS: ProcessedMealType[] = [
+	{label: 'Breakfast', starttime: '07:15', endtime: '09:45', stations: [station('Grill')]},
+	{label: 'Lunch', starttime: '10:30', endtime: '14:00', stations: [station('Deli')]},
+	{label: 'Dinner', starttime: '16:30', endtime: '20:00', stations: [station('Home')]},
+]
+
 /// The picker the menu's filter bar builds, carrying whichever meal is chosen.
 function mealPicker(selected: string | undefined): FilterType<MenuItemType> {
 	return {
@@ -48,6 +55,10 @@ describe('chooseMeal', () => {
 
 	test('picks the last meal of the day once they have all ended', () => {
 		expect(chooseMeal(MEALS, [], at('23:00:00')).label).toBe('Dinner')
+	})
+
+	test('picks a meal whose hours are zero-padded', () => {
+		expect(chooseMeal(PADDED_MEALS, [], at('08:00:00')).label).toBe('Breakfast')
 	})
 
 	test("the user's pick wins over the time of day", () => {
