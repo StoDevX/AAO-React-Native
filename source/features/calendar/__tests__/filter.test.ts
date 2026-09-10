@@ -109,3 +109,25 @@ describe('filterEvents', () => {
 		expect(filterEvents(events, filter)).toStrictEqual([])
 	})
 })
+
+describe('a tally and the filter it describes', () => {
+	// The count is a promise about what choosing that value would leave on
+	// screen, so the two have to be counting the same events. They arrive at it
+	// differently -- the tally walks every event once, the filter tests each
+	// event against one value -- and nothing but this ties them together.
+	let events = [
+		sourced('a', ['Music', 'Music'], ['Music Department']),
+		sourced('b', ['Music', 'Chapel'], ['Music Department', 'Wellness Center']),
+		sourced('c', ['Chapel'], []),
+	]
+
+	test.each(availableCategories(events))('$value ($count) categorises $count events', (option) => {
+		let filtered = filterEvents(events, {axis: 'category', value: option.value})
+		expect(filtered).toHaveLength(option.count)
+	})
+
+	test.each(availableOrganizations(events))('$value ($count) sponsors $count events', (option) => {
+		let filtered = filterEvents(events, {axis: 'organization', value: option.value})
+		expect(filtered).toHaveLength(option.count)
+	})
+})
