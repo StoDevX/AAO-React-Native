@@ -62,6 +62,15 @@ class StageOneListsTests: UITestCase {
 		screen.capture("Printers")
 	}
 
+	/// The first screen to draw a thumbnail through the shared row, so this is
+	/// where a remote image hosted inside a SwiftUI list gets looked at.
+	func testStreamingMediaList() throws {
+		StreamingMediaScreen(app: app)
+			.navigate()
+			.checkStreamListExists()
+			.capture("Streaming Media")
+	}
+
 	func testMoreList() throws {
 		MoreScreen(app: app)
 			.navigate()

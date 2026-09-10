@@ -238,3 +238,35 @@ export function toggleSectionSelection(
 export function shortSportName(sport: string): string {
 	return sport.replace(/^(Men's|Women's)\s/u, '')
 }
+
+/** What a score row says about a game, and how it says it. */
+export interface GameSummary {
+	/** True before a game starts, when there is a kickoff time but no score. */
+	showsTime: boolean
+	/** The kickoff time, or the result and score once there is one. */
+	label: string
+	/** The whole row as one sentence, since a scoreboard read field by field
+	 * tells a VoiceOver reader very little. */
+	accessibilityLabel: string
+}
+
+/**
+ * Decides whether a score row shows a kickoff time or a scoreline.
+ *
+ * A game that has not started (status `A`) and carries no result shows its
+ * time; anything ongoing or finished shows the score, with the result letter
+ * in front of it once there is one.
+ */
+export function gameSummary(score: ProcessedScore): GameSummary {
+	let showsTime = score.status.indicator === 'A' && score.result === ''
+	// All-day and multi-day fixtures carry no `time` string.
+	let label = showsTime
+		? score.time || 'All day'
+		: [score.result, `${score.team_score}-${score.opponent_score}`].filter(Boolean).join(' ')
+
+	return {
+		showsTime,
+		label,
+		accessibilityLabel: `${score.sport}: ${score.hometeam.trim()} vs ${score.opponent.trim()}, ${label}`,
+	}
+}

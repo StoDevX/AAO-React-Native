@@ -1,153 +1,106 @@
 import * as React from 'react'
-import {Image, PixelRatio, StyleSheet, Text, View} from 'react-native'
+import {Image as RNImage, StyleSheet} from 'react-native'
+import {HStack, RNHostView, Text, VStack} from '@expo/ui/swift-ui'
+import {
+	accessibilityElement,
+	accessibilityLabel,
+	font,
+	foregroundStyle,
+	frame,
+	lineLimit,
+	multilineTextAlignment,
+} from '@expo/ui/swift-ui/modifiers'
 import * as c from '@frogpond/colors'
-import {ProcessedScore} from './types'
+import {gameSummary} from './utils'
+import type {ProcessedScore} from './types'
+
+const LOGO_SIZE = 30
+/// Wide enough for a two-digit score either side of the dash without the
+/// teams' names shifting as a game goes on.
+const SCORE_WIDTH = 96
+
+const TEAM_MODIFIERS = [
+	font({textStyle: 'caption'}),
+	foregroundStyle(c.label),
+	multilineTextAlignment('center'),
+	lineLimit(2),
+]
 
 type Props = {
 	score: ProcessedScore
 }
 
-export const AthleticsRow = React.memo(({score}: Props): React.ReactNode => {
-	// Show time only for games that haven't started yet (status A, no result).
-	// For ongoing (O) and finalized (result is W/L/N) games, show the score panel.
-	const showTime = score.status.indicator === 'A' && score.result === ''
-	// All-day and multi-day fixtures carry no `time` string.
-	const timeText = score.time || 'All day'
-	const gameInfoLabel = showTime
-		? timeText
-		: [score.result, `${score.team_score}-${score.opponent_score}`].filter(Boolean).join(' ')
-	const accessibilityLabel = `${score.sport}: ${score.hometeam.trim()} vs ${score.opponent.trim()}, ${gameInfoLabel}`
+function TeamLogo({uri}: {uri: string}): React.ReactNode {
+	if (!uri) {
+		return null
+	}
+
+	// `@expo/ui`'s Image reads only SF Symbols and local files, so a team's
+	// crest is a React Native image hosted in the row -- and RNHostView gives a
+	// hosted view no bounds of its own, hence the frame.
+	return (
+		<HStack modifiers={[frame({width: LOGO_SIZE, height: LOGO_SIZE})]}>
+			<RNHostView matchContents={false}>
+				<RNImage accessibilityIgnoresInvertColors={true} source={{uri}} style={styles.logo} />
+			</RNHostView>
+		</HStack>
+	)
+}
+
+/**
+ * One fixture: the sport it is, the two teams with their crests, and either a
+ * kickoff time or the score between them.
+ *
+ * The whole row is one accessibility element. Read field by field a scoreboard
+ * announces six fragments and says very little; `gameSummary` builds the
+ * sentence a reader actually wants.
+ */
+export const AthleticsRow = React.memo(function AthleticsRow({score}: Props): React.ReactNode {
+	let summary = gameSummary(score)
 
 	return (
-		<View
-			accessibilityLabel={accessibilityLabel}
-			accessibilityRole="text"
-			accessible={true}
-			style={styles.rowContainer}
+		<VStack
+			modifiers={[accessibilityElement('combine'), accessibilityLabel(summary.accessibilityLabel)]}
+			spacing={4}
 		>
-			<Text style={styles.sportName}>{score.sport}</Text>
-			<View style={styles.container}>
-				<View style={styles.teamLeft}>
-					{score.hometeam_logo ? (
-						<Image
-							accessibilityIgnoresInvertColors={true}
-							source={{uri: score.hometeam_logo}}
-							style={styles.teamLogo}
-						/>
-					) : null}
-					<Text style={styles.teamName}>{score.hometeam.trim()}</Text>
-				</View>
+			<Text modifiers={[font({textStyle: 'caption2', weight: 'bold'}), foregroundStyle(c.label)]}>
+				{score.sport}
+			</Text>
 
-				<View style={styles.gameInfo}>
-					{showTime ? (
-						<Text style={styles.infoTime}>{timeText}</Text>
-					) : (
-						<>
-							{score.result !== '' && <Text style={styles.infoProcess}>{score.result}</Text>}
-							<View style={styles.infoScorePanel}>
-								<Text style={styles.infoScore}>{score.team_score}</Text>
-								<View style={styles.infoDivider} />
-								<Text style={styles.infoScore}>{score.opponent_score}</Text>
-							</View>
-						</>
-					)}
-				</View>
+			<HStack spacing={8}>
+				<VStack modifiers={[frame({maxWidth: Infinity})]} spacing={4}>
+					<TeamLogo uri={score.hometeam_logo} />
+					<Text modifiers={TEAM_MODIFIERS}>{score.hometeam.trim()}</Text>
+				</VStack>
 
-				<View style={styles.teamRight}>
-					{score.opponent_logo ? (
-						<Image
-							accessibilityIgnoresInvertColors={true}
-							source={{uri: score.opponent_logo}}
-							style={styles.teamLogo}
-						/>
-					) : null}
-					<Text style={styles.teamName}>{score.opponent.trim()}</Text>
-				</View>
-			</View>
-		</View>
+				<VStack modifiers={[frame({width: SCORE_WIDTH})]} spacing={2}>
+					<Text
+						modifiers={[
+							font({
+								textStyle: summary.showsTime ? 'body' : 'title2',
+								weight: summary.showsTime ? 'regular' : 'medium',
+							}),
+							foregroundStyle(c.label),
+							multilineTextAlignment('center'),
+						]}
+					>
+						{summary.label}
+					</Text>
+				</VStack>
+
+				<VStack modifiers={[frame({maxWidth: Infinity})]} spacing={4}>
+					<TeamLogo uri={score.opponent_logo} />
+					<Text modifiers={TEAM_MODIFIERS}>{score.opponent.trim()}</Text>
+				</VStack>
+			</HStack>
+		</VStack>
 	)
 })
-AthleticsRow.displayName = 'AthleticsRow'
 
 const styles = StyleSheet.create({
-	rowContainer: {
-		backgroundColor: c.systemBackground,
-		borderRadius: 10,
-		elevation: 3,
-		marginHorizontal: 3,
-		marginVertical: 5,
-		padding: 3,
-		shadowColor: '#000',
-		shadowOffset: {width: 0, height: 2},
-		shadowOpacity: 0.1,
-		shadowRadius: 5,
-	},
-	container: {
-		alignItems: 'center',
-		backgroundColor: c.systemBackground,
-		borderRadius: 5,
-		flex: 1,
-		flexDirection: 'row',
-		justifyContent: 'space-between',
-		padding: 5,
-	},
-	teamLeft: {
-		alignItems: 'center',
-		flex: 1,
-	},
-	teamRight: {
-		alignItems: 'center',
-		flex: 1,
-	},
-	teamLogo: {
-		height: 30,
-		marginVertical: 4,
-		width: 30,
-	},
-	sportName: {
-		color: c.label,
-		fontSize: 11,
-		fontWeight: 'bold',
-		padding: 2,
-		textAlign: 'center',
-	},
-	teamName: {
-		color: c.label,
-		fontSize: 12,
-		textAlign: 'center',
-	},
-	gameInfo: {
-		alignItems: 'center',
-		flex: 1,
-		justifyContent: 'center',
-	},
-	infoProcess: {
-		color: c.label,
-		fontSize: 8,
-		marginVertical: 2,
-	},
-	infoTime: {
-		color: c.label,
-		fontSize: 14,
-		textAlign: 'center',
-	},
-	infoScorePanel: {
-		alignItems: 'center',
-		flexDirection: 'row',
-		height: '100%',
-		justifyContent: 'center',
-	},
-	infoScore: {
-		color: c.label,
-		fontSize: 20,
-		fontWeight: '500',
-		textAlign: 'center',
-		width: 40,
-	},
-	infoDivider: {
-		backgroundColor: c.systemGray,
-		height: 20,
-		marginHorizontal: 8,
-		width: 2 / PixelRatio.get(),
+	logo: {
+		height: LOGO_SIZE,
+		width: LOGO_SIZE,
+		resizeMode: 'contain',
 	},
 })
