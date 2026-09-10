@@ -57,6 +57,25 @@ describe('chooseMeal', () => {
 		expect(chooseMeal(MEALS, [], at('23:00:00')).label).toBe('Dinner')
 	})
 
+	// The small hours, before anything has opened. Nothing is being served, and
+	// the first meal of the coming day is the useful answer -- this is the state
+	// a CI run in the early morning sees.
+	test('picks the first meal of the day before any of them open', () => {
+		expect(chooseMeal(MEALS, [], at('03:00:00')).label).toBe('Breakfast')
+	})
+
+	// Breakfast ends at 11:00 and lunch starts there. A meal's end is the minute
+	// it stops being served, so the shared minute belongs to lunch.
+	test('gives a shared boundary minute to the meal coming in', () => {
+		expect(chooseMeal(MEALS, [], at('11:00:00')).label).toBe('Lunch')
+	})
+
+	// The same rule at the end of the day has nothing to hand over to, so the
+	// last meal stands rather than the screen emptying.
+	test('keeps the last meal at the minute it ends', () => {
+		expect(chooseMeal(MEALS, [], at('20:00:00')).label).toBe('Dinner')
+	})
+
 	test('picks a meal whose hours are zero-padded', () => {
 		expect(chooseMeal(PADDED_MEALS, [], at('08:00:00')).label).toBe('Breakfast')
 	})
