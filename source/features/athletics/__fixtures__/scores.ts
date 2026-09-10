@@ -11,10 +11,13 @@ import type {Score} from '../types'
  * reasoning about entries.
  */
 
-/// A 1x1 transparent PNG. The crests only need to prove the row hosts a remote
-/// image at all, and an inline one cannot fail for want of a network.
+/// A 1x1 grey PNG, stretched to fill the crest's frame.
+///
+/// Visible on purpose: a crest that drew nothing would look exactly like one
+/// that failed to load, so a plain square is what shows the row really did host
+/// the image. Inline rather than a URL so it cannot fail for want of a network.
 const LOGO =
-	'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=='
+	'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGM4fvwMAASzAlv//YG7AAAAAElFTkSuQmCC'
 
 function score(props: Partial<Score> & Pick<Score, 'id' | 'sport' | 'date_utc'>): Score {
 	return {

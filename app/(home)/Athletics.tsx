@@ -6,6 +6,7 @@ import {Stack} from 'expo-router'
 import {useQuery} from '@tanstack/react-query'
 
 import {LoadingView, NoticeView} from '@frogpond/notice'
+import {now} from '@frogpond/timer'
 import * as c from '@frogpond/colors'
 
 import {Constants} from '../../source/features/athletics/constants'
@@ -42,7 +43,10 @@ function AthleticsView(): React.ReactNode {
 
 	// The day the buckets are measured from. Held steady between renders so the
 	// grouping below doesn't re-run against a clock that has moved on.
-	const today = React.useMemo(() => debugDate ?? new Date(), [debugDate])
+	// `now()` rather than `new Date()`: under UI testing it answers the frozen
+	// date the fixtures are written around, so which games count as today does
+	// not depend on the day the suite happens to run.
+	const today = React.useMemo(() => debugDate ?? now().toDate(), [debugDate])
 
 	// Derive the Women's/Men's/Other sport groups for the filter screen.
 	const sports = React.useMemo(() => sportFilterSections(data), [data])
