@@ -163,12 +163,30 @@ depends = ["bundle-data"]
 run = "tsc --noEmit"
 
 [tasks.test]
-description = "Run Jest tests"
+description = "Run every test"
+depends = ["test:jest", "test:scripts"]
+
+[tasks."test:jest"]
+description = "Run the Jest tests"
 # Same reason as tsc above: source/features/building-hours/query.ts imports
 # docs/building-hours.json, which bundle-data generates, so the suite cannot
-# run against a clean checkout without it.
+# run against a clean checkout without it. node:test needs none of it, so the
+# dependency sits here rather than on the umbrella.
 depends = ["bundle-data"]
 run = "jest"
+
+# scripts/ is plain Node with no React Native in it, so its tests run on
+# node:test: native ESM, no transform step, and no restriction on import.meta
+# -- a literal import.meta breaks Jest's CommonJS transform of an .mjs file,
+# which is why scripts/report-flaky-uitests.mjs checks its entry point by argv
+# instead. Jest's testMatch covers __tests__/ and .js/.ts/.tsx only, so a
+# scripts/*.test.mjs cannot end up running under both.
+#
+# node --test wants a quoted glob here; a bare directory argument makes it try
+# to load the directory as a module.
+[tasks."test:scripts"]
+description = "Run the node:test tests under scripts/"
+run = 'node --test "scripts/*.test.mjs"'
 
 # --- Data ---
 
