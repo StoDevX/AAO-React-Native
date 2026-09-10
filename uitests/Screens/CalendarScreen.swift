@@ -565,4 +565,62 @@ struct CalendarScreen: Screen {
 			"The event detail should credit the calendar the event came from")
 		return self
 	}
+
+	// MARK: - View mode
+
+	/// Open the top-right menu that chooses the calendar's view.
+	@discardableResult
+	func openModeMenu() -> Self {
+		let menu = app.buttons[TestIdentifiers.Calendar.modePicker]
+		XCTAssertTrue(
+			menu.waitForExistence(timeout: 30),
+			"The calendar should offer a view menu in the navigation bar")
+		menu.tap()
+		return self
+	}
+
+	/// Choose a view from the open menu. A Toggle inside a Menu reaches
+	/// XCUITest as a button labelled with its title.
+	@discardableResult
+	func selectMode(_ title: String) -> Self {
+		let item = app.buttons[title]
+		XCTAssertTrue(
+			item.waitForExistence(timeout: 30),
+			"\(title) should be offered in the view menu")
+		item.tap()
+		return self
+	}
+
+	@discardableResult
+	func verifyModeAbsent(_ title: String) -> Self {
+		XCTAssertFalse(
+			app.buttons[title].exists,
+			"\(title) should not be offered yet")
+		return self
+	}
+
+	/// Whether a day's cell reports having events.
+	///
+	/// Read off the cell's accessibility label rather than off the dot view. A
+	/// dot is a bare `View` with no accessibility of its own, so it may not
+	/// reach the hierarchy at all -- and a query that cannot fail is worse than
+	/// no query. The label is what `day-picker-strip.tsx` appends "has events"
+	/// to, and it is also what VoiceOver reads, so this asserts the thing that
+	/// actually matters.
+	func dayHasEvents(_ isoDay: String) -> Bool {
+		let cell = app.buttons[TestIdentifiers.Calendar.dayCellPrefix + isoDay]
+		guard cell.waitForExistence(timeout: 10) else { return false }
+		return cell.label.hasSuffix("has events")
+	}
+
+	@discardableResult
+	func verifyStripAbsent() -> Self {
+		let cell = app.buttons.matching(
+			NSPredicate(format: "identifier BEGINSWITH %@", TestIdentifiers.Calendar.dayCellPrefix)
+		).firstMatch
+		XCTAssertTrue(
+			cell.waitForNonExistence(timeout: 10),
+			"Upcoming should draw no day picker")
+		return self
+	}
 }

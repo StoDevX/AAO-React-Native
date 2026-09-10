@@ -291,6 +291,20 @@ struct TestIdentifiers {
 		/// Mirrored by `DAY_CELL_PREFIX` in `modules/event-list/day-picker-strip.tsx`.
 		static let dayCellPrefix = "day-cell-"
 
+		/// A day's event dot is identified by `day-dot-<ISO date>`.
+		/// Mirrored by `DAY_DOT_PREFIX` in
+		/// `modules/event-list/day-picker-strip.tsx`.
+		static let dayDotPrefix = "day-dot-"
+
+		/// The top-right menu that chooses how the calendar draws itself.
+		/// Mirrors `accessibilityLabel('Calendar view')` in
+		/// `modules/ccc-calendar/mode-picker.tsx`.
+		static let modePicker = "Calendar view"
+		static let dayMode = "Day"
+		static let upcomingMode = "Upcoming"
+		/// The mode that is committed commented out, and so must not appear.
+		static let timelineMode = "Timeline"
+
 		/// Each event row is identified by `event-row-<title>`.
 		/// Mirrored by `EVENT_ROW_PREFIX` in `modules/event-list/event-list-row.tsx`.
 		static let eventRowPrefix = "event-row-"

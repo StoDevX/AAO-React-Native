@@ -119,72 +119,23 @@ class ModuleCalendarTests: UITestCase {
 			.capture("25-strip-last-week")
 	}
 
-	/// The strip runs to the Saturday of the last event's week, so its final
-	/// days can have no events behind them. Tapping one still has to move the
-	/// selection somewhere the list can show, rather than selecting a day no
-	/// section answers to and leaving the strip fighting itself.
-	///
-	/// The fixture's last event is Fri 2026-09-18, which leaves Sat 2026-09-19
-	/// empty.
-	///
-	/// The fixture states its events in campus time, but the app reads them in
-	/// the device's, so which day the last one falls on moves with the zone. Its
-	/// events are timed to keep Friday's on Friday from UTC-8 through UTC+2,
-	/// which covers a CI runner (UTC) and a machine on campus alike. Further
-	/// east than that they cross midnight, Saturday stops being empty, and this
-	/// test has nothing left to check -- so keep the fixture's last day well
-	/// clear of midnight if you move it.
-	func testTappingADayPastTheLastEventSelectsTheLastDayWithOne() throws {
-		let screen = CalendarScreen(app: app)
-			.navigate()
-			.verifyStripIsPresent()
-
-		screen.swipeStripToNextWeek().swipeStripToNextWeek()
-
-		screen
-			.tapDay("2026-09-19")
-			.verifySelectedDay(
-				TestIdentifiers.Calendar.dayCellPrefix + "2026-09-18",
-				message: "Tapping the empty Saturday should select the last day that has events")
-			.capture("26-strip-trailing-day")
-	}
-
-	/// Scrolling the list moves the strip's selection to whichever day the list
-	/// settled on. The two views drive each other, so this is the direction that
-	/// a naive fix breaks first.
-	func testScrollingTheListMovesTheStripSelection() throws {
-		let screen = CalendarScreen(app: app).navigate()
-		screen.verifyStripIsPresent()
-
-		// Scroll once to trigger an initial selection sync.
-		screen.nudgeList()
-
-		guard let startingDay = screen.selectedDay() else {
-			XCTFail("A day should be selected after the first scroll")
-			return
-		}
-		screen.capture("22-after-first-scroll")
-
-		for _ in 1...4 {
-			screen.nudgeList()
-		}
-		screen.capture("23-after-more-scrolling")
-
-		// Without this the assertion below could pass on a list too short to
-		// have scrolled anywhere.
-		XCTAssertNotEqual(
-			screen.selectedDay(), startingDay,
-			"Scrolling the list should move the strip's selection off \(startingDay)")
-	}
-
 	/// Today returns the list to the top from wherever it has been scrolled.
 	///
 	/// The button aimed at an `Ongoing` section that only exists while some
 	/// event spans today, so on a day with nothing ongoing it silently scrolled
 	/// nowhere. It aims at the first section rendered now, which always exists.
-	func testTodayReturnsTheListToTheTop() throws {
-		let screen = CalendarScreen(app: app).navigate()
-		screen.verifyStripIsPresent()
+	///
+	/// Upcoming, not Day: the strip synchronising with list scroll is gone
+	/// (`testScrollingTheListMovesTheStripSelection` and
+	/// `testTappingADayPastTheLastEventSelectsTheLastDayWithOne`, both deleted
+	/// with it), and Today's own list-scrolling behaviour now only exists in
+	/// the sectioned Upcoming view.
+	func testTodayReturnsTheUpcomingListToTheTop() throws {
+		let screen = CalendarScreen(app: app)
+		screen.navigate()
+			.openModeMenu()
+			.selectMode(TestIdentifiers.Calendar.upcomingMode)
+			.verifyStripAbsent()
 
 		guard let topAtLaunch = screen.topRowLabel() else {
 			XCTFail("The list should have rows to scroll")
@@ -333,8 +284,18 @@ class ModuleCalendarTests: UITestCase {
 	/// come from Presence rather than from the campus calendar. Nothing in Jest
 	/// reaches the rendered menu, so this is the only check that choosing one
 	/// narrows the list the way a category does.
-	func testFilteringByOrganizationNarrowsTheList() throws {
-		let screen = CalendarScreen(app: app).navigate()
+	///
+	/// Upcoming, not Day: the fixture's Music Organizations events all fall on
+	/// days other than the frozen one, so Day mode's single day would show none
+	/// of them either side of the filter, and "narrows" would have nothing to
+	/// prove against. Only the merged list has enough days in view for a
+	/// sponsor filter to narrow rather than empty it.
+	func testFilteringByOrganizationNarrowsTheUpcomingList() throws {
+		let screen = CalendarScreen(app: app)
+		screen.navigate()
+			.openModeMenu()
+			.selectMode(TestIdentifiers.Calendar.upcomingMode)
+			.verifyStripAbsent()
 		let unfiltered = screen.visibleRowCount()
 
 		screen
@@ -370,5 +331,124 @@ class ModuleCalendarTests: UITestCase {
 			.openFirstEvent()
 			.verifyAttributionOnDetail()
 			.capture("33-detail-attribution")
+	}
+
+	// MARK: - View mode
+
+	/// The menu offers the two views that exist, and not the one that does not.
+	func testViewMenuOffersDayAndUpcoming() throws {
+		CalendarScreen(app: app)
+			.navigate()
+			.openModeMenu()
+			.verifyModeAbsent(TestIdentifiers.Calendar.timelineMode)
+			.selectMode(TestIdentifiers.Calendar.upcomingMode)
+			.verifyStripAbsent()
+	}
+
+	/// Day is what the calendar opens in, so the strip is there from the start.
+	func testCalendarOpensInDayView() throws {
+		CalendarScreen(app: app)
+			.navigate()
+			.verifyStripIsPresent()
+			.verifySundayLeadsTheStrip()
+	}
+
+	/// Dragging the strip browses; it must not move the selection. This is the
+	/// pair of gestures that used to disagree.
+	func testDraggingTheStripLeavesTheSelectionAlone() throws {
+		let calendar = CalendarScreen(app: app)
+		calendar.navigate().verifyStripIsPresent()
+
+		let before = calendar.selectedDay()
+		calendar.swipeStripToNextWeek()
+
+		XCTAssertEqual(
+			calendar.selectedDay(), before,
+			"Scrolling the strip should show another week, not choose a day in it")
+	}
+
+	/// An empty day is a day you can land on now, so it has to keep the strip.
+	///
+	/// 2026-08-31 rather than the day after the frozen date: the fixture's
+	/// "Fall Semester Orientation" is an ongoing event spanning 2026-09-01
+	/// through 2026-09-12, so `occursOn` (modules/event-list/days.ts) marks
+	/// every one of those days as having an event -- including the day right
+	/// after the frozen Saturday. The Monday before the frozen week's Sunday is
+	/// the nearest day the fixture leaves empty, and it is visible on launch
+	/// with no strip swipe needed.
+	func testAnEmptyDayKeepsTheStrip() throws {
+		let calendar = CalendarScreen(app: app)
+		calendar.navigate().verifyStripIsPresent()
+
+		let empty = "2026-08-31"
+		XCTAssertFalse(
+			calendar.dayHasEvents(empty),
+			"2026-08-31 should carry no events in the fixture calendar")
+
+		calendar.tapDay(empty)
+		calendar.capture("empty-day")
+		calendar.verifySelectedDay(
+			TestIdentifiers.Calendar.dayCellPrefix + empty,
+			message: "Tapping an empty day should select it rather than skip past it")
+		calendar.verifyStripIsPresent()
+	}
+
+	/// A dot is what replaces scrolling to find out whether a day has anything,
+	/// so it has to be drawn where a screenshot shows it -- and readably,
+	/// which is a colour claim only a screenshot can close.
+	///
+	/// The dot's colour was a real review catch: it once reused a colour tuned
+	/// for drawing on the selection circle, which made it invisible on today's
+	/// cell and on a selected cell in light mode. `isToday ? c.systemRed :
+	/// c.label` (day-picker-strip.tsx) is the fix, so this captures both cells
+	/// the bug hit, under both appearances the app supports.
+	///
+	/// The appearance is set before the app relaunches, matching
+	/// `ModuleCampusDictionaryTests.verifyAddedSenseWash`: a dynamic colour
+	/// resolves against the traits its view was drawn under, and relaunching
+	/// draws the whole screen once, under the appearance being photographed.
+	private func verifyDayDotContrast(under appearance: XCUIDevice.Appearance, named suffix: String) {
+		let original = XCUIDevice.shared.appearance
+		addTeardownBlock { XCUIDevice.shared.appearance = original }
+		XCUIDevice.shared.appearance = appearance
+		relaunchWithFreshState()
+
+		let calendar = CalendarScreen(app: app)
+		calendar.navigate().verifyStripIsPresent()
+
+		let today = TestIdentifiers.Calendar.dayCell(TestIdentifiers.Calendar.frozenNow)
+			.replacingOccurrences(of: TestIdentifiers.Calendar.dayCellPrefix, with: "")
+		XCTAssertTrue(
+			calendar.dayHasEvents(today),
+			"The frozen day should carry events, so its dot is the today-with-events case")
+		calendar.verifySelectedDay(
+			TestIdentifiers.Calendar.dayCellPrefix + today,
+			message: "Day view should open with today selected")
+		calendar.capture("Day dot, today has events \(suffix)")
+
+		// 2026-09-01 sits in the same visible week as the frozen day and
+		// carries its own events (it is the first day of the fixture's ongoing
+		// orientation), so tapping it gives a selected-but-not-today cell with
+		// no strip swipe needed.
+		let selected = "2026-09-01"
+		XCTAssertTrue(
+			calendar.dayHasEvents(selected),
+			"2026-09-01 should carry events in the fixture calendar")
+		calendar.tapDay(selected)
+		calendar.verifySelectedDay(
+			TestIdentifiers.Calendar.dayCellPrefix + selected,
+			message: "Tapping a day should select it")
+		calendar.capture("Day dot, selected has events \(suffix)")
+
+		// The dot's colour against its cell's background is a claim only the
+		// two screenshots above carry -- open both and look.
+	}
+
+	func testDayDotContrastInLightMode() throws {
+		verifyDayDotContrast(under: .light, named: "(light)")
+	}
+
+	func testDayDotContrastInDarkMode() throws {
+		verifyDayDotContrast(under: .dark, named: "(dark)")
 	}
 }
