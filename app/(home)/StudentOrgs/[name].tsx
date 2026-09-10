@@ -41,7 +41,16 @@ export default function StudentOrgsDetailPage(): React.ReactNode {
 	let {name} = useLocalSearchParams<{name: string}>()
 	let {data: org, isLoading, error, refetch} = useQuery(orgByNameOptions(name))
 
-	let screenTitle = <Stack.Title>{org?.name ?? name}</Stack.Title>
+	// The name is the screen, so it takes a large title -- and the card that
+	// used to repeat it below the bar is gone. Safe to collapse here: the list
+	// is the only scrollable, so there is nothing above it to collapse against
+	// instead. See the note in Directory/index.tsx.
+	let screenTitle = (
+		<>
+			<Stack.Screen options={{headerLargeTitleEnabled: true}} />
+			<Stack.Title>{org?.name ?? name}</Stack.Title>
+		</>
+	)
 
 	if (isLoading) {
 		return (
