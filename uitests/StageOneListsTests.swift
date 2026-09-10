@@ -90,6 +90,11 @@ class StageOneListsTests: UITestCase {
 		XCTAssertTrue(firstOrg.waitForExistence(timeout: 30), "An org should be listed")
 		firstOrg.tap()
 
+		// Wait for a section of the pushed screen, not just the tap: a capture
+		// taken straight after lands mid-animation, with both screens on it.
+		let category = app.staticTexts["CATEGORY"].firstMatch
+		XCTAssertTrue(category.waitForExistence(timeout: 30), "The org detail should be shown")
+
 		screen.capture("Student Orgs - detail")
 	}
 

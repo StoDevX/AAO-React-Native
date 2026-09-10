@@ -113,7 +113,7 @@ function BalanceTile(props: {
 		<VStack modifiers={[frame({maxWidth: Infinity})]} spacing={6}>
 			<Text
 				modifiers={[
-					font({textStyle: 'title2', weight: 'ultraLight'}),
+					font({textStyle: 'title2'}),
 					foregroundStyle(c.secondaryLabel),
 					multilineTextAlignment('center'),
 					textSelection(true),
