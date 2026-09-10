@@ -113,6 +113,9 @@ jobs:
       # A second copy of a package that has to be singular resolves fine and
       # builds fine; only the lockfile shows it.
       - run: mise run validate-single-copy
+      # One manifest naming its own react version is enough to put two copies
+      # of the runtime in the tree, and only the lockfile would show it.
+      - run: mise run validate-catalog-refs
       # bundled.json is generated from data/sources.yaml and committed, since
       # the app needs it at build time. Fail if someone edited one and not
       # the other.

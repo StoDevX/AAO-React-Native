@@ -235,6 +235,15 @@ run = "node scripts/validate-workspace-deps.mjs"
 description = "Check that watched packages resolve to one version in the lockfile"
 run = "node scripts/validate-single-copy.mjs"
 
+# react and react-native are named once, in the catalog, because every module
+# declares them as peers and autoInstallPeers turns each declaration into a
+# real install -- so one manifest naming its own version is enough to leave two
+# runtimes in the tree. This reads no network, unlike validate-expo-versions,
+# so it runs locally as well as in CI.
+[tasks."validate-catalog-refs"]
+description = "Check that nothing pins a version the catalog owns"
+run = "node scripts/validate-catalog-refs.mjs"
+
 [tasks."validate-lockfile"]
 description = "Check that pnpm-lock.yaml matches the package.json files"
 run = "pnpm install --frozen-lockfile --lockfile-only --trust-lockfile"
@@ -281,6 +290,7 @@ depends = [
 	"lint",
 	"tsc",
 	"test",
+	"validate-catalog-refs",
 	"validate-deps",
 	"validate-lockfile",
 	"validate-mise-lock",
