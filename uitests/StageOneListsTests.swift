@@ -98,19 +98,28 @@ class StageOneListsTests: UITestCase {
 		screen.capture("Student Orgs - detail")
 	}
 
-	func testDirectoryContactDetail() throws {
-		let screen = DirectoryScreen(app: app).navigate()
+	/// A directory *entry*, reached by searching -- not an Important Contact
+	/// tile, which pushes `Directory/named/[title]`, a different screen this
+	/// migration has not touched.
+	func testDirectoryEntryDetail() throws {
+		let screen = DirectoryScreen(app: app)
+			.navigate()
+			.search(for: TestIdentifiers.Directory.departmentalEntry)
 
-		let contact = app.buttonLabelled(TestIdentifiers.Directory.aContact)
-		XCTAssertTrue(contact.waitForExistence(timeout: 30), "A contact tile should be shown")
-		contact.tap()
+		let row = app.descendants(matching: .any)
+			.matching(
+				NSPredicate(
+					format: "identifier BEGINSWITH %@", TestIdentifiers.Directory.rowPrefix))
+			.firstMatch
+		XCTAssertTrue(row.waitForExistence(timeout: 30), "A directory result should be listed")
+		row.tap()
 
 		// Wait for something only the pushed screen has: a capture taken
 		// straight after the tap lands mid-animation, with both screens in it.
-		let action = app.staticTexts[TestIdentifiers.Directory.aContactAction].firstMatch
-		XCTAssertTrue(action.waitForExistence(timeout: 30), "The contact detail should be shown")
+		let department = app.staticTexts[TestIdentifiers.Directory.department].firstMatch
+		XCTAssertTrue(department.waitForExistence(timeout: 30), "The entry detail should be shown")
 
-		screen.capture("Directory - contact detail")
+		screen.capture("Directory - entry detail")
 	}
 
 	/// Searches the catalogue, which under UI testing holds one course, and
