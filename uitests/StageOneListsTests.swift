@@ -71,6 +71,38 @@ class StageOneListsTests: UITestCase {
 			.capture("Streaming Media")
 	}
 
+	/// The four detail screens, each of which is mostly label-beside-value rows.
+	func testSISBalances() throws {
+		SISScreen(app: app)
+			.navigate()
+			.acceptAcknowledgement()
+			.checkBalancesVisible()
+			.capture("SIS - Balances")
+	}
+
+	func testStudentOrgDetail() throws {
+		let screen = StudentOrgsScreen(app: app).navigate()
+
+		// The first org alphabetically, whatever the college is listing today.
+		let firstOrg = app.buttons
+			.matching(NSPredicate(format: "label BEGINSWITH %@", "Academic"))
+			.firstMatch
+		XCTAssertTrue(firstOrg.waitForExistence(timeout: 30), "An org should be listed")
+		firstOrg.tap()
+
+		screen.capture("Student Orgs - detail")
+	}
+
+	func testDirectoryContactDetail() throws {
+		let screen = DirectoryScreen(app: app).navigate()
+
+		let contact = app.buttonLabelled(TestIdentifiers.Directory.aContact)
+		XCTAssertTrue(contact.waitForExistence(timeout: 30), "A contact tile should be shown")
+		contact.tap()
+
+		screen.capture("Directory - contact detail")
+	}
+
 	func testMoreList() throws {
 		MoreScreen(app: app)
 			.navigate()
