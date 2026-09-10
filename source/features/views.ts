@@ -79,13 +79,6 @@ export const AllViews = (): Array<ViewType> => {
 		},
 		{
 			type: 'view',
-			view: '/Campus?campus=carleton',
-			title: 'Carleton Campus',
-			icon: 'building.2.fill',
-			gradient: c.blueGradient,
-		},
-		{
-			type: 'view',
 			view: '/Transportation',
 			title: 'Transportation',
 			icon: 'bus.fill',
@@ -140,6 +133,14 @@ export const AllViews = (): Array<ViewType> => {
 			title: 'Athletics',
 			icon: 'trophy.fill',
 			gradient: c.paleGoldGradient,
+			devOnly: true,
+		},
+		{
+			type: 'view',
+			view: '/Campus?campus=carleton',
+			title: 'Carleton Campus',
+			icon: 'building.2.fill',
+			gradient: c.blueGradient,
 			devOnly: true,
 		},
 	]

@@ -60,6 +60,17 @@ struct CarletonMapScreen: Screen {
 	/// Carleton's tile; pass `TestIdentifiers.Buttons.campus` for St. Olaf's.
 	@discardableResult
 	func navigate(from campusTile: String = TestIdentifiers.Buttons.carletonCampus) -> Self {
+		let tile = app.buttons[campusTile].firstMatch
+		if !tile.waitForExistence(timeout: 10) {
+			HomeScreen(app: app)
+				.longPressNotice()
+				.tapEnableDevMode()
+
+			XCTAssertTrue(
+				tile.waitForExistence(timeout: 30),
+				"\(campusTile) tile should appear once dev mode is on")
+		}
+
 		navigateFromHome(to: campusTile)
 
 		let mapButton = app.buttons[TestIdentifiers.Campus.mapButton].firstMatch

@@ -13,7 +13,18 @@ struct CampusScreen: Screen {
 	/// Opens the Carleton Campus tile, which pushes `/Campus?campus=carleton`.
 	@discardableResult
 	func navigateToCarleton() -> Self {
-		navigateFromHome(to: TestIdentifiers.Buttons.carletonCampus)
+		let tile = app.buttons[TestIdentifiers.Buttons.carletonCampus].firstMatch
+		if !tile.waitForExistence(timeout: 10) {
+			HomeScreen(app: app)
+				.longPressNotice()
+				.tapEnableDevMode()
+
+			XCTAssertTrue(
+				tile.waitForExistence(timeout: 30),
+				"Carleton Campus tile should appear once dev mode is on")
+		}
+
+		return navigateFromHome(to: TestIdentifiers.Buttons.carletonCampus)
 	}
 
 	private var searchField: XCUIElement {
