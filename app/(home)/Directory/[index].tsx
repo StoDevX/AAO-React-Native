@@ -1,13 +1,13 @@
 import * as React from 'react'
-import {ScrollView, Text, StyleSheet, Image} from 'react-native'
+import {StyleSheet, Image as RNImage} from 'react-native'
+import {Host, List, RNHostView, Section, Text} from '@expo/ui/swift-ui'
+import {font, foregroundStyle, listStyle, multilineTextAlignment} from '@expo/ui/swift-ui/modifiers'
 import {Stack, useLocalSearchParams, useRouter} from 'expo-router'
 import {useQuery} from '@tanstack/react-query'
 import {openUrl} from '@frogpond/open-url'
 import {callPhone} from '../../../source/components/call-phone'
 import {sendEmail} from '../../../source/components/send-email'
-import {Detail} from '@frogpond/lists'
-import {TableView, Section, Cell} from '@frogpond/tableview'
-import {MultiLineLeftDetailCell} from '@frogpond/tableview/cells'
+import {DetailRow, DisclosureRow} from '../../../source/components/rows'
 import * as c from '@frogpond/colors'
 import {directoryContactOptions} from '../../../source/features/directory/query'
 import type {
@@ -89,111 +89,104 @@ export default function DirectoryDetailPage(): React.ReactNode {
 	return (
 		<>
 			{screenTitle}
-			<ScrollView contentInsetAdjustmentBehavior="automatic">
-				<Image
-					accessibilityIgnoresInvertColors={true}
-					resizeMode="cover"
-					source={{uri: photo}}
-					style={styles.image}
-				/>
-				<Detail style={[styles.header, styles.headerTitle]}>{displayTitle}</Detail>
+			<Host style={styles.host}>
+				<List modifiers={[listStyle('insetGrouped')]}>
+					<Section>
+						{/* The photo is a network image, so React Native draws it and
+						    SwiftUI hosts it. */}
+						<RNHostView matchContents={true}>
+							<RNImage
+								accessibilityIgnoresInvertColors={true}
+								resizeMode="cover"
+								source={{uri: photo}}
+								style={styles.image}
+							/>
+						</RNHostView>
+						<Text modifiers={HEADER_MODIFIERS}>{displayTitle}</Text>
+					</Section>
 
-				<TableView>
 					{officeHours || email || profileUrl || pronouns ? (
-						<Section header="ABOUT">
-							{pronouns?.length ? (
-								<Cell
-									cellStyle="LeftDetail"
-									detail="Pronouns"
-									title={pronouns.join(', ').concat('')}
-								/>
-							) : null}
+						<Section title="ABOUT">
+							{pronouns?.length ? <DetailRow label="Pronouns" value={pronouns.join(', ')} /> : null}
 
 							{email ? (
-								<Cell
-									accessory="DisclosureIndicator"
-									cellStyle="LeftDetail"
-									detail="Email"
+								<DetailRow
+									label="Email"
 									onPress={() => sendEmail({to: [email], subject: '', body: ''})}
-									title={email}
+									value={email}
 								/>
 							) : null}
 
-							{officeHours && (
-								<MultiLineLeftDetailCell
-									accessory={officeHours.href ? 'DisclosureIndicator' : undefined}
-									detail={officeHours.title}
-									onPress={
-										officeHours.href
-											? () => officeHours.href && openUrl(officeHours.href)
-											: undefined
-									}
-									title={officeHours.description}
+							{officeHours ? (
+								<DetailRow
+									label={officeHours.title}
+									onPress={officeHours.href ? () => openUrl(String(officeHours.href)) : undefined}
+									value={officeHours.description}
 								/>
-							)}
+							) : null}
 
 							{profileUrl ? (
-								<Cell
-									accessory="DisclosureIndicator"
-									cellStyle="LeftDetail"
-									detail="Profile"
-									onPress={() => openUrl(profileUrl)}
-									title={profileUrl}
-								/>
+								<DetailRow label="Profile" onPress={() => openUrl(profileUrl)} value={profileUrl} />
 							) : null}
 						</Section>
 					) : null}
 
 					{campusLocations.map((loc: CampusLocation, i: number) => (
-						<Section key={i} header="OFFICE">
-							{Boolean(loc.display) && (
-								<Cell cellStyle="LeftDetail" detail="Location" title={loc.display} />
-							)}
-							{Boolean(loc.phone) && (
-								<Cell
-									accessory="DisclosureIndicator"
-									cellStyle="LeftDetail"
-									detail="Phone"
+						<Section key={i} title="OFFICE">
+							{loc.display ? <DetailRow label="Location" value={loc.display} /> : null}
+							{loc.phone ? (
+								<DetailRow
+									label="Phone"
 									onPress={() => callPhone(loc.phone, {prompt: false})}
-									title={loc.phone}
+									value={loc.phone}
 								/>
-							)}
+							) : null}
 						</Section>
 					))}
 
 					{departments.length ? (
-						<Section header={departments.length !== 1 ? 'DEPARTMENTS' : 'DEPARTMENT'}>
-							{departments.map((dept: Department, key: number) => (
-								<Cell
-									key={key}
-									accessory="DisclosureIndicator"
-									cellStyle="Basic"
-									detail="Department"
-									onPress={() => {
+						<Section title={departments.length === 1 ? 'DEPARTMENT' : 'DEPARTMENTS'}>
+							{departments.map((dept: Department) => (
+								<DisclosureRow
+									key={dept.name}
+									onPress={() =>
 										router.push({
 											pathname: '/Directory',
-											params: {
-												queryType: 'department',
-												queryParam: dept.name,
-											},
+											params: {queryType: 'department', queryParam: dept.name},
 										})
-									}}
+									}
 									title={dept.name}
 								/>
 							))}
 						</Section>
 					) : null}
-				</TableView>
 
-				<Text selectable={true} style={[styles.footer, styles.poweredBy]}>
-					Powered by the St. Olaf Directory
-				</Text>
-			</ScrollView>
+					<Section>
+						<Text modifiers={CREDIT_MODIFIERS}>Powered by the St. Olaf Directory</Text>
+					</Section>
+				</List>
+			</Host>
 		</>
 	)
 }
 
+const HEADER_MODIFIERS = [
+	font({textStyle: 'subheadline'}),
+	foregroundStyle(c.secondaryLabel),
+	multilineTextAlignment('center'),
+]
+
+const CREDIT_MODIFIERS = [
+	font({textStyle: 'caption2'}),
+	foregroundStyle(c.secondaryLabel),
+	multilineTextAlignment('center'),
+]
+
 const styles = StyleSheet.create({
+	host: {
+		flex: 1,
+		backgroundColor: c.systemGroupedBackground,
+	},
 	image: {
 		width: 100,
 		height: 100,
@@ -201,24 +194,5 @@ const styles = StyleSheet.create({
 		borderRadius: 4,
 		borderWidth: 0.2,
 		borderColor: c.label,
-		marginTop: 10,
-	},
-	header: {
-		justifyContent: 'center',
-		textAlign: 'center',
-		marginHorizontal: 30,
-	},
-	headerTitle: {
-		marginTop: 10,
-		marginBottom: 10,
-		fontSize: 14,
-	},
-	footer: {
-		fontSize: 10,
-		color: c.secondaryLabel,
-		textAlign: 'center',
-	},
-	poweredBy: {
-		paddingBottom: 20,
 	},
 })

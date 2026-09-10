@@ -1,10 +1,11 @@
 import * as React from 'react'
-import {ScrollView, Text, StyleSheet} from 'react-native'
+import {StyleSheet} from 'react-native'
+import {Host, List, Section, Text} from '@expo/ui/swift-ui'
+import {font, foregroundStyle, listStyle, multilineTextAlignment} from '@expo/ui/swift-ui/modifiers'
 import {Stack, useLocalSearchParams} from 'expo-router'
 import {useQuery} from '@tanstack/react-query'
 import moment from 'moment'
-import {Cell, Section, TableView} from '@frogpond/tableview'
-import {SelectableCell} from '@frogpond/tableview/cells'
+import {DisclosureRow, SelectableText} from '../../../source/components/rows'
 import * as c from '@frogpond/colors'
 import {openUrl} from '@frogpond/open-url'
 import {sendEmail} from '../../../source/components/send-email'
@@ -13,26 +14,16 @@ import {decode} from '@frogpond/html-lib'
 import {orgByNameOptions} from '../../../source/features/student-orgs/query'
 import {LoadingView, NoticeView} from '@frogpond/notice'
 
+const CREDIT_MODIFIERS = [
+	font({textStyle: 'caption2'}),
+	foregroundStyle(c.secondaryLabel),
+	multilineTextAlignment('center'),
+]
+
 const styles = StyleSheet.create({
-	name: {
-		textAlign: 'center',
-		marginTop: 20,
-		marginBottom: 15,
-		paddingHorizontal: 5,
-		color: c.label,
-		fontSize: 32,
-		fontWeight: '300',
-	},
-	footer: {
-		fontSize: 10,
-		color: c.secondaryLabel,
-		textAlign: 'center',
-	},
-	lastUpdated: {
-		paddingBottom: 10,
-	},
-	poweredBy: {
-		paddingBottom: 20,
+	host: {
+		flex: 1,
+		backgroundColor: c.systemGroupedBackground,
 	},
 })
 
@@ -89,44 +80,43 @@ export default function StudentOrgsDetailPage(): React.ReactNode {
 	return (
 		<>
 			{screenTitle}
-			<ScrollView contentInsetAdjustmentBehavior="automatic">
-				<TableView>
-					<Text selectable={true} style={styles.name}>
-						{orgName}
-					</Text>
+			<Host style={styles.host}>
+				<List modifiers={[listStyle('insetGrouped')]}>
+					<Section>
+						<Text
+							modifiers={[
+								font({textStyle: 'largeTitle', weight: 'light'}),
+								foregroundStyle(c.label),
+								multilineTextAlignment('center'),
+							]}
+						>
+							{orgName}
+						</Text>
+					</Section>
 
 					{category ? (
-						<Section header="CATEGORY">
-							<Cell cellStyle="Basic" title={category} />
+						<Section title="CATEGORY">
+							<Text>{category}</Text>
 						</Section>
 					) : null}
 
 					{meetings ? (
-						<Section header="MEETINGS">
-							<SelectableCell text={decode(meetings)} />
+						<Section title="MEETINGS">
+							<SelectableText text={decode(meetings)} />
 						</Section>
 					) : null}
 
 					{website ? (
-						<Section header="WEBSITE">
-							<Cell
-								accessory="DisclosureIndicator"
-								cellStyle="Basic"
-								onPress={() => {
-									openUrl(website)
-								}}
-								title={website}
-							/>
+						<Section title="WEBSITE">
+							<DisclosureRow onPress={() => openUrl(website)} title={website} />
 						</Section>
 					) : null}
 
 					{contacts.length ? (
-						<Section header="CONTACT">
-							{contacts.map((contact, i) => (
-								<Cell
-									key={i}
-									accessory="DisclosureIndicator"
-									cellStyle={contact.title ? 'Subtitle' : 'Basic'}
+						<Section title="CONTACT">
+							{contacts.map((contact) => (
+								<DisclosureRow
+									key={contact.email}
 									detail={contact.title}
 									onPress={() => sendEmail({to: [contact.email], subject: orgName})}
 									title={showNameOrEmail(contact)}
@@ -136,12 +126,10 @@ export default function StudentOrgsDetailPage(): React.ReactNode {
 					) : null}
 
 					{advisors.length ? (
-						<Section header={advisors.length === 1 ? 'ADVISOR' : 'ADVISORS'}>
-							{advisors.map((contact, i) => (
-								<Cell
-									key={i}
-									accessory="DisclosureIndicator"
-									cellStyle="Basic"
+						<Section title={advisors.length === 1 ? 'ADVISOR' : 'ADVISORS'}>
+							{advisors.map((contact) => (
+								<DisclosureRow
+									key={contact.email}
 									onPress={() => sendEmail({to: [contact.email], subject: orgName})}
 									title={contact.name}
 								/>
@@ -150,20 +138,19 @@ export default function StudentOrgsDetailPage(): React.ReactNode {
 					) : null}
 
 					{description ? (
-						<Section header="DESCRIPTION">
-							<SelectableCell text={decode(description)} />
+						<Section title="DESCRIPTION">
+							<SelectableText text={decode(description)} />
 						</Section>
 					) : null}
 
-					<Text selectable={true} style={[styles.footer, styles.lastUpdated]}>
-						Last updated: {moment(orgLastUpdated, 'MMMM, DD YYYY HH:mm:ss').calendar()}
-					</Text>
-
-					<Text selectable={true} style={[styles.footer, styles.poweredBy]}>
-						Powered by the St. Olaf Student Orgs Database
-					</Text>
-				</TableView>
-			</ScrollView>
+					<Section>
+						<Text modifiers={CREDIT_MODIFIERS}>
+							Last updated: {moment(orgLastUpdated, 'MMMM, DD YYYY HH:mm:ss').calendar()}
+						</Text>
+						<Text modifiers={CREDIT_MODIFIERS}>Powered by the St. Olaf Student Orgs Database</Text>
+					</Section>
+				</List>
+			</Host>
 		</>
 	)
 }

@@ -1,8 +1,17 @@
 import * as React from 'react'
-import {Image as RNImage, StyleSheet} from 'react-native'
+import {Image as RNImage, StyleSheet, TextInput as RNTextInput} from 'react-native'
 import type {ColorValue} from 'react-native'
 import type {SFSymbol} from 'sf-symbols-typescript'
-import {Button, HStack, Image, RNHostView, Spacer, Text, VStack} from '@expo/ui/swift-ui'
+import {
+	Button,
+	HStack,
+	Image,
+	LabeledContent,
+	RNHostView,
+	Spacer,
+	Text,
+	VStack,
+} from '@expo/ui/swift-ui'
 import {
 	accessibilityLabel,
 	buttonStyle,
@@ -10,8 +19,9 @@ import {
 	disabled as disabledModifier,
 	font,
 	foregroundStyle,
-	lineLimit,
 	frame,
+	lineLimit,
+	multilineTextAlignment,
 	shapes,
 	truncationMode,
 } from '@expo/ui/swift-ui/modifiers'
@@ -190,4 +200,100 @@ const styles = StyleSheet.create({
 	thumbnail: {
 		resizeMode: 'cover',
 	},
+	selectableText: {
+		color: c.secondaryLabel,
+		paddingVertical: 4,
+	},
 })
+
+type DetailRowProps = {
+	/** The quieter half: what this value is. */
+	label: string
+	/** The value itself. */
+	value: string
+	/** How many lines the value may wrap to. Unbounded by default. */
+	valueLines?: number
+	/** Makes the row tappable, and draws a chevron to say so. */
+	onPress?: () => void
+}
+
+/**
+ * A label and its value, side by side -- the shape most of the detail screens
+ * are made of.
+ *
+ * `LabeledContent` is SwiftUI's own, so the two halves align with every other
+ * row in the list and follow the platform's own emphasis rather than ours.
+ */
+export function DetailRow(props: DetailRowProps): React.ReactNode {
+	let {label, value, valueLines, onPress} = props
+
+	let content = (
+		<LabeledContent label={label}>
+			<HStack spacing={6}>
+				<Text
+					modifiers={[
+						foregroundStyle(c.secondaryLabel),
+						multilineTextAlignment('trailing'),
+						...(valueLines ? [lineLimit(valueLines)] : []),
+					]}
+				>
+					{value}
+				</Text>
+				{onPress ? <Image color={c.tertiaryLabel} size={14} systemName="chevron.right" /> : null}
+			</HStack>
+		</LabeledContent>
+	)
+
+	if (!onPress) {
+		return content
+	}
+
+	return (
+		<Button
+			modifiers={[buttonStyle('plain'), accessibilityLabel(`${label}, ${value}`)]}
+			onPress={onPress}
+		>
+			{/* contentShape on the label, not the Button -- see NavigationRow. */}
+			<HStack modifiers={[contentShape(shapes.rectangle())]}>{content}</HStack>
+		</Button>
+	)
+}
+
+/// Mirrored by `TestIdentifiers.Rows.selectableText`.
+const SELECTABLE_TEXT_ID = 'selectable-text'
+
+/**
+ * A block of text a reader can select, and whose phone numbers, addresses,
+ * links and dates iOS turns into things they can tap.
+ *
+ * A React Native `TextInput` rather than an `@expo/ui` `Text`: SwiftUI's
+ * `textSelection` gives selection but no data detectors, and losing those would
+ * make an org's meeting time or a course's room number unactionable.
+ *
+ * `dataDetectorTypes="all"` detects nothing under the new architecture --
+ * `UIDataDetectorTypeAll` is `NSUIntegerMax`, which React Native reads through
+ * `unsignedIntValue` and truncates to 32 bits -- so the types are spelled out.
+ * See https://github.com/facebook/react-native/issues/55367.
+ */
+const DETECTED_TYPES: React.ComponentProps<typeof RNTextInput>['dataDetectorTypes'] = [
+	'calendarEvent',
+	'link',
+	'phoneNumber',
+	'address',
+]
+
+export function SelectableText({text}: {text: string}): React.ReactNode {
+	return (
+		<RNHostView matchContents={true}>
+			<RNTextInput
+				dataDetectorTypes={DETECTED_TYPES}
+				editable={false}
+				multiline={true}
+				scrollEnabled={false}
+				style={styles.selectableText}
+				testID={SELECTABLE_TEXT_ID}
+				value={text}
+			/>
+		</RNHostView>
+	)
+}
