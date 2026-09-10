@@ -57,6 +57,7 @@ struct TestIdentifiers {
 
 	enum Buttons {
 		static let menus = "Menus"
+		static let athletics = "Athletics"
 		static let calendar = "Calendar"
 		static let sis = "SIS"
 		static let campus = "Campus"

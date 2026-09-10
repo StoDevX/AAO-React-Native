@@ -13,7 +13,7 @@ import {StoPrintErrorView, StoPrintNoticeView} from '../../../source/features/st
 import groupBy from 'lodash/groupBy'
 import toPairs from 'lodash/toPairs'
 import sortBy from 'lodash/sortBy'
-import {getTimeRemaining} from '../../../source/features/stoprint/lib'
+import {getTimeRemaining, printJobsGate} from '../../../source/features/stoprint/lib'
 import {Stack, useRouter} from 'expo-router'
 import {useMomentTimer} from '@frogpond/timer'
 import {printJobsOptions} from '../../../source/features/stoprint/query'
@@ -48,11 +48,17 @@ function PrintJobsView(): React.ReactNode {
 		}
 	}
 
-	if (hasCredentialsLoading) {
+	let gate = printJobsGate({
+		isLoadingCredentials: hasCredentialsLoading,
+		hasCredentials,
+		isMocked: isStoprintMocked,
+	})
+
+	if (gate === 'loading') {
 		return <LoadingView text="Loading…" />
 	}
 
-	if (!hasCredentials && !isStoprintMocked) {
+	if (gate === 'signed-out') {
 		return (
 			<StoPrintNoticeView
 				buttonText="Open Settings"

@@ -22,3 +22,28 @@ const parseTime = (now: Moment, time: string): null | Moment => {
 export const getTimeRemaining = (now: Moment, time: string): undefined | string => {
 	return parseTime(now, time)?.fromNow()
 }
+
+/** Which of the print-jobs screen's three states the reader should see. */
+export type PrintJobsGate = 'loading' | 'signed-out' | 'jobs'
+
+/**
+ * Decides between waiting on the keychain, asking the reader to sign in, and
+ * showing their jobs.
+ *
+ * Kept apart from the screen so the decision can be tested directly: it turns
+ * on a mocking flag that only a UI-test launch sets, which is exactly the
+ * combination a rendered test would struggle to reach.
+ */
+export function printJobsGate(state: {
+	isLoadingCredentials: boolean
+	hasCredentials: boolean
+	isMocked: boolean
+}): PrintJobsGate {
+	let {isLoadingCredentials, hasCredentials, isMocked} = state
+
+	if (isLoadingCredentials) {
+		return 'loading'
+	}
+
+	return hasCredentials || isMocked ? 'jobs' : 'signed-out'
+}
