@@ -147,9 +147,16 @@ struct CalendarScreen: Screen {
 	/// Close the menu by tapping well away from it -- the toolbar button is at
 	/// the bottom right and the menu opens upward from it, so the top left is
 	/// clear of both.
+	///
+	/// Checks both `menuIsPresented` and `pickerIsPresented`: the parent menu
+	/// with no calendar enabled draws the CALENDARS header but no axis row (see
+	/// `pickerIsPresented`), and an open submenu is the opposite -- an axis row
+	/// with no CALENDARS header. Gating the tap on only one of the two silently
+	/// skips it whenever the other is what is actually on screen, leaving the
+	/// menu open under whatever the test does next.
 	@discardableResult
 	func dismissMenu() -> Self {
-		if pickerIsPresented() {
+		if menuIsPresented() || pickerIsPresented() {
 			app.coordinate(withNormalizedOffset: CGVector(dx: 0.1, dy: 0.2)).tap()
 			_ = app.staticTexts[TestIdentifiers.Calendar.calendarsSection]
 				.waitForNonExistence(timeout: 10)
@@ -157,6 +164,9 @@ struct CalendarScreen: Screen {
 			XCTAssertFalse(
 				pickerIsPresented(),
 				"Tapping away from the picker should close it, submenu and all")
+			XCTAssertTrue(
+				app.staticTexts[TestIdentifiers.Calendar.calendarsSection].waitForNonExistence(timeout: 10),
+				"Tapping away from the picker should close its CALENDARS section too")
 		}
 		return self
 	}
@@ -621,6 +631,37 @@ struct CalendarScreen: Screen {
 		XCTAssertTrue(
 			cell.waitForNonExistence(timeout: 10),
 			"Upcoming should draw no day picker")
+		return self
+	}
+
+	/// A day's notice, actually painted -- not merely present in the tree.
+	///
+	/// `exists` is true for a view a zero-height host has collapsed to
+	/// nothing; that collapse is a real bug (a `RNHostView` sized to its
+	/// SwiftUI-flexible child's zero intrinsic size) that an existence check
+	/// alone cannot see. `frame.height` and `isHittable` both read zero for a
+	/// collapsed host, so either would catch it; both are checked so a test
+	/// reading this failure sees which one tripped.
+	@discardableResult
+	func verifyNoticeVisible(_ text: String) -> Self {
+		// `.firstMatch` rather than the `[text]` subscript: a `NoticeView`'s
+		// `Text` reaches the accessibility tree as two nested elements with the
+		// same label, and reading `frame`/`isHittable` demands a single match --
+		// unlike `exists`, which is satisfied by "at least one" and so cannot
+		// see this collapse at all.
+		let notice = app.staticTexts.matching(NSPredicate(format: "label == %@", text)).firstMatch
+		XCTAssertTrue(
+			notice.waitForExistence(timeout: 10),
+			"\"\(text)\" should be on screen")
+		XCTContext.runActivity(named: "\"\(text)\" frame is \(notice.frame), isHittable \(notice.isHittable)") {
+			_ in
+		}
+		XCTAssertGreaterThan(
+			notice.frame.height, 0,
+			"\"\(text)\" exists in the hierarchy but has collapsed to zero height")
+		XCTAssertTrue(
+			notice.isHittable,
+			"\"\(text)\" exists but is not hittable, which a zero-size element never is")
 		return self
 	}
 }

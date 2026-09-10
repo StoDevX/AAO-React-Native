@@ -291,10 +291,14 @@ struct TestIdentifiers {
 		/// Mirrored by `DAY_CELL_PREFIX` in `modules/event-list/day-picker-strip.tsx`.
 		static let dayCellPrefix = "day-cell-"
 
-		/// A day's event dot is identified by `day-dot-<ISO date>`.
-		/// Mirrored by `DAY_DOT_PREFIX` in
-		/// `modules/event-list/day-picker-strip.tsx`.
-		static let dayDotPrefix = "day-dot-"
+		/// Day view's empty-state copy, shown below the strip when the selected
+		/// day has no events. Mirrors the literal in `modules/event-list/day-view.tsx`.
+		static let emptyDayNotice = "Nothing on this day."
+
+		/// Day view's empty-state copy when every calendar is switched off.
+		/// Mirrors the literal in `modules/event-list/day-view.tsx`.
+		static let noCalendarsNotice =
+			"No calendars are showing. Choose some from the Calendars button below."
 
 		/// The top-right menu that chooses how the calendar draws itself.
 		/// Mirrors `accessibilityLabel('Calendar view')` in

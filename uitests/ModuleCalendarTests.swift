@@ -234,6 +234,7 @@ class ModuleCalendarTests: UITestCase {
 		XCTAssertEqual(
 			screen.visibleRowCount(), 0,
 			"With no calendar enabled the list should have no rows")
+		screen.verifyNoticeVisible(TestIdentifiers.Calendar.noCalendarsNotice)
 
 		screen
 			.openPicker()
@@ -359,7 +360,10 @@ class ModuleCalendarTests: UITestCase {
 		let calendar = CalendarScreen(app: app)
 		calendar.navigate().verifyStripIsPresent()
 
-		let before = calendar.selectedDay()
+		guard let before = calendar.selectedDay() else {
+			XCTFail("A day should be selected before dragging the strip")
+			return
+		}
 		calendar.swipeStripToNextWeek()
 
 		XCTAssertEqual(
@@ -391,6 +395,7 @@ class ModuleCalendarTests: UITestCase {
 			TestIdentifiers.Calendar.dayCellPrefix + empty,
 			message: "Tapping an empty day should select it rather than skip past it")
 		calendar.verifyStripIsPresent()
+		calendar.verifyNoticeVisible(TestIdentifiers.Calendar.emptyDayNotice)
 	}
 
 	/// A dot is what replaces scrolling to find out whether a day has anything,

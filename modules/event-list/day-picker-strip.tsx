@@ -25,7 +25,6 @@ export const DAY_CELL_PREFIX = 'day-cell-'
 
 /**
  * A day's dot is identified by its own ISO date, the same way its cell is.
- * Mirrored by `TestIdentifiers.Calendar.dayDotPrefix`.
  */
 export const DAY_DOT_PREFIX = 'day-dot-'
 
