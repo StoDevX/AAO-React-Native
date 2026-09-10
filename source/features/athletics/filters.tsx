@@ -1,10 +1,40 @@
 import * as React from 'react'
-import {SectionList, StyleSheet, Text, TouchableOpacity, View} from 'react-native'
-import {ListFooter} from '@frogpond/lists'
+import {StyleSheet} from 'react-native'
+import {Button, Host, HStack, List, Section, Spacer, Text} from '@expo/ui/swift-ui'
+import {
+	accessibilityLabel,
+	buttonStyle,
+	contentShape,
+	environment,
+	font,
+	foregroundStyle,
+	frame,
+	listStyle,
+	shapes,
+	tag,
+} from '@expo/ui/swift-ui/modifiers'
 import * as c from '@frogpond/colors'
 import {useFilterStore} from './store'
 import {SportSection} from './types'
-import {isSectionFullySelected, toggleSectionSelection} from './utils'
+import {isSectionFullySelected, shortSportName, toggleSectionSelection} from './utils'
+
+// An active edit mode is what turns `List(selection:)`'s selected state into
+// the circular checkboxes iOS draws while a list is being edited -- the same
+// arrangement `modules/filter/filter-sheet.tsx` uses for its options.
+const LIST_MODIFIERS = [listStyle('insetGrouped'), environment({key: 'editMode', value: 'active'})]
+const ROW_MODIFIERS = [contentShape(shapes.rectangle())]
+const FILL_LEADING = [frame({maxWidth: Infinity, alignment: 'leading'})]
+
+const MIN_TOUCH_TARGET = 44
+// "All" draws as a few characters of text, well under the 44x44pt minimum this
+// project requires, so it gets `contentShape` -- making the whole frame
+// tappable rather than the drawn glyphs -- and a frame floor to match.
+const ALL_BUTTON_MODIFIERS = [
+	buttonStyle('plain'),
+	contentShape(shapes.rectangle()),
+	frame({minHeight: MIN_TOUCH_TARGET}),
+]
+const HEADER_TITLE_MODIFIERS = [font({textStyle: 'footnote'}), foregroundStyle(c.secondaryLabel)]
 
 interface AthleticsFiltersProps {
 	sports: SportSection[]
@@ -12,7 +42,6 @@ interface AthleticsFiltersProps {
 
 export function AthleticsFilters({sports}: AthleticsFiltersProps): React.ReactNode {
 	const selectedSports = useFilterStore((s) => s.selectedSports)
-	const toggleSport = useFilterStore((s) => s.toggleSport)
 	const setSelectedSports = useFilterStore((s) => s.setSelectedSports)
 
 	const handleSelectAll = (sectionTitle: string) => {
@@ -21,94 +50,66 @@ export function AthleticsFilters({sports}: AthleticsFiltersProps): React.ReactNo
 	}
 
 	return (
-		<SectionList
-			ListFooterComponent={
-				<ListFooter title="Filter preferences are saved locally to your device." />
-			}
-			contentContainerStyle={styles.listContainer}
-			keyExtractor={(item) => item}
-			renderItem={({item}) => (
-				<TouchableOpacity
-					accessibilityLabel={item}
-					accessibilityRole="checkbox"
-					accessibilityState={{checked: selectedSports.includes(item)}}
-					onPress={() => toggleSport(item)}
-					style={[
-						styles.filterButton,
-						selectedSports.includes(item) && styles.selectedFilterButton,
-					]}
-				>
-					<Text
-						style={[
-							styles.filterButtonText,
-							selectedSports.includes(item) && styles.selectedFilterButtonText,
-						]}
+		<Host style={styles.host}>
+			{/* Selection belongs to SwiftUI: `List(selection:)` under an active
+			    edit mode owns each row's tap, so a row is plain content carrying a
+			    tag rather than a `Button` -- a button would take the tap back and
+			    the selection would never change. The section headers sit outside
+			    that, so "All" stays an ordinary button. */}
+			<List
+				modifiers={LIST_MODIFIERS}
+				onSelectionChange={(selection) => setSelectedSports(selection.map(String))}
+				selection={selectedSports}
+			>
+				{sports.map((section, index) => (
+					<Section
+						key={section.title}
+						footer={
+							index === sports.length - 1 ? (
+								<Text modifiers={HEADER_TITLE_MODIFIERS}>
+									Filter preferences are saved locally to your device.
+								</Text>
+							) : undefined
+						}
+						header={
+							<HStack>
+								<Text modifiers={HEADER_TITLE_MODIFIERS}>{section.title}</Text>
+								<Spacer />
+								<Button
+									modifiers={[...ALL_BUTTON_MODIFIERS, accessibilityLabel(`All ${section.title}`)]}
+									onPress={() => handleSelectAll(section.title)}
+								>
+									<Text
+										modifiers={[
+											font({textStyle: 'footnote'}),
+											foregroundStyle(
+												isSectionFullySelected(section.data, selectedSports)
+													? c.systemBlue
+													: c.secondaryLabel,
+											),
+										]}
+									>
+										All
+									</Text>
+								</Button>
+							</HStack>
+						}
 					>
-						{item.replace(/^(Men's|Women's)\s/u, '')}
-					</Text>
-				</TouchableOpacity>
-			)}
-			renderSectionHeader={({section: {title}}) => {
-				const sectionSports = sports.find((s) => s.title === title)?.data
-				const allSelected = sectionSports
-					? isSectionFullySelected(sectionSports, selectedSports)
-					: false
-				return (
-					<View>
-						<Text style={styles.sectionHeader}>{title}</Text>
-						<TouchableOpacity
-							accessibilityLabel={`All ${title}`}
-							accessibilityRole="checkbox"
-							accessibilityState={{checked: allSelected}}
-							onPress={() => handleSelectAll(title)}
-							style={[styles.filterButton, allSelected && styles.selectedFilterButton]}
-						>
-							<Text
-								style={[styles.filterButtonText, allSelected && styles.selectedFilterButtonText]}
-							>
-								All
+						{section.data.map((sport) => (
+							<Text key={sport} modifiers={[...ROW_MODIFIERS, ...FILL_LEADING, tag(sport)]}>
+								{shortSportName(sport)}
 							</Text>
-						</TouchableOpacity>
-					</View>
-				)
-			}}
-			sections={sports}
-			stickyHeaderHiddenOnScroll={true}
-		/>
+						))}
+					</Section>
+				))}
+			</List>
+		</Host>
 	)
 }
 
 const styles = StyleSheet.create({
-	listContainer: {
+	host: {
+		flex: 1,
 		backgroundColor: c.systemGroupedBackground,
-		paddingHorizontal: 20,
-	},
-	sectionHeader: {
-		backgroundColor: c.systemGroupedBackground,
-		color: c.label,
-		fontWeight: 'bold',
-		paddingTop: 15,
-	},
-	filterButton: {
-		backgroundColor: c.systemBackground,
-		borderColor: c.separator,
-		borderRadius: 5,
-		borderWidth: 1,
-		justifyContent: 'center',
-		marginVertical: 5,
-		minHeight: 44,
-		paddingHorizontal: 12,
-	},
-	filterButtonText: {
-		color: c.label,
-		fontSize: 14,
-	},
-	selectedFilterButton: {
-		backgroundColor: c.blue,
-		borderColor: c.blue,
-	},
-	selectedFilterButtonText: {
-		color: c.white,
-		fontWeight: 'bold',
 	},
 })
