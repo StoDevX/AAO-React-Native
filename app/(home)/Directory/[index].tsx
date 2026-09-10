@@ -6,6 +6,7 @@ import {
 	foregroundStyle,
 	frame,
 	listRowBackground,
+	listRowInsets,
 	listStyle,
 	multilineTextAlignment,
 } from '@expo/ui/swift-ui/modifiers'
@@ -44,7 +45,6 @@ export default function DirectoryDetailPage(): React.ReactNode {
 	// scroll, rather than a static heading repeated in the body.
 	let screenTitle = (
 		<>
-			<Stack.Screen options={{headerLargeTitleEnabled: true}} />
 			<Stack.Title>{contact?.displayName ?? 'Contact'}</Stack.Title>
 		</>
 	)
@@ -104,7 +104,7 @@ export default function DirectoryDetailPage(): React.ReactNode {
 						    long name wraps down the left of the photo rather than
 						    pushing it about. The VStack fills what the photo leaves,
 						    which is what gives the name somewhere to wrap within. */}
-						<HStack alignment="top" spacing={12}>
+						<HStack alignment="top" modifiers={HEADER_ROW_MODIFIERS} spacing={12}>
 							<VStack
 								alignment="leading"
 								modifiers={[frame({maxWidth: Infinity, alignment: 'leading'})]}
@@ -206,6 +206,10 @@ const PHOTO_WIDTH = 80
 const PHOTO_HEIGHT = 104
 
 const NAME_MODIFIERS = [font({textStyle: 'title2', weight: 'semibold'}), foregroundStyle(c.label)]
+
+/// No card behind the heading: a name and a face are what the screen is about,
+/// not a row of its data.
+const HEADER_ROW_MODIFIERS = [listRowBackground('clear'), listRowInsets({leading: 0, trailing: 0})]
 
 const HEADER_MODIFIERS = [font({textStyle: 'subheadline'}), foregroundStyle(c.secondaryLabel)]
 
