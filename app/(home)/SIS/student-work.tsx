@@ -1,25 +1,18 @@
 import * as React from 'react'
-import {StyleSheet, SectionList} from 'react-native'
+import {StyleSheet} from 'react-native'
+import {ContentUnavailableView, Host, List, Section} from '@expo/ui/swift-ui'
+import {listStyle, refreshable} from '@expo/ui/swift-ui/modifiers'
 import * as c from '@frogpond/colors'
-import {ListSeparator, ListSectionHeader} from '@frogpond/lists'
-import {NoticeView, LoadingView} from '@frogpond/notice'
-import {JobRow} from '../../../source/features/sis/student-work/job-row'
-import {jobPostingsOptions, type JobSummary} from '@frogpond/ccc-jobs'
+import {LoadingView, NoticeView} from '@frogpond/notice'
+import {jobPostingsOptions} from '@frogpond/ccc-jobs'
 import {useRouter} from 'expo-router'
 import {useQuery} from '@tanstack/react-query'
-
-const styles = StyleSheet.create({
-	listContainer: {
-		backgroundColor: c.systemBackground,
-	},
-	contentContainer: {
-		flexGrow: 1,
-	},
-})
+import {DisclosureRow} from '../../../source/components/rows'
+import {postedOn} from '../../../source/features/sis/student-work/lib'
 
 export default function SISStudentWorkPage(): React.ReactNode {
 	let router = useRouter()
-	let {data = [], error, isError, refetch, isRefetching, isLoading} = useQuery(jobPostingsOptions)
+	let {data = [], error, isError, refetch, isLoading} = useQuery(jobPostingsOptions)
 
 	let sections = React.useMemo(
 		() =>
@@ -39,29 +32,45 @@ export default function SISStudentWorkPage(): React.ReactNode {
 		)
 	}
 
+	if (isLoading) {
+		return <LoadingView />
+	}
+
 	return (
-		<SectionList
-			ItemSeparatorComponent={ListSeparator}
-			ListEmptyComponent={
-				isLoading ? <LoadingView /> : <NoticeView text="There are no open job postings." />
-			}
-			contentContainerStyle={styles.contentContainer}
-			contentInsetAdjustmentBehavior="automatic"
-			keyExtractor={(item: JobSummary) => item.id}
-			onRefresh={refetch}
-			refreshing={isRefetching}
-			renderItem={({item}) => (
-				<JobRow
-					job={item}
-					onPress={(job: JobSummary) =>
-						router.push({pathname: '/JobDetail', params: {jobId: job.id}})
-					}
-				/>
-			)}
-			renderSectionHeader={({section: {title}}) => <ListSectionHeader title={title} />}
-			sections={sections}
-			style={styles.listContainer}
-			testID="student-work-list"
-		/>
+		<Host style={styles.host}>
+			<List
+				modifiers={[
+					listStyle('insetGrouped'),
+					refreshable(async () => {
+						await refetch()
+					}),
+				]}
+			>
+				{sections.length === 0 ? (
+					<ContentUnavailableView systemImage="briefcase" title="There are no open job postings." />
+				) : (
+					sections.map((section) => (
+						<Section key={section.title} title={section.title}>
+							{section.data.map((job) => (
+								<DisclosureRow
+									key={job.id}
+									detail={postedOn(job.postedDate)}
+									onPress={() => router.push({pathname: '/JobDetail', params: {jobId: job.id}})}
+									title={job.title}
+									titleLines={2}
+								/>
+							))}
+						</Section>
+					))
+				)}
+			</List>
+		</Host>
 	)
 }
+
+const styles = StyleSheet.create({
+	host: {
+		flex: 1,
+		backgroundColor: c.systemGroupedBackground,
+	},
+})

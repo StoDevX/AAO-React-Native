@@ -2,7 +2,8 @@ import * as React from 'react'
 import {Stack, useLocalSearchParams, useRouter} from 'expo-router'
 import {useQuery} from '@tanstack/react-query'
 import {SectionList, StyleSheet} from 'react-native'
-import type {Printer, PrintJob} from '../../../../source/lib/stoprint'
+import {isStoprintMocked, type Printer, type PrintJob} from '../../../../source/lib/stoprint'
+import {stoprintUsername} from '../../../../source/features/stoprint/lib'
 import {Detail, ListRow, ListSectionHeader, ListSeparator, Title} from '@frogpond/lists'
 import {LoadingView, NoticeView} from '@frogpond/notice'
 import groupBy from 'lodash/groupBy'
@@ -29,7 +30,7 @@ function PrinterListView({job}: PrinterListViewProps): React.ReactNode {
 
 	let {data: username = ''} = useQuery({
 		...credentialsOptions,
-		select: (data) => data?.username,
+		select: (data) => stoprintUsername(data, isStoprintMocked),
 	})
 
 	let {
@@ -165,7 +166,7 @@ function PrinterListLoader(): React.ReactNode {
 
 	let {data: username = '', isLoading: credentialsLoading} = useQuery({
 		...credentialsOptions,
-		select: (data) => data?.username,
+		select: (data) => stoprintUsername(data, isStoprintMocked),
 	})
 
 	let {

@@ -1,36 +1,25 @@
 import * as React from 'react'
-import {SectionList, StyleSheet} from 'react-native'
+import {StyleSheet} from 'react-native'
+import {ContentUnavailableView, Host, List, Section} from '@expo/ui/swift-ui'
+import {listStyle, refreshable} from '@expo/ui/swift-ui/modifiers'
 
+import * as c from '@frogpond/colors'
 import {useDebounce} from '@frogpond/use-debounce'
 import {LoadingView, NoticeView} from '@frogpond/notice'
 import {openUrl} from '@frogpond/open-url'
-import {Row} from '@frogpond/layout'
-import {ListSeparator, ListSectionHeader, largeListProps, Title, ListRow} from '@frogpond/lists'
-import {LinkValue} from '../../../source/features/more/types'
 
 import {Stack} from 'expo-router'
+import {useQuery} from '@tanstack/react-query'
+import {DisclosureRow} from '../../../source/components/rows'
+import {SearchBar} from '../../../source/components/search-bar'
 import {filterLinkGroups} from '../../../source/features/more/helpers'
 import {searchLinksOptions} from '../../../source/features/more/query'
-import {useQuery} from '@tanstack/react-query'
-import {SearchBar} from '../../../source/components/search-bar'
-
-const styles = StyleSheet.create({
-	wrapper: {
-		flex: 1,
-	},
-	row: {
-		marginVertical: 5,
-	},
-	contentContainer: {
-		flexGrow: 1,
-	},
-})
 
 function MoreView(): React.ReactNode {
 	let [query, setQuery] = React.useState('')
 	let searchQuery = useDebounce(query, 200)
 
-	let {data = [], error, refetch, isLoading, isError, isRefetching} = useQuery(searchLinksOptions)
+	let {data = [], error, refetch, isLoading, isError} = useQuery(searchLinksOptions)
 
 	let filtered = React.useMemo(() => filterLinkGroups(data, searchQuery), [data, searchQuery])
 
@@ -44,6 +33,10 @@ function MoreView(): React.ReactNode {
 		)
 	}
 
+	if (isLoading) {
+		return <LoadingView />
+	}
+
 	return (
 		<>
 			<Stack.Toolbar placement="bottom">
@@ -52,38 +45,36 @@ function MoreView(): React.ReactNode {
 
 			<SearchBar onChangeText={setQuery} value={query} />
 
-			<SectionList
-				ItemSeparatorComponent={ListSeparator}
-				ListEmptyComponent={
-					searchQuery ? (
-						<NoticeView text={`No results found for "${searchQuery}"`} />
-					) : isLoading ? (
-						<LoadingView />
+			<Host style={styles.host}>
+				<List
+					modifiers={[
+						listStyle('insetGrouped'),
+						refreshable(async () => {
+							await refetch()
+						}),
+					]}
+				>
+					{filtered.length === 0 ? (
+						<ContentUnavailableView
+							systemImage="magnifyingglass"
+							title={searchQuery ? `No results found for "${searchQuery}"` : 'No results found.'}
+						/>
 					) : (
-						<NoticeView text="No results found." />
-					)
-				}
-				contentContainerStyle={styles.contentContainer}
-				contentInsetAdjustmentBehavior="automatic"
-				keyExtractor={(item: LinkValue, index) => `${item.label}-${index}`}
-				keyboardDismissMode="on-drag"
-				keyboardShouldPersistTaps="never"
-				onRefresh={refetch}
-				refreshing={isRefetching}
-				renderItem={({item}) => {
-					return (
-						<ListRow arrowPosition="center" onPress={() => openUrl(item.url)}>
-							<Row alignItems="center" style={styles.row}>
-								<Title lines={2}>{item.label}</Title>
-							</Row>
-						</ListRow>
-					)
-				}}
-				renderSectionHeader={({section: {title}}) => <ListSectionHeader title={title} />}
-				sections={filtered}
-				style={styles.wrapper}
-				{...largeListProps}
-			/>
+						filtered.map((section) => (
+							<Section key={section.title} title={section.title}>
+								{section.data.map((link, index) => (
+									<DisclosureRow
+										key={`${link.label}-${index}`}
+										onPress={() => openUrl(link.url)}
+										title={link.label}
+										titleLines={2}
+									/>
+								))}
+							</Section>
+						))
+					)}
+				</List>
+			</Host>
 		</>
 	)
 }
@@ -96,3 +87,10 @@ export default function MorePage(): React.ReactNode {
 		</>
 	)
 }
+
+const styles = StyleSheet.create({
+	host: {
+		flex: 1,
+		backgroundColor: c.systemGroupedBackground,
+	},
+})

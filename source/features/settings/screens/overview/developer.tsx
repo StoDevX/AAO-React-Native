@@ -5,7 +5,7 @@ import {Section} from '@expo/ui/swift-ui'
 import {useRouter} from 'expo-router'
 import {useIsDevMode} from '../../../../lib/use-is-dev-mode'
 import {ServerUrlSection} from './server-url'
-import {ActionRow, NavigationRow} from '../../components/rows'
+import {ActionRow, NavigationRow} from '../../../../components/rows'
 
 export const DeveloperSection = (): React.ReactElement => {
 	let router = useRouter()

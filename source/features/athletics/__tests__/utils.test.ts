@@ -1,4 +1,5 @@
 import {
+	shortSportName,
 	toProcessedScores,
 	groupScoresByDate,
 	formatDateString,
@@ -283,5 +284,20 @@ describe('toggleSectionSelection', () => {
 	it('does not duplicate a sport that is already selected when adding the rest of the section', () => {
 		const result = toggleSectionSelection(['Baseball', 'Softball'], ['Baseball', "Men's Golf"])
 		expect(result).toEqual(['Baseball', "Men's Golf", 'Softball'])
+	})
+})
+
+describe('shortSportName', () => {
+	it('drops the division prefix, which the section header already states', () => {
+		expect(shortSportName("Men's Basketball")).toBe('Basketball')
+		expect(shortSportName("Women's Nordic Skiing")).toBe('Nordic Skiing')
+	})
+
+	it('leaves a sport with no division prefix alone', () => {
+		expect(shortSportName('Football')).toBe('Football')
+	})
+
+	it('only strips a prefix at the start of the name', () => {
+		expect(shortSportName("Cheer for Men's Hockey")).toBe("Cheer for Men's Hockey")
 	})
 })

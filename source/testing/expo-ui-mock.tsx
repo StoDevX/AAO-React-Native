@@ -289,6 +289,7 @@ export const tint = (color: unknown): Modifier => ({$type: 'tint', color})
 
 export const listStyle = (style: string): Modifier => ({$type: 'listStyle', style})
 export const lineLimit = (value: unknown): Modifier => ({$type: 'lineLimit', value})
+export const truncationMode = (mode: string): Modifier => ({$type: 'truncationMode', mode})
 export const lineSpacing = (value: number): Modifier => ({$type: 'lineSpacing', value})
 export const italic = (): Modifier => ({$type: 'italic'})
 export const bold = (): Modifier => ({$type: 'bold'})

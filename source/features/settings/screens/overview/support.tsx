@@ -7,7 +7,7 @@ import * as Device from 'expo-device'
 import {refreshApp} from '../../../../lib/refresh'
 import {useRouter} from 'expo-router'
 import {formatVersion} from './version'
-import {ActionRow, NavigationRow} from '../../components/rows'
+import {ActionRow, NavigationRow} from '../../../../components/rows'
 
 const getDeviceInfo = () => `
 

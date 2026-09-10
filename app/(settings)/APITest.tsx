@@ -1,11 +1,12 @@
 import * as React from 'react'
-import {View, SectionList, StyleSheet} from 'react-native'
-import {ListRow, ListSectionHeader, ListSeparator, Title} from '@frogpond/lists'
-import {Column} from '@frogpond/layout'
+import {View, StyleSheet} from 'react-native'
+import {Host, List, Section} from '@expo/ui/swift-ui'
+import {listStyle, refreshable} from '@expo/ui/swift-ui/modifiers'
 import {LoadingView, NoticeView} from '@frogpond/notice'
 import * as c from '@frogpond/colors'
 import {useQuery} from '@tanstack/react-query'
 import {Stack, useNavigation, useRouter} from 'expo-router'
+import {DisclosureRow} from '../../source/components/rows'
 
 import {SearchBar} from '../../source/components/search-bar'
 import {
@@ -30,23 +31,12 @@ export default function APITestPage(): React.ReactNode {
 		refetch: routesRefetch,
 	} = useQuery(serverRoutesOptions)
 
-	const renderItem = React.useCallback(
-		(item: ServerRoute) => (
-			<ListRow
-				fullWidth={false}
-				onPress={() =>
-					router.push({
-						pathname: '/APITestDetail',
-						params: {displayName: item.displayName},
-					})
-				}
-				style={styles.serverRouteRow}
-			>
-				<Column flex={1}>
-					<Title lines={1}>{item.displayName}</Title>
-				</Column>
-			</ListRow>
-		),
+	const openRoute = React.useCallback(
+		(route: ServerRoute) =>
+			router.push({
+				pathname: '/APITestDetail',
+				params: {displayName: route.displayName},
+			}),
 		[router],
 	)
 
@@ -98,18 +88,28 @@ export default function APITestPage(): React.ReactNode {
 				) : !groupedRoutes ? (
 					<NoticeView text="No routes were found." />
 				) : (
-					<SectionList
-						ItemSeparatorComponent={ListSeparator}
-						contentInsetAdjustmentBehavior="automatic"
-						keyExtractor={(item, index) => `${item.path}-${index}`}
-						keyboardDismissMode="on-drag"
-						keyboardShouldPersistTaps="never"
-						onRefresh={routesRefetch}
-						refreshing={isRoutesLoading}
-						renderItem={({item}) => renderItem(item)}
-						renderSectionHeader={({section: {title}}) => <ListSectionHeader title={title} />}
-						sections={groupedRoutes}
-					/>
+					<Host style={styles.host}>
+						<List
+							modifiers={[
+								listStyle('insetGrouped'),
+								refreshable(async () => {
+									await routesRefetch()
+								}),
+							]}
+						>
+							{groupedRoutes.map((section) => (
+								<Section key={section.title} title={section.title}>
+									{section.data.map((route, index) => (
+										<DisclosureRow
+											key={`${route.path}-${index}`}
+											onPress={() => openRoute(route)}
+											title={route.displayName}
+										/>
+									))}
+								</Section>
+							))}
+						</List>
+					</Host>
 				)}
 			</View>
 		</>
@@ -121,8 +121,8 @@ const styles = StyleSheet.create({
 		flex: 1,
 		backgroundColor: c.systemBackground,
 	},
-	serverRouteRow: {
-		flexDirection: 'row',
-		alignItems: 'center',
+	host: {
+		flex: 1,
+		backgroundColor: c.systemGroupedBackground,
 	},
 })

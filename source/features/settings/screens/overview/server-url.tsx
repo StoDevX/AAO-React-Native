@@ -7,7 +7,7 @@ import {DEFAULT_URL} from '../../../../lib/constants'
 import {useMutation, useQuery} from '@tanstack/react-query'
 import {serverUrlOptions} from './query'
 import {useServerDiscovery} from './use-server-discovery'
-import {ActionRow, NavigationRow} from '../../components/rows'
+import {ActionRow, NavigationRow} from '../../../../components/rows'
 
 export const ServerUrlSection = (): React.ReactElement => {
 	const [serverAddress, setServerAddress] = React.useState('')

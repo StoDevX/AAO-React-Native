@@ -1,16 +1,23 @@
 import * as React from 'react'
+import {StyleSheet} from 'react-native'
+import {Host, List, Section} from '@expo/ui/swift-ui'
+import {listStyle, refreshable} from '@expo/ui/swift-ui/modifiers'
+import * as c from '@frogpond/colors'
 import {timezone} from '@frogpond/constants'
-import {SectionList} from 'react-native'
 import type {PrintJob} from '../../../source/lib/stoprint'
 import {STOPRINT_HELP_PAGE, isStoprintMocked} from '../../../source/lib/stoprint'
-import {Detail, ListRow, ListSectionHeader, ListSeparator, Title} from '@frogpond/lists'
 import {LoadingView} from '@frogpond/notice'
+import {DisclosureRow} from '../../../source/components/rows'
 import {openUrl} from '@frogpond/open-url'
 import {StoPrintErrorView, StoPrintNoticeView} from '../../../source/features/stoprint/components'
 import groupBy from 'lodash/groupBy'
 import toPairs from 'lodash/toPairs'
 import sortBy from 'lodash/sortBy'
-import {getTimeRemaining} from '../../../source/features/stoprint/lib'
+import {
+	getTimeRemaining,
+	printJobsGate,
+	stoprintUsername,
+} from '../../../source/features/stoprint/lib'
 import {Stack, useRouter} from 'expo-router'
 import {useMomentTimer} from '@frogpond/timer'
 import {printJobsOptions} from '../../../source/features/stoprint/query'
@@ -22,7 +29,7 @@ function PrintJobsView(): React.ReactNode {
 	let {data: credentials, isLoading: hasCredentialsLoading} = useQuery(credentialsOptions)
 
 	let hasCredentials = Boolean(credentials)
-	let username = credentials?.username ?? ''
+	let username = stoprintUsername(credentials, isStoprintMocked)
 
 	let {
 		data: jobsData = {jobs: []},
@@ -45,11 +52,17 @@ function PrintJobsView(): React.ReactNode {
 		}
 	}
 
-	if (hasCredentialsLoading) {
+	let gate = printJobsGate({
+		isLoadingCredentials: hasCredentialsLoading,
+		hasCredentials,
+		isMocked: isStoprintMocked,
+	})
+
+	if (gate === 'loading') {
 		return <LoadingView text="Loading…" />
 	}
 
-	if (!hasCredentials && !isStoprintMocked) {
+	if (gate === 'signed-out') {
 		return (
 			<StoPrintNoticeView
 				buttonText="Open Settings"
@@ -100,29 +113,38 @@ function PrintJobsView(): React.ReactNode {
 	])
 
 	return (
-		<SectionList
-			ItemSeparatorComponent={ListSeparator}
-			contentInsetAdjustmentBehavior="automatic"
-			keyExtractor={(item) => item.id.toString()}
-			onRefresh={jobsRefetch}
-			refreshing={jobsRefetching}
-			renderItem={({item}) => (
-				<ListRow onPress={() => handleJobPress(item)}>
-					<Title>{item.documentName}</Title>
-					<Detail>
-						Expires {getTimeRemaining(now, item.usageTimeFormatted)}
-						{' • '}
-						{item.usageCostFormatted}
-						{' • '}
-						{item.totalPages} {item.totalPages === 1 ? 'page' : 'pages'}
-					</Detail>
-				</ListRow>
-			)}
-			renderSectionHeader={({section: {title}}) => <ListSectionHeader title={title} />}
-			sections={sortedGroupedJobs}
-		/>
+		<Host style={styles.host}>
+			<List
+				modifiers={[
+					listStyle('insetGrouped'),
+					refreshable(async () => {
+						await jobsRefetch()
+					}),
+				]}
+			>
+				{sortedGroupedJobs.map((section) => (
+					<Section key={section.title} title={section.title}>
+						{section.data.map((job) => (
+							<DisclosureRow
+								key={job.id.toString()}
+								detail={`Expires ${getTimeRemaining(now, job.usageTimeFormatted)} • ${job.usageCostFormatted} • ${job.totalPages} ${job.totalPages === 1 ? 'page' : 'pages'}`}
+								onPress={() => handleJobPress(job)}
+								title={job.documentName}
+							/>
+						))}
+					</Section>
+				))}
+			</List>
+		</Host>
 	)
 }
+
+const styles = StyleSheet.create({
+	host: {
+		flex: 1,
+		backgroundColor: c.systemGroupedBackground,
+	},
+})
 
 export default function PrintJobsPage(): React.ReactNode {
 	return (

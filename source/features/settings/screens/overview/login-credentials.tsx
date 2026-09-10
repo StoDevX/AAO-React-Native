@@ -18,7 +18,7 @@ import {
 } from '../../../../lib/login'
 import {useMutation, useQuery} from '@tanstack/react-query'
 import {sto} from '../../../../lib/colors'
-import {ActionRow} from '../../components/rows'
+import {ActionRow} from '../../../../components/rows'
 
 function LoginButton(props: {
 	loading: boolean
