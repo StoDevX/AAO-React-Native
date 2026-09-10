@@ -1,4 +1,4 @@
-export type {CalendarSource, PoweredBy, SourcedEvent} from './types'
+export type {CalendarBodyHandle, CalendarSource, PoweredBy, SourcedEvent} from './types'
 
 export * as EventList from './event-list'
 export * as EventDetail from './event-detail'

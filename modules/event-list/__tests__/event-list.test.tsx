@@ -318,25 +318,10 @@ describe('EventList', () => {
 		expect(screen.queryByText('Try Again')).toBeNull()
 	})
 
-	// The strip runs to the end of the last event's week, so the days after the
-	// final event have no section behind them. Tapping one has to land on a day
-	// the list can actually show, or the tap selects nothing and the list stays
-	// put.
-	test('tapping a day past the last event selects the last day that has one', async () => {
-		let events = [
-			makeEntry({
-				startTime: moment('2026-08-17T09:00:00Z'),
-				endTime: moment('2026-08-17T10:00:00Z'),
-			}),
-			makeEntry({
-				startTime: moment('2026-08-19T09:00:00Z'),
-				endTime: moment('2026-08-19T10:00:00Z'),
-			}),
-		]
-
+	test('draws no day picker', async () => {
 		await render(
 			<EventList
-				events={events}
+				events={[makeEntry()]}
 				failed={[]}
 				now={NOW}
 				onPressEvent={jest.fn()}
@@ -346,10 +331,7 @@ describe('EventList', () => {
 			/>,
 		)
 
-		// Friday of the same week: past Wednesday's event, still inside the strip.
-		await fireEvent.press(screen.getByTestId('day-cell-2026-08-21'))
-
-		expect(screen.getByTestId('day-cell-2026-08-19').props.accessibilityState.selected).toBe(true)
+		expect(screen.queryByTestId('day-cell-2026-08-17')).toBeNull()
 	})
 
 	// "Nothing is on" and "nothing is happening" look identical if both say

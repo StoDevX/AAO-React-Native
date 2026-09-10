@@ -8,7 +8,7 @@ import {
 	useCalendarSources,
 	useMergedEvents,
 } from '@frogpond/ccc-calendar'
-import {EventList} from '@frogpond/event-list'
+import {type CalendarBodyHandle, EventList} from '@frogpond/event-list'
 import {useMomentTimer} from '@frogpond/timer'
 
 import {
@@ -23,7 +23,7 @@ export default function CalendarPage(): React.ReactNode {
 	let {now} = useMomentTimer({intervalMs: 60000})
 	let {all, enabled, toggle, canOfferDevice, deviceAvailable, requestDevice} = useCalendarSources()
 	let {events, failed, isLoading, isRefetching, refetchAll} = useMergedEvents(enabled)
-	let eventListRef = React.useRef<EventList.EventListHandle>(null)
+	let eventListRef = React.useRef<CalendarBodyHandle>(null)
 
 	let {filter, selectFilter} = useCalendarFilterStore()
 
@@ -39,7 +39,7 @@ export default function CalendarPage(): React.ReactNode {
 	}
 
 	let onTodayPress = React.useCallback(() => {
-		eventListRef.current?.scrollToToday()
+		eventListRef.current?.showToday()
 	}, [])
 
 	let enabledIds = useMemo(() => enabled.map((source) => source.id), [enabled])
