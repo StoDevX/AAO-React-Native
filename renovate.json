@@ -71,6 +71,36 @@
       "matchUpdateTypes": ["patch"],
       "groupName": "all patch updates",
       "schedule": ["before 9am on monday"]
+    },
+    {
+      "description": "hold everything Expo pins a version for, and move them as one PR when they do move, so moving toward or away from its recommendation is a decision rather than a Monday patch PR; scripts/validate-expo-versions.mjs is the check that notices either way, and expo/bundledNativeModules.json is the list this mirrors",
+      "matchPackageNames": [
+        "expo",
+        "expo-*",
+        "@expo/*",
+        "react",
+        "react-native",
+        "@react-native/*",
+        "@react-native-async-storage/async-storage",
+        "@react-native-community/netinfo",
+        "@sentry/react-native",
+        "react-native-reanimated",
+        "react-native-safe-area-context",
+        "react-native-screens",
+        "react-native-webview",
+        "react-native-worklets",
+        "typescript"
+      ],
+      "groupName": "expo sdk",
+      "dependencyDashboardApproval": true
+    },
+    {
+      "description": "let expo's own patch releases open a pull request weekly, rather than waiting on the dashboard: the SDK ships around twenty-two of them a cycle, and holding every one is how the app ends up several patches behind. Expect the pull request to be red -- validate-expo-versions names the packages the new SDK moved, and renovate.json's ceilings need regenerating with 'mise run bundle-renovate-expo'. That list is the work order. Renovate cannot do it itself: postUpgradeTasks needs allowedCommands, which the hosted app does not grant. Its own group, so it never waits behind an SDK package the dashboard is holding. The SDK major stays a decision.",
+      "matchPackageNames": ["expo"],
+      "matchUpdateTypes": ["patch"],
+      "groupName": "expo",
+      "dependencyDashboardApproval": false,
+      "schedule": ["before 9am on monday"]
     }
   ],
   "prConcurrentLimit": 4

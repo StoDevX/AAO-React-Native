@@ -116,6 +116,11 @@ jobs:
       # One manifest naming its own react version is enough to put two copies
       # of the runtime in the tree, and only the lockfile would show it.
       - run: mise run validate-catalog-refs
+      # Expo pins a version of every package it knows about, and prebuild
+      # mentions one mismatch in passing. Nothing else looks, so this does --
+      # against the list inside the installed SDK, so it cannot turn red
+      # because Expo published something.
+      - run: mise run validate-expo-versions
       # bundled.json is generated from data/sources.yaml and committed, since
       # the app needs it at build time. Fail if someone edited one and not
       # the other.

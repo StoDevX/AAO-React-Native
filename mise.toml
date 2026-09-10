@@ -244,6 +244,18 @@ run = "node scripts/validate-single-copy.mjs"
 description = "Check that nothing pins a version the catalog owns"
 run = "node scripts/validate-catalog-refs.mjs"
 
+# Expo builds and tests each SDK against one version of every package it knows
+# about. Drifting off that list breaks nothing here -- the bundle builds, the
+# tests pass -- and turns up as a native crash on a device.
+#
+# The list comes from the expo package we have installed, not from Expo's
+# versions API. An API-backed check turns red when Expo publishes, which means
+# master breaking with no commit behind it and a demand to move onto versions
+# the SDK we run has never been tested against.
+[tasks."validate-expo-versions"]
+description = "Check that packages match the versions Expo recommends"
+run = "node scripts/validate-expo-versions.mjs"
+
 [tasks."validate-lockfile"]
 description = "Check that pnpm-lock.yaml matches the package.json files"
 run = "pnpm install --frozen-lockfile --lockfile-only --trust-lockfile"
@@ -292,6 +304,7 @@ depends = [
 	"test",
 	"validate-catalog-refs",
 	"validate-deps",
+	"validate-expo-versions",
 	"validate-lockfile",
 	"validate-mise-lock",
 	"validate-single-copy",
