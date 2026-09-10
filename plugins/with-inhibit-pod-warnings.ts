@@ -1,7 +1,8 @@
 import {readFileSync, writeFileSync} from 'node:fs'
 import {join} from 'node:path'
 
-import {ConfigPlugin, withDangerousMod} from '@expo/config-plugins'
+import {withDangerousMod} from '@expo/config-plugins'
+import type {ConfigPlugin} from '@expo/config-plugins'
 
 // Matched with tolerance for indentation, and the captured indentation is
 // reused, so a reflowed Expo template does not break this.

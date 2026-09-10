@@ -1,13 +1,8 @@
 import {copyFileSync, existsSync} from 'node:fs'
 import {join} from 'node:path'
 
-import {
-	ConfigPlugin,
-	IOSConfig,
-	InfoPlist,
-	withInfoPlist,
-	withXcodeProject,
-} from '@expo/config-plugins'
+import {IOSConfig, withInfoPlist, withXcodeProject} from '@expo/config-plugins'
+import type {ConfigPlugin, InfoPlist} from '@expo/config-plugins'
 
 /** The key `react-native-change-icon` asks UIKit for. */
 const ICON_NAME = 'icon_type_old_main'

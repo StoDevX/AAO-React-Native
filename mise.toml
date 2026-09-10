@@ -164,7 +164,7 @@ run = "tsc --noEmit"
 
 [tasks.test]
 description = "Run every test"
-depends = ["test:jest", "test:scripts"]
+depends = ["test:jest", "test:node"]
 
 [tasks."test:jest"]
 description = "Run the Jest tests"
@@ -175,18 +175,24 @@ description = "Run the Jest tests"
 depends = ["bundle-data"]
 run = "jest"
 
-# scripts/ is plain Node with no React Native in it, so its tests run on
-# node:test: native ESM, no transform step, and no restriction on import.meta
-# -- a literal import.meta breaks Jest's CommonJS transform of an .mjs file,
-# which is why scripts/report-flaky-uitests.mjs checks its entry point by argv
-# instead. Jest's testMatch covers __tests__/ and .js/.ts/.tsx only, so a
-# scripts/*.test.mjs cannot end up running under both.
+# scripts/ and plugins/ are plain Node with no React Native in them, so their
+# tests run on node:test: native ESM, no transform step, and no restriction on
+# import.meta -- a literal import.meta breaks Jest's CommonJS transform of an
+# .mjs file, which is why scripts/report-flaky-uitests.mjs checks its entry
+# point by argv instead. Jest's testMatch requires a __tests__/ segment, so a
+# test sitting beside its subject cannot end up running under both runners.
 #
 # node --test wants a quoted glob here; a bare directory argument makes it try
 # to load the directory as a module.
-[tasks."test:scripts"]
-description = "Run the node:test tests under scripts/"
-run = 'node --test "scripts/*.test.mjs"'
+#
+# The plugin tests import .ts, which Node strips types from and then loads as
+# ESM. Every file under plugins/ warns that it had to be reparsed, because the
+# root package.json has no `type` and cannot gain one -- the app is CommonJS.
+# The warning says nothing actionable, so it is off rather than in the output
+# of every run.
+[tasks."test:node"]
+description = "Run the node:test tests under scripts/ and plugins/"
+run = 'node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test "scripts/*.test.mjs" "plugins/*.test.ts"'
 
 # --- Data ---
 

@@ -1,46 +1,48 @@
+import assert from 'node:assert/strict'
 import {readFileSync} from 'node:fs'
 import {join} from 'node:path'
+import {describe, it} from 'node:test'
 
-import {patchAppDelegate} from '../with-app-delegate-customizations'
+import {patchAppDelegate} from './with-app-delegate-customizations.ts'
 
 // The stock file expo prebuild writes, taken verbatim from
 // expo-template-bare-minimum. Regenerate it after an SDK bump: the transform
 // anchors on this text and throws when the anchors move.
-const STOCK = readFileSync(join(__dirname, 'fixtures/AppDelegate.swift'), 'utf8')
+const STOCK = readFileSync(join(import.meta.dirname, 'fixtures/AppDelegate.swift'), 'utf8')
 
 describe('patchAppDelegate', () => {
 	it('imports AVFoundation', () => {
-		expect(patchAppDelegate(STOCK)).toContain('import AVFoundation')
+		assert.ok(patchAppDelegate(STOCK).includes('import AVFoundation'))
 	})
 
 	it('configures the shared URLCache', () => {
-		expect(patchAppDelegate(STOCK)).toContain('URLCache.shared = urlCache')
+		assert.ok(patchAppDelegate(STOCK).includes('URLCache.shared = urlCache'))
 	})
 
 	it('sets the audio session to playback so the silent switch is ignored', () => {
-		expect(patchAppDelegate(STOCK)).toContain(
-			'AVAudioSession.sharedInstance().setCategory(.playback)',
+		assert.ok(
+			patchAppDelegate(STOCK).includes('AVAudioSession.sharedInstance().setCategory(.playback)'),
 		)
 	})
 
 	it('handles the --reset-state launch argument', () => {
-		expect(patchAppDelegate(STOCK)).toContain('--reset-state')
+		assert.ok(patchAppDelegate(STOCK).includes('--reset-state'))
 	})
 
 	it('leaves the default module name alone, matching what expo-router registers', () => {
-		expect(patchAppDelegate(STOCK)).toContain('withModuleName: "main"')
+		assert.ok(patchAppDelegate(STOCK).includes('withModuleName: "main"'))
 	})
 
 	it('prefers an injected jsbundle over Metro in debug builds', () => {
 		let result = patchAppDelegate(STOCK)
-		expect(result).toContain('forResource: "main", withExtension: "jsbundle"')
-		expect(result).toContain('forBundleRoot: "index"')
-		expect(result).not.toContain('.expo/.virtual-metro-entry')
+		assert.ok(result.includes('forResource: "main", withExtension: "jsbundle"'))
+		assert.ok(result.includes('forBundleRoot: "index"'))
+		assert.ok(!result.includes('.expo/.virtual-metro-entry'))
 	})
 
 	it('is idempotent', () => {
 		let once = patchAppDelegate(STOCK)
-		expect(patchAppDelegate(once)).toBe(once)
+		assert.equal(patchAppDelegate(once), once)
 	})
 
 	// A substring anchor survives *deeper* indentation by accident; it is a
@@ -50,21 +52,21 @@ describe('patchAppDelegate', () => {
 			'    let delegate = ReactNativeDelegate()',
 			'  let delegate = ReactNativeDelegate()',
 		)
-		expect(patchAppDelegate(reindented)).toContain('URLCache.shared = urlCache')
+		assert.ok(patchAppDelegate(reindented).includes('URLCache.shared = urlCache'))
 	})
 
 	it('throws when the launch anchor is missing', () => {
 		let withoutLaunch = STOCK.replaceAll('didFinishLaunchingWithOptions', '')
-		expect(() => patchAppDelegate(withoutLaunch)).toThrow(/didFinishLaunchingWithOptions/u)
+		assert.throws(() => patchAppDelegate(withoutLaunch), /didFinishLaunchingWithOptions/u)
 	})
 
 	it('throws when the import anchor is missing', () => {
 		let withoutImport = STOCK.replace('internal import Expo', '')
-		expect(() => patchAppDelegate(withoutImport)).toThrow(/import Expo/u)
+		assert.throws(() => patchAppDelegate(withoutImport), /import Expo/u)
 	})
 
 	it('throws when the bundleURL anchor is missing', () => {
 		let withoutBundleRoot = STOCK.replace('forBundleRoot: ".expo/.virtual-metro-entry"', '')
-		expect(() => patchAppDelegate(withoutBundleRoot)).toThrow(/forBundleRoot/u)
+		assert.throws(() => patchAppDelegate(withoutBundleRoot), /forBundleRoot/u)
 	})
 })

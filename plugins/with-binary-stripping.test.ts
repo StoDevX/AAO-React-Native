@@ -1,12 +1,14 @@
+import assert from 'node:assert/strict'
 import {join} from 'node:path'
+import {describe, it} from 'node:test'
 
 import xcode from 'xcode'
 import type {XcodeProject} from 'xcode'
 
-import {STRIPPING_SETTINGS, applyStripping} from '../with-binary-stripping'
+import {STRIPPING_SETTINGS, applyStripping} from './with-binary-stripping.ts'
 
 function loadProject(): XcodeProject {
-	let project = xcode.project(join(__dirname, 'fixtures/project.pbxproj'))
+	let project = xcode.project(join(import.meta.dirname, 'fixtures/project.pbxproj'))
 	project.parseSync()
 	return project
 }
@@ -29,17 +31,17 @@ describe('applyStripping', () => {
 	it('strips in every build configuration of the app target', () => {
 		let project = applyStripping(loadProject(), 'AllAboutOlaf')
 		let configurations = settingsFor(project, 'AllAboutOlaf')
-		expect(configurations.length).toBeGreaterThan(0)
+		assert.ok(configurations.length > 0)
 		for (let settings of configurations) {
-			expect(settings.DEPLOYMENT_POSTPROCESSING).toBe('YES')
-			expect(settings.STRIPFLAGS).toBe('"-rSTx"')
+			assert.equal(settings.DEPLOYMENT_POSTPROCESSING, 'YES')
+			assert.equal(settings.STRIPFLAGS, '"-rSTx"')
 		}
 	})
 
 	it('leaves unrelated settings alone', () => {
 		let before = settingsFor(loadProject(), 'AllAboutOlaf')[0].PRODUCT_NAME
 		let project = applyStripping(loadProject(), 'AllAboutOlaf')
-		expect(settingsFor(project, 'AllAboutOlaf')[0].PRODUCT_NAME).toBe(before)
+		assert.equal(settingsFor(project, 'AllAboutOlaf')[0].PRODUCT_NAME, before)
 	})
 
 	it('is idempotent', () => {
@@ -48,17 +50,17 @@ describe('applyStripping', () => {
 			applyStripping(loadProject(), 'AllAboutOlaf'),
 			'AllAboutOlaf',
 		).writeSync()
-		expect(twice).toBe(once)
+		assert.equal(twice, once)
 	})
 
 	it('throws when the target is missing', () => {
-		expect(() => applyStripping(loadProject(), 'NoSuchTarget')).toThrow(/NoSuchTarget/u)
+		assert.throws(() => applyStripping(loadProject(), 'NoSuchTarget'), /NoSuchTarget/u)
 	})
 })
 
 describe('STRIPPING_SETTINGS', () => {
 	it('matches the values the tracked project used before the cutover', () => {
-		expect(STRIPPING_SETTINGS).toEqual({
+		assert.deepEqual(STRIPPING_SETTINGS, {
 			DEPLOYMENT_POSTPROCESSING: 'YES',
 			STRIPFLAGS: '"-rSTx"',
 		})

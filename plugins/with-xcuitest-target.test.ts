@@ -1,6 +1,8 @@
+import assert from 'node:assert/strict'
 import {mkdirSync, mkdtempSync, readFileSync, writeFileSync} from 'node:fs'
 import {tmpdir} from 'node:os'
 import {join} from 'node:path'
+import {describe, it} from 'node:test'
 
 import xcode from 'xcode'
 import type {PBXNativeTarget, XcodeProject} from 'xcode'
@@ -9,7 +11,7 @@ import {
 	addTestableToScheme,
 	ensureUITestTarget,
 	patchPodfileForUITests,
-} from '../with-xcuitest-target'
+} from './with-xcuitest-target.ts'
 
 const TARGET = 'AllAboutOlafUITests'
 
@@ -20,10 +22,10 @@ const PROJECT_PATH = '../uitests'
 // The Podfile and project prebuild writes, taken verbatim from
 // expo-template-bare-minimum with HelloWorld renamed. Regenerate both after an
 // SDK bump.
-const STOCK_PODFILE = readFileSync(join(__dirname, 'fixtures/Podfile'), 'utf8')
+const STOCK_PODFILE = readFileSync(join(import.meta.dirname, 'fixtures/Podfile'), 'utf8')
 
 function loadProject(): XcodeProject {
-	let project = xcode.project(join(__dirname, 'fixtures/project.pbxproj'))
+	let project = xcode.project(join(import.meta.dirname, 'fixtures/project.pbxproj'))
 	project.parseSync()
 	return project
 }
@@ -48,13 +50,14 @@ function makeSourceDir(): string {
 
 describe('patchPodfileForUITests', () => {
 	it('disables expo autolinking for the UITests target', () => {
-		expect(patchPodfileForUITests(STOCK_PODFILE)).toContain(`return nil if name == '${TARGET}'`)
+		let result = patchPodfileForUITests(STOCK_PODFILE)
+		assert.ok(result.includes(`return nil if name == '${TARGET}'`))
 	})
 
 	it('nests the UITests target with inherit! :none', () => {
 		let result = patchPodfileForUITests(STOCK_PODFILE)
-		expect(result).toContain(`target '${TARGET}' do`)
-		expect(result).toContain('inherit! :none')
+		assert.ok(result.includes(`target '${TARGET}' do`))
+		assert.ok(result.includes('inherit! :none'))
 	})
 
 	it('nests the UITests target inside the app target', () => {
@@ -62,13 +65,13 @@ describe('patchPodfileForUITests', () => {
 		let appTarget = result.indexOf("target 'AllAboutOlaf' do")
 		let uiTarget = result.indexOf(`target '${TARGET}' do`)
 		let postInstall = result.indexOf('post_install do |installer|')
-		expect(appTarget).toBeLessThan(uiTarget)
-		expect(uiTarget).toBeLessThan(postInstall)
+		assert.ok(appTarget < uiTarget)
+		assert.ok(uiTarget < postInstall)
 	})
 
 	it('is idempotent', () => {
 		let once = patchPodfileForUITests(STOCK_PODFILE)
-		expect(patchPodfileForUITests(once)).toBe(once)
+		assert.equal(patchPodfileForUITests(once), once)
 	})
 
 	// A substring anchor survives *deeper* indentation by accident; it is a
@@ -79,12 +82,12 @@ describe('patchPodfileForUITests', () => {
 			'post_install do |installer|',
 		)
 		let result = patchPodfileForUITests(reindented)
-		expect(result).toContain(`target '${TARGET}' do`)
-		expect(result).toContain('inherit! :none')
+		assert.ok(result.includes(`target '${TARGET}' do`))
+		assert.ok(result.includes('inherit! :none'))
 	})
 
 	it('throws when the app target is missing', () => {
-		expect(() => patchPodfileForUITests('# empty\n')).toThrow(/target 'AllAboutOlaf'/u)
+		assert.throws(() => patchPodfileForUITests('# empty\n'), /target 'AllAboutOlaf'/u)
 	})
 })
 
@@ -95,7 +98,7 @@ describe('ensureUITestTarget', () => {
 			sourceDir: makeSourceDir(),
 			projectPath: PROJECT_PATH,
 		})
-		expect(project.pbxTargetByName(TARGET)).toBeDefined()
+		assert.notEqual(project.pbxTargetByName(TARGET), undefined)
 	})
 
 	it('stores the target name unquoted so lookups succeed', () => {
@@ -105,8 +108,8 @@ describe('ensureUITestTarget', () => {
 			projectPath: PROJECT_PATH,
 		})
 		let target = uiTestTarget(project)
-		expect(target.name).not.toMatch(/^"/u)
-		expect(target.productName).not.toMatch(/^"/u)
+		assert.doesNotMatch(target.name, /^"/u)
+		assert.doesNotMatch(target.productName, /^"/u)
 	})
 
 	// The xcode package derives the product's extension from its file type and
@@ -121,8 +124,8 @@ describe('ensureUITestTarget', () => {
 			projectPath: PROJECT_PATH,
 		})
 		let written = project.writeSync()
-		expect(written).toContain(`${TARGET}.xctest`)
-		expect(written).not.toContain('.mdimporter')
+		assert.ok(written.includes(`${TARGET}.xctest`))
+		assert.ok(!written.includes('.mdimporter'))
 	})
 
 	it('marks the target as a UI test bundle, not a unit test bundle', () => {
@@ -131,7 +134,7 @@ describe('ensureUITestTarget', () => {
 			sourceDir: makeSourceDir(),
 			projectPath: PROJECT_PATH,
 		})
-		expect(uiTestTarget(project).productType).toBe('"com.apple.product-type.bundle.ui-testing"')
+		assert.equal(uiTestTarget(project).productType, '"com.apple.product-type.bundle.ui-testing"')
 	})
 
 	it('points the target at the app under test', () => {
@@ -144,12 +147,12 @@ describe('ensureUITestTarget', () => {
 			.filter((entry) => typeof entry !== 'string')
 			.map((entry) => entry.buildSettings as Record<string, string>)
 			.filter((entry) => entry.TEST_TARGET_NAME)
-		expect(settings).toHaveLength(2)
+		assert.equal(settings.length, 2)
 		for (let entry of settings) {
-			expect(entry.TEST_TARGET_NAME).toBe('AllAboutOlaf')
+			assert.equal(entry.TEST_TARGET_NAME, 'AllAboutOlaf')
 			// An empty SWIFT_VERSION fails the build outright.
-			expect(entry.SWIFT_VERSION).toBe('5.0')
-			expect(entry.INFOPLIST_FILE).toBe(`${PROJECT_PATH}/Info.plist`)
+			assert.equal(entry.SWIFT_VERSION, '5.0')
+			assert.equal(entry.INFOPLIST_FILE, `${PROJECT_PATH}/Info.plist`)
 		}
 	})
 
@@ -160,8 +163,8 @@ describe('ensureUITestTarget', () => {
 			projectPath: PROJECT_PATH,
 		})
 		let written = project.writeSync()
-		expect(written).toContain('UITestCase.swift')
-		expect(written).toContain('HomeScreen.swift')
+		assert.ok(written.includes('UITestCase.swift'))
+		assert.ok(written.includes('HomeScreen.swift'))
 	})
 
 	it('does not compile non-Swift files', () => {
@@ -172,7 +175,7 @@ describe('ensureUITestTarget', () => {
 		})
 		let phase = project.pbxSourcesBuildPhaseObj(project.findTargetKey(TARGET) as string)
 		let sources = (phase?.files ?? []).map((file) => file.comment)
-		expect(sources.join(' ')).not.toContain('Info.plist')
+		assert.ok(!sources.join(' ').includes('Info.plist'))
 	})
 
 	it('depends on the app target so the app builds first', () => {
@@ -181,7 +184,7 @@ describe('ensureUITestTarget', () => {
 			sourceDir: makeSourceDir(),
 			projectPath: PROJECT_PATH,
 		})
-		expect(uiTestTarget(project).dependencies).toHaveLength(1)
+		assert.equal(uiTestTarget(project).dependencies.length, 1)
 	})
 
 	it('is idempotent', () => {
@@ -192,7 +195,7 @@ describe('ensureUITestTarget', () => {
 		let targets = Object.values(project.pbxNativeTargetSection()).filter(
 			(entry) => typeof entry === 'object' && entry.name === TARGET,
 		)
-		expect(targets).toHaveLength(1)
+		assert.equal(targets.length, 1)
 	})
 })
 
@@ -215,17 +218,17 @@ describe('addTestableToScheme', () => {
 
 	it('adds the UITests bundle as a testable', () => {
 		let result = addTestableToScheme(SCHEME, options)
-		expect(result).toContain(`BuildableName = "${TARGET}.xctest"`)
-		expect(result).toContain(`BlueprintName = "${TARGET}"`)
-		expect(result).toContain('BlueprintIdentifier = "ABC123"')
+		assert.ok(result.includes(`BuildableName = "${TARGET}.xctest"`))
+		assert.ok(result.includes(`BlueprintName = "${TARGET}"`))
+		assert.ok(result.includes('BlueprintIdentifier = "ABC123"'))
 	})
 
 	it('is idempotent', () => {
 		let once = addTestableToScheme(SCHEME, options)
-		expect(addTestableToScheme(once, options)).toBe(once)
+		assert.equal(addTestableToScheme(once, options), once)
 	})
 
 	it('throws when there is no Testables element', () => {
-		expect(() => addTestableToScheme('<Scheme/>', options)).toThrow(/Testables/u)
+		assert.throws(() => addTestableToScheme('<Scheme/>', options), /Testables/u)
 	})
 })
