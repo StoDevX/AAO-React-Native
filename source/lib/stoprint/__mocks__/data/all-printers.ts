@@ -74,7 +74,7 @@ export const mockAllPrinters: AllPrintersResponse = [
 		printerName: 'mfc-dataservices',
 	},
 	{
-		location: 'Dittmann HOM Link',
+		location: 'CAD HOM Link',
 		serverName: 'printers',
 		code: '',
 		printerName: 'mfc-dc204',

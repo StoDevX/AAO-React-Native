@@ -41,7 +41,7 @@ export const mockRecent: RecentPopularPrintersResponse = {
 			printerName: 'mfc-toh101',
 		},
 		{
-			location: 'Dittmann HOM Link',
+			location: 'CAD HOM Link',
 			serverName: 'printers',
 			code: '',
 			printerName: 'mfc-dc204',
