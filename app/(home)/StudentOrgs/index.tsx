@@ -1,16 +1,10 @@
 import * as React from 'react'
-import {StyleSheet, SectionList} from 'react-native'
+import {StyleSheet} from 'react-native'
+import {ContentUnavailableView, Host, List, Section} from '@expo/ui/swift-ui'
+import {listStyle, refreshable} from '@expo/ui/swift-ui/modifiers'
 import {NoticeView, LoadingView} from '@frogpond/notice'
-import {Column} from '@frogpond/layout'
-import {
-	ListRow,
-	ListSectionHeader,
-	ListSeparator,
-	Detail,
-	Title,
-	largeListProps,
-	emptyList,
-} from '@frogpond/lists'
+import {emptyList} from '@frogpond/lists'
+import {DisclosureRow} from '../../../source/components/rows'
 import * as c from '@frogpond/colors'
 import groupBy from 'lodash/groupBy'
 import toPairs from 'lodash/toPairs'
@@ -37,12 +31,9 @@ const orgToArray = memoize((term: StudentOrgType) =>
 )
 
 const styles = StyleSheet.create({
-	wrapper: {
+	host: {
 		flex: 1,
-		backgroundColor: c.systemBackground,
-	},
-	contentContainer: {
-		flexGrow: 1,
+		backgroundColor: c.systemGroupedBackground,
 	},
 })
 
@@ -52,14 +43,7 @@ function StudentOrgsView(): React.ReactNode {
 	let [query, setQuery] = React.useState('')
 	let searchQuery = useDebounce(query.toLowerCase(), 200)
 
-	let {
-		data: orgs = [],
-		error,
-		isError,
-		refetch,
-		isRefetching,
-		isLoading,
-	} = useQuery(studentOrgsOptions)
+	let {data: orgs = [], error, isError, refetch, isLoading} = useQuery(studentOrgsOptions)
 
 	let results = React.useMemo(() => {
 		if (!orgs) {
@@ -115,41 +99,52 @@ function StudentOrgsView(): React.ReactNode {
 		)
 	}
 
+	if (isLoading) {
+		return (
+			<>
+				{searchChrome}
+				<LoadingView />
+			</>
+		)
+	}
+
 	return (
 		<>
 			{searchChrome}
 
-			<SectionList
-				ItemSeparatorComponent={ListSeparator}
-				ListEmptyComponent={
-					searchQuery ? (
-						<NoticeView text={`No results found for "${searchQuery}"`} />
-					) : isLoading ? (
-						<LoadingView />
+			<Host style={styles.host}>
+				<List
+					modifiers={[
+						listStyle('insetGrouped'),
+						refreshable(async () => {
+							await refetch()
+						}),
+					]}
+				>
+					{grouped.length === 0 ? (
+						<ContentUnavailableView
+							systemImage="person.3"
+							title={
+								searchQuery ? `No results found for "${searchQuery}"` : 'No organizations found.'
+							}
+						/>
 					) : (
-						<NoticeView text="No organizations found." />
-					)
-				}
-				contentContainerStyle={styles.contentContainer}
-				contentInsetAdjustmentBehavior="automatic"
-				keyExtractor={(item) => item.name + item.category}
-				keyboardDismissMode="on-drag"
-				keyboardShouldPersistTaps="never"
-				onRefresh={refetch}
-				refreshing={isRefetching}
-				renderItem={({item}) => (
-					<ListRow arrowPosition="top" onPress={() => onPressOrg(item)}>
-						<Column flex={1}>
-							<Title lines={1}>{item.name}</Title>
-							<Detail lines={1}>{item.category}</Detail>
-						</Column>
-					</ListRow>
-				)}
-				renderSectionHeader={({section: {title}}) => <ListSectionHeader title={title} />}
-				sections={grouped}
-				style={styles.wrapper}
-				{...largeListProps}
-			/>
+						grouped.map((section) => (
+							<Section key={section.title} title={section.title}>
+								{section.data.map((org) => (
+									<DisclosureRow
+										key={org.name + org.category}
+										detail={org.category}
+										detailLines={1}
+										onPress={() => onPressOrg(org)}
+										title={org.name}
+									/>
+								))}
+							</Section>
+						))
+					)}
+				</List>
+			</Host>
 		</>
 	)
 }

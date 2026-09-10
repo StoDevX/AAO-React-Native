@@ -1,10 +1,13 @@
 import * as React from 'react'
 import {Stack, useLocalSearchParams, useRouter} from 'expo-router'
 import {useQuery} from '@tanstack/react-query'
-import {SectionList, StyleSheet} from 'react-native'
+import {StyleSheet} from 'react-native'
+import {Host, List, Section} from '@expo/ui/swift-ui'
+import * as c from '@frogpond/colors'
+import {listStyle, refreshable} from '@expo/ui/swift-ui/modifiers'
 import {isStoprintMocked, type Printer, type PrintJob} from '../../../../source/lib/stoprint'
 import {stoprintUsername} from '../../../../source/features/stoprint/lib'
-import {Detail, ListRow, ListSectionHeader, ListSeparator, Title} from '@frogpond/lists'
+import {DisclosureRow} from '../../../../source/components/rows'
 import {LoadingView, NoticeView} from '@frogpond/notice'
 import groupBy from 'lodash/groupBy'
 import {StoPrintErrorView} from '../../../../source/features/stoprint/components/error'
@@ -18,7 +21,10 @@ import {credentialsOptions} from '../../../../source/lib/login'
 import {RecentPopularPrintersResponse} from '../../../../source/lib/stoprint/types'
 
 const styles = StyleSheet.create({
-	list: {},
+	host: {
+		flex: 1,
+		backgroundColor: c.systemGroupedBackground,
+	},
 })
 
 type PrinterListViewProps = {
@@ -58,7 +64,6 @@ function PrinterListView({job}: PrinterListViewProps): React.ReactNode {
 	} = useQuery(colorPrintersOptions)
 
 	let isLoading = allPrintersLoading || recentPrintersLoading || colorPrintersLoading
-	let isRefetching = allPrintersRefetching || recentPrintersRefetching || colorPrintersRefetching
 
 	let openPrintRelease = React.useCallback(
 		(printer: Printer) =>
@@ -69,11 +74,13 @@ function PrinterListView({job}: PrinterListViewProps): React.ReactNode {
 		[router, job],
 	)
 
-	let refetchAll = React.useCallback(() => {
-		allPrintersRefetch()
-		colorPrintersRefetch()
-		recentPrintersRefetch()
-	}, [allPrintersRefetch, colorPrintersRefetch, recentPrintersRefetch])
+	// Returns all three, rather than firing and forgetting them: SwiftUI's
+	// `refreshable` spinner runs until the handler it was given settles, so a
+	// void return would stop it the instant the pull ended.
+	let refetchAll = React.useCallback(
+		() => Promise.all([allPrintersRefetch(), colorPrintersRefetch(), recentPrintersRefetch()]),
+		[allPrintersRefetch, colorPrintersRefetch, recentPrintersRefetch],
+	)
 
 	if (allPrintersError) {
 		return (
@@ -142,22 +149,30 @@ function PrinterListView({job}: PrinterListViewProps): React.ReactNode {
 	let availableGrouped = colorJob ? groupedByBuilding : grouped
 
 	return (
-		<SectionList
-			ItemSeparatorComponent={ListSeparator}
-			contentInsetAdjustmentBehavior="automatic"
-			keyExtractor={(item: Printer) => item.printerName}
-			onRefresh={refetchAll}
-			refreshing={isRefetching}
-			renderItem={({item}: {item: Printer}) => (
-				<ListRow onPress={() => openPrintRelease(item)}>
-					<Title>{item.printerName}</Title>
-					<Detail>{item.location}</Detail>
-				</ListRow>
-			)}
-			renderSectionHeader={({section: {title}}) => <ListSectionHeader title={title} />}
-			sections={availableGrouped}
-			style={styles.list}
-		/>
+		<Host style={styles.host}>
+			<List
+				modifiers={[
+					listStyle('insetGrouped'),
+					refreshable(async () => {
+						await refetchAll()
+					}),
+				]}
+			>
+				{availableGrouped.map((section) => (
+					<Section key={section.title} title={section.title}>
+						{section.data.map((printer) => (
+							<DisclosureRow
+								key={printer.printerName}
+								detail={printer.location}
+								image={{systemName: 'printer'}}
+								onPress={() => openPrintRelease(printer)}
+								title={printer.printerName}
+							/>
+						))}
+					</Section>
+				))}
+			</List>
+		</Host>
 	)
 }
 
