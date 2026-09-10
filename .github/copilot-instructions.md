@@ -11,7 +11,7 @@ All About Olaf is a React Native mobile application for the St. Olaf College com
 - Redux Toolkit for state management
 - React Query for data fetching
 - Jest for testing
-- Fastlane for CI/CD
+- Xcode Cloud for builds and TestFlight submissions
 
 ## Code Style and Standards
 

@@ -4,9 +4,6 @@ pnpm = "12.3.2"
 hk = "1.58.1"
 ruby = "3.4.10"
 "gem:bundler" = "4.0.20"
-"gem:fastlane" = "2.237.0"
-"gem:rubocop" = "1.90.0"
-sentry = "3.7.0"
 
 [env]
 _.path = ["node_modules/.bin"]
@@ -136,10 +133,6 @@ depends = [
 	{ task = "embed-jsbundle:ios" },
 ]
 run = [{ task = 'device:deploy', args = ["{{usage.device}}"] }]
-
-[tasks.fastlane]
-description = "Run fastlane"
-run = "fastlane"
 
 # --- Code quality ---
 

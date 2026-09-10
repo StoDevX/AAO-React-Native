@@ -19,7 +19,6 @@ import {readFileSync} from 'node:fs'
 const INERT = [
 	/^docs\//u,
 	/\.md$/u,
-	/^fastlane\//u,
 	/(^|\/)__tests__\//u,
 	// A node:test file sits beside its subject rather than in __tests__/, so
 	// the directory rule above never sees it.

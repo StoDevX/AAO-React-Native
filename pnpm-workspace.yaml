@@ -141,10 +141,9 @@ overrides:
   # @sentry/cli is a dependency of both @sentry/react-native and
   # @sentry/expo-upload-sourcemaps, but neither is wired into a build phase
   # here: the Xcode "Bundle React Native code and images" step runs plain
-  # react-native-xcode.sh (not Sentry's wrapper), and
-  # fastlane/lib/sourcemaps.rb uploads sourcemaps through mise's own
-  # sentry-cli, not this npm package. Drop it -- it's dead weight that costs
-  # every install a platform-specific CLI binary download for nothing.
+  # react-native-xcode.sh, not Sentry's wrapper, and nothing uploads
+  # sourcemaps at all. Drop it -- it's dead weight that costs every install a
+  # platform-specific CLI binary download for nothing.
   '@sentry/cli': '-'
 
 # bind top-level dependencies to exact versions, so lockfile-maintenance MRs
