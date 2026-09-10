@@ -158,7 +158,7 @@ function DayCell({
 			</View>
 			{hasEvents ? (
 				<View
-					style={[styles.dot, {backgroundColor: isSelected || isToday ? textColor : c.label}]}
+					style={[styles.dot, {backgroundColor: isToday ? c.systemRed : c.label}]}
 					testID={`${DAY_DOT_PREFIX}${day.format('YYYY-MM-DD')}`}
 				/>
 			) : (
