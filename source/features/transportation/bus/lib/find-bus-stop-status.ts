@@ -9,10 +9,18 @@ type Args = {
 	busStatus: BusStateEnum
 	departureIndex: null | number
 	now: Moment
+	/** Whether the bus is drawn sitting on this stop's dot. */
+	busAtStop?: boolean
 }
 
 export function findBusStopStatus(args: Args): BusStopStatusEnum {
-	let {stop, busStatus, departureIndex, now} = args
+	let {stop, busStatus, departureIndex, now, busAtStop} = args
+
+	// Where the bus is outranks what the timetable says: between rounds it waits
+	// at the end of the loop it just drove, a stop the next round calls 'before'.
+	if (busAtStop) {
+		return 'at'
+	}
 
 	let stopStatus: BusStopStatusEnum = 'skip'
 	let arrivalTime: null | Moment = null

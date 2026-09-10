@@ -12,12 +12,17 @@ type ReturnVal = {
 	times: DepartureTimeList
 	index: null | number
 	nextStart?: Moment | null
+	/**
+	 * Where the bus waits out the gap between rounds: the last stop the round
+	 * that just ended actually served. Null whenever the bus is on the move.
+	 */
+	parkedStopIndex: null | number
 }
 
 export function getCurrentBusIteration(schedule: BusSchedule, now: Moment): ReturnVal {
 	// If the schedule is empty
 	if (schedule.times.length === 0) {
-		return {status: 'none', times: [], index: null, nextStart: null}
+		return {status: 'none', times: [], index: null, nextStart: null, parkedStopIndex: null}
 	}
 
 	// Handle "now" being before or after the bus runs for the day
@@ -26,16 +31,17 @@ export function getCurrentBusIteration(schedule: BusSchedule, now: Moment): Retu
 
 	// Start off by handling another empty-schedule case
 	if (!veryFirst || !veryLast) {
-		return {status: 'none', times: [], index: null, nextStart: null}
+		return {status: 'none', times: [], index: null, nextStart: null, parkedStopIndex: null}
 	} else if (now.isBefore(veryFirst)) {
 		return {
 			status: 'before-start',
 			times: [],
 			index: null,
 			nextStart: veryFirst,
+			parkedStopIndex: null,
 		}
 	} else if (now.isAfter(veryLast)) {
-		return {status: 'after-end', times: [], index: null, nextStart: null}
+		return {status: 'after-end', times: [], index: null, nextStart: null, parkedStopIndex: null}
 	}
 
 	// The meat of this function: find the furthest timeset that now is part of.
@@ -74,13 +80,14 @@ export function getCurrentBusIteration(schedule: BusSchedule, now: Moment): Retu
 				times: nextTimes,
 				index: index + 1,
 				nextStart,
+				parkedStopIndex: findLastIndex(times, isTruthy),
 			}
 		}
 
 		// If we're not, then return "running"
-		return {status: 'running', times, index, nextStart}
+		return {status: 'running', times, index, nextStart, parkedStopIndex: null}
 	}
 
 	// Last ditch effort: we're not running at all
-	return {status: 'none', times: [], index: null, nextStart: null}
+	return {status: 'none', times: [], index: null, nextStart: null, parkedStopIndex: null}
 }

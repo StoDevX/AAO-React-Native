@@ -108,12 +108,15 @@ type Props = {
 }
 
 export function ProgressChunk(props: Props): React.ReactNode {
-	let {stopStatus, barColor, currentStopColor, busProgress, busAtStop} = props
+	let {stopStatus, barColor, currentStopColor, isFirstChunk, isLastChunk, busProgress, busAtStop} =
+		props
 
 	// To draw the bar, we draw a chunk of the bar, then we draw the dot, then
-	// we draw the last chunk of the bar.
-	let startBarColor = barColor
-	let endBarColor = barColor
+	// we draw the last chunk of the bar. The line has to start at the first stop
+	// and stop at the last, so those two outer chunks are drawn in nothing at
+	// all -- they keep their height, which is what the bus rides along.
+	let startBarColor = isFirstChunk ? c.transparent : barColor
+	let endBarColor = isLastChunk ? c.transparent : barColor
 
 	let [aboveHeight, setAboveHeight] = useState(0)
 	let [belowHeight, setBelowHeight] = useState(0)

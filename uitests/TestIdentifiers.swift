@@ -468,5 +468,11 @@ struct TestIdentifiers {
 
 	enum Transportation {
 		static let tabs = ["Express", "Red Line", "Blue Line", "Oles Go", "Other"]
+		/// The list footer renders as a single Text, so both lines are one label.
+		static let footer = """
+			Bus routes and times subject to change without notice
+
+			Data collected by the humans of All About Olaf
+			"""
 	}
 }
