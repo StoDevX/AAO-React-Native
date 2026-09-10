@@ -36,7 +36,7 @@ export const manifestOptions = queryOptions({
 /// wholesale. Resolution must never be the reason a feature fails to load.
 export async function fetchManifest(queryClient: QueryClient): Promise<Jrd> {
 	try {
-		return await queryClient.fetchQuery(manifestOptions)
+		return await queryClient.query(manifestOptions)
 	} catch {
 		return bundled
 	}
