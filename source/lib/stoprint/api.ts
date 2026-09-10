@@ -95,7 +95,7 @@ export function fetchRecentPrinters(
 }
 
 export async function fetchColorPrinters(options: Options): Promise<string[]> {
-	let response = await client.get<ColorPrintersResponse>('color-printers', options).json()
+	let response = await client.get<ColorPrintersResponse>('printing/color-printers', options).json()
 	return response.data.colorPrinters
 }
 
