@@ -52,7 +52,17 @@ export let DayView = React.forwardRef<CalendarBodyHandle, Props>(function DayVie
 	// `deriveDays` always yields at least the current week, so today is always
 	// among the days and the view always opens somewhere real.
 	let [chosenDay, setChosenDay] = React.useState<Moment | null>(null)
-	let selectedDay = chosenDay ?? days.find((day) => day.isSame(props.now, 'day')) ?? days[0]
+
+	// A chosen day the strip no longer offers is ignored rather than cleared.
+	// Narrowing the filter can shorten the range past it, and a selection the
+	// strip cannot show is the strip and the content disagreeing again -- the
+	// thing this view exists to prevent. Held rather than dropped so widening
+	// the filter again returns the day the reader was on.
+	let chosenIsVisible = chosenDay ? days.some((day) => day.isSame(chosenDay, 'day')) : false
+	let selectedDay =
+		(chosenIsVisible ? chosenDay : null) ??
+		days.find((day) => day.isSame(props.now, 'day')) ??
+		days[0]
 
 	let rows = React.useMemo(
 		() => (selectedDay ? eventsOnDay(props.events, selectedDay) : []),

@@ -1,10 +1,11 @@
 import React from 'react'
 import moment from 'moment-timezone'
 import {describe, expect, jest, test} from '@jest/globals'
-import {fireEvent, render, screen} from '@testing-library/react-native'
+import {act, fireEvent, render, screen} from '@testing-library/react-native'
 import {deriveDayFlags, type EventType} from '@frogpond/event-type'
 
 import {DayView} from '../day-view'
+import type {CalendarBodyHandle} from '../types'
 
 jest.mock('@expo/ui/swift-ui', () => {
 	// oxlint-disable-next-line typescript/no-require-imports
@@ -108,6 +109,52 @@ describe('DayView', () => {
 
 		expect(screen.getByText('Nothing on this day.')).toBeTruthy()
 		expect(screen.getByTestId('day-cell-2026-09-05')).toBeTruthy()
+	})
+
+	test('falls back to today when the chosen day drops out of a narrowed range', async () => {
+		let {rerender} = await render(
+			view({
+				events: [entry('Chapel', '2026-09-05T10:00:00'), entry('Recital', '2026-09-19T10:00:00')],
+			}),
+		)
+
+		await fireEvent.press(screen.getByTestId('day-cell-2026-09-15'))
+		expect(screen.getByTestId('day-cell-2026-09-15').props.accessibilityState.selected).toBe(true)
+
+		// Narrowing the events -- as switching a calendar off would -- shortens
+		// the derived range past the chosen day. The strip and the content have
+		// to keep agreeing even though nothing told either of them to.
+		await rerender(view({events: [entry('Chapel', '2026-09-05T10:00:00')]}))
+
+		expect(screen.getByText('Chapel')).toBeTruthy()
+		expect(screen.getByTestId('day-cell-2026-09-05').props.accessibilityState.selected).toBe(true)
+	})
+
+	test('showToday returns to today’s events through the imperative handle', async () => {
+		let ref = React.createRef<CalendarBodyHandle>()
+
+		await render(
+			<DayView
+				ref={ref}
+				events={[entry('Chapel', '2026-09-05T10:00:00'), entry('Recital', '2026-09-07T10:00:00')]}
+				failed={[]}
+				now={NOW}
+				onPressEvent={jest.fn()}
+				onRefresh={jest.fn()}
+				refreshing={false}
+				sources={[STOLAF_SOURCE]}
+			/>,
+		)
+
+		await fireEvent.press(screen.getByTestId('day-cell-2026-09-07'))
+		expect(screen.getByText('Recital')).toBeTruthy()
+
+		await act(() => {
+			ref.current?.showToday()
+		})
+
+		expect(screen.getByText('Chapel')).toBeTruthy()
+		expect(screen.queryByText('Recital')).toBeNull()
 	})
 
 	test('names the failed calendars rather than looking empty', async () => {
