@@ -457,6 +457,10 @@ struct TestIdentifiers {
 
 	enum CourseCatalog {
 		static let recent = "Recent"
+		/// The one course a UI-test run's catalogue holds. Mirrors
+		/// `UITEST_COURSE_NAME` in
+		/// `source/lib/course-search/__fixtures__/courses.ts`.
+		static let aCourse = "Hybrid Test Course"
 	}
 
 	// MARK: - StoPrint

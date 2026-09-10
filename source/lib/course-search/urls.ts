@@ -1,5 +1,7 @@
 import ky, {Options} from 'ky'
+import {isUITesting} from '@frogpond/launch-arguments'
 import {CourseType, RawCourseType, TermInfoType, TermType} from './types'
+import {UITEST_COURSES, UITEST_TERM_INFO} from './__fixtures__/courses'
 import intersection from 'lodash/intersection'
 
 const BASE_URL = 'https://stolaf.dev'
@@ -10,8 +12,11 @@ export const DEPT_DATA = `${BASE_URL}/course-data/data-lists/valid_departments.j
 export const TIMES_DATA = `${BASE_URL}/course-data/data-lists/valid_times.json`
 
 export let client = ky.create({baseUrl: COURSE_DATA_PAGE})
+// The catalogue is several megabytes that change every registration cycle, so
+// a UI test searching it cannot say what it will find -- see
+// `source/features/dictionary/query.ts` for the same reasoning about entries.
 export let infoJson = (options?: Options): Promise<TermInfoType> =>
-	client.get('info.json', options).json()
+	isUITesting ? Promise.resolve(UITEST_TERM_INFO) : client.get('info.json', options).json()
 export let geData = (options?: Options): Promise<string[]> =>
 	client.get('data-lists/valid_gereqs.json', options).json()
 export let deptData = (options?: Options): Promise<string[]> =>
@@ -24,7 +29,9 @@ export let coursesForTerm = async (
 	gereqs: string[] = [],
 	options?: Options,
 ): Promise<Array<CourseType>> => {
-	let data: RawCourseType[] = await client.get(`${term.path}`, options).json()
+	let data: RawCourseType[] = isUITesting
+		? UITEST_COURSES
+		: await client.get(`${term.path}`, options).json()
 	return data
 		.map((course) => ({
 			spaceAvailable: course.enrolled < course.max,
