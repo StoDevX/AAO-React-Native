@@ -20,6 +20,24 @@ import {decode} from '@frogpond/html-lib'
 import {orgByNameOptions} from '../../../source/features/student-orgs/query'
 import {LoadingView, NoticeView} from '@frogpond/notice'
 
+/**
+ * The org's name, at the top of its own screen.
+ *
+ * A large title would be the platform idiom, but UIKit draws one on a single
+ * line -- and these names run long enough that it truncated more often than
+ * not. In the body it wraps.
+ *
+ * `frame(maxWidth: Infinity)` before the alignment: a Text is only as wide as
+ * its content, so centring inside that says nothing about the row it sits in,
+ * and the name drew left of centre until it filled the row.
+ */
+const ORG_NAME_MODIFIERS = [
+	font({textStyle: 'title', weight: 'semibold'}),
+	foregroundStyle(c.label),
+	frame({maxWidth: Infinity}),
+	multilineTextAlignment('center'),
+]
+
 /// No card behind the credit: it is a footnote about where the data came
 /// from, not a row of it.
 const CREDIT_MODIFIERS = [
@@ -41,16 +59,7 @@ export default function StudentOrgsDetailPage(): React.ReactNode {
 	let {name} = useLocalSearchParams<{name: string}>()
 	let {data: org, isLoading, error, refetch} = useQuery(orgByNameOptions(name))
 
-	// The name is the screen, so it takes a large title -- and the card that
-	// used to repeat it below the bar is gone. Safe to collapse here: the list
-	// is the only scrollable, so there is nothing above it to collapse against
-	// instead. See the note in Directory/index.tsx.
-	let screenTitle = (
-		<>
-			<Stack.Screen options={{headerLargeTitleEnabled: true}} />
-			<Stack.Title>{org?.name ?? name}</Stack.Title>
-		</>
-	)
+	let screenTitle = <Stack.Title>{org?.name ?? name}</Stack.Title>
 
 	if (isLoading) {
 		return (
@@ -92,6 +101,10 @@ export default function StudentOrgsDetailPage(): React.ReactNode {
 			{screenTitle}
 			<Host style={styles.host}>
 				<List modifiers={[listStyle('insetGrouped')]}>
+					<Section>
+						<Text modifiers={ORG_NAME_MODIFIERS}>{orgName}</Text>
+					</Section>
+
 					{category ? (
 						<Section title="CATEGORY">
 							<Text>{category}</Text>

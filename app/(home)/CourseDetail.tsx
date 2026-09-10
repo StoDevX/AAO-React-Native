@@ -172,16 +172,7 @@ export default function CourseDetailPage(): React.ReactNode {
 
 	// The route param is a course id, meaningless to a user, so the title
 	// stays empty until the course loads rather than falling back to it.
-	// The name is the screen, so it takes a large title -- and the card that
-	// used to repeat it below the bar is gone. Safe to collapse here: the list
-	// is the only scrollable, so there is nothing above it to collapse against
-	// instead. See the note in Directory/index.tsx.
-	let screenTitle = (
-		<>
-			<Stack.Screen options={{headerLargeTitleEnabled: true}} />
-			<Stack.Title>{course?.name ?? ''}</Stack.Title>
-		</>
-	)
+	let screenTitle = <Stack.Title>{course?.name ?? ''}</Stack.Title>
 
 	if (termLoading || courseLoading) {
 		return (
