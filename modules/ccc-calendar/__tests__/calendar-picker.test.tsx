@@ -25,12 +25,15 @@ const SOURCES: CalendarSource[] = [
 function picker(overrides = {}): React.ReactElement {
 	return (
 		<CalendarPicker
-			categories={['Athletics', 'Chapel']}
+			categories={[
+				{value: 'Athletics', count: 3},
+				{value: 'Chapel', count: 1},
+			]}
 			enabledIds={['stolaf', 'presence']}
 			filter={null}
 			onSelectFilter={jest.fn()}
 			onToggleSource={jest.fn()}
-			organizations={['Wellness Center']}
+			organizations={[{value: 'Wellness Center', count: 2}]}
 			sources={SOURCES}
 			{...overrides}
 		/>
@@ -43,31 +46,22 @@ test('lists every calendar as a toggle', async () => {
 	expect(screen.getByText('Presence')).toBeTruthy()
 })
 
-test('lists the categories and the organisations', async () => {
+test('labels each choice with how many events match it', async () => {
 	await render(picker())
-	expect(screen.getByText('Athletics')).toBeTruthy()
-	expect(screen.getByText('Wellness Center')).toBeTruthy()
+	expect(screen.getByText('Athletics (3)')).toBeTruthy()
+	expect(screen.getByText('Wellness Center (2)')).toBeTruthy()
 })
 
-test('omits the organisation section when no source names one', async () => {
+test('omits the organisation submenu when no source names one', async () => {
 	await render(picker({organizations: []}))
-	expect(screen.queryByText('ORGANIZATION')).toBeNull()
-})
-
-test('All Events clears whichever axis is filtered', async () => {
-	let onSelectFilter = jest.fn()
-	await render(picker({filter: {axis: 'category', value: 'Athletics'}, onSelectFilter}))
-
-	fireEvent.press(screen.getByText('All Events'))
-
-	expect(onSelectFilter).toHaveBeenCalledWith(null)
+	expect(screen.queryByText('Organization')).toBeNull()
 })
 
 test('choosing an unselected organisation filters on it', async () => {
 	let onSelectFilter = jest.fn()
 	await render(picker({onSelectFilter}))
 
-	fireEvent.press(screen.getByText('Wellness Center'))
+	fireEvent.press(screen.getByText('Wellness Center (2)'))
 
 	expect(onSelectFilter).toHaveBeenCalledWith({axis: 'organization', value: 'Wellness Center'})
 })
@@ -76,7 +70,7 @@ test('choosing the category already filtered on clears the filter', async () => 
 	let onSelectFilter = jest.fn()
 	await render(picker({filter: {axis: 'category', value: 'Athletics'}, onSelectFilter}))
 
-	fireEvent.press(screen.getByText('Athletics'))
+	fireEvent.press(screen.getByText('Athletics (3)'))
 
 	expect(onSelectFilter).toHaveBeenCalledWith(null)
 })
@@ -85,7 +79,35 @@ test('a category on one axis does not read as selected on the other', async () =
 	let onSelectFilter = jest.fn()
 	await render(picker({filter: {axis: 'organization', value: 'Athletics'}, onSelectFilter}))
 
-	fireEvent.press(screen.getByText('Athletics'))
+	fireEvent.press(screen.getByText('Athletics (3)'))
 
 	expect(onSelectFilter).toHaveBeenCalledWith({axis: 'category', value: 'Athletics'})
+})
+
+test('a submenu row names the selection on its own axis', async () => {
+	await render(picker({filter: {axis: 'category', value: 'Athletics'}}))
+
+	expect(screen.getByText('Category: Athletics')).toBeTruthy()
+	expect(screen.getByText('Organization')).toBeTruthy()
+})
+
+test('a submenu row names nothing when the other axis is filtered', async () => {
+	await render(picker({filter: {axis: 'organization', value: 'Wellness Center'}}))
+
+	expect(screen.getByText('Category')).toBeTruthy()
+	expect(screen.getByText('Organization: Wellness Center')).toBeTruthy()
+})
+
+test('Reset Filters is absent while nothing is filtered', async () => {
+	await render(picker())
+	expect(screen.queryByText('Reset Filters')).toBeNull()
+})
+
+test('Reset Filters clears whichever axis is filtered', async () => {
+	let onSelectFilter = jest.fn()
+	await render(picker({filter: {axis: 'organization', value: 'Wellness Center'}, onSelectFilter}))
+
+	fireEvent.press(screen.getByText('Reset Filters'))
+
+	expect(onSelectFilter).toHaveBeenCalledWith(null)
 })

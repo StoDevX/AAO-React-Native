@@ -27,36 +27,52 @@ function sourced(key: string, categories: string[], organization?: string[]): So
 }
 
 describe('availableCategories', () => {
-	test('deduplicates categories carried by more than one event', () => {
-		let events = [sourced('a', ['Music']), sourced('b', ['Music'])]
-		expect(availableCategories(events)).toStrictEqual(['Music'])
+	test('counts the events carrying each category', () => {
+		let events = [sourced('a', ['Music']), sourced('b', ['Music']), sourced('c', ['Chapel'])]
+		expect(availableCategories(events)).toStrictEqual([
+			{value: 'Music', count: 2},
+			{value: 'Chapel', count: 1},
+		])
+	})
+
+	test('an event listing a category twice still counts once', () => {
+		let events = [sourced('a', ['Music', 'Music'])]
+		expect(availableCategories(events)).toStrictEqual([{value: 'Music', count: 1}])
 	})
 
 	test('sorts Z-A, so SwiftUI renders it A-Z bottom-to-top', () => {
 		let events = [sourced('a', ['Athletics']), sourced('b', ['Music'])]
-		expect(availableCategories(events)).toStrictEqual(['Music', 'Athletics'])
+		expect(availableCategories(events)).toStrictEqual([
+			{value: 'Music', count: 1},
+			{value: 'Athletics', count: 1},
+		])
 	})
 })
 
 describe('availableOrganizations', () => {
 	test('an event with no organisation contributes nothing', () => {
-		let events = [sourced('a', [])]
-		expect(availableOrganizations(events)).toStrictEqual([])
+		expect(availableOrganizations([sourced('a', [])])).toStrictEqual([])
 	})
 
-	test('an event naming two organisations contributes both', () => {
+	test('an event naming two organisations counts toward both', () => {
 		let events = [sourced('a', [], ['Music Department', 'Wellness Center'])]
-		expect(availableOrganizations(events)).toStrictEqual(['Wellness Center', 'Music Department'])
+		expect(availableOrganizations(events)).toStrictEqual([
+			{value: 'Wellness Center', count: 1},
+			{value: 'Music Department', count: 1},
+		])
 	})
 
-	test('deduplicates organisations named by more than one event', () => {
+	test('counts the events naming each organisation', () => {
 		let events = [sourced('a', [], ['Music Department']), sourced('b', [], ['Music Department'])]
-		expect(availableOrganizations(events)).toStrictEqual(['Music Department'])
+		expect(availableOrganizations(events)).toStrictEqual([{value: 'Music Department', count: 2}])
 	})
 
 	test('sorts Z-A, so SwiftUI renders it A-Z bottom-to-top', () => {
 		let events = [sourced('a', [], ['Athletics']), sourced('b', [], ['Music Department'])]
-		expect(availableOrganizations(events)).toStrictEqual(['Music Department', 'Athletics'])
+		expect(availableOrganizations(events)).toStrictEqual([
+			{value: 'Music Department', count: 1},
+			{value: 'Athletics', count: 1},
+		])
 	})
 })
 
@@ -91,5 +107,27 @@ describe('filterEvents', () => {
 		let events = [sourced('a', ['Athletics']), sourced('b', ['Music'])]
 		let filter: CalendarFilter = {axis: 'category', value: 'Theater'}
 		expect(filterEvents(events, filter)).toStrictEqual([])
+	})
+})
+
+describe('a tally and the filter it describes', () => {
+	// The count is a promise about what choosing that value would leave on
+	// screen, so the two have to be counting the same events. They arrive at it
+	// differently -- the tally walks every event once, the filter tests each
+	// event against one value -- and nothing but this ties them together.
+	let events = [
+		sourced('a', ['Music', 'Music'], ['Music Department']),
+		sourced('b', ['Music', 'Chapel'], ['Music Department', 'Wellness Center']),
+		sourced('c', ['Chapel'], []),
+	]
+
+	test.each(availableCategories(events))('$value ($count) categorises $count events', (option) => {
+		let filtered = filterEvents(events, {axis: 'category', value: option.value})
+		expect(filtered).toHaveLength(option.count)
+	})
+
+	test.each(availableOrganizations(events))('$value ($count) sponsors $count events', (option) => {
+		let filtered = filterEvents(events, {axis: 'organization', value: option.value})
+		expect(filtered).toHaveLength(option.count)
 	})
 })

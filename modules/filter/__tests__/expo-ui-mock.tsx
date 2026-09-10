@@ -76,6 +76,16 @@ export const padding = (params: Record<string, unknown> = {}): Modifier => ({
 	...params,
 })
 
+/**
+ * A `Divider` draws a rule and carries nothing -- no label, no children, no
+ * behaviour. The stand-in is an empty view: it exists so a tree containing one
+ * mounts, not to be asserted on. What a rule looks like is a screenshot's
+ * business.
+ */
+export function Divider({modifiers}: {modifiers?: Modifier[]}): React.ReactNode {
+	return <ViewWithModifiers modifiers={modifiers} />
+}
+
 export function Host({children}: WithChildren & {matchContents?: boolean}): React.ReactNode {
 	return <View>{children}</View>
 }
