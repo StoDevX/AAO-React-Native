@@ -83,8 +83,6 @@ function main() {
 	console.log(`Recorded ${Object.keys(durations).length} test durations`)
 }
 
-// argv[1] is the path as typed, while import.meta.filename is resolved
-// through symlinks. Comparing them raw makes this quietly never fire.
-if (process.argv[1] && fs.realpathSync(process.argv[1]) === import.meta.filename) {
+if (import.meta.main) {
 	main()
 }
