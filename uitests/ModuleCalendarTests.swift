@@ -267,6 +267,16 @@ class ModuleCalendarTests: UITestCase {
 		screen
 			.openPicker()
 			.toggleCalendar(TestIdentifiers.Calendar.uitestCalendar)
+
+		// With no calendar enabled there is no category and no organisation, so
+		// each axis draws an empty Menu -- which SwiftUI draws as no row at all.
+		// The picker is still open, and a reading that only knew about the axes
+		// would call it closed and leave it covering the list.
+		XCTAssertTrue(
+			screen.pickerIsPresented(),
+			"The picker should still read as open with every calendar switched off")
+
+		screen
 			.dismissMenu()
 			.capture("31-no-calendars-enabled")
 

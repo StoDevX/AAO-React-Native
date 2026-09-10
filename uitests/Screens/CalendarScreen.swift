@@ -133,12 +133,15 @@ struct CalendarScreen: Screen {
 
 	/// Whether the picker is up, counting a submenu drawn over its parent.
 	///
-	/// Opening a submenu replaces everything the parent drew, CALENDARS header
-	/// included, so `menuIsPresented` reads an open submenu as no menu at all.
-	/// An axis row survives both states, and unlike a category it is drawn
-	/// whatever the enabled calendars happen to hold.
+	/// Two readings because neither covers both states. Opening a submenu
+	/// replaces everything the parent drew, CALENDARS header included, so
+	/// `menuIsPresented` alone reads an open submenu as no menu at all. An axis
+	/// row alone is worse: an axis with nothing to offer draws an empty Menu,
+	/// which SwiftUI renders as no row, so a picker opened with every calendar
+	/// switched off has neither axis in it -- and that is exactly when
+	/// `testTogglingACalendarOffEmptiesTheList` looks.
 	func pickerIsPresented() -> Bool {
-		axisRow().exists
+		menuIsPresented() || axisRow().exists
 	}
 
 	/// Close the menu by tapping well away from it -- the toolbar button is at
@@ -148,8 +151,11 @@ struct CalendarScreen: Screen {
 	func dismissMenu() -> Self {
 		if pickerIsPresented() {
 			app.coordinate(withNormalizedOffset: CGVector(dx: 0.1, dy: 0.2)).tap()
-			XCTAssertTrue(
-				axisRow().waitForNonExistence(timeout: 10),
+			_ = app.staticTexts[TestIdentifiers.Calendar.calendarsSection]
+				.waitForNonExistence(timeout: 10)
+			_ = axisRow().waitForNonExistence(timeout: 10)
+			XCTAssertFalse(
+				pickerIsPresented(),
 				"Tapping away from the picker should close it, submenu and all")
 		}
 		return self
