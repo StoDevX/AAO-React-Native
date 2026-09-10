@@ -1,7 +1,14 @@
 import * as React from 'react'
 import {StyleSheet, Image as RNImage} from 'react-native'
-import {Host, List, RNHostView, Section, Text} from '@expo/ui/swift-ui'
-import {font, foregroundStyle, listStyle, multilineTextAlignment} from '@expo/ui/swift-ui/modifiers'
+import {Host, HStack, List, RNHostView, Section, Spacer, Text} from '@expo/ui/swift-ui'
+import {
+	font,
+	foregroundStyle,
+	frame,
+	listRowBackground,
+	listStyle,
+	multilineTextAlignment,
+} from '@expo/ui/swift-ui/modifiers'
 import {Stack, useLocalSearchParams, useRouter} from 'expo-router'
 import {useQuery} from '@tanstack/react-query'
 import {openUrl} from '@frogpond/open-url'
@@ -93,19 +100,28 @@ export default function DirectoryDetailPage(): React.ReactNode {
 				<List modifiers={[listStyle('insetGrouped')]}>
 					<Section>
 						{/* The photo is a network image, so React Native draws it and
-						    SwiftUI hosts it. */}
-						<RNHostView matchContents={true}>
-							<RNImage
-								accessibilityIgnoresInvertColors={true}
-								resizeMode="cover"
-								source={{uri: photo}}
-								style={styles.image}
-							/>
-						</RNHostView>
+						    SwiftUI hosts it. Spacers either side rather than the RN
+						    `alignSelf`, which a hosted view sizing to its own contents
+						    has nothing to align within. */}
+						<HStack modifiers={[frame({maxWidth: Infinity})]}>
+							<Spacer />
+							<RNHostView matchContents={true}>
+								<RNImage
+									accessibilityIgnoresInvertColors={true}
+									resizeMode="cover"
+									source={{uri: photo}}
+									style={styles.image}
+								/>
+							</RNHostView>
+							<Spacer />
+						</HStack>
 						<Text modifiers={HEADER_MODIFIERS}>{displayTitle}</Text>
 					</Section>
 
-					{officeHours || email || profileUrl || pronouns ? (
+					{/* An empty array of pronouns is still an array, so asking whether
+					    the entry *has* pronouns is the question -- otherwise ABOUT
+					    drew its header over nothing. */}
+					{pronouns?.length || email || officeHours || profileUrl ? (
 						<Section title="ABOUT">
 							{pronouns?.length ? <DetailRow label="Pronouns" value={pronouns.join(', ')} /> : null}
 
@@ -176,10 +192,14 @@ const HEADER_MODIFIERS = [
 	multilineTextAlignment('center'),
 ]
 
+/// No card behind the credit: it names where the data came from, and is not a
+/// row of it. Matches the org detail.
 const CREDIT_MODIFIERS = [
 	font({textStyle: 'caption2'}),
 	foregroundStyle(c.secondaryLabel),
 	multilineTextAlignment('center'),
+	frame({maxWidth: Infinity}),
+	listRowBackground('clear'),
 ]
 
 const styles = StyleSheet.create({

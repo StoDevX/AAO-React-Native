@@ -106,13 +106,15 @@ class StageOneListsTests: UITestCase {
 			.navigate()
 			.search(for: TestIdentifiers.Directory.departmentalEntry)
 
-		let row = app.descendants(matching: .any)
+		// The tile gallery is the default view, so a result is a tile rather
+		// than a row -- both open the same entry detail.
+		let result = app.descendants(matching: .any)
 			.matching(
 				NSPredicate(
-					format: "identifier BEGINSWITH %@", TestIdentifiers.Directory.rowPrefix))
+					format: "identifier BEGINSWITH %@", TestIdentifiers.Directory.tilePrefix))
 			.firstMatch
-		XCTAssertTrue(row.waitForExistence(timeout: 30), "A directory result should be listed")
-		row.tap()
+		XCTAssertTrue(result.waitForExistence(timeout: 30), "A directory result should be shown")
+		result.tap()
 
 		// Wait for something only the pushed screen has: a capture taken
 		// straight after the tap lands mid-animation, with both screens in it.
@@ -167,6 +169,30 @@ class StageOneListsTests: UITestCase {
 		XCTAssertTrue(jobInfo.waitForExistence(timeout: 30), "The release screen should be shown")
 
 		screen.capture("Print release")
+	}
+
+	/// The release screen with its actions available, which is a different
+	/// state: a job already sent has nothing left to print or cancel, so those
+	/// rows are drawn only when one is pending and a printer has been chosen.
+	func testPrintReleaseActions() throws {
+		let screen = StoPrintScreen(app: app).navigate()
+
+		let job = app.buttons
+			.matching(NSPredicate(format: "label BEGINSWITH %@", "IMG_2259-COLLAGE.jpg"))
+			.firstMatch
+		XCTAssertTrue(job.waitForExistence(timeout: 30), "A pending job should be listed")
+		job.tap()
+
+		let printer = app.buttons
+			.matching(NSPredicate(format: "label BEGINSWITH %@", "mfc-"))
+			.firstMatch
+		XCTAssertTrue(printer.waitForExistence(timeout: 30), "A printer should be listed")
+		printer.tap()
+
+		let print = app.buttons["Print"].firstMatch
+		XCTAssertTrue(print.waitForExistence(timeout: 30), "Print should be offered")
+
+		screen.capture("Print release - actions")
 	}
 
 	func testMoreList() throws {
