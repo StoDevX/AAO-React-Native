@@ -77,6 +77,14 @@ minimumReleaseAgeExclude: []
 
 catalog:
   js-yaml: '5.4.1'
+  # Every module declares these two as caret peers, and autoInstallPeers turns
+  # each declaration into a real install. A range that still matches the
+  # version being left behind keeps its old resolution when the root pin moves,
+  # so the tree ends up with two runtimes -- upward unless every module range
+  # moves too, and downward always. Naming the version once removes the
+  # question.
+  react: '19.2.3'
+  react-native: '0.86.3'
 
 # dependency version overrides (used to live in package.json)
 overrides:
@@ -145,4 +153,4 @@ saveExact: true
 savePrefix: ''
 patchedDependencies:
   react-native-change-icon@5.0.0: patches/react-native-change-icon@5.0.0.patch
-  react-native@0.86.2: patches/react-native@0.86.2.patch
+  react-native@0.86.3: patches/react-native@0.86.3.patch

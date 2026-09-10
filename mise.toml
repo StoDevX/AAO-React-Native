@@ -163,12 +163,30 @@ depends = ["bundle-data"]
 run = "tsc --noEmit"
 
 [tasks.test]
-description = "Run Jest tests"
+description = "Run every test"
+depends = ["test:jest", "test:scripts"]
+
+[tasks."test:jest"]
+description = "Run the Jest tests"
 # Same reason as tsc above: source/features/building-hours/query.ts imports
 # docs/building-hours.json, which bundle-data generates, so the suite cannot
-# run against a clean checkout without it.
+# run against a clean checkout without it. node:test needs none of it, so the
+# dependency sits here rather than on the umbrella.
 depends = ["bundle-data"]
 run = "jest"
+
+# scripts/ is plain Node with no React Native in it, so its tests run on
+# node:test: native ESM, no transform step, and no restriction on import.meta
+# -- a literal import.meta breaks Jest's CommonJS transform of an .mjs file,
+# which is why scripts/report-flaky-uitests.mjs checks its entry point by argv
+# instead. Jest's testMatch covers __tests__/ and .js/.ts/.tsx only, so a
+# scripts/*.test.mjs cannot end up running under both.
+#
+# node --test wants a quoted glob here; a bare directory argument makes it try
+# to load the directory as a module.
+[tasks."test:scripts"]
+description = "Run the node:test tests under scripts/"
+run = 'node --test "scripts/*.test.mjs"'
 
 # --- Data ---
 
@@ -217,6 +235,40 @@ run = "node scripts/validate-workspace-deps.mjs"
 description = "Check that watched packages resolve to one version in the lockfile"
 run = "node scripts/validate-single-copy.mjs"
 
+# Renovate has no Expo datasource, so it only ever offers the newest release
+# and will walk a package past the range this SDK was tested against. The
+# ceilings it needs come from the installed SDK's own list, which changes only
+# when package.json does -- so they are generated and committed here, the same
+# way bundle-data commits bundled.json, rather than by a job on a timer.
+[tasks."bundle-renovate-expo"]
+description = "Write Renovate a version ceiling per package the Expo SDK pins"
+wait_for = ["pnpm:install:*"]
+# oxfmt has opinions about JSON that JSON.stringify does not share -- it packs
+# a short array onto one line. Formatting here means the committed file is
+# byte-for-byte what CI regenerates, so `git diff --exit-code` means something.
+run = ["node scripts/bundle-renovate-expo.mjs", "oxfmt --write renovate.json"]
+
+# react and react-native are named once, in the catalog, because every module
+# declares them as peers and autoInstallPeers turns each declaration into a
+# real install -- so one manifest naming its own version is enough to leave two
+# runtimes in the tree. This reads no network, unlike validate-expo-versions,
+# so it runs locally as well as in CI.
+[tasks."validate-catalog-refs"]
+description = "Check that nothing pins a version the catalog owns"
+run = "node scripts/validate-catalog-refs.mjs"
+
+# Expo builds and tests each SDK against one version of every package it knows
+# about. Drifting off that list breaks nothing here -- the bundle builds, the
+# tests pass -- and turns up as a native crash on a device.
+#
+# The list comes from the expo package we have installed, not from Expo's
+# versions API. An API-backed check turns red when Expo publishes, which means
+# master breaking with no commit behind it and a demand to move onto versions
+# the SDK we run has never been tested against.
+[tasks."validate-expo-versions"]
+description = "Check that packages match the versions Expo recommends"
+run = "node scripts/validate-expo-versions.mjs"
+
 [tasks."validate-lockfile"]
 description = "Check that pnpm-lock.yaml matches the package.json files"
 run = "pnpm install --frozen-lockfile --lockfile-only --trust-lockfile"
@@ -263,7 +315,9 @@ depends = [
 	"lint",
 	"tsc",
 	"test",
+	"validate-catalog-refs",
 	"validate-deps",
+	"validate-expo-versions",
 	"validate-lockfile",
 	"validate-mise-lock",
 	"validate-single-copy",

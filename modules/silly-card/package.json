@@ -13,7 +13,7 @@
     "react-native-typography": "1.4.1"
   },
   "peerDependencies": {
-    "react": "^19.1.0",
-    "react-native": "^0.86.2"
+    "react": "catalog:",
+    "react-native": "catalog:"
   }
 }

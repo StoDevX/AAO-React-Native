@@ -14,7 +14,7 @@
     "react-native-enriched-markdown": "1.0.2"
   },
   "peerDependencies": {
-    "react": "^19.1.0",
-    "react-native": "^0.86.2"
+    "react": "catalog:",
+    "react-native": "catalog:"
   }
 }
