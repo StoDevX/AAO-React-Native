@@ -1,5 +1,10 @@
 import * as React from 'react'
-import {Image as RNImage, StyleSheet, TextInput as RNTextInput} from 'react-native'
+import {
+	Image as RNImage,
+	StyleSheet,
+	TextInput as RNTextInput,
+	useWindowDimensions,
+} from 'react-native'
 import type {ColorValue} from 'react-native'
 import type {SFSymbol} from 'sf-symbols-typescript'
 import {
@@ -282,7 +287,22 @@ const DETECTED_TYPES: React.ComponentProps<typeof RNTextInput>['dataDetectorType
 	'address',
 ]
 
+/**
+ * What an inset-grouped row leaves for its content: the list's own margin
+ * either side of the card, and the card's padding either side of the row.
+ *
+ * Stated rather than measured because a hosted view reports its own intrinsic
+ * size, and a paragraph's intrinsic width is however long its longest line
+ * would be unwrapped -- far wider than the row, so it drew clipped at both
+ * edges until given a width to wrap to.
+ */
+const LIST_MARGIN = 20
+const ROW_PADDING = 16
+const ROW_CONTENT_INSET = (LIST_MARGIN + ROW_PADDING) * 2
+
 export function SelectableText({text}: {text: string}): React.ReactNode {
+	let {width: screenWidth} = useWindowDimensions()
+
 	return (
 		<RNHostView matchContents={true}>
 			<RNTextInput
@@ -290,7 +310,7 @@ export function SelectableText({text}: {text: string}): React.ReactNode {
 				editable={false}
 				multiline={true}
 				scrollEnabled={false}
-				style={styles.selectableText}
+				style={[styles.selectableText, {width: screenWidth - ROW_CONTENT_INSET}]}
 				testID={SELECTABLE_TEXT_ID}
 				value={text}
 			/>
