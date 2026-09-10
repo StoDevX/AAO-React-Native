@@ -1,7 +1,8 @@
 import * as React from 'react'
 import {Stack} from 'expo-router'
 import {Host, Image, Menu, Toggle} from '@expo/ui/swift-ui'
-import {accessibilityLabel} from '@expo/ui/swift-ui/modifiers'
+import {accessibilityLabel, foregroundStyle} from '@expo/ui/swift-ui/modifiers'
+import * as c from '@frogpond/colors'
 
 import type {CalendarMode} from '../../source/features/calendar/store'
 
@@ -26,13 +27,14 @@ type Props = {
 // Mirrored by `TestIdentifiers.Calendar.modePicker` in the XCUITest target: it
 // is the only handle those tests have on this menu.
 const LABEL = accessibilityLabel('Calendar view')
+const MENU_MODIFIERS = [LABEL, foregroundStyle(c.label)]
 
 export function CalendarModePicker({mode, onSelectMode}: Props): React.ReactNode {
 	return (
 		<Stack.Toolbar placement="right">
 			<Stack.Toolbar.View>
 				<Host matchContents={true}>
-					<Menu label={<Image systemName="ellipsis.circle" />} modifiers={[LABEL]}>
+					<Menu label={<Image systemName="ellipsis.circle" />} modifiers={MENU_MODIFIERS}>
 						<Toggle isOn={mode === 'day'} label="Day" onIsOnChange={() => onSelectMode('day')} />
 						{/*
 						<Toggle
