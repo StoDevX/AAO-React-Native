@@ -1,10 +1,16 @@
 import * as React from 'react'
 import {StyleSheet} from 'react-native'
 import {Host, List, Section, Text} from '@expo/ui/swift-ui'
-import {font, foregroundStyle, listStyle, multilineTextAlignment} from '@expo/ui/swift-ui/modifiers'
+import {
+	font,
+	foregroundStyle,
+	frame,
+	listRowBackground,
+	listStyle,
+	multilineTextAlignment,
+} from '@expo/ui/swift-ui/modifiers'
 import {Stack, useLocalSearchParams} from 'expo-router'
 import {useQuery} from '@tanstack/react-query'
-import moment from 'moment'
 import {DisclosureRow, SelectableText} from '../../../source/components/rows'
 import * as c from '@frogpond/colors'
 import {openUrl} from '@frogpond/open-url'
@@ -14,10 +20,14 @@ import {decode} from '@frogpond/html-lib'
 import {orgByNameOptions} from '../../../source/features/student-orgs/query'
 import {LoadingView, NoticeView} from '@frogpond/notice'
 
+/// No card behind the credit: it is a footnote about where the data came
+/// from, not a row of it.
 const CREDIT_MODIFIERS = [
 	font({textStyle: 'caption2'}),
 	foregroundStyle(c.secondaryLabel),
 	multilineTextAlignment('center'),
+	frame({maxWidth: Infinity}),
+	listRowBackground('clear'),
 ]
 
 const styles = StyleSheet.create({
@@ -66,34 +76,13 @@ export default function StudentOrgsDetailPage(): React.ReactNode {
 		)
 	}
 
-	let {
-		name: orgName,
-		category,
-		meetings,
-		website,
-		contacts,
-		advisors,
-		description,
-		lastUpdated: orgLastUpdated,
-	} = org
+	let {name: orgName, category, meetings, website, contacts, advisors, description} = org
 
 	return (
 		<>
 			{screenTitle}
 			<Host style={styles.host}>
 				<List modifiers={[listStyle('insetGrouped')]}>
-					<Section>
-						<Text
-							modifiers={[
-								font({textStyle: 'largeTitle', weight: 'light'}),
-								foregroundStyle(c.label),
-								multilineTextAlignment('center'),
-							]}
-						>
-							{orgName}
-						</Text>
-					</Section>
-
 					{category ? (
 						<Section title="CATEGORY">
 							<Text>{category}</Text>
@@ -144,10 +133,7 @@ export default function StudentOrgsDetailPage(): React.ReactNode {
 					) : null}
 
 					<Section>
-						<Text modifiers={CREDIT_MODIFIERS}>
-							Last updated: {moment(orgLastUpdated, 'MMMM, DD YYYY HH:mm:ss').calendar()}
-						</Text>
-						<Text modifiers={CREDIT_MODIFIERS}>Powered by the St. Olaf Student Orgs Database</Text>
+						<Text modifiers={CREDIT_MODIFIERS}>Powered by Presence.io</Text>
 					</Section>
 				</List>
 			</Host>

@@ -206,7 +206,7 @@ const styles = StyleSheet.create({
 		resizeMode: 'cover',
 	},
 	selectableText: {
-		color: c.secondaryLabel,
+		color: c.label,
 		paddingVertical: 4,
 	},
 })
