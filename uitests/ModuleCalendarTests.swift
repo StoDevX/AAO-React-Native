@@ -12,7 +12,7 @@ class ModuleCalendarTests: UITestCase {
 			.navigate()
 			.openPicker()
 			.checkCategoriesListed()
-			.capture("33-category-submenu")
+			.capture("35-category-submenu")
 	}
 
 	/// Selecting a category filters the list; selecting it again clears the filter.
@@ -301,6 +301,7 @@ class ModuleCalendarTests: UITestCase {
 
 		screen
 			.openPicker()
+			.capture("36-reset-filters-offered")
 			.tapResetFilters()
 			.capture("32-filter-cleared")
 
