@@ -40,9 +40,10 @@ function RecentItemsList(props: Props): React.ReactNode {
 				/>
 			) : (
 				items.map((item, i) => (
-					<>
+					// The key belongs on what `map` returns -- on the Pressable
+					// inside, React never saw it, and every recent search warned.
+					<React.Fragment key={item}>
 						<Pressable
-							key={item}
 							// adding long press allows for copy text when selectable is true
 							onLongPress={noop}
 							onPress={() => props.onItemPress(item)}
@@ -55,7 +56,7 @@ function RecentItemsList(props: Props): React.ReactNode {
 						</Pressable>
 
 						{i < items.length - 1 ? <ListSeparator spacing={{left: 17, right: 17}} /> : null}
-					</>
+					</React.Fragment>
 				))
 			)}
 		</>

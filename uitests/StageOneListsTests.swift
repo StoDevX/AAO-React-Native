@@ -114,7 +114,10 @@ class StageOneListsTests: UITestCase {
 		field.tap()
 		field.typeText(TestIdentifiers.CourseCatalog.aCourse)
 
-		let result = app.buttons
+		// Any descendant, not a button: the results list is the one screen still
+		// on SectionList, so its rows are React Native views rather than
+		// SwiftUI buttons.
+		let result = app.descendants(matching: .any)
 			.matching(NSPredicate(format: "label CONTAINS %@", TestIdentifiers.CourseCatalog.aCourse))
 			.firstMatch
 		XCTAssertTrue(result.waitForExistence(timeout: 30), "The fixture course should be found")
