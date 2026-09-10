@@ -142,8 +142,8 @@ describe('DayPickerStrip', () => {
 		await render(
 			<DayPickerStrip
 				days={days}
+				daysWithEvents={new Set()}
 				now={NOW}
-				onScrollSettle={jest.fn()}
 				onSelectDay={jest.fn()}
 				selectedDay={days[0]}
 			/>,
@@ -160,8 +160,8 @@ describe('DayPickerStrip', () => {
 		await render(
 			<DayPickerStrip
 				days={days}
+				daysWithEvents={new Set()}
 				now={NOW}
-				onScrollSettle={jest.fn()}
 				onSelectDay={jest.fn()}
 				selectedDay={days[0]}
 			/>,
@@ -178,8 +178,8 @@ describe('DayPickerStrip', () => {
 		await render(
 			<DayPickerStrip
 				days={days}
+				daysWithEvents={new Set()}
 				now={NOW}
-				onScrollSettle={jest.fn()}
 				onSelectDay={onSelectDay}
 				selectedDay={days[0]}
 			/>,
@@ -196,13 +196,30 @@ describe('DayPickerStrip', () => {
 		let result = await render(
 			<DayPickerStrip
 				days={[]}
+				daysWithEvents={new Set()}
 				now={NOW}
-				onScrollSettle={jest.fn()}
 				onSelectDay={jest.fn()}
 				selectedDay={null}
 			/>,
 		)
 
 		expect(result.toJSON()).toBeNull()
+	})
+
+	test('marks a day that has events', async () => {
+		let days = [moment('2026-08-23T12:00:00Z'), moment('2026-08-24T12:00:00Z')]
+
+		await render(
+			<DayPickerStrip
+				days={days}
+				daysWithEvents={new Set(['2026-08-24'])}
+				now={NOW}
+				onSelectDay={jest.fn()}
+				selectedDay={days[0]}
+			/>,
+		)
+
+		expect(screen.getByTestId('day-dot-2026-08-24')).toBeTruthy()
+		expect(screen.queryByTestId('day-dot-2026-08-23')).toBeNull()
 	})
 })

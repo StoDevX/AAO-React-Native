@@ -7,8 +7,6 @@ import {
 	Text,
 	View,
 	type LayoutChangeEvent,
-	type NativeScrollEvent,
-	type NativeSyntheticEvent,
 } from 'react-native'
 import type {Moment} from 'moment-timezone'
 import * as c from '@frogpond/colors'
@@ -24,6 +22,14 @@ import type {SourcedEvent} from './types'
  * `TestIdentifiers.Calendar.dayCellPrefix`.
  */
 export const DAY_CELL_PREFIX = 'day-cell-'
+
+/**
+ * A day's dot is identified by its own ISO date, the same way its cell is.
+ * Mirrored by `TestIdentifiers.Calendar.dayDotPrefix`.
+ */
+export const DAY_DOT_PREFIX = 'day-dot-'
+
+const DOT_SIZE = 5
 
 const CELL_WIDTH = 44
 const CELL_MARGIN = 4
@@ -99,12 +105,7 @@ type Props = {
 	days: Moment[]
 	selectedDay: Moment | null
 	onSelectDay: (day: Moment) => void
-	/**
-	 * The day the strip came to rest on after a drag. Distinct from
-	 * `onSelectDay` because the strip is already in position by the time this
-	 * fires -- scrolling it again would fight the gesture that just ended.
-	 */
-	onScrollSettle: (day: Moment) => void
+	daysWithEvents: ReadonlySet<string>
 	now: Moment
 }
 
@@ -116,11 +117,13 @@ function DayCell({
 	day,
 	isToday,
 	isSelected,
+	hasEvents,
 	onPress,
 }: {
 	day: Moment
 	isToday: boolean
 	isSelected: boolean
+	hasEvents: boolean
 	onPress: () => void
 }): React.ReactNode {
 	let weekdayLetter = day.format('dd').charAt(0).toUpperCase()
@@ -133,7 +136,9 @@ function DayCell({
 
 	return (
 		<Pressable
-			accessibilityLabel={day.format('dddd, MMMM D')}
+			accessibilityLabel={
+				hasEvents ? `${day.format('dddd, MMMM D')}, has events` : day.format('dddd, MMMM D')
+			}
 			accessibilityRole="button"
 			// The selection is drawn as a filled circle, which carries no meaning
 			// to VoiceOver. This is what actually announces the active day.
@@ -151,21 +156,24 @@ function DayCell({
 				) : null}
 				<Text style={[styles.date, {color: textColor}]}>{dateNumber}</Text>
 			</View>
+			{hasEvents ? (
+				<View
+					style={[styles.dot, {backgroundColor: isSelected || isToday ? textColor : c.label}]}
+					testID={`${DAY_DOT_PREFIX}${day.format('YYYY-MM-DD')}`}
+				/>
+			) : (
+				<View style={styles.dot} />
+			)}
 		</Pressable>
 	)
 }
 
 export let DayPickerStrip = React.forwardRef<DayPickerStripHandle, Props>(function DayPickerStrip(
-	{days, selectedDay, onSelectDay, onScrollSettle, now},
+	{days, selectedDay, onSelectDay, daysWithEvents, now},
 	ref,
 ) {
 	let scrollRef = React.useRef<ScrollView>(null)
 	let [containerWidth, setContainerWidth] = React.useState(0)
-
-	// Only a drag may move the selection. A programmatic scroll raises the same
-	// momentum events, and acting on those would let the list and the strip
-	// drive each other in a loop.
-	let isDragging = React.useRef(false)
 
 	let handleLayout = React.useCallback((event: LayoutChangeEvent) => {
 		setContainerWidth(event.nativeEvent.layout.width)
@@ -238,52 +246,6 @@ export let DayPickerStrip = React.forwardRef<DayPickerStripHandle, Props>(functi
 
 	React.useImperativeHandle(ref, () => ({scrollToDay}), [scrollToDay])
 
-	// The strip rests on a snap offset, so the nearest week start is the one
-	// filling the viewport.
-	let settleAt = React.useCallback(
-		(offsetX: number) => {
-			if (!isDragging.current || weekStarts.length === 0) {
-				return
-			}
-			isDragging.current = false
-
-			let nearest = weekStarts.reduce((best, candidate) => {
-				return Math.abs(candidate.offset - offsetX) < Math.abs(best.offset - offsetX)
-					? candidate
-					: best
-			})
-
-			if (!selectedDay || !nearest.day.isSame(selectedDay, 'day')) {
-				onScrollSettle(nearest.day)
-			}
-		},
-		[weekStarts, selectedDay, onScrollSettle],
-	)
-
-	let handleScrollBeginDrag = React.useCallback(() => {
-		isDragging.current = true
-	}, [])
-
-	// A lift with velocity is followed by momentum, and the offset here is still
-	// mid-flight -- settling on it would pick a week the strip is only passing
-	// through. That case is left to `onMomentumScrollEnd`.
-	let handleScrollEndDrag = React.useCallback(
-		(event: NativeSyntheticEvent<NativeScrollEvent>) => {
-			if (event.nativeEvent.velocity?.x) {
-				return
-			}
-			settleAt(event.nativeEvent.contentOffset.x)
-		},
-		[settleAt],
-	)
-
-	let handleMomentumScrollEnd = React.useCallback(
-		(event: NativeSyntheticEvent<NativeScrollEvent>) => {
-			settleAt(event.nativeEvent.contentOffset.x)
-		},
-		[settleAt],
-	)
-
 	if (days.length === 0) {
 		return null
 	}
@@ -297,9 +259,6 @@ export let DayPickerStrip = React.forwardRef<DayPickerStripHandle, Props>(functi
 				]}
 				decelerationRate="fast"
 				horizontal={true}
-				onMomentumScrollEnd={handleMomentumScrollEnd}
-				onScrollBeginDrag={handleScrollBeginDrag}
-				onScrollEndDrag={handleScrollEndDrag}
 				ref={scrollRef}
 				showsHorizontalScrollIndicator={false}
 				snapToOffsets={weekStarts.map((week) => week.offset)}
@@ -311,6 +270,7 @@ export let DayPickerStrip = React.forwardRef<DayPickerStripHandle, Props>(functi
 					return (
 						<DayCell
 							day={day}
+							hasEvents={daysWithEvents.has(day.format('YYYY-MM-DD'))}
 							isSelected={isSelected}
 							isToday={isToday}
 							key={day.format('YYYY-MM-DD')}
@@ -357,5 +317,11 @@ const styles = StyleSheet.create({
 	date: {
 		fontSize: 17,
 		fontWeight: '400',
+	},
+	dot: {
+		width: DOT_SIZE,
+		height: DOT_SIZE,
+		borderRadius: DOT_SIZE / 2,
+		marginTop: 2,
 	},
 })
