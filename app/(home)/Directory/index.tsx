@@ -114,14 +114,21 @@ function DirectoryView(): React.ReactNode {
 				{/* Always mounted, hidden until there are results to re-lay-out:
 				    `Stack.Toolbar` only reads direct Button/Spacer children, so a
 				    conditionally-rendered fragment of them is dropped entirely. */}
+				{/* Icon and Label as children rather than an `icon` prop and an
+				    `accessibilityLabel`: a bottom-toolbar item drops the latter and
+				    lets iOS name it after its symbol, so the button announced
+				    itself as "List" rather than saying what tapping it does. */}
 				<Stack.Toolbar.Button
-					accessibilityLabel={resultsView === 'tiles' ? 'Show as list' : 'Show as tiles'}
 					hidden={!hasResults}
-					icon={resultsView === 'tiles' ? 'list.bullet' : 'square.grid.2x2'}
 					onPress={() =>
 						dispatch(setDirectoryResultsView(resultsView === 'tiles' ? 'list' : 'tiles'))
 					}
-				/>
+				>
+					<Stack.Toolbar.Icon sf={resultsView === 'tiles' ? 'list.bullet' : 'square.grid.2x2'} />
+					<Stack.Toolbar.Label>
+						{resultsView === 'tiles' ? 'Show as list' : 'Show as tiles'}
+					</Stack.Toolbar.Label>
+				</Stack.Toolbar.Button>
 			</Stack.Toolbar>
 
 			<SearchBar onChangeText={setTypedQuery} value={typedQuery} />

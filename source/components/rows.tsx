@@ -220,6 +220,9 @@ export function DisclosureRow(props: DisclosureRowProps): React.ReactNode {
 const styles = StyleSheet.create({
 	thumbnail: {
 		resizeMode: 'cover',
+		// Enough to take the hard corners off a cropped photo without reading
+		// as a deliberately rounded avatar.
+		borderRadius: 4,
 	},
 	selectableText: {
 		color: c.label,
