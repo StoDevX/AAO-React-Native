@@ -82,8 +82,41 @@ const DETAIL_LINE_DATE_OPTIONS: Intl.DateTimeFormatOptions = {
 	year: 'numeric',
 }
 
+/**
+ * `Intl.DateTimeFormat` is far more expensive to build than to use, and these
+ * are called once per row and once per hour label -- a day of events builds
+ * dozens before anything reaches the screen. The set of shapes asked for is
+ * tiny and fixed, so they are built once and kept.
+ */
+const FORMATTERS = new Map<string, Intl.DateTimeFormat>()
+
+function formatterFor(
+	shape: string,
+	locale: string | undefined,
+	options: Intl.DateTimeFormatOptions,
+): Intl.DateTimeFormat {
+	// Keyed on a name the call site gives rather than on the options object.
+	// Stringifying the options would allocate on every lookup, which is the
+	// cost this cache exists to avoid.
+	let key = `${shape}|${locale ?? ''}`
+	let cached = FORMATTERS.get(key)
+
+	if (!cached) {
+		cached = new Intl.DateTimeFormat(locale, options)
+		FORMATTERS.set(key, cached)
+	}
+
+	return cached
+}
+
+/**
+ * Whether the locale writes a meridiem is a property of the locale, so it is
+ * asked once per locale rather than once per time rendered.
+ */
+const MERIDIEM = new Map<string, boolean>()
+
 function formatDetailDate(value: Moment, locale: string | undefined): string {
-	return new Intl.DateTimeFormat(locale, DETAIL_LINE_DATE_OPTIONS).format(value.toDate())
+	return formatterFor('detail-date', locale, DETAIL_LINE_DATE_OPTIONS).format(value.toDate())
 }
 
 /**
@@ -91,9 +124,17 @@ function formatDetailDate(value: Moment, locale: string | undefined): string {
  * hour-only time readable: `6 PM` stands on its own, `18` does not.
  */
 function hasMeridiem(locale: string | undefined): boolean {
-	return new Intl.DateTimeFormat(locale, {hour: 'numeric'})
-		.formatToParts(new Date(0))
-		.some((part) => part.type === 'dayPeriod')
+	let key = locale ?? ''
+	let cached = MERIDIEM.get(key)
+
+	if (cached === undefined) {
+		cached = formatterFor('hour-probe', locale, {hour: 'numeric'})
+			.formatToParts(new Date(0))
+			.some((part) => part.type === 'dayPeriod')
+		MERIDIEM.set(key, cached)
+	}
+
+	return cached
 }
 
 /**
@@ -109,10 +150,10 @@ function formatDetailTime(value: Moment, locale: string | undefined): string {
 	// A 24-hour clock pads the hour -- `06:00`, not `6:00` -- while a 12-hour
 	// one does not: `06 AM` is wrong wherever `6 AM` is right.
 	let hour = meridiem ? ('numeric' as const) : ('2-digit' as const)
-	let options: Intl.DateTimeFormatOptions =
-		value.minutes() === 0 && meridiem ? {hour} : {hour, minute: '2-digit'}
+	let bare = value.minutes() === 0 && meridiem
+	let options: Intl.DateTimeFormatOptions = bare ? {hour} : {hour, minute: '2-digit'}
 
-	return new Intl.DateTimeFormat(locale, options).format(value.toDate())
+	return formatterFor(`detail-time-${hour}-${bare}`, locale, options).format(value.toDate())
 }
 
 /**
@@ -125,7 +166,7 @@ export function formatHourLabel(value: Moment, locale: string | undefined): stri
 	let hour = meridiem ? ('numeric' as const) : ('2-digit' as const)
 	let options: Intl.DateTimeFormatOptions = meridiem ? {hour} : {hour, minute: '2-digit'}
 
-	return new Intl.DateTimeFormat(locale, options).format(value.toDate())
+	return formatterFor(`hour-label-${hour}`, locale, options).format(value.toDate())
 }
 
 const LIST_SECTION_DATE_OPTIONS: Intl.DateTimeFormatOptions = {month: 'short', day: 'numeric'}
@@ -135,7 +176,7 @@ const LIST_SECTION_DATE_OPTIONS: Intl.DateTimeFormatOptions = {month: 'short', d
  * screen's `August 20, 2026`, since this sits next to a weekday on one line.
  */
 function formatListDate(value: Moment, locale: string | undefined): string {
-	return new Intl.DateTimeFormat(locale, LIST_SECTION_DATE_OPTIONS).format(value.toDate())
+	return formatterFor('list-date', locale, LIST_SECTION_DATE_OPTIONS).format(value.toDate())
 }
 
 /**
@@ -144,8 +185,10 @@ function formatListDate(value: Moment, locale: string | undefined): string {
  * order is locale-specific (`Aug 16` in en-US, `16 Aug` in en-GB) while the
  * weekday always leads.
  */
+const WEEKDAY_OPTIONS: Intl.DateTimeFormatOptions = {weekday: 'long'}
+
 export function formatSectionHeader(value: Moment, locale?: string): string {
-	let weekday = new Intl.DateTimeFormat(locale, {weekday: 'long'}).format(value.toDate())
+	let weekday = formatterFor('weekday', locale, WEEKDAY_OPTIONS).format(value.toDate())
 	return `${weekday} – ${formatListDate(value, locale)}`
 }
 

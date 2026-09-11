@@ -48,3 +48,20 @@ test('migrating a persisted category carries the selection over', () => {
 test('migrating a persisted empty selection stays empty', () => {
 	expect(migrate({selectedCategory: null}, 2)).toStrictEqual({filter: null})
 })
+
+describe('mode', () => {
+	test('defaults to day', () => {
+		expect(useCalendarFilterStore.getState().mode).toBe('day')
+	})
+
+	test('selectMode replaces the mode', () => {
+		useCalendarFilterStore.getState().selectMode('upcoming')
+		expect(useCalendarFilterStore.getState().mode).toBe('upcoming')
+	})
+
+	test('selecting a mode leaves the filter alone', () => {
+		useCalendarFilterStore.getState().selectFilter({axis: 'category', value: 'Music'})
+		useCalendarFilterStore.getState().selectMode('upcoming')
+		expect(useCalendarFilterStore.getState().filter).toEqual({axis: 'category', value: 'Music'})
+	})
+})

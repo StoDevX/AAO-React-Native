@@ -13,9 +13,17 @@ export type CalendarFilter = {
 	value: string
 }
 
+/**
+ * How the calendar draws itself. `day` shows one day at a time under the day
+ * picker; `upcoming` shows every event ahead in one scrolling list.
+ */
+export type CalendarMode = 'day' | 'upcoming'
+
 type CalendarFilterStore = {
 	filter: CalendarFilter | null
 	selectFilter: (filter: CalendarFilter | null) => void
+	mode: CalendarMode
+	selectMode: (mode: CalendarMode) => void
 }
 
 type PersistedV2 = {selectedCategory?: string | null}
@@ -36,6 +44,8 @@ export const useCalendarFilterStore = create<CalendarFilterStore>()(
 		(set) => ({
 			filter: null,
 			selectFilter: (filter) => set({filter}),
+			mode: 'day',
+			selectMode: (mode) => set({mode}),
 		}),
 		{
 			name: 'calendar-filter-preferences',

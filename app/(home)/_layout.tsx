@@ -46,9 +46,26 @@ export default function HomeLayout(): React.ReactNode {
 			<Stack.Screen name="SIS" options={{title: 'SIS'}} />
 			<Stack.Screen
 				name="EventDetail"
-				options={{presentation: 'modal', title: '', headerTransparent: true}}
+				options={{
+					// A form sheet rather than a modal. As a modal, two quick presses
+					// of Close popped twice -- the dismissal and the press each taking
+					// a screen -- and landed on the home screen. A form sheet dismisses
+					// itself, so the grabber is the way out and there is no button to
+					// press twice.
+					presentation: 'formSheet',
+					title: '',
+					headerTransparent: true,
+					// The same stops as the campus and dictionary sheets, so every
+					// sheet in the app rests at one height.
+					sheetAllowedDetents: [SHEET_RESTING_FRACTION, 0.999],
+					sheetGrabberVisible: true,
+					// The calendar behind has nothing worth touching while an event is
+					// up, and an undimmed detent would let a second tap push a second
+					// sheet on top of the first.
+					sheetLargestUndimmedDetentIndex: 'none',
+				}}
 			/>
-			<Stack.Screen name="Calendar" options={{title: 'Calendar', headerLargeTitle: true}} />
+			<Stack.Screen name="Calendar" options={{title: 'Calendar', headerLargeTitleEnabled: true}} />
 		</Stack>
 	)
 }

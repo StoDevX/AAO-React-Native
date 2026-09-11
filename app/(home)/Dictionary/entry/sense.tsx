@@ -14,6 +14,7 @@ import {DEFINITION_LINES} from '../../../../source/features/dictionary/constants
 import type {DraftExample} from '../../../../source/features/dictionary/lib/draft'
 import {findSense} from '../../../../source/features/dictionary/lib/draft'
 import {useDictionaryDraftStore} from '../../../../source/features/dictionary/store'
+import {useDismissOnce} from '../../../../source/lib/use-dismiss-once'
 
 const styles = StyleSheet.create({
 	host: {flex: 1},
@@ -21,6 +22,7 @@ const styles = StyleSheet.create({
 
 export default function DictionarySensePage(): React.ReactNode {
 	let router = useRouter()
+	let dismiss = useDismissOnce()
 	let {senseId} = useLocalSearchParams<{senseId: string}>()
 	let store = useDictionaryDraftStore()
 
@@ -124,7 +126,7 @@ export default function DictionarySensePage(): React.ReactNode {
 							label="Delete Sense"
 							onPress={() => {
 								store.deleteSense(sense.id)
-								router.back()
+								dismiss()
 							}}
 							role="destructive"
 							systemImage="trash"

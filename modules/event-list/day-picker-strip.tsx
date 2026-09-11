@@ -7,8 +7,6 @@ import {
 	Text,
 	View,
 	type LayoutChangeEvent,
-	type NativeScrollEvent,
-	type NativeSyntheticEvent,
 } from 'react-native'
 import type {Moment} from 'moment-timezone'
 import * as c from '@frogpond/colors'
@@ -16,7 +14,7 @@ import * as c from '@frogpond/colors'
 const selectionCircleFill = DynamicColorIOS({light: '#000000', dark: '#FFFFFF'})
 const selectionTextColor = DynamicColorIOS({light: '#FFFFFF', dark: '#000000'})
 
-import type {SourcedEvent} from './types'
+import {DAYS_PER_WEEK} from './days'
 
 /**
  * Each day cell is identified by its own ISO date, so a UI test can reach a
@@ -25,66 +23,23 @@ import type {SourcedEvent} from './types'
  */
 export const DAY_CELL_PREFIX = 'day-cell-'
 
-const CELL_WIDTH = 44
+/**
+ * A day's dot is identified by its own ISO date, the same way its cell is.
+ */
+export const DAY_DOT_PREFIX = 'day-dot-'
+
+const DOT_SIZE = 5
+
 const CELL_MARGIN = 4
-const CELL_TOTAL_WIDTH = CELL_WIDTH + CELL_MARGIN * 2
 const PADDING_HORIZONTAL = 8
 const CIRCLE_SIZE = 32
-const DAYS_PER_WEEK = 7
 
 /**
- * Generates a continuous range of whole weeks, from Sunday of the current week
- * through the Saturday of the last event's week. Whole weeks keep every day
- * sitting under a Sunday the strip can snap to. Returns an empty array if
- * there are no future events.
+ * The smallest a cell is allowed to shrink to, so a narrow phone never drops
+ * below the 44pt minimum tap target.
  */
-export function deriveDays(events: readonly SourcedEvent[], now: Moment): Moment[] {
-	let today = now.clone().startOf('day')
-	let lastDay: Moment | null = null
-
-	for (let entry of events) {
-		if (entry.event.isOngoing) {
-			continue
-		}
-
-		let day = entry.event.startTime.clone().startOf('day')
-
-		if (day.isBefore(today, 'day')) {
-			continue
-		}
-
-		if (!lastDay || day.isAfter(lastDay, 'day')) {
-			lastDay = day
-		}
-	}
-
-	if (!lastDay) {
-		return []
-	}
-
-	let sunday = today.clone().startOf('week')
-
-	// Compared as a calendar date rather than as an instant. `now` and an
-	// event's `startTime` are both device-local, but nothing in this
-	// function's signature says so, and comparing two moments in different
-	// zones as instants runs the range a day long or a day short. Whole weeks
-	// is the contract the strip's snapping is built on.
-	let lastDate = lastDay.format('YYYY-MM-DD')
-
-	let days: Moment[] = []
-	let current = sunday.clone()
-	let weekEnd = ''
-
-	do {
-		for (let i = 0; i < DAYS_PER_WEEK; i++) {
-			days.push(current.clone())
-			weekEnd = current.format('YYYY-MM-DD')
-			current.add(1, 'day')
-		}
-	} while (weekEnd < lastDate)
-
-	return days
-}
+const MIN_CELL_WIDTH = 44
+const MIN_CELL_TOTAL_WIDTH = MIN_CELL_WIDTH + CELL_MARGIN * 2
 
 /**
  * Whether `day` opens its week, by the rule `deriveDays` and `scrollToDay`
@@ -99,12 +54,7 @@ type Props = {
 	days: Moment[]
 	selectedDay: Moment | null
 	onSelectDay: (day: Moment) => void
-	/**
-	 * The day the strip came to rest on after a drag. Distinct from
-	 * `onSelectDay` because the strip is already in position by the time this
-	 * fires -- scrolling it again would fight the gesture that just ended.
-	 */
-	onScrollSettle: (day: Moment) => void
+	daysWithEvents: ReadonlySet<string>
 	now: Moment
 }
 
@@ -112,35 +62,63 @@ export type DayPickerStripHandle = {
 	scrollToDay: (day: Moment) => void
 }
 
-function DayCell({
+// Memoized, and taking `day` plus a stable `onPress` rather than a
+// ready-made closure: with 100+ cells in the strip, an unmemoized cell (or a
+// fresh closure per cell per render) means every cell re-renders and crosses
+// the SwiftUI bridge on every tap, just to move which cell has a circle
+// behind it.
+let DayCell = React.memo(function DayCell({
 	day,
 	isToday,
 	isSelected,
+	hasEvents,
+	isPast,
 	onPress,
+	width,
 }: {
 	day: Moment
 	isToday: boolean
 	isSelected: boolean
-	onPress: () => void
+	hasEvents: boolean
+	isPast: boolean
+	onPress: (day: Moment) => void
+	width: number
 }): React.ReactNode {
 	let weekdayLetter = day.format('dd').charAt(0).toUpperCase()
 	let dateNumber = day.format('D')
+	let handlePress = React.useCallback(() => onPress(day), [onPress, day])
 
-	let showTodayCircle = isToday
+	// Today keeps its own circle only while it is also the selection -- worn
+	// at all times, it competed with the selection circle and left two days
+	// looking chosen at once. Off today, unselected, red carries the "today"
+	// meaning on its own, the way Calendar.app does it.
+	let showTodayCircle = isToday && isSelected
 	let showSelectionCircle = isSelected && !isToday
-	let textColor = isToday ? '#FFFFFF' : showSelectionCircle ? selectionTextColor : c.label
+	let textColor = showTodayCircle
+		? '#FFFFFF'
+		: isToday
+			? c.systemRed
+			: showSelectionCircle
+				? selectionTextColor
+				: c.label
 	let weekdayColor = isToday ? c.systemRed : c.secondaryLabel
+
+	// A day already gone cannot be chosen -- there is nothing behind today to
+	// show, since anything that has ended never reaches this screen. It stays
+	// drawn so the week it opens reads whole.
+	let dimmed = isPast ? {opacity: 0.3} : null
 
 	return (
 		<Pressable
-			accessibilityLabel={day.format('dddd, MMMM D')}
+			accessibilityLabel={
+				hasEvents ? `${day.format('dddd, MMMM D')}, has events` : day.format('dddd, MMMM D')
+			}
 			accessibilityRole="button"
-			// The selection is drawn as a filled circle, which carries no meaning
-			// to VoiceOver. This is what actually announces the active day.
-			accessibilityState={{selected: isSelected}}
+			accessibilityState={{disabled: isPast, selected: isSelected}}
+			disabled={isPast}
 			hitSlop={4}
-			onPress={onPress}
-			style={styles.cell}
+			onPress={handlePress}
+			style={[styles.cell, {width}, dimmed]}
 			testID={`${DAY_CELL_PREFIX}${day.format('YYYY-MM-DD')}`}
 		>
 			<Text style={[styles.weekday, {color: weekdayColor}]}>{weekdayLetter}</Text>
@@ -151,25 +129,39 @@ function DayCell({
 				) : null}
 				<Text style={[styles.date, {color: textColor}]}>{dateNumber}</Text>
 			</View>
+			{hasEvents ? (
+				<View
+					style={[styles.dot, {backgroundColor: isToday ? c.systemRed : c.label}]}
+					testID={`${DAY_DOT_PREFIX}${day.format('YYYY-MM-DD')}`}
+				/>
+			) : (
+				<View style={styles.dot} />
+			)}
 		</Pressable>
 	)
-}
+})
 
 export let DayPickerStrip = React.forwardRef<DayPickerStripHandle, Props>(function DayPickerStrip(
-	{days, selectedDay, onSelectDay, onScrollSettle, now},
+	{days, selectedDay, onSelectDay, daysWithEvents, now},
 	ref,
 ) {
 	let scrollRef = React.useRef<ScrollView>(null)
 	let [containerWidth, setContainerWidth] = React.useState(0)
 
-	// Only a drag may move the selection. A programmatic scroll raises the same
-	// momentum events, and acting on those would let the list and the strip
-	// drive each other in a loop.
-	let isDragging = React.useRef(false)
-
 	let handleLayout = React.useCallback((event: LayoutChangeEvent) => {
 		setContainerWidth(event.nativeEvent.layout.width)
 	}, [])
+
+	// A week has to fill the viewport exactly, or the next week's first cell
+	// sits in the leftover space and shows at the strip's trailing edge. A
+	// fixed cell width can't promise that on every phone, so the width is
+	// derived from what actually got measured -- floored at the 44pt minimum
+	// tap target for a phone too narrow to reach it otherwise.
+	let cellTotalWidth =
+		containerWidth > 0
+			? Math.max(MIN_CELL_TOTAL_WIDTH, (containerWidth - PADDING_HORIZONTAL * 2) / DAYS_PER_WEEK)
+			: MIN_CELL_TOTAL_WIDTH
+	let cellWidth = cellTotalWidth - CELL_MARGIN * 2
 
 	// Trailing room so the last week's Sunday can still pull to the leading
 	// edge -- scroll inset, not day cells, so there is no empty week to swipe
@@ -178,12 +170,12 @@ export let DayPickerStrip = React.forwardRef<DayPickerStripHandle, Props>(functi
 	// and the strip drags into blank space and rubber-bands back.
 	let trailingInset = Math.max(
 		0,
-		containerWidth - (DAYS_PER_WEEK * CELL_TOTAL_WIDTH + PADDING_HORIZONTAL * 2 - CELL_MARGIN),
+		containerWidth - (DAYS_PER_WEEK * cellTotalWidth + PADDING_HORIZONTAL * 2 - CELL_MARGIN),
 	)
 
 	let maxScroll = Math.max(
 		0,
-		PADDING_HORIZONTAL * 2 + trailingInset + days.length * CELL_TOTAL_WIDTH - containerWidth,
+		PADDING_HORIZONTAL * 2 + trailingInset + days.length * cellTotalWidth - containerWidth,
 	)
 
 	/**
@@ -192,8 +184,13 @@ export let DayPickerStrip = React.forwardRef<DayPickerStripHandle, Props>(functi
 	 * at all, which is why it is separate from `offsetForIndex`.
 	 */
 	let rawOffsetForIndex = React.useCallback(
-		(index: number) => PADDING_HORIZONTAL + index * CELL_TOTAL_WIDTH - CELL_MARGIN,
-		[],
+		// Whole cells from the start, so week zero is at zero -- which is where
+		// an untouched strip already rests. Counting the container's padding in
+		// here put it four points along instead, and the session's first scroll
+		// shifted the strip by that much before settling onto this grid and
+		// never moving again.
+		(index: number) => index * cellTotalWidth,
+		[cellTotalWidth],
 	)
 
 	let offsetForIndex = React.useCallback(
@@ -238,52 +235,6 @@ export let DayPickerStrip = React.forwardRef<DayPickerStripHandle, Props>(functi
 
 	React.useImperativeHandle(ref, () => ({scrollToDay}), [scrollToDay])
 
-	// The strip rests on a snap offset, so the nearest week start is the one
-	// filling the viewport.
-	let settleAt = React.useCallback(
-		(offsetX: number) => {
-			if (!isDragging.current || weekStarts.length === 0) {
-				return
-			}
-			isDragging.current = false
-
-			let nearest = weekStarts.reduce((best, candidate) => {
-				return Math.abs(candidate.offset - offsetX) < Math.abs(best.offset - offsetX)
-					? candidate
-					: best
-			})
-
-			if (!selectedDay || !nearest.day.isSame(selectedDay, 'day')) {
-				onScrollSettle(nearest.day)
-			}
-		},
-		[weekStarts, selectedDay, onScrollSettle],
-	)
-
-	let handleScrollBeginDrag = React.useCallback(() => {
-		isDragging.current = true
-	}, [])
-
-	// A lift with velocity is followed by momentum, and the offset here is still
-	// mid-flight -- settling on it would pick a week the strip is only passing
-	// through. That case is left to `onMomentumScrollEnd`.
-	let handleScrollEndDrag = React.useCallback(
-		(event: NativeSyntheticEvent<NativeScrollEvent>) => {
-			if (event.nativeEvent.velocity?.x) {
-				return
-			}
-			settleAt(event.nativeEvent.contentOffset.x)
-		},
-		[settleAt],
-	)
-
-	let handleMomentumScrollEnd = React.useCallback(
-		(event: NativeSyntheticEvent<NativeScrollEvent>) => {
-			settleAt(event.nativeEvent.contentOffset.x)
-		},
-		[settleAt],
-	)
-
 	if (days.length === 0) {
 		return null
 	}
@@ -297,9 +248,6 @@ export let DayPickerStrip = React.forwardRef<DayPickerStripHandle, Props>(functi
 				]}
 				decelerationRate="fast"
 				horizontal={true}
-				onMomentumScrollEnd={handleMomentumScrollEnd}
-				onScrollBeginDrag={handleScrollBeginDrag}
-				onScrollEndDrag={handleScrollEndDrag}
 				ref={scrollRef}
 				showsHorizontalScrollIndicator={false}
 				snapToOffsets={weekStarts.map((week) => week.offset)}
@@ -311,10 +259,13 @@ export let DayPickerStrip = React.forwardRef<DayPickerStripHandle, Props>(functi
 					return (
 						<DayCell
 							day={day}
+							hasEvents={daysWithEvents.has(day.format('YYYY-MM-DD'))}
+							isPast={day.isBefore(now, 'day')}
 							isSelected={isSelected}
 							isToday={isToday}
 							key={day.format('YYYY-MM-DD')}
-							onPress={() => onSelectDay(day)}
+							onPress={onSelectDay}
+							width={cellWidth}
 						/>
 					)
 				})}
@@ -333,8 +284,8 @@ const styles = StyleSheet.create({
 		paddingVertical: 8,
 	},
 	cell: {
-		width: CELL_WIDTH,
 		alignItems: 'center',
+		borderRadius: 12,
 		marginHorizontal: CELL_MARGIN,
 	},
 	weekday: {
@@ -357,5 +308,11 @@ const styles = StyleSheet.create({
 	date: {
 		fontSize: 17,
 		fontWeight: '400',
+	},
+	dot: {
+		width: DOT_SIZE,
+		height: DOT_SIZE,
+		borderRadius: DOT_SIZE / 2,
+		marginTop: 2,
 	},
 })

@@ -291,6 +291,25 @@ struct TestIdentifiers {
 		/// Mirrored by `DAY_CELL_PREFIX` in `modules/event-list/day-picker-strip.tsx`.
 		static let dayCellPrefix = "day-cell-"
 
+		/// Day view's empty-state copy, shown below the strip when the selected
+		/// day has no events. Mirrors the literal in `modules/event-list/day-view.tsx`.
+		/// An empty day names itself, so only the opening is fixed.
+		static let emptyDayNotice = "Nothing on "
+
+		/// Day view's empty-state copy when every calendar is switched off.
+		/// Mirrors the literal in `modules/event-list/day-view.tsx`.
+		static let noCalendarsNotice =
+			"No calendars are showing. Choose some from the Calendars button below."
+
+		/// The top-right menu that chooses how the calendar draws itself.
+		/// Mirrors `accessibilityLabel('Calendar view')` in
+		/// `modules/ccc-calendar/mode-picker.tsx`.
+		static let modePicker = "Calendar view"
+		static let dayMode = "Day"
+		static let upcomingMode = "Upcoming"
+		/// The mode that is committed commented out, and so must not appear.
+		static let timelineMode = "Timeline"
+
 		/// Each event row is identified by `event-row-<title>`.
 		/// Mirrored by `EVENT_ROW_PREFIX` in `modules/event-list/event-list-row.tsx`.
 		static let eventRowPrefix = "event-row-"

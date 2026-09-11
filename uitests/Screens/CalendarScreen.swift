@@ -147,9 +147,16 @@ struct CalendarScreen: Screen {
 	/// Close the menu by tapping well away from it -- the toolbar button is at
 	/// the bottom right and the menu opens upward from it, so the top left is
 	/// clear of both.
+	///
+	/// Checks both `menuIsPresented` and `pickerIsPresented`: the parent menu
+	/// with no calendar enabled draws the CALENDARS header but no axis row (see
+	/// `pickerIsPresented`), and an open submenu is the opposite -- an axis row
+	/// with no CALENDARS header. Gating the tap on only one of the two silently
+	/// skips it whenever the other is what is actually on screen, leaving the
+	/// menu open under whatever the test does next.
 	@discardableResult
 	func dismissMenu() -> Self {
-		if pickerIsPresented() {
+		if menuIsPresented() || pickerIsPresented() {
 			app.coordinate(withNormalizedOffset: CGVector(dx: 0.1, dy: 0.2)).tap()
 			_ = app.staticTexts[TestIdentifiers.Calendar.calendarsSection]
 				.waitForNonExistence(timeout: 10)
@@ -157,6 +164,9 @@ struct CalendarScreen: Screen {
 			XCTAssertFalse(
 				pickerIsPresented(),
 				"Tapping away from the picker should close it, submenu and all")
+			XCTAssertTrue(
+				app.staticTexts[TestIdentifiers.Calendar.calendarsSection].waitForNonExistence(timeout: 10),
+				"Tapping away from the picker should close its CALENDARS section too")
 		}
 		return self
 	}
@@ -415,6 +425,25 @@ struct CalendarScreen: Screen {
 		return self
 	}
 
+	/// Taps the cell for a given ISO day at its visual centre, the way a
+	/// finger does.
+	///
+	/// `XCUIElement.tap()` can activate an accessible element through the
+	/// accessibility layer -- it does not have to land a real touch at that
+	/// point on screen. `XCUICoordinate.tap()` always synthesizes a touch and
+	/// goes through UIKit's actual `hitTest(_:with:)`, so it is the only way
+	/// here to prove a cell is tappable where it is drawn, not merely present
+	/// in the hierarchy.
+	@discardableResult
+	func tapDayAtItsCenter(_ isoDay: String) -> Self {
+		let cell = app.buttons[TestIdentifiers.Calendar.dayCellPrefix + isoDay]
+		XCTAssertTrue(
+			cell.waitForExistence(timeout: 10),
+			"The strip should offer \(isoDay)")
+		cell.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
+		return self
+	}
+
 	/// The day cells at the head of the strip should each clear the 44pt minimum
 	/// for a touch target.
 	///
@@ -563,6 +592,95 @@ struct CalendarScreen: Screen {
 		XCTAssertTrue(
 			caption.waitForExistence(timeout: 30),
 			"The event detail should credit the calendar the event came from")
+		return self
+	}
+
+	// MARK: - View mode
+
+	/// Open the top-right menu that chooses the calendar's view.
+	@discardableResult
+	func openModeMenu() -> Self {
+		let menu = app.buttons[TestIdentifiers.Calendar.modePicker]
+		XCTAssertTrue(
+			menu.waitForExistence(timeout: 30),
+			"The calendar should offer a view menu in the navigation bar")
+		menu.tap()
+		return self
+	}
+
+	/// Choose a view from the open menu. A Toggle inside a Menu reaches
+	/// XCUITest as a button labelled with its title.
+	@discardableResult
+	func selectMode(_ title: String) -> Self {
+		let item = app.buttons[title]
+		XCTAssertTrue(
+			item.waitForExistence(timeout: 30),
+			"\(title) should be offered in the view menu")
+		item.tap()
+		return self
+	}
+
+	@discardableResult
+	func verifyModeAbsent(_ title: String) -> Self {
+		XCTAssertFalse(
+			app.buttons[title].exists,
+			"\(title) should not be offered yet")
+		return self
+	}
+
+	/// Whether a day's cell reports having events.
+	///
+	/// Read off the cell's accessibility label rather than off the dot view. A
+	/// dot is a bare `View` with no accessibility of its own, so it may not
+	/// reach the hierarchy at all -- and a query that cannot fail is worse than
+	/// no query. The label is what `day-picker-strip.tsx` appends "has events"
+	/// to, and it is also what VoiceOver reads, so this asserts the thing that
+	/// actually matters.
+	func dayHasEvents(_ isoDay: String) -> Bool {
+		let cell = app.buttons[TestIdentifiers.Calendar.dayCellPrefix + isoDay]
+		guard cell.waitForExistence(timeout: 10) else { return false }
+		return cell.label.hasSuffix("has events")
+	}
+
+	@discardableResult
+	func verifyStripAbsent() -> Self {
+		let cell = app.buttons.matching(
+			NSPredicate(format: "identifier BEGINSWITH %@", TestIdentifiers.Calendar.dayCellPrefix)
+		).firstMatch
+		XCTAssertTrue(
+			cell.waitForNonExistence(timeout: 10),
+			"Upcoming should draw no day picker")
+		return self
+	}
+
+	/// A day's notice, actually painted -- not merely present in the tree.
+	///
+	/// `exists` is true for a view a zero-height host has collapsed to
+	/// nothing; that collapse is a real bug (a `RNHostView` sized to its
+	/// SwiftUI-flexible child's zero intrinsic size) that an existence check
+	/// alone cannot see. `frame.height` and `isHittable` both read zero for a
+	/// collapsed host, so either would catch it; both are checked so a test
+	/// reading this failure sees which one tripped.
+	@discardableResult
+	func verifyNoticeVisible(_ text: String) -> Self {
+		// `.firstMatch` rather than the `[text]` subscript: a `NoticeView`'s
+		// `Text` reaches the accessibility tree as two nested elements with the
+		// same label, and reading `frame`/`isHittable` demands a single match --
+		// unlike `exists`, which is satisfied by "at least one" and so cannot
+		// see this collapse at all.
+		let notice = app.staticTexts.matching(NSPredicate(format: "label BEGINSWITH %@", text)).firstMatch
+		XCTAssertTrue(
+			notice.waitForExistence(timeout: 10),
+			"\"\(text)\" should be on screen")
+		XCTContext.runActivity(named: "\"\(text)\" frame is \(notice.frame), isHittable \(notice.isHittable)") {
+			_ in
+		}
+		XCTAssertGreaterThan(
+			notice.frame.height, 0,
+			"\"\(text)\" exists in the hierarchy but has collapsed to zero height")
+		XCTAssertTrue(
+			notice.isHittable,
+			"\"\(text)\" exists but is not hittable, which a zero-size element never is")
 		return self
 	}
 }

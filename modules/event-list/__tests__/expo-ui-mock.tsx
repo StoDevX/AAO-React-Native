@@ -43,6 +43,8 @@ export const opacity = modifier('opacity')
 export const scrollPosition = modifier('scrollPosition')
 export const id = modifier('id')
 export const scrollTargetLayout = modifier('scrollTargetLayout')
+export const tabViewStyle = modifier('tabViewStyle')
+export const ignoreSafeArea = modifier('ignoreSafeArea')
 
 /**
  * Shape builders, not modifiers: `contentShape(shapes.rectangle())` passes one
@@ -271,3 +273,44 @@ export const environment = (config: Record<string, unknown>): Modifier => ({
 	...config,
 })
 export const tag = (value: string | number): Modifier => ({$type: 'tag', value})
+
+/**
+ * A paged `TabView` renders one tab at a time natively. The stand-in renders
+ * the selected tab's children and drops the rest, which is the decision a test
+ * can legitimately assert -- which day's events are on screen. Whether the
+ * pager swipes is a gesture, and belongs to a UI test.
+ */
+export function TabView({
+	selection,
+	defaultSelection,
+	children,
+}: {
+	selection?: string
+	defaultSelection?: string
+	onSelectionChange?: (value: string) => void
+	children?: React.ReactNode
+}): React.ReactNode {
+	let tabs = React.Children.toArray(children) as React.ReactElement<{
+		value: string
+		children?: React.ReactNode
+	}>[]
+	// Uncontrolled is how the day view drives this: it hands over a
+	// `defaultSelection` and rebuilds the pager to move it.
+	//
+	// A selection matching no tab renders nothing, which is what the native
+	// component does -- it seeds its own state with whatever it was handed and
+	// SwiftUI draws no page for a value no tab carries. Falling back to the
+	// first tab here would turn a blank screen on a device into a passing test.
+	let chosen = selection ?? defaultSelection
+	let active = tabs.find((tab) => tab.props.value === chosen)
+	return <View>{active ?? null}</View>
+}
+
+TabView.Tab = function Tab({
+	children,
+}: {
+	value: string
+	children?: React.ReactNode
+}): React.ReactNode {
+	return <View>{children}</View>
+}
