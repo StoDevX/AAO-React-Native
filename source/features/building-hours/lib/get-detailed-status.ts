@@ -3,7 +3,8 @@ import flatten from 'lodash/flatten'
 import type {BuildingType} from '../types'
 
 import {schedulesInEffect} from './schedules-in-effect'
-import {isChapelTime, formatChapelTime} from './chapel'
+import {formatChapelTime} from './chapel'
+import {findChapelReopen} from './find-chapel-reopen'
 import {isScheduleOpenAtMoment} from './is-schedule-open'
 import {formatBuildingTimes} from './format-times'
 
@@ -31,7 +32,10 @@ export function getDetailedBuildingStatus(info: BuildingType, m: Moment): Buildi
 
 	let results = schedules.map((set) => {
 		let label = set.title
-		if (set.closedForChapelTime && isChapelTime(m)) {
+		// Standing in for the day's hours is only honest when chapel is the one
+		// thing holding the doors shut. Otherwise the real rows say more, and
+		// the per-schedule chapel guard below still marks them inactive.
+		if (findChapelReopen(set, m)) {
 			return [
 				{
 					isActive: false,
