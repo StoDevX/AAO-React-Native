@@ -5,6 +5,14 @@ import {PostList} from '../post-list'
 import type {RedditPostType} from '../types'
 
 jest.mock('expo-symbols', () => ({SymbolView: 'SymbolView'}))
+jest.mock('@expo/ui/swift-ui', () => {
+	// oxlint-disable-next-line typescript/no-require-imports
+	return require('../../../testing/expo-ui-mock') as typeof import('../../../testing/expo-ui-mock')
+})
+jest.mock('@expo/ui/swift-ui/modifiers', () => {
+	// oxlint-disable-next-line typescript/no-require-imports
+	return require('../../../testing/expo-ui-mock') as typeof import('../../../testing/expo-ui-mock')
+})
 
 const makePost = (overrides: Partial<RedditPostType> = {}): RedditPostType => ({
 	id: 'post-1',

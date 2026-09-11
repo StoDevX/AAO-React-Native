@@ -18,6 +18,7 @@ import {
 	VStack,
 } from '@expo/ui/swift-ui'
 import {
+	accessibilityIdentifier,
 	accessibilityLabel,
 	buttonStyle,
 	contentShape,
@@ -125,6 +126,12 @@ type DisclosureRowProps = {
 	detailLines?: number
 	/** A symbol or thumbnail at the leading edge. */
 	image?: DisclosureRowImage
+	/**
+	 * An accessibility identifier for the row, for a UI test to find it by.
+	 * A label is built from the title and details, which a screen showing
+	 * arbitrary data cannot guarantee is unique.
+	 */
+	identifier?: string
 	onPress: () => void
 }
 
@@ -170,7 +177,7 @@ function LeadingImage({image}: {image: DisclosureRowImage}): React.ReactNode {
  * chevron is drawn by hand.
  */
 export function DisclosureRow(props: DisclosureRowProps): React.ReactNode {
-	let {title, detail, titleLines = 1, detailLines, image, onPress} = props
+	let {title, detail, titleLines = 1, detailLines, image, identifier, onPress} = props
 
 	let details = detailLinesOf(detail)
 	let detailModifiers = [
@@ -181,7 +188,11 @@ export function DisclosureRow(props: DisclosureRowProps): React.ReactNode {
 
 	return (
 		<Button
-			modifiers={[buttonStyle('plain'), accessibilityLabel([title, ...details].join(', '))]}
+			modifiers={[
+				buttonStyle('plain'),
+				accessibilityLabel([title, ...details].join(', ')),
+				...(identifier ? [accessibilityIdentifier(identifier)] : []),
+			]}
 			onPress={onPress}
 		>
 			{/* contentShape on the label, not the Button -- see NavigationRow. */}

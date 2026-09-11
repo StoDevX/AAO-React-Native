@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {FlatList, StyleSheet, Text} from 'react-native'
+import {ScrollView, StyleSheet, Text} from 'react-native'
 import {Stack, useLocalSearchParams} from 'expo-router'
 import {useQuery} from '@tanstack/react-query'
 import {timezone} from '@frogpond/constants'
@@ -111,15 +111,11 @@ function BusStopDetailInternal(props: Props): React.ReactNode {
 		)
 
 		return (
-			<FlatList
-				ListFooterComponent={<ListFooter title={BUS_FOOTER_MESSAGE} />}
-				ListHeaderComponent={headerElement}
-				contentInsetAdjustmentBehavior="automatic"
-				data={[emptyRowElement]}
-				keyExtractor={(item, index) => `${item.key}-${index}`}
-				renderItem={({item}) => item}
-				style={styles.container}
-			/>
+			<ScrollView contentInsetAdjustmentBehavior="automatic" style={styles.container}>
+				{headerElement}
+				{emptyRowElement}
+				<ListFooter title={BUS_FOOTER_MESSAGE} />
+			</ScrollView>
 		)
 	}
 
@@ -163,16 +159,11 @@ function BusStopDetailInternal(props: Props): React.ReactNode {
 	})
 
 	return (
-		<FlatList
-			ItemSeparatorComponent={undefined}
-			ListFooterComponent={<ListFooter title={BUS_FOOTER_MESSAGE} />}
-			ListHeaderComponent={headerElement}
-			contentInsetAdjustmentBehavior="automatic"
-			data={timeRows}
-			keyExtractor={(item, index) => `${item.key}-${index}`}
-			renderItem={({item}) => item}
-			style={styles.container}
-		/>
+		<ScrollView contentInsetAdjustmentBehavior="automatic" style={styles.container}>
+			{headerElement}
+			{timeRows}
+			<ListFooter title={BUS_FOOTER_MESSAGE} />
+		</ScrollView>
 	)
 }
 
