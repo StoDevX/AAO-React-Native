@@ -7,6 +7,7 @@ export {
 	REL_CALENDAR,
 	REL_JOBS,
 	REL_NEWS,
+	REL_ORG_CATEGORIES,
 	type Jrd,
 	type ResolvedSource,
 } from './types'
