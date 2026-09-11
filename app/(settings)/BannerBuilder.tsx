@@ -1,8 +1,20 @@
 import * as React from 'react'
-import {Alert, ScrollView, Share, StyleSheet, Text, View} from 'react-native'
-import {Cell, Section, TableView} from '@frogpond/tableview'
-import {CellTextField, CellToggle, PushButtonCell, ButtonCell} from '@frogpond/tableview/cells'
+import {Alert, Share, StyleSheet} from 'react-native'
+import {
+	Host,
+	LabeledContent,
+	List,
+	Picker,
+	RNHostView,
+	Section,
+	Text,
+	TextField,
+	Toggle,
+	useNativeState,
+} from '@expo/ui/swift-ui'
+import {lineLimit, listStyle, pickerStyle, tag} from '@expo/ui/swift-ui/modifiers'
 import * as c from '@frogpond/colors'
+import {ActionRow} from '../../source/components/rows'
 import {dump} from 'js-yaml'
 import {Stack, useNavigation} from 'expo-router'
 
@@ -128,142 +140,122 @@ export default function BannerBuilderPage(): React.ReactNode {
 				/>
 			</Stack.Toolbar>
 
-			<ScrollView
-				contentInsetAdjustmentBehavior="automatic"
-				keyboardDismissMode="on-drag"
-				keyboardShouldPersistTaps="always"
-				style={styles.container}
-			>
-				<View style={styles.previewSection}>
-					<Text style={styles.previewLabel}>PREVIEW</Text>
-					<BannerPreview faq={currentFaq} />
-				</View>
+			<Host style={styles.host}>
+				<List modifiers={[listStyle('insetGrouped')]}>
+					<Section title="PREVIEW">
+						{/* The banner is a React Native component, so SwiftUI hosts it
+						    -- and it redraws as the fields below are typed into. */}
+						<RNHostView matchContents={true}>
+							<FaqBannerPresentation faq={currentFaq} />
+						</RNHostView>
+					</Section>
 
-				<TableView>
-					<Section header="Content">
-						<CellTextField
-							label="Title"
-							labelWidth={110}
-							onChangeText={setBannerTitle}
-							placeholder="Banner title"
-							value={bannerTitle}
-						/>
-						<CellTextField
+					<Section title="CONTENT">
+						<FormField label="Title" onChangeText={setBannerTitle} placeholder="Banner title" />
+						<FormField
 							label="Text"
-							labelWidth={110}
 							multiline={true}
 							onChangeText={setBannerText}
 							placeholder="Banner description"
-							value={bannerText}
 						/>
-						<CellTextField
-							label="CTA"
-							labelWidth={110}
-							onChangeText={setBannerCta}
-							placeholder="Learn more"
-							value={bannerCta}
-						/>
-						<CellTextField
-							label="Question"
-							labelWidth={110}
-							onChangeText={setQuestion}
-							placeholder="FAQ question"
-							value={question}
-						/>
-						<CellTextField
+						<FormField label="CTA" onChangeText={setBannerCta} placeholder="Learn more" />
+						<FormField label="Question" onChangeText={setQuestion} placeholder="FAQ question" />
+						<FormField
 							label="Answer"
-							labelWidth={110}
 							multiline={true}
 							onChangeText={setAnswer}
 							placeholder="Full FAQ answer (markdown)"
-							value={answer}
 						/>
 					</Section>
 
-					<Section header="Appearance">
-						{SEVERITY_OPTIONS.map((opt) => (
-							<Cell
-								key={opt}
-								accessory={severity === opt ? 'Checkmark' : undefined}
-								onPress={() => setSeverity(opt)}
-								title={opt.charAt(0).toUpperCase() + opt.slice(1)}
-							/>
-						))}
+					<Section title="APPEARANCE">
+						{/* One of three, so a picker rather than rows carrying their own
+						    checkmarks -- the control says it is a single choice. */}
+						<Picker
+							label="Severity"
+							modifiers={[pickerStyle('segmented')]}
+							onSelectionChange={(selection) => setSeverity(selection as FaqSeverity)}
+							selection={severity}
+						>
+							{SEVERITY_OPTIONS.map((option) => (
+								<Text key={option} modifiers={[tag(option)]}>
+									{option.charAt(0).toUpperCase() + option.slice(1)}
+								</Text>
+							))}
+						</Picker>
 					</Section>
 
-					<Section header="Colors & Icon">
-						<CellTextField
+					<Section title="COLORS & ICON">
+						<FormField
 							label="Icon"
-							labelWidth={110}
 							onChangeText={setIcon}
 							placeholder="e.g. alert-circle, help-circle"
-							value={icon}
 						/>
-						<CellTextField
-							label="BG Color"
-							labelWidth={110}
-							onChangeText={setBackgroundColor}
-							placeholder="#fef2f2"
-							value={backgroundColor}
-						/>
-						<CellTextField
-							label="FG Color"
-							labelWidth={110}
-							onChangeText={setForegroundColor}
-							placeholder="#7f1d1d"
-							value={foregroundColor}
-						/>
+						<FormField label="BG Color" onChangeText={setBackgroundColor} placeholder="#fef2f2" />
+						<FormField label="FG Color" onChangeText={setForegroundColor} placeholder="#7f1d1d" />
 					</Section>
 
-					<Section header="Behavior">
-						<CellToggle label="Dismissable" onChange={setDismissable} value={dismissable} />
+					<Section title="BEHAVIOR">
+						<Toggle isOn={dismissable} label="Dismissable" onIsOnChange={setDismissable} />
 					</Section>
 
-					<Section header="Target Screens">
+					{/* Toggles rather than rows with checkmarks: any number of these
+					    can be on at once, which a checkmark does not say and a switch
+					    does. */}
+					<Section title="TARGET SCREENS">
 						{TARGET_OPTIONS.map((target) => (
-							<Cell
+							<Toggle
 								key={target}
-								accessory={selectedTargets.includes(target) ? 'Checkmark' : undefined}
-								onPress={() => toggleTarget(target)}
-								title={target}
+								isOn={selectedTargets.includes(target)}
+								label={target}
+								onIsOnChange={() => toggleTarget(target)}
 							/>
 						))}
 					</Section>
 
-					<Section header="Actions">
-						<ButtonCell onPress={applyToApp} title="Apply Banner to App" />
-						<PushButtonCell onPress={exportYaml} title="Export as YAML" />
+					<Section title="ACTIONS">
+						<ActionRow onPress={applyToApp} title="Apply Banner to App" />
+						<ActionRow onPress={exportYaml} title="Export as YAML" />
 					</Section>
-				</TableView>
-			</ScrollView>
+				</List>
+			</Host>
 		</>
 	)
 }
 
-/** Inline preview that renders the banner directly from local form state */
-function BannerPreview({faq}: {faq: Faq}): React.ReactNode {
+/**
+ * One labelled field. `LabeledContent` puts the name leading and the field
+ * trailing, which is what the old cell's fixed label width was imitating.
+ *
+ * The field owns its own native state: `TextField` writes through an
+ * `ObservableState` rather than a plain string, so re-rendering the form as
+ * each keystroke lands cannot fight what is being typed.
+ */
+function FormField(props: {
+	label: string
+	placeholder: string
+	multiline?: boolean
+	onChangeText: (text: string) => void
+}): React.ReactNode {
+	let {label, placeholder, multiline = false, onChangeText} = props
+	let state = useNativeState('')
+
 	return (
-		<View style={styles.directPreview}>
-			<FaqBannerPresentation faq={faq} />
-		</View>
+		<LabeledContent label={label}>
+			<TextField
+				axis={multiline ? 'vertical' : 'horizontal'}
+				modifiers={multiline ? [lineLimit(4)] : []}
+				onTextChange={onChangeText}
+				placeholder={placeholder}
+				text={state}
+			/>
+		</LabeledContent>
 	)
 }
 
 const styles = StyleSheet.create({
-	container: {
+	host: {
 		flex: 1,
-	},
-	previewSection: {
-		padding: 16,
-		gap: 8,
-	},
-	previewLabel: {
-		color: c.secondaryLabel,
-		fontSize: 12,
-		fontWeight: '600',
-		letterSpacing: 0.5,
-	},
-	directPreview: {
-		marginTop: 8,
+		backgroundColor: c.systemGroupedBackground,
 	},
 })
