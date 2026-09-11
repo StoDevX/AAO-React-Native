@@ -8,11 +8,11 @@ import {EventList} from '../event-list'
 
 jest.mock('@expo/ui/swift-ui', () => {
 	// oxlint-disable-next-line typescript/no-require-imports
-	return require('./expo-ui-mock') as typeof import('./expo-ui-mock')
+	return require('../../../source/testing/expo-ui-mock') as typeof import('../../../source/testing/expo-ui-mock')
 })
 jest.mock('@expo/ui/swift-ui/modifiers', () => {
 	// oxlint-disable-next-line typescript/no-require-imports
-	return require('./expo-ui-mock') as typeof import('./expo-ui-mock')
+	return require('../../../source/testing/expo-ui-mock') as typeof import('../../../source/testing/expo-ui-mock')
 })
 
 const NOW = moment('2026-08-17T12:00:00Z')
