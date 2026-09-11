@@ -27,8 +27,7 @@ import {
 	getShortBuildingStatus,
 	getAccentBackgroundColor,
 	contextualStatus,
-	isScheduleOpenAtMoment,
-	getDayOfWeek,
+	isScheduleRowActive,
 } from '../lib'
 import {ScheduleRowSwiftUI} from './schedule-row-swiftui'
 import {openUrl} from '@frogpond/open-url'
@@ -59,7 +58,6 @@ export function BuildingDetailSwiftUI({building, now, campus}: Props): React.Rea
 	let status = getShortBuildingStatus(building, now)
 	let accentColor = getAccentBackgroundColor(status)
 	let statusText = contextualStatus(building, now)
-	let dayOfWeek = getDayOfWeek(now)
 
 	let schedules = building.schedule || []
 	let links = building.links || []
@@ -115,11 +113,7 @@ export function BuildingDetailSwiftUI({building, now, campus}: Props): React.Rea
 							<ScheduleRowSwiftUI
 								key={i}
 								accentColor={accentColor}
-								isActive={
-									schedule.isPhysicallyOpen !== false &&
-									set.days.includes(dayOfWeek) &&
-									isScheduleOpenAtMoment(set, now, schedule.closedForChapelTime)
-								}
+								isActive={isScheduleRowActive(schedule, set, now)}
 								now={now}
 								schedule={set}
 							/>
