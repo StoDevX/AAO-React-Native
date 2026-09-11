@@ -105,15 +105,22 @@ export function eventsByDay(
 ): Map<string, SourcedEvent[]> {
 	let buckets = new Map<string, SourcedEvent[]>()
 
-	for (let day of days) {
-		buckets.set(day.format('YYYY-MM-DD'), [])
-	}
+	// Each day's key and its two bounds, worked out once. Formatting a moment
+	// and cloning one both cost, and an ongoing event has to be checked against
+	// every day in the range -- doing it inside that loop would rebuild the same
+	// handful of values for every event.
+	let calendar = days.map((day) => {
+		let iso = day.format('YYYY-MM-DD')
+		let bucket: SourcedEvent[] = []
+		buckets.set(iso, bucket)
+		return {bucket, start: day.clone().startOf('day'), end: day.clone().endOf('day')}
+	})
 
 	for (let entry of events) {
 		if (entry.event.isOngoing) {
-			for (let day of days) {
-				if (occursOn(entry, day)) {
-					buckets.get(day.format('YYYY-MM-DD'))?.push(entry)
+			for (let {bucket, start, end} of calendar) {
+				if (!entry.event.startTime.isAfter(end) && !entry.event.endTime.isBefore(start)) {
+					bucket.push(entry)
 				}
 			}
 			continue
