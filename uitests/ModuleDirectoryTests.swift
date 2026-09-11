@@ -17,16 +17,13 @@ class ModuleDirectoryTests: UITestCase {
 			.capture("Directory contact grid")
 	}
 
-	func testTappingAContactOpensItsDetail() throws {
-		DirectoryScreen(app: app)
-			.navigate()
-			.openContact(TestIdentifiers.Directory.aContact)
-			.verifyDetailAction(TestIdentifiers.Directory.aContactAction)
-	}
-
 	/// A contact is read and dismissed, so it presents as a sheet rather than
 	/// a push -- and the grid staying in the hierarchy behind it is the tell.
 	/// A push would replace the grid, so this fails outright on one.
+	///
+	/// Reaching the detail at all is covered here too, by the action button:
+	/// it appears only on the detail, the grid's tile merely navigating, so
+	/// finding it is proof the tap went somewhere.
 	func testTappingAContactPresentsASheet() throws {
 		DirectoryScreen(app: app)
 			.navigate()

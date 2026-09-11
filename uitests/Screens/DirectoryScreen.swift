@@ -1,5 +1,11 @@
 import XCTest
 
+/// How long a push is given to take the contact grid out of the hierarchy
+/// before `verifyContactGridStillBehind` concludes it never will. Long enough
+/// to outlast a push transition on a loaded machine, short enough that the
+/// passing case -- where the grid legitimately stays -- does not drag.
+private let GRID_REMOVAL_GRACE: TimeInterval = 5
+
 struct DirectoryScreen: Screen {
 	let app: XCUIApplication
 
@@ -224,11 +230,17 @@ struct DirectoryScreen: Screen {
 	/// visible one, so this does not tell a sheet apart from anything else
 	/// that leaves the grid behind it -- only from the push it replaces, which
 	/// is the whole of what is under test here.
+	///
+	/// Phrased as "does not go away within `GRID_REMOVAL_GRACE`" rather than a
+	/// bare `exists`, because a push takes the outgoing screen out at the end
+	/// of its transition, not the start. Asked the instant the detail's button
+	/// appears, a bare `exists` finds the grid mid-transition and reports a
+	/// push as a sheet.
 	@discardableResult
 	func verifyContactGridStillBehind() -> Self {
 		let grid = app.element(matching: TestIdentifiers.Directory.contactGrid)
-		XCTAssertTrue(
-			grid.exists,
+		XCTAssertFalse(
+			grid.waitForNonExistence(timeout: GRID_REMOVAL_GRACE),
 			"The contact grid should still be behind the sheet, not replaced by it")
 		return self
 	}
