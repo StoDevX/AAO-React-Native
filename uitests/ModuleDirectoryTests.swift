@@ -115,4 +115,34 @@ class ModuleDirectoryTests: UITestCase {
 			.showAsTiles()
 			.verifyResultsGalleried()
 	}
+
+	/// A directory *entry*, reached by searching -- not an Important Contact
+	/// tile, which pushes `Directory/named/[title]`, a different screen this
+	/// migration has not touched.
+	func testDirectoryEntryDetail() throws {
+		let screen = DirectoryScreen(app: app)
+			.navigate()
+			.search(for: TestIdentifiers.Directory.fixtureEntry)
+
+		// The tile gallery is the default view, so a result is a tile rather
+		// than a row -- both open the same entry detail.
+		let result = app.descendants(matching: .any)
+			.matching(
+				NSPredicate(
+					format: "identifier BEGINSWITH %@", TestIdentifiers.Directory.tilePrefix))
+			.firstMatch
+		XCTAssertTrue(result.waitForExistence(timeout: 30), "A directory result should be shown")
+		result.tap()
+
+		// Wait for something only the pushed screen has: a capture taken
+		// straight after the tap lands mid-animation, with both screens in it.
+		let department = app.descendants(matching: .any)
+			.matching(
+				NSPredicate(
+					format: "label CONTAINS %@", TestIdentifiers.Directory.fixtureEntryDepartment))
+			.firstMatch
+		XCTAssertTrue(department.waitForExistence(timeout: 30), "The entry detail should be shown")
+
+		screen.capture("Directory - entry detail")
+	}
 }

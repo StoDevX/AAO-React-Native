@@ -17,4 +17,19 @@ class ModuleTransportationTests: UITestCase {
 			.verifyStopScheduleShown()
 			.capture("stop schedule")
 	}
+
+	func testTransportationOtherModesList() throws {
+		let screen = TransportationScreen(app: app).navigate()
+
+		let otherTab = app.tabButton("Other")
+		XCTAssertTrue(
+			otherTab.waitForExistence(timeout: 30),
+			"Other tab should be visible on Transportation")
+		otherTab.tap()
+
+		let section = app.staticTexts["Bus"].firstMatch
+		XCTAssertTrue(section.waitForExistence(timeout: 30), "The Other tab should be showing")
+
+		screen.capture("Transportation - Other Modes")
+	}
 }
