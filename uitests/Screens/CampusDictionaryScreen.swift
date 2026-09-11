@@ -51,9 +51,45 @@ struct CampusDictionaryScreen: Screen {
 		app.searchFields.firstMatch
 	}
 
+	/// SwiftUI's native A-Z jumplist rail, iOS 26+ (`sectionIndexLabel()`, added
+	/// via `patches/@expo__ui@57.0.14.patch`). It carries no per-letter
+	/// accessibility elements -- it is one `Other` spanning every section -- so
+	/// nothing here can query a specific letter, only the rail as a whole.
+	private var sectionIndexRail: XCUIElement {
+		app.otherElements["Section index"]
+	}
+
 	@discardableResult
 	func navigate() -> Self {
 		navigateFromHome(to: TestIdentifiers.Buttons.dictionary)
+	}
+
+	/// Taps near the bottom of the section index rail and asserts the list
+	/// actually scrolled. Cannot assert *which* section it landed on -- see
+	/// `sectionIndexRail`. `sectionIndexLabel()` is iOS 26+, so this skips
+	/// below that, where the rail does not exist at all.
+	@discardableResult
+	func verifySectionIndexRailScrolls() throws -> Self {
+		guard #available(iOS 26.0, *) else {
+			throw XCTSkip("sectionIndexLabel() needs iOS 26; the rail does not exist below it")
+		}
+
+		let list = app.collectionViews[TestIdentifiers.Dictionary.list]
+		XCTAssertTrue(list.waitForExistence(timeout: 10), "the dictionary list never appeared")
+		XCTAssertTrue(
+			sectionIndexRail.waitForExistence(timeout: 10),
+			"no section index rail appeared -- sectionIndexLabel needs iOS 26")
+		capture("Dictionary with a section index rail")
+
+		let firstRowBefore = list.buttons.firstMatch.label
+
+		sectionIndexRail.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.95)).tap()
+
+		let firstRowAfter = list.buttons.firstMatch.label
+		XCTAssertNotEqual(
+			firstRowAfter, firstRowBefore,
+			"tapping near the bottom of the section index rail should scroll the list")
+		return self
 	}
 
 	@discardableResult

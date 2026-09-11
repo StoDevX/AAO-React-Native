@@ -1,6 +1,12 @@
 import XCTest
 
 class ModuleCampusDictionaryTests: UITestCase {
+	func testTappingTheSectionIndexRailScrollsTheList() throws {
+		try CampusDictionaryScreen(app: app)
+			.navigate()
+			.verifySectionIndexRailScrolls()
+	}
+
 	func testTappingAWordOpensAHalfHeightSheet() throws {
 		CampusDictionaryScreen(app: app)
 			.navigate()
