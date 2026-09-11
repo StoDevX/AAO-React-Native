@@ -44,6 +44,7 @@ export const scrollPosition = modifier('scrollPosition')
 export const id = modifier('id')
 export const scrollTargetLayout = modifier('scrollTargetLayout')
 export const tabViewStyle = modifier('tabViewStyle')
+export const ignoreSafeArea = modifier('ignoreSafeArea')
 
 /**
  * Shape builders, not modifiers: `contentShape(shapes.rectangle())` passes one

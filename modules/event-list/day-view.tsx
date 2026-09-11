@@ -14,6 +14,7 @@ import {
 	font,
 	foregroundStyle,
 	frame,
+	ignoreSafeArea,
 	padding,
 	refreshable,
 	tabViewStyle,
@@ -27,6 +28,14 @@ import {deriveDays, eventsByDay} from './days'
 import {EventListRow} from './event-list-row'
 import {formatSectionHeader} from './times'
 import type {CalendarBodyHandle, CalendarSource, SourcedEvent} from './types'
+
+/**
+ * How many days either side of the selected one are mounted as pages. Wide
+ * enough that a swipe lands well inside the window and the next one has fresh
+ * pages waiting; narrow enough that opening the screen builds fifteen of them
+ * rather than a semester's worth.
+ */
+const PAGE_WINDOW = 7
 
 type Props = {
 	events: SourcedEvent[]
@@ -84,6 +93,20 @@ export let DayView = React.forwardRef<CalendarBodyHandle, Props>(function DayVie
 		days.find((day) => day.isSame(props.now, 'day')) ??
 		days[0]
 
+	// Only the days within reach of the selected one are mounted. Every day of
+	// a semester is well over a hundred pages, and SwiftUI builds each one
+	// whether or not it is ever swiped to -- which cost five to eight seconds
+	// before the screen would draw at all. A week either side is more than a
+	// swipe can cross before the window has moved again.
+	let pages = React.useMemo(() => {
+		if (!selectedDay) return days
+
+		let middle = days.findIndex((day) => day.isSame(selectedDay, 'day'))
+		if (middle < 0) return days.slice(0, PAGE_WINDOW * 2 + 1)
+
+		return days.slice(Math.max(0, middle - PAGE_WINDOW), middle + PAGE_WINDOW + 1)
+	}, [days, selectedDay])
+
 	let showToday = React.useCallback(() => {
 		let today = days.find((day) => day.isSame(props.now, 'day'))
 		if (!today) return
@@ -133,7 +156,15 @@ export let DayView = React.forwardRef<CalendarBodyHandle, Props>(function DayVie
 					/>
 				</RNHostView>
 				<TabView
-					modifiers={[tabViewStyle({type: 'page', indexDisplayMode: 'never'})]}
+					modifiers={[
+						tabViewStyle({type: 'page', indexDisplayMode: 'never'}),
+						// The pager bounds its pages to its own frame, which stops the
+						// rows short of the toolbar rather than letting them pass behind
+						// it. A bottom bar on iOS is translucent so the content it covers
+						// still shows through; a list that stops above it reads as a
+						// screen that ran out.
+						ignoreSafeArea({regions: 'container', edges: 'bottom'}),
+					]}
 					onSelectionChange={(iso) => {
 						let day = days.find((d) => d.format('YYYY-MM-DD') === iso)
 						if (day) {
@@ -143,7 +174,7 @@ export let DayView = React.forwardRef<CalendarBodyHandle, Props>(function DayVie
 					}}
 					selection={selectedDay?.format('YYYY-MM-DD') ?? ''}
 				>
-					{days.map((day) => {
+					{pages.map((day) => {
 						let iso = day.format('YYYY-MM-DD')
 						let dayRows = byDay.get(iso) ?? []
 
