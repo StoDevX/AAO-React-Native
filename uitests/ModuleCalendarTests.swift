@@ -100,7 +100,10 @@ class ModuleCalendarTests: UITestCase {
 		calendar.navigate().verifyStripIsPresent()
 		calendar.capture("today-selected-others-plain")
 
-		let other = "2026-09-01"
+		// A day ahead of the frozen one: days already gone cannot be chosen, so
+		// the strip is swiped to the week that follows.
+		calendar.swipeStripToNextWeek()
+		let other = "2026-09-07"
 		calendar.tapDay(other)
 		calendar.verifySelectedDay(
 			TestIdentifiers.Calendar.dayCellPrefix + other,
@@ -429,21 +432,26 @@ class ModuleCalendarTests: UITestCase {
 
 	/// An empty day is a day you can land on now, so it has to keep the strip.
 	///
-	/// 2026-08-31 rather than the day after the frozen date: the fixture's
-	/// "Fall Semester Orientation" is an ongoing event spanning 2026-09-01
-	/// through 2026-09-12, so `occursOn` (modules/event-list/days.ts) marks
-	/// every one of those days as having an event -- including the day right
-	/// after the frozen Saturday. The Monday before the frozen week's Sunday is
-	/// the nearest day the fixture leaves empty, and it is visible on launch
-	/// with no strip swipe needed.
+	/// The fixture's "Fall Semester Orientation" runs 2026-09-01 through
+	/// 2026-09-12, and `occursOn` (modules/event-list/days.ts) marks every day
+	/// it spans -- so the first day the fixture leaves empty on or after the
+	/// frozen Saturday is a fortnight out. Days already gone cannot be chosen
+	/// at all, which is why the nearer empty days behind it are no use here.
 	func testAnEmptyDayKeepsTheStrip() throws {
 		let calendar = CalendarScreen(app: app)
 		calendar.navigate().verifyStripIsPresent()
 
-		let empty = "2026-08-31"
+		// The first day on or after the frozen one that the fixture leaves empty.
+		// Days already gone cannot be chosen at all, so an empty one has to be
+		// found ahead -- two weeks out here, which is why the strip is swiped to
+		// it first.
+		let empty = "2026-09-19"
+		calendar.swipeStripToNextWeek()
+		calendar.swipeStripToNextWeek()
+
 		XCTAssertFalse(
 			calendar.dayHasEvents(empty),
-			"2026-08-31 should carry no events in the fixture calendar")
+			"\(empty) should carry no events in the fixture calendar")
 
 		calendar.tapDay(empty)
 		calendar.capture("empty-day")
@@ -468,7 +476,10 @@ class ModuleCalendarTests: UITestCase {
 		let calendar = CalendarScreen(app: app)
 		calendar.navigate().verifyStripIsPresent()
 
-		for target in ["2026-08-31", "2026-09-01", "2026-08-30", "2026-09-02", "2026-09-03"] {
+		// Days ahead of the frozen one, since a day already gone cannot be
+		// chosen at all.
+		calendar.swipeStripToNextWeek()
+		for target in ["2026-09-08", "2026-09-10", "2026-09-07", "2026-09-11", "2026-09-09"] {
 			calendar.tapDayAtItsCenter(target)
 			calendar.verifySelectedDay(
 				TestIdentifiers.Calendar.dayCellPrefix + target,
@@ -476,7 +487,7 @@ class ModuleCalendarTests: UITestCase {
 		}
 
 		calendar.swipeStripToNextWeek()
-		let afterScroll = "2026-09-07"
+		let afterScroll = "2026-09-14"
 		calendar.tapDayAtItsCenter(afterScroll)
 		calendar.verifySelectedDay(
 			TestIdentifiers.Calendar.dayCellPrefix + afterScroll,
@@ -516,14 +527,15 @@ class ModuleCalendarTests: UITestCase {
 			message: "Day view should open with today selected")
 		calendar.capture("Day dot, today has events \(suffix)")
 
-		// 2026-09-01 sits in the same visible week as the frozen day and
-		// carries its own events (it is the first day of the fixture's ongoing
-		// orientation), so tapping it gives a selected-but-not-today cell with
-		// no strip swipe needed.
-		let selected = "2026-09-01"
+		// A day ahead of the frozen one that carries its own events -- the
+		// fixture's ongoing orientation runs through it -- so the cell is
+		// selected but not today. Days already gone cannot be chosen, so this
+		// one is a week on and the strip is swiped to it.
+		calendar.swipeStripToNextWeek()
+		let selected = "2026-09-07"
 		XCTAssertTrue(
 			calendar.dayHasEvents(selected),
-			"2026-09-01 should carry events in the fixture calendar")
+			"2026-09-07 should carry events in the fixture calendar")
 		calendar.tapDay(selected)
 		calendar.verifySelectedDay(
 			TestIdentifiers.Calendar.dayCellPrefix + selected,

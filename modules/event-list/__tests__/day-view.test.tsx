@@ -107,7 +107,8 @@ describe('DayView', () => {
 
 		await fireEvent.press(screen.getByTestId('day-cell-2026-09-08'))
 
-		expect(screen.getByText('Nothing on this day.')).toBeTruthy()
+		// The notice names the day it is empty for, so match its opening.
+		expect(screen.getByText(/^Nothing on /u)).toBeTruthy()
 		expect(screen.getByTestId('day-cell-2026-09-05')).toBeTruthy()
 	})
 

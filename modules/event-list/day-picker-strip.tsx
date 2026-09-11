@@ -72,6 +72,7 @@ let DayCell = React.memo(function DayCell({
 	isToday,
 	isSelected,
 	hasEvents,
+	isPast,
 	onPress,
 	width,
 }: {
@@ -79,6 +80,7 @@ let DayCell = React.memo(function DayCell({
 	isToday: boolean
 	isSelected: boolean
 	hasEvents: boolean
+	isPast: boolean
 	onPress: (day: Moment) => void
 	width: number
 }): React.ReactNode {
@@ -101,18 +103,22 @@ let DayCell = React.memo(function DayCell({
 				: c.label
 	let weekdayColor = isToday ? c.systemRed : c.secondaryLabel
 
+	// A day already gone cannot be chosen -- there is nothing behind today to
+	// show, since anything that has ended never reaches this screen. It stays
+	// drawn so the week it opens reads whole.
+	let dimmed = isPast ? {opacity: 0.3} : null
+
 	return (
 		<Pressable
 			accessibilityLabel={
 				hasEvents ? `${day.format('dddd, MMMM D')}, has events` : day.format('dddd, MMMM D')
 			}
 			accessibilityRole="button"
-			// The selection is drawn as a filled circle, which carries no meaning
-			// to VoiceOver. This is what actually announces the active day.
-			accessibilityState={{selected: isSelected}}
+			accessibilityState={{disabled: isPast, selected: isSelected}}
+			disabled={isPast}
 			hitSlop={4}
 			onPress={handlePress}
-			style={[styles.cell, {width}]}
+			style={[styles.cell, {width}, dimmed]}
 			testID={`${DAY_CELL_PREFIX}${day.format('YYYY-MM-DD')}`}
 		>
 			<Text style={[styles.weekday, {color: weekdayColor}]}>{weekdayLetter}</Text>
@@ -178,7 +184,12 @@ export let DayPickerStrip = React.forwardRef<DayPickerStripHandle, Props>(functi
 	 * at all, which is why it is separate from `offsetForIndex`.
 	 */
 	let rawOffsetForIndex = React.useCallback(
-		(index: number) => PADDING_HORIZONTAL + index * cellTotalWidth - CELL_MARGIN,
+		// Whole cells from the start, so week zero is at zero -- which is where
+		// an untouched strip already rests. Counting the container's padding in
+		// here put it four points along instead, and the session's first scroll
+		// shifted the strip by that much before settling onto this grid and
+		// never moving again.
+		(index: number) => index * cellTotalWidth,
 		[cellTotalWidth],
 	)
 
@@ -249,6 +260,7 @@ export let DayPickerStrip = React.forwardRef<DayPickerStripHandle, Props>(functi
 						<DayCell
 							day={day}
 							hasEvents={daysWithEvents.has(day.format('YYYY-MM-DD'))}
+							isPast={day.isBefore(now, 'day')}
 							isSelected={isSelected}
 							isToday={isToday}
 							key={day.format('YYYY-MM-DD')}

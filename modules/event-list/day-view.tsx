@@ -5,6 +5,7 @@ import {
 	LazyVStack,
 	RNHostView,
 	ScrollView as SwiftUIScrollView,
+	Spacer,
 	TabView,
 	Text,
 	VStack,
@@ -30,12 +31,14 @@ import {formatSectionHeader} from './times'
 import type {CalendarBodyHandle, CalendarSource, SourcedEvent} from './types'
 
 /**
- * How many days either side of the selected one are mounted as pages. Wide
- * enough that a swipe lands well inside the window and the next one has fresh
- * pages waiting; narrow enough that opening the screen builds fifteen of them
- * rather than a semester's worth.
+ * How many days either side of the anchor are mounted as pages.
+ *
+ * Every page in the window is built when the pager is, and the pager is built
+ * again whenever a day is chosen from the strip -- so this is what a tap on
+ * the strip costs. Seven pages is a swipe or two of road in each direction and
+ * a tap that lands promptly; fifteen took well over a second.
  */
-const PAGE_WINDOW = 7
+const PAGE_WINDOW = 3
 
 /**
  * How close to the window's edge the selected day gets before the window
@@ -44,7 +47,19 @@ const PAGE_WINDOW = 7
  * drag. Holding the window still until there is only this much road left ahead
  * means most swipes move within a fixed set and animate once.
  */
-const PAGE_MARGIN = 3
+const PAGE_MARGIN = 1
+
+/**
+ * How far either side of the day on screen a page is built in full.
+ *
+ * A page beyond this is mounted but empty, so it costs nothing until it is
+ * swiped to. Only a rebuild of the pager -- which is what choosing a day from
+ * the strip does, since an uncontrolled pager cannot be told to move -- pays
+ * for what is in the window, and a tap on tomorrow should not cost more than a
+ * swipe to it. One either side is enough that a swipe lands on something
+ * already drawn.
+ */
+const PAGES_DRAWN = 1
 
 type Props = {
 	events: SourcedEvent[]
@@ -112,20 +127,52 @@ export let DayView = React.forwardRef<CalendarBodyHandle, Props>(function DayVie
 	// animating.
 	let [anchor, setAnchor] = React.useState<Moment | null>(null)
 
+	// The pager keeps its own position rather than being told one.
+	//
+	// Told one, it animates twice for a single swipe. `@expo/ui`'s TabView
+	// binds selection so the getter hands back the prop it was last given: the
+	// swipe moves it, SwiftUI reads the old day back and returns there, and
+	// then the new prop arrives and it travels forward again. Uncontrolled,
+	// the swipe is the only thing that moves it.
+	//
+	// A day chosen from the strip is an outside change, and the only way to
+	// reach the pager then is to build it again around that day. Remounting
+	// does not animate, which suits a jump of weeks better than paging through
+	// every day between would.
+	// The day the pager was last built around, and how many times it has been
+	// rebuilt. One value, because they only ever change together.
+	let [pager, setPager] = React.useState<{generation: number; day: string | null}>({
+		generation: 0,
+		day: null,
+	})
+
+	let driveTo = React.useCallback((day: Moment) => {
+		setPager((previous) => ({generation: previous.generation + 1, day: day.format('YYYY-MM-DD')}))
+	}, [])
+
 	// Keyed on the anchor's date rather than the anchor itself. A memo that
 	// listed the selection would hand back a fresh array on every swipe even
 	// when the window had not moved, and a new set of children is a second
 	// thing for SwiftUI to animate on top of the swipe.
 	let anchorIso = (anchor ?? selectedDay)?.format('YYYY-MM-DD') ?? ''
 
+	// The strip draws whole weeks, so it offers the days before today that
+	// open the current one. Those are not days to swipe into -- there is
+	// nothing behind today, since anything that has ended is dropped before it
+	// reaches here -- so the pager starts at today.
+	let swipeable = React.useMemo(
+		() => days.filter((day) => !day.isBefore(props.now, 'day')),
+		[days, props.now],
+	)
+
 	let pages = React.useMemo(() => {
-		if (!anchorIso) return days
+		if (!anchorIso) return swipeable
 
-		let middle = days.findIndex((day) => day.format('YYYY-MM-DD') === anchorIso)
-		if (middle < 0) return days.slice(0, PAGE_WINDOW * 2 + 1)
+		let middle = swipeable.findIndex((day) => day.format('YYYY-MM-DD') === anchorIso)
+		if (middle < 0) return swipeable.slice(0, PAGE_WINDOW * 2 + 1)
 
-		return days.slice(Math.max(0, middle - PAGE_WINDOW), middle + PAGE_WINDOW + 1)
-	}, [days, anchorIso])
+		return swipeable.slice(Math.max(0, middle - PAGE_WINDOW), middle + PAGE_WINDOW + 1)
+	}, [swipeable, anchorIso])
 
 	/**
 	 * Moves the window when the chosen day comes within `PAGE_MARGIN` of its
@@ -145,12 +192,13 @@ export let DayView = React.forwardRef<CalendarBodyHandle, Props>(function DayVie
 		let today = days.find((day) => day.isSame(props.now, 'day'))
 		if (!today) return
 		setChosenDay(today)
+		driveTo(today)
 		stripRef.current?.scrollToDay(today)
-	}, [days, props.now])
+	}, [days, props.now, driveTo])
 
 	React.useImperativeHandle(ref, () => ({showToday}), [showToday])
 
-	let notice = (): React.ReactElement => {
+	let notice = (day: Moment): React.ReactElement => {
 		if (props.message) {
 			return <NoticeView text={props.message} />
 		}
@@ -173,7 +221,7 @@ export let DayView = React.forwardRef<CalendarBodyHandle, Props>(function DayVie
 		if (props.events.length === 0 && props.isLoading) {
 			return <NoticeView text="Loading…" />
 		}
-		return <NoticeView text="Nothing on this day." />
+		return <NoticeView text={`Nothing on ${formatSectionHeader(day)}.`} />
 	}
 
 	return (
@@ -188,6 +236,7 @@ export let DayView = React.forwardRef<CalendarBodyHandle, Props>(function DayVie
 						onSelectDay={(day) => {
 							setChosenDay(day)
 							keepInWindow(day)
+							driveTo(day)
 						}}
 						selectedDay={selectedDay ?? null}
 					/>
@@ -210,17 +259,32 @@ export let DayView = React.forwardRef<CalendarBodyHandle, Props>(function DayVie
 							stripRef.current?.scrollToDay(day)
 						}
 					}}
-					selection={selectedDay?.format('YYYY-MM-DD') ?? ''}
+					defaultSelection={pager.day ?? selectedDay?.format('YYYY-MM-DD') ?? ''}
+					key={pager.generation}
 				>
-					{pages.map((day) => {
+					{pages.map((day, index) => {
 						let iso = day.format('YYYY-MM-DD')
 						let dayRows = byDay.get(iso) ?? []
+						let showing = pages.findIndex((page) => page.isSame(selectedDay, 'day'))
+						let drawn = Math.abs(index - showing) <= PAGES_DRAWN
+
+						if (!drawn) {
+							// Mounted so the pager can reach it, empty until it is worth
+							// drawing. A swipe lands on a neighbour, which is drawn.
+							return (
+								<TabView.Tab key={iso} value={iso}>
+									<VStack>
+										<Spacer />
+									</VStack>
+								</TabView.Tab>
+							)
+						}
 
 						return (
 							<TabView.Tab key={iso} value={iso}>
 								{dayRows.length === 0 ? (
 									<VStack modifiers={[frame({maxHeight: Infinity})]}>
-										<RNHostView matchContents={false}>{notice()}</RNHostView>
+										<RNHostView matchContents={false}>{notice(day)}</RNHostView>
 									</VStack>
 								) : (
 									<SwiftUIScrollView

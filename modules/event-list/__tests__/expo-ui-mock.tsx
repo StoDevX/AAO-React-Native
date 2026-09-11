@@ -282,9 +282,11 @@ export const tag = (value: string | number): Modifier => ({$type: 'tag', value})
  */
 export function TabView({
 	selection,
+	defaultSelection,
 	children,
 }: {
 	selection?: string
+	defaultSelection?: string
 	onSelectionChange?: (value: string) => void
 	children?: React.ReactNode
 }): React.ReactNode {
@@ -292,7 +294,10 @@ export function TabView({
 		value: string
 		children?: React.ReactNode
 	}>[]
-	let active = tabs.find((tab) => tab.props.value === selection) ?? tabs[0]
+	// Uncontrolled is how the day view drives this: it hands over a
+	// `defaultSelection` and rebuilds the pager to move it.
+	let chosen = selection ?? defaultSelection
+	let active = tabs.find((tab) => tab.props.value === chosen) ?? tabs[0]
 	return <View>{active ?? null}</View>
 }
 

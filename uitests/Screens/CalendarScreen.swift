@@ -668,7 +668,7 @@ struct CalendarScreen: Screen {
 		// same label, and reading `frame`/`isHittable` demands a single match --
 		// unlike `exists`, which is satisfied by "at least one" and so cannot
 		// see this collapse at all.
-		let notice = app.staticTexts.matching(NSPredicate(format: "label == %@", text)).firstMatch
+		let notice = app.staticTexts.matching(NSPredicate(format: "label BEGINSWITH %@", text)).firstMatch
 		XCTAssertTrue(
 			notice.waitForExistence(timeout: 10),
 			"\"\(text)\" should be on screen")

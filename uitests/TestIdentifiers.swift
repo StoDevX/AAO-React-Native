@@ -293,7 +293,8 @@ struct TestIdentifiers {
 
 		/// Day view's empty-state copy, shown below the strip when the selected
 		/// day has no events. Mirrors the literal in `modules/event-list/day-view.tsx`.
-		static let emptyDayNotice = "Nothing on this day."
+		/// An empty day names itself, so only the opening is fixed.
+		static let emptyDayNotice = "Nothing on "
 
 		/// Day view's empty-state copy when every calendar is switched off.
 		/// Mirrors the literal in `modules/event-list/day-view.tsx`.
