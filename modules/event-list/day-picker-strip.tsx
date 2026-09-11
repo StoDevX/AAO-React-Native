@@ -112,7 +112,7 @@ let DayCell = React.memo(function DayCell({
 			accessibilityState={{selected: isSelected}}
 			hitSlop={4}
 			onPress={handlePress}
-			style={({pressed}) => [styles.cell, {width}, pressed && styles.cellPressed]}
+			style={[styles.cell, {width}]}
 			testID={`${DAY_CELL_PREFIX}${day.format('YYYY-MM-DD')}`}
 		>
 			<Text style={[styles.weekday, {color: weekdayColor}]}>{weekdayLetter}</Text>
@@ -275,12 +275,6 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		borderRadius: 12,
 		marginHorizontal: CELL_MARGIN,
-	},
-	// A press has to read at a glance and with no delay, since a tap on this
-	// small a target is often over before a fade would finish -- a flat fill
-	// swapped in and out with the touch is what makes that visible.
-	cellPressed: {
-		backgroundColor: c.systemFill,
 	},
 	weekday: {
 		fontSize: 11,
