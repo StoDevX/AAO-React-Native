@@ -17,7 +17,7 @@ import type {SFSymbol} from 'sf-symbols-typescript'
 import * as c from '@frogpond/colors'
 import {FILL_WIDTH} from '../home/button'
 import {homescreenIconDark, homescreenIconLight} from '../home/colors'
-import {TILE_ASPECT, TILE_RADIUS} from './tile-layout'
+import {TILE_ASPECT, TILE_RADIUS} from '../../components/tile-layout'
 import type {ContactType} from './types'
 
 /// The gradient starts at the top edge's centre and has to reach the two

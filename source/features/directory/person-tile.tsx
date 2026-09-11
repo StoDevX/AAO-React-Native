@@ -17,7 +17,7 @@ import {
 } from '@expo/ui/swift-ui/modifiers'
 import * as c from '@frogpond/colors'
 import {initials} from './person'
-import {TILE_ASPECT, TILE_RADIUS} from './tile-layout'
+import {TILE_ASPECT, TILE_RADIUS} from '../../components/tile-layout'
 import type {DirectoryItem} from './types'
 
 type Props = {

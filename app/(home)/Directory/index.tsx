@@ -48,11 +48,7 @@ import {formatResults} from '../../../source/features/directory/helpers'
 import {directoryEntriesOptions} from '../../../source/features/directory/query'
 import {resolveSearch, searchHeading} from '../../../source/features/directory/resolve-search'
 import {ContactTile} from '../../../source/features/directory/tile'
-import {
-	columnsForFontScale,
-	inRows,
-	TILE_SPACING,
-} from '../../../source/features/directory/tile-layout'
+import {columnsForFontScale, inRows, TILE_SPACING} from '../../../source/components/tile-layout'
 import type {DirectoryItem, DirectorySearchTypeEnum} from '../../../source/features/directory/types'
 import {FILL_WIDTH, SCREEN_MARGIN} from '../../../source/features/home/button'
 
