@@ -81,9 +81,14 @@ class StageOneListsTests: UITestCase {
 	}
 
 	func testStudentOrgDetail() throws {
-		let screen = StudentOrgsScreen(app: app).navigate()
+		// Searching first, rather than tapping straight from the landing
+		// screen, is what disambiguates: the landing screen shows category
+		// tiles before any query is typed, and "Academic" now names a real
+		// curated category as well as an org, so a bare label match there
+		// could resolve to the tile instead of a row. Only the search
+		// results render org rows.
+		let screen = StudentOrgsScreen(app: app).navigate().search(for: "academic")
 
-		// The first org alphabetically, whatever the college is listing today.
 		let firstOrg = app.buttons
 			.matching(NSPredicate(format: "label BEGINSWITH %@", "Academic"))
 			.firstMatch

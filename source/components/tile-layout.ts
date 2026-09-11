@@ -29,8 +29,9 @@ export function columnsForFontScale(fontScale: number): number {
 /// Groups a flat list into the rows a SwiftUI Grid wants: its API takes
 /// children pre-split into `Grid.Row`s rather than a flat list. `columns`
 /// varies with Dynamic Type (see `columnsForFontScale`), so it is a parameter
-/// rather than a closed-over constant. Generic over the row type -- the
-/// contact grid passes `ContactType`, the search-results grid `DirectoryItem`.
+/// rather than a closed-over constant. Generic over the row type -- each
+/// caller supplies its own item shape (`ContactType`, `DirectoryItem`,
+/// `CategoryTileData`, ...).
 export function inRows<T>(items: T[], columns: number): T[][] {
 	let rows: T[][] = []
 	for (let i = 0; i < items.length; i += columns) {
