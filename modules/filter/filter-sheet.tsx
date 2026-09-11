@@ -24,6 +24,7 @@ import {
 	tag,
 } from '@expo/ui/swift-ui/modifiers'
 
+import {optionLabel} from './lib/option-label'
 import {clearSelection, selectByTitles} from './lib/select-options'
 import {TriggerLabel} from './lib/trigger-label'
 import {triggerModifiers} from './lib/trigger-modifiers'
@@ -231,7 +232,7 @@ export function FilterSheet<T extends object>({
 									key={option.title}
 									detail={option.detail}
 									mark={spec.renderMark?.(option) ?? null}
-									label={spec.displayTitle ? option.title : option.label}
+									label={optionLabel(option, spec.displayTitle)}
 									title={option.title}
 								/>
 							))}

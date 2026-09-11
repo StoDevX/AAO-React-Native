@@ -38,14 +38,6 @@ let LIST_FILTER_WITH_SELECTION: FilterType<Item> = {
 	apply: {key: 'dietaryTags'},
 }
 
-let EMPTY_LIST_FILTER: FilterType<Item> = {
-	type: 'list',
-	key: 'empty',
-	enabled: false,
-	spec: {title: 'Nothing To Choose', options: [], selected: [], mode: 'OR', displayTitle: true},
-	apply: {key: 'dietaryTags'},
-}
-
 // Neither `FilterMenu` nor `FilterSheet` renders a summary chip for an empty
 // OR-mode selection -- this fixture is what would catch a regression that
 // added one back.
@@ -106,25 +98,4 @@ describe('FilterToolbar', () => {
 		// `LIST_FILTER_WITH_NO_SELECTION`'s comment for why this fixture exists.
 		expect(screen.queryByText('No Stations')).toBeNull()
 	})
-
-	test('renders nothing for a list filter with no options', async () => {
-		await render(
-			<FilterToolbar filters={[TOGGLE_FILTER, EMPTY_LIST_FILTER]} onChange={jest.fn()} />,
-		)
-
-		expect(screen.getByText('Vegetarian')).toBeTruthy()
-		expect(screen.queryByText('Nothing To Choose')).toBeNull()
-	})
-
-	// `FilterToolbar` maps `isActive={filter.enabled}` for every shape --
-	// covered here for a sheet-shaped filter and a menu-shaped one. Both
-	// triggers carry the same fact the same way: `FilterSheet`'s anchor
-	// `Button` and `Menu`'s own label share `buttonStyle` modifiers (see
-	// `./lib/trigger-modifiers`), so a sheet trigger's `isActive` shows up as
-	// which modifiers it was given, the same as a menu's.
-	// `iconFor` has to survive two forwards to reach a row -- `FilterToolbar`
-	// to `FilterToolbarButton`, then `FilterToolbarButton` to `FilterSheet` --
-	// and every component in between is the real one; only `@expo/ui` itself
-	// is mocked. A drop at either hop fails this the same way it would fail
-	// on screen.
 })

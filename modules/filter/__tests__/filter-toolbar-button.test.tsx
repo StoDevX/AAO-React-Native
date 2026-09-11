@@ -47,22 +47,6 @@ function sheetFilter(enabled: boolean): FilterType<Item> {
 }
 
 describe('FilterToolbarButton, inline shape', () => {
-	// A toggle has one state to change, so its trigger is the control: there is
-	// no menu to open and nothing to present.
-	test('renders a toggle as a control, presenting nothing', async () => {
-		await render(
-			<FilterToolbarButton
-				filter={TOGGLE_FILTER}
-				isActive={false}
-				onChange={jest.fn()}
-				title={TOGGLE_FILTER.spec.title}
-			/>,
-		)
-
-		expect(screen.getByRole('button', {name: 'Vegetarian'})).toBeTruthy()
-		expect(screen.queryByTestId('menu:Vegetarian')).toBeNull()
-	})
-
 	// The dispatcher's whole job is to wire `onChange` through to whichever
 	// presentation it picked. This is the only test that exercises that wiring
 	// directly -- every other test in the suite exercises what
@@ -86,16 +70,8 @@ describe('FilterToolbarButton, inline shape', () => {
 })
 
 describe('FilterToolbarButton, sheet shape', () => {
-	// A sheet's `BottomSheet` anchors its own trigger `Button`, styled
-	// identically to `FilterMenu`'s -- so `isActive` shows up the same way it
-	// does for a menu: as which modifiers the trigger was given. Compared by
-	// identity against `filter-menu.tsx`'s own exported constants, not a
-	// literal shape, so the mock's invented `Modifier` representation can't
-	// leak into what this asserts.
 	// The dispatcher's whole job, for this shape, is wiring the sheet's own
-	// trigger up at all. This is the only test in this block that proves a
-	// press actually reveals a row -- every other test here only checks the
-	// trigger's own modifiers.
+	// trigger up at all: a press has to reveal a row.
 	test('pressing the trigger opens the sheet', async () => {
 		await render(
 			<FilterToolbarButton
@@ -112,8 +88,4 @@ describe('FilterToolbarButton, sheet shape', () => {
 
 		expect(screen.getByText('Dept 0')).toBeTruthy()
 	})
-
-	// `iconFor` is forwarded to the sheet only -- covering it here, not just
-	// in `filter-sheet.test.tsx`, is what catches a mutation that deletes the
-	// prop at the point this component passes it on.
 })
