@@ -1,4 +1,4 @@
-import {expect, it, jest} from '@jest/globals'
+import {describe, expect, it, jest} from '@jest/globals'
 import {getDetailedBuildingStatus} from '../get-detailed-status'
 import {plainMoment} from './moment.helper'
 import {BuildingType} from '../../types'
@@ -159,4 +159,39 @@ it('returns false if none are open', () => {
 	expect(actual).toMatchSnapshot()
 
 	expect(actual[0].isActive).toBe(false)
+})
+
+describe('a window still running from last night', () => {
+	// data/building-hours/8-bc.yaml: Buntrock runs to 1am on Friday and
+	// Saturday nights. 2026-09-13 is a Sunday.
+	let buntrock: BuildingType = {
+		name: 'Buntrock Commons',
+		category: 'Academia',
+		breakSchedule: undefined,
+		schedule: [
+			{
+				title: 'Hours',
+				hours: [
+					{days: ['Su', 'Mo', 'Tu', 'We', 'Th'], from: '7:00am', to: '12:00am'},
+					{days: ['Fr', 'Sa'], from: '7:00am', to: '1:00am'},
+				],
+			},
+		],
+	}
+
+	let at = (time: string) => plainMoment(`2026-09-13T${time}`, 'YYYY-MM-DD[T]HH:mm:ss')
+
+	it('is listed, showing the hours it is actually running', () => {
+		let actual = getDetailedBuildingStatus(buntrock, at('00:30:00'))
+		let running = actual.filter((row) => row.isActive)
+
+		expect(running).toHaveLength(1)
+		expect(running[0].status).toBe('7:00 AM — 1:00 AM')
+	})
+
+	it('drops off the list once it has closed', () => {
+		let actual = getDetailedBuildingStatus(buntrock, at('14:00:00'))
+
+		expect(actual.map((row) => row.status)).toEqual(['7:00 AM — Midnight'])
+	})
 })

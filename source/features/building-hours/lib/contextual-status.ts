@@ -1,7 +1,7 @@
 import type {Moment} from 'moment-timezone'
 import type {BuildingType} from '../types'
 import {getDayOfWeek} from './get-day-of-week'
-import {parseHours} from './parse-hours'
+import {findOpenWindow, windowOpeningOn} from './find-open-window'
 import {isChapelTime} from './chapel'
 
 const ALMOST_THRESHOLD_MINUTES = 30
@@ -14,18 +14,17 @@ function formatTime(m: Moment): string {
 type OpenWindow = {open: Moment; close: Moment}
 
 function findCurrentOpen(building: BuildingType, now: Moment): OpenWindow | null {
-	let dayOfWeek = getDayOfWeek(now)
-
 	for (let set of building.schedule || []) {
 		if (set.isPhysicallyOpen === false) continue
 		if (set.closedForChapelTime && isChapelTime(now)) continue
 
 		for (let hours of set.hours) {
-			if (!hours.days.includes(dayOfWeek)) continue
-
-			let {open, close} = parseHours(hours, now)
-			if (now.isBetween(open, close, 'minute', '[)')) {
-				return {open, close}
+			// `findOpenWindow` decides this on its own, and counts a window
+			// that opened last night -- filtering by today's day first would
+			// discard exactly those.
+			let window = findOpenWindow(hours, now)
+			if (window) {
+				return window
 			}
 		}
 	}
@@ -41,7 +40,7 @@ function findNextOpenToday(building: BuildingType, now: Moment): OpenWindow | nu
 		for (let hours of set.hours) {
 			if (!hours.days.includes(dayOfWeek)) continue
 
-			let {open, close} = parseHours(hours, now)
+			let {open, close} = windowOpeningOn(hours, now)
 			if (now.isBefore(open)) {
 				return {open, close}
 			}
