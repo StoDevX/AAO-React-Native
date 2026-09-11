@@ -222,6 +222,12 @@ function tagOf(modifiers?: Modifier[]): string | number | undefined {
 	return typeof found === 'string' || typeof found === 'number' ? found : undefined
 }
 
+/** The letter a `sectionIndexLabel(…)` modifier asks the jumplist rail to show. */
+function sectionIndexLabelOf(modifiers?: Modifier[]): string | undefined {
+	let found = modifierOf(modifiers, 'sectionIndexLabel')
+	return typeof found?.label === 'string' ? found.label : undefined
+}
+
 /** The handler a `refreshable(…)` modifier registers. */
 function refreshHandlerOf(modifiers?: Modifier[]): (() => Promise<void>) | undefined {
 	let found = modifierOf(modifiers, 'refreshable')
@@ -324,6 +330,7 @@ export function Section({
 	children,
 	footer,
 	header,
+	modifiers,
 	title,
 }: WithModifiers & {
 	title?: string
@@ -334,9 +341,12 @@ export function Section({
 		throw new Error('Section header/footer are SwiftUI slots; a bare string crashes at mount')
 	}
 
+	let indexLabel = sectionIndexLabelOf(modifiers)
+
 	return (
 		<View>
 			{title ? <RNText>{title}</RNText> : null}
+			{indexLabel ? <RNText accessibilityLabel={`section index ${indexLabel}`} /> : null}
 			{header}
 			{children}
 			{footer}

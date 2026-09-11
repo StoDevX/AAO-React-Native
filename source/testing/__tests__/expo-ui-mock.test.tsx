@@ -133,6 +133,24 @@ describe('expo-ui-mock', () => {
 		})
 	})
 
+	describe('Section', () => {
+		test('surfaces a sectionIndexLabel modifier for the jumplist rail', async () => {
+			await render(
+				<Section modifiers={[{$type: 'sectionIndexLabel', label: 'C'}]} title="C">
+					{null}
+				</Section>,
+			)
+
+			expect(screen.getByLabelText('section index C')).toBeTruthy()
+		})
+
+		test('renders no marker when no sectionIndexLabel modifier is given', async () => {
+			await render(<Section title="C">{null}</Section>)
+
+			expect(screen.queryByLabelText(/^section index /u)).toBeNull()
+		})
+	})
+
 	describe('BottomSheet', () => {
 		test('keeps the anchor mounted and the children out while dismissed', async () => {
 			await render(
