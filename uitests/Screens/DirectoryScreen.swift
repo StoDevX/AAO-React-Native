@@ -233,19 +233,19 @@ struct DirectoryScreen: Screen {
 		return self
 	}
 
-	/// Swipe the contact sheet away, the way `FilterScreen.dismissSheet` does.
+	/// Swipe the contact sheet away, with the same press-drag-hold shape
+	/// `FilterScreen.dismissSheet` uses.
 	///
 	/// The drag starts on the sheet's own navigation bar rather than in its
 	/// body: a drag begun inside the scrollable content scrolls that content
 	/// instead of moving the sheet, and reports nothing either way.
 	///
-	/// That bar is found by `title` -- the contact's own name, which the
-	/// sheet's nested stack titles it with -- rather than by position. A bar
-	/// picked by index returns whichever one XCUITest enumerates at that slot,
-	/// and for this sheet that is the Directory screen's own bar, which sits
-	/// above the sheet behind the dimmed backdrop. Dragging from there does
-	/// dismiss the sheet, since a backdrop drag is its own dismissal path, so
-	/// the mistake passes quietly while testing a different gesture.
+	/// That bar is found by `title` -- the contact's own name, which only the
+	/// sheet carries, the screen behind it being titled "Directory". An
+	/// index-picked bar is not a substitute: the presenting screen's own bar
+	/// is above the sheet, behind the dimmed backdrop, and a drag from there
+	/// dismisses the sheet by backdrop rather than by grabber -- a different
+	/// gesture that ends in the same place, so the test would still pass.
 	///
 	/// `action` is the contact's own button, which exists only on the detail
 	/// -- the contact's name will not do, since SwiftUI collapses that onto
@@ -276,12 +276,11 @@ struct DirectoryScreen: Screen {
 	/// screen coordinate rather than `XCUIElement.tap()`, because the tile is
 	/// expected not to respond -- a plain `.tap()` would fail for
 	/// unhittability, which is a different claim than the one being made. The
-	/// sheet's top edge is found by looking up its navigation bar by
-	/// `sheetTitle` -- the contact's own name, which the sheet's nested stack
-	/// titles it with -- rather than by position: a bar picked by index
-	/// silently returns whichever bar XCUITest happens to enumerate at that
-	/// slot, and for this sheet that is the Directory screen's own bar behind
-	/// it, not the sheet's. And the tap aims at `dy: 0.1`, the
+	/// sheet's top edge comes from its own navigation bar, found by
+	/// `sheetTitle` -- the contact's name, which only the sheet carries, the
+	/// screen behind it being titled "Directory". An index-picked bar would be
+	/// the presenting screen's, which sits above the sheet and would put the
+	/// comparison against the wrong edge. And the tap aims at `dy: 0.1`, the
 	/// tile's upper edge, rather than its centre: the first grid row's tile is
 	/// tall enough that its centre sits below the sheet's top edge even while
 	/// its top is exposed above it, so the centre is the wrong point to prove
