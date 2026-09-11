@@ -33,6 +33,32 @@ struct TransportationScreen: Screen {
 		app.staticTexts[TestIdentifiers.Transportation.footer].firstMatch
 	}
 
+	/// Open a stop's own schedule, which draws the same progress bar down a
+	/// column of departure times rather than of stops.
+	@discardableResult
+	func openFirstStop() -> Self {
+		// The rows carry a concatenated label -- the stop name and its times --
+		// so the name is a prefix rather than the whole of it.
+		let stop = app.elementWithLabel(startingWith: TestIdentifiers.Transportation.aStop)
+		XCTAssertTrue(
+			stop.waitForExistence(timeout: 30),
+			"The route should list \(TestIdentifiers.Transportation.aStop) as a stop")
+		stop.tap()
+		return self
+	}
+
+	@discardableResult
+	func verifyStopScheduleShown() -> Self {
+		// The heading carries the stop's name and when its next bus is, as one
+		// element -- "St. Olaf College — Starts in 3 hours (12:00pm)" -- so the
+		// name is a prefix of it rather than the whole of it.
+		XCTAssertTrue(
+			app.elementWithLabel(startingWith: TestIdentifiers.Transportation.aStop)
+				.waitForExistence(timeout: 30),
+			"Tapping a stop should open its own schedule, headed by its name")
+		return self
+	}
+
 	@discardableResult
 	func checkTabs() -> Self {
 		for tab in TestIdentifiers.Transportation.tabs {

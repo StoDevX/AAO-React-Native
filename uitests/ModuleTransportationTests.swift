@@ -18,4 +18,15 @@ class ModuleTransportationTests: UITestCase {
 			.capture("route line, last stop")
 			.verifyEndOfRoute()
 	}
+
+	/// A single stop's schedule draws the same progress bar down its departure
+	/// times, so it has the same question to answer as the route above: whether
+	/// the bar and its dots survive the card they are drawn inside.
+	func testAStopSchedulePresents() throws {
+		TransportationScreen(app: app)
+			.navigate()
+			.openFirstStop()
+			.verifyStopScheduleShown()
+			.capture("stop schedule")
+	}
 }
