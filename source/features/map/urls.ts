@@ -51,3 +51,13 @@ const BUILDING_PHOTO_ROOT = 'https://carls-app.github.io/map-data/cache/img'
 export function buildingPhotoUrl(filename: string): string {
 	return `${BUILDING_PHOTO_ROOT}/${filename}`
 }
+
+/**
+ * A search for an address in Maps.
+ *
+ * A universal link rather than the `maps://` scheme: iOS hands this straight
+ * to Maps.app, and a device without it still lands somewhere sensible.
+ */
+export function appleMapsSearchUrl(address: string): string {
+	return `https://maps.apple.com/?q=${encodeURIComponent(address)}`
+}

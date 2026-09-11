@@ -22,7 +22,7 @@ import {openUrl} from '@frogpond/open-url'
 
 import {normalizeLinks} from './lib/normalize-link'
 import type {Building, Feature, LabelLink, LabelLinkString} from './types'
-import {buildingPhotoUrl} from './urls'
+import {appleMapsSearchUrl, buildingPhotoUrl} from './urls'
 
 /// Matches the glyph Apple uses to close a sheet.
 const CLOSE_GLYPH_SIZE = 26
@@ -163,7 +163,7 @@ function AddressLink({address}: {address: string}): React.ReactNode {
 	// hands to Maps.app, and openUrl would offer to show it in the in-app
 	// browser instead, which lands on Apple's web fallback page.
 	let onPress = () => {
-		let url = `https://maps.apple.com/?q=${encodeURIComponent(address)}`
+		let url = appleMapsSearchUrl(address)
 		Linking.openURL(url).catch((err: unknown) => {
 			console.warn(`could not open ${url}`, err)
 		})

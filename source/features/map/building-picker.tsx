@@ -11,10 +11,11 @@ import {
 import {useQuery} from '@tanstack/react-query'
 import {CampusSearchBar} from '@frogpond/campus-search-bar'
 import {useDebounce} from '@frogpond/use-debounce'
-import fuzzyfind from 'fuzzyfind'
 
 import type {Campus} from '../building-hours/query'
-import {CategoryPicker, LABEL_TO_CATEGORY, type CategoryLabel} from './category-picker'
+import {CategoryPicker} from './category-picker'
+import type {CategoryLabel} from './lib/categories'
+import {visibleBuildings} from './lib/visible-buildings'
 import {mapDataOptions} from './query'
 import type {Building, Feature} from './types'
 
@@ -80,18 +81,10 @@ export function BuildingPicker({
 
 	let {data: buildings = [], error, isError, isLoading, refetch} = useQuery(mapDataOptions(campus))
 
-	let visible = React.useMemo(() => {
-		// fuzzyfind is subsequence-based and lowercases both sides itself, so
-		// the needle only has to be trimmed -- a leading space would otherwise
-		// have to appear in the name before any of the typed letters.
-		if (query) {
-			return fuzzyfind(query, buildings, {
-				accessor: (b: Feature<Building>) => `${b.properties.name} ${b.properties.nickname ?? ''}`,
-			})
-		}
-		let key = LABEL_TO_CATEGORY[category]
-		return buildings.filter((b) => b.properties.categories?.includes(key))
-	}, [buildings, category, query])
+	let visible = React.useMemo(
+		() => visibleBuildings(buildings, category, query),
+		[buildings, category, query],
+	)
 
 	let cancelSearch = React.useCallback(() => {
 		setTypedQuery('')

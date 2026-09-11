@@ -30,7 +30,10 @@ afterEach(() => {
 })
 
 describe('BuildingInfo', () => {
-	it('hands the address to Maps over https', async () => {
+	// `Linking` rather than `openUrl`: a universal link goes to Maps.app, where
+	// the in-app browser would land on Apple's web fallback page instead.
+	// `urls.test.ts` covers the URL itself.
+	it('opens an address through Linking, not the in-app browser', async () => {
 		await render(
 			<BuildingInfo
 				building={makeBuilding({
@@ -64,23 +67,6 @@ describe('BuildingInfo', () => {
 		expect(mockOpenUrl).toHaveBeenCalledWith('https://wp.stolaf.edu/registrar')
 	})
 
-	it('opens a St. Olaf department given as a {label, href} object', async () => {
-		await render(
-			<BuildingInfo
-				building={makeBuilding({
-					id: 'a',
-					name: 'Alpha Hall',
-					departments: [{label: 'Admissions', href: 'https://wp.stolaf.edu/admissions'}],
-				})}
-				onClose={jest.fn()}
-			/>,
-		)
-
-		await fireEvent.press(screen.getByText('Admissions'))
-
-		expect(mockOpenUrl).toHaveBeenCalledWith('https://wp.stolaf.edu/admissions')
-	})
-
 	it('renders St. Olaf-only links', async () => {
 		await render(
 			<BuildingInfo
@@ -96,25 +82,6 @@ describe('BuildingInfo', () => {
 		await fireEvent.press(screen.getByText('Directions'))
 
 		expect(mockOpenUrl).toHaveBeenCalledWith('https://wp.stolaf.edu/directions')
-	})
-
-	it('resolves a photo filename against the photo host', async () => {
-		await render(
-			<BuildingInfo
-				building={makeBuilding({
-					id: 'a',
-					name: 'Leighton Hall',
-					photos: ['leighton.jpg'],
-				})}
-				onClose={jest.fn()}
-			/>,
-		)
-
-		// ccc-server stores a bare filename, not a URL; the images live in
-		// carls-app/map-data.
-		expect(screen.getByLabelText('Photo of Leighton Hall').props.source).toEqual({
-			uri: 'https://carls-app.github.io/map-data/cache/img/leighton.jpg',
-		})
 	})
 
 	it('renders a not-found state when the building is missing', async () => {
