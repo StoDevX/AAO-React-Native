@@ -106,6 +106,40 @@ class ModuleFilterTests: UITestCase {
 			"every remaining row should carry the \(vegan) icon")
 	}
 
+	/// The other dismissal: the header's Done button. It runs `onClose`, which
+	/// commits the sheet's accumulated selection the same way an interactive
+	/// dismissal does -- a Done that only closed the sheet would throw the
+	/// reader's choices away, silently and every time.
+	///
+	/// The trigger's state is the assertion rather than the remaining food
+	/// rows: `testSwipeDismissalAppliesTheSelection` already establishes that a
+	/// committed selection narrows the menu, so what is left to prove here is
+	/// that the button committed anything at all -- and that holds whatever
+	/// Stav is serving today.
+	func testDonePressAppliesTheSelection() throws {
+		MenusScreen(app: app)
+			.navigate()
+			.verifyFoodRowsAppear()
+
+		let filters = FilterScreen(app: app)
+		let vegan = TestIdentifiers.Menus.vegan
+
+		filters.verifyTrigger(Keys.dietaryRestrictions, isSelected: false)
+
+		filters
+			.openFilter(Keys.dietaryRestrictions, until: filters.option(vegan))
+			.tapOption(vegan)
+			.tapDone(waitingFor: vegan)
+
+		filters.verifyTrigger(Keys.dietaryRestrictions, isSelected: true)
+
+		// And the choice is still drawn when the sheet comes back up, so Done
+		// committed it rather than merely leaving the trigger looking active.
+		filters
+			.openFilter(Keys.dietaryRestrictions, until: filters.option(vegan))
+			.verifyOption(vegan, isSelected: true)
+	}
+
 	// MARK: - The menu
 
 	/// The other presentation, end to end: open the pull-down menu, toggle one
