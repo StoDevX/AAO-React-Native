@@ -25,6 +25,7 @@ import type {Moment} from 'moment-timezone'
 import {NoticeView} from '@frogpond/notice'
 
 import {DayPickerStrip, type DayPickerStripHandle} from './day-picker-strip'
+import {anchorShouldFollow, dayOnShow, emptyNotice, pageWindow} from './day-state'
 import {deriveDays, eventsByDay} from './days'
 import {EventListRow} from './event-list-row'
 import {formatSectionHeader} from './times'
@@ -76,9 +77,8 @@ type Props = {
 /**
  * One day of the calendar at a time, under a day picker.
  *
- * The strip is the only thing that says what day it is. Nothing reads the
- * scroll position back, so there is no second opinion to reconcile -- which is
- * what the sectioned list and its strip used to spend their time doing.
+ * The strip is the only thing that says what day it is. Nothing reads a scroll
+ * position back, so there is no second opinion to reconcile.
  */
 export let DayView = React.forwardRef<CalendarBodyHandle, Props>(function DayView(props, ref) {
 	let stripRef = React.useRef<DayPickerStripHandle>(null)
@@ -106,16 +106,7 @@ export let DayView = React.forwardRef<CalendarBodyHandle, Props>(function DayVie
 	// among the days and the view always opens somewhere real.
 	let [chosenDay, setChosenDay] = React.useState<Moment | null>(null)
 
-	// A chosen day the strip no longer offers is ignored rather than cleared.
-	// Narrowing the filter can shorten the range past it, and a selection the
-	// strip cannot show is the strip and the content disagreeing again -- the
-	// thing this view exists to prevent. Held rather than dropped so widening
-	// the filter again returns the day the reader was on.
-	let chosenIsVisible = chosenDay ? days.some((day) => day.isSame(chosenDay, 'day')) : false
-	let selectedDay =
-		(chosenIsVisible ? chosenDay : null) ??
-		days.find((day) => day.isSame(props.now, 'day')) ??
-		days[0]
+	let selectedDay = dayOnShow(days, chosenDay, props.now)
 
 	// Only the days within reach of the selected one are mounted. Every day of
 	// a semester is well over a hundred pages, and SwiftUI builds each one
@@ -146,46 +137,59 @@ export let DayView = React.forwardRef<CalendarBodyHandle, Props>(function DayVie
 		day: null,
 	})
 
-	let driveTo = React.useCallback((day: Moment) => {
-		setPager((previous) => ({generation: previous.generation + 1, day: day.format('YYYY-MM-DD')}))
-	}, [])
+	let driveTo = React.useCallback(
+		(day: Moment) => {
+			setPager((previous) => ({generation: previous.generation + 1, day: day.format('YYYY-MM-DD')}))
+		},
+		[setPager],
+	)
 
-	// Keyed on the anchor's date rather than the anchor itself. A memo that
-	// listed the selection would hand back a fresh array on every swipe even
-	// when the window had not moved, and a new set of children is a second
-	// thing for SwiftUI to animate on top of the swipe.
-	let anchorIso = (anchor ?? selectedDay)?.format('YYYY-MM-DD') ?? ''
+	// The pager's own position is not readable from here, so it is tracked: it
+	// is whatever it was last built around, and whatever its swipes have since
+	// reported. When the day being shown parts company with that -- a filter
+	// narrowing the range out from under it, or the clock passing midnight --
+	// nothing has asked the pager to move, and it sits on a day no tab carries
+	// while the strip shows another. Building it again is the only way to move
+	// it, so that is what this does.
+	let selectedIso = selectedDay?.format('YYYY-MM-DD') ?? null
 
-	// The strip draws whole weeks, so it offers the days before today that
-	// open the current one. Those are not days to swipe into -- there is
-	// nothing behind today, since anything that has ended is dropped before it
-	// reaches here -- so the pager starts at today.
+	// The rule this waives asks that an effect only synchronise React with an
+	// external system, which is what this is: a SwiftUI pager whose position
+	// cannot be read back and can only be set by building it again.
+	React.useEffect(() => {
+		if (selectedDay && selectedIso !== pager.day) {
+			// oxlint-disable-next-line react/set-state-in-effect
+			driveTo(selectedDay)
+		}
+	}, [selectedDay, selectedIso, pager.day, driveTo])
+
+	// The strip draws whole weeks, so it offers the days before today that open
+	// the current one. Those are not days to page into -- nothing that has
+	// ended reaches this screen -- so the pager starts at today.
 	let swipeable = React.useMemo(
 		() => days.filter((day) => !day.isBefore(props.now, 'day')),
 		[days, props.now],
 	)
 
-	let pages = React.useMemo(() => {
-		if (!anchorIso) return swipeable
-
-		let middle = swipeable.findIndex((day) => day.format('YYYY-MM-DD') === anchorIso)
-		if (middle < 0) return swipeable.slice(0, PAGE_WINDOW * 2 + 1)
-
-		return swipeable.slice(Math.max(0, middle - PAGE_WINDOW), middle + PAGE_WINDOW + 1)
-	}, [swipeable, anchorIso])
+	let pages = React.useMemo(
+		() => pageWindow(swipeable, anchor, selectedDay, PAGE_WINDOW),
+		[swipeable, anchor, selectedDay],
+	)
 
 	/**
-	 * Moves the window when the chosen day comes within `PAGE_MARGIN` of its
-	 * edge, and leaves it alone otherwise.
+	 * Moves the anchor on when the chosen day nears the window's edge.
+	 *
+	 * The window would hold the day either way -- `pages` sees to that -- but
+	 * moving it here keeps the correction from firing in the middle of a swipe,
+	 * where a changed set of pages is a second thing to animate.
 	 */
 	let keepInWindow = React.useCallback(
 		(day: Moment) => {
-			let edge = pages.findIndex((page) => page.isSame(day, 'day'))
-			if (edge < 0 || edge < PAGE_MARGIN || edge > pages.length - 1 - PAGE_MARGIN) {
+			if (anchorShouldFollow(pages, day, PAGE_MARGIN)) {
 				setAnchor(day)
 			}
 		},
-		[pages],
+		[pages, setAnchor],
 	)
 
 	let showToday = React.useCallback(() => {
@@ -198,30 +202,21 @@ export let DayView = React.forwardRef<CalendarBodyHandle, Props>(function DayVie
 
 	React.useImperativeHandle(ref, () => ({showToday}), [showToday])
 
+	// Where the day being shown sits in the window, which is what says how far
+	// from it a page can be and still be worth drawing. `pages` guarantees this
+	// is found.
+	let showingAt = pages.findIndex((page) => page.isSame(selectedDay, 'day'))
+
 	let notice = (day: Moment): React.ReactElement => {
-		if (props.message) {
-			return <NoticeView text={props.message} />
-		}
-		if (props.sources.length === 0) {
-			// No retry: there is nothing to reload, and the way out is the
-			// Calendars button rather than another attempt.
-			return (
-				<NoticeView text="No calendars are showing. Choose some from the Calendars button below." />
-			)
-		}
-		if (props.events.length === 0 && props.failed.length > 0) {
-			return (
-				<NoticeView
-					buttonText="Try Again"
-					onPress={props.onRefresh}
-					text={`Could not load ${props.failed.map((source) => source.title).join(', ')}.`}
-				/>
-			)
-		}
-		if (props.events.length === 0 && props.isLoading) {
-			return <NoticeView text="Loading…" />
-		}
-		return <NoticeView text={`Nothing on ${formatSectionHeader(day)}.`} />
+		let {text, retry} = emptyNotice(props, {
+			text: `Nothing on ${formatSectionHeader(day)}.`,
+			retry: false,
+		})
+		return retry ? (
+			<NoticeView buttonText="Try Again" onPress={props.onRefresh} text={text} />
+		) : (
+			<NoticeView text={text} />
+		)
 	}
 
 	return (
@@ -256,6 +251,10 @@ export let DayView = React.forwardRef<CalendarBodyHandle, Props>(function DayVie
 						if (day) {
 							setChosenDay(day)
 							keepInWindow(day)
+							// The pager moved itself, so it is already showing this day.
+							// Recorded rather than driven, or the effect above would
+							// rebuild it and undo the swipe it just made.
+							setPager((previous) => ({...previous, day: iso}))
 							stripRef.current?.scrollToDay(day)
 						}
 					}}
@@ -265,8 +264,7 @@ export let DayView = React.forwardRef<CalendarBodyHandle, Props>(function DayVie
 					{pages.map((day, index) => {
 						let iso = day.format('YYYY-MM-DD')
 						let dayRows = byDay.get(iso) ?? []
-						let showing = pages.findIndex((page) => page.isSame(selectedDay, 'day'))
-						let drawn = Math.abs(index - showing) <= PAGES_DRAWN
+						let drawn = Math.abs(index - showingAt) <= PAGES_DRAWN
 
 						if (!drawn) {
 							// Mounted so the pager can reach it, empty until it is worth

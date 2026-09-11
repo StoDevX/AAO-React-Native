@@ -296,8 +296,13 @@ export function TabView({
 	}>[]
 	// Uncontrolled is how the day view drives this: it hands over a
 	// `defaultSelection` and rebuilds the pager to move it.
+	//
+	// A selection matching no tab renders nothing, which is what the native
+	// component does -- it seeds its own state with whatever it was handed and
+	// SwiftUI draws no page for a value no tab carries. Falling back to the
+	// first tab here would turn a blank screen on a device into a passing test.
 	let chosen = selection ?? defaultSelection
-	let active = tabs.find((tab) => tab.props.value === chosen) ?? tabs[0]
+	let active = tabs.find((tab) => tab.props.value === chosen)
 	return <View>{active ?? null}</View>
 }
 

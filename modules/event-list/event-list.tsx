@@ -22,6 +22,7 @@ import * as c from '@frogpond/colors'
 import type {Moment} from 'moment-timezone'
 import {NoticeView} from '@frogpond/notice'
 import {EventListRow} from './event-list-row'
+import {emptyNotice} from './day-state'
 import {groupEvents} from './sections'
 import type {CalendarBodyHandle, CalendarSource, SourcedEvent} from './types'
 
@@ -79,39 +80,17 @@ export let EventList = React.forwardRef<CalendarBodyHandle, Props>(function Even
 
 	React.useImperativeHandle(ref, () => ({showToday}), [showToday])
 
-	if (props.message) {
-		return <NoticeView text={props.message} />
-	}
+	let {text, retry} = emptyNotice(props, {text: 'No events.', retry: true})
 
-	if (props.sources.length === 0) {
-		// No retry: there is nothing to reload, and the way out is the Calendars
-		// button rather than another attempt.
-		return (
-			<NoticeView text="No calendars are showing. Choose some from the Calendars button below." />
+	// Each notice replaces the list, and the list is what carries
+	// pull-to-refresh -- so one that can be retried has to offer it itself, or a
+	// failed load leaves the screen with no way back but the back button.
+	if (props.message || props.sources.length === 0 || props.events.length === 0) {
+		return retry ? (
+			<NoticeView buttonText="Try Again" onPress={props.onRefresh} text={text} />
+		) : (
+			<NoticeView text={text} />
 		)
-	}
-
-	if (props.events.length === 0) {
-		// Each notice replaces the list, and the list is what carries
-		// pull-to-refresh -- so each has to offer the retry itself, or a failed
-		// load leaves the screen with no way back but the back button.
-		//
-		// A calendar that failed to load is worth naming even when it left
-		// nothing else to show -- otherwise "every source errored" and "nothing
-		// is on today" read as the identical bare "No events."
-		if (props.failed.length > 0) {
-			return (
-				<NoticeView
-					buttonText="Try Again"
-					onPress={props.onRefresh}
-					text={`Could not load ${props.failed.map((source) => source.title).join(', ')}.`}
-				/>
-			)
-		}
-		if (props.isLoading) {
-			return <NoticeView text="Loading…" />
-		}
-		return <NoticeView buttonText="Try Again" onPress={props.onRefresh} text="No events." />
 	}
 
 	return (

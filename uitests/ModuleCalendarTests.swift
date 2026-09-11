@@ -384,6 +384,33 @@ class ModuleCalendarTests: UITestCase {
 			"Swiping from the left edge should land back on the home screen")
 	}
 
+	/// Today, in Day mode, is a different thing from Today in Upcoming: it
+	/// chooses a day rather than scrolling a list, and the pager has to be
+	/// rebuilt around it. Pressed from a day well ahead, it once left the pager
+	/// seeded with a day it had no page for, so the strip showed today selected
+	/// over an empty pane -- which is why this asserts an event is on screen and
+	/// not merely that the strip moved.
+	func testTodayReturnsTheDayViewToToday() throws {
+		let calendar = CalendarScreen(app: app)
+		calendar.navigate().verifyStripIsPresent()
+
+		let opening = calendar.topRowLabel()
+		XCTAssertNotNil(opening, "Day mode should open on a day that has events")
+
+		// Far enough ahead that the mounted window has moved off today.
+		calendar.swipeStripToNextWeek()
+		calendar.tapDay("2026-09-12")
+
+		calendar.tapToday()
+		calendar.capture("today-from-a-week-ahead")
+		calendar.verifySelectedDay(
+			TestIdentifiers.Calendar.dayCell(TestIdentifiers.Calendar.frozenNow),
+			message: "Today should choose the frozen day")
+		XCTAssertEqual(
+			calendar.topRowLabel(), opening,
+			"Today should bring back the day it opened on, with its events drawn")
+	}
+
 	func testAttributionOnlyOnTheDetailScreen() throws {
 		CalendarScreen(app: app)
 			.navigate()

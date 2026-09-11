@@ -58,35 +58,6 @@ export function deriveDays(events: readonly SourcedEvent[], now: Moment): Moment
 }
 
 /**
- * Whether an event belongs on a given day. An ongoing event belongs to every
- * day it spans; anything else belongs to the day it starts on.
- *
- * One predicate rather than two, because a dot on the strip and the rows
- * beneath it have to agree: a dot on a day that turns out to be empty is worse
- * than no dot at all.
- */
-export function occursOn(entry: SourcedEvent, day: Moment): boolean {
-	if (entry.event.isOngoing) {
-		let start = day.clone().startOf('day')
-		let end = day.clone().endOf('day')
-		return !entry.event.startTime.isAfter(end) && !entry.event.endTime.isBefore(start)
-	}
-
-	return entry.event.startTime.isSame(day, 'day')
-}
-
-/**
- * One day's events, earliest first. `useMergedEvents` hands over one
- * calendar's events at a time, so without the sort a second calendar's
- * morning sits behind the first calendar's evening.
- */
-export function eventsOnDay(events: readonly SourcedEvent[], day: Moment): SourcedEvent[] {
-	return events
-		.filter((entry) => occursOn(entry, day))
-		.sort((one, two) => one.event.startTime.valueOf() - two.event.startTime.valueOf())
-}
-
-/**
  * Every day in `days`, mapped to the events that fall on it, earliest first.
  *
  * Built once and read many times: the strip asks which days carry anything and
@@ -136,23 +107,4 @@ export function eventsByDay(
 	}
 
 	return buckets
-}
-
-/**
- * The ISO dates, among `days`, that carry at least one event. What the strip
- * draws its dots from.
- */
-export function daysWithEvents(
-	events: readonly SourcedEvent[],
-	days: readonly Moment[],
-): Set<string> {
-	let marked = new Set<string>()
-
-	for (let [iso, bucket] of eventsByDay(events, days)) {
-		if (bucket.length > 0) {
-			marked.add(iso)
-		}
-	}
-
-	return marked
 }

@@ -1,7 +1,7 @@
 import moment from 'moment-timezone'
 import {describe, expect, test} from '@jest/globals'
 
-import {daysWithEvents, deriveDays, eventsOnDay, occursOn} from '../days'
+import {deriveDays, eventsByDay} from '../days'
 import type {SourcedEvent} from '../types'
 
 // A Sunday, so "this week" runs 2026-08-23 (Sun) through 2026-08-29 (Sat).
@@ -161,58 +161,66 @@ function eventInZone(start: string, end = start, isOngoing = false): SourcedEven
 	} as unknown as SourcedEvent
 }
 
-describe('occursOn', () => {
-	let sunday = moment.tz('2026-08-23T00:00:00', 'America/Chicago')
+describe('eventsByDay', () => {
+	let week = () => deriveDays([], moment.tz('2026-08-23T12:00:00', 'America/Chicago'))
 
-	test('an event starting that day occurs on it', () => {
-		expect(occursOn(eventInZone('2026-08-23T18:00:00'), sunday)).toBe(true)
+	test('buckets an event by the day it starts', () => {
+		let buckets = eventsByDay([eventInZone('2026-08-24T09:00:00')], week())
+		expect(buckets.get('2026-08-24')).toHaveLength(1)
+		expect(buckets.get('2026-08-23')).toEqual([])
 	})
 
-	test('an event starting another day does not', () => {
-		expect(occursOn(eventInZone('2026-08-24T18:00:00'), sunday)).toBe(false)
+	test('gives every day in range a bucket, empty or not', () => {
+		let buckets = eventsByDay([], week())
+		expect([...buckets.keys()]).toHaveLength(7)
+		expect([...buckets.values()].every((bucket) => bucket.length === 0)).toBe(true)
 	})
 
-	test('an ongoing event spanning that day occurs on it', () => {
-		let spanning = eventInZone('2026-08-20T10:00:00', '2026-08-26T10:00:00', true)
-		expect(occursOn(spanning, sunday)).toBe(true)
+	test('puts an ongoing event on every day it spans', () => {
+		// The branch production actually runs, and the one a dot on the strip
+		// and the rows beneath it both read.
+		let spanning = eventInZone('2026-08-24T10:00:00', '2026-08-26T10:00:00', true)
+		let buckets = eventsByDay([spanning], week())
+		expect(buckets.get('2026-08-24')).toHaveLength(1)
+		expect(buckets.get('2026-08-25')).toHaveLength(1)
+		expect(buckets.get('2026-08-26')).toHaveLength(1)
+		expect(buckets.get('2026-08-27')).toEqual([])
 	})
 
-	test('an ongoing event that ended before that day does not', () => {
+	test('leaves out an ongoing event that ended before the range', () => {
 		let past = eventInZone('2026-08-18T10:00:00', '2026-08-20T10:00:00', true)
-		expect(occursOn(past, sunday)).toBe(false)
-	})
-})
-
-describe('eventsOnDay', () => {
-	let day = moment.tz('2026-08-23T00:00:00', 'America/Chicago')
-
-	test('keeps only the events on that day, in start order', () => {
-		let events = [
-			eventInZone('2026-08-24T09:00:00'),
-			eventInZone('2026-08-23T18:00:00'),
-			eventInZone('2026-08-23T09:00:00'),
-		]
-		let result = eventsOnDay(events, day)
-		expect(result.map((entry) => entry.key)).toEqual(['2026-08-23T09:00:00', '2026-08-23T18:00:00'])
+		expect([...eventsByDay([past], week()).values()].flat()).toEqual([])
 	})
 
-	test('returns nothing for a day with no events', () => {
-		expect(eventsOnDay([eventInZone('2026-08-24T09:00:00')], day)).toEqual([])
-	})
-})
-
-describe('daysWithEvents', () => {
-	test('names the ISO dates that carry at least one event', () => {
-		// `days` and the events both have to carry the same explicit zone: a day
-		// label comes from the day moment's own zone, so a mismatched zone can
-		// shift an event's match onto the day next to it.
-		let now = moment.tz('2026-08-23T12:00:00', 'America/Chicago')
-		let days = deriveDays([], now)
-		let events = [eventInZone('2026-08-24T09:00:00'), eventInZone('2026-08-24T18:00:00')]
-		expect(daysWithEvents(events, days)).toEqual(new Set(['2026-08-24']))
+	test('orders a day by start time, however the calendars arrived', () => {
+		// `useMergedEvents` hands over one calendar at a time, so without the
+		// sort a second calendar's morning sits behind the first's evening.
+		let buckets = eventsByDay(
+			[eventInZone('2026-08-24T18:00:00'), eventInZone('2026-08-24T09:00:00')],
+			week(),
+		)
+		expect(buckets.get('2026-08-24')?.map((one) => one.key)).toEqual([
+			'2026-08-24T09:00:00',
+			'2026-08-24T18:00:00',
+		])
 	})
 
-	test('is empty when no day in range carries one', () => {
-		expect(daysWithEvents([], deriveDays([], NOW)).size).toBe(0)
+	test('sorts an ongoing event in among the rest by when it started', () => {
+		let buckets = eventsByDay(
+			[
+				eventInZone('2026-08-24T12:00:00'),
+				eventInZone('2026-08-20T08:00:00', '2026-08-26T10:00:00', true),
+			],
+			week(),
+		)
+		expect(buckets.get('2026-08-24')?.map((one) => one.key)).toEqual([
+			'2026-08-20T08:00:00',
+			'2026-08-24T12:00:00',
+		])
+	})
+
+	test('ignores a day outside the range it was given', () => {
+		let buckets = eventsByDay([eventInZone('2026-12-25T09:00:00')], week())
+		expect([...buckets.values()].flat()).toEqual([])
 	})
 })
