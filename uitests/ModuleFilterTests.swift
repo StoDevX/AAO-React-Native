@@ -120,7 +120,8 @@ class ModuleFilterTests: UITestCase {
 
 		let filters = FilterScreen(app: app)
 
-		// The Pause serves specials, so the toggle is seeded on.
+		// The toggle is built on; a meal with no specials of its own would
+		// force it off and grey it out. The Pause's current meal has them.
 		filters.verifyTrigger(Keys.specials, isSelected: true)
 
 		filters.tapTrigger(Keys.specials)

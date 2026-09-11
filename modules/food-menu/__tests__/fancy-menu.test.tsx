@@ -169,6 +169,40 @@ describe('FancyMenu', () => {
 		expect(screen.getByText('Pot Roast')).toBeTruthy()
 	})
 
+	// The mirror of the case above. A meal with no specials must not decide the
+	// toggle for the rest of the visit: moving on to a meal that does have them
+	// should leave the reader the handful worth reading, rather than every
+	// condiment and dressing the cafe stocks.
+	test('applies the specials filter to a meal that has them', async () => {
+		let dinnerMeals: ProcessedMealType[] = MEALS.map((meal) =>
+			meal.label === 'Dinner'
+				? {...meal, stations: [station('Home', ['3', '4'], 'closes at 8pm')]}
+				: meal,
+		)
+
+		await render(
+			<FancyMenu
+				foodItems={{
+					1: item('1', 'Pancakes', 'Grill'),
+					3: item('3', 'Pot Roast', 'Home'),
+					4: {...item('4', 'Prime Rib', 'Home'), special: true},
+				}}
+				meals={dinnerMeals}
+				menuCorIcons={COR_ICONS}
+				name="The Caf"
+				now={moment.tz(BREAKFAST_TIME, TIMEZONE)}
+				onItemPress={jest.fn()}
+			/>,
+		)
+
+		// Breakfast has no specials, so the whole meal is on screen.
+		expect(screen.getByText('Pancakes')).toBeTruthy()
+
+		await fireEvent.press(screen.getByTestId('choose-dinner'))
+		expect(screen.getByText('Prime Rib')).toBeTruthy()
+		expect(screen.queryByText('Pot Roast')).toBeNull()
+	})
+
 	// Which meal the menu starts on is `chooseMeal`'s decision, covered directly
 	// in lib/__tests__. What only shows up at this level is whether the choice
 	// outlives a render of the screen above, which hands down a fresh Moment
