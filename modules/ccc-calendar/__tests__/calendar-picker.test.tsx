@@ -10,11 +10,11 @@ import type {CalendarSource} from '../sources'
 // stand-in for `@expo/ui`.
 jest.mock('@expo/ui/swift-ui', () => {
 	// oxlint-disable-next-line typescript/no-require-imports
-	return require('../../filter/__tests__/expo-ui-mock') as typeof import('../../filter/__tests__/expo-ui-mock')
+	return require('../../../source/testing/expo-ui-mock') as typeof import('../../../source/testing/expo-ui-mock')
 })
 jest.mock('@expo/ui/swift-ui/modifiers', () => {
 	// oxlint-disable-next-line typescript/no-require-imports
-	return require('../../filter/__tests__/expo-ui-mock') as typeof import('../../filter/__tests__/expo-ui-mock')
+	return require('../../../source/testing/expo-ui-mock') as typeof import('../../../source/testing/expo-ui-mock')
 })
 
 jest.mock('expo-router', () => {

@@ -14,11 +14,11 @@ import {images as buildingImages} from '../../../../../images/spaces'
 
 jest.mock('@expo/ui/swift-ui', () => {
 	// oxlint-disable-next-line typescript/no-require-imports
-	return require('./expo-ui-mock') as typeof import('./expo-ui-mock')
+	return require('../../../../testing/expo-ui-mock') as typeof import('../../../../testing/expo-ui-mock')
 })
 jest.mock('@expo/ui/swift-ui/modifiers', () => {
 	// oxlint-disable-next-line typescript/no-require-imports
-	return require('./expo-ui-mock') as typeof import('./expo-ui-mock')
+	return require('../../../../testing/expo-ui-mock') as typeof import('../../../../testing/expo-ui-mock')
 })
 jest.mock('@maplibre/maplibre-react-native', () => {
 	// oxlint-disable-next-line typescript/no-require-imports
