@@ -1,9 +1,16 @@
 import * as React from 'react'
 import {Stack, useLocalSearchParams, useRouter} from 'expo-router'
 import {useMutation, useQuery} from '@tanstack/react-query'
-import {Alert, StyleSheet, ScrollView, Text, TextProps} from 'react-native'
-import {TableView, Section, Cell} from '@frogpond/tableview'
-import {ButtonCell} from '@frogpond/tableview/cells'
+import {Alert, StyleSheet} from 'react-native'
+import {Host, List, Section, Text} from '@expo/ui/swift-ui'
+import {
+	font,
+	foregroundStyle,
+	frame,
+	listStyle,
+	multilineTextAlignment,
+} from '@expo/ui/swift-ui/modifiers'
+import {ActionRow, DetailRow} from '../../../../source/components/rows'
 import * as c from '@frogpond/colors'
 import {
 	cancelPrintJobForUser,
@@ -25,49 +32,41 @@ import {credentialsOptions} from '../../../../source/lib/login'
 import {LoadingView, NoticeView} from '@frogpond/notice'
 
 const styles = StyleSheet.create({
-	cancelButton: {
-		color: c.red,
-	},
-	buttonCell: {
-		textAlign: 'center',
-	},
-	header: {
-		fontSize: 30,
-		textAlign: 'center',
-		marginTop: 20,
-		marginHorizontal: 10,
-		color: c.label,
+	host: {
+		flex: 1,
+		backgroundColor: c.systemGroupedBackground,
 	},
 })
 
-const Header = (props: TextProps) => <Text {...props} style={[styles.header, props.style]} />
-
-function LeftDetailCell({detail, title}: {detail: string; title: string}) {
-	return <Cell cellStyle="LeftDetail" detail={detail} title={title} />
-}
+/// `frame(maxWidth: Infinity)` before the alignment: a Text is only as wide as
+/// its content, so centring inside that says nothing about the row it sits in.
+const DOCUMENT_NAME_MODIFIERS = [
+	font({textStyle: 'title', weight: 'semibold'}),
+	foregroundStyle(c.label),
+	frame({maxWidth: Infinity}),
+	multilineTextAlignment('center'),
+]
 
 function JobInformation({job}: {job: PrintJob}) {
 	let wasPrintedAlready = job.statusFormatted === 'Sent to Printer'
 	return (
-		<Section header="JOB INFO">
-			<LeftDetailCell detail="Status" title={job.statusFormatted} />
-			<LeftDetailCell detail="Time" title={job.usageTimeFormatted} />
-			<LeftDetailCell detail="Pages" title={job.totalPages.toString()} />
-			<LeftDetailCell detail="Cost" title={job.usageCostFormatted} />
-			<LeftDetailCell detail="Grayscale" title={job.grayscaleFormatted} />
-			<LeftDetailCell detail="Paper Size" title={job.paperSizeFormatted} />
-			{wasPrintedAlready && <LeftDetailCell detail="Printer" title={job.printerName} />}
+		<Section title="JOB INFO">
+			<DetailRow label="Status" value={job.statusFormatted} />
+			<DetailRow label="Time" value={job.usageTimeFormatted} />
+			<DetailRow label="Pages" value={job.totalPages.toString()} />
+			<DetailRow label="Cost" value={job.usageCostFormatted} />
+			<DetailRow label="Grayscale" value={job.grayscaleFormatted} />
+			<DetailRow label="Paper Size" value={job.paperSizeFormatted} />
+			{wasPrintedAlready ? <DetailRow label="Printer" value={job.printerName} /> : null}
 		</Section>
 	)
 }
 
 function PrinterInformation({printer}: {printer: Printer}) {
 	return (
-		<Section header="PRINTER INFO">
-			<LeftDetailCell detail="Name" title={printer.printerName} />
-			{Boolean(printer.location) && (
-				<LeftDetailCell detail="Location" title={printer.location ?? ''} />
-			)}
+		<Section title="PRINTER INFO">
+			<DetailRow label="Name" value={printer.printerName} />
+			{Boolean(printer.location) && <DetailRow label="Location" value={printer.location ?? ''} />}
 		</Section>
 	)
 }
@@ -150,11 +149,7 @@ function PrintJobReleaseView({job, printer}: PrintJobReleaseViewProps): React.Re
 	})
 
 	if (loadingUsername && !isStoprintMocked) {
-		return (
-			<ScrollView contentInsetAdjustmentBehavior="automatic">
-				<LoadingView />
-			</ScrollView>
-		)
+		return <LoadingView />
 	}
 
 	const requestCancel = () => {
@@ -188,31 +183,36 @@ function PrintJobReleaseView({job, printer}: PrintJobReleaseViewProps): React.Re
 	let actionAvailable = status !== 'complete' && printer
 
 	return (
-		<ScrollView contentInsetAdjustmentBehavior="automatic">
-			<Header>{job.documentName}</Header>
-			<TableView>
+		<Host style={styles.host}>
+			<List modifiers={[listStyle('insetGrouped')]}>
+				<Section>
+					<Text modifiers={DOCUMENT_NAME_MODIFIERS}>{job.documentName}</Text>
+				</Section>
+
 				<JobInformation job={job} />
-				{actionAvailable && (
-					<React.Fragment>
-						{printer && <PrinterInformation printer={printer} />}
-						<Section sectionPaddingBottom={0}>
-							<ButtonCell
+
+				{actionAvailable ? (
+					<>
+						{printer ? <PrinterInformation printer={printer} /> : null}
+						<Section>
+							<ActionRow
+								disabled={status !== 'pending'}
 								onPress={requestRelease}
-								textStyle={styles.buttonCell}
 								title={status === 'printing' ? 'Printing…' : 'Print'}
 							/>
-						</Section>
-						<Section>
-							<ButtonCell
+							{/* Destructive, and last: cancelling a job cannot be undone,
+							    so it sits apart from the action a reader came here for. */}
+							<ActionRow
+								destructive={true}
+								disabled={status !== 'pending'}
 								onPress={requestCancel}
-								textStyle={[styles.buttonCell, styles.cancelButton]}
 								title={status === 'cancelling' ? 'Cancelling…' : 'Cancel'}
 							/>
 						</Section>
-					</React.Fragment>
-				)}
-			</TableView>
-		</ScrollView>
+					</>
+				) : null}
+			</List>
+		</Host>
 	)
 }
 

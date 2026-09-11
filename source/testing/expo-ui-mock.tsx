@@ -209,6 +209,12 @@ export function Image({
 	return <View accessibilityLabel={labelOf(modifiers) ?? systemName} />
 }
 
+/// Whether a `disabled(…)` modifier asked for the control to be off.
+function isDisabled(modifiers?: Modifier[]): boolean {
+	let found = modifiers?.find((m) => m.$type === 'disabled')
+	return found ? found.isDisabled !== false : false
+}
+
 export function Button({
 	children,
 	label,
@@ -219,7 +225,11 @@ export function Button({
 	// custom `children`, never both -- mirror that so a row's text lands the
 	// same way a query would find it on device.
 	return (
-		<Pressable accessibilityLabel={labelOf(modifiers)} onPress={onPress}>
+		<Pressable
+			accessibilityLabel={labelOf(modifiers)}
+			disabled={isDisabled(modifiers)}
+			onPress={onPress}
+		>
 			{label ? <RNText>{label}</RNText> : children}
 		</Pressable>
 	)

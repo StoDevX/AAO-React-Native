@@ -1,7 +1,7 @@
 import * as React from 'react'
 import {fireEvent, render, screen} from '@testing-library/react-native'
 
-import {DetailRow, DisclosureRow, SelectableText} from '../rows'
+import {ActionRow, DetailRow, DisclosureRow, SelectableText} from '../rows'
 
 jest.mock('@expo/ui/swift-ui', () => {
 	// oxlint-disable-next-line typescript/no-require-imports
@@ -184,5 +184,37 @@ describe('SelectableText', () => {
 		await render(<SelectableText text="Mondays at 7pm" />)
 
 		expect(screen.getByTestId('selectable-text').props.editable).toBe(false)
+	})
+})
+
+describe('ActionRow', () => {
+	it('calls onPress when tapped', async () => {
+		let onPress = jest.fn()
+		await render(<ActionRow onPress={onPress} title="Print" />)
+
+		fireEvent.press(screen.getByLabelText('Print'))
+
+		expect(onPress).toHaveBeenCalledTimes(1)
+	})
+
+	/// Whether a destructive action is drawn in red is a question for a
+	/// screenshot; Jest has no colour to look at, and asserting the modifier we
+	/// passed would only restate our own input.
+	it('still calls onPress when the action is destructive', async () => {
+		let onPress = jest.fn()
+		await render(<ActionRow destructive={true} onPress={onPress} title="Cancel" />)
+
+		fireEvent.press(screen.getByLabelText('Cancel'))
+
+		expect(onPress).toHaveBeenCalledTimes(1)
+	})
+
+	it('is disabled when it says it is', async () => {
+		let onPress = jest.fn()
+		await render(<ActionRow disabled={true} onPress={onPress} title="Print" />)
+
+		fireEvent.press(screen.getByLabelText('Print'))
+
+		expect(onPress).not.toHaveBeenCalled()
 	})
 })

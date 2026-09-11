@@ -98,14 +98,34 @@ class StageOneListsTests: UITestCase {
 		screen.capture("Student Orgs - detail")
 	}
 
-	func testDirectoryContactDetail() throws {
-		let screen = DirectoryScreen(app: app).navigate()
+	/// A directory *entry*, reached by searching -- not an Important Contact
+	/// tile, which pushes `Directory/named/[title]`, a different screen this
+	/// migration has not touched.
+	func testDirectoryEntryDetail() throws {
+		let screen = DirectoryScreen(app: app)
+			.navigate()
+			.search(for: TestIdentifiers.Directory.fixtureEntry)
 
-		let contact = app.buttonLabelled(TestIdentifiers.Directory.aContact)
-		XCTAssertTrue(contact.waitForExistence(timeout: 30), "A contact tile should be shown")
-		contact.tap()
+		// The tile gallery is the default view, so a result is a tile rather
+		// than a row -- both open the same entry detail.
+		let result = app.descendants(matching: .any)
+			.matching(
+				NSPredicate(
+					format: "identifier BEGINSWITH %@", TestIdentifiers.Directory.tilePrefix))
+			.firstMatch
+		XCTAssertTrue(result.waitForExistence(timeout: 30), "A directory result should be shown")
+		result.tap()
 
-		screen.capture("Directory - contact detail")
+		// Wait for something only the pushed screen has: a capture taken
+		// straight after the tap lands mid-animation, with both screens in it.
+		let department = app.descendants(matching: .any)
+			.matching(
+				NSPredicate(
+					format: "label CONTAINS %@", TestIdentifiers.Directory.fixtureEntryDepartment))
+			.firstMatch
+		XCTAssertTrue(department.waitForExistence(timeout: 30), "The entry detail should be shown")
+
+		screen.capture("Directory - entry detail")
 	}
 
 	/// Searches the catalogue, which under UI testing holds one course, and
@@ -136,6 +156,49 @@ class StageOneListsTests: UITestCase {
 		screen.capture("Course detail")
 	}
 
+	/// A job that is not pending release goes to the release screen rather than
+	/// the printer picker, which is the screen this reaches.
+	func testPrintReleaseScreen() throws {
+		let screen = StoPrintScreen(app: app).navigate()
+
+		// "test.pdf" is Sent to Printer in the fixtures, so tapping it opens the
+		// release screen; a Pending Release job would open the printer list.
+		let job = app.buttons
+			.matching(NSPredicate(format: "label BEGINSWITH %@", "test.pdf"))
+			.firstMatch
+		XCTAssertTrue(job.waitForExistence(timeout: 30), "A sent job should be listed")
+		job.tap()
+
+		let jobInfo = app.staticTexts["JOB INFO"].firstMatch
+		XCTAssertTrue(jobInfo.waitForExistence(timeout: 30), "The release screen should be shown")
+
+		screen.capture("Print release")
+	}
+
+	/// The release screen with its actions available, which is a different
+	/// state: a job already sent has nothing left to print or cancel, so those
+	/// rows are drawn only when one is pending and a printer has been chosen.
+	func testPrintReleaseActions() throws {
+		let screen = StoPrintScreen(app: app).navigate()
+
+		let job = app.buttons
+			.matching(NSPredicate(format: "label BEGINSWITH %@", "IMG_2259-COLLAGE.jpg"))
+			.firstMatch
+		XCTAssertTrue(job.waitForExistence(timeout: 30), "A pending job should be listed")
+		job.tap()
+
+		let printer = app.buttons
+			.matching(NSPredicate(format: "label BEGINSWITH %@", "mfc-"))
+			.firstMatch
+		XCTAssertTrue(printer.waitForExistence(timeout: 30), "A printer should be listed")
+		printer.tap()
+
+		let print = app.buttons["Print"].firstMatch
+		XCTAssertTrue(print.waitForExistence(timeout: 30), "Print should be offered")
+
+		screen.capture("Print release - actions")
+	}
+
 	func testMoreList() throws {
 		MoreScreen(app: app)
 			.navigate()
@@ -151,6 +214,9 @@ class StageOneListsTests: UITestCase {
 			otherTab.waitForExistence(timeout: 30),
 			"Other tab should be visible on Transportation")
 		otherTab.tap()
+
+		let section = app.staticTexts["Bus"].firstMatch
+		XCTAssertTrue(section.waitForExistence(timeout: 30), "The Other tab should be showing")
 
 		screen.capture("Transportation - Other Modes")
 	}
@@ -180,6 +246,10 @@ class StageOneListsTests: UITestCase {
 		XCTAssertTrue(found, "Filter tab should be visible on Athletics")
 
 		filterTab.tap()
+
+		let sports = app.staticTexts["Women's Sports"].firstMatch
+		XCTAssertTrue(sports.waitForExistence(timeout: 30), "The Filter tab should be showing")
+
 		screen.capture("Athletics - Filter")
 	}
 
