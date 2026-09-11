@@ -227,12 +227,11 @@ class ModuleCampusTests: UITestCase {
 			.verifyReportScreenGone(buildingName: TestIdentifiers.Campus.anExcludedBuilding)
 	}
 
-	/// `BuildingHoursScheduleEditor` still presents as a `modal` on the OUTER
-	/// stack, pushed from the report screen two levels inside the formSheet.
-	/// A modal presented while a formSheet is already up is exactly the class
-	/// of presentation this task moved Report a Problem off of because it can
-	/// silently no-op on iOS -- this asserts whether the editor actually comes
-	/// up from its new, deeper starting point.
+	/// The schedule editor is a push inside the formSheet's own stack, next to
+	/// the report screen it opens from, so that the two can share the draft
+	/// they both edit. It used to be a `modal` on the OUTER stack -- a
+	/// presentation that can silently no-op on iOS while a formSheet is
+	/// already up -- so this asserts the editor really does come up.
 	func testScheduleEditorPresentsFromWithinTheReportScreen() throws {
 		CampusScreen(app: app)
 			.navigate()

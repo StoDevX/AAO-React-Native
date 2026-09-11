@@ -41,7 +41,6 @@ export default function HomeLayout(): React.ReactNode {
 					sheetLargestUndimmedDetentIndex: 'none',
 				}}
 			/>
-			<Stack.Screen name="BuildingHoursScheduleEditor" options={{presentation: 'modal'}} />
 			<Stack.Screen name="Communities" />
 			<Stack.Screen name="Map" />
 			<Stack.Screen name="SIS" options={{title: 'SIS'}} />
