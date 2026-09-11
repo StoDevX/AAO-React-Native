@@ -67,13 +67,13 @@ class ModuleDirectoryTests: UITestCase {
 	/// leave both alone -- otherwise the list empties while the title goes on
 	/// naming a department, and the only way back is to navigate in again.
 	func testCancellingSearchKeepsTheLinkedDepartment() throws {
-		let department = TestIdentifiers.Directory.department
+		let department = TestIdentifiers.Directory.fixtureEntryDepartment
 
 		DirectoryScreen(app: app)
 			.navigate()
-			.search(for: "registrar")
+			.search(for: "testerson")
 			.openDepartment(
-				of: TestIdentifiers.Directory.departmentalEntry, named: department)
+				of: TestIdentifiers.Directory.fixtureEntry, named: department)
 			.verifyDepartmentHeading(department)
 			.verifyResultsShown()
 			.cancelSearch()
@@ -86,13 +86,13 @@ class ModuleDirectoryTests: UITestCase {
 	/// department has to name itself above its own results -- otherwise nothing
 	/// on screen says whose names these are.
 	func testDepartmentLinkIsNamedAboveTheResults() throws {
-		let department = TestIdentifiers.Directory.department
+		let department = TestIdentifiers.Directory.fixtureEntryDepartment
 
 		DirectoryScreen(app: app)
 			.navigate()
-			.search(for: "registrar")
+			.search(for: "testerson")
 			.openDepartment(
-				of: TestIdentifiers.Directory.departmentalEntry, named: department)
+				of: TestIdentifiers.Directory.fixtureEntry, named: department)
 			.capture("Directory opened from a department link")
 			.verifyDirectoryTitle()
 			.verifyDepartmentHeading(department)

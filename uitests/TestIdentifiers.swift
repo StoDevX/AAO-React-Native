@@ -362,13 +362,6 @@ struct TestIdentifiers {
 		static let showAsList = "Show as list"
 		static let showAsTiles = "Show as tiles"
 
-		/// A directory entry with no title, email or profile, so its detail
-		/// screen carries exactly one element labelled with its department --
-		/// and it is a desk rather than a person, so the college is unlikely to
-		/// rename it out from under this test.
-		static let departmentalEntry = "Registrar Fax"
-		static let department = "Registrar\u{2019}s Office"
-
 		/// The one entry a UI-test run's directory holds, carrying every field
 		/// the detail screen draws. Mirrors `UITEST_ENTRY_NAME` in
 		/// `source/features/directory/__fixtures__/entries.ts`.
