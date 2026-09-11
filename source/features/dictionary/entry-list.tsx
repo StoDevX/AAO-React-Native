@@ -72,7 +72,7 @@ export function EntryList({
 	return (
 		<List
 			modifiers={[
-				listStyle('plain'),
+				listStyle('insetGrouped'),
 				// Awaited, so the spinner stays up for as long as the refetch does.
 				refreshable(async () => {
 					await onRetry()
