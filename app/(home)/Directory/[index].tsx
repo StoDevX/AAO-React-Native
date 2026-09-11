@@ -6,7 +6,6 @@ import {
 	foregroundStyle,
 	frame,
 	listRowBackground,
-	listRowInsets,
 	listStyle,
 	multilineTextAlignment,
 } from '@expo/ui/swift-ui/modifiers'
@@ -209,7 +208,11 @@ const NAME_MODIFIERS = [font({textStyle: 'title2', weight: 'semibold'}), foregro
 
 /// No card behind the heading: a name and a face are what the screen is about,
 /// not a row of its data.
-const HEADER_ROW_MODIFIERS = [listRowBackground('clear'), listRowInsets({leading: 0, trailing: 0})]
+///
+/// The row keeps its ordinary insets. Zeroing them clipped the name against
+/// the list's own margin and pushed the photo past the edge the cards below
+/// line up with.
+const HEADER_ROW_MODIFIERS = [listRowBackground('clear')]
 
 const HEADER_MODIFIERS = [font({textStyle: 'subheadline'}), foregroundStyle(c.secondaryLabel)]
 
