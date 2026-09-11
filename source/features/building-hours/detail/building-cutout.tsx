@@ -4,7 +4,7 @@ import {RNHostView} from '@expo/ui/swift-ui'
 import {Camera, GeoJSONSource, Layer, Map} from '@maplibre/maplibre-react-native'
 import * as c from '@frogpond/colors'
 import {toBuildingFootprints} from '../../map/lib/building-footprints'
-import {featureBounds} from '../../map/lib/feature-bounds'
+import {cutoutBounds} from '../../map/lib/cutout-bounds'
 import type {Building, Feature} from '../../map/types'
 import {mapStyleUrl} from '../../map/urls'
 import type {Campus} from '../query'
@@ -32,19 +32,20 @@ type Props = {
  * scroll have to reach past it undisturbed, and there is nothing here for a
  * tap to do.
  *
- * Renders `null` when the feature carries no coordinates at all, which
- * `featureBounds` signals by returning `undefined`.
+ * Renders `null` when there is nothing to frame, which `cutoutBounds` signals
+ * by returning `undefined`.
  */
 export function BuildingCutout({campus, feature}: Props): React.ReactNode {
 	// Framed on the same geometry the layers below draw, so the two cannot
 	// disagree. Callers are expected to have checked `hasFootprint` already --
 	// this guard is the belt to that braces, and keeps the component honest on
 	// its own.
-	let footprints = toBuildingFootprints([feature])
-	let bounds = footprints.features.length > 0 ? featureBounds(feature) : undefined
+	let bounds = cutoutBounds(feature)
 	if (!bounds) {
 		return null
 	}
+
+	let footprints = toBuildingFootprints([feature])
 
 	return (
 		<RNHostView matchContents={true}>

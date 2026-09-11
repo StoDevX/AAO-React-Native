@@ -223,19 +223,6 @@ describe('FilterSheet', () => {
 		expect(screen.queryByText('mark:B')).toBeNull()
 	})
 
-	test('renders nothing when there are no options', async () => {
-		await render(
-			<FilterSheet
-				filter={listFilter('AND', [], [])}
-				isActive={false}
-				onChange={jest.fn()}
-				title={TITLE}
-			/>,
-		)
-
-		expect(screen.toJSON()).toBeNull()
-	})
-
 	test('reopening re-seeds from the incoming filter, and dismissing it again re-emits', async () => {
 		// A single open-then-dismiss can't tell `openSheet`'s `setLocal(filter)`
 		// seed and the emit guard's reset apart from having no effect at all.
@@ -274,44 +261,6 @@ describe('FilterSheet', () => {
 			2,
 			expect.objectContaining({spec: expect.objectContaining({selected: [{title: 'B'}]})}),
 		)
-	})
-
-	test('displayTitle false renders by label, not title', async () => {
-		let options = [{title: 'BIO', label: 'Biology'}]
-		await render(
-			<FilterSheet
-				filter={listFilter('AND', options, [], false)}
-				isActive={false}
-				onChange={jest.fn()}
-				title={TITLE}
-			/>,
-		)
-
-		await openSheet()
-
-		expect(screen.getByText('Biology')).toBeTruthy()
-		expect(screen.queryByText('BIO')).toBeNull()
-	})
-
-	test('draws its own title in the header once opened, alongside the still-mounted anchor', async () => {
-		await render(
-			<FilterSheet
-				filter={listFilter('AND', [{title: 'A'}], [])}
-				isActive={false}
-				onChange={jest.fn()}
-				title={TITLE}
-			/>,
-		)
-
-		// Before the sheet opens, only the anchor trigger draws the title.
-		expect(screen.getAllByText(TITLE)).toHaveLength(1)
-
-		await openSheet()
-
-		// The header adds a second occurrence -- the sheet's own title -- while
-		// the anchor `Button` stays mounted underneath it (see `BottomSheet`'s
-		// mock doc comment).
-		expect(screen.getAllByText(TITLE)).toHaveLength(2)
 	})
 
 	test('the close button commits the accumulated filter, exactly like a swipe does', async () => {

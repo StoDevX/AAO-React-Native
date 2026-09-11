@@ -19,6 +19,7 @@ import {
 } from '@expo/ui/swift-ui/modifiers'
 import * as c from '@frogpond/colors'
 
+import {listNotice} from './lib/list-notice'
 import type {DictionaryGroup, NormalizedEntry} from './types'
 
 /// How many lines of the definition a row previews before truncating.
@@ -45,7 +46,9 @@ export function EntryList({
 	onRetry,
 	onSelect,
 }: Props): React.ReactNode {
-	if (isError) {
+	let notice = listNotice({isError, isLoading, groupCount: groups.length, query})
+
+	if (notice.kind === 'error') {
 		return (
 			<VStack spacing={16}>
 				<ContentUnavailableView
@@ -58,17 +61,12 @@ export function EntryList({
 		)
 	}
 
-	if (groups.length === 0) {
-		if (isLoading) {
-			return <ProgressView />
-		}
+	if (notice.kind === 'loading') {
+		return <ProgressView />
+	}
 
-		return (
-			<ContentUnavailableView
-				systemImage="magnifyingglass"
-				title={query ? `No results for “${query}”` : 'No results'}
-			/>
-		)
+	if (notice.kind === 'empty') {
+		return <ContentUnavailableView systemImage="magnifyingglass" title={notice.title} />
 	}
 
 	return (

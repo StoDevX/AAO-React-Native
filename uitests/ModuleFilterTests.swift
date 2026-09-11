@@ -66,12 +66,13 @@ class ModuleFilterTests: UITestCase {
 			.verifyOption(TestIdentifiers.Menus.halal, isSelected: false)
 	}
 
-	/// Swiping is the only dismissal the sheet offers -- there is no Done
-	/// button -- so if an interactive dismissal did not hand the selection
-	/// over, a filter sheet could never narrow anything at all. This asserts
-	/// the visible consequence rather than the trigger's state: after the
-	/// swipe, every food row still on screen carries the cor-icon that was
-	/// chosen.
+	/// The sheet has two dismissals -- the header's Done button and a swipe
+	/// down -- and the swipe is the one no code of ours runs: UIKit takes it,
+	/// and the selection is handed over only if the sheet's own dismissal
+	/// callback fires. Jest covers what Done commits; nothing but a device
+	/// covers this. This asserts the visible consequence rather than the
+	/// trigger's state: after the swipe, every food row still on screen
+	/// carries the cor-icon that was chosen.
 	func testSwipeDismissalAppliesTheSelection() throws {
 		let menus = MenusScreen(app: app)
 			.navigate()
@@ -103,6 +104,40 @@ class ModuleFilterTests: UITestCase {
 		XCTAssertEqual(
 			app.foodRows(withoutDietaryLabel: vegan).count, 0,
 			"every remaining row should carry the \(vegan) icon")
+	}
+
+	/// The other dismissal: the header's Done button. It runs `onClose`, which
+	/// commits the sheet's accumulated selection the same way an interactive
+	/// dismissal does -- a Done that only closed the sheet would throw the
+	/// reader's choices away, silently and every time.
+	///
+	/// The trigger's state is the assertion rather than the remaining food
+	/// rows: `testSwipeDismissalAppliesTheSelection` already establishes that a
+	/// committed selection narrows the menu, so what is left to prove here is
+	/// that the button committed anything at all -- and that holds whatever
+	/// Stav is serving today.
+	func testDonePressAppliesTheSelection() throws {
+		MenusScreen(app: app)
+			.navigate()
+			.verifyFoodRowsAppear()
+
+		let filters = FilterScreen(app: app)
+		let vegan = TestIdentifiers.Menus.vegan
+
+		filters.verifyTrigger(Keys.dietaryRestrictions, isSelected: false)
+
+		filters
+			.openFilter(Keys.dietaryRestrictions, until: filters.option(vegan))
+			.tapOption(vegan)
+			.tapDone(waitingFor: vegan)
+
+		filters.verifyTrigger(Keys.dietaryRestrictions, isSelected: true)
+
+		// And the choice is still drawn when the sheet comes back up, so Done
+		// committed it rather than merely leaving the trigger looking active.
+		filters
+			.openFilter(Keys.dietaryRestrictions, until: filters.option(vegan))
+			.verifyOption(vegan, isSelected: true)
 	}
 
 	// MARK: - The menu

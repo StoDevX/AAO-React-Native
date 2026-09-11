@@ -161,9 +161,10 @@ struct FilterScreen: Screen {
 
 	/// Swipe the sheet away.
 	///
-	/// The sheet's (X) commits too, so this is one of two paths a selection can
-	/// take -- the gestural one, which no button drives. The drag starts just
-	/// below the sheet's top edge and runs to the bottom of the screen.
+	/// The header's Done button commits too, so this is one of two paths a
+	/// selection can take -- the gestural one, which no code of ours drives.
+	/// The drag starts just below the sheet's top edge and runs to the bottom
+	/// of the screen.
 	@discardableResult
 	func dismissSheet(waitingFor row: String) -> Self {
 		let start = app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.12))
@@ -174,6 +175,25 @@ struct FilterScreen: Screen {
 		XCTAssertTrue(
 			option(row).waitForNonExistence(timeout: 30),
 			"the sheet should be gone after a swipe down")
+		return self
+	}
+
+	/// Close the sheet with its header's Done button -- the other of the two
+	/// paths a selection can take out of a sheet.
+	///
+	/// A plain `.tap()` rather than the coordinate tap a trigger needs: this
+	/// button's label is text, so XCUITest reports it hittable and finds its
+	/// centre on its own.
+	@discardableResult
+	func tapDone(waitingFor row: String) -> Self {
+		let done = app.buttons[TestIdentifiers.Filter.closeButton].firstMatch
+		XCTAssertTrue(
+			done.waitForExistence(timeout: 30), "the sheet's header should offer a Done button")
+		done.tap()
+
+		XCTAssertTrue(
+			option(row).waitForNonExistence(timeout: 30),
+			"the sheet should be gone after pressing Done")
 		return self
 	}
 }

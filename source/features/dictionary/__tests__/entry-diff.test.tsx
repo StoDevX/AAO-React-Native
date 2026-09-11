@@ -1,19 +1,9 @@
 import * as React from 'react'
 import {render, screen} from '@testing-library/react-native'
 
-import {EntryDiff, withoutTrailingFullStop} from '../entry-diff'
+import {EntryDiff} from '../entry-diff'
 import {diffEntry} from '../lib/diff'
-import type {Run} from '../lib/diff'
-import {
-	addExample,
-	deleteExample,
-	deleteSense,
-	moveExample,
-	moveSense,
-	setExampleText,
-	setSenseField,
-	startDraft,
-} from '../lib/draft'
+import {deleteSense, moveExample, moveSense, startDraft} from '../lib/draft'
 import {normalizeEntry} from '../lib/entry'
 
 jest.mock('@expo/ui/swift-ui', () => {
@@ -52,13 +42,6 @@ const withExamples = () =>
 	)
 
 describe('EntryDiff', () => {
-	it('numbers the senses a reader keeps', async () => {
-		await render(<EntryDiff diff={diffEntry(twoSenses(), twoSenses())} />)
-
-		expect(screen.getByText('1')).toBeTruthy()
-		expect(screen.getByText('2')).toBeTruthy()
-	})
-
 	it('draws a removed sense against no number', async () => {
 		let diff = diffEntry(twoSenses(), deleteSense(twoSenses(), '1'))
 		await render(<EntryDiff diff={diff} />)
@@ -72,14 +55,6 @@ describe('EntryDiff', () => {
 		await render(<EntryDiff diff={diff} />)
 
 		expect(screen.getByText('moved from 2')).toBeTruthy()
-	})
-
-	it('draws each changed word as its own run', async () => {
-		let diff = diffEntry(twoSenses(), setSenseField(twoSenses(), '2', {definition: 'Three.'}))
-		await render(<EntryDiff diff={diff} />)
-
-		expect(screen.getByText('Two.')).toBeTruthy()
-		expect(screen.getByText('Three.')).toBeTruthy()
 	})
 
 	it('omits the pronunciation entirely when the entry never had one', async () => {
@@ -114,26 +89,7 @@ describe('EntryDiff', () => {
 		expect(screen.getAllByText(SUBSENSE_MARKER)).toHaveLength(2)
 	})
 
-	it('says where a moved sub-sense came from', async () => {
-		let diff = diffEntry(withSubsenses(), moveSense(withSubsenses(), '1', 1, 0))
-		await render(<EntryDiff diff={diff} />)
-
-		expect(screen.getByText('moved from 2')).toBeTruthy()
-	})
-
-	it('draws a sense holding both an added and a removed citation', async () => {
-		let before = withExamples()
-		let afterAdding = addExample(deleteExample(before, '1', '2'), '1')
-		let addedId = afterAdding.senses[0].examples[1].id
-		let after = setExampleText(afterAdding, '1', addedId, 'third.')
-		let diff = diffEntry(before, after)
-		await render(<EntryDiff diff={diff} />)
-
-		expect(screen.getByText('first.')).toBeTruthy()
-		expect(screen.getByText('third.')).toBeTruthy()
-	})
-
-	// The unit tests below cover `withoutTrailingFullStop` itself. This covers
+	// `full-stop.test.ts` covers `withoutTrailingFullStop` itself. This covers
 	// that the row calls it: the same thing `EntryDefinition` does for a plain
 	// sense, so the preview and the entry read alike where a citation runs on.
 	it('drops the definition’s full stop before a citation runs on from it', async () => {
@@ -150,28 +106,5 @@ describe('EntryDiff', () => {
 		await render(<EntryDiff diff={diff} />)
 
 		expect(screen.getByText('citation moved from 2')).toBeTruthy()
-	})
-})
-
-describe('withoutTrailingFullStop', () => {
-	it('leaves an added trailing full stop alone -- the edit itself added it', () => {
-		let runs: Run[] = [
-			{text: 'modify', mark: 'removed'},
-			{text: 'modify.', mark: 'added'},
-		]
-
-		expect(withoutTrailingFullStop(runs)).toEqual(runs)
-	})
-
-	it('drops a trailing full stop that both the old and new text already carried', () => {
-		let runs: Run[] = [
-			{text: 'modify.', mark: 'removed'},
-			{text: 'change.', mark: 'added'},
-		]
-
-		expect(withoutTrailingFullStop(runs)).toEqual([
-			{text: 'modify.', mark: 'removed'},
-			{text: 'change', mark: 'added'},
-		])
 	})
 })

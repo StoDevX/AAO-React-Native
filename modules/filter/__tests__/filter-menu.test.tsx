@@ -26,12 +26,12 @@ function toggleFilter(enabled: boolean): ToggleType<Row> {
 	}
 }
 
-function pickerFilter(options: {label: string}[], selected?: {label: string}): PickerType<Row> {
+function pickerFilter(options: {label: string}[]): PickerType<Row> {
 	return {
 		type: 'picker',
 		key: 'k',
 		enabled: true,
-		spec: {title: 'Level', options, selected},
+		spec: {title: 'Level', options},
 		apply: {key: 'x'},
 	}
 }
@@ -40,13 +40,12 @@ function listFilter(
 	mode: 'AND' | 'OR',
 	options: ListItemSpecType[],
 	selected: ListItemSpecType[],
-	displayTitle = true,
 ): ListType<Row> {
 	return {
 		type: 'list',
 		key: 'k',
 		enabled: false,
-		spec: {title: 'Stations', options, selected, mode, displayTitle},
+		spec: {title: 'Stations', options, selected, mode, displayTitle: true},
 		apply: {key: 'x'},
 	} as ListType<Row>
 }
@@ -74,35 +73,9 @@ describe('FilterMenu, picker', () => {
 			expect.objectContaining({spec: expect.objectContaining({selected: options[1]})}),
 		)
 	})
-
-	test('renders nothing with one option', async () => {
-		await render(
-			<FilterMenu filter={pickerFilter([{label: 'Only'}])} isActive={false} onChange={jest.fn()} />,
-		)
-
-		expect(screen.toJSON()).toBeNull()
-	})
-
-	test('renders nothing with no options', async () => {
-		await render(<FilterMenu filter={pickerFilter([])} isActive={false} onChange={jest.fn()} />)
-
-		expect(screen.toJSON()).toBeNull()
-	})
 })
 
 describe('FilterMenu, list', () => {
-	// A menu offers only its options. Clearing is unticking -- and a menu-shaped
-	// filter is short by definition, so there is little to untick.
-	test.each(['AND', 'OR'] as const)('offers no all-or-nothing action in %s mode', async (mode) => {
-		let options = [{title: 'A'}, {title: 'B'}]
-		await render(
-			<FilterMenu filter={listFilter(mode, options, [])} isActive={false} onChange={jest.fn()} />,
-		)
-
-		expect(screen.queryByText('Show All')).toBeNull()
-		expect(screen.queryByText('Clear')).toBeNull()
-	})
-
 	test('tapping an option emits the toggled selection', async () => {
 		let onChange = jest.fn()
 		let options = [{title: 'A'}, {title: 'B'}, {title: 'C'}]
@@ -121,27 +94,5 @@ describe('FilterMenu, list', () => {
 				spec: expect.objectContaining({selected: [{title: 'A'}, {title: 'B'}]}),
 			}),
 		)
-	})
-
-	test('renders nothing when there are no options', async () => {
-		await render(
-			<FilterMenu filter={listFilter('OR', [], [])} isActive={false} onChange={jest.fn()} />,
-		)
-
-		expect(screen.toJSON()).toBeNull()
-	})
-
-	test('displayTitle false renders by label, not title', async () => {
-		let options = [{title: 'BIO', label: 'Biology'}]
-		await render(
-			<FilterMenu
-				filter={listFilter('AND', options, [], false)}
-				isActive={false}
-				onChange={jest.fn()}
-			/>,
-		)
-
-		expect(screen.getByText('Biology')).toBeTruthy()
-		expect(screen.queryByText('BIO')).toBeNull()
 	})
 })

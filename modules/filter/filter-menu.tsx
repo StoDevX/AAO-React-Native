@@ -3,6 +3,7 @@ import {Host, Menu, Section, Toggle} from '@expo/ui/swift-ui'
 import {menuActionDismissBehavior} from '@expo/ui/swift-ui/modifiers'
 import isEqual from 'lodash/isEqual'
 
+import {optionLabel} from './lib/option-label'
 import {toggleOption} from './lib/select-options'
 import {TriggerLabel} from './lib/trigger-label'
 import {triggerModifiers} from './lib/trigger-modifiers'
@@ -103,7 +104,7 @@ export function FilterMenu<T extends object>({
 								<Toggle
 									key={option.title}
 									isOn={spec.selected.some((selected) => isEqual(selected, option))}
-									label={spec.displayTitle ? option.title : option.label}
+									label={optionLabel(option, spec.displayTitle)}
 									onIsOnChange={() => onChange(toggleOption(filter, option))}
 								/>
 							))}

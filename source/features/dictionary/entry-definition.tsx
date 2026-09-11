@@ -15,9 +15,9 @@ import * as c from '@frogpond/colors'
 
 import {FILL_WIDTH} from '../home/button'
 
+import {pronunciationText, senseText} from './lib/entry-text'
 import {
 	BODY_LINE_SPACING,
-	EXAMPLE_SEPARATOR,
 	HEADING_SPACING,
 	HEADING_TOP_SPACE,
 	HEADWORD_SIZE,
@@ -31,16 +31,6 @@ import {
 	TEXT_INDENT,
 } from './lib/metrics'
 import type {NormalizedEntry, Sense} from './types'
-
-/**
- * Drops a single trailing full stop, so a definition written as a sentence can
- * still be followed by `: example` without reading as `modify.: both parties`.
- * Question and exclamation marks stay: they carry meaning a colon does not
- * replace.
- */
-function withoutFullStop(definition: string): string {
-	return definition.endsWith('.') ? definition.slice(0, -1) : definition
-}
 
 type Props = {
 	entry: NormalizedEntry
@@ -57,7 +47,7 @@ function SenseRow({
 	marker: string
 	indent: number
 }): React.ReactNode {
-	let citations = sense.examples?.length ? sense.examples.join(EXAMPLE_SEPARATOR) : undefined
+	let text = senseText(sense)
 
 	return (
 		<>
@@ -80,12 +70,10 @@ function SenseRow({
 						textSelection(true),
 					]}
 				>
-					{sense.grammar ? <Text modifiers={[italic()]}>{`[${sense.grammar}] `}</Text> : null}
-					<Text>{citations ? withoutFullStop(sense.definition) : sense.definition}</Text>
-					{citations ? (
-						<Text modifiers={[italic(), foregroundStyle(c.secondaryLabel)]}>
-							{`: ${citations}`}
-						</Text>
+					{text.grammar ? <Text modifiers={[italic()]}>{text.grammar}</Text> : null}
+					<Text>{text.definition}</Text>
+					{text.citations ? (
+						<Text modifiers={[italic(), foregroundStyle(c.secondaryLabel)]}>{text.citations}</Text>
 					) : null}
 				</Text>
 			</HStack>
@@ -109,6 +97,8 @@ function SenseRow({
  * Presentational — the route that hosts it owns the title and the toolbar.
  */
 export function EntryDefinition({entry}: Props): React.ReactNode {
+	let pronunciation = pronunciationText(entry.pronunciation)
+
 	return (
 		// FILL_WIDTH is the usual SwiftUI trick for a view with no "fill the
 		// available space" constant of its own: the route's Host wraps this in
@@ -144,7 +134,7 @@ export function EntryDefinition({entry}: Props): React.ReactNode {
 							{entry.word}
 						</Text>
 
-						{entry.pronunciation ? (
+						{pronunciation ? (
 							<Text
 								modifiers={[
 									font({size: PRONUNCIATION_SIZE, design: 'serif'}),
@@ -152,7 +142,7 @@ export function EntryDefinition({entry}: Props): React.ReactNode {
 									textSelection(true),
 								]}
 							>
-								{`| ${entry.pronunciation} |`}
+								{pronunciation}
 							</Text>
 						) : null}
 					</HStack>

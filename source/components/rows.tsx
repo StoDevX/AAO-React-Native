@@ -33,6 +33,8 @@ import {
 } from '@expo/ui/swift-ui/modifiers'
 import * as c from '@frogpond/colors'
 
+import {detailLinesOf, rowLabel, type RowDetail} from './lib/row-text'
+
 type RowProps = {
 	title: string
 	onPress: () => void
@@ -119,7 +121,7 @@ type DisclosureRowProps = {
 	 * blank are dropped rather than drawn, so a caller can build the array
 	 * straight from optional fields without filtering first.
 	 */
-	detail?: string | (string | undefined | null)[]
+	detail?: RowDetail
 	/** How many lines the title may wrap to before it truncates. */
 	titleLines?: number
 	/** How many lines each detail line may wrap to. Unbounded by default. */
@@ -133,15 +135,6 @@ type DisclosureRowProps = {
 	 */
 	identifier?: string
 	onPress: () => void
-}
-
-/** The detail lines actually worth drawing, in order. */
-function detailLinesOf(detail: DisclosureRowProps['detail']): string[] {
-	if (!detail) {
-		return []
-	}
-	let lines = Array.isArray(detail) ? detail : [detail]
-	return lines.filter((line): line is string => Boolean(line && line.trim()))
 }
 
 function LeadingImage({image}: {image: DisclosureRowImage}): React.ReactNode {
@@ -190,7 +183,7 @@ export function DisclosureRow(props: DisclosureRowProps): React.ReactNode {
 		<Button
 			modifiers={[
 				buttonStyle('plain'),
-				accessibilityLabel([title, ...details].join(', ')),
+				accessibilityLabel(rowLabel(title, detail)),
 				...(identifier ? [accessibilityIdentifier(identifier)] : []),
 			]}
 			onPress={onPress}
