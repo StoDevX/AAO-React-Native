@@ -14,6 +14,12 @@ type Props = {
  */
 export function CategoryTile({tile, onPress}: Props): React.ReactNode {
 	return (
-		<GradientTile gradient={tile.gradient} icon={tile.icon} onPress={onPress} title={tile.name} />
+		<GradientTile
+			gradient={tile.gradient}
+			icon={tile.icon}
+			onPress={onPress}
+			ratio={1}
+			title={tile.name}
+		/>
 	)
 }

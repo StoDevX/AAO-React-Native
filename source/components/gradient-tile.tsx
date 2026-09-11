@@ -41,6 +41,8 @@ type Props = {
 	title: string
 	icon: SFSymbol
 	gradient: Gradient
+	/** Overrides the default portrait ratio (`TILE_ASPECT`) -- pass 1 for a square tile. */
+	ratio?: number
 	/** Opens whatever this tile represents. */
 	onPress: () => void
 }
@@ -56,7 +58,13 @@ type Props = {
  * puts the grid inside one row of an inset-grouped list, so a per-tile menu
  * would lift the entire grid.
  */
-export function GradientTile({title, icon, gradient, onPress}: Props): React.ReactNode {
+export function GradientTile({
+	title,
+	icon,
+	gradient,
+	ratio = TILE_ASPECT,
+	onPress,
+}: Props): React.ReactNode {
 	let dark = useColorScheme() === 'dark'
 	let iconColor = dark ? homescreenIconDark : homescreenIconLight
 	let [inner, outer] = gradient
@@ -72,10 +80,7 @@ export function GradientTile({title, icon, gradient, onPress}: Props): React.Rea
 				{/* maxWidth first: the ratio only decides the height once the
 				    card has taken the column's full width. */}
 				<ZStack
-					modifiers={[
-						frame({maxWidth: FILL_WIDTH}),
-						aspectRatio({ratio: TILE_ASPECT, contentMode: 'fit'}),
-					]}
+					modifiers={[frame({maxWidth: FILL_WIDTH}), aspectRatio({ratio, contentMode: 'fit'})]}
 				>
 					<RoundedRectangle
 						cornerRadius={TILE_RADIUS}
