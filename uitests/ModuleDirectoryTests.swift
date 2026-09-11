@@ -44,7 +44,9 @@ class ModuleDirectoryTests: UITestCase {
 			.navigate()
 			.openContact(TestIdentifiers.Directory.aContact)
 			.verifyDetailAction(TestIdentifiers.Directory.aContactAction)
-			.dismissContactSheet(TestIdentifiers.Directory.aContactAction)
+			.dismissContactSheet(
+				titled: TestIdentifiers.Directory.aContact,
+				waitingFor: TestIdentifiers.Directory.aContactAction)
 			.capture("Directory after dismissing a contact sheet")
 			.verifyContactsHeading()
 			.verifyContactTiles(count: 8)

@@ -239,15 +239,23 @@ struct DirectoryScreen: Screen {
 	/// body: a drag begun inside the scrollable content scrolls that content
 	/// instead of moving the sheet, and reports nothing either way.
 	///
+	/// That bar is found by `title` -- the contact's own name, which the
+	/// sheet's nested stack titles it with -- rather than by position. A bar
+	/// picked by index returns whichever one XCUITest enumerates at that slot,
+	/// and for this sheet that is the Directory screen's own bar, which sits
+	/// above the sheet behind the dimmed backdrop. Dragging from there does
+	/// dismiss the sheet, since a backdrop drag is its own dismissal path, so
+	/// the mistake passes quietly while testing a different gesture.
+	///
 	/// `action` is the contact's own button, which exists only on the detail
 	/// -- the contact's name will not do, since SwiftUI collapses that onto
 	/// the grid's tile button too, and it never goes away.
 	@discardableResult
-	func dismissContactSheet(_ action: String) -> Self {
-		let bar = app.navigationBars.element(boundBy: app.navigationBars.count - 1)
+	func dismissContactSheet(titled title: String, waitingFor action: String) -> Self {
+		let bar = app.navigationBars[title]
 		XCTAssertTrue(
 			bar.waitForExistence(timeout: 30),
-			"The contact sheet should have a navigation bar to drag from")
+			"The \(title) sheet should have a navigation bar to drag from")
 
 		bar.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5))
 			.press(
