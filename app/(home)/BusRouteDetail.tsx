@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {FlatList, StyleSheet, Text} from 'react-native'
+import {ScrollView, StyleSheet, Text, View} from 'react-native'
 import {Stack, useLocalSearchParams} from 'expo-router'
 import {useQuery} from '@tanstack/react-query'
 import {timezone} from '@frogpond/constants'
@@ -30,9 +30,26 @@ import {ListFooter, ListRow, ListSectionHeader, Detail, Title} from '@frogpond/l
 import * as c from '@frogpond/colors'
 import {Column} from '@frogpond/layout'
 
+/// The corner radius and side margin iOS gives an inset-grouped section.
+const CARD_RADIUS = 10
+const CARD_MARGIN = 16
+
 const styles = StyleSheet.create({
 	container: {
+		backgroundColor: c.systemGroupedBackground,
+	},
+	/**
+	 * The inset-grouped card the rows sit in, drawn by hand rather than by a
+	 * SwiftUI `List`: the progress bar runs continuously down the route and its
+	 * dots are pulled up onto the bar above them by a negative margin, which a
+	 * list clips at every row boundary. One card clips only its own ends, where
+	 * the bar stops anyway.
+	 */
+	card: {
 		backgroundColor: c.secondarySystemGroupedBackground,
+		borderRadius: CARD_RADIUS,
+		marginHorizontal: CARD_MARGIN,
+		overflow: 'hidden',
 	},
 	timeRow: {
 		flexDirection: 'row',
@@ -111,15 +128,11 @@ function BusStopDetailInternal(props: Props): React.ReactNode {
 		)
 
 		return (
-			<FlatList
-				ListFooterComponent={<ListFooter title={BUS_FOOTER_MESSAGE} />}
-				ListHeaderComponent={headerElement}
-				contentInsetAdjustmentBehavior="automatic"
-				data={[emptyRowElement]}
-				keyExtractor={(item, index) => `${item.key}-${index}`}
-				renderItem={({item}) => item}
-				style={styles.container}
-			/>
+			<ScrollView contentInsetAdjustmentBehavior="automatic" style={styles.container}>
+				{headerElement}
+				<View style={styles.card}>{emptyRowElement}</View>
+				<ListFooter title={BUS_FOOTER_MESSAGE} />
+			</ScrollView>
 		)
 	}
 
@@ -163,16 +176,11 @@ function BusStopDetailInternal(props: Props): React.ReactNode {
 	})
 
 	return (
-		<FlatList
-			ItemSeparatorComponent={undefined}
-			ListFooterComponent={<ListFooter title={BUS_FOOTER_MESSAGE} />}
-			ListHeaderComponent={headerElement}
-			contentInsetAdjustmentBehavior="automatic"
-			data={timeRows}
-			keyExtractor={(item, index) => `${item.key}-${index}`}
-			renderItem={({item}) => item}
-			style={styles.container}
-		/>
+		<ScrollView contentInsetAdjustmentBehavior="automatic" style={styles.container}>
+			{headerElement}
+			<View style={styles.card}>{timeRows}</View>
+			<ListFooter title={BUS_FOOTER_MESSAGE} />
+		</ScrollView>
 	)
 }
 

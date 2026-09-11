@@ -1,5 +1,13 @@
 import * as React from 'react'
-import {FlatList, StyleSheet, View} from 'react-native'
+import {StyleSheet, useWindowDimensions, View} from 'react-native'
+import {Host, List, RNHostView, VStack} from '@expo/ui/swift-ui'
+import {
+	listRowBackground,
+	listRowInsets,
+	listRowSeparator,
+	listStyle,
+	refreshable,
+} from '@expo/ui/swift-ui/modifiers'
 import {LoadingView, NoticeView} from '@frogpond/notice'
 import * as c from '@frogpond/colors'
 import type {UseQueryResult} from '@tanstack/react-query'
@@ -16,15 +24,15 @@ type Props = {
 	variant?: PostListVariant
 }
 
-function Separator({variant}: {variant: PostListVariant}): React.ReactNode {
-	if (variant === 'C') {
-		return <View style={styles.cardGap} />
-	}
-	return <View style={styles.separator} />
-}
+/// The gap above and below a card, which the row itself draws since the list
+/// rows carry no insets of their own.
+const CARD_GAP = 12
+
+const NO_INSETS = {top: 0, leading: 0, bottom: 0, trailing: 0}
 
 export function PostList({query, onPressPost, variant = 'C'}: Props): React.ReactNode {
-	const {data = [], error, refetch, isRefetching, isError, isLoading} = query
+	const {data = [], error, refetch, isError, isLoading} = query
+	const {width} = useWindowDimensions()
 
 	if (isError) {
 		return (
@@ -36,52 +44,70 @@ export function PostList({query, onPressPost, variant = 'C'}: Props): React.Reac
 		)
 	}
 
+	if (isLoading) {
+		return <LoadingView />
+	}
+
+	if (!data.length) {
+		return <NoticeView text="No posts found." />
+	}
+
 	const isGrouped = variant === 'C'
 
 	return (
-		<FlatList
-			ItemSeparatorComponent={() => <Separator variant={variant} />}
-			ListEmptyComponent={isLoading ? <LoadingView /> : <NoticeView text="No posts found." />}
-			ListFooterComponent={isGrouped ? <View style={styles.cardGap} /> : null}
-			ListHeaderComponent={isGrouped ? <View style={styles.cardGap} /> : null}
-			contentContainerStyle={styles.contentContainer}
-			contentInsetAdjustmentBehavior="automatic"
-			data={data}
-			keyExtractor={(item) => item.id}
-			onRefresh={refetch}
-			refreshing={isRefetching}
-			renderItem={({item, index}) => {
-				if (variant === 'C' && index === 0 && item.thumbnail) {
-					return <PostRowHero onPress={onPressPost} post={item} />
-				}
-				if (variant === 'C') {
-					return <PostRowCard onPress={onPressPost} post={item} />
-				}
-				return <PostRow onPress={onPressPost} post={item} />
-			}}
+		<Host
+			matchContents={false}
 			style={[
-				styles.list,
-				{
-					backgroundColor: isGrouped ? c.systemGroupedBackground : c.systemBackground,
-				},
+				styles.host,
+				{backgroundColor: isGrouped ? c.systemGroupedBackground : c.systemBackground},
 			]}
-		/>
+		>
+			<List
+				modifiers={[
+					listStyle('plain'),
+					refreshable(async () => {
+						await refetch()
+					}),
+				]}
+			>
+				{data.map((post, index) => (
+					<VStack
+						key={post.id}
+						modifiers={[
+							listRowInsets(NO_INSETS),
+							listRowBackground('clear'),
+							// The cards draw their own edges and gaps; a separator
+							// between them would cut across the rounded corners.
+							...(isGrouped ? [listRowSeparator('hidden')] : []),
+						]}
+					>
+						<RNHostView matchContents={false}>
+							{/* A hosted view is sized to what it intrinsically wants, and
+						    a card built from `marginHorizontal` and `width: '100%'`
+						    wants nothing in particular -- so the width it lays out
+						    against is stated here. */}
+							<View style={[isGrouped && styles.cardRow, {width}]}>
+								{isGrouped && index === 0 && post.thumbnail ? (
+									<PostRowHero onPress={onPressPost} post={post} />
+								) : isGrouped ? (
+									<PostRowCard onPress={onPressPost} post={post} />
+								) : (
+									<PostRow onPress={onPressPost} post={post} />
+								)}
+							</View>
+						</RNHostView>
+					</VStack>
+				))}
+			</List>
+		</Host>
 	)
 }
 
 const styles = StyleSheet.create({
-	list: {
+	host: {
 		flex: 1,
 	},
-	contentContainer: {
-		flexGrow: 1,
-	},
-	separator: {
-		height: StyleSheet.hairlineWidth,
-		backgroundColor: c.separator,
-		marginLeft: 16,
-	},
-	cardGap: {
-		height: 12,
+	cardRow: {
+		paddingVertical: CARD_GAP / 2,
 	},
 })

@@ -478,6 +478,10 @@ struct TestIdentifiers {
 	enum Transportation {
 		static let tabs = ["Express", "Red Line", "Blue Line", "Oles Go", "Other"]
 		/// The list footer renders as a single Text, so both lines are one label.
+		/// A stop every Express Bus route passes through, used to open a single
+		/// stop's schedule. It is the college itself, so it is not going to be
+		/// renamed out from under this test.
+		static let aStop = "St. Olaf College"
 		static let footer = """
 			Bus routes and times subject to change without notice
 

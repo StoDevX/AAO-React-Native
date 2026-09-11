@@ -315,6 +315,14 @@ export const multilineTextAlignment = (alignment: string): Modifier => ({
 })
 export const lineSpacing = (value: number): Modifier => ({$type: 'lineSpacing', value})
 export const submitLabel = (label: string): Modifier => ({$type: 'submitLabel', label})
+export const listRowBackground = (background: unknown): Modifier => ({
+	$type: 'listRowBackground',
+	background,
+})
+export const listRowSeparator = (visibility: string): Modifier => ({
+	$type: 'listRowSeparator',
+	visibility,
+})
 export const textInputAutocapitalization = (autocapitalization: string): Modifier => ({
 	$type: 'textInputAutocapitalization',
 	autocapitalization,
