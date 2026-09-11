@@ -362,6 +362,25 @@ class ModuleCalendarTests: UITestCase {
 		screen.verifyCalendarTitle()
 	}
 
+	/// A paged TabView inside a navigation stack is the classic way to lose the
+	/// interactive pop gesture: the pager claims the horizontal pan and the edge
+	/// swipe never fires. Day mode pages horizontally, so this is the one thing
+	/// that has to keep working.
+	func testSwipingFromTheLeftEdgeLeavesTheCalendar() throws {
+		CalendarScreen(app: app).navigate().verifyStripIsPresent()
+
+		// Started hard against the left edge, where UIKit's screen-edge
+		// recogniser lives, and dragged most of the way across so the gesture
+		// completes rather than rubber-banding back.
+		let edge = app.coordinate(withNormalizedOffset: CGVector(dx: 0.0, dy: 0.5))
+		let across = app.coordinate(withNormalizedOffset: CGVector(dx: 0.9, dy: 0.5))
+		edge.press(forDuration: 0.05, thenDragTo: across)
+
+		XCTAssertTrue(
+			app.buttons[TestIdentifiers.Buttons.calendar].waitForExistence(timeout: 30),
+			"Swiping from the left edge should land back on the home screen")
+	}
+
 	func testAttributionOnlyOnTheDetailScreen() throws {
 		CalendarScreen(app: app)
 			.navigate()

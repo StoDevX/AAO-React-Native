@@ -43,6 +43,7 @@ export const opacity = modifier('opacity')
 export const scrollPosition = modifier('scrollPosition')
 export const id = modifier('id')
 export const scrollTargetLayout = modifier('scrollTargetLayout')
+export const tabViewStyle = modifier('tabViewStyle')
 
 /**
  * Shape builders, not modifiers: `contentShape(shapes.rectangle())` passes one
@@ -271,3 +272,34 @@ export const environment = (config: Record<string, unknown>): Modifier => ({
 	...config,
 })
 export const tag = (value: string | number): Modifier => ({$type: 'tag', value})
+
+/**
+ * A paged `TabView` renders one tab at a time natively. The stand-in renders
+ * the selected tab's children and drops the rest, which is the decision a test
+ * can legitimately assert -- which day's events are on screen. Whether the
+ * pager swipes is a gesture, and belongs to a UI test.
+ */
+export function TabView({
+	selection,
+	children,
+}: {
+	selection?: string
+	onSelectionChange?: (value: string) => void
+	children?: React.ReactNode
+}): React.ReactNode {
+	let tabs = React.Children.toArray(children) as React.ReactElement<{
+		value: string
+		children?: React.ReactNode
+	}>[]
+	let active = tabs.find((tab) => tab.props.value === selection) ?? tabs[0]
+	return <View>{active ?? null}</View>
+}
+
+TabView.Tab = function Tab({
+	children,
+}: {
+	value: string
+	children?: React.ReactNode
+}): React.ReactNode {
+	return <View>{children}</View>
+}

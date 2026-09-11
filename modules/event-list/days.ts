@@ -87,6 +87,51 @@ export function eventsOnDay(events: readonly SourcedEvent[], day: Moment): Sourc
 }
 
 /**
+ * Every day in `days`, mapped to the events that fall on it, earliest first.
+ *
+ * Built once and read many times: the strip asks which days carry anything and
+ * each day on screen asks for its own rows, and walking the whole event list
+ * for each of those would be a scan per day. It also means the dots and the
+ * rows cannot disagree -- a dot is a bucket that is not empty, and the rows
+ * are that same bucket.
+ *
+ * An event that is ongoing belongs to every day it spans, so it is the one
+ * case that still has to be checked against each day. Everything else lands in
+ * one bucket by its start date.
+ */
+export function eventsByDay(
+	events: readonly SourcedEvent[],
+	days: readonly Moment[],
+): Map<string, SourcedEvent[]> {
+	let buckets = new Map<string, SourcedEvent[]>()
+
+	for (let day of days) {
+		buckets.set(day.format('YYYY-MM-DD'), [])
+	}
+
+	for (let entry of events) {
+		if (entry.event.isOngoing) {
+			for (let day of days) {
+				if (occursOn(entry, day)) {
+					buckets.get(day.format('YYYY-MM-DD'))?.push(entry)
+				}
+			}
+			continue
+		}
+
+		buckets.get(entry.event.startTime.format('YYYY-MM-DD'))?.push(entry)
+	}
+
+	// `useMergedEvents` hands over one calendar's events at a time, so without
+	// this a second calendar's morning sits behind the first's evening.
+	for (let bucket of buckets.values()) {
+		bucket.sort((one, two) => one.event.startTime.valueOf() - two.event.startTime.valueOf())
+	}
+
+	return buckets
+}
+
+/**
  * The ISO dates, among `days`, that carry at least one event. What the strip
  * draws its dots from.
  */
@@ -96,9 +141,9 @@ export function daysWithEvents(
 ): Set<string> {
 	let marked = new Set<string>()
 
-	for (let day of days) {
-		if (events.some((entry) => occursOn(entry, day))) {
-			marked.add(day.format('YYYY-MM-DD'))
+	for (let [iso, bucket] of eventsByDay(events, days)) {
+		if (bucket.length > 0) {
+			marked.add(iso)
 		}
 	}
 

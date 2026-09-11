@@ -5,6 +5,7 @@ import {
 	LazyVStack,
 	RNHostView,
 	ScrollView as SwiftUIScrollView,
+	TabView,
 	Text,
 	VStack,
 } from '@expo/ui/swift-ui'
@@ -15,13 +16,14 @@ import {
 	frame,
 	padding,
 	refreshable,
+	tabViewStyle,
 } from '@expo/ui/swift-ui/modifiers'
 import * as c from '@frogpond/colors'
 import type {Moment} from 'moment-timezone'
 import {NoticeView} from '@frogpond/notice'
 
 import {DayPickerStrip, type DayPickerStripHandle} from './day-picker-strip'
-import {daysWithEvents, deriveDays, eventsOnDay} from './days'
+import {deriveDays, eventsByDay} from './days'
 import {EventListRow} from './event-list-row'
 import {formatSectionHeader} from './times'
 import type {CalendarBodyHandle, CalendarSource, SourcedEvent} from './types'
@@ -54,7 +56,18 @@ export let DayView = React.forwardRef<CalendarBodyHandle, Props>(function DayVie
 	}, [props.sources])
 
 	let days = React.useMemo(() => deriveDays(props.events, props.now), [props.events, props.now])
-	let marked = React.useMemo(() => daysWithEvents(props.events, days), [props.events, days])
+	// One pass over the events, read by the strip for its dots and by every day
+	// on screen for its rows. Neither can disagree with the other, because both
+	// read the same buckets.
+	let byDay = React.useMemo(() => eventsByDay(props.events, days), [props.events, days])
+
+	let marked = React.useMemo(() => {
+		let found = new Set<string>()
+		for (let [iso, bucket] of byDay) {
+			if (bucket.length > 0) found.add(iso)
+		}
+		return found
+	}, [byDay])
 
 	// `deriveDays` always yields at least the current week, so today is always
 	// among the days and the view always opens somewhere real.
@@ -70,11 +83,6 @@ export let DayView = React.forwardRef<CalendarBodyHandle, Props>(function DayVie
 		(chosenIsVisible ? chosenDay : null) ??
 		days.find((day) => day.isSame(props.now, 'day')) ??
 		days[0]
-
-	let rows = React.useMemo(
-		() => (selectedDay ? eventsOnDay(props.events, selectedDay) : []),
-		[props.events, selectedDay],
-	)
 
 	let showToday = React.useCallback(() => {
 		let today = days.find((day) => day.isSame(props.now, 'day'))
@@ -124,56 +132,66 @@ export let DayView = React.forwardRef<CalendarBodyHandle, Props>(function DayVie
 						selectedDay={selectedDay ?? null}
 					/>
 				</RNHostView>
-				{rows.length === 0 ? (
-					// Below the strip rather than in place of it: replacing the whole
-					// view would strand someone on a blank day with nothing to
-					// navigate away with.
-					//
-					// `matchContents={false}` rather than `true`: the notice's
-					// container is `flex: 1`, which has no intrinsic size for a
-					// content-matching host to measure, so it drew at zero height.
-					// `false` makes the host take the size SwiftUI offers it instead --
-					// and `frame(maxHeight: Infinity)` on the wrapping VStack is what
-					// makes SwiftUI actually offer it the space the strip left behind,
-					// rather than the VStack's own default of hugging its content.
-					<VStack modifiers={[frame({maxHeight: Infinity})]}>
-						<RNHostView matchContents={false}>{notice()}</RNHostView>
-					</VStack>
-				) : (
-					<SwiftUIScrollView
-						modifiers={[
-							background(c.systemBackground),
-							refreshable(async () => {
-								await props.onRefresh()
-							}),
-						]}
-					>
-						<LazyVStack alignment="leading">
-							<VStack
-								alignment="leading"
-								modifiers={[padding({leading: 16, trailing: 16, top: 12, bottom: 8})]}
-							>
-								<Text
-									modifiers={[
-										font({textStyle: 'headline'}),
-										foregroundStyle(selectedDay?.isSame(props.now, 'day') ? c.systemRed : c.label),
-									]}
-								>
-									{selectedDay ? formatSectionHeader(selectedDay) : ''}
-								</Text>
-								{rows.map((entry, index) => (
-									<EventListRow
-										color={colorFor(entry.sourceId)}
-										event={entry.event}
-										isLastInSection={index === rows.length - 1}
-										key={`${entry.sourceId}|${entry.key}`}
-										onPress={() => props.onPressEvent(entry)}
-									/>
-								))}
-							</VStack>
-						</LazyVStack>
-					</SwiftUIScrollView>
-				)}
+				<TabView
+					modifiers={[tabViewStyle({type: 'page', indexDisplayMode: 'never'})]}
+					onSelectionChange={(iso) => {
+						let day = days.find((d) => d.format('YYYY-MM-DD') === iso)
+						if (day) {
+							setChosenDay(day)
+							stripRef.current?.scrollToDay(day)
+						}
+					}}
+					selection={selectedDay?.format('YYYY-MM-DD') ?? ''}
+				>
+					{days.map((day) => {
+						let iso = day.format('YYYY-MM-DD')
+						let dayRows = byDay.get(iso) ?? []
+
+						return (
+							<TabView.Tab key={iso} value={iso}>
+								{dayRows.length === 0 ? (
+									<VStack modifiers={[frame({maxHeight: Infinity})]}>
+										<RNHostView matchContents={false}>{notice()}</RNHostView>
+									</VStack>
+								) : (
+									<SwiftUIScrollView
+										modifiers={[
+											background(c.systemBackground),
+											refreshable(async () => {
+												await props.onRefresh()
+											}),
+										]}
+									>
+										<LazyVStack alignment="leading">
+											<VStack
+												alignment="leading"
+												modifiers={[padding({leading: 16, trailing: 16, top: 12, bottom: 8})]}
+											>
+												<Text
+													modifiers={[
+														font({textStyle: 'headline'}),
+														foregroundStyle(day.isSame(props.now, 'day') ? c.systemRed : c.label),
+													]}
+												>
+													{formatSectionHeader(day)}
+												</Text>
+												{dayRows.map((entry, index) => (
+													<EventListRow
+														color={colorFor(entry.sourceId)}
+														event={entry.event}
+														isLastInSection={index === dayRows.length - 1}
+														key={`${entry.sourceId}|${entry.key}`}
+														onPress={() => props.onPressEvent(entry)}
+													/>
+												))}
+											</VStack>
+										</LazyVStack>
+									</SwiftUIScrollView>
+								)}
+							</TabView.Tab>
+						)
+					})}
+				</TabView>
 			</VStack>
 		</Host>
 	)
