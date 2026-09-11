@@ -2,7 +2,7 @@ import * as React from 'react'
 import {StyleSheet} from 'react-native'
 import xor from 'lodash/xor'
 import moment from 'moment-timezone'
-import {Stack, useLocalSearchParams, useRouter} from 'expo-router'
+import {Stack, useLocalSearchParams} from 'expo-router'
 import {
 	Button,
 	DatePicker,
@@ -27,6 +27,7 @@ import {
 	toPickerDate,
 } from '../../../../source/features/building-hours/lib'
 import {useBuildingReport} from '../../../../source/features/building-hours/report/context'
+import {useDismissOnce} from '../../../../source/lib/use-dismiss-once'
 
 const ALL_DAYS: DayOfWeekEnumType[] = ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su']
 
@@ -38,13 +39,13 @@ export default function BuildingHoursScheduleEditorPage(): React.ReactNode {
 	let scheduleIndex = Number(scheduleIndexParam)
 	let setIndex = Number(setIndexParam)
 
-	let router = useRouter()
+	let dismiss = useDismissOnce()
 	let {draft, edit} = useBuildingReport()
 	let set = draft?.schedule[scheduleIndex]?.hours[setIndex] ?? blankSchedule()
 
 	let deleteSet = () => {
 		edit({type: 'DELETE_HOURS', scheduleIndex, setIndex})
-		router.back()
+		dismiss()
 	}
 
 	let setHours = (data: typeof set) => {
