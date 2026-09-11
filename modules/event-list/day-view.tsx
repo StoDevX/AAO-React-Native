@@ -112,15 +112,20 @@ export let DayView = React.forwardRef<CalendarBodyHandle, Props>(function DayVie
 	// animating.
 	let [anchor, setAnchor] = React.useState<Moment | null>(null)
 
-	let pages = React.useMemo(() => {
-		let around = anchor ?? selectedDay
-		if (!around) return days
+	// Keyed on the anchor's date rather than the anchor itself. A memo that
+	// listed the selection would hand back a fresh array on every swipe even
+	// when the window had not moved, and a new set of children is a second
+	// thing for SwiftUI to animate on top of the swipe.
+	let anchorIso = (anchor ?? selectedDay)?.format('YYYY-MM-DD') ?? ''
 
-		let middle = days.findIndex((day) => day.isSame(around, 'day'))
+	let pages = React.useMemo(() => {
+		if (!anchorIso) return days
+
+		let middle = days.findIndex((day) => day.format('YYYY-MM-DD') === anchorIso)
 		if (middle < 0) return days.slice(0, PAGE_WINDOW * 2 + 1)
 
 		return days.slice(Math.max(0, middle - PAGE_WINDOW), middle + PAGE_WINDOW + 1)
-	}, [days, anchor, selectedDay])
+	}, [days, anchorIso])
 
 	/**
 	 * Moves the window when the chosen day comes within `PAGE_MARGIN` of its

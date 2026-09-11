@@ -4,7 +4,7 @@ import xor from 'lodash/xor'
 import {ScrollView, StyleSheet, Text} from 'react-native'
 import type {Moment} from 'moment-timezone'
 import moment from 'moment-timezone'
-import {Stack, useLocalSearchParams, useNavigation} from 'expo-router'
+import {Stack, useLocalSearchParams} from 'expo-router'
 import {Cell, Section, TableView} from '@frogpond/tableview'
 import {DeleteButtonCell} from '@frogpond/tableview/cells'
 import type {DayOfWeekEnumType} from '../../source/features/building-hours/types'
@@ -24,9 +24,10 @@ import {
 	useAppDispatch,
 	useAppSelector,
 } from '../../source/redux'
+import {useDismissOnce} from '../../source/lib/use-dismiss-once'
 
 export default function BuildingHoursScheduleEditorPage(): React.ReactNode {
-	const navigation = useNavigation()
+	const dismiss = useDismissOnce()
 	let {scheduleIndex: scheduleIndexParam, setIndex: setIndexParam} = useLocalSearchParams<{
 		scheduleIndex: string
 		setIndex: string
@@ -41,7 +42,7 @@ export default function BuildingHoursScheduleEditorPage(): React.ReactNode {
 
 	let deleteSet = () => {
 		dispatch(applyBuildingAction({type: 'DELETE_HOURS', scheduleIndex, setIndex}))
-		navigation.goBack()
+		dismiss()
 	}
 
 	let onChangeDays = (newDays: DayOfWeekEnumType[]) => {
@@ -93,11 +94,7 @@ export default function BuildingHoursScheduleEditorPage(): React.ReactNode {
 		<>
 			<Stack.Title>Edit Schedule</Stack.Title>
 			<Stack.Toolbar placement="right">
-				<Stack.Toolbar.Button
-					accessibilityLabel="Close Screen"
-					icon="xmark"
-					onPress={() => navigation.goBack()}
-				/>
+				<Stack.Toolbar.Button accessibilityLabel="Close Screen" icon="xmark" onPress={dismiss} />
 			</Stack.Toolbar>
 
 			<ScrollView contentInsetAdjustmentBehavior="automatic">

@@ -65,7 +65,7 @@ export default function HomeLayout(): React.ReactNode {
 					sheetLargestUndimmedDetentIndex: 'none',
 				}}
 			/>
-			<Stack.Screen name="Calendar" options={{title: 'Calendar'}} />
+			<Stack.Screen name="Calendar" options={{title: 'Calendar', headerLargeTitleEnabled: true}} />
 		</Stack>
 	)
 }
