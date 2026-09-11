@@ -1,4 +1,4 @@
-import {expect, it, xdescribe, describe} from '@jest/globals'
+import {describe, expect, it, xdescribe} from '@jest/globals'
 import {parseHours} from '../parse-hours'
 import {dayMoment, hourMoment, moment, plainMoment} from './moment.helper'
 import {SingleBuildingScheduleType} from '../../types'
@@ -132,5 +132,32 @@ xdescribe('checks a list of schedules to see if any are open', () => {
 		let {open, close} = parseHours(schedule, now)
 		expect(open.format('HH:mm')).toBe('10:30')
 		expect(close.format('HH:mm')).toBe('02:00')
+	})
+})
+
+describe('anchors a window on the day it opens, not the day it is read', () => {
+	// 2026-09-11 is a Friday, 2026-09-12 a Saturday, 2026-09-13 a Sunday.
+	let schedule: SingleBuildingScheduleType = {
+		days: ['Fr', 'Sa'],
+		from: '9:00pm',
+		to: '2:00am',
+	}
+
+	let at = (date: string, time: string) => plainMoment(`${date}T${time}`, 'YYYY-MM-DD[T]HH:mm:ss')
+
+	it('returns Saturday night when read early Sunday', () => {
+		let {open, close} = parseHours(schedule, at('2026-09-13', '01:00:00'))
+
+		expect(open.format('YYYY-MM-DD HH:mm')).toBe('2026-09-12 21:00')
+		expect(close.format('YYYY-MM-DD HH:mm')).toBe('2026-09-13 02:00')
+	})
+
+	it('does not borrow a night the schedule never runs', () => {
+		// Thursday night is not in `days`, so Friday at 1:00am falls outside
+		// every window this schedule describes.
+		let m = at('2026-09-11', '01:00:00')
+		let {open, close} = parseHours(schedule, m)
+
+		expect(m.isBetween(open, close, 'minute', '[)')).toBe(false)
 	})
 })

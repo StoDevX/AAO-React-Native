@@ -2,7 +2,7 @@ import type {Moment} from 'moment-timezone'
 import flatten from 'lodash/flatten'
 import type {BuildingType} from '../types'
 
-import {getDayOfWeek} from './get-day-of-week'
+import {schedulesInEffect} from './schedules-in-effect'
 import {isChapelTime, formatChapelTime} from './chapel'
 import {isScheduleOpenAtMoment} from './is-schedule-open'
 import {formatBuildingTimes} from './format-times'
@@ -24,8 +24,6 @@ export function getDetailedBuildingStatus(info: BuildingType, m: Moment): Buildi
 	// Friday Lap Swim: 12:45pm – 2:00pm
 	// Friday Open Swim: 7:00am – 2:00pm
 
-	let dayOfWeek = getDayOfWeek(m)
-
 	let schedules = info.schedule || []
 	if (!schedules.length) {
 		return [{isActive: false, label: null, status: 'Hours unknown'}]
@@ -43,7 +41,7 @@ export function getDetailedBuildingStatus(info: BuildingType, m: Moment): Buildi
 			]
 		}
 
-		let filteredSchedules = set.hours.filter((sched) => sched.days.includes(dayOfWeek))
+		let filteredSchedules = schedulesInEffect(set.hours, m)
 		if (!filteredSchedules.length) {
 			return [{isActive: false, label, status: 'Closed today'}]
 		}

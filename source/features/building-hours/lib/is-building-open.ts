@@ -2,13 +2,11 @@ import type {Moment} from 'moment-timezone'
 import flatten from 'lodash/flatten'
 import type {BuildingType} from '../types'
 
-import {getDayOfWeek} from './get-day-of-week'
+import {schedulesInEffect} from './schedules-in-effect'
 import {isChapelTime} from './chapel'
 import {isScheduleOpenAtMoment} from './is-schedule-open'
 
 export function isBuildingOpen(info: BuildingType, m: Moment): boolean {
-	let dayOfWeek = getDayOfWeek(m)
-
 	let schedules = info.schedule || []
 	if (!schedules.length) {
 		return false
@@ -22,7 +20,7 @@ export function isBuildingOpen(info: BuildingType, m: Moment): boolean {
 			return false
 		}
 
-		let filteredSchedules = set.hours.filter((sched) => sched.days.includes(dayOfWeek))
+		let filteredSchedules = schedulesInEffect(set.hours, m)
 		if (!filteredSchedules.length) {
 			return false
 		}
