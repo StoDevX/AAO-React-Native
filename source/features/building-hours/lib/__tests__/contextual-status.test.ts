@@ -104,4 +104,49 @@ describe('contextualStatus', () => {
 		let result = contextualStatus(building, now)
 		expect(result).toBe('Closed today')
 	})
+
+	it('says when a chapel closure lifts', () => {
+		// data/building-hours/3-1-post-office.yaml; Monday chapel is 10:10-10:30am.
+		let building = makeBuilding([
+			{
+				title: 'Hours',
+				closedForChapelTime: true,
+				hours: [{days: ['Mo', 'Tu', 'We', 'Th', 'Fr'], from: '8:00am', to: '5:00pm'}],
+			},
+		])
+		let now = moment.tz('2026-09-07 10:15', timezone)
+
+		expect(contextualStatus(building, now)).toBe('Reopens at 10:30 AM')
+	})
+
+	it('counts down the last ten minutes of chapel', () => {
+		let building = makeBuilding([
+			{
+				title: 'Hours',
+				closedForChapelTime: true,
+				hours: [{days: ['Mo', 'Tu', 'We', 'Th', 'Fr'], from: '8:00am', to: '5:00pm'}],
+			},
+		])
+		let now = moment.tz('2026-09-07 10:22', timezone)
+
+		expect(contextualStatus(building, now)).toBe('Reopens in 8 min')
+	})
+
+	it('points at the next real opening when the building will not resume', () => {
+		// data/building-hours/7-2-health-services.yaml; Thursday chapel runs to
+		// 12:35pm, but the 9:00-11:30am window is over by then.
+		let building = makeBuilding([
+			{
+				title: 'Hours',
+				closedForChapelTime: true,
+				hours: [
+					{days: ['Mo', 'Tu', 'We', 'Th', 'Fr'], from: '9:00am', to: '11:30am'},
+					{days: ['Mo', 'Tu', 'We', 'Th', 'Fr'], from: '1:00pm', to: '4:00pm'},
+				],
+			},
+		])
+		let now = moment.tz('2026-09-10 11:15', timezone)
+
+		expect(contextualStatus(building, now)).toBe('Opens at 1 PM')
+	})
 })
