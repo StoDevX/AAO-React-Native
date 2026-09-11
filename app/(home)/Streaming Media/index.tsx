@@ -1,7 +1,8 @@
 import * as React from 'react'
-import {StyleSheet, SectionList} from 'react-native'
+import {StyleSheet} from 'react-native'
+import {ContentUnavailableView, Host, List, Section} from '@expo/ui/swift-ui'
+import {listStyle, refreshable} from '@expo/ui/swift-ui/modifiers'
 import * as c from '@frogpond/colors'
-import {ListSeparator, ListSectionHeader} from '@frogpond/lists'
 import {NoticeView, LoadingView} from '@frogpond/notice'
 import {FilterToolbar, ListType, selectedOptions} from '@frogpond/filter'
 import {StreamRow} from '../../../source/features/streaming/streams/row'
@@ -15,11 +16,9 @@ import {streamsOptionsFor} from '../../../source/features/streaming/streams/quer
 import {useQuery} from '@tanstack/react-query'
 
 const styles = StyleSheet.create({
-	listContainer: {
-		backgroundColor: c.systemBackground,
-	},
-	contentContainer: {
-		flexGrow: 1,
+	host: {
+		flex: 1,
+		backgroundColor: c.systemGroupedBackground,
 	},
 })
 
@@ -61,7 +60,7 @@ const filterStreams = <T extends object>(streams: StreamType[], filters: ListTyp
 }
 
 export default function StreamingPage(): React.ReactNode {
-	let {data = [], error, refetch, isLoading, isRefetching, isError} = useQuery(streamsOptionsFor())
+	let {data = [], error, refetch, isLoading, isError} = useQuery(streamsOptionsFor())
 
 	// Only the narrowing the user asked for is state; the categories on offer
 	// come from the streams. Keeping the whole filter in state instead would tie
@@ -128,29 +127,48 @@ export default function StreamingPage(): React.ReactNode {
 		/>
 	)
 
+	if (isLoading) {
+		return (
+			<>
+				{header}
+				<LoadingView />
+			</>
+		)
+	}
+
+	let sections = groupStreams(filterStreams(entries, filters))
+	let hasActiveFilter = filters.some((f) => f.spec.selected.length)
+
 	return (
-		<SectionList
-			ItemSeparatorComponent={ListSeparator}
-			ListEmptyComponent={
-				isLoading ? (
-					<LoadingView />
-				) : filters.some((f) => f.spec.selected.length) ? (
-					<NoticeView text="No streams to show. Try changing the filters." />
-				) : (
-					<NoticeView text="No streams." />
-				)
-			}
-			ListHeaderComponent={header}
-			contentContainerStyle={styles.contentContainer}
-			contentInsetAdjustmentBehavior="automatic"
-			keyExtractor={(item: StreamType) => item.eid}
-			onRefresh={refetch}
-			refreshing={isRefetching}
-			renderItem={({item}) => <StreamRow stream={item} />}
-			renderSectionHeader={({section: {title}}) => <ListSectionHeader title={title} />}
-			sections={groupStreams(filterStreams(entries, filters))}
-			style={styles.listContainer}
-			testID="stream-list"
-		/>
+		<>
+			{header}
+
+			<Host style={styles.host} testID="stream-list">
+				<List
+					modifiers={[
+						listStyle('insetGrouped'),
+						refreshable(async () => {
+							await refetch()
+						}),
+					]}
+				>
+					{sections.length === 0 ? (
+						<ContentUnavailableView
+							description={hasActiveFilter ? 'Try changing the filters.' : undefined}
+							systemImage="play.tv"
+							title="No streams."
+						/>
+					) : (
+						sections.map((section) => (
+							<Section key={section.title} title={section.title}>
+								{section.data.map((stream) => (
+									<StreamRow key={stream.eid} stream={stream} />
+								))}
+							</Section>
+						))
+					)}
+				</List>
+			</Host>
+		</>
 	)
 }

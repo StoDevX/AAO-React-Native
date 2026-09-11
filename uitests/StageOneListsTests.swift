@@ -62,6 +62,15 @@ class StageOneListsTests: UITestCase {
 		screen.capture("Printers")
 	}
 
+	/// The first screen to draw a thumbnail through the shared row, so this is
+	/// where a remote image hosted inside a SwiftUI list gets looked at.
+	func testStreamingMediaList() throws {
+		StreamingMediaScreen(app: app)
+			.navigate()
+			.checkStreamListExists()
+			.capture("Streaming Media")
+	}
+
 	func testMoreList() throws {
 		MoreScreen(app: app)
 			.navigate()
@@ -107,5 +116,15 @@ class StageOneListsTests: UITestCase {
 
 		filterTab.tap()
 		screen.capture("Athletics - Filter")
+	}
+
+	/// The scores tab, which draws two remote crests per row through
+	/// `RNHostView`. Athletics opens on Today, which may legitimately have no
+	/// games -- the capture is taken either way, since an empty state is worth
+	/// seeing too.
+	func testAthleticsScoresList() throws {
+		AthleticsScreen(app: app)
+			.navigate()
+			.capture("Athletics - Scores")
 	}
 }

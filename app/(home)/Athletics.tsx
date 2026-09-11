@@ -1,10 +1,12 @@
 import * as React from 'react'
-import {SectionList, StyleSheet, View} from 'react-native'
+import {StyleSheet, View} from 'react-native'
+import {Host, List, Section} from '@expo/ui/swift-ui'
+import {listStyle, refreshable} from '@expo/ui/swift-ui/modifiers'
 import {Stack} from 'expo-router'
 import {useQuery} from '@tanstack/react-query'
 
-import {ListSectionHeader} from '@frogpond/lists'
 import {LoadingView, NoticeView} from '@frogpond/notice'
+import {now} from '@frogpond/timer'
 import * as c from '@frogpond/colors'
 
 import {Constants} from '../../source/features/athletics/constants'
@@ -37,18 +39,14 @@ function AthleticsView(): React.ReactNode {
 	const selectedSports = useFilterStore((s) => s.selectedSports)
 	const setAvailableSports = useFilterStore((s) => s.setAvailableSports)
 
-	const {
-		data = NO_SCORES,
-		error,
-		refetch,
-		isLoading,
-		isError,
-		isRefetching,
-	} = useQuery(athleticsOptions)
+	const {data = NO_SCORES, error, refetch, isLoading, isError} = useQuery(athleticsOptions)
 
 	// The day the buckets are measured from. Held steady between renders so the
 	// grouping below doesn't re-run against a clock that has moved on.
-	const today = React.useMemo(() => debugDate ?? new Date(), [debugDate])
+	// `now()` rather than `new Date()`: under UI testing it answers the frozen
+	// date the fixtures are written around, so which games count as today does
+	// not depend on the day the suite happens to run.
+	const today = React.useMemo(() => debugDate ?? now().toDate(), [debugDate])
 
 	// Derive the Women's/Men's/Other sport groups for the filter screen.
 	const sports = React.useMemo(() => sportFilterSections(data), [data])
@@ -120,20 +118,27 @@ function AthleticsView(): React.ReactNode {
 				<TabBar onSelectSection={setSelectedSection} selectedSection={selectedSection} />
 				{selectedSection === Constants.FILTER ? (
 					<AthleticsFilters sports={sports} />
+				) : sections.length === 0 ? (
+					<EmptyListNotice selectedSection={selectedSection} />
 				) : (
-					<SectionList
-						ListEmptyComponent={<EmptyListNotice selectedSection={selectedSection} />}
-						contentContainerStyle={styles.sectionListContent}
-						contentInsetAdjustmentBehavior="automatic"
-						keyExtractor={(item) => item.id}
-						onRefresh={refetch}
-						refreshing={isRefetching}
-						renderItem={({item}) => <AthleticsRow score={item} />}
-						renderSectionHeader={({section: {title}}) =>
-							title ? <ListSectionHeader title={title} /> : null
-						}
-						sections={sections}
-					/>
+					<Host style={styles.host}>
+						<List
+							modifiers={[
+								listStyle('insetGrouped'),
+								refreshable(async () => {
+									await refetch()
+								}),
+							]}
+						>
+							{sections.map((section, index) => (
+								<Section key={section.title || `section-${index}`} title={section.title}>
+									{section.data.map((score) => (
+										<AthleticsRow key={score.id} score={score} />
+									))}
+								</Section>
+							))}
+						</List>
+					</Host>
 				)}
 			</View>
 		</>
@@ -145,9 +150,9 @@ const styles = StyleSheet.create({
 		backgroundColor: c.secondarySystemBackground,
 		flex: 1,
 	},
-	sectionListContent: {
-		flexGrow: 1,
-		padding: 10,
+	host: {
+		flex: 1,
+		backgroundColor: c.systemGroupedBackground,
 	},
 })
 
