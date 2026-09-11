@@ -1,7 +1,6 @@
 import * as React from 'react'
 import {StyleSheet} from 'react-native'
 import xor from 'lodash/xor'
-import type {Moment} from 'moment-timezone'
 import moment from 'moment-timezone'
 import {Stack, useLocalSearchParams, useRouter} from 'expo-router'
 import {
@@ -22,8 +21,10 @@ import {ActionRow} from '../../../../source/components/rows'
 import type {DayOfWeekEnumType} from '../../../../source/features/building-hours/types'
 import {
 	blankSchedule,
+	fromPickerDate,
 	parseHours,
 	summarizeDaysAndHours,
+	toPickerDate,
 } from '../../../../source/features/building-hours/lib'
 import {useBuildingReport} from '../../../../source/features/building-hours/report/context'
 
@@ -54,22 +55,9 @@ export default function BuildingHoursScheduleEditorPage(): React.ReactNode {
 		setHours({...set, days: newDays})
 	}
 
-	/**
-	 * The wheel reports a whole instant, but only the hour and minute it shows
-	 * were chosen -- so those are read off it and applied to today on campus,
-	 * rather than converting an instant from the device's zone into St. Olaf's.
-	 */
-	let timeFrom = (picked: Date): string =>
-		moment.tz(timezone()).hours(picked.getHours()).minutes(picked.getMinutes()).format('h:mma')
-
 	let {open, close} = parseHours(set, moment.tz(timezone()))
 
-	let summary = React.useMemo(() => {
-		if (!set.days.length) {
-			return 'Select a day to get started.'
-		}
-		return summarizeDaysAndHours(set)
-	}, [set])
+	let summary = set.days.length ? summarizeDaysAndHours(set) : 'Select a day to get started.'
 
 	return (
 		<>
@@ -83,15 +71,15 @@ export default function BuildingHoursScheduleEditorPage(): React.ReactNode {
 						<LabeledContent label="Hours">
 							<HStack spacing={4}>
 								<TimePicker
-									date={open}
+									date={toPickerDate(open)}
 									label="Opens at"
-									onChange={(picked) => setHours({...set, from: timeFrom(picked)})}
+									onChange={(picked) => setHours({...set, from: fromPickerDate(picked)})}
 								/>
 								<Text>—</Text>
 								<TimePicker
-									date={close}
+									date={toPickerDate(close)}
 									label="Closes at"
-									onChange={(picked) => setHours({...set, to: timeFrom(picked)})}
+									onChange={(picked) => setHours({...set, to: fromPickerDate(picked)})}
 								/>
 							</HStack>
 						</LabeledContent>
@@ -140,7 +128,7 @@ function WeekToggles({days, onChangeDays}: WeekTogglesProps): React.ReactNode {
  * the month calendar, which has nothing to offer an hour and a minute.
  */
 function TimePicker(props: {
-	date: Moment
+	date: Date
 	label: string
 	onChange: (date: Date) => void
 }): React.ReactNode {
@@ -149,7 +137,7 @@ function TimePicker(props: {
 			displayedComponents={['hourAndMinute']}
 			modifiers={[datePickerStyle('compact'), labelsHidden()]}
 			onDateChange={props.onChange}
-			selection={props.date.toDate()}
+			selection={props.date}
 			title={props.label}
 		/>
 	)
