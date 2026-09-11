@@ -9,8 +9,8 @@ import type {Building, Feature} from '../types'
  * Both halves have to agree: a feature with no drawable footprint leaves the
  * cutout with an outline it cannot fill, and a feature with no coordinates at
  * all has no box. Framing on a zero-area box clamps MapLibre to maximum zoom,
- * which draws a blank tile with a name floating on it -- the six St. Olaf
- * venues that key to a point rather than a building all landed there.
+ * which draws a blank tile with a name floating on it -- what the six St. Olaf
+ * venues keyed to a point rather than a building would each get.
  */
 export function cutoutBounds(feature: Feature<Building>): ReturnType<typeof featureBounds> {
 	let footprints = toBuildingFootprints([feature])
