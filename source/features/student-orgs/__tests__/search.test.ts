@@ -19,6 +19,8 @@ function makeOrg(overrides: Partial<StudentOrgType> = {}): StudentOrgType {
 		lastUpdated: '',
 		website: '',
 		name: 'Test Org',
+		organizationUri: 'test-org',
+		memberCount: 0,
 		...overrides,
 	}
 }

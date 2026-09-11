@@ -1,8 +1,8 @@
 import {describe, expect, test} from '@jest/globals'
 import {goldGradient, grayGradient} from '@frogpond/colors'
 
-import {buildCategoryTiles, categoriesFor, groupOrgsByCategory} from '../categories'
-import type {OrgCategoryType, StudentOrgType} from '../types'
+import {buildCategoryTiles, orgsInCategory} from '../categories'
+import type {OrgCategoryMembership, OrgCategoryType, StudentOrgType} from '../types'
 
 function makeOrg(overrides: Partial<StudentOrgType> = {}): StudentOrgType {
 	return {
@@ -14,67 +14,20 @@ function makeOrg(overrides: Partial<StudentOrgType> = {}): StudentOrgType {
 		lastUpdated: '',
 		website: '',
 		name: 'Test Org',
+		organizationUri: 'test-org',
+		memberCount: 0,
 		...overrides,
 	}
 }
 
-describe('categoriesFor', () => {
-	test('a single category returns one entry', () => {
-		expect(categoriesFor(makeOrg({category: 'Academic'}))).toEqual(['Academic'])
-	})
-
-	test('a comma-separated category splits into multiple entries', () => {
-		expect(categoriesFor(makeOrg({category: 'Special Interest, Performance'}))).toEqual([
-			'Special Interest',
-			'Performance',
-		])
-	})
-
-	test('trims whitespace around each category', () => {
-		expect(categoriesFor(makeOrg({category: 'Academic,  Service ,Religious'}))).toEqual([
-			'Academic',
-			'Service',
-			'Religious',
-		])
-	})
-
-	test('drops empty entries from a trailing comma', () => {
-		expect(categoriesFor(makeOrg({category: 'Academic, '}))).toEqual(['Academic'])
-	})
-
-	test('an empty category string returns no entries', () => {
-		expect(categoriesFor(makeOrg({category: ''}))).toEqual([])
-	})
-})
-
-describe('groupOrgsByCategory', () => {
-	test('groups orgs under their single category', () => {
-		let academic = makeOrg({name: 'A', category: 'Academic'})
-		let service = makeOrg({name: 'B', category: 'Service'})
-
-		let grouped = groupOrgsByCategory([academic, service])
-
-		expect(grouped.get('Academic')).toEqual([academic])
-		expect(grouped.get('Service')).toEqual([service])
-	})
-
-	test('a multi-category org appears under every one of its categories', () => {
-		let org = makeOrg({name: 'Choir', category: 'Special Interest, Performance'})
-
-		let grouped = groupOrgsByCategory([org])
-
-		expect(grouped.get('Special Interest')).toEqual([org])
-		expect(grouped.get('Performance')).toEqual([org])
-	})
-
-	test('an org with no category is grouped under nothing', () => {
-		let org = makeOrg({category: ''})
-
-		let grouped = groupOrgsByCategory([org])
-
-		expect(grouped.size).toBe(0)
-	})
-})
+function makeMembership(overrides: Partial<OrgCategoryMembership> = {}): OrgCategoryMembership {
+	return {
+		catIdh: 'abc123',
+		name: 'Academic',
+		organizationUris: [],
+		...overrides,
+	}
+}
 
 describe('buildCategoryTiles', () => {
 	let curated: OrgCategoryType[] = [
@@ -82,9 +35,9 @@ describe('buildCategoryTiles', () => {
 	]
 
 	test('a curated category gets its own icon and gradient', () => {
-		let orgs = [makeOrg({category: 'Academic'})]
+		let memberships = [makeMembership({name: 'Academic', organizationUris: ['a']})]
 
-		let tiles = buildCategoryTiles(curated, orgs)
+		let tiles = buildCategoryTiles(curated, memberships)
 
 		expect(tiles).toEqual([
 			{name: 'Academic', icon: 'graduationcap.fill', gradient: goldGradient, count: 1},
@@ -92,30 +45,47 @@ describe('buildCategoryTiles', () => {
 	})
 
 	test('an uncurated category still gets a tile, with the fallback icon and gray gradient', () => {
-		let orgs = [makeOrg({category: 'Robotics'})]
+		let memberships = [makeMembership({name: 'Robotics', organizationUris: ['a']})]
 
-		let tiles = buildCategoryTiles(curated, orgs)
+		let tiles = buildCategoryTiles(curated, memberships)
 
 		expect(tiles).toEqual([
 			{name: 'Robotics', icon: 'person.3.fill', gradient: grayGradient, count: 1},
 		])
 	})
 
-	test('counts every org in a category, including multi-category ones', () => {
-		let orgs = [
-			makeOrg({name: 'A', category: 'Academic'}),
-			makeOrg({name: 'B', category: 'Academic, Service'}),
-		]
+	test('count comes from the membership row, not any org list', () => {
+		let memberships = [makeMembership({name: 'Academic', organizationUris: ['a', 'b', 'c']})]
 
-		let tiles = buildCategoryTiles(curated, orgs)
-		let academicTile = tiles.find((tile) => tile.name === 'Academic')
+		let tiles = buildCategoryTiles(curated, memberships)
 
-		expect(academicTile?.count).toBe(2)
+		expect(tiles[0]?.count).toBe(3)
 	})
 
-	test('a curated category with no current orgs produces no tile', () => {
-		let tiles = buildCategoryTiles(curated, [])
+	test('an empty membership list produces no tiles', () => {
+		expect(buildCategoryTiles(curated, [])).toEqual([])
+	})
+})
 
-		expect(tiles).toEqual([])
+describe('orgsInCategory', () => {
+	test('returns only orgs whose organizationUri is in the membership', () => {
+		let a = makeOrg({name: 'A', organizationUri: 'a'})
+		let b = makeOrg({name: 'B', organizationUri: 'b'})
+		let c = makeOrg({name: 'C', organizationUri: 'c'})
+		let membership = makeMembership({organizationUris: ['a', 'c']})
+
+		expect(orgsInCategory([a, b, c], membership)).toEqual([a, c])
+	})
+
+	test('an org not present in the membership uris is excluded', () => {
+		let org = makeOrg({organizationUri: 'not-listed'})
+		let membership = makeMembership({organizationUris: ['something-else']})
+
+		expect(orgsInCategory([org], membership)).toEqual([])
+	})
+
+	test('an empty org list returns nothing', () => {
+		let membership = makeMembership({organizationUris: ['a']})
+		expect(orgsInCategory([], membership)).toEqual([])
 	})
 })

@@ -15,6 +15,7 @@ import * as c from '@frogpond/colors'
 import {Stack, useRouter} from 'expo-router'
 import {useDebounce} from '@frogpond/use-debounce'
 import {useQuery} from '@tanstack/react-query'
+import {categoryMembershipsOptions} from '../../../source/features/student-orgs/category-memberships-query'
 import {orgCategoryIconsOptions} from '../../../source/features/student-orgs/category-icons-query'
 import {
 	buildCategoryTiles,
@@ -42,15 +43,31 @@ function StudentOrgsView(): React.ReactNode {
 	let [query, setQuery] = React.useState('')
 	let searchQuery = useDebounce(query.toLowerCase(), 200)
 
-	let {data: orgs = [], error, isError, refetch, isLoading} = useQuery(studentOrgsOptions)
+	let {
+		data: memberships = [],
+		error: membershipsError,
+		isError: isMembershipsError,
+		refetch: refetchMemberships,
+		isLoading: isMembershipsLoading,
+	} = useQuery(categoryMembershipsOptions)
 	let {data: categoryIcons = [], refetch: refetchCategoryIcons} = useQuery(orgCategoryIconsOptions)
+	let {
+		data: orgs = [],
+		error: orgsError,
+		isError: isOrgsError,
+		refetch: refetchOrgs,
+		isLoading: isOrgsLoading,
+	} = useQuery(studentOrgsOptions)
 
-	let tiles = React.useMemo(() => buildCategoryTiles(categoryIcons, orgs), [categoryIcons, orgs])
+	let tiles = React.useMemo(
+		() => buildCategoryTiles(categoryIcons, memberships),
+		[categoryIcons, memberships],
+	)
 	let sections = React.useMemo(() => filterAndGroupOrgs(orgs, searchQuery), [orgs, searchQuery])
 
-	let refresh = React.useCallback(async () => {
-		await Promise.all([refetch(), refetchCategoryIcons()])
-	}, [refetch, refetchCategoryIcons])
+	let refreshTiles = React.useCallback(async () => {
+		await Promise.all([refetchMemberships(), refetchCategoryIcons()])
+	}, [refetchMemberships, refetchCategoryIcons])
 
 	let onPressOrg = React.useCallback(
 		(org: StudentOrgType) =>
@@ -84,33 +101,63 @@ function StudentOrgsView(): React.ReactNode {
 		</>
 	)
 
-	if (isError) {
+	if (!searchQuery) {
+		// The tile grid only depends on the lightweight memberships + curated
+		// icon queries -- the full org list loads in parallel for whenever a
+		// search actually happens, but never blocks the tiles from showing.
+		if (isMembershipsError) {
+			return (
+				<>
+					{searchChrome}
+					<NoticeView
+						buttonText="Try Again"
+						onPress={refetchMemberships}
+						text={`A problem occured while loading: ${membershipsError}`}
+					/>
+				</>
+			)
+		}
+
+		if (isMembershipsLoading) {
+			return (
+				<>
+					{searchChrome}
+					<LoadingView />
+				</>
+			)
+		}
+
 		return (
 			<>
 				{searchChrome}
-				<NoticeView
-					buttonText="Try Again"
-					onPress={refetch}
-					text={`A problem occured while loading: ${error}`}
+				<StudentOrgsLanding
+					onRefresh={refreshTiles}
+					onSelectCategory={onSelectCategory}
+					tiles={tiles}
 				/>
 			</>
 		)
 	}
 
-	if (isLoading) {
+	// Search spans every org, so this branch depends on the full org list.
+	if (isOrgsError) {
 		return (
 			<>
 				{searchChrome}
-				<LoadingView />
+				<NoticeView
+					buttonText="Try Again"
+					onPress={refetchOrgs}
+					text={`A problem occured while loading: ${orgsError}`}
+				/>
 			</>
 		)
 	}
 
-	if (!searchQuery) {
+	if (isOrgsLoading) {
 		return (
 			<>
 				{searchChrome}
-				<StudentOrgsLanding onRefresh={refresh} onSelectCategory={onSelectCategory} tiles={tiles} />
+				<LoadingView />
 			</>
 		)
 	}
@@ -121,7 +168,7 @@ function StudentOrgsView(): React.ReactNode {
 			<OrgResultsList
 				emptyText={`No results found for "${searchQuery}".`}
 				onPressOrg={onPressOrg}
-				onRefresh={refetch}
+				onRefresh={refetchOrgs}
 				sections={sections}
 			/>
 		</>
