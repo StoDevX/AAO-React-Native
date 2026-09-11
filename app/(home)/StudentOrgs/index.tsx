@@ -1,7 +1,7 @@
 import * as React from 'react'
 import {StyleSheet} from 'react-native'
 import {ContentUnavailableView, Host, List, Section} from '@expo/ui/swift-ui'
-import {listStyle, refreshable} from '@expo/ui/swift-ui/modifiers'
+import {accessibilityIdentifier, listStyle, refreshable} from '@expo/ui/swift-ui/modifiers'
 import {NoticeView, LoadingView} from '@frogpond/notice'
 import {emptyList} from '@frogpond/lists'
 import {DisclosureRow} from '../../../source/components/rows'
@@ -120,6 +120,7 @@ function StudentOrgsView(): React.ReactNode {
 						refreshable(async () => {
 							await refetch()
 						}),
+						accessibilityIdentifier('student-orgs-list'),
 					]}
 				>
 					{grouped.length === 0 ? (
