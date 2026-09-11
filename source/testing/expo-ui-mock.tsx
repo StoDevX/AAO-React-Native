@@ -45,11 +45,6 @@ export const autocorrectionDisabled = (disabled = true): Modifier => ({
 	disabled,
 })
 
-export const textInputAutocapitalization = (autocapitalization: string): Modifier => ({
-	$type: 'textInputAutocapitalization',
-	autocapitalization,
-})
-
 export const listRowInsets = (params: Record<string, number> = {}): Modifier => ({
 	$type: 'listRowInsets',
 	...params,
@@ -319,6 +314,11 @@ export const multilineTextAlignment = (alignment: string): Modifier => ({
 	alignment,
 })
 export const lineSpacing = (value: number): Modifier => ({$type: 'lineSpacing', value})
+export const submitLabel = (label: string): Modifier => ({$type: 'submitLabel', label})
+export const textInputAutocapitalization = (autocapitalization: string): Modifier => ({
+	$type: 'textInputAutocapitalization',
+	autocapitalization,
+})
 export const italic = (): Modifier => ({$type: 'italic'})
 export const bold = (): Modifier => ({$type: 'bold'})
 export const textSelection = (value: boolean): Modifier => ({$type: 'textSelection', value})

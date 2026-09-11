@@ -76,11 +76,9 @@ export default function DictionaryPreviewPage(): React.ReactNode {
 		<>
 			<Stack.Title>Preview</Stack.Title>
 			<Stack.Toolbar placement="right">
-				<Stack.Toolbar.Button
-					accessibilityLabel="Submit Report"
-					icon="paperplane.fill"
-					onPress={submit}
-				/>
+				<Stack.Toolbar.Button accessibilityLabel="Submit Report" onPress={submit}>
+					Submit
+				</Stack.Toolbar.Button>
 			</Stack.Toolbar>
 			<Host style={styles.host}>
 				<EntryDiff diff={diff} />

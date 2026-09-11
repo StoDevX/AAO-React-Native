@@ -348,6 +348,19 @@ struct CampusScreen: Screen {
 		XCTAssertTrue(nameField.waitForExistence(timeout: 30), "The report screen should have a Name field")
 		nameField.tap()
 		nameField.typeText(" edited")
+
+		// Put the keyboard away before anything tries to navigate. The field
+		// keeps focus after typing, and tapping into one that already holds
+		// text can raise the Select/Select All callout -- a popover that
+		// swallows the next tap anywhere else, so the back button's tap would
+		// only dismiss the callout and the screen would never try to leave.
+		let done = app.keyboards.buttons["done"]
+		if done.waitForExistence(timeout: 5) {
+			done.tap()
+		}
+		XCTAssertTrue(
+			app.keyboards.firstMatch.waitForNonExistence(timeout: 15),
+			"The keyboard should be gone before leaving the report screen")
 		return self
 	}
 

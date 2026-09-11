@@ -9,5 +9,5 @@ import {Stack} from 'expo-router'
  * with no way back out.
  */
 export default function DictionaryEntryLayout(): React.ReactNode {
-	return <Stack />
+	return <Stack screenOptions={{headerBackButtonDisplayMode: 'minimal'}} />
 }
