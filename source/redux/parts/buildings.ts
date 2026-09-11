@@ -54,6 +54,21 @@ export const reducer = slice.reducer
 export const selectFavoriteBuildings = (state: RootState): State['favorites'] =>
 	state.buildings.favorites
 
+/**
+ * The names favourited on `campus`, in the order they were favourited.
+ *
+ * Favourites are keyed by campus and name together, because the two campuses
+ * share building names -- Bookstore, Post Office. A list showing one campus
+ * wants plain names, so the campus half is spent here rather than pushed down
+ * into the list.
+ */
+export function favoriteNamesForCampus(
+	favorites: Array<FavoriteBuilding>,
+	campus: Campus,
+): string[] {
+	return favorites.filter((favorite) => favorite.campus === campus).map((favorite) => favorite.name)
+}
+
 /** Whether `name` on `campus` is among `favorites`. */
 export function isFavoriteBuilding(
 	favorites: Array<FavoriteBuilding>,

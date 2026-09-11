@@ -18,13 +18,23 @@ import {
 import * as c from '@frogpond/colors'
 import type {Moment} from 'moment-timezone'
 import type {BuildingType} from '../types'
-import {getShortBuildingStatus, getAccentBackgroundColor, contextualStatus} from '../lib'
+import {
+	getShortBuildingStatus,
+	getAccentBackgroundColor,
+	contextualStatus,
+	hasDisplayableHours,
+	firstScheduleNote,
+} from '../lib'
 
 /**
  * Every building row carries this prefix so XCUITest can query them directly
  * without iterating all buttons.
  */
 export const BUILDING_ROW_PREFIX = 'building-row-'
+
+/** The swipe action's two labels, which are also how XCUITest finds it. */
+export const ADD_TO_FAVORITES = 'Add to Favorites'
+export const REMOVE_FROM_FAVORITES = 'Remove from Favorites'
 
 const SINGLE_LINE = [lineLimit(1), truncationMode('tail')]
 
@@ -58,8 +68,8 @@ export const BuildingListRow = React.memo(function BuildingListRow({
 			: null
 
 	let schedules = building.schedule || []
-	let hasHours = schedules.some((s) => s.hours.length > 0)
-	let firstNote = schedules.find((s) => s.notes)?.notes
+	let hasHours = hasDisplayableHours(schedules)
+	let firstNote = firstScheduleNote(schedules)
 
 	return (
 		<SwipeActions>
@@ -128,7 +138,7 @@ export const BuildingListRow = React.memo(function BuildingListRow({
 				<Button
 					modifiers={[
 						tint(c.systemBlue),
-						accessibilityLabel(isFavorite ? 'Remove from Favorites' : 'Add to Favorites'),
+						accessibilityLabel(isFavorite ? REMOVE_FROM_FAVORITES : ADD_TO_FAVORITES),
 					]}
 					onPress={() => onToggleFavorite(building)}
 				>

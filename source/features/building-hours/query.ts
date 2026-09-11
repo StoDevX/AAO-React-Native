@@ -3,6 +3,7 @@ import {isUITesting} from '@frogpond/launch-arguments'
 import {queryOptions, useQuery, UseQueryResult} from '@tanstack/react-query'
 import {groupBy} from 'lodash'
 import {selectFavoriteBuildings, useAppSelector} from '../../redux'
+import {favoriteNamesForCampus} from '../../redux/parts/buildings'
 import bundledBuildings from '../../../docs/building-hours.json'
 import {BuildingType} from './types'
 
@@ -74,9 +75,7 @@ export function useGroupedBuildings(
 	return useQuery({
 		...buildingsOptions(campus),
 		select: (buildings) => {
-			let favoriteNames = new Set(
-				favoriteBuildings.filter((f) => f.campus === campus).map((f) => f.name),
-			)
+			let favoriteNames = new Set(favoriteNamesForCampus(favoriteBuildings, campus))
 			let favoritesGroup = {
 				title: 'Favorites',
 				data: buildings.filter((b) => favoriteNames.has(b.name)),
