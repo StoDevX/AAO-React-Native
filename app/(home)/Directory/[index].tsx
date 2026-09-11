@@ -2,11 +2,11 @@ import * as React from 'react'
 import {StyleSheet, Image as RNImage} from 'react-native'
 import {Host, HStack, List, RNHostView, Section, Text, VStack} from '@expo/ui/swift-ui'
 import {
+	clipShape,
 	font,
 	foregroundStyle,
 	frame,
 	listRowBackground,
-	listRowInsets,
 	listStyle,
 	multilineTextAlignment,
 } from '@expo/ui/swift-ui/modifiers'
@@ -95,7 +95,7 @@ export default function DirectoryDetailPage(): React.ReactNode {
 			{screenTitle}
 			<Host style={styles.host}>
 				<List modifiers={[listStyle('insetGrouped')]}>
-					<Section>
+					<Section modifiers={HEADER_SECTION_MODIFIERS}>
 						{/* Name leading, photo trailing, both hung from the top -- so a
 						    long name wraps down the left of the photo rather than
 						    pushing it about. The VStack fills what the photo leaves,
@@ -209,12 +209,14 @@ const NAME_MODIFIERS = [font({textStyle: 'title2', weight: 'semibold'}), foregro
 ///
 /// The padding is ours rather than the list's. Zeroing the insets alone left
 /// the content hard against the screen edge, where the name clipped.
-/// No background, and none of the insetting or rounding a section gives its
-/// rows: the heading runs edge to edge.
-const HEADER_ROW_MODIFIERS = [
-	listRowBackground('clear'),
-	listRowInsets({bottom: 0, leading: 0, top: 0, trailing: 0}),
-]
+/// A section clips its rows to a rounded rectangle, and that corner was cutting
+/// the first glyph of the name. Squaring the clip keeps the heading's own
+/// margins while letting the text reach the edge of them.
+const HEADER_SECTION_MODIFIERS = [clipShape('rectangle')]
+
+/// No card behind the heading: a name and a face are what the screen is about,
+/// not a row of its data.
+const HEADER_ROW_MODIFIERS = [listRowBackground('clear')]
 
 const HEADER_MODIFIERS = [font({textStyle: 'subheadline'}), foregroundStyle(c.secondaryLabel)]
 
