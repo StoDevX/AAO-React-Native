@@ -147,7 +147,7 @@
   "engines": {
     "node": ">=18"
   },
-  "packageManager": "pnpm@12.3.2",
+  "packageManager": "pnpm@12.4.0",
   "enriched-markdown": {
     "enableMath": false
   }

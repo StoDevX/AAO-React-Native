@@ -76,44 +76,50 @@ checksum = "sha256:158f7685b44de51f6c0df1d153526cbcd3e1bc739a8dfc607721cef75de9e
 url = "https://nodejs.org/dist/v24.21.0/node-v24.21.0-win-x64.zip"
 
 [[tools.pnpm]]
-version = "12.3.2"
+version = "12.4.0"
 backend = "aqua:pnpm/pnpm"
-specifiers = ["12.3.2"]
+specifiers = ["12.4.0"]
 
 [tools.pnpm."platforms.linux-arm64"]
-checksum = "sha256:48ec5973741ae04207e5e1a5253726ef2de1c5219dfce2e5894092cac565a740"
-url = "https://github.com/pnpm/pnpm/releases/download/v12.3.2/pnpm-linux-arm64.tar.gz"
-url_api = "https://api.github.com/repos/pnpm/pnpm/releases/assets/543536284"
+checksum = "sha256:74fc88eacd2975df4ec5bae517482986ce824bc35a7ac5965c1baf1c854fe933"
+url = "https://github.com/pnpm/pnpm/releases/download/v12.4.0/pnpm-linux-arm64.tar.gz"
+url_api = "https://api.github.com/repos/pnpm/pnpm/releases/assets/550351855"
 provenance = "github-attestations"
 
 [tools.pnpm."platforms.linux-arm64-musl"]
-checksum = "sha256:f8217e648488c3997f21df3c0867ac2d4fd831ef693df352e523356bcfb098f5"
-url = "https://github.com/pnpm/pnpm/releases/download/v12.3.2/pnpm-linux-arm64-musl.tar.gz"
-url_api = "https://api.github.com/repos/pnpm/pnpm/releases/assets/543536281"
+checksum = "sha256:e2e9ec97dbf6165e0936883c078850af967fd7842cfabbb130c24f594bba589f"
+url = "https://github.com/pnpm/pnpm/releases/download/v12.4.0/pnpm-linux-arm64-musl.tar.gz"
+url_api = "https://api.github.com/repos/pnpm/pnpm/releases/assets/550351859"
 provenance = "github-attestations"
 
 [tools.pnpm."platforms.linux-x64"]
-checksum = "sha256:f3300f14b59da54fa2655d5399ac237a0a5d7e51f515c30cb9e4a893eda01555"
-url = "https://github.com/pnpm/pnpm/releases/download/v12.3.2/pnpm-linux-x64.tar.gz"
-url_api = "https://api.github.com/repos/pnpm/pnpm/releases/assets/543536283"
+checksum = "sha256:fcff7ecad46365d356718a40a88a72b4c02eae9d075d567e032697d769f3d999"
+url = "https://github.com/pnpm/pnpm/releases/download/v12.4.0/pnpm-linux-x64.tar.gz"
+url_api = "https://api.github.com/repos/pnpm/pnpm/releases/assets/550351861"
 provenance = "github-attestations"
 
 [tools.pnpm."platforms.linux-x64-musl"]
-checksum = "sha256:63cb80c52268f75d480d3cf9c972656f6ebb0f6412e0e9faba88f5b46d3d3234"
-url = "https://github.com/pnpm/pnpm/releases/download/v12.3.2/pnpm-linux-x64-musl.tar.gz"
-url_api = "https://api.github.com/repos/pnpm/pnpm/releases/assets/543536286"
+checksum = "sha256:cb90483341f8601d7d62c93dbd3f17f057e1d95f8cc8720cfe6df4411a616bde"
+url = "https://github.com/pnpm/pnpm/releases/download/v12.4.0/pnpm-linux-x64-musl.tar.gz"
+url_api = "https://api.github.com/repos/pnpm/pnpm/releases/assets/550351865"
 provenance = "github-attestations"
 
 [tools.pnpm."platforms.macos-arm64"]
-checksum = "sha256:170f4b055ab5412292d4b35958d25f4f5915c801a375ce2f54ac1c3810105c04"
-url = "https://github.com/pnpm/pnpm/releases/download/v12.3.2/pnpm-darwin-arm64.tar.gz"
-url_api = "https://api.github.com/repos/pnpm/pnpm/releases/assets/543536285"
+checksum = "sha256:dae611f18e7acc416fac9134ac86fcb1cc8670868ea2e5a51e82e184aec01d63"
+url = "https://github.com/pnpm/pnpm/releases/download/v12.4.0/pnpm-darwin-arm64.tar.gz"
+url_api = "https://api.github.com/repos/pnpm/pnpm/releases/assets/550351864"
+provenance = "github-attestations"
+
+[tools.pnpm."platforms.macos-x64"]
+checksum = "sha256:6baf32b1706fefad6a5021d55670a9b306b109f5e1fe6542f4b82351fdc328e4"
+url = "https://github.com/pnpm/pnpm/releases/download/v12.4.0/pnpm-darwin-x64.tar.gz"
+url_api = "https://api.github.com/repos/pnpm/pnpm/releases/assets/550351854"
 provenance = "github-attestations"
 
 [tools.pnpm."platforms.windows-x64"]
-checksum = "sha256:8d4810214fdc38dbb3899144e9a955c213ece110acc9f77a40be851678791b63"
-url = "https://github.com/pnpm/pnpm/releases/download/v12.3.2/pnpm-win32-x64.zip"
-url_api = "https://api.github.com/repos/pnpm/pnpm/releases/assets/543536282"
+checksum = "sha256:0c25c9921d61171c1551ed38cf6bc5240bcd3acaff81431a4edb5fe33c720674"
+url = "https://github.com/pnpm/pnpm/releases/download/v12.4.0/pnpm-win32-x64.zip"
+url_api = "https://api.github.com/repos/pnpm/pnpm/releases/assets/550351858"
 provenance = "github-attestations"
 
 [[tools.ruby]]
