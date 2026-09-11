@@ -111,11 +111,9 @@ let CampusProblemReportView = ({initialBuilding, campus}: Props): React.ReactNod
 			 * cell at the bottom further down a sheet that shows about half a
 			 * screen. Here it is reachable at any detent, whatever the venue. */}
 			<Stack.Toolbar placement="right">
-				<Stack.Toolbar.Button
-					accessibilityLabel="Submit Report"
-					icon="paperplane.fill"
-					onPress={submit}
-				/>
+				<Stack.Toolbar.Button accessibilityLabel="Submit Report" onPress={submit}>
+					Submit
+				</Stack.Toolbar.Button>
 			</Stack.Toolbar>
 
 			<Host style={styles.host}>

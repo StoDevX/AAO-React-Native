@@ -17,7 +17,7 @@ import {BuildingReportProvider} from '../../../../source/features/building-hours
 export default function CampusDetailLayout(): React.ReactNode {
 	return (
 		<BuildingReportProvider>
-			<Stack />
+			<Stack screenOptions={{headerBackButtonDisplayMode: 'minimal'}} />
 		</BuildingReportProvider>
 	)
 }
