@@ -18,6 +18,7 @@ import {
 	refreshable,
 } from '@expo/ui/swift-ui/modifiers'
 import * as c from '@frogpond/colors'
+import {sectionIndexLabel} from '../../lib/section-index-label'
 
 import {listNotice} from './lib/list-notice'
 import type {DictionaryGroup, NormalizedEntry} from './types'
@@ -81,7 +82,7 @@ export function EntryList({
 			]}
 		>
 			{groups.map((group) => (
-				<Section key={group.title} title={group.title}>
+				<Section key={group.title} modifiers={[sectionIndexLabel(group.title)]} title={group.title}>
 					{group.data.map((entry) => (
 						<Button
 							key={entry.word}

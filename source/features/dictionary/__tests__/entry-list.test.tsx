@@ -44,6 +44,13 @@ describe('EntryList', () => {
 		expect(screen.getByText('Pause')).toBeTruthy()
 	})
 
+	it('gives every section a jumplist letter matching its title', async () => {
+		await renderList()
+
+		expect(screen.getByLabelText('section index C')).toBeTruthy()
+		expect(screen.getByLabelText('section index P')).toBeTruthy()
+	})
+
 	it('shows the first sense as each row’s preview', async () => {
 		await renderList()
 
