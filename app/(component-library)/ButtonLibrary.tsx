@@ -2,49 +2,12 @@ import * as React from 'react'
 import {Alert} from 'react-native'
 import {Stack} from 'expo-router'
 
-import * as c from '@frogpond/colors'
-import {Section} from '@frogpond/tableview'
+import {Section} from '@expo/ui/swift-ui'
 import {Button} from '@frogpond/button'
-import {ButtonCell} from '@frogpond/tableview/cells'
 import {
 	LibraryWrapper,
 	Example,
 } from '../../source/features/settings/screens/overview/component-library/base/library-wrapper'
-
-const ButtonCellExample = (): React.ReactNode => {
-	return (
-		<>
-			<ButtonCell disabled={false} onPress={() => undefined} title="Enabled" />
-
-			<ButtonCell disabled={true} onPress={() => undefined} title="Disabled" />
-
-			<ButtonCell indeterminate={true} onPress={() => undefined} title="Indeterminate" />
-
-			<ButtonCell accessoryIcon="graduationcap.fill" onPress={() => undefined} title="Accessory" />
-
-			<ButtonCell
-				accessoryIcon="graduationcap.fill"
-				onPress={() => undefined}
-				textStyle={{color: c.red}}
-				title="Accessory, textstyle"
-			/>
-
-			<ButtonCell
-				accessoryIcon="graduationcap.fill"
-				disabled={true}
-				onPress={() => undefined}
-				textStyle={{color: c.red}}
-				title="Disabled, textstyle, accessory"
-			/>
-
-			<ButtonCell
-				disabled={false}
-				onPress={() => Alert.alert('You tapped the button!')}
-				title="Callback"
-			/>
-		</>
-	)
-}
 
 const ButtonExample = (): React.ReactNode => {
 	return (
@@ -82,11 +45,7 @@ export default function ButtonLibraryPage(): React.ReactNode {
 			<Stack.Title>Buttons</Stack.Title>
 			<LibraryWrapper>
 				<>
-					<Section header="@frogpond/tableview/cells">
-						<ButtonCellExample />
-					</Section>
-
-					<Section header="@frogpond/button">
+					<Section title="@frogpond/button">
 						<ButtonExample />
 					</Section>
 				</>
