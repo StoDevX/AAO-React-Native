@@ -1,4 +1,10 @@
-import {isFavoriteBuilding, reducer, State, toggleFavoriteBuilding} from '../parts/buildings'
+import {
+	favoriteNamesForCampus,
+	isFavoriteBuilding,
+	reducer,
+	State,
+	toggleFavoriteBuilding,
+} from '../parts/buildings'
 import {describe, it, expect} from '@jest/globals'
 
 describe('toggle favorite building hours', () => {
@@ -95,5 +101,26 @@ describe('isFavoriteBuilding', () => {
 
 		expect(isFavoriteBuilding(favorites, 'stolaf', 'Bookstore')).toBe(true)
 		expect(isFavoriteBuilding(favorites, 'carleton', 'Bookstore')).toBe(false)
+	})
+})
+
+describe('favoriteNamesForCampus', () => {
+	const favorites = [
+		{campus: 'stolaf' as const, name: 'Bookstore'},
+		{campus: 'carleton' as const, name: 'Sayles'},
+		{campus: 'stolaf' as const, name: 'Rolvaag'},
+	]
+
+	it('keeps only the named campus, in the order given', () => {
+		expect(favoriteNamesForCampus(favorites, 'stolaf')).toEqual(['Bookstore', 'Rolvaag'])
+	})
+
+	it('does not leak a name favourited on the other campus', () => {
+		// `Bookstore` exists on both campuses; only St. Olaf's is favourited.
+		expect(favoriteNamesForCampus(favorites, 'carleton')).toEqual(['Sayles'])
+	})
+
+	it('is empty when nothing is favourited on that campus', () => {
+		expect(favoriteNamesForCampus([], 'stolaf')).toEqual([])
 	})
 })

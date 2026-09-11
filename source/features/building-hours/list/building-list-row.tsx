@@ -18,7 +18,13 @@ import {
 import * as c from '@frogpond/colors'
 import type {Moment} from 'moment-timezone'
 import type {BuildingType} from '../types'
-import {getShortBuildingStatus, getAccentBackgroundColor, contextualStatus} from '../lib'
+import {
+	getShortBuildingStatus,
+	getAccentBackgroundColor,
+	contextualStatus,
+	hasDisplayableHours,
+	firstScheduleNote,
+} from '../lib'
 
 /**
  * Every building row carries this prefix so XCUITest can query them directly
@@ -58,8 +64,8 @@ export const BuildingListRow = React.memo(function BuildingListRow({
 			: null
 
 	let schedules = building.schedule || []
-	let hasHours = schedules.some((s) => s.hours.length > 0)
-	let firstNote = schedules.find((s) => s.notes)?.notes
+	let hasHours = hasDisplayableHours(schedules)
+	let firstNote = firstScheduleNote(schedules)
 
 	return (
 		<SwipeActions>

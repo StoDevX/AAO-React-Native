@@ -10,6 +10,7 @@ import {filterBuildings} from '../../../source/features/building-hours/lib'
 import {SearchBar} from '../../../source/components/search-bar'
 import {useAppDispatch, useAppSelector} from '../../../source/redux/hooks'
 import {
+	favoriteNamesForCampus,
 	selectFavoriteBuildings,
 	toggleFavoriteBuilding,
 } from '../../../source/redux/parts/buildings'
@@ -32,7 +33,7 @@ function CampusView({campus}: Props): React.ReactNode {
 	// this campus's favourites -- scoping here keeps `BuildingList` itself
 	// campus-agnostic, working from plain names the way it always has.
 	let favorites = React.useMemo(
-		() => allFavorites.filter((f) => f.campus === campus).map((f) => f.name),
+		() => favoriteNamesForCampus(allFavorites, campus),
 		[allFavorites, campus],
 	)
 
