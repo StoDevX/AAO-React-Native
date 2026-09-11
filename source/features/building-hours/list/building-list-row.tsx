@@ -32,6 +32,10 @@ import {
  */
 export const BUILDING_ROW_PREFIX = 'building-row-'
 
+/** The swipe action's two labels, which are also how XCUITest finds it. */
+export const ADD_TO_FAVORITES = 'Add to Favorites'
+export const REMOVE_FROM_FAVORITES = 'Remove from Favorites'
+
 const SINGLE_LINE = [lineLimit(1), truncationMode('tail')]
 
 type Props = {
@@ -134,7 +138,7 @@ export const BuildingListRow = React.memo(function BuildingListRow({
 				<Button
 					modifiers={[
 						tint(c.systemBlue),
-						accessibilityLabel(isFavorite ? 'Remove from Favorites' : 'Add to Favorites'),
+						accessibilityLabel(isFavorite ? REMOVE_FROM_FAVORITES : ADD_TO_FAVORITES),
 					]}
 					onPress={() => onToggleFavorite(building)}
 				>

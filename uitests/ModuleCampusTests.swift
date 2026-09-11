@@ -59,6 +59,23 @@ class ModuleCampusTests: UITestCase {
 			.verifyRowHidden(TestIdentifiers.Campus.anExcludedBuilding)
 	}
 
+	/// The favourite action lives in a SwiftUI `swipeActions` group, which is
+	/// drawn only once a row has been swiped. Jest's stand-in for `@expo/ui`
+	/// renders nothing for it, on purpose -- there is no gesture in Jest to
+	/// reveal it with -- so this is the only place the action is exercised at
+	/// all.
+	func testSwipingARowFavoritesTheBuilding() throws {
+		CampusScreen(app: app)
+			.navigate()
+			.verifyRowShown(TestIdentifiers.Campus.anExcludedBuilding)
+			.verifyFavoritesSectionAbsent()
+			.revealSwipeAction(on: TestIdentifiers.Campus.anExcludedBuilding)
+			.capture("Campus row swiped to reveal its favorite action")
+			.tapAddToFavorites()
+			.capture("Campus list with a Favorites section")
+			.verifyFavoritesSectionShown()
+	}
+
 	func testSearchWithNoMatchesShowsNoResults() throws {
 		CampusScreen(app: app)
 			.navigate()
