@@ -1,7 +1,7 @@
 import * as React from 'react'
 import {fireEvent, render, screen} from '@testing-library/react-native'
 
-import {DisclosureRow} from '../rows'
+import {DetailRow, DisclosureRow, SelectableText} from '../rows'
 
 jest.mock('@expo/ui/swift-ui', () => {
 	// oxlint-disable-next-line typescript/no-require-imports
@@ -130,5 +130,59 @@ describe('DisclosureRow leading image', () => {
 		await render(<DisclosureRow onPress={jest.fn()} title="KSTO" />)
 
 		expect(screen.queryByTestId('disclosure-row-thumbnail')).not.toBeOnTheScreen()
+	})
+})
+
+describe('DetailRow', () => {
+	it('shows the label and its value', async () => {
+		await render(<DetailRow label="Credits" value="1.00" />)
+
+		expect(screen.getByText('Credits')).toBeOnTheScreen()
+		expect(screen.getByText('1.00')).toBeOnTheScreen()
+	})
+
+	it('calls onPress when the row is tappable', async () => {
+		let onPress = jest.fn()
+		await render(<DetailRow label="Email" onPress={onPress} value="ole@stolaf.edu" />)
+
+		fireEvent.press(screen.getByLabelText('Email, ole@stolaf.edu'))
+
+		expect(onPress).toHaveBeenCalledTimes(1)
+	})
+
+	/// A row with nowhere to go must not look like one that has somewhere.
+	it('is not a button when there is nothing to tap', async () => {
+		await render(<DetailRow label="Pronouns" value="they/them" />)
+
+		expect(screen.queryByLabelText('Pronouns, they/them')).not.toBeOnTheScreen()
+	})
+})
+
+describe('SelectableText', () => {
+	it('shows the text', async () => {
+		await render(<SelectableText text="Mondays at 7pm, Tomson 280" />)
+
+		expect(screen.getByTestId('selectable-text')).toBeOnTheScreen()
+	})
+
+	/// The reason this is a TextInput rather than an @expo/ui Text. Asking for
+	/// them collectively detects nothing under the new architecture, so a
+	/// regression here would read as "selection still works" while quietly
+	/// making every phone number and address unactionable.
+	it('names each data detector rather than asking for all of them', async () => {
+		await render(<SelectableText text="Call 507-786-2222" />)
+
+		expect(screen.getByTestId('selectable-text').props.dataDetectorTypes).toEqual([
+			'calendarEvent',
+			'link',
+			'phoneNumber',
+			'address',
+		])
+	})
+
+	it('cannot be edited', async () => {
+		await render(<SelectableText text="Mondays at 7pm" />)
+
+		expect(screen.getByTestId('selectable-text').props.editable).toBe(false)
 	})
 })

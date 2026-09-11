@@ -71,6 +71,71 @@ class StageOneListsTests: UITestCase {
 			.capture("Streaming Media")
 	}
 
+	/// The four detail screens, each of which is mostly label-beside-value rows.
+	func testSISBalances() throws {
+		SISScreen(app: app)
+			.navigate()
+			.acceptAcknowledgement()
+			.checkBalancesVisible()
+			.capture("SIS - Balances")
+	}
+
+	func testStudentOrgDetail() throws {
+		let screen = StudentOrgsScreen(app: app).navigate()
+
+		// The first org alphabetically, whatever the college is listing today.
+		let firstOrg = app.buttons
+			.matching(NSPredicate(format: "label BEGINSWITH %@", "Academic"))
+			.firstMatch
+		XCTAssertTrue(firstOrg.waitForExistence(timeout: 30), "An org should be listed")
+		firstOrg.tap()
+
+		// Wait for a section of the pushed screen, not just the tap: a capture
+		// taken straight after lands mid-animation, with both screens on it.
+		let category = app.staticTexts["CATEGORY"].firstMatch
+		XCTAssertTrue(category.waitForExistence(timeout: 30), "The org detail should be shown")
+
+		screen.capture("Student Orgs - detail")
+	}
+
+	func testDirectoryContactDetail() throws {
+		let screen = DirectoryScreen(app: app).navigate()
+
+		let contact = app.buttonLabelled(TestIdentifiers.Directory.aContact)
+		XCTAssertTrue(contact.waitForExistence(timeout: 30), "A contact tile should be shown")
+		contact.tap()
+
+		screen.capture("Directory - contact detail")
+	}
+
+	/// Searches the catalogue, which under UI testing holds one course, and
+	/// opens it. That course carries something for every section the detail
+	/// screen draws.
+	func testCourseDetail() throws {
+		let screen = CourseCatalogScreen(app: app).navigate()
+
+		let field = app.searchFields.firstMatch
+		XCTAssertTrue(field.waitForExistence(timeout: 30), "Course search should offer a field")
+		field.tap()
+		field.typeText(TestIdentifiers.CourseCatalog.aCourse)
+
+		// Any descendant, not a button: the results list is the one screen still
+		// on SectionList, so its rows are React Native views rather than
+		// SwiftUI buttons.
+		let result = app.descendants(matching: .any)
+			.matching(NSPredicate(format: "label CONTAINS %@", TestIdentifiers.CourseCatalog.aCourse))
+			.firstMatch
+		XCTAssertTrue(result.waitForExistence(timeout: 30), "The fixture course should be found")
+		result.tap()
+
+		let prerequisites = app.staticTexts["Prerequisites"].firstMatch
+		XCTAssertTrue(
+			prerequisites.waitForExistence(timeout: 30),
+			"The course detail screen should be shown")
+
+		screen.capture("Course detail")
+	}
+
 	func testMoreList() throws {
 		MoreScreen(app: app)
 			.navigate()
