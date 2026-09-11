@@ -6,7 +6,9 @@ import {
 	foregroundStyle,
 	frame,
 	listRowBackground,
+	listRowInsets,
 	listStyle,
+	padding,
 	multilineTextAlignment,
 } from '@expo/ui/swift-ui/modifiers'
 import {Stack, useLocalSearchParams, useRouter} from 'expo-router'
@@ -40,13 +42,9 @@ export default function DirectoryDetailPage(): React.ReactNode {
 		refetch,
 	} = useQuery(directoryContactOptions(query, type as DirectorySearchTypeEnum, Number(index)))
 
-	// The screen's only copy of the name: a large title that collapses on
-	// scroll, rather than a static heading repeated in the body.
-	let screenTitle = (
-		<>
-			<Stack.Title>{contact?.displayName ?? 'Contact'}</Stack.Title>
-		</>
-	)
+	// No title in the bar: the heading below carries the name, and the bar
+	// repeating it said the same thing twice.
+	let screenTitle = <Stack.Screen options={{title: ''}} />
 
 	if (isLoading) {
 		return (
@@ -206,13 +204,21 @@ const PHOTO_HEIGHT = 104
 
 const NAME_MODIFIERS = [font({textStyle: 'title2', weight: 'semibold'}), foregroundStyle(c.label)]
 
-/// No card behind the heading: a name and a face are what the screen is about,
-/// not a row of its data.
+/// No card behind the heading, and none of the insetting or rounding a section
+/// gives its rows: a name and a face are what the screen is about, not a row of
+/// its data.
 ///
-/// The row keeps its ordinary insets. Zeroing them clipped the name against
-/// the list's own margin and pushed the photo past the edge the cards below
-/// line up with.
-const HEADER_ROW_MODIFIERS = [listRowBackground('clear')]
+/// The padding is ours rather than the list's. Zeroing the insets alone left
+/// the content hard against the screen edge, where the name clipped.
+/// Matches what an inset-grouped row leaves its content, so the name lines up
+/// with the section headings below it.
+const HEADER_PADDING = 20
+
+const HEADER_ROW_MODIFIERS = [
+	listRowBackground('clear'),
+	listRowInsets({bottom: 0, leading: 0, top: 0, trailing: 0}),
+	padding({horizontal: HEADER_PADDING}),
+]
 
 const HEADER_MODIFIERS = [font({textStyle: 'subheadline'}), foregroundStyle(c.secondaryLabel)]
 
