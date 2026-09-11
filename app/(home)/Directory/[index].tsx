@@ -8,7 +8,6 @@ import {
 	listRowBackground,
 	listRowInsets,
 	listStyle,
-	padding,
 	multilineTextAlignment,
 } from '@expo/ui/swift-ui/modifiers'
 import {Stack, useLocalSearchParams, useRouter} from 'expo-router'
@@ -210,14 +209,11 @@ const NAME_MODIFIERS = [font({textStyle: 'title2', weight: 'semibold'}), foregro
 ///
 /// The padding is ours rather than the list's. Zeroing the insets alone left
 /// the content hard against the screen edge, where the name clipped.
-/// Matches what an inset-grouped row leaves its content, so the name lines up
-/// with the section headings below it.
-const HEADER_PADDING = 20
-
+/// No background, and none of the insetting or rounding a section gives its
+/// rows: the heading runs edge to edge.
 const HEADER_ROW_MODIFIERS = [
 	listRowBackground('clear'),
 	listRowInsets({bottom: 0, leading: 0, top: 0, trailing: 0}),
-	padding({horizontal: HEADER_PADDING}),
 ]
 
 const HEADER_MODIFIERS = [font({textStyle: 'subheadline'}), foregroundStyle(c.secondaryLabel)]
