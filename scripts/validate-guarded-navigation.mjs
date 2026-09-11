@@ -1,15 +1,22 @@
 import {globSync, readFileSync} from 'node:fs'
 
 /**
- * `router.back()` pops whatever is behind it, every time it is called. It
- * carries no guard, so a second press of a close button — which a lagging
- * screen invites — pops the screen behind the one being closed. On a sheet
- * that means landing on the home screen instead of where you were.
+ * Going back has one sanctioned call in this app: `navigation.goBack()`. It is
+ * a no-op once there is nothing left to pop, so a second press of a close
+ * button -- which a lagging screen invites -- costs nothing.
  *
- * `navigation.goBack()` is a no-op once there is nothing left to pop, so the
- * extra press costs nothing.
+ * Every other route off a screen pops unconditionally. `router.back()` takes
+ * the screen behind the one being closed, which on a sheet means landing on
+ * the home screen. `dismiss`, `dismissAll` and `dismissTo` have the same
+ * shape, and `navigation.pop` family likewise.
+ *
+ * The point is not that each of these is wrong everywhere -- it is that one
+ * call being the only reachable one is what keeps this from needing a test per
+ * screen. If a case ever genuinely needs another, add it here with the reason
+ * rather than reaching for it in a component.
  */
-const BANNED = /\brouter\s*\.\s*back\s*\(/u
+const BANNED =
+	/\b(?:router\s*\.\s*(?:back|goBack|dismiss|dismissAll|dismissTo)|navigation\s*\.\s*(?:pop|popTo|popToTop))\s*\(/u
 
 /** The source roots a route or component can live in. */
 const ROOTS = [
@@ -47,15 +54,14 @@ if (import.meta.url === `file://${process.argv[1]}`) {
 	let offenders = findUnguardedBack(readSources())
 
 	for (let {file, line, text} of offenders) {
-		console.log(`error: ${file}:${line} calls router.back()`)
+		console.log(`error: ${file}:${line} navigates back some way other than navigation.goBack()`)
 		console.log(`       ${text}`)
 	}
 
 	if (offenders.length > 0) {
 		console.log('')
-		console.log('router.back() pops every time it is called, so a second press of a')
-		console.log('close button takes the screen behind it too. Use the navigation')
-		console.log('object instead:')
+		console.log('These all pop unconditionally, so a second press of a close button')
+		console.log('takes the screen behind it too. Use the navigation object instead:')
 		console.log('')
 		console.log("  import {useNavigation} from 'expo-router'")
 		console.log('  let navigation = useNavigation()')

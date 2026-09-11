@@ -20,6 +20,24 @@ describe('findUnguardedBack', () => {
 		assert.deepEqual(found, [])
 	})
 
+	test('catches every other way off a screen', () => {
+		let sources = [
+			'router.dismiss()',
+			'router.dismissAll()',
+			"router.dismissTo('/x')",
+			'router.goBack()',
+			'navigation.pop()',
+			'navigation.popToTop()',
+		]
+		for (let contents of sources) {
+			assert.equal(
+				findUnguardedBack([{path: 'a.tsx', contents}]).length,
+				1,
+				`${contents} should be reported`,
+			)
+		}
+	})
+
 	test('catches the call however it is spaced', () => {
 		let found = findUnguardedBack([{path: 'a.tsx', contents: 'router . back ()\n'}])
 		assert.equal(found.length, 1)
