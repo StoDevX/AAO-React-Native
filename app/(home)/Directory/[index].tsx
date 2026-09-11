@@ -2,7 +2,6 @@ import * as React from 'react'
 import {StyleSheet, Image as RNImage} from 'react-native'
 import {Host, HStack, List, RNHostView, Section, Text, VStack} from '@expo/ui/swift-ui'
 import {
-	clipShape,
 	font,
 	foregroundStyle,
 	frame,
@@ -95,12 +94,12 @@ export default function DirectoryDetailPage(): React.ReactNode {
 			{screenTitle}
 			<Host style={styles.host}>
 				<List modifiers={[listStyle('insetGrouped')]}>
-					<Section modifiers={HEADER_SECTION_MODIFIERS}>
+					<Section>
 						{/* Name leading, photo trailing, both hung from the top -- so a
 						    long name wraps down the left of the photo rather than
 						    pushing it about. The VStack fills what the photo leaves,
 						    which is what gives the name somewhere to wrap within. */}
-						<HStack alignment="top" modifiers={HEADER_ROW_MODIFIERS} spacing={12}>
+						<HStack alignment="top" spacing={12}>
 							<VStack
 								alignment="leading"
 								modifiers={[frame({maxWidth: Infinity, alignment: 'leading'})]}
@@ -202,21 +201,6 @@ const PHOTO_WIDTH = 80
 const PHOTO_HEIGHT = 104
 
 const NAME_MODIFIERS = [font({textStyle: 'title2', weight: 'semibold'}), foregroundStyle(c.label)]
-
-/// No card behind the heading, and none of the insetting or rounding a section
-/// gives its rows: a name and a face are what the screen is about, not a row of
-/// its data.
-///
-/// The padding is ours rather than the list's. Zeroing the insets alone left
-/// the content hard against the screen edge, where the name clipped.
-/// A section clips its rows to a rounded rectangle, and that corner was cutting
-/// the first glyph of the name. Squaring the clip keeps the heading's own
-/// margins while letting the text reach the edge of them.
-const HEADER_SECTION_MODIFIERS = [clipShape('rectangle')]
-
-/// No card behind the heading: a name and a face are what the screen is about,
-/// not a row of its data.
-const HEADER_ROW_MODIFIERS = [listRowBackground('clear')]
 
 const HEADER_MODIFIERS = [font({textStyle: 'subheadline'}), foregroundStyle(c.secondaryLabel)]
 
