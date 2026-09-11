@@ -1,6 +1,6 @@
 import * as React from 'react'
 import {useMemo} from 'react'
-import {useRouter} from 'expo-router'
+import {Stack, useRouter} from 'expo-router'
 
 import {
 	CalendarModePicker,
@@ -49,6 +49,13 @@ export default function CalendarPage(): React.ReactNode {
 
 	return (
 		<>
+			{/*
+			 * Day mode puts the picker strip directly under the header, so a large
+			 * title pushes the day being read halfway down the screen with nothing
+			 * long enough to scroll it away. Upcoming is one list, which is what a
+			 * large title is for.
+			 */}
+			<Stack.Screen options={{headerLargeTitleEnabled: mode === 'upcoming'}} />
 			<Body
 				ref={bodyRef}
 				events={filteredEvents}
