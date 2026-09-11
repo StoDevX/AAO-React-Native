@@ -2,6 +2,7 @@ import type {Moment} from 'moment-timezone'
 import type {BuildingType} from '../types'
 
 import {isChapelTime} from './chapel'
+import {findChapelReopen} from './find-chapel-reopen'
 import {schedulesInEffect} from './schedules-in-effect'
 import {getScheduleStatusAtMoment} from './get-schedule-status'
 
@@ -17,7 +18,9 @@ export function getShortBuildingStatus(info: BuildingType, m: Moment): string {
 		}
 
 		if (set.closedForChapelTime && isChapelTime(m)) {
-			return 'Chapel'
+			// Chapel has the doors shut either way; it is only worth naming when
+			// the building opens again the minute chapel lets out.
+			return findChapelReopen(set, m) ? 'Chapel' : 'Closed'
 		}
 
 		let filteredSchedules = schedulesInEffect(set.hours, m)

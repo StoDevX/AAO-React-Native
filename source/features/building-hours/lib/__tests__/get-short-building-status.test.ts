@@ -138,3 +138,55 @@ describe('a schedule running past midnight', () => {
 		)
 	})
 })
+
+describe('the chapel badge', () => {
+	let at = (date: string, time: string) => plainMoment(`${date}T${time}`, 'YYYY-MM-DD[T]HH:mm:ss')
+
+	// data/building-hours/3-1-post-office.yaml
+	let postOffice: BuildingType = {
+		name: 'Post Office',
+		category: '???',
+		breakSchedule: undefined,
+		schedule: [
+			{
+				title: 'Hours',
+				closedForChapelTime: true,
+				hours: [{days: ['Mo', 'Tu', 'We', 'Th', 'Fr'], from: '8:00am', to: '5:00pm'}],
+			},
+		],
+	}
+
+	// data/building-hours/7-2-health-services.yaml
+	let healthServices: BuildingType = {
+		name: 'Health Services',
+		category: '???',
+		breakSchedule: undefined,
+		schedule: [
+			{
+				title: 'Hours',
+				closedForChapelTime: true,
+				hours: [
+					{days: ['Mo', 'Tu', 'We', 'Th', 'Fr'], from: '9:00am', to: '11:30am'},
+					{days: ['Mo', 'Tu', 'We', 'Th', 'Fr'], from: '1:00pm', to: '4:00pm'},
+				],
+			},
+		],
+	}
+
+	it('reads Chapel when the building resumes as chapel ends', () => {
+		expect(getShortBuildingStatus(postOffice, at('2026-09-07', '10:15:00'))).toBe('Chapel')
+	})
+
+	it('reads Closed when the window dies mid-chapel', () => {
+		// Not "Closes in 15 minutes": the building is shut, not closing soon.
+		expect(getShortBuildingStatus(healthServices, at('2026-09-10', '11:15:00'))).toBe('Closed')
+	})
+
+	it('reads Closed when the building is in its own gap during chapel', () => {
+		expect(getShortBuildingStatus(healthServices, at('2026-09-10', '12:00:00'))).toBe('Closed')
+	})
+
+	it('reads Open once chapel has let out', () => {
+		expect(getShortBuildingStatus(postOffice, at('2026-09-07', '10:35:00'))).toBe('Open')
+	})
+})

@@ -195,3 +195,40 @@ describe('a window still running from last night', () => {
 		expect(actual.map((row) => row.status)).toEqual(['7:00 AM — Midnight'])
 	})
 })
+
+describe('the chapel row', () => {
+	let at = (date: string, time: string) => plainMoment(`${date}T${time}`, 'YYYY-MM-DD[T]HH:mm:ss')
+
+	let healthServices: BuildingType = {
+		name: 'Health Services',
+		category: '???',
+		breakSchedule: undefined,
+		schedule: [
+			{
+				title: 'Hours',
+				closedForChapelTime: true,
+				hours: [
+					{days: ['Mo', 'Tu', 'We', 'Th', 'Fr'], from: '9:00am', to: '11:30am'},
+					{days: ['Mo', 'Tu', 'We', 'Th', 'Fr'], from: '1:00pm', to: '4:00pm'},
+				],
+			},
+		],
+	}
+
+	it('replaces the hours when the building resumes as chapel ends', () => {
+		// Monday chapel is 10:10-10:30am, inside the 9:00-11:30am window.
+		let actual = getDetailedBuildingStatus(healthServices, at('2026-09-07', '10:15:00'))
+
+		expect(actual).toHaveLength(1)
+		expect(actual[0].status).toBe('Closed for chapel: 10:10 AM — 10:30 AM')
+		expect(actual[0].isActive).toBe(false)
+	})
+
+	it('shows the real hours when the building will not resume', () => {
+		// Thursday chapel runs to 12:35pm, long after the 11:30am close.
+		let actual = getDetailedBuildingStatus(healthServices, at('2026-09-10', '11:15:00'))
+
+		expect(actual.map((row) => row.status)).toEqual(['9:00 AM — 11:30 AM', '1:00 PM — 4:00 PM'])
+		expect(actual.every((row) => !row.isActive)).toBe(true)
+	})
+})

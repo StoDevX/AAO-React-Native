@@ -3,8 +3,13 @@ import type {BuildingType} from '../types'
 import {getDayOfWeek} from './get-day-of-week'
 import {findOpenWindow, windowOpeningOn} from './find-open-window'
 import {isChapelTime} from './chapel'
+import {findChapelReopen} from './find-chapel-reopen'
 
 const ALMOST_THRESHOLD_MINUTES = 30
+
+// Chapel windows run 20 to 95 minutes, so the 30-minute threshold above would
+// spend most of one counting down. Ten minutes keeps the countdown meaningful.
+const CHAPEL_COUNTDOWN_MINUTES = 10
 
 /** Formats a time as "8 PM", or "8:15 PM" when it isn't on the hour. */
 function formatTime(m: Moment): string {
@@ -31,6 +36,18 @@ function findCurrentOpen(building: BuildingType, now: Moment): OpenWindow | null
 	return null
 }
 
+function findChapelReopenForBuilding(building: BuildingType, now: Moment): Moment | null {
+	for (let set of building.schedule || []) {
+		if (set.isPhysicallyOpen === false) continue
+
+		let reopen = findChapelReopen(set, now)
+		if (reopen) {
+			return reopen
+		}
+	}
+	return null
+}
+
 function findNextOpenToday(building: BuildingType, now: Moment): OpenWindow | null {
 	let dayOfWeek = getDayOfWeek(now)
 
@@ -51,7 +68,8 @@ function findNextOpenToday(building: BuildingType, now: Moment): OpenWindow | nu
 
 /**
  * Human-readable status for a building right now, e.g. "Open until 8 PM",
- * "Closes in 15 min", "Opens at 5 PM", "Opens in 10 min", or "Closed today".
+ * "Closes in 15 min", "Reopens at 10:30 AM", "Reopens in 8 min",
+ * "Opens at 5 PM", "Opens in 10 min", or "Closed today".
  */
 export function contextualStatus(building: BuildingType, now: Moment): string {
 	let current = findCurrentOpen(building, now)
@@ -61,6 +79,15 @@ export function contextualStatus(building: BuildingType, now: Moment): string {
 			return `Closes in ${minutesLeft} min`
 		}
 		return `Open until ${formatTime(current.close)}`
+	}
+
+	let chapelReopen = findChapelReopenForBuilding(building, now)
+	if (chapelReopen) {
+		let minutesLeft = chapelReopen.diff(now, 'minutes')
+		if (minutesLeft <= CHAPEL_COUNTDOWN_MINUTES) {
+			return `Reopens in ${minutesLeft} min`
+		}
+		return `Reopens at ${formatTime(chapelReopen)}`
 	}
 
 	let next = findNextOpenToday(building, now)
