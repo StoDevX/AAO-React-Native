@@ -37,4 +37,35 @@ struct StudentOrgsScreen: Screen {
 			"Typing should put the query in the search field")
 		return self
 	}
+
+	@discardableResult
+	func verifyCategoryTilesShown() -> Self {
+		let grid = app.element(matching: TestIdentifiers.StudentOrgs.categoryGrid)
+		XCTAssertTrue(
+			grid.waitForExistence(timeout: 30),
+			"The category grid should be visible before a search")
+		XCTAssertGreaterThan(
+			grid.buttons.count, 0,
+			"The category grid should hold at least one category tile")
+		return self
+	}
+
+	/// Taps whichever category tile is first in the grid and returns its label,
+	/// so the caller can assert the next screen is titled for it without this
+	/// test naming a category that Presence.io could rename or remove.
+	func openFirstCategory() -> String {
+		let grid = app.element(matching: TestIdentifiers.StudentOrgs.categoryGrid)
+		XCTAssertTrue(
+			grid.waitForExistence(timeout: 30),
+			"The category grid should be visible before a search")
+
+		let tile = grid.buttons.firstMatch
+		XCTAssertTrue(
+			tile.waitForExistence(timeout: 30),
+			"The category grid should hold at least one tile")
+
+		let label = tile.label
+		tile.tap()
+		return label
+	}
 }

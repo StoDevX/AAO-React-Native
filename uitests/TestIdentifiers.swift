@@ -375,6 +375,13 @@ struct TestIdentifiers {
 		static let department = "Registrar\u{2019}s Office"
 	}
 
+	// MARK: - Student Orgs
+
+	enum StudentOrgs {
+		/// Matches CATEGORY_GRID_ID in app/(home)/StudentOrgs/index.tsx.
+		static let categoryGrid = "student-orgs-category-grid"
+	}
+
 	// MARK: - Campus
 
 	enum Campus {
