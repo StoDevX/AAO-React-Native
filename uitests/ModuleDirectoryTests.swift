@@ -21,11 +21,52 @@ class ModuleDirectoryTests: UITestCase {
 			.capture("Directory contact grid")
 	}
 
-	func testTappingAContactOpensItsDetail() throws {
+	/// A contact is read and dismissed, so it presents as a sheet rather than
+	/// a push -- and the grid staying in the hierarchy behind it is the tell.
+	/// A push would replace the grid, so this fails outright on one.
+	///
+	/// Reaching the detail at all is covered here too, by the action button:
+	/// it appears only on the detail, the grid's tile merely navigating, so
+	/// finding it is proof the tap went somewhere.
+	func testTappingAContactPresentsASheet() throws {
 		DirectoryScreen(app: app)
 			.navigate()
 			.openContact(TestIdentifiers.Directory.aContact)
 			.verifyDetailAction(TestIdentifiers.Directory.aContactAction)
+			.verifyContactGridStillBehind()
+			.capture("Contact detail as a sheet")
+	}
+
+	/// The contact sheet carries no close button, and a formSheet route has no
+	/// back button either -- the drag is the only way out. If it does not
+	/// dismiss, the reader is stuck on a contact with no way back to the grid.
+	func testTheContactSheetCanBeSwipedAway() throws {
+		DirectoryScreen(app: app)
+			.navigate()
+			.openContact(TestIdentifiers.Directory.aContact)
+			.verifyDetailAction(TestIdentifiers.Directory.aContactAction)
+			.dismissContactSheet(
+				titled: TestIdentifiers.Directory.aContact,
+				waitingFor: TestIdentifiers.Directory.aContactAction)
+			.capture("Directory after dismissing a contact sheet")
+			.verifyContactsHeading()
+			.verifyContactTiles(count: 8)
+	}
+
+	/// `sheetLargestUndimmedDetentIndex: 'none'` is what makes this true: UIKit
+	/// dims and blocks touches to the grid behind the sheet at every detent,
+	/// not merely below the largest one. Without it, a tap on another
+	/// contact's tile reaches the grid and stacks a second sheet on the first.
+	func testTappingATileBehindTheSheetDoesNotStackASecondSheet() throws {
+		DirectoryScreen(app: app)
+			.navigate()
+			.openContact(TestIdentifiers.Directory.aContact)
+			.verifyDetailAction(TestIdentifiers.Directory.aContactAction)
+			.attemptToTapContactBehindSheet(
+				TestIdentifiers.Directory.aSecondContact,
+				whileShowing: TestIdentifiers.Directory.aContact)
+			.capture("Directory after tapping a tile behind the contact sheet")
+			.verifyNoSecondContactSheet(TestIdentifiers.Directory.aSecondContactAction)
 	}
 
 	/// At an accessibility Dynamic Type size the label and glyph both grow,

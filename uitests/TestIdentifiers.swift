@@ -376,6 +376,13 @@ struct TestIdentifiers {
 		/// That contact's own action, shown on its detail screen.
 		static let aContactAction = "Call Public Safety"
 
+		/// A second contact from data/contact-info/, so its tile is in the grid
+		/// whatever the server is serving.
+		static let aSecondContact = "SARN"
+		/// That contact's own action. Nothing else in the app shows this
+		/// string, so finding it can only mean SARN's detail is on screen.
+		static let aSecondContactAction = "Call SARN"
+
 		/// Search results in list mode: `directory-row-<index>`. Mirrors
 		/// DIRECTORY_ROW_PREFIX in app/(home)/Directory/index.tsx.
 		static let rowPrefix = "directory-row-"

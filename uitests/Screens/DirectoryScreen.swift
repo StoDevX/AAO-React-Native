@@ -1,5 +1,11 @@
 import XCTest
 
+/// How long a push is given to take the contact grid out of the hierarchy
+/// before `verifyContactGridStillBehind` concludes it never will. Long enough
+/// to outlast a push transition on a loaded machine, short enough that the
+/// passing case -- where the grid legitimately stays -- does not drag.
+private let GRID_REMOVAL_GRACE: TimeInterval = 5
+
 struct DirectoryScreen: Screen {
 	let app: XCUIApplication
 
@@ -214,6 +220,120 @@ struct DirectoryScreen: Screen {
 		XCTAssertTrue(
 			button.waitForExistence(timeout: 30),
 			"\(action) should be on the contact's detail screen")
+		return self
+	}
+
+	/// Distinguishes a sheet from a full-screen push: a pushed screen replaces
+	/// the grid in the hierarchy, while a sheet leaves it present underneath.
+	///
+	/// `XCUIElement.exists` is true for a merely-covered element as much as a
+	/// visible one, so this does not tell a sheet apart from anything else
+	/// that leaves the grid behind it -- only from the push it replaces, which
+	/// is the whole of what is under test here.
+	///
+	/// Phrased as "does not go away within `GRID_REMOVAL_GRACE`" rather than a
+	/// bare `exists`, because a push takes the outgoing screen out at the end
+	/// of its transition, not the start. Asked the instant the detail's button
+	/// appears, a bare `exists` finds the grid mid-transition and reports a
+	/// push as a sheet.
+	@discardableResult
+	func verifyContactGridStillBehind() -> Self {
+		let grid = app.element(matching: TestIdentifiers.Directory.contactGrid)
+		XCTAssertFalse(
+			grid.waitForNonExistence(timeout: GRID_REMOVAL_GRACE),
+			"The contact grid should still be behind the sheet, not replaced by it")
+		return self
+	}
+
+	/// Swipe the contact sheet away, with the same press-drag-hold shape
+	/// `FilterScreen.dismissSheet` uses.
+	///
+	/// The drag starts on the sheet's own navigation bar rather than in its
+	/// body: a drag begun inside the scrollable content scrolls that content
+	/// instead of moving the sheet, and reports nothing either way.
+	///
+	/// That bar is found by `title` -- the contact's own name, which only the
+	/// sheet carries, the screen behind it being titled "Directory". An
+	/// index-picked bar is not a substitute: the presenting screen's own bar
+	/// is above the sheet, behind the dimmed backdrop, and a drag from there
+	/// dismisses the sheet by backdrop rather than by grabber -- a different
+	/// gesture that ends in the same place, so the test would still pass.
+	///
+	/// `action` is the contact's own button, which exists only on the detail
+	/// -- the contact's name will not do, since SwiftUI collapses that onto
+	/// the grid's tile button too, and it never goes away.
+	@discardableResult
+	func dismissContactSheet(titled title: String, waitingFor action: String) -> Self {
+		let bar = app.navigationBars[title]
+		XCTAssertTrue(
+			bar.waitForExistence(timeout: 30),
+			"The \(title) sheet should have a navigation bar to drag from")
+
+		bar.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5))
+			.press(
+				forDuration: 0.15,
+				thenDragTo: app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.97)),
+				withVelocity: .default,
+				thenHoldForDuration: 0.1)
+
+		XCTAssertTrue(
+			app.buttons[action].firstMatch.waitForNonExistence(timeout: 30),
+			"The contact sheet should be gone after a swipe down")
+		return self
+	}
+
+	/// Taps a second contact's tile while the first's sheet is up.
+	///
+	/// Three things keep this from passing vacuously. The tap goes through a
+	/// screen coordinate rather than `XCUIElement.tap()`, because the tile is
+	/// expected not to respond -- a plain `.tap()` would fail for
+	/// unhittability, which is a different claim than the one being made. The
+	/// sheet's top edge comes from its own navigation bar, found by
+	/// `sheetTitle` -- the contact's name, which only the sheet carries, the
+	/// screen behind it being titled "Directory". An index-picked bar would be
+	/// the presenting screen's, which sits above the sheet and would put the
+	/// comparison against the wrong edge. And the tap aims at `dy: 0.1`, the
+	/// tile's upper edge, rather than its centre: the first grid row's tile is
+	/// tall enough that its centre sits below the sheet's top edge even while
+	/// its top is exposed above it, so the centre is the wrong point to prove
+	/// anything with.
+	@discardableResult
+	func attemptToTapContactBehindSheet(_ title: String, whileShowing sheetTitle: String) -> Self {
+		let tile = app.buttons[title].firstMatch
+		XCTAssertTrue(
+			tile.waitForExistence(timeout: 30),
+			"\(title) should still have a tile behind the sheet")
+
+		let sheetBar = app.navigationBars[sheetTitle]
+		XCTAssertTrue(
+			sheetBar.waitForExistence(timeout: 30),
+			"The \(sheetTitle) sheet should have a navigation bar marking its top edge")
+
+		let point = tile.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.1))
+		XCTAssertLessThan(
+			point.screenPoint.y, sheetBar.frame.minY,
+			"\(title)'s tile sits under the sheet, so tapping it would land on the sheet "
+				+ "itself and prove nothing -- this test needs a contact whose tile stays "
+				+ "above the sheet's top edge")
+
+		point.tap()
+		return self
+	}
+
+	/// Assert the second contact's own action -- which appears nowhere but on
+	/// its detail -- never showed up. That is the tell for a second sheet
+	/// having stacked over the first.
+	///
+	/// Whether the tap also dismissed the sheet already up is not asserted
+	/// here: tapping a dimmed backdrop to dismiss the sheet in front of it is
+	/// ordinary sheet behaviour, and a different thing from the bug this
+	/// guards against.
+	@discardableResult
+	func verifyNoSecondContactSheet(_ action: String) -> Self {
+		XCTAssertFalse(
+			app.buttons[action].firstMatch.waitForExistence(timeout: 5),
+			"\(action) should never have appeared -- the tap should have been blocked by "
+				+ "the dimmed grid behind the sheet, not reached through to stack a second one")
 		return self
 	}
 }
