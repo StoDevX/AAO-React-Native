@@ -78,6 +78,85 @@ struct CampusScreen: Screen {
 		return self
 	}
 
+	/// Swipe a row part-way from its trailing edge, so its action is revealed
+	/// and left on screen.
+	///
+	/// Swiped by coordinate rather than `row.swipeLeft()`, and only about a
+	/// third of the row's width. The group sets `allowsFullSwipe`, so a swipe
+	/// that travels most of the row performs the favourite outright and the
+	/// button never lingers to be found -- the test would then be asserting on
+	/// an element the gesture had already consumed. Slowly, because a flick
+	/// carries past the resting position for the same reason.
+	///
+	/// The hittability check is what makes the swipe mean anything. A row below
+	/// the fold is in the accessibility tree and answers `exists`, so a bare
+	/// existence check passes while `coordinate(withNormalizedOffset:)` returns
+	/// a point off screen -- the drag then lands nowhere, reveals nothing, and
+	/// the test fails somewhere later with a message about the wrong thing.
+	@discardableResult
+	func revealSwipeAction(on name: String) -> Self {
+		let row = app.element(matching: TestIdentifiers.Campus.rowPrefix + name)
+		XCTAssertTrue(
+			row.waitForExistence(timeout: 30),
+			"\(name) should be listed before it can be swiped")
+
+		scrollUntilHittable(row)
+		XCTAssertTrue(
+			row.isHittable,
+			"\(name) should be on screen before it is swiped, or the gesture lands nowhere")
+
+		let start = row.coordinate(withNormalizedOffset: CGVector(dx: 0.95, dy: 0.5))
+		let end = row.coordinate(withNormalizedOffset: CGVector(dx: 0.6, dy: 0.5))
+		start.press(forDuration: 0.1, thenDragTo: end, withVelocity: .slow, thenHoldForDuration: 0.5)
+		return self
+	}
+
+	/// Scroll until `element` is not merely present but actually on screen.
+	@discardableResult
+	private func scrollUntilHittable(_ element: XCUIElement, swipes: Int = 10) -> Self {
+		for _ in 0..<swipes {
+			if element.isHittable { break }
+			app.swipeUp()
+		}
+		return self
+	}
+
+	/// Tap the revealed action that adds a building to Favorites.
+	@discardableResult
+	func tapAddToFavorites() -> Self {
+		// Matched on label across every element type: what a SwiftUI swipe
+		// action lands as in the XCUITest tree is not something to assume.
+		let action = app.elementWithLabel(startingWith: TestIdentifiers.Campus.addToFavorites)
+		if !action.waitForExistence(timeout: 10) {
+			XCTFail(
+				"""
+				Swiping a row should reveal its Add to Favorites action.
+				Hierarchy at failure:
+				\(app.debugDescription)
+				""")
+		}
+		action.tap()
+		return self
+	}
+
+	@discardableResult
+	func verifyFavoritesSectionShown() -> Self {
+		let heading = app.staticTexts[TestIdentifiers.Campus.favoritesSection].firstMatch
+		XCTAssertTrue(
+			heading.waitForExistence(timeout: 30),
+			"Favouriting a building should grow a Favorites section at the top of the list")
+		return self
+	}
+
+	@discardableResult
+	func verifyFavoritesSectionAbsent() -> Self {
+		let heading = app.staticTexts[TestIdentifiers.Campus.favoritesSection].firstMatch
+		XCTAssertFalse(
+			heading.exists,
+			"Nothing is favourited on a freshly reset launch, so there should be no Favorites section")
+		return self
+	}
+
 	@discardableResult
 	func tapRow(_ name: String) -> Self {
 		let row = app.element(matching: TestIdentifiers.Campus.rowPrefix + name)

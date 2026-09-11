@@ -1,5 +1,6 @@
+# despite the rename, the building abbreviation did not change as far as I (Hawken) can tell
 name: HOM
-subtitle: Hall of Music
+subtitle: Tweet Hall of Music
 image: hall-of-music
 category: Academia
 building: hom
@@ -7,8 +8,8 @@ building: hom
 schedule:
   - title: Hours
     hours:
-      - {days: [Mo, Tu, We, Th, Fr], from: '7:00am', to: '11:00am'}
-      - {days: [Sa, Su], from: '8:00am', to: '11:00am'}
+      - {days: [Mo, Tu, We, Th, Fr], from: '7:00am', to: '11:00pm'}
+      - {days: [Sa, Su], from: '8:00am', to: '11:00pm'}
 
 breakSchedule:
   fall: []

@@ -6,8 +6,10 @@ import {
 	accessibilityLabel,
 	lineLimit,
 	textInputAutocapitalization,
+	tint,
 } from '@expo/ui/swift-ui/modifiers'
 import {Stack, useLocalSearchParams, useRouter} from 'expo-router'
+import * as c from '@frogpond/colors'
 import {NoticeView} from '@frogpond/notice'
 
 import {DEFINITION_LINES} from '../../../../source/features/dictionary/constants'
@@ -124,6 +126,7 @@ export default function DictionarySensePage(): React.ReactNode {
 					<Section>
 						<Button
 							label="Delete Sense"
+							modifiers={[tint(c.red)]}
 							onPress={() => {
 								store.deleteSense(sense.id)
 								dismiss()

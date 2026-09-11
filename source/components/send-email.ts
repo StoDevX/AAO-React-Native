@@ -39,23 +39,29 @@ export function sendEmail(args: Args): void {
 export function formatEmailParts(args: Args): string {
 	const {to = [], cc = [], bcc = [], subject = '', body = ''} = args
 
-	let mailto = new URL(`mailto:${to.join(',')}`)
+	// `mailto:` follows RFC 6068, not the `application/x-www-form-urlencoded`
+	// convention: `+` is a literal plus sign there, not a decoded space. So this
+	// builds the query string with `encodeURIComponent`, which percent-encodes
+	// a space as `%20`, instead of `URLSearchParams`, which encodes it as `+`.
+	const params: Array<[string, string]> = []
 
 	if (cc.length) {
-		mailto.searchParams.append('cc', cc.join(','))
+		params.push(['cc', cc.join(',')])
 	}
 
 	if (bcc.length) {
-		mailto.searchParams.append('bcc', bcc.join(','))
+		params.push(['bcc', bcc.join(',')])
 	}
 
 	if (subject) {
-		mailto.searchParams.append('subject', subject)
+		params.push(['subject', subject])
 	}
 
 	if (body) {
-		mailto.searchParams.append('body', body)
+		params.push(['body', body])
 	}
 
-	return mailto.href
+	const query = params.map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&')
+
+	return `mailto:${to.join(',')}${query ? `?${query}` : ''}`
 }

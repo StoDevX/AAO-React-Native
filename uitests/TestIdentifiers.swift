@@ -437,6 +437,14 @@ struct TestIdentifiers {
 		/// Mirrors BUILDING_ROW_PREFIX in
 		/// source/features/building-hours/list/building-list-row.tsx.
 		static let rowPrefix = "building-row-"
+		/// The swipe action's two labels. Mirrors ADD_TO_FAVORITES and
+		/// REMOVE_FROM_FAVORITES in
+		/// source/features/building-hours/list/building-list-row.tsx.
+		static let addToFavorites = "Add to Favorites"
+		static let removeFromFavorites = "Remove from Favorites"
+		/// The section the list grows at its top once anything is favourited.
+		/// Every test launches with `--reset-state`, so it starts absent.
+		static let favoritesSection = "Favorites"
 		/// A schedule section heading on the detail sheet, shown only once a
 		/// building is open in the sheet.
 		static let detailSchedule = "HOURS"

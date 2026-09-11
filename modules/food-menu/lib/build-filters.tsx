@@ -9,7 +9,6 @@ import {chooseMeal, EMPTY_MEAL} from './choose-meal'
 import {dietaryBadge} from './dietary-badge'
 
 export function buildFilters(
-	foodItems: MenuItemType[],
 	corIcons: MasterCorIconMapType,
 	meals: ProcessedMealType[],
 	now?: Moment,
@@ -39,16 +38,14 @@ export function buildFilters(
 	const mealOptions = meals.map((m) => ({label: m.label}))
 	const selectedMeal = (now == null ? meals[0] : chooseMeal(meals, [], now)) ?? EMPTY_MEAL
 
-	// Check if there is at least one special in order to show the specials-only filter
-	const stationNames = selectedMeal.stations.map((s) => s.label)
-	const shouldShowSpecials =
-		foodItems.filter((item) => item.special && stationNames.includes(item.station)).length >= 1
-
 	return [
 		{
+			// On by default, whatever the starting meal holds. Whether a given
+			// meal has anything special to show is decided per meal, as the
+			// reader moves between them, by `offerSpecials`.
 			type: 'toggle',
 			key: 'specials',
-			enabled: shouldShowSpecials,
+			enabled: true,
 			spec: {
 				title: 'Specials Only',
 				label: 'Only Show Specials',

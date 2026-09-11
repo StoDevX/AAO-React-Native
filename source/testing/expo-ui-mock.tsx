@@ -95,10 +95,12 @@ export const textInputAutocapitalization = named(
 	'textInputAutocapitalization',
 	'autocapitalization',
 )
+export const layoutPriority = named('layoutPriority', 'priority')
 export const textSelection = named('textSelection', 'value')
 export const tint = named('tint', 'color')
 export const truncationMode = named('truncationMode', 'mode')
 export const underline = spreading('underline')
+export const fixedSize = spreading('fixedSize')
 
 export const background = (color: unknown, shape?: Record<string, unknown>): Modifier =>
 	createModifier('background', {color, ...shape})
@@ -875,3 +877,27 @@ export function useNativeState<T>(initial: T): NativeStateHandle<T> {
 	})
 	return handle
 }
+
+/**
+ * The swipe actions themselves are drawn by SwiftUI only once a row has been
+ * swiped, so they are not on screen at rest. This stand-in renders nothing for
+ * them: a test that could query a favourite button here would be asserting
+ * something no reader can see or reach without the gesture, which neither this
+ * file nor Jest can perform. Swipe behaviour belongs in an XCUITest.
+ */
+export function SwipeActionsGroup(_props: {
+	edge?: 'leading' | 'trailing'
+	allowsFullSwipe?: boolean
+	children: React.ReactNode
+}): React.ReactNode {
+	return null
+}
+
+/** The row's ordinary content; its `Actions` are revealed only by a gesture. */
+function SwipeActionsComponent({children, modifiers}: WithModifiers): React.ReactNode {
+	return <ForwardingView modifiers={modifiers}>{children}</ForwardingView>
+}
+
+SwipeActionsComponent.Actions = SwipeActionsGroup
+
+export const SwipeActions = SwipeActionsComponent
