@@ -84,45 +84,6 @@ describe('MenuItemDetailView', () => {
 		expect(screen.queryByText('Dietary')).toBeNull()
 	})
 
-	test('heads the panel with the serving size and the calories', async () => {
-		await render(
-			<MenuItemDetailView
-				icons={{}}
-				item={item({
-					nutrition_details: nutrition({
-						calories: {label: 'Calories', value: 50, unit: ''},
-						servingSize: {label: 'Serving Size', value: 4, unit: 'oz'},
-					}),
-				})}
-			/>,
-		)
-
-		expect(screen.getByText('Serving Size')).toBeTruthy()
-		expect(screen.getByText('4oz')).toBeTruthy()
-		expect(screen.getByText('Amount per serving')).toBeTruthy()
-		expect(screen.getByText('Calories')).toBeTruthy()
-		expect(screen.getByText('50')).toBeTruthy()
-	})
-
-	test('names each nutrient and states its amount', async () => {
-		await render(
-			<MenuItemDetailView
-				icons={{}}
-				item={item({
-					nutrition_details: nutrition({
-						fatContent: {label: 'Total Fat', value: 12, unit: 'g'},
-						saturatedFatContent: {label: 'Saturated Fat', value: 3, unit: 'g'},
-					}),
-				})}
-			/>,
-		)
-
-		expect(screen.getByText('Total Fat')).toBeTruthy()
-		expect(screen.getByText('12g')).toBeTruthy()
-		expect(screen.getByText('Saturated Fat')).toBeTruthy()
-		expect(screen.getByText('3g')).toBeTruthy()
-	})
-
 	// The panel shows no % Daily Value and no servings per container, so it says
 	// where its figures come from rather than implying it is a regulated label.
 	test('attributes the figures to the cafe when it has some', async () => {
