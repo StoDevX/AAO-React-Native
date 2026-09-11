@@ -50,6 +50,22 @@ class ModuleDirectoryTests: UITestCase {
 			.verifyContactTiles(count: 8)
 	}
 
+	/// `sheetLargestUndimmedDetentIndex: 'none'` is what makes this true: UIKit
+	/// dims and blocks touches to the grid behind the sheet at every detent,
+	/// not merely below the largest one. Without it, a tap on another
+	/// contact's tile reaches the grid and stacks a second sheet on the first.
+	func testTappingATileBehindTheSheetDoesNotStackASecondSheet() throws {
+		DirectoryScreen(app: app)
+			.navigate()
+			.openContact(TestIdentifiers.Directory.aContact)
+			.verifyDetailAction(TestIdentifiers.Directory.aContactAction)
+			.attemptToTapContactBehindSheet(
+				TestIdentifiers.Directory.aSecondContact,
+				whileShowing: TestIdentifiers.Directory.aContact)
+			.capture("Directory after tapping a tile behind the contact sheet")
+			.verifyNoSecondContactSheet(TestIdentifiers.Directory.aSecondContactAction)
+	}
+
 	/// At an accessibility Dynamic Type size the label and glyph both grow,
 	/// but a fixed column count's width would not -- columnsForFontScale is
 	/// what narrows the grid to keep it readable there instead of clipping.

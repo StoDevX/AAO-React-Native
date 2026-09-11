@@ -261,4 +261,60 @@ struct DirectoryScreen: Screen {
 			"The contact sheet should be gone after a swipe down")
 		return self
 	}
+
+	/// Taps a second contact's tile while the first's sheet is up.
+	///
+	/// Three things keep this from passing vacuously. The tap goes through a
+	/// screen coordinate rather than `XCUIElement.tap()`, because the tile is
+	/// expected not to respond -- a plain `.tap()` would fail for
+	/// unhittability, which is a different claim than the one being made. The
+	/// sheet's top edge is found by looking up its navigation bar by
+	/// `sheetTitle` -- the contact's own name, which the sheet's nested stack
+	/// titles it with -- rather than by position: a bar picked by index
+	/// silently returns whichever bar XCUITest happens to enumerate at that
+	/// slot, and for this sheet that is the Directory screen's own bar behind
+	/// it, not the sheet's. And the tap aims at `dy: 0.1`, the
+	/// tile's upper edge, rather than its centre: the first grid row's tile is
+	/// tall enough that its centre sits below the sheet's top edge even while
+	/// its top is exposed above it, so the centre is the wrong point to prove
+	/// anything with.
+	@discardableResult
+	func attemptToTapContactBehindSheet(_ title: String, whileShowing sheetTitle: String) -> Self {
+		let tile = app.buttons[title].firstMatch
+		XCTAssertTrue(
+			tile.waitForExistence(timeout: 30),
+			"\(title) should still have a tile behind the sheet")
+
+		let sheetBar = app.navigationBars[sheetTitle]
+		XCTAssertTrue(
+			sheetBar.waitForExistence(timeout: 30),
+			"The \(sheetTitle) sheet should have a navigation bar marking its top edge")
+
+		let point = tile.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.1))
+		XCTAssertLessThan(
+			point.screenPoint.y, sheetBar.frame.minY,
+			"\(title)'s tile sits under the sheet, so tapping it would land on the sheet "
+				+ "itself and prove nothing -- this test needs a contact whose tile stays "
+				+ "above the sheet's top edge")
+
+		point.tap()
+		return self
+	}
+
+	/// Assert the second contact's own action -- which appears nowhere but on
+	/// its detail -- never showed up. That is the tell for a second sheet
+	/// having stacked over the first.
+	///
+	/// Whether the tap also dismissed the sheet already up is not asserted
+	/// here: tapping a dimmed backdrop to dismiss the sheet in front of it is
+	/// ordinary sheet behaviour, and a different thing from the bug this
+	/// guards against.
+	@discardableResult
+	func verifyNoSecondContactSheet(_ action: String) -> Self {
+		XCTAssertFalse(
+			app.buttons[action].firstMatch.waitForExistence(timeout: 5),
+			"\(action) should never have appeared -- the tap should have been blocked by "
+				+ "the dimmed grid behind the sheet, not reached through to stack a second one")
+		return self
+	}
 }
