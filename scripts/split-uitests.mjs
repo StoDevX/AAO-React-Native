@@ -44,36 +44,43 @@ export function discoverTests(files) {
  * A weight of NaN (or Infinity) propagates into `packShards`'s
  * `Math.min(...totals)` and turns every shard total NaN, so `indexOf` finds
  * none of them and the next push throws. A corrupt entry reads as an unknown
- * test instead -- it takes the median, same as a test the table never saw.
+ * test instead -- it takes the p90, same as a test the table never saw.
  */
 export function sanitizeDurations(durations) {
 	return Object.fromEntries(Object.entries(durations).filter(([, value]) => Number.isFinite(value)))
 }
 
-/** The middle value, or 0 for an empty list. */
-function median(numbers) {
+/**
+ * The 90th percentile by nearest rank, or 0 for an empty list.
+ *
+ * Nearest rank rather than an interpolated percentile, so the answer is always
+ * a duration something actually took rather than a number between two of them.
+ */
+function p90(numbers) {
 	if (numbers.length === 0) {
 		return 0
 	}
 
 	const sorted = [...numbers].sort((a, b) => a - b)
-	const middle = Math.floor(sorted.length / 2)
-	return sorted.length % 2 === 0 ? (sorted[middle - 1] + sorted[middle]) / 2 : sorted[middle]
+	return sorted[Math.ceil(sorted.length * 0.9) - 1]
 }
 
 /**
  * Weigh each class by how long its tests take.
  *
- * A test the table has never seen weighs the median of the ones it has, so a
- * newly added test does not read as free. With no table at all every test
- * weighs one, giving every test an equal share of the split.
+ * A test the table has never seen weighs the p90 of the ones it has, so a
+ * newly added test reads as slow rather than typical. The table is cached from
+ * master, so a branch's own new tests are always the unknown ones -- weighing
+ * them at the median let a branch adding slow tests underestimate its own
+ * shard and discover the real numbers only after merging. With no table at all
+ * every test weighs one, giving every test an equal share of the split.
  * @param {Array<{className: string, methods: string[]}>} classes
  * @param {Record<string, number>} durations
  * @returns {Array<{name: string, weight: number}>}
  */
 export function weigh(classes, durations) {
 	const known = Object.values(durations)
-	const fallback = known.length === 0 ? 1 : median(known)
+	const fallback = known.length === 0 ? 1 : p90(known)
 
 	return classes.map((testClass) => ({
 		name: testClass.className,
@@ -95,7 +102,7 @@ export function weigh(classes, durations) {
  */
 export function weighMethods(classes, durations) {
 	const known = Object.values(durations)
-	const fallback = known.length === 0 ? 1 : median(known)
+	const fallback = known.length === 0 ? 1 : p90(known)
 
 	return classes.flatMap((testClass) =>
 		testClass.methods.map((method) => ({
