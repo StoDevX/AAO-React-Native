@@ -41,6 +41,21 @@ export default function HomeLayout(): React.ReactNode {
 					sheetLargestUndimmedDetentIndex: 'none',
 				}}
 			/>
+			<Stack.Screen
+				name="Directory/named"
+				options={{
+					presentation: 'formSheet',
+					headerShown: false,
+					// The same stops as the sheets above, so every sheet in the app
+					// rests at one height.
+					sheetAllowedDetents: [SHEET_RESTING_FRACTION, 0.999],
+					sheetGrabberVisible: true,
+					// The grid behind has nothing worth touching while a contact is
+					// up, and an undimmed detent would let a second tap on another
+					// tile push a second sheet.
+					sheetLargestUndimmedDetentIndex: 'none',
+				}}
+			/>
 			<Stack.Screen name="Communities" />
 			<Stack.Screen name="Map" />
 			<Stack.Screen name="SIS" options={{title: 'SIS'}} />

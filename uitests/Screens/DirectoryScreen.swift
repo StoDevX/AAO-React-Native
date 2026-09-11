@@ -216,4 +216,20 @@ struct DirectoryScreen: Screen {
 			"\(action) should be on the contact's detail screen")
 		return self
 	}
+
+	/// Distinguishes a sheet from a full-screen push: a pushed screen replaces
+	/// the grid in the hierarchy, while a sheet leaves it present underneath.
+	///
+	/// `XCUIElement.exists` is true for a merely-covered element as much as a
+	/// visible one, so this does not tell a sheet apart from anything else
+	/// that leaves the grid behind it -- only from the push it replaces, which
+	/// is the whole of what is under test here.
+	@discardableResult
+	func verifyContactGridStillBehind() -> Self {
+		let grid = app.element(matching: TestIdentifiers.Directory.contactGrid)
+		XCTAssertTrue(
+			grid.exists,
+			"The contact grid should still be behind the sheet, not replaced by it")
+		return self
+	}
 }

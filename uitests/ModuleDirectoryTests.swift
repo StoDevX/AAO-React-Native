@@ -24,6 +24,18 @@ class ModuleDirectoryTests: UITestCase {
 			.verifyDetailAction(TestIdentifiers.Directory.aContactAction)
 	}
 
+	/// A contact is read and dismissed, so it presents as a sheet rather than
+	/// a push -- and the grid staying in the hierarchy behind it is the tell.
+	/// A push would replace the grid, so this fails outright on one.
+	func testTappingAContactPresentsASheet() throws {
+		DirectoryScreen(app: app)
+			.navigate()
+			.openContact(TestIdentifiers.Directory.aContact)
+			.verifyDetailAction(TestIdentifiers.Directory.aContactAction)
+			.verifyContactGridStillBehind()
+			.capture("Contact detail as a sheet")
+	}
+
 	/// At an accessibility Dynamic Type size the label and glyph both grow,
 	/// but a fixed column count's width would not -- columnsForFontScale is
 	/// what narrows the grid to keep it readable there instead of clipping.
