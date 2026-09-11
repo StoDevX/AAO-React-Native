@@ -27,12 +27,12 @@ bundle. To drive the app by hand instead of asserting on it, see
 as a chain of named steps, with no `app.buttons[...]` in it:
 
 ```swift
-func testCancelledSwipeBackKeepsTheQuery() throws {
+func testSearchResultsOpenAsTiles() throws {
     DirectoryScreen(app: app)
         .navigate()
         .search(for: "olaf")
-        .cancelSwipeBack()
-        .verifySearchText("olaf")
+        .verifyResultsGalleried()
+        .capture("Directory search results as a tile gallery")
 }
 ```
 

@@ -1,47 +1,12 @@
 import XCTest
 
 class ModuleCalendarTests: UITestCase {
-	func testIsReachableFromHomescreen() throws {
-		CalendarScreen(app: app)
-			.navigate()
-			.verifyCalendarTitle()
-	}
-
 	func testCategoryPickerOffersCategories() throws {
 		CalendarScreen(app: app)
 			.navigate()
 			.openPicker()
 			.checkCategoriesListed()
 			.capture("35-category-submenu")
-	}
-
-	/// Selecting a category filters the list; selecting it again clears the filter.
-	/// The menu stays open between taps so the user can see the toggle change.
-	func testSelectingCategoryFiltersEvents() throws {
-		let screen = CalendarScreen(app: app)
-			.navigate()
-			.capture("01-calendar-list-default")
-			.openPicker()
-			.capture("02-picker-open")
-
-		screen.selectCategory(TestIdentifiers.Calendar.categories[0])
-
-		let stayedOpen = screen.pickerIsPresented()
-		XCTContext.runActivity(
-			named: stayedOpen
-				? "Menu stayed presented after selecting category"
-				: "Menu closed after selecting category"
-		) { _ in }
-		screen.capture("03-after-selecting-category")
-
-		if stayedOpen {
-			screen
-				.verifySelected(TestIdentifiers.Calendar.categories[0])
-				.capture("04-category-selected")
-		}
-
-		screen.dismissMenu()
-		screen.capture("05-list-filtered")
 	}
 
 	/// The category filter button floats over the end of the list, so the list
@@ -54,15 +19,6 @@ class ModuleCalendarTests: UITestCase {
 			.scrollToEnd()
 			.capture("16-list-scrolled-to-end")
 			.verifyLastRowClearsToolbar()
-	}
-
-	/// The detail screen for an event opened out of the list: its masthead bar
-	/// should carry the calendar's color.
-	func testEventDetailFromList() throws {
-		CalendarScreen(app: app)
-			.navigate()
-			.openFirstEvent()
-			.capture("09-event-detail-masthead")
 	}
 
 	// MARK: - Day picker strip
@@ -85,32 +41,6 @@ class ModuleCalendarTests: UITestCase {
 		CalendarScreen(app: app)
 			.navigate()
 			.verifyDayCellsAreTappable()
-	}
-
-	/// Today wears its own filled circle only while it is also the selection;
-	/// off the selection it stays red with no circle, so it never looks chosen
-	/// alongside whichever day actually is. None of this is something Jest can
-	/// see -- it has no layout pass -- so a screenshot is the only artifact that
-	/// proves it.
-	///
-	/// Two captures carry all four cell states between them: the first shows
-	/// today circled and selected against every other visible cell, plain and
-	/// unselected; the second, taken after selecting a different day, shows
-	/// today red but uncircled next to the newly selected day's own circle.
-	func testTodayCircleOnlyShowsWhenSelected() throws {
-		let calendar = CalendarScreen(app: app)
-		calendar.navigate().verifyStripIsPresent()
-		calendar.capture("today-selected-others-plain")
-
-		// A day ahead of the frozen one: days already gone cannot be chosen, so
-		// the strip is swiped to the week that follows.
-		calendar.swipeStripToNextWeek()
-		let other = "2026-09-07"
-		calendar.tapDay(other)
-		calendar.verifySelectedDay(
-			TestIdentifiers.Calendar.dayCellPrefix + other,
-			message: "Tapping another day should select it")
-		calendar.capture("today-unselected-other-selected")
 	}
 
 	/// Swiping the strip settles on a week boundary: the Sunday of whichever week

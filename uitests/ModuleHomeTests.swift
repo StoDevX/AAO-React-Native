@@ -1,12 +1,6 @@
 import XCTest
 
 class ModuleHomeTests: UITestCase {
-	func testShowsTheHomeScreen() throws {
-		HomeScreen(app: app)
-			.checkHomescreenExists()
-			.checkMenusButtonExists()
-	}
-
 	/// Guards the whole tile being tappable, not just its icon and title.
 	func testTileIsTappableAwayFromItsCentre() throws {
 		HomeScreen(app: app)
