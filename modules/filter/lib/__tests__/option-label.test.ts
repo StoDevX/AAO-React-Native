@@ -14,4 +14,11 @@ describe('optionLabel', () => {
 	test('draws the label instead when it does not', () => {
 		expect(optionLabel({title: 'BIO', label: 'Biology'}, false)).toBe('Biology')
 	})
+
+	// `label` is optional, and a filter that turns titles off is asking for a
+	// name it may not have for every option -- a row drawing nothing at all is
+	// worse than one drawing the code.
+	test('falls back to the title for an option carrying no label', () => {
+		expect(optionLabel({title: 'BIO'}, false)).toBe('BIO')
+	})
 })

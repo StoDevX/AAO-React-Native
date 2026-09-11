@@ -66,12 +66,13 @@ class ModuleFilterTests: UITestCase {
 			.verifyOption(TestIdentifiers.Menus.halal, isSelected: false)
 	}
 
-	/// Swiping is the only dismissal the sheet offers -- there is no Done
-	/// button -- so if an interactive dismissal did not hand the selection
-	/// over, a filter sheet could never narrow anything at all. This asserts
-	/// the visible consequence rather than the trigger's state: after the
-	/// swipe, every food row still on screen carries the cor-icon that was
-	/// chosen.
+	/// The sheet has two dismissals -- the header's Done button and a swipe
+	/// down -- and the swipe is the one no code of ours runs: UIKit takes it,
+	/// and the selection is handed over only if the sheet's own dismissal
+	/// callback fires. Jest covers what Done commits; nothing but a device
+	/// covers this. This asserts the visible consequence rather than the
+	/// trigger's state: after the swipe, every food row still on screen
+	/// carries the cor-icon that was chosen.
 	func testSwipeDismissalAppliesTheSelection() throws {
 		let menus = MenusScreen(app: app)
 			.navigate()
