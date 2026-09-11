@@ -135,4 +135,13 @@ describe('groupEntries', () => {
 	it('files an entry with an empty word under a question mark', () => {
 		expect(groupEntries([normalizeEntry({word: '', definition: 'a'})])[0]?.title).toBe('?')
 	})
+
+	it('files a lower-case word under its upper-case letter', () => {
+		let entries = [
+			normalizeEntry({word: 'Caf', definition: 'a'}),
+			normalizeEntry({word: 'change', definition: 'b'}),
+		]
+
+		expect(groupEntries(entries)).toEqual([{title: 'C', data: [entries[0], entries[1]]}])
+	})
 })
