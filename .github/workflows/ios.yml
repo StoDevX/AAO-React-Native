@@ -538,7 +538,7 @@ jobs:
         run: xcrun simctl bootstatus "${{ steps.udid.outputs.udid }}" -b
 
       - name: Run UITests
-        timeout-minutes: 35
+        timeout-minutes: 45
         run: |
           set -o pipefail
           # Every test cold-launches the app in setUp, and on hosted runners that
