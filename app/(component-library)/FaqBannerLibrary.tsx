@@ -1,6 +1,6 @@
 import * as React from 'react'
 import {Alert, StyleSheet} from 'react-native'
-import {Section} from '@frogpond/tableview'
+import {Section} from '@expo/ui/swift-ui'
 import {Stack} from 'expo-router'
 
 import {FaqBannerPresentation} from '../../source/features/faqs/banner'
@@ -126,7 +126,7 @@ const textExamples: Faq[] = [
 const BannerSection = ({header, faqs}: {header: string; faqs: Faq[]}): React.ReactNode => (
 	// Banners are standalone cards with their own corners and borders, so the
 	// section drops the cell chrome that would clip and divide them.
-	<Section header={header} hideSeparator={true} roundedCorners={false}>
+	<Section title={header}>
 		{faqs.map((faq) => (
 			// Both handlers report which banner fired them, so a dismiss tap that
 			// leaks through to the card shows up as the wrong alert. Passing

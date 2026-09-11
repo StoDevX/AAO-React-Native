@@ -1,7 +1,6 @@
 import * as React from 'react'
-import {Button, Host, Menu, Section as SwiftUISection} from '@expo/ui/swift-ui'
+import {Button, Host, Menu, Section, Section as SwiftUISection} from '@expo/ui/swift-ui'
 import {accessibilityIdentifier} from '@expo/ui/swift-ui/modifiers'
-import {Section} from '@frogpond/tableview'
 import {Stack} from 'expo-router'
 import {
 	Example,

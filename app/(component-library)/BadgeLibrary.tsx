@@ -2,7 +2,7 @@ import * as React from 'react'
 import {Platform, StyleSheet} from 'react-native'
 import * as c from '@frogpond/colors'
 import {OutlineBadge, SolidBadge} from '@frogpond/badge'
-import {Section} from '@frogpond/tableview'
+import {Section} from '@expo/ui/swift-ui'
 import {Stack} from 'expo-router'
 import {
 	LibraryWrapper,
@@ -10,7 +10,7 @@ import {
 } from '../../source/features/settings/screens/overview/component-library/base/library-wrapper'
 
 const OutlineBadgeExamples = (): React.ReactNode => (
-	<Section header="Outline badge">
+	<Section title="Outline badge">
 		<Example title="Default">
 			<OutlineBadge text="Status" />
 		</Example>
@@ -36,7 +36,7 @@ const OutlineBadgeExamples = (): React.ReactNode => (
 )
 
 const SolidBadgeExamples = (): React.ReactNode => (
-	<Section header="Solid badge">
+	<Section title="Solid badge">
 		<Example title="Default">
 			<SolidBadge status="Status" />
 		</Example>
