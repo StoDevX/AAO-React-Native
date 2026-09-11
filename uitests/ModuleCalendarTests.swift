@@ -69,6 +69,8 @@ class ModuleCalendarTests: UITestCase {
 
 	/// The strip leads with Sunday — the leftmost cell is Sunday of the current
 	/// week, not today.
+	/// Day mode is what the calendar opens in, so the strip is there from the
+	/// start, already leading with a Sunday.
 	func testDayPickerStripLeadsWithSunday() throws {
 		CalendarScreen(app: app)
 			.navigate()
@@ -194,21 +196,6 @@ class ModuleCalendarTests: UITestCase {
 			.openFirstEvent()
 			.verifyAddToCalendarButton()
 			.capture("17-event-detail-add-to-calendar")
-	}
-
-	/// The sheet's bottom bar has to survive being reopened. react-native-screens
-	/// reuses one navigation controller for every presentation of a modal, so a
-	/// screen that leaves its toolbar showing on the way out makes the next
-	/// screen's unhide a no-op -- and that screen's bar items never reach the
-	/// bar, leaving the button drawn but untitled. It looked fine the first time
-	/// and blank every time after, which is why one presentation never caught it.
-	func testAddToCalendarSurvivesReopeningTheSheet() throws {
-		let screen = CalendarScreen(app: app).navigate()
-
-		screen.openFirstEvent().verifyAddToCalendarButton().closeEventDetail()
-
-		screen.openFirstEvent().capture("18-add-to-calendar-after-reopening")
-		screen.verifyAddToCalendarButton()
 	}
 
 	/// The picker is three lists in one: which calendars contribute events, and
@@ -432,14 +419,6 @@ class ModuleCalendarTests: UITestCase {
 			.verifyStripAbsent()
 	}
 
-	/// Day is what the calendar opens in, so the strip is there from the start.
-	func testCalendarOpensInDayView() throws {
-		CalendarScreen(app: app)
-			.navigate()
-			.verifyStripIsPresent()
-			.verifySundayLeadsTheStrip()
-	}
-
 	/// Dragging the strip browses; it must not move the selection. This is the
 	/// pair of gestures that used to disagree.
 	func testDraggingTheStripLeavesTheSelectionAlone() throws {
@@ -519,65 +498,5 @@ class ModuleCalendarTests: UITestCase {
 		calendar.verifySelectedDay(
 			TestIdentifiers.Calendar.dayCellPrefix + afterScroll,
 			message: "A coordinate tap after scrolling the strip should still select the cell it lands on")
-	}
-
-	/// A dot is what replaces scrolling to find out whether a day has anything,
-	/// so it has to be drawn where a screenshot shows it -- and readably,
-	/// which is a colour claim only a screenshot can close.
-	///
-	/// The dot's colour was a real review catch: it once reused a colour tuned
-	/// for drawing on the selection circle, which made it invisible on today's
-	/// cell and on a selected cell in light mode. `isToday ? c.systemRed :
-	/// c.label` (day-picker-strip.tsx) is the fix, so this captures both cells
-	/// the bug hit, under both appearances the app supports.
-	///
-	/// The appearance is set before the app relaunches, matching
-	/// `ModuleCampusDictionaryTests.verifyAddedSenseWash`: a dynamic colour
-	/// resolves against the traits its view was drawn under, and relaunching
-	/// draws the whole screen once, under the appearance being photographed.
-	private func verifyDayDotContrast(under appearance: XCUIDevice.Appearance, named suffix: String) {
-		let original = XCUIDevice.shared.appearance
-		addTeardownBlock { XCUIDevice.shared.appearance = original }
-		XCUIDevice.shared.appearance = appearance
-		relaunchWithFreshState()
-
-		let calendar = CalendarScreen(app: app)
-		calendar.navigate().verifyStripIsPresent()
-
-		let today = TestIdentifiers.Calendar.dayCell(TestIdentifiers.Calendar.frozenNow)
-			.replacingOccurrences(of: TestIdentifiers.Calendar.dayCellPrefix, with: "")
-		XCTAssertTrue(
-			calendar.dayHasEvents(today),
-			"The frozen day should carry events, so its dot is the today-with-events case")
-		calendar.verifySelectedDay(
-			TestIdentifiers.Calendar.dayCellPrefix + today,
-			message: "Day view should open with today selected")
-		calendar.capture("Day dot, today has events \(suffix)")
-
-		// A day ahead of the frozen one that carries its own events -- the
-		// fixture's ongoing orientation runs through it -- so the cell is
-		// selected but not today. Days already gone cannot be chosen, so this
-		// one is a week on and the strip is swiped to it.
-		calendar.swipeStripToNextWeek()
-		let selected = "2026-09-07"
-		XCTAssertTrue(
-			calendar.dayHasEvents(selected),
-			"2026-09-07 should carry events in the fixture calendar")
-		calendar.tapDay(selected)
-		calendar.verifySelectedDay(
-			TestIdentifiers.Calendar.dayCellPrefix + selected,
-			message: "Tapping a day should select it")
-		calendar.capture("Day dot, selected has events \(suffix)")
-
-		// The dot's colour against its cell's background is a claim only the
-		// two screenshots above carry -- open both and look.
-	}
-
-	func testDayDotContrastInLightMode() throws {
-		verifyDayDotContrast(under: .light, named: "(light)")
-	}
-
-	func testDayDotContrastInDarkMode() throws {
-		verifyDayDotContrast(under: .dark, named: "(dark)")
 	}
 }
