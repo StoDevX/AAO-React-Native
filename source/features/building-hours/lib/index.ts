@@ -1,5 +1,4 @@
 export {contextualStatus} from './contextual-status'
-export {getDetailedBuildingStatus} from './get-detailed-status'
 export {getShortBuildingStatus} from './get-short-status'
 export {formatBuildingTimes} from './format-times'
 export {filterBuildings} from './filter-buildings'
