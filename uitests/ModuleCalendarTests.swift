@@ -1,13 +1,6 @@
 import XCTest
 
 class ModuleCalendarTests: UITestCase {
-	func testCategoryPickerOffersCategories() throws {
-		CalendarScreen(app: app)
-			.navigate()
-			.openPicker()
-			.checkCategoriesListed()
-			.capture("35-category-submenu")
-	}
 
 	/// The category filter button floats over the end of the list, so the list
 	/// has to be inset for it. Scrolled all the way down, the last row should
@@ -126,27 +119,6 @@ class ModuleCalendarTests: UITestCase {
 			.openFirstEvent()
 			.verifyAddToCalendarButton()
 			.capture("17-event-detail-add-to-calendar")
-	}
-
-	/// The picker is three lists in one: which calendars contribute events, and
-	/// a row per axis the list can be narrowed along. SwiftUI renders a Menu's
-	/// contents bottom-to-top, so only a screenshot settles the order they
-	/// actually reach the screen in.
-	func testPickerMenuShowsItsRows() throws {
-		let screen = CalendarScreen(app: app)
-			.navigate()
-			.openPicker()
-			.verifyMenuSection(TestIdentifiers.Calendar.calendarsSection)
-
-		for row in [
-			TestIdentifiers.Calendar.categoryMenu, TestIdentifiers.Calendar.organizationMenu,
-		] {
-			XCTAssertTrue(
-				app.buttons[row].waitForExistence(timeout: 30),
-				"\(row) should be a row of the open picker")
-		}
-
-		screen.capture("30-picker-rows")
 	}
 
 	/// The CALENDARS section is what makes a source controllable. UI test mode
@@ -428,5 +400,34 @@ class ModuleCalendarTests: UITestCase {
 		calendar.verifySelectedDay(
 			TestIdentifiers.Calendar.dayCellPrefix + afterScroll,
 			message: "A coordinate tap after scrolling the strip should still select the cell it lands on")
+	}
+
+	/// The picker is three lists in one: which calendars contribute events, and a
+	/// row per axis the list can be narrowed along. SwiftUI renders a Menu's
+	/// contents bottom-to-top, so only a screenshot settles the order they
+	/// actually reach the screen in.
+	///
+	/// The category submenu is opened afterwards, not before: descending into an
+	/// axis replaces what is on screen, so the top-level rows have to be read
+	/// while they are still the thing presented.
+	func testPickerMenuShowsItsRowsAndCategories() throws {
+		let screen = CalendarScreen(app: app)
+			.navigate()
+			.openPicker()
+			.verifyMenuSection(TestIdentifiers.Calendar.calendarsSection)
+
+		for row in [
+			TestIdentifiers.Calendar.categoryMenu, TestIdentifiers.Calendar.organizationMenu,
+		] {
+			XCTAssertTrue(
+				app.buttons[row].waitForExistence(timeout: 30),
+				"\(row) should be a row of the open picker")
+		}
+
+		screen.capture("30-picker-rows")
+
+		screen
+			.checkCategoriesListed()
+			.capture("35-category-submenu")
 	}
 }

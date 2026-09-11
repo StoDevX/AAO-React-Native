@@ -13,19 +13,6 @@ class ModuleCarletonMapTests: UITestCase {
 			.capture("Carleton map sheet at its middle detent, showing a building's card")
 	}
 
-	/// The sheet opens on its smallest stop, at the foot of the screen, holding
-	/// the whole search field. That the field is the only thing on the stop is
-	/// still a question for the capture.
-	func testSheetOpensOnItsCollapsedStop() throws {
-		CarletonMapScreen(app: app)
-			.navigate()
-			.checkSheetPresented()
-			.capture("Carleton map sheet collapsed")
-			.verifyCollapsed()
-			.verifyFieldWithinSheet()
-			.verifyAttributionClearOfSheet()
-	}
-
 	/// The module pins the field at 44pt with a constraint UIKit is free to
 	/// overrule silently, so the height is worth a test of its own.
 	func testTheSearchFieldIsAppleMapsHeight() throws {
@@ -82,17 +69,6 @@ class ModuleCarletonMapTests: UITestCase {
 			.verifyCardAtMedium()
 	}
 
-	/// UIKit shrinks the presented sheet by a scale that depends on the
-	/// detent, so the collapsed content's margins have to be checked in
-	/// screen space rather than assumed from the layout numbers that went in.
-	func testCollapsedSheetHasSymmetricMargins() throws {
-		CarletonMapScreen(app: app)
-			.navigate()
-			.checkSheetPresented()
-			.verifyCollapsedMarginsSymmetric()
-			.verifyFieldWithinSheet()
-	}
-
 	func testTappingAFootprintWhileCollapsedRaisesTheCardToMedium() throws {
 		CarletonMapScreen(app: app)
 			.navigate()
@@ -101,5 +77,23 @@ class ModuleCarletonMapTests: UITestCase {
 			.tapAFootprint()
 			.capture("Carleton map card after a footprint tap from collapsed")
 			.verifyCardAtMedium()
+	}
+
+	/// The sheet opens on its smallest stop, at the foot of the screen, holding
+	/// the whole search field and nothing else.
+	///
+	/// The margins are read in screen space rather than taken from the layout
+	/// numbers that went in: UIKit shrinks a presented sheet by a scale that
+	/// depends on the detent, so a symmetric inset going in is not necessarily a
+	/// symmetric one coming out.
+	func testTheSheetOpensCollapsedAroundItsField() throws {
+		CarletonMapScreen(app: app)
+			.navigate()
+			.checkSheetPresented()
+			.capture("Carleton map sheet collapsed")
+			.verifyCollapsed()
+			.verifyFieldWithinSheet()
+			.verifyCollapsedMarginsSymmetric()
+			.verifyAttributionClearOfSheet()
 	}
 }

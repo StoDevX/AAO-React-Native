@@ -9,18 +9,14 @@ import XCTest
 // cold launch per run to do nothing. Worth restoring if the gesture can ever be
 // driven at a speed a runner cannot misread.
 class ModuleDirectoryTests: UITestCase {
-	func testIsReachableFromHomescreen() throws {
-		DirectoryScreen(app: app)
-			.navigate()
-			.verifyDirectoryTitle()
-			.verifyContactsHeading()
-	}
 
 	/// Every contact in data/contact-info/ gets a tile. The count is the point:
 	/// a grid that silently drops the last row still looks right in isolation.
 	func testShowsEveryContactBeforeASearch() throws {
 		DirectoryScreen(app: app)
 			.navigate()
+			.verifyDirectoryTitle()
+			.verifyContactsHeading()
 			.verifyContactTiles(count: 8)
 			.capture("Directory contact grid")
 	}
