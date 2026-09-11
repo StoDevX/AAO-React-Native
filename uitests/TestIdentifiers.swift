@@ -368,6 +368,12 @@ struct TestIdentifiers {
 		/// rename it out from under this test.
 		static let departmentalEntry = "Registrar Fax"
 		static let department = "Registrar\u{2019}s Office"
+
+		/// The one entry a UI-test run's directory holds, carrying every field
+		/// the detail screen draws. Mirrors `UITEST_ENTRY_NAME` in
+		/// `source/features/directory/__fixtures__/entries.ts`.
+		static let fixtureEntry = "Kari Testerson"
+		static let fixtureEntryDepartment = "Computer Science"
 	}
 
 	// MARK: - Campus

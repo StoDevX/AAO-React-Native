@@ -104,7 +104,7 @@ class StageOneListsTests: UITestCase {
 	func testDirectoryEntryDetail() throws {
 		let screen = DirectoryScreen(app: app)
 			.navigate()
-			.search(for: TestIdentifiers.Directory.departmentalEntry)
+			.search(for: TestIdentifiers.Directory.fixtureEntry)
 
 		// The tile gallery is the default view, so a result is a tile rather
 		// than a row -- both open the same entry detail.
@@ -118,7 +118,11 @@ class StageOneListsTests: UITestCase {
 
 		// Wait for something only the pushed screen has: a capture taken
 		// straight after the tap lands mid-animation, with both screens in it.
-		let department = app.staticTexts[TestIdentifiers.Directory.department].firstMatch
+		let department = app.descendants(matching: .any)
+			.matching(
+				NSPredicate(
+					format: "label CONTAINS %@", TestIdentifiers.Directory.fixtureEntryDepartment))
+			.firstMatch
 		XCTAssertTrue(department.waitForExistence(timeout: 30), "The entry detail should be shown")
 
 		screen.capture("Directory - entry detail")
