@@ -232,4 +232,33 @@ struct DirectoryScreen: Screen {
 			"The contact grid should still be behind the sheet, not replaced by it")
 		return self
 	}
+
+	/// Swipe the contact sheet away, the way `FilterScreen.dismissSheet` does.
+	///
+	/// The drag starts on the sheet's own navigation bar rather than in its
+	/// body: a drag begun inside the scrollable content scrolls that content
+	/// instead of moving the sheet, and reports nothing either way.
+	///
+	/// `action` is the contact's own button, which exists only on the detail
+	/// -- the contact's name will not do, since SwiftUI collapses that onto
+	/// the grid's tile button too, and it never goes away.
+	@discardableResult
+	func dismissContactSheet(_ action: String) -> Self {
+		let bar = app.navigationBars.element(boundBy: app.navigationBars.count - 1)
+		XCTAssertTrue(
+			bar.waitForExistence(timeout: 30),
+			"The contact sheet should have a navigation bar to drag from")
+
+		bar.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5))
+			.press(
+				forDuration: 0.15,
+				thenDragTo: app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.97)),
+				withVelocity: .default,
+				thenHoldForDuration: 0.1)
+
+		XCTAssertTrue(
+			app.buttons[action].firstMatch.waitForNonExistence(timeout: 30),
+			"The contact sheet should be gone after a swipe down")
+		return self
+	}
 }

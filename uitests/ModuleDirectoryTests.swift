@@ -36,6 +36,20 @@ class ModuleDirectoryTests: UITestCase {
 			.capture("Contact detail as a sheet")
 	}
 
+	/// The contact sheet carries no close button, and a formSheet route has no
+	/// back button either -- the drag is the only way out. If it does not
+	/// dismiss, the reader is stuck on a contact with no way back to the grid.
+	func testTheContactSheetCanBeSwipedAway() throws {
+		DirectoryScreen(app: app)
+			.navigate()
+			.openContact(TestIdentifiers.Directory.aContact)
+			.verifyDetailAction(TestIdentifiers.Directory.aContactAction)
+			.dismissContactSheet(TestIdentifiers.Directory.aContactAction)
+			.capture("Directory after dismissing a contact sheet")
+			.verifyContactsHeading()
+			.verifyContactTiles(count: 8)
+	}
+
 	/// At an accessibility Dynamic Type size the label and glyph both grow,
 	/// but a fixed column count's width would not -- columnsForFontScale is
 	/// what narrows the grid to keep it readable there instead of clipping.
