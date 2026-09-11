@@ -68,6 +68,57 @@
     "no-extra-label": "error",
     "no-implicit-coercion": ["error", {"boolean": true, "number": true, "string": true}],
     "no-implicit-globals": "error",
+    // Going back has one sanctioned call: `navigation.goBack()`. It is a no-op
+    // once there is nothing left to pop, so a second press of a close button --
+    // which a lagging screen invites -- costs nothing. Everything below pops
+    // unconditionally, and on a sheet the second press takes the screen behind
+    // it too, landing on the home screen.
+    //
+    // One reachable call is what keeps this from needing a test per screen. A
+    // case that genuinely wants another can name it here, with the reason.
+    "no-restricted-properties": [
+      "error",
+      {
+        "object": "router",
+        "property": "back",
+        "message": "Use navigation.goBack() -- router.back() pops even when there is nothing to pop, so a second press of a close button takes the screen behind it."
+      },
+      {
+        "object": "router",
+        "property": "goBack",
+        "message": "Use navigation.goBack() from useNavigation(), not the imperative router."
+      },
+      {
+        "object": "router",
+        "property": "dismiss",
+        "message": "Use navigation.goBack() -- dismiss() pops unconditionally."
+      },
+      {
+        "object": "router",
+        "property": "dismissAll",
+        "message": "Use navigation.goBack() -- dismissAll() pops unconditionally."
+      },
+      {
+        "object": "router",
+        "property": "dismissTo",
+        "message": "Use navigation.goBack() -- dismissTo() pops unconditionally."
+      },
+      {
+        "object": "navigation",
+        "property": "pop",
+        "message": "Use navigation.goBack() -- pop() pops even when there is nothing to pop."
+      },
+      {
+        "object": "navigation",
+        "property": "popTo",
+        "message": "Use navigation.goBack() -- popTo() pops unconditionally."
+      },
+      {
+        "object": "navigation",
+        "property": "popToTop",
+        "message": "Use navigation.goBack() -- popToTop() pops unconditionally."
+      }
+    ],
     "no-multi-assign": "error",
     "no-new-native-nonconstructor": "error",
     "no-throw-literal": "error",
