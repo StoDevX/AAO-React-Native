@@ -348,6 +348,20 @@ class ModuleCalendarTests: UITestCase {
 
 	/// The list merges several calendars and so credits none of them; the
 	/// detail screen credits the one its event came from.
+	/// Closing the event sheet twice should leave you on the calendar both
+	/// times. The close button calls `router.back()`, and on a screen presented
+	/// as a sheet that can consume the sheet's own dismissal as well as its
+	/// own -- taking the calendar with it and landing on the home screen.
+	func testClosingTheEventSheetTwiceStaysOnTheCalendar() throws {
+		let screen = CalendarScreen(app: app).navigate()
+
+		screen.openFirstEvent().closeEventDetail()
+		screen.openFirstEvent().closeEventDetail()
+
+		screen.capture("closed-the-event-sheet-twice")
+		screen.verifyCalendarTitle()
+	}
+
 	func testAttributionOnlyOnTheDetailScreen() throws {
 		CalendarScreen(app: app)
 			.navigate()

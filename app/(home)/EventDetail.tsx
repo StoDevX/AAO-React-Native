@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {router, Stack, useLocalSearchParams} from 'expo-router'
+import {Stack, useLocalSearchParams, useNavigation} from 'expo-router'
 import {useQuery} from '@tanstack/react-query'
 
 import {
@@ -52,6 +52,7 @@ const NO_ATTRIBUTION = {title: '', href: ''} as const
 const REMOTE_SOURCE_IDS = new Set(['stolaf', 'presence', 'uitest'])
 
 export default function EventDetailPage(): React.ReactNode {
+	let navigation = useNavigation()
 	let {source, eventKey} = useLocalSearchParams<{
 		source: string
 		eventKey: string
@@ -174,7 +175,7 @@ export default function EventDetailPage(): React.ReactNode {
 				<Stack.Toolbar.Button
 					accessibilityLabel="Close"
 					icon="xmark"
-					onPress={() => router.back()}
+					onPress={() => navigation.goBack()}
 					separateBackground={true}
 				/>
 			</Stack.Toolbar>

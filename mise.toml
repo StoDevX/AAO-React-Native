@@ -252,6 +252,14 @@ run = ["node scripts/bundle-renovate-expo.mjs", "oxfmt --write renovate.json"]
 # real install -- so one manifest naming its own version is enough to leave two
 # runtimes in the tree. This reads no network, unlike validate-expo-versions,
 # so it runs locally as well as in CI.
+# `router.back()` pops unconditionally, so a second press of a close button --
+# which a lagging screen invites -- takes the screen behind it too. On a sheet
+# that lands you on the home screen. `navigation.goBack()` is a no-op once
+# there is nothing left to pop, which is why every screen here uses it.
+[tasks."validate-guarded-navigation"]
+description = "Check that nothing navigates back with the unguarded router.back()"
+run = "node scripts/validate-guarded-navigation.mjs"
+
 [tasks."validate-catalog-refs"]
 description = "Check that nothing pins a version the catalog owns"
 run = "node scripts/validate-catalog-refs.mjs"
@@ -317,6 +325,7 @@ depends = [
 	"validate-catalog-refs",
 	"validate-deps",
 	"validate-expo-versions",
+	"validate-guarded-navigation",
 	"validate-lockfile",
 	"validate-mise-lock",
 	"validate-single-copy",

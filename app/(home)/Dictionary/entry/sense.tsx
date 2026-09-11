@@ -7,7 +7,7 @@ import {
 	lineLimit,
 	textInputAutocapitalization,
 } from '@expo/ui/swift-ui/modifiers'
-import {Stack, useLocalSearchParams, useRouter} from 'expo-router'
+import {Stack, useLocalSearchParams, useNavigation, useRouter} from 'expo-router'
 import {NoticeView} from '@frogpond/notice'
 
 import {DEFINITION_LINES} from '../../../../source/features/dictionary/constants'
@@ -21,6 +21,7 @@ const styles = StyleSheet.create({
 
 export default function DictionarySensePage(): React.ReactNode {
 	let router = useRouter()
+	let navigation = useNavigation()
 	let {senseId} = useLocalSearchParams<{senseId: string}>()
 	let store = useDictionaryDraftStore()
 
@@ -124,7 +125,7 @@ export default function DictionarySensePage(): React.ReactNode {
 							label="Delete Sense"
 							onPress={() => {
 								store.deleteSense(sense.id)
-								router.back()
+								navigation.goBack()
 							}}
 							role="destructive"
 							systemImage="trash"

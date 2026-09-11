@@ -4,7 +4,7 @@ import {StyleSheet} from 'react-native'
 import {Host, List, Section} from '@expo/ui/swift-ui'
 import {listStyle} from '@expo/ui/swift-ui/modifiers'
 import * as c from '@frogpond/colors'
-import {Stack, useRouter} from 'expo-router'
+import {Stack, useNavigation, useRouter} from 'expo-router'
 
 import {DisclosureRow} from '../../source/components/rows'
 
@@ -24,6 +24,7 @@ const LIBRARIES = [
 
 export default function ComponentLibraryRootPage(): React.ReactNode {
 	const router = useRouter()
+	const navigation = useNavigation()
 
 	return (
 		<>
@@ -32,7 +33,7 @@ export default function ComponentLibraryRootPage(): React.ReactNode {
 				<Stack.Toolbar.Button
 					accessibilityLabel="Close Screen"
 					icon="xmark"
-					onPress={() => router.back()}
+					onPress={() => navigation.goBack()}
 				/>
 			</Stack.Toolbar>
 
