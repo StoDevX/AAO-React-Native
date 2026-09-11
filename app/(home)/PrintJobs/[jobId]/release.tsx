@@ -80,10 +80,8 @@ type PrintJobReleaseViewProps = {
 function PrintJobReleaseView({job, printer}: PrintJobReleaseViewProps): React.ReactNode {
 	let router = useRouter()
 
-	let {data: username = '', isLoading: loadingUsername} = useQuery({
-		...credentialsOptions,
-		select: (data) => stoprintUsername(data, isStoprintMocked),
-	})
+	let {data: credentials, isLoading: loadingUsername} = useQuery(credentialsOptions)
+	let username = stoprintUsername(credentials, isStoprintMocked)
 
 	let {data: heldJobs = []} = useQuery(heldJobsOptions(username, printer?.printerName))
 	let jobId = job.id.toString()
@@ -151,7 +149,7 @@ function PrintJobReleaseView({job, printer}: PrintJobReleaseViewProps): React.Re
 		},
 	})
 
-	if (loadingUsername) {
+	if (loadingUsername && !isStoprintMocked) {
 		return (
 			<ScrollView contentInsetAdjustmentBehavior="automatic">
 				<LoadingView />
@@ -224,10 +222,8 @@ function PrintJobReleaseLoader(): React.ReactNode {
 		printer?: string
 	}>()
 
-	let {data: username = '', isLoading: credentialsLoading} = useQuery({
-		...credentialsOptions,
-		select: (data) => stoprintUsername(data, isStoprintMocked),
-	})
+	let {data: credentials, isLoading: credentialsLoading} = useQuery(credentialsOptions)
+	let username = stoprintUsername(credentials, isStoprintMocked)
 
 	let {
 		data: job,
@@ -243,7 +239,7 @@ function PrintJobReleaseLoader(): React.ReactNode {
 		refetch: printerRefetch,
 	} = useQuery(printerByNameOptions(username, printerName))
 
-	if (credentialsLoading || jobLoading || printerLoading) {
+	if ((credentialsLoading && !isStoprintMocked) || jobLoading || printerLoading) {
 		return <LoadingView text="Loading…" />
 	}
 

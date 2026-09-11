@@ -41,7 +41,10 @@ export function printJobsGate(state: {
 }): PrintJobsGate {
 	let {isLoadingCredentials, hasCredentials, isMocked} = state
 
-	if (isLoadingCredentials) {
+	// A mocked run prints as `MOCK_STOPRINT_USERNAME` whatever the keychain
+	// says, so waiting on that read gains nothing -- and on the simulator it
+	// does not always come back, which left the printer screen on its spinner.
+	if (isLoadingCredentials && !isMocked) {
 		return 'loading'
 	}
 

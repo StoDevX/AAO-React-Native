@@ -1,7 +1,9 @@
 import {mobileReleaseApi, papercutApi} from './urls'
 import {encode} from 'base-64'
 import {
+	cancelPrintJobForUser as mockCancelPrintJobForUser,
 	fetchAllPrinters as mockFetchAllPrinters,
+	fetchColorPrinters as mockFetchColorPrinters,
 	fetchJobs as mockFetchJobs,
 	fetchRecentPrinters as mockFetchRecentPrinters,
 	heldJobsAvailableAtPrinterForUser as mockHeldJobsAvailableAtPrinterForUser,
@@ -95,6 +97,10 @@ export function fetchRecentPrinters(
 }
 
 export async function fetchColorPrinters(options: Options): Promise<string[]> {
+	if (isStoprintMocked) {
+		return mockFetchColorPrinters()
+	}
+
 	let response = await client.get<ColorPrintersResponse>('printing/color-printers', options).json()
 	return response.data.colorPrinters
 }
@@ -125,6 +131,10 @@ export function cancelPrintJobForUser(
 	username: string,
 	options: Options,
 ): Promise<CancelResponse> {
+	if (isStoprintMocked) {
+		return mockCancelPrintJobForUser()
+	}
+
 	return mobileReleaseApi
 		.post<CancelResponse>('held-jobs/cancel', {
 			...options,

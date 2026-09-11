@@ -1,5 +1,8 @@
 import * as React from 'react'
-import {Button, HStack, Image, Spacer, Text, VStack} from '@expo/ui/swift-ui'
+import {Image as RNImage, StyleSheet} from 'react-native'
+import type {ColorValue} from 'react-native'
+import type {SFSymbol} from 'sf-symbols-typescript'
+import {Button, HStack, Image, RNHostView, Spacer, Text, VStack} from '@expo/ui/swift-ui'
 import {
 	accessibilityLabel,
 	buttonStyle,
@@ -8,6 +11,7 @@ import {
 	font,
 	foregroundStyle,
 	lineLimit,
+	frame,
 	shapes,
 	truncationMode,
 } from '@expo/ui/swift-ui/modifiers'
@@ -67,43 +71,113 @@ export function ActionRow(props: RowProps): React.ReactNode {
 	)
 }
 
+/**
+ * A leading symbol, drawn by SwiftUI itself.
+ */
+type SymbolImage = {systemName: SFSymbol; tint?: ColorValue}
+
+/**
+ * A leading thumbnail fetched over the network. `@expo/ui`'s own `Image` reads
+ * only SF Symbols, asset-catalog names and local files, so this is a React
+ * Native image hosted inside the SwiftUI row -- which needs its size stated
+ * up front, since `RNHostView` gives a hosted view no bounds of its own.
+ */
+type ThumbnailImage = {uri: string; width: number; height: number}
+
+export type DisclosureRowImage = SymbolImage | ThumbnailImage
+
+/// Mirrored by `TestIdentifiers.Rows.thumbnail`.
+const THUMBNAIL_ID = 'disclosure-row-thumbnail'
+
+const SYMBOL_SIZE = 20
+
 type DisclosureRowProps = {
 	title: string
-	/** A second, quieter line under the title. Omitted entirely when absent, so
-	 * a row without one is a single line rather than a line and a gap. */
-	detail?: string
+	/**
+	 * One or more quieter lines under the title. Entries that are absent or
+	 * blank are dropped rather than drawn, so a caller can build the array
+	 * straight from optional fields without filtering first.
+	 */
+	detail?: string | (string | undefined | null)[]
 	/** How many lines the title may wrap to before it truncates. */
 	titleLines?: number
+	/** How many lines each detail line may wrap to. Unbounded by default. */
+	detailLines?: number
+	/** A symbol or thumbnail at the leading edge. */
+	image?: DisclosureRowImage
 	onPress: () => void
 }
 
+/** The detail lines actually worth drawing, in order. */
+function detailLinesOf(detail: DisclosureRowProps['detail']): string[] {
+	if (!detail) {
+		return []
+	}
+	let lines = Array.isArray(detail) ? detail : [detail]
+	return lines.filter((line): line is string => Boolean(line && line.trim()))
+}
+
+function LeadingImage({image}: {image: DisclosureRowImage}): React.ReactNode {
+	if ('systemName' in image) {
+		return (
+			<Image
+				color={image.tint ?? c.secondaryLabel}
+				size={SYMBOL_SIZE}
+				systemName={image.systemName}
+			/>
+		)
+	}
+
+	return (
+		<HStack modifiers={[frame({width: image.width, height: image.height})]}>
+			<RNHostView matchContents={false}>
+				<RNImage
+					accessibilityIgnoresInvertColors={true}
+					source={{uri: image.uri}}
+					style={[styles.thumbnail, {width: image.width, height: image.height}]}
+					testID={THUMBNAIL_ID}
+				/>
+			</RNHostView>
+		</HStack>
+	)
+}
+
 /**
- * The list row this app repeats most: a title, an optional detail line, and a
- * disclosure chevron. Shared rather than repeated per screen because the
- * `contentShape` placement below is easy to get wrong and impossible to catch
- * in Jest -- see [[NavigationRow]] for why the chevron is drawn by hand.
+ * The list row this app repeats most: an optional leading image, a title, any
+ * number of quieter detail lines, and a disclosure chevron. Shared rather than
+ * repeated per screen because the `contentShape` placement below is easy to get
+ * wrong and impossible to catch in Jest -- see [[NavigationRow]] for why the
+ * chevron is drawn by hand.
  */
 export function DisclosureRow(props: DisclosureRowProps): React.ReactNode {
-	let {title, detail, titleLines = 1, onPress} = props
+	let {title, detail, titleLines = 1, detailLines, image, onPress} = props
+
+	let details = detailLinesOf(detail)
+	let detailModifiers = [
+		font({textStyle: 'subheadline'}),
+		foregroundStyle(c.secondaryLabel),
+		...(detailLines ? [lineLimit(detailLines), truncationMode('tail')] : []),
+	]
 
 	return (
 		<Button
-			modifiers={[buttonStyle('plain'), accessibilityLabel(detail ? `${title}, ${detail}` : title)]}
+			modifiers={[buttonStyle('plain'), accessibilityLabel([title, ...details].join(', '))]}
 			onPress={onPress}
 		>
 			{/* contentShape on the label, not the Button -- see NavigationRow. */}
-			<HStack modifiers={[contentShape(shapes.rectangle())]} spacing={8}>
+			<HStack modifiers={[contentShape(shapes.rectangle())]} spacing={12}>
+				{image ? <LeadingImage image={image} /> : null}
 				<VStack alignment="leading" spacing={2}>
 					<Text
 						modifiers={[foregroundStyle(c.label), lineLimit(titleLines), truncationMode('tail')]}
 					>
 						{title}
 					</Text>
-					{detail ? (
-						<Text modifiers={[font({textStyle: 'subheadline'}), foregroundStyle(c.secondaryLabel)]}>
-							{detail}
+					{details.map((line) => (
+						<Text key={line} modifiers={detailModifiers}>
+							{line}
 						</Text>
-					) : null}
+					))}
 				</VStack>
 				<Spacer />
 				<Image color={c.tertiaryLabel} size={14} systemName="chevron.right" />
@@ -111,3 +185,9 @@ export function DisclosureRow(props: DisclosureRowProps): React.ReactNode {
 		</Button>
 	)
 }
+
+const styles = StyleSheet.create({
+	thumbnail: {
+		resizeMode: 'cover',
+	},
+})
