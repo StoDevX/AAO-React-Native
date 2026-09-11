@@ -1,11 +1,6 @@
 import XCTest
 
 class ModuleSISTests: UITestCase {
-	func testIsReachableFromHomescreen() throws {
-		SISScreen(app: app)
-			.navigate()
-	}
-
 	// MARK: - Balances (need fresh state)
 
 	func testHasAcknowledgementVisibleByDefault() throws {

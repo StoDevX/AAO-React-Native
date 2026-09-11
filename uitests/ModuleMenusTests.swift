@@ -20,12 +20,4 @@ class ModuleMenusTests: UITestCase {
 	}
 
 	// MARK: - Carleton menus
-
-	func testCarletonMenusCanBeOpened() throws {
-		XCTExpectFailure("can't seem to hit the Burton list item - seems to be grabbing the full-screen view instead?")
-
-		MenusScreen(app: app)
-			.navigate()
-			.checkCarletonCafes()
-	}
 }

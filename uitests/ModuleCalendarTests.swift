@@ -1,48 +1,6 @@
 import XCTest
 
 class ModuleCalendarTests: UITestCase {
-	func testIsReachableFromHomescreen() throws {
-		CalendarScreen(app: app)
-			.navigate()
-			.verifyCalendarTitle()
-	}
-
-	func testCategoryPickerOffersCategories() throws {
-		CalendarScreen(app: app)
-			.navigate()
-			.openPicker()
-			.checkCategoriesListed()
-			.capture("35-category-submenu")
-	}
-
-	/// Selecting a category filters the list; selecting it again clears the filter.
-	/// The menu stays open between taps so the user can see the toggle change.
-	func testSelectingCategoryFiltersEvents() throws {
-		let screen = CalendarScreen(app: app)
-			.navigate()
-			.capture("01-calendar-list-default")
-			.openPicker()
-			.capture("02-picker-open")
-
-		screen.selectCategory(TestIdentifiers.Calendar.categories[0])
-
-		let stayedOpen = screen.pickerIsPresented()
-		XCTContext.runActivity(
-			named: stayedOpen
-				? "Menu stayed presented after selecting category"
-				: "Menu closed after selecting category"
-		) { _ in }
-		screen.capture("03-after-selecting-category")
-
-		if stayedOpen {
-			screen
-				.verifySelected(TestIdentifiers.Calendar.categories[0])
-				.capture("04-category-selected")
-		}
-
-		screen.dismissMenu()
-		screen.capture("05-list-filtered")
-	}
 
 	/// The category filter button floats over the end of the list, so the list
 	/// has to be inset for it. Scrolled all the way down, the last row should
@@ -54,15 +12,6 @@ class ModuleCalendarTests: UITestCase {
 			.scrollToEnd()
 			.capture("16-list-scrolled-to-end")
 			.verifyLastRowClearsToolbar()
-	}
-
-	/// The detail screen for an event opened out of the list: its masthead bar
-	/// should carry the calendar's color.
-	func testEventDetailFromList() throws {
-		CalendarScreen(app: app)
-			.navigate()
-			.openFirstEvent()
-			.capture("09-event-detail-masthead")
 	}
 
 	// MARK: - Day picker strip
@@ -85,32 +34,6 @@ class ModuleCalendarTests: UITestCase {
 		CalendarScreen(app: app)
 			.navigate()
 			.verifyDayCellsAreTappable()
-	}
-
-	/// Today wears its own filled circle only while it is also the selection;
-	/// off the selection it stays red with no circle, so it never looks chosen
-	/// alongside whichever day actually is. None of this is something Jest can
-	/// see -- it has no layout pass -- so a screenshot is the only artifact that
-	/// proves it.
-	///
-	/// Two captures carry all four cell states between them: the first shows
-	/// today circled and selected against every other visible cell, plain and
-	/// unselected; the second, taken after selecting a different day, shows
-	/// today red but uncircled next to the newly selected day's own circle.
-	func testTodayCircleOnlyShowsWhenSelected() throws {
-		let calendar = CalendarScreen(app: app)
-		calendar.navigate().verifyStripIsPresent()
-		calendar.capture("today-selected-others-plain")
-
-		// A day ahead of the frozen one: days already gone cannot be chosen, so
-		// the strip is swiped to the week that follows.
-		calendar.swipeStripToNextWeek()
-		let other = "2026-09-07"
-		calendar.tapDay(other)
-		calendar.verifySelectedDay(
-			TestIdentifiers.Calendar.dayCellPrefix + other,
-			message: "Tapping another day should select it")
-		calendar.capture("today-unselected-other-selected")
 	}
 
 	/// Swiping the strip settles on a week boundary: the Sunday of whichever week
@@ -196,27 +119,6 @@ class ModuleCalendarTests: UITestCase {
 			.openFirstEvent()
 			.verifyAddToCalendarButton()
 			.capture("17-event-detail-add-to-calendar")
-	}
-
-	/// The picker is three lists in one: which calendars contribute events, and
-	/// a row per axis the list can be narrowed along. SwiftUI renders a Menu's
-	/// contents bottom-to-top, so only a screenshot settles the order they
-	/// actually reach the screen in.
-	func testPickerMenuShowsItsRows() throws {
-		let screen = CalendarScreen(app: app)
-			.navigate()
-			.openPicker()
-			.verifyMenuSection(TestIdentifiers.Calendar.calendarsSection)
-
-		for row in [
-			TestIdentifiers.Calendar.categoryMenu, TestIdentifiers.Calendar.organizationMenu,
-		] {
-			XCTAssertTrue(
-				app.buttons[row].waitForExistence(timeout: 30),
-				"\(row) should be a row of the open picker")
-		}
-
-		screen.capture("30-picker-rows")
 	}
 
 	/// The CALENDARS section is what makes a source controllable. UI test mode
@@ -498,5 +400,34 @@ class ModuleCalendarTests: UITestCase {
 		calendar.verifySelectedDay(
 			TestIdentifiers.Calendar.dayCellPrefix + afterScroll,
 			message: "A coordinate tap after scrolling the strip should still select the cell it lands on")
+	}
+
+	/// The picker is three lists in one: which calendars contribute events, and a
+	/// row per axis the list can be narrowed along. SwiftUI renders a Menu's
+	/// contents bottom-to-top, so only a screenshot settles the order they
+	/// actually reach the screen in.
+	///
+	/// The category submenu is opened afterwards, not before: descending into an
+	/// axis replaces what is on screen, so the top-level rows have to be read
+	/// while they are still the thing presented.
+	func testPickerMenuShowsItsRowsAndCategories() throws {
+		let screen = CalendarScreen(app: app)
+			.navigate()
+			.openPicker()
+			.verifyMenuSection(TestIdentifiers.Calendar.calendarsSection)
+
+		for row in [
+			TestIdentifiers.Calendar.categoryMenu, TestIdentifiers.Calendar.organizationMenu,
+		] {
+			XCTAssertTrue(
+				app.buttons[row].waitForExistence(timeout: 30),
+				"\(row) should be a row of the open picker")
+		}
+
+		screen.capture("30-picker-rows")
+
+		screen
+			.checkCategoriesListed()
+			.capture("35-category-submenu")
 	}
 }

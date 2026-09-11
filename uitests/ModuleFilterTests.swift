@@ -138,10 +138,9 @@ class ModuleFilterTests: UITestCase {
 	}
 
 	/// The point of a menu that stays open: several options chosen in one
-	/// opening. `testMenuStaysOpenOnTheFirstSelection` proves it survives the
-	/// tick that turns the filter on; this proves the survival is good for
-	/// something, by ticking a second station without reopening and finding
-	/// both applied.
+	/// opening. The second station is ticked without reopening the menu, so
+	/// this cannot pass unless the menu survived the first tick -- the tick
+	/// that flips the filter from off to on, and so the one at risk.
 	func testMenuSelectsSeveralOptionsInOneOpening() throws {
 		MenusScreen(app: app)
 			.navigate()
@@ -164,30 +163,6 @@ class ModuleFilterTests: UITestCase {
 		XCTAssertTrue(
 			app.buttons[TestIdentifiers.Menus.specialtyPizzaItem].waitForExistence(timeout: 30),
 			"the second station's items should show, chosen without reopening the menu")
-	}
-
-	/// A list filter is multi-select, so its menu stays up as options are
-	/// ticked -- otherwise choosing three stations means opening the menu three
-	/// times. The first tick is the one at risk: it is what flips the filter
-	/// from off to on, and so the only tick that changes the trigger's own
-	/// styling underneath the open menu.
-	func testMenuStaysOpenOnTheFirstSelection() throws {
-		MenusScreen(app: app)
-			.navigate()
-			.verifyFoodRowsAppear()
-			.openCafe(TestIdentifiers.Menus.pause)
-
-		let filters = FilterScreen(app: app)
-		let pizza = TestIdentifiers.Menus.pizzaStation
-		let specialty = TestIdentifiers.Menus.specialtyPizzaStation
-
-		filters
-			.openFilter(Keys.stations, until: filters.menuItem(pizza))
-			.tapMenuItem(pizza)
-
-		XCTAssertTrue(
-			filters.menuItem(specialty).isHittable,
-			"the menu should still be open after the first station is ticked")
 	}
 
 	/// station, and find it applied to the list behind the menu. The sheet tests

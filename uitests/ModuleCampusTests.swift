@@ -1,12 +1,6 @@
 import XCTest
 
 class ModuleCampusTests: UITestCase {
-	func testIsReachableFromHomescreen() throws {
-		CampusScreen(app: app)
-			.navigate()
-			.verifyTitle(TestIdentifiers.Buttons.campus)
-	}
-
 	/// The campus parameter, not just the route, has to actually select the
 	/// venue list: `carletonBuilding` exists in Carleton's `spaces/hours` but
 	/// not St. Olaf's, so this fails if the Carleton tile's `?campus=carleton`

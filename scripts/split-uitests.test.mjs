@@ -105,16 +105,47 @@ describe('weigh', () => {
 		)
 	})
 
-	it('gives a test with no recorded time the median of the ones that have', () => {
-		// Known: 10 and 20, median 15. testTwo is new, so it weighs 15.
+	it('is the ninetieth percentile of the known times, not the slowest of them', () => {
+		// Ten known durations, 1 through 10. The p90 is 9; the slowest is 10.
+		// A fallback set to the maximum would let one outlier -- the suite has a
+		// test at nearly five times the median -- decide every new test's weight.
+		const classes = [
+			{className: 'ModuleATests', methods: Array.from({length: 10}, (_, i) => `test${i + 1}`)},
+			{className: 'ModuleBTests', methods: ['testNew']},
+		]
+		const durations = Object.fromEntries(
+			Array.from({length: 10}, (_, i) => [`ModuleATests/test${i + 1}()`, i + 1]),
+		)
+
+		assert.deepEqual(weigh(classes, durations), [
+			{name: 'ModuleATests', weight: 55},
+			{name: 'ModuleBTests', weight: 9},
+		])
+	})
+
+	it('gives a test with no recorded time the p90 of the ones that have', () => {
+		// A branch's new tests are never in the table -- it is cached from master --
+		// so an optimistic fallback makes every branch underestimate its own shard
+		// and learn the real numbers only after merging. Known: 1, 5 and 100; the
+		// p90 is 100, so testFour is assumed slow rather than typical.
+		const classes = [
+			{className: 'ModuleATests', methods: ['testOne']},
+			{className: 'ModuleBTests', methods: ['testTwo']},
+			{className: 'ModuleCTests', methods: ['testThree']},
+			{className: 'ModuleDTests', methods: ['testFour']},
+		]
+
 		assert.deepEqual(
-			weigh(CLASSES, {
-				'ModuleATests/testOne()': 10,
-				'ModuleBTests/testThree()': 20,
+			weigh(classes, {
+				'ModuleATests/testOne()': 1,
+				'ModuleBTests/testTwo()': 5,
+				'ModuleCTests/testThree()': 100,
 			}),
 			[
-				{name: 'ModuleATests', weight: 25},
-				{name: 'ModuleBTests', weight: 20},
+				{name: 'ModuleATests', weight: 1},
+				{name: 'ModuleBTests', weight: 5},
+				{name: 'ModuleCTests', weight: 100},
+				{name: 'ModuleDTests', weight: 100},
 			],
 		)
 	})
@@ -126,40 +157,31 @@ describe('weigh', () => {
 		])
 	})
 
-	it('uses the true middle value for an odd number of known durations, not an average', () => {
-		const classes = [
-			{className: 'ModuleATests', methods: ['testOne']},
-			{className: 'ModuleBTests', methods: ['testTwo']},
-			{className: 'ModuleCTests', methods: ['testThree']},
-			{className: 'ModuleDTests', methods: ['testFour']},
-		]
-		// Known: 1, 5, 100. The true median is 5; an average would be ~35.3.
-		// testFour is new, so it takes the median.
+	it('rounds the rank up, so a table too small to have a ninetieth percentile uses its slowest', () => {
+		// Known: 10 and 20. Nearest rank puts the p90 at the second of the two,
+		// so testThree weighs 20 rather than an interpolated 19.
 		assert.deepEqual(
-			weigh(classes, {
-				'ModuleATests/testOne()': 1,
-				'ModuleBTests/testTwo()': 5,
-				'ModuleCTests/testThree()': 100,
+			weigh(CLASSES, {
+				'ModuleATests/testOne()': 10,
+				'ModuleATests/testTwo()': 20,
 			}),
 			[
-				{name: 'ModuleATests', weight: 1},
-				{name: 'ModuleBTests', weight: 5},
-				{name: 'ModuleCTests', weight: 100},
-				{name: 'ModuleDTests', weight: 5},
+				{name: 'ModuleATests', weight: 30},
+				{name: 'ModuleBTests', weight: 20},
 			],
 		)
 	})
 
-	it('sorts durations numerically, not lexicographically, when finding the median', () => {
+	it('sorts durations numerically, not lexicographically, when finding the percentile', () => {
 		const classes = [
 			{className: 'ModuleATests', methods: ['testOne']},
 			{className: 'ModuleBTests', methods: ['testTwo']},
 			{className: 'ModuleCTests', methods: ['testThree']},
 			{className: 'ModuleDTests', methods: ['testFour']},
 		]
-		// Known: 1, 9, 10. The numeric median is 9; a lexicographic sort orders
-		// "1", "10", "9" and would pick 10 instead. testFour is new, so it
-		// takes the median.
+		// Known: 1, 9, 10. The numeric p90 is 10; a lexicographic sort orders
+		// "1", "10", "9" and would pick 9 instead. testFour is new, so it takes
+		// the p90.
 		assert.deepEqual(
 			weigh(classes, {
 				'ModuleATests/testOne()': 1,
@@ -170,7 +192,7 @@ describe('weigh', () => {
 				{name: 'ModuleATests', weight: 1},
 				{name: 'ModuleBTests', weight: 9},
 				{name: 'ModuleCTests', weight: 10},
-				{name: 'ModuleDTests', weight: 9},
+				{name: 'ModuleDTests', weight: 10},
 			],
 		)
 	})
@@ -201,7 +223,7 @@ describe('sanitizeDurations', () => {
 	it('packs without throwing once a corrupt table has been sanitized', () => {
 		// A NaN weight sends packShards' totals to NaN, and Math.min(...totals)
 		// then finds none of them -- an unsanitized table throws here instead of
-		// falling back to the median, which is the crash this guards against.
+		// falling back to the p90, which is the crash this guards against.
 		const durations = sanitizeDurations({
 			'ModuleATests/testOne()': 'oops',
 			'ModuleBTests/testThree()': 5,
