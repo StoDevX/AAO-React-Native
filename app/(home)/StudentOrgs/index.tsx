@@ -17,6 +17,7 @@ import memoize from 'lodash/memoize'
 import {studentOrgsOptions} from '../../../source/features/student-orgs/query'
 import {useQuery} from '@tanstack/react-query'
 import {SearchBar} from '../../../source/components/search-bar'
+import {sectionIndexLabel} from '../../../source/lib/section-index-label'
 
 const splitToArray = memoize((str: string) => words(deburr(str.toLowerCase())))
 
@@ -130,7 +131,11 @@ function StudentOrgsView(): React.ReactNode {
 						/>
 					) : (
 						grouped.map((section) => (
-							<Section key={section.title} title={section.title}>
+							<Section
+								key={section.title}
+								modifiers={[sectionIndexLabel(section.title)]}
+								title={section.title}
+							>
 								{section.data.map((org) => (
 									<DisclosureRow
 										key={org.name + org.category}
