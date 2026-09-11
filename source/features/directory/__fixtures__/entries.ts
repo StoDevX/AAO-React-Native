@@ -18,6 +18,12 @@ import type {DirectoryItem, SearchResults} from '../types'
 export const UITEST_ENTRY_NAME = 'Kari Testerson'
 export const UITEST_ENTRY_DEPARTMENT = 'Computer Science'
 
+/// A 40x52 gradient, at the photo's own aspect. Inline so it cannot fail for
+/// want of a network, and visible rather than blank: a photo that drew nothing
+/// would look exactly like one that failed to load.
+const PHOTO =
+	'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAA0CAIAAAB3iO3aAAAA6klEQVR4nMXCBVICAAAAwXu7PQqoSHd3dysqqGM+yWfcznISiCk5DcaVnIUSSs5vk0ou7lJKLu/TSq7CGSXXkZySm2heSSBWUBKMF5WEEiUlt8mykvt0VUk4U1PykK0rieQaSqL5ppJYoaUkXmwrSZa7SlKVnpJ0ta8kUxsoydaHSnKNkZJCa6Kk2J4qKXVmSsrduZJKb6Gk2l8qqQ1WShqjjZLmeKukNdkpaU8flXRmT0q6872S/vJFyWD1qmS4PigZbY5Kxts3JZPdu5Lp44eS+f5TyeL5S8ny5VvJ6vVHyfrwq2Rz/FP+A/OrF2HR73bXAAAAAElFTkSuQmCC'
+
 const ENTRY: DirectoryItem = {
 	campusLocations: [
 		{
@@ -51,11 +57,11 @@ const ENTRY: DirectoryItem = {
 		title: 'Office Hours',
 	},
 	onLeave: null,
-	photo: '',
+	photo: PHOTO,
 	profileUrl: 'https://wp.stolaf.edu/profile/testerson',
 	pronouns: ['she', 'her', 'hers'],
 	suffixName: null,
-	thumbnail: '',
+	thumbnail: PHOTO,
 	title: 'Associate Professor',
 	username: 'testerson',
 	description: null,
