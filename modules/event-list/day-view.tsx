@@ -37,6 +37,15 @@ import type {CalendarBodyHandle, CalendarSource, SourcedEvent} from './types'
  */
 const PAGE_WINDOW = 7
 
+/**
+ * How close to the window's edge the selected day gets before the window
+ * moves. Re-centring on every swipe changes the set of pages mid-gesture, and
+ * SwiftUI animates that change on top of the swipe -- two animations for one
+ * drag. Holding the window still until there is only this much road left ahead
+ * means most swipes move within a fixed set and animate once.
+ */
+const PAGE_MARGIN = 3
+
 type Props = {
 	events: SourcedEvent[]
 	sources: CalendarSource[]
@@ -98,14 +107,34 @@ export let DayView = React.forwardRef<CalendarBodyHandle, Props>(function DayVie
 	// whether or not it is ever swiped to -- which cost five to eight seconds
 	// before the screen would draw at all. A week either side is more than a
 	// swipe can cross before the window has moved again.
-	let pages = React.useMemo(() => {
-		if (!selectedDay) return days
+	// The day the mounted window is built around. It trails the selection
+	// rather than following it, so the page set holds still while a swipe is
+	// animating.
+	let [anchor, setAnchor] = React.useState<Moment | null>(null)
 
-		let middle = days.findIndex((day) => day.isSame(selectedDay, 'day'))
+	let pages = React.useMemo(() => {
+		let around = anchor ?? selectedDay
+		if (!around) return days
+
+		let middle = days.findIndex((day) => day.isSame(around, 'day'))
 		if (middle < 0) return days.slice(0, PAGE_WINDOW * 2 + 1)
 
 		return days.slice(Math.max(0, middle - PAGE_WINDOW), middle + PAGE_WINDOW + 1)
-	}, [days, selectedDay])
+	}, [days, anchor, selectedDay])
+
+	/**
+	 * Moves the window when the chosen day comes within `PAGE_MARGIN` of its
+	 * edge, and leaves it alone otherwise.
+	 */
+	let keepInWindow = React.useCallback(
+		(day: Moment) => {
+			let edge = pages.findIndex((page) => page.isSame(day, 'day'))
+			if (edge < 0 || edge < PAGE_MARGIN || edge > pages.length - 1 - PAGE_MARGIN) {
+				setAnchor(day)
+			}
+		},
+		[pages],
+	)
 
 	let showToday = React.useCallback(() => {
 		let today = days.find((day) => day.isSame(props.now, 'day'))
@@ -151,7 +180,10 @@ export let DayView = React.forwardRef<CalendarBodyHandle, Props>(function DayVie
 						days={days}
 						daysWithEvents={marked}
 						now={props.now}
-						onSelectDay={setChosenDay}
+						onSelectDay={(day) => {
+							setChosenDay(day)
+							keepInWindow(day)
+						}}
 						selectedDay={selectedDay ?? null}
 					/>
 				</RNHostView>
@@ -169,6 +201,7 @@ export let DayView = React.forwardRef<CalendarBodyHandle, Props>(function DayVie
 						let day = days.find((d) => d.format('YYYY-MM-DD') === iso)
 						if (day) {
 							setChosenDay(day)
+							keepInWindow(day)
 							stripRef.current?.scrollToDay(day)
 						}
 					}}
