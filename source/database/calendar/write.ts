@@ -48,24 +48,26 @@ export function retentionFor(now: Date): Retention {
 }
 
 /**
- * Whether an occurrence starts before a boundary -- the same all-day/timed
+ * Whether an occurrence ends before a boundary -- the same all-day/timed
  * split `RANGE_PREDICATE` (`queries.ts`) uses, but a single-point comparison
  * rather than a window overlap, which is what both deletes below need.
+ * Both boundaries below are on the occurrence's *end*, not its start: an
+ * event that started before today but is still running has to be replaced
+ * along with the ones that haven't started yet, or it never picks up an
+ * upstream edit (see `writeSource`'s doc comment).
  *
  * This is a sibling of `RANGE_PREDICATE`, not a reuse of it: that predicate
  * always pairs an occurrence's start with a window's *upper* bound and its
  * end with the *lower* one, because it is answering "does this occurrence
- * overlap the window". Reusing it here would require the boundary this
- * module needs -- "does this occurrence start at or after the cutoff" -- to
- * be expressed as a start paired with a *lower* bound, which
- * `RANGE_PREDICATE`'s shape cannot give without also constraining the
- * occurrence's end (fixable only by binding a sentinel infinity/date to the
- * end side, trading one duplication for a more fragile one). Negating this
- * predicate (`not (${STARTS_BEFORE})`) gives "starts at or after the
- * boundary", so one constant still serves both deletes below.
+ * overlap the window" -- neither pairing is "end paired with an upper
+ * bound", which is what both deletes below need. Reusing it would mean
+ * binding a sentinel infinity/date to the *start* side to neutralise that
+ * arm, trading one duplication for a more fragile one. Negating this
+ * predicate (`not (${ENDS_BEFORE})`) gives "ends at or after the boundary",
+ * so one constant still serves both deletes below.
  */
-const STARTS_BEFORE = `(  (o.all_day = 0 and o.start_utc  < ?)
-or (o.all_day = 1 and o.start_date < ?) )`
+const ENDS_BEFORE = `(  (o.all_day = 0 and o.end_utc  < ?)
+or (o.all_day = 1 and o.end_date < ?) )`
 
 /**
  * Deletes this source's events whose occurrence does not violate `predicate`
@@ -132,31 +134,45 @@ function insertTag(runner: SqlRunner, row: TagRow): void {
 }
 
 /**
- * Updates one source's rows for a freshly parsed fetch: **replace-future,
- * prune-past**.
+ * Updates one source's rows for a freshly parsed fetch: **replace-unfinished,
+ * prune-finished**.
  *
  * The upstream feed only describes today forward, so a plain "delete this
  * source's rows, insert what arrived" would erase yesterday's events on
  * every refresh and the app's two-sided window would never have a back half.
  * Instead:
  *
- * 1. Delete this source's events whose occurrence sits at or after today --
- *    the feed's to-state, replaced wholesale.
- * 2. Delete this source's events whose occurrence sits before the retention
- *    cutoff -- the only thing that prunes old rows.
+ * 1. Delete this source's events that have not yet finished -- no occurrence
+ *    ending before today. That is everything the feed could still be
+ *    describing: events starting later, and events already running.
+ * 2. Delete this source's events that finished before the retention cutoff
+ *    -- no occurrence ending at or after it. The only thing that prunes old
+ *    rows.
  * 3. Insert `wire`'s rows, skipping any event whose key survived step 1 as a
- *    retained past row -- inserting it again would collide with the row
- *    already in place.
+ *    retained, already-finished row -- inserting it again would collide
+ *    with the row already in place.
+ *
+ * Both boundaries are on the occurrence's *end*, not its start, and getting
+ * that backwards is a staleness bug rather than a style choice. A
+ * start-based version of step 1 leaves an event that began before today but
+ * is still running in limbo: it does not get replaced (it started in the
+ * past), does not get pruned (it is recent), and is skipped on insert (its
+ * key is already present) -- so the feed can re-send an edited title or
+ * location on every refresh and this write silently keeps serving the stale
+ * one, for up to `RETENTION_DAYS`. That hits precisely the long-running
+ * events -- exhibitions, multi-week runs -- that have their own `Ongoing`
+ * section in `modules/event-list/sections.ts`.
  *
  * Everything runs inside one transaction, so a throw -- a fetch that failed
  * partway through parsing, a constraint violation -- leaves this source's
  * previous rows exactly as they were; a failing Presence fetch cannot blank
  * St. Olaf.
  *
- * Accepted cost: an event cancelled upstream after it has started lingers in
- * the past (it is neither future nor old enough to prune) until it ages out
- * past the retention cutoff. That is the price of filling the back window
- * without an ingest change.
+ * Accepted cost: an event cancelled upstream *after it has already
+ * finished* stays in the retained past until it ages out past the cutoff --
+ * the feed simply stops mentioning it, so there is no signal to act on. An
+ * event cancelled while still upcoming or still running does disappear,
+ * because step 1 deletes it and the feed does not send it back.
  */
 export function writeSource(
 	runner: SqlRunner,
@@ -166,8 +182,8 @@ export function writeSource(
 	retention: Retention,
 ): void {
 	runner.transaction(() => {
-		deleteWhere(runner, sourceId, STARTS_BEFORE, [retention.todayUtc, retention.todayDate])
-		deleteWhere(runner, sourceId, `not (${STARTS_BEFORE})`, [
+		deleteWhere(runner, sourceId, ENDS_BEFORE, [retention.todayUtc, retention.todayDate])
+		deleteWhere(runner, sourceId, `not (${ENDS_BEFORE})`, [
 			retention.cutoffUtc,
 			retention.cutoffDate,
 		])

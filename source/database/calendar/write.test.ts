@@ -107,6 +107,37 @@ describe('writeSource', () => {
 		assert.equal(rows[0].start_utc, Date.parse('2026-09-01T18:00:00Z'))
 	})
 
+	// The case a start-based boundary silently breaks: an event that started
+	// before today but is still running. Under a start-based replace, this
+	// event is never deleted (it started in the past), never pruned (it is
+	// recent), and never re-inserted (once retained, its old key blocks a
+	// fresh insert under a *matching* key) -- so an edited title never lands,
+	// or worse, an edited title with a *different* key lands alongside the
+	// stale one. Asserting the row merely exists would pass either way;
+	// asserting the title is what discriminates.
+	it('replaces an ongoing event present in a later fetch, so an edited title lands', () => {
+		let runner = freshDb()
+		let draft = wireEvent({
+			title: 'Festival (draft)',
+			startTime: '2026-09-10T18:00:00Z',
+			endTime: '2026-09-25T20:00:00Z',
+		})
+		writeSource(runner, 'stolaf', 0, [draft], RETENTION)
+
+		let final = wireEvent({
+			title: 'Festival (final)',
+			startTime: '2026-09-10T18:00:00Z',
+			endTime: '2026-09-25T20:00:00Z',
+		})
+		writeSource(runner, 'stolaf', 0, [final], RETENTION)
+
+		let titles = runner.all<{title: string}>({
+			sql: 'select title from event where source_id = ?',
+			params: ['stolaf'],
+		})
+		assert.deepEqual(titles, [{title: 'Festival (final)'}])
+	})
+
 	it('prunes a past event older than the retention cutoff', () => {
 		let runner = freshDb()
 		let event = wireEvent({
