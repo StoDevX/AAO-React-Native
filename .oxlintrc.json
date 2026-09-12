@@ -122,6 +122,20 @@
     "no-multi-assign": "error",
     "no-new-native-nonconstructor": "error",
     "no-throw-literal": "error",
+    // `node:sqlite` is invisible to Metro, so nothing in the app's import
+    // graph may reach it. The two overrides below are the only legitimate
+    // callers: the test harness, and Task 10's Jest-based equivalence test.
+    "no-restricted-imports": [
+      "error",
+      {
+        "paths": [
+          {
+            "name": "node:sqlite",
+            "message": "Only source/database/testing/** and the sqlite-equivalence test may import node:sqlite."
+          }
+        ]
+      }
+    ],
     "no-underscore-dangle": "off",
     "no-unmodified-loop-condition": "error",
     "no-unused-vars": [
@@ -228,6 +242,15 @@
         "no-unused-expressions": "off",
         "typescript/explicit-module-boundary-types": "off",
         "no-unused-vars": "off"
+      }
+    },
+    {
+      "files": [
+        "source/database/testing/**",
+        "modules/ccc-calendar/__tests__/sqlite-equivalence.test.ts"
+      ],
+      "rules": {
+        "no-restricted-imports": "off"
       }
     },
     {
