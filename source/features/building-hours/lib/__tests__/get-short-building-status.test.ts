@@ -3,6 +3,8 @@ import {getShortBuildingStatus} from '../get-short-status'
 import {dayMoment, plainMoment} from './moment.helper'
 import {BuildingType} from '../../types'
 
+let at = (date: string, time: string) => plainMoment(`${date}T${time}`, 'YYYY-MM-DD[T]HH:mm:ss')
+
 it('checks a list of schedules to see if any are open', () => {
 	let m = dayMoment('Fri 1:00pm')
 	let building: BuildingType = {
@@ -122,8 +124,6 @@ describe('a schedule running past midnight', () => {
 		],
 	}
 
-	let at = (date: string, time: string) => plainMoment(`${date}T${time}`, 'YYYY-MM-DD[T]HH:mm:ss')
-
 	it('is Open early Sunday, while Saturday night runs on', () => {
 		expect(getShortBuildingStatus(building, at('2026-09-13', '01:00:00'))).toBe('Open')
 	})
@@ -132,16 +132,12 @@ describe('a schedule running past midnight', () => {
 		expect(getShortBuildingStatus(building, at('2026-09-11', '01:00:00'))).toBe('Closed')
 	})
 
-	it('counts down to the close carried over from last night', () => {
-		expect(getShortBuildingStatus(building, at('2026-09-13', '01:45:00'))).toBe(
-			'Closes in 15 minutes',
-		)
+	it('reads Almost Closed in the last half hour of the carried-over window', () => {
+		expect(getShortBuildingStatus(building, at('2026-09-13', '01:45:00'))).toBe('Almost Closed')
 	})
 })
 
 describe('the chapel badge', () => {
-	let at = (date: string, time: string) => plainMoment(`${date}T${time}`, 'YYYY-MM-DD[T]HH:mm:ss')
-
 	// data/building-hours/3-1-post-office.yaml
 	let postOffice: BuildingType = {
 		name: 'Post Office',
@@ -194,5 +190,35 @@ describe('the chapel badge', () => {
 
 	it('reads Open once chapel has let out', () => {
 		expect(getShortBuildingStatus(postOffice, at('2026-09-07', '10:35:00'))).toBe('Open')
+	})
+})
+
+describe('a building reachable by something that is not a door', () => {
+	const sarn: BuildingType = {
+		name: 'SARN',
+		category: 'Health and Wellness',
+		breakSchedule: undefined,
+		schedule: [
+			{title: 'Office', hours: [{days: ['Tu'], from: '7:00pm', to: '8:00pm'}]},
+			{
+				title: 'Phone',
+				isPhysicallyOpen: false,
+				status: {symbol: 'phone.circle', name: 'Phone'},
+				hours: [{days: ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'], from: '8:00pm', to: '8:00am'}],
+			},
+		],
+	}
+
+	it('reads Service when only the service is running', () => {
+		// 2026-09-08 is a Tuesday; the office shut at 8pm.
+		expect(getShortBuildingStatus(sarn, at('2026-09-08', '22:00:00'))).toBe('Service')
+	})
+
+	it('prefers the door when both are open', () => {
+		expect(getShortBuildingStatus(sarn, at('2026-09-08', '19:30:00'))).toBe('Almost Closed')
+	})
+
+	it('reads Closed when neither is running', () => {
+		expect(getShortBuildingStatus(sarn, at('2026-09-08', '14:00:00'))).toBe('Closed')
 	})
 })

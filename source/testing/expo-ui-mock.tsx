@@ -96,6 +96,7 @@ export const textInputAutocapitalization = named(
 	'autocapitalization',
 )
 export const layoutPriority = named('layoutPriority', 'priority')
+export const allowsTightening = named('allowsTightening', 'value')
 export const textSelection = named('textSelection', 'value')
 export const tint = named('tint', 'color')
 export const truncationMode = named('truncationMode', 'mode')

@@ -6,7 +6,9 @@ jest.mock('@frogpond/launch-arguments', () => ({
 	isUITesting: false,
 }))
 
-import {useMomentTimer} from '../index'
+import moment from 'moment-timezone'
+import {now, useMomentTimer} from '../index'
+import {useNowOverride} from '../override'
 
 const ONE_MINUTE = 60000
 
@@ -137,5 +139,24 @@ describe('useMomentTimer', () => {
 		await unmount()
 
 		expect(appStateHandlers).toHaveLength(0)
+	})
+})
+
+describe('a frozen clock', () => {
+	afterEach(() => {
+		useNowOverride.getState().clear()
+	})
+
+	it('reports the frozen moment rather than the real one', () => {
+		useNowOverride.getState().freeze(moment.tz('2026-09-07 10:05', 'America/Chicago'))
+
+		expect(now().format('YYYY-MM-DD HH:mm')).toBe('2026-09-07 10:05')
+	})
+
+	it('goes back to the real clock when cleared', () => {
+		useNowOverride.getState().freeze(moment.tz('2026-09-07 10:05', 'America/Chicago'))
+		useNowOverride.getState().clear()
+
+		expect(now().format('YYYY-MM-DD HH:mm')).not.toBe('2026-09-07 10:05')
 	})
 })
