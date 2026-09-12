@@ -8,6 +8,7 @@ links:
 schedule:
   - title: On Campus Pizza Delivery
     isPhysicallyOpen: false
+    status: {symbol: figure.walk.circle, name: Delivery}
     hours:
       - {days: [Mo, Tu, We, Th, Fr, Sa, Su], from: '7:00pm', to: '12:00am'}
 
