@@ -55,3 +55,42 @@ order by o.start_utc`
 
 	return {sql, params}
 }
+
+/**
+ * Every value at least one event in the window carries, tallied.
+ *
+ * `count(distinct e.dedupe_key)` behind an `exists` subquery rather than a
+ * join to `occurrence`: joining returns one row per occurrence, so an event
+ * recurring twice inside the window would be counted twice, and the tally has
+ * to answer "how many events would this leave me".
+ *
+ * Counted across every source rather than over `visible_event`, deliberately.
+ * A deduped event should count once, and a tag either copy contributes should
+ * count — which is the same union the hydrated row applies.
+ *
+ * Sorted Z-A because SwiftUI's `Menu` renders its contents bottom-to-top, so
+ * this reads A-Z on screen. See `source/features/calendar/filter.ts`.
+ */
+export function facetsQuery(args: {
+	axis: 'category' | 'organization'
+	window: Window
+	sourceIds: string[]
+}): Statement {
+	let {axis, window, sourceIds} = args
+
+	let sql = `
+select t.value as value, count(distinct e.dedupe_key) as count
+from event_tag t
+join event e on e.source_id = t.source_id and e.event_key = t.event_key
+where t.axis = ?
+  and e.source_id in (${placeholders(sourceIds.length)})
+  and exists (
+    select 1 from occurrence o
+    where o.source_id = e.source_id and o.event_key = e.event_key
+      and ${RANGE_PREDICATE}
+  )
+group by t.value
+order by t.value desc`
+
+	return {sql, params: [axis, ...sourceIds, ...rangeParams(window)]}
+}

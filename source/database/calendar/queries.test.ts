@@ -4,7 +4,7 @@ import {describe, it} from 'node:test'
 import {ensureSchema} from '../schema.ts'
 import type {SqlRunner, Statement} from '../sql.ts'
 import {openTestDatabase} from '../testing/harness.ts'
-import {occurrencesQuery, type Window} from './queries.ts'
+import {facetsQuery, occurrencesQuery, type Window} from './queries.ts'
 
 export const WINDOW: Window = {
 	fromUtc: Date.UTC(2026, 8, 14),
@@ -137,5 +137,84 @@ describe('occurrencesQuery', () => {
 			}),
 		)
 		assert.deepEqual(mismatched, [], 'filters are an AND, not an OR')
+	})
+})
+
+describe('facetsQuery', () => {
+	it('counts an event once however many occurrences it has in range', () => {
+		let runner = seed()
+		// A second occurrence for the same event, also inside the window.
+		runner.run({
+			sql: 'insert into occurrence values (?,?,0,?,?,null,null)',
+			params: ['stolaf', 'tagged', Date.UTC(2026, 8, 28, 12), Date.UTC(2026, 8, 28, 13)],
+		})
+		let rows = runner.all<{value: string; count: number}>(
+			facetsQuery({axis: 'category', window: WINDOW, sourceIds: ['stolaf']}),
+		)
+		assert.deepEqual(rows, [{value: 'Music', count: 1}])
+	})
+
+	it('unions tags across a dedupe key and counts the event once', () => {
+		let runner = seed()
+		runner.run({
+			sql: 'insert into event values (?,?,?,?,?,?,?)',
+			params: ['presence', 'dup', 1, 'dk-tagged', 'Tagged', 'Somewhere', '{}'],
+		})
+		runner.run({
+			sql: 'insert into occurrence values (?,?,0,?,?,null,null)',
+			params: ['presence', 'dup', Date.UTC(2026, 8, 21, 12), Date.UTC(2026, 8, 21, 13)],
+		})
+		runner.run({
+			sql: 'insert into event_tag values (?,?,?,?)',
+			params: ['presence', 'dup', 'organization', 'Student Activities'],
+		})
+
+		let rows = runner.all<{value: string; count: number}>(
+			facetsQuery({axis: 'organization', window: WINDOW, sourceIds: ['stolaf', 'presence']}),
+		)
+		assert.deepEqual(rows, [
+			{value: 'Student Activities', count: 1},
+			{value: 'Music Dept', count: 1},
+		])
+	})
+
+	it('sorts Z-A, because the SwiftUI menu renders bottom-to-top', () => {
+		let runner = seed()
+		runner.run({
+			sql: 'insert into event_tag values (?,?,?,?)',
+			params: ['stolaf', 'inside', 'category', 'Athletics'],
+		})
+		let rows = runner.all<{value: string}>(
+			facetsQuery({axis: 'category', window: WINDOW, sourceIds: ['stolaf']}),
+		)
+		assert.deepEqual(
+			rows.map((r) => r.value),
+			['Music', 'Athletics'],
+		)
+	})
+
+	it('agrees with the filter query for every value it reports', () => {
+		let runner = seed()
+		for (let axis of ['category', 'organization'] as const) {
+			let facets = runner.all<{value: string; count: number}>(
+				facetsQuery({axis, window: WINDOW, sourceIds: ['stolaf']}),
+			)
+			assert.ok(facets.length > 0, `${axis} produced no facets to check`)
+			for (let facet of facets) {
+				let matched = runner.all<{event_key: string}>(
+					occurrencesQuery({
+						window: WINDOW,
+						sourceIds: ['stolaf'],
+						filters: [{axis, value: facet.value}],
+					}),
+				)
+				let distinct = new Set(matched.map((row) => row.event_key))
+				assert.equal(
+					distinct.size,
+					facet.count,
+					`"${facet.value}" is tallied ${facet.count} but filters to ${distinct.size}`,
+				)
+			}
+		}
 	})
 })
