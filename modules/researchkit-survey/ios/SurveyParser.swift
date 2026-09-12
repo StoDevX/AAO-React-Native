@@ -229,6 +229,65 @@ struct SurveyParser {
 			let step = dict["step"] as? Int ?? 1
 			return ORKTimeIntervalAnswerFormat(defaultInterval: defaultInterval, step: step)
 
+		case "textChoiceOther":
+			guard let choicesArray = dict["choices"] as? [[String: Any]], !choicesArray.isEmpty else {
+				throw SurveyParserError.emptyChoices(questionId: questionId)
+			}
+			let otherPlaceholder = dict["otherPlaceholder"] as? String ?? "Other"
+			var textChoices: [ORKTextChoice] = choicesArray.map { choice in
+				ORKTextChoice(
+					text: choice["text"] as? String ?? "",
+					value: (choice["value"] as? String ?? "") as NSString
+				)
+			}
+			let otherChoice = ORKTextChoiceOther.choice(
+				withText: "Other",
+				detailText: nil,
+				value: "other" as NSString,
+				exclusive: false,
+				textViewPlaceholderText: otherPlaceholder
+			)
+			textChoices.append(otherChoice)
+			let styleStr = dict["style"] as? String ?? "singleChoice"
+			let style: ORKChoiceAnswerStyle = styleStr == "multipleChoice" ? .multipleChoice : .singleChoice
+			return ORKTextChoiceAnswerFormat(style: style, textChoices: textChoices)
+
+		case "imageChoice":
+			guard let choicesArray = dict["choices"] as? [[String: Any]], !choicesArray.isEmpty else {
+				throw SurveyParserError.emptyChoices(questionId: questionId)
+			}
+			var imageChoices: [ORKImageChoice] = []
+			for choice in choicesArray {
+				let text = choice["text"] as? String ?? ""
+				let value = (choice["value"] as? String ?? "") as NSString
+				var image: UIImage?
+
+				if let imageDict = choice["image"] as? [String: String] {
+					if let sfSymbol = imageDict["sfSymbol"] {
+						image = UIImage(systemName: sfSymbol)
+					} else if let urlString = imageDict["url"],
+						let url = URL(string: urlString),
+						let data = try? Data(contentsOf: url) {
+						image = UIImage(data: data)
+					}
+				}
+
+				guard let validImage = image else {
+					throw SurveyParserError.invalidImageChoice(questionId: questionId)
+				}
+
+				imageChoices.append(ORKImageChoice(normalImage: validImage, selectedImage: nil, text: text, value: value))
+			}
+			let styleStr = dict["style"] as? String ?? "singleChoice"
+			let style: ORKChoiceAnswerStyle = styleStr == "multipleChoice" ? .multipleChoice : .singleChoice
+			return ORKImageChoiceAnswerFormat(imageChoices: imageChoices, style: style, vertical: false)
+
+		case "location":
+			let format = ORKLocationAnswerFormat()
+			format.useCurrentLocation = false
+			format.placeholder = dict["placeholder"] as? String
+			return format
+
 		default:
 			throw SurveyParserError.unknownQuestionType(type)
 		}
