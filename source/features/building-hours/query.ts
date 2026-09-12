@@ -6,6 +6,7 @@ import {selectFavoriteBuildings, useAppSelector} from '../../redux'
 import {favoriteNamesForCampus} from '../../redux/parts/buildings'
 import bundledBuildings from '../../../docs/building-hours.json'
 import {BuildingType} from './types'
+import {useForceBundledData} from './dev/data-source-store'
 
 /** The two campuses that serve building hours through this feature. */
 export type Campus = 'stolaf' | 'carleton'
@@ -41,7 +42,11 @@ function fetchBuildings(campus: Campus) {
 		// server once it merges, and a test for it would fail in between for a
 		// reason nobody could act on. Carleton's data lives outside this
 		// repository, so it still comes over the wire.
-		if (isUITesting && campus === 'stolaf') {
+		//
+		// The dev override takes the same route, for the same reason: a field
+		// added here is invisible on a device until the server has it.
+		let forced = useForceBundledData.getState().forced
+		if ((isUITesting || forced) && campus === 'stolaf') {
 			return (bundledBuildings as {data: BuildingType[]}).data
 		}
 
