@@ -16,6 +16,8 @@ function wrap(db: SQLite.SQLiteDatabase): SqlRunner {
 		exec: (sql) => db.execSync(sql),
 		all: <Row>(stmt: Statement) => db.getAllSync<Row>(stmt.sql, stmt.params),
 		run: (stmt: Statement) => void db.runSync(stmt.sql, stmt.params),
+		// Commits if `task` returns, rolls back if it throws.
+		transaction: (task) => db.withTransactionSync(task),
 	}
 }
 

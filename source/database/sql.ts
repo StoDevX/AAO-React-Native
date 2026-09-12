@@ -19,6 +19,12 @@ export interface SqlRunner {
 	exec(sql: string): void
 	all<Row>(stmt: Statement): Row[]
 	run(stmt: Statement): void
+	/**
+	 * Runs `task` as one transaction: everything it writes commits together,
+	 * or none of it does. A throw inside `task` rolls the transaction back and
+	 * rethrows, leaving the database exactly as it was.
+	 */
+	transaction(task: () => void): void
 }
 
 /**

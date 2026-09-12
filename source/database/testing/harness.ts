@@ -26,5 +26,19 @@ export function openTestDatabase(): SqlRunner {
 				.all(...stmt.params)
 				.map((row) => ({...row})) as Row[],
 		run: (stmt: Statement) => void db.prepare(stmt.sql).run(...stmt.params),
+		// `node:sqlite` has no transaction helper of its own, so this drives
+		// the same begin/commit/rollback `expo-sqlite`'s withTransactionSync
+		// does under the hood -- a throw from `task` must roll back for real,
+		// or a rollback test here would pass against a no-op.
+		transaction: (task) => {
+			db.exec('begin')
+			try {
+				task()
+				db.exec('commit')
+			} catch (err) {
+				db.exec('rollback')
+				throw err
+			}
+		},
 	}
 }
