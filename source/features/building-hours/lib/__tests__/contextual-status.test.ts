@@ -49,6 +49,52 @@ describe('contextualStatus', () => {
 		expect(result).toBe('Opens at 5 PM')
 	})
 
+	it('names the earliest opening today, not the first one listed', () => {
+		// The shape of data/building-hours/1-2-pause-kitchen.yaml: a delivery set
+		// written before the kitchen's own hours, because it is the notable one
+		// rather than the early one. Reading the row in file order put "Opens at
+		// 7 PM" on screen all morning. Kept as a fixture rather than read from
+		// the file, since marking that set not physically open is a separate
+		// change and would stop the real file exercising this.
+		let building = makeBuilding([
+			{
+				title: 'On Campus Pizza Delivery',
+				hours: [{days: ['Mo', 'Tu', 'We', 'Th', 'Fr'], from: '7:00pm', to: '12:00am'}],
+			},
+			{
+				title: 'Hours',
+				hours: [
+					{days: ['Mo', 'Tu', 'We', 'Th', 'Fr'], from: '11:00am', to: '2:00pm'},
+					{days: ['Mo', 'Tu', 'We', 'Th', 'Fr'], from: '5:00pm', to: '12:00am'},
+				],
+			},
+		])
+
+		expect(contextualStatus(building, moment.tz('2026-09-07 10:00', timezone))).toBe(
+			'Opens at 11 AM',
+		)
+		// And again once the first window has passed: the answer moves to the
+		// kitchen's evening window, still not the delivery one.
+		expect(contextualStatus(building, moment.tz('2026-09-07 14:30', timezone))).toBe(
+			'Opens at 5 PM',
+		)
+	})
+
+	it('names the earliest opening when one set lists its rows out of order', () => {
+		let building = makeBuilding([
+			{
+				title: 'Hours',
+				hours: [
+					{days: ['Mo'], from: '5:00pm', to: '8:00pm'},
+					{days: ['Mo'], from: '9:00am', to: '12:00pm'},
+				],
+			},
+		])
+		let now = moment.tz('2026-09-07 08:00', timezone) // Monday 8am
+
+		expect(contextualStatus(building, now)).toBe('Opens at 9 AM')
+	})
+
 	it('returns "Opens in X min" when almost open', () => {
 		let building = makeBuilding([
 			{
