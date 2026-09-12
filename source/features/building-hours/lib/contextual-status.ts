@@ -48,8 +48,17 @@ function findChapelReopenForBuilding(building: BuildingType, now: Moment): Momen
 	return null
 }
 
+/**
+ * The soonest window today that has not opened yet at `now`, or null when
+ * nothing opens again today.
+ *
+ * Every window is weighed rather than returning at the first future one, because
+ * sets are grouped by what they describe and not by time -- a set written later
+ * can hold the earlier window, and its rows need not run in order either.
+ */
 function findNextOpenToday(building: BuildingType, now: Moment): OpenWindow | null {
 	let dayOfWeek = getDayOfWeek(now)
+	let earliest: OpenWindow | null = null
 
 	for (let set of building.schedule || []) {
 		if (set.isPhysicallyOpen === false) continue
@@ -57,13 +66,14 @@ function findNextOpenToday(building: BuildingType, now: Moment): OpenWindow | nu
 		for (let hours of set.hours) {
 			if (!hours.days.includes(dayOfWeek)) continue
 
-			let {open, close} = windowOpeningOn(hours, now)
-			if (now.isBefore(open)) {
-				return {open, close}
+			let window = windowOpeningOn(hours, now)
+			if (now.isBefore(window.open) && (!earliest || window.open.isBefore(earliest.open))) {
+				earliest = window
 			}
 		}
 	}
-	return null
+
+	return earliest
 }
 
 /**
