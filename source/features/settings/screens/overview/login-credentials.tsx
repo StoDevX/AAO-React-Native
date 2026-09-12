@@ -85,9 +85,13 @@ export const CredentialsLoginSection = (): React.ReactNode => {
 	let isLoggedIn = Boolean(credentials.data)
 	let hasBothCredentials = Boolean(username && password)
 
-	let sectionFooter = isLoggedIn
-		? 'St. Olaf login enables the "meals remaining" feature.'
-		: 'St. Olaf login enables the "meals remaining" feature. Sign in to see this data.'
+	let loginDisabled = true
+
+	let sectionFooter = loginDisabled
+		? 'St. Olaf login is unavailable.'
+		: isLoggedIn
+			? 'St. Olaf login enables the "meals remaining" feature.'
+			: 'St. Olaf login enables the "meals remaining" feature. Sign in to see this data.'
 
 	let actionPending = logIn.isPending || logOut.isPending
 
@@ -102,7 +106,7 @@ export const CredentialsLoginSection = (): React.ReactNode => {
 						modifiers={[
 							submitLabel('next'),
 							onSubmit(() => passwordInputRef.current?.focus()),
-							disabled(actionPending),
+							disabled(loginDisabled || actionPending),
 						]}
 						onTextChange={setUsername}
 						placeholder="username"
@@ -114,7 +118,7 @@ export const CredentialsLoginSection = (): React.ReactNode => {
 						modifiers={[
 							submitLabel('done'),
 							onSubmit(() => logIn.mutate()),
-							disabled(actionPending),
+							disabled(loginDisabled || actionPending),
 						]}
 						onTextChange={setPassword}
 						placeholder="password"
@@ -124,7 +128,7 @@ export const CredentialsLoginSection = (): React.ReactNode => {
 			)}
 
 			<LoginButton
-				disabled={!hasBothCredentials || actionPending}
+				disabled={loginDisabled || !hasBothCredentials || actionPending}
 				label="St. Olaf"
 				loading={actionPending}
 				loggedIn={isLoggedIn}
