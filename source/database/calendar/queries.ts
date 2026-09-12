@@ -106,3 +106,38 @@ order by t.value desc`
 
 	return {sql, params: [axis, ...sourceIds, ...rangeParams(window)]}
 }
+
+/** Separator for `group_concat`. A unit separator cannot occur in a sponsor name. */
+export const ORG_SEPARATOR = '\x1F'
+
+/**
+ * The sponsoring organisations for each of `dedupeKeys`, as one delimited
+ * string per key.
+ *
+ * This is the cross-source union. Today `dedupeEvents` writes it into the
+ * surviving event by hand, because both calendars name sponsors and each is
+ * authoritative about the ones it lists — dropping the displaced copy's would
+ * hide the event from a filter on an organisation that really does sponsor it.
+ * Grouping tags by `dedupe_key` rather than by `event_key` *is* that union.
+ *
+ * Order matters and is asserted by a test: the winner's own names, in their own
+ * order, then names only a displaced copy contributes. The `order by` sits
+ * *inside* `group_concat` because an aggregate is not guaranteed to inherit a
+ * subquery's ordering, even though SQLite happens to.
+ */
+export function organizationsQuery(dedupeKeys: string[]): Statement {
+	let sql = `
+select dedupe_key,
+       group_concat(value, ? order by source_rank, tag_rowid) as orgs
+from (
+  select e.dedupe_key as dedupe_key, t.value as value,
+         e.source_rank as source_rank, t.rowid as tag_rowid
+  from event_tag t
+  join event e on e.source_id = t.source_id and e.event_key = t.event_key
+  where t.axis = 'organization'
+    and e.dedupe_key in (${placeholders(dedupeKeys.length)})
+)
+group by dedupe_key`
+
+	return {sql, params: [ORG_SEPARATOR, ...dedupeKeys]}
+}

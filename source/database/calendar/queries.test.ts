@@ -4,7 +4,13 @@ import {describe, it} from 'node:test'
 import {ensureSchema} from '../schema.ts'
 import type {SqlRunner, Statement} from '../sql.ts'
 import {openTestDatabase} from '../testing/harness.ts'
-import {facetsQuery, occurrencesQuery, type Window} from './queries.ts'
+import {
+	facetsQuery,
+	occurrencesQuery,
+	ORG_SEPARATOR,
+	organizationsQuery,
+	type Window,
+} from './queries.ts'
 
 export const WINDOW: Window = {
 	fromUtc: Date.UTC(2026, 8, 14),
@@ -243,5 +249,23 @@ describe('facetsQuery', () => {
 				)
 			}
 		}
+	})
+})
+
+describe('organizationsQuery', () => {
+	it("lists the winner's sponsors first, then ones only the loser names", () => {
+		let runner = seed()
+		runner.run({
+			sql: 'insert into event values (?,?,?,?,?,?,?)',
+			params: ['presence', 'dup', 1, 'dk-tagged', 'Tagged', 'Somewhere', '{}'],
+		})
+		runner.run({
+			sql: 'insert into event_tag values (?,?,?,?)',
+			params: ['presence', 'dup', 'organization', 'Student Activities'],
+		})
+
+		let rows = runner.all<{dedupe_key: string; orgs: string}>(organizationsQuery(['dk-tagged']))
+		assert.equal(rows.length, 1)
+		assert.deepEqual(rows[0].orgs.split(ORG_SEPARATOR), ['Music Dept', 'Student Activities'])
 	})
 })
