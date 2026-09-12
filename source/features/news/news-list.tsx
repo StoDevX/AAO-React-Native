@@ -49,7 +49,7 @@ export const NewsList = (props: Props): React.ReactNode => {
 			<VStack spacing={0}>
 				<List
 					modifiers={[
-						listStyle('plain'),
+						listStyle('insetGrouped'),
 						refreshable(async () => {
 							await refetch()
 						}),
@@ -77,6 +77,6 @@ export const NewsList = (props: Props): React.ReactNode => {
 const styles = StyleSheet.create({
 	host: {
 		flex: 1,
-		backgroundColor: c.systemBackground,
+		backgroundColor: c.systemGroupedBackground,
 	},
 })
