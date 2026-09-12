@@ -8,8 +8,11 @@ public class ResearchKitSurveyModule: Module {
             SurveyPresenter.shared.present(definition: definition, promise: promise)
         }
 
-        Function("cancelSurvey") {
-            SurveyPresenter.shared.cancel()
-        }.runOnQueue(.main)
+        AsyncFunction("cancelSurvey") { (promise: Promise) in
+            DispatchQueue.main.async {
+                SurveyPresenter.shared.cancel()
+                promise.resolve(nil)
+            }
+        }
     }
 }
