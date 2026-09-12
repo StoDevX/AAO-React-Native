@@ -50,6 +50,6 @@ export function filterEntries(entries: NormalizedEntry[], query: string): Normal
 }
 
 export function groupEntries(entries: NormalizedEntry[]): DictionaryGroup[] {
-	let grouped = groupBy(entries, (entry) => entry.word[0] || '?')
+	let grouped = groupBy(entries, (entry) => entry.word[0]?.toLocaleUpperCase() || '?')
 	return Object.entries(grouped).map(([title, data]) => ({title, data}))
 }
