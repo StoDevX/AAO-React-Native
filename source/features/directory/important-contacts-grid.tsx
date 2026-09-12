@@ -75,8 +75,6 @@ export function ImportantContactsGrid({
 			spacing={TILE_SPACING}
 		>
 			<HStack modifiers={[frame({maxWidth: FILL_WIDTH})]}>
-				<UIText modifiers={[font({textStyle: 'headline'})]}>Important Contacts</UIText>
-				<Spacer />
 				{contactsError && contacts ? (
 					<Button
 						modifiers={[buttonStyle('plain'), accessibilityLabel(STALE_CONTACTS_LABEL)]}
