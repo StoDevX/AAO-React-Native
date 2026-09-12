@@ -2,26 +2,62 @@
   icon: graduationcap.fill
   gradient: gold
 
-- name: Service
-  icon: hands.and.sparkles.fill
-  gradient: green
+- name: Awareness
+  icon: lightbulb.fill
+  gradient: yellow
 
-- name: Religious
-  icon: sparkles
-  gradient: purple
+- name: Club Sports - Competitive
+  icon: trophy.fill
+  gradient: red
+
+- name: Club Sports - Recreational
+  icon: figure.run
+  gradient: mint
+
+- name: Demo
+  icon: testtube.2
+  gradient: gray
+
+- name: Departments
+  icon: building.columns.fill
+  gradient: indigo
+
+- name: Honor Houses
+  icon: house.fill
+  gradient: tan
+
+- name: Multicultural
+  icon: globe.americas.fill
+  gradient: violet
 
 - name: Performance
   icon: theatermasks.fill
   gradient: pink
 
-- name: Special Interest
-  icon: star.fill
-  gradient: orange
-
 - name: Pre-Professional
   icon: briefcase.fill
   gradient: blue
 
-- name: Departments
-  icon: building.columns.fill
-  gradient: indigo
+- name: Religious
+  icon: sparkles
+  gradient: purple
+
+- name: Residence Halls
+  icon: building.2.fill
+  gradient: sage
+
+- name: Service
+  icon: hands.and.sparkles.fill
+  gradient: green
+
+- name: Special Interest
+  icon: star.fill
+  gradient: orange
+
+- name: Student Leadership
+  icon: person.3.sequence.fill
+  gradient: light-blue
+
+- name: Student-Led Campus Organizations
+  icon: person.2.fill
+  gradient: pale-gold
