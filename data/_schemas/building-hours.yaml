@@ -45,6 +45,13 @@ definitions:
       notes: {type: string}
       closedForChapelTime: {type: boolean}
       isPhysicallyOpen: {type: boolean}
+      status:
+        type: object
+        additionalProperties: false
+        required: [name]
+        properties:
+          symbol: {type: string}
+          name: {type: string, maxLength: 12}
       hours:
         type: array
         items: {$ref: '_defs.json#/definitions/day'}
