@@ -141,3 +141,27 @@ group by dedupe_key`
 
 	return {sql, params: [ORG_SEPARATOR, ...dedupeKeys]}
 }
+
+/**
+ * One event, named by its own `(source_id, event_key)` rather than by
+ * `dedupe_key` -- a deep link names a specific source's copy, and it has to
+ * resolve even when another source's copy won the dedupe. Selecting from
+ * `visible_event` would 404 the losing copy's route; this selects from
+ * `event` directly, so both copies of a duplicated event stay reachable by
+ * their own key.
+ *
+ * `toRows` writes exactly one occurrence per event today, but the join (over
+ * a plain equi-join, ordered and capped) is the same shape `occurrencesQuery`
+ * would need if that ever changes, rather than assuming it never will.
+ */
+export function oneEventQuery(sourceId: string, eventKey: string): Statement {
+	let sql = `
+select e.source_id, e.event_key, e.dedupe_key, e.wire, o.start_utc
+from event e
+join occurrence o on o.source_id = e.source_id and o.event_key = e.event_key
+where e.source_id = ? and e.event_key = ?
+order by o.start_utc
+limit 1`
+
+	return {sql, params: [sourceId, eventKey]}
+}

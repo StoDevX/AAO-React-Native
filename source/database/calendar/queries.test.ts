@@ -7,6 +7,7 @@ import {openTestDatabase} from '../testing/harness.ts'
 import {
 	facetsQuery,
 	occurrencesQuery,
+	oneEventQuery,
 	ORG_SEPARATOR,
 	organizationsQuery,
 	type Window,
@@ -333,5 +334,57 @@ describe('organizationsQuery', () => {
 		let rows = runner.all<{dedupe_key: string; orgs: string}>(organizationsQuery(['dk-tagged']))
 		assert.equal(rows.length, 1)
 		assert.deepEqual(rows[0].orgs.split(ORG_SEPARATOR), ['Music Dept', 'Student Activities'])
+	})
+})
+
+describe('oneEventQuery', () => {
+	it('resolves a single event by its own source and key', () => {
+		let runner = seed()
+		let rows = runner.all<{source_id: string; event_key: string; start_utc: number}>(
+			oneEventQuery('stolaf', 'inside'),
+		)
+		assert.equal(rows.length, 1)
+		assert.equal(rows[0].source_id, 'stolaf')
+		assert.equal(rows[0].event_key, 'inside')
+		assert.equal(rows[0].start_utc, Date.UTC(2026, 8, 20, 18))
+	})
+
+	it('returns nothing for a key that does not exist', () => {
+		let runner = seed()
+		let rows = runner.all(oneEventQuery('stolaf', 'nope'))
+		assert.deepEqual(rows, [])
+	})
+
+	// The case this query exists for: a deep link names one source's copy of
+	// an event, and it has to resolve even when another source's copy won the
+	// dedupe. `visible_event` would 404 the loser -- selecting from `event`
+	// directly must not.
+	it('resolves the losing copy of a duplicated event, not just the winner', () => {
+		let runner = seed()
+		runner.run({
+			sql: 'insert into event values (?,?,?,?,?,?,?)',
+			params: ['presence', 'dup', 1, 'dk-inside', 'Inside (Presence copy)', 'Somewhere', '{}'],
+		})
+		runner.run({
+			sql: 'insert into occurrence values (?,?,0,?,?,null,null)',
+			params: ['presence', 'dup', Date.UTC(2026, 8, 20, 18), Date.UTC(2026, 8, 20, 20)],
+		})
+
+		// The winner, by source_rank, is 'stolaf'/'inside' -- confirm the loser
+		// is absent from visible_event before proving the direct query still
+		// reaches it.
+		let visible = runner.all<{source_id: string}>({
+			sql: 'select source_id from visible_event where dedupe_key = ?',
+			params: ['dk-inside'],
+		})
+		assert.deepEqual(visible, [{source_id: 'stolaf'}])
+
+		let rows = runner.all<{source_id: string; event_key: string; dedupe_key: string}>(
+			oneEventQuery('presence', 'dup'),
+		)
+		assert.equal(rows.length, 1)
+		assert.equal(rows[0].source_id, 'presence')
+		assert.equal(rows[0].event_key, 'dup')
+		assert.equal(rows[0].dedupe_key, 'dk-inside')
 	})
 })
