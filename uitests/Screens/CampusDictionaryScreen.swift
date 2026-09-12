@@ -587,19 +587,13 @@ struct CampusDictionaryScreen: Screen {
 	/// `editMode` went active -- `ForEach`'s `onMove` inside a `Form` is the
 	/// one piece of this flow the plan has no fallback for, so this is a real
 	/// check of the drawn hierarchy, not a proxy for the toggle having been
-	/// tapped. Captures a screenshot and the accessibility tree as attachments
-	/// -- `keepAlways`, same as `Screen.capture` -- so a failure here can be
-	/// read from the result bundle rather than re-run to find out what
-	/// happened; a bare `print` of `debugDescription` does not survive into
-	/// the bundle at all.
+	/// tapped. Captures a screenshot and the accessibility tree so a failure
+	/// here can be read from the result bundle rather than re-run to find out
+	/// what happened.
 	@discardableResult
 	func verifyReorderHandlesAppear(senseCount expectedCount: Int) -> Self {
 		capture("Dictionary form in reorder mode")
-
-		let treeDump = XCTAttachment(string: app.debugDescription)
-		treeDump.name = "Reorder mode accessibility tree"
-		treeDump.lifetime = .keepAlways
-		XCTContext.runActivity(named: "Reorder mode accessibility tree") { $0.add(treeDump) }
+		captureAccessibilityTree("Reorder mode accessibility tree")
 
 		// Asserting an exact count, not merely `> 0`, closes the loophole
 		// `reorderHandles` scopes away a second time: a query that happened to
