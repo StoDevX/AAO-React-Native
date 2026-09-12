@@ -1,6 +1,6 @@
 import * as React from 'react'
-import {StyleSheet, Image as RNImage} from 'react-native'
-import {Host, HStack, List, RNHostView, Section, Text, VStack} from '@expo/ui/swift-ui'
+import {StyleSheet} from 'react-native'
+import {Host, HStack, List, Section, Text, VStack} from '@expo/ui/swift-ui'
 import {
 	font,
 	foregroundStyle,
@@ -16,6 +16,7 @@ import {callPhone} from '../../../source/components/call-phone'
 import {sendEmail} from '../../../source/components/send-email'
 import {DetailRow, DisclosureRow} from '../../../source/components/rows'
 import * as c from '@frogpond/colors'
+import {PersonPhoto} from '../../../source/features/directory/person-photo'
 import {directoryContactOptions} from '../../../source/features/directory/query'
 import type {
 	CampusLocation,
@@ -81,7 +82,6 @@ export default function DirectoryDetailPage(): React.ReactNode {
 		campusLocations,
 		displayName,
 		displayTitle,
-		photo,
 		officeHours,
 		profileUrl,
 		email,
@@ -109,21 +109,7 @@ export default function DirectoryDetailPage(): React.ReactNode {
 								{displayTitle ? <Text modifiers={HEADER_MODIFIERS}>{displayTitle}</Text> : null}
 							</VStack>
 
-							{photo ? (
-								/* A network image, so React Native draws it and SwiftUI
-								   hosts it -- at a stated size, since a hosted view has no
-								   bounds of its own. */
-								<HStack modifiers={[frame({width: PHOTO_WIDTH, height: PHOTO_HEIGHT})]}>
-									<RNHostView matchContents={false}>
-										<RNImage
-											accessibilityIgnoresInvertColors={true}
-											resizeMode="cover"
-											source={{uri: photo}}
-											style={styles.image}
-										/>
-									</RNHostView>
-								</HStack>
-							) : null}
+							<PersonPhoto person={contact} width={PHOTO_WIDTH} />
 						</HStack>
 					</Section>
 
@@ -195,10 +181,9 @@ export default function DirectoryDetailPage(): React.ReactNode {
 	)
 }
 
-/// Portrait rather than square: a directory photo is a head-and-shoulders
-/// shot, and a square crops it to the chin.
+/// The photo's height follows from `TILE_ASPECT`, so the crop here and the crop
+/// on the search grid are the same picture.
 const PHOTO_WIDTH = 80
-const PHOTO_HEIGHT = 104
 
 const NAME_MODIFIERS = [font({textStyle: 'title2', weight: 'semibold'}), foregroundStyle(c.label)]
 
@@ -218,10 +203,5 @@ const styles = StyleSheet.create({
 	host: {
 		flex: 1,
 		backgroundColor: c.systemGroupedBackground,
-	},
-	image: {
-		width: PHOTO_WIDTH,
-		height: PHOTO_HEIGHT,
-		borderRadius: 6,
 	},
 })

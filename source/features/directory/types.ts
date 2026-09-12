@@ -55,6 +55,11 @@ export type DirectoryItem = {
 	lastName: string
 	officeHours: OfficeHours | null
 	onLeave: OnLeave | null
+	/**
+	 * The full-size portrait, 1337x2003 and 205 KB. Nothing reads it: both
+	 * screens draw `thumbnail`, which is the same picture at a size they can
+	 * use. Kept for a full-screen photo view.
+	 */
 	photo: string
 	profileUrl: string | null
 	pronouns: Array<string> | null
