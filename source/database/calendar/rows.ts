@@ -1,5 +1,5 @@
 import type {EventType} from '@frogpond/event-type'
-import {addDays} from 'date-fns'
+import {addDays, isAfter} from 'date-fns'
 
 import {convertEvents} from '../../../modules/ccc-calendar/convert.ts'
 import type {WireEvent} from '../../../modules/ccc-calendar/parsers/events.ts'
@@ -40,15 +40,23 @@ function utcDate(instant: string): string {
 	return instant.slice(0, 10)
 }
 
-/// The wire end instant's UTC date is the last calendar day the event
-/// covers, inclusive. `end_date` is stored exclusive, so it is always the
-/// day after -- this is also where a zero-length span (wire start and end
-/// sharing a UTC date) picks up a whole day, which is the same relocation
-/// `convertEvents`'s own zero-length guard makes for `EventType.endTime`.
+/// `end_date` is stored exclusive, and the wire end instant's UTC date
+/// already IS that exclusive end -- for two different reasons that happen to
+/// agree. TEC emits campus midnight expressed in UTC, so `23:59:59` on the
+/// last local day lands in the *next* UTC day; iCal emits DATE values at UTC
+/// midnight, and RFC 5545 already defines a DATE-valued `DTEND` as
+/// exclusive. Adding a day here would make every all-day event one day too
+/// long. The only adjustment is the zero-length guard: a degenerate span
+/// (wire start and end sharing a UTC date) would otherwise read as already
+/// over, so it picks up a whole day -- the same relocation `convertEvents`
+/// makes in instant space for `EventType.endTime`.
 function allDayDates(wireEvent: WireEvent): {startDate: string; endDate: string} {
 	let startDate = utcDate(wireEvent.startTime)
-	let lastInclusiveDay = new Date(utcDate(wireEvent.endTime))
-	let endDate = utcDate(addDays(lastInclusiveDay, 1).toISOString())
+	let endDate = utcDate(wireEvent.endTime)
+
+	if (!isAfter(new Date(endDate), new Date(startDate))) {
+		endDate = utcDate(addDays(new Date(startDate), 1).toISOString())
+	}
 
 	return {startDate, endDate}
 }
