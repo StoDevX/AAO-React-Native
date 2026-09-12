@@ -259,4 +259,21 @@ describe('contextualStatus', () => {
 
 		expect(contextualStatus(building, now).short).toBe('Phone until 8 AM')
 	})
+
+	it('prefers a service open now over a door that opens later', () => {
+		// SARN's line runs overnight; its office opens at 10:10am. At 3am the line
+		// is what you can actually reach, so the row must not point at the office.
+		let building = makeBuilding([
+			{title: 'Office', hours: [{days: ['We'], from: '10:10am', to: '10:30am'}]},
+			{
+				title: 'Phone',
+				isPhysicallyOpen: false,
+				status: {symbol: 'phone.circle', name: 'Phone'},
+				hours: [{days: ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'], from: '8:00pm', to: '8:00am'}],
+			},
+		])
+		let now = moment.tz('2026-09-09 03:00', timezone) // Wednesday 3am
+
+		expect(contextualStatus(building, now).short).toBe('Phone until 8 AM')
+	})
 })

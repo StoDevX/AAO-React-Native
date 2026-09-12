@@ -119,17 +119,9 @@ export function contextualStatus(building: BuildingType, now: Moment): Contextua
 		return plain(`Reopens at ${formatTime(chapelReopen)}`)
 	}
 
-	let next = findNextOpenToday(building, now)
-	if (next) {
-		let minutesUntilOpen = next.open.diff(now, 'minutes')
-		if (minutesUntilOpen <= ALMOST_THRESHOLD_MINUTES) {
-			return plain(`Opens in ${minutesUntilOpen} min`)
-		}
-		return plain(`Opens at ${formatTime(next.open)}`)
-	}
-
-	// A phone line or a delivery service is not a door, so it is only worth naming
-	// once nothing physical is open.
+	// A phone line or a delivery service is not a door, so it never outranks one.
+	// It does outrank a door that opens later, though: something reachable now
+	// beats something reachable at ten past ten.
 	let service = findOpenService(building, now)
 	if (service) {
 		let set = (building.schedule || []).find((candidate) => candidate.status === service)
@@ -139,6 +131,15 @@ export function contextualStatus(building: BuildingType, now: Moment): Contextua
 		if (window) {
 			return plain(`${service.name} until ${formatTime(window.close)}`)
 		}
+	}
+
+	let next = findNextOpenToday(building, now)
+	if (next) {
+		let minutesUntilOpen = next.open.diff(now, 'minutes')
+		if (minutesUntilOpen <= ALMOST_THRESHOLD_MINUTES) {
+			return plain(`Opens in ${minutesUntilOpen} min`)
+		}
+		return plain(`Opens at ${formatTime(next.open)}`)
 	}
 
 	// Not "Closed today": this is only reached once nothing opens again today, so
