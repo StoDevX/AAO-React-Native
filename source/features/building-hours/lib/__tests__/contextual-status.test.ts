@@ -151,6 +151,54 @@ describe('contextualStatus', () => {
 		expect(result.short).toBe('Closed')
 	})
 
+	it('counts down to a chapel closure', () => {
+		// data/building-hours/3-1-post-office.yaml; Monday chapel is 10:10-10:30am.
+		let building = makeBuilding([
+			{
+				title: 'Hours',
+				closedForChapelTime: true,
+				hours: [{days: ['Mo', 'Tu', 'We', 'Th', 'Fr'], from: '8:00am', to: '5:00pm'}],
+			},
+		])
+		let now = moment.tz('2026-09-07 10:00', timezone) // Monday, ten minutes out
+
+		expect(contextualStatus(building, now)).toEqual({
+			short: 'Chapel in 10 min',
+			long: 'Closes for chapel in 10 minutes',
+		})
+	})
+
+	it('says minute in the singular with one minute left', () => {
+		let building = makeBuilding([
+			{
+				title: 'Hours',
+				closedForChapelTime: true,
+				hours: [{days: ['Mo', 'Tu', 'We', 'Th', 'Fr'], from: '8:00am', to: '5:00pm'}],
+			},
+		])
+		let now = moment.tz('2026-09-07 10:09', timezone)
+
+		expect(contextualStatus(building, now)).toEqual({
+			short: 'Chapel in 1 min',
+			long: 'Closes for chapel in 1 minute',
+		})
+	})
+
+	it("names the day's real close before the countdown starts", () => {
+		// The whole reason chapel stays an overlay: at 9:55 this building is open
+		// until five, not until chapel.
+		let building = makeBuilding([
+			{
+				title: 'Hours',
+				closedForChapelTime: true,
+				hours: [{days: ['Mo', 'Tu', 'We', 'Th', 'Fr'], from: '8:00am', to: '5:00pm'}],
+			},
+		])
+		let now = moment.tz('2026-09-07 09:55', timezone)
+
+		expect(contextualStatus(building, now).short).toBe('Open until 5 PM')
+	})
+
 	it('says when a chapel closure lifts', () => {
 		// data/building-hours/3-1-post-office.yaml; Monday chapel is 10:10-10:30am.
 		let building = makeBuilding([

@@ -4,6 +4,7 @@ import {getDayOfWeek} from './get-day-of-week'
 import {findOpenWindow, windowOpeningOn} from './find-open-window'
 import {CHAPEL_COUNTDOWN_MINUTES, isChapelTime} from './chapel'
 import {findChapelReopen} from './find-chapel-reopen'
+import {findChapelPause} from './find-chapel-pause'
 
 const ALMOST_THRESHOLD_MINUTES = 30
 
@@ -92,6 +93,15 @@ function plain(text: string): ContextualStatus {
 export function contextualStatus(building: BuildingType, now: Moment): ContextualStatus {
 	let current = findCurrentOpen(building, now)
 	if (current) {
+		let chapelPause = findChapelPause(current.set, now)
+		if (chapelPause) {
+			let minutes = chapelPause.diff(now, 'minutes')
+			return {
+				short: `Chapel in ${minutes} min`,
+				long: `Closes for chapel in ${minutes} ${minutes === 1 ? 'minute' : 'minutes'}`,
+			}
+		}
+
 		let minutesLeft = current.close.diff(now, 'minutes')
 		if (minutesLeft <= ALMOST_THRESHOLD_MINUTES) {
 			return plain(`Closes in ${minutesLeft} min`)
