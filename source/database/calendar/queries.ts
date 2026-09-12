@@ -59,10 +59,22 @@ order by o.start_utc`
 /**
  * Every value at least one event in the window carries, tallied.
  *
- * `count(distinct e.dedupe_key)` behind an `exists` subquery rather than a
- * join to `occurrence`: joining returns one row per occurrence, so an event
- * recurring twice inside the window would be counted twice, and the tally has
- * to answer "how many events would this leave me".
+ * `count(distinct e.dedupe_key)` is what keeps the tally honest, and it is
+ * doing two jobs. It collapses an event with several occurrences in the
+ * window, and — the case that actually needs it — it collapses one event
+ * carried by two calendars where both tag it the same. A game listed by both
+ * St. Olaf and Presence, each tagging it "Athletics", is one event to the
+ * user, and the tally has to answer "how many events would this leave me" or
+ * the menu's number disagrees with the list the filter produces. Measured:
+ * that shape gives 1 under `count(distinct e.dedupe_key)` and 2 under
+ * `count(*)`.
+ *
+ * The `exists` subquery rather than a join to `occurrence` is a **performance**
+ * choice, not a correctness one — `count(distinct ...)` absorbs the row
+ * multiplication a join would cause, so both spellings return the same
+ * numbers. `exists` just stops SQLite materialising one row per occurrence
+ * before the aggregate throws them away. Do not read the two as
+ * interchangeable safety nets: only the `distinct` is load-bearing.
  *
  * Counted across every source rather than over `visible_event`, deliberately.
  * A deduped event should count once, and a tag either copy contributes should
