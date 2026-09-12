@@ -1,24 +1,19 @@
 import * as React from 'react'
-import { PlatformColor, useColorScheme } from 'react-native'
-import { Button, Image, RoundedRectangle, Text, VStack, ZStack } from '@expo/ui/swift-ui'
+import {useColorScheme} from 'react-native'
+import {Button, Image, Text, VStack, ZStack, type ImageProps} from '@expo/ui/swift-ui'
 import {
 	accessibilityLabel,
 	buttonStyle,
+	environment,
 	font,
 	foregroundStyle,
 	frame,
 	imageScale,
+	opacity,
 	padding,
-	shadow,
 } from '@expo/ui/swift-ui/modifiers'
-import { displayP3 } from '@frogpond/colors'
-import type { ViewType } from '../views'
-import {
-	homescreenIconDark,
-	homescreenIconLight,
-	homescreenTitleDark,
-	homescreenTitleLight,
-} from './colors'
+import type {ViewType} from '../views'
+import {GradientRoundedRectangle} from '../../components/gradient-tile'
 
 type Props = {
 	view: ViewType
@@ -35,60 +30,49 @@ export const SCREEN_MARGIN = 16
 /// cap the frame at a width no phone reaches and let the stack divide the space.
 export const FILL_WIDTH = 10_000
 
-function HomeScreenGradient({ view, isDarkScheme }: { view: ViewType; isDarkScheme: boolean }) {
-	let [gradientInner, gradientOuter] = view.gradient
-	return (
-		<RoundedRectangle
-			cornerRadius={27}
-			modifiers={[
-				shadow({
-					// Only show shadow in light mode.
-					color: isDarkScheme ? PlatformColor('transparent') : displayP3(gradientOuter, 0.4),
-					radius: 8,
-					y: 2,
-				}),
-				foregroundStyle({
-					type: 'radialGradient',
-					colors: [displayP3(gradientInner), displayP3(gradientOuter)],
-					center: { x: 0.5, y: 0 },
-					startRadius: 0,
-					// TODO: eventually, we want to compute this radius size to match Health/Shortcuts
-					endRadius: 129,
-				}),
-			]}
-		/>
-	)
-}
-
-function HomeScreenButtonLabel({ view, isDarkScheme }: { view: ViewType; isDarkScheme: boolean }) {
-	let titleColor = isDarkScheme ? homescreenTitleDark : homescreenTitleLight
-	let iconColor = isDarkScheme ? homescreenIconDark : homescreenIconLight
+function HomeScreenButtonLabel({
+	title,
+	icon,
+	isDarkScheme,
+}: {
+	title: string
+	icon: NonNullable<ImageProps['systemName']>
+	isDarkScheme: boolean
+}) {
 	return (
 		<VStack
 			alignment="leading"
-			modifiers={[padding({ top: 56 / 3, bottom: 49.5 / 3, horizontal: 16 })]}
+			modifiers={[
+				padding({top: 56 / 3, bottom: 49.5 / 3, horizontal: 16}),
+				// force the colors of the Image and Text below here to be inverted from typical expectations
+				environment({key: 'colorScheme', value: isDarkScheme ? 'light' : 'dark'}),
+			]}
 			spacing={10}
 		>
 			<Image
 				modifiers={[
-					frame({ height: 86 / 3 }),
+					frame({height: 86 / 3}),
 					imageScale('large'),
-					font({ textStyle: 'title3' }),
-					foregroundStyle(iconColor),
+					font({textStyle: 'title3'}),
+					foregroundStyle({type: 'hierarchical', style: 'primary'}),
+					opacity(0.8),
 				]}
-				systemName={view.icon}
+				systemName={icon}
 			/>
 
 			<Text
-				modifiers={[font({ textStyle: 'headline', weight: 'semibold' }), foregroundStyle(titleColor)]}
+				modifiers={[
+					font({textStyle: 'headline', weight: 'semibold'}),
+					foregroundStyle({type: 'hierarchical', style: 'primary'}),
+				]}
 			>
-				{view.title}
+				{title}
 			</Text>
 		</VStack>
 	)
 }
 
-export function HomeScreenButton({ view, onPress }: Props): React.ReactNode {
+export function HomeScreenButton({view, onPress}: Props): React.ReactNode {
 	let isDarkScheme = useColorScheme() === 'dark'
 
 	return (
@@ -96,14 +80,14 @@ export function HomeScreenButton({ view, onPress }: Props): React.ReactNode {
 			modifiers={[
 				buttonStyle('plain'),
 				// make a card grow to match a taller one beside it
-				frame({ maxWidth: FILL_WIDTH, maxHeight: FILL_WIDTH }),
+				frame({maxWidth: FILL_WIDTH, maxHeight: FILL_WIDTH}),
 				accessibilityLabel(view.title),
 			]}
 			onPress={onPress}
 		>
 			<ZStack alignment="topLeading">
-				<HomeScreenGradient view={view} isDarkScheme={isDarkScheme} />
-				<HomeScreenButtonLabel view={view} isDarkScheme={isDarkScheme} />
+				<GradientRoundedRectangle gradient={view.gradient} showShadow={isDarkScheme} />
+				<HomeScreenButtonLabel title={view.title} icon={view.icon} isDarkScheme={isDarkScheme} />
 			</ZStack>
 		</Button>
 	)
