@@ -211,7 +211,13 @@ struct SurveyParser {
 			return format
 
 		case "email":
-			return ORKEmailAnswerFormat()
+			let format = ORKTextAnswerFormat(maximumLength: 0)
+			format.keyboardType = .emailAddress
+			format.autocapitalizationType = .none
+			format.autocorrectionType = .no
+			format.spellCheckingType = .no
+			format.placeholder = dict["placeholder"] as? String
+			return format
 
 		case "date":
 			let styleStr = dict["style"] as? String ?? "date"
@@ -320,7 +326,7 @@ struct SurveyParser {
 					} else if let urlString = imageDict["url"],
 						let url = URL(string: urlString),
 						let data = try? Data(contentsOf: url) {
-						image = UIImage(data: data)
+						image = UIImage(data: data)?.withRenderingMode(.alwaysOriginal)
 					}
 				}
 

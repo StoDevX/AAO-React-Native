@@ -5,10 +5,15 @@ export * from './types'
 
 interface ResearchKitSurveyModule {
 	presentSurvey(survey: SurveyDefinition): Promise<SurveyResult>
+	cancelSurvey(): void
 }
 
 const NativeModule = requireNativeModule<ResearchKitSurveyModule>('ResearchKitSurvey')
 
 export function presentSurvey(survey: SurveyDefinition): Promise<SurveyResult> {
 	return NativeModule.presentSurvey(survey)
+}
+
+export function cancelSurvey(): void {
+	NativeModule.cancelSurvey()
 }

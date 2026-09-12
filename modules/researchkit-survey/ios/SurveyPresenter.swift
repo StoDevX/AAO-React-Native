@@ -12,21 +12,44 @@ final class SurveyPresenter: NSObject {
 		super.init()
 	}
 
+	func cancel() {
+		if let taskVC = taskViewController {
+			taskVC.dismiss(animated: false)
+		}
+		currentPromise?.reject("CANCELLED", "Survey was cancelled")
+		currentPromise = nil
+		taskViewController = nil
+	}
+
 	func present(definition: [String: Any], promise: Promise) {
 		guard currentPromise == nil else {
-			promise.reject("SURVEY_IN_PROGRESS", "A survey is already being presented")
-			return
+			// Check if the task view controller is still being presented
+			if taskViewController?.presentingViewController == nil {
+				// The survey was dismissed without our delegate being called (e.g., hot reload)
+				// Clear the stale state and proceed
+				currentPromise = nil
+				taskViewController = nil
+			} else {
+				promise.reject("SURVEY_IN_PROGRESS", "A survey is already being presented")
+				return
+			}
 		}
 
-		do {
-			let task = try SurveyParser.parse(definition)
-			currentPromise = promise
+		currentPromise = promise
 
-			DispatchQueue.main.async { [weak self] in
-				self?.presentTask(task)
+		// Parse on background queue to avoid blocking main thread during image loading
+		DispatchQueue.global(qos: .userInitiated).async { [weak self] in
+			do {
+				let task = try SurveyParser.parse(definition)
+				DispatchQueue.main.async {
+					self?.presentTask(task)
+				}
+			} catch {
+				DispatchQueue.main.async {
+					self?.currentPromise?.reject("PARSE_ERROR", error.localizedDescription)
+					self?.currentPromise = nil
+				}
 			}
-		} catch {
-			promise.reject("PARSE_ERROR", error.localizedDescription)
 		}
 	}
 

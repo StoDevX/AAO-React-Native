@@ -6,6 +6,10 @@ public class ResearchKitSurveyModule: Module {
 
         AsyncFunction("presentSurvey") { (definition: [String: Any], promise: Promise) in
             SurveyPresenter.shared.present(definition: definition, promise: promise)
+        }
+
+        Function("cancelSurvey") {
+            SurveyPresenter.shared.cancel()
         }.runOnQueue(.main)
     }
 }
