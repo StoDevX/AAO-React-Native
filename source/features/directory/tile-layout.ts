@@ -38,3 +38,12 @@ export function inRows<T>(items: T[], columns: number): T[][] {
 	}
 	return rows
 }
+
+/// The height a photo of the given width needs to sit at the tile's aspect.
+/// Stated in points rather than left to a SwiftUI `aspectRatio` modifier
+/// because a React Native image hosted in an `RNHostView` has no bounds of its
+/// own: a percentage size there resolves against nothing, and the image falls
+/// back to its intrinsic size and is cropped by whatever clips it.
+export function photoHeight(width: number): number {
+	return width / TILE_ASPECT
+}

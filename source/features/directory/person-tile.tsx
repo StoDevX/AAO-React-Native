@@ -1,12 +1,9 @@
 import * as React from 'react'
-import {Image, StyleSheet} from 'react-native'
-import {Button, RoundedRectangle, RNHostView, Text, VStack, ZStack} from '@expo/ui/swift-ui'
+import {Button, Text, VStack} from '@expo/ui/swift-ui'
 import {
 	accessibilityIdentifier,
 	accessibilityLabel,
-	aspectRatio,
 	buttonStyle,
-	clipShape,
 	contentShape,
 	font,
 	foregroundStyle,
@@ -16,8 +13,7 @@ import {
 	shapes,
 } from '@expo/ui/swift-ui/modifiers'
 import * as c from '@frogpond/colors'
-import {initials} from './person'
-import {TILE_ASPECT, TILE_RADIUS} from './tile-layout'
+import {PersonPhoto} from './person-photo'
 import type {DirectoryItem} from './types'
 
 type Props = {
@@ -35,8 +31,6 @@ type Props = {
  * image), with the name beneath. Tapping opens the person's detail screen.
  */
 export function PersonTile({person, width, testID, onPress}: Props): React.ReactNode {
-	let photo = person.photo || person.thumbnail
-
 	return (
 		<Button
 			modifiers={[
@@ -47,33 +41,7 @@ export function PersonTile({person, width, testID, onPress}: Props): React.React
 			onPress={onPress}
 		>
 			<VStack modifiers={[frame({width}), contentShape(shapes.rectangle())]} spacing={8}>
-				<ZStack
-					modifiers={[
-						frame({width}),
-						aspectRatio({ratio: TILE_ASPECT, contentMode: 'fit'}),
-						clipShape('roundedRectangle', TILE_RADIUS),
-					]}
-				>
-					{photo ? (
-						<RNHostView matchContents={false}>
-							<Image
-								accessibilityIgnoresInvertColors={true}
-								source={{uri: photo}}
-								style={styles.photo}
-							/>
-						</RNHostView>
-					) : (
-						<>
-							<RoundedRectangle
-								cornerRadius={TILE_RADIUS}
-								modifiers={[foregroundStyle(c.systemGray)]}
-							/>
-							<Text modifiers={[font({textStyle: 'largeTitle'}), foregroundStyle(c.white)]}>
-								{initials(person)}
-							</Text>
-						</>
-					)}
-				</ZStack>
+				<PersonPhoto person={person} width={width} />
 
 				<Text
 					modifiers={[
@@ -90,7 +58,3 @@ export function PersonTile({person, width, testID, onPress}: Props): React.React
 		</Button>
 	)
 }
-
-const styles = StyleSheet.create({
-	photo: {width: '100%', height: '100%', resizeMode: 'cover'},
-})
