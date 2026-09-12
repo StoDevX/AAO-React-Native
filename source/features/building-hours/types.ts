@@ -28,11 +28,25 @@ export type SingleBuildingScheduleType = {
 	to: string
 }
 
+/**
+ * What a set that is not a door calls itself.
+ *
+ * `name` is what the status line says and is required: without a word for the
+ * service there is no honest way to word the row, so the set stays closed. The
+ * symbol is decoration, and falls back to a filled circle. `name` is short
+ * because the row is narrow.
+ */
+export type ServiceStatusType = {
+	symbol?: string
+	name: string
+}
+
 export type NamedBuildingScheduleType = {
 	title: string
 	notes?: string
 	isPhysicallyOpen?: boolean
 	closedForChapelTime?: boolean
+	status?: ServiceStatusType
 	hours: SingleBuildingScheduleType[]
 }
 
