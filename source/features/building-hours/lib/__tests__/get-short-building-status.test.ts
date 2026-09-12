@@ -124,7 +124,6 @@ describe('a schedule running past midnight', () => {
 		],
 	}
 
-
 	it('is Open early Sunday, while Saturday night runs on', () => {
 		expect(getShortBuildingStatus(building, at('2026-09-13', '01:00:00'))).toBe('Open')
 	})
@@ -139,7 +138,6 @@ describe('a schedule running past midnight', () => {
 })
 
 describe('the chapel badge', () => {
-
 	// data/building-hours/3-1-post-office.yaml
 	let postOffice: BuildingType = {
 		name: 'Post Office',

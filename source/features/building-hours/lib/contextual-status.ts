@@ -5,6 +5,7 @@ import {findOpenWindow, windowOpeningOn} from './find-open-window'
 import {CHAPEL_COUNTDOWN_MINUTES, isChapelTime} from './chapel'
 import {findChapelReopen} from './find-chapel-reopen'
 import {findChapelPause} from './find-chapel-pause'
+import {findOpenService} from './find-open-service'
 
 const ALMOST_THRESHOLD_MINUTES = 30
 
@@ -125,6 +126,19 @@ export function contextualStatus(building: BuildingType, now: Moment): Contextua
 			return plain(`Opens in ${minutesUntilOpen} min`)
 		}
 		return plain(`Opens at ${formatTime(next.open)}`)
+	}
+
+	// A phone line or a delivery service is not a door, so it is only worth naming
+	// once nothing physical is open.
+	let service = findOpenService(building, now)
+	if (service) {
+		let set = (building.schedule || []).find((candidate) => candidate.status === service)
+		let window = set?.hours
+			.map((hours) => findOpenWindow(hours, now))
+			.find((candidate) => candidate !== null)
+		if (window) {
+			return plain(`${service.name} until ${formatTime(window.close)}`)
+		}
 	}
 
 	// Not "Closed today": this is only reached once nothing opens again today, so
