@@ -62,13 +62,15 @@ function CategoryOrgsView(): React.ReactNode {
 	)
 
 	if (isError || isMembershipsError) {
+		let err = error ?? membershipsError
+		let message = err instanceof Error ? err.message : String(err)
 		return (
 			<>
 				{searchChrome}
 				<NoticeView
 					buttonText="Try Again"
 					onPress={refresh}
-					text={`A problem occured while loading: ${error ?? membershipsError}`}
+					text={`A problem occurred while loading: ${message}`}
 				/>
 			</>
 		)

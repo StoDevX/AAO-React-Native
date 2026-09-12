@@ -6,6 +6,7 @@ import * as c from '@frogpond/colors'
 import {DisclosureRow} from '../../components/rows'
 import type {OrgSection} from './search'
 import type {StudentOrgType} from './types'
+import {sectionIndexLabel} from '../../lib/section-index-label'
 
 const styles = StyleSheet.create({
 	host: {
@@ -48,10 +49,14 @@ export function OrgResultsList({
 					<ContentUnavailableView systemImage="person.3" title={emptyText} />
 				) : (
 					sections.map((section) => (
-						<Section key={section.title} title={section.title}>
+						<Section
+							key={section.title}
+							modifiers={[sectionIndexLabel(section.title)]}
+							title={section.title}
+						>
 							{section.data.map((org) => (
 								<DisclosureRow
-									key={org.name + org.category}
+									key={org.organizationUri}
 									detail={org.category}
 									detailLines={1}
 									onPress={() => onPressOrg(org)}

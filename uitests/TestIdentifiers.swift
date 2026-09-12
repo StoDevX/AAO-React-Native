@@ -530,9 +530,4 @@ struct TestIdentifiers {
 			"""
 	}
 
-	// MARK: - Student Orgs
-
-	enum StudentOrgs {
-		static let list = "student-orgs-list"
-	}
 }

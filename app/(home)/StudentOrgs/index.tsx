@@ -106,13 +106,15 @@ function StudentOrgsView(): React.ReactNode {
 		// icon queries -- the full org list loads in parallel for whenever a
 		// search actually happens, but never blocks the tiles from showing.
 		if (isMembershipsError) {
+			let message =
+				membershipsError instanceof Error ? membershipsError.message : String(membershipsError)
 			return (
 				<>
 					{searchChrome}
 					<NoticeView
 						buttonText="Try Again"
 						onPress={refetchMemberships}
-						text={`A problem occured while loading: ${membershipsError}`}
+						text={`A problem occurred while loading: ${message}`}
 					/>
 				</>
 			)
@@ -141,13 +143,14 @@ function StudentOrgsView(): React.ReactNode {
 
 	// Search spans every org, so this branch depends on the full org list.
 	if (isOrgsError) {
+		let message = orgsError instanceof Error ? orgsError.message : String(orgsError)
 		return (
 			<>
 				{searchChrome}
 				<NoticeView
 					buttonText="Try Again"
 					onPress={refetchOrgs}
-					text={`A problem occured while loading: ${orgsError}`}
+					text={`A problem occurred while loading: ${message}`}
 				/>
 			</>
 		)
