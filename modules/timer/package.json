@@ -9,7 +9,8 @@
     "test": "jest"
   },
   "dependencies": {
-    "@frogpond/launch-arguments": "workspace:*"
+    "@frogpond/launch-arguments": "workspace:*",
+    "zustand": "5.0.15"
   },
   "peerDependencies": {
     "moment-timezone": "^0.6.3",
