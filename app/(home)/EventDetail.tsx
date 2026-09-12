@@ -8,6 +8,7 @@ import {
 	timelineBlocks,
 	timelineEntries,
 	timelineWindow,
+	type TimelineWindow,
 } from '@frogpond/event-list'
 import * as c from '@frogpond/colors'
 
@@ -17,15 +18,16 @@ import {
 	deviceCalendarEventOptions,
 	deviceCalendarIdFrom,
 	isDeviceSourceId,
-	namedCalendarEventOptions,
+	scheduleEventOptions,
 	useCalendarSource,
 	useCalendarSources,
-	useMergedEvents,
 } from '@frogpond/ccc-calendar'
 import {LoadingView, NoticeView} from '@frogpond/notice'
 import {PRESENCE_POWERED_BY, STOLAF_POWERED_BY} from '../../source/features/calendar/constants'
 import {KSTO_POWERED_BY, KRLX_POWERED_BY} from '../../source/features/streaming/radio/constants'
 import {Host} from '@expo/ui/swift-ui'
+import {useEvent, useNeighbours} from '../../source/database/calendar/read'
+import type {Window} from '../../source/database/calendar/queries'
 
 type EventSource = 'stolaf' | 'presence' | 'uitest' | 'ksto-schedule' | 'krlx-schedule'
 
@@ -53,6 +55,28 @@ const NO_ATTRIBUTION = {title: '', href: ''} as const
  */
 const REMOTE_SOURCE_IDS = new Set(['stolaf', 'presence', 'uitest'])
 
+/** KSTO's and KRLX's broadcast schedules -- fetched, not written into the database. */
+const SCHEDULE_SOURCE_IDS = new Set(['ksto-schedule', 'krlx-schedule'])
+
+/**
+ * A window with no rows in it, ever: `1970-01-01` sits before any occurrence
+ * this app's data can name. Passed to `useNeighbours` when the current event
+ * has no timeline of its own (all-day, multi-day, device, or a schedule
+ * source) -- `useNeighbours` has no `enabled` flag to switch off with, so a
+ * window that can only ever match zero rows stands in for "don't bother".
+ */
+const NO_WINDOW: Window = {fromUtc: 0, toUtc: 0, fromDate: '1970-01-01', toDate: '1970-01-01'}
+
+/** `timelineWindow`'s Moment span, as the `Window` `useNeighbours` reads by value. */
+function occurrenceWindowFor(range: TimelineWindow): Window {
+	return {
+		fromUtc: range.start.valueOf(),
+		toUtc: range.end.valueOf(),
+		fromDate: range.start.format('YYYY-MM-DD'),
+		toDate: range.end.format('YYYY-MM-DD'),
+	}
+}
+
 export default function EventDetailPage(): React.ReactNode {
 	let dismiss = useDismissOnce()
 	let {source, eventKey} = useLocalSearchParams<{
@@ -61,12 +85,13 @@ export default function EventDetailPage(): React.ReactNode {
 	}>()
 
 	let deviceSource = isDeviceSourceId(source)
+	let scheduleSource = SCHEDULE_SOURCE_IDS.has(source)
 
-	// Two queries, one of them switched off, rather than one `useQuery` over a
-	// ternary: the two option objects have different key tuples and different
-	// fetched shapes, so their union does not satisfy `useQuery` -- and picking
-	// the query inside the call would still leave the hook count stable but the
-	// types unresolvable. The idle one never fetches.
+	// Three queries, at most one of them switched on, rather than one
+	// `useQuery` over a branch: the option objects have different key tuples
+	// and different fetched shapes, so their union does not satisfy `useQuery`
+	// -- and picking the query inside the call would still leave the hook count
+	// stable but the types unresolvable. The idle ones never fetch.
 	//
 	// Detail lookups don't need the list's eventMapper: it only ever sets
 	// config.subtitle, which the detail view never reads (only the list's
@@ -80,12 +105,29 @@ export default function EventDetailPage(): React.ReactNode {
 		...deviceCalendarEventOptions(deviceSource ? deviceCalendarIdFrom(source) : '', eventKey),
 		enabled: deviceSource,
 	})
-	let namedQuery = useQuery({
-		...namedCalendarEventOptions(source as EventSource, eventKey),
-		enabled: !deviceSource,
+	let scheduleQuery = useQuery({
+		...scheduleEventOptions(source, eventKey),
+		enabled: scheduleSource,
 	})
+	// A plain local SQLite read, not a fetch -- always run, since running it
+	// for a device or schedule source (neither of which the database has rows
+	// for) only costs a query that returns nothing.
+	let dbEvent = useEvent(source, eventKey)
 
-	let {data: event, isLoading, error, refetch} = deviceSource ? deviceQuery : namedQuery
+	let {
+		data: event,
+		isLoading,
+		error,
+		refetch,
+	} = deviceSource
+		? deviceQuery
+		: scheduleSource
+			? scheduleQuery
+			: // The database read never fails and is never mid-fetch by the time a
+				// screen can render it -- `useEvent` deliberately exposes neither
+				// state. `undefined` here has to land in the "Could not find this
+				// event" branch below, not the error one.
+				{data: dbEvent, isLoading: false, error: null, refetch: () => undefined}
 
 	// The same cached device-calendar query the picker reads, so a device
 	// event's masthead is the colour its row had without any colour crossing
@@ -93,21 +135,30 @@ export default function EventDetailPage(): React.ReactNode {
 	// deep link to a calendar since deleted from the phone.
 	let color = useCalendarSource(source)?.color ?? c.systemBlue
 
-	// The same cached month the list reads, under the same query keys, so
-	// arriving from the list costs no fetch.
 	let {enabled} = useCalendarSources()
-	let {events: neighbours} = useMergedEvents(enabled)
 
 	let colorFor = React.useMemo(() => {
 		let table = new Map(enabled.map((source) => [source.id, source.color]))
 		return (sourceId: string) => table.get(sourceId) ?? c.systemBlue
 	}, [enabled])
 
+	let enabledIds = React.useMemo(() => enabled.map((source) => source.id), [enabled])
+
 	// The radio schedules route here too, and their events never enter
 	// `useCalendarSources` -- so there are no neighbours to draw and no timeline.
 	// `timelineWindow` rules out all-day events on its own, by returning null.
 	let isCalendarSource = deviceSource || REMOTE_SOURCE_IDS.has(source)
 	let windowRange = event && isCalendarSource ? timelineWindow(event) : null
+
+	// A bounded read over the timeline's own span, rather than the whole
+	// merged calendar: `NO_WINDOW` when there is no timeline to draw, so this
+	// hook -- which has no `enabled` flag -- still runs to something that can
+	// only ever answer "no neighbours".
+	let neighbours = useNeighbours({
+		window: windowRange ? occurrenceWindowFor(windowRange) : NO_WINDOW,
+		sourceIds: enabledIds,
+	})
+
 	let timeline =
 		windowRange && event
 			? {

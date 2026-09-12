@@ -12,25 +12,28 @@ import {
 import {type CalendarBodyHandle, DayView, EventList} from '@frogpond/event-list'
 import {useMomentTimer} from '@frogpond/timer'
 
-import {
-	availableCategories,
-	availableOrganizations,
-	filterEvents,
-} from '../../source/features/calendar/filter'
+import {dayWindow, useFacets, useOccurrences} from '../../source/database/calendar/read'
 import {useCalendarFilterStore} from '../../source/features/calendar/store'
 
 export default function CalendarPage(): React.ReactNode {
 	let router = useRouter()
 	let {now} = useMomentTimer({intervalMs: 60000})
 	let {all, enabled, toggle, canOfferDevice, deviceAvailable, requestDevice} = useCalendarSources()
-	let {events, failed, isLoading, isRefetching, refetchAll} = useMergedEvents(enabled)
+	let {failed, isLoading, isRefetching, refetchAll} = useMergedEvents(enabled)
 	let bodyRef = React.useRef<CalendarBodyHandle>(null)
 
 	let {filter, selectFilter, mode, selectMode} = useCalendarFilterStore()
 
-	let categories = useMemo(() => availableCategories(events), [events])
-	let organizations = useMemo(() => availableOrganizations(events), [events])
-	let filteredEvents = useMemo(() => filterEvents(events, filter), [events, filter])
+	let enabledIds = useMemo(() => enabled.map((source) => source.id), [enabled])
+
+	// `dayWindow` floors to the day, so this recomputes every minute but keeps
+	// returning a window equal by value -- the read hooks below key their
+	// queries on that value, never on this object's own identity, so an equal
+	// window does not mint a new query key.
+	let window = useMemo(() => dayWindow(now.toDate()), [now])
+	let {events} = useOccurrences({window, sourceIds: enabledIds, filters: filter ? [filter] : []})
+	let categories = useFacets({axis: 'category', window, sourceIds: enabledIds})
+	let organizations = useFacets({axis: 'organization', window, sourceIds: enabledIds})
 
 	let onPressEvent = (entry: SourcedEvent) => {
 		router.push({
@@ -43,15 +46,13 @@ export default function CalendarPage(): React.ReactNode {
 		bodyRef.current?.showToday()
 	}, [])
 
-	let enabledIds = useMemo(() => enabled.map((source) => source.id), [enabled])
-
 	let Body = mode === 'day' ? DayView.DayView : EventList.EventList
 
 	return (
 		<>
 			<Body
 				ref={bodyRef}
-				events={filteredEvents}
+				events={events}
 				failed={failed}
 				isLoading={isLoading}
 				now={now}

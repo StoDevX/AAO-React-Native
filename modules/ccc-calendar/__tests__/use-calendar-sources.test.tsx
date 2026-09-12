@@ -15,6 +15,14 @@ jest.mock('@react-native-community/netinfo', () =>
 	// oxlint-disable-next-line typescript/no-require-imports
 	require('@react-native-community/netinfo/jest/netinfo-mock'),
 )
+// `query.ts` also reports a failed write to Sentry. `@sentry/react-native`
+// ships ESM-only and Jest has nothing to transform it with, so -- as in every
+// other test in this repo that touches Sentry -- it is mocked rather than
+// left for Jest to load for real.
+jest.mock('@sentry/react-native', () => ({captureException: jest.fn()}))
+// And it writes into the calendar database; `source/database/client.ts`
+// reaches `expo-sqlite`, a native module Jest cannot load at all.
+jest.mock('../../../source/database/client', () => ({getRunner: jest.fn()}))
 
 // Named `mock*` so the `jest.mock` factories below -- which close over them --
 // pass Jest's out-of-scope-variable check, and so each test can assert on

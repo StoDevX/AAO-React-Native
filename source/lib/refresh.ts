@@ -4,6 +4,7 @@ import {SIS_LOGIN_KEY} from './login'
 import {getIcon, resetIcon} from 'react-native-change-icon'
 import {persister, queryClient} from '../init/tanstack-query'
 import {resetInternetCredentials} from 'react-native-keychain'
+import {dropDatabase} from '../database/client'
 
 export async function refreshApp(): Promise<void> {
 	// Empty the query cache at the source, then delete what it already wrote.
@@ -15,6 +16,10 @@ export async function refreshApp(): Promise<void> {
 
 	// Clear AsyncStorage
 	await clearAsyncStorage()
+
+	// Drop the calendar database. It would otherwise survive as the only
+	// remaining copy of data the rest of this function just wiped.
+	dropDatabase()
 
 	// Clear the Keychain items
 	await resetInternetCredentials({server: SIS_LOGIN_KEY})
