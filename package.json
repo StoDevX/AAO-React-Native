@@ -33,6 +33,7 @@
     "@frogpond/markdown": "workspace:*",
     "@frogpond/notice": "workspace:*",
     "@frogpond/open-url": "workspace:*",
+    "@frogpond/researchkit-survey": "workspace:*",
     "@frogpond/separator": "workspace:*",
     "@frogpond/silly-card": "workspace:*",
     "@frogpond/storage": "workspace:*",
