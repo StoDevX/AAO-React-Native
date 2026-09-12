@@ -86,11 +86,14 @@ export function sponsorMap(rows: {dedupe_key: string; orgs: string}[]): Map<stri
 /**
  * The sponsors for each of `dedupeKeys`, as the map `hydrate` expects.
  *
- * `organizationsQuery` binds `dedupeKeys` into an `in (...)` clause, which
- * SQLite rejects outright as `in ()` when the list is empty -- the shape a
- * window with no events in range produces, on first launch and offline. That
- * case is skipped here rather than sent to SQLite. Exported so the guard can
- * be tested against a runner that would throw if it were ever reached.
+ * `organizationsQuery` binds `dedupeKeys` into an `in (...)` clause; with an
+ * empty list that becomes `in ()`. Measured against real SQLite: that is
+ * *not* an error -- it is a valid, always-false predicate, and the query
+ * just returns zero rows. The guard below skips the query anyway, because a
+ * window with no events in range (first launch, offline) already knows the
+ * answer is empty; running the statement would only pay for a prepare and an
+ * execute to learn what we already know. Exported so that skip can be tested
+ * against a runner that would fail the test if it were ever reached.
  */
 export function sponsorsFor(runner: SqlRunner, dedupeKeys: string[]): Map<string, string[]> {
 	if (dedupeKeys.length === 0) return new Map()
@@ -134,12 +137,7 @@ export function useFacets(args: {
 
 	let result = useQuery({
 		queryKey: ['calendar-db', 'facets', revision, axis, window, sourceIds],
-		queryFn: () => {
-			let rows = getRunner().all<{value: string; count: number}>(
-				facetsQuery({axis, window, sourceIds}),
-			)
-			return rows.map(({value, count}) => ({value, count}))
-		},
+		queryFn: () => getRunner().all<CalendarFilterOption>(facetsQuery({axis, window, sourceIds})),
 		placeholderData: keepPreviousData,
 	})
 

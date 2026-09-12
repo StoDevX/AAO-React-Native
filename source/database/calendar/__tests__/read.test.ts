@@ -31,6 +31,20 @@ describe('dayWindow', () => {
 		let after = dayWindow(new Date('2026-09-16T00:01:00-05:00'))
 		expect(after).not.toEqual(before)
 	})
+
+	// America/Chicago springs forward on 2026-03-08 at 2 AM local, so that day
+	// is 23 real hours. `dayWindow` builds `today` from local calendar getters
+	// (`getFullYear`/`getMonth`/`getDate`) and steps it with `setDate`, which
+	// recomputes the equivalent local wall-clock instant rather than adding a
+	// fixed number of milliseconds -- so it should floor both sides of the
+	// transition to the same day. `toRows`' zero-length guard got this wrong
+	// once already, using `date-fns`' `addDays` (a local calendar step short
+	// by an hour on this exact day) instead -- see rows.test.ts.
+	it('floors to the same window on both sides of a DST spring-forward', () => {
+		let before = dayWindow(new Date('2026-03-08T01:30:00-06:00'))
+		let after = dayWindow(new Date('2026-03-08T03:30:00-05:00'))
+		expect(after).toEqual(before)
+	})
 })
 
 describe('sponsorMap', () => {
@@ -55,9 +69,12 @@ describe('sponsorMap', () => {
 })
 
 describe('sponsorsFor', () => {
-	// A runner that fails the test if it is ever asked to run a statement --
-	// standing in for what a real `in ()` would do: throw a SQLite syntax
-	// error. Reaching it at all is the failure this guard exists to prevent.
+	// `in ()` is not a SQLite error -- measured against real SQLite, it is a
+	// valid, always-false predicate that returns zero rows. So this runner
+	// doesn't stand in for a throw SQLite would produce; it fails the test if
+	// `sponsorsFor` ever runs a statement for an empty key list, because the
+	// answer is already known to be empty and running one would only pay for
+	// a prepare and an execute to learn that again.
 	function explosiveRunner(): SqlRunner {
 		return {
 			exec: () => {
