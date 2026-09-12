@@ -173,6 +173,12 @@ describe('the chapel badge', () => {
 		],
 	}
 
+	it('reads Chapel in the minutes before chapel shuts the building', () => {
+		// The dot has to turn with the text, or the row reads "Chapel in 5 min"
+		// beside a green Open dot.
+		expect(getShortBuildingStatus(postOffice, at('2026-09-07', '10:05:00'))).toBe('Chapel')
+	})
+
 	it('reads Chapel when the building resumes as chapel ends', () => {
 		expect(getShortBuildingStatus(postOffice, at('2026-09-07', '10:15:00'))).toBe('Chapel')
 	})
