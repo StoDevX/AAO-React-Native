@@ -9,6 +9,11 @@ jest.mock('expo-sqlite', () => ({
 	openDatabaseSync: jest.fn(),
 	deleteDatabaseSync: jest.fn(),
 }))
+// `@sentry/react-native` ships ESM-only and Jest's transformIgnorePatterns does
+// not let it through, so it is stubbed the same way every other suite here
+// stubs it. `read.ts` and `client.ts` report a failed read or a failed drop
+// through it.
+jest.mock('@sentry/react-native', () => ({captureException: jest.fn()}))
 
 import type {SqlRunner} from '../../sql'
 import {dayWindow, sponsorMap, sponsorsFor} from '../read'
@@ -93,8 +98,8 @@ describe('sponsorsFor', () => {
 	}
 
 	it('returns an empty map without running a query when there are no dedupe keys', () => {
-		expect(() => sponsorsFor(explosiveRunner(), [])).not.toThrow()
-		expect(sponsorsFor(explosiveRunner(), [])).toEqual(new Map())
+		expect(() => sponsorsFor(explosiveRunner(), [], ['stolaf'])).not.toThrow()
+		expect(sponsorsFor(explosiveRunner(), [], ['stolaf'])).toEqual(new Map())
 	})
 
 	it('does run the query when there is at least one dedupe key', () => {
@@ -104,6 +109,6 @@ describe('sponsorsFor', () => {
 			run: () => undefined,
 			transaction: (task) => task(),
 		}
-		expect(sponsorsFor(runner, ['dk'])).toEqual(new Map([['dk', ['Athletics']]]))
+		expect(sponsorsFor(runner, ['dk'], ['stolaf'])).toEqual(new Map([['dk', ['Athletics']]]))
 	})
 })

@@ -52,10 +52,4 @@ create table event_tag (
   primary key (source_id, event_key, axis, value),
   foreign key (source_id, event_key) references event on delete cascade
 );
-create index event_tag_lookup on event_tag (axis, value);
-
-create view visible_event as
-select * from (
-  select *, row_number() over (partition by dedupe_key order by source_rank, event_key) rn
-  from event
-) where rn = 1;`
+create index event_tag_lookup on event_tag (axis, value);`

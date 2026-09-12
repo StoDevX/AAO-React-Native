@@ -225,7 +225,9 @@ function runNewPath(
 	let sponsors =
 		dedupeKeys.length === 0
 			? new Map<string, string[]>()
-			: sponsorsFrom(runner.all<{dedupe_key: string; orgs: string}>(organizationsQuery(dedupeKeys)))
+			: sponsorsFrom(
+					runner.all<{dedupe_key: string; orgs: string}>(organizationsQuery(dedupeKeys, sourceIds)),
+				)
 	return hydrate(rows, sponsors, now)
 }
 
@@ -429,7 +431,7 @@ test('isOngoing is the one deliberate divergence: frozen on the old path, derive
 		occurrencesQuery({window, sourceIds: ['stolaf'], filters: []}),
 	)
 	let dedupeKeys = [...new Set(rows.map((row) => row.dedupe_key))]
-	let sponsors = sponsorsFrom(db.all(organizationsQuery(dedupeKeys)))
+	let sponsors = sponsorsFrom(db.all(organizationsQuery(dedupeKeys, ['stolaf'])))
 
 	// The old path's list is built once, here, and never rebuilt below --
 	// exactly like production, where it was frozen the moment the feed was

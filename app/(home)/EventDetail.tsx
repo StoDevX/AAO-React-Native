@@ -109,10 +109,15 @@ export default function EventDetailPage(): React.ReactNode {
 		...scheduleEventOptions(source, eventKey),
 		enabled: scheduleSource,
 	})
+	let {enabled} = useCalendarSources()
+
+	let enabledIds = React.useMemo(() => enabled.map((source) => source.id), [enabled])
+
 	// A plain local SQLite read, not a fetch -- always run, since running it
 	// for a device or schedule source (neither of which the database has rows
-	// for) only costs a query that returns nothing.
-	let dbEvent = useEvent(source, eventKey)
+	// for) only costs a query that returns nothing. `enabledIds` scopes the
+	// sponsor union the same way the list screen scopes it.
+	let dbEvent = useEvent(source, eventKey, enabledIds)
 
 	let {
 		data: event,
@@ -123,11 +128,16 @@ export default function EventDetailPage(): React.ReactNode {
 		? deviceQuery
 		: scheduleSource
 			? scheduleQuery
-			: // The database read never fails and is never mid-fetch by the time a
-				// screen can render it -- `useEvent` deliberately exposes neither
-				// state. `undefined` here has to land in the "Could not find this
-				// event" branch below, not the error one.
-				{data: dbEvent, isLoading: false, error: null, refetch: () => undefined}
+			: // A local read, so there is no loading state worth a spinner -- but it
+				// can fail, and a corrupt database must reach the error branch below
+				// rather than the "Could not find this event" one. `undefined` with no
+				// error still means exactly that: no row under this key.
+				{
+					data: dbEvent.event,
+					isLoading: false,
+					error: dbEvent.error,
+					refetch: dbEvent.refetch,
+				}
 
 	// The same cached device-calendar query the picker reads, so a device
 	// event's masthead is the colour its row had without any colour crossing
@@ -135,14 +145,10 @@ export default function EventDetailPage(): React.ReactNode {
 	// deep link to a calendar since deleted from the phone.
 	let color = useCalendarSource(source)?.color ?? c.systemBlue
 
-	let {enabled} = useCalendarSources()
-
 	let colorFor = React.useMemo(() => {
 		let table = new Map(enabled.map((source) => [source.id, source.color]))
 		return (sourceId: string) => table.get(sourceId) ?? c.systemBlue
 	}, [enabled])
-
-	let enabledIds = React.useMemo(() => enabled.map((source) => source.id), [enabled])
 
 	// The radio schedules route here too, and their events never enter
 	// `useCalendarSources` -- so there are no neighbours to draw and no timeline.

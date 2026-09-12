@@ -76,6 +76,42 @@ function keysOf(runner: SqlRunner, stmt: Statement): string[] {
 	return runner.all<{event_key: string}>(stmt).map((r) => r.event_key)
 }
 
+/** Which copy of each event a statement returned, as `source_id|event_key`. */
+function copiesOf(runner: SqlRunner, stmt: Statement): string[] {
+	return runner
+		.all<{source_id: string; event_key: string}>(stmt)
+		.map((r) => `${r.source_id}|${r.event_key}`)
+}
+
+/**
+ * A second calendar's copy of `tagged`, ranked *below* stolaf's, so stolaf's
+ * copy wins the dedupe.
+ *
+ * Everything the cross-source tests turn on is that ranking: query with
+ * stolaf switched off and the winner is a row no query may return, while the
+ * loser is the only copy of the event left. It carries its own tags, one
+ * shared with the winner and one of its own, so the facet and sponsor queries
+ * have something to get wrong too.
+ */
+function addCrossSourceDuplicate(runner: SqlRunner): void {
+	runner.run({
+		sql: 'insert into event values (?,?,?,?,?,?,?)',
+		params: ['presence', 'dup', 1, 'dk-tagged', 'Tagged', 'Somewhere', '{}'],
+	})
+	runner.run({
+		sql: 'insert into occurrence values (?,?,0,?,?,null,null)',
+		params: ['presence', 'dup', Date.UTC(2026, 8, 21, 12), Date.UTC(2026, 8, 21, 13)],
+	})
+	runner.run({
+		sql: 'insert into event_tag values (?,?,?,?)',
+		params: ['presence', 'dup', 'category', 'Music'],
+	})
+	runner.run({
+		sql: 'insert into event_tag values (?,?,?,?)',
+		params: ['presence', 'dup', 'organization', 'Student Activities'],
+	})
+}
+
 describe('occurrencesQuery', () => {
 	it('returns events overlapping the window and nothing outside it', () => {
 		let runner = seed()
@@ -144,6 +180,62 @@ describe('occurrencesQuery', () => {
 			}),
 		)
 		assert.deepEqual(mismatched, [], 'filters are an AND, not an OR')
+	})
+
+	it('shows one copy of an event two calendars both carry, the lowest-ranked one', () => {
+		let runner = seed()
+		addCrossSourceDuplicate(runner)
+
+		let copies = copiesOf(
+			runner,
+			occurrencesQuery({
+				window: WINDOW,
+				sourceIds: ['stolaf', 'presence'],
+				filters: [{axis: 'category', value: 'Music'}],
+			}),
+		)
+		assert.deepEqual(copies, ['stolaf|tagged'], 'source_rank decides, not insertion order')
+	})
+
+	it('keeps events with distinct dedupe keys separate', () => {
+		let runner = seed()
+		let keys = keysOf(
+			runner,
+			occurrencesQuery({window: WINDOW, sourceIds: ['stolaf'], filters: []}),
+		)
+		assert.equal(new Set(keys).size, keys.length, 'nothing here shares a dedupe key')
+		assert.ok(keys.includes('inside'))
+		assert.ok(keys.includes('tagged'))
+	})
+
+	/**
+	 * The case a dedupe computed over every source silently loses.
+	 *
+	 * Ranking the dedupe across the whole `event` table and narrowing to the
+	 * requested sources afterwards deletes an event outright whenever the
+	 * winner belongs to a calendar that is switched off: the winner is filtered
+	 * away by the source clause, and the loser was already suppressed by the
+	 * ranking. Nothing is left, and it does not heal -- a disabled source's
+	 * query never runs, so `writeSource` never refreshes or prunes its rows and
+	 * they keep winning dedupes for as long as the calendar stays off.
+	 *
+	 * The dedupe therefore has to run over the requested sources only, which is
+	 * exactly what the deleted `dedupeEvents` did: it only ever saw the events
+	 * of calendars that were on.
+	 */
+	it('returns the losing copy when the winning copy belongs to a calendar that is off', () => {
+		let runner = seed()
+		addCrossSourceDuplicate(runner)
+
+		let copies = copiesOf(
+			runner,
+			occurrencesQuery({window: WINDOW, sourceIds: ['presence'], filters: []}),
+		)
+		assert.deepEqual(
+			copies,
+			['presence|dup'],
+			'the event disappears entirely if the dedupe ranks across sources the query excluded',
+		)
 	})
 })
 
@@ -227,30 +319,45 @@ describe('facetsQuery', () => {
 		assert.deepEqual(rows, [{value: 'Music', count: 1}])
 	})
 
-	it('agrees with the filter query for every value it reports', () => {
-		let runner = seed()
-		for (let axis of ['category', 'organization'] as const) {
-			let facets = runner.all<{value: string; count: number}>(
-				facetsQuery({axis, window: WINDOW, sourceIds: ['stolaf']}),
-			)
-			assert.ok(facets.length > 0, `${axis} produced no facets to check`)
-			for (let facet of facets) {
-				let matched = runner.all<{event_key: string}>(
-					occurrencesQuery({
-						window: WINDOW,
-						sourceIds: ['stolaf'],
-						filters: [{axis, value: facet.value}],
-					}),
+	/**
+	 * The invariant the menu depends on: a value tallied as N must filter to N
+	 * events, or the menu offers a choice that empties the list.
+	 *
+	 * Run over each calendar on its own, with a cross-source duplicate present
+	 * -- so each pass has a copy of one event whose dedupe winner belongs to
+	 * the calendar the pass has switched off. `facetsQuery` counts over `event`
+	 * and is source-scoped correctly, so a dedupe in `occurrencesQuery` that is
+	 * *not* source-scoped shows up here as a value the menu offers and the
+	 * filter cannot satisfy.
+	 */
+	for (let sourceIds of [['stolaf'], ['presence']]) {
+		it(`agrees with the filter query for every value it reports, with only ${sourceIds[0]} on`, () => {
+			let runner = seed()
+			addCrossSourceDuplicate(runner)
+
+			for (let axis of ['category', 'organization'] as const) {
+				let facets = runner.all<{value: string; count: number}>(
+					facetsQuery({axis, window: WINDOW, sourceIds}),
 				)
-				let distinct = new Set(matched.map((row) => row.event_key))
-				assert.equal(
-					distinct.size,
-					facet.count,
-					`"${facet.value}" is tallied ${facet.count} but filters to ${distinct.size}`,
-				)
+				assert.ok(facets.length > 0, `${axis} produced no facets to check`)
+				for (let facet of facets) {
+					let matched = runner.all<{event_key: string}>(
+						occurrencesQuery({
+							window: WINDOW,
+							sourceIds,
+							filters: [{axis, value: facet.value}],
+						}),
+					)
+					let distinct = new Set(matched.map((row) => row.event_key))
+					assert.equal(
+						distinct.size,
+						facet.count,
+						`"${facet.value}" is tallied ${facet.count} but filters to ${distinct.size}`,
+					)
+				}
 			}
-		}
-	})
+		})
+	}
 })
 
 describe('organizationsQuery', () => {
@@ -296,7 +403,9 @@ describe('organizationsQuery', () => {
 		tag('stolaf', 'gala-w', 'Zoology Dept')
 		tag('stolaf', 'gala-w', 'Anthropology Dept')
 
-		let rows = runner.all<{dedupe_key: string; orgs: string}>(organizationsQuery(['dk-gala']))
+		let rows = runner.all<{dedupe_key: string; orgs: string}>(
+			organizationsQuery(['dk-gala'], ['stolaf', 'presence']),
+		)
 		assert.equal(rows.length, 1)
 		assert.deepEqual(rows[0].orgs.split(ORG_SEPARATOR), [
 			'Zoology Dept',
@@ -316,7 +425,7 @@ describe('organizationsQuery', () => {
 		// This module is a string builder, so the SQL it emits IS its behaviour.
 		// Asserting the shape is what stops a later "simplification" from
 		// reintroducing a spelling that is correct only by luck.
-		let {sql} = organizationsQuery(['dk-gala'])
+		let {sql} = organizationsQuery(['dk-gala'], ['stolaf', 'presence'])
 		assert.match(sql, /group_concat\([^)]*order by[^)]*\)/u)
 	})
 
@@ -331,9 +440,30 @@ describe('organizationsQuery', () => {
 			params: ['presence', 'dup', 'organization', 'Student Activities'],
 		})
 
-		let rows = runner.all<{dedupe_key: string; orgs: string}>(organizationsQuery(['dk-tagged']))
+		let rows = runner.all<{dedupe_key: string; orgs: string}>(
+			organizationsQuery(['dk-tagged'], ['stolaf', 'presence']),
+		)
 		assert.equal(rows.length, 1)
 		assert.deepEqual(rows[0].orgs.split(ORG_SEPARATOR), ['Music Dept', 'Student Activities'])
+	})
+
+	/**
+	 * The union is across the copies a *reader* can see, not across every copy
+	 * stored. Grouping tags by `dedupe_key` over the whole `event` table lets a
+	 * switched-off calendar contribute a sponsor to an event the reader is
+	 * looking at from another calendar -- a name `facetsQuery` will never offer
+	 * and no filter can match, appearing on a row anyway. The deleted
+	 * `dedupeEvents` merged only the calendars that were on.
+	 */
+	it('leaves out a sponsor named only by a calendar that is off', () => {
+		let runner = seed()
+		addCrossSourceDuplicate(runner)
+
+		let rows = runner.all<{dedupe_key: string; orgs: string}>(
+			organizationsQuery(['dk-tagged'], ['stolaf']),
+		)
+		assert.equal(rows.length, 1)
+		assert.deepEqual(rows[0].orgs.split(ORG_SEPARATOR), ['Music Dept'])
 	})
 })
 
@@ -357,8 +487,8 @@ describe('oneEventQuery', () => {
 
 	// The case this query exists for: a deep link names one source's copy of
 	// an event, and it has to resolve even when another source's copy won the
-	// dedupe. `visible_event` would 404 the loser -- selecting from `event`
-	// directly must not.
+	// dedupe. Ranking by `dedupe_key`, as the list query does, would 404 the
+	// loser -- selecting from `event` directly must not.
 	it('resolves the losing copy of a duplicated event, not just the winner', () => {
 		let runner = seed()
 		runner.run({
@@ -371,13 +501,14 @@ describe('oneEventQuery', () => {
 		})
 
 		// The winner, by source_rank, is 'stolaf'/'inside' -- confirm the loser
-		// is absent from visible_event before proving the direct query still
+		// is absent from the list query before proving the direct query still
 		// reaches it.
-		let visible = runner.all<{source_id: string}>({
-			sql: 'select source_id from visible_event where dedupe_key = ?',
-			params: ['dk-inside'],
-		})
-		assert.deepEqual(visible, [{source_id: 'stolaf'}])
+		let listed = copiesOf(
+			runner,
+			occurrencesQuery({window: WINDOW, sourceIds: ['stolaf', 'presence'], filters: []}),
+		)
+		assert.ok(listed.includes('stolaf|inside'))
+		assert.ok(!listed.includes('presence|dup'), 'the list shows only the winning copy')
 
 		let rows = runner.all<{source_id: string; event_key: string; dedupe_key: string}>(
 			oneEventQuery('presence', 'dup'),

@@ -2,7 +2,7 @@ import {CALENDAR_CREATE_SQL} from './calendar/schema.ts'
 import type {SqlRunner} from './sql.ts'
 
 /** Bump when any DDL below changes. A mismatch wipes and rebuilds. */
-export const SCHEMA_VERSION = 1
+export const SCHEMA_VERSION = 2
 
 const META_CREATE = `
 create table if not exists meta (
@@ -11,9 +11,13 @@ create table if not exists meta (
 );`
 
 /**
- * Everything a reset drops, children before parents. The view goes first: a
- * view over a dropped table is not an error in SQLite, so leaving one behind
- * would let a stale definition survive a schema change.
+ * Everything a reset drops, children before parents.
+ *
+ * `visible_event` is dropped although `CREATE_SQL` no longer builds it: a
+ * database written under an earlier `SCHEMA_VERSION` can still hold that view,
+ * and a view over a dropped table is not an error in SQLite, so an undropped
+ * one outlives every table it names and would collide with any later view
+ * taking its name.
  */
 export const RESET_SQL = `
 drop view  if exists visible_event;

@@ -50,24 +50,4 @@ describe('calendar schema', () => {
 		assert.equal(occurrences[0].n, 0)
 		assert.equal(tags[0].n, 0)
 	})
-
-	it('picks the lowest source_rank as the visible copy', () => {
-		let runner = fresh()
-		addEvent(runner, 'presence', 'k2', 1, 'dk')
-		addEvent(runner, 'stolaf', 'k1', 0, 'dk')
-
-		let rows = runner.all<{source_id: string}>({
-			sql: 'select source_id from visible_event where dedupe_key = ?',
-			params: ['dk'],
-		})
-		assert.deepEqual(rows, [{source_id: 'stolaf'}], 'insertion order must not decide the winner')
-	})
-
-	it('keeps events with distinct dedupe keys separate', () => {
-		let runner = fresh()
-		addEvent(runner, 'stolaf', 'k1', 0, 'dk-a')
-		addEvent(runner, 'stolaf', 'k3', 0, 'dk-b')
-		let rows = runner.all<{n: number}>({sql: 'select count(*) n from visible_event', params: []})
-		assert.equal(rows[0].n, 2)
-	})
 })

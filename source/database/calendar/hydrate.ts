@@ -25,9 +25,14 @@ export type OccurrenceRowResult = {
  * field absent, never `[]`, matching `EventType`'s own contract.
  *
  * `isOngoing` is likewise never trusted from the wire: every parser computes
- * it at parse time, so a stored value is already stale by the time it is
- * read back. It is recomputed here against `now`, which callers pass in
- * rather than this module reading the clock itself, so a test can pin it.
+ * it at parse time, so what is stored is as old as the fetch. It is recomputed
+ * against `now`, which callers pass in rather than this module reading the
+ * clock itself, so a test can pin it.
+ *
+ * Recomputed *here*, not continuously: it is fixed for as long as the caller's
+ * result is, which for `read.ts`'s hooks means until the next write or the next
+ * local day. `sections.ts` knows this and re-checks `endTime.isAfter(now)`
+ * against its own minute ticker before placing a row under `Ongoing`.
  */
 export function hydrate(
 	rows: OccurrenceRowResult[],
