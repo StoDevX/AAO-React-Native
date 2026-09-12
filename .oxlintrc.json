@@ -123,15 +123,25 @@
     "no-new-native-nonconstructor": "error",
     "no-throw-literal": "error",
     // `node:sqlite` is invisible to Metro, so nothing in the app's import
-    // graph may reach it. The two overrides below are the only legitimate
-    // callers: the test harness, and Task 10's Jest-based equivalence test.
+    // graph may reach it. Two things are restricted, not one: the module
+    // itself, and `source/database/testing/harness.ts`, which is the only
+    // thing that imports it and so the route by which it would actually reach
+    // a bundle. The override below names the files allowed past both -- the
+    // harness, the node:test suites beside their subjects, and the Jest
+    // equivalence test.
     "no-restricted-imports": [
       "error",
       {
         "paths": [
           {
             "name": "node:sqlite",
-            "message": "Only source/database/testing/** and the sqlite-equivalence test may import node:sqlite."
+            "message": "Only test files may import node:sqlite; see source/database/testing/harness.ts."
+          }
+        ],
+        "patterns": [
+          {
+            "group": ["**/testing/harness*", "**/database/testing/*"],
+            "message": "The test harness imports node:sqlite, which Metro cannot resolve. Only test files may reach it."
           }
         ]
       }
@@ -247,6 +257,7 @@
     {
       "files": [
         "source/database/testing/**",
+        "source/database/**/*.test.ts",
         "modules/ccc-calendar/__tests__/sqlite-equivalence.test.ts"
       ],
       "rules": {
