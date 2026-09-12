@@ -38,7 +38,7 @@ const icalFixture = readFileSync(join(__dirname, 'fixtures/ical.ics'), 'utf8')
 // Frozen reference implementation -- DO NOT IMPORT ELSEWHERE, DO NOT SHARE.
 //
 // `dedupeEvents` and the convert/filter/tag steps below are faithful copies
-// of code Task 9 deleted: `dedupeEvents` from
+// of the pre-database implementation: `dedupeEvents` from
 // `modules/ccc-calendar/use-merged-events.ts`, and `namedCalendarOptions`'s
 // `select` from `modules/ccc-calendar/query.ts`, both as of commit
 // 069480f72 (`git show 069480f72:modules/ccc-calendar/use-merged-events.ts`,

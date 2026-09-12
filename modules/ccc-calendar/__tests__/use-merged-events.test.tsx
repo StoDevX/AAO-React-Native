@@ -6,9 +6,9 @@ import {QueryClient, QueryClientProvider} from '@tanstack/react-query'
 import type {CalendarSource} from '../sources'
 import {useMergedEvents} from '../use-merged-events'
 
-// `useMergedEvents` no longer reads events out of these queries -- a remote
-// one now writes into the database instead of returning them -- so the mocks
-// only need to resolve or reject, standing in for a write's receipt.
+// `useMergedEvents` reads nothing out of these queries directly: a remote one
+// writes into the database and resolves to a receipt of that write, so the
+// mocks only need to resolve or reject, standing in for the receipt.
 jest.mock('../query', () => ({
 	namedCalendarOptions: (name: string) => ({
 		queryKey: ['calendar', 'named', name],

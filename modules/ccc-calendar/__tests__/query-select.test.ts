@@ -106,8 +106,8 @@ describe('sourceRankOf', () => {
 })
 
 /**
- * `namedCalendarOptions` no longer returns events -- it writes the fetched
- * wire straight into the database and resolves to a receipt of that write.
+ * `namedCalendarOptions` writes the fetched wire straight into the database
+ * and resolves to a receipt of that write, not the events themselves.
  * `'uitest'` is used throughout so these run against the bundled fixture
  * rather than the network, the same way the rest of this file avoids it.
  */
@@ -211,9 +211,8 @@ describe('deviceCalendarOptions select', () => {
 
 /**
  * `scheduleCalendarOptions` is KSTO's and KRLX's broadcast schedules' own
- * fetch-convert-and-tag query -- the same `select` `namedCalendarOptions` ran
- * before this task, kept for them because their events are never written into
- * the database.
+ * fetch-convert-and-tag query, kept for them because their events are never
+ * written into the database the way a campus calendar's are.
  */
 describe('scheduleCalendarOptions select', () => {
 	test('every event is tagged with the calendar it was fetched from', () => {

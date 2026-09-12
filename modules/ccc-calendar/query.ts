@@ -118,9 +118,9 @@ export const namedCalendarOptions = (
  * KSTO's and KRLX's broadcast schedules are fetched through the same wire
  * format as a campus calendar but are not part of it -- `ScheduleView` draws
  * them from a plain fetch, never from the database `namedCalendarOptions`
- * above writes into, so they keep the convert-and-tag `select` that query
- * used to run, under a query key of their own rather than sharing
- * `namedCalendarOptions`' key with a different fetched shape.
+ * above writes into, so they run their own convert-and-tag `select`, under a
+ * query key of their own rather than sharing `namedCalendarOptions`'s key
+ * with a different fetched shape.
  *
  * The key deliberately does not start with `'calendar'`: `tanstack-query.ts`'s
  * `shouldDehydrateQuery` excludes that whole prefix from persistence because
@@ -154,8 +154,7 @@ export const scheduleCalendarOptions = (
  * `startTime|title` key a schedule row is listed under. Shares
  * `scheduleCalendarOptions`' query key on purpose: both run the identical
  * `fetchCalendar`, so a detail lookup reached from the schedule list costs no
- * extra fetch, and unlike `namedCalendarOptions`/`namedCalendarEventOptions`
- * before this task, neither side's `queryFn` return shape ever changes out
+ * extra fetch, and neither side's `queryFn` return shape ever changes out
  * from under the other's `select`.
  */
 export const scheduleEventOptions = (

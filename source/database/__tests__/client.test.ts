@@ -38,8 +38,8 @@ describe('dropDatabase', () => {
 	})
 
 	// `expo-sqlite` refuses to delete a database that is still open
-	// (`DeleteDatabaseException`, "Close it prior to deletion"), so a drop that
-	// only forgot the runner deleted nothing and threw instead.
+	// (`DeleteDatabaseException`, "Close it prior to deletion"), so closing has
+	// to happen before the delete, or the delete fails and throws.
 	it('closes the database before deleting it', () => {
 		getRunner()
 		dropDatabase()

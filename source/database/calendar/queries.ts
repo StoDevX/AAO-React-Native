@@ -34,10 +34,6 @@ export function rangeParams(window: Window): BindValue[] {
  * breaks the menu: `facetsQuery` counts over `event` and is source-scoped, so
  * it would offer a value that filters to nothing.
  *
- * Scoping it this way is what the deleted `dedupeEvents` did without having to
- * say so -- it was handed the enabled calendars' events and never saw any
- * others.
- *
  * The filters below match over the dedupe group rather than over the winning
  * row, for the same reason and with the same union. See the comment on them.
  */
@@ -53,11 +49,12 @@ export function occurrencesQuery(args: {
 	// them.
 	//
 	// Each one matches over the **dedupe group**, not over the winning row.
-	// For `organization`, group-wide matching reproduces the union `dedupeEvents`
-	// wrote into the survivor, which `organizationsQuery` rebuilds and `hydrate`
-	// prints. For `category`, it is broader than the old path on purpose: `facetsQuery`
-	// tallies categories across all in-scope copies, so matching only the winner
-	// would tally values that filter to nothing.
+	// For `organization`, group-wide matching keeps the filter consistent with
+	// the sponsor union `organizationsQuery` rebuilds and `hydrate` prints --
+	// a copy's sponsor has to filter the same way the hydrated row lists it.
+	// For `category` this is broader on purpose: `facetsQuery` tallies
+	// categories across all in-scope copies, so matching only the winner would
+	// offer a value that filters to nothing.
 	let matches = filters
 		.map(
 			(_, index) =>
@@ -128,12 +125,11 @@ order by o.start_utc`
  * Sorted Z-A because SwiftUI's `Menu` renders its contents bottom-to-top, so
  * this reads A-Z on screen. See `source/features/calendar/filter.ts`.
  *
- * `collate nocase` because the deleted `tally` sorted with `localeCompare`,
- * where SQLite's default BINARY collation puts every capital ahead of every
- * lower-case letter -- so "athletics" sorted after "Zoology". This is closer
- * but not exact parity: `nocase` folds ASCII A-Z only, so accented and
- * non-Latin names still order by code point where `localeCompare` would order
- * them by the locale's rules.
+ * `collate nocase` because the filter menu must not split a value by case --
+ * SQLite's default BINARY collation puts every capital ahead of every
+ * lower-case letter, so "athletics" would sort after "Zoology". This is close
+ * but not exact: `nocase` folds ASCII A-Z only, so accented and non-Latin
+ * names still order by code point rather than by locale rules.
  */
 export function facetsQuery(args: {
 	axis: 'category' | 'organization'

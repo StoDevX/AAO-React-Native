@@ -300,12 +300,12 @@ describe('writeSource', () => {
 	 * leave this source exactly as it was -- a failing Presence fetch cannot
 	 * blank St. Olaf.
 	 *
-	 * The throw is injected rather than provoked by colliding wire events,
-	 * which is how this test used to build one: `toRows` now drops a repeat
-	 * before it reaches SQLite, so that feed no longer fails at all. What has
-	 * to stay proven is that the transaction really rolls back, and injecting
-	 * the failure states that directly instead of relying on a constraint
-	 * violation that may or may not remain reachable.
+	 * The throw is injected rather than provoked by colliding wire events:
+	 * `toRows` drops a repeat before it reaches SQLite, so a colliding feed
+	 * never fails on its own. What has to stay proven is that the transaction
+	 * really rolls back, and injecting the failure states that directly
+	 * instead of relying on a constraint violation that may or may not remain
+	 * reachable.
 	 */
 	it("leaves a source's previous rows intact when the write throws partway through", () => {
 		let runner = freshDb()

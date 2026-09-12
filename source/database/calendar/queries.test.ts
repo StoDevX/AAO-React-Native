@@ -247,9 +247,8 @@ describe('occurrencesQuery', () => {
 	 * query never runs, so `writeSource` never refreshes or prunes its rows and
 	 * they keep winning dedupes for as long as the calendar stays off.
 	 *
-	 * The dedupe therefore has to run over the requested sources only, which is
-	 * exactly what the deleted `dedupeEvents` did: it only ever saw the events
-	 * of calendars that were on.
+	 * The dedupe therefore has to run over the requested sources only -- the
+	 * calendars the reader has enabled, and no others.
 	 */
 	it('returns the losing copy when the winning copy belongs to a calendar that is off', () => {
 		let runner = seed()
@@ -363,9 +362,7 @@ describe('facetsQuery', () => {
 	 * print that same union on the row -- so a filter that matches only the
 	 * *winning* copy's tags cannot reach a tag only a displaced copy carries.
 	 * The menu then offers a sponsor printed on the row in front of the
-	 * reader, and selecting it empties the list. The deleted array path could
-	 * not do this: `tally` and `filterEvents` both read one deduped list whose
-	 * `organization` was already the union, so they agreed by construction.
+	 * reader, and selecting it empties the list.
 	 */
 	for (let sourceIds of [['stolaf'], ['presence'], ['stolaf', 'presence']]) {
 		it(`agrees with the filter query for every value it reports, with ${sourceIds.join(' and ')} on`, () => {
@@ -489,8 +486,7 @@ describe('organizationsQuery', () => {
 	 * stored. Grouping tags by `dedupe_key` over the whole `event` table lets a
 	 * switched-off calendar contribute a sponsor to an event the reader is
 	 * looking at from another calendar -- a name `facetsQuery` will never offer
-	 * and no filter can match, appearing on a row anyway. The deleted
-	 * `dedupeEvents` merged only the calendars that were on.
+	 * and no filter can match, appearing on a row anyway.
 	 */
 	it('leaves out a sponsor named only by a calendar that is off', () => {
 		let runner = seed()
