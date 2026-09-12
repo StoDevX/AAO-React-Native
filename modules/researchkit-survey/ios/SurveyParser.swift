@@ -192,6 +192,43 @@ struct SurveyParser {
 			}
 			return ORKTimeOfDayAnswerFormat(defaultComponents: defaultComponents)
 
+		case "continuousScale":
+			let min = dict["min"] as? Double ?? 0.0
+			let max = dict["max"] as? Double ?? 1.0
+			guard min < max else {
+				throw SurveyParserError.invalidScaleRange(questionId: questionId)
+			}
+			let minLabel = dict["minLabel"] as? String
+			let maxLabel = dict["maxLabel"] as? String
+			let defaultValue = dict["defaultValue"] as? Double ?? min
+			let fractionDigits = dict["fractionDigits"] as? Int ?? 2
+			return ORKContinuousScaleAnswerFormat(
+				maximumValue: max,
+				minimumValue: min,
+				defaultValue: defaultValue,
+				maximumFractionDigits: fractionDigits,
+				vertical: false,
+				maximumValueDescription: maxLabel,
+				minimumValueDescription: minLabel
+			)
+
+		case "valuePicker":
+			guard let choicesArray = dict["choices"] as? [[String: Any]], !choicesArray.isEmpty else {
+				throw SurveyParserError.emptyChoices(questionId: questionId)
+			}
+			let textChoices = choicesArray.map { choice in
+				ORKTextChoice(
+					text: choice["text"] as? String ?? "",
+					value: (choice["value"] as? String ?? "") as NSString
+				)
+			}
+			return ORKValuePickerAnswerFormat(textChoices: textChoices)
+
+		case "timeInterval":
+			let defaultInterval = dict["defaultInterval"] as? TimeInterval ?? 0
+			let step = dict["step"] as? Int ?? 1
+			return ORKTimeIntervalAnswerFormat(defaultInterval: defaultInterval, step: step)
+
 		default:
 			throw SurveyParserError.unknownQuestionType(type)
 		}
