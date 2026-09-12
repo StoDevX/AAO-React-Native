@@ -380,11 +380,14 @@ test('the sponsor union matches when the same event is duplicated across two sou
 
 	// Both sources describe the same real-world game -- same title, same
 	// instant, so the same `dedupeKey` -- and each names a sponsor the other
-	// does not. `stolaf` is rank 0, so it is the survivor/winner on both
-	// paths; the union should carry its own name first, then the name only
-	// `presence` contributes.
-	let winner = gameWireEvent(['St. Olaf Athletics'])
-	let loser = gameWireEvent(['Campus Rec'])
+	// does not, but they also agree on one: "Campus Rec", named by both.
+	// `stolaf` is rank 0, so it is the survivor/winner on both paths; the
+	// union should carry its own two names first, in their own order, then
+	// only the name `presence` contributes that `stolaf` didn't already
+	// name -- "Campus Rec" must appear once, not twice, the same way the
+	// deleted `dedupeEvents` never double-listed a sponsor both copies named.
+	let winner = gameWireEvent(['St. Olaf Athletics', 'Campus Rec'])
+	let loser = gameWireEvent(['Campus Rec', 'Presence Rec'])
 
 	let db = freshDb()
 	writeToDb(db, 'stolaf', 0, [winner])
@@ -402,7 +405,11 @@ test('the sponsor union matches when the same event is duplicated across two sou
 
 	expect(oldEvents).toHaveLength(1)
 	expect(oldEvents[0]?.sourceId).toBe('stolaf')
-	expect(oldEvents[0]?.event.organization).toEqual(['St. Olaf Athletics', 'Campus Rec'])
+	expect(oldEvents[0]?.event.organization).toEqual([
+		'St. Olaf Athletics',
+		'Campus Rec',
+		'Presence Rec',
+	])
 
 	assertPipelinesAgree(oldEvents, newEvents, {compareIsOngoing: true})
 })

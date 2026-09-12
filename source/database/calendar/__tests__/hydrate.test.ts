@@ -40,6 +40,22 @@ describe('hydrate', () => {
 		expect(entry.event.organization).toEqual(['Athletics', 'Student Activities'])
 	})
 
+	it('de-duplicates a sponsor both copies name, keeping the winner-first order', () => {
+		// `group_concat` cannot enforce `distinct` alongside its in-aggregate
+		// `order by` (`organizationsQuery`'s ordering is load-bearing and
+		// tested on its own) -- SQLite rejects
+		// `group_concat(distinct value, separator order by ...)` outright
+		// ("DISTINCT aggregates must have exactly one argument") -- so a name
+		// both the winner and a displaced copy tag arrives here already
+		// duplicated. `hydrate` has to collapse it the way the deleted
+		// `dedupeEvents` did explicitly
+		// (`modules/ccc-calendar/use-merged-events.ts`, pre-Task-9:
+		// `.filter((name) => !sponsors.includes(name))`).
+		let sponsors = new Map([['dk', ['Athletics', 'Student Activities', 'Athletics']]])
+		let [entry] = hydrate([ROW], sponsors, new Date('2026-09-15T19:00:00Z'))
+		expect(entry.event.organization).toEqual(['Athletics', 'Student Activities'])
+	})
+
 	it('leaves organization absent rather than empty when nothing sponsors it', () => {
 		let [entry] = hydrate([ROW], new Map(), new Date('2026-09-15T19:00:00Z'))
 		expect('organization' in entry.event).toBe(false)
