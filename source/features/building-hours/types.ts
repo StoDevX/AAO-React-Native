@@ -1,4 +1,14 @@
-export type BuildingStatusType = 'Open' | 'Closed' | 'Almost Closed' | 'Almost Open' | 'Chapel'
+/**
+ * What a building's dot says: whether it is open, about to change, shut for
+ * chapel, or reachable by something that is not a door.
+ */
+export type BuildingStatusType =
+	| 'Open'
+	| 'Almost Open'
+	| 'Almost Closed'
+	| 'Chapel'
+	| 'Service'
+	| 'Closed'
 
 export type DayOfWeekEnumType = 'Mo' | 'Tu' | 'We' | 'Th' | 'Fr' | 'Sa' | 'Su'
 

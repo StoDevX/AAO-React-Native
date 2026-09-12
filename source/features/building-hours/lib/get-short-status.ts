@@ -1,5 +1,5 @@
 import type {Moment} from 'moment-timezone'
-import type {BuildingType} from '../types'
+import type {BuildingStatusType, BuildingType} from '../types'
 
 import {isChapelTime} from './chapel'
 import {findChapelReopen} from './find-chapel-reopen'
@@ -7,7 +7,7 @@ import {findChapelPause} from './find-chapel-pause'
 import {schedulesInEffect} from './schedules-in-effect'
 import {getScheduleStatusAtMoment} from './get-schedule-status'
 
-export function getShortBuildingStatus(info: BuildingType, m: Moment): string {
+export function getShortBuildingStatus(info: BuildingType, m: Moment): BuildingStatusType {
 	let schedules = info.schedule || []
 	if (!schedules.length) {
 		return 'Closed'
