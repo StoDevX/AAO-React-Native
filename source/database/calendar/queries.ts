@@ -53,15 +53,11 @@ export function occurrencesQuery(args: {
 	// them.
 	//
 	// Each one matches over the **dedupe group**, not over the winning row.
-	// That is the same union `organizationsQuery` builds and `hydrate` prints,
-	// and matching anything narrower breaks the invariant the filter menu rests
-	// on: `facetsQuery` tallies a tag that any in-scope copy carries, so a
-	// filter reading only the winner's own tags cannot reach a tag only a
-	// displaced copy carries -- and the menu then offers a sponsor printed on
-	// the row in front of the reader, which empties the list when chosen. The
-	// deleted array path could not get this wrong, because `tally` and
-	// `filterEvents` both read one deduped list whose `organization` was
-	// already the union.
+	// For `organization`, group-wide matching reproduces the union `dedupeEvents`
+	// wrote into the survivor, which `organizationsQuery` rebuilds and `hydrate`
+	// prints. For `category`, it is broader than the old path on purpose: `facetsQuery`
+	// tallies categories across all in-scope copies, so matching only the winner
+	// would tally values that filter to nothing.
 	let matches = filters
 		.map(
 			(_, index) =>
