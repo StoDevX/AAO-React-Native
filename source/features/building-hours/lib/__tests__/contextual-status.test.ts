@@ -22,7 +22,7 @@ describe('contextualStatus', () => {
 		])
 		let now = moment.tz('2026-09-07 14:00', timezone) // Monday 2pm
 		let result = contextualStatus(building, now)
-		expect(result).toBe('Open until 8 PM')
+		expect(result.short).toBe('Open until 8 PM')
 	})
 
 	it('returns "Closes in X min" when almost closed', () => {
@@ -34,7 +34,7 @@ describe('contextualStatus', () => {
 		])
 		let now = moment.tz('2026-09-07 19:45', timezone) // Monday 7:45pm
 		let result = contextualStatus(building, now)
-		expect(result).toMatch(/Closes in \d+ min/u)
+		expect(result.short).toMatch(/Closes in \d+ min/u)
 	})
 
 	it('returns "Opens at X" when closed but opens later today', () => {
@@ -46,7 +46,7 @@ describe('contextualStatus', () => {
 		])
 		let now = moment.tz('2026-09-07 14:00', timezone) // Monday 2pm
 		let result = contextualStatus(building, now)
-		expect(result).toBe('Opens at 5 PM')
+		expect(result.short).toBe('Opens at 5 PM')
 	})
 
 	it('names the earliest opening today, not the first one listed', () => {
@@ -70,12 +70,12 @@ describe('contextualStatus', () => {
 			},
 		])
 
-		expect(contextualStatus(building, moment.tz('2026-09-07 10:00', timezone))).toBe(
+		expect(contextualStatus(building, moment.tz('2026-09-07 10:00', timezone)).short).toBe(
 			'Opens at 11 AM',
 		)
 		// And again once the first window has passed: the answer moves to the
 		// kitchen's evening window, still not the delivery one.
-		expect(contextualStatus(building, moment.tz('2026-09-07 14:30', timezone))).toBe(
+		expect(contextualStatus(building, moment.tz('2026-09-07 14:30', timezone)).short).toBe(
 			'Opens at 5 PM',
 		)
 	})
@@ -92,7 +92,7 @@ describe('contextualStatus', () => {
 		])
 		let now = moment.tz('2026-09-07 08:00', timezone) // Monday 8am
 
-		expect(contextualStatus(building, now)).toBe('Opens at 9 AM')
+		expect(contextualStatus(building, now).short).toBe('Opens at 9 AM')
 	})
 
 	it('returns "Opens in X min" when almost open', () => {
@@ -104,7 +104,7 @@ describe('contextualStatus', () => {
 		])
 		let now = moment.tz('2026-09-07 16:45', timezone) // Monday 4:45pm
 		let result = contextualStatus(building, now)
-		expect(result).toMatch(/Opens in \d+ min/u)
+		expect(result.short).toMatch(/Opens in \d+ min/u)
 	})
 
 	it('reports the window carried over from last night', () => {
@@ -120,7 +120,7 @@ describe('contextualStatus', () => {
 			},
 		])
 		let now = moment.tz('2026-09-13 00:30', timezone) // Sunday 12:30am
-		expect(contextualStatus(building, now)).toBe('Closes in 30 min')
+		expect(contextualStatus(building, now).short).toBe('Closes in 30 min')
 	})
 
 	it('does not report a window that no night of the week is running', () => {
@@ -136,7 +136,7 @@ describe('contextualStatus', () => {
 			},
 		])
 		let now = moment.tz('2026-09-11 00:30', timezone) // Friday 12:30am
-		expect(contextualStatus(building, now)).toBe('Opens at 7 AM')
+		expect(contextualStatus(building, now).short).toBe('Opens at 7 AM')
 	})
 
 	it('returns "Closed" when nothing opens again today', () => {
@@ -148,7 +148,7 @@ describe('contextualStatus', () => {
 		])
 		let now = moment.tz('2026-09-12 14:00', timezone) // Saturday 2pm
 		let result = contextualStatus(building, now)
-		expect(result).toBe('Closed')
+		expect(result.short).toBe('Closed')
 	})
 
 	it('says when a chapel closure lifts', () => {
@@ -162,7 +162,7 @@ describe('contextualStatus', () => {
 		])
 		let now = moment.tz('2026-09-07 10:15', timezone)
 
-		expect(contextualStatus(building, now)).toBe('Reopens at 10:30 AM')
+		expect(contextualStatus(building, now).short).toBe('Reopens at 10:30 AM')
 	})
 
 	it('counts down the last ten minutes of chapel', () => {
@@ -175,7 +175,7 @@ describe('contextualStatus', () => {
 		])
 		let now = moment.tz('2026-09-07 10:22', timezone)
 
-		expect(contextualStatus(building, now)).toBe('Reopens in 8 min')
+		expect(contextualStatus(building, now).short).toBe('Reopens in 8 min')
 	})
 
 	it('points at the next real opening when the building will not resume', () => {
@@ -193,6 +193,6 @@ describe('contextualStatus', () => {
 		])
 		let now = moment.tz('2026-09-10 11:15', timezone)
 
-		expect(contextualStatus(building, now)).toBe('Opens at 1 PM')
+		expect(contextualStatus(building, now).short).toBe('Opens at 1 PM')
 	})
 })
