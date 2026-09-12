@@ -22,17 +22,16 @@ final class SurveyPresenter: NSObject {
 	}
 
 	func present(definition: [String: Any], promise: Promise) {
-		guard currentPromise == nil else {
+		if currentPromise != nil {
 			// Check if the task view controller is still being presented
-			if taskViewController?.presentingViewController == nil {
-				// The survey was dismissed without our delegate being called (e.g., hot reload)
-				// Clear the stale state and proceed
-				currentPromise = nil
-				taskViewController = nil
-			} else {
+			if taskViewController?.presentingViewController != nil {
 				promise.reject("SURVEY_IN_PROGRESS", "A survey is already being presented")
 				return
 			}
+			// The survey was dismissed without our delegate being called (e.g., hot reload)
+			// Clear the stale state and proceed
+			currentPromise = nil
+			taskViewController = nil
 		}
 
 		currentPromise = promise
