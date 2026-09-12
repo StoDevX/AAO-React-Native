@@ -73,10 +73,35 @@ final class SurveyPresenter: NSObject {
 					}
 				} else if let scaleResult = result as? ORKScaleQuestionResult,
 						  let value = scaleResult.scaleAnswer {
-					answers[key] = value.intValue
+					// ORKScaleAnswerFormat and ORKContinuousScaleAnswerFormat both
+					// produce ORKScaleQuestionResult, so one branch must serve both;
+					// doubleValue loses no information for either since JS numbers
+					// don't distinguish int from double.
+					answers[key] = value.doubleValue
 				} else if let textResult = result as? ORKTextQuestionResult,
 						  let value = textResult.textAnswer {
 					answers[key] = value
+				} else if let numericResult = result as? ORKNumericQuestionResult,
+						  let value = numericResult.numericAnswer {
+					answers[key] = value.doubleValue
+				} else if let dateResult = result as? ORKDateQuestionResult,
+						  let value = dateResult.dateAnswer {
+					let formatter = ISO8601DateFormatter()
+					answers[key] = formatter.string(from: value)
+				} else if let timeResult = result as? ORKTimeOfDayQuestionResult,
+						  let components = timeResult.dateComponentsAnswer {
+					let hour = components.hour ?? 0
+					let minute = components.minute ?? 0
+					answers[key] = String(format: "%02d:%02d", hour, minute)
+				} else if let intervalResult = result as? ORKTimeIntervalQuestionResult,
+						  let value = intervalResult.intervalAnswer {
+					answers[key] = value.doubleValue
+				} else if let locationResult = result as? ORKLocationQuestionResult,
+						  let location = locationResult.locationAnswer {
+					answers[key] = [
+						"latitude": location.coordinate.latitude,
+						"longitude": location.coordinate.longitude
+					]
 				}
 			}
 		}
