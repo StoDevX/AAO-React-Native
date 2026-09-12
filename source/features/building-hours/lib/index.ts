@@ -9,10 +9,7 @@ export {hasDisplayableHours, firstScheduleNote} from './schedule-summary'
 export {getDayOfWeek} from './get-day-of-week'
 export {parseHours} from './parse-hours'
 export {blankSchedule} from './blank-schedule'
-export {
-	BG_COLORS as hoursBackgroundColors,
-	FG_COLORS as hoursForegroundColors,
-	getAccentBackgroundColor,
-	getAccentTextColor,
-} from './color-helpers'
+export {getAccentBackgroundColor} from './color-helpers'
+export {statusGlyph} from './status-glyph'
+export {findOpenService} from './find-open-service'
 export {toPickerDate, fromPickerDate} from './picker-time'
