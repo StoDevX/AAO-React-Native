@@ -157,9 +157,7 @@ struct SurveyParser {
 			return format
 
 		case "email":
-			let format = ORKEmailAnswerFormat()
-			format.placeholder = dict["placeholder"] as? String
-			return format
+			return ORKEmailAnswerFormat()
 
 		case "date":
 			let styleStr = dict["style"] as? String ?? "date"
