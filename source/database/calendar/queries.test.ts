@@ -193,6 +193,33 @@ describe('facetsQuery', () => {
 		)
 	})
 
+	// The case that actually distinguishes count(distinct dedupe_key) from
+	// count(*): one event carried by two calendars, both tagging it the same.
+	// It is one event to the user, so the menu must say 1 -- and filtering on
+	// that value returns one deduped event, so a 2 here would be the menu
+	// lying about what the filter will do. None of the cases above builds this
+	// shape, so without it the aggregate choice is untested.
+	it('counts a cross-source duplicate once when both copies carry the tag', () => {
+		let runner = seed()
+		runner.run({
+			sql: 'insert into event values (?,?,?,?,?,?,?)',
+			params: ['presence', 'dup2', 1, 'dk-tagged', 'tagged', 'Somewhere', '{}'],
+		})
+		runner.run({
+			sql: 'insert into occurrence values (?,?,0,?,?,null,null)',
+			params: ['presence', 'dup2', Date.UTC(2026, 8, 21, 12), Date.UTC(2026, 8, 21, 13)],
+		})
+		runner.run({
+			sql: 'insert into event_tag values (?,?,?,?)',
+			params: ['presence', 'dup2', 'category', 'Music'],
+		})
+
+		let rows = runner.all<{value: string; count: number}>(
+			facetsQuery({axis: 'category', window: WINDOW, sourceIds: ['stolaf', 'presence']}),
+		)
+		assert.deepEqual(rows, [{value: 'Music', count: 1}])
+	})
+
 	it('agrees with the filter query for every value it reports', () => {
 		let runner = seed()
 		for (let axis of ['category', 'organization'] as const) {
