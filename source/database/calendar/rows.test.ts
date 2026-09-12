@@ -93,6 +93,23 @@ describe('toRows', () => {
 		assert.equal(occurrences[0].endDate, '2026-09-12')
 	})
 
+	// America/Chicago springs forward on 2026-03-08, so a local +1 day is only
+	// 23 real hours -- long enough to fall short of the next UTC date. The
+	// zero-length guard has to advance the calendar date in UTC, not by
+	// stepping local wall-clock days, or it silently no-ops on this one day a
+	// year (under this suite's TZ=America/Chicago).
+	it('gives a zero-length all-day event a whole day across a DST spring-forward', () => {
+		let {occurrences} = toRows('stolaf', 0, [
+			wireEvent({
+				isAllDay: true,
+				startTime: '2026-03-08T00:00:00Z',
+				endTime: '2026-03-08T00:00:00Z',
+			}),
+		])
+		assert.equal(occurrences[0].startDate, '2026-03-08')
+		assert.equal(occurrences[0].endDate, '2026-03-09')
+	})
+
 	it('emits a tag row per value on each axis', () => {
 		let {tags} = toRows('stolaf', 0, [
 			wireEvent({categories: ['Sports', 'Athletics'], organization: ['Athletics Dept']}),
@@ -117,5 +134,15 @@ describe('toRows', () => {
 	it('carries the source rank onto every event row', () => {
 		let {events} = toRows('presence', 1, [wireEvent()])
 		assert.equal(events[0].sourceRank, 1)
+	})
+
+	it('normalizes an empty wire location to null', () => {
+		let {events} = toRows('stolaf', 0, [wireEvent({location: ''})])
+		assert.equal(events[0].location, null)
+	})
+
+	it('passes a real wire location through unchanged', () => {
+		let {events} = toRows('stolaf', 0, [wireEvent({location: 'Field'})])
+		assert.equal(events[0].location, 'Field')
 	})
 })

@@ -1,5 +1,4 @@
 import type {EventType} from '@frogpond/event-type'
-import {addDays, isAfter} from 'date-fns'
 
 import {convertEvents} from '../../../modules/ccc-calendar/convert.ts'
 import type {WireEvent} from '../../../modules/ccc-calendar/parsers/events.ts'
@@ -40,6 +39,16 @@ function utcDate(instant: string): string {
 	return instant.slice(0, 10)
 }
 
+/// A `YYYY-MM-DD` string parses as UTC midnight (per spec), so this advances
+/// the calendar date entirely in UTC via `setUTCDate` -- never `setDate`,
+/// which steps the *local* day and, across a spring-forward DST transition,
+/// covers only 23 real hours and can fail to reach the next UTC date at all.
+function utcDatePlusOneDay(date: string): string {
+	let instant = new Date(`${date}T00:00:00Z`)
+	instant.setUTCDate(instant.getUTCDate() + 1)
+	return utcDate(instant.toISOString())
+}
+
 /// `end_date` is stored exclusive, and the wire end instant's UTC date
 /// already IS that exclusive end -- for two different reasons that happen to
 /// agree. TEC emits campus midnight expressed in UTC, so `23:59:59` on the
@@ -50,12 +59,17 @@ function utcDate(instant: string): string {
 /// (wire start and end sharing a UTC date) would otherwise read as already
 /// over, so it picks up a whole day -- the same relocation `convertEvents`
 /// makes in instant space for `EventType.endTime`.
+///
+/// The comparison below is zone-safe: `new Date('2026-03-08')` parses as UTC
+/// midnight (per spec), so comparing two such values never consults the
+/// local zone. Advancing the date, if needed, has to stay equally UTC-only --
+/// see `utcDatePlusOneDay`.
 function allDayDates(wireEvent: WireEvent): {startDate: string; endDate: string} {
 	let startDate = utcDate(wireEvent.startTime)
 	let endDate = utcDate(wireEvent.endTime)
 
-	if (!isAfter(new Date(endDate), new Date(startDate))) {
-		endDate = utcDate(addDays(new Date(startDate), 1).toISOString())
+	if (new Date(endDate).getTime() <= new Date(startDate).getTime()) {
+		endDate = utcDatePlusOneDay(startDate)
 	}
 
 	return {startDate, endDate}
@@ -90,7 +104,10 @@ export function toRows(sourceId: string, sourceRank: number, wire: WireEvent[]):
 			sourceRank,
 			dedupeKey: dedupeKey(event),
 			title: wireEvent.title,
-			location: wireEvent.location,
+			// `WireEvent.location` defaults to `''` rather than being absent, but
+			// the column is nullable -- normalizing here keeps "no location" one
+			// value instead of two spellings a later query would have to handle.
+			location: wireEvent.location === '' ? null : wireEvent.location,
 			wire: JSON.stringify(wireEvent),
 		})
 
