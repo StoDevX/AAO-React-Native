@@ -3,6 +3,7 @@ import {AppState} from 'react-native'
 import {default as moment, unitOfTime, type Moment} from 'moment-timezone'
 
 import {isUITesting} from '@frogpond/launch-arguments'
+import {useNowOverride} from './override'
 
 /**
  * Frozen date for UI testing. Tests run against fixture data anchored to this
@@ -14,6 +15,13 @@ export const UITEST_FROZEN_DATE = '2026-09-05T12:00:00-05:00'
  * Returns the current moment, or the frozen date in UI testing mode.
  */
 export function now(): Moment {
+	// `clone()` because a Moment is mutable and callers chain `.startOf()` and
+	// `.tz()` onto what they get back -- handing out the stored one would let
+	// any of them rewrite the override for the whole app.
+	let frozen = useNowOverride.getState().frozen
+	if (frozen) {
+		return frozen.clone()
+	}
 	return isUITesting ? moment(UITEST_FROZEN_DATE) : moment()
 }
 
@@ -91,7 +99,8 @@ export function useMomentTimer(props: MomentProps): {now: Moment} {
 	let {intervalMs, timezone, startOf} = props
 
 	let currentMoment = useCallback((): Moment => {
-		let next = isUITesting ? moment(UITEST_FROZEN_DATE) : moment()
+		let frozen = useNowOverride.getState().frozen
+		let next = frozen ? frozen.clone() : isUITesting ? moment(UITEST_FROZEN_DATE) : moment()
 		if (timezone) {
 			next = next.tz(timezone)
 		}
@@ -102,6 +111,14 @@ export function useMomentTimer(props: MomentProps): {now: Moment} {
 	}, [timezone, startOf])
 
 	let [now, setNow] = useState(currentMoment)
+
+	// `getState()` reads without subscribing, so a screen already on-screen when
+	// the clock is frozen would keep the old time until its next tick -- which,
+	// on a frozen clock, never comes.
+	let frozen = useNowOverride((state) => state.frozen)
+	useEffect(() => {
+		setNow(currentMoment())
+	}, [frozen, currentMoment])
 
 	useBoundaryInterval(() => {
 		// Hold onto the existing moment when the clock has not actually moved, so
