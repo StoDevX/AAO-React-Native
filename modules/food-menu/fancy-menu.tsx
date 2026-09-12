@@ -126,7 +126,7 @@ export function FancyMenu(props: Props): React.ReactNode {
 	// Moment on each of their renders, so anything tracking it would follow
 	// every one of them and take the user's filters with it.
 	const [filters, setFilters] = useState<FilterType<MenuItemType>[]>(() =>
-		buildFilters(Object.values(foodItems), menuCorIcons, meals, now),
+		buildFilters(menuCorIcons, meals, now),
 	)
 
 	const meal = chooseMeal(meals, filters, now)

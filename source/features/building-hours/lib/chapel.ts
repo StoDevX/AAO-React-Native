@@ -2,9 +2,10 @@ import type {Moment} from 'moment-timezone'
 import type {SingleBuildingScheduleType} from '../types'
 
 import {getDayOfWeek} from './get-day-of-week'
-import {isScheduleReallyOpenAtMoment} from './is-schedule-really-open'
 import {formatBuildingTimes} from './format-times'
 import {parseHours} from './parse-hours'
+import {findOpenWindow} from './find-open-window'
+import type {HourPairType} from './find-open-window'
 
 // TODO: fetch this over the network
 const chapelSchedule: SingleBuildingScheduleType[] = [
@@ -13,18 +14,26 @@ const chapelSchedule: SingleBuildingScheduleType[] = [
 	{days: ['Th'], from: '11:00am', to: '12:35pm'},
 ]
 
+/** The chapel window running at `m`, or null when chapel is not in session. */
+export function findChapelWindow(
+	m: Moment,
+	schedules: SingleBuildingScheduleType[] = chapelSchedule,
+): HourPairType | null {
+	for (let schedule of schedules) {
+		let window = findOpenWindow(schedule, m)
+		if (window) {
+			return window
+		}
+	}
+
+	return null
+}
+
 export function isChapelTime(
 	m: Moment,
 	schedules: SingleBuildingScheduleType[] = chapelSchedule,
 ): boolean {
-	let dayOfWeek = getDayOfWeek(m)
-	let sched = schedules.find((schedule) => schedule.days.includes(dayOfWeek))
-
-	if (!sched) {
-		return false
-	}
-
-	return isScheduleReallyOpenAtMoment(sched, m)
+	return findChapelWindow(m, schedules) !== null
 }
 
 export function formatChapelTime(

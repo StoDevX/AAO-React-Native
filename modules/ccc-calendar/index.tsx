@@ -1,6 +1,7 @@
 export {deviceCalendarEventOptions, namedCalendarOptions, namedCalendarEventOptions} from './query'
 export {deviceCalendarIdFrom, isDeviceSourceId} from './sources'
 export {CalendarPicker} from './calendar-picker'
+export {CalendarModePicker} from './mode-picker'
 export {ScheduleView} from './schedule-view'
 export {useCalendarSource, useCalendarSources} from './use-calendar-sources'
 export {useMergedEvents} from './use-merged-events'

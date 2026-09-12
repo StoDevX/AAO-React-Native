@@ -1,5 +1,7 @@
 import ky from 'ky'
+import {isUITesting} from '@frogpond/launch-arguments'
 import {queryOptions} from '@tanstack/react-query'
+import {UITEST_DIRECTORY_RESULTS} from './__fixtures__/entries'
 import {DirectorySearchTypeEnum, SearchResults} from './types'
 import {formatResults} from './helpers'
 
@@ -45,6 +47,14 @@ async function fetchDirectoryEntries(
 	searchQuery: ReturnType<typeof getDirectoryQuery>,
 	signal?: AbortSignal,
 ): Promise<SearchResults> {
+	// The live directory is whoever works at St. Olaf this week, so a test
+	// searching it cannot say what it will find -- see
+	// `source/features/dictionary/query.ts` for the same reasoning about
+	// entries.
+	if (isUITesting) {
+		return UITEST_DIRECTORY_RESULTS
+	}
+
 	let response = await directory.get('search', {searchParams: searchQuery, signal}).json()
 	return response as SearchResults
 }

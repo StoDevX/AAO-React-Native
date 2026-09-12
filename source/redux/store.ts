@@ -2,7 +2,6 @@ import {configureStore, combineReducers} from '@reduxjs/toolkit'
 
 import {reducer as settings} from './parts/settings'
 import {reducer as buildings} from './parts/buildings'
-import {reducer as buildingHoursReport} from './parts/building-hours-report'
 import {reducer as courses} from './parts/courses'
 import {sentryReduxEnhancer} from './sentry-enhancer'
 import {migrations} from './migrations'
@@ -26,16 +25,11 @@ const persistConfig = {
 	version: 3,
 	migrate: createMigrate(migrations),
 	storage: AsyncStorage,
-	// A report draft is a mid-edit scratch buffer, not durable app state --
-	// resurrecting a half-finished bug report days after the app was closed
-	// would be surprising, not helpful.
-	blacklist: ['buildingHoursReport'],
 }
 
 const rootReducer = combineReducers({
 	settings,
 	buildings,
-	buildingHoursReport,
 	courses,
 })
 

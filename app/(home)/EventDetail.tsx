@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {router, Stack, useLocalSearchParams} from 'expo-router'
+import {Stack, useLocalSearchParams} from 'expo-router'
 import {useQuery} from '@tanstack/react-query'
 
 import {
@@ -10,6 +10,8 @@ import {
 	timelineWindow,
 } from '@frogpond/event-list'
 import * as c from '@frogpond/colors'
+
+import {useDismissOnce} from '../../source/lib/use-dismiss-once'
 import {AddToCalendar} from '@frogpond/add-to-device-calendar'
 import {
 	deviceCalendarEventOptions,
@@ -52,6 +54,7 @@ const NO_ATTRIBUTION = {title: '', href: ''} as const
 const REMOTE_SOURCE_IDS = new Set(['stolaf', 'presence', 'uitest'])
 
 export default function EventDetailPage(): React.ReactNode {
+	let dismiss = useDismissOnce()
 	let {source, eventKey} = useLocalSearchParams<{
 		source: string
 		eventKey: string
@@ -174,7 +177,7 @@ export default function EventDetailPage(): React.ReactNode {
 				<Stack.Toolbar.Button
 					accessibilityLabel="Close"
 					icon="xmark"
-					onPress={() => router.back()}
+					onPress={dismiss}
 					separateBackground={true}
 				/>
 			</Stack.Toolbar>

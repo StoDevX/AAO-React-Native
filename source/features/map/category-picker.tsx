@@ -1,18 +1,7 @@
 import * as React from 'react'
 import {Picker, Text} from '@expo/ui/swift-ui'
 import {pickerStyle, tag} from '@expo/ui/swift-ui/modifiers'
-import type {Category} from './types'
-
-export const CATEGORY_LABELS = ['Buildings', 'Outdoors', 'Parking', 'Athletics'] as const
-
-export type CategoryLabel = (typeof CATEGORY_LABELS)[number]
-
-export const LABEL_TO_CATEGORY: Record<CategoryLabel, Category> = {
-	Buildings: 'building',
-	Outdoors: 'outdoors',
-	Parking: 'parking',
-	Athletics: 'athletics',
-}
+import {CATEGORY_LABELS, type CategoryLabel} from './lib/categories'
 
 type Props = {
 	selected: CategoryLabel

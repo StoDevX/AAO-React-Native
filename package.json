@@ -36,7 +36,6 @@
     "@frogpond/separator": "workspace:*",
     "@frogpond/silly-card": "workspace:*",
     "@frogpond/storage": "workspace:*",
-    "@frogpond/tableview": "workspace:*",
     "@frogpond/timer": "workspace:*",
     "@frogpond/titlecase": "2.0.4",
     "@frogpond/toolbar": "workspace:*",
@@ -89,7 +88,6 @@
     "react-native-restart-newarch": "1.0.87",
     "react-native-safe-area-context": "5.7.0",
     "react-native-screens": "4.26.2",
-    "react-native-tableview-simple": "4.4.1",
     "react-native-typography": "1.4.1",
     "react-native-url-polyfill": "4.0.0",
     "react-native-webview": "13.16.1",
@@ -149,7 +147,7 @@
   "engines": {
     "node": ">=18"
   },
-  "packageManager": "pnpm@12.3.2",
+  "packageManager": "pnpm@12.4.0",
   "enriched-markdown": {
     "enableMath": false
   }

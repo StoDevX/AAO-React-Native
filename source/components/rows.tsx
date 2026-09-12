@@ -18,6 +18,7 @@ import {
 	VStack,
 } from '@expo/ui/swift-ui'
 import {
+	accessibilityIdentifier,
 	accessibilityLabel,
 	buttonStyle,
 	contentShape,
@@ -32,10 +33,17 @@ import {
 } from '@expo/ui/swift-ui/modifiers'
 import * as c from '@frogpond/colors'
 
+import {detailLinesOf, rowLabel, type RowDetail} from './lib/row-text'
+
 type RowProps = {
 	title: string
 	onPress: () => void
 	disabled?: boolean
+}
+
+type ActionRowProps = RowProps & {
+	/** Draws the action in red, for one that destroys something. */
+	destructive?: boolean
 }
 
 /**
@@ -70,8 +78,8 @@ export function NavigationRow(props: RowProps): React.ReactNode {
  * A row that fires an action (open a URL, show an alert, mutate) rather than
  * pushing a screen. Tinted text and no chevron, since there is nowhere to go.
  */
-export function ActionRow(props: RowProps): React.ReactNode {
-	let {title, onPress, disabled = false} = props
+export function ActionRow(props: ActionRowProps): React.ReactNode {
+	let {title, onPress, disabled = false, destructive = false} = props
 
 	return (
 		<Button
@@ -79,7 +87,7 @@ export function ActionRow(props: RowProps): React.ReactNode {
 			onPress={onPress}
 		>
 			<HStack modifiers={[contentShape(shapes.rectangle())]}>
-				<Text modifiers={[foregroundStyle(c.systemBlue)]}>{title}</Text>
+				<Text modifiers={[foregroundStyle(destructive ? c.systemRed : c.systemBlue)]}>{title}</Text>
 				<Spacer />
 			</HStack>
 		</Button>
@@ -113,23 +121,20 @@ type DisclosureRowProps = {
 	 * blank are dropped rather than drawn, so a caller can build the array
 	 * straight from optional fields without filtering first.
 	 */
-	detail?: string | (string | undefined | null)[]
+	detail?: RowDetail
 	/** How many lines the title may wrap to before it truncates. */
 	titleLines?: number
 	/** How many lines each detail line may wrap to. Unbounded by default. */
 	detailLines?: number
 	/** A symbol or thumbnail at the leading edge. */
 	image?: DisclosureRowImage
+	/**
+	 * An accessibility identifier for the row, for a UI test to find it by.
+	 * A label is built from the title and details, which a screen showing
+	 * arbitrary data cannot guarantee is unique.
+	 */
+	identifier?: string
 	onPress: () => void
-}
-
-/** The detail lines actually worth drawing, in order. */
-function detailLinesOf(detail: DisclosureRowProps['detail']): string[] {
-	if (!detail) {
-		return []
-	}
-	let lines = Array.isArray(detail) ? detail : [detail]
-	return lines.filter((line): line is string => Boolean(line && line.trim()))
 }
 
 function LeadingImage({image}: {image: DisclosureRowImage}): React.ReactNode {
@@ -165,7 +170,7 @@ function LeadingImage({image}: {image: DisclosureRowImage}): React.ReactNode {
  * chevron is drawn by hand.
  */
 export function DisclosureRow(props: DisclosureRowProps): React.ReactNode {
-	let {title, detail, titleLines = 1, detailLines, image, onPress} = props
+	let {title, detail, titleLines = 1, detailLines, image, identifier, onPress} = props
 
 	let details = detailLinesOf(detail)
 	let detailModifiers = [
@@ -176,7 +181,11 @@ export function DisclosureRow(props: DisclosureRowProps): React.ReactNode {
 
 	return (
 		<Button
-			modifiers={[buttonStyle('plain'), accessibilityLabel([title, ...details].join(', '))]}
+			modifiers={[
+				buttonStyle('plain'),
+				accessibilityLabel(rowLabel(title, detail)),
+				...(identifier ? [accessibilityIdentifier(identifier)] : []),
+			]}
 			onPress={onPress}
 		>
 			{/* contentShape on the label, not the Button -- see NavigationRow. */}
@@ -204,6 +213,9 @@ export function DisclosureRow(props: DisclosureRowProps): React.ReactNode {
 const styles = StyleSheet.create({
 	thumbnail: {
 		resizeMode: 'cover',
+		// Enough to take the hard corners off a cropped photo without reading
+		// as a deliberately rounded avatar.
+		borderRadius: 4,
 	},
 	selectableText: {
 		color: c.label,

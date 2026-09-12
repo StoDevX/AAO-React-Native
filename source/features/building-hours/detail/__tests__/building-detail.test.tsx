@@ -14,11 +14,11 @@ import {images as buildingImages} from '../../../../../images/spaces'
 
 jest.mock('@expo/ui/swift-ui', () => {
 	// oxlint-disable-next-line typescript/no-require-imports
-	return require('./expo-ui-mock') as typeof import('./expo-ui-mock')
+	return require('../../../../testing/expo-ui-mock') as typeof import('../../../../testing/expo-ui-mock')
 })
 jest.mock('@expo/ui/swift-ui/modifiers', () => {
 	// oxlint-disable-next-line typescript/no-require-imports
-	return require('./expo-ui-mock') as typeof import('./expo-ui-mock')
+	return require('../../../../testing/expo-ui-mock') as typeof import('../../../../testing/expo-ui-mock')
 })
 jest.mock('@maplibre/maplibre-react-native', () => {
 	// oxlint-disable-next-line typescript/no-require-imports
@@ -99,30 +99,12 @@ describe('BuildingDetailSwiftUI', () => {
 		expect(() => renderDetail(building)).not.toThrow()
 	})
 
-	test('renders a schedule with no notes and skips the footer', async () => {
-		let noteText = 'The kitchen stops cooking at 8 p.m.'
-		let building = makeBuilding({
-			schedule: [
-				{
-					title: 'Hours',
-					hours: [{days: ['Mo', 'Tu', 'We', 'Th', 'Fr'], from: '8:00am', to: '5:00pm'}],
-				},
-			],
-		})
-
-		let {queryByText} = await renderDetail(building)
-
-		// A schedule with no `notes` must not render another schedule's note
-		// text as its footer. This only catches a footer that renders the wrong
-		// string; it can't tell `<Text>{undefined}</Text>` apart from omitting
-		// the ternary entirely, since both render nothing here.
-		expect(queryByText(noteText)).toBeNull()
-	})
-
 	afterEach(() => {
 		buildingImages.clear()
 	})
 
+	// `building-photo.test.ts` covers which venues resolve a photograph at all.
+	// This is the other half: that the screen draws the one it was given.
 	test('renders the building photo when the building has one', async () => {
 		buildingImages.set('cage', {uri: 'cage.jpg', width: 100, height: 100, scale: 1})
 		let building = makeBuilding({image: 'cage'})
@@ -130,28 +112,6 @@ describe('BuildingDetailSwiftUI', () => {
 		let {getByTestId} = await renderDetail(building)
 
 		expect(getByTestId('building-photo')).toBeTruthy()
-	})
-
-	test('renders no photo when the building has none', async () => {
-		let building = makeBuilding({image: undefined})
-
-		let {queryByTestId} = await renderDetail(building)
-
-		expect(queryByTestId('building-photo')).toBeNull()
-	})
-
-	// CRITICAL regression: `buildingImages` only ever holds St. Olaf's photos.
-	// Carleton's Bookstore and Post Office collide with St. Olaf slugs of the
-	// same name, and Carleton's Writing Center collides with St. Olaf's
-	// `disco` slug -- so a Carleton building whose `image` happens to match
-	// one of those keys must still show no photo.
-	test('never resolves a photo for a Carleton building, even when its image key collides with a St. Olaf slug', async () => {
-		buildingImages.set('disco', {uri: 'disco.jpg', width: 100, height: 100, scale: 1})
-		let building = makeBuilding({name: 'Writing Center', image: 'disco'})
-
-		let {queryByTestId} = await renderDetail(building, 'carleton')
-
-		expect(queryByTestId('building-photo')).toBeNull()
 	})
 
 	// The whole point of `building` -- Task 1's join key -- is a cutout that

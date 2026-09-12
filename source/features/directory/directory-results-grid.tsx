@@ -17,8 +17,8 @@ type Props = {
 	/** The name over the results, when the search was opened from something named. */
 	heading: string | null
 	onSelectIndex: (index: number) => void
-	// The SwiftUI `refreshable` modifier owns its own spinner, so unlike the
-	// FlatList branch there is no `refreshing` flag to pass in.
+	// The SwiftUI `refreshable` modifier owns its own spinner, so there is no
+	// `refreshing` flag to pass alongside this.
 	onRefresh: () => Promise<unknown>
 }
 

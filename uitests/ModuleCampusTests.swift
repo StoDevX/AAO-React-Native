@@ -1,12 +1,6 @@
 import XCTest
 
 class ModuleCampusTests: UITestCase {
-	func testIsReachableFromHomescreen() throws {
-		CampusScreen(app: app)
-			.navigate()
-			.verifyTitle(TestIdentifiers.Buttons.campus)
-	}
-
 	/// The campus parameter, not just the route, has to actually select the
 	/// venue list: `carletonBuilding` exists in Carleton's `spaces/hours` but
 	/// not St. Olaf's, so this fails if the Carleton tile's `?campus=carleton`
@@ -57,6 +51,23 @@ class ModuleCampusTests: UITestCase {
 			.search(for: TestIdentifiers.Campus.deburredQuery)
 			.verifyRowShown(TestIdentifiers.Campus.aBuilding)
 			.verifyRowHidden(TestIdentifiers.Campus.anExcludedBuilding)
+	}
+
+	/// The favourite action lives in a SwiftUI `swipeActions` group, which is
+	/// drawn only once a row has been swiped. Jest's stand-in for `@expo/ui`
+	/// renders nothing for it, on purpose -- there is no gesture in Jest to
+	/// reveal it with -- so this is the only place the action is exercised at
+	/// all.
+	func testSwipingARowFavoritesTheBuilding() throws {
+		CampusScreen(app: app)
+			.navigate()
+			.verifyRowShown(TestIdentifiers.Campus.anExcludedBuilding)
+			.verifyFavoritesSectionAbsent()
+			.revealSwipeAction(on: TestIdentifiers.Campus.anExcludedBuilding)
+			.capture("Campus row swiped to reveal its favorite action")
+			.tapAddToFavorites()
+			.capture("Campus list with a Favorites section")
+			.verifyFavoritesSectionShown()
 	}
 
 	func testSearchWithNoMatchesShowsNoResults() throws {
@@ -227,12 +238,11 @@ class ModuleCampusTests: UITestCase {
 			.verifyReportScreenGone(buildingName: TestIdentifiers.Campus.anExcludedBuilding)
 	}
 
-	/// `BuildingHoursScheduleEditor` still presents as a `modal` on the OUTER
-	/// stack, pushed from the report screen two levels inside the formSheet.
-	/// A modal presented while a formSheet is already up is exactly the class
-	/// of presentation this task moved Report a Problem off of because it can
-	/// silently no-op on iOS -- this asserts whether the editor actually comes
-	/// up from its new, deeper starting point.
+	/// The schedule editor is a push inside the formSheet's own stack, next to
+	/// the report screen it opens from, so that the two can share the draft
+	/// they both edit. It used to be a `modal` on the OUTER stack -- a
+	/// presentation that can silently no-op on iOS while a formSheet is
+	/// already up -- so this asserts the editor really does come up.
 	func testScheduleEditorPresentsFromWithinTheReportScreen() throws {
 		CampusScreen(app: app)
 			.navigate()

@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {Alert, FlatList, Image, StyleSheet, useWindowDimensions} from 'react-native'
+import {Alert, StyleSheet, useWindowDimensions} from 'react-native'
 import {Stack, useLocalSearchParams, useRouter} from 'expo-router'
 import {useDispatch, useSelector} from 'react-redux'
 import {useQuery} from '@tanstack/react-query'
@@ -11,6 +11,7 @@ import {
 	Image as UIImage,
 	List,
 	ProgressView,
+	Section,
 	Spacer,
 	Text as UIText,
 	VStack,
@@ -30,11 +31,10 @@ import {
 	padding,
 	refreshable,
 } from '@expo/ui/swift-ui/modifiers'
-import {Column} from '@frogpond/layout'
-import {Detail, ListRow, ListSectionHeader, ListSeparator, Title} from '@frogpond/lists'
 import * as c from '@frogpond/colors'
 import {useDebounce} from '@frogpond/use-debounce'
 import {LoadingView, NoticeView} from '@frogpond/notice'
+import {DisclosureRow} from '../../../source/components/rows'
 import {SearchBar} from '../../../source/components/search-bar'
 import {
 	selectDirectoryResultsView,
@@ -82,7 +82,6 @@ function DirectoryView(): React.ReactNode {
 		error,
 		refetch,
 		isError,
-		isRefetching,
 		isLoading,
 	} = useQuery(directoryEntriesOptions(searchQuery, searchQueryType))
 
@@ -111,14 +110,21 @@ function DirectoryView(): React.ReactNode {
 				{/* Always mounted, hidden until there are results to re-lay-out:
 				    `Stack.Toolbar` only reads direct Button/Spacer children, so a
 				    conditionally-rendered fragment of them is dropped entirely. */}
+				{/* Icon and Label as children rather than an `icon` prop and an
+				    `accessibilityLabel`: a bottom-toolbar item drops the latter and
+				    lets iOS name it after its symbol, so the button announced
+				    itself as "List" rather than saying what tapping it does. */}
 				<Stack.Toolbar.Button
-					accessibilityLabel={resultsView === 'tiles' ? 'Show as list' : 'Show as tiles'}
 					hidden={!hasResults}
-					icon={resultsView === 'tiles' ? 'list.bullet' : 'square.grid.2x2'}
 					onPress={() =>
 						dispatch(setDirectoryResultsView(resultsView === 'tiles' ? 'list' : 'tiles'))
 					}
-				/>
+				>
+					<Stack.Toolbar.Icon sf={resultsView === 'tiles' ? 'list.bullet' : 'square.grid.2x2'} />
+					<Stack.Toolbar.Label>
+						{resultsView === 'tiles' ? 'Show as list' : 'Show as tiles'}
+					</Stack.Toolbar.Label>
+				</Stack.Toolbar.Button>
 			</Stack.Toolbar>
 
 			<SearchBar onChangeText={setTypedQuery} value={typedQuery} />
@@ -168,21 +174,27 @@ function DirectoryView(): React.ReactNode {
 					onSelectIndex={openResult}
 				/>
 			) : (
-				<FlatList
-					ItemSeparatorComponent={IndentedListSeparator}
-					ListHeaderComponent={heading ? <ListSectionHeader title={heading} /> : null}
-					contentInsetAdjustmentBehavior="automatic"
-					data={items}
-					keyExtractor={(_item, index) => String(index)}
-					keyboardDismissMode="on-drag"
-					keyboardShouldPersistTaps="never"
-					onRefresh={refetch}
-					refreshing={isRefetching}
-					renderItem={({item, index}) => (
-						<DirectoryItemRow index={index} item={item} onPress={() => openResult(index)} />
-					)}
-					style={styles.wrapper}
-				/>
+				<Host matchContents={false} style={styles.host}>
+					<List
+						modifiers={[
+							listStyle('insetGrouped'),
+							refreshable(async () => {
+								await refetch()
+							}),
+						]}
+					>
+						<Section title={heading ?? undefined}>
+							{items.map((item, index) => (
+								<DirectoryItemRow
+									key={index}
+									index={index}
+									item={item}
+									onPress={() => openResult(index)}
+								/>
+							))}
+						</Section>
+					</List>
+				</Host>
 			)}
 			{searchChrome}
 		</>
@@ -197,10 +209,6 @@ export default function DirectoryPage(): React.ReactNode {
 			<DirectoryView />
 		</>
 	)
-}
-
-function IndentedListSeparator() {
-	return <ListSeparator spacing={{left: leftMargin + imageSize + imageMargin}} />
 }
 
 /// Mirrored by TestIdentifiers.Directory.contactGrid.
@@ -357,45 +365,23 @@ type DirectoryItemRowProps = {
 	onPress: () => void
 }
 
-function IosDirectoryItemRow({item, index, onPress}: DirectoryItemRowProps) {
+function DirectoryItemRow({item, index, onPress}: DirectoryItemRowProps) {
 	return (
-		<ListRow
-			fullWidth={true}
+		<DisclosureRow
+			detail={[item.description]}
+			detailLines={1}
+			identifier={`${DIRECTORY_ROW_PREFIX}${index}`}
+			image={{uri: item.thumbnail, width: THUMBNAIL_SIZE, height: THUMBNAIL_SIZE}}
 			onPress={onPress}
-			style={styles.row}
-			testID={`${DIRECTORY_ROW_PREFIX}${index}`}
-		>
-			<Image source={{uri: item.thumbnail}} style={styles.image} />
-			<Column flex={1}>
-				<Title lines={1}>{item.displayName}</Title>
-				<Detail lines={1}>{item.description}</Detail>
-			</Column>
-		</ListRow>
+			title={item.displayName}
+		/>
 	)
 }
 
-const DirectoryItemRow = IosDirectoryItemRow
+/// The face beside each result, at the size the row list has always drawn it.
+const THUMBNAIL_SIZE = 35
 
-const leftMargin = 15
-const imageSize = 35
-const imageMargin = 10
 const styles = StyleSheet.create({
-	wrapper: {
-		flex: 1,
-		backgroundColor: c.systemBackground,
-	},
-	row: {
-		flexDirection: 'row',
-		alignItems: 'center',
-	},
-	image: {
-		resizeMode: 'cover',
-		width: imageSize,
-		height: imageSize,
-		borderRadius: 4,
-		marginRight: imageMargin,
-		marginLeft: leftMargin,
-	},
 	host: {
 		flex: 1,
 	},

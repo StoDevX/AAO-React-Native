@@ -1,6 +1,6 @@
 import * as React from 'react'
 import {useState} from 'react'
-import {FlatList, StyleSheet, Text, TouchableOpacity, View} from 'react-native'
+import {ScrollView, StyleSheet, Text, TouchableOpacity, View} from 'react-native'
 import type {BusSchedule, UnprocessedBusLine, DayOfWeek} from './types'
 import {
 	BusStateEnum,
@@ -22,9 +22,26 @@ import {useRouter} from 'expo-router'
 import {BUS_FOOTER_MESSAGE} from './constants'
 import {DayPickerHeader, momentToDayOfWeek, createMomentForDay} from './components/day-picker'
 
+/// The corner radius and side margin iOS gives an inset-grouped section.
+const CARD_RADIUS = 10
+const CARD_MARGIN = 16
+
 const styles = StyleSheet.create({
 	container: {
+		backgroundColor: c.systemGroupedBackground,
+	},
+	/**
+	 * The inset-grouped card the rows sit in, drawn by hand rather than by a
+	 * SwiftUI `List`: the progress bar runs continuously down the route and its
+	 * dots are pulled up onto the bar above them by a negative margin, which a
+	 * list clips at every row boundary. One card clips only its own ends, where
+	 * the bar stops anyway.
+	 */
+	card: {
 		backgroundColor: c.secondarySystemGroupedBackground,
+		borderRadius: CARD_RADIUS,
+		marginHorizontal: CARD_MARGIN,
+		overflow: 'hidden',
 	},
 	label: {
 		color: c.label,
@@ -91,7 +108,7 @@ export function deriveFromProps({line, now}: {line: UnprocessedBusLine; now: Mom
 	currentBusIteration: number | null
 	parkedStopIndex: number | null
 } {
-	// Finds the stuff that's shared between FlatList and renderItem
+	// The line as a whole, which every row below reads from.
 	let processedLine = processBusLine(line, now)
 
 	let scheduleForToday = getScheduleForNow(processedLine.schedules, now)
@@ -215,39 +232,38 @@ export function BusLine(props: Props): React.ReactNode {
 	let timetable = schedule.timetable
 
 	return (
-		<FlatList
-			ItemSeparatorComponent={BusLineSeparator}
-			ListEmptyComponent={EMPTY_SCHEDULE_MESSAGE}
-			ListFooterComponent={footerElement}
-			ListHeaderComponent={headerElement}
-			contentInsetAdjustmentBehavior="automatic"
-			data={timetable}
-			keyExtractor={(item, index) => `${item.name}-${index}`}
-			renderItem={({item, index}) => {
-				return (
-					<TouchableOpacity
-						onPress={() => {
-							router.push({
-								pathname: '/BusRouteDetail',
-								params: {line: line.line, day: selectedDay, stopName: item.name},
-							})
-						}}
-					>
-						<BusStopRow
-							barColor={line.colors.bar}
-							{...busPropsForRow(busTarget, index)}
-							currentStopColor={line.colors.dot}
-							departureIndex={currentBusIteration}
-							isFirstRow={index === 0}
-							isLastRow={timetable.length === 0 || index === timetable.length - 1}
-							now={momentForSelectedDay}
-							status={status}
-							stop={item}
-						/>
-					</TouchableOpacity>
-				)
-			}}
-			style={styles.container}
-		/>
+		<ScrollView contentInsetAdjustmentBehavior="automatic" style={styles.container}>
+			{headerElement}
+			<View style={styles.card}>
+				{timetable.length === 0
+					? EMPTY_SCHEDULE_MESSAGE
+					: timetable.map((item, index) => (
+							<React.Fragment key={`${item.name}-${index}`}>
+								{index > 0 ? <BusLineSeparator /> : null}
+								<TouchableOpacity
+									onPress={() => {
+										router.push({
+											pathname: '/BusRouteDetail',
+											params: {line: line.line, day: selectedDay, stopName: item.name},
+										})
+									}}
+								>
+									<BusStopRow
+										barColor={line.colors.bar}
+										{...busPropsForRow(busTarget, index)}
+										currentStopColor={line.colors.dot}
+										departureIndex={currentBusIteration}
+										isFirstRow={index === 0}
+										isLastRow={index === timetable.length - 1}
+										now={momentForSelectedDay}
+										status={status}
+										stop={item}
+									/>
+								</TouchableOpacity>
+							</React.Fragment>
+						))}
+			</View>
+			{footerElement}
+		</ScrollView>
 	)
 }

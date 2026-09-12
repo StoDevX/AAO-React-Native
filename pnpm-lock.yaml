@@ -37,7 +37,7 @@ overrides:
   '@sentry/cli': '-'
 
 patchedDependencies:
-  '@expo/ui@57.0.14': 3ae156090eaabecb64d3f46e9f341e2528a3e6a62382c07411c739089caedeb8
+  '@expo/ui@57.0.14': d87805b1ea59ad1dd03cc405de7916dfe290b3f61fd50941cb930710a6e33815
   react-native-change-icon@5.0.0: 7576d2a458dd256e90b703b84345bf87a19dfa2e3dea523e4691e395dfddfcff
   react-native@0.86.3: 6ca2e1225f38672b073b92b9d13f24feebbe9e37ba67708a3f1569275ce99191
 
@@ -59,7 +59,7 @@ importers:
         version: 57.0.15(@expo/log-box@57.0.4)(expo@57.0.19)(react-native@0.86.3)(react@19.2.3)
       '@expo/ui':
         specifier: 57.0.14
-        version: 57.0.14(patch_hash=3ae156090eaabecb64d3f46e9f341e2528a3e6a62382c07411c739089caedeb8)(@babel/core@7.29.7)(expo@57.0.19)(react-native-worklets@0.10.1)(react-native@0.86.3)(react@19.2.3)
+        version: 57.0.14(patch_hash=d87805b1ea59ad1dd03cc405de7916dfe290b3f61fd50941cb930710a6e33815)(@babel/core@7.29.7)(expo@57.0.19)(react-native-worklets@0.10.1)(react-native@0.86.3)(react@19.2.3)
       '@frogpond/add-to-device-calendar':
         specifier: workspace:*
         version: link:modules/add-to-device-calendar
@@ -144,9 +144,6 @@ importers:
       '@frogpond/storage':
         specifier: workspace:*
         version: link:modules/storage
-      '@frogpond/tableview':
-        specifier: workspace:*
-        version: link:modules/tableview
       '@frogpond/timer':
         specifier: workspace:*
         version: link:modules/timer
@@ -303,9 +300,6 @@ importers:
       react-native-screens:
         specifier: 4.26.2
         version: 4.26.2(react-native@0.86.3)(react@19.2.3)
-      react-native-tableview-simple:
-        specifier: 4.4.1
-        version: 4.4.1(react-native@0.86.3)(react@19.2.3)
       react-native-typography:
         specifier: 1.4.1
         version: 1.4.1(react-native@0.86.3)(react@19.2.3)
@@ -616,7 +610,7 @@ importers:
     dependencies:
       '@expo/ui':
         specifier: 57.0.14
-        version: 57.0.14(patch_hash=3ae156090eaabecb64d3f46e9f341e2528a3e6a62382c07411c739089caedeb8)(@babel/core@7.29.7)(expo@57.0.19)(react-native-worklets@0.10.1)(react-native@0.86.3)(react@19.2.3)
+        version: 57.0.14(patch_hash=d87805b1ea59ad1dd03cc405de7916dfe290b3f61fd50941cb930710a6e33815)(@babel/core@7.29.7)(expo@57.0.19)(react-native-worklets@0.10.1)(react-native@0.86.3)(react@19.2.3)
       moment-timezone:
         specifier: ^0.6.3
         version: 0.6.3
@@ -667,7 +661,7 @@ importers:
     dependencies:
       '@expo/ui':
         specifier: 57.0.14
-        version: 57.0.14(patch_hash=3ae156090eaabecb64d3f46e9f341e2528a3e6a62382c07411c739089caedeb8)(@babel/core@7.29.7)(expo@57.0.19)(react-native-worklets@0.10.1)(react-native@0.86.3)(react@19.2.3)
+        version: 57.0.14(patch_hash=d87805b1ea59ad1dd03cc405de7916dfe290b3f61fd50941cb930710a6e33815)(@babel/core@7.29.7)(expo@57.0.19)(react-native-worklets@0.10.1)(react-native@0.86.3)(react@19.2.3)
       '@frogpond/colors':
         specifier: workspace:*
         version: link:../colors
@@ -691,7 +685,7 @@ importers:
         version: 3.0.9(react@19.2.3)
       '@expo/ui':
         specifier: 57.0.14
-        version: 57.0.14(patch_hash=3ae156090eaabecb64d3f46e9f341e2528a3e6a62382c07411c739089caedeb8)(@babel/core@7.29.7)(expo@57.0.19)(react-native-worklets@0.10.1)(react-native@0.86.3)(react@19.2.3)
+        version: 57.0.14(patch_hash=d87805b1ea59ad1dd03cc405de7916dfe290b3f61fd50941cb930710a6e33815)(@babel/core@7.29.7)(expo@57.0.19)(react-native-worklets@0.10.1)(react-native@0.86.3)(react@19.2.3)
       '@frogpond/colors':
         specifier: workspace:*
         version: link:../colors
@@ -902,27 +896,6 @@ importers:
       react-native:
         specifier: 'catalog:'
         version: 0.86.3(patch_hash=6ca2e1225f38672b073b92b9d13f24feebbe9e37ba67708a3f1569275ce99191)(@babel/core@7.29.7)(@react-native/jest-preset@0.86.3)(@types/react@19.2.18)(react@19.2.3)(supports-color@8.1.1)
-
-  modules/tableview:
-    dependencies:
-      '@frogpond/app-theme':
-        specifier: workspace:*
-        version: link:../app-theme
-      '@frogpond/colors':
-        specifier: workspace:*
-        version: link:../colors
-      expo-symbols:
-        specifier: ^57.0.2
-        version: 57.0.2(expo-font@57.0.3)(expo@57.0.19)(react-native@0.86.3)(react@19.2.3)
-      react:
-        specifier: 'catalog:'
-        version: 19.2.3
-      react-native:
-        specifier: 'catalog:'
-        version: 0.86.3(patch_hash=6ca2e1225f38672b073b92b9d13f24feebbe9e37ba67708a3f1569275ce99191)(@babel/core@7.29.7)(@react-native/jest-preset@0.86.3)(@types/react@19.2.18)(react@19.2.3)(supports-color@8.1.1)
-      react-native-tableview-simple:
-        specifier: 4.4.1
-        version: 4.4.1(react-native@0.86.3)(react@19.2.3)
 
   modules/timer:
     dependencies:
@@ -4822,12 +4795,6 @@ packages:
       react: '*'
       react-native: '*'
 
-  react-native-tableview-simple@4.4.1:
-    resolution: {integrity: sha512-iB95jhzH2gPqhymkQuI2qx2OE+GK79TxGMqUDpjWaXohQ30iP1z9bakA6tBe7rmfwk+WU2fmlSlwt/ov3RYVNw==}
-    peerDependencies:
-      react: '*'
-      react-native: '>=0.64'
-
   react-native-typography@1.4.1:
     resolution: {integrity: sha512-dc9Zfs4jUdq4ygx4/KwO6jKTERBu6cRrfPJGntw/pA+D6BMjlWfMNuhZ/69vf4Zpsnt9s4AGe+Z/V1QFYaCXAA==}
     peerDependencies:
@@ -6424,7 +6391,7 @@ snapshots:
       metro-resolver: 0.84.5
       metro-runtime: 0.84.5
       metro-source-map: 0.84.5(supports-color@8.1.1)
-      metro-symbolicate: 0.84.5
+      metro-symbolicate: 0.84.5(supports-color@8.1.1)
       metro-transform-plugins: 0.84.5(supports-color@8.1.1)
       metro-transform-worker: 0.84.5(supports-color@8.1.1)
     transitivePeerDependencies:
@@ -6501,7 +6468,7 @@ snapshots:
 
   '@expo/sudo-prompt@9.3.2': {}
 
-  '@expo/ui@57.0.14(patch_hash=3ae156090eaabecb64d3f46e9f341e2528a3e6a62382c07411c739089caedeb8)(@babel/core@7.29.7)(expo@57.0.19)(react-native-worklets@0.10.1)(react-native@0.86.3)(react@19.2.3)':
+  '@expo/ui@57.0.14(patch_hash=d87805b1ea59ad1dd03cc405de7916dfe290b3f61fd50941cb930710a6e33815)(@babel/core@7.29.7)(expo@57.0.19)(react-native-worklets@0.10.1)(react-native@0.86.3)(react@19.2.3)':
     dependencies:
       expo: 57.0.19(@babel/core@7.29.7)(@expo/dom-webview@57.0.1)(@expo/metro-runtime@57.0.15)(expo-router@57.0.18)(react-native-webview@13.16.1)(react-native-worklets@0.10.1)(react-native@0.86.3)(react@19.2.3)(supports-color@8.1.1)(typescript@7.0.2)
       react: 19.2.3
@@ -9395,7 +9362,7 @@ snapshots:
       '@babel/types': 7.29.8
       flow-enums-runtime: 0.0.6
       invariant: 2.2.4
-      metro-symbolicate: 0.84.5
+      metro-symbolicate: 0.84.5(supports-color@8.1.1)
       nullthrows: 1.1.1
       ob1: 0.84.5
       source-map: 0.5.7
@@ -9403,7 +9370,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  metro-symbolicate@0.84.5:
+  metro-symbolicate@0.84.5(supports-color@8.1.1):
     dependencies:
       flow-enums-runtime: 0.0.6
       invariant: 2.2.4
@@ -9411,6 +9378,8 @@ snapshots:
       nullthrows: 1.1.1
       source-map: 0.5.7
       vlq: 1.0.1
+    transitivePeerDependencies:
+      - supports-color
 
   metro-transform-plugins@0.84.5(supports-color@8.1.1):
     dependencies:
@@ -9473,7 +9442,7 @@ snapshots:
       metro-resolver: 0.84.5
       metro-runtime: 0.84.5
       metro-source-map: 0.84.5(supports-color@8.1.1)
-      metro-symbolicate: 0.84.5
+      metro-symbolicate: 0.84.5(supports-color@8.1.1)
       metro-transform-plugins: 0.84.5(supports-color@8.1.1)
       metro-transform-worker: 0.84.5(supports-color@8.1.1)
       mime-types: 3.0.2
@@ -9916,11 +9885,6 @@ snapshots:
       react-freeze: 1.0.4(react@19.2.3)
       react-native: 0.86.3(patch_hash=6ca2e1225f38672b073b92b9d13f24feebbe9e37ba67708a3f1569275ce99191)(@babel/core@7.29.7)(@react-native/jest-preset@0.86.3)(@types/react@19.2.18)(react@19.2.3)(supports-color@8.1.1)
       warn-once: 0.1.1
-
-  react-native-tableview-simple@4.4.1(react-native@0.86.3)(react@19.2.3):
-    dependencies:
-      react: 19.2.3
-      react-native: 0.86.3(patch_hash=6ca2e1225f38672b073b92b9d13f24feebbe9e37ba67708a3f1569275ce99191)(@babel/core@7.29.7)(@react-native/jest-preset@0.86.3)(@types/react@19.2.18)(react@19.2.3)(supports-color@8.1.1)
 
   react-native-typography@1.4.1(react-native@0.86.3)(react@19.2.3):
     dependencies:

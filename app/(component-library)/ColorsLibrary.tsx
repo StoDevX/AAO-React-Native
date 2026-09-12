@@ -11,7 +11,7 @@
 
 import * as React from 'react'
 import {DynamicColorIOS, PlatformColor, StyleSheet, Text, View} from 'react-native'
-import {Section} from '@frogpond/tableview'
+import {Section} from '@expo/ui/swift-ui'
 import {Stack} from 'expo-router'
 import {LibraryWrapper} from '../../source/features/settings/screens/overview/component-library/base/library-wrapper'
 
@@ -236,19 +236,19 @@ export default function ColorsLibraryPage(): React.ReactNode {
 			<Stack.Title>Colors</Stack.Title>
 			<LibraryWrapper>
 				<>
-					<Section header="Platform Colors">
+					<Section title="Platform Colors">
 						<PlatformColorsExample />
 					</Section>
 
-					<Section header="Fallback Colors">
+					<Section title="Fallback Colors">
 						<FallbackColorsExample />
 					</Section>
 
-					<Section header="iOS Dynamic Colors">
+					<Section title="iOS Dynamic Colors">
 						<DynamicColorsExample />
 					</Section>
 
-					<Section header="Variant Colors">
+					<Section title="Variant Colors">
 						<VariantColorsExample />
 					</Section>
 				</>

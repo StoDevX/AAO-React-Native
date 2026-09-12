@@ -3,13 +3,18 @@ import {fireEvent, render, screen} from '@testing-library/react-native'
 import {CalendarPicker} from '../calendar-picker'
 import type {CalendarSource} from '../sources'
 
+// What is left is wiring: that the menu is built from the sources and options
+// it is given, and hands a choice back. Which label a row reads and what a
+// choice leaves the filter as are decided in
+// `source/features/calendar/picker-state.ts` and asserted there, without a
+// stand-in for `@expo/ui`.
 jest.mock('@expo/ui/swift-ui', () => {
 	// oxlint-disable-next-line typescript/no-require-imports
-	return require('../../filter/__tests__/expo-ui-mock') as typeof import('../../filter/__tests__/expo-ui-mock')
+	return require('../../../source/testing/expo-ui-mock') as typeof import('../../../source/testing/expo-ui-mock')
 })
 jest.mock('@expo/ui/swift-ui/modifiers', () => {
 	// oxlint-disable-next-line typescript/no-require-imports
-	return require('../../filter/__tests__/expo-ui-mock') as typeof import('../../filter/__tests__/expo-ui-mock')
+	return require('../../../source/testing/expo-ui-mock') as typeof import('../../../source/testing/expo-ui-mock')
 })
 
 jest.mock('expo-router', () => {
@@ -64,38 +69,6 @@ test('choosing an unselected organisation filters on it', async () => {
 	fireEvent.press(screen.getByText('Wellness Center (2)'))
 
 	expect(onSelectFilter).toHaveBeenCalledWith({axis: 'organization', value: 'Wellness Center'})
-})
-
-test('choosing the category already filtered on clears the filter', async () => {
-	let onSelectFilter = jest.fn()
-	await render(picker({filter: {axis: 'category', value: 'Athletics'}, onSelectFilter}))
-
-	fireEvent.press(screen.getByText('Athletics (3)'))
-
-	expect(onSelectFilter).toHaveBeenCalledWith(null)
-})
-
-test('a category on one axis does not read as selected on the other', async () => {
-	let onSelectFilter = jest.fn()
-	await render(picker({filter: {axis: 'organization', value: 'Athletics'}, onSelectFilter}))
-
-	fireEvent.press(screen.getByText('Athletics (3)'))
-
-	expect(onSelectFilter).toHaveBeenCalledWith({axis: 'category', value: 'Athletics'})
-})
-
-test('a submenu row names the selection on its own axis', async () => {
-	await render(picker({filter: {axis: 'category', value: 'Athletics'}}))
-
-	expect(screen.getByText('Category: Athletics')).toBeTruthy()
-	expect(screen.getByText('Organization')).toBeTruthy()
-})
-
-test('a submenu row names nothing when the other axis is filtered', async () => {
-	await render(picker({filter: {axis: 'organization', value: 'Wellness Center'}}))
-
-	expect(screen.getByText('Category')).toBeTruthy()
-	expect(screen.getByText('Organization: Wellness Center')).toBeTruthy()
 })
 
 test('Reset Filters is absent while nothing is filtered', async () => {

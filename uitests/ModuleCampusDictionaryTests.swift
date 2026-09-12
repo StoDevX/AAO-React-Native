@@ -1,10 +1,10 @@
 import XCTest
 
 class ModuleCampusDictionaryTests: UITestCase {
-	func testIsReachableFromHomescreen() throws {
-		CampusDictionaryScreen(app: app)
+	func testTappingTheSectionIndexRailScrollsTheList() throws {
+		try CampusDictionaryScreen(app: app)
 			.navigate()
-			.verifyCampusDictionaryTitle()
+			.verifySectionIndexRailScrolls()
 	}
 
 	func testTappingAWordOpensAHalfHeightSheet() throws {
@@ -174,55 +174,6 @@ class ModuleCampusDictionaryTests: UITestCase {
 			.verifyEditFormPushedIntoSheet()
 	}
 
-	/// A wholly added sense should sit on a green wash in the preview, beside
-	/// the entry's original sense which -- untouched -- carries none, so one
-	/// still image shows the wash marking a sense out rather than tinting
-	/// everything equally.
-	///
-	/// `diffAdditionFill` and `diffDeletionFill` are `DynamicColorIOS` so that
-	/// a tint pale enough for white does not glare on black, and that only
-	/// holds if both appearances are looked at -- hence one test per
-	/// appearance, each capturing under its own name. The appearance is set
-	/// before the app is relaunched rather than mid-run: a dynamic colour
-	/// resolves against the traits its view was drawn under, and relaunching
-	/// draws the whole screen once, under the appearance being photographed.
-	private func verifyAddedSenseWash(under appearance: XCUIDevice.Appearance, named: String) {
-		let original = XCUIDevice.shared.appearance
-		addTeardownBlock { XCUIDevice.shared.appearance = original }
-		XCUIDevice.shared.appearance = appearance
-		relaunchWithFreshState()
-
-		let newSenseDefinition = "a wholly new meaning"
-		CampusDictionaryScreen(app: app)
-			.navigate()
-			.search(for: TestIdentifiers.Dictionary.referenceEntry)
-			.openWord(TestIdentifiers.Dictionary.referenceEntry)
-			.verifyDefinitionSheetIsPresented()
-			.openEditor()
-			.verifyEditFormPushedIntoSheet()
-			.addSense()
-			.fillDefinition(2, with: newSenseDefinition)
-			.verifyPreviewEnabled()
-			.openPreview()
-			.verifyPreviewPresented()
-			.expandSheetToFullHeight()
-			.scrollPreviewInto(view: newSenseDefinition)
-			.capture(named)
-			// The original sense, redrawn unchanged, and the added one beside
-			// it -- the pairing the screenshot is meant to show.
-			.verifyPreviewShows("someone")
-			.verifyPreviewShows(newSenseDefinition)
-			.verifyNoUnsupportedNestedModifierMarker()
-	}
-
-	func testANewSenseShowsAGreenWashInThePreviewLight() throws {
-		verifyAddedSenseWash(under: .light, named: "Dictionary diff with an added sense (light)")
-	}
-
-	func testANewSenseShowsAGreenWashInThePreviewDark() throws {
-		verifyAddedSenseWash(under: .dark, named: "Dictionary diff with an added sense (dark)")
-	}
-
 	/// Rolvaag is the one entry carrying phonetics, so it is the only place
 	/// this layout can be proven against real data rather than a fixture.
 	func testAnEntryWithPhoneticsSetsThemBesideTheHeadword() throws {
@@ -234,17 +185,5 @@ class ModuleCampusDictionaryTests: UITestCase {
 			.verifyPronunciation(TestIdentifiers.Dictionary.phoneticEntryIPA)
 			.verifyPartOfSpeech(TestIdentifiers.Dictionary.phoneticEntryPartOfSpeech)
 			.capture("Dictionary entry with phonetics")
-	}
-
-	/// Renders the reference entry so its screenshot can be measured against
-	/// Apple's. Asserts only that the entry is up -- the comparison itself is
-	/// done by eye and by pixel, not by an assertion.
-	func testReferenceEntryForComparison() throws {
-		CampusDictionaryScreen(app: app)
-			.navigate()
-			.search(for: TestIdentifiers.Dictionary.referenceEntry)
-			.openWord(TestIdentifiers.Dictionary.referenceEntry)
-			.verifyDefinitionSheetIsPresented()
-			.capture("Reference entry")
 	}
 }

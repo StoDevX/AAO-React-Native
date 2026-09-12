@@ -50,3 +50,11 @@ export interface EventListProps {
 	now: Moment
 	poweredBy?: PoweredBy
 }
+
+/**
+ * What the calendar screen's toolbar can ask of whichever body is mounted.
+ * Both modes answer `showToday`; they just mean different things by it.
+ */
+export type CalendarBodyHandle = {
+	showToday: () => void
+}

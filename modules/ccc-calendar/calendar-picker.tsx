@@ -8,6 +8,7 @@ import {
 } from '@expo/ui/swift-ui/modifiers'
 import * as c from '@frogpond/colors'
 import type {CalendarFilterOption} from '../../source/features/calendar/filter'
+import {axisLabel, filterAfterChoosing} from '../../source/features/calendar/picker-state'
 import type {CalendarFilter} from '../../source/features/calendar/store'
 import type {CalendarSource} from './sources'
 
@@ -42,19 +43,6 @@ const STAYS_OPEN = [menuActionDismissBehavior('disabled')]
 // the only handle those tests have on the toolbar menu.
 const LABEL = accessibilityLabel('Calendar filter')
 
-/**
- * What a collapsed submenu row reads. It names its axis, and names the
- * selection too when that axis is the one filtered -- otherwise the only way
- * to see what the list is narrowed to is to open both submenus.
- */
-function axisLabel(
-	axis: CalendarFilter['axis'],
-	title: string,
-	filter: CalendarFilter | null,
-): string {
-	return filter?.axis === axis ? `${title}: ${filter.value}` : title
-}
-
 export function CalendarPicker({
 	sources,
 	enabledIds,
@@ -73,8 +61,7 @@ export function CalendarPicker({
 	let menuModifiers = [LABEL, foregroundStyle(isActive ? c.systemBlue : c.label)]
 
 	let toggleFilter = (axis: CalendarFilter['axis'], value: string) => {
-		let isSelected = filter?.axis === axis && filter.value === value
-		onSelectFilter(isSelected ? null : {axis, value})
+		onSelectFilter(filterAfterChoosing(filter, axis, value))
 	}
 
 	return (

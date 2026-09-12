@@ -2,15 +2,18 @@ import * as React from 'react'
 import {Stack, useLocalSearchParams, useNavigation, useRouter} from 'expo-router'
 import {usePreventRemove} from 'expo-router/react-navigation'
 import {useQuery} from '@tanstack/react-query'
-import {Alert, ScrollView, View} from 'react-native'
+import {Alert, StyleSheet} from 'react-native'
+import {Host, List, Section, Text, Toggle, VStack} from '@expo/ui/swift-ui'
+import {font, foregroundStyle, frame, listStyle} from '@expo/ui/swift-ui/modifiers'
 import moment from 'moment-timezone'
 import type {Moment} from 'moment-timezone'
 import noop from 'lodash/noop'
+import * as c from '@frogpond/colors'
 import {timezone} from '@frogpond/constants'
-import {InfoHeader} from '@frogpond/info-header'
-import {TableView, Section, Cell} from '@frogpond/tableview'
-import {CellTextField, CellToggle, DeleteButtonCell} from '@frogpond/tableview/cells'
+import {LoadingView, NoticeView} from '@frogpond/notice'
 
+import {ActionRow, DetailRow, NavigationRow} from '../../../../source/components/rows'
+import {SyncedTextField} from '../../../../source/components/synced-text-field'
 import type {Campus} from '../../../../source/features/building-hours/query'
 import {buildingByNameOptions, parseCampus} from '../../../../source/features/building-hours/query'
 import type {
@@ -21,24 +24,14 @@ import type {
 import {summarizeDays, formatBuildingTimes} from '../../../../source/features/building-hours/lib'
 import {submitReport} from '../../../../source/features/building-hours/report/submit'
 import type {BuildingAction} from '../../../../source/features/building-hours/report/building-reducer'
-import {
-	applyBuildingAction,
-	clearReport,
-	selectReportDraft,
-	selectReportHasUnsavedChanges,
-	startReport,
-	useAppDispatch,
-	useAppSelector,
-} from '../../../../source/redux'
-import {LoadingView, NoticeView} from '@frogpond/notice'
+import {useBuildingReport} from '../../../../source/features/building-hours/report/context'
 
 function useBuildingEditor(initialBuilding: BuildingType, campus: Campus) {
-	let dispatch = useAppDispatch()
 	let router = useRouter()
 	let navigation = useNavigation()
 
-	let building = useAppSelector(selectReportDraft) ?? initialBuilding
-	let hasUnsavedChanges = useAppSelector(selectReportHasUnsavedChanges)
+	let {draft, hasUnsavedChanges, edit} = useBuildingReport()
+	let building = draft ?? initialBuilding
 
 	let [submitted, setSubmitted] = React.useState(false)
 
@@ -71,15 +64,10 @@ function useBuildingEditor(initialBuilding: BuildingType, campus: Campus) {
 		)
 	})
 
-	let dispatchAction = React.useCallback(
-		(action: BuildingAction) => dispatch(applyBuildingAction(action)),
-		[dispatch],
-	)
-
 	let openEditor = React.useCallback(
 		(scheduleIdx: number, setIdx: number) =>
 			router.push({
-				pathname: '/BuildingHoursScheduleEditor',
+				pathname: '/Campus/detail/schedule-editor',
 				params: {
 					scheduleIndex: String(scheduleIdx),
 					setIndex: String(setIdx),
@@ -93,7 +81,7 @@ function useBuildingEditor(initialBuilding: BuildingType, campus: Campus) {
 		submitReport(initialBuilding, building, campus)
 	}, [building, campus, initialBuilding])
 
-	return {building, dispatch: dispatchAction, openEditor, submit}
+	return {building, dispatch: edit, openEditor, submit}
 }
 
 type Props = {
@@ -102,12 +90,12 @@ type Props = {
 }
 
 let CampusProblemReportView = ({initialBuilding, campus}: Props): React.ReactNode => {
-	let appDispatch = useAppDispatch()
+	let {start, clear} = useBuildingReport()
 
 	React.useEffect(() => {
-		appDispatch(startReport(initialBuilding))
+		start(initialBuilding)
 		return () => {
-			appDispatch(clearReport())
+			clear()
 		}
 		// oxlint-disable-next-line react/exhaustive-deps
 	}, [])
@@ -117,59 +105,71 @@ let CampusProblemReportView = ({initialBuilding, campus}: Props): React.ReactNod
 	let {schedule: schedules, name} = building
 
 	return (
-		<ScrollView contentInsetAdjustmentBehavior="automatic">
+		<>
 			{/* In the header rather than at the foot of the form: this screen
 			 * exists to send the report, and every schedule a venue has pushes a
 			 * cell at the bottom further down a sheet that shows about half a
 			 * screen. Here it is reachable at any detent, whatever the venue. */}
 			<Stack.Toolbar placement="right">
-				<Stack.Toolbar.Button
-					accessibilityLabel="Submit Report"
-					icon="paperplane.fill"
-					onPress={submit}
-				/>
+				<Stack.Toolbar.Button accessibilityLabel="Submit Report" onPress={submit}>
+					Submit
+				</Stack.Toolbar.Button>
 			</Stack.Toolbar>
 
-			<InfoHeader
-				message="If you could change what is incorrect and share it with us we&rsquo;d greatly appreciate it."
-				title="Thanks for spotting a problem!"
-			/>
+			<Host style={styles.host}>
+				<List modifiers={[listStyle('insetGrouped')]}>
+					<Section>
+						<VStack alignment="leading" spacing={4}>
+							<Text modifiers={[font({weight: 'semibold'})]}>Thanks for spotting a problem!</Text>
+							<Text
+								modifiers={[
+									font({textStyle: 'subheadline'}),
+									foregroundStyle(c.secondaryLabel),
+									frame({maxWidth: Infinity, alignment: 'leading'}),
+								]}
+							>
+								If you could change what is incorrect and share it with us we’d greatly appreciate
+								it.
+							</Text>
+						</VStack>
+					</Section>
 
-			<TableView>
-				<Section header="NAME">
-					<TitleCell
-						onChange={(newName) => dispatch({type: 'SET_BUILDING_NAME', name: newName})}
-						text={name || ''}
-					/>
-				</Section>
+					<Section title="NAME">
+						<SyncedTextField
+							autocapitalization="words"
+							onChangeText={(newName) => dispatch({type: 'SET_BUILDING_NAME', name: newName})}
+							placeholder="Title"
+							value={name || ''}
+						/>
+					</Section>
 
-				{schedules.map((s: NamedBuildingScheduleType, i: number) => (
-					<EditableSchedule
-						key={i}
-						dispatch={dispatch}
-						editRow={openEditor}
-						schedule={s}
-						scheduleIndex={i}
-					/>
-				))}
+					{schedules.map((s: NamedBuildingScheduleType, i: number) => (
+						<EditableSchedule
+							key={i}
+							dispatch={dispatch}
+							editRow={openEditor}
+							schedule={s}
+							scheduleIndex={i}
+						/>
+					))}
 
-				<Section>
-					<Cell
-						accessory="DisclosureIndicator"
-						onPress={() => dispatch({type: 'ADD_SCHEDULE'})}
-						title="Add New Schedule"
-					/>
-				</Section>
-			</TableView>
-		</ScrollView>
+					<Section>
+						<NavigationRow
+							onPress={() => dispatch({type: 'ADD_SCHEDULE'})}
+							title="Add New Schedule"
+						/>
+					</Section>
+				</List>
+			</Host>
+		</>
 	)
 }
 
 type EditableScheduleProps = {
 	schedule: NamedBuildingScheduleType
 	scheduleIndex: number
-	dispatch: React.Dispatch<BuildingAction>
-	editRow: (schedIdx: number, setIdx: number, set: SingleBuildingScheduleType) => void
+	dispatch: (action: BuildingAction) => void
+	editRow: (schedIdx: number, setIdx: number) => void
 }
 
 const EditableSchedule = (props: EditableScheduleProps) => {
@@ -204,88 +204,57 @@ const EditableSchedule = (props: EditableScheduleProps) => {
 	}
 
 	let deleteSchedule = () => {
-		dispatch({type: 'DELETE_SCHEDULE', scheduleIndex: scheduleIndex})
-	}
-
-	let openEditor = (setIndex: number, hoursSet: SingleBuildingScheduleType) => {
-		props.editRow(scheduleIndex, setIndex, hoursSet)
+		dispatch({type: 'DELETE_SCHEDULE', scheduleIndex})
 	}
 
 	let now = moment.tz(timezone())
 
 	return (
-		<View>
-			<Section header="INFORMATION">
-				<TitleCell onChange={editTitle} text={schedule.title || ''} />
-				<NotesCell onChange={editNotes} text={schedule.notes || ''} />
+		<Section title="INFORMATION">
+			<SyncedTextField
+				autocapitalization="words"
+				onChangeText={editTitle}
+				placeholder="Title"
+				value={schedule.title || ''}
+			/>
+			<SyncedTextField
+				autocapitalization="sentences"
+				multiline={true}
+				onChangeText={editNotes}
+				placeholder="Notes"
+				value={schedule.notes || ''}
+			/>
 
-				<CellToggle
-					label="Closes for Chapel"
-					onChange={toggleChapel}
-					value={Boolean(schedule.closedForChapelTime)}
-				/>
+			<Toggle
+				isOn={Boolean(schedule.closedForChapelTime)}
+				label="Closes for Chapel"
+				onIsOnChange={toggleChapel}
+			/>
 
-				{schedule.hours.map((set, i) => (
-					<TimesCell key={i} now={now} onPress={openEditor} set={set} setIndex={i} />
-				))}
+			{schedule.hours.map((set, i) => (
+				<TimesRow key={i} now={now} onPress={() => props.editRow(scheduleIndex, i)} set={set} />
+			))}
 
-				<Cell accessory="DisclosureIndicator" onPress={addHoursRow} title="Add More Hours" />
+			<NavigationRow onPress={addHoursRow} title="Add More Hours" />
 
-				<DeleteButtonCell onPress={deleteSchedule} title="Delete Schedule" />
-			</Section>
-		</View>
+			<ActionRow destructive={true} onPress={deleteSchedule} title="Delete Schedule" />
+		</Section>
 	)
 }
 
-type TextFieldProps = {text: string; onChange: (text: string) => void}
-// "Title" will become a textfield like the login form
-const TitleCell = ({text, onChange}: TextFieldProps) => (
-	<CellTextField
-		autoCapitalize="words"
-		onChangeText={onChange}
-		onSubmitEditing={(ev) => onChange(ev.nativeEvent.text)}
-		placeholder="Title"
-		returnKeyType="done"
-		value={text}
-	/>
-)
-
-// "Notes" will become a big textarea
-const NotesCell = ({text, onChange}: TextFieldProps) => (
-	<CellTextField
-		autoCapitalize="sentences"
-		onChangeText={onChange}
-		onSubmitEditing={(ev) => onChange(ev.nativeEvent.text)}
-		placeholder="Notes"
-		returnKeyType="done"
-		value={text}
-	/>
-)
-
-type TimesCellProps = {
+type TimesRowProps = {
 	set: SingleBuildingScheduleType
-	setIndex: number
-	onPress: (setIdx: number, set: SingleBuildingScheduleType) => void
+	onPress: () => void
 	now: Moment
 }
 
-const TimesCell = (props: TimesCellProps) => {
-	let onPress = () => {
-		props.onPress(props.setIndex, props.set)
-	}
-
-	let {set, now} = props
-
-	return (
-		<Cell
-			accessory="DisclosureIndicator"
-			cellStyle="RightDetail"
-			detail={formatBuildingTimes(set, now)}
-			onPress={onPress}
-			title={set.days.length ? summarizeDays(set.days) : 'Days'}
-		/>
-	)
-}
+const TimesRow = ({set, now, onPress}: TimesRowProps) => (
+	<DetailRow
+		label={set.days.length ? summarizeDays(set.days) : 'Days'}
+		onPress={onPress}
+		value={formatBuildingTimes(set, now)}
+	/>
+)
 
 function CampusProblemReportLoader(): React.ReactNode {
 	let {name, campus: campusParam} = useLocalSearchParams<{name: string; campus?: string}>()
@@ -339,3 +308,10 @@ export default function CampusProblemReportPage(): React.ReactNode {
 		</>
 	)
 }
+
+const styles = StyleSheet.create({
+	host: {
+		flex: 1,
+		backgroundColor: c.systemGroupedBackground,
+	},
+})

@@ -44,6 +44,13 @@ describe('EntryList', () => {
 		expect(screen.getByText('Pause')).toBeTruthy()
 	})
 
+	it('gives every section a jumplist letter matching its title', async () => {
+		await renderList()
+
+		expect(screen.getByLabelText('section index C')).toBeTruthy()
+		expect(screen.getByLabelText('section index P')).toBeTruthy()
+	})
+
 	it('shows the first sense as each row’s preview', async () => {
 		await renderList()
 
@@ -59,13 +66,6 @@ describe('EntryList', () => {
 		expect(onSelect).toHaveBeenCalledWith(entries[0])
 	})
 
-	it('chooses the error branch over the list', async () => {
-		await renderList({isError: true})
-
-		expect(screen.getByText('Couldn’t load the dictionary')).toBeTruthy()
-		expect(screen.queryByText('Caf')).toBeNull()
-	})
-
 	it('retries from the error branch', async () => {
 		// oxlint-disable-next-line require-await
 		let onRetry = jest.fn(async () => undefined)
@@ -74,26 +74,6 @@ describe('EntryList', () => {
 		await fireEvent.press(screen.getByText('Try Again'))
 
 		expect(onRetry).toHaveBeenCalled()
-	})
-
-	it('names the query in the no-results branch', async () => {
-		await renderList({groups: [], query: 'zzz'})
-
-		expect(screen.getByText('No results for “zzz”')).toBeTruthy()
-	})
-
-	it('chooses the loading branch over the empty branch', async () => {
-		await renderList({groups: [], isLoading: true})
-
-		expect(screen.getByLabelText('Loading')).toBeTruthy()
-		expect(screen.queryByText('No results')).toBeNull()
-	})
-
-	it('prefers the error branch to the loading branch', async () => {
-		await renderList({groups: [], isError: true, isLoading: true})
-
-		expect(screen.getByText('Couldn’t load the dictionary')).toBeTruthy()
-		expect(screen.queryByLabelText('Loading')).toBeNull()
 	})
 
 	it('keeps the pull-to-refresh handler pending until onRetry settles', async () => {

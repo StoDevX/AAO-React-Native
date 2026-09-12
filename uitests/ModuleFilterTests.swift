@@ -66,12 +66,13 @@ class ModuleFilterTests: UITestCase {
 			.verifyOption(TestIdentifiers.Menus.halal, isSelected: false)
 	}
 
-	/// Swiping is the only dismissal the sheet offers -- there is no Done
-	/// button -- so if an interactive dismissal did not hand the selection
-	/// over, a filter sheet could never narrow anything at all. This asserts
-	/// the visible consequence rather than the trigger's state: after the
-	/// swipe, every food row still on screen carries the cor-icon that was
-	/// chosen.
+	/// The sheet has two dismissals -- the header's Done button and a swipe
+	/// down -- and the swipe is the one no code of ours runs: UIKit takes it,
+	/// and the selection is handed over only if the sheet's own dismissal
+	/// callback fires. Jest covers what Done commits; nothing but a device
+	/// covers this. This asserts the visible consequence rather than the
+	/// trigger's state: after the swipe, every food row still on screen
+	/// carries the cor-icon that was chosen.
 	func testSwipeDismissalAppliesTheSelection() throws {
 		let menus = MenusScreen(app: app)
 			.navigate()
@@ -105,6 +106,40 @@ class ModuleFilterTests: UITestCase {
 			"every remaining row should carry the \(vegan) icon")
 	}
 
+	/// The other dismissal: the header's Done button. It runs `onClose`, which
+	/// commits the sheet's accumulated selection the same way an interactive
+	/// dismissal does -- a Done that only closed the sheet would throw the
+	/// reader's choices away, silently and every time.
+	///
+	/// The trigger's state is the assertion rather than the remaining food
+	/// rows: `testSwipeDismissalAppliesTheSelection` already establishes that a
+	/// committed selection narrows the menu, so what is left to prove here is
+	/// that the button committed anything at all -- and that holds whatever
+	/// Stav is serving today.
+	func testDonePressAppliesTheSelection() throws {
+		MenusScreen(app: app)
+			.navigate()
+			.verifyFoodRowsAppear()
+
+		let filters = FilterScreen(app: app)
+		let vegan = TestIdentifiers.Menus.vegan
+
+		filters.verifyTrigger(Keys.dietaryRestrictions, isSelected: false)
+
+		filters
+			.openFilter(Keys.dietaryRestrictions, until: filters.option(vegan))
+			.tapOption(vegan)
+			.tapDone(waitingFor: vegan)
+
+		filters.verifyTrigger(Keys.dietaryRestrictions, isSelected: true)
+
+		// And the choice is still drawn when the sheet comes back up, so Done
+		// committed it rather than merely leaving the trigger looking active.
+		filters
+			.openFilter(Keys.dietaryRestrictions, until: filters.option(vegan))
+			.verifyOption(vegan, isSelected: true)
+	}
+
 	// MARK: - The menu
 
 	/// The other presentation, end to end: open the pull-down menu, toggle one
@@ -120,7 +155,8 @@ class ModuleFilterTests: UITestCase {
 
 		let filters = FilterScreen(app: app)
 
-		// The Pause serves specials, so the toggle is seeded on.
+		// The toggle is built on; a meal with no specials of its own would
+		// force it off and grey it out. The Pause's current meal has them.
 		filters.verifyTrigger(Keys.specials, isSelected: true)
 
 		filters.tapTrigger(Keys.specials)
@@ -138,10 +174,9 @@ class ModuleFilterTests: UITestCase {
 	}
 
 	/// The point of a menu that stays open: several options chosen in one
-	/// opening. `testMenuStaysOpenOnTheFirstSelection` proves it survives the
-	/// tick that turns the filter on; this proves the survival is good for
-	/// something, by ticking a second station without reopening and finding
-	/// both applied.
+	/// opening. The second station is ticked without reopening the menu, so
+	/// this cannot pass unless the menu survived the first tick -- the tick
+	/// that flips the filter from off to on, and so the one at risk.
 	func testMenuSelectsSeveralOptionsInOneOpening() throws {
 		MenusScreen(app: app)
 			.navigate()
@@ -164,30 +199,6 @@ class ModuleFilterTests: UITestCase {
 		XCTAssertTrue(
 			app.buttons[TestIdentifiers.Menus.specialtyPizzaItem].waitForExistence(timeout: 30),
 			"the second station's items should show, chosen without reopening the menu")
-	}
-
-	/// A list filter is multi-select, so its menu stays up as options are
-	/// ticked -- otherwise choosing three stations means opening the menu three
-	/// times. The first tick is the one at risk: it is what flips the filter
-	/// from off to on, and so the only tick that changes the trigger's own
-	/// styling underneath the open menu.
-	func testMenuStaysOpenOnTheFirstSelection() throws {
-		MenusScreen(app: app)
-			.navigate()
-			.verifyFoodRowsAppear()
-			.openCafe(TestIdentifiers.Menus.pause)
-
-		let filters = FilterScreen(app: app)
-		let pizza = TestIdentifiers.Menus.pizzaStation
-		let specialty = TestIdentifiers.Menus.specialtyPizzaStation
-
-		filters
-			.openFilter(Keys.stations, until: filters.menuItem(pizza))
-			.tapMenuItem(pizza)
-
-		XCTAssertTrue(
-			filters.menuItem(specialty).isHittable,
-			"the menu should still be open after the first station is ticked")
 	}
 
 	/// station, and find it applied to the list behind the menu. The sheet tests

@@ -291,6 +291,25 @@ struct TestIdentifiers {
 		/// Mirrored by `DAY_CELL_PREFIX` in `modules/event-list/day-picker-strip.tsx`.
 		static let dayCellPrefix = "day-cell-"
 
+		/// Day view's empty-state copy, shown below the strip when the selected
+		/// day has no events. Mirrors the literal in `modules/event-list/day-view.tsx`.
+		/// An empty day names itself, so only the opening is fixed.
+		static let emptyDayNotice = "Nothing on "
+
+		/// Day view's empty-state copy when every calendar is switched off.
+		/// Mirrors the literal in `modules/event-list/day-view.tsx`.
+		static let noCalendarsNotice =
+			"No calendars are showing. Choose some from the Calendars button below."
+
+		/// The top-right menu that chooses how the calendar draws itself.
+		/// Mirrors `accessibilityLabel('Calendar view')` in
+		/// `modules/ccc-calendar/mode-picker.tsx`.
+		static let modePicker = "Calendar view"
+		static let dayMode = "Day"
+		static let upcomingMode = "Upcoming"
+		/// The mode that is committed commented out, and so must not appear.
+		static let timelineMode = "Timeline"
+
 		/// Each event row is identified by `event-row-<title>`.
 		/// Mirrored by `EVENT_ROW_PREFIX` in `modules/event-list/event-list-row.tsx`.
 		static let eventRowPrefix = "event-row-"
@@ -357,6 +376,13 @@ struct TestIdentifiers {
 		/// That contact's own action, shown on its detail screen.
 		static let aContactAction = "Call Public Safety"
 
+		/// A second contact from data/contact-info/, so its tile is in the grid
+		/// whatever the server is serving.
+		static let aSecondContact = "SARN"
+		/// That contact's own action. Nothing else in the app shows this
+		/// string, so finding it can only mean SARN's detail is on screen.
+		static let aSecondContactAction = "Call SARN"
+
 		/// Search results in list mode: `directory-row-<index>`. Mirrors
 		/// DIRECTORY_ROW_PREFIX in app/(home)/Directory/index.tsx.
 		static let rowPrefix = "directory-row-"
@@ -367,12 +393,11 @@ struct TestIdentifiers {
 		static let showAsList = "Show as list"
 		static let showAsTiles = "Show as tiles"
 
-		/// A directory entry with no title, email or profile, so its detail
-		/// screen carries exactly one element labelled with its department --
-		/// and it is a desk rather than a person, so the college is unlikely to
-		/// rename it out from under this test.
-		static let departmentalEntry = "Registrar Fax"
-		static let department = "Registrar\u{2019}s Office"
+		/// The one entry a UI-test run's directory holds, carrying every field
+		/// the detail screen draws. Mirrors `UITEST_ENTRY_NAME` in
+		/// `source/features/directory/__fixtures__/entries.ts`.
+		static let fixtureEntry = "Kari Testerson"
+		static let fixtureEntryDepartment = "Computer Science"
 	}
 
 	// MARK: - Student Orgs
@@ -419,6 +444,14 @@ struct TestIdentifiers {
 		/// Mirrors BUILDING_ROW_PREFIX in
 		/// source/features/building-hours/list/building-list-row.tsx.
 		static let rowPrefix = "building-row-"
+		/// The swipe action's two labels. Mirrors ADD_TO_FAVORITES and
+		/// REMOVE_FROM_FAVORITES in
+		/// source/features/building-hours/list/building-list-row.tsx.
+		static let addToFavorites = "Add to Favorites"
+		static let removeFromFavorites = "Remove from Favorites"
+		/// The section the list grows at its top once anything is favourited.
+		/// Every test launches with `--reset-state`, so it starts absent.
+		static let favoritesSection = "Favorites"
 		/// A schedule section heading on the detail sheet, shown only once a
 		/// building is open in the sheet.
 		static let detailSchedule = "HOURS"
@@ -486,10 +519,20 @@ struct TestIdentifiers {
 	enum Transportation {
 		static let tabs = ["Express", "Red Line", "Blue Line", "Oles Go", "Other"]
 		/// The list footer renders as a single Text, so both lines are one label.
+		/// A stop every Express Bus route passes through, used to open a single
+		/// stop's schedule. It is the college itself, so it is not going to be
+		/// renamed out from under this test.
+		static let aStop = "St. Olaf College"
 		static let footer = """
 			Bus routes and times subject to change without notice
 
 			Data collected by the humans of All About Olaf
 			"""
+	}
+
+	// MARK: - Student Orgs
+
+	enum StudentOrgs {
+		static let list = "student-orgs-list"
 	}
 }
