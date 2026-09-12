@@ -2,7 +2,7 @@ import {describe, expect, test} from '@jest/globals'
 import moment from 'moment-timezone'
 import {deriveDayFlags, type EventType} from '@frogpond/event-type'
 
-import {groupEvents} from '../sections'
+import {groupEvents, todaySectionKey} from '../sections'
 import type {SourcedEvent} from '../types'
 
 const NOW = moment('2026-08-17T12:00:00Z')
@@ -99,5 +99,79 @@ describe('groupEvents', () => {
 			['Monday – Aug 17', true],
 			['Tuesday – Aug 18', false],
 		])
+	})
+})
+
+describe('todaySectionKey', () => {
+	/**
+	 * The case the whole function exists for. The read window keeps 30 days of
+	 * finished events, and `groupEvents` orders sections by start time, so the
+	 * retained past leads the list -- opening at the top, or sending the Today
+	 * button there, lands the reader in last month.
+	 */
+	test('picks today over the retained past that leads the list', () => {
+		let sections = groupEvents(
+			[
+				entryOn('stolaf', 'last-month', '2026-08-01T15:00:00Z'),
+				entryOn('stolaf', 'yesterday', '2026-08-16T15:00:00Z'),
+				entryOn('stolaf', 'today', '2026-08-17T15:00:00Z'),
+				entryOn('stolaf', 'next-week', '2026-08-24T15:00:00Z'),
+			],
+			NOW,
+		)
+
+		expect(sections[0].key).toBe('2026-08-01')
+		expect(todaySectionKey(sections, NOW)).toBe('Today')
+	})
+
+	test('picks the next day with something on it when today has nothing', () => {
+		let sections = groupEvents(
+			[
+				entryOn('stolaf', 'last-month', '2026-08-01T15:00:00Z'),
+				entryOn('stolaf', 'next-week', '2026-08-24T15:00:00Z'),
+			],
+			NOW,
+		)
+
+		expect(todaySectionKey(sections, NOW)).toBe('2026-08-24')
+	})
+
+	test('picks Ongoing over a later day when something is running and today is empty', () => {
+		let spanning = {
+			sourceId: 'stolaf',
+			key: 'spanning',
+			event: makeEvent({
+				startTime: moment('2026-08-15T15:00:00Z'),
+				endTime: moment('2026-08-19T15:00:00Z'),
+				isOngoing: true,
+			}),
+		}
+		let sections = groupEvents(
+			[
+				entryOn('stolaf', 'last-month', '2026-08-01T15:00:00Z'),
+				spanning,
+				entryOn('stolaf', 'next-week', '2026-08-24T15:00:00Z'),
+			],
+			NOW,
+		)
+
+		expect(sections[0].key).toBe('2026-08-01')
+		expect(todaySectionKey(sections, NOW)).toBe('Ongoing')
+	})
+
+	test('falls back to the section nearest today when everything is in the past', () => {
+		let sections = groupEvents(
+			[
+				entryOn('stolaf', 'last-month', '2026-08-01T15:00:00Z'),
+				entryOn('stolaf', 'yesterday', '2026-08-16T15:00:00Z'),
+			],
+			NOW,
+		)
+
+		expect(todaySectionKey(sections, NOW)).toBe('2026-08-16')
+	})
+
+	test('has nothing to scroll to when there are no sections', () => {
+		expect(todaySectionKey([], NOW)).toBeNull()
 	})
 })

@@ -23,7 +23,7 @@ import type {Moment} from 'moment-timezone'
 import {NoticeView} from '@frogpond/notice'
 import {EventListRow} from './event-list-row'
 import {emptyNotice} from './day-state'
-import {groupEvents} from './sections'
+import {groupEvents, todaySectionKey} from './sections'
 import type {CalendarBodyHandle, CalendarSource, SourcedEvent} from './types'
 
 type Props = {
@@ -64,19 +64,36 @@ export let EventList = React.forwardRef<CalendarBodyHandle, Props>(function Even
 		[props.events, props.now],
 	)
 
+	let todayKey = React.useMemo(() => todaySectionKey(sections, props.now), [sections, props.now])
+
 	let scrollTarget = useNativeState<string | null>(null)
 
 	/**
-	 * Returns the list to the top. The topmost section is whatever sorts first
-	 * -- `Ongoing` when something spans today, otherwise the earliest day.
+	 * Opens the list on today rather than at the top.
+	 *
+	 * The read window keeps 30 days of finished events, so the top of the list
+	 * is last month; the past is meant to be reachable by scrolling up, not to
+	 * be where the screen opens.
+	 *
+	 * Driven from an effect because `useNativeState` captures its initial value
+	 * on the very first render, which happens before any events have come back
+	 * from SQLite -- so there is no section to open on yet. Once only: a filter
+	 * change or a refresh rebuilds the sections, and yanking the reader back to
+	 * today each time is what the Today button is for.
 	 */
+	let opened = React.useRef(false)
+	React.useEffect(() => {
+		if (opened.current || !todayKey) return
+		opened.current = true
+		scrollTarget.set(todayKey)
+	}, [scrollTarget, todayKey])
+
+	/** Returns the list to today -- see `todaySectionKey` for what that means. */
 	let showToday = React.useCallback(() => {
-		let topSection = sections[0]?.key
-		if (topSection) {
-			// oxlint-disable-next-line react/immutability
-			scrollTarget.value = topSection
+		if (todayKey) {
+			scrollTarget.set(todayKey)
 		}
-	}, [scrollTarget, sections])
+	}, [scrollTarget, todayKey])
 
 	React.useImperativeHandle(ref, () => ({showToday}), [showToday])
 
