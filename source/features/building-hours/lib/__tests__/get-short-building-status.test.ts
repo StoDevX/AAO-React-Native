@@ -132,10 +132,8 @@ describe('a schedule running past midnight', () => {
 		expect(getShortBuildingStatus(building, at('2026-09-11', '01:00:00'))).toBe('Closed')
 	})
 
-	it('counts down to the close carried over from last night', () => {
-		expect(getShortBuildingStatus(building, at('2026-09-13', '01:45:00'))).toBe(
-			'Closes in 15 minutes',
-		)
+	it('reads Almost Closed in the last half hour of the carried-over window', () => {
+		expect(getShortBuildingStatus(building, at('2026-09-13', '01:45:00'))).toBe('Almost Closed')
 	})
 })
 

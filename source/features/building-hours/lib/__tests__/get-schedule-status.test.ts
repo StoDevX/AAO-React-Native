@@ -3,79 +3,32 @@ import {getScheduleStatusAtMoment} from '../get-schedule-status'
 import {dayMoment} from './moment.helper'
 import {SingleBuildingScheduleType} from '../../types'
 
-it('handles if a schedule is open', () => {
-	let m = dayMoment('Fri 3:00pm')
-	let schedule: SingleBuildingScheduleType = {
-		days: ['Fr'],
-		from: '10:30am',
-		to: '12:00am',
-	}
+const allDay: SingleBuildingScheduleType = {days: ['Fr'], from: '10:30am', to: '12:00am'}
 
-	expect(getScheduleStatusAtMoment(schedule, m)).toBe('Open')
+it('reads Open while the window is running', () => {
+	expect(getScheduleStatusAtMoment(allDay, dayMoment('Fri 3:00pm'))).toBe('Open')
 })
 
-it('handles the minute the schedule opens', () => {
-	let m = dayMoment('Fri 10:30am')
-	let schedule: SingleBuildingScheduleType = {
-		days: ['Fr'],
-		from: '10:30am',
-		to: '12:00am',
-	}
-
-	expect(getScheduleStatusAtMoment(schedule, m)).toBe('Open')
+it('reads Open on the minute it opens', () => {
+	expect(getScheduleStatusAtMoment(allDay, dayMoment('Fri 10:30am'))).toBe('Open')
 })
 
-it('returns the time remaining before the schedule opens', () => {
+it('reads Almost Open within half an hour of opening', () => {
 	let m = dayMoment('Fri 10:29:00am', 'ddd h:mm:ssa')
-	let schedule: SingleBuildingScheduleType = {
-		days: ['Fr'],
-		from: '10:30am',
-		to: '12:00am',
-	}
-
-	expect(getScheduleStatusAtMoment(schedule, m)).toBe('Opens in a minute')
+	expect(getScheduleStatusAtMoment(allDay, m)).toBe('Almost Open')
 })
 
-it('returns the time remaining before the schedule closes', () => {
+it('reads Almost Closed within half an hour of closing', () => {
 	let m = dayMoment('Fri 11:55:00pm', 'ddd h:mm:ssa')
-	let schedule: SingleBuildingScheduleType = {
-		days: ['Fr'],
-		from: '10:30am',
-		to: '12:00am',
-	}
-
-	expect(getScheduleStatusAtMoment(schedule, m)).toBe('Closes in 5 minutes')
+	expect(getScheduleStatusAtMoment(allDay, m)).toBe('Almost Closed')
 })
 
-it('handles after the schedule closes', () => {
-	let m = dayMoment('Fri 1:01pm')
-	let schedule: SingleBuildingScheduleType = {
-		days: ['Fr'],
-		from: '10:30am',
-		to: '1:00pm',
-	}
-
-	expect(getScheduleStatusAtMoment(schedule, m)).toBe('Closed')
+it('reads Closed once the window has passed', () => {
+	let schedule: SingleBuildingScheduleType = {days: ['Fr'], from: '10:30am', to: '1:00pm'}
+	expect(getScheduleStatusAtMoment(schedule, dayMoment('Fri 1:01pm'))).toBe('Closed')
 })
 
-it('rounds the second down when calculating times (pre-30s)', () => {
-	let m = dayMoment('Tue 7:43:30am', 'ddd h:mm:ssa')
-	let schedule: SingleBuildingScheduleType = {
-		days: ['Tu'],
-		from: '8:00am',
-		to: '1:00pm',
-	}
-
-	expect(getScheduleStatusAtMoment(schedule, m)).toBe('Opens in 17 minutes')
-})
-
-it('rounds the second down when calculating times (post-30s)', () => {
-	let m = dayMoment('Tue 7:43:31am', 'ddd h:mm:ssa')
-	let schedule: SingleBuildingScheduleType = {
-		days: ['Tu'],
-		from: '8:00am',
-		to: '1:00pm',
-	}
-
-	expect(getScheduleStatusAtMoment(schedule, m)).toBe('Opens in 17 minutes')
+it('reads Closed well before the window opens', () => {
+	let schedule: SingleBuildingScheduleType = {days: ['Tu'], from: '8:00am', to: '1:00pm'}
+	expect(getScheduleStatusAtMoment(schedule, dayMoment('Tue 6:00am'))).toBe('Closed')
 })

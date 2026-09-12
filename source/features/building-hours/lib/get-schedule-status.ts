@@ -1,29 +1,32 @@
 import type {Moment} from 'moment-timezone'
-import type {SingleBuildingScheduleType} from '../types'
+import type {BuildingStatusType, SingleBuildingScheduleType} from '../types'
 
 import {parseHours} from './parse-hours'
 
-function in30(start: Moment, end: Moment) {
-	return start.clone().add(30, 'minutes').isSameOrAfter(end)
+const ALMOST_THRESHOLD_MINUTES = 30
+
+function within(minutes: number, start: Moment, end: Moment): boolean {
+	return start.clone().add(minutes, 'minutes').isSameOrAfter(end)
 }
 
-function timeBetween(start: Moment, end: Moment) {
-	return start.clone().seconds(0).to(end)
-}
-
-export function getScheduleStatusAtMoment(schedule: SingleBuildingScheduleType, m: Moment): string {
+/**
+ * How one window reads at `m`: running, about to change, or neither.
+ *
+ * The caller picks the wording. This says only which state the window is in,
+ * so the set of answers stays closed and a glyph can be chosen from it.
+ */
+export function getScheduleStatusAtMoment(
+	schedule: SingleBuildingScheduleType,
+	m: Moment,
+): BuildingStatusType {
 	let {open, close} = parseHours(schedule, m)
 
-	if (m.isBefore(open) && in30(m, open)) {
-		return `Opens ${timeBetween(m, open)}`
+	if (m.isBefore(open)) {
+		return within(ALMOST_THRESHOLD_MINUTES, m, open) ? 'Almost Open' : 'Closed'
 	}
 
 	if (m.isBetween(open, close, 'minute', '[)')) {
-		if (in30(m, close)) {
-			return `Closes ${timeBetween(m, close)}`
-		}
-
-		return 'Open'
+		return within(ALMOST_THRESHOLD_MINUTES, m, close) ? 'Almost Closed' : 'Open'
 	}
 
 	return 'Closed'
