@@ -145,4 +145,52 @@ describe('toRows', () => {
 		let {events} = toRows('stolaf', 0, [wireEvent({location: 'Field'})])
 		assert.equal(events[0].location, 'Field')
 	})
+
+	/**
+	 * `eventKey` is `startTime|title`, and its own doc comment admits two
+	 * events can collide. On the array path that was harmless -- `.find()`
+	 * returned the first match. Here the second row violates `event`'s primary
+	 * key, the whole transaction rolls back, and `writeSource` reports the
+	 * source failed. Because the collision is in the upstream feed, every
+	 * refresh after it fails identically: that calendar freezes at its last
+	 * good window until somebody edits the feed. Two same-titled all-day events
+	 * on one date are the easiest way to hit it, since an all-day event's
+	 * `startTime` is local midnight.
+	 *
+	 * First wins, matching what `.find()` did.
+	 */
+	it('keeps the first of two wire events that share an event key', () => {
+		let first = wireEvent({
+			isAllDay: true,
+			startTime: '2026-09-15T05:00:00Z',
+			endTime: '2026-09-16T04:59:59Z',
+			location: 'Field',
+		})
+		let second = {...first, location: 'Gym', description: 'The other one'}
+
+		let {events, occurrences, tags} = toRows('stolaf', 0, [first, second])
+
+		assert.equal(events.length, 1)
+		assert.equal(occurrences.length, 1)
+		assert.equal(events[0].location, 'Field', 'the first copy wins, as `.find()` did')
+		assert.deepEqual(JSON.parse(events[0].wire), first)
+		assert.deepEqual(
+			tags.map((tag) => `${tag.axis}|${tag.value}`),
+			['category|Sports', 'organization|Athletics'],
+			'the dropped copy contributes no tags either',
+		)
+	})
+
+	it('keeps the occurrence at the same index as its event when a duplicate is dropped', () => {
+		let duplicated = wireEvent({title: 'Twice', startTime: '2026-09-20T18:00:00Z'})
+		let other = wireEvent({title: 'Once', startTime: '2026-09-21T18:00:00Z'})
+
+		let {events, occurrences} = toRows('stolaf', 0, [duplicated, duplicated, other])
+
+		assert.deepEqual(
+			events.map((event) => event.eventKey),
+			occurrences.map((occurrence) => occurrence.eventKey),
+		)
+		assert.equal(events.length, 2)
+	})
 })

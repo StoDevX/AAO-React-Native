@@ -17,6 +17,11 @@ export const RETENTION_DAYS = 30
 export type Retention = {
 	todayUtc: number
 	todayDate: string
+	/**
+	 * The day after `todayDate`, which is what an *exclusive* `end_date` has to
+	 * be compared against to mean "finished before today". See `ENDS_BEFORE`.
+	 */
+	tomorrowDate: string
 	cutoffUtc: number
 	cutoffDate: string
 }
@@ -29,19 +34,23 @@ function localDate(date: Date): string {
 }
 
 /**
- * Today's local midnight, and the date `RETENTION_DAYS` before it -- the two
- * boundaries `writeSource` deletes against. Takes the clock as an argument
- * rather than reading it, so a test can pin "now" and assert an exact
- * boundary.
+ * Today's local midnight, the day after it, and the date `RETENTION_DAYS`
+ * before it -- the boundaries `writeSource` deletes against, in both the
+ * instant space a timed occurrence ends in and the exclusive-date space an
+ * all-day one does. Takes the clock as an argument rather than reading it, so
+ * a test can pin "now" and assert an exact boundary.
  */
 export function retentionFor(now: Date): Retention {
 	let today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
 	let cutoff = new Date(today)
 	cutoff.setDate(cutoff.getDate() - RETENTION_DAYS)
+	let tomorrow = new Date(today)
+	tomorrow.setDate(tomorrow.getDate() + 1)
 
 	return {
 		todayUtc: today.getTime(),
 		todayDate: localDate(today),
+		tomorrowDate: localDate(tomorrow),
 		cutoffUtc: cutoff.getTime(),
 		cutoffDate: localDate(cutoff),
 	}
@@ -55,6 +64,15 @@ export function retentionFor(now: Date): Retention {
  * event that started before today but is still running has to be replaced
  * along with the ones that haven't started yet, or it never picks up an
  * upstream edit (see `writeSource`'s doc comment).
+ *
+ * **The two arms take boundaries in different spaces, and each caller binds
+ * accordingly.** `end_utc` is an instant, so the instant arm takes the
+ * boundary itself. `end_date` is *exclusive* -- an occurrence whose last day
+ * is D stores `end_date = D + 1` -- so the date arm takes the day *after* the
+ * boundary, or a row that finished yesterday reads as unfinished. Step 1 binds
+ * `tomorrowDate` for exactly that reason. Step 2 deliberately does not: it
+ * binds `cutoffDate`, leaving the one day of retention slack the design spec
+ * calls for (see "Retention runs one day wider than the window, on purpose").
  *
  * This is a sibling of `RANGE_PREDICATE`, not a reuse of it: that predicate
  * always pairs an occurrence's start with a window's *upper* bound and its
@@ -190,7 +208,10 @@ export function writeSource(
 		// as a whole hasn't. That's everything the feed could still be
 		// describing, wiped so the insert below can put the fresh version
 		// back.
-		deleteWhere(runner, sourceId, ENDS_BEFORE, [retention.todayUtc, retention.todayDate])
+		// `tomorrowDate`, not `todayDate`: `end_date` is exclusive, so an
+		// all-day event that finished yesterday stores today's date and would
+		// read as unfinished against `todayDate`.
+		deleteWhere(runner, sourceId, ENDS_BEFORE, [retention.todayUtc, retention.tomorrowDate])
 		// Step 2, prune: delete an event only if every occurrence fails "ends
 		// at or after the cutoff" -- i.e. none of them is recent, so the event
 		// finished long enough ago to age out.

@@ -87,16 +87,34 @@ function tagRows(
 	return [...new Set(values)].map((value) => ({sourceId, eventKey: key, axis, value}))
 }
 
+/**
+ * One source's parsed feed, as the rows a write inserts.
+ *
+ * **Deduplicated by `eventKey` within the feed, first copy winning.**
+ * `eventKey` is `startTime|title` and collides for two events that genuinely
+ * share both -- two same-titled all-day events on one date being the easiest
+ * case, since an all-day event's `startTime` is local midnight. On the array
+ * path a collision was harmless, because lookups went through `.find()` and
+ * took the first match. Here the second row violates `event`'s primary key,
+ * which rolls the whole write back and reports the source failed -- and since
+ * the collision is in the upstream feed, every later refresh fails the same
+ * way and that calendar freezes at its last good window. Dropping the repeat
+ * keeps the old behaviour: first wins, the rest are not there.
+ */
 export function toRows(sourceId: string, sourceRank: number, wire: WireEvent[]): SourceRows {
 	let converted: EventType[] = convertEvents(wire, {})
 
 	let events: EventRow[] = []
 	let occurrences: OccurrenceRow[] = []
 	let tags: TagRow[] = []
+	let seen = new Set<string>()
 
 	wire.forEach((wireEvent, index) => {
 		let event = converted[index]
 		let key = eventKey(event)
+
+		if (seen.has(key)) return
+		seen.add(key)
 
 		events.push({
 			sourceId,

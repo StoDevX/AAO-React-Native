@@ -55,8 +55,9 @@ function shiftUtcDate(date: string, days: number): string {
 }
 
 describe('retentionFor', () => {
-	it("gives today's local midnight and the date 30 days before it", () => {
+	it("gives today's local midnight, tomorrow's date, and the date 30 days before", () => {
 		assert.equal(RETENTION.todayDate, '2026-09-15')
+		assert.equal(RETENTION.tomorrowDate, '2026-09-16')
 		assert.equal(RETENTION.cutoffDate, '2026-08-16')
 		assert.equal(RETENTION.todayUtc, new Date(2026, 8, 15).getTime())
 		assert.equal(RETENTION.cutoffUtc, new Date(2026, 7, 16).getTime())
@@ -185,6 +186,69 @@ describe('writeSource', () => {
 		assert.equal(occurrenceRows(runner).length, 1)
 	})
 
+	/**
+	 * `end_date` is exclusive, so an all-day event covering *yesterday* stores
+	 * `end_date == todayDate`. Step 1 asks "has no occurrence ended before
+	 * today", and comparing an exclusive end against `todayDate` answers that
+	 * wrongly: `end_date < todayDate` is false for a row that finished
+	 * yesterday, so step 1 reads it as unfinished and deletes it -- and the
+	 * today-forward feed never sends it back, so the whole event goes. A
+	 * multi-week exhibition that closed yesterday vanishes from the retained
+	 * past the same way.
+	 *
+	 * The timed arm needs no such adjustment: `end_utc < todayUtc` genuinely
+	 * does mean "ended before local midnight".
+	 */
+	it('keeps an all-day event that finished yesterday', () => {
+		let runner = freshDb()
+		let event = wireEvent({
+			title: 'Exhibit',
+			isAllDay: true,
+			startTime: `${shiftUtcDate(RETENTION.todayDate, -1)}T00:00:00Z`,
+			endTime: `${RETENTION.todayDate}T00:00:00Z`,
+		})
+
+		writeSource(runner, 'stolaf', 0, [event], RETENTION)
+		writeSource(runner, 'stolaf', 0, [], RETENTION)
+
+		assert.equal(
+			occurrenceRows(runner).length,
+			1,
+			'an exclusive end_date of today means it ended yesterday',
+		)
+	})
+
+	// The other side of the same boundary: an all-day event covering today has
+	// not finished, so step 1 must still delete it and let the fresh copy land.
+	it('replaces an all-day event covering today, so an edited title lands', () => {
+		let runner = freshDb()
+		let dates = {
+			startTime: `${RETENTION.todayDate}T00:00:00Z`,
+			endTime: `${shiftUtcDate(RETENTION.todayDate, 1)}T00:00:00Z`,
+		}
+
+		writeSource(
+			runner,
+			'stolaf',
+			0,
+			[wireEvent({title: 'Fair (draft)', isAllDay: true, ...dates})],
+			RETENTION,
+		)
+		writeSource(
+			runner,
+			'stolaf',
+			0,
+			[wireEvent({title: 'Fair (final)', isAllDay: true, ...dates})],
+			RETENTION,
+		)
+
+		let titles = runner.all<{title: string}>({
+			sql: 'select title from event where source_id = ?',
+			params: ['stolaf'],
+		})
+		assert.deepEqual(titles, [{title: 'Fair (final)'}])
+	})
+
 	it("leaves one source's rows untouched while writing another", () => {
 		let runner = freshDb()
 		let stolafEvent = wireEvent({
@@ -212,6 +276,37 @@ describe('writeSource', () => {
 		assert.deepEqual(after, before)
 	})
 
+	/**
+	 * Two wire events sharing a title and a start time collapse to one
+	 * `event_key`. `toRows` drops the repeat, so the write inserts a single row
+	 * and commits -- where inserting both would violate `event`'s primary key,
+	 * roll the transaction back, and report the source failed on this refresh
+	 * and on every refresh after it, since the collision is in the feed.
+	 */
+	it('writes one row, and does not throw, for two colliding wire events', () => {
+		let runner = freshDb()
+		let colliding = wireEvent({
+			title: 'Dup',
+			startTime: '2026-09-22T18:00:00Z',
+			endTime: '2026-09-22T20:00:00Z',
+		})
+
+		assert.doesNotThrow(() => writeSource(runner, 'stolaf', 0, [colliding, colliding], RETENTION))
+		assert.equal(occurrenceRows(runner).length, 1)
+	})
+
+	/**
+	 * The rollback. A statement failing partway through the insert loop has to
+	 * leave this source exactly as it was -- a failing Presence fetch cannot
+	 * blank St. Olaf.
+	 *
+	 * The throw is injected rather than provoked by colliding wire events,
+	 * which is how this test used to build one: `toRows` now drops a repeat
+	 * before it reaches SQLite, so that feed no longer fails at all. What has
+	 * to stay proven is that the transaction really rolls back, and injecting
+	 * the failure states that directly instead of relying on a constraint
+	 * violation that may or may not remain reachable.
+	 */
 	it("leaves a source's previous rows intact when the write throws partway through", () => {
 		let runner = freshDb()
 		let seed = wireEvent({
@@ -222,17 +317,30 @@ describe('writeSource', () => {
 		writeSource(runner, 'stolaf', 0, [seed], RETENTION)
 		let before = occurrenceRows(runner)
 
-		// Two wire events with the same title and start time collapse to the
-		// same event_key -- toRows does not dedupe within one source's own
-		// fetch -- so the second insert violates event's primary key,
-		// throwing partway through the write.
-		let colliding = wireEvent({
-			title: 'Dup',
+		let inserts = 0
+		let failing: SqlRunner = {
+			...runner,
+			run: (stmt) => {
+				if (stmt.sql.includes('insert into event ') && ++inserts === 2) {
+					throw new Error('constraint failed')
+				}
+				runner.run(stmt)
+			},
+		}
+
+		let first = wireEvent({
+			title: 'First',
 			startTime: '2026-09-22T18:00:00Z',
 			endTime: '2026-09-22T20:00:00Z',
 		})
-		assert.throws(() => writeSource(runner, 'stolaf', 0, [colliding, colliding], RETENTION))
+		let second = wireEvent({
+			title: 'Second',
+			startTime: '2026-09-23T18:00:00Z',
+			endTime: '2026-09-23T20:00:00Z',
+		})
+		assert.throws(() => writeSource(failing, 'stolaf', 0, [first, second], RETENTION))
 
+		assert.equal(inserts, 2, 'the first insert must land before the second fails')
 		assert.deepEqual(occurrenceRows(runner), before)
 	})
 })
