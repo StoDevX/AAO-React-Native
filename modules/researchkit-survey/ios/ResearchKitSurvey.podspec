@@ -8,10 +8,8 @@ Pod::Spec.new do |s|
   s.homepage       = 'https://github.com/StoDevX/AAO-React-Native'
   s.platforms      = { :ios => '15.1' }
   s.source         = { git: 'https://github.com/StoDevX/AAO-React-Native.git', tag: s.version.to_s }
-  s.static_framework = true
-
   s.dependency 'ExpoModulesCore'
-  s.dependency 'ResearchKit', '~> 3.0'
+  s.dependency 'ResearchKit', '~> 2.2'
 
   s.source_files = '**/*.swift'
 end

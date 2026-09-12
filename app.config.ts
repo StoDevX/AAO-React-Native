@@ -235,6 +235,7 @@ const config: ExpoConfig = {
 		'./plugins/with-xcuitest-target',
 		'./plugins/with-binary-stripping',
 		'./plugins/with-inhibit-pod-warnings',
+		'./plugins/with-researchkit',
 	],
 }
 

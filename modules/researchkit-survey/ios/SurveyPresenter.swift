@@ -88,7 +88,7 @@ final class SurveyPresenter: NSObject {
 extension SurveyPresenter: ORKTaskViewControllerDelegate {
 	func taskViewController(
 		_ taskViewController: ORKTaskViewController,
-		didFinishWith reason: ORKTaskFinishReason,
+		didFinishWith reason: ORKTaskViewControllerFinishReason,
 		error: Error?
 	) {
 		let result: [String: Any]
