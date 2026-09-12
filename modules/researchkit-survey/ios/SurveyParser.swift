@@ -143,6 +143,55 @@ struct SurveyParser {
 			format.placeholder = placeholder
 			return format
 
+		case "numeric":
+			let styleStr = dict["style"] as? String ?? "integer"
+			let style: ORKNumericAnswerStyle = styleStr == "decimal" ? .decimal : .integer
+			let min = dict["min"] as? NSNumber
+			let max = dict["max"] as? NSNumber
+			if let minVal = min, let maxVal = max, minVal.doubleValue >= maxVal.doubleValue {
+				throw SurveyParserError.invalidNumericRange(questionId: questionId)
+			}
+			let unit = dict["unit"] as? String
+			let format = ORKNumericAnswerFormat(style: style, unit: unit, minimum: min, maximum: max)
+			format.placeholder = dict["placeholder"] as? String
+			return format
+
+		case "email":
+			let format = ORKEmailAnswerFormat()
+			format.placeholder = dict["placeholder"] as? String
+			return format
+
+		case "date":
+			let styleStr = dict["style"] as? String ?? "date"
+			let style: ORKDateAnswerStyle = styleStr == "dateTime" ? .dateAndTime : .date
+
+			let dateFormatter = ISO8601DateFormatter()
+			let minDate = (dict["minDate"] as? String).flatMap { dateFormatter.date(from: $0) }
+			let maxDate = (dict["maxDate"] as? String).flatMap { dateFormatter.date(from: $0) }
+			let defaultDate = (dict["defaultDate"] as? String).flatMap { dateFormatter.date(from: $0) }
+
+			if let min = minDate, let max = maxDate, min >= max {
+				throw SurveyParserError.invalidDateRange(questionId: questionId)
+			}
+
+			return ORKDateAnswerFormat(
+				style: style,
+				defaultDate: defaultDate,
+				minimumDate: minDate,
+				maximumDate: maxDate,
+				calendar: nil
+			)
+
+		case "time":
+			var defaultComponents: DateComponents?
+			if let timeStr = dict["defaultTime"] as? String {
+				let parts = timeStr.split(separator: ":")
+				if parts.count == 2, let hour = Int(parts[0]), let minute = Int(parts[1]) {
+					defaultComponents = DateComponents(hour: hour, minute: minute)
+				}
+			}
+			return ORKTimeOfDayAnswerFormat(defaultComponents: defaultComponents)
+
 		default:
 			throw SurveyParserError.unknownQuestionType(type)
 		}
