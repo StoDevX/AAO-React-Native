@@ -253,7 +253,73 @@ describe('facetsQuery', () => {
 })
 
 describe('organizationsQuery', () => {
-	it("lists the winner's sponsors first, then ones only the loser names", () => {
+	/**
+	 * The ordering test. The realistic fixture below proves the union happens
+	 * at all, but it cannot prove the ordering: with `Music Dept` on the
+	 * rank-0 winner and inserted first, and `Student Activities` on the
+	 * rank-1 loser inserted second, the required ordering, plain insertion
+	 * order, and plain alphabetical order all produce the same answer — so an
+	 * implementation that dropped the in-aggregate `order by` and leaned on
+	 * the subquery's natural order would pass it.
+	 *
+	 * This fixture is built so that only `order by source_rank, tag_rowid`
+	 * produces the asserted result. The loser's tag is inserted FIRST, and
+	 * the winner's two tags are in non-alphabetical order, which also pins
+	 * the tie-break: the winner's own names keep their own order. Measured
+	 * against real SQLite:
+	 *
+	 *   order by source_rank, tag_rowid  -> Zoology Dept, Anthropology Dept, Athletics
+	 *   order by tag_rowid               -> Athletics, Zoology Dept, Anthropology Dept
+	 *   order by value                   -> Anthropology Dept, Athletics, Zoology Dept
+	 *   no order by                      -> Anthropology Dept, Athletics, Zoology Dept
+	 */
+	it('orders sponsors by source rank, then by insertion within a source', () => {
+		let runner = seed()
+		let event = (sourceId: string, key: string, rank: number) =>
+			runner.run({
+				sql: 'insert into event values (?,?,?,?,?,?,?)',
+				params: [sourceId, key, rank, 'dk-gala', 'Gala', 'Somewhere', '{}'],
+			})
+		let tag = (sourceId: string, key: string, value: string) =>
+			runner.run({
+				sql: 'insert into event_tag values (?,?,?,?)',
+				params: [sourceId, key, 'organization', value],
+			})
+
+		event('stolaf', 'gala-w', 0)
+		event('presence', 'gala-l', 1)
+		// The loser's tag first, so insertion order disagrees with rank order.
+		tag('presence', 'gala-l', 'Athletics')
+		// The winner's two out of alphabetical order, so alphabetical
+		// disagrees too, and the within-source tie-break is decidable.
+		tag('stolaf', 'gala-w', 'Zoology Dept')
+		tag('stolaf', 'gala-w', 'Anthropology Dept')
+
+		let rows = runner.all<{dedupe_key: string; orgs: string}>(organizationsQuery(['dk-gala']))
+		assert.equal(rows.length, 1)
+		assert.deepEqual(rows[0].orgs.split(ORG_SEPARATOR), [
+			'Zoology Dept',
+			'Anthropology Dept',
+			'Athletics',
+		])
+	})
+
+	it('keeps the sponsor ordering inside the aggregate, not in a subquery', () => {
+		// Row-based tests cannot catch this. Moving the `order by` out of
+		// `group_concat` and into the enclosing subquery produces identical rows
+		// on SQLite 3.53.4 -- measured -- because the planner happens to feed
+		// the aggregate in the subquery's order. SQLite does not promise that: a
+		// subquery's `order by` may be optimised away, and an aggregate's input
+		// order is undefined unless ordered within the aggregate itself.
+		//
+		// This module is a string builder, so the SQL it emits IS its behaviour.
+		// Asserting the shape is what stops a later "simplification" from
+		// reintroducing a spelling that is correct only by luck.
+		let {sql} = organizationsQuery(['dk-gala'])
+		assert.match(sql, /group_concat\([^)]*order by[^)]*\)/u)
+	})
+
+	it('unions sponsors across the copies of one event', () => {
 		let runner = seed()
 		runner.run({
 			sql: 'insert into event values (?,?,?,?,?,?,?)',
