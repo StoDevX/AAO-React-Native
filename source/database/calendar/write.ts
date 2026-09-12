@@ -70,10 +70,13 @@ const ENDS_BEFORE = `(  (o.all_day = 0 and o.end_utc  < ?)
 or (o.all_day = 1 and o.end_date < ?) )`
 
 /**
- * Deletes this source's events whose occurrence does not violate `predicate`
- * -- i.e. every occurrence sits on the side of the boundary `predicate`
- * describes. `event_tag` and `occurrence` cascade with the `event` row, so
- * deleting from `event` alone is enough.
+ * Deletes this source's events for which *every* occurrence fails
+ * `predicate` -- i.e. none of them sits on `predicate`'s side of the
+ * boundary, so the whole event sits on the far side. (The SQL reads
+ * `not exists (... and predicate)`: an event survives if even one occurrence
+ * satisfies `predicate`, and is deleted only when none does.) `event_tag`
+ * and `occurrence` cascade with the `event` row, so deleting from `event`
+ * alone is enough.
  */
 function deleteWhere(
 	runner: SqlRunner,
@@ -182,12 +185,22 @@ export function writeSource(
 	retention: Retention,
 ): void {
 	runner.transaction(() => {
+		// Step 1, replace: delete an event only if every occurrence fails
+		// "ends before today" -- i.e. none of them has finished, so the event
+		// as a whole hasn't. That's everything the feed could still be
+		// describing, wiped so the insert below can put the fresh version
+		// back.
 		deleteWhere(runner, sourceId, ENDS_BEFORE, [retention.todayUtc, retention.todayDate])
+		// Step 2, prune: delete an event only if every occurrence fails "ends
+		// at or after the cutoff" -- i.e. none of them is recent, so the event
+		// finished long enough ago to age out.
 		deleteWhere(runner, sourceId, `not (${ENDS_BEFORE})`, [
 			retention.cutoffUtc,
 			retention.cutoffDate,
 		])
 
+		// Whatever is left for this source now is a retained, already-finished
+		// past row -- everything else was just deleted by step 1 or step 2.
 		let retained = new Set(
 			runner
 				.all<{event_key: string}>({

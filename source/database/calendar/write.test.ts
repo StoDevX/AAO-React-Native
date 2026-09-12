@@ -45,11 +45,12 @@ function wireEvent(over: Partial<WireEvent> = {}): WireEvent {
 	}
 }
 
-// A `YYYY-MM-DD` string advanced by one day, entirely in UTC -- same
-// technique `rows.ts` uses, kept local here since it's test-only.
-function addUtcDay(date: string): string {
+// A `YYYY-MM-DD` string shifted by `days` (positive or negative), entirely
+// in UTC -- same technique `rows.ts` uses, kept local here since it's
+// test-only.
+function shiftUtcDate(date: string, days: number): string {
 	let instant = new Date(`${date}T00:00:00Z`)
-	instant.setUTCDate(instant.getUTCDate() + 1)
+	instant.setUTCDate(instant.getUTCDate() + days)
 	return instant.toISOString().slice(0, 10)
 }
 
@@ -152,20 +153,30 @@ describe('writeSource', () => {
 		assert.deepEqual(occurrenceRows(runner), [])
 	})
 
-	// The trap: an all-day row's start_utc is the raw wire instant, not a
-	// meaningful ordering value. This event sits exactly on the retention
-	// cutoff date, but is written iCal-style at UTC midnight -- five hours
-	// earlier than the cutoff's own boundary, which is local (Chicago)
-	// midnight. Comparing on start_utc reads "started before the cutoff"
-	// and prunes it; comparing on start_date correctly reads it as sitting
-	// exactly on the boundary, which retention keeps.
-	it('keeps a past all-day event at the retention boundary, compared on dates rather than instants', () => {
+	// The trap: an all-day row's end_utc is the raw wire instant, not a
+	// meaningful ordering value for the (end-based) retention boundary.
+	// `cutoffUtc` is Chicago *local* midnight of `cutoffDate`; this
+	// iCal-style all-day event's own end instant is *UTC* midnight of that
+	// same date, five hours earlier. For this fixture's actual numbers
+	// (cutoffDate = 2026-08-16, cutoffUtc = 2026-08-16T05:00:00Z):
+	//
+	//   end 2026-08-16T00:00:00Z -> end_date 2026-08-16
+	//     date arm   (end_date < cutoffDate): false -> survives
+	//     instant arm (end_utc  < cutoffUtc):  true  -> pruned
+	//
+	// The date arm reads this occurrence as ending exactly at the cutoff,
+	// which retention keeps; comparing on end_utc instead reads it as
+	// already five hours short of the cutoff and prunes the one row this
+	// case exists to keep. The event starts a day earlier so `toRows`'
+	// zero-length guard doesn't stretch `end_date` past the boundary this
+	// fixture is built to sit on.
+	it('keeps a finished past all-day event at the retention boundary, compared on dates rather than instants', () => {
 		let runner = freshDb()
 		let event = wireEvent({
 			title: 'Exhibit',
 			isAllDay: true,
-			startTime: `${RETENTION.cutoffDate}T00:00:00Z`,
-			endTime: `${addUtcDay(RETENTION.cutoffDate)}T00:00:00Z`,
+			startTime: `${shiftUtcDate(RETENTION.cutoffDate, -1)}T00:00:00Z`,
+			endTime: `${RETENTION.cutoffDate}T00:00:00Z`,
 		})
 
 		writeSource(runner, 'stolaf', 0, [event], RETENTION)
