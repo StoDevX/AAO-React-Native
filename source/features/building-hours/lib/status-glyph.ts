@@ -1,9 +1,15 @@
+import type {ComponentProps} from 'react'
 import type {ColorValue} from 'react-native'
+import type {Image} from '@expo/ui/swift-ui'
 import type {BuildingStatusType, ServiceStatusType} from '../types'
 
 import {getAccentBackgroundColor} from './color-helpers'
 
-const SYMBOLS: Record<BuildingStatusType, string> = {
+/** The SF Symbol names `Image` will accept, taken from its own prop rather than
+ * from a second copy of Apple's catalogue. */
+type SymbolName = NonNullable<ComponentProps<typeof Image>['systemName']>
+
+const SYMBOLS: Record<BuildingStatusType, SymbolName> = {
 	Open: 'circle.fill',
 	'Almost Open': 'circle.lefthalf.filled',
 	'Almost Closed': 'circle.righthalf.filled',
@@ -24,9 +30,14 @@ const SYMBOLS: Record<BuildingStatusType, string> = {
 export function statusGlyph(
 	status: BuildingStatusType,
 	service?: ServiceStatusType,
-): {symbol: string; color: ColorValue} {
+): {symbol: SymbolName; color: ColorValue} {
+	// A symbol out of the data is an unchecked string: the schema can say it is
+	// a string but not that Apple ships it, so a name with a typo in it draws
+	// nothing. Ours are checked, because `SYMBOLS` is typed.
+	let fromData = status === 'Service' ? (service?.symbol as SymbolName | undefined) : undefined
+
 	return {
-		symbol: (status === 'Service' ? service?.symbol : undefined) ?? SYMBOLS[status],
+		symbol: fromData ?? SYMBOLS[status],
 		color: getAccentBackgroundColor(status),
 	}
 }

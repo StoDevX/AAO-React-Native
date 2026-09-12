@@ -1,9 +1,9 @@
 import * as React from 'react'
-import type {ColorValue} from 'react-native'
 import {Button, HStack, Image, Spacer, SwipeActions, Text, VStack} from '@expo/ui/swift-ui'
 import {
 	accessibilityIdentifier,
 	accessibilityLabel,
+	allowsTightening,
 	buttonStyle,
 	contentShape,
 	fixedSize,
@@ -11,6 +11,7 @@ import {
 	foregroundStyle,
 	layoutPriority,
 	lineLimit,
+	minimumScaleFactor,
 	shapes,
 	tint,
 	truncationMode,
@@ -20,7 +21,8 @@ import type {Moment} from 'moment-timezone'
 import type {BuildingType} from '../types'
 import {
 	getShortBuildingStatus,
-	getAccentBackgroundColor,
+	statusGlyph,
+	findOpenService,
 	contextualStatus,
 	hasDisplayableHours,
 	firstScheduleNote,
@@ -36,7 +38,15 @@ export const BUILDING_ROW_PREFIX = 'building-row-'
 export const ADD_TO_FAVORITES = 'Add to Favorites'
 export const REMOVE_FROM_FAVORITES = 'Remove from Favorites'
 
-const SINGLE_LINE = [lineLimit(1), truncationMode('tail')]
+const SINGLE_LINE = [
+	lineLimit(1),
+	truncationMode('tail'),
+	// The status wins this row on layout priority, so without these the name is
+	// what gets an ellipsis. Shrinking a little reads better than losing letters,
+	// and keeps every row the same height.
+	minimumScaleFactor(0.8),
+	allowsTightening(true),
+]
 
 type Props = {
 	building: BuildingType
@@ -58,7 +68,7 @@ export const BuildingListRow = React.memo(function BuildingListRow({
 	onSelect,
 }: Props): React.ReactNode {
 	let status = getShortBuildingStatus(building, now)
-	let accentBg: ColorValue = getAccentBackgroundColor(status)
+	let glyph = statusGlyph(status, findOpenService(building, now) ?? undefined)
 	let statusText = contextualStatus(building, now)
 
 	let subtitle = building.subtitle
@@ -107,8 +117,8 @@ export const BuildingListRow = React.memo(function BuildingListRow({
 								{hasHours ? statusText.short : (firstNote ?? '')}
 							</Text>
 							<Image
-								modifiers={[foregroundStyle(accentBg), font({textStyle: 'caption2'})]}
-								systemName="circle.fill"
+								modifiers={[foregroundStyle(glyph.color), font({textStyle: 'caption2'})]}
+								systemName={glyph.symbol}
 							/>
 							<Image
 								modifiers={[font({textStyle: 'footnote'}), foregroundStyle(c.tertiaryLabel)]}
