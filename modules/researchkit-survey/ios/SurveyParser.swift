@@ -73,12 +73,17 @@ struct SurveyParser {
 		return ORKOrderedTask(identifier: surveyId, steps: steps)
 	}
 
-	private static func parseQuestion(_ dict: [String: Any]) throws -> ORKQuestionStep {
-		guard let id = dict["id"] as? String else {
-			throw SurveyParserError.missingField("question.id")
-		}
+	private static func parseQuestion(_ dict: [String: Any]) throws -> ORKStep {
 		guard let type = dict["type"] as? String else {
 			throw SurveyParserError.missingField("question.type")
+		}
+
+		if type == "formStep" {
+			return try parseFormStep(dict)
+		}
+
+		guard let id = dict["id"] as? String else {
+			throw SurveyParserError.missingField("question.id")
 		}
 		guard let title = dict["title"] as? String else {
 			throw SurveyParserError.missingField("question.title")
@@ -93,6 +98,55 @@ struct SurveyParser {
 		step.isOptional = optional
 
 		return step
+	}
+
+	private static func parseFormStep(_ dict: [String: Any]) throws -> ORKFormStep {
+		guard let id = dict["id"] as? String else {
+			throw SurveyParserError.missingField("formStep.id")
+		}
+		guard let title = dict["title"] as? String else {
+			throw SurveyParserError.missingField("formStep.title")
+		}
+		guard let sectionsArray = dict["sections"] as? [[String: Any]], !sectionsArray.isEmpty else {
+			throw SurveyParserError.emptySections(stepId: id)
+		}
+
+		let text = dict["text"] as? String
+		let useCardView = dict["cardView"] as? Bool ?? true
+
+		let formStep = ORKFormStep(identifier: id, title: title, text: text)
+		formStep.useCardView = useCardView
+
+		var formItems: [ORKFormItem] = []
+
+		for section in sectionsArray {
+			if let sectionTitle = section["title"] as? String {
+				let sectionItem = ORKFormItem(sectionTitle: sectionTitle)
+				formItems.append(sectionItem)
+			}
+
+			guard let items = section["items"] as? [[String: Any]] else { continue }
+
+			for itemDict in items {
+				guard let itemId = itemDict["id"] as? String else {
+					throw SurveyParserError.missingField("formItem.id")
+				}
+				guard let itemType = itemDict["type"] as? String else {
+					throw SurveyParserError.missingField("formItem.type")
+				}
+				let itemTitle = itemDict["title"] as? String ?? ""
+				let itemText = itemDict["text"] as? String
+				let optional = itemDict["optional"] as? Bool ?? false
+
+				let answerFormat = try parseAnswerFormat(type: itemType, dict: itemDict, questionId: itemId)
+				let formItem = ORKFormItem(identifier: itemId, text: itemTitle, answerFormat: answerFormat, optional: optional)
+				formItem.detailText = itemText
+				formItems.append(formItem)
+			}
+		}
+
+		formStep.formItems = formItems
+		return formStep
 	}
 
 	private static func parseAnswerFormat(type: String, dict: [String: Any], questionId: String) throws -> ORKAnswerFormat {
