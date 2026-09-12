@@ -16,19 +16,17 @@ import {
 	accessibilityIdentifier,
 	accessibilityLabel,
 	buttonStyle,
-	font,
 	foregroundStyle,
 	frame,
 	listRowBackground,
 	listRowInsets,
 	listRowSeparator,
-	padding,
 } from '@expo/ui/swift-ui/modifiers'
 import * as c from '@frogpond/colors'
 import {ContactTile} from '../../../source/features/directory/tile'
 import {columnsForFontScale, inRows, TILE_SPACING} from '../../../source/components/tile-layout'
 import type {ContactType} from '../../../source/features/directory/types'
-import {FILL_WIDTH, SCREEN_MARGIN} from '../../../source/features/home/button'
+import {FILL_WIDTH} from '../../../source/features/home/button'
 
 /// Mirrored by TestIdentifiers.Directory.contactGrid.
 const CONTACT_GRID_ID = 'directory-contact-grid'
@@ -67,9 +65,6 @@ export function ImportantContactsGrid({
 				listRowBackground('clear'),
 				listRowInsets({top: 0, leading: 0, bottom: 0, trailing: 0}),
 				listRowSeparator('hidden'),
-				// Horizontal + top only: the enclosing List owns the gap down
-				// to the Departments section below.
-				padding({horizontal: SCREEN_MARGIN, top: SCREEN_MARGIN}),
 				frame({maxWidth: FILL_WIDTH}),
 			]}
 			spacing={TILE_SPACING}

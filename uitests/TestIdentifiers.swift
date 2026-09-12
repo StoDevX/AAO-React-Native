@@ -366,8 +366,8 @@ struct TestIdentifiers {
 	// MARK: - Directory
 
 	enum Directory {
-		/// The heading above the contact tiles on the Directory screen.
-		static let importantContacts = "Important Contacts"
+		/// The heading below the contact tiles on the Directory screen.
+		static let importantContacts = "Departments"
 		/// Matches CONTACT_GRID_ID in app/(home)/Directory/index.tsx.
 		static let contactGrid = "directory-contact-grid"
 		/// A contact from data/contact-info/, so its tile is in the grid
