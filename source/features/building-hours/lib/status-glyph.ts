@@ -1,5 +1,5 @@
 import type {ComponentProps} from 'react'
-import type {ColorValue} from 'react-native'
+import type {ColorSchemeName, ColorValue} from 'react-native'
 import type {Image} from '@expo/ui/swift-ui'
 import type {BuildingStatusType, ServiceStatusType} from '../types'
 
@@ -30,14 +30,24 @@ const SYMBOLS: Record<BuildingStatusType, SymbolName> = {
 export function statusGlyph(
 	status: BuildingStatusType,
 	service?: ServiceStatusType,
+	scheme?: ColorSchemeName,
 ): {symbol: SymbolName; color: ColorValue} {
 	// A symbol out of the data is an unchecked string: the schema can say it is
 	// a string but not that Apple ships it, so a name with a typo in it draws
 	// nothing. Ours are checked, because `SYMBOLS` is typed.
 	let fromData = status === 'Service' ? (service?.symbol as SymbolName | undefined) : undefined
+	let symbol = fromData ?? SYMBOLS[status]
+
+	if (scheme === 'dark' && status === 'Almost Open') {
+		symbol = 'circle.lefthalf.filled.inverse'
+	}
+
+	if (scheme === 'dark' && status === 'Almost Closed') {
+		symbol = 'circle.righthalf.filled.inverse'
+	}
 
 	return {
-		symbol: fromData ?? SYMBOLS[status],
+		symbol,
 		color: getAccentBackgroundColor(status),
 	}
 }

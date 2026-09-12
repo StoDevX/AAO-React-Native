@@ -2,6 +2,7 @@ import React from 'react'
 import moment from 'moment-timezone'
 import {describe, expect, test} from '@jest/globals'
 import {render} from '@testing-library/react-native'
+import * as ReactNative from 'react-native'
 
 import {BuildingListRow} from '../building-list-row'
 import type {BuildingType} from '../../types'
@@ -31,6 +32,18 @@ const noticeOnly: BuildingType = {
 	schedule: [{title: 'Hours', notes: 'Closed for renovation.', hours: []}],
 }
 
+const almostOpen: BuildingType = {
+	name: 'Buntrock Commons',
+	category: 'Student Life',
+	schedule: [{title: 'Hours', hours: [{days: ['Mo'], from: '2:15pm', to: '5:00pm'}]}],
+}
+
+const almostClosed: BuildingType = {
+	name: 'Rolvaag Memorial Library',
+	category: 'Academia',
+	schedule: [{title: 'Hours', hours: [{days: ['Mo'], from: '8:00am', to: '2:15pm'}]}],
+}
+
 function renderRow(building: BuildingType, isFavorite = false) {
 	return render(
 		<BuildingListRow
@@ -42,6 +55,10 @@ function renderRow(building: BuildingType, isFavorite = false) {
 		/>,
 	)
 }
+
+afterEach(() => {
+	jest.restoreAllMocks()
+})
 
 describe('what the row says on its status line', () => {
 	test('gives the live status when the building has hours', async () => {
@@ -72,5 +89,17 @@ describe('the accessibility label', () => {
 		let {queryByLabelText} = await renderRow(scheduled)
 
 		expect(queryByLabelText('Tomson Hall, Open until 5 PM')).not.toBeNull()
+	})
+})
+
+describe('the status glyph', () => {
+	test('uses the inverse half-filled symbols in dark mode', async () => {
+		jest.spyOn(ReactNative, 'useColorScheme').mockReturnValue('dark')
+
+		let almostOpenRow = await renderRow(almostOpen)
+		let almostClosedRow = await renderRow(almostClosed)
+
+		expect(almostOpenRow.queryByTestId('symbol-circle.lefthalf.filled.inverse')).not.toBeNull()
+		expect(almostClosedRow.queryByTestId('symbol-circle.righthalf.filled.inverse')).not.toBeNull()
 	})
 })

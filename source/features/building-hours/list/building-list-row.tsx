@@ -1,4 +1,5 @@
 import * as React from 'react'
+import {useColorScheme} from 'react-native'
 import {Button, HStack, Image, Spacer, SwipeActions, Text, VStack} from '@expo/ui/swift-ui'
 import {
 	accessibilityIdentifier,
@@ -67,8 +68,9 @@ export const BuildingListRow = React.memo(function BuildingListRow({
 	onToggleFavorite,
 	onSelect,
 }: Props): React.ReactNode {
+	let scheme = useColorScheme()
 	let status = getShortBuildingStatus(building, now)
-	let glyph = statusGlyph(status, findOpenService(building, now) ?? undefined)
+	let glyph = statusGlyph(status, findOpenService(building, now) ?? undefined, scheme)
 	let statusText = contextualStatus(building, now)
 
 	let subtitle = building.subtitle
