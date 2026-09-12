@@ -92,7 +92,7 @@ export function BuildingDetailSwiftUI({building, now, campus}: Props): React.Rea
 						<Text
 							modifiers={[font({textStyle: 'body', weight: 'semibold'}), foregroundStyle(c.label)]}
 						>
-							{statusText}
+							{statusText.long}
 						</Text>
 					</HStack>
 				</Section>

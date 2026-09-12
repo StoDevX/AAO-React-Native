@@ -77,7 +77,7 @@ export const BuildingListRow = React.memo(function BuildingListRow({
 				modifiers={[
 					buttonStyle('plain'),
 					accessibilityIdentifier(`${BUILDING_ROW_PREFIX}${building.name}`),
-					accessibilityLabel(`${building.name}, ${statusText}`),
+					accessibilityLabel(`${building.name}, ${statusText.long}`),
 				]}
 				onPress={() => onSelect(building)}
 			>
@@ -104,7 +104,7 @@ export const BuildingListRow = React.memo(function BuildingListRow({
 									layoutPriority(1),
 								]}
 							>
-								{hasHours ? statusText : (firstNote ?? '')}
+								{hasHours ? statusText.short : (firstNote ?? '')}
 							</Text>
 							<Image
 								modifiers={[foregroundStyle(accentBg), font({textStyle: 'caption2'})]}
