@@ -79,7 +79,7 @@ function findNextOpenToday(building: BuildingType, now: Moment): OpenWindow | nu
 /**
  * Human-readable status for a building right now, e.g. "Open until 8 PM",
  * "Closes in 15 min", "Reopens at 10:30 AM", "Reopens in 8 min",
- * "Opens at 5 PM", "Opens in 10 min", or "Closed today".
+ * "Opens at 5 PM", "Opens in 10 min", or "Closed".
  */
 export function contextualStatus(building: BuildingType, now: Moment): string {
 	let current = findCurrentOpen(building, now)
@@ -109,5 +109,9 @@ export function contextualStatus(building: BuildingType, now: Moment): string {
 		return `Opens at ${formatTime(next.open)}`
 	}
 
-	return 'Closed today'
+	// Not "Closed today": this is only reached once nothing opens again today, so
+	// both readings are true, but "Closed today" also reads as "has no hours
+	// today" -- a claim about the whole day that a building open this morning
+	// would contradict. The detail sheet carries the real hours.
+	return 'Closed'
 }

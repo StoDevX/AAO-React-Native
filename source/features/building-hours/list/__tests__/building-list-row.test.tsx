@@ -52,18 +52,18 @@ describe('what the row says on its status line', () => {
 
 	test('falls back to the note when the building has no hours at all', async () => {
 		// A building with an empty `hours` is unscheduled, not closed -- saying
-		// "Closed today" would claim something the data does not support.
+		// "Closed" would claim something the data does not support.
 		let {queryByText} = await renderRow(noticeOnly)
 
 		expect(queryByText('Closed for renovation.')).not.toBeNull()
-		expect(queryByText('Closed today')).toBeNull()
+		expect(queryByText('Closed')).toBeNull()
 	})
 
 	test('says nothing rather than guessing when there are neither hours nor a note', async () => {
 		let bare: BuildingType = {name: 'Nowhere', category: 'Other', schedule: []}
 		let {queryByText} = await renderRow(bare)
 
-		expect(queryByText('Closed today')).toBeNull()
+		expect(queryByText('Closed')).toBeNull()
 	})
 })
 

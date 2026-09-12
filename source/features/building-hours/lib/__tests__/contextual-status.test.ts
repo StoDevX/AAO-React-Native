@@ -139,7 +139,7 @@ describe('contextualStatus', () => {
 		expect(contextualStatus(building, now)).toBe('Opens at 7 AM')
 	})
 
-	it('returns "Closed today" when not opening today', () => {
+	it('returns "Closed" when nothing opens again today', () => {
 		let building = makeBuilding([
 			{
 				title: 'Hours',
@@ -148,7 +148,7 @@ describe('contextualStatus', () => {
 		])
 		let now = moment.tz('2026-09-12 14:00', timezone) // Saturday 2pm
 		let result = contextualStatus(building, now)
-		expect(result).toBe('Closed today')
+		expect(result).toBe('Closed')
 	})
 
 	it('says when a chapel closure lifts', () => {
