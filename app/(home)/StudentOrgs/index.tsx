@@ -1,7 +1,7 @@
 import * as React from 'react'
 import {StyleSheet} from 'react-native'
 import {ContentUnavailableView, Host, List, Section} from '@expo/ui/swift-ui'
-import {listStyle, refreshable} from '@expo/ui/swift-ui/modifiers'
+import {accessibilityIdentifier, listStyle, refreshable} from '@expo/ui/swift-ui/modifiers'
 import {NoticeView, LoadingView} from '@frogpond/notice'
 import {emptyList} from '@frogpond/lists'
 import {DisclosureRow} from '../../../source/components/rows'
@@ -17,6 +17,7 @@ import memoize from 'lodash/memoize'
 import {studentOrgsOptions} from '../../../source/features/student-orgs/query'
 import {useQuery} from '@tanstack/react-query'
 import {SearchBar} from '../../../source/components/search-bar'
+import {sectionIndexLabel} from '../../../source/lib/section-index-label'
 
 const splitToArray = memoize((str: string) => words(deburr(str.toLowerCase())))
 
@@ -119,6 +120,7 @@ function StudentOrgsView(): React.ReactNode {
 						refreshable(async () => {
 							await refetch()
 						}),
+						accessibilityIdentifier('student-orgs-list'),
 					]}
 				>
 					{grouped.length === 0 ? (
@@ -130,7 +132,11 @@ function StudentOrgsView(): React.ReactNode {
 						/>
 					) : (
 						grouped.map((section) => (
-							<Section key={section.title} title={section.title}>
+							<Section
+								key={section.title}
+								modifiers={[sectionIndexLabel(section.title)]}
+								title={section.title}
+							>
 								{section.data.map((org) => (
 									<DisclosureRow
 										key={org.name + org.category}

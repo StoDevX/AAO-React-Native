@@ -522,4 +522,10 @@ struct TestIdentifiers {
 			Data collected by the humans of All About Olaf
 			"""
 	}
+
+	// MARK: - Student Orgs
+
+	enum StudentOrgs {
+		static let list = "student-orgs-list"
+	}
 }

@@ -1,6 +1,12 @@
 import XCTest
 
 class ModuleStudentOrgsTests: UITestCase {
+	func testTappingTheSectionIndexRailScrollsTheList() throws {
+		try StudentOrgsScreen(app: app)
+			.navigate()
+			.verifySectionIndexRailScrolls()
+	}
+
 	func testIsReachableFromHomescreen() throws {
 		StudentOrgsScreen(app: app)
 			.navigate()
