@@ -6,6 +6,10 @@ enum SurveyParserError: LocalizedError {
 	case unknownQuestionType(String)
 	case invalidScaleRange(questionId: String)
 	case emptyChoices(questionId: String)
+	case invalidNumericRange(questionId: String)
+	case invalidDateRange(questionId: String)
+	case invalidImageChoice(questionId: String)
+	case emptySections(stepId: String)
 
 	var errorDescription: String? {
 		switch self {
@@ -19,6 +23,14 @@ enum SurveyParserError: LocalizedError {
 			return "Scale question '\(id)' has min >= max"
 		case .emptyChoices(let id):
 			return "Choice question '\(id)' has no choices"
+		case .invalidNumericRange(let id):
+			return "Numeric question '\(id)' has min >= max"
+		case .invalidDateRange(let id):
+			return "Date question '\(id)' has minDate >= maxDate"
+		case .invalidImageChoice(let id):
+			return "Image choice question '\(id)' has no valid image source"
+		case .emptySections(let id):
+			return "Form step '\(id)' has no sections"
 		}
 	}
 }
