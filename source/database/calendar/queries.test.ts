@@ -182,6 +182,34 @@ describe('occurrencesQuery', () => {
 		assert.deepEqual(mismatched, [], 'filters are an AND, not an OR')
 	})
 
+	/**
+	 * Positional parameters mean the bind order *is* the query's meaning, and
+	 * this builder now repeats the source list once per filter as well as once
+	 * in the ranking subquery. A count mismatch is the cheap half of that going
+	 * wrong; the property test below catches the rest.
+	 */
+	it('binds exactly as many parameters as the assembled statement has placeholders', () => {
+		for (let filters of [
+			[],
+			[{axis: 'category', value: 'Music'} as const],
+			[
+				{axis: 'category', value: 'Music'} as const,
+				{axis: 'organization', value: 'Music Dept'} as const,
+			],
+		]) {
+			let {sql, params} = occurrencesQuery({
+				window: WINDOW,
+				sourceIds: ['stolaf', 'presence'],
+				filters: [...filters],
+			})
+			assert.equal(
+				(sql.match(/\?/gu) ?? []).length,
+				params.length,
+				`${filters.length} filter(s): placeholders and params disagree`,
+			)
+		}
+	})
+
 	it('shows one copy of an event two calendars both carry, the lowest-ranked one', () => {
 		let runner = seed()
 		addCrossSourceDuplicate(runner)
@@ -323,15 +351,24 @@ describe('facetsQuery', () => {
 	 * The invariant the menu depends on: a value tallied as N must filter to N
 	 * events, or the menu offers a choice that empties the list.
 	 *
-	 * Run over each calendar on its own, with a cross-source duplicate present
-	 * -- so each pass has a copy of one event whose dedupe winner belongs to
-	 * the calendar the pass has switched off. `facetsQuery` counts over `event`
-	 * and is source-scoped correctly, so a dedupe in `occurrencesQuery` that is
-	 * *not* source-scoped shows up here as a value the menu offers and the
-	 * filter cannot satisfy.
+	 * Run over three selections, each with a cross-source duplicate present,
+	 * because they fail for different reasons.
+	 *
+	 * One calendar at a time catches a dedupe that ranks across sources the
+	 * query excluded: the pass has a copy of an event whose winner belongs to
+	 * the calendar it switched off.
+	 *
+	 * Both calendars at once catches the other half. `facetsQuery` tallies a
+	 * tag every in-scope copy carries, and `organizationsQuery` and `hydrate`
+	 * print that same union on the row -- so a filter that matches only the
+	 * *winning* copy's tags cannot reach a tag only a displaced copy carries.
+	 * The menu then offers a sponsor printed on the row in front of the
+	 * reader, and selecting it empties the list. The deleted array path could
+	 * not do this: `tally` and `filterEvents` both read one deduped list whose
+	 * `organization` was already the union, so they agreed by construction.
 	 */
-	for (let sourceIds of [['stolaf'], ['presence']]) {
-		it(`agrees with the filter query for every value it reports, with only ${sourceIds[0]} on`, () => {
+	for (let sourceIds of [['stolaf'], ['presence'], ['stolaf', 'presence']]) {
+		it(`agrees with the filter query for every value it reports, with ${sourceIds.join(' and ')} on`, () => {
 			let runner = seed()
 			addCrossSourceDuplicate(runner)
 

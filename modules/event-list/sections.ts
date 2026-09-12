@@ -68,23 +68,29 @@ export function groupEvents(events: readonly SourcedEvent[], now: Moment): Event
  * the top opens in the past, and a Today button that scrolls to the top takes
  * the reader further from today rather than to it.
  *
- * Today's own section when there is one. Otherwise the first section at or
- * after today, which is `Ongoing` if anything is running and the next day with
- * something on it if not -- a day with nothing on it is ordinary, and the
- * reader wants the next thing rather than the oldest retained one. When every
- * section is in the past, the last one is the closest to today there is.
+ * Today's own section when there is one, otherwise the first day at or after
+ * today -- a day with nothing on it is ordinary, and the reader wants the next
+ * thing rather than the oldest retained one. When every day is in the past, the
+ * last of them is the closest to today there is.
  *
- * `Ongoing` is named rather than left to the `>=` below: it happens to sort
- * after any `YYYY-MM-DD`, but a scroll target chosen by an accident of ASCII
- * is one rename away from being wrong.
+ * **Never `Ongoing`.** A multi-week run sits above the fold and is reached by
+ * scrolling up, like any past day. Excluding it by name is load-bearing and not
+ * merely tidy: `groupEvents` positions `Ongoing` by its earliest member, so a
+ * run that began in July leads the array, and `'Ongoing' >= '2026-09-15'` is
+ * true in string order ('O' is 0x4F, '2' is 0x32). Leaving it to the comparison
+ * below would pick it anyway -- the original bug, reintroduced through an ASCII
+ * accident. The `Ongoing` section itself stays in the list; only the scroll
+ * target skips it.
  */
 export function todaySectionKey(sections: readonly EventSection[], now: Moment): string | null {
 	let today = sections.find((section) => section.isToday)
 	if (today) return today.key
 
+	let days = sections.filter((section) => section.key !== 'Ongoing')
+
 	let todayIso = now.format('YYYY-MM-DD')
-	let next = sections.find((section) => section.key === 'Ongoing' || section.key >= todayIso)
+	let next = days.find((section) => section.key >= todayIso)
 	if (next) return next.key
 
-	return sections[sections.length - 1]?.key ?? null
+	return days[days.length - 1]?.key ?? null
 }

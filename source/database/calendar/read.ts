@@ -141,8 +141,12 @@ export function sponsorsFor(
  * nothing the user presses helps. Reporting matches what the write path
  * already does for the same hazard (`modules/ccc-calendar/query.ts`);
  * rethrowing is what marks the query failed, so the screen can say so.
+ *
+ * Exported so the reporting and the rethrow can be asserted against a callback
+ * that throws, rather than only through a hook that would need `expo-sqlite`
+ * mocked into a thrower to reach.
  */
-function reportingFailures<T>(read: () => T): T {
+export function reportingFailures<T>(read: () => T): T {
 	try {
 		return read()
 	} catch (error) {

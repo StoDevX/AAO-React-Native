@@ -15,8 +15,10 @@ jest.mock('expo-sqlite', () => ({
 // through it.
 jest.mock('@sentry/react-native', () => ({captureException: jest.fn()}))
 
+import * as Sentry from '@sentry/react-native'
+
 import type {SqlRunner} from '../../sql'
-import {dayWindow, sponsorMap, sponsorsFor} from '../read'
+import {dayWindow, reportingFailures, sponsorMap, sponsorsFor} from '../read'
 
 describe('dayWindow', () => {
 	it('is stable across a day, so a minute ticker cannot change the query key', () => {
@@ -110,5 +112,40 @@ describe('sponsorsFor', () => {
 			transaction: (task) => task(),
 		}
 		expect(sponsorsFor(runner, ['dk'], ['stolaf'])).toEqual(new Map([['dk', ['Athletics']]]))
+	})
+})
+
+describe('reportingFailures', () => {
+	beforeEach(() => {
+		jest.clearAllMocks()
+	})
+
+	it('returns what the read returned, and reports nothing', () => {
+		expect(reportingFailures(() => ['a row'])).toEqual(['a row'])
+		expect(Sentry.captureException).not.toHaveBeenCalled()
+	})
+
+	// Both halves matter, and for different reasons. Reporting is the only way
+	// anyone learns a read failed -- a corrupt page, a throw inside
+	// `ensureSchema`, a `wire` column `JSON.parse` chokes on. Rethrowing is what
+	// marks the query failed, so `useOccurrences` can report `failed` and the
+	// screen can offer a retry instead of saying "No events." about a database
+	// it could not read.
+	it('reports a throw and lets it through', () => {
+		let boom = new Error('database disk image is malformed')
+
+		expect(() =>
+			reportingFailures(() => {
+				throw boom
+			}),
+		).toThrow(boom)
+
+		expect(Sentry.captureException).toHaveBeenCalledTimes(1)
+		expect(Sentry.captureException).toHaveBeenCalledWith(boom)
+	})
+
+	it('does not swallow a falsy return value', () => {
+		expect(reportingFailures(() => undefined)).toBeUndefined()
+		expect(Sentry.captureException).not.toHaveBeenCalled()
 	})
 })

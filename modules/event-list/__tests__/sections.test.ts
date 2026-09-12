@@ -136,27 +136,59 @@ describe('todaySectionKey', () => {
 		expect(todaySectionKey(sections, NOW)).toBe('2026-08-24')
 	})
 
-	test('picks Ongoing over a later day when something is running and today is empty', () => {
-		let spanning = {
+	/** An event running across today, which `groupEvents` files under `Ongoing`. */
+	function ongoingFrom(startTime: string, endTime: string): SourcedEvent {
+		return {
 			sourceId: 'stolaf',
 			key: 'spanning',
 			event: makeEvent({
-				startTime: moment('2026-08-15T15:00:00Z'),
-				endTime: moment('2026-08-19T15:00:00Z'),
+				startTime: moment(startTime),
+				endTime: moment(endTime),
 				isOngoing: true,
 			}),
 		}
+	}
+
+	/**
+	 * `Ongoing` is never the target -- a multi-week run sits above the fold and
+	 * is reached by scrolling up, like any past day.
+	 *
+	 * The fixture is built so that dropping the explicit `Ongoing` exclusion
+	 * cannot pass it. The run began in July, so `groupEvents` -- which orders
+	 * sections by their earliest member -- puts `Ongoing` first in the array,
+	 * ahead of a past day and a future one. A rule that merely compared
+	 * `key >= todayIso` would return `Ongoing` anyway, because `'O'` is 0x4F and
+	 * `'2'` is 0x32, so `'Ongoing' >= '2026-08-17'` is true in string order.
+	 * That is the original bug reintroduced through an ASCII accident.
+	 */
+	test('skips Ongoing and takes the next day, even when Ongoing leads the array', () => {
 		let sections = groupEvents(
 			[
-				entryOn('stolaf', 'last-month', '2026-08-01T15:00:00Z'),
-				spanning,
+				ongoingFrom('2026-07-01T15:00:00Z', '2026-08-19T15:00:00Z'),
+				entryOn('stolaf', 'earlier-this-month', '2026-08-10T15:00:00Z'),
 				entryOn('stolaf', 'next-week', '2026-08-24T15:00:00Z'),
 			],
 			NOW,
 		)
 
-		expect(sections[0].key).toBe('2026-08-01')
-		expect(todaySectionKey(sections, NOW)).toBe('Ongoing')
+		expect(sections.map((section) => section.key)).toEqual(['Ongoing', '2026-08-10', '2026-08-24'])
+		expect(todaySectionKey(sections, NOW)).toBe('2026-08-24')
+	})
+
+	// The fallback has to skip `Ongoing` too. A run that began yesterday sorts
+	// last here, so a fallback reaching for the final section would land on it.
+	test('falls back past a trailing Ongoing to the nearest day', () => {
+		let sections = groupEvents(
+			[
+				entryOn('stolaf', 'last-month', '2026-08-01T15:00:00Z'),
+				entryOn('stolaf', 'earlier-this-month', '2026-08-10T15:00:00Z'),
+				ongoingFrom('2026-08-16T15:00:00Z', '2026-08-19T15:00:00Z'),
+			],
+			NOW,
+		)
+
+		expect(sections[sections.length - 1].key).toBe('Ongoing')
+		expect(todaySectionKey(sections, NOW)).toBe('2026-08-10')
 	})
 
 	test('falls back to the section nearest today when everything is in the past', () => {

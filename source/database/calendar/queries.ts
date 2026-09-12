@@ -37,6 +37,9 @@ export function rangeParams(window: Window): BindValue[] {
  * Scoping it this way is what the deleted `dedupeEvents` did without having to
  * say so -- it was handed the enabled calendars' events and never saw any
  * others.
+ *
+ * The filters below match over the dedupe group rather than over the winning
+ * row, for the same reason and with the same union. See the comment on them.
  */
 export function occurrencesQuery(args: {
 	window: Window
@@ -45,14 +48,31 @@ export function occurrencesQuery(args: {
 }): Statement {
 	let {window, sourceIds, filters} = args
 
-	// One aliased join per filter, so several filters read as an AND. A single
-	// join with an `in (...)` would match an event carrying *any* of them.
-	let joins = filters
+	// One `exists` per filter, ANDed, so several filters read as an AND -- a
+	// single clause with an `in (...)` would match an event carrying *any* of
+	// them.
+	//
+	// Each one matches over the **dedupe group**, not over the winning row.
+	// That is the same union `organizationsQuery` builds and `hydrate` prints,
+	// and matching anything narrower breaks the invariant the filter menu rests
+	// on: `facetsQuery` tallies a tag that any in-scope copy carries, so a
+	// filter reading only the winner's own tags cannot reach a tag only a
+	// displaced copy carries -- and the menu then offers a sponsor printed on
+	// the row in front of the reader, which empties the list when chosen. The
+	// deleted array path could not get this wrong, because `tally` and
+	// `filterEvents` both read one deduped list whose `organization` was
+	// already the union.
+	let matches = filters
 		.map(
 			(_, index) =>
-				`join event_tag f${index} on f${index}.source_id = e.source_id` +
-				` and f${index}.event_key = e.event_key` +
-				` and f${index}.axis = ? and f${index}.value = ?`,
+				`  and exists (
+    select 1 from event_tag t${index}
+    join event c${index} on c${index}.source_id = t${index}.source_id
+      and c${index}.event_key = t${index}.event_key
+    where c${index}.dedupe_key = e.dedupe_key
+      and c${index}.source_id in (${placeholders(sourceIds.length)})
+      and t${index}.axis = ? and t${index}.value = ?
+  )`,
 		)
 		.join('\n')
 
@@ -64,18 +84,21 @@ from (
   where source_id in (${placeholders(sourceIds.length)})
 ) e
 join occurrence o on o.source_id = e.source_id and o.event_key = e.event_key
-${joins}
 where e.rn = 1
   and ${RANGE_PREDICATE}
+${matches}
 order by o.start_utc`
 
-	// Bound in the order the placeholders appear in the SQL above: the
-	// subquery's source list, then each filter's axis and value, then the
-	// window.
+	// Bound in the order the placeholders appear in the SQL above: the ranking
+	// subquery's source list, the window, then -- per filter, in order -- that
+	// `exists` clause's own copy of the source list followed by its axis and
+	// value. The source list appears once per filter as well as once up top, so
+	// this sequence is longer than it looks; `queries.test.ts` counts the
+	// assembled statement's placeholders rather than trusting the template.
 	let params: BindValue[] = [
 		...sourceIds,
-		...filters.flatMap((filter) => [filter.axis, filter.value]),
 		...rangeParams(window),
+		...filters.flatMap((filter) => [...sourceIds, filter.axis, filter.value]),
 	]
 
 	return {sql, params}
