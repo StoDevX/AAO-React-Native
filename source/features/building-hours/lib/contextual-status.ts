@@ -1,5 +1,5 @@
 import type {Moment} from 'moment-timezone'
-import type {BuildingType} from '../types'
+import type {BuildingType, NamedBuildingScheduleType} from '../types'
 import {getDayOfWeek} from './get-day-of-week'
 import {findOpenWindow, windowOpeningOn} from './find-open-window'
 import {isChapelTime} from './chapel'
@@ -18,7 +18,10 @@ function formatTime(m: Moment): string {
 
 type OpenWindow = {open: Moment; close: Moment}
 
-function findCurrentOpen(building: BuildingType, now: Moment): OpenWindow | null {
+/** The window a building is open under, and the set that posted it. */
+type CurrentOpen = OpenWindow & {set: NamedBuildingScheduleType}
+
+function findCurrentOpen(building: BuildingType, now: Moment): CurrentOpen | null {
 	for (let set of building.schedule || []) {
 		if (set.isPhysicallyOpen === false) continue
 		if (set.closedForChapelTime && isChapelTime(now)) continue
@@ -29,7 +32,7 @@ function findCurrentOpen(building: BuildingType, now: Moment): OpenWindow | null
 			// discard exactly those.
 			let window = findOpenWindow(hours, now)
 			if (window) {
-				return window
+				return {...window, set}
 			}
 		}
 	}
