@@ -5,6 +5,7 @@ import {
 	font,
 	foregroundStyle,
 	frame,
+	listRowBackground,
 	listStyle,
 	multilineTextAlignment,
 	refreshable,
@@ -56,10 +57,11 @@ export const BalancesView = (): React.ReactNode => {
 					}),
 				]}
 			>
-				<Section>
+				<Section modifiers={[listRowBackground('clear')]}>
 					<RNHostView matchContents={true}>
 						<FaqBannerGroup
 							onPressFaq={(faqId) => router.push({pathname: '/Faq', params: {faqId}})}
+							style={styles.banner}
 							target={FAQ_TARGETS.SIS}
 						/>
 					</RNHostView>
@@ -138,5 +140,9 @@ let styles = StyleSheet.create({
 	host: {
 		flex: 1,
 		backgroundColor: c.systemGroupedBackground,
+	},
+	banner: {
+		marginHorizontal: 16,
+		marginTop: 16,
 	},
 })

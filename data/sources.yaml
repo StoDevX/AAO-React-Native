@@ -60,3 +60,9 @@ links:
     type: application/vnd.oracle.recruiting-ce+json
     titles: {und: Student Work}
     properties: {'https://frogpond.tech/ns/id': stolaf}
+
+  - rel: https://frogpond.tech/rel/org-categories
+    href: 'https://stolaf.dev/AAO-React-Native/org-categories.json'
+    type: application/vnd.frogpond.org-categories+json
+    titles: {und: Student Org Categories}
+    properties: {'https://frogpond.tech/ns/id': stolaf}

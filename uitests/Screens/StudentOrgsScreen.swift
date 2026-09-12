@@ -3,11 +3,8 @@ import XCTest
 struct StudentOrgsScreen: Screen {
 	let app: XCUIApplication
 
-	/// SwiftUI's native A-Z jumplist rail, iOS 26+ (`sectionIndexLabel()`,
-	/// added via `patches/@expo__ui@57.0.14.patch`). Carries no per-letter
-	/// accessibility elements -- see the same note on `CampusDictionaryScreen`.
-	private var sectionIndexRail: XCUIElement {
-		app.otherElements["Section index"]
+	private var searchField: XCUIElement {
+		app.searchFields.firstMatch
 	}
 
 	@discardableResult
@@ -20,30 +17,55 @@ struct StudentOrgsScreen: Screen {
 		verifyTitle(TestIdentifiers.Buttons.studentOrgs)
 	}
 
-	/// Taps near the bottom of the section index rail and asserts the list
-	/// actually scrolled. See `CampusDictionaryScreen.verifySectionIndexRailScrolls`
-	/// for why this cannot assert which section it landed on.
+	/// Search across every category. The landing screen shows category tiles
+	/// until a query is typed, so this is also how a test reaches an org row
+	/// unambiguously -- a category can share an org's name (e.g. "Academic"),
+	/// but only the search results render `DisclosureRow`s rather than tiles.
 	@discardableResult
-	func verifySectionIndexRailScrolls() throws -> Self {
-		guard #available(iOS 26.0, *) else {
-			throw XCTSkip("sectionIndexLabel() needs iOS 26; the rail does not exist below it")
-		}
-
-		let list = app.collectionViews[TestIdentifiers.StudentOrgs.list]
-		XCTAssertTrue(list.waitForExistence(timeout: 10), "the student orgs list never appeared")
+	func search(for text: String) -> Self {
 		XCTAssertTrue(
-			sectionIndexRail.waitForExistence(timeout: 10),
-			"no section index rail appeared -- sectionIndexLabel needs iOS 26")
-		capture("Student Orgs with a section index rail")
+			searchField.waitForExistence(timeout: 30),
+			"Student Orgs should offer a search field")
+		searchField.tap()
+		searchField.typeText(text)
 
-		let firstRowBefore = list.buttons.firstMatch.label
-
-		sectionIndexRail.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.95)).tap()
-
-		let firstRowAfter = list.buttons.firstMatch.label
-		XCTAssertNotEqual(
-			firstRowAfter, firstRowBefore,
-			"tapping near the bottom of the section index rail should scroll the list")
+		// The field is the one place the typed text is held, so read it back
+		// before going on: a test that searched nothing would pass no matter
+		// what it typed.
+		XCTAssertEqual(
+			searchField.value as? String, text,
+			"Typing should put the query in the search field")
 		return self
+	}
+
+	@discardableResult
+	func verifyCategoryTilesShown() -> Self {
+		let grid = app.element(matching: TestIdentifiers.StudentOrgs.categoryGrid)
+		XCTAssertTrue(
+			grid.waitForExistence(timeout: 30),
+			"The category grid should be visible before a search")
+		XCTAssertGreaterThan(
+			grid.buttons.count, 0,
+			"The category grid should hold at least one category tile")
+		return self
+	}
+
+	/// Taps whichever category tile is first in the grid and returns its label,
+	/// so the caller can assert the next screen is titled for it without this
+	/// test naming a category that Presence.io could rename or remove.
+	func openFirstCategory() -> String {
+		let grid = app.element(matching: TestIdentifiers.StudentOrgs.categoryGrid)
+		XCTAssertTrue(
+			grid.waitForExistence(timeout: 30),
+			"The category grid should be visible before a search")
+
+		let tile = grid.buttons.firstMatch
+		XCTAssertTrue(
+			tile.waitForExistence(timeout: 30),
+			"The category grid should hold at least one tile")
+
+		let label = tile.label
+		tile.tap()
+		return label
 	}
 }

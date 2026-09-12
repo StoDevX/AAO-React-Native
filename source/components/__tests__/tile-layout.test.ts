@@ -1,7 +1,6 @@
 import {describe, expect, test} from '@jest/globals'
 
 import {columnsForFontScale, inRows} from '../tile-layout'
-import type {ContactType} from '../types'
 
 describe('columnsForFontScale', () => {
 	test('the default scale gives four columns', () => {
@@ -38,32 +37,26 @@ describe('columnsForFontScale', () => {
 	)
 })
 
-/// Only `title` matters to `inRows` -- it slices and groups, it never reads a
-/// contact's other fields -- so a fixture only needs a distinct title per
-/// contact to tell rows and positions apart in an assertion.
-function makeContacts(count: number): ContactType[] {
-	return Array.from({length: count}, (_, i) => ({
-		title: `Contact ${i}`,
-		buttonText: 'Call',
-		category: 'Test',
-		text: '',
-		synopsis: '',
-	}))
+/// Only `title` matters to `inRows` -- it slices and groups, it never reads
+/// anything else -- so a fixture only needs a distinct title per item to
+/// tell rows and positions apart in an assertion.
+function makeTiles(count: number): {title: string}[] {
+	return Array.from({length: count}, (_, i) => ({title: `Tile ${i}`}))
 }
 
 describe('inRows', () => {
-	test('8 contacts at 4 columns gives two rows of four', () => {
-		let rows = inRows(makeContacts(8), 4)
+	test('8 items at 4 columns gives two rows of four', () => {
+		let rows = inRows(makeTiles(8), 4)
 		expect(rows.map((row) => row.length)).toEqual([4, 4])
 	})
 
-	test('8 contacts at 3 columns gives 3/3/2', () => {
-		let rows = inRows(makeContacts(8), 3)
+	test('8 items at 3 columns gives 3/3/2', () => {
+		let rows = inRows(makeTiles(8), 3)
 		expect(rows.map((row) => row.length)).toEqual([3, 3, 2])
 	})
 
-	test('8 contacts at 2 columns gives four rows of two', () => {
-		let rows = inRows(makeContacts(8), 2)
+	test('8 items at 2 columns gives four rows of two', () => {
+		let rows = inRows(makeTiles(8), 2)
 		expect(rows.map((row) => row.length)).toEqual([2, 2, 2, 2])
 	})
 

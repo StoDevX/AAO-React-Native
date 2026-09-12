@@ -4,7 +4,7 @@ import {HStack, RoundedRectangle, RNHostView, Text, ZStack} from '@expo/ui/swift
 import {clipShape, font, foregroundStyle, frame} from '@expo/ui/swift-ui/modifiers'
 import * as c from '@frogpond/colors'
 import {initials} from './person'
-import {photoHeight, TILE_RADIUS} from './tile-layout'
+import {photoHeight, TILE_RADIUS} from '../../components/tile-layout'
 import type {DirectoryItem} from './types'
 
 /** What drawing a person's photo needs of them: the picture, and a name to fall back on. */
