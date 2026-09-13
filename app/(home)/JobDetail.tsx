@@ -2,15 +2,16 @@ import * as React from 'react'
 import {ScrollView, StyleSheet, View} from 'react-native'
 import {Stack, useLocalSearchParams} from 'expo-router'
 import {useQuery} from '@tanstack/react-query'
-import {Button, Form, HStack, Host, Section, Spacer, Text} from '@expo/ui/swift-ui'
+import {Button, Form, Host, Section, Text} from '@expo/ui/swift-ui'
 import {font} from '@expo/ui/swift-ui/modifiers'
 import {Markdown} from '@frogpond/markdown'
 import {LoadingView, NoticeView} from '@frogpond/notice'
 import {openUrl} from '@frogpond/open-url'
 import * as c from '@frogpond/colors'
-import {jobDetailOptions, type JobDetail, type JobField} from '@frogpond/ccc-jobs'
+import {jobDetailOptions, type JobDetail} from '@frogpond/ccc-jobs'
 import {shareJob} from '../../source/features/sis/student-work/lib'
 import {format, isValid, parseISO} from 'date-fns'
+import {DetailRow} from '../../source/components/rows'
 
 const styles = StyleSheet.create({
 	screen: {
@@ -23,16 +24,6 @@ const styles = StyleSheet.create({
 		paddingBottom: 24,
 	},
 })
-
-function FieldRow({label, value}: JobField): React.ReactNode {
-	return (
-		<HStack>
-			<Text>{label}</Text>
-			<Spacer />
-			<Text>{value}</Text>
-		</HStack>
-	)
-}
 
 function postedOn(postedDate: string | undefined): string | undefined {
 	if (!postedDate) return undefined
@@ -58,16 +49,16 @@ function JobDetailView({job}: {job: JobDetail}): React.ReactNode {
 				<Form>
 					<Section>
 						<Text modifiers={[font({textStyle: 'title2', weight: 'bold'})]}>{job.title}</Text>
-						{job.category ? <FieldRow label="Category" value={job.category} /> : null}
-						{job.schedule ? <FieldRow label="Schedule" value={job.schedule} /> : null}
-						{job.location ? <FieldRow label="Location" value={job.location} /> : null}
-						{posted ? <FieldRow label="Posted" value={posted} /> : null}
+						{job.category ? <DetailRow label="Category" value={job.category} /> : null}
+						{job.schedule ? <DetailRow label="Schedule" value={job.schedule} /> : null}
+						{job.location ? <DetailRow label="Location" value={job.location} /> : null}
+						{posted ? <DetailRow label="Posted" value={posted} /> : null}
 					</Section>
 
 					{job.fields.length > 0 ? (
 						<Section title="Details">
 							{job.fields.map((field) => (
-								<FieldRow key={field.label} label={field.label} value={field.value} />
+								<DetailRow key={field.label} label={field.label} value={field.value} />
 							))}
 						</Section>
 					) : null}

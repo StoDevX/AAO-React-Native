@@ -6,28 +6,21 @@ import {
 	aspectRatio,
 	buttonStyle,
 	contentShape,
+	environment,
 	font,
 	foregroundStyle,
 	frame,
 	lineLimit,
 	multilineTextAlignment,
+	opacity,
+	shadow,
 	shapes,
 } from '@expo/ui/swift-ui/modifiers'
 import type {SFSymbol} from 'sf-symbols-typescript'
-import * as c from '@frogpond/colors'
-import type {Gradient} from '@frogpond/colors'
+import {displayP3, type Gradient} from '@frogpond/colors'
 import {FILL_WIDTH} from '../features/home/button'
-import {homescreenIconDark, homescreenIconLight} from '../features/home/colors'
-import {TILE_ASPECT, TILE_RADIUS} from './tile-layout'
+import {TILE_ASPECT} from './tile-layout'
 
-/// The gradient starts at the top edge's centre and has to reach the two
-/// bottom corners, hypot(109 / 2, 167) ~= 176pt away on that card. Same
-/// construction as the home cards; features/home/button.tsx explains it.
-const TILE_GRADIENT_RADIUS = 176
-/// The glyph sized against the card rather than in points, so it grows with
-/// Dynamic Type. `Image`'s `size` prop is ignored when a `font` modifier
-/// carries a `textStyle`.
-const ICON_TEXT_STYLE = 'largeTitle'
 /// Space between the card and the name beneath it.
 const LABEL_GAP = 8
 /// Two lines, with an ellipsis for whatever still doesn't fit, rather than
@@ -45,6 +38,39 @@ type Props = {
 	ratio?: number
 	/** Opens whatever this tile represents. */
 	onPress: () => void
+}
+
+export function GradientRoundedRectangle({
+	gradient,
+	showShadow,
+}: {
+	gradient: Gradient
+	showShadow: boolean
+}): React.ReactNode {
+	let [start, end] = gradient
+
+	return (
+		<RoundedRectangle
+			cornerRadius={27}
+			modifiers={[
+				showShadow
+					? shadow({
+							color: displayP3(end, 0.4),
+							radius: 8,
+							y: 2,
+						})
+					: {$type: 'empty'},
+				foregroundStyle({
+					type: 'radialGradient',
+					colors: [displayP3(start), displayP3(end)],
+					center: {x: 0.5, y: 0},
+					startRadius: 0,
+					// TODO: eventually, we want to compute this radius size to match Health/Shortcuts
+					endRadius: 129,
+				}),
+			]}
+		/>
+	)
 }
 
 /**
@@ -65,38 +91,24 @@ export function GradientTile({
 	ratio = TILE_ASPECT,
 	onPress,
 }: Props): React.ReactNode {
-	let dark = useColorScheme() === 'dark'
-	let iconColor = dark ? homescreenIconDark : homescreenIconLight
-	let [inner, outer] = gradient
+	let isDarkScheme = useColorScheme() === 'dark'
 
 	return (
 		<Button modifiers={[buttonStyle('plain'), accessibilityLabel(title)]} onPress={onPress}>
-			{/* The hit shape belongs on the label, not the Button: SwiftUI
-			    derives a button's tappable region from its label, and without
-			    a content shape only the drawn glyph and text hit-test -- the
-			    gradient and the gap between card and name do not.
-			    features/home/button.tsx carries the same note. */}
 			<VStack modifiers={[contentShape(shapes.rectangle())]} spacing={LABEL_GAP}>
-				{/* maxWidth first: the ratio only decides the height once the
-				    card has taken the column's full width. */}
 				<ZStack
 					modifiers={[frame({maxWidth: FILL_WIDTH}), aspectRatio({ratio, contentMode: 'fit'})]}
 				>
-					<RoundedRectangle
-						cornerRadius={TILE_RADIUS}
-						modifiers={[
-							foregroundStyle({
-								type: 'radialGradient',
-								colors: [c.displayP3(inner), c.displayP3(outer)],
-								center: {x: 0.5, y: 0},
-								startRadius: 0,
-								endRadius: TILE_GRADIENT_RADIUS,
-							}),
-						]}
-					/>
+					<GradientRoundedRectangle gradient={gradient} showShadow={isDarkScheme} />
+
 					<Image
-						color={iconColor}
-						modifiers={[font({textStyle: ICON_TEXT_STYLE})]}
+						modifiers={[
+							// force the colors of the Image here to be inverted from typical expectations
+							environment({key: 'colorScheme', value: isDarkScheme ? 'light' : 'dark'}),
+							font({textStyle: 'largeTitle'}),
+							foregroundStyle({type: 'hierarchical', style: 'primary'}),
+							opacity(0.8),
+						]}
 						systemName={icon}
 					/>
 				</ZStack>
@@ -104,7 +116,7 @@ export function GradientTile({
 				<Text
 					modifiers={[
 						font({textStyle: 'subheadline'}),
-						foregroundStyle(c.secondaryLabel),
+						foregroundStyle({type: 'hierarchical', style: 'secondary'}),
 						multilineTextAlignment('center'),
 						lineLimit(LABEL_LINES),
 						frame({maxWidth: FILL_WIDTH}),
