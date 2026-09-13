@@ -2,40 +2,24 @@ import * as React from 'react'
 import {afterEach, describe, expect, jest, test} from '@jest/globals'
 import {renderHook, waitFor} from '@testing-library/react-native'
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query'
-import moment from 'moment-timezone'
 
 import type {CalendarSource} from '../sources'
 import {useMergedEvents} from '../use-merged-events'
 
-// Named with a `mock` prefix so `babel-plugin-jest-hoist` allows the
-// hoisted `jest.mock()` factory below to reference it.
-function mockMakeEvent(title: string) {
-	return {
-		title,
-		description: '',
-		location: '',
-		startTime: moment('2026-08-17T09:00:00'),
-		endTime: moment('2026-08-17T10:00:00'),
-		isOngoing: false,
-		links: [],
-		config: {startTime: true, endTime: true, subtitle: 'location' as const},
-	}
-}
-
-// The queries tag their own results, so the mocks return what a `select` would.
+// `useMergedEvents` reads nothing out of these queries directly: a remote one
+// writes into the database and resolves to a receipt of that write, so the
+// mocks only need to resolve or reject, standing in for the receipt.
 jest.mock('../query', () => ({
 	namedCalendarOptions: (name: string) => ({
-		queryKey: ['calendar', name],
+		queryKey: ['calendar', 'named', name],
 		queryFn: () => {
 			if (name === 'northfield') throw new Error('down')
-			return [{sourceId: name, key: 'olaf-1', event: mockMakeEvent('Olaf event')}]
+			return {writtenAt: Date.now(), count: 1}
 		},
 	}),
 	deviceCalendarOptions: (calendarId: string) => ({
 		queryKey: ['calendar', 'device', calendarId],
-		queryFn: () => [
-			{sourceId: `device:${calendarId}`, key: 'evt-1', event: mockMakeEvent('Device event')},
-		],
+		queryFn: () => [],
 	}),
 }))
 
@@ -65,12 +49,6 @@ function wrapper({children}: {children: React.ReactNode}) {
 }
 
 describe('useMergedEvents', () => {
-	test('events from every enabled source arrive together', async () => {
-		let {result} = await renderHook(() => useMergedEvents([STOLAF]), {wrapper})
-
-		await waitFor(() => expect(result.current.events).toHaveLength(1))
-	})
-
 	// One failing feed must not blank the screen: with several sources, a flaky
 	// one would take the working ones down with it.
 	test('a failing source is named without hiding the ones that loaded', async () => {
@@ -78,13 +56,19 @@ describe('useMergedEvents', () => {
 
 		await waitFor(() => expect(result.current.failed).toHaveLength(1))
 		expect(result.current.failed[0]?.id).toBe('northfield')
-		expect(result.current.events).toHaveLength(1)
 	})
 
-	test('no sources means no events and no failures', async () => {
+	test('no sources means no failures', async () => {
 		let {result} = await renderHook(() => useMergedEvents([]), {wrapper})
 
-		expect(result.current.events).toEqual([])
 		expect(result.current.failed).toEqual([])
+		expect(result.current.isLoading).toBe(false)
+	})
+
+	test('refetchAll refetches every source', async () => {
+		let {result} = await renderHook(() => useMergedEvents([STOLAF]), {wrapper})
+
+		await waitFor(() => expect(result.current.isLoading).toBe(false))
+		await expect(result.current.refetchAll()).resolves.toBeUndefined()
 	})
 })

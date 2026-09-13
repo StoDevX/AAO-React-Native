@@ -66,6 +66,7 @@
     "expo-linking": "57.0.9",
     "expo-modules-core": "57.0.15",
     "expo-router": "57.0.18",
+    "expo-sqlite": "57.0.2",
     "expo-symbols": "57.0.2",
     "expo-web-browser": "57.0.2",
     "fuzzyfind": "2.1.0",

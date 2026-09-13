@@ -2,14 +2,26 @@ import {describe, expect, jest, test} from '@jest/globals'
 import moment from 'moment-timezone'
 
 import type {WireEvent} from '../parsers/events'
-import {deviceCalendarOptions, namedCalendarOptions} from '../query'
+import {
+	deviceCalendarOptions,
+	namedCalendarOptions,
+	scheduleCalendarOptions,
+	sourceRankOf,
+} from '../query'
+import {REMOTE_SOURCES} from '../sources'
+import uitestFixtures from '../fixtures/uitest-events.json'
 import {EventType} from '@frogpond/event-type'
 import {groupEvents} from '@frogpond/event-list/sections'
 import {now} from '@frogpond/timer'
+import {getRunner} from '../../../source/database/client'
+import {bumpCalendarRevision} from '../../../source/database/calendar/revision'
+import {writeSource} from '../../../source/database/calendar/write'
+import * as Sentry from '@sentry/react-native'
 
 // `query.ts` reaches EventKit for the device queries, and the shared query
 // client it imports subscribes to network reachability at module load. Neither
-// runs here: every test below calls a `select` by hand, which is pure.
+// runs here: every test below calls a `select` (or, for the ingest query, a
+// `queryFn`) by hand, against fixture data rather than the network.
 jest.mock('expo-calendar', () => ({EntityTypes: {EVENT: 'event'}}))
 jest.mock('@react-native-community/netinfo', () =>
 	// oxlint-disable-next-line typescript/no-require-imports
@@ -22,11 +34,22 @@ jest.mock('@frogpond/timer', () => {
 	return {...actual, now: jest.fn((actual as {now: () => unknown}).now)}
 })
 
-// `queryOptions` types `select` as optional, so these name the assertion once
-// rather than at every call below.
-function selectNamed(calendar: string, options?: Parameters<typeof namedCalendarOptions>[1]) {
-	let {select} = namedCalendarOptions(calendar, options)
-	if (!select) throw new Error('namedCalendarOptions should tag its results')
+// `namedCalendarOptions`'s `queryFn` writes into the database rather than
+// returning events, so the ingest tests below assert against the write
+// itself rather than against a real SQLite file.
+jest.mock('../../../source/database/client', () => ({getRunner: jest.fn(() => 'the-runner')}))
+jest.mock('../../../source/database/calendar/revision', () => ({bumpCalendarRevision: jest.fn()}))
+jest.mock('../../../source/database/calendar/write', () => ({
+	writeSource: jest.fn(),
+	retentionFor: jest.fn(() => 'the-retention'),
+}))
+jest.mock('@sentry/react-native', () => ({captureException: jest.fn()}))
+
+// `queryOptions` types `select`/`queryFn` as optional, so these name the
+// assertion once rather than at every call below.
+function selectSchedule(calendar: string, options?: Parameters<typeof scheduleCalendarOptions>[1]) {
+	let {select} = scheduleCalendarOptions(calendar, options)
+	if (!select) throw new Error('scheduleCalendarOptions should tag its results')
 	return select
 }
 
@@ -34,6 +57,14 @@ function selectDevice(calendarId: string) {
 	let {select} = deviceCalendarOptions(calendarId)
 	if (!select) throw new Error('deviceCalendarOptions should tag its results')
 	return select
+}
+
+function ingestFor(calendar: string) {
+	let {queryFn} = namedCalendarOptions(calendar)
+	if (typeof queryFn !== 'function') {
+		throw new Error(`namedCalendarOptions('${calendar}') built no queryFn`)
+	}
+	return () => queryFn({queryKey: ['calendar', 'named', calendar], signal: undefined} as never)
 }
 
 function makeWireEvent(overrides: Partial<WireEvent> = {}): WireEvent {
@@ -55,66 +86,74 @@ function makeWireEvent(overrides: Partial<WireEvent> = {}): WireEvent {
 	}
 }
 
+describe('sourceRankOf', () => {
+	// `scripts/jest-setup.js` mocks `@frogpond/launch-arguments` to
+	// `isUITesting: true` for every test in this repo, so `REMOTE_SOURCES` here
+	// is always the single-entry UI-test fixture list, never `[stolaf,
+	// presence]` -- reading the id straight off it, rather than hardcoding
+	// `'stolaf'`, keeps this test honest about which list it is checking.
+	let [firstSource] = REMOTE_SOURCES
+	if (!firstSource) throw new Error('REMOTE_SOURCES must not be empty')
+
+	test('ranks a source by its position in REMOTE_SOURCES', () => {
+		expect(sourceRankOf(firstSource.id)).toBe(0)
+	})
+
+	test('an id REMOTE_SOURCES does not list ranks past the end, never 0 ahead of the first', () => {
+		expect(sourceRankOf('northfield')).toBe(REMOTE_SOURCES.length)
+		expect(sourceRankOf('northfield')).toBeGreaterThan(sourceRankOf(firstSource.id))
+	})
+})
+
 /**
- * Where an event's `sourceId` and `key` are actually assigned. A wrong
- * `sourceId` puts an event under another calendar's name and tint; a wrong
- * `key` sends the detail screen looking up an event that isn't there.
+ * `namedCalendarOptions` writes the fetched wire straight into the database
+ * and resolves to a receipt of that write, not the events themselves.
+ * `'uitest'` is used throughout so these run against the bundled fixture
+ * rather than the network, the same way the rest of this file avoids it.
  */
-describe('namedCalendarOptions select', () => {
-	test('every event is tagged with the calendar it was fetched from', () => {
-		let events = [makeWireEvent({title: 'One'}), makeWireEvent({title: 'Two'})]
-
-		let selected = selectNamed('northfield')(events)
-
-		expect(selected.map((entry) => entry.sourceId)).toEqual(['northfield', 'northfield'])
+describe('namedCalendarOptions', () => {
+	afterEach(() => {
+		jest.clearAllMocks()
 	})
 
-	test('two calendars tag the same event differently', () => {
-		let event = makeWireEvent()
+	test('writes the fetched wire events into the database, ranked and retained', async () => {
+		await ingestFor('uitest')()
 
-		let [olaf] = selectNamed('stolaf')([event])
-		let [northfield] = selectNamed('northfield')([event])
-
-		expect(olaf?.sourceId).toBe('stolaf')
-		expect(northfield?.sourceId).toBe('northfield')
-	})
-
-	test('the key is the start time and title the detail screen looks up by', () => {
-		let event = makeWireEvent()
-
-		let [selected] = selectNamed('stolaf')([event])
-
-		expect(selected?.key).toBe(
-			`${moment('2026-09-10T07:45:00Z').toISOString()}|New Faculty Orientation`,
+		expect(writeSource).toHaveBeenCalledWith(
+			getRunner(),
+			'uitest',
+			sourceRankOf('uitest'),
+			uitestFixtures,
+			'the-retention',
 		)
 	})
 
-	test('two events on one calendar get keys of their own', () => {
-		let events = [makeWireEvent({title: 'One'}), makeWireEvent({title: 'Two'})]
+	test('bumps the calendar revision after a successful write', async () => {
+		await ingestFor('uitest')()
 
-		let selected = selectNamed('stolaf')(events)
-
-		expect(selected[0]?.key).not.toBe(selected[1]?.key)
+		expect(bumpCalendarRevision).toHaveBeenCalledTimes(1)
 	})
 
-	test('the wire’s string times come back as moments', () => {
-		let [selected] = selectNamed('stolaf')([makeWireEvent()])
+	test('resolves to a receipt describing the write, not the events', async () => {
+		let receipt = await ingestFor('uitest')()
 
-		expect(moment.isMoment(selected?.event.startTime)).toBe(true)
-		expect(selected?.event.startTime.toISOString()).toBe(
-			moment('2026-09-10T07:45:00Z').toISOString(),
-		)
+		expect(receipt).toEqual({writtenAt: expect.any(Number), count: uitestFixtures.length})
 	})
 
-	test('an eventMapper runs before the event is tagged', () => {
-		let selected = selectNamed('stolaf', {
-			eventMapper: (event) => ({...event, title: `${event.title}!`}),
-		})([makeWireEvent()])
+	// The one failure here that would otherwise be invisible: the revision
+	// never bumps, so the screen keeps showing the previous window and the
+	// user sees nothing wrong. Reported to Sentry, and rethrown so React
+	// Query marks the source failed and the picker names it.
+	test('reports a write failure to Sentry and still rejects', async () => {
+		let error = new Error('disk full')
+		jest.mocked(writeSource).mockImplementationOnce(() => {
+			throw error
+		})
 
-		expect(selected[0]?.event.title).toBe('New Faculty Orientation!')
-		expect(selected[0]?.key).toBe(
-			`${moment('2026-09-10T07:45:00Z').toISOString()}|New Faculty Orientation!`,
-		)
+		await expect(ingestFor('uitest')()).rejects.toThrow(error)
+
+		expect(Sentry.captureException).toHaveBeenCalledWith(error)
+		expect(bumpCalendarRevision).not.toHaveBeenCalled()
 	})
 })
 
@@ -171,12 +210,80 @@ describe('deviceCalendarOptions select', () => {
 })
 
 /**
+ * `scheduleCalendarOptions` is KSTO's and KRLX's broadcast schedules' own
+ * fetch-convert-and-tag query, kept for them because their events are never
+ * written into the database the way a campus calendar's are.
+ */
+describe('scheduleCalendarOptions select', () => {
+	test('every event is tagged with the calendar it was fetched from', () => {
+		let events = [makeWireEvent({title: 'One'}), makeWireEvent({title: 'Two'})]
+
+		let selected = selectSchedule('krlx-schedule')(events)
+
+		expect(selected.map((entry) => entry.sourceId)).toEqual(['krlx-schedule', 'krlx-schedule'])
+	})
+
+	test('two schedules tag the same event differently', () => {
+		let event = makeWireEvent()
+
+		let [krlx] = selectSchedule('krlx-schedule')([event])
+		let [ksto] = selectSchedule('ksto-schedule')([event])
+
+		expect(krlx?.sourceId).toBe('krlx-schedule')
+		expect(ksto?.sourceId).toBe('ksto-schedule')
+	})
+
+	test('the key is the start time and title the detail screen looks up by', () => {
+		let event = makeWireEvent()
+
+		let [selected] = selectSchedule('krlx-schedule')([event])
+
+		expect(selected?.key).toBe(
+			`${moment('2026-09-10T07:45:00Z').toISOString()}|New Faculty Orientation`,
+		)
+	})
+
+	test('two events on one schedule get keys of their own', () => {
+		let events = [makeWireEvent({title: 'One'}), makeWireEvent({title: 'Two'})]
+
+		let selected = selectSchedule('krlx-schedule')(events)
+
+		expect(selected[0]?.key).not.toBe(selected[1]?.key)
+	})
+
+	test('the wire’s string times come back as moments', () => {
+		let [selected] = selectSchedule('krlx-schedule')([makeWireEvent()])
+
+		expect(moment.isMoment(selected?.event.startTime)).toBe(true)
+		expect(selected?.event.startTime.toISOString()).toBe(
+			moment('2026-09-10T07:45:00Z').toISOString(),
+		)
+	})
+
+	test('an eventMapper runs before the event is tagged', () => {
+		let selected = selectSchedule('krlx-schedule', {
+			eventMapper: (event) => ({...event, title: `${event.title}!`}),
+		})([makeWireEvent()])
+
+		expect(selected[0]?.event.title).toBe('New Faculty Orientation!')
+		expect(selected[0]?.key).toBe(
+			`${moment('2026-09-10T07:45:00Z').toISOString()}|New Faculty Orientation!`,
+		)
+	})
+})
+
+/**
  * An all-day event is a calendar date, not an instant. The wire instant's UTC
  * date has to be that calendar date -- iCal satisfies this by emitting UTC
  * midnight, TEC by emitting campus midnight expressed in UTC. Read back in
  * the device's zone that lands a day early west of UTC and at the wrong time
  * east of it, so the boundary re-anchors it to local midnight on its own
  * date.
+ *
+ * Run against `scheduleCalendarOptions` because that is the query still
+ * carrying `convertEvents` through a `select` -- the conversion itself is
+ * `convertEvents`' own behaviour, exercised here through the one caller left
+ * that still runs it this way.
  */
 describe('all-day events', () => {
 	afterEach(() => {
@@ -195,7 +302,7 @@ describe('all-day events', () => {
 	test('sits at local midnight on its own date, west of UTC', () => {
 		moment.tz.setDefault('America/Chicago')
 
-		let [selected] = selectNamed('stolaf')([allDayEvent()])
+		let [selected] = selectSchedule('krlx-schedule')([allDayEvent()])
 
 		expect(selected?.event.startTime.format('YYYY-MM-DD HH:mm')).toBe('2030-01-15 00:00')
 		expect(selected?.event.endTime.format('YYYY-MM-DD HH:mm')).toBe('2030-01-16 00:00')
@@ -204,7 +311,7 @@ describe('all-day events', () => {
 	test('sits at local midnight on its own date, east of UTC', () => {
 		moment.tz.setDefault('Asia/Tokyo')
 
-		let [selected] = selectNamed('stolaf')([allDayEvent()])
+		let [selected] = selectSchedule('krlx-schedule')([allDayEvent()])
 
 		expect(selected?.event.startTime.format('YYYY-MM-DD HH:mm')).toBe('2030-01-15 00:00')
 		expect(selected?.event.endTime.format('YYYY-MM-DD HH:mm')).toBe('2030-01-16 00:00')
@@ -217,14 +324,14 @@ describe('all-day events', () => {
 			endTime: '2030-01-15T20:00:00.000Z',
 		})
 
-		let [selected] = selectNamed('stolaf')([event])
+		let [selected] = selectSchedule('krlx-schedule')([event])
 
 		expect(selected?.event.startTime.toISOString()).toBe('2030-01-15T18:00:00.000Z')
 	})
 
 	test('reaches the list under its own day, not the day before', () => {
 		moment.tz.setDefault('America/Chicago')
-		let selected = selectNamed('stolaf')([allDayEvent()])
+		let selected = selectSchedule('krlx-schedule')([allDayEvent()])
 
 		let sections = groupEvents(selected, moment('2030-01-10T12:00:00Z'))
 
@@ -243,7 +350,7 @@ describe('all-day events', () => {
 			endTime: '2030-01-15T18:00:00.000Z',
 		})
 
-		let selected = selectNamed('stolaf')([event])
+		let selected = selectSchedule('krlx-schedule')([event])
 		let sections = groupEvents(selected, moment('2030-01-10T12:00:00Z'))
 
 		// 17:00Z is 02:00 on the 16th in Tokyo.
@@ -262,7 +369,7 @@ describe('all-day events', () => {
 			config: {startTime: false, endTime: false, subtitle: 'location'},
 		})
 
-		let [selected] = selectNamed('stolaf')([event])
+		let [selected] = selectSchedule('krlx-schedule')([event])
 
 		expect(selected?.event.startTime.format('YYYY-MM-DD HH:mm')).toBe('2030-01-15 00:00')
 		expect(selected?.event.endTime.format('YYYY-MM-DD HH:mm')).toBe('2030-01-16 00:00')
@@ -280,16 +387,16 @@ describe('all-day events', () => {
 			config: {startTime: false, endTime: false, subtitle: 'location'},
 		})
 
-		let [selected] = selectNamed('stolaf')([event])
+		let [selected] = selectSchedule('krlx-schedule')([event])
 
 		expect(selected?.event.startTime.format('YYYY-MM-DD HH:mm')).toBe('2030-01-15 00:00')
 		expect(selected?.event.endTime.format('YYYY-MM-DD HH:mm')).toBe('2030-01-16 00:00')
 	})
 
 	// Without the collapse guard, the re-anchored span is zero-length, and
-	// `namedCalendarOptions`'s own "has it ended?" filter drops it -- the event
-	// vanishes from the list all day, in every zone, rather than merely
-	// rendering the wrong span.
+	// `scheduleCalendarOptions`'s own "has it ended?" filter drops it -- the
+	// event vanishes from the schedule all day, in every zone, rather than
+	// merely rendering the wrong span.
 	test('a collapsed all-day event still shows up in the list instead of vanishing as already over', () => {
 		moment.tz.setDefault('America/Chicago')
 		jest.mocked(now).mockReturnValueOnce(moment('2030-01-15T12:00:00.000Z'))
@@ -301,7 +408,7 @@ describe('all-day events', () => {
 			config: {startTime: false, endTime: false, subtitle: 'location'},
 		})
 
-		let selected = selectNamed('stolaf')([event])
+		let selected = selectSchedule('krlx-schedule')([event])
 
 		expect(selected).toHaveLength(1)
 	})

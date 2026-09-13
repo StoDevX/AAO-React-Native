@@ -2,7 +2,7 @@ import {describe, expect, test} from '@jest/globals'
 import moment from 'moment-timezone'
 import {deriveDayFlags, type EventType} from '@frogpond/event-type'
 
-import {groupEvents} from '../sections'
+import {groupEvents, todaySectionKey} from '../sections'
 import type {SourcedEvent} from '../types'
 
 const NOW = moment('2026-08-17T12:00:00Z')
@@ -99,5 +99,111 @@ describe('groupEvents', () => {
 			['Monday – Aug 17', true],
 			['Tuesday – Aug 18', false],
 		])
+	})
+})
+
+describe('todaySectionKey', () => {
+	/**
+	 * The case the whole function exists for. The read window keeps 30 days of
+	 * finished events, and `groupEvents` orders sections by start time, so the
+	 * retained past leads the list -- opening at the top, or sending the Today
+	 * button there, lands the reader in last month.
+	 */
+	test('picks today over the retained past that leads the list', () => {
+		let sections = groupEvents(
+			[
+				entryOn('stolaf', 'last-month', '2026-08-01T15:00:00Z'),
+				entryOn('stolaf', 'yesterday', '2026-08-16T15:00:00Z'),
+				entryOn('stolaf', 'today', '2026-08-17T15:00:00Z'),
+				entryOn('stolaf', 'next-week', '2026-08-24T15:00:00Z'),
+			],
+			NOW,
+		)
+
+		expect(sections[0].key).toBe('2026-08-01')
+		expect(todaySectionKey(sections, NOW)).toBe('Today')
+	})
+
+	test('picks the next day with something on it when today has nothing', () => {
+		let sections = groupEvents(
+			[
+				entryOn('stolaf', 'last-month', '2026-08-01T15:00:00Z'),
+				entryOn('stolaf', 'next-week', '2026-08-24T15:00:00Z'),
+			],
+			NOW,
+		)
+
+		expect(todaySectionKey(sections, NOW)).toBe('2026-08-24')
+	})
+
+	/** An event running across today, which `groupEvents` files under `Ongoing`. */
+	function ongoingFrom(startTime: string, endTime: string): SourcedEvent {
+		return {
+			sourceId: 'stolaf',
+			key: 'spanning',
+			event: makeEvent({
+				startTime: moment(startTime),
+				endTime: moment(endTime),
+				isOngoing: true,
+			}),
+		}
+	}
+
+	/**
+	 * `Ongoing` is never the target -- a multi-week run sits above the fold and
+	 * is reached by scrolling up, like any past day.
+	 *
+	 * The fixture is built so that dropping the explicit `Ongoing` exclusion
+	 * cannot pass it. The run began in July, so `groupEvents` -- which orders
+	 * sections by their earliest member -- puts `Ongoing` first in the array,
+	 * ahead of a past day and a future one. A rule that merely compared
+	 * `key >= todayIso` would return `Ongoing` anyway, because `'O'` is 0x4F and
+	 * `'2'` is 0x32, so `'Ongoing' >= '2026-08-17'` is true in string order.
+	 * That is the original bug reintroduced through an ASCII accident.
+	 */
+	test('skips Ongoing and takes the next day, even when Ongoing leads the array', () => {
+		let sections = groupEvents(
+			[
+				ongoingFrom('2026-07-01T15:00:00Z', '2026-08-19T15:00:00Z'),
+				entryOn('stolaf', 'earlier-this-month', '2026-08-10T15:00:00Z'),
+				entryOn('stolaf', 'next-week', '2026-08-24T15:00:00Z'),
+			],
+			NOW,
+		)
+
+		expect(sections.map((section) => section.key)).toEqual(['Ongoing', '2026-08-10', '2026-08-24'])
+		expect(todaySectionKey(sections, NOW)).toBe('2026-08-24')
+	})
+
+	// The fallback has to skip `Ongoing` too. A run that began yesterday sorts
+	// last here, so a fallback reaching for the final section would land on it.
+	test('falls back past a trailing Ongoing to the nearest day', () => {
+		let sections = groupEvents(
+			[
+				entryOn('stolaf', 'last-month', '2026-08-01T15:00:00Z'),
+				entryOn('stolaf', 'earlier-this-month', '2026-08-10T15:00:00Z'),
+				ongoingFrom('2026-08-16T15:00:00Z', '2026-08-19T15:00:00Z'),
+			],
+			NOW,
+		)
+
+		expect(sections[sections.length - 1].key).toBe('Ongoing')
+		expect(todaySectionKey(sections, NOW)).toBe('2026-08-10')
+	})
+
+	test('falls back to the section nearest today when everything is in the past', () => {
+		let sections = groupEvents(
+			[
+				entryOn('stolaf', 'last-month', '2026-08-01T15:00:00Z'),
+				entryOn('stolaf', 'yesterday', '2026-08-16T15:00:00Z'),
+			],
+			NOW,
+		)
+
+		expect(todaySectionKey(sections, NOW)).toBe('2026-08-16')
+	})
+
+	test('has nothing to scroll to when there are no sections', () => {
+		expect(todaySectionKey([], NOW)).toBeNull()
 	})
 })

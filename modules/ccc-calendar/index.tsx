@@ -1,4 +1,9 @@
-export {deviceCalendarEventOptions, namedCalendarOptions, namedCalendarEventOptions} from './query'
+export {
+	deviceCalendarEventOptions,
+	namedCalendarOptions,
+	scheduleCalendarOptions,
+	scheduleEventOptions,
+} from './query'
 export {deviceCalendarIdFrom, isDeviceSourceId} from './sources'
 export {CalendarPicker} from './calendar-picker'
 export {CalendarModePicker} from './mode-picker'

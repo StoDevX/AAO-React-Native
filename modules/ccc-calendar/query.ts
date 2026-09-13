@@ -1,61 +1,26 @@
 import {fetchManifest, fetchSourceBody, REL_CALENDAR, resolveSource} from '@frogpond/data-sources'
 import {eventKey} from '@frogpond/event-list/calendar-util'
-import {EventType} from '@frogpond/event-type'
 import {queryOptions} from '@tanstack/react-query'
+import * as Sentry from '@sentry/react-native'
 import * as Calendar from 'expo-calendar'
-import moment, {type Moment} from 'moment'
+import moment from 'moment'
 import {now as currentMoment} from '@frogpond/timer'
 import {queryClient} from '../../source/init/tanstack-query'
+import {getRunner} from '../../source/database/client'
+import {bumpCalendarRevision} from '../../source/database/calendar/revision'
+import {retentionFor, writeSource} from '../../source/database/calendar/write'
+import {convertEvents, type EventMapper} from './convert'
 import {getFullCalendarAccess, listDeviceEvents} from './device-calendar'
 import uitestFixtures from './fixtures/uitest-events.json'
 import {parseEvents, type WireEvent} from './parsers/events'
 import {parseIcalEvents} from './parsers/ical'
 import {parsePresenceEvents} from './parsers/presence'
 import {parseTecEvents} from './parsers/tec-events'
-import {deviceSourceId, toDeviceSource, type SourcedEvent} from './sources'
+import {deviceSourceId, REMOTE_SOURCES, toDeviceSource, type SourcedEvent} from './sources'
 import {NamedCalendar} from './types'
 
 export const keys = {
 	named: (name: string) => ['calendar', 'named', name] as const,
-}
-
-type EventMapper = (event: EventType) => EventType
-
-/**
- * An all-day event names a calendar date, not an instant. What both web
- * sources guarantee is that the wire instant's UTC date IS that calendar
- * date -- iCal satisfies this by emitting UTC midnight, TEC by emitting
- * campus midnight expressed in UTC (`05:00Z` for a `America/Chicago` day).
- * Everything downstream -- the section keys, the day-picker strip, every
- * `Intl` format -- reads a moment in the device's zone, so reading the UTC
- * date straight through would land on the day before anywhere west of UTC.
- * This reads the date back out in UTC and rebuilds it as local midnight,
- * which is where a day sits for every other part of the calendar.
- */
-function localMidnightOf(instant: string): Moment {
-	return moment(moment.utc(instant).format('YYYY-MM-DD'), 'YYYY-MM-DD')
-}
-
-function convertEvents(data: WireEvent[], options: {eventMapper?: EventMapper}): EventType[] {
-	let events: EventType[] = data.map((event) => {
-		let startTime = event.isAllDay ? localMidnightOf(event.startTime) : moment(event.startTime)
-		let endTime = event.isAllDay ? localMidnightOf(event.endTime) : moment(event.endTime)
-
-		// An all-day event whose wire start and end share a UTC date collapses to
-		// a zero-length span, which the calendar's own "has it ended?" filter
-		// reads as already over. A day-long event covers its day.
-		if (event.isAllDay && !endTime.isAfter(startTime)) {
-			endTime = startTime.clone().add(1, 'day')
-		}
-
-		return {...event, startTime, endTime}
-	})
-
-	if (options.eventMapper) {
-		events = events.map(options.eventMapper)
-	}
-
-	return events
 }
 
 const TEC_EVENTS = 'application/vnd.tribe.events.v1+json'
@@ -99,14 +64,77 @@ async function fetchCalendar(calendar: NamedCalendar, signal: AbortSignal): Prom
 	return parser.parse(body)
 }
 
+/**
+ * Where a source's rows land in dedupe order -- `REMOTE_SOURCES`' own order,
+ * because that is what decides which copy of a duplicated event survives (the
+ * campus calendar over Presence). An id `REMOTE_SOURCES` does not list gets a
+ * rank past the end of it rather than 0: silently ranking an unknown source
+ * first would let it outrank St. Olaf. Exported so the rule can be tested
+ * directly rather than only through a full fetch-and-write.
+ */
+export function sourceRankOf(sourceId: string): number {
+	let index = REMOTE_SOURCES.findIndex((source) => source.id === sourceId)
+	return index === -1 ? REMOTE_SOURCES.length : index
+}
+
+/**
+ * Fetches a remote calendar and writes it into the database -- the calendar
+ * screens read from `source/database/calendar/read.ts`, not from this query's
+ * own data, so what it resolves to is a receipt of the write rather than the
+ * events themselves.
+ */
 export const namedCalendarOptions = (
+	calendar: NamedCalendar,
+	// oxlint-disable-next-line typescript/explicit-module-boundary-types
+) =>
+	queryOptions({
+		queryKey: keys.named(calendar),
+		queryFn: async ({queryKey, signal}): Promise<{writtenAt: number; count: number}> => {
+			let wire = await fetchCalendar(queryKey[2], signal)
+
+			try {
+				writeSource(
+					getRunner(),
+					queryKey[2],
+					sourceRankOf(queryKey[2]),
+					wire,
+					retentionFor(new Date()),
+				)
+				bumpCalendarRevision()
+			} catch (error) {
+				// The one failure here that is invisible: the revision does not
+				// bump, so the screen keeps showing the previous window and the
+				// user sees nothing wrong. Rethrow as well, so React Query marks
+				// the source failed and the picker names it.
+				Sentry.captureException(error)
+				throw error
+			}
+
+			return {writtenAt: Date.now(), count: wire.length}
+		},
+	})
+
+/**
+ * KSTO's and KRLX's broadcast schedules are fetched through the same wire
+ * format as a campus calendar but are not part of it -- `ScheduleView` draws
+ * them from a plain fetch, never from the database `namedCalendarOptions`
+ * above writes into, so they run their own convert-and-tag `select`, under a
+ * query key of their own rather than sharing `namedCalendarOptions`'s key
+ * with a different fetched shape.
+ *
+ * The key deliberately does not start with `'calendar'`: `tanstack-query.ts`'s
+ * `shouldDehydrateQuery` excludes that whole prefix from persistence because
+ * the campus calendar's data lives in SQLite, not in this query's own cache --
+ * a schedule's events are not in the database, so they keep being persisted.
+ */
+export const scheduleCalendarOptions = (
 	calendar: NamedCalendar,
 	options: {eventMapper?: EventMapper} = {},
 	// oxlint-disable-next-line typescript/explicit-module-boundary-types
 ) =>
 	queryOptions({
-		queryKey: keys.named(calendar),
-		queryFn: ({queryKey, signal}) => fetchCalendar(queryKey[2], signal),
+		queryKey: ['schedule', calendar] as const,
+		queryFn: ({queryKey, signal}) => fetchCalendar(queryKey[1], signal),
 		// A remote calendar's name IS its source id, so tagging needs no new
 		// argument. Filter out events that have already ended.
 		select: (events): SourcedEvent[] => {
@@ -121,15 +149,23 @@ export const namedCalendarOptions = (
 		},
 	})
 
-export const namedCalendarEventOptions = (
+/**
+ * One event out of a KSTO/KRLX broadcast schedule, by the same
+ * `startTime|title` key a schedule row is listed under. Shares
+ * `scheduleCalendarOptions`' query key on purpose: both run the identical
+ * `fetchCalendar`, so a detail lookup reached from the schedule list costs no
+ * extra fetch, and neither side's `queryFn` return shape ever changes out
+ * from under the other's `select`.
+ */
+export const scheduleEventOptions = (
 	calendar: NamedCalendar,
 	key: string,
 	options: {eventMapper?: EventMapper} = {},
 	// oxlint-disable-next-line typescript/explicit-module-boundary-types
 ) =>
 	queryOptions({
-		queryKey: keys.named(calendar),
-		queryFn: ({queryKey, signal}) => fetchCalendar(queryKey[2], signal),
+		queryKey: ['schedule', calendar] as const,
+		queryFn: ({queryKey, signal}) => fetchCalendar(queryKey[1], signal),
 		select: (events) => convertEvents(events, options).find((event) => eventKey(event) === key),
 	})
 
