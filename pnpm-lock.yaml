@@ -19,7 +19,7 @@ catalogs:
 
 overrides:
   metro-runtime@: 0.84.5
-  metro-source-map@: 0.84.5
+  metro-source-map@: 0.87.1
   metro-symbolicate@: 0.84.5
   '@react-native/metro-config': '-'
   '@react-native/community-cli-plugin': '-'
