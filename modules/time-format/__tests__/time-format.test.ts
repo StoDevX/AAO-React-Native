@@ -53,11 +53,12 @@ describe('formatTime', () => {
 	})
 
 	test("converts to the device zone regardless of the moment's own zone label", () => {
-		// Same real instant, two different zone labels. If the input\'s own
+		// Same real instant, two different zone labels. If the input’s own
 		// zone were still preserved, these would render differently -- they
 		// must not.
 		let chicago = moment.tz('2026-08-20 17:30', CAMPUS)
 		let tokyo = chicago.clone().tz('Asia/Tokyo')
+		expect(formatTime(chicago, 'en-US')).toBe('5:30 PM')
 		expect(formatTime(chicago, 'en-US')).toBe(formatTime(tokyo, 'en-US'))
 	})
 
@@ -93,11 +94,12 @@ describe('formatDate', () => {
 	})
 
 	test("converts to the device zone regardless of the moment's own zone label", () => {
-		// 23:30 Chicago is already the 21st in Tokyo. If the input\'s own zone
+		// 23:30 Chicago is already the 21st in Tokyo. If the input’s own zone
 		// were still preserved, the two would land on different calendar
 		// days -- they must not.
 		let chicago = moment.tz('2026-08-20 23:30', CAMPUS)
 		let tokyo = chicago.clone().tz('Asia/Tokyo')
+		expect(formatDate(chicago, 'short', 'en-US')).toBe('Aug 20')
 		expect(formatDate(chicago, 'short', 'en-US')).toBe(formatDate(tokyo, 'short', 'en-US'))
 	})
 })

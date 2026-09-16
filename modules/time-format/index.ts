@@ -43,7 +43,10 @@ function deviceLocale(): string {
  * `Intl.DateTimeFormat` is far more expensive to build than to use, and these
  * are called once per row -- a day of events builds dozens before anything
  * reaches the screen. The set of shapes asked for is tiny and fixed, so they
- * are built once and kept.
+ * are built once and kept. A formatter built while the device was in one zone
+ * goes on rendering in that zone if the device's zone changes later in the
+ * same session -- a traveler landing, say -- which is the same tradeoff
+ * `deviceLocale()` above accepts for the locale.
  */
 const FORMATTERS = new Map<string, Intl.DateTimeFormat>()
 
@@ -185,6 +188,11 @@ function numberFormatterFor(locale: string): Intl.NumberFormat {
  * it. Counting sidesteps the question either way -- a day of the month is a
  * number, and `Intl.NumberFormat` writes a number in the locale's digits and
  * nothing else.
+ *
+ * Unlike every other export here, this reads the moment's own zone via
+ * `.date()` rather than converting to the device's -- harmless today, since
+ * its only caller never passes a zoned moment, but worth knowing if that ever
+ * changes.
  */
 export function formatDayOfMonth(m: Moment, locale: string = deviceLocale()): string {
 	return numberFormatterFor(locale).format(m.date())

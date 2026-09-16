@@ -16,8 +16,8 @@ export interface ScheduleDay {
 }
 
 /**
- * A course's offerings gathered by day, with each slot's times formatted in
- * campus time.
+ * A course's offerings gathered by day, with each slot's meeting times
+ * formatted in the reader's own device zone.
  *
  * The feed sends one record per meeting, so a course meeting twice on a Tuesday
  * arrives as two records that belong under one heading.
