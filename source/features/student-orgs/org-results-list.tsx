@@ -35,6 +35,8 @@ export function OrgResultsList({
 	onPressOrg,
 	onRefresh,
 }: Props): React.ReactNode {
+	let hasMultipleSections = sections.length > 1
+
 	return (
 		<Host style={styles.host}>
 			<List
@@ -51,8 +53,8 @@ export function OrgResultsList({
 					sections.map((section) => (
 						<Section
 							key={section.title}
-							modifiers={[sectionIndexLabel(section.title)]}
-							title={section.title}
+							modifiers={hasMultipleSections ? [sectionIndexLabel(section.title)] : []}
+							title={hasMultipleSections ? section.title : undefined}
 						>
 							{section.data.map((org) => (
 								<DisclosureRow

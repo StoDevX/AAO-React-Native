@@ -68,7 +68,25 @@ describe('filterAndGroupOrgs', () => {
 		expect(sections.flatMap((section) => section.data)).toHaveLength(1)
 	})
 
-	test('orgs are grouped into sections by $groupableName', () => {
+	test('orgs are grouped into sections by $groupableName once results exceed the flat-list threshold', () => {
+		let cOrgs: GroupableOrg[] = Array.from({length: 10}, (_, i) => ({
+			...makeOrg({name: `Chess Club ${i}`}),
+			$groupableName: 'C',
+		}))
+		let sOrgs: GroupableOrg[] = Array.from({length: 10}, (_, i) => ({
+			...makeOrg({name: `Ski Club ${i}`}),
+			$groupableName: 'S',
+		}))
+
+		let sections = filterAndGroupOrgs([...cOrgs, ...sOrgs], '')
+
+		expect(sections).toEqual([
+			{title: 'C', data: cOrgs},
+			{title: 'S', data: sOrgs},
+		])
+	})
+
+	test('small result sets collapse into a single ungrouped section', () => {
 		let orgs: GroupableOrg[] = [
 			{...makeOrg({name: 'Chess Club'}), $groupableName: 'C'},
 			{...makeOrg({name: 'Ski Club'}), $groupableName: 'S'},
@@ -76,10 +94,18 @@ describe('filterAndGroupOrgs', () => {
 
 		let sections = filterAndGroupOrgs(orgs, '')
 
-		expect(sections).toEqual([
-			{title: 'C', data: [orgs[0]]},
-			{title: 'S', data: [orgs[1]]},
-		])
+		expect(sections).toEqual([{title: '', data: orgs}])
+	})
+
+	test('a result set right at the flat-list threshold still collapses', () => {
+		let orgs: GroupableOrg[] = Array.from({length: 15}, (_, i) => ({
+			...makeOrg({name: `Org ${i}`}),
+			$groupableName: i % 2 === 0 ? 'A' : 'B',
+		}))
+
+		let sections = filterAndGroupOrgs(orgs, '')
+
+		expect(sections).toEqual([{title: '', data: orgs}])
 	})
 
 	test('a query matching nothing returns no sections', () => {
