@@ -1,4 +1,5 @@
 import {timezone} from '@frogpond/constants'
+import {formatTime} from '@frogpond/time-format'
 import moment from 'moment-timezone'
 import type {CourseType} from '../../../../lib/course-search'
 
@@ -24,7 +25,10 @@ export interface ScheduleDay {
 // Typed optional despite the feed's own type saying otherwise: the screen has
 // always guarded against a course arriving without offerings, so the guard is
 // answering something real.
-export function courseSchedule(offerings: CourseType['offerings'] | undefined): ScheduleDay[] {
+export function courseSchedule(
+	offerings: CourseType['offerings'] | undefined,
+	locale?: string,
+): ScheduleDay[] {
 	if (!offerings) {
 		return []
 	}
@@ -32,8 +36,8 @@ export function courseSchedule(offerings: CourseType['offerings'] | undefined): 
 	let byDay = new Map<string, ScheduleSlot[]>()
 
 	for (let offering of offerings) {
-		let start = moment.tz(offering.start, 'H:mm', timezone()).format('h:mm A')
-		let end = moment.tz(offering.end, 'H:mm', timezone()).format('h:mm A')
+		let start = formatTime(moment.tz(offering.start, 'H:mm', timezone()), locale)
+		let end = formatTime(moment.tz(offering.end, 'H:mm', timezone()), locale)
 
 		let slots = byDay.get(offering.day) ?? []
 		slots.push({time: `${start} – ${end}`, location: offering.location})

@@ -1,9 +1,8 @@
 import * as React from 'react'
 
 import {StyleProp, Text, TextStyle} from 'react-native'
+import {formatTime} from '@frogpond/time-format'
 import type {DepartureTimeList} from '../types'
-
-const TIME_FORMAT = 'h:mma'
 
 type Props = {
 	times: DepartureTimeList
@@ -15,7 +14,7 @@ export function ScheduleTimes({times, style}: Props): React.ReactNode {
 		<Text style={style}>
 			{times
 				// and format the times
-				.map((time) => time?.format(TIME_FORMAT) ?? 'None')
+				.map((time) => (time ? formatTime(time) : 'None'))
 				.join(' • ')}
 		</Text>
 	)

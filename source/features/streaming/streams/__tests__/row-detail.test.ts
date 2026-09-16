@@ -23,7 +23,13 @@ describe('streamDetailLines', () => {
 	it('puts the subtitle above the showing time', () => {
 		let lines = streamDetailLines(makeStream({subtitle: 'Boe Memorial Chapel'}))
 
-		expect(lines).toEqual(['Boe Memorial Chapel', '7:00 PM – Fri, Sep. 11th, 2026'])
+		expect(lines).toEqual(['Boe Memorial Chapel', 'Sep 11, 2026, 7:00 PM'])
+	})
+
+	it('spells the showing time in the locale', () => {
+		let lines = streamDetailLines(makeStream({subtitle: 'Boe'}), 'ja-JP')
+
+		expect(lines).toEqual(['Boe', '2026/09/11 19:00'])
 	})
 
 	it('falls back to the performer when there is no subtitle', () => {

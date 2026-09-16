@@ -25,7 +25,16 @@ describe('courseSchedule', () => {
 			offerings([{day: 'Mo', start: '13:05', end: '14:00', location: 'RNS 310'}]),
 		)
 
-		expect(schedule[0]?.slots).toEqual([{time: '1:05 PM – 2:00 PM', location: 'RNS 310'}])
+		expect(schedule[0]?.slots).toEqual([{time: '1:05 PM – 2 PM', location: 'RNS 310'}])
+	})
+
+	it('formats the range in the locale', () => {
+		let schedule = courseSchedule(
+			offerings([{day: 'Mo', start: '13:05', end: '14:00', location: 'RNS 310'}]),
+			'en-GB',
+		)
+
+		expect(schedule[0]?.slots).toEqual([{time: '13:05 – 14:00', location: 'RNS 310'}])
 	})
 
 	/// A lab that meets twice on one day is two slots under one heading, not two
