@@ -10,6 +10,7 @@ import {
 } from 'react-native'
 import type {Moment} from 'moment-timezone'
 import * as c from '@frogpond/colors'
+import {formatDate, formatDayOfMonth, formatWeekday} from '@frogpond/time-format'
 
 const selectionCircleFill = DynamicColorIOS({light: '#000000', dark: '#FFFFFF'})
 const selectionTextColor = DynamicColorIOS({light: '#FFFFFF', dark: '#000000'})
@@ -84,8 +85,8 @@ let DayCell = React.memo(function DayCell({
 	onPress: (day: Moment) => void
 	width: number
 }): React.ReactNode {
-	let weekdayLetter = day.format('dd').charAt(0).toUpperCase()
-	let dateNumber = day.format('D')
+	let weekdayLetter = formatWeekday(day, 'narrow').toUpperCase()
+	let dateNumber = formatDayOfMonth(day)
 	let handlePress = React.useCallback(() => onPress(day), [onPress, day])
 
 	// Today keeps its own circle only while it is also the selection -- worn
@@ -111,7 +112,7 @@ let DayCell = React.memo(function DayCell({
 	return (
 		<Pressable
 			accessibilityLabel={
-				hasEvents ? `${day.format('dddd, MMMM D')}, has events` : day.format('dddd, MMMM D')
+				hasEvents ? `${formatDate(day, 'long')}, has events` : formatDate(day, 'long')
 			}
 			accessibilityRole="button"
 			accessibilityState={{disabled: isPast, selected: isSelected}}

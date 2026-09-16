@@ -641,6 +641,9 @@ importers:
       '@frogpond/notice':
         specifier: workspace:*
         version: link:../notice
+      '@frogpond/time-format':
+        specifier: workspace:*
+        version: link:../time-format
       lodash:
         specifier: 4.18.1
         version: 4.18.1
