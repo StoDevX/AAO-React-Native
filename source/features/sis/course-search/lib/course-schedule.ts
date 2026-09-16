@@ -1,7 +1,19 @@
 import {timezone} from '@frogpond/constants'
-import {formatTime} from '@frogpond/time-format'
+import {formatTime, formatWeekday} from '@frogpond/time-format'
 import moment from 'moment-timezone'
 import type {CourseType} from '../../../../lib/course-search'
+
+/**
+ * The weekday name for a schedule heading, falling back to the raw feed
+ * value for anything moment's `'dd'` parser doesn't recognize -- `day`
+ * comes straight off the SIS feed with no enum validation, so a value that
+ * doesn't parse must not crash the screen the way an unguarded `Invalid
+ * Date` passed to `Intl` would.
+ */
+export function weekdayLabel(day: string, locale?: string): string {
+	let parsed = moment(day, 'dd')
+	return parsed.isValid() ? formatWeekday(parsed, 'long', locale) : day
+}
 
 /** One meeting: when it runs and where. */
 export interface ScheduleSlot {

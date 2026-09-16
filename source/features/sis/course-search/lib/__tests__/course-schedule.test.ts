@@ -1,5 +1,5 @@
 import {setTimezone} from '@frogpond/constants'
-import {courseSchedule} from '../course-schedule'
+import {courseSchedule, weekdayLabel} from '../course-schedule'
 import type {CourseType} from '../../../../../lib/course-search'
 
 setTimezone('America/Chicago')
@@ -53,5 +53,18 @@ describe('courseSchedule', () => {
 
 	it('has nothing to show for a course with no offerings', () => {
 		expect(courseSchedule(undefined)).toEqual([])
+	})
+})
+
+describe('weekdayLabel', () => {
+	it('spells out the weekday for a recognized abbreviation', () => {
+		expect(weekdayLabel('Mo')).toBe('Monday')
+	})
+
+	it('falls back to the raw value for anything moment cannot parse as a weekday', () => {
+		// `ScheduleDay.day` comes straight off the SIS feed with no enum
+		// validation -- a value moment's `'dd'` parser does not recognize
+		// must not crash the screen.
+		expect(weekdayLabel('Some Weird Value')).toBe('Some Weird Value')
 	})
 })
