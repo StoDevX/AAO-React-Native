@@ -1,5 +1,6 @@
 import type {Moment} from 'moment-timezone'
 import type {BuildingType, NamedBuildingScheduleType} from '../types'
+import {formatTime} from '@frogpond/time-format'
 import {getDayOfWeek} from './get-day-of-week'
 import {findOpenWindow, windowOpeningOn} from './find-open-window'
 import {CHAPEL_COUNTDOWN_MINUTES, isChapelTime} from './chapel'
@@ -8,11 +9,6 @@ import {findChapelPause} from './find-chapel-pause'
 import {findOpenService} from './find-open-service'
 
 const ALMOST_THRESHOLD_MINUTES = 30
-
-/** Formats a time as "8 PM", or "8:15 PM" when it isn't on the hour. */
-function formatTime(m: Moment): string {
-	return m.format(m.minute() === 0 ? 'h A' : 'h:mm A')
-}
 
 type OpenWindow = {open: Moment; close: Moment}
 
@@ -91,7 +87,11 @@ function plain(text: string): ContextualStatus {
  * "Opens at 5 PM", "Opens in 10 min", or "Closed". The two forms differ only
  * for the chapel warning, which the list row has no room to spell out.
  */
-export function contextualStatus(building: BuildingType, now: Moment): ContextualStatus {
+export function contextualStatus(
+	building: BuildingType,
+	now: Moment,
+	locale?: string,
+): ContextualStatus {
 	let current = findCurrentOpen(building, now)
 	if (current) {
 		let chapelPause = findChapelPause(current.set, now)
@@ -107,7 +107,7 @@ export function contextualStatus(building: BuildingType, now: Moment): Contextua
 		if (minutesLeft <= ALMOST_THRESHOLD_MINUTES) {
 			return plain(`Closes in ${minutesLeft} min`)
 		}
-		return plain(`Open until ${formatTime(current.close)}`)
+		return plain(`Open until ${formatTime(current.close, locale)}`)
 	}
 
 	let chapelReopen = findChapelReopenForBuilding(building, now)
@@ -116,7 +116,7 @@ export function contextualStatus(building: BuildingType, now: Moment): Contextua
 		if (minutesLeft <= CHAPEL_COUNTDOWN_MINUTES) {
 			return plain(`Reopens in ${minutesLeft} min`)
 		}
-		return plain(`Reopens at ${formatTime(chapelReopen)}`)
+		return plain(`Reopens at ${formatTime(chapelReopen, locale)}`)
 	}
 
 	// A phone line or a delivery service is not a door, so it never outranks one.
@@ -129,7 +129,7 @@ export function contextualStatus(building: BuildingType, now: Moment): Contextua
 			.map((hours) => findOpenWindow(hours, now))
 			.find((candidate) => candidate !== null)
 		if (window) {
-			return plain(`${service.name} until ${formatTime(window.close)}`)
+			return plain(`${service.name} until ${formatTime(window.close, locale)}`)
 		}
 	}
 
@@ -139,7 +139,7 @@ export function contextualStatus(building: BuildingType, now: Moment): Contextua
 		if (minutesUntilOpen <= ALMOST_THRESHOLD_MINUTES) {
 			return plain(`Opens in ${minutesUntilOpen} min`)
 		}
-		return plain(`Opens at ${formatTime(next.open)}`)
+		return plain(`Opens at ${formatTime(next.open, locale)}`)
 	}
 
 	// Not "Closed today": this is only reached once nothing opens again today, so

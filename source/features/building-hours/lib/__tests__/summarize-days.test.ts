@@ -183,3 +183,14 @@ describe('returns summary for combination days and hours', () => {
 		)
 	})
 })
+
+describe('follows the locale', () => {
+	test('a single day', () => {
+		expect(summarizeDays(['Fr'], false, 'ja-JP')).toEqual('金曜日')
+	})
+
+	test('a contiguous span', () => {
+		expect(summarizeDays(['Tu', 'We', 'Th'], false, 'en-GB')).toEqual('Tue — Thu')
+		expect(summarizeDays(['Tu', 'We', 'Th'], true, 'ja-JP')).toEqual('火曜日 — 木曜日')
+	})
+})
