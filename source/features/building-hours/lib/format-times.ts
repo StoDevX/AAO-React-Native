@@ -13,9 +13,9 @@ import {parseHours} from './parse-hours'
  *
  * This can't be proven in Jest: a worker's zone is pinned once at start
  * (scripts/jest-global-setup.js) and never reacts to a later `process.env.TZ`
- * change, confirmed empirically, so "device zone" and "campus zone" are always
- * the same Chicago there. See the device check in
- * `.superpowers/sdd/2026-09-16-device-zone-times/final-fix-report.md` instead.
+ * change, confirmed empirically, so "device zone" and "campus zone" are
+ * always the same Chicago there. Verified instead on a simulator relaunched
+ * with a different `TZ`, against a building whose hours cross midnight.
  */
 function formatSingleTime(time: Moment, locale?: string): string {
 	let local = moment(time.valueOf())
