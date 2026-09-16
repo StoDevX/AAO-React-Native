@@ -68,6 +68,9 @@ describe('allDay', () => {
 	})
 })
 
+// Node's ICU joins a date and a time with a comma; Apple's ICU (verified
+// on-device) uses "at" instead. Either is a correct localization choice --
+// the tests below only pin Node's, which is what CI actually runs under.
 describe('detailTimes', () => {
 	function generateEvent(
 		start: string,
@@ -101,10 +104,6 @@ describe('detailTimes', () => {
 		expect(detailTimes(event, 'en-GB')).toEqual({start: '7 Aug', end: '9 Aug', allDay: false})
 	})
 
-	// Node's ICU joins the date and the time with a comma; Apple's ICU
-	// (verified on-device) uses "at" instead. Either is a correct localization
-	// choice -- this test only pins Node's, which is what CI actually runs
-	// under.
 	test('a same-day event gets a date-time and a bare end time', () => {
 		let event = generateEvent('2026-08-20T17:30:00', '2026-08-20T19:00:00')
 		expect(detailTimes(event, 'en-US')).toEqual({
