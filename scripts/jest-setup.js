@@ -14,6 +14,11 @@ jest.mock('expo-clipboard', () => ({
 	setStringAsync: jest.fn(() => Promise.resolve(true)),
 	hasStringAsync: jest.fn(() => Promise.resolve(false)),
 }))
+// These specific values are load-bearing for tests across building-hours,
+// transportation, course-search, and streaming that call a time-format helper
+// without an explicit locale -- the default falls through to deviceLocale(),
+// which reads this mock. Changing these values changes what those tests
+// expect, with no visible link back to this file.
 jest.mock('expo-localization', () => ({
 	getLocales: () => [{languageTag: 'en-US'}],
 	getCalendars: () => [{uses24hourClock: false}],
