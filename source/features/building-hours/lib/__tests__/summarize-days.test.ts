@@ -183,3 +183,20 @@ describe('returns summary for combination days and hours', () => {
 		)
 	})
 })
+
+describe('follows the locale', () => {
+	test('a single day', () => {
+		expect(summarizeDays(['Fr'], false, 'ja-JP')).toEqual('金曜日')
+	})
+
+	test('a contiguous span', () => {
+		expect(summarizeDays(['Tu', 'We', 'Th'], false, 'en-GB')).toEqual('Tue — Thu')
+		expect(summarizeDays(['Tu', 'We', 'Th'], true, 'ja-JP')).toEqual('火曜日 — 木曜日')
+	})
+
+	// `formatFullDay` -- the non-contiguous, spelled-out branch -- follows the
+	// locale too, not just the two branches above it.
+	test('non-contiguous full days', () => {
+		expect(summarizeDays(['Mo', 'We', 'Sa'], true, 'ja-JP')).toEqual('月曜日, 水曜日, and 土曜日')
+	})
+})

@@ -1,6 +1,19 @@
 import {timezone} from '@frogpond/constants'
+import {formatTime, formatWeekday} from '@frogpond/time-format'
 import moment from 'moment-timezone'
 import type {CourseType} from '../../../../lib/course-search'
+
+/**
+ * The weekday name for a schedule heading, falling back to the raw feed
+ * value for anything moment's `'dd'` parser doesn't recognize -- `day`
+ * comes straight off the SIS feed with no enum validation, so a value that
+ * doesn't parse must not crash the screen the way an unguarded `Invalid
+ * Date` passed to `Intl` would.
+ */
+export function weekdayLabel(day: string, locale?: string): string {
+	let parsed = moment(day, 'dd')
+	return parsed.isValid() ? formatWeekday(parsed, 'long', locale) : day
+}
 
 /** One meeting: when it runs and where. */
 export interface ScheduleSlot {
@@ -15,8 +28,8 @@ export interface ScheduleDay {
 }
 
 /**
- * A course's offerings gathered by day, with each slot's times formatted in
- * campus time.
+ * A course's offerings gathered by day, with each slot's meeting times
+ * formatted in the reader's own device zone.
  *
  * The feed sends one record per meeting, so a course meeting twice on a Tuesday
  * arrives as two records that belong under one heading.
@@ -24,7 +37,10 @@ export interface ScheduleDay {
 // Typed optional despite the feed's own type saying otherwise: the screen has
 // always guarded against a course arriving without offerings, so the guard is
 // answering something real.
-export function courseSchedule(offerings: CourseType['offerings'] | undefined): ScheduleDay[] {
+export function courseSchedule(
+	offerings: CourseType['offerings'] | undefined,
+	locale?: string,
+): ScheduleDay[] {
 	if (!offerings) {
 		return []
 	}
@@ -32,8 +48,8 @@ export function courseSchedule(offerings: CourseType['offerings'] | undefined): 
 	let byDay = new Map<string, ScheduleSlot[]>()
 
 	for (let offering of offerings) {
-		let start = moment.tz(offering.start, 'H:mm', timezone()).format('h:mm A')
-		let end = moment.tz(offering.end, 'H:mm', timezone()).format('h:mm A')
+		let start = formatTime(moment.tz(offering.start, 'H:mm', timezone()), locale)
+		let end = formatTime(moment.tz(offering.end, 'H:mm', timezone()), locale)
 
 		let slots = byDay.get(offering.day) ?? []
 		slots.push({time: `${start} – ${end}`, location: offering.location})

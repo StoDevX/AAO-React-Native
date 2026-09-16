@@ -6,9 +6,9 @@ import {Host, LabeledContent, List, RNHostView, Section, Text, VStack} from '@ex
 import {font, foregroundStyle, listStyle, multilineTextAlignment} from '@expo/ui/swift-ui/modifiers'
 import type {CourseType, TermType} from '../../source/lib/course-search'
 import {SolidBadge as Badge} from '@frogpond/badge'
-import {formatDay} from '../../source/features/sis/course-search/lib/format-day'
 import {
 	courseSchedule,
+	weekdayLabel,
 	type ScheduleSlot,
 } from '../../source/features/sis/course-search/lib/course-schedule'
 import {DetailRow, SelectableText} from '../../source/components/rows'
@@ -68,7 +68,7 @@ function Schedule({course}: {course: CourseType}) {
  */
 function LabeledDay({day, slots}: {day: string; slots: ScheduleSlot[]}) {
 	return (
-		<LabeledContent label={formatDay(day)}>
+		<LabeledContent label={weekdayLabel(day)}>
 			<VStack alignment="trailing" spacing={2}>
 				{slots.map((slot) => (
 					<Text key={slot.time} modifiers={SLOT_MODIFIERS}>

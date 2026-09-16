@@ -1,6 +1,7 @@
 import {Share, ShareAction} from 'react-native'
 
 import type {EventType} from '@frogpond/event-type'
+import {formatDate} from '@frogpond/time-format'
 import {detailTimes} from './times'
 
 /// EventType has no id field, so this stands in for one when selecting a
@@ -48,7 +49,7 @@ export function getTimes(event: EventType): string {
 	let {allDay, start, end} = detailTimes(event)
 
 	if (allDay) {
-		return `All-Day on ${event.startTime.format('MMM D.')}`
+		return `All-Day on ${formatDate(event.startTime, 'short')}`
 	}
 
 	return `${start}${end ? ' to ' + end : ''}`

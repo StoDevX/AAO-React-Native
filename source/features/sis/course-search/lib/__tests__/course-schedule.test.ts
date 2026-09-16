@@ -1,5 +1,5 @@
 import {setTimezone} from '@frogpond/constants'
-import {courseSchedule} from '../course-schedule'
+import {courseSchedule, weekdayLabel} from '../course-schedule'
 import type {CourseType} from '../../../../../lib/course-search'
 
 setTimezone('America/Chicago')
@@ -25,7 +25,16 @@ describe('courseSchedule', () => {
 			offerings([{day: 'Mo', start: '13:05', end: '14:00', location: 'RNS 310'}]),
 		)
 
-		expect(schedule[0]?.slots).toEqual([{time: '1:05 PM – 2:00 PM', location: 'RNS 310'}])
+		expect(schedule[0]?.slots).toEqual([{time: '1:05 PM – 2 PM', location: 'RNS 310'}])
+	})
+
+	it('formats the range in the locale', () => {
+		let schedule = courseSchedule(
+			offerings([{day: 'Mo', start: '13:05', end: '14:00', location: 'RNS 310'}]),
+			'en-GB',
+		)
+
+		expect(schedule[0]?.slots).toEqual([{time: '13:05 – 14:00', location: 'RNS 310'}])
 	})
 
 	/// A lab that meets twice on one day is two slots under one heading, not two
@@ -44,5 +53,18 @@ describe('courseSchedule', () => {
 
 	it('has nothing to show for a course with no offerings', () => {
 		expect(courseSchedule(undefined)).toEqual([])
+	})
+})
+
+describe('weekdayLabel', () => {
+	it('spells out the weekday for a recognized abbreviation', () => {
+		expect(weekdayLabel('Mo')).toBe('Monday')
+	})
+
+	it('falls back to the raw value for anything moment cannot parse as a weekday', () => {
+		// `ScheduleDay.day` comes straight off the SIS feed with no enum
+		// validation -- a value moment's `'dd'` parser does not recognize
+		// must not crash the screen.
+		expect(weekdayLabel('Some Weird Value')).toBe('Some Weird Value')
 	})
 })

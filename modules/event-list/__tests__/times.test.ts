@@ -1,15 +1,9 @@
 import {describe, expect, test} from '@jest/globals'
 
 import {deriveDayFlags, type EventType} from '@frogpond/event-type'
-import moment from 'moment'
-import {
-	detailTimes,
-	detailTimeLines,
-	formatHourLabel,
-	formatSectionHeader,
-	listTimeLines,
-	times,
-} from '../times'
+import moment from 'moment-timezone'
+import {formatHourLabel} from '@frogpond/time-format'
+import {detailTimes, detailTimeLines, formatSectionHeader, listTimeLines} from '../times'
 
 /**
  * What every parser writes for an all-day event: neither edge carries a
@@ -45,15 +39,13 @@ describe('allDay', () => {
 	test('should be true for a remote midnight-to-midnight event', () => {
 		const event = generateEvent('2018-08-07T00:00:00Z', '2018-08-08T00:00:00Z')
 
-		expect(times(event).allDay).toBe(true)
 		expect(detailTimes(event).allDay).toBe(true)
 	})
 
-	// `times()`/`detailTimes()` must read `allDay` straight off the event, never
-	// infer it from the clock times themselves.
+	// `detailTimes()` must read `allDay` straight off the event, never infer
+	// it from the clock times themselves.
 	test('should be true for a noon-to-noon event whose source called it all-day', () => {
 		const event = generateEvent('2018-08-07T12:00:00Z', '2018-08-08T12:00:00Z')
-		expect(times(event).allDay).toBe(true)
 		expect(detailTimes(event).allDay).toBe(true)
 	})
 
@@ -61,52 +53,97 @@ describe('allDay', () => {
 	// nothing may read all-day off the duration.
 	test('should be true for an EventKit all-day event ending at 23:59:59', () => {
 		const event = generateEvent('2026-09-07T00:00:00', '2026-09-07T23:59:59')
-		expect(times(event).allDay).toBe(true)
 		expect(detailTimes(event).allDay).toBe(true)
 	})
 
 	test('should be false when the source gave the event real times', () => {
 		const event = generateEvent('2018-08-07T12:00:00Z', '2018-08-08T12:30:00Z', false)
-		expect(times(event).allDay).toBe(false)
 		expect(detailTimes(event).allDay).toBe(false)
 	})
 
 	// A full 24 hours is not all-day if the source gave both edges a time.
 	test('should be false for a timed event that happens to run 24 hours', () => {
 		const event = generateEvent('2018-08-07T12:00:00Z', '2018-08-08T12:00:00Z', false)
-		expect(times(event).allDay).toBe(false)
 		expect(detailTimes(event).allDay).toBe(false)
 	})
 })
 
-describe('ongoing events', () => {
-	function generateOngoingEvent(start: string, end: string): EventType {
+// Node's ICU joins a date and a time with a comma; Apple's ICU (verified
+// on-device) uses "at" instead. Either is a correct localization choice --
+// the tests below only pin Node's, which is what CI actually runs under.
+describe('detailTimes', () => {
+	function generateEvent(
+		start: string,
+		end: string,
+		overrides: Partial<EventType> = {},
+	): EventType {
 		let startTime = moment(start)
 		let endTime = moment(end)
-		let config = {startTime: true, endTime: true, subtitle: 'description' as const}
-		let isAllDay = !config.startTime && !config.endTime
-		let {isMultiDay, isSameInstant} = deriveDayFlags(isAllDay, startTime.toDate(), endTime.toDate())
+		let {isMultiDay, isSameInstant} = deriveDayFlags(false, startTime.toDate(), endTime.toDate())
 
 		return {
 			title: 'title',
 			description: 'description',
 			startTime,
 			endTime,
-			isAllDay,
+			isAllDay: false,
 			isMultiDay,
 			isSameInstant,
 			location: 'location',
-			isOngoing: true,
+			isOngoing: false,
 			links: [],
 			categories: [],
-			config,
+			config: {startTime: true, endTime: true, subtitle: 'description'},
+			...overrides,
 		}
 	}
 
-	test('should be formatted', () => {
-		const event = generateOngoingEvent('2018-08-07T12:00:00Z', '2018-08-07T15:00:00Z')
-		expect(times(event)).toMatchSnapshot()
-		expect(detailTimes(event)).toMatchSnapshot()
+	test('an ongoing event gets short dates, no times', () => {
+		let event = generateEvent('2018-08-07T12:00:00', '2018-08-09T15:00:00', {isOngoing: true})
+		expect(detailTimes(event, 'en-US')).toEqual({start: 'Aug 7', end: 'Aug 9', allDay: false})
+		expect(detailTimes(event, 'en-GB')).toEqual({start: '7 Aug', end: '9 Aug', allDay: false})
+	})
+
+	test('a same-day event gets a date-time and a bare end time', () => {
+		let event = generateEvent('2026-08-20T17:30:00', '2026-08-20T19:00:00')
+		expect(detailTimes(event, 'en-US')).toEqual({
+			start: 'Aug 20, 2026, 5:30 PM',
+			end: '7 PM',
+			allDay: false,
+		})
+		expect(detailTimes(event, 'en-GB')).toEqual({
+			start: '20 Aug 2026, 17:30',
+			end: '19:00',
+			allDay: false,
+		})
+	})
+
+	// A same-day event whose source recorded its end as hour 0 on the same
+	// calendar day (rather than rolling the date over) reads as `12 AM`,
+	// which looks like the start of a day, not the end of one. `format-
+	// times.ts` substitutes `Midnight` for building hours; the share sheet's
+	// summary must do the same.
+	test('a same-day event ending at midnight says Midnight, not 12 AM', () => {
+		let event = generateEvent('2026-08-20T17:30:00', '2026-08-20T00:00:00')
+		expect(detailTimes(event, 'en-US').end).toBe('Midnight')
+	})
+
+	test('a multi-day event gets a date-time at both ends', () => {
+		let event = generateEvent('2026-08-20T17:30:00', '2026-08-22T19:00:00')
+		expect(detailTimes(event, 'en-US')).toEqual({
+			start: 'Aug 20, 2026, 5:30 PM',
+			end: 'Aug 22, 2026, 7:00 PM',
+			allDay: false,
+		})
+	})
+
+	test('a zero-length event says when it starts and has no end', () => {
+		let event = generateEvent('2026-08-20T17:30:00', '2026-08-20T17:30:00')
+		expect(detailTimes(event, 'en-US')).toEqual({
+			start: 'Starts on Aug 20, 2026, 5:30 PM',
+			end: '',
+			allDay: false,
+		})
 	})
 })
 

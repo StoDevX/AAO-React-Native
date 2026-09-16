@@ -144,6 +144,9 @@ importers:
       '@frogpond/storage':
         specifier: workspace:*
         version: link:modules/storage
+      '@frogpond/time-format':
+        specifier: workspace:*
+        version: link:modules/time-format
       '@frogpond/timer':
         specifier: workspace:*
         version: link:modules/timer
@@ -228,6 +231,9 @@ importers:
       expo-linking:
         specifier: 57.0.9
         version: 57.0.9(expo@57.0.19)(react-native@0.86.3)(react@19.2.3)(supports-color@8.1.1)
+      expo-localization:
+        specifier: 57.0.2
+        version: 57.0.2(expo@57.0.19)(react@19.2.3)
       expo-modules-core:
         specifier: 57.0.15
         version: 57.0.15(react-native-worklets@0.10.1)(react-native@0.86.3)(react@19.2.3)
@@ -635,6 +641,9 @@ importers:
       '@frogpond/notice':
         specifier: workspace:*
         version: link:../notice
+      '@frogpond/time-format':
+        specifier: workspace:*
+        version: link:../time-format
       lodash:
         specifier: 4.18.1
         version: 4.18.1
@@ -701,6 +710,9 @@ importers:
       '@frogpond/layout':
         specifier: workspace:*
         version: link:../layout
+      '@frogpond/time-format':
+        specifier: workspace:*
+        version: link:../time-format
       '@frogpond/toolbar':
         specifier: workspace:*
         version: link:../toolbar
@@ -893,6 +905,18 @@ importers:
 
   modules/storage:
     dependencies:
+      react-native:
+        specifier: 'catalog:'
+        version: 0.86.3(patch_hash=6ca2e1225f38672b073b92b9d13f24feebbe9e37ba67708a3f1569275ce99191)(@babel/core@7.29.7)(@react-native/jest-preset@0.86.3)(@types/react@19.2.18)(react@19.2.3)(supports-color@8.1.1)
+
+  modules/time-format:
+    dependencies:
+      expo-localization:
+        specifier: ~57.0.2
+        version: 57.0.2(expo@57.0.19)(react@19.2.3)
+      moment-timezone:
+        specifier: ^0.6.3
+        version: 0.6.3
       react-native:
         specifier: 'catalog:'
         version: 0.86.3(patch_hash=6ca2e1225f38672b073b92b9d13f24feebbe9e37ba67708a3f1569275ce99191)(@babel/core@7.29.7)(@react-native/jest-preset@0.86.3)(@types/react@19.2.18)(react@19.2.3)(supports-color@8.1.1)
@@ -3517,6 +3541,12 @@ packages:
       react: '*'
       react-native: '*'
 
+  expo-localization@57.0.2:
+    resolution: {integrity: sha512-sIKYH3Ivddoge568WY6j+Kp2MAAZzWWqEnY2bokLkJFwX366tGL1mEnoY2WUi/qHatFFPop2yqDdurzbhnnimQ==}
+    peerDependencies:
+      expo: '*'
+      react: '*'
+
   expo-modules-autolinking@57.0.12:
     resolution: {integrity: sha512-Q8KAlq37nLKsQ+HsS9NpQVpd5jCgqtu694TDUNHBUBpV9ViD82mRBh8Uug/h68RG9xnLS+kuL4nYaCuFRghHjg==}
     hasBin: true
@@ -4973,6 +5003,9 @@ packages:
   restore-cursor@2.0.0:
     resolution: {integrity: sha512-6IzJLuGi4+R14vwagDHX+JrXmPVtPpn4mffDJ1UdR7/Edm87fl6yi8mMBIVvFtJaNTUvjughmW4hwLhRG7gC1Q==}
     engines: {node: '>=4'}
+
+  rtl-detect@1.1.2:
+    resolution: {integrity: sha512-PGMBq03+TTG/p/cRB7HCLKJ1MgDIi07+QU1faSjiYRfmY5UsAttV9Hs08jDAHVwcOwmVLcSJkpwyfXszVjWfIQ==}
 
   safe-buffer@5.2.1:
     resolution: {integrity: sha512-rp3So07KcdmmKbGvgaNxQSJr7bGVSVk5S9Eq1F+ppbRo70+YeaDxkw5Dd8NPN+GD6bjnYm2VuPuCXmpuYvmCXQ==}
@@ -8364,6 +8397,12 @@ snapshots:
       - expo
       - supports-color
 
+  expo-localization@57.0.2(expo@57.0.19)(react@19.2.3):
+    dependencies:
+      expo: 57.0.19(@babel/core@7.29.7)(@expo/dom-webview@57.0.1)(@expo/metro-runtime@57.0.15)(expo-router@57.0.18)(react-native-webview@13.16.1)(react-native-worklets@0.10.1)(react-native@0.86.3)(react@19.2.3)(supports-color@8.1.1)(typescript@7.0.2)
+      react: 19.2.3
+      rtl-detect: 1.1.2
+
   expo-modules-autolinking@57.0.12(supports-color@8.1.1)(typescript@7.0.2):
     dependencies:
       '@expo/require-utils': 57.0.5(supports-color@8.1.1)(typescript@7.0.2)
@@ -10083,6 +10122,8 @@ snapshots:
     dependencies:
       onetime: 2.0.1
       signal-exit: 3.0.7
+
+  rtl-detect@1.1.2: {}
 
   safe-buffer@5.2.1: {}
 

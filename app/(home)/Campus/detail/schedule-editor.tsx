@@ -69,7 +69,7 @@ export default function BuildingHoursScheduleEditorPage(): React.ReactNode {
 					<Section footer={<Text>{summary}</Text>}>
 						<WeekToggles days={set.days} onChangeDays={onChangeDays} />
 
-						<LabeledContent label="Hours">
+						<LabeledContent label="Hours (Central Time)">
 							<HStack spacing={4}>
 								<TimePicker
 									date={toPickerDate(open)}

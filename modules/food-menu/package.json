@@ -16,6 +16,7 @@
     "@frogpond/filter": "workspace:*",
     "@frogpond/html-lib": "workspace:*",
     "@frogpond/layout": "workspace:*",
+    "@frogpond/time-format": "workspace:*",
     "@frogpond/toolbar": "workspace:*",
     "lodash": "4.18.1"
   },

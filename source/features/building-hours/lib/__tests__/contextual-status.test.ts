@@ -25,6 +25,17 @@ describe('contextualStatus', () => {
 		expect(result.short).toBe('Open until 8 PM')
 	})
 
+	it('spells the closing time in the locale', () => {
+		let building = makeBuilding([
+			{
+				title: 'Hours',
+				hours: [{days: ['Mo', 'Tu', 'We', 'Th', 'Fr'], from: '9:00am', to: '8:00pm'}],
+			},
+		])
+		let now = moment.tz('2026-09-07 14:00', timezone)
+		expect(contextualStatus(building, now, 'en-GB').short).toBe('Open until 20:00')
+	})
+
 	it('returns "Closes in X min" when almost closed', () => {
 		let building = makeBuilding([
 			{

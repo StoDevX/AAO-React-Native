@@ -13,6 +13,7 @@
     "@frogpond/colors": "workspace:*",
     "@frogpond/event-type": "workspace:*",
     "@frogpond/notice": "workspace:*",
+    "@frogpond/time-format": "workspace:*",
     "lodash": "4.18.1"
   },
   "peerDependencies": {

@@ -11,7 +11,7 @@ it('formats the times', () => {
 		to: '10:00pm',
 	}
 
-	expect(formatBuildingTimes(schedule, m)).toBe('10:30 AM — 10:00 PM')
+	expect(formatBuildingTimes(schedule, m)).toBe('10:30 AM — 10 PM')
 })
 
 it('changes 12:00am into "Midnight"', () => {

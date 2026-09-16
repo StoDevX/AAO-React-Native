@@ -1,4 +1,5 @@
 import {innerTextWithSpaces, parseHtml} from '@frogpond/html-lib'
+import {formatDateTime} from '@frogpond/time-format'
 import type {StreamType} from './types'
 
 /**
@@ -6,12 +7,8 @@ import type {StreamType} from './types'
  *
  * An archived stream has already happened, so its start time says nothing
  * worth reading and is left out.
- *
- * The date is still a `Moment`, which is what the streams query builds. The
- * project prefers `date-fns` for new date handling, but moving this one off
- * Moment means changing that query's parsing too, which is its own change.
  */
-export function streamDetailLines(stream: StreamType): string[] {
+export function streamDetailLines(stream: StreamType, locale?: string): string[] {
 	let lines: string[] = []
 
 	let where = decode(stream.subtitle || stream.performer || '')
@@ -20,7 +17,7 @@ export function streamDetailLines(stream: StreamType): string[] {
 	}
 
 	if (stream.status !== 'archived') {
-		lines.push(stream.date.format('h:mm A – ddd, MMM. Do, YYYY'))
+		lines.push(formatDateTime(stream.date, locale))
 	}
 
 	return lines
