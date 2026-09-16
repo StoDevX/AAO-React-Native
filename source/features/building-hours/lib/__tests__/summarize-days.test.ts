@@ -193,4 +193,11 @@ describe('follows the locale', () => {
 		expect(summarizeDays(['Tu', 'We', 'Th'], false, 'en-GB')).toEqual('Tue — Thu')
 		expect(summarizeDays(['Tu', 'We', 'Th'], true, 'ja-JP')).toEqual('火曜日 — 木曜日')
 	})
+
+	// Non-contiguous days with `useFullDay: true` used to fall through to
+	// `formatFullDay`'s hardcoded English day names, which the other two
+	// branches above already left behind.
+	test('non-contiguous full days', () => {
+		expect(summarizeDays(['Mo', 'We', 'Sa'], true, 'ja-JP')).toEqual('月曜日, 水曜日, and 土曜日')
+	})
 })

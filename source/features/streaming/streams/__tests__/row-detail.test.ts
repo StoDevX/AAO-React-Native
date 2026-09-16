@@ -23,6 +23,9 @@ describe('streamDetailLines', () => {
 	it('puts the subtitle above the showing time', () => {
 		let lines = streamDetailLines(makeStream({subtitle: 'Boe Memorial Chapel'}))
 
+		// Node's ICU joins with a comma; Apple's ICU (verified on-device) uses
+		// "at" instead. Either is a correct localization choice -- this test
+		// only pins Node's, which is what CI actually runs under.
 		expect(lines).toEqual(['Boe Memorial Chapel', 'Sep 11, 2026, 7:00 PM'])
 	})
 

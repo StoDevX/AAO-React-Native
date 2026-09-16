@@ -115,6 +115,16 @@ describe('detailTimes', () => {
 		})
 	})
 
+	// A same-day event whose source recorded its end as hour 0 on the same
+	// calendar day (rather than rolling the date over) reads as `12 AM`,
+	// which looks like the start of a day, not the end of one. `format-
+	// times.ts` substitutes `Midnight` for building hours; the share sheet's
+	// summary must do the same.
+	test('a same-day event ending at midnight says Midnight, not 12 AM', () => {
+		let event = generateEvent('2026-08-20T17:30:00', '2026-08-20T00:00:00')
+		expect(detailTimes(event, 'en-US').end).toBe('Midnight')
+	})
+
 	test('a multi-day event gets a date-time at both ends', () => {
 		let event = generateEvent('2026-08-20T17:30:00', '2026-08-22T19:00:00')
 		expect(detailTimes(event, 'en-US')).toEqual({

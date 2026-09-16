@@ -18,6 +18,11 @@ export function detailTimes(event: EventType, locale?: string): EventDetailTime 
 	} else if (event.startTime.isSame(event.endTime, 'day')) {
 		start = formatDateTime(event.startTime, locale)
 		end = formatTime(event.endTime, locale)
+		// A same-day end recorded at hour 0 is midnight, not `12 AM` -- the
+		// bare time reads as the start of a day, not the end of one.
+		if (event.endTime.hour() === 0 && event.endTime.minute() === 0) {
+			end = 'Midnight'
+		}
 	} else {
 		start = formatDateTime(event.startTime, locale)
 		end = formatDateTime(event.endTime, locale)
@@ -81,8 +86,9 @@ export function listTimeLines(event: EventType, locale?: string): EventDetailTim
 }
 
 /**
- * `locale` defaults to the device's own locale -- `undefined` tells `Intl`
- * to use the system default rather than hardcoding one.
+ * `locale` defaults to the device locale via `@frogpond/time-format`'s
+ * `deviceLocale()`, which composes the OS's 24-hour preference onto the
+ * language tag -- bare `undefined` does not carry that preference.
  */
 export function detailTimeLines(event: EventType, locale?: string): EventTimeLine[] {
 	let startDate = formatDate(event.startTime, 'long', locale)

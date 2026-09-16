@@ -232,7 +232,7 @@ importers:
         specifier: 57.0.9
         version: 57.0.9(expo@57.0.19)(react-native@0.86.3)(react@19.2.3)(supports-color@8.1.1)
       expo-localization:
-        specifier: ~57.0.2
+        specifier: 57.0.2
         version: 57.0.2(expo@57.0.19)(react@19.2.3)
       expo-modules-core:
         specifier: 57.0.15
@@ -915,7 +915,7 @@ importers:
         specifier: ~57.0.2
         version: 57.0.2(expo@57.0.19)(react@19.2.3)
       moment-timezone:
-        specifier: 0.6.3
+        specifier: ^0.6.3
         version: 0.6.3
 
   modules/timer:

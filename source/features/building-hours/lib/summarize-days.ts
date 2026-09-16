@@ -4,7 +4,6 @@ import type {DayOfWeekEnumType, SingleBuildingScheduleType} from '../types'
 import {formatWeekday} from '@frogpond/time-format'
 
 import {daysOfTheWeek} from './constants'
-import {formatDay} from '../../../features/sis/course-search/lib/format-day'
 
 export function summarizeDays(
 	days: DayOfWeekEnumType[],
@@ -38,7 +37,7 @@ export function summarizeDays(
 	// join the list. (There's no point to converting them here.)
 	if (endIndex - startIndex !== sortedDays.length - 1) {
 		if (useFullDay) {
-			return formatFullDay(sortedDays)
+			return formatFullDay(sortedDays, locale)
 		}
 
 		return sortedDays.join(', ')
@@ -62,9 +61,9 @@ export function summarizeDays(
 	return `${start} — ${end}`
 }
 
-function formatFullDay(sortedDays: DayOfWeekEnumType[]) {
+function formatFullDay(sortedDays: DayOfWeekEnumType[], locale?: string) {
 	let formatted = sortedDays.map((day, index) => {
-		let formattedDay = formatDay(day)
+		let formattedDay = formatWeekday(moment(day, 'dd'), 'long', locale)
 
 		if (index === sortedDays.length - 1) {
 			return `and ${formattedDay}`

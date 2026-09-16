@@ -1,4 +1,10 @@
 import type {Moment} from 'moment-timezone'
+// Value import for its side effect: this is what patches `.tz()` onto
+// moment's shared prototype. Every caller today happens to also
+// value-import `moment-timezone` before reaching this module, but nothing
+// here itself guaranteed that, so this module now carries its own
+// dependency on the patch it relies on.
+import 'moment-timezone'
 import * as Localization from 'expo-localization'
 
 /**
@@ -25,9 +31,16 @@ let cachedDeviceLocale: string | undefined
 
 function deviceLocale(): string {
 	if (cachedDeviceLocale === undefined) {
-		let [locale] = Localization.getLocales()
-		let [calendar] = Localization.getCalendars()
-		cachedDeviceLocale = localeWithHourCycle(locale.languageTag, calendar.uses24hourClock)
+		// `noUncheckedIndexedAccess` is off, so tsc won't flag an empty array
+		// here -- shouldn't happen on a real device, but a thrown error would
+		// poison the memoized result for every future call, so fall back
+		// instead of trusting the array has an element.
+		let locale = Localization.getLocales()[0]
+		let calendar = Localization.getCalendars()[0]
+		cachedDeviceLocale = localeWithHourCycle(
+			locale?.languageTag ?? 'en-US',
+			calendar?.uses24hourClock ?? null,
+		)
 	}
 	return cachedDeviceLocale
 }

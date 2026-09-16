@@ -276,11 +276,7 @@ export function EventTimeline({window, blocks, colorFor}: Props): React.ReactNod
 				]}
 			>
 				{window.hours.map((hour, index) => (
-					<HourLabel
-						hour={formatHourLabel(hour, undefined)}
-						index={index}
-						key={hour.toISOString()}
-					/>
+					<HourLabel hour={formatHourLabel(hour)} index={index} key={hour.toISOString()} />
 				))}
 			</ZStack>
 
