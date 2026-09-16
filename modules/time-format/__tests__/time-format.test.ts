@@ -24,6 +24,16 @@ describe('localeWithHourCycle', () => {
 	test('leaves the tag alone when the OS preference is unknown', () => {
 		expect(localeWithHourCycle('en-US', null)).toBe('en-US')
 	})
+
+	test('extends an existing -u- extension rather than doubling it', () => {
+		// Settings → General → Language & Region → Calendar puts a `-u-ca-`
+		// keyword in the language tag `expo-localization` reports. Appending
+		// a second `-u-` block produces an invalid BCP47 tag that crashes
+		// every `Intl.DateTimeFormat` call using it.
+		let tag = localeWithHourCycle('ja-JP-u-ca-japanese', true)
+		expect(tag).toBe('ja-JP-u-ca-japanese-hc-h23')
+		expect(() => new Intl.DateTimeFormat(tag, {hour: 'numeric'})).not.toThrow()
+	})
 })
 
 describe('formatTime', () => {

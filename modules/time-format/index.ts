@@ -10,12 +10,20 @@ import * as Localization from 'expo-localization'
  * ...)` resolves its default locale from the preferred-language list, not
  * from the OS's 24-Hour Time switch, so that switch never reaches it on its
  * own -- confirmed on device before this module existed.
+ *
+ * A BCP47 tag allows only one `-u-` extension, holding as many keywords as
+ * it likes -- `expo-localization` can report one already attached (e.g.
+ * `ja-JP-u-ca-japanese`, from Settings → Language & Region → Calendar), and
+ * appending a second `-u-` block produces an invalid tag that crashes every
+ * `Intl.DateTimeFormat` call using it. Extending the existing block instead
+ * keeps it valid.
  */
 export function localeWithHourCycle(languageTag: string, uses24hourClock: boolean | null): string {
 	if (uses24hourClock === null) {
 		return languageTag
 	}
-	return `${languageTag}-u-hc-${uses24hourClock ? 'h23' : 'h12'}`
+	let keyword = `hc-${uses24hourClock ? 'h23' : 'h12'}`
+	return `${languageTag}-${languageTag.includes('-u-') ? '' : 'u-'}${keyword}`
 }
 
 /**
