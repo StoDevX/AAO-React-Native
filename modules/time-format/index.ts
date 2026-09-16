@@ -187,11 +187,12 @@ function numberFormatterFor(locale: string): Intl.NumberFormat {
  * locales -- `20日`, `20일` -- and the day-picker strip has no room for one: it
  * draws the number in a fixed-width circle under a weekday letter that already
  * says what kind of thing it is. Picking the `day` part back out of
- * `formatToParts` looks like the cleaner answer and is not one: Hermes hands
- * back the marker inside the `day` part on iOS, so the filter keeps `20日`
- * whole. Counting sidesteps the question -- a day of the month is a number,
- * and `Intl.NumberFormat` writes a number in the locale's digits and nothing
- * else.
+ * `formatToParts` looks like the cleaner answer and is not one: it fixes this
+ * under Jest and changes nothing on a device, which suggests Hermes hands the
+ * marker back inside the `day` part itself rather than as a `literal` beside
+ * it. Counting sidesteps the question either way -- a day of the month is a
+ * number, and `Intl.NumberFormat` writes a number in the locale's digits and
+ * nothing else.
  */
 export function formatDayOfMonth(m: Moment, locale: string = deviceLocale()): string {
 	return numberFormatterFor(locale).format(m.date())
