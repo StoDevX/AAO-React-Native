@@ -1,10 +1,4 @@
 import type {Moment} from 'moment-timezone'
-// Value import for its side effect: this is what patches `.tz()` onto
-// moment's shared prototype. Every caller today happens to also
-// value-import `moment-timezone` before reaching this module, but nothing
-// here itself guaranteed that, so this module now carries its own
-// dependency on the patch it relies on.
-import 'moment-timezone'
 import * as Localization from 'expo-localization'
 
 /**
@@ -56,17 +50,16 @@ const FORMATTERS = new Map<string, Intl.DateTimeFormat>()
 function formatterFor(
 	shape: string,
 	locale: string,
-	zone: string | undefined,
 	options: Intl.DateTimeFormatOptions,
 ): Intl.DateTimeFormat {
 	// Keyed on a name the call site gives rather than on the options object.
 	// Stringifying the options would allocate on every lookup, which is the
 	// cost this cache exists to avoid.
-	let key = `${shape}|${locale}|${zone ?? ''}`
+	let key = `${shape}|${locale}`
 	let cached = FORMATTERS.get(key)
 
 	if (!cached) {
-		cached = new Intl.DateTimeFormat(locale, {...options, timeZone: zone})
+		cached = new Intl.DateTimeFormat(locale, options)
 		FORMATTERS.set(key, cached)
 	}
 
@@ -87,27 +80,13 @@ function hasMeridiem(locale: string): boolean {
 	let cached = MERIDIEM.get(locale)
 
 	if (cached === undefined) {
-		cached = formatterFor('hour-probe', locale, undefined, {hour: 'numeric'})
+		cached = formatterFor('hour-probe', locale, {hour: 'numeric'})
 			.formatToParts(new Date(0))
 			.some((part) => part.type === 'dayPeriod')
 		MERIDIEM.set(locale, cached)
 	}
 
 	return cached
-}
-
-/**
- * `Intl` formats an instant in whatever zone it is told, so a campus-zoned
- * moment must carry its zone across or an off-campus reader sees it shifted.
- * A plain moment has no zone and formats in the device's. A moment converted
- * to UTC with `.utc()` has no explicit zone but offset 0; detect and label it.
- */
-function zoneOf(m: Moment): string | undefined {
-	let tz = m.tz()
-	if (!tz && m.utcOffset() === 0) {
-		return 'UTC'
-	}
-	return tz
 }
 
 /**
@@ -126,7 +105,7 @@ export function formatTime(m: Moment, locale: string = deviceLocale()): string {
 	let bare = m.minutes() === 0 && meridiem
 	let options: Intl.DateTimeFormatOptions = bare ? {hour} : {hour, minute: '2-digit'}
 
-	return formatterFor(`time-${hour}-${bare}`, locale, zoneOf(m), options).format(m.toDate())
+	return formatterFor(`time-${hour}-${bare}`, locale, options).format(m.toDate())
 }
 
 /**
@@ -139,7 +118,7 @@ export function formatHourLabel(m: Moment, locale: string = deviceLocale()): str
 	let hour = meridiem ? ('numeric' as const) : ('2-digit' as const)
 	let options: Intl.DateTimeFormatOptions = meridiem ? {hour} : {hour, minute: '2-digit'}
 
-	return formatterFor(`hour-label-${hour}`, locale, zoneOf(m), options).format(m.toDate())
+	return formatterFor(`hour-label-${hour}`, locale, options).format(m.toDate())
 }
 
 const SHORT_DATE: Intl.DateTimeFormatOptions = {month: 'short', day: 'numeric'}
@@ -157,7 +136,7 @@ export function formatDate(
 	locale: string = deviceLocale(),
 ): string {
 	let options = style === 'long' ? LONG_DATE : SHORT_DATE
-	return formatterFor(`date-${style}`, locale, zoneOf(m), options).format(m.toDate())
+	return formatterFor(`date-${style}`, locale, options).format(m.toDate())
 }
 
 const DATE_TIME: Intl.DateTimeFormatOptions = {dateStyle: 'medium', timeStyle: 'short'}
@@ -167,7 +146,7 @@ const DATE_TIME: Intl.DateTimeFormatOptions = {dateStyle: 'medium', timeStyle: '
  * punctuation between the two halves, which differ per locale.
  */
 export function formatDateTime(m: Moment, locale: string = deviceLocale()): string {
-	return formatterFor('date-time', locale, zoneOf(m), DATE_TIME).format(m.toDate())
+	return formatterFor('date-time', locale, DATE_TIME).format(m.toDate())
 }
 
 /** `T`, `Thu`, or `Thursday`; `木`, `木`, or `木曜日`. */
@@ -176,7 +155,7 @@ export function formatWeekday(
 	style: 'narrow' | 'short' | 'long',
 	locale: string = deviceLocale(),
 ): string {
-	return formatterFor(`weekday-${style}`, locale, zoneOf(m), {weekday: style}).format(m.toDate())
+	return formatterFor(`weekday-${style}`, locale, {weekday: style}).format(m.toDate())
 }
 
 const NUMBER_FORMATTERS = new Map<string, Intl.NumberFormat>()

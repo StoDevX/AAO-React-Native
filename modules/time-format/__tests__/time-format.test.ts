@@ -52,12 +52,13 @@ describe('formatTime', () => {
 		expect(formatTime(m, 'ja-JP')).toBe('17:30')
 	})
 
-	test('formats a zoned moment in its own zone, not the process zone', () => {
-		// 17:30 in Chicago is 22:30 UTC; if the zone were dropped, TZ=UTC in CI
-		// would print 10:30 PM.
-		let m = moment.tz('2026-08-20 17:30', CAMPUS)
-		expect(formatTime(m, 'en-US')).toBe('5:30 PM')
-		expect(formatTime(m.clone().utc(), 'en-US')).toBe('10:30 PM')
+	test("converts to the device zone regardless of the moment's own zone label", () => {
+		// Same real instant, two different zone labels. If the input\'s own
+		// zone were still preserved, these would render differently -- they
+		// must not.
+		let chicago = moment.tz('2026-08-20 17:30', CAMPUS)
+		let tokyo = chicago.clone().tz('Asia/Tokyo')
+		expect(formatTime(chicago, 'en-US')).toBe(formatTime(tokyo, 'en-US'))
 	})
 
 	test('formats an unzoned moment in the process zone', () => {
@@ -91,10 +92,13 @@ describe('formatDate', () => {
 		expect(formatDate(m, 'long', 'ja-JP')).toBe('2026年8月20日木曜日')
 	})
 
-	test('formats a zoned moment on its own calendar day', () => {
-		// 23:30 Chicago is already the 21st in UTC.
-		let late = moment.tz('2026-08-20 23:30', CAMPUS)
-		expect(formatDate(late, 'short', 'en-US')).toBe('Aug 20')
+	test("converts to the device zone regardless of the moment's own zone label", () => {
+		// 23:30 Chicago is already the 21st in Tokyo. If the input\'s own zone
+		// were still preserved, the two would land on different calendar
+		// days -- they must not.
+		let chicago = moment.tz('2026-08-20 23:30', CAMPUS)
+		let tokyo = chicago.clone().tz('Asia/Tokyo')
+		expect(formatDate(chicago, 'short', 'en-US')).toBe(formatDate(tokyo, 'short', 'en-US'))
 	})
 })
 
