@@ -128,3 +128,45 @@ export function formatHourLabel(m: Moment, locale: string = deviceLocale()): str
 
 	return formatterFor(`hour-label-${hour}`, locale, zoneOf(m), options).format(m.toDate())
 }
+
+const SHORT_DATE: Intl.DateTimeFormatOptions = {month: 'short', day: 'numeric'}
+const LONG_DATE: Intl.DateTimeFormatOptions = {
+	weekday: 'long',
+	month: 'long',
+	day: 'numeric',
+	year: 'numeric',
+}
+
+/** `Aug 20` or `20 Aug`; `Thursday, August 20, 2026` or `2026年8月20日木曜日`. */
+export function formatDate(
+	m: Moment,
+	style: 'short' | 'long',
+	locale: string = deviceLocale(),
+): string {
+	let options = style === 'long' ? LONG_DATE : SHORT_DATE
+	return formatterFor(`date-${style}`, locale, zoneOf(m), options).format(m.toDate())
+}
+
+const DATE_TIME: Intl.DateTimeFormatOptions = {dateStyle: 'medium', timeStyle: 'short'}
+
+/**
+ * `Aug 20, 2026, 5:30 PM` or `2026/08/20 17:30`. `Intl` owns the order and the
+ * punctuation between the two halves, which differ per locale.
+ */
+export function formatDateTime(m: Moment, locale: string = deviceLocale()): string {
+	return formatterFor('date-time', locale, zoneOf(m), DATE_TIME).format(m.toDate())
+}
+
+/** `T`, `Thu`, or `Thursday`; `木`, `木`, or `木曜日`. */
+export function formatWeekday(
+	m: Moment,
+	style: 'narrow' | 'short' | 'long',
+	locale: string = deviceLocale(),
+): string {
+	return formatterFor(`weekday-${style}`, locale, zoneOf(m), {weekday: style}).format(m.toDate())
+}
+
+/** The day of the month in the locale's own digits: `20`, or `٢٠`. */
+export function formatDayOfMonth(m: Moment, locale: string = deviceLocale()): string {
+	return formatterFor('day-of-month', locale, zoneOf(m), {day: 'numeric'}).format(m.toDate())
+}
