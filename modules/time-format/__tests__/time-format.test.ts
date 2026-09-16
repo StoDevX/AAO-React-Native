@@ -134,4 +134,20 @@ describe('formatDayOfMonth', () => {
 		expect(formatDayOfMonth(m, 'en-US')).toBe('20')
 		expect(formatDayOfMonth(m, 'ar-EG')).toBe('٢٠')
 	})
+
+	test('leaves off the day marker a locale would write after the number', () => {
+		// A formatted date writes `20日` in Japanese and `20일` in Korean. The
+		// day-picker strip draws this inside a fixed-width circle beneath a
+		// weekday letter, where the marker is both redundant and too wide to
+		// fit -- it clipped the number on the simulator.
+		expect(formatDayOfMonth(m, 'ja-JP')).toBe('20')
+		expect(formatDayOfMonth(m, 'ko-KR')).toBe('20')
+	})
+
+	test('counts the day in the moment’s own zone', () => {
+		// 23:30 in Chicago is already the 21st in UTC.
+		let late = moment.tz('2026-08-20 23:30', CAMPUS)
+		expect(formatDayOfMonth(late, 'en-US')).toBe('20')
+		expect(formatDayOfMonth(late.clone().utc(), 'en-US')).toBe('21')
+	})
 })

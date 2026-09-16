@@ -166,7 +166,33 @@ export function formatWeekday(
 	return formatterFor(`weekday-${style}`, locale, zoneOf(m), {weekday: style}).format(m.toDate())
 }
 
-/** The day of the month in the locale's own digits: `20`, or `٢٠`. */
+const NUMBER_FORMATTERS = new Map<string, Intl.NumberFormat>()
+
+function numberFormatterFor(locale: string): Intl.NumberFormat {
+	let cached = NUMBER_FORMATTERS.get(locale)
+
+	if (!cached) {
+		cached = new Intl.NumberFormat(locale)
+		NUMBER_FORMATTERS.set(locale, cached)
+	}
+
+	return cached
+}
+
+/**
+ * The day of the month in the locale's own digits: `20`, or `٢٠`.
+ *
+ * Just the number, which is why this counts it rather than formatting a date.
+ * A date formatted down to its day writes a marker after the number in several
+ * locales -- `20日`, `20일` -- and the day-picker strip has no room for one: it
+ * draws the number in a fixed-width circle under a weekday letter that already
+ * says what kind of thing it is. Picking the `day` part back out of
+ * `formatToParts` looks like the cleaner answer and is not one: Hermes hands
+ * back the marker inside the `day` part on iOS, so the filter keeps `20日`
+ * whole. Counting sidesteps the question -- a day of the month is a number,
+ * and `Intl.NumberFormat` writes a number in the locale's digits and nothing
+ * else.
+ */
 export function formatDayOfMonth(m: Moment, locale: string = deviceLocale()): string {
-	return formatterFor('day-of-month', locale, zoneOf(m), {day: 'numeric'}).format(m.toDate())
+	return numberFormatterFor(locale).format(m.date())
 }
