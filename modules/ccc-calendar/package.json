@@ -17,7 +17,7 @@
     "@frogpond/launch-arguments": "workspace:*",
     "@frogpond/notice": "workspace:*",
     "@frogpond/timer": "workspace:*",
-    "expo-calendar": "57.0.2",
+    "expo-calendar": "57.0.3",
     "ical.js": "2.2.1"
   },
   "peerDependencies": {

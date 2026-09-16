@@ -24,6 +24,10 @@ const byName = (a, b) => a.localeCompare(b)
  */
 const SINGLE_COPY = new Map([
 	[
+		'@expo/ui',
+		'ships native iOS code, so a second copy is a second RNHostView for autolinking to pick from; EXPECTED_DEVIATIONS holds it at 57.0.14 and expo-router asks for a newer one',
+	],
+	[
 		'metro-config',
 		'metro.config.js merges a config into whichever metro is bundling, so a second copy merges across two of them',
 	],
