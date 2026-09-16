@@ -1,4 +1,5 @@
 import type {Moment} from 'moment-timezone'
+import {AppState} from 'react-native'
 import * as Localization from 'expo-localization'
 
 /**
@@ -18,35 +19,79 @@ export function localeWithHourCycle(languageTag: string, uses24hourClock: boolea
 }
 
 /**
- * The device's own locale doesn't change mid-session, so this is computed
- * once and kept -- matching what the formatter cache below already assumes.
+ * `noUncheckedIndexedAccess` is off, so tsc won't flag an empty array here --
+ * shouldn't happen on a real device, but a thrown error would poison the
+ * memoized result for every future call, so fall back instead of trusting
+ * the array has an element.
+ */
+function computeDeviceLocale(): string {
+	let locale = Localization.getLocales()[0]
+	let calendar = Localization.getCalendars()[0]
+	return localeWithHourCycle(locale?.languageTag ?? 'en-US', calendar?.uses24hourClock ?? null)
+}
+
+/** The device's own current zone, e.g. `America/Chicago`. */
+function currentDeviceZone(): string {
+	return Intl.DateTimeFormat().resolvedOptions().timeZone
+}
+
+/**
+ * The locale and zone the caches below were last built against. Read
+ * together, in `deviceLocale()`, since that's the one place every formatter
+ * ultimately traces back to.
  */
 let cachedDeviceLocale: string | undefined
+let cachedDeviceZone: string | undefined
 
 function deviceLocale(): string {
 	if (cachedDeviceLocale === undefined) {
-		// `noUncheckedIndexedAccess` is off, so tsc won't flag an empty array
-		// here -- shouldn't happen on a real device, but a thrown error would
-		// poison the memoized result for every future call, so fall back
-		// instead of trusting the array has an element.
-		let locale = Localization.getLocales()[0]
-		let calendar = Localization.getCalendars()[0]
-		cachedDeviceLocale = localeWithHourCycle(
-			locale?.languageTag ?? 'en-US',
-			calendar?.uses24hourClock ?? null,
-		)
+		cachedDeviceLocale = computeDeviceLocale()
+		cachedDeviceZone = currentDeviceZone()
 	}
 	return cachedDeviceLocale
 }
 
 /**
+ * Locale drifting is self-correcting: `deviceLocale()` recomputing to a new
+ * string makes every formatter start using a new cache key, and the stale
+ * entries just sit unused. Zone drifting is not -- nothing about a
+ * formatter's key reveals its baked-in zone, so an old one goes on rendering
+ * in a zone the device left behind. Returning to the foreground is the one
+ * moment worth checking both against what the caches were actually built
+ * with, and only clearing them when something moved, rather than emptying
+ * them on every resume regardless.
+ */
+function refreshIfDeviceChanged(): void {
+	if (cachedDeviceLocale === undefined) {
+		// Nothing has been formatted yet this session -- no baseline to check
+		// against, and nothing cached to invalidate.
+		return
+	}
+
+	let locale = computeDeviceLocale()
+	let zone = currentDeviceZone()
+
+	if (locale === cachedDeviceLocale && zone === cachedDeviceZone) {
+		return
+	}
+
+	FORMATTERS.clear()
+	NUMBER_FORMATTERS.clear()
+	MERIDIEM.clear()
+	cachedDeviceLocale = locale
+	cachedDeviceZone = zone
+}
+
+AppState.addEventListener('change', (status) => {
+	if (status === 'active') refreshIfDeviceChanged()
+})
+
+/**
  * `Intl.DateTimeFormat` is far more expensive to build than to use, and these
  * are called once per row -- a day of events builds dozens before anything
  * reaches the screen. The set of shapes asked for is tiny and fixed, so they
- * are built once and kept. A formatter built while the device was in one zone
- * goes on rendering in that zone if the device's zone changes later in the
- * same session -- a traveler landing, say -- which is the same tradeoff
- * `deviceLocale()` above accepts for the locale.
+ * are built once and kept, until `refreshIfDeviceChanged()` above finds the
+ * device has actually moved out from under them.
  */
 const FORMATTERS = new Map<string, Intl.DateTimeFormat>()
 
