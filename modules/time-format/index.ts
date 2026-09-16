@@ -36,64 +36,35 @@ function currentDeviceZone(): string {
 }
 
 /**
- * The locale and zone the caches below were last built against. Read
- * together, in `deviceLocale()`, since that's the one place every formatter
- * ultimately traces back to.
+ * The device's own locale doesn't change mid-session, so this is computed
+ * once and kept -- matching what `FORMATTERS` below already assumes for
+ * everything except zone (see `cachedFormatterZone`).
  */
 let cachedDeviceLocale: string | undefined
-let cachedDeviceZone: string | undefined
 
 function deviceLocale(): string {
 	if (cachedDeviceLocale === undefined) {
 		cachedDeviceLocale = computeDeviceLocale()
-		cachedDeviceZone = currentDeviceZone()
 	}
 	return cachedDeviceLocale
 }
 
 /**
- * Locale drifting is self-correcting: `deviceLocale()` recomputing to a new
- * string makes every formatter start using a new cache key, and the stale
- * entries just sit unused. Zone drifting is not -- nothing about a
- * formatter's key reveals its baked-in zone, so an old one goes on rendering
- * in a zone the device left behind. Returning to the foreground is the one
- * moment worth checking both against what the caches were actually built
- * with, and only clearing them when something moved, rather than emptying
- * them on every resume regardless.
- */
-function refreshIfDeviceChanged(): void {
-	if (cachedDeviceLocale === undefined) {
-		// Nothing has been formatted yet this session -- no baseline to check
-		// against, and nothing cached to invalidate.
-		return
-	}
-
-	let locale = computeDeviceLocale()
-	let zone = currentDeviceZone()
-
-	if (locale === cachedDeviceLocale && zone === cachedDeviceZone) {
-		return
-	}
-
-	FORMATTERS.clear()
-	NUMBER_FORMATTERS.clear()
-	MERIDIEM.clear()
-	cachedDeviceLocale = locale
-	cachedDeviceZone = zone
-}
-
-AppState.addEventListener('change', (status) => {
-	if (status === 'active') refreshIfDeviceChanged()
-})
-
-/**
  * `Intl.DateTimeFormat` is far more expensive to build than to use, and these
  * are called once per row -- a day of events builds dozens before anything
  * reaches the screen. The set of shapes asked for is tiny and fixed, so they
- * are built once and kept, until `refreshIfDeviceChanged()` above finds the
- * device has actually moved out from under them.
+ * are built once and kept, until `refreshFormattersIfZoneChanged()` below
+ * finds the zone has moved out from under them.
  */
 const FORMATTERS = new Map<string, Intl.DateTimeFormat>()
+
+/**
+ * The zone `FORMATTERS` was actually built against, set on every real cache
+ * miss rather than tied to `deviceLocale()` -- a caller that always supplies
+ * an explicit locale never touches `deviceLocale()` at all, and this still
+ * needs to notice that caller's formatters going stale.
+ */
+let cachedFormatterZone: string | undefined
 
 function formatterFor(
 	shape: string,
@@ -107,12 +78,42 @@ function formatterFor(
 	let cached = FORMATTERS.get(key)
 
 	if (!cached) {
+		cachedFormatterZone = currentDeviceZone()
 		cached = new Intl.DateTimeFormat(locale, options)
 		FORMATTERS.set(key, cached)
 	}
 
 	return cached
 }
+
+/**
+ * `NUMBER_FORMATTERS` and `MERIDIEM` below are both keyed purely by locale,
+ * so a locale change is self-correcting for them: a new `deviceLocale()`
+ * result makes every lookup start using a new key, and the stale entries
+ * just sit unused. `FORMATTERS` is the one exception, since it bakes in
+ * whatever zone was active at construction and that is not part of its own
+ * key -- zone is the one thing actually worth checking for on resume, and
+ * only clearing `FORMATTERS` when it has actually moved, rather than
+ * emptying every cache on every resume regardless.
+ */
+function refreshFormattersIfZoneChanged(): void {
+	if (cachedFormatterZone === undefined) {
+		// Nothing zone-sensitive has been built yet this session -- no
+		// baseline to check against, and nothing cached to invalidate.
+		return
+	}
+
+	if (currentDeviceZone() === cachedFormatterZone) {
+		return
+	}
+
+	FORMATTERS.clear()
+	cachedFormatterZone = undefined
+}
+
+AppState.addEventListener('change', (status) => {
+	if (status === 'active') refreshFormattersIfZoneChanged()
+})
 
 /**
  * Whether the locale writes a meridiem is a property of the locale, so it is

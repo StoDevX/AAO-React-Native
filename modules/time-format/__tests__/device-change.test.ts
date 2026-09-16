@@ -16,6 +16,27 @@ describe('returning to the foreground', () => {
 		for (let handler of appStateHandlers) handler(status)
 	}
 
+	/**
+	 * `Intl.DateTimeFormat()` with no arguments is `currentDeviceZone()`'s own
+	 * probe -- substituted here so a test can move "the device's zone"
+	 * without disturbing real formatter construction, which always calls
+	 * with a locale and options and is left to build for real. Counting only
+	 * the two-argument calls is how a test tells "a formatter was actually
+	 * rebuilt" apart from "the zone was merely checked."
+	 */
+	const spyWithDeviceZone = (getZone: () => string) => {
+		let RealDateTimeFormat = Intl.DateTimeFormat
+		return jest.spyOn(Intl, 'DateTimeFormat').mockImplementation((...args: unknown[]) => {
+			if (args.length === 0) {
+				return {resolvedOptions: () => ({timeZone: getZone()})} as Intl.DateTimeFormat
+			}
+			return new RealDateTimeFormat(...(args as ConstructorParameters<typeof Intl.DateTimeFormat>))
+		})
+	}
+
+	const rebuiltFormatterCount = (spy: jest.SpiedFunction<typeof Intl.DateTimeFormat>) =>
+		spy.mock.calls.filter((args) => args.length > 0).length
+
 	beforeEach(() => {
 		jest.resetModules()
 		appStateHandlers = []
@@ -28,41 +49,55 @@ describe('returning to the foreground', () => {
 				},
 			}
 		})
+		jest.doMock('expo-localization', () => ({
+			getLocales: () => [{languageTag: 'en-US'}],
+			getCalendars: () => [{uses24hourClock: false}],
+		}))
 	})
 
 	afterEach(() => {
 		jest.restoreAllMocks()
 	})
 
-	/**
-	 * `Intl.DateTimeFormat()` with no arguments is `refreshIfDeviceChanged`'s
-	 * own zone probe, run on every resume regardless of the outcome -- only a
-	 * call with a locale and options is a real formatter being rebuilt.
-	 */
-	const rebuiltFormatterCount = (spy: jest.SpiedFunction<typeof Intl.DateTimeFormat>) =>
-		spy.mock.calls.filter((args) => args.length > 0).length
-
-	test('leaves a cached formatter alone when the device has not changed', () => {
-		jest.doMock('expo-localization', () => ({
-			getLocales: () => [{languageTag: 'en-US'}],
-			getCalendars: () => [{uses24hourClock: false}],
-		}))
-
+	test('leaves a cached formatter alone across a resume when the zone has not changed', () => {
 		// oxlint-disable-next-line typescript/no-require-imports
 		let {formatTime} = require('../index')
 		let m = moment.tz('2026-08-20 17:00', 'America/Chicago')
 
+		let spy = spyWithDeviceZone(() => 'America/Chicago')
 		formatTime(m)
+		let before = rebuiltFormatterCount(spy)
 
-		let spy = jest.spyOn(Intl, 'DateTimeFormat')
 		sendAppState('background')
 		sendAppState('active')
 		formatTime(m)
 
-		expect(rebuiltFormatterCount(spy)).toBe(0)
+		expect(rebuiltFormatterCount(spy)).toBe(before)
 	})
 
-	test('rebuilds the cache when the device locale changed', () => {
+	test('rebuilds the cache across a resume when the zone changed', () => {
+		// oxlint-disable-next-line typescript/no-require-imports
+		let {formatTime} = require('../index')
+		let m = moment.tz('2026-08-20 17:00', 'America/Chicago')
+
+		let zone = 'America/Chicago'
+		let spy = spyWithDeviceZone(() => zone)
+		formatTime(m)
+		let before = rebuiltFormatterCount(spy)
+
+		zone = 'Asia/Tokyo'
+		sendAppState('background')
+		sendAppState('active')
+		formatTime(m)
+
+		expect(rebuiltFormatterCount(spy)).toBeGreaterThan(before)
+	})
+
+	test('a locale change alone, with the same zone, does not clear the formatter cache', () => {
+		// `NUMBER_FORMATTERS` and `MERIDIEM` are keyed by locale, so a locale
+		// change is self-correcting for them without any active invalidation
+		// -- this is the mechanism `refreshFormattersIfZoneChanged` leaves
+		// alone. Only the zone axis is checked on resume.
 		let languageTag = 'en-US'
 		jest.doMock('expo-localization', () => ({
 			getLocales: () => [{languageTag}],
@@ -73,23 +108,19 @@ describe('returning to the foreground', () => {
 		let {formatTime} = require('../index')
 		let m = moment.tz('2026-08-20 17:00', 'America/Chicago')
 
+		let spy = spyWithDeviceZone(() => 'America/Chicago')
 		formatTime(m)
-		languageTag = 'ja-JP'
+		let before = rebuiltFormatterCount(spy)
 
-		let spy = jest.spyOn(Intl, 'DateTimeFormat')
+		languageTag = 'ja-JP'
 		sendAppState('background')
 		sendAppState('active')
-		formatTime(m)
+		formatTime(m) // still no explicit locale -- exercises deviceLocale()'s own (separately accepted) staleness
 
-		expect(rebuiltFormatterCount(spy)).toBeGreaterThan(0)
+		expect(rebuiltFormatterCount(spy)).toBe(before)
 	})
 
 	test('does nothing on resume if nothing has been formatted yet this session', () => {
-		jest.doMock('expo-localization', () => ({
-			getLocales: () => [{languageTag: 'en-US'}],
-			getCalendars: () => [{uses24hourClock: false}],
-		}))
-
 		// oxlint-disable-next-line typescript/no-require-imports
 		require('../index')
 
@@ -97,5 +128,26 @@ describe('returning to the foreground', () => {
 			sendAppState('background')
 			sendAppState('active')
 		}).not.toThrow()
+	})
+
+	test('notices a zone change even when every call passes an explicit locale', () => {
+		// The baseline lives in `formatterFor`'s own cache miss, not in
+		// `deviceLocale()` -- a caller that never touches the device-default
+		// path still gets its stale formatters caught on resume.
+		// oxlint-disable-next-line typescript/no-require-imports
+		let {formatTime} = require('../index')
+		let m = moment.tz('2026-08-20 17:00', 'America/Chicago')
+
+		let zone = 'America/Chicago'
+		let spy = spyWithDeviceZone(() => zone)
+		formatTime(m, 'en-US')
+		let before = rebuiltFormatterCount(spy)
+
+		zone = 'Asia/Tokyo'
+		sendAppState('background')
+		sendAppState('active')
+		formatTime(m, 'en-US')
+
+		expect(rebuiltFormatterCount(spy)).toBeGreaterThan(before)
 	})
 })
