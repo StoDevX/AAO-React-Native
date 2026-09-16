@@ -14,6 +14,10 @@ jest.mock('expo-clipboard', () => ({
 	setStringAsync: jest.fn(() => Promise.resolve(true)),
 	hasStringAsync: jest.fn(() => Promise.resolve(false)),
 }))
+jest.mock('expo-localization', () => ({
+	getLocales: () => [{languageTag: 'en-US'}],
+	getCalendars: () => [{uses24hourClock: false}],
+}))
 jest.mock('@frogpond/launch-arguments', () => ({
 	isUITesting: true,
 }))

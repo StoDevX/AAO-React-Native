@@ -1,0 +1,16 @@
+{
+  "name": "@frogpond/time-format",
+  "version": "1.0.0",
+  "description": "",
+  "license": "ISC",
+  "author": "",
+  "main": "index.ts",
+  "scripts": {
+    "test": "jest"
+  },
+  "dependencies": {},
+  "peerDependencies": {
+    "expo-localization": "~57.0.2",
+    "moment-timezone": "0.6.3"
+  }
+}
