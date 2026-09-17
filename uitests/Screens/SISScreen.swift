@@ -64,9 +64,8 @@ struct SISScreen: Screen {
 	}
 
 	/// Leaves SIS via the navigation bar's back button, scoped to that bar and
-	/// queried by UIKit's identifier. The label is no use here: every back
-	/// button reads `Back`, and this one used to read the previous screen's
-	/// title instead.
+	/// queried by UIKit's identifier rather than its label: every back button
+	/// in the app reads `Back`, so the label says nothing about which one.
 	@discardableResult
 	func navigateBack() -> Self {
 		let backButton = app.navigationBars[TestIdentifiers.Buttons.sis]

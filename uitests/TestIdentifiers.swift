@@ -41,9 +41,8 @@ struct TestIdentifiers {
 		/// the bar behind a sheet as readily as the sheet's own.
 		static let backButton = "Back"
 		/// UIKit's own identifier for a system back button, which it sets
-		/// whatever the label. This is what separates a bar's system back
-		/// button from an app-provided one carrying only a label, now that
-		/// both read `Back`.
+		/// whatever the label. Both a system back button and an app-provided
+		/// one read `Back`, so the identifier is what separates them.
 		static let systemBackButton = "BackButton"
 	}
 
@@ -476,8 +475,8 @@ struct TestIdentifiers {
 		static let reportScreenPrompt = "Thanks for spotting a problem!"
 		/// The report screen's navigation bar, which carries `reportAction`'s
 		/// wording because that action is what opens it. Queries for the
-		/// screen's back button scope to this bar: the label alone no longer
-		/// tells the two bars apart.
+		/// screen's back button scope to this bar, since the label alone does
+		/// not tell the two bars apart.
 		static let reportScreenTitle = reportAction
 		/// The report screen's own submit control, in the navigation bar.
 		static let submitReportAction = "Submit Report"
