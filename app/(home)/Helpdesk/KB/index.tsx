@@ -1,12 +1,12 @@
 import * as React from 'react'
-import {useRouter} from 'expo-router'
+import {Stack, useRouter} from 'expo-router'
 import {HelpdeskList} from '../../../../source/features/helpdesk/helpdesk-list'
 import {kbUrl} from '../../../../source/features/helpdesk/page-configs'
 import {slugFromHref} from '../../../../source/features/helpdesk/slug-from-href'
 import type {HelpdeskItem} from '../../../../source/features/helpdesk/types'
 
 /** The top-level Knowledge Base categories -- tapping one drills into `[id]`. */
-export default function KBScreen(): React.ReactNode {
+function KBView(): React.ReactNode {
 	let router = useRouter()
 
 	let openCategory = (item: HelpdeskItem) =>
@@ -16,4 +16,13 @@ export default function KBScreen(): React.ReactNode {
 		})
 
 	return <HelpdeskList onSelect={openCategory} pageType="kb" title="Knowledge Base" url={kbUrl()} />
+}
+
+export default function KBScreen(): React.ReactNode {
+	return (
+		<>
+			<Stack.Title>Knowledge Base</Stack.Title>
+			<KBView />
+		</>
+	)
 }

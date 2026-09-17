@@ -1,12 +1,12 @@
 import * as React from 'react'
-import {useRouter} from 'expo-router'
+import {Stack, useRouter} from 'expo-router'
 import {HelpdeskList} from '../../../../source/features/helpdesk/helpdesk-list'
 import {serviceCatalogUrl} from '../../../../source/features/helpdesk/page-configs'
 import {slugFromHref} from '../../../../source/features/helpdesk/slug-from-href'
 import type {HelpdeskItem} from '../../../../source/features/helpdesk/types'
 
 /** The top-level Service Catalog categories -- tapping one drills into `[id]`. */
-export default function ServiceCatalogScreen(): React.ReactNode {
+function ServiceCatalogView(): React.ReactNode {
 	let router = useRouter()
 
 	let openCategory = (item: HelpdeskItem) =>
@@ -22,5 +22,14 @@ export default function ServiceCatalogScreen(): React.ReactNode {
 			title="Service Catalog"
 			url={serviceCatalogUrl()}
 		/>
+	)
+}
+
+export default function ServiceCatalogScreen(): React.ReactNode {
+	return (
+		<>
+			<Stack.Title>Service Catalog</Stack.Title>
+			<ServiceCatalogView />
+		</>
 	)
 }
