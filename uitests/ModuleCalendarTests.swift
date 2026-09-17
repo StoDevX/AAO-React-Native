@@ -196,6 +196,35 @@ class ModuleCalendarTests: UITestCase {
 			"Reset Filters should be absent while the list is unfiltered")
 	}
 
+	/// The Upcoming list keeps a month of finished events, so its top is in the
+	/// past. It has to open on today, with that past above the fold rather than
+	/// the first thing a reader sees.
+	func testTheUpcomingListOpensOnToday() throws {
+		let screen = CalendarScreen(app: app)
+		screen.navigate()
+			.openModeMenu()
+			.selectMode(TestIdentifiers.Calendar.upcomingMode)
+			.verifyStripAbsent()
+
+		XCTAssertTrue(
+			screen.todayHeader().waitForExistence(timeout: 30),
+			"Today's section should be in the list")
+
+		// The list settles on today asynchronously, so wait for the past to leave
+		// the reader's view rather than checking once.
+		let deadline = Date().addingTimeInterval(5)
+		var above = screen.rowsVisibleAboveToday()
+		while !above.isEmpty && Date() < deadline {
+			RunLoop.current.run(until: Date().addingTimeInterval(0.25))
+			above = screen.rowsVisibleAboveToday()
+		}
+		screen.capture("opens-on-today")
+
+		XCTAssertEqual(
+			above, [],
+			"The list should open on today, but these past rows were showing above it")
+	}
+
 	/// Organisation is the second filter axis, and the only one whose values
 	/// come from Presence rather than from the campus calendar. Nothing in Jest
 	/// reaches the rendered menu, so this is the only check that choosing one

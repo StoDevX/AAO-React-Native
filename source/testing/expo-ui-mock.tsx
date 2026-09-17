@@ -142,6 +142,13 @@ export function lineLimit(
 export const listRowSeparator = (visibility: string, edges?: string): Modifier =>
 	createModifier('listRowSeparator', {visibility, edges})
 
+/**
+ * Natively SwiftUI calls the handler when the view appears. Nothing appears
+ * here, so it only carries the handler; when a view lands on screen is a UI
+ * test's question.
+ */
+export const onAppear = (handler: () => void): Modifier => createModifier('onAppear', {handler})
+
 export const presentationDetents = (
 	detents: unknown[],
 	options?: {selection?: unknown},

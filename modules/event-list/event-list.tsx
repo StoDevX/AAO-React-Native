@@ -13,6 +13,7 @@ import {
 	font,
 	foregroundStyle,
 	id,
+	onAppear,
 	padding,
 	refreshable,
 	scrollPosition,
@@ -75,17 +76,21 @@ export let EventList = React.forwardRef<CalendarBodyHandle, Props>(function Even
 	 * is last month; the past is meant to be reachable by scrolling up, not to
 	 * be where the screen opens.
 	 *
-	 * Driven from an effect because `useNativeState` captures its initial value
-	 * on the very first render, which happens before any events have come back
-	 * from SQLite -- so there is no section to open on yet. Once only: a filter
-	 * change or a refresh rebuilds the sections, and yanking the reader back to
-	 * today each time is what the Today button is for.
+	 * Sent when the scroll view appears -- not from an effect, and not as the
+	 * state's starting value. Measured on the simulator, SwiftUI scrolls only
+	 * when the position changes after the list has appeared: a position that
+	 * arrives any earlier is dropped, and since the state then already reads
+	 * today, nothing sends it again, so the list stays on last month.
+	 *
+	 * Only while the list has no position yet. SwiftUI writes the leading
+	 * section back as the reader scrolls, so a list that has been placed never
+	 * reads null again; appearing a second time leaves the reader where they
+	 * were, and going back to today is what the Today button is for.
 	 */
-	let opened = React.useRef(false)
-	React.useEffect(() => {
-		if (opened.current || !todayKey) return
-		opened.current = true
-		scrollTarget.set(todayKey)
+	let openOnToday = React.useCallback(() => {
+		if (todayKey && scrollTarget.get() === null) {
+			scrollTarget.set(todayKey)
+		}
 	}, [scrollTarget, todayKey])
 
 	/** Returns the list to today -- see `todaySectionKey` for what that means. */
@@ -119,6 +124,7 @@ export let EventList = React.forwardRef<CalendarBodyHandle, Props>(function Even
 						await props.onRefresh()
 					}),
 					scrollPosition(scrollTarget, {anchor: 'top'}),
+					onAppear(openOnToday),
 				]}
 			>
 				<LazyVStack alignment="leading" modifiers={[scrollTargetLayout()]}>
