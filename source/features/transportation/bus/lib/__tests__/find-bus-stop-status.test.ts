@@ -147,3 +147,34 @@ test('marks the stop the bus is parked at as "at", whatever the timetable says',
 	expect(findBusStopStatus({stop, departureIndex, busStatus, now})).toBe('before')
 	expect(findBusStopStatus({stop, departureIndex, busStatus, now, busAtStop: true})).toBe('at')
 })
+
+// A `null` departure is a round the bus skips this stop, and the switch below
+// reads it correctly. An index past the end of a stop's own list is a
+// different thing and reads as `undefined`, which passes an `!== null` test --
+// so it has to be ruled out on its own.
+test('skips a stop whose departures run out before the index', () => {
+	let now = dayAndTime('Mo 1:20pm')
+	let {busStatus, departureIndex} = makeSchedule(now)
+	let shortStop = {name: 'Ragged', departures: [dayAndTime('Mo 1:00pm')]}
+
+	expect(departureIndex).not.toBeNull()
+	expect(findBusStopStatus({stop: shortStop, departureIndex, busStatus, now})).toBe('skip')
+})
+
+test('skips a stop with no departures at all, before the bus starts', () => {
+	let now = dayAndTime('Mo 12:00pm')
+	let {busStatus, departureIndex} = makeSchedule(now)
+	let emptyStop = {name: 'Empty', departures: []}
+
+	expect(busStatus).toBe('before-start')
+	expect(findBusStopStatus({stop: emptyStop, departureIndex, busStatus, now})).toBe('skip')
+})
+
+test('skips a stop with no departures at all, after the bus finishes', () => {
+	let now = dayAndTime('Mo 11:00pm')
+	let {busStatus, departureIndex} = makeSchedule(now)
+	let emptyStop = {name: 'Empty', departures: []}
+
+	expect(busStatus).toBe('after-end')
+	expect(findBusStopStatus({stop: emptyStop, departureIndex, busStatus, now})).toBe('skip')
+})
