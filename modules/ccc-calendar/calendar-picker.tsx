@@ -35,7 +35,6 @@ type Props = {
 	filter: CalendarFilter | null
 	onSelectFilter: (filter: CalendarFilter | null) => void
 	onTodayPress?: () => void
-	onRequestDeviceCalendars?: () => void
 }
 
 const STAYS_OPEN = [menuActionDismissBehavior('disabled')]
@@ -52,7 +51,6 @@ export function CalendarPicker({
 	filter,
 	onSelectFilter,
 	onTodayPress,
-	onRequestDeviceCalendars,
 }: Props): React.ReactNode {
 	let isActive = filter !== null
 	// Keep the modifier list structurally identical every render -- only the
@@ -108,9 +106,6 @@ export function CalendarPicker({
 							))}
 						</Menu>
 						<Section modifiers={STAYS_OPEN} title="CALENDARS">
-							{onRequestDeviceCalendars ? (
-								<Button label="Add Device Calendars…" onPress={onRequestDeviceCalendars} />
-							) : null}
 							{sources.map((source) => (
 								<Toggle
 									isOn={enabledIds.includes(source.id)}

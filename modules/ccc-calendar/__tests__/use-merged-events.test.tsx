@@ -6,9 +6,9 @@ import {QueryClient, QueryClientProvider} from '@tanstack/react-query'
 import type {CalendarSource} from '../sources'
 import {useMergedEvents} from '../use-merged-events'
 
-// `useMergedEvents` reads nothing out of these queries directly: a remote one
-// writes into the database and resolves to a receipt of that write, so the
-// mocks only need to resolve or reject, standing in for the receipt.
+// `useMergedEvents` reads nothing out of these queries directly: each writes
+// into the database and resolves to a receipt of that write, so the mocks only
+// need to resolve or reject, standing in for the receipt.
 jest.mock('../query', () => ({
 	namedCalendarOptions: (name: string) => ({
 		queryKey: ['calendar', 'named', name],
@@ -17,18 +17,13 @@ jest.mock('../query', () => ({
 			return {writtenAt: Date.now(), count: 1}
 		},
 	}),
-	deviceCalendarOptions: (calendarId: string) => ({
-		queryKey: ['calendar', 'device', calendarId],
-		queryFn: () => [],
-	}),
 }))
 
-const STOLAF: CalendarSource = {id: 'stolaf', title: 'St. Olaf', color: 'blue', kind: 'remote'}
+const STOLAF: CalendarSource = {id: 'stolaf', title: 'St. Olaf', color: 'blue'}
 const NORTHFIELD: CalendarSource = {
 	id: 'northfield',
 	title: 'Northfield',
 	color: 'indigo',
-	kind: 'remote',
 }
 // Every query left without observers gets a garbage-collection timeout, and
 // React Query's default is five minutes -- long enough to outlive the run and

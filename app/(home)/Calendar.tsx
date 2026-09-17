@@ -18,7 +18,7 @@ import {useCalendarFilterStore} from '../../source/features/calendar/store'
 export default function CalendarPage(): React.ReactNode {
 	let router = useRouter()
 	let {now} = useMomentTimer({intervalMs: 60000})
-	let {all, enabled, toggle, canOfferDevice, deviceAvailable, requestDevice} = useCalendarSources()
+	let {all, enabled, toggle} = useCalendarSources()
 	let {failed, isLoading, isRefetching, refetchAll} = useMergedEvents(enabled)
 	let bodyRef = React.useRef<CalendarBodyHandle>(null)
 
@@ -87,7 +87,6 @@ export default function CalendarPage(): React.ReactNode {
 				categories={categories}
 				enabledIds={enabledIds}
 				filter={filter}
-				onRequestDeviceCalendars={canOfferDevice && !deviceAvailable ? requestDevice : undefined}
 				onSelectFilter={selectFilter}
 				onToggleSource={toggle}
 				onTodayPress={onTodayPress}

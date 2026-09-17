@@ -2,21 +2,18 @@ import {fetchManifest, fetchSourceBody, REL_CALENDAR, resolveSource} from '@frog
 import {eventKey} from '@frogpond/event-list/calendar-util'
 import {queryOptions} from '@tanstack/react-query'
 import * as Sentry from '@sentry/react-native'
-import * as Calendar from 'expo-calendar'
-import moment from 'moment'
 import {now as currentMoment} from '@frogpond/timer'
 import {queryClient} from '../../source/init/tanstack-query'
 import {getRunner} from '../../source/database/client'
 import {bumpCalendarRevision} from '../../source/database/calendar/revision'
 import {retentionFor, writeSource} from '../../source/database/calendar/write'
 import {convertEvents, type EventMapper} from './convert'
-import {getFullCalendarAccess, listDeviceEvents} from './device-calendar'
 import uitestFixtures from './fixtures/uitest-events.json'
 import {parseEvents, type WireEvent} from './parsers/events'
 import {parseIcalEvents} from './parsers/ical'
 import {parsePresenceEvents} from './parsers/presence'
 import {parseTecEvents} from './parsers/tec-events'
-import {deviceSourceId, REMOTE_SOURCES, toDeviceSource, type SourcedEvent} from './sources'
+import {REMOTE_SOURCES, type SourcedEvent} from './sources'
 import {NamedCalendar} from './types'
 
 export const keys = {
@@ -167,82 +164,4 @@ export const scheduleEventOptions = (
 		queryKey: ['schedule', calendar] as const,
 		queryFn: ({queryKey, signal}) => fetchCalendar(queryKey[1], signal),
 		select: (events) => convertEvents(events, options).find((event) => eventKey(event) === key),
-	})
-
-/**
- * One device event, by EventKit id. Reaches a month either side of today
- * rather than the list's forward-only month: a deep link, or a list still
- * showing yesterday's section, can name an event the forward window has
- * already passed.
- */
-// oxlint-disable-next-line typescript/explicit-module-boundary-types
-export const deviceCalendarEventOptions = (calendarId: string, eventId: string) =>
-	queryOptions({
-		queryKey: ['calendar', 'device', calendarId, eventId] as const,
-		queryFn: async () => {
-			let start = moment().startOf('day').subtract(1, 'month').toDate()
-			let end = moment().startOf('day').add(1, 'month').toDate()
-			let events = await listDeviceEvents(start, end, [calendarId])
-			return events.find((entry) => entry.id === eventId)?.event
-		},
-	})
-
-/**
- * Whether EventKit has already granted full calendar access. A query, so that
- * the three components asking for calendar sources on one screen -- the
- * picker, the list, and the detail screen -- read a single answer: the grant
- * is won inside the picker, and per-component state leaves the other two
- * believing there is still no access. React Query also drops a stale in-flight
- * check rather than letting it land on newer state.
- *
- * Only ever *checks*. Asking is `requestFullCalendarAccess`, called from an
- * explicit tap, and the caller leaves this query disabled outside dev mode, so
- * a production build never reaches EventKit at all.
- */
-// oxlint-disable-next-line typescript/explicit-module-boundary-types
-export const calendarAccessOptions = () =>
-	queryOptions({
-		queryKey: ['calendar', 'device-access'] as const,
-		queryFn: async () => {
-			let access = await getFullCalendarAccess()
-			return access.granted
-		},
-	})
-
-/**
- * The device's calendars, as sources. A query rather than component state:
- * it is read from the device like anything else here, and both the picker and
- * the detail screen need it, so neither should own it.
- */
-// oxlint-disable-next-line typescript/explicit-module-boundary-types
-export const deviceCalendarsOptions = () =>
-	queryOptions({
-		queryKey: ['calendar', 'device-calendars'] as const,
-		queryFn: async () => {
-			let calendars = await Calendar.getCalendars(Calendar.EntityTypes.EVENT)
-			return calendars.map((calendar) => toDeviceSource(calendar))
-		},
-	})
-
-/**
- * A month from today. EventKit will return years of events, and the list draws
- * a section per day with no pagination behind it.
- */
-// oxlint-disable-next-line typescript/explicit-module-boundary-types
-export const deviceCalendarOptions = (calendarId: string) =>
-	queryOptions({
-		queryKey: ['calendar', 'device', calendarId] as const,
-		queryFn: () => {
-			let start = moment().startOf('day').toDate()
-			let end = moment().startOf('day').add(1, 'month').toDate()
-			return listDeviceEvents(start, end, [calendarId])
-		},
-		// EventKit gives a real event id; better than `startTime|title`, and it is
-		// what the detail screen looks the event back up by.
-		select: (events): SourcedEvent[] =>
-			events.map((entry) => ({
-				sourceId: deviceSourceId(calendarId),
-				key: entry.id,
-				event: entry.event,
-			})),
 	})

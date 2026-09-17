@@ -16,7 +16,7 @@ type Props = {
 // they aren't part of the calendar picker and never will be. So this screen
 // draws one query in one accent colour: no picker, no merge, and no per-source
 // failure list.
-const SOURCES: CalendarSource[] = [{id: 'schedule', title: '', color: c.systemBlue, kind: 'remote'}]
+const SOURCES: CalendarSource[] = [{id: 'schedule', title: '', color: c.systemBlue}]
 
 export function ScheduleView(props: Props): React.ReactNode {
 	let {now} = useMomentTimer({intervalMs: 60000})

@@ -564,9 +564,6 @@ importers:
       delay:
         specifier: ^7.0.0
         version: 7.0.0
-      expo-calendar:
-        specifier: 57.0.2
-        version: 57.0.2(expo@57.0.19)(react-native@0.86.3)
       ical.js:
         specifier: 2.2.1
         version: 2.2.1

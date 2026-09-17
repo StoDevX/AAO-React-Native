@@ -2,15 +2,9 @@ import {describe, expect, jest, test} from '@jest/globals'
 import moment from 'moment-timezone'
 
 import type {WireEvent} from '../parsers/events'
-import {
-	deviceCalendarOptions,
-	namedCalendarOptions,
-	scheduleCalendarOptions,
-	sourceRankOf,
-} from '../query'
+import {namedCalendarOptions, scheduleCalendarOptions, sourceRankOf} from '../query'
 import {REMOTE_SOURCES} from '../sources'
 import uitestFixtures from '../fixtures/uitest-events.json'
-import {EventType} from '@frogpond/event-type'
 import {groupEvents} from '@frogpond/event-list/sections'
 import {now} from '@frogpond/timer'
 import {getRunner} from '../../../source/database/client'
@@ -18,11 +12,10 @@ import {bumpCalendarRevision} from '../../../source/database/calendar/revision'
 import {writeSource} from '../../../source/database/calendar/write'
 import * as Sentry from '@sentry/react-native'
 
-// `query.ts` reaches EventKit for the device queries, and the shared query
-// client it imports subscribes to network reachability at module load. Neither
-// runs here: every test below calls a `select` (or, for the ingest query, a
-// `queryFn`) by hand, against fixture data rather than the network.
-jest.mock('expo-calendar', () => ({EntityTypes: {EVENT: 'event'}}))
+// The shared query client `query.ts` imports subscribes to network
+// reachability at module load. That does not run here: every test below calls
+// a `select` (or, for the ingest query, a `queryFn`) by hand, against fixture
+// data rather than the network.
 jest.mock('@react-native-community/netinfo', () =>
 	// oxlint-disable-next-line typescript/no-require-imports
 	require('@react-native-community/netinfo/jest/netinfo-mock'),
@@ -50,12 +43,6 @@ jest.mock('@sentry/react-native', () => ({captureException: jest.fn()}))
 function selectSchedule(calendar: string, options?: Parameters<typeof scheduleCalendarOptions>[1]) {
 	let {select} = scheduleCalendarOptions(calendar, options)
 	if (!select) throw new Error('scheduleCalendarOptions should tag its results')
-	return select
-}
-
-function selectDevice(calendarId: string) {
-	let {select} = deviceCalendarOptions(calendarId)
-	if (!select) throw new Error('deviceCalendarOptions should tag its results')
 	return select
 }
 
@@ -154,58 +141,6 @@ describe('namedCalendarOptions', () => {
 
 		expect(Sentry.captureException).toHaveBeenCalledWith(error)
 		expect(bumpCalendarRevision).not.toHaveBeenCalled()
-	})
-})
-
-describe('deviceCalendarOptions select', () => {
-	function makeDeviceEvent(
-		id: string,
-		calendarId: string,
-	): {calendarId: string; id: string; event: EventType} {
-		return {
-			calendarId,
-			id,
-			event: {
-				title: 'Labor Day',
-				description: '',
-				location: '',
-				startTime: moment('2026-09-10T00:00:00'),
-				endTime: moment('2026-09-10T23:59:59'),
-				isAllDay: false,
-				isMultiDay: false,
-				isSameInstant: false,
-				isOngoing: false,
-				links: [],
-				categories: [],
-				config: {startTime: false, endTime: false, subtitle: 'location' as const},
-			},
-		}
-	}
-
-	test('every event is tagged with the device calendar it was fetched from', () => {
-		let events = [makeDeviceEvent('evt-1', 'cal-1'), makeDeviceEvent('evt-2', 'cal-1')]
-
-		let selected = selectDevice('cal-1')(events)
-
-		expect(selected.map((entry) => entry.sourceId)).toEqual(['device:cal-1', 'device:cal-1'])
-	})
-
-	test('two device calendars tag the same event differently', () => {
-		let event = makeDeviceEvent('evt-1', 'cal-1')
-
-		let [first] = selectDevice('cal-1')([event])
-		let [second] = selectDevice('cal-2')([event])
-
-		expect(first?.sourceId).toBe('device:cal-1')
-		expect(second?.sourceId).toBe('device:cal-2')
-	})
-
-	// EventKit's own event id, not the `startTime|title` key a remote event
-	// gets -- it is what the detail screen reads the event back by.
-	test('the key is EventKit’s event id', () => {
-		let selected = selectDevice('cal-1')([makeDeviceEvent('evt-1', 'cal-1')])
-
-		expect(selected[0]?.key).toBe('evt-1')
 	})
 })
 

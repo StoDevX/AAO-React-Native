@@ -14,14 +14,7 @@ import * as c from '@frogpond/colors'
 
 import {useDismissOnce} from '../../source/lib/use-dismiss-once'
 import {AddToCalendar} from '@frogpond/add-to-device-calendar'
-import {
-	deviceCalendarEventOptions,
-	deviceCalendarIdFrom,
-	isDeviceSourceId,
-	scheduleEventOptions,
-	useCalendarSource,
-	useCalendarSources,
-} from '@frogpond/ccc-calendar'
+import {scheduleEventOptions, useCalendarSource, useCalendarSources} from '@frogpond/ccc-calendar'
 import {LoadingView, NoticeView} from '@frogpond/notice'
 import {PRESENCE_POWERED_BY, STOLAF_POWERED_BY} from '../../source/features/calendar/constants'
 import {KSTO_POWERED_BY, KRLX_POWERED_BY} from '../../source/features/streaming/radio/constants'
@@ -42,12 +35,6 @@ const POWERED_BY: Record<EventSource, {title: string; href: string}> = {
 	'ksto-schedule': KSTO_POWERED_BY,
 	'krlx-schedule': KRLX_POWERED_BY,
 }
-
-/**
- * A calendar on the phone has no upstream to credit, so the attribution
- * caption is empty -- `EventDetail` omits it entirely when the title is.
- */
-const NO_ATTRIBUTION = {title: '', href: ''} as const
 
 /**
  * The sources that contribute to the merged calendar, and so have neighbours
@@ -75,27 +62,18 @@ export default function EventDetailPage(): React.ReactNode {
 		eventKey: string
 	}>()
 
-	let deviceSource = isDeviceSourceId(source)
 	let scheduleSource = SCHEDULE_SOURCE_IDS.has(source)
 
-	// Three queries, at most one of them switched on, rather than one
-	// `useQuery` over a branch: the option objects have different key tuples
-	// and different fetched shapes, so their union does not satisfy `useQuery`
-	// -- and picking the query inside the call would still leave the hook count
-	// stable but the types unresolvable. The idle ones never fetch.
+	// Two lookups, at most one of them switched on, rather than one `useQuery`
+	// over a branch: the option objects have different key tuples and different
+	// fetched shapes, so their union does not satisfy `useQuery` -- and picking
+	// the query inside the call would still leave the hook count stable but the
+	// types unresolvable. The idle one never fetches.
 	//
 	// Detail lookups don't need the list's eventMapper: it only ever sets
 	// config.subtitle, which the detail view never reads (only the list's
 	// row does) -- passing a mapper here would just be a second copy of that
 	// transform that has to stay byte-identical to the list's forever.
-	//
-	// `deviceCalendarIdFrom` only means anything for a device id -- run on a
-	// remote one it slices the prefix off a name that never had it, so the idle
-	// query would carry a key built from nonsense.
-	let deviceQuery = useQuery({
-		...deviceCalendarEventOptions(deviceSource ? deviceCalendarIdFrom(source) : '', eventKey),
-		enabled: deviceSource,
-	})
 	let scheduleQuery = useQuery({
 		...scheduleEventOptions(source, eventKey),
 		enabled: scheduleSource,
@@ -105,9 +83,9 @@ export default function EventDetailPage(): React.ReactNode {
 	let enabledIds = React.useMemo(() => enabled.map((source) => source.id), [enabled])
 
 	// A plain local SQLite read, not a fetch -- always run, since running it
-	// for a device or schedule source (neither of which the database has rows
-	// for) only costs a query that returns nothing. `enabledIds` scopes the
-	// sponsor union the same way the list screen scopes it.
+	// for a schedule source (which the database has no rows for) only costs a
+	// query that returns nothing. `enabledIds` scopes the sponsor union the
+	// same way the list screen scopes it.
 	let dbEvent = useEvent(source, eventKey, enabledIds)
 
 	let {
@@ -115,27 +93,25 @@ export default function EventDetailPage(): React.ReactNode {
 		isLoading,
 		error,
 		refetch,
-	} = deviceSource
-		? deviceQuery
-		: scheduleSource
-			? scheduleQuery
-			: // A local read, but not an instant one: a failed read is retried, and
-				// during a retry there is neither an event nor an error, so pending has
-				// to reach the loading branch rather than "Could not find this event".
-				// A corrupt database must reach the error branch below. `undefined`
-				// with no error and nothing pending still means exactly that: no row
-				// under this key.
-				{
-					data: dbEvent.event,
-					isLoading: dbEvent.isPending,
-					error: dbEvent.error,
-					refetch: dbEvent.refetch,
-				}
+	} = scheduleSource
+		? scheduleQuery
+		: // A local read, but not an instant one: a failed read is retried, and
+			// during a retry there is neither an event nor an error, so pending has
+			// to reach the loading branch rather than "Could not find this event".
+			// A corrupt database must reach the error branch below. `undefined`
+			// with no error and nothing pending still means exactly that: no row
+			// under this key.
+			{
+				data: dbEvent.event,
+				isLoading: dbEvent.isPending,
+				error: dbEvent.error,
+				refetch: dbEvent.refetch,
+			}
 
-	// The same cached device-calendar query the picker reads, so a device
-	// event's masthead is the colour its row had without any colour crossing
-	// the route. The fallback is only for an id nothing recognises -- a stale
-	// deep link to a calendar since deleted from the phone.
+	// The same source list the picker reads, so an event's masthead is the
+	// colour its row had without any colour crossing the route. The fallback is
+	// only for an id nothing recognises -- a stale deep link, or a source the
+	// app no longer ships.
 	let color = useCalendarSource(source)?.color ?? c.systemBlue
 
 	let colorFor = React.useMemo(() => {
@@ -146,13 +122,13 @@ export default function EventDetailPage(): React.ReactNode {
 	// The radio schedules route here too, and their events never enter
 	// `useCalendarSources` -- so there are no neighbours to draw and no timeline.
 	// `timelineWindow` rules out all-day events on its own, by returning null.
-	let isCalendarSource = deviceSource || REMOTE_SOURCE_IDS.has(source)
+	let isCalendarSource = REMOTE_SOURCE_IDS.has(source)
 	let windowRange = event && isCalendarSource ? timelineWindow(event) : null
 
 	// A bounded read over the timeline's own span, rather than the whole merged
-	// calendar. An event with no timeline of its own (all-day, multi-day,
-	// device, or a schedule source) has no neighbours to draw, and a `null`
-	// window skips the read entirely.
+	// calendar. An event with no timeline of its own (all-day, multi-day, or a
+	// schedule source) has no neighbours to draw, and a `null` window skips the
+	// read entirely.
 	let neighbours = useNeighbours({
 		window: windowRange ? occurrenceWindowFor(windowRange) : null,
 		sourceIds: enabledIds,
@@ -173,11 +149,7 @@ export default function EventDetailPage(): React.ReactNode {
 				}
 			: undefined
 
-	let poweredBy = deviceSource
-		? NO_ATTRIBUTION
-		: source in POWERED_BY
-			? POWERED_BY[source as EventSource]
-			: undefined
+	let poweredBy = source in POWERED_BY ? POWERED_BY[source as EventSource] : undefined
 
 	if (!poweredBy) {
 		return (

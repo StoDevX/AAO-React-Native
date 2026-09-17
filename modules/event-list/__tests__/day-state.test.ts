@@ -4,12 +4,11 @@ import {describe, expect, test} from '@jest/globals'
 import {anchorShouldFollow, dayOnShow, emptyNotice, failureNote, pageWindow} from '../day-state'
 import type {CalendarSource, SourcedEvent} from '../types'
 
-const CAMPUS: CalendarSource = {id: 'stolaf', title: 'St. Olaf', color: 'blue', kind: 'remote'}
+const CAMPUS: CalendarSource = {id: 'stolaf', title: 'St. Olaf', color: 'blue'}
 const PRESENCE: CalendarSource = {
 	id: 'presence',
 	title: 'Presence',
 	color: 'indigo',
-	kind: 'remote',
 }
 
 /** A day, in one named zone, so no assertion follows the machine it ran on. */

@@ -1,7 +1,7 @@
 import {useQueries} from '@tanstack/react-query'
 
-import {deviceCalendarOptions, namedCalendarOptions} from './query'
-import {type CalendarSource, deviceCalendarIdFrom, isDeviceSourceId} from './sources'
+import {namedCalendarOptions} from './query'
+import type {CalendarSource} from './sources'
 
 type MergedEvents = {
 	failed: CalendarSource[]
@@ -11,19 +11,15 @@ type MergedEvents = {
 }
 
 /**
- * Runs every enabled source's query -- a remote one now writes into the
- * database rather than returning events, and a device one still returns them
- * directly -- and reports across all of them: which failed, whether any is
- * still loading or refetching, and how to refetch every one. The events
- * themselves are read separately, from the database, by `useOccurrences`.
+ * Runs every enabled source's query -- each writes into the database rather
+ * than returning events -- and reports across all of them: which failed,
+ * whether any is still loading or refetching, and how to refetch every one.
+ * The events themselves are read separately, from the database, by
+ * `useOccurrences`.
  */
 export function useMergedEvents(sources: CalendarSource[]): MergedEvents {
 	let results = useQueries({
-		queries: sources.map((source) =>
-			isDeviceSourceId(source.id)
-				? deviceCalendarOptions(deviceCalendarIdFrom(source.id))
-				: namedCalendarOptions(source.id),
-		),
+		queries: sources.map((source) => namedCalendarOptions(source.id)),
 	})
 
 	let failed = sources.filter((_, index) => results[index]?.isError)
