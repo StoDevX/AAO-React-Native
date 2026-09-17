@@ -226,6 +226,7 @@
     "unicorn/prefer-type-error": "error",
     "unicorn/prefer-regexp-test": "error",
     "unicorn/prefer-math-min-max": "error",
+    "unicorn/consistent-function-scoping": "error",
     // `prefer-at` is off. `arr[arr.length - 1]` types as `T`, `arr.at(-1)` as
     // `T | undefined`, so every rewrite needs either a `!` -- which
     // typescript/no-non-null-assertion then warns about -- or a widened type.
@@ -345,6 +346,17 @@
       "files": ["images/**/*.ts"],
       "rules": {
         "typescript/no-require-imports": "off"
+      }
+    },
+    {
+      // A helper declared inside a `describe` says it belongs to that suite.
+      // times.test.ts holds four `generateEvent`s with three signatures
+      // between them, each building the fixture its own suite needs; hoisting
+      // them would mean three module-level builders with invented names and
+      // no suite to read them against.
+      "files": ["**/__tests__/**", "**/*.test.ts", "**/*.test.tsx", "**/*.test.mjs"],
+      "rules": {
+        "unicorn/consistent-function-scoping": "off"
       }
     },
     {

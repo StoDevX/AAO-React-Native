@@ -110,15 +110,17 @@ export function normalizeDraft(draft: DraftEntry): WordType {
 	return {...head, senses}
 }
 
+/// Every id at or under one sense, itself included.
+const idsUnder = (sense: DraftSense): string[] => [
+	sense.id,
+	...sense.examples.map((e) => e.id),
+	...sense.subsenses.flatMap(idsUnder),
+]
+
 /// Every id the draft holds, senses and examples alike. One namespace, so an
 /// id identifies a sense at any depth without a path.
 function idsOf(draft: DraftEntry): string[] {
-	let walk = (sense: DraftSense): string[] => [
-		sense.id,
-		...sense.examples.map((e) => e.id),
-		...sense.subsenses.flatMap(walk),
-	]
-	return draft.senses.flatMap(walk)
+	return draft.senses.flatMap(idsUnder)
 }
 
 /// One past the largest id in use. Derived from the draft rather than held in
