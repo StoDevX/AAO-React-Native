@@ -29,6 +29,20 @@ describe('patchAppDelegate', () => {
 		assert.ok(patchAppDelegate(STOCK).includes('--reset-state'))
 	})
 
+	// The calendar reads from SQLite, so a reset that leaves the database behind
+	// hands each test the events an earlier one wrote.
+	it('clears the SQLite databases under --reset-state', () => {
+		let result = patchAppDelegate(STOCK)
+		let reset = result.slice(
+			result.indexOf('--reset-state'),
+			result.indexOf('// set up the requests cacher'),
+		)
+		assert.match(
+			reset,
+			/urls\(for: \.documentDirectory, in: \.userDomainMask\)[\s\S]*appendingPathComponent\("SQLite"\)/u,
+		)
+	})
+
 	it('leaves the default module name alone, matching what expo-router registers', () => {
 		assert.ok(patchAppDelegate(STOCK).includes('withModuleName: "main"'))
 	})
