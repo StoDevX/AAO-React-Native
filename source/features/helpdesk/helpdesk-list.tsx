@@ -43,7 +43,7 @@ export function HelpdeskList(props: Props): React.ReactNode {
 	React.useEffect(() => {
 		useSelectorConfigStore
 			.getState()
-			.refresh()
+			.refresh(queryClient)
 			.then(() => {
 				queryClient.invalidateQueries({queryKey: ['helpdesk']})
 			})

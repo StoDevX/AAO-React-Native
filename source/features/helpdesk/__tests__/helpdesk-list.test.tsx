@@ -208,15 +208,16 @@ describe('HelpdeskList', () => {
 		expect(onSelect).toHaveBeenCalledWith(item)
 	})
 
-	test('refreshes the selector config on mount', async () => {
+	test('refreshes the selector config on mount, passing the QueryClient in scope', async () => {
 		// oxlint-disable-next-line require-await
 		let refresh = jest.fn(async () => undefined)
 		mockGetState.mockReturnValue({config: undefined as never, refresh})
 
 		// oxlint-disable-next-line require-await
-		await renderList(async () => [])
+		let {client} = await renderList(async () => [])
 
 		await waitFor(() => expect(refresh).toHaveBeenCalledTimes(1))
+		expect(refresh).toHaveBeenCalledWith(client)
 	})
 
 	test('invalidates the helpdesk queries once the refresh resolves', async () => {

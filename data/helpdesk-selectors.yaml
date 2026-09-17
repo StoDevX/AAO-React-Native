@@ -1,0 +1,23 @@
+# CSS selectors for scraping St. Olaf's public TeamDynamix portal. Published
+# separately from the app (see data/sources.yaml) so a portal redesign that
+# breaks scraping can be fixed here, without an App Store release --
+# source/features/helpdesk/default-selectors.ts is the bundled fallback used
+# until this loads, and again if a refresh ever fails.
+version: 1
+shapes:
+  resultList:
+    scope: '#divContent'
+    item: .search-result
+    title: h2.h3 a
+    snippet: .result-desc
+
+  categoryList:
+    scope: '#divCats'
+    item: .category-box
+    title: .category-title a
+    snippet: .category-box-description small
+
+  itemList:
+    item: .gutter-bottom-lg
+    title: h3.gutter-bottom-xs a
+    snippet: .breadcrumb

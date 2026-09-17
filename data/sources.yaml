@@ -66,3 +66,9 @@ links:
     type: application/vnd.frogpond.org-categories+json
     titles: {und: Student Org Categories}
     properties: {'https://frogpond.tech/ns/id': stolaf}
+
+  - rel: https://frogpond.tech/rel/helpdesk-selectors
+    href: 'https://stolaf.dev/AAO-React-Native/helpdesk-selectors.json'
+    type: application/vnd.frogpond.helpdesk-selectors+json
+    titles: {und: Helpdesk Selectors}
+    properties: {'https://frogpond.tech/ns/id': stolaf}
