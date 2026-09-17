@@ -4,6 +4,7 @@ import type {Moment} from 'moment'
 import type {FilterType} from '@frogpond/filter'
 import {FilterToolbar, FilterToolbarButton} from '@frogpond/filter'
 import {Toolbar} from '@frogpond/toolbar'
+import {useHostedContentWidth} from '@frogpond/viewport'
 import * as c from '@frogpond/colors'
 import {formatDate} from '@frogpond/time-format'
 
@@ -51,11 +52,17 @@ export function FilterMenuToolbar<T extends object>({
 		mealFilter && mealFilter.type === 'picker' ? mealFilter.spec.options.length > 1 : false
 	const nonPickerFilters = filters.filter((f) => f.type !== 'picker')
 
+	// The date bar is a flex row, and a flex child offered unbounded width
+	// stretches to it -- which runs the date off the leading edge and the meal
+	// picker off the trailing one. An explicit width is what keeps the bars
+	// inside the screen; see `useHostedContentWidth`.
+	const width = useHostedContentWidth()
+
 	// One view, not a fragment: `RNHostView` measures `children.first.uiView`,
 	// so a fragment of two bars sizes to the first and leaves the second in
 	// dead space with the SwiftUI host showing through the gap.
 	return (
-		<View style={styles.bars}>
+		<View style={[styles.bars, {width}]}>
 			<Toolbar>
 				<View style={[styles.toolbarSection, styles.today]}>
 					<Text style={styles.toolbarText}>{formatDate(date, 'short')}</Text>

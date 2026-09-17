@@ -8,6 +8,9 @@
   "scripts": {
     "test": "jest"
   },
+  "dependencies": {
+    "react-native-safe-area-context": "5.7.0"
+  },
   "peerDependencies": {
     "react": "catalog:",
     "react-native": "catalog:"

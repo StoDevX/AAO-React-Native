@@ -1,16 +1,8 @@
 import * as React from 'react'
-import {
-	DynamicColorIOS,
-	Pressable,
-	ScrollView,
-	StyleSheet,
-	Text,
-	useWindowDimensions,
-	View,
-} from 'react-native'
-import {useSafeAreaInsets} from 'react-native-safe-area-context'
+import {DynamicColorIOS, Pressable, ScrollView, StyleSheet, Text, View} from 'react-native'
 import type {Moment} from 'moment-timezone'
 import * as c from '@frogpond/colors'
+import {useHostedContentWidth} from '@frogpond/viewport'
 import {formatDate, formatDayOfMonth, formatWeekday} from '@frogpond/time-format'
 
 const selectionCircleFill = DynamicColorIOS({light: '#000000', dark: '#FFFFFF'})
@@ -149,16 +141,7 @@ export let DayPickerStrip = React.forwardRef<DayPickerStripHandle, Props>(functi
 ) {
 	let scrollRef = React.useRef<ScrollView>(null)
 
-	let {width: screenWidth} = useWindowDimensions()
-	// The strip spans the screen, so in landscape the notch would otherwise
-	// count towards a week and push the next week's Sunday into view.
-	let insets = useSafeAreaInsets()
-	// The hosting SwiftUI view sizes itself to this strip, so the strip cannot
-	// take its own width back from that view: asking to be measured there
-	// answers with an unbounded width, and the cells come out thousands of
-	// points wide. The viewport is the screen minus its safe area, which is
-	// already a width in points.
-	let containerWidth = screenWidth - insets.left - insets.right
+	let containerWidth = useHostedContentWidth()
 
 	// A week has to fill the viewport exactly, or the next week's first cell
 	// sits in the leftover space and shows at the strip's trailing edge. A
