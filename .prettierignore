@@ -7,3 +7,4 @@ node_modules/
 /android/
 /ios/
 /pnpm-lock.yaml
+/source/features/helpdesk/__fixtures__/
