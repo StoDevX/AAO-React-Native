@@ -121,6 +121,13 @@ export const AllViews = (): Array<ViewType> => {
 		},
 		{
 			type: 'view',
+			view: '/Helpdesk',
+			title: 'Helpdesk',
+			icon: 'lifepreserver.fill',
+			gradient: c.indigoGradient,
+		},
+		{
+			type: 'view',
 			view: '/Communities',
 			title: 'Communities',
 			icon: 'bubble.left.and.bubble.right.fill',
