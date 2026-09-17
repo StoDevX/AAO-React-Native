@@ -38,7 +38,7 @@ function lcsTable(before: string[], after: string[]): number[][] {
 /// Appends to the last run when the mark matches, so a stretch of changed
 /// words draws as one span rather than one per word.
 function push(runs: Run[], text: string, mark: Mark): void {
-	let last = runs[runs.length - 1]
+	let last = runs.at(-1)
 	if (last && last.mark === mark) {
 		last.text += text
 		return

@@ -21,7 +21,7 @@ export function convertDataFile({fromFile, toFile, toFileType = 'json'}) {
 	let contents = fs.readFileSync(fromFile, 'utf-8')
 	let output = contents
 
-	let fileType = fromFile.split('.').slice(-1)[0]
+	let fileType = fromFile.split('.').at(-1)
 	switch (fileType) {
 		case 'md':
 			output = processMarkdown(contents)

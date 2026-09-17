@@ -161,7 +161,7 @@ export function htmlToFormattedText(html: string): string {
 
 function appendText(segments: Segment[], text: string): void {
 	if (!text) return
-	const last = segments[segments.length - 1]
+	const last = segments.at(-1)
 	if (last?.type === 'text') {
 		last.text += text
 	} else {
@@ -206,7 +206,7 @@ function walkSegments(nodes: ChildNode[], segments: Segment[], listContext?: 'ul
 			case 'p': {
 				const inner: Segment[] = []
 				walkSegments(children, inner)
-				const last = inner[inner.length - 1]
+				const last = inner.at(-1)
 				if (last?.type === 'text') last.text = last.text.trimEnd()
 				mergeSegments(segments, inner)
 				appendText(segments, '\n\n')
@@ -230,7 +230,7 @@ function walkSegments(nodes: ChildNode[], segments: Segment[], listContext?: 'ul
 				if (firstSeg?.type === 'text') {
 					firstSeg.text = firstSeg.text.trimStart()
 				}
-				const lastSeg = inner[inner.length - 1]
+				const lastSeg = inner.at(-1)
 				if (lastSeg?.type === 'text') {
 					lastSeg.text = lastSeg.text.trimEnd()
 				}

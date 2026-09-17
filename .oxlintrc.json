@@ -227,11 +227,11 @@
     "unicorn/prefer-regexp-test": "error",
     "unicorn/prefer-math-min-max": "error",
     "unicorn/consistent-function-scoping": "error",
-    // `prefer-at` is off. `arr[arr.length - 1]` types as `T`, `arr.at(-1)` as
-    // `T | undefined`, so every rewrite needs either a `!` -- which
-    // typescript/no-non-null-assertion then warns about -- or a widened type.
-    // Applying it produced 13 type errors.
-    "unicorn/prefer-at": "off",
+    // `noUncheckedIndexedAccess` is off, so `arr[i]` types as `T` while it can
+    // be `undefined` at runtime; `arr.at(i)` types as `T | undefined`, which is
+    // what is actually true. Every app-code site either already carried the
+    // check -- `if (!last)`, `last?.type` -- or was missing one it needed.
+    "unicorn/prefer-at": "error",
     // Both checks off: stripping a `undefined` argument leaves a call short
     // of a required parameter, and rewriting `async () => undefined` to
     // `async () => {}` leaves an empty body that no-empty-function then
@@ -356,7 +356,11 @@
       // no suite to read them against.
       "files": ["**/__tests__/**", "**/*.test.ts", "**/*.test.tsx", "**/*.test.mjs"],
       "rules": {
-        "unicorn/consistent-function-scoping": "off"
+        "unicorn/consistent-function-scoping": "off",
+        // A fixture index that misses fails the test on the next line anyway,
+        // so narrowing it only adds ceremony between the arrangement and the
+        // assertion.
+        "unicorn/prefer-at": "off"
       }
     },
     {

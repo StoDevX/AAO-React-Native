@@ -22,6 +22,10 @@ describe('returns a single day if only a single day is given', () => {
 	}
 })
 
+test('says nothing for a schedule with no days set', () => {
+	expect(summarizeDays([])).toEqual('')
+})
+
 describe('returns the provided days if non-contiguous', () => {
 	test('handles a two-day set', () => {
 		let actual = summarizeDays(['Mo', 'We'])

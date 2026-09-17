@@ -26,8 +26,13 @@ export function summarizeDays(
 	// Sort the days so we have fewer edge-cases
 	let sortedDays = sortBy(days, (d) => daysOfTheWeek.indexOf(d))
 
-	let startDay = sortedDays[0]
-	let endDay = sortedDays[sortedDays.length - 1]
+	let startDay = sortedDays.at(0)
+	let endDay = sortedDays.at(-1)
+	if (!startDay || !endDay) {
+		// No days is not a span, and nothing below can word one. `blankSchedule()`
+		// opens a schedule with none, so an unfilled row reaches here.
+		return ''
+	}
 
 	// Get the indices of the start/end days from the master list of all days
 	let startIndex = daysOfTheWeek.indexOf(startDay)
