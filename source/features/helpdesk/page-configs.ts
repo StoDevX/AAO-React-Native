@@ -9,6 +9,7 @@ export type HelpdeskPageType =
 	| 'kbCategory'
 
 export const HELPDESK_BASE_URL = 'https://stolafcarleton.teamdynamix.com'
+// 1893 is St. Olaf's numeric TDX client ID; StOlaf is the portal slug.
 const PORTAL_PATH = '/TDClient/1893/StOlaf'
 
 interface PageConfig {
@@ -39,6 +40,8 @@ export const serviceCatalogCategoryUrl = (id: string, slug: string): string =>
 export const servicesAtoZUrl = (): string =>
 	`${HELPDESK_BASE_URL}${PORTAL_PATH}/Services/ServicesAtoZ`
 
+// The trailing slash is load-bearing -- TDX's real KB root URL includes it,
+// verified against the live portal.
 export const kbUrl = (): string => `${HELPDESK_BASE_URL}${PORTAL_PATH}/KB/`
 
 export const kbCategoryUrl = (id: string, slug: string): string =>
