@@ -211,10 +211,6 @@ const config: ExpoConfig = {
 			'expo-build-properties',
 			{
 				ios: {
-					// The oldest iOS the app installs on. Expo SDK 57's own floor is
-					// 16.4; the project has run ahead of that since SDK 56, and the
-					// Podfile must not drift from it. A build needs an SDK at least this
-					// new, so CI runs the Xcode 27 image -- see ios.yml.
 					deploymentTarget: '27.0',
 
 					// Point CC/CXX at React Native's ccache wrappers, which only CI
