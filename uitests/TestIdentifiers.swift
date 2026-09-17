@@ -96,6 +96,11 @@ struct TestIdentifiers {
 		/// Apple's.
 		static let referenceEntry = "change"
 
+		/// The edit form's navigation bar, which carries `suggestAnEdit`'s
+		/// wording because that action is what opens it. Queries for the form's
+		/// back button scope to this bar, since the label alone does not tell
+		/// it from the list's back button behind the sheet.
+		static let editFormTitle = suggestAnEdit
 		static let editForm = "dictionary-edit-form"
 		static let previewSheet = "dictionary-preview-sheet"
 		static let preview = "Preview"
