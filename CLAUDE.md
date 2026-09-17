@@ -47,7 +47,7 @@ change was needed rather than restating the diff.
 
 These patterns are especially important in this codebase:
 
-- **Lists:** Always use `FlatList`, never `ScrollView` for dynamic data. Memoize list items with `React.memo`.
+- **Lists:** Use `@expo/ui/swift-ui`'s `Host`/`List`/`Section` with `DisclosureRow` (`source/components/rows.tsx`) for a native list screen — this is a SwiftUI-backed component, not a React Native `ScrollView`/`FlatList`. `FlatList` is legacy in this codebase; don't reach for it in new code.
 - **Safe areas:** Use `react-native-safe-area-context` — never hardcode status bar padding
 - **Touch targets:** Minimum 44x44pt on all interactive elements
 - **Accessibility:** Include `accessibilityLabel` and `accessibilityRole` on all interactive elements
