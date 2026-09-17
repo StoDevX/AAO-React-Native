@@ -22,10 +22,7 @@ function papercut<T>(mockData: T): Promise<T> {
 	return new Promise((resolve) => resolve(mockData))
 }
 
-export function logIn(
-	credentials: SharedWebCredentials,
-	now: number = new Date().getTime(),
-): Promise<void> {
+export function logIn(credentials: SharedWebCredentials, now: number = Date.now()): Promise<void> {
 	return Promise.resolve()
 }
 

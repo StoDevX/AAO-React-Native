@@ -38,7 +38,7 @@ function parseFeedDate(dateUtc: string): Date {
 
 	const match = MDY_DATE.exec(dateUtc)
 	if (!match) {
-		return new Date(NaN)
+		return new Date(Number.NaN)
 	}
 
 	const [, month, day, year] = match

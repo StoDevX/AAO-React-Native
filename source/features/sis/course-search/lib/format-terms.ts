@@ -27,7 +27,7 @@ type TermAbbrevType = {
 function parseTermAbbrev(term: string): TermAbbrevType {
 	let semester = term.slice(-1)
 	let year = term.slice(0, -1)
-	let currentYear = parseInt(year, 10)
+	let currentYear = Number.parseInt(year, 10)
 	let currentYearAbbrev = year.slice(-2)
 	let nextYear = (currentYear + 1).toString().slice(-2)
 	switch (semester) {

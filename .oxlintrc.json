@@ -189,6 +189,34 @@
     "react/self-closing-comp": "warn",
     "react/jsx-boolean-value": ["error", "always"],
 
+    // Unicorn rules.
+    //
+    // `no-array-sort` and `no-array-reverse` are deliberately absent. Both
+    // rewrite to the non-mutating `toSorted`/`toReversed`, and every one of
+    // the 29 sites here already sorts or reverses an array the surrounding
+    // expression just built -- `.filter(...).sort()`, `Array.from(x).sort()`,
+    // `[...x].reverse()`. They would add a redundant copy at each site and go
+    // on firing on correct code. `toSorted` is also not a method Hermes has:
+    // Hermes 0.17.0, the engine react-native 0.86 ships, registers
+    // `toReversed` and `toSpliced` but not `toSorted`, so the rule's own fix
+    // type-checks, passes Jest -- which runs on Node, where the method exists
+    // -- and throws on a device.
+    //
+    // `Number.parseInt`/`Number.NaN` over the globals: same functions, but
+    // the namespaced spelling does not shadow-collide and reads as numeric.
+    "unicorn/prefer-number-properties": "error",
+    "unicorn/new-for-builtins": "error",
+    "unicorn/no-typeof-undefined": "error",
+    // `new Date().getTime()` allocates a Date to read a number off it.
+    "unicorn/prefer-date-now": "error",
+    // Off here, on for scripts/ and plugins/ in the overrides below. Those run
+    // under Node, where `node:` prefixes resolve. App code goes through Metro
+    // for Hermes, which has no Node builtins: `source/polyfills/buffer.js`
+    // imports from 'buffer' to reach the `buffer` npm shim, and a `node:`
+    // prefix there would break the polyfill that exists because Hermes has no
+    // global Buffer.
+    "unicorn/prefer-node-protocol": "off",
+
     // TanStack Query rules (@tanstack/eslint-plugin-query's own
     // `flat/recommended` severities)
     "@tanstack/query/exhaustive-deps": "error",
@@ -214,6 +242,13 @@
       "files": ["images/**/*.ts"],
       "rules": {
         "typescript/no-require-imports": "off"
+      }
+    },
+    {
+      // Node runs these, so `node:` prefixes resolve here.
+      "files": ["scripts/**/*.mjs", "scripts/**/*.ts", "plugins/**/*.ts"],
+      "rules": {
+        "unicorn/prefer-node-protocol": "error"
       }
     },
     {

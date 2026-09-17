@@ -33,7 +33,7 @@ function describeFilter(filter: FilterType<CourseType>, filters: FilterType<Cour
 		case 'term': {
 			let termFilter = filterListSpecs(filters).find((specFilter) => specFilter.key === 'term')
 			let selectedTerms = termFilter ? termFilter.spec.selected : []
-			let terms = selectedTerms.map((t) => parseInt(t.title, 10))
+			let terms = selectedTerms.map((t) => Number.parseInt(t.title, 10))
 			return formatTerms(terms)
 		}
 		case 'gereqs': {
