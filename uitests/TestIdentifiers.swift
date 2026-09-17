@@ -245,8 +245,10 @@ struct TestIdentifiers {
 		/// Categories the picker offers, written as the menu draws them: the
 		/// name, then how many events carry it. The counts come from
 		/// `modules/ccc-calendar/fixtures/uitest-events.json` read at the app's
-		/// frozen clock, so they hold for as long as that fixture does.
-		static let categories = ["Music (10)", "Academic Year (6)"]
+		/// frozen clock, so they hold for as long as that fixture does. A count
+		/// covers the list's whole window, finished events included: Welcome
+		/// Convocation ended that morning and still counts toward Academic Year.
+		static let categories = ["Music (10)", "Academic Year (7)"]
 		/// The picker menu's one section header. SwiftUI draws a Menu section
 		/// title as static text, uppercased by the caller rather than by the
 		/// platform.
