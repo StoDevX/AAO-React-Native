@@ -40,6 +40,11 @@ struct TestIdentifiers {
 		/// navigation bar -- `app.navigationBars.buttons[backButton]` matches
 		/// the bar behind a sheet as readily as the sheet's own.
 		static let backButton = "Back"
+		/// UIKit's own identifier for a system back button, which it sets
+		/// whatever the label. This is what separates a bar's system back
+		/// button from an app-provided one carrying only a label, now that
+		/// both read `Back`.
+		static let systemBackButton = "BackButton"
 	}
 
 	/// Labels UIKit gives a `Stack.SearchBar`'s own controls. In the bottom
@@ -169,7 +174,6 @@ struct TestIdentifiers {
 		static let iAgree = "I Agree"
 		static let balancesHeader = "BALANCES"
 		static let mealPlanHeader = "MEAL PLAN"
-		static let backButton = "All About Olaf"
 		static let openJobs = "Open Jobs"
 	}
 
