@@ -142,13 +142,6 @@ export function lineLimit(
 export const listRowSeparator = (visibility: string, edges?: string): Modifier =>
 	createModifier('listRowSeparator', {visibility, edges})
 
-/**
- * Natively SwiftUI calls the handler when the view appears. Nothing appears
- * here, so it only carries the handler; when a view lands on screen is a UI
- * test's question.
- */
-export const onAppear = (handler: () => void): Modifier => createModifier('onAppear', {handler})
-
 export const presentationDetents = (
 	detents: unknown[],
 	options?: {selection?: unknown},
@@ -180,6 +173,15 @@ export const scrollPosition = (
 		anchor: options?.anchor,
 		onChange: options?.onChange,
 	})
+
+/**
+ * Natively a worklet here runs on the UI thread as the scroll geometry changes.
+ * There is no scrolling here, so it only carries the callback; where a scroll
+ * lands is a UI test's question.
+ */
+export function useScrollGeometryChange(callback?: (geometry: unknown) => void): Modifier | null {
+	return callback ? createModifier('onScrollGeometryChange', {callback}) : null
+}
 
 /**
  * Shape builders, not modifiers: `contentShape(shapes.rectangle())` passes one

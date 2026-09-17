@@ -4,6 +4,7 @@ import {
 	Host,
 	LazyVStack,
 	ScrollView as SwiftUIScrollView,
+	type ScrollGeometry,
 	Text,
 	useNativeState,
 	VStack,
@@ -13,11 +14,11 @@ import {
 	font,
 	foregroundStyle,
 	id,
-	onAppear,
 	padding,
 	refreshable,
 	scrollPosition,
 	scrollTargetLayout,
+	useScrollGeometryChange,
 } from '@expo/ui/swift-ui/modifiers'
 import * as c from '@frogpond/colors'
 import type {Moment} from 'moment-timezone'
@@ -77,22 +78,30 @@ export let EventList = React.forwardRef<CalendarBodyHandle, Props>(function Even
 	 * is last month; the past is meant to be reachable by scrolling up, not to
 	 * be where the screen opens.
 	 *
-	 * Sent when the scroll view appears -- not from an effect, and not as the
-	 * state's starting value. Measured on the simulator, SwiftUI scrolls only
-	 * when the position changes after the list has appeared: a position that
-	 * arrives any earlier is dropped, and since the state then already reads
-	 * today, nothing sends it again, so the list stays on last month.
+	 * Set on the UI thread the first time the list has content laid out. Not
+	 * from an effect, and not as the state's starting value: measured on the
+	 * simulator, SwiftUI drops a position set before the list appears, and since
+	 * the state then already reads today, nothing sets it again. Not from
+	 * JavaScript either: an event from the list reaches it a render late, and
+	 * with a month of events above today the reader sees that month for a
+	 * moment before the jump.
 	 *
 	 * Only while the list has no position yet. SwiftUI writes the leading
 	 * section back as the reader scrolls, so a list that has been placed never
-	 * reads null again; appearing a second time leaves the reader where they
-	 * were, and going back to today is what the Today button is for.
+	 * reads null again; a later layout -- a refresh, a filter -- leaves the
+	 * reader where they were, and going back to today is what the Today button
+	 * is for.
 	 */
-	let openOnToday = React.useCallback(() => {
-		if (todayKey && scrollTarget.get() === null) {
-			scrollTarget.set(todayKey)
-		}
-	}, [scrollTarget, todayKey])
+	let openOnToday = React.useCallback(
+		(geometry: ScrollGeometry) => {
+			'worklet'
+			if (todayKey && geometry.contentHeight > 0 && scrollTarget.get() === null) {
+				scrollTarget.set(todayKey)
+			}
+		},
+		[scrollTarget, todayKey],
+	)
+	let placement = useScrollGeometryChange(openOnToday)
 
 	/** Returns the list to today -- see `todaySectionKey` for what that means. */
 	let showToday = React.useCallback(() => {
@@ -125,7 +134,7 @@ export let EventList = React.forwardRef<CalendarBodyHandle, Props>(function Even
 						await props.onRefresh()
 					}),
 					scrollPosition(scrollTarget, {anchor: 'top'}),
-					onAppear(openOnToday),
+					...(placement ? [placement] : []),
 				]}
 			>
 				<LazyVStack alignment="leading" modifiers={[scrollTargetLayout()]}>
