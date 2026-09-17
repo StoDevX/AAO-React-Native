@@ -394,14 +394,16 @@ export function List({
 	onSelectionChange?: (selection: (string | number)[]) => void
 }): React.ReactNode {
 	let rows = <Refreshable modifiers={modifiers}>{children}</Refreshable>
+	let context = React.useMemo(
+		() => (selection && onSelectionChange ? {selection, onSelectionChange} : null),
+		[selection, onSelectionChange],
+	)
 
-	if (!selection || !onSelectionChange) {
+	if (!context) {
 		return rows
 	}
 
-	return (
-		<ListSelection.Provider value={{selection, onSelectionChange}}>{rows}</ListSelection.Provider>
-	)
+	return <ListSelection.Provider value={context}>{rows}</ListSelection.Provider>
 }
 
 List.ForEach = function ListForEach({

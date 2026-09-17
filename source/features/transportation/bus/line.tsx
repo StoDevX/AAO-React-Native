@@ -238,6 +238,7 @@ export function BusLine(props: Props): React.ReactNode {
 				{timetable.length === 0
 					? EMPTY_SCHEDULE_MESSAGE
 					: timetable.map((item, index) => (
+							// oxlint-disable-next-line react/no-array-index-key -- a loop route visits a stop twice
 							<React.Fragment key={`${item.name}-${index}`}>
 								{index > 0 ? <BusLineSeparator /> : null}
 								<TouchableOpacity

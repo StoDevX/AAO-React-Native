@@ -125,9 +125,9 @@ export function BuildingDetailSwiftUI({building, now, campus}: Props): React.Rea
 						footer={schedule.notes ? <Text>{schedule.notes}</Text> : undefined}
 						title={schedule.title.toUpperCase()}
 					>
-						{schedule.hours.map((set, i) => (
+						{schedule.hours.map((set) => (
 							<ScheduleRowSwiftUI
-								key={i}
+								key={`${set.days.join('')}-${set.from}-${set.to}`}
 								accentColor={accentColor}
 								isActive={isScheduleRowActive(schedule, set, now)}
 								now={now}
@@ -169,9 +169,9 @@ export function BuildingDetailSwiftUI({building, now, campus}: Props): React.Rea
 
 				{links.length > 0 ? (
 					<Section title="RESOURCES">
-						{links.map((link, i) => (
+						{links.map((link) => (
 							<Button
-								key={i}
+								key={link.url.toString()}
 								modifiers={[buttonStyle('plain')]}
 								onPress={() => openUrl(link.url.toString())}
 							>

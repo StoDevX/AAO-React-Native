@@ -63,6 +63,11 @@ type Modifier = ReturnType<typeof foregroundStyle>
  * one `markedRuns` call per example, and each starts counting from zero on
  * its own.
  */
+/** The marked-up text read plainly, for naming a row rather than setting it. */
+function runsText(runs: Run[]): string {
+	return runs.map((run) => run.text).join('')
+}
+
 function markedRuns(runs: Run[], keyPrefix = ''): React.ReactNode[] {
 	return runs.map((run, index) => {
 		let key = `${keyPrefix}${index}`
@@ -199,9 +204,9 @@ function DiffSenseRow({
 				</Text>
 			) : null}
 
-			{movedCitations.map((example, index) => (
+			{movedCitations.map((example) => (
 				<Text
-					key={index}
+					key={runsText(example.runs)}
 					modifiers={[
 						font({textStyle: 'footnote'}),
 						foregroundStyle(c.secondaryLabel),
@@ -212,10 +217,10 @@ function DiffSenseRow({
 				</Text>
 			))}
 
-			{sense.subsenses.map((subsense, index) => (
+			{sense.subsenses.map((subsense) => (
 				<DiffSenseRow
 					indent={indent + SENSE_NUMBER_WIDTH}
-					key={index}
+					key={runsText(subsense.definition)}
 					marker={SUBSENSE_MARKER}
 					sense={subsense}
 				/>
@@ -293,10 +298,10 @@ export function EntryDiff({diff}: Props): React.ReactNode {
 				{/* One block, so consecutive senses read on with the same leading
 				    as the lines inside them rather than a paragraph gap. */}
 				<VStack alignment="leading" spacing={0}>
-					{diff.senses.map((sense, index) => (
+					{diff.senses.map((sense) => (
 						<DiffSenseRow
 							indent={SENSE_INDENT}
-							key={index}
+							key={runsText(sense.definition)}
 							marker={sense.number === undefined ? '' : String(sense.number)}
 							sense={sense}
 						/>

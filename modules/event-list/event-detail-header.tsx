@@ -82,8 +82,11 @@ export function EventDetailHeader({lines, color, title}: Props): React.ReactNode
 				<Text modifiers={[font({textStyle: 'title', weight: 'bold'}), foregroundStyle(c.label)]}>
 					{title}
 				</Text>
-				{lines.map((line, index) => (
-					<TimeLine key={`${line.prefix}-${index}`} line={line} />
+				{lines.map((line) => (
+					<TimeLine
+						key={[line.prefix, line.time, line.date].filter(Boolean).join(' ')}
+						line={line}
+					/>
 				))}
 			</VStack>
 		</HStack>

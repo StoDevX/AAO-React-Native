@@ -42,6 +42,7 @@ export default function WebcamsPage(): React.ReactNode {
 			testID="screen-streaming-webcams"
 		>
 			{columns.map((contents, i) => (
+				// oxlint-disable-next-line react/no-array-index-key -- a column is its position; the thumbnails inside are keyed by name
 				<Column key={i} style={styles.column}>
 					{contents.map((webcam) => (
 						<StreamThumbnail key={webcam.name} viewportWidth={viewport.width} webcam={webcam} />

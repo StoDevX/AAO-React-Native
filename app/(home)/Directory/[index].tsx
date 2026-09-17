@@ -142,8 +142,8 @@ export default function DirectoryDetailPage(): React.ReactNode {
 						</Section>
 					) : null}
 
-					{campusLocations.map((loc: CampusLocation, i: number) => (
-						<Section key={i} title="OFFICE">
+					{campusLocations.map((loc: CampusLocation) => (
+						<Section key={`${loc.display ?? ''}-${loc.phone ?? ''}`} title="OFFICE">
 							{loc.display ? <DetailRow label="Location" value={loc.display} /> : null}
 							{loc.phone ? (
 								<DetailRow

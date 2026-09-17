@@ -32,7 +32,8 @@
   "plugins": ["typescript", "react", "unicorn", "oxc", "import"],
   "jsPlugins": ["@tanstack/eslint-plugin-query"],
   "categories": {
-    "correctness": "error"
+    "correctness": "error",
+    "perf": "error"
   },
   "options": {
     "typeAware": true,
@@ -281,7 +282,6 @@
     "unicorn/no-useless-switch-case": "error",
     "unicorn/number-literal-case": "error",
     "unicorn/prefer-array-flat": "error",
-    "unicorn/prefer-array-flat-map": "error",
     "unicorn/prefer-array-index-of": "error",
     "unicorn/prefer-array-some": "error",
     "unicorn/prefer-bigint-literals": "error",
@@ -305,6 +305,20 @@
     "unicorn/require-number-to-fixed-digits-argument": "error",
     "unicorn/switch-case-break-position": "error",
     "unicorn/throw-new-error": "error",
+
+    // Two rules out of the perf category, which is otherwise on.
+    //
+    // no-map-spread reads `.map((x) => ({...x, extra}))` as a wasted
+    // allocation and offers "if in-place mutation is acceptable, use
+    // Object.assign". It is not acceptable at any of the seven sites here --
+    // they shape React Query results, parsed feeds and draft state, all of
+    // which someone else owns. Trading an allocation for a mutated shared
+    // object is the wrong side of that bargain in a React app.
+    "oxc/no-map-spread": "off",
+    // prefer-set-has pays off when a list is probed repeatedly. Both sites
+    // here probe once, against a list of two, so a Set costs more than it
+    // saves.
+    "unicorn/prefer-set-has": "off",
 
     // TanStack Query rules (@tanstack/eslint-plugin-query's own
     // `flat/recommended` severities)

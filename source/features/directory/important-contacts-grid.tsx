@@ -93,6 +93,7 @@ export function ImportantContactsGrid({
 					verticalSpacing={TILE_SPACING}
 				>
 					{inRows(contacts, columns).map((row, i) => (
+						// oxlint-disable-next-line react/no-array-index-key -- a row is its position; tiles are keyed by title
 						<Grid.Row key={i}>
 							{row.map((contact) => (
 								<ContactTile

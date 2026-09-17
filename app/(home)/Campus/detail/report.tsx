@@ -145,6 +145,7 @@ let CampusProblemReportView = ({initialBuilding, campus}: Props): React.ReactNod
 
 					{schedules.map((s: NamedBuildingScheduleType, i: number) => (
 						<EditableSchedule
+							// oxlint-disable-next-line react/no-array-index-key -- the index is the handle editRow edits by
 							key={i}
 							dispatch={dispatch}
 							editRow={openEditor}
@@ -232,6 +233,7 @@ const EditableSchedule = (props: EditableScheduleProps) => {
 			/>
 
 			{schedule.hours.map((set, i) => (
+				// oxlint-disable-next-line react/no-array-index-key -- the index is the handle editRow edits by
 				<TimesRow key={i} now={now} onPress={() => props.editRow(scheduleIndex, i)} set={set} />
 			))}
 

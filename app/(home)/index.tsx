@@ -186,6 +186,7 @@ export default function HomePage(): React.ReactNode {
 
 						<Grid horizontalSpacing={CELL_MARGIN} verticalSpacing={CELL_MARGIN}>
 							{rows.map((row, i) => (
+								// oxlint-disable-next-line react/no-array-index-key -- a row is its position; the buttons inside are keyed by title
 								<Grid.Row key={i}>
 									{row.map((view) => (
 										<HomeScreenButton

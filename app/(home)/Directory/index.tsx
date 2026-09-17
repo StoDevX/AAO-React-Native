@@ -157,6 +157,7 @@ function DirectoryView(): React.ReactNode {
 						<Section title={heading ?? undefined}>
 							{items.map((item, index) => (
 								<DirectoryItemRow
+									// oxlint-disable-next-line react/no-array-index-key -- the index is the handle openResult opens by
 									key={index}
 									index={index}
 									item={item}

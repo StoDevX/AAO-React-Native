@@ -19,10 +19,7 @@ export const serverRoutesOptions = queryOptions({
 		return response as ServerRoute[]
 	},
 	select: (routes) => {
-		let grouped = groupBy(routes, (r) => {
-			const parts = r.path.split('/').filter((v) => v)
-			return parts[0]
-		})
+		let grouped = groupBy(routes, (r) => r.path.split('/').find((v) => v))
 		let groupedRoutes = Object.entries(grouped).map(([key, value]) => ({
 			title: key,
 			data: value,
