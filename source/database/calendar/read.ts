@@ -227,12 +227,16 @@ export function useFacets(args: {
  * reader is looking at this copy, so the calendar carrying it contributes
  * whether or not it is switched on -- a deep link into a calendar the reader
  * has turned off would otherwise show the event with no sponsors at all.
+ *
+ * `isPending` covers a retry as well as the first read: React Query clears the
+ * error of a failed read while it tries again, so without it a retry reads as
+ * no event under this key.
  */
 export function useEvent(
 	sourceId: string,
 	key: string,
 	sourceIds: string[],
-): {event: EventType | undefined; error: Error | null; refetch: () => void} {
+): {event: EventType | undefined; isPending: boolean; error: Error | null; refetch: () => void} {
 	let revision = useCalendarRevision()
 
 	let result = useQuery({
@@ -254,6 +258,7 @@ export function useEvent(
 
 	return {
 		event: result.data,
+		isPending: result.isPending,
 		error: result.error,
 		refetch: () => void result.refetch(),
 	}

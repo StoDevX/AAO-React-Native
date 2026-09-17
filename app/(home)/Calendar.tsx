@@ -31,7 +31,11 @@ export default function CalendarPage(): React.ReactNode {
 	// queries on that value, never on this object's own identity, so an equal
 	// window does not mint a new query key.
 	let readWindow = useMemo(() => dayWindow(now.toDate()), [now])
-	let {events, failed: readFailed} = useOccurrences({
+	let {
+		events,
+		isPending: readPending,
+		failed: readFailed,
+	} = useOccurrences({
 		window: readWindow,
 		sourceIds: enabledIds,
 		filters: filter ? [filter] : [],
@@ -46,6 +50,11 @@ export default function CalendarPage(): React.ReactNode {
 	// nothing went wrong. What actually went wrong goes to Sentry from
 	// `read.ts`; there is nothing on this screen a reader could do with it.
 	let unreadable = readFailed ? enabled : failed
+
+	// A read still going -- the first one, or a retry of one that failed, when
+	// React Query holds neither events nor an error -- is loading, not an empty
+	// calendar.
+	let loading = isLoading || readPending
 
 	let onPressEvent = (entry: SourcedEvent) => {
 		router.push({
@@ -66,7 +75,7 @@ export default function CalendarPage(): React.ReactNode {
 				ref={bodyRef}
 				events={events}
 				failed={unreadable}
-				isLoading={isLoading}
+				isLoading={loading}
 				now={now}
 				onPressEvent={onPressEvent}
 				onRefresh={refetchAll}

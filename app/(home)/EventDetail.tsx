@@ -128,13 +128,15 @@ export default function EventDetailPage(): React.ReactNode {
 		? deviceQuery
 		: scheduleSource
 			? scheduleQuery
-			: // A local read, so there is no loading state worth a spinner -- but it
-				// can fail, and a corrupt database must reach the error branch below
-				// rather than the "Could not find this event" one. `undefined` with no
-				// error still means exactly that: no row under this key.
+			: // A local read, but not an instant one: a failed read is retried, and
+				// during a retry there is neither an event nor an error, so pending has
+				// to reach the loading branch rather than "Could not find this event".
+				// A corrupt database must reach the error branch below. `undefined`
+				// with no error and nothing pending still means exactly that: no row
+				// under this key.
 				{
 					data: dbEvent.event,
-					isLoading: false,
+					isLoading: dbEvent.isPending,
 					error: dbEvent.error,
 					refetch: dbEvent.refetch,
 				}
