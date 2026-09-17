@@ -129,7 +129,7 @@ export function contextualStatus(
 			.map((hours) => findOpenWindow(hours, now))
 			.find((candidate) => candidate !== null)
 		if (window) {
-			return plain(`${service.name} until ${formatTime(window.close, locale)}`)
+			return plain(`${service.name} calls only until ${formatTime(window.close, locale)}`)
 		}
 	}
 
