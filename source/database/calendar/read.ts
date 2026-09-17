@@ -7,6 +7,7 @@ import type {SourcedEvent} from '../../../modules/event-list/types.ts'
 import type {CalendarFilterOption} from '../../features/calendar/filter.ts'
 import {getRunner} from '../client.ts'
 import type {SqlRunner} from '../sql.ts'
+import {localDate} from './dates.ts'
 import {hydrate, type OccurrenceRowResult} from './hydrate.ts'
 import {
 	facetsQuery,
@@ -44,14 +45,6 @@ const FORWARD_DAYS = 180
  * how all three hooks below came to be persisted in the first place.
  */
 export const CALENDAR_READ_KEY = 'calendar-db'
-
-/** A `YYYY-MM-DD` string for a `Date`, read in local time -- matches `write.ts`'s own `localDate`. */
-function localDate(date: Date): string {
-	let year = date.getFullYear()
-	let month = String(date.getMonth() + 1).padStart(2, '0')
-	let day = String(date.getDate()).padStart(2, '0')
-	return `${year}-${month}-${day}`
-}
 
 /**
  * The two-sided window the screens read from: `RETENTION_DAYS` back, `FORWARD_DAYS`

@@ -1,5 +1,6 @@
 import type {WireEvent} from '../../../modules/ccc-calendar/parsers/events.ts'
 import type {SqlRunner} from '../sql.ts'
+import {localDate} from './dates.ts'
 import type {EventRow, OccurrenceRow, TagRow} from './rows.ts'
 import {toRows} from './rows.ts'
 
@@ -24,13 +25,6 @@ export type Retention = {
 	tomorrowDate: string
 	cutoffUtc: number
 	cutoffDate: string
-}
-
-function localDate(date: Date): string {
-	let year = date.getFullYear()
-	let month = String(date.getMonth() + 1).padStart(2, '0')
-	let day = String(date.getDate()).padStart(2, '0')
-	return `${year}-${month}-${day}`
 }
 
 /**
