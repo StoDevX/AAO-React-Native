@@ -39,11 +39,15 @@ export function hydrate(
 	sponsors: Map<string, string[]>,
 	now: Date,
 ): SourcedEvent[] {
-	return rows.map((row) => {
-		let wireEvent: WireEvent = JSON.parse(row.wire)
-		let [converted] = convertEvents([wireEvent], {})
+	// One `convertEvents` over the whole batch, not one per row: it takes a
+	// list, and a window's worth of rows is the list it was written for.
+	let converted = convertEvents(
+		rows.map((row): WireEvent => JSON.parse(row.wire)),
+		{},
+	)
 
-		let {organization: _wireOrganization, ...rest} = converted
+	return rows.map((row, index) => {
+		let {organization: _wireOrganization, ...rest} = converted[index]
 		let union = sponsors.get(row.dedupe_key)
 
 		// `union` can carry the same name twice -- when a duplicated event's
