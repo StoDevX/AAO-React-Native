@@ -1,4 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import * as Sentry from '@sentry/react-native'
 import {create} from 'zustand'
 import {persist, createJSONStorage} from 'zustand/middleware'
 
@@ -14,6 +15,16 @@ type SelectorConfigStore = {
 	refresh: () => Promise<void>
 }
 
+/**
+ * True when a fetched payload has all three shapes the parser requires.
+ * Not full schema validation -- just enough to catch a malformed or
+ * unrelated JSON response before it overwrites the last-known-good config.
+ */
+function isValidSelectorConfig(payload: unknown): payload is SelectorConfig {
+	let shapes = (payload as Partial<SelectorConfig> | undefined)?.shapes
+	return Boolean(shapes?.resultList && shapes.categoryList && shapes.itemList)
+}
+
 export const useSelectorConfigStore = create<SelectorConfigStore>()(
 	persist(
 		(set) => ({
@@ -22,13 +33,28 @@ export const useSelectorConfigStore = create<SelectorConfigStore>()(
 				try {
 					let response = await fetch(SELECTOR_CONFIG_URL)
 					if (!response.ok) {
+						Sentry.captureMessage(
+							`Helpdesk selector config refresh failed: ${SELECTOR_CONFIG_URL} responded with status ${response.status}`,
+							{level: 'warning'},
+						)
 						return
 					}
-					let config = (await response.json()) as SelectorConfig
-					set({config})
-				} catch {
+
+					let payload: unknown = await response.json()
+
+					if (!isValidSelectorConfig(payload)) {
+						Sentry.captureMessage(
+							`Helpdesk selector config refresh fetched a malformed payload from ${SELECTOR_CONFIG_URL} -- missing one or more required shapes`,
+							{level: 'warning'},
+						)
+						return
+					}
+
+					set({config: payload})
+				} catch (error) {
 					// Leave the store's current config alone -- the last
 					// successful remote fetch, or the bundled default.
+					Sentry.captureException(error)
 				}
 			},
 		}),
