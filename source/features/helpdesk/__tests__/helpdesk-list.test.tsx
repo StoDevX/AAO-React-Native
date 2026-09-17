@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {fireEvent, render, screen, waitFor} from '@testing-library/react-native'
+import {act, fireEvent, render, screen, waitFor} from '@testing-library/react-native'
 import {QueryClient, QueryClientProvider, queryOptions} from '@tanstack/react-query'
 import {afterEach, describe, expect, jest, test} from '@jest/globals'
 
@@ -236,9 +236,25 @@ describe('HelpdeskList', () => {
 		await waitFor(() => expect(refresh).toHaveBeenCalledTimes(1))
 		expect(invalidateQueries).not.toHaveBeenCalled()
 
-		resolveRefresh()
+		// `resolveRefresh` settles the refresh promise, whose `.then()` calls
+		// `invalidateQueries` synchronously. But the observer notification that
+		// actually updates HelpdeskList's state is scheduled separately by
+		// React Query's notifyManager, as a macrotask queued during that same
+		// `.then()` -- so a bare `resolveRefresh()` races that macrotask
+		// outside of any `act()` scope, producing an intermittent "not
+		// wrapped in act(...)" warning. Fake timers let us flush that
+		// macrotask -- and any it schedules in turn -- deterministically,
+		// inside one `act()`, rather than guessing how many real ticks to
+		// await.
+		jest.useFakeTimers()
+		try {
+			resolveRefresh()
+			await act(() => jest.advanceTimersByTimeAsync(0))
+		} finally {
+			jest.useRealTimers()
+		}
 
-		await waitFor(() => expect(invalidateQueries).toHaveBeenCalledWith({queryKey: ['helpdesk']}))
+		expect(invalidateQueries).toHaveBeenCalledWith({queryKey: ['helpdesk']})
 	})
 
 	test('does not refresh again on a re-render', async () => {
