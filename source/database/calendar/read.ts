@@ -1,4 +1,5 @@
 import type {EventType} from '@frogpond/event-type'
+import {now} from '@frogpond/timer'
 import * as Sentry from '@sentry/react-native'
 import {keepPreviousData, useQuery} from '@tanstack/react-query'
 
@@ -181,7 +182,10 @@ export function useOccurrences(args: {
 				// bumps the revision or the day-floored window moves, and not in
 				// between. `sections.ts` re-checks the end time against its own
 				// minute ticker, which is what keeps `Ongoing` honest.
-				return hydrate(rows, sponsors, new Date())
+				// The app's clock, which UI testing freezes: the screens choose
+				// their day by it, and an event judged ongoing by any other clock
+				// lands on the wrong days.
+				return hydrate(rows, sponsors, now().toDate())
 			}),
 		placeholderData: keepPreviousData,
 	})
@@ -250,7 +254,7 @@ export function useEvent(
 					rows.map((row) => row.dedupe_key),
 					[sourceId, ...sourceIds],
 				)
-				let [entry] = hydrate(rows, sponsors, new Date())
+				let [entry] = hydrate(rows, sponsors, now().toDate())
 				return entry?.event
 			}),
 		placeholderData: keepPreviousData,
