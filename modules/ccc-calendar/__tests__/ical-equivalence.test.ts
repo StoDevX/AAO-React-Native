@@ -113,7 +113,7 @@ function referenceToWireEvent(
 		isMultiDay: !isAllDay && !isSameDay(startJsDate, endJsDate),
 		isSameInstant: !isAllDay && isSameMinute(startJsDate, endJsDate),
 		title: item.summary ?? '',
-		description: decode(descriptionHtml).replace(/\s+/gu, ' ').trim(),
+		description: decode(descriptionHtml).replaceAll(/\s+/gu, ' ').trim(),
 		location: item.location ?? '',
 		isOngoing: isBefore(new Date(startIso), startOfDay(now)),
 		links: referenceLinksIn(descriptionHtml),

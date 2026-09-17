@@ -217,6 +217,29 @@
     // global Buffer.
     "unicorn/prefer-node-protocol": "off",
 
+    // Cosmetic, but each has one spelling and oxlint fixes them all.
+    // `replaceAll` is safe on device -- Hermes 0.17.0 registers it, unlike
+    // `toSorted` above.
+    "unicorn/explicit-length-check": "error",
+    "unicorn/prefer-string-replace-all": "error",
+    "unicorn/prefer-type-error": "error",
+    "unicorn/prefer-regexp-test": "error",
+    "unicorn/prefer-math-min-max": "error",
+    // `prefer-at` is off. `arr[arr.length - 1]` types as `T`, `arr.at(-1)` as
+    // `T | undefined`, so every rewrite needs either a `!` -- which
+    // typescript/no-non-null-assertion then warns about -- or a widened type.
+    // Applying it produced 13 type errors.
+    "unicorn/prefer-at": "off",
+    // Both checks off: stripping a `undefined` argument leaves a call short
+    // of a required parameter, and rewriting `async () => undefined` to
+    // `async () => {}` leaves an empty body that no-empty-function then
+    // reports. What is left -- a bare `return undefined`, `let x = undefined`
+    // -- is worth keeping.
+    "unicorn/no-useless-undefined": [
+      "error",
+      {"checkArguments": false, "checkArrowFunctionBody": false}
+    ],
+
     // TanStack Query rules (@tanstack/eslint-plugin-query's own
     // `flat/recommended` severities)
     "@tanstack/query/exhaustive-deps": "error",

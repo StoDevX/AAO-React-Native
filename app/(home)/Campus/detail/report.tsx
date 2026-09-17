@@ -250,7 +250,7 @@ type TimesRowProps = {
 
 const TimesRow = ({set, now, onPress}: TimesRowProps) => (
 	<DetailRow
-		label={set.days.length ? summarizeDays(set.days) : 'Days'}
+		label={set.days.length > 0 ? summarizeDays(set.days) : 'Days'}
 		onPress={onPress}
 		value={formatBuildingTimes(set, now)}
 	/>

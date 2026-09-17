@@ -58,7 +58,7 @@ export default function BuildingHoursScheduleEditorPage(): React.ReactNode {
 
 	let {open, close} = parseHours(set, moment.tz(timezone()))
 
-	let summary = set.days.length ? summarizeDaysAndHours(set) : 'Select a day to get started.'
+	let summary = set.days.length > 0 ? summarizeDaysAndHours(set) : 'Select a day to get started.'
 
 	return (
 		<>

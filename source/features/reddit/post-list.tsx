@@ -48,7 +48,7 @@ export function PostList({query, onPressPost, variant = 'C'}: Props): React.Reac
 		return <LoadingView />
 	}
 
-	if (!data.length) {
+	if (data.length === 0) {
 		return <NoticeView text="No posts found." />
 	}
 

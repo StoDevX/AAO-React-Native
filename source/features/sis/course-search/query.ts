@@ -76,7 +76,7 @@ export function useCourseData(
 	})
 
 	return useQueries({
-		queries: (filteredTerms.length ? filteredTerms : terms).map(buildQuery),
+		queries: (filteredTerms.length > 0 ? filteredTerms : terms).map(buildQuery),
 	})
 }
 

@@ -49,7 +49,7 @@ function Information({course}: {course: CourseType}) {
 function Schedule({course}: {course: CourseType}) {
 	let schedule = courseSchedule(course.offerings)
 
-	if (!schedule.length) {
+	if (schedule.length === 0) {
 		return null
 	}
 

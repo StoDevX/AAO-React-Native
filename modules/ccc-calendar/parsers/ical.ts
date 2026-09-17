@@ -63,7 +63,7 @@ function linksIn(descriptionHtml: string): string[] {
 /// `href` when one is actually present, so a link embedded in real markup is
 /// not lost -- only the field's own tag-stripping is removed.
 function plainTextDescription(description: string): string {
-	return decode(description).replace(/\s+/gu, ' ').trim()
+	return decode(description).replaceAll(/\s+/gu, ' ').trim()
 }
 
 /// `Time#toJSDate()` resolves a zoned time (one with a `TZID`, backed by the

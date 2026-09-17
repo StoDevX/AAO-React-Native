@@ -8,7 +8,8 @@ const INLINE: [string, string] = [
 	'color(display-p3 0.902 0.3882 0.4118)',
 ]
 
-const camelize = (name: string): string => name.replace(/-(.)/gu, (_, c: string) => c.toUpperCase())
+const camelize = (name: string): string =>
+	name.replaceAll(/-(.)/gu, (_, c: string) => c.toUpperCase())
 
 describe('resolveGradient', () => {
 	test('resolves a name to the gradient it is named after', () => {

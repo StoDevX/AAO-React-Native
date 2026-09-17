@@ -6,7 +6,7 @@ export function trimStationName(stationName: string): string {
 
 function removeParenTags(str: string) {
 	let parensRegex = /\s?\([^)]*?\)\s?$/u
-	while (str.match(parensRegex)) {
+	while (parensRegex.test(str)) {
 		str = str.replace(parensRegex, '')
 	}
 	return str
@@ -14,7 +14,7 @@ function removeParenTags(str: string) {
 
 export function trimItemLabel(label: string): string {
 	// remove extraneous whitespace and title-case the bonapp titles
-	let evenedWhitespace = label.replace(/\s+/gu, ' ')
+	let evenedWhitespace = label.replaceAll(/\s+/gu, ' ')
 	let noParens = removeParenTags(evenedWhitespace)
 	return toLaxTitleCase(noParens)
 }

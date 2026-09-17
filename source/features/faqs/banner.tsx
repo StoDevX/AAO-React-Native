@@ -59,7 +59,7 @@ export function FaqBanner({style, target, faqId, onPressOverride}: Props): React
 		if (devMatch) return devMatch
 
 		if (!data) {
-			return undefined
+			return
 		}
 
 		if (faqId) {
@@ -70,7 +70,7 @@ export function FaqBanner({style, target, faqId, onPressOverride}: Props): React
 			return data.faqs.find((entry) => entry.targets.includes(target))
 		}
 
-		return undefined
+		return
 	}, [data, target, faqId, devBanners, devEnabled])
 
 	// No error check here on purpose. A refetch that fails leaves the last good
@@ -189,7 +189,7 @@ export function FaqBannerGroup({target, style, onPressFaq}: GroupProps): React.R
 		matching = [...devMatching, ...matching]
 	}
 
-	if (!matching.length) {
+	if (matching.length === 0) {
 		return null
 	}
 

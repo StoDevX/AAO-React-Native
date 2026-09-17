@@ -119,7 +119,7 @@ function CourseSearchResultsView(): React.ReactNode {
 	}, [filterDescription])
 
 	let [filters, setFilters] = React.useState<FilterType<CourseType>[]>(
-		initialFilters.length ? initialFilters : basicFilters,
+		initialFilters.length > 0 ? initialFilters : basicFilters,
 	)
 
 	let [searchQuery, setSearchQuery] = React.useState(initialQuery)

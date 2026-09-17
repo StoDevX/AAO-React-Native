@@ -31,7 +31,7 @@ async function launchBrowser(url: string): Promise<boolean> {
 export async function openUrl(url: string): Promise<boolean> {
 	let protocol = /^(.*?):/u.exec(url)
 
-	if (protocol && protocol.length) {
+	if (protocol && protocol.length > 0) {
 		switch (protocol[1]) {
 			case 'tel':
 				return genericOpen(url)

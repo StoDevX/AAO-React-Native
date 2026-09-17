@@ -142,7 +142,7 @@ export function sectionsForTab(
 	switch (tab) {
 		case Constants.YESTERDAY: {
 			const data = grouped.find((s) => s.title === Constants.YESTERDAY)?.data ?? []
-			return data.length ? [{title: '', data}] : []
+			return data.length > 0 ? [{title: '', data}] : []
 		}
 
 		case Constants.TODAY: {

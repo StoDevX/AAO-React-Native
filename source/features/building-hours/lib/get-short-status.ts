@@ -10,7 +10,7 @@ import {getScheduleStatusAtMoment} from './get-schedule-status'
 
 export function getShortBuildingStatus(info: BuildingType, m: Moment): BuildingStatusType {
 	let schedules = info.schedule || []
-	if (!schedules.length) {
+	if (schedules.length === 0) {
 		return 'Closed'
 	}
 
@@ -32,7 +32,7 @@ export function getShortBuildingStatus(info: BuildingType, m: Moment): BuildingS
 		}
 
 		let filteredSchedules = schedulesInEffect(set.hours, m)
-		if (!filteredSchedules.length) {
+		if (filteredSchedules.length === 0) {
 			return 'Closed'
 		}
 

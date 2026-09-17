@@ -80,8 +80,8 @@ function toSense(draft: DraftSense): Sense | null {
 	return {
 		...(grammar ? {grammar} : {}),
 		definition,
-		...(examples.length ? {examples} : {}),
-		...(subsenses.length ? {subsenses} : {}),
+		...(examples.length > 0 ? {examples} : {}),
+		...(subsenses.length > 0 ? {subsenses} : {}),
 	}
 }
 

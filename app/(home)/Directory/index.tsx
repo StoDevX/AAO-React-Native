@@ -135,7 +135,7 @@ function DirectoryView(): React.ReactNode {
 				<LoadingView />
 			) : isError && error instanceof Error ? (
 				<NoticeView text={String(error)} />
-			) : !items.length ? (
+			) : items.length === 0 ? (
 				<NoticeView text={`No results found for "${searchQuery}".`} />
 			) : resultsView === 'tiles' ? (
 				<DirectoryResultsGrid

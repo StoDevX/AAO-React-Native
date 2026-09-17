@@ -72,7 +72,7 @@ export function removeHtml(str: string): string {
 }
 
 export function fastGetTrimmedText(str: string): string {
-	return removeHtml(str).replace(/\s+/gu, ' ').trim()
+	return removeHtml(str).replaceAll(/\s+/gu, ' ').trim()
 }
 
 // ── Structured HTML-to-text utilities ─────────────────────────────────────
@@ -156,7 +156,7 @@ function walkNodes(nodes: ChildNode[], listContext?: 'ul' | 'ol'): string {
 export function htmlToFormattedText(html: string): string {
 	const doc = parseHtml(html)
 	const raw = walkNodes(doc.children)
-	return raw.replace(/\n{3,}/gu, '\n\n').replace(/^\n+|\n+$/gu, '')
+	return raw.replaceAll(/\n{3,}/gu, '\n\n').replaceAll(/^\n+|\n+$/gu, '')
 }
 
 function appendText(segments: Segment[], text: string): void {
@@ -244,7 +244,7 @@ function walkSegments(nodes: ChildNode[], segments: Segment[], listContext?: 'ul
 				walkSegments(children, inner)
 				const indented = inner.map((seg) => ({
 					...seg,
-					text: seg.text.replace(/^/gmu, '  '),
+					text: seg.text.replaceAll(/^/gmu, '  '),
 				}))
 				mergeSegments(segments, indented)
 				appendText(segments, '\n')
@@ -269,7 +269,7 @@ function normalizeSegments(segments: Segment[]): Segment[] {
 			if (seg.type !== 'text') return seg
 			return {
 				...seg,
-				text: seg.text.replace(/\n{3,}/gu, '\n\n').replace(/^\n+|\n+$/gu, ''),
+				text: seg.text.replaceAll(/\n{3,}/gu, '\n\n').replaceAll(/^\n+|\n+$/gu, ''),
 			}
 		})
 		.filter((seg) => seg.type !== 'text' || seg.text !== '')
@@ -303,7 +303,7 @@ const INLINE_PUNCTUATION = /([\\`*_[\]])/gu
 function escapeInline(text: string): string {
 	// A non-breaking space is a space as far as markdown is concerned, and
 	// leaving it in defeats every trim downstream.
-	return text.replace(/\u00a0/gu, ' ').replace(INLINE_PUNCTUATION, '\\$1')
+	return text.replaceAll('\xA0', ' ').replace(INLINE_PUNCTUATION, '\\$1')
 }
 
 /** Escapes punctuation that only means something at the start of a line, so

@@ -45,11 +45,11 @@ export function formatEmailParts(args: Args): string {
 	// a space as `%20`, instead of `URLSearchParams`, which encodes it as `+`.
 	const params: Array<[string, string]> = []
 
-	if (cc.length) {
+	if (cc.length > 0) {
 		params.push(['cc', cc.join(',')])
 	}
 
-	if (bcc.length) {
+	if (bcc.length > 0) {
 		params.push(['bcc', bcc.join(',')])
 	}
 

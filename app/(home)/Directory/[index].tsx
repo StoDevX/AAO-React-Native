@@ -155,7 +155,7 @@ export default function DirectoryDetailPage(): React.ReactNode {
 						</Section>
 					))}
 
-					{departments.length ? (
+					{departments.length > 0 ? (
 						<Section title={departments.length === 1 ? 'DEPARTMENT' : 'DEPARTMENTS'}>
 							{departments.map((dept: Department) => (
 								<DisclosureRow
