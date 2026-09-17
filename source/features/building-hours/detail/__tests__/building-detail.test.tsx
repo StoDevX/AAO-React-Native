@@ -155,4 +155,25 @@ describe('BuildingDetailSwiftUI', () => {
 
 		expect(queryByLabelText(/^Map showing/u)).toBeNull()
 	})
+
+	// A venue whose name is the word people say -- DiSCO, SARN, STORP -- spells
+	// itself out here, which is the only place it is spelled out.
+	test('spells out a venue formal name', async () => {
+		let building = makeBuilding({
+			name: 'DiSCO',
+			subtitle: 'Digital Scholarship Center at St. Olaf',
+		})
+
+		let {queryByText} = await renderDetail(building)
+
+		expect(queryByText('Digital Scholarship Center at St. Olaf')).not.toBeNull()
+	})
+
+	test('falls back to the abbreviation when there is no formal name to spell out', async () => {
+		let building = makeBuilding({name: 'Academic Success Center', abbreviation: 'ASC'})
+
+		let {queryByText} = await renderDetail(building)
+
+		expect(queryByText('(ASC)')).not.toBeNull()
+	})
 })
