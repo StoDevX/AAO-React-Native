@@ -1,7 +1,7 @@
 import type {EventType} from '@frogpond/event-type'
 import {now} from '@frogpond/timer'
 import * as Sentry from '@sentry/react-native'
-import {keepPreviousData, useQuery} from '@tanstack/react-query'
+import {keepPreviousData, skipToken, useQuery} from '@tanstack/react-query'
 
 import type {SourcedEvent} from '../../../modules/event-list/types.ts'
 import type {CalendarFilterOption} from '../../features/calendar/filter.ts'
@@ -155,7 +155,7 @@ export function reportingFailures<T>(read: () => T): T {
  * the screen reports as every enabled calendar being unavailable.
  */
 export function useOccurrences(args: {
-	window: Window
+	window: Window | null
 	sourceIds: string[]
 	filters: FilterSelection[]
 }): {events: SourcedEvent[]; isPending: boolean; failed: boolean} {
@@ -164,22 +164,31 @@ export function useOccurrences(args: {
 
 	let result = useQuery({
 		queryKey: [CALENDAR_READ_KEY, 'occurrences', revision, window, sourceIds, filters],
-		queryFn: () =>
-			reportingFailures(() => {
-				let runner = getRunner()
-				let rows = runner.all<OccurrenceRowResult>(occurrencesQuery({window, sourceIds, filters}))
-				let dedupeKeys = [...new Set(rows.map((row) => row.dedupe_key))]
-				let sponsors = sponsorsFor(runner, dedupeKeys, sourceIds)
-				// Read once per query run, not per render: `hydrate` derives
-				// `isOngoing` from it, so that flag is recomputed when a write
-				// bumps the revision or the day-floored window moves, and not in
-				// between. `sections.ts` re-checks the end time against its own
-				// minute ticker, which is what keeps `Ongoing` honest.
-				// The app's clock, which UI testing freezes: the screens choose
-				// their day by it, and an event judged ongoing by any other clock
-				// lands on the wrong days.
-				return hydrate(rows, sponsors, now().toDate())
-			}),
+		// A `null` window means there is nothing to read -- the detail screen
+		// asks for neighbours only when it has a timeline to draw them on.
+		// `skipToken` is what switches the query off while keeping the key and
+		// the return type honest; the ternary is also what narrows `window` to a
+		// `Window` for the read below.
+		queryFn: !window
+			? skipToken
+			: () =>
+					reportingFailures(() => {
+						let runner = getRunner()
+						let rows = runner.all<OccurrenceRowResult>(
+							occurrencesQuery({window, sourceIds, filters}),
+						)
+						let dedupeKeys = [...new Set(rows.map((row) => row.dedupe_key))]
+						let sponsors = sponsorsFor(runner, dedupeKeys, sourceIds)
+						// Read once per query run, not per render: `hydrate` derives
+						// `isOngoing` from it, so that flag is recomputed when a write
+						// bumps the revision or the day-floored window moves, and not in
+						// between. `sections.ts` re-checks the end time against its own
+						// minute ticker, which is what keeps `Ongoing` honest.
+						// The app's clock, which UI testing freezes: the screens choose
+						// their day by it, and an event judged ongoing by any other clock
+						// lands on the wrong days.
+						return hydrate(rows, sponsors, now().toDate())
+					}),
 		placeholderData: keepPreviousData,
 	})
 
@@ -261,8 +270,11 @@ export function useEvent(
 	}
 }
 
-/** `useOccurrences` over the timeline's own window, with no filter narrowing it. */
-export function useNeighbours(args: {window: Window; sourceIds: string[]}): SourcedEvent[] {
+/**
+ * `useOccurrences` over the timeline's own window, with no filter narrowing it.
+ * A `null` window -- an event with no timeline of its own -- reads nothing.
+ */
+export function useNeighbours(args: {window: Window | null; sourceIds: string[]}): SourcedEvent[] {
 	let {events} = useOccurrences({window: args.window, sourceIds: args.sourceIds, filters: []})
 	return events
 }

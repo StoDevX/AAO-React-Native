@@ -4,7 +4,7 @@ import {act, renderHook, waitFor} from '@testing-library/react-native'
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query'
 
 import type {SqlRunner} from '../../sql'
-import {useEvent} from '../read'
+import {useEvent, useNeighbours} from '../read'
 
 // `client.ts` reaches `expo-sqlite`, a native module Jest cannot load. The
 // runner stands in for the database so a test can make a read throw.
@@ -67,5 +67,35 @@ describe('useEvent', () => {
 			await jest.advanceTimersByTimeAsync(60_000)
 		})
 		await unmount()
+	})
+})
+
+describe('useNeighbours', () => {
+	test('reads nothing when the event has no timeline to draw', async () => {
+		// A read that would succeed if it ran, so nothing here fails for want of
+		// a fixture -- only for the hook having run a read at all.
+		mockAll.mockReturnValue([])
+
+		let client = new QueryClient({defaultOptions: {queries: {retry: false}}})
+		trackedQueryClients.push(client)
+		let wrapper = ({children}: {children: React.ReactNode}) => (
+			<QueryClientProvider client={client}>{children}</QueryClientProvider>
+		)
+
+		let {result} = await renderHook(() => useNeighbours({window: null, sourceIds: ['stolaf']}), {
+			wrapper,
+		})
+
+		await waitFor(() => expect(result.current).toEqual([]))
+
+		// Idle and pending, never fetched and never failed: a window that cannot
+		// be built into a statement must not reach one. Asserting only that the
+		// runner went uncalled would pass either way -- `occurrencesQuery` throws
+		// on a null window before it gets that far -- and a thrown read is the
+		// detail screen's error state, not "no neighbours".
+		let [query] = client.getQueryCache().getAll()
+		expect(query?.state.fetchStatus).toBe('idle')
+		expect(query?.state.status).toBe('pending')
+		expect(mockAll).not.toHaveBeenCalled()
 	})
 })

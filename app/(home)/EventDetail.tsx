@@ -58,15 +58,6 @@ const REMOTE_SOURCE_IDS = new Set(['stolaf', 'presence', 'uitest'])
 /** KSTO's and KRLX's broadcast schedules -- fetched, not written into the database. */
 const SCHEDULE_SOURCE_IDS = new Set(['ksto-schedule', 'krlx-schedule'])
 
-/**
- * A window with no rows in it, ever: `1970-01-01` sits before any occurrence
- * this app's data can name. Passed to `useNeighbours` when the current event
- * has no timeline of its own (all-day, multi-day, device, or a schedule
- * source) -- `useNeighbours` has no `enabled` flag to switch off with, so a
- * window that can only ever match zero rows stands in for "don't bother".
- */
-const NO_WINDOW: Window = {fromUtc: 0, toUtc: 0, fromDate: '1970-01-01', toDate: '1970-01-01'}
-
 /** `timelineWindow`'s Moment span, as the `Window` `useNeighbours` reads by value. */
 function occurrenceWindowFor(range: TimelineWindow): Window {
 	return {
@@ -158,12 +149,12 @@ export default function EventDetailPage(): React.ReactNode {
 	let isCalendarSource = deviceSource || REMOTE_SOURCE_IDS.has(source)
 	let windowRange = event && isCalendarSource ? timelineWindow(event) : null
 
-	// A bounded read over the timeline's own span, rather than the whole
-	// merged calendar: `NO_WINDOW` when there is no timeline to draw, so this
-	// hook -- which has no `enabled` flag -- still runs to something that can
-	// only ever answer "no neighbours".
+	// A bounded read over the timeline's own span, rather than the whole merged
+	// calendar. An event with no timeline of its own (all-day, multi-day,
+	// device, or a schedule source) has no neighbours to draw, and a `null`
+	// window skips the read entirely.
 	let neighbours = useNeighbours({
-		window: windowRange ? occurrenceWindowFor(windowRange) : NO_WINDOW,
+		window: windowRange ? occurrenceWindowFor(windowRange) : null,
 		sourceIds: enabledIds,
 	})
 
