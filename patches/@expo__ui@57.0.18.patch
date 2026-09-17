@@ -1,5 +1,5 @@
 diff --git a/ios/Modifiers/ViewModifierRegistry.swift b/ios/Modifiers/ViewModifierRegistry.swift
-index 8c426dffff1df73809436999f23a6155b0a72ef8..d46585fb204a0a923fdb4f2eea88242f8114bfad 100644
+index ddd814e795e793f20bc0dbbc3277c8f654fd8f97..7db9b88dfd80a65b4c1e34fb040ff92ac81ff7e3 100644
 --- a/ios/Modifiers/ViewModifierRegistry.swift
 +++ b/ios/Modifiers/ViewModifierRegistry.swift
 @@ -43,6 +43,22 @@ internal struct CornerRadiusModifier: ViewModifier, Record {
@@ -25,7 +25,7 @@ index 8c426dffff1df73809436999f23a6155b0a72ef8..d46585fb204a0a923fdb4f2eea88242f
  internal struct ShadowModifier: ViewModifier, Record {
    @Field var color: Color = .white
    @Field var radius: CGFloat = 0
-@@ -1157,6 +1173,23 @@ internal enum TextLinePattern: String, Enumerable {
+@@ -1183,6 +1199,23 @@ internal enum TextLinePattern: String, Enumerable {
    case dashDotDot
  }
  
@@ -49,9 +49,9 @@ index 8c426dffff1df73809436999f23a6155b0a72ef8..d46585fb204a0a923fdb4f2eea88242f
  internal struct TextUnderLine: ViewModifier, Record {
    @Field var isActive: Bool = false
    @Field var pattern: TextLinePattern = .solid
-@@ -1599,6 +1632,18 @@ public class ViewModifierRegistry {
-           return text.foregroundColor(color)
-       } 
+@@ -1629,6 +1662,18 @@ public class ViewModifierRegistry {
+         return text.foregroundColor(color)
+       }
        return text
 +    case "strikethrough":
 +      guard #available(iOS 16.0, macOS 13.0, tvOS 16.0, *),
@@ -68,7 +68,7 @@ index 8c426dffff1df73809436999f23a6155b0a72ef8..d46585fb204a0a923fdb4f2eea88242f
      default:
        #if DEBUG
        return Text(" ['\(type)' not supported for nested Text]").foregroundColor(.red)
-@@ -2306,6 +2351,10 @@ extension ViewModifierRegistry {
+@@ -2357,6 +2402,10 @@ extension ViewModifierRegistry {
        return try ListStyleModifier(from: params, appContext: appContext)
      }
  

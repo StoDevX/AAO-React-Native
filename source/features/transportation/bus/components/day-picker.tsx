@@ -212,7 +212,7 @@ export const DayPickerHeader = ({
 							background(c.systemBackground, headerButtonShape),
 							contentShape(headerButtonShape),
 							strokeBorder({
-								color: accentColor,
+								content: accentColor,
 								cornerRadius: HEADER_BUTTON_RADIUS,
 								shape: 'roundedRectangle',
 								style: {lineWidth: 1},

@@ -45,10 +45,6 @@ export const EXPECTED_DEVIATIONS = new Map([
 		'@sentry/react-native',
 		'on 8.x while the SDK expects 7.x: 7.11.0 has no Sentry.appLoaded(), which ends the app-start transaction in app/_layout.tsx, and no enableMetricKit option, which is where the iOS hang and crash diagnostics come from. Measured by downgrading -- both fail tsc.',
 	],
-	[
-		'@expo/ui',
-		'held at 57.0.14: from 57.0.15 it sets expoInternalSizeFromChildren on its iOS RNHostView, and the views under matchContents answer XCUITest with CGRectInfinite, failing four calendar UITests',
-	],
 ])
 
 const byName = (a, b) => a.localeCompare(b)
