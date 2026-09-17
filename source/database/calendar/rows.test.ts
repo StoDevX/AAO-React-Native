@@ -125,6 +125,16 @@ describe('toRows', () => {
 		assert.equal(tags.filter((t) => t.axis === 'organization').length, 0)
 	})
 
+	it('drops a blank tag value, which no reader could filter on and no menu could name', () => {
+		let {tags} = toRows('stolaf', 0, [
+			wireEvent({categories: ['', 'Sports'], organization: ['', '   ']}),
+		])
+		assert.deepEqual(
+			tags.map((t) => `${t.axis}:${t.value}`),
+			['category:Sports'],
+		)
+	})
+
 	it('round-trips the wire event through the stored JSON', () => {
 		let input = wireEvent()
 		let {events} = toRows('stolaf', 0, [input])

@@ -81,6 +81,15 @@ function allDayDates(wireEvent: WireEvent): {startDate: string; endDate: string}
 	return {startDate, endDate}
 }
 
+/**
+ * One row per distinct value, blanks dropped.
+ *
+ * A feed that names an empty sponsor -- `organization: ['']` -- would
+ * otherwise write a tag nothing can use: the filter menu offers a nameless
+ * entry, choosing it narrows the list to the events carrying the blank, and
+ * the detail screen prints it where a sponsor should be. Dropped at the
+ * write, so no query downstream has to know about it.
+ */
 function tagRows(
 	sourceId: string,
 	key: string,
@@ -90,7 +99,9 @@ function tagRows(
 	if (!values) {
 		return []
 	}
-	return [...new Set(values)].map((value) => ({sourceId, eventKey: key, axis, value}))
+	return [...new Set(values)]
+		.filter((value) => value.trim() !== '')
+		.map((value) => ({sourceId, eventKey: key, axis, value}))
 }
 
 /**
