@@ -1,6 +1,6 @@
 import * as React from 'react'
 import {useColorScheme} from 'react-native'
-import {Button, HStack, Image, Spacer, SwipeActions, Text, VStack} from '@expo/ui/swift-ui'
+import {Button, HStack, Image, Spacer, SwipeActions, Text} from '@expo/ui/swift-ui'
 import {
 	accessibilityIdentifier,
 	accessibilityLabel,
@@ -73,12 +73,6 @@ export const BuildingListRow = React.memo(function BuildingListRow({
 	let glyph = statusGlyph(status, findOpenService(building, now) ?? undefined, scheme)
 	let statusText = contextualStatus(building, now)
 
-	let subtitle = building.subtitle
-		? building.subtitle
-		: building.abbreviation
-			? `(${building.abbreviation})`
-			: null
-
 	let schedules = building.schedule || []
 	let hasHours = hasDisplayableHours(schedules)
 	let firstNote = firstScheduleNote(schedules)
@@ -97,49 +91,33 @@ export const BuildingListRow = React.memo(function BuildingListRow({
 					modifiers={[contentShape(shapes.rectangle()), fixedSize({vertical: true})]}
 					spacing={8}
 				>
-					<VStack alignment="leading">
-						<HStack alignment="center" spacing={8}>
-							<Text
-								modifiers={[
-									font({textStyle: 'body', weight: 'medium'}),
-									foregroundStyle(c.label),
-									...SINGLE_LINE,
-								]}
-							>
-								{building.name}
-							</Text>
-							<Spacer />
-							<Text
-								modifiers={[
-									font({textStyle: 'body'}),
-									foregroundStyle(c.secondaryLabel),
-									layoutPriority(1),
-								]}
-							>
-								{hasHours ? statusText.short : (firstNote ?? '')}
-							</Text>
-							<Image
-								modifiers={[foregroundStyle(glyph.color), font({textStyle: 'caption2'})]}
-								systemName={glyph.symbol}
-							/>
-							<Image
-								modifiers={[font({textStyle: 'footnote'}), foregroundStyle(c.tertiaryLabel)]}
-								systemName="chevron.right"
-							/>
-						</HStack>
-
-						{subtitle ? (
-							<Text
-								modifiers={[
-									font({textStyle: 'subheadline'}),
-									foregroundStyle(c.secondaryLabel),
-									...SINGLE_LINE,
-								]}
-							>
-								{subtitle}
-							</Text>
-						) : null}
-					</VStack>
+					<Text
+						modifiers={[
+							font({textStyle: 'body', weight: 'medium'}),
+							foregroundStyle(c.label),
+							...SINGLE_LINE,
+						]}
+					>
+						{building.name}
+					</Text>
+					<Spacer />
+					<Text
+						modifiers={[
+							font({textStyle: 'body'}),
+							foregroundStyle(c.secondaryLabel),
+							layoutPriority(1),
+						]}
+					>
+						{hasHours ? statusText.short : (firstNote ?? '')}
+					</Text>
+					<Image
+						modifiers={[foregroundStyle(glyph.color), font({textStyle: 'caption2'})]}
+						systemName={glyph.symbol}
+					/>
+					<Image
+						modifiers={[font({textStyle: 'footnote'}), foregroundStyle(c.tertiaryLabel)]}
+						systemName="chevron.right"
+					/>
 				</HStack>
 			</Button>
 

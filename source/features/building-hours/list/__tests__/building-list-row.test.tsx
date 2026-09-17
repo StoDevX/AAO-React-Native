@@ -103,3 +103,33 @@ describe('the status glyph', () => {
 		expect(almostClosedRow.queryByTestId('symbol-circle.righthalf.filled.inverse')).not.toBeNull()
 	})
 })
+
+describe('what the row says under the name', () => {
+	// The formal name belongs on the detail sheet: a list of venues reads as a
+	// list of the names people use, and "DiSCO" is one of those names.
+	test('leaves a venue formal name to the detail sheet', async () => {
+		let disco: BuildingType = {
+			name: 'DiSCO',
+			subtitle: 'Digital Scholarship Center at St. Olaf',
+			category: 'Libraries',
+			schedule: [{title: 'Hours', hours: [{days: ['Mo'], from: '8:00am', to: '9:00pm'}]}],
+		}
+
+		let {queryByText} = await renderRow(disco)
+
+		expect(queryByText('Digital Scholarship Center at St. Olaf')).toBeNull()
+	})
+
+	test('leaves an abbreviation to the detail sheet too', async () => {
+		let asc: BuildingType = {
+			name: 'Academic Success Center',
+			abbreviation: 'ASC',
+			category: 'Help and Support',
+			schedule: [{title: 'Hours', hours: [{days: ['Mo'], from: '8:00am', to: '5:00pm'}]}],
+		}
+
+		let {queryByText} = await renderRow(asc)
+
+		expect(queryByText('(ASC)')).toBeNull()
+	})
+})
