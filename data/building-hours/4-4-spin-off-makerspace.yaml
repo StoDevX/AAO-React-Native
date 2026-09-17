@@ -3,10 +3,8 @@ subtitle: 3D printing, textiles and electronics, next to DiSCO
 category: Libraries
 building: rml
 links:
-  - {
-      title: 'DiSCO Resource Request',
-      url: 'https://stolafcarleton.teamdynamix.com/TDClient/1893/StOlaf/Requests/Service/40473/DiSCO-Resource-Request',
-    }
+  - title: 'DiSCO Resource Request'
+    url: 'https://stolafcarleton.teamdynamix.com/TDClient/1893/StOlaf/Requests/Service/40473/DiSCO-Resource-Request'
 
 schedule:
   - title: Hours
