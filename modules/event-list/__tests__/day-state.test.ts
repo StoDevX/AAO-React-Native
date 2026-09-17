@@ -1,7 +1,7 @@
 import moment from 'moment-timezone'
 import {describe, expect, test} from '@jest/globals'
 
-import {anchorShouldFollow, dayOnShow, emptyNotice, pageWindow} from '../day-state'
+import {anchorShouldFollow, dayOnShow, emptyNotice, failureNote, pageWindow} from '../day-state'
 import type {CalendarSource, SourcedEvent} from '../types'
 
 const CAMPUS: CalendarSource = {id: 'stolaf', title: 'St. Olaf', color: 'blue', kind: 'remote'}
@@ -70,6 +70,16 @@ describe('emptyNotice', () => {
 		let failed = {...base, events: [], failed: [CAMPUS]}
 		expect(emptyNotice(failed, NO_EVENTS).text).toBe('Could not load St. Olaf.')
 		expect(emptyNotice(failed, NOTHING_ON_FRIDAY).text).toBe('Could not load St. Olaf.')
+	})
+})
+
+describe('failureNote', () => {
+	test('names every calendar that failed', () => {
+		expect(failureNote([CAMPUS, PRESENCE])).toBe('Could not load St. Olaf, Presence.')
+	})
+
+	test('is absent when nothing failed', () => {
+		expect(failureNote([])).toBeNull()
 	})
 })
 

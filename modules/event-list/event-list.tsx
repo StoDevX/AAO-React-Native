@@ -23,6 +23,7 @@ import * as c from '@frogpond/colors'
 import type {Moment} from 'moment-timezone'
 import {NoticeView} from '@frogpond/notice'
 import {EventListRow} from './event-list-row'
+import {FailureNote} from './failure-note'
 import {emptyNotice} from './day-state'
 import {groupEvents, todaySectionKey} from './sections'
 import type {CalendarBodyHandle, CalendarSource, SourcedEvent} from './types'
@@ -128,11 +129,7 @@ export let EventList = React.forwardRef<CalendarBodyHandle, Props>(function Even
 				]}
 			>
 				<LazyVStack alignment="leading" modifiers={[scrollTargetLayout()]}>
-					{props.failed.length > 0 ? (
-						<Text modifiers={[foregroundStyle(c.secondaryLabel), font({textStyle: 'footnote'})]}>
-							{`Could not load ${props.failed.map((source) => source.title).join(', ')}.`}
-						</Text>
-					) : null}
+					{todayKey ? null : <FailureNote failed={props.failed} />}
 					{sections.map((section) => (
 						<VStack
 							key={section.key}
@@ -142,6 +139,8 @@ export let EventList = React.forwardRef<CalendarBodyHandle, Props>(function Even
 								padding({leading: 16, trailing: 16, top: 12, bottom: 8}),
 							]}
 						>
+							{/* The list opens on this section, so a failure named here is in view. */}
+							{section.key === todayKey ? <FailureNote failed={props.failed} /> : null}
 							<SectionHeader isToday={section.isToday} title={section.title} />
 							{section.data.map((entry, index) => (
 								<EventListRow

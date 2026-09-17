@@ -24,6 +24,19 @@ export interface DayState {
 }
 
 /**
+ * Names the calendars that could not be loaded, or null when none failed.
+ *
+ * The same line serves as the whole notice when a failure left nothing to show,
+ * and as a note beside the saved events when it did not.
+ */
+export function failureNote(failed: readonly CalendarSource[]): string | null {
+	if (failed.length === 0) {
+		return null
+	}
+	return `Could not load ${failed.map((source) => source.title).join(', ')}.`
+}
+
+/**
  * The notice a view shows when it has no rows, given what it would say if the
  * only thing wrong were that nothing is on.
  *
@@ -47,11 +60,9 @@ export function emptyNotice(state: DayState, whenEmpty: DayNotice): DayNotice {
 		}
 	}
 
-	if (state.events.length === 0 && state.failed.length > 0) {
-		return {
-			text: `Could not load ${state.failed.map((source) => source.title).join(', ')}.`,
-			retry: true,
-		}
+	let note = failureNote(state.failed)
+	if (state.events.length === 0 && note) {
+		return {text: note, retry: true}
 	}
 
 	if (state.events.length === 0 && state.isLoading) {
