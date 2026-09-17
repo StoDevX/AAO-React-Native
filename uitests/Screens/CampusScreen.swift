@@ -389,9 +389,11 @@ struct CampusScreen: Screen {
 	/// presenting as a modal over it. Queried by the back button's own label
 	/// rather than `element(boundBy: 0)` -- the list's nav bar is still in the
 	/// hierarchy behind the sheet, so an unscoped positional query can match
-	/// the wrong bar's button. The back button carrying the sheet's own label
-	/// is the actual discriminator: a modal presented on the outer stack would
-	/// not carry a back button that pops into the sheet's nested stack.
+	/// the wrong bar's button. Scoping to the report screen's own bar is what
+	/// tells them apart: both buttons carry the label `Back`, so an unscoped
+	/// `navigationBars.buttons` lookup resolves to neither. That a back button
+	/// is there at all remains the discriminator for the push itself -- a modal
+	/// presented on the outer stack would not carry one.
 	@discardableResult
 	func verifyReportPushedIntoSheet() -> Self {
 		XCTAssertTrue(
@@ -399,7 +401,8 @@ struct CampusScreen: Screen {
 				.waitForExistence(timeout: 30),
 			"The report screen should be up")
 
-		let back = app.navigationBars.buttons[TestIdentifiers.Navigation.backButton]
+		let back = app.navigationBars[TestIdentifiers.Campus.reportScreenTitle]
+			.buttons[TestIdentifiers.Navigation.backButton]
 		XCTAssertTrue(
 			back.exists && back.isHittable,
 			"The report should push into the sheet's stack, so it carries a back button")
@@ -407,11 +410,12 @@ struct CampusScreen: Screen {
 		return self
 	}
 
-	/// Dismisses the report screen via its own back button. Queried by label
-	/// rather than position -- see `verifyReportPushedIntoSheet`.
+	/// Dismisses the report screen via its own back button. Scoped to that
+	/// screen's navigation bar -- see `verifyReportPushedIntoSheet`.
 	@discardableResult
 	func dismissReportScreen() -> Self {
-		let back = app.navigationBars.buttons[TestIdentifiers.Navigation.backButton]
+		let back = app.navigationBars[TestIdentifiers.Campus.reportScreenTitle]
+			.buttons[TestIdentifiers.Navigation.backButton]
 		XCTAssertTrue(
 			back.waitForExistence(timeout: 30),
 			"The report screen should offer a way to go back")
