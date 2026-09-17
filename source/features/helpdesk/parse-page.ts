@@ -1,4 +1,5 @@
 import {parse} from 'node-html-parser'
+import * as Sentry from '@sentry/react-native'
 import type {HelpdeskItem, HelpdeskItemType, SelectorConfig} from './types'
 import {HELPDESK_BASE_URL, HELPDESK_PAGE_CONFIGS, type HelpdeskPageType} from './page-configs'
 
@@ -17,6 +18,11 @@ const absoluteHref = (href: string): string =>
  * Turns a fetched TDX portal page into a flat list of items. All markup
  * knowledge lives in `config` (see default-selectors.ts / selector-store.ts)
  * so a portal redesign is a config fix, not a parser rewrite.
+ *
+ * A scope selector that matches nothing usually means the portal's markup
+ * shifted, not that the page legitimately has zero results -- that gets
+ * reported to Sentry, but this still returns an empty array so the caller
+ * renders its normal empty state rather than an error state.
  */
 export function parseHelpdeskPage(
 	html: string,
@@ -29,6 +35,10 @@ export function parseHelpdeskPage(
 	let scope = selectors.scope ? root.querySelector(selectors.scope) : root
 
 	if (!scope) {
+		Sentry.captureMessage(
+			`Helpdesk parser: scope selector "${selectors.scope}" matched nothing for page type "${pageType}" (shape "${shape}") -- the portal's markup may have changed`,
+			{level: 'warning'},
+		)
 		return []
 	}
 
@@ -43,11 +53,13 @@ export function parseHelpdeskPage(
 			continue
 		}
 
+		let absHref = absoluteHref(href)
+
 		items.push({
 			type: itemType ?? itemTypeFromHref(href),
-			id: ID_PATTERN.exec(href)?.[1] ?? href,
+			id: ID_PATTERN.exec(href)?.[1] ?? absHref,
 			title,
-			href: absoluteHref(href),
+			href: absHref,
 			snippet: selectors.snippet
 				? (el.querySelector(selectors.snippet)?.text.trim() ?? undefined)
 				: undefined,

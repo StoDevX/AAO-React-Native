@@ -1,14 +1,21 @@
-import {describe, expect, test} from '@jest/globals'
+import {afterEach, describe, expect, test} from '@jest/globals'
 import {readFileSync} from 'node:fs'
 import {join} from 'node:path'
+import * as Sentry from '@sentry/react-native'
 
 import {DEFAULT_SELECTOR_CONFIG} from '../default-selectors'
 import {parseHelpdeskPage} from '../parse-page'
+
+jest.mock('@sentry/react-native', () => ({captureMessage: jest.fn()}))
 
 const fixture = (name: string): string =>
 	readFileSync(join(__dirname, '..', '__fixtures__', name), 'utf-8')
 
 describe('parseHelpdeskPage', () => {
+	afterEach(() => {
+		jest.clearAllMocks()
+	})
+
 	test('parses mixed search results, typing each from its href', () => {
 		let items = parseHelpdeskPage(fixture('search.html'), 'search', DEFAULT_SELECTOR_CONFIG)
 
@@ -70,7 +77,7 @@ describe('parseHelpdeskPage', () => {
 		])
 	})
 
-	test('returns an empty array when the scope selector matches nothing', () => {
+	test('returns an empty array and reports to Sentry when the scope selector matches nothing', () => {
 		let items = parseHelpdeskPage(
 			'<html><body>unrelated</body></html>',
 			'search',
@@ -78,5 +85,62 @@ describe('parseHelpdeskPage', () => {
 		)
 
 		expect(items).toEqual([])
+		expect(Sentry.captureMessage).toHaveBeenCalledTimes(1)
+		expect(Sentry.captureMessage).toHaveBeenCalledWith(
+			expect.stringContaining('search'),
+			expect.objectContaining({level: 'warning'}),
+		)
+	})
+
+	test('falls back to the absolute href as the id when it has no recognizable Service/Article/Category id', () => {
+		let html = `
+			<div>
+				<div class="gutter-bottom-lg">
+					<h3 class="gutter-bottom-xs">
+						<a href="/TDClient/1893/StOlaf/Some/Other/Path">Weird Link</a>
+					</h3>
+				</div>
+			</div>
+		`
+
+		let items = parseHelpdeskPage(html, 'servicesAtoZ', DEFAULT_SELECTOR_CONFIG)
+
+		expect(items).toEqual([
+			{
+				type: 'service',
+				id: 'https://stolafcarleton.teamdynamix.com/TDClient/1893/StOlaf/Some/Other/Path',
+				title: 'Weird Link',
+				href: 'https://stolafcarleton.teamdynamix.com/TDClient/1893/StOlaf/Some/Other/Path',
+				snippet: undefined,
+			},
+		])
+		expect(items[0].id).toBe(items[0].href)
+	})
+
+	test('silently skips an item missing its href', () => {
+		let html = `
+			<div>
+				<div class="gutter-bottom-lg">
+					<h3 class="gutter-bottom-xs">Untitled entry with no link</h3>
+				</div>
+				<div class="gutter-bottom-lg">
+					<h3 class="gutter-bottom-xs">
+						<a href="/TDClient/1893/StOlaf/Requests/Service/99999/Valid-Item">Valid Item</a>
+					</h3>
+				</div>
+			</div>
+		`
+
+		let items = parseHelpdeskPage(html, 'servicesAtoZ', DEFAULT_SELECTOR_CONFIG)
+
+		expect(items).toEqual([
+			{
+				type: 'service',
+				id: '99999',
+				title: 'Valid Item',
+				href: 'https://stolafcarleton.teamdynamix.com/TDClient/1893/StOlaf/Requests/Service/99999/Valid-Item',
+				snippet: undefined,
+			},
+		])
 	})
 })
