@@ -1,0 +1,24 @@
+name: The Spin-Off Makerspace
+subtitle: 3D printing, textiles and electronics, next to DiSCO
+category: Libraries
+building: rml
+links:
+  - title: 'DiSCO Resource Request'
+    url: 'https://stolafcarleton.teamdynamix.com/TDClient/1893/StOlaf/Requests/Service/40473/DiSCO-Resource-Request'
+
+schedule:
+  - title: Hours
+    hours:
+      - {days: [Mo, Tu, We, Th], from: '3:00pm', to: '9:00pm'}
+      - {days: [Fr], from: '3:00pm', to: '6:00pm'}
+      - {days: [Sa], from: '12:00pm', to: '4:00pm'}
+      - {days: [Su], from: '12:00pm', to: '9:00pm'}
+
+breakSchedule:
+  fall: []
+  thanksgiving: []
+  winter: []
+  interim: []
+  spring: []
+  easter: []
+  summer: []
