@@ -95,7 +95,7 @@ describe('the dictionary edit screen', () => {
 	// footer is the only place the form can say why the button went quiet.
 	//
 	// The definition is cleared through the store, as `sense.tsx`'s own field
-	// does -- this screen no longer has a field of its own to fire on.
+	// does -- this screen has no definition field of its own to fire on.
 	it('refuses to preview a draft left with no definition', async () => {
 		useDictionaryDraftStore.getState().startDraft(entry)
 		await render(<EditScreen />)
@@ -249,13 +249,20 @@ describe('the dictionary sense screen', () => {
 		)
 	})
 
-	it('adds a sub-sense under this sense', async () => {
+	// Like Add Sense on the edit form, the button that appends a sub-sense is
+	// also the one that opens it -- its row carries no field to type into.
+	it('adds a sub-sense under this sense and opens it', async () => {
 		useDictionaryDraftStore.getState().startDraft(entry)
 		await render(<SenseScreen />)
 
 		await fireEvent.press(screen.getByText('Add Sub-sense'))
 
-		expect(useDictionaryDraftStore.getState().draft?.senses[0].subsenses).toHaveLength(1)
+		let added = useDictionaryDraftStore.getState().draft?.senses[0].subsenses.at(-1)
+		expect(added).toBeTruthy()
+		expect(mockPush).toHaveBeenCalledWith({
+			pathname: '/Dictionary/entry/sense',
+			params: {senseId: added?.id},
+		})
 	})
 
 	// As in the edit screen, the list handlers reach the store even though the

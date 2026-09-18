@@ -12,7 +12,6 @@ import {Stack, useLocalSearchParams, useRouter} from 'expo-router'
 import * as c from '@frogpond/colors'
 import {NoticeView} from '@frogpond/notice'
 
-import {DEFINITION_LINES} from '../../../../source/features/dictionary/constants'
 import type {DraftExample} from '../../../../source/features/dictionary/lib/draft'
 import {findSense} from '../../../../source/features/dictionary/lib/draft'
 import {useDictionaryDraftStore} from '../../../../source/features/dictionary/store'
@@ -53,7 +52,12 @@ export default function DictionarySensePage(): React.ReactNode {
 							axis="vertical"
 							modifiers={[
 								accessibilityLabel('Definition'),
-								lineLimit(DEFINITION_LINES),
+								// A single reserved height, not a `{min, max}` range: a range
+								// leaves the row's height and the drawn text free to disagree,
+								// which clipped a long definition against the row's top edge
+								// and left dead space below it. A definition past eight lines
+								// scrolls inside the field.
+								lineLimit(8, {reservesSpace: true}),
 								textInputAutocapitalization('sentences'),
 							]}
 							onTextChange={(definition) => store.setSenseField(sense.id, {definition})}
@@ -118,7 +122,12 @@ export default function DictionarySensePage(): React.ReactNode {
 						))}
 						<Button
 							label="Add Sub-sense"
-							onPress={() => store.addSubsense(sense.id)}
+							onPress={() => {
+								let id = store.addSubsense(sense.id)
+								if (id) {
+									router.push({pathname: '/Dictionary/entry/sense', params: {senseId: id}})
+								}
+							}}
 							systemImage="plus"
 						/>
 					</Section>
