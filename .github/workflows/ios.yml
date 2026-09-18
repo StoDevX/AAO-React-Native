@@ -21,7 +21,7 @@ env:
 jobs:
   ios-bundle:
     name: iOS Bundle
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     outputs:
       cache-key: ${{ steps.jsbundle-cache.outputs.cache-matched-key || steps.jsbundle-cache.outputs.cache-primary-key }}
     steps:
@@ -97,7 +97,7 @@ jobs:
 
   ios-cache-check:
     name: Check if iOS cache exists
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     outputs:
       cache-matched-key: ${{ steps.app-cache.outputs.cache-matched-key }}
       cache-primary-key: ${{ steps.app-cache.outputs.cache-primary-key }}
@@ -332,7 +332,7 @@ jobs:
 
   uitest-gate:
     name: Decide whether UITests must run
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     # uitest-plan and ios-uitest key off needs.uitest-gate.outputs.needed, not
     # this job's own result -- their job-level `if:` replaces GitHub's implicit
     # success() gate, so a failure here does not skip them. The Decide step
@@ -392,7 +392,7 @@ jobs:
 
   uitest-plan:
     name: Plan UITest shards
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     needs: [uitest-gate]
     # Anything other than an explicit "false" from the gate means run it --
     # empty (the gate died before it could answer) defaults to needed, same
@@ -625,7 +625,7 @@ jobs:
   uitest-durations:
     name: Publish UITest durations
     needs: [ios-uitest]
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     # Master alone writes. A branch reads master's table through the planner's
     # restore-key; letting every branch save one would crowd the repository's
     # shared cache and evict what the shards restore with fail-on-cache-miss.
