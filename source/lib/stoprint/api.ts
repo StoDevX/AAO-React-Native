@@ -32,7 +32,7 @@ export class PapercutJobReleaseError extends Error {}
 export async function logIn(
 	credentials: SharedWebCredentials,
 	options: Options,
-	now: number = new Date().getTime(),
+	now: number = Date.now(),
 ): Promise<void> {
 	let {username, password} = credentials
 

@@ -67,7 +67,7 @@ describe('the Stav Hall UI test fixture', () => {
 function menuFetcherFor(cafe: string) {
 	let {queryFn} = bonAppMenuOptions(cafe)
 	if (typeof queryFn !== 'function') {
-		throw new Error(`bonAppMenuOptions('${cafe}') built no queryFn`)
+		throw new TypeError(`bonAppMenuOptions('${cafe}') built no queryFn`)
 	}
 	return () => queryFn({} as never)
 }

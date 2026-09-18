@@ -231,6 +231,7 @@ function StudentOrgsLanding({tiles, onSelectCategory, onRefresh}: LandingProps):
 						verticalSpacing={TILE_SPACING}
 					>
 						{inRows(tiles, columns).map((row, i) => (
+							// oxlint-disable-next-line react/no-array-index-key -- a row is its position; tiles are keyed by name
 							<Grid.Row key={i}>
 								{row.map((tile) => (
 									<CategoryTile

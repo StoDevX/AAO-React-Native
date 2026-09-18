@@ -14,7 +14,7 @@ export const cleanEntries = (data: StoryType[]): StoryType[] => {
 // decode entities
 // titlecase words
 export const trimStoryCateogry = (label: string): string => {
-	let evenedWhitespace = label.replace(/\s+/gu, ' ')
+	let evenedWhitespace = label.replaceAll(/\s+/gu, ' ')
 	return toLaxTitleCase(decode(evenedWhitespace))
 }
 

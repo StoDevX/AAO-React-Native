@@ -99,9 +99,9 @@ export default function APITestPage(): React.ReactNode {
 						>
 							{groupedRoutes.map((section) => (
 								<Section key={section.title} title={section.title}>
-									{section.data.map((route, index) => (
+									{section.data.map((route) => (
 										<DisclosureRow
-											key={`${route.path}-${index}`}
+											key={route.path}
 											onPress={() => openRoute(route)}
 											title={route.displayName}
 										/>

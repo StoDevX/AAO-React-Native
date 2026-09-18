@@ -26,8 +26,8 @@ export function getCurrentBusIteration(schedule: BusSchedule, now: Moment): Retu
 	}
 
 	// Handle "now" being before or after the bus runs for the day
-	let veryFirst = find(schedule.times[0], isTruthy)
-	let veryLast = findLast(schedule.times[schedule.times.length - 1], isTruthy)
+	let veryFirst = find(schedule.times.at(0), isTruthy)
+	let veryLast = findLast(schedule.times.at(-1), isTruthy)
 
 	// Start off by handling another empty-schedule case
 	if (!veryFirst || !veryLast) {

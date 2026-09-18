@@ -9,6 +9,15 @@ import {serverUrlOptions} from './query'
 import {useServerDiscovery} from './use-server-discovery'
 import {ActionRow, NavigationRow} from '../../../../components/rows'
 
+const isHttpUrl = (value: string): boolean => {
+	try {
+		const parsedUrl = new URL(value)
+		return parsedUrl.protocol === 'http:' || parsedUrl.protocol === 'https:'
+	} catch {
+		return false
+	}
+}
+
 export const ServerUrlSection = (): React.ReactElement => {
 	const [serverAddress, setServerAddress] = React.useState('')
 	const serverAddressState = useNativeState('')
@@ -35,14 +44,6 @@ export const ServerUrlSection = (): React.ReactElement => {
 	})
 
 	let reload = () => storeServerAddress.mutate()
-	const isHttpUrl = (value: string): boolean => {
-		try {
-			const parsedUrl = new URL(value)
-			return parsedUrl.protocol === 'http:' || parsedUrl.protocol === 'https:'
-		} catch {
-			return false
-		}
-	}
 
 	const isUrlValid = isHttpUrl(serverAddress)
 	const isValid = isUrlValid || serverAddress.length === 0

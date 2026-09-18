@@ -123,7 +123,7 @@ export default function StudentOrgsDetailPage(): React.ReactNode {
 						</Section>
 					) : null}
 
-					{contacts.length ? (
+					{contacts.length > 0 ? (
 						<Section title="CONTACT">
 							{contacts.map((contact) => (
 								<DisclosureRow
@@ -136,7 +136,7 @@ export default function StudentOrgsDetailPage(): React.ReactNode {
 						</Section>
 					) : null}
 
-					{advisors.length ? (
+					{advisors.length > 0 ? (
 						<Section title={advisors.length === 1 ? 'ADVISOR' : 'ADVISORS'}>
 							{advisors.map((contact) => (
 								<DisclosureRow

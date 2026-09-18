@@ -36,7 +36,7 @@ export function callPhone(phoneNumber: string, opts?: Options): void {
 export const formatNumber = (phoneNumber: string): string => {
 	let re = /^(1|)?(\d{3})(\d{3})(\d{4})$/u
 
-	let cleaned = String(phoneNumber).replace(/\D/gu, '')
+	let cleaned = String(phoneNumber).replaceAll(/\D/gu, '')
 	let match = cleaned.match(re)
 
 	if (match) {

@@ -135,7 +135,7 @@ function DirectoryView(): React.ReactNode {
 				<LoadingView />
 			) : isError && error instanceof Error ? (
 				<NoticeView text={String(error)} />
-			) : !items.length ? (
+			) : items.length === 0 ? (
 				<NoticeView text={`No results found for "${searchQuery}".`} />
 			) : resultsView === 'tiles' ? (
 				<DirectoryResultsGrid
@@ -157,6 +157,7 @@ function DirectoryView(): React.ReactNode {
 						<Section title={heading ?? undefined}>
 							{items.map((item, index) => (
 								<DirectoryItemRow
+									// oxlint-disable-next-line react/no-array-index-key -- the index is the handle openResult opens by
 									key={index}
 									index={index}
 									item={item}

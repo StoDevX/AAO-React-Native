@@ -24,7 +24,7 @@ export function bundleDataDir({fromDir, toFile}) {
 		.readdirSync(fromDir)
 		.filter(isNotJunk)
 		.map((f) => path.join(fromDir, f))
-	if (!files.length) {
+	if (files.length === 0) {
 		return
 	}
 

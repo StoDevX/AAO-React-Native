@@ -4,6 +4,6 @@
 // before any such package is loaded.
 import {Buffer} from 'buffer'
 
-if (typeof globalThis.Buffer === 'undefined') {
+if (globalThis.Buffer === undefined) {
 	globalThis.Buffer = Buffer
 }

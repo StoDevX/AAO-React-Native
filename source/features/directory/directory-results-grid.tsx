@@ -69,6 +69,7 @@ export function DirectoryResultsGrid({
 						verticalSpacing={TILE_SPACING}
 					>
 						{inRows(indexed, columns).map((row, i) => (
+							// oxlint-disable-next-line react/no-array-index-key -- a row is its position; tiles are keyed by their person's index
 							<Grid.Row key={i}>
 								{row.map(({person, index}) => (
 									<PersonTile

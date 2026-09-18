@@ -7,9 +7,14 @@ export default function DebugKeyPathPage(): React.ReactNode {
 	const navigation = useNavigation()
 	let {keyPath = []} = useLocalSearchParams<{keyPath?: string[]}>()
 
+	// The last key in the path, dotted the way a property access reads. With no
+	// path there is no key to dot, and the screen is the root of the tree -- the
+	// same thing Debug/index calls itself.
+	let lastKey = keyPath.at(-1)
+
 	return (
 		<>
-			<Stack.Title>.{keyPath[keyPath.length - 1]}</Stack.Title>
+			<Stack.Title>{lastKey === undefined ? 'Debug' : `.${lastKey}`}</Stack.Title>
 			<Stack.Toolbar placement="right">
 				<Stack.Toolbar.Button
 					accessibilityLabel="Close Screen"

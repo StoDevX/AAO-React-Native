@@ -102,7 +102,7 @@ function parseConditionNode(value: unknown): ConditionNode | null {
 			.map((child) => parseConditionNode(child))
 			.filter(Boolean) as ConditionNode[]
 
-		return children.length ? {type: 'and', children} : null
+		return children.length > 0 ? {type: 'and', children} : null
 	}
 
 	if (!isRecord(value)) {
@@ -114,7 +114,7 @@ function parseConditionNode(value: unknown): ConditionNode | null {
 			.map((child) => parseConditionNode(child))
 			.filter(Boolean) as ConditionNode[]
 
-		return children.length ? {type: 'and', children} : null
+		return children.length > 0 ? {type: 'and', children} : null
 	}
 
 	if (value.or !== undefined) {
@@ -122,7 +122,7 @@ function parseConditionNode(value: unknown): ConditionNode | null {
 			.map((child) => parseConditionNode(child))
 			.filter(Boolean) as ConditionNode[]
 
-		return children.length ? {type: 'or', children} : null
+		return children.length > 0 ? {type: 'or', children} : null
 	}
 
 	if (value.not !== undefined) {
@@ -179,11 +179,11 @@ function readPlatforms(value: unknown): PlatformCondition[] | undefined {
 		})
 		.filter(Boolean) as PlatformCondition[]
 
-	return valid.length ? valid : undefined
+	return valid.length > 0 ? valid : undefined
 }
 
 function readString(value: unknown): string | undefined {
-	if (typeof value === 'string' && value.trim().length) {
+	if (typeof value === 'string' && value.trim().length > 0) {
 		return value.trim()
 	}
 

@@ -227,7 +227,7 @@ export let DayPickerStrip = React.forwardRef<DayPickerStripHandle, Props>(functi
 			let sundayIndex = days.findIndex((d) => d.isSame(sundayOfWeek, 'day'))
 
 			scrollRef.current.scrollTo({
-				x: offsetForIndex(sundayIndex >= 0 ? sundayIndex : 0),
+				x: offsetForIndex(Math.max(sundayIndex, 0)),
 				animated: true,
 			})
 		},

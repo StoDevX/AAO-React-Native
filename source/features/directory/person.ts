@@ -13,5 +13,5 @@ export function initials(
 	if (first && last) {
 		return (first + last).toUpperCase()
 	}
-	return person.displayName.replace(/\s/gu, '').slice(0, 2).toUpperCase()
+	return person.displayName.replaceAll(/\s/gu, '').slice(0, 2).toUpperCase()
 }

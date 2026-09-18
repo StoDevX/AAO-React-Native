@@ -29,19 +29,19 @@ export const openEmail = (): void => {
 const getVersion = () =>
 	formatVersion(Application.nativeApplicationVersion, Application.nativeBuildVersion)
 
+const onResetButton = () => {
+	Alert.alert('Reset Everything', 'Are you sure you want to clear everything?', [
+		{text: 'Nope!', style: 'cancel'},
+		{
+			text: 'Reset it!',
+			style: 'destructive',
+			onPress: () => refreshApp(),
+		},
+	])
+}
+
 export const SupportSection = (): React.ReactNode => {
 	let router = useRouter()
-
-	let onResetButton = () => {
-		Alert.alert('Reset Everything', 'Are you sure you want to clear everything?', [
-			{text: 'Nope!', style: 'cancel'},
-			{
-				text: 'Reset it!',
-				style: 'destructive',
-				onPress: () => refreshApp(),
-			},
-		])
-	}
 
 	return (
 		<Section title="Support">

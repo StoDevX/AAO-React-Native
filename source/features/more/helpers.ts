@@ -21,7 +21,7 @@ export const filterLinkGroups = (groups: LinkGroup[], query: string): LinkGroup[
 	let filtered: LinkGroup[] = []
 	for (let {title, data} of groups) {
 		let links = data.filter((link) => labelWords(link).some((word) => word.includes(needle)))
-		if (links.length) {
+		if (links.length > 0) {
 			filtered.push({title, data: links})
 		}
 	}

@@ -98,7 +98,7 @@ const HTML_ENTITIES: Record<string, string> = {
 }
 
 function decodeHtmlEntities(str: string): string {
-	return str.replace(/&(?:amp|lt|gt|quot|#039);/gu, (entity) => HTML_ENTITIES[entity] ?? entity)
+	return str.replaceAll(/&(?:amp|lt|gt|quot|#039);/gu, (entity) => HTML_ENTITIES[entity] ?? entity)
 }
 
 function extractGalleryImages(metadata: RawRedditPost['media_metadata']): string[] {
@@ -229,7 +229,7 @@ export async function fetchRedditPost(
 	const res = await fetch(url, {signal, headers: {'User-Agent': USER_AGENT}})
 	if (!res.ok) throw new Error(`Reddit post fetch failed: ${res.status}`)
 	const json: unknown = await res.json()
-	if (!Array.isArray(json) || json.length < 1) return null
+	if (!Array.isArray(json) || json.length === 0) return null
 	const postListing = json[0] as RawRedditListing
 	const child = postListing?.data?.children?.[0]
 	if (!child) return null

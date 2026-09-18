@@ -105,7 +105,7 @@ function getArgs(argv) {
 	}
 
 	// if you don't provide any files, it defaults to all schemas
-	if (!args._.length) {
+	if (args._.length === 0) {
 		args._ = allSchemas
 	}
 

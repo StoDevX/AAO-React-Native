@@ -78,7 +78,7 @@ function readBuildingHoursFiles() {
 function levenshtein(a, b) {
 	let rows = a.length + 1
 	let cols = b.length + 1
-	let dist = Array.from({length: rows}, (_, i) => [i, ...Array(cols - 1).fill(0)])
+	let dist = Array.from({length: rows}, (_, i) => [i, ...Array.from({length: cols - 1}, () => 0)])
 	for (let j = 0; j < cols; j++) {
 		dist[0][j] = j
 	}

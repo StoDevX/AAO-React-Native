@@ -56,16 +56,19 @@ function findCafeMessage(cafeInfo: CafeInfoType, now: Moment): string | null {
 	return null
 }
 
-function buildCustomStationMenu(foodItems: MenuItemContainerType): Array<StationMenuType> {
-	let groupByStation = (grouped: Record<string, MenuItemType['id'][]>, item: MenuItemType) => {
-		if (item.station in grouped) {
-			grouped[item.station].push(item.id)
-		} else {
-			grouped[item.station] = [item.id]
-		}
-		return grouped
+const groupByStation = (
+	grouped: Record<string, MenuItemType['id'][]>,
+	item: MenuItemType,
+): Record<string, MenuItemType['id'][]> => {
+	if (item.station in grouped) {
+		grouped[item.station].push(item.id)
+	} else {
+		grouped[item.station] = [item.id]
 	}
+	return grouped
+}
 
+function buildCustomStationMenu(foodItems: MenuItemContainerType): Array<StationMenuType> {
 	// go over the list of all food items, turning it into a mapping
 	// of {StationName: Array<FoodItemId>}
 	let idsGroupedByStation = reduce(foodItems, groupByStation, {})
