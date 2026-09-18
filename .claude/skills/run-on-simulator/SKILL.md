@@ -67,9 +67,8 @@ for n in json.load(sys.stdin): walk(n)
 
 ### What still belongs in an XCUITest
 
-`axe` gets you to any screen, so "the screen is three taps away" is no longer a
-reason to skip straight to `run-uitests`. The division is now about what you
-are doing, not how deep it is:
+`axe` reaches any screen, so how deep a screen sits is no reason to reach for
+`run-uitests`. Choose by what you are doing:
 
 | | |
 | --- | --- |
