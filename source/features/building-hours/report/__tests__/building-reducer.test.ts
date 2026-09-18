@@ -120,3 +120,38 @@ describe('buildingReducer', () => {
 		expect(baseBuilding).toEqual(original)
 	})
 })
+
+describe('links', () => {
+	let withLinks: BuildingType = {
+		...baseBuilding,
+		links: [{title: 'Instagram', url: 'https://instagram.com/lionspause'}],
+	}
+
+	it('handles ADD_LINK on a building with no links', () => {
+		let result = buildingReducer(baseBuilding, {type: 'ADD_LINK'})
+		expect(result.links).toEqual([{title: '', url: ''}])
+	})
+
+	it('handles ADD_LINK on a building that already has one', () => {
+		let result = buildingReducer(withLinks, {type: 'ADD_LINK'})
+		expect(result.links).toHaveLength(2)
+		expect(result.links?.[0].title).toBe('Instagram')
+	})
+
+	it('handles UPDATE_LINK', () => {
+		let result = buildingReducer(withLinks, {
+			type: 'UPDATE_LINK',
+			linkIndex: 0,
+			data: {title: 'Pause Instagram'},
+		})
+		expect(result.links?.[0]).toEqual({
+			title: 'Pause Instagram',
+			url: 'https://instagram.com/lionspause',
+		})
+	})
+
+	it('handles DELETE_LINK', () => {
+		let result = buildingReducer(withLinks, {type: 'DELETE_LINK', linkIndex: 0})
+		expect(result.links).toEqual([])
+	})
+})
