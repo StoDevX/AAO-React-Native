@@ -6,6 +6,8 @@ import {formatTime} from '@frogpond/time-format'
 import {parseHours} from './parse-hours'
 
 /**
+ * `Noon` or `Midnight` when the instant reads as one, else null.
+ *
  * `time` carries its own (campus) zone, but the reader may be in a different
  * one -- decide Midnight/Noon on the instant as the device would show it, not
  * on the campus clock reading, or a campus-midnight close can print "Midnight"
@@ -17,7 +19,7 @@ import {parseHours} from './parse-hours'
  * always the same Chicago there. Verified instead on a simulator relaunched
  * with a different `TZ`, against a building whose hours cross midnight.
  */
-function formatSingleTime(time: Moment, locale?: string): string {
+function specialLabel(time: Moment): 'Noon' | 'Midnight' | null {
 	let local = moment(time.valueOf())
 	if (local.hour() === 0 && local.minute() === 0) {
 		return 'Midnight'
@@ -25,7 +27,23 @@ function formatSingleTime(time: Moment, locale?: string): string {
 	if (local.hour() === 12 && local.minute() === 0) {
 		return 'Noon'
 	}
-	return formatTime(time, locale)
+	return null
+}
+
+/** One end of a printed range: `Midnight`, `Noon`, or `10:30 AM`. */
+function formatSingleTime(time: Moment, locale?: string): string {
+	return specialLabel(time) ?? formatTime(time, locale)
+}
+
+/**
+ * A time inside a sentence: `midnight`, `noon`, or `8 PM`.
+ *
+ * Lowercase because the status line reads "Open until midnight", where the
+ * range on the detail sheet reads "10:30 AM — Midnight" and wants the capital
+ * to match the weight of "10:30 AM".
+ */
+export function formatStatusTime(time: Moment, locale?: string): string {
+	return specialLabel(time)?.toLowerCase() ?? formatTime(time, locale)
 }
 
 export function formatBuildingTimes(
