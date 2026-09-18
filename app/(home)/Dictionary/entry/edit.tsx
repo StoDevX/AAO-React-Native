@@ -5,7 +5,6 @@ import {
 	accessibilityIdentifier,
 	accessibilityLabel,
 	environment,
-	lineLimit,
 	textInputAutocapitalization,
 } from '@expo/ui/swift-ui/modifiers'
 import {Stack, useNavigation, useRouter} from 'expo-router'
@@ -13,6 +12,7 @@ import {usePreventRemove} from 'expo-router/react-navigation'
 import noop from 'lodash/noop'
 import {NoticeView} from '@frogpond/notice'
 
+import {DisclosureRow} from '../../../../source/components/rows'
 import {
 	hasChanges,
 	hasDefinition,
@@ -178,25 +178,21 @@ export default function DictionaryEditPage(): React.ReactNode {
 							onMove={(from, to) => store.moveSense(null, from[0], to)}
 						>
 							{draft.senses.map((sense, index) => (
-								// The definition is the row's own label rather than an
-								// `accessibilityLabel(…)` modifier: that modifier would
-								// override the accessible name, and the definition is what
-								// a reorder test reads to find where a drag left a sense.
-								// The identifier is how a test addresses the row instead.
-								<Button
+								// The definition is the row's own label: no `detail` means
+								// `rowLabel` renders it bare, which is what a reorder test
+								// reads to find where a drag left a sense. The identifier is
+								// how a test addresses the row instead.
+								<DisclosureRow
 									key={sense.id}
-									label={sense.definition || `Sense ${index + 1}`}
-									modifiers={[
-										accessibilityIdentifier(`dictionary-sense-row-${index + 1}`),
-										lineLimit(2),
-									]}
+									identifier={`dictionary-sense-row-${index + 1}`}
 									onPress={() =>
 										router.push({
 											pathname: '/Dictionary/entry/sense',
 											params: {senseId: sense.id},
 										})
 									}
-									systemImage="chevron.right"
+									title={sense.definition || `Sense ${index + 1}`}
+									titleLines={2}
 								/>
 							))}
 						</List.ForEach>
