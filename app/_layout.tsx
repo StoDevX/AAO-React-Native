@@ -4,7 +4,7 @@ import '../source/init/moment'
 import * as sentryInit from '../source/init/sentry'
 import '../source/init/api'
 import '../source/init/theme'
-import {queryClient, persister} from '../source/init/tanstack-query'
+import {queryClient, persistOptions} from '../source/init/tanstack-query'
 
 import * as React from 'react'
 import {PersistGate} from 'redux-persist/integration/react'
@@ -49,7 +49,7 @@ function RootLayout(): React.ReactNode {
 	return (
 		<ReduxProvider store={store}>
 			<PersistGate loading={<LoadingView text="Loading App..." />} persistor={persistor}>
-				<PersistQueryClientProvider client={queryClient} persistOptions={{persister}}>
+				<PersistQueryClientProvider client={queryClient} persistOptions={persistOptions}>
 					<PaperProvider theme={theme}>
 						<ThemeProvider value={theme}>
 							<StatusBar barStyle={statusBarStyle} />

@@ -23,8 +23,8 @@ jest.mock('expo-router', () => {
 })
 
 const SOURCES: CalendarSource[] = [
-	{id: 'stolaf', title: 'St. Olaf', color: '#007aff', kind: 'remote'},
-	{id: 'presence', title: 'Presence', color: '#5856d6', kind: 'remote'},
+	{id: 'stolaf', title: 'St. Olaf', color: '#007aff'},
+	{id: 'presence', title: 'Presence', color: '#5856d6'},
 ]
 
 function picker(overrides = {}): React.ReactElement {

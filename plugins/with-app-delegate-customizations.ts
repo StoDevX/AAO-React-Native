@@ -19,6 +19,10 @@ const STARTUP_BLOCK = `${BEGIN}
         }
         try? fileManager.removeItem(at: appSupportPath.appendingPathComponent("RCTAsyncLocalStorage_V1"))
       }
+      if let documentsPath = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first {
+        // Clear expo-sqlite's databases, which hold the calendar's saved events
+        try? fileManager.removeItem(at: documentsPath.appendingPathComponent("SQLite"))
+      }
       if let bundleId = Bundle.main.bundleIdentifier {
         UserDefaults.standard.removePersistentDomain(forName: bundleId)
       }

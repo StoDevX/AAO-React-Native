@@ -503,6 +503,40 @@ struct CalendarScreen: Screen {
 		anyRow(listTop: listTop)?.label
 	}
 
+	/// Today's section header in the Upcoming list, as the app writes it:
+	/// "Saturday – Sep 5". Built from the frozen clock rather than typed out, and
+	/// matched on both halves, because every later Saturday shares the prefix.
+	func todayHeader() -> XCUIElement {
+		func format(_ pattern: String) -> String {
+			let formatter = DateFormatter()
+			formatter.locale = Locale(identifier: "en_US_POSIX")
+			formatter.timeZone = TimeZone.current
+			formatter.dateFormat = pattern
+			return formatter.string(from: TestIdentifiers.Calendar.frozenNow)
+		}
+		return app.staticTexts.matching(
+			NSPredicate(
+				format: "label BEGINSWITH %@ AND label ENDSWITH %@",
+				"\(format("EEEE")) – ", format("MMM d"))
+		).firstMatch
+	}
+
+	/// Titles of the event rows a reader can see above today's section: below
+	/// the navigation bar, above today's header. Empty when the list sits on
+	/// today; the past sections are then tucked under the bar.
+	///
+	/// Measured against the navigation bar rather than a fixed height so it
+	/// holds on any device, and whether the large title is showing or not.
+	func rowsVisibleAboveToday() -> [String] {
+		let barBottom = app.navigationBars.firstMatch.frame.maxY
+		let todayTop = todayHeader().frame.minY
+		return app.buttons.matching(
+			NSPredicate(format: "identifier BEGINSWITH %@", TestIdentifiers.Calendar.eventRowPrefix)
+		).allElementsBoundByIndex
+			.filter { $0.frame.maxY > barBottom && $0.frame.minY < todayTop }
+			.map(\.label)
+	}
+
 	/// Tap the bottom-bar Today button.
 	@discardableResult
 	func tapToday() -> Self {
@@ -569,6 +603,34 @@ struct CalendarScreen: Screen {
 		app.buttons.matching(
 			NSPredicate(format: "identifier BEGINSWITH %@", TestIdentifiers.Calendar.eventRowPrefix)
 		).count
+	}
+
+	/// A row for `title` is in the list, found by its own identifier.
+	///
+	/// This, not `visibleRowCount()`, is how a test asks whether a filter let an
+	/// event through: the list is a lazy stack, so its row count is how far
+	/// ahead SwiftUI has built rather than how many events the list holds, and
+	/// two counts taken at different scroll offsets differ without anything
+	/// about the data having changed.
+	@discardableResult
+	func verifyRowPresent(_ title: String) -> Self {
+		XCTAssertTrue(
+			row(title).waitForExistence(timeout: 10),
+			"\(title) should be in the list")
+		return self
+	}
+
+	/// The counterpart to `verifyRowPresent`, for an event a filter excludes.
+	@discardableResult
+	func verifyRowAbsent(_ title: String) -> Self {
+		XCTAssertTrue(
+			row(title).waitForNonExistence(timeout: 10),
+			"\(title) should have been filtered out of the list")
+		return self
+	}
+
+	private func row(_ title: String) -> XCUIElement {
+		app.buttons["\(TestIdentifiers.Calendar.eventRowPrefix)\(title)"]
 	}
 
 	/// The list merges several calendars, so it can credit none of them.

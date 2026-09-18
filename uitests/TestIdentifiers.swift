@@ -254,8 +254,10 @@ struct TestIdentifiers {
 		/// Categories the picker offers, written as the menu draws them: the
 		/// name, then how many events carry it. The counts come from
 		/// `modules/ccc-calendar/fixtures/uitest-events.json` read at the app's
-		/// frozen clock, so they hold for as long as that fixture does.
-		static let categories = ["Music (10)", "Academic Year (6)"]
+		/// frozen clock, so they hold for as long as that fixture does. A count
+		/// covers the list's whole window, finished events included: Welcome
+		/// Convocation ended that morning and still counts toward Academic Year.
+		static let categories = ["Music (10)", "Academic Year (7)"]
 		/// The picker menu's one section header. SwiftUI draws a Menu section
 		/// title as static text, uppercased by the caller rather than by the
 		/// platform.
@@ -279,6 +281,14 @@ struct TestIdentifiers {
 		/// only too long. A name long enough to wrap its row costs half again
 		/// the height of one that does not.
 		static let organization = "Music Organizations (3)"
+		/// An event on the frozen day that carries neither of the values the
+		/// two filter tests choose -- Academic Year rather than Music, and no
+		/// sponsor at all. Day mode's own filter test watches it leave the list
+		/// and come back.
+		static let unfilteredDayRow = "Welcome Convocation"
+		/// The same, for the Upcoming list: two days past the frozen one, so it
+		/// sits well inside the rows the list has built either side of today.
+		static let unfilteredUpcomingRow = "First Day of Classes"
 		/// The one calendar UI test mode enables, from `REMOTE_SOURCES`.
 		static let uitestCalendar = "UI Test Fixtures"
 		/// Every attribution caption opens with this. The list should carry

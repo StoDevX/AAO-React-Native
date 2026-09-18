@@ -28,6 +28,7 @@ import {DayPickerStrip, type DayPickerStripHandle} from './day-picker-strip'
 import {anchorShouldFollow, dayOnShow, emptyNotice, pageWindow} from './day-state'
 import {deriveDays, eventsByDay} from './days'
 import {EventListRow} from './event-list-row'
+import {FailureNote} from './failure-note'
 import {formatSectionHeader} from './times'
 import type {CalendarBodyHandle, CalendarSource, SourcedEvent} from './types'
 
@@ -298,6 +299,7 @@ export let DayView = React.forwardRef<CalendarBodyHandle, Props>(function DayVie
 												alignment="leading"
 												modifiers={[padding({leading: 16, trailing: 16, top: 12, bottom: 8})]}
 											>
+												<FailureNote failed={props.failed} />
 												<Text
 													modifiers={[
 														font({textStyle: 'headline'}),

@@ -28,7 +28,6 @@ export interface CalendarSource {
 	id: string
 	title: string
 	color: ColorValue
-	kind: 'remote' | 'device'
 }
 
 export interface EventGroup {

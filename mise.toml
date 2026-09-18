@@ -184,8 +184,9 @@ run = "jest"
 # The warning says nothing actionable, so it is off rather than in the output
 # of every run.
 [tasks."test:node"]
-description = "Run the node:test tests under scripts/ and plugins/"
-run = 'node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test "scripts/*.test.mjs" "plugins/*.test.ts"'
+description = "Run the node:test tests beside their subjects"
+env = { TZ = "America/Chicago" }
+run = 'node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test "scripts/*.test.mjs" "plugins/*.test.ts" "source/database/*.test.ts" "source/database/calendar/*.test.ts" "modules/event-list/*.test.ts" "modules/ccc-calendar/*.test.ts"'
 
 # --- Data ---
 

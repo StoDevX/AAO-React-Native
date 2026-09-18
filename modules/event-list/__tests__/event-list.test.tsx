@@ -107,6 +107,47 @@ describe('EventList', () => {
 
 	// Nothing to reload -- the way out is the picker, not a retry.
 
+	// A failed refresh leaves the saved events on screen, and the list opens on
+	// today with the past above the fold. A note at the top of the list would
+	// open out of sight, so it leads the section the list opens on.
+	test('names a failed calendar at the top of today, not above the past', async () => {
+		await render(
+			<EventList
+				events={[
+					{
+						sourceId: 'stolaf',
+						key: 'past',
+						event: makeEvent({
+							title: 'Last Week',
+							startTime: moment('2026-08-10T19:00:00Z'),
+							endTime: moment('2026-08-10T20:00:00Z'),
+						}),
+					},
+					{
+						sourceId: 'stolaf',
+						key: 'today',
+						event: makeEvent({
+							title: 'This Afternoon',
+							startTime: moment('2026-08-17T19:00:00Z'),
+							endTime: moment('2026-08-17T20:00:00Z'),
+						}),
+					},
+				]}
+				failed={[STOLAF_SOURCE]}
+				now={NOW}
+				onPressEvent={jest.fn()}
+				onRefresh={jest.fn()}
+				refreshing={false}
+				sources={[STOLAF_SOURCE]}
+			/>,
+		)
+
+		let reading = screen
+			.getAllByText(/Could not load|Last Week|Monday – Aug 17/u)
+			.map((node) => [node.props.children].flat().join(''))
+		expect(reading).toEqual(['Last Week', 'Could not load St. Olaf.', 'Monday – Aug 17'])
+	})
+
 	test('draws no day picker', async () => {
 		await render(
 			<EventList

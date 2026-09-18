@@ -4,6 +4,7 @@ import {
 	Host,
 	LazyVStack,
 	ScrollView as SwiftUIScrollView,
+	type ScrollGeometry,
 	Text,
 	useNativeState,
 	VStack,
@@ -17,13 +18,15 @@ import {
 	refreshable,
 	scrollPosition,
 	scrollTargetLayout,
+	useScrollGeometryChange,
 } from '@expo/ui/swift-ui/modifiers'
 import * as c from '@frogpond/colors'
 import type {Moment} from 'moment-timezone'
 import {NoticeView} from '@frogpond/notice'
 import {EventListRow} from './event-list-row'
+import {FailureNote} from './failure-note'
 import {emptyNotice} from './day-state'
-import {groupEvents} from './sections'
+import {groupEvents, todaySectionKey} from './sections'
 import type {CalendarBodyHandle, CalendarSource, SourcedEvent} from './types'
 
 type Props = {
@@ -64,19 +67,48 @@ export let EventList = React.forwardRef<CalendarBodyHandle, Props>(function Even
 		[props.events, props.now],
 	)
 
+	let todayKey = React.useMemo(() => todaySectionKey(sections, props.now), [sections, props.now])
+
 	let scrollTarget = useNativeState<string | null>(null)
 
 	/**
-	 * Returns the list to the top. The topmost section is whatever sorts first
-	 * -- `Ongoing` when something spans today, otherwise the earliest day.
+	 * Opens the list on today rather than at the top.
+	 *
+	 * The read window keeps 30 days of finished events, so the top of the list
+	 * is last month; the past is meant to be reachable by scrolling up, not to
+	 * be where the screen opens.
+	 *
+	 * Set on the UI thread the first time the list has content laid out. Not
+	 * from an effect, and not as the state's starting value: measured on the
+	 * simulator, SwiftUI drops a position set before the list appears, and since
+	 * the state then already reads today, nothing sets it again. Not from
+	 * JavaScript either: an event from the list reaches it a render late, and
+	 * with a month of events above today the reader sees that month for a
+	 * moment before the jump.
+	 *
+	 * Only while the list has no position yet. SwiftUI writes the leading
+	 * section back as the reader scrolls, so a list that has been placed never
+	 * reads null again; a later layout -- a refresh, a filter -- leaves the
+	 * reader where they were, and going back to today is what the Today button
+	 * is for.
 	 */
+	let openOnToday = React.useCallback(
+		(geometry: ScrollGeometry) => {
+			'worklet'
+			if (todayKey && geometry.contentHeight > 0 && scrollTarget.get() === null) {
+				scrollTarget.set(todayKey)
+			}
+		},
+		[scrollTarget, todayKey],
+	)
+	let placement = useScrollGeometryChange(openOnToday)
+
+	/** Returns the list to today -- see `todaySectionKey` for what that means. */
 	let showToday = React.useCallback(() => {
-		let topSection = sections[0]?.key
-		if (topSection) {
-			// oxlint-disable-next-line react/immutability
-			scrollTarget.value = topSection
+		if (todayKey) {
+			scrollTarget.set(todayKey)
 		}
-	}, [scrollTarget, sections])
+	}, [scrollTarget, todayKey])
 
 	React.useImperativeHandle(ref, () => ({showToday}), [showToday])
 
@@ -102,14 +134,11 @@ export let EventList = React.forwardRef<CalendarBodyHandle, Props>(function Even
 						await props.onRefresh()
 					}),
 					scrollPosition(scrollTarget, {anchor: 'top'}),
+					...(placement ? [placement] : []),
 				]}
 			>
 				<LazyVStack alignment="leading" modifiers={[scrollTargetLayout()]}>
-					{props.failed.length > 0 ? (
-						<Text modifiers={[foregroundStyle(c.secondaryLabel), font({textStyle: 'footnote'})]}>
-							{`Could not load ${props.failed.map((source) => source.title).join(', ')}.`}
-						</Text>
-					) : null}
+					{todayKey ? null : <FailureNote failed={props.failed} />}
 					{sections.map((section) => (
 						<VStack
 							key={section.key}
@@ -119,6 +148,8 @@ export let EventList = React.forwardRef<CalendarBodyHandle, Props>(function Even
 								padding({leading: 16, trailing: 16, top: 12, bottom: 8}),
 							]}
 						>
+							{/* The list opens on this section, so a failure named here is in view. */}
+							{section.key === todayKey ? <FailureNote failed={props.failed} /> : null}
 							<SectionHeader isToday={section.isToday} title={section.title} />
 							{section.data.map((entry, index) => (
 								<EventListRow
