@@ -6,7 +6,6 @@ import SenseScreen from '../../../../app/(home)/Dictionary/entry/sense'
 import {normalizeEntry} from '../lib/entry'
 import {useDictionaryDraftStore} from '../store'
 import type * as ExpoRouterMock from '../../../testing/expo-router-mock'
-import {simulateFocus} from '../../../testing/expo-router-mock'
 
 jest.mock('@expo/ui/swift-ui', () => {
 	// oxlint-disable-next-line typescript/no-require-imports
@@ -24,10 +23,9 @@ const mockPush = jest.fn()
 
 jest.mock('expo-router', () => {
 	// oxlint-disable-next-line typescript/no-require-imports
-	let {Stack, useFocusEffect}: typeof ExpoRouterMock = require('../../../testing/expo-router-mock')
+	let {Stack}: typeof ExpoRouterMock = require('../../../testing/expo-router-mock')
 	return {
 		Stack,
-		useFocusEffect,
 		useRouter: () => ({push: mockPush}),
 		useNavigation: () => ({goBack: jest.fn()}),
 		useLocalSearchParams: () => ({senseId: '1'}),
@@ -63,7 +61,6 @@ describe('the dictionary edit screen', () => {
 		expect(screen.getByLabelText('Word').props.value).toBe('Caf')
 		expect(screen.getByLabelText('Pronunciation').props.value).toBe('kaf')
 		expect(screen.getByLabelText('Part of Speech').props.value).toBe('noun')
-		expect(screen.getByLabelText('Definition 1').props.value).toBe('The hall.')
 	})
 
 	// The three headword fields are copy-paste shaped -- same `TextField`,
@@ -96,11 +93,16 @@ describe('the dictionary edit screen', () => {
 	// Clearing the last definition *is* a change, so a Preview keyed off
 	// `hasChanges` alone would offer to send `word: Caf` and nothing else. The
 	// footer is the only place the form can say why the button went quiet.
+	//
+	// The definition is cleared through the store, as `sense.tsx`'s own field
+	// does -- this screen no longer has a field of its own to fire on.
 	it('refuses to preview a draft left with no definition', async () => {
 		useDictionaryDraftStore.getState().startDraft(entry)
 		await render(<EditScreen />)
 
-		await fireEvent.changeText(screen.getByLabelText('Definition 1'), '')
+		await act(() => {
+			useDictionaryDraftStore.getState().setSenseField('1', {definition: ''})
+		})
 
 		expect(screen.getByLabelText('Preview').props.accessibilityState.disabled).toBe(true)
 		expect(screen.getByText('Add a definition to preview')).toBeTruthy()
@@ -110,7 +112,9 @@ describe('the dictionary edit screen', () => {
 		useDictionaryDraftStore.getState().startDraft(entry)
 		await render(<EditScreen />)
 
-		await fireEvent.changeText(screen.getByLabelText('Definition 1'), 'The caf.')
+		await act(() => {
+			useDictionaryDraftStore.getState().setSenseField('1', {definition: 'The caf.'})
+		})
 
 		expect(screen.getByLabelText('Preview').props.accessibilityState.disabled).toBe(false)
 
@@ -124,54 +128,50 @@ describe('the dictionary edit screen', () => {
 		expect(mockPush).toHaveBeenCalledWith('/Dictionary/entry/preview')
 	})
 
-	// Regression: `sense.tsx` edits the same definition through its own field
-	// while this screen stays mounted underneath it. A `useNativeState`
-	// handle captures its initial value once on mount, so without a sync
-	// pulling the row back into line, this row would keep showing whatever it
-	// showed before the reader left for the sense screen -- see
-	// `SenseDefinitionField` in `edit.tsx`.
-	it("picks up a sense's definition changed elsewhere when it comes back to the front", async () => {
-		useDictionaryDraftStore.getState().startDraft(entry)
-		await render(<EditScreen />)
-
-		// Stands in for `sense.tsx`'s own Definition field calling this same
-		// store action -- not a `fireEvent` on this screen's own row, which
-		// would leave the handle and the store agreeing from the start and
-		// never exercise the sync at all. Wrapped in `act` because, unlike
-		// `fireEvent`, a direct store call is not wrapped for us.
-		await act(() => {
-			useDictionaryDraftStore.getState().setSenseField('1', {definition: 'Foo'})
-		})
-		await act(() => simulateFocus())
-
-		expect(await screen.findByLabelText('Definition 1')).toHaveProperty('props.value', 'Foo')
-	})
-
-	// The other half of that sync, and the reason it hangs off focus rather
-	// than off `sense.definition`: a store write landing while this screen is
-	// the one in front belongs to a keystroke the reader just made here, and
-	// the field already holds it. Writing the store's value back over the
-	// field at that moment overwrites whatever arrived after the keystroke
-	// being echoed -- on device that dropped characters out of the middle of
-	// a typed word.
-	it("leaves a sense's row alone while this screen is the one in front", async () => {
-		useDictionaryDraftStore.getState().startDraft(entry)
-		await render(<EditScreen />)
-
-		await act(() => {
-			useDictionaryDraftStore.getState().setSenseField('1', {definition: 'Foo'})
-		})
-
-		expect(screen.getByLabelText('Definition 1')).toHaveProperty('props.value', 'The dining hall.')
-	})
-
-	it('adds a sense, and numbers the fields', async () => {
+	// A sense added here has nowhere on this screen to be typed into, so the
+	// button that adds it is also the one that opens it.
+	it('adds a sense and opens it', async () => {
 		useDictionaryDraftStore.getState().startDraft(entry)
 		await render(<EditScreen />)
 
 		await fireEvent.press(screen.getByText('Add Sense'))
 
-		expect(screen.getByLabelText('Definition 2')).toBeTruthy()
+		let added = useDictionaryDraftStore.getState().draft?.senses.at(-1)
+		expect(added).toBeTruthy()
+		expect(mockPush).toHaveBeenCalledWith({
+			pathname: '/Dictionary/entry/sense',
+			params: {senseId: added?.id},
+		})
+	})
+
+	it("shows each sense's definition as its row", async () => {
+		useDictionaryDraftStore.getState().startDraft(entry)
+		await render(<EditScreen />)
+
+		expect(screen.getByText('The dining hall.')).toBeTruthy()
+	})
+
+	// A sense with nothing in it yet would otherwise render a row with no
+	// text at all -- a chevron floating over blank space, with nothing saying
+	// which sense it opens.
+	it('names a sense with no definition by its number', async () => {
+		useDictionaryDraftStore.getState().startDraft(entry)
+		useDictionaryDraftStore.getState().addSense()
+		await render(<EditScreen />)
+
+		expect(screen.getByText('Sense 2')).toBeTruthy()
+	})
+
+	it('opens the sense a row names', async () => {
+		useDictionaryDraftStore.getState().startDraft(entry)
+		await render(<EditScreen />)
+
+		await fireEvent.press(screen.getByText('The dining hall.'))
+
+		expect(mockPush).toHaveBeenCalledWith({
+			pathname: '/Dictionary/entry/sense',
+			params: {senseId: '1'},
+		})
 	})
 
 	it('offers no reorder toggle until there are two senses', async () => {

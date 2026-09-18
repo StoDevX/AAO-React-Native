@@ -8,13 +8,11 @@ import {
 	lineLimit,
 	textInputAutocapitalization,
 } from '@expo/ui/swift-ui/modifiers'
-import {Stack, useFocusEffect, useNavigation, useRouter} from 'expo-router'
+import {Stack, useNavigation, useRouter} from 'expo-router'
 import {usePreventRemove} from 'expo-router/react-navigation'
 import noop from 'lodash/noop'
 import {NoticeView} from '@frogpond/notice'
 
-import {DEFINITION_LINES} from '../../../../source/features/dictionary/constants'
-import type {DraftSense} from '../../../../source/features/dictionary/lib/draft'
 import {
 	hasChanges,
 	hasDefinition,
@@ -86,6 +84,13 @@ export default function DictionaryEditPage(): React.ReactNode {
 			? 'Ready to preview'
 			: 'Add a definition to preview'
 
+	let openNewSense = (): void => {
+		let id = store.addSense()
+		if (id) {
+			router.push({pathname: '/Dictionary/entry/sense', params: {senseId: id}})
+		}
+	}
+
 	return (
 		<>
 			<Stack.Title>Suggest an Edit</Stack.Title>
@@ -154,18 +159,6 @@ export default function DictionaryEditPage(): React.ReactNode {
 						/>
 					</Section>
 
-					{/* This section's rows are the sense definitions, each followed
-					    below by one "Options" chevron per sense (see the second
-					    `.map()` further down). The chevron belongs inside its own
-					    field's row -- that is the design -- but a flat, two-`.map()`
-					    layout is what an XCUITest has actually proven still takes
-					    taps; whether a SwiftUI `TextField` responds sharing a row
-					    with a `Button` remains open, so fold the chevron into the
-					    row and delete the second `.map()` only once that in-row
-					    arrangement is proven too. Under an active edit mode SwiftUI
-					    also makes row content inert, so the fields stop taking taps
-					    while the reorder handles are up -- which is why the toolbar
-					    toggles between the two rather than showing both. */}
 					{/* The footer says whether there is a suggestion to preview yet, and
 					    stays mounted to say it: swapping a footer in and out on the first
 					    edit rebuilds this Section natively, and keystrokes already in
@@ -185,104 +178,35 @@ export default function DictionaryEditPage(): React.ReactNode {
 							onMove={(from, to) => store.moveSense(null, from[0], to)}
 						>
 							{draft.senses.map((sense, index) => (
-								<SenseDefinitionField
+								// The definition is the row's own label rather than an
+								// `accessibilityLabel(…)` modifier: that modifier would
+								// override the accessible name, and the definition is what
+								// a reorder test reads to find where a drag left a sense.
+								// The identifier is how a test addresses the row instead.
+								<Button
 									key={sense.id}
-									index={index}
-									onChange={(definition) => store.setSenseField(sense.id, {definition})}
-									sense={sense}
+									label={sense.definition || `Sense ${index + 1}`}
+									modifiers={[
+										accessibilityIdentifier(`dictionary-sense-row-${index + 1}`),
+										lineLimit(2),
+									]}
+									onPress={() =>
+										router.push({
+											pathname: '/Dictionary/entry/sense',
+											params: {senseId: sense.id},
+										})
+									}
+									systemImage="chevron.right"
 								/>
 							))}
 						</List.ForEach>
 
-						{draft.senses.map((sense, index) => (
-							<Button
-								key={`options-${sense.id}`}
-								label={`Sense ${index + 1} Options`}
-								onPress={() =>
-									router.push({
-										pathname: '/Dictionary/entry/sense',
-										params: {senseId: sense.id},
-									})
-								}
-								systemImage="chevron.right"
-							/>
-						))}
-
-						<Button label="Add Sense" onPress={store.addSense} systemImage="plus" />
+						{/* Adding a sense and opening it are one action: the row it
+						    appends has nowhere to type a definition. */}
+						<Button label="Add Sense" onPress={openNewSense} systemImage="plus" />
 					</Section>
 				</Form>
 			</Host>
 		</>
-	)
-}
-
-type SenseDefinitionFieldProps = {
-	sense: DraftSense
-	index: number
-	onChange: (definition: string) => void
-}
-
-/**
- * One sense's definition row.
- *
- * Its own component rather than a `TextField` written straight into the
- * `map` above: a `useNativeState` handle's initial value is captured once on
- * mount, so it needs a hook call whose count does not change as senses are
- * added, deleted or reordered. A component keyed by the sense's id gives each
- * row a stable hook of its own; called inline in the loop, adding or removing
- * a sense would change how many times `useNativeState` ran on this render
- * and break React's rule that a component call the same hooks every time.
- */
-function SenseDefinitionField({
-	sense,
-	index,
-	onChange,
-}: SenseDefinitionFieldProps): React.ReactNode {
-	let text = useNativeState(sense.definition)
-
-	// Held in a ref so the reconcile below can read the current definition
-	// without taking it as a dependency -- a dependency would re-run the effect
-	// on every store write, which is exactly what must not happen here.
-	let definition = React.useRef(sense.definition)
-	React.useEffect(() => {
-		definition.current = sense.definition
-	}, [sense.definition])
-
-	/**
-	 * This screen stays mounted underneath `sense.tsx`, which edits the same
-	 * definition through its own field. `text`'s initial value was captured
-	 * once on mount, so a change made over there leaves this row showing
-	 * whatever it showed before the reader navigated away, until this pulls the
-	 * handle back into line.
-	 *
-	 * Keyed on focus, not on `sense.definition`: another screen can only have
-	 * changed the definition while it sat on top of this one, so regaining
-	 * focus is the single moment reconciling is needed -- and it is never while
-	 * the reader is typing here. Reconciling on every change would race their
-	 * own keystrokes, because `onTextChange`'s store write crosses the bridge:
-	 * a second keystroke landing before the first one's echo returns leaves the
-	 * handle ahead of the store, and `text.set` would overwrite the field with
-	 * the stale value, dropping the character.
-	 */
-	useFocusEffect(
-		React.useCallback(() => {
-			if (text.get() !== definition.current) {
-				text.set(definition.current)
-			}
-		}, [text]),
-	)
-
-	return (
-		<TextField
-			axis="vertical"
-			modifiers={[
-				accessibilityLabel(`Definition ${index + 1}`),
-				lineLimit(DEFINITION_LINES),
-				textInputAutocapitalization('sentences'),
-			]}
-			onTextChange={onChange}
-			placeholder="Definition"
-			text={text}
-		/>
 	)
 }
