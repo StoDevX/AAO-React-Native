@@ -1,6 +1,5 @@
 import * as React from 'react'
-import {StyleSheet, Text, useWindowDimensions, View} from 'react-native'
-import {useSafeAreaInsets} from 'react-native-safe-area-context'
+import {StyleSheet, Text, View} from 'react-native'
 import {Stack, useLocalSearchParams} from 'expo-router'
 import {useQuery} from '@tanstack/react-query'
 import {timezone} from '@frogpond/constants'
@@ -27,10 +26,8 @@ import {
 } from '../../source/features/transportation/bus/lib'
 import {ScheduleTimes} from '../../source/features/transportation/bus/components/times'
 import {ProgressChunk} from '../../source/features/transportation/bus/components/progress-chunk'
-import {
-	BUS_FOOTER_MESSAGE,
-	SECTION_HORIZONTAL_INSET,
-} from '../../source/features/transportation/bus/constants'
+import {BUS_FOOTER_MESSAGE} from '../../source/features/transportation/bus/constants'
+import {useTimetableWidth} from '../../source/features/transportation/bus/use-timetable-width'
 import {LoadingView, NoticeView} from '@frogpond/notice'
 import {ListRow, Detail, Title} from '@frogpond/lists'
 import * as c from '@frogpond/colors'
@@ -73,8 +70,7 @@ type Props = {
 
 function BusStopDetailInternal(props: Props): React.ReactNode {
 	let {stop, line, now, subtitle} = props
-	let {width: windowWidth} = useWindowDimensions()
-	let insets = useSafeAreaInsets()
+	let hostedWidth = useTimetableWidth()
 
 	// Read straight from the props: the row statuses below are computed from
 	// these, so they have to be settled by the time the first frame draws.
@@ -159,12 +155,6 @@ function BusStopDetailInternal(props: Props): React.ReactNode {
 			)
 		})
 	}
-
-	// In landscape on a notched iPhone, an inset-grouped List insets its card
-	// by the safe-area inset plus SECTION_HORIZONTAL_INSET, not just the
-	// constant, so the hosted view has to subtract both or its content
-	// overflows the card.
-	let hostedWidth = windowWidth - 2 * SECTION_HORIZONTAL_INSET - insets.left - insets.right
 
 	return (
 		<Host style={styles.host}>

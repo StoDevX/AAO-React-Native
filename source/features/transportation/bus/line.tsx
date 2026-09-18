@@ -1,6 +1,5 @@
 import * as React from 'react'
-import {StyleSheet, Text, TouchableOpacity, useWindowDimensions, View} from 'react-native'
-import {useSafeAreaInsets} from 'react-native-safe-area-context'
+import {StyleSheet, Text, TouchableOpacity, View} from 'react-native'
 import type {BusSchedule, UnprocessedBusLine} from './types'
 import {
 	BusStateEnum,
@@ -28,9 +27,10 @@ import {
 	listRowSeparator,
 	listStyle,
 } from '@expo/ui/swift-ui/modifiers'
-import {BUS_FOOTER_MESSAGE, SECTION_HORIZONTAL_INSET} from './constants'
+import {BUS_FOOTER_MESSAGE} from './constants'
 import {momentToDayOfWeek, createMomentForDay} from './components/days'
 import {useBusDay} from './store'
+import {useTimetableWidth} from './use-timetable-width'
 
 const styles = StyleSheet.create({
 	host: {
@@ -140,8 +140,7 @@ export function deriveFromProps({line, now}: {line: UnprocessedBusLine; now: Mom
 export function BusLine(props: Props): React.ReactNode {
 	let {line, now} = props
 	let router = useRouter()
-	let {width: windowWidth} = useWindowDimensions()
-	let insets = useSafeAreaInsets()
+	let hostedWidth = useTimetableWidth()
 
 	const currentDay = momentToDayOfWeek(now)
 
@@ -160,12 +159,6 @@ export function BusLine(props: Props): React.ReactNode {
 		{status, index: currentBusIteration, parkedStopIndex},
 		momentForSelectedDay,
 	)
-
-	// In landscape on a notched iPhone, an inset-grouped List insets its card
-	// by the safe-area inset plus SECTION_HORIZONTAL_INSET, not just the
-	// constant, so the hosted view has to subtract both or its content
-	// overflows the card.
-	let hostedWidth = windowWidth - 2 * SECTION_HORIZONTAL_INSET - insets.left - insets.right
 
 	let timetable = schedule.timetable
 
