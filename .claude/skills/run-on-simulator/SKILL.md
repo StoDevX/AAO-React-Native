@@ -23,9 +23,10 @@ axe swipe --start-x 200 --start-y 600 --end-x 200 --end-y 200 --udid "$UDID"
 axe screenshot --udid "$UDID" --output /tmp/shot.png
 ```
 
-`brew install cameroncooke/axe/axe` if it is ever missing. It drives
-CoreSimulator's HID interface directly, so no GUI is involved and nothing needs
-to be in the foreground.
+It comes from `mise.toml` like every other tool here, so `mise run agent:setup`
+installs it and `mise x -- axe …` finds it. It drives CoreSimulator's HID
+interface directly, so no GUI is involved and nothing needs to be in the
+foreground.
 
 Coordinates from `describe-ui` are **points**, and so are `axe tap`'s. A
 `simctl io screenshot` is in pixels — divide by the scale (3 on the Pro
