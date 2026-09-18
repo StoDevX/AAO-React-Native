@@ -5,6 +5,24 @@ hk = "2.0.1"
 ruby = "3.4.10"
 "gem:bundler" = "4.0.20"
 
+# Taps and types on a simulator, which simctl cannot do -- see the
+# run-on-simulator skill. macOS only: it drives CoreSimulator, so it has
+# nothing to talk to on the Linux jobs.
+[tools."github:cameroncooke/AXe"]
+version = "1.8.0"
+exe = "axe"
+extract_all = "true"
+os = ["macos"]
+# The release tarball is unsigned, and macOS kills an unsigned arm64 binary on
+# exec -- SIGKILL, exit 137, no message. The homebrew formula ad-hoc signs it
+# after unpacking; this is the same step.
+postinstall = """
+for framework in "$MISE_TOOL_INSTALL_PATH"/Frameworks/*.framework; do
+	codesign --force --sign - --timestamp=none "$framework"
+done
+codesign --force --sign - --timestamp=none "$MISE_TOOL_INSTALL_PATH/axe"
+"""
+
 [env]
 _.path = ["node_modules/.bin"]
 HK_PKL_BACKEND = "pklr"

@@ -14,21 +14,12 @@ import {
 } from '@expo/ui/swift-ui/modifiers'
 import type {ViewType} from '../views'
 import {GradientRoundedRectangle} from '../../components/gradient-tile'
+import {FILL_WIDTH} from '../../components/tile-layout'
 
 type Props = {
 	view: ViewType
 	onPress: () => void
 }
-
-/// Gap between cards, both within a column and between the two columns.
-export const CELL_MARGIN = 10
-
-/// Gap between the screen edge and the cards.
-export const SCREEN_MARGIN = 16
-
-/// SwiftUI has no "fill the available width" constant reachable from JS, so we
-/// cap the frame at a width no phone reaches and let the stack divide the space.
-export const FILL_WIDTH = 10_000
 
 function HomeScreenButtonLabel({
 	title,

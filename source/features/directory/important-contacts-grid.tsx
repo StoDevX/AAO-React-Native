@@ -24,9 +24,13 @@ import {
 } from '@expo/ui/swift-ui/modifiers'
 import * as c from '@frogpond/colors'
 import {ContactTile} from '../../../source/features/directory/tile'
-import {columnsForFontScale, inRows, TILE_SPACING} from '../../../source/components/tile-layout'
+import {
+	columnsForFontScale,
+	FILL_WIDTH,
+	inRows,
+	TILE_SPACING,
+} from '../../../source/components/tile-layout'
 import type {ContactType} from '../../../source/features/directory/types'
-import {FILL_WIDTH} from '../../../source/features/home/button'
 
 /// Mirrored by TestIdentifiers.Directory.contactGrid.
 const CONTACT_GRID_ID = 'directory-contact-grid'
