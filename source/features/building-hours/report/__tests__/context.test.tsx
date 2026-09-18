@@ -63,4 +63,48 @@ describe('useBuildingReport', () => {
 		expect(result.current.draft).toBeNull()
 		expect(result.current.hasUnsavedChanges).toBe(false)
 	})
+
+	it('starts a report with an empty note', async () => {
+		let {result} = await renderReport()
+
+		await act(() => {
+			result.current.start(BUILDING)
+		})
+
+		expect(result.current.note).toBe('')
+	})
+
+	// A note with no field edits is still work someone loses if the sheet
+	// dismisses without asking.
+	it('counts a note as an unsaved change', async () => {
+		let {result} = await renderReport()
+
+		await act(() => {
+			result.current.start(BUILDING)
+		})
+		expect(result.current.hasUnsavedChanges).toBe(false)
+
+		await act(() => {
+			result.current.setNote('The Friday hours are wrong.')
+		})
+
+		expect(result.current.note).toBe('The Friday hours are wrong.')
+		expect(result.current.hasUnsavedChanges).toBe(true)
+	})
+
+	it('clears the note when a new report starts', async () => {
+		let {result} = await renderReport()
+
+		await act(() => {
+			result.current.start(BUILDING)
+		})
+		await act(() => {
+			result.current.setNote('Something')
+		})
+		await act(() => {
+			result.current.start(BUILDING)
+		})
+
+		expect(result.current.note).toBe('')
+	})
 })
