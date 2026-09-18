@@ -233,7 +233,11 @@ struct CampusDictionaryScreen: Screen {
 	/// the caret at the start of the existing text, not the end.
 	@discardableResult
 	func typeDefinition(prepending text: String) -> Self {
-		let field = app.element(matching: TestIdentifiers.Dictionary.senseDefinitionField)
+		// Typed, not `element(matching:)`: the sense screen's "Definition"
+		// section title is a StaticText carrying the same accessibility label
+		// as the field itself and precedes it in the tree, so a type-agnostic
+		// query resolves to the header, which takes no taps.
+		let field = app.textFields[TestIdentifiers.Dictionary.senseDefinitionField]
 		XCTAssertTrue(
 			field.waitForExistence(timeout: 15), "the sense's definition field never appeared")
 		let before = (field.value as? String) ?? ""
@@ -511,7 +515,7 @@ struct CampusDictionaryScreen: Screen {
 			guard senseForm.waitForExistence(timeout: 5) else { continue }
 
 			if let text {
-				let field = app.element(matching: TestIdentifiers.Dictionary.senseDefinitionField)
+				let field = app.textFields[TestIdentifiers.Dictionary.senseDefinitionField]
 				XCTAssertTrue(
 					field.waitForExistence(timeout: 15),
 					"the new sense's definition field never appeared")
