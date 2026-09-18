@@ -96,6 +96,13 @@ struct TestIdentifiers {
 		/// Apple's.
 		static let referenceEntry = "change"
 
+		/// The longest multi-paragraph definition in the bundled dictionary --
+		/// 744 characters over four paragraphs. The entry that showed the
+		/// definition field clipped against its row's top edge with dead space
+		/// below it (#7959); a single-paragraph entry of the same length never
+		/// did.
+		static let longDefinitionEntry = "AmCon"
+
 		/// The edit form's navigation bar, which carries `suggestAnEdit`'s
 		/// wording because that action is what opens it. Queries for the form's
 		/// back button scope to this bar, since the label alone does not tell

@@ -44,7 +44,7 @@ class ModuleCampusDictionaryTests: UITestCase {
 	///
 	/// `"indeed "` rather than a shorter word, here and in every other test
 	/// that types into this field: a burst this long used to arrive as
-	/// `indmake`, `indemake` or `indeedmake`, because `SenseDefinitionField`
+	/// `indmake`, `indemake` or `indeedmake`, because the definition field
 	/// reconciled its native handle against the store on every change and so
 	/// overwrote the field with a value one keystroke out of date. Seven
 	/// characters is what it took to straddle that window reliably, which
@@ -183,5 +183,23 @@ class ModuleCampusDictionaryTests: UITestCase {
 			.verifyPronunciation(TestIdentifiers.Dictionary.phoneticEntryIPA)
 			.verifyPartOfSpeech(TestIdentifiers.Dictionary.phoneticEntryPartOfSpeech)
 			.capture("Dictionary entry with phonetics")
+	}
+
+	/// #7959: a multi-paragraph definition in a `{min, max}` line-limited row
+	/// drew ten lines flush against the row's top edge, clipped at both ends,
+	/// with three lines of dead row beneath it. Nothing in Jest can see this
+	/// -- there is no layout pass there -- so the check is a screenshot of the
+	/// field holding the definition that broke it.
+	func testALongDefinitionFillsItsFieldWithoutClipping() throws {
+		CampusDictionaryScreen(app: app)
+			.navigate()
+			.search(for: TestIdentifiers.Dictionary.longDefinitionEntry)
+			.openWord(TestIdentifiers.Dictionary.longDefinitionEntry)
+			.verifyDefinitionSheetIsPresented()
+			.openEditor()
+			.verifyEditFormPushedIntoSheet()
+			.capture("Dictionary edit form for a long definition")
+			.openSense(1)
+			.capture("Dictionary sense screen for a long definition")
 	}
 }
