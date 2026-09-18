@@ -34,6 +34,7 @@ import type {
 } from '../../../../source/features/building-hours/types'
 import {
 	categoriesFrom,
+	linkHost,
 	summarizeDays,
 	formatBuildingTimes,
 } from '../../../../source/features/building-hours/lib'
@@ -96,7 +97,7 @@ function useBuildingEditor(initialBuilding: BuildingType, campus: Campus) {
 		submitReport(initialBuilding, building, campus, note)
 	}, [building, campus, initialBuilding, note])
 
-	return {building, dispatch: edit, openEditor, submit}
+	return {building, dispatch: edit, openEditor, router, submit}
 }
 
 type Props = {
@@ -115,9 +116,9 @@ let CampusProblemReportView = ({initialBuilding, campus}: Props): React.ReactNod
 		// oxlint-disable-next-line react/exhaustive-deps
 	}, [])
 
-	let {building, dispatch, openEditor, submit} = useBuildingEditor(initialBuilding, campus)
+	let {building, dispatch, openEditor, router, submit} = useBuildingEditor(initialBuilding, campus)
 
-	let {schedule: schedules, name, subtitle, abbreviation, category} = building
+	let {schedule: schedules, name, subtitle, abbreviation, category, links = []} = building
 
 	let {data: buildings} = useQuery(buildingsOptions(campus))
 	let categories = categoriesFrom([...(buildings ?? []), building])
@@ -210,6 +211,37 @@ let CampusProblemReportView = ({initialBuilding, campus}: Props): React.ReactNod
 						<NavigationRow
 							onPress={() => dispatch({type: 'ADD_SCHEDULE'})}
 							title="Add New Schedule"
+						/>
+					</Section>
+
+					{/* Always drawn, even with no links, so Add Link stays reachable. */}
+					<Section title="RESOURCES">
+						{links.map((link, i) => (
+							<DetailRow
+								// oxlint-disable-next-line react/no-array-index-key -- the index is the handle the editor edits by
+								key={i}
+								label={link.title || 'Untitled Link'}
+								onPress={() =>
+									router.push({
+										pathname: '/Campus/detail/link-editor',
+										params: {linkIndex: String(i)},
+									})
+								}
+								value={linkHost(link.url)}
+							/>
+						))}
+
+						<NavigationRow
+							onPress={() => {
+								// The new link lands at the end, which is where the editor
+								// that opens next has to look for it.
+								router.push({
+									pathname: '/Campus/detail/link-editor',
+									params: {linkIndex: String(links.length)},
+								})
+								dispatch({type: 'ADD_LINK'})
+							}}
+							title="Add Link"
 						/>
 					</Section>
 				</List>

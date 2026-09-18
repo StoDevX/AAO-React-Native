@@ -50,6 +50,7 @@ const mockSendEmail = sendEmail as jest.MockedFunction<typeof sendEmail>
 const cage: BuildingType = {
 	name: 'The Cage',
 	category: 'Food',
+	links: [{title: 'Instagram', url: 'https://www.instagram.com/lionspause/'}],
 	schedule: [{title: 'Hours', hours: [{days: ['Mo'], from: '8:00am', to: '5:00pm'}]}],
 }
 const library: BuildingType = {name: 'Rolvaag', category: 'Libraries', schedule: []}
@@ -117,5 +118,35 @@ describe('the report form', () => {
 
 		let [args] = mockSendEmail.mock.calls.at(-1) as [{body: string}]
 		expect(args.body).toContain('category: Libraries')
+	})
+})
+
+describe('links', () => {
+	// DetailRow's tappable rows carry both halves in their accessibility label
+	// -- "Email, ole@stolaf.edu" is the same shape asserted in
+	// source/components/__tests__/rows.test.tsx -- so a link row reads as
+	// "title, host".
+	it('shows a row per link, with its host', async () => {
+		await renderReport()
+
+		expect(screen.getByLabelText('Instagram, www.instagram.com')).toBeTruthy()
+		expect(screen.getByText('www.instagram.com')).toBeTruthy()
+	})
+
+	it('names an untitled link rather than showing a blank row', async () => {
+		await renderReport()
+
+		await fireEvent.press(screen.getByLabelText('Add Link'))
+		expect(screen.getByText('Untitled Link')).toBeTruthy()
+	})
+
+	it('opens the editor for the link that was pressed', async () => {
+		await renderReport()
+
+		await fireEvent.press(screen.getByLabelText('Instagram, www.instagram.com'))
+		expect(mockPush).toHaveBeenCalledWith({
+			pathname: '/Campus/detail/link-editor',
+			params: {linkIndex: '0'},
+		})
 	})
 })
