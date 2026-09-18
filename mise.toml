@@ -31,6 +31,10 @@ run = "expo start"
 [tasks.prebuild]
 description = "Generate the native iOS project from app.config.ts"
 wait_for = ["pnpm:install:*"]
+# CocoaPods requires a UTF-8 locale; without one `pod install` crashes with
+# an Encoding::CompatibilityError. A shell with no LANG set, such as an
+# agent's, has none.
+env = { LANG = "en_US.UTF-8" }
 # prebuild recreates ios/ from scratch, deleting the tracked ios/ci_scripts
 # shim with it. `--no-clean` does not help: it preserves an existing *valid*
 # project, but a fresh clone contains only ci_scripts, which prebuild treats as
