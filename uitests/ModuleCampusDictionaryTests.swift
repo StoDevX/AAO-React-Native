@@ -139,15 +139,13 @@ class ModuleCampusDictionaryTests: UITestCase {
 			.verifyDefinitionSheetIsPresented()
 			.openEditor()
 			.verifyEditFormPushedIntoSheet()
-			.addSense()
-			.fillDefinition(2, with: second)
-			.addSense(expectingDefinition: 3)
-			.fillDefinition(3, with: third)
+			.addSense(withDefinition: second)
+			.addSense(expectingRow: 3, withDefinition: third)
 			.toggleReorderMode()
 			.verifyReorderHandlesAppear(senseCount: 3)
 			.dragSenseDownOneRow(from: 0)
 			// Back out of reorder mode before reading: an active `editMode`
-			// makes row content inert, and the fields are what carry the text.
+			// makes row content inert, and the rows are what carry the text.
 			.toggleReorderMode()
 			.verifyDefinitionOrder([
 				second,

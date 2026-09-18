@@ -208,6 +208,69 @@ struct CampusDictionaryScreen: Screen {
 		return self
 	}
 
+	private var senseForm: XCUIElement {
+		app.element(matching: TestIdentifiers.Dictionary.senseForm)
+	}
+
+	/// Opens the sense in row `position`, counting from 1.
+	@discardableResult
+	func openSense(_ position: Int) -> Self {
+		let row = app.element(matching: TestIdentifiers.Dictionary.senseRow(position))
+		scrollUntilExists(row)
+		XCTAssertTrue(row.waitForExistence(timeout: 15), "sense row \(position) never appeared")
+		row.tap()
+		XCTAssertTrue(
+			senseForm.waitForExistence(timeout: 15),
+			"tapping sense row \(position) should open that sense")
+		return self
+	}
+
+	/// Types into the sense screen's definition field and reads it back, so a
+	/// dropped keystroke or a field that lost focus mid-type fails outright
+	/// rather than leaving whatever string survived.
+	///
+	/// Named `prepending`: a tap on a wrapped, multi-line `TextField` lands
+	/// the caret at the start of the existing text, not the end.
+	@discardableResult
+	func typeDefinition(prepending text: String) -> Self {
+		let field = app.element(matching: TestIdentifiers.Dictionary.senseDefinitionField)
+		XCTAssertTrue(
+			field.waitForExistence(timeout: 15), "the sense's definition field never appeared")
+		let before = (field.value as? String) ?? ""
+
+		field.tap()
+		XCTAssertTrue(
+			app.keyboards.firstMatch.waitForExistence(timeout: 10),
+			"tapping the definition field should raise the keyboard -- if it did not, the field "
+				+ "is not taking taps")
+
+		field.typeText(text)
+
+		let after = field.value as? String
+		XCTAssertEqual(
+			after, text + before,
+			"typing should have prepended \"\(text)\" to the field's existing text -- got "
+				+ "\(String(describing: after)), which means a keystroke was dropped or the field "
+				+ "lost focus mid-type")
+		return self
+	}
+
+	/// Returns to the edit form from a sense. The keyboard is up after typing
+	/// and covers nothing in the navigation bar, so no scroll is needed.
+	///
+	/// Scoped to the sense form's own bar: on iOS 27 an unscoped
+	/// `navigationBars["Back"]` matches more than one bar at once.
+	@discardableResult
+	func leaveSense() -> Self {
+		let back = app.navigationBars[TestIdentifiers.Dictionary.senseFormTitle]
+			.buttons[TestIdentifiers.Navigation.backButton]
+		XCTAssertTrue(back.waitForExistence(timeout: 15), "the sense form had no back button")
+		back.tap()
+		XCTAssertTrue(
+			editForm.waitForExistence(timeout: 15), "Back should return to the edit form")
+		return self
+	}
+
 	/// Dismisses the entry sheet by dragging it past the bottom of the screen,
 	/// the gesture UIKit reads as a dismissal rather than a change of detent.
 	@discardableResult
@@ -246,44 +309,13 @@ struct CampusDictionaryScreen: Screen {
 		return self
 	}
 
-	/// Types into the first sense's definition field and confirms the
-	/// keyboard actually rose -- the one check this suite has that the field
-	/// takes taps at all. This field sits in a flat list, separate from the
-	/// "Options" chevron buttons below it (see the two-`.map()` layout in
-	/// `edit.tsx`); it proves that flat layout takes taps, not the in-row
-	/// arrangement the same comment leaves open as a separate question.
-	///
-	/// Named `prepending`, not `appending`: a tap on this field -- a wrapped,
-	/// multi-line `TextField` -- lands the caret at the very start of its
-	/// existing text, not the end, so typed text is inserted before it, not
-	/// after. Reads the field's value back both before and after typing and
-	/// asserts they combine exactly as `text + before`, so a dropped keystroke
-	/// or a field that lost keyboard focus mid-type fails the test outright
-	/// rather than quietly leaving whatever string survived. That read-back is
-	/// this suite's detector for the write race `SenseDefinitionField` guards
-	/// against; see the caller's comment for the length it takes to trip it.
+	/// Edits the first sense's definition, which now means opening that sense
+	/// and typing on its own screen. The read-back inside `typeDefinition` is
+	/// this suite's detector for a write race in the field; see the caller's
+	/// comment for the length it takes to trip one.
 	@discardableResult
 	func editFirstDefinition(prepending text: String) -> Self {
-		let field = app.element(matching: TestIdentifiers.Dictionary.firstDefinitionField)
-		XCTAssertTrue(
-			field.waitForExistence(timeout: 15), "the first definition field never appeared")
-		let before = (field.value as? String) ?? ""
-
-		field.tap()
-		XCTAssertTrue(
-			app.keyboards.firstMatch.waitForExistence(timeout: 10),
-			"tapping the definition field should raise the keyboard -- if it did not, the field "
-				+ "is not taking taps")
-
-		field.typeText(text)
-
-		let after = field.value as? String
-		XCTAssertEqual(
-			after, text + before,
-			"typing should have prepended \"\(text)\" to the field's existing text -- got "
-				+ "\(String(describing: after)), which means a keystroke was dropped or the field "
-				+ "lost focus mid-type")
-		return self
+		return openSense(1).typeDefinition(prepending: text).leaveSense()
 	}
 
 	/// Scrolls the edit form until `text` is on screen and unobstructed.
@@ -316,30 +348,6 @@ struct CampusDictionaryScreen: Screen {
 				? "\"\(text)\" is in the form but never became hittable -- something is drawn "
 					+ "over it"
 				: "eight drags up the form never produced an element reading \"\(text)\"")
-		return self
-	}
-
-	/// Types into a definition field `addSense()` produced -- unlike
-	/// `editFirstDefinition`, those fields start empty, so there is no
-	/// existing text to combine with: the field's value after typing is
-	/// asserted to equal exactly what was typed.
-	@discardableResult
-	func fillDefinition(_ position: Int, with text: String) -> Self {
-		let field = app.element(matching: TestIdentifiers.Dictionary.definitionField(position))
-		XCTAssertTrue(
-			field.waitForExistence(timeout: 15),
-			"definition field \(position) never appeared")
-
-		field.tap()
-		XCTAssertTrue(
-			app.keyboards.firstMatch.waitForExistence(timeout: 10),
-			"tapping definition field \(position) should raise the keyboard")
-
-		field.typeText(text)
-
-		XCTAssertEqual(
-			field.value as? String, text,
-			"definition field \(position) should read back exactly what was typed")
 		return self
 	}
 
@@ -481,24 +489,53 @@ struct CampusDictionaryScreen: Screen {
 		return self
 	}
 
-	/// Taps Add Sense and confirms a second sense actually appeared, retrying
-	/// the tap the way `navigateFromHome` does: a tap can land on an already
-	/// -hittable button before its action has reached JavaScript, and be lost
-	/// entirely.
+	/// Taps Add Sense, types `text` into the sense it opens if given, and
+	/// returns to the form. Retries the tap the way `navigateFromHome` does:
+	/// a tap can land on an already-hittable button before its action has
+	/// reached JavaScript, and be lost entirely.
+	///
+	/// `position` is the row the new sense should occupy, counting from 1 --
+	/// asserted after the return, so a tap that added nothing fails here
+	/// rather than in whatever ran next.
+	///
+	/// The field a new sense opens is empty, so its value after typing is
+	/// asserted to equal exactly what was typed.
 	@discardableResult
-	func addSense(expectingDefinition position: Int = 2) -> Self {
+	func addSense(expectingRow position: Int = 2, withDefinition text: String? = nil) -> Self {
 		let button = app.buttons[TestIdentifiers.Dictionary.addSense]
 		scrollUntilExists(button)
 		XCTAssertTrue(button.waitForExistence(timeout: 15), "the edit form should offer Add Sense")
 
-		let newDefinition = app.element(matching: TestIdentifiers.Dictionary.definitionField(position))
 		for _ in 1...3 {
 			button.tap()
-			if newDefinition.waitForExistence(timeout: 5) {
-				return self
+			guard senseForm.waitForExistence(timeout: 5) else { continue }
+
+			if let text {
+				let field = app.element(matching: TestIdentifiers.Dictionary.senseDefinitionField)
+				XCTAssertTrue(
+					field.waitForExistence(timeout: 15),
+					"the new sense's definition field never appeared")
+
+				field.tap()
+				XCTAssertTrue(
+					app.keyboards.firstMatch.waitForExistence(timeout: 10),
+					"tapping the new sense's definition field should raise the keyboard")
+
+				field.typeText(text)
+
+				XCTAssertEqual(
+					field.value as? String, text,
+					"the new sense's definition field should read back exactly what was typed")
 			}
+
+			leaveSense()
+			let row = app.element(matching: TestIdentifiers.Dictionary.senseRow(position))
+			XCTAssertTrue(
+				row.waitForExistence(timeout: 15),
+				"Add Sense should have left a row at position \(position)")
+			return self
 		}
-		XCTFail("tapping Add Sense never produced definition field \(position)")
+		XCTFail("tapping Add Sense never opened the sense it added")
 		return self
 	}
 
@@ -563,20 +600,21 @@ struct CampusDictionaryScreen: Screen {
 
 	/// Reads each sense's definition back off the form, in form order.
 	///
-	/// The fields are labelled by position, so which field holds which text
-	/// is precisely what a reorder changes -- and reading them back is the
-	/// only way to see on screen where a drag actually put a sense.
+	/// The rows are identified by position and labelled by definition, so
+	/// which row holds which text is precisely what a reorder changes -- and
+	/// reading them back is the only way to see on screen where a drag
+	/// actually put a sense.
 	@discardableResult
 	func verifyDefinitionOrder(_ expected: [String]) -> Self {
 		capture("Dictionary edit form after a reorder drag")
 
 		var actual: [String] = []
 		for position in 1...expected.count {
-			let field = app.element(matching: TestIdentifiers.Dictionary.definitionField(position))
+			let row = app.element(matching: TestIdentifiers.Dictionary.senseRow(position))
 			XCTAssertTrue(
-				field.waitForExistence(timeout: 15),
-				"the form should still show definition field \(position)")
-			actual.append((field.value as? String) ?? "")
+				row.waitForExistence(timeout: 15),
+				"the form should still show a row at position \(position)")
+			actual.append(row.label)
 		}
 
 		XCTAssertEqual(

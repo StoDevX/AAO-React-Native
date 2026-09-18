@@ -106,15 +106,17 @@ struct TestIdentifiers {
 		static let preview = "Preview"
 		static let reorder = "Reorder"
 		static let addSense = "Add Sense"
-		/// Each sense's definition field carries its position in the form, so
-		/// which field holds which text is exactly what a reorder changes --
-		/// and the only place on screen a drag's result can be read.
-		static func definitionField(_ position: Int) -> String { "Definition \(position)" }
-		static let firstDefinitionField = definitionField(1)
-		/// The field `addSense()` produces -- always empty when it first
-		/// appears, unlike `firstDefinitionField`, which the reference entry
-		/// seeds with real text.
-		static let secondDefinitionField = definitionField(2)
+		/// The form `sense.tsx` renders, pushed from a sense row.
+		static let senseForm = "dictionary-sense-form"
+		/// That form's navigation bar, for its back button.
+		static let senseFormTitle = "Sense"
+		/// The one definition field left in the app, on the sense screen.
+		static let senseDefinitionField = "Definition"
+		/// Each sense's row on the edit form. The row's accessibility *label*
+		/// is the definition itself -- which is what a reorder test reads --
+		/// so the identifier is the only stable way to address a row by
+		/// position.
+		static func senseRow(_ position: Int) -> String { "dictionary-sense-row-\(position)" }
 		/// The reference entry's own first definition, so a reorder test can
 		/// say where that sense ended up. Matches `REFERENCE_ENTRY` in
 		/// `source/features/dictionary/lib/reference-entry.ts`.
