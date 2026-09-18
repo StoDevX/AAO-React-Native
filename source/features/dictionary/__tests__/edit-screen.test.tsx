@@ -151,6 +151,19 @@ describe('the dictionary edit screen', () => {
 		expect(screen.getByText('The dining hall.')).toBeTruthy()
 	})
 
+	// A row hard-coded to the draft it was seeded with would pass the test
+	// above too -- this is what tells the row apart from a static label.
+	it("updates a sense's row when its definition changes elsewhere", async () => {
+		useDictionaryDraftStore.getState().startDraft(entry)
+		await render(<EditScreen />)
+
+		await act(() => {
+			useDictionaryDraftStore.getState().setSenseField('1', {definition: 'Foo'})
+		})
+
+		expect(screen.getByText('Foo')).toBeTruthy()
+	})
+
 	// A sense with nothing in it yet would otherwise render a row with no
 	// text at all -- a chevron floating over blank space, with nothing saying
 	// which sense it opens.
