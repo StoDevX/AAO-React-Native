@@ -16,6 +16,17 @@ class ModuleCampusDictionaryTests: UITestCase {
 			.verifySheetIsHalfHeight()
 	}
 
+	func testALoneSenseLinesUpWithTheHeadword() throws {
+		CampusDictionaryScreen(app: app)
+			.navigate()
+			.openFirstWord()
+			.verifyDefinitionSheetIsPresented()
+			.capture("Dictionary entry with one sense")
+			.verifySenseAlignsWithHeadword(
+				TestIdentifiers.Dictionary.firstEntry,
+				definition: TestIdentifiers.Dictionary.firstEntryDefinition)
+	}
+
 	func testTheSheetCloses() throws {
 		CampusDictionaryScreen(app: app)
 			.navigate()

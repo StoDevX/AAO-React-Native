@@ -95,6 +95,10 @@ struct TestIdentifiers {
 		/// `--uitesting`, for comparing this sheet against a screenshot of
 		/// Apple's.
 		static let referenceEntry = "change"
+		/// The entry `openFirstWord()` lands on under `--uitesting`, from
+		/// `docs/dictionary.json`. It has a single sense.
+		static let firstEntry = "AAC"
+		static let firstEntryDefinition = "The Academic Advising Center"
 
 		/// The edit form's navigation bar, which carries `suggestAnEdit`'s
 		/// wording because that action is what opens it. Queries for the form's

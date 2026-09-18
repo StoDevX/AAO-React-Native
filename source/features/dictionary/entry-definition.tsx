@@ -160,9 +160,11 @@ export function EntryDefinition({entry}: Props): React.ReactNode {
 				{/* One block, so consecutive senses read on with the same leading
 				    as the lines inside them rather than a paragraph gap. */}
 				<VStack alignment="leading" spacing={0}>
+					{/* A lone sense has no number to hang in a gutter, so it sits
+					    flush with the headword instead of stepping in past it. */}
 					{entry.senses.map((sense, index) => (
 						<SenseRow
-							indent={SENSE_INDENT}
+							indent={hasSeveralSenses ? SENSE_INDENT : TEXT_INDENT}
 							key={sense.definition}
 							marker={hasSeveralSenses ? String(index + 1) : ''}
 							sense={sense}
