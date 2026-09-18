@@ -193,9 +193,8 @@ export function BusLine(props: Props): React.ReactNode {
 					footer={<SwiftUIText>{BUS_FOOTER_MESSAGE}</SwiftUIText>}
 					title={scheduleSectionTitle({selectedDay, subtitle})}
 				>
-					{/* The insets are zeroed and the separator hidden because the
-					    Section draws the card the timetable used to draw for itself,
-					    and the progress bar has to reach the card's own edges. */}
+					{/* Zeroed insets and no separator, so the progress bar runs to
+					    the card's own edges. */}
 					<VStack
 						modifiers={[
 							listRowInsets({top: 0, bottom: 0, leading: 0, trailing: 0}),

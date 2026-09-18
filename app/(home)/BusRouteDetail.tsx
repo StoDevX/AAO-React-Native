@@ -173,8 +173,8 @@ function BusStopDetailInternal(props: Props): React.ReactNode {
 					footer={<SwiftUIText>{BUS_FOOTER_MESSAGE}</SwiftUIText>}
 					title={`${stop.name} — ${subtitle}`.toUpperCase()}
 				>
-					{/* Zeroed so the progress bar reaches the card's own edges, the
-					    way it did when this screen drew the card itself. */}
+					{/* Zeroed insets and no separator, so the progress bar runs to
+					    the card's own edges. */}
 					<VStack
 						modifiers={[
 							listRowInsets({top: 0, bottom: 0, leading: 0, trailing: 0}),
