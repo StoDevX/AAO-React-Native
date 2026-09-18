@@ -540,6 +540,11 @@ jobs:
 
       - name: Run UITests
         timeout-minutes: 45
+        # Tells Screen.capture it is in CI, so a passing test's screenshots are
+        # dropped rather than uploaded. xcodebuild hands the runner only the
+        # TEST_RUNNER_-prefixed variables, with the prefix stripped.
+        env:
+          TEST_RUNNER_CI: 'true'
         run: |
           set -o pipefail
           # Every test cold-launches the app in setUp, and on hosted runners that

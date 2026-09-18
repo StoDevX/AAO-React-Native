@@ -163,7 +163,11 @@ is how a broken feature ends up looking covered.
 ## Getting the picture out
 
 `capture("some name")` on any `Screen` attaches a screenshot with
-`.keepAlways`. Pull it out of the result bundle and actually look at it:
+`.keepAlways` when you run it by hand. In CI the workflow sets
+`TEST_RUNNER_CI`, and the same call attaches with `.deleteOnSuccess`, so a
+passing shard uploads no screenshots at all — only a failing test's survive.
+Setting `TEST_RUNNER_CI` locally reproduces that. Pull it out of the result
+bundle and actually look at it:
 
 ```bash
 rm -rf /tmp/shots
