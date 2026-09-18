@@ -9,7 +9,7 @@ import type {Moment} from 'moment-timezone'
 
 import {busLineOptions} from '../../source/features/transportation/bus/query'
 import {deriveFromProps} from '../../source/features/transportation/bus/line'
-import {createMomentForDay} from '../../source/features/transportation/bus/components/day-picker'
+import {createMomentForDay} from '../../source/features/transportation/bus/components/days'
 import type {
 	DayOfWeek,
 	BusTimetableEntry,

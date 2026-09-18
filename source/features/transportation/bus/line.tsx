@@ -28,7 +28,7 @@ import {
 	listStyle,
 } from '@expo/ui/swift-ui/modifiers'
 import {BUS_FOOTER_MESSAGE, SECTION_HORIZONTAL_INSET} from './constants'
-import {momentToDayOfWeek, createMomentForDay} from './components/day-picker'
+import {momentToDayOfWeek, createMomentForDay} from './components/days'
 import {useBusDay} from './store'
 
 const styles = StyleSheet.create({
