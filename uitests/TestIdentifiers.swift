@@ -97,7 +97,7 @@ struct TestIdentifiers {
 		static let referenceEntry = "change"
 
 		/// The longest multi-paragraph definition in the bundled dictionary --
-		/// 744 characters over four paragraphs. The entry that showed the
+		/// 744 characters over three paragraphs. The entry that showed the
 		/// definition field clipped against its row's top edge with dead space
 		/// below it (#7959); a single-paragraph entry of the same length never
 		/// did.
