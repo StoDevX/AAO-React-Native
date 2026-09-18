@@ -29,8 +29,10 @@ type DictionaryDraftStore = {
 	setPartOfSpeech: (partOfSpeech: string) => void
 
 	setSenseField: (id: string, patch: {grammar?: string; definition?: string}) => void
-	addSense: () => void
-	addSubsense: (parentId: string) => void
+	/// Returns the new sense's id so the caller can push to it, or `null` if
+	/// there was no draft to add to.
+	addSense: () => string | null
+	addSubsense: (parentId: string) => string | null
 	deleteSense: (id: string) => void
 	moveSense: (parentId: string | null, from: number, to: number) => void
 
@@ -59,7 +61,7 @@ const onDraft =
  * suggestion restored days later, against a definition that has since changed,
  * is worse than no draft at all.
  */
-export const useDictionaryDraftStore = create<DictionaryDraftStore>()((set) => ({
+export const useDictionaryDraftStore = create<DictionaryDraftStore>()((set, get) => ({
 	original: null,
 	draft: null,
 	submitted: false,
@@ -74,8 +76,18 @@ export const useDictionaryDraftStore = create<DictionaryDraftStore>()((set) => (
 	setPartOfSpeech: (partOfSpeech) => set(onDraft((draft) => ({...draft, partOfSpeech}))),
 
 	setSenseField: (id, patch) => set(onDraft((draft) => draftLib.setSenseField(draft, id, patch))),
-	addSense: () => set(onDraft(draftLib.addSense)),
-	addSubsense: (parentId) => set(onDraft((draft) => draftLib.addSubsense(draft, parentId))),
+	// `draftLib.addSense` appends, so the sense just added is the last one --
+	// which is how the id comes back out without threading a second return
+	// value through every pure function in `lib/draft`.
+	addSense: () => {
+		set(onDraft(draftLib.addSense))
+		return get().draft?.senses.at(-1)?.id ?? null
+	},
+	addSubsense: (parentId) => {
+		set(onDraft((draft) => draftLib.addSubsense(draft, parentId)))
+		let draft = get().draft
+		return draft ? (draftLib.findSense(draft, parentId)?.subsenses.at(-1)?.id ?? null) : null
+	},
 	deleteSense: (id) => set(onDraft((draft) => draftLib.deleteSense(draft, id))),
 	moveSense: (parentId, from, to) =>
 		set(onDraft((draft) => draftLib.moveSense(draft, parentId, from, to))),

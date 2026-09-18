@@ -25,6 +25,10 @@ struct CampusDictionaryScreen: Screen {
 		app.element(matching: TestIdentifiers.Dictionary.previewSheet)
 	}
 
+	private var senseForm: XCUIElement {
+		app.element(matching: TestIdentifiers.Dictionary.senseForm)
+	}
+
 	private var previewButton: XCUIElement {
 		app.navigationBars.buttons[TestIdentifiers.Dictionary.preview]
 	}
@@ -208,6 +212,79 @@ struct CampusDictionaryScreen: Screen {
 		return self
 	}
 
+	/// Opens the sense in row `position`, counting from 1.
+	@discardableResult
+	func openSense(_ position: Int) -> Self {
+		let row = app.element(matching: TestIdentifiers.Dictionary.senseRow(position))
+		scrollUntilExists(row)
+		XCTAssertTrue(row.waitForExistence(timeout: 15), "sense row \(position) never appeared")
+		row.tap()
+		XCTAssertTrue(
+			senseForm.waitForExistence(timeout: 15),
+			"tapping sense row \(position) should open that sense")
+		return self
+	}
+
+	/// Types into the sense screen's definition field and reads it back, so a
+	/// dropped keystroke or a field that lost focus mid-type fails outright
+	/// rather than leaving whatever string survived.
+	///
+	/// Named `prepending`: a tap on a wrapped, multi-line `TextField` lands
+	/// the caret at the start of the existing text, not the end.
+	@discardableResult
+	func typeDefinition(prepending text: String) -> Self {
+		// Typed, not `element(matching:)`: the sense screen's "Definition"
+		// section title is a StaticText carrying the same accessibility label
+		// as the field itself and precedes it in the tree, so a type-agnostic
+		// query resolves to the header, which takes no taps.
+		let field = app.textFields[TestIdentifiers.Dictionary.senseDefinitionField]
+		XCTAssertTrue(
+			field.waitForExistence(timeout: 15), "the sense's definition field never appeared")
+
+		// An empty `TextField` reads its placeholder back as its value, the
+		// same quirk `searchField` has (see uitests/CLAUDE.md) -- and this
+		// field's placeholder is the same string as its own accessibility
+		// label. A sense `addSense` just opened has a genuinely empty field,
+		// so that placeholder means no existing text, not literal content to
+		// prepend to.
+		let rawBefore = (field.value as? String) ?? ""
+		let before = rawBefore == TestIdentifiers.Dictionary.senseDefinitionField ? "" : rawBefore
+
+		field.tap()
+		XCTAssertTrue(
+			app.keyboards.firstMatch.waitForExistence(timeout: 10),
+			"tapping the definition field should raise the keyboard -- if it did not, the field "
+				+ "is not taking taps")
+
+		field.typeText(text)
+
+		let after = field.value as? String
+		XCTAssertEqual(
+			after, text + before,
+			"typing should have left \"\(text)\" prepended to whatever the field already held -- got "
+				+ "\(String(describing: after)), which means a keystroke was dropped or the field "
+				+ "lost focus mid-type")
+		return self
+	}
+
+	/// Returns to the edit form from a sense. The back button sits in the
+	/// navigation bar at the top of the screen, which the keyboard never
+	/// reaches even when it is up, so no scroll is needed -- whether or not
+	/// this call followed any typing.
+	///
+	/// Scoped to the sense form's own bar: on iOS 27 an unscoped
+	/// `navigationBars["Back"]` matches more than one bar at once.
+	@discardableResult
+	func leaveSense() -> Self {
+		let back = app.navigationBars[TestIdentifiers.Dictionary.senseFormTitle]
+			.buttons[TestIdentifiers.Navigation.backButton]
+		XCTAssertTrue(back.waitForExistence(timeout: 15), "the sense form had no back button")
+		back.tap()
+		XCTAssertTrue(
+			editForm.waitForExistence(timeout: 15), "Back should return to the edit form")
+		return self
+	}
+
 	/// Dismisses the entry sheet by dragging it past the bottom of the screen,
 	/// the gesture UIKit reads as a dismissal rather than a change of detent.
 	@discardableResult
@@ -246,63 +323,32 @@ struct CampusDictionaryScreen: Screen {
 		return self
 	}
 
-	/// Types into the first sense's definition field and confirms the
-	/// keyboard actually rose -- the one check this suite has that the field
-	/// takes taps at all. This field sits in a flat list, separate from the
-	/// "Options" chevron buttons below it (see the two-`.map()` layout in
-	/// `edit.tsx`); it proves that flat layout takes taps, not the in-row
-	/// arrangement the same comment leaves open as a separate question.
-	///
-	/// Named `prepending`, not `appending`: a tap on this field -- a wrapped,
-	/// multi-line `TextField` -- lands the caret at the very start of its
-	/// existing text, not the end, so typed text is inserted before it, not
-	/// after. Reads the field's value back both before and after typing and
-	/// asserts they combine exactly as `text + before`, so a dropped keystroke
-	/// or a field that lost keyboard focus mid-type fails the test outright
-	/// rather than quietly leaving whatever string survived. That read-back is
-	/// this suite's detector for the write race `SenseDefinitionField` guards
-	/// against; see the caller's comment for the length it takes to trip it.
+	/// Edits the first sense's definition, which now means opening that sense
+	/// and typing on its own screen. The read-back inside `typeDefinition` is
+	/// this suite's detector for a write race in the field; see the caller's
+	/// comment for the length it takes to trip one.
 	@discardableResult
 	func editFirstDefinition(prepending text: String) -> Self {
-		let field = app.element(matching: TestIdentifiers.Dictionary.firstDefinitionField)
-		XCTAssertTrue(
-			field.waitForExistence(timeout: 15), "the first definition field never appeared")
-		let before = (field.value as? String) ?? ""
-
-		field.tap()
-		XCTAssertTrue(
-			app.keyboards.firstMatch.waitForExistence(timeout: 10),
-			"tapping the definition field should raise the keyboard -- if it did not, the field "
-				+ "is not taking taps")
-
-		field.typeText(text)
-
-		let after = field.value as? String
-		XCTAssertEqual(
-			after, text + before,
-			"typing should have prepended \"\(text)\" to the field's existing text -- got "
-				+ "\(String(describing: after)), which means a keystroke was dropped or the field "
-				+ "lost focus mid-type")
-		return self
+		return openSense(1).typeDefinition(prepending: text).leaveSense()
 	}
 
-	/// Scrolls the edit form until `text` is on screen and unobstructed.
-	/// After typing, the keyboard covers the bottom of the form -- including
-	/// the Senses section's footer, the last thing in it -- so a capture taken
-	/// where `editFirstDefinition` leaves off shows neither the footer nor the
+	/// Scrolls the edit form until `text` is on screen and unobstructed. The
+	/// Senses section's footer -- the last thing in the form -- sits below the
+	/// fold on return from a sense screen, so a capture taken where
+	/// `editFirstDefinition` leaves off shows neither the footer nor the
 	/// wording it carries.
 	///
-	/// A press-and-drag between two points above the keyboard, rather than
-	/// `app.swipeUp()`. A swipe spans the whole element it is sent to, so with
-	/// the keyboard up it begins on the keyboard, and the keyboard takes it:
-	/// the form sits at offset 0 however many swipes it is given, and this
-	/// helper then reports content that was scrollable all along as
-	/// unreachable.
+	/// A press-and-drag between two fixed points inside the form's own
+	/// content, rather than `app.swipeUp()`. A swipe spans the whole element
+	/// it is sent to, so sent to `app` its start and end points are computed
+	/// from the app's full frame rather than the form's own bounds -- and
+	/// this helper then reports content that was scrollable all along as
+	/// unreachable if either point misses the form.
 	@discardableResult
 	func revealInForm(_ text: String) -> Self {
 		let label = app.staticTexts[text]
-		// Both ends lie in the strip the keyboard leaves visible, between the
-		// navigation bar and the top of the keys.
+		// Both ends lie inside the form's own content, between the navigation
+		// bar and the bottom of the screen.
 		let start = app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.43))
 		let end = app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.18))
 		for _ in 1...8 {
@@ -316,30 +362,6 @@ struct CampusDictionaryScreen: Screen {
 				? "\"\(text)\" is in the form but never became hittable -- something is drawn "
 					+ "over it"
 				: "eight drags up the form never produced an element reading \"\(text)\"")
-		return self
-	}
-
-	/// Types into a definition field `addSense()` produced -- unlike
-	/// `editFirstDefinition`, those fields start empty, so there is no
-	/// existing text to combine with: the field's value after typing is
-	/// asserted to equal exactly what was typed.
-	@discardableResult
-	func fillDefinition(_ position: Int, with text: String) -> Self {
-		let field = app.element(matching: TestIdentifiers.Dictionary.definitionField(position))
-		XCTAssertTrue(
-			field.waitForExistence(timeout: 15),
-			"definition field \(position) never appeared")
-
-		field.tap()
-		XCTAssertTrue(
-			app.keyboards.firstMatch.waitForExistence(timeout: 10),
-			"tapping definition field \(position) should raise the keyboard")
-
-		field.typeText(text)
-
-		XCTAssertEqual(
-			field.value as? String, text,
-			"definition field \(position) should read back exactly what was typed")
 		return self
 	}
 
@@ -481,24 +503,67 @@ struct CampusDictionaryScreen: Screen {
 		return self
 	}
 
-	/// Taps Add Sense and confirms a second sense actually appeared, retrying
-	/// the tap the way `navigateFromHome` does: a tap can land on an already
-	/// -hittable button before its action has reached JavaScript, and be lost
-	/// entirely.
+	/// Taps Add Sense, types `text` into the sense it opens if given, and
+	/// returns to the form. Retries the tap the way `navigateFromHome` does:
+	/// a tap can land on an already-hittable button before its action has
+	/// reached JavaScript, and be lost entirely.
+	///
+	/// `position` is the row the new sense should occupy, counting from 1 --
+	/// asserted after the return, so a tap that added nothing fails here
+	/// rather than in whatever ran next.
+	///
+	/// The field a new sense opens is empty, so `typeDefinition`'s read-back
+	/// there is exactly what was typed.
 	@discardableResult
-	func addSense(expectingDefinition position: Int = 2) -> Self {
+	func addSense(expectingRow position: Int = 2, withDefinition text: String? = nil) -> Self {
 		let button = app.buttons[TestIdentifiers.Dictionary.addSense]
 		scrollUntilExists(button)
 		XCTAssertTrue(button.waitForExistence(timeout: 15), "the edit form should offer Add Sense")
 
-		let newDefinition = app.element(matching: TestIdentifiers.Dictionary.definitionField(position))
 		for _ in 1...3 {
 			button.tap()
-			if newDefinition.waitForExistence(timeout: 5) {
-				return self
+			guard senseForm.waitForExistence(timeout: 5) else { continue }
+
+			if let text {
+				typeDefinition(prepending: text)
 			}
+
+			leaveSense()
+			let row = app.element(matching: TestIdentifiers.Dictionary.senseRow(position))
+			XCTAssertTrue(
+				row.waitForExistence(timeout: 15),
+				"Add Sense should have left a row at position \(position)")
+			return self
 		}
-		XCTFail("tapping Add Sense never produced definition field \(position)")
+		XCTFail("tapping Add Sense never opened the sense it added")
+		return self
+	}
+
+	/// Swipes the sense row at `position` (counting from 1) part-way from its
+	/// trailing edge to reveal `List.ForEach(onDelete:)`'s Delete button, then
+	/// taps it.
+	///
+	/// Swiped by coordinate rather than `row.swipeLeft()`, and only about a
+	/// third of the row's width, for the same reason
+	/// `CampusScreen.revealSwipeAction` is: a full swipe performs the delete
+	/// outright and the button never lingers to be found, so a test asserting
+	/// on it would be asserting on an element the gesture had already
+	/// consumed.
+	@discardableResult
+	func deleteSense(at position: Int) -> Self {
+		let row = app.element(matching: TestIdentifiers.Dictionary.senseRow(position))
+		XCTAssertTrue(row.waitForExistence(timeout: 15), "sense row \(position) never appeared")
+
+		let start = row.coordinate(withNormalizedOffset: CGVector(dx: 0.95, dy: 0.5))
+		let end = row.coordinate(withNormalizedOffset: CGVector(dx: 0.6, dy: 0.5))
+		start.press(forDuration: 0.1, thenDragTo: end, withVelocity: .slow, thenHoldForDuration: 0.5)
+
+		let delete = app.buttons["Delete"]
+		XCTAssertTrue(
+			delete.waitForExistence(timeout: 5),
+			"swiping sense row \(position) should reveal a Delete button -- if it did not, the "
+				+ "swipe never engaged the row")
+		delete.tap()
 		return self
 	}
 
@@ -563,20 +628,21 @@ struct CampusDictionaryScreen: Screen {
 
 	/// Reads each sense's definition back off the form, in form order.
 	///
-	/// The fields are labelled by position, so which field holds which text
-	/// is precisely what a reorder changes -- and reading them back is the
-	/// only way to see on screen where a drag actually put a sense.
+	/// The rows are identified by position and labelled by definition, so
+	/// which row holds which text is precisely what a reorder changes -- and
+	/// reading them back is the only way to see on screen where a drag
+	/// actually put a sense.
 	@discardableResult
 	func verifyDefinitionOrder(_ expected: [String]) -> Self {
 		capture("Dictionary edit form after a reorder drag")
 
 		var actual: [String] = []
 		for position in 1...expected.count {
-			let field = app.element(matching: TestIdentifiers.Dictionary.definitionField(position))
+			let row = app.element(matching: TestIdentifiers.Dictionary.senseRow(position))
 			XCTAssertTrue(
-				field.waitForExistence(timeout: 15),
-				"the form should still show definition field \(position)")
-			actual.append((field.value as? String) ?? "")
+				row.waitForExistence(timeout: 15),
+				"the form should still show a row at position \(position)")
+			actual.append(row.label)
 		}
 
 		XCTAssertEqual(

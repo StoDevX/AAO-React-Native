@@ -12,7 +12,6 @@ import {Stack, useLocalSearchParams, useRouter} from 'expo-router'
 import * as c from '@frogpond/colors'
 import {NoticeView} from '@frogpond/notice'
 
-import {DEFINITION_LINES} from '../../../../source/features/dictionary/constants'
 import type {DraftExample} from '../../../../source/features/dictionary/lib/draft'
 import {findSense} from '../../../../source/features/dictionary/lib/draft'
 import {useDictionaryDraftStore} from '../../../../source/features/dictionary/store'
@@ -53,7 +52,12 @@ export default function DictionarySensePage(): React.ReactNode {
 							axis="vertical"
 							modifiers={[
 								accessibilityLabel('Definition'),
-								lineLimit(DEFINITION_LINES),
+								// A single reserved height, not a `{min, max}` range: a range
+								// leaves the row's height and the drawn text free to disagree,
+								// which clips a long definition against the row's top edge and
+								// leaves dead space below it. A definition past eight lines
+								// scrolls inside the field.
+								lineLimit(8, {reservesSpace: true}),
 								textInputAutocapitalization('sentences'),
 							]}
 							onTextChange={(definition) => store.setSenseField(sense.id, {definition})}
@@ -118,7 +122,12 @@ export default function DictionarySensePage(): React.ReactNode {
 						))}
 						<Button
 							label="Add Sub-sense"
-							onPress={() => store.addSubsense(sense.id)}
+							onPress={() => {
+								let id = store.addSubsense(sense.id)
+								if (id) {
+									router.push({pathname: '/Dictionary/entry/sense', params: {senseId: id}})
+								}
+							}}
 							systemImage="plus"
 						/>
 					</Section>
@@ -150,19 +159,13 @@ type ExampleFieldProps = {
 /**
  * One example citation's row.
  *
- * Its own component for the same reason `SenseDefinitionField` in `edit.tsx`
- * is: a `useNativeState` handle's initial value is captured once on mount, so
- * it needs a hook call whose count does not track how many examples the
- * sense currently has. A component keyed by the example's id gives each row
- * a hook of its own that adding, deleting or reordering examples cannot
- * change the count of.
- *
- * Unlike that sibling, this one does not also need a sync effect pulling its
- * handle back into line with the store: a definition is edited from two
- * screens at once (this one and `edit.tsx`, mounted underneath it), but no
- * second screen ever writes a given example's text -- only this field's own
- * `onChange` does -- so the handle and the store can never disagree while
- * this component is mounted.
+ * Its own component because a `useNativeState` handle's initial value is
+ * captured once on mount, and the sense holds a variable number of examples
+ * -- calling the hook directly in `DictionarySensePage`'s own `.map()` would
+ * change how many times it ran there as examples are added, deleted or
+ * reordered, which breaks React's fixed-hook-count-per-render rule. Keyed by
+ * the example's id, so each row keeps its own handle across a reorder rather
+ * than picking up whichever handle now sits at its position.
  */
 function ExampleField({example, index, onChange}: ExampleFieldProps): React.ReactNode {
 	let text = useNativeState(example.text)
