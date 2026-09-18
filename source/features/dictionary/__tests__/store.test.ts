@@ -74,6 +74,47 @@ describe('the dictionary draft store', () => {
 		expect(state.draft).toBeNull()
 		expect(state.submitted).toBe(false)
 	})
+
+	// The edit form pushes to the sense it just added, so the action has to
+	// say which one that is. Asserting the id finds a real sense rather than
+	// asserting a literal "2": the ids come from a counter over the whole
+	// draft, and a test pinned to the number would fail the next time
+	// anything else took an id first.
+	it('returns the id of the sense it added', () => {
+		useDictionaryDraftStore.getState().startDraft(entry)
+
+		let id = useDictionaryDraftStore.getState().addSense()
+
+		let draft = useDictionaryDraftStore.getState().draft
+		expect(id).not.toBeNull()
+		expect(draft?.senses.at(-1)?.id).toBe(id)
+	})
+
+	it('returns a different id for each sense added', () => {
+		useDictionaryDraftStore.getState().startDraft(entry)
+
+		let first = useDictionaryDraftStore.getState().addSense()
+		let second = useDictionaryDraftStore.getState().addSense()
+
+		expect(first).not.toBe(second)
+	})
+
+	it('returns the id of the sub-sense it added, under the parent named', () => {
+		useDictionaryDraftStore.getState().startDraft(entry)
+
+		let id = useDictionaryDraftStore.getState().addSubsense('1')
+
+		let draft = useDictionaryDraftStore.getState().draft
+		expect(id).not.toBeNull()
+		expect(draft?.senses[0].subsenses.at(-1)?.id).toBe(id)
+	})
+
+	// Every action is a no-op before `startDraft`, so there is no id to give
+	// back and the caller has nowhere to push to.
+	it('adds no sense, and names none, with nothing started', () => {
+		expect(useDictionaryDraftStore.getState().addSense()).toBeNull()
+		expect(useDictionaryDraftStore.getState().addSubsense('1')).toBeNull()
+	})
 })
 
 // An entry with every definition cleared normalises to `word: Caf, senses: []`

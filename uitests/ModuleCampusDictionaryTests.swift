@@ -43,14 +43,11 @@ class ModuleCampusDictionaryTests: UITestCase {
 	/// the entry as opened -- retyping nothing is not a suggestion.
 	///
 	/// `"indeed "` rather than a shorter word, here and in every other test
-	/// that types into this field: a burst this long used to arrive as
-	/// `indmake`, `indemake` or `indeedmake`, because `SenseDefinitionField`
-	/// reconciled its native handle against the store on every change and so
-	/// overwrote the field with a value one keystroke out of date. Seven
-	/// characters is what it took to straddle that window reliably, which
-	/// makes it the length worth keeping now the reconcile hangs off focus
-	/// instead -- `editFirstDefinition`'s read-back is what fails if it ever
-	/// comes back.
+	/// that types into this field: a shorter burst does not reliably straddle
+	/// the window in which a keystroke sent to a native text field can be
+	/// dropped between renders. Seven characters is what it takes to trip that
+	/// race reliably -- `editFirstDefinition`'s read-back of the field's value
+	/// is what fails if one ever is.
 	func testPreviewIsRefusedUntilSomethingChanges() throws {
 		CampusDictionaryScreen(app: app)
 			.navigate()
@@ -100,6 +97,13 @@ class ModuleCampusDictionaryTests: UITestCase {
 	/// preconditions matter: without them this test would stay green even if
 	/// `editMode` were hard-coded active, which is the bug this suite already
 	/// found once, in the opposite direction.
+	///
+	/// A second sense also makes deletion meaningful to check: swiping the
+	/// added row away and tapping Delete should drop the count back to one,
+	/// leaving the original sense's row in its place. This is the only place
+	/// the suite performs that gesture -- the Jest coverage fires the list's
+	/// `onDelete` prop directly, which says the wiring reaches the store, not
+	/// that SwiftUI still offers a swipe on the row.
 	func testASecondSenseOffersReordering() throws {
 		CampusDictionaryScreen(app: app)
 			.navigate()
@@ -115,6 +119,12 @@ class ModuleCampusDictionaryTests: UITestCase {
 			.capture("Dictionary edit form with two senses")
 			.toggleReorderMode()
 			.verifyReorderHandlesAppear(senseCount: 2)
+			// Back out of reorder mode before swiping: `editMode` active swaps
+			// the row's swipe-to-delete affordance for the reorder handle.
+			.toggleReorderMode()
+			.deleteSense(at: 2)
+			.verifyDefinitionOrder([TestIdentifiers.Dictionary.referenceEntryFirstDefinition])
+			.verifyReorderToggleHidden()
 	}
 
 	/// The drag itself, and where it leaves the sense.
@@ -139,15 +149,13 @@ class ModuleCampusDictionaryTests: UITestCase {
 			.verifyDefinitionSheetIsPresented()
 			.openEditor()
 			.verifyEditFormPushedIntoSheet()
-			.addSense()
-			.fillDefinition(2, with: second)
-			.addSense(expectingDefinition: 3)
-			.fillDefinition(3, with: third)
+			.addSense(withDefinition: second)
+			.addSense(expectingRow: 3, withDefinition: third)
 			.toggleReorderMode()
 			.verifyReorderHandlesAppear(senseCount: 3)
 			.dragSenseDownOneRow(from: 0)
 			// Back out of reorder mode before reading: an active `editMode`
-			// makes row content inert, and the fields are what carry the text.
+			// makes row content inert, and the rows are what carry the text.
 			.toggleReorderMode()
 			.verifyDefinitionOrder([
 				second,
@@ -185,5 +193,23 @@ class ModuleCampusDictionaryTests: UITestCase {
 			.verifyPronunciation(TestIdentifiers.Dictionary.phoneticEntryIPA)
 			.verifyPartOfSpeech(TestIdentifiers.Dictionary.phoneticEntryPartOfSpeech)
 			.capture("Dictionary entry with phonetics")
+	}
+
+	/// #7959: a multi-paragraph definition in a `{min, max}` line-limited row
+	/// drew ten lines flush against the row's top edge, clipped at both ends,
+	/// with three lines of dead row beneath it. Nothing in Jest can see this
+	/// -- there is no layout pass there -- so the check is a screenshot of the
+	/// field holding the definition that broke it.
+	func testALongDefinitionFillsItsFieldWithoutClipping() throws {
+		CampusDictionaryScreen(app: app)
+			.navigate()
+			.search(for: TestIdentifiers.Dictionary.longDefinitionEntry)
+			.openWord(TestIdentifiers.Dictionary.longDefinitionEntry)
+			.verifyDefinitionSheetIsPresented()
+			.openEditor()
+			.verifyEditFormPushedIntoSheet()
+			.capture("Dictionary edit form for a long definition")
+			.openSense(1)
+			.capture("Dictionary sense screen for a long definition")
 	}
 }
