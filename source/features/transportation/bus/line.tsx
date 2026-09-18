@@ -1,5 +1,6 @@
 import * as React from 'react'
 import {StyleSheet, Text, TouchableOpacity, useWindowDimensions, View} from 'react-native'
+import {useSafeAreaInsets} from 'react-native-safe-area-context'
 import type {BusSchedule, UnprocessedBusLine} from './types'
 import {
 	BusStateEnum,
@@ -140,6 +141,7 @@ export function BusLine(props: Props): React.ReactNode {
 	let {line, now} = props
 	let router = useRouter()
 	let {width: windowWidth} = useWindowDimensions()
+	let insets = useSafeAreaInsets()
 
 	const currentDay = momentToDayOfWeek(now)
 
@@ -159,7 +161,11 @@ export function BusLine(props: Props): React.ReactNode {
 		momentForSelectedDay,
 	)
 
-	let hostedWidth = windowWidth - 2 * SECTION_HORIZONTAL_INSET
+	// In landscape on a notched iPhone, an inset-grouped List insets its card
+	// by the safe-area inset plus SECTION_HORIZONTAL_INSET, not just the
+	// constant, so the hosted view has to subtract both or its content
+	// overflows the card.
+	let hostedWidth = windowWidth - 2 * SECTION_HORIZONTAL_INSET - insets.left - insets.right
 
 	let timetable = schedule.timetable
 

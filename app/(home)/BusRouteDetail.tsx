@@ -1,5 +1,6 @@
 import * as React from 'react'
 import {StyleSheet, Text, useWindowDimensions, View} from 'react-native'
+import {useSafeAreaInsets} from 'react-native-safe-area-context'
 import {Stack, useLocalSearchParams} from 'expo-router'
 import {useQuery} from '@tanstack/react-query'
 import {timezone} from '@frogpond/constants'
@@ -73,6 +74,7 @@ type Props = {
 function BusStopDetailInternal(props: Props): React.ReactNode {
 	let {stop, line, now, subtitle} = props
 	let {width: windowWidth} = useWindowDimensions()
+	let insets = useSafeAreaInsets()
 
 	// Read straight from the props: the row statuses below are computed from
 	// these, so they have to be settled by the time the first frame draws.
@@ -158,7 +160,11 @@ function BusStopDetailInternal(props: Props): React.ReactNode {
 		})
 	}
 
-	let hostedWidth = windowWidth - 2 * SECTION_HORIZONTAL_INSET
+	// In landscape on a notched iPhone, an inset-grouped List insets its card
+	// by the safe-area inset plus SECTION_HORIZONTAL_INSET, not just the
+	// constant, so the hosted view has to subtract both or its content
+	// overflows the card.
+	let hostedWidth = windowWidth - 2 * SECTION_HORIZONTAL_INSET - insets.left - insets.right
 
 	return (
 		<Host style={styles.host}>
