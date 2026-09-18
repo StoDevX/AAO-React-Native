@@ -43,7 +43,7 @@ describe('useBuildingReport', () => {
 			result.current.start(BUILDING)
 		})
 		await act(() => {
-			result.current.edit({type: 'SET_BUILDING_NAME', name: 'The Cage'})
+			result.current.edit({type: 'UPDATE_BUILDING', data: {name: 'The Cage'}})
 		})
 
 		expect(result.current.draft?.name).toBe('The Cage')

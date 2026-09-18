@@ -137,7 +137,7 @@ let CampusProblemReportView = ({initialBuilding, campus}: Props): React.ReactNod
 					<Section title="NAME">
 						<SyncedTextField
 							autocapitalization="words"
-							onChangeText={(newName) => dispatch({type: 'SET_BUILDING_NAME', name: newName})}
+							onChangeText={(newName) => dispatch({type: 'UPDATE_BUILDING', data: {name: newName}})}
 							placeholder="Title"
 							value={name || ''}
 						/>

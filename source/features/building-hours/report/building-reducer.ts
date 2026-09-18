@@ -2,7 +2,7 @@ import type {BuildingType, NamedBuildingScheduleType, SingleBuildingScheduleType
 import {blankSchedule} from '../lib'
 
 export type BuildingAction =
-	| {type: 'SET_BUILDING_NAME'; name: string}
+	| {type: 'UPDATE_BUILDING'; data: Partial<BuildingType>}
 	| {type: 'ADD_SCHEDULE'}
 	| {
 			type: 'UPDATE_SCHEDULE'
@@ -19,10 +19,24 @@ export type BuildingAction =
 	  }
 	| {type: 'DELETE_HOURS'; scheduleIndex: number; setIndex: number}
 
+/**
+ * The optional free-text fields, which a reporter clearing a field means to
+ * remove rather than to blank. `name` and `category` are required, so an empty
+ * one stays empty and shows as the mistake it is.
+ */
+const OPTIONAL_TEXT_KEYS = ['subtitle', 'abbreviation'] as const
+
 export function buildingReducer(state: BuildingType, action: BuildingAction): BuildingType {
 	switch (action.type) {
-		case 'SET_BUILDING_NAME':
-			return {...state, name: action.name}
+		case 'UPDATE_BUILDING': {
+			let next = {...state, ...action.data}
+			for (let key of OPTIONAL_TEXT_KEYS) {
+				if (next[key] === '') {
+					delete next[key]
+				}
+			}
+			return next
+		}
 
 		case 'ADD_SCHEDULE':
 			return {

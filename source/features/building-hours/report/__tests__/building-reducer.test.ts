@@ -13,11 +13,34 @@ const baseBuilding: BuildingType = {
 }
 
 describe('buildingReducer', () => {
-	it('handles SET_BUILDING_NAME', () => {
-		let action: BuildingAction = {type: 'SET_BUILDING_NAME', name: 'New Name'}
+	it('handles UPDATE_BUILDING', () => {
+		let action: BuildingAction = {type: 'UPDATE_BUILDING', data: {name: 'New Name'}}
 		let result = buildingReducer(baseBuilding, action)
 		expect(result.name).toBe('New Name')
 		expect(result.schedule).toBe(baseBuilding.schedule)
+	})
+
+	it('sets a subtitle through UPDATE_BUILDING', () => {
+		let action: BuildingAction = {
+			type: 'UPDATE_BUILDING',
+			data: {subtitle: 'Digital Scholarship Center'},
+		}
+		let result = buildingReducer(baseBuilding, action)
+		expect(result.subtitle).toBe('Digital Scholarship Center')
+	})
+
+	// A cleared optional field must leave no key behind: `subtitle: ''` in the
+	// emailed YAML reads as a deliberate empty formal name, not an absent one.
+	it('drops an optional field cleared to an empty string', () => {
+		let withSubtitle = {...baseBuilding, subtitle: 'Old Name', abbreviation: 'ON'}
+		let result = buildingReducer(withSubtitle, {type: 'UPDATE_BUILDING', data: {subtitle: ''}})
+		expect('subtitle' in result).toBe(false)
+		expect(result.abbreviation).toBe('ON')
+	})
+
+	it('keeps a cleared name, which is required', () => {
+		let result = buildingReducer(baseBuilding, {type: 'UPDATE_BUILDING', data: {name: ''}})
+		expect(result.name).toBe('')
 	})
 
 	it('handles ADD_SCHEDULE', () => {
@@ -93,7 +116,7 @@ describe('buildingReducer', () => {
 
 	it('does not mutate the original state', () => {
 		let original: BuildingType = JSON.parse(JSON.stringify(baseBuilding)) as BuildingType
-		buildingReducer(baseBuilding, {type: 'SET_BUILDING_NAME', name: 'Changed'})
+		buildingReducer(baseBuilding, {type: 'UPDATE_BUILDING', data: {name: 'Changed'}})
 		expect(baseBuilding).toEqual(original)
 	})
 })
