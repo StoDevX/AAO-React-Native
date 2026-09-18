@@ -552,6 +552,11 @@ struct TestIdentifiers {
 
 			Data collected by the humans of All About Olaf
 			"""
+
+		/// The navigation bar's day menu, labelled by the day it is showing.
+		/// `Today` when the screens are following the clock.
+		static let dayMenuDefaultLabel = "Today"
+		static let aDay = "Saturday"
 	}
 
 }

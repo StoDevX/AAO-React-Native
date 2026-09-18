@@ -11,9 +11,10 @@ struct TransportationScreen: Screen {
 	/// Scroll to the bottom of the line, where the route's last stop is.
 	@discardableResult
 	func scrollToEndOfRoute() -> Self {
-		// Swipe the list itself. The tab bar floats over the bottom of the screen,
-		// so a swipe aimed at the app as a whole can land on that instead.
-		let list = app.scrollViews.firstMatch
+		// Swipe the list itself. The tab bar floats over the bottom of the
+		// screen, so a swipe aimed at the app as a whole can land on that
+		// instead. A SwiftUI List is a table, not a scroll view.
+		let list = app.tables.firstMatch
 		for _ in 0..<4 {
 			list.swipeUp()
 		}
@@ -50,12 +51,43 @@ struct TransportationScreen: Screen {
 	@discardableResult
 	func verifyStopScheduleShown() -> Self {
 		// The heading carries the stop's name and when its next bus is, as one
-		// element -- "St. Olaf College — Starts in 3 hours (12:00pm)" -- so the
-		// name is a prefix of it rather than the whole of it.
+		// element -- "ST. OLAF COLLEGE — STARTS IN 3 HOURS (12:00PM)", drawn in
+		// caps -- so the match is both a prefix and case-insensitive.
+		let heading = app.staticTexts.containing(
+			NSPredicate(format: "label BEGINSWITH[c] %@", TestIdentifiers.Transportation.aStop)
+		).firstMatch
 		XCTAssertTrue(
-			app.elementWithLabel(startingWith: TestIdentifiers.Transportation.aStop)
-				.waitForExistence(timeout: 30),
+			heading.waitForExistence(timeout: 30),
 			"Tapping a stop should open its own schedule, headed by its name")
+		return self
+	}
+
+	/// Pick a day from the navigation bar's menu.
+	@discardableResult
+	func pickDay(_ day: String) -> Self {
+		let menu = app.buttons[TestIdentifiers.Transportation.dayMenuDefaultLabel].firstMatch
+		XCTAssertTrue(
+			menu.waitForExistence(timeout: 30),
+			"The navigation bar should offer a day menu labelled Today")
+		menu.tap()
+
+		let option = app.buttons[day].firstMatch
+		XCTAssertTrue(
+			option.waitForExistence(timeout: 30),
+			"The day menu should offer \(day)")
+		option.tap()
+		return self
+	}
+
+	/// Assert the timetable's section title names the day on screen.
+	@discardableResult
+	func verifyScheduleShows(day: String) -> Self {
+		let title = app.staticTexts.containing(
+			NSPredicate(format: "label BEGINSWITH[c] %@", day)
+		).firstMatch
+		XCTAssertTrue(
+			title.waitForExistence(timeout: 30),
+			"The section title should lead with \(day)")
 		return self
 	}
 
