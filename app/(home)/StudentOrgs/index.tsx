@@ -26,8 +26,13 @@ import {OrgResultsList} from '../../../source/features/student-orgs/org-results-
 import {studentOrgsOptions} from '../../../source/features/student-orgs/query'
 import {filterAndGroupOrgs} from '../../../source/features/student-orgs/search'
 import type {StudentOrgType} from '../../../source/features/student-orgs/types'
-import {columnsForFontScale, inRows, TILE_SPACING} from '../../../source/components/tile-layout'
-import {FILL_WIDTH, SCREEN_MARGIN} from '../../../source/features/home/button'
+import {
+	columnsForFontScale,
+	FILL_WIDTH,
+	inRows,
+	SCREEN_MARGIN,
+	TILE_SPACING,
+} from '../../../source/components/tile-layout'
 import {SearchBar} from '../../../source/components/search-bar'
 
 const styles = StyleSheet.create({

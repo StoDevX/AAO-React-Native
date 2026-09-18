@@ -16,7 +16,7 @@ import {
 } from '@expo/ui/swift-ui/modifiers'
 import * as c from '@frogpond/colors'
 
-import {FILL_WIDTH} from '../home/button'
+import {FILL_WIDTH} from '../../components/tile-layout'
 
 import type {DiffedEntry, DiffedSense, DiffStatus, Run} from './lib/diff'
 import {withoutTrailingFullStop} from './lib/full-stop'

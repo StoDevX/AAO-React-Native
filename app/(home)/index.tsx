@@ -30,12 +30,8 @@ import {Restart} from 'react-native-restart-newarch'
 
 import {AllViews} from '../../source/features/views'
 import type {ViewType} from '../../source/features/views'
-import {
-	CELL_MARGIN,
-	FILL_WIDTH,
-	HomeScreenButton,
-	SCREEN_MARGIN,
-} from '../../source/features/home/button'
+import {HomeScreenButton} from '../../source/features/home/button'
+import {CELL_MARGIN, FILL_WIDTH, SCREEN_MARGIN} from '../../source/components/tile-layout'
 import {openUrl} from '@frogpond/open-url'
 import {selectDevModeOverride, setDevModeOverride} from '../../source/redux/parts/settings'
 import {useIsDevMode} from '../../source/lib/use-is-dev-mode'

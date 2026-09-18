@@ -1,3 +1,13 @@
+/// Gap between cards, both within a column and between the two columns.
+export const CELL_MARGIN = 10
+
+/// Gap between the screen edge and the cards.
+export const SCREEN_MARGIN = 16
+
+/// SwiftUI has no "fill the available width" constant reachable from JS, so we
+/// cap the frame at a width no phone reaches and let the stack divide the space.
+export const FILL_WIDTH = 10_000
+
 /// Matches the home grid's gap, so the two screens sit at the same rhythm.
 export const TILE_SPACING = 10
 

@@ -13,7 +13,7 @@ import {
 } from '@expo/ui/swift-ui/modifiers'
 import * as c from '@frogpond/colors'
 
-import {FILL_WIDTH} from '../home/button'
+import {FILL_WIDTH} from '../../components/tile-layout'
 
 import {pronunciationText, senseText} from './lib/entry-text'
 import {
