@@ -52,15 +52,17 @@ function SenseRow({
 	return (
 		<>
 			<HStack alignment="firstTextBaseline" modifiers={[padding({leading: indent})]} spacing={0}>
-				<Text
-					modifiers={[
-						font({textStyle: 'body', design: 'serif'}),
-						bold(),
-						frame({width: SENSE_NUMBER_WIDTH, alignment: 'leading'}),
-					]}
-				>
-					{marker}
-				</Text>
+				{marker ? (
+					<Text
+						modifiers={[
+							font({textStyle: 'body', design: 'serif'}),
+							bold(),
+							frame({width: SENSE_NUMBER_WIDTH, alignment: 'leading'}),
+						]}
+					>
+						{marker}
+					</Text>
+				) : null}
 				{/* Grammar, definition and citations are one paragraph: a dictionary
 				    runs them together rather than breaking a line between them. */}
 				<Text
@@ -98,6 +100,7 @@ function SenseRow({
  */
 export function EntryDefinition({entry}: Props): React.ReactNode {
 	let pronunciation = pronunciationText(entry.pronunciation)
+	let hasSeveralSenses = entry.senses.length > 1
 
 	return (
 		// FILL_WIDTH is the usual SwiftUI trick for a view with no "fill the
@@ -157,11 +160,13 @@ export function EntryDefinition({entry}: Props): React.ReactNode {
 				{/* One block, so consecutive senses read on with the same leading
 				    as the lines inside them rather than a paragraph gap. */}
 				<VStack alignment="leading" spacing={0}>
+					{/* A lone sense has no number to hang in a gutter, so it sits
+					    flush with the headword instead of stepping in past it. */}
 					{entry.senses.map((sense, index) => (
 						<SenseRow
-							indent={SENSE_INDENT}
+							indent={hasSeveralSenses ? SENSE_INDENT : TEXT_INDENT}
 							key={sense.definition}
-							marker={String(index + 1)}
+							marker={hasSeveralSenses ? String(index + 1) : ''}
 							sense={sense}
 						/>
 					))}

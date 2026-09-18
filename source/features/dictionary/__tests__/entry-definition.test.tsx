@@ -36,12 +36,12 @@ describe('EntryDefinition', () => {
 		expect(screen.getByText('The dining hall.')).toBeTruthy()
 	})
 
-	it('numbers a lone sense too, so it reads as an entry not a paragraph', async () => {
+	it('omits the top-level marker when the entry has only one sense', async () => {
 		await render(
 			<EntryDefinition entry={normalizeEntry({word: 'Caf', definition: 'The dining hall.'})} />,
 		)
 
-		expect(screen.getByText('1')).toBeTruthy()
+		expect(screen.queryByText('1')).toBeNull()
 	})
 
 	it('numbers every sense when there are several', async () => {
@@ -73,7 +73,7 @@ describe('EntryDefinition', () => {
 			/>,
 		)
 
-		expect(screen.getByText('1')).toBeTruthy()
+		expect(screen.queryByText('1')).toBeNull()
 		expect(screen.getByText('•')).toBeTruthy()
 		expect(screen.getByText('become different.')).toBeTruthy()
 	})
