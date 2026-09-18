@@ -54,8 +54,8 @@ export default function DictionarySensePage(): React.ReactNode {
 								accessibilityLabel('Definition'),
 								// A single reserved height, not a `{min, max}` range: a range
 								// leaves the row's height and the drawn text free to disagree,
-								// which clipped a long definition against the row's top edge
-								// and left dead space below it. A definition past eight lines
+								// which clips a long definition against the row's top edge and
+								// leaves dead space below it. A definition past eight lines
 								// scrolls inside the field.
 								lineLimit(8, {reservesSpace: true}),
 								textInputAutocapitalization('sentences'),

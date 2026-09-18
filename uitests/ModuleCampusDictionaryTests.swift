@@ -100,9 +100,10 @@ class ModuleCampusDictionaryTests: UITestCase {
 	///
 	/// A second sense also makes deletion meaningful to check: swiping the
 	/// added row away and tapping Delete should drop the count back to one,
-	/// leaving the original sense's row in its place -- the row change from a
-	/// `TextField` to a `Button` (#7959) is nothing this suite otherwise
-	/// exercises the delete gesture against.
+	/// leaving the original sense's row in its place. This is the only place
+	/// the suite performs that gesture -- the Jest coverage fires the list's
+	/// `onDelete` prop directly, which says the wiring reaches the store, not
+	/// that SwiftUI still offers a swipe on the row.
 	func testASecondSenseOffersReordering() throws {
 		CampusDictionaryScreen(app: app)
 			.navigate()
