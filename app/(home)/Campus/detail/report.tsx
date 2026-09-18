@@ -3,8 +3,15 @@ import {Stack, useLocalSearchParams, useNavigation, useRouter} from 'expo-router
 import {usePreventRemove} from 'expo-router/react-navigation'
 import {useQuery} from '@tanstack/react-query'
 import {Alert, StyleSheet} from 'react-native'
-import {Host, List, Section, Text, Toggle, VStack} from '@expo/ui/swift-ui'
-import {font, foregroundStyle, frame, listStyle} from '@expo/ui/swift-ui/modifiers'
+import {Host, List, Picker, Section, Text, Toggle, VStack} from '@expo/ui/swift-ui'
+import {
+	font,
+	foregroundStyle,
+	frame,
+	listStyle,
+	pickerStyle,
+	tag,
+} from '@expo/ui/swift-ui/modifiers'
 import moment from 'moment-timezone'
 import type {Moment} from 'moment-timezone'
 import noop from 'lodash/noop'
@@ -15,13 +22,21 @@ import {LoadingView, NoticeView} from '@frogpond/notice'
 import {ActionRow, DetailRow, NavigationRow} from '../../../../source/components/rows'
 import {SyncedTextField} from '../../../../source/components/synced-text-field'
 import type {Campus} from '../../../../source/features/building-hours/query'
-import {buildingByNameOptions, parseCampus} from '../../../../source/features/building-hours/query'
+import {
+	buildingByNameOptions,
+	buildingsOptions,
+	parseCampus,
+} from '../../../../source/features/building-hours/query'
 import type {
 	BuildingType,
 	NamedBuildingScheduleType,
 	SingleBuildingScheduleType,
 } from '../../../../source/features/building-hours/types'
-import {summarizeDays, formatBuildingTimes} from '../../../../source/features/building-hours/lib'
+import {
+	categoriesFrom,
+	summarizeDays,
+	formatBuildingTimes,
+} from '../../../../source/features/building-hours/lib'
 import {submitReport} from '../../../../source/features/building-hours/report/submit'
 import type {BuildingAction} from '../../../../source/features/building-hours/report/building-reducer'
 import {useBuildingReport} from '../../../../source/features/building-hours/report/context'
@@ -102,7 +117,10 @@ let CampusProblemReportView = ({initialBuilding, campus}: Props): React.ReactNod
 
 	let {building, dispatch, openEditor, submit} = useBuildingEditor(initialBuilding, campus)
 
-	let {schedule: schedules, name} = building
+	let {schedule: schedules, name, subtitle, abbreviation, category} = building
+
+	let {data: buildings} = useQuery(buildingsOptions(campus))
+	let categories = categoriesFrom([...(buildings ?? []), building])
 
 	return (
 		<>
@@ -134,13 +152,47 @@ let CampusProblemReportView = ({initialBuilding, campus}: Props): React.ReactNod
 						</VStack>
 					</Section>
 
-					<Section title="NAME">
+					<Section title="ABOUT">
 						<SyncedTextField
 							autocapitalization="words"
 							onChangeText={(newName) => dispatch({type: 'UPDATE_BUILDING', data: {name: newName}})}
-							placeholder="Title"
+							placeholder="Name"
 							value={name || ''}
 						/>
+						{/* A venue is listed under the name people say; this is where
+						    the formal one is spelled out. */}
+						<SyncedTextField
+							autocapitalization="words"
+							onChangeText={(newSubtitle) =>
+								dispatch({type: 'UPDATE_BUILDING', data: {subtitle: newSubtitle}})
+							}
+							placeholder="Formal Name"
+							value={subtitle || ''}
+						/>
+						<SyncedTextField
+							autocapitalization="characters"
+							onChangeText={(newAbbreviation) =>
+								dispatch({type: 'UPDATE_BUILDING', data: {abbreviation: newAbbreviation}})
+							}
+							placeholder="Abbreviation"
+							value={abbreviation || ''}
+						/>
+						{/* A picker rather than a field: a category is a section header
+						    on the campus list, so one typo invents a section. */}
+						<Picker<string>
+							label="Category"
+							modifiers={[pickerStyle('menu')]}
+							onSelectionChange={(newCategory) =>
+								dispatch({type: 'UPDATE_BUILDING', data: {category: newCategory}})
+							}
+							selection={category}
+						>
+							{categories.map((option) => (
+								<Text key={option} modifiers={[tag(option)]}>
+									{option}
+								</Text>
+							))}
+						</Picker>
 					</Section>
 
 					{schedules.map((s: NamedBuildingScheduleType, i: number) => (
