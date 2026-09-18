@@ -41,7 +41,7 @@ function makeEmailBody(
 	note: string,
 ): string {
 	return `
-Hi! Thanks for letting us know about a schedule change.
+Hi! Thanks for letting us know about a change.
 ${note ? `\n${note}\n` : ''}
 Please do not change anything below this line.
 
@@ -88,15 +88,16 @@ function makeIssueLink(
 	// St. Olaf-only -- Carleton has no YAML of its own to route this label
 	// to, so a Carleton report still files here, named unambiguously instead.
 	url.searchParams.append('labels[]', 'data/hours')
-	url.searchParams.append('title', `Building hours update for ${title} (${campusLabel(campus)})`)
+	url.searchParams.append('title', `Building update for ${title} (${campusLabel(campus)})`)
 	url.searchParams.append('body', makeMarkdownBody(before, after, note))
 	return url.toString()
 }
 
 function stringifyBuilding(building: BuildingType): string {
+	let toShow = withoutBlankLinks(building)
 	let res = ''
 	let prev = null
-	let data = dump(building, {flowLevel: 4}).split('\n')
+	let data = dump(toShow, {flowLevel: 4}).split('\n')
 	for (let line of data) {
 		if (['schedule:', 'breakSchedule:'].includes(line)) {
 			res += `\n\n${line}`
@@ -108,4 +109,27 @@ function stringifyBuilding(building: BuildingType): string {
 		prev = line
 	}
 	return res
+}
+
+/**
+ * A link with neither a title nor a url carries nothing for a maintainer to
+ * act on, so it is dropped before the building reaches the YAML dump. A link
+ * with just one of the two is a real, if incomplete, report and stays.
+ */
+function withoutBlankLinks(building: BuildingType): BuildingType {
+	if (!building.links) {
+		return building
+	}
+
+	let links = building.links.filter((link) => link.title !== '' || link.url !== '')
+	if (links.length === building.links.length) {
+		return building
+	}
+
+	if (links.length === 0) {
+		let {links: _links, ...rest} = building
+		return rest
+	}
+
+	return {...building, links}
 }

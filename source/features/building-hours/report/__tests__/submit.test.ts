@@ -42,7 +42,7 @@ describe('submitReport', () => {
 		let issueUrl = /Project maintainers: (\S+)/u.exec(args.body)?.[1] ?? ''
 		let title = new URL(issueUrl).searchParams.get('title')
 
-		expect(title).toBe('Building hours update for Registrar (Carleton)')
+		expect(title).toBe('Building update for Registrar (Carleton)')
 	})
 
 	it('puts the note in the email, above the do-not-change line', () => {
@@ -76,7 +76,26 @@ describe('submitReport', () => {
 
 		let [args] = mockSendEmail.mock.calls.at(-1) as [{body: string}]
 		expect(args.body).toContain(
-			'Hi! Thanks for letting us know about a schedule change.\n\nPlease do not change anything below this line.',
+			'Hi! Thanks for letting us know about a change.\n\nPlease do not change anything below this line.',
 		)
+	})
+
+	// Adding a link and then leaving both fields blank must not reach a
+	// maintainer as `- title: ''` / `url: ''`: it carries no information.
+	it('drops a wholly blank link from the emailed diff', () => {
+		let after: BuildingType = {...makeBuilding('Cage'), links: [{title: '', url: ''}]}
+		submitReport(makeBuilding('Cage'), after, 'stolaf', '')
+
+		let [args] = mockSendEmail.mock.calls.at(-1) as [{body: string}]
+		expect(args.body).not.toContain('links:')
+	})
+
+	// A title with no url (or vice versa) is a real, if incomplete, report.
+	it('keeps a link with only one of title or url filled in', () => {
+		let after: BuildingType = {...makeBuilding('Cage'), links: [{title: 'Instagram', url: ''}]}
+		submitReport(makeBuilding('Cage'), after, 'stolaf', '')
+
+		let [args] = mockSendEmail.mock.calls.at(-1) as [{body: string}]
+		expect(args.body).toContain('title: Instagram')
 	})
 })

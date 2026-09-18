@@ -92,39 +92,14 @@ function useBuildingEditor(initialBuilding: BuildingType, campus: Campus) {
 		[router],
 	)
 
-	let submit = React.useCallback((): void => {
-		setSubmitted(true)
-		submitReport(initialBuilding, building, campus, note)
-	}, [building, campus, initialBuilding, note])
-
-	return {building, dispatch: edit, note, openEditor, router, setNote, submit}
-}
-
-type Props = {
-	initialBuilding: BuildingType
-	campus: Campus
-}
-
-let CampusProblemReportView = ({initialBuilding, campus}: Props): React.ReactNode => {
-	let {start, clear} = useBuildingReport()
-
-	React.useEffect(() => {
-		start(initialBuilding)
-		return () => {
-			clear()
-		}
-		// oxlint-disable-next-line react/exhaustive-deps
-	}, [])
-
-	let {building, dispatch, note, openEditor, router, setNote, submit} = useBuildingEditor(
-		initialBuilding,
-		campus,
+	let openLink = React.useCallback(
+		(linkIndex: number) =>
+			router.push({
+				pathname: '/Campus/detail/link-editor',
+				params: {linkIndex: String(linkIndex)},
+			}),
+		[router],
 	)
-
-	let {schedule: schedules, name, subtitle, abbreviation, category, links = []} = building
-
-	let {data: buildings} = useQuery(buildingsOptions(campus))
-	let categories = categoriesFrom([...(buildings ?? []), building])
 
 	/**
 	 * Stops a second press from opening a second editor on the same link.
@@ -153,13 +128,42 @@ let CampusProblemReportView = ({initialBuilding, campus}: Props): React.ReactNod
 		// The new link lands at the end, which is where the editor that opens
 		// next has to look for it. Dispatched before the push so the draft
 		// already holds the link the editor is about to read.
-		let linkIndex = links.length
-		dispatch({type: 'ADD_LINK'})
-		router.push({
-			pathname: '/Campus/detail/link-editor',
-			params: {linkIndex: String(linkIndex)},
-		})
-	}, [dispatch, links.length, router])
+		let linkIndex = building.links?.length ?? 0
+		edit({type: 'ADD_LINK'})
+		openLink(linkIndex)
+	}, [building.links, edit, openLink])
+
+	let submit = React.useCallback((): void => {
+		setSubmitted(true)
+		submitReport(initialBuilding, building, campus, note)
+	}, [building, campus, initialBuilding, note])
+
+	return {addLink, building, dispatch: edit, note, openEditor, openLink, setNote, submit}
+}
+
+type Props = {
+	initialBuilding: BuildingType
+	campus: Campus
+}
+
+let CampusProblemReportView = ({initialBuilding, campus}: Props): React.ReactNode => {
+	let {start, clear} = useBuildingReport()
+
+	React.useEffect(() => {
+		start(initialBuilding)
+		return () => {
+			clear()
+		}
+		// oxlint-disable-next-line react/exhaustive-deps
+	}, [])
+
+	let {addLink, building, dispatch, note, openEditor, openLink, setNote, submit} =
+		useBuildingEditor(initialBuilding, campus)
+
+	let {schedule: schedules, name, subtitle, abbreviation, category, links = []} = building
+
+	let {data: buildings} = useQuery(buildingsOptions(campus))
+	let categories = categoriesFrom([...(buildings ?? []), building])
 
 	return (
 		<>
@@ -259,12 +263,7 @@ let CampusProblemReportView = ({initialBuilding, campus}: Props): React.ReactNod
 								// oxlint-disable-next-line react/no-array-index-key -- the index is the handle the editor edits by
 								key={i}
 								label={link.title || 'Untitled Link'}
-								onPress={() =>
-									router.push({
-										pathname: '/Campus/detail/link-editor',
-										params: {linkIndex: String(i)},
-									})
-								}
+								onPress={() => openLink(i)}
 								value={linkHost(link.url)}
 							/>
 						))}

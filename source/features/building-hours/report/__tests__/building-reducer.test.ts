@@ -151,7 +151,22 @@ describe('links', () => {
 	})
 
 	it('handles DELETE_LINK', () => {
+		let withTwoLinks: BuildingType = {
+			...baseBuilding,
+			links: [
+				{title: 'Instagram', url: 'https://instagram.com/lionspause'},
+				{title: 'Facebook', url: 'https://facebook.com/lionspause'},
+			],
+		}
+		let result = buildingReducer(withTwoLinks, {type: 'DELETE_LINK', linkIndex: 0})
+		expect(result.links).toEqual([{title: 'Facebook', url: 'https://facebook.com/lionspause'}])
+	})
+
+	// An empty `links: []` in the emailed YAML reads as a deliberate clearing
+	// of every link, and leaves `hasUnsavedChanges` stuck true forever since
+	// the building no longer round-trips to its initial, key-less shape.
+	it('drops the links key entirely when DELETE_LINK empties the array', () => {
 		let result = buildingReducer(withLinks, {type: 'DELETE_LINK', linkIndex: 0})
-		expect(result.links).toEqual([])
+		expect('links' in result).toBe(false)
 	})
 })

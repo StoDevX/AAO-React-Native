@@ -53,6 +53,7 @@ export default function BuildingLinkEditorPage(): React.ReactNode {
 						/>
 						<SyncedTextField
 							autocapitalization="never"
+							keyboardType="url"
 							onChangeText={editUrl}
 							placeholder="URL"
 							value={link.url}

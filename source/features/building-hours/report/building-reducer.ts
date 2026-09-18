@@ -110,6 +110,13 @@ export function buildingReducer(state: BuildingType, action: BuildingAction): Bu
 		case 'DELETE_LINK': {
 			let links = [...(state.links ?? [])]
 			links.splice(action.linkIndex, 1)
+			// An empty `links: []` in the emailed YAML reads as a deliberate
+			// clearing of every link, not the absence of any -- so a building
+			// left with none goes back to having no `links` key at all.
+			if (links.length === 0) {
+				let {links: _links, ...rest} = state
+				return rest
+			}
 			return {...state, links}
 		}
 
