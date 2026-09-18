@@ -8,7 +8,9 @@ type BusDayStore = {
 	 *
 	 * `null` rather than today's weekday so the navigation bar's menu can
 	 * label itself without a timer, and so the schedule rolls over at midnight
-	 * on its own.
+	 * on its own -- until a day is picked. The menu offers only the seven
+	 * weekdays, with no "Today" entry to pick back, so once set this stays
+	 * pinned to that day rather than rolling over again.
 	 */
 	selectedDay: DayOfWeek | null
 	setSelectedDay: (day: DayOfWeek | null) => void
