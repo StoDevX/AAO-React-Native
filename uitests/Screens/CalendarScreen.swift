@@ -605,6 +605,34 @@ struct CalendarScreen: Screen {
 		).count
 	}
 
+	/// A row for `title` is in the list, found by its own identifier.
+	///
+	/// This, not `visibleRowCount()`, is how a test asks whether a filter let an
+	/// event through: the list is a lazy stack, so its row count is how far
+	/// ahead SwiftUI has built rather than how many events the list holds, and
+	/// two counts taken at different scroll offsets differ without anything
+	/// about the data having changed.
+	@discardableResult
+	func verifyRowPresent(_ title: String) -> Self {
+		XCTAssertTrue(
+			row(title).waitForExistence(timeout: 10),
+			"\(title) should be in the list")
+		return self
+	}
+
+	/// The counterpart to `verifyRowPresent`, for an event a filter excludes.
+	@discardableResult
+	func verifyRowAbsent(_ title: String) -> Self {
+		XCTAssertTrue(
+			row(title).waitForNonExistence(timeout: 10),
+			"\(title) should have been filtered out of the list")
+		return self
+	}
+
+	private func row(_ title: String) -> XCUIElement {
+		app.buttons["\(TestIdentifiers.Calendar.eventRowPrefix)\(title)"]
+	}
+
 	/// The list merges several calendars, so it can credit none of them.
 	@discardableResult
 	func verifyNoAttribution() -> Self {

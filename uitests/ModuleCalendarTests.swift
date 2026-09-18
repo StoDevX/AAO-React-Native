@@ -163,6 +163,11 @@ class ModuleCalendarTests: UITestCase {
 
 	/// Reset Filters clears whichever axis is filtered, and is the only way back
 	/// to the whole list without hunting for the selected choice to untick.
+	///
+	/// Restoration is checked by naming a row the filter excluded and watching
+	/// it leave and return, rather than by comparing row counts either side:
+	/// the list is a lazy stack, so a count says how far ahead SwiftUI built,
+	/// not how many events the list holds.
 	func testResetFiltersClearsTheFilter() throws {
 		let screen = CalendarScreen(app: app).navigate()
 		let unfiltered = screen.visibleRowCount()
@@ -175,6 +180,7 @@ class ModuleCalendarTests: UITestCase {
 		XCTAssertLessThan(
 			screen.visibleRowCount(), unfiltered,
 			"Choosing a category should narrow the list")
+		screen.verifyRowAbsent(TestIdentifiers.Calendar.unfilteredDayRow)
 
 		screen
 			.openPicker()
@@ -182,9 +188,7 @@ class ModuleCalendarTests: UITestCase {
 			.tapResetFilters()
 			.capture("32-filter-cleared")
 
-		XCTAssertEqual(
-			screen.visibleRowCount(), unfiltered,
-			"Reset Filters should restore the whole list")
+		screen.verifyRowPresent(TestIdentifiers.Calendar.unfilteredDayRow)
 	}
 
 	/// Reset Filters is an undo, so it has nothing to offer an unfiltered list.
@@ -235,6 +239,9 @@ class ModuleCalendarTests: UITestCase {
 	/// of them either side of the filter, and "narrows" would have nothing to
 	/// prove against. Only the merged list has enough days in view for a
 	/// sponsor filter to narrow rather than empty it.
+	///
+	/// Reset is checked against a named row the filter excluded, for the reason
+	/// `testResetFiltersClearsTheFilter` gives.
 	func testFilteringByOrganizationNarrowsTheUpcomingList() throws {
 		let screen = CalendarScreen(app: app)
 		screen.navigate()
@@ -257,14 +264,13 @@ class ModuleCalendarTests: UITestCase {
 		XCTAssertGreaterThan(
 			filtered, 0,
 			"The organisation sponsors several events, so rows should remain")
+		screen.verifyRowAbsent(TestIdentifiers.Calendar.unfilteredUpcomingRow)
 
 		screen
 			.openPicker()
 			.tapResetFilters()
 
-		XCTAssertEqual(
-			screen.visibleRowCount(), unfiltered,
-			"Reset Filters should restore the whole list")
+		screen.verifyRowPresent(TestIdentifiers.Calendar.unfilteredUpcomingRow)
 	}
 
 	/// The list merges several calendars and so credits none of them; the

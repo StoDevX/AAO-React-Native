@@ -281,6 +281,14 @@ struct TestIdentifiers {
 		/// only too long. A name long enough to wrap its row costs half again
 		/// the height of one that does not.
 		static let organization = "Music Organizations (3)"
+		/// An event on the frozen day that carries neither of the values the
+		/// two filter tests choose -- Academic Year rather than Music, and no
+		/// sponsor at all. Day mode's own filter test watches it leave the list
+		/// and come back.
+		static let unfilteredDayRow = "Welcome Convocation"
+		/// The same, for the Upcoming list: two days past the frozen one, so it
+		/// sits well inside the rows the list has built either side of today.
+		static let unfilteredUpcomingRow = "First Day of Classes"
 		/// The one calendar UI test mode enables, from `REMOTE_SOURCES`.
 		static let uitestCalendar = "UI Test Fixtures"
 		/// Every attribution caption opens with this. The list should carry
