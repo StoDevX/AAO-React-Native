@@ -25,6 +25,10 @@ struct CampusDictionaryScreen: Screen {
 		app.element(matching: TestIdentifiers.Dictionary.previewSheet)
 	}
 
+	private var senseForm: XCUIElement {
+		app.element(matching: TestIdentifiers.Dictionary.senseForm)
+	}
+
 	private var previewButton: XCUIElement {
 		app.navigationBars.buttons[TestIdentifiers.Dictionary.preview]
 	}
@@ -208,10 +212,6 @@ struct CampusDictionaryScreen: Screen {
 		return self
 	}
 
-	private var senseForm: XCUIElement {
-		app.element(matching: TestIdentifiers.Dictionary.senseForm)
-	}
-
 	/// Opens the sense in row `position`, counting from 1.
 	@discardableResult
 	func openSense(_ position: Int) -> Self {
@@ -253,7 +253,7 @@ struct CampusDictionaryScreen: Screen {
 		let after = field.value as? String
 		XCTAssertEqual(
 			after, text + before,
-			"typing should have prepended \"\(text)\" to the field's existing text -- got "
+			"typing should have left \"\(text)\" prepended to whatever the field already held -- got "
 				+ "\(String(describing: after)), which means a keystroke was dropped or the field "
 				+ "lost focus mid-type")
 		return self
@@ -504,8 +504,8 @@ struct CampusDictionaryScreen: Screen {
 	/// asserted after the return, so a tap that added nothing fails here
 	/// rather than in whatever ran next.
 	///
-	/// The field a new sense opens is empty, so its value after typing is
-	/// asserted to equal exactly what was typed.
+	/// The field a new sense opens is empty, so `typeDefinition`'s read-back
+	/// there is exactly what was typed.
 	@discardableResult
 	func addSense(expectingRow position: Int = 2, withDefinition text: String? = nil) -> Self {
 		let button = app.buttons[TestIdentifiers.Dictionary.addSense]
@@ -517,21 +517,7 @@ struct CampusDictionaryScreen: Screen {
 			guard senseForm.waitForExistence(timeout: 5) else { continue }
 
 			if let text {
-				let field = app.textFields[TestIdentifiers.Dictionary.senseDefinitionField]
-				XCTAssertTrue(
-					field.waitForExistence(timeout: 15),
-					"the new sense's definition field never appeared")
-
-				field.tap()
-				XCTAssertTrue(
-					app.keyboards.firstMatch.waitForExistence(timeout: 10),
-					"tapping the new sense's definition field should raise the keyboard")
-
-				field.typeText(text)
-
-				XCTAssertEqual(
-					field.value as? String, text,
-					"the new sense's definition field should read back exactly what was typed")
+				typeDefinition(prepending: text)
 			}
 
 			leaveSense()
