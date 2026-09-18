@@ -483,7 +483,7 @@ struct TestIdentifiers {
 		static let detailMenu = Buttons.more
 		/// The one action the detail sheet's overflow menu offers.
 		static let reportAction = "Report a Problem"
-		/// The report screen's own `InfoHeader` title -- distinct from
+		/// The report screen's own prompt -- distinct from
 		/// `reportAction`, which labels the menu button that opens it, so a test
 		/// can tell the screen actually came up rather than the menu item merely
 		/// existing.
