@@ -14,7 +14,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  xcode_version: 'Xcode_26.4'
+  xcode_version: 'Xcode_27.0'
   cache_epoch: '1'
   MISE_RUBY_COMPILE: 'false'
 
@@ -135,9 +135,9 @@ jobs:
         uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: ios/build/Build/Products/
-          key: ios-app/e=${{ env.cache_epoch }}/host=macOS@26/target=ios/xcode=${{ env.xcode_version }}/job=${{ steps.build-job.outputs.fingerprint }}/ref=${{ github.head_ref || github.ref_name }}/hash=${{ hashFiles('app.config.ts', 'plugins/**', 'uitests/**', 'images/**', 'pnpm-lock.yaml', 'pnpm-workspace.yaml', 'mise.toml') }}
+          key: ios-app/e=${{ env.cache_epoch }}/host=macOS@27/target=ios/xcode=${{ env.xcode_version }}/job=${{ steps.build-job.outputs.fingerprint }}/ref=${{ github.head_ref || github.ref_name }}/hash=${{ hashFiles('app.config.ts', 'plugins/**', 'uitests/**', 'images/**', 'pnpm-lock.yaml', 'pnpm-workspace.yaml', 'mise.toml') }}
           restore-keys: |
-            ios-app/e=${{ env.cache_epoch }}/host=macOS@26/target=ios/xcode=${{ env.xcode_version }}/job=${{ steps.build-job.outputs.fingerprint }}/ref=master/hash=${{ hashFiles('app.config.ts', 'plugins/**', 'uitests/**', 'images/**', 'pnpm-lock.yaml', 'pnpm-workspace.yaml', 'mise.toml') }}
+            ios-app/e=${{ env.cache_epoch }}/host=macOS@27/target=ios/xcode=${{ env.xcode_version }}/job=${{ steps.build-job.outputs.fingerprint }}/ref=master/hash=${{ hashFiles('app.config.ts', 'plugins/**', 'uitests/**', 'images/**', 'pnpm-lock.yaml', 'pnpm-workspace.yaml', 'mise.toml') }}
 
       # ios-build is skipped on a hit, so nothing else would publish an
       # artifact for the shards and they would be back to restoring a cache
@@ -159,7 +159,7 @@ jobs:
   ios-build:
     name: Build for iOS
     needs: [ios-cache-check]
-    runs-on: macos-26
+    runs-on: xcode-27
     if: needs.ios-cache-check.outputs.cache-matched-key == ''
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -196,10 +196,10 @@ jobs:
         uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: ~/Library/Caches/ccache
-          key: ccache/e=${{ env.cache_epoch }}/host=macOS@26/target=ios/xcode=${{ env.xcode_version }}/ref=${{ github.head_ref || github.ref_name }}/run=${{ github.run_id }}-${{ github.run_attempt }}
+          key: ccache/e=${{ env.cache_epoch }}/host=macOS@27/target=ios/xcode=${{ env.xcode_version }}/ref=${{ github.head_ref || github.ref_name }}/run=${{ github.run_id }}-${{ github.run_attempt }}
           restore-keys: |
-            ccache/e=${{ env.cache_epoch }}/host=macOS@26/target=ios/xcode=${{ env.xcode_version }}/ref=${{ github.head_ref || github.ref_name }}/
-            ccache/e=${{ env.cache_epoch }}/host=macOS@26/target=ios/xcode=${{ env.xcode_version }}/ref=master/
+            ccache/e=${{ env.cache_epoch }}/host=macOS@27/target=ios/xcode=${{ env.xcode_version }}/ref=${{ github.head_ref || github.ref_name }}/
+            ccache/e=${{ env.cache_epoch }}/host=macOS@27/target=ios/xcode=${{ env.xcode_version }}/ref=master/
 
       # After the restore, not before: ccache keeps its counters inside the
       # cache directory, so zeroing them first only to restore the previous
@@ -306,7 +306,7 @@ jobs:
         uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: ~/Library/Caches/ccache
-          key: ccache/e=${{ env.cache_epoch }}/host=macOS@26/target=ios/xcode=${{ env.xcode_version }}/ref=${{ github.head_ref || github.ref_name }}/run=${{ github.run_id }}-${{ github.run_attempt }}
+          key: ccache/e=${{ env.cache_epoch }}/host=macOS@27/target=ios/xcode=${{ env.xcode_version }}/ref=${{ github.head_ref || github.ref_name }}/run=${{ github.run_id }}-${{ github.run_attempt }}
 
       - name: Save iOS app to cache
         uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
@@ -423,7 +423,7 @@ jobs:
   ios-uitest:
     name: Native UITest for iOS (${{ matrix.shard }})
     needs: [uitest-gate, uitest-plan, ios-build, ios-bundle, ios-cache-check]
-    runs-on: macos-26
+    runs-on: xcode-27
     # A job-level `if:` replaces GitHub's implicit success()-of-needs gate, so
     # each dependency this job actually relies on is checked explicitly rather
     # than through !failure(), which would also depend on undocumented
@@ -485,9 +485,10 @@ jobs:
         run: |
           set -o pipefail
           # Pick the latest installed iOS runtime on the runner. IPHONEOS_DEPLOYMENT_TARGET
-          # is the minimum we support, not what's actually installed — on macos-26 the
-          # runner ships iOS 26.x runtimes, which don't match our 18.x deployment target.
-          # `simctl list runtimes` reports the full version (e.g. 26.4.1), but `simctl list
+          # is the minimum we support, not what's actually installed, and the two have
+          # never matched — so resolve the destination from the runner rather than
+          # hardcoding a version the image may not ship.
+          # `simctl list runtimes` reports the full version (e.g. 27.0.1), but `simctl list
           # devices` keys runtimes as iOS-<major>-<minor> only, so strip the patch component.
           OS_VERSION=$(xcrun simctl list runtimes iOS -j | jq -r '.runtimes | map(select(.isAvailable != false)) | sort_by(.version) | last | .version | split(".") | .[0:2] | join(".")')
           echo "type=iPhone 17e" | tee -a "$GITHUB_OUTPUT"

@@ -229,15 +229,17 @@ struct CampusDictionaryScreen: Screen {
 	}
 
 	/// Asserts the edit form actually pushed into the entry sheet's own
-	/// stack, rather than presenting some other way. Its Back button, which
-	/// carries the sheet's nested-stack label, is what a plain modal would
-	/// not have -- the same discriminator `CampusScreen.verifyReportPushedIntoSheet`
-	/// uses for the building-hours report screen.
+	/// stack, rather than presenting some other way. A back button on the
+	/// form's own bar is what a plain modal would not have -- the same
+	/// discriminator `CampusScreen.verifyReportPushedIntoSheet` uses for the
+	/// building-hours report screen, scoped the same way, because the list's
+	/// bar behind the sheet carries a button with this label too.
 	@discardableResult
 	func verifyEditFormPushedIntoSheet() -> Self {
 		XCTAssertTrue(editForm.waitForExistence(timeout: 15), "the edit form never appeared")
 
-		let back = app.navigationBars.buttons[TestIdentifiers.Navigation.backButton]
+		let back = app.navigationBars[TestIdentifiers.Dictionary.editFormTitle]
+			.buttons[TestIdentifiers.Navigation.backButton]
 		XCTAssertTrue(
 			back.exists && back.isHittable,
 			"the edit form should push into the sheet's stack, so it carries a back button")

@@ -211,9 +211,7 @@ const config: ExpoConfig = {
 			'expo-build-properties',
 			{
 				ios: {
-					// Expo SDK 57 needs at least 16.4; the project has run ahead of
-					// that since SDK 56, and the Podfile must not drift from it.
-					deploymentTarget: '18.6',
+					deploymentTarget: '27.0',
 
 					// Point CC/CXX at React Native's ccache wrappers, which only CI
 					// asks for. A local build gets the plain compiler unless the
