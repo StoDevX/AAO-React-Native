@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {Stack, useLocalSearchParams, useNavigation, useRouter} from 'expo-router'
+import {Stack, useFocusEffect, useLocalSearchParams, useNavigation, useRouter} from 'expo-router'
 import {usePreventRemove} from 'expo-router/react-navigation'
 import {useQuery} from '@tanstack/react-query'
 import {Alert, StyleSheet} from 'react-native'
@@ -126,6 +126,41 @@ let CampusProblemReportView = ({initialBuilding, campus}: Props): React.ReactNod
 	let {data: buildings} = useQuery(buildingsOptions(campus))
 	let categories = categoriesFrom([...(buildings ?? []), building])
 
+	/**
+	 * Stops a second press from opening a second editor on the same link.
+	 * Both presses would read the same `links.length` from this render, so the
+	 * guard is a ref rather than state — a re-render must not clear it while
+	 * the push is still travelling.
+	 *
+	 * Unlike `useDismissOnce`, this one has to reset: the screen is still here
+	 * when someone comes back from the editor, and pressing again then is a
+	 * legitimate second link.
+	 */
+	let addingLink = React.useRef(false)
+
+	useFocusEffect(
+		React.useCallback(() => {
+			addingLink.current = false
+		}, []),
+	)
+
+	let addLink = React.useCallback(() => {
+		if (addingLink.current) {
+			return
+		}
+		addingLink.current = true
+
+		// The new link lands at the end, which is where the editor that opens
+		// next has to look for it. Dispatched before the push so the draft
+		// already holds the link the editor is about to read.
+		let linkIndex = links.length
+		dispatch({type: 'ADD_LINK'})
+		router.push({
+			pathname: '/Campus/detail/link-editor',
+			params: {linkIndex: String(linkIndex)},
+		})
+	}, [dispatch, links.length, router])
+
 	return (
 		<>
 			{/* In the header rather than at the foot of the form: this screen
@@ -234,18 +269,7 @@ let CampusProblemReportView = ({initialBuilding, campus}: Props): React.ReactNod
 							/>
 						))}
 
-						<NavigationRow
-							onPress={() => {
-								// The new link lands at the end, which is where the editor
-								// that opens next has to look for it.
-								router.push({
-									pathname: '/Campus/detail/link-editor',
-									params: {linkIndex: String(links.length)},
-								})
-								dispatch({type: 'ADD_LINK'})
-							}}
-							title="Add Link"
-						/>
+						<NavigationRow onPress={addLink} title="Add Link" />
 					</Section>
 
 					<Section

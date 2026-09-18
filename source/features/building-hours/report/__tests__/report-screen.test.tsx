@@ -1,11 +1,12 @@
 import * as React from 'react'
-import {fireEvent, render, screen} from '@testing-library/react-native'
+import {act, fireEvent, render, screen} from '@testing-library/react-native'
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query'
 
 import ReportPage from '../../../../../app/(home)/Campus/detail/report'
 import {BuildingReportProvider} from '../context'
 import {keys} from '../../query'
 import type {BuildingType} from '../../types'
+import {simulateFocus} from '../../../../testing/expo-router-mock'
 import type * as ExpoRouterMock from '../../../../testing/expo-router-mock'
 
 // report.tsx pulls in the redux barrel through query.ts, for
@@ -32,9 +33,11 @@ const mockPush = jest.fn()
 
 jest.mock('expo-router', () => {
 	// oxlint-disable-next-line typescript/no-require-imports
-	let {Stack}: typeof ExpoRouterMock = require('../../../../testing/expo-router-mock')
+	let mock: typeof ExpoRouterMock = require('../../../../testing/expo-router-mock')
+	let {Stack, useFocusEffect} = mock
 	return {
 		Stack,
+		useFocusEffect,
 		useRouter: () => ({push: mockPush}),
 		useNavigation: () => ({goBack: jest.fn(), dispatch: jest.fn()}),
 		useLocalSearchParams: () => ({name: 'The Cage', campus: 'stolaf'}),
@@ -70,18 +73,29 @@ afterEach(() => {
 	trackedQueryClients.length = 0
 })
 
-function renderReport() {
+async function renderReport() {
 	let client = new QueryClient({defaultOptions: {queries: {retry: false}}})
 	trackedQueryClients.push(client)
 	client.setQueryData(keys.all('stolaf'), [cage, library])
 
-	return render(
+	let view = await render(
 		<QueryClientProvider client={client}>
 			<BuildingReportProvider>
 				<ReportPage />
 			</BuildingReportProvider>
 		</QueryClientProvider>,
 	)
+
+	// React Query's notifyManager schedules subscriber notifications with a
+	// real setTimeout(0) (see notifyManager.ts's systemSetTimeoutZero), not a
+	// microtask, so it lands after render returns and re-renders outside
+	// act(). The queries here are seeded, so there is nothing to fetch -- only
+	// that timer to flush.
+	await act(async () => {
+		await new Promise((resolve) => setTimeout(resolve, 0))
+	})
+
+	return view
 }
 
 beforeEach(() => {
@@ -148,6 +162,33 @@ describe('links', () => {
 			pathname: '/Campus/detail/link-editor',
 			params: {linkIndex: '0'},
 		})
+	})
+
+	// Two presses before React re-renders would otherwise both read the same
+	// links.length, opening two editors on one link and stranding a second
+	// blank one with no editor pointed at it.
+	it('opens one editor when Add Link is pressed twice quickly', async () => {
+		await renderReport()
+
+		let addLink = screen.getByLabelText('Add Link')
+		await fireEvent.press(addLink)
+		await fireEvent.press(addLink)
+
+		expect(mockPush).toHaveBeenCalledTimes(1)
+	})
+
+	it('lets Add Link work again after coming back from the editor', async () => {
+		await renderReport()
+
+		await fireEvent.press(screen.getByLabelText('Add Link'))
+		expect(mockPush).toHaveBeenCalledTimes(1)
+
+		await act(() => {
+			simulateFocus()
+		})
+
+		await fireEvent.press(screen.getByLabelText('Add Link'))
+		expect(mockPush).toHaveBeenCalledTimes(2)
 	})
 })
 
