@@ -54,8 +54,24 @@ const cage: BuildingType = {
 }
 const library: BuildingType = {name: 'Rolvaag', category: 'Libraries', schedule: []}
 
+// Every query left without observers gets a garbage-collection timeout, and
+// React Query's default is five minutes -- long enough to outlive the run and
+// leave the Jest worker to be force-killed rather than exiting on its own.
+// Testing Library registers its unmounting afterEach when it is imported, and
+// Jest runs afterEach hooks in registration order, so by the time this one
+// runs the components are gone and every gc timeout has been armed.
+const trackedQueryClients: QueryClient[] = []
+
+afterEach(() => {
+	for (let queryClient of trackedQueryClients) {
+		queryClient.clear()
+	}
+	trackedQueryClients.length = 0
+})
+
 function renderReport() {
 	let client = new QueryClient({defaultOptions: {queries: {retry: false}}})
+	trackedQueryClients.push(client)
 	client.setQueryData(keys.all('stolaf'), [cage, library])
 
 	return render(
