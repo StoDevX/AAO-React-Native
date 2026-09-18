@@ -9,25 +9,72 @@ For seeing a change with your own eyes. To *assert* something about a screen,
 write an XCUITest instead — see `run-uitests`. For a physical iPhone, see
 `build-to-device`.
 
-## You can look, but you cannot touch
+## You can touch, with `axe`
 
-`simctl` reads the framebuffer and it launches apps. **It has no tap, no swipe
-and no typing.** There is no `simctl tap`, and unless `idb` is installed there
-is nothing else to reach for either.
+`simctl` reads the framebuffer and launches apps. It has no tap, no swipe and
+no typing. **`axe` has all three**, and it is already installed:
 
-So this skill gets you to whatever screen the app opens on, and no further. Any
-check that needs a row tapped, a field typed into, or a sheet dragged is an
-XCUITest — `run-uitests`. XCUITest drives the UI through the test harness
-rather than the GUI, so its taps work where `simctl` has nothing to offer.
+```bash
+axe describe-ui --udid "$UDID"          # the accessibility tree, with frames
+axe tap --label "Campus" --tap-style physical --udid "$UDID"
+axe tap -x 201 -y 234 --tap-style physical --udid "$UDID"
+axe type "shirt" --udid "$UDID"
+axe swipe --start-x 200 --start-y 600 --end-x 200 --end-y 200 --udid "$UDID"
+axe screenshot --udid "$UDID" --output /tmp/shot.png
+```
 
-Deep-linking your way past a tap does not work either. `simctl openurl` with an
-app scheme raises an **"Open in 'All About Olaf'?"** confirmation sheet, and
-dismissing that needs the tap you were trying to avoid. The launch URL in step 4
-below is the exception that survives, because it is what the dev client itself
-registers.
+`brew install cameroncooke/axe/axe` if it is ever missing. It drives
+CoreSimulator's HID interface directly, so no GUI is involved and nothing needs
+to be in the foreground.
 
-Decide this before you build, not after: if the screen you care about is more
-than one launch away, skip straight to `run-uitests`.
+Coordinates from `describe-ui` are **points**, and so are `axe tap`'s. A
+`simctl io screenshot` is in pixels — divide by the scale (3 on the Pro
+phones) before you tap what you saw.
+
+### Always pass `--tap-style physical`
+
+The default is `automatic`, which uses `FBSimulator tapAt` for anything that
+is not a switch. That **silently fails on SpringBoard's own alerts** — it
+reports `✓ Tap … completed successfully` and the sheet stays exactly where it
+was. `physical` posts a real touch down/up and works everywhere, so there is
+no reason to use anything else.
+
+### `--label` is an exact match, including invisible characters
+
+iOS writes times with U+202F NARROW NO-BREAK SPACE, so the row that reads
+`The Pause Kitchen, Open until 3 PM` on screen has the label
+`The Pause Kitchen, Open until 3\u202fPM`. The two are indistinguishable in a
+terminal, and a `--label` typed with an ordinary space matches nothing:
+
+```
+Warning: No accessibility element matched --label '...'. No tap performed.
+```
+
+Dump the tree through `repr`, which prints the escape rather than a space you
+cannot see, then tap the frame's centre by coordinate:
+
+```bash
+axe describe-ui --udid "$UDID" | python3 -c '
+import json, sys
+def walk(n):
+    lbl = n.get("AXLabel") or n.get("title")
+    if lbl and lbl.strip(): print(repr(lbl), n.get("frame"))
+    for c in n.get("children") or []: walk(c)
+for n in json.load(sys.stdin): walk(n)
+'
+```
+
+### What still belongs in an XCUITest
+
+`axe` gets you to any screen, so "the screen is three taps away" is no longer a
+reason to skip straight to `run-uitests`. The division is now about what you
+are doing, not how deep it is:
+
+| | |
+| --- | --- |
+| Looking at a screen once, by eye | `axe` |
+| Reproducing something by hand | `axe` |
+| Asserting a screen is correct, repeatably, in CI | `run-uitests` |
 
 ## Whose Metro are you talking to?
 
@@ -96,10 +143,9 @@ a server is only half the job:
 
 | How you launch | How the port gets in |
 | --- | --- |
+| `simctl launch <UDID> <bundle id> -RCT_jsLocation localhost:$PORT` | a launch argument React Native reads before it guesses 8081 — **the one to use** |
 | `npx expo run:ios --port $PORT` | baked in at build time; the log then reads `Waiting on http://localhost:$PORT` |
-| `simctl openurl …expo-development-client/?url=…` | carried in the URL, percent-encoded (step 4 below) |
 | XCUITest | `TEST_RUNNER_AAO_JS_LOCATION=localhost:$PORT` on the `xcodebuild test` command; `UITestCase` turns it into `-RCT_jsLocation` |
-| `simctl launch <UDID> <bundle id> -RCT_jsLocation localhost:$PORT` | a launch argument React Native reads before it guesses 8081 |
 
 `RCT_METRO_PORT` is only the compile-time default the guess falls back to; a
 launch argument overrides it at run time, and `--reset-state` does not clear
@@ -143,49 +189,69 @@ mise run ios          # expect it to fail at the last step; see below
 
 # 2. Boot a simulator.
 xcrun simctl list devices available | grep iPhone
-xcrun simctl boot <UDID>; xcrun simctl bootstatus <UDID> -b
+xcrun simctl boot "$UDID"; xcrun simctl bootstatus "$UDID" -b
 
 # 3. Serve the JavaScript, and wait until it answers. Check the port is yours
 #    first — see "Whose Metro are you talking to?" above.
-npx expo start --port $PORT > /tmp/metro-$PORT.log 2>&1 &
+npx expo start --port "$PORT" > /tmp/metro-$PORT.log 2>&1 &
 until curl -sf http://localhost:$PORT/status | grep -q running; do sleep 1; done
 
-# 4. Launch it pointed at Metro, and look.
-xcrun simctl openurl $UDID \
-  "NFMTHAZVS9.com.drewvolz.stolaf://expo-development-client/?url=http%3A%2F%2Flocalhost%3A$PORT"
-xcrun simctl io $UDID screenshot /tmp/shot.png    # then Read the png
+# 4. Launch it pointed at Metro. No confirmation sheet, no deep link needed.
+xcrun simctl launch "$UDID" NFMTHAZVS9.com.drewvolz.stolaf \
+  -RCT_jsLocation "localhost:$PORT"
+
+# 5. Drive it and look.
+axe describe-ui --udid "$UDID"
+axe tap --label "Campus" --tap-style physical --udid "$UDID"
+xcrun simctl io "$UDID" screenshot /tmp/shot.png    # then Read the png
 ```
 
-No GUI is needed at any point. `simctl` drives a booted simulator whether or
-not anything is on screen, and `io screenshot` reads the framebuffer directly.
+No GUI is needed at any point.
 
-## The two steps that mislead
+## Skip the deep link, and its confirmation sheet
+
+`simctl openurl` with the app's own scheme raises an **"Open in 'All About
+Olaf'?"** sheet from SpringBoard on iOS 26 and later. `simctl launch` with
+`-RCT_jsLocation` does the same job — points a Debug build at your Metro —
+**and raises no sheet at all**, so prefer it and the problem never arises.
+
+When you genuinely need the deep link (testing routing, say), `axe` clears the
+sheet in one command:
+
+```bash
+axe tap --label "Open" --element-type Button --tap-style physical --udid "$UDID"
+```
+
+`--tap-style physical` is not optional here. The sheet belongs to SpringBoard,
+and the default tap style does nothing to it while reporting success.
+
+## The steps that mislead
 
 **`mise run ios` fails at the end, after doing the useful work.** It builds,
-signs and installs, then tries to raise the Simulator GUI and reports:
+signs and installs, then tries to raise a simulator GUI and reports:
 
 ```
 CommandError: Simulator app did not open fast enough.
 Try opening Simulator first, then running your app.
 ```
 
-Take its advice only once you have checked the GUI exists. Some Xcode installs
-have no `$(xcode-select -p)/Applications/` directory at all, so
-`open -a Simulator` answers `Unable to find application named 'Simulator'` and
-no amount of retrying will help. **The app is installed either way** — the
-failure is in raising a window, not in the build. Ignore it and go to step 2.
+Ignore it — **the app is installed**. The failure is in raising a window, and
+on Xcode 27 no window can be raised the way the tool expects: Apple deleted
+`Xcode.app/Contents/Developer/Applications/Simulator.app` and replaced it with
+`Xcode.app/Contents/Applications/DeviceHub.app` (bundle id
+`com.apple.dt.Devices`). `open -a Simulator` answers `Unable to find
+application named 'Simulator'` and always will. Every tool that hardcodes the
+old path — Expo, Flutter, Maestro — hits this. You do not need the GUI anyway.
 
-**`simctl launch` gets you a red screen.** Launching by bundle id alone:
+**`simctl launch` without `-RCT_jsLocation` gets you a red screen.** Launching
+by bundle id alone starts the app with no idea where Metro is, and it renders
+`No script URL provided. Make sure the packager is running…`, which reads like
+a broken Metro rather than a missing argument.
 
-```bash
-xcrun simctl launch <UDID> NFMTHAZVS9.com.drewvolz.stolaf   # DON'T
-```
-
-starts the app with no idea where Metro is, and it renders `No script URL
-provided. Make sure the packager is running…`, which reads like a broken Metro
-rather than a missing argument. The `openurl` deep link in step 4 is what
-passes the packager address in. Note the URL is percent-encoded — `%3A%2F%2F`
-for `://`.
+**LogBox will not show you a warning.** Since React Native 0.80 the toast reads
+`Open debugger to view warnings.` and tapping it does nothing — there is no
+inspector to open. Warnings, including `Require cycle:`, print in the Metro
+log, so `grep` `/tmp/metro-$PORT.log`.
 
 ## Bundle identifiers
 
@@ -195,8 +261,8 @@ for `://`.
 | `development` | `NFMTHAZVS9.com.drewvolz.stolaf.dev` |
 
 The URL scheme matches the bundle id, so a dev-variant build wants
-`…stolaf.dev://expo-development-client/?url=…`. Two builds claiming one scheme
-is undefined behaviour, which is why they differ.
+`…stolaf.dev://…`. Two builds claiming one scheme is undefined behaviour,
+which is why they differ.
 
 ## Notes
 
