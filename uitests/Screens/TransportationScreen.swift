@@ -53,7 +53,7 @@ struct TransportationScreen: Screen {
 		// The heading carries the stop's name and when its next bus is, as one
 		// element -- "ST. OLAF COLLEGE — STARTS IN 3 HOURS (12:00PM)", drawn in
 		// caps -- so the match is both a prefix and case-insensitive.
-		let heading = app.staticTexts.containing(
+		let heading = app.staticTexts.matching(
 			NSPredicate(format: "label BEGINSWITH[c] %@", TestIdentifiers.Transportation.aStop)
 		).firstMatch
 		XCTAssertTrue(
@@ -79,15 +79,23 @@ struct TransportationScreen: Screen {
 		return self
 	}
 
-	/// Assert the timetable's section title names the day on screen.
+	/// Assert the day menu relabelled itself and the timetable's section title
+	/// names the day on screen. Matching on the em-dash that follows the day
+	/// in the title -- "Saturday — Not running today" -- rules out the
+	/// toolbar button, whose own label is the bare day name and never
+	/// contains it.
 	@discardableResult
 	func verifyScheduleShows(day: String) -> Self {
-		let title = app.staticTexts.containing(
-			NSPredicate(format: "label BEGINSWITH[c] %@", day)
+		XCTAssertTrue(
+			app.buttons[day].waitForExistence(timeout: 30),
+			"The day menu should relabel itself to \(day)")
+
+		let title = app.staticTexts.matching(
+			NSPredicate(format: "label BEGINSWITH[c] %@", "\(day) —")
 		).firstMatch
 		XCTAssertTrue(
 			title.waitForExistence(timeout: 30),
-			"The section title should lead with \(day)")
+			"The section title should lead with \(day) —")
 		return self
 	}
 
