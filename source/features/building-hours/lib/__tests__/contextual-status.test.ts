@@ -268,7 +268,7 @@ describe('contextualStatus', () => {
 		])
 		let now = moment.tz('2026-09-08 22:00', timezone) // Tuesday 10pm
 
-		expect(contextualStatus(building, now).short).toBe('Phone calls only until 8 AM')
+		expect(contextualStatus(building, now).short).toBe('Phone until 8 AM')
 	})
 
 	it('prefers a service open now over a door that opens later', () => {
@@ -285,22 +285,6 @@ describe('contextualStatus', () => {
 		])
 		let now = moment.tz('2026-09-09 03:00', timezone) // Wednesday 3am
 
-		expect(contextualStatus(building, now).short).toBe('Phone calls only until 8 AM')
-	})
-
-	it('names a non-phone service without "calls only"', () => {
-		// data/building-hours/1-2-pause-kitchen.yaml; delivery runs 7pm to midnight.
-		let building = makeBuilding([
-			{title: 'Hours', hours: [{days: ['Mo'], from: '11:00am', to: '2:00pm'}]},
-			{
-				title: 'On Campus Pizza Delivery',
-				isPhysicallyOpen: false,
-				status: {symbol: 'figure.walk.circle', name: 'Delivery'},
-				hours: [{days: ['Mo'], from: '7:00pm', to: '12:00am'}],
-			},
-		])
-		let now = moment.tz('2026-09-07 20:00', timezone) // Monday 8pm
-
-		expect(contextualStatus(building, now).short).toBe('Delivery until 12 AM')
+		expect(contextualStatus(building, now).short).toBe('Phone until 8 AM')
 	})
 })

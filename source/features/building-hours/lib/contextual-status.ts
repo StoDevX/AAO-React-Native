@@ -129,9 +129,7 @@ export function contextualStatus(
 			.map((hours) => findOpenWindow(hours, now))
 			.find((candidate) => candidate !== null)
 		if (window) {
-			let isPhone = service.symbol?.includes('phone') ?? false
-			let prefix = isPhone ? `${service.name} calls only` : service.name
-			return plain(`${prefix} until ${formatTime(window.close, locale)}`)
+			return plain(`${service.name} until ${formatTime(window.close, locale)}`)
 		}
 	}
 
