@@ -97,6 +97,12 @@ class ModuleCampusDictionaryTests: UITestCase {
 	/// preconditions matter: without them this test would stay green even if
 	/// `editMode` were hard-coded active, which is the bug this suite already
 	/// found once, in the opposite direction.
+	///
+	/// A second sense also makes deletion meaningful to check: swiping the
+	/// added row away and tapping Delete should drop the count back to one,
+	/// leaving the original sense's row in its place -- the row change from a
+	/// `TextField` to a `Button` (#7959) is nothing this suite otherwise
+	/// exercises the delete gesture against.
 	func testASecondSenseOffersReordering() throws {
 		CampusDictionaryScreen(app: app)
 			.navigate()
@@ -112,6 +118,12 @@ class ModuleCampusDictionaryTests: UITestCase {
 			.capture("Dictionary edit form with two senses")
 			.toggleReorderMode()
 			.verifyReorderHandlesAppear(senseCount: 2)
+			// Back out of reorder mode before swiping: `editMode` active swaps
+			// the row's swipe-to-delete affordance for the reorder handle.
+			.toggleReorderMode()
+			.deleteSense(at: 2)
+			.verifyDefinitionOrder([TestIdentifiers.Dictionary.referenceEntryFirstDefinition])
+			.verifyReorderToggleHidden()
 	}
 
 	/// The drag itself, and where it leaves the sense.

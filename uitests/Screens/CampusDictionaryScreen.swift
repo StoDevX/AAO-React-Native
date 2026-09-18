@@ -240,7 +240,15 @@ struct CampusDictionaryScreen: Screen {
 		let field = app.textFields[TestIdentifiers.Dictionary.senseDefinitionField]
 		XCTAssertTrue(
 			field.waitForExistence(timeout: 15), "the sense's definition field never appeared")
-		let before = (field.value as? String) ?? ""
+
+		// An empty `TextField` reads its placeholder back as its value, the
+		// same quirk `searchField` has (see uitests/CLAUDE.md) -- and this
+		// field's placeholder is the same string as its own accessibility
+		// label. A sense `addSense` just opened has a genuinely empty field,
+		// so that placeholder means no existing text, not literal content to
+		// prepend to.
+		let rawBefore = (field.value as? String) ?? ""
+		let before = rawBefore == TestIdentifiers.Dictionary.senseDefinitionField ? "" : rawBefore
 
 		field.tap()
 		XCTAssertTrue(
@@ -528,6 +536,34 @@ struct CampusDictionaryScreen: Screen {
 			return self
 		}
 		XCTFail("tapping Add Sense never opened the sense it added")
+		return self
+	}
+
+	/// Swipes the sense row at `position` (counting from 1) part-way from its
+	/// trailing edge to reveal `List.ForEach(onDelete:)`'s Delete button, then
+	/// taps it.
+	///
+	/// Swiped by coordinate rather than `row.swipeLeft()`, and only about a
+	/// third of the row's width, for the same reason
+	/// `CampusScreen.revealSwipeAction` is: a full swipe performs the delete
+	/// outright and the button never lingers to be found, so a test asserting
+	/// on it would be asserting on an element the gesture had already
+	/// consumed.
+	@discardableResult
+	func deleteSense(at position: Int) -> Self {
+		let row = app.element(matching: TestIdentifiers.Dictionary.senseRow(position))
+		XCTAssertTrue(row.waitForExistence(timeout: 15), "sense row \(position) never appeared")
+
+		let start = row.coordinate(withNormalizedOffset: CGVector(dx: 0.95, dy: 0.5))
+		let end = row.coordinate(withNormalizedOffset: CGVector(dx: 0.6, dy: 0.5))
+		start.press(forDuration: 0.1, thenDragTo: end, withVelocity: .slow, thenHoldForDuration: 0.5)
+
+		let delete = app.buttons["Delete"]
+		XCTAssertTrue(
+			delete.waitForExistence(timeout: 5),
+			"swiping sense row \(position) should reveal a Delete button -- if it did not, the "
+				+ "swipe never engaged the row")
+		delete.tap()
 		return self
 	}
 
