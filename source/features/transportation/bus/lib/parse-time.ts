@@ -16,6 +16,12 @@ const parseTime =
 		// interpret in Central time
 		let m = moment.tz(time, TIME_FORMAT, true, timezone())
 
+		// a value that fails the strict parse is exactly as absent as `false`
+		// -- every caller downstream already treats `null` as "no data here"
+		if (!m.isValid()) {
+			return null
+		}
+
 		// and set the date to today
 		m.year(now.year()).month(now.month()).date(now.date())
 

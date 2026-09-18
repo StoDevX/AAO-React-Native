@@ -96,6 +96,7 @@ export const textInputAutocapitalization = named(
 	'autocapitalization',
 )
 export const layoutPriority = named('layoutPriority', 'priority')
+export const allowsTightening = named('allowsTightening', 'value')
 export const textSelection = named('textSelection', 'value')
 export const tint = named('tint', 'color')
 export const truncationMode = named('truncationMode', 'mode')
@@ -349,7 +350,7 @@ export function Section({
 	footer?: React.ReactNode
 }): React.ReactNode {
 	if (typeof header === 'string' || typeof footer === 'string') {
-		throw new Error('Section header/footer are SwiftUI slots; a bare string crashes at mount')
+		throw new TypeError('Section header/footer are SwiftUI slots; a bare string crashes at mount')
 	}
 
 	let indexLabel = sectionIndexLabelOf(modifiers)
@@ -402,14 +403,16 @@ export function List({
 	onSelectionChange?: (selection: (string | number)[]) => void
 }): React.ReactNode {
 	let rows = <Refreshable modifiers={modifiers}>{children}</Refreshable>
+	let context = React.useMemo(
+		() => (selection && onSelectionChange ? {selection, onSelectionChange} : null),
+		[selection, onSelectionChange],
+	)
 
-	if (!selection || !onSelectionChange) {
+	if (!context) {
 		return rows
 	}
 
-	return (
-		<ListSelection.Provider value={{selection, onSelectionChange}}>{rows}</ListSelection.Provider>
-	)
+	return <ListSelection.Provider value={context}>{rows}</ListSelection.Provider>
 }
 
 List.ForEach = function ListForEach({
@@ -574,7 +577,7 @@ export function Menu({
 	modifiers,
 }: WithModifiers & {label?: React.ReactNode}): React.ReactNode {
 	if (typeof children === 'string') {
-		throw new Error('Menu children must be nested elements, not a plain string')
+		throw new TypeError('Menu children must be nested elements, not a plain string')
 	}
 
 	let name = labelOf(modifiers) ?? textOf(label)
@@ -608,7 +611,7 @@ export function Toggle({
 	onIsOnChange?: (isOn: boolean) => void
 }): React.ReactNode {
 	if (typeof children === 'string') {
-		throw new Error('Toggle children must be nested elements, not a plain string')
+		throw new TypeError('Toggle children must be nested elements, not a plain string')
 	}
 
 	return (
@@ -642,7 +645,7 @@ export function Button({
 	onPress,
 }: WithModifiers & {label?: React.ReactNode; onPress?: () => void}): React.ReactNode {
 	if (typeof children === 'string') {
-		throw new Error('Button children must be nested elements, not a plain string')
+		throw new TypeError('Button children must be nested elements, not a plain string')
 	}
 
 	let name = labelOf(modifiers) ?? textOf(label) ?? textOf(children)
@@ -811,7 +814,7 @@ export function BottomSheet({
 	onIsPresentedChange?: (isPresented: boolean) => void
 }): React.ReactNode {
 	if (typeof anchor === 'string') {
-		throw new Error('BottomSheet anchor is a SwiftUI slot; a bare string crashes at mount')
+		throw new TypeError('BottomSheet anchor is a SwiftUI slot; a bare string crashes at mount')
 	}
 
 	return (

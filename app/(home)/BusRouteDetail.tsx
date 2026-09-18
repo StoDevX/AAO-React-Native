@@ -158,6 +158,7 @@ function BusStopDetailInternal(props: Props): React.ReactNode {
 		]
 
 		return (
+			// oxlint-disable-next-line react/no-array-index-key -- position in the route is the stop's identity
 			<ListRow key={index} fullHeight={true} fullWidth={true} style={styles.timeRow}>
 				<ProgressChunk
 					barColor={line.colors.bar}

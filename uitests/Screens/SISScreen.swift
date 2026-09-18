@@ -63,10 +63,16 @@ struct SISScreen: Screen {
 		return self
 	}
 
+	/// Leaves SIS via the navigation bar's back button, scoped to that bar and
+	/// queried by UIKit's identifier rather than its label: every back button
+	/// in the app reads `Back`, so the label says nothing about which one.
 	@discardableResult
 	func navigateBack() -> Self {
-		let backButton = app.buttons[TestIdentifiers.SIS.backButton].firstMatch
-		XCTAssertTrue(backButton.waitForExistence(timeout: 10))
+		let backButton = app.navigationBars[TestIdentifiers.Buttons.sis]
+			.buttons[TestIdentifiers.Navigation.systemBackButton]
+		XCTAssertTrue(
+			backButton.waitForExistence(timeout: 10),
+			"SIS should offer a back button to leave by")
 		backButton.tap()
 		return self
 	}
@@ -74,7 +80,9 @@ struct SISScreen: Screen {
 	@discardableResult
 	func waitForHomescreenVisible() -> Self {
 		let homescreen = app.element(matching: TestIdentifiers.Home.screen)
-		XCTAssertTrue(homescreen.waitForExistence(timeout: 30))
+		XCTAssertTrue(
+			homescreen.waitForExistence(timeout: 30),
+			"Leaving SIS should land back on the homescreen")
 		return self
 	}
 
@@ -82,7 +90,9 @@ struct SISScreen: Screen {
 	func navigateToSISAgain() -> Self {
 		let homescreen = app.element(matching: TestIdentifiers.Home.screen)
 		app.buttons[TestIdentifiers.Buttons.sis].firstMatch.tap()
-		XCTAssertTrue(homescreen.waitForNonExistence(timeout: 30))
+		XCTAssertTrue(
+			homescreen.waitForNonExistence(timeout: 30),
+			"Reopening SIS should leave the homescreen")
 		return self
 	}
 

@@ -56,6 +56,16 @@ export function BuildingDetailSwiftUI({building, now, campus}: Props): React.Rea
 	let schedules = building.schedule || []
 	let links = building.links || []
 
+	// A venue is listed under the name people say, so this is the only place it
+	// is spelled out: DiSCO is the Digital Scholarship Center, SARN the Sexual
+	// Assault Resource Network. Where there is no formal name, the abbreviation
+	// stands in.
+	let formalName = building.subtitle
+		? building.subtitle
+		: building.abbreviation
+			? `(${building.abbreviation})`
+			: null
+
 	// Every Carleton venue, and any St. Olaf one not yet keyed to a building,
 	// carries no `building` id -- skip the fetch entirely rather than warm a
 	// cache no lookup will ever use. Where a key does exist, this query shares
@@ -89,11 +99,23 @@ export function BuildingDetailSwiftUI({building, now, campus}: Props): React.Rea
 						>
 							{null}
 						</VStack>
-						<Text
-							modifiers={[font({textStyle: 'body', weight: 'semibold'}), foregroundStyle(c.label)]}
-						>
-							{statusText}
-						</Text>
+						<VStack alignment="leading" spacing={2}>
+							<Text
+								modifiers={[
+									font({textStyle: 'body', weight: 'semibold'}),
+									foregroundStyle(c.label),
+								]}
+							>
+								{statusText.long}
+							</Text>
+							{formalName ? (
+								<Text
+									modifiers={[font({textStyle: 'subheadline'}), foregroundStyle(c.secondaryLabel)]}
+								>
+									{formalName}
+								</Text>
+							) : null}
+						</VStack>
 					</HStack>
 				</Section>
 
@@ -103,9 +125,9 @@ export function BuildingDetailSwiftUI({building, now, campus}: Props): React.Rea
 						footer={schedule.notes ? <Text>{schedule.notes}</Text> : undefined}
 						title={schedule.title.toUpperCase()}
 					>
-						{schedule.hours.map((set, i) => (
+						{schedule.hours.map((set) => (
 							<ScheduleRowSwiftUI
-								key={i}
+								key={`${set.days.join('')}-${set.from}-${set.to}`}
 								accentColor={accentColor}
 								isActive={isScheduleRowActive(schedule, set, now)}
 								now={now}
@@ -147,9 +169,9 @@ export function BuildingDetailSwiftUI({building, now, campus}: Props): React.Rea
 
 				{links.length > 0 ? (
 					<Section title="RESOURCES">
-						{links.map((link, i) => (
+						{links.map((link) => (
 							<Button
-								key={i}
+								key={link.url.toString()}
 								modifiers={[buttonStyle('plain')]}
 								onPress={() => openUrl(link.url.toString())}
 							>

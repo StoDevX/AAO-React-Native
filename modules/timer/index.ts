@@ -3,6 +3,7 @@ import {AppState} from 'react-native'
 import {default as moment, unitOfTime, type Moment} from 'moment-timezone'
 
 import {isUITesting} from '@frogpond/launch-arguments'
+import {useNowOverride} from './override'
 
 /**
  * Frozen date for UI testing. Tests run against fixture data anchored to this
@@ -14,6 +15,13 @@ export const UITEST_FROZEN_DATE = '2026-09-05T12:00:00-05:00'
  * Returns the current moment, or the frozen date in UI testing mode.
  */
 export function now(): Moment {
+	// `clone()` because a Moment is mutable and callers chain `.startOf()` and
+	// `.tz()` onto what they get back -- handing out the stored one would let
+	// any of them rewrite the override for the whole app.
+	let frozen = useNowOverride.getState().frozen
+	if (frozen) {
+		return frozen.clone()
+	}
 	return isUITesting ? moment(UITEST_FROZEN_DATE) : moment()
 }
 
@@ -90,18 +98,27 @@ export function useDateTimer(props: BasicProps): {now: Date} {
 export function useMomentTimer(props: MomentProps): {now: Moment} {
 	let {intervalMs, timezone, startOf} = props
 
-	let currentMoment = useCallback((): Moment => {
-		let next = isUITesting ? moment(UITEST_FROZEN_DATE) : moment()
-		if (timezone) {
-			next = next.tz(timezone)
-		}
-		if (startOf) {
-			next = next.startOf(startOf)
-		}
-		return next
-	}, [timezone, startOf])
+	let shape = useCallback(
+		(m: Moment): Moment => {
+			let next = m
+			if (timezone) {
+				next = next.tz(timezone)
+			}
+			if (startOf) {
+				next = next.startOf(startOf)
+			}
+			return next
+		},
+		[timezone, startOf],
+	)
 
-	let [now, setNow] = useState(currentMoment)
+	let currentMoment = useCallback(
+		(): Moment => shape(isUITesting ? moment(UITEST_FROZEN_DATE) : moment()),
+		[shape],
+	)
+
+	let [ticked, setNow] = useState(currentMoment)
+	let frozen = useNowOverride((state) => state.frozen)
 
 	useBoundaryInterval(() => {
 		// Hold onto the existing moment when the clock has not actually moved, so
@@ -114,5 +131,10 @@ export function useMomentTimer(props: MomentProps): {now: Moment} {
 		})
 	}, intervalMs)
 
-	return {now}
+	// Derived rather than stored: a frozen clock never ticks, so there is
+	// nothing to keep in sync, and a screen already on-screen when the freeze
+	// happens picks it up on its next render rather than waiting for a boundary
+	// that will not come. `clone()` because callers chain onto what they get.
+	return {now: frozen ? shape(frozen.clone()) : ticked}
 }
+export {useNowOverride} from './override'

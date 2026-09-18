@@ -5,7 +5,7 @@ import {Grid, Host, ScrollView, Spacer, Text as UIText, VStack} from '@expo/ui/s
 import {font, frame, padding, refreshable} from '@expo/ui/swift-ui/modifiers'
 import * as c from '@frogpond/colors'
 import {FILL_WIDTH, SCREEN_MARGIN} from '../home/button'
-import {columnsForFontScale, inRows, TILE_SPACING} from './tile-layout'
+import {columnsForFontScale, inRows, TILE_SPACING} from '../../components/tile-layout'
 import {PersonTile} from './person-tile'
 import type {DirectoryItem} from './types'
 
@@ -69,6 +69,7 @@ export function DirectoryResultsGrid({
 						verticalSpacing={TILE_SPACING}
 					>
 						{inRows(indexed, columns).map((row, i) => (
+							// oxlint-disable-next-line react/no-array-index-key -- a row is its position; tiles are keyed by their person's index
 							<Grid.Row key={i}>
 								{row.map(({person, index}) => (
 									<PersonTile

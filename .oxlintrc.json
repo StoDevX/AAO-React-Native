@@ -32,7 +32,8 @@
   "plugins": ["typescript", "react", "unicorn", "oxc", "import"],
   "jsPlugins": ["@tanstack/eslint-plugin-query"],
   "categories": {
-    "correctness": "error"
+    "correctness": "error",
+    "perf": "error"
   },
   "options": {
     "typeAware": true,
@@ -213,6 +214,137 @@
     "react/self-closing-comp": "warn",
     "react/jsx-boolean-value": ["error", "always"],
 
+    // Unicorn rules.
+    //
+    // `no-array-sort` and `no-array-reverse` are deliberately absent. Both
+    // rewrite to the non-mutating `toSorted`/`toReversed`, and every one of
+    // the 29 sites here already sorts or reverses an array the surrounding
+    // expression just built -- `.filter(...).sort()`, `Array.from(x).sort()`,
+    // `[...x].reverse()`. They would add a redundant copy at each site and go
+    // on firing on correct code. `toSorted` is also not a method Hermes has:
+    // Hermes 0.17.0, the engine react-native 0.86 ships, registers
+    // `toReversed` and `toSpliced` but not `toSorted`, so the rule's own fix
+    // type-checks, passes Jest -- which runs on Node, where the method exists
+    // -- and throws on a device.
+    //
+    // `Number.parseInt`/`Number.NaN` over the globals: same functions, but
+    // the namespaced spelling does not shadow-collide and reads as numeric.
+    "unicorn/prefer-number-properties": "error",
+    "unicorn/new-for-builtins": "error",
+    "unicorn/no-typeof-undefined": "error",
+    // `new Date().getTime()` allocates a Date to read a number off it.
+    "unicorn/prefer-date-now": "error",
+    // Off here, on for scripts/ and plugins/ in the overrides below. Those run
+    // under Node, where `node:` prefixes resolve. App code goes through Metro
+    // for Hermes, which has no Node builtins: `source/polyfills/buffer.js`
+    // imports from 'buffer' to reach the `buffer` npm shim, and a `node:`
+    // prefix there would break the polyfill that exists because Hermes has no
+    // global Buffer.
+    "unicorn/prefer-node-protocol": "off",
+
+    // Cosmetic, but each has one spelling and oxlint fixes them all.
+    // `replaceAll` is safe on device -- Hermes 0.17.0 registers it, unlike
+    // `toSorted` above.
+    "unicorn/explicit-length-check": "error",
+    "unicorn/prefer-string-replace-all": "error",
+    "unicorn/prefer-type-error": "error",
+    "unicorn/prefer-regexp-test": "error",
+    "unicorn/prefer-math-min-max": "error",
+    "unicorn/consistent-function-scoping": "error",
+    // `noUncheckedIndexedAccess` is off, so `arr[i]` types as `T` while it can
+    // be `undefined` at runtime; `arr.at(i)` types as `T | undefined`, which is
+    // what is actually true. Every app-code site either already carried the
+    // check -- `if (!last)`, `last?.type` -- or was missing one it needed.
+    "unicorn/prefer-at": "error",
+    // Both checks off: stripping a `undefined` argument leaves a call short
+    // of a required parameter, and rewriting `async () => undefined` to
+    // `async () => {}` leaves an empty body that no-empty-function then
+    // reports. What is left -- a bare `return undefined`, `let x = undefined`
+    // -- is worth keeping.
+    "unicorn/no-useless-undefined": [
+      "error",
+      {"checkArguments": false, "checkArrowFunctionBody": false}
+    ],
+
+    // Rules that report nothing here today, kept on so they keep reporting
+    // nothing. Each costs a line and no churn; what they buy is that the first
+    // instance arrives as a CI failure rather than as review archaeology. The
+    // DOM-only rules of this set are left out -- there is no document here for
+    // prefer-query-selector or prefer-dom-node-remove to have an opinion about.
+    "unicorn/consistent-assert": "error",
+    "unicorn/consistent-date-clone": "error",
+    "unicorn/consistent-empty-array-spread": "error",
+    "unicorn/consistent-existence-index-check": "error",
+    "unicorn/consistent-template-literal-escape": "error",
+    "unicorn/empty-brace-spaces": "error",
+    "unicorn/error-message": "error",
+    "unicorn/escape-case": "error",
+    "unicorn/explicit-timer-delay": "error",
+    "unicorn/no-abusive-eslint-disable": "error",
+    "unicorn/no-accessor-recursion": "error",
+    "unicorn/no-array-fill-with-reference-type": "error",
+    "unicorn/no-array-method-this-argument": "error",
+    "unicorn/no-confusing-array-with": "error",
+    "unicorn/no-console-spaces": "error",
+    "unicorn/no-immediate-mutation": "error",
+    "unicorn/no-instanceof-array": "error",
+    "unicorn/no-instanceof-builtins": "error",
+    "unicorn/no-length-as-slice-end": "error",
+    "unicorn/no-magic-array-flat-depth": "error",
+    "unicorn/no-negation-in-equality-check": "error",
+    "unicorn/no-new-buffer": "error",
+    "unicorn/no-object-as-default-parameter": "error",
+    "unicorn/no-static-only-class": "error",
+    "unicorn/no-this-assignment": "error",
+    "unicorn/no-unnecessary-array-flat-depth": "error",
+    "unicorn/no-unnecessary-array-splice-count": "error",
+    "unicorn/no-unnecessary-slice-end": "error",
+    "unicorn/no-unreadable-iife": "error",
+    "unicorn/no-useless-collection-argument": "error",
+    "unicorn/no-useless-error-capture-stack-trace": "error",
+    "unicorn/no-useless-iterator-to-array": "error",
+    "unicorn/no-useless-promise-resolve-reject": "error",
+    "unicorn/no-useless-switch-case": "error",
+    "unicorn/number-literal-case": "error",
+    "unicorn/prefer-array-flat": "error",
+    "unicorn/prefer-array-index-of": "error",
+    "unicorn/prefer-array-some": "error",
+    "unicorn/prefer-bigint-literals": "error",
+    "unicorn/prefer-class-fields": "error",
+    "unicorn/prefer-code-point": "error",
+    "unicorn/prefer-default-parameters": "error",
+    "unicorn/prefer-event-target": "error",
+    "unicorn/prefer-includes": "error",
+    "unicorn/prefer-math-trunc": "error",
+    "unicorn/prefer-modern-math-apis": "error",
+    "unicorn/prefer-negative-index": "error",
+    "unicorn/prefer-object-from-entries": "error",
+    "unicorn/prefer-prototype-methods": "error",
+    "unicorn/prefer-reflect-apply": "error",
+    "unicorn/prefer-single-call": "error",
+    "unicorn/prefer-string-trim-start-end": "error",
+    "unicorn/relative-url-style": "error",
+    "unicorn/require-array-join-separator": "error",
+    "unicorn/require-module-attributes": "error",
+    "unicorn/require-module-specifiers": "error",
+    "unicorn/require-number-to-fixed-digits-argument": "error",
+    "unicorn/switch-case-break-position": "error",
+    "unicorn/throw-new-error": "error",
+
+    // Two rules out of the perf category, which is otherwise on.
+    //
+    // no-map-spread reads `.map((x) => ({...x, extra}))` as a wasted
+    // allocation and offers "if in-place mutation is acceptable, use
+    // Object.assign". It is not acceptable at any of the seven sites here --
+    // they shape React Query results, parsed feeds and draft state, all of
+    // which someone else owns. Trading an allocation for a mutated shared
+    // object is the wrong side of that bargain in a React app.
+    "oxc/no-map-spread": "off",
+    // prefer-set-has pays off when a list is probed repeatedly. Both sites
+    // here probe once, against a list of two, so a Set costs more than it
+    // saves.
+    "unicorn/prefer-set-has": "off",
+
     // TanStack Query rules (@tanstack/eslint-plugin-query's own
     // `flat/recommended` severities)
     "@tanstack/query/exhaustive-deps": "error",
@@ -238,6 +370,28 @@
       "files": ["images/**/*.ts"],
       "rules": {
         "typescript/no-require-imports": "off"
+      }
+    },
+    {
+      // A helper declared inside a `describe` says it belongs to that suite.
+      // times.test.ts holds four `generateEvent`s with three signatures
+      // between them, each building the fixture its own suite needs; hoisting
+      // them would mean three module-level builders with invented names and
+      // no suite to read them against.
+      "files": ["**/__tests__/**", "**/*.test.ts", "**/*.test.tsx", "**/*.test.mjs"],
+      "rules": {
+        "unicorn/consistent-function-scoping": "off",
+        // A fixture index that misses fails the test on the next line anyway,
+        // so narrowing it only adds ceremony between the arrangement and the
+        // assertion.
+        "unicorn/prefer-at": "off"
+      }
+    },
+    {
+      // Node runs these, so `node:` prefixes resolve here.
+      "files": ["scripts/**/*.mjs", "scripts/**/*.ts", "plugins/**/*.ts"],
+      "rules": {
+        "unicorn/prefer-node-protocol": "error"
       }
     },
     {

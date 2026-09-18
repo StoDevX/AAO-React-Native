@@ -49,7 +49,7 @@ function selectSchedule(calendar: string, options?: Parameters<typeof scheduleCa
 function ingestFor(calendar: string) {
 	let {queryFn} = namedCalendarOptions(calendar)
 	if (typeof queryFn !== 'function') {
-		throw new Error(`namedCalendarOptions('${calendar}') built no queryFn`)
+		throw new TypeError(`namedCalendarOptions('${calendar}') built no queryFn`)
 	}
 	return () => queryFn({queryKey: ['calendar', 'named', calendar], signal: undefined} as never)
 }

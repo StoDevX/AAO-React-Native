@@ -171,8 +171,10 @@ export function toRows(sourceId: string, sourceRank: number, wire: WireEvent[]):
 			})
 		}
 
-		tags.push(...tagRows(sourceId, key, 'category', wireEvent.categories))
-		tags.push(...tagRows(sourceId, key, 'organization', wireEvent.organization))
+		tags.push(
+			...tagRows(sourceId, key, 'category', wireEvent.categories),
+			...tagRows(sourceId, key, 'organization', wireEvent.organization),
+		)
 	})
 
 	return {events, occurrences, tags}

@@ -1,6 +1,7 @@
 import {Share, ShareAction} from 'react-native'
 
 import type {EventType} from '@frogpond/event-type'
+import {formatDate} from '@frogpond/time-format'
 import {detailTimes} from './times'
 
 // This file imports react-native for Share, so the key format has to live
@@ -22,7 +23,7 @@ export function getTimes(event: EventType): string {
 	let {allDay, start, end} = detailTimes(event)
 
 	if (allDay) {
-		return `All-Day on ${event.startTime.format('MMM D.')}`
+		return `All-Day on ${formatDate(event.startTime, 'short')}`
 	}
 
 	return `${start}${end ? ' to ' + end : ''}`

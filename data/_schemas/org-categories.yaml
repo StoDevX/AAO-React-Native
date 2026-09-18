@@ -1,0 +1,49 @@
+# The SF Symbol + gradient a Student Orgs category tile draws. Published
+# separately from the app (see data/sources.yaml) so a new Presence.io
+# category can get a tile without an App Store release. Any category not
+# listed here still gets a tile -- source/features/student-orgs/categories.ts
+# falls back to a generic icon and a gray gradient -- so this file only needs
+# entries worth distinguishing visually, not every category that has ever
+# existed.
+$schema: http://json-schema.org/draft-07/schema#
+
+type: array
+items:
+  type: object
+  additionalProperties: false
+  required: [name, icon, gradient]
+  properties:
+    name: {type: string, minLength: 1}
+    # An SF Symbol name. sf-symbols-typescript ships no runtime value -- the
+    # package is one declaration file -- so nothing can check this name here.
+    # A wrong one draws nothing; only a missing icon falls back.
+    icon: {type: string, minLength: 1}
+    # A name from GRADIENT_NAMES in modules/colors/resolve-gradient.ts, or an
+    # explicit [inner, outer] pair -- see data/_schemas/contact-info.yaml for
+    # the display-p3 pair syntax.
+    gradient:
+      oneOf:
+        - type: string
+          enum:
+            - red
+            - orange
+            - gold
+            - yellow
+            - green
+            - mint
+            - light-blue
+            - blue
+            - indigo
+            - purple
+            - violet
+            - pink
+            - gray
+            - sage
+            - tan
+            - pale-gold
+        - type: array
+          minItems: 2
+          maxItems: 2
+          items:
+            type: string
+            pattern: '^color\(display-p3 [0-9.]+ [0-9.]+ [0-9.]+\)$'

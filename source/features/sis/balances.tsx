@@ -5,6 +5,7 @@ import {
 	font,
 	foregroundStyle,
 	frame,
+	listRowBackground,
 	listStyle,
 	multilineTextAlignment,
 	refreshable,
@@ -23,6 +24,13 @@ import {balanceValue} from './lib'
 
 const DISCLAIMER = 'This data may be outdated or otherwise inaccurate.'
 
+// Settings hasn't been migrated to expo-router yet, so there's no route
+// to send this to without landing on an "Unmatched Route" screen --
+// leave it a no-op (matching today's actual behavior, since Settings is
+// unreachable already) until that migration lands.
+// oxlint-disable-next-line typescript/no-empty-function
+const openSettings = () => {}
+
 export const BalancesView = (): React.ReactNode => {
 	let router = useRouter()
 
@@ -39,13 +47,6 @@ export const BalancesView = (): React.ReactNode => {
 		refetch,
 	} = useQuery(balancesOptions(username))
 
-	// Settings hasn't been migrated to expo-router yet, so there's no route
-	// to send this to without landing on an "Unmatched Route" screen --
-	// leave it a no-op (matching today's actual behavior, since Settings is
-	// unreachable already) until that migration lands.
-	// oxlint-disable-next-line typescript/no-empty-function
-	let openSettings = () => {}
-
 	return (
 		<Host style={styles.host} testID="balances-view">
 			<List
@@ -56,10 +57,11 @@ export const BalancesView = (): React.ReactNode => {
 					}),
 				]}
 			>
-				<Section>
+				<Section modifiers={[listRowBackground('clear')]}>
 					<RNHostView matchContents={true}>
 						<FaqBannerGroup
 							onPressFaq={(faqId) => router.push({pathname: '/Faq', params: {faqId}})}
+							style={styles.banner}
 							target={FAQ_TARGETS.SIS}
 						/>
 					</RNHostView>
@@ -138,5 +140,9 @@ let styles = StyleSheet.create({
 	host: {
 		flex: 1,
 		backgroundColor: c.systemGroupedBackground,
+	},
+	banner: {
+		marginHorizontal: 16,
+		marginTop: 16,
 	},
 })

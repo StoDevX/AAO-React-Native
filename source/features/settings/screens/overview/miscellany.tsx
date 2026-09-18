@@ -6,13 +6,14 @@ import * as storage from '../../../../lib/storage'
 import {useRouter} from 'expo-router'
 import {ActionRow, NavigationRow} from '../../../../components/rows'
 
+const onSourceButton = () => trackedOpenUrl({url: GH_BASE_URL, id: 'ContributingView'})
+
 export let MiscellanySection = (): React.ReactNode => {
 	let router = useRouter()
 
 	let onCreditsButton = () => router.push('/Credits')
 	let onPrivacyButton = () => router.push('/Privacy')
 	let onLegalButton = () => router.push('/Legal')
-	let onSourceButton = () => trackedOpenUrl({url: GH_BASE_URL, id: 'ContributingView'})
 
 	let [openInApplinkPreference, setOpenInAppLinkPreference] = React.useState(true)
 

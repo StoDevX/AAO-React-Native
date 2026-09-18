@@ -10,7 +10,7 @@ export function findMenu(dayparts: DayPartsCollectionType, now: Moment): void | 
 	// `dayparts` is, conceptually, a collection of bonapp menus for a
 	// location. It's a single-element array of arrays, so we first check
 	// to see if either dimension is empty.
-	if (!dayparts.length || !dayparts[0].length) {
+	if (dayparts.length === 0 || dayparts[0].length === 0) {
 		return
 	}
 
@@ -23,7 +23,7 @@ export function findMenu(dayparts: DayPartsCollectionType, now: Moment): void | 
 }
 
 export function findMeal(meals: ProcessedMealType[], now: Moment): ProcessedMealType | undefined {
-	if (!meals.length) {
+	if (meals.length === 0) {
 		return
 	}
 

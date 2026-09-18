@@ -19,7 +19,10 @@ import {timezone} from '@frogpond/constants'
 import {LoadingView, NoticeView} from '@frogpond/notice'
 import {useDebounce} from '@frogpond/use-debounce'
 import {Stack, useLocalSearchParams, useRouter} from 'expo-router'
-import {useMomentTimer} from '@frogpond/timer'
+import {useMomentTimer, useNowOverride} from '@frogpond/timer'
+import {useIsDevMode} from '../../../source/lib/use-is-dev-mode'
+import {CampusDevSheet} from '../../../source/features/building-hours/dev/campus-dev-sheet'
+import {useForceBundledData} from '../../../source/features/building-hours/dev/data-source-store'
 
 type Props = {
 	campus: Campus
@@ -38,6 +41,12 @@ function CampusView({campus}: Props): React.ReactNode {
 	)
 
 	let {now} = useMomentTimer({intervalMs: 60000, startOf: 'minute', timezone: timezone()})
+
+	let isDevMode = useIsDevMode()
+	let [devSheetPresented, setDevSheetPresented] = React.useState(false)
+	let frozen = useNowOverride((state) => state.frozen)
+	let forcedData = useForceBundledData((state) => state.forced)
+	let overriding = Boolean(frozen) || forcedData
 
 	let {data = [], error, refetch, isLoading, isError} = useGroupedBuildings(campus)
 
@@ -73,6 +82,13 @@ function CampusView({campus}: Props): React.ReactNode {
 			</Stack.Toolbar>
 
 			<Stack.Toolbar placement="right">
+				{isDevMode ? (
+					<Stack.Toolbar.Button
+						accessibilityLabel="Dev overrides"
+						icon={overriding ? 'clock.badge.exclamationmark' : 'clock'}
+						onPress={() => setDevSheetPresented(true)}
+					/>
+				) : null}
 				<Stack.Toolbar.Button
 					accessibilityLabel="Map"
 					icon="map"
@@ -81,6 +97,8 @@ function CampusView({campus}: Props): React.ReactNode {
 			</Stack.Toolbar>
 
 			<SearchBar onChangeText={setQuery} value={query} />
+
+			<CampusDevSheet isPresented={devSheetPresented} onIsPresentedChange={setDevSheetPresented} />
 		</>
 	)
 

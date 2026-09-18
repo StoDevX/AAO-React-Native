@@ -1,14 +1,16 @@
 import type {Moment} from 'moment-timezone'
-import type {BuildingType} from '../types'
+import type {BuildingStatusType, BuildingType} from '../types'
 
 import {isChapelTime} from './chapel'
 import {findChapelReopen} from './find-chapel-reopen'
+import {findChapelPause} from './find-chapel-pause'
+import {findOpenService} from './find-open-service'
 import {schedulesInEffect} from './schedules-in-effect'
 import {getScheduleStatusAtMoment} from './get-schedule-status'
 
-export function getShortBuildingStatus(info: BuildingType, m: Moment): string {
+export function getShortBuildingStatus(info: BuildingType, m: Moment): BuildingStatusType {
 	let schedules = info.schedule || []
-	if (!schedules.length) {
+	if (schedules.length === 0) {
 		return 'Closed'
 	}
 
@@ -23,13 +25,26 @@ export function getShortBuildingStatus(info: BuildingType, m: Moment): string {
 			return findChapelReopen(set, m) ? 'Chapel' : 'Closed'
 		}
 
+		// The branch above needs chapel already running, this one needs it still
+		// ahead, so the two never both fire.
+		if (findChapelPause(set, m)) {
+			return 'Chapel'
+		}
+
 		let filteredSchedules = schedulesInEffect(set.hours, m)
-		if (!filteredSchedules.length) {
+		if (filteredSchedules.length === 0) {
 			return 'Closed'
 		}
 
 		return filteredSchedules.map((schedule) => getScheduleStatusAtMoment(schedule, m))
 	})
 
-	return statuses.find((status) => status !== 'Closed') ?? 'Closed'
+	let physical = statuses.find((status) => status !== 'Closed')
+	if (physical) {
+		return physical
+	}
+
+	// Only once no door is open is it worth naming a phone line or a delivery
+	// service; a building you can walk into should say so first.
+	return findOpenService(info, m) ? 'Service' : 'Closed'
 }

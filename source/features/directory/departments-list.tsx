@@ -33,7 +33,7 @@ export function DepartmentsList({
 	return (
 		<Section title="Departments">
 			{departments ? (
-				departments.length ? (
+				departments.length > 0 ? (
 					// Rendered directly, not wrapped in `List.ForEach`: that component
 					// attaches `.onDelete`/`.onMove` unconditionally, which would put
 					// swipe-to-delete and drag-to-reorder on a read-only roster.

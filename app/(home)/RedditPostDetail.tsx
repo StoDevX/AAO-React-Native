@@ -237,11 +237,11 @@ function RedditPostDetailView({post, communityName}: ViewProps): React.ReactNode
 				{pollData ? (
 					<View style={styles.pollContainer}>
 						<Text style={styles.pollHeader}>{pollData.totalVotes.toLocaleString()} votes</Text>
-						{pollData.options.map((opt, i) => {
+						{pollData.options.map((opt) => {
 							const pct =
 								pollData.totalVotes > 0 ? Math.round((opt.votes / pollData.totalVotes) * 100) : 0
 							return (
-								<View key={i} style={styles.pollOption}>
+								<View key={opt.text} style={styles.pollOption}>
 									<View style={[styles.pollBar, {width: `${pct}%`}]} />
 									<View style={styles.pollOptionRow}>
 										<Text style={styles.pollOptionText}>{opt.text}</Text>

@@ -71,7 +71,7 @@ export function applyOrListFilter(filterValue: ListItemSpecType[], itemValue: st
 	// An item passes if its value is in the filter's selected items array
 	let valueToCheckAgainst = filterValue.map((f) => f.title.toString())
 	let intersectionValues = intersection(valueToCheckAgainst, itemValue)
-	return intersectionValues.length !== 0
+	return intersectionValues.length > 0
 }
 
 export function applyAndListFilter(filterValue: ListItemSpecType[], itemValue: string[]): boolean {

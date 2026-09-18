@@ -14,9 +14,13 @@ type Props = {
 export function SegmentedText({segments, onLinkPress, style}: Props): React.ReactNode {
 	return (
 		<Text selectable={true} style={style}>
-			{segments.map((seg, i) =>
+			{segments.map((seg) =>
 				seg.type === 'link' ? (
-					<Text key={i} onPress={() => (onLinkPress ?? openUrl)(seg.url)} style={styles.link}>
+					<Text
+						key={`${seg.url}-${seg.text}`}
+						onPress={() => (onLinkPress ?? openUrl)(seg.url)}
+						style={styles.link}
+					>
 						{seg.text}
 					</Text>
 				) : (

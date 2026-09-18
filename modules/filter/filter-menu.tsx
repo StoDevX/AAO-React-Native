@@ -73,9 +73,9 @@ export function FilterMenu<T extends object>({
 				<Host matchContents={true}>
 					<Menu label={<TriggerLabel title={filter.spec.title} />} modifiers={modifiers}>
 						<Section title={filter.spec.title.toUpperCase()}>
-							{filter.spec.options.map((option, index) => (
+							{filter.spec.options.map((option) => (
 								<Toggle
-									key={index}
+									key={option.label}
 									isOn={isEqual(filter.spec.selected, option)}
 									label={option.label}
 									onIsOnChange={() =>

@@ -1,9 +1,10 @@
 import * as React from 'react'
-import type {ColorValue} from 'react-native'
-import {Button, HStack, Image, Spacer, SwipeActions, Text, VStack} from '@expo/ui/swift-ui'
+import {useColorScheme} from 'react-native'
+import {Button, HStack, Image, Spacer, SwipeActions, Text} from '@expo/ui/swift-ui'
 import {
 	accessibilityIdentifier,
 	accessibilityLabel,
+	allowsTightening,
 	buttonStyle,
 	contentShape,
 	fixedSize,
@@ -11,6 +12,7 @@ import {
 	foregroundStyle,
 	layoutPriority,
 	lineLimit,
+	minimumScaleFactor,
 	shapes,
 	tint,
 	truncationMode,
@@ -20,7 +22,8 @@ import type {Moment} from 'moment-timezone'
 import type {BuildingType} from '../types'
 import {
 	getShortBuildingStatus,
-	getAccentBackgroundColor,
+	statusGlyph,
+	findOpenService,
 	contextualStatus,
 	hasDisplayableHours,
 	firstScheduleNote,
@@ -36,7 +39,15 @@ export const BUILDING_ROW_PREFIX = 'building-row-'
 export const ADD_TO_FAVORITES = 'Add to Favorites'
 export const REMOVE_FROM_FAVORITES = 'Remove from Favorites'
 
-const SINGLE_LINE = [lineLimit(1), truncationMode('tail')]
+const SINGLE_LINE = [
+	lineLimit(1),
+	truncationMode('tail'),
+	// The status wins this row on layout priority, so without these the name is
+	// what gets an ellipsis. Shrinking a little reads better than losing letters,
+	// and keeps every row the same height.
+	minimumScaleFactor(0.8),
+	allowsTightening(true),
+]
 
 type Props = {
 	building: BuildingType
@@ -57,15 +68,10 @@ export const BuildingListRow = React.memo(function BuildingListRow({
 	onToggleFavorite,
 	onSelect,
 }: Props): React.ReactNode {
+	let scheme = useColorScheme()
 	let status = getShortBuildingStatus(building, now)
-	let accentBg: ColorValue = getAccentBackgroundColor(status)
+	let glyph = statusGlyph(status, findOpenService(building, now) ?? undefined, scheme)
 	let statusText = contextualStatus(building, now)
-
-	let subtitle = building.subtitle
-		? building.subtitle
-		: building.abbreviation
-			? `(${building.abbreviation})`
-			: null
 
 	let schedules = building.schedule || []
 	let hasHours = hasDisplayableHours(schedules)
@@ -77,7 +83,7 @@ export const BuildingListRow = React.memo(function BuildingListRow({
 				modifiers={[
 					buttonStyle('plain'),
 					accessibilityIdentifier(`${BUILDING_ROW_PREFIX}${building.name}`),
-					accessibilityLabel(`${building.name}, ${statusText}`),
+					accessibilityLabel(`${building.name}, ${statusText.long}`),
 				]}
 				onPress={() => onSelect(building)}
 			>
@@ -85,49 +91,33 @@ export const BuildingListRow = React.memo(function BuildingListRow({
 					modifiers={[contentShape(shapes.rectangle()), fixedSize({vertical: true})]}
 					spacing={8}
 				>
-					<VStack alignment="leading">
-						<HStack alignment="center" spacing={8}>
-							<Text
-								modifiers={[
-									font({textStyle: 'body', weight: 'medium'}),
-									foregroundStyle(c.label),
-									...SINGLE_LINE,
-								]}
-							>
-								{building.name}
-							</Text>
-							<Spacer />
-							<Text
-								modifiers={[
-									font({textStyle: 'body'}),
-									foregroundStyle(c.secondaryLabel),
-									layoutPriority(1),
-								]}
-							>
-								{hasHours ? statusText : (firstNote ?? '')}
-							</Text>
-							<Image
-								modifiers={[foregroundStyle(accentBg), font({textStyle: 'caption2'})]}
-								systemName="circle.fill"
-							/>
-							<Image
-								modifiers={[font({textStyle: 'footnote'}), foregroundStyle(c.tertiaryLabel)]}
-								systemName="chevron.right"
-							/>
-						</HStack>
-
-						{subtitle ? (
-							<Text
-								modifiers={[
-									font({textStyle: 'subheadline'}),
-									foregroundStyle(c.secondaryLabel),
-									...SINGLE_LINE,
-								]}
-							>
-								{subtitle}
-							</Text>
-						) : null}
-					</VStack>
+					<Text
+						modifiers={[
+							font({textStyle: 'body', weight: 'medium'}),
+							foregroundStyle(c.label),
+							...SINGLE_LINE,
+						]}
+					>
+						{building.name}
+					</Text>
+					<Spacer />
+					<Text
+						modifiers={[
+							font({textStyle: 'body'}),
+							foregroundStyle(c.secondaryLabel),
+							layoutPriority(1),
+						]}
+					>
+						{hasHours ? statusText.short : (firstNote ?? '')}
+					</Text>
+					<Image
+						modifiers={[foregroundStyle(glyph.color), font({textStyle: 'caption2'})]}
+						systemName={glyph.symbol}
+					/>
+					<Image
+						modifiers={[font({textStyle: 'footnote'}), foregroundStyle(c.tertiaryLabel)]}
+						systemName="chevron.right"
+					/>
 				</HStack>
 			</Button>
 

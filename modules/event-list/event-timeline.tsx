@@ -12,9 +12,10 @@ import {
 	padding,
 } from '@expo/ui/swift-ui/modifiers'
 import * as c from '@frogpond/colors'
+import {formatHourLabel} from '@frogpond/time-format'
 
 import {HOUR_HEIGHT, type TimelineBlock, type TimelineWindow} from './timeline'
-import {formatHourLabel, listTimeLines} from './times'
+import {listTimeLines} from './times'
 
 /**
  * The width the hour labels take, leaving the rest for blocks. Fixed, because
@@ -275,11 +276,7 @@ export function EventTimeline({window, blocks, colorFor}: Props): React.ReactNod
 				]}
 			>
 				{window.hours.map((hour, index) => (
-					<HourLabel
-						hour={formatHourLabel(hour, undefined)}
-						index={index}
-						key={hour.toISOString()}
-					/>
+					<HourLabel hour={formatHourLabel(hour)} index={index} key={hour.toISOString()} />
 				))}
 			</ZStack>
 

@@ -29,7 +29,7 @@ export function dedupeKey(event: EventType): string {
 	let title = event.title
 		.normalize('NFKD')
 		.toLowerCase()
-		.replace(/[^a-z0-9]+/gu, ' ')
+		.replaceAll(/[^a-z0-9]+/gu, ' ')
 		.trim()
 	return `${event.startTime.toISOString()}|${title}`
 }

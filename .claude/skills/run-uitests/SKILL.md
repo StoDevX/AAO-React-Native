@@ -129,9 +129,9 @@ Three things that bite on the second run:
   `/tmp/results.xcresult`, which is the path every later command wants.
 - **The version in the bundle's name is the SDK, not a runtime.**
   `AllAboutOlaf_iphonesimulator27.0-arm64-x86_64.xctestrun` is built by the
-  Xcode 27 SDK and runs on any installed runtime that SDK supports — iOS 26.5
-  at the time of writing. Do not go hunting for a matching runtime; there is
-  no iOS 27. `xcrun simctl list runtimes` shows what you have.
+  Xcode 27 SDK and runs on any installed runtime that SDK supports and that is
+  at least the deployment target. Do not assume the two numbers match; `xcrun
+  simctl list runtimes` shows what you have.
 - **`find` picks an arbitrary bundle if there is more than one.** There is
   normally one, but pass the path explicitly if `find` returns several.
 

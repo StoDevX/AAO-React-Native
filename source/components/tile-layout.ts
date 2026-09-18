@@ -29,12 +29,22 @@ export function columnsForFontScale(fontScale: number): number {
 /// Groups a flat list into the rows a SwiftUI Grid wants: its API takes
 /// children pre-split into `Grid.Row`s rather than a flat list. `columns`
 /// varies with Dynamic Type (see `columnsForFontScale`), so it is a parameter
-/// rather than a closed-over constant. Generic over the row type -- the
-/// contact grid passes `ContactType`, the search-results grid `DirectoryItem`.
+/// rather than a closed-over constant. Generic over the row type -- each
+/// caller supplies its own item shape (`ContactType`, `DirectoryItem`,
+/// `CategoryTileData`, ...).
 export function inRows<T>(items: T[], columns: number): T[][] {
 	let rows: T[][] = []
 	for (let i = 0; i < items.length; i += columns) {
 		rows.push(items.slice(i, i + columns))
 	}
 	return rows
+}
+
+/// The height a photo of the given width needs to sit at the tile's aspect.
+/// Stated in points rather than left to a SwiftUI `aspectRatio` modifier
+/// because a React Native image hosted in an `RNHostView` has no bounds of its
+/// own: a percentage size there resolves against nothing, and the image falls
+/// back to its intrinsic size and is cropped by whatever clips it.
+export function photoHeight(width: number): number {
+	return width / TILE_ASPECT
 }

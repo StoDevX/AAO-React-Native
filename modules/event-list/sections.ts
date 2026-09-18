@@ -92,5 +92,5 @@ export function todaySectionKey(sections: readonly EventSection[], now: Moment):
 	let next = days.find((section) => section.key >= todayIso)
 	if (next) return next.key
 
-	return days[days.length - 1]?.key ?? null
+	return days.at(-1)?.key ?? null
 }

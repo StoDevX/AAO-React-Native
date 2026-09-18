@@ -22,6 +22,10 @@ describe('returns a single day if only a single day is given', () => {
 	}
 })
 
+test('says nothing for a schedule with no days set', () => {
+	expect(summarizeDays([])).toEqual('')
+})
+
 describe('returns the provided days if non-contiguous', () => {
 	test('handles a two-day set', () => {
 		let actual = summarizeDays(['Mo', 'We'])
@@ -181,5 +185,22 @@ describe('returns summary for combination days and hours', () => {
 		expect(actual).toEqual(
 			'Opens at 9:00am and closes at 5:00pm every Monday, Wednesday, and Saturday.',
 		)
+	})
+})
+
+describe('follows the locale', () => {
+	test('a single day', () => {
+		expect(summarizeDays(['Fr'], false, 'ja-JP')).toEqual('金曜日')
+	})
+
+	test('a contiguous span', () => {
+		expect(summarizeDays(['Tu', 'We', 'Th'], false, 'en-GB')).toEqual('Tue — Thu')
+		expect(summarizeDays(['Tu', 'We', 'Th'], true, 'ja-JP')).toEqual('火曜日 — 木曜日')
+	})
+
+	// `formatFullDay` -- the non-contiguous, spelled-out branch -- follows the
+	// locale too, not just the two branches above it.
+	test('non-contiguous full days', () => {
+		expect(summarizeDays(['Mo', 'We', 'Sa'], true, 'ja-JP')).toEqual('月曜日, 水曜日, and 土曜日')
 	})
 })

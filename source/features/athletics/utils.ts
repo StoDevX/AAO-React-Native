@@ -38,7 +38,7 @@ function parseFeedDate(dateUtc: string): Date {
 
 	const match = MDY_DATE.exec(dateUtc)
 	if (!match) {
-		return new Date(NaN)
+		return new Date(Number.NaN)
 	}
 
 	const [, month, day, year] = match
@@ -142,7 +142,7 @@ export function sectionsForTab(
 	switch (tab) {
 		case Constants.YESTERDAY: {
 			const data = grouped.find((s) => s.title === Constants.YESTERDAY)?.data ?? []
-			return data.length ? [{title: '', data}] : []
+			return data.length > 0 ? [{title: '', data}] : []
 		}
 
 		case Constants.TODAY: {

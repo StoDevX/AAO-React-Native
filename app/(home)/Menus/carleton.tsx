@@ -17,7 +17,7 @@ export default function CarletonPage(): React.ReactNode {
 	return (
 		<ScrollView contentInsetAdjustmentBehavior="automatic" style={styles.container}>
 			{carletonCafes.map((loc, i, collection) => (
-				<View key={i}>
+				<View key={loc.href}>
 					<ListRow arrowPosition="center" onPress={() => router.push(loc.href)}>
 						<Row alignItems="center">
 							<Title style={styles.rowText}>{loc.title}</Title>

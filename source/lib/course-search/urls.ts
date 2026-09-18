@@ -48,15 +48,15 @@ const findMatches = (
 	findgereqs: Array<string> = [],
 	gereqs: Array<string>,
 ) => {
-	if (!levels.length && !gereqs.length) {
+	if (levels.length === 0 && gereqs.length === 0) {
 		return true
 	}
 
-	if (levels.length && gereqs.length) {
+	if (levels.length > 0 && gereqs.length > 0) {
 		return matchesLevels(findLevel, levels) && matchesGEs(findgereqs, gereqs)
-	} else if (levels.length) {
+	} else if (levels.length > 0) {
 		return matchesLevels(findLevel, levels)
-	} else if (gereqs.length) {
+	} else if (gereqs.length > 0) {
 		return matchesGEs(findgereqs, gereqs)
 	}
 

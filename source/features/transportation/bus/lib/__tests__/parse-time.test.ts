@@ -14,3 +14,11 @@ it("returns a time (set to now's DOY) given a string", () => {
 	expect(actual).toBeTruthy()
 	expect(actual?.dayOfYear()).toBe(doy)
 })
+
+it('returns `null` given a string that fails to parse', () => {
+	// A malformed feed value fails the strict-mode 'h:mma' parse. An Invalid
+	// Moment is still truthy, so returning one would read as real data
+	// everywhere a caller checks for null or false.
+	let actual = parseTime(moment())('not a time')
+	expect(actual).toEqual(null)
+})

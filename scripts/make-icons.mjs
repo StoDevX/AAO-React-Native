@@ -1,4 +1,4 @@
-import {spawnSync as childSpawn} from 'child_process'
+import {spawnSync as childSpawn} from 'node:child_process'
 const source = 'icon-source.png'
 
 const spawn = (cmd, ...args) => {

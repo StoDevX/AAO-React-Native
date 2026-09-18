@@ -25,21 +25,28 @@ export function findBusStopStatus(args: Args): BusStopStatusEnum {
 	let stopStatus: BusStopStatusEnum = 'skip'
 	let arrivalTime: null | Moment = null
 
+	// `.at()` rather than an index, and `?? null` on each: a departures list
+	// holds `null` for a round that skips this stop, which everything below
+	// reads correctly, but a stop whose list is shorter than the round being
+	// asked for reads as `undefined` -- and `undefined !== null`, so it would
+	// pass both the branch test below and the `=== null` backstop at the end
+	// and draw as an upcoming arrival. Folding it into `null` says the one
+	// thing both cases mean: this stop has no arrival to show.
 	switch (busStatus) {
 		case 'before-start': {
 			stopStatus = 'before'
-			arrivalTime = stop.departures[0]
+			arrivalTime = stop.departures.at(0) ?? null
 			break
 		}
 
 		case 'after-end': {
 			stopStatus = 'after'
-			arrivalTime = stop.departures[stop.departures.length - 1]
+			arrivalTime = stop.departures.at(-1) ?? null
 			break
 		}
 
 		default: {
-			arrivalTime = departureIndex === null ? null : stop.departures[departureIndex]
+			arrivalTime = departureIndex === null ? null : (stop.departures.at(departureIndex) ?? null)
 
 			if (arrivalTime && now.isAfter(arrivalTime, 'minute')) {
 				stopStatus = 'after'

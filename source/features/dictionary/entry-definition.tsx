@@ -78,10 +78,10 @@ function SenseRow({
 				</Text>
 			</HStack>
 
-			{sense.subsenses?.map((subsense, index) => (
+			{sense.subsenses?.map((subsense) => (
 				<SenseRow
 					indent={indent + SENSE_NUMBER_WIDTH}
-					key={index}
+					key={subsense.definition}
 					marker={SUBSENSE_MARKER}
 					sense={subsense}
 				/>
@@ -158,7 +158,12 @@ export function EntryDefinition({entry}: Props): React.ReactNode {
 				    as the lines inside them rather than a paragraph gap. */}
 				<VStack alignment="leading" spacing={0}>
 					{entry.senses.map((sense, index) => (
-						<SenseRow indent={SENSE_INDENT} key={index} marker={String(index + 1)} sense={sense} />
+						<SenseRow
+							indent={SENSE_INDENT}
+							key={sense.definition}
+							marker={String(index + 1)}
+							sense={sense}
+						/>
 					))}
 				</VStack>
 

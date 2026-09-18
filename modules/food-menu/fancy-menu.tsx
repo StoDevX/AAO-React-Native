@@ -172,7 +172,7 @@ export function FancyMenu(props: Props): React.ReactNode {
 	})
 
 	// If the requested menu has no food items, that location is closed.
-	const isOpen = Object.keys(foodItems).length !== 0
+	const isOpen = Object.keys(foodItems).length > 0
 
 	return (
 		<Host style={styles.host}>

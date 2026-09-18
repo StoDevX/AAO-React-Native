@@ -5,6 +5,7 @@ import {listStyle, refreshable} from '@expo/ui/swift-ui/modifiers'
 import * as c from '@frogpond/colors'
 import {NoticeView, LoadingView} from '@frogpond/notice'
 import {FilterToolbar, ListType, selectedOptions} from '@frogpond/filter'
+import {formatDate} from '@frogpond/time-format'
 import {StreamRow} from '../../../source/features/streaming/streams/row'
 import toPairs from 'lodash/toPairs'
 import groupBy from 'lodash/groupBy'
@@ -29,7 +30,7 @@ const groupStreams = (entries: StreamType[]) => {
 
 const groupStreamsByCategoryAndDate = (stream: StreamType) => {
 	let date: Moment = moment(stream.starttime)
-	let dateGroup = date.format('dddd, MMMM Do')
+	let dateGroup = formatDate(date, 'long')
 
 	let group = stream.status.toLowerCase() !== 'live' ? dateGroup : 'Live'
 

@@ -38,7 +38,7 @@ function lcsTable(before: string[], after: string[]): number[][] {
 /// Appends to the last run when the mark matches, so a stretch of changed
 /// words draws as one span rather than one per word.
 function push(runs: Run[], text: string, mark: Mark): void {
-	let last = runs[runs.length - 1]
+	let last = runs.at(-1)
 	if (last && last.mark === mark) {
 		last.text += text
 		return
@@ -132,23 +132,27 @@ const wholly = (text: string, mark: Mark): Run[] => (text ? [{text, mark}] : [])
 /// these ranks — rather than raw index — tells whether an item actually
 /// moved relative to its still-present neighbours, as opposed to merely
 /// shifting because something else was added or removed above it.
+/// Positions within one list, counting only the items `keep` admits.
+function rank<T extends {id: string}>(
+	list: T[],
+	keep: (id: string) => boolean,
+): Map<string, number> {
+	let ranks = new Map<string, number>()
+	let next = 0
+	for (let item of list) {
+		if (keep(item.id)) {
+			ranks.set(item.id, next++)
+		}
+	}
+	return ranks
+}
+
 function survivorRanks<T extends {id: string}>(
 	before: T[],
 	after: T[],
 ): {rankBefore: Map<string, number>; rankAfter: Map<string, number>} {
 	let beforeIds = new Set(before.map((item) => item.id))
 	let afterIds = new Set(after.map((item) => item.id))
-
-	let rank = (list: T[], keep: (id: string) => boolean): Map<string, number> => {
-		let ranks = new Map<string, number>()
-		let next = 0
-		for (let item of list) {
-			if (keep(item.id)) {
-				ranks.set(item.id, next++)
-			}
-		}
-		return ranks
-	}
 
 	return {
 		rankBefore: rank(before, (id) => afterIds.has(id)),

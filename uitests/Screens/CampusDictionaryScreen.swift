@@ -229,15 +229,17 @@ struct CampusDictionaryScreen: Screen {
 	}
 
 	/// Asserts the edit form actually pushed into the entry sheet's own
-	/// stack, rather than presenting some other way. Its Back button, which
-	/// carries the sheet's nested-stack label, is what a plain modal would
-	/// not have -- the same discriminator `CampusScreen.verifyReportPushedIntoSheet`
-	/// uses for the building-hours report screen.
+	/// stack, rather than presenting some other way. A back button on the
+	/// form's own bar is what a plain modal would not have -- the same
+	/// discriminator `CampusScreen.verifyReportPushedIntoSheet` uses for the
+	/// building-hours report screen, scoped the same way, because the list's
+	/// bar behind the sheet carries a button with this label too.
 	@discardableResult
 	func verifyEditFormPushedIntoSheet() -> Self {
 		XCTAssertTrue(editForm.waitForExistence(timeout: 15), "the edit form never appeared")
 
-		let back = app.navigationBars.buttons[TestIdentifiers.Navigation.backButton]
+		let back = app.navigationBars[TestIdentifiers.Dictionary.editFormTitle]
+			.buttons[TestIdentifiers.Navigation.backButton]
 		XCTAssertTrue(
 			back.exists && back.isHittable,
 			"the edit form should push into the sheet's stack, so it carries a back button")
@@ -587,19 +589,13 @@ struct CampusDictionaryScreen: Screen {
 	/// `editMode` went active -- `ForEach`'s `onMove` inside a `Form` is the
 	/// one piece of this flow the plan has no fallback for, so this is a real
 	/// check of the drawn hierarchy, not a proxy for the toggle having been
-	/// tapped. Captures a screenshot and the accessibility tree as attachments
-	/// -- `keepAlways`, same as `Screen.capture` -- so a failure here can be
-	/// read from the result bundle rather than re-run to find out what
-	/// happened; a bare `print` of `debugDescription` does not survive into
-	/// the bundle at all.
+	/// tapped. Captures a screenshot and the accessibility tree so a failure
+	/// here can be read from the result bundle rather than re-run to find out
+	/// what happened.
 	@discardableResult
 	func verifyReorderHandlesAppear(senseCount expectedCount: Int) -> Self {
 		capture("Dictionary form in reorder mode")
-
-		let treeDump = XCTAttachment(string: app.debugDescription)
-		treeDump.name = "Reorder mode accessibility tree"
-		treeDump.lifetime = .keepAlways
-		XCTContext.runActivity(named: "Reorder mode accessibility tree") { $0.add(treeDump) }
+		captureAccessibilityTree("Reorder mode accessibility tree")
 
 		// Asserting an exact count, not merely `> 0`, closes the loophole
 		// `reorderHandles` scopes away a second time: a query that happened to

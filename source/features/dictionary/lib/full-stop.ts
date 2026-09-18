@@ -34,7 +34,7 @@ function beforeText(runs: Run[]): string {
  * with the colon ahead of a citation -- is dropped.
  */
 export function withoutTrailingFullStop(runs: Run[]): Run[] {
-	let last = runs[runs.length - 1]
+	let last = runs.at(-1)
 	if (!last || !last.text.endsWith('.') || !beforeText(runs).endsWith('.')) {
 		return runs
 	}

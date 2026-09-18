@@ -35,10 +35,15 @@ struct TestIdentifiers {
 	enum Navigation {
 		static let openSettings = "Open Settings"
 		static let closeScreen = "Close Screen"
-		/// Matches the report screen's own explicit back button, whose
-		/// accessibilityLabel is fixed rather than the previous screen's title,
-		/// so tests can assert on it regardless of which building is open.
+		/// The label every back button carries. UIKit gives its own back
+		/// buttons this label too, so a query using it must be scoped to one
+		/// navigation bar -- `app.navigationBars.buttons[backButton]` matches
+		/// the bar behind a sheet as readily as the sheet's own.
 		static let backButton = "Back"
+		/// UIKit's own identifier for a system back button, which it sets
+		/// whatever the label. Both a system back button and an app-provided
+		/// one read `Back`, so the identifier is what separates them.
+		static let systemBackButton = "BackButton"
 	}
 
 	/// Labels UIKit gives a `Stack.SearchBar`'s own controls. In the bottom
@@ -91,6 +96,11 @@ struct TestIdentifiers {
 		/// Apple's.
 		static let referenceEntry = "change"
 
+		/// The edit form's navigation bar, which carries `suggestAnEdit`'s
+		/// wording because that action is what opens it. Queries for the form's
+		/// back button scope to this bar, since the label alone does not tell
+		/// it from the list's back button behind the sheet.
+		static let editFormTitle = suggestAnEdit
 		static let editForm = "dictionary-edit-form"
 		static let previewSheet = "dictionary-preview-sheet"
 		static let preview = "Preview"
@@ -168,7 +178,6 @@ struct TestIdentifiers {
 		static let iAgree = "I Agree"
 		static let balancesHeader = "BALANCES"
 		static let mealPlanHeader = "MEAL PLAN"
-		static let backButton = "All About Olaf"
 		static let openJobs = "Open Jobs"
 	}
 
@@ -368,8 +377,8 @@ struct TestIdentifiers {
 	// MARK: - Directory
 
 	enum Directory {
-		/// The heading above the contact tiles on the Directory screen.
-		static let importantContacts = "Important Contacts"
+		/// The heading below the contact tiles on the Directory screen.
+		static let importantContacts = "Departments"
 		/// Matches CONTACT_GRID_ID in app/(home)/Directory/index.tsx.
 		static let contactGrid = "directory-contact-grid"
 		/// A contact from data/contact-info/, so its tile is in the grid
@@ -400,6 +409,13 @@ struct TestIdentifiers {
 		/// `source/features/directory/__fixtures__/entries.ts`.
 		static let fixtureEntry = "Kari Testerson"
 		static let fixtureEntryDepartment = "Computer Science"
+	}
+
+	// MARK: - Student Orgs
+
+	enum StudentOrgs {
+		/// Matches CATEGORY_GRID_ID in app/(home)/StudentOrgs/index.tsx.
+		static let categoryGrid = "student-orgs-category-grid"
 	}
 
 	// MARK: - Campus
@@ -464,6 +480,11 @@ struct TestIdentifiers {
 		/// can tell the screen actually came up rather than the menu item merely
 		/// existing.
 		static let reportScreenPrompt = "Thanks for spotting a problem!"
+		/// The report screen's navigation bar, which carries `reportAction`'s
+		/// wording because that action is what opens it. Queries for the
+		/// screen's back button scope to this bar, since the label alone does
+		/// not tell the two bars apart.
+		static let reportScreenTitle = reportAction
 		/// The report screen's own submit control, in the navigation bar.
 		static let submitReportAction = "Submit Report"
 
@@ -525,9 +546,4 @@ struct TestIdentifiers {
 			"""
 	}
 
-	// MARK: - Student Orgs
-
-	enum StudentOrgs {
-		static let list = "student-orgs-list"
-	}
 }

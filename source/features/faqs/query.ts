@@ -32,7 +32,7 @@ function normalizeFaqResponse(raw: unknown): FaqQueryData {
 				.filter((faq) => evaluateConditions(faq.conditions))
 		: []
 
-	if (!faqs.length) {
+	if (faqs.length === 0) {
 		faqs = fallbackFaqs
 	}
 
@@ -139,22 +139,22 @@ function slugify(value: string): string | undefined {
 	let slug = value
 		.toLowerCase()
 		// oxlint-disable-next-line require-unicode-regexp
-		.replace(/[^a-z0-9]+/g, '-')
+		.replaceAll(/[^a-z0-9]+/g, '-')
 		// oxlint-disable-next-line require-unicode-regexp
-		.replace(/(^-|-$)+/g, '')
+		.replaceAll(/(^-|-$)+/g, '')
 
 	return slug || undefined
 }
 
 function stripMarkdown(value: string): string {
 	return value
-		.replace(/!\[[^\]]*\]\([^)]*\)/gu, '')
-		.replace(/\[([^\]]+)\]\(([^)]+)\)/gu, '$1')
-		.replace(/[`*_>#]/gu, '')
+		.replaceAll(/!\[[^\]]*\]\([^)]*\)/gu, '')
+		.replaceAll(/\[([^\]]+)\]\(([^)]+)\)/gu, '$1')
+		.replaceAll(/[`*_>#]/gu, '')
 }
 
 function buildSummary(value: string): string {
-	let plain = stripMarkdown(value).replace(/\s+/gu, ' ').trim()
+	let plain = stripMarkdown(value).replaceAll(/\s+/gu, ' ').trim()
 
 	if (plain.length <= 140) {
 		return plain

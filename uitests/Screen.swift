@@ -75,15 +75,30 @@ extension Screen {
 
 	/// Attach a screenshot of the whole screen to the test report.
 	///
-	/// `.keepAlways` rather than the default `.deleteOnSuccess`: these are taken
-	/// to be looked at, and a run that passes is exactly the run whose
-	/// screenshots are worth keeping.
+	/// `.deleteOnSuccess`: a passing run's screenshots are never looked at, and
+	/// keeping them anyway bloats the result bundle every shard uploads.
 	@discardableResult
 	func capture(_ name: String) -> Self {
 		let attachment = XCTAttachment(screenshot: app.screenshot())
 		attachment.name = name
-		attachment.lifetime = .keepAlways
+		attachment.lifetime = .deleteOnSuccess
 		XCTContext.runActivity(named: name) { $0.add(attachment) }
+		return self
+	}
+
+	/// Attach the current accessibility tree as text, for a query whose
+	/// failure a screenshot can't explain -- fuzzy label matching, or an
+	/// element the screenshot can't visually tell apart from a decoy. A bare
+	/// `print` of `debugDescription` doesn't survive into the result bundle;
+	/// this does.
+	///
+	/// `.deleteOnSuccess`, same as `capture`.
+	@discardableResult
+	func captureAccessibilityTree(_ name: String) -> Self {
+		let treeDump = XCTAttachment(string: app.debugDescription)
+		treeDump.name = name
+		treeDump.lifetime = .deleteOnSuccess
+		XCTContext.runActivity(named: name) { $0.add(treeDump) }
 		return self
 	}
 

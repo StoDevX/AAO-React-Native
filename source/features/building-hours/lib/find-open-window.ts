@@ -53,7 +53,7 @@ export function findOpenWindow(
 ): HourPairType | null {
 	for (let daysBack of [0, 1]) {
 		let anchor = m.clone().subtract(daysBack, 'day')
-		if (schedule.days.length && !schedule.days.includes(getDayOfWeek(anchor))) {
+		if (schedule.days.length > 0 && !schedule.days.includes(getDayOfWeek(anchor))) {
 			continue
 		}
 

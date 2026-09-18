@@ -1,64 +1,32 @@
 import type {Moment} from 'moment-timezone'
 import type {EventType} from '@frogpond/event-type'
 import type {EventDetailTime} from '@frogpond/event-list/types'
+import {formatDate, formatDateTime, formatTime, formatWeekday} from '@frogpond/time-format'
 
-export function times(event: EventType): EventDetailTime {
-	let startTimeFormatted = event.startTime.format('h:mm A')
-	let endTimeFormatted = event.endTime.format('h:mm A')
-	let midnightTime = '12:00 AM'
-
+/**
+ * The share sheet's one-line summary of when an event is. A same-day event
+ * spells the date once; an event spanning days spells it at both ends.
+ */
+export function detailTimes(event: EventType, locale?: string): EventDetailTime {
 	let start, end
 	if (event.isOngoing) {
-		start = event.startTime.format('MMM. D')
-		end = event.endTime.format('MMM. D')
-	} else if (event.isMultiDay) {
-		// 12:00 PM to Jun. 25 3:00pm
-		// Midnight to Jun. 25 <-- assuming the end time is also midnight
-		start = startTimeFormatted
-		let endFormat = endTimeFormatted === midnightTime ? 'MMM. D' : 'MMM. D h:mm A'
-		end = `to ${event.endTime.format(endFormat)}`
+		start = formatDate(event.startTime, 'short', locale)
+		end = formatDate(event.endTime, 'short', locale)
 	} else if (event.isSameInstant) {
-		start = startTimeFormatted
-		end = 'until ???'
-	} else {
-		start = startTimeFormatted
-		end = endTimeFormatted
-	}
-
-	start = start === midnightTime ? 'Midnight' : start
-	end = end === midnightTime ? 'Midnight' : end
-
-	return {start, end, allDay: event.isAllDay}
-}
-
-export function detailTimes(event: EventType): EventDetailTime {
-	let endsOnSameDay = event.startTime.isSame(event.endTime, 'day')
-
-	let endFormat = endsOnSameDay ? 'h:mm A' : 'MMM. D h:mm A'
-	let startTimeFormatted = event.startTime.format('MMM. D h:mm A')
-	let endTimeFormatted = event.endTime.format(endFormat)
-	let midnightTime = '12:00 AM'
-
-	let start, end
-	if (event.isOngoing) {
-		start = event.startTime.format('MMM. D')
-		end = event.endTime.format('MMM. D')
-	} else if (event.isMultiDay) {
-		// 12:00 PM to Jun. 25 3:00pm
-		// Midnight to Jun. 25 <-- assuming the end time is also midnight
-		start = startTimeFormatted
-		let multiDayEndFormat = endTimeFormatted === midnightTime ? 'MMM. D' : 'MMM. D h:mm A'
-		end = `${event.endTime.format(multiDayEndFormat)}`
-	} else if (event.isSameInstant) {
-		start = `Starts on ${startTimeFormatted}`
+		start = `Starts on ${formatDateTime(event.startTime, locale)}`
 		end = ''
+	} else if (event.startTime.isSame(event.endTime, 'day')) {
+		start = formatDateTime(event.startTime, locale)
+		end = formatTime(event.endTime, locale)
+		// A same-day end recorded at hour 0 is midnight, not `12 AM` -- the
+		// bare time reads as the start of a day, not the end of one.
+		if (event.endTime.hour() === 0 && event.endTime.minute() === 0) {
+			end = 'Midnight'
+		}
 	} else {
-		start = startTimeFormatted
-		end = endTimeFormatted
+		start = formatDateTime(event.startTime, locale)
+		end = formatDateTime(event.endTime, locale)
 	}
-
-	start = start === midnightTime ? 'Midnight' : start
-	end = end === midnightTime ? 'Midnight' : end
 
 	return {start, end, allDay: event.isAllDay}
 }
@@ -75,121 +43,14 @@ export interface EventTimeLine {
 	date: string
 }
 
-const DETAIL_LINE_DATE_OPTIONS: Intl.DateTimeFormatOptions = {
-	weekday: 'long',
-	month: 'long',
-	day: 'numeric',
-	year: 'numeric',
-}
-
-/**
- * `Intl.DateTimeFormat` is far more expensive to build than to use, and these
- * are called once per row and once per hour label -- a day of events builds
- * dozens before anything reaches the screen. The set of shapes asked for is
- * tiny and fixed, so they are built once and kept.
- */
-const FORMATTERS = new Map<string, Intl.DateTimeFormat>()
-
-function formatterFor(
-	shape: string,
-	locale: string | undefined,
-	options: Intl.DateTimeFormatOptions,
-): Intl.DateTimeFormat {
-	// Keyed on a name the call site gives rather than on the options object.
-	// Stringifying the options would allocate on every lookup, which is the
-	// cost this cache exists to avoid.
-	let key = `${shape}|${locale ?? ''}`
-	let cached = FORMATTERS.get(key)
-
-	if (!cached) {
-		cached = new Intl.DateTimeFormat(locale, options)
-		FORMATTERS.set(key, cached)
-	}
-
-	return cached
-}
-
-/**
- * Whether the locale writes a meridiem is a property of the locale, so it is
- * asked once per locale rather than once per time rendered.
- */
-const MERIDIEM = new Map<string, boolean>()
-
-function formatDetailDate(value: Moment, locale: string | undefined): string {
-	return formatterFor('detail-date', locale, DETAIL_LINE_DATE_OPTIONS).format(value.toDate())
-}
-
-/**
- * Whether the locale writes a meridiem, which is also what makes an
- * hour-only time readable: `6 PM` stands on its own, `18` does not.
- */
-function hasMeridiem(locale: string | undefined): boolean {
-	let key = locale ?? ''
-	let cached = MERIDIEM.get(key)
-
-	if (cached === undefined) {
-		cached = formatterFor('hour-probe', locale, {hour: 'numeric'})
-			.formatToParts(new Date(0))
-			.some((part) => part.type === 'dayPeriod')
-		MERIDIEM.set(key, cached)
-	}
-
-	return cached
-}
-
-/**
- * `6 PM`, not `6:00 PM` -- Calendar.app drops `:00` on the hour.
- *
- * Only where there is a meridiem, though. Dropping the minutes in a 24-hour
- * locale leaves a bare `15`, and `From 15 Wednesday, 19 August` does not read
- * as a time at all; those locales keep `15:00`.
- */
-function formatDetailTime(value: Moment, locale: string | undefined): string {
-	let meridiem = hasMeridiem(locale)
-
-	// A 24-hour clock pads the hour -- `06:00`, not `6:00` -- while a 12-hour
-	// one does not: `06 AM` is wrong wherever `6 AM` is right.
-	let hour = meridiem ? ('numeric' as const) : ('2-digit' as const)
-	let bare = value.minutes() === 0 && meridiem
-	let options: Intl.DateTimeFormatOptions = bare ? {hour} : {hour, minute: '2-digit'}
-
-	return formatterFor(`detail-time-${hour}-${bare}`, locale, options).format(value.toDate())
-}
-
-/**
- * A timeline's hour label, e.g. `9 AM` or `09:00`. An hour label is always
- * on the hour, so a 12-hour locale needs no minutes at all -- unlike
- * `formatDetailTime`, which keeps them for a time that might not be.
- */
-export function formatHourLabel(value: Moment, locale: string | undefined): string {
-	let meridiem = hasMeridiem(locale)
-	let hour = meridiem ? ('numeric' as const) : ('2-digit' as const)
-	let options: Intl.DateTimeFormatOptions = meridiem ? {hour} : {hour, minute: '2-digit'}
-
-	return formatterFor(`hour-label-${hour}`, locale, options).format(value.toDate())
-}
-
-const LIST_SECTION_DATE_OPTIONS: Intl.DateTimeFormatOptions = {month: 'short', day: 'numeric'}
-
-/**
- * A section header's date, e.g. `Aug 20` -- short, unlike the detail
- * screen's `August 20, 2026`, since this sits next to a weekday on one line.
- */
-function formatListDate(value: Moment, locale: string | undefined): string {
-	return formatterFor('list-date', locale, LIST_SECTION_DATE_OPTIONS).format(value.toDate())
-}
-
 /**
  * `Sunday – Aug 16`, matching Calendar.app's list section headers. The
  * weekday and the date are formatted separately because their relative
  * order is locale-specific (`Aug 16` in en-US, `16 Aug` in en-GB) while the
  * weekday always leads.
  */
-const WEEKDAY_OPTIONS: Intl.DateTimeFormatOptions = {weekday: 'long'}
-
 export function formatSectionHeader(value: Moment, locale?: string): string {
-	let weekday = formatterFor('weekday', locale, WEEKDAY_OPTIONS).format(value.toDate())
-	return `${weekday} – ${formatListDate(value, locale)}`
+	return `${formatWeekday(value, 'long', locale)} – ${formatDate(value, 'short', locale)}`
 }
 
 /**
@@ -206,31 +67,32 @@ export function listTimeLines(event: EventType, locale?: string): EventDetailTim
 
 	let start, end
 	if (event.isOngoing) {
-		start = formatListDate(event.startTime, locale)
-		end = formatListDate(event.endTime, locale)
+		start = formatDate(event.startTime, 'short', locale)
+		end = formatDate(event.endTime, 'short', locale)
 	} else if (event.isMultiDay) {
-		start = formatDetailTime(event.startTime, locale)
+		start = formatTime(event.startTime, locale)
 		// A multi-day event's end needs both a date and a time -- the date alone
 		// drops when it ends.
-		end = `${formatListDate(event.endTime, locale)}, ${formatDetailTime(event.endTime, locale)}`
+		end = `${formatDate(event.endTime, 'short', locale)}, ${formatTime(event.endTime, locale)}`
 	} else if (event.isSameInstant) {
-		start = formatDetailTime(event.startTime, locale)
+		start = formatTime(event.startTime, locale)
 		end = ''
 	} else {
-		start = formatDetailTime(event.startTime, locale)
-		end = formatDetailTime(event.endTime, locale)
+		start = formatTime(event.startTime, locale)
+		end = formatTime(event.endTime, locale)
 	}
 
 	return {start, end, allDay: false}
 }
 
 /**
- * `locale` defaults to the device's own locale -- `undefined` tells `Intl`
- * to use the system default rather than hardcoding one.
+ * `locale` defaults to the device locale via `@frogpond/time-format`'s
+ * `deviceLocale()`, which composes the OS's 24-hour preference onto the
+ * language tag -- bare `undefined` does not carry that preference.
  */
 export function detailTimeLines(event: EventType, locale?: string): EventTimeLine[] {
-	let startDate = formatDetailDate(event.startTime, locale)
-	let endDate = formatDetailDate(event.endTime, locale)
+	let startDate = formatDate(event.startTime, 'long', locale)
+	let endDate = formatDate(event.endTime, 'long', locale)
 
 	if (event.isAllDay) {
 		// The two sources disagree about where an all-day event ends: the web
@@ -247,12 +109,12 @@ export function detailTimeLines(event: EventType, locale?: string): EventTimeLin
 
 		return [
 			{prefix: 'All day from', time: '', date: startDate},
-			{prefix: 'to', time: '', date: formatDetailDate(lastDay, locale)},
+			{prefix: 'to', time: '', date: formatDate(lastDay, 'long', locale)},
 		]
 	}
 
 	if (event.isSameInstant) {
-		return [{prefix: '', time: formatDetailTime(event.startTime, locale), date: startDate}]
+		return [{prefix: '', time: formatTime(event.startTime, locale), date: startDate}]
 	}
 
 	if (event.isOngoing) {
@@ -263,7 +125,7 @@ export function detailTimeLines(event: EventType, locale?: string): EventTimeLin
 	}
 
 	return [
-		{prefix: 'From', time: formatDetailTime(event.startTime, locale), date: startDate},
-		{prefix: 'to', time: formatDetailTime(event.endTime, locale), date: endDate},
+		{prefix: 'From', time: formatTime(event.startTime, locale), date: startDate},
+		{prefix: 'to', time: formatTime(event.endTime, locale), date: endDate},
 	]
 }

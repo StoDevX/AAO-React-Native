@@ -62,9 +62,9 @@ function MoreView(): React.ReactNode {
 					) : (
 						filtered.map((section) => (
 							<Section key={section.title} title={section.title}>
-								{section.data.map((link, index) => (
+								{section.data.map((link) => (
 									<DisclosureRow
-										key={`${link.label}-${index}`}
+										key={link.url}
 										onPress={() => openUrl(link.url)}
 										title={link.label}
 										titleLines={2}
