@@ -30,7 +30,7 @@ function useBuildingEditor(initialBuilding: BuildingType, campus: Campus) {
 	let router = useRouter()
 	let navigation = useNavigation()
 
-	let {draft, hasUnsavedChanges, edit} = useBuildingReport()
+	let {draft, hasUnsavedChanges, edit, note} = useBuildingReport()
 	let building = draft ?? initialBuilding
 
 	let [submitted, setSubmitted] = React.useState(false)
@@ -78,8 +78,8 @@ function useBuildingEditor(initialBuilding: BuildingType, campus: Campus) {
 
 	let submit = React.useCallback((): void => {
 		setSubmitted(true)
-		submitReport(initialBuilding, building, campus)
-	}, [building, campus, initialBuilding])
+		submitReport(initialBuilding, building, campus, note)
+	}, [building, campus, initialBuilding, note])
 
 	return {building, dispatch: edit, openEditor, submit}
 }
