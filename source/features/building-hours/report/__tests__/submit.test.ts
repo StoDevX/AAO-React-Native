@@ -62,8 +62,11 @@ describe('submitReport', () => {
 		let [args] = mockSendEmail.mock.calls.at(-1) as [{body: string}]
 		let issueUrl = /Project maintainers: (\S+)/u.exec(args.body)?.[1] ?? ''
 		let body = new URL(issueUrl).searchParams.get('body') ?? ''
+		let noteAt = body.indexOf('Closed all of interim.')
+		let beforeAt = body.indexOf('## Before:')
 
-		expect(body.indexOf('Closed all of interim.')).toBeLessThan(body.indexOf('## Before:'))
+		expect(noteAt).toBeGreaterThan(-1)
+		expect(noteAt).toBeLessThan(beforeAt)
 	})
 
 	// The note is an addition, not a rewrite: a report without one has to look
