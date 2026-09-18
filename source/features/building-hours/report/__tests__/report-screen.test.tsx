@@ -150,3 +150,18 @@ describe('links', () => {
 		})
 	})
 })
+
+describe("the reporter's note", () => {
+	it('sends what was typed with the report', async () => {
+		await renderReport()
+
+		await fireEvent.changeText(
+			screen.getByLabelText('Describe the problem'),
+			'It closes at 9 during interim.',
+		)
+		await fireEvent.press(screen.getByLabelText('Submit Report'))
+
+		let [args] = mockSendEmail.mock.calls.at(-1) as [{body: string}]
+		expect(args.body).toContain('It closes at 9 during interim.')
+	})
+})

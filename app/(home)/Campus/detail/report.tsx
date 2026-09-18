@@ -46,7 +46,7 @@ function useBuildingEditor(initialBuilding: BuildingType, campus: Campus) {
 	let router = useRouter()
 	let navigation = useNavigation()
 
-	let {draft, hasUnsavedChanges, edit, note} = useBuildingReport()
+	let {draft, hasUnsavedChanges, edit, note, setNote} = useBuildingReport()
 	let building = draft ?? initialBuilding
 
 	let [submitted, setSubmitted] = React.useState(false)
@@ -97,7 +97,7 @@ function useBuildingEditor(initialBuilding: BuildingType, campus: Campus) {
 		submitReport(initialBuilding, building, campus, note)
 	}, [building, campus, initialBuilding, note])
 
-	return {building, dispatch: edit, openEditor, router, submit}
+	return {building, dispatch: edit, note, openEditor, router, setNote, submit}
 }
 
 type Props = {
@@ -116,7 +116,10 @@ let CampusProblemReportView = ({initialBuilding, campus}: Props): React.ReactNod
 		// oxlint-disable-next-line react/exhaustive-deps
 	}, [])
 
-	let {building, dispatch, openEditor, router, submit} = useBuildingEditor(initialBuilding, campus)
+	let {building, dispatch, note, openEditor, router, setNote, submit} = useBuildingEditor(
+		initialBuilding,
+		campus,
+	)
 
 	let {schedule: schedules, name, subtitle, abbreviation, category, links = []} = building
 
@@ -242,6 +245,19 @@ let CampusProblemReportView = ({initialBuilding, campus}: Props): React.ReactNod
 								dispatch({type: 'ADD_LINK'})
 							}}
 							title="Add Link"
+						/>
+					</Section>
+
+					<Section
+						footer={<Text>Anything the fields above cannot say.</Text>}
+						title="WHAT'S WRONG?"
+					>
+						<SyncedTextField
+							autocapitalization="sentences"
+							multiline={true}
+							onChangeText={setNote}
+							placeholder="Describe the problem"
+							value={note}
 						/>
 					</Section>
 				</List>
