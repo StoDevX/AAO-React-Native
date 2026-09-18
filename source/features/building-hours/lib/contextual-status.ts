@@ -1,6 +1,6 @@
 import type {Moment} from 'moment-timezone'
 import type {BuildingType, NamedBuildingScheduleType} from '../types'
-import {formatTime} from '@frogpond/time-format'
+import {formatStatusTime} from './format-times'
 import {getDayOfWeek} from './get-day-of-week'
 import {findOpenWindow, windowOpeningOn} from './find-open-window'
 import {CHAPEL_COUNTDOWN_MINUTES, isChapelTime} from './chapel'
@@ -83,9 +83,10 @@ function plain(text: string): ContextualStatus {
 
 /**
  * Human-readable status for a building right now, e.g. "Open until 8 PM",
- * "Closes in 15 min", "Reopens at 10:30 AM", "Reopens in 8 min",
- * "Opens at 5 PM", "Opens in 10 min", or "Closed". The two forms differ only
- * for the chapel warning, which the list row has no room to spell out.
+ * "Open until midnight", "Closes in 15 min", "Reopens at 10:30 AM", "Reopens
+ * in 8 min", "Opens at noon", "Opens in 10 min", or "Closed". The two forms
+ * differ only for the chapel warning, which the list row has no room to spell
+ * out.
  */
 export function contextualStatus(
 	building: BuildingType,
@@ -107,7 +108,7 @@ export function contextualStatus(
 		if (minutesLeft <= ALMOST_THRESHOLD_MINUTES) {
 			return plain(`Closes in ${minutesLeft} min`)
 		}
-		return plain(`Open until ${formatTime(current.close, locale)}`)
+		return plain(`Open until ${formatStatusTime(current.close, locale)}`)
 	}
 
 	let chapelReopen = findChapelReopenForBuilding(building, now)
@@ -116,7 +117,7 @@ export function contextualStatus(
 		if (minutesLeft <= CHAPEL_COUNTDOWN_MINUTES) {
 			return plain(`Reopens in ${minutesLeft} min`)
 		}
-		return plain(`Reopens at ${formatTime(chapelReopen, locale)}`)
+		return plain(`Reopens at ${formatStatusTime(chapelReopen, locale)}`)
 	}
 
 	// A phone line or a delivery service is not a door, so it never outranks one.
@@ -129,7 +130,7 @@ export function contextualStatus(
 			.map((hours) => findOpenWindow(hours, now))
 			.find((candidate) => candidate !== null)
 		if (window) {
-			return plain(`${service.name} until ${formatTime(window.close, locale)}`)
+			return plain(`${service.name} until ${formatStatusTime(window.close, locale)}`)
 		}
 	}
 
@@ -139,7 +140,7 @@ export function contextualStatus(
 		if (minutesUntilOpen <= ALMOST_THRESHOLD_MINUTES) {
 			return plain(`Opens in ${minutesUntilOpen} min`)
 		}
-		return plain(`Opens at ${formatTime(next.open, locale)}`)
+		return plain(`Opens at ${formatStatusTime(next.open, locale)}`)
 	}
 
 	// Not "Closed today": this is only reached once nothing opens again today, so

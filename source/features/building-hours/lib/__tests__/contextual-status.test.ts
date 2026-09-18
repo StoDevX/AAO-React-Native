@@ -287,4 +287,27 @@ describe('contextualStatus', () => {
 
 		expect(contextualStatus(building, now).short).toBe('Phone until 8 AM')
 	})
+	it('says "midnight" rather than 12 AM for a midnight close', () => {
+		let building = makeBuilding([
+			{
+				title: 'Hours',
+				hours: [{days: ['Mo'], from: '5:00pm', to: '12:00am'}],
+			},
+		])
+		let now = moment.tz('2026-09-07 23:00', timezone) // Monday 11pm
+
+		expect(contextualStatus(building, now).short).toBe('Open until midnight')
+	})
+
+	it('says "noon" rather than 12 PM for a noon opening', () => {
+		let building = makeBuilding([
+			{
+				title: 'Hours',
+				hours: [{days: ['Mo'], from: '12:00pm', to: '5:00pm'}],
+			},
+		])
+		let now = moment.tz('2026-09-07 09:00', timezone) // Monday 9am
+
+		expect(contextualStatus(building, now).short).toBe('Opens at noon')
+	})
 })
