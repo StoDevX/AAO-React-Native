@@ -96,11 +96,12 @@ struct TestIdentifiers {
 		/// Apple's.
 		static let referenceEntry = "change"
 
-		/// The longest multi-paragraph definition in the bundled dictionary --
-		/// 744 characters over three paragraphs. The entry that showed the
-		/// definition field clipped against its row's top edge with dead space
-		/// below it (#7959); a single-paragraph entry of the same length never
-		/// did.
+		/// The entry from #7959, whose definition field showed clipped against
+		/// its row's top edge with dead space below it -- 744 characters over
+		/// three paragraphs; a single-paragraph entry of the same length never
+		/// did. Not the longest definition in the bundled dictionary: ASC runs
+		/// to 1189 characters over five paragraphs, for whoever wants the worst
+		/// case.
 		static let longDefinitionEntry = "AmCon"
 
 		/// The edit form's navigation bar, which carries `suggestAnEdit`'s

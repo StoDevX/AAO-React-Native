@@ -259,8 +259,10 @@ struct CampusDictionaryScreen: Screen {
 		return self
 	}
 
-	/// Returns to the edit form from a sense. The keyboard is up after typing
-	/// and covers nothing in the navigation bar, so no scroll is needed.
+	/// Returns to the edit form from a sense. The back button sits in the
+	/// navigation bar at the top of the screen, which the keyboard never
+	/// reaches even when it is up, so no scroll is needed -- whether or not
+	/// this call followed any typing.
 	///
 	/// Scoped to the sense form's own bar: on iOS 27 an unscoped
 	/// `navigationBars["Back"]` matches more than one bar at once.
@@ -322,23 +324,23 @@ struct CampusDictionaryScreen: Screen {
 		return openSense(1).typeDefinition(prepending: text).leaveSense()
 	}
 
-	/// Scrolls the edit form until `text` is on screen and unobstructed.
-	/// After typing, the keyboard covers the bottom of the form -- including
-	/// the Senses section's footer, the last thing in it -- so a capture taken
-	/// where `editFirstDefinition` leaves off shows neither the footer nor the
+	/// Scrolls the edit form until `text` is on screen and unobstructed. The
+	/// Senses section's footer -- the last thing in the form -- sits below the
+	/// fold on return from a sense screen, so a capture taken where
+	/// `editFirstDefinition` leaves off shows neither the footer nor the
 	/// wording it carries.
 	///
-	/// A press-and-drag between two points above the keyboard, rather than
-	/// `app.swipeUp()`. A swipe spans the whole element it is sent to, so with
-	/// the keyboard up it begins on the keyboard, and the keyboard takes it:
-	/// the form sits at offset 0 however many swipes it is given, and this
-	/// helper then reports content that was scrollable all along as
-	/// unreachable.
+	/// A press-and-drag between two fixed points inside the form's own
+	/// content, rather than `app.swipeUp()`. A swipe spans the whole element
+	/// it is sent to, so sent to `app` its start and end points are computed
+	/// from the app's full frame rather than the form's own bounds -- and
+	/// this helper then reports content that was scrollable all along as
+	/// unreachable if either point misses the form.
 	@discardableResult
 	func revealInForm(_ text: String) -> Self {
 		let label = app.staticTexts[text]
-		// Both ends lie in the strip the keyboard leaves visible, between the
-		// navigation bar and the top of the keys.
+		// Both ends lie inside the form's own content, between the navigation
+		// bar and the bottom of the screen.
 		let start = app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.43))
 		let end = app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.18))
 		for _ in 1...8 {

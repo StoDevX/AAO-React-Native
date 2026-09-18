@@ -43,14 +43,11 @@ class ModuleCampusDictionaryTests: UITestCase {
 	/// the entry as opened -- retyping nothing is not a suggestion.
 	///
 	/// `"indeed "` rather than a shorter word, here and in every other test
-	/// that types into this field: a burst this long used to arrive as
-	/// `indmake`, `indemake` or `indeedmake`, because the definition field
-	/// reconciled its native handle against the store on every change and so
-	/// overwrote the field with a value one keystroke out of date. Seven
-	/// characters is what it took to straddle that window reliably, which
-	/// makes it the length worth keeping now the reconcile hangs off focus
-	/// instead -- `editFirstDefinition`'s read-back is what fails if it ever
-	/// comes back.
+	/// that types into this field: a shorter burst does not reliably straddle
+	/// the window in which a keystroke sent to a native text field can be
+	/// dropped between renders. Seven characters is what it takes to trip that
+	/// race reliably -- `editFirstDefinition`'s read-back of the field's value
+	/// is what fails if one ever is.
 	func testPreviewIsRefusedUntilSomethingChanges() throws {
 		CampusDictionaryScreen(app: app)
 			.navigate()
