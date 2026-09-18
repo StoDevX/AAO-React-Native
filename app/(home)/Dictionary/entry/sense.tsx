@@ -159,19 +159,13 @@ type ExampleFieldProps = {
 /**
  * One example citation's row.
  *
- * Its own component for the same reason `SenseDefinitionField` in `edit.tsx`
- * is: a `useNativeState` handle's initial value is captured once on mount, so
- * it needs a hook call whose count does not track how many examples the
- * sense currently has. A component keyed by the example's id gives each row
- * a hook of its own that adding, deleting or reordering examples cannot
- * change the count of.
- *
- * Unlike that sibling, this one does not also need a sync effect pulling its
- * handle back into line with the store: a definition is edited from two
- * screens at once (this one and `edit.tsx`, mounted underneath it), but no
- * second screen ever writes a given example's text -- only this field's own
- * `onChange` does -- so the handle and the store can never disagree while
- * this component is mounted.
+ * Its own component because a `useNativeState` handle's initial value is
+ * captured once on mount, and the sense holds a variable number of examples
+ * -- calling the hook directly in `DictionarySensePage`'s own `.map()` would
+ * change how many times it ran there as examples are added, deleted or
+ * reordered, which breaks React's fixed-hook-count-per-render rule. Keyed by
+ * the example's id, so each row keeps its own handle across a reorder rather
+ * than picking up whichever handle now sits at its position.
  */
 function ExampleField({example, index, onChange}: ExampleFieldProps): React.ReactNode {
 	let text = useNativeState(example.text)
