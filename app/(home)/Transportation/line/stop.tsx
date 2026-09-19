@@ -17,7 +17,7 @@ import type {
 	UnprocessedBusLine,
 } from '../../../../source/features/transportation/bus/types'
 import {
-	deriveFromProps,
+	deriveLineState,
 	getCurrentBusIteration,
 	getScheduleForNow,
 	processBusLine,
@@ -245,7 +245,7 @@ export default function BusStopPage(): React.ReactNode {
 
 	// An empty day means the caller was following the clock, so today it is.
 	let momentForDay = day ? createMomentForDay(now, day) : now
-	let {subtitle, schedule} = deriveFromProps({line, now: momentForDay})
+	let {subtitle, schedule} = deriveLineState({line, now: momentForDay})
 	let stop = schedule.timetable.find((entry) => entry.name === stopName)
 
 	if (!stop) {

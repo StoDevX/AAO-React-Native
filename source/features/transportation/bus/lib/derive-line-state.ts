@@ -18,7 +18,13 @@ function startsIn(now: Moment, start?: Moment | null) {
 	return `Starts ${nowCopy.seconds(0).to(start)}`
 }
 
-export function deriveFromProps({line, now}: {line: UnprocessedBusLine; now: Moment}): {
+/**
+ * A line's state at a moment in time: what it is doing right now (its status
+ * and the subtitle that names it, such as "Running" or "Starts in 20
+ * minutes"), plus the processed schedule and iteration that state was read
+ * from, ready for the widget and timetable to draw from directly.
+ */
+export function deriveLineState({line, now}: {line: UnprocessedBusLine; now: Moment}): {
 	subtitle: string
 	status: BusStateEnum
 	schedule: BusSchedule
@@ -58,8 +64,6 @@ export function deriveFromProps({line, now}: {line: UnprocessedBusLine; now: Mom
 					subtitle = 'Not running today'
 				} else if (now.isBefore(first)) {
 					subtitle = startsIn(now, first)
-				} else if (now.isAfter(last)) {
-					subtitle = 'Running'
 				} else {
 					subtitle = 'Running'
 				}

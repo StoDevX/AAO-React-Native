@@ -1,7 +1,7 @@
 import * as React from 'react'
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native'
 import type {DayOfWeek, UnprocessedBusLine} from './types'
-import {busPropsForRow, deriveFromProps, findBusTarget, scheduleSectionTitle} from './lib'
+import {busPropsForRow, deriveLineState, findBusTarget, scheduleSectionTitle} from './lib'
 import type {Moment} from 'moment-timezone'
 import {Separator} from '@frogpond/separator'
 import {BusStopRow} from './components/bus-stop-row'
@@ -60,7 +60,7 @@ export function BusLine(props: Props): React.ReactNode {
 
 	const momentForSelectedDay = createMomentForDay(now, dayToShow)
 
-	let {schedule, subtitle, currentBusIteration, parkedStopIndex, status} = deriveFromProps({
+	let {schedule, subtitle, currentBusIteration, parkedStopIndex, status} = deriveLineState({
 		line,
 		now: momentForSelectedDay,
 	})

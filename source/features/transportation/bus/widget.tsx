@@ -34,7 +34,7 @@ import type {Moment} from 'moment-timezone'
 import * as c from '@frogpond/colors'
 import {FILL_WIDTH} from '../../../components/tile-layout'
 import {formatDeparture} from './components/times'
-import {buildStopStrip, deriveFromProps, type StopStripCell} from './lib'
+import {buildStopStrip, deriveLineState, type StopStripCell} from './lib'
 import type {UnprocessedBusLine} from './types'
 
 /// Wide enough for "Buntrock Commons" to wrap to two lines rather than
@@ -212,7 +212,7 @@ function NextRoundCell({time}: {time: Moment}): React.ReactNode {
  * opens that stop's own departures.
  */
 export function BusLineWidget({line, now, onPressLine, onPressStop}: Props): React.ReactNode {
-	let {subtitle, status, schedule, currentBusIteration} = deriveFromProps({line, now})
+	let {subtitle, status, schedule, currentBusIteration} = deriveLineState({line, now})
 	let {cells, currentIndex, nextRoundStart} = buildStopStrip({
 		schedule,
 		busStatus: status,
@@ -222,7 +222,9 @@ export function BusLineWidget({line, now, onPressLine, onPressStop}: Props): Rea
 
 	// The strip opens at the stop the bus is at, or the next one ahead, rather
 	// than at the start of the route -- a bus halfway round its loop is the
-	// thing the reader came to see.
+	// thing the reader came to see. `useNativeState` captures this initial
+	// value once on mount, so the strip does not chase the bus every minute
+	// and does not stomp a scroll the reader made themselves.
 	let scrollTarget = useNativeState<string | null>(
 		currentIndex === null ? null : String(currentIndex),
 	)

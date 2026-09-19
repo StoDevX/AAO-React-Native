@@ -8,8 +8,8 @@ const DAY_LABELS = Object.fromEntries(DAYS_OF_WEEK.map(({day, label}) => [day, l
 
 /**
  * The timetable Section's title: which day is on screen, and what the line is
- * doing. The line's own name is deliberately absent -- the tab bar already
- * says it, and so does the screen above.
+ * doing. The line's own name is deliberately absent -- the sheet's navigation
+ * title already says it, and so does the screen above.
  *
  * The day leads because the picker sits in the navigation bar, leaving
  * this the only place in the content area that says which day you are reading.

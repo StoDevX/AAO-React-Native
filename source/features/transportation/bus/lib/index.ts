@@ -8,7 +8,7 @@ export {calculateBusProgress} from './calculate-bus-progress'
 export {buildStopStrip} from './build-stop-strip'
 export {busPropsForRow, findBusTarget} from './find-bus-target'
 export {scheduleSectionTitle} from './schedule-section-title'
-export {deriveFromProps} from './derive-line-state'
+export {deriveLineState} from './derive-line-state'
 
 export type {BusStateEnum} from './get-current-bus-iteration'
 export type {StopStripCell} from './build-stop-strip'
