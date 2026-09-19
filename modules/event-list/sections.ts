@@ -97,18 +97,27 @@ export function todaySectionKey(sections: readonly EventSection[], now: Moment):
 }
 
 /**
- * The sections Upcoming shows: `Ongoing`, today, and every day after.
+ * The sections Upcoming shows: `Ongoing`, today, every day after, and whatever
+ * on an earlier day has not ended yet.
  *
  * The read window keeps a month of finished events for the day view's strip
  * and the event detail's timeline. Upcoming is what is ahead, and each
  * finished row in it would be one more row mounted on the main thread for a
  * reader who has to scroll up to see it.
+ *
+ * An earlier day keeps its unfinished events because `isOngoing` is worked out
+ * when the events are read, not when they are shown: a schedule fetched before
+ * midnight files a show that is on air now under the day it began.
  */
 export function upcomingSections(sections: readonly EventSection[], now: Moment): EventSection[] {
 	let todayIso = now.format('YYYY-MM-DD')
-	return sections.filter(
-		(section) => section.key === 'Ongoing' || section.key === 'Today' || section.key >= todayIso,
-	)
+	return sections.flatMap((section) => {
+		if (section.key === 'Ongoing' || section.key === 'Today' || section.key >= todayIso) {
+			return [section]
+		}
+		let running = section.data.filter((entry) => entry.event.endTime.isAfter(now))
+		return running.length > 0 ? [{...section, data: running}] : []
+	})
 }
 
 /**

@@ -145,12 +145,16 @@ export let EventList = React.forwardRef<CalendarBodyHandle, Props>(function Even
 
 	React.useImperativeHandle(ref, () => ({showToday}), [showToday])
 
-	let {text, retry} = emptyNotice(props, {text: 'No events.', retry: true})
+	// What the list would draw, rather than everything it was handed: a window
+	// whose events are all over is as empty as one with none.
+	let shown = React.useMemo(() => sections.flatMap((section) => section.data), [sections])
+
+	let {text, retry} = emptyNotice({...props, events: shown}, {text: 'No events.', retry: true})
 
 	// Each notice replaces the list, and the list is what carries
 	// pull-to-refresh -- so one that can be retried has to offer it itself, or a
 	// failed load leaves the screen with no way back but the back button.
-	if (props.message || props.sources.length === 0 || props.events.length === 0) {
+	if (props.message || props.sources.length === 0 || shown.length === 0) {
 		return retry ? (
 			<NoticeView buttonText="Try Again" onPress={props.onRefresh} text={text} />
 		) : (

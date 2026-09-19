@@ -234,6 +234,27 @@ describe('upcomingSections', () => {
 	})
 
 	/**
+	 * `isOngoing` is worked out when the events are read, so a show that began
+	 * before midnight and is still on air can reach the list without it, filed
+	 * under the day it started. It stays; what finished that day goes.
+	 */
+	test('keeps an event from an earlier day that has not ended', () => {
+		let onAir = {
+			sourceId: 'ksto',
+			key: 'late-show',
+			event: makeEvent({
+				startTime: moment('2026-08-16T23:30:00Z'),
+				endTime: moment('2026-08-17T13:00:00Z'),
+			}),
+		}
+		let sections = groupEvents([entryOn('ksto', 'finished', '2026-08-16T15:00:00Z'), onAir], NOW)
+
+		let upcoming = upcomingSections(sections, NOW)
+		expect(upcoming.map((section) => section.key)).toEqual(['2026-08-16'])
+		expect(upcoming[0].data.map((entry) => entry.key)).toEqual(['late-show'])
+	})
+
+	/**
 	 * `Ongoing` sorts by its earliest member, so a run that began in July sits
 	 * among the past days -- but it is still going, so it stays.
 	 */

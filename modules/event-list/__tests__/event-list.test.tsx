@@ -187,6 +187,35 @@ describe('EventList', () => {
 		expect(screen.getByText('This Afternoon')).toBeTruthy()
 	})
 
+	// Every event in the window can be over -- the read window keeps a month of
+	// them -- and a list of nothing is a blank screen, not a notice.
+	test('says there is nothing when every event is over', async () => {
+		await render(
+			<EventList
+				events={[
+					{
+						sourceId: 'stolaf',
+						key: 'past',
+						event: makeEvent({
+							title: 'Last Week',
+							startTime: moment('2026-08-10T19:00:00Z'),
+							endTime: moment('2026-08-10T20:00:00Z'),
+						}),
+					},
+				]}
+				failed={[STOLAF_SOURCE]}
+				now={NOW}
+				onPressEvent={jest.fn()}
+				onRefresh={jest.fn()}
+				refreshing={false}
+				sources={[STOLAF_SOURCE]}
+			/>,
+		)
+
+		expect(screen.getByText('Could not load St. Olaf.')).toBeTruthy()
+		expect(screen.getByText('Try Again')).toBeTruthy()
+	})
+
 	test('draws no day picker', async () => {
 		await render(
 			<EventList
