@@ -4,7 +4,6 @@ import type {BuildingStatusType, BuildingType} from '../types'
 import {isChapelTime} from './chapel'
 import {findChapelReopen} from './find-chapel-reopen'
 import {findChapelPause} from './find-chapel-pause'
-import {findOpenService} from './find-open-service'
 import {schedulesInEffect} from './schedules-in-effect'
 import {getScheduleStatusAtMoment} from './get-schedule-status'
 
@@ -39,12 +38,5 @@ export function getShortBuildingStatus(info: BuildingType, m: Moment): BuildingS
 		return filteredSchedules.map((schedule) => getScheduleStatusAtMoment(schedule, m))
 	})
 
-	let physical = statuses.find((status) => status !== 'Closed')
-	if (physical) {
-		return physical
-	}
-
-	// Only once no door is open is it worth naming a phone line or a delivery
-	// service; a building you can walk into should say so first.
-	return findOpenService(info, m) ? 'Service' : 'Closed'
+	return statuses.find((status) => status !== 'Closed') ?? 'Closed'
 }

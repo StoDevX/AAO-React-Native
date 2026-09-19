@@ -193,9 +193,9 @@ describe('the chapel badge', () => {
 	})
 })
 
-describe('a building reachable by something that is not a door', () => {
-	const sarn: BuildingType = {
-		name: 'SARN',
+describe('a set that is not physically open', () => {
+	const office: BuildingType = {
+		name: 'Office',
 		category: 'Health and Wellness',
 		breakSchedule: undefined,
 		schedule: [
@@ -203,22 +203,17 @@ describe('a building reachable by something that is not a door', () => {
 			{
 				title: 'Phone',
 				isPhysicallyOpen: false,
-				status: {symbol: 'phone.circle', name: 'Phone'},
 				hours: [{days: ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'], from: '8:00pm', to: '8:00am'}],
 			},
 		],
 	}
 
-	it('reads Service when only the service is running', () => {
+	it('never opens the building on its own', () => {
 		// 2026-09-08 is a Tuesday; the office shut at 8pm.
-		expect(getShortBuildingStatus(sarn, at('2026-09-08', '22:00:00'))).toBe('Service')
+		expect(getShortBuildingStatus(office, at('2026-09-08', '22:00:00'))).toBe('Closed')
 	})
 
-	it('prefers the door when both are open', () => {
-		expect(getShortBuildingStatus(sarn, at('2026-09-08', '19:30:00'))).toBe('Almost Closed')
-	})
-
-	it('reads Closed when neither is running', () => {
-		expect(getShortBuildingStatus(sarn, at('2026-09-08', '14:00:00'))).toBe('Closed')
+	it('leaves the door to speak for the building', () => {
+		expect(getShortBuildingStatus(office, at('2026-09-08', '19:30:00'))).toBe('Almost Closed')
 	})
 })
