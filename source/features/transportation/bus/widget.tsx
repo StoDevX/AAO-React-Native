@@ -1,11 +1,11 @@
 import * as React from 'react'
 import {
 	Button,
-	Capsule,
 	Circle,
 	HStack,
 	Image,
 	LazyHStack,
+	Rectangle,
 	ScrollView,
 	Section,
 	Spacer,
@@ -102,16 +102,19 @@ function StopCell({
 					{/* Two halves rather than one bar: the rail has to stop at the
 					    first and last dot, and a cell only knows about its own
 					    half of each gap. Both are always drawn and the end caps
-					    are made transparent, so every cell lays out identically. */}
+					    are made transparent, so every cell lays out identically.
+					    `Rectangle` rather than `Capsule`: a capsule rounds both ends,
+					    so two adjacent cells' halves would pinch where they meet
+					    instead of reading as one line. */}
 					<HStack spacing={0}>
-						<Capsule
+						<Rectangle
 							modifiers={[
 								frame({width: CELL_WIDTH / 2, height: RAIL_HEIGHT}),
 								foregroundStyle(barColor),
 								opacity(isFirst ? 0 : railOpacity),
 							]}
 						/>
-						<Capsule
+						<Rectangle
 							modifiers={[
 								frame({width: CELL_WIDTH / 2, height: RAIL_HEIGHT}),
 								foregroundStyle(barColor),
@@ -169,14 +172,14 @@ function NextRoundCell({time, onPress}: {time: Moment; onPress: () => void}): Re
 
 				<ZStack modifiers={[frame({width: CELL_WIDTH, height: DOT_SIZE})]}>
 					<HStack spacing={0}>
-						<Capsule
+						<Rectangle
 							modifiers={[
 								frame({width: CELL_WIDTH / 2, height: RAIL_HEIGHT}),
 								foregroundStyle(c.tertiaryLabel),
 								opacity(0.35),
 							]}
 						/>
-						<Capsule
+						<Rectangle
 							modifiers={[
 								frame({width: CELL_WIDTH / 2, height: RAIL_HEIGHT}),
 								foregroundStyle(c.tertiaryLabel),
@@ -185,12 +188,11 @@ function NextRoundCell({time, onPress}: {time: Moment; onPress: () => void}): Re
 						/>
 					</HStack>
 
+					{/* `systemGray3` rather than `tertiaryLabel`: the label color is
+					    itself semi-transparent, so the rail would still show through
+					    it even at `opacity(1)`. This dot is meant to read as solid. */}
 					<Circle
-						modifiers={[
-							frame({width: DOT_SIZE, height: DOT_SIZE}),
-							foregroundStyle(c.tertiaryLabel),
-							opacity(0.45),
-						]}
+						modifiers={[frame({width: DOT_SIZE, height: DOT_SIZE}), foregroundStyle(c.systemGray3)]}
 					/>
 				</ZStack>
 
@@ -246,6 +248,14 @@ export function BusLineWidget({line, now, onPress}: Props): React.ReactNode {
 					modifiers={[contentShape(shapes.rectangle()), frame({maxWidth: FILL_WIDTH})]}
 					spacing={8}
 				>
+					{/* Tinted with the line's own dot color -- the same cue the old
+					    native tab bar gave each bus line before the tabs went away.
+					    The header's accessibility label already names the line, so
+					    this carries no label of its own. */}
+					<Image
+						modifiers={[font({textStyle: 'body'}), foregroundStyle(dotColor)]}
+						systemName="bus.fill"
+					/>
 					<Text modifiers={[font({weight: 'semibold'})]}>{line.line}</Text>
 					<Spacer />
 					<Text modifiers={[font({textStyle: 'subheadline'}), foregroundStyle(c.secondaryLabel)]}>

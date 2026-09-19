@@ -578,6 +578,10 @@ export function Circle(_props: WithModifiers): React.ReactNode {
 	return <View />
 }
 
+export function Rectangle(_props: WithModifiers): React.ReactNode {
+	return <View />
+}
+
 /**
  * A `Divider` draws a rule and carries nothing -- no label, no children, no
  * behaviour. The stand-in is an empty view: it exists so a tree containing one
