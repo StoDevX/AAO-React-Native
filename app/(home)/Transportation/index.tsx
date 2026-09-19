@@ -40,7 +40,15 @@ export default function TransportationPage(): React.ReactNode {
 		isError: busesErrored,
 	} = useQuery(busRoutesOptions)
 
-	let {data: otherModes = []} = useQuery(otherModesGroupedOptions)
+	let {data: otherModes = [], refetch: refetchOtherModes} = useQuery(otherModesGroupedOptions)
+
+	// Returns both, rather than firing and forgetting them: SwiftUI's
+	// `refreshable` spinner runs until the handler it was given settles, so a
+	// void return would stop it the instant the pull ended.
+	let refetchAll = React.useCallback(
+		() => Promise.all([refetchBuses(), refetchOtherModes()]),
+		[refetchBuses, refetchOtherModes],
+	)
 
 	if (busesLoading) {
 		return <LoadingView />
@@ -62,7 +70,7 @@ export default function TransportationPage(): React.ReactNode {
 				modifiers={[
 					listStyle('insetGrouped'),
 					refreshable(async () => {
-						await refetchBuses()
+						await refetchAll()
 					}),
 				]}
 			>
@@ -108,6 +116,7 @@ export default function TransportationPage(): React.ReactNode {
 					</Section>
 				))}
 
+				{/* children is required, but this section has no rows of its own -- only a footer */}
 				<Section footer={<Text>{BUS_FOOTER_MESSAGE}</Text>}>{null}</Section>
 			</List>
 		</Host>
