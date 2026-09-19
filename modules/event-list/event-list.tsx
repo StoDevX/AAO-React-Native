@@ -14,6 +14,7 @@ import {
 	font,
 	foregroundStyle,
 	id,
+	onScrollPhaseChange,
 	padding,
 	refreshable,
 	scrollPosition,
@@ -26,8 +27,21 @@ import {NoticeView} from '@frogpond/notice'
 import {EventListRow} from './event-list-row'
 import {FailureNote} from './failure-note'
 import {emptyNotice} from './day-state'
-import {groupEvents, todaySectionKey} from './sections'
+import {
+	groupEvents,
+	isNearEnd,
+	sectionsToMount,
+	todaySectionKey,
+	upcomingSections,
+} from './sections'
 import type {CalendarBodyHandle, CalendarSource, SourcedEvent} from './types'
+
+/**
+ * How many rows the list mounts at first, and how many more each time the
+ * reader nears the end. A screen and a half: enough that a first scroll never
+ * waits, small enough that mounting a step does not stall it.
+ */
+const ROWS_PER_STEP = 15
 
 type Props = {
 	events: SourcedEvent[]
@@ -63,28 +77,47 @@ export let EventList = React.forwardRef<CalendarBodyHandle, Props>(function Even
 	}, [props.sources])
 
 	let sections = React.useMemo(
-		() => groupEvents(props.events, props.now),
+		() => upcomingSections(groupEvents(props.events, props.now), props.now),
 		[props.events, props.now],
 	)
 
 	let todayKey = React.useMemo(() => todaySectionKey(sections, props.now), [sections, props.now])
+
+	let [rowBudget, setRowBudget] = React.useState(ROWS_PER_STEP)
+	let mounted = React.useMemo(
+		() => sectionsToMount(sections, rowBudget, todayKey),
+		[sections, rowBudget, todayKey],
+	)
+	let hasMore = mounted.length < sections.length
+
+	/**
+	 * Mounts the next step once the reader is within a screen of the end.
+	 *
+	 * On a change of scroll phase rather than on every frame: a phase change
+	 * arrives as an ordinary JavaScript event, and a drag or a fling that ends
+	 * near the bottom is exactly when more rows are wanted.
+	 */
+	let growNearEnd = onScrollPhaseChange((_phase, geometry) => {
+		if (hasMore && isNearEnd(geometry)) {
+			setRowBudget((budget) => budget + ROWS_PER_STEP)
+		}
+	})
 
 	let scrollTarget = useNativeState<string | null>(null)
 
 	/**
 	 * Opens the list on today rather than at the top.
 	 *
-	 * The read window keeps 30 days of finished events, so the top of the list
-	 * is last month; the past is meant to be reachable by scrolling up, not to
-	 * be where the screen opens.
+	 * Past days are left out, but `Ongoing` still leads the list, and a
+	 * multi-week run is not what the reader opened the calendar to see.
 	 *
 	 * Set on the UI thread the first time the list has content laid out. Not
 	 * from an effect, and not as the state's starting value: measured on the
 	 * simulator, SwiftUI drops a position set before the list appears, and since
 	 * the state then already reads today, nothing sets it again. Not from
 	 * JavaScript either: an event from the list reaches it a render late, and
-	 * with a month of events above today the reader sees that month for a
-	 * moment before the jump.
+	 * with a long `Ongoing` above today the reader sees it for a moment before
+	 * the jump.
 	 *
 	 * Only while the list has no position yet. SwiftUI writes the leading
 	 * section back as the reader scrolls, so a list that has been placed never
@@ -135,11 +168,12 @@ export let EventList = React.forwardRef<CalendarBodyHandle, Props>(function Even
 					}),
 					scrollPosition(scrollTarget, {anchor: 'top'}),
 					...(placement ? [placement] : []),
+					growNearEnd,
 				]}
 			>
 				<LazyVStack alignment="leading" modifiers={[scrollTargetLayout()]}>
 					{todayKey ? null : <FailureNote failed={props.failed} />}
-					{sections.map((section) => (
+					{mounted.map((section) => (
 						<VStack
 							key={section.key}
 							alignment="leading"

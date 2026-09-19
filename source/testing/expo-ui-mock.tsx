@@ -150,6 +150,14 @@ export const presentationDetents = (
 ): Modifier => createModifier('presentationDetents', {detents, selection: options?.selection})
 
 /**
+ * The real modifier delivers the phase and the geometry sampled with it from
+ * native; there is no scrolling here, so it only carries the callback.
+ */
+export const onScrollPhaseChange = (
+	callback: (phase: string, geometry: unknown) => void,
+): Modifier => createModifier('onScrollPhaseChange', {callback})
+
+/**
  * The real modifier hands native a wrapped handler that tells SwiftUI the
  * refresh has finished; this one carries the caller's own handler under
  * `handler`, since the promise a test awaits is the caller's, and there is no

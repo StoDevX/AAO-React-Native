@@ -1,6 +1,7 @@
 import groupBy from 'lodash/groupBy'
 import toPairs from 'lodash/toPairs'
 import type {Moment} from 'moment-timezone'
+import type {ScrollGeometry} from '@expo/ui/swift-ui'
 
 import {formatSectionHeader} from './times'
 import type {SourcedEvent} from './types'
@@ -93,4 +94,58 @@ export function todaySectionKey(sections: readonly EventSection[], now: Moment):
 	if (next) return next.key
 
 	return days.at(-1)?.key ?? null
+}
+
+/**
+ * The sections Upcoming shows: `Ongoing`, today, and every day after.
+ *
+ * The read window keeps a month of finished events for the day view's strip
+ * and the event detail's timeline. Upcoming is what is ahead, and every
+ * finished row it drew was a row mounted on the main thread for a reader who
+ * had to scroll up to see it.
+ */
+export function upcomingSections(sections: readonly EventSection[], now: Moment): EventSection[] {
+	let todayIso = now.format('YYYY-MM-DD')
+	return sections.filter(
+		(section) => section.key === 'Ongoing' || section.key === 'Today' || section.key >= todayIso,
+	)
+}
+
+/**
+ * The leading sections worth mounting for a budget of rows, whole days at a
+ * time, and always through `throughKey`.
+ *
+ * Every mounted row is a set of `@expo/ui` views created on the main thread in
+ * one go -- `LazyVStack` only defers SwiftUI's drawing, not React's mounting --
+ * so a list mounted whole froze the screen for seconds. Mounting a screen or
+ * two and growing as the reader nears the end keeps each step small.
+ *
+ * `throughKey` is the section the list opens on: a scroll target that is not
+ * mounted is one SwiftUI cannot reach, and a long `Ongoing` above today could
+ * otherwise spend the whole budget.
+ */
+export function sectionsToMount(
+	sections: readonly EventSection[],
+	rowBudget: number,
+	throughKey: string | null,
+): EventSection[] {
+	let through = throughKey ? sections.findIndex((section) => section.key === throughKey) : -1
+
+	let rows = 0
+	let count = 0
+	while (count < sections.length && (rows < rowBudget || count <= through)) {
+		rows += sections[count].data.length
+		count += 1
+	}
+
+	return sections.slice(0, count)
+}
+
+/**
+ * Whether less than a screen of content is left below what the reader can
+ * see -- the point at which the list mounts its next step.
+ */
+export function isNearEnd(geometry: ScrollGeometry): boolean {
+	let remaining = geometry.contentHeight - (geometry.contentOffsetY + geometry.containerHeight)
+	return remaining < geometry.containerHeight
 }

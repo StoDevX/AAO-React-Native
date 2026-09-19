@@ -2,7 +2,14 @@ import {describe, expect, test} from '@jest/globals'
 import moment from 'moment-timezone'
 import {deriveDayFlags, type EventType} from '@frogpond/event-type'
 
-import {groupEvents, todaySectionKey} from '../sections'
+import {
+	groupEvents,
+	isNearEnd,
+	sectionsToMount,
+	todaySectionKey,
+	upcomingSections,
+	type EventSection,
+} from '../sections'
 import type {SourcedEvent} from '../types'
 
 const NOW = moment('2026-08-17T12:00:00Z')
@@ -205,5 +212,113 @@ describe('todaySectionKey', () => {
 
 	test('has nothing to scroll to when there are no sections', () => {
 		expect(todaySectionKey([], NOW)).toBeNull()
+	})
+})
+
+describe('upcomingSections', () => {
+	test('drops the days that are over and keeps today and after', () => {
+		let sections = groupEvents(
+			[
+				entryOn('stolaf', 'last-month', '2026-08-01T15:00:00Z'),
+				entryOn('stolaf', 'yesterday', '2026-08-16T15:00:00Z'),
+				entryOn('stolaf', 'today', '2026-08-17T15:00:00Z'),
+				entryOn('stolaf', 'next-week', '2026-08-24T15:00:00Z'),
+			],
+			NOW,
+		)
+
+		expect(upcomingSections(sections, NOW).map((section) => section.key)).toEqual([
+			'Today',
+			'2026-08-24',
+		])
+	})
+
+	/**
+	 * `Ongoing` sorts by its earliest member, so a run that began in July sits
+	 * among the past days -- but it is still going, so it stays.
+	 */
+	test('keeps Ongoing wherever the run began', () => {
+		let spanning = {
+			sourceId: 'stolaf',
+			key: 'exhibition',
+			event: makeEvent({
+				startTime: moment('2026-07-01T15:00:00Z'),
+				endTime: moment('2026-08-24T15:00:00Z'),
+				isOngoing: true,
+			}),
+		}
+		let sections = groupEvents(
+			[entryOn('stolaf', 'last-month', '2026-08-01T15:00:00Z'), spanning],
+			NOW,
+		)
+
+		expect(upcomingSections(sections, NOW).map((section) => section.key)).toEqual(['Ongoing'])
+	})
+})
+
+describe('sectionsToMount', () => {
+	/** Sections holding the given number of rows, keyed by position. */
+	function sectionsOf(...sizes: number[]): EventSection[] {
+		return sizes.map((size, index) => ({
+			key: `day-${index}`,
+			title: `Day ${index}`,
+			isToday: false,
+			data: Array.from({length: size}, (_, row) =>
+				entryOn('stolaf', `${index}-${row}`, '2026-08-17T15:00:00Z'),
+			),
+		}))
+	}
+
+	function keys(sections: readonly EventSection[]): string[] {
+		return sections.map((section) => section.key)
+	}
+
+	test('mounts whole days until the budget is met', () => {
+		// 4 rows is under the budget of 5, so the next day is mounted whole; 6
+		// meets it, so nothing after that is.
+		expect(keys(sectionsToMount(sectionsOf(4, 2, 2, 1), 5, null))).toEqual(['day-0', 'day-1'])
+	})
+
+	test('mounts everything when the budget covers it', () => {
+		expect(keys(sectionsToMount(sectionsOf(1, 1), 50, null))).toEqual(['day-0', 'day-1'])
+	})
+
+	/**
+	 * The list opens on today. A long `Ongoing` above it could spend the whole
+	 * budget, and a scroll target that is not mounted is one SwiftUI cannot
+	 * reach.
+	 */
+	test('always mounts through the section the list opens on', () => {
+		expect(keys(sectionsToMount(sectionsOf(9, 1, 1), 5, 'day-2'))).toEqual([
+			'day-0',
+			'day-1',
+			'day-2',
+		])
+	})
+
+	test('mounts nothing when there is nothing', () => {
+		expect(sectionsToMount([], 5, null)).toEqual([])
+	})
+})
+
+describe('isNearEnd', () => {
+	let geometry = {
+		contentOffsetX: 0,
+		containerWidth: 400,
+		contentWidth: 400,
+		containerHeight: 800,
+		contentHeight: 3000,
+	}
+
+	test('is near the end within a screen of the bottom', () => {
+		expect(isNearEnd({...geometry, contentOffsetY: 1500})).toBe(true)
+	})
+
+	test('is not near the end further up', () => {
+		expect(isNearEnd({...geometry, contentOffsetY: 1000})).toBe(false)
+	})
+
+	test('is near the end when the content is shorter than the screen', () => {
+		expect(isNearEnd({...geometry, contentOffsetY: 0, contentHeight: 500})).toBe(true)
 	})
 })
