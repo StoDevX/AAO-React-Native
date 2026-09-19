@@ -42,6 +42,11 @@ export default function TransportationPage(): React.ReactNode {
 
 	let {data: otherModes = [], refetch: refetchOtherModes} = useQuery(otherModesGroupedOptions)
 
+	// Filtered here rather than in the query: `busLineOptions` shares this same
+	// cache key and selects a single line by name for the timetable sheet, so
+	// hiding a line at fetch time would make that lookup fail to find it too.
+	let visibleBusLines = busLines.filter((line) => !line.hidden)
+
 	// Returns both, rather than firing and forgetting them: SwiftUI's
 	// `refreshable` spinner runs until the handler it was given settles, so a
 	// void return would stop it the instant the pull ended.
@@ -74,14 +79,14 @@ export default function TransportationPage(): React.ReactNode {
 					}),
 				]}
 			>
-				{busLines.length === 0 ? (
+				{visibleBusLines.length === 0 ? (
 					<ContentUnavailableView
 						description="Check back once the college publishes its routes."
 						systemImage="bus"
 						title="No Bus Lines"
 					/>
 				) : (
-					busLines.map((line) => (
+					visibleBusLines.map((line) => (
 						<BusLineWidget
 							key={line.line}
 							line={line}
