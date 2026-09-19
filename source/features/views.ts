@@ -121,14 +121,6 @@ export const AllViews = (): Array<ViewType> => {
 		},
 		{
 			type: 'view',
-			view: '/Communities',
-			title: 'Communities',
-			icon: 'bubble.left.and.bubble.right.fill',
-			gradient: c.orangeGradient,
-			devOnly: true,
-		},
-		{
-			type: 'view',
 			view: '/Athletics',
 			title: 'Athletics',
 			icon: 'trophy.fill',
