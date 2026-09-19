@@ -31,6 +31,21 @@ const DETAIL_SHEET: React.ComponentProps<typeof Stack.Screen>['options'] = {
 	sheetLargestUndimmedDetentIndex: 'none',
 }
 
+/**
+ * The bus sheet, which opens straight to full height.
+ *
+ * The other detail sheets rest at `SHEET_RESTING_FRACTION` first because their
+ * content is short enough to read there -- a building's hours, one dictionary
+ * entry. A line's timetable is a stop per row over a progress rail, and at the
+ * resting height it is a scroll within a scroll showing four rows of a
+ * twenty-row route. Opening at full height is what a reader would do first
+ * anyway.
+ */
+const BUS_SHEET: React.ComponentProps<typeof Stack.Screen>['options'] = {
+	...DETAIL_SHEET,
+	sheetAllowedDetents: [0.999],
+}
+
 export default function HomeLayout(): React.ReactNode {
 	return (
 		<Stack screenOptions={{headerBackButtonDisplayMode: 'minimal'}}>
@@ -38,7 +53,7 @@ export default function HomeLayout(): React.ReactNode {
 			<Stack.Screen name="Streaming Media" options={{title: 'Streaming Media'}} />
 			<Stack.Screen name="News" options={{title: 'News', headerLargeTitleEnabled: true}} />
 			<Stack.Screen name="Transportation" options={{title: 'Transportation'}} />
-			<Stack.Screen name="Transportation/line" options={DETAIL_SHEET} />
+			<Stack.Screen name="Transportation/line" options={BUS_SHEET} />
 			<Stack.Screen name="Campus" />
 			<Stack.Screen name="Campus/detail" options={DETAIL_SHEET} />
 			<Stack.Screen name="Dictionary/entry" options={DETAIL_SHEET} />

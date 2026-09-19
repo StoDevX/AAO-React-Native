@@ -161,7 +161,7 @@ function NextRoundCell({time, onPress}: {time: Moment; onPress: () => void}): Re
 				buttonStyle('plain'),
 				frame({width: CELL_WIDTH}),
 				accessibilityElement('combine'),
-				accessibilityLabel(`Next bus, ${label}`),
+				accessibilityLabel(`Next departure, ${label}`),
 			]}
 			onPress={onPress}
 		>
@@ -203,7 +203,7 @@ function NextRoundCell({time, onPress}: {time: Moment; onPress: () => void}): Re
 						frame({width: CELL_WIDTH}),
 					]}
 				>
-					Next bus
+					Next departure
 				</Text>
 			</VStack>
 		</Button>

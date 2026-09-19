@@ -88,12 +88,12 @@ describe('BusLineWidget', () => {
 
 		let {getByText} = await renderWidget(twoRounds)
 
-		expect(getByText('Next bus')).toBeTruthy()
+		expect(getByText('Next departure')).toBeTruthy()
 	})
 
 	test('ends the strip at the last stop on the final round of the day', async () => {
 		let {queryByText} = await renderWidget(makeLine())
 
-		expect(queryByText('Next bus')).toBeNull()
+		expect(queryByText('Next departure')).toBeNull()
 	})
 })
