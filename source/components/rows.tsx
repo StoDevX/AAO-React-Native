@@ -58,7 +58,9 @@ export type RowDestination =
 /**
  * The trailing glyph that says where a row's tap goes. An action draws nothing:
  * it completes what the row names and returns you here, so there is nowhere to
- * point. The tint is what says such a row is tappable at all.
+ * point. A tint stands in for the missing accessory where one is needed:
+ * `DisclosureRow` tints its title for an action, and `DetailRow` tints its
+ * value whenever the row is tappable and not a push.
  */
 function RowAccessory({destination}: {destination: RowDestination}): React.ReactNode {
 	if (destination === 'action') {
@@ -194,10 +196,10 @@ function LeadingImage({image}: {image: DisclosureRowImage}): React.ReactNode {
 
 /**
  * The list row this app repeats most: an optional leading image, a title, any
- * number of quieter detail lines, and a disclosure chevron. Shared rather than
- * repeated per screen because the `contentShape` placement below is easy to get
- * wrong and impossible to catch in Jest -- see [[NavigationRow]] for why the
- * chevron is drawn by hand.
+ * number of quieter detail lines, and a trailing accessory naming where the
+ * tap goes. Shared rather than repeated per screen because the `contentShape`
+ * placement below is easy to get wrong and impossible to catch in Jest -- see
+ * [[NavigationRow]] for why the accessory is drawn by hand.
  */
 export function DisclosureRow(props: DisclosureRowProps): React.ReactNode {
 	let {
@@ -218,6 +220,11 @@ export function DisclosureRow(props: DisclosureRowProps): React.ReactNode {
 		...(detailLines ? [lineLimit(detailLines), truncationMode('tail')] : []),
 	]
 
+	// A tinted title stands in for the missing accessory on an action row. An
+	// external row already carries `arrow.up.right`, so tinting its title too
+	// would turn a long link list into a wall of blue.
+	let titleTint = destination === 'action' ? c.systemBlue : c.label
+
 	return (
 		<Button
 			modifiers={[
@@ -232,7 +239,7 @@ export function DisclosureRow(props: DisclosureRowProps): React.ReactNode {
 				{image ? <LeadingImage image={image} /> : null}
 				<VStack alignment="leading" spacing={2}>
 					<Text
-						modifiers={[foregroundStyle(c.label), lineLimit(titleLines), truncationMode('tail')]}
+						modifiers={[foregroundStyle(titleTint), lineLimit(titleLines), truncationMode('tail')]}
 					>
 						{title}
 					</Text>
@@ -269,7 +276,7 @@ type DetailRowProps = {
 	value: string
 	/** How many lines the value may wrap to. Unbounded by default. */
 	valueLines?: number
-	/** Makes the row tappable, and draws a chevron to say so. */
+	/** Makes the row tappable, and draws an accessory naming where the tap goes. */
 	onPress?: () => void
 	/** Where tapping the row goes. Defaults to a push. Ignored without `onPress`. */
 	destination?: RowDestination
