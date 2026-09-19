@@ -4,18 +4,14 @@ import {HStack, Spacer, Text, VStack} from '@expo/ui/swift-ui'
 import {background, clipShape, font, foregroundStyle, frame} from '@expo/ui/swift-ui/modifiers'
 import * as c from '@frogpond/colors'
 import type {Moment} from 'moment-timezone'
-import type {SingleBuildingScheduleType} from '../types'
-import {formatBuildingTimes, summarizeDays} from '../lib'
+import type {ScheduleEntry} from '../lib'
+import {formatBuildingTimes} from '../lib'
 
 /** The gap between the accent bar and the text beside it. */
 const BAR_GAP = 8
 
-type ScheduleEntry = {
-	schedule: SingleBuildingScheduleType
-	isActive: boolean
-}
-
 type Props = {
+	label: string
 	entries: ScheduleEntry[]
 	now: Moment
 	accentColor: ColorValue
@@ -25,10 +21,7 @@ type Props = {
  * A grouped schedule row: day label on the left, time entries stacked on the right.
  * The accent bar appears to the left of the day label when any entry is active.
  */
-export function ScheduleRowSwiftUI({entries, now, accentColor}: Props): React.ReactNode {
-	if (entries.length === 0) return null
-
-	let days = summarizeDays(entries[0].schedule.days)
+export function ScheduleRowSwiftUI({label, entries, now, accentColor}: Props): React.ReactNode {
 	let hasActiveEntry = entries.some((e) => e.isActive)
 
 	return (
@@ -47,13 +40,13 @@ export function ScheduleRowSwiftUI({entries, now, accentColor}: Props): React.Re
 					foregroundStyle(c.label),
 				]}
 			>
-				{days}
+				{label}
 			</Text>
 			<Spacer />
 			<VStack alignment="trailing" spacing={2}>
-				{entries.map(({schedule, isActive}) => (
+				{entries.map(({schedule, isActive, sourceIndex}) => (
 					<Text
-						key={`${schedule.from}-${schedule.to}`}
+						key={sourceIndex}
 						modifiers={[
 							font({textStyle: 'body', weight: isActive ? 'semibold' : 'regular'}),
 							foregroundStyle(c.secondaryLabel),
