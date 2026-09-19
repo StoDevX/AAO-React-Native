@@ -331,10 +331,18 @@ const EditableSchedule = (props: EditableScheduleProps) => {
 		dispatch({type: 'DELETE_SCHEDULE', scheduleIndex})
 	}
 
-	let now = moment.tz(timezone())
+	let zone = timezone()
+	let now = moment.tz(zone)
 
 	return (
-		<Section title="INFORMATION">
+		<Section
+			// The hours below are the campus's own wall clock, the same one the
+			// picker in the schedule editor writes and the YAML the report
+			// carries -- say so, or a reader outside Central reads their own
+			// times back and reports an hour that was never wrong.
+			footer={schedule.hours.length > 0 ? <Text>Hours are in Central Time.</Text> : undefined}
+			title="INFORMATION"
+		>
 			<SyncedTextField
 				autocapitalization="words"
 				onChangeText={editTitle}
@@ -356,8 +364,14 @@ const EditableSchedule = (props: EditableScheduleProps) => {
 			/>
 
 			{schedule.hours.map((set, i) => (
-				// oxlint-disable-next-line react/no-array-index-key -- the index is the handle editRow edits by
-				<TimesRow key={i} now={now} onPress={() => props.editRow(scheduleIndex, i)} set={set} />
+				<TimesRow
+					// oxlint-disable-next-line react/no-array-index-key -- the index is the handle editRow edits by
+					key={i}
+					now={now}
+					onPress={() => props.editRow(scheduleIndex, i)}
+					set={set}
+					zone={zone}
+				/>
 			))}
 
 			<NavigationRow onPress={addHoursRow} title="Add More Hours" />
@@ -371,13 +385,14 @@ type TimesRowProps = {
 	set: SingleBuildingScheduleType
 	onPress: () => void
 	now: Moment
+	zone: string
 }
 
-const TimesRow = ({set, now, onPress}: TimesRowProps) => (
+const TimesRow = ({set, now, onPress, zone}: TimesRowProps) => (
 	<DetailRow
 		label={set.days.length > 0 ? summarizeDays(set.days) : 'Days'}
 		onPress={onPress}
-		value={formatBuildingTimes(set, now)}
+		value={formatBuildingTimes(set, now, {zone})}
 	/>
 )
 

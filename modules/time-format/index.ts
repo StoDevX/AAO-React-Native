@@ -152,17 +152,29 @@ function hasMeridiem(locale: string): boolean {
  * Only where there is a meridiem, though. Dropping the minutes in a 24-hour
  * locale leaves a bare `15`, and `From 15 Wednesday, 19 August` does not read
  * as a time at all; those locales keep `15:00`.
+ *
+ * `timeZone` renders in a zone other than the device's, for the rare screen
+ * that shows a time belonging to somewhere else -- the building-hours report
+ * form, which is a reader writing down the campus's own schedule. Pass a
+ * moment already in that zone: the on-the-hour check below reads the
+ * moment's own minutes, and a half-hour-offset zone would disagree with it.
  */
-export function formatTime(m: Moment, locale: string = deviceLocale()): string {
+export function formatTime(m: Moment, locale: string = deviceLocale(), timeZone?: string): string {
 	let meridiem = hasMeridiem(locale)
 
 	// A 24-hour clock pads the hour -- `06:00`, not `6:00` -- while a 12-hour
 	// one does not: `06 AM` is wrong wherever `6 AM` is right.
 	let hour = meridiem ? ('numeric' as const) : ('2-digit' as const)
 	let bare = m.minutes() === 0 && meridiem
-	let options: Intl.DateTimeFormatOptions = bare ? {hour} : {hour, minute: '2-digit'}
+	let shape: Intl.DateTimeFormatOptions = bare ? {hour} : {hour, minute: '2-digit'}
+	let options = timeZone ? {...shape, timeZone} : shape
 
-	return formatterFor(`time-${hour}-${bare}`, locale, options).format(m.toDate())
+	// The zone joins the cache key: it is baked into the formatter and, unlike
+	// the device's own zone, is not what `refreshFormattersIfZoneChanged`
+	// watches.
+	return formatterFor(`time-${hour}-${bare}-${timeZone ?? 'device'}`, locale, options).format(
+		m.toDate(),
+	)
 }
 
 /**
