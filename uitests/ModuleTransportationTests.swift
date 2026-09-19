@@ -63,7 +63,8 @@ class ModuleTransportationTests: UITestCase {
 			.capture("Transportation - Saturday schedule")
 	}
 
-	/// Other Modes has no tab of its own any more.
+	/// Other Modes has no tab of its own -- it is a set of sections below the
+	/// bus widgets, on the same screen.
 	func testOtherModesSitsBelowTheWidgets() throws {
 		TransportationScreen(app: app)
 			.navigate()

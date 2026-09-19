@@ -582,6 +582,10 @@ struct TestIdentifiers {
 		/// once, so its presence unambiguously means the strip scrolled forward
 		/// rather than showing a second, later occurrence of the start.
 		static let aStopFartherAlongTheRoute = "El Tequila"
+
+		/// The navigation bar's day menu, labelled by the day it is showing.
+		/// `Today` when the screens are following the clock.
+		static let dayMenuDefaultLabel = "Today"
 		static let aDay = "Saturday"
 		/// The list footer renders as a single Text, so both lines are one label.
 		static let footer = """

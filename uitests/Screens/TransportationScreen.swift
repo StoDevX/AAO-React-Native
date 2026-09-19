@@ -99,15 +99,6 @@ struct TransportationScreen: Screen {
 		return self
 	}
 
-	/// The end of the route, reached by scrolling the sheet's timetable.
-	@discardableResult
-	func scrollToEndOfRoute() -> Self {
-		for _ in 0..<4 {
-			list.swipeUp()
-		}
-		return self
-	}
-
 	/// Open a stop's own schedule from inside the sheet's timetable.
 	@discardableResult
 	func openFirstStop() -> Self {
@@ -136,7 +127,7 @@ struct TransportationScreen: Screen {
 	/// Pick a day from the sheet's navigation bar menu.
 	@discardableResult
 	func pickDay(_ day: String) -> Self {
-		let menu = app.buttons["Today"].firstMatch
+		let menu = app.buttons[TestIdentifiers.Transportation.dayMenuDefaultLabel].firstMatch
 		XCTAssertTrue(
 			menu.waitForExistence(timeout: 30),
 			"The sheet's navigation bar should offer a day menu labelled Today")
@@ -168,10 +159,10 @@ struct TransportationScreen: Screen {
 		return self
 	}
 
-	/// Other Modes now sits below the widgets rather than behind a tab. This
-	/// scrolls all the way to the last row on the screen, which lives in Other
-	/// Modes' final, headerless section -- proving the list scrolls past the
-	/// widgets and that the unlabelled section is actually reached.
+	/// Other Modes sits below the widgets on this screen, not behind its own
+	/// tab. This scrolls all the way to the last row on the screen, which lives
+	/// in Other Modes' final, headerless section -- proving the list scrolls
+	/// past the widgets and that the unlabelled section is actually reached.
 	@discardableResult
 	func scrollToOtherModes() -> Self {
 		let row = app.elementWithLabel(startingWith: TestIdentifiers.Transportation.lastOtherModesRow)
