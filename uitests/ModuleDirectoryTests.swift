@@ -38,8 +38,8 @@ class ModuleDirectoryTests: UITestCase {
 	}
 
 	/// A contact carries either a phone number or a link, and its one button
-	/// follows whichever it has. Every other contact here places a call, so
-	/// this is the only test that reaches the link branch.
+	/// follows whichever it has. The other tests here all open a contact that
+	/// places a call, so this is the only one that reaches the link branch.
 	func testALinkContactOpensItsPage() throws {
 		DirectoryScreen(app: app)
 			.navigate()
