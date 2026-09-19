@@ -83,11 +83,9 @@ const HIDE_BOTTOM_SEPARATOR = [listRowSeparator('hidden', 'bottom')]
 /**
  * `headline` is body-sized but semibold, and scales with Dynamic Type --
  * matching Mail's bold sender line without hardcoding a weight or a fixed
- * point size the way `font({weight: 'bold'})` would. Fills the text column's
- * width like the excerpt beneath it, so the two lines read as one flush-left
- * block.
+ * point size the way `font({weight: 'bold'})` would.
  */
-const TITLE_MODIFIERS = [lineLimit(2), font({textStyle: 'headline'}), ...FILL_LEADING]
+const TITLE_MODIFIERS = [lineLimit(2), font({textStyle: 'headline'})]
 
 const EXCERPT_MODIFIERS = [
 	lineLimit(3),
