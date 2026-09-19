@@ -46,7 +46,13 @@ type ActionRowProps = RowProps & {
 	destructive?: boolean
 }
 
-/** Where a row's tap goes, which is what its trailing accessory names. */
+/**
+ * Where a row's tap goes, which its trailing accessory names: `push` draws
+ * `chevron.right`, `action` draws nothing and tints the label instead, and
+ * `external` draws `arrow.up.right`. `DetailRow` is the exception: its value
+ * is secondary-coloured text that reads as static, so it tints for `external`
+ * too, not just `action`.
+ */
 export type RowDestination =
 	/** Another screen in this navigation stack. */
 	| 'push'
@@ -56,11 +62,9 @@ export type RowDestination =
 	| 'external'
 
 /**
- * The trailing glyph that says where a row's tap goes. An action draws nothing:
- * it completes what the row names and returns you here, so there is nowhere to
- * point. A tint stands in for the missing accessory where one is needed:
- * `DisclosureRow` tints its title for an action, and `DetailRow` tints its
- * value whenever the row is tappable and not a push.
+ * The trailing glyph naming a row's destination -- see [[RowDestination]]. An
+ * action draws nothing: it completes what the row names and returns you
+ * here, so there is nowhere to point.
  */
 function RowAccessory({destination}: {destination: RowDestination}): React.ReactNode {
 	if (destination === 'action') {
@@ -220,9 +224,8 @@ export function DisclosureRow(props: DisclosureRowProps): React.ReactNode {
 		...(detailLines ? [lineLimit(detailLines), truncationMode('tail')] : []),
 	]
 
-	// A tinted title stands in for the missing accessory on an action row. An
-	// external row already carries `arrow.up.right`, so tinting its title too
-	// would turn a long link list into a wall of blue.
+	// External already carries `arrow.up.right`; tinting the title too would
+	// turn a long link list into a wall of blue.
 	let titleTint = destination === 'action' ? c.systemBlue : c.label
 
 	return (
@@ -292,7 +295,8 @@ type DetailRowProps = {
 export function DetailRow(props: DetailRowProps): React.ReactNode {
 	let {label, value, valueLines, onPress, destination = 'push'} = props
 
-	// A tinted value is what says a row with no accessory is still tappable.
+	// The value is secondary-coloured text that reads as static, so it is
+	// tinted whenever it is tappable and not a push.
 	let valueTint = onPress && destination !== 'push' ? c.systemBlue : c.secondaryLabel
 
 	let content = (

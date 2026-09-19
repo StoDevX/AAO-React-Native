@@ -55,8 +55,8 @@ const ROW_BACKGROUND = listRowBackground(c.secondarySystemGroupedBackground)
  * The row's own trailing accessory. A story opens in the browser rather than
  * pushing, so it points out of the app. `@expo/ui` exposes no accessory that
  * draws one without a real `NavigationLink` push, so it is drawn by hand,
- * matching the colour `RowAccessory` uses. Sized and gapped by the title row's
- * own `HStack`, not a hardcoded pad -- and it shares that row rather than the
+ * matching the colour `RowAccessory` uses. Gapped by the title row's own
+ * `HStack`, not a hardcoded pad -- and it shares that row rather than the
  * whole button, so the excerpt below runs the full row width instead of
  * stopping short to leave it a column of its own, the way Mail's preview line
  * does. Hidden from VoiceOver: it is decorative, and the row's own
