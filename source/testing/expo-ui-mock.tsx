@@ -512,6 +512,10 @@ export function LazyVStack({children}: WithModifiers & {alignment?: string}): Re
 	return <View>{children}</View>
 }
 
+export function LazyHStack({children}: WithModifiers & {alignment?: string}): React.ReactNode {
+	return <View>{children}</View>
+}
+
 /**
  * A paged `TabView` renders one tab at a time natively. The stand-in renders
  * the selected tab's children and drops the rest, which is the decision a test
@@ -556,6 +560,19 @@ TabView.Tab = function Tab({
 /** A spacer takes up room and says nothing, so there is nothing to render. */
 export function Spacer(): React.ReactNode {
 	return null
+}
+
+/**
+ * Shapes are paint. Jest has no compositor, so the stand-ins are empty views
+ * that keep the tree's shape -- whether a rail is drawn, and in what colour, is
+ * a UI test's question.
+ */
+export function Capsule(_props: WithModifiers & {cornerStyle?: string}): React.ReactNode {
+	return <View />
+}
+
+export function Circle(_props: WithModifiers): React.ReactNode {
+	return <View />
 }
 
 /**
