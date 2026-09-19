@@ -1,0 +1,21 @@
+name: SARN Office
+subtitle: Sexual Assault Resource Network
+category: Health and Wellness
+building: bc
+
+schedule:
+  - title: Hours
+    hours:
+      - {days: [Mo, We], from: '7:00pm', to: '8:00pm'}
+      - {days: [Tu, Th], from: '4:00pm', to: '5:00pm'}
+      - {days: [Fr], from: '10:00am', to: '11:00am'}
+    notes: Buntrock Commons Room 14, next to KSTO
+
+breakSchedule:
+  fall: []
+  thanksgiving: []
+  winter: []
+  interim: []
+  spring: []
+  easter: []
+  summer: []

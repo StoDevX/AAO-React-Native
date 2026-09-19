@@ -186,6 +186,12 @@ Put the `capture` *before* the assertion it illustrates. `UITestCase` sets
 For a whole-screen shot with no one assertion behind it, put it after whichever
 check proves the screen is up and before the one most likely to fail.
 
+**A screenshot's times are in the simulator's zone, not campus time.** Hours
+in `data/building-hours/` are Chicago times, and the app prints them in the
+device's zone (`source/features/building-hours/lib/format-times.ts`). A
+simulator that inherits an Eastern Mac's zone shows Stav's 7:15am breakfast as
+8:15 AM, and every other time an hour late. That is intended, not a data bug.
+
 ## Writing a new test
 
 Screen objects live in `uitests/Screens/`, one struct per screen conforming to

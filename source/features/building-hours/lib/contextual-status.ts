@@ -6,7 +6,6 @@ import {findOpenWindow, windowOpeningOn} from './find-open-window'
 import {CHAPEL_COUNTDOWN_MINUTES, isChapelTime} from './chapel'
 import {findChapelReopen} from './find-chapel-reopen'
 import {findChapelPause} from './find-chapel-pause'
-import {findOpenService} from './find-open-service'
 
 const ALMOST_THRESHOLD_MINUTES = 30
 
@@ -118,20 +117,6 @@ export function contextualStatus(
 			return plain(`Reopens in ${minutesLeft} min`)
 		}
 		return plain(`Reopens at ${formatStatusTime(chapelReopen, locale)}`)
-	}
-
-	// A phone line or a delivery service is not a door, so it never outranks one.
-	// It does outrank a door that opens later, though: something reachable now
-	// beats something reachable at ten past ten.
-	let service = findOpenService(building, now)
-	if (service) {
-		let set = (building.schedule || []).find((candidate) => candidate.status === service)
-		let window = set?.hours
-			.map((hours) => findOpenWindow(hours, now))
-			.find((candidate) => candidate !== null)
-		if (window) {
-			return plain(`${service.name} until ${formatStatusTime(window.close, locale)}`)
-		}
 	}
 
 	let next = findNextOpenToday(building, now)

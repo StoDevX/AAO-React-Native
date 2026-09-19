@@ -248,6 +248,10 @@ by bundle id alone starts the app with no idea where Metro is, and it renders
 `No script URL provided. Make sure the packager is running…`, which reads like
 a broken Metro rather than a missing argument.
 
+**Every time on screen can be an hour off the data.** Building hours are
+stored in Chicago time and printed in the device's zone, so a simulator on an
+Eastern Mac shows them an hour later. That is intended; see `format-times.ts`.
+
 **LogBox will not show you a warning.** Since React Native 0.80 the toast reads
 `Open debugger to view warnings.` and tapping it does nothing — there is no
 inspector to open. Warnings, including `Require cycle:`, print in the Metro
