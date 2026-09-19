@@ -1,79 +1,60 @@
 import * as React from 'react'
 import type {ColorValue} from 'react-native'
 import {HStack, Spacer, Text, VStack} from '@expo/ui/swift-ui'
-import {
-	background,
-	clipShape,
-	font,
-	foregroundStyle,
-	frame,
-	padding,
-} from '@expo/ui/swift-ui/modifiers'
+import {background, clipShape, font, foregroundStyle, frame} from '@expo/ui/swift-ui/modifiers'
 import * as c from '@frogpond/colors'
 import type {Moment} from 'moment-timezone'
-import type {SingleBuildingScheduleType} from '../types'
-import {formatBuildingTimes, summarizeDays} from '../lib'
+import {formatBuildingTimes, type ScheduleEntry} from '../lib'
 
 /** The gap between the accent bar and the text beside it. */
 const BAR_GAP = 8
 
-/** How far the accent bar clears the title/subtitle block at each end. */
-const BAR_OVERSHOOT = 3
-
 type Props = {
-	schedule: SingleBuildingScheduleType
+	label: string
+	entries: ScheduleEntry[]
 	now: Moment
-	isActive: boolean
 	accentColor: ColorValue
-	showAccentBar?: boolean
 }
 
 /**
- * A single schedule row: days on the left, times on the right.
- * Active rows get semibold text; accent bar shown unless showAccentBar is false.
+ * A grouped schedule row: day label on the left, time entries stacked on the right.
+ * The accent bar appears to the left of the day label when any entry is active.
  */
-export function ScheduleRowSwiftUI({
-	schedule,
-	now,
-	isActive,
-	accentColor,
-	showAccentBar = true,
-}: Props): React.ReactNode {
-	let days = summarizeDays(schedule.days)
-	let times = formatBuildingTimes(schedule, now)
+export function ScheduleRowSwiftUI({label, entries, now, accentColor}: Props): React.ReactNode {
+	let hasActiveEntry = entries.some((e) => e.isActive)
 
 	return (
-		<HStack alignment="top" spacing={showAccentBar ? BAR_GAP : 0}>
-			{showAccentBar ? (
-				<VStack
-					modifiers={[
-						frame({minWidth: 4, maxWidth: 4, maxHeight: Infinity}),
-						...(isActive ? [background(accentColor), clipShape('capsule')] : []),
-					]}
-				>
-					{null}
-				</VStack>
-			) : null}
-
-			<HStack modifiers={[padding({vertical: BAR_OVERSHOOT})]}>
-				<Text
-					modifiers={[
-						font({textStyle: 'body', weight: isActive ? 'semibold' : 'regular'}),
-						foregroundStyle(c.label),
-					]}
-				>
-					{days}
-				</Text>
-				<Spacer />
-				<Text
-					modifiers={[
-						font({textStyle: 'body', weight: isActive ? 'semibold' : 'regular'}),
-						foregroundStyle(c.secondaryLabel),
-					]}
-				>
-					{times}
-				</Text>
-			</HStack>
+		<HStack alignment="top" spacing={BAR_GAP}>
+			<VStack
+				modifiers={[
+					frame({minWidth: 4, maxWidth: 4, maxHeight: Infinity}),
+					...(hasActiveEntry ? [background(accentColor), clipShape('capsule')] : []),
+				]}
+			>
+				{null}
+			</VStack>
+			<Text
+				modifiers={[
+					font({textStyle: 'body', weight: hasActiveEntry ? 'semibold' : 'regular'}),
+					foregroundStyle(c.label),
+				]}
+			>
+				{label}
+			</Text>
+			<Spacer />
+			<VStack alignment="trailing" spacing={2}>
+				{entries.map(({schedule, isActive, sourceIndex}) => (
+					<Text
+						key={sourceIndex}
+						modifiers={[
+							font({textStyle: 'body', weight: isActive ? 'semibold' : 'regular'}),
+							foregroundStyle(c.secondaryLabel),
+						]}
+					>
+						{formatBuildingTimes(schedule, now)}
+					</Text>
+				))}
+			</VStack>
 		</HStack>
 	)
 }

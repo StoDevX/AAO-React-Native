@@ -90,13 +90,7 @@ export const BuildingListRow = React.memo(function BuildingListRow({
 					modifiers={[contentShape(shapes.rectangle()), fixedSize({vertical: true})]}
 					spacing={8}
 				>
-					<Text
-						modifiers={[
-							font({textStyle: 'body', weight: 'medium'}),
-							foregroundStyle(c.label),
-							...SINGLE_LINE,
-						]}
-					>
+					<Text modifiers={[font({textStyle: 'body'}), foregroundStyle(c.label), ...SINGLE_LINE]}>
 						{building.name}
 					</Text>
 					<Spacer />

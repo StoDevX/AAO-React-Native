@@ -28,7 +28,7 @@ import {
 	getShortBuildingStatus,
 	getAccentBackgroundColor,
 	contextualStatus,
-	isScheduleRowActive,
+	groupHoursByDays,
 } from '../lib'
 import {ScheduleRowSwiftUI} from './schedule-row-swiftui'
 import {openUrl} from '@frogpond/open-url'
@@ -119,23 +119,26 @@ export function BuildingDetailSwiftUI({building, now, campus}: Props): React.Rea
 					</HStack>
 				</Section>
 
-				{schedules.map((schedule) => (
-					<Section
-						key={schedule.title}
-						footer={schedule.notes ? <Text>{schedule.notes}</Text> : undefined}
-						title={schedule.title.toUpperCase()}
-					>
-						{schedule.hours.map((set) => (
-							<ScheduleRowSwiftUI
-								key={`${set.days.join('')}-${set.from}-${set.to}`}
-								accentColor={accentColor}
-								isActive={isScheduleRowActive(schedule, set, now)}
-								now={now}
-								schedule={set}
-							/>
-						))}
-					</Section>
-				))}
+				{schedules.map((schedule) => {
+					let groups = groupHoursByDays(schedule, now)
+					return (
+						<Section
+							key={schedule.title}
+							footer={schedule.notes ? <Text>{schedule.notes}</Text> : undefined}
+							title={schedule.title.toUpperCase()}
+						>
+							{groups.map((group) => (
+								<ScheduleRowSwiftUI
+									key={group.entries[0].sourceIndex}
+									accentColor={accentColor}
+									entries={group.entries}
+									label={group.label}
+									now={now}
+								/>
+							))}
+						</Section>
+					)
+				})}
 
 				{feature ? (
 					<Section>
