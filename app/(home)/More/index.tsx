@@ -65,6 +65,7 @@ function MoreView(): React.ReactNode {
 								{section.data.map((link) => (
 									<DisclosureRow
 										key={link.url}
+										destination="external"
 										onPress={() => openUrl(link.url)}
 										title={link.label}
 										titleLines={2}

@@ -1,6 +1,14 @@
 import * as React from 'react'
 import {Alert, Image, StyleSheet, type ImageResolvedAssetSource} from 'react-native'
-import {Button, HStack, Image as SwiftUIImage, RNHostView, Text, VStack} from '@expo/ui/swift-ui'
+import {
+	Button,
+	HStack,
+	Image as SwiftUIImage,
+	RNHostView,
+	Spacer,
+	Text,
+	VStack,
+} from '@expo/ui/swift-ui'
 import {
 	accessibilityHidden,
 	accessibilityIdentifier,
@@ -31,15 +39,15 @@ const PLAIN_BUTTON = buttonStyle('plain')
 /**
  * `contentShape` belongs on the label rather than the `Button`: SwiftUI
  * derives a button's tappable region from its label, so the empty run below
- * a short excerpt -- and to the right of a short title, before the chevron
+ * a short excerpt -- and to the right of a short title, before the accessory
  * -- would otherwise be dead to taps.
  */
 const ROW_HIT_AREA = [contentShape(shapes.rectangle())]
 
 /**
- * Fills the row so trailing content (the chevron, the title's own available
- * width) settles against the true trailing edge instead of hugging whatever
- * width the text happens to need.
+ * Fills the row so trailing content (the accessory, the text column's own
+ * available width) settles against the true trailing edge instead of hugging
+ * whatever width the text happens to need.
  */
 const FILL_LEADING = [frame({maxWidth: Infinity, alignment: 'leading'})]
 
@@ -52,17 +60,15 @@ const FILL_LEADING = [frame({maxWidth: Infinity, alignment: 'leading'})]
 const ROW_BACKGROUND = listRowBackground(c.secondarySystemGroupedBackground)
 
 /**
- * The row's own disclosure arrow. `@expo/ui` exposes no accessory that adds
- * one without a real `NavigationLink` push -- which these rows don't do,
- * they open a story in the browser -- so it's drawn by hand, matching
- * `DisclosureArrow`'s glyph and colour. Sized and gapped by the title row's
- * own `HStack`, not a hardcoded pad -- and shares that row rather than the
- * whole button, so the excerpt below runs the full row width instead of
- * stopping short to leave the chevron a column of its own, the way Mail's
- * preview line does. Hidden from VoiceOver: it's decorative, and the row's
- * own accessibilityLabel already says what pressing it does.
+ * The row's own trailing accessory. A story opens in the browser rather than
+ * pushing, so it points out of the app. `@expo/ui` exposes no accessory that
+ * draws one without a real `NavigationLink` push, so it is drawn by hand,
+ * matching the colour `RowAccessory` uses. Gapped by the row's own `HStack`,
+ * the same as the thumbnail, not a hardcoded pad. Hidden from VoiceOver: it
+ * is decorative, and the row's own accessibilityLabel already says what
+ * pressing it does.
  */
-const CHEVRON_MODIFIERS = [accessibilityHidden(true)]
+const ACCESSORY_MODIFIERS = [accessibilityHidden(true)]
 
 /**
  * Starts the separator where the title/excerpt column starts: 70pt for the
@@ -77,11 +83,9 @@ const HIDE_BOTTOM_SEPARATOR = [listRowSeparator('hidden', 'bottom')]
 /**
  * `headline` is body-sized but semibold, and scales with Dynamic Type --
  * matching Mail's bold sender line without hardcoding a weight or a fixed
- * point size the way `font({weight: 'bold'})` would. Fills its row so the
- * chevron beside it settles at the row's trailing edge rather than right
- * after the last character.
+ * point size the way `font({weight: 'bold'})` would.
  */
-const TITLE_MODIFIERS = [lineLimit(2), font({textStyle: 'headline'}), ...FILL_LEADING]
+const TITLE_MODIFIERS = [lineLimit(2), font({textStyle: 'headline'})]
 
 const EXCERPT_MODIFIERS = [
 	lineLimit(3),
@@ -141,16 +145,22 @@ export const NewsRow = (props: Props): React.ReactNode => {
 					</VStack>
 				) : null}
 				<VStack alignment="leading" modifiers={FILL_LEADING} spacing={4}>
-					<HStack alignment="top" spacing={8}>
-						<Text modifiers={TITLE_MODIFIERS}>{story.title}</Text>
-						<SwiftUIImage
-							color={c.secondaryLabel}
-							modifiers={CHEVRON_MODIFIERS}
-							size={20}
-							systemName="chevron.right"
-						/>
-					</HStack>
+					<Text modifiers={TITLE_MODIFIERS}>{story.title}</Text>
 					<Text modifiers={EXCERPT_MODIFIERS}>{story.excerpt}</Text>
+				</VStack>
+				{/* A `Spacer` beneath the glyph, inside its own `VStack`, is what
+				    pins it to the row's top edge: the outer `HStack` is
+				    `alignment="center"`, and a `VStack` stretched to the row's full
+				    height settles non-expanding content -- the image -- at its own
+				    top before the `Spacer` claims the rest. */}
+				<VStack>
+					<SwiftUIImage
+						color={c.tertiaryLabel}
+						modifiers={ACCESSORY_MODIFIERS}
+						size={14}
+						systemName="arrow.up.right"
+					/>
+					<Spacer />
 				</VStack>
 			</HStack>
 		</Button>

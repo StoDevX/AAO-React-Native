@@ -14,6 +14,7 @@ type Props = {stream: StreamType}
 
 export const StreamRow = ({stream}: Props): React.ReactNode => (
 	<DisclosureRow
+		destination="external"
 		detail={streamDetailLines(stream)}
 		image={
 			stream.thumb

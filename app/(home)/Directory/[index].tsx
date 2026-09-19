@@ -122,6 +122,7 @@ export default function DirectoryDetailPage(): React.ReactNode {
 
 							{email ? (
 								<DetailRow
+									destination="action"
 									label="Email"
 									onPress={() => sendEmail({to: [email], subject: '', body: ''})}
 									value={email}
@@ -130,6 +131,7 @@ export default function DirectoryDetailPage(): React.ReactNode {
 
 							{officeHours ? (
 								<DetailRow
+									destination="external"
 									label={officeHours.title}
 									onPress={officeHours.href ? () => openUrl(String(officeHours.href)) : undefined}
 									value={officeHours.description}
@@ -137,7 +139,12 @@ export default function DirectoryDetailPage(): React.ReactNode {
 							) : null}
 
 							{profileUrl ? (
-								<DetailRow label="Profile" onPress={() => openUrl(profileUrl)} value={profileUrl} />
+								<DetailRow
+									destination="external"
+									label="Profile"
+									onPress={() => openUrl(profileUrl)}
+									value={profileUrl}
+								/>
 							) : null}
 						</Section>
 					) : null}
@@ -147,6 +154,7 @@ export default function DirectoryDetailPage(): React.ReactNode {
 							{loc.display ? <DetailRow label="Location" value={loc.display} /> : null}
 							{loc.phone ? (
 								<DetailRow
+									destination="action"
 									label="Phone"
 									onPress={() => callPhone(loc.phone, {prompt: false})}
 									value={loc.phone}

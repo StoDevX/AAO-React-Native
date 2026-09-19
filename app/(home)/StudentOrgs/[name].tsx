@@ -119,7 +119,11 @@ export default function StudentOrgsDetailPage(): React.ReactNode {
 
 					{website ? (
 						<Section title="WEBSITE">
-							<DisclosureRow onPress={() => openUrl(website)} title={website} />
+							<DisclosureRow
+								destination="external"
+								onPress={() => openUrl(website)}
+								title={website}
+							/>
 						</Section>
 					) : null}
 
@@ -128,6 +132,7 @@ export default function StudentOrgsDetailPage(): React.ReactNode {
 							{contacts.map((contact) => (
 								<DisclosureRow
 									key={contact.email}
+									destination="action"
 									detail={contact.title}
 									onPress={() => sendEmail({to: [contact.email], subject: orgName})}
 									title={showNameOrEmail(contact)}
@@ -141,6 +146,7 @@ export default function StudentOrgsDetailPage(): React.ReactNode {
 							{advisors.map((contact) => (
 								<DisclosureRow
 									key={contact.email}
+									destination="action"
 									onPress={() => sendEmail({to: [contact.email], subject: orgName})}
 									title={contact.name}
 								/>

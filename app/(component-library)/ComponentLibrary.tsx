@@ -20,6 +20,7 @@ const LIBRARIES = [
 	{title: 'Colors', route: '/(component-library)/ColorsLibrary'},
 	{title: 'Context Menus', route: '/(component-library)/ContextMenuLibrary'},
 	{title: 'FAQ Banners', route: '/(component-library)/FaqBannerLibrary'},
+	{title: 'Rows', route: '/(component-library)/RowLibrary'},
 ] as const
 
 export default function ComponentLibraryRootPage(): React.ReactNode {

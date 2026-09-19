@@ -47,11 +47,45 @@ type ActionRowProps = RowProps & {
 }
 
 /**
+ * Where a row's tap goes, which its trailing accessory names: `push` draws
+ * `chevron.right`, `action` draws nothing and tints the label instead, and
+ * `external` draws `arrow.up.right`. `DetailRow` is the exception: its value
+ * is secondary-coloured text that reads as static, so it tints for `external`
+ * too, not just `action`.
+ */
+export type RowDestination =
+	/** Another screen in this navigation stack. */
+	| 'push'
+	/** The row is the thing, and tapping does it: a call, a message, a mutation. */
+	| 'action'
+	/** A document somewhere else, which tapping goes and shows. */
+	| 'external'
+
+/**
+ * The trailing glyph naming a row's destination -- see [[RowDestination]]. An
+ * action draws nothing: it completes what the row names and returns you
+ * here, so there is nowhere to point.
+ */
+function RowAccessory({destination}: {destination: RowDestination}): React.ReactNode {
+	if (destination === 'action') {
+		return null
+	}
+
+	return (
+		<Image
+			color={c.tertiaryLabel}
+			size={14}
+			systemName={destination === 'external' ? 'arrow.up.right' : 'chevron.right'}
+		/>
+	)
+}
+
+/**
  * A row that pushes another screen via React Navigation. `@expo/ui` has no
  * `NavigationLink` (it mounts its destination as a SwiftUI view inside a
  * SwiftUI `NavigationStack`, and this app pushes via React Navigation, so
- * there is no SwiftUI view for it to push to) so the chevron is drawn by
- * hand.
+ * there is no SwiftUI view for it to push to) so the accessory is drawn by
+ * hand -- see [[RowAccessory]].
  */
 export function NavigationRow(props: RowProps): React.ReactNode {
 	let {title, onPress, disabled = false} = props
@@ -68,7 +102,7 @@ export function NavigationRow(props: RowProps): React.ReactNode {
 			<HStack modifiers={[contentShape(shapes.rectangle())]}>
 				<Text modifiers={[foregroundStyle(c.label)]}>{title}</Text>
 				<Spacer />
-				<Image color={c.tertiaryLabel} size={14} systemName="chevron.right" />
+				<RowAccessory destination="push" />
 			</HStack>
 		</Button>
 	)
@@ -135,6 +169,8 @@ type DisclosureRowProps = {
 	 */
 	identifier?: string
 	onPress: () => void
+	/** Where tapping the row goes. Defaults to a push. */
+	destination?: RowDestination
 }
 
 function LeadingImage({image}: {image: DisclosureRowImage}): React.ReactNode {
@@ -164,13 +200,22 @@ function LeadingImage({image}: {image: DisclosureRowImage}): React.ReactNode {
 
 /**
  * The list row this app repeats most: an optional leading image, a title, any
- * number of quieter detail lines, and a disclosure chevron. Shared rather than
- * repeated per screen because the `contentShape` placement below is easy to get
- * wrong and impossible to catch in Jest -- see [[NavigationRow]] for why the
- * chevron is drawn by hand.
+ * number of quieter detail lines, and a trailing accessory naming where the
+ * tap goes. Shared rather than repeated per screen because the `contentShape`
+ * placement below is easy to get wrong and impossible to catch in Jest -- see
+ * [[NavigationRow]] for why the accessory is drawn by hand.
  */
 export function DisclosureRow(props: DisclosureRowProps): React.ReactNode {
-	let {title, detail, titleLines = 1, detailLines, image, identifier, onPress} = props
+	let {
+		title,
+		detail,
+		titleLines = 1,
+		detailLines,
+		image,
+		identifier,
+		onPress,
+		destination = 'push',
+	} = props
 
 	let details = detailLinesOf(detail)
 	let detailModifiers = [
@@ -178,6 +223,10 @@ export function DisclosureRow(props: DisclosureRowProps): React.ReactNode {
 		foregroundStyle(c.secondaryLabel),
 		...(detailLines ? [lineLimit(detailLines), truncationMode('tail')] : []),
 	]
+
+	// External already carries `arrow.up.right`; tinting the title too would
+	// turn a long link list into a wall of blue.
+	let titleTint = destination === 'action' ? c.systemBlue : c.label
 
 	return (
 		<Button
@@ -193,7 +242,7 @@ export function DisclosureRow(props: DisclosureRowProps): React.ReactNode {
 				{image ? <LeadingImage image={image} /> : null}
 				<VStack alignment="leading" spacing={2}>
 					<Text
-						modifiers={[foregroundStyle(c.label), lineLimit(titleLines), truncationMode('tail')]}
+						modifiers={[foregroundStyle(titleTint), lineLimit(titleLines), truncationMode('tail')]}
 					>
 						{title}
 					</Text>
@@ -204,7 +253,7 @@ export function DisclosureRow(props: DisclosureRowProps): React.ReactNode {
 					))}
 				</VStack>
 				<Spacer />
-				<Image color={c.tertiaryLabel} size={14} systemName="chevron.right" />
+				<RowAccessory destination={destination} />
 			</HStack>
 		</Button>
 	)
@@ -230,8 +279,10 @@ type DetailRowProps = {
 	value: string
 	/** How many lines the value may wrap to. Unbounded by default. */
 	valueLines?: number
-	/** Makes the row tappable, and draws a chevron to say so. */
+	/** Makes the row tappable, and draws an accessory naming where the tap goes. */
 	onPress?: () => void
+	/** Where tapping the row goes. Defaults to a push. Ignored without `onPress`. */
+	destination?: RowDestination
 }
 
 /**
@@ -242,21 +293,25 @@ type DetailRowProps = {
  * row in the list and follow the platform's own emphasis rather than ours.
  */
 export function DetailRow(props: DetailRowProps): React.ReactNode {
-	let {label, value, valueLines, onPress} = props
+	let {label, value, valueLines, onPress, destination = 'push'} = props
+
+	// The value is secondary-coloured text that reads as static, so it is
+	// tinted whenever it is tappable and not a push.
+	let valueTint = onPress && destination !== 'push' ? c.systemBlue : c.secondaryLabel
 
 	let content = (
 		<LabeledContent label={label}>
 			<HStack spacing={6}>
 				<Text
 					modifiers={[
-						foregroundStyle(c.secondaryLabel),
+						foregroundStyle(valueTint),
 						multilineTextAlignment('trailing'),
 						...(valueLines ? [lineLimit(valueLines)] : []),
 					]}
 				>
 					{value}
 				</Text>
-				{onPress ? <Image color={c.tertiaryLabel} size={14} systemName="chevron.right" /> : null}
+				{onPress ? <RowAccessory destination={destination} /> : null}
 			</HStack>
 		</LabeledContent>
 	)
