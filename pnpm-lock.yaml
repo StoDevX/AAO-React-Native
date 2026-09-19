@@ -114,9 +114,6 @@ importers:
       '@frogpond/html-lib':
         specifier: workspace:*
         version: link:modules/html-lib
-      '@frogpond/info-header':
-        specifier: workspace:*
-        version: link:modules/info-header
       '@frogpond/launch-arguments':
         specifier: workspace:*
         version: link:modules/launch-arguments
@@ -761,18 +758,6 @@ importers:
       htmlparser2:
         specifier: 12.0.0
         version: 12.0.0
-
-  modules/info-header:
-    dependencies:
-      '@frogpond/colors':
-        specifier: workspace:*
-        version: link:../colors
-      react:
-        specifier: 'catalog:'
-        version: 19.2.3
-      react-native:
-        specifier: 'catalog:'
-        version: 0.86.3(patch_hash=6ca2e1225f38672b073b92b9d13f24feebbe9e37ba67708a3f1569275ce99191)(@babel/core@7.29.7)(@react-native/jest-preset@0.86.3)(@types/react@19.2.18)(react@19.2.3)(supports-color@8.1.1)
 
   modules/launch-arguments: {}
 

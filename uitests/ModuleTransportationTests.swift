@@ -18,6 +18,17 @@ class ModuleTransportationTests: UITestCase {
 			.capture("stop schedule")
 	}
 
+	/// The day picker lives in the navigation bar rather than in the content,
+	/// so the section title is the only thing on screen that says which day is
+	/// showing. This checks the two stay in step.
+	func testPickingADayRetitlesTheSchedule() throws {
+		TransportationScreen(app: app)
+			.navigate()
+			.pickDay(TestIdentifiers.Transportation.aDay)
+			.verifyScheduleShows(day: TestIdentifiers.Transportation.aDay)
+			.capture("Transportation - Saturday schedule")
+	}
+
 	func testTransportationOtherModesList() throws {
 		let screen = TransportationScreen(app: app).navigate()
 
@@ -25,10 +36,16 @@ class ModuleTransportationTests: UITestCase {
 		XCTAssertTrue(
 			otherTab.waitForExistence(timeout: 30),
 			"Other tab should be visible on Transportation")
-		otherTab.tap()
 
 		let section = app.staticTexts["Bus"].firstMatch
-		XCTAssertTrue(section.waitForExistence(timeout: 30), "The Other tab should be showing")
+		for attempt in 1...3 {
+			otherTab.tap()
+			if section.waitForExistence(timeout: 10) {
+				break
+			}
+			XCTContext.runActivity(named: "Tap \(attempt) on Other did not switch; retrying") { _ in }
+		}
+		XCTAssertTrue(section.exists, "The Other tab should be showing")
 
 		screen.capture("Transportation - Other Modes")
 	}

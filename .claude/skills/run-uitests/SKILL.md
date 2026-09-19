@@ -163,7 +163,13 @@ is how a broken feature ends up looking covered.
 ## Getting the picture out
 
 `capture("some name")` on any `Screen` attaches a screenshot with
-`.keepAlways`. Pull it out of the result bundle and actually look at it:
+`.deleteOnSuccess`, which keeps a green shard's result bundle small. **So a run
+where everything passes leaves no screenshots to export.** To look at a screen
+that is working, fail the test on purpose after the capture — an
+`XCTFail("capturing")` on the line below it is enough — and delete that line
+once you have the picture.
+
+Pull it out of the result bundle and actually look at it:
 
 ```bash
 rm -rf /tmp/shots

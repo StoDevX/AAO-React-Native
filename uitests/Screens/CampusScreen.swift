@@ -350,8 +350,8 @@ struct CampusScreen: Screen {
 		return self
 	}
 
-	/// Assert the report screen actually came up, by its own `InfoHeader`
-	/// prompt rather than `reportAction`'s label -- that label belongs to the
+	/// Assert the report screen actually came up, by its own prompt
+	/// rather than `reportAction`'s label -- that label belongs to the
 	/// menu button that opens this screen, and would exist whether or not the
 	/// screen ever presented.
 	@discardableResult

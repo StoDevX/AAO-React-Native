@@ -1,7 +1,6 @@
 import * as React from 'react'
-import {useState} from 'react'
-import {ScrollView, StyleSheet, Text, TouchableOpacity, View} from 'react-native'
-import type {BusSchedule, UnprocessedBusLine, DayOfWeek} from './types'
+import {StyleSheet, Text, TouchableOpacity, View} from 'react-native'
+import type {BusSchedule, UnprocessedBusLine} from './types'
 import {
 	BusStateEnum,
 	busPropsForRow,
@@ -9,39 +8,34 @@ import {
 	getCurrentBusIteration,
 	getScheduleForNow,
 	processBusLine,
+	scheduleSectionTitle,
 } from './lib'
 import type {Moment} from 'moment-timezone'
 import find from 'lodash/find'
 import findLast from 'lodash/findLast'
 import {Separator} from '@frogpond/separator'
 import {BusStopRow} from './components/bus-stop-row'
-import {ListFooter, ListRow} from '@frogpond/lists'
-import {InfoHeader} from '@frogpond/info-header'
+import {ListRow} from '@frogpond/lists'
 import * as c from '@frogpond/colors'
 import {useRouter} from 'expo-router'
+import {Host, List, RNHostView, Section, Text as SwiftUIText, VStack} from '@expo/ui/swift-ui'
+import {
+	font,
+	foregroundStyle,
+	frame,
+	listRowInsets,
+	listRowSeparator,
+	listStyle,
+} from '@expo/ui/swift-ui/modifiers'
 import {BUS_FOOTER_MESSAGE} from './constants'
-import {DayPickerHeader, momentToDayOfWeek, createMomentForDay} from './components/day-picker'
-
-/// The corner radius and side margin iOS gives an inset-grouped section.
-const CARD_RADIUS = 10
-const CARD_MARGIN = 16
+import {momentToDayOfWeek, createMomentForDay} from './components/days'
+import {useBusDay} from './store'
+import {useTimetableWidth} from './use-timetable-width'
 
 const styles = StyleSheet.create({
-	container: {
+	host: {
+		flex: 1,
 		backgroundColor: c.systemGroupedBackground,
-	},
-	/**
-	 * The inset-grouped card the rows sit in, drawn by hand rather than by a
-	 * SwiftUI `List`: the progress bar runs continuously down the route and its
-	 * dots are pulled up onto the bar above them by a negative margin, which a
-	 * list clips at every row boundary. One card clips only its own ends, where
-	 * the bar stops anyway.
-	 */
-	card: {
-		backgroundColor: c.secondarySystemGroupedBackground,
-		borderRadius: CARD_RADIUS,
-		marginHorizontal: CARD_MARGIN,
-		overflow: 'hidden',
 	},
 	label: {
 		color: c.label,
@@ -50,32 +44,6 @@ const styles = StyleSheet.create({
 		marginLeft: 45,
 		// erase the gap in the bar caused by the separators' block-ness
 		marginTop: -1,
-	},
-	headerContainer: {
-		paddingLeft: 15,
-		paddingRight: 15,
-		paddingVertical: 6,
-		backgroundColor: c.systemGroupedBackground,
-		borderTopWidth: StyleSheet.hairlineWidth,
-		borderBottomWidth: StyleSheet.hairlineWidth,
-		borderTopColor: c.separator,
-		borderBottomColor: c.separator,
-		flexDirection: 'row',
-		alignItems: 'center',
-		justifyContent: 'space-between',
-	},
-	headerTextContainer: {
-		flex: 1,
-	},
-	headerTitle: {
-		fontSize: 16,
-		fontWeight: '500',
-		color: c.label,
-	},
-	headerSubtitle: {
-		fontSize: 16,
-		fontWeight: '400',
-		color: c.secondaryLabel,
 	},
 })
 
@@ -172,15 +140,14 @@ export function deriveFromProps({line, now}: {line: UnprocessedBusLine; now: Mom
 export function BusLine(props: Props): React.ReactNode {
 	let {line, now} = props
 	let router = useRouter()
+	let hostedWidth = useTimetableWidth()
 
 	const currentDay = momentToDayOfWeek(now)
 
-	// Only the user's own pick is state. The day shown otherwise follows the
-	// clock, so the schedule rolls over to the new day at midnight by itself.
-	let [dayOverride, setDayOverride] = useState<DayOfWeek | null>(null)
-	let selectedDay = dayOverride ?? currentDay
+	let {selectedDay} = useBusDay()
+	let dayToShow = selectedDay ?? currentDay
 
-	const momentForSelectedDay = createMomentForDay(now, selectedDay)
+	const momentForSelectedDay = createMomentForDay(now, dayToShow)
 
 	let {schedule, subtitle, currentBusIteration, parkedStopIndex, status} = deriveFromProps({
 		line,
@@ -193,78 +160,75 @@ export function BusLine(props: Props): React.ReactNode {
 		momentForSelectedDay,
 	)
 
-	let INFO_EL = (
-		<View style={styles.headerContainer}>
-			<View style={styles.headerTextContainer}>
-				<Text>
-					<Text style={[styles.headerTitle]}>{line.line}</Text>
-					{subtitle ? (
-						<Text style={styles.headerSubtitle}>
-							{' — '}
-							{subtitle}
-						</Text>
-					) : null}
-				</Text>
-			</View>
-
-			<DayPickerHeader
-				accentColor={line.colors.bar}
-				currentDay={currentDay}
-				onDaySelect={setDayOverride}
-				selectedDay={selectedDay}
-			/>
-		</View>
-	)
-
-	let lineMessage = line.notice || ''
-
-	let footerElement = <ListFooter title={BUS_FOOTER_MESSAGE} />
-
-	let headerElement = lineMessage ? (
-		<>
-			<InfoHeader message={lineMessage} title={`About ${line.line}`} />
-			{INFO_EL}
-		</>
-	) : (
-		INFO_EL
-	)
-
 	let timetable = schedule.timetable
 
 	return (
-		<ScrollView contentInsetAdjustmentBehavior="automatic" style={styles.container}>
-			{headerElement}
-			<View style={styles.card}>
-				{timetable.length === 0
-					? EMPTY_SCHEDULE_MESSAGE
-					: timetable.map((item, index) => (
-							// oxlint-disable-next-line react/no-array-index-key -- a loop route visits a stop twice
-							<React.Fragment key={`${item.name}-${index}`}>
-								{index > 0 ? <BusLineSeparator /> : null}
-								<TouchableOpacity
-									onPress={() => {
-										router.push({
-											pathname: '/BusRouteDetail',
-											params: {line: line.line, day: selectedDay, stopName: item.name},
-										})
-									}}
-								>
-									<BusStopRow
-										barColor={line.colors.bar}
-										{...busPropsForRow(busTarget, index)}
-										currentStopColor={line.colors.dot}
-										departureIndex={currentBusIteration}
-										isFirstRow={index === 0}
-										isLastRow={index === timetable.length - 1}
-										now={momentForSelectedDay}
-										status={status}
-										stop={item}
-									/>
-								</TouchableOpacity>
-							</React.Fragment>
-						))}
-			</View>
-			{footerElement}
-		</ScrollView>
+		<Host style={styles.host}>
+			<List modifiers={[listStyle('insetGrouped')]}>
+				{line.notice ? (
+					<Section>
+						<VStack alignment="leading" spacing={4}>
+							<SwiftUIText modifiers={[font({weight: 'semibold'})]}>About {line.line}</SwiftUIText>
+							<SwiftUIText
+								modifiers={[
+									font({textStyle: 'subheadline'}),
+									foregroundStyle(c.secondaryLabel),
+									frame({maxWidth: Infinity, alignment: 'leading'}),
+								]}
+							>
+								{line.notice}
+							</SwiftUIText>
+						</VStack>
+					</Section>
+				) : null}
+
+				<Section
+					footer={<SwiftUIText>{BUS_FOOTER_MESSAGE}</SwiftUIText>}
+					title={scheduleSectionTitle({selectedDay, subtitle})}
+				>
+					{/* Zeroed insets and no separator, so the progress bar runs to
+					    the card's own edges. */}
+					<VStack
+						modifiers={[
+							listRowInsets({top: 0, bottom: 0, leading: 0, trailing: 0}),
+							listRowSeparator('hidden'),
+						]}
+					>
+						<RNHostView matchContents={true}>
+							<View style={{width: hostedWidth}}>
+								{timetable.length === 0
+									? EMPTY_SCHEDULE_MESSAGE
+									: timetable.map((item, index) => (
+											// oxlint-disable-next-line react/no-array-index-key -- a loop route visits a stop twice
+											<React.Fragment key={`${item.name}-${index}`}>
+												{index > 0 ? <BusLineSeparator /> : null}
+												<TouchableOpacity
+													onPress={() => {
+														router.push({
+															pathname: '/BusRouteDetail',
+															params: {line: line.line, day: dayToShow, stopName: item.name},
+														})
+													}}
+												>
+													<BusStopRow
+														barColor={line.colors.bar}
+														{...busPropsForRow(busTarget, index)}
+														currentStopColor={line.colors.dot}
+														departureIndex={currentBusIteration}
+														isFirstRow={index === 0}
+														isLastRow={index === timetable.length - 1}
+														now={momentForSelectedDay}
+														status={status}
+														stop={item}
+													/>
+												</TouchableOpacity>
+											</React.Fragment>
+										))}
+							</View>
+						</RNHostView>
+					</VStack>
+				</Section>
+			</List>
+		</Host>
 	)
 }
