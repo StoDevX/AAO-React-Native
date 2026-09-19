@@ -1,7 +1,19 @@
 import {readFileSync} from 'node:fs'
 import {join} from 'node:path'
+import {htmlToSegments} from '@frogpond/html-lib'
 import ICAL from 'ical.js'
 import {IcalBodyParseError, parseIcalEvents, seekableRule} from '../parsers/ical'
+
+// Wraps the real link scanner so a single test can count how many
+// occurrences paid for description parsing -- every other test falls
+// through to the real implementation untouched.
+jest.mock('@frogpond/html-lib', () => {
+	let actual = jest.requireActual('@frogpond/html-lib') as object
+	return {
+		...actual,
+		htmlToSegments: jest.fn((actual as {htmlToSegments: (html: string) => unknown}).htmlToSegments),
+	}
+})
 
 // `parseIcalEvents` buckets occurrences by calendar day (via date-fns'
 // `startOfDay`/`endOfDay`), which reads the process's local time zone --
@@ -993,102 +1005,40 @@ END:VEVENT`),
 })
 
 test('does not pay the description-parsing cost for occurrences the future-only filter would discard anyway', () => {
-	// Before this fix, toWireEvent (HTML-stripping + link-scanning the
-	// description) ran for every occurrence walked from DTSTART, including
-	// the thousands already in the past, only for parseIcalEvents's own
-	// future-only filter to throw almost all of that work away moments
-	// later. Checking the today-or-later condition before building the wire
-	// event, not after, means only the ~90 occurrences actually inside the
-	// window ever reach that cost.
-	//
-	// An absolute wall-clock ceiling is hardware-dependent: a CI runner
-	// meaningfully slower than the machine this was tuned on could fail a
-	// passing implementation. Comparing against a same-shape baseline
-	// (the identical rule with DESCRIPTION removed) measured in the same run
-	// instead makes the assertion relative to whatever this machine's speed
-	// actually is -- if the fix holds, the two cost about the same (only the
-	// ~90 occurrences inside the window ever reach `toWireEvent` either way);
-	// broken, the with-description run pays for parsing all ~9700 candidate
-	// occurrences instead of just the ~90 that survive.
-	//
-	// Both shapes are run twice, discarding the first result, before either
-	// is timed: Jest's JIT has not warmed up `ical.js`'s hot paths yet on the
-	// very first `parseIcalEvents` call in a test, so an unwarmed comparison
-	// mostly measures "which one ran first" rather than the cost difference
-	// this test cares about -- confirmed directly (reversing which shape ran
-	// first flipped which one looked "faster").
-	//
-	// Measured directly, warmed up, several runs each: fixed lands at
-	// roughly 1.0-1.03x its own baseline; the pre-fix ordering (every
-	// occurrence converted regardless of date) lands at roughly 2.3-2.4x.
-	// 1.8x sits with clear margin on both sides of that gap on this machine,
-	// well under the review's own suggested 2.5x -- kept lower deliberately,
-	// since 2.5x left as little as ~0.1x of headroom above the broken
-	// measurement here.
-	//
-	// A single sample of each side is still noisy on a shared/loaded CI
-	// runner -- a GC pause landing in just the baseline call, say, inflates
-	// the ratio with nothing to do with this fix. Taking the best (lowest)
-	// of several timed runs per side, after the same warm-up, keeps a single
-	// unlucky pause from failing an otherwise-passing implementation while
-	// still measuring the real per-occurrence cost this test exists to
-	// catch: a regression back to converting every candidate makes *every*
-	// with-description run slower, so the best of several still lands near
-	// 2.3x, not down near 1.0x.
+	// toWireEvent (decoding + link-scanning the description) is the expensive
+	// part of an occurrence. The today-or-later check runs before it, so only
+	// the ~90 occurrences inside the window pay that cost, not the ~9700
+	// already-past ones walked from DTSTART. Counting calls to the link
+	// scanner asserts that in one parse, independent of machine speed or
+	// load.
 	//
 	// `BYHOUR=13` is a no-op against this rule's own occurrences -- DTSTART is
 	// already 13:00, so every occurrence lands exactly where it would without
 	// it -- but it keeps this rule off `expandOccurrences`'s seeded fast path
 	// (see `seekableRule` in ical.ts), which requires no `BY*` part at all for
-	// a `DAILY` rule. Seeding a plain `FREQ=DAILY` rule this old would walk
-	// straight to the ~90 in-window candidates instead of the ~9700 this test
-	// means to walk past, collapsing both sides of the comparison down to a
-	// few milliseconds each -- at that scale the ratio is dominated by timer
-	// noise, not by whether `toWireEvent` runs early or late, and stops
-	// measuring the thing this test exists to catch.
-	const description =
-		'<p>Join us for chapel featuring a guest speaker. See <a href="https://stolaf.edu/chapel">the schedule</a> for details.</p>'
-
-	function chapelCalendar(withDescription: boolean): string {
-		return calendar(`BEGIN:VEVENT
+	// a `DAILY` rule. Seeding a plain `FREQ=DAILY` rule this old would start
+	// the walk at the window, so there would be no past occurrences for the
+	// ordering to skip and this test would pass whichever way it ran.
+	const chapelCalendar = calendar(`BEGIN:VEVENT
 UID:chapel@test
 DTSTART:20000101T130000Z
 DTEND:20000101T140000Z
 RRULE:FREQ=DAILY;BYHOUR=13
 SUMMARY:Daily chapel
-${withDescription ? `DESCRIPTION:${description}\n` : ''}END:VEVENT`)
-	}
-
-	function bestOf(runs: number, run: () => void): number {
-		let best = Infinity
-		for (let i = 0; i < runs; i += 1) {
-			let start = Date.now()
-			run()
-			best = Math.min(best, Date.now() - start)
-		}
-		return best
-	}
+DESCRIPTION:<p>Join us for chapel. See <a href="https://stolaf.edu/chapel">the schedule</a>.</p>
+END:VEVENT`)
 
 	// Asserted directly, not just relied on in a comment: if `BYHOUR` (or
 	// `seekableRule` itself) is ever widened enough to accept this rule, this
-	// fails immediately instead of leaving the timing assertion below to
-	// silently degrade into noise-chasing.
-	let chapelComponent = ICAL.Component.fromString(chapelCalendar(false))
-	let chapelVevent = chapelComponent.getFirstSubcomponent('vevent')
+	// fails immediately instead of leaving the count below to pass vacuously.
+	let chapelVevent = ICAL.Component.fromString(chapelCalendar).getFirstSubcomponent('vevent')
 	expect(chapelVevent && seekableRule(chapelVevent)).toBeUndefined()
 
-	parseIcalEvents(chapelCalendar(false), NOW)
-	parseIcalEvents(chapelCalendar(true), NOW)
-
-	const RUNS_PER_SIDE = 3
-	const baselineMs = bestOf(RUNS_PER_SIDE, () => parseIcalEvents(chapelCalendar(false), NOW))
-	let events: ReturnType<typeof parseIcalEvents> = []
-	const elapsedMs = bestOf(RUNS_PER_SIDE, () => {
-		events = parseIcalEvents(chapelCalendar(true), NOW)
-	})
+	jest.mocked(htmlToSegments).mockClear()
+	const events = parseIcalEvents(chapelCalendar, NOW)
 
 	expect(events.length).toBeGreaterThan(0)
-	expect(elapsedMs).toBeLessThan(baselineMs * 1.8)
+	expect(htmlToSegments).toHaveBeenCalledTimes(events.length)
 })
 
 // The tests below establish behaviour for RFC 5545 shapes the fixture and
