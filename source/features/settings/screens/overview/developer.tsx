@@ -11,12 +11,12 @@ export const DeveloperSection = (): React.ReactElement => {
 	let router = useRouter()
 	const isDev = useIsDevMode()
 
-	const onComponentsButton = () => router.push('/ComponentLibrary')
-	const onAPIButton = () => router.push('/APITest')
-	const onBonAppButton = () => router.push('/BonAppPicker')
-	const onBannerBuilderButton = () => router.push('/BannerBuilder')
-	const onDebugButton = () => router.push('/Debug')
-	const onNetworkLoggerButton = () => router.push('/NetworkLogger')
+	const onComponentsButton = () => router.navigate('/ComponentLibrary')
+	const onAPIButton = () => router.navigate('/APITest')
+	const onBonAppButton = () => router.navigate('/BonAppPicker')
+	const onBannerBuilderButton = () => router.navigate('/BannerBuilder')
+	const onDebugButton = () => router.navigate('/Debug')
+	const onNetworkLoggerButton = () => router.navigate('/NetworkLogger')
 	const sendSentryMessage = () => {
 		Sentry.captureMessage('A Sentry Message', {level: 'info'})
 		showSentryAlert()

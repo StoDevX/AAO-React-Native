@@ -169,7 +169,7 @@ export default function DirectoryDetailPage(): React.ReactNode {
 								<DisclosureRow
 									key={dept.name}
 									onPress={() =>
-										router.push({
+										router.navigate({
 											pathname: '/Directory',
 											params: {queryType: 'department', queryParam: dept.name},
 										})

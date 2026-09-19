@@ -159,7 +159,7 @@ export default function HomePage(): React.ReactNode {
 				<Stack.Toolbar.Button
 					accessibilityLabel="Open Settings"
 					icon="gear"
-					onPress={() => router.push('/SettingsRoot')}
+					onPress={() => router.navigate('/SettingsRoot')}
 				/>
 			</Stack.Toolbar>
 			<Host
@@ -174,7 +174,7 @@ export default function HomePage(): React.ReactNode {
 					>
 						<RNHostView matchContents={true}>
 							<FaqBannerGroup
-								onPressFaq={(faqId) => router.push({pathname: '/Faq', params: {faqId}})}
+								onPressFaq={(faqId) => router.navigate({pathname: '/Faq', params: {faqId}})}
 								style={styles.banner}
 								target={FAQ_TARGETS.HOME}
 							/>
@@ -191,7 +191,7 @@ export default function HomePage(): React.ReactNode {
 												if (view.type === 'url') {
 													return openUrl(view.url)
 												} else if (view.type === 'view') {
-													return router.push(view.view)
+													return router.navigate(view.view)
 												} else {
 													throw new Error(`unexpected view type ${view.type}`)
 												}

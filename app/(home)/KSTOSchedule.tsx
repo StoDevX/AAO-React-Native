@@ -12,7 +12,7 @@ export default function KSTOSchedulePage(): React.ReactNode {
 
 	let onPressEvent = React.useCallback(
 		(event: EventType) => {
-			router.push({
+			router.navigate({
 				pathname: '/EventDetail',
 				params: {source: 'ksto-schedule', eventKey: eventKey(event)},
 			})

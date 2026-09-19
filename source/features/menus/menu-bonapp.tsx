@@ -182,7 +182,7 @@ export function BonAppHostedMenu(props: Props): React.ReactNode {
 	// every one of its rows to re-render with it.
 	let onItemPress = React.useCallback(
 		(item: MenuItemType) => {
-			router.push({
+			router.navigate({
 				pathname: '/MenuItemDetail',
 				params: {
 					source: 'bonapp',

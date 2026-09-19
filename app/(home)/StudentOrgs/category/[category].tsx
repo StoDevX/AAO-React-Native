@@ -44,7 +44,7 @@ function CategoryOrgsView(): React.ReactNode {
 
 	let onPressOrg = React.useCallback(
 		(org: StudentOrgType) =>
-			router.push({
+			router.navigate({
 				pathname: '/StudentOrgs/[name]',
 				params: {name: org.name},
 			}),

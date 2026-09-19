@@ -204,7 +204,7 @@ export function BusLine(props: Props): React.ReactNode {
 												{index > 0 ? <BusLineSeparator /> : null}
 												<TouchableOpacity
 													onPress={() => {
-														router.push({
+														router.navigate({
 															pathname: '/BusRouteDetail',
 															params: {line: line.line, day: dayToShow, stopName: item.name},
 														})

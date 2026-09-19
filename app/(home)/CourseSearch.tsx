@@ -25,7 +25,7 @@ function CourseSearchView(): React.ReactNode {
 
 	let showSearchResult = React.useCallback(
 		(query: string) => {
-			router.push({
+			router.navigate({
 				pathname: '/CourseSearchResults',
 				params: {initialQuery: query},
 			})
@@ -92,7 +92,7 @@ function CourseSearchView(): React.ReactNode {
 						emptyText="Your recent filter combinations will appear here."
 						items={recentFilterDescriptions}
 						onItemPress={(text) => {
-							router.push({
+							router.navigate({
 								pathname: '/CourseSearchResults',
 								params: {filterDescription: text},
 							})
