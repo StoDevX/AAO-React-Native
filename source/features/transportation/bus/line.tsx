@@ -82,7 +82,7 @@ export function BusLine(props: Props): React.ReactNode {
 
 				<Section
 					footer={<Text>{BUS_FOOTER_MESSAGE}</Text>}
-					title={scheduleSectionTitle({selectedDay, subtitle})}
+					title={scheduleSectionTitle({selectedDay, subtitle, hasTimetable: timetable.length > 0})}
 				>
 					{timetable.length === 0 ? (
 						<ContentUnavailableView systemImage="bus" title="This line is not running today." />

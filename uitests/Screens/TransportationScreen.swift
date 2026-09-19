@@ -145,8 +145,11 @@ struct TransportationScreen: Screen {
 	}
 
 	/// Matching on the em-dash that follows the day in the section title --
-	/// "Saturday — Not running today" -- rules out the toolbar button, whose
-	/// own label is the bare day name and never contains it.
+	/// "Saturday — Starts in 3 hours" -- rules out the toolbar button, whose
+	/// own label is the bare day name and never contains it. The dash is only
+	/// there when the line has a timetable for the day; on a day it does not
+	/// run the title is the bare day, so this needs a line that runs on `day`.
+	/// `aLine` runs on `aDay`.
 	@discardableResult
 	func verifyScheduleShows(day: String) -> Self {
 		XCTAssertTrue(

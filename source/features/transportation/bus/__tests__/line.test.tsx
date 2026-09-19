@@ -70,4 +70,11 @@ describe('BusLine', () => {
 		expect(getByText('This line is not running today.')).toBeTruthy()
 		expect(queryByLabelText(/^St\. Olaf,/u)).toBeNull()
 	})
+
+	test('titles an empty day with the day alone, so the empty state is not said twice', async () => {
+		let {getByText, queryByText} = await renderLine('Sa')
+
+		expect(getByText('SATURDAY')).toBeTruthy()
+		expect(queryByText(/^SATURDAY —/u)).toBeNull()
+	})
 })
