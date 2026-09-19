@@ -589,6 +589,9 @@ struct TestIdentifiers {
 
 			Data collected by the humans of All About Olaf
 			"""
+		/// A section heading in Other Modes. Comes from `data/transportation/`
+		/// via the UI-test fixture, so it moves only when this checkout does.
+		static let anOtherModesSection = "Local to Northfield"
 	}
 
 }

@@ -171,7 +171,7 @@ struct TransportationScreen: Screen {
 	/// Other Modes now sits below the widgets rather than behind a tab.
 	@discardableResult
 	func scrollToOtherModes() -> Self {
-		let section = app.staticTexts["Bus"].firstMatch
+		let section = app.staticTexts[TestIdentifiers.Transportation.anOtherModesSection].firstMatch
 		scrollUntilExists(section, in: list)
 		XCTAssertTrue(
 			section.exists,
