@@ -230,7 +230,7 @@ class ModuleCalendarTests: UITestCase {
 	}
 
 	/// The Upcoming list mounts a screen or so of rows and mounts more as the
-	/// reader nears the end, because mounting every row at once froze the
+	/// reader nears the end, because mounting every row at once freezes the
 	/// screen. Nothing in Jest scrolls, so this is the only check that the list
 	/// keeps growing rather than stopping at its first step.
 	func testScrollingUpcomingToTheEndReachesTheLastEvent() throws {

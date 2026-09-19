@@ -100,9 +100,9 @@ export function todaySectionKey(sections: readonly EventSection[], now: Moment):
  * The sections Upcoming shows: `Ongoing`, today, and every day after.
  *
  * The read window keeps a month of finished events for the day view's strip
- * and the event detail's timeline. Upcoming is what is ahead, and every
- * finished row it drew was a row mounted on the main thread for a reader who
- * had to scroll up to see it.
+ * and the event detail's timeline. Upcoming is what is ahead, and each
+ * finished row in it would be one more row mounted on the main thread for a
+ * reader who has to scroll up to see it.
  */
 export function upcomingSections(sections: readonly EventSection[], now: Moment): EventSection[] {
 	let todayIso = now.format('YYYY-MM-DD')
@@ -117,7 +117,7 @@ export function upcomingSections(sections: readonly EventSection[], now: Moment)
  *
  * Every mounted row is a set of `@expo/ui` views created on the main thread in
  * one go -- `LazyVStack` only defers SwiftUI's drawing, not React's mounting --
- * so a list mounted whole froze the screen for seconds. Mounting a screen or
+ * so mounting a whole list freezes the screen for seconds. Mounting a screen or
  * two and growing as the reader nears the end keeps each step small.
  *
  * `throughKey` is the section the list opens on: a scroll target that is not
