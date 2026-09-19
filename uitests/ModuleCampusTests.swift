@@ -102,8 +102,8 @@ class ModuleCampusTests: UITestCase {
 			.verifyNoSecondSheetForStavHall()
 	}
 
-	/// `aBuildingWithLongSchedule` has two schedule sections plus a resource
-	/// link -- enough combined content to overflow the sheet's smaller detent,
+	/// `aBuildingWithLongSchedule` has three schedule sections -- enough
+	/// combined content to overflow the sheet's smaller detent,
 	/// unlike `anExcludedBuilding`'s single short section, which already fits
 	/// it entirely. Dragging it open is the case that would catch content
 	/// stuck laid out at the smaller detent's height.
@@ -111,7 +111,7 @@ class ModuleCampusTests: UITestCase {
 		let screen = CampusScreen(app: app)
 			.navigate()
 			.tapRow(TestIdentifiers.Campus.aBuildingWithLongSchedule)
-			.verifyDetailSheetPresented(for: TestIdentifiers.Campus.aBuildingWithLongSchedule)
+			.verifyDetailSheetTitled(TestIdentifiers.Campus.aBuildingWithLongSchedule)
 			.capture("Campus detail sheet before dragging to the larger detent")
 
 		let titleBefore = screen.detailTitleFrame(
