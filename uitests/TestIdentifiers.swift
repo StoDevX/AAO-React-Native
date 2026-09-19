@@ -303,6 +303,10 @@ struct TestIdentifiers {
 		/// The same, for the Upcoming list: two days past the frozen one, so it
 		/// sits well inside the rows the list has built either side of today.
 		static let unfilteredUpcomingRow = "First Day of Classes"
+		/// The fixture's last event, thirteen days past the frozen one. The
+		/// Upcoming list mounts only its first fifteen rows up front, so this
+		/// one exists only once scrolling has made the list mount more.
+		static let lastUpcomingRow = "Fall Family Weekend"
 		/// The one calendar UI test mode enables, from `REMOTE_SOURCES`.
 		static let uitestCalendar = "UI Test Fixtures"
 		/// Every attribution caption opens with this. The list should carry
