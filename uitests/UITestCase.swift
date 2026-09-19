@@ -36,6 +36,10 @@ class UITestCase: XCTestCase {
 
 		continueAfterFailure = false
 
+		// Before the app launches: a run with no known JS source measures
+		// whatever is on 8081, which may be another checkout entirely.
+		try requireKnownJsSource()
+
 		app = XCUIApplication()
 		app.launchArguments.append(TestIdentifiers.LaunchArguments.uiTesting)
 		// Reset persisted state for every test. Without this, UserDefaults and
@@ -89,6 +93,85 @@ class UITestCase: XCTestCase {
 	func appendJsLocationIfProvided() {
 		if let location = ProcessInfo.processInfo.environment["AAO_JS_LOCATION"] {
 			app.launchArguments.append(contentsOf: ["-RCT_jsLocation", location])
+		}
+	}
+
+	/// Refuses to run a test whose JavaScript could come from anywhere.
+	///
+	/// A Debug build with no embedded bundle asks `localhost:8081` and takes
+	/// whatever answers. On a machine running several checkouts that is
+	/// whichever one started Metro first, so the suite silently measures
+	/// another branch's code -- a run that can go green or red for reasons
+	/// that have nothing to do with the diff under test. With nothing on 8081
+	/// it instead fails at the first screen, which reads as a launch flake and
+	/// invites a retry loop.
+	///
+	/// Both failures are worse than not running, so this stops the suite
+	/// before a single test does. One of two things has to be true:
+	///
+	/// - `TEST_RUNNER_AAO_JS_LOCATION=localhost:<port>` names a Metro, or
+	/// - the built `.app` carries a `main.jsbundle`, which is how CI runs.
+	///
+	/// The second is checked rather than declared. `xcodebuild` hands the
+	/// runner the host path to its build products in
+	/// `__XCODE_BUILT_PRODUCTS_DIR_PATHS`, and a simulator process can read
+	/// the host filesystem, so the bundle can simply be looked for. A flag
+	/// saying "a bundle is embedded" would be one more thing that can be wrong.
+	private func requireKnownJsSource() throws {
+		if ProcessInfo.processInfo.environment["AAO_JS_LOCATION"] != nil {
+			return
+		}
+		if Self.builtAppHasEmbeddedBundle() {
+			return
+		}
+		throw UnknownJsSource()
+	}
+
+	/// Whether the `.app` this run installs carries its JavaScript inside it.
+	///
+	/// Returns false when the products directory cannot be found or read,
+	/// which is the safe answer: without a Metro declared, a run that cannot
+	/// prove it has a bundle is the run this guard exists to stop.
+	private static func builtAppHasEmbeddedBundle() -> Bool {
+		guard
+			let products = ProcessInfo.processInfo.environment["__XCODE_BUILT_PRODUCTS_DIR_PATHS"]?
+				.split(separator: ":").first.map(String.init)
+		else {
+			return false
+		}
+
+		let fileManager = FileManager.default
+		// Found by extension rather than by name, so renaming the app or
+		// adding a variant does not quietly disable the check.
+		let apps = ((try? fileManager.contentsOfDirectory(atPath: products)) ?? [])
+			.filter { $0.hasSuffix(".app") }
+
+		return apps.contains { app in
+			fileManager.fileExists(atPath: "\(products)/\(app)/main.jsbundle")
+		}
+	}
+
+	/// Thrown, not skipped: a skipped suite exits 0 and reads as "nothing to
+	/// do", which is how a misconfigured run gets mistaken for a clean one.
+	/// A thrown error fails the test, and the fail-fast latch above turns that
+	/// into a non-zero exit before any other test runs.
+	struct UnknownJsSource: Error, CustomStringConvertible {
+		var description: String {
+			"""
+			No Metro was named and the built .app carries no main.jsbundle, so \
+			this run would ask localhost:8081 and take whatever answers -- \
+			possibly another checkout's Metro, whose results would say nothing \
+			about this branch.
+
+			Either point it at a Metro serving THIS worktree:
+			  TEST_RUNNER_AAO_JS_LOCATION=localhost:<port> xcodebuild ...
+			or embed a bundle in the .app, which is how CI runs.
+
+			The TEST_RUNNER_ prefix is required: xcodebuild silently drops \
+			environment variables without it, so a bare AAO_JS_LOCATION never \
+			reaches this process and the run looks configured while it is not. \
+			Prefer the run-uitests skill, which handles this.
+			"""
 		}
 	}
 
