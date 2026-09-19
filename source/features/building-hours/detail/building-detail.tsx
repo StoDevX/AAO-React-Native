@@ -29,6 +29,7 @@ import {
 	getAccentBackgroundColor,
 	contextualStatus,
 	isScheduleRowActive,
+	summarizeDays,
 } from '../lib'
 import {ScheduleRowSwiftUI} from './schedule-row-swiftui'
 import {openUrl} from '@frogpond/open-url'
@@ -119,23 +120,38 @@ export function BuildingDetailSwiftUI({building, now, campus}: Props): React.Rea
 					</HStack>
 				</Section>
 
-				{schedules.map((schedule) => (
-					<Section
-						key={schedule.title}
-						footer={schedule.notes ? <Text>{schedule.notes}</Text> : undefined}
-						title={schedule.title.toUpperCase()}
-					>
-						{schedule.hours.map((set) => (
-							<ScheduleRowSwiftUI
-								key={`${set.days.join('')}-${set.from}-${set.to}`}
-								accentColor={accentColor}
-								isActive={isScheduleRowActive(schedule, set, now)}
-								now={now}
-								schedule={set}
-							/>
-						))}
-					</Section>
-				))}
+				{schedules.map((schedule) => {
+					let groups = new Map<
+						string,
+						Array<{schedule: (typeof schedule.hours)[0]; isActive: boolean}>
+					>()
+					for (let set of schedule.hours) {
+						let dayLabel = summarizeDays(set.days)
+						let entry = {schedule: set, isActive: isScheduleRowActive(schedule, set, now)}
+						let group = groups.get(dayLabel)
+						if (group) {
+							group.push(entry)
+						} else {
+							groups.set(dayLabel, [entry])
+						}
+					}
+					return (
+						<Section
+							key={schedule.title}
+							footer={schedule.notes ? <Text>{schedule.notes}</Text> : undefined}
+							title={schedule.title.toUpperCase()}
+						>
+							{Array.from(groups.entries()).map(([dayLabel, entries]) => (
+								<ScheduleRowSwiftUI
+									key={dayLabel}
+									accentColor={accentColor}
+									entries={entries}
+									now={now}
+								/>
+							))}
+						</Section>
+					)
+				})}
 
 				{feature ? (
 					<Section>

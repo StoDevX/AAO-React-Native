@@ -93,7 +93,7 @@ export const BuildingListRow = React.memo(function BuildingListRow({
 				>
 					<Text
 						modifiers={[
-							font({textStyle: 'body', weight: 'medium'}),
+							font({textStyle: 'body', weight: 'regular'}),
 							foregroundStyle(c.label),
 							...SINGLE_LINE,
 						]}
