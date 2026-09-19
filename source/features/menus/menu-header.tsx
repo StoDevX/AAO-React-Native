@@ -59,17 +59,20 @@ export function MenuHeaderProvider(props: {children: React.ReactNode}): React.Re
  * reader never asked for are live at any moment; without the gate they would
  * take turns titling the screen.
  *
- * `header` must be memoized by the caller, or be a constant -- it is compared
- * by identity, and a fresh object each render would publish on each render.
+ * The header is read field by field rather than by identity, so a caller may
+ * build it inline. Depending on the object would make an unmemoized caller
+ * publish on every render, and publishing sets state that re-renders the
+ * caller.
  */
 export function usePublishMenuHeader(header: MenuHeader, focused: boolean): void {
 	let publish = React.useContext(PublishMenuHeaderContext)
+	let {name, date, meals} = header
 
 	React.useEffect(() => {
 		if (focused) {
-			publish?.(header)
+			publish?.({name, date, meals})
 		}
-	}, [focused, header, publish])
+	}, [focused, name, date, meals, publish])
 }
 
 /**

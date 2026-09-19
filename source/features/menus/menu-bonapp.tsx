@@ -18,8 +18,11 @@ import {type Moment} from 'moment-timezone'
 import {now as currentMoment} from '@frogpond/timer'
 import {bonAppCafeOptions, bonAppMenuOptions, prepareFood} from './query'
 import {useQuery} from '@tanstack/react-query'
-import {useRouter} from 'expo-router'
+import {useIsFocused, useRouter} from 'expo-router'
 import {toLaxTitleCase} from '@frogpond/titlecase'
+import {formatDate} from '@frogpond/time-format'
+import type {MealMenuSelection} from '@frogpond/food-menu'
+import {usePublishMenuHeader} from './menu-header'
 
 const BONAPP_HTML_ERROR_CODE = 'bonapp-html'
 
@@ -149,6 +152,22 @@ export function BonAppHostedMenu(props: Props): React.ReactNode {
 	let now = currentMoment().tz(timezone())
 	let router = useRouter()
 
+	// Live focus rather than the latched `useHasEverBeenFocused` the tabs use
+	// to defer their mounting: every cafe the reader has already visited stays
+	// mounted, and only the one in front of them may title the screen.
+	let isFocused = useIsFocused()
+	let [mealMenu, setMealMenu] = React.useState<MealMenuSelection | null>(null)
+
+	// The formatted day, not `now`: `currentMoment()` above builds a fresh
+	// Moment on every render, so a header depending on it would republish on
+	// every render and loop through the provider's state.
+	let date = formatDate(now, 'short')
+
+	// Published from here rather than from the menu below, which does not
+	// exist until its query resolves -- the screen would spend that whole
+	// first load under the previous cafe's name.
+	usePublishMenuHeader({name: props.name, date, meals: mealMenu}, isFocused)
+
 	let {
 		data: cafeMenu,
 		error: menuError,
@@ -251,6 +270,7 @@ export function BonAppHostedMenu(props: Props): React.ReactNode {
 			name={props.name}
 			now={now}
 			onItemPress={onItemPress}
+			onMealMenuChange={setMealMenu}
 			onRefresh={onRefresh}
 		/>
 	)
