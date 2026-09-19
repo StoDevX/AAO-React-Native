@@ -95,7 +95,7 @@ export default function TransportationPage(): React.ReactNode {
 				)}
 
 				{otherModes.map((section) => (
-					<Section key={section.title} title={section.title}>
+					<Section key={section.title ?? 'uncategorized'} title={section.title}>
 						{section.data.map((mode) => (
 							<DisclosureRow
 								key={mode.name}
