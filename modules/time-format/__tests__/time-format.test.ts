@@ -76,6 +76,21 @@ describe('formatTime', () => {
 		let m = moment('2026-08-20T17:30:00')
 		expect(formatTime(m, 'en-US')).toBe('5:30 PM')
 	})
+
+	test('renders in an explicit zone when one is asked for', () => {
+		let m = moment.tz('2026-08-20 17:30', CAMPUS)
+		expect(formatTime(m, 'en-US', 'America/New_York')).toBe('6:30 PM')
+	})
+
+	test('keeps the formatter cache keyed by zone', () => {
+		// Same shape and locale, two zones. A cache keyed only on
+		// shape-and-locale would hand the second call the first one's
+		// formatter and render both in the same zone.
+		let m = moment.tz('2026-08-20 17:30', CAMPUS)
+		expect(formatTime(m, 'en-US', 'America/Chicago')).toBe('5:30 PM')
+		expect(formatTime(m, 'en-US', 'America/New_York')).toBe('6:30 PM')
+		expect(formatTime(m, 'en-US')).toBe('5:30 PM')
+	})
 })
 
 describe('formatHourLabel', () => {

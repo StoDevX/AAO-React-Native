@@ -40,3 +40,39 @@ it('leaves an ordinary time to the locale formatter', () => {
 it('passes the locale through', () => {
 	expect(formatStatusTime(hourMoment('8:00pm'), 'en-GB')).toBe('20:00')
 })
+
+it('renders in the zone it is given rather than the device one', () => {
+	let m = dayMoment('Fri 3:00pm')
+	let schedule: SingleBuildingScheduleType = {
+		days: ['Fr'],
+		from: '10:30am',
+		to: '10:00pm',
+	}
+
+	expect(formatBuildingTimes(schedule, m, {zone: 'America/New_York'})).toBe('11:30 AM — 11 PM')
+})
+
+it('decides "Midnight" on the zone it is given', () => {
+	// 12:00am Central is 1:00am Eastern, which is not midnight anywhere.
+	let m = dayMoment('Fri 3:00pm')
+	let schedule: SingleBuildingScheduleType = {
+		days: ['Fr'],
+		from: '10:30am',
+		to: '12:00am',
+	}
+
+	expect(formatBuildingTimes(schedule, m, {zone: 'America/New_York'})).toBe('11:30 AM — 1 AM')
+})
+
+it('passes a locale through alongside the zone', () => {
+	let m = dayMoment('Fri 3:00pm')
+	let schedule: SingleBuildingScheduleType = {
+		days: ['Fr'],
+		from: '10:30am',
+		to: '10:00pm',
+	}
+
+	expect(formatBuildingTimes(schedule, m, {locale: 'en-GB', zone: 'America/Chicago'})).toBe(
+		'10:30 — 22:00',
+	)
+})
