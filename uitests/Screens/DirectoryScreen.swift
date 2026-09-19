@@ -223,6 +223,25 @@ struct DirectoryScreen: Screen {
 		return self
 	}
 
+	/// Assert the contact's card is square rather than portrait. The tile's
+	/// frame spans the card and the name beneath it, and the accessibility tree
+	/// cannot see the card on its own, so this measures the whole tile of a
+	/// contact whose name fits on one line: a square card plus that line comes
+	/// to about 1.3 times the tile's width, a portrait card alone to 1.5.
+	@discardableResult
+	func verifyContactTileIsSquare(_ title: String) -> Self {
+		let tile = app.buttons[title].firstMatch
+		XCTAssertTrue(
+			tile.waitForExistence(timeout: 30),
+			"\(title) should have a tile in the grid")
+		let frame = tile.frame
+		XCTAssertLessThan(
+			frame.height, frame.width * 1.4,
+			"\(title)'s tile is \(frame.width) wide and \(frame.height) tall -- "
+				+ "too tall for a square card and one line of name")
+		return self
+	}
+
 	/// Tap the contact's action and assert the in-app browser opened. Its Done
 	/// button is drawn before the page loads, so this holds without the
 	/// network the page itself would need.

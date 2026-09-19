@@ -21,6 +21,15 @@ class ModuleDirectoryTests: UITestCase {
 			.capture("Directory contact grid")
 	}
 
+	/// Contact cards are square so that three rows of them leave the
+	/// department list in view below the grid.
+	func testContactTilesAreSquare() throws {
+		DirectoryScreen(app: app)
+			.navigate()
+			.capture("Directory contact grid with square tiles")
+			.verifyContactTileIsSquare(TestIdentifiers.Directory.aContact)
+	}
+
 	/// A contact is read and dismissed, so it presents as a sheet rather than
 	/// a push -- and the grid staying in the hierarchy behind it is the tell.
 	/// A push would replace the grid, so this fails outright on one.
