@@ -1,46 +1,29 @@
 import * as React from 'react'
-import {StyleSheet, Text, TouchableOpacity, View} from 'react-native'
+import {StyleSheet} from 'react-native'
 import type {DayOfWeek, UnprocessedBusLine} from './types'
-import {busPropsForRow, deriveLineState, findBusTarget, scheduleSectionTitle} from './lib'
-import type {Moment} from 'moment-timezone'
-import {Separator} from '@frogpond/separator'
-import {BusStopRow} from './components/bus-stop-row'
-import {ListRow} from '@frogpond/lists'
-import * as c from '@frogpond/colors'
-import {Host, List, RNHostView, Section, Text as SwiftUIText, VStack} from '@expo/ui/swift-ui'
 import {
-	font,
-	foregroundStyle,
-	frame,
-	listRowInsets,
-	listRowSeparator,
-	listStyle,
-} from '@expo/ui/swift-ui/modifiers'
+	busPropsForRow,
+	deriveLineState,
+	findBusStopStatus,
+	findBusTarget,
+	findRemainingDeparturesForStop,
+	scheduleSectionTitle,
+} from './lib'
+import type {Moment} from 'moment-timezone'
+import * as c from '@frogpond/colors'
+import {ContentUnavailableView, Host, List, Section, Text, VStack} from '@expo/ui/swift-ui'
+import {font, foregroundStyle, frame, listStyle} from '@expo/ui/swift-ui/modifiers'
 import {BUS_FOOTER_MESSAGE} from './constants'
 import {momentToDayOfWeek, createMomentForDay} from './components/days'
-import {useTimetableWidth} from './use-timetable-width'
+import {formatDepartures} from './components/times'
+import {TimetableRow} from './components/timetable-row'
 
 const styles = StyleSheet.create({
 	host: {
 		flex: 1,
 		backgroundColor: c.systemGroupedBackground,
 	},
-	label: {
-		color: c.label,
-	},
-	separator: {
-		marginLeft: 45,
-		// erase the gap in the bar caused by the separators' block-ness
-		marginTop: -1,
-	},
 })
-
-const BusLineSeparator = () => <Separator style={styles.separator} />
-const EMPTY_SCHEDULE_MESSAGE = (
-	<ListRow>
-		<Text style={styles.label}>This line is not running today.</Text>
-	</ListRow>
-)
 
 type Props = {
 	line: UnprocessedBusLine
@@ -52,7 +35,6 @@ type Props = {
 
 export function BusLine(props: Props): React.ReactNode {
 	let {line, now, selectedDay, onPressStop} = props
-	let hostedWidth = useTimetableWidth()
 
 	const currentDay = momentToDayOfWeek(now)
 
@@ -73,14 +55,19 @@ export function BusLine(props: Props): React.ReactNode {
 
 	let timetable = schedule.timetable
 
+	// SwiftUI colors want strings; the feed gives hex, but the type is RN's
+	// wider ColorValue.
+	let barColor = String(line.colors.bar)
+	let currentStopColor = String(line.colors.dot)
+
 	return (
 		<Host style={styles.host}>
 			<List modifiers={[listStyle('insetGrouped')]}>
 				{line.notice ? (
 					<Section>
 						<VStack alignment="leading" spacing={4}>
-							<SwiftUIText modifiers={[font({weight: 'semibold'})]}>About {line.line}</SwiftUIText>
-							<SwiftUIText
+							<Text modifiers={[font({weight: 'semibold'})]}>About {line.line}</Text>
+							<Text
 								modifiers={[
 									font({textStyle: 'subheadline'}),
 									foregroundStyle(c.secondaryLabel),
@@ -88,49 +75,54 @@ export function BusLine(props: Props): React.ReactNode {
 								]}
 							>
 								{line.notice}
-							</SwiftUIText>
+							</Text>
 						</VStack>
 					</Section>
 				) : null}
 
 				<Section
-					footer={<SwiftUIText>{BUS_FOOTER_MESSAGE}</SwiftUIText>}
+					footer={<Text>{BUS_FOOTER_MESSAGE}</Text>}
 					title={scheduleSectionTitle({selectedDay, subtitle})}
 				>
-					{/* Zeroed insets and no separator, so the progress bar runs to
-					    the card's own edges. */}
-					<VStack
-						modifiers={[
-							listRowInsets({top: 0, bottom: 0, leading: 0, trailing: 0}),
-							listRowSeparator('hidden'),
-						]}
-					>
-						<RNHostView matchContents={true}>
-							<View style={{width: hostedWidth}}>
-								{timetable.length === 0
-									? EMPTY_SCHEDULE_MESSAGE
-									: timetable.map((item, index) => (
-											// oxlint-disable-next-line react/no-array-index-key -- a loop route visits a stop twice
-											<React.Fragment key={`${item.name}-${index}`}>
-												{index > 0 ? <BusLineSeparator /> : null}
-												<TouchableOpacity onPress={() => onPressStop(item.name)}>
-													<BusStopRow
-														barColor={line.colors.bar}
-														{...busPropsForRow(busTarget, index)}
-														currentStopColor={line.colors.dot}
-														departureIndex={currentBusIteration}
-														isFirstRow={index === 0}
-														isLastRow={index === timetable.length - 1}
-														now={momentForSelectedDay}
-														status={status}
-														stop={item}
-													/>
-												</TouchableOpacity>
-											</React.Fragment>
-										))}
-							</View>
-						</RNHostView>
-					</VStack>
+					{timetable.length === 0 ? (
+						<ContentUnavailableView systemImage="bus" title="This line is not running today." />
+					) : (
+						timetable.map((stop, index) => {
+							let {busProgress, busAtStop} = busPropsForRow(busTarget, index)
+							let stopStatus = findBusStopStatus({
+								stop,
+								busStatus: status,
+								departureIndex: currentBusIteration,
+								now: momentForSelectedDay,
+								busAtStop,
+							})
+							let times = formatDepartures(
+								findRemainingDeparturesForStop({
+									stop,
+									busStatus: status,
+									departureIndex: currentBusIteration,
+								}),
+							)
+
+							return (
+								<TimetableRow
+									// oxlint-disable-next-line react/no-array-index-key -- a loop route visits a stop twice
+									key={`${stop.name}-${index}`}
+									accessibilityLabel={`${stop.name}, ${times}`}
+									barColor={barColor}
+									busAtStop={busAtStop}
+									busProgress={busProgress}
+									currentStopColor={currentStopColor}
+									detail={times}
+									isFirstRow={index === 0}
+									isLastRow={index === timetable.length - 1}
+									onPress={() => onPressStop(stop.name)}
+									stopStatus={stopStatus}
+									title={stop.name}
+								/>
+							)
+						})
+					)}
 				</Section>
 			</List>
 		</Host>

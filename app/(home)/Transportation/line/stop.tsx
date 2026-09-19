@@ -1,11 +1,11 @@
 import * as React from 'react'
-import {StyleSheet, Text, View} from 'react-native'
+import {StyleSheet} from 'react-native'
 import {Stack, useLocalSearchParams} from 'expo-router'
 import {useQuery} from '@tanstack/react-query'
 import {timezone} from '@frogpond/constants'
 import {useMomentTimer} from '@frogpond/timer'
-import {Host, List, RNHostView, Section, Text as SwiftUIText, VStack} from '@expo/ui/swift-ui'
-import {listRowInsets, listRowSeparator, listStyle} from '@expo/ui/swift-ui/modifiers'
+import {Host, List, Section, Text} from '@expo/ui/swift-ui'
+import {listStyle} from '@expo/ui/swift-ui/modifiers'
 
 import type {Moment} from 'moment-timezone'
 
@@ -24,40 +24,16 @@ import {
 	findBusStopStatus as findStopStatus,
 	type BusStopStatusEnum,
 } from '../../../../source/features/transportation/bus/lib'
-import {ScheduleTimes} from '../../../../source/features/transportation/bus/components/times'
-import {ProgressChunk} from '../../../../source/features/transportation/bus/components/progress-chunk'
+import {formatDeparture} from '../../../../source/features/transportation/bus/components/times'
+import {TimetableRow} from '../../../../source/features/transportation/bus/components/timetable-row'
 import {BUS_FOOTER_MESSAGE} from '../../../../source/features/transportation/bus/constants'
-import {useTimetableWidth} from '../../../../source/features/transportation/bus/use-timetable-width'
 import {LoadingView, NoticeView} from '@frogpond/notice'
-import {ListRow, Detail, Title} from '@frogpond/lists'
 import * as c from '@frogpond/colors'
-import {Column} from '@frogpond/layout'
 
 const styles = StyleSheet.create({
 	host: {
 		flex: 1,
 		backgroundColor: c.systemGroupedBackground,
-	},
-	timeRow: {
-		flexDirection: 'row',
-	},
-	noTimesText: {
-		color: c.tertiaryLabel,
-		fontStyle: 'italic',
-		textAlign: 'center',
-		padding: 20,
-	},
-	internalPadding: {
-		paddingVertical: 12,
-	},
-	skippingStopTitle: {
-		color: c.tertiaryLabel,
-	},
-	passedStopTitle: {
-		color: c.secondaryLabel,
-	},
-	atStopTitle: {
-		fontWeight: '600',
 	},
 })
 
@@ -70,7 +46,6 @@ type Props = {
 
 function BusStopDetailInternal(props: Props): React.ReactNode {
 	let {stop, line, now, subtitle} = props
-	let hostedWidth = useTimetableWidth()
 
 	// Read straight from the props: the row statuses below are computed from
 	// these, so they have to be settled by the time the first frame draws.
@@ -79,40 +54,34 @@ function BusStopDetailInternal(props: Props): React.ReactNode {
 	let {index: currentBusIteration, status} = getCurrentBusIteration(scheduleForToday, now)
 
 	let departureTimes = stop.departures.filter(Boolean)
-	let stopStatus = findStopStatus({
-		stop,
-		busStatus: status,
-		departureIndex: currentBusIteration,
-		now,
-	})
 
-	let rowTextStyle = [
-		stopStatus === 'skip' && styles.skippingStopTitle,
-		stopStatus === 'after' && styles.passedStopTitle,
-		stopStatus === 'at' && styles.atStopTitle,
-	]
+	// SwiftUI colors want strings; the feed gives hex, but the type is RN's
+	// wider ColorValue.
+	let barColor = String(line.colors.bar)
+	let currentStopColor = String(line.colors.dot)
 
 	let rows: React.ReactNode
 
 	if (departureTimes.length === 0) {
+		let stopStatus = findStopStatus({
+			stop,
+			busStatus: status,
+			departureIndex: currentBusIteration,
+			now,
+		})
+		let detail = 'No departure times available'
+
 		rows = (
-			<ListRow fullHeight={true} fullWidth={true} style={styles.timeRow}>
-				<ProgressChunk
-					barColor={line.colors.bar}
-					currentStopColor={line.colors.dot}
-					isFirstChunk={true}
-					isLastChunk={true}
-					stopStatus={stopStatus}
-				/>
-				<Column flex={1} style={styles.internalPadding}>
-					<Title bold={false} style={rowTextStyle}>
-						{stop.name}
-					</Title>
-					<Detail lines={1}>
-						<Text style={styles.noTimesText}>No departure times available</Text>
-					</Detail>
-				</Column>
-			</ListRow>
+			<TimetableRow
+				accessibilityLabel={`${stop.name}, ${detail}`}
+				barColor={barColor}
+				currentStopColor={currentStopColor}
+				detail={detail}
+				isFirstRow={true}
+				isLastRow={true}
+				stopStatus={stopStatus}
+				title={stop.name}
+			/>
 		)
 	} else {
 		const getTimeStatus = (departureTime: Moment | null): BusStopStatusEnum => {
@@ -128,30 +97,20 @@ function BusStopDetailInternal(props: Props): React.ReactNode {
 		}
 
 		rows = departureTimes.map((time, index) => {
-			let timeStatus = getTimeStatus(time)
-
-			let timeRowTextStyle = [
-				timeStatus === 'skip' && styles.skippingStopTitle,
-				timeStatus === 'after' && styles.passedStopTitle,
-				timeStatus === 'at' && styles.atStopTitle,
-			]
+			let title = formatDeparture(time)
 
 			return (
-				// oxlint-disable-next-line react/no-array-index-key -- position in the route is the stop's identity
-				<ListRow key={index} fullHeight={true} fullWidth={true} style={styles.timeRow}>
-					<ProgressChunk
-						barColor={line.colors.bar}
-						currentStopColor={line.colors.dot}
-						isFirstChunk={index === 0}
-						isLastChunk={index === departureTimes.length - 1}
-						stopStatus={timeStatus}
-					/>
-					<Column flex={1} style={styles.internalPadding}>
-						<Title bold={false} style={timeRowTextStyle}>
-							<ScheduleTimes times={[time]} />
-						</Title>
-					</Column>
-				</ListRow>
+				<TimetableRow
+					// oxlint-disable-next-line react/no-array-index-key -- position in the route is the stop's identity
+					key={index}
+					accessibilityLabel={title}
+					barColor={barColor}
+					currentStopColor={currentStopColor}
+					isFirstRow={index === 0}
+					isLastRow={index === departureTimes.length - 1}
+					stopStatus={getTimeStatus(time)}
+					title={title}
+				/>
 			)
 		})
 	}
@@ -160,21 +119,10 @@ function BusStopDetailInternal(props: Props): React.ReactNode {
 		<Host style={styles.host}>
 			<List modifiers={[listStyle('insetGrouped')]}>
 				<Section
-					footer={<SwiftUIText>{BUS_FOOTER_MESSAGE}</SwiftUIText>}
+					footer={<Text>{BUS_FOOTER_MESSAGE}</Text>}
 					title={`${stop.name} — ${subtitle}`.toUpperCase()}
 				>
-					{/* Zeroed insets and no separator, so the progress bar runs to
-					    the card's own edges. */}
-					<VStack
-						modifiers={[
-							listRowInsets({top: 0, bottom: 0, leading: 0, trailing: 0}),
-							listRowSeparator('hidden'),
-						]}
-					>
-						<RNHostView matchContents={true}>
-							<View style={{width: hostedWidth}}>{rows}</View>
-						</RNHostView>
-					</VStack>
+					{rows}
 				</Section>
 			</List>
 		</Host>
