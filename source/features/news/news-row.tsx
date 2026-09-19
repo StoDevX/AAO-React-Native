@@ -144,9 +144,9 @@ export const NewsRow = (props: Props): React.ReactNode => {
 					<HStack alignment="top" spacing={8}>
 						<Text modifiers={TITLE_MODIFIERS}>{story.title}</Text>
 						<SwiftUIImage
-							color={c.secondaryLabel}
+							color={c.tertiaryLabel}
 							modifiers={ACCESSORY_MODIFIERS}
-							size={20}
+							size={14}
 							systemName="arrow.up.right"
 						/>
 					</HStack>
