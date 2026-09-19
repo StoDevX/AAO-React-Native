@@ -547,6 +547,11 @@ jobs:
           TEST_RUNNER_CI: 'true'
         run: |
           set -o pipefail
+          # The jsbundle was moved into the .app above, so no Metro is involved
+          # and AAO_JS_LOCATION is deliberately unset. UITestCase refuses to run
+          # without one of the two declared, because a run that has neither asks
+          # localhost:8081 and measures whatever answers.
+          export TEST_RUNNER_AAO_JS_EMBEDDED=1
           # Every test cold-launches the app in setUp, and on hosted runners that
           # launch sometimes outruns the 30s the screen objects allow the view tree
           # to mount, so whichever test lands on a slow moment fails. Retry rather
