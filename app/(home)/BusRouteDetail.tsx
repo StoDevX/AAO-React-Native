@@ -10,7 +10,6 @@ import {listRowInsets, listRowSeparator, listStyle} from '@expo/ui/swift-ui/modi
 import type {Moment} from 'moment-timezone'
 
 import {busLineOptions} from '../../source/features/transportation/bus/query'
-import {deriveFromProps} from '../../source/features/transportation/bus/line'
 import {createMomentForDay} from '../../source/features/transportation/bus/components/days'
 import type {
 	DayOfWeek,
@@ -18,6 +17,7 @@ import type {
 	UnprocessedBusLine,
 } from '../../source/features/transportation/bus/types'
 import {
+	deriveFromProps,
 	getCurrentBusIteration,
 	getScheduleForNow,
 	processBusLine,
