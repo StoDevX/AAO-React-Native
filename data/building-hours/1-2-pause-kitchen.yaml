@@ -6,12 +6,6 @@ links:
   - {title: 'Pause Instagram', url: 'https://www.instagram.com/lionspause/'}
 
 schedule:
-  - title: On Campus Pizza Delivery
-    isPhysicallyOpen: false
-    status: {symbol: figure.walk.circle, name: Delivery}
-    hours:
-      - {days: [Mo, Tu, We, Th, Fr, Sa, Su], from: '7:00pm', to: '12:00am'}
-
   - title: Hours
     hours:
       - {days: [Mo, Tu, We, Th, Fr], from: '11:00am', to: '2:00pm'}
