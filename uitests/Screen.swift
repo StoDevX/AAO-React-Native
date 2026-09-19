@@ -6,6 +6,24 @@ protocol Screen {
 	var app: XCUIApplication { get }
 }
 
+/// How long a `capture` or `captureAccessibilityTree` attachment survives.
+///
+/// Run by hand, a screenshot is taken to be looked at, and a passing run is
+/// exactly the one whose screenshots are worth keeping. In CI nobody opens a
+/// passing run's attachments, and keeping them bloats the result bundle every
+/// shard uploads. The workflow sets `TEST_RUNNER_CI`; xcodebuild strips the
+/// prefix on its way to the runner.
+private let captureLifetime: XCTAttachment.Lifetime = isCI ? .deleteOnSuccess : .keepAlways
+
+/// Whether `CI` holds a truthy value, the way CI services set it: present,
+/// and neither empty, `0` nor `false`.
+private var isCI: Bool {
+	guard let value = ProcessInfo.processInfo.environment["CI"]?.lowercased() else {
+		return false
+	}
+	return !["", "0", "false"].contains(value)
+}
+
 extension Screen {
 	/// Assert that the home screen is visible.
 	@discardableResult
@@ -73,15 +91,13 @@ extension Screen {
 		return self
 	}
 
-	/// Attach a screenshot of the whole screen to the test report.
-	///
-	/// `.deleteOnSuccess`: a passing run's screenshots are never looked at, and
-	/// keeping them anyway bloats the result bundle every shard uploads.
+	/// Attach a screenshot of the whole screen to the test report, for as long
+	/// as `captureLifetime` says.
 	@discardableResult
 	func capture(_ name: String) -> Self {
 		let attachment = XCTAttachment(screenshot: app.screenshot())
 		attachment.name = name
-		attachment.lifetime = .deleteOnSuccess
+		attachment.lifetime = captureLifetime
 		XCTContext.runActivity(named: name) { $0.add(attachment) }
 		return self
 	}
@@ -92,12 +108,12 @@ extension Screen {
 	/// `print` of `debugDescription` doesn't survive into the result bundle;
 	/// this does.
 	///
-	/// `.deleteOnSuccess`, same as `capture`.
+	/// Kept for as long as `captureLifetime` says, same as `capture`.
 	@discardableResult
 	func captureAccessibilityTree(_ name: String) -> Self {
 		let treeDump = XCTAttachment(string: app.debugDescription)
 		treeDump.name = name
-		treeDump.lifetime = .deleteOnSuccess
+		treeDump.lifetime = captureLifetime
 		XCTContext.runActivity(named: name) { $0.add(treeDump) }
 		return self
 	}
