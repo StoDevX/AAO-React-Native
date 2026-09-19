@@ -253,7 +253,7 @@ export function BusLineWidget({line, now, onPress}: Props): React.ReactNode {
 					    The header's accessibility label already names the line, so
 					    this carries no label of its own. */}
 					<Image
-						modifiers={[font({textStyle: 'body'}), foregroundStyle(dotColor)]}
+						modifiers={[font({textStyle: 'body'}), foregroundStyle(barColor)]}
 						systemName="bus.fill"
 					/>
 					<Text modifiers={[font({weight: 'semibold'})]}>{line.line}</Text>
