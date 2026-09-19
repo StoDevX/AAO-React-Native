@@ -9,6 +9,9 @@ export const keys = {
 	all: ['athletics', 'scores'] as const,
 }
 
+const ACTIVE_GAME_INTERVAL = 30 * 1000
+const IDLE_INTERVAL = 5 * 60 * 1000
+
 export const athleticsOptions = queryOptions({
 	queryKey: keys.all,
 	// UI tests assert against what the tabs do with a week of fixtures, so they
@@ -19,4 +22,12 @@ export const athleticsOptions = queryOptions({
 			? Promise.resolve(UITEST_SCORES)
 			: client.get('athletics/scores', {signal}).json<Score[]>(),
 	select: toProcessedScores,
+	refetchInterval: (query) => {
+		const scores = query.state.data
+		if (!scores?.length) {
+			return IDLE_INTERVAL
+		}
+		const hasActiveGame = scores.some((score) => score.status.indicator === 'A')
+		return hasActiveGame ? ACTIVE_GAME_INTERVAL : IDLE_INTERVAL
+	},
 })
