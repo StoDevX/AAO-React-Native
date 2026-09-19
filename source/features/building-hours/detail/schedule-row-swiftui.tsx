@@ -50,7 +50,7 @@ export function ScheduleRowSwiftUI({entries, now, accentColor}: Props): React.Re
 				{days}
 			</Text>
 			<Spacer />
-			<VStack alignment="leading" spacing={2}>
+			<VStack alignment="trailing" spacing={2}>
 				{entries.map(({schedule, isActive}) => (
 					<Text
 						key={`${schedule.from}-${schedule.to}`}
