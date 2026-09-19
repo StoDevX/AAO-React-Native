@@ -75,6 +75,67 @@ describe('DisclosureRow leading image', () => {
 	})
 })
 
+describe('DisclosureRow destination', () => {
+	it('points into the stack by default', async () => {
+		await render(<DisclosureRow onPress={jest.fn()} title="Shuttle" />)
+
+		expect(screen.getByTestId('symbol-chevron.right')).toBeOnTheScreen()
+	})
+
+	it('points out of the app when the row opens a document elsewhere', async () => {
+		await render(<DisclosureRow destination="external" onPress={jest.fn()} title="KSTO" />)
+
+		expect(screen.getByTestId('symbol-arrow.up.right')).toBeOnTheScreen()
+		expect(screen.queryByTestId('symbol-chevron.right')).not.toBeOnTheScreen()
+	})
+
+	/// An action returns you to this row, so there is nowhere to point.
+	it('points nowhere when the row is the thing it does', async () => {
+		await render(<DisclosureRow destination="action" onPress={jest.fn()} title="Email Us" />)
+
+		expect(screen.queryByTestId('symbol-chevron.right')).not.toBeOnTheScreen()
+		expect(screen.queryByTestId('symbol-arrow.up.right')).not.toBeOnTheScreen()
+	})
+})
+
+describe('DetailRow destination', () => {
+	it('points into the stack by default', async () => {
+		await render(<DetailRow label="Days" onPress={jest.fn()} value="Mon – Fri" />)
+
+		expect(screen.getByTestId('symbol-chevron.right')).toBeOnTheScreen()
+	})
+
+	it('points out of the app when the value is a document elsewhere', async () => {
+		await render(
+			<DetailRow
+				destination="external"
+				label="Profile"
+				onPress={jest.fn()}
+				value="stolaf.edu/profile/ole"
+			/>,
+		)
+
+		expect(screen.getByTestId('symbol-arrow.up.right')).toBeOnTheScreen()
+	})
+
+	it('points nowhere when the value is a number to call', async () => {
+		await render(
+			<DetailRow destination="action" label="Phone" onPress={jest.fn()} value="507-786-1234" />,
+		)
+
+		expect(screen.queryByTestId('symbol-chevron.right')).not.toBeOnTheScreen()
+		expect(screen.queryByTestId('symbol-arrow.up.right')).not.toBeOnTheScreen()
+	})
+
+	/// Directory's office-hours row states a destination but only sometimes has
+	/// a URL behind it, so an untappable row must stay unmarked.
+	it('points nowhere when there is nothing to tap', async () => {
+		await render(<DetailRow destination="external" label="Office Hours" value="By appointment" />)
+
+		expect(screen.queryByTestId('symbol-arrow.up.right')).not.toBeOnTheScreen()
+	})
+})
+
 describe('DetailRow', () => {
 	it('shows the label and its value', async () => {
 		await render(<DetailRow label="Credits" value="1.00" />)
