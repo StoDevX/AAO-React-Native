@@ -6,8 +6,11 @@ import type {MealMenuSelection} from '@frogpond/food-menu'
 
 /**
  * What a menu screen puts in its navigation bar: the cafe it is showing, the
- * day it is showing, and the meal picker -- or `null` for a cafe that serves
- * one meal.
+ * day it is showing, and the meal picker.
+ *
+ * `date` is `null` for a screen that shows no single day, and `meals` is `null`
+ * for a cafe that serves one meal -- or for a screen with no menu on it at all,
+ * like the Carleton chooser.
  *
  * The date arrives already formatted. `now` is a fresh `Moment` on every render
  * of the screens that publish this, so a `Moment` here would republish on every
@@ -15,16 +18,22 @@ import type {MealMenuSelection} from '@frogpond/food-menu'
  */
 type MenuHeader = {
 	name: string
-	date: string
+	date: string | null
 	meals: MealMenuSelection | null
 }
 
-type ContextValue = {
-	header: MenuHeader | null
-	publish: (header: MenuHeader) => void
-}
+/**
+ * The published header, read by the host alone.
+ *
+ * Separate from the publisher below so that a publish re-renders only the host.
+ * Every cafe tab stays mounted once visited, each hosting a SwiftUI list, and
+ * one context carrying both would re-render all of them whenever any one of
+ * them published.
+ */
+const MenuHeaderContext = React.createContext<MenuHeader | null>(null)
 
-const MenuHeaderContext = React.createContext<ContextValue | null>(null)
+/** Writes into the context above. A `useState` setter, so its identity holds. */
+const PublishMenuHeaderContext = React.createContext<((header: MenuHeader) => void) | null>(null)
 
 /**
  * Holds the header for whichever menu is on screen.
@@ -36,28 +45,31 @@ const MenuHeaderContext = React.createContext<ContextValue | null>(null)
 export function MenuHeaderProvider(props: {children: React.ReactNode}): React.ReactNode {
 	let [header, setHeader] = React.useState<MenuHeader | null>(null)
 
-	let value = React.useMemo((): ContextValue => ({header, publish: setHeader}), [header])
-
-	return <MenuHeaderContext.Provider value={value}>{props.children}</MenuHeaderContext.Provider>
+	return (
+		<PublishMenuHeaderContext.Provider value={setHeader}>
+			<MenuHeaderContext.Provider value={header}>{props.children}</MenuHeaderContext.Provider>
+		</PublishMenuHeaderContext.Provider>
+	)
 }
 
 /**
- * Publishes a menu's header while `active`, which is the screen's own focus.
+ * Publishes a menu's header while its screen holds focus.
  *
  * `NativeTabs` mounts every tab as soon as Menus opens, so three cafes the
  * reader never asked for are live at any moment; without the gate they would
  * take turns titling the screen.
  *
- * `header` must be memoized by the caller -- it is compared by identity.
+ * `header` must be memoized by the caller, or be a constant -- it is compared
+ * by identity, and a fresh object each render would publish on each render.
  */
-export function usePublishMenuHeader(header: MenuHeader, active: boolean): void {
-	let publish = React.useContext(MenuHeaderContext)?.publish
+export function usePublishMenuHeader(header: MenuHeader, focused: boolean): void {
+	let publish = React.useContext(PublishMenuHeaderContext)
 
 	React.useEffect(() => {
-		if (active) {
+		if (focused) {
 			publish?.(header)
 		}
-	}, [active, header, publish])
+	}, [focused, header, publish])
 }
 
 /**
@@ -69,7 +81,7 @@ export function usePublishMenuHeader(header: MenuHeader, active: boolean): void 
  * against the tab's route and are dropped without a word.
  */
 export function MenuHeaderHost(): React.ReactNode {
-	let header = React.useContext(MenuHeaderContext)?.header
+	let header = React.useContext(MenuHeaderContext)
 
 	if (!header) {
 		return null
@@ -88,13 +100,24 @@ export function MenuHeaderHost(): React.ReactNode {
 	)
 }
 
-function MenuHeaderTitle(props: {name: string; date: string}): React.ReactNode {
+function MenuHeaderTitle(props: {name: string; date: string | null}): React.ReactNode {
 	let {name, date} = props
 
 	return (
-		<View accessibilityLabel={`${name}, ${date}`} accessible={true} style={styles.title}>
-			<Text style={styles.name}>{name}</Text>
-			<Text style={styles.date}>{date}</Text>
+		<View
+			accessibilityLabel={date ? `${name}, ${date}` : name}
+			accessibilityRole="header"
+			accessible={true}
+			style={styles.title}
+		>
+			<Text maxFontSizeMultiplier={TITLE_SCALE_LIMIT} numberOfLines={1} style={styles.name}>
+				{name}
+			</Text>
+			{date ? (
+				<Text maxFontSizeMultiplier={TITLE_SCALE_LIMIT} numberOfLines={1} style={styles.date}>
+					{date}
+				</Text>
+			) : null}
 		</View>
 	)
 }
@@ -124,6 +147,13 @@ function MealPicker(props: {meals: MealMenuSelection}): React.ReactNode {
 		</Stack.Toolbar>
 	)
 }
+
+/**
+ * How far the title may grow with Dynamic Type. A navigation bar keeps its
+ * height whatever the text inside it asks for, so past this the two lines
+ * would clip rather than scale.
+ */
+const TITLE_SCALE_LIMIT = 1.4
 
 const styles = StyleSheet.create({
 	title: {
