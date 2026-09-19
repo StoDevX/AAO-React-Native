@@ -1,7 +1,7 @@
 import * as React from 'react'
 import moment from 'moment-timezone'
 import {describe, expect, jest, test} from '@jest/globals'
-import {fireEvent, render, screen, within} from '@testing-library/react-native'
+import {act, fireEvent, render, screen, within} from '@testing-library/react-native'
 
 import {FancyMenu, sectionHeaderProps} from '../fancy-menu'
 import type {
@@ -218,6 +218,63 @@ describe('FancyMenu', () => {
 		await rerender(renderMenu(moment.tz(BREAKFAST_TIME, TIMEZONE)))
 
 		expect(shownMeal()).toBe('Dinner')
+	})
+
+	// The screens above draw the meal picker in their navigation bar, so the
+	// menu has to hand them what to draw -- both the one it opens on and the
+	// one the reader moves to.
+	test('reports the meal picker to the screen above it', async () => {
+		let onMealMenuChange = jest.fn()
+
+		await render(
+			<FancyMenu
+				foodItems={FOOD_ITEMS}
+				meals={MEALS}
+				menuCorIcons={COR_ICONS}
+				name="The Caf"
+				now={moment.tz(BREAKFAST_TIME, TIMEZONE)}
+				onItemPress={jest.fn()}
+				onMealMenuChange={onMealMenuChange}
+			/>,
+		)
+
+		expect(onMealMenuChange).toHaveBeenLastCalledWith(
+			expect.objectContaining({
+				options: ['Breakfast', 'Lunch', 'Dinner'],
+				selected: 'Breakfast',
+			}),
+		)
+
+		await fireEvent.press(screen.getByTestId('choose-dinner'))
+
+		expect(onMealMenuChange).toHaveBeenLastCalledWith(expect.objectContaining({selected: 'Dinner'}))
+	})
+
+	// The callback the screen above uses to move between meals, which nothing
+	// else in the tree can reach -- the filters live in here.
+	test('switches meals through the picker it reported', async () => {
+		let onMealMenuChange = jest.fn()
+
+		await render(
+			<FancyMenu
+				foodItems={FOOD_ITEMS}
+				meals={MEALS}
+				menuCorIcons={COR_ICONS}
+				name="The Caf"
+				now={moment.tz(BREAKFAST_TIME, TIMEZONE)}
+				onItemPress={jest.fn()}
+				onMealMenuChange={onMealMenuChange}
+			/>,
+		)
+
+		expect(screen.getByText('Pancakes')).toBeTruthy()
+
+		let reported = onMealMenuChange.mock.lastCall?.[0] as {select: (label: string) => void}
+		await act(() => {
+			reported.select('Dinner')
+		})
+
+		expect(screen.getByText('Pot Roast')).toBeTruthy()
 	})
 
 	// `FoodItemRow`'s real decision: the accessibility label names every

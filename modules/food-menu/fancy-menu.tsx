@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {useMemo, useState} from 'react'
+import {useCallback, useEffect, useMemo, useState} from 'react'
 import {StyleSheet} from 'react-native'
 import {Host, List, RNHostView, Section, Text, VStack} from '@expo/ui/swift-ui'
 import {font, foregroundStyle, listStyle, padding, refreshable} from '@expo/ui/swift-ui/modifiers'
@@ -13,6 +13,7 @@ import {applyMenuFilters} from './lib/apply-menu-filters'
 import {buildFilters} from './lib/build-filters'
 import {chooseMeal} from './lib/choose-meal'
 import {emptyMessage} from './lib/empty-message'
+import {mealHeaderMenu, type MealHeaderMenu} from './lib/meal-header'
 import {offerSpecials} from './lib/offer-specials'
 import type {
 	MasterCorIconMapType,
@@ -23,6 +24,12 @@ import type {
 } from './types'
 
 type FilterFunc = (filters: Array<FilterType<MenuItemType>>, item: MenuItemType) => boolean
+
+/** The meal picker, together with the way to act on it. */
+export type MealMenuSelection = MealHeaderMenu & {
+	/** Shows another of the cafe's meals. */
+	select: (label: string) => void
+}
 
 type Props = {
 	cafeMessage?: string | null
@@ -36,6 +43,12 @@ type Props = {
 	// menu-github.tsx's `refetch`) return a promise, and `refreshable` below
 	// needs to await that promise to keep the spinner up until it resolves.
 	onRefresh?: () => unknown
+	/**
+	 * Hands the screen above the meal picker to draw, for a screen that draws
+	 * it in its navigation bar rather than in the toolbar below. `null` when
+	 * the cafe serves one meal and there is nothing to pick.
+	 */
+	onMealMenuChange?: (menu: MealMenuSelection | null) => void
 	applyFilters?: FilterFunc
 }
 
@@ -161,6 +174,25 @@ export function FancyMenu(props: Props): React.ReactNode {
 			note: stationsByLabel.get(section.title)?.note,
 		}))
 	}, [groupedMenuData, stations])
+
+	// Written against the previous filters rather than the ones in scope, so
+	// the identity survives every render and the effect below fires only when
+	// the picker itself changes.
+	const selectMeal = useCallback((label: string) => {
+		setFilters((current) =>
+			current.map((f) => (f.type === 'picker' ? {...f, spec: {...f.spec, selected: {label}}} : f)),
+		)
+	}, [])
+
+	const mealMenu = useMemo((): MealMenuSelection | null => {
+		const menu = mealHeaderMenu(filters, mealName)
+		return menu ? {...menu, select: selectMeal} : null
+	}, [filters, mealName, selectMeal])
+
+	const {onMealMenuChange} = props
+	useEffect(() => {
+		onMealMenuChange?.(mealMenu)
+	}, [onMealMenuChange, mealMenu])
 
 	const specialsFilterEnabled = areSpecialsFiltered(appliedFilters)
 	const message = emptyMessage({
