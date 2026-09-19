@@ -464,12 +464,12 @@ struct TestIdentifiers {
 		/// never "Hours", which is what makes its detail content an unambiguous
 		/// tell for a second sheet: nothing else on this screen shows those words.
 		static let aSecondBuilding = "Stav Hall"
-		/// A building with two schedule sections and a resource link -- enough
-		/// combined content to overflow the sheet's smaller detent, unlike
-		/// `anExcludedBuilding`'s single short section. One of its sections is
-		/// still titled "Hours", so `tapRow`'s own detection of a successful tap
-		/// still applies.
-		static let aBuildingWithLongSchedule = "The Pause Kitchen"
+		/// A building with three schedule sections -- enough combined content to
+		/// overflow the sheet's smaller detent, unlike `anExcludedBuilding`'s
+		/// single short section. None of its sections is titled "Hours", so a
+		/// test opening it checks the sheet's title rather than
+		/// `detailSchedule`.
+		static let aBuildingWithLongSchedule = "Stav Hall"
 		/// A query no building matches, so the screen must say no results were
 		/// found rather than claim the data is missing -- the two states read
 		/// differently, or a broken search looks like a server outage.

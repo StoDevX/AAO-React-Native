@@ -1,14 +1,12 @@
-name: The Pause Kitchen
+name: Lion's Pause Pizza Delivery
 image: pause-kitchen
 category: Food
 building: thelionspause
-links:
-  - {title: 'Pause Instagram', url: 'https://www.instagram.com/lionspause/'}
 
 schedule:
   - title: Hours
     hours:
-      - {days: [Mo, Tu, We, Th, Fr, Sa, Su], from: '4:00pm', to: '12:00am'}
+      - {days: [Fr, Sa, Su], from: '7:00pm', to: '12:00am'}
 
 breakSchedule:
   fall: []

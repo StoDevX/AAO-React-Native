@@ -23,7 +23,6 @@ import type {BuildingType} from '../types'
 import {
 	getShortBuildingStatus,
 	statusGlyph,
-	findOpenService,
 	contextualStatus,
 	hasDisplayableHours,
 	firstScheduleNote,
@@ -70,7 +69,7 @@ export const BuildingListRow = React.memo(function BuildingListRow({
 }: Props): React.ReactNode {
 	let scheme = useColorScheme()
 	let status = getShortBuildingStatus(building, now)
-	let glyph = statusGlyph(status, findOpenService(building, now) ?? undefined, scheme)
+	let glyph = statusGlyph(status, scheme)
 	let statusText = contextualStatus(building, now)
 
 	let schedules = building.schedule || []

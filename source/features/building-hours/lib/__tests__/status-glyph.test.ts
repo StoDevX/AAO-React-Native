@@ -16,29 +16,11 @@ describe('the glyph a status shows', () => {
 	})
 
 	it('uses the inverse half-filled circles in dark mode', () => {
-		expect(statusGlyph('Almost Open', undefined, 'dark').symbol).toBe(
-			'circle.lefthalf.filled.inverse',
-		)
-		expect(statusGlyph('Almost Closed', undefined, 'dark').symbol).toBe(
-			'circle.righthalf.filled.inverse',
-		)
+		expect(statusGlyph('Almost Open', 'dark').symbol).toBe('circle.lefthalf.filled.inverse')
+		expect(statusGlyph('Almost Closed', 'dark').symbol).toBe('circle.righthalf.filled.inverse')
 	})
 
 	it('rings a bell for chapel', () => {
 		expect(statusGlyph('Chapel').symbol).toBe('bell.circle')
-	})
-
-	it('takes the service symbol from the data', () => {
-		expect(statusGlyph('Service', {symbol: 'phone.circle', name: 'Phone'}).symbol).toBe(
-			'phone.circle',
-		)
-	})
-
-	it('falls back to a filled circle when a service named no symbol', () => {
-		expect(statusGlyph('Service', {name: 'Phone'}).symbol).toBe('circle.fill')
-	})
-
-	it('falls back to a filled circle when there is no service at all', () => {
-		expect(statusGlyph('Service').symbol).toBe('circle.fill')
 	})
 })

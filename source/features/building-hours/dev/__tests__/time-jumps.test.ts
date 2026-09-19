@@ -30,6 +30,11 @@ describe('every named jump lands where it says', () => {
 		expect(contextualStatus(pause, jump('Almost open')).short).toBe('Opens in 15 min')
 	})
 
+	it('puts the SARN Hotline open overnight', () => {
+		let hotline = read('7-3-sarn-hotline.yaml')
+		expect(contextualStatus(hotline, jump('Overnight')).short).toBe('Open until 8 AM')
+	})
+
 	it('closes everything in Mail and Packages', () => {
 		let printCenter = read('3-2-print-center.yaml')
 		expect(contextualStatus(printCenter, jump('Weekend, closed')).short).toBe('Closed')
