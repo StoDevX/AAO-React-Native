@@ -1,15 +1,17 @@
 import * as React from 'react'
-import {ScrollView, StyleSheet, Text, View} from 'react-native'
+import {StyleSheet, Text, View} from 'react-native'
 import {Stack, useLocalSearchParams} from 'expo-router'
 import {useQuery} from '@tanstack/react-query'
 import {timezone} from '@frogpond/constants'
 import {useMomentTimer} from '@frogpond/timer'
+import {Host, List, RNHostView, Section, Text as SwiftUIText, VStack} from '@expo/ui/swift-ui'
+import {listRowInsets, listRowSeparator, listStyle} from '@expo/ui/swift-ui/modifiers'
 
 import type {Moment} from 'moment-timezone'
 
 import {busLineOptions} from '../../source/features/transportation/bus/query'
 import {deriveFromProps} from '../../source/features/transportation/bus/line'
-import {createMomentForDay} from '../../source/features/transportation/bus/components/day-picker'
+import {createMomentForDay} from '../../source/features/transportation/bus/components/days'
 import type {
 	DayOfWeek,
 	BusTimetableEntry,
@@ -25,31 +27,16 @@ import {
 import {ScheduleTimes} from '../../source/features/transportation/bus/components/times'
 import {ProgressChunk} from '../../source/features/transportation/bus/components/progress-chunk'
 import {BUS_FOOTER_MESSAGE} from '../../source/features/transportation/bus/constants'
+import {useTimetableWidth} from '../../source/features/transportation/bus/use-timetable-width'
 import {LoadingView, NoticeView} from '@frogpond/notice'
-import {ListFooter, ListRow, ListSectionHeader, Detail, Title} from '@frogpond/lists'
+import {ListRow, Detail, Title} from '@frogpond/lists'
 import * as c from '@frogpond/colors'
 import {Column} from '@frogpond/layout'
 
-/// The corner radius and side margin iOS gives an inset-grouped section.
-const CARD_RADIUS = 10
-const CARD_MARGIN = 16
-
 const styles = StyleSheet.create({
-	container: {
+	host: {
+		flex: 1,
 		backgroundColor: c.systemGroupedBackground,
-	},
-	/**
-	 * The inset-grouped card the rows sit in, drawn by hand rather than by a
-	 * SwiftUI `List`: the progress bar runs continuously down the route and its
-	 * dots are pulled up onto the bar above them by a negative margin, which a
-	 * list clips at every row boundary. One card clips only its own ends, where
-	 * the bar stops anyway.
-	 */
-	card: {
-		backgroundColor: c.secondarySystemGroupedBackground,
-		borderRadius: CARD_RADIUS,
-		marginHorizontal: CARD_MARGIN,
-		overflow: 'hidden',
 	},
 	timeRow: {
 		flexDirection: 'row',
@@ -83,6 +70,7 @@ type Props = {
 
 function BusStopDetailInternal(props: Props): React.ReactNode {
 	let {stop, line, now, subtitle} = props
+	let hostedWidth = useTimetableWidth()
 
 	// Read straight from the props: the row statuses below are computed from
 	// these, so they have to be settled by the time the first frame draws.
@@ -98,16 +86,16 @@ function BusStopDetailInternal(props: Props): React.ReactNode {
 		now,
 	})
 
-	let headerElement = <ListSectionHeader subtitle={subtitle} title={stop.name} />
-
 	let rowTextStyle = [
 		stopStatus === 'skip' && styles.skippingStopTitle,
 		stopStatus === 'after' && styles.passedStopTitle,
 		stopStatus === 'at' && styles.atStopTitle,
 	]
 
+	let rows: React.ReactNode
+
 	if (departureTimes.length === 0) {
-		let emptyRowElement = (
+		rows = (
 			<ListRow fullHeight={true} fullWidth={true} style={styles.timeRow}>
 				<ProgressChunk
 					barColor={line.colors.bar}
@@ -126,62 +114,70 @@ function BusStopDetailInternal(props: Props): React.ReactNode {
 				</Column>
 			</ListRow>
 		)
+	} else {
+		const getTimeStatus = (departureTime: Moment | null): BusStopStatusEnum => {
+			if (!departureTime) return 'skip'
 
-		return (
-			<ScrollView contentInsetAdjustmentBehavior="automatic" style={styles.container}>
-				{headerElement}
-				<View style={styles.card}>{emptyRowElement}</View>
-				<ListFooter title={BUS_FOOTER_MESSAGE} />
-			</ScrollView>
-		)
-	}
-
-	const getTimeStatus = (departureTime: Moment | null): BusStopStatusEnum => {
-		if (!departureTime) return 'skip'
-
-		if (now.isAfter(departureTime, 'minute')) {
-			return 'after'
-		} else if (now.isSame(departureTime, 'minute')) {
-			return 'at'
-		} else {
-			return 'before'
+			if (now.isAfter(departureTime, 'minute')) {
+				return 'after'
+			} else if (now.isSame(departureTime, 'minute')) {
+				return 'at'
+			} else {
+				return 'before'
+			}
 		}
+
+		rows = departureTimes.map((time, index) => {
+			let timeStatus = getTimeStatus(time)
+
+			let timeRowTextStyle = [
+				timeStatus === 'skip' && styles.skippingStopTitle,
+				timeStatus === 'after' && styles.passedStopTitle,
+				timeStatus === 'at' && styles.atStopTitle,
+			]
+
+			return (
+				// oxlint-disable-next-line react/no-array-index-key -- position in the route is the stop's identity
+				<ListRow key={index} fullHeight={true} fullWidth={true} style={styles.timeRow}>
+					<ProgressChunk
+						barColor={line.colors.bar}
+						currentStopColor={line.colors.dot}
+						isFirstChunk={index === 0}
+						isLastChunk={index === departureTimes.length - 1}
+						stopStatus={timeStatus}
+					/>
+					<Column flex={1} style={styles.internalPadding}>
+						<Title bold={false} style={timeRowTextStyle}>
+							<ScheduleTimes times={[time]} />
+						</Title>
+					</Column>
+				</ListRow>
+			)
+		})
 	}
-
-	let timeRows = departureTimes.map((time, index) => {
-		let timeStatus = getTimeStatus(time)
-
-		let timeRowTextStyle = [
-			timeStatus === 'skip' && styles.skippingStopTitle,
-			timeStatus === 'after' && styles.passedStopTitle,
-			timeStatus === 'at' && styles.atStopTitle,
-		]
-
-		return (
-			// oxlint-disable-next-line react/no-array-index-key -- position in the route is the stop's identity
-			<ListRow key={index} fullHeight={true} fullWidth={true} style={styles.timeRow}>
-				<ProgressChunk
-					barColor={line.colors.bar}
-					currentStopColor={line.colors.dot}
-					isFirstChunk={index === 0}
-					isLastChunk={index === departureTimes.length - 1}
-					stopStatus={timeStatus}
-				/>
-				<Column flex={1} style={styles.internalPadding}>
-					<Title bold={false} style={timeRowTextStyle}>
-						<ScheduleTimes times={[time]} />
-					</Title>
-				</Column>
-			</ListRow>
-		)
-	})
 
 	return (
-		<ScrollView contentInsetAdjustmentBehavior="automatic" style={styles.container}>
-			{headerElement}
-			<View style={styles.card}>{timeRows}</View>
-			<ListFooter title={BUS_FOOTER_MESSAGE} />
-		</ScrollView>
+		<Host style={styles.host}>
+			<List modifiers={[listStyle('insetGrouped')]}>
+				<Section
+					footer={<SwiftUIText>{BUS_FOOTER_MESSAGE}</SwiftUIText>}
+					title={`${stop.name} — ${subtitle}`.toUpperCase()}
+				>
+					{/* Zeroed insets and no separator, so the progress bar runs to
+					    the card's own edges. */}
+					<VStack
+						modifiers={[
+							listRowInsets({top: 0, bottom: 0, leading: 0, trailing: 0}),
+							listRowSeparator('hidden'),
+						]}
+					>
+						<RNHostView matchContents={true}>
+							<View style={{width: hostedWidth}}>{rows}</View>
+						</RNHostView>
+					</VStack>
+				</Section>
+			</List>
+		</Host>
 	)
 }
 

@@ -30,12 +30,8 @@ import {Restart} from 'react-native-restart-newarch'
 
 import {AllViews} from '../../source/features/views'
 import type {ViewType} from '../../source/features/views'
-import {
-	CELL_MARGIN,
-	FILL_WIDTH,
-	HomeScreenButton,
-	SCREEN_MARGIN,
-} from '../../source/features/home/button'
+import {HomeScreenButton} from '../../source/features/home/button'
+import {FILL_WIDTH, SCREEN_MARGIN, TILE_SPACING} from '../../source/components/tile-layout'
 import {openUrl} from '@frogpond/open-url'
 import {selectDevModeOverride, setDevModeOverride} from '../../source/redux/parts/settings'
 import {useIsDevMode} from '../../source/lib/use-is-dev-mode'
@@ -48,8 +44,8 @@ const styles = StyleSheet.create({
 	},
 	banner: {
 		marginHorizontal: SCREEN_MARGIN,
-		marginTop: CELL_MARGIN,
-		marginBottom: CELL_MARGIN / 2,
+		marginTop: TILE_SPACING,
+		marginBottom: TILE_SPACING / 2,
 	},
 })
 
@@ -174,7 +170,7 @@ export default function HomePage(): React.ReactNode {
 				<ScrollView>
 					<VStack
 						modifiers={[padding({all: SCREEN_MARGIN}), frame({maxWidth: FILL_WIDTH})]}
-						spacing={CELL_MARGIN}
+						spacing={TILE_SPACING}
 					>
 						<RNHostView matchContents={true}>
 							<FaqBannerGroup
@@ -184,7 +180,7 @@ export default function HomePage(): React.ReactNode {
 							/>
 						</RNHostView>
 
-						<Grid horizontalSpacing={CELL_MARGIN} verticalSpacing={CELL_MARGIN}>
+						<Grid horizontalSpacing={TILE_SPACING} verticalSpacing={TILE_SPACING}>
 							{rows.map((row, i) => (
 								// oxlint-disable-next-line react/no-array-index-key -- a row is its position; the buttons inside are keyed by title
 								<Grid.Row key={i}>

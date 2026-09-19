@@ -7,6 +7,21 @@ version = "4.0.20"
 backend = "gem:bundler"
 specifiers = ["4.0.20"]
 
+[[tools."github:cameroncooke/AXe"]]
+version = "1.8.0"
+backend = "github:cameroncooke/AXe"
+specifiers = ["1.8.0"]
+
+[tools."github:cameroncooke/AXe"."platforms.macos-arm64"]
+checksum = "sha256:87eb09cd49dfc74fa8f7f5a46a03dfe2f14518b01d819f6a4094eab0d344ea7f"
+url = "https://github.com/cameroncooke/AXe/releases/download/v1.8.0/AXe-macOS-homebrew-v1.8.0.tar.gz"
+url_api = "https://api.github.com/repos/cameroncooke/AXe/releases/assets/483428550"
+
+[tools."github:cameroncooke/AXe"."platforms.macos-x64"]
+checksum = "sha256:87eb09cd49dfc74fa8f7f5a46a03dfe2f14518b01d819f6a4094eab0d344ea7f"
+url = "https://github.com/cameroncooke/AXe/releases/download/v1.8.0/AXe-macOS-homebrew-v1.8.0.tar.gz"
+url_api = "https://api.github.com/repos/cameroncooke/AXe/releases/assets/483428550"
+
 [[tools.hk]]
 version = "2.0.1"
 backend = "packslip:github.com/jdx/hk"

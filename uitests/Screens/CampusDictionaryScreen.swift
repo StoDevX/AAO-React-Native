@@ -179,6 +179,25 @@ struct CampusDictionaryScreen: Screen {
 		return self
 	}
 
+	/// A lone sense has no number hanging in a gutter, so its text should
+	/// start at the headword's left edge rather than stepping in past it.
+	@discardableResult
+	func verifySenseAlignsWithHeadword(_ word: String, definition: String) -> Self {
+		let sheetTexts = app.staticTexts.matching(
+			identifier: TestIdentifiers.Dictionary.definitionSheet)
+		let headword = sheetTexts.matching(NSPredicate(format: "label == %@", word)).firstMatch
+		let sense = sheetTexts.matching(
+			NSPredicate(format: "label BEGINSWITH %@", definition)
+		).firstMatch
+		XCTAssertTrue(headword.waitForExistence(timeout: 5), "the sheet showed no headword")
+		XCTAssertTrue(sense.exists, "the sheet showed no definition")
+
+		XCTAssertEqual(
+			sense.frame.minX, headword.frame.minX, accuracy: 1,
+			"the definition did not line up with the headword")
+		return self
+	}
+
 	/// The sheet's top edge should sit near the middle of the screen, not at
 	/// the top of it -- which is the whole point of a `medium` detent.
 	@discardableResult

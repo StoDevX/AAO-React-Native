@@ -6,6 +6,7 @@ export {findRemainingDeparturesForStop} from './find-remaining-departures-for-st
 export {findBusStopStatus} from './find-bus-stop-status'
 export {calculateBusProgress} from './calculate-bus-progress'
 export {busPropsForRow, findBusTarget} from './find-bus-target'
+export {scheduleSectionTitle} from './schedule-section-title'
 
 export type {BusStateEnum} from './get-current-bus-iteration'
 export type {BusStopStatusEnum} from './find-bus-stop-status'

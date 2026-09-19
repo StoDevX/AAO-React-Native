@@ -26,7 +26,6 @@
     "@frogpond/food-menu": "workspace:*",
     "@frogpond/html-content": "workspace:*",
     "@frogpond/html-lib": "workspace:*",
-    "@frogpond/info-header": "workspace:*",
     "@frogpond/launch-arguments": "workspace:*",
     "@frogpond/layout": "workspace:*",
     "@frogpond/lists": "workspace:*",

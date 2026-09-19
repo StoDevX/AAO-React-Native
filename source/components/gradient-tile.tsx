@@ -18,8 +18,7 @@ import {
 } from '@expo/ui/swift-ui/modifiers'
 import type {SFSymbol} from 'sf-symbols-typescript'
 import {displayP3, type Gradient} from '@frogpond/colors'
-import {FILL_WIDTH} from '../features/home/button'
-import {TILE_ASPECT} from './tile-layout'
+import {FILL_WIDTH, TILE_ASPECT} from './tile-layout'
 
 /// Space between the card and the name beneath it.
 const LABEL_GAP = 8
