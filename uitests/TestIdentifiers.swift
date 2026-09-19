@@ -414,11 +414,22 @@ struct TestIdentifiers {
 		static let aContactAction = "Call Public Safety"
 
 		/// A second contact from data/contact-info/, so its tile is in the grid
-		/// whatever the server is serving.
-		static let aSecondContact = "SARN"
+		/// whatever the server is serving. It has to sit in the grid's first
+		/// row, the only one the contact sheet leaves uncovered.
+		static let aSecondContact = "HOPE Center"
 		/// That contact's own action. Nothing else in the app shows this
-		/// string, so finding it can only mean SARN's detail is on screen.
-		static let aSecondContactAction = "Call SARN"
+		/// string, so finding it can only mean HOPE Center's detail is on
+		/// screen.
+		static let aSecondContactAction = "Call 24-Hour Hotline"
+
+		/// A contact from data/contact-info/ whose action opens a web page
+		/// rather than placing a call.
+		static let aLinkContact = "Anonymous Reports"
+		/// That contact's own action, shown on its detail screen.
+		static let aLinkContactAction = "Open Anonymous Report Form"
+		/// The in-app browser's own close button, which only the browser
+		/// sheet draws.
+		static let inAppBrowserDone = "Done"
 
 		/// Search results in list mode: `directory-row-<index>`. Mirrors
 		/// DIRECTORY_ROW_PREFIX in app/(home)/Directory/index.tsx.

@@ -223,6 +223,19 @@ struct DirectoryScreen: Screen {
 		return self
 	}
 
+	/// Tap the contact's action and assert the in-app browser opened. Its Done
+	/// button is drawn before the page loads, so this holds without the
+	/// network the page itself would need.
+	@discardableResult
+	func followDetailLink(_ action: String) -> Self {
+		app.buttons[action].firstMatch.tap()
+		let done = app.buttons[TestIdentifiers.Directory.inAppBrowserDone].firstMatch
+		XCTAssertTrue(
+			done.waitForExistence(timeout: 30),
+			"\(action) should open its page in the in-app browser")
+		return self
+	}
+
 	/// Distinguishes a sheet from a full-screen push: a pushed screen replaces
 	/// the grid in the hierarchy, while a sheet leaves it present underneath.
 	///

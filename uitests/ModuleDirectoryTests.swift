@@ -17,7 +17,7 @@ class ModuleDirectoryTests: UITestCase {
 			.navigate()
 			.verifyDirectoryTitle()
 			.verifyContactsHeading()
-			.verifyContactTiles(count: 8)
+			.verifyContactTiles(count: 11)
 			.capture("Directory contact grid")
 	}
 
@@ -37,6 +37,18 @@ class ModuleDirectoryTests: UITestCase {
 			.capture("Contact detail as a sheet")
 	}
 
+	/// A contact carries either a phone number or a link, and its one button
+	/// follows whichever it has. The other tests here all open a contact that
+	/// places a call, so this is the only one that reaches the link branch.
+	func testALinkContactOpensItsPage() throws {
+		DirectoryScreen(app: app)
+			.navigate()
+			.openContact(TestIdentifiers.Directory.aLinkContact)
+			.verifyDetailAction(TestIdentifiers.Directory.aLinkContactAction)
+			.followDetailLink(TestIdentifiers.Directory.aLinkContactAction)
+			.capture("Contact link opened in the in-app browser")
+	}
+
 	/// The contact sheet carries no close button, and a formSheet route has no
 	/// back button either -- the drag is the only way out. If it does not
 	/// dismiss, the reader is stuck on a contact with no way back to the grid.
@@ -50,7 +62,7 @@ class ModuleDirectoryTests: UITestCase {
 				waitingFor: TestIdentifiers.Directory.aContactAction)
 			.capture("Directory after dismissing a contact sheet")
 			.verifyContactsHeading()
-			.verifyContactTiles(count: 8)
+			.verifyContactTiles(count: 11)
 	}
 
 	/// `sheetLargestUndimmedDetentIndex: 'none'` is what makes this true: UIKit
@@ -72,14 +84,14 @@ class ModuleDirectoryTests: UITestCase {
 	/// At an accessibility Dynamic Type size the label and glyph both grow,
 	/// but a fixed column count's width would not -- columnsForFontScale is
 	/// what narrows the grid to keep it readable there instead of clipping.
-	/// The count staying at eight (not the column count, which this test
+	/// The count staying at eleven (not the column count, which this test
 	/// cannot see from the accessibility tree) is what proves the reflow
 	/// happened rather than the grid just running off the edge of the screen.
 	func testShowsEveryContactAtAnAccessibilitySize() throws {
 		relaunch(atContentSizeCategory: TestIdentifiers.LaunchArguments.accessibilityExtraExtraExtraLarge)
 		DirectoryScreen(app: app)
 			.navigate()
-			.verifyContactTiles(count: 8)
+			.verifyContactTiles(count: 11)
 			.capture("Directory contact grid at an accessibility size")
 	}
 
