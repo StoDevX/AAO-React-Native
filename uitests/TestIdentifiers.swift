@@ -570,22 +570,18 @@ struct TestIdentifiers {
 	// MARK: - Transportation
 
 	enum Transportation {
-		static let tabs = ["Express", "Red Line", "Blue Line", "Oles Go", "Other"]
-		/// The list footer renders as a single Text, so both lines are one label.
-		/// A stop every Express Bus route passes through, used to open a single
-		/// stop's schedule. It is the college itself, so it is not going to be
-		/// renamed out from under this test.
+		/// The line every UI test drives, and a stop it always calls at. The
+		/// stop is the college itself, so it is not going to be renamed out
+		/// from under this test.
+		static let aLine = "Express Bus"
 		static let aStop = "St. Olaf College"
+		static let aDay = "Saturday"
+		/// The list footer renders as a single Text, so both lines are one label.
 		static let footer = """
 			Bus routes and times subject to change without notice
 
 			Data collected by the humans of All About Olaf
 			"""
-
-		/// The navigation bar's day menu, labelled by the day it is showing.
-		/// `Today` when the screens are following the clock.
-		static let dayMenuDefaultLabel = "Today"
-		static let aDay = "Saturday"
 	}
 
 }

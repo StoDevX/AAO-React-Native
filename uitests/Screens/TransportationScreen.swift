@@ -8,38 +8,99 @@ struct TransportationScreen: Screen {
 		navigateFromHome(to: TestIdentifiers.Buttons.transportation)
 	}
 
-	/// Scroll to the bottom of the line, where the route's last stop is.
+	/// A line's widget header, which carries the line name and what it is
+	/// doing -- "Express Bus, Running" -- as one label.
+	private func lineHeader(_ line: String) -> XCUIElement {
+		app.elementWithLabel(startingWith: line)
+	}
+
+	/// The screen's `@expo/ui` `List`, which lands as a `CollectionView` rather
+	/// than the `UITableView` a plain SwiftUI `List` would give -- so a swipe
+	/// aimed at `app.tables` finds nothing to scroll.
+	private var list: XCUIElement {
+		app.collectionViews.firstMatch
+	}
+
+	/// A line's widget is a `Section` in that list, which builds its rows
+	/// lazily: one below the fold is absent from the tree entirely, not merely
+	/// offscreen, so waiting longer never surfaces it. This scrolls until the
+	/// header appears rather than trusting `waitForExistence` alone, which is
+	/// only good for a header already on screen.
+	@discardableResult
+	func verifyLineWidgetShown(_ line: String) -> Self {
+		let header = lineHeader(line)
+		for _ in 0..<6 where !header.exists {
+			list.swipeUp()
+		}
+		XCTAssertTrue(
+			header.exists,
+			"\(line) should have a widget on the Transportation screen")
+		return self
+	}
+
+	/// Open a line's full timetable by pressing its widget header.
+	@discardableResult
+	func openLine(_ line: String) -> Self {
+		let header = lineHeader(line)
+		XCTAssertTrue(
+			header.waitForExistence(timeout: 30),
+			"\(line) should have a widget to open")
+		header.tap()
+		return self
+	}
+
+	/// Press a stop in a widget's strip. The cell's label is the stop name and
+	/// its departure -- "St. Olaf College, 1:05 PM" -- so the name is a prefix.
+	@discardableResult
+	func openStopFromStrip(_ stop: String) -> Self {
+		let cell = app.elementWithLabel(startingWith: stop)
+		XCTAssertTrue(
+			cell.waitForExistence(timeout: 30),
+			"The strip should show \(stop)")
+		cell.tap()
+		return self
+	}
+
+	/// Push the strip sideways. The strip is a horizontal ScrollView inside a
+	/// List row, so the swipe is aimed at the cell rather than at the app,
+	/// which would scroll the list vertically instead.
+	@discardableResult
+	func swipeStripLeft(startingAt stop: String) -> Self {
+		let cell = app.elementWithLabel(startingWith: stop)
+		XCTAssertTrue(
+			cell.waitForExistence(timeout: 30),
+			"The strip should show \(stop) before it is swiped")
+		cell.swipeLeft()
+		cell.swipeLeft()
+		return self
+	}
+
+	/// The footer sits below the route's stops, which the same lazy list
+	/// building means is absent from the tree until scrolled into view.
+	@discardableResult
+	func verifyTimetableShown() -> Self {
+		let footer = app.staticTexts[TestIdentifiers.Transportation.footer].firstMatch
+		for _ in 0..<6 where !footer.exists {
+			list.swipeUp()
+		}
+		XCTAssertTrue(
+			footer.exists,
+			"The sheet should show the line's full timetable, footer and all")
+		return self
+	}
+
+	/// The end of the route, reached by scrolling the sheet's timetable.
 	@discardableResult
 	func scrollToEndOfRoute() -> Self {
-		// Swipe the list itself. The tab bar floats over the bottom of the
-		// screen, so a swipe aimed at the app as a whole can land on that
-		// instead. A SwiftUI List is a table, not a scroll view.
-		let list = app.tables.firstMatch
 		for _ in 0..<4 {
 			list.swipeUp()
 		}
 		return self
 	}
 
-	@discardableResult
-	func verifyEndOfRoute() -> Self {
-		XCTAssertTrue(
-			endOfRoute.exists,
-			"The end of the route should be reachable by scrolling")
-		return self
-	}
-
-	/// The list footer, which sits below the route's last stop.
-	private var endOfRoute: XCUIElement {
-		app.staticTexts[TestIdentifiers.Transportation.footer].firstMatch
-	}
-
-	/// Open a stop's own schedule, which draws the same progress bar down a
-	/// column of departure times rather than of stops.
+	/// Open a stop's own schedule from inside the sheet's timetable.
 	@discardableResult
 	func openFirstStop() -> Self {
-		// The rows carry a concatenated label -- the stop name and its times --
-		// so the name is a prefix rather than the whole of it.
 		let stop = app.elementWithLabel(startingWith: TestIdentifiers.Transportation.aStop)
 		XCTAssertTrue(
 			stop.waitForExistence(timeout: 30),
@@ -62,13 +123,13 @@ struct TransportationScreen: Screen {
 		return self
 	}
 
-	/// Pick a day from the navigation bar's menu.
+	/// Pick a day from the sheet's navigation bar menu.
 	@discardableResult
 	func pickDay(_ day: String) -> Self {
-		let menu = app.buttons[TestIdentifiers.Transportation.dayMenuDefaultLabel].firstMatch
+		let menu = app.buttons["Today"].firstMatch
 		XCTAssertTrue(
 			menu.waitForExistence(timeout: 30),
-			"The navigation bar should offer a day menu labelled Today")
+			"The sheet's navigation bar should offer a day menu labelled Today")
 		menu.tap()
 
 		let option = app.buttons[day].firstMatch
@@ -79,11 +140,9 @@ struct TransportationScreen: Screen {
 		return self
 	}
 
-	/// Assert the day menu relabelled itself and the timetable's section title
-	/// names the day on screen. Matching on the em-dash that follows the day
-	/// in the title -- "Saturday — Not running today" -- rules out the
-	/// toolbar button, whose own label is the bare day name and never
-	/// contains it.
+	/// Matching on the em-dash that follows the day in the section title --
+	/// "Saturday — Not running today" -- rules out the toolbar button, whose
+	/// own label is the bare day name and never contains it.
 	@discardableResult
 	func verifyScheduleShows(day: String) -> Self {
 		XCTAssertTrue(
@@ -99,16 +158,16 @@ struct TransportationScreen: Screen {
 		return self
 	}
 
+	/// Other Modes now sits below the widgets rather than behind a tab.
 	@discardableResult
-	func checkTabs() -> Self {
-		for tab in TestIdentifiers.Transportation.tabs {
-			XCTContext.runActivity(named: tab) { _ in
-				let tabButton = app.tabButton(tab)
-				XCTAssertTrue(
-					tabButton.waitForExistence(timeout: 30),
-					"\(tab) tab button should be visible")
-			}
+	func scrollToOtherModes() -> Self {
+		let section = app.staticTexts["Bus"].firstMatch
+		for _ in 0..<6 where !section.exists {
+			list.swipeUp()
 		}
+		XCTAssertTrue(
+			section.exists,
+			"Other Modes should be reachable by scrolling past the widgets")
 		return self
 	}
 }
