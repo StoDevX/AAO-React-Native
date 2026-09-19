@@ -22,9 +22,9 @@ describe('groupHoursByDays', () => {
 
 		let groups = groupHoursByDays(schedule, now)
 
-		expect(groups).toHaveLength(1)
-		expect(groups[0].label).toBe('Weekdays')
-		expect(groups[0].entries).toHaveLength(2)
+		expect(groups.map((g) => [g.label, g.entries.map((e) => e.sourceIndex)])).toEqual([
+			['Weekdays', [0, 1]],
+		])
 	})
 
 	test('keeps non-adjacent rows with the same label as separate groups', () => {
@@ -36,13 +36,11 @@ describe('groupHoursByDays', () => {
 
 		let groups = groupHoursByDays(schedule, now)
 
-		expect(groups).toHaveLength(3)
-		expect(groups[0].label).toBe('Weekdays')
-		expect(groups[0].entries).toHaveLength(1)
-		expect(groups[1].label).toBe('Saturday')
-		expect(groups[1].entries).toHaveLength(1)
-		expect(groups[2].label).toBe('Weekdays')
-		expect(groups[2].entries).toHaveLength(1)
+		expect(groups.map((g) => [g.label, g.entries.map((e) => e.sourceIndex)])).toEqual([
+			['Weekdays', [0]],
+			['Saturday', [1]],
+			['Weekdays', [2]],
+		])
 	})
 
 	test('marks the active entry when now falls within its hours', () => {
@@ -55,8 +53,23 @@ describe('groupHoursByDays', () => {
 		let fridayAfternoon = moment.tz('2026-09-18T15:30:00', 'America/Chicago')
 		let groups = groupHoursByDays(schedule, fridayAfternoon)
 
-		expect(groups[0].entries[0].isActive).toBe(false)
-		expect(groups[0].entries[1].isActive).toBe(true)
+		expect(groups[0].entries.map((e) => e.isActive)).toEqual([false, true])
+	})
+
+	test('marks active entry in a group after a label change', () => {
+		let schedule = makeSchedule([
+			{days: ['Mo', 'Tu', 'We', 'Th', 'Fr'], from: '9:00am', to: '12:00pm'},
+			{days: ['Sa'], from: '3:00pm', to: '10:00pm'},
+		])
+
+		// Saturday at 4pm is within the Saturday slot
+		let saturdayAfternoon = moment.tz('2026-09-19T16:00:00', 'America/Chicago')
+		let groups = groupHoursByDays(schedule, saturdayAfternoon)
+
+		expect(groups.map((g) => [g.label, g.entries.map((e) => e.isActive)])).toEqual([
+			['Weekdays', [false]],
+			['Saturday', [true]],
+		])
 	})
 
 	test('returns an empty array for a schedule with no hours', () => {
@@ -72,8 +85,8 @@ describe('groupHoursByDays', () => {
 
 		let groups = groupHoursByDays(schedule, now)
 
-		expect(groups).toHaveLength(1)
-		expect(groups[0].label).toBe('Weekdays')
-		expect(groups[0].entries).toHaveLength(1)
+		expect(groups.map((g) => [g.label, g.entries.map((e) => e.sourceIndex)])).toEqual([
+			['Weekdays', [0]],
+		])
 	})
 })
