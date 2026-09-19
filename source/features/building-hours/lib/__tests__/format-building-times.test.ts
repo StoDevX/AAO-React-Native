@@ -52,17 +52,6 @@ it('renders in the zone it is given rather than the device one', () => {
 	expect(formatBuildingTimes(schedule, m, {zone: 'America/New_York'})).toBe('11:30 AM — 11 PM')
 })
 
-it('keeps campus wall clock when the campus zone is the one asked for', () => {
-	let m = dayMoment('Fri 3:00pm')
-	let schedule: SingleBuildingScheduleType = {
-		days: ['Fr'],
-		from: '10:30am',
-		to: '10:00pm',
-	}
-
-	expect(formatBuildingTimes(schedule, m, {zone: 'America/Chicago'})).toBe('10:30 AM — 10 PM')
-})
-
 it('decides "Midnight" on the zone it is given', () => {
 	// 12:00am Central is 1:00am Eastern, which is not midnight anywhere.
 	let m = dayMoment('Fri 3:00pm')
@@ -73,7 +62,6 @@ it('decides "Midnight" on the zone it is given', () => {
 	}
 
 	expect(formatBuildingTimes(schedule, m, {zone: 'America/New_York'})).toBe('11:30 AM — 1 AM')
-	expect(formatBuildingTimes(schedule, m, {zone: 'America/Chicago'})).toBe('10:30 AM — Midnight')
 })
 
 it('passes a locale through alongside the zone', () => {

@@ -153,11 +153,10 @@ function hasMeridiem(locale: string): boolean {
  * locale leaves a bare `15`, and `From 15 Wednesday, 19 August` does not read
  * as a time at all; those locales keep `15:00`.
  *
- * `timeZone` renders in a zone other than the device's, for the rare screen
- * that shows a time belonging to somewhere else -- the building-hours report
- * form, which is a reader writing down the campus's own schedule. Pass a
- * moment already in that zone: the on-the-hour check below reads the
- * moment's own minutes, and a half-hour-offset zone would disagree with it.
+ * `timeZone` renders in a zone other than the device's, for a screen showing
+ * a time that belongs somewhere else rather than to the reader. Pass a moment
+ * already in that zone: the on-the-hour check below reads the moment's own
+ * minutes, and a half-hour-offset zone would disagree with it.
  */
 export function formatTime(m: Moment, locale: string = deviceLocale(), timeZone?: string): string {
 	let meridiem = hasMeridiem(locale)
