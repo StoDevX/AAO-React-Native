@@ -22,7 +22,7 @@ let at = (stamp: string) => () => moment.tz(stamp, timezone())
 export const TIME_JUMPS: TimeJump[] = [
 	{label: 'Chapel in 5 min', shows: 'Post Office counts down', moment: at('2026-09-07 10:05')},
 	{label: 'During chapel', shows: 'Post Office reopens at 10:30', moment: at('2026-09-07 10:15')},
-	{label: 'Almost open', shows: 'Pause Kitchen opens in 15 min', moment: at('2026-09-07 16:45')},
+	{label: 'Almost open', shows: 'Pause Kitchen opens in 15 min', moment: at('2026-09-07 15:45')},
 	{label: 'Overnight', shows: 'SARN Hotline open until 8 AM', moment: at('2026-09-08 22:00')},
 	{label: 'Weekend, closed', shows: 'Mail and Packages is shut', moment: at('2026-09-12 14:00')},
 ]
