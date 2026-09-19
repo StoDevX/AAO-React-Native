@@ -1,5 +1,5 @@
-import {groupHoursByDays} from '../group-hours-by-days'
 import moment from 'moment-timezone'
+import {groupHoursByDays} from '../group-hours-by-days'
 import type {NamedBuildingScheduleType, DayOfWeekEnumType} from '../../types'
 
 function makeSchedule(
@@ -7,7 +7,7 @@ function makeSchedule(
 ): NamedBuildingScheduleType {
 	return {
 		title: 'Test',
-		hours: hours.map((h) => ({...h, timezone: 'America/Chicago'})),
+		hours,
 	}
 }
 
@@ -49,7 +49,7 @@ describe('groupHoursByDays', () => {
 			{days: ['Mo', 'Tu', 'We', 'Th', 'Fr'], from: '3:00pm', to: '10:00pm'},
 		])
 
-		// Friday at 3pm is within the second slot
+		// Friday at 3:30pm is within the second slot (3pm-10pm)
 		let fridayAfternoon = moment.tz('2026-09-18T15:30:00', 'America/Chicago')
 		let groups = groupHoursByDays(schedule, fridayAfternoon)
 

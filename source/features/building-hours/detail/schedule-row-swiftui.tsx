@@ -4,8 +4,7 @@ import {HStack, Spacer, Text, VStack} from '@expo/ui/swift-ui'
 import {background, clipShape, font, foregroundStyle, frame} from '@expo/ui/swift-ui/modifiers'
 import * as c from '@frogpond/colors'
 import type {Moment} from 'moment-timezone'
-import type {ScheduleEntry} from '../lib'
-import {formatBuildingTimes} from '../lib'
+import {formatBuildingTimes, type ScheduleEntry} from '../lib'
 
 /** The gap between the accent bar and the text beside it. */
 const BAR_GAP = 8
