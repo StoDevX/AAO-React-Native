@@ -3,7 +3,6 @@ import {
 	Button,
 	Capsule,
 	Circle,
-	ContentUnavailableView,
 	HStack,
 	Image,
 	LazyHStack,
@@ -186,13 +185,9 @@ export function BusLineWidget({line, now, onPressLine, onPressStop}: Props): Rea
 				</HStack>
 			</Button>
 
-			{cells.length === 0 ? (
-				<ContentUnavailableView
-					description={`${line.line} keeps no schedule today.`}
-					systemImage="bus"
-					title="Not running today"
-				/>
-			) : (
+			{/* An idle line collapses to its header: the status there already says
+			    so, and a placeholder card would push the lines below it off screen. */}
+			{cells.length === 0 ? null : (
 				<ScrollView
 					axes="horizontal"
 					modifiers={[

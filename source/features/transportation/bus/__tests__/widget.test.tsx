@@ -55,14 +55,14 @@ describe('BusLineWidget', () => {
 		expect(getByText('Carleton')).toBeTruthy()
 	})
 
-	test('shows the unavailable view instead of a strip when the line does not run today', async () => {
+	test('shows only the header, and no strip, when the line does not run today', async () => {
 		let idle = makeLine({
 			schedules: [{days: ['Sa'], coordinates: {}, stops: ['St. Olaf'], times: [['1:00pm']]}],
 		})
 
 		let {getByText, queryByText} = await renderWidget(idle)
 
-		expect(getByText('Not running today')).toBeTruthy()
+		expect(getByText(/Not running today/u)).toBeTruthy()
 		expect(queryByText('St. Olaf')).toBeNull()
 	})
 
