@@ -61,12 +61,9 @@ describe('contextualStatus', () => {
 	})
 
 	it('names the earliest opening today, not the first one listed', () => {
-		// The shape of data/building-hours/1-2-pause-kitchen.yaml: a delivery set
-		// written before the kitchen's own hours, because it is the notable one
-		// rather than the early one. Reading the row in file order put "Opens at
-		// 7 PM" on screen all morning. Kept as a fixture rather than read from
-		// the file, since marking that set not physically open is a separate
-		// change and would stop the real file exercising this.
+		// Sets are ordered by what they describe, not by time: a notable set can
+		// be written first while a later one holds the earlier window. Reading
+		// in file order would name 7 PM all morning.
 		let building = makeBuilding([
 			{
 				title: 'On Campus Pizza Delivery',
