@@ -12,6 +12,7 @@ import {Stack, useLocalSearchParams, useRouter} from 'expo-router'
 import * as c from '@frogpond/colors'
 import {NoticeView} from '@frogpond/notice'
 
+import {DisclosureRow} from '../../../../source/components/rows'
 import type {DraftExample} from '../../../../source/features/dictionary/lib/draft'
 import {findSense} from '../../../../source/features/dictionary/lib/draft'
 import {useDictionaryDraftStore} from '../../../../source/features/dictionary/store'
@@ -108,16 +109,15 @@ export default function DictionarySensePage(): React.ReactNode {
 					    push back into this route with its own id. */}
 					<Section title="Sub-senses">
 						{sense.subsenses.map((subsense, index) => (
-							<Button
+							<DisclosureRow
 								key={subsense.id}
-								label={subsense.definition || `Sub-sense ${index + 1}`}
 								onPress={() =>
 									router.push({
 										pathname: '/Dictionary/entry/sense',
 										params: {senseId: subsense.id},
 									})
 								}
-								systemImage="chevron.right"
+								title={subsense.definition || `Sub-sense ${index + 1}`}
 							/>
 						))}
 						<Button

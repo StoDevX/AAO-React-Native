@@ -278,6 +278,21 @@ describe('the dictionary sense screen', () => {
 		})
 	})
 
+	it('opens an existing sub-sense', async () => {
+		useDictionaryDraftStore.getState().startDraft(entry)
+		let id = useDictionaryDraftStore
+			.getState()
+			.addSubsense(useDictionaryDraftStore.getState().draft?.senses[0].id ?? '')
+		await render(<SenseScreen />)
+
+		await fireEvent.press(screen.getByText('Sub-sense 1'))
+
+		expect(mockPush).toHaveBeenCalledWith({
+			pathname: '/Dictionary/entry/sense',
+			params: {senseId: id},
+		})
+	})
+
 	// As in the edit screen, the list handlers reach the store even though the
 	// drag gesture that would trigger them on device cannot run here.
 	it('deletes an example via the list handler', async () => {
