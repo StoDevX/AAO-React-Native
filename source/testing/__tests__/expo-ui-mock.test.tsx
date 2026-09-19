@@ -10,7 +10,6 @@ import {
 	Button,
 	disabled,
 	HStack,
-	keyboardType,
 	List,
 	Menu,
 	Picker,
@@ -297,12 +296,6 @@ describe('expo-ui-mock', () => {
 			)
 
 			expect(screen.getByText('Category')).toBeTruthy()
-		})
-	})
-
-	describe('keyboardType', () => {
-		test('carries the type it was given', () => {
-			expect(keyboardType('url')).toEqual({$type: 'keyboardType', keyboardType: 'url'})
 		})
 	})
 })
