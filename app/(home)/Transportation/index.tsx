@@ -100,6 +100,7 @@ export default function TransportationPage(): React.ReactNode {
 							<DisclosureRow
 								key={mode.name}
 								detail={mode.synopsis}
+								destination="external"
 								onPress={() => openUrl(mode.url)}
 								title={mode.name}
 							/>
