@@ -520,13 +520,41 @@ struct CampusScreen: Screen {
 	/// The row is a single Pressable carrying a concatenated label (title and
 	/// detail together, e.g. "Weekdays, 7:30 AM — 8:00 PM"), not a standalone
 	/// "Weekdays" text, hence the prefix match.
+	///
+	/// Scrolled to rather than waited for: the form's ABOUT section sits above
+	/// the schedules, so a venue's first Weekdays row starts below the sheet's
+	/// resting height. A SwiftUI `List` builds its rows lazily, so a row below
+	/// the fold is absent from the tree rather than merely offscreen, and no
+	/// `waitForExistence` will ever see it.
 	@discardableResult
 	func openScheduleEditorFromReportScreen() -> Self {
 		let weekdaysRow = app.elementWithLabel(startingWith: "Weekdays")
+		scrollSheetUntilHittable(weekdaysRow)
 		XCTAssertTrue(
 			weekdaysRow.waitForExistence(timeout: 15),
 			"The report screen should list an editable Weekdays row")
 		weekdaysRow.tap()
+		return self
+	}
+
+	/// Scroll a list that lives inside the detail sheet, until `element` is on
+	/// screen.
+	///
+	/// `app.swipeUp()` is sent to the application element and so begins at its
+	/// centre, which at the sheet's resting height can land on the dimmed
+	/// backdrop above the sheet rather than on the sheet's own list. The
+	/// gesture goes to the backdrop, scrolls nothing, and a lazily built row
+	/// below the fold is never realised. Dragging from low inside the sheet
+	/// reaches the list wherever the sheet is resting.
+	@discardableResult
+	private func scrollSheetUntilHittable(_ element: XCUIElement, swipes: Int = 10) -> Self {
+		for _ in 0..<swipes {
+			if element.isHittable { break }
+			let start = app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.85))
+			let end = app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.45))
+			start.press(
+				forDuration: 0.1, thenDragTo: end, withVelocity: .slow, thenHoldForDuration: 0.2)
+		}
 		return self
 	}
 
