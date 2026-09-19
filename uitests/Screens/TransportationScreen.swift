@@ -122,8 +122,8 @@ struct TransportationScreen: Screen {
 	@discardableResult
 	func verifyStopScheduleShown() -> Self {
 		// The heading carries the stop's name and when its next bus is, as one
-		// element -- "ST. OLAF COLLEGE — STARTS IN 3 HOURS (12:00PM)", drawn in
-		// caps -- so the match is both a prefix and case-insensitive.
+		// element -- "ST. OLAF COLLEGE — STARTS IN 3 HOURS", drawn in caps --
+		// so the match is both a prefix and case-insensitive.
 		let heading = app.staticTexts.matching(
 			NSPredicate(format: "label BEGINSWITH[c] %@", TestIdentifiers.Transportation.aStop)
 		).firstMatch
@@ -168,14 +168,17 @@ struct TransportationScreen: Screen {
 		return self
 	}
 
-	/// Other Modes now sits below the widgets rather than behind a tab.
+	/// Other Modes now sits below the widgets rather than behind a tab. This
+	/// scrolls all the way to the last row on the screen, which lives in Other
+	/// Modes' final, headerless section -- proving the list scrolls past the
+	/// widgets and that the unlabelled section is actually reached.
 	@discardableResult
 	func scrollToOtherModes() -> Self {
-		let section = app.staticTexts[TestIdentifiers.Transportation.anOtherModesSection].firstMatch
-		scrollUntilExists(section, in: list)
+		let row = app.elementWithLabel(startingWith: TestIdentifiers.Transportation.lastOtherModesRow)
+		scrollUntilExists(row, in: list)
 		XCTAssertTrue(
-			section.exists,
-			"Other Modes should be reachable by scrolling past the widgets")
+			row.exists,
+			"Scrolling past the widgets should reach \(TestIdentifiers.Transportation.lastOtherModesRow), the last row in Other Modes' unlabelled section")
 		return self
 	}
 }

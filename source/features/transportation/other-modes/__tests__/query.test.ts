@@ -8,21 +8,21 @@ function mode(overrides: Partial<OtherModeType> = {}): OtherModeType {
 		name: 'Ole Bikes',
 		synopsis: 'Great green alternative.',
 		url: 'https://example.com',
-		category: 'Local to Northfield',
+		category: 'Local',
 		...overrides,
 	}
 }
 
 test('groups modes by their category', () => {
 	let grouped = groupOtherModes([
-		mode({name: 'Ole Bikes', category: 'Local to Northfield'}),
+		mode({name: 'Ole Bikes', category: 'Local'}),
 		mode({name: 'Break Airport Shuttles', category: 'Airport Shuttle'}),
-		mode({name: 'Hiawathaland Transit', category: 'Local to Northfield'}),
+		mode({name: 'Hiawathaland Transit', category: 'Local'}),
 	])
 
 	expect(grouped).toStrictEqual([
 		{
-			title: 'Local to Northfield',
+			title: 'Local',
 			data: [
 				expect.objectContaining({name: 'Ole Bikes'}),
 				expect.objectContaining({name: 'Hiawathaland Transit'}),
@@ -44,12 +44,12 @@ test('keeps the order the server sent the categories in', () => {
 	let grouped = groupOtherModes([
 		mode({name: 'Transportation Options', category: ''}),
 		mode({name: 'Break Airport Shuttles', category: 'Airport Shuttle'}),
-		mode({name: 'Ole Bikes', category: 'Local to Northfield'}),
+		mode({name: 'Ole Bikes', category: 'Local'}),
 	])
 
 	expect(grouped.map((section) => section.title)).toStrictEqual([
 		undefined,
 		'Airport Shuttle',
-		'Local to Northfield',
+		'Local',
 	])
 })

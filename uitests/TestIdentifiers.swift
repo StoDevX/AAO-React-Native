@@ -589,9 +589,11 @@ struct TestIdentifiers {
 
 			Data collected by the humans of All About Olaf
 			"""
-		/// A section heading in Other Modes. Comes from `data/transportation/`
-		/// via the UI-test fixture, so it moves only when this checkout does.
-		static let anOtherModesSection = "Local to Northfield"
+		/// The last row on the Transportation screen. It sits in Other Modes'
+		/// final section, which carries no heading -- its entries have an empty
+		/// `category` -- so reaching this row proves the list scrolls past both
+		/// the widgets and the two headed sections into the headerless one.
+		static let lastOtherModesRow = "Transportation Options"
 	}
 
 }

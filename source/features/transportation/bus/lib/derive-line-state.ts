@@ -72,11 +72,6 @@ export function deriveFromProps({line, now}: {line: UnprocessedBusLine; now: Mom
 		}
 	}
 
-	if (process.env.NODE_ENV !== 'production') {
-		// for debugging
-		subtitle += ` (${now.format('h:mma')})`
-	}
-
 	return {
 		subtitle: subtitle,
 		status: status,

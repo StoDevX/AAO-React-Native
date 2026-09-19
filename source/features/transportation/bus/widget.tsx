@@ -4,6 +4,7 @@ import {
 	Capsule,
 	Circle,
 	HStack,
+	Image,
 	LazyHStack,
 	ScrollView,
 	Section,
@@ -246,6 +247,10 @@ export function BusLineWidget({line, now, onPressLine, onPressStop}: Props): Rea
 					<Text modifiers={[font({textStyle: 'subheadline'}), foregroundStyle(c.secondaryLabel)]}>
 						{subtitle}
 					</Text>
+					<Image
+						modifiers={[font({textStyle: 'footnote'}), foregroundStyle(c.tertiaryLabel)]}
+						systemName="chevron.right"
+					/>
 				</HStack>
 			</Button>
 
