@@ -77,4 +77,30 @@ describe('BusLineWidget', () => {
 
 		expect(onPressStop).toHaveBeenCalledWith('Carleton')
 	})
+
+	test('ends the strip with the next round when another one follows today', async () => {
+		let twoRounds = makeLine({
+			schedules: [
+				{
+					days: ['Mo'],
+					coordinates: {},
+					stops: ['St. Olaf', 'Carleton'],
+					times: [
+						['1:00pm', '1:05pm'],
+						['2:00pm', '2:05pm'],
+					],
+				},
+			],
+		})
+
+		let {getByText} = await renderWidget(twoRounds)
+
+		expect(getByText('Next bus')).toBeTruthy()
+	})
+
+	test('ends the strip at the last stop on the final round of the day', async () => {
+		let {queryByText} = await renderWidget(makeLine())
+
+		expect(queryByText('Next bus')).toBeNull()
+	})
 })

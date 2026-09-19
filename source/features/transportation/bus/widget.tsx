@@ -4,7 +4,6 @@ import {
 	Capsule,
 	Circle,
 	HStack,
-	Image,
 	LazyHStack,
 	ScrollView,
 	Section,
@@ -15,6 +14,7 @@ import {
 	ZStack,
 } from '@expo/ui/swift-ui'
 import {
+	accessibilityElement,
 	accessibilityLabel,
 	buttonStyle,
 	contentShape,
@@ -76,6 +76,9 @@ function StopCell({
 	let isSkipped = cell.stopStatus === 'skip'
 	let isHere = cell.stopStatus === 'at'
 
+	// A leg the bus has already driven is solid; one still ahead of it is faint.
+	let railOpacity = isPassed ? 1 : 0.35
+
 	return (
 		<Button
 			modifiers={[
@@ -97,21 +100,25 @@ function StopCell({
 				</Text>
 
 				<ZStack modifiers={[frame({width: CELL_WIDTH, height: DOT_SIZE})]}>
-					{/* The rail is drawn per cell rather than once behind the row:
-					    a LazyHStack builds its children as they scroll in, so
-					    there is no single view spanning the whole route to hang a
-					    rail off. The end caps are shortened so the line stops at
-					    the first and last dot instead of running off the edge. */}
+					{/* Two halves rather than one bar: the rail has to stop at the
+					    first and last dot, and a cell only knows about its own
+					    half of each gap. Both are always drawn and the end caps
+					    are made transparent, so every cell lays out identically. */}
 					<HStack spacing={0}>
-						{isFirst ? <Spacer /> : null}
 						<Capsule
 							modifiers={[
-								frame({maxWidth: FILL_WIDTH, height: RAIL_HEIGHT}),
+								frame({width: CELL_WIDTH / 2, height: RAIL_HEIGHT}),
 								foregroundStyle(barColor),
-								opacity(isPassed ? 1 : 0.35),
+								opacity(isFirst ? 0 : railOpacity),
 							]}
 						/>
-						{isLast ? <Spacer /> : null}
+						<Capsule
+							modifiers={[
+								frame({width: CELL_WIDTH / 2, height: RAIL_HEIGHT}),
+								foregroundStyle(barColor),
+								opacity(isLast ? 0 : railOpacity),
+							]}
+						/>
 					</HStack>
 
 					<Circle
@@ -138,13 +145,74 @@ function StopCell({
 }
 
 /**
+ * The end of the loop: when the next round begins. Greyed and inert -- there is
+ * no stop behind it, so it is a note rather than a destination, and it carries
+ * no `Button`.
+ */
+function NextRoundCell({time}: {time: Moment}): React.ReactNode {
+	let label = formatDeparture(time)
+
+	return (
+		<VStack
+			modifiers={[
+				frame({width: CELL_WIDTH}),
+				accessibilityElement('combine'),
+				accessibilityLabel(`Next bus, ${label}`),
+			]}
+			spacing={6}
+		>
+			<Text modifiers={[font({textStyle: 'footnote'}), foregroundStyle(c.tertiaryLabel)]}>
+				{label}
+			</Text>
+
+			<ZStack modifiers={[frame({width: CELL_WIDTH, height: DOT_SIZE})]}>
+				<HStack spacing={0}>
+					<Capsule
+						modifiers={[
+							frame({width: CELL_WIDTH / 2, height: RAIL_HEIGHT}),
+							foregroundStyle(c.tertiaryLabel),
+							opacity(0.35),
+						]}
+					/>
+					<Capsule
+						modifiers={[
+							frame({width: CELL_WIDTH / 2, height: RAIL_HEIGHT}),
+							foregroundStyle(c.tertiaryLabel),
+							opacity(0),
+						]}
+					/>
+				</HStack>
+
+				<Circle
+					modifiers={[
+						frame({width: DOT_SIZE, height: DOT_SIZE}),
+						foregroundStyle(c.tertiaryLabel),
+						opacity(0.45),
+					]}
+				/>
+			</ZStack>
+
+			<Text
+				modifiers={[
+					font({textStyle: 'caption'}),
+					foregroundStyle(c.tertiaryLabel),
+					frame({width: CELL_WIDTH}),
+				]}
+			>
+				Next bus
+			</Text>
+		</VStack>
+	)
+}
+
+/**
  * One bus line at a glance: what it is doing right now, and its route as a
  * strip you can push sideways. The header opens the full timetable; a stop
  * opens that stop's own departures.
  */
 export function BusLineWidget({line, now, onPressLine, onPressStop}: Props): React.ReactNode {
 	let {subtitle, status, schedule, currentBusIteration} = deriveFromProps({line, now})
-	let {cells, currentIndex} = buildStopStrip({
+	let {cells, currentIndex, nextRoundStart} = buildStopStrip({
 		schedule,
 		busStatus: status,
 		departureIndex: currentBusIteration,
@@ -178,10 +246,6 @@ export function BusLineWidget({line, now, onPressLine, onPressStop}: Props): Rea
 					<Text modifiers={[font({textStyle: 'subheadline'}), foregroundStyle(c.secondaryLabel)]}>
 						{subtitle}
 					</Text>
-					<Image
-						modifiers={[font({textStyle: 'footnote'}), foregroundStyle(c.tertiaryLabel)]}
-						systemName="chevron.right"
-					/>
 				</HStack>
 			</Button>
 
@@ -207,10 +271,12 @@ export function BusLineWidget({line, now, onPressLine, onPressStop}: Props): Rea
 								dotColor={dotColor}
 								index={index}
 								isFirst={index === 0}
-								isLast={index === cells.length - 1}
+								// The faux stop, when there is one, is the rail's real end.
+								isLast={index === cells.length - 1 && nextRoundStart === null}
 								onPress={() => onPressStop(cell.name)}
 							/>
 						))}
+						{nextRoundStart ? <NextRoundCell time={nextRoundStart} /> : null}
 					</LazyHStack>
 				</ScrollView>
 			)}

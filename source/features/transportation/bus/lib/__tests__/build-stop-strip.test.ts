@@ -84,3 +84,44 @@ test('returns nothing at all for a day the line does not run', () => {
 	expect(cells).toStrictEqual([])
 	expect(currentIndex).toBeNull()
 })
+
+test('names the start of the round after the one on screen', () => {
+	// 1:02pm is inside round 1 (1:00pm), so the next round is round 2 at 2:00pm.
+	let {nextRoundStart} = stripAt('Mo 1:02pm')
+	expect(nextRoundStart?.format('h:mma')).toBe('2:00pm')
+})
+
+test('names the next round while the bus waits between rounds', () => {
+	// 1:30pm is after round 1 finishes (1:10pm) and before round 2 starts, so
+	// the strip shows round 2 and the faux stop names round 3.
+	let {nextRoundStart} = stripAt('Mo 1:30pm')
+	expect(nextRoundStart?.format('h:mma')).toBe('3:00pm')
+})
+
+test('names the second round before the bus has started for the day', () => {
+	let {nextRoundStart} = stripAt('Mo 12:00pm')
+	expect(nextRoundStart?.format('h:mma')).toBe('2:00pm')
+})
+
+test('names no next round on the final round of the day', () => {
+	let {nextRoundStart} = stripAt('Mo 3:02pm')
+	expect(nextRoundStart).toBeNull()
+})
+
+test('names no next round once the bus is done for the day', () => {
+	let {nextRoundStart} = stripAt('Mo 11:00pm')
+	expect(nextRoundStart).toBeNull()
+})
+
+test('names no next round for a day the line does not run', () => {
+	let now = dayAndTime('We 1:02pm')
+	let schedule = getScheduleForNow(buildBusSchedules(now), now)
+	let {status, index} = getCurrentBusIteration(schedule, now)
+	let {nextRoundStart} = buildStopStrip({
+		schedule,
+		busStatus: status,
+		departureIndex: index,
+		now,
+	})
+	expect(nextRoundStart).toBeNull()
+})

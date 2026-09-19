@@ -1,3 +1,4 @@
+import find from 'lodash/find'
 import type {Moment} from 'moment-timezone'
 
 import type {BusSchedule} from '../types'
@@ -30,6 +31,7 @@ type Args = {
 export function buildStopStrip(args: Args): {
 	cells: StopStripCell[]
 	currentIndex: number | null
+	nextRoundStart: Moment | null
 } {
 	let {schedule, busStatus, departureIndex, now} = args
 
@@ -43,5 +45,19 @@ export function buildStopStrip(args: Args): {
 	let aheadIndex = cells.findIndex((cell) => cell.stopStatus === 'before')
 	let currentIndex = atIndex !== -1 ? atIndex : aheadIndex !== -1 ? aheadIndex : null
 
-	return {cells, currentIndex}
+	// Which round the strip is showing: the one the bus is on, or -- before the
+	// day's first bus -- the first. `after-end` shows the last round of the day.
+	let displayedIndex = departureIndex ?? (busStatus === 'after-end' ? schedule.times.length - 1 : 0)
+
+	// The first departure of the round after that one. Deliberately not
+	// `getCurrentBusIteration`'s `nextStart`: between rounds that names the
+	// start of the round already on screen, which would have the faux stop
+	// repeat the strip's own first cell.
+	let nextRound = schedule.times[displayedIndex + 1]
+	let nextRoundStart =
+		busStatus === 'after-end' || !nextRound
+			? null
+			: (find(nextRound, (time) => Boolean(time)) ?? null)
+
+	return {cells, currentIndex, nextRoundStart}
 }

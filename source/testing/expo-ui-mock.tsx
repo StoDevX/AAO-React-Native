@@ -55,6 +55,9 @@ function flag(type: string, key: string) {
 }
 
 export const accessibilityAddTraits = named('accessibilityAddTraits', 'traits')
+/** Defaults to 'ignore', as the real one does. */
+export const accessibilityElement = (children = 'ignore'): Modifier =>
+	createModifier('accessibilityElement', {children})
 export const accessibilityIdentifier = named('accessibilityIdentifier', 'identifier')
 export const accessibilityLabel = named('accessibilityLabel', 'label')
 export const aspectRatio = spreading('aspectRatio')
