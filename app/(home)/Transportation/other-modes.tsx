@@ -48,6 +48,7 @@ export default function OtherModesPage(): React.ReactNode {
 							{section.data.map((mode) => (
 								<DisclosureRow
 									key={mode.name}
+									destination="external"
 									detail={mode.synopsis}
 									onPress={() => openUrl(mode.url)}
 									title={mode.name}
