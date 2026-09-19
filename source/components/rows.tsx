@@ -46,12 +46,40 @@ type ActionRowProps = RowProps & {
 	destructive?: boolean
 }
 
+/** Where a row's tap goes, which is what its trailing accessory names. */
+export type RowDestination =
+	/** Another screen in this navigation stack. */
+	| 'push'
+	/** The row is the thing, and tapping does it: a call, a message, a mutation. */
+	| 'action'
+	/** A document somewhere else, which tapping goes and shows. */
+	| 'external'
+
+/**
+ * The trailing glyph that says where a row's tap goes. An action draws nothing:
+ * it completes what the row names and returns you here, so there is nowhere to
+ * point. The tint is what says such a row is tappable at all.
+ */
+function RowAccessory({destination}: {destination: RowDestination}): React.ReactNode {
+	if (destination === 'action') {
+		return null
+	}
+
+	return (
+		<Image
+			color={c.tertiaryLabel}
+			size={14}
+			systemName={destination === 'external' ? 'arrow.up.right' : 'chevron.right'}
+		/>
+	)
+}
+
 /**
  * A row that pushes another screen via React Navigation. `@expo/ui` has no
  * `NavigationLink` (it mounts its destination as a SwiftUI view inside a
  * SwiftUI `NavigationStack`, and this app pushes via React Navigation, so
- * there is no SwiftUI view for it to push to) so the chevron is drawn by
- * hand.
+ * there is no SwiftUI view for it to push to) so the accessory is drawn by
+ * hand -- see [[RowAccessory]].
  */
 export function NavigationRow(props: RowProps): React.ReactNode {
 	let {title, onPress, disabled = false} = props
@@ -68,7 +96,7 @@ export function NavigationRow(props: RowProps): React.ReactNode {
 			<HStack modifiers={[contentShape(shapes.rectangle())]}>
 				<Text modifiers={[foregroundStyle(c.label)]}>{title}</Text>
 				<Spacer />
-				<Image color={c.tertiaryLabel} size={14} systemName="chevron.right" />
+				<RowAccessory destination="push" />
 			</HStack>
 		</Button>
 	)
@@ -135,6 +163,8 @@ type DisclosureRowProps = {
 	 */
 	identifier?: string
 	onPress: () => void
+	/** Where tapping the row goes. Defaults to a push. */
+	destination?: RowDestination
 }
 
 function LeadingImage({image}: {image: DisclosureRowImage}): React.ReactNode {
@@ -170,7 +200,16 @@ function LeadingImage({image}: {image: DisclosureRowImage}): React.ReactNode {
  * chevron is drawn by hand.
  */
 export function DisclosureRow(props: DisclosureRowProps): React.ReactNode {
-	let {title, detail, titleLines = 1, detailLines, image, identifier, onPress} = props
+	let {
+		title,
+		detail,
+		titleLines = 1,
+		detailLines,
+		image,
+		identifier,
+		onPress,
+		destination = 'push',
+	} = props
 
 	let details = detailLinesOf(detail)
 	let detailModifiers = [
@@ -204,7 +243,7 @@ export function DisclosureRow(props: DisclosureRowProps): React.ReactNode {
 					))}
 				</VStack>
 				<Spacer />
-				<Image color={c.tertiaryLabel} size={14} systemName="chevron.right" />
+				<RowAccessory destination={destination} />
 			</HStack>
 		</Button>
 	)
@@ -232,6 +271,8 @@ type DetailRowProps = {
 	valueLines?: number
 	/** Makes the row tappable, and draws a chevron to say so. */
 	onPress?: () => void
+	/** Where tapping the row goes. Defaults to a push. Ignored without `onPress`. */
+	destination?: RowDestination
 }
 
 /**
@@ -242,21 +283,24 @@ type DetailRowProps = {
  * row in the list and follow the platform's own emphasis rather than ours.
  */
 export function DetailRow(props: DetailRowProps): React.ReactNode {
-	let {label, value, valueLines, onPress} = props
+	let {label, value, valueLines, onPress, destination = 'push'} = props
+
+	// A tinted value is what says a row with no accessory is still tappable.
+	let valueTint = onPress && destination !== 'push' ? c.systemBlue : c.secondaryLabel
 
 	let content = (
 		<LabeledContent label={label}>
 			<HStack spacing={6}>
 				<Text
 					modifiers={[
-						foregroundStyle(c.secondaryLabel),
+						foregroundStyle(valueTint),
 						multilineTextAlignment('trailing'),
 						...(valueLines ? [lineLimit(valueLines)] : []),
 					]}
 				>
 					{value}
 				</Text>
-				{onPress ? <Image color={c.tertiaryLabel} size={14} systemName="chevron.right" /> : null}
+				{onPress ? <RowAccessory destination={destination} /> : null}
 			</HStack>
 		</LabeledContent>
 	)
