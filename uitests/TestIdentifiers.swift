@@ -575,6 +575,13 @@ struct TestIdentifiers {
 		/// from under this test.
 		static let aLine = "Express Bus"
 		static let aStop = "St. Olaf College"
+		/// A stop several places past `aStop` on Express Bus's route (see
+		/// `docs/bus-times.json`), used to prove a strip swipe actually moved the
+		/// strip rather than doing nothing. Unlike `aStop`, which the route
+		/// visits twice (the loop starts and ends there), this one appears only
+		/// once, so its presence unambiguously means the strip scrolled forward
+		/// rather than showing a second, later occurrence of the start.
+		static let aStopFartherAlongTheRoute = "El Tequila"
 		static let aDay = "Saturday"
 		/// The list footer renders as a single Text, so both lines are one label.
 		static let footer = """

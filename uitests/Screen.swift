@@ -77,16 +77,23 @@ extension Screen {
 	/// absent from the tree entirely, not merely offscreen, so a query for it
 	/// fails outright rather than returning something unhittable.
 	///
+	/// `in` defaults to swiping `app` as a whole, which is right for a screen
+	/// that is one scrollable region. A screen with its own named scroll
+	/// container -- an `@expo/ui` `List`, say, sharing the screen with a
+	/// floating control the swipe should not land on -- passes that container
+	/// instead.
+	///
 	/// Good only for a screen with no keyboard up. A swipe spans the whole
 	/// element it is sent to, so once a keyboard is showing it begins on the
 	/// keyboard, the keyboard takes it, and this returns quietly having scrolled
 	/// nothing. Every caller scrolls with the keyboard down; one that cannot
 	/// wants the press-and-drag `CampusDictionaryScreen.revealInForm` uses.
 	@discardableResult
-	func scrollUntilExists(_ element: XCUIElement, swipes: Int = 8) -> Self {
+	func scrollUntilExists(_ element: XCUIElement, swipes: Int = 8, in container: XCUIElement? = nil) -> Self {
+		let scrollTarget = container ?? app
 		for _ in 0..<swipes {
 			if element.exists { break }
-			app.swipeUp()
+			scrollTarget.swipeUp()
 		}
 		return self
 	}

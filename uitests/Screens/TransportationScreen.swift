@@ -29,9 +29,7 @@ struct TransportationScreen: Screen {
 	@discardableResult
 	func verifyLineWidgetShown(_ line: String) -> Self {
 		let header = lineHeader(line)
-		for _ in 0..<6 where !header.exists {
-			list.swipeUp()
-		}
+		scrollUntilExists(header, in: list)
 		XCTAssertTrue(
 			header.exists,
 			"\(line) should have a widget on the Transportation screen")
@@ -75,14 +73,26 @@ struct TransportationScreen: Screen {
 		return self
 	}
 
+	/// Assert the strip actually moved, rather than merely accepting the
+	/// gesture: a stop further along the route should now be on screen.
+	/// `aStop` is not a fit for this check because the route loops back
+	/// through it, so its mere presence would not say which pass the strip
+	/// is showing.
+	@discardableResult
+	func verifyStripAdvancedTo(_ stop: String) -> Self {
+		let cell = app.elementWithLabel(startingWith: stop)
+		XCTAssertTrue(
+			cell.waitForExistence(timeout: 30),
+			"Swiping the strip should scroll far enough to reveal \(stop)")
+		return self
+	}
+
 	/// The footer sits below the route's stops, which the same lazy list
 	/// building means is absent from the tree until scrolled into view.
 	@discardableResult
 	func verifyTimetableShown() -> Self {
 		let footer = app.staticTexts[TestIdentifiers.Transportation.footer].firstMatch
-		for _ in 0..<6 where !footer.exists {
-			list.swipeUp()
-		}
+		scrollUntilExists(footer, in: list)
 		XCTAssertTrue(
 			footer.exists,
 			"The sheet should show the line's full timetable, footer and all")
@@ -162,9 +172,7 @@ struct TransportationScreen: Screen {
 	@discardableResult
 	func scrollToOtherModes() -> Self {
 		let section = app.staticTexts["Bus"].firstMatch
-		for _ in 0..<6 where !section.exists {
-			list.swipeUp()
-		}
+		scrollUntilExists(section, in: list)
 		XCTAssertTrue(
 			section.exists,
 			"Other Modes should be reachable by scrolling past the widgets")

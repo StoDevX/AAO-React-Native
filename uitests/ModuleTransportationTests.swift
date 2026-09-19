@@ -17,6 +17,7 @@ class ModuleTransportationTests: UITestCase {
 		TransportationScreen(app: app)
 			.navigate()
 			.swipeStripLeft(startingAt: TestIdentifiers.Transportation.aStop)
+			.verifyStripAdvancedTo(TestIdentifiers.Transportation.aStopFartherAlongTheRoute)
 			.capture("Transportation - strip scrolled")
 	}
 
