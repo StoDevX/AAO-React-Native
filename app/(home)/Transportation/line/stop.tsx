@@ -9,13 +9,13 @@ import {listRowInsets, listRowSeparator, listStyle} from '@expo/ui/swift-ui/modi
 
 import type {Moment} from 'moment-timezone'
 
-import {busLineOptions} from '../../source/features/transportation/bus/query'
-import {createMomentForDay} from '../../source/features/transportation/bus/components/days'
+import {busLineOptions} from '../../../../source/features/transportation/bus/query'
+import {createMomentForDay} from '../../../../source/features/transportation/bus/components/days'
 import type {
 	DayOfWeek,
 	BusTimetableEntry,
 	UnprocessedBusLine,
-} from '../../source/features/transportation/bus/types'
+} from '../../../../source/features/transportation/bus/types'
 import {
 	deriveFromProps,
 	getCurrentBusIteration,
@@ -23,11 +23,11 @@ import {
 	processBusLine,
 	findBusStopStatus as findStopStatus,
 	type BusStopStatusEnum,
-} from '../../source/features/transportation/bus/lib'
-import {ScheduleTimes} from '../../source/features/transportation/bus/components/times'
-import {ProgressChunk} from '../../source/features/transportation/bus/components/progress-chunk'
-import {BUS_FOOTER_MESSAGE} from '../../source/features/transportation/bus/constants'
-import {useTimetableWidth} from '../../source/features/transportation/bus/use-timetable-width'
+} from '../../../../source/features/transportation/bus/lib'
+import {ScheduleTimes} from '../../../../source/features/transportation/bus/components/times'
+import {ProgressChunk} from '../../../../source/features/transportation/bus/components/progress-chunk'
+import {BUS_FOOTER_MESSAGE} from '../../../../source/features/transportation/bus/constants'
+import {useTimetableWidth} from '../../../../source/features/transportation/bus/use-timetable-width'
 import {LoadingView, NoticeView} from '@frogpond/notice'
 import {ListRow, Detail, Title} from '@frogpond/lists'
 import * as c from '@frogpond/colors'
@@ -193,14 +193,14 @@ function BusRouteDetailView({stop, line, subtitle}: BusRouteDetailProps): React.
 	return <BusStopDetailInternal line={line} now={now} stop={stop} subtitle={subtitle} />
 }
 
-export default function BusRouteDetailPage(): React.ReactNode {
+export default function BusStopPage(): React.ReactNode {
 	let {
 		line: lineName,
 		day,
 		stopName,
 	} = useLocalSearchParams<{
 		line: string
-		day: DayOfWeek
+		day: DayOfWeek | ''
 		stopName: string
 	}>()
 
@@ -243,7 +243,8 @@ export default function BusRouteDetailPage(): React.ReactNode {
 		)
 	}
 
-	let momentForDay = createMomentForDay(now, day)
+	// An empty day means the caller was following the clock, so today it is.
+	let momentForDay = day ? createMomentForDay(now, day) : now
 	let {subtitle, schedule} = deriveFromProps({line, now: momentForDay})
 	let stop = schedule.timetable.find((entry) => entry.name === stopName)
 

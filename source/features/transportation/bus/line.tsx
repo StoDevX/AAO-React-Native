@@ -1,13 +1,12 @@
 import * as React from 'react'
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native'
-import type {UnprocessedBusLine} from './types'
+import type {DayOfWeek, UnprocessedBusLine} from './types'
 import {busPropsForRow, deriveFromProps, findBusTarget, scheduleSectionTitle} from './lib'
 import type {Moment} from 'moment-timezone'
 import {Separator} from '@frogpond/separator'
 import {BusStopRow} from './components/bus-stop-row'
 import {ListRow} from '@frogpond/lists'
 import * as c from '@frogpond/colors'
-import {useRouter} from 'expo-router'
 import {Host, List, RNHostView, Section, Text as SwiftUIText, VStack} from '@expo/ui/swift-ui'
 import {
 	font,
@@ -19,7 +18,6 @@ import {
 } from '@expo/ui/swift-ui/modifiers'
 import {BUS_FOOTER_MESSAGE} from './constants'
 import {momentToDayOfWeek, createMomentForDay} from './components/days'
-import {useBusDay} from './store'
 import {useTimetableWidth} from './use-timetable-width'
 
 const styles = StyleSheet.create({
@@ -47,16 +45,17 @@ const EMPTY_SCHEDULE_MESSAGE = (
 type Props = {
 	line: UnprocessedBusLine
 	now: Moment
+	/** The day on screen, or `null` to follow the clock. */
+	selectedDay: DayOfWeek | null
+	onPressStop: (stopName: string) => void
 }
 
 export function BusLine(props: Props): React.ReactNode {
-	let {line, now} = props
-	let router = useRouter()
+	let {line, now, selectedDay, onPressStop} = props
 	let hostedWidth = useTimetableWidth()
 
 	const currentDay = momentToDayOfWeek(now)
 
-	let {selectedDay} = useBusDay()
 	let dayToShow = selectedDay ?? currentDay
 
 	const momentForSelectedDay = createMomentForDay(now, dayToShow)
@@ -114,14 +113,7 @@ export function BusLine(props: Props): React.ReactNode {
 											// oxlint-disable-next-line react/no-array-index-key -- a loop route visits a stop twice
 											<React.Fragment key={`${item.name}-${index}`}>
 												{index > 0 ? <BusLineSeparator /> : null}
-												<TouchableOpacity
-													onPress={() => {
-														router.push({
-															pathname: '/BusRouteDetail',
-															params: {line: line.line, day: dayToShow, stopName: item.name},
-														})
-													}}
-												>
+												<TouchableOpacity onPress={() => onPressStop(item.name)}>
 													<BusStopRow
 														barColor={line.colors.bar}
 														{...busPropsForRow(busTarget, index)}

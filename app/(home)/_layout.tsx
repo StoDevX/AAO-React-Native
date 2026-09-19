@@ -38,6 +38,7 @@ export default function HomeLayout(): React.ReactNode {
 			<Stack.Screen name="Streaming Media" options={{title: 'Streaming Media'}} />
 			<Stack.Screen name="News" options={{title: 'News', headerLargeTitleEnabled: true}} />
 			<Stack.Screen name="Transportation" options={{title: 'Transportation'}} />
+			<Stack.Screen name="Transportation/line" options={DETAIL_SHEET} />
 			<Stack.Screen name="Campus" />
 			<Stack.Screen name="Campus/detail" options={DETAIL_SHEET} />
 			<Stack.Screen name="Dictionary/entry" options={DETAIL_SHEET} />
