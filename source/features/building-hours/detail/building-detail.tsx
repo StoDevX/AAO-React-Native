@@ -129,7 +129,7 @@ export function BuildingDetailSwiftUI({building, now, campus}: Props): React.Rea
 						>
 							{groups.map((group) => (
 								<ScheduleRowSwiftUI
-									key={group.startIndex}
+									key={group.entries[0].sourceIndex}
 									accentColor={accentColor}
 									entries={group.entries}
 									label={group.label}
