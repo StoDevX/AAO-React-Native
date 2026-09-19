@@ -63,7 +63,7 @@ export type BreakScheduleContainerType = Partial<
 
 export type BuildingLinkType = {
 	title: string
-	url: URL
+	url: string
 }
 
 export type BuildingType = {

@@ -1,10 +1,17 @@
 import * as React from 'react'
-import {Stack, useLocalSearchParams, useNavigation, useRouter} from 'expo-router'
+import {Stack, useFocusEffect, useLocalSearchParams, useNavigation, useRouter} from 'expo-router'
 import {usePreventRemove} from 'expo-router/react-navigation'
 import {useQuery} from '@tanstack/react-query'
 import {Alert, StyleSheet} from 'react-native'
-import {Host, List, Section, Text, Toggle, VStack} from '@expo/ui/swift-ui'
-import {font, foregroundStyle, frame, listStyle} from '@expo/ui/swift-ui/modifiers'
+import {Host, List, Picker, Section, Text, Toggle, VStack} from '@expo/ui/swift-ui'
+import {
+	font,
+	foregroundStyle,
+	frame,
+	listStyle,
+	pickerStyle,
+	tag,
+} from '@expo/ui/swift-ui/modifiers'
 import moment from 'moment-timezone'
 import type {Moment} from 'moment-timezone'
 import noop from 'lodash/noop'
@@ -15,13 +22,22 @@ import {LoadingView, NoticeView} from '@frogpond/notice'
 import {ActionRow, DetailRow, NavigationRow} from '../../../../source/components/rows'
 import {SyncedTextField} from '../../../../source/components/synced-text-field'
 import type {Campus} from '../../../../source/features/building-hours/query'
-import {buildingByNameOptions, parseCampus} from '../../../../source/features/building-hours/query'
+import {
+	buildingByNameOptions,
+	buildingsOptions,
+	parseCampus,
+} from '../../../../source/features/building-hours/query'
 import type {
 	BuildingType,
 	NamedBuildingScheduleType,
 	SingleBuildingScheduleType,
 } from '../../../../source/features/building-hours/types'
-import {summarizeDays, formatBuildingTimes} from '../../../../source/features/building-hours/lib'
+import {
+	categoriesFrom,
+	linkHost,
+	summarizeDays,
+	formatBuildingTimes,
+} from '../../../../source/features/building-hours/lib'
 import {submitReport} from '../../../../source/features/building-hours/report/submit'
 import type {BuildingAction} from '../../../../source/features/building-hours/report/building-reducer'
 import {useBuildingReport} from '../../../../source/features/building-hours/report/context'
@@ -30,7 +46,7 @@ function useBuildingEditor(initialBuilding: BuildingType, campus: Campus) {
 	let router = useRouter()
 	let navigation = useNavigation()
 
-	let {draft, hasUnsavedChanges, edit} = useBuildingReport()
+	let {draft, hasUnsavedChanges, edit, note, setNote} = useBuildingReport()
 	let building = draft ?? initialBuilding
 
 	let [submitted, setSubmitted] = React.useState(false)
@@ -76,12 +92,53 @@ function useBuildingEditor(initialBuilding: BuildingType, campus: Campus) {
 		[router],
 	)
 
+	let openLink = React.useCallback(
+		(linkIndex: number) =>
+			router.push({
+				pathname: '/Campus/detail/link-editor',
+				params: {linkIndex: String(linkIndex)},
+			}),
+		[router],
+	)
+
+	/**
+	 * Stops a second press from opening a second editor on the same link.
+	 * Both presses would read the same `links.length` from this render, so the
+	 * guard is a ref rather than state — a re-render must not clear it while
+	 * the push is still travelling.
+	 *
+	 * Unlike `useDismissOnce`, this one has to reset: the screen is still here
+	 * when someone comes back from the editor, and pressing again then is a
+	 * legitimate second link.
+	 */
+	let addingLink = React.useRef(false)
+
+	useFocusEffect(
+		React.useCallback(() => {
+			addingLink.current = false
+		}, []),
+	)
+
+	let addLink = React.useCallback(() => {
+		if (addingLink.current) {
+			return
+		}
+		addingLink.current = true
+
+		// The new link lands at the end, which is where the editor that opens
+		// next has to look for it. Dispatched before the push so the draft
+		// already holds the link the editor is about to read.
+		let linkIndex = building.links?.length ?? 0
+		edit({type: 'ADD_LINK'})
+		openLink(linkIndex)
+	}, [building.links, edit, openLink])
+
 	let submit = React.useCallback((): void => {
 		setSubmitted(true)
-		submitReport(initialBuilding, building, campus)
-	}, [building, campus, initialBuilding])
+		submitReport(initialBuilding, building, campus, note)
+	}, [building, campus, initialBuilding, note])
 
-	return {building, dispatch: edit, openEditor, submit}
+	return {addLink, building, dispatch: edit, note, openEditor, openLink, setNote, submit}
 }
 
 type Props = {
@@ -100,9 +157,13 @@ let CampusProblemReportView = ({initialBuilding, campus}: Props): React.ReactNod
 		// oxlint-disable-next-line react/exhaustive-deps
 	}, [])
 
-	let {building, dispatch, openEditor, submit} = useBuildingEditor(initialBuilding, campus)
+	let {addLink, building, dispatch, note, openEditor, openLink, setNote, submit} =
+		useBuildingEditor(initialBuilding, campus)
 
-	let {schedule: schedules, name} = building
+	let {schedule: schedules, name, subtitle, abbreviation, category, links = []} = building
+
+	let {data: buildings} = useQuery(buildingsOptions(campus))
+	let categories = categoriesFrom([...(buildings ?? []), building])
 
 	return (
 		<>
@@ -134,13 +195,47 @@ let CampusProblemReportView = ({initialBuilding, campus}: Props): React.ReactNod
 						</VStack>
 					</Section>
 
-					<Section title="NAME">
+					<Section title="ABOUT">
 						<SyncedTextField
 							autocapitalization="words"
-							onChangeText={(newName) => dispatch({type: 'SET_BUILDING_NAME', name: newName})}
-							placeholder="Title"
+							onChangeText={(newName) => dispatch({type: 'UPDATE_BUILDING', data: {name: newName}})}
+							placeholder="Name"
 							value={name || ''}
 						/>
+						{/* A venue is listed under the name people say; this is where
+						    the formal one is spelled out. */}
+						<SyncedTextField
+							autocapitalization="words"
+							onChangeText={(newSubtitle) =>
+								dispatch({type: 'UPDATE_BUILDING', data: {subtitle: newSubtitle}})
+							}
+							placeholder="Formal Name"
+							value={subtitle || ''}
+						/>
+						<SyncedTextField
+							autocapitalization="characters"
+							onChangeText={(newAbbreviation) =>
+								dispatch({type: 'UPDATE_BUILDING', data: {abbreviation: newAbbreviation}})
+							}
+							placeholder="Abbreviation"
+							value={abbreviation || ''}
+						/>
+						{/* A picker rather than a field: a category is a section header
+						    on the campus list, so one typo invents a section. */}
+						<Picker<string>
+							label="Category"
+							modifiers={[pickerStyle('menu')]}
+							onSelectionChange={(newCategory) =>
+								dispatch({type: 'UPDATE_BUILDING', data: {category: newCategory}})
+							}
+							selection={category}
+						>
+							{categories.map((option) => (
+								<Text key={option} modifiers={[tag(option)]}>
+									{option}
+								</Text>
+							))}
+						</Picker>
 					</Section>
 
 					{schedules.map((s: NamedBuildingScheduleType, i: number) => (
@@ -158,6 +253,34 @@ let CampusProblemReportView = ({initialBuilding, campus}: Props): React.ReactNod
 						<NavigationRow
 							onPress={() => dispatch({type: 'ADD_SCHEDULE'})}
 							title="Add New Schedule"
+						/>
+					</Section>
+
+					{/* Always drawn, even with no links, so Add Link stays reachable. */}
+					<Section title="RESOURCES">
+						{links.map((link, i) => (
+							<DetailRow
+								// oxlint-disable-next-line react/no-array-index-key -- the index is the handle the editor edits by
+								key={i}
+								label={link.title || 'Untitled Link'}
+								onPress={() => openLink(i)}
+								value={linkHost(link.url)}
+							/>
+						))}
+
+						<NavigationRow onPress={addLink} title="Add Link" />
+					</Section>
+
+					<Section
+						footer={<Text>Anything the fields above cannot say.</Text>}
+						title="WHAT'S WRONG?"
+					>
+						<SyncedTextField
+							autocapitalization="sentences"
+							multiline={true}
+							onChangeText={setNote}
+							placeholder="Describe the problem"
+							value={note}
 						/>
 					</Section>
 				</List>

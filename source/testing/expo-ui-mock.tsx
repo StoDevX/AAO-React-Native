@@ -69,6 +69,7 @@ export const hidden = flag('hidden', 'hidden')
 export const id = named('id', 'id')
 export const ignoreSafeArea = spreading('ignoreSafeArea')
 export const italic = bare('italic')
+export const keyboardType = named('keyboardType', 'keyboardType')
 export const kerning = named('kerning', 'value')
 export const lineSpacing = named('lineSpacing', 'value')
 export const listRowBackground = named('listRowBackground', 'color')
@@ -741,14 +742,17 @@ export function LabeledContent({
 
 export function Picker<T>({
 	children,
+	label,
 	onSelectionChange,
 	selection,
 }: WithModifiers & {
+	label?: string | React.ReactNode
 	selection?: T
 	onSelectionChange?: (selection: T) => void
 }): React.ReactNode {
 	return (
 		<View>
+			{typeof label === 'string' ? <RNText>{label}</RNText> : label}
 			{React.Children.map(children, (child) => {
 				// A picker reports the `tag(…)` its chosen option carries.
 				let value = (

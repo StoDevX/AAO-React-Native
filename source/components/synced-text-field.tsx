@@ -1,6 +1,11 @@
 import * as React from 'react'
 import {TextField, useNativeState} from '@expo/ui/swift-ui'
-import {lineLimit, submitLabel, textInputAutocapitalization} from '@expo/ui/swift-ui/modifiers'
+import {
+	keyboardType as keyboardTypeModifier,
+	lineLimit,
+	submitLabel,
+	textInputAutocapitalization,
+} from '@expo/ui/swift-ui/modifiers'
 
 type Props = {
 	/** The value the field should be showing, from wherever it is kept. */
@@ -9,6 +14,19 @@ type Props = {
 	/** Grows the field vertically rather than scrolling one line. */
 	multiline?: boolean
 	autocapitalization?: 'never' | 'words' | 'sentences' | 'characters'
+	keyboardType?:
+		| 'default'
+		| 'email-address'
+		| 'numeric'
+		| 'phone-pad'
+		| 'ascii-capable'
+		| 'numbers-and-punctuation'
+		| 'url'
+		| 'name-phone-pad'
+		| 'decimal-pad'
+		| 'twitter'
+		| 'web-search'
+		| 'ascii-capable-number-pad'
 	onChangeText: (text: string) => void
 }
 
@@ -31,7 +49,14 @@ const MULTILINE_LIMIT = 4
  * does land.
  */
 export function SyncedTextField(props: Props): React.ReactNode {
-	let {value, placeholder, multiline = false, autocapitalization, onChangeText} = props
+	let {
+		value,
+		placeholder,
+		multiline = false,
+		autocapitalization,
+		keyboardType,
+		onChangeText,
+	} = props
 
 	let state = useNativeState(value)
 	let lastEmitted = React.useRef(value)
@@ -52,6 +77,9 @@ export function SyncedTextField(props: Props): React.ReactNode {
 	}
 	if (autocapitalization) {
 		modifiers.push(textInputAutocapitalization(autocapitalization))
+	}
+	if (keyboardType) {
+		modifiers.push(keyboardTypeModifier(keyboardType))
 	}
 
 	return (

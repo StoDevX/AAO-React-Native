@@ -10,8 +10,10 @@ import {
 	Button,
 	disabled,
 	HStack,
+	keyboardType,
 	List,
 	Menu,
+	Picker,
 	refreshable,
 	Section,
 	TabView,
@@ -284,5 +286,23 @@ describe('expo-ui-mock', () => {
 
 		await expect(onRefresh()).resolves.toBeUndefined()
 		expect(handler).toHaveBeenCalled()
+	})
+
+	describe('Picker', () => {
+		test('shows its label', async () => {
+			await render(
+				<Picker label="Category" selection="Food">
+					<Text modifiers={[tag('Food')]}>Food</Text>
+				</Picker>,
+			)
+
+			expect(screen.getByText('Category')).toBeTruthy()
+		})
+	})
+
+	describe('keyboardType', () => {
+		test('carries the type it was given', () => {
+			expect(keyboardType('url')).toEqual({$type: 'keyboardType', keyboardType: 'url'})
+		})
 	})
 })

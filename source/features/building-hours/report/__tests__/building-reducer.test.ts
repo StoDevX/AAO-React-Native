@@ -13,11 +13,34 @@ const baseBuilding: BuildingType = {
 }
 
 describe('buildingReducer', () => {
-	it('handles SET_BUILDING_NAME', () => {
-		let action: BuildingAction = {type: 'SET_BUILDING_NAME', name: 'New Name'}
+	it('handles UPDATE_BUILDING', () => {
+		let action: BuildingAction = {type: 'UPDATE_BUILDING', data: {name: 'New Name'}}
 		let result = buildingReducer(baseBuilding, action)
 		expect(result.name).toBe('New Name')
 		expect(result.schedule).toBe(baseBuilding.schedule)
+	})
+
+	it('sets a subtitle through UPDATE_BUILDING', () => {
+		let action: BuildingAction = {
+			type: 'UPDATE_BUILDING',
+			data: {subtitle: 'Digital Scholarship Center'},
+		}
+		let result = buildingReducer(baseBuilding, action)
+		expect(result.subtitle).toBe('Digital Scholarship Center')
+	})
+
+	// A cleared optional field must leave no key behind: `subtitle: ''` in the
+	// emailed YAML reads as a deliberate empty formal name, not an absent one.
+	it('drops an optional field cleared to an empty string', () => {
+		let withSubtitle = {...baseBuilding, subtitle: 'Old Name', abbreviation: 'ON'}
+		let result = buildingReducer(withSubtitle, {type: 'UPDATE_BUILDING', data: {subtitle: ''}})
+		expect('subtitle' in result).toBe(false)
+		expect(result.abbreviation).toBe('ON')
+	})
+
+	it('keeps a cleared name, which is required', () => {
+		let result = buildingReducer(baseBuilding, {type: 'UPDATE_BUILDING', data: {name: ''}})
+		expect(result.name).toBe('')
 	})
 
 	it('handles ADD_SCHEDULE', () => {
@@ -93,7 +116,57 @@ describe('buildingReducer', () => {
 
 	it('does not mutate the original state', () => {
 		let original: BuildingType = JSON.parse(JSON.stringify(baseBuilding)) as BuildingType
-		buildingReducer(baseBuilding, {type: 'SET_BUILDING_NAME', name: 'Changed'})
+		buildingReducer(baseBuilding, {type: 'UPDATE_BUILDING', data: {name: 'Changed'}})
 		expect(baseBuilding).toEqual(original)
+	})
+})
+
+describe('links', () => {
+	let withLinks: BuildingType = {
+		...baseBuilding,
+		links: [{title: 'Instagram', url: 'https://instagram.com/lionspause'}],
+	}
+
+	it('handles ADD_LINK on a building with no links', () => {
+		let result = buildingReducer(baseBuilding, {type: 'ADD_LINK'})
+		expect(result.links).toEqual([{title: '', url: ''}])
+	})
+
+	it('handles ADD_LINK on a building that already has one', () => {
+		let result = buildingReducer(withLinks, {type: 'ADD_LINK'})
+		expect(result.links).toHaveLength(2)
+		expect(result.links?.[0].title).toBe('Instagram')
+	})
+
+	it('handles UPDATE_LINK', () => {
+		let result = buildingReducer(withLinks, {
+			type: 'UPDATE_LINK',
+			linkIndex: 0,
+			data: {title: 'Pause Instagram'},
+		})
+		expect(result.links?.[0]).toEqual({
+			title: 'Pause Instagram',
+			url: 'https://instagram.com/lionspause',
+		})
+	})
+
+	it('handles DELETE_LINK', () => {
+		let withTwoLinks: BuildingType = {
+			...baseBuilding,
+			links: [
+				{title: 'Instagram', url: 'https://instagram.com/lionspause'},
+				{title: 'Facebook', url: 'https://facebook.com/lionspause'},
+			],
+		}
+		let result = buildingReducer(withTwoLinks, {type: 'DELETE_LINK', linkIndex: 0})
+		expect(result.links).toEqual([{title: 'Facebook', url: 'https://facebook.com/lionspause'}])
+	})
+
+	// An empty `links: []` in the emailed YAML reads as a deliberate clearing
+	// of every link, and leaves `hasUnsavedChanges` stuck true forever since
+	// the building no longer round-trips to its initial, key-less shape.
+	it('drops the links key entirely when DELETE_LINK empties the array', () => {
+		let result = buildingReducer(withLinks, {type: 'DELETE_LINK', linkIndex: 0})
+		expect('links' in result).toBe(false)
 	})
 })

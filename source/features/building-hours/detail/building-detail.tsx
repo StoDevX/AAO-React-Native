@@ -171,9 +171,9 @@ export function BuildingDetailSwiftUI({building, now, campus}: Props): React.Rea
 					<Section title="RESOURCES">
 						{links.map((link) => (
 							<Button
-								key={link.url.toString()}
+								key={link.url}
 								modifiers={[buttonStyle('plain')]}
-								onPress={() => openUrl(link.url.toString())}
+								onPress={() => openUrl(link.url)}
 							>
 								<Text modifiers={[foregroundStyle(c.systemBlue)]}>{link.title}</Text>
 							</Button>

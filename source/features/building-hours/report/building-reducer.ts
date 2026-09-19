@@ -1,8 +1,13 @@
-import type {BuildingType, NamedBuildingScheduleType, SingleBuildingScheduleType} from '../types'
+import type {
+	BuildingLinkType,
+	BuildingType,
+	NamedBuildingScheduleType,
+	SingleBuildingScheduleType,
+} from '../types'
 import {blankSchedule} from '../lib'
 
 export type BuildingAction =
-	| {type: 'SET_BUILDING_NAME'; name: string}
+	| {type: 'UPDATE_BUILDING'; data: Partial<BuildingType>}
 	| {type: 'ADD_SCHEDULE'}
 	| {
 			type: 'UPDATE_SCHEDULE'
@@ -18,11 +23,28 @@ export type BuildingAction =
 			data: SingleBuildingScheduleType
 	  }
 	| {type: 'DELETE_HOURS'; scheduleIndex: number; setIndex: number}
+	| {type: 'ADD_LINK'}
+	| {type: 'UPDATE_LINK'; linkIndex: number; data: Partial<BuildingLinkType>}
+	| {type: 'DELETE_LINK'; linkIndex: number}
+
+/**
+ * The optional free-text fields, which a reporter clearing a field means to
+ * remove rather than to blank. `name` and `category` are required, so an empty
+ * one stays empty and shows as the mistake it is.
+ */
+const OPTIONAL_TEXT_KEYS = ['subtitle', 'abbreviation'] as const
 
 export function buildingReducer(state: BuildingType, action: BuildingAction): BuildingType {
 	switch (action.type) {
-		case 'SET_BUILDING_NAME':
-			return {...state, name: action.name}
+		case 'UPDATE_BUILDING': {
+			let next = {...state, ...action.data}
+			for (let key of OPTIONAL_TEXT_KEYS) {
+				if (next[key] === '') {
+					delete next[key]
+				}
+			}
+			return next
+		}
 
 		case 'ADD_SCHEDULE':
 			return {
@@ -74,6 +96,28 @@ export function buildingReducer(state: BuildingType, action: BuildingAction): Bu
 				hours,
 			}
 			return {...state, schedule: schedules}
+		}
+
+		case 'ADD_LINK':
+			return {...state, links: [...(state.links ?? []), {title: '', url: ''}]}
+
+		case 'UPDATE_LINK': {
+			let links = [...(state.links ?? [])]
+			links[action.linkIndex] = {...links[action.linkIndex], ...action.data}
+			return {...state, links}
+		}
+
+		case 'DELETE_LINK': {
+			let links = [...(state.links ?? [])]
+			links.splice(action.linkIndex, 1)
+			// An empty `links: []` in the emailed YAML reads as a deliberate
+			// clearing of every link, not the absence of any -- so a building
+			// left with none goes back to having no `links` key at all.
+			if (links.length === 0) {
+				let {links: _links, ...rest} = state
+				return rest
+			}
+			return {...state, links}
 		}
 
 		default: {
