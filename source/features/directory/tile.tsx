@@ -17,7 +17,9 @@ type Props = {
 
 /**
  * A curated campus contact's tile. Tapping opens the detail screen, where
- * the contact's call/link action lives.
+ * the contact's call/link action lives. Square rather than the default
+ * portrait shape, so the grid stays short enough to leave the department list
+ * in view below it.
  */
 export function ContactTile({contact, onPress}: Props): React.ReactNode {
 	return (
@@ -25,6 +27,7 @@ export function ContactTile({contact, onPress}: Props): React.ReactNode {
 			gradient={resolveGradient(contact.gradient)}
 			icon={contact.icon ?? FALLBACK_ICON}
 			onPress={onPress}
+			ratio={1}
 			title={contact.title}
 		/>
 	)
