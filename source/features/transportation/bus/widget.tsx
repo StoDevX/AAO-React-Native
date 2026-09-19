@@ -49,10 +49,8 @@ const DOT_SIZE = 11
 type Props = {
 	line: UnprocessedBusLine
 	now: Moment
-	/** Opens the line's full timetable. */
-	onPressLine: () => void
-	/** Opens one stop's departures. */
-	onPressStop: (stopName: string) => void
+	/** Opens the line's full timetable, from anywhere in the widget. */
+	onPress: () => void
 }
 
 function StopCell({
@@ -146,72 +144,76 @@ function StopCell({
 }
 
 /**
- * The end of the loop: when the next round begins. Greyed and inert -- there is
- * no stop behind it, so it is a note rather than a destination, and it carries
- * no `Button`.
+ * The end of the loop: when the next round begins. Greyed and inert to the
+ * eye -- there is no stop behind it, so it is a note rather than a
+ * destination -- but still a `Button`, so the strip has no dead patch at its
+ * far end.
  */
-function NextRoundCell({time}: {time: Moment}): React.ReactNode {
+function NextRoundCell({time, onPress}: {time: Moment; onPress: () => void}): React.ReactNode {
 	let label = formatDeparture(time)
 
 	return (
-		<VStack
+		<Button
 			modifiers={[
+				buttonStyle('plain'),
 				frame({width: CELL_WIDTH}),
 				accessibilityElement('combine'),
 				accessibilityLabel(`Next bus, ${label}`),
 			]}
-			spacing={6}
+			onPress={onPress}
 		>
-			<Text modifiers={[font({textStyle: 'footnote'}), foregroundStyle(c.tertiaryLabel)]}>
-				{label}
-			</Text>
+			<VStack modifiers={[contentShape(shapes.rectangle())]} spacing={6}>
+				<Text modifiers={[font({textStyle: 'footnote'}), foregroundStyle(c.tertiaryLabel)]}>
+					{label}
+				</Text>
 
-			<ZStack modifiers={[frame({width: CELL_WIDTH, height: DOT_SIZE})]}>
-				<HStack spacing={0}>
-					<Capsule
+				<ZStack modifiers={[frame({width: CELL_WIDTH, height: DOT_SIZE})]}>
+					<HStack spacing={0}>
+						<Capsule
+							modifiers={[
+								frame({width: CELL_WIDTH / 2, height: RAIL_HEIGHT}),
+								foregroundStyle(c.tertiaryLabel),
+								opacity(0.35),
+							]}
+						/>
+						<Capsule
+							modifiers={[
+								frame({width: CELL_WIDTH / 2, height: RAIL_HEIGHT}),
+								foregroundStyle(c.tertiaryLabel),
+								opacity(0),
+							]}
+						/>
+					</HStack>
+
+					<Circle
 						modifiers={[
-							frame({width: CELL_WIDTH / 2, height: RAIL_HEIGHT}),
+							frame({width: DOT_SIZE, height: DOT_SIZE}),
 							foregroundStyle(c.tertiaryLabel),
-							opacity(0.35),
+							opacity(0.45),
 						]}
 					/>
-					<Capsule
-						modifiers={[
-							frame({width: CELL_WIDTH / 2, height: RAIL_HEIGHT}),
-							foregroundStyle(c.tertiaryLabel),
-							opacity(0),
-						]}
-					/>
-				</HStack>
+				</ZStack>
 
-				<Circle
+				<Text
 					modifiers={[
-						frame({width: DOT_SIZE, height: DOT_SIZE}),
+						font({textStyle: 'caption'}),
 						foregroundStyle(c.tertiaryLabel),
-						opacity(0.45),
+						frame({width: CELL_WIDTH}),
 					]}
-				/>
-			</ZStack>
-
-			<Text
-				modifiers={[
-					font({textStyle: 'caption'}),
-					foregroundStyle(c.tertiaryLabel),
-					frame({width: CELL_WIDTH}),
-				]}
-			>
-				Next bus
-			</Text>
-		</VStack>
+				>
+					Next bus
+				</Text>
+			</VStack>
+		</Button>
 	)
 }
 
 /**
  * One bus line at a glance: what it is doing right now, and its route as a
- * strip you can push sideways. The header opens the full timetable; a stop
- * opens that stop's own departures.
+ * strip you can push sideways. A tap anywhere on the widget -- the header or
+ * any cell in the strip -- opens the line's full timetable.
  */
-export function BusLineWidget({line, now, onPressLine, onPressStop}: Props): React.ReactNode {
+export function BusLineWidget({line, now, onPress}: Props): React.ReactNode {
 	let {subtitle, status, schedule, currentBusIteration} = deriveLineState({line, now})
 	let {cells, currentIndex, nextRoundStart} = buildStopStrip({
 		schedule,
@@ -238,7 +240,7 @@ export function BusLineWidget({line, now, onPressLine, onPressStop}: Props): Rea
 		<Section>
 			<Button
 				modifiers={[buttonStyle('plain'), accessibilityLabel(`${line.line}, ${subtitle}`)]}
-				onPress={onPressLine}
+				onPress={onPress}
 			>
 				<HStack
 					modifiers={[contentShape(shapes.rectangle()), frame({maxWidth: FILL_WIDTH})]}
@@ -280,10 +282,10 @@ export function BusLineWidget({line, now, onPressLine, onPressStop}: Props): Rea
 								isFirst={index === 0}
 								// The faux stop, when there is one, is the rail's real end.
 								isLast={index === cells.length - 1 && nextRoundStart === null}
-								onPress={() => onPressStop(cell.name)}
+								onPress={onPress}
 							/>
 						))}
-						{nextRoundStart ? <NextRoundCell time={nextRoundStart} /> : null}
+						{nextRoundStart ? <NextRoundCell onPress={onPress} time={nextRoundStart} /> : null}
 					</LazyHStack>
 				</ScrollView>
 			)}

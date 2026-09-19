@@ -86,16 +86,10 @@ export default function TransportationPage(): React.ReactNode {
 							key={line.line}
 							line={line}
 							now={now}
-							onPressLine={() => {
+							onPress={() => {
 								router.push({
 									pathname: '/Transportation/line/[line]',
 									params: {line: line.line},
-								})
-							}}
-							onPressStop={(stopName) => {
-								router.push({
-									pathname: '/Transportation/line/stop',
-									params: {line: line.line, day: '', stopName},
 								})
 							}}
 						/>

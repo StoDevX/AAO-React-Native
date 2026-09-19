@@ -21,15 +21,6 @@ class ModuleTransportationTests: UITestCase {
 			.capture("Transportation - strip scrolled")
 	}
 
-	/// Pressing a widget's header opens the line's full timetable in a sheet.
-	func testOpeningALineShowsItsTimetable() throws {
-		TransportationScreen(app: app)
-			.navigate()
-			.openLine(TestIdentifiers.Transportation.aLine)
-			.verifyTimetableShown()
-			.capture("Transportation - line sheet")
-	}
-
 	/// A single stop's schedule draws the same progress bar down its departure
 	/// times, so it has the same question to answer as the route above: whether
 	/// the bar and its dots survive the card they are drawn inside.
@@ -42,13 +33,14 @@ class ModuleTransportationTests: UITestCase {
 			.capture("stop schedule")
 	}
 
-	/// A stop cell in the strip is the short way to the same screen.
-	func testAStripCellOpensThatStop() throws {
+	/// Every cell in the strip is a shortcut to the same sheet the header opens
+	/// -- a stop cell is no longer its own destination.
+	func testAStripCellOpensTheTimetable() throws {
 		TransportationScreen(app: app)
 			.navigate()
-			.openStopFromStrip(TestIdentifiers.Transportation.aStop)
-			.verifyStopScheduleShown()
-			.capture("Transportation - stop from strip")
+			.openTimetableFromStrip(TestIdentifiers.Transportation.aStop)
+			.verifyTimetableShown()
+			.capture("Transportation - timetable from strip")
 	}
 
 	/// The day picker lives in the sheet's navigation bar rather than in the

@@ -587,12 +587,6 @@ struct TestIdentifiers {
 		/// `Today` when the screens are following the clock.
 		static let dayMenuDefaultLabel = "Today"
 		static let aDay = "Saturday"
-		/// The list footer renders as a single Text, so both lines are one label.
-		static let footer = """
-			Bus routes and times subject to change without notice
-
-			Data collected by the humans of All About Olaf
-			"""
 		/// The last row on the Transportation screen. It sits in Other Modes'
 		/// final section, which carries no heading -- its entries have an empty
 		/// `category` -- so reaching this row proves the list scrolls past both

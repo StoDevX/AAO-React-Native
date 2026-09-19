@@ -36,15 +36,8 @@ function makeLine(overrides: Partial<UnprocessedBusLine> = {}): UnprocessedBusLi
 	}
 }
 
-function renderWidget(line: UnprocessedBusLine, onPressStop = jest.fn()) {
-	return render(
-		<BusLineWidget
-			line={line}
-			now={MONDAY_AFTERNOON}
-			onPressLine={jest.fn()}
-			onPressStop={onPressStop}
-		/>,
-	)
+function renderWidget(line: UnprocessedBusLine, onPress = jest.fn()) {
+	return render(<BusLineWidget line={line} now={MONDAY_AFTERNOON} onPress={onPress} />)
 }
 
 describe('BusLineWidget', () => {
@@ -66,16 +59,16 @@ describe('BusLineWidget', () => {
 		expect(queryByText('St. Olaf')).toBeNull()
 	})
 
-	test('reports which stop was pressed', async () => {
-		let onPressStop = jest.fn()
-		let {getByLabelText} = await renderWidget(makeLine(), onPressStop)
+	test('pressing a stop cell opens the line, same as the header', async () => {
+		let onPress = jest.fn()
+		let {getByLabelText} = await renderWidget(makeLine(), onPress)
 
 		// Matched on the name alone: the departure beside it is written by
 		// Intl through the device's locale, which is not a decision this
 		// component makes and not one Jest should be pinning.
 		await fireEvent.press(getByLabelText(/^Carleton,/u))
 
-		expect(onPressStop).toHaveBeenCalledWith('Carleton')
+		expect(onPress).toHaveBeenCalled()
 	})
 
 	test('ends the strip with the next round when another one follows today', async () => {

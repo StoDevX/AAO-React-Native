@@ -47,10 +47,12 @@ struct TransportationScreen: Screen {
 		return self
 	}
 
-	/// Press a stop in a widget's strip. The cell's label is the stop name and
-	/// its departure -- "St. Olaf College, 1:05 PM" -- so the name is a prefix.
+	/// Press a stop cell in a widget's strip. Every cell opens the line's full
+	/// timetable, the same as the header, so this reaches the sheet by the
+	/// short way. The cell's label is the stop name and its departure --
+	/// "St. Olaf College, 1:05 PM" -- so the name is a prefix.
 	@discardableResult
-	func openStopFromStrip(_ stop: String) -> Self {
+	func openTimetableFromStrip(_ stop: String) -> Self {
 		let cell = app.elementWithLabel(startingWith: stop)
 		XCTAssertTrue(
 			cell.waitForExistence(timeout: 30),
@@ -87,15 +89,16 @@ struct TransportationScreen: Screen {
 		return self
 	}
 
-	/// The footer sits below the route's stops, which the same lazy list
-	/// building means is absent from the tree until scrolled into view.
+	/// The day menu lives only in the timetable sheet's navigation bar, so
+	/// its presence is sheet-unique -- unlike the footer text, which all three
+	/// screens in this feature render and which only ever discriminated
+	/// because a presented sheet makes the screen behind it accessibility-inert.
 	@discardableResult
 	func verifyTimetableShown() -> Self {
-		let footer = app.staticTexts[TestIdentifiers.Transportation.footer].firstMatch
-		scrollUntilExists(footer, in: list)
+		let menu = app.buttons[TestIdentifiers.Transportation.dayMenuDefaultLabel].firstMatch
 		XCTAssertTrue(
-			footer.exists,
-			"The sheet should show the line's full timetable, footer and all")
+			menu.waitForExistence(timeout: 30),
+			"The sheet should show the line's full timetable, day menu and all")
 		return self
 	}
 
