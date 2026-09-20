@@ -28,6 +28,7 @@ import {
 	offset,
 	opacity,
 	scrollPosition,
+	scrollTargetLayout,
 	shapes,
 } from '@expo/ui/swift-ui/modifiers'
 import type {Moment} from 'moment-timezone'
@@ -53,12 +54,12 @@ const CELL_WIDTH = 86
 const RAIL_HEIGHT = 3
 /// What the rail, and anything sitting on it, weighs ahead of the bus.
 const RAIL_AHEAD_OPACITY = 0.35
-/// A stop the bus has yet to reach, drawn as a ring rather than a disc.
-const FUTURE_DOT_SIZE = 18
-const FUTURE_RING_WIDTH = 6
-const FUTURE_HOLE_SIZE = FUTURE_DOT_SIZE - 2 * FUTURE_RING_WIDTH
 /// Diameter of a stop's dot.
 const DOT_SIZE = 11
+/// A stop the bus has yet to reach is a ring rather than a disc, drawn at the
+/// same width as the disc so the two sit on the rail as the same size of thing.
+const FUTURE_RING_WIDTH = 2
+const FUTURE_HOLE_SIZE = DOT_SIZE - 2 * FUTURE_RING_WIDTH
 
 type Props = {
 	line: UnprocessedBusLine
@@ -107,13 +108,7 @@ function StopDot({
 	// behind the dot and would otherwise show through the hole.
 	return (
 		<ZStack>
-			<Circle
-				modifiers={[
-					frame({width: FUTURE_DOT_SIZE, height: FUTURE_DOT_SIZE}),
-					foregroundStyle(barColor),
-					opacity(RAIL_AHEAD_OPACITY),
-				]}
-			/>
+			<Circle modifiers={[frame({width: DOT_SIZE, height: DOT_SIZE}), foregroundStyle(barColor)]} />
 			<Circle
 				modifiers={[
 					frame({width: FUTURE_HOLE_SIZE, height: FUTURE_HOLE_SIZE}),
@@ -337,6 +332,9 @@ export function BusLineWidget({line, now, onPress}: Props): React.ReactNode {
 	// `useNativeState` captures this initial value once on mount, so the strip
 	// does not chase the bus every minute and does not stomp a scroll the
 	// reader made themselves.
+	// Seeded rather than written: writing the id is what actually scrolls, but
+	// the lint forbids mutating a hook's value after render and the write did
+	// not move the strip anyway. The anchor is not working yet.
 	let scrollTarget = useNativeState<string | null>(
 		currentIndex === null ? null : String(Math.max(0, currentIndex - 1)),
 	)
@@ -388,7 +386,11 @@ export function BusLineWidget({line, now, onPress}: Props): React.ReactNode {
 					]}
 					showsIndicators={false}
 				>
-					<LazyHStack alignment="top" spacing={0}>
+					{/* `scrollPosition` above only lands if the content it scrolls says
+					    which of its children are targets, so the stack carries
+					    `scrollTargetLayout`. Without it the anchor is set and
+					    silently ignored, and the strip opens at the first stop. */}
+					<LazyHStack alignment="top" modifiers={[scrollTargetLayout()]} spacing={0}>
 						{cells.map((cell, index) => (
 							<StopCell
 								// oxlint-disable-next-line react/no-array-index-key -- a loop route visits a stop twice
