@@ -1,7 +1,15 @@
 import * as React from 'react'
 import {useCallback, useEffect, useMemo, useState} from 'react'
 import {StyleSheet} from 'react-native'
-import {Host, List, RNHostView, Section, Text, VStack} from '@expo/ui/swift-ui'
+import {
+	ContentUnavailableView,
+	Host,
+	List,
+	RNHostView,
+	Section,
+	Text,
+	VStack,
+} from '@expo/ui/swift-ui'
 import {font, foregroundStyle, listStyle, padding, refreshable} from '@expo/ui/swift-ui/modifiers'
 import * as c from '@frogpond/colors'
 import type {FilterType} from '@frogpond/filter'
@@ -251,19 +259,25 @@ export function FancyMenu(props: Props): React.ReactNode {
 							{message}
 						</Text>
 					) : (
-						sectionsWithNotes.map((section) => (
-							<Section key={section.title} {...sectionHeaderProps(section.title, section.note)}>
-								{section.data.map((item) => (
-									<FoodItemRow
-										key={item.id}
-										badgeSpecials={!specialsFilterEnabled}
-										corIcons={menuCorIcons}
-										data={item}
-										onPress={onItemPress}
-									/>
-								))}
-							</Section>
-						))
+						sectionsWithNotes.map((section) =>
+							section.data.length === 1 && section.data[0].label.toUpperCase() === 'CLOSED' ? (
+								<Section key={section.title} {...sectionHeaderProps('', section.note)}>
+									<ContentUnavailableView systemImage="clock" title={section.title} />
+								</Section>
+							) : (
+								<Section key={section.title} {...sectionHeaderProps(section.title, section.note)}>
+									{section.data.map((item) => (
+										<FoodItemRow
+											key={item.id}
+											badgeSpecials={!specialsFilterEnabled}
+											corIcons={menuCorIcons}
+											data={item}
+											onPress={onItemPress}
+										/>
+									))}
+								</Section>
+							),
+						)
 					)}
 				</List>
 			</VStack>
