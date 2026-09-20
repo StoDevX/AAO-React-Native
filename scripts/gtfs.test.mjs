@@ -45,6 +45,15 @@ describe('parseCsv', () => {
 		assert.deepEqual(rows, [{stop_id: '1'}])
 	})
 
+	it('keeps a newline inside a quoted field, as stop_desc can carry', () => {
+		let rows = parseCsv('stop_id,stop_name\n1,"Depot\nLower Level"\n2,Library\n')
+
+		assert.deepEqual(rows, [
+			{stop_id: '1', stop_name: 'Depot\nLower Level'},
+			{stop_id: '2', stop_name: 'Library'},
+		])
+	})
+
 	it('skips blank lines', () => {
 		let rows = parseCsv('a\n1\n\n2\n')
 

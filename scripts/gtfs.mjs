@@ -1,60 +1,30 @@
+import {parse} from 'csv-parse/sync'
 import fs from 'node:fs'
 import path from 'node:path'
 
-/**
- * Splits one CSV line into fields, honouring RFC 4180 quoting.
- *
- * `stops.txt` quotes any name holding a comma -- "Plainview, MN, USA" -- and
- * escapes a literal quote by doubling it.
- */
-function splitLine(line) {
-	let fields = []
-	let field = ''
-	let inQuotes = false
-
-	for (let i = 0; i < line.length; i += 1) {
-		let char = line[i]
-
-		if (inQuotes) {
-			if (char === '"' && line[i + 1] === '"') {
-				field += '"'
-				i += 1
-			} else if (char === '"') {
-				inQuotes = false
-			} else {
-				field += char
-			}
-		} else if (char === '"') {
-			inQuotes = true
-		} else if (char === ',') {
-			fields.push(field)
-			field = ''
-		} else {
-			field += char
-		}
-	}
-
-	fields.push(field)
-	return fields
-}
-
 /** Parses CSV text into row objects keyed by the header row. */
 export function parseCsv(text) {
-	// A BOM would otherwise ride along on the first header name, making
-	// `row.stop_id` undefined for every row in the file.
-	let body = text.replace(/^﻿/u, '')
-	let lines = body.split(/\r?\n/u).filter((line) => line.length > 0)
-
-	if (lines.length === 0) {
+	if (text.trim().length === 0) {
 		return []
 	}
 
-	let header = splitLine(lines[0])
-
-	return lines.slice(1).map((line) => {
-		let fields = splitLine(line)
-		return Object.fromEntries(header.map((name, i) => [name, fields[i] ?? '']))
+	let header = []
+	let rows = parse(text, {
+		// Captures the header names as csv-parse sees them, so a short row
+		// (fewer fields than the header) can still be filled out below.
+		columns: (headerRow) => {
+			header = headerRow
+			return headerRow
+		},
+		bom: true,
+		skip_empty_lines: true,
+		relax_column_count: true,
 	})
+
+	// csv-parse omits a key entirely for a field a short row didn't reach.
+	// Filling it with '' keeps `row.stop_lat === ''` distinguishable from a
+	// parsed `0`, which is what downstream coordinate validation checks for.
+	return rows.map((row) => Object.fromEntries(header.map((name) => [name, row[name] ?? ''])))
 }
 
 /** The files we read. `calendar_dates` is optional in GTFS. */
