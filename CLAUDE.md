@@ -162,6 +162,27 @@ To use this:
 
 The feature uses `react-native-zeroconf` (native pod). If the pod hasn't been linked yet (`mise run prebuild`), discovery is silently skipped — the screen won't crash.
 
+### Dining Hours
+
+`data/building-hours/1-3-stav.yaml` and `1-1-cage.yaml` are maintained by a
+weekly scrape of Bon Appétit's café pages, which opens a pull request when they
+fall behind. Edit `scripts/bonapp-overrides.yaml` rather than those two files —
+a hand edit to a `schedule:` block in them is reverted by the next run.
+
+```bash
+mise run scrape-dining                   # update the owned files now
+node scripts/scrape-bonapp.mjs --check   # report without writing; exits 1 on drift
+```
+
+The Lion's Pause, its pizza delivery, the C-Store and every `breakSchedule` are
+hand-maintained. Bon Appétit publishes no page for the Pause, and its hours for
+The Cave disagree with the college's own — each run reports that disagreement
+rather than resolving it.
+
+Bon Appétit's café pages are the better source generally: the Weekly Schedule
+table is in the server HTML, and `wp.stolaf.edu/buntrock/eat/` has been wrong
+about Stav twice.
+
 ## Agent Workflow
 
 **Session startup:** Always run `mise run agent:setup` at the start of every session. This installs dependencies and bundles data files.

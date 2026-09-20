@@ -1,0 +1,202 @@
+// Turns a Bon Appétit café page into the `schedule:` block of a building-hours
+// file. Everything here is pure -- no network, no filesystem, no clock, no
+// imports -- so the whole pipeline is exercised by scripts/bonapp-schedule.test.mjs
+// against committed fixtures. scripts/scrape-bonapp.mjs does the I/O.
+
+/** The week in the order the data files list it. */
+export const DAYS = ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su']
+
+const DAY_BY_NAME = {Mon: 'Mo', Tue: 'Tu', Wed: 'We', Thu: 'Th', Fri: 'Fr', Sat: 'Sa', Sun: 'Su'}
+
+/** Matches the data schema's time definition in data/_schemas/_defs.yaml. */
+const TIME = /^1?\d:[0-5]?\d[ap]m$/u
+
+// The weekly list and the "open now" list above it share
+// `dotted-leader-container`; only the weekly one is a `day-part`. Keying on
+// that class is what keeps today's single-line hours out of the result -- they
+// name no day, so taking them would invent hours for the whole week.
+const ROW = /<li class=['"][^'"]*\bday-part\b[^'"]*['"]>(.*?)<\/li>/gsu
+const SPAN = /<span class=['"][^'"]*['"]>(.*?)<\/span>/gsu
+
+// The page escapes its punctuation: the Cave's "Grab 'n' Go" arrives as
+// `Grab &#039;n&#039; Go`, and a daypart name has to match the overrides file
+// exactly or composing throws.
+const NAMED = {nbsp: ' ', amp: '&', lt: '<', gt: '>', quot: '"', apos: "'"}
+
+let decode = (html) =>
+	html.replaceAll(/&(#x[0-9a-f]+|#\d+|[a-z]+);/giu, (entity, body) => {
+		if (body.startsWith('#x') || body.startsWith('#X')) {
+			return String.fromCodePoint(Number.parseInt(body.slice(2), 16))
+		}
+		if (body.startsWith('#')) {
+			return String.fromCodePoint(Number(body.slice(1)))
+		}
+		return NAMED[body.toLowerCase()] ?? entity
+	})
+
+let text = (html) =>
+	decode(html.replaceAll(/<[^>]+>/gu, ' '))
+		.replaceAll(/\s+/gu, ' ')
+		.trim()
+
+let normalizeTime = (raw) => raw.replaceAll(/\s+/gu, '').toLowerCase()
+
+function expandDays(spec) {
+	let [first, last] = spec.split('-').map((part) => part.trim())
+	let start = DAYS.indexOf(DAY_BY_NAME[first])
+	if (start < 0) {
+		throw new Error(`bonapp: unknown day "${first}" in "${spec}"`)
+	}
+	if (!last) {
+		return [DAYS[start]]
+	}
+	let end = DAYS.indexOf(DAY_BY_NAME[last])
+	if (end < 0) {
+		throw new Error(`bonapp: unknown day "${last}" in "${spec}"`)
+	}
+	return DAYS.slice(start, end + 1)
+}
+
+/**
+ * Reads a Bon Appétit café page's Weekly Schedule into rows.
+ *
+ * Throws rather than returning an empty list for anything unexpected: an empty
+ * schedule written to a venue file makes the app report it permanently closed,
+ * which is worse than a failed run nobody has to act on.
+ */
+export function parseWeeklySchedule(html) {
+	if (!html.includes('Weekly Schedule')) {
+		throw new Error('bonapp: no Weekly Schedule section in the page')
+	}
+
+	let rows = []
+	for (let [, inner] of html.matchAll(ROW)) {
+		let spans = [...inner.matchAll(SPAN)].map(([, span]) => text(span))
+		let [daypart, when] = spans.length >= 2 ? spans : [text(inner), '']
+		let match = /^(.+?),\s*(\S+\s*[ap]m)\s*-\s*(\S+\s*[ap]m)$/iu.exec(when)
+		if (!match) {
+			throw new Error(`bonapp: could not read hours from "${when}"`)
+		}
+
+		let [, dayspec, from, to] = match
+		let row = {
+			daypart,
+			days: expandDays(dayspec),
+			from: normalizeTime(from),
+			to: normalizeTime(to),
+		}
+		for (let key of ['from', 'to']) {
+			if (!TIME.test(row[key])) {
+				throw new Error(`bonapp: "${row[key]}" is not a time the data schema accepts`)
+			}
+		}
+		rows.push(row)
+	}
+
+	if (rows.length === 0) {
+		throw new Error('bonapp: no day-part rows in the Weekly Schedule')
+	}
+	return rows
+}
+
+let minutes = (time) => {
+	let [, hours, mins, half] = /^(\d+):(\d+)([ap])m$/u.exec(time)
+	return ((Number(hours) % 12) + (half === 'p' ? 12 : 0)) * 60 + Number(mins)
+}
+
+/**
+ * Renders rows as the `schedule:` block of a building-hours file, including the
+ * blank line that separates it from `breakSchedule:`.
+ *
+ * Section order follows `venue.dayparts` rather than the page, because the page
+ * leads the Cage with its Sunday breakfast while our file leads with its hours.
+ * Row order is by first day then start time, which is what every file in
+ * data/building-hours already does -- sorting by time first would put Stav's
+ * Sunday brunch above its Saturday one.
+ */
+export function composeSchedule(rows, venue) {
+	let dayparts = venue.dayparts ?? {}
+	let skip = new Set(venue.skip)
+	let notes = venue.notes ?? {}
+
+	let sections = new Map()
+	for (let title of Object.values(dayparts)) {
+		if (!sections.has(title)) {
+			sections.set(title, [])
+		}
+	}
+
+	for (let row of rows) {
+		if (skip.has(row.daypart)) {
+			continue
+		}
+		let title = dayparts[row.daypart]
+		if (!title) {
+			throw new Error(
+				`bonapp: daypart "${row.daypart}" is neither mapped nor skipped; ` +
+					'add it to dayparts or skip in scripts/bonapp-overrides.yaml',
+			)
+		}
+		sections.get(title).push(row)
+	}
+
+	let out = 'schedule:\n'
+	for (let [title, entries] of sections) {
+		entries.sort(
+			(a, b) =>
+				DAYS.indexOf(a.days[0]) - DAYS.indexOf(b.days[0]) || minutes(a.from) - minutes(b.from),
+		)
+		out += `  - title: ${title}\n`
+		if (notes[title]) {
+			out += `    notes: ${notes[title]}\n`
+		}
+		out += '    hours:\n'
+		for (let row of entries) {
+			out += `      - {days: [${row.days.join(', ')}], from: '${row.from}', to: '${row.to}'}\n`
+		}
+		out += '\n'
+	}
+	return out
+}
+
+// Anchors the schedule block in a building-hours file. Both are top-level keys
+// in every file in data/building-hours, and `schedule` is always followed by
+// `breakSchedule`.
+const START = '\nschedule:\n'
+const END = '\nbreakSchedule:\n'
+
+function anchors(fileText) {
+	let start = fileText.indexOf(START)
+	if (start < 0) {
+		throw new Error('bonapp: the file has no `schedule:` line')
+	}
+	let end = fileText.indexOf(END, start)
+	if (end < 0) {
+		throw new Error('bonapp: the file has no `breakSchedule:` line to stop at')
+	}
+	return [start, end]
+}
+
+/**
+ * Replaces a file's `schedule:` block, leaving every other byte alone.
+ *
+ * Text splicing rather than a YAML round-trip: js-yaml's dumper emits block
+ * style, which would rewrite every `{days: ...}` line in both owned files into
+ * a multi-line spurious diff the first time this ran, and would drop the
+ * comments any of these files might later carry.
+ */
+export function spliceSchedule(fileText, block) {
+	let [start, end] = anchors(fileText)
+	return fileText.slice(0, start + 1) + block + fileText.slice(end + 1)
+}
+
+/**
+ * A file's current `schedule:` block, verbatim, for comparing against a venue
+ * we do not write. Textual rather than parsed: every hour row in
+ * data/building-hours quotes its times the same way, so the only differences a
+ * text comparison can report are real ones.
+ */
+export function extractSchedule(fileText) {
+	let [start, end] = anchors(fileText)
+	return fileText.slice(start + 1, end + 1)
+}
