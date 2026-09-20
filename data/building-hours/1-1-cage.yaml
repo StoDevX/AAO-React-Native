@@ -10,6 +10,10 @@ schedule:
       - {days: [Mo, Tu, We, Th, Fr], from: '7:30am', to: '8:00pm'}
       - {days: [Sa, Su], from: '9:00am', to: '8:00pm'}
 
+  - title: Continental Breakfast Meal Swipe
+    hours:
+      - {days: [Su], from: '9:00am', to: '10:30am'}
+
 breakSchedule:
   fall: []
   thanksgiving: []

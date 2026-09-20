@@ -6,7 +6,7 @@ building: thelionspause
 schedule:
   - title: Hours
     hours:
-      - {days: [Fr, Sa, Su], from: '7:00pm', to: '12:00am'}
+      - {days: [Mo, Tu, We, Th, Fr, Sa, Su], from: '5:00pm', to: '12:00am'}
 
 breakSchedule:
   fall: []

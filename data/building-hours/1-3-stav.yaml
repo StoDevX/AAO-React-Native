@@ -6,9 +6,8 @@ building: stavhall
 schedule:
   - title: Breakfast
     hours:
-      - {days: [Mo, Tu, We, Th, Fr], from: '7:15am', to: '9:45am'}
+      - {days: [Mo, Tu, We, Th, Fr], from: '7:00am', to: '9:45am'}
       - {days: [Sa], from: '8:00am', to: '9:30am'}
-      - {days: [Su], from: '8:00am', to: '9:00am'}
 
   - title: Lunch
     hours:
@@ -18,7 +17,8 @@ schedule:
 
   - title: Dinner
     hours:
-      - {days: [Mo, Tu, We, Th, Fr, Sa, Su], from: '4:30pm', to: '7:30pm'}
+      - {days: [Mo, Tu, We, Th], from: '4:30pm', to: '8:00pm'}
+      - {days: [Fr, Sa, Su], from: '4:30pm', to: '7:30pm'}
 
 breakSchedule:
   fall: []
