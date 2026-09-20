@@ -26,6 +26,7 @@ export const processBusSchedule =
 			stops: scheduleData.stops,
 			times: times,
 			timetable: timetable,
+			closures: scheduleData.closures,
 		}
 	}
 

@@ -33,6 +33,21 @@ test('processBusSchedule returns a timetable property', () => {
 	expect('timetable' in actual).toBe(true)
 })
 
+test('processBusSchedule carries closures through to the processed schedule', () => {
+	let closures = [{date: '2026-09-07', name: 'Labor Day'}]
+	let scheduleWithClosures = {...line.schedules[0], closures}
+
+	let actual = processBusSchedule(time('12:00pm'))(scheduleWithClosures)
+
+	expect(actual.closures).toEqual(closures)
+})
+
+test('processBusSchedule leaves closures undefined for a schedule with none', () => {
+	let actual = processBusSchedule(time('12:00pm'))(line.schedules[0])
+
+	expect(actual.closures).toBeUndefined()
+})
+
 test('processBusSchedule does not throw for a schedule with no coordinates key', () => {
 	let {coordinates: _coordinates, ...scheduleWithoutCoordinates} = line.schedules[0]
 

@@ -71,6 +71,30 @@ describe('BusLine', () => {
 		expect(queryByLabelText(/^St\. Olaf,/u)).toBeNull()
 	})
 
+	test('names the holiday when the day is a closure', async () => {
+		let lineWithClosure: UnprocessedBusLine = {
+			...LINE,
+			schedules: [
+				{
+					...LINE.schedules[0],
+					closures: [{date: '2019-12-16', name: 'Test Holiday'}],
+				},
+			],
+		}
+
+		let {getByText, queryByLabelText} = await render(
+			<BusLine
+				line={lineWithClosure}
+				now={MONDAY_AFTERNOON}
+				onPressStop={jest.fn()}
+				selectedDay={null}
+			/>,
+		)
+
+		expect(getByText('This line is not running today — Test Holiday.')).toBeTruthy()
+		expect(queryByLabelText(/^St\. Olaf,/u)).toBeNull()
+	})
+
 	test('heads the stop list Stops', async () => {
 		let {getByText} = await renderLine()
 

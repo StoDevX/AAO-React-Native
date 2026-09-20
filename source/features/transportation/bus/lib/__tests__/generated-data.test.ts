@@ -58,6 +58,33 @@ describe('the bundled bus-times data', () => {
 		}
 	})
 
+	test('every closure on a generated schedule survives processing unchanged', () => {
+		let generatedLines = lines.filter((line) => line.timezone !== undefined)
+		let sawAClosure = false
+
+		for (let line of generatedLines) {
+			let processed = processBusLine(line, now)
+
+			for (let [i, schedule] of line.schedules.entries()) {
+				if (!schedule.closures) {
+					continue
+				}
+
+				sawAClosure = true
+				expect(processed.schedules[i].closures).toEqual(schedule.closures)
+				for (let closure of schedule.closures) {
+					expect(closure.date).toMatch(/^\d{4}-\d{2}-\d{2}$/u)
+					expect(typeof closure.name).toBe('string')
+				}
+			}
+		}
+
+		// The real feed's Blue and Red lines each carry four closures and
+		// Express carries one; if the generator ever stopped emitting them,
+		// this loop would silently pass by finding nothing to check.
+		expect(sawAClosure).toBe(true)
+	})
+
 	test('every generated line publishes a coordinate for every stop it serves', () => {
 		// The generator always sets `timezone`; a hand-maintained line, like Oles
 		// Go, never does -- that is how this picks out "generated" lines. If the
