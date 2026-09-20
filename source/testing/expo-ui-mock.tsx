@@ -108,6 +108,15 @@ export const layoutPriority = named('layoutPriority', 'priority')
 export const alignmentGuide = (guide: string, value: number): Modifier =>
 	createModifier('alignmentGuide', {guide, value})
 
+/**
+ * An SF Symbol effect. Jest has no symbols to animate, so this only has to
+ * exist and carry what it was given.
+ */
+export const symbolEffect = (
+	effect: Record<string, unknown>,
+	args?: Record<string, unknown>,
+): Modifier => createModifier('symbolEffect', {effect, ...args})
+
 export const allowsTightening = named('allowsTightening', 'value')
 export const textSelection = named('textSelection', 'value')
 export const tint = named('tint', 'color')
@@ -742,7 +751,10 @@ export function Image({
 	return (
 		<View
 			accessibilityLabel={labelOf(modifiers) ?? systemName}
-			testID={uiImage ? `icon-${uiImage}` : systemName ? `symbol-${systemName}` : undefined}
+			testID={
+				identifierOf(modifiers) ??
+				(uiImage ? `icon-${uiImage}` : systemName ? `symbol-${systemName}` : undefined)
+			}
 		/>
 	)
 }

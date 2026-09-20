@@ -25,6 +25,7 @@ import {
 	offset,
 	onGeometryChange,
 	opacity,
+	symbolEffect,
 	padding,
 	shapes,
 	truncationMode,
@@ -100,30 +101,30 @@ export function BusGlyph({
 	modifiers?: ViewModifier[]
 }): React.ReactNode {
 	// A zero frame keeps the glyph out of layout: it draws centred on the point
-	// it is given without making the rail segment it rides any taller. Both the
-	// disc and the bus carry it, so the pair sits on that point together.
+	// it is given without making the rail segment it rides any taller.
 	let placement = [frame({width: 0, height: 0}), ...(modifiers ?? [])]
 
+	// A bead on the rail rather than a bus. `bus.fill` is not a solid shape --
+	// its windscreen, headlights and the gap between its wheels are holes the
+	// rail shows straight through -- and every way of backing it added more
+	// than it was worth. A dot says the same thing: the rail carries the stops,
+	// and this is what is moving between them.
+	//
+	// Drawn as the `circle.fill` symbol rather than a `Circle` shape so it can
+	// pulse: `symbolEffect` applies to SF Symbols, not to shapes. The pulse
+	// says the position is live, which a still dot on a timetable of fixed
+	// times otherwise does not.
 	return (
-		<>
-			{/* A bead on the rail rather than a bus. `bus.fill` is not a solid
-			    shape -- its windscreen, headlights and the gap between its
-			    wheels are holes the rail shows straight through -- and every
-			    way of backing it added more than it was worth. A dot says the
-			    same thing: the rail carries stops, and this is the thing moving
-			    between them.
-
-			    Smaller than a passed stop's dot and in the darker of the line's
-			    two colours, so it reads as the bus and not as another stop. */}
-			<Circle
-				modifiers={[
-					frame({width: BUS_DOT_SIZE, height: BUS_DOT_SIZE}),
-					foregroundStyle(color),
-					accessibilityIdentifier(BUS_ON_RAIL),
-					...placement,
-				]}
-			/>
-		</>
+		<Image
+			modifiers={[
+				font({size: BUS_DOT_SIZE}),
+				foregroundStyle(color),
+				accessibilityIdentifier(BUS_ON_RAIL),
+				symbolEffect({effect: 'pulse'}, {options: {repeat: 'continuous'}}),
+				...placement,
+			]}
+			systemName="circle.fill"
+		/>
 	)
 }
 
