@@ -20,7 +20,9 @@ export const processBusSchedule =
 
 		return {
 			days: scheduleData.days,
-			coordinates: scheduleData.coordinates,
+			// The input may omit coordinates; the output always carries a map,
+			// possibly empty, so nothing downstream needs an optional check.
+			coordinates: scheduleData.coordinates ?? {},
 			stops: scheduleData.stops,
 			times: times,
 			timetable: timetable,

@@ -51,7 +51,9 @@ export type BusLine = {
 
 export type UnprocessedBusSchedule = {
 	days: Array<DayOfWeek>
-	coordinates: Record<string, Coordinates>
+	/** Absent for a hand-maintained line -- the schema has always allowed
+	 * a schedule to omit this. */
+	coordinates?: Record<string, Coordinates>
 	stops: string[]
 	times: Array<UnprocessedDepartureTimeList>
 }
