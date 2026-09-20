@@ -1,3 +1,76 @@
+diff --git a/ios/Modifiers/ScrollPositionModifier.swift b/ios/Modifiers/ScrollPositionModifier.swift
+index 2b9e034d0c6aff0255d44c36de08733ffca5e892..9f6733772e31741e848cfc70b970c5a259e6fbc9 100644
+--- a/ios/Modifiers/ScrollPositionModifier.swift
++++ b/ios/Modifiers/ScrollPositionModifier.swift
+@@ -37,16 +37,64 @@ private struct ScrollPositionWrapper<C: View>: View {
+   let eventDispatcher: EventDispatcher?
+   @ViewBuilder let content: () -> C
+ 
++  /// The id `.scrollPosition(id:)` is holding, which is non-nil only while a
++  /// programmatic scroll is on its way.
++  ///
++  /// A held id is re-applied every time this body runs, and applying it aligns
++  /// the content to that item. A scroll view reports its leading item as the
++  /// reader drags, so binding the modifier straight to the reported value made
++  /// every report re-align the content mid-gesture -- measured on a horizontal
++  /// strip as a clean drag with a half-cell jump backwards in the middle of
++  /// it. Letting go of the id once the scroll has landed leaves the scroll
++  /// view to the reader, which is whose gesture it is.
++  @State private var steeringTo: String?
++
++  /// The last id seen from either side, so a report is not mistaken for a new
++  /// instruction and scrolled to a second time.
++  @State private var settledOn: String?
++
++  /// How long a programmatic scroll is given to land before the wheel is let
++  /// go. SwiftUI offers no completion for one, and the exact figure does not
++  /// matter: it only has to outlast the scroll and end before a reader can
++  /// reach for the view.
++  private static var steeringSeconds: TimeInterval { 0.5 }
++
+   var body: some View {
+     let activeID = Binding<String?>(
+-      get: { state.value as? String },
+-      set: { state.value = $0 }
++      get: { steeringTo },
++      set: { reported in report(reported) }
+     )
+     content()
+       .scrollPosition(id: activeID, anchor: anchor?.toUnitPoint)
++      .onAppear { steer(to: state.value as? String) }
+       .onChange(of: state.value as? String) { _, newValue in
+-        let id: Any = newValue ?? NSNull()
+-        eventDispatcher?(["scrollPosition": ["id": id]])
++        steer(to: newValue)
+       }
+   }
++
++  /// A scroll view saying where it settled. Passed on to JavaScript and
++  /// remembered, never held as a target.
++  private func report(_ id: String?) {
++    guard id != settledOn else {
++      return
++    }
++    settledOn = id
++    state.value = id
++    let value: Any = id ?? NSNull()
++    eventDispatcher?(["scrollPosition": ["id": value]])
++  }
++
++  /// JavaScript naming a view to scroll to.
++  private func steer(to id: String?) {
++    guard let id, id != settledOn else {
++      return
++    }
++    settledOn = id
++    steeringTo = id
++    DispatchQueue.main.asyncAfter(deadline: .now() + Self.steeringSeconds) {
++      if steeringTo == id {
++        steeringTo = nil
++      }
++    }
++  }
+ }
 diff --git a/ios/Modifiers/ViewModifierRegistry.swift b/ios/Modifiers/ViewModifierRegistry.swift
 index 8c426dffff1df73809436999f23a6155b0a72ef8..d46585fb204a0a923fdb4f2eea88242f8114bfad 100644
 --- a/ios/Modifiers/ViewModifierRegistry.swift
