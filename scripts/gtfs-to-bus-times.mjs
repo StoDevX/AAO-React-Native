@@ -445,6 +445,10 @@ export function gtfsToBusTimes(
 			timezone,
 			colors: config.colors,
 			notice: config.notice,
+			// Passed through only when curation sets it, so a generated line can
+			// be retired the way Oles Go was, without hand-editing a file this
+			// script overwrites on every run.
+			...(config.hidden ? {hidden: config.hidden} : {}),
 			schedules,
 		})
 	}

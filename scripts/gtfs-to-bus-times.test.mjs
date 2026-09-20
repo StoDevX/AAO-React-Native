@@ -363,6 +363,28 @@ describe('gtfsToBusTimes', () => {
 		assert.equal(line.notice, 'A test route.')
 	})
 
+	it('does not emit hidden when curation does not set it', () => {
+		let {files} = gtfsToBusTimes(twoServiceFeed(), {curation, repairs: {repairs: []}})
+		let line = files.get('test-line.yaml')
+
+		assert.equal('hidden' in line, false)
+	})
+
+	it('passes through hidden: true from curation, so a generated line can be retired', () => {
+		let hiddenCuration = {
+			...curation,
+			routes: {r1: {...curation.routes.r1, hidden: true}},
+		}
+
+		let {files} = gtfsToBusTimes(twoServiceFeed(), {
+			curation: hiddenCuration,
+			repairs: {repairs: []},
+		})
+		let line = files.get('test-line.yaml')
+
+		assert.equal(line.hidden, true)
+	})
+
 	it('renames stops for riders', () => {
 		let {files} = gtfsToBusTimes(twoServiceFeed(), {curation, repairs: {repairs: []}})
 
