@@ -1,6 +1,6 @@
 import fs from 'node:fs'
 import path from 'node:path'
-import {isNotJunk} from './junk.mjs'
+import {isDataEntry} from './data-entries.mjs'
 import {load} from 'js-yaml'
 import moment from 'moment'
 import {DATA_BASE} from './paths.mjs'
@@ -27,7 +27,7 @@ function* pair(iter) {
 	}
 }
 
-function* validate(data) {
+export function* validate(data) {
 	for (let schedule of data.schedules) {
 		for (let [i, times] of enumerate(schedule.times)) {
 			// prettier-ignore
@@ -59,11 +59,15 @@ function* validate(data) {
 	}
 }
 
+export function findBusDataFiles(dir) {
+	return fs
+		.readdirSync(dir)
+		.filter(isDataEntry)
+		.map((f) => path.join(dir, f))
+}
+
 function main() {
-	let files = fs
-		.readdirSync(path.join(DATA_BASE, 'bus-times'))
-		.filter(isNotJunk)
-		.map((f) => path.join(DATA_BASE, 'bus-times', f))
+	let files = findBusDataFiles(path.join(DATA_BASE, 'bus-times'))
 
 	let anyHadError = false
 	for (let filepath of files) {
@@ -78,7 +82,9 @@ function main() {
 		if (!fileHadError) {
 			process.stdout.write(' is valid\n')
 		}
-		anyHadError = fileHadError
+		// OR rather than assign: a plain assignment lets a clean last file
+		// erase an earlier file's failure and exit 0 with errors on screen.
+		anyHadError = anyHadError || fileHadError
 	}
 
 	if (anyHadError) {
@@ -86,4 +92,6 @@ function main() {
 	}
 }
 
-main()
+if (import.meta.main) {
+	main()
+}
