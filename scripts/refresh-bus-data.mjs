@@ -48,6 +48,43 @@ function readYaml(filename) {
 }
 
 /**
+ * Fails if two data files in `data/bus-times/` publish the same `line:`.
+ *
+ * This is what would have caught the bug that prompted it: `_curation.yaml`
+ * pointed `file:` at pre-rename names while the renamed files already held
+ * generated content, so a refresh would have written `blue-line.yaml`
+ * alongside `4-blue-line.yaml` -- both claiming "Blue Line" -- and
+ * `bundleDataDir` would publish the line twice. Reading the directory back
+ * after writing, rather than checking `files` from `gtfsToBusTimes`, is what
+ * catches a stray file left over from a rename regardless of how it got
+ * there.
+ */
+function assertNoDuplicateLines() {
+	let filenames = fs
+		.readdirSync(BUS_TIMES)
+		.filter((filename) => filename.endsWith('.yaml') && !filename.startsWith('_'))
+
+	let filenamesByLine = new Map()
+	for (let filename of filenames) {
+		let {line} = readYaml(filename)
+		let siblings = filenamesByLine.get(line)
+		if (siblings) {
+			siblings.push(filename)
+		} else {
+			filenamesByLine.set(line, [filename])
+		}
+	}
+
+	for (let [line, siblings] of filenamesByLine) {
+		if (siblings.length > 1) {
+			throw new Error(
+				`${siblings.join(', ')} all publish the line "${line}"; bundleDataDir would publish it ${siblings.length} times`,
+			)
+		}
+	}
+}
+
+/**
  * Today's date as GTFS's YYYYMMDD, read in the feed's own calendar.
  *
  * `feed_end_date` is the operator's local date, not UTC, so comparing it
@@ -117,6 +154,8 @@ async function main() {
 			fs.writeFileSync(target, dump(line, {lineWidth: -1, quotingType: "'", flowLevel: 4}))
 			console.log(`wrote ${target}`)
 		}
+
+		assertNoDuplicateLines()
 	} finally {
 		if (tempDir) {
 			fs.rmSync(tempDir, {recursive: true, force: true})
