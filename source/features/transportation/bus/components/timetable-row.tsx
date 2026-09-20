@@ -12,6 +12,7 @@ import {
 } from '@expo/ui/swift-ui'
 import {
 	accessibilityElement,
+	accessibilityIdentifier,
 	accessibilityLabel,
 	buttonStyle,
 	contentShape,
@@ -25,7 +26,6 @@ import {
 	onGeometryChange,
 	opacity,
 	padding,
-	shadow,
 	shapes,
 	truncationMode,
 	type ViewModifier,
@@ -39,9 +39,10 @@ const RAIL_COLUMN_WIDTH = 40
 /// Gap between the rail column and the stop's text.
 const ROW_SPACING = 12
 const RAIL_WIDTH = 5
-const BUS_ICON_SIZE = 18
-/// Wide enough to cover the rail behind the bus's own holes.
-const BUS_BACKING_SIZE = 22
+/// Names the bus's own dot, for the tests that check where it is.
+export const BUS_ON_RAIL = 'bus-on-rail'
+/// The bus on the rail. Smaller than a passed stop's dot, so the two read apart.
+const BUS_DOT_SIZE = 9
 /** A stop the bus has passed: a small solid disc. */
 const PASSED_DOT_SIZE = 12
 /** A stop still ahead: a ring, so it reads as a hole punched in the rail. */
@@ -105,21 +106,22 @@ export function BusGlyph({
 
 	return (
 		<>
-			{/* `bus.fill` is not solid -- its windscreen, headlights and the gap
-			    between its wheels are holes, and the rail runs straight through
-			    them. A disc in the card's own colour gives the bus something to
-			    sit on, so the rail stops at it. */}
+			{/* A bead on the rail rather than a bus. `bus.fill` is not a solid
+			    shape -- its windscreen, headlights and the gap between its
+			    wheels are holes the rail shows straight through -- and every
+			    way of backing it added more than it was worth. A dot says the
+			    same thing: the rail carries stops, and this is the thing moving
+			    between them.
+
+			    Smaller than a passed stop's dot and in the darker of the line's
+			    two colours, so it reads as the bus and not as another stop. */}
 			<Circle
 				modifiers={[
-					frame({width: BUS_BACKING_SIZE, height: BUS_BACKING_SIZE}),
-					foregroundStyle(c.secondarySystemGroupedBackground),
-					shadow({radius: 2, y: 1}),
+					frame({width: BUS_DOT_SIZE, height: BUS_DOT_SIZE}),
+					foregroundStyle(color),
+					accessibilityIdentifier(BUS_ON_RAIL),
 					...placement,
 				]}
-			/>
-			<Image
-				modifiers={[font({size: BUS_ICON_SIZE}), foregroundStyle(color), ...placement]}
-				systemName="bus.fill"
 			/>
 		</>
 	)

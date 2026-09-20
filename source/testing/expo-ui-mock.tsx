@@ -590,8 +590,10 @@ export function Capsule(_props: WithModifiers & {cornerStyle?: string}): React.R
 	return <View />
 }
 
-export function Circle(_props: WithModifiers): React.ReactNode {
-	return <View />
+export function Circle({modifiers}: WithModifiers): React.ReactNode {
+	// Shapes are paint, which Jest cannot see -- but one carrying an
+	// accessibilityIdentifier is something a test is meant to find.
+	return <View testID={identifierOf(modifiers)} />
 }
 
 export function Rectangle(_props: WithModifiers): React.ReactNode {

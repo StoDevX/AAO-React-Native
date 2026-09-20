@@ -1,3 +1,4 @@
+import {BUS_ON_RAIL} from '../components/timetable-row'
 import React from 'react'
 import {describe, expect, jest, test} from '@jest/globals'
 import {fireEvent, render} from '@testing-library/react-native'
@@ -74,19 +75,18 @@ describe('BusLineWidget', () => {
 	test('draws the bus on the strip while the line is running', async () => {
 		let {getAllByTestId} = await renderWidget(makeLine())
 
-		// One glyph is the header's. The other two are the bus itself, drawn by
-		// the stops either side of the leg it is on: they resolve to the same
-		// point and superimpose, which is what lets a bus straddling two rows
-		// survive the clipping in the timetable's list.
-		expect(getAllByTestId('symbol-bus.fill')).toHaveLength(3)
+		// Two, not one: the stops either side of the leg both draw the bus. They
+		// resolve to the same point and superimpose, which is what lets a bus
+		// straddling two rows survive the clipping in the timetable's list.
+		expect(getAllByTestId(BUS_ON_RAIL)).toHaveLength(2)
 	})
 
 	test('keeps the bus off the strip before the first departure', async () => {
 		let beforeStart = MONDAY_AFTERNOON.clone().hour(12)
 
-		let {getAllByTestId} = await renderWidget(makeLine(), jest.fn(), beforeStart)
+		let {queryAllByTestId} = await renderWidget(makeLine(), jest.fn(), beforeStart)
 
-		expect(getAllByTestId('symbol-bus.fill')).toHaveLength(1)
+		expect(queryAllByTestId(BUS_ON_RAIL)).toHaveLength(0)
 	})
 
 	test('ends the strip with the next round when another one follows today', async () => {

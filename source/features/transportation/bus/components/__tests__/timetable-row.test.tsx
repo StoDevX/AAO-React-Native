@@ -2,7 +2,7 @@ import React from 'react'
 import {describe, expect, jest, test} from '@jest/globals'
 import {render} from '@testing-library/react-native'
 
-import {TimetableRow} from '../timetable-row'
+import {BUS_ON_RAIL, TimetableRow} from '../timetable-row'
 
 jest.mock('@expo/ui/swift-ui', () => {
 	// oxlint-disable-next-line typescript/no-require-imports
@@ -33,18 +33,18 @@ describe('TimetableRow', () => {
 	test('holds a bus in transit until a row height has been measured', async () => {
 		let {queryAllByTestId} = await renderRow({busFraction: -0.25, rowHeight: null})
 
-		expect(queryAllByTestId('symbol-bus.fill')).toHaveLength(0)
+		expect(queryAllByTestId(BUS_ON_RAIL)).toHaveLength(0)
 	})
 
 	test('draws a bus in transit once the row height is known', async () => {
 		let {getAllByTestId} = await renderRow({busFraction: -0.25, rowHeight: 60})
 
-		expect(getAllByTestId('symbol-bus.fill')).toHaveLength(1)
+		expect(getAllByTestId(BUS_ON_RAIL)).toHaveLength(1)
 	})
 
 	test('draws a bus at the stop whether or not the height is known', async () => {
 		let {getAllByTestId} = await renderRow({busAtStop: true, rowHeight: null})
 
-		expect(getAllByTestId('symbol-bus.fill')).toHaveLength(1)
+		expect(getAllByTestId(BUS_ON_RAIL)).toHaveLength(1)
 	})
 })
