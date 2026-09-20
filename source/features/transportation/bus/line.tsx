@@ -4,11 +4,11 @@ import type {DayOfWeek, UnprocessedBusLine} from './types'
 import {
 	busPropsForRow,
 	collapseEarlierStops,
-	deriveLineState,
 	findBusStopStatus,
 	findBusTarget,
 	findRemainingDeparturesForStop,
 } from './lib'
+import {useLineState} from './use-line-state'
 import type {Moment} from 'moment-timezone'
 import * as c from '@frogpond/colors'
 import {ContentUnavailableView, Host, List, Section, Text} from '@expo/ui/swift-ui'
@@ -49,7 +49,7 @@ export function BusLine(props: Props): React.ReactNode {
 
 	const momentForSelectedDay = createMomentForDay(now, dayToShow)
 
-	let {schedule, currentBusIteration, parkedStopIndex, status} = deriveLineState({
+	let {schedule, currentBusIteration, parkedStopIndex, status} = useLineState({
 		line,
 		now: momentForSelectedDay,
 	})

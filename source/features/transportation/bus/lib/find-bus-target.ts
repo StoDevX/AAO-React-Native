@@ -72,9 +72,9 @@ export function findBusTarget(
 }
 
 /**
- * Where the bus sits relative to one stop's dot, in stops -- negative above or
- * left of it, positive below or right -- or nothing if it is not on a leg
- * touching that stop.
+ * Where the bus sits relative to one stop's dot, in stops -- negative above it,
+ * positive below -- or nothing if it is not on a leg touching that stop. For
+ * the timetable's rows, which a `List` clips.
  *
  * Both stops either side of the leg get an answer, and both draw the bus. A
  * `List` row clips anything outside itself, so a bus straddling the seam
@@ -108,4 +108,28 @@ export function busPropsForRow(
 	}
 
 	return {}
+}
+
+/**
+ * The same answer for the widget's strip, which nothing clips.
+ *
+ * Only the nearer of the two stops either side of the leg draws the bus. Both
+ * copies resolve to the same point on the rail, so without a row boundary to
+ * cut them in half they would sit one on top of the other -- two beads, each
+ * pinging to its own clock. The nearer stop rather than a fixed one of the
+ * pair, so the cell drawing the bus is on screen whenever the bus is: the
+ * offset never reaches half a cell.
+ */
+export function busPropsForCell(
+	busTarget: BusTarget | null,
+	index: number,
+): {busFraction?: number; busAtStop?: boolean} {
+	if (!busTarget || busTarget.atStop) {
+		return busPropsForRow(busTarget, index)
+	}
+
+	let {targetIndex, progress} = busTarget
+	let nearerIndex = progress < 0.5 ? targetIndex - 1 : targetIndex
+
+	return index === nearerIndex ? busPropsForRow(busTarget, index) : {}
 }

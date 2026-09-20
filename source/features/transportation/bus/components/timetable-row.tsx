@@ -240,9 +240,10 @@ function RowContent(props: Props): React.ReactNode {
 	let detailColor = stopStatus === 'skip' ? c.tertiaryLabel : c.secondaryLabel
 
 	// `busFraction` is where the bus sits relative to this row's own dot, in
-	// rows, and never exceeds half a row -- so the glyph stays inside the row
-	// drawing it, which a `List` row would otherwise clip. The same arithmetic
-	// as the widget's strip, one axis over: there the cell width is a constant,
+	// rows. Both rows either side of the leg draw the bus, each offset towards
+	// the other, and a `List` row clips whatever hangs outside it -- so the two
+	// halves that survive meet as one bus on the seam. The same arithmetic as
+	// the widget's strip, one axis over: there the cell width is a constant,
 	// here the row height is measured once, since the text size sets it. Until
 	// that measurement lands the bus is not drawn, so it never jumps.
 	let busOffset =
@@ -334,11 +335,6 @@ function RowContent(props: Props): React.ReactNode {
 }
 
 /**
- * One row of a bus timetable: a stop or a departure, beside the rail that
- * runs the length of the list. Pressable when given `onPress`, in which case
- * the whole row is the target.
- */
-/**
  * Stands in for the stops the bus has already left, which the timetable folds
  * away so it opens on where the bus actually is. The rail runs through it at
  * the width it has everywhere else, so the route reads as continuous rather
@@ -389,6 +385,11 @@ export function CollapsedStopsRow({
 	)
 }
 
+/**
+ * One row of a bus timetable: a stop or a departure, beside the rail that
+ * runs the length of the list. Pressable when given `onPress`, in which case
+ * the whole row is the target.
+ */
 export function TimetableRow(props: Props): React.ReactNode {
 	let {onPress, accessibilityLabel: label} = props
 

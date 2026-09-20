@@ -2,10 +2,9 @@ import find from 'lodash/find'
 import findLast from 'lodash/findLast'
 import type {Moment} from 'moment-timezone'
 
-import type {BusSchedule, UnprocessedBusLine} from '../types'
+import type {BusLine, BusSchedule} from '../types'
 import {getCurrentBusIteration, type BusStateEnum} from './get-current-bus-iteration'
 import {getScheduleForNow} from './get-schedule-for-now'
-import {processBusLine} from './process-bus-line'
 
 const isTruthy = (x: unknown) => Boolean(x)
 
@@ -21,20 +20,20 @@ function startsIn(now: Moment, start?: Moment | null) {
 /**
  * A line's state at a moment in time: what it is doing right now (its status
  * and the subtitle that names it, such as "Running" or "Starts in 20
- * minutes"), plus the processed schedule and iteration that state was read
- * from, ready for the widget and timetable to draw from directly.
+ * minutes"), plus the schedule and iteration that state was read from, ready
+ * for the widget and timetable to draw from directly.
+ *
+ * Takes the line already parsed, so a caller reading the clock every minute
+ * can hold the parse still: `useLineState` is that caller.
  */
-export function deriveLineState({line, now}: {line: UnprocessedBusLine; now: Moment}): {
+export function deriveLineState({line, now}: {line: BusLine; now: Moment}): {
 	subtitle: string
 	status: BusStateEnum
 	schedule: BusSchedule
 	currentBusIteration: number | null
 	parkedStopIndex: number | null
 } {
-	// The line as a whole, which every row below reads from.
-	let processedLine = processBusLine(line, now)
-
-	let scheduleForToday = getScheduleForNow(processedLine.schedules, now)
+	let scheduleForToday = getScheduleForNow(line.schedules, now)
 	let {times, status, index, nextStart, parkedStopIndex} = getCurrentBusIteration(
 		scheduleForToday,
 		now,
@@ -42,7 +41,7 @@ export function deriveLineState({line, now}: {line: UnprocessedBusLine; now: Mom
 
 	let isLastBus = index === scheduleForToday.times.length - 1
 
-	let subtitle = 'Error'
+	let subtitle: string
 	switch (status) {
 		case 'none':
 			subtitle = 'Not running today'
@@ -71,8 +70,12 @@ export function deriveLineState({line, now}: {line: UnprocessedBusLine; now: Mom
 			break
 		}
 		default: {
-			// TODO(rye): Find a replacement for this.
-			// ;(status: empty)
+			// Every `BusStateEnum` is answered above. This arm is here so that
+			// adding a sixth stops the compiler rather than slipping through
+			// with no subtitle.
+			let unhandled: never = status
+			subtitle = unhandled
+			break
 		}
 	}
 

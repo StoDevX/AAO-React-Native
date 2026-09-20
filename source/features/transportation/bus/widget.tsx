@@ -43,13 +43,14 @@ import {formatDeparture} from './components/times'
 import {BusGlyph} from './components/timetable-row'
 import {
 	buildStopStrip,
-	busPropsForRow,
-	deriveLineState,
+	busPropsForCell,
 	findBusTarget,
+	legsBehindTheBus,
 	stripAnchorIndex,
 	type StopStripCell,
 } from './lib'
 import type {UnprocessedBusLine} from './types'
+import {useLineState} from './use-line-state'
 
 /// Wide enough for "Buntrock Commons" to wrap to two lines rather than
 /// truncate, narrow enough that four cells are visible at once on a 393pt
@@ -139,7 +140,8 @@ function StopCell({
 	dotColor,
 	isFirst,
 	isLast,
-	previousPassed,
+	legInSolid,
+	legOutSolid,
 	busFraction,
 	busAtStop,
 	onPress,
@@ -151,8 +153,10 @@ function StopCell({
 	isFirst: boolean
 	/** Whether the rail ends at this stop, with no leg out of it. */
 	isLast: boolean
-	/** Whether the bus has left the stop before this one, so the leg in is solid. */
-	previousPassed: boolean
+	/** Whether the leg arriving at this stop is behind the bus, so drawn solid. */
+	legInSolid: boolean
+	/** Whether the leg leaving this stop is behind the bus, so drawn solid. */
+	legOutSolid: boolean
 	/** Where the bus sits relative to this cell's dot, in cells: -0.5 to +0.5. */
 	busFraction?: number
 	/** Whether the bus is sitting on this cell's dot. */
@@ -164,16 +168,9 @@ function StopCell({
 	let isSkipped = cell.stopStatus === 'skip'
 	let isHere = cell.stopStatus === 'at'
 
-	// The rail behind the bus is solid and the rail ahead is faint, and the two
-	// halves of a cell answer separately: the half to the left belongs to the
-	// leg in from the stop before, the half to the right to the leg out to the
-	// next. So the leg the bus is on is solid all the way across rather than
-	// changing colour under it.
-	let leadingActive = previousPassed
-	let trailingActive = isPassed
-
 	// `busFraction` is where the bus sits relative to this cell's own dot, in
-	// cells, and never exceeds half a cell. Every cell is the same known width,
+	// cells, and never reaches half a cell -- `busPropsForCell` hands the bus to
+	// whichever of the two stops is nearer. Every cell is the same known width,
 	// so the bus sits at its true point on the leg with nothing measured.
 	let busOffset = busFraction == null || busAtStop ? null : CELL_WIDTH * busFraction
 
@@ -198,10 +195,13 @@ function StopCell({
 				</Text>
 
 				<ZStack modifiers={[frame({width: CELL_WIDTH, height: DOT_SIZE})]}>
-					{/* Two halves rather than one bar: the rail has to stop at the
-					    ends of the route, and a cell only knows about its own half
-					    of each gap. Both are always drawn, and the caps at either
-					    end are made transparent, so every cell lays out identically.
+					{/* Two halves rather than one bar: the rail has to stop at
+					    the ends of the route, and each half belongs to a
+					    different leg -- the one in from the stop before, and the
+					    one out to the next -- so the leg the bus is on stays solid
+					    all the way across rather than changing colour under it.
+					    Both are always drawn, and the caps at either end are made
+					    transparent, so every cell lays out identically.
 					    `Rectangle` rather than `Capsule`: a capsule rounds both ends,
 					    so two adjacent cells' halves would pinch where they meet
 					    instead of reading as one line. */}
@@ -210,14 +210,14 @@ function StopCell({
 							modifiers={[
 								frame({width: CELL_WIDTH / 2, height: RAIL_HEIGHT}),
 								foregroundStyle(barColor),
-								opacity(isFirst ? 0 : leadingActive ? 1 : RAIL_AHEAD_OPACITY),
+								opacity(isFirst ? 0 : legInSolid ? 1 : RAIL_AHEAD_OPACITY),
 							]}
 						/>
 						<Rectangle
 							modifiers={[
 								frame({width: CELL_WIDTH / 2, height: RAIL_HEIGHT}),
 								foregroundStyle(barColor),
-								opacity(isLast ? 0 : trailingActive ? 1 : RAIL_AHEAD_OPACITY),
+								opacity(isLast ? 0 : legOutSolid ? 1 : RAIL_AHEAD_OPACITY),
 							]}
 						/>
 					</HStack>
@@ -263,9 +263,16 @@ function StopCell({
  * reader to work out whether another bus follows.
  */
 function RouteEndCell({
+	cellId,
 	time,
 	onPress,
 }: {
+	/**
+	 * Its SwiftUI id. Every child of the `scrollTargetLayout()` stack needs
+	 * one: a child the scroll view cannot name reports itself as `nil`, which
+	 * lands in the binding `scrollPosition` is reading.
+	 */
+	cellId: string
 	time: Moment | null
 	onPress: () => void
 }): React.ReactNode {
@@ -275,6 +282,7 @@ function RouteEndCell({
 		<Button
 			modifiers={[
 				buttonStyle('plain'),
+				id(cellId),
 				frame({width: CELL_WIDTH}),
 				accessibilityElement('combine'),
 				accessibilityLabel(time ? `Next departure, ${label}` : 'Last bus of the day'),
@@ -356,7 +364,7 @@ function RouteEndCell({
  * any cell in the strip -- opens the line's full timetable.
  */
 export function BusLineWidget({line, now, onPress}: Props): React.ReactNode {
-	let {subtitle, status, schedule, currentBusIteration, parkedStopIndex} = deriveLineState({
+	let {subtitle, status, schedule, currentBusIteration, parkedStopIndex} = useLineState({
 		line,
 		now,
 	})
@@ -371,27 +379,38 @@ export function BusLineWidget({line, now, onPress}: Props): React.ReactNode {
 		{status, index: currentBusIteration, parkedStopIndex},
 		now,
 	)
+	// Leg `n` runs from stop `n` to stop `n + 1`, and the ones below this count
+	// are behind the bus, so drawn solid.
+	let legsBehind = legsBehindTheBus(cells, busTarget)
 	let scrollTarget = useNativeState<string | null>(null)
+
+	// Whether the strip has been aimed yet. A flag of its own rather than a
+	// `null` check on `scrollTarget`, which is written from both directions:
+	// the scroll view reports the cell it has settled on back into it, so
+	// reading it here would both miss the first chance -- a report can land
+	// before the strip has width to scroll -- and take a later one, jumping
+	// the strip back to the bus after the reader had scrolled away.
+	let hasAnchored = useNativeState(false)
 
 	// The strip opens on the stop behind the bus, so the leg it is on has both
 	// ends in view and everything earlier is still there to scroll back to.
 	//
 	// Set from the scroll geometry rather than at mount: the position only
-	// takes once the strip has width to scroll, and the `null` guard means it
-	// happens once -- a reader who scrolls somewhere else is left there, and
-	// the strip does not chase the bus every minute. The calendar's event list
-	// opens on today the same way.
+	// takes once the strip has width to scroll. It happens once -- a reader who
+	// scrolls somewhere else is left there, and the strip does not chase the
+	// bus every minute. The calendar's event list opens on today the same way.
 	let anchorIndex = stripAnchorIndex(busTarget, currentIndex)
 	// A string because it addresses a cell by its SwiftUI id.
 	let anchorId = anchorIndex === null ? null : String(anchorIndex)
 	let openOnTheBus = React.useCallback(
 		(geometry: ScrollGeometry) => {
 			'worklet'
-			if (anchorId !== null && geometry.contentWidth > 0 && scrollTarget.get() === null) {
+			if (anchorId !== null && geometry.contentWidth > 0 && !hasAnchored.get()) {
+				hasAnchored.set(true)
 				scrollTarget.set(anchorId)
 			}
 		},
-		[anchorId, scrollTarget],
+		[anchorId, hasAnchored, scrollTarget],
 	)
 	let placement = useScrollGeometryChange(openOnTheBus)
 
@@ -471,12 +490,13 @@ export function BusLineWidget({line, now, onPress}: Props): React.ReactNode {
 								// No bus leaves the last stop of the day, so the rail
 								// stops there and the end slot stands on its own.
 								isLast={index === cells.length - 1 && nextRoundStart === null}
-								previousPassed={cells[index - 1]?.stopStatus === 'after'}
+								legInSolid={index - 1 < legsBehind}
+								legOutSolid={index < legsBehind}
 								onPress={onPress}
-								{...busPropsForRow(busTarget, index)}
+								{...busPropsForCell(busTarget, index)}
 							/>
 						))}
-						<RouteEndCell onPress={onPress} time={nextRoundStart} />
+						<RouteEndCell cellId={String(cells.length)} onPress={onPress} time={nextRoundStart} />
 					</LazyHStack>
 				</ScrollView>
 			)}

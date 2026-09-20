@@ -2,10 +2,12 @@ import * as React from 'react'
 import {StyleSheet} from 'react-native'
 import {Stack, useLocalSearchParams} from 'expo-router'
 import {useQuery} from '@tanstack/react-query'
-import {timezone} from '@frogpond/constants'
-import {useMomentTimer} from '@frogpond/timer'
 import {Host, List, Section, Text} from '@expo/ui/swift-ui'
 import {listStyle} from '@expo/ui/swift-ui/modifiers'
+import * as c from '@frogpond/colors'
+import {timezone} from '@frogpond/constants'
+import {LoadingView, NoticeView} from '@frogpond/notice'
+import {useMomentTimer} from '@frogpond/timer'
 
 import type {Moment} from 'moment-timezone'
 
@@ -17,18 +19,14 @@ import type {
 	UnprocessedBusLine,
 } from '../../../../source/features/transportation/bus/types'
 import {
-	deriveLineState,
-	getCurrentBusIteration,
-	getScheduleForNow,
-	processBusLine,
 	findBusStopStatus as findStopStatus,
+	type BusStateEnum,
 	type BusStopStatusEnum,
 } from '../../../../source/features/transportation/bus/lib'
+import {useLineState} from '../../../../source/features/transportation/bus/use-line-state'
 import {formatDeparture} from '../../../../source/features/transportation/bus/components/times'
 import {TimetableRow} from '../../../../source/features/transportation/bus/components/timetable-row'
 import {BUS_FOOTER_MESSAGE} from '../../../../source/features/transportation/bus/constants'
-import {LoadingView, NoticeView} from '@frogpond/notice'
-import * as c from '@frogpond/colors'
 
 const styles = StyleSheet.create({
 	host: {
@@ -40,18 +38,19 @@ const styles = StyleSheet.create({
 type Props = {
 	stop: BusTimetableEntry
 	line: UnprocessedBusLine
+	/**
+	 * The moment the stop was resolved for -- the picked day, or the clock when
+	 * the reader is following it. The same one the rest of the page reads, so
+	 * the statuses below describe the day on screen.
+	 */
 	now: Moment
+	status: BusStateEnum
+	currentBusIteration: number | null
 	subtitle: string
 }
 
-function BusStopDetailInternal(props: Props): React.ReactNode {
-	let {stop, line, now, subtitle} = props
-
-	// Read straight from the props: the row statuses below are computed from
-	// these, so they have to be settled by the time the first frame draws.
-	let processedLine = processBusLine(line, now)
-	let scheduleForToday = getScheduleForNow(processedLine.schedules, now)
-	let {index: currentBusIteration, status} = getCurrentBusIteration(scheduleForToday, now)
+function BusStopDetail(props: Props): React.ReactNode {
+	let {stop, line, now, status, currentBusIteration, subtitle} = props
 
 	let departureTimes = stop.departures.filter(Boolean)
 
@@ -129,16 +128,47 @@ function BusStopDetailInternal(props: Props): React.ReactNode {
 	)
 }
 
-type BusRouteDetailProps = {
-	stop: BusTimetableEntry
+/**
+ * The page once its line has arrived. One clock drives the whole screen: the
+ * day the reader picked resolves the stop, and the statuses drawn against that
+ * stop are read from the same moment, so the two always describe the same day.
+ */
+function BusStopForLine({
+	line,
+	now,
+	stopName,
+}: {
 	line: UnprocessedBusLine
-	subtitle: string
-}
+	now: Moment
+	stopName: string
+}): React.ReactNode {
+	let {subtitle, status, schedule, currentBusIteration} = useLineState({line, now})
 
-function BusRouteDetailView({stop, line, subtitle}: BusRouteDetailProps): React.ReactNode {
-	let {now} = useMomentTimer({intervalMs: 1000 * 60, timezone: timezone()})
+	let screenTitle = <Stack.Title>{`${line.line} Schedule`}</Stack.Title>
+	let stop = schedule.timetable.find((entry) => entry.name === stopName)
 
-	return <BusStopDetailInternal line={line} now={now} stop={stop} subtitle={subtitle} />
+	if (!stop) {
+		return (
+			<>
+				{screenTitle}
+				<NoticeView text={`Could not find the stop "${stopName}".`} />
+			</>
+		)
+	}
+
+	return (
+		<>
+			{screenTitle}
+			<BusStopDetail
+				currentBusIteration={currentBusIteration}
+				line={line}
+				now={now}
+				status={status}
+				stop={stop}
+				subtitle={subtitle}
+			/>
+		</>
+	)
 }
 
 export default function BusStopPage(): React.ReactNode {
@@ -193,22 +223,6 @@ export default function BusStopPage(): React.ReactNode {
 
 	// An empty day means the caller was following the clock, so today it is.
 	let momentForDay = day ? createMomentForDay(now, day) : now
-	let {subtitle, schedule} = deriveLineState({line, now: momentForDay})
-	let stop = schedule.timetable.find((entry) => entry.name === stopName)
 
-	if (!stop) {
-		return (
-			<>
-				{screenTitle}
-				<NoticeView text={`Could not find the stop "${stopName}".`} />
-			</>
-		)
-	}
-
-	return (
-		<>
-			{screenTitle}
-			<BusRouteDetailView line={line} stop={stop} subtitle={subtitle} />
-		</>
-	)
+	return <BusStopForLine line={line} now={momentForDay} stopName={stopName} />
 }

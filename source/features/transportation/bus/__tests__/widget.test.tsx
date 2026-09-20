@@ -75,10 +75,10 @@ describe('BusLineWidget', () => {
 	test('draws the bus on the strip while the line is running', async () => {
 		let {getAllByTestId} = await renderWidget(makeLine())
 
-		// Two, not one: the stops either side of the leg both draw the bus. They
-		// resolve to the same point and superimpose, which is what lets a bus
-		// straddling two rows survive the clipping in the timetable's list.
-		expect(getAllByTestId(BUS_ON_RAIL)).toHaveLength(2)
+		// One, not two. Both stops either side of the leg can place the bus, and
+		// they resolve to the same point -- but nothing clips the strip, so a
+		// second copy would sit on top of the first and ping out of step with it.
+		expect(getAllByTestId(BUS_ON_RAIL)).toHaveLength(1)
 	})
 
 	test('keeps the bus off the strip before the first departure', async () => {

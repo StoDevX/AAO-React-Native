@@ -14,6 +14,20 @@ test('keeps the stop behind the bus on screen, so its leg has both ends', () => 
 	expect(firstVisibleIndex).toBe(4)
 })
 
+test('hides nothing when only one stop would go behind the row', () => {
+	expect(collapseEarlierStops({targetIndex: 2, expanded: false})).toStrictEqual({
+		firstVisibleIndex: 0,
+		hiddenCount: 0,
+	})
+})
+
+test('collapses as soon as the row saves a row', () => {
+	expect(collapseEarlierStops({targetIndex: 3, expanded: false})).toStrictEqual({
+		firstVisibleIndex: 2,
+		hiddenCount: 2,
+	})
+})
+
 test('hides nothing when the bus is heading for the second stop', () => {
 	expect(collapseEarlierStops({targetIndex: 1, expanded: false})).toStrictEqual({
 		firstVisibleIndex: 0,

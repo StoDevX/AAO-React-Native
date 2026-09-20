@@ -154,15 +154,6 @@ export const layoutPriority = named('layoutPriority', 'priority')
 export const alignmentGuide = (guide: string, value: number): Modifier =>
 	createModifier('alignmentGuide', {guide, value})
 
-/**
- * An SF Symbol effect. Jest has no symbols to animate, so this only has to
- * exist and carry what it was given.
- */
-export const symbolEffect = (
-	effect: Record<string, unknown>,
-	args?: Record<string, unknown>,
-): Modifier => createModifier('symbolEffect', {effect, ...args})
-
 export const allowsTightening = named('allowsTightening', 'value')
 export const textSelection = named('textSelection', 'value')
 export const tint = named('tint', 'color')
@@ -641,10 +632,6 @@ export function Spacer(): React.ReactNode {
  * that keep the tree's shape -- whether a rail is drawn, and in what colour, is
  * a UI test's question.
  */
-export function Capsule(_props: WithModifiers & {cornerStyle?: string}): React.ReactNode {
-	return <View />
-}
-
 export function Circle({modifiers}: WithModifiers): React.ReactNode {
 	// Shapes are paint, which Jest cannot see -- but one carrying an
 	// accessibilityIdentifier is something a test is meant to find.
