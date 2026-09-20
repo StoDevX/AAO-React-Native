@@ -158,3 +158,45 @@ export function composeSchedule(rows, venue) {
 	}
 	return out
 }
+
+// Anchors the schedule block in a building-hours file. Both are top-level keys
+// in every file in data/building-hours, and `schedule` is always followed by
+// `breakSchedule`.
+const START = '\nschedule:\n'
+const END = '\nbreakSchedule:\n'
+
+function anchors(fileText) {
+	let start = fileText.indexOf(START)
+	if (start < 0) {
+		throw new Error('bonapp: the file has no `schedule:` line')
+	}
+	let end = fileText.indexOf(END, start)
+	if (end < 0) {
+		throw new Error('bonapp: the file has no `breakSchedule:` line to stop at')
+	}
+	return [start, end]
+}
+
+/**
+ * Replaces a file's `schedule:` block, leaving every other byte alone.
+ *
+ * Text splicing rather than a YAML round-trip: js-yaml's dumper emits block
+ * style, which would rewrite every `{days: ...}` line in both owned files into
+ * a multi-line spurious diff the first time this ran, and would drop the
+ * comments any of these files might later carry.
+ */
+export function spliceSchedule(fileText, block) {
+	let [start, end] = anchors(fileText)
+	return fileText.slice(0, start + 1) + block + fileText.slice(end + 1)
+}
+
+/**
+ * A file's current `schedule:` block, verbatim, for comparing against a venue
+ * we do not write. Textual rather than parsed: every hour row in
+ * data/building-hours quotes its times the same way, so the only differences a
+ * text comparison can report are real ones.
+ */
+export function extractSchedule(fileText) {
+	let [start, end] = anchors(fileText)
+	return fileText.slice(start + 1, end + 1)
+}

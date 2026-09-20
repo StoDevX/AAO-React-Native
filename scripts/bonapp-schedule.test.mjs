@@ -1,7 +1,12 @@
 import assert from 'node:assert/strict'
 import {readFileSync} from 'node:fs'
 import {test} from 'node:test'
-import {composeSchedule, parseWeeklySchedule} from './bonapp-schedule.mjs'
+import {
+	composeSchedule,
+	extractSchedule,
+	parseWeeklySchedule,
+	spliceSchedule,
+} from './bonapp-schedule.mjs'
 
 let fixture = (slug) =>
 	readFileSync(new URL(`fixtures/bonapp/${slug}.html`, import.meta.url), 'utf8')
@@ -164,4 +169,57 @@ test('emits the hand-written note from the overrides', () => {
 test('throws on a daypart that is neither mapped nor skipped', () => {
 	let rows = [{daypart: 'Second Breakfast', days: ['Mo'], from: '9:00am', to: '10:00am'}]
 	assert.throws(() => composeSchedule(rows, STAV), /Second Breakfast/u)
+})
+
+let FILE = `name: The Cage
+image: cage
+category: Food
+building: thecage
+
+schedule:
+  - title: Hours
+    hours:
+      - {days: [Mo], from: '7:30am', to: '8:00pm'}
+
+breakSchedule:
+  fall: []
+  summer: []
+`
+
+test('replaces the schedule block and nothing else', () => {
+	let out = spliceSchedule(FILE, 'schedule:\n  - title: New\n    hours: []\n\n')
+	assert.ok(out.startsWith('name: The Cage\nimage: cage\ncategory: Food\nbuilding: thecage\n\n'))
+	assert.ok(out.endsWith('breakSchedule:\n  fall: []\n  summer: []\n'))
+	assert.ok(out.includes('- title: New'))
+	assert.ok(!out.includes('7:30am'))
+})
+
+test('throws when the file has no breakSchedule anchor', () => {
+	assert.throws(
+		() => spliceSchedule('\nschedule:\n  - title: X\n', 'schedule:\n'),
+		/breakSchedule/u,
+	)
+})
+
+test('throws when the file has no schedule anchor', () => {
+	assert.throws(() => spliceSchedule('\nbreakSchedule:\n  fall: []\n', 'schedule:\n'), /schedule:/u)
+})
+
+test('extracts the current schedule block verbatim', () => {
+	assert.equal(
+		extractSchedule(FILE),
+		`schedule:
+  - title: Hours
+    hours:
+      - {days: [Mo], from: '7:30am', to: '8:00pm'}
+
+`,
+	)
+})
+
+test('what splice writes is what extract reads back', () => {
+	// The property the drift check depends on: comparing a composed block
+	// against an extracted one is comparing like with like.
+	let block = composeSchedule(parseWeeklySchedule(fixture('the-cage')), CAGE)
+	assert.equal(extractSchedule(spliceSchedule(FILE, block)), block)
 })
