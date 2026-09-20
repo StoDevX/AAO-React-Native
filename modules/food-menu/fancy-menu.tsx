@@ -209,17 +209,15 @@ export function FancyMenu(props: Props): React.ReactNode {
 	return (
 		<Host style={styles.host}>
 			<VStack spacing={0}>
-				{/* The date bar this toolbar carries is React Native, so it still needs
-				    an `RNHostView` bridge into the SwiftUI tree around it. */}
+				{/* This toolbar is React Native, so it needs an `RNHostView` bridge
+				    into the SwiftUI tree around it. */}
 				<RNHostView matchContents={true}>
 					<FilterToolbar
-						date={now}
 						filters={appliedFilters}
 						isOpen={isOpen}
 						onChange={(newFilter) => {
 							setFilters(filters.map((f) => (f.key === newFilter.key ? newFilter : f)))
 						}}
-						title={mealName}
 					/>
 				</RNHostView>
 
