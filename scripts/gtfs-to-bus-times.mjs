@@ -203,6 +203,25 @@ function groupBy(items, keyOf) {
 	return groups
 }
 
+/**
+ * Every stop a schedule serves, keyed by the display name riders read.
+ *
+ * Keyed by display name rather than GTFS id because that is what
+ * `processBusSchedule` looks up a timetable row's coordinates by. A stop
+ * visited twice in one loop -- Blue calls at Northfield Depot both first and
+ * last -- collapses to one entry, which is the same shape the hand-written
+ * files already used.
+ */
+function coordinatesForStops(canonical, stopsById, stopNames) {
+	return Object.fromEntries(
+		canonical.map((stop) => {
+			let gtfsStop = stopsById.get(stop.id)
+			let displayName = stopNames[stop.name] ?? stop.name
+			return [displayName, [Number(gtfsStop.stop_lat), Number(gtfsStop.stop_lon)]]
+		}),
+	)
+}
+
 /** One route's schedules, one per distinct (days, stops, times) timetable. */
 function schedulesForRoute(feed, routeId, stopsById, stopNames) {
 	let calendarById = new Map(feed.calendar.map((row) => [row.service_id, row]))
@@ -250,6 +269,7 @@ function schedulesForRoute(feed, routeId, stopsById, stopNames) {
 
 		schedules.push({
 			days,
+			coordinates: coordinatesForStops(canonical, stopsById, stopNames),
 			stops: canonical.map((stop) => stopNames[stop.name] ?? stop.name),
 			times: rows.map((row) => alignRow(canonical, row.pattern, row.times)),
 		})

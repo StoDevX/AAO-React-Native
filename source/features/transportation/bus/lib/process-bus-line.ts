@@ -10,7 +10,9 @@ export const processBusSchedule =
 		let times = scheduleData.times.map((timeList) => timeList.map(parseTime(now, tz)))
 
 		let timetable = scheduleData.stops.map((stopName, i) => {
-			let coordinates = scheduleData.coordinates[stopName]
+			// A hand-maintained line can omit coordinates entirely; render it
+			// rather than throw.
+			let coordinates = scheduleData.coordinates?.[stopName]
 			let departures = times.map((timeList) => timeList[i])
 			let stop: BusTimetableEntry = {name: stopName, departures, coordinates}
 			return stop

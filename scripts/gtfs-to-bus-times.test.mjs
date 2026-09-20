@@ -305,8 +305,20 @@ function twoServiceFeed() {
 			{route_id: 'r1', service_id: 'sB', trip_id: 't2'},
 		],
 		stops: [
-			{stop_id: 'a', stop_name: 'Depot', stop_timezone: 'America/Chicago'},
-			{stop_id: 'b', stop_name: 'St Olaf College', stop_timezone: 'America/Chicago'},
+			{
+				stop_id: 'a',
+				stop_name: 'Depot',
+				stop_timezone: 'America/Chicago',
+				stop_lat: '44.460',
+				stop_lon: '-93.155',
+			},
+			{
+				stop_id: 'b',
+				stop_name: 'St Olaf College',
+				stop_timezone: 'America/Chicago',
+				stop_lat: '44.462',
+				stop_lon: '-93.183',
+			},
 		],
 		stopTimes: [
 			{trip_id: 't1', stop_id: 'a', stop_sequence: '1', departure_time: '06:00:00', timepoint: '1'},
@@ -347,6 +359,34 @@ describe('gtfsToBusTimes', () => {
 		let {files} = gtfsToBusTimes(twoServiceFeed(), {curation, repairs: {repairs: []}})
 
 		assert.deepEqual(files.get('test-line.yaml').schedules[0].stops, ['Depot', 'St. Olaf College'])
+	})
+
+	it('builds a coordinates map covering every distinct stop the schedule serves', () => {
+		let {files} = gtfsToBusTimes(twoServiceFeed(), {curation, repairs: {repairs: []}})
+		let schedule = files.get('test-line.yaml').schedules[0]
+
+		assert.deepEqual(Object.keys(schedule.coordinates).sort(), schedule.stops.toSorted())
+	})
+
+	it('keys the coordinates map by the rider-facing name, not the GTFS name', () => {
+		let {files} = gtfsToBusTimes(twoServiceFeed(), {curation, repairs: {repairs: []}})
+		let schedule = files.get('test-line.yaml').schedules[0]
+
+		assert.ok('St. Olaf College' in schedule.coordinates)
+		assert.ok(!('St Olaf College' in schedule.coordinates))
+	})
+
+	it('gives each stop a numeric [lat, lon] pair', () => {
+		let {files} = gtfsToBusTimes(twoServiceFeed(), {curation, repairs: {repairs: []}})
+		let schedule = files.get('test-line.yaml').schedules[0]
+
+		assert.deepEqual(schedule.coordinates.Depot, [44.46, -93.155])
+		assert.deepEqual(schedule.coordinates['St. Olaf College'], [44.462, -93.183])
+		for (let pair of Object.values(schedule.coordinates)) {
+			assert.equal(pair.length, 2)
+			assert.equal(typeof pair[0], 'number')
+			assert.equal(typeof pair[1], 'number')
+		}
 	})
 
 	it('collapses services whose timetables are identical, as the Express three do', () => {

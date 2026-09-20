@@ -1,7 +1,7 @@
 import {expect, test} from '@jest/globals'
 import {processBusLine, processBusSchedule} from '../process-bus-line'
 import {time} from './moment.helper'
-import {UnprocessedBusLine} from '../../types'
+import {UnprocessedBusLine, UnprocessedBusSchedule} from '../../types'
 import moment from 'moment-timezone'
 
 // prettier-ignore
@@ -31,6 +31,22 @@ const line: UnprocessedBusLine = {
 test('processBusSchedule returns a timetable property', () => {
 	let actual = processBusSchedule(time('12:00pm'))(line.schedules[0])
 	expect('timetable' in actual).toBe(true)
+})
+
+test('processBusSchedule does not throw for a schedule with no coordinates key, as a hand-maintained line may have', () => {
+	let {coordinates: _coordinates, ...scheduleWithoutCoordinates} = line.schedules[0]
+
+	let process = () =>
+		processBusSchedule(time('12:00pm'))(
+			scheduleWithoutCoordinates as unknown as UnprocessedBusSchedule,
+		)
+
+	expect(process).not.toThrow()
+
+	let actual = process()
+	for (let stop of actual.timetable) {
+		expect(stop.coordinates).toBeUndefined()
+	}
 })
 
 test("processBusLine parses times in the line's own timezone", () => {

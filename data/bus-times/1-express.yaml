@@ -12,6 +12,12 @@ schedules:
       - Th
       - Fr
       - Sa
+    coordinates:
+      Carleton College: [44.460787, -93.155787]
+      St. Olaf College: [44.462152, -93.183032]
+      Food Co-op: [44.454674, -93.161873]
+      Wells Fargo: [44.452748467315956, -93.16180008775618]
+      Cub/Target: [44.433265, -93.186694]
     stops:
       - Carleton College
       - St. Olaf College
@@ -21,66 +27,12 @@ schedules:
       - Carleton College
       - St. Olaf College
     times:
-      - - 3:00pm
-        - 3:08pm
-        - 3:15pm
-        - 3:23pm
-        - 3:33pm
-        - 3:38pm
-        - false
-      - - 3:45pm
-        - 3:53pm
-        - 4:00pm
-        - 4:09pm
-        - 4:18pm
-        - 4:23pm
-        - false
-      - - 4:30pm
-        - 4:38pm
-        - 4:45pm
-        - 4:54pm
-        - 5:03pm
-        - 5:08pm
-        - false
-      - - 5:15pm
-        - 5:23pm
-        - 5:30pm
-        - 5:39pm
-        - 5:48pm
-        - 5:53pm
-        - false
-      - - 6:00pm
-        - 6:08pm
-        - 6:15pm
-        - 6:24pm
-        - 6:33pm
-        - 6:38pm
-        - false
-      - - 6:45pm
-        - 6:53pm
-        - 7:00pm
-        - 7:09pm
-        - 7:18pm
-        - 7:23pm
-        - false
-      - - 7:30pm
-        - 7:38pm
-        - 7:45pm
-        - 7:54pm
-        - 8:03pm
-        - 8:08pm
-        - false
-      - - 8:15pm
-        - 8:23pm
-        - 8:30pm
-        - 8:39pm
-        - 8:48pm
-        - 8:53pm
-        - false
-      - - 9:00pm
-        - 9:08pm
-        - 9:15pm
-        - 9:24pm
-        - 9:33pm
-        - 9:38pm
-        - 9:45pm
+      - [3:00pm, 3:08pm, 3:15pm, 3:23pm, 3:33pm, 3:38pm, false]
+      - [3:45pm, 3:53pm, 4:00pm, 4:09pm, 4:18pm, 4:23pm, false]
+      - [4:30pm, 4:38pm, 4:45pm, 4:54pm, 5:03pm, 5:08pm, false]
+      - [5:15pm, 5:23pm, 5:30pm, 5:39pm, 5:48pm, 5:53pm, false]
+      - [6:00pm, 6:08pm, 6:15pm, 6:24pm, 6:33pm, 6:38pm, false]
+      - [6:45pm, 6:53pm, 7:00pm, 7:09pm, 7:18pm, 7:23pm, false]
+      - [7:30pm, 7:38pm, 7:45pm, 7:54pm, 8:03pm, 8:08pm, false]
+      - [8:15pm, 8:23pm, 8:30pm, 8:39pm, 8:48pm, 8:53pm, false]
+      - [9:00pm, 9:08pm, 9:15pm, 9:24pm, 9:33pm, 9:38pm, 9:45pm]

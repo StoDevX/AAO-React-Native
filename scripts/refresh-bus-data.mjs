@@ -11,10 +11,15 @@ import {DATA_BASE} from './paths.mjs'
 const FEED_URL = 'https://data.trilliumtransit.com/gtfs/threerivers-mn-us/threerivers-mn-us.zip'
 const BUS_TIMES = path.join(DATA_BASE, 'bus-times')
 
-/** Downloads and unzips the feed, returning the directory it landed in. */
+/**
+ * Downloads and unzips the feed.
+ *
+ * Returns the directory the feed landed in, plus the temp root above it so
+ * the caller can remove the whole download -- zip included -- once done.
+ */
 async function downloadFeed() {
-	let dir = fs.mkdtempSync(path.join(os.tmpdir(), 'gtfs-'))
-	let zipPath = path.join(dir, 'feed.zip')
+	let tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'gtfs-'))
+	let zipPath = path.join(tempDir, 'feed.zip')
 
 	let response = await fetch(FEED_URL)
 	if (!response.ok) {
@@ -24,56 +29,88 @@ async function downloadFeed() {
 
 	// Node ships no archive reader, and this runs only in CI and on our own
 	// machines -- not worth an npm dependency to decode one 137 KB zip.
-	execFileSync('unzip', ['-o', '-q', zipPath, '-d', path.join(dir, 'feed')])
+	execFileSync('unzip', ['-o', '-q', zipPath, '-d', path.join(tempDir, 'feed')])
 
-	return path.join(dir, 'feed')
+	return {feedDir: path.join(tempDir, 'feed'), tempDir}
 }
 
 function readYaml(filename) {
 	return load(fs.readFileSync(path.join(BUS_TIMES, filename), 'utf-8'))
 }
 
+/**
+ * Today's date as GTFS's YYYYMMDD, read in the feed's own calendar.
+ *
+ * `feed_end_date` is the operator's local date, not UTC, so comparing it
+ * against `new Date().toISOString()` can flip a day early or late near UTC
+ * midnight. Every stop this feed publishes is America/Chicago.
+ */
+function todayInChicago() {
+	return new Intl.DateTimeFormat('en-CA', {timeZone: 'America/Chicago'})
+		.format(new Date())
+		.replaceAll('-', '')
+}
+
 async function main() {
 	let args = process.argv.slice(2)
 	let feedFlag = args.indexOf('--feed')
-	let feedDir = feedFlag === -1 ? await downloadFeed() : args[feedFlag + 1]
 
-	let feed = readFeed(feedDir)
-
-	// readFeed returns [] for a missing file the same way it does for a
-	// genuinely optional one, so a wrong --feed path or an empty unzip looks
-	// just like a feed with no calendar_dates.txt. Catch it here rather than
-	// let the transform write three timetables with no schedules.
-	if (feed.routes.length === 0 || feed.trips.length === 0 || feed.stopTimes.length === 0) {
-		console.error(`error: no GTFS data found in ${feedDir}`)
-		process.exit(1)
+	let feedDir
+	let tempDir
+	if (feedFlag === -1) {
+		;({feedDir, tempDir} = await downloadFeed())
+	} else {
+		feedDir = args[feedFlag + 1]
 	}
 
-	let feedEnd = feed.feedInfo[0]?.feed_end_date
+	try {
+		let feed = readFeed(feedDir)
 
-	let {files, warnings} = gtfsToBusTimes(feed, {
-		curation: readYaml('_curation.yaml'),
-		repairs: readYaml('_repairs.yaml'),
-	})
+		// readFeed returns [] for a missing file the same way it does for a
+		// genuinely optional one, so a wrong --feed path or an empty unzip looks
+		// just like a feed with no calendar_dates.txt. Catch it here rather than
+		// let the transform write three timetables with no schedules.
+		if (feed.routes.length === 0 || feed.trips.length === 0 || feed.stopTimes.length === 0) {
+			throw new Error(`no GTFS data found in ${feedDir}`)
+		}
 
-	for (let warning of warnings) {
-		console.warn(`warning: ${warning}`)
-	}
+		let feedEnd = feed.feedInfo[0]?.feed_end_date
 
-	for (let [filename, line] of files) {
-		let target = path.join(BUS_TIMES, filename)
-		fs.writeFileSync(target, dump(line, {lineWidth: -1, quotingType: "'"}))
-		console.log(`wrote ${target}`)
-	}
+		// An expired feed keeps the last generated YAML on the site forever while
+		// the refresh job quietly finds nothing to change. Fail before writing
+		// anything, rather than leave a partial refresh in the working tree.
+		if (!feedEnd) {
+			console.warn('warning: the feed has no feed_end_date; the expiry check cannot run')
+		} else if (feedEnd < todayInChicago()) {
+			throw new Error(`the feed expired on ${feedEnd}; it is no longer being published`)
+		}
 
-	// An expired feed keeps the last generated YAML on the site forever while
-	// the refresh job quietly finds nothing to change. Fail instead.
-	if (feedEnd && feedEnd < new Date().toISOString().slice(0, 10).replaceAll('-', '')) {
-		console.error(`error: the feed expired on ${feedEnd}; it is no longer being published`)
-		process.exit(1)
+		let {files, warnings} = gtfsToBusTimes(feed, {
+			curation: readYaml('_curation.yaml'),
+			repairs: readYaml('_repairs.yaml'),
+		})
+
+		for (let warning of warnings) {
+			console.warn(`warning: ${warning}`)
+		}
+
+		for (let [filename, line] of files) {
+			let target = path.join(BUS_TIMES, filename)
+			fs.writeFileSync(target, dump(line, {lineWidth: -1, quotingType: "'", flowLevel: 4}))
+			console.log(`wrote ${target}`)
+		}
+	} finally {
+		if (tempDir) {
+			fs.rmSync(tempDir, {recursive: true, force: true})
+		}
 	}
 }
 
 if (import.meta.main) {
-	await main()
+	try {
+		await main()
+	} catch (error) {
+		console.error(`error: ${error.message}`)
+		process.exit(1)
+	}
 }
