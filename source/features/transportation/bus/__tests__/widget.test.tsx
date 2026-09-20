@@ -109,9 +109,10 @@ describe('BusLineWidget', () => {
 		expect(getByText('Next departure')).toBeTruthy()
 	})
 
-	test('ends the strip at the last stop on the final round of the day', async () => {
-		let {queryByText} = await renderWidget(makeLine())
+	test('ends the strip with an empty slot on the final round of the day', async () => {
+		let {getByText, queryByText} = await renderWidget(makeLine())
 
 		expect(queryByText('Next departure')).toBeNull()
+		expect(getByText('Last bus')).toBeTruthy()
 	})
 })

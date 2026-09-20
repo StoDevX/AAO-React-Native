@@ -63,6 +63,9 @@ const DOT_SIZE = 11
 /// same width as the disc so the two sit on the rail as the same size of thing.
 const FUTURE_RING_WIDTH = 2
 const FUTURE_HOLE_SIZE = DOT_SIZE - 2 * FUTURE_RING_WIDTH
+/// Stands in for the time in the end cell when no later bus runs today, so its
+/// dot still lines up with the rail the stops sit on.
+const NO_LATER_DEPARTURE = '—'
 
 type Props = {
 	line: UnprocessedBusLine
@@ -128,7 +131,6 @@ function StopCell({
 	barColor,
 	dotColor,
 	isFirst,
-	isLast,
 	previousPassed,
 	busFraction,
 	busAtStop,
@@ -139,7 +141,6 @@ function StopCell({
 	barColor: string
 	dotColor: string
 	isFirst: boolean
-	isLast: boolean
 	/** Whether the bus has left the stop before this one, so the leg in is solid. */
 	previousPassed: boolean
 	/** Where the bus sits relative to this cell's dot, in cells: -0.5 to +0.5. */
@@ -187,10 +188,10 @@ function StopCell({
 				</Text>
 
 				<ZStack modifiers={[frame({width: CELL_WIDTH, height: DOT_SIZE})]}>
-					{/* Two halves rather than one bar: the rail has to stop at the
-					    first and last dot, and a cell only knows about its own
-					    half of each gap. Both are always drawn and the end caps
-					    are made transparent, so every cell lays out identically.
+					{/* Two halves rather than one bar: the rail has to start at the
+					    first dot, and a cell only knows about its own half of each
+					    gap. Both are always drawn and the leading cap of the first
+					    cell is made transparent, so every cell lays out identically.
 					    `Rectangle` rather than `Capsule`: a capsule rounds both ends,
 					    so two adjacent cells' halves would pinch where they meet
 					    instead of reading as one line. */}
@@ -206,7 +207,7 @@ function StopCell({
 							modifiers={[
 								frame({width: CELL_WIDTH / 2, height: RAIL_HEIGHT}),
 								foregroundStyle(barColor),
-								opacity(isLast ? 0 : trailingActive ? 1 : RAIL_AHEAD_OPACITY),
+								opacity(trailingActive ? 1 : RAIL_AHEAD_OPACITY),
 							]}
 						/>
 					</HStack>
@@ -243,13 +244,22 @@ function StopCell({
 }
 
 /**
- * The end of the loop: when the next round begins. Greyed and inert to the
- * eye -- there is no stop behind it, so it is a note rather than a
- * destination -- but still a `Button`, so the strip has no dead patch at its
- * far end.
+ * The far end of the strip: when the next round begins, or -- once the day's
+ * last round is on screen -- that there is no next round. Greyed and inert to
+ * the eye, since there is no stop behind it, but still a `Button`, so the
+ * strip has no dead patch at its far end.
+ *
+ * A slot either way: a rail that simply stopped at the last stop left the
+ * reader to work out whether another bus follows.
  */
-function NextRoundCell({time, onPress}: {time: Moment; onPress: () => void}): React.ReactNode {
-	let label = formatDeparture(time)
+function RouteEndCell({
+	time,
+	onPress,
+}: {
+	time: Moment | null
+	onPress: () => void
+}): React.ReactNode {
+	let label = time ? formatDeparture(time) : NO_LATER_DEPARTURE
 
 	return (
 		<Button
@@ -257,7 +267,7 @@ function NextRoundCell({time, onPress}: {time: Moment; onPress: () => void}): Re
 				buttonStyle('plain'),
 				frame({width: CELL_WIDTH}),
 				accessibilityElement('combine'),
-				accessibilityLabel(`Next departure, ${label}`),
+				accessibilityLabel(time ? `Next departure, ${label}` : 'Last bus of the day'),
 			]}
 			onPress={onPress}
 		>
@@ -286,10 +296,34 @@ function NextRoundCell({time, onPress}: {time: Moment; onPress: () => void}): Re
 
 					{/* `systemGray3` rather than `tertiaryLabel`: the label color is
 					    itself semi-transparent, so the rail would still show through
-					    it even at `opacity(1)`. This dot is meant to read as solid. */}
-					<Circle
-						modifiers={[frame({width: DOT_SIZE, height: DOT_SIZE}), foregroundStyle(c.systemGray3)]}
-					/>
+					    it even at `opacity(1)`. These are meant to read as solid.
+
+					    A round still to come gets a filled dot -- another bus stands
+					    there. The end of the day gets the ring an unvisited stop
+					    wears with nothing inside it: a slot no bus will fill. */}
+					{time ? (
+						<Circle
+							modifiers={[
+								frame({width: DOT_SIZE, height: DOT_SIZE}),
+								foregroundStyle(c.systemGray3),
+							]}
+						/>
+					) : (
+						<ZStack>
+							<Circle
+								modifiers={[
+									frame({width: DOT_SIZE, height: DOT_SIZE}),
+									foregroundStyle(c.systemGray3),
+								]}
+							/>
+							<Circle
+								modifiers={[
+									frame({width: FUTURE_HOLE_SIZE, height: FUTURE_HOLE_SIZE}),
+									foregroundStyle(c.secondarySystemGroupedBackground),
+								]}
+							/>
+						</ZStack>
+					)}
 				</ZStack>
 
 				<Text
@@ -299,7 +333,7 @@ function NextRoundCell({time, onPress}: {time: Moment; onPress: () => void}): Re
 						frame({width: CELL_WIDTH}),
 					]}
 				>
-					Next departure
+					{time ? 'Next departure' : 'Last bus'}
 				</Text>
 			</VStack>
 		</Button>
@@ -413,14 +447,12 @@ export function BusLineWidget({line, now, onPress}: Props): React.ReactNode {
 								dotColor={dotColor}
 								index={index}
 								isFirst={index === 0}
-								// The faux stop, when there is one, is the rail's real end.
-								isLast={index === cells.length - 1 && nextRoundStart === null}
 								previousPassed={cells[index - 1]?.stopStatus === 'after'}
 								onPress={onPress}
 								{...busPropsForRow(busTarget, index)}
 							/>
 						))}
-						{nextRoundStart ? <NextRoundCell onPress={onPress} time={nextRoundStart} /> : null}
+						<RouteEndCell onPress={onPress} time={nextRoundStart} />
 					</LazyHStack>
 				</ScrollView>
 			)}
