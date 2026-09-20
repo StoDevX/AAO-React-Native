@@ -11,7 +11,7 @@ import {
 import type {Moment} from 'moment-timezone'
 import * as c from '@frogpond/colors'
 import {ContentUnavailableView, Host, List, Section, Text} from '@expo/ui/swift-ui'
-import {font, foregroundStyle, frame, listStyle} from '@expo/ui/swift-ui/modifiers'
+import {frame, listStyle} from '@expo/ui/swift-ui/modifiers'
 import {BUS_FOOTER_MESSAGE} from './constants'
 import {momentToDayOfWeek, createMomentForDay} from './components/days'
 import {formatDepartures} from './components/times'
@@ -74,13 +74,7 @@ export function BusLine(props: Props): React.ReactNode {
 						{/* The sheet's title already names the line, so the notice
 						    stands alone. Stretched to the card's width, so a short
 						    one sits at the leading edge rather than centring. */}
-						<Text
-							modifiers={[
-								font({textStyle: 'subheadline'}),
-								foregroundStyle(c.secondaryLabel),
-								frame({maxWidth: Infinity, alignment: 'leading'}),
-							]}
-						>
+						<Text modifiers={[frame({maxWidth: Infinity, alignment: 'leading'})]}>
 							{line.notice}
 						</Text>
 					</Section>
