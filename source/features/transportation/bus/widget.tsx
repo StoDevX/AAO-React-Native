@@ -44,6 +44,7 @@ import {
 	busPropsForRow,
 	deriveLineState,
 	findBusTarget,
+	stripAnchorIndex,
 	type StopStripCell,
 } from './lib'
 import type {UnprocessedBusLine} from './types'
@@ -336,7 +337,9 @@ export function BusLineWidget({line, now, onPress}: Props): React.ReactNode {
 	// happens once -- a reader who scrolls somewhere else is left there, and
 	// the strip does not chase the bus every minute. The calendar's event list
 	// opens on today the same way.
-	let anchorId = currentIndex === null ? null : String(Math.max(0, currentIndex - 1))
+	let anchorIndex = stripAnchorIndex(busTarget, currentIndex)
+	// A string because it addresses a cell by its SwiftUI id.
+	let anchorId = anchorIndex === null ? null : String(anchorIndex)
 	let openOnTheBus = React.useCallback(
 		(geometry: ScrollGeometry) => {
 			'worklet'
