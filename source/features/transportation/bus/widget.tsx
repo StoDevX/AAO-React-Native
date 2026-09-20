@@ -131,6 +131,7 @@ function StopCell({
 	barColor,
 	dotColor,
 	isFirst,
+	isLast,
 	previousPassed,
 	busFraction,
 	busAtStop,
@@ -141,6 +142,8 @@ function StopCell({
 	barColor: string
 	dotColor: string
 	isFirst: boolean
+	/** Whether the rail ends at this stop, with no leg out of it. */
+	isLast: boolean
 	/** Whether the bus has left the stop before this one, so the leg in is solid. */
 	previousPassed: boolean
 	/** Where the bus sits relative to this cell's dot, in cells: -0.5 to +0.5. */
@@ -188,10 +191,10 @@ function StopCell({
 				</Text>
 
 				<ZStack modifiers={[frame({width: CELL_WIDTH, height: DOT_SIZE})]}>
-					{/* Two halves rather than one bar: the rail has to start at the
-					    first dot, and a cell only knows about its own half of each
-					    gap. Both are always drawn and the leading cap of the first
-					    cell is made transparent, so every cell lays out identically.
+					{/* Two halves rather than one bar: the rail has to stop at the
+					    ends of the route, and a cell only knows about its own half
+					    of each gap. Both are always drawn, and the caps at either
+					    end are made transparent, so every cell lays out identically.
 					    `Rectangle` rather than `Capsule`: a capsule rounds both ends,
 					    so two adjacent cells' halves would pinch where they meet
 					    instead of reading as one line. */}
@@ -207,7 +210,7 @@ function StopCell({
 							modifiers={[
 								frame({width: CELL_WIDTH / 2, height: RAIL_HEIGHT}),
 								foregroundStyle(barColor),
-								opacity(trailingActive ? 1 : RAIL_AHEAD_OPACITY),
+								opacity(isLast ? 0 : trailingActive ? 1 : RAIL_AHEAD_OPACITY),
 							]}
 						/>
 					</HStack>
@@ -282,7 +285,7 @@ function RouteEndCell({
 							modifiers={[
 								frame({width: CELL_WIDTH / 2, height: RAIL_HEIGHT}),
 								foregroundStyle(c.tertiaryLabel),
-								opacity(0.35),
+								opacity(time ? 0.35 : 0),
 							]}
 						/>
 						<Rectangle
@@ -447,6 +450,9 @@ export function BusLineWidget({line, now, onPress}: Props): React.ReactNode {
 								dotColor={dotColor}
 								index={index}
 								isFirst={index === 0}
+								// No bus leaves the last stop of the day, so the rail
+								// stops there and the end slot stands on its own.
+								isLast={index === cells.length - 1 && nextRoundStart === null}
 								previousPassed={cells[index - 1]?.stopStatus === 'after'}
 								onPress={onPress}
 								{...busPropsForRow(busTarget, index)}
