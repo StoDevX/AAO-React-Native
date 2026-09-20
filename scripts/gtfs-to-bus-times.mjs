@@ -99,7 +99,17 @@ function isSubsequence(canonical, pattern) {
  * by position and emit times that look plausible and are wrong.
  */
 export function canonicalPattern(patterns) {
+	if (patterns.length === 0) {
+		throw new Error('canonicalPattern: no trip patterns given; the route has no trips to align')
+	}
+
 	let canonical = patterns.reduce((longest, p) => (p.length > longest.length ? p : longest))
+
+	if (canonical.length === 0) {
+		throw new Error(
+			'canonicalPattern: every trip pattern is empty; the route would publish zero stops -- check that stop_times.txt sets timepoint',
+		)
+	}
 
 	for (let pattern of patterns) {
 		if (!isSubsequence(canonical, pattern)) {
@@ -122,6 +132,12 @@ export function canonicalPattern(patterns) {
  * occurrence would put a time on the wrong row.
  */
 export function alignRow(canonical, pattern, times) {
+	if (pattern.length !== times.length) {
+		throw new Error(
+			`alignRow: pattern has ${pattern.length} stop(s) but times has ${times.length} entries; they must describe the same trip`,
+		)
+	}
+
 	let row = []
 	let i = 0
 
@@ -132,6 +148,12 @@ export function alignRow(canonical, pattern, times) {
 		} else {
 			row.push(false)
 		}
+	}
+
+	if (i !== pattern.length) {
+		throw new Error(
+			`alignRow: ${pattern.length - i} stop(s) in the trip's pattern were never matched against the canonical stop list; canonicalPattern should have rejected this pattern as not a subsequence`,
+		)
 	}
 
 	return row

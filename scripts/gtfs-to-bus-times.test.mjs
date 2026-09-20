@@ -134,6 +134,18 @@ describe('timepointStops', () => {
 			{id: 'c', name: 'Library'},
 		])
 	})
+
+	it('sorts stop_sequence numerically, not lexicographically, since Blue runs past 9', () => {
+		let rows = [
+			{stop_id: 'a', stop_sequence: '10', timepoint: '1'},
+			{stop_id: 'c', stop_sequence: '2', timepoint: '1'},
+		]
+
+		assert.deepEqual(timepointStops(rows, stopsById), [
+			{id: 'c', name: 'Library'},
+			{id: 'a', name: 'Depot'},
+		])
+	})
 })
 
 describe('canonicalPattern', () => {
@@ -162,10 +174,37 @@ describe('canonicalPattern', () => {
 		assert.deepEqual(canonicalPattern([[s('a'), s('a')], full]), full)
 	})
 
+	it('throws instead of publishing zero stops when every pattern is empty', () => {
+		// An omitted timepoint column would make timepointStops filter every
+		// row away, so every pattern collapses to []; that must not silently
+		// become a real, published schedule with no stops.
+		assert.throws(() => canonicalPattern([[], []]), /zero stops/u)
+	})
+
+	it('throws with a clear message, rather than a bare reduce error, when given no patterns', () => {
+		assert.throws(() => canonicalPattern([]), /no trip patterns/u)
+	})
+
 	it('throws when a pattern is not a subsequence, rather than emitting plausible wrong times', () => {
 		let full = [s('a'), s('b'), s('c')]
 
 		assert.throws(() => canonicalPattern([[s('c'), s('a')], full]), /not a subsequence/u)
+	})
+
+	it('throws for a backwards pattern even when two distinct stops share a display name', () => {
+		// 'a' and 'c' are distinct stop_ids that both render as "Library", the
+		// way "Library Nf" gets renamed to "Library" downstream of curation.
+		let full = [
+			{id: 'a', name: 'Library'},
+			{id: 'b', name: 'Depot'},
+			{id: 'c', name: 'Library'},
+		]
+		let backwards = [
+			{id: 'c', name: 'Library'},
+			{id: 'a', name: 'Library'},
+		]
+
+		assert.throws(() => canonicalPattern([backwards, full]), /not a subsequence/u)
 	})
 })
 
@@ -195,5 +234,35 @@ describe('alignRow', () => {
 		let aligned = alignRow(canonical, [s('a')], ['6:00am'])
 
 		assert.equal(aligned.length, canonical.length)
+	})
+
+	it('matches a repeated stop_id by position, not by first occurrence, as the Express loop through Carleton needs', () => {
+		let expressLoop = [s('carl'), s('olaf'), s('coop'), s('carl'), s('olaf')]
+		let aligned = alignRow(expressLoop, [s('carl'), s('carl'), s('olaf')], ['x', 'y', 'z'])
+
+		assert.deepEqual(aligned, ['x', false, false, 'y', 'z'])
+	})
+
+	it('matches by stop_id, not display name, since Library Nf renames to the same "Library" name', () => {
+		let bothNamedLibrary = [
+			{id: 'library', name: 'Library'},
+			{id: 'library_nf', name: 'Library'},
+		]
+		let aligned = alignRow(bothNamedLibrary, [{id: 'library_nf', name: 'Library'}], ['6:10am'])
+
+		assert.deepEqual(aligned, [false, '6:10am'])
+	})
+
+	it('throws when the pattern has more stops than the times row has entries', () => {
+		assert.throws(() => alignRow(canonical, [s('a'), s('b')], ['6:00am']), /pattern/u)
+	})
+
+	it('throws when a stop in the pattern never matched the canonical list', () => {
+		// canonicalPattern should reject this pattern before it reaches alignRow;
+		// this pins the belt-and-suspenders check inside alignRow itself.
+		assert.throws(
+			() => alignRow(canonical, [s('c'), s('a')], ['6:10am', '6:00am']),
+			/never matched/u,
+		)
 	})
 })
