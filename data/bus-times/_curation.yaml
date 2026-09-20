@@ -18,9 +18,15 @@ routes:
   # Keyed by GTFS route_id. `expect_name` is not used to match -- it is
   # recorded so the generator can warn when Trillium renames a route under a
   # stable id, which would otherwise pass silently.
+  #
+  # `file` carries a numeric prefix (`bundle-data-dir.mjs` sorts by it to
+  # order the lines in the app) that a human assigns, not the generator --
+  # it is written out literally here rather than derived from `line` or
+  # `route_id` so a future reader does not go looking for where the
+  # generator computes display order.
   '77627':
     expect_name: Blue - Northfield
-    file: blue-line.yaml
+    file: 4-blue-line.yaml
     line: Blue Line
     colors:
       bar: rgb(103, 153, 170)
@@ -29,7 +35,7 @@ routes:
 
   '77628':
     expect_name: Red - Northfield
-    file: red-line.yaml
+    file: 3-red-line.yaml
     line: Red Line
     colors:
       bar: rgb(233, 87, 95)
@@ -38,7 +44,7 @@ routes:
 
   '77629':
     expect_name: Express Northfield
-    file: express.yaml
+    file: 1-express.yaml
     line: Express Bus
     colors:
       bar: rgb(134, 198, 124)

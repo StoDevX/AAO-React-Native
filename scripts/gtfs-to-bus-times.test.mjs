@@ -652,18 +652,18 @@ describe('the real Hiawathaland feed', () => {
 		repairs: load(fs.readFileSync(path.join(busTimes, '_repairs.yaml'), 'utf-8')),
 	}
 
-	it('writes exactly the three curated files, never oles-go.yaml', () => {
+	it('writes exactly the three curated files, never 2-oles-go.yaml', () => {
 		let {files} = gtfsToBusTimes(feed, real)
 
 		assert.deepEqual(
 			[...files.keys()].sort((a, b) => a.localeCompare(b)),
-			['blue-line.yaml', 'express.yaml', 'red-line.yaml'],
+			['1-express.yaml', '3-red-line.yaml', '4-blue-line.yaml'],
 		)
 	})
 
 	it('reproduces the Blue Line brochure table', () => {
 		let {files} = gtfsToBusTimes(feed, real)
-		let schedule = files.get('blue-line.yaml').schedules[0]
+		let schedule = files.get('4-blue-line.yaml').schedules[0]
 
 		assert.deepEqual(schedule.stops, [
 			'Northfield Depot',
@@ -694,7 +694,7 @@ describe('the real Hiawathaland feed', () => {
 
 	it('excludes by-request deviation stops, which carry interpolated times', () => {
 		let {files} = gtfsToBusTimes(feed, real)
-		let stops = files.get('blue-line.yaml').schedules[0].stops
+		let stops = files.get('4-blue-line.yaml').schedules[0].stops
 
 		for (let deviation of ["Jersey Mike's", 'Dollar General', 'Kraewood Flats']) {
 			assert.ok(!stops.includes(deviation), `${deviation} should not be a timetable row`)
@@ -704,12 +704,12 @@ describe('the real Hiawathaland feed', () => {
 	it('collapses the three Express services into one schedule', () => {
 		let {files} = gtfsToBusTimes(feed, real)
 
-		assert.equal(files.get('express.yaml').schedules.length, 1)
+		assert.equal(files.get('1-express.yaml').schedules.length, 1)
 	})
 
 	it('marks the Express six-stop loop as skipping the final St. Olaf call', () => {
 		let {files} = gtfsToBusTimes(feed, real)
-		let schedule = files.get('express.yaml').schedules[0]
+		let schedule = files.get('1-express.yaml').schedules[0]
 
 		assert.equal(schedule.stops.length, 7)
 		assert.equal(schedule.stops.at(-1), 'St. Olaf College')
