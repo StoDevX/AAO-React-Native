@@ -46,7 +46,7 @@ export function GitHubHostedMenu(props: Props): React.ReactNode {
 		? moment.tz(dataUpdatedAt, timezone())
 		: currentMoment().tz(timezone())
 
-	let date = formatDate(menuDate, 'short')
+	let date = formatDate(menuDate, 'medium')
 
 	usePublishMenuHeader({name: props.name, date, meals: mealMenu}, isFocused)
 

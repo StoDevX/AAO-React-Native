@@ -161,7 +161,7 @@ export function BonAppHostedMenu(props: Props): React.ReactNode {
 	// The formatted day, not `now`: `currentMoment()` above builds a fresh
 	// Moment on every render, so a header depending on it would republish on
 	// every render and loop through the provider's state.
-	let date = formatDate(now, 'short')
+	let date = formatDate(now, 'medium')
 
 	// Published from here rather than from the menu below, which does not
 	// exist until its query resolves -- the screen would spend that whole
