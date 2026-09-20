@@ -8,7 +8,7 @@ import {pauseMenuOptions} from './query'
 import {useQuery} from '@tanstack/react-query'
 import {useIsFocused, useRouter} from 'expo-router'
 import type {GithubMenuType} from './types'
-import {formatDate} from '@frogpond/time-format'
+import {formatWeekday} from '@frogpond/time-format'
 import {now as currentMoment} from '@frogpond/timer'
 import type {MealHeaderState} from '@frogpond/food-menu'
 import {usePublishMenuHeader} from './menu-header'
@@ -50,7 +50,7 @@ export function GitHubHostedMenu(props: Props): React.ReactNode {
 		? moment.tz(dataUpdatedAt, timezone())
 		: currentMoment().tz(timezone())
 
-	let date = formatDate(menuDate, 'medium')
+	let date = formatWeekday(menuDate, 'short')
 
 	// Collapsed to begin with: a menu opens as food rather than as chrome, and
 	// the navigation bar carries the control that reveals the row.

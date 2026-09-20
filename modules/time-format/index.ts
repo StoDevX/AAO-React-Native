@@ -198,6 +198,50 @@ export function formatCompactTime(
 }
 
 /**
+ * The locale's word for the half of the day the moment falls in -- `AM`, `PM`,
+ * `午前` -- or `''` where the locale writes none.
+ */
+function dayPeriodOf(m: Moment, locale: string, timeZone?: string): string {
+	let shape: Intl.DateTimeFormatOptions = {hour: 'numeric'}
+	let options = timeZone ? {...shape, timeZone} : shape
+
+	return (
+		formatterFor(`day-period-${timeZone ?? 'device'}`, locale, options)
+			.formatToParts(m.toDate())
+			.find((part) => part.type === 'dayPeriod')?.value ?? ''
+	)
+}
+
+/** The dash between the ends of a range, spaced so neither end runs into it. */
+const RANGE_SEPARATOR = ' – '
+
+/**
+ * A span of one day's clock, e.g. `8:30 – 11:30AM`, `7AM – 6PM` or
+ * `08:30 – 11:30`.
+ *
+ * Where both ends fall in the same half of the day the meridiem is written
+ * once, at the end: `8:30 – 11:30AM` reads as one span of the morning, where
+ * repeating it reads as two separate times to be compared. A range crossing
+ * noon or midnight needs both, and a 24-hour locale has none to leave out.
+ */
+export function formatCompactTimeRange(
+	start: Moment,
+	end: Moment,
+	locale: string = deviceLocale(),
+	timeZone?: string,
+): string {
+	let from = formatCompactTime(start, locale, timeZone)
+	let to = formatCompactTime(end, locale, timeZone)
+
+	let period = dayPeriodOf(start, locale, timeZone)
+	if (period && period === dayPeriodOf(end, locale, timeZone)) {
+		from = from.replace(period, '')
+	}
+
+	return `${from}${RANGE_SEPARATOR}${to}`
+}
+
+/**
  * A timeline's hour label, e.g. `9 AM` or `09:00`. An hour label is always
  * on the hour, so a 12-hour locale needs no minutes at all -- unlike
  * `formatTime`, which keeps them for a time that might not be.

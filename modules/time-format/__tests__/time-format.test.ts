@@ -2,6 +2,7 @@ import {describe, expect, test} from '@jest/globals'
 import moment from 'moment-timezone'
 import {
 	formatCompactTime,
+	formatCompactTimeRange,
 	formatDate,
 	formatDateTime,
 	formatDayOfMonth,
@@ -124,6 +125,43 @@ describe('formatCompactTime', () => {
 	})
 })
 
+describe('formatCompactTimeRange', () => {
+	// The meridiem is written once when both ends share it: `8:30 – 11:30AM`
+	// reads as one span of the morning, where repeating `AM` reads as two
+	// separate times the reader has to compare.
+	test('writes the meridiem once when both ends share it', () => {
+		let start = moment.tz('2026-08-20 08:30', CAMPUS)
+		let end = moment.tz('2026-08-20 11:30', CAMPUS)
+		expect(formatCompactTimeRange(start, end, 'en-US')).toBe('8:30 – 11:30AM')
+	})
+
+	test('writes both when the range crosses noon', () => {
+		let start = moment.tz('2026-08-20 07:00', CAMPUS)
+		let end = moment.tz('2026-08-20 18:00', CAMPUS)
+		expect(formatCompactTimeRange(start, end, 'en-US')).toBe('7AM – 6PM')
+	})
+
+	test('writes both when the range crosses midnight', () => {
+		let start = moment.tz('2026-08-20 21:00', CAMPUS)
+		let end = moment.tz('2026-08-20 01:00', CAMPUS)
+		expect(formatCompactTimeRange(start, end, 'en-US')).toBe('9PM – 1AM')
+	})
+
+	// A 24-hour locale writes no meridiem, so there is none to leave out and
+	// both ends stand as they are.
+	test('leaves a 24-hour locale with both ends intact', () => {
+		let start = moment.tz('2026-08-20 08:30', CAMPUS)
+		let end = moment.tz('2026-08-20 11:30', CAMPUS)
+		expect(formatCompactTimeRange(start, end, 'en-GB')).toBe('08:30 – 11:30')
+	})
+
+	test('keeps dropping :00 on the hour at either end', () => {
+		let start = moment.tz('2026-08-20 14:30', CAMPUS)
+		let end = moment.tz('2026-08-20 17:00', CAMPUS)
+		expect(formatCompactTimeRange(start, end, 'en-US')).toBe('2:30 – 5PM')
+	})
+})
+
 describe('formatHourLabel', () => {
 	test('a 12-hour locale gets a bare hour and meridiem', () => {
 		expect(formatHourLabel(moment.tz('2026-08-20 09:00', CAMPUS), 'en-US')).toBe('9 AM')
@@ -143,8 +181,6 @@ describe('formatDate', () => {
 		expect(formatDate(m, 'short', 'ja-JP')).toBe('8月20日')
 	})
 
-	// The weekday is what the menus' header adds: a reader glancing at a
-	// cafe's menu wants to know it is today's without doing the arithmetic.
 	test('medium: short weekday, month and day in locale order', () => {
 		expect(formatDate(m, 'medium', 'en-US')).toBe('Thu, Aug 20')
 		// No comma in en-GB, where `Intl` separates the weekday with a space.

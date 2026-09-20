@@ -1,6 +1,6 @@
 import moment from 'moment-timezone'
 import {timezone} from '@frogpond/constants'
-import {formatCompactTime} from '@frogpond/time-format'
+import {formatCompactTimeRange} from '@frogpond/time-format'
 
 // Both spellings of the hour: BonApp pads it ("07:15") while our own fallback
 // menus do not ("0:00"), and strict parsing accepts a format only for the
@@ -21,7 +21,7 @@ type MealWindow = {
 }
 
 /**
- * The window a meal is served, e.g. `7:15AM–9:45AM`, or `null` for a meal
+ * The window a meal is served, e.g. `7:15 – 9:45AM`, or `null` for a meal
  * whose times BonApp did not give us.
  *
  * The times are clock readings on the campus's own clock, rendered in the
@@ -47,5 +47,5 @@ export function formatMealTimes(meal: MealWindow, locale?: string): string | nul
 		return null
 	}
 
-	return `${formatCompactTime(start, locale)}–${formatCompactTime(end, locale)}`
+	return formatCompactTimeRange(start, end, locale)
 }

@@ -20,7 +20,7 @@ import {bonAppCafeOptions, bonAppMenuOptions, prepareFood} from './query'
 import {useQuery} from '@tanstack/react-query'
 import {useIsFocused, useRouter} from 'expo-router'
 import {toLaxTitleCase} from '@frogpond/titlecase'
-import {formatDate} from '@frogpond/time-format'
+import {formatWeekday} from '@frogpond/time-format'
 import type {MealHeaderState} from '@frogpond/food-menu'
 import {usePublishMenuHeader} from './menu-header'
 
@@ -162,10 +162,14 @@ export function BonAppHostedMenu(props: Props): React.ReactNode {
 	let isFocused = useIsFocused()
 	let [mealHeader, setMealHeader] = React.useState<MealHeaderState>(EMPTY_MEAL_HEADER)
 
+	// The weekday alone. The date beside it said which today it is, which the
+	// reader already knows; the weekday is what tells them the menu they are
+	// looking at is today's.
+	//
 	// The formatted day, not `now`: `currentMoment()` above builds a fresh
 	// Moment on every render, so a header depending on it would republish on
 	// every render and loop through the provider's state.
-	let date = formatDate(now, 'medium')
+	let date = formatWeekday(now, 'short')
 
 	// Collapsed to begin with: a menu opens as food rather than as chrome, and
 	// the navigation bar carries the control that reveals the row.
