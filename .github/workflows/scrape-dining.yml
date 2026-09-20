@@ -1,0 +1,115 @@
+name: Scrape dining hours
+
+on:
+  # Weekly, Mondays at 07:00 UTC. Dining hours move at term boundaries rather
+  # than daily, so most runs are no-ops -- but a mid-term change should not sit
+  # unnoticed for a month, and a no-op run costs four HTTP requests.
+  schedule:
+    - cron: '0 7 * * 1'
+
+  workflow_dispatch:
+
+  # Dry run on every PR that touches the scrape: fetch, compare, write nothing.
+  # Without this the workflow could only be exercised by merging it.
+  pull_request:
+    paths:
+      - scripts/bonapp-overrides.yaml
+      - scripts/bonapp-schedule.mjs
+      - scripts/scrape-bonapp.mjs
+      - .github/workflows/scrape-dining.yml
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: >-
+    ${{ github.event_name == 'pull_request'
+        && format('scrape-dining-dryrun-{0}', github.ref)
+        || 'scrape-dining' }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+env:
+  MISE_RUBY_COMPILE: 'false'
+
+jobs:
+  scrape:
+    name: Scrape and open a pull request
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Check out the code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: jdx/mise-action@c2a87611a18de5b3828c5652fe268e992400cb5c # v4.3.0
+        # Keyed on mise.lock rather than mise.toml -- see the note in check.yml.
+        with:
+          cache_key: mise-v2-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('mise.lock') }}
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # --check writes nothing and exits non-zero when something would change.
+      # On a PR that touches the scrape, that divergence is the point: it means
+      # the change alters what would be written.
+      - name: Scrape (dry run)
+        if: github.event_name == 'pull_request'
+        run: node scripts/scrape-bonapp.mjs --check
+
+      - name: Scrape
+        if: github.event_name != 'pull_request'
+        run: mise run scrape-dining
+
+      # The scrape emits the schedule block by hand, so these two are what stop
+      # a malformed write reaching a pull request: one checks the data schema,
+      # the other that the emitter still matches house style.
+      - name: Validate
+        if: github.event_name != 'pull_request'
+        run: mise run validate-data
+
+      - name: Check formatting
+        if: github.event_name != 'pull_request'
+        run: pnpm exec oxfmt --check data/building-hours
+
+      - name: Open or update the pull request
+        if: github.event_name != 'pull_request'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if git diff --quiet; then
+            echo "Nothing changed."
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -B bot/dining-hours
+          git add data/building-hours
+          git commit -m "Update the dining hours from Bon Appétit"
+          git push --force origin bot/dining-hours
+
+          # A change that persists for a month must not produce four pull
+          # requests, so reuse the open one when there is one. The force-push
+          # above has already updated its head.
+          open=$(gh pr list --head bot/dining-hours --state open --json number --jq '.[].number')
+          if [ -n "$open" ]; then
+            echo "Updated existing pull request #${open}."
+            exit 0
+          fi
+
+          gh pr create --base master --head bot/dining-hours \
+            --title "Update the dining hours from Bon Appétit" \
+            --body "$(cat <<'BODY'
+          Bon Appétit's published café schedules no longer match what we ship.
+
+          Read the diff against the source before merging. The sources for St. Olaf
+          dining contradict each other — the college's own Buntrock page has been
+          wrong about Stav twice — and this scrape reads only Bon Appétit.
+
+          - https://stolaf.cafebonappetit.com/cafe/stav-hall/
+          - https://stolaf.cafebonappetit.com/cafe/the-cage/
+
+          The run summary lists the cafés this watches but does not write.
+          BODY
+          )"
