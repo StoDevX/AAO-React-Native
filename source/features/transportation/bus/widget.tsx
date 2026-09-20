@@ -16,6 +16,7 @@ import {
 } from '@expo/ui/swift-ui'
 import {
 	accessibilityElement,
+	accessibilityIdentifier,
 	accessibilityLabel,
 	buttonStyle,
 	contentShape,
@@ -66,6 +67,11 @@ const FUTURE_HOLE_SIZE = DOT_SIZE - 2 * FUTURE_RING_WIDTH
 /// Stands in for the time in the end cell when no later bus runs today, so its
 /// dot still lines up with the rail the stops sit on.
 const NO_LATER_DEPARTURE = '—'
+/// The strip itself, for a UI test to aim a sideways swipe at. A stop cell is
+/// no use for that: the strip opens partway along the route, so which cells
+/// are on screen depends on where the bus is.
+/// Mirrored by `TestIdentifiers.Transportation.stopStrip`.
+export const STOP_STRIP = 'stop-strip'
 
 type Props = {
 	line: UnprocessedBusLine
@@ -431,6 +437,7 @@ export function BusLineWidget({line, now, onPress}: Props): React.ReactNode {
 					modifiers={[
 						listRowInsets({top: 12, bottom: 12, leading: 0, trailing: 0}),
 						listRowSeparator('hidden'),
+						accessibilityIdentifier(STOP_STRIP),
 						scrollPosition(scrollTarget, {anchor: 'leading'}),
 						...(placement ? [placement] : []),
 					]}

@@ -582,6 +582,12 @@ struct TestIdentifiers {
 		/// once, so its presence unambiguously means the strip scrolled forward
 		/// rather than showing a second, later occurrence of the start.
 		static let aStopFartherAlongTheRoute = "El Tequila"
+		/// The horizontal strip of stops inside a line's widget, which a swipe
+		/// test aims at rather than at a stop cell: the strip opens partway
+		/// along the route, so which cells are on screen depends on where the
+		/// bus is.
+		/// Mirrored by `STOP_STRIP` in `source/features/transportation/bus/widget.tsx`.
+		static let stopStrip = "stop-strip"
 
 		/// The navigation bar's day menu, labelled by the day it is showing.
 		/// `Today` when the screens are following the clock.

@@ -16,7 +16,7 @@ class ModuleTransportationTests: UITestCase {
 	func testTheStopStripScrollsSideways() throws {
 		TransportationScreen(app: app)
 			.navigate()
-			.swipeStripLeft(startingAt: TestIdentifiers.Transportation.aStop)
+			.swipeStripLeft()
 			.verifyStripAdvancedTo(TestIdentifiers.Transportation.aStopFartherAlongTheRoute)
 			.capture("Transportation - strip scrolled")
 	}

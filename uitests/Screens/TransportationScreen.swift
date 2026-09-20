@@ -61,17 +61,19 @@ struct TransportationScreen: Screen {
 		return self
 	}
 
-	/// Push the strip sideways. The strip is a horizontal ScrollView inside a
-	/// List row, so the swipe is aimed at the cell rather than at the app,
-	/// which would scroll the list vertically instead.
+	/// Push the first line's strip sideways. The swipe is aimed at the strip
+	/// itself rather than at the app, which would scroll the list vertically
+	/// instead -- and rather than at a named stop, which may be scrolled out
+	/// of view: the strip opens on the stop behind the bus, so which cells are
+	/// on screen depends on where the bus is.
 	@discardableResult
-	func swipeStripLeft(startingAt stop: String) -> Self {
-		let cell = app.elementWithLabel(startingWith: stop)
+	func swipeStripLeft() -> Self {
+		let strip = app.scrollViews[TestIdentifiers.Transportation.stopStrip].firstMatch
 		XCTAssertTrue(
-			cell.waitForExistence(timeout: 30),
-			"The strip should show \(stop) before it is swiped")
-		cell.swipeLeft()
-		cell.swipeLeft()
+			strip.waitForExistence(timeout: 30),
+			"The first line's widget should show its stop strip")
+		strip.swipeLeft()
+		strip.swipeLeft()
 		return self
 	}
 
