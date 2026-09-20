@@ -158,3 +158,128 @@ export function alignRow(canonical, pattern, times) {
 
 	return row
 }
+
+/**
+ * Repairs whose feed has moved past the version they were written against.
+ *
+ * A repair patches a bug in one published feed. Once Trillium publishes a new
+ * one the bug may be fixed, and a repair that keeps applying silently
+ * overrides good data -- so say so rather than letting it become permanent.
+ */
+export function staleRepairs(repairs, feedVersion) {
+	return repairs
+		.filter((repair) => repair.written_against !== feedVersion)
+		.map(
+			(repair) =>
+				`repair "${repair.id}" was written against feed "${repair.written_against}" but the feed is now "${feedVersion}"; confirm it is still needed`,
+		)
+}
+
+/** Groups an array into a Map keyed by `keyOf`. */
+function groupBy(items, keyOf) {
+	let groups = new Map()
+	for (let item of items) {
+		let key = keyOf(item)
+		let group = groups.get(key)
+		if (group) {
+			group.push(item)
+		} else {
+			groups.set(key, [item])
+		}
+	}
+	return groups
+}
+
+/** One route's schedules, one per distinct (days, stops, times) timetable. */
+function schedulesForRoute(feed, routeId, stopsById, stopNames) {
+	let calendarById = new Map(feed.calendar.map((row) => [row.service_id, row]))
+	let stopTimesByTrip = groupBy(
+		feed.stopTimes.filter((row) => row.trip_id),
+		(row) => row.trip_id,
+	)
+	let routeTrips = feed.trips.filter((trip) => trip.route_id === routeId)
+	let schedules = []
+
+	for (let [serviceId, trips] of groupBy(routeTrips, (trip) => trip.service_id)) {
+		let calendarRow = calendarById.get(serviceId)
+		if (!calendarRow) {
+			continue
+		}
+
+		let days = daysForService(calendarRow)
+		if (days.length === 0) {
+			continue
+		}
+
+		let rows = trips.map((trip) => {
+			let tripStopTimes = stopTimesByTrip.get(trip.trip_id) ?? []
+			let pattern = timepointStops(tripStopTimes, stopsById)
+			let published = tripStopTimes
+				.filter((row) => row.timepoint === '1')
+				.sort((a, b) => Number(a.stop_sequence) - Number(b.stop_sequence))
+			return {
+				pattern,
+				// The raw GTFS `HH:MM:SS` sorts correctly as a string; the
+				// formatted `h:mma` does not -- '10:30am' sorts before '6:00am'
+				// and '1:30pm' before both, which silently scrambles the
+				// timetable's row order.
+				firstDeparture: published[0]?.departure_time ?? '',
+				times: published.map((row) => formatTime(row.departure_time)),
+			}
+		})
+
+		rows.sort((a, b) => a.firstDeparture.localeCompare(b.firstDeparture))
+
+		let canonical = canonicalPattern(rows.map((row) => row.pattern))
+
+		schedules.push({
+			days,
+			stops: canonical.map((stop) => stopNames[stop.name] ?? stop.name),
+			times: rows.map((row) => alignRow(canonical, row.pattern, row.times)),
+		})
+	}
+
+	// Three Express service_ids carry the same timetable over different date
+	// windows; without this the app renders that timetable three times.
+	let seen = new Map()
+	for (let schedule of schedules) {
+		seen.set(JSON.stringify(schedule), schedule)
+	}
+
+	return [...seen.values()]
+}
+
+/** Every curated route as a bus line, keyed by the file it is written to. */
+export function gtfsToBusTimes(feed, {curation, repairs}) {
+	let feedVersion = feed.feedInfo[0]?.feed_version ?? ''
+	let stopsById = new Map(feed.stops.map((stop) => [stop.stop_id, stop]))
+	let stopNames = curation.stop_names ?? {}
+
+	let {routes, warnings} = selectRoutes(feed, curation)
+	warnings = [...warnings, ...staleRepairs(repairs.repairs, feedVersion)]
+
+	let files = new Map()
+
+	for (let {routeId, config} of routes) {
+		let schedules = schedulesForRoute(feed, routeId, stopsById, stopNames)
+
+		for (let repair of repairs.repairs) {
+			if (repair.route === routeId && repair.set?.days) {
+				schedules = schedules.map((schedule) => ({...schedule, days: repair.set.days}))
+			}
+		}
+
+		if (schedules.length === 0) {
+			warnings.push(`route ${routeId} (${config.line}) produced no schedules`)
+		}
+
+		files.set(config.file, {
+			line: config.line,
+			colors: config.colors,
+			notice: config.notice,
+			schedules,
+		})
+	}
+
+	return {files, warnings}
+}

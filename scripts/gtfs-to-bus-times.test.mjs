@@ -5,7 +5,9 @@ import {
 	canonicalPattern,
 	daysForService,
 	formatTime,
+	gtfsToBusTimes,
 	selectRoutes,
+	staleRepairs,
 	timepointStops,
 } from './gtfs-to-bus-times.mjs'
 
@@ -264,5 +266,170 @@ describe('alignRow', () => {
 			() => alignRow(canonical, [s('c'), s('a')], ['6:10am', '6:00am']),
 			/never matched/u,
 		)
+	})
+})
+
+/** A feed with one route, two identical services, and one trip each. */
+function twoServiceFeed() {
+	return {
+		feedInfo: [{feed_version: 'v1'}],
+		routes: [{route_id: 'r1', route_long_name: 'Test Route'}],
+		calendar: [
+			{
+				service_id: 'sA',
+				monday: '1',
+				tuesday: '0',
+				wednesday: '0',
+				thursday: '0',
+				friday: '0',
+				saturday: '0',
+				sunday: '0',
+				start_date: '20260101',
+				end_date: '20260601',
+			},
+			{
+				service_id: 'sB',
+				monday: '1',
+				tuesday: '0',
+				wednesday: '0',
+				thursday: '0',
+				friday: '0',
+				saturday: '0',
+				sunday: '0',
+				start_date: '20260602',
+				end_date: '20261201',
+			},
+		],
+		trips: [
+			{route_id: 'r1', service_id: 'sA', trip_id: 't1'},
+			{route_id: 'r1', service_id: 'sB', trip_id: 't2'},
+		],
+		stops: [
+			{stop_id: 'a', stop_name: 'Depot'},
+			{stop_id: 'b', stop_name: 'St Olaf College'},
+		],
+		stopTimes: [
+			{trip_id: 't1', stop_id: 'a', stop_sequence: '1', departure_time: '06:00:00', timepoint: '1'},
+			{trip_id: 't1', stop_id: 'b', stop_sequence: '2', departure_time: '06:10:00', timepoint: '1'},
+			{trip_id: 't2', stop_id: 'a', stop_sequence: '1', departure_time: '06:00:00', timepoint: '1'},
+			{trip_id: 't2', stop_id: 'b', stop_sequence: '2', departure_time: '06:10:00', timepoint: '1'},
+		],
+		calendarDates: [],
+		shapes: [],
+		agency: [],
+	}
+}
+
+let curation = {
+	stop_names: {'St Olaf College': 'St. Olaf College'},
+	routes: {
+		r1: {
+			expect_name: 'Test Route',
+			file: 'test-line.yaml',
+			line: 'Test Line',
+			colors: {bar: 'rgb(1, 2, 3)', dot: 'rgb(4, 5, 6)'},
+			notice: 'A test route.',
+		},
+	},
+}
+
+describe('gtfsToBusTimes', () => {
+	it('writes the curated line name, colours and notice', () => {
+		let {files} = gtfsToBusTimes(twoServiceFeed(), {curation, repairs: {repairs: []}})
+		let line = files.get('test-line.yaml')
+
+		assert.equal(line.line, 'Test Line')
+		assert.deepEqual(line.colors, {bar: 'rgb(1, 2, 3)', dot: 'rgb(4, 5, 6)'})
+		assert.equal(line.notice, 'A test route.')
+	})
+
+	it('renames stops for riders', () => {
+		let {files} = gtfsToBusTimes(twoServiceFeed(), {curation, repairs: {repairs: []}})
+
+		assert.deepEqual(files.get('test-line.yaml').schedules[0].stops, ['Depot', 'St. Olaf College'])
+	})
+
+	it('collapses services whose timetables are identical, as the Express three do', () => {
+		let {files} = gtfsToBusTimes(twoServiceFeed(), {curation, repairs: {repairs: []}})
+		let schedules = files.get('test-line.yaml').schedules
+
+		assert.equal(schedules.length, 1)
+		assert.deepEqual(schedules[0].days, ['Mo'])
+		assert.deepEqual(schedules[0].times, [['6:00am', '6:10am']])
+	})
+
+	it('keeps services apart when their timetables differ', () => {
+		let feed = twoServiceFeed()
+		feed.stopTimes[2].departure_time = '07:00:00'
+		feed.stopTimes[3].departure_time = '07:10:00'
+
+		let {files} = gtfsToBusTimes(feed, {curation, repairs: {repairs: []}})
+
+		assert.equal(files.get('test-line.yaml').schedules.length, 2)
+	})
+
+	it('applies a repair that overrides a route schedule days', () => {
+		let repairs = {
+			repairs: [
+				{
+					id: 'test-days',
+					reason: 'test',
+					written_against: 'v1',
+					expires: '2027-01-01',
+					route: 'r1',
+					set: {days: ['Mo', 'Tu']},
+				},
+			],
+		}
+
+		let {files} = gtfsToBusTimes(twoServiceFeed(), {curation, repairs})
+
+		assert.deepEqual(files.get('test-line.yaml').schedules[0].days, ['Mo', 'Tu'])
+	})
+
+	it('orders rows by real departure time, not by their formatted string', () => {
+		let feed = twoServiceFeed()
+		// Two trips in one service, the later one listed first.
+		feed.trips = [
+			{route_id: 'r1', service_id: 'sA', trip_id: 't1'},
+			{route_id: 'r1', service_id: 'sA', trip_id: 't2'},
+		]
+		feed.stopTimes = [
+			{trip_id: 't1', stop_id: 'a', stop_sequence: '1', departure_time: '13:30:00', timepoint: '1'},
+			{trip_id: 't1', stop_id: 'b', stop_sequence: '2', departure_time: '13:40:00', timepoint: '1'},
+			{trip_id: 't2', stop_id: 'a', stop_sequence: '1', departure_time: '06:00:00', timepoint: '1'},
+			{trip_id: 't2', stop_id: 'b', stop_sequence: '2', departure_time: '06:10:00', timepoint: '1'},
+		]
+
+		let {files} = gtfsToBusTimes(feed, {curation, repairs: {repairs: []}})
+		let times = files.get('test-line.yaml').schedules[0].times
+
+		// Sorting the formatted strings would put '1:30pm' before '6:00am'.
+		assert.deepEqual(times, [
+			['6:00am', '6:10am'],
+			['1:30pm', '1:40pm'],
+		])
+	})
+
+	it('never writes a file curation did not ask for', () => {
+		let {files} = gtfsToBusTimes(twoServiceFeed(), {curation, repairs: {repairs: []}})
+
+		assert.deepEqual([...files.keys()], ['test-line.yaml'])
+	})
+})
+
+describe('staleRepairs', () => {
+	let repair = {id: 'tz', reason: 'r', written_against: 'v1', expires: '2027-01-01', set: {}}
+
+	it('says nothing while the feed is the one the repair was written against', () => {
+		assert.deepEqual(staleRepairs([repair], 'v1'), [])
+	})
+
+	it('warns once the feed has moved on, so a repair cannot outlive its bug', () => {
+		let warnings = staleRepairs([repair], 'v2')
+
+		assert.equal(warnings.length, 1)
+		assert.match(warnings[0], /tz/u)
+		assert.match(warnings[0], /v2/u)
 	})
 })
