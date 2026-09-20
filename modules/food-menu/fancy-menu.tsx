@@ -20,6 +20,7 @@ import {FoodItemRow} from './food-item-row'
 import {applyMenuFilters} from './lib/apply-menu-filters'
 import {buildFilters} from './lib/build-filters'
 import {chooseMeal} from './lib/choose-meal'
+import {isClosedLabel} from './lib/closed'
 import {emptyMessage} from './lib/empty-message'
 import {mealHeaderMenu, type MealHeaderMenu} from './lib/meal-header'
 import {formatMealTimes} from './lib/meal-times'
@@ -53,6 +54,11 @@ export type MealHeaderState = {
 	 * carry it and hours all the same.
 	 */
 	time: string | null
+	/**
+	 * Whether the cafe is shut, which is the whole of what the screen above has
+	 * to say about it -- there is no day's service to describe.
+	 */
+	closed: boolean
 }
 
 type Props = {
@@ -224,9 +230,11 @@ export function FancyMenu(props: Props): React.ReactNode {
 	const {starttime, endtime} = meal
 	const mealTime = useMemo(() => formatMealTimes({starttime, endtime}), [starttime, endtime])
 
+	const closed = isClosedLabel(mealName)
+
 	const mealHeader = useMemo(
-		(): MealHeaderState => ({menu: mealMenu, time: mealTime}),
-		[mealMenu, mealTime],
+		(): MealHeaderState => ({menu: mealMenu, time: mealTime, closed}),
+		[mealMenu, mealTime, closed],
 	)
 
 	const {onMealHeaderChange} = props
@@ -287,7 +295,7 @@ export function FancyMenu(props: Props): React.ReactNode {
 						</Text>
 					) : (
 						sectionsWithNotes.map((section) =>
-							section.data.length === 1 && section.data[0].label.toUpperCase() === 'CLOSED' ? (
+							section.data.length === 1 && isClosedLabel(section.data[0].label) ? (
 								<Section key={section.title} {...sectionHeaderProps('', section.note)}>
 									<ContentUnavailableView systemImage="clock" title={section.title} />
 								</Section>

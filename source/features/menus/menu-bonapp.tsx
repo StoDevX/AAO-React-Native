@@ -39,7 +39,7 @@ const DEFAULT_MENU = [
 
 // Module-level so the state below starts on one identity rather than a fresh
 // object per mount.
-const EMPTY_MEAL_HEADER: MealHeaderState = {menu: null, time: null}
+const EMPTY_MEAL_HEADER: MealHeaderState = {menu: null, time: null, closed: false}
 
 type Props = {
 	cafe: string | {id: string}
@@ -189,6 +189,7 @@ export function BonAppHostedMenu(props: Props): React.ReactNode {
 			date,
 			meals: mealHeader.menu,
 			time: mealHeader.time,
+			closed: mealHeader.closed,
 			filters: {visible: filtersVisible, toggle: toggleFilters},
 		},
 		isFocused,

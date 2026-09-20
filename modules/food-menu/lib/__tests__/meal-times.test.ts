@@ -33,6 +33,19 @@ describe('formatMealTimes', () => {
 		expect(formatMealTimes({starttime: '0:00', endtime: '23:59'}, 'en-US')).toBeNull()
 	})
 
+	// BonApp writes the same span its own way, which is how Weitz published a
+	// closed Sunday. Read on a clock two hours behind campus both ends land on
+	// the same reading -- `10PM – 10PM` -- so a whole day has to be recognised
+	// by what it covers rather than by how it is spelled.
+	test("says nothing about a whole day spelled BonApp's way", () => {
+		expect(formatMealTimes({starttime: '00:00', endtime: '24:00'}, 'en-US')).toBeNull()
+	})
+
+	// A window nobody could be served in is not a window either.
+	test('says nothing about a window with no duration', () => {
+		expect(formatMealTimes({starttime: '14:00', endtime: '14:00'}, 'en-US')).toBeNull()
+	})
+
 	test('says nothing when a time is missing', () => {
 		expect(formatMealTimes({starttime: '', endtime: '09:45'}, 'en-US')).toBeNull()
 	})

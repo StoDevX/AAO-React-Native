@@ -13,7 +13,15 @@ export default function CarletonPage(): React.ReactNode {
 	// pick. It publishes all the same, so the cafe tab the reader came from
 	// does not leave its name and its live picker sitting over this list.
 	usePublishMenuHeader(
-		{name: 'Carleton', weekday: null, date: null, time: null, meals: null, filters: null},
+		{
+			name: 'Carleton',
+			weekday: null,
+			date: null,
+			time: null,
+			closed: false,
+			meals: null,
+			filters: null,
+		},
 		useIsFocused(),
 	)
 

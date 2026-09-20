@@ -28,6 +28,10 @@ import {spokenTime, subtitle} from './lib/header-title'
  * than inside it because a cafe serving one meal has no picker and hours all
  * the same.
  *
+ * `closed` is the cafe saying it is not serving. Nothing under the name is
+ * true of a cafe that is shut -- not the meal, not a window, not even the day
+ * it is shut on -- so the name stands alone.
+ *
  * The day is carried twice because it is drawn twice at two different lengths:
  * `weekday` under the cafe's name, where the line is already tight, and `date`
  * over the meal picker, which has room for the whole of it. A screen showing a
@@ -43,6 +47,7 @@ type MenuHeader = {
 	weekday: string | null
 	date: string | null
 	time: string | null
+	closed: boolean
 	meals: MealMenuSelection | null
 	/** The filter row's own control, or `null` for a screen with no filters. */
 	filters: {visible: boolean; toggle: () => void} | null
@@ -92,7 +97,7 @@ export function MenuHeaderProvider(props: {children: React.ReactNode}): React.Re
  */
 export function usePublishMenuHeader(header: MenuHeader, focused: boolean): void {
 	let publish = React.useContext(PublishMenuHeaderContext)
-	let {name, weekday, date, time, meals, filters} = header
+	let {name, weekday, date, time, closed, meals, filters} = header
 
 	// `filters` is read apart too: a caller building it inline hands over a new
 	// object each render, and depending on that object would publish on each
@@ -107,6 +112,7 @@ export function usePublishMenuHeader(header: MenuHeader, focused: boolean): void
 				weekday,
 				date,
 				time,
+				closed,
 				meals,
 				filters:
 					toggleFilters && filtersVisible !== null
@@ -114,7 +120,7 @@ export function usePublishMenuHeader(header: MenuHeader, focused: boolean): void
 						: null,
 			})
 		}
-	}, [focused, name, weekday, date, time, meals, filtersVisible, toggleFilters, publish])
+	}, [focused, name, weekday, date, time, closed, meals, filtersVisible, toggleFilters, publish])
 }
 
 /**
@@ -132,6 +138,11 @@ export function MenuHeaderHost(): React.ReactNode {
 		return null
 	}
 
+	// A cafe that is shut has no day's service to describe, so the name stands
+	// alone rather than over a line that has nothing true to put in it.
+	let weekday = header.closed ? null : header.weekday
+	let time = header.closed ? null : header.time
+
 	return (
 		<>
 			{/* `Stack.Title asChild` sets only `headerTitle`; the plain string
@@ -143,11 +154,11 @@ export function MenuHeaderHost(): React.ReactNode {
 						date={header.date}
 						meals={header.meals}
 						name={header.name}
-						time={header.time}
-						weekday={header.weekday}
+						time={time}
+						weekday={weekday}
 					/>
 				) : (
-					<MenuHeaderTitle name={header.name} time={header.time} weekday={header.weekday} />
+					<MenuHeaderTitle name={header.name} time={time} weekday={weekday} />
 				)}
 			</Stack.Title>
 			{header.filters ? (

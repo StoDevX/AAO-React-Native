@@ -27,7 +27,7 @@ const EMPTY_MENU: GithubMenuType = {foodItems: {}, meals: [], corIcons: {}}
 
 // Module-level for the same reason: one identity rather than a fresh object
 // per mount.
-const EMPTY_MEAL_HEADER: MealHeaderState = {menu: null, time: null}
+const EMPTY_MEAL_HEADER: MealHeaderState = {menu: null, time: null, closed: false}
 
 export function GitHubHostedMenu(props: Props): React.ReactNode {
 	let router = useRouter()
@@ -66,6 +66,7 @@ export function GitHubHostedMenu(props: Props): React.ReactNode {
 			date: null,
 			meals: mealHeader.menu,
 			time: mealHeader.time,
+			closed: mealHeader.closed,
 			filters: {visible: filtersVisible, toggle: toggleFilters},
 		},
 		isFocused,

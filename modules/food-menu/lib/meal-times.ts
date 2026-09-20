@@ -4,15 +4,12 @@ import {formatCompactTimeRange} from '@frogpond/time-format'
 
 // Both spellings of the hour: BonApp pads it ("07:15") while our own fallback
 // menus do not ("0:00"), and strict parsing accepts a format only for the
-// spelling it names.
+// spelling it names. `24:00` is a real answer too, and parses to the following
+// midnight.
 const TIME_FORMATS = ['H:mm', 'HH:mm']
 
-/**
- * The whole day, which `DEFAULT_MENU` in `menu-bonapp.tsx` stands up in place
- * of the dayparts BonApp did not publish. Our own invention rather than a
- * window anyone is served in, so it is not a window to print.
- */
-const ALL_DAY = {starttime: '0:00', endtime: '23:59'}
+/** Minutes in a day, less the one `23:59` stops short of. */
+const WHOLE_DAY = 24 * 60 - 1
 
 /** Just enough of a meal to say when it is served. */
 type MealWindow = {
@@ -22,7 +19,15 @@ type MealWindow = {
 
 /**
  * The window a meal is served, e.g. `7:15AM – 9:45AM`, or `null` for a meal
- * whose times BonApp did not give us.
+ * whose times say nothing.
+ *
+ * A window covering the whole day is one of those: `DEFAULT_MENU` in
+ * `menu-bonapp.tsx` stands one up in place of dayparts BonApp did not publish,
+ * and BonApp writes its own (`00:00` to `24:00`) for a cafe that is shut. The
+ * two are recognised by what they cover rather than by how they are spelled --
+ * read on a clock two hours behind campus, BonApp's spelling puts both ends on
+ * the same reading and prints `10PM – 10PM`. A window with no duration says as
+ * little.
  *
  * The times are clock readings on the campus's own clock, rendered in the
  * reader's -- the same conversion `formatBuildingTimes` makes, so a cafe's
@@ -34,16 +39,17 @@ type MealWindow = {
  * through the provider's state.
  */
 export function formatMealTimes(meal: MealWindow, locale?: string): string | null {
-	let {starttime, endtime} = meal
+	let start = moment.tz(meal.starttime, TIME_FORMATS, true, timezone())
+	let end = moment.tz(meal.endtime, TIME_FORMATS, true, timezone())
 
-	if (starttime === ALL_DAY.starttime && endtime === ALL_DAY.endtime) {
+	if (!start.isValid() || !end.isValid()) {
 		return null
 	}
 
-	let start = moment.tz(starttime, TIME_FORMATS, true, timezone())
-	let end = moment.tz(endtime, TIME_FORMATS, true, timezone())
-
-	if (!start.isValid() || !end.isValid()) {
+	// Negative where the window crosses midnight, which is a real window --
+	// Sayles' Late Night -- rather than one of the empty ones above.
+	let minutes = end.diff(start, 'minutes')
+	if (minutes === 0 || minutes >= WHOLE_DAY) {
 		return null
 	}
 

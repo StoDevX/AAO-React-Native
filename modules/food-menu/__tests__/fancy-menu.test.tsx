@@ -303,7 +303,37 @@ describe('FancyMenu', () => {
 			/>,
 		)
 
-		expect(onMealHeaderChange).toHaveBeenLastCalledWith({menu: null, time: '7AM \u2013 11AM'})
+		expect(onMealHeaderChange).toHaveBeenLastCalledWith({
+			menu: null,
+			time: '7AM \u2013 11AM',
+			closed: false,
+		})
+	})
+
+	// Weitz on a Sunday: BonApp shuts a cafe by publishing one daypart named
+	// `Closed`, and there is nothing true to put under the cafe's name.
+	test('reports a cafe BonApp has shut', async () => {
+		let onMealHeaderChange = jest.fn()
+		let closedMeal: ProcessedMealType = {
+			label: 'Closed',
+			starttime: '00:00',
+			endtime: '24:00',
+			stations: [station('Closed', ['1'])],
+		}
+
+		await render(
+			<FancyMenu
+				foodItems={FOOD_ITEMS}
+				meals={[closedMeal]}
+				menuCorIcons={COR_ICONS}
+				name="Weitz Center"
+				now={moment.tz(BREAKFAST_TIME, TIMEZONE)}
+				onItemPress={jest.fn()}
+				onMealHeaderChange={onMealHeaderChange}
+			/>,
+		)
+
+		expect(onMealHeaderChange).toHaveBeenLastCalledWith({menu: null, time: null, closed: true})
 	})
 
 	// The callback the screen above uses to move between meals, which nothing
