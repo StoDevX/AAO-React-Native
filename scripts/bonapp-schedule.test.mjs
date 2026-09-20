@@ -147,8 +147,9 @@ test('merges Brunch into Lunch rather than making a second section', () => {
 test('drops a skipped daypart', () => {
 	let block = composeSchedule(parseWeeklySchedule(fixture('stav-hall')), STAV)
 	assert.ok(!block.includes('Continuous'))
-	// Continuous Dining is the only thing running to 10:30am or from 2:00pm.
-	assert.ok(!block.includes("to: '10:30am'}\n      - {days: [Mo, Tu, We, Th, Fr], from: '2:00pm'"))
+	// Ten rows are published and two of them are Continuous Dining, so a skip
+	// that stopped dropping exactly those two would change this count.
+	assert.equal(block.match(/- \{days:/gu).length, 8)
 })
 
 test('sections follow the dayparts map, not the page', () => {
