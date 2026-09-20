@@ -2,6 +2,8 @@ import * as React from 'react'
 import {StyleSheet, Text, View} from 'react-native'
 import {Stack} from 'expo-router'
 import * as c from '@frogpond/colors'
+import {Host, HStack, Image, Menu, Section, Text as UIText, Toggle, VStack} from '@expo/ui/swift-ui'
+import {background, font, foregroundStyle, frame, shapes} from '@expo/ui/swift-ui/modifiers'
 import type {MealMenuSelection} from '@frogpond/food-menu'
 
 /**
@@ -96,10 +98,67 @@ export function MenuHeaderHost(): React.ReactNode {
 			    is what the back button and VoiceOver's fallback read. */}
 			<Stack.Screen options={{title: header.name}} />
 			<Stack.Title asChild={true}>
-				<MenuHeaderTitle date={header.date} name={header.name} />
+				{header.meals ? (
+					<MealMenuTitle date={header.date} meals={header.meals} name={header.name} />
+				) : (
+					<MenuHeaderTitle date={header.date} name={header.name} />
+				)}
 			</Stack.Title>
-			{header.meals ? <MealPicker meals={header.meals} /> : null}
 		</>
+	)
+}
+
+/**
+ * The title as the meal picker: the cafe, the day and meal it is showing, and
+ * the chevron that says the whole thing is a button. Shortcuts titles a screen
+ * this way when the thing the title names is what the reader can change.
+ *
+ * A navigation bar cannot draw a button carrying both a label and an image --
+ * `UIBarButtonItem` takes one or the other -- so a picker that names its meal
+ * *and* shows a chevron has to be a custom view, and the title is the slot
+ * that takes one.
+ */
+function MealMenuTitle(props: {
+	name: string
+	date: string | null
+	meals: MealMenuSelection
+}): React.ReactNode {
+	let {name, date, meals} = props
+
+	return (
+		// An explicit size rather than `matchContents`: a navigation bar gives
+		// its title view no size to match, so a self-sizing host collapses and
+		// takes the title with it.
+		<Host style={styles.menuHost}>
+			<Menu
+				label={
+					<VStack spacing={0}>
+						<UIText modifiers={TITLE_MODIFIERS}>{name}</UIText>
+						<HStack spacing={4}>
+							<UIText modifiers={SUBTITLE_MODIFIERS}>
+								{[date, meals.selected].filter(Boolean).join(' • ')}
+							</UIText>
+							<Image modifiers={CHEVRON_MODIFIERS} systemName="chevron.down" />
+						</HStack>
+					</VStack>
+				}
+			>
+				<Section title={meals.title.toUpperCase()}>
+					{meals.options.map((label) => (
+						<Toggle
+							key={label}
+							isOn={label === meals.selected}
+							label={label}
+							onIsOnChange={(isOn) => {
+								if (isOn) {
+									meals.select(label)
+								}
+							}}
+						/>
+					))}
+				</Section>
+			</Menu>
+		</Host>
 	)
 }
 
@@ -125,32 +184,6 @@ function MenuHeaderTitle(props: {name: string; date: string | null}): React.Reac
 	)
 }
 
-function MealPicker(props: {meals: MealMenuSelection}): React.ReactNode {
-	let {meals} = props
-
-	return (
-		<Stack.Toolbar placement="right">
-			<Stack.Toolbar.Menu
-				accessibilityLabel={`${meals.title}, ${meals.selected}`}
-				title={meals.title}
-			>
-				<Stack.Toolbar.Label>{meals.selected}</Stack.Toolbar.Label>
-				{meals.options.map((label) => (
-					<Stack.Toolbar.MenuAction
-						key={label}
-						isOn={label === meals.selected}
-						onPress={() => {
-							meals.select(label)
-						}}
-					>
-						{label}
-					</Stack.Toolbar.MenuAction>
-				))}
-			</Stack.Toolbar.Menu>
-		</Stack.Toolbar>
-	)
-}
-
 /**
  * How far the title may grow with Dynamic Type. A navigation bar keeps its
  * height whatever the text inside it asks for, so past this the two lines
@@ -158,7 +191,27 @@ function MealPicker(props: {meals: MealMenuSelection}): React.ReactNode {
  */
 const TITLE_SCALE_LIMIT = 1.4
 
+// A navigation title reads as the screen's name, not as a link, so the name
+// keeps the label colour a plain title would have. Only the chevron is tinted.
+const TITLE_MODIFIERS = [font({textStyle: 'headline'}), foregroundStyle(c.label)]
+const SUBTITLE_MODIFIERS = [font({textStyle: 'caption'}), foregroundStyle(c.secondaryLabel)]
+
+// The disc Shortcuts puts behind its title's chevron, which is what says the
+// title is a button rather than a label.
+const CHEVRON_MODIFIERS = [
+	font({textStyle: 'caption2', weight: 'bold'}),
+	foregroundStyle(c.secondaryLabel),
+	frame({width: 18, height: 18}),
+	background(c.tertiarySystemFill, shapes.circle()),
+]
+
 const styles = StyleSheet.create({
+	// Wide enough for a cafe name over a date and a meal, short enough to sit
+	// inside the bar. The bar centres it, so the width is shared either side.
+	menuHost: {
+		width: 220,
+		height: 44,
+	},
 	title: {
 		alignItems: 'center',
 	},
