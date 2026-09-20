@@ -241,9 +241,9 @@ describe('FancyMenu', () => {
 			expect.objectContaining({
 				menu: expect.objectContaining({
 					options: [
-						{label: 'Breakfast', time: '7 \u2013 11AM'},
+						{label: 'Breakfast', time: '7AM \u2013 11AM'},
 						{label: 'Lunch', time: '11AM \u2013 2PM'},
-						{label: 'Dinner', time: '5 \u2013 8PM'},
+						{label: 'Dinner', time: '5PM \u2013 8PM'},
 					],
 					selected: 'Breakfast',
 				}),
@@ -276,13 +276,13 @@ describe('FancyMenu', () => {
 		)
 
 		expect(onMealHeaderChange).toHaveBeenLastCalledWith(
-			expect.objectContaining({time: '7 \u2013 11AM'}),
+			expect.objectContaining({time: '7AM \u2013 11AM'}),
 		)
 
 		await fireEvent.press(screen.getByTestId('choose-dinner'))
 
 		expect(onMealHeaderChange).toHaveBeenLastCalledWith(
-			expect.objectContaining({time: '5 \u2013 8PM'}),
+			expect.objectContaining({time: '5PM \u2013 8PM'}),
 		)
 	})
 
@@ -303,7 +303,7 @@ describe('FancyMenu', () => {
 			/>,
 		)
 
-		expect(onMealHeaderChange).toHaveBeenLastCalledWith({menu: null, time: '7 \u2013 11AM'})
+		expect(onMealHeaderChange).toHaveBeenLastCalledWith({menu: null, time: '7AM \u2013 11AM'})
 	})
 
 	// The callback the screen above uses to move between meals, which nothing

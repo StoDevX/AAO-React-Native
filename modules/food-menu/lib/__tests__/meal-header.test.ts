@@ -43,9 +43,9 @@ describe('mealHeaderMenu', () => {
 		expect(mealHeaderMenu(filters, 'Dinner', STAV)).toEqual({
 			title: "Today's Menus",
 			options: [
-				{label: 'Breakfast', time: '7:15 – 9:45AM'},
+				{label: 'Breakfast', time: '7:15AM – 9:45AM'},
 				{label: 'Lunch', time: '10:30AM – 2PM'},
-				{label: 'Dinner', time: '4:30 – 8PM'},
+				{label: 'Dinner', time: '4:30PM – 8PM'},
 			],
 			selected: 'Dinner',
 		})
@@ -68,7 +68,7 @@ describe('mealHeaderMenu', () => {
 
 		expect(mealHeaderMenu(filters, 'Brunch', meals)?.options).toEqual([
 			{label: 'Brunch', time: null},
-			{label: 'Dinner', time: '4:30 – 8PM'},
+			{label: 'Dinner', time: '4:30PM – 8PM'},
 		])
 	})
 

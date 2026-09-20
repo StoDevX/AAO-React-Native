@@ -48,7 +48,7 @@ export type MealHeaderState = {
 	 */
 	menu: MealMenuSelection | null
 	/**
-	 * The window the meal on screen is served, e.g. `7:15AM–9:45AM`. Reported
+	 * The window the meal on screen is served, e.g. `7:15AM – 9:45AM`. Reported
 	 * apart from the picker because a cafe serving one meal has no picker to
 	 * carry it and hours all the same.
 	 */

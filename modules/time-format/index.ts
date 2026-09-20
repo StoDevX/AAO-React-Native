@@ -197,32 +197,16 @@ export function formatCompactTime(
 	return formatTime(m, locale, timeZone).replaceAll(/\s/gu, '')
 }
 
-/**
- * The locale's word for the half of the day the moment falls in -- `AM`, `PM`,
- * `午前` -- or `''` where the locale writes none.
- */
-function dayPeriodOf(m: Moment, locale: string, timeZone?: string): string {
-	let shape: Intl.DateTimeFormatOptions = {hour: 'numeric'}
-	let options = timeZone ? {...shape, timeZone} : shape
-
-	return (
-		formatterFor(`day-period-${timeZone ?? 'device'}`, locale, options)
-			.formatToParts(m.toDate())
-			.find((part) => part.type === 'dayPeriod')?.value ?? ''
-	)
-}
-
 /** The dash between the ends of a range, spaced so neither end runs into it. */
 const RANGE_SEPARATOR = ' – '
 
 /**
- * A span of one day's clock, e.g. `8:30 – 11:30AM`, `7AM – 6PM` or
+ * A span of one day's clock, e.g. `8:30AM – 11:30AM`, `7AM – 6PM` or
  * `08:30 – 11:30`.
  *
- * Where both ends fall in the same half of the day the meridiem is written
- * once, at the end: `8:30 – 11:30AM` reads as one span of the morning, where
- * repeating it reads as two separate times to be compared. A range crossing
- * noon or midnight needs both, and a 24-hour locale has none to leave out.
+ * Each end is written in full. A reader glancing at one is reading one end,
+ * not the pair, and an end that borrows its meridiem from the other is an end
+ * that cannot be read on its own.
  */
 export function formatCompactTimeRange(
 	start: Moment,
@@ -232,11 +216,6 @@ export function formatCompactTimeRange(
 ): string {
 	let from = formatCompactTime(start, locale, timeZone)
 	let to = formatCompactTime(end, locale, timeZone)
-
-	let period = dayPeriodOf(start, locale, timeZone)
-	if (period && period === dayPeriodOf(end, locale, timeZone)) {
-		from = from.replace(period, '')
-	}
 
 	return `${from}${RANGE_SEPARATOR}${to}`
 }
@@ -285,6 +264,71 @@ type DateStyle = 'short' | 'medium' | 'long'
  */
 export function formatDate(m: Moment, style: DateStyle, locale: string = deviceLocale()): string {
 	return formatterFor(`date-${style}`, locale, DATE_STYLES[style]).format(m.toDate())
+}
+
+const ORDINAL_DATE: Intl.DateTimeFormatOptions = {
+	weekday: 'long',
+	month: 'long',
+	day: 'numeric',
+}
+
+/**
+ * What English appends to a day: `st`, `nd`, `rd`, or `th`.
+ *
+ * `Intl.PluralRules` answers exactly this question and Hermes does not
+ * implement it -- Node does, so a test covering this passes while the app
+ * renders a red screen reading "undefined cannot be used as a constructor".
+ * Written out instead, which is also the whole of the rule.
+ */
+function englishOrdinalSuffix(day: number): string {
+	// The teens take `th` whatever their last digit would otherwise say.
+	if (day % 100 >= 11 && day % 100 <= 13) {
+		return 'th'
+	}
+
+	switch (day % 10) {
+		case 1:
+			return 'st'
+		case 2:
+			return 'nd'
+		case 3:
+			return 'rd'
+		default:
+			return 'th'
+	}
+}
+
+/**
+ * `20th`, or the day untouched for a locale whose ordinals we do not write.
+ *
+ * The suffix is English's own -- there is no `Intl` that writes one, and a
+ * table of them per locale is a translation problem rather than a formatting
+ * one -- so the decoration stops where English does.
+ */
+function withOrdinal(day: string, locale: string): string {
+	if (!locale.startsWith('en')) {
+		return day
+	}
+
+	return `${day}${englishOrdinalSuffix(Number(day))}`
+}
+
+/**
+ * `Sunday, September 20th`, or `Sunday 20th September`; `9月20日日曜日`.
+ *
+ * The day named in full, for a heading with room for the whole of it. No year:
+ * this titles a menu the reader is looking at today, where the year is a fact
+ * they are not asking about.
+ *
+ * `Intl` still owns the order of the parts and the punctuation between them --
+ * the ordinal is dropped into whichever position the locale puts the day in,
+ * rather than the whole date being assembled by hand.
+ */
+export function formatOrdinalDate(m: Moment, locale: string = deviceLocale()): string {
+	return formatterFor('ordinal-date', locale, ORDINAL_DATE)
+		.formatToParts(m.toDate())
+		.map((part) => (part.type === 'day' ? withOrdinal(part.value, locale) : part.value))
+		.join('')
 }
 
 const DATE_TIME: Intl.DateTimeFormatOptions = {dateStyle: 'medium', timeStyle: 'short'}

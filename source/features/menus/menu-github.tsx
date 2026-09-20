@@ -8,7 +8,6 @@ import {pauseMenuOptions} from './query'
 import {useQuery} from '@tanstack/react-query'
 import {useIsFocused, useRouter} from 'expo-router'
 import type {GithubMenuType} from './types'
-import {formatWeekday} from '@frogpond/time-format'
 import {now as currentMoment} from '@frogpond/timer'
 import type {MealHeaderState} from '@frogpond/food-menu'
 import {usePublishMenuHeader} from './menu-header'
@@ -50,8 +49,6 @@ export function GitHubHostedMenu(props: Props): React.ReactNode {
 		? moment.tz(dataUpdatedAt, timezone())
 		: currentMoment().tz(timezone())
 
-	let date = formatWeekday(menuDate, 'short')
-
 	// Collapsed to begin with: a menu opens as food rather than as chrome, and
 	// the navigation bar carries the control that reveals the row.
 	let [filtersVisible, setFiltersVisible] = React.useState(false)
@@ -61,8 +58,12 @@ export function GitHubHostedMenu(props: Props): React.ReactNode {
 
 	usePublishMenuHeader(
 		{
+			// The Pause's menu is a file we keep rather than a day's service:
+			// it does not turn over at midnight the way a BonApp cafe's does,
+			// and dating it would promise a freshness it does not have.
 			name: props.name,
-			date,
+			weekday: null,
+			date: null,
 			meals: mealHeader.menu,
 			time: mealHeader.time,
 			filters: {visible: filtersVisible, toggle: toggleFilters},

@@ -5,7 +5,7 @@ import {formatMealTimes} from './meal-times'
 /** One meal the reader can choose, and when the cafe serves it. */
 export type MealHeaderOption = {
 	label: string
-	/** e.g. `7:15AM–9:45AM`, or `null` when BonApp published no times for it. */
+	/** e.g. `7:15AM – 9:45AM`, or `null` when BonApp published no times for it. */
 	time: string | null
 }
 

@@ -21,7 +21,7 @@ type MealWindow = {
 }
 
 /**
- * The window a meal is served, e.g. `7:15 – 9:45AM`, or `null` for a meal
+ * The window a meal is served, e.g. `7:15AM – 9:45AM`, or `null` for a meal
  * whose times BonApp did not give us.
  *
  * The times are clock readings on the campus's own clock, rendered in the

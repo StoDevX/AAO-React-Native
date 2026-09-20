@@ -13,6 +13,7 @@ import {
 	shapes,
 } from '@expo/ui/swift-ui/modifiers'
 import type {MealHeaderOption, MealMenuSelection} from '@frogpond/food-menu'
+import {spokenTime, subtitle} from './lib/header-title'
 
 /**
  * What a menu screen puts in its navigation bar: the cafe it is showing, the
@@ -22,17 +23,24 @@ import type {MealHeaderOption, MealMenuSelection} from '@frogpond/food-menu'
  * for a cafe that serves one meal -- or for a screen with no menu on it at all,
  * like the Carleton chooser.
  *
- * `time` is the window the meal on screen is served, e.g. `11AM–1:30PM`, and is
+ * `time` is the window the meal on screen is served, e.g. `11AM – 1:30PM`, and is
  * `null` for a cafe whose menu carries no hours. It rides beside `meals` rather
  * than inside it because a cafe serving one meal has no picker and hours all
  * the same.
  *
- * The date arrives already formatted. `now` is a fresh `Moment` on every render
- * of the screens that publish this, so a `Moment` here would republish on every
+ * The day is carried twice because it is drawn twice at two different lengths:
+ * `weekday` under the cafe's name, where the line is already tight, and `date`
+ * over the meal picker, which has room for the whole of it. A screen showing a
+ * menu that is not any particular day's -- the Pause, whose menu is a file we
+ * keep rather than a day's service -- publishes neither.
+ *
+ * Both arrive already formatted. `now` is a fresh `Moment` on every render of
+ * the screens that publish this, so a `Moment` here would republish on every
  * render and loop through the provider's state.
  */
 type MenuHeader = {
 	name: string
+	weekday: string | null
 	date: string | null
 	time: string | null
 	meals: MealMenuSelection | null
@@ -84,7 +92,7 @@ export function MenuHeaderProvider(props: {children: React.ReactNode}): React.Re
  */
 export function usePublishMenuHeader(header: MenuHeader, focused: boolean): void {
 	let publish = React.useContext(PublishMenuHeaderContext)
-	let {name, date, time, meals, filters} = header
+	let {name, weekday, date, time, meals, filters} = header
 
 	// `filters` is read apart too: a caller building it inline hands over a new
 	// object each render, and depending on that object would publish on each
@@ -96,6 +104,7 @@ export function usePublishMenuHeader(header: MenuHeader, focused: boolean): void
 		if (focused) {
 			publish?.({
 				name,
+				weekday,
 				date,
 				time,
 				meals,
@@ -105,7 +114,7 @@ export function usePublishMenuHeader(header: MenuHeader, focused: boolean): void
 						: null,
 			})
 		}
-	}, [focused, name, date, time, meals, filtersVisible, toggleFilters, publish])
+	}, [focused, name, weekday, date, time, meals, filtersVisible, toggleFilters, publish])
 }
 
 /**
@@ -135,9 +144,10 @@ export function MenuHeaderHost(): React.ReactNode {
 						meals={header.meals}
 						name={header.name}
 						time={header.time}
+						weekday={header.weekday}
 					/>
 				) : (
-					<MenuHeaderTitle date={header.date} name={header.name} time={header.time} />
+					<MenuHeaderTitle name={header.name} time={header.time} weekday={header.weekday} />
 				)}
 			</Stack.Title>
 			{header.filters ? (
@@ -166,11 +176,12 @@ export function MenuHeaderHost(): React.ReactNode {
  */
 function MealMenuTitle(props: {
 	name: string
+	weekday: string | null
 	date: string | null
 	time: string | null
 	meals: MealMenuSelection
 }): React.ReactNode {
-	let {name, date, time, meals} = props
+	let {name, weekday, date, time, meals} = props
 
 	return (
 		// An explicit size rather than `matchContents`: a navigation bar gives
@@ -182,13 +193,18 @@ function MealMenuTitle(props: {
 					<HStack spacing={6}>
 						<VStack spacing={0}>
 							<UIText modifiers={TITLE_MODIFIERS}>{name}</UIText>
-							<UIText modifiers={SUBTITLE_MODIFIERS}>{subtitle(date, meals.selected, time)}</UIText>
+							<UIText modifiers={SUBTITLE_MODIFIERS}>
+								{subtitle(weekday, meals.selected, time)}
+							</UIText>
 						</VStack>
 						<Image modifiers={CHEVRON_MODIFIERS} systemName="chevron.down" />
 					</HStack>
 				}
 			>
-				<Section title={meals.title.toUpperCase()}>
+				{/* The day named in full. The line under the cafe's name carries
+				    the weekday alone, so this is where the whole date fits; a
+				    screen naming no day falls back to the picker's own title. */}
+				<Section title={date ?? meals.title}>
 					{meals.options.map((option) => (
 						<MealOption
 							key={option.label}
@@ -239,15 +255,15 @@ function MealOption(props: {
 
 function MenuHeaderTitle(props: {
 	name: string
-	date: string | null
+	weekday: string | null
 	time: string | null
 }): React.ReactNode {
-	let {name, date, time} = props
-	let detail = subtitle(date, time)
+	let {name, weekday, time} = props
+	let detail = subtitle(weekday, time)
 
 	return (
 		<View
-			accessibilityLabel={[name, date, time && spokenTime(time)].filter(Boolean).join(', ')}
+			accessibilityLabel={[name, weekday, time && spokenTime(time)].filter(Boolean).join(', ')}
 			accessibilityRole="header"
 			accessible={true}
 			style={styles.title}
@@ -262,19 +278,6 @@ function MenuHeaderTitle(props: {
 			) : null}
 		</View>
 	)
-}
-
-/** The line under the cafe's name, e.g. `Thu, Sep 20 • Lunch • 11AM–1:30PM`. */
-function subtitle(...parts: (string | null)[]): string {
-	return parts.filter(Boolean).join(' • ')
-}
-
-/**
- * The window as VoiceOver should hear it. Read aloud, the dash in
- * `11AM–1:30PM` is either silence or the word "dash".
- */
-function spokenTime(time: string): string {
-	return time.replace('–', ' to ')
 }
 
 /**
@@ -312,8 +315,8 @@ const styles = StyleSheet.create({
 	// filter button either side.
 	//
 	// The subtitle now carries the day, the meal and the window it is served
-	// in -- `Thu, Sep 20 • Lunch • 11AM–1:30PM` -- which is the longest line
-	// the bar has to hold, and wider than the longest cafe name above it.
+	// in -- `Sun • Lunch • 11AM – 1:30PM` -- which is the longest line the bar
+	// has to hold, and wider than the longest cafe name above it.
 	// Past this the back button and the filter button either side start to
 	// crowd, so the subtitle scales itself down instead (see
 	// `SUBTITLE_MODIFIERS`); the name still clips rather than shrinks, since a
