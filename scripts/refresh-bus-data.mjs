@@ -19,19 +19,28 @@ const BUS_TIMES = path.join(DATA_BASE, 'bus-times')
  */
 async function downloadFeed() {
 	let tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'gtfs-'))
-	let zipPath = path.join(tempDir, 'feed.zip')
 
-	let response = await fetch(FEED_URL)
-	if (!response.ok) {
-		throw new Error(`${FEED_URL} responded ${response.status}`)
+	try {
+		let zipPath = path.join(tempDir, 'feed.zip')
+
+		let response = await fetch(FEED_URL)
+		if (!response.ok) {
+			throw new Error(`${FEED_URL} responded ${response.status}`)
+		}
+		fs.writeFileSync(zipPath, Buffer.from(await response.arrayBuffer()))
+
+		// Node ships no archive reader, and this runs only in CI and on our own
+		// machines -- not worth an npm dependency to decode one 137 KB zip.
+		execFileSync('unzip', ['-o', '-q', zipPath, '-d', path.join(tempDir, 'feed')])
+
+		return {feedDir: path.join(tempDir, 'feed'), tempDir}
+	} catch (error) {
+		// A failed fetch or a corrupt archive throws before this function
+		// returns, so the caller never learns tempDir exists and cannot clean
+		// it up itself -- remove it here instead of leaking it.
+		fs.rmSync(tempDir, {recursive: true, force: true})
+		throw error
 	}
-	fs.writeFileSync(zipPath, Buffer.from(await response.arrayBuffer()))
-
-	// Node ships no archive reader, and this runs only in CI and on our own
-	// machines -- not worth an npm dependency to decode one 137 KB zip.
-	execFileSync('unzip', ['-o', '-q', zipPath, '-d', path.join(tempDir, 'feed')])
-
-	return {feedDir: path.join(tempDir, 'feed'), tempDir}
 }
 
 function readYaml(filename) {
