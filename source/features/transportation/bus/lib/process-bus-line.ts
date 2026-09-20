@@ -33,6 +33,7 @@ export function processBusLine(lineData: UnprocessedBusLine, now: Moment): BusLi
 	return {
 		line: lineData.line,
 		colors: lineData.colors,
+		timezone: lineData.timezone,
 		schedules: lineData.schedules.map(processBusSchedule(now, lineData.timezone)),
 	}
 }

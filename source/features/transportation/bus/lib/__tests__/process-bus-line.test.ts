@@ -56,6 +56,20 @@ test("processBusLine parses times in the line's own timezone", () => {
 	)
 })
 
+test("processBusLine carries the line's timezone through to its output, for getScheduleForNow and any other reader", () => {
+	let now = moment.tz('2026-08-20 12:00', 'America/Chicago')
+	let processed = processBusLine({...line, timezone: 'America/Chicago'}, now)
+
+	expect(processed.timezone).toBe('America/Chicago')
+})
+
+test('processBusLine leaves timezone undefined for a hand-maintained line, as oles-go.yaml has none', () => {
+	let now = moment.tz('2026-08-20 12:00', 'America/Chicago')
+	let processed = processBusLine(line, now)
+
+	expect(processed.timezone).toBeUndefined()
+})
+
 test('processBusLine falls back to the app timezone for a line without one, as oles-go.yaml has none', () => {
 	let now = moment.tz('2026-08-20 12:00', 'America/Chicago')
 	let withoutZone = processBusLine(line, now)

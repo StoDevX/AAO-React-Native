@@ -91,6 +91,13 @@ describe('the bundled bus-times data', () => {
 		expect(generatedLines.length).toBeGreaterThanOrEqual(3)
 
 		for (let line of generatedLines) {
+			// A route that produced zero schedules would otherwise ship as
+			// `schedules: []` -- a file the schema, the validator, and the loop
+			// above all accept without complaint. The generator and the schema
+			// both reject this now; assert it here too, in the gate that runs
+			// against what actually ships.
+			expect(line.schedules.length).toBeGreaterThan(0)
+
 			for (let schedule of line.schedules) {
 				for (let stopName of schedule.stops) {
 					// `coordinates` is keyed by stop name, and a looping route can
