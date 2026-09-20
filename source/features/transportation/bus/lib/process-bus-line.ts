@@ -5,9 +5,9 @@ import {parseTime} from './parse-time'
 import type {Moment} from 'moment'
 
 export const processBusSchedule =
-	(now: Moment) =>
+	(now: Moment, tz?: string) =>
 	(scheduleData: UnprocessedBusSchedule): BusSchedule => {
-		let times = scheduleData.times.map((timeList) => timeList.map(parseTime(now)))
+		let times = scheduleData.times.map((timeList) => timeList.map(parseTime(now, tz)))
 
 		let timetable = scheduleData.stops.map((stopName, i) => {
 			let coordinates = scheduleData.coordinates[stopName]
@@ -29,6 +29,6 @@ export function processBusLine(lineData: UnprocessedBusLine, now: Moment): BusLi
 	return {
 		line: lineData.line,
 		colors: lineData.colors,
-		schedules: lineData.schedules.map(processBusSchedule(now)),
+		schedules: lineData.schedules.map(processBusSchedule(now, lineData.timezone)),
 	}
 }

@@ -1,6 +1,6 @@
-import {expect, it} from '@jest/globals'
+import {expect, it, test} from '@jest/globals'
 import {parseTime} from '../parse-time'
-import moment from 'moment'
+import moment from 'moment-timezone'
 
 it('returns `null` given `false`', () => {
 	let actual = parseTime(moment())(false)
@@ -21,4 +21,23 @@ it('returns `null` given a string that fails to parse', () => {
 	// everywhere a caller checks for null or false.
 	let actual = parseTime(moment())('not a time')
 	expect(actual).toEqual(null)
+})
+
+test('parseTime interprets a time in an explicitly supplied zone', () => {
+	let now = moment.tz('2026-08-20 12:00', 'America/Chicago')
+	let central = parseTime(now, 'America/Chicago')('4:05pm')
+	let eastern = parseTime(now, 'America/New_York')('4:05pm')
+
+	expect(central).not.toBeNull()
+	expect(eastern).not.toBeNull()
+	// The same wall-clock reading in two zones is not the same instant.
+	expect(central?.valueOf()).not.toEqual(eastern?.valueOf())
+})
+
+test('parseTime falls back to the app timezone when none is supplied', () => {
+	let now = moment.tz('2026-08-20 12:00', 'America/Chicago')
+
+	expect(parseTime(now)('4:05pm')?.valueOf()).toEqual(
+		parseTime(now, 'America/Chicago')('4:05pm')?.valueOf(),
+	)
 })

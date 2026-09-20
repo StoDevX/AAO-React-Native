@@ -35,12 +35,18 @@ export type UnprocessedBusLine = {
 	 */
 	hidden?: boolean
 	schedules: Array<UnprocessedBusSchedule>
+	/** The zone this line's wall-clock departure times are read in. Absent for
+	 * hand-maintained lines, which fall back to the app-wide timezone. */
+	timezone?: string
 }
 
 export type BusLine = {
 	line: string
 	colors: BusLineColors
 	schedules: Array<BusSchedule>
+	/** The zone this line's wall-clock departure times are read in. Absent for
+	 * hand-maintained lines, which fall back to the app-wide timezone. */
+	timezone?: string
 }
 
 export type UnprocessedBusSchedule = {

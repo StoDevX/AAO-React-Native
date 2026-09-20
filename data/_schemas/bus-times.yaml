@@ -5,6 +5,7 @@ additionalProperties: false
 required: [line, schedules, colors]
 properties:
   line: {type: string}
+  timezone: {type: string}
   colors: {$ref: '#/definitions/colors'}
   notice: {type: string}
   hidden: {type: boolean}

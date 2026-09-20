@@ -1,7 +1,8 @@
 import {expect, test} from '@jest/globals'
-import {processBusSchedule} from '../process-bus-line'
+import {processBusLine, processBusSchedule} from '../process-bus-line'
 import {time} from './moment.helper'
 import {UnprocessedBusLine} from '../../types'
+import moment from 'moment-timezone'
 
 // prettier-ignore
 const line: UnprocessedBusLine = {
@@ -30,4 +31,24 @@ const line: UnprocessedBusLine = {
 test('processBusSchedule returns a timetable property', () => {
 	let actual = processBusSchedule(time('12:00pm'))(line.schedules[0])
 	expect('timetable' in actual).toBe(true)
+})
+
+test("processBusLine parses times in the line's own timezone", () => {
+	let now = moment.tz('2026-08-20 12:00', 'America/Chicago')
+	let central = processBusLine({...line, timezone: 'America/Chicago'}, now)
+	let eastern = processBusLine({...line, timezone: 'America/New_York'}, now)
+
+	expect(central.schedules[0].times[0][0]?.valueOf()).not.toEqual(
+		eastern.schedules[0].times[0][0]?.valueOf(),
+	)
+})
+
+test('processBusLine falls back to the app timezone for a line without one, as oles-go.yaml has none', () => {
+	let now = moment.tz('2026-08-20 12:00', 'America/Chicago')
+	let withoutZone = processBusLine(line, now)
+	let withCentral = processBusLine({...line, timezone: 'America/Chicago'}, now)
+
+	expect(withoutZone.schedules[0].times[0][0]?.valueOf()).toEqual(
+		withCentral.schedules[0].times[0][0]?.valueOf(),
+	)
 })
