@@ -227,6 +227,10 @@ run = "node scripts/validate-data.mjs"
 
 # Needs the network -- it fetches the live campus geojson -- so it stays out
 # of validate-data, which gates three workflows including deploy-data. A
+[tasks."scrape-dining"]
+description = "Update data/building-hours/ from Bon Appétit's café pages"
+run = "node scripts/scrape-bonapp.mjs"
+
 # ccc-server blip should not block an unrelated pull request from merging.
 [tasks."validate-building-keys"]
 description = "Check that every building: key resolves to a real map feature"
