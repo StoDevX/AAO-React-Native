@@ -1,5 +1,9 @@
 import assert from 'node:assert/strict'
+import fs from 'node:fs'
+import path from 'node:path'
 import {describe, it} from 'node:test'
+import {load} from 'js-yaml'
+import {readFeed} from './gtfs.mjs'
 import {
 	alignRow,
 	canonicalPattern,
@@ -579,5 +583,81 @@ describe('staleRepairs', () => {
 		assert.equal(warnings.length, 1)
 		assert.match(warnings[0], /tz/u)
 		assert.match(warnings[0], /v2/u)
+	})
+})
+
+describe('the real Hiawathaland feed', () => {
+	let feed = readFeed(path.join(import.meta.dirname, '__fixtures__', 'gtfs-threerivers'))
+	let busTimes = path.join(import.meta.dirname, '..', 'data', 'bus-times')
+	let real = {
+		curation: load(fs.readFileSync(path.join(busTimes, '_curation.yaml'), 'utf-8')),
+		repairs: load(fs.readFileSync(path.join(busTimes, '_repairs.yaml'), 'utf-8')),
+	}
+
+	it('writes exactly the three curated files, never oles-go.yaml', () => {
+		let {files} = gtfsToBusTimes(feed, real)
+
+		assert.deepEqual(
+			[...files.keys()].sort((a, b) => a.localeCompare(b)),
+			['blue-line.yaml', 'express.yaml', 'red-line.yaml'],
+		)
+	})
+
+	it('reproduces the Blue Line brochure table', () => {
+		let {files} = gtfsToBusTimes(feed, real)
+		let schedule = files.get('blue-line.yaml').schedules[0]
+
+		assert.deepEqual(schedule.stops, [
+			'Northfield Depot',
+			'Library',
+			'Family Fare',
+			'Carleton College',
+			'Northfield Estates',
+			'Viking Terrace',
+			'Northfield Manor',
+			'St. Olaf College',
+			'South Oak Apartments',
+			'Northfield Depot',
+		])
+		assert.deepEqual(schedule.times[0], [
+			'6:00am',
+			'6:03am',
+			'6:05am',
+			'6:10am',
+			'6:17am',
+			'6:20am',
+			'6:27am',
+			'6:34am',
+			'6:40am',
+			'6:50am',
+		])
+		assert.equal(schedule.times.length, 13)
+	})
+
+	it('excludes by-request deviation stops, which carry interpolated times', () => {
+		let {files} = gtfsToBusTimes(feed, real)
+		let stops = files.get('blue-line.yaml').schedules[0].stops
+
+		for (let deviation of ["Jersey Mike's", 'Dollar General', 'Kraewood Flats']) {
+			assert.ok(!stops.includes(deviation), `${deviation} should not be a timetable row`)
+		}
+	})
+
+	it('collapses the three Express services into one schedule', () => {
+		let {files} = gtfsToBusTimes(feed, real)
+
+		assert.equal(files.get('express.yaml').schedules.length, 1)
+	})
+
+	it('marks the Express six-stop loop as skipping the final St. Olaf call', () => {
+		let {files} = gtfsToBusTimes(feed, real)
+		let schedule = files.get('express.yaml').schedules[0]
+
+		assert.equal(schedule.stops.length, 7)
+		assert.equal(schedule.stops.at(-1), 'St. Olaf College')
+		assert.ok(
+			schedule.times.some((row) => row.at(-1) === false),
+			'the six-stop trips should mark the last stop false',
+		)
 	})
 })

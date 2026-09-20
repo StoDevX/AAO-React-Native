@@ -1,0 +1,4 @@
+agency_id,route_id,route_short_name,route_long_name,route_desc,route_type,route_url,route_color,route_text_color,route_sort_order,min_headway_minutes,eligibility_restricted,continuous_pickup,continuous_drop_off,tts_route_short_name,tts_route_long_name
+5083,77629,,Express Northfield,,3,,eecc42,000000,0,45,0,1,1,,
+5083,77627,,Blue - Northfield,,3,,08a4d7,000000,2,60,0,1,1,,
+5083,77628,,Red - Northfield,,3,,ff0005,000000,3,60,0,1,1,,
