@@ -655,6 +655,58 @@ describe('gtfsToBusTimes', () => {
 		assert.match(warnings[0], /agency-timezone/u)
 		assert.match(warnings[0], /timezone/u)
 	})
+
+	it('emits a closure from an exception_type 2 row, with its date and name', () => {
+		let feed = twoServiceFeed()
+		feed.calendarDates = [
+			{service_id: 'sA', date: '20260907', holiday_name: 'Labor Day', exception_type: '2'},
+			{service_id: 'sB', date: '20260907', holiday_name: 'Labor Day', exception_type: '2'},
+		]
+
+		let {files} = gtfsToBusTimes(feed, {curation, repairs: {repairs: []}})
+		let schedule = files.get('test-line.yaml').schedules[0]
+
+		assert.deepEqual(schedule.closures, [{date: '2026-09-07', name: 'Labor Day'}])
+	})
+
+	it('ignores exception_type 1 rows, which add service rather than remove it', () => {
+		let feed = twoServiceFeed()
+		feed.calendarDates = [
+			{service_id: 'sA', date: '20260907', holiday_name: 'Labor Day', exception_type: '2'},
+			{service_id: 'sB', date: '20260907', holiday_name: 'Labor Day', exception_type: '2'},
+			{service_id: 'sA', date: '20260101', holiday_name: 'Added Service', exception_type: '1'},
+		]
+
+		let {files} = gtfsToBusTimes(feed, {curation, repairs: {repairs: []}})
+		let schedule = files.get('test-line.yaml').schedules[0]
+
+		assert.deepEqual(schedule.closures, [{date: '2026-09-07', name: 'Labor Day'}])
+	})
+
+	it('omits closures entirely when a service has no calendar_dates removal rows', () => {
+		let {files} = gtfsToBusTimes(twoServiceFeed(), {curation, repairs: {repairs: []}})
+		let schedule = files.get('test-line.yaml').schedules[0]
+
+		assert.equal('closures' in schedule, false)
+	})
+
+	it('sorts closures by date, regardless of the feed row order', () => {
+		let feed = twoServiceFeed()
+		feed.calendarDates = [
+			{service_id: 'sA', date: '20260907', holiday_name: 'Labor Day', exception_type: '2'},
+			{service_id: 'sA', date: '20251225', holiday_name: 'Christmas Day', exception_type: '2'},
+			{service_id: 'sB', date: '20260907', holiday_name: 'Labor Day', exception_type: '2'},
+			{service_id: 'sB', date: '20251225', holiday_name: 'Christmas Day', exception_type: '2'},
+		]
+
+		let {files} = gtfsToBusTimes(feed, {curation, repairs: {repairs: []}})
+		let schedule = files.get('test-line.yaml').schedules[0]
+
+		assert.deepEqual(schedule.closures, [
+			{date: '2025-12-25', name: 'Christmas Day'},
+			{date: '2026-09-07', name: 'Labor Day'},
+		])
+	})
 })
 
 describe('staleRepairs', () => {

@@ -264,6 +264,27 @@ function coordinatesForStops(canonical, stopsById, stopNames) {
 	)
 }
 
+/** A GTFS `YYYYMMDD` date as the `YYYY-MM-DD` string the schema's `date` format expects. */
+function formatGtfsDate(gtfsDate) {
+	return `${gtfsDate.slice(0, 4)}-${gtfsDate.slice(4, 6)}-${gtfsDate.slice(6, 8)}`
+}
+
+/**
+ * A service's holiday closures: its `calendar_dates.txt` REMOVED rows
+ * (`exception_type` 2), sorted by date so the emitted YAML is stable across
+ * runs regardless of the feed's row order.
+ *
+ * Every closure the feed lists is emitted, including dates already past --
+ * filtering by "today" would make the generated files churn between weekly
+ * runs for no benefit, since the app only ever asks about the current date.
+ */
+function closuresForService(feed, serviceId) {
+	return feed.calendarDates
+		.filter((row) => row.service_id === serviceId && row.exception_type === '2')
+		.map((row) => ({date: formatGtfsDate(row.date), name: row.holiday_name}))
+		.sort((a, b) => a.date.localeCompare(b.date))
+}
+
 /** One route's schedules, one per distinct (days, stops, times) timetable. */
 function schedulesForRoute(feed, routeId, stopsById, stopNames) {
 	let calendarById = new Map(feed.calendar.map((row) => [row.service_id, row]))
@@ -306,12 +327,16 @@ function schedulesForRoute(feed, routeId, stopsById, stopNames) {
 		rows.sort((a, b) => a.firstDeparture.localeCompare(b.firstDeparture))
 
 		let canonical = canonicalPattern(rows.map((row) => row.pattern))
+		let closures = closuresForService(feed, serviceId)
 
 		schedules.push({
 			days,
 			coordinates: coordinatesForStops(canonical, stopsById, stopNames),
 			stops: canonical.map((stop) => stopNames[stop.name] ?? stop.name),
 			times: rows.map((row) => alignRow(canonical, row.pattern, row.times)),
+			// Omitted entirely rather than emitted empty, so a service with no
+			// closures does not grow a `closures: []` key on every generated file.
+			...(closures.length > 0 ? {closures} : {}),
 		})
 	}
 

@@ -44,3 +44,8 @@ schedules:
       - [4:00pm, 4:02pm, 4:08pm, 4:10pm, 4:14pm, 4:26pm, 4:36pm, 4:46pm, 4:50pm]
       - [5:00pm, 5:02pm, 5:08pm, 5:10pm, 5:14pm, 5:26pm, 5:36pm, 5:46pm, 5:50pm]
       - [6:00pm, 6:02pm, 6:08pm, 6:10pm, 6:14pm, 6:26pm, 6:36pm, 6:46pm, 6:50pm]
+    closures:
+      - {date: '2025-12-25', name: Christmas Day}
+      - {date: '2026-01-01', name: New Years Day}
+      - {date: '2026-05-25', name: Memorial Day}
+      - {date: '2026-09-07', name: Labor Day}

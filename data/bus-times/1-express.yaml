@@ -36,3 +36,5 @@ schedules:
       - [7:30pm, 7:38pm, 7:45pm, 7:54pm, 8:03pm, 8:08pm, false]
       - [8:15pm, 8:23pm, 8:30pm, 8:39pm, 8:48pm, 8:53pm, false]
       - [9:00pm, 9:08pm, 9:15pm, 9:24pm, 9:33pm, 9:38pm, 9:45pm]
+    closures:
+      - {date: '2026-05-25', name: Memorial Day}
