@@ -287,6 +287,57 @@ function RowContent(props: Props): React.ReactNode {
  * runs the length of the list. Pressable when given `onPress`, in which case
  * the whole row is the target.
  */
+/**
+ * Stands in for the stops the bus has already left, which the timetable folds
+ * away so it opens on where the bus actually is. The rail runs through it at
+ * the width it has everywhere else, so the route reads as continuous rather
+ * than as starting here; the stops it covers are a tap away.
+ */
+export function CollapsedStopsRow({
+	barColor,
+	count,
+	onPress,
+}: {
+	barColor: string
+	count: number
+	onPress: () => void
+}): React.ReactNode {
+	let label = count === 1 ? '1 previous stop' : `${count} previous stops`
+
+	return (
+		<Button
+			modifiers={[buttonStyle('plain'), accessibilityLabel(`Show ${label}`), ...ROW_MODIFIERS]}
+			onPress={onPress}
+		>
+			<HStack
+				modifiers={[contentShape(shapes.rectangle()), frame({maxWidth: FILL_WIDTH})]}
+				spacing={ROW_SPACING}
+			>
+				<ZStack modifiers={[frame({width: RAIL_COLUMN_WIDTH, maxHeight: Infinity})]}>
+					<Rectangle
+						modifiers={[
+							frame({width: RAIL_WIDTH, maxHeight: Infinity}),
+							foregroundStyle(barColor),
+							opacity(0.35),
+						]}
+					/>
+				</ZStack>
+
+				<Text
+					modifiers={[
+						font({textStyle: 'subheadline'}),
+						foregroundStyle(c.secondaryLabel),
+						padding({vertical: TEXT_VERTICAL_PADDING}),
+						frame({maxWidth: FILL_WIDTH, alignment: 'leading'}),
+					]}
+				>
+					{label}
+				</Text>
+			</HStack>
+		</Button>
+	)
+}
+
 export function TimetableRow(props: Props): React.ReactNode {
 	let {onPress, accessibilityLabel: label} = props
 

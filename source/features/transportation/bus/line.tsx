@@ -3,6 +3,7 @@ import {StyleSheet} from 'react-native'
 import type {DayOfWeek, UnprocessedBusLine} from './types'
 import {
 	busPropsForRow,
+	collapseEarlierStops,
 	deriveLineState,
 	findBusStopStatus,
 	findBusTarget,
@@ -15,7 +16,7 @@ import {frame, listStyle} from '@expo/ui/swift-ui/modifiers'
 import {BUS_FOOTER_MESSAGE} from './constants'
 import {momentToDayOfWeek, createMomentForDay} from './components/days'
 import {formatDepartures} from './components/times'
-import {TimetableRow} from './components/timetable-row'
+import {CollapsedStopsRow, TimetableRow} from './components/timetable-row'
 
 /**
  * How many of a stop's remaining departures a row shows. Three fit on one
@@ -53,6 +54,10 @@ export function BusLine(props: Props): React.ReactNode {
 		now: momentForSelectedDay,
 	})
 
+	// The timetable opens on where the bus is, with the stops behind it folded
+	// away.
+	let [expanded, setExpanded] = React.useState(false)
+
 	let busTarget = findBusTarget(
 		schedule,
 		{status, index: currentBusIteration, parkedStopIndex},
@@ -61,11 +66,17 @@ export function BusLine(props: Props): React.ReactNode {
 
 	let timetable = schedule.timetable
 
+	let {firstVisibleIndex, hiddenCount} = collapseEarlierStops({
+		targetIndex: busTarget?.targetIndex ?? null,
+		expanded,
+	})
+
 	// One row's measured height, which every row then uses to place the bus.
 	// The set is skipped when the value has not changed: the measurement
 	// fires on layout passes the rows do not care about, and only a new
 	// height is worth a render.
 	let [rowHeight, setRowHeight] = React.useState<number | null>(null)
+
 	let recordRowHeight = React.useCallback((height: number) => {
 		setRowHeight((known) => (known === height ? known : height))
 	}, [])
@@ -90,10 +101,22 @@ export function BusLine(props: Props): React.ReactNode {
 				) : null}
 
 				<Section footer={<Text>{BUS_FOOTER_MESSAGE}</Text>} title="Stops">
+					{hiddenCount > 0 ? (
+						<CollapsedStopsRow
+							barColor={barColor}
+							count={hiddenCount}
+							onPress={() => setExpanded(true)}
+						/>
+					) : null}
+
 					{timetable.length === 0 ? (
 						<ContentUnavailableView systemImage="bus" title="This line is not running today." />
 					) : (
 						timetable.map((stop, index) => {
+							if (index < firstVisibleIndex) {
+								return null
+							}
+
 							let {busFraction, busAtStop} = busPropsForRow(busTarget, index)
 							let stopStatus = findBusStopStatus({
 								stop,
@@ -122,7 +145,7 @@ export function BusLine(props: Props): React.ReactNode {
 									detail={times}
 									isFirstRow={index === 0}
 									isLastRow={index === timetable.length - 1}
-									onHeight={index === 0 ? recordRowHeight : undefined}
+									onHeight={index === firstVisibleIndex ? recordRowHeight : undefined}
 									onPress={() => onPressStop(stop.name)}
 									rowHeight={rowHeight}
 									stopStatus={stopStatus}
