@@ -33,7 +33,7 @@ test('processBusSchedule returns a timetable property', () => {
 	expect('timetable' in actual).toBe(true)
 })
 
-test('processBusSchedule does not throw for a schedule with no coordinates key, as a hand-maintained line may have', () => {
+test('processBusSchedule does not throw for a schedule with no coordinates key', () => {
 	let {coordinates: _coordinates, ...scheduleWithoutCoordinates} = line.schedules[0]
 
 	let process = () => processBusSchedule(time('12:00pm'))(scheduleWithoutCoordinates)
@@ -63,14 +63,14 @@ test("processBusLine carries the line's timezone through to its output, for getS
 	expect(processed.timezone).toBe('America/Chicago')
 })
 
-test('processBusLine leaves timezone undefined for a hand-maintained line, as oles-go.yaml has none', () => {
+test('processBusLine leaves timezone undefined for a line that carries none', () => {
 	let now = moment.tz('2026-08-20 12:00', 'America/Chicago')
 	let processed = processBusLine(line, now)
 
 	expect(processed.timezone).toBeUndefined()
 })
 
-test('processBusLine falls back to the app timezone for a line without one, as oles-go.yaml has none', () => {
+test('processBusLine falls back to the app timezone for a line that carries none', () => {
 	let now = moment.tz('2026-08-20 12:00', 'America/Chicago')
 	let withoutZone = processBusLine(line, now)
 	let withCentral = processBusLine({...line, timezone: 'America/Chicago'}, now)

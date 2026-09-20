@@ -58,28 +58,6 @@ describe('the bundled bus-times data', () => {
 		}
 	})
 
-	test('Oles Go processes, the one line with no timezone and an empty coordinates map', () => {
-		let olesGo = lines.find((line) => line.line === 'Oles Go')
-
-		if (!olesGo) {
-			throw new Error('expected docs/bus-times.json to carry an "Oles Go" line')
-		}
-
-		expect(olesGo.timezone).toBeUndefined()
-
-		let process = () => processBusLine(olesGo, now)
-
-		expect(process).not.toThrow()
-
-		let processed = process()
-		for (let schedule of processed.schedules) {
-			expect(schedule.coordinates).toEqual({})
-			for (let stop of schedule.timetable) {
-				expect(stop.coordinates).toBeUndefined()
-			}
-		}
-	})
-
 	test('every generated line publishes a coordinate for every stop it serves', () => {
 		// The generator always sets `timezone`; a hand-maintained line, like Oles
 		// Go, never does -- that is how this picks out "generated" lines. If the
