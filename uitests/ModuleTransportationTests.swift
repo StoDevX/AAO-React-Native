@@ -43,16 +43,19 @@ class ModuleTransportationTests: UITestCase {
 			.capture("Transportation - timetable from strip")
 	}
 
-	/// The day picker lives in the sheet's navigation bar rather than in the
-	/// content, so the section title is the only thing on screen that says
-	/// which day is showing. This checks the two stay in step.
-	func testPickingADayRetitlesTheSchedule() throws {
+	/// Picking a day from the sheet's navigation bar has to redraw the
+	/// timetable beneath it, not just relabel the menu. Sunday's route skips a
+	/// stop every other day calls at, so that stop's row is the proof.
+	func testPickingADayRedrawsTheTimetable() throws {
 		TransportationScreen(app: app)
 			.navigate()
 			.openLine(TestIdentifiers.Transportation.aLine)
+			.verifyStopListsDepartures(TestIdentifiers.Transportation.aStopSkippedOnADay)
 			.pickDay(TestIdentifiers.Transportation.aDay)
-			.verifyScheduleShows(day: TestIdentifiers.Transportation.aDay)
-			.capture("Transportation - Saturday schedule")
+			.verifyStopSkipped(
+				TestIdentifiers.Transportation.aStopSkippedOnADay,
+				on: TestIdentifiers.Transportation.aDay)
+			.capture("Transportation - Sunday schedule")
 	}
 
 	/// Other Modes has no tab of its own -- it is a set of sections below the

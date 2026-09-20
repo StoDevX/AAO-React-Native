@@ -71,11 +71,10 @@ describe('BusLine', () => {
 		expect(queryByLabelText(/^St\. Olaf,/u)).toBeNull()
 	})
 
-	test('titles an empty day with the day alone, so the empty state is not said twice', async () => {
-		let {getByText, queryByText} = await renderLine('Sa')
+	test('heads the stop list Stops', async () => {
+		let {getByText} = await renderLine()
 
-		expect(getByText('SATURDAY')).toBeTruthy()
-		expect(queryByText(/^SATURDAY —/u)).toBeNull()
+		expect(getByText('Stops')).toBeTruthy()
 	})
 
 	test('shows a stop at most three departures, so they fit on one line', async () => {

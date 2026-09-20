@@ -586,7 +586,18 @@ struct TestIdentifiers {
 		/// The navigation bar's day menu, labelled by the day it is showing.
 		/// `Today` when the screens are following the clock.
 		static let dayMenuDefaultLabel = "Today"
-		static let aDay = "Saturday"
+		/// The day the day-picker test picks. Sunday, because Express Bus keeps
+		/// one timetable Monday to Saturday (`docs/bus-times.json`), so Sunday
+		/// is the only pick that draws rows the frozen Saturday clock does not.
+		static let aDay = "Sunday"
+		/// A stop Express Bus skips on `aDay` and calls at every other day. Its
+		/// row lists times on any other day and reads "Cinema 10, None • None"
+		/// on Sunday, which is how the test tells a redrawn timetable from a
+		/// menu that merely relabelled itself.
+		static let aStopSkippedOnADay = "Cinema 10"
+		/// What a row shows in place of a departure the route skips; matches
+		/// `formatDeparture` in `source/features/transportation/bus/components/times.tsx`.
+		static let skippedDeparture = "None"
 		/// The last row on the Transportation screen. It sits in Other Modes'
 		/// final section, which carries no heading -- its entries have an empty
 		/// `category` -- so reaching this row proves the list scrolls past both

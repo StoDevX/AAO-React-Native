@@ -144,24 +144,35 @@ struct TransportationScreen: Screen {
 		return self
 	}
 
-	/// Matching on the em-dash that follows the day in the section title --
-	/// "Saturday — Starts in 3 hours" -- rules out the toolbar button, whose
-	/// own label is the bare day name and never contains it. The dash is only
-	/// there when the line has a timetable for the day; on a day it does not
-	/// run the title is the bare day, so this needs a line that runs on `day`.
-	/// `aLine` runs on `aDay`.
+	/// The timetable lists departure times for `stop` rather than the "None"
+	/// a skipped stop shows. The precondition for `verifyStopSkipped`: without
+	/// it, a timetable that showed "None" all along would pass that check.
 	@discardableResult
-	func verifyScheduleShows(day: String) -> Self {
+	func verifyStopListsDepartures(_ stop: String) -> Self {
+		let row = app.elementWithLabel(startingWith: "\(stop), ")
+		XCTAssertTrue(
+			row.waitForExistence(timeout: 30),
+			"The timetable should list \(stop)")
+		XCTAssertFalse(
+			row.label.hasPrefix("\(stop), \(TestIdentifiers.Transportation.skippedDeparture)"),
+			"\(stop) should have departure times before the day changes")
+		return self
+	}
+
+	/// The timetable now shows `stop` as skipped -- its row leads with "None"
+	/// where a time would be. Matched on the row's label rather than on the
+	/// menu button, which relabels itself whether or not the list redrew.
+	@discardableResult
+	func verifyStopSkipped(_ stop: String, on day: String) -> Self {
 		XCTAssertTrue(
 			app.buttons[day].waitForExistence(timeout: 30),
 			"The day menu should relabel itself to \(day)")
 
-		let title = app.staticTexts.matching(
-			NSPredicate(format: "label BEGINSWITH[c] %@", "\(day) —")
-		).firstMatch
+		let row = app.elementWithLabel(
+			startingWith: "\(stop), \(TestIdentifiers.Transportation.skippedDeparture)")
 		XCTAssertTrue(
-			title.waitForExistence(timeout: 30),
-			"The section title should lead with \(day) —")
+			row.waitForExistence(timeout: 30),
+			"Picking \(day) should redraw the timetable, on which \(stop) is skipped")
 		return self
 	}
 

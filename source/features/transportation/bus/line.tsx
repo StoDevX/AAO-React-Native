@@ -7,7 +7,6 @@ import {
 	findBusStopStatus,
 	findBusTarget,
 	findRemainingDeparturesForStop,
-	scheduleSectionTitle,
 } from './lib'
 import type {Moment} from 'moment-timezone'
 import * as c from '@frogpond/colors'
@@ -49,7 +48,7 @@ export function BusLine(props: Props): React.ReactNode {
 
 	const momentForSelectedDay = createMomentForDay(now, dayToShow)
 
-	let {schedule, subtitle, currentBusIteration, parkedStopIndex, status} = deriveLineState({
+	let {schedule, currentBusIteration, parkedStopIndex, status} = deriveLineState({
 		line,
 		now: momentForSelectedDay,
 	})
@@ -87,10 +86,7 @@ export function BusLine(props: Props): React.ReactNode {
 					</Section>
 				) : null}
 
-				<Section
-					footer={<Text>{BUS_FOOTER_MESSAGE}</Text>}
-					title={scheduleSectionTitle({selectedDay, subtitle, hasTimetable: timetable.length > 0})}
-				>
+				<Section footer={<Text>{BUS_FOOTER_MESSAGE}</Text>} title="Stops">
 					{timetable.length === 0 ? (
 						<ContentUnavailableView systemImage="bus" title="This line is not running today." />
 					) : (
