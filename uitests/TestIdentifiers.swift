@@ -224,10 +224,16 @@ struct TestIdentifiers {
 		static let vegan = "Vegan"
 		static let halal = "Halal"
 
-		/// The day the app's frozen clock sits on, as the header's `medium`
-		/// date style renders it. `UITEST_FROZEN_DATE` in modules/timer/index.ts
-		/// is noon in Chicago, so it also decides the meal below.
-		static let frozenDate = "Sat, Sep 5"
+		/// The day the app's frozen clock sits on, as the header writes it under
+		/// the cafe's name -- the weekday alone. `UITEST_FROZEN_DATE` in
+		/// modules/timer/index.ts is noon in Chicago, so it also decides the
+		/// meal below.
+		static let frozenWeekday = "Sat"
+
+		/// The separator between the parts of the header's second line. Used to
+		/// assert a screen has no such line at all: only a day-and-meal
+		/// subtitle puts one in a navigation bar.
+		static let headerSeparator = " • "
 
 		/// The meal that frozen noon lands in, and so the one every menu screen
 		/// opens on.
@@ -239,10 +245,18 @@ struct TestIdentifiers {
 		/// Reveals the filter row, which a menu opens with collapsed.
 		static let filtersButton = "Filters"
 
-		/// The navigation title, which is also the meal picker's button. Built
-		/// the way `MenuHeaderTitle` composes its accessibility label.
+		/// The start of the navigation title's label, which is also the meal
+		/// picker's button: SwiftUI composes it as the cafe's name, a comma,
+		/// then the line beneath -- `Stav Hall, Sat • Lunch • 8:30AM – 12PM`.
+		///
+		/// A prefix, because the window that finishes it is not the same string
+		/// on every machine. A meal's hours are campus clock readings printed
+		/// in the device's zone, so Stav's 10:30 lunch is `10:30AM` on a
+		/// Chicago simulator, `8:30AM` on a Pacific one and `3:30PM` on a UTC
+		/// runner. Matching it exactly would pin the suite to whoever wrote it.
+		/// What the window says is `meal-times.test.ts`' business.
 		static func header(_ cafe: String, meal: String) -> String {
-			"\(cafe), \(frozenDate) • \(meal)"
+			"\(cafe), \(frozenWeekday)\(headerSeparator)\(meal)"
 		}
 	}
 

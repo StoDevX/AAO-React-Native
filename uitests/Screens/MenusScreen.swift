@@ -19,7 +19,7 @@ struct MenusScreen: Screen {
 	func verifyCafeHeader(_ cafe: String, showing meal: String) -> Self {
 		XCTAssertTrue(
 			mealPicker(cafe, showing: meal).waitForExistence(timeout: 30),
-			"the header should read \(cafe) over \(TestIdentifiers.Menus.frozenDate) and \(meal)")
+			"the header should read \(cafe) over \(TestIdentifiers.Menus.frozenWeekday) and \(meal)")
 		return self
 	}
 
@@ -75,10 +75,16 @@ struct MenusScreen: Screen {
 	/// Queried across every element type: the title is a SwiftUI `Menu` label
 	/// hosted in the bar, and it surfaces as neither a plain button nor static
 	/// text reliably.
+	///
+	/// Matched on a prefix, since the label ends in the meal's serving window
+	/// and that is written in the device's zone -- see `Menus.header`.
 	func mealPicker(_ cafe: String, showing meal: String) -> XCUIElement {
-		app.navigationBars.descendants(matching: .any)[
-			TestIdentifiers.Menus.header(cafe, meal: meal)
-		].firstMatch
+		app.navigationBars.descendants(matching: .any)
+			.matching(
+				NSPredicate(
+					format: "label BEGINSWITH %@", TestIdentifiers.Menus.header(cafe, meal: meal))
+			)
+			.firstMatch
 	}
 
 	/// Open the title's menu and choose another meal.
@@ -90,8 +96,11 @@ struct MenusScreen: Screen {
 			"the title should name \(current) and open the meal picker")
 		picker.tap()
 
-		// The menu presents above the bar rather than inside it.
-		let option = app.buttons[meal].firstMatch
+		// The menu presents above the bar rather than inside it. Matched on a
+		// prefix: each row now carries the meal over the window it is served
+		// in, so its label reads `Dinner, 2:30PM - 6PM` rather than `Dinner`.
+		let option = app.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", meal))
+			.firstMatch
 		XCTAssertTrue(
 			option.waitForExistence(timeout: 30),
 			"\(meal) should be offered in the meal menu")

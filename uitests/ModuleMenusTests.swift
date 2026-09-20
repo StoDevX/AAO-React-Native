@@ -54,9 +54,11 @@ class ModuleMenusTests: UITestCase {
 			"the chooser should not carry a cafe's name")
 		XCTAssertFalse(
 			app.navigationBars.staticTexts
-				.matching(NSPredicate(format: "label CONTAINS %@", TestIdentifiers.Menus.frozenDate))
+				.matching(
+					NSPredicate(format: "label CONTAINS %@", TestIdentifiers.Menus.headerSeparator)
+				)
 				.firstMatch.exists,
-			"the chooser shows no single day, so it should carry no date")
+			"the chooser shows no single day, so it should carry no line beneath its name")
 	}
 
 	/// The meal picker is the title itself, drawn as a custom view because a
