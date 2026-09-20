@@ -1,7 +1,15 @@
 import * as React from 'react'
 import {useCallback, useEffect, useMemo, useState} from 'react'
 import {StyleSheet} from 'react-native'
-import {Host, List, RNHostView, Section, Text, VStack} from '@expo/ui/swift-ui'
+import {
+	ContentUnavailableView,
+	Host,
+	List,
+	RNHostView,
+	Section,
+	Text,
+	VStack,
+} from '@expo/ui/swift-ui'
 import {font, foregroundStyle, listStyle, padding, refreshable} from '@expo/ui/swift-ui/modifiers'
 import * as c from '@frogpond/colors'
 import type {FilterType} from '@frogpond/filter'
@@ -12,8 +20,10 @@ import {FoodItemRow} from './food-item-row'
 import {applyMenuFilters} from './lib/apply-menu-filters'
 import {buildFilters} from './lib/build-filters'
 import {chooseMeal} from './lib/choose-meal'
+import {isClosedLabel} from './lib/closed'
 import {emptyMessage} from './lib/empty-message'
 import {mealHeaderMenu, type MealHeaderMenu} from './lib/meal-header'
+import {formatMealTimes} from './lib/meal-times'
 import {offerSpecials} from './lib/offer-specials'
 import type {
 	MasterCorIconMapType,
@@ -31,6 +41,26 @@ export type MealMenuSelection = MealHeaderMenu & {
 	select: (label: string) => void
 }
 
+/** What the screen above needs to title itself with the menu on screen. */
+export type MealHeaderState = {
+	/**
+	 * The meal picker, or `null` when the cafe serves one meal and there is
+	 * nothing to pick.
+	 */
+	menu: MealMenuSelection | null
+	/**
+	 * The window the meal on screen is served, e.g. `7:15AM – 9:45AM`. Reported
+	 * apart from the picker because a cafe serving one meal has no picker to
+	 * carry it and hours all the same.
+	 */
+	time: string | null
+	/**
+	 * Whether the cafe is shut, which is the whole of what the screen above has
+	 * to say about it -- there is no day's service to describe.
+	 */
+	closed: boolean
+}
+
 type Props = {
 	cafeMessage?: string | null
 	foodItems: MenuItemContainerType
@@ -44,11 +74,11 @@ type Props = {
 	// needs to await that promise to keep the spinner up until it resolves.
 	onRefresh?: () => unknown
 	/**
-	 * Hands the screen above the meal picker to draw, for a screen that draws
-	 * it in its navigation bar rather than in the toolbar below. `null` when
-	 * the cafe serves one meal and there is nothing to pick.
+	 * Hands the screen above what to title itself with, for a screen that
+	 * draws the meal picker in its navigation bar rather than in the toolbar
+	 * below.
 	 */
-	onMealMenuChange?: (menu: MealMenuSelection | null) => void
+	onMealHeaderChange?: (header: MealHeaderState) => void
 	/**
 	 * Whether the filter row is on screen. The screens above hide it behind a
 	 * navigation-bar button, so a menu opens as food rather than as chrome.
@@ -190,14 +220,27 @@ export function FancyMenu(props: Props): React.ReactNode {
 	}, [])
 
 	const mealMenu = useMemo((): MealMenuSelection | null => {
-		const menu = mealHeaderMenu(filters, mealName)
+		const menu = mealHeaderMenu(filters, mealName, meals)
 		return menu ? {...menu, select: selectMeal} : null
-	}, [filters, mealName, selectMeal])
+	}, [filters, mealName, meals, selectMeal])
 
-	const {onMealMenuChange} = props
+	// Keyed on the two time strings rather than on `meal`: `chooseMeal` runs
+	// on every render, and a window rebuilt with it would republish the header
+	// on every render and loop through the provider's state above.
+	const {starttime, endtime} = meal
+	const mealTime = useMemo(() => formatMealTimes({starttime, endtime}), [starttime, endtime])
+
+	const closed = isClosedLabel(mealName)
+
+	const mealHeader = useMemo(
+		(): MealHeaderState => ({menu: mealMenu, time: mealTime, closed}),
+		[mealMenu, mealTime, closed],
+	)
+
+	const {onMealHeaderChange} = props
 	useEffect(() => {
-		onMealMenuChange?.(mealMenu)
-	}, [onMealMenuChange, mealMenu])
+		onMealHeaderChange?.(mealHeader)
+	}, [onMealHeaderChange, mealHeader])
 
 	const specialsFilterEnabled = areSpecialsFiltered(appliedFilters)
 	const message = emptyMessage({
@@ -251,19 +294,25 @@ export function FancyMenu(props: Props): React.ReactNode {
 							{message}
 						</Text>
 					) : (
-						sectionsWithNotes.map((section) => (
-							<Section key={section.title} {...sectionHeaderProps(section.title, section.note)}>
-								{section.data.map((item) => (
-									<FoodItemRow
-										key={item.id}
-										badgeSpecials={!specialsFilterEnabled}
-										corIcons={menuCorIcons}
-										data={item}
-										onPress={onItemPress}
-									/>
-								))}
-							</Section>
-						))
+						sectionsWithNotes.map((section) =>
+							section.data.length === 1 && isClosedLabel(section.data[0].label) ? (
+								<Section key={section.title} {...sectionHeaderProps('', section.note)}>
+									<ContentUnavailableView systemImage="clock" title={section.title} />
+								</Section>
+							) : (
+								<Section key={section.title} {...sectionHeaderProps(section.title, section.note)}>
+									{section.data.map((item) => (
+										<FoodItemRow
+											key={item.id}
+											badgeSpecials={!specialsFilterEnabled}
+											corIcons={menuCorIcons}
+											data={item}
+											onPress={onItemPress}
+										/>
+									))}
+								</Section>
+							),
+						)
 					)}
 				</List>
 			</VStack>

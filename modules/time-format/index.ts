@@ -177,6 +177,50 @@ export function formatTime(m: Moment, locale: string = deviceLocale(), timeZone?
 }
 
 /**
+ * The same time with nothing between the digits and the meridiem: `5:30PM`,
+ * `9AM`. For a navigation bar and a pull-down row, where the gap is width
+ * there is none of.
+ *
+ * Squeezed out of `formatTime`'s answer rather than assembled from parts:
+ * every locale that writes a meridiem sets it off with a space on one side or
+ * the other, and closing that space is the whole of the difference. A
+ * 24-hour locale has no space to close and comes back as it went in.
+ *
+ * `\s` covers the narrow no-break space `Intl` writes in some ICU builds as
+ * well as the plain one it writes in others.
+ */
+export function formatCompactTime(
+	m: Moment,
+	locale: string = deviceLocale(),
+	timeZone?: string,
+): string {
+	return formatTime(m, locale, timeZone).replaceAll(/\s/gu, '')
+}
+
+/** The dash between the ends of a range, spaced so neither end runs into it. */
+const RANGE_SEPARATOR = ' – '
+
+/**
+ * A span of one day's clock, e.g. `8:30AM – 11:30AM`, `7AM – 6PM` or
+ * `08:30 – 11:30`.
+ *
+ * Each end is written in full. A reader glancing at one is reading one end,
+ * not the pair, and an end that borrows its meridiem from the other is an end
+ * that cannot be read on its own.
+ */
+export function formatCompactTimeRange(
+	start: Moment,
+	end: Moment,
+	locale: string = deviceLocale(),
+	timeZone?: string,
+): string {
+	let from = formatCompactTime(start, locale, timeZone)
+	let to = formatCompactTime(end, locale, timeZone)
+
+	return `${from}${RANGE_SEPARATOR}${to}`
+}
+
+/**
  * A timeline's hour label, e.g. `9 AM` or `09:00`. An hour label is always
  * on the hour, so a 12-hour locale needs no minutes at all -- unlike
  * `formatTime`, which keeps them for a time that might not be.

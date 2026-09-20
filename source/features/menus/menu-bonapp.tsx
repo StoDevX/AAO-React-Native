@@ -5,7 +5,6 @@ import {LoadingView, NoticeView} from '@frogpond/notice'
 import {FoodMenu} from '@frogpond/food-menu'
 import type {
 	DayPartMenuType,
-	EditedBonAppCafeInfoType as CafeInfoType,
 	EditedBonAppMenuInfoType as MenuInfoType,
 	MenuItemContainerType,
 	MenuItemType,
@@ -14,14 +13,14 @@ import type {
 } from './types'
 import sample from 'lodash/sample'
 import {reduce} from 'lodash'
-import {type Moment} from 'moment-timezone'
 import {now as currentMoment} from '@frogpond/timer'
 import {bonAppCafeOptions, bonAppMenuOptions, prepareFood} from './query'
+import {findCafeMessage} from './lib/cafe-message'
 import {useQuery} from '@tanstack/react-query'
 import {useIsFocused, useRouter} from 'expo-router'
 import {toLaxTitleCase} from '@frogpond/titlecase'
-import {formatDate} from '@frogpond/time-format'
-import type {MealMenuSelection} from '@frogpond/food-menu'
+import {formatDate, formatWeekday} from '@frogpond/time-format'
+import type {MealHeaderState} from '@frogpond/food-menu'
 import {usePublishMenuHeader} from './menu-header'
 
 const BONAPP_HTML_ERROR_CODE = 'bonapp-html'
@@ -37,26 +36,15 @@ const DEFAULT_MENU = [
 	},
 ]
 
+// Module-level so the state below starts on one identity rather than a fresh
+// object per mount.
+const EMPTY_MEAL_HEADER: MealHeaderState = {menu: null, time: null, closed: false}
+
 type Props = {
 	cafe: string | {id: string}
 	ignoreProvidedMenus?: boolean
 	loadingMessage: string[]
 	name: string
-}
-
-function findCafeMessage(cafeInfo: CafeInfoType, now: Moment): string | null {
-	let actualCafeInfo = cafeInfo.cafe
-
-	let todayDate = now.format('YYYY-MM-DD')
-	let todayMenu = actualCafeInfo.days.find(({date}) => date === todayDate)
-
-	if (!todayMenu) {
-		return 'Closed today'
-	} else if (todayMenu.status === 'closed') {
-		return todayMenu.message || 'Closed today'
-	}
-
-	return null
 }
 
 const groupByStation = (
@@ -156,11 +144,16 @@ export function BonAppHostedMenu(props: Props): React.ReactNode {
 	// to defer their mounting: every cafe the reader has already visited stays
 	// mounted, and only the one in front of them may title the screen.
 	let isFocused = useIsFocused()
-	let [mealMenu, setMealMenu] = React.useState<MealMenuSelection | null>(null)
+	let [mealHeader, setMealHeader] = React.useState<MealHeaderState>(EMPTY_MEAL_HEADER)
 
-	// The formatted day, not `now`: `currentMoment()` above builds a fresh
-	// Moment on every render, so a header depending on it would republish on
-	// every render and loop through the provider's state.
+	// The weekday alone under the cafe's name, where the line is already tight
+	// -- the date beside it said which today it is, which the reader knows --
+	// and the whole date over the meal picker, which has room for it.
+	//
+	// Formatted days, not `now`: `currentMoment()` above builds a fresh Moment
+	// on every render, so a header depending on it would republish on every
+	// render and loop through the provider's state.
+	let weekday = formatWeekday(now, 'short')
 	let date = formatDate(now, 'medium')
 
 	// Collapsed to begin with: a menu opens as food rather than as chrome, and
@@ -176,8 +169,11 @@ export function BonAppHostedMenu(props: Props): React.ReactNode {
 	usePublishMenuHeader(
 		{
 			name: props.name,
+			weekday,
 			date,
-			meals: mealMenu,
+			meals: mealHeader.menu,
+			time: mealHeader.time,
+			closed: mealHeader.closed,
 			filters: {visible: filtersVisible, toggle: toggleFilters},
 		},
 		isFocused,
@@ -286,7 +282,7 @@ export function BonAppHostedMenu(props: Props): React.ReactNode {
 			now={now}
 			onItemPress={onItemPress}
 			filtersVisible={filtersVisible}
-			onMealMenuChange={setMealMenu}
+			onMealHeaderChange={setMealHeader}
 			onRefresh={onRefresh}
 		/>
 	)

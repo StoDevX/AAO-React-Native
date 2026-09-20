@@ -8,9 +8,8 @@ import {pauseMenuOptions} from './query'
 import {useQuery} from '@tanstack/react-query'
 import {useIsFocused, useRouter} from 'expo-router'
 import type {GithubMenuType} from './types'
-import {formatDate} from '@frogpond/time-format'
 import {now as currentMoment} from '@frogpond/timer'
-import type {MealMenuSelection} from '@frogpond/food-menu'
+import type {MealHeaderState} from '@frogpond/food-menu'
 import {usePublishMenuHeader} from './menu-header'
 
 type Props = {
@@ -26,10 +25,14 @@ type Props = {
 // `corIcons` reference on every one of those renders.
 const EMPTY_MENU: GithubMenuType = {foodItems: {}, meals: [], corIcons: {}}
 
+// Module-level for the same reason: one identity rather than a fresh object
+// per mount.
+const EMPTY_MEAL_HEADER: MealHeaderState = {menu: null, time: null, closed: false}
+
 export function GitHubHostedMenu(props: Props): React.ReactNode {
 	let router = useRouter()
 	let isFocused = useIsFocused()
-	let [mealMenu, setMealMenu] = React.useState<MealMenuSelection | null>(null)
+	let [mealHeader, setMealHeader] = React.useState<MealHeaderState>(EMPTY_MEAL_HEADER)
 
 	let {
 		data = EMPTY_MENU,
@@ -46,8 +49,6 @@ export function GitHubHostedMenu(props: Props): React.ReactNode {
 		? moment.tz(dataUpdatedAt, timezone())
 		: currentMoment().tz(timezone())
 
-	let date = formatDate(menuDate, 'medium')
-
 	// Collapsed to begin with: a menu opens as food rather than as chrome, and
 	// the navigation bar carries the control that reveals the row.
 	let [filtersVisible, setFiltersVisible] = React.useState(false)
@@ -57,9 +58,15 @@ export function GitHubHostedMenu(props: Props): React.ReactNode {
 
 	usePublishMenuHeader(
 		{
+			// The Pause's menu is a file we keep rather than a day's service:
+			// it does not turn over at midnight the way a BonApp cafe's does,
+			// and dating it would promise a freshness it does not have.
 			name: props.name,
-			date,
-			meals: mealMenu,
+			weekday: null,
+			date: null,
+			meals: mealHeader.menu,
+			time: mealHeader.time,
+			closed: mealHeader.closed,
 			filters: {visible: filtersVisible, toggle: toggleFilters},
 		},
 		isFocused,
@@ -93,7 +100,7 @@ export function GitHubHostedMenu(props: Props): React.ReactNode {
 				})
 			}
 			filtersVisible={filtersVisible}
-			onMealMenuChange={setMealMenu}
+			onMealHeaderChange={setMealHeader}
 			onRefresh={refetch}
 		/>
 	)

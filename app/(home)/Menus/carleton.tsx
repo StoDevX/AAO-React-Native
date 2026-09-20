@@ -9,10 +9,21 @@ import {usePublishMenuHeader} from '../../../source/features/menus/menu-header'
 export default function CarletonPage(): React.ReactNode {
 	let router = useRouter()
 
-	// A chooser rather than a menu: no day on it, and no meal to pick. It
-	// publishes all the same, so the cafe tab the reader came from does not
-	// leave its name and its live picker sitting over this list.
-	usePublishMenuHeader({name: 'Carleton', date: null, meals: null, filters: null}, useIsFocused())
+	// A chooser rather than a menu: no day on it, no hours, and no meal to
+	// pick. It publishes all the same, so the cafe tab the reader came from
+	// does not leave its name and its live picker sitting over this list.
+	usePublishMenuHeader(
+		{
+			name: 'Carleton',
+			weekday: null,
+			date: null,
+			time: null,
+			closed: false,
+			meals: null,
+			filters: null,
+		},
+		useIsFocused(),
+	)
 
 	let carletonCafes = [
 		{href: '/CarletonBurtonMenu', title: 'Burton'},

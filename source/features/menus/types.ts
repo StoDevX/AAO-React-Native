@@ -53,22 +53,24 @@ type BonAppSingleCafeInfo = {
 	menu_type: string
 	menu_html: string
 	weekly_schedule: string
-	days: [
-		{
-			date: string
-			dayparts: [
-				{
-					id: string
-					starttime: string
-					endtime: string
-					message: string
-					label: string
-				},
-			]
-			status: string
-			message: false | string
-		},
-	]
+	// Arrays rather than one-element tuples, which is what these were until a
+	// closed Weitz arrived with `dayparts: []` -- a shape the tuple said could
+	// not happen, so nothing checked for it.
+	days: BonAppCafeDay[]
+}
+
+export type BonAppCafeDay = {
+	date: string
+	dayparts: {
+		id: string
+		starttime: string
+		endtime: string
+		message: string
+		label: string
+	}[]
+	status: string
+	/** `false`, rather than empty, when the cafe has nothing to say. */
+	message: false | string
 }
 
 export type EditedBonAppCafeInfoType = {

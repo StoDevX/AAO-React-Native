@@ -1,6 +1,8 @@
 import {describe, expect, test} from '@jest/globals'
 import moment from 'moment-timezone'
 import {
+	formatCompactTime,
+	formatCompactTimeRange,
 	formatDate,
 	formatDateTime,
 	formatDayOfMonth,
@@ -93,6 +95,71 @@ describe('formatTime', () => {
 	})
 })
 
+describe('formatCompactTime', () => {
+	test('squeezes out the gap before the meridiem', () => {
+		let m = moment.tz('2026-08-20 17:30', CAMPUS)
+		expect(formatCompactTime(m, 'en-US')).toBe('5:30PM')
+	})
+
+	test('keeps dropping :00 on the hour', () => {
+		let m = moment.tz('2026-08-20 17:00', CAMPUS)
+		expect(formatCompactTime(m, 'en-US')).toBe('5PM')
+	})
+
+	// There is no gap to squeeze out of `06:00`, and squeezing the colon or
+	// the digits would leave something that is not a time.
+	test('leaves a 24-hour locale alone', () => {
+		let m = moment.tz('2026-08-20 06:00', CAMPUS)
+		expect(formatCompactTime(m, 'en-GB')).toBe('06:00')
+	})
+
+	// `Intl` writes the gap as U+202F in some ICU builds and U+0020 in others,
+	// and the caller cannot tell which it got.
+	test('squeezes a narrow no-break space as readily as a plain one', () => {
+		expect(formatCompactTime(moment.tz('2026-08-20 09:15', CAMPUS), 'en-US')).not.toMatch(/\s/u)
+	})
+
+	test('formats in Japanese', () => {
+		let m = moment.tz('2026-08-20 17:30', CAMPUS)
+		expect(formatCompactTime(m, 'ja-JP')).toBe('17:30')
+	})
+})
+
+describe('formatCompactTimeRange', () => {
+	// Each end is written in full, including when both fall in the same half
+	// of the day: an end that borrows its meridiem from the other is an end
+	// that cannot be read on its own.
+	test('writes the meridiem at both ends when they share it', () => {
+		let start = moment.tz('2026-08-20 08:30', CAMPUS)
+		let end = moment.tz('2026-08-20 11:30', CAMPUS)
+		expect(formatCompactTimeRange(start, end, 'en-US')).toBe('8:30AM – 11:30AM')
+	})
+
+	test('writes both when the range crosses noon', () => {
+		let start = moment.tz('2026-08-20 07:00', CAMPUS)
+		let end = moment.tz('2026-08-20 18:00', CAMPUS)
+		expect(formatCompactTimeRange(start, end, 'en-US')).toBe('7AM – 6PM')
+	})
+
+	test('writes both when the range crosses midnight', () => {
+		let start = moment.tz('2026-08-20 21:00', CAMPUS)
+		let end = moment.tz('2026-08-20 01:00', CAMPUS)
+		expect(formatCompactTimeRange(start, end, 'en-US')).toBe('9PM – 1AM')
+	})
+
+	test('follows the locale onto a 24-hour clock', () => {
+		let start = moment.tz('2026-08-20 08:30', CAMPUS)
+		let end = moment.tz('2026-08-20 11:30', CAMPUS)
+		expect(formatCompactTimeRange(start, end, 'en-GB')).toBe('08:30 – 11:30')
+	})
+
+	test('keeps dropping :00 on the hour at either end', () => {
+		let start = moment.tz('2026-08-20 14:30', CAMPUS)
+		let end = moment.tz('2026-08-20 17:00', CAMPUS)
+		expect(formatCompactTimeRange(start, end, 'en-US')).toBe('2:30PM – 5PM')
+	})
+})
+
 describe('formatHourLabel', () => {
 	test('a 12-hour locale gets a bare hour and meridiem', () => {
 		expect(formatHourLabel(moment.tz('2026-08-20 09:00', CAMPUS), 'en-US')).toBe('9 AM')
@@ -112,8 +179,6 @@ describe('formatDate', () => {
 		expect(formatDate(m, 'short', 'ja-JP')).toBe('8月20日')
 	})
 
-	// The weekday is what the menus' header adds: a reader glancing at a
-	// cafe's menu wants to know it is today's without doing the arithmetic.
 	test('medium: short weekday, month and day in locale order', () => {
 		expect(formatDate(m, 'medium', 'en-US')).toBe('Thu, Aug 20')
 		// No comma in en-GB, where `Intl` separates the weekday with a space.
