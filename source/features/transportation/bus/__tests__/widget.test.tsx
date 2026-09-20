@@ -36,8 +36,8 @@ function makeLine(overrides: Partial<UnprocessedBusLine> = {}): UnprocessedBusLi
 	}
 }
 
-function renderWidget(line: UnprocessedBusLine, onPress = jest.fn()) {
-	return render(<BusLineWidget line={line} now={MONDAY_AFTERNOON} onPress={onPress} />)
+function renderWidget(line: UnprocessedBusLine, onPress = jest.fn(), now = MONDAY_AFTERNOON) {
+	return render(<BusLineWidget line={line} now={now} onPress={onPress} />)
 }
 
 describe('BusLineWidget', () => {
@@ -69,6 +69,21 @@ describe('BusLineWidget', () => {
 		await fireEvent.press(getByLabelText(/^Carleton,/u))
 
 		expect(onPress).toHaveBeenCalled()
+	})
+
+	test('draws the bus on the strip while the line is running', async () => {
+		let {getAllByTestId} = await renderWidget(makeLine())
+
+		// One bus glyph is the header's; a second one is the bus on the strip.
+		expect(getAllByTestId('symbol-bus.fill')).toHaveLength(2)
+	})
+
+	test('keeps the bus off the strip before the first departure', async () => {
+		let beforeStart = MONDAY_AFTERNOON.clone().hour(12)
+
+		let {getAllByTestId} = await renderWidget(makeLine(), jest.fn(), beforeStart)
+
+		expect(getAllByTestId('symbol-bus.fill')).toHaveLength(1)
 	})
 
 	test('ends the strip with the next round when another one follows today', async () => {

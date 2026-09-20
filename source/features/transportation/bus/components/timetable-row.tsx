@@ -24,6 +24,7 @@ import {
 	padding,
 	shadow,
 	shapes,
+	type ViewModifier,
 } from '@expo/ui/swift-ui/modifiers'
 import * as c from '@frogpond/colors'
 import {FILL_WIDTH} from '../../../../components/tile-layout'
@@ -68,7 +69,18 @@ type Props = {
 	onPress?: () => void
 }
 
-function BusGlyph({color}: {color: string}): React.ReactNode {
+/**
+ * The bus itself, drawn on a rail. Shared by the timetable's vertical rail and
+ * the widget's horizontal strip so the two agree on its size and tint.
+ */
+export function BusGlyph({
+	color,
+	modifiers,
+}: {
+	color: string
+	/** Applied after the glyph's own, so a caller can move it along its rail. */
+	modifiers?: ViewModifier[]
+}): React.ReactNode {
 	// A zero frame keeps the glyph out of layout: it draws centred on the
 	// point it is given without making the rail segment it rides any taller.
 	return (
@@ -78,6 +90,7 @@ function BusGlyph({color}: {color: string}): React.ReactNode {
 				foregroundStyle(color),
 				shadow({radius: 2, y: 1}),
 				frame({width: 0, height: 0}),
+				...(modifiers ?? []),
 			]}
 			systemName="bus.fill"
 		/>

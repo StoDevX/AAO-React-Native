@@ -25,6 +25,7 @@ import {
 	id,
 	listRowInsets,
 	listRowSeparator,
+	offset,
 	opacity,
 	scrollPosition,
 	shapes,
@@ -34,7 +35,14 @@ import type {Moment} from 'moment-timezone'
 import * as c from '@frogpond/colors'
 import {FILL_WIDTH} from '../../../components/tile-layout'
 import {formatDeparture} from './components/times'
-import {buildStopStrip, deriveLineState, type StopStripCell} from './lib'
+import {BusGlyph} from './components/timetable-row'
+import {
+	buildStopStrip,
+	busPropsForRow,
+	deriveLineState,
+	findBusTarget,
+	type StopStripCell,
+} from './lib'
 import type {UnprocessedBusLine} from './types'
 
 /// Wide enough for "Buntrock Commons" to wrap to two lines rather than
@@ -60,6 +68,8 @@ function StopCell({
 	dotColor,
 	isFirst,
 	isLast,
+	busProgress,
+	busAtStop,
 	onPress,
 }: {
 	cell: StopStripCell
@@ -68,6 +78,10 @@ function StopCell({
 	dotColor: string
 	isFirst: boolean
 	isLast: boolean
+	/** How far the bus is along the leg into this cell, when it is on that leg. */
+	busProgress?: number
+	/** Whether the bus is sitting on this cell's dot. */
+	busAtStop?: boolean
 	onPress: () => void
 }): React.ReactNode {
 	let time = formatDeparture(cell.time)
@@ -77,6 +91,13 @@ function StopCell({
 
 	// A leg the bus has already driven is solid; one still ahead of it is faint.
 	let railOpacity = isPassed ? 1 : 0.35
+
+	// The leg into this cell is the previous cell's right half plus this
+	// cell's left half: CELL_WIDTH long, starting half a cell left of this
+	// dot. Every cell is the same known width, so the bus can sit at its true
+	// fraction of the leg with nothing measured.
+	let busOffset =
+		busProgress == null || busAtStop ? null : busProgress * CELL_WIDTH - CELL_WIDTH / 2
 
 	return (
 		<Button
@@ -123,13 +144,21 @@ function StopCell({
 						/>
 					</HStack>
 
-					<Circle
-						modifiers={[
-							frame({width: DOT_SIZE, height: DOT_SIZE}),
-							foregroundStyle(isHere ? dotColor : barColor),
-							opacity(isSkipped ? 0.25 : 1),
-						]}
-					/>
+					{busAtStop ? (
+						<BusGlyph color={dotColor} />
+					) : (
+						<Circle
+							modifiers={[
+								frame({width: DOT_SIZE, height: DOT_SIZE}),
+								foregroundStyle(isHere ? dotColor : barColor),
+								opacity(isSkipped ? 0.25 : 1),
+							]}
+						/>
+					)}
+
+					{busOffset === null ? null : (
+						<BusGlyph color={dotColor} modifiers={[offset({x: busOffset})]} />
+					)}
 				</ZStack>
 
 				<Text
@@ -216,13 +245,21 @@ function NextRoundCell({time, onPress}: {time: Moment; onPress: () => void}): Re
  * any cell in the strip -- opens the line's full timetable.
  */
 export function BusLineWidget({line, now, onPress}: Props): React.ReactNode {
-	let {subtitle, status, schedule, currentBusIteration} = deriveLineState({line, now})
+	let {subtitle, status, schedule, currentBusIteration, parkedStopIndex} = deriveLineState({
+		line,
+		now,
+	})
 	let {cells, currentIndex, nextRoundStart} = buildStopStrip({
 		schedule,
 		busStatus: status,
 		departureIndex: currentBusIteration,
 		now,
 	})
+	let busTarget = findBusTarget(
+		schedule,
+		{status, index: currentBusIteration, parkedStopIndex},
+		now,
+	)
 
 	// The strip opens at the stop the bus is at, or the next one ahead, rather
 	// than at the start of the route -- a bus halfway round its loop is the
@@ -293,6 +330,7 @@ export function BusLineWidget({line, now, onPress}: Props): React.ReactNode {
 								// The faux stop, when there is one, is the rail's real end.
 								isLast={index === cells.length - 1 && nextRoundStart === null}
 								onPress={onPress}
+								{...busPropsForRow(busTarget, index)}
 							/>
 						))}
 						{nextRoundStart ? <NextRoundCell onPress={onPress} time={nextRoundStart} /> : null}
