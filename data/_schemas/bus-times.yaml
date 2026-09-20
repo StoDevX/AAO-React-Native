@@ -7,6 +7,7 @@ properties:
   line: {type: string}
   colors: {$ref: '#/definitions/colors'}
   notice: {type: string}
+  hidden: {type: boolean}
   schedules:
     type: array
     items: {$ref: '#/definitions/schedule'}

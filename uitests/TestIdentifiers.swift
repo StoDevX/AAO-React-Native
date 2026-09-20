@@ -591,22 +591,49 @@ struct TestIdentifiers {
 	// MARK: - Transportation
 
 	enum Transportation {
-		static let tabs = ["Express", "Red Line", "Blue Line", "Oles Go", "Other"]
-		/// The list footer renders as a single Text, so both lines are one label.
-		/// A stop every Express Bus route passes through, used to open a single
-		/// stop's schedule. It is the college itself, so it is not going to be
-		/// renamed out from under this test.
+		/// The line every UI test drives, and a stop it always calls at. The
+		/// stop is the college itself, so it is not going to be renamed out
+		/// from under this test.
+		static let aLine = "Express Bus"
 		static let aStop = "St. Olaf College"
-		static let footer = """
-			Bus routes and times subject to change without notice
-
-			Data collected by the humans of All About Olaf
-			"""
+		/// A line the feed publishes with `hidden: true`
+		/// (`data/bus-times/2-oles-go.yaml`), so it stays readable to released
+		/// app versions while this one leaves it off the screen.
+		static let aHiddenLine = "Oles Go"
+		/// A stop several places past `aStop` on Express Bus's route (see
+		/// `docs/bus-times.json`), used to prove a strip swipe actually moved the
+		/// strip rather than doing nothing. Unlike `aStop`, which the route
+		/// visits twice (the loop starts and ends there), this one appears only
+		/// once, so its presence unambiguously means the strip scrolled forward
+		/// rather than showing a second, later occurrence of the start.
+		static let aStopFartherAlongTheRoute = "El Tequila"
+		/// The horizontal strip of stops inside a line's widget, which a swipe
+		/// test aims at rather than at a stop cell: the strip opens partway
+		/// along the route, so which cells are on screen depends on where the
+		/// bus is.
+		/// Mirrored by `STOP_STRIP` in `source/features/transportation/bus/widget.tsx`.
+		static let stopStrip = "stop-strip"
 
 		/// The navigation bar's day menu, labelled by the day it is showing.
 		/// `Today` when the screens are following the clock.
 		static let dayMenuDefaultLabel = "Today"
-		static let aDay = "Saturday"
+		/// The day the day-picker test picks. Sunday, because Express Bus keeps
+		/// one timetable Monday to Saturday (`docs/bus-times.json`), so Sunday
+		/// is the only pick that draws rows the frozen Saturday clock does not.
+		static let aDay = "Sunday"
+		/// A stop Express Bus skips on `aDay` and calls at every other day. Its
+		/// row lists times on any other day and reads "Cinema 10, None • None"
+		/// on Sunday, which is how the test tells a redrawn timetable from a
+		/// menu that merely relabelled itself.
+		static let aStopSkippedOnADay = "Cinema 10"
+		/// What a row shows in place of a departure the route skips; matches
+		/// `formatDeparture` in `source/features/transportation/bus/components/times.tsx`.
+		static let skippedDeparture = "None"
+		/// The last row on the Transportation screen. It sits in Other Modes'
+		/// final section, which carries no heading -- its entries have an empty
+		/// `category` -- so reaching this row proves the list scrolls past both
+		/// the widgets and the two headed sections into the headerless one.
+		static let lastOtherModesRow = "Transportation Options"
 	}
 
 }

@@ -1,10 +1,29 @@
 import XCTest
 
 class ModuleTransportationTests: UITestCase {
-	func testIsReachableFromHomescreen() throws {
+	/// Every line gets a widget, so the screen answers "what is running" without
+	/// a tap -- except one the feed has retired, which keeps its entry for
+	/// released app versions to read and earns no widget here. Both halves ride
+	/// one cold launch; the absence sweep goes last because it scrolls the list
+	/// to the bottom.
+	func testEveryLineHasAWidget() throws {
 		TransportationScreen(app: app)
 			.navigate()
-			.checkTabs()
+			.verifyLineWidgetShown(TestIdentifiers.Transportation.aLine)
+			.verifyLineWidgetShown("Red Line")
+			.capture("Transportation - widgets")
+			.verifyLineWidgetAbsent(TestIdentifiers.Transportation.aHiddenLine)
+	}
+
+	/// The strip is a horizontal scroll view inside a list row, which is the
+	/// arrangement most likely to have the list steal the gesture.
+	func testTheStopStripScrollsSideways() throws {
+		TransportationScreen(app: app)
+			.navigate()
+			.verifyStripHasNotReached(TestIdentifiers.Transportation.aStopFartherAlongTheRoute)
+			.swipeStripLeft()
+			.verifyStripAdvancedTo(TestIdentifiers.Transportation.aStopFartherAlongTheRoute)
+			.capture("Transportation - strip scrolled")
 	}
 
 	/// A single stop's schedule draws the same progress bar down its departure
@@ -13,40 +32,43 @@ class ModuleTransportationTests: UITestCase {
 	func testAStopSchedulePresents() throws {
 		TransportationScreen(app: app)
 			.navigate()
+			.openLine(TestIdentifiers.Transportation.aLine)
 			.openFirstStop()
 			.verifyStopScheduleShown()
 			.capture("stop schedule")
 	}
 
-	/// The day picker lives in the navigation bar rather than in the content,
-	/// so the section title is the only thing on screen that says which day is
-	/// showing. This checks the two stay in step.
-	func testPickingADayRetitlesTheSchedule() throws {
+	/// Every cell in the strip is a shortcut to the same sheet the header opens
+	/// -- a stop cell is no longer its own destination.
+	func testAStripCellOpensTheTimetable() throws {
 		TransportationScreen(app: app)
 			.navigate()
-			.pickDay(TestIdentifiers.Transportation.aDay)
-			.verifyScheduleShows(day: TestIdentifiers.Transportation.aDay)
-			.capture("Transportation - Saturday schedule")
+			.openTimetableFromStrip(TestIdentifiers.Transportation.aStop)
+			.verifyTimetableShown()
+			.capture("Transportation - timetable from strip")
 	}
 
-	func testTransportationOtherModesList() throws {
-		let screen = TransportationScreen(app: app).navigate()
+	/// Picking a day from the sheet's navigation bar has to redraw the
+	/// timetable beneath it, not just relabel the menu. Sunday's route skips a
+	/// stop every other day calls at, so that stop's row is the proof.
+	func testPickingADayRedrawsTheTimetable() throws {
+		TransportationScreen(app: app)
+			.navigate()
+			.openLine(TestIdentifiers.Transportation.aLine)
+			.verifyStopListsDepartures(TestIdentifiers.Transportation.aStopSkippedOnADay)
+			.pickDay(TestIdentifiers.Transportation.aDay)
+			.verifyStopSkipped(
+				TestIdentifiers.Transportation.aStopSkippedOnADay,
+				on: TestIdentifiers.Transportation.aDay)
+			.capture("Transportation - Sunday schedule")
+	}
 
-		let otherTab = app.tabButton("Other")
-		XCTAssertTrue(
-			otherTab.waitForExistence(timeout: 30),
-			"Other tab should be visible on Transportation")
-
-		let section = app.staticTexts["Bus"].firstMatch
-		for attempt in 1...3 {
-			otherTab.tap()
-			if section.waitForExistence(timeout: 10) {
-				break
-			}
-			XCTContext.runActivity(named: "Tap \(attempt) on Other did not switch; retrying") { _ in }
-		}
-		XCTAssertTrue(section.exists, "The Other tab should be showing")
-
-		screen.capture("Transportation - Other Modes")
+	/// Other Modes has no tab of its own -- it is a set of sections below the
+	/// bus widgets, on the same screen.
+	func testOtherModesSitsBelowTheWidgets() throws {
+		TransportationScreen(app: app)
+			.navigate()
+			.scrollToOtherModes()
+			.capture("Transportation - Other Modes")
 	}
 }

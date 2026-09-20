@@ -55,8 +55,54 @@ function flag(type: string, key: string) {
 }
 
 export const accessibilityAddTraits = named('accessibilityAddTraits', 'traits')
+/** Defaults to 'ignore', as the real one does. */
+export const accessibilityElement = (children = 'ignore'): Modifier =>
+	createModifier('accessibilityElement', {children})
 export const accessibilityIdentifier = named('accessibilityIdentifier', 'identifier')
 export const accessibilityLabel = named('accessibilityLabel', 'label')
+export const animation = (animationObject: unknown, animatedValue: number | boolean): Modifier =>
+	createModifier('animation', {animationObject, animatedValue})
+
+/**
+ * A `@expo/ui` animation preset. Nothing animates in Jest; this exists so a
+ * component that asks for one still renders, and so the chain a caller writes
+ * -- `Animation.easeOut().repeat({...})` -- resolves.
+ */
+type ChainableAnimation = {
+	type: string
+	delay: () => ChainableAnimation
+	repeat: () => ChainableAnimation
+}
+
+type AnimationPresets = {
+	easeInOut: () => ChainableAnimation
+	easeIn: () => ChainableAnimation
+	easeOut: () => ChainableAnimation
+	linear: () => ChainableAnimation
+	spring: () => ChainableAnimation
+	interpolatingSpring: () => ChainableAnimation
+	default: ChainableAnimation
+}
+
+function chainable(type: string): ChainableAnimation {
+	let self: ChainableAnimation = {
+		type,
+		delay: () => self,
+		repeat: () => self,
+	}
+	return self
+}
+
+export const Animation: AnimationPresets = {
+	easeInOut: () => chainable('easeInOut'),
+	easeIn: () => chainable('easeIn'),
+	easeOut: () => chainable('easeOut'),
+	linear: () => chainable('linear'),
+	spring: () => chainable('spring'),
+	interpolatingSpring: () => chainable('interpolatingSpring'),
+	default: chainable('default'),
+}
+
 export const aspectRatio = spreading('aspectRatio')
 export const autocorrectionDisabled = flag('autocorrectionDisabled', 'disabled')
 export const bold = bare('bold')
@@ -81,13 +127,17 @@ export const minimumScaleFactor = named('minimumScaleFactor', 'factor')
 export const monospacedDigit = bare('monospacedDigit')
 export const multilineTextAlignment = named('multilineTextAlignment', 'alignment')
 export const offset = spreading('offset')
+export const onAppear = (handler: () => void): Modifier => createModifier('onAppear', {handler})
 export const opacity = named('opacity', 'value')
 export const padding = spreading('padding')
+export const scaleEffect = named('scaleEffect', 'scale')
+export const scrollTargetBehavior = named('scrollTargetBehavior', 'behavior')
 export const pickerStyle = named('pickerStyle', 'style')
 export const presentationBackground = named('presentationBackground', 'color')
 export const presentationDragIndicator = named('presentationDragIndicator', 'visibility')
 export const scrollContentBackground = named('scrollContentBackground', 'visible')
 export const scrollTargetLayout = bare('scrollTargetLayout')
+export const shadow = spreading('shadow')
 export const strikethrough = spreading('strikethrough')
 export const submitLabel = named('submitLabel', 'submitLabel')
 export const tabViewStyle = spreading('tabViewStyle')
@@ -97,6 +147,13 @@ export const textInputAutocapitalization = named(
 	'autocapitalization',
 )
 export const layoutPriority = named('layoutPriority', 'priority')
+/**
+ * Where a `List` row's separator starts, among other alignment guides. Jest has
+ * no separators to place, so this only has to exist and carry its arguments.
+ */
+export const alignmentGuide = (guide: string, value: number): Modifier =>
+	createModifier('alignmentGuide', {guide, value})
+
 export const allowsTightening = named('allowsTightening', 'value')
 export const textSelection = named('textSelection', 'value')
 export const tint = named('tint', 'color')
@@ -156,6 +213,14 @@ export const presentationDetents = (
 export const onScrollPhaseChange = (
 	callback: (phase: string, geometry: unknown) => void,
 ): Modifier => createModifier('onScrollPhaseChange', {callback})
+
+/**
+ * Natively this reports the view's frame after each layout pass; there is
+ * no layout here, so it only carries the handler and never calls it.
+ */
+export const onGeometryChange = (
+	handler: (frame: {x: number; y: number; width: number; height: number}) => void,
+): Modifier => createModifier('onGeometryChange', {onGeometryChange: handler})
 
 /**
  * The real modifier hands native a wrapped handler that tells SwiftUI the
@@ -512,6 +577,10 @@ export function LazyVStack({children}: WithModifiers & {alignment?: string}): Re
 	return <View>{children}</View>
 }
 
+export function LazyHStack({children}: WithModifiers & {alignment?: string}): React.ReactNode {
+	return <View>{children}</View>
+}
+
 /**
  * A paged `TabView` renders one tab at a time natively. The stand-in renders
  * the selected tab's children and drops the rest, which is the decision a test
@@ -556,6 +625,21 @@ TabView.Tab = function Tab({
 /** A spacer takes up room and says nothing, so there is nothing to render. */
 export function Spacer(): React.ReactNode {
 	return null
+}
+
+/**
+ * Shapes are paint. Jest has no compositor, so the stand-ins are empty views
+ * that keep the tree's shape -- whether a rail is drawn, and in what colour, is
+ * a UI test's question.
+ */
+export function Circle({modifiers}: WithModifiers): React.ReactNode {
+	// Shapes are paint, which Jest cannot see -- but one carrying an
+	// accessibilityIdentifier is something a test is meant to find.
+	return <View testID={identifierOf(modifiers)} />
+}
+
+export function Rectangle(_props: WithModifiers): React.ReactNode {
+	return <View />
 }
 
 /**
@@ -700,7 +784,10 @@ export function Image({
 	return (
 		<View
 			accessibilityLabel={labelOf(modifiers) ?? systemName}
-			testID={uiImage ? `icon-${uiImage}` : systemName ? `symbol-${systemName}` : undefined}
+			testID={
+				identifierOf(modifiers) ??
+				(uiImage ? `icon-${uiImage}` : systemName ? `symbol-${systemName}` : undefined)
+			}
 		/>
 	)
 }

@@ -1,5 +1,5 @@
-import {expect, test} from '@jest/globals'
-import {findBusTarget} from '../find-bus-target'
+import {describe, expect, test} from '@jest/globals'
+import {busPropsForCell, busPropsForRow, findBusTarget} from '../find-bus-target'
 import {processBusSchedule} from '../process-bus-line'
 import {time} from './moment.helper'
 import type {BusSchedule, UnprocessedBusSchedule} from '../../types'
@@ -50,4 +50,56 @@ test('draws no bus once the day is over, whatever the clock says', () => {
 	let schedule = buildSchedule(now)
 	let actual = findBusTarget(schedule, {status: 'after-end', index: 0, parkedStopIndex: null}, now)
 	expect(actual).toBe(null)
+})
+
+describe('busPropsForRow', () => {
+	test('gives the bus to both stops either side of the leg', () => {
+		let target = {targetIndex: 2, progress: 0.25, atStop: false}
+		expect(busPropsForRow(target, 1)).toStrictEqual({busFraction: 0.25})
+		expect(busPropsForRow(target, 2)).toStrictEqual({busFraction: -0.75})
+	})
+
+	test('gives a parked bus to the stop it is parked at, alone', () => {
+		let target = {targetIndex: 2, progress: 1, atStop: true}
+		expect(busPropsForRow(target, 2)).toStrictEqual({busAtStop: true})
+		expect(busPropsForRow(target, 1)).toStrictEqual({})
+	})
+
+	test('gives nothing to a stop the bus is nowhere near', () => {
+		expect(busPropsForRow({targetIndex: 2, progress: 0.25, atStop: false}, 0)).toStrictEqual({})
+	})
+
+	test('gives nothing at all when no bus is on the route', () => {
+		expect(busPropsForRow(null, 0)).toStrictEqual({})
+	})
+})
+
+describe('busPropsForCell', () => {
+	test('gives the bus to the stop it left while it is the nearer one', () => {
+		let target = {targetIndex: 2, progress: 0.25, atStop: false}
+		expect(busPropsForCell(target, 1)).toStrictEqual({busFraction: 0.25})
+		expect(busPropsForCell(target, 2)).toStrictEqual({})
+	})
+
+	test('hands the bus over to the stop ahead once that one is nearer', () => {
+		let target = {targetIndex: 2, progress: 0.75, atStop: false}
+		expect(busPropsForCell(target, 1)).toStrictEqual({})
+		expect(busPropsForCell(target, 2)).toStrictEqual({busFraction: -0.25})
+	})
+
+	test('draws the bus once at the midpoint of a leg, not twice', () => {
+		let target = {targetIndex: 2, progress: 0.5, atStop: false}
+		let drawn = [0, 1, 2].filter((index) => busPropsForCell(target, index).busFraction != null)
+		expect(drawn).toStrictEqual([2])
+	})
+
+	test('gives a parked bus to the stop it is parked at, same as a row', () => {
+		let target = {targetIndex: 2, progress: 1, atStop: true}
+		expect(busPropsForCell(target, 2)).toStrictEqual({busAtStop: true})
+		expect(busPropsForCell(target, 1)).toStrictEqual({})
+	})
+
+	test('gives nothing at all when no bus is on the route', () => {
+		expect(busPropsForCell(null, 0)).toStrictEqual({})
+	})
 })

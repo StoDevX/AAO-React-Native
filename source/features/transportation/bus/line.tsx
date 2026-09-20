@@ -1,158 +1,62 @@
 import * as React from 'react'
-import {StyleSheet, Text, TouchableOpacity, View} from 'react-native'
-import type {BusSchedule, UnprocessedBusLine} from './types'
+import {StyleSheet} from 'react-native'
+import type {DayOfWeek, UnprocessedBusLine} from './types'
 import {
-	BusStateEnum,
 	busPropsForRow,
+	collapseEarlierStops,
+	findBusStopStatus,
 	findBusTarget,
-	getCurrentBusIteration,
-	getScheduleForNow,
-	processBusLine,
-	scheduleSectionTitle,
+	findRemainingDeparturesForStop,
 } from './lib'
+import {useLineState} from './use-line-state'
 import type {Moment} from 'moment-timezone'
-import find from 'lodash/find'
-import findLast from 'lodash/findLast'
-import {Separator} from '@frogpond/separator'
-import {BusStopRow} from './components/bus-stop-row'
-import {ListRow} from '@frogpond/lists'
 import * as c from '@frogpond/colors'
-import {useRouter} from 'expo-router'
-import {Host, List, RNHostView, Section, Text as SwiftUIText, VStack} from '@expo/ui/swift-ui'
-import {
-	font,
-	foregroundStyle,
-	frame,
-	listRowInsets,
-	listRowSeparator,
-	listStyle,
-} from '@expo/ui/swift-ui/modifiers'
+import {ContentUnavailableView, Host, List, Section, Text} from '@expo/ui/swift-ui'
+import {frame, listStyle} from '@expo/ui/swift-ui/modifiers'
 import {BUS_FOOTER_MESSAGE} from './constants'
 import {momentToDayOfWeek, createMomentForDay} from './components/days'
-import {useBusDay} from './store'
-import {useTimetableWidth} from './use-timetable-width'
+import {formatDepartures} from './components/times'
+import {CollapsedStopsRow, TimetableRow} from './components/timetable-row'
+
+/**
+ * How many of a stop's remaining departures a row shows. Three fit on one
+ * line; every row then stands the same height, which the rail's bus glyph
+ * relies on.
+ */
+const DEPARTURES_PER_ROW = 3
 
 const styles = StyleSheet.create({
 	host: {
 		flex: 1,
 		backgroundColor: c.systemGroupedBackground,
 	},
-	label: {
-		color: c.label,
-	},
-	separator: {
-		marginLeft: 45,
-		// erase the gap in the bar caused by the separators' block-ness
-		marginTop: -1,
-	},
 })
-
-const isTruthy = (x: unknown) => Boolean(x)
-const BusLineSeparator = () => <Separator style={styles.separator} />
-const EMPTY_SCHEDULE_MESSAGE = (
-	<ListRow>
-		<Text style={styles.label}>This line is not running today.</Text>
-	</ListRow>
-)
 
 type Props = {
 	line: UnprocessedBusLine
 	now: Moment
-}
-
-function startsIn(now: Moment, start?: Moment | null) {
-	if (!start) {
-		return 'Error'
-	}
-
-	let nowCopy = now.clone()
-	return `Starts ${nowCopy.seconds(0).to(start)}`
-}
-
-export function deriveFromProps({line, now}: {line: UnprocessedBusLine; now: Moment}): {
-	subtitle: string
-	status: BusStateEnum
-	schedule: BusSchedule
-	currentBusIteration: number | null
-	parkedStopIndex: number | null
-} {
-	// The line as a whole, which every row below reads from.
-	let processedLine = processBusLine(line, now)
-
-	let scheduleForToday = getScheduleForNow(processedLine.schedules, now)
-	let {times, status, index, nextStart, parkedStopIndex} = getCurrentBusIteration(
-		scheduleForToday,
-		now,
-	)
-
-	let isLastBus = index === scheduleForToday.times.length - 1
-
-	let subtitle = 'Error'
-	switch (status) {
-		case 'none':
-			subtitle = 'Not running today'
-			break
-		case 'before-start':
-		case 'between-rounds':
-			subtitle = startsIn(now, nextStart)
-			break
-		case 'after-end':
-			subtitle = 'Over for today'
-			break
-		case 'running': {
-			if (isLastBus) {
-				subtitle = 'Last Bus'
-			} else {
-				let first = find(times, isTruthy)
-				let last = findLast(times, isTruthy)
-				if (!first || !last) {
-					subtitle = 'Not running today'
-				} else if (now.isBefore(first)) {
-					subtitle = startsIn(now, first)
-				} else if (now.isAfter(last)) {
-					subtitle = 'Running'
-				} else {
-					subtitle = 'Running'
-				}
-			}
-			break
-		}
-		default: {
-			// TODO(rye): Find a replacement for this.
-			// ;(status: empty)
-		}
-	}
-
-	if (process.env.NODE_ENV !== 'production') {
-		// for debugging
-		subtitle += ` (${now.format('h:mma')})`
-	}
-
-	return {
-		subtitle: subtitle,
-		status: status,
-		schedule: scheduleForToday,
-		currentBusIteration: index,
-		parkedStopIndex: parkedStopIndex,
-	}
+	/** The day on screen, or `null` to follow the clock. */
+	selectedDay: DayOfWeek | null
+	onPressStop: (stopName: string) => void
 }
 
 export function BusLine(props: Props): React.ReactNode {
-	let {line, now} = props
-	let router = useRouter()
-	let hostedWidth = useTimetableWidth()
+	let {line, now, selectedDay, onPressStop} = props
 
 	const currentDay = momentToDayOfWeek(now)
 
-	let {selectedDay} = useBusDay()
 	let dayToShow = selectedDay ?? currentDay
 
 	const momentForSelectedDay = createMomentForDay(now, dayToShow)
 
-	let {schedule, subtitle, currentBusIteration, parkedStopIndex, status} = deriveFromProps({
+	let {schedule, currentBusIteration, parkedStopIndex, status} = useLineState({
 		line,
 		now: momentForSelectedDay,
 	})
+
+	// The timetable opens on where the bus is, with the stops behind it folded
+	// away.
+	let [expanded, setExpanded] = React.useState(false)
 
 	let busTarget = findBusTarget(
 		schedule,
@@ -162,71 +66,94 @@ export function BusLine(props: Props): React.ReactNode {
 
 	let timetable = schedule.timetable
 
+	let {firstVisibleIndex, hiddenCount} = collapseEarlierStops({
+		targetIndex: busTarget?.targetIndex ?? null,
+		expanded,
+	})
+
+	// One row's measured height, which every row then uses to place the bus.
+	// The set is skipped when the value has not changed: the measurement
+	// fires on layout passes the rows do not care about, and only a new
+	// height is worth a render.
+	let [rowHeight, setRowHeight] = React.useState<number | null>(null)
+
+	let recordRowHeight = React.useCallback((height: number) => {
+		setRowHeight((known) => (known === height ? known : height))
+	}, [])
+
+	// SwiftUI colors want strings; the feed gives hex, but the type is RN's
+	// wider ColorValue.
+	let barColor = String(line.colors.bar)
+	let currentStopColor = String(line.colors.dot)
+
 	return (
 		<Host style={styles.host}>
 			<List modifiers={[listStyle('insetGrouped')]}>
 				{line.notice ? (
 					<Section>
-						<VStack alignment="leading" spacing={4}>
-							<SwiftUIText modifiers={[font({weight: 'semibold'})]}>About {line.line}</SwiftUIText>
-							<SwiftUIText
-								modifiers={[
-									font({textStyle: 'subheadline'}),
-									foregroundStyle(c.secondaryLabel),
-									frame({maxWidth: Infinity, alignment: 'leading'}),
-								]}
-							>
-								{line.notice}
-							</SwiftUIText>
-						</VStack>
+						{/* The sheet's title already names the line, so the notice
+						    stands alone. Stretched to the card's width, so a short
+						    one sits at the leading edge rather than centring. */}
+						<Text modifiers={[frame({maxWidth: Infinity, alignment: 'leading'})]}>
+							{line.notice}
+						</Text>
 					</Section>
 				) : null}
 
-				<Section
-					footer={<SwiftUIText>{BUS_FOOTER_MESSAGE}</SwiftUIText>}
-					title={scheduleSectionTitle({selectedDay, subtitle})}
-				>
-					{/* Zeroed insets and no separator, so the progress bar runs to
-					    the card's own edges. */}
-					<VStack
-						modifiers={[
-							listRowInsets({top: 0, bottom: 0, leading: 0, trailing: 0}),
-							listRowSeparator('hidden'),
-						]}
-					>
-						<RNHostView matchContents={true}>
-							<View style={{width: hostedWidth}}>
-								{timetable.length === 0
-									? EMPTY_SCHEDULE_MESSAGE
-									: timetable.map((item, index) => (
-											// oxlint-disable-next-line react/no-array-index-key -- a loop route visits a stop twice
-											<React.Fragment key={`${item.name}-${index}`}>
-												{index > 0 ? <BusLineSeparator /> : null}
-												<TouchableOpacity
-													onPress={() => {
-														router.navigate({
-															pathname: '/BusRouteDetail',
-															params: {line: line.line, day: dayToShow, stopName: item.name},
-														})
-													}}
-												>
-													<BusStopRow
-														barColor={line.colors.bar}
-														{...busPropsForRow(busTarget, index)}
-														currentStopColor={line.colors.dot}
-														departureIndex={currentBusIteration}
-														isFirstRow={index === 0}
-														isLastRow={index === timetable.length - 1}
-														now={momentForSelectedDay}
-														status={status}
-														stop={item}
-													/>
-												</TouchableOpacity>
-											</React.Fragment>
-										))}
-							</View>
-						</RNHostView>
-					</VStack>
+				<Section footer={<Text>{BUS_FOOTER_MESSAGE}</Text>} title="Stops">
+					{hiddenCount > 0 ? (
+						<CollapsedStopsRow
+							barColor={barColor}
+							count={hiddenCount}
+							onPress={() => setExpanded(true)}
+						/>
+					) : null}
+
+					{timetable.length === 0 ? (
+						<ContentUnavailableView systemImage="bus" title="This line is not running today." />
+					) : (
+						timetable.map((stop, index) => {
+							if (index < firstVisibleIndex) {
+								return null
+							}
+
+							let {busFraction, busAtStop} = busPropsForRow(busTarget, index)
+							let stopStatus = findBusStopStatus({
+								stop,
+								busStatus: status,
+								departureIndex: currentBusIteration,
+								now: momentForSelectedDay,
+								busAtStop,
+							})
+							let times = formatDepartures(
+								findRemainingDeparturesForStop({
+									stop,
+									busStatus: status,
+									departureIndex: currentBusIteration,
+								}).slice(0, DEPARTURES_PER_ROW),
+							)
+
+							return (
+								<TimetableRow
+									// oxlint-disable-next-line react/no-array-index-key -- a loop route visits a stop twice
+									key={`${stop.name}-${index}`}
+									accessibilityLabel={`${stop.name}, ${times}`}
+									barColor={barColor}
+									busAtStop={busAtStop}
+									busFraction={busFraction}
+									currentStopColor={currentStopColor}
+									detail={times}
+									isFirstRow={index === 0}
+									isLastRow={index === timetable.length - 1}
+									onHeight={index === firstVisibleIndex ? recordRowHeight : undefined}
+									onPress={() => onPressStop(stop.name)}
+									rowHeight={rowHeight}
+									stopStatus={stopStatus}
+									title={stop.name}
+								/>
+							)
+						})
+					)}
 				</Section>
 			</List>
 		</Host>
