@@ -436,8 +436,6 @@ export function BusLineWidget({line, now, onPress}: Props): React.ReactNode {
 				<ScrollView
 					axes="horizontal"
 					modifiers={[
-						listRowInsets({top: 12, bottom: 12, leading: 0, trailing: 0}),
-						listRowSeparator('hidden'),
 						accessibilityIdentifier(STOP_STRIP),
 						scrollPosition(scrollTarget, {anchor: 'leading'}),
 						// The strip comes to rest with a stop against its leading
@@ -445,6 +443,14 @@ export function BusLineWidget({line, now, onPress}: Props): React.ReactNode {
 						// a run of whole stops.
 						scrollTargetBehavior('viewAligned'),
 						...(placement ? [placement] : []),
+						// Last, so they wrap everything above: modifiers apply from
+						// the top of this list outwards, and a row modifier reaches
+						// the row only from outside the scroll view. Applied first,
+						// `scrollTargetBehavior` sat outside them and the strip drew
+						// inset from the card's edges with a separator under the
+						// header.
+						listRowInsets({top: 12, bottom: 12, leading: 0, trailing: 0}),
+						listRowSeparator('hidden'),
 					]}
 					showsIndicators={false}
 				>
