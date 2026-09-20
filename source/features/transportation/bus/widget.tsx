@@ -53,6 +53,10 @@ const CELL_WIDTH = 86
 const RAIL_HEIGHT = 3
 /// What the rail, and anything sitting on it, weighs ahead of the bus.
 const RAIL_AHEAD_OPACITY = 0.35
+/// A stop the bus has yet to reach, drawn as a ring rather than a disc.
+const FUTURE_DOT_SIZE = 18
+const FUTURE_RING_WIDTH = 6
+const FUTURE_HOLE_SIZE = FUTURE_DOT_SIZE - 2 * FUTURE_RING_WIDTH
 /// Diameter of a stop's dot.
 const DOT_SIZE = 11
 
@@ -61,6 +65,63 @@ type Props = {
 	now: Moment
 	/** Opens the line's full timetable, from anywhere in the widget. */
 	onPress: () => void
+}
+
+/**
+ * A stop on the strip. One the bus has passed is a solid disc; one still ahead
+ * is a ring at the rail's own weight with an opaque centre, so a reader can see
+ * at a glance how much of the route is behind the bus and how much is to come.
+ */
+function StopDot({
+	barColor,
+	dotColor,
+	isHere,
+	isPassed,
+	isSkipped,
+}: {
+	barColor: string
+	dotColor: string
+	isHere: boolean
+	isPassed: boolean
+	isSkipped: boolean
+}): React.ReactNode {
+	if (isHere) {
+		return (
+			<Circle modifiers={[frame({width: DOT_SIZE, height: DOT_SIZE}), foregroundStyle(dotColor)]} />
+		)
+	}
+
+	if (isPassed || isSkipped) {
+		return (
+			<Circle
+				modifiers={[
+					frame({width: DOT_SIZE, height: DOT_SIZE}),
+					foregroundStyle(barColor),
+					opacity(isSkipped ? 0.25 : 1),
+				]}
+			/>
+		)
+	}
+
+	// The centre is the card's own colour rather than clear: the rail runs
+	// behind the dot and would otherwise show through the hole.
+	return (
+		<ZStack>
+			<Circle
+				modifiers={[
+					frame({width: FUTURE_DOT_SIZE, height: FUTURE_DOT_SIZE}),
+					foregroundStyle(barColor),
+					opacity(RAIL_AHEAD_OPACITY),
+				]}
+			/>
+			<Circle
+				modifiers={[
+					frame({width: FUTURE_HOLE_SIZE, height: FUTURE_HOLE_SIZE}),
+					foregroundStyle(c.secondarySystemGroupedBackground),
+				]}
+			/>
+		</ZStack>
+	)
 }
 
 function StopCell({
@@ -155,12 +216,12 @@ function StopCell({
 					{busAtStop ? (
 						<BusGlyph color={dotColor} />
 					) : (
-						<Circle
-							modifiers={[
-								frame({width: DOT_SIZE, height: DOT_SIZE}),
-								foregroundStyle(isHere ? dotColor : barColor),
-								opacity(isSkipped ? 0.25 : 1),
-							]}
+						<StopDot
+							barColor={barColor}
+							dotColor={dotColor}
+							isHere={isHere}
+							isPassed={isPassed}
+							isSkipped={isSkipped}
 						/>
 					)}
 
