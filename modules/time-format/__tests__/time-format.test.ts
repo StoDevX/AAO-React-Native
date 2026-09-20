@@ -5,7 +5,6 @@ import {
 	formatCompactTimeRange,
 	formatDate,
 	formatDateTime,
-	formatOrdinalDate,
 	formatDayOfMonth,
 	formatHourLabel,
 	formatTime,
@@ -201,49 +200,6 @@ describe('formatDate', () => {
 		let tokyo = chicago.clone().tz('Asia/Tokyo')
 		expect(formatDate(chicago, 'short', 'en-US')).toBe('Aug 20')
 		expect(formatDate(chicago, 'short', 'en-US')).toBe(formatDate(tokyo, 'short', 'en-US'))
-	})
-})
-
-describe('formatOrdinalDate', () => {
-	test('names the weekday and month in full, with the day ordinal', () => {
-		let m = moment.tz('2026-09-20 12:00', CAMPUS)
-		expect(formatOrdinalDate(m, 'en-US')).toBe('Sunday, September 20th')
-	})
-
-	// `Intl` owns the order and the punctuation, so the ordinal is dropped
-	// into whichever position the locale puts the day in.
-	test('follows the locale order', () => {
-		let m = moment.tz('2026-09-20 12:00', CAMPUS)
-		expect(formatOrdinalDate(m, 'en-GB')).toBe('Sunday 20th September')
-	})
-
-	test('covers every English ordinal suffix', () => {
-		let ordinal = (day: string) =>
-			formatOrdinalDate(moment.tz(`2026-09-${day} 12:00`, CAMPUS), 'en-US').replace(
-				'Sunday, September ',
-				'',
-			)
-
-		// The 20th is a Sunday, so only this one keeps the weekday above.
-		expect(ordinal('20')).toBe('20th')
-		expect(formatOrdinalDate(moment.tz('2026-09-01 12:00', CAMPUS), 'en-US')).toContain('1st')
-		expect(formatOrdinalDate(moment.tz('2026-09-02 12:00', CAMPUS), 'en-US')).toContain('2nd')
-		expect(formatOrdinalDate(moment.tz('2026-09-03 12:00', CAMPUS), 'en-US')).toContain('3rd')
-		expect(formatOrdinalDate(moment.tz('2026-09-04 12:00', CAMPUS), 'en-US')).toContain('4th')
-		// The teens take `th` whatever their last digit says.
-		expect(formatOrdinalDate(moment.tz('2026-09-11 12:00', CAMPUS), 'en-US')).toContain('11th')
-		expect(formatOrdinalDate(moment.tz('2026-09-12 12:00', CAMPUS), 'en-US')).toContain('12th')
-		expect(formatOrdinalDate(moment.tz('2026-09-13 12:00', CAMPUS), 'en-US')).toContain('13th')
-		expect(formatOrdinalDate(moment.tz('2026-09-21 12:00', CAMPUS), 'en-US')).toContain('21st')
-		expect(formatOrdinalDate(moment.tz('2026-09-22 12:00', CAMPUS), 'en-US')).toContain('22nd')
-		expect(formatOrdinalDate(moment.tz('2026-09-23 12:00', CAMPUS), 'en-US')).toContain('23rd')
-	})
-
-	// The suffix is English's own. A locale with no ordinals of ours gets the
-	// date `Intl` writes and nothing bolted onto it.
-	test('leaves a locale we have no ordinals for alone', () => {
-		let m = moment.tz('2026-09-20 12:00', CAMPUS)
-		expect(formatOrdinalDate(m, 'ja-JP')).toBe('9月20日日曜日')
 	})
 })
 

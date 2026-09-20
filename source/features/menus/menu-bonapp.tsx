@@ -20,7 +20,7 @@ import {bonAppCafeOptions, bonAppMenuOptions, prepareFood} from './query'
 import {useQuery} from '@tanstack/react-query'
 import {useIsFocused, useRouter} from 'expo-router'
 import {toLaxTitleCase} from '@frogpond/titlecase'
-import {formatOrdinalDate, formatWeekday} from '@frogpond/time-format'
+import {formatDate, formatWeekday} from '@frogpond/time-format'
 import type {MealHeaderState} from '@frogpond/food-menu'
 import {usePublishMenuHeader} from './menu-header'
 
@@ -170,7 +170,7 @@ export function BonAppHostedMenu(props: Props): React.ReactNode {
 	// on every render, so a header depending on it would republish on every
 	// render and loop through the provider's state.
 	let weekday = formatWeekday(now, 'short')
-	let date = formatOrdinalDate(now)
+	let date = formatDate(now, 'medium')
 
 	// Collapsed to begin with: a menu opens as food rather than as chrome, and
 	// the navigation bar carries the control that reveals the row.
