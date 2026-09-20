@@ -103,6 +103,15 @@ async function main() {
 			console.warn(`warning: ${warning}`)
 		}
 
+		// Every warning above also reaches stdout, but stdout is a run log
+		// nobody reading the PR opens. BUS_DATA_WARNINGS_FILE, when set, is a
+		// second channel the workflow reads to put warnings in front of the
+		// PR reviewer instead -- unset locally, so this is a no-op outside CI.
+		let warningsFile = process.env.BUS_DATA_WARNINGS_FILE
+		if (warningsFile) {
+			fs.writeFileSync(warningsFile, warnings.map((warning) => `${warning}\n`).join(''))
+		}
+
 		for (let [filename, line] of files) {
 			let target = path.join(BUS_TIMES, filename)
 			fs.writeFileSync(target, dump(line, {lineWidth: -1, quotingType: "'", flowLevel: 4}))

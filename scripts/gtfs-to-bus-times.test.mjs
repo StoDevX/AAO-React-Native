@@ -8,6 +8,7 @@ import {
 	alignRow,
 	canonicalPattern,
 	daysForService,
+	expiredRepairs,
 	formatTime,
 	gtfsToBusTimes,
 	selectRoutes,
@@ -93,12 +94,15 @@ describe('selectRoutes', () => {
 		assert.match(warnings[0], /Blue - Northfield Loop/u)
 	})
 
-	it('warns when a curated route has vanished from the feed', () => {
-		let {routes, warnings} = selectRoutes({routes: []}, curation)
-
-		assert.deepEqual(routes, [])
-		assert.equal(warnings.length, 1)
-		assert.match(warnings[0], /77627/u)
+	it('throws when a curated route has vanished from the feed, naming the route id and line', () => {
+		assert.throws(
+			() => selectRoutes({routes: []}, curation),
+			(error) => {
+				assert.match(error.message, /77627/u)
+				assert.match(error.message, /Blue Line/u)
+				return true
+			},
+		)
 	})
 })
 
@@ -393,6 +397,34 @@ describe('gtfsToBusTimes', () => {
 		}
 	})
 
+	it('throws naming the stop when a stop is missing stop_lat/stop_lon', () => {
+		let feed = twoServiceFeed()
+		feed.stops[1].stop_lat = ''
+		feed.stops[1].stop_lon = ''
+
+		assert.throws(
+			() => gtfsToBusTimes(feed, {curation, repairs: {repairs: []}}),
+			(error) => {
+				assert.match(error.message, /St Olaf College/u)
+				return true
+			},
+		)
+	})
+
+	it('throws when a route produces no schedules, rather than writing schedules: []', () => {
+		let feed = twoServiceFeed()
+		feed.calendar = []
+
+		assert.throws(
+			() => gtfsToBusTimes(feed, {curation, repairs: {repairs: []}}),
+			(error) => {
+				assert.match(error.message, /r1/u)
+				assert.match(error.message, /Test Line/u)
+				return true
+			},
+		)
+	})
+
 	it('collapses services whose timetables are identical, as the Express three do', () => {
 		let {files} = gtfsToBusTimes(twoServiceFeed(), {curation, repairs: {repairs: []}})
 		let schedules = files.get('test-line.yaml').schedules
@@ -583,6 +615,32 @@ describe('staleRepairs', () => {
 		assert.equal(warnings.length, 1)
 		assert.match(warnings[0], /tz/u)
 		assert.match(warnings[0], /v2/u)
+	})
+})
+
+describe('expiredRepairs', () => {
+	let repair = {id: 'tz', reason: 'r', written_against: 'v1', expires: '2027-01-01', set: {}}
+
+	it('says nothing before the expiry date', () => {
+		assert.deepEqual(expiredRepairs([repair], '2026-12-31'), [])
+	})
+
+	it('says nothing on the expiry date itself', () => {
+		assert.deepEqual(expiredRepairs([repair], '2027-01-01'), [])
+	})
+
+	it('warns once the expiry date has passed', () => {
+		let warnings = expiredRepairs([repair], '2027-01-02')
+
+		assert.equal(warnings.length, 1)
+		assert.match(warnings[0], /tz/u)
+		assert.match(warnings[0], /2027-01-01/u)
+	})
+
+	it('says nothing about a repair with no expires field', () => {
+		let noExpiry = {id: 'permanent', reason: 'r', written_against: 'v1', set: {}}
+
+		assert.deepEqual(expiredRepairs([noExpiry], '2099-01-01'), [])
 	})
 })
 

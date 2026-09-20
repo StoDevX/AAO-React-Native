@@ -12,6 +12,7 @@ properties:
   schedules:
     type: array
     items: {$ref: '#/definitions/schedule'}
+    minItems: 1
 
 definitions:
   schedule:

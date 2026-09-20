@@ -24,6 +24,11 @@ export function daysForService(calendarRow) {
  * Matching is by id because ids survive the renames that names do not; the
  * recorded `expect_name` is checked only so a rename is reported rather than
  * absorbed silently.
+ *
+ * A route curation asks for and the feed no longer has is a hard error, not
+ * a warning -- Trillium's numeric ids are not contractually stable, and a
+ * feed that drops or renumbers a curated route must not be able to write
+ * zero files, warn, and exit 0 while the app goes on serving stale data.
  */
 export function selectRoutes(feed, curation) {
 	let byId = new Map(feed.routes.map((route) => [route.route_id, route]))
@@ -34,8 +39,7 @@ export function selectRoutes(feed, curation) {
 		let gtfsRoute = byId.get(routeId)
 
 		if (!gtfsRoute) {
-			warnings.push(`route ${routeId} (${config.line}) is no longer in the feed`)
-			continue
+			throw new Error(`route ${routeId} (${config.line}) is no longer in the feed`)
 		}
 
 		if (gtfsRoute.route_long_name !== config.expect_name) {
@@ -188,6 +192,24 @@ export function staleRepairs(repairs, feedVersion) {
 		)
 }
 
+/**
+ * Repairs whose self-imposed `expires` date has passed.
+ *
+ * `written_against` alone cannot catch every stale repair: the feed can keep
+ * the same version indefinitely while the underlying condition a repair
+ * patches has become stale for some other reason. `expires` is the author's
+ * own deadline for a second look; a repair that quietly outlives it is the
+ * same failure mode as one that outlives its feed version.
+ */
+export function expiredRepairs(repairs, today) {
+	return repairs
+		.filter((repair) => repair.expires !== undefined && repair.expires < today)
+		.map(
+			(repair) =>
+				`repair "${repair.id}" expired on ${repair.expires} and it is now ${today}; confirm it is still needed`,
+		)
+}
+
 /** Groups an array into a Map keyed by `keyOf`. */
 function groupBy(items, keyOf) {
 	let groups = new Map()
@@ -204,6 +226,24 @@ function groupBy(items, keyOf) {
 }
 
 /**
+ * A GTFS `stop_lat`/`stop_lon` field as a finite number, or a thrown error.
+ *
+ * `readFeed` fills an absent column with `''`, and `Number('')` is `0`, not
+ * `NaN` -- so a stop missing coordinates would otherwise round-trip as a
+ * silently plausible-looking `0`, putting a map pin in the Gulf of Guinea.
+ * The empty-string check catches what `Number.isFinite` alone cannot.
+ */
+function parseCoordinate(rawValue, stopName, field) {
+	let value = Number(rawValue)
+
+	if (rawValue === '' || !Number.isFinite(value)) {
+		throw new Error(`stop "${stopName}" has an invalid ${field} ("${rawValue}")`)
+	}
+
+	return value
+}
+
+/**
  * Every stop a schedule serves, keyed by the display name riders read.
  *
  * Keyed by display name rather than GTFS id because that is what
@@ -217,7 +257,9 @@ function coordinatesForStops(canonical, stopsById, stopNames) {
 		canonical.map((stop) => {
 			let gtfsStop = stopsById.get(stop.id)
 			let displayName = stopNames[stop.name] ?? stop.name
-			return [displayName, [Number(gtfsStop.stop_lat), Number(gtfsStop.stop_lon)]]
+			let lat = parseCoordinate(gtfsStop.stop_lat, stop.name, 'stop_lat')
+			let lon = parseCoordinate(gtfsStop.stop_lon, stop.name, 'stop_lon')
+			return [displayName, [lat, lon]]
 		}),
 	)
 }
@@ -245,15 +287,13 @@ function schedulesForRoute(feed, routeId, stopsById, stopNames) {
 
 		let rows = trips.map((trip) => {
 			let tripStopTimes = stopTimesByTrip.get(trip.trip_id) ?? []
-			// pattern and times both come from this one filtered-and-sorted
-			// list, so they cannot disagree about which stops are published or
-			// what order they fall in.
+			// pattern and times both come from the same published-stop
+			// selection -- timepointStops and publishedStopTimes both filter
+			// and sort tripStopTimes identically -- so they cannot disagree
+			// about which stops are published or what order they fall in.
 			let published = publishedStopTimes(tripStopTimes)
 			return {
-				pattern: published.map((row) => ({
-					id: row.stop_id,
-					name: stopsById.get(row.stop_id).stop_name,
-				})),
+				pattern: timepointStops(tripStopTimes, stopsById),
 				// The raw GTFS `HH:MM:SS` sorts correctly as a string; the
 				// formatted `h:mma` does not -- '10:30am' sorts before '6:00am'
 				// and '1:30pm' before both, which silently scrambles the
@@ -358,7 +398,14 @@ function timezoneForRoute(feed, routeId, routeLabel, stopsById) {
 }
 
 /** Every curated route as a bus line, keyed by the file it is written to. */
-export function gtfsToBusTimes(feed, {curation, repairs}) {
+export function gtfsToBusTimes(
+	feed,
+	{
+		curation,
+		repairs,
+		today = new Intl.DateTimeFormat('en-CA', {timeZone: 'America/Chicago'}).format(new Date()),
+	},
+) {
 	let feedVersion = feed.feedInfo[0]?.feed_version ?? ''
 	let stopsById = new Map(feed.stops.map((stop) => [stop.stop_id, stop]))
 	let stopNames = curation.stop_names ?? {}
@@ -368,6 +415,7 @@ export function gtfsToBusTimes(feed, {curation, repairs}) {
 	warnings = [
 		...warnings,
 		...staleRepairs(repairs.repairs, feedVersion),
+		...expiredRepairs(repairs.repairs, today),
 		...ineffectiveRepairs(repairs.repairs, routeIds),
 	]
 
@@ -382,8 +430,12 @@ export function gtfsToBusTimes(feed, {curation, repairs}) {
 			}
 		}
 
+		// A route that produces zero schedules would otherwise write
+		// `schedules: []` -- a file with nothing wrong the schema, the
+		// validator, or the Jest gate can see. This is the same shape as the
+		// Critical bug this branch already shipped once; make it a hard error.
 		if (schedules.length === 0) {
-			warnings.push(`route ${routeId} (${config.line}) produced no schedules`)
+			throw new Error(`route ${routeId} (${config.line}) produced no schedules`)
 		}
 
 		let timezone = timezoneForRoute(feed, routeId, `route ${routeId} (${config.line})`, stopsById)
