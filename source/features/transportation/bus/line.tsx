@@ -94,7 +94,7 @@ export function BusLine(props: Props): React.ReactNode {
 						<ContentUnavailableView systemImage="bus" title="This line is not running today." />
 					) : (
 						timetable.map((stop, index) => {
-							let {busProgress, busAtStop} = busPropsForRow(busTarget, index)
+							let {busFraction, busAtStop} = busPropsForRow(busTarget, index)
 							let stopStatus = findBusStopStatus({
 								stop,
 								busStatus: status,
@@ -117,7 +117,7 @@ export function BusLine(props: Props): React.ReactNode {
 									accessibilityLabel={`${stop.name}, ${times}`}
 									barColor={barColor}
 									busAtStop={busAtStop}
-									busProgress={busProgress}
+									busFraction={busFraction}
 									currentStopColor={currentStopColor}
 									detail={times}
 									isFirstRow={index === 0}

@@ -72,16 +72,40 @@ export function findBusTarget(
 }
 
 /**
- * Hands the bus to the row it is heading for, which draws the whole leg from the
- * stop above down to its own.
+ * Where the bus sits relative to one stop's dot, in stops -- negative above or
+ * left of it, positive below or right -- or nothing if it is not on a leg
+ * touching that stop.
+ *
+ * Both stops either side of the leg get an answer, and both draw the bus. A
+ * `List` row clips anything outside itself, so a bus straddling the seam
+ * between two rows would otherwise lose whatever half hangs over. Drawn twice,
+ * each row clips its own half and the two halves meet as one bus. Wherever the
+ * bus sits well inside one stop's row, the other copy is a whole row away and
+ * never appears.
  */
 export function busPropsForRow(
 	busTarget: BusTarget | null,
 	index: number,
-): {busProgress?: number; busAtStop?: boolean} {
-	if (!busTarget || index !== busTarget.targetIndex) {
+): {busFraction?: number; busAtStop?: boolean} {
+	if (!busTarget) {
 		return {}
 	}
 
-	return busTarget.atStop ? {busAtStop: true} : {busProgress: busTarget.progress}
+	let {targetIndex, progress, atStop} = busTarget
+
+	if (atStop) {
+		return index === targetIndex ? {busAtStop: true} : {}
+	}
+
+	// The stop it is heading for: the bus is behind that dot, so above it.
+	if (index === targetIndex) {
+		return {busFraction: progress - 1}
+	}
+
+	// The stop it left: the bus is past that dot, so below it.
+	if (index === targetIndex - 1) {
+		return {busFraction: progress}
+	}
+
+	return {}
 }

@@ -13,7 +13,7 @@ jest.mock('@expo/ui/swift-ui/modifiers', () => {
 	return require('../../../../../testing/expo-ui-mock') as typeof import('../../../../../testing/expo-ui-mock')
 })
 
-function renderRow(props: {busProgress?: number; busAtStop?: boolean; rowHeight: number | null}) {
+function renderRow(props: {busFraction?: number; busAtStop?: boolean; rowHeight: number | null}) {
 	return render(
 		<TimetableRow
 			accessibilityLabel="Carleton, 1:05 PM"
@@ -31,13 +31,13 @@ function renderRow(props: {busProgress?: number; busAtStop?: boolean; rowHeight:
 
 describe('TimetableRow', () => {
 	test('holds a bus in transit until a row height has been measured', async () => {
-		let {queryAllByTestId} = await renderRow({busProgress: 0.5, rowHeight: null})
+		let {queryAllByTestId} = await renderRow({busFraction: -0.25, rowHeight: null})
 
 		expect(queryAllByTestId('symbol-bus.fill')).toHaveLength(0)
 	})
 
 	test('draws a bus in transit once the row height is known', async () => {
-		let {getAllByTestId} = await renderRow({busProgress: 0.5, rowHeight: 60})
+		let {getAllByTestId} = await renderRow({busFraction: -0.25, rowHeight: 60})
 
 		expect(getAllByTestId('symbol-bus.fill')).toHaveLength(1)
 	})

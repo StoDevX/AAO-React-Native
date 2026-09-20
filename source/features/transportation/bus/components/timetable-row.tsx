@@ -65,7 +65,7 @@ type Props = {
 	isFirstRow: boolean
 	isLastRow: boolean
 	/** How far the bus is along the leg into this row, when it is on that leg. */
-	busProgress?: number
+	busFraction?: number
 	/** Whether the bus is sitting on this row's dot. */
 	busAtStop?: boolean
 	/**
@@ -173,7 +173,7 @@ function RowContent(props: Props): React.ReactNode {
 		currentStopColor,
 		isFirstRow,
 		isLastRow,
-		busProgress,
+		busFraction,
 		busAtStop,
 		rowHeight,
 		onHeight,
@@ -185,16 +185,14 @@ function RowContent(props: Props): React.ReactNode {
 		stopStatus === 'skip' ? c.tertiaryLabel : stopStatus === 'after' ? c.secondaryLabel : c.label
 	let detailColor = stopStatus === 'skip' ? c.tertiaryLabel : c.secondaryLabel
 
-	// The leg into this row runs from the dot above to this row's dot: the
-	// lower half of the row above plus the upper half of this one, one row
-	// high, starting half a row above this dot. The same arithmetic as the
-	// widget's strip, one axis over -- there the cell width is a constant;
-	// here the row height is measured once, since text size sets it. Until
+	// `busFraction` is where the bus sits relative to this row's own dot, in
+	// rows, and never exceeds half a row -- so the glyph stays inside the row
+	// drawing it, which a `List` row would otherwise clip. The same arithmetic
+	// as the widget's strip, one axis over: there the cell width is a constant,
+	// here the row height is measured once, since the text size sets it. Until
 	// that measurement lands the bus is not drawn, so it never jumps.
 	let busOffset =
-		busProgress == null || busAtStop || rowHeight == null
-			? null
-			: busProgress * rowHeight - rowHeight / 2
+		busFraction == null || busAtStop || rowHeight == null ? null : rowHeight * busFraction
 
 	// The glyph has a zero frame, so nothing measured here depends on where
 	// it is drawn: the height is the text's, and moving the bus cannot change it.

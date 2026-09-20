@@ -68,7 +68,7 @@ function StopCell({
 	dotColor,
 	isFirst,
 	isLast,
-	busProgress,
+	busFraction,
 	busAtStop,
 	onPress,
 }: {
@@ -78,8 +78,8 @@ function StopCell({
 	dotColor: string
 	isFirst: boolean
 	isLast: boolean
-	/** How far the bus is along the leg into this cell, when it is on that leg. */
-	busProgress?: number
+	/** Where the bus sits relative to this cell's dot, in cells: -0.5 to +0.5. */
+	busFraction?: number
 	/** Whether the bus is sitting on this cell's dot. */
 	busAtStop?: boolean
 	onPress: () => void
@@ -92,12 +92,10 @@ function StopCell({
 	// A leg the bus has already driven is solid; one still ahead of it is faint.
 	let railOpacity = isPassed ? 1 : 0.35
 
-	// The leg into this cell is the previous cell's right half plus this
-	// cell's left half: CELL_WIDTH long, starting half a cell left of this
-	// dot. Every cell is the same known width, so the bus can sit at its true
-	// fraction of the leg with nothing measured.
-	let busOffset =
-		busProgress == null || busAtStop ? null : busProgress * CELL_WIDTH - CELL_WIDTH / 2
+	// `busFraction` is where the bus sits relative to this cell's own dot, in
+	// cells, and never exceeds half a cell. Every cell is the same known width,
+	// so the bus sits at its true point on the leg with nothing measured.
+	let busOffset = busFraction == null || busAtStop ? null : CELL_WIDTH * busFraction
 
 	return (
 		<Button

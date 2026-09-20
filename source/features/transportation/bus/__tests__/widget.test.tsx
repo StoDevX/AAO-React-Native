@@ -74,8 +74,11 @@ describe('BusLineWidget', () => {
 	test('draws the bus on the strip while the line is running', async () => {
 		let {getAllByTestId} = await renderWidget(makeLine())
 
-		// One bus glyph is the header's; a second one is the bus on the strip.
-		expect(getAllByTestId('symbol-bus.fill')).toHaveLength(2)
+		// One glyph is the header's. The other two are the bus itself, drawn by
+		// the stops either side of the leg it is on: they resolve to the same
+		// point and superimpose, which is what lets a bus straddling two rows
+		// survive the clipping in the timetable's list.
+		expect(getAllByTestId('symbol-bus.fill')).toHaveLength(3)
 	})
 
 	test('keeps the bus off the strip before the first departure', async () => {
