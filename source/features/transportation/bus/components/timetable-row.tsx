@@ -18,12 +18,16 @@ import {
 	font,
 	foregroundStyle,
 	frame,
+	lineLimit,
 	listRowInsets,
 	listRowSeparator,
+	offset,
+	onGeometryChange,
 	opacity,
 	padding,
 	shadow,
 	shapes,
+	truncationMode,
 	type ViewModifier,
 } from '@expo/ui/swift-ui/modifiers'
 import * as c from '@frogpond/colors'
@@ -64,6 +68,14 @@ type Props = {
 	busProgress?: number
 	/** Whether the bus is sitting on this row's dot. */
 	busAtStop?: boolean
+	/**
+	 * The height every row stands at, once one has been measured. Every row
+	 * is one title line over one detail line, so one measurement holds for
+	 * all of them, and it is what places a bus in transit along the rail.
+	 */
+	rowHeight?: number | null
+	/** Reports this row's height; given to the one row that does the measuring. */
+	onHeight?: (height: number) => void
 	/** What the row announces; it begins with the title, which the UI tests match on. */
 	accessibilityLabel: string
 	onPress?: () => void
@@ -140,26 +152,15 @@ function StopDot({
 	)
 }
 
-function RailSegment({
-	barColor,
-	isHidden,
-	children,
-}: {
-	barColor: string
-	isHidden: boolean
-	children?: React.ReactNode
-}): React.ReactNode {
+function RailSegment({barColor, isHidden}: {barColor: string; isHidden: boolean}): React.ReactNode {
 	return (
-		<ZStack modifiers={[frame({maxHeight: Infinity})]}>
-			<Rectangle
-				modifiers={[
-					frame({width: RAIL_WIDTH, maxHeight: Infinity}),
-					foregroundStyle(barColor),
-					opacity(isHidden ? 0 : 1),
-				]}
-			/>
-			{children}
-		</ZStack>
+		<Rectangle
+			modifiers={[
+				frame({width: RAIL_WIDTH, maxHeight: Infinity}),
+				foregroundStyle(barColor),
+				opacity(isHidden ? 0 : 1),
+			]}
+		/>
 	)
 }
 
@@ -174,6 +175,8 @@ function RowContent(props: Props): React.ReactNode {
 		isLastRow,
 		busProgress,
 		busAtStop,
+		rowHeight,
+		onHeight,
 		accessibilityLabel: label,
 		onPress,
 	} = props
@@ -182,11 +185,23 @@ function RowContent(props: Props): React.ReactNode {
 		stopStatus === 'skip' ? c.tertiaryLabel : stopStatus === 'after' ? c.secondaryLabel : c.label
 	let detailColor = stopStatus === 'skip' ? c.tertiaryLabel : c.secondaryLabel
 
-	// A bus on the leg into this row rides the upper segment. Its exact
-	// position along the segment is not drawn: a row's height is set by its
-	// text, and finding it would mean measuring the row and feeding the result
-	// back into it. The glyph sits at the segment's midpoint instead.
-	let busOnSegment = busProgress != null && !busAtStop
+	// The leg into this row runs from the dot above to this row's dot: the
+	// lower half of the row above plus the upper half of this one, one row
+	// high, starting half a row above this dot. The same arithmetic as the
+	// widget's strip, one axis over -- there the cell width is a constant;
+	// here the row height is measured once, since text size sets it. Until
+	// that measurement lands the bus is not drawn, so it never jumps.
+	let busOffset =
+		busProgress == null || busAtStop || rowHeight == null
+			? null
+			: busProgress * rowHeight - rowHeight / 2
+
+	// The glyph has a zero frame, so nothing measured here depends on where
+	// it is drawn: the height is the text's, and moving the bus cannot change it.
+	let railColumnModifiers = [
+		frame({width: RAIL_COLUMN_WIDTH, maxHeight: Infinity}),
+		...(onHeight ? [onGeometryChange(({height}) => onHeight(height))] : []),
+	]
 
 	return (
 		<HStack
@@ -201,11 +216,9 @@ function RowContent(props: Props): React.ReactNode {
 			    can go transparent on the first and last rows and the rail
 			    terminates at their dots. `Rectangle` rather than `Capsule`:
 			    rounded ends pinch where one row's segment meets the next. */}
-			<ZStack modifiers={[frame({width: RAIL_COLUMN_WIDTH, maxHeight: Infinity})]}>
+			<ZStack modifiers={railColumnModifiers}>
 				<VStack spacing={0}>
-					<RailSegment barColor={barColor} isHidden={isFirstRow}>
-						{busOnSegment ? <BusGlyph color={currentStopColor} /> : null}
-					</RailSegment>
+					<RailSegment barColor={barColor} isHidden={isFirstRow} />
 					<RailSegment barColor={barColor} isHidden={isLastRow} />
 				</VStack>
 				{busAtStop ? (
@@ -217,8 +230,13 @@ function RowContent(props: Props): React.ReactNode {
 						stopStatus={stopStatus}
 					/>
 				)}
+				{busOffset === null ? null : (
+					<BusGlyph color={currentStopColor} modifiers={[offset({y: busOffset})]} />
+				)}
 			</ZStack>
 
+			{/* One line each, so every row stands the same height and one
+			    measurement places the bus on any of them. */}
 			<VStack
 				alignment="leading"
 				modifiers={[padding({vertical: TEXT_VERTICAL_PADDING})]}
@@ -228,12 +246,21 @@ function RowContent(props: Props): React.ReactNode {
 					modifiers={[
 						font({textStyle: 'body', weight: stopStatus === 'at' ? 'semibold' : 'regular'}),
 						foregroundStyle(titleColor),
+						lineLimit(1),
+						truncationMode('tail'),
 					]}
 				>
 					{title}
 				</Text>
 				{detail ? (
-					<Text modifiers={[font({textStyle: 'subheadline'}), foregroundStyle(detailColor)]}>
+					<Text
+						modifiers={[
+							font({textStyle: 'subheadline'}),
+							foregroundStyle(detailColor),
+							lineLimit(1),
+							truncationMode('tail'),
+						]}
+					>
 						{detail}
 					</Text>
 				) : null}

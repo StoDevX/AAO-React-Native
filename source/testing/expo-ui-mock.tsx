@@ -162,6 +162,14 @@ export const onScrollPhaseChange = (
 ): Modifier => createModifier('onScrollPhaseChange', {callback})
 
 /**
+ * Natively this reports the view's frame after each layout pass; there is
+ * no layout here, so it only carries the handler and never calls it.
+ */
+export const onGeometryChange = (
+	handler: (frame: {x: number; y: number; width: number; height: number}) => void,
+): Modifier => createModifier('onGeometryChange', {onGeometryChange: handler})
+
+/**
  * The real modifier hands native a wrapped handler that tells SwiftUI the
  * refresh has finished; this one carries the caller's own handler under
  * `handler`, since the promise a test awaits is the caller's, and there is no

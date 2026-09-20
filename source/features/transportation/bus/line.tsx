@@ -61,6 +61,15 @@ export function BusLine(props: Props): React.ReactNode {
 
 	let timetable = schedule.timetable
 
+	// One row's measured height, which every row then uses to place the bus.
+	// The set is skipped when the value has not changed: the measurement
+	// fires on layout passes the rows do not care about, and only a new
+	// height is worth a render.
+	let [rowHeight, setRowHeight] = React.useState<number | null>(null)
+	let recordRowHeight = React.useCallback((height: number) => {
+		setRowHeight((known) => (known === height ? known : height))
+	}, [])
+
 	// SwiftUI colors want strings; the feed gives hex, but the type is RN's
 	// wider ColorValue.
 	let barColor = String(line.colors.bar)
@@ -113,7 +122,9 @@ export function BusLine(props: Props): React.ReactNode {
 									detail={times}
 									isFirstRow={index === 0}
 									isLastRow={index === timetable.length - 1}
+									onHeight={index === 0 ? recordRowHeight : undefined}
 									onPress={() => onPressStop(stop.name)}
+									rowHeight={rowHeight}
 									stopStatus={stopStatus}
 									title={stop.name}
 								/>
