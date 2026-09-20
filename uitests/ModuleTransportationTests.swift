@@ -2,13 +2,17 @@ import XCTest
 
 class ModuleTransportationTests: UITestCase {
 	/// Every line gets a widget, so the screen answers "what is running" without
-	/// a tap.
+	/// a tap -- except one the feed has retired, which keeps its entry for
+	/// released app versions to read and earns no widget here. Both halves ride
+	/// one cold launch; the absence sweep goes last because it scrolls the list
+	/// to the bottom.
 	func testEveryLineHasAWidget() throws {
 		TransportationScreen(app: app)
 			.navigate()
 			.verifyLineWidgetShown(TestIdentifiers.Transportation.aLine)
 			.verifyLineWidgetShown("Red Line")
 			.capture("Transportation - widgets")
+			.verifyLineWidgetAbsent(TestIdentifiers.Transportation.aHiddenLine)
 	}
 
 	/// The strip is a horizontal scroll view inside a list row, which is the
@@ -16,6 +20,7 @@ class ModuleTransportationTests: UITestCase {
 	func testTheStopStripScrollsSideways() throws {
 		TransportationScreen(app: app)
 			.navigate()
+			.verifyStripHasNotReached(TestIdentifiers.Transportation.aStopFartherAlongTheRoute)
 			.swipeStripLeft()
 			.verifyStripAdvancedTo(TestIdentifiers.Transportation.aStopFartherAlongTheRoute)
 			.capture("Transportation - strip scrolled")

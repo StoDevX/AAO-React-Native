@@ -88,6 +88,17 @@ extension Screen {
 	/// keyboard, the keyboard takes it, and this returns quietly having scrolled
 	/// nothing. Every caller scrolls with the keyboard down; one that cannot
 	/// wants the press-and-drag `CampusDictionaryScreen.revealInForm` uses.
+	/// Swipe a scrolling container back to its top. `scrollUntilExists` only
+	/// ever swipes one way, so a sweep meant to rule an element out has to
+	/// start from the top or it never sees what is above it.
+	@discardableResult
+	func scrollToTop(_ container: XCUIElement, swipes: Int = 8) -> Self {
+		for _ in 0..<swipes {
+			container.swipeDown()
+		}
+		return self
+	}
+
 	@discardableResult
 	func scrollUntilExists(_ element: XCUIElement, swipes: Int = 8, in container: XCUIElement? = nil) -> Self {
 		let scrollTarget = container ?? app

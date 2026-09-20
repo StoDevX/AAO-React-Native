@@ -36,6 +36,21 @@ struct TransportationScreen: Screen {
 		return self
 	}
 
+	/// A line has no widget anywhere on the screen. Sweeps the whole list from
+	/// the top looking for its header rather than trusting one glance: the
+	/// sections build lazily, so a widget below the fold is absent from the
+	/// tree and would read as missing without ever having been ruled out.
+	@discardableResult
+	func verifyLineWidgetAbsent(_ line: String) -> Self {
+		scrollToTop(list)
+		let header = lineHeader(line)
+		scrollUntilExists(header, in: list)
+		XCTAssertFalse(
+			header.exists,
+			"\(line) is hidden in the feed and should have no widget on the Transportation screen")
+		return self
+	}
+
 	/// Open a line's full timetable by pressing its widget header.
 	@discardableResult
 	func openLine(_ line: String) -> Self {
@@ -61,6 +76,32 @@ struct TransportationScreen: Screen {
 		return self
 	}
 
+	/// The first line's strip, which a swipe is aimed at and a stop is looked
+	/// for inside.
+	private var stopStrip: XCUIElement {
+		app.scrollViews[TestIdentifiers.Transportation.stopStrip].firstMatch
+	}
+
+	/// The strip is not already showing `stop`. The precondition for
+	/// `verifyStripAdvancedTo`: the strip opens partway along the route,
+	/// wherever the clock puts the bus, so without this a stop that happened to
+	/// be on screen from the start would pass that check even if the swipe had
+	/// been swallowed by the enclosing list.
+	///
+	/// Hittability rather than existence, at both ends of the swipe: a
+	/// `LazyHStack` realises a little beyond its viewport, so a cell just off
+	/// screen can be in the tree without being on it.
+	@discardableResult
+	func verifyStripHasNotReached(_ stop: String) -> Self {
+		XCTAssertTrue(
+			stopStrip.waitForExistence(timeout: 30),
+			"The first line's widget should show its stop strip")
+		XCTAssertFalse(
+			app.elementWithLabel(startingWith: stop).isHittable,
+			"\(stop) should be off the end of the strip before it is swiped")
+		return self
+	}
+
 	/// Push the first line's strip sideways. The swipe is aimed at the strip
 	/// itself rather than at the app, which would scroll the list vertically
 	/// instead -- and rather than at a named stop, which may be scrolled out
@@ -68,12 +109,11 @@ struct TransportationScreen: Screen {
 	/// on screen depends on where the bus is.
 	@discardableResult
 	func swipeStripLeft() -> Self {
-		let strip = app.scrollViews[TestIdentifiers.Transportation.stopStrip].firstMatch
 		XCTAssertTrue(
-			strip.waitForExistence(timeout: 30),
+			stopStrip.waitForExistence(timeout: 30),
 			"The first line's widget should show its stop strip")
-		strip.swipeLeft()
-		strip.swipeLeft()
+		stopStrip.swipeLeft()
+		stopStrip.swipeLeft()
 		return self
 	}
 
@@ -88,6 +128,9 @@ struct TransportationScreen: Screen {
 		XCTAssertTrue(
 			cell.waitForExistence(timeout: 30),
 			"Swiping the strip should scroll far enough to reveal \(stop)")
+		XCTAssertTrue(
+			cell.isHittable,
+			"Swiping the strip should bring \(stop) onto the screen, not merely into the tree")
 		return self
 	}
 

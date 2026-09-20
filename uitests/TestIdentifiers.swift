@@ -596,6 +596,10 @@ struct TestIdentifiers {
 		/// from under this test.
 		static let aLine = "Express Bus"
 		static let aStop = "St. Olaf College"
+		/// A line the feed publishes with `hidden: true`
+		/// (`data/bus-times/2-oles-go.yaml`), so it stays readable to released
+		/// app versions while this one leaves it off the screen.
+		static let aHiddenLine = "Oles Go"
 		/// A stop several places past `aStop` on Express Bus's route (see
 		/// `docs/bus-times.json`), used to prove a strip swipe actually moved the
 		/// strip rather than doing nothing. Unlike `aStop`, which the route
