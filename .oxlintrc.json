@@ -105,6 +105,11 @@
         "message": "Use navigation.goBack() -- dismissTo() pops unconditionally."
       },
       {
+        "object": "router",
+        "property": "push",
+        "message": "Use router.navigate() -- push() pops unconditionally."
+      },
+      {
         "object": "navigation",
         "property": "pop",
         "message": "Use navigation.goBack() -- pop() pops even when there is nothing to pop."
