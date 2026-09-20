@@ -10,7 +10,9 @@ repairs:
     reason: >-
       agency.txt says America/Los_Angeles. Northfield is Central. The feed
       knows this itself -- every stop in stops.txt carries stop_timezone
-      America/Chicago -- so only the agency-level field is wrong.
+      America/Chicago -- so this repair supplies that corrected value
+      directly rather than merely flagging the bug. agency_timezone itself is
+      never read.
     written_against: 'UTC: 10-Dec-2025 15:23'
     expires: 2027-01-01
     set:

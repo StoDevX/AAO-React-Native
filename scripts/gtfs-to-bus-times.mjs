@@ -66,18 +66,31 @@ export function formatTime(gtfsTime) {
 }
 
 /**
- * A trip's published stops, in order.
+ * A trip's stop_times rows that are actually published, in departure order.
  *
  * `timepoint === '1'` marks a time the operator commits to. The rest are
  * interpolated between timepoints, and in this feed they are the
  * route-deviation stops -- visited only on a phoned-ahead request -- so their
  * times promise a schedule that is not kept.
+ *
+ * This is the one place that decides which rows count as published and how
+ * they are ordered; `timepointStops` and `schedulesForRoute` both build from
+ * it, so a trip's stop pattern and its times cannot silently disagree on
+ * length or order -- `alignRow` would otherwise catch that too late, by
+ * throwing on a real route.
  */
-export function timepointStops(tripStopTimes, stopsById) {
+function publishedStopTimes(tripStopTimes) {
 	return tripStopTimes
 		.filter((row) => row.timepoint === '1')
 		.sort((a, b) => Number(a.stop_sequence) - Number(b.stop_sequence))
-		.map((row) => ({id: row.stop_id, name: stopsById.get(row.stop_id).stop_name}))
+}
+
+/** A trip's published stops, in order. */
+export function timepointStops(tripStopTimes, stopsById) {
+	return publishedStopTimes(tripStopTimes).map((row) => ({
+		id: row.stop_id,
+		name: stopsById.get(row.stop_id).stop_name,
+	}))
 }
 
 /** Whether `pattern` appears in `canonical` in order, allowing gaps. */
@@ -213,12 +226,15 @@ function schedulesForRoute(feed, routeId, stopsById, stopNames) {
 
 		let rows = trips.map((trip) => {
 			let tripStopTimes = stopTimesByTrip.get(trip.trip_id) ?? []
-			let pattern = timepointStops(tripStopTimes, stopsById)
-			let published = tripStopTimes
-				.filter((row) => row.timepoint === '1')
-				.sort((a, b) => Number(a.stop_sequence) - Number(b.stop_sequence))
+			// pattern and times both come from this one filtered-and-sorted
+			// list, so they cannot disagree about which stops are published or
+			// what order they fall in.
+			let published = publishedStopTimes(tripStopTimes)
 			return {
-				pattern,
+				pattern: published.map((row) => ({
+					id: row.stop_id,
+					name: stopsById.get(row.stop_id).stop_name,
+				})),
 				// The raw GTFS `HH:MM:SS` sorts correctly as a string; the
 				// formatted `h:mma` does not -- '10:30am' sorts before '6:00am'
 				// and '1:30pm' before both, which silently scrambles the
@@ -249,6 +265,78 @@ function schedulesForRoute(feed, routeId, stopsById, stopNames) {
 	return [...seen.values()]
 }
 
+/** The `set` keys `gtfsToBusTimes` knows how to apply from a repair. */
+const HANDLED_REPAIR_KEYS = new Set(['days', 'timezone'])
+
+/** Whether `repair` targets `routeId` -- a repair with no `route` targets every route. */
+function repairAppliesToRoute(repair, routeId) {
+	return repair.route === undefined || repair.route === routeId
+}
+
+/**
+ * Warns about `repairs:` entries that applied to nothing.
+ *
+ * A repair that names a route no longer being generated, or that sets a key
+ * nothing reads, silently does nothing -- which looks identical to a repair
+ * that worked. Say so, rather than let a future repair author trust
+ * protection that isn't there.
+ */
+function ineffectiveRepairs(repairs, routeIds) {
+	let warnings = []
+
+	for (let repair of repairs) {
+		if (repair.route !== undefined && !routeIds.has(repair.route)) {
+			warnings.push(
+				`repair "${repair.id}" names route ${repair.route}, which is not among the routes being generated; it had no effect`,
+			)
+			continue
+		}
+
+		let unhandled = Object.keys(repair.set ?? {}).filter((key) => !HANDLED_REPAIR_KEYS.has(key))
+		if (unhandled.length > 0) {
+			warnings.push(
+				`repair "${repair.id}" sets ${unhandled.join(', ')}, which gtfsToBusTimes does not know how to apply; it had no effect`,
+			)
+		}
+	}
+
+	return warnings
+}
+
+/**
+ * The single `stop_timezone` every stop a route serves agrees on.
+ *
+ * `undefined` means the route's stops disagree, or one of them never set the
+ * column -- both are feed defects for the caller to warn about and fall back
+ * from, rather than guess at.
+ */
+function timezoneForRoute(feed, routeId, stopsById) {
+	let routeTripIds = new Set(
+		feed.trips.filter((trip) => trip.route_id === routeId).map((trip) => trip.trip_id),
+	)
+	let stopIds = new Set(
+		feed.stopTimes.filter((row) => routeTripIds.has(row.trip_id)).map((row) => row.stop_id),
+	)
+
+	let timezones = new Set()
+	let sawMissing = false
+
+	for (let stopId of stopIds) {
+		let timezone = stopsById.get(stopId)?.stop_timezone
+		if (timezone) {
+			timezones.add(timezone)
+		} else {
+			sawMissing = true
+		}
+	}
+
+	if (sawMissing || timezones.size !== 1) {
+		return
+	}
+
+	return [...timezones][0]
+}
+
 /** Every curated route as a bus line, keyed by the file it is written to. */
 export function gtfsToBusTimes(feed, {curation, repairs}) {
 	let feedVersion = feed.feedInfo[0]?.feed_version ?? ''
@@ -256,15 +344,24 @@ export function gtfsToBusTimes(feed, {curation, repairs}) {
 	let stopNames = curation.stop_names ?? {}
 
 	let {routes, warnings} = selectRoutes(feed, curation)
-	warnings = [...warnings, ...staleRepairs(repairs.repairs, feedVersion)]
+	let routeIds = new Set(routes.map((route) => route.routeId))
+	warnings = [
+		...warnings,
+		...staleRepairs(repairs.repairs, feedVersion),
+		...ineffectiveRepairs(repairs.repairs, routeIds),
+	]
 
 	let files = new Map()
+	// Collected across routes and reported once per repair, the same way
+	// `staleRepairs` reports once per repair rather than once per route it
+	// touches.
+	let redundantTimezoneRepairs = new Set()
 
 	for (let {routeId, config} of routes) {
 		let schedules = schedulesForRoute(feed, routeId, stopsById, stopNames)
 
 		for (let repair of repairs.repairs) {
-			if (repair.route === routeId && repair.set?.days) {
+			if (repairAppliesToRoute(repair, routeId) && repair.set?.days) {
 				schedules = schedules.map((schedule) => ({...schedule, days: repair.set.days}))
 			}
 		}
@@ -273,12 +370,41 @@ export function gtfsToBusTimes(feed, {curation, repairs}) {
 			warnings.push(`route ${routeId} (${config.line}) produced no schedules`)
 		}
 
+		// agency.txt's agency_timezone is never read -- it says
+		// America/Los_Angeles for this Minnesota operator, which is exactly
+		// the bug the agency-timezone repair exists to correct. stops.txt's
+		// per-stop stop_timezone is the real source of truth.
+		let derivedTimezone = timezoneForRoute(feed, routeId, stopsById)
+		let timezoneRepair = repairs.repairs.find(
+			(repair) => repairAppliesToRoute(repair, routeId) && repair.set?.timezone !== undefined,
+		)
+
+		if (derivedTimezone === undefined) {
+			warnings.push(
+				`route ${routeId} (${config.line})'s stops disagree on stop_timezone, or one of them never set it; falling back to a repair`,
+			)
+		} else if (timezoneRepair && timezoneRepair.set.timezone === derivedTimezone) {
+			redundantTimezoneRepairs.add(timezoneRepair.id)
+		}
+
+		// A repair's timezone always wins over the value derived from
+		// stops.txt -- that is the point of a repair -- but the derived
+		// value still backstops a route that no timezone repair targets.
+		let timezone = timezoneRepair?.set.timezone ?? derivedTimezone
+
 		files.set(config.file, {
 			line: config.line,
+			timezone,
 			colors: config.colors,
 			notice: config.notice,
 			schedules,
 		})
+	}
+
+	for (let repairId of redundantTimezoneRepairs) {
+		warnings.push(
+			`repair "${repairId}" sets a timezone that already matches stops.txt; it may be redundant now that the feed provides the correct value`,
+		)
 	}
 
 	return {files, warnings}
