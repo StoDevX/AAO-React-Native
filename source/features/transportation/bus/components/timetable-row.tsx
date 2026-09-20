@@ -14,6 +14,8 @@ import {
 	accessibilityElement,
 	accessibilityIdentifier,
 	accessibilityLabel,
+	animation,
+	Animation,
 	buttonStyle,
 	contentShape,
 	font,
@@ -23,10 +25,11 @@ import {
 	listRowInsets,
 	alignmentGuide,
 	offset,
+	onAppear,
 	onGeometryChange,
 	opacity,
-	symbolEffect,
 	padding,
+	scaleEffect,
 	shapes,
 	truncationMode,
 	type ViewModifier,
@@ -44,6 +47,15 @@ const RAIL_WIDTH = 5
 export const BUS_ON_RAIL = 'bus-on-rail'
 /// The bus on the rail. Smaller than a passed stop's dot, so the two read apart.
 const BUS_DOT_SIZE = 9
+/// How far the ping reaches past the bead, as a multiple of it.
+const RIPPLE_SCALE = 3
+/// How solid the ring is as it leaves the bead, before it fades out.
+const RIPPLE_OPACITY = 0.45
+/// How long one ping takes, in seconds.
+const RIPPLE_SECONDS = 1.6
+/// SwiftUI counts repeats rather than offering "forever", so this is a count
+/// no one will sit through: a day and a half of pinging.
+const RIPPLE_FOREVER = 100000
 /** A stop the bus has passed: a small solid disc. */
 const PASSED_DOT_SIZE = 12
 /** A stop still ahead: a ring, so it reads as a hole punched in the rail. */
@@ -110,21 +122,44 @@ export function BusGlyph({
 	// than it was worth. A dot says the same thing: the rail carries the stops,
 	// and this is what is moving between them.
 	//
-	// Drawn as the `circle.fill` symbol rather than a `Circle` shape so it can
-	// pulse: `symbolEffect` applies to SF Symbols, not to shapes. The pulse
-	// says the position is live, which a still dot on a timetable of fixed
-	// times otherwise does not.
+	// It pings: a ring leaves the bead, grows, and fades, over and over, which
+	// says the position is live in a way a still dot on a timetable of fixed
+	// times cannot. Drawn as a `Circle` that scales and fades rather than an SF
+	// Symbol effect -- `pulse` fades the whole symbol, leaving the rail showing
+	// through the bead, and nothing in the symbol effects expands outwards.
+	//
+	// The animation runs off a flag the view flips as it appears: SwiftUI
+	// animates a value's change, so there has to be a change for it to animate.
+	let [pinging, setPinging] = React.useState(false)
+	let startPinging = React.useCallback(() => setPinging(true), [])
+
 	return (
-		<Image
-			modifiers={[
-				font({size: BUS_DOT_SIZE}),
-				foregroundStyle(color),
-				accessibilityIdentifier(BUS_ON_RAIL),
-				symbolEffect({effect: 'pulse'}, {options: {repeat: 'continuous'}}),
-				...placement,
-			]}
-			systemName="circle.fill"
-		/>
+		<ZStack modifiers={placement}>
+			<Circle
+				modifiers={[
+					frame({width: BUS_DOT_SIZE, height: BUS_DOT_SIZE}),
+					foregroundStyle(color),
+					onAppear(startPinging),
+					scaleEffect(pinging ? RIPPLE_SCALE : 1),
+					opacity(pinging ? 0 : RIPPLE_OPACITY),
+					animation(
+						Animation.easeOut({duration: RIPPLE_SECONDS}).repeat({
+							repeatCount: RIPPLE_FOREVER,
+							autoreverses: false,
+						}),
+						pinging,
+					),
+				]}
+			/>
+			<Image
+				modifiers={[
+					font({size: BUS_DOT_SIZE}),
+					foregroundStyle(color),
+					accessibilityIdentifier(BUS_ON_RAIL),
+				]}
+				systemName="circle.fill"
+			/>
+		</ZStack>
 	)
 }
 

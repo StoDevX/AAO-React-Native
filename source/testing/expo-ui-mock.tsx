@@ -60,6 +60,49 @@ export const accessibilityElement = (children = 'ignore'): Modifier =>
 	createModifier('accessibilityElement', {children})
 export const accessibilityIdentifier = named('accessibilityIdentifier', 'identifier')
 export const accessibilityLabel = named('accessibilityLabel', 'label')
+export const animation = (animationObject: unknown, animatedValue: number | boolean): Modifier =>
+	createModifier('animation', {animationObject, animatedValue})
+
+/**
+ * A `@expo/ui` animation preset. Nothing animates in Jest; this exists so a
+ * component that asks for one still renders, and so the chain a caller writes
+ * -- `Animation.easeOut().repeat({...})` -- resolves.
+ */
+type ChainableAnimation = {
+	type: string
+	delay: () => ChainableAnimation
+	repeat: () => ChainableAnimation
+}
+
+type AnimationPresets = {
+	easeInOut: () => ChainableAnimation
+	easeIn: () => ChainableAnimation
+	easeOut: () => ChainableAnimation
+	linear: () => ChainableAnimation
+	spring: () => ChainableAnimation
+	interpolatingSpring: () => ChainableAnimation
+	default: ChainableAnimation
+}
+
+function chainable(type: string): ChainableAnimation {
+	let self: ChainableAnimation = {
+		type,
+		delay: () => self,
+		repeat: () => self,
+	}
+	return self
+}
+
+export const Animation: AnimationPresets = {
+	easeInOut: () => chainable('easeInOut'),
+	easeIn: () => chainable('easeIn'),
+	easeOut: () => chainable('easeOut'),
+	linear: () => chainable('linear'),
+	spring: () => chainable('spring'),
+	interpolatingSpring: () => chainable('interpolatingSpring'),
+	default: chainable('default'),
+}
+
 export const aspectRatio = spreading('aspectRatio')
 export const autocorrectionDisabled = flag('autocorrectionDisabled', 'disabled')
 export const bold = bare('bold')
@@ -84,8 +127,10 @@ export const minimumScaleFactor = named('minimumScaleFactor', 'factor')
 export const monospacedDigit = bare('monospacedDigit')
 export const multilineTextAlignment = named('multilineTextAlignment', 'alignment')
 export const offset = spreading('offset')
+export const onAppear = (handler: () => void): Modifier => createModifier('onAppear', {handler})
 export const opacity = named('opacity', 'value')
 export const padding = spreading('padding')
+export const scaleEffect = named('scaleEffect', 'scale')
 export const pickerStyle = named('pickerStyle', 'style')
 export const presentationBackground = named('presentationBackground', 'color')
 export const presentationDragIndicator = named('presentationDragIndicator', 'visibility')
