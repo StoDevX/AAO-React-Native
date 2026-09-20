@@ -232,8 +232,14 @@ const CHEVRON_MODIFIERS = [
 ]
 
 const styles = StyleSheet.create({
-	// Wide enough for a cafe name over a date and a meal, short enough to sit
-	// inside the bar. The bar centres it, so the width is shared either side.
+	// The host needs a size of its own -- see `MealMenuTitle` -- and this is
+	// the widest the bar can give it without crowding the back button and the
+	// filter button either side.
+	//
+	// The longest header the app can draw is Sayles Hill over `Late Night`,
+	// which measures 197pt at the largest accessibility type size. A cafe
+	// named much longer than that would clip rather than shrink, since a
+	// navigation bar keeps its height whatever it is asked to hold.
 	menuHost: {
 		width: 220,
 		height: 44,
