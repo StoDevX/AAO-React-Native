@@ -40,6 +40,8 @@ const RAIL_COLUMN_WIDTH = 40
 const ROW_SPACING = 12
 const RAIL_WIDTH = 5
 const BUS_ICON_SIZE = 18
+/// Wide enough to cover the rail behind the bus's own holes.
+const BUS_BACKING_SIZE = 22
 /** A stop the bus has passed: a small solid disc. */
 const PASSED_DOT_SIZE = 12
 /** A stop still ahead: a ring, so it reads as a hole punched in the rail. */
@@ -96,19 +98,30 @@ export function BusGlyph({
 	/** Applied after the glyph's own, so a caller can move it along its rail. */
 	modifiers?: ViewModifier[]
 }): React.ReactNode {
-	// A zero frame keeps the glyph out of layout: it draws centred on the
-	// point it is given without making the rail segment it rides any taller.
+	// A zero frame keeps the glyph out of layout: it draws centred on the point
+	// it is given without making the rail segment it rides any taller. Both the
+	// disc and the bus carry it, so the pair sits on that point together.
+	let placement = [frame({width: 0, height: 0}), ...(modifiers ?? [])]
+
 	return (
-		<Image
-			modifiers={[
-				font({size: BUS_ICON_SIZE}),
-				foregroundStyle(color),
-				shadow({radius: 2, y: 1}),
-				frame({width: 0, height: 0}),
-				...(modifiers ?? []),
-			]}
-			systemName="bus.fill"
-		/>
+		<>
+			{/* `bus.fill` is not solid -- its windscreen, headlights and the gap
+			    between its wheels are holes, and the rail runs straight through
+			    them. A disc in the card's own colour gives the bus something to
+			    sit on, so the rail stops at it. */}
+			<Circle
+				modifiers={[
+					frame({width: BUS_BACKING_SIZE, height: BUS_BACKING_SIZE}),
+					foregroundStyle(c.secondarySystemGroupedBackground),
+					shadow({radius: 2, y: 1}),
+					...placement,
+				]}
+			/>
+			<Image
+				modifiers={[font({size: BUS_ICON_SIZE}), foregroundStyle(color), ...placement]}
+				systemName="bus.fill"
+			/>
+		</>
 	)
 }
 
