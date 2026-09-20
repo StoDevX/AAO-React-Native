@@ -51,6 +51,8 @@ import type {UnprocessedBusLine} from './types'
 const CELL_WIDTH = 86
 /// Height of the rail the dots sit on.
 const RAIL_HEIGHT = 3
+/// What the rail, and anything sitting on it, weighs ahead of the bus.
+const RAIL_AHEAD_OPACITY = 0.35
 /// Diameter of a stop's dot.
 const DOT_SIZE = 11
 
@@ -68,6 +70,7 @@ function StopCell({
 	dotColor,
 	isFirst,
 	isLast,
+	previousPassed,
 	busFraction,
 	busAtStop,
 	onPress,
@@ -78,6 +81,8 @@ function StopCell({
 	dotColor: string
 	isFirst: boolean
 	isLast: boolean
+	/** Whether the bus has left the stop before this one, so the leg in is solid. */
+	previousPassed: boolean
 	/** Where the bus sits relative to this cell's dot, in cells: -0.5 to +0.5. */
 	busFraction?: number
 	/** Whether the bus is sitting on this cell's dot. */
@@ -89,8 +94,13 @@ function StopCell({
 	let isSkipped = cell.stopStatus === 'skip'
 	let isHere = cell.stopStatus === 'at'
 
-	// A leg the bus has already driven is solid; one still ahead of it is faint.
-	let railOpacity = isPassed ? 1 : 0.35
+	// The rail behind the bus is solid and the rail ahead is faint, and the two
+	// halves of a cell answer separately: the half to the left belongs to the
+	// leg in from the stop before, the half to the right to the leg out to the
+	// next. So the leg the bus is on is solid all the way across rather than
+	// changing colour under it.
+	let leadingActive = previousPassed
+	let trailingActive = isPassed
 
 	// `busFraction` is where the bus sits relative to this cell's own dot, in
 	// cells, and never exceeds half a cell. Every cell is the same known width,
@@ -130,14 +140,14 @@ function StopCell({
 							modifiers={[
 								frame({width: CELL_WIDTH / 2, height: RAIL_HEIGHT}),
 								foregroundStyle(barColor),
-								opacity(isFirst ? 0 : railOpacity),
+								opacity(isFirst ? 0 : leadingActive ? 1 : RAIL_AHEAD_OPACITY),
 							]}
 						/>
 						<Rectangle
 							modifiers={[
 								frame({width: CELL_WIDTH / 2, height: RAIL_HEIGHT}),
 								foregroundStyle(barColor),
-								opacity(isLast ? 0 : railOpacity),
+								opacity(isLast ? 0 : trailingActive ? 1 : RAIL_AHEAD_OPACITY),
 							]}
 						/>
 					</HStack>
@@ -259,13 +269,15 @@ export function BusLineWidget({line, now, onPress}: Props): React.ReactNode {
 		now,
 	)
 
-	// The strip opens at the stop the bus is at, or the next one ahead, rather
-	// than at the start of the route -- a bus halfway round its loop is the
-	// thing the reader came to see. `useNativeState` captures this initial
-	// value once on mount, so the strip does not chase the bus every minute
-	// and does not stomp a scroll the reader made themselves.
+	// The strip opens on the stop behind the bus, so the leg it is on has both
+	// ends in view and the bus itself sits just inside the left edge rather
+	// than against it. Everything before that is still there to scroll back to.
+	//
+	// `useNativeState` captures this initial value once on mount, so the strip
+	// does not chase the bus every minute and does not stomp a scroll the
+	// reader made themselves.
 	let scrollTarget = useNativeState<string | null>(
-		currentIndex === null ? null : String(currentIndex),
+		currentIndex === null ? null : String(Math.max(0, currentIndex - 1)),
 	)
 
 	// SwiftUI colors want strings; the feed gives hex, but the type is RN's
@@ -327,6 +339,7 @@ export function BusLineWidget({line, now, onPress}: Props): React.ReactNode {
 								isFirst={index === 0}
 								// The faux stop, when there is one, is the rail's real end.
 								isLast={index === cells.length - 1 && nextRoundStart === null}
+								previousPassed={cells[index - 1]?.stopStatus === 'after'}
 								onPress={onPress}
 								{...busPropsForRow(busTarget, index)}
 							/>
