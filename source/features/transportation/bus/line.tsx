@@ -18,6 +18,13 @@ import {momentToDayOfWeek, createMomentForDay} from './components/days'
 import {formatDepartures} from './components/times'
 import {TimetableRow} from './components/timetable-row'
 
+/**
+ * How many of a stop's remaining departures a row shows. Three fit on one
+ * line; every row then stands the same height, which the rail's bus glyph
+ * relies on.
+ */
+const DEPARTURES_PER_ROW = 3
+
 const styles = StyleSheet.create({
 	host: {
 		flex: 1,
@@ -101,7 +108,7 @@ export function BusLine(props: Props): React.ReactNode {
 									stop,
 									busStatus: status,
 									departureIndex: currentBusIteration,
-								}),
+								}).slice(0, DEPARTURES_PER_ROW),
 							)
 
 							return (

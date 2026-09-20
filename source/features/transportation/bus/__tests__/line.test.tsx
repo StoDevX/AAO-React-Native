@@ -77,4 +77,37 @@ describe('BusLine', () => {
 		expect(getByText('SATURDAY')).toBeTruthy()
 		expect(queryByText(/^SATURDAY —/u)).toBeNull()
 	})
+
+	test('shows a stop at most three departures, so they fit on one line', async () => {
+		let fiveRounds: UnprocessedBusLine = {
+			...LINE,
+			schedules: [
+				{
+					days: ['Mo'],
+					coordinates: {},
+					stops: ['St. Olaf', 'Carleton'],
+					times: [
+						['1:00pm', '1:05pm'],
+						['2:00pm', '2:05pm'],
+						['3:00pm', '3:05pm'],
+						['4:00pm', '4:05pm'],
+						['5:00pm', '5:05pm'],
+					],
+				},
+			],
+		}
+
+		let {getByLabelText} = await render(
+			<BusLine
+				line={fiveRounds}
+				now={MONDAY_AFTERNOON}
+				onPressStop={jest.fn()}
+				selectedDay={null}
+			/>,
+		)
+
+		// Counted by separator rather than by time: the times are written by
+		// Intl in the device's locale, which is not this component's decision.
+		expect(getByLabelText(/^Carleton, [^•]+ • [^•]+ • [^•]+$/u)).toBeTruthy()
+	})
 })
