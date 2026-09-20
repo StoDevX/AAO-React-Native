@@ -89,7 +89,7 @@ export default function CalendarPage(): React.ReactNode {
 				filter={filter}
 				onSelectFilter={selectFilter}
 				onToggleSource={toggle}
-				onTodayPress={onTodayPress}
+				onTodayPress={mode === 'day' ? onTodayPress : undefined}
 				organizations={organizations}
 				sources={all}
 			/>

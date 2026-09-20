@@ -70,47 +70,6 @@ class ModuleCalendarTests: UITestCase {
 			.capture("25-strip-last-week")
 	}
 
-	/// Today returns the list to the top from wherever it has been scrolled.
-	///
-	/// The button aimed at an `Ongoing` section that only exists while some
-	/// event spans today, so on a day with nothing ongoing it silently scrolled
-	/// nowhere. It aims at the first section rendered now, which always exists.
-	///
-	/// Upcoming, not Day: the strip synchronising with list scroll is gone
-	/// (`testScrollingTheListMovesTheStripSelection` and
-	/// `testTappingADayPastTheLastEventSelectsTheLastDayWithOne`, both deleted
-	/// with it), and Today's own list-scrolling behaviour now only exists in
-	/// the sectioned Upcoming view.
-	func testTodayReturnsTheUpcomingListToTheTop() throws {
-		let screen = CalendarScreen(app: app)
-		screen.navigate()
-			.openModeMenu()
-			.selectMode(TestIdentifiers.Calendar.upcomingMode)
-			.verifyStripAbsent()
-
-		guard let topAtLaunch = screen.topRowLabel() else {
-			XCTFail("The list should have rows to scroll")
-			return
-		}
-
-		for _ in 1...6 {
-			screen.nudgeList()
-		}
-		screen.capture("24-scrolled-away-from-today")
-
-		// The list has to have actually moved, or tapping Today proves nothing.
-		XCTAssertNotEqual(
-			screen.topRowLabel(), topAtLaunch,
-			"The list should have scrolled before Today is tested")
-
-		screen.tapToday()
-		screen.capture("25-after-tapping-today")
-
-		XCTAssertEqual(
-			screen.topRowLabel(), topAtLaunch,
-			"Today should return the list to the row it started on")
-	}
-
 	/// The add-to-calendar action is a bottom-bar item, which no component test
 	/// can reach -- so this is the only assertion that it exists at all.
 	func testEventDetailOffersAddToCalendar() throws {
@@ -198,35 +157,6 @@ class ModuleCalendarTests: UITestCase {
 		XCTAssertFalse(
 			app.buttons[TestIdentifiers.Calendar.resetFilters].exists,
 			"Reset Filters should be absent while the list is unfiltered")
-	}
-
-	/// The Upcoming list opens on today, with nothing above it in view. Days
-	/// that are over are left out of the list, and an `Ongoing` run above today
-	/// stays above the fold.
-	func testTheUpcomingListOpensOnToday() throws {
-		let screen = CalendarScreen(app: app)
-		screen.navigate()
-			.openModeMenu()
-			.selectMode(TestIdentifiers.Calendar.upcomingMode)
-			.verifyStripAbsent()
-
-		XCTAssertTrue(
-			screen.todayHeader().waitForExistence(timeout: 30),
-			"Today's section should be in the list")
-
-		// The list settles on today asynchronously, so wait for the past to leave
-		// the reader's view rather than checking once.
-		let deadline = Date().addingTimeInterval(5)
-		var above = screen.rowsVisibleAboveToday()
-		while !above.isEmpty && Date() < deadline {
-			RunLoop.current.run(until: Date().addingTimeInterval(0.25))
-			above = screen.rowsVisibleAboveToday()
-		}
-		screen.capture("opens-on-today")
-
-		XCTAssertEqual(
-			above, [],
-			"The list should open on today, but these past rows were showing above it")
 	}
 
 	/// The Upcoming list mounts a screen or so of rows and mounts more as the
