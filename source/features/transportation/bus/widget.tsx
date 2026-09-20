@@ -30,6 +30,7 @@ import {
 	opacity,
 	scrollPosition,
 	useScrollGeometryChange,
+	scrollTargetBehavior,
 	scrollTargetLayout,
 	shapes,
 } from '@expo/ui/swift-ui/modifiers'
@@ -439,6 +440,10 @@ export function BusLineWidget({line, now, onPress}: Props): React.ReactNode {
 						listRowSeparator('hidden'),
 						accessibilityIdentifier(STOP_STRIP),
 						scrollPosition(scrollTarget, {anchor: 'leading'}),
+						// The strip comes to rest with a stop against its leading
+						// edge rather than mid-gap, so what it shows always reads as
+						// a run of whole stops.
+						scrollTargetBehavior('viewAligned'),
 						...(placement ? [placement] : []),
 					]}
 					showsIndicators={false}

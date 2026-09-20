@@ -131,6 +131,7 @@ export const onAppear = (handler: () => void): Modifier => createModifier('onApp
 export const opacity = named('opacity', 'value')
 export const padding = spreading('padding')
 export const scaleEffect = named('scaleEffect', 'scale')
+export const scrollTargetBehavior = named('scrollTargetBehavior', 'behavior')
 export const pickerStyle = named('pickerStyle', 'style')
 export const presentationBackground = named('presentationBackground', 'color')
 export const presentationDragIndicator = named('presentationDragIndicator', 'visibility')
