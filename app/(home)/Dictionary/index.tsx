@@ -35,7 +35,7 @@ function DictionaryView(): React.ReactNode {
 
 	let openEntry = React.useCallback(
 		(entry: NormalizedEntry) => {
-			router.push({pathname: '/Dictionary/entry/[word]', params: {word: entry.word}})
+			router.navigate({pathname: '/Dictionary/entry/[word]', params: {word: entry.word}})
 		},
 		[router],
 	)

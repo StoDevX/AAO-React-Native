@@ -138,12 +138,12 @@ Navigate to it with `useRouter`:
 import {useRouter} from 'expo-router'
 
 let router = useRouter()
-router.push({pathname: '/Contacts/[title]', params: {title: contactTitle}})
+router.navigate({pathname: '/Contacts/[title]', params: {title: contactTitle}})
 ```
 
 Any `.navigate(literal)` call site needs
 `useNavigation<NavigationProp<LegacyRootParamList>>()` for its typed generic;
-`router.push()` call sites don't need one.
+`router.navigate()` call sites don't need one.
 
 ### Step 5: Add to Home Screen Menu (if applicable)
 
@@ -296,7 +296,7 @@ Use this checklist to ensure you've completed all necessary steps when adding a 
 
 ### Routing Issues
 - The route's `view` path in `source/features/views.ts` matches the file path under `app/`
-- Dynamic segments (`[param].tsx`) match the params used in `useLocalSearchParams` and `router.push`
+- Dynamic segments (`[param].tsx`) match the params used in `useLocalSearchParams` and `router.navigate`
 - Screen is in the correct group (`(home)` vs `(settings)` vs `(component-library)`)
 
 ### TypeScript Issues

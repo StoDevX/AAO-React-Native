@@ -57,7 +57,7 @@ export default function CalendarPage(): React.ReactNode {
 	let loading = isLoading || readPending
 
 	let onPressEvent = (entry: SourcedEvent) => {
-		router.push({
+		router.navigate({
 			pathname: '/EventDetail',
 			params: {source: entry.sourceId, eventKey: entry.key},
 		})
@@ -89,7 +89,7 @@ export default function CalendarPage(): React.ReactNode {
 				filter={filter}
 				onSelectFilter={selectFilter}
 				onToggleSource={toggle}
-				onTodayPress={onTodayPress}
+				onTodayPress={mode === 'day' ? onTodayPress : undefined}
 				organizations={organizations}
 				sources={all}
 			/>

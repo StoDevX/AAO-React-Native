@@ -112,7 +112,7 @@ export default function DictionarySensePage(): React.ReactNode {
 							<DisclosureRow
 								key={subsense.id}
 								onPress={() =>
-									router.push({
+									router.navigate({
 										pathname: '/Dictionary/entry/sense',
 										params: {senseId: subsense.id},
 									})
@@ -125,7 +125,7 @@ export default function DictionarySensePage(): React.ReactNode {
 							onPress={() => {
 								let id = store.addSubsense(sense.id)
 								if (id) {
-									router.push({pathname: '/Dictionary/entry/sense', params: {senseId: id}})
+									router.navigate({pathname: '/Dictionary/entry/sense', params: {senseId: id}})
 								}
 							}}
 							systemImage="plus"

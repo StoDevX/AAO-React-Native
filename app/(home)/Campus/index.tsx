@@ -62,7 +62,7 @@ function CampusView({campus}: Props): React.ReactNode {
 
 	let onSelect = React.useCallback(
 		(building: BuildingType) =>
-			router.push({
+			router.navigate({
 				pathname: '/Campus/detail/[name]',
 				params: {name: building.name, campus},
 			}),
@@ -92,7 +92,7 @@ function CampusView({campus}: Props): React.ReactNode {
 				<Stack.Toolbar.Button
 					accessibilityLabel="Map"
 					icon="map"
-					onPress={() => router.push({pathname: '/Map', params: {campus}})}
+					onPress={() => router.navigate({pathname: '/Map', params: {campus}})}
 				/>
 			</Stack.Toolbar>
 

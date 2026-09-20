@@ -1,7 +1,7 @@
 import * as React from 'react'
 import moment from 'moment-timezone'
 import {describe, expect, jest, test} from '@jest/globals'
-import {fireEvent, render, screen, within} from '@testing-library/react-native'
+import {act, fireEvent, render, screen, within} from '@testing-library/react-native'
 
 import {FancyMenu, sectionHeaderProps} from '../fancy-menu'
 import type {
@@ -15,11 +15,13 @@ import type {FilterType, PickerType} from '@frogpond/filter'
 
 /**
  * The real toolbar renders `@expo/ui/swift-ui` directly, which cannot mount
- * under Jest. This stand-in exposes the two things this suite is about: the
- * meal the menu is currently showing, and a way to fire the callback the
- * toolbar fires when the user picks a different one. The logic under test is
- * the menu's own -- whether that choice survives -- not anything this mock
- * decides.
+ * under Jest. This stand-in exposes the one thing this suite needs from it: a
+ * way to fire the callback the toolbar fires when the user picks a different
+ * meal.
+ *
+ * It renders no meal name of its own. Which meal is showing is `chooseMeal`'s
+ * answer, and reading it back off a label this file drew would assert the mock
+ * rather than the menu -- so every test below asserts the food on screen.
  */
 // `@frogpond/filter`'s `FilterMenu`/`FilterSheet` render `@expo/ui/swift-ui`
 // directly, which cannot mount under Jest; `applyFiltersToItem` next to them
@@ -35,33 +37,28 @@ jest.mock('@expo/ui/swift-ui/modifiers', () => {
 
 jest.mock('../filter-menu-toolbar', () => {
 	// oxlint-disable-next-line typescript/no-require-imports
-	let {Pressable: P, Text: T} = require('react-native') as typeof import('react-native')
+	let {Pressable: P} = require('react-native') as typeof import('react-native')
 
 	return {
 		FilterMenuToolbar: ({
-			title,
 			filters,
 			onChange,
 		}: {
-			title: string
 			filters: FilterType<MenuItemType>[]
 			onChange: (filter: FilterType<MenuItemType>) => void
 		}) => {
 			let mealFilter = filters.find((f) => f.key === 'meals') as PickerType<MenuItemType>
 
 			return (
-				<>
-					<T testID="meal-title">{title}</T>
-					<P
-						onPress={() =>
-							onChange({
-								...mealFilter,
-								spec: {...mealFilter.spec, selected: {label: 'Dinner'}},
-							})
-						}
-						testID="choose-dinner"
-					/>
-				</>
+				<P
+					onPress={() =>
+						onChange({
+							...mealFilter,
+							spec: {...mealFilter.spec, selected: {label: 'Dinner'}},
+						})
+					}
+					testID="choose-dinner"
+				/>
 			)
 		},
 	}
@@ -130,10 +127,6 @@ function renderMenu(now: moment.Moment) {
 			onItemPress={jest.fn()}
 		/>
 	)
-}
-
-function shownMeal(): string {
-	return screen.getByTestId('meal-title').props.children as string
 }
 
 describe('FancyMenu', () => {
@@ -207,17 +200,80 @@ describe('FancyMenu', () => {
 	// in lib/__tests__. What only shows up at this level is whether the choice
 	// outlives a render of the screen above, which hands down a fresh Moment
 	// each time it renders.
+	//
+	// Asserted on the food rather than on a meal name, so the whole path runs:
+	// the clock and the picker meet in `chooseMeal`, and its answer decides
+	// which stations `groupMenuData` builds.
 	test('keeps the meal the user picked when the parent re-renders', async () => {
 		let {rerender} = await render(renderMenu(moment.tz(BREAKFAST_TIME, TIMEZONE)))
 
 		await fireEvent.press(screen.getByTestId('choose-dinner'))
-		expect(shownMeal()).toBe('Dinner')
+		expect(screen.getByText('Pot Roast')).toBeTruthy()
 
 		// The same instant, but a fresh Moment -- which is all the menu screens
 		// hand down on each of their own renders.
 		await rerender(renderMenu(moment.tz(BREAKFAST_TIME, TIMEZONE)))
 
-		expect(shownMeal()).toBe('Dinner')
+		// Still dinner, rather than the breakfast the clock on its own would pick.
+		expect(screen.getByText('Pot Roast')).toBeTruthy()
+		expect(screen.queryByText('Pancakes')).toBeNull()
+	})
+
+	// The screens above draw the meal picker in their navigation bar, so the
+	// menu has to hand them what to draw -- both the one it opens on and the
+	// one the reader moves to.
+	test('reports the meal picker to the screen above it', async () => {
+		let onMealMenuChange = jest.fn()
+
+		await render(
+			<FancyMenu
+				foodItems={FOOD_ITEMS}
+				meals={MEALS}
+				menuCorIcons={COR_ICONS}
+				name="The Caf"
+				now={moment.tz(BREAKFAST_TIME, TIMEZONE)}
+				onItemPress={jest.fn()}
+				onMealMenuChange={onMealMenuChange}
+			/>,
+		)
+
+		expect(onMealMenuChange).toHaveBeenLastCalledWith(
+			expect.objectContaining({
+				options: ['Breakfast', 'Lunch', 'Dinner'],
+				selected: 'Breakfast',
+			}),
+		)
+
+		await fireEvent.press(screen.getByTestId('choose-dinner'))
+
+		expect(onMealMenuChange).toHaveBeenLastCalledWith(expect.objectContaining({selected: 'Dinner'}))
+	})
+
+	// The callback the screen above uses to move between meals, which nothing
+	// else in the tree can reach -- the filters live in here.
+	test('switches meals through the picker it reported', async () => {
+		let onMealMenuChange = jest.fn()
+
+		await render(
+			<FancyMenu
+				foodItems={FOOD_ITEMS}
+				meals={MEALS}
+				menuCorIcons={COR_ICONS}
+				name="The Caf"
+				now={moment.tz(BREAKFAST_TIME, TIMEZONE)}
+				onItemPress={jest.fn()}
+				onMealMenuChange={onMealMenuChange}
+			/>,
+		)
+
+		expect(screen.getByText('Pancakes')).toBeTruthy()
+
+		let reported = onMealMenuChange.mock.lastCall?.[0] as {select: (label: string) => void}
+		await act(() => {
+			reported.select('Dinner')
+		})
+
+		expect(screen.getByText('Pot Roast')).toBeTruthy()
 	})
 
 	// `FoodItemRow`'s real decision: the accessibility label names every
@@ -253,6 +309,41 @@ describe('FancyMenu', () => {
 		// legend covers.
 		expect(within(row).getByText('V')).toBeTruthy()
 		expect(within(row).getByText('H')).toBeTruthy()
+	})
+
+	// The screens above open a menu with its filter row hidden, behind a button
+	// in the navigation bar. Which of the two a menu draws is its own decision;
+	// what the row then looks like is not something Jest can see.
+	test('draws the filter row only when the screen above asks for it', async () => {
+		let {rerender} = await render(
+			<FancyMenu
+				filtersVisible={false}
+				foodItems={FOOD_ITEMS}
+				meals={MEALS}
+				menuCorIcons={COR_ICONS}
+				name="The Caf"
+				now={moment.tz(BREAKFAST_TIME, TIMEZONE)}
+				onItemPress={jest.fn()}
+			/>,
+		)
+
+		expect(screen.queryByTestId('choose-dinner')).toBeNull()
+		// The menu itself is unaffected -- only the row is gone.
+		expect(screen.getByText('Pancakes')).toBeTruthy()
+
+		await rerender(
+			<FancyMenu
+				filtersVisible={true}
+				foodItems={FOOD_ITEMS}
+				meals={MEALS}
+				menuCorIcons={COR_ICONS}
+				name="The Caf"
+				now={moment.tz(BREAKFAST_TIME, TIMEZONE)}
+				onItemPress={jest.fn()}
+			/>,
+		)
+
+		expect(screen.getByTestId('choose-dinner')).toBeTruthy()
 	})
 
 	test('shows the empty message instead of stations when the filters exclude everything', async () => {

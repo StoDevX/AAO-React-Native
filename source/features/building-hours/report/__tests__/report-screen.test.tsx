@@ -29,7 +29,7 @@ jest.mock('@expo/ui/swift-ui/modifiers', () => {
 	return require('../../../../testing/expo-ui-mock') as typeof import('../../../../testing/expo-ui-mock')
 })
 
-const mockPush = jest.fn()
+const mockNavigate = jest.fn()
 
 jest.mock('expo-router', () => {
 	// oxlint-disable-next-line typescript/no-require-imports
@@ -38,7 +38,7 @@ jest.mock('expo-router', () => {
 	return {
 		Stack,
 		useFocusEffect,
-		useRouter: () => ({push: mockPush}),
+		useRouter: () => ({navigate: mockNavigate}),
 		useNavigation: () => ({goBack: jest.fn(), dispatch: jest.fn()}),
 		useLocalSearchParams: () => ({name: 'The Cage', campus: 'stolaf'}),
 	}
@@ -158,7 +158,7 @@ describe('links', () => {
 		await renderReport()
 
 		await fireEvent.press(screen.getByLabelText('Instagram, www.instagram.com'))
-		expect(mockPush).toHaveBeenCalledWith({
+		expect(mockNavigate).toHaveBeenCalledWith({
 			pathname: '/Campus/detail/link-editor',
 			params: {linkIndex: '0'},
 		})
@@ -174,21 +174,21 @@ describe('links', () => {
 		await fireEvent.press(addLink)
 		await fireEvent.press(addLink)
 
-		expect(mockPush).toHaveBeenCalledTimes(1)
+		expect(mockNavigate).toHaveBeenCalledTimes(1)
 	})
 
 	it('lets Add Link work again after coming back from the editor', async () => {
 		await renderReport()
 
 		await fireEvent.press(screen.getByLabelText('Add Link'))
-		expect(mockPush).toHaveBeenCalledTimes(1)
+		expect(mockNavigate).toHaveBeenCalledTimes(1)
 
 		await act(() => {
 			simulateFocus()
 		})
 
 		await fireEvent.press(screen.getByLabelText('Add Link'))
-		expect(mockPush).toHaveBeenCalledTimes(2)
+		expect(mockNavigate).toHaveBeenCalledTimes(2)
 	})
 })
 

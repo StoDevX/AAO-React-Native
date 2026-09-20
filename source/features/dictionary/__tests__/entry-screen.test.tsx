@@ -16,7 +16,7 @@ jest.mock('@expo/ui/swift-ui/modifiers', () => {
 	return require('../../../testing/expo-ui-mock') as typeof import('../../../testing/expo-ui-mock')
 })
 
-const mockPush = jest.fn()
+const mockNavigate = jest.fn()
 
 jest.mock('expo-router', () => ({
 	Stack: Object.assign(({children}: {children?: React.ReactNode}) => children ?? null, {
@@ -35,7 +35,7 @@ jest.mock('expo-router', () => ({
 		}),
 	}),
 	useLocalSearchParams: () => ({word: 'Caf'}),
-	useRouter: () => ({push: mockPush}),
+	useRouter: () => ({navigate: mockNavigate}),
 }))
 
 const wordEntry: WordType = {word: 'Caf', definition: 'The dining hall.'}
@@ -60,7 +60,7 @@ const renderWithQuery = (words: WordType[]) => {
 }
 
 beforeEach(() => {
-	mockPush.mockClear()
+	mockNavigate.mockClear()
 	useDictionaryDraftStore.getState().clearDraft()
 })
 
@@ -81,7 +81,7 @@ describe('the dictionary entry screen', () => {
 			word: 'Caf',
 			senses: [{definition: 'The dining hall.'}],
 		})
-		expect(mockPush).toHaveBeenCalledWith('/Dictionary/entry/edit')
+		expect(mockNavigate).toHaveBeenCalledWith('/Dictionary/entry/edit')
 	})
 
 	it('does nothing if the menu action fires with no entry to start a draft from', async () => {
@@ -93,6 +93,6 @@ describe('the dictionary entry screen', () => {
 		await fireEvent.press(await screen.findByText('Suggest an Edit'))
 
 		expect(useDictionaryDraftStore.getState().original).toBeNull()
-		expect(mockPush).not.toHaveBeenCalled()
+		expect(mockNavigate).not.toHaveBeenCalled()
 	})
 })

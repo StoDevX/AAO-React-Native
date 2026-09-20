@@ -121,7 +121,7 @@ function DirectoryView(): React.ReactNode {
 	}
 
 	let openResult = (index: number) =>
-		router.push({
+		router.navigate({
 			pathname: '/Directory/[index]',
 			params: {index: String(index), query: searchQuery, type: searchQueryType},
 		})
@@ -218,7 +218,7 @@ function DirectoryLanding(): React.ReactNode {
 				<ImportantContactsGrid
 					query={contacts}
 					onSelectContact={(contact) => {
-						router.push({
+						router.navigate({
 							pathname: '/Directory/named/[title]',
 							params: {title: contact.title},
 						})
@@ -229,7 +229,7 @@ function DirectoryLanding(): React.ReactNode {
 					departments={departments}
 					isLoading={departmentsLoading}
 					onSelectDepartment={(name) =>
-						router.push({
+						router.navigate({
 							pathname: '/Directory',
 							params: {queryType: 'department', queryParam: name},
 						})

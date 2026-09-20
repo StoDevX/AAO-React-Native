@@ -223,6 +223,27 @@ struct TestIdentifiers {
 		/// of every food row that carries it.
 		static let vegan = "Vegan"
 		static let halal = "Halal"
+
+		/// The day the app's frozen clock sits on, as the header's `medium`
+		/// date style renders it. `UITEST_FROZEN_DATE` in modules/timer/index.ts
+		/// is noon in Chicago, so it also decides the meal below.
+		static let frozenDate = "Sat, Sep 5"
+
+		/// The meal that frozen noon lands in, and so the one every menu screen
+		/// opens on.
+		static let openingMeal = "Lunch"
+
+		/// Another of Stav Hall's meals, for proving the picker switches.
+		static let otherMeal = "Dinner"
+
+		/// Reveals the filter row, which a menu opens with collapsed.
+		static let filtersButton = "Filters"
+
+		/// The navigation title, which is also the meal picker's button. Built
+		/// the way `MenuHeaderTitle` composes its accessibility label.
+		static func header(_ cafe: String, meal: String) -> String {
+			"\(cafe), \(frozenDate) • \(meal)"
+		}
 	}
 
 	// MARK: - Filters

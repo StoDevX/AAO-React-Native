@@ -22,6 +22,7 @@ class ModuleFilterTests: UITestCase {
 		MenusScreen(app: app)
 			.navigate()
 			.verifyFoodRowsAppear()
+			.revealFilters()
 
 		let filters = FilterScreen(app: app)
 
@@ -49,6 +50,7 @@ class ModuleFilterTests: UITestCase {
 		MenusScreen(app: app)
 			.navigate()
 			.verifyFoodRowsAppear()
+			.revealFilters()
 
 		let filters = FilterScreen(app: app)
 		let vegan = TestIdentifiers.Menus.vegan
@@ -77,6 +79,7 @@ class ModuleFilterTests: UITestCase {
 		let menus = MenusScreen(app: app)
 			.navigate()
 			.verifyFoodRowsAppear()
+			.revealFilters()
 
 		let filters = FilterScreen(app: app)
 		let vegan = TestIdentifiers.Menus.vegan
@@ -120,6 +123,7 @@ class ModuleFilterTests: UITestCase {
 		MenusScreen(app: app)
 			.navigate()
 			.verifyFoodRowsAppear()
+			.revealFilters()
 
 		let filters = FilterScreen(app: app)
 		let vegan = TestIdentifiers.Menus.vegan
@@ -152,6 +156,7 @@ class ModuleFilterTests: UITestCase {
 			.navigate()
 			.verifyFoodRowsAppear()
 			.openCafe(TestIdentifiers.Menus.pause)
+			.revealFilters()
 
 		let filters = FilterScreen(app: app)
 
@@ -182,6 +187,7 @@ class ModuleFilterTests: UITestCase {
 			.navigate()
 			.verifyFoodRowsAppear()
 			.openCafe(TestIdentifiers.Menus.pause)
+			.revealFilters()
 
 		let filters = FilterScreen(app: app)
 		let pizza = TestIdentifiers.Menus.pizzaStation
@@ -209,6 +215,7 @@ class ModuleFilterTests: UITestCase {
 			.navigate()
 			.verifyFoodRowsAppear()
 			.openCafe(TestIdentifiers.Menus.pause)
+			.revealFilters()
 
 		let filters = FilterScreen(app: app)
 		let pizza = TestIdentifiers.Menus.pizzaStation

@@ -82,7 +82,7 @@ function useBuildingEditor(initialBuilding: BuildingType, campus: Campus) {
 
 	let openEditor = React.useCallback(
 		(scheduleIdx: number, setIdx: number) =>
-			router.push({
+			router.navigate({
 				pathname: '/Campus/detail/schedule-editor',
 				params: {
 					scheduleIndex: String(scheduleIdx),
@@ -94,7 +94,7 @@ function useBuildingEditor(initialBuilding: BuildingType, campus: Campus) {
 
 	let openLink = React.useCallback(
 		(linkIndex: number) =>
-			router.push({
+			router.navigate({
 				pathname: '/Campus/detail/link-editor',
 				params: {linkIndex: String(linkIndex)},
 			}),

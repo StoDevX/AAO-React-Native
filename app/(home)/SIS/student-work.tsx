@@ -55,7 +55,7 @@ export default function SISStudentWorkPage(): React.ReactNode {
 								<DisclosureRow
 									key={job.id}
 									detail={postedOn(job.postedDate)}
-									onPress={() => router.push({pathname: '/JobDetail', params: {jobId: job.id}})}
+									onPress={() => router.navigate({pathname: '/JobDetail', params: {jobId: job.id}})}
 									title={job.title}
 									titleLines={2}
 								/>

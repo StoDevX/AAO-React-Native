@@ -87,7 +87,7 @@ export default function DictionaryEditPage(): React.ReactNode {
 	let openNewSense = (): void => {
 		let id = store.addSense()
 		if (id) {
-			router.push({pathname: '/Dictionary/entry/sense', params: {senseId: id}})
+			router.navigate({pathname: '/Dictionary/entry/sense', params: {senseId: id}})
 		}
 	}
 
@@ -125,7 +125,7 @@ export default function DictionaryEditPage(): React.ReactNode {
 					accessibilityLabel="Preview"
 					disabled={!previewable}
 					icon="eye"
-					onPress={() => router.push('/Dictionary/entry/preview')}
+					onPress={() => router.navigate('/Dictionary/entry/preview')}
 				/>
 			</Stack.Toolbar>
 
@@ -186,7 +186,7 @@ export default function DictionaryEditPage(): React.ReactNode {
 									key={sense.id}
 									identifier={`dictionary-sense-row-${index + 1}`}
 									onPress={() =>
-										router.push({
+										router.navigate({
 											pathname: '/Dictionary/entry/sense',
 											params: {senseId: sense.id},
 										})

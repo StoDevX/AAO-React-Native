@@ -190,6 +190,11 @@ export function formatHourLabel(m: Moment, locale: string = deviceLocale()): str
 }
 
 const SHORT_DATE: Intl.DateTimeFormatOptions = {month: 'short', day: 'numeric'}
+const MEDIUM_DATE: Intl.DateTimeFormatOptions = {
+	weekday: 'short',
+	month: 'short',
+	day: 'numeric',
+}
 const LONG_DATE: Intl.DateTimeFormatOptions = {
 	weekday: 'long',
 	month: 'long',
@@ -197,14 +202,24 @@ const LONG_DATE: Intl.DateTimeFormatOptions = {
 	year: 'numeric',
 }
 
-/** `Aug 20` or `20 Aug`; `Thursday, August 20, 2026` or `2026年8月20日木曜日`. */
-export function formatDate(
-	m: Moment,
-	style: 'short' | 'long',
-	locale: string = deviceLocale(),
-): string {
-	let options = style === 'long' ? LONG_DATE : SHORT_DATE
-	return formatterFor(`date-${style}`, locale, options).format(m.toDate())
+const DATE_STYLES: Record<DateStyle, Intl.DateTimeFormatOptions> = {
+	short: SHORT_DATE,
+	medium: MEDIUM_DATE,
+	long: LONG_DATE,
+}
+
+type DateStyle = 'short' | 'medium' | 'long'
+
+/**
+ * `Aug 20` or `20 Aug`; `Thu, Aug 20` or `8月20日(木)`; `Thursday, August 20,
+ * 2026` or `2026年8月20日木曜日`.
+ *
+ * `Intl` owns the order of the parts and the punctuation between them, which
+ * differ per locale -- a weekday joined on by hand would read wrong in half of
+ * them.
+ */
+export function formatDate(m: Moment, style: DateStyle, locale: string = deviceLocale()): string {
+	return formatterFor(`date-${style}`, locale, DATE_STYLES[style]).format(m.toDate())
 }
 
 const DATE_TIME: Intl.DateTimeFormatOptions = {dateStyle: 'medium', timeStyle: 'short'}

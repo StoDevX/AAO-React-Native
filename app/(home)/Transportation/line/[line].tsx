@@ -91,7 +91,7 @@ export default function BusLinePage(): React.ReactNode {
 				line={line}
 				now={now}
 				onPressStop={(stopName) => {
-					router.push({
+					router.navigate({
 						pathname: '/Transportation/line/stop',
 						params: {line: lineName, day: selectedDay ?? '', stopName},
 					})

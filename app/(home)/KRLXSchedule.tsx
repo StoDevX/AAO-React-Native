@@ -12,7 +12,7 @@ export default function KRLXSchedulePage(): React.ReactNode {
 
 	let onPressEvent = React.useCallback(
 		(event: EventType) => {
-			router.push({
+			router.navigate({
 				pathname: '/EventDetail',
 				params: {source: 'krlx-schedule', eventKey: eventKey(event)},
 			})

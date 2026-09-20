@@ -65,7 +65,7 @@ function PrinterListView({job}: PrinterListViewProps): React.ReactNode {
 
 	let openPrintRelease = React.useCallback(
 		(printer: Printer) =>
-			router.push({
+			router.navigate({
 				pathname: '/PrintJobs/[jobId]/release',
 				params: {jobId: job.id.toString(), printer: printer.printerName},
 			}),

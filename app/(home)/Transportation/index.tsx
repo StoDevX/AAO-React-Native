@@ -92,7 +92,7 @@ export default function TransportationPage(): React.ReactNode {
 							line={line}
 							now={now}
 							onPress={() => {
-								router.push({
+								router.navigate({
 									pathname: '/Transportation/line/[line]',
 									params: {line: line.line},
 								})

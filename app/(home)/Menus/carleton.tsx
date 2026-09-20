@@ -2,10 +2,17 @@ import * as React from 'react'
 import {Platform, ScrollView, StyleSheet, View} from 'react-native'
 import {Row} from '@frogpond/layout'
 import {ListRow, ListSeparator, Title} from '@frogpond/lists'
-import {useRouter} from 'expo-router'
+import {useIsFocused, useRouter} from 'expo-router'
+
+import {usePublishMenuHeader} from '../../../source/features/menus/menu-header'
 
 export default function CarletonPage(): React.ReactNode {
 	let router = useRouter()
+
+	// A chooser rather than a menu: no day on it, and no meal to pick. It
+	// publishes all the same, so the cafe tab the reader came from does not
+	// leave its name and its live picker sitting over this list.
+	usePublishMenuHeader({name: 'Carleton', date: null, meals: null, filters: null}, useIsFocused())
 
 	let carletonCafes = [
 		{href: '/CarletonBurtonMenu', title: 'Burton'},
@@ -18,7 +25,7 @@ export default function CarletonPage(): React.ReactNode {
 		<ScrollView contentInsetAdjustmentBehavior="automatic" style={styles.container}>
 			{carletonCafes.map((loc, i, collection) => (
 				<View key={loc.href}>
-					<ListRow arrowPosition="center" onPress={() => router.push(loc.href)}>
+					<ListRow arrowPosition="center" onPress={() => router.navigate(loc.href)}>
 						<Row alignItems="center">
 							<Title style={styles.rowText}>{loc.title}</Title>
 						</Row>

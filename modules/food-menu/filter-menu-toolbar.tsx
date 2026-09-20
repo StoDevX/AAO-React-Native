@@ -1,78 +1,26 @@
 import * as React from 'react'
-import {StyleSheet, Text, View} from 'react-native'
-import type {Moment} from 'moment'
+import {View} from 'react-native'
 import type {FilterType} from '@frogpond/filter'
-import {FilterToolbar, FilterToolbarButton} from '@frogpond/filter'
-import {Toolbar} from '@frogpond/toolbar'
-import * as c from '@frogpond/colors'
-import {formatDate} from '@frogpond/time-format'
-
-const styles = StyleSheet.create({
-	today: {
-		flex: 1,
-		paddingLeft: 12,
-		paddingVertical: 14,
-	},
-	toolbarText: {
-		color: c.label,
-	},
-	toolbarSection: {
-		flexDirection: 'row',
-		alignItems: 'center',
-	},
-	// Balances the date's own 12pt leading inset, so the meal picker doesn't
-	// sit flush against the bar's trailing edge. The filter bar below uses the
-	// same 12pt on both sides, and the two bars are read as one block.
-	mealPicker: {
-		paddingRight: 12,
-	},
-	bars: {
-		backgroundColor: c.systemGroupedBackground,
-	},
-})
+import {FilterToolbar} from '@frogpond/filter'
 
 type Props<T extends object> = {
-	date: Moment
 	isOpen: boolean
-	title?: string
 	onChange: (filter: FilterType<T>) => void
 	filters: FilterType<T>[]
 }
 
 export function FilterMenuToolbar<T extends object>({
-	date,
 	isOpen,
-	title,
 	filters,
 	onChange,
 }: Props<T>): React.ReactNode {
-	const mealFilter = filters.find((f) => f.type === 'picker')
-	const multipleMeals =
-		mealFilter && mealFilter.type === 'picker' ? mealFilter.spec.options.length > 1 : false
+	// The meal is chosen from the navigation bar, so its picker is drawn there.
 	const nonPickerFilters = filters.filter((f) => f.type !== 'picker')
 
-	// One view, not a fragment: `RNHostView` measures `children.first.uiView`,
-	// so a fragment of two bars sizes to the first and leaves the second in
-	// dead space with the SwiftUI host showing through the gap.
+	// One View, because `RNHostView` hosts exactly one element and a closed
+	// cafe's `isOpen &&` yields `false` rather than a view. `FilterToolbar`
+	// paints its own background, so this one needs none.
 	return (
-		<View style={styles.bars}>
-			<Toolbar>
-				<View style={[styles.toolbarSection, styles.today]}>
-					<Text style={styles.toolbarText}>{formatDate(date, 'short')}</Text>
-					{title ? <Text style={styles.toolbarText}> — {title}</Text> : null}
-				</View>
-				{mealFilter && multipleMeals ? (
-					<View style={styles.mealPicker}>
-						<FilterToolbarButton<T>
-							filter={mealFilter}
-							isActive={false}
-							onChange={onChange}
-							title={mealFilter.spec.title}
-						/>
-					</View>
-				) : null}
-			</Toolbar>
-			{isOpen && <FilterToolbar<T> filters={nonPickerFilters} onChange={onChange} />}
-		</View>
+		<View>{isOpen && <FilterToolbar<T> filters={nonPickerFilters} onChange={onChange} />}</View>
 	)
 }

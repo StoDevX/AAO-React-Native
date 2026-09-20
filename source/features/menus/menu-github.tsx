@@ -6,8 +6,12 @@ import moment from 'moment-timezone'
 import sample from 'lodash/sample'
 import {pauseMenuOptions} from './query'
 import {useQuery} from '@tanstack/react-query'
-import {useRouter} from 'expo-router'
+import {useIsFocused, useRouter} from 'expo-router'
 import type {GithubMenuType} from './types'
+import {formatDate} from '@frogpond/time-format'
+import {now as currentMoment} from '@frogpond/timer'
+import type {MealMenuSelection} from '@frogpond/food-menu'
+import {usePublishMenuHeader} from './menu-header'
 
 type Props = {
 	name: string
@@ -24,6 +28,8 @@ const EMPTY_MENU: GithubMenuType = {foodItems: {}, meals: [], corIcons: {}}
 
 export function GitHubHostedMenu(props: Props): React.ReactNode {
 	let router = useRouter()
+	let isFocused = useIsFocused()
+	let [mealMenu, setMealMenu] = React.useState<MealMenuSelection | null>(null)
 
 	let {
 		data = EMPTY_MENU,
@@ -33,6 +39,31 @@ export function GitHubHostedMenu(props: Props): React.ReactNode {
 		refetch,
 		dataUpdatedAt,
 	} = useQuery(pauseMenuOptions)
+
+	// `dataUpdatedAt` is 0 until the query resolves, which is the epoch rather
+	// than a day anyone is reading about.
+	let menuDate = dataUpdatedAt
+		? moment.tz(dataUpdatedAt, timezone())
+		: currentMoment().tz(timezone())
+
+	let date = formatDate(menuDate, 'medium')
+
+	// Collapsed to begin with: a menu opens as food rather than as chrome, and
+	// the navigation bar carries the control that reveals the row.
+	let [filtersVisible, setFiltersVisible] = React.useState(false)
+	let toggleFilters = React.useCallback(() => {
+		setFiltersVisible((visible) => !visible)
+	}, [])
+
+	usePublishMenuHeader(
+		{
+			name: props.name,
+			date,
+			meals: mealMenu,
+			filters: {visible: filtersVisible, toggle: toggleFilters},
+		},
+		isFocused,
+	)
 
 	if (isLoading) {
 		return <LoadingView text={sample(props.loadingMessage)} />
@@ -54,13 +85,15 @@ export function GitHubHostedMenu(props: Props): React.ReactNode {
 			meals={data.meals}
 			menuCorIcons={data.corIcons}
 			name={props.name}
-			now={moment.tz(dataUpdatedAt, timezone())}
+			now={menuDate}
 			onItemPress={(item) =>
-				router.push({
+				router.navigate({
 					pathname: '/MenuItemDetail',
 					params: {source: 'pause', itemId: item.id},
 				})
 			}
+			filtersVisible={filtersVisible}
+			onMealMenuChange={setMealMenu}
 			onRefresh={refetch}
 		/>
 	)

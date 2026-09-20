@@ -41,14 +41,14 @@ function PrintJobsView(): React.ReactNode {
 	} = useQuery(printJobsOptions(username))
 
 	let router = useRouter()
-	let openSettings = () => router.push('/SettingsRoot')
+	let openSettings = () => router.navigate('/SettingsRoot')
 
 	let handleJobPress = (job: PrintJob) => {
 		let jobId = job.id.toString()
 		if (job.statusFormatted === 'Pending Release') {
-			router.push({pathname: '/PrintJobs/[jobId]/printers', params: {jobId}})
+			router.navigate({pathname: '/PrintJobs/[jobId]/printers', params: {jobId}})
 		} else {
-			router.push({pathname: '/PrintJobs/[jobId]/release', params: {jobId}})
+			router.navigate({pathname: '/PrintJobs/[jobId]/release', params: {jobId}})
 		}
 	}
 

@@ -11,9 +11,9 @@ const onSourceButton = () => trackedOpenUrl({url: GH_BASE_URL, id: 'Contributing
 export let MiscellanySection = (): React.ReactNode => {
 	let router = useRouter()
 
-	let onCreditsButton = () => router.push('/Credits')
-	let onPrivacyButton = () => router.push('/Privacy')
-	let onLegalButton = () => router.push('/Legal')
+	let onCreditsButton = () => router.navigate('/Credits')
+	let onPrivacyButton = () => router.navigate('/Privacy')
+	let onLegalButton = () => router.navigate('/Legal')
 
 	let [openInApplinkPreference, setOpenInAppLinkPreference] = React.useState(true)
 
