@@ -1,4 +1,6 @@
 export {FancyMenu as FoodMenu} from './fancy-menu'
+export type {MealMenuSelection} from './fancy-menu'
+export type {MealHeaderMenu} from './lib/meal-header'
 
 export type {
 	MenuItemType,

@@ -112,6 +112,15 @@ describe('formatDate', () => {
 		expect(formatDate(m, 'short', 'ja-JP')).toBe('8月20日')
 	})
 
+	// The weekday is what the menus' header adds: a reader glancing at a
+	// cafe's menu wants to know it is today's without doing the arithmetic.
+	test('medium: short weekday, month and day in locale order', () => {
+		expect(formatDate(m, 'medium', 'en-US')).toBe('Thu, Aug 20')
+		// No comma in en-GB, where `Intl` separates the weekday with a space.
+		expect(formatDate(m, 'medium', 'en-GB')).toBe('Thu 20 Aug')
+		expect(formatDate(m, 'medium', 'ja-JP')).toBe('8月20日(木)')
+	})
+
 	test('long: weekday, month, day and year', () => {
 		expect(formatDate(m, 'long', 'en-US')).toBe('Thursday, August 20, 2026')
 		expect(formatDate(m, 'long', 'en-GB')).toBe('Thursday, 20 August 2026')

@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {useMemo, useState} from 'react'
+import {useCallback, useEffect, useMemo, useState} from 'react'
 import {StyleSheet} from 'react-native'
 import {Host, List, RNHostView, Section, Text, VStack} from '@expo/ui/swift-ui'
 import {font, foregroundStyle, listStyle, padding, refreshable} from '@expo/ui/swift-ui/modifiers'
@@ -13,6 +13,7 @@ import {applyMenuFilters} from './lib/apply-menu-filters'
 import {buildFilters} from './lib/build-filters'
 import {chooseMeal} from './lib/choose-meal'
 import {emptyMessage} from './lib/empty-message'
+import {mealHeaderMenu, type MealHeaderMenu} from './lib/meal-header'
 import {offerSpecials} from './lib/offer-specials'
 import type {
 	MasterCorIconMapType,
@@ -23,6 +24,12 @@ import type {
 } from './types'
 
 type FilterFunc = (filters: Array<FilterType<MenuItemType>>, item: MenuItemType) => boolean
+
+/** The meal picker, together with the way to act on it. */
+export type MealMenuSelection = MealHeaderMenu & {
+	/** Shows another of the cafe's meals. */
+	select: (label: string) => void
+}
 
 type Props = {
 	cafeMessage?: string | null
@@ -36,6 +43,17 @@ type Props = {
 	// menu-github.tsx's `refetch`) return a promise, and `refreshable` below
 	// needs to await that promise to keep the spinner up until it resolves.
 	onRefresh?: () => unknown
+	/**
+	 * Hands the screen above the meal picker to draw, for a screen that draws
+	 * it in its navigation bar rather than in the toolbar below. `null` when
+	 * the cafe serves one meal and there is nothing to pick.
+	 */
+	onMealMenuChange?: (menu: MealMenuSelection | null) => void
+	/**
+	 * Whether the filter row is on screen. The screens above hide it behind a
+	 * navigation-bar button, so a menu opens as food rather than as chrome.
+	 */
+	filtersVisible?: boolean
 	applyFilters?: FilterFunc
 }
 
@@ -162,6 +180,25 @@ export function FancyMenu(props: Props): React.ReactNode {
 		}))
 	}, [groupedMenuData, stations])
 
+	// Written against the previous filters rather than the ones in scope, so
+	// the identity survives every render and the effect below fires only when
+	// the picker itself changes.
+	const selectMeal = useCallback((label: string) => {
+		setFilters((current) =>
+			current.map((f) => (f.type === 'picker' ? {...f, spec: {...f.spec, selected: {label}}} : f)),
+		)
+	}, [])
+
+	const mealMenu = useMemo((): MealMenuSelection | null => {
+		const menu = mealHeaderMenu(filters, mealName)
+		return menu ? {...menu, select: selectMeal} : null
+	}, [filters, mealName, selectMeal])
+
+	const {onMealMenuChange} = props
+	useEffect(() => {
+		onMealMenuChange?.(mealMenu)
+	}, [onMealMenuChange, mealMenu])
+
 	const specialsFilterEnabled = areSpecialsFiltered(appliedFilters)
 	const message = emptyMessage({
 		cafeMessage,
@@ -174,22 +211,24 @@ export function FancyMenu(props: Props): React.ReactNode {
 	// If the requested menu has no food items, that location is closed.
 	const isOpen = Object.keys(foodItems).length > 0
 
+	const {filtersVisible = true} = props
+
 	return (
 		<Host style={styles.host}>
 			<VStack spacing={0}>
-				{/* The date bar this toolbar carries is React Native, so it still needs
-				    an `RNHostView` bridge into the SwiftUI tree around it. */}
-				<RNHostView matchContents={true}>
-					<FilterToolbar
-						date={now}
-						filters={appliedFilters}
-						isOpen={isOpen}
-						onChange={(newFilter) => {
-							setFilters(filters.map((f) => (f.key === newFilter.key ? newFilter : f)))
-						}}
-						title={mealName}
-					/>
-				</RNHostView>
+				{/* This toolbar is React Native, so it needs an `RNHostView` bridge
+				    into the SwiftUI tree around it. */}
+				{filtersVisible ? (
+					<RNHostView matchContents={true}>
+						<FilterToolbar
+							filters={appliedFilters}
+							isOpen={isOpen}
+							onChange={(newFilter) => {
+								setFilters(filters.map((f) => (f.key === newFilter.key ? newFilter : f)))
+							}}
+						/>
+					</RNHostView>
+				) : null}
 
 				<List
 					modifiers={[
