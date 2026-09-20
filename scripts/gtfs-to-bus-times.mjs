@@ -266,7 +266,7 @@ function schedulesForRoute(feed, routeId, stopsById, stopNames) {
 }
 
 /** The `set` keys `gtfsToBusTimes` knows how to apply from a repair. */
-const HANDLED_REPAIR_KEYS = new Set(['days', 'timezone'])
+const HANDLED_REPAIR_KEYS = new Set(['days'])
 
 /** Whether `repair` targets `routeId` -- a repair with no `route` targets every route. */
 function repairAppliesToRoute(repair, routeId) {
@@ -306,11 +306,13 @@ function ineffectiveRepairs(repairs, routeIds) {
 /**
  * The single `stop_timezone` every stop a route serves agrees on.
  *
- * `undefined` means the route's stops disagree, or one of them never set the
- * column -- both are feed defects for the caller to warn about and fall back
- * from, rather than guess at.
+ * agency.txt's agency_timezone is deliberately never read here -- this feed
+ * reports America/Los_Angeles for a Minnesota operator, so only the
+ * per-stop stop_timezone in stops.txt can be trusted. A route whose stops
+ * disagree, or one of which never set the column, has nothing trustworthy
+ * to fall back to, so that is a hard error rather than a guess.
  */
-function timezoneForRoute(feed, routeId, stopsById) {
+function timezoneForRoute(feed, routeId, routeLabel, stopsById) {
 	let routeTripIds = new Set(
 		feed.trips.filter((trip) => trip.route_id === routeId).map((trip) => trip.trip_id),
 	)
@@ -318,23 +320,21 @@ function timezoneForRoute(feed, routeId, stopsById) {
 		feed.stopTimes.filter((row) => routeTripIds.has(row.trip_id)).map((row) => row.stop_id),
 	)
 
-	let timezones = new Set()
-	let sawMissing = false
+	let timezoneByStop = new Map(
+		[...stopIds].map((stopId) => [stopId, stopsById.get(stopId)?.stop_timezone ?? '']),
+	)
+	let distinct = new Set(timezoneByStop.values())
 
-	for (let stopId of stopIds) {
-		let timezone = stopsById.get(stopId)?.stop_timezone
-		if (timezone) {
-			timezones.add(timezone)
-		} else {
-			sawMissing = true
-		}
+	if (distinct.size !== 1 || distinct.has('')) {
+		let detail = [...timezoneByStop.entries()]
+			.map(([stopId, timezone]) => `${stopId}: "${timezone}"`)
+			.join(', ')
+		throw new Error(
+			`${routeLabel}'s stops do not agree on a usable stop_timezone (${detail}); there is no repair to fall back to`,
+		)
 	}
 
-	if (sawMissing || timezones.size !== 1) {
-		return
-	}
-
-	return [...timezones][0]
+	return [...distinct][0]
 }
 
 /** Every curated route as a bus line, keyed by the file it is written to. */
@@ -352,10 +352,6 @@ export function gtfsToBusTimes(feed, {curation, repairs}) {
 	]
 
 	let files = new Map()
-	// Collected across routes and reported once per repair, the same way
-	// `staleRepairs` reports once per repair rather than once per route it
-	// touches.
-	let redundantTimezoneRepairs = new Set()
 
 	for (let {routeId, config} of routes) {
 		let schedules = schedulesForRoute(feed, routeId, stopsById, stopNames)
@@ -370,27 +366,7 @@ export function gtfsToBusTimes(feed, {curation, repairs}) {
 			warnings.push(`route ${routeId} (${config.line}) produced no schedules`)
 		}
 
-		// agency.txt's agency_timezone is never read -- it says
-		// America/Los_Angeles for this Minnesota operator, which is exactly
-		// the bug the agency-timezone repair exists to correct. stops.txt's
-		// per-stop stop_timezone is the real source of truth.
-		let derivedTimezone = timezoneForRoute(feed, routeId, stopsById)
-		let timezoneRepair = repairs.repairs.find(
-			(repair) => repairAppliesToRoute(repair, routeId) && repair.set?.timezone !== undefined,
-		)
-
-		if (derivedTimezone === undefined) {
-			warnings.push(
-				`route ${routeId} (${config.line})'s stops disagree on stop_timezone, or one of them never set it; falling back to a repair`,
-			)
-		} else if (timezoneRepair && timezoneRepair.set.timezone === derivedTimezone) {
-			redundantTimezoneRepairs.add(timezoneRepair.id)
-		}
-
-		// A repair's timezone always wins over the value derived from
-		// stops.txt -- that is the point of a repair -- but the derived
-		// value still backstops a route that no timezone repair targets.
-		let timezone = timezoneRepair?.set.timezone ?? derivedTimezone
+		let timezone = timezoneForRoute(feed, routeId, `route ${routeId} (${config.line})`, stopsById)
 
 		files.set(config.file, {
 			line: config.line,
@@ -399,12 +375,6 @@ export function gtfsToBusTimes(feed, {curation, repairs}) {
 			notice: config.notice,
 			schedules,
 		})
-	}
-
-	for (let repairId of redundantTimezoneRepairs) {
-		warnings.push(
-			`repair "${repairId}" sets a timezone that already matches stops.txt; it may be redundant now that the feed provides the correct value`,
-		)
 	}
 
 	return {files, warnings}

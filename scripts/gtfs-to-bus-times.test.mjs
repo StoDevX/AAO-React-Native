@@ -474,87 +474,38 @@ describe('gtfsToBusTimes', () => {
 		assert.equal(files.get('test-line.yaml').timezone, 'America/Chicago')
 	})
 
-	it("warns when a route's stops disagree on stop_timezone, and falls back to the repair", () => {
+	it("throws when a route's stops carry conflicting stop_timezone values", () => {
 		let feed = twoServiceFeed()
 		feed.stops[1].stop_timezone = 'America/New_York'
-		let repairs = {
-			repairs: [
-				{
-					id: 'agency-timezone',
-					reason: 'test',
-					written_against: 'v1',
-					expires: '2027-01-01',
-					set: {timezone: 'America/Chicago'},
-				},
-			],
-		}
 
-		let {files, warnings} = gtfsToBusTimes(feed, {curation, repairs})
-
-		assert.ok(warnings.some((warning) => /disagree/u.test(warning)))
-		assert.equal(files.get('test-line.yaml').timezone, 'America/Chicago')
-	})
-
-	it('applies a repair with no route to every route', () => {
-		let feed = twoServiceFeed()
-		feed.routes.push({route_id: 'r2', route_long_name: 'Second Route'})
-		feed.trips.push({route_id: 'r2', service_id: 'sA', trip_id: 't3'})
-		feed.stopTimes.push(
-			{trip_id: 't3', stop_id: 'a', stop_sequence: '1', departure_time: '08:00:00', timepoint: '1'},
-			{trip_id: 't3', stop_id: 'b', stop_sequence: '2', departure_time: '08:10:00', timepoint: '1'},
-		)
-
-		let twoRouteCuration = {
-			...curation,
-			routes: {
-				...curation.routes,
-				r2: {
-					expect_name: 'Second Route',
-					file: 'second-line.yaml',
-					line: 'Second Line',
-					colors: {bar: 'rgb(7, 8, 9)', dot: 'rgb(10, 11, 12)'},
-					notice: 'Another test route.',
-				},
+		assert.throws(
+			() => gtfsToBusTimes(feed, {curation, repairs: {repairs: []}}),
+			(error) => {
+				assert.match(error.message, /no repair to fall back to/u)
+				assert.match(error.message, /r1/u)
+				assert.match(error.message, /America\/Chicago/u)
+				assert.match(error.message, /America\/New_York/u)
+				return true
 			},
-		}
-		let repairs = {
-			repairs: [
-				{
-					id: 'agency-timezone',
-					reason: 'test',
-					written_against: 'v1',
-					expires: '2027-01-01',
-					set: {timezone: 'America/New_York'},
-				},
-			],
-		}
-
-		let {files} = gtfsToBusTimes(feed, {curation: twoRouteCuration, repairs})
-
-		assert.equal(files.get('test-line.yaml').timezone, 'America/New_York')
-		assert.equal(files.get('second-line.yaml').timezone, 'America/New_York')
+		)
 	})
 
-	it('lets a set: {timezone} repair override the value derived from stops.txt', () => {
-		let repairs = {
-			repairs: [
-				{
-					id: 'agency-timezone',
-					reason: 'test',
-					written_against: 'v1',
-					expires: '2027-01-01',
-					set: {timezone: 'America/New_York'},
-				},
-			],
-		}
+	it('throws when a stop the route serves has an empty stop_timezone', () => {
+		let feed = twoServiceFeed()
+		feed.stops[0].stop_timezone = ''
+		feed.stops[1].stop_timezone = ''
 
-		let {files, warnings} = gtfsToBusTimes(twoServiceFeed(), {curation, repairs})
-
-		assert.equal(files.get('test-line.yaml').timezone, 'America/New_York')
-		assert.deepEqual(warnings, [])
+		assert.throws(
+			() => gtfsToBusTimes(feed, {curation, repairs: {repairs: []}}),
+			(error) => {
+				assert.match(error.message, /no repair to fall back to/u)
+				assert.match(error.message, /r1/u)
+				return true
+			},
+		)
 	})
 
-	it('warns that a timezone repair is redundant once its value matches the feed', () => {
+	it('warns that a set: {timezone} repair is unhandled now that the generator never applies one', () => {
 		let repairs = {
 			repairs: [
 				{
@@ -571,7 +522,7 @@ describe('gtfsToBusTimes', () => {
 
 		assert.equal(warnings.length, 1)
 		assert.match(warnings[0], /agency-timezone/u)
-		assert.match(warnings[0], /redundant/u)
+		assert.match(warnings[0], /timezone/u)
 	})
 })
 
