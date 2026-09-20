@@ -10,7 +10,7 @@ import {useIsFocused, useRouter} from 'expo-router'
 import type {GithubMenuType} from './types'
 import {formatDate} from '@frogpond/time-format'
 import {now as currentMoment} from '@frogpond/timer'
-import type {MealMenuSelection} from '@frogpond/food-menu'
+import type {MealHeaderState} from '@frogpond/food-menu'
 import {usePublishMenuHeader} from './menu-header'
 
 type Props = {
@@ -26,10 +26,14 @@ type Props = {
 // `corIcons` reference on every one of those renders.
 const EMPTY_MENU: GithubMenuType = {foodItems: {}, meals: [], corIcons: {}}
 
+// Module-level for the same reason: one identity rather than a fresh object
+// per mount.
+const EMPTY_MEAL_HEADER: MealHeaderState = {menu: null, time: null}
+
 export function GitHubHostedMenu(props: Props): React.ReactNode {
 	let router = useRouter()
 	let isFocused = useIsFocused()
-	let [mealMenu, setMealMenu] = React.useState<MealMenuSelection | null>(null)
+	let [mealHeader, setMealHeader] = React.useState<MealHeaderState>(EMPTY_MEAL_HEADER)
 
 	let {
 		data = EMPTY_MENU,
@@ -59,7 +63,8 @@ export function GitHubHostedMenu(props: Props): React.ReactNode {
 		{
 			name: props.name,
 			date,
-			meals: mealMenu,
+			meals: mealHeader.menu,
+			time: mealHeader.time,
 			filters: {visible: filtersVisible, toggle: toggleFilters},
 		},
 		isFocused,
@@ -93,7 +98,7 @@ export function GitHubHostedMenu(props: Props): React.ReactNode {
 				})
 			}
 			filtersVisible={filtersVisible}
-			onMealMenuChange={setMealMenu}
+			onMealHeaderChange={setMealHeader}
 			onRefresh={refetch}
 		/>
 	)

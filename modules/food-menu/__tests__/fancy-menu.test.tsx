@@ -223,7 +223,7 @@ describe('FancyMenu', () => {
 	// menu has to hand them what to draw -- both the one it opens on and the
 	// one the reader moves to.
 	test('reports the meal picker to the screen above it', async () => {
-		let onMealMenuChange = jest.fn()
+		let onMealHeaderChange = jest.fn()
 
 		await render(
 			<FancyMenu
@@ -233,26 +233,35 @@ describe('FancyMenu', () => {
 				name="The Caf"
 				now={moment.tz(BREAKFAST_TIME, TIMEZONE)}
 				onItemPress={jest.fn()}
-				onMealMenuChange={onMealMenuChange}
+				onMealHeaderChange={onMealHeaderChange}
 			/>,
 		)
 
-		expect(onMealMenuChange).toHaveBeenLastCalledWith(
+		expect(onMealHeaderChange).toHaveBeenLastCalledWith(
 			expect.objectContaining({
-				options: ['Breakfast', 'Lunch', 'Dinner'],
-				selected: 'Breakfast',
+				menu: expect.objectContaining({
+					options: [
+						{label: 'Breakfast', time: '7AM\u201311AM'},
+						{label: 'Lunch', time: '11AM\u20132PM'},
+						{label: 'Dinner', time: '5PM\u20138PM'},
+					],
+					selected: 'Breakfast',
+				}),
 			}),
 		)
 
 		await fireEvent.press(screen.getByTestId('choose-dinner'))
 
-		expect(onMealMenuChange).toHaveBeenLastCalledWith(expect.objectContaining({selected: 'Dinner'}))
+		expect(onMealHeaderChange).toHaveBeenLastCalledWith(
+			expect.objectContaining({menu: expect.objectContaining({selected: 'Dinner'})}),
+		)
 	})
 
-	// The callback the screen above uses to move between meals, which nothing
-	// else in the tree can reach -- the filters live in here.
-	test('switches meals through the picker it reported', async () => {
-		let onMealMenuChange = jest.fn()
+	// The title says when the meal on screen is served, and a cafe serving one
+	// meal has no picker to carry it -- so the window is reported apart from
+	// the picker rather than inside it.
+	test('reports the window the meal on screen is served in', async () => {
+		let onMealHeaderChange = jest.fn()
 
 		await render(
 			<FancyMenu
@@ -262,15 +271,65 @@ describe('FancyMenu', () => {
 				name="The Caf"
 				now={moment.tz(BREAKFAST_TIME, TIMEZONE)}
 				onItemPress={jest.fn()}
-				onMealMenuChange={onMealMenuChange}
+				onMealHeaderChange={onMealHeaderChange}
+			/>,
+		)
+
+		expect(onMealHeaderChange).toHaveBeenLastCalledWith(
+			expect.objectContaining({time: '7AM\u201311AM'}),
+		)
+
+		await fireEvent.press(screen.getByTestId('choose-dinner'))
+
+		expect(onMealHeaderChange).toHaveBeenLastCalledWith(
+			expect.objectContaining({time: '5PM\u20138PM'}),
+		)
+	})
+
+	// The Cage: one meal, so there is nothing to pick, but the hours it keeps
+	// are still what the reader came to the header for.
+	test('reports a window but no picker for a cafe serving one meal', async () => {
+		let onMealHeaderChange = jest.fn()
+
+		await render(
+			<FancyMenu
+				foodItems={FOOD_ITEMS}
+				meals={[MEALS[0]]}
+				menuCorIcons={COR_ICONS}
+				name="The Cage"
+				now={moment.tz(BREAKFAST_TIME, TIMEZONE)}
+				onItemPress={jest.fn()}
+				onMealHeaderChange={onMealHeaderChange}
+			/>,
+		)
+
+		expect(onMealHeaderChange).toHaveBeenLastCalledWith({menu: null, time: '7AM\u201311AM'})
+	})
+
+	// The callback the screen above uses to move between meals, which nothing
+	// else in the tree can reach -- the filters live in here.
+	test('switches meals through the picker it reported', async () => {
+		let onMealHeaderChange = jest.fn()
+
+		await render(
+			<FancyMenu
+				foodItems={FOOD_ITEMS}
+				meals={MEALS}
+				menuCorIcons={COR_ICONS}
+				name="The Caf"
+				now={moment.tz(BREAKFAST_TIME, TIMEZONE)}
+				onItemPress={jest.fn()}
+				onMealHeaderChange={onMealHeaderChange}
 			/>,
 		)
 
 		expect(screen.getByText('Pancakes')).toBeTruthy()
 
-		let reported = onMealMenuChange.mock.lastCall?.[0] as {select: (label: string) => void}
+		let reported = onMealHeaderChange.mock.lastCall?.[0] as {
+			menu: {select: (label: string) => void}
+		}
 		await act(() => {
-			reported.select('Dinner')
+			reported.menu.select('Dinner')
 		})
 
 		expect(screen.getByText('Pot Roast')).toBeTruthy()

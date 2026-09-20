@@ -1,6 +1,7 @@
 import {describe, expect, test} from '@jest/globals'
 import moment from 'moment-timezone'
 import {
+	formatCompactTime,
 	formatDate,
 	formatDateTime,
 	formatDayOfMonth,
@@ -90,6 +91,36 @@ describe('formatTime', () => {
 		expect(formatTime(m, 'en-US', 'America/Chicago')).toBe('5:30 PM')
 		expect(formatTime(m, 'en-US', 'America/New_York')).toBe('6:30 PM')
 		expect(formatTime(m, 'en-US')).toBe('5:30 PM')
+	})
+})
+
+describe('formatCompactTime', () => {
+	test('squeezes out the gap before the meridiem', () => {
+		let m = moment.tz('2026-08-20 17:30', CAMPUS)
+		expect(formatCompactTime(m, 'en-US')).toBe('5:30PM')
+	})
+
+	test('keeps dropping :00 on the hour', () => {
+		let m = moment.tz('2026-08-20 17:00', CAMPUS)
+		expect(formatCompactTime(m, 'en-US')).toBe('5PM')
+	})
+
+	// There is no gap to squeeze out of `06:00`, and squeezing the colon or
+	// the digits would leave something that is not a time.
+	test('leaves a 24-hour locale alone', () => {
+		let m = moment.tz('2026-08-20 06:00', CAMPUS)
+		expect(formatCompactTime(m, 'en-GB')).toBe('06:00')
+	})
+
+	// `Intl` writes the gap as U+202F in some ICU builds and U+0020 in others,
+	// and the caller cannot tell which it got.
+	test('squeezes a narrow no-break space as readily as a plain one', () => {
+		expect(formatCompactTime(moment.tz('2026-08-20 09:15', CAMPUS), 'en-US')).not.toMatch(/\s/u)
+	})
+
+	test('formats in Japanese', () => {
+		let m = moment.tz('2026-08-20 17:30', CAMPUS)
+		expect(formatCompactTime(m, 'ja-JP')).toBe('17:30')
 	})
 })
 

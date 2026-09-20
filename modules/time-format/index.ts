@@ -177,6 +177,27 @@ export function formatTime(m: Moment, locale: string = deviceLocale(), timeZone?
 }
 
 /**
+ * The same time with nothing between the digits and the meridiem: `5:30PM`,
+ * `9AM`. For a navigation bar and a pull-down row, where the gap is width
+ * there is none of.
+ *
+ * Squeezed out of `formatTime`'s answer rather than assembled from parts:
+ * every locale that writes a meridiem sets it off with a space on one side or
+ * the other, and closing that space is the whole of the difference. A
+ * 24-hour locale has no space to close and comes back as it went in.
+ *
+ * `\s` covers the narrow no-break space `Intl` writes in some ICU builds as
+ * well as the plain one it writes in others.
+ */
+export function formatCompactTime(
+	m: Moment,
+	locale: string = deviceLocale(),
+	timeZone?: string,
+): string {
+	return formatTime(m, locale, timeZone).replaceAll(/\s/gu, '')
+}
+
+/**
  * A timeline's hour label, e.g. `9 AM` or `09:00`. An hour label is always
  * on the hour, so a 12-hour locale needs no minutes at all -- unlike
  * `formatTime`, which keeps them for a time that might not be.

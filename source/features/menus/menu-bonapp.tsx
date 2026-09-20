@@ -21,7 +21,7 @@ import {useQuery} from '@tanstack/react-query'
 import {useIsFocused, useRouter} from 'expo-router'
 import {toLaxTitleCase} from '@frogpond/titlecase'
 import {formatDate} from '@frogpond/time-format'
-import type {MealMenuSelection} from '@frogpond/food-menu'
+import type {MealHeaderState} from '@frogpond/food-menu'
 import {usePublishMenuHeader} from './menu-header'
 
 const BONAPP_HTML_ERROR_CODE = 'bonapp-html'
@@ -36,6 +36,10 @@ const DEFAULT_MENU = [
 		stations: [],
 	},
 ]
+
+// Module-level so the state below starts on one identity rather than a fresh
+// object per mount.
+const EMPTY_MEAL_HEADER: MealHeaderState = {menu: null, time: null}
 
 type Props = {
 	cafe: string | {id: string}
@@ -156,7 +160,7 @@ export function BonAppHostedMenu(props: Props): React.ReactNode {
 	// to defer their mounting: every cafe the reader has already visited stays
 	// mounted, and only the one in front of them may title the screen.
 	let isFocused = useIsFocused()
-	let [mealMenu, setMealMenu] = React.useState<MealMenuSelection | null>(null)
+	let [mealHeader, setMealHeader] = React.useState<MealHeaderState>(EMPTY_MEAL_HEADER)
 
 	// The formatted day, not `now`: `currentMoment()` above builds a fresh
 	// Moment on every render, so a header depending on it would republish on
@@ -177,7 +181,8 @@ export function BonAppHostedMenu(props: Props): React.ReactNode {
 		{
 			name: props.name,
 			date,
-			meals: mealMenu,
+			meals: mealHeader.menu,
+			time: mealHeader.time,
 			filters: {visible: filtersVisible, toggle: toggleFilters},
 		},
 		isFocused,
@@ -286,7 +291,7 @@ export function BonAppHostedMenu(props: Props): React.ReactNode {
 			now={now}
 			onItemPress={onItemPress}
 			filtersVisible={filtersVisible}
-			onMealMenuChange={setMealMenu}
+			onMealHeaderChange={setMealHeader}
 			onRefresh={onRefresh}
 		/>
 	)

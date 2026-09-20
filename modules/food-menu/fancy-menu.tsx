@@ -22,6 +22,7 @@ import {buildFilters} from './lib/build-filters'
 import {chooseMeal} from './lib/choose-meal'
 import {emptyMessage} from './lib/empty-message'
 import {mealHeaderMenu, type MealHeaderMenu} from './lib/meal-header'
+import {formatMealTimes} from './lib/meal-times'
 import {offerSpecials} from './lib/offer-specials'
 import type {
 	MasterCorIconMapType,
@@ -39,6 +40,21 @@ export type MealMenuSelection = MealHeaderMenu & {
 	select: (label: string) => void
 }
 
+/** What the screen above needs to title itself with the menu on screen. */
+export type MealHeaderState = {
+	/**
+	 * The meal picker, or `null` when the cafe serves one meal and there is
+	 * nothing to pick.
+	 */
+	menu: MealMenuSelection | null
+	/**
+	 * The window the meal on screen is served, e.g. `7:15AM–9:45AM`. Reported
+	 * apart from the picker because a cafe serving one meal has no picker to
+	 * carry it and hours all the same.
+	 */
+	time: string | null
+}
+
 type Props = {
 	cafeMessage?: string | null
 	foodItems: MenuItemContainerType
@@ -52,11 +68,11 @@ type Props = {
 	// needs to await that promise to keep the spinner up until it resolves.
 	onRefresh?: () => unknown
 	/**
-	 * Hands the screen above the meal picker to draw, for a screen that draws
-	 * it in its navigation bar rather than in the toolbar below. `null` when
-	 * the cafe serves one meal and there is nothing to pick.
+	 * Hands the screen above what to title itself with, for a screen that
+	 * draws the meal picker in its navigation bar rather than in the toolbar
+	 * below.
 	 */
-	onMealMenuChange?: (menu: MealMenuSelection | null) => void
+	onMealHeaderChange?: (header: MealHeaderState) => void
 	/**
 	 * Whether the filter row is on screen. The screens above hide it behind a
 	 * navigation-bar button, so a menu opens as food rather than as chrome.
@@ -198,14 +214,25 @@ export function FancyMenu(props: Props): React.ReactNode {
 	}, [])
 
 	const mealMenu = useMemo((): MealMenuSelection | null => {
-		const menu = mealHeaderMenu(filters, mealName)
+		const menu = mealHeaderMenu(filters, mealName, meals)
 		return menu ? {...menu, select: selectMeal} : null
-	}, [filters, mealName, selectMeal])
+	}, [filters, mealName, meals, selectMeal])
 
-	const {onMealMenuChange} = props
+	// Keyed on the two time strings rather than on `meal`: `chooseMeal` runs
+	// on every render, and a window rebuilt with it would republish the header
+	// on every render and loop through the provider's state above.
+	const {starttime, endtime} = meal
+	const mealTime = useMemo(() => formatMealTimes({starttime, endtime}), [starttime, endtime])
+
+	const mealHeader = useMemo(
+		(): MealHeaderState => ({menu: mealMenu, time: mealTime}),
+		[mealMenu, mealTime],
+	)
+
+	const {onMealHeaderChange} = props
 	useEffect(() => {
-		onMealMenuChange?.(mealMenu)
-	}, [onMealMenuChange, mealMenu])
+		onMealHeaderChange?.(mealHeader)
+	}, [onMealHeaderChange, mealHeader])
 
 	const specialsFilterEnabled = areSpecialsFiltered(appliedFilters)
 	const message = emptyMessage({
