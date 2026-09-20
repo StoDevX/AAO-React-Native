@@ -20,7 +20,7 @@ import {
 	frame,
 	lineLimit,
 	listRowInsets,
-	listRowSeparator,
+	alignmentGuide,
 	offset,
 	onGeometryChange,
 	opacity,
@@ -36,6 +36,8 @@ import type {BusStopStatusEnum} from '../lib'
 
 /** Width of the column the rail runs down; the rail and dots sit at its centre. */
 const RAIL_COLUMN_WIDTH = 40
+/// Gap between the rail column and the stop's text.
+const ROW_SPACING = 12
 const RAIL_WIDTH = 5
 const BUS_ICON_SIZE = 18
 /** A stop the bus has passed: a small solid disc. */
@@ -48,12 +50,13 @@ const RING_WIDTH = 3
 const TEXT_VERTICAL_PADDING = 10
 
 /**
- * Zeroed top and bottom insets so one row's rail meets the next, and no
- * separator, which would cut across the rail.
+ * Zeroed top and bottom insets so one row's rail meets the next. The separator
+ * starts where the text does, clearing the rail column: drawn full width it
+ * would cut straight through the rail and the bus riding it.
  */
 const ROW_MODIFIERS = [
 	listRowInsets({top: 0, bottom: 0, leading: 0, trailing: 16}),
-	listRowSeparator('hidden'),
+	alignmentGuide('listRowSeparatorLeading', RAIL_COLUMN_WIDTH + ROW_SPACING),
 ]
 
 type Props = {
@@ -208,7 +211,7 @@ function RowContent(props: Props): React.ReactNode {
 				frame({maxWidth: FILL_WIDTH}),
 				...(onPress ? [] : [accessibilityElement('combine'), accessibilityLabel(label)]),
 			]}
-			spacing={12}
+			spacing={ROW_SPACING}
 		>
 			{/* The rail is two segments either side of the dot, so the ends
 			    can go transparent on the first and last rows and the rail

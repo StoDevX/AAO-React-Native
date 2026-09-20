@@ -101,6 +101,13 @@ export const textInputAutocapitalization = named(
 	'autocapitalization',
 )
 export const layoutPriority = named('layoutPriority', 'priority')
+/**
+ * Where a `List` row's separator starts, among other alignment guides. Jest has
+ * no separators to place, so this only has to exist and carry its arguments.
+ */
+export const alignmentGuide = (guide: string, value: number): Modifier =>
+	createModifier('alignmentGuide', {guide, value})
+
 export const allowsTightening = named('allowsTightening', 'value')
 export const textSelection = named('textSelection', 'value')
 export const tint = named('tint', 'color')
