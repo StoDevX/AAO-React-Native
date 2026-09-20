@@ -87,7 +87,7 @@ export function GitHubHostedMenu(props: Props): React.ReactNode {
 			name={props.name}
 			now={menuDate}
 			onItemPress={(item) =>
-				router.push({
+				router.navigate({
 					pathname: '/MenuItemDetail',
 					params: {source: 'pause', itemId: item.id},
 				})

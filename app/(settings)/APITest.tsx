@@ -33,7 +33,7 @@ export default function APITestPage(): React.ReactNode {
 
 	const openRoute = React.useCallback(
 		(route: ServerRoute) =>
-			router.push({
+			router.navigate({
 				pathname: '/APITestDetail',
 				params: {displayName: route.displayName},
 			}),
@@ -67,7 +67,7 @@ export default function APITestPage(): React.ReactNode {
 				autoCapitalize="none"
 				onChangeText={setPath}
 				onSearchButtonPress={(ev) => {
-					router.push({
+					router.navigate({
 						pathname: '/APITestDetail',
 						params: {displayName: ev.nativeEvent.text},
 					})

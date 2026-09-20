@@ -76,7 +76,7 @@ function StudentOrgsView(): React.ReactNode {
 
 	let onPressOrg = React.useCallback(
 		(org: StudentOrgType) =>
-			router.push({
+			router.navigate({
 				pathname: '/StudentOrgs/[name]',
 				params: {name: org.name},
 			}),
@@ -85,7 +85,7 @@ function StudentOrgsView(): React.ReactNode {
 
 	let onSelectCategory = React.useCallback(
 		(category: string) =>
-			router.push({
+			router.navigate({
 				pathname: '/StudentOrgs/category/[category]',
 				params: {category},
 			}),

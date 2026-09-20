@@ -142,7 +142,7 @@ function CourseSearchResultsView(): React.ReactNode {
 				// if there is at least one active filter, add the filter set to the Recent Filters list
 				dispatch(updateRecentFilters(filters))
 			}
-			router.push({
+			router.navigate({
 				pathname: '/CourseDetail',
 				params: {clbid: data.clbid.toString(), term: data.term.toString()},
 			})

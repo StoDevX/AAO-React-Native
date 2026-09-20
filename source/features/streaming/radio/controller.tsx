@@ -101,7 +101,7 @@ export function RadioControllerView(props: Props): React.ReactNode {
 	}
 
 	let openSchedule = useCallback(() => {
-		router.push(scheduleHref)
+		router.navigate(scheduleHref)
 	}, [router, scheduleHref])
 
 	let callStation = useCallback(() => {

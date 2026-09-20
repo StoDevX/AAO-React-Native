@@ -60,7 +60,7 @@ export const BalancesView = (): React.ReactNode => {
 				<Section modifiers={[listRowBackground('clear')]}>
 					<RNHostView matchContents={true}>
 						<FaqBannerGroup
-							onPressFaq={(faqId) => router.push({pathname: '/Faq', params: {faqId}})}
+							onPressFaq={(faqId) => router.navigate({pathname: '/Faq', params: {faqId}})}
 							style={styles.banner}
 							target={FAQ_TARGETS.SIS}
 						/>

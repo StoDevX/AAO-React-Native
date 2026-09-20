@@ -87,7 +87,7 @@ function PrintJobReleaseView({job, printer}: PrintJobReleaseViewProps): React.Re
 	let heldJob = heldJobs.find((item) => item.id.startsWith(jobId))
 
 	const returnToJobsView = React.useCallback(() => {
-		router.push('/PrintJobs')
+		router.navigate('/PrintJobs')
 	}, [router])
 
 	const releaseJob = useMutation({

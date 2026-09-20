@@ -15,7 +15,7 @@ export const DebugKeyPathScreen = ({keyPath}: Props): React.ReactNode => {
 	let slice = getAtKeyPath(reduxState, keyPath)
 
 	let onDrillDown = (key: string | number) => {
-		router.push({
+		router.navigate({
 			pathname: '/Debug/[...keyPath]',
 			params: {keyPath: [...keyPath, String(key)]},
 		})

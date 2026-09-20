@@ -57,7 +57,7 @@ export default function CalendarPage(): React.ReactNode {
 	let loading = isLoading || readPending
 
 	let onPressEvent = (entry: SourcedEvent) => {
-		router.push({
+		router.navigate({
 			pathname: '/EventDetail',
 			params: {source: entry.sourceId, eventKey: entry.key},
 		})

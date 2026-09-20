@@ -33,7 +33,7 @@ export default function CampusDetailPage(): React.ReactNode {
 
 	let reportProblem = React.useCallback(
 		() =>
-			router.push({
+			router.navigate({
 				pathname: '/Campus/detail/report',
 				params: {name, campus},
 			}),

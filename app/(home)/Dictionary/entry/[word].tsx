@@ -39,7 +39,7 @@ export default function DictionaryEntryPage(): React.ReactNode {
 		// `useNativeState` handles, which capture their initial value on their
 		// first render.
 		useDictionaryDraftStore.getState().startDraft(entry)
-		router.push('/Dictionary/entry/edit')
+		router.navigate('/Dictionary/entry/edit')
 	}, [entry, router])
 
 	let screen = (
