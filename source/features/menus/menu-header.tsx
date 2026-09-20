@@ -22,6 +22,8 @@ type MenuHeader = {
 	name: string
 	date: string | null
 	meals: MealMenuSelection | null
+	/** The filter row's own control, or `null` for a screen with no filters. */
+	filters: {visible: boolean; toggle: () => void} | null
 }
 
 /**
@@ -68,13 +70,27 @@ export function MenuHeaderProvider(props: {children: React.ReactNode}): React.Re
  */
 export function usePublishMenuHeader(header: MenuHeader, focused: boolean): void {
 	let publish = React.useContext(PublishMenuHeaderContext)
-	let {name, date, meals} = header
+	let {name, date, meals, filters} = header
+
+	// `filters` is read apart too: a caller building it inline hands over a new
+	// object each render, and depending on that object would publish on each
+	// one.
+	let filtersVisible = filters?.visible ?? null
+	let toggleFilters = filters?.toggle ?? null
 
 	React.useEffect(() => {
 		if (focused) {
-			publish?.({name, date, meals})
+			publish?.({
+				name,
+				date,
+				meals,
+				filters:
+					toggleFilters && filtersVisible !== null
+						? {visible: filtersVisible, toggle: toggleFilters}
+						: null,
+			})
 		}
-	}, [focused, name, date, meals, publish])
+	}, [focused, name, date, meals, filtersVisible, toggleFilters, publish])
 }
 
 /**
@@ -104,6 +120,16 @@ export function MenuHeaderHost(): React.ReactNode {
 					<MenuHeaderTitle date={header.date} name={header.name} />
 				)}
 			</Stack.Title>
+			{header.filters ? (
+				<Stack.Toolbar placement="right">
+					<Stack.Toolbar.Button
+						accessibilityLabel="Filters"
+						icon="line.3.horizontal.decrease"
+						onPress={header.filters.toggle}
+						selected={header.filters.visible}
+					/>
+				</Stack.Toolbar>
+			) : null}
 		</>
 	)
 }
@@ -132,15 +158,15 @@ function MealMenuTitle(props: {
 		<Host style={styles.menuHost}>
 			<Menu
 				label={
-					<VStack spacing={0}>
-						<UIText modifiers={TITLE_MODIFIERS}>{name}</UIText>
-						<HStack spacing={4}>
+					<HStack spacing={6}>
+						<VStack spacing={0}>
+							<UIText modifiers={TITLE_MODIFIERS}>{name}</UIText>
 							<UIText modifiers={SUBTITLE_MODIFIERS}>
 								{[date, meals.selected].filter(Boolean).join(' • ')}
 							</UIText>
-							<Image modifiers={CHEVRON_MODIFIERS} systemName="chevron.down" />
-						</HStack>
-					</VStack>
+						</VStack>
+						<Image modifiers={CHEVRON_MODIFIERS} systemName="chevron.down" />
+					</HStack>
 				}
 			>
 				<Section title={meals.title.toUpperCase()}>

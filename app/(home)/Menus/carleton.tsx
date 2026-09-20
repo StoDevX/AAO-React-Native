@@ -12,7 +12,7 @@ export default function CarletonPage(): React.ReactNode {
 	// A chooser rather than a menu: no day on it, and no meal to pick. It
 	// publishes all the same, so the cafe tab the reader came from does not
 	// leave its name and its live picker sitting over this list.
-	usePublishMenuHeader({name: 'Carleton', date: null, meals: null}, useIsFocused())
+	usePublishMenuHeader({name: 'Carleton', date: null, meals: null, filters: null}, useIsFocused())
 
 	let carletonCafes = [
 		{href: '/CarletonBurtonMenu', title: 'Burton'},

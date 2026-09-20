@@ -49,6 +49,11 @@ type Props = {
 	 * the cafe serves one meal and there is nothing to pick.
 	 */
 	onMealMenuChange?: (menu: MealMenuSelection | null) => void
+	/**
+	 * Whether the filter row is on screen. The screens above hide it behind a
+	 * navigation-bar button, so a menu opens as food rather than as chrome.
+	 */
+	filtersVisible?: boolean
 	applyFilters?: FilterFunc
 }
 
@@ -206,20 +211,24 @@ export function FancyMenu(props: Props): React.ReactNode {
 	// If the requested menu has no food items, that location is closed.
 	const isOpen = Object.keys(foodItems).length > 0
 
+	const {filtersVisible = true} = props
+
 	return (
 		<Host style={styles.host}>
 			<VStack spacing={0}>
 				{/* This toolbar is React Native, so it needs an `RNHostView` bridge
 				    into the SwiftUI tree around it. */}
-				<RNHostView matchContents={true}>
-					<FilterToolbar
-						filters={appliedFilters}
-						isOpen={isOpen}
-						onChange={(newFilter) => {
-							setFilters(filters.map((f) => (f.key === newFilter.key ? newFilter : f)))
-						}}
-					/>
-				</RNHostView>
+				{filtersVisible ? (
+					<RNHostView matchContents={true}>
+						<FilterToolbar
+							filters={appliedFilters}
+							isOpen={isOpen}
+							onChange={(newFilter) => {
+								setFilters(filters.map((f) => (f.key === newFilter.key ? newFilter : f)))
+							}}
+						/>
+					</RNHostView>
+				) : null}
 
 				<List
 					modifiers={[

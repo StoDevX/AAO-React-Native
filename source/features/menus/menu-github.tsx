@@ -48,7 +48,22 @@ export function GitHubHostedMenu(props: Props): React.ReactNode {
 
 	let date = formatDate(menuDate, 'medium')
 
-	usePublishMenuHeader({name: props.name, date, meals: mealMenu}, isFocused)
+	// Collapsed to begin with: a menu opens as food rather than as chrome, and
+	// the navigation bar carries the control that reveals the row.
+	let [filtersVisible, setFiltersVisible] = React.useState(false)
+	let toggleFilters = React.useCallback(() => {
+		setFiltersVisible((visible) => !visible)
+	}, [])
+
+	usePublishMenuHeader(
+		{
+			name: props.name,
+			date,
+			meals: mealMenu,
+			filters: {visible: filtersVisible, toggle: toggleFilters},
+		},
+		isFocused,
+	)
 
 	if (isLoading) {
 		return <LoadingView text={sample(props.loadingMessage)} />
@@ -77,6 +92,7 @@ export function GitHubHostedMenu(props: Props): React.ReactNode {
 					params: {source: 'pause', itemId: item.id},
 				})
 			}
+			filtersVisible={filtersVisible}
 			onMealMenuChange={setMealMenu}
 			onRefresh={refetch}
 		/>

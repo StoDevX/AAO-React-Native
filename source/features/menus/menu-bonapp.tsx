@@ -163,10 +163,25 @@ export function BonAppHostedMenu(props: Props): React.ReactNode {
 	// every render and loop through the provider's state.
 	let date = formatDate(now, 'medium')
 
+	// Collapsed to begin with: a menu opens as food rather than as chrome, and
+	// the navigation bar carries the control that reveals the row.
+	let [filtersVisible, setFiltersVisible] = React.useState(false)
+	let toggleFilters = React.useCallback(() => {
+		setFiltersVisible((visible) => !visible)
+	}, [])
+
 	// Published from here rather than from the menu below, which does not
 	// exist until its query resolves -- the screen would spend that whole
 	// first load under the previous cafe's name.
-	usePublishMenuHeader({name: props.name, date, meals: mealMenu}, isFocused)
+	usePublishMenuHeader(
+		{
+			name: props.name,
+			date,
+			meals: mealMenu,
+			filters: {visible: filtersVisible, toggle: toggleFilters},
+		},
+		isFocused,
+	)
 
 	let {
 		data: cafeMenu,
@@ -270,6 +285,7 @@ export function BonAppHostedMenu(props: Props): React.ReactNode {
 			name={props.name}
 			now={now}
 			onItemPress={onItemPress}
+			filtersVisible={filtersVisible}
 			onMealMenuChange={setMealMenu}
 			onRefresh={onRefresh}
 		/>

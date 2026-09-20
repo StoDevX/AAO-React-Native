@@ -311,6 +311,41 @@ describe('FancyMenu', () => {
 		expect(within(row).getByText('H')).toBeTruthy()
 	})
 
+	// The screens above open a menu with its filter row hidden, behind a button
+	// in the navigation bar. Which of the two a menu draws is its own decision;
+	// what the row then looks like is not something Jest can see.
+	test('draws the filter row only when the screen above asks for it', async () => {
+		let {rerender} = await render(
+			<FancyMenu
+				filtersVisible={false}
+				foodItems={FOOD_ITEMS}
+				meals={MEALS}
+				menuCorIcons={COR_ICONS}
+				name="The Caf"
+				now={moment.tz(BREAKFAST_TIME, TIMEZONE)}
+				onItemPress={jest.fn()}
+			/>,
+		)
+
+		expect(screen.queryByTestId('choose-dinner')).toBeNull()
+		// The menu itself is unaffected -- only the row is gone.
+		expect(screen.getByText('Pancakes')).toBeTruthy()
+
+		await rerender(
+			<FancyMenu
+				filtersVisible={true}
+				foodItems={FOOD_ITEMS}
+				meals={MEALS}
+				menuCorIcons={COR_ICONS}
+				name="The Caf"
+				now={moment.tz(BREAKFAST_TIME, TIMEZONE)}
+				onItemPress={jest.fn()}
+			/>,
+		)
+
+		expect(screen.getByTestId('choose-dinner')).toBeTruthy()
+	})
+
 	test('shows the empty message instead of stations when the filters exclude everything', async () => {
 		await render(
 			<FancyMenu
