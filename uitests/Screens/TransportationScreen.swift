@@ -82,22 +82,35 @@ struct TransportationScreen: Screen {
 		app.scrollViews[TestIdentifiers.Transportation.stopStrip].firstMatch
 	}
 
+	/// Whether a stop cell has actually been scrolled into the strip's window.
+	///
+	/// Geometry rather than `exists`, because a `LazyHStack` realises cells
+	/// beyond its viewport -- measured here at x=532 against a strip spanning
+	/// 16 to 374, present in the tree and nowhere near the screen. And geometry
+	/// rather than `isHittable`, which answered differently on two identical
+	/// runs of this very test. The frames do not: the strip's own frame is the
+	/// window onto the rail, so a cell whose centre falls outside it is not on
+	/// screen.
+	private func stripShows(_ stop: String) -> Bool {
+		let cell = app.elementWithLabel(startingWith: stop)
+		guard cell.exists else {
+			return false
+		}
+		return stopStrip.frame.contains(CGPoint(x: cell.frame.midX, y: cell.frame.midY))
+	}
+
 	/// The strip is not already showing `stop`. The precondition for
 	/// `verifyStripAdvancedTo`: the strip opens partway along the route,
 	/// wherever the clock puts the bus, so without this a stop that happened to
 	/// be on screen from the start would pass that check even if the swipe had
 	/// been swallowed by the enclosing list.
-	///
-	/// Hittability rather than existence, at both ends of the swipe: a
-	/// `LazyHStack` realises a little beyond its viewport, so a cell just off
-	/// screen can be in the tree without being on it.
 	@discardableResult
 	func verifyStripHasNotReached(_ stop: String) -> Self {
 		XCTAssertTrue(
 			stopStrip.waitForExistence(timeout: 30),
 			"The first line's widget should show its stop strip")
 		XCTAssertFalse(
-			app.elementWithLabel(startingWith: stop).isHittable,
+			stripShows(stop),
 			"\(stop) should be off the end of the strip before it is swiped")
 		return self
 	}
@@ -129,8 +142,8 @@ struct TransportationScreen: Screen {
 			cell.waitForExistence(timeout: 30),
 			"Swiping the strip should scroll far enough to reveal \(stop)")
 		XCTAssertTrue(
-			cell.isHittable,
-			"Swiping the strip should bring \(stop) onto the screen, not merely into the tree")
+			stripShows(stop),
+			"Swiping the strip should bring \(stop) into the strip's window, not merely into the tree")
 		return self
 	}
 
