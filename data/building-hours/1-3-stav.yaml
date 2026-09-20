@@ -6,8 +6,9 @@ building: stavhall
 schedule:
   - title: Breakfast
     hours:
-      - {days: [Mo, Tu, We, Th, Fr], from: '7:00am', to: '9:45am'}
+      - {days: [Mo, Tu, We, Th, Fr], from: '7:15am', to: '9:45am'}
       - {days: [Sa], from: '8:00am', to: '9:30am'}
+      - {days: [Su], from: '9:00am', to: '10:30am'}
 
   - title: Lunch
     hours:
