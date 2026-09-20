@@ -4,6 +4,7 @@ import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
 import {dump, load} from 'js-yaml'
+import {findDuplicateLines, todayInChicago} from './bus-data-checks.mjs'
 import {readFeed} from './gtfs.mjs'
 import {gtfsToBusTimes} from './gtfs-to-bus-times.mjs'
 import {DATA_BASE} from './paths.mjs'
@@ -50,51 +51,22 @@ function readYaml(filename) {
 /**
  * Fails if two data files in `data/bus-times/` publish the same `line:`.
  *
- * This is what would have caught the bug that prompted it: `_curation.yaml`
- * pointed `file:` at pre-rename names while the renamed files already held
- * generated content, so a refresh would have written `blue-line.yaml`
- * alongside `4-blue-line.yaml` -- both claiming "Blue Line" -- and
- * `bundleDataDir` would publish the line twice. Reading the directory back
- * after writing, rather than checking `files` from `gtfsToBusTimes`, is what
- * catches a stray file left over from a rename regardless of how it got
- * there.
+ * Reading the directory back after writing, rather than checking `files`
+ * from `gtfsToBusTimes`, is what catches a stray file left over from a
+ * rename regardless of how it got there.
  */
 function assertNoDuplicateLines() {
 	let filenames = fs
 		.readdirSync(BUS_TIMES)
 		.filter((filename) => filename.endsWith('.yaml') && !filename.startsWith('_'))
 
-	let filenamesByLine = new Map()
-	for (let filename of filenames) {
-		let {line} = readYaml(filename)
-		let siblings = filenamesByLine.get(line)
-		if (siblings) {
-			siblings.push(filename)
-		} else {
-			filenamesByLine.set(line, [filename])
-		}
-	}
+	let entries = filenames.map((file) => ({file, line: readYaml(file).line}))
 
-	for (let [line, siblings] of filenamesByLine) {
-		if (siblings.length > 1) {
-			throw new Error(
-				`${siblings.join(', ')} all publish the line "${line}"; bundleDataDir would publish it ${siblings.length} times`,
-			)
-		}
+	for (let {line, files} of findDuplicateLines(entries)) {
+		throw new Error(
+			`${files.join(', ')} all publish the line "${line}"; bundleDataDir would publish it ${files.length} times`,
+		)
 	}
-}
-
-/**
- * Today's date as GTFS's YYYYMMDD, read in the feed's own calendar.
- *
- * `feed_end_date` is the operator's local date, not UTC, so comparing it
- * against `new Date().toISOString()` can flip a day early or late near UTC
- * midnight. Every stop this feed publishes is America/Chicago.
- */
-function todayInChicago() {
-	return new Intl.DateTimeFormat('en-CA', {timeZone: 'America/Chicago'})
-		.format(new Date())
-		.replaceAll('-', '')
 }
 
 async function main() {
@@ -127,7 +99,7 @@ async function main() {
 		// anything, rather than leave a partial refresh in the working tree.
 		if (!feedEnd) {
 			console.warn('warning: the feed has no feed_end_date; the expiry check cannot run')
-		} else if (feedEnd < todayInChicago()) {
+		} else if (feedEnd < todayInChicago(new Date())) {
 			throw new Error(`the feed expired on ${feedEnd}; it is no longer being published`)
 		}
 
