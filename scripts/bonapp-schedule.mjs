@@ -98,3 +98,63 @@ export function parseWeeklySchedule(html) {
 	}
 	return rows
 }
+
+let minutes = (time) => {
+	let [, hours, mins, half] = /^(\d+):(\d+)([ap])m$/u.exec(time)
+	return ((Number(hours) % 12) + (half === 'p' ? 12 : 0)) * 60 + Number(mins)
+}
+
+/**
+ * Renders rows as the `schedule:` block of a building-hours file, including the
+ * blank line that separates it from `breakSchedule:`.
+ *
+ * Section order follows `venue.dayparts` rather than the page, because the page
+ * leads the Cage with its Sunday breakfast while our file leads with its hours.
+ * Row order is by first day then start time, which is what every file in
+ * data/building-hours already does -- sorting by time first would put Stav's
+ * Sunday brunch above its Saturday one.
+ */
+export function composeSchedule(rows, venue) {
+	let dayparts = venue.dayparts ?? {}
+	let skip = new Set(venue.skip)
+	let notes = venue.notes ?? {}
+
+	let sections = new Map()
+	for (let title of Object.values(dayparts)) {
+		if (!sections.has(title)) {
+			sections.set(title, [])
+		}
+	}
+
+	for (let row of rows) {
+		if (skip.has(row.daypart)) {
+			continue
+		}
+		let title = dayparts[row.daypart]
+		if (!title) {
+			throw new Error(
+				`bonapp: daypart "${row.daypart}" is neither mapped nor skipped; ` +
+					'add it to dayparts or skip in scripts/bonapp-overrides.yaml',
+			)
+		}
+		sections.get(title).push(row)
+	}
+
+	let out = 'schedule:\n'
+	for (let [title, entries] of sections) {
+		entries.sort(
+			(a, b) =>
+				DAYS.indexOf(a.days[0]) - DAYS.indexOf(b.days[0]) || minutes(a.from) - minutes(b.from),
+		)
+		out += `  - title: ${title}\n`
+		if (notes[title]) {
+			out += `    notes: ${notes[title]}\n`
+		}
+		out += '    hours:\n'
+		for (let row of entries) {
+			out += `      - {days: [${row.days.join(', ')}], from: '${row.from}', to: '${row.to}'}\n`
+		}
+		out += '\n'
+	}
+	return out
+}

@@ -1,0 +1,48 @@
+# Everything the scrape cannot know, for scripts/scrape-bonapp.mjs.
+#
+# Lives outside data/ so bundle-data never ships it to the app.
+#
+# `dayparts` maps Bon Appétit's meal names onto our section titles, and is
+# many-to-one: Stav's Brunch and Lunch are one row to someone reading the
+# screen. `skip` drops a period we have decided not to show. `notes` supplies a
+# hand-written line that belongs on a section. A venue with `watch_only` is
+# never written -- the run reports how it differs and changes nothing.
+#
+# A daypart in neither `dayparts` nor `skip` fails the run. A new meal period
+# should be a decision somebody makes, not a row that quietly disappears.
+venues:
+  stav-hall:
+    file: data/building-hours/1-3-stav.yaml
+    dayparts:
+      Breakfast: Breakfast
+      Brunch: Lunch
+      Lunch: Lunch
+      Dinner: Dinner
+    # Stav stays open between meals with a salad bar, a deli bar and soup. The
+    # screen lists the meals people plan a day around, so the gaps are not a
+    # section of their own.
+    skip: [Continuous Dining]
+
+  the-cage:
+    file: data/building-hours/1-1-cage.yaml
+    dayparts:
+      The Cage: Hours
+      Breakfast: Continental Breakfast Meal Swipe
+    notes:
+      Hours: The kitchen stops cooking at 8 p.m.
+
+  the-cave:
+    file: data/building-hours/1-5-cave.yaml
+    dayparts:
+      Grab 'n' Go: Hours
+    watch_only: >-
+      Bon Appétit publishes a flat Mon-Sun 9am-9pm that reads like a default.
+      wp.stolaf.edu/buntrock/eat/ gives Mon-Fri 11am-9pm and Sat-Sun 1-9pm,
+      a staffed roster, and is the page announcing the Cave's reopening. That
+      is what we ship. Both agree the 8pm close we shipped before was wrong.
+
+  the-kings-room:
+    watch_only: >-
+      Sushirito, Cage Express and Med-Express all serve this room's 11am-1:30pm
+      lunch. They are not separate venues in AAO, so there is nothing here to
+      compare against -- the run just reports what the room publishes.
