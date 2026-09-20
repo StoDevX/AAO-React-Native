@@ -5,7 +5,6 @@ import {LoadingView, NoticeView} from '@frogpond/notice'
 import {FoodMenu} from '@frogpond/food-menu'
 import type {
 	DayPartMenuType,
-	EditedBonAppCafeInfoType as CafeInfoType,
 	EditedBonAppMenuInfoType as MenuInfoType,
 	MenuItemContainerType,
 	MenuItemType,
@@ -14,9 +13,9 @@ import type {
 } from './types'
 import sample from 'lodash/sample'
 import {reduce} from 'lodash'
-import {type Moment} from 'moment-timezone'
 import {now as currentMoment} from '@frogpond/timer'
 import {bonAppCafeOptions, bonAppMenuOptions, prepareFood} from './query'
+import {findCafeMessage} from './lib/cafe-message'
 import {useQuery} from '@tanstack/react-query'
 import {useIsFocused, useRouter} from 'expo-router'
 import {toLaxTitleCase} from '@frogpond/titlecase'
@@ -46,21 +45,6 @@ type Props = {
 	ignoreProvidedMenus?: boolean
 	loadingMessage: string[]
 	name: string
-}
-
-function findCafeMessage(cafeInfo: CafeInfoType, now: Moment): string | null {
-	let actualCafeInfo = cafeInfo.cafe
-
-	let todayDate = now.format('YYYY-MM-DD')
-	let todayMenu = actualCafeInfo.days.find(({date}) => date === todayDate)
-
-	if (!todayMenu) {
-		return 'Closed today'
-	} else if (todayMenu.status === 'closed') {
-		return todayMenu.message || 'Closed today'
-	}
-
-	return null
 }
 
 const groupByStation = (
