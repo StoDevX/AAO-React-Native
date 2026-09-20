@@ -28,9 +28,11 @@ import {
 	offset,
 	opacity,
 	scrollPosition,
+	useScrollGeometryChange,
 	scrollTargetLayout,
 	shapes,
 } from '@expo/ui/swift-ui/modifiers'
+import type {ScrollGeometry} from '@expo/ui/swift-ui'
 import type {Moment} from 'moment-timezone'
 
 import * as c from '@frogpond/colors'
@@ -324,20 +326,27 @@ export function BusLineWidget({line, now, onPress}: Props): React.ReactNode {
 		{status, index: currentBusIteration, parkedStopIndex},
 		now,
 	)
+	let scrollTarget = useNativeState<string | null>(null)
 
 	// The strip opens on the stop behind the bus, so the leg it is on has both
-	// ends in view and the bus itself sits just inside the left edge rather
-	// than against it. Everything before that is still there to scroll back to.
+	// ends in view and everything earlier is still there to scroll back to.
 	//
-	// `useNativeState` captures this initial value once on mount, so the strip
-	// does not chase the bus every minute and does not stomp a scroll the
-	// reader made themselves.
-	// Seeded rather than written: writing the id is what actually scrolls, but
-	// the lint forbids mutating a hook's value after render and the write did
-	// not move the strip anyway. The anchor is not working yet.
-	let scrollTarget = useNativeState<string | null>(
-		currentIndex === null ? null : String(Math.max(0, currentIndex - 1)),
+	// Set from the scroll geometry rather than at mount: the position only
+	// takes once the strip has width to scroll, and the `null` guard means it
+	// happens once -- a reader who scrolls somewhere else is left there, and
+	// the strip does not chase the bus every minute. The calendar's event list
+	// opens on today the same way.
+	let anchorId = currentIndex === null ? null : String(Math.max(0, currentIndex - 1))
+	let openOnTheBus = React.useCallback(
+		(geometry: ScrollGeometry) => {
+			'worklet'
+			if (anchorId !== null && geometry.contentWidth > 0 && scrollTarget.get() === null) {
+				scrollTarget.set(anchorId)
+			}
+		},
+		[anchorId, scrollTarget],
 	)
+	let placement = useScrollGeometryChange(openOnTheBus)
 
 	// SwiftUI colors want strings; the feed gives hex, but the type is RN's
 	// wider ColorValue.
@@ -382,7 +391,8 @@ export function BusLineWidget({line, now, onPress}: Props): React.ReactNode {
 					modifiers={[
 						listRowInsets({top: 12, bottom: 12, leading: 0, trailing: 0}),
 						listRowSeparator('hidden'),
-						scrollPosition(scrollTarget),
+						scrollPosition(scrollTarget, {anchor: 'leading'}),
+						...(placement ? [placement] : []),
 					]}
 					showsIndicators={false}
 				>
