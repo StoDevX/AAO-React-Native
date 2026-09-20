@@ -442,6 +442,39 @@ describe('gtfsToBusTimes', () => {
 			(error) => {
 				assert.match(error.message, /r1/u)
 				assert.match(error.message, /Test Line/u)
+				assert.doesNotMatch(error.message, /calendar_dates\.txt/u)
+				return true
+			},
+		)
+	})
+
+	it('names calendar_dates.txt when a route has service only added there, not in calendar.txt', () => {
+		let feed = twoServiceFeed()
+		feed.calendar = []
+		feed.calendarDates = [{service_id: 'sA', date: '20260101', exception_type: '1'}]
+
+		assert.throws(
+			() => gtfsToBusTimes(feed, {curation, repairs: {repairs: []}}),
+			(error) => {
+				assert.match(error.message, /r1/u)
+				assert.match(error.message, /Test Line/u)
+				assert.match(error.message, /calendar_dates\.txt/u)
+				return true
+			},
+		)
+	})
+
+	it('keeps the generic message when a route only has calendar_dates removal rows', () => {
+		let feed = twoServiceFeed()
+		feed.calendar = []
+		feed.calendarDates = [{service_id: 'sA', date: '20260101', exception_type: '2'}]
+
+		assert.throws(
+			() => gtfsToBusTimes(feed, {curation, repairs: {repairs: []}}),
+			(error) => {
+				assert.match(error.message, /r1/u)
+				assert.match(error.message, /Test Line/u)
+				assert.doesNotMatch(error.message, /calendar_dates\.txt/u)
 				return true
 			},
 		)

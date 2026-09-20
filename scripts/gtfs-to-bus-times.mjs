@@ -325,6 +325,27 @@ function schedulesForRoute(feed, routeId, stopsById, stopNames) {
 	return [...seen.values()]
 }
 
+/**
+ * Whether `routeId`'s trips reference a service that `calendar_dates.txt`
+ * adds (`exception_type` ADDED, `1`) rather than one `calendar.txt` defines.
+ *
+ * GTFS allows a feed to define a service entirely through `calendar_dates.txt`
+ * and omit it from `calendar.txt` -- something `schedulesForRoute` does not
+ * read. If a route's trips land here, its schedules are missing not because
+ * the service is gone, but because this generator does not look where the
+ * service is defined.
+ */
+function servedOnlyByCalendarDates(feed, routeId) {
+	let routeServiceIds = new Set(
+		feed.trips.filter((trip) => trip.route_id === routeId).map((trip) => trip.service_id),
+	)
+	let addedServiceIds = new Set(
+		feed.calendarDates.filter((row) => row.exception_type === '1').map((row) => row.service_id),
+	)
+
+	return [...routeServiceIds].some((serviceId) => addedServiceIds.has(serviceId))
+}
+
 /** The `set` keys `gtfsToBusTimes` knows how to apply from a repair. */
 const HANDLED_REPAIR_KEYS = new Set(['days'])
 
@@ -435,6 +456,11 @@ export function gtfsToBusTimes(
 		// validator, or the Jest gate can see. This is the same shape as the
 		// Critical bug this branch already shipped once; make it a hard error.
 		if (schedules.length === 0) {
+			if (servedOnlyByCalendarDates(feed, routeId)) {
+				throw new Error(
+					`route ${routeId} (${config.line})'s service is defined only in calendar_dates.txt, which schedulesForRoute does not read; supporting it needs a code change there, not a curation edit`,
+				)
+			}
 			throw new Error(`route ${routeId} (${config.line}) produced no schedules`)
 		}
 
