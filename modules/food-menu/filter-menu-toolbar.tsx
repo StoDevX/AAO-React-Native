@@ -1,14 +1,7 @@
 import * as React from 'react'
-import {StyleSheet, View} from 'react-native'
+import {View} from 'react-native'
 import type {FilterType} from '@frogpond/filter'
 import {FilterToolbar} from '@frogpond/filter'
-import * as c from '@frogpond/colors'
-
-const styles = StyleSheet.create({
-	bars: {
-		backgroundColor: c.systemGroupedBackground,
-	},
-})
 
 type Props<T extends object> = {
 	isOpen: boolean
@@ -21,15 +14,13 @@ export function FilterMenuToolbar<T extends object>({
 	filters,
 	onChange,
 }: Props<T>): React.ReactNode {
-	// The meal is chosen from the navigation bar, so its picker is drawn there
-	// rather than in this bar.
+	// The meal is chosen from the navigation bar, so its picker is drawn there.
 	const nonPickerFilters = filters.filter((f) => f.type !== 'picker')
 
-	// The view carries the bar's own background: `RNHostView` sizes to it, and
-	// the SwiftUI host shows through anything it does not paint.
+	// One View, because `RNHostView` hosts exactly one element and a closed
+	// cafe's `isOpen &&` yields `false` rather than a view. `FilterToolbar`
+	// paints its own background, so this one needs none.
 	return (
-		<View style={styles.bars}>
-			{isOpen && <FilterToolbar<T> filters={nonPickerFilters} onChange={onChange} />}
-		</View>
+		<View>{isOpen && <FilterToolbar<T> filters={nonPickerFilters} onChange={onChange} />}</View>
 	)
 }

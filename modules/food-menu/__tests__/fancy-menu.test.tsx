@@ -15,11 +15,13 @@ import type {FilterType, PickerType} from '@frogpond/filter'
 
 /**
  * The real toolbar renders `@expo/ui/swift-ui` directly, which cannot mount
- * under Jest. This stand-in exposes the two things this suite is about: the
- * meal the menu is currently showing, read off the filters it is handed, and a
+ * under Jest. This stand-in exposes the one thing this suite needs from it: a
  * way to fire the callback the toolbar fires when the user picks a different
- * one. The logic under test is the menu's own -- whether that choice survives
- * -- not anything this mock decides.
+ * meal.
+ *
+ * It renders no meal name of its own. Which meal is showing is `chooseMeal`'s
+ * answer, and reading it back off a label this file drew would assert the mock
+ * rather than the menu -- so every test below asserts the food on screen.
  */
 // `@frogpond/filter`'s `FilterMenu`/`FilterSheet` render `@expo/ui/swift-ui`
 // directly, which cannot mount under Jest; `applyFiltersToItem` next to them
@@ -35,7 +37,7 @@ jest.mock('@expo/ui/swift-ui/modifiers', () => {
 
 jest.mock('../filter-menu-toolbar', () => {
 	// oxlint-disable-next-line typescript/no-require-imports
-	let {Pressable: P, Text: T} = require('react-native') as typeof import('react-native')
+	let {Pressable: P} = require('react-native') as typeof import('react-native')
 
 	return {
 		FilterMenuToolbar: ({
@@ -48,18 +50,15 @@ jest.mock('../filter-menu-toolbar', () => {
 			let mealFilter = filters.find((f) => f.key === 'meals') as PickerType<MenuItemType>
 
 			return (
-				<>
-					<T testID="meal-title">{mealFilter.spec.selected?.label ?? ''}</T>
-					<P
-						onPress={() =>
-							onChange({
-								...mealFilter,
-								spec: {...mealFilter.spec, selected: {label: 'Dinner'}},
-							})
-						}
-						testID="choose-dinner"
-					/>
-				</>
+				<P
+					onPress={() =>
+						onChange({
+							...mealFilter,
+							spec: {...mealFilter.spec, selected: {label: 'Dinner'}},
+						})
+					}
+					testID="choose-dinner"
+				/>
 			)
 		},
 	}
@@ -128,10 +127,6 @@ function renderMenu(now: moment.Moment) {
 			onItemPress={jest.fn()}
 		/>
 	)
-}
-
-function shownMeal(): string {
-	return screen.getByTestId('meal-title').props.children as string
 }
 
 describe('FancyMenu', () => {
@@ -205,17 +200,23 @@ describe('FancyMenu', () => {
 	// in lib/__tests__. What only shows up at this level is whether the choice
 	// outlives a render of the screen above, which hands down a fresh Moment
 	// each time it renders.
+	//
+	// Asserted on the food rather than on a meal name, so the whole path runs:
+	// the clock and the picker meet in `chooseMeal`, and its answer decides
+	// which stations `groupMenuData` builds.
 	test('keeps the meal the user picked when the parent re-renders', async () => {
 		let {rerender} = await render(renderMenu(moment.tz(BREAKFAST_TIME, TIMEZONE)))
 
 		await fireEvent.press(screen.getByTestId('choose-dinner'))
-		expect(shownMeal()).toBe('Dinner')
+		expect(screen.getByText('Pot Roast')).toBeTruthy()
 
 		// The same instant, but a fresh Moment -- which is all the menu screens
 		// hand down on each of their own renders.
 		await rerender(renderMenu(moment.tz(BREAKFAST_TIME, TIMEZONE)))
 
-		expect(shownMeal()).toBe('Dinner')
+		// Still dinner, rather than the breakfast the clock on its own would pick.
+		expect(screen.getByText('Pot Roast')).toBeTruthy()
+		expect(screen.queryByText('Pancakes')).toBeNull()
 	})
 
 	// The screens above draw the meal picker in their navigation bar, so the
