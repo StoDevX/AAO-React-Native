@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import {load} from 'js-yaml'
 import fs from 'node:fs'
-import {isNotJunk} from './junk.mjs'
+import {isDataEntry} from './data-entries.mjs'
 import path from 'node:path'
 
 // run cli
@@ -22,7 +22,7 @@ import path from 'node:path'
 export function bundleDataDir({fromDir, toFile}) {
 	let files = fs
 		.readdirSync(fromDir)
-		.filter(isNotJunk)
+		.filter(isDataEntry)
 		.map((f) => path.join(fromDir, f))
 	if (files.length === 0) {
 		return

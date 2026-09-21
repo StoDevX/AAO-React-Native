@@ -23,6 +23,16 @@ export type BusTimetableEntry = {
 	departures: DepartureTimeList
 }
 
+/** A date a schedule's service does not run, generated from the feed's
+ * `calendar_dates.txt` REMOVED rows. */
+export type BusClosure = {
+	/** `YYYY-MM-DD`, matching the data schema's `date` format. */
+	date: string
+	/** The holiday's name, e.g. "Labor Day" -- carried through from the
+	 * feed's `holiday_name`, a Trillium extension to core GTFS. */
+	name: string
+}
+
 export type UnprocessedBusLine = {
 	line: string
 	colors: BusLineColors
@@ -35,19 +45,30 @@ export type UnprocessedBusLine = {
 	 */
 	hidden?: boolean
 	schedules: Array<UnprocessedBusSchedule>
+	/** The zone this line's wall-clock departure times are read in. Absent for
+	 * hand-maintained lines, which fall back to the app-wide timezone. */
+	timezone?: string
 }
 
 export type BusLine = {
 	line: string
 	colors: BusLineColors
 	schedules: Array<BusSchedule>
+	/** The zone this line's wall-clock departure times are read in. Absent for
+	 * hand-maintained lines, which fall back to the app-wide timezone. */
+	timezone?: string
 }
 
 export type UnprocessedBusSchedule = {
 	days: Array<DayOfWeek>
-	coordinates: Record<string, Coordinates>
+	/** Absent for a hand-maintained line -- the schema has always allowed
+	 * a schedule to omit this. */
+	coordinates?: Record<string, Coordinates>
 	stops: string[]
 	times: Array<UnprocessedDepartureTimeList>
+	/** Absent for a schedule whose service has no closures -- the schema has
+	 * always allowed a schedule to omit this. */
+	closures?: Array<BusClosure>
 }
 
 export type BusSchedule = {
@@ -56,4 +77,5 @@ export type BusSchedule = {
 	stops: Array<string>
 	coordinates: {[name: string]: Coordinates}
 	times: Array<DepartureTimeList>
+	closures?: Array<BusClosure>
 }

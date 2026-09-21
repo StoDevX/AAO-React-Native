@@ -14,6 +14,7 @@ exports[`returns an empty schedule if there is no schedule for today 1`] = `
 
 exports[`returns the bus schedule for today 1`] = `
 {
+  "closures": undefined,
   "coordinates": {},
   "days": [
     "Fr",

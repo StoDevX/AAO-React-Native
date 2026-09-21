@@ -619,8 +619,12 @@ struct TestIdentifiers {
 		/// strip rather than doing nothing. Unlike `aStop`, which the route
 		/// visits twice (the loop starts and ends there), this one appears only
 		/// once, so its presence unambiguously means the strip scrolled forward
-		/// rather than showing a second, later occurrence of the start.
-		static let aStopFartherAlongTheRoute = "El Tequila"
+		/// rather than showing a second, later occurrence of the start. It is also
+		/// the fifth stop, so it starts past the four cells the strip shows when
+		/// it opens on the first stop; a stop nearer the start would already be
+		/// on screen. Red Line's route calls here too, but that line does not run
+		/// on the frozen Saturday and its strip is collapsed.
+		static let aStopFartherAlongTheRoute = "Cub/Target"
 		/// The horizontal strip of stops inside a line's widget, which a swipe
 		/// test aims at rather than at a stop cell: the strip opens partway
 		/// along the route, so which cells are on screen depends on where the
@@ -633,13 +637,17 @@ struct TestIdentifiers {
 		static let dayMenuDefaultLabel = "Today"
 		/// The day the day-picker test picks. Sunday, because Express Bus keeps
 		/// one timetable Monday to Saturday (`docs/bus-times.json`), so Sunday
-		/// is the only pick that draws rows the frozen Saturday clock does not.
+		/// is the one pick that draws nothing where the frozen Saturday clock
+		/// draws rows.
 		static let aDay = "Sunday"
-		/// A stop Express Bus skips on `aDay` and calls at every other day. Its
-		/// row lists times on any other day and reads "Cinema 10, None • None"
-		/// on Sunday, which is how the test tells a redrawn timetable from a
-		/// menu that merely relabelled itself.
-		static let aStopSkippedOnADay = "Cinema 10"
+		/// A stop Express Bus calls at once per round, so its row lists times
+		/// wherever the line runs. Unlike `aStop`, which the route visits twice
+		/// and ends the round on, with no departure to list.
+		static let aStopOnEveryRunningDay = "Food Co-op"
+		/// The empty state that replaces the timetable on a day the line does not
+		/// run. A prefix: a holiday appends its name. Matches `BusLine` in
+		/// `source/features/transportation/bus/line.tsx`.
+		static let lineNotRunning = "This line is not running today"
 		/// What a row shows in place of a departure the route skips; matches
 		/// `formatDeparture` in `source/features/transportation/bus/components/times.tsx`.
 		static let skippedDeparture = "None"

@@ -1,0 +1,182 @@
+name: Refresh Bus Data
+
+on:
+  # Weekly, Mondays at 12:00 UTC. Three Rivers republishes on no fixed cadence;
+  # weekly is about matching how often a brochure can change, not the feed.
+  schedule:
+    - cron: '0 12 * * 1'
+
+  workflow_dispatch:
+
+  # Anything that changes how the timetables are derived should regenerate
+  # them rather than wait for the cron. Note this deliberately excludes the
+  # three generated files in data/bus-times/ -- listing the directory would
+  # make this workflow re-trigger itself forever.
+  push:
+    branches: [master]
+    paths:
+      - scripts/gtfs.mjs
+      - scripts/gtfs-to-bus-times.mjs
+      - scripts/refresh-bus-data.mjs
+      - data/bus-times/_curation.yaml
+      - data/bus-times/_repairs.yaml
+      - .github/workflows/refresh-bus-data.yml
+
+  # Dry run on every PR: fetch, generate, validate, open nothing. Without this
+  # the workflow could only be exercised by merging it. Scoped to the same
+  # paths as push: above -- otherwise every unrelated PR in the repo would
+  # download the live feed and re-run the full Jest suite check.yml already
+  # runs.
+  pull_request:
+    paths:
+      - scripts/gtfs.mjs
+      - scripts/gtfs-to-bus-times.mjs
+      - scripts/refresh-bus-data.mjs
+      - data/bus-times/_curation.yaml
+      - data/bus-times/_repairs.yaml
+      - .github/workflows/refresh-bus-data.yml
+
+# `contents: write` to push the refresh branch, `pull-requests: write` to open
+# the PR against it.
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  # PRs get their own group so a dry run can never queue behind, or cancel, a
+  # scheduled refresh.
+  group: >-
+    ${{ github.event_name == 'pull_request'
+        && format('refresh-bus-dryrun-{0}', github.ref)
+        || 'refresh-bus-data' }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  refresh:
+    name: Regenerate the timetables from GTFS
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    # Read by refresh-bus-data.mjs and by the steps below, so a warning the
+    # generator raises reaches the step summary and the PR body instead of
+    # sitting in stdout where only the run log shows it.
+    env:
+      BUS_DATA_WARNINGS_FILE: ${{ runner.temp }}/bus-data-warnings.txt
+
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: jdx/mise-action@c2a87611a18de5b3828c5652fe268e992400cb5c # v4.3.0
+        with:
+          cache_key: mise-v2-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('mise.lock') }}
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Regenerate the timetables
+        run: mise run refresh-bus-data
+
+      # Both validators: validate-bus-data is the hand-written invariant
+      # checker, validate-data is the JSON-Schema pass with
+      # additionalProperties: false. deploy-data.yml runs both against
+      # master; running only the first here would let a new top-level key
+      # (like timezone was) go green here and fail there.
+      - name: Validate the result
+        run: |
+          mise run validate-bus-data
+          mise run validate-data
+
+      # A PR opened by GITHUB_TOKEN does not trigger other workflows, so
+      # check.yml will not run on it. These three steps are the only gate
+      # the generated data gets before a human reads it -- keep them here.
+      # test:jest matters most: generated-data.test.ts processes the bundled
+      # bus data for real, which is the kind of bug a bad feed would trip.
+      - name: Check the generated data against the fixture expectations
+        run: mise run test:node
+
+      - name: Run the Jest tests
+        run: mise run test:jest
+
+      - name: Summarise
+        run: |
+          {
+            echo "## Bus timetables"
+            echo
+            if git diff --quiet data/bus-times; then
+              echo "No change — the published timetables already match the feed."
+            else
+              echo '```diff'
+              git diff data/bus-times
+              echo '```'
+            fi
+
+            if [ -s "$BUS_DATA_WARNINGS_FILE" ]; then
+              echo
+              echo "## Warnings"
+              echo
+              sed 's/^/- /' "$BUS_DATA_WARNINGS_FILE"
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Open a pull request
+        if: github.event_name != 'pull_request'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BRANCH: bus-data/gtfs-refresh
+        run: |
+          if git diff --quiet data/bus-times; then
+            echo "Nothing changed."
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git switch -c "$BRANCH"
+          git add data/bus-times
+          git commit -m "Update the bus timetables from the GTFS feed" \
+            -m "Regenerated by ${GITHUB_WORKFLOW} (run ${GITHUB_RUN_ID})."
+
+          # Force-push: the branch is a rolling snapshot of the current feed,
+          # not a history. A second refresh before the first is merged should
+          # replace it, not stack another commit on top.
+          git push --force origin "$BRANCH"
+
+          # Re-running with the PR already open just updates the branch above.
+          if [ -n "$(gh pr list --head "$BRANCH" --state open --json number --jq '.[].number')" ]; then
+            echo "PR already open for $BRANCH; the force-push updated it."
+            exit 0
+          fi
+
+          BODY_FILE="$(mktemp)"
+          cat <<'BODY' > "$BODY_FILE"
+          Regenerated by `mise run refresh-bus-data` from the Hiawathaland GTFS feed.
+
+          `validate-bus-data`, `validate-data`, `test:node`, and `test:jest`
+          passed in the run that opened this. Nothing else did — a PR opened
+          by `GITHUB_TOKEN` does not trigger `check.yml`, so push an empty
+          commit if you want the full suite.
+
+          Check the diff against the current brochures before merging:
+
+          - Red and Blue: https://www.threeriverscap.org/wp-content/uploads/NorthfieldX-XEnglishX8.2026X.pdf
+          - Express: https://www.threeriverscap.org/wp-content/uploads/ExpressXBrochureX8.28X.26X.pdf
+          BODY
+
+          # A warning is a signal a route vanished, a repair went stale or
+          # ineffective, or a timezone disagreed -- put it in front of
+          # whoever reviews this rather than leave it for someone to notice
+          # by opening the run log.
+          if [ -s "$BUS_DATA_WARNINGS_FILE" ]; then
+            {
+              echo
+              echo "## Warnings"
+              echo
+              sed 's/^/- /' "$BUS_DATA_WARNINGS_FILE"
+            } >> "$BODY_FILE"
+          fi
+
+          gh pr create \
+            --base master \
+            --head "$BRANCH" \
+            --title "Update the bus timetables from the GTFS feed" \
+            --body-file "$BODY_FILE"

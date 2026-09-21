@@ -217,6 +217,10 @@ description = "Bundle data files"
 wait_for = ["pnpm:install:*"]
 run = "node scripts/bundle-data.mjs data/ docs/"
 
+[tasks."refresh-bus-data"]
+description = "Regenerate data/bus-times/ from the Hiawathaland GTFS feed"
+run = "node scripts/refresh-bus-data.mjs"
+
 [tasks."validate-bus-data"]
 description = "Validate bus schedule data"
 run = "node scripts/validate-bus-schedules.mjs"

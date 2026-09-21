@@ -5,12 +5,14 @@ additionalProperties: false
 required: [line, schedules, colors]
 properties:
   line: {type: string}
+  timezone: {type: string}
   colors: {$ref: '#/definitions/colors'}
   notice: {type: string}
   hidden: {type: boolean}
   schedules:
     type: array
     items: {$ref: '#/definitions/schedule'}
+    minItems: 1
 
 definitions:
   schedule:
@@ -22,6 +24,7 @@ definitions:
       coordinates: {$ref: '#/definitions/coordinates'}
       stops: {$ref: '#/definitions/stops'}
       times: {$ref: '#/definitions/times'}
+      closures: {$ref: '#/definitions/closures'}
 
   coordinates:
     type: object
@@ -41,6 +44,18 @@ definitions:
     oneOf:
       - {$ref: '_defs.json#/definitions/time'}
       - {const: false}
+
+  closures:
+    type: array
+    items: {$ref: '#/definitions/closure'}
+
+  closure:
+    type: object
+    additionalProperties: false
+    required: [date, name]
+    properties:
+      date: {type: string, format: date}
+      name: {type: string}
 
   coord-pair:
     type: array

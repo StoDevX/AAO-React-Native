@@ -1,0 +1,5 @@
+service_id,service_name,monday,tuesday,wednesday,thursday,friday,saturday,sunday,start_date,end_date
+c_71684_b_85999_d_31,Year round starting 12/08/2025 (Weekday),1,1,1,1,1,0,0,20251208,20261001
+c_71619_b_85729_d_63,School Service (No Sunday),1,1,1,1,1,1,0,20251201,20251214
+c_71619_b_85727_d_63,School Service (No Sunday),1,1,1,1,1,1,0,20260105,20260327
+c_71619_b_85726_d_63,School Service (No Sunday),1,1,1,1,1,1,0,20260330,20260608

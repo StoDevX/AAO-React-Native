@@ -37,3 +37,27 @@ test('returns an empty schedule if there is no schedule for today', () => {
 
 	expect(actual).toMatchSnapshot()
 })
+
+test('returns the empty schedule when today is a closure, even though the weekday would otherwise run', () => {
+	// a saturday, the same one the schedule normally runs on
+	let closureDay = moment.utc('2017-11-18T13:14:00.000-06:00', moment.ISO_8601)
+	let input = buildBusSchedules(closureDay)
+	input[0] = {...input[0], closures: [{date: '2017-11-18', name: 'Test Holiday'}]}
+
+	let actual = getScheduleForNow(input, closureDay)
+
+	expect(actual.timetable).toEqual([])
+	expect(actual.stops).toEqual([])
+	expect(actual.times).toEqual([])
+})
+
+test('returns the normal schedule on the same weekday a week later, once the closure date has passed', () => {
+	// the saturday one week after the closure date above
+	let weekLater = moment.utc('2017-11-25T13:14:00.000-06:00', moment.ISO_8601)
+	let input = buildBusSchedules(weekLater)
+	input[0] = {...input[0], closures: [{date: '2017-11-18', name: 'Test Holiday'}]}
+
+	let actual = getScheduleForNow(input, weekLater)
+
+	expect(actual.timetable.length).toBeGreaterThan(0)
+})
