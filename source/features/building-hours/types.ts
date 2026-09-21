@@ -2,9 +2,6 @@
  * What a building's dot says: whether it is open, about to change, or shut for
  * chapel.
  */
-/** The two campuses that serve building hours through this feature. */
-export type Campus = 'stolaf' | 'carleton'
-
 export type BuildingStatusType = 'Open' | 'Almost Open' | 'Almost Closed' | 'Chapel' | 'Closed'
 
 export type DayOfWeekEnumType = 'Mo' | 'Tu' | 'We' | 'Th' | 'Fr' | 'Sa' | 'Su'

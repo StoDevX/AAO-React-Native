@@ -1,5 +1,5 @@
 import type {ImageSourcePropType} from 'react-native'
-import type {Campus} from '../query'
+import type {Campus} from '../types'
 
 /**
  * The photograph a venue's detail screen shows, if there is one.

@@ -5,7 +5,7 @@ import {render} from '@testing-library/react-native'
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query'
 
 import type {BuildingType} from '../../types'
-import type {Campus} from '../../query'
+import type {Campus} from '../../types'
 import {BuildingDetailSwiftUI} from '../building-detail'
 import {keys as mapKeys} from '../../../map/query'
 import {makeBuilding as makeFeature} from '../../../map/__tests__/fixtures'

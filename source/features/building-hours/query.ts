@@ -8,8 +8,6 @@ import bundledBuildings from '../../../docs/building-hours.json'
 import {BuildingType, Campus} from './types'
 import {useForceBundledData} from './dev/data-source-store'
 
-export type {Campus} from './types'
-
 /**
  * Narrows a route's `?campus=` param to a known `Campus`, falling back to
  * St. Olaf for anything else -- an unrecognised value should never crash the
