@@ -619,8 +619,12 @@ struct TestIdentifiers {
 		/// strip rather than doing nothing. Unlike `aStop`, which the route
 		/// visits twice (the loop starts and ends there), this one appears only
 		/// once, so its presence unambiguously means the strip scrolled forward
-		/// rather than showing a second, later occurrence of the start.
-		static let aStopFartherAlongTheRoute = "El Tequila"
+		/// rather than showing a second, later occurrence of the start. It is also
+		/// the fifth stop, so it starts past the four cells the strip shows when
+		/// it opens on the first stop; a stop nearer the start would already be
+		/// on screen. Red Line's route calls here too, but that line does not run
+		/// on the frozen Saturday and its strip is collapsed.
+		static let aStopFartherAlongTheRoute = "Cub/Target"
 		/// The horizontal strip of stops inside a line's widget, which a swipe
 		/// test aims at rather than at a stop cell: the strip opens partway
 		/// along the route, so which cells are on screen depends on where the
