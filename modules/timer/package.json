@@ -13,7 +13,7 @@
     "zustand": "5.0.15"
   },
   "peerDependencies": {
-    "moment-timezone": "^0.6.3",
+    "moment-timezone": "^0.6.4",
     "react": "catalog:",
     "react-native": "catalog:"
   }
