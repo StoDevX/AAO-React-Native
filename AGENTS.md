@@ -193,13 +193,27 @@ about Stav twice.
 
 ## Superpowers Skills Framework
 
-This project uses the [Superpowers](https://github.com/obra/superpowers) skills framework. You have superpowers.
+This project uses the [Superpowers](https://github.com/obra/superpowers) skills
+framework, provided by the `superpowers` Claude Code plugin. It is not vendored
+in this repo — only project-specific skills, agents, and commands live under
+`.claude/`.
+
+**If the skill listing at session start does not include `using-superpowers`,
+`brainstorming`, `test-driven-development`, and the rest of the Superpowers
+skills below, the plugin is not installed or not enabled on this machine. Tell
+the user before proceeding** — the workflow this file describes (skill check
+before every response, brainstorming before creative work, TDD before
+implementation) depends on the plugin, and silently skipping it changes how
+work here gets done.
 
 **Below is your introduction to using skills. For all other skills, use the `Skill` tool.**
 
-Skills are located in `.claude/skills/`. Agents are in `.claude/agents/`. Commands are in `.claude/commands/`.
+Project-specific skills are located in `.claude/skills/`. The project-specific
+agent is in `.claude/agents/`. Commands are in `.claude/commands/`.
 
 ### Available Skills
+
+From the `superpowers` plugin:
 
 | Skill | Purpose |
 |-------|---------|
@@ -218,8 +232,15 @@ Skills are located in `.claude/skills/`. Agents are in `.claude/agents/`. Comman
 | `auditing-a-finished-branch` | Test-value and comment audit before review |
 | `finishing-a-development-branch` | Merge/PR decision workflow |
 | `writing-skills` | Create new skills |
+
+Project-specific, in `.claude/skills/`:
+
+| Skill | Purpose |
+|-------|---------|
 | `add-screen` | Scaffold and integrate a new screen into the app |
 | `build-to-device` | Put a build on a physical iPhone for manual checks |
+| `run-on-simulator` | Look at the app on a simulator by eye |
+| `run-uitests` | Run XCUITests against a running simulator |
 
 ### Available Agents
 
