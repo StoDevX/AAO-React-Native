@@ -203,8 +203,8 @@ struct TransportationScreen: Screen {
 	}
 
 	/// The timetable lists departure times for `stop` rather than the "None"
-	/// a skipped stop shows. The precondition for `verifyStopSkipped`: without
-	/// it, a timetable that showed "None" all along would pass that check.
+	/// a skipped stop shows. The precondition for `verifyLineNotRunning`: without
+	/// it, a timetable that was empty all along would pass that check.
 	@discardableResult
 	func verifyStopListsDepartures(_ stop: String) -> Self {
 		let row = app.elementWithLabel(startingWith: "\(stop), ")
@@ -217,20 +217,20 @@ struct TransportationScreen: Screen {
 		return self
 	}
 
-	/// The timetable now shows `stop` as skipped -- its row leads with "None"
-	/// where a time would be. Matched on the row's label rather than on the
+	/// The timetable is gone and the empty state stands in its place: the line
+	/// does not run on `day`. Matched on the empty state rather than on the
 	/// menu button, which relabels itself whether or not the list redrew.
 	@discardableResult
-	func verifyStopSkipped(_ stop: String, on day: String) -> Self {
+	func verifyLineNotRunning(on day: String) -> Self {
 		XCTAssertTrue(
 			app.buttons[day].waitForExistence(timeout: 30),
 			"The day menu should relabel itself to \(day)")
 
-		let row = app.elementWithLabel(
-			startingWith: "\(stop), \(TestIdentifiers.Transportation.skippedDeparture)")
+		let emptyState = app.elementWithLabel(
+			startingWith: TestIdentifiers.Transportation.lineNotRunning)
 		XCTAssertTrue(
-			row.waitForExistence(timeout: 30),
-			"Picking \(day) should redraw the timetable, on which \(stop) is skipped")
+			emptyState.waitForExistence(timeout: 30),
+			"Picking \(day) should redraw the timetable as a line that is not running")
 		return self
 	}
 
