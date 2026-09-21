@@ -1,6 +1,5 @@
 import {dump} from 'js-yaml'
-import type {BuildingType} from '../types'
-import type {Campus} from '../types'
+import type {BuildingType, Campus} from '../types'
 import {sendEmail} from '../../../components/send-email'
 import {GH_NEW_ISSUE_URL, SUPPORT_EMAIL} from '../../../lib/constants'
 
