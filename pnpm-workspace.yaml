@@ -112,12 +112,12 @@ overrides:
   # @expo/cli ranges ^57.0.9. 57.0.10 wants expo-constants ^57.0.18 and
   # expo-font ^57.0.4; the Expo SDK we hold pins 57.0.17 and 57.0.3. Move it
   # when the Expo set moves.
-  '@expo/router-server': '57.0.9'
+  '@expo/router-server': '57.0.10'
   # expo-router carries its own @expo/ui range, which a fresh resolve floats to
   # the newest. The app holds 57.0.14 (see scripts/validate-expo-versions.mjs),
   # so expo-router gets the same copy, and with it the patch, rather than a
   # second one nothing has checked.
-  '@expo/ui': '57.0.14'
+  '@expo/ui': '57.0.18'
   # Known-vulnerable transitive deps, all pulled in by build/CLI tooling
   # (never part of the shipped JS bundle). Each override is scoped to the
   # currently-resolved major/minor so it can't clobber some other, unrelated

@@ -13,7 +13,7 @@
   },
   "peerDependencies": {
     "delay": "^7.0.0",
-    "expo-calendar": "~57.0.2",
+    "expo-calendar": "~57.0.4",
     "react": "catalog:",
     "react-native": "catalog:"
   }
