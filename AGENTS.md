@@ -30,7 +30,7 @@ change was needed rather than restating the diff.
 - **No Moment.js** — use `date-fns` or `Day.js` for date/time
 - Colors from `@frogpond/colors` — follow existing color system
 - oxfmt config in `.oxfmtrc.json` (tabs, single quotes, no semis)
-- **Comments:** JSDoc (`/** … */`) to annotate a declaration — a function, component, type, prop, or exported constant. Plain `//` for a step or a reason inside a function body.
+- **Comments:** JSDoc (`/** … */` or `/// `) to annotate a declaration — a function, component, type, prop, or exported constant. Plain `//` for a step or a reason inside a function body.
 - Comments say what the code does and why, never what it used to do or what changed
 
 ## Architecture & Patterns
@@ -206,51 +206,9 @@ before every response, brainstorming before creative work, TDD before
 implementation) depends on the plugin, and silently skipping it changes how
 work here gets done.
 
-**Below is your introduction to using skills. For all other skills, use the `Skill` tool.**
-
-Project-specific skills are located in `.claude/skills/`. The project-specific
-agent is in `.claude/agents/`. Commands are in `.claude/commands/`.
-
-### Available Skills
-
-From the `superpowers` plugin:
-
-| Skill | Purpose |
-|-------|---------|
-| `using-superpowers` | Introduction to the skills system |
-| `brainstorming` | Socratic design refinement before coding |
-| `writing-plans` | Detailed implementation plans |
-| `executing-plans` | Batch execution with checkpoints |
-| `subagent-driven-development` | Fast iteration with two-stage review |
-| `dispatching-parallel-agents` | Concurrent subagent workflows |
-| `test-driven-development` | RED-GREEN-REFACTOR cycle |
-| `systematic-debugging` | 4-phase root cause process |
-| `verification-before-completion` | Ensure it's actually fixed |
-| `requesting-code-review` | Pre-review checklist |
-| `receiving-code-review` | Responding to feedback |
-| `using-git-worktrees` | Parallel development branches |
-| `auditing-a-finished-branch` | Test-value and comment audit before review |
-| `finishing-a-development-branch` | Merge/PR decision workflow |
-| `writing-skills` | Create new skills |
-
-Project-specific, in `.claude/skills/`:
-
-| Skill | Purpose |
-|-------|---------|
-| `add-screen` | Scaffold and integrate a new screen into the app |
-| `build-to-device` | Put a build on a physical iPhone for manual checks |
-| `run-on-simulator` | Look at the app on a simulator by eye |
-| `run-uitests` | Run XCUITests against a running simulator |
-
-### Available Agents
-
-| Agent | Purpose |
-|-------|---------|
-| `code-reviewer` | Reviews completed project steps against plans and coding standards |
-
-### How It Works
-
-**Invoke relevant skills BEFORE any response or action.** Even a 1% chance a skill might apply means you should invoke the skill to check. If an invoked skill turns out to be wrong for the situation, you don't need to use it.
+**Invoke relevant skills BEFORE any response or action.** Even a 1% chance a
+skill might apply means you should invoke the skill to check. If an invoked
+skill turns out to be wrong for the situation, you don't need to use it.
 
 #### Red Flags - These thoughts mean STOP, you're rationalizing:
 
