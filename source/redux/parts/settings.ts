@@ -2,8 +2,6 @@ import {createSlice} from '@reduxjs/toolkit'
 import type {PayloadAction} from '@reduxjs/toolkit'
 
 import {isUITesting} from '@frogpond/launch-arguments'
-import type {RootState} from '../store'
-
 type State = {
 	unofficialityAcknowledged: boolean
 	devModeOverride: boolean
@@ -65,14 +63,17 @@ export const {
 } = slice.actions
 export const reducer = slice.reducer
 
-export const selectAcknowledgement = (state: RootState): State['unofficialityAcknowledged'] =>
-	state.settings.unofficialityAcknowledged
+export const selectAcknowledgement = (state: {
+	settings: State
+}): State['unofficialityAcknowledged'] => state.settings.unofficialityAcknowledged
 
-export const selectDevModeOverride = (state: RootState): State['devModeOverride'] =>
+export const selectDevModeOverride = (state: {settings: State}): State['devModeOverride'] =>
 	state.settings.devModeOverride
 
-export const selectEnabledCalendarSources = (state: RootState): State['enabledCalendarSources'] =>
+export const selectEnabledCalendarSources = (state: {
+	settings: State
+}): State['enabledCalendarSources'] =>
 	state.settings.enabledCalendarSources ?? DEFAULT_CALENDAR_SOURCES
 
-export const selectDirectoryResultsView = (state: RootState): State['directoryResultsView'] =>
+export const selectDirectoryResultsView = (state: {settings: State}): State['directoryResultsView'] =>
 	state.settings.directoryResultsView ?? initialState.directoryResultsView

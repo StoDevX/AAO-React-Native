@@ -1,7 +1,6 @@
 import {createSlice} from '@reduxjs/toolkit'
 import type {PayloadAction} from '@reduxjs/toolkit'
-import type {RootState} from '../store'
-import type {Campus} from '../../features/building-hours/query'
+import type {Campus} from '../../features/building-hours/types'
 
 /**
  * A favourited building, identified by campus AND name. St. Olaf and
@@ -51,7 +50,7 @@ const slice = createSlice({
 export const {toggleFavoriteBuilding} = slice.actions
 export const reducer = slice.reducer
 
-export const selectFavoriteBuildings = (state: RootState): State['favorites'] =>
+export const selectFavoriteBuildings = (state: {buildings: State}): State['favorites'] =>
 	state.buildings.favorites
 
 /**

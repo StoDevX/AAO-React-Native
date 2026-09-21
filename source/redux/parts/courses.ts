@@ -6,7 +6,6 @@ import {
 
 import {createSlice} from '@reduxjs/toolkit'
 import type {PayloadAction} from '@reduxjs/toolkit'
-import type {RootState} from '../store'
 import {CourseType} from '../../lib/course-search'
 
 type State = {
@@ -56,8 +55,8 @@ const slice = createSlice({
 export const {updateRecentFilters, updateRecentSearches} = slice.actions
 export const reducer = slice.reducer
 
-export const selectRecentFilters = (state: RootState): State['recentFilters'] =>
+export const selectRecentFilters = (state: {courses: State}): State['recentFilters'] =>
 	state.courses.recentFilters
 
-export const selectRecentSearches = (state: RootState): State['recentSearches'] =>
+export const selectRecentSearches = (state: {courses: State}): State['recentSearches'] =>
 	state.courses.recentSearches
