@@ -75,5 +75,7 @@ export const selectEnabledCalendarSources = (state: {
 }): State['enabledCalendarSources'] =>
 	state.settings.enabledCalendarSources ?? DEFAULT_CALENDAR_SOURCES
 
-export const selectDirectoryResultsView = (state: {settings: State}): State['directoryResultsView'] =>
+export const selectDirectoryResultsView = (state: {
+	settings: State
+}): State['directoryResultsView'] =>
 	state.settings.directoryResultsView ?? initialState.directoryResultsView
