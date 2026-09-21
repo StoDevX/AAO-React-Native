@@ -12,7 +12,7 @@
     "@expo/ui": "57.0.14"
   },
   "peerDependencies": {
-    "moment-timezone": "^0.6.3",
+    "moment-timezone": "^0.6.4",
     "react": "catalog:",
     "react-native": "catalog:"
   }

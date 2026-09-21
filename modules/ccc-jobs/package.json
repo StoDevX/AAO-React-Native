@@ -11,10 +11,10 @@
   "dependencies": {
     "@frogpond/data-sources": "workspace:*",
     "@frogpond/html-lib": "workspace:*",
-    "zod": "4.6.2"
+    "zod": "4.6.5"
   },
   "peerDependencies": {
-    "@tanstack/react-query": "^5.103.0",
+    "@tanstack/react-query": "^5.103.1",
     "react": "catalog:"
   }
 }

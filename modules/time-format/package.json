@@ -11,7 +11,7 @@
   "dependencies": {},
   "peerDependencies": {
     "expo-localization": "~57.0.2",
-    "moment-timezone": "^0.6.3",
+    "moment-timezone": "^0.6.4",
     "react-native": "catalog:"
   }
 }
