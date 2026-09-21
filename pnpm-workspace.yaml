@@ -108,7 +108,7 @@ overrides:
   # test-renderer is a peer of @testing-library/react-native, so autoInstallPeers
   # picks the newest; 1.3.0 wants react-reconciler 0.34, which wants React 19.3.
   # We are on 19.2.3. Move it when React moves.
-  'test-renderer': '1.2.0'
+  'test-renderer': '1.3.0'
   # @expo/cli ranges ^57.0.9. 57.0.10 wants expo-constants ^57.0.18 and
   # expo-font ^57.0.4; the Expo SDK we hold pins 57.0.17 and 57.0.3. Move it
   # when the Expo set moves.
