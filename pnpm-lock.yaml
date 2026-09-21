@@ -31,7 +31,7 @@ overrides:
   '@expo/router-server': 57.0.9
   '@expo/ui': 57.0.14
   shell-quote@: 1.10.0
-  fast-uri@3.1: 4.1.5
+  fast-uri@3.1: 4.2.0
   js-yaml@3: 5.4.2
   js-yaml@4: 5.4.2
   '@babel/core@': 7.29.7
@@ -3629,8 +3629,8 @@ packages:
   fast-levenshtein@2.0.6:
     resolution: {integrity: sha512-DCXu6Ifhqcks7TZKY3Hxp3y6qphY5SJZmrWMDrKcERSOXWQdMhU9Ig/PYrzyw/ul9jOIyh0N4M0tbC5hodg8dw==}
 
-  fast-uri@4.1.5:
-    resolution: {integrity: sha512-vZeoMRB4epNr7QfdHxel7te/RcX16CxyXI07JCCTFWZA2s4v1azGNESRj+2EoaHSaWFL/Z3GmKT2jF6A202jLg==}
+  fast-uri@4.2.0:
+    resolution: {integrity: sha512-13WQ1fc3rKNqctRaXC/gFe3hFQ2zcUsZlMTB1X30CCrWJGi+LQNO7+9Ku9mKYzo3KVnZ8eRGLTXzCbnXKgddNQ==}
 
   fb-dotslash@0.5.8:
     resolution: {integrity: sha512-XHYLKk9J4BupDxi9bSEhkfss0m+Vr9ChTrjhf9l2iw3jB5C7BnY4GVPoMcqbrTutsKJso6yj2nAB6BI/F2oZaA==}
@@ -7626,7 +7626,7 @@ snapshots:
   ajv@8.20.0:
     dependencies:
       fast-deep-equal: 3.1.3
-      fast-uri: 4.1.5
+      fast-uri: 4.2.0
       json-schema-traverse: 1.0.0
       require-from-string: 2.0.2
 
@@ -8517,7 +8517,7 @@ snapshots:
 
   fast-levenshtein@2.0.6: {}
 
-  fast-uri@4.1.5: {}
+  fast-uri@4.2.0: {}
 
   fb-dotslash@0.5.8: {}
 
