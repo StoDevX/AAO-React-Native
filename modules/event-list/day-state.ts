@@ -11,6 +11,7 @@ import type {CalendarSource, SourcedEvent} from './types'
  */
 export interface DayNotice {
 	readonly text: string
+	readonly detail?: string
 	readonly retry: boolean
 }
 
@@ -55,7 +56,8 @@ export function emptyNotice(state: DayState, whenEmpty: DayNotice): DayNotice {
 
 	if (state.sources.length === 0) {
 		return {
-			text: 'No calendars are showing. Choose some from the Calendars button below.',
+			text: 'No calendars are showing.',
+			detail: 'Choose some from the Calendars button below.',
 			retry: false,
 		}
 	}

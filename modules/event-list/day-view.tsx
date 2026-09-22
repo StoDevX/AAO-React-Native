@@ -278,43 +278,45 @@ export let DayView = React.forwardRef<CalendarBodyHandle, Props>(function DayVie
 										frame({maxWidth: Infinity, maxHeight: Infinity}),
 									]}
 								>
-									{dayRows.length === 0 ? (
-										<ContentUnavailableView
-											title={
-												emptyNotice(props, {
-													text: `Nothing on ${formatSectionHeader(day)}.`,
-													retry: false,
-												}).text
-											}
-											systemImage="calendar"
-										/>
-									) : (
-										<LazyVStack alignment="leading">
-											<VStack
-												alignment="leading"
-												modifiers={[padding({leading: 16, trailing: 16, top: 12, bottom: 8})]}
-											>
-												<FailureNote failed={props.failed} />
-												<Text
-													modifiers={[
-														font({textStyle: 'headline'}),
-														foregroundStyle(day.isSame(props.now, 'day') ? c.systemRed : c.label),
-													]}
+									{(() => {
+										let notice = emptyNotice(props, {
+											text: `Nothing on ${formatSectionHeader(day)}.`,
+											retry: false,
+										})
+										return dayRows.length === 0 ? (
+											<ContentUnavailableView
+												title={notice.text}
+												description={notice.detail}
+												systemImage="calendar"
+											/>
+										) : (
+											<LazyVStack alignment="leading">
+												<VStack
+													alignment="leading"
+													modifiers={[padding({leading: 16, trailing: 16, top: 12, bottom: 8})]}
 												>
-													{formatSectionHeader(day)}
-												</Text>
-												{dayRows.map((entry, index) => (
-													<EventListRow
-														color={colorFor(entry.sourceId)}
-														event={entry.event}
-														isLastInSection={index === dayRows.length - 1}
-														key={`${entry.sourceId}|${entry.key}`}
-														onPress={() => props.onPressEvent(entry)}
-													/>
-												))}
-											</VStack>
-										</LazyVStack>
-									)}
+													<FailureNote failed={props.failed} />
+													<Text
+														modifiers={[
+															font({textStyle: 'headline'}),
+															foregroundStyle(day.isSame(props.now, 'day') ? c.systemRed : c.label),
+														]}
+													>
+														{formatSectionHeader(day)}
+													</Text>
+													{dayRows.map((entry, index) => (
+														<EventListRow
+															color={colorFor(entry.sourceId)}
+															event={entry.event}
+															isLastInSection={index === dayRows.length - 1}
+															key={`${entry.sourceId}|${entry.key}`}
+															onPress={() => props.onPressEvent(entry)}
+														/>
+													))}
+												</VStack>
+											</LazyVStack>
+										)
+									})()}
 								</SwiftUIScrollView>
 							</TabView.Tab>
 						)
