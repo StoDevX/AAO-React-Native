@@ -108,6 +108,10 @@ overrides:
   'jest-environment-node@29': '30.5.2'
   '@jest/create-cache-key-function@29': '30.5.1'
   'pretty-format@29': '30.5.1'
+  # expo's dev HMR client imports pretty-format's default export, which
+  # 30's index.mjs loses under Metro's ESM interop: every Debug build
+  # redboxes at startup on `prettyFormat.default.default`.
+  'expo>pretty-format': '29.7.0'
   'jest-validate@29': '30.5.1'
   'jest-worker@29': '30.5.1'
   'jest-haste-map@30>@parcel/watcher': '-'
