@@ -14,6 +14,7 @@ import {DisclosureRow} from '../../../source/components/rows'
 import {SearchBar} from '../../../source/components/search-bar'
 import {filterLinkGroups} from '../../../source/features/more/helpers'
 import {searchLinksOptions} from '../../../source/features/more/query'
+import {sectionIndexLabel} from '../../../source/lib/section-index-label'
 
 function MoreView(): React.ReactNode {
 	let [query, setQuery] = React.useState('')
@@ -61,7 +62,11 @@ function MoreView(): React.ReactNode {
 						/>
 					) : (
 						filtered.map((section) => (
-							<Section key={section.title} title={section.title}>
+							<Section
+								key={section.title}
+								modifiers={[sectionIndexLabel(section.title)]}
+								title={section.title}
+							>
 								{section.data.map((link) => (
 									<DisclosureRow
 										key={`${link.url}-${link.label}`}
