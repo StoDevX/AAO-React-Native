@@ -13,7 +13,7 @@ import type {UnprocessedBusLine} from '../../types'
 // and the tests below are split to catch each: "does not throw" catches the
 // former, and the coverage check below catches the latter even though the
 // consumer's own `?.` guard would otherwise let it pass silently.
-let lines = (bundledBusTimes as {data: UnprocessedBusLine[]}).data
+let lines = (bundledBusTimes as {data: UnprocessedBusLine[]}).data.filter((line) => !line.hidden)
 
 let now = moment.tz('2026-08-20 12:00', 'America/Chicago')
 
