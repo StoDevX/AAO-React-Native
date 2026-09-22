@@ -15,10 +15,12 @@ export default function CarletonPage(): React.ReactNode {
 	usePublishMenuHeader(
 		{
 			name: 'Carleton',
-			weekday: null,
+			weekdayShort: null,
+			weekdayLong: null,
 			date: null,
 			time: null,
 			closed: false,
+			loading: false,
 			meals: null,
 			filters: null,
 		},
