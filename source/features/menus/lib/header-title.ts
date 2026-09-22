@@ -59,15 +59,12 @@ export function menuSubtitle(parts: SubtitleParts): string {
  * nothing about which cafe is which. `Weitz Café` and `Weitz Center` are one
  * building under two of them.
  *
- * Both spellings of `cafe`, rather than folding the accent away: `normalize`
- * is the obvious tool and Hermes is not somewhere to find out whether it
- * behaves, since Jest runs on Node and would pass either way.
+ * Written without accents, since `words` folds them away before comparing.
  */
 const PLACE_WORDS = new Set([
 	'a',
 	'an',
 	'cafe',
-	'café',
 	'center',
 	'centre',
 	'commons',
@@ -76,9 +73,18 @@ const PLACE_WORDS = new Set([
 	'the',
 ])
 
-/** Every word in a name, lowercased and stripped of its punctuation. */
+/**
+ * Every word in a name, lowercased and stripped of its punctuation and accents,
+ * so `Café` and `Cafe` are one word.
+ *
+ * Decomposing and dropping the combining marks is safe on Hermes: on an iOS 27
+ * simulator its `normalize` handled every form the way Node's does, and Node
+ * is all Jest runs on.
+ */
 function words(name: string): string[] {
 	return name
+		.normalize('NFD')
+		.replaceAll(/\p{M}/gu, '')
 		.toLowerCase()
 		.split(/[^\p{L}\p{N}]+/u)
 		.filter(Boolean)

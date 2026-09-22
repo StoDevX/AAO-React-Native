@@ -154,6 +154,17 @@ describe('menuSubtitle', () => {
 		).toBe('Sunday • Closed until 4PM')
 	})
 
+	// An accent is not a different word: BonApp is not consistent about
+	// writing one, and `Café` under `Weitz Cafe` still says the name twice.
+	test('reads a word the same with or without its accent', () => {
+		expect(
+			menuSubtitle({...SUNDAY, cafeName: 'Weitz Cafe', mealName: 'Café', time: '8AM – 10AM'}),
+		).toBe('Sunday • 8AM – 10AM')
+		expect(
+			menuSubtitle({...SUNDAY, cafeName: 'Crêpe Corner', mealName: 'Crepe', time: '8AM – 10AM'}),
+		).toBe('Sunday • 8AM – 10AM')
+	})
+
 	test('names a meal that is not the cafe over again', () => {
 		expect(
 			menuSubtitle({...SUNDAY, cafeName: 'The Cage', mealName: 'Breakfast', time: '9AM – 10:30AM'}),
