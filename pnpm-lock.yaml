@@ -25,7 +25,7 @@ overrides:
   '@react-native/community-cli-plugin': '-'
   babel-plugin-syntax-hermes-parser: 0.36.1
   '@react-native/codegen>hermes-parser': 0.36.1
-  metro-babel-transformer@0.84>hermes-parser: 0.36.1
+  metro-babel-transformer@0.84>hermes-parser: 0.37.0
   metro@0.84>hermes-parser: 0.36.1
   babel-jest@29: 30.5.2
   jest-environment-node@29: 30.5.2
@@ -3920,8 +3920,14 @@ packages:
   hermes-estree@0.36.1:
     resolution: {integrity: sha512-guv1nQ6IJ7S83NRFPWc3SA7IBZrdNC9kapwOq6uXvF4wP+sDCgjzQbKPCoyYmoyZRzztF/n/c36l/rccCZSiCw==}
 
+  hermes-estree@0.37.0:
+    resolution: {integrity: sha512-Frp4+A518C4zZgB2+Qo1srlM3y6nbrFbNNzBF3g7tEuQXHXTb2h39V25JQLNHotxclkD+AZTN/JCCpiTFlhIGg==}
+
   hermes-parser@0.36.1:
     resolution: {integrity: sha512-GApNk4zLHi2UWoWZZkx7LNCOSzLSc5lB55pZ/PhK7ycFeg7u5LcF88p/WbpIi1XUDtE0MpHE3uRR3u3KB7TjSQ==}
+
+  hermes-parser@0.37.0:
+    resolution: {integrity: sha512-8PuWcyaF6VHQHL2dbU+QEIkbtHYQrTX/6+ep4VcBLJ3f/ehevowr5Zj8LQfYXQQGFG2O+df7hIMtt4PkkhfK3Q==}
 
   hoist-non-react-statics@3.3.2:
     resolution: {integrity: sha512-/gGivxi8JPKWNm/W0jSmzcMPpfpPLc3dY/6GxhX2hQ9iGj3aDfklV4ET7NjKpSinLpJ5vafa9iiGIEZg10SfBw==}
@@ -8819,9 +8825,15 @@ snapshots:
 
   hermes-estree@0.36.1: {}
 
+  hermes-estree@0.37.0: {}
+
   hermes-parser@0.36.1:
     dependencies:
       hermes-estree: 0.36.1
+
+  hermes-parser@0.37.0:
+    dependencies:
+      hermes-estree: 0.37.0
 
   hoist-non-react-statics@3.3.2:
     dependencies:
@@ -9431,7 +9443,7 @@ snapshots:
     dependencies:
       '@babel/core': 7.29.7(supports-color@8.1.1)
       flow-enums-runtime: 0.0.6
-      hermes-parser: 0.36.1
+      hermes-parser: 0.37.0
       metro-cache-key: 0.84.5
       nullthrows: 1.1.1
     transitivePeerDependencies:

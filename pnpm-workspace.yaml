@@ -101,7 +101,7 @@ overrides:
   '@react-native/community-cli-plugin': '-'
   'babel-plugin-syntax-hermes-parser': '0.36.1'
   '@react-native/codegen>hermes-parser': '0.36.1'
-  'metro-babel-transformer@0.84>hermes-parser': '0.36.1'
+  'metro-babel-transformer@0.84>hermes-parser': '0.37.0'
   'metro@0.84>hermes-parser': '0.36.1'
   # others
   'babel-jest@29': '30.5.2'
