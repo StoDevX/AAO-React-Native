@@ -1,4 +1,5 @@
 line: Oles Go
+timezone: America/Chicago
 colors:
   bar: '#E4A01B'
   dot: rgb(0, 0, 0)
