@@ -366,8 +366,7 @@ struct TestIdentifiers {
 
 		/// Day view's empty-state copy when every calendar is switched off.
 		/// Mirrors the literal in `modules/event-list/day-view.tsx`.
-		static let noCalendarsNotice =
-			"No calendars are showing. Choose some from the Calendars button below."
+		static let noCalendarsNotice = "No calendars are showing."
 
 		/// The top-right menu that chooses how the calendar draws itself.
 		/// Mirrors `accessibilityLabel('Calendar view')` in
