@@ -119,6 +119,8 @@ overrides:
   'terser>commander': '-'
   'react-native>commander': '-'
   'expo-modules-autolinking>commander': '-'
+  '@react-native/codegen>yargs': '-'
+  'react-native>yargs': '-'
   # Peers and transitive ranges a fresh resolve floats past what we pin, and
   # strictPeerDependencies then refuses the result.
   # test-renderer is a peer of @testing-library/react-native, so autoInstallPeers
