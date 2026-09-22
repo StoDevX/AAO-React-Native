@@ -12,7 +12,7 @@ import {useQuery} from '@tanstack/react-query'
 import {CampusSearchBar} from '@frogpond/campus-search-bar'
 import {useDebounce} from '@frogpond/use-debounce'
 
-import type {Campus} from '../building-hours/query'
+import type {Campus} from '../building-hours/types'
 import {CategoryPicker} from './category-picker'
 import type {CategoryLabel} from './lib/categories'
 import {visibleBuildings} from './lib/visible-buildings'

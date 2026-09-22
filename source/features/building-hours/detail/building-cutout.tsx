@@ -7,7 +7,7 @@ import {toBuildingFootprints} from '../../map/lib/building-footprints'
 import {cutoutBounds} from '../../map/lib/cutout-bounds'
 import type {Building, Feature} from '../../map/types'
 import {mapStyleUrl} from '../../map/urls'
-import type {Campus} from '../query'
+import type {Campus} from '../types'
 
 /** How tall the cutout draws. */
 const CUTOUT_HEIGHT = 160

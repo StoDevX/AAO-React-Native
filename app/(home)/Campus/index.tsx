@@ -1,10 +1,6 @@
 import * as React from 'react'
-import {
-	Campus,
-	parseCampus,
-	useGroupedBuildings,
-} from '../../../source/features/building-hours/query'
-import {BuildingType} from '../../../source/features/building-hours/types'
+import {parseCampus, useGroupedBuildings} from '../../../source/features/building-hours/query'
+import {BuildingType, Campus} from '../../../source/features/building-hours/types'
 import {BuildingList} from '../../../source/features/building-hours/list'
 import {filterBuildings} from '../../../source/features/building-hours/lib'
 import {SearchBar} from '../../../source/components/search-bar'

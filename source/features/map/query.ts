@@ -1,6 +1,6 @@
 import {carletonClient, client} from '@frogpond/api'
 import {queryOptions} from '@tanstack/react-query'
-import type {Campus} from '../building-hours/query'
+import type {Campus} from '../building-hours/types'
 import type {Building, Feature, FeatureCollection} from './types'
 
 export const keys = {

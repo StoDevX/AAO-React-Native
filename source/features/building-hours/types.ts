@@ -1,3 +1,6 @@
+/** The two campuses that serve building hours through this feature. */
+export type Campus = 'stolaf' | 'carleton'
+
 /**
  * What a building's dot says: whether it is open, about to change, or shut for
  * chapel.

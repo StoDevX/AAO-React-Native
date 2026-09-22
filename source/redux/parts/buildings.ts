@@ -1,7 +1,7 @@
 import {createSlice} from '@reduxjs/toolkit'
 import type {PayloadAction} from '@reduxjs/toolkit'
 import type {RootState} from '../store'
-import type {Campus} from '../../features/building-hours/query'
+import type {Campus} from '../../features/building-hours/types'
 
 /**
  * A favourited building, identified by campus AND name. St. Olaf and

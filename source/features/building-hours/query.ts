@@ -2,14 +2,11 @@ import {carletonClient, client} from '@frogpond/api'
 import {isUITesting} from '@frogpond/launch-arguments'
 import {queryOptions, useQuery, UseQueryResult} from '@tanstack/react-query'
 import {groupBy} from 'lodash'
-import {selectFavoriteBuildings, useAppSelector} from '../../redux'
-import {favoriteNamesForCampus} from '../../redux/parts/buildings'
+import {useAppSelector} from '../../redux/hooks'
+import {favoriteNamesForCampus, selectFavoriteBuildings} from '../../redux/parts/buildings'
 import bundledBuildings from '../../../docs/building-hours.json'
-import {BuildingType} from './types'
+import {BuildingType, Campus} from './types'
 import {useForceBundledData} from './dev/data-source-store'
-
-/** The two campuses that serve building hours through this feature. */
-export type Campus = 'stolaf' | 'carleton'
 
 /**
  * Narrows a route's `?campus=` param to a known `Campus`, falling back to

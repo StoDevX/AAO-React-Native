@@ -1,4 +1,4 @@
-import type {Campus} from '../building-hours/query'
+import type {Campus} from '../building-hours/types'
 /**
  * The MapLibre style JSON the campus map renders, self-hosted from
  * carls-app/map-tiles: OSM-derived vector tiles covering Northfield, plus the

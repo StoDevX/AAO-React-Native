@@ -21,7 +21,6 @@ import {LoadingView, NoticeView} from '@frogpond/notice'
 
 import {ActionRow, DetailRow, NavigationRow} from '../../../../source/components/rows'
 import {SyncedTextField} from '../../../../source/components/synced-text-field'
-import type {Campus} from '../../../../source/features/building-hours/query'
 import {
 	buildingByNameOptions,
 	buildingsOptions,
@@ -29,6 +28,7 @@ import {
 } from '../../../../source/features/building-hours/query'
 import type {
 	BuildingType,
+	Campus,
 	NamedBuildingScheduleType,
 	SingleBuildingScheduleType,
 } from '../../../../source/features/building-hours/types'
