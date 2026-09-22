@@ -31,6 +31,7 @@ overrides:
   jest-environment-node@29: 30.5.2
   '@jest/create-cache-key-function@29': 30.5.1
   pretty-format@29: 30.5.1
+  expo>pretty-format: 29.7.0
   jest-validate@29: 30.5.1
   jest-worker@29: 30.5.1
   jest-haste-map@30>@parcel/watcher: '-'
@@ -1752,6 +1753,10 @@ packages:
       node-notifier:
         optional: true
 
+  '@jest/schemas@29.6.3':
+    resolution: {integrity: sha512-mo5j5X+jIZmJQveBKeS/clAueipV7KgiX1vMgCxam1RNYiqE1w62n0/tJJnHtjW8ZHcQco5gY85jA3mi0L+nSA==}
+    engines: {node: ^14.15.0 || ^16.10.0 || >=18.0.0}
+
   '@jest/schemas@30.5.0':
     resolution: {integrity: sha512-/hunigyNpc4RCjC0VaW3f5RCUZVM2+WQ65qP7z083Gmvac7or2LI50XVNOtE4YPgBpV0yxYiAgorAPGniCoJmg==}
     engines: {node: ^18.14.0 || ^20.0.0 || ^22.0.0 || >=24.0.0}
@@ -2485,6 +2490,9 @@ packages:
   '@sentry/replay@10.71.0':
     resolution: {integrity: sha512-ytEgVg7isvavQL6hgsgYeuSCkcA3EyOKm9lMLQOZTLkiUCtFT/ItWwGNhzS46vQ6wsTv3Uc0Y1JlcJHSFKe/Kg==}
     engines: {node: '>=18'}
+
+  '@sinclair/typebox@0.27.12':
+    resolution: {integrity: sha512-hhyNJ+nbR6ZR7pToHvllEFun9TL0sbL+tk/ON75lo+Xas054uez98qRbsuNt7MBCyZKK4+8Yli/OAGZhmfBZ/g==}
 
   '@sinclair/typebox@0.34.52':
     resolution: {integrity: sha512-XiMQh7qqVlxZzcVD+kkGMNGMzcTrDMLWI7S4x7z1MkCkbDPrekpZXEUK0eZqZFMuHQg2a2DZOcDIh9o5v3Gonw==}
@@ -4726,6 +4734,10 @@ packages:
     resolution: {integrity: sha512-vkcDPrRZo1QZLbn5RLGPpg/WmIQ65qoWWhcGKf/b5eplkkarX0m9z8ppCat4mlOqUsWpyNuYgO3VRyrYHSzX5g==}
     engines: {node: '>= 0.8.0'}
 
+  pretty-format@29.7.0:
+    resolution: {integrity: sha512-Pdlw/oPxN+aXdmM9R00JVC9WVFoCLTKJvDVLgmJ+qAffBMxsV85l/Lu7sNx4zSzPyoL2euImuEwHhOXdEgNFZQ==}
+    engines: {node: ^14.15.0 || ^16.10.0 || >=18.0.0}
+
   pretty-format@30.5.1:
     resolution: {integrity: sha512-byhRAPguVKMQIj4kjJwJ5lAskVhfuiSdiYl/aLTWpgkGEmic2jYhJh1yE9ih8Ox44Xg9ccCT11/S6QrzSJuNrg==}
     engines: {node: ^18.14.0 || ^20.0.0 || ^22.0.0 || >=24.0.0}
@@ -6753,6 +6765,10 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
+  '@jest/schemas@29.6.3':
+    dependencies:
+      '@sinclair/typebox': 0.27.12
+
   '@jest/schemas@30.5.0':
     dependencies:
       '@sinclair/typebox': 0.34.52
@@ -7372,6 +7388,8 @@ snapshots:
     dependencies:
       '@sentry/browser-utils': 10.71.0
       '@sentry/core': 10.71.0
+
+  '@sinclair/typebox@0.27.12': {}
 
   '@sinclair/typebox@0.34.52': {}
 
@@ -8647,7 +8665,7 @@ snapshots:
       expo-keep-awake: 57.0.2(expo@57.0.19)(react@19.2.3)
       expo-modules-autolinking: 57.0.13(supports-color@8.1.1)(typescript@7.0.2)
       expo-modules-core: 57.0.15(react-native-worklets@0.10.1)(react-native@0.86.3)(react@19.2.3)
-      pretty-format: 30.5.1
+      pretty-format: 29.7.0
       react: 19.2.3
       react-native: 0.86.3(patch_hash=6ca2e1225f38672b073b92b9d13f24feebbe9e37ba67708a3f1569275ce99191)(@babel/core@7.29.7)(@react-native/jest-preset@0.86.3)(@types/react@19.2.18)(react@19.2.3)(supports-color@8.1.1)
       react-refresh: 0.14.2
@@ -9838,6 +9856,12 @@ snapshots:
       source-map-js: 1.2.1
 
   prelude-ls@1.2.1: {}
+
+  pretty-format@29.7.0:
+    dependencies:
+      '@jest/schemas': 29.6.3
+      ansi-styles: 5.2.0
+      react-is: 18.3.1
 
   pretty-format@30.5.1:
     dependencies:
