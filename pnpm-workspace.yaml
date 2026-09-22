@@ -103,11 +103,19 @@ overrides:
   '@react-native/codegen>hermes-parser': '0.36.1' 
   'metro-babel-transformer@0.84>hermes-parser': '0.36.1'
   'metro@0.84>hermes-parser': '0.36.1'
+  # others
+  'babel-jest@29': '30'
+  'jest-environment-node@29': '30'
+  '@jest/create-cache-key-function@29': '30'
+  'pretty-format@29': '30'
+  'jest-validate@29': '30'
+  'jest-worker@29': '30'
+  'jest-haste-map@30>@parcel/watcher': '-'
+  'test-exclude@7': '8'
   # some GHSA vulnverability fixes
-  'brace-expansion@1': '1.1.21'
-  'brace-expansion@2': '2.1.7'
-  'brace-expansion@5': '5.0.12'
   'postcss@': '8.5.28'
+  # clis we don't use
+  'handlebars>minimist': '-'
   # Peers and transitive ranges a fresh resolve floats past what we pin, and
   # strictPeerDependencies then refuses the result.
   # test-renderer is a peer of @testing-library/react-native, so autoInstallPeers
