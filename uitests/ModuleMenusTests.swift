@@ -33,6 +33,15 @@ class ModuleMenusTests: UITestCase {
 
 		menus.verifyCafeHeader(stav, showing: TestIdentifiers.Menus.openingMeal)
 
+		// Proves the query the Carleton leg below asserts the *absence* of can
+		// match something in the first place. A cafe's title carries a line under
+		// its name, so this is where it has to find one; without this the
+		// assertion down there would pass just as well against a query that
+		// matches nothing at all.
+		XCTAssertTrue(
+			menus.headerDetailed(stav).exists,
+			"a cafe's title should carry a line beneath its name")
+
 		menus
 			.openCafe(TestIdentifiers.Menus.pause)
 			.verifyHeaderNames(TestIdentifiers.Menus.pause)
