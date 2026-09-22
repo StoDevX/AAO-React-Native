@@ -100,7 +100,7 @@ overrides:
   '@react-native/metro-config': '-'
   '@react-native/community-cli-plugin': '-'
   'babel-plugin-syntax-hermes-parser': '0.36.1'
-  '@react-native/codegen>hermes-parser': '0.36.1' 
+  '@react-native/codegen>hermes-parser': '0.36.1'
   'metro-babel-transformer@0.84>hermes-parser': '0.36.1'
   'metro@0.84>hermes-parser': '0.36.1'
   # others
@@ -117,10 +117,6 @@ overrides:
   # clis we don't use
   'handlebars>minimist': '-'
   'terser>commander': '-'
-  'react-native>commander': '-'
-  'expo-modules-autolinking>commander': '-'
-  '@react-native/codegen>yargs': '-'
-  'react-native>yargs': '-'
   # Peers and transitive ranges a fresh resolve floats past what we pin, and
   # strictPeerDependencies then refuses the result.
   # test-renderer is a peer of @testing-library/react-native, so autoInstallPeers

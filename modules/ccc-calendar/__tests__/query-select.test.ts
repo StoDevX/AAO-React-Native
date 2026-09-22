@@ -4,7 +4,9 @@ import moment from 'moment-timezone'
 import type {WireEvent} from '../parsers/events'
 import {namedCalendarOptions, scheduleCalendarOptions, sourceRankOf} from '../query'
 import {REMOTE_SOURCES} from '../sources'
-import uitestFixtures from '../fixtures/uitest-events.json'
+import uitestFixturesJson from '../fixtures/uitest-events.json'
+
+let uitestFixtures = uitestFixturesJson as WireEvent[]
 import {groupEvents} from '@frogpond/event-list/sections'
 import {now} from '@frogpond/timer'
 import {getRunner} from '../../../source/database/client'
@@ -111,7 +113,7 @@ describe('namedCalendarOptions', () => {
 			'uitest',
 			sourceRankOf('uitest'),
 			uitestFixtures,
-			'the-retention',
+			'the-retention' as never,
 		)
 	})
 

@@ -38,10 +38,6 @@ overrides:
   postcss@: 8.5.28
   handlebars>minimist: '-'
   terser>commander: '-'
-  react-native>commander: '-'
-  expo-modules-autolinking>commander: '-'
-  '@react-native/codegen>yargs': '-'
-  react-native>yargs: '-'
   test-renderer: 1.2.0
   '@expo/router-server': 57.0.9
   '@expo/ui': 57.0.14
@@ -3292,6 +3288,14 @@ packages:
   color@4.2.3:
     resolution: {integrity: sha512-1rXeuUUiGGrykh+CeBdu5Ie7OJwinCgQY0bc7GCRxy5xVHy+moaqkpL/jqQq0MtQOeYcrqEz4abc5f0KtU7W4A==}
     engines: {node: '>=12.5.0'}
+
+  commander@12.1.0:
+    resolution: {integrity: sha512-Vw8qHK3bZM9y/P10u3Vib8o/DdkvA2OtPtZvD871QKjy74Wj1WSKFILMPRPSdUSx5RFK1arlJzEtA4PkFgnbuA==}
+    engines: {node: '>=18'}
+
+  commander@7.2.0:
+    resolution: {integrity: sha512-QrWXB+ZQSVPmIWIhtEO9H+gwHaMGYiF5ChvoJ+K9ZGHG/sVsa6yiesAD1GC/x46sET00Xlwo1u49RVVVzvcSkw==}
+    engines: {node: '>= 10'}
 
   component-emitter@2.0.0:
     resolution: {integrity: sha512-4m5s3Me2xxlVKG9PkZpQqHQR7bgpnN7joDMJ4yvVkVXngjoITG76IaZmzmywSeRTeTpc6N6r3H3+KyUurV8OYw==}
@@ -7230,6 +7234,7 @@ snapshots:
       invariant: 2.2.4
       nullthrows: 1.1.1
       tinyglobby: 0.2.17
+      yargs: 17.7.3
 
   '@react-native/debugger-frontend@0.86.3': {}
 
@@ -8172,6 +8177,10 @@ snapshots:
       color-convert: 2.0.1
       color-string: 1.9.1
 
+  commander@12.1.0: {}
+
+  commander@7.2.0: {}
+
   component-emitter@2.0.0: {}
 
   compressible@2.0.18:
@@ -8536,6 +8545,7 @@ snapshots:
       '@expo/require-utils': 57.0.5(supports-color@8.1.1)(typescript@7.0.2)
       '@expo/spawn-async': 1.8.0
       chalk: 4.1.2
+      commander: 7.2.0
     transitivePeerDependencies:
       - supports-color
       - typescript
@@ -10057,6 +10067,7 @@ snapshots:
       ansi-regex: 5.0.1
       babel-plugin-syntax-hermes-parser: 0.36.1
       base64-js: 1.5.1
+      commander: 12.1.0
       flow-enums-runtime: 0.0.6
       hermes-compiler: 250829098.0.17
       invariant: 2.2.4
@@ -10076,6 +10087,7 @@ snapshots:
       tinyglobby: 0.2.17
       whatwg-fetch: 3.6.20
       ws: 7.5.13
+      yargs: 17.7.3
     optionalDependencies:
       '@react-native/jest-preset': 0.86.3(@babel/core@7.29.7)(react@19.2.3)(supports-color@8.1.1)
       '@types/react': 19.2.18
