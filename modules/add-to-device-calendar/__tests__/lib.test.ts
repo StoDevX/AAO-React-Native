@@ -13,7 +13,7 @@ jest.mock('expo-calendar', () => ({
 	getDefaultCalendarSync: jest.fn(),
 }))
 
-let addEventWithForm = jest.fn<() => Promise<unknown>>()
+let addEventWithForm = jest.fn<(options?: unknown) => Promise<unknown>>()
 let alertSpy = jest.spyOn(Alert, 'alert').mockReturnValue(undefined)
 let openURLSpy = jest.spyOn(Linking, 'openURL').mockResolvedValue(true)
 // The error path logs alongside reporting to Sentry. Captured rather than
