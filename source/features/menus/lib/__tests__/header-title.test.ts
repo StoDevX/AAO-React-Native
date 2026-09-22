@@ -123,11 +123,12 @@ describe('menuSubtitle', () => {
 		).toBe('Sunday • 8AM – 10AM')
 	})
 
-	// Nothing under the name is true of a cafe that is shut -- not the meal, not
-	// a window, not even the day it is shut on -- so the name stands alone. The
-	// meal is the one of those that arrives from the picker rather than from the
-	// screen, and so the one a caller is liable to leave in.
-	test('says nothing at all about a cafe that is shut', () => {
+	// Nothing under the name is true of a cafe that is shut and does not open
+	// again today -- not the meal, not a window, not even the day it is shut on
+	// -- so the name stands alone. The meal is the one of those that arrives
+	// from the picker rather than from the screen, and so the one a caller is
+	// liable to leave in.
+	test('says nothing at all about a cafe shut for the rest of the day', () => {
 		expect(
 			menuSubtitle({
 				...SUNDAY,
@@ -135,6 +136,7 @@ describe('menuSubtitle', () => {
 				mealName: 'Lunch',
 				time: '11AM – 1:30PM',
 				closed: true,
+				opensAt: null,
 			}),
 		).toBe('')
 	})

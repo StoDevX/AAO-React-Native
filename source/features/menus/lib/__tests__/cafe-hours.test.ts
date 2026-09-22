@@ -27,9 +27,8 @@ describe('cafeHours', () => {
 		})
 	})
 
-	// The hours stay true when the doors are shut, but the header has a way of
-	// saying shut already -- the cafe's name standing alone -- and that is what
-	// a closed Bon Appétit cafe does too.
+	// The hours stay true when the doors are shut, but they are not what the
+	// header draws for a shut cafe: it says when the doors open instead.
 	test('reports a venue that is not serving as closed, and when it opens', () => {
 		expect(cafeHours(PAUSE, dayMoment('Fri 9:00am'))).toEqual({
 			time: null,
@@ -156,6 +155,12 @@ describe('cafeHours', () => {
 			opensAt: null,
 		})
 		expect(cafeHours(shuttered, dayMoment('Fri 1:00pm'))).toEqual({
+			time: null,
+			closed: true,
+			opensAt: '5PM',
+		})
+		// Before the shuttered set's own window, whose opening is not one.
+		expect(cafeHours(shuttered, dayMoment('Fri 6:00am'))).toEqual({
 			time: null,
 			closed: true,
 			opensAt: '5PM',

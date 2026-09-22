@@ -42,9 +42,13 @@ class ModuleMenusTests: UITestCase {
 			menus.headerDetailed(stav).exists,
 			"a cafe's title should carry a line beneath its name")
 
+		// The frozen clock sits before the Pause opens for the day, so its title
+		// says when it does rather than standing alone over nothing.
 		menus
 			.openCafe(TestIdentifiers.Menus.pause)
-			.verifyHeaderNames(TestIdentifiers.Menus.pauseTitle)
+			.verifyHeader(
+				TestIdentifiers.Menus.pauseTitle,
+				reading: TestIdentifiers.Menus.pauseClosedDetail)
 
 		XCTAssertFalse(
 			menus.headerTitled(stav).exists,
@@ -70,18 +74,6 @@ class ModuleMenusTests: UITestCase {
 		XCTAssertFalse(
 			menus.headerDetailed(TestIdentifiers.Menus.carleton).exists,
 			"the chooser shows no single day, so it should carry no line beneath its name")
-	}
-
-	/// The frozen clock sits before the Pause opens for the day, so its title
-	/// says when it does rather than standing alone over nothing.
-	func testShutCafeSaysWhenItOpens() throws {
-		MenusScreen(app: app)
-			.navigate()
-			.openCafe(TestIdentifiers.Menus.pause)
-			.capture("The Pause before it opens")
-			.verifyHeader(
-				TestIdentifiers.Menus.pauseTitle,
-				reading: TestIdentifiers.Menus.pauseClosedDetail)
 	}
 
 	/// The meal picker is the title itself, drawn as a custom view because a
