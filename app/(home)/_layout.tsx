@@ -67,6 +67,19 @@ export default function HomeLayout(): React.ReactNode {
 				}}
 			/>
 			<Stack.Screen name="Calendar" options={{title: 'Calendar', headerLargeTitleEnabled: true}} />
+			<Stack.Screen
+				name="MenuItemDetail"
+				options={{
+					// A form sheet, same as EventDetail: flat, no sub-screens, so it
+					// draws its own header rather than nesting a stack of its own.
+					presentation: 'formSheet',
+					title: '',
+					headerTransparent: true,
+					sheetAllowedDetents: [SHEET_RESTING_FRACTION, 0.999],
+					sheetGrabberVisible: true,
+					sheetLargestUndimmedDetentIndex: 'none',
+				}}
+			/>
 		</Stack>
 	)
 }
