@@ -725,24 +725,31 @@ struct CalendarScreen: Screen {
 	/// reading this failure sees which one tripped.
 	@discardableResult
 	func verifyNoticeVisible(_ text: String) -> Self {
+		// If the notice is split into title and description (separated by ". "),
+		// SwiftUI's ContentUnavailableView draws them as separate text elements,
+		// so no single element contains the entire text. In that case, we verify
+		// the title part is visible.
+		let parts = text.components(separatedBy: ". ")
+		let titlePart = parts.first ?? text
+
 		// `.firstMatch` rather than the `[text]` subscript: a `NoticeView`'s
 		// `Text` reaches the accessibility tree as two nested elements with the
 		// same label, and reading `frame`/`isHittable` demands a single match --
 		// unlike `exists`, which is satisfied by "at least one" and so cannot
 		// see this collapse at all.
-		let notice = app.staticTexts.matching(NSPredicate(format: "label BEGINSWITH %@", text)).firstMatch
+		let notice = app.staticTexts.matching(NSPredicate(format: "label BEGINSWITH %@", titlePart)).firstMatch
 		XCTAssertTrue(
 			notice.waitForExistence(timeout: 10),
-			"\"\(text)\" should be on screen")
-		XCTContext.runActivity(named: "\"\(text)\" frame is \(notice.frame), isHittable \(notice.isHittable)") {
+			"\"\(titlePart)\" should be on screen")
+		XCTContext.runActivity(named: "\"\(titlePart)\" frame is \(notice.frame), isHittable \(notice.isHittable)") {
 			_ in
 		}
 		XCTAssertGreaterThan(
 			notice.frame.height, 0,
-			"\"\(text)\" exists in the hierarchy but has collapsed to zero height")
+			"\"\(titlePart)\" exists in the hierarchy but has collapsed to zero height")
 		XCTAssertTrue(
 			notice.isHittable,
-			"\"\(text)\" exists but is not hittable, which a zero-size element never is")
+			"\"\(titlePart)\" exists but is not hittable, which a zero-size element never is")
 		return self
 	}
 }
