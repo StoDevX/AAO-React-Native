@@ -1,5 +1,6 @@
 import * as React from 'react'
 import {GitHubHostedMenu} from '../../../source/features/menus/menu-github'
+import {PAUSE_VENUE} from '../../../source/features/menus/lib/cafe-hours'
 import {LoadingView} from '@frogpond/notice'
 import {useHasEverBeenFocused} from '../../../source/lib/use-has-ever-been-focused'
 
@@ -27,7 +28,7 @@ export default function ThePausePage(): React.ReactNode {
 				'Fixing the oven…',
 			]}
 			name="The Pause"
-			venue="The Pause Kitchen"
+			venue={PAUSE_VENUE}
 		/>
 	)
 }

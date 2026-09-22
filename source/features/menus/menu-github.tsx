@@ -78,6 +78,9 @@ export function GitHubHostedMenu(props: Props): React.ReactNode {
 	// nothing for this.
 	let {data: venue, isLoading: isVenueLoading} = useQuery({
 		...buildingByNameOptions('stolaf', props.venue ?? ''),
+		// A disabled query is pending but never fetching, which React Query
+		// reports as `isLoading: false` -- so the header below needs no guard of
+		// its own for a screen that named no venue.
 		enabled: Boolean(props.venue),
 	})
 
@@ -103,7 +106,7 @@ export function GitHubHostedMenu(props: Props): React.ReactNode {
 			meals: mealHeader.menu,
 			time: hours.time ?? mealHeader.time,
 			closed: mealHeader.closed || hours.closed,
-			loading: isLoading || (Boolean(props.venue) && isVenueLoading),
+			loading: isLoading || isVenueLoading,
 			filters: {visible: filtersVisible, toggle: toggleFilters},
 		},
 		isFocused,

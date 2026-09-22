@@ -8,6 +8,7 @@ import {
 	accessibilityElement,
 	accessibilityLabel,
 	background,
+	dynamicTypeSize,
 	font,
 	foregroundStyle,
 	frame,
@@ -18,7 +19,7 @@ import {
 } from '@expo/ui/swift-ui/modifiers'
 import type {ModifierConfig} from '@expo/ui/swift-ui/modifiers'
 import type {MealHeaderOption, MealMenuSelection} from '@frogpond/food-menu'
-import {menuSubtitle, spokenTime} from './lib/header-title'
+import {menuSubtitle, spokenTime, SUBTITLE_SEPARATOR} from './lib/header-title'
 
 /**
  * What a menu screen puts in its navigation bar: the cafe it is showing, the
@@ -168,7 +169,7 @@ export function MenuHeaderHost(): React.ReactNode {
 	// alone rather than over a line that has nothing true to put in it.
 	let loading = header.loading && !header.closed
 	let weekdayLong = header.closed ? null : header.weekdayLong
-	let mealName = header.meals?.selected ?? null
+	let mealName = header.closed ? null : (header.meals?.selected ?? null)
 
 	let detail = loading
 		? null
@@ -201,7 +202,7 @@ export function MenuHeaderHost(): React.ReactNode {
 				{/* An explicit size rather than `matchContents`: a navigation bar
 				    gives its title view no size to match, so a self-sizing host
 				    collapses and takes the title with it. */}
-				<Host style={styles.menuHost}>
+				<Host modifiers={HOST_MODIFIERS} style={styles.menuHost}>
 					{header.meals ? (
 						<MealMenu date={header.date} meals={header.meals} spoken={spoken}>
 							<TitleStack name={header.name} subtitle={subtitle} />
@@ -355,7 +356,7 @@ function MealOption(props: {
  */
 function spokenDetail(detail: string, time: string | null): string {
 	let spoken = time ? detail.replace(time, spokenTime(time)) : detail
-	return spoken.replaceAll(' • ', ', ')
+	return spoken.replaceAll(SUBTITLE_SEPARATOR, ', ')
 }
 
 /**
@@ -365,9 +366,32 @@ function spokenDetail(detail: string, time: string | null): string {
  */
 const PENDING_DETAIL = '00:00AM – 00:00PM'
 
+/**
+ * How far the title may grow with Dynamic Type, set on the host so it reaches
+ * both lines through the environment.
+ *
+ * A navigation bar keeps its height whatever the text inside it asks for, and
+ * this title asks for two lines of it. `lineLimit` and `minimumScaleFactor`
+ * below only govern width; past this size the pair is taller than the bar and
+ * clips rather than scales, so the ceiling has to be set here as well.
+ * `xxxLarge` is about where `headline` over `caption` still fits 44pt.
+ */
+const HOST_MODIFIERS = [dynamicTypeSize({max: 'xxxLarge'})]
+
 // A navigation title reads as the screen's name, not as a link, so the name
 // keeps the label colour a plain title would have. Only the chevron is tinted.
-const TITLE_MODIFIERS = [font({textStyle: 'headline'}), foregroundStyle(c.label)]
+//
+// One line, and it shrinks a little rather than wrapping: a navigation bar
+// keeps its height whatever it is asked to hold, so a name that wraps pushes
+// the line beneath it out of the bar entirely. It stops shrinking well short of
+// the subtitle's floor -- a name is the one thing on the screen a reader has to
+// be able to read.
+const TITLE_MODIFIERS = [
+	font({textStyle: 'headline'}),
+	foregroundStyle(c.label),
+	lineLimit(1),
+	minimumScaleFactor(0.85),
+]
 // The subtitle shrinks rather than truncates: it carries three facts at the
 // largest accessibility type sizes, and a clipped one reads as a different
 // time rather than as a missing one.

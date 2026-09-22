@@ -105,6 +105,20 @@ describe('menuSubtitle', () => {
 		).toBe('Sun • The Cage • 7:30AM – 8PM')
 	})
 
+	// `every` over no words is true, so a meal whose whole name is place words
+	// would be dropped against any cafe at all -- `Kitchen` under `Stav Hall`.
+	test('keeps a meal of place words the cafe never says', () => {
+		expect(
+			menuSubtitle({...SUNDAY, cafeName: 'Stav Hall', mealName: 'Kitchen', time: '8AM – 10AM'}),
+		).toBe('Sun • Kitchen • 8AM – 10AM')
+	})
+
+	test('drops a meal of place words the cafe does say', () => {
+		expect(
+			menuSubtitle({...SUNDAY, cafeName: 'Weitz Café', mealName: 'Café', time: '8AM – 10AM'}),
+		).toBe('Sunday • 8AM – 10AM')
+	})
+
 	test('names a meal that is not the cafe over again', () => {
 		expect(
 			menuSubtitle({...SUNDAY, cafeName: 'The Cage', mealName: 'Breakfast', time: '9AM – 10:30AM'}),

@@ -38,26 +38,28 @@ class ModuleMenusTests: UITestCase {
 			.verifyHeaderNames(TestIdentifiers.Menus.pause)
 
 		XCTAssertFalse(
-			app.navigationBars.staticTexts[stav].exists,
+			menus.headerTitled(stav).exists,
 			"the previous cafe's name should be gone from the header")
 
 		let carleton = app.tabButton(TestIdentifiers.Menus.carleton)
 		XCTAssertTrue(carleton.waitForExistence(timeout: 30), "the Carleton tab should be visible")
 		carleton.tap()
 
-		let chooserTitle = MenusScreen(app: app).headerTitled(TestIdentifiers.Menus.carleton)
 		XCTAssertTrue(
-			chooserTitle.waitForExistence(timeout: 30),
+			menus.headerTitled(TestIdentifiers.Menus.carleton).waitForExistence(timeout: 30),
 			"the chooser should name itself Carleton")
 		XCTAssertFalse(
-			app.navigationBars.staticTexts[TestIdentifiers.Menus.pause].exists,
+			menus.headerTitled(TestIdentifiers.Menus.pause).exists,
 			"the chooser should not carry a cafe's name")
 
 		// The title reads as one element carrying the name and the line beneath
 		// it, so a chooser with no line to carry is a label that is the name and
-		// stops -- anything after it would arrive as `Carleton, ...`.
-		XCTAssertEqual(
-			chooserTitle.label, TestIdentifiers.Menus.carleton,
+		// stops. Asserted as the absence of anything longer rather than as the
+		// equality of whichever element a `firstMatch` lands on: the plain
+		// `Stack.Screen` title is in the bar too, and it would satisfy an
+		// equality check while the line beneath had regressed.
+		XCTAssertFalse(
+			menus.headerDetailed(TestIdentifiers.Menus.carleton).exists,
 			"the chooser shows no single day, so it should carry no line beneath its name")
 	}
 

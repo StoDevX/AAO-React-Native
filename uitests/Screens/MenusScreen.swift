@@ -64,6 +64,19 @@ struct MenusScreen: Screen {
 			.firstMatch
 	}
 
+	/// A title of this screen that carries a line beneath its name.
+	///
+	/// The title composes one label out of the name and the line under it, so
+	/// the two are told apart by the comma that joins them. Its absence is what
+	/// says a screen has no second line at all -- a claim `headerTitled` cannot
+	/// make, since a bare `Stack.Screen` title sits in the same bar and answers
+	/// to the name on its own.
+	func headerDetailed(_ name: String) -> XCUIElement {
+		app.navigationBars.descendants(matching: .any)
+			.matching(NSPredicate(format: "label BEGINSWITH %@", "\(name), "))
+			.firstMatch
+	}
+
 	/// Whether the filter row is on screen, named by one of its triggers.
 	@discardableResult
 	func verifyFilters(visible: Bool) -> Self {

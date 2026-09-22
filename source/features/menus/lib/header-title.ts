@@ -13,6 +13,13 @@ type SubtitleParts = {
 }
 
 /**
+ * What the eye reads as the break between two facts on the subtitle's one
+ * line. Exported because VoiceOver has to find them again to read the line as
+ * separate facts rather than as one phrase.
+ */
+export const SUBTITLE_SEPARATOR = ' • '
+
+/**
  * The line under the cafe's name, e.g. `Sun • Lunch • 11AM – 1:30PM`.
  *
  * A meal named after the cafe serving it is left out: BonApp names The Cage's
@@ -29,7 +36,7 @@ export function menuSubtitle(parts: SubtitleParts): string {
 	let meal = namesTheCafe(mealName, cafeName) ? null : mealName
 	let weekday = meal ? weekdayShort : weekdayLong
 
-	return [weekday, meal, time].filter(Boolean).join(' • ')
+	return [weekday, meal, time].filter(Boolean).join(SUBTITLE_SEPARATOR)
 }
 
 /**
@@ -54,12 +61,17 @@ const PLACE_WORDS = new Set([
 	'the',
 ])
 
-/** The words in a name that actually pick out a place, lowercased. */
-function distinctiveWords(name: string): string[] {
+/** Every word in a name, lowercased and stripped of its punctuation. */
+function words(name: string): string[] {
 	return name
 		.toLowerCase()
 		.split(/[^\p{L}\p{N}]+/u)
-		.filter((word) => word && !PLACE_WORDS.has(word))
+		.filter(Boolean)
+}
+
+/** The words in a name that actually pick out a place. */
+function distinctiveWords(name: string): string[] {
+	return words(name).filter((word) => !PLACE_WORDS.has(word))
 }
 
 /**
@@ -71,16 +83,28 @@ function distinctiveWords(name: string): string[] {
  *
  * Every distinctive word has to be accounted for, not merely one of them -- a
  * `Weitz Lunch` is still a lunch, and dropping it would cost the reader the
- * only word that said which meal they were looking at. A meal made entirely of
- * place words has nothing of its own to lose.
+ * only word that said which meal they were looking at.
+ *
+ * A meal whose whole name is place words has no distinctive word to account
+ * for, and a rule written over those alone would drop it against any cafe at
+ * all -- `Kitchen` is not `Stav Hall` said twice. Such a name is weighed
+ * against everything the cafe is called instead, place words included, so
+ * `Café` goes under `Weitz Café` and stays under `Stav Hall`.
  */
 function namesTheCafe(mealName: string | null, cafeName: string): boolean {
 	if (!mealName) {
 		return false
 	}
 
+	let mealWords = distinctiveWords(mealName)
 	let cafeWords = new Set(distinctiveWords(cafeName))
-	return distinctiveWords(mealName).every((word) => cafeWords.has(word))
+
+	if (mealWords.length === 0) {
+		mealWords = words(mealName)
+		cafeWords = new Set(words(cafeName))
+	}
+
+	return mealWords.every((word) => cafeWords.has(word))
 }
 
 /**

@@ -1,7 +1,8 @@
 import {describe, expect, test} from '@jest/globals'
 
+import bundledBuildings from '../../../../../docs/building-hours.json'
 import type {BuildingType} from '../../../building-hours/types'
-import {cafeHours} from '../cafe-hours'
+import {cafeHours, PAUSE_VENUE} from '../cafe-hours'
 import {dayMoment} from '../../../building-hours/lib/__tests__/moment.helper'
 
 /** The Pause Kitchen as `data/building-hours/1-2-pause-kitchen.yaml` has it. */
@@ -61,5 +62,117 @@ describe('cafeHours', () => {
 			time: '9PM – 2AM',
 			closed: false,
 		})
+	})
+	// A venue serving twice a day publishes both windows on the same day, and
+	// `schedulesInEffect` hands back both. The one running is the one to draw.
+	test('draws the window it is running, not the first one it published', () => {
+		let twiceDaily: BuildingType = {
+			...PAUSE,
+			schedule: [
+				{
+					title: 'Hours',
+					hours: [
+						{days: ['Fr'], from: '7:00am', to: '2:00pm'},
+						{days: ['Fr'], from: '5:00pm', to: '9:00pm'},
+					],
+				},
+			],
+		}
+
+		expect(cafeHours(twiceDaily, dayMoment('Fri 6:00pm'))).toEqual({
+			time: '5PM – 9PM',
+			closed: false,
+		})
+		expect(cafeHours(twiceDaily, dayMoment('Fri 1:00pm'))).toEqual({
+			time: '7AM – 2PM',
+			closed: false,
+		})
+	})
+
+	// `isPhysicallyOpen: false` is the college saying the doors are shut whatever
+	// the hours beside them read.
+	test('passes over a set whose doors are not open', () => {
+		let shuttered: BuildingType = {
+			...PAUSE,
+			schedule: [
+				{
+					title: 'Closed for renovation',
+					isPhysicallyOpen: false,
+					hours: [{days: ['Fr'], from: '7:00am', to: '2:00pm'}],
+				},
+				{title: 'Hours', hours: [{days: ['Fr'], from: '5:00pm', to: '9:00pm'}]},
+			],
+		}
+
+		expect(cafeHours(shuttered, dayMoment('Fri 6:00pm'))).toEqual({
+			time: '5PM – 9PM',
+			closed: false,
+		})
+		expect(cafeHours(shuttered, dayMoment('Fri 1:00pm'))).toEqual({time: null, closed: true})
+	})
+
+	// Half an hour out from closing the venue reads as `Almost Closed`, which is
+	// a venue that is still serving.
+	test('keeps a venue that is about to close open', () => {
+		expect(cafeHours(PAUSE, dayMoment('Fri 11:45pm'))).toEqual({
+			time: '4PM – Midnight',
+			closed: false,
+		})
+	})
+
+	// Half an hour out from opening it reads as `Almost Open`, which is when the
+	// window is worth reading. The window to read is the one about to start, not
+	// whichever the venue happened to publish first -- this morning's service is
+	// over by then.
+	test('draws the window about to open, not the one already finished', () => {
+		let twiceDaily: BuildingType = {
+			...PAUSE,
+			schedule: [
+				{
+					title: 'Hours',
+					hours: [
+						{days: ['Fr'], from: '7:00am', to: '2:00pm'},
+						{days: ['Fr'], from: '5:00pm', to: '9:00pm'},
+					],
+				},
+			],
+		}
+
+		expect(cafeHours(twiceDaily, dayMoment('Fri 4:40pm'))).toEqual({
+			time: '5PM – 9PM',
+			closed: false,
+		})
+	})
+
+	// Chapel shuts the doors too. `getShortBuildingStatus` names it rather than
+	// calling it closed, which is a distinction a menu header has no room for.
+	test('reports a venue shut for chapel as closed', () => {
+		let observesChapel: BuildingType = {
+			...PAUSE,
+			schedule: [
+				{
+					title: 'Hours',
+					closedForChapelTime: true,
+					hours: [{days: ['We'], from: '8:00am', to: '5:00pm'}],
+				},
+			],
+		}
+
+		expect(cafeHours(observesChapel, dayMoment('Wed 10:20am'))).toEqual({
+			time: null,
+			closed: true,
+		})
+	})
+})
+
+// The fixture above is a copy, so every test here would go on passing after a
+// rename. This is the one that would not: `PAUSE_VENUE` is a key into a file
+// the college maintains by hand, and the header loses its hours the moment it
+// stops matching. The bundled copy is what the UI tests read, so it is the
+// copy worth holding the constant against.
+describe('PAUSE_VENUE', () => {
+	test('names a venue the bundled building hours actually carry', () => {
+		let names = (bundledBuildings as {data: BuildingType[]}).data.map((b) => b.name)
+		expect(names).toContain(PAUSE_VENUE)
 	})
 })

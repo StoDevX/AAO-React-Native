@@ -1,7 +1,7 @@
 import moment from 'moment-timezone'
 import type {Moment} from 'moment-timezone'
 import type {SingleBuildingScheduleType} from '../types'
-import {formatCompactTime, formatTime} from '@frogpond/time-format'
+import {formatCompactTime, formatTime, RANGE_SEPARATOR} from '@frogpond/time-format'
 
 import {parseHours} from './parse-hours'
 
@@ -69,7 +69,11 @@ export function formatBuildingTimes(
 	{locale, zone, compact = false}: BuildingTimesOptions = {},
 ): string {
 	let {open, close} = parseHours(schedule, m)
-	let dash = compact ? ' – ' : ' — '
+	// The compact form is `formatCompactTimeRange`'s, borrowed rather than
+	// rebuilt -- only the Noon and Midnight labels are this module's own, and a
+	// range assembled here with a different dash would not match the meal
+	// windows a menu header draws beside it.
+	let dash = compact ? RANGE_SEPARATOR : ' — '
 	let from = formatSingleTime(open, locale, zone, compact)
 	let to = formatSingleTime(close, locale, zone, compact)
 	return `${from}${dash}${to}`

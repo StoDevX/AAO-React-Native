@@ -230,7 +230,6 @@ struct TestIdentifiers {
 		/// meal below.
 		static let frozenWeekday = "Sat"
 
-
 		/// The meal that frozen noon lands in, and so the one every menu screen
 		/// opens on.
 		static let openingMeal = "Lunch"

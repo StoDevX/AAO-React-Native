@@ -198,7 +198,7 @@ export function formatCompactTime(
 }
 
 /** The dash between the ends of a range, spaced so neither end runs into it. */
-const RANGE_SEPARATOR = ' – '
+export const RANGE_SEPARATOR = ' – '
 
 /**
  * A span of one day's clock, e.g. `8:30AM – 11:30AM`, `7AM – 6PM` or
