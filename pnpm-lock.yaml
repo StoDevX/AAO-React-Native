@@ -27,14 +27,14 @@ overrides:
   '@react-native/codegen>hermes-parser': 0.36.1
   metro-babel-transformer@0.84>hermes-parser: 0.36.1
   metro@0.84>hermes-parser: 0.36.1
-  babel-jest@29: '30'
-  jest-environment-node@29: '30'
-  '@jest/create-cache-key-function@29': '30'
-  pretty-format@29: '30'
-  jest-validate@29: '30'
-  jest-worker@29: '30'
+  babel-jest@29: 30.5.2
+  jest-environment-node@29: 30.5.2
+  '@jest/create-cache-key-function@29': 30.5.1
+  pretty-format@29: 30.5.1
+  jest-validate@29: 30.5.1
+  jest-worker@29: 30.5.1
   jest-haste-map@30>@parcel/watcher: '-'
-  test-exclude@7: '8'
+  test-exclude@7: 8.0.0
   postcss@: 8.5.28
   handlebars>minimist: '-'
   terser>commander: '-'
@@ -5352,7 +5352,7 @@ packages:
       '@babel/core': 7.29.7
       '@jest/transform': ^29.0.0 || ^30.0.0
       '@jest/types': ^29.0.0 || ^30.0.0
-      babel-jest: '30'
+      babel-jest: 30.5.2
       esbuild: '*'
       jest: ^29.0.0 || ^30.0.0
       jest-util: ^29.0.0 || ^30.0.0

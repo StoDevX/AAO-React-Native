@@ -104,14 +104,14 @@ overrides:
   'metro-babel-transformer@0.84>hermes-parser': '0.36.1'
   'metro@0.84>hermes-parser': '0.36.1'
   # others
-  'babel-jest@29': '30'
-  'jest-environment-node@29': '30'
-  '@jest/create-cache-key-function@29': '30'
-  'pretty-format@29': '30'
-  'jest-validate@29': '30'
-  'jest-worker@29': '30'
+  'babel-jest@29': '30.5.2'
+  'jest-environment-node@29': '30.5.2'
+  '@jest/create-cache-key-function@29': '30.5.1'
+  'pretty-format@29': '30.5.1'
+  'jest-validate@29': '30.5.1'
+  'jest-worker@29': '30.5.1'
   'jest-haste-map@30>@parcel/watcher': '-'
-  'test-exclude@7': '8'
+  'test-exclude@7': '8.0.0'
   # some GHSA vulnverability fixes
   'postcss@': '8.5.28'
   # clis we don't use
