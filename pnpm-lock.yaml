@@ -174,8 +174,8 @@ importers:
         specifier: workspace:*
         version: link:modules/use-debounce
       '@maplibre/maplibre-react-native':
-        specifier: 11.3.10
-        version: 11.3.10(@types/geojson@7946.0.16)(@types/react@19.2.18)(expo@57.0.19)(react-native@0.86.3)(react@19.2.3)
+        specifier: 11.4.0
+        version: 11.4.0(@types/geojson@7946.0.16)(@types/react@19.2.18)(expo@57.0.19)(react-native@0.86.3)(react@19.2.3)
       '@react-native-async-storage/async-storage':
         specifier: 3.1.1
         version: 3.1.1(react-native@0.86.3)(react@19.2.3)
@@ -1819,8 +1819,8 @@ packages:
     resolution: {integrity: sha512-QFKCXkOeSzOr8jF75jm6kySOg+dUvOehPhRi68gcOYPHb7U5JloUq0dJW0Y5/fZV8ygfT0Vp2RWodvq+fyxFWA==}
     hasBin: true
 
-  '@maplibre/maplibre-react-native@11.3.10':
-    resolution: {integrity: sha512-//aakCcPfonYxpWATJkQLjnqeAaxyURv7a1tIZyr0qJ6py5BqJ6bv4J5aNHyTHrbvmNKIPT9RPlQ2S0E0vXTtQ==}
+  '@maplibre/maplibre-react-native@11.4.0':
+    resolution: {integrity: sha512-jCXpIz+yjI70jyitBfvtApN7CU9l7IDorNgWO4Vm8FVnDSQ9fYikpSvZPTgPDk9vqmC770UlunTU/pm+eAVEsw==}
     peerDependencies:
       '@types/geojson': ^7946.0.0
       '@types/react': '>=19.1.0'
@@ -6867,7 +6867,7 @@ snapshots:
       quickselect: 3.0.0
       tinyqueue: 3.0.0
 
-  '@maplibre/maplibre-react-native@11.3.10(@types/geojson@7946.0.16)(@types/react@19.2.18)(expo@57.0.19)(react-native@0.86.3)(react@19.2.3)':
+  '@maplibre/maplibre-react-native@11.4.0(@types/geojson@7946.0.16)(@types/react@19.2.18)(expo@57.0.19)(react-native@0.86.3)(react@19.2.3)':
     dependencies:
       '@maplibre/maplibre-gl-style-spec': 26.2.1
       '@turf/distance': 7.4.0
