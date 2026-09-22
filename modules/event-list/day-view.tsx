@@ -1,6 +1,7 @@
 import * as React from 'react'
 import {StyleSheet} from 'react-native'
 import {
+	ContentUnavailableView,
 	Host,
 	LazyVStack,
 	RNHostView,
@@ -22,8 +23,6 @@ import {
 } from '@expo/ui/swift-ui/modifiers'
 import * as c from '@frogpond/colors'
 import type {Moment} from 'moment-timezone'
-import {NoticeView} from '@frogpond/notice'
-
 import {DayPickerStrip, type DayPickerStripHandle} from './day-picker-strip'
 import {anchorShouldFollow, dayOnShow, emptyNotice, pageWindow} from './day-state'
 import {deriveDays, eventsByDay} from './days'
@@ -208,18 +207,6 @@ export let DayView = React.forwardRef<CalendarBodyHandle, Props>(function DayVie
 	// is found.
 	let showingAt = pages.findIndex((page) => page.isSame(selectedDay, 'day'))
 
-	let notice = (day: Moment): React.ReactElement => {
-		let {text, retry} = emptyNotice(props, {
-			text: `Nothing on ${formatSectionHeader(day)}.`,
-			retry: false,
-		})
-		return retry ? (
-			<NoticeView buttonText="Try Again" onPress={props.onRefresh} text={text} />
-		) : (
-			<NoticeView text={text} />
-		)
-	}
-
 	return (
 		<Host style={styles.host}>
 			<VStack spacing={0}>
@@ -246,6 +233,7 @@ export let DayView = React.forwardRef<CalendarBodyHandle, Props>(function DayVie
 						// still shows through; a list that stops above it reads as a
 						// screen that ran out.
 						ignoreSafeArea({regions: 'container', edges: 'bottom'}),
+						frame({maxWidth: Infinity, maxHeight: Infinity}),
 					]}
 					onSelectionChange={(iso) => {
 						let day = days.find((d) => d.format('YYYY-MM-DD') === iso)
@@ -281,46 +269,55 @@ export let DayView = React.forwardRef<CalendarBodyHandle, Props>(function DayVie
 
 						return (
 							<TabView.Tab key={iso} value={iso}>
-								{dayRows.length === 0 ? (
-									<VStack modifiers={[frame({maxHeight: Infinity})]}>
-										<RNHostView matchContents={false}>{notice(day)}</RNHostView>
-									</VStack>
-								) : (
-									<SwiftUIScrollView
-										modifiers={[
-											background(c.systemBackground),
-											refreshable(async () => {
-												await props.onRefresh()
-											}),
-										]}
-									>
-										<LazyVStack alignment="leading">
-											<VStack
-												alignment="leading"
-												modifiers={[padding({leading: 16, trailing: 16, top: 12, bottom: 8})]}
-											>
-												<FailureNote failed={props.failed} />
-												<Text
-													modifiers={[
-														font({textStyle: 'headline'}),
-														foregroundStyle(day.isSame(props.now, 'day') ? c.systemRed : c.label),
-													]}
+								<SwiftUIScrollView
+									modifiers={[
+										background(c.systemBackground),
+										refreshable(async () => {
+											await props.onRefresh()
+										}),
+										frame({maxWidth: Infinity, maxHeight: Infinity}),
+									]}
+								>
+									{(() => {
+										let notice = emptyNotice(props, {
+											text: `Nothing on ${formatSectionHeader(day)}.`,
+											retry: false,
+										})
+										return dayRows.length === 0 ? (
+											<ContentUnavailableView
+												title={notice.text}
+												description={notice.detail}
+												systemImage="calendar"
+											/>
+										) : (
+											<LazyVStack alignment="leading">
+												<VStack
+													alignment="leading"
+													modifiers={[padding({leading: 16, trailing: 16, top: 12, bottom: 8})]}
 												>
-													{formatSectionHeader(day)}
-												</Text>
-												{dayRows.map((entry, index) => (
-													<EventListRow
-														color={colorFor(entry.sourceId)}
-														event={entry.event}
-														isLastInSection={index === dayRows.length - 1}
-														key={`${entry.sourceId}|${entry.key}`}
-														onPress={() => props.onPressEvent(entry)}
-													/>
-												))}
-											</VStack>
-										</LazyVStack>
-									</SwiftUIScrollView>
-								)}
+													<FailureNote failed={props.failed} />
+													<Text
+														modifiers={[
+															font({textStyle: 'headline'}),
+															foregroundStyle(day.isSame(props.now, 'day') ? c.systemRed : c.label),
+														]}
+													>
+														{formatSectionHeader(day)}
+													</Text>
+													{dayRows.map((entry, index) => (
+														<EventListRow
+															color={colorFor(entry.sourceId)}
+															event={entry.event}
+															isLastInSection={index === dayRows.length - 1}
+															key={`${entry.sourceId}|${entry.key}`}
+															onPress={() => props.onPressEvent(entry)}
+														/>
+													))}
+												</VStack>
+											</LazyVStack>
+										)
+									})()}
+								</SwiftUIScrollView>
 							</TabView.Tab>
 						)
 					})}
