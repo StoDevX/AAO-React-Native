@@ -76,3 +76,27 @@ it('passes a locale through alongside the zone', () => {
 		'10:30 — 22:00',
 	)
 })
+
+// A navigation bar has none of the width a detail sheet does, so a header
+// borrows the special labels and drops the spaces -- see `menuSubtitle`.
+it('writes a compact range the way a menu header does', () => {
+	let m = dayMoment('Fri 3:00pm')
+	let schedule: SingleBuildingScheduleType = {
+		days: ['Fr'],
+		from: '10:30am',
+		to: '10:00pm',
+	}
+
+	expect(formatBuildingTimes(schedule, m, {compact: true})).toBe('10:30AM – 10PM')
+})
+
+it('keeps "Midnight" when it is compact', () => {
+	let m = dayMoment('Fri 3:00pm')
+	let schedule: SingleBuildingScheduleType = {
+		days: ['Fr'],
+		from: '4:00pm',
+		to: '12:00am',
+	}
+
+	expect(formatBuildingTimes(schedule, m, {compact: true})).toBe('4PM – Midnight')
+})
