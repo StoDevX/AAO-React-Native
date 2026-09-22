@@ -116,6 +116,9 @@ overrides:
   'postcss@': '8.5.28'
   # clis we don't use
   'handlebars>minimist': '-'
+  'terser>commander': '-'
+  'react-native>commander': '-'
+  'expo-modules-autolinking>commander': '-'
   # Peers and transitive ranges a fresh resolve floats past what we pin, and
   # strictPeerDependencies then refuses the result.
   # test-renderer is a peer of @testing-library/react-native, so autoInstallPeers
