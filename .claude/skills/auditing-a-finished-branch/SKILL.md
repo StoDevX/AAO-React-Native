@@ -1,6 +1,6 @@
 ---
 name: auditing-a-finished-branch
-description: Use when a branch is implementation-complete and about to be reviewed, opened as a PR, or merged — before finishing-a-development-branch
+description: Use when a branch is implementation-complete and about to be reviewed, opened as a PR, or merged — before superpowers:finishing-a-development-branch
 ---
 
 # Auditing a Finished Branch
@@ -14,7 +14,7 @@ every gate — tsc, lint, and a green suite — so nothing catches them but a
 deliberate pass.
 
 Do this after the last task is reviewed and before
-`finishing-a-development-branch`.
+`superpowers:finishing-a-development-branch`.
 
 ## The test-value audit
 
@@ -51,10 +51,12 @@ branch, not part of what it ships. Delete any the branch introduced.
 
 Deleting them from the working tree is not enough — a file removed in a later
 commit is still in every earlier one, and still lands in the repository when the
-branch merges. Check the history:
+branch merges. Superpowers writes them to `.superpowers/`, which is gitignored,
+so one reaches history only through `git add -f` -- and the working tree then
+shows nothing. Check the history:
 
 ```bash
-git log --oneline origin/master..HEAD -- docs/superpowers/
+git log --oneline origin/master..HEAD -- .superpowers/ docs/superpowers/
 ```
 
 Anything that lists has to come out of the commits, not just off disk. When
@@ -63,7 +65,7 @@ are mixed in with real changes, strip the paths from the range:
 
 ```bash
 git filter-branch -f --index-filter \
-  'git rm -r --cached --ignore-unmatch docs/superpowers/' \
+  'git rm -r --cached --ignore-unmatch .superpowers/ docs/superpowers/' \
   --prune-empty origin/master..HEAD
 ```
 
