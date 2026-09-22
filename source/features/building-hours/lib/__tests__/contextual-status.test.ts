@@ -1,5 +1,5 @@
 import moment from 'moment-timezone'
-import {contextualStatus} from '../contextual-status'
+import {contextualStatus, nextOpening} from '../contextual-status'
 import type {BuildingType} from '../../types'
 
 const timezone = 'America/Chicago'
@@ -289,5 +289,60 @@ describe('contextualStatus', () => {
 		let now = moment.tz('2026-09-07 09:00', timezone) // Monday 9am
 
 		expect(contextualStatus(building, now).short).toBe('Opens at noon')
+	})
+})
+
+describe('nextOpening', () => {
+	it('names the opening still ahead today', () => {
+		let building = makeBuilding([
+			{
+				title: 'Hours',
+				hours: [{days: ['Mo', 'Tu', 'We', 'Th', 'Fr'], from: '5:00pm', to: '11:00pm'}],
+			},
+		])
+		let now = moment.tz('2026-09-07 14:00', timezone) // Monday 2pm
+
+		expect(nextOpening(building, now)?.format('ddd h:mma')).toBe('Mon 5:00pm')
+	})
+
+	it('names the earliest opening today, not the first one listed', () => {
+		let building = makeBuilding([
+			{
+				title: 'Hours',
+				hours: [
+					{days: ['Mo'], from: '5:00pm', to: '8:00pm'},
+					{days: ['Mo'], from: '9:00am', to: '12:00pm'},
+				],
+			},
+		])
+		let now = moment.tz('2026-09-07 08:00', timezone) // Monday 8am
+
+		expect(nextOpening(building, now)?.format('ddd h:mma')).toBe('Mon 9:00am')
+	})
+
+	it('names the end of chapel when the building resumes after it', () => {
+		// data/building-hours/3-1-post-office.yaml; Monday chapel is 10:10-10:30am.
+		let building = makeBuilding([
+			{
+				title: 'Hours',
+				closedForChapelTime: true,
+				hours: [{days: ['Mo', 'Tu', 'We', 'Th', 'Fr'], from: '8:00am', to: '5:00pm'}],
+			},
+		])
+		let now = moment.tz('2026-09-07 10:15', timezone)
+
+		expect(nextOpening(building, now)?.format('ddd h:mma')).toBe('Mon 10:30am')
+	})
+
+	it('is null once nothing opens again today', () => {
+		let building = makeBuilding([
+			{
+				title: 'Hours',
+				hours: [{days: ['Mo', 'Tu', 'We', 'Th', 'Fr'], from: '9:00am', to: '5:00pm'}],
+			},
+		])
+		let now = moment.tz('2026-09-12 14:00', timezone) // Saturday 2pm
+
+		expect(nextOpening(building, now)).toBeNull()
 	})
 })

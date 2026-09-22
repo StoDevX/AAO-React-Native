@@ -72,6 +72,17 @@ function findNextOpenToday(building: BuildingType, now: Moment): OpenWindow | nu
 	return earliest
 }
 
+/**
+ * When a building that is shut at `now` next lets anyone in today: the end of
+ * chapel if it resumes after chapel, else the soonest window still ahead, else
+ * null.
+ */
+export function nextOpening(building: BuildingType, now: Moment): Moment | null {
+	return (
+		findChapelReopenForBuilding(building, now) ?? findNextOpenToday(building, now)?.open ?? null
+	)
+}
+
 /** The status line's two spellings: the list row is cramped, the detail screen is not. */
 export type ContextualStatus = {short: string; long: string}
 

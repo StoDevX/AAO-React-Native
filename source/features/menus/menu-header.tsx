@@ -32,9 +32,12 @@ import {menuSubtitle, spokenTime, SUBTITLE_SEPARATOR} from './lib/header-title'
  * than inside it because a cafe serving one meal has no picker and hours all
  * the same.
  *
- * `closed` is the cafe saying it is not serving. Nothing under the name is
- * true of a cafe that is shut -- not the meal, not a window, not even the day
- * it is shut on -- so the name stands alone.
+ * `closed` is the cafe saying it is not serving. Neither the meal nor its
+ * window is true of a cafe that is shut, so neither is drawn.
+ *
+ * `opensAt` is when a shut cafe opens again today, e.g. `4PM`, drawn beside
+ * the day as `Sunday • Closed until 4PM`. It is `null` for a cafe that is
+ * open, and for one that does not open again today, whose name stands alone.
  *
  * `loading` is the menu still on its way. The clock is ours and the day is
  * already known, so the day is drawn and the rest of the line stands in for
@@ -58,6 +61,7 @@ type MenuHeader = {
 	date: string | null
 	time: string | null
 	closed: boolean
+	opensAt: string | null
 	loading: boolean
 	meals: MealMenuSelection | null
 	/** The filter row's own control, or `null` for a screen with no filters. */
@@ -108,7 +112,8 @@ export function MenuHeaderProvider(props: {children: React.ReactNode}): React.Re
  */
 export function usePublishMenuHeader(header: MenuHeader, focused: boolean): void {
 	let publish = React.useContext(PublishMenuHeaderContext)
-	let {name, weekdayShort, weekdayLong, date, time, closed, loading, meals, filters} = header
+	let {name, weekdayShort, weekdayLong, date, time, closed, opensAt, loading, meals, filters} =
+		header
 
 	// `filters` is read apart too: a caller building it inline hands over a new
 	// object each render, and depending on that object would publish on each
@@ -125,6 +130,7 @@ export function usePublishMenuHeader(header: MenuHeader, focused: boolean): void
 				date,
 				time,
 				closed,
+				opensAt,
 				loading,
 				meals,
 				filters:
@@ -141,6 +147,7 @@ export function usePublishMenuHeader(header: MenuHeader, focused: boolean): void
 		date,
 		time,
 		closed,
+		opensAt,
 		loading,
 		meals,
 		filtersVisible,
@@ -164,11 +171,9 @@ export function MenuHeaderHost(): React.ReactNode {
 		return null
 	}
 
-	// A cafe that is shut has no day's service to describe, so the name stands
-	// alone rather than over a line that has nothing true to put in it.
-	// `menuSubtitle` is what knows that; all this decides is that a shut cafe
-	// has no line still on its way either, which leaves the day below free of
-	// the question.
+	// `menuSubtitle` decides what a shut cafe's line says; all this decides is
+	// that a shut cafe has no line still on its way, which leaves the day below
+	// free of the question.
 	let loading = header.loading && !header.closed
 
 	let detail = loading
@@ -180,6 +185,7 @@ export function MenuHeaderHost(): React.ReactNode {
 				mealName: header.meals?.selected ?? null,
 				time: header.time,
 				closed: header.closed,
+				opensAt: header.opensAt,
 			})
 
 	let subtitle = loading ? (

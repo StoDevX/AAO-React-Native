@@ -2,7 +2,7 @@ import {describe, expect, test} from '@jest/globals'
 
 import {menuSubtitle, spokenTime} from '../header-title'
 
-const SUNDAY = {weekdayShort: 'Sun', weekdayLong: 'Sunday', closed: false}
+const SUNDAY = {weekdayShort: 'Sun', weekdayLong: 'Sunday', closed: false, opensAt: null}
 
 describe('menuSubtitle', () => {
 	test('joins the day, the meal and the window', () => {
@@ -59,6 +59,7 @@ describe('menuSubtitle', () => {
 				mealName: null,
 				time: '11AM – 1PM',
 				closed: false,
+				opensAt: null,
 			}),
 		).toBe('11AM – 1PM')
 		expect(
@@ -69,6 +70,7 @@ describe('menuSubtitle', () => {
 				mealName: null,
 				time: null,
 				closed: false,
+				opensAt: null,
 			}),
 		).toBe('')
 	})
@@ -135,6 +137,21 @@ describe('menuSubtitle', () => {
 				closed: true,
 			}),
 		).toBe('')
+	})
+
+	// A shut cafe that opens again today says when, beside the day it is shut
+	// on. The meal and its window stay out: neither is being served.
+	test('says when a shut cafe opens again today', () => {
+		expect(
+			menuSubtitle({
+				...SUNDAY,
+				cafeName: 'The Pause Kitchen',
+				mealName: 'Menu',
+				time: null,
+				closed: true,
+				opensAt: '4PM',
+			}),
+		).toBe('Sunday • Closed until 4PM')
 	})
 
 	test('names a meal that is not the cafe over again', () => {

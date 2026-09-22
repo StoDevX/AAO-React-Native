@@ -72,6 +72,18 @@ class ModuleMenusTests: UITestCase {
 			"the chooser shows no single day, so it should carry no line beneath its name")
 	}
 
+	/// The frozen clock sits before the Pause opens for the day, so its title
+	/// says when it does rather than standing alone over nothing.
+	func testShutCafeSaysWhenItOpens() throws {
+		MenusScreen(app: app)
+			.navigate()
+			.openCafe(TestIdentifiers.Menus.pause)
+			.capture("The Pause before it opens")
+			.verifyHeader(
+				TestIdentifiers.Menus.pauseTitle,
+				reading: TestIdentifiers.Menus.pauseClosedDetail)
+	}
+
 	/// The meal picker is the title itself, drawn as a custom view because a
 	/// `UIBarButtonItem` cannot carry both a label and a chevron. Jest sees
 	/// neither the bar nor the menu it opens, so this is the only place the

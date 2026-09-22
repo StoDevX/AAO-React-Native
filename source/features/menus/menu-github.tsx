@@ -106,6 +106,7 @@ export function GitHubHostedMenu(props: Props): React.ReactNode {
 			meals: mealHeader.menu,
 			time: props.venue && venue ? hours.time : mealHeader.time,
 			closed: mealHeader.closed || hours.closed,
+			opensAt: hours.opensAt,
 			loading: isLoading || isVenueLoading,
 			filters: {visible: filtersVisible, toggle: toggleFilters},
 		},

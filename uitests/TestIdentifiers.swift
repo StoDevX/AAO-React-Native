@@ -214,6 +214,11 @@ struct TestIdentifiers {
 		/// hours rather than repeating the tab's shorter label.
 		static let pauseTitle = "The Pause Kitchen"
 
+		/// What the Pause's title reads at the frozen clock, which is before it
+		/// opens for the day: the day written out, and when it opens. A prefix,
+		/// because the time that finishes it is printed in the device's zone.
+		static let pauseClosedDetail = "Saturday, Closed until "
+
 		/// Two stations from that file, and one item from each. The Stations
 		/// filter asks for a menu outright, so its shape does not depend on how
 		/// many stations a cafe happens to serve.

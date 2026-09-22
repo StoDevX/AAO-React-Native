@@ -1,6 +1,6 @@
-export {contextualStatus} from './contextual-status'
+export {contextualStatus, nextOpening} from './contextual-status'
 export {getShortBuildingStatus} from './get-short-status'
-export {formatBuildingTimes} from './format-times'
+export {formatBuildingTimes, formatCompactBuildingTime} from './format-times'
 export {linkHost} from './link-host'
 export {filterBuildings} from './filter-buildings'
 export {categoriesFrom} from './categories-from'

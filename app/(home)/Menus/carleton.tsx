@@ -20,6 +20,7 @@ export default function CarletonPage(): React.ReactNode {
 			date: null,
 			time: null,
 			closed: false,
+			opensAt: null,
 			loading: false,
 			meals: null,
 			filters: null,

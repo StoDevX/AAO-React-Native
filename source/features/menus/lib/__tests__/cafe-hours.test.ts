@@ -23,31 +23,74 @@ describe('cafeHours', () => {
 		expect(cafeHours(PAUSE, dayMoment('Fri 6:00pm'))).toEqual({
 			time: '4PM – Midnight',
 			closed: false,
+			opensAt: null,
 		})
 	})
 
 	// The hours stay true when the doors are shut, but the header has a way of
 	// saying shut already -- the cafe's name standing alone -- and that is what
 	// a closed Bon Appétit cafe does too.
-	test('reports a venue that is not serving as closed', () => {
-		expect(cafeHours(PAUSE, dayMoment('Fri 9:00am'))).toEqual({time: null, closed: true})
+	test('reports a venue that is not serving as closed, and when it opens', () => {
+		expect(cafeHours(PAUSE, dayMoment('Fri 9:00am'))).toEqual({
+			time: null,
+			closed: true,
+			opensAt: '4PM',
+		})
 	})
 
 	// The menu screen draws before the buildings query resolves, and a venue
 	// that has not arrived is not a venue that is shut.
 	test('says nothing about a venue it has not been given', () => {
-		expect(cafeHours(undefined, dayMoment('Fri 6:00pm'))).toEqual({time: null, closed: false})
+		expect(cafeHours(undefined, dayMoment('Fri 6:00pm'))).toEqual({
+			time: null,
+			closed: false,
+			opensAt: null,
+		})
 	})
 
 	test('reports a venue publishing no hours at all as closed', () => {
 		let unscheduled: BuildingType = {...PAUSE, schedule: []}
-		expect(cafeHours(unscheduled, dayMoment('Fri 6:00pm'))).toEqual({time: null, closed: true})
+		expect(cafeHours(unscheduled, dayMoment('Fri 6:00pm'))).toEqual({
+			time: null,
+			closed: true,
+			opensAt: null,
+		})
 	})
 
 	// The Pause shuts *at* midnight rather than past it, so the small hours are
 	// the one time its flat every-day schedule is not serving.
 	test('reports the venue shut once its window has closed at midnight', () => {
-		expect(cafeHours(PAUSE, dayMoment('Sat 12:30am'))).toEqual({time: null, closed: true})
+		expect(cafeHours(PAUSE, dayMoment('Sat 12:30am'))).toEqual({
+			time: null,
+			closed: true,
+			opensAt: '4PM',
+		})
+	})
+
+	// Nothing ahead today is not the same as never: the header says shut and
+	// stops, rather than naming a day it has no room for.
+	test('names no opening once nothing opens again today', () => {
+		let lunchOnly: BuildingType = {
+			...PAUSE,
+			schedule: [{title: 'Hours', hours: [{days: ['Fr'], from: '11:00am', to: '2:00pm'}]}],
+		}
+
+		expect(cafeHours(lunchOnly, dayMoment('Fri 3:00pm'))).toEqual({
+			time: null,
+			closed: true,
+			opensAt: null,
+		})
+	})
+
+	// Written the way the menu header writes its windows, so the opening reads
+	// as a time from the same line of the bar.
+	test('writes an opening at noon as Noon', () => {
+		let fromNoon: BuildingType = {
+			...PAUSE,
+			schedule: [{title: 'Hours', hours: [{days: ['Fr'], from: '12:00pm', to: '2:00pm'}]}],
+		}
+
+		expect(cafeHours(fromNoon, dayMoment('Fri 9:00am')).opensAt).toBe('Noon')
 	})
 
 	// A venue that does run past midnight keeps last night's window rather than
@@ -61,6 +104,7 @@ describe('cafeHours', () => {
 		expect(cafeHours(lateNight, dayMoment('Sat 1:00am'))).toEqual({
 			time: '9PM – 2AM',
 			closed: false,
+			opensAt: null,
 		})
 	})
 	// A venue serving twice a day publishes both windows on the same day, and
@@ -82,10 +126,12 @@ describe('cafeHours', () => {
 		expect(cafeHours(twiceDaily, dayMoment('Fri 6:00pm'))).toEqual({
 			time: '5PM – 9PM',
 			closed: false,
+			opensAt: null,
 		})
 		expect(cafeHours(twiceDaily, dayMoment('Fri 1:00pm'))).toEqual({
 			time: '7AM – 2PM',
 			closed: false,
+			opensAt: null,
 		})
 	})
 
@@ -107,8 +153,13 @@ describe('cafeHours', () => {
 		expect(cafeHours(shuttered, dayMoment('Fri 6:00pm'))).toEqual({
 			time: '5PM – 9PM',
 			closed: false,
+			opensAt: null,
 		})
-		expect(cafeHours(shuttered, dayMoment('Fri 1:00pm'))).toEqual({time: null, closed: true})
+		expect(cafeHours(shuttered, dayMoment('Fri 1:00pm'))).toEqual({
+			time: null,
+			closed: true,
+			opensAt: '5PM',
+		})
 	})
 
 	// Half an hour out from closing the venue reads as `Almost Closed`, which is
@@ -117,6 +168,7 @@ describe('cafeHours', () => {
 		expect(cafeHours(PAUSE, dayMoment('Fri 11:45pm'))).toEqual({
 			time: '4PM – Midnight',
 			closed: false,
+			opensAt: null,
 		})
 	})
 
@@ -141,6 +193,7 @@ describe('cafeHours', () => {
 		expect(cafeHours(twiceDaily, dayMoment('Fri 4:40pm'))).toEqual({
 			time: '5PM – 9PM',
 			closed: false,
+			opensAt: null,
 		})
 	})
 
@@ -161,6 +214,7 @@ describe('cafeHours', () => {
 		expect(cafeHours(observesChapel, dayMoment('Wed 10:20am'))).toEqual({
 			time: null,
 			closed: true,
+			opensAt: '10:30AM',
 		})
 	})
 })

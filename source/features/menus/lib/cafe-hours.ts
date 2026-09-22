@@ -2,8 +2,10 @@ import type {Moment} from 'moment-timezone'
 import type {BuildingStatusType, BuildingType} from '../../building-hours/types'
 import {
 	formatBuildingTimes,
+	formatCompactBuildingTime,
 	getScheduleStatusAtMoment,
 	getShortBuildingStatus,
+	nextOpening,
 	schedulesInEffect,
 } from '../../building-hours/lib'
 
@@ -11,8 +13,13 @@ import {
 export type CafeHours = {
 	/** The window it is serving, e.g. `4PM – Midnight`, or `null` when shut. */
 	time: string | null
-	/** Whether the doors are closed, which the header draws as the name alone. */
+	/** Whether the doors are closed. */
 	closed: boolean
+	/**
+	 * When a shut cafe next opens today, e.g. `4PM`, or `null` when it is open,
+	 * or when nothing opens again today.
+	 */
+	opensAt: string | null
 }
 
 /**
@@ -27,7 +34,7 @@ export type CafeHours = {
 export const PAUSE_VENUE = 'The Pause Kitchen'
 
 /** Neither open nor shut: what a screen shows before it has been told. */
-const UNKNOWN: CafeHours = {time: null, closed: false}
+const UNKNOWN: CafeHours = {time: null, closed: false, opensAt: null}
 
 /** The statuses that mean the doors are shut right now. */
 const SHUT = new Set<BuildingStatusType>(['Closed', 'Chapel'])
@@ -57,7 +64,7 @@ export function cafeHours(building: BuildingType | undefined, m: Moment): CafeHo
 	// Closed` is still serving, and `Almost Open` is about to, which is exactly
 	// when the window under the name is worth reading.
 	if (SHUT.has(status)) {
-		return {time: null, closed: true}
+		return shut(building, m)
 	}
 
 	// The window the status above was reading, found the way it found it:
@@ -79,9 +86,23 @@ export function cafeHours(building: BuildingType | undefined, m: Moment): CafeHo
 		)
 
 		if (schedule) {
-			return {time: formatBuildingTimes(schedule, m, {compact: true}), closed: false}
+			return {
+				time: formatBuildingTimes(schedule, m, {compact: true}),
+				closed: false,
+				opensAt: null,
+			}
 		}
 	}
 
-	return {time: null, closed: true}
+	return shut(building, m)
+}
+
+/** A venue whose doors are shut at `m`, and when they next open today. */
+function shut(building: BuildingType, m: Moment): CafeHours {
+	let opening = nextOpening(building, m)
+	return {
+		time: null,
+		closed: true,
+		opensAt: opening ? formatCompactBuildingTime(opening) : null,
+	}
 }

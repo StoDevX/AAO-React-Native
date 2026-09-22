@@ -194,6 +194,8 @@ export function BonAppHostedMenu(props: Props): React.ReactNode {
 			meals: mealHeader.menu,
 			time: mealHeader.time,
 			closed: mealHeader.closed,
+			// Bon Appétit says a cafe is shut without saying until when.
+			opensAt: null,
 			loading: isMenuLoading || isCafeLoading,
 			filters: {visible: filtersVisible, toggle: toggleFilters},
 		},

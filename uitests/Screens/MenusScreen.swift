@@ -51,6 +51,20 @@ struct MenusScreen: Screen {
 		return self
 	}
 
+	/// The header names this screen over a line that starts with `detail`, as
+	/// the title's composed label writes it -- commas where the eye reads
+	/// bullets.
+	@discardableResult
+	func verifyHeader(_ name: String, reading detail: String) -> Self {
+		let title = app.navigationBars.descendants(matching: .any)
+			.matching(NSPredicate(format: "label BEGINSWITH %@", "\(name), \(detail)"))
+			.firstMatch
+		XCTAssertTrue(
+			title.waitForExistence(timeout: 30),
+			"the header should read \(name) over \(detail)")
+		return self
+	}
+
 	/// The navigation title of a screen whose meal this suite does not pin
 	/// down, found by the name it starts with.
 	///

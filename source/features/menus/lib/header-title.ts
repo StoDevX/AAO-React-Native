@@ -10,8 +10,10 @@ type SubtitleParts = {
 	mealName: string | null
 	/** The window that meal is served, e.g. `11AM – 1:30PM`. */
 	time: string | null
-	/** Whether the cafe is shut, which empties the line rather than filling it. */
+	/** Whether the cafe is shut, which leaves the meal and its window off the line. */
 	closed: boolean
+	/** When a shut cafe opens again today, e.g. `4PM`, or `null` if it does not. */
+	opensAt: string | null
 }
 
 /**
@@ -32,15 +34,18 @@ export const SUBTITLE_SEPARATOR = ' • '
  * letters beside two other facts read as a day; three letters alone out there
  * read as a word that got cut off.
  *
- * A shut cafe has no line at all. Nothing under the name is true of one -- not
- * the meal, not a window, not even the day it is shut on -- so the emptying is
- * done here, once, rather than left to each caller to remember for each part.
+ * A shut cafe is decided here, once, rather than left to each caller to
+ * remember for each part. Neither the meal nor its window is being served, so
+ * neither is drawn. One that opens again today says when, beside the day it is
+ * shut on: `Sunday • Closed until 4PM`. One that does not has no line at all.
  */
 export function menuSubtitle(parts: SubtitleParts): string {
-	let {weekdayShort, weekdayLong, cafeName, mealName, time, closed} = parts
+	let {weekdayShort, weekdayLong, cafeName, mealName, time, closed, opensAt} = parts
 
 	if (closed) {
-		return ''
+		return opensAt
+			? [weekdayLong, `Closed until ${opensAt}`].filter(Boolean).join(SUBTITLE_SEPARATOR)
+			: ''
 	}
 
 	let meal = namesTheCafe(mealName, cafeName) ? null : mealName
