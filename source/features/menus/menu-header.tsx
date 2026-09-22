@@ -8,7 +8,6 @@ import {
 	accessibilityElement,
 	accessibilityLabel,
 	background,
-	dynamicTypeSize,
 	font,
 	foregroundStyle,
 	frame,
@@ -167,27 +166,33 @@ export function MenuHeaderHost(): React.ReactNode {
 
 	// A cafe that is shut has no day's service to describe, so the name stands
 	// alone rather than over a line that has nothing true to put in it.
+	// `menuSubtitle` is what knows that; all this decides is that a shut cafe
+	// has no line still on its way either, which leaves the day below free of
+	// the question.
 	let loading = header.loading && !header.closed
-	let weekdayLong = header.closed ? null : header.weekdayLong
-	let mealName = header.closed ? null : (header.meals?.selected ?? null)
 
 	let detail = loading
 		? null
 		: menuSubtitle({
-				weekdayShort: header.closed ? null : header.weekdayShort,
-				weekdayLong,
+				weekdayShort: header.weekdayShort,
+				weekdayLong: header.weekdayLong,
 				cafeName: header.name,
-				mealName,
-				time: header.closed ? null : header.time,
+				mealName: header.meals?.selected ?? null,
+				time: header.time,
+				closed: header.closed,
 			})
 
-	let subtitle = loading ? <LoadingSubtitle weekday={weekdayLong} /> : <Subtitle detail={detail} />
+	let subtitle = loading ? (
+		<LoadingSubtitle weekday={header.weekdayLong} />
+	) : (
+		<Subtitle detail={detail} />
+	)
 
 	// Read as one thing rather than as a name and a line of shorthand. The
 	// window is respelled because a dash between two times is read as silence.
 	let spoken = [
 		header.name,
-		loading ? weekdayLong : detail && spokenDetail(detail, header.time),
+		loading ? header.weekdayLong : detail && spokenDetail(detail, header.time),
 		loading ? 'Loading' : null,
 	]
 		.filter(Boolean)
@@ -202,7 +207,7 @@ export function MenuHeaderHost(): React.ReactNode {
 				{/* An explicit size rather than `matchContents`: a navigation bar
 				    gives its title view no size to match, so a self-sizing host
 				    collapses and takes the title with it. */}
-				<Host modifiers={HOST_MODIFIERS} style={styles.menuHost}>
+				<Host style={styles.menuHost}>
 					{header.meals ? (
 						<MealMenu date={header.date} meals={header.meals} spoken={spoken}>
 							<TitleStack name={header.name} subtitle={subtitle} />
@@ -366,18 +371,6 @@ function spokenDetail(detail: string, time: string | null): string {
  */
 const PENDING_DETAIL = '00:00AM – 00:00PM'
 
-/**
- * How far the title may grow with Dynamic Type, set on the host so it reaches
- * both lines through the environment.
- *
- * A navigation bar keeps its height whatever the text inside it asks for, and
- * this title asks for two lines of it. `lineLimit` and `minimumScaleFactor`
- * below only govern width; past this size the pair is taller than the bar and
- * clips rather than scales, so the ceiling has to be set here as well.
- * `xxxLarge` is about where `headline` over `caption` still fits 44pt.
- */
-const HOST_MODIFIERS = [dynamicTypeSize({max: 'xxxLarge'})]
-
 // A navigation title reads as the screen's name, not as a link, so the name
 // keeps the label colour a plain title would have. Only the chevron is tinted.
 //
@@ -386,6 +379,12 @@ const HOST_MODIFIERS = [dynamicTypeSize({max: 'xxxLarge'})]
 // the line beneath it out of the bar entirely. It stops shrinking well short of
 // the subtitle's floor -- a name is the one thing on the screen a reader has to
 // be able to read.
+//
+// No `dynamicTypeSize` ceiling over the pair: photographed at
+// `accessibility-extra-extra-extra-large`, the largest size there is, the name
+// and the line under it both still sit inside the bar. A ceiling would hold
+// every accessibility size down to a non-accessibility one, which is a cost
+// paid by the readers who asked for the larger text in the first place.
 const TITLE_MODIFIERS = [
 	font({textStyle: 'headline'}),
 	foregroundStyle(c.label),

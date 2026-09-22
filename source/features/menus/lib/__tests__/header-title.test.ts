@@ -2,7 +2,7 @@ import {describe, expect, test} from '@jest/globals'
 
 import {menuSubtitle, spokenTime} from '../header-title'
 
-const SUNDAY = {weekdayShort: 'Sun', weekdayLong: 'Sunday'}
+const SUNDAY = {weekdayShort: 'Sun', weekdayLong: 'Sunday', closed: false}
 
 describe('menuSubtitle', () => {
 	test('joins the day, the meal and the window', () => {
@@ -58,6 +58,7 @@ describe('menuSubtitle', () => {
 				cafeName: 'The Pause',
 				mealName: null,
 				time: '11AM – 1PM',
+				closed: false,
 			}),
 		).toBe('11AM – 1PM')
 		expect(
@@ -67,6 +68,7 @@ describe('menuSubtitle', () => {
 				cafeName: 'Carleton',
 				mealName: null,
 				time: null,
+				closed: false,
 			}),
 		).toBe('')
 	})
@@ -117,6 +119,22 @@ describe('menuSubtitle', () => {
 		expect(
 			menuSubtitle({...SUNDAY, cafeName: 'Weitz Café', mealName: 'Café', time: '8AM – 10AM'}),
 		).toBe('Sunday • 8AM – 10AM')
+	})
+
+	// Nothing under the name is true of a cafe that is shut -- not the meal, not
+	// a window, not even the day it is shut on -- so the name stands alone. The
+	// meal is the one of those that arrives from the picker rather than from the
+	// screen, and so the one a caller is liable to leave in.
+	test('says nothing at all about a cafe that is shut', () => {
+		expect(
+			menuSubtitle({
+				...SUNDAY,
+				cafeName: 'Stav Hall',
+				mealName: 'Lunch',
+				time: '11AM – 1:30PM',
+				closed: true,
+			}),
+		).toBe('')
 	})
 
 	test('names a meal that is not the cafe over again', () => {
