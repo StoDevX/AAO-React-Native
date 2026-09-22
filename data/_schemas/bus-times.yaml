@@ -2,7 +2,7 @@ $schema: http://json-schema.org/draft-07/schema#
 
 type: object
 additionalProperties: false
-required: [line, schedules, colors]
+required: [line, timezone, schedules, colors]
 properties:
   line: {type: string}
   timezone: {type: string}
