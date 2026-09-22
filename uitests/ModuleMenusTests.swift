@@ -33,12 +33,21 @@ class ModuleMenusTests: UITestCase {
 
 		menus.verifyCafeHeader(stav, showing: TestIdentifiers.Menus.openingMeal)
 
+		// Proves the query the Carleton leg below asserts the *absence* of can
+		// match something in the first place. A cafe's title carries a line under
+		// its name, so this is where it has to find one; without this the
+		// assertion down there would pass just as well against a query that
+		// matches nothing at all.
+		XCTAssertTrue(
+			menus.headerDetailed(stav).exists,
+			"a cafe's title should carry a line beneath its name")
+
 		menus
 			.openCafe(TestIdentifiers.Menus.pause)
 			.verifyHeaderNames(TestIdentifiers.Menus.pause)
 
 		XCTAssertFalse(
-			app.navigationBars.staticTexts[stav].exists,
+			menus.headerTitled(stav).exists,
 			"the previous cafe's name should be gone from the header")
 
 		let carleton = app.tabButton(TestIdentifiers.Menus.carleton)
@@ -46,18 +55,20 @@ class ModuleMenusTests: UITestCase {
 		carleton.tap()
 
 		XCTAssertTrue(
-			app.navigationBars.staticTexts[TestIdentifiers.Menus.carleton]
-				.waitForExistence(timeout: 30),
+			menus.headerTitled(TestIdentifiers.Menus.carleton).waitForExistence(timeout: 30),
 			"the chooser should name itself Carleton")
 		XCTAssertFalse(
-			app.navigationBars.staticTexts[TestIdentifiers.Menus.pause].exists,
+			menus.headerTitled(TestIdentifiers.Menus.pause).exists,
 			"the chooser should not carry a cafe's name")
+
+		// The title reads as one element carrying the name and the line beneath
+		// it, so a chooser with no line to carry is a label that is the name and
+		// stops. Asserted as the absence of anything longer rather than as the
+		// equality of whichever element a `firstMatch` lands on: the plain
+		// `Stack.Screen` title is in the bar too, and it would satisfy an
+		// equality check while the line beneath had regressed.
 		XCTAssertFalse(
-			app.navigationBars.staticTexts
-				.matching(
-					NSPredicate(format: "label CONTAINS %@", TestIdentifiers.Menus.headerSeparator)
-				)
-				.firstMatch.exists,
+			menus.headerDetailed(TestIdentifiers.Menus.carleton).exists,
 			"the chooser shows no single day, so it should carry no line beneath its name")
 	}
 

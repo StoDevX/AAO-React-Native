@@ -6,15 +6,15 @@ import type {Moment} from 'moment-timezone'
 type MaybeTime = string | false
 
 const parseTime =
-	(now: Moment) =>
+	(now: Moment, tz: string = timezone()) =>
 	(time: MaybeTime): null | Moment => {
 		// either pass `false` through or return a parsed time
 		if (time === false) {
 			return null
 		}
 
-		// interpret in Central time
-		let m = moment.tz(time, TIME_FORMAT, true, timezone())
+		// interpret in the given zone
+		let m = moment.tz(time, TIME_FORMAT, true, tz)
 
 		// a value that fails the strict parse is exactly as absent as `false`
 		// -- every caller downstream already treats `null` as "no data here"

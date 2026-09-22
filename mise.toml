@@ -1,6 +1,6 @@
 [tools]
 node = "24.21.0"
-pnpm = "12.4.2"
+pnpm = "12.5.0"
 hk = "2.0.1"
 ruby = "3.4.10"
 "gem:bundler" = "4.0.21"
@@ -216,6 +216,10 @@ run = 'node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test "scripts/*.tes
 description = "Bundle data files"
 wait_for = ["pnpm:install:*"]
 run = "node scripts/bundle-data.mjs data/ docs/"
+
+[tasks."refresh-bus-data"]
+description = "Regenerate data/bus-times/ from the Hiawathaland GTFS feed"
+run = "node scripts/refresh-bus-data.mjs"
 
 [tasks."validate-bus-data"]
 description = "Validate bus schedule data"

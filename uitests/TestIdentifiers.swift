@@ -230,11 +230,6 @@ struct TestIdentifiers {
 		/// meal below.
 		static let frozenWeekday = "Sat"
 
-		/// The separator between the parts of the header's second line. Used to
-		/// assert a screen has no such line at all: only a day-and-meal
-		/// subtitle puts one in a navigation bar.
-		static let headerSeparator = " • "
-
 		/// The meal that frozen noon lands in, and so the one every menu screen
 		/// opens on.
 		static let openingMeal = "Lunch"
@@ -246,8 +241,9 @@ struct TestIdentifiers {
 		static let filtersButton = "Filters"
 
 		/// The start of the navigation title's label, which is also the meal
-		/// picker's button: SwiftUI composes it as the cafe's name, a comma,
-		/// then the line beneath -- `Stav Hall, Sat • Lunch • 8:30AM – 12PM`.
+		/// picker's button. The title writes its own label rather than letting
+		/// SwiftUI compose one, so the bullets the eye reads as separators are
+		/// the commas the ear needs -- `Stav Hall, Sat, Lunch, 8:30AM to 12PM`.
 		///
 		/// A prefix, because the window that finishes it is not the same string
 		/// on every machine. A meal's hours are campus clock readings printed
@@ -256,7 +252,7 @@ struct TestIdentifiers {
 		/// runner. Matching it exactly would pin the suite to whoever wrote it.
 		/// What the window says is `meal-times.test.ts`' business.
 		static func header(_ cafe: String, meal: String) -> String {
-			"\(cafe), \(frozenWeekday)\(headerSeparator)\(meal)"
+			"\(cafe), \(frozenWeekday), \(meal)"
 		}
 	}
 
@@ -619,8 +615,12 @@ struct TestIdentifiers {
 		/// strip rather than doing nothing. Unlike `aStop`, which the route
 		/// visits twice (the loop starts and ends there), this one appears only
 		/// once, so its presence unambiguously means the strip scrolled forward
-		/// rather than showing a second, later occurrence of the start.
-		static let aStopFartherAlongTheRoute = "El Tequila"
+		/// rather than showing a second, later occurrence of the start. It is also
+		/// the fifth stop, so it starts past the four cells the strip shows when
+		/// it opens on the first stop; a stop nearer the start would already be
+		/// on screen. Red Line's route calls here too, but that line does not run
+		/// on the frozen Saturday and its strip is collapsed.
+		static let aStopFartherAlongTheRoute = "Cub/Target"
 		/// The horizontal strip of stops inside a line's widget, which a swipe
 		/// test aims at rather than at a stop cell: the strip opens partway
 		/// along the route, so which cells are on screen depends on where the
@@ -633,13 +633,17 @@ struct TestIdentifiers {
 		static let dayMenuDefaultLabel = "Today"
 		/// The day the day-picker test picks. Sunday, because Express Bus keeps
 		/// one timetable Monday to Saturday (`docs/bus-times.json`), so Sunday
-		/// is the only pick that draws rows the frozen Saturday clock does not.
+		/// is the one pick that draws nothing where the frozen Saturday clock
+		/// draws rows.
 		static let aDay = "Sunday"
-		/// A stop Express Bus skips on `aDay` and calls at every other day. Its
-		/// row lists times on any other day and reads "Cinema 10, None • None"
-		/// on Sunday, which is how the test tells a redrawn timetable from a
-		/// menu that merely relabelled itself.
-		static let aStopSkippedOnADay = "Cinema 10"
+		/// A stop Express Bus calls at once per round, so its row lists times
+		/// wherever the line runs. Unlike `aStop`, which the route visits twice
+		/// and ends the round on, with no departure to list.
+		static let aStopOnEveryRunningDay = "Food Co-op"
+		/// The empty state that replaces the timetable on a day the line does not
+		/// run. A prefix: a holiday appends its name. Matches `BusLine` in
+		/// `source/features/transportation/bus/line.tsx`.
+		static let lineNotRunning = "This line is not running today"
 		/// What a row shows in place of a departure the route skips; matches
 		/// `formatDeparture` in `source/features/transportation/bus/components/times.tsx`.
 		static let skippedDeparture = "None"

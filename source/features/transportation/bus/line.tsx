@@ -6,6 +6,7 @@ import {
 	collapseEarlierStops,
 	findBusStopStatus,
 	findBusTarget,
+	findClosure,
 	findRemainingDeparturesForStop,
 } from './lib'
 import {useLineState} from './use-line-state'
@@ -53,6 +54,12 @@ export function BusLine(props: Props): React.ReactNode {
 		line,
 		now: momentForSelectedDay,
 	})
+
+	// Named separately from `schedule` so the empty state can say why: the
+	// bus schedule found for a closure day is empty for the same reason a
+	// schedule not found at all is, but only one of those has a holiday to
+	// name.
+	let closure = findClosure(line.schedules, momentForSelectedDay)
 
 	// The timetable opens on where the bus is, with the stops behind it folded
 	// away.
@@ -110,7 +117,14 @@ export function BusLine(props: Props): React.ReactNode {
 					) : null}
 
 					{timetable.length === 0 ? (
-						<ContentUnavailableView systemImage="bus" title="This line is not running today." />
+						<ContentUnavailableView
+							systemImage="bus"
+							title={
+								closure
+									? `This line is not running today — ${closure.name}.`
+									: 'This line is not running today.'
+							}
+						/>
 					) : (
 						timetable.map((stop, index) => {
 							if (index < firstVisibleIndex) {

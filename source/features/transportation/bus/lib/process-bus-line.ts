@@ -5,12 +5,14 @@ import {parseTime} from './parse-time'
 import type {Moment} from 'moment'
 
 export const processBusSchedule =
-	(now: Moment) =>
+	(now: Moment, tz?: string) =>
 	(scheduleData: UnprocessedBusSchedule): BusSchedule => {
-		let times = scheduleData.times.map((timeList) => timeList.map(parseTime(now)))
+		let times = scheduleData.times.map((timeList) => timeList.map(parseTime(now, tz)))
 
 		let timetable = scheduleData.stops.map((stopName, i) => {
-			let coordinates = scheduleData.coordinates[stopName]
+			// A hand-maintained line can omit coordinates entirely; render it
+			// rather than throw.
+			let coordinates = scheduleData.coordinates?.[stopName]
 			let departures = times.map((timeList) => timeList[i])
 			let stop: BusTimetableEntry = {name: stopName, departures, coordinates}
 			return stop
@@ -18,10 +20,13 @@ export const processBusSchedule =
 
 		return {
 			days: scheduleData.days,
-			coordinates: scheduleData.coordinates,
+			// The input may omit coordinates; the output always carries a map,
+			// possibly empty, so nothing downstream needs an optional check.
+			coordinates: scheduleData.coordinates ?? {},
 			stops: scheduleData.stops,
 			times: times,
 			timetable: timetable,
+			closures: scheduleData.closures,
 		}
 	}
 
@@ -29,6 +34,7 @@ export function processBusLine(lineData: UnprocessedBusLine, now: Moment): BusLi
 	return {
 		line: lineData.line,
 		colors: lineData.colors,
-		schedules: lineData.schedules.map(processBusSchedule(now)),
+		timezone: lineData.timezone,
+		schedules: lineData.schedules.map(processBusSchedule(now, lineData.timezone)),
 	}
 }

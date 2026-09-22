@@ -1,4 +1,5 @@
 export {getScheduleForNow} from './get-schedule-for-now'
+export {findClosure} from './find-closure'
 export {parseTime} from './parse-time'
 export {processBusLine} from './process-bus-line'
 export {getCurrentBusIteration} from './get-current-bus-iteration'

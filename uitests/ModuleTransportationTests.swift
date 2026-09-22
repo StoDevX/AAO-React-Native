@@ -49,18 +49,17 @@ class ModuleTransportationTests: UITestCase {
 	}
 
 	/// Picking a day from the sheet's navigation bar has to redraw the
-	/// timetable beneath it, not just relabel the menu. Sunday's route skips a
-	/// stop every other day calls at, so that stop's row is the proof.
+	/// timetable beneath it, not just relabel the menu. The frozen clock is a
+	/// Saturday, which Express Bus runs, and it does not run on Sunday, so the
+	/// rows giving way to the empty state is the proof.
 	func testPickingADayRedrawsTheTimetable() throws {
 		TransportationScreen(app: app)
 			.navigate()
 			.openLine(TestIdentifiers.Transportation.aLine)
-			.verifyStopListsDepartures(TestIdentifiers.Transportation.aStopSkippedOnADay)
+			.verifyStopListsDepartures(TestIdentifiers.Transportation.aStopOnEveryRunningDay)
 			.pickDay(TestIdentifiers.Transportation.aDay)
-			.verifyStopSkipped(
-				TestIdentifiers.Transportation.aStopSkippedOnADay,
-				on: TestIdentifiers.Transportation.aDay)
 			.capture("Transportation - Sunday schedule")
+			.verifyLineNotRunning(on: TestIdentifiers.Transportation.aDay)
 	}
 
 	/// Other Modes has no tab of its own -- it is a set of sections below the

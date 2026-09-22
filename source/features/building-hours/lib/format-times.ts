@@ -1,7 +1,7 @@
 import moment from 'moment-timezone'
 import type {Moment} from 'moment-timezone'
 import type {SingleBuildingScheduleType} from '../types'
-import {formatTime} from '@frogpond/time-format'
+import {formatCompactTime, formatTime, RANGE_SEPARATOR} from '@frogpond/time-format'
 
 import {parseHours} from './parse-hours'
 
@@ -33,9 +33,10 @@ function specialLabel(time: Moment, zone?: string): 'Noon' | 'Midnight' | null {
 	return null
 }
 
-/** One end of a printed range: `Midnight`, `Noon`, or `10:30 AM`. */
-function formatSingleTime(time: Moment, locale?: string, zone?: string): string {
-	return specialLabel(time, zone) ?? formatTime(time, locale, zone)
+/** One end of a printed range: `Midnight`, `Noon`, `10:30 AM`, or `10:30AM`. */
+function formatSingleTime(time: Moment, locale?: string, zone?: string, compact = false): string {
+	let write = compact ? formatCompactTime : formatTime
+	return specialLabel(time, zone) ?? write(time, locale, zone)
 }
 
 /**
@@ -54,14 +55,26 @@ export function formatStatusTime(time: Moment, locale?: string): string {
  * showing the reader their own time -- the report form, where the hours being
  * edited are the campus's canonical schedule. Left out, the range follows the
  * device, which is what every reader-facing screen wants.
+ *
+ * `compact` writes the range the way a navigation bar needs it -- `4PM –
+ * Midnight` rather than `4 PM — Midnight` -- so a venue's hours match the
+ * meal windows a menu header draws beside them. The special labels stay: they
+ * are shorter than the digits they replace, not longer.
  */
-export type BuildingTimesOptions = {locale?: string; zone?: string}
+export type BuildingTimesOptions = {locale?: string; zone?: string; compact?: boolean}
 
 export function formatBuildingTimes(
 	schedule: SingleBuildingScheduleType,
 	m: Moment,
-	{locale, zone}: BuildingTimesOptions = {},
+	{locale, zone, compact = false}: BuildingTimesOptions = {},
 ): string {
 	let {open, close} = parseHours(schedule, m)
-	return `${formatSingleTime(open, locale, zone)} — ${formatSingleTime(close, locale, zone)}`
+	// The compact form is `formatCompactTimeRange`'s, borrowed rather than
+	// rebuilt -- only the Noon and Midnight labels are this module's own, and a
+	// range assembled here with a different dash would not match the meal
+	// windows a menu header draws beside it.
+	let dash = compact ? RANGE_SEPARATOR : ' — '
+	let from = formatSingleTime(open, locale, zone, compact)
+	let to = formatSingleTime(close, locale, zone, compact)
+	return `${from}${dash}${to}`
 }

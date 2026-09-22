@@ -148,12 +148,15 @@ export function BonAppHostedMenu(props: Props): React.ReactNode {
 
 	// The weekday alone under the cafe's name, where the line is already tight
 	// -- the date beside it said which today it is, which the reader knows --
-	// and the whole date over the meal picker, which has room for it.
+	// and the whole date over the meal picker, which has room for it. Both
+	// lengths of the weekday go over, since which one fits depends on whether a
+	// meal ends up sharing its line.
 	//
 	// Formatted days, not `now`: `currentMoment()` above builds a fresh Moment
 	// on every render, so a header depending on it would republish on every
 	// render and loop through the provider's state.
-	let weekday = formatWeekday(now, 'short')
+	let weekdayShort = formatWeekday(now, 'short')
+	let weekdayLong = formatWeekday(now, 'long')
 	let date = formatDate(now, 'medium')
 
 	// Collapsed to begin with: a menu opens as food rather than as chrome, and
@@ -162,22 +165,6 @@ export function BonAppHostedMenu(props: Props): React.ReactNode {
 	let toggleFilters = React.useCallback(() => {
 		setFiltersVisible((visible) => !visible)
 	}, [])
-
-	// Published from here rather than from the menu below, which does not
-	// exist until its query resolves -- the screen would spend that whole
-	// first load under the previous cafe's name.
-	usePublishMenuHeader(
-		{
-			name: props.name,
-			weekday,
-			date,
-			meals: mealHeader.menu,
-			time: mealHeader.time,
-			closed: mealHeader.closed,
-			filters: {visible: filtersVisible, toggle: toggleFilters},
-		},
-		isFocused,
-	)
 
 	let {
 		data: cafeMenu,
@@ -194,6 +181,24 @@ export function BonAppHostedMenu(props: Props): React.ReactNode {
 		isError: isCafeError,
 		isLoading: isCafeLoading,
 	} = useQuery(bonAppCafeOptions(props.cafe))
+
+	// Published from here rather than from the menu below, which does not
+	// exist until its query resolves -- the screen would spend that whole
+	// first load under the previous cafe's name.
+	usePublishMenuHeader(
+		{
+			name: props.name,
+			weekdayShort,
+			weekdayLong,
+			date,
+			meals: mealHeader.menu,
+			time: mealHeader.time,
+			closed: mealHeader.closed,
+			loading: isMenuLoading || isCafeLoading,
+			filters: {visible: filtersVisible, toggle: toggleFilters},
+		},
+		isFocused,
+	)
 
 	let {ignoreProvidedMenus = false} = props
 

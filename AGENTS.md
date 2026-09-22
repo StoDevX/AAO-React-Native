@@ -1,0 +1,202 @@
+# AAO React Native
+
+## Project Overview
+
+All About Olaf is a React Native mobile app for the St. Olaf College community. It provides students, faculty, and staff with access to campus info, dining menus, course catalogs, campus maps, and more.
+
+- **React Native 0.86.2** with **TypeScript**
+- **Expo Router 57** for navigation — file-based, with `experiments.typedRoutes` set in `app.config.ts`
+- **Redux Toolkit** for global state, **React Query 5** for server state
+- **Jest** + **React Native Testing Library** for testing
+- **Xcode Cloud** for builds and TestFlight submissions
+- Monorepo with internal packages in `modules/`
+
+## Commit Messages
+
+No conventional-commit prefixes. Write `Drop the migration planning docs`, not
+`chore: drop the migration planning docs`.
+
+Use the imperative mood, capitalised, with no trailing full stop. Most commits
+here are subject-only; when a body is warranted, use it to explain why the
+change was needed rather than restating the diff.
+
+## Code Conventions
+
+- TypeScript for all new code — no `any`
+- Functional components with hooks only
+- `StyleSheet.create()` for all styles — no inline style objects
+- **Naming:** PascalCase components, kebab-case files, camelCase variables/functions, UPPER_SNAKE_CASE constants
+- **Imports:** React → React Native → third-party → local. Named imports preferred.
+- **No Moment.js** — use `date-fns` or `Day.js` for date/time
+- Colors from `@frogpond/colors` — follow existing color system
+- oxfmt config in `.oxfmtrc.json` (tabs, single quotes, no semis)
+- **Comments:** JSDoc (`/** … */` or `/// `) to annotate a declaration — a function, component, type, prop, or exported constant. Plain `//` for a step or a reason inside a function body.
+- Comments say what the code does and why, never what it used to do or what changed
+
+## Architecture & Patterns
+
+- `source/features/` holds each feature's non-route code (e.g., `dining/`, `directory/`, `calendar/`); `app/` route files are the screens themselves
+- Barrel exports (`index.ts`) for clean imports
+- State: React Query for server state, Redux Toolkit for global app state, `useState` for component-local
+- iOS is the only supported platform
+- Email via `sendEmail`, phone via `callPhone` components
+- Error logging via Sentry integration
+- React Error Boundaries for component error handling
+
+## Mobile Priorities
+
+These patterns are especially important in this codebase:
+
+- **Lists:** Always use `FlatList`, never `ScrollView` for dynamic data. Memoize list items with `React.memo`.
+- **Safe areas:** Use `react-native-safe-area-context` — never hardcode status bar padding
+- **Touch targets:** Minimum 44x44pt on all interactive elements
+- **Accessibility:** Include `accessibilityLabel` and `accessibilityRole` on all interactive elements
+- **Offline:** Handle network unavailability gracefully — use cached data as fallback
+- **Performance:** Minimize bridge traffic; use `InteractionManager.runAfterInteractions()` for heavy work
+- **Memory:** Clean up subscriptions/listeners in `useEffect` cleanup functions
+- **Platform testing:** Test on iOS — verify platform-specific UI patterns
+
+## Testing
+
+- Jest + React Native Testing Library for component tests
+- Build and CI tooling is plain Node, so its tests run on `node:test` and live
+  beside their subject: `scripts/<name>.test.mjs` and `plugins/<name>.test.ts`.
+  Jest's `testMatch` requires a `__tests__/` segment, so a test sitting beside
+  its subject cannot end up under both runners.
+- A `plugins/*.test.ts` imports its subject with the extension —
+  `./with-alternate-icons.ts` — because Node strips the types and loads the
+  result as ESM. For the same reason a plugin importing a type as a value
+  breaks at runtime, so type imports there are `import type`.
+- Tests live adjacent to source files or in `__tests__/` directories
+- Mock native modules and external APIs
+- Descriptive test names; group with `describe` blocks
+- `beforeEach`/`afterEach` for setup/cleanup
+- **XCUITest debugging:** iOS UI tests live in `uitests/` and run as sharded CI jobs. When a test fails, two artifacts are uploaded per shard: `uitest-attachments-{shard}` (screenshots extracted via `xcrun xcresulttool export attachments`) and `uitest-results-{shard}.xcresult` (the full XCResult bundle). Start with the attachments for a quick look; open the `.xcresult` bundle in Xcode (or query via `xcrun xcresulttool get --format json --path uitest-results.xcresult`) for full logs, traces, and per-test activity.
+
+**Jest cannot see what a view looks like.** The test environment has no layout
+pass, no compositor, and no hit testing. A rendered view there is a tree of the
+props we passed — sometimes through stand-ins for components that cannot load at
+all. So a test asserting a colour, a size, a spacing, a truncation, or a tap
+target is asserting our own input, not the result a user gets, and it will keep
+passing while the screen is broken on a device. A row once shipped untappable
+because its button style hit-tested only drawn content; every test around it
+passed.
+
+In Jest, assert what is genuinely decided in JavaScript: pure functions,
+reducers, parsers, data shaping, hooks, and **which branch a component chose** —
+the empty state versus the error state versus the list. Those are real decisions
+with real logic behind them.
+
+Appearance and interaction — tint, spacing, alignment, truncation, hit targets,
+menu and sheet presentation, safe-area behaviour — belong in an XCUITest under
+`uitests/`, verified against a screenshot someone actually opens.
+
+If something cannot be checked on the simulator, say so. The failure mode is not
+a weak test; it is a weak test that makes a broken feature look covered.
+
+## Development Commands
+
+pnpm is the package manager. npm and yarn both choke on the `workspace:*`
+protocol the modules use.
+
+```bash
+mise run lint         # oxlint
+mise run format       # oxfmt; run `format:check` to validate instead
+mise run test         # every test
+mise run test:jest    # Jest: app, source, modules
+mise run test:node    # node:test: scripts/, plugins/
+mise run tsc          # Type check
+mise run prebuild     # Generate ios/ from app.config.ts, and install pods
+```
+
+### App Variants
+
+A development build can sit alongside the shipping app on one device.
+`APP_VARIANT` selects the build at generation time; unset means production, so
+every default path is unchanged.
+
+| `APP_VARIANT` | Bundle identifier | Home screen | Icon |
+| --- | --- | --- | --- |
+| *(unset)* / `production` | `NFMTHAZVS9.com.drewvolz.stolaf` | All About Olaf | the windmill |
+| `development` | `…stolaf.dev` | AAO Dev | Old Main with a diagonal DEV ribbon across the top-right corner across the top-right corner |
+
+```bash
+APP_VARIANT=development mise run prebuild   # then build to your device
+```
+
+The URL scheme varies too — two apps claiming one scheme is undefined behaviour.
+
+TestFlight and App Store builds both ship the production identity, so a
+TestFlight build replaces the App Store app as it always has.
+
+The dev icon is generated rather than drawn by hand. To regenerate it after an
+app icon change:
+
+```bash
+magick -size 520x170 xc:none -gravity center \
+  -font '/System/Library/Fonts/Supplemental/Arial Bold.ttf' \
+  -pointsize 116 -kerning 10 -fill white -annotate +0+0 'DEV' \
+  -background none -rotate 45 -trim +repage /tmp/devtext.png
+magick images/icons/app-icon.png \
+  -fill '#D0021B' -draw 'polygon 1024,424 600,0 840,0 1024,184' /tmp/base.png
+magick /tmp/base.png /tmp/devtext.png -geometry +753+44 -composite \
+  -alpha off -strip images/icons/app-icon-development.png
+```
+
+Run the result through `oxipng -o max --strip safe --zopfli`; ImageMagick's own
+output is roughly a third larger.
+
+**A build to a local device needs nothing beyond `mise run device "<DEVICE
+NAME>"`.** Sending the dev variant through TestFlight or the App Store is a
+different matter: that bundle identifier would need its own App Store Connect
+record, which this config does not create.
+
+### Local Server Discovery
+
+In dev mode (debug builds, or with the dev-mode override enabled in Settings), the Settings → Server URL screen will automatically discover a `ccc-server` instance running on the same network via mDNS. Discovered servers appear as tappable cells; tapping one fills the URL field.
+
+To use this:
+1. Start `ccc-server` with mDNS advertisement enabled: `mise run stolaf-college:mdns` (in the `ccc-server` repo)
+2. Run a debug build of the app on a device on the same network
+3. Navigate to Settings → Server URL — the server will appear automatically
+
+The feature uses `react-native-zeroconf` (native pod). If the pod hasn't been linked yet (`mise run prebuild`), discovery is silently skipped — the screen won't crash.
+
+### Dining Hours
+
+`data/building-hours/1-3-stav.yaml` and `1-1-cage.yaml` are maintained by a
+weekly scrape of Bon Appétit's café pages, which opens a pull request when they
+fall behind. Edit `scripts/bonapp-overrides.yaml` rather than those two files —
+a hand edit to a `schedule:` block in them is reverted by the next run.
+
+```bash
+mise run scrape-dining                   # update the owned files now
+node scripts/scrape-bonapp.mjs --check   # report without writing; exits 1 on drift
+```
+
+The Lion's Pause, its pizza delivery, the C-Store and every `breakSchedule` are
+hand-maintained. Bon Appétit publishes no page for the Pause, and its hours for
+The Cave disagree with the college's own — each run reports that disagreement
+rather than resolving it.
+
+Bon Appétit's café pages are the better source generally: the Weekly Schedule
+table is in the server HTML, and `wp.stolaf.edu/buntrock/eat/` has been wrong
+about Stav twice.
+
+## Agent Workflow
+
+**Session startup:** Always run `mise run agent:setup` at the start of every session. This installs dependencies and bundles data files.
+
+**Before committing:** Always run `mise run agent:pre-commit` before committing any changes. This formats code with oxfmt, runs oxlint, checks TypeScript types, runs Jest tests, and checks that every module's `@frogpond` dependencies and the lockfile match its package.json. Do not commit if any step fails.
+
+**Dependency upgrades:** Whenever you upgrade a dependency whose version is mentioned in this file (e.g., React Native, React Navigation, React Query, Redux Toolkit, TypeScript, Jest), update the version reference in CLAUDE.md as part of the same change. Stale version references in this file mislead future sessions about the project's current state.
+
+## Superpowers Skills Framework
+
+This project relies on the [Superpowers](https://github.com/obra/superpowers)
+skills framework, provided by the `superpowers` agent plugin.
+
+**If the skill listing at session start does not include `using-superpowers`,
+`brainstorming`, `test-driven-development`, and the rest of the Superpowers
+skills below, the plugin is not installed or not enabled on this machine. Warn
+the user before proceeding.**

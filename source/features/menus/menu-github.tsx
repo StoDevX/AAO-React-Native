@@ -9,12 +9,25 @@ import {useQuery} from '@tanstack/react-query'
 import {useIsFocused, useRouter} from 'expo-router'
 import type {GithubMenuType} from './types'
 import {now as currentMoment} from '@frogpond/timer'
+import {formatWeekday} from '@frogpond/time-format'
 import type {MealHeaderState} from '@frogpond/food-menu'
+import {buildingByNameOptions} from '../building-hours/query'
+import {cafeHours} from './lib/cafe-hours'
 import {usePublishMenuHeader} from './menu-header'
 
 type Props = {
 	name: string
 	loadingMessage: string[]
+	/**
+	 * The venue in `spaces/hours` whose schedule these are, e.g. `The Pause
+	 * Kitchen`, or nothing for a menu whose hours we do not publish.
+	 *
+	 * Named by the route rather than derived from `name`: the two differ, and
+	 * the venue is a key into a file the college maintains by hand. A name it
+	 * no longer matches costs the header its hours, which is the same blank
+	 * line this screen drew before it had any.
+	 */
+	venue?: string
 }
 
 // Module-level so its identity is stable across renders. `useQuery` reports
@@ -56,17 +69,44 @@ export function GitHubHostedMenu(props: Props): React.ReactNode {
 		setFiltersVisible((visible) => !visible)
 	}, [])
 
+	// The hours come from the venue's building schedule rather than from the
+	// menu, which carries none: `transformPauseMenu` stands up one all-day meal
+	// in place of dayparts nobody publishes for the Pause, and `formatMealTimes`
+	// reports a whole-day window as no window at all.
+	//
+	// Shares the Campus screen's cache key, so a reader who has been there pays
+	// nothing for this.
+	let {data: venue, isLoading: isVenueLoading} = useQuery({
+		...buildingByNameOptions('stolaf', props.venue ?? ''),
+		// A disabled query is pending but never fetching, which React Query
+		// reports as `isLoading: false` -- so the header below needs no guard of
+		// its own for a screen that named no venue.
+		enabled: Boolean(props.venue),
+	})
+
+	// Read off the clock rather than off `menuDate`, which is when the menu was
+	// fetched. The day and the window both come back as strings, so a fresh
+	// `Moment` on every render does not republish the header and loop through
+	// the provider's state.
+	let clock = currentMoment().tz(timezone())
+	let weekdayShort = formatWeekday(clock, 'short')
+	let weekdayLong = formatWeekday(clock, 'long')
+	let hours = cafeHours(venue, clock)
+
 	usePublishMenuHeader(
 		{
-			// The Pause's menu is a file we keep rather than a day's service:
-			// it does not turn over at midnight the way a BonApp cafe's does,
-			// and dating it would promise a freshness it does not have.
+			// The day is the hours' day rather than the menu's: this menu is a
+			// file we keep rather than a day's service, but the hours under its
+			// name do turn over, and a reader checking whether the Pause is open
+			// is asking about today.
 			name: props.name,
-			weekday: null,
+			weekdayShort,
+			weekdayLong,
 			date: null,
 			meals: mealHeader.menu,
-			time: mealHeader.time,
-			closed: mealHeader.closed,
+			time: hours.time ?? mealHeader.time,
+			closed: mealHeader.closed || hours.closed,
+			loading: isLoading || isVenueLoading,
 			filters: {visible: filtersVisible, toggle: toggleFilters},
 		},
 		isFocused,

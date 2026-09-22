@@ -1,7 +1,8 @@
 import {expect, test} from '@jest/globals'
-import {processBusSchedule} from '../process-bus-line'
+import {processBusLine, processBusSchedule} from '../process-bus-line'
 import {time} from './moment.helper'
 import {UnprocessedBusLine} from '../../types'
+import moment from 'moment-timezone'
 
 // prettier-ignore
 const line: UnprocessedBusLine = {
@@ -30,4 +31,66 @@ const line: UnprocessedBusLine = {
 test('processBusSchedule returns a timetable property', () => {
 	let actual = processBusSchedule(time('12:00pm'))(line.schedules[0])
 	expect('timetable' in actual).toBe(true)
+})
+
+test('processBusSchedule carries closures through to the processed schedule', () => {
+	let closures = [{date: '2026-09-07', name: 'Labor Day'}]
+	let scheduleWithClosures = {...line.schedules[0], closures}
+
+	let actual = processBusSchedule(time('12:00pm'))(scheduleWithClosures)
+
+	expect(actual.closures).toEqual(closures)
+})
+
+test('processBusSchedule leaves closures undefined for a schedule with none', () => {
+	let actual = processBusSchedule(time('12:00pm'))(line.schedules[0])
+
+	expect(actual.closures).toBeUndefined()
+})
+
+test('processBusSchedule does not throw for a schedule with no coordinates key', () => {
+	let {coordinates: _coordinates, ...scheduleWithoutCoordinates} = line.schedules[0]
+
+	let process = () => processBusSchedule(time('12:00pm'))(scheduleWithoutCoordinates)
+
+	expect(process).not.toThrow()
+
+	let actual = process()
+	for (let stop of actual.timetable) {
+		expect(stop.coordinates).toBeUndefined()
+	}
+})
+
+test("processBusLine parses times in the line's own timezone", () => {
+	let now = moment.tz('2026-08-20 12:00', 'America/Chicago')
+	let central = processBusLine({...line, timezone: 'America/Chicago'}, now)
+	let eastern = processBusLine({...line, timezone: 'America/New_York'}, now)
+
+	expect(central.schedules[0].times[0][0]?.valueOf()).not.toEqual(
+		eastern.schedules[0].times[0][0]?.valueOf(),
+	)
+})
+
+test("processBusLine carries the line's timezone through to its output, for getScheduleForNow and any other reader", () => {
+	let now = moment.tz('2026-08-20 12:00', 'America/Chicago')
+	let processed = processBusLine({...line, timezone: 'America/Chicago'}, now)
+
+	expect(processed.timezone).toBe('America/Chicago')
+})
+
+test('processBusLine leaves timezone undefined for a line that carries none', () => {
+	let now = moment.tz('2026-08-20 12:00', 'America/Chicago')
+	let processed = processBusLine(line, now)
+
+	expect(processed.timezone).toBeUndefined()
+})
+
+test('processBusLine falls back to the app timezone for a line that carries none', () => {
+	let now = moment.tz('2026-08-20 12:00', 'America/Chicago')
+	let withoutZone = processBusLine(line, now)
+	let withCentral = processBusLine({...line, timezone: 'America/Chicago'}, now)
+
+	expect(withoutZone.schedules[0].times[0][0]?.valueOf()).toEqual(
+		withCentral.schedules[0].times[0][0]?.valueOf(),
+	)
 })

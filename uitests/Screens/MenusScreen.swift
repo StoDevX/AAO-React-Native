@@ -46,9 +46,35 @@ struct MenusScreen: Screen {
 	@discardableResult
 	func verifyHeaderNames(_ name: String) -> Self {
 		XCTAssertTrue(
-			app.navigationBars.staticTexts[name].waitForExistence(timeout: 30),
+			headerTitled(name).waitForExistence(timeout: 30),
 			"the header should name \(name)")
 		return self
+	}
+
+	/// The navigation title of a screen whose meal this suite does not pin
+	/// down, found by the name it starts with.
+	///
+	/// Queried the same way as `mealPicker` and for the same reason: the title
+	/// is a SwiftUI view hosted in the bar, reading as one element carrying the
+	/// name and whatever line sits beneath it, and it surfaces as neither a
+	/// plain button nor static text reliably.
+	func headerTitled(_ name: String) -> XCUIElement {
+		app.navigationBars.descendants(matching: .any)
+			.matching(NSPredicate(format: "label BEGINSWITH %@", name))
+			.firstMatch
+	}
+
+	/// A title of this screen that carries a line beneath its name.
+	///
+	/// The title composes one label out of the name and the line under it, so
+	/// the two are told apart by the comma that joins them. Its absence is what
+	/// says a screen has no second line at all -- a claim `headerTitled` cannot
+	/// make, since a bare `Stack.Screen` title sits in the same bar and answers
+	/// to the name on its own.
+	func headerDetailed(_ name: String) -> XCUIElement {
+		app.navigationBars.descendants(matching: .any)
+			.matching(NSPredicate(format: "label BEGINSWITH %@", "\(name), "))
+			.firstMatch
 	}
 
 	/// Whether the filter row is on screen, named by one of its triggers.
