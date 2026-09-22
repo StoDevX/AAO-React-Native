@@ -50,12 +50,14 @@ export function cafeHours(building: BuildingType | undefined, m: Moment): CafeHo
 		return UNKNOWN
 	}
 
+	let status = getShortBuildingStatus(building, m)
+
 	// `Chapel` counts as shut -- the doors are closed either way, and a
 	// navigation bar has no room to say why -- and only the status knows about
 	// chapel at all. Everything else is a venue with something to say: `Almost
 	// Closed` is still serving, and `Almost Open` is about to, which is exactly
 	// when the window under the name is worth reading.
-	if (SHUT.has(getShortBuildingStatus(building, m))) {
+	if (SHUT.has(status)) {
 		return {time: null, closed: true}
 	}
 
@@ -74,7 +76,7 @@ export function cafeHours(building: BuildingType | undefined, m: Moment): CafeHo
 		}
 
 		let schedule = schedulesInEffect(set.hours, m).find(
-			(candidate) => getScheduleStatusAtMoment(candidate, m) !== 'Closed',
+			(candidate) => getScheduleStatusAtMoment(candidate, m) === status,
 		)
 
 		if (schedule) {
