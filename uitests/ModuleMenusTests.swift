@@ -45,19 +45,19 @@ class ModuleMenusTests: UITestCase {
 		XCTAssertTrue(carleton.waitForExistence(timeout: 30), "the Carleton tab should be visible")
 		carleton.tap()
 
+		let chooserTitle = MenusScreen(app: app).headerTitled(TestIdentifiers.Menus.carleton)
 		XCTAssertTrue(
-			app.navigationBars.staticTexts[TestIdentifiers.Menus.carleton]
-				.waitForExistence(timeout: 30),
+			chooserTitle.waitForExistence(timeout: 30),
 			"the chooser should name itself Carleton")
 		XCTAssertFalse(
 			app.navigationBars.staticTexts[TestIdentifiers.Menus.pause].exists,
 			"the chooser should not carry a cafe's name")
-		XCTAssertFalse(
-			app.navigationBars.staticTexts
-				.matching(
-					NSPredicate(format: "label CONTAINS %@", TestIdentifiers.Menus.headerSeparator)
-				)
-				.firstMatch.exists,
+
+		// The title reads as one element carrying the name and the line beneath
+		// it, so a chooser with no line to carry is a label that is the name and
+		// stops -- anything after it would arrive as `Carleton, ...`.
+		XCTAssertEqual(
+			chooserTitle.label, TestIdentifiers.Menus.carleton,
 			"the chooser shows no single day, so it should carry no line beneath its name")
 	}
 

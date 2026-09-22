@@ -230,10 +230,6 @@ struct TestIdentifiers {
 		/// meal below.
 		static let frozenWeekday = "Sat"
 
-		/// The separator between the parts of the header's second line. Used to
-		/// assert a screen has no such line at all: only a day-and-meal
-		/// subtitle puts one in a navigation bar.
-		static let headerSeparator = " • "
 
 		/// The meal that frozen noon lands in, and so the one every menu screen
 		/// opens on.
@@ -246,8 +242,9 @@ struct TestIdentifiers {
 		static let filtersButton = "Filters"
 
 		/// The start of the navigation title's label, which is also the meal
-		/// picker's button: SwiftUI composes it as the cafe's name, a comma,
-		/// then the line beneath -- `Stav Hall, Sat • Lunch • 8:30AM – 12PM`.
+		/// picker's button. The title writes its own label rather than letting
+		/// SwiftUI compose one, so the bullets the eye reads as separators are
+		/// the commas the ear needs -- `Stav Hall, Sat, Lunch, 8:30AM to 12PM`.
 		///
 		/// A prefix, because the window that finishes it is not the same string
 		/// on every machine. A meal's hours are campus clock readings printed
@@ -256,7 +253,7 @@ struct TestIdentifiers {
 		/// runner. Matching it exactly would pin the suite to whoever wrote it.
 		/// What the window says is `meal-times.test.ts`' business.
 		static func header(_ cafe: String, meal: String) -> String {
-			"\(cafe), \(frozenWeekday)\(headerSeparator)\(meal)"
+			"\(cafe), \(frozenWeekday), \(meal)"
 		}
 	}
 
