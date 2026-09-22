@@ -12,7 +12,7 @@
   // require-atomic-updates, react/jsx-no-bind, react/jsx-sort-props,
   // react/no-access-state-in-setstate, react/no-typos, react/sort-comp,
   // react/sort-prop-types. Most are stylistic (prop/method ordering) or only
-  // meaningful for class components, which CLAUDE.md steers this codebase
+  // meaningful for class components, which AGENTS.md steers this codebase
   // away from (functional components with hooks only) -- two class
   // components remain (modules/add-to-device-calendar/add-to-calendar.ts,
   // modules/event-list/event-row.tsx), so no-typos/no-access-state-in-setstate
@@ -20,7 +20,7 @@
   //
   // eslint-plugin-import's `order` rule -- the rule #7093 actually asked
   // for, to enforce the external/internal/relative import grouping this
-  // file's CLAUDE.md documents under "Imports" -- has no oxlint port either;
+  // file's AGENTS.md documents under "Imports" -- has no oxlint port either;
   // neither does `no-unresolved` (module resolution is instead covered here
   // by the typescript plugin's typeAware type-checking). The rest of
   // eslint-plugin-import's `recommended` ruleset does have oxlint

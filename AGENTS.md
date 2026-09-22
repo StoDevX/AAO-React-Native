@@ -30,7 +30,7 @@ change was needed rather than restating the diff.
 - **No Moment.js** — use `date-fns` or `Day.js` for date/time
 - Colors from `@frogpond/colors` — follow existing color system
 - oxfmt config in `.oxfmtrc.json` (tabs, single quotes, no semis)
-- **Comments:** JSDoc (`/** … */`) to annotate a declaration — a function, component, type, prop, or exported constant. Plain `//` for a step or a reason inside a function body.
+- **Comments:** JSDoc (`/** … */` or `/// `) to annotate a declaration — a function, component, type, prop, or exported constant. Plain `//` for a step or a reason inside a function body.
 - Comments say what the code does and why, never what it used to do or what changed
 
 ## Architecture & Patterns
@@ -193,60 +193,10 @@ about Stav twice.
 
 ## Superpowers Skills Framework
 
-This project uses the [Superpowers](https://github.com/obra/superpowers) skills framework. You have superpowers.
+This project relies on the [Superpowers](https://github.com/obra/superpowers)
+skills framework, provided by the `superpowers` agent plugin.
 
-**Below is your introduction to using skills. For all other skills, use the `Skill` tool.**
-
-Skills are located in `.claude/skills/`. Agents are in `.claude/agents/`. Commands are in `.claude/commands/`.
-
-### Available Skills
-
-| Skill | Purpose |
-|-------|---------|
-| `using-superpowers` | Introduction to the skills system |
-| `brainstorming` | Socratic design refinement before coding |
-| `writing-plans` | Detailed implementation plans |
-| `executing-plans` | Batch execution with checkpoints |
-| `subagent-driven-development` | Fast iteration with two-stage review |
-| `dispatching-parallel-agents` | Concurrent subagent workflows |
-| `test-driven-development` | RED-GREEN-REFACTOR cycle |
-| `systematic-debugging` | 4-phase root cause process |
-| `verification-before-completion` | Ensure it's actually fixed |
-| `requesting-code-review` | Pre-review checklist |
-| `receiving-code-review` | Responding to feedback |
-| `using-git-worktrees` | Parallel development branches |
-| `auditing-a-finished-branch` | Test-value and comment audit before review |
-| `finishing-a-development-branch` | Merge/PR decision workflow |
-| `writing-skills` | Create new skills |
-| `add-screen` | Scaffold and integrate a new screen into the app |
-| `build-to-device` | Put a build on a physical iPhone for manual checks |
-
-### Available Agents
-
-| Agent | Purpose |
-|-------|---------|
-| `code-reviewer` | Reviews completed project steps against plans and coding standards |
-
-### How It Works
-
-**Invoke relevant skills BEFORE any response or action.** Even a 1% chance a skill might apply means you should invoke the skill to check. If an invoked skill turns out to be wrong for the situation, you don't need to use it.
-
-#### Red Flags - These thoughts mean STOP, you're rationalizing:
-
-| Thought | Reality |
-|---------|---------|
-| "This is just a simple question" | Questions are tasks. Check for skills. |
-| "I need more context first" | Skill check comes BEFORE clarifying questions. |
-| "Let me explore the codebase first" | Skills tell you HOW to explore. Check first. |
-| "This doesn't need a formal skill" | If a skill exists, use it. |
-| "The skill is overkill" | Simple things become complex. Use it. |
-| "I'll just do this one thing first" | Check BEFORE doing anything. |
-
-#### Skill Priority
-
-When multiple skills could apply, use this order:
-1. **Process skills first** (brainstorming, debugging) - these determine HOW to approach the task
-2. **Implementation skills second** - these guide execution
-
-"Let's build X" -> brainstorming first, then implementation skills.
-"Fix this bug" -> debugging first, then domain-specific skills.
+**If the skill listing at session start does not include `using-superpowers`,
+`brainstorming`, `test-driven-development`, and the rest of the Superpowers
+skills below, the plugin is not installed or not enabled on this machine. Warn
+the user before proceeding.**

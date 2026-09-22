@@ -196,7 +196,7 @@ simulator that inherits an Eastern Mac's zone shows Stav's 7:15am breakfast as
 
 Screen objects live in `uitests/Screens/`, one struct per screen conforming to
 `Screen`, with `@discardableResult` methods returning `Self` so tests read as a
-chain. See `uitests/CLAUDE.md` for the conventions.
+chain. See `uitests/AGENTS.md` for the conventions.
 
 **Adding *or deleting* a `.swift` file needs `mise run prebuild` before it will
 build.** `plugins/with-xcuitest-target.ts` walks `uitests/` at prebuild time and
