@@ -16,9 +16,8 @@ export type CafeHours = {
 }
 
 /**
- * The Pause's entry in `spaces/hours`, which is not what the menu screen calls
- * itself: the tab reads `The Pause`, the venue publishing the hours is `The
- * Pause Kitchen`.
+ * The Pause's entry in `spaces/hours`, and the title of its menu screen. The
+ * tab keeps its shorter label, `The Pause`.
  *
  * A constant rather than a literal at the call site so that
  * `cafe-hours.test.ts` can hold it against the bundled buildings -- the name is

@@ -22,10 +22,10 @@ type Props = {
 	 * The venue in `spaces/hours` whose schedule these are, e.g. `The Pause
 	 * Kitchen`, or nothing for a menu whose hours we do not publish.
 	 *
-	 * Named by the route rather than derived from `name`: the two differ, and
-	 * the venue is a key into a file the college maintains by hand. A name it
-	 * no longer matches costs the header its hours, which is the same blank
-	 * line this screen drew before it had any.
+	 * Named by the route rather than derived from `name`: the venue is a key
+	 * into a file the college maintains by hand, and a screen may title itself
+	 * without publishing hours. A name it no longer matches costs the header its
+	 * hours, which is the same blank line this screen drew before it had any.
 	 */
 	venue?: string
 }

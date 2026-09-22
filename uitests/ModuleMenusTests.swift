@@ -44,7 +44,7 @@ class ModuleMenusTests: UITestCase {
 
 		menus
 			.openCafe(TestIdentifiers.Menus.pause)
-			.verifyHeaderNames(TestIdentifiers.Menus.pause)
+			.verifyHeaderNames(TestIdentifiers.Menus.pauseTitle)
 
 		XCTAssertFalse(
 			menus.headerTitled(stav).exists,
@@ -58,7 +58,7 @@ class ModuleMenusTests: UITestCase {
 			menus.headerTitled(TestIdentifiers.Menus.carleton).waitForExistence(timeout: 30),
 			"the chooser should name itself Carleton")
 		XCTAssertFalse(
-			menus.headerTitled(TestIdentifiers.Menus.pause).exists,
+			menus.headerTitled(TestIdentifiers.Menus.pauseTitle).exists,
 			"the chooser should not carry a cafe's name")
 
 		// The title reads as one element carrying the name and the line beneath

@@ -210,6 +210,10 @@ struct TestIdentifiers {
 		/// than whatever Bon Appétit is serving today.
 		static let pause = "The Pause"
 
+		/// The Pause's navigation title, which names the venue publishing its
+		/// hours rather than repeating the tab's shorter label.
+		static let pauseTitle = "The Pause Kitchen"
+
 		/// Two stations from that file, and one item from each. The Stations
 		/// filter asks for a menu outright, so its shape does not depend on how
 		/// many stations a cafe happens to serve.
