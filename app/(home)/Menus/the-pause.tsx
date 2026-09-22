@@ -27,6 +27,7 @@ export default function ThePausePage(): React.ReactNode {
 				'Fixing the oven…',
 			]}
 			name="The Pause"
+			venue="The Pause Kitchen"
 		/>
 	)
 }

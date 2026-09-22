@@ -33,18 +33,54 @@ export function menuSubtitle(parts: SubtitleParts): string {
 }
 
 /**
- * Whether a meal is named after the cafe serving it.
+ * Words that name a kind of place rather than a particular one, and so say
+ * nothing about which cafe is which. `Weitz Café` and `Weitz Center` are one
+ * building under two of them.
  *
- * Compared past casing and surrounding space, since the two names reach us from
- * different places -- the cafe's from the route that drew the screen, the
- * meal's from whatever BonApp published that morning.
+ * Both spellings of `cafe`, rather than folding the accent away: `normalize`
+ * is the obvious tool and Hermes is not somewhere to find out whether it
+ * behaves, since Jest runs on Node and would pass either way.
+ */
+const PLACE_WORDS = new Set([
+	'a',
+	'an',
+	'cafe',
+	'café',
+	'center',
+	'centre',
+	'commons',
+	'hall',
+	'kitchen',
+	'the',
+])
+
+/** The words in a name that actually pick out a place, lowercased. */
+function distinctiveWords(name: string): string[] {
+	return name
+		.toLowerCase()
+		.split(/[^\p{L}\p{N}]+/u)
+		.filter((word) => word && !PLACE_WORDS.has(word))
+}
+
+/**
+ * Whether a meal says nothing the cafe's name has not already said.
+ *
+ * BonApp names a daypart after its venue often enough to be worth handling:
+ * The Cage's only daypart is `The Cage`, and Weitz Center serves a `Weitz
+ * Café`. Drawn under the cafe's own name, either reads as a stutter.
+ *
+ * Every distinctive word has to be accounted for, not merely one of them -- a
+ * `Weitz Lunch` is still a lunch, and dropping it would cost the reader the
+ * only word that said which meal they were looking at. A meal made entirely of
+ * place words has nothing of its own to lose.
  */
 function namesTheCafe(mealName: string | null, cafeName: string): boolean {
 	if (!mealName) {
 		return false
 	}
 
-	return mealName.trim().toLowerCase() === cafeName.trim().toLowerCase()
+	let cafeWords = new Set(distinctiveWords(cafeName))
+	return distinctiveWords(mealName).every((word) => cafeWords.has(word))
 }
 
 /**

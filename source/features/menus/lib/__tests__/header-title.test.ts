@@ -71,6 +71,40 @@ describe('menuSubtitle', () => {
 		).toBe('')
 	})
 
+	// Carleton's Weitz Center serves a daypart called `Weitz Café`, which is the
+	// building again rather than a meal. It adds nothing the title above it does
+	// not already say, so it goes the way `The Cage` does.
+	test('drops a meal that only repeats what the cafe is called', () => {
+		expect(
+			menuSubtitle({
+				...SUNDAY,
+				cafeName: 'Weitz Center',
+				mealName: 'Weitz Café',
+				time: '7:30AM – 3PM',
+			}),
+		).toBe('Sunday • 7:30AM – 3PM')
+	})
+
+	// The same cafe's other daypart. A meal keeps its name as long as it carries
+	// a word of its own, so matching a *part* of the cafe's name is not enough.
+	test('keeps a meal that carries a word the cafe does not', () => {
+		expect(
+			menuSubtitle({
+				...SUNDAY,
+				cafeName: 'Weitz Center',
+				mealName: 'Weitz Lunch',
+				time: '11AM – 3PM',
+			}),
+		).toBe('Sun • Weitz Lunch • 11AM – 3PM')
+	})
+
+	// `The` is the whole of what these two share, and an article is not a name.
+	test('does not confuse two cafes that share an article', () => {
+		expect(
+			menuSubtitle({...SUNDAY, cafeName: 'The Pause', mealName: 'The Cage', time: '7:30AM – 8PM'}),
+		).toBe('Sun • The Cage • 7:30AM – 8PM')
+	})
+
 	test('names a meal that is not the cafe over again', () => {
 		expect(
 			menuSubtitle({...SUNDAY, cafeName: 'The Cage', mealName: 'Breakfast', time: '9AM – 10:30AM'}),
