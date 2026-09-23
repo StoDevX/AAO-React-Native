@@ -177,6 +177,7 @@ function StudentOrgsView(): React.ReactNode {
 				emptyText={`No results found for "${searchQuery}".`}
 				onPressOrg={onPressOrg}
 				onRefresh={refetchOrgs}
+				query={searchQuery}
 				sections={sections}
 			/>
 		</>

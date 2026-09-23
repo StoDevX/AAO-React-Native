@@ -500,6 +500,8 @@ struct TestIdentifiers {
 	enum StudentOrgs {
 		/// Matches CATEGORY_GRID_ID in app/(home)/StudentOrgs/index.tsx.
 		static let categoryGrid = "student-orgs-category-grid"
+		/// Matches RESULTS_LIST_ID in source/features/student-orgs/org-results-list.tsx.
+		static let resultsList = "student-orgs-results-list"
 	}
 
 	// MARK: - Campus

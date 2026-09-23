@@ -96,6 +96,7 @@ function CategoryOrgsView(): React.ReactNode {
 				}
 				onPressOrg={onPressOrg}
 				onRefresh={refresh}
+				query={searchQuery}
 				sections={sections}
 			/>
 		</>
