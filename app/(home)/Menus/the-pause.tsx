@@ -27,7 +27,9 @@ export default function ThePausePage(): React.ReactNode {
 				'Putting ice cream on the cookies…',
 				'Fixing the oven…',
 			]}
-			name="The Pause"
+			// Titled by the venue whose hours sit under the name, rather than by the
+			// tab's shorter label.
+			name={PAUSE_VENUE}
 			venue={PAUSE_VENUE}
 		/>
 	)

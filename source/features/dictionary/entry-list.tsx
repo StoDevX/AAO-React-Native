@@ -13,6 +13,7 @@ import {
 	buttonStyle,
 	font,
 	foregroundStyle,
+	id,
 	lineLimit,
 	listStyle,
 	refreshable,
@@ -79,6 +80,10 @@ export function EntryList({
 					await onRetry()
 				}),
 				accessibilityIdentifier('dictionary-list'),
+				// A new query is a new list, starting from the top. Without this
+				// the list keeps the offset it had, and results that sort above it
+				// land offscreen.
+				id(query),
 			]}
 		>
 			{groups.map((group) => (

@@ -5,16 +5,4 @@
 # These are meant to be deleted. Permanent editorial data belongs in
 # _curation.yaml instead.
 
-repairs:
-  - id: express-service-window
-    reason: >-
-      The three Express service_ids in calendar.txt all ended 2026-06-08, so
-      the feed says the Express does not run at all. The 8/1/2026 brochure
-      says Monday-Saturday, 3:00pm-10:00pm during the Carleton and St. Olaf
-      school year. Drop this once Trillium publishes a feed covering the
-      current term.
-    written_against: 'UTC: 10-Dec-2025 15:23'
-    expires: 2027-01-01
-    route: '77629'
-    set:
-      days: [Mo, Tu, We, Th, Fr, Sa]
+repairs: []

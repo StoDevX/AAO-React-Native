@@ -2,6 +2,7 @@ import * as React from 'react'
 import {StyleSheet, View, Text, TouchableOpacity, useColorScheme} from 'react-native'
 import {Button} from '@frogpond/button'
 import NetworkLogger, {getBackHandler} from 'react-native-network-logger'
+import {SafeAreaView} from 'react-native-safe-area-context'
 import * as c from '@frogpond/colors'
 import {Stack, useNavigation} from 'expo-router'
 
@@ -31,24 +32,29 @@ export default function NetworkLoggerPage(): React.ReactNode {
 				/>
 			</Stack.Toolbar>
 
-			<View style={styles.header}>
-				<TouchableOpacity hitSlop={styles.hitSlop} onPress={backHandler} style={styles.navButton}>
-					<Text style={styles.backButtonText}>‹</Text>
-				</TouchableOpacity>
+			<SafeAreaView edges={['left', 'right']} style={styles.screen}>
+				<View style={styles.header}>
+					<TouchableOpacity hitSlop={styles.hitSlop} onPress={backHandler} style={styles.navButton}>
+						<Text style={styles.backButtonText}>‹</Text>
+					</TouchableOpacity>
 
-				<Text accessibilityRole="header" style={styles.title}>
-					react-native-network-logger
-				</Text>
+					<Text accessibilityRole="header" style={styles.title}>
+						react-native-network-logger
+					</Text>
 
-				<View style={styles.navButton} />
-			</View>
+					<View style={styles.navButton} />
+				</View>
 
-			{(unmountNetworkLogger && remountButton) || <NetworkLogger theme={themeMode} />}
+				{(unmountNetworkLogger && remountButton) || <NetworkLogger theme={themeMode} />}
+			</SafeAreaView>
 		</>
 	)
 }
 
 const styles = StyleSheet.create({
+	screen: {
+		flex: 1,
+	},
 	header: {
 		flexDirection: 'row',
 	},

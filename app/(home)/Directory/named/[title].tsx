@@ -1,5 +1,6 @@
 import * as React from 'react'
-import {StyleSheet, ScrollView, Image, View, ViewProps} from 'react-native'
+import {StyleSheet, ScrollView, Image, ViewProps} from 'react-native'
+import {SafeAreaView} from 'react-native-safe-area-context'
 import {Stack, useLocalSearchParams} from 'expo-router'
 import {useQuery} from '@tanstack/react-query'
 
@@ -26,8 +27,10 @@ const styles = StyleSheet.create({
 	},
 })
 
+/// The contact's text and button, clear of the notch in landscape. The header
+/// image above it stays full bleed.
 const Container = (props: ViewProps): React.ReactNode => (
-	<View {...props} style={[styles.container, props.style]} />
+	<SafeAreaView edges={['left', 'right']} {...props} style={[styles.container, props.style]} />
 )
 
 export default function ContactsDetailPage(): React.ReactNode {

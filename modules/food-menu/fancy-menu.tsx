@@ -170,9 +170,9 @@ export function FancyMenu(props: Props): React.ReactNode {
 	const applyFilters = props.applyFilters ?? applyMenuFilters
 
 	// Built from the day's menu, then owned by the user. `now` picks the meal
-	// selected to begin with and nothing after: the screens above build a fresh
-	// Moment on each of their renders, so anything tracking it would follow
-	// every one of them and take the user's filters with it.
+	// selected to begin with and nothing after: tracking it would move the
+	// reader off a meal they chose, and take their filters with it, whenever the
+	// clock moved on.
 	const [filters, setFilters] = useState<FilterType<MenuItemType>[]>(() =>
 		buildFilters(menuCorIcons, meals, now),
 	)

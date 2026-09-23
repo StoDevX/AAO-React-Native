@@ -44,6 +44,17 @@ export default function HomeLayout(): React.ReactNode {
 			<Stack.Screen name="Campus" />
 			<Stack.Screen name="Campus/detail" options={DETAIL_SHEET} />
 			<Stack.Screen name="Dictionary/entry" options={DETAIL_SHEET} />
+			{/* A department opens a fresh copy of the Directory over the landing.
+			    Keyed by the search it shows, navigating to a different one pushes
+			    it, where an unkeyed route would only swap the params of the
+			    Directory already on top; navigating to the same one still
+			    refuses a duplicate. */}
+			<Stack.Screen
+				dangerouslySingular={(_name, params) =>
+					`${params.queryType ?? ''}:${params.queryParam ?? ''}`
+				}
+				name="Directory/index"
+			/>
 			<Stack.Screen name="Directory/named" options={DETAIL_SHEET} />
 			<Stack.Screen name="Map" />
 			<Stack.Screen name="SIS/index" options={{title: 'SIS'}} />

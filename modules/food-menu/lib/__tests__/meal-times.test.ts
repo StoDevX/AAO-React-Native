@@ -1,6 +1,6 @@
 import {describe, expect, test} from '@jest/globals'
 
-import {formatMealTimes} from '../meal-times'
+import {formatMealTimes, mealWindow} from '../meal-times'
 
 describe('formatMealTimes', () => {
 	test('reads the padded hour BonApp publishes', () => {
@@ -58,5 +58,28 @@ describe('formatMealTimes', () => {
 	// stands; it is the reader's evening either way.
 	test('prints a window that crosses midnight', () => {
 		expect(formatMealTimes({starttime: '21:00', endtime: '1:00'}, 'en-US')).toBe('9PM – 1AM')
+	})
+})
+
+describe('mealWindow', () => {
+	// The day the clocks go forward is 23 hours long, so a whole day measured in
+	// elapsed minutes falls short of one. It is still the whole day on the
+	// campus clock, which is what BonApp writes for a cafe that is shut.
+	test('says nothing about a whole day on the day the clocks go forward', () => {
+		expect(mealWindow({starttime: '00:00', endtime: '24:00'}, '2027-03-14')).toBeNull()
+		expect(mealWindow({starttime: '0:00', endtime: '23:59'}, '2027-03-14')).toBeNull()
+	})
+
+	// The day the clocks go back is 25 hours long, so a window short of the
+	// whole day on the campus clock runs longer than a day in elapsed minutes.
+	test('keeps a real window on the day the clocks go back', () => {
+		let window = mealWindow({starttime: '00:00', endtime: '23:30'}, '2026-11-01')
+		expect(window?.start.format('YYYY-MM-DD HH:mm')).toBe('2026-11-01 00:00')
+		expect(window?.end.format('YYYY-MM-DD HH:mm')).toBe('2026-11-01 23:30')
+	})
+
+	test('closes a window that crosses midnight the following day', () => {
+		let window = mealWindow({starttime: '22:00', endtime: '01:00'}, '2026-09-22')
+		expect(window?.end.format('YYYY-MM-DD HH:mm')).toBe('2026-09-23 01:00')
 	})
 })

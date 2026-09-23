@@ -2,7 +2,7 @@ import {describe, expect, test} from '@jest/globals'
 
 import {menuSubtitle, spokenTime} from '../header-title'
 
-const SUNDAY = {weekdayShort: 'Sun', weekdayLong: 'Sunday', closed: false}
+const SUNDAY = {weekdayShort: 'Sun', weekdayLong: 'Sunday', closed: false, reopening: null}
 
 describe('menuSubtitle', () => {
 	test('joins the day, the meal and the window', () => {
@@ -59,6 +59,7 @@ describe('menuSubtitle', () => {
 				mealName: null,
 				time: '11AM – 1PM',
 				closed: false,
+				reopening: null,
 			}),
 		).toBe('11AM – 1PM')
 		expect(
@@ -69,6 +70,7 @@ describe('menuSubtitle', () => {
 				mealName: null,
 				time: null,
 				closed: false,
+				reopening: null,
 			}),
 		).toBe('')
 	})
@@ -121,11 +123,12 @@ describe('menuSubtitle', () => {
 		).toBe('Sunday • 8AM – 10AM')
 	})
 
-	// Nothing under the name is true of a cafe that is shut -- not the meal, not
-	// a window, not even the day it is shut on -- so the name stands alone. The
-	// meal is the one of those that arrives from the picker rather than from the
-	// screen, and so the one a caller is liable to leave in.
-	test('says nothing at all about a cafe that is shut', () => {
+	// Nothing under the name is true of a cafe that is shut with nothing to
+	// promise about opening again -- not the meal, not a window, not even the
+	// day it is shut on -- so the name stands alone. The meal is the one of
+	// those that arrives from the picker rather than from the screen, and so the
+	// one a caller is liable to leave in.
+	test('says nothing at all about a shut cafe with nothing to promise', () => {
 		expect(
 			menuSubtitle({
 				...SUNDAY,
@@ -133,8 +136,36 @@ describe('menuSubtitle', () => {
 				mealName: 'Lunch',
 				time: '11AM – 1:30PM',
 				closed: true,
+				reopening: null,
 			}),
 		).toBe('')
+	})
+
+	// A shut cafe with something to say about opening again says it beside the
+	// day it is shut on. The meal and its window stay out: neither is being
+	// served.
+	test('says when a shut cafe opens again', () => {
+		expect(
+			menuSubtitle({
+				...SUNDAY,
+				cafeName: 'The Pause Kitchen',
+				mealName: 'Menu',
+				time: null,
+				closed: true,
+				reopening: 'Opens at 4 PM',
+			}),
+		).toBe('Sunday • Opens at 4 PM')
+	})
+
+	// An accent is not a different word: BonApp is not consistent about
+	// writing one, and `Café` under `Weitz Cafe` still says the name twice.
+	test('reads a word the same with or without its accent', () => {
+		expect(
+			menuSubtitle({...SUNDAY, cafeName: 'Weitz Cafe', mealName: 'Café', time: '8AM – 10AM'}),
+		).toBe('Sunday • 8AM – 10AM')
+		expect(
+			menuSubtitle({...SUNDAY, cafeName: 'Crêpe Corner', mealName: 'Crepe', time: '8AM – 10AM'}),
+		).toBe('Sunday • 8AM – 10AM')
 	})
 
 	test('names a meal that is not the cafe over again', () => {
