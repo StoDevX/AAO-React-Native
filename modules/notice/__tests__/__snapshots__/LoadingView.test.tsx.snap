@@ -1,7 +1,15 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`LoadingView it displays "Loading…" when no text is supplied 1`] = `
-<View
+<RNCSafeAreaView
+  edges={
+    {
+      "bottom": "off",
+      "left": "additive",
+      "right": "additive",
+      "top": "off",
+    }
+  }
   style={
     [
       {
@@ -46,11 +54,19 @@ exports[`LoadingView it displays "Loading…" when no text is supplied 1`] = `
   >
     Loading…
   </Text>
-</View>
+</RNCSafeAreaView>
 `;
 
 exports[`LoadingView it displays text when text is supplied 1`] = `
-<View
+<RNCSafeAreaView
+  edges={
+    {
+      "bottom": "off",
+      "left": "additive",
+      "right": "additive",
+      "top": "off",
+    }
+  }
   style={
     [
       {
@@ -95,5 +111,5 @@ exports[`LoadingView it displays text when text is supplied 1`] = `
   >
     foo bar
   </Text>
-</View>
+</RNCSafeAreaView>
 `;

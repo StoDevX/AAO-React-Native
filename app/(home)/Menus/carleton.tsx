@@ -1,5 +1,6 @@
 import * as React from 'react'
 import {Platform, ScrollView, StyleSheet, View} from 'react-native'
+import {SafeAreaView} from 'react-native-safe-area-context'
 import {Row} from '@frogpond/layout'
 import {ListRow, ListSeparator, Title} from '@frogpond/lists'
 import {useIsFocused, useRouter} from 'expo-router'
@@ -36,16 +37,18 @@ export default function CarletonPage(): React.ReactNode {
 
 	return (
 		<ScrollView contentInsetAdjustmentBehavior="automatic" style={styles.container}>
-			{carletonCafes.map((loc, i, collection) => (
-				<View key={loc.href}>
-					<ListRow arrowPosition="center" onPress={() => router.navigate(loc.href)}>
-						<Row alignItems="center">
-							<Title style={styles.rowText}>{loc.title}</Title>
-						</Row>
-					</ListRow>
-					{i < collection.length - 1 ? <ListSeparator spacing={{left: 15}} /> : null}
-				</View>
-			))}
+			<SafeAreaView edges={['left', 'right']}>
+				{carletonCafes.map((loc, i, collection) => (
+					<View key={loc.href}>
+						<ListRow arrowPosition="center" onPress={() => router.navigate(loc.href)}>
+							<Row alignItems="center">
+								<Title style={styles.rowText}>{loc.title}</Title>
+							</Row>
+						</ListRow>
+						{i < collection.length - 1 ? <ListSeparator spacing={{left: 15}} /> : null}
+					</View>
+				))}
+			</SafeAreaView>
 		</ScrollView>
 	)
 }

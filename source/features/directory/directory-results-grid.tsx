@@ -34,18 +34,17 @@ export function DirectoryResultsGrid({
 	onRefresh,
 }: Props): React.ReactNode {
 	let {width: screenWidth, fontScale} = useWindowDimensions()
-	// The SwiftUI `ScrollView` fills the `Host` edge to edge, so in landscape
-	// the outer columns would sit under the notch / home indicator without this.
+	// SwiftUI's `ScrollView` keeps its content inside the safe area, so in
+	// landscape the columns share the width left once the notch's side insets
+	// are taken -- the padding below is only the screen margin.
 	let insets = useSafeAreaInsets()
-	let leadingInset = SCREEN_MARGIN + insets.left
-	let trailingInset = SCREEN_MARGIN + insets.right
+	let contentWidth = screenWidth - insets.left - insets.right
 
 	let columns = columnsForFontScale(fontScale)
 	// `@expo/ui` has no `LazyVGrid`, and a `Grid` sizes a cell to its content --
 	// so a lone tile in a short row would fill the screen. Pin every tile to a
 	// column's width instead.
-	let tileWidth =
-		(screenWidth - leadingInset - trailingInset - (columns - 1) * TILE_SPACING) / columns
+	let tileWidth = (contentWidth - 2 * SCREEN_MARGIN - (columns - 1) * TILE_SPACING) / columns
 
 	let indexed = items.map((person, index) => ({person, index}))
 
@@ -61,7 +60,7 @@ export function DirectoryResultsGrid({
 				<VStack
 					alignment="leading"
 					modifiers={[
-						padding({leading: leadingInset, trailing: trailingInset, top: SCREEN_MARGIN}),
+						padding({leading: SCREEN_MARGIN, trailing: SCREEN_MARGIN, top: SCREEN_MARGIN}),
 						frame({maxWidth: FILL_WIDTH}),
 					]}
 					spacing={TILE_SPACING}

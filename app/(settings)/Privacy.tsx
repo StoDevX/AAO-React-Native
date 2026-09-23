@@ -1,6 +1,7 @@
 import * as React from 'react'
 import {Stack, useNavigation} from 'expo-router'
 import {ScrollView, StyleSheet} from 'react-native'
+import {SafeAreaView} from 'react-native-safe-area-context'
 import * as c from '@frogpond/colors'
 import {Markdown} from '@frogpond/markdown'
 import privacyData from '../../docs/privacy.json'
@@ -28,7 +29,9 @@ export default function PrivacyPage(): React.ReactNode {
 			</Stack.Toolbar>
 
 			<ScrollView contentInsetAdjustmentBehavior="automatic" style={styles.scrollView}>
-				<Markdown source={privacyData.text} />
+				<SafeAreaView edges={['left', 'right']}>
+					<Markdown source={privacyData.text} />
+				</SafeAreaView>
 			</ScrollView>
 		</>
 	)
