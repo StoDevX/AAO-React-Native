@@ -589,6 +589,28 @@ export function VStack({
 	return <View testID={testID}>{children}</View>
 }
 
+/**
+ * A `Grid` has no accessibility presence of its own: natively an
+ * `accessibilityIdentifier` on one lands on its first button rather than on
+ * the grid, unless `accessibilityElement('contain')` gives the grid an element
+ * to carry it. So the stand-in takes the identifier only alongside `contain`.
+ */
+export function Grid({
+	children,
+	modifiers,
+}: WithModifiers & {
+	alignment?: string
+	horizontalSpacing?: number
+	verticalSpacing?: number
+}): React.ReactNode {
+	let contains = modifierOf(modifiers, 'accessibilityElement')?.children === 'contain'
+	return <View testID={contains ? identifierOf(modifiers) : undefined}>{children}</View>
+}
+
+Grid.Row = function Row({children}: WithModifiers): React.ReactNode {
+	return <View>{children}</View>
+}
+
 export function ZStack({children}: WithModifiers & {alignment?: string}): React.ReactNode {
 	return <View>{children}</View>
 }
