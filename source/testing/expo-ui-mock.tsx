@@ -297,6 +297,15 @@ function identifierOf(modifiers?: Modifier[]): string | undefined {
 	return typeof found?.identifier === 'string' ? found.identifier : undefined
 }
 
+/**
+ * The role an element announces: a link when `accessibilityAddTraits(…)`
+ * names `isLink`, which is what VoiceOver says for it on device.
+ */
+function roleOf(modifiers: Modifier[] | undefined, role: string): string {
+	let traits = modifierOf(modifiers, 'accessibilityAddTraits')?.traits
+	return Array.isArray(traits) && traits.includes('isLink') ? 'link' : role
+}
+
 /** Whether a `disabled(…)` modifier asked for the control to be off. */
 function isDisabled(modifiers?: Modifier[]): boolean {
 	return modifierOf(modifiers, 'disabled')?.disabled === true
@@ -747,7 +756,7 @@ export function Button({
 	return (
 		<PressableWithModifiers
 			accessibilityLabel={name}
-			accessibilityRole="button"
+			accessibilityRole={roleOf(modifiers, 'button')}
 			// `RNTL`'s `getByRole` only considers an element an accessibility
 			// element -- and so a candidate at all -- once `accessible` is
 			// explicitly set.

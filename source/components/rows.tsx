@@ -18,6 +18,7 @@ import {
 	VStack,
 } from '@expo/ui/swift-ui'
 import {
+	accessibilityAddTraits,
 	accessibilityIdentifier,
 	accessibilityLabel,
 	buttonStyle,
@@ -78,6 +79,14 @@ function RowAccessory({destination}: {destination: RowDestination}): React.React
 			systemName={destination === 'external' ? 'arrow.up.right' : 'chevron.right'}
 		/>
 	)
+}
+
+/**
+ * VoiceOver reads a row's label and never its accessory, so a row that leaves
+ * the app says so with the link trait, as SwiftUI's own `Link` does.
+ */
+function destinationTraits(destination: RowDestination) {
+	return destination === 'external' ? [accessibilityAddTraits(['isLink'])] : []
 }
 
 /**
@@ -233,6 +242,7 @@ export function DisclosureRow(props: DisclosureRowProps): React.ReactNode {
 			modifiers={[
 				buttonStyle('plain'),
 				accessibilityLabel(rowLabel(title, detail)),
+				...destinationTraits(destination),
 				...(identifier ? [accessibilityIdentifier(identifier)] : []),
 			]}
 			onPress={onPress}
@@ -322,7 +332,11 @@ export function DetailRow(props: DetailRowProps): React.ReactNode {
 
 	return (
 		<Button
-			modifiers={[buttonStyle('plain'), accessibilityLabel(`${label}, ${value}`)]}
+			modifiers={[
+				buttonStyle('plain'),
+				accessibilityLabel(`${label}, ${value}`),
+				...destinationTraits(destination),
+			]}
 			onPress={onPress}
 		>
 			{/* contentShape on the label, not the Button -- see NavigationRow. */}
