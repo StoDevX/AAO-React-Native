@@ -51,9 +51,7 @@ type ActionRowProps = RowProps & {
 /**
  * Where a row's tap goes, which its trailing accessory names: `push` draws
  * `chevron.right`, `action` draws nothing and tints the label instead, and
- * `external` draws `arrow.up.right`. `DetailRow` is the exception: its value
- * is secondary-coloured text that reads as static, so it tints for `external`
- * too, not just `action`.
+ * `external` draws `arrow.up.right`.
  */
 export type RowDestination =
 	/** Another screen in this navigation stack. */
@@ -307,9 +305,10 @@ type DetailRowProps = {
 export function DetailRow(props: DetailRowProps): React.ReactNode {
 	let {label, value, valueLines, onPress, destination = 'push'} = props
 
-	// The value is secondary-coloured text that reads as static, so it is
-	// tinted whenever it is tappable and not a push.
-	let valueTint = onPress && destination !== 'push' ? c.systemBlue : c.secondaryLabel
+	// An action has no accessory, so the tint is its only sign of being
+	// tappable. A push or external value already has its glyph, and a tinted
+	// value would draw prose -- office hours, say -- as though it were a link.
+	let valueTint = onPress && destination === 'action' ? c.systemBlue : c.secondaryLabel
 
 	let content = (
 		<LabeledContent label={label}>
