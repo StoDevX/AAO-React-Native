@@ -4,7 +4,6 @@ import type {HourPairType} from '../../building-hours/lib'
 import {
 	formatBuildingTimes,
 	formatStatusTime,
-	getDayOfWeek,
 	getScheduleStatusAtMoment,
 	getShortBuildingStatus,
 	isSetInService,
@@ -25,8 +24,7 @@ export type CafeHours = {
 	closed: boolean
 	/**
 	 * What to say about a shut cafe opening again, e.g. `Opens at 4 PM`, `Closed
-	 * until tomorrow`, `Closed until 5 PM`, or `Closed` when there is nothing to
-	 * promise; `null` when it is open, when its hours have not arrived, and in
+	 * until 5 PM`, or `Closed` when nothing opens again today; `null` when it is open, when its hours have not arrived, and in
 	 * the minutes before chapel, when the name stands alone.
 	 */
 	reopening: string | null
@@ -74,7 +72,7 @@ export function cafeHours(building: BuildingType | undefined, m: Moment): CafeHo
 	if (status !== 'Chapel') {
 		let windows = windowsOfTheDay(building, m)
 		if (windows.length === 1) {
-			return oneWindowHours(windows[0], m, () => opensTomorrow(building, m))
+			return oneWindowHours(windows[0], m)
 		}
 	}
 
@@ -149,18 +147,10 @@ function windowsOfTheDay(building: BuildingType, m: Moment): HourPairType[] {
 
 /**
  * The line for a cafe whose day holds the one `window`: when it opens, then
- * when it closes, then that it is shut.
- *
- * `opensTomorrow` answers whether it serves tomorrow, asked only once the
- * window has closed, and only a cafe it says yes for is `Closed until
- * tomorrow`. Left out for a cafe whose tomorrow nobody has published, which is
- * only `Closed` -- the one line true either way.
+ * when it closes, then only that it is shut -- as every venue says after its
+ * last window, whether or not it opens tomorrow.
  */
-export function oneWindowHours(
-	window: HourPairType,
-	m: Moment,
-	opensTomorrow?: () => boolean,
-): CafeHours {
+export function oneWindowHours(window: HourPairType, m: Moment): CafeHours {
 	if (m.isBefore(window.open)) {
 		return {time: null, closed: true, reopening: `Opens at ${formatStatusTime(window.open)}`}
 	}
@@ -169,18 +159,5 @@ export function oneWindowHours(
 		return {time: `Closes at ${formatStatusTime(window.close)}`, closed: false, reopening: null}
 	}
 
-	return {
-		time: null,
-		closed: true,
-		reopening: opensTomorrow?.() ? 'Closed until tomorrow' : 'Closed',
-	}
-}
-
-/** Whether any of a venue's open sets has a window starting the day after `m`. */
-function opensTomorrow(building: BuildingType, m: Moment): boolean {
-	let tomorrow = getDayOfWeek(m.clone().add(1, 'day'))
-	return (building.schedule ?? []).some(
-		(set) =>
-			set.isPhysicallyOpen !== false && set.hours.some((hours) => hours.days.includes(tomorrow)),
-	)
+	return {time: null, closed: true, reopening: 'Closed'}
 }
