@@ -118,17 +118,17 @@ export function buildJobFilters(
 
 	let facets = jobs.map((job) => fullFacetsOf(job, context))
 	let areaOrder = context.areas.map((area) => area.name)
+	// Every area whose searches have answered, empty ones too: an empty
+	// area's tile still opens, to a list filtered to it that says so.
+	let knownAreas = new Set(
+		context.areas
+			.filter((area) => context.membership.get(area.slug)?.count !== undefined)
+			.map((area) => area.name),
+	)
 
 	return [
 		// Sixteen areas are too many rows for a pull-down menu.
-		listFilter(
-			'area',
-			'Area',
-			areaOrder,
-			new Set(facets.flatMap((f) => f.area)),
-			chosen.area,
-			'sheet',
-		),
+		listFilter('area', 'Area', areaOrder, knownAreas, chosen.area, 'sheet'),
 		listFilter(
 			'posted',
 			'Posted',

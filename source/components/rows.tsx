@@ -191,8 +191,6 @@ type DisclosureRowProps = {
 	onPress: () => void
 	/** A count before the chevron, as Settings shows one. None at zero. */
 	badge?: number
-	/** Drawn dimmed and not tappable, as for a view with nothing in it. */
-	disabled?: boolean
 	/** Where tapping the row goes. Defaults to a push. */
 	destination?: RowDestination
 }
@@ -239,7 +237,6 @@ export function DisclosureRow(props: DisclosureRowProps): React.ReactNode {
 		identifier,
 		onPress,
 		badge,
-		disabled = false,
 		destination = 'push',
 	} = props
 
@@ -265,7 +262,6 @@ export function DisclosureRow(props: DisclosureRowProps): React.ReactNode {
 			modifiers={[
 				buttonStyle('plain'),
 				accessibilityLabel(hasBadge ? `${spokenLabel}, ${badge}` : spokenLabel),
-				disabledModifier(disabled),
 				...destinationTraits(destination),
 				...(identifier ? [accessibilityIdentifier(identifier)] : []),
 			]}

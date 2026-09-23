@@ -20,16 +20,16 @@ describe('areaMembership', () => {
 			]),
 			BOARD,
 		).get('music')
-		expect(status).toEqual({ids: new Set(['a', 'b']), count: 2, disabled: false})
+		expect(status).toEqual({ids: new Set(['a', 'b']), count: 2, empty: false})
 	})
 
-	test('disables an area only when every search answered with nothing', () => {
+	test('calls an area empty only when every search answered with nothing', () => {
 		let status = areaMembership(
 			[area('art', ['1'])],
 			results([['1', {status: 'success', ids: []}]]),
 			BOARD,
 		).get('art')
-		expect(status).toEqual({ids: new Set(), count: 0, disabled: true})
+		expect(status).toEqual({ids: new Set(), count: 0, empty: true})
 	})
 
 	test('counts what loaded when one of an area’s searches failed', () => {
@@ -41,16 +41,16 @@ describe('areaMembership', () => {
 			]),
 			BOARD,
 		).get('music')
-		expect(status).toEqual({ids: new Set(['a']), count: 1, disabled: false})
+		expect(status).toEqual({ids: new Set(['a']), count: 1, empty: false})
 	})
 
-	test('never disables an area whose searches failed with nothing found', () => {
+	test('never calls an area empty when its searches failed', () => {
 		let status = areaMembership(
 			[area('music', ['1'])],
 			results([['1', {status: 'error'}]]),
 			BOARD,
 		).get('music')
-		expect(status).toEqual({ids: new Set(), count: undefined, disabled: false})
+		expect(status).toEqual({ids: new Set(), count: undefined, empty: false})
 	})
 
 	test('shows no count before any search answers', () => {
@@ -59,7 +59,7 @@ describe('areaMembership', () => {
 			results([['1', {status: 'pending'}]]),
 			BOARD,
 		).get('music')
-		expect(status).toEqual({ids: new Set(), count: undefined, disabled: false})
+		expect(status).toEqual({ids: new Set(), count: undefined, empty: false})
 	})
 
 	test('counts a posting once when two of an area’s units return it', () => {

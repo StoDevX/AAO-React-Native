@@ -59,7 +59,7 @@ export function AreaGrid({areas, membership, onSelectArea}: Props): React.ReactN
 								<GradientTile
 									key={area.slug}
 									count={status?.count}
-									disabled={status?.disabled ?? false}
+									dimmed={status?.empty ?? false}
 									gradient={area.gradient}
 									icon={area.icon}
 									onPress={() => onSelectArea(area)}

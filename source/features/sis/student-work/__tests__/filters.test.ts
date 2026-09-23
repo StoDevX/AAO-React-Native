@@ -35,11 +35,24 @@ const DINING: StudentWorkArea = {
 	units: ['22005'],
 }
 
-const DINING_STATUS: AreaStatus = {ids: new Set(['1', '3']), count: 2, disabled: false}
+const DINING_STATUS: AreaStatus = {ids: new Set(['1', '3']), count: 2, empty: false}
+
+const FAITH: StudentWorkArea = {
+	name: 'Faith',
+	slug: 'faith',
+	icon: 'sparkles',
+	gradient: ['#000', '#fff'],
+	units: ['45158'],
+}
+
+const FAITH_STATUS: AreaStatus = {ids: new Set(), count: 0, empty: true}
 
 const CONTEXT: FilterContext = {
-	areas: [DINING],
-	membership: new Map([['dining', DINING_STATUS]]),
+	areas: [DINING, FAITH],
+	membership: new Map([
+		['dining', DINING_STATUS],
+		['faith', FAITH_STATUS],
+	]),
 	newIds: new Set(['4']),
 	today: TODAY,
 }
@@ -259,9 +272,15 @@ describe('the Area and Posted filters', () => {
 		])
 	})
 
-	test('offer only areas that have postings', () => {
+	// An empty area's tile still opens, to a list filtered to that area.
+	test('offer every area whose searches have answered, empty ones too', () => {
 		let area = filterNamed(buildJobFilters(ALL_JOBS, NOTHING_CHOSEN, CONTEXT), 'Area')
-		expect(optionTitles(area)).toEqual(['Dining'])
+		expect(optionTitles(area)).toEqual(['Dining', 'Faith'])
+	})
+
+	test('show nothing for an empty area', () => {
+		let filters = buildJobFilters(ALL_JOBS, {...NOTHING_CHOSEN, area: ['Faith']}, CONTEXT)
+		expect(ids(visibleSections(CATEGORIES, filters, '', CONTEXT))).toEqual([])
 	})
 
 	test('offer no areas before the unit searches answer', () => {

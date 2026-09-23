@@ -7,7 +7,6 @@ import {
 	background,
 	buttonStyle,
 	contentShape,
-	disabled as disabledModifier,
 	environment,
 	font,
 	foregroundStyle,
@@ -25,8 +24,10 @@ import * as c from '@frogpond/colors'
 import {displayP3, type Gradient} from '@frogpond/colors'
 import {FILL_WIDTH, TILE_ASPECT} from './tile-layout'
 
-/// A disabled tile is still read, so it fades rather than vanishes.
-const DISABLED_OPACITY = 0.4
+/// SwiftUI's own disabled look for a plain button, measured on the simulator:
+/// the whole tile, card and label alike, at half opacity. A dimmed tile wears
+/// it without being disabled, so it can still be opened.
+const DIMMED_OPACITY = 0.5
 
 /// A neutral capsule rather than a red one, which would read as unread.
 const COUNT_MODIFIERS = [
@@ -57,8 +58,8 @@ type Props = {
 	onPress: () => void
 	/** How many things the tile holds, drawn at the card's top-right corner. None at zero. */
 	count?: number
-	/** Drawn dimmed and not tappable, as for an area with nothing in it. */
-	disabled?: boolean
+	/** Drawn as SwiftUI draws a disabled button, but still tappable, as for an area with nothing in it. */
+	dimmed?: boolean
 }
 
 export function GradientRoundedRectangle({
@@ -112,7 +113,7 @@ export function GradientTile({
 	ratio = TILE_ASPECT,
 	onPress,
 	count,
-	disabled = false,
+	dimmed = false,
 }: Props): React.ReactNode {
 	let isDarkScheme = useColorScheme() === 'dark'
 	let hasCount = count !== undefined && count > 0
@@ -123,8 +124,7 @@ export function GradientTile({
 			modifiers={[
 				buttonStyle('plain'),
 				accessibilityLabel(label),
-				disabledModifier(disabled),
-				...(disabled ? [opacity(DISABLED_OPACITY)] : []),
+				...(dimmed ? [opacity(DIMMED_OPACITY)] : []),
 			]}
 			onPress={onPress}
 		>

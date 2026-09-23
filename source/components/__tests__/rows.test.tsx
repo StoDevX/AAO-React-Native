@@ -60,13 +60,6 @@ describe('DisclosureRow badge', () => {
 		await render(<DisclosureRow badge={0} onPress={jest.fn()} title="Summer jobs" />)
 		expect(screen.getByLabelText('Summer jobs')).toBeOnTheScreen()
 	})
-
-	it('does not fire when disabled', async () => {
-		let onPress = jest.fn()
-		await render(<DisclosureRow disabled={true} onPress={onPress} title="Summer jobs" />)
-		fireEvent.press(screen.getByLabelText('Summer jobs'))
-		expect(onPress).not.toHaveBeenCalled()
-	})
 })
 
 describe('DisclosureRow leading image', () => {

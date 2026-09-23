@@ -115,7 +115,6 @@ export default function StudentWorkPage(): React.ReactNode {
 							<DisclosureRow
 								key={preset.key}
 								badge={counts[preset.key]}
-								disabled={counts[preset.key] === 0}
 								onPress={() =>
 									router.navigate({pathname: '/StudentWork/postings', params: preset.params})
 								}

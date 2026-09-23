@@ -39,8 +39,8 @@ export type AreaStatus = {
 	ids: Set<string>
 	/// How many, or undefined while nothing about the area is known.
 	count: number | undefined
-	/// Only when every unit's search answered and none found anything.
-	disabled: boolean
+	/// Known to hold nothing: every unit's search answered and none found anything.
+	empty: boolean
 }
 
 /// Which of the board's postings each area holds, keyed by the area's slug.
@@ -65,7 +65,7 @@ export function areaMembership(
 
 		let allAnswered = answered === area.units.length
 		let count = ids.size > 0 || allAnswered ? ids.size : undefined
-		statuses.set(area.slug, {ids, count, disabled: allAnswered && ids.size === 0})
+		statuses.set(area.slug, {ids, count, empty: allAnswered && ids.size === 0})
 	}
 
 	return statuses

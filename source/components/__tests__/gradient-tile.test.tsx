@@ -62,11 +62,12 @@ describe('GradientTile', () => {
 		expect(screen.queryByText('0')).not.toBeOnTheScreen()
 	})
 
-	it('does not fire when disabled', async () => {
+	// An empty area still opens, to a list that says so.
+	it('still opens when dimmed', async () => {
 		let onPress = jest.fn()
 		await render(
 			<GradientTile
-				disabled={true}
+				dimmed={true}
 				gradient={blueGradient}
 				icon="sparkles"
 				onPress={onPress}
@@ -74,6 +75,6 @@ describe('GradientTile', () => {
 			/>,
 		)
 		fireEvent.press(screen.getByLabelText('Faith'))
-		expect(onPress).not.toHaveBeenCalled()
+		expect(onPress).toHaveBeenCalledTimes(1)
 	})
 })
