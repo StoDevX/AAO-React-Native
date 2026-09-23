@@ -1,40 +1,18 @@
+import * as Sentry from '@sentry/react-native'
+import type {PickedImage} from '../../../../../components/use-image-attachments'
 import type {ReportAttachment} from './submit'
 
-/** The most images one report carries, so a report stays small enough to send. */
-export const MAX_ATTACHMENTS = 3
-
-/** An image picked from the photo library, not yet read from disk. */
-export type PickedImage = {
-	uri: string
-	fileName?: string | null
-	mimeType?: string
-}
-
 /**
- * The name an attachment is filed under in Sentry. The photo library usually
- * supplies one; when it does not, the image is numbered by its place in the
- * report.
+ * Reads a picked image's bytes for sending. Sentry reads the file natively,
+ * where a `fetch` of the file URI would leave the path behind as a breadcrumb.
+ * Every picked image has been re-encoded as JPEG, so each is numbered by its
+ * place in the report rather than named for its original.
  */
-export function attachmentFilename(
-	image: Pick<PickedImage, 'fileName' | 'mimeType'>,
-	index: number,
-): string {
-	if (image.fileName) {
-		return image.fileName
-	}
-
-	let extension = image.mimeType?.split('/')[1] ?? 'jpg'
-	return `image-${index + 1}.${extension}`
-}
-
-/** Reads a picked image's bytes from the file the picker left it in. */
 export async function readAttachment(image: PickedImage, index: number): Promise<ReportAttachment> {
-	let response = await fetch(image.uri)
-	let data = new Uint8Array(await response.arrayBuffer())
-
-	return {
-		filename: attachmentFilename(image, index),
-		data,
-		contentType: image.mimeType,
+	let data = await Sentry.getDataFromUri(image.uri)
+	if (!data) {
+		throw new Error(`could not read ${image.uri}`)
 	}
+
+	return {filename: `image-${index + 1}.jpg`, data, contentType: 'image/jpeg'}
 }

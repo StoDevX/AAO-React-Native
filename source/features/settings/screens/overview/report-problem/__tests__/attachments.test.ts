@@ -1,17 +1,25 @@
-import {attachmentFilename} from '../attachments'
+import * as Sentry from '@sentry/react-native'
+import {readAttachment} from '../attachments'
 
-describe('attachmentFilename', () => {
-	it("keeps the photo library's own name", () => {
-		expect(attachmentFilename({fileName: 'IMG_0042.jpg', mimeType: 'image/jpeg'}, 0)).toBe(
-			'IMG_0042.jpg',
-		)
+jest.mock('@sentry/react-native', () => ({getDataFromUri: jest.fn()}))
+
+const mockGetData = Sentry.getDataFromUri as jest.MockedFunction<typeof Sentry.getDataFromUri>
+
+describe('readAttachment', () => {
+	it('reads the image into a JPEG attachment numbered from one', async () => {
+		let data = new Uint8Array([1, 2, 3])
+		mockGetData.mockResolvedValue(data)
+
+		await expect(readAttachment({uri: 'file:///a.jpg'}, 1)).resolves.toEqual({
+			filename: 'image-2.jpg',
+			data,
+			contentType: 'image/jpeg',
+		})
 	})
 
-	it('numbers an unnamed image from one, with an extension from its type', () => {
-		expect(attachmentFilename({fileName: null, mimeType: 'image/png'}, 1)).toBe('image-2.png')
-	})
+	it('fails rather than attach nothing when the file cannot be read', async () => {
+		mockGetData.mockResolvedValue(null)
 
-	it('falls back to jpg when the type is unknown', () => {
-		expect(attachmentFilename({}, 0)).toBe('image-1.jpg')
+		await expect(readAttachment({uri: 'file:///gone.jpg'}, 0)).rejects.toThrow()
 	})
 })
