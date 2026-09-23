@@ -17,26 +17,7 @@ items:
     slug: {type: string, pattern: '^[a-z0-9]+(-[a-z0-9]+)*$'}
     # An SF Symbol name; see data/_schemas/org-categories.yaml.
     icon: {type: string, minLength: 1}
-    # A name from GRADIENT_NAMES in modules/colors/resolve-gradient.ts.
-    gradient:
-      type: string
-      enum:
-        - red
-        - orange
-        - gold
-        - yellow
-        - green
-        - mint
-        - light-blue
-        - blue
-        - indigo
-        - purple
-        - violet
-        - pink
-        - gray
-        - sage
-        - tan
-        - pale-gold
+    gradient: {$ref: '_defs.json#/definitions/gradient-name'}
     units:
       type: array
       minItems: 1
