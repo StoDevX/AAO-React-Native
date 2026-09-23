@@ -27,7 +27,6 @@ import {
 	foregroundStyle,
 	frame,
 	lineLimit,
-	multilineTextAlignment,
 	shapes,
 	truncationMode,
 } from '@expo/ui/swift-ui/modifiers'
@@ -303,11 +302,7 @@ export function DetailRow(props: DetailRowProps): React.ReactNode {
 		<LabeledContent label={label}>
 			<HStack spacing={6}>
 				<Text
-					modifiers={[
-						foregroundStyle(valueTint),
-						multilineTextAlignment('trailing'),
-						...(valueLines ? [lineLimit(valueLines)] : []),
-					]}
+					modifiers={[foregroundStyle(valueTint), ...(valueLines ? [lineLimit(valueLines)] : [])]}
 				>
 					{value}
 				</Text>
