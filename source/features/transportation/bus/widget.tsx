@@ -39,7 +39,7 @@ import type {Moment} from 'moment-timezone'
 
 import * as c from '@frogpond/colors'
 import {FILL_WIDTH} from '../../../components/tile-layout'
-import {formatDeparture} from './components/times'
+import {formatDeparture, NOT_SERVED_SPOKEN} from './components/times'
 import {BusGlyph} from './components/timetable-row'
 import {
 	buildStopStrip,
@@ -178,7 +178,7 @@ function StopCell({
 		<Button
 			modifiers={[
 				buttonStyle('plain'),
-				accessibilityLabel(`${cell.name}, ${time}`),
+				accessibilityLabel(`${cell.name}, ${cell.time?.isValid() ? time : NOT_SERVED_SPOKEN}`),
 				id(String(index)),
 				frame({width: CELL_WIDTH}),
 			]}
