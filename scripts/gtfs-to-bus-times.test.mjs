@@ -11,6 +11,7 @@ import {
 	expiredRepairs,
 	formatTime,
 	gtfsToBusTimes,
+	returningRoutes,
 	selectRoutes,
 	staleRepairs,
 	timepointStops,
@@ -61,6 +62,78 @@ describe('daysForService', () => {
 })
 
 describe('selectRoutes', () => {
+	describe('returningRoutes', () => {
+		let watching = {
+			stop_names: {'St Olaf College': 'St. Olaf College'},
+			routes: {},
+			watched_routes: {r1: {line: 'Test Route', file: 'test-route.yaml'}},
+		}
+		let handKeptAs = (times) =>
+			new Map([
+				[
+					'test-route.yaml',
+					{
+						line: 'Test Route',
+						schedules: [{days: ['Mo'], stops: ['Depot', 'St. Olaf College'], times}],
+					},
+				],
+			])
+
+		it('reports a watched route whose service covers today, matching its hand-kept file', () => {
+			let found = returningRoutes(
+				twoServiceFeed(),
+				watching,
+				handKeptAs([['6:00am', '6:10am']]),
+				'20260701',
+			)
+
+			assert.deepEqual(found, [
+				{routeId: 'r1', line: 'Test Route', file: 'test-route.yaml', matches: true},
+			])
+		})
+
+		it('says when the feed differs from the hand-kept file', () => {
+			let found = returningRoutes(
+				twoServiceFeed(),
+				watching,
+				handKeptAs([['7:00am', '7:10am']]),
+				'20260701',
+			)
+
+			assert.equal(found[0]?.matches, false)
+		})
+
+		it('compares only the services running today, not ones that have lapsed', () => {
+			let feed = twoServiceFeed()
+			feed.stopTimes = feed.stopTimes.map((row) =>
+				row.trip_id === 't1'
+					? {...row, departure_time: row.departure_time.replace('06:', '05:')}
+					: row,
+			)
+
+			let found = returningRoutes(feed, watching, handKeptAs([['6:00am', '6:10am']]), '20260701')
+
+			assert.equal(found[0]?.matches, true)
+		})
+
+		it('reports nothing once every service has ended', () => {
+			assert.deepEqual(returningRoutes(twoServiceFeed(), watching, handKeptAs([]), '20261202'), [])
+		})
+
+		it('reports nothing before any service starts', () => {
+			assert.deepEqual(returningRoutes(twoServiceFeed(), watching, handKeptAs([]), '20251231'), [])
+		})
+
+		it('reports nothing for a route it is not watching', () => {
+			let notWatching = {...watching, watched_routes: {}}
+
+			assert.deepEqual(
+				returningRoutes(twoServiceFeed(), notWatching, handKeptAs([]), '20260701'),
+				[],
+			)
+		})
+	})
+
 	let curation = {
 		routes: {
 			77627: {expect_name: 'Blue - Northfield', file: 'blue-line.yaml', line: 'Blue Line'},
@@ -759,12 +832,39 @@ describe('the real Hiawathaland feed', () => {
 		repairs: load(fs.readFileSync(path.join(busTimes, '_repairs.yaml'), 'utf-8')),
 	}
 
-	it('writes exactly the three curated files, never 2-oles-go.yaml', () => {
+	// The Express is hand-maintained from its brochure, so the real curation no
+	// longer asks for it. The feed still carries it, and its loop exercises the
+	// generator's prefix and skipped-stop handling, so these tests ask for it.
+	let withExpress = {
+		...real,
+		curation: {
+			...real.curation,
+			routes: {
+				...real.curation.routes,
+				77629: {
+					expect_name: 'Express Northfield',
+					file: '1-express.yaml',
+					line: 'Express Bus',
+					colors: {bar: 'rgb(134, 198, 124)', dot: 'rgb(32, 87, 14)'},
+				},
+			},
+		},
+	}
+
+	it('reports the Express as still gone, since its services ended 2026-06-08', () => {
+		let handKept = new Map([
+			['1-express.yaml', load(fs.readFileSync(path.join(busTimes, '1-express.yaml'), 'utf-8'))],
+		])
+
+		assert.deepEqual(returningRoutes(feed, real.curation, handKept, '20260922'), [])
+	})
+
+	it('writes exactly the curated files, never the hand-maintained Express or Oles Go', () => {
 		let {files} = gtfsToBusTimes(feed, real)
 
 		assert.deepEqual(
 			[...files.keys()].sort((a, b) => a.localeCompare(b)),
-			['1-express.yaml', '3-red-line.yaml', '4-blue-line.yaml'],
+			['3-red-line.yaml', '4-blue-line.yaml'],
 		)
 	})
 
@@ -809,13 +909,13 @@ describe('the real Hiawathaland feed', () => {
 	})
 
 	it('collapses the three Express services into one schedule', () => {
-		let {files} = gtfsToBusTimes(feed, real)
+		let {files} = gtfsToBusTimes(feed, withExpress)
 
 		assert.equal(files.get('1-express.yaml').schedules.length, 1)
 	})
 
 	it('marks the Express six-stop loop as skipping the final St. Olaf call', () => {
-		let {files} = gtfsToBusTimes(feed, real)
+		let {files} = gtfsToBusTimes(feed, withExpress)
 		let schedule = files.get('1-express.yaml').schedules[0]
 
 		assert.equal(schedule.stops.length, 7)
