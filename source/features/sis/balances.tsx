@@ -15,11 +15,11 @@ import * as c from '@frogpond/colors'
 import {BalancesShapeType, balancesOptions} from '../../lib/financials'
 import {sto} from '../../lib/colors'
 import {useRouter} from 'expo-router'
-import {NoCredentialsError, credentialsOptions} from '../../lib/login'
+import {credentialsOptions} from '../../lib/login'
 import {useQuery} from '@tanstack/react-query'
 import {FaqBannerGroup} from '../../features/faqs/banner'
 import {FAQ_TARGETS} from '../../features/faqs/constants'
-import {DetailRow, DisclosureRow} from '../../components/rows'
+import {DetailRow} from '../../components/rows'
 import {balanceValue} from './lib'
 
 const DISCLAIMER = 'This data may be outdated or otherwise inaccurate.'
@@ -78,14 +78,7 @@ export const BalancesView = (): React.ReactNode => {
 
 				{isError && error instanceof Error ? (
 					<Section footer={<Text>You&apos;ll need to log in in order to see this data.</Text>}>
-						{error instanceof NoCredentialsError ? (
-							<DisclosureRow
-								onPress={() => router.navigate('/SettingsRoot')}
-								title="Log in with St. Olaf"
-							/>
-						) : (
-							<Text modifiers={[foregroundStyle(sto.red)]}>{error.message}</Text>
-						)}
+						<Text modifiers={[foregroundStyle(sto.red)]}>{error.message}</Text>
 					</Section>
 				) : null}
 			</List>
