@@ -47,6 +47,52 @@ struct StudentWorkScreen: Screen {
 		return self
 	}
 
+	/// Scrolls the postings a few screens down, and asserts they moved.
+	@discardableResult
+	func scrollListDown() -> Self {
+		XCTAssertTrue(postingsList.waitForExistence(timeout: 30), "The postings should appear")
+		let firstRowBefore = postingsList.buttons.firstMatch.label
+		// Swipes, not press-and-drag: a press that lands on a row before the
+		// drag begins opens that posting instead of scrolling.
+		for _ in 0..<2 {
+			postingsList.swipeUp(velocity: .slow)
+		}
+		XCTAssertNotEqual(
+			postingsList.buttons.firstMatch.label, firstRowBefore,
+			"Dragging up should scroll the postings")
+		return self
+	}
+
+	/// Asserts the postings begin at their first row: pulling the list down
+	/// reveals nothing above the row already first. A list that kept its old
+	/// offset when its rows changed leaves earlier rows above the screen.
+	@discardableResult
+	func verifyListStartsAtTheTop() -> Self {
+		// A search applies after a 200ms debounce. Wait for the rows to change
+		// so the reading below is of the new list; one that wrongly kept its
+		// place may leave the same row first, so a timeout is not a failure.
+		let firstRow = postingsList.buttons.firstMatch
+		let stale = firstRow.label
+		_ = XCTWaiter.wait(
+			for: [
+				XCTNSPredicateExpectation(
+					predicate: NSPredicate(format: "label != %@", stale), object: firstRow)
+			],
+			timeout: 5)
+
+		let top = postingsList.buttons.firstMatch.label
+		capture("Student Work after narrowing from far down the list")
+		postingsList.swipeDown()
+		XCTAssertEqual(
+			postingsList.buttons.firstMatch.label, top,
+			"The narrowed postings should start at their first row, not wherever the list was scrolled before")
+		return self
+	}
+
+	private var postingsList: XCUIElement {
+		app.collectionViews[TestIdentifiers.StudentWork.postingsList]
+	}
+
 	@discardableResult
 	func search(for text: String) -> Self {
 		let field = app.searchFields.firstMatch

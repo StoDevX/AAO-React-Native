@@ -22,6 +22,22 @@ class ModuleStudentWorkTests: UITestCase {
 			.capture("Student Work filtered to entry-level")
 	}
 
+	func testChoosingAFilterFromFarDownTheListStartsAtTheTop() throws {
+		StudentWorkScreen(app: app)
+			.navigate()
+			.scrollListDown()
+			.choose(IDs.experienced, inFilter: IDs.levelFilter)
+			.verifyListStartsAtTheTop()
+	}
+
+	func testSearchingFromFarDownTheListStartsAtTheTop() throws {
+		StudentWorkScreen(app: app)
+			.navigate()
+			.scrollListDown()
+			.search(for: "fixture")
+			.verifyListStartsAtTheTop()
+	}
+
 	func testSearchNarrowsTheList() throws {
 		StudentWorkScreen(app: app)
 			.navigate()

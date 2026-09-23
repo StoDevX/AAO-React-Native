@@ -14,6 +14,11 @@ import type {JobCategory, JobDetail} from '../types'
  * A third carries a term prefix and a pay code, as nearly every live posting
  * does, for the list's wage, Level filter, and search to act on. The first two
  * carry neither, so they are "Not stated" in both filters.
+ *
+ * Then enough filler postings to scroll, because a list shorter than the
+ * screen cannot show whether a new search or filter starts it at the top.
+ * They are all tier 2, so choosing Experienced keeps a list long enough to
+ * have been scrolled.
  */
 
 /// Mirrored by `TestIdentifiers.StudentWork.fixtureJobWithWrappingField`.
@@ -86,7 +91,26 @@ const CODED_JOB: JobDetail = {
 	url: `${SITE}/job/uitest-3`,
 }
 
-export const UITEST_JOB_DETAILS: JobDetail[] = [WRAPPING_JOB, SHORT_JOB, CODED_JOB]
+/// Mirrored by `TestIdentifiers.StudentWork.fixtureFillerPrefix`.
+const FILLER_TITLE_PREFIX = 'Fixture Filler Posting'
+const FILLER_COUNT = 20
+
+const FILLER_JOBS: JobDetail[] = Array.from({length: FILLER_COUNT}, (_, index) => {
+	let number = String(index + 1).padStart(2, '0')
+	return {
+		id: `uitest-filler-${number}`,
+		title: `AY ${FILLER_TITLE_PREFIX} ${number} (WS-ST2)`,
+		category: 'Student Work',
+		schedule: 'Part time',
+		location: 'Northfield, MN, United States',
+		postedDate: '2026-09-01T15:00:00+00:00',
+		fields: [],
+		body: BODY,
+		url: `${SITE}/job/uitest-filler-${number}`,
+	}
+})
+
+export const UITEST_JOB_DETAILS: JobDetail[] = [WRAPPING_JOB, SHORT_JOB, CODED_JOB, ...FILLER_JOBS]
 
 export const UITEST_JOB_CATEGORIES: JobCategory[] = [
 	{

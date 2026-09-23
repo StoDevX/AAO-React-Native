@@ -1,7 +1,7 @@
 import * as React from 'react'
 import {StyleSheet} from 'react-native'
-import {ContentUnavailableView, Host, List, Section} from '@expo/ui/swift-ui'
-import {listStyle, refreshable} from '@expo/ui/swift-ui/modifiers'
+import {ContentUnavailableView, Host, List, RNHostView, Section, VStack} from '@expo/ui/swift-ui'
+import {accessibilityIdentifier, id, listStyle, refreshable} from '@expo/ui/swift-ui/modifiers'
 import * as c from '@frogpond/colors'
 import {FilterToolbar} from '@frogpond/filter'
 import {LoadingView, NoticeView} from '@frogpond/notice'
@@ -18,6 +18,9 @@ import {
 } from '../../source/features/sis/student-work/filters'
 import {jobRowDetail} from '../../source/features/sis/student-work/lib'
 import {displayTitle} from '../../source/features/sis/student-work/posting'
+
+/// Mirrored by TestIdentifiers.StudentWork.postingsList.
+const POSTINGS_LIST_ID = 'student-work-postings'
 
 const NOTHING_CHOSEN: ChosenJobFilters = {level: null, term: null}
 
@@ -78,47 +81,58 @@ export default function StudentWorkPage(): React.ReactNode {
 	return (
 		<>
 			{chrome}
-			<FilterToolbar
-				filters={filters}
-				onChange={(changed) => {
-					if (changed.type !== 'list') return
-					let titles = changed.spec.selected.map((option) => option.title)
-					setChosen((previous) => ({...previous, [changed.apply.key]: titles}))
-				}}
-			/>
 			<Host style={styles.host}>
-				<List
-					modifiers={[
-						listStyle('insetGrouped'),
-						refreshable(async () => {
-							await refetch()
-						}),
-					]}
-				>
-					{sections.length === 0 ? (
-						<ContentUnavailableView
-							description={isNarrowed ? 'Try a different search or filter.' : undefined}
-							systemImage="briefcase"
-							title={isNarrowed ? 'No matching jobs.' : 'There are no open job postings.'}
+				{/* The toolbar is React Native, bridged into the SwiftUI stack so it
+				    sits under the navigation bar rather than behind it. */}
+				<VStack spacing={0}>
+					<RNHostView matchContents={true}>
+						<FilterToolbar
+							filters={filters}
+							onChange={(changed) => {
+								if (changed.type !== 'list') return
+								let titles = changed.spec.selected.map((option) => option.title)
+								setChosen((previous) => ({...previous, [changed.apply.key]: titles}))
+							}}
 						/>
-					) : (
-						sections.map((section) => (
-							<Section key={section.title} title={section.title}>
-								{section.data.map((job) => (
-									<DisclosureRow
-										key={job.id}
-										detail={jobRowDetail(job)}
-										onPress={() =>
-											router.navigate({pathname: '/JobDetail', params: {jobId: job.id}})
-										}
-										title={displayTitle(job.title)}
-										titleLines={2}
-									/>
-								))}
-							</Section>
-						))
-					)}
-				</List>
+					</RNHostView>
+					<List
+						modifiers={[
+							listStyle('insetGrouped'),
+							refreshable(async () => {
+								await refetch()
+							}),
+							accessibilityIdentifier(POSTINGS_LIST_ID),
+							// A new search or filter is a new list, starting from the
+							// top. Without this the list keeps the offset it had, and
+							// postings that sort above it land offscreen.
+							id(JSON.stringify([searchQuery, chosen])),
+						]}
+					>
+						{sections.length === 0 ? (
+							<ContentUnavailableView
+								description={isNarrowed ? 'Try a different search or filter.' : undefined}
+								systemImage="briefcase"
+								title={isNarrowed ? 'No matching jobs.' : 'There are no open job postings.'}
+							/>
+						) : (
+							sections.map((section) => (
+								<Section key={section.title} title={section.title}>
+									{section.data.map((job) => (
+										<DisclosureRow
+											key={job.id}
+											detail={jobRowDetail(job)}
+											onPress={() =>
+												router.navigate({pathname: '/JobDetail', params: {jobId: job.id}})
+											}
+											title={displayTitle(job.title)}
+											titleLines={2}
+										/>
+									))}
+								</Section>
+							))
+						)}
+					</List>
+				</VStack>
 			</Host>
 		</>
 	)
