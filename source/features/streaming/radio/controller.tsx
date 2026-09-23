@@ -9,6 +9,7 @@ import {
 	View,
 	useWindowDimensions,
 } from 'react-native'
+import {SafeAreaView} from 'react-native-safe-area-context'
 import noop from 'lodash/noop'
 import * as c from '@frogpond/colors'
 import {callPhone} from '../../../components/call-phone'
@@ -175,21 +176,26 @@ export function RadioControllerView(props: Props): React.ReactNode {
 	let logoWrapper = [styles.logoWrapper, sideways && landscape.logoWrapper]
 
 	return (
-		<ScrollView contentContainerStyle={root} contentInsetAdjustmentBehavior="automatic">
-			<View style={logoWrapper}>
-				<Image resizeMode="contain" source={image} style={logo} />
-			</View>
+		<SafeAreaView edges={['left', 'right']} style={styles.screen}>
+			<ScrollView contentContainerStyle={root} contentInsetAdjustmentBehavior="automatic">
+				<View style={logoWrapper}>
+					<Image resizeMode="contain" source={image} style={logo} />
+				</View>
 
-			<View style={styles.container}>
-				{titleBlock}
-				{controlsBlock}
-				{playerBlock}
-			</View>
-		</ScrollView>
+				<View style={styles.container}>
+					{titleBlock}
+					{controlsBlock}
+					{playerBlock}
+				</View>
+			</ScrollView>
+		</SafeAreaView>
 	)
 }
 
 const styles = StyleSheet.create({
+	screen: {
+		flex: 1,
+	},
 	root: {
 		flexDirection: 'column',
 		alignItems: 'stretch',
