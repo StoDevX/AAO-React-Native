@@ -51,15 +51,6 @@ export function formatStatusTime(time: Moment, locale?: string): string {
 }
 
 /**
- * One time written the way `formatBuildingTimes` writes a compact range's ends
- * -- `4PM`, `10:30AM`, `Noon` -- for a navigation bar naming a single moment
- * beside the ranges it names elsewhere.
- */
-export function formatCompactBuildingTime(time: Moment, locale?: string): string {
-	return formatSingleTime(time, locale, undefined, true)
-}
-
-/**
  * `zone` names the clock the range is read on, for a screen that is not
  * showing the reader their own time -- the report form, where the hours being
  * edited are the campus's canonical schedule. Left out, the range follows the

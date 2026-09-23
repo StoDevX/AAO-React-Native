@@ -214,7 +214,7 @@ describe('cafeHours', () => {
 			expect(cafeHours(TWICE_DAILY, dayMoment('Fri 3:00pm'))).toEqual({
 				time: null,
 				closed: true,
-				reopening: 'Closed until 5PM',
+				reopening: 'Closed until 5 PM',
 			})
 		})
 
@@ -224,6 +224,90 @@ describe('cafeHours', () => {
 				closed: true,
 				reopening: null,
 			})
+		})
+
+		// Half an hour out from closing it reads as `Almost Closed`, which is a
+		// venue that is still serving.
+		test('keeps a venue that is about to close open', () => {
+			expect(cafeHours(TWICE_DAILY, dayMoment('Fri 8:45pm'))).toEqual({
+				time: '5PM – 9PM',
+				closed: false,
+				reopening: null,
+			})
+		})
+
+		// Last night's window is running and tonight's is ahead, so the day holds
+		// two, and the one to draw is the one still running.
+		test('draws a window still running from last night', () => {
+			let lateNights: BuildingType = {
+				...PAUSE,
+				schedule: [
+					{
+						title: 'Hours',
+						hours: [
+							{days: ['Fr'], from: '9:00pm', to: '2:00am'},
+							{days: ['Sa'], from: '11:00am', to: '2:00pm'},
+						],
+					},
+				],
+			}
+
+			expect(cafeHours(lateNights, dayMoment('Sat 1:00am'))).toEqual({
+				time: '9PM – 2AM',
+				closed: false,
+				reopening: null,
+			})
+		})
+
+		// `isPhysicallyOpen: false` is the college saying the doors are shut
+		// whatever the hours beside them read, so its window is not the one to
+		// draw even while the status reads open.
+		test('passes over a set whose doors are not open', () => {
+			let shuttered: BuildingType = {
+				...PAUSE,
+				schedule: [
+					{
+						title: 'Closed for renovation',
+						isPhysicallyOpen: false,
+						hours: [{days: ['Fr'], from: '9:00am', to: '3:00pm'}],
+					},
+					{
+						title: 'Hours',
+						hours: [
+							{days: ['Fr'], from: '7:00am', to: '11:00am'},
+							{days: ['Fr'], from: '5:00pm', to: '9:00pm'},
+						],
+					},
+				],
+			}
+
+			expect(cafeHours(shuttered, dayMoment('Fri 10:00am'))).toEqual({
+				time: '7AM – 11AM',
+				closed: false,
+				reopening: null,
+			})
+		})
+	})
+
+	// A window that ends while chapel has the doors shut does not reopen after
+	// it, so the status reads `Closed` rather than `Chapel` -- and the window
+	// is not one the venue is serving in.
+	test('reports a window cut short by chapel as closed', () => {
+		let endsInChapel: BuildingType = {
+			...PAUSE,
+			schedule: [
+				{
+					title: 'Hours',
+					closedForChapelTime: true,
+					hours: [{days: ['Mo'], from: '8:00am', to: '10:20am'}],
+				},
+			],
+		}
+
+		expect(cafeHours(endsInChapel, dayMoment('Mon 10:15am'))).toEqual({
+			time: null,
+			closed: true,
+			reopening: null,
 		})
 	})
 
@@ -244,7 +328,7 @@ describe('cafeHours', () => {
 		expect(cafeHours(observesChapel, dayMoment('Wed 10:20am'))).toEqual({
 			time: null,
 			closed: true,
-			reopening: 'Closed until 10:30AM',
+			reopening: 'Closed until 10:30 AM',
 		})
 	})
 })

@@ -99,8 +99,26 @@ describe('daypartHours', () => {
 			expect(daypartHours(closed, at('2026-09-22 12:00'))).toBeNull()
 		})
 
-		test('a cafe with no dayparts', () => {
-			expect(daypartHours([day('2026-09-22')], at('2026-09-22 12:00'))).toBeNull()
+		// BonApp writes a whole day, or no time at all, for a daypart whose times
+		// say nothing; the meal's own window drops those too.
+		test('a daypart covering the whole day', () => {
+			let allDay = [day('2026-09-22', ['All Day', '00:00', '23:59'])]
+			expect(daypartHours(allDay, at('2026-09-22 12:00'))).toBeNull()
+			let untilMidnight = [day('2026-09-22', ['Menu', '00:00', '24:00'])]
+			expect(daypartHours(untilMidnight, at('2026-09-22 12:00'))).toBeNull()
+		})
+
+		test('a daypart with no length', () => {
+			let empty = [day('2026-09-22', ['Menu', '00:00', '00:00'])]
+			expect(daypartHours(empty, at('2026-09-22 12:00'))).toBeNull()
+		})
+
+		// Only today is published, so after midnight last night's Late Night is
+		// not in the data, and today's has not started. Whether the cafe is open
+		// right now is not something the day can answer.
+		test('the small hours of a daypart that runs past midnight', () => {
+			let lateNight = [day('2026-09-22', ['Late Night', '22:00', '01:00'])]
+			expect(daypartHours(lateNight, at('2026-09-22 00:30'))).toBeNull()
 		})
 
 		// The cafe query resolves after the screen first draws.
@@ -111,6 +129,27 @@ describe('daypartHours', () => {
 		test('a daypart whose times do not parse', () => {
 			let garbled = [day('2026-09-22', ['The Cage', 'soon', 'later'])]
 			expect(daypartHours(garbled, at('2026-09-22 12:00'))).toBeNull()
+		})
+	})
+
+	// The body of the screen reads the same flags to decide the cafe is shut,
+	// so the line under its name agrees with it.
+	describe('reports as shut', () => {
+		test('a day Bon Appétit marks closed', () => {
+			let closed = [{...day('2026-09-22', ['The Cage', '07:30', '20:00']), status: 'closed'}]
+			expect(daypartHours(closed, at('2026-09-22 12:00'))).toEqual({
+				time: null,
+				closed: true,
+				reopening: null,
+			})
+		})
+
+		test('a day with no dayparts', () => {
+			expect(daypartHours([day('2026-09-22')], at('2026-09-22 12:00'))).toEqual({
+				time: null,
+				closed: true,
+				reopening: null,
+			})
 		})
 	})
 })

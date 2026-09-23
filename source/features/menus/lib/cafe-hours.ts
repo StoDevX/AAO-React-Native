@@ -1,17 +1,16 @@
 import type {Moment} from 'moment-timezone'
 import type {BuildingStatusType, BuildingType} from '../../building-hours/types'
-import type {HourPairType} from '../../building-hours/lib'
+import type {HourPairType} from '../../building-hours/lib/find-open-window'
+import {isChapelTime} from '../../building-hours/lib/chapel'
 import {
-	findOpenWindow,
 	formatBuildingTimes,
-	formatCompactBuildingTime,
 	formatStatusTime,
 	getDayOfWeek,
 	getScheduleStatusAtMoment,
 	getShortBuildingStatus,
 	nextOpening,
+	parseHours,
 	schedulesInEffect,
-	windowOpeningOn,
 } from '../../building-hours/lib'
 
 /** What a venue's published hours say about the cafe on screen right now. */
@@ -26,7 +25,7 @@ export type CafeHours = {
 	closed: boolean
 	/**
 	 * What to say about a shut cafe opening again, e.g. `Opens at 4 PM`, `Closed
-	 * until tomorrow`, or `Closed until 5PM`, or `null` when it is open or when
+	 * until tomorrow`, or `Closed until 5 PM`, or `null` when it is open or when
 	 * there is nothing to promise.
 	 */
 	reopening: string | null
@@ -74,7 +73,7 @@ export function cafeHours(building: BuildingType | undefined, m: Moment): CafeHo
 	if (status !== 'Chapel') {
 		let windows = windowsOfTheDay(building, m)
 		if (windows.length === 1) {
-			return oneWindowHours(windows[0], m, opensTomorrow(building, m))
+			return oneWindowHours(windows[0], m, () => opensTomorrow(building, m))
 		}
 	}
 
@@ -123,48 +122,35 @@ function shut(building: BuildingType, m: Moment): CafeHours {
 	return {
 		time: null,
 		closed: true,
-		reopening: opening ? `Closed until ${formatCompactBuildingTime(opening)}` : null,
+		reopening: opening ? `Closed until ${formatStatusTime(opening)}` : null,
 	}
 }
 
 /**
  * The windows a venue's day holds at `m`: the one running, even when it opened
  * last night, and those that open today. Sets whose doors are not open hold
- * none.
+ * none, and neither does a set shut for chapel while chapel runs -- the status
+ * reads such a venue as shut, and so does this.
  */
 function windowsOfTheDay(building: BuildingType, m: Moment): HourPairType[] {
-	let today = getDayOfWeek(m)
-	let windows: HourPairType[] = []
-
-	for (let set of building.schedule ?? []) {
-		if (set.isPhysicallyOpen === false) {
-			continue
-		}
-
-		for (let hours of set.hours) {
-			let window =
-				findOpenWindow(hours, m) ?? (hours.days.includes(today) ? windowOpeningOn(hours, m) : null)
-			if (window) {
-				windows.push(window)
-			}
-		}
-	}
-
-	return windows
+	return (building.schedule ?? [])
+		.filter((set) => set.isPhysicallyOpen !== false)
+		.filter((set) => !(set.closedForChapelTime && isChapelTime(m)))
+		.flatMap((set) => schedulesInEffect(set.hours, m).map((hours) => parseHours(hours, m)))
 }
 
 /**
  * The line for a cafe whose day holds the one `window`: when it opens, then
  * when it closes, then that it is shut until tomorrow.
  *
- * `opensTomorrow` is `false` for a cafe known to have nothing tomorrow, which
- * is only `Closed`, and `undefined` for one whose tomorrow nobody has
- * published -- a cafe that served today is taken to serve again.
+ * `opensTomorrow` answers whether it does, asked only once the window has
+ * closed; a cafe with nothing tomorrow is only `Closed`. Left out for a cafe
+ * whose tomorrow nobody has published, which is taken to serve again.
  */
 export function oneWindowHours(
 	window: HourPairType,
 	m: Moment,
-	opensTomorrow: boolean | undefined,
+	opensTomorrow?: () => boolean,
 ): CafeHours {
 	if (m.isBefore(window.open)) {
 		return {time: null, closed: true, reopening: `Opens at ${formatStatusTime(window.open)}`}
@@ -177,7 +163,7 @@ export function oneWindowHours(
 	return {
 		time: null,
 		closed: true,
-		reopening: opensTomorrow === false ? 'Closed' : 'Closed until tomorrow',
+		reopening: opensTomorrow && !opensTomorrow() ? 'Closed' : 'Closed until tomorrow',
 	}
 }
 

@@ -18,6 +18,41 @@ type MealWindow = {
 }
 
 /**
+ * When a meal opens and closes, or `null` for a meal whose times say nothing
+ * -- see `formatMealTimes` for which those are. A window crossing midnight
+ * closes the following day.
+ *
+ * `date` (`YYYY-MM-DD`) is the day the meal is served; left out, the times are
+ * read against today.
+ */
+export function mealWindow(
+	meal: MealWindow,
+	date?: string,
+): {start: moment.Moment; end: moment.Moment} | null {
+	let formats = date ? TIME_FORMATS.map((format) => `YYYY-MM-DD ${format}`) : TIME_FORMATS
+	let stamp = (time: string) => (date ? `${date} ${time}` : time)
+	let start = moment.tz(stamp(meal.starttime), formats, true, timezone())
+	let end = moment.tz(stamp(meal.endtime), formats, true, timezone())
+
+	if (!start.isValid() || !end.isValid()) {
+		return null
+	}
+
+	// Negative where the window crosses midnight, which is a real window --
+	// Sayles' Late Night -- rather than one of the empty ones.
+	let minutes = end.diff(start, 'minutes')
+	if (minutes === 0 || minutes >= WHOLE_DAY) {
+		return null
+	}
+
+	if (minutes < 0) {
+		end.add(1, 'day')
+	}
+
+	return {start, end}
+}
+
+/**
  * The window a meal is served, e.g. `7:15AM – 9:45AM`, or `null` for a meal
  * whose times say nothing.
  *
@@ -39,19 +74,6 @@ type MealWindow = {
  * through the provider's state.
  */
 export function formatMealTimes(meal: MealWindow, locale?: string): string | null {
-	let start = moment.tz(meal.starttime, TIME_FORMATS, true, timezone())
-	let end = moment.tz(meal.endtime, TIME_FORMATS, true, timezone())
-
-	if (!start.isValid() || !end.isValid()) {
-		return null
-	}
-
-	// Negative where the window crosses midnight, which is a real window --
-	// Sayles' Late Night -- rather than one of the empty ones above.
-	let minutes = end.diff(start, 'minutes')
-	if (minutes === 0 || minutes >= WHOLE_DAY) {
-		return null
-	}
-
-	return formatCompactTimeRange(start, end, locale)
+	let window = mealWindow(meal)
+	return window ? formatCompactTimeRange(window.start, window.end, locale) : null
 }

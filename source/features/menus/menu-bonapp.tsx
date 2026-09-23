@@ -13,7 +13,7 @@ import type {
 } from './types'
 import sample from 'lodash/sample'
 import {reduce} from 'lodash'
-import {now as currentMoment} from '@frogpond/timer'
+import {useMomentTimer} from '@frogpond/timer'
 import {bonAppCafeOptions, bonAppMenuOptions, prepareFood} from './query'
 import {findCafeMessage} from './lib/cafe-message'
 import {daypartHours} from './lib/daypart-hours'
@@ -138,7 +138,11 @@ function getErrorMessage(error: Error | undefined) {
 export function BonAppHostedMenu(props: Props): React.ReactNode {
 	// Which meal a cafe opens on is read off the clock, so a UI test run takes
 	// the frozen one its fixtures are anchored to. Noon lands in lunch.
-	let now = currentMoment().tz(timezone())
+	//
+	// A clock that ticks: the line under the name is relative to it -- `Opens
+	// at 7:30 AM` is false a minute later -- and a tab stays mounted for as long
+	// as the reader keeps coming back to it.
+	let {now} = useMomentTimer({intervalMs: 60_000, timezone: timezone()})
 	let router = useRouter()
 
 	// Live focus rather than the latched `useHasEverBeenFocused` the tabs use
@@ -153,9 +157,8 @@ export function BonAppHostedMenu(props: Props): React.ReactNode {
 	// lengths of the weekday go over, since which one fits depends on whether a
 	// meal ends up sharing its line.
 	//
-	// Formatted days, not `now`: `currentMoment()` above builds a fresh Moment
-	// on every render, so a header depending on it would republish on every
-	// render and loop through the provider's state.
+	// Formatted days, not `now`: the header is read field by field, so strings
+	// republish it only when the day itself changes.
 	let weekdayShort = formatWeekday(now, 'short')
 	let weekdayLong = formatWeekday(now, 'long')
 	let date = formatDate(now, 'medium')

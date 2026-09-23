@@ -8,7 +8,7 @@ import {pauseMenuOptions} from './query'
 import {useQuery} from '@tanstack/react-query'
 import {useIsFocused, useRouter} from 'expo-router'
 import type {GithubMenuType} from './types'
-import {now as currentMoment} from '@frogpond/timer'
+import {now as currentMoment, useMomentTimer} from '@frogpond/timer'
 import {formatWeekday} from '@frogpond/time-format'
 import type {MealHeaderState} from '@frogpond/food-menu'
 import {buildingByNameOptions} from '../building-hours/query'
@@ -85,10 +85,12 @@ export function GitHubHostedMenu(props: Props): React.ReactNode {
 	})
 
 	// Read off the clock rather than off `menuDate`, which is when the menu was
-	// fetched. The day and the window both come back as strings, so a fresh
-	// `Moment` on every render does not republish the header and loop through
-	// the provider's state.
-	let clock = currentMoment().tz(timezone())
+	// fetched, and a clock that ticks: the line under the name is relative to
+	// it -- `Opens at 4 PM` is false a minute after four -- and a tab stays
+	// mounted for as long as the reader keeps coming back to it. The day and
+	// the line both come back as strings, so each tick republishes the header
+	// only when one of them has changed.
+	let {now: clock} = useMomentTimer({intervalMs: 60_000, timezone: timezone()})
 	let weekdayShort = formatWeekday(clock, 'short')
 	let weekdayLong = formatWeekday(clock, 'long')
 	let hours = cafeHours(venue, clock)
