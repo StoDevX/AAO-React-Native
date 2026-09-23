@@ -4,7 +4,7 @@ import {isValid, parseISO} from 'date-fns'
 import {jobCode, type JobCode} from './posting'
 
 /// The title of a posting's description, both the row that opens it and the
-/// screen it opens. Mirrored by `TestIdentifiers.SIS.jobDescriptionRow`.
+/// screen it opens. Mirrored by `TestIdentifiers.StudentWork.jobDescriptionRow`.
 export const JOB_DESCRIPTION_TITLE = 'Description'
 
 /// `PostedDate` is a plain `YYYY-MM-DD` with no zone, parsed as local time so

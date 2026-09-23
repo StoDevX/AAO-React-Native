@@ -10,12 +10,19 @@ import type {JobCategory, JobDetail} from '../types'
  * The first has a field long enough to wrap onto a second line, the shape a
  * host sized to its content measures as too short; the second has only short
  * fields.
+ *
+ * A third carries a term prefix and a pay code, as nearly every live posting
+ * does, for the list's wage, Level filter, and search to act on. The first two
+ * carry neither, so they are "Not stated" in both filters.
  */
 
-/// Mirrored by `TestIdentifiers.SIS.fixtureJobWithWrappingField`.
+/// Mirrored by `TestIdentifiers.StudentWork.fixtureJobWithWrappingField`.
 export const UITEST_WRAPPING_JOB_TITLE = 'Undergraduate Research Assistant'
-/// Mirrored by `TestIdentifiers.SIS.fixtureJobWithShortFields`.
+/// Mirrored by `TestIdentifiers.StudentWork.fixtureJobWithShortFields`.
 export const UITEST_SHORT_JOB_TITLE = 'Library Circulation Desk Assistant'
+/// Listed as `TestIdentifiers.StudentWork.fixtureCodedJob`, without its term
+/// prefix and pay code.
+export const UITEST_CODED_JOB_TITLE = 'AY Stav Student Server (WS-NST1)'
 
 const SITE = 'https://jobs.example.invalid/sites/CX_1'
 
@@ -64,7 +71,22 @@ const SHORT_JOB: JobDetail = {
 	url: `${SITE}/job/uitest-2`,
 }
 
-export const UITEST_JOB_DETAILS: JobDetail[] = [WRAPPING_JOB, SHORT_JOB]
+const CODED_JOB: JobDetail = {
+	id: 'uitest-3',
+	title: UITEST_CODED_JOB_TITLE,
+	category: 'Student Work',
+	schedule: 'Part time',
+	location: 'Northfield, MN, United States',
+	postedDate: '2026-09-05T15:00:00+00:00',
+	fields: [
+		{label: 'Classification', value: 'Student Employee (non-exempt)'},
+		{label: 'Department', value: 'Stav Hall'},
+	],
+	body: BODY,
+	url: `${SITE}/job/uitest-3`,
+}
+
+export const UITEST_JOB_DETAILS: JobDetail[] = [WRAPPING_JOB, SHORT_JOB, CODED_JOB]
 
 export const UITEST_JOB_CATEGORIES: JobCategory[] = [
 	{

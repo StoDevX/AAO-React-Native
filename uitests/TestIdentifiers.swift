@@ -75,6 +75,7 @@ struct TestIdentifiers {
 		static let stoPrint = "stoPrint"
 		static let streamingMedia = "Streaming Media"
 		static let studentOrgs = "Student Orgs"
+		static let studentWork = "Student Work"
 		static let transportation = "Transportation"
 	}
 
@@ -192,7 +193,11 @@ struct TestIdentifiers {
 		static let iAgree = "I Agree"
 		static let balancesHeader = "BALANCES"
 		static let mealPlanHeader = "MEAL PLAN"
-		static let openJobs = "Open Jobs"
+	}
+
+	// MARK: - Student Work
+
+	enum StudentWork {
 		/// Postings from modules/ccc-jobs/fixtures/uitest-postings.ts: one with
 		/// a field long enough to wrap, one with only short fields.
 		static let fixtureJobWithWrappingField = "Undergraduate Research Assistant"
@@ -206,6 +211,15 @@ struct TestIdentifiers {
 		/// The SF Symbol `DisclosureRow` draws for an external destination,
 		/// which the image carries as its identifier.
 		static let externalLinkAccessory = "arrow.up.right"
+		/// A fixture posting whose title carries a term and a pay code, shown
+		/// with both dropped. Mirrors UITEST_CODED_JOB_TITLE.
+		static let fixtureCodedJob = "Stav Student Server"
+		/// Its wage, from the NST1 tier.
+		static let fixtureCodedJobWage = "$13.50/hr"
+		/// Matches LEVELS in source/features/sis/student-work/filters.ts.
+		static let entryLevel = "Entry-level"
+		/// The Level filter's key, from `buildJobFilters`.
+		static let levelFilter = "level"
 	}
 
 	// MARK: - Menus

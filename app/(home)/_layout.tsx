@@ -46,7 +46,7 @@ export default function HomeLayout(): React.ReactNode {
 			<Stack.Screen name="Dictionary/entry" options={DETAIL_SHEET} />
 			<Stack.Screen name="Directory/named" options={DETAIL_SHEET} />
 			<Stack.Screen name="Map" />
-			<Stack.Screen name="SIS" options={{title: 'SIS'}} />
+			<Stack.Screen name="SIS/index" options={{title: 'SIS'}} />
 			<Stack.Screen
 				name="EventDetail"
 				options={{
