@@ -4,21 +4,39 @@ import {Button, Image, RoundedRectangle, Text, VStack, ZStack} from '@expo/ui/sw
 import {
 	accessibilityLabel,
 	aspectRatio,
+	background,
 	buttonStyle,
 	contentShape,
+	disabled as disabledModifier,
 	environment,
 	font,
 	foregroundStyle,
 	frame,
 	lineLimit,
+	monospacedDigit,
 	multilineTextAlignment,
 	opacity,
+	padding,
 	shadow,
 	shapes,
 } from '@expo/ui/swift-ui/modifiers'
 import type {SFSymbol} from 'sf-symbols-typescript'
+import * as c from '@frogpond/colors'
 import {displayP3, type Gradient} from '@frogpond/colors'
 import {FILL_WIDTH, TILE_ASPECT} from './tile-layout'
+
+/// A disabled tile is still read, so it fades rather than vanishes.
+const DISABLED_OPACITY = 0.4
+
+/// A neutral capsule rather than a red one, which would read as unread.
+const COUNT_MODIFIERS = [
+	font({textStyle: 'caption', weight: 'semibold'}),
+	monospacedDigit(),
+	foregroundStyle(c.label),
+	padding({horizontal: 7, vertical: 2}),
+	background(c.secondarySystemBackground, shapes.capsule()),
+	padding({top: 8, trailing: 8}),
+]
 
 /// Space between the card and the name beneath it.
 const LABEL_GAP = 8
@@ -37,6 +55,10 @@ type Props = {
 	ratio?: number
 	/** Opens whatever this tile represents. */
 	onPress: () => void
+	/** How many things the tile holds, drawn at the card's top-right corner. None at zero. */
+	count?: number
+	/** Drawn dimmed and not tappable, as for an area with nothing in it. */
+	disabled?: boolean
 }
 
 export function GradientRoundedRectangle({
@@ -89,27 +111,46 @@ export function GradientTile({
 	gradient,
 	ratio = TILE_ASPECT,
 	onPress,
+	count,
+	disabled = false,
 }: Props): React.ReactNode {
 	let isDarkScheme = useColorScheme() === 'dark'
+	let hasCount = count !== undefined && count > 0
+	let label = hasCount ? `${title}, ${count} ${count === 1 ? 'posting' : 'postings'}` : title
 
 	return (
-		<Button modifiers={[buttonStyle('plain'), accessibilityLabel(title)]} onPress={onPress}>
+		<Button
+			modifiers={[
+				buttonStyle('plain'),
+				accessibilityLabel(label),
+				disabledModifier(disabled),
+				...(disabled ? [opacity(DISABLED_OPACITY)] : []),
+			]}
+			onPress={onPress}
+		>
 			<VStack modifiers={[contentShape(shapes.rectangle())]} spacing={LABEL_GAP}>
+				{/* The count sits in the card's corner, over the centred icon, as
+				    a Home Screen badge sits on an app icon. */}
 				<ZStack
+					alignment="topTrailing"
 					modifiers={[frame({maxWidth: FILL_WIDTH}), aspectRatio({ratio, contentMode: 'fit'})]}
 				>
-					<GradientRoundedRectangle gradient={gradient} showShadow={isDarkScheme} />
+					<ZStack modifiers={[frame({maxWidth: FILL_WIDTH, maxHeight: FILL_WIDTH})]}>
+						<GradientRoundedRectangle gradient={gradient} showShadow={isDarkScheme} />
 
-					<Image
-						modifiers={[
-							// force the colors of the Image here to be inverted from typical expectations
-							environment({key: 'colorScheme', value: isDarkScheme ? 'light' : 'dark'}),
-							font({textStyle: 'largeTitle'}),
-							foregroundStyle({type: 'hierarchical', style: 'primary'}),
-							opacity(0.8),
-						]}
-						systemName={icon}
-					/>
+						<Image
+							modifiers={[
+								// force the colors of the Image here to be inverted from typical expectations
+								environment({key: 'colorScheme', value: isDarkScheme ? 'light' : 'dark'}),
+								font({textStyle: 'largeTitle'}),
+								foregroundStyle({type: 'hierarchical', style: 'primary'}),
+								opacity(0.8),
+							]}
+							systemName={icon}
+						/>
+					</ZStack>
+
+					{hasCount ? <Text modifiers={COUNT_MODIFIERS}>{String(count)}</Text> : null}
 				</ZStack>
 
 				<Text

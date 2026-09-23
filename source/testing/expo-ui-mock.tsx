@@ -106,6 +106,7 @@ export const Animation: AnimationPresets = {
 
 export const aspectRatio = spreading('aspectRatio')
 export const autocorrectionDisabled = flag('autocorrectionDisabled', 'disabled')
+export const badge = named('badge', 'value')
 export const bold = bare('bold')
 export const buttonStyle = named('buttonStyle', 'style')
 export const disabled = flag('disabled', 'disabled')
@@ -266,6 +267,7 @@ export function useScrollGeometryChange(callback?: (geometry: unknown) => void):
 export const shapes = {
 	rectangle: (): Record<string, unknown> => ({shape: 'rectangle'}),
 	circle: (): Record<string, unknown> => ({shape: 'circle'}),
+	capsule: (): Record<string, unknown> => ({shape: 'capsule'}),
 	roundedRectangle: (params: {
 		cornerRadius?: number
 		roundedCornerStyle?: string
@@ -658,6 +660,10 @@ export function Circle({modifiers}: WithModifiers): React.ReactNode {
 }
 
 export function Rectangle(_props: WithModifiers): React.ReactNode {
+	return <View />
+}
+
+export function RoundedRectangle(_props: WithModifiers & {cornerRadius?: number}): React.ReactNode {
 	return <View />
 }
 

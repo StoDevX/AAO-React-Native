@@ -45,6 +45,25 @@ describe('DisclosureRow', () => {
 	})
 })
 
+describe('DisclosureRow badge', () => {
+	it('carries its badge count in its spoken label', async () => {
+		await render(<DisclosureRow badge={4} onPress={jest.fn()} title="Entry-level jobs" />)
+		expect(screen.getByLabelText('Entry-level jobs, 4')).toBeOnTheScreen()
+	})
+
+	it('says nothing of a badge of zero', async () => {
+		await render(<DisclosureRow badge={0} onPress={jest.fn()} title="Summer jobs" />)
+		expect(screen.getByLabelText('Summer jobs')).toBeOnTheScreen()
+	})
+
+	it('does not fire when disabled', async () => {
+		let onPress = jest.fn()
+		await render(<DisclosureRow disabled={true} onPress={onPress} title="Summer jobs" />)
+		fireEvent.press(screen.getByLabelText('Summer jobs'))
+		expect(onPress).not.toHaveBeenCalled()
+	})
+})
+
 describe('DisclosureRow leading image', () => {
 	it('shows a leading symbol', async () => {
 		await render(

@@ -24,6 +24,7 @@ import {
 	accessibilityLabel,
 	buttonStyle,
 	contentShape,
+	badge as badgeModifier,
 	disabled as disabledModifier,
 	font,
 	foregroundStyle,
@@ -188,6 +189,10 @@ type DisclosureRowProps = {
 	 */
 	identifier?: string
 	onPress: () => void
+	/** A count for the row's trailing edge, as Settings and Mail show one. None at zero. */
+	badge?: number
+	/** Drawn dimmed and not tappable, as for a view with nothing in it. */
+	disabled?: boolean
 	/** Where tapping the row goes. Defaults to a push. */
 	destination?: RowDestination
 }
@@ -233,8 +238,16 @@ export function DisclosureRow(props: DisclosureRowProps): React.ReactNode {
 		image,
 		identifier,
 		onPress,
+		badge,
+		disabled = false,
 		destination = 'push',
 	} = props
+
+	let hasBadge = badge !== undefined && badge > 0
+	let spokenLabel =
+		image && 'label' in image && image.label
+			? `${image.label}, ${rowLabel(title, detail)}`
+			: rowLabel(title, detail)
 
 	let details = detailLinesOf(detail)
 	let detailModifiers = [
@@ -251,11 +264,9 @@ export function DisclosureRow(props: DisclosureRowProps): React.ReactNode {
 		<Button
 			modifiers={[
 				buttonStyle('plain'),
-				accessibilityLabel(
-					image && 'label' in image && image.label
-						? `${image.label}, ${rowLabel(title, detail)}`
-						: rowLabel(title, detail),
-				),
+				accessibilityLabel(hasBadge ? `${spokenLabel}, ${badge}` : spokenLabel),
+				...(hasBadge ? [badgeModifier(String(badge))] : []),
+				disabledModifier(disabled),
 				...destinationTraits(destination),
 				...(identifier ? [accessibilityIdentifier(identifier)] : []),
 			]}
