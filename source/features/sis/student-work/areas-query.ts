@@ -14,29 +14,25 @@ const AREAS_TYPE = 'application/vnd.frogpond.student-work-areas+json'
 
 const BUNDLED_AREAS = toAreas((bundled as {data: AreaEntry[]}).data)
 
-/// The areas as published, or the copy the app shipped with when that cannot
-/// be fetched: a stale mapping still draws tiles, and no mapping draws none.
+/// The areas as published. The copy the app shipped with is the query's
+/// initial data, so a fetch that fails leaves whichever areas it already
+/// has -- shipped or published -- rather than passing the shipped copy off as
+/// the live one.
 export const studentWorkAreasOptions = queryOptions({
 	queryKey: ['student-work-areas'] as const,
 	queryFn: async ({signal}): Promise<StudentWorkArea[]> => {
 		if (isUITesting) return BUNDLED_AREAS
 
-		try {
-			let manifest = await fetchManifest(queryClient)
-			let source = resolveSources(manifest, REL_STUDENT_WORK_AREAS, [AREAS_TYPE])[0]
-			if (!source) return BUNDLED_AREAS
+		let manifest = await fetchManifest(queryClient)
+		let source = resolveSources(manifest, REL_STUDENT_WORK_AREAS, [AREAS_TYPE])[0]
+		if (!source) return BUNDLED_AREAS
 
-			let body = await fetchSourceBody(source.href, signal, 'Student Work areas')
-			return toAreas((body as {data: AreaEntry[]}).data)
-		} catch {
-			return BUNDLED_AREAS
-		}
+		let body = await fetchSourceBody(source.href, signal, 'Student Work areas')
+		return toAreas((body as {data: AreaEntry[]}).data)
 	},
 	staleTime: 1000 * 60 * 5,
-	// A query that has never run does not run offline, so the fallback above
-	// would never be reached on a first, offline open. The shipped areas are
-	// there from the start instead, marked stale so the live copy replaces
-	// them as soon as it can be fetched.
+	// There from the start, since a query that has never run does not run
+	// offline; marked stale so the live copy replaces them when it can.
 	initialData: BUNDLED_AREAS,
 	initialDataUpdatedAt: 0,
 })

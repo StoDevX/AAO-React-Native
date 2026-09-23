@@ -22,7 +22,7 @@ describe('prefillFromParams', () => {
 	})
 
 	test('prefills an area by its slug', () => {
-		expect(prefillFromParams({area: 'dance-theater'}, AREAS).area).toEqual(['Dance & Theater'])
+		expect(prefillFromParams({area: 'dance-theater'}, AREAS).area).toEqual(['dance-theater'])
 	})
 
 	test('prefills each preset’s filter', () => {

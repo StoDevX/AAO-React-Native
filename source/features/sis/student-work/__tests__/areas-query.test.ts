@@ -26,12 +26,11 @@ afterEach(() => {
 })
 
 describe('studentWorkAreasOptions', () => {
-	// No areas would mean no tiles; a stale mapping still draws them.
-	test('falls back to the areas the app shipped with when the manifest fails', async () => {
+	// A failed fetch must not pass the shipped copy off as the live one: React
+	// Query keeps the areas it already has, shipped or published.
+	test('fails when the manifest cannot be fetched', async () => {
 		;(fetchManifest as jest.Mock<() => Promise<never>>).mockRejectedValue(new Error('offline'))
-		let areas = await run<Array<{slug: string}>>(studentWorkAreasOptions)
-		expect(areas).toHaveLength(16)
-		expect(areas[0]?.slug).toBe('dining')
+		await expect(run(studentWorkAreasOptions)).rejects.toThrow('offline')
 	})
 
 	// A query that has never run does not run offline, so a fallback inside

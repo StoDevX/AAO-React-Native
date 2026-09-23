@@ -32,9 +32,10 @@ export function prefillFromParams(
 	params: Record<string, string | string[] | undefined>,
 	areas: StudentWorkArea[],
 ): ChosenJobFilters {
-	let areaNames = Object.fromEntries(areas.map((area) => [area.slug, area.name]))
+	let slug = one(params['area'])
 	return {
-		area: pick(areaNames, one(params['area'])),
+		// By slug, which a rename in the published areas file leaves alone.
+		area: slug !== undefined && areas.some((area) => area.slug === slug) ? [slug] : null,
 		posted: pick(POSTED, one(params['posted'])),
 		level: pick(LEVEL, one(params['level'])),
 		term: pick(TERM, one(params['term'])),

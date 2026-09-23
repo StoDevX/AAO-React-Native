@@ -102,33 +102,34 @@ describe('chosenAreaState', () => {
 	}
 
 	test('is ready with no area chosen', () => {
-		expect(chosenAreaState(null, [MUSIC], status({}), false)).toBe('ready')
+		expect(chosenAreaState(null, [MUSIC], status({}))).toBe('ready')
 	})
 
 	test('is ready once the chosen area is known', () => {
-		expect(chosenAreaState(['music'], [MUSIC], status({count: 2, settled: true}), false)).toBe(
-			'ready',
-		)
+		expect(chosenAreaState(['music'], [MUSIC], status({count: 2, settled: true}))).toBe('ready')
 	})
 
 	// Showing the whole board while an area loads would pass it off as the area's.
 	test('waits while the chosen area’s searches are pending', () => {
-		expect(chosenAreaState(['music'], [MUSIC], status({}), false)).toBe('loading')
+		expect(chosenAreaState(['music'], [MUSIC], status({}))).toBe('loading')
 	})
 
 	test('fails when every search for the chosen area failed', () => {
-		expect(chosenAreaState(['music'], [MUSIC], status({settled: true}), false)).toBe('failed')
+		expect(chosenAreaState(['music'], [MUSIC], status({settled: true}))).toBe('failed')
 	})
 
 	// A list that fills in unit by unit would jump back to the top each time.
 	test('waits for every search when some have answered', () => {
-		expect(chosenAreaState(['music'], [MUSIC], status({count: 1, settled: false}), false)).toBe(
-			'loading',
-		)
+		expect(chosenAreaState(['music'], [MUSIC], status({count: 1, settled: false}))).toBe('loading')
 	})
 
-	// Try Again: show that it is trying rather than the same failure.
-	test('shows a retry of failed searches as loading', () => {
-		expect(chosenAreaState(['music'], [MUSIC], status({settled: true}), true)).toBe('loading')
+	// An area that did load is still worth showing beside one that failed.
+	test('is ready when one chosen area failed and another loaded', () => {
+		const ART = area('art', ['2'])
+		let membership = new Map([
+			['music', {ids: new Set<string>(), count: undefined, empty: false, settled: true}],
+			['art', {ids: new Set(['a']), count: 1, empty: false, settled: true}],
+		])
+		expect(chosenAreaState(['music', 'art'], [MUSIC, ART], membership)).toBe('ready')
 	})
 })

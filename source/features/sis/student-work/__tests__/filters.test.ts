@@ -1,6 +1,12 @@
 import type {JobCategory, JobSummary} from '@frogpond/ccc-jobs'
 import type {AreaStatus, StudentWorkArea} from '../areas'
-import {buildJobFilters, choosePosted, visibleSections, type FilterContext} from '../filters'
+import {
+	areaSlugsFor,
+	buildJobFilters,
+	choosePosted,
+	visibleSections,
+	type FilterContext,
+} from '../filters'
 
 function job(id: string, title: string, postedDate = '2026-09-01'): JobSummary {
 	return {id, title, postedDate, location: undefined}
@@ -235,7 +241,7 @@ describe('visibleSections', () => {
 	})
 
 	test('keeps postings in a chosen area', () => {
-		let filters = buildJobFilters(ALL_JOBS, {...NOTHING_CHOSEN, area: ['Dining']}, CONTEXT)
+		let filters = buildJobFilters(ALL_JOBS, {...NOTHING_CHOSEN, area: ['dining']}, CONTEXT)
 		expect(ids(visibleSections(CATEGORIES, filters, '', CONTEXT))).toEqual(['1', '3'])
 	})
 
@@ -279,7 +285,7 @@ describe('the Area and Posted filters', () => {
 	})
 
 	test('show nothing for an empty area', () => {
-		let filters = buildJobFilters(ALL_JOBS, {...NOTHING_CHOSEN, area: ['Faith']}, CONTEXT)
+		let filters = buildJobFilters(ALL_JOBS, {...NOTHING_CHOSEN, area: ['faith']}, CONTEXT)
 		expect(ids(visibleSections(CATEGORIES, filters, '', CONTEXT))).toEqual([])
 	})
 
@@ -317,6 +323,27 @@ describe('a prefilled choice nothing matches', () => {
 		expect(filterNamed(filters, 'Term')?.enabled).toBe(true)
 		let categories: JobCategory[] = [{id: 1, name: 'Student Work', count: 2, jobs: [MAIL, STAV]}]
 		expect(ids(visibleSections(categories, filters, '', CONTEXT))).toEqual([])
+	})
+})
+
+describe('areaSlugsFor', () => {
+	test('turns the Area filter’s titles back into slugs', () => {
+		expect(areaSlugsFor(['Faith', 'Dining'], [DINING, FAITH])).toEqual(['faith', 'dining'])
+	})
+
+	test('drops a title no area has', () => {
+		expect(areaSlugsFor(['Gone'], [DINING, FAITH])).toEqual([])
+	})
+})
+
+describe('a chosen area keyed by slug', () => {
+	// The published file can rename an area while a list is open; the slug
+	// is what the tile opened, so the choice follows the rename.
+	test('still selects an area the live file has renamed', () => {
+		let renamed = {...CONTEXT, areas: [{...DINING, name: 'Dining & BonApp'}, FAITH]}
+		let filters = buildJobFilters(ALL_JOBS, {...NOTHING_CHOSEN, area: ['dining']}, renamed)
+		expect(filterNamed(filters, 'Area')?.spec.selected).toEqual([{title: 'Dining & BonApp'}])
+		expect(ids(visibleSections(CATEGORIES, filters, '', renamed))).toEqual(['1', '3'])
 	})
 })
 

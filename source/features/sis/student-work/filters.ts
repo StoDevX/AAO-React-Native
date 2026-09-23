@@ -17,7 +17,9 @@ export type JobFacets = {area: string[]; posted: string[]; level: string; term: 
 /// What a posting's level and term are; worked out from its title alone.
 type TitleFacets = Pick<JobFacets, 'level' | 'term'>
 
-/// The options the student picked in each filter; `null` is untouched.
+/// The options the student picked in each filter; `null` is untouched. Areas
+/// are held by slug, which a rename in the published areas file leaves alone;
+/// the rest by the option's title.
 export type ChosenJobFilters = {
 	area: string[] | null
 	posted: string[] | null
@@ -122,6 +124,10 @@ export function buildJobFilters(
 
 	let facets = jobs.map((job) => fullFacetsOf(job, context))
 	let areaOrder = context.areas.map((area) => area.name)
+	let chosenAreaNames =
+		chosen.area === null
+			? null
+			: context.areas.filter((area) => chosen.area?.includes(area.slug)).map((area) => area.name)
 	// Every area whose searches have answered, empty ones too: an empty
 	// area's tile still opens, to a list filtered to it that says so.
 	let knownAreas = new Set(
@@ -132,7 +138,7 @@ export function buildJobFilters(
 
 	return [
 		// Sixteen areas are too many rows for a pull-down menu.
-		listFilter('area', 'Area', areaOrder, knownAreas, chosen.area, 'sheet'),
+		listFilter('area', 'Area', areaOrder, knownAreas, chosenAreaNames, 'sheet'),
 		listFilter(
 			'posted',
 			'Posted',
@@ -143,6 +149,13 @@ export function buildJobFilters(
 		listFilter('level', 'Level', LEVEL_ORDER, new Set(facets.map((f) => f.level)), chosen.level),
 		listFilter('term', 'Term', TERM_ORDER, new Set(facets.map((f) => f.term)), chosen.term),
 	]
+}
+
+/// The slugs for the Area filter's chosen titles, which is how a choice is held.
+export function areaSlugsFor(titles: string[], areas: StudentWorkArea[]): string[] {
+	return titles.flatMap((title) =>
+		areas.filter((area) => area.name === title).map((area) => area.slug),
+	)
 }
 
 /// Posted is one choice at a time: the list filter reports every ticked

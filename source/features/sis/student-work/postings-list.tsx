@@ -13,12 +13,17 @@ import {accessibilityIdentifier, id, listStyle, refreshable} from '@expo/ui/swif
 import * as c from '@frogpond/colors'
 import {FilterToolbar} from '@frogpond/filter'
 import {LoadingView, NoticeView} from '@frogpond/notice'
-import {keys, type JobSummary} from '@frogpond/ccc-jobs'
+import type {JobSummary} from '@frogpond/ccc-jobs'
 import {useRouter} from 'expo-router'
-import {useIsFetching} from '@tanstack/react-query'
 import {DisclosureRow, type DisclosureRowImage} from '../../../components/rows'
 import {chosenAreaState} from './areas'
-import {buildJobFilters, choosePosted, visibleSections, type ChosenJobFilters} from './filters'
+import {
+	areaSlugsFor,
+	buildJobFilters,
+	choosePosted,
+	visibleSections,
+	type ChosenJobFilters,
+} from './filters'
 import {jobRowDetail, listState} from './lib'
 import {displayTitle} from './posting'
 import {useStudentWorkBoard} from './use-board'
@@ -75,8 +80,6 @@ type PostingsListProps = {
 /// shared by the landing screen's search and the postings screen.
 export function PostingsList({searchQuery, initialChosen}: PostingsListProps): React.ReactNode {
 	let router = useRouter()
-	// A Try Again under way: shown as loading, not as the same failure.
-	let retrying = useIsFetching({queryKey: keys.units}) > 0
 	let {board, jobs, context, refresh} = useStudentWorkBoard()
 	let {data = [], error, isError, refetch, isLoading} = board
 
@@ -130,7 +133,7 @@ export function PostingsList({searchQuery, initialChosen}: PostingsListProps): R
 
 	// The filter bar stays up while a chosen area loads or fails, so the
 	// student can change or clear the choice rather than only go back.
-	let areaState = chosenAreaState(chosen.area, context.areas, context.membership, retrying)
+	let areaState = chosenAreaState(chosen.area, context.areas, context.membership)
 
 	return (
 		<>
@@ -149,7 +152,9 @@ export function PostingsList({searchQuery, initialChosen}: PostingsListProps): R
 									setChosen((previous) =>
 										changed.apply.key === 'posted'
 											? {...previous, posted: choosePosted(previous.posted, titles)}
-											: {...previous, [changed.apply.key]: titles},
+											: changed.apply.key === 'area'
+												? {...previous, area: areaSlugsFor(titles, context.areas)}
+												: {...previous, [changed.apply.key]: titles},
 									)
 								}}
 							/>

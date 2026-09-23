@@ -26,6 +26,12 @@ describe('unitResultOf', () => {
 		expect(unitResultOf(result({isError: true}))).toEqual({status: 'error'})
 	})
 
+	// Offline, a search that has never run waits for a connection forever; the
+	// list says it could not load rather than spinning with no message.
+	test('calls a search paused with nothing failed', () => {
+		expect(unitResultOf(result({fetchStatus: 'paused'}))).toEqual({status: 'error'})
+	})
+
 	test('calls a search with nothing yet pending', () => {
 		expect(unitResultOf(result({}))).toEqual({status: 'pending'})
 		expect(unitResultOf(undefined)).toEqual({status: 'pending'})
