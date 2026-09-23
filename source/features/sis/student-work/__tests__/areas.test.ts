@@ -1,4 +1,10 @@
-import {areaMembership, type StudentWorkArea, type UnitResult} from '../areas'
+import {
+	areaMembership,
+	chosenAreaState,
+	type AreaStatus,
+	type StudentWorkArea,
+	type UnitResult,
+} from '../areas'
 
 function area(slug: string, units: string[]): StudentWorkArea {
 	return {name: slug, slug, icon: 'star', gradient: ['#000', '#fff'], units}
@@ -20,7 +26,7 @@ describe('areaMembership', () => {
 			]),
 			BOARD,
 		).get('music')
-		expect(status).toEqual({ids: new Set(['a', 'b']), count: 2, empty: false})
+		expect(status).toEqual({ids: new Set(['a', 'b']), count: 2, empty: false, settled: true})
 	})
 
 	test('calls an area empty only when every search answered with nothing', () => {
@@ -29,7 +35,7 @@ describe('areaMembership', () => {
 			results([['1', {status: 'success', ids: []}]]),
 			BOARD,
 		).get('art')
-		expect(status).toEqual({ids: new Set(), count: 0, empty: true})
+		expect(status).toEqual({ids: new Set(), count: 0, empty: true, settled: true})
 	})
 
 	test('counts what loaded when one of an area’s searches failed', () => {
@@ -41,7 +47,7 @@ describe('areaMembership', () => {
 			]),
 			BOARD,
 		).get('music')
-		expect(status).toEqual({ids: new Set(['a']), count: 1, empty: false})
+		expect(status).toEqual({ids: new Set(['a']), count: 1, empty: false, settled: true})
 	})
 
 	test('never calls an area empty when its searches failed', () => {
@@ -50,7 +56,7 @@ describe('areaMembership', () => {
 			results([['1', {status: 'error'}]]),
 			BOARD,
 		).get('music')
-		expect(status).toEqual({ids: new Set(), count: undefined, empty: false})
+		expect(status).toEqual({ids: new Set(), count: undefined, empty: false, settled: true})
 	})
 
 	test('shows no count before any search answers', () => {
@@ -59,7 +65,7 @@ describe('areaMembership', () => {
 			results([['1', {status: 'pending'}]]),
 			BOARD,
 		).get('music')
-		expect(status).toEqual({ids: new Set(), count: undefined, empty: false})
+		expect(status).toEqual({ids: new Set(), count: undefined, empty: false, settled: false})
 	})
 
 	test('counts a posting once when two of an area’s units return it', () => {
@@ -83,5 +89,32 @@ describe('areaMembership', () => {
 			BOARD,
 		).get('music')
 		expect(status?.ids).toEqual(new Set(['a']))
+	})
+})
+
+describe('chosenAreaState', () => {
+	const MUSIC = area('music', ['1'])
+
+	function status(overrides: Partial<AreaStatus>): Map<string, AreaStatus> {
+		return new Map([
+			['music', {ids: new Set(), count: undefined, empty: false, settled: false, ...overrides}],
+		])
+	}
+
+	test('is ready with no area chosen', () => {
+		expect(chosenAreaState(null, [MUSIC], status({}))).toBe('ready')
+	})
+
+	test('is ready once the chosen area is known', () => {
+		expect(chosenAreaState(['music'], [MUSIC], status({count: 2, settled: true}))).toBe('ready')
+	})
+
+	// Showing the whole board while an area loads would pass it off as the area's.
+	test('waits while the chosen area’s searches are pending', () => {
+		expect(chosenAreaState(['music'], [MUSIC], status({}))).toBe('loading')
+	})
+
+	test('fails when every search for the chosen area failed', () => {
+		expect(chosenAreaState(['music'], [MUSIC], status({settled: true}))).toBe('failed')
 	})
 })

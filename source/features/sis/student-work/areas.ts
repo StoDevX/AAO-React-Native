@@ -41,6 +41,8 @@ export type AreaStatus = {
 	count: number | undefined
 	/// Known to hold nothing: every unit's search answered and none found anything.
 	empty: boolean
+	/// Every unit's search has answered, whether or not it succeeded.
+	settled: boolean
 }
 
 /// Which of the board's postings each area holds, keyed by the area's slug.
@@ -54,8 +56,10 @@ export function areaMembership(
 	for (let area of areas) {
 		let ids = new Set<string>()
 		let answered = 0
+		let settled = true
 		for (let unit of area.units) {
 			let result = units.get(unit)
+			if (result === undefined || result.status === 'pending') settled = false
 			if (result?.status !== 'success') continue
 			answered += 1
 			for (let id of result.ids) {
@@ -65,8 +69,33 @@ export function areaMembership(
 
 		let allAnswered = answered === area.units.length
 		let count = ids.size > 0 || allAnswered ? ids.size : undefined
-		statuses.set(area.slug, {ids, count, empty: allAnswered && ids.size === 0})
+		statuses.set(area.slug, {ids, count, empty: allAnswered && ids.size === 0, settled})
 	}
 
 	return statuses
+}
+
+/// Whether a list with these areas chosen (by name) can show its postings.
+/// Until a chosen area's searches answer, the list cannot tell its postings
+/// from the rest, and showing the whole board would pass it off as the area's.
+export function chosenAreaState(
+	chosenNames: string[] | null,
+	areas: StudentWorkArea[],
+	membership: Map<string, AreaStatus>,
+): 'ready' | 'loading' | 'failed' {
+	let statuses = areas
+		.filter((area) => (chosenNames ?? []).includes(area.name))
+		.map((area) => membership.get(area.slug))
+
+	if (
+		statuses.some(
+			(status) => status === undefined || (status.count === undefined && !status.settled),
+		)
+	) {
+		return 'loading'
+	}
+	if (statuses.some((status) => status?.count === undefined)) {
+		return 'failed'
+	}
+	return 'ready'
 }

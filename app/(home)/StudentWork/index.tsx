@@ -20,7 +20,7 @@ import {useStudentWorkBoard} from '../../../source/features/sis/student-work/use
 /// landing for the whole board's matching postings.
 export default function StudentWorkPage(): React.ReactNode {
 	let router = useRouter()
-	let {board, jobs, areas, context} = useStudentWorkBoard()
+	let {board, jobs, areas, context, refresh} = useStudentWorkBoard()
 
 	let [query, setQuery] = React.useState('')
 	let searchQuery = useDebounce(query, 200)
@@ -98,7 +98,7 @@ export default function StudentWorkPage(): React.ReactNode {
 					modifiers={[
 						listStyle('insetGrouped'),
 						refreshable(async () => {
-							await board.refetch()
+							await refresh()
 						}),
 					]}
 				>

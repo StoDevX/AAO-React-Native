@@ -94,7 +94,11 @@ function listFilter(
 	chosen: string[] | null,
 	presentation: 'menu' | 'sheet' = 'menu',
 ): ListType<JobFacets> {
-	let options = order.filter((value) => present.has(value)).map((value) => ({title: value}))
+	// A chosen value stays on offer even when nothing has it: a preset opens
+	// the list with its choice made, and a choice dropped for matching nothing
+	// would show every posting instead of saying none match.
+	let offered = (value: string) => present.has(value) || (chosen ?? []).includes(value)
+	let options = order.filter(offered).map((value) => ({title: value}))
 	let selected = selectedOptions(options, chosen)
 
 	return {

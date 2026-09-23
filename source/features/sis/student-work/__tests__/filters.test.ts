@@ -35,7 +35,7 @@ const DINING: StudentWorkArea = {
 	units: ['22005'],
 }
 
-const DINING_STATUS: AreaStatus = {ids: new Set(['1', '3']), count: 2, empty: false}
+const DINING_STATUS: AreaStatus = {ids: new Set(['1', '3']), count: 2, empty: false, settled: true}
 
 const FAITH: StudentWorkArea = {
 	name: 'Faith',
@@ -45,7 +45,7 @@ const FAITH: StudentWorkArea = {
 	units: ['45158'],
 }
 
-const FAITH_STATUS: AreaStatus = {ids: new Set(), count: 0, empty: true}
+const FAITH_STATUS: AreaStatus = {ids: new Set(), count: 0, empty: true, settled: true}
 
 const CONTEXT: FilterContext = {
 	areas: [DINING, FAITH],
@@ -294,6 +294,29 @@ describe('the Area and Posted filters', () => {
 	test('offer the Posted choices some posting has', () => {
 		let posted = filterNamed(buildJobFilters(ALL_JOBS, NOTHING_CHOSEN, CONTEXT), 'Posted')
 		expect(optionTitles(posted)).toEqual(['Last 30 days', 'New since last visit'])
+	})
+})
+
+describe('a prefilled choice nothing matches', () => {
+	// A preset opens the list with its choice made; when nothing has that value
+	// -- no new postings on a first visit, no summer jobs in September -- the
+	// list has to say so, not drop the choice and show everything.
+	test('keeps a Posted choice nothing has, and shows nothing', () => {
+		let context = {...CONTEXT, newIds: new Set<string>()}
+		let filters = buildJobFilters(
+			ALL_JOBS,
+			{...NOTHING_CHOSEN, posted: ['New since last visit']},
+			context,
+		)
+		expect(filterNamed(filters, 'Posted')?.enabled).toBe(true)
+		expect(ids(visibleSections(CATEGORIES, filters, '', context))).toEqual([])
+	})
+
+	test('keeps a Term choice nothing has, and shows nothing', () => {
+		let filters = buildJobFilters([MAIL, STAV], {...NOTHING_CHOSEN, term: ['Spring']}, CONTEXT)
+		expect(filterNamed(filters, 'Term')?.enabled).toBe(true)
+		let categories: JobCategory[] = [{id: 1, name: 'Student Work', count: 2, jobs: [MAIL, STAV]}]
+		expect(ids(visibleSections(categories, filters, '', CONTEXT))).toEqual([])
 	})
 })
 

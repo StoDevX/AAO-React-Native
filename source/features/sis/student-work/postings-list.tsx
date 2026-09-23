@@ -5,9 +5,11 @@ import {accessibilityIdentifier, id, listStyle, refreshable} from '@expo/ui/swif
 import * as c from '@frogpond/colors'
 import {FilterToolbar} from '@frogpond/filter'
 import {LoadingView, NoticeView} from '@frogpond/notice'
-import type {JobSummary} from '@frogpond/ccc-jobs'
+import {keys, type JobSummary} from '@frogpond/ccc-jobs'
 import {useRouter} from 'expo-router'
+import {useQueryClient} from '@tanstack/react-query'
 import {DisclosureRow, type DisclosureRowImage} from '../../../components/rows'
+import {chosenAreaState} from './areas'
 import {buildJobFilters, choosePosted, visibleSections, type ChosenJobFilters} from './filters'
 import {jobRowDetail, listState} from './lib'
 import {displayTitle} from './posting'
@@ -65,7 +67,8 @@ type PostingsListProps = {
 /// shared by the landing screen's search and the postings screen.
 export function PostingsList({searchQuery, initialChosen}: PostingsListProps): React.ReactNode {
 	let router = useRouter()
-	let {board, jobs, context} = useStudentWorkBoard()
+	let queryClient = useQueryClient()
+	let {board, jobs, context, refresh} = useStudentWorkBoard()
 	let {data = [], error, isError, refetch, isLoading} = board
 
 	// Only the narrowing the student asked for is state; the options on offer
@@ -116,6 +119,22 @@ export function PostingsList({searchQuery, initialChosen}: PostingsListProps): R
 		)
 	}
 
+	let areaState = chosenAreaState(chosen.area, context.areas, context.membership)
+
+	if (areaState === 'loading') {
+		return <LoadingView />
+	}
+
+	if (areaState === 'failed') {
+		return (
+			<NoticeView
+				buttonText="Try Again"
+				onPress={() => queryClient.refetchQueries({queryKey: keys.units})}
+				text="A problem occurred while loading this area’s postings."
+			/>
+		)
+	}
+
 	return (
 		<>
 			<Host style={styles.host}>
@@ -143,7 +162,7 @@ export function PostingsList({searchQuery, initialChosen}: PostingsListProps): R
 						modifiers={[
 							listStyle('insetGrouped'),
 							refreshable(async () => {
-								await refetch()
+								await refresh()
 							}),
 							accessibilityIdentifier(POSTINGS_LIST_ID),
 							// A new set of postings is a new list, starting from the top.

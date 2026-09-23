@@ -1,6 +1,6 @@
 import {afterEach, describe, expect, jest, test} from '@jest/globals'
 import {fetchManifest, fetchSourceBody} from '@frogpond/data-sources'
-import {jobDetailOptions, jobPostingsOptions, unitPostingsOptions} from '../query'
+import {jobDetailOptions, jobPostingsOptions, keys, unitPostingsOptions} from '../query'
 import {
 	UITEST_JOB_CATEGORIES,
 	UITEST_JOB_DETAILS,
@@ -61,5 +61,17 @@ describe('under UI testing', () => {
 
 	test('a posting missing from the fixture is an error', async () => {
 		await expect(run(jobDetailOptions('not-a-fixture'))).rejects.toThrow('not-a-fixture')
+	})
+})
+
+describe('unitPostingsOptions', () => {
+	// Every Student Work screen asks for all 49 units; a unit's postings change
+	// on the order of days, so they are not asked for again on every screen.
+	test('keeps a unit’s postings fresh for two hours', () => {
+		expect(unitPostingsOptions('11150').staleTime).toBe(2 * 60 * 60 * 1000)
+	})
+
+	test('files every unit search under one prefix, for retrying them together', () => {
+		expect(unitPostingsOptions('11150').queryKey.slice(0, 2)).toEqual([...keys.units])
 	})
 })

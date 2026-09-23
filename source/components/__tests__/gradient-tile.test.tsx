@@ -15,10 +15,11 @@ jest.mock('@expo/ui/swift-ui/modifiers', () => {
 })
 
 describe('GradientTile', () => {
-	it('names its count in its spoken label', async () => {
+	it('names its count in its spoken label, in the caller’s words', async () => {
 		await render(
 			<GradientTile
 				count={13}
+				countLabel={(count) => `${count} postings`}
 				gradient={blueGradient}
 				icon="music.note"
 				onPress={jest.fn()}
@@ -28,17 +29,18 @@ describe('GradientTile', () => {
 		expect(screen.getByLabelText('Music, 13 postings')).toBeOnTheScreen()
 	})
 
-	it('says one posting, not one postings', async () => {
+	// A tile shared by Directory and Student Orgs cannot know what it counts.
+	it('says just the number when the caller gives no words', async () => {
 		await render(
 			<GradientTile
-				count={1}
+				count={4}
 				gradient={blueGradient}
-				icon="paintpalette.fill"
+				icon="music.note"
 				onPress={jest.fn()}
-				title="Art"
+				title="Music"
 			/>,
 		)
-		expect(screen.getByLabelText('Art, 1 posting')).toBeOnTheScreen()
+		expect(screen.getByLabelText('Music, 4')).toBeOnTheScreen()
 	})
 
 	it('draws the count on the card', async () => {

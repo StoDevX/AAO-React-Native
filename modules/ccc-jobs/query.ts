@@ -24,9 +24,13 @@ const SOURCE_TYPES = [ORACLE_RECRUITING]
 const SOURCE_ID = 'stolaf'
 const LABEL = 'Jobs'
 
+/// Two hours.
+const UNIT_STALE_TIME = 2 * 60 * 60 * 1000
+
 export const keys = {
 	postings: ['jobs', 'postings'] as const,
 	detail: (id: string) => ['jobs', 'detail', id] as const,
+	units: ['jobs', 'unit'] as const,
 	unit: (unit: string) => ['jobs', 'unit', unit] as const,
 }
 
@@ -91,6 +95,10 @@ export const jobDetailOptions = (id: string) =>
 export const unitPostingsOptions = (unit: string) =>
 	queryOptions({
 		queryKey: keys.unit(unit),
+		// Every Student Work screen asks for all of them, and a unit's postings
+		// change on the order of days; new postings reach the list through the
+		// board regardless.
+		staleTime: UNIT_STALE_TIME,
 		queryFn: async ({signal}): Promise<string[]> => {
 			if (isUITesting) {
 				return UITEST_UNIT_POSTINGS[unit] ?? []

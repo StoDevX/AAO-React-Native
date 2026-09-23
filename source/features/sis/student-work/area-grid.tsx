@@ -18,6 +18,10 @@ import {
 } from '../../../components/tile-layout'
 import type {AreaStatus, StudentWorkArea} from './areas'
 
+function postingsLabel(count: number): string {
+	return count === 1 ? '1 posting' : `${count} postings`
+}
+
 /// Mirrored by TestIdentifiers.StudentWork.areaGrid.
 const AREA_GRID_ID = 'student-work-area-grid'
 
@@ -59,6 +63,7 @@ export function AreaGrid({areas, membership, onSelectArea}: Props): React.ReactN
 								<GradientTile
 									key={area.slug}
 									count={status?.count}
+									countLabel={postingsLabel}
 									dimmed={status?.empty ?? false}
 									gradient={area.gradient}
 									icon={area.icon}
