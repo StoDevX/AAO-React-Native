@@ -16,6 +16,45 @@ export type FilterSelection = {axis: 'category' | 'organization'; value: string}
 export const RANGE_PREDICATE = `(  (o.all_day = 0 and o.start_utc  < ? and o.end_utc  > ?)
 or (o.all_day = 1 and o.start_date < ? and o.end_date > ?) )`
 
+/**
+ * An `exists` over the dedupe group of the row aliased `e`: some copy of the
+ * event, from one of the bound sources, carries the bound tag.
+ *
+ * It matches over the group rather than the winning row so that a filter, an
+ * exclusion and the facet tally all see the same tags -- the union
+ * `organizationsQuery` rebuilds and `hydrate` prints. `alias` keeps this
+ * subquery's table names apart from any other clause's in the same statement.
+ * Binds what `groupTagParams` returns, in that order.
+ */
+function groupCarriesTag(alias: string, sourceCount: number): string {
+	return `exists (
+    select 1 from event_tag t${alias}
+    join event c${alias} on c${alias}.source_id = t${alias}.source_id
+      and c${alias}.event_key = t${alias}.event_key
+    where c${alias}.dedupe_key = e.dedupe_key
+      and c${alias}.source_id in (${placeholders(sourceCount)})
+      and t${alias}.axis = ? and t${alias}.value = ?
+  )`
+}
+
+/** The bindings for one `groupCarriesTag` clause: the source list, the axis, the value. */
+function groupTagParams(sourceIds: string[], selection: FilterSelection): BindValue[] {
+	return [...sourceIds, selection.axis, selection.value]
+}
+
+/**
+ * One `and not exists` per excluded tag, for a statement whose event row is
+ * aliased `e`. An exclusion matches the way a filter does, over the dedupe
+ * group, so an event is hidden when any in-scope copy of it carries the tag,
+ * whichever copy won the dedupe. The `x` prefix keeps its aliases apart from
+ * the filters' numbered ones.
+ */
+function exclusionClauses(exclude: FilterSelection[], sourceCount: number): string {
+	return exclude
+		.map((_, index) => `  and not ${groupCarriesTag(`x${index}`, sourceCount)}`)
+		.join('\n')
+}
+
 export function rangeParams(window: Window): BindValue[] {
 	return [window.toUtc, window.fromUtc, window.toDate, window.fromDate]
 }
@@ -41,8 +80,10 @@ export function occurrencesQuery(args: {
 	window: Window
 	sourceIds: string[]
 	filters: FilterSelection[]
+	/** Tags whose events never appear, however the list is filtered. */
+	exclude?: FilterSelection[]
 }): Statement {
-	let {window, sourceIds, filters} = args
+	let {window, sourceIds, filters, exclude = []} = args
 
 	// One `exists` per filter, ANDed, so several filters read as an AND -- a
 	// single clause with an `in (...)` would match an event carrying *any* of
@@ -56,18 +97,9 @@ export function occurrencesQuery(args: {
 	// categories across all in-scope copies, so matching only the winner would
 	// offer a value that filters to nothing.
 	let matches = filters
-		.map(
-			(_, index) =>
-				`  and exists (
-    select 1 from event_tag t${index}
-    join event c${index} on c${index}.source_id = t${index}.source_id
-      and c${index}.event_key = t${index}.event_key
-    where c${index}.dedupe_key = e.dedupe_key
-      and c${index}.source_id in (${placeholders(sourceIds.length)})
-      and t${index}.axis = ? and t${index}.value = ?
-  )`,
-		)
+		.map((_, index) => `  and ${groupCarriesTag(`${index}`, sourceIds.length)}`)
 		.join('\n')
+	let exclusions = exclusionClauses(exclude, sourceIds.length)
 
 	let sql = `
 select e.source_id, e.event_key, e.dedupe_key, e.wire, o.start_utc
@@ -80,18 +112,19 @@ join occurrence o on o.source_id = e.source_id and o.event_key = e.event_key
 where e.rn = 1
   and ${RANGE_PREDICATE}
 ${matches}
+${exclusions}
 order by o.start_utc`
 
 	// Bound in the order the placeholders appear in the SQL above: the ranking
-	// subquery's source list, the window, then -- per filter, in order -- that
-	// `exists` clause's own copy of the source list followed by its axis and
-	// value. The source list appears once per filter as well as once up top, so
-	// this sequence is longer than it looks; `queries.test.ts` counts the
-	// assembled statement's placeholders rather than trusting the template.
+	// subquery's source list, the window, then each filter's clause, then each
+	// exclusion's. Every clause binds its own copy of the source list, so this
+	// sequence is longer than it looks; `queries.test.ts` counts the assembled
+	// statement's placeholders rather than trusting the template.
 	let params: BindValue[] = [
 		...sourceIds,
 		...rangeParams(window),
-		...filters.flatMap((filter) => [...sourceIds, filter.axis, filter.value]),
+		...filters.flatMap((filter) => groupTagParams(sourceIds, filter)),
+		...exclude.flatMap((selection) => groupTagParams(sourceIds, selection)),
 	]
 
 	return {sql, params}
@@ -122,6 +155,9 @@ order by o.start_utc`
  * `count(distinct e.dedupe_key)` sees to — and a tag either copy contributes
  * should count, which is the same union the hydrated row applies.
  *
+ * `exclude` drops events the list hides, so the menu never offers or counts a
+ * value that could only filter to hidden events.
+ *
  * Sorted Z-A because SwiftUI's `Menu` renders its contents bottom-to-top, so
  * this reads A-Z on screen. See `source/features/calendar/filter.ts`.
  *
@@ -135,8 +171,10 @@ export function facetsQuery(args: {
 	axis: 'category' | 'organization'
 	window: Window
 	sourceIds: string[]
+	/** Tags whose events the list hides; they are left out of the tally too. */
+	exclude?: FilterSelection[]
 }): Statement {
-	let {axis, window, sourceIds} = args
+	let {axis, window, sourceIds, exclude = []} = args
 
 	let sql = `
 select t.value as value, count(distinct e.dedupe_key) as count
@@ -149,10 +187,19 @@ where t.axis = ?
     where o.source_id = e.source_id and o.event_key = e.event_key
       and ${RANGE_PREDICATE}
   )
+${exclusionClauses(exclude, sourceIds.length)}
 group by t.value
 order by t.value collate nocase desc`
 
-	return {sql, params: [axis, ...sourceIds, ...rangeParams(window)]}
+	return {
+		sql,
+		params: [
+			axis,
+			...sourceIds,
+			...rangeParams(window),
+			...exclude.flatMap((selection) => groupTagParams(sourceIds, selection)),
+		],
+	}
 }
 
 /** Separator for `group_concat`. A unit separator cannot occur in a sponsor name. */

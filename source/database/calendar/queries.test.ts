@@ -6,6 +6,7 @@ import type {SqlRunner, Statement} from '../sql.ts'
 import {openTestDatabase} from '../testing/harness.ts'
 import {
 	facetsQuery,
+	type FilterSelection,
 	occurrencesQuery,
 	oneEventQuery,
 	ORG_SEPARATOR,
@@ -110,6 +111,40 @@ function addCrossSourceDuplicate(runner: SqlRunner): void {
 		sql: 'insert into event_tag values (?,?,?,?)',
 		params: ['presence', 'dup', 'organization', 'Student Activities'],
 	})
+}
+
+/** What the Calendar hides, spelled out here so the tests do not depend on app config. */
+const ATHLETICS: FilterSelection[] = [
+	{axis: 'category', value: 'Athletics'},
+	{axis: 'organization', value: 'St. Olaf Athletics'},
+]
+
+/**
+ * An event inside `WINDOW` carrying each of `tags`. `rank` and `dedupeKey`
+ * decide which copy wins when two calendars carry the same event.
+ */
+function addEvent(
+	runner: SqlRunner,
+	source: string,
+	key: string,
+	rank: number,
+	dedupeKey: string,
+	tags: FilterSelection[],
+): void {
+	runner.run({
+		sql: 'insert into event values (?,?,?,?,?,?,?)',
+		params: [source, key, rank, dedupeKey, key, 'Somewhere', '{}'],
+	})
+	runner.run({
+		sql: 'insert into occurrence values (?,?,0,?,?,null,null)',
+		params: [source, key, Date.UTC(2026, 8, 22, 18), Date.UTC(2026, 8, 22, 20)],
+	})
+	for (let tag of tags) {
+		runner.run({
+			sql: 'insert into event_tag values (?,?,?,?)',
+			params: [source, key, tag.axis, tag.value],
+		})
+	}
 }
 
 describe('occurrencesQuery', () => {
@@ -392,6 +427,169 @@ describe('facetsQuery', () => {
 			}
 		})
 	}
+})
+
+describe('excluding tags', () => {
+	it('hides a campus-calendar event in the Athletics category', () => {
+		let runner = seed()
+		addEvent(runner, 'stolaf', 'game', 0, 'dk-game', [{axis: 'category', value: 'Athletics'}])
+
+		let keys = keysOf(
+			runner,
+			occurrencesQuery({window: WINDOW, sourceIds: ['stolaf'], filters: [], exclude: ATHLETICS}),
+		)
+		assert.ok(!keys.includes('game'))
+		assert.ok(keys.includes('inside'), 'an event with no excluded tag still shows')
+		assert.ok(keys.includes('tagged'), 'an event with other tags still shows')
+	})
+
+	it('hides a Presence event sponsored by St. Olaf Athletics', () => {
+		let runner = seed()
+		addEvent(runner, 'presence', 'match', 1, 'dk-match', [
+			{axis: 'organization', value: 'St. Olaf Athletics'},
+		])
+
+		let keys = keysOf(
+			runner,
+			occurrencesQuery({
+				window: WINDOW,
+				sourceIds: ['stolaf', 'presence'],
+				filters: [],
+				exclude: ATHLETICS,
+			}),
+		)
+		assert.ok(!keys.includes('match'))
+		assert.ok(keys.includes('inside'))
+	})
+
+	it('hides an event when only the losing copy is athletics', () => {
+		let runner = seed()
+		addEvent(runner, 'stolaf', 'game', 0, 'dk-game', [{axis: 'category', value: 'Recreation'}])
+		addEvent(runner, 'presence', 'game-copy', 1, 'dk-game', [
+			{axis: 'organization', value: 'St. Olaf Athletics'},
+		])
+
+		let both = copiesOf(
+			runner,
+			occurrencesQuery({
+				window: WINDOW,
+				sourceIds: ['stolaf', 'presence'],
+				filters: [],
+				exclude: ATHLETICS,
+			}),
+		)
+		assert.ok(!both.includes('stolaf|game'), 'the winner is hidden by its twin')
+		assert.ok(!both.includes('presence|game-copy'))
+
+		// With Presence switched off its copy is out of scope, so nothing in
+		// scope says the event is athletics.
+		let stolafOnly = copiesOf(
+			runner,
+			occurrencesQuery({window: WINDOW, sourceIds: ['stolaf'], filters: [], exclude: ATHLETICS}),
+		)
+		assert.ok(stolafOnly.includes('stolaf|game'))
+	})
+
+	it('combines with a filter: a shared category keeps only the non-athletics event', () => {
+		let runner = seed()
+		addEvent(runner, 'stolaf', 'game', 0, 'dk-game', [
+			{axis: 'category', value: 'Athletics'},
+			{axis: 'category', value: 'Music'},
+		])
+
+		let keys = keysOf(
+			runner,
+			occurrencesQuery({
+				window: WINDOW,
+				sourceIds: ['stolaf'],
+				filters: [{axis: 'category', value: 'Music'}],
+				exclude: ATHLETICS,
+			}),
+		)
+		assert.deepEqual(keys, ['tagged'])
+	})
+
+	it('leaves hidden events out of the facet tally', () => {
+		let runner = seed()
+		addEvent(runner, 'stolaf', 'game', 0, 'dk-game', [
+			{axis: 'category', value: 'Athletics'},
+			{axis: 'category', value: 'Music'},
+		])
+		addEvent(runner, 'presence', 'match', 1, 'dk-match', [
+			{axis: 'organization', value: 'St. Olaf Athletics'},
+		])
+		let sourceIds = ['stolaf', 'presence']
+
+		// Without the exclusion the setup really does carry both values.
+		let unhidden = runner.all<{value: string; count: number}>(
+			facetsQuery({axis: 'category', window: WINDOW, sourceIds}),
+		)
+		assert.deepEqual(unhidden, [
+			{value: 'Music', count: 2},
+			{value: 'Athletics', count: 1},
+		])
+
+		let categories = runner.all<{value: string; count: number}>(
+			facetsQuery({axis: 'category', window: WINDOW, sourceIds, exclude: ATHLETICS}),
+		)
+		assert.deepEqual(categories, [{value: 'Music', count: 1}])
+
+		let organizations = runner.all<{value: string; count: number}>(
+			facetsQuery({axis: 'organization', window: WINDOW, sourceIds, exclude: ATHLETICS}),
+		)
+		assert.ok(!organizations.some((row) => row.value === 'St. Olaf Athletics'))
+	})
+
+	it('keeps the facet tally and the filtered list in agreement', () => {
+		let runner = seed()
+		addCrossSourceDuplicate(runner)
+		addEvent(runner, 'stolaf', 'game', 0, 'dk-game', [
+			{axis: 'category', value: 'Athletics'},
+			{axis: 'category', value: 'Music'},
+		])
+		let sourceIds = ['stolaf', 'presence']
+
+		for (let axis of ['category', 'organization'] as const) {
+			let facets = runner.all<{value: string; count: number}>(
+				facetsQuery({axis, window: WINDOW, sourceIds, exclude: ATHLETICS}),
+			)
+			assert.ok(facets.length > 0, `${axis} produced no facets to check`)
+			for (let facet of facets) {
+				let matched = keysOf(
+					runner,
+					occurrencesQuery({
+						window: WINDOW,
+						sourceIds,
+						filters: [{axis, value: facet.value}],
+						exclude: ATHLETICS,
+					}),
+				)
+				assert.equal(
+					new Set(matched).size,
+					facet.count,
+					`"${facet.value}" is tallied ${facet.count} but filters to ${new Set(matched).size}`,
+				)
+			}
+		}
+	})
+
+	it('binds exactly as many parameters as each statement has placeholders', () => {
+		let count = (sql: string) => (sql.match(/\?/gu) ?? []).length
+		let sourceIds = ['stolaf', 'presence']
+
+		for (let exclude of [[], ATHLETICS.slice(0, 1), ATHLETICS]) {
+			let occurrences = occurrencesQuery({
+				window: WINDOW,
+				sourceIds,
+				filters: [{axis: 'category', value: 'Music'}],
+				exclude,
+			})
+			assert.equal(count(occurrences.sql), occurrences.params.length, 'occurrencesQuery')
+
+			let facets = facetsQuery({axis: 'category', window: WINDOW, sourceIds, exclude})
+			assert.equal(count(facets.sql), facets.params.length, 'facetsQuery')
+		}
+	})
 })
 
 describe('organizationsQuery', () => {
