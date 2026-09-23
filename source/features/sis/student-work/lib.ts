@@ -75,7 +75,10 @@ export function jobDetailFields(job: JobDetail): JobField[] {
 
 	let fromTitle: JobField[] = []
 	if (code) {
-		fromTitle.push({label: WAGE_LABEL, value: formatWage(code)}, {label: 'Level', value: LEVEL_LABELS[code.tier]})
+		fromTitle.push(
+			{label: WAGE_LABEL, value: formatWage(code)},
+			{label: 'Level', value: LEVEL_LABELS[code.tier]},
+		)
 	}
 	if (term) {
 		fromTitle.push({label: 'Term', value: term})
