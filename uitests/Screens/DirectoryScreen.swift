@@ -81,6 +81,36 @@ struct DirectoryScreen: Screen {
 		return self
 	}
 
+	/// Opens the first department on the landing and returns its name. The
+	/// roster is live, so the test reads the name rather than choosing one.
+	func openFirstDepartment() -> String {
+		let row = app.descendants(matching: .any)
+			.matching(
+				NSPredicate(
+					format: "identifier BEGINSWITH %@", TestIdentifiers.Directory.departmentRowPrefix))
+			.firstMatch
+		scrollUntilExists(row)
+		XCTAssertTrue(row.waitForExistence(timeout: 30), "the landing should list a department")
+		let name = row.label
+		row.tap()
+		return name
+	}
+
+	/// Goes back from a department opened on the landing, which should return
+	/// to the landing rather than past it to the home screen.
+	@discardableResult
+	func leaveDepartmentForLanding() -> Self {
+		let back = app.navigationBars[TestIdentifiers.Buttons.directory]
+			.buttons[TestIdentifiers.Navigation.backButton]
+		XCTAssertTrue(back.waitForExistence(timeout: 10), "a department should have a back button")
+		back.tap()
+		XCTAssertTrue(
+			app.element(matching: TestIdentifiers.Directory.contactGrid).waitForExistence(timeout: 15),
+			"Back from a department should return to the Directory landing, not past it to the "
+				+ "home screen")
+		return self
+	}
+
 	/// Dismiss the search bar the way its own cancel button does.
 	///
 	/// The tap is retried, and each attempt tries a coordinate as well as the

@@ -1,6 +1,7 @@
 import * as React from 'react'
 import {Button, HStack, Image, ProgressView, Section, Spacer, Text} from '@expo/ui/swift-ui'
 import {
+	accessibilityIdentifier,
 	accessibilityLabel,
 	buttonStyle,
 	contentShape,
@@ -9,6 +10,11 @@ import {
 } from '@expo/ui/swift-ui/modifiers'
 import * as c from '@frogpond/colors'
 import type {DepartmentListing} from './types'
+
+/// Mirrored by `TestIdentifiers.Directory.departmentRowPrefix`. The roster is
+/// live, so a test addresses the first row by prefix rather than by a name
+/// the college can change.
+const DEPARTMENT_ROW_PREFIX = 'directory-department-'
 
 type Props = {
 	/** The sorted roster, or `undefined` before the first successful fetch. */
@@ -63,7 +69,11 @@ function DepartmentRow({name, onPress}: {name: string; onPress: () => void}): Re
 		<Button
 			// Without `plain`, SwiftUI tints the whole label and the name reads as
 			// a link.
-			modifiers={[buttonStyle('plain'), accessibilityLabel(name)]}
+			modifiers={[
+				buttonStyle('plain'),
+				accessibilityLabel(name),
+				accessibilityIdentifier(`${DEPARTMENT_ROW_PREFIX}${name}`),
+			]}
 			onPress={onPress}
 		>
 			{/* contentShape belongs on the label, not the Button: SwiftUI derives
