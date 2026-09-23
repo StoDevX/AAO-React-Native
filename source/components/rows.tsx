@@ -118,8 +118,10 @@ export function NavigationRow(props: RowProps): React.ReactNode {
 }
 
 /**
- * A row that fires an action (open a URL, show an alert, mutate) rather than
- * pushing a screen. Tinted text and no chevron, since there is nowhere to go.
+ * A row that does something in place (show an alert, send a message, mutate)
+ * rather than going anywhere -- an `action` in [[RowDestination]]'s terms.
+ * Tinted text and no accessory, since there is nowhere to point. A row that
+ * opens a URL is `external`: use a `DisclosureRow` for it.
  */
 export function ActionRow(props: ActionRowProps): React.ReactNode {
 	let {title, onPress, disabled = false, destructive = false} = props
