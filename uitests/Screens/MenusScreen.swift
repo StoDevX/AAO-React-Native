@@ -184,6 +184,37 @@ struct MenusScreen: Screen {
 		return verifyFoodRowsAppear()
 	}
 
+	/// Tap a food row, found by its identifier rather than its label: the label
+	/// also carries the dish's dietary tags.
+	@discardableResult
+	func openFoodItem(_ identifier: String) -> Self {
+		let row = app.buttons[identifier].firstMatch
+		XCTAssertTrue(row.waitForExistence(timeout: 30), "\(identifier) should be on the menu")
+		row.tap()
+		return self
+	}
+
+	/// The nutrition page presents as a sheet, titled with the dish.
+	///
+	/// A sheet at rest stops at 0.68 of the screen, so its title sits about a
+	/// third of the way down; a pushed page's title sits at the top. Where the
+	/// title is, then, is what tells the two apart -- the title's text alone
+	/// reads the same in both.
+	@discardableResult
+	func verifyNutritionSheet(titled name: String) -> Self {
+		let title = app.navigationBars.staticTexts[name].firstMatch
+		XCTAssertTrue(
+			title.waitForExistence(timeout: 30),
+			"the nutrition sheet should be titled \(name)")
+
+		let windowHeight = app.windows.firstMatch.frame.height
+		XCTAssertGreaterThan(
+			title.frame.minY, windowHeight * 0.25,
+			"the title should sit in a sheet resting below the top of the screen,"
+				+ " not at the top of a pushed page (title at \(title.frame.minY) of \(windowHeight))")
+		return self
+	}
+
 	@discardableResult
 	func checkStOlafCafes() -> Self {
 		for cafe in TestIdentifiers.Menus.stOlafCafes {
