@@ -1,5 +1,12 @@
+# Hand-maintained, not generated: the GTFS feed carries last year's Express
+# timetable, so _curation.yaml leaves this route out and the weekly refresh
+# never writes this file.
+#
+# Transcribed from the Three Rivers brochure "Transportation Services for
+# Express Northfield", effective 8/1/2026:
+# https://www.threeriverscap.org/wp-content/uploads/ExpressXBrochureX8.28X.26X.pdf
+# Stop coordinates are the feed's, as the other lines use.
 line: Express Bus
-timezone: America/Chicago
 colors:
   bar: rgb(134, 198, 124)
   dot: rgb(32, 87, 14)
@@ -13,28 +20,26 @@ schedules:
       - Fr
       - Sa
     coordinates:
-      Carleton College: [44.460787, -93.155787]
       St. Olaf College: [44.462152, -93.183032]
+      Library: [44.457643, -93.158715]
+      Carleton College: [44.460787, -93.155787]
       Food Co-op: [44.454674, -93.161873]
-      Wells Fargo: [44.452748467315956, -93.16180008775618]
       Cub/Target: [44.433265, -93.186694]
+      Wells Fargo: [44.452748467315956, -93.16180008775618]
     stops:
-      - Carleton College
       - St. Olaf College
+      - Library
+      - Carleton College
       - Food Co-op
-      - Wells Fargo
       - Cub/Target
+      - Wells Fargo
       - Carleton College
       - St. Olaf College
     times:
-      - [3:00pm, 3:08pm, 3:15pm, 3:23pm, 3:33pm, 3:38pm, false]
-      - [3:45pm, 3:53pm, 4:00pm, 4:09pm, 4:18pm, 4:23pm, false]
-      - [4:30pm, 4:38pm, 4:45pm, 4:54pm, 5:03pm, 5:08pm, false]
-      - [5:15pm, 5:23pm, 5:30pm, 5:39pm, 5:48pm, 5:53pm, false]
-      - [6:00pm, 6:08pm, 6:15pm, 6:24pm, 6:33pm, 6:38pm, false]
-      - [6:45pm, 6:53pm, 7:00pm, 7:09pm, 7:18pm, 7:23pm, false]
-      - [7:30pm, 7:38pm, 7:45pm, 7:54pm, 8:03pm, 8:08pm, false]
-      - [8:15pm, 8:23pm, 8:30pm, 8:39pm, 8:48pm, 8:53pm, false]
-      - [9:00pm, 9:08pm, 9:15pm, 9:24pm, 9:33pm, 9:38pm, 9:45pm]
-    closures:
-      - {date: '2026-05-25', name: Memorial Day}
+      - [3:00pm, 3:08pm, 3:12pm, 3:16pm, 3:26pm, 3:36pm, 3:41pm, 3:50pm]
+      - [4:00pm, 4:08pm, 4:12pm, 4:16pm, 4:26pm, 4:36pm, 4:41pm, 4:50pm]
+      - [5:00pm, 5:08pm, 5:12pm, 5:16pm, 5:26pm, 5:36pm, 5:41pm, 5:50pm]
+      - [6:00pm, 6:08pm, 6:12pm, 6:16pm, 6:26pm, 6:36pm, 6:41pm, 6:50pm]
+      - [7:00pm, 7:08pm, 7:12pm, 7:16pm, 7:26pm, 7:36pm, 7:41pm, 7:50pm]
+      - [8:00pm, 8:08pm, 8:12pm, 8:16pm, 8:26pm, 8:36pm, 8:41pm, 8:50pm]
+      - [9:00pm, 9:08pm, 9:12pm, 9:16pm, 9:26pm, 9:36pm, 9:41pm, 9:50pm]

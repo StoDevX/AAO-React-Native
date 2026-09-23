@@ -79,21 +79,21 @@ describe('the bundled bus-times data', () => {
 			}
 		}
 
-		// The real feed's Blue and Red lines each carry four closures and
-		// Express carries one; if the generator ever stopped emitting them,
-		// this loop would silently pass by finding nothing to check.
+		// The real feed's Blue and Red lines each carry four closures; if the
+		// generator ever stopped emitting them, this loop would silently pass by
+		// finding nothing to check.
 		expect(sawAClosure).toBe(true)
 	})
 
 	test('every generated line publishes a coordinate for every stop it serves', () => {
 		// The generator always sets `timezone`; a hand-maintained line, like Oles
-		// Go, never does -- that is how this picks out "generated" lines. If the
-		// generator ever stopped setting `timezone` too, this filter would match
-		// nothing and the loop below would pass by doing nothing, so the count is
-		// asserted directly rather than trusted.
+		// Go or the Express, never does -- that is how this picks out "generated"
+		// lines. If the generator ever stopped setting `timezone` too, this filter
+		// would match nothing and the loop below would pass by doing nothing, so
+		// the count is asserted directly rather than trusted.
 		let generatedLines = lines.filter((line) => line.timezone !== undefined)
 
-		expect(generatedLines.length).toBeGreaterThanOrEqual(3)
+		expect(generatedLines.length).toBeGreaterThanOrEqual(2)
 
 		for (let line of generatedLines) {
 			// A route that produced zero schedules would otherwise ship as
@@ -106,9 +106,9 @@ describe('the bundled bus-times data', () => {
 			for (let schedule of line.schedules) {
 				for (let stopName of schedule.stops) {
 					// `coordinates` is keyed by stop name, and a looping route can
-					// call at the same stop twice (Blue's Northfield Depot, Express's
-					// Carleton and St. Olaf), so its key count is legitimately smaller
-					// than `stops.length` -- this checks coverage, not a matching size.
+					// call at the same stop twice (Blue's Northfield Depot), so its
+					// key count is legitimately smaller than `stops.length` -- this
+					// checks coverage, not a matching size.
 					// (Not `toHaveProperty`: a name like "St. Olaf College" has a dot,
 					// which that matcher reads as a nested-path separator.)
 					expect(Object.keys(schedule.coordinates ?? {})).toContain(stopName)

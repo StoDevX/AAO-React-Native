@@ -759,12 +759,31 @@ describe('the real Hiawathaland feed', () => {
 		repairs: load(fs.readFileSync(path.join(busTimes, '_repairs.yaml'), 'utf-8')),
 	}
 
-	it('writes exactly the three curated files, never 2-oles-go.yaml', () => {
+	// The Express is hand-maintained from its brochure, so the real curation no
+	// longer asks for it. The feed still carries it, and its loop exercises the
+	// generator's prefix and skipped-stop handling, so these tests ask for it.
+	let withExpress = {
+		...real,
+		curation: {
+			...real.curation,
+			routes: {
+				...real.curation.routes,
+				77629: {
+					expect_name: 'Express Northfield',
+					file: '1-express.yaml',
+					line: 'Express Bus',
+					colors: {bar: 'rgb(134, 198, 124)', dot: 'rgb(32, 87, 14)'},
+				},
+			},
+		},
+	}
+
+	it('writes exactly the curated files, never the hand-maintained Express or Oles Go', () => {
 		let {files} = gtfsToBusTimes(feed, real)
 
 		assert.deepEqual(
 			[...files.keys()].sort((a, b) => a.localeCompare(b)),
-			['1-express.yaml', '3-red-line.yaml', '4-blue-line.yaml'],
+			['3-red-line.yaml', '4-blue-line.yaml'],
 		)
 	})
 
@@ -809,13 +828,13 @@ describe('the real Hiawathaland feed', () => {
 	})
 
 	it('collapses the three Express services into one schedule', () => {
-		let {files} = gtfsToBusTimes(feed, real)
+		let {files} = gtfsToBusTimes(feed, withExpress)
 
 		assert.equal(files.get('1-express.yaml').schedules.length, 1)
 	})
 
 	it('marks the Express six-stop loop as skipping the final St. Olaf call', () => {
-		let {files} = gtfsToBusTimes(feed, real)
+		let {files} = gtfsToBusTimes(feed, withExpress)
 		let schedule = files.get('1-express.yaml').schedules[0]
 
 		assert.equal(schedule.stops.length, 7)
