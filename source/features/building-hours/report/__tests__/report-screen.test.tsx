@@ -168,6 +168,28 @@ describe('images', () => {
 
 		expect(guard.mock.calls.at(-1)?.[0]).toBe(true)
 	})
+
+	it('holds Submit Report while picked images are still loading', async () => {
+		await renderReport()
+		let picker = ImagePicker.launchImageLibraryAsync as jest.MockedFunction<
+			typeof ImagePicker.launchImageLibraryAsync
+		>
+		picker.mockReturnValueOnce(new Promise(() => undefined))
+
+		await fireEvent.press(screen.getByLabelText('Add Image'))
+
+		expect(screen.getByLabelText('Submit Report')).toBeDisabled()
+	})
+
+	it('opens one email for two quick taps on Submit Report', async () => {
+		await renderReport()
+		mockComposeEmail.mockReturnValueOnce(new Promise(() => undefined))
+
+		await fireEvent.press(screen.getByLabelText('Submit Report'))
+		await fireEvent.press(screen.getByLabelText('Submit Report'))
+
+		expect(mockComposeEmail).toHaveBeenCalledTimes(1)
+	})
 })
 
 describe('links', () => {

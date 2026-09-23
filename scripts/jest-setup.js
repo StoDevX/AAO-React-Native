@@ -20,6 +20,21 @@ jest.mock('expo-mail-composer', () => ({
 }))
 jest.mock('expo-image-picker', () => ({
 	launchImageLibraryAsync: jest.fn(() => Promise.resolve({canceled: true, assets: null})),
+	UIImagePickerPreferredAssetRepresentationMode: {Compatible: 'compatible'},
+}))
+// Re-encoding hands each image back under the uri it came in with, so a test
+// can follow a picked image through to whatever it is sent with.
+jest.mock('expo-image-manipulator', () => ({
+	ImageManipulator: {
+		manipulate: jest.fn((uri) => {
+			let context = {
+				resize: () => context,
+				renderAsync: () => Promise.resolve({saveAsync: () => Promise.resolve({uri})}),
+			}
+			return context
+		}),
+	},
+	SaveFormat: {JPEG: 'jpeg'},
 }))
 // These specific values are load-bearing for tests across building-hours,
 // transportation, course-search, and streaming that call a time-format helper
