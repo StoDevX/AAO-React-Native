@@ -60,6 +60,7 @@ export const accessibilityElement = (children = 'ignore'): Modifier =>
 	createModifier('accessibilityElement', {children})
 export const accessibilityIdentifier = named('accessibilityIdentifier', 'identifier')
 export const accessibilityLabel = named('accessibilityLabel', 'label')
+export const accessibilityRemoveTraits = named('accessibilityRemoveTraits', 'traits')
 export const animation = (animationObject: unknown, animatedValue: number | boolean): Modifier =>
 	createModifier('animation', {animationObject, animatedValue})
 
@@ -297,13 +298,22 @@ function identifierOf(modifiers?: Modifier[]): string | undefined {
 	return typeof found?.identifier === 'string' ? found.identifier : undefined
 }
 
+/** The traits an `accessibilityAddTraits(…)` or `accessibilityRemoveTraits(…)` names. */
+function traitsOf(modifiers: Modifier[] | undefined, type: string): unknown[] {
+	let traits = modifierOf(modifiers, type)?.traits
+	return Array.isArray(traits) ? traits : []
+}
+
 /**
- * The role an element announces: a link when `accessibilityAddTraits(…)`
- * names `isLink`, which is what VoiceOver says for it on device.
+ * The role a button announces. Adding `isLink` alone is not enough: on device
+ * a button keeps `isButton` and still reads as a button, so it reads as a link
+ * only once `isButton` is removed too.
  */
-function roleOf(modifiers: Modifier[] | undefined, role: string): string {
-	let traits = modifierOf(modifiers, 'accessibilityAddTraits')?.traits
-	return Array.isArray(traits) && traits.includes('isLink') ? 'link' : role
+function buttonRoleOf(modifiers?: Modifier[]): string {
+	let isLink =
+		traitsOf(modifiers, 'accessibilityAddTraits').includes('isLink') &&
+		traitsOf(modifiers, 'accessibilityRemoveTraits').includes('isButton')
+	return isLink ? 'link' : 'button'
 }
 
 /** Whether a `disabled(…)` modifier asked for the control to be off. */
@@ -756,7 +766,7 @@ export function Button({
 	return (
 		<PressableWithModifiers
 			accessibilityLabel={name}
-			accessibilityRole={roleOf(modifiers, 'button')}
+			accessibilityRole={buttonRoleOf(modifiers)}
 			// `RNTL`'s `getByRole` only considers an element an accessibility
 			// element -- and so a candidate at all -- once `accessible` is
 			// explicitly set.

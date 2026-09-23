@@ -19,6 +19,7 @@ import {
 } from '@expo/ui/swift-ui'
 import {
 	accessibilityAddTraits,
+	accessibilityRemoveTraits,
 	accessibilityIdentifier,
 	accessibilityLabel,
 	buttonStyle,
@@ -83,10 +84,14 @@ export function RowAccessory({destination}: {destination: RowDestination}): Reac
 
 /**
  * VoiceOver reads a row's label and never its accessory, so a row that leaves
- * the app says so with the link trait, as SwiftUI's own `Link` does.
+ * the app says so by reading as a link, as SwiftUI's own `Link` does. Adding
+ * `isLink` alone is not enough: a button keeps `isButton`, and iOS still
+ * reports it as a button until that trait is removed.
  */
 export function destinationTraits(destination: RowDestination): ModifierConfig[] {
-	return destination === 'external' ? [accessibilityAddTraits(['isLink'])] : []
+	return destination === 'external'
+		? [accessibilityAddTraits(['isLink']), accessibilityRemoveTraits(['isButton'])]
+		: []
 }
 
 /**
