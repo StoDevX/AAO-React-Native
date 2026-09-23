@@ -24,15 +24,9 @@ import {balanceValue} from './lib'
 
 const DISCLAIMER = 'This data may be outdated or otherwise inaccurate.'
 
-// Settings hasn't been migrated to expo-router yet, so there's no route
-// to send this to without landing on an "Unmatched Route" screen --
-// leave it a no-op (matching today's actual behavior, since Settings is
-// unreachable already) until that migration lands.
-// oxlint-disable-next-line typescript/no-empty-function
-const openSettings = () => {}
-
 export const BalancesView = (): React.ReactNode => {
 	let router = useRouter()
+	let openSettings = () => router.navigate('/SettingsRoot')
 
 	let {data: username = ''} = useQuery({
 		...credentialsOptions,
