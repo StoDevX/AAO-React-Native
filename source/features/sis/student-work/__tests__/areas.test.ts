@@ -1,6 +1,8 @@
+import {blueGradient} from '@frogpond/colors'
 import {
 	areaMembership,
 	chosenAreaState,
+	toAreas,
 	type AreaStatus,
 	type StudentWorkArea,
 	type UnitResult,
@@ -131,5 +133,26 @@ describe('chosenAreaState', () => {
 			['art', {ids: new Set(['a']), count: 1, empty: false, settled: true}],
 		])
 		expect(chosenAreaState(['music', 'art'], [MUSIC, ART], membership)).toBe('ready')
+	})
+})
+
+describe('toAreas', () => {
+	test('resolves an area’s gradient by name and keeps its units in order', () => {
+		let [area] = toAreas([
+			{
+				name: 'Music',
+				slug: 'music',
+				icon: 'music.note',
+				gradient: 'blue',
+				units: ['11230', '11756'],
+			},
+		])
+		expect(area).toEqual({
+			name: 'Music',
+			slug: 'music',
+			icon: 'music.note',
+			gradient: blueGradient,
+			units: ['11230', '11756'],
+		})
 	})
 })
