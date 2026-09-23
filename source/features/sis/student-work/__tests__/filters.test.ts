@@ -12,10 +12,12 @@ const PAUSE = job('4', 'AY Lion’s Pause Student Technician (WS-OSA1)')
 const CURI = job('5', 'CURI Academic Year Student Researcher - Braun')
 const FOOTBALL = job('6', 'Football Student Filmer (WS-ST1)')
 const SUMMER = job('7', 'Summer Physics Stockroom Student Assistant (WS-ST2)')
+const OPERA = job('8', 'CURI Academic Year Student Researcher - Mináǧi Kiŋ Dowáŋ Opera (WS-NST2)')
 
 const CATEGORIES: JobCategory[] = [
 	{id: 1, name: 'Student Work', count: 6, jobs: [MAIL, CHEM_TA, STAV, PAUSE, CURI, FOOTBALL]},
 	{id: 2, name: 'Summer Student Work', count: 1, jobs: [SUMMER]},
+	{id: 3, name: 'Research', count: 1, jobs: [OPERA]},
 ]
 
 const ALL_JOBS = CATEGORIES.flatMap((category) => category.jobs)
@@ -75,8 +77,9 @@ describe('visibleSections', () => {
 		expect(sections.map((section) => section.title)).toEqual([
 			'Student Work',
 			'Summer Student Work',
+			'Research',
 		])
-		expect(ids(sections)).toEqual(['1', '2', '3', '4', '5', '6', '7'])
+		expect(ids(sections)).toEqual(['1', '2', '3', '4', '5', '6', '7', '8'])
 	})
 
 	test('keeps postings at any chosen level', () => {
@@ -120,6 +123,13 @@ describe('visibleSections', () => {
 	test('ignores case and apostrophes in the search', () => {
 		let filters = buildJobFilters(ALL_JOBS, NOTHING_CHOSEN)
 		expect(ids(visibleSections(CATEGORIES, filters, 'LIONS pause'))).toEqual(['4'])
+	})
+
+	/// lodash's `deburr` leaves letters like ǧ and ŋ alone; a live CURI title
+	/// has both.
+	test('ignores accents beyond Latin-1 in the search', () => {
+		let filters = buildJobFilters(ALL_JOBS, NOTHING_CHOSEN)
+		expect(ids(visibleSections(CATEGORIES, filters, 'minagi kin'))).toEqual(['8'])
 	})
 
 	test('does not match the term prefix or pay code a student never sees', () => {

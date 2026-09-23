@@ -214,12 +214,19 @@ struct TestIdentifiers {
 		/// A fixture posting whose title carries a term and a pay code, shown
 		/// with both dropped. Mirrors UITEST_CODED_JOB_TITLE.
 		static let fixtureCodedJob = "Stav Student Server"
+		/// A word only the coded fixture's title holds, to search for it by.
+		static let fixtureCodedJobSearch = "stav"
 		/// Its wage, from the NST1 tier.
 		static let fixtureCodedJobWage = "$13.50/hr"
-		/// Matches LEVELS in source/features/sis/student-work/filters.ts.
+		/// Matches LEVEL_LABELS in source/features/sis/student-work/posting.ts.
 		static let entryLevel = "Entry-level"
 		/// The Level filter's key, from `buildJobFilters`.
 		static let levelFilter = "level"
+		/// Row labels on a posting's screen, from `jobDetailFields` in
+		/// source/features/sis/student-work/lib.ts.
+		static let wageRow = "Wage"
+		static let levelRow = "Level"
+		static let termRow = "Term"
 		/// The coded fixture's term, as `jobTerm` names it.
 		static let academicYear = "Academic Year"
 		/// The tier every filler posting is at.

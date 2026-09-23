@@ -3,25 +3,19 @@ import XCTest
 class ModuleStudentWorkTests: UITestCase {
 	private typealias IDs = TestIdentifiers.StudentWork
 
-	/// The title drops its term and pay code, and the row shows the wage the
-	/// code stands for.
-	func testRowShowsTheWageForItsPayCode() throws {
+	/// A row drops its title's term and pay code and shows the wage the code
+	/// stands for. The posting's own screen titles it the same way, and turns
+	/// what the prefix and code said into rows.
+	func testCodedPostingShowsItsDisplayTitleWageLevelAndTerm() throws {
 		StudentWorkScreen(app: app)
 			.navigate()
 			.verifyPostingDetail(IDs.fixtureCodedJob, contains: IDs.fixtureCodedJobWage)
 			.capture("Student Work list")
-	}
-
-	/// The posting's own screen titles it as the list does, and turns what the
-	/// title's term prefix and pay code said into rows.
-	func testJobPostingShowsItsDisplayTitleAndTitleFields() throws {
-		StudentWorkScreen(app: app)
-			.navigate()
 			.openJobPosting(IDs.fixtureCodedJob)
 			.capture("Job posting with a display title")
-			.verifyDetailRow("Wage", IDs.fixtureCodedJobWage)
-			.verifyDetailRow("Level", IDs.entryLevel)
-			.verifyDetailRow("Term", IDs.academicYear)
+			.verifyDetailRow(IDs.wageRow, IDs.fixtureCodedJobWage)
+			.verifyDetailRow(IDs.levelRow, IDs.entryLevel)
+			.verifyDetailRow(IDs.termRow, IDs.academicYear)
 	}
 
 	func testLevelFilterNarrowsTheList() throws {
@@ -46,7 +40,7 @@ class ModuleStudentWorkTests: UITestCase {
 		StudentWorkScreen(app: app)
 			.navigate()
 			.scrollListDown()
-			.search(for: "fixture")
+			.search(for: IDs.fixtureFillerPrefix)
 			.verifyListStartsAtTheTop()
 	}
 
@@ -54,7 +48,7 @@ class ModuleStudentWorkTests: UITestCase {
 		StudentWorkScreen(app: app)
 			.navigate()
 			.verifyPostingListed(IDs.fixtureJobWithShortFields)
-			.search(for: "stav")
+			.search(for: IDs.fixtureCodedJobSearch)
 			.verifyPostingListed(IDs.fixtureCodedJob)
 			.verifyPostingHidden(IDs.fixtureJobWithShortFields)
 	}

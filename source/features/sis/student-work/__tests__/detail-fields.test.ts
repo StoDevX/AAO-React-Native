@@ -28,14 +28,18 @@ describe('jobDetailFields', () => {
 		])
 	})
 
-	/// The description's wage is usually the whole structure's range; the
-	/// title's pay code names the tier, so it wins.
-	test('drops the description’s wage when the title gives one', () => {
+	/// The listing's own wage is what the employer wrote, so it wins; the
+	/// title's pay code only fills in when the listing states none.
+	test('shows the listing’s wage over the one the title implies', () => {
 		let job = posting('AY Mail Services Student Worker (WS-ST1)', [
+			{label: 'Department', value: 'Mail Services'},
 			{label: 'Wage', value: '$12.00-13.00/hour'},
 		])
-		expect(jobDetailFields(job).filter((field) => field.label === 'Wage')).toEqual([
-			{label: 'Wage', value: '$12.00/hr'},
+		expect(jobDetailFields(job)).toEqual([
+			{label: 'Wage', value: '$12.00-13.00/hour'},
+			{label: 'Level', value: 'Entry-level'},
+			{label: 'Term', value: 'Academic Year'},
+			{label: 'Department', value: 'Mail Services'},
 		])
 	})
 
@@ -44,8 +48,8 @@ describe('jobDetailFields', () => {
 			{label: 'Wage', value: '$13.50-15.50/hour'},
 		])
 		expect(jobDetailFields(job)).toEqual([
-			{label: 'Term', value: 'Academic Year'},
 			{label: 'Wage', value: '$13.50-15.50/hour'},
+			{label: 'Term', value: 'Academic Year'},
 		])
 	})
 

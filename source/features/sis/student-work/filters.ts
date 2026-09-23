@@ -71,10 +71,15 @@ export function buildJobFilters(
 	]
 }
 
+const COMBINING_MARKS = /\p{M}/gu
+
 /// Lowercased words with accents and apostrophes gone, so "lions" finds
-/// "Lion’s".
+/// "Lion’s" and "minagi kin" finds "Mináǧi Kiŋ". Dropping the marks after
+/// decomposing reaches accented letters `deburr` leaves alone, like ǧ, and
+/// `deburr` maps the letters that have no decomposition, like ŋ.
 function searchWords(text: string): string[] {
-	return words(deburr(text.toLowerCase().replaceAll(/['’]/gu, '')))
+	let unmarked = text.toLowerCase().normalize('NFD').replaceAll(COMBINING_MARKS, '')
+	return words(deburr(unmarked.replaceAll(/['’]/gu, '')))
 }
 
 /// Every word of the query has to start some word of the title the student

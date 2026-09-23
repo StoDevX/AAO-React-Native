@@ -7,17 +7,38 @@ import {jobCode, jobTerm, LEVEL_LABELS, type JobCode} from './posting'
 /// screen it opens. Mirrored by `TestIdentifiers.StudentWork.jobDescriptionRow`.
 export const JOB_DESCRIPTION_TITLE = 'Description'
 
-/// `PostedDate` is a plain `YYYY-MM-DD` with no zone, parsed as local time so
-/// the date a student sees is the date Oracle published.
-///
-/// `locales` defaults to the device's own, so the date reads the way the rest
-/// of the phone writes dates.
-export function postedOn(postedDate: string, locales?: string): string | undefined {
-	let parsed = parseISO(postedDate)
-	if (!isValid(parsed)) return undefined
+/// Building an `Intl.DateTimeFormat` costs far more than using one, and the
+/// list formats a date per row on every render, so each locale's is kept.
+const postedDateFormats = new Map<string, Intl.DateTimeFormat>()
 
-	let date = new Intl.DateTimeFormat(locales, {dateStyle: 'medium'}).format(parsed)
-	return `Posted ${date}`
+function postedDateFormat(locales: string | undefined): Intl.DateTimeFormat {
+	let key = locales ?? ''
+	let cached = postedDateFormats.get(key)
+	if (cached) return cached
+
+	let created = new Intl.DateTimeFormat(locales, {dateStyle: 'medium'})
+	postedDateFormats.set(key, created)
+	return created
+}
+
+/// A posting's date as the list and its own screen both show it, in the
+/// device's own style when `locales` is left out.
+///
+/// The list's `PostedDate` is a plain `YYYY-MM-DD` with no zone, parsed as
+/// local time so the date a student sees is the date Oracle published.
+export function formatPostedDate(
+	postedDate: string | undefined,
+	locales?: string,
+): string | undefined {
+	if (!postedDate) return undefined
+
+	let parsed = parseISO(postedDate)
+	return isValid(parsed) ? postedDateFormat(locales).format(parsed) : undefined
+}
+
+export function postedOn(postedDate: string, locales?: string): string | undefined {
+	let date = formatPostedDate(postedDate, locales)
+	return date ? `Posted ${date}` : undefined
 }
 
 /// Dollars an hour, by structure and tier, for the 2026–27 academic year.
@@ -64,26 +85,26 @@ export function shareJob(job: JobDetail): void {
 
 const WAGE_LABEL = 'Wage'
 
-/// The rows a posting's Details section shows: what its title says about
-/// wage, level, and term, then what its description says.
+/// The rows a posting's Details section shows: its wage, then the level and
+/// term its title carries, then the rest of what its description says.
 ///
-/// A description's own Wage is usually the whole structure's range, where the
-/// title's pay code names the tier, so the title's wage replaces it.
+/// The listing's own Wage is what the employer wrote, so it wins. The wage the
+/// title's pay code implies fills in only when the listing states none.
 export function jobDetailFields(job: JobDetail): JobField[] {
 	let code = jobCode(job.title)
 	let term = jobTerm(job.title)
 
+	let statedWage = job.fields.find((field) => field.label === WAGE_LABEL)
+	let wage = statedWage ?? (code ? {label: WAGE_LABEL, value: formatWage(code)} : undefined)
+
 	let fromTitle: JobField[] = []
 	if (code) {
-		fromTitle.push(
-			{label: WAGE_LABEL, value: formatWage(code)},
-			{label: 'Level', value: LEVEL_LABELS[code.tier]},
-		)
+		fromTitle.push({label: 'Level', value: LEVEL_LABELS[code.tier]})
 	}
 	if (term) {
 		fromTitle.push({label: 'Term', value: term})
 	}
 
-	let fromDescription = code ? job.fields.filter((field) => field.label !== WAGE_LABEL) : job.fields
-	return [...fromTitle, ...fromDescription]
+	let rest = job.fields.filter((field) => field.label !== WAGE_LABEL)
+	return [...(wage ? [wage] : []), ...fromTitle, ...rest]
 }

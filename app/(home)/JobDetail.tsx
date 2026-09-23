@@ -9,12 +9,12 @@ import {openUrl} from '@frogpond/open-url'
 import * as c from '@frogpond/colors'
 import {jobDetailOptions, type JobDetail} from '@frogpond/ccc-jobs'
 import {
+	formatPostedDate,
 	JOB_DESCRIPTION_TITLE,
 	jobDetailFields,
 	shareJob,
 } from '../../source/features/sis/student-work/lib'
 import {displayTitle} from '../../source/features/sis/student-work/posting'
-import {format, isValid, parseISO} from 'date-fns'
 import {DetailRow, DisclosureRow, NavigationRow} from '../../source/components/rows'
 
 const styles = StyleSheet.create({
@@ -23,13 +23,6 @@ const styles = StyleSheet.create({
 		backgroundColor: c.systemGroupedBackground,
 	},
 })
-
-function postedOn(postedDate: string | undefined): string | undefined {
-	if (!postedDate) return undefined
-
-	let parsed = parseISO(postedDate)
-	return isValid(parsed) ? format(parsed, 'MMMM d, yyyy') : undefined
-}
 
 /// The posting's fields, as a SwiftUI form that fills the screen and scrolls
 /// itself, with the description a push away.
@@ -41,7 +34,7 @@ function postedOn(postedDate: string | undefined): string | undefined {
 /// and hosting it in the form would need that same content-sized measurement.
 function JobDetailView({job}: {job: JobDetail}): React.ReactNode {
 	let router = useRouter()
-	let posted = postedOn(job.postedDate)
+	let posted = formatPostedDate(job.postedDate)
 	let fields = jobDetailFields(job)
 
 	return (
