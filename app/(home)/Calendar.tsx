@@ -13,6 +13,7 @@ import {type CalendarBodyHandle, DayView, EventList} from '@frogpond/event-list'
 import {useMomentTimer} from '@frogpond/timer'
 
 import {dayWindow, useFacets, useOccurrences} from '../../source/database/calendar/read'
+import {HIDDEN_FROM_CALENDAR} from '../../source/features/calendar/constants'
 import {useCalendarFilterStore} from '../../source/features/calendar/store'
 
 export default function CalendarPage(): React.ReactNode {
@@ -39,9 +40,20 @@ export default function CalendarPage(): React.ReactNode {
 		window: readWindow,
 		sourceIds: enabledIds,
 		filters: filter ? [filter] : [],
+		exclude: HIDDEN_FROM_CALENDAR,
 	})
-	let categories = useFacets({axis: 'category', window: readWindow, sourceIds: enabledIds})
-	let organizations = useFacets({axis: 'organization', window: readWindow, sourceIds: enabledIds})
+	let categories = useFacets({
+		axis: 'category',
+		window: readWindow,
+		sourceIds: enabledIds,
+		exclude: HIDDEN_FROM_CALENDAR,
+	})
+	let organizations = useFacets({
+		axis: 'organization',
+		window: readWindow,
+		sourceIds: enabledIds,
+		exclude: HIDDEN_FROM_CALENDAR,
+	})
 
 	// A database read that failed leaves every enabled calendar unreadable, so
 	// the body names them the way it names a fetch that failed -- and offers the

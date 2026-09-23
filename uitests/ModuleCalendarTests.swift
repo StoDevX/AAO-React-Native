@@ -422,7 +422,7 @@ class ModuleCalendarTests: UITestCase {
 		let screen = CalendarScreen(app: app)
 			.navigate()
 			.verifyRowPresent(TestIdentifiers.Calendar.unfilteredDayRow)
-			.capture("36-athletics-hidden")
+			.capture("37-athletics-hidden")
 			.verifyRowAbsent(TestIdentifiers.Calendar.hiddenAthleticsRow)
 
 		screen

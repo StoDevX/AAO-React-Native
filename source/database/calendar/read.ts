@@ -4,7 +4,6 @@ import * as Sentry from '@sentry/react-native'
 import {keepPreviousData, skipToken, useQuery} from '@tanstack/react-query'
 
 import type {SourcedEvent} from '../../../modules/event-list/types.ts'
-import {HIDDEN_FROM_CALENDAR} from '../../features/calendar/constants.ts'
 import type {CalendarFilterOption} from '../../features/calendar/filter.ts'
 import {getRunner} from '../client.ts'
 import type {SqlRunner} from '../sql.ts'
@@ -152,7 +151,8 @@ export function reportingFailures<T>(read: () => T): T {
 
 /**
  * Every occurrence in `window`, narrowed to `sourceIds` and `filters`, less
- * anything `HIDDEN_FROM_CALENDAR` names, hydrated into `SourcedEvent`s.
+ * what `exclude` hides (see `occurrencesQuery`), hydrated into
+ * `SourcedEvent`s.
  * `failed` says the read itself threw, which the screen reports as every
  * enabled calendar being unavailable.
  */
@@ -160,14 +160,13 @@ export function useOccurrences(args: {
 	window: Window | null
 	sourceIds: string[]
 	filters: FilterSelection[]
+	exclude: FilterSelection[]
 }): {events: SourcedEvent[]; isPending: boolean; failed: boolean} {
-	let {window, sourceIds, filters} = args
+	let {window, sourceIds, filters, exclude} = args
 	let revision = useCalendarRevision()
 
 	let result = useQuery({
-		// HIDDEN_FROM_CALENDAR is a module constant, so it cannot change a result
-		// between two reads and has no place in the key.
-		queryKey: [CALENDAR_READ_KEY, 'occurrences', revision, window, sourceIds, filters],
+		queryKey: [CALENDAR_READ_KEY, 'occurrences', revision, window, sourceIds, filters, exclude],
 		// A `null` window means there is nothing to read -- the detail screen
 		// asks for neighbours only when it has a timeline to draw them on.
 		// `skipToken` is what switches the query off while keeping the key and
@@ -179,7 +178,7 @@ export function useOccurrences(args: {
 					reportingFailures(() => {
 						let runner = getRunner()
 						let rows = runner.all<OccurrenceRowResult>(
-							occurrencesQuery({window, sourceIds, filters, exclude: HIDDEN_FROM_CALENDAR}),
+							occurrencesQuery({window, sourceIds, filters, exclude}),
 						)
 						let dedupeKeys = [...new Set(rows.map((row) => row.dedupe_key))]
 						let sponsors = sponsorsFor(runner, dedupeKeys, sourceIds)
@@ -210,17 +209,16 @@ export function useFacets(args: {
 	axis: 'category' | 'organization'
 	window: Window
 	sourceIds: string[]
+	exclude: FilterSelection[]
 }): CalendarFilterOption[] {
-	let {axis, window, sourceIds} = args
+	let {axis, window, sourceIds, exclude} = args
 	let revision = useCalendarRevision()
 
 	let result = useQuery({
-		queryKey: [CALENDAR_READ_KEY, 'facets', revision, axis, window, sourceIds],
+		queryKey: [CALENDAR_READ_KEY, 'facets', revision, axis, window, sourceIds, exclude],
 		queryFn: () =>
 			reportingFailures(() =>
-				getRunner().all<CalendarFilterOption>(
-					facetsQuery({axis, window, sourceIds, exclude: HIDDEN_FROM_CALENDAR}),
-				),
+				getRunner().all<CalendarFilterOption>(facetsQuery({axis, window, sourceIds, exclude})),
 			),
 		placeholderData: keepPreviousData,
 	})
@@ -280,7 +278,16 @@ export function useEvent(
  * `useOccurrences` over the timeline's own window, with no filter narrowing it.
  * A `null` window -- an event with no timeline of its own -- reads nothing.
  */
-export function useNeighbours(args: {window: Window | null; sourceIds: string[]}): SourcedEvent[] {
-	let {events} = useOccurrences({window: args.window, sourceIds: args.sourceIds, filters: []})
+export function useNeighbours(args: {
+	window: Window | null
+	sourceIds: string[]
+	exclude: FilterSelection[]
+}): SourcedEvent[] {
+	let {events} = useOccurrences({
+		window: args.window,
+		sourceIds: args.sourceIds,
+		filters: [],
+		exclude: args.exclude,
+	})
 	return events
 }
