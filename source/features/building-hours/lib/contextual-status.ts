@@ -100,9 +100,15 @@ function plain(text: string): ContextualStatus {
  */
 export function contextualStatus(
 	building: BuildingType,
-	now: Moment,
+	clock: Moment,
 	locale?: string,
 ): ContextualStatus {
+	// `diff` rounds down, so the seconds already gone from this minute would
+	// knock a minute off every countdown -- "Closes in 0 min" at 10:44:30 for a
+	// 10:45 close. Counting from the minute's start also keeps the answer the
+	// same whether or not the caller's clock was already rounded.
+	let now = clock.clone().startOf('minute')
+
 	let current = findCurrentOpen(building, now)
 	if (current) {
 		let chapelPause = findChapelPause(current.set, now)

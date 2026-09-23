@@ -169,13 +169,25 @@ export function FancyMenu(props: Props): React.ReactNode {
 	const {now, meals, cafeMessage, foodItems, menuCorIcons, onItemPress} = props
 	const applyFilters = props.applyFilters ?? applyMenuFilters
 
-	// Built from the menu once, then owned by the user. `now` picks the meal
+	// Built from the day's menu, then owned by the user. `now` picks the meal
 	// selected to begin with and nothing after: tracking it would move the
 	// reader off a meal they chose, and take their filters with it, whenever the
 	// clock moved on.
 	const [filters, setFilters] = useState<FilterType<MenuItemType>[]>(() =>
 		buildFilters(menuCorIcons, meals, now),
 	)
+
+	// Rebuilt when a different day's meals arrive. A cold launch draws
+	// yesterday's menu from the disk cache, and today's replaces it on this same
+	// mounted menu; filters built from yesterday's would keep its meals in the
+	// picker and a selection today does not serve, which draws nothing. Keyed on
+	// the meals' labels, so a refetch of the same day keeps the user's filters.
+	const mealLabels = meals.map((meal) => meal.label).join('\n')
+	const [filtersBuiltFor, setFiltersBuiltFor] = useState(mealLabels)
+	if (filtersBuiltFor !== mealLabels) {
+		setFiltersBuiltFor(mealLabels)
+		setFilters(buildFilters(menuCorIcons, meals, now))
+	}
 
 	const meal = chooseMeal(meals, filters, now)
 	const {label: mealName, stations} = meal

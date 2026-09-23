@@ -112,5 +112,17 @@ class ModuleMenusTests: UITestCase {
 			.checkStOlafCafes()
 	}
 
+	/// A dish's nutrition opens over the menu as a sheet, like every other
+	/// detail in the app, rather than as a page of its own. The Pause is used
+	/// because its menu comes from `data/pause-menu.yaml`, so the dish is fixed.
+	func testTappingADishPresentsItsNutritionSheet() throws {
+		MenusScreen(app: app)
+			.navigate()
+			.openCafe(TestIdentifiers.Menus.pause)
+			.openFoodItem(TestIdentifiers.Menus.pizzaItem)
+			.verifyNutritionSheet(titled: "Single Slice")
+			.capture("Nutrition sheet for Single Slice at the resting detent")
+	}
+
 	// MARK: - Carleton menus
 }

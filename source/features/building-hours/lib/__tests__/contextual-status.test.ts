@@ -290,6 +290,55 @@ describe('contextualStatus', () => {
 
 		expect(contextualStatus(building, now).short).toBe('Opens at noon')
 	})
+
+	describe('partway through a minute', () => {
+		// The list and the detail sheet each bring their own clock, and only one
+		// of them rounds to the minute. Both have to count the same.
+		let chapelBuilding = makeBuilding([
+			{
+				title: 'Hours',
+				closedForChapelTime: true,
+				hours: [{days: ['Mo', 'Tu', 'We', 'Th', 'Fr'], from: '8:00am', to: '5:00pm'}],
+			},
+		])
+
+		it('counts the closing minute the way the list does', () => {
+			// data/building-hours/1-3-stav.yaml: weekday breakfast ends at 10:45.
+			let building = makeBuilding([
+				{
+					title: 'Breakfast',
+					hours: [{days: ['Mo', 'Tu', 'We', 'Th', 'Fr'], from: '8:15am', to: '10:45am'}],
+				},
+			])
+			let now = moment.tz('2026-09-07 10:44:30', timezone)
+
+			expect(contextualStatus(building, now).short).toBe('Closes in 1 min')
+		})
+
+		it('counts the opening minute the way the list does', () => {
+			let building = makeBuilding([
+				{
+					title: 'Hours',
+					hours: [{days: ['Mo', 'Tu', 'We', 'Th', 'Fr'], from: '11:00am', to: '6:00pm'}],
+				},
+			])
+			let now = moment.tz('2026-09-07 10:48:30', timezone)
+
+			expect(contextualStatus(building, now).short).toBe('Opens in 12 min')
+		})
+
+		it('counts down to chapel the way the list does', () => {
+			let now = moment.tz('2026-09-07 10:00:30', timezone)
+
+			expect(contextualStatus(chapelBuilding, now).short).toBe('Chapel in 10 min')
+		})
+
+		it('counts down to the end of chapel the way the list does', () => {
+			let now = moment.tz('2026-09-07 10:22:30', timezone)
+
+			expect(contextualStatus(chapelBuilding, now).short).toBe('Reopens in 8 min')
+		})
+	})
 })
 
 describe('nextOpening', () => {
