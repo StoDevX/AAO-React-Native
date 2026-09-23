@@ -4,6 +4,7 @@ import * as Sentry from '@sentry/react-native'
 import {keepPreviousData, skipToken, useQuery} from '@tanstack/react-query'
 
 import type {SourcedEvent} from '../../../modules/event-list/types.ts'
+import {HIDDEN_FROM_CALENDAR} from '../../features/calendar/constants.ts'
 import type {CalendarFilterOption} from '../../features/calendar/filter.ts'
 import {getRunner} from '../client.ts'
 import type {SqlRunner} from '../sql.ts'
@@ -150,9 +151,10 @@ export function reportingFailures<T>(read: () => T): T {
 }
 
 /**
- * Every occurrence in `window`, narrowed to `sourceIds` and `filters`,
- * hydrated into `SourcedEvent`s. `failed` says the read itself threw, which
- * the screen reports as every enabled calendar being unavailable.
+ * Every occurrence in `window`, narrowed to `sourceIds` and `filters`, less
+ * anything `HIDDEN_FROM_CALENDAR` names, hydrated into `SourcedEvent`s.
+ * `failed` says the read itself threw, which the screen reports as every
+ * enabled calendar being unavailable.
  */
 export function useOccurrences(args: {
 	window: Window | null
@@ -163,6 +165,8 @@ export function useOccurrences(args: {
 	let revision = useCalendarRevision()
 
 	let result = useQuery({
+		// HIDDEN_FROM_CALENDAR is a module constant, so it cannot change a result
+		// between two reads and has no place in the key.
 		queryKey: [CALENDAR_READ_KEY, 'occurrences', revision, window, sourceIds, filters],
 		// A `null` window means there is nothing to read -- the detail screen
 		// asks for neighbours only when it has a timeline to draw them on.
@@ -175,7 +179,7 @@ export function useOccurrences(args: {
 					reportingFailures(() => {
 						let runner = getRunner()
 						let rows = runner.all<OccurrenceRowResult>(
-							occurrencesQuery({window, sourceIds, filters}),
+							occurrencesQuery({window, sourceIds, filters, exclude: HIDDEN_FROM_CALENDAR}),
 						)
 						let dedupeKeys = [...new Set(rows.map((row) => row.dedupe_key))]
 						let sponsors = sponsorsFor(runner, dedupeKeys, sourceIds)
@@ -214,7 +218,9 @@ export function useFacets(args: {
 		queryKey: [CALENDAR_READ_KEY, 'facets', revision, axis, window, sourceIds],
 		queryFn: () =>
 			reportingFailures(() =>
-				getRunner().all<CalendarFilterOption>(facetsQuery({axis, window, sourceIds})),
+				getRunner().all<CalendarFilterOption>(
+					facetsQuery({axis, window, sourceIds, exclude: HIDDEN_FROM_CALENDAR}),
+				),
 			),
 		placeholderData: keepPreviousData,
 	})

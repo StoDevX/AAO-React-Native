@@ -410,4 +410,29 @@ class ModuleCalendarTests: UITestCase {
 			.checkCategoriesListed()
 			.capture("35-category-submenu")
 	}
+
+	// MARK: - Athletics
+
+	/// Athletics events never reach the Calendar; the Athletics screen lists
+	/// games instead. The fixture puts one on the frozen day beside rows that
+	/// do show, so its absence means it was hidden rather than not yet built.
+	/// Its category leaves the picker too, since choosing it could only empty
+	/// the list.
+	func testAthleticsEventsAreHidden() throws {
+		let screen = CalendarScreen(app: app)
+			.navigate()
+			.verifyRowPresent(TestIdentifiers.Calendar.unfilteredDayRow)
+			.capture("36-athletics-hidden")
+			.verifyRowAbsent(TestIdentifiers.Calendar.hiddenAthleticsRow)
+
+		screen
+			.openPicker()
+			.checkCategoriesListed()
+
+		let athletics = app.buttons.matching(
+			NSPredicate(format: "label BEGINSWITH %@", TestIdentifiers.Calendar.hiddenCategory))
+		XCTAssertEqual(
+			athletics.count, 0,
+			"The picker should not offer the \(TestIdentifiers.Calendar.hiddenCategory) category")
+	}
 }
