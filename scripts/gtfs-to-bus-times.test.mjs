@@ -11,6 +11,7 @@ import {
 	expiredRepairs,
 	formatTime,
 	gtfsToBusTimes,
+	returningRoutes,
 	selectRoutes,
 	staleRepairs,
 	timepointStops,
@@ -61,6 +62,65 @@ describe('daysForService', () => {
 })
 
 describe('selectRoutes', () => {
+	describe('returningRoutes', () => {
+		let watching = {
+			stop_names: {'St Olaf College': 'St. Olaf College'},
+			routes: {},
+			watched_routes: {r1: {line: 'Test Route', file: 'test-route.yaml'}},
+		}
+		let handKeptAs = (times) =>
+			new Map([
+				[
+					'test-route.yaml',
+					{
+						line: 'Test Route',
+						schedules: [{days: ['Mo'], stops: ['Depot', 'St. Olaf College'], times}],
+					},
+				],
+			])
+
+		it('reports a watched route whose service covers today, matching its hand-kept file', () => {
+			let found = returningRoutes(
+				twoServiceFeed(),
+				watching,
+				handKeptAs([['6:00am', '6:10am']]),
+				'20260701',
+			)
+
+			assert.deepEqual(found, [
+				{routeId: 'r1', line: 'Test Route', file: 'test-route.yaml', matches: true},
+			])
+		})
+
+		it('says when the feed differs from the hand-kept file', () => {
+			let found = returningRoutes(
+				twoServiceFeed(),
+				watching,
+				handKeptAs([['7:00am', '7:10am']]),
+				'20260701',
+			)
+
+			assert.equal(found[0]?.matches, false)
+		})
+
+		it('reports nothing once every service has ended', () => {
+			assert.deepEqual(returningRoutes(twoServiceFeed(), watching, handKeptAs([]), '20261202'), [])
+		})
+
+		it('reports nothing before any service starts', () => {
+			assert.deepEqual(returningRoutes(twoServiceFeed(), watching, handKeptAs([]), '20251231'), [])
+		})
+
+		it('reports nothing for a route it is not watching', () => {
+			let notWatching = {...watching, watched_routes: {}}
+
+			assert.deepEqual(
+				returningRoutes(twoServiceFeed(), notWatching, handKeptAs([]), '20260701'),
+				[],
+			)
+		})
+	})
+
 	let curation = {
 		routes: {
 			77627: {expect_name: 'Blue - Northfield', file: 'blue-line.yaml', line: 'Blue Line'},
@@ -777,6 +837,14 @@ describe('the real Hiawathaland feed', () => {
 			},
 		},
 	}
+
+	it('reports the Express as still gone, since its services ended 2026-06-08', () => {
+		let handKept = new Map([
+			['1-express.yaml', load(fs.readFileSync(path.join(busTimes, '1-express.yaml'), 'utf-8'))],
+		])
+
+		assert.deepEqual(returningRoutes(feed, real.curation, handKept, '20260922'), [])
+	})
 
 	it('writes exactly the curated files, never the hand-maintained Express or Oles Go', () => {
 		let {files} = gtfsToBusTimes(feed, real)

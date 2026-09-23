@@ -45,3 +45,12 @@ routes:
       bar: rgb(233, 87, 95)
       dot: rgb(151, 27, 16)
     notice: Route that services the south part of the city. Oles ride free with a student ID.
+
+# Routes kept by hand in data/bus-times/ because the feed's copy was wrong.
+# The weekly refresh opens an issue when the feed runs one again, so the
+# hand-kept file does not outlive its reason. Keyed by GTFS route_id, like
+# `routes`; move an entry back there once the feed can be trusted.
+watched_routes:
+  '77629':
+    line: Express Bus
+    file: 1-express.yaml
