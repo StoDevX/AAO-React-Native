@@ -1,7 +1,15 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`NoticeView when buttonText is given displays a button with the buttonText in its title 1`] = `
-<View
+<RNCSafeAreaView
+  edges={
+    {
+      "bottom": "off",
+      "left": "additive",
+      "right": "additive",
+      "top": "off",
+    }
+  }
   style={
     [
       {
@@ -119,11 +127,19 @@ exports[`NoticeView when buttonText is given displays a button with the buttonTe
       button text
     </Text>
   </View>
-</View>
+</RNCSafeAreaView>
 `;
 
 exports[`NoticeView when given no text to display displays "Notice!" as its text 1`] = `
-<View
+<RNCSafeAreaView
+  edges={
+    {
+      "bottom": "off",
+      "left": "additive",
+      "right": "additive",
+      "top": "off",
+    }
+  }
   style={
     [
       {
@@ -159,11 +175,19 @@ exports[`NoticeView when given no text to display displays "Notice!" as its text
   >
     Notice!
   </Text>
-</View>
+</RNCSafeAreaView>
 `;
 
 exports[`NoticeView when given text to display displays the text 1`] = `
-<View
+<RNCSafeAreaView
+  edges={
+    {
+      "bottom": "off",
+      "left": "additive",
+      "right": "additive",
+      "top": "off",
+    }
+  }
   style={
     [
       {
@@ -199,11 +223,19 @@ exports[`NoticeView when given text to display displays the text 1`] = `
   >
     foo bar
   </Text>
-</View>
+</RNCSafeAreaView>
 `;
 
 exports[`NoticeView when given view style overrides applies view style overrides 1`] = `
-<View
+<RNCSafeAreaView
+  edges={
+    {
+      "bottom": "off",
+      "left": "additive",
+      "right": "additive",
+      "top": "off",
+    }
+  }
   style={
     [
       {
@@ -241,11 +273,19 @@ exports[`NoticeView when given view style overrides applies view style overrides
   >
     foo bar
   </Text>
-</View>
+</RNCSafeAreaView>
 `;
 
 exports[`NoticeView when header text is given displays the header text 1`] = `
-<View
+<RNCSafeAreaView
+  edges={
+    {
+      "bottom": "off",
+      "left": "additive",
+      "right": "additive",
+      "top": "off",
+    }
+  }
   style={
     [
       {
@@ -302,11 +342,19 @@ exports[`NoticeView when header text is given displays the header text 1`] = `
   >
     foo bar
   </Text>
-</View>
+</RNCSafeAreaView>
 `;
 
 exports[`NoticeView when instructed to display a spinner displays a spinner 1`] = `
-<View
+<RNCSafeAreaView
+  edges={
+    {
+      "bottom": "off",
+      "left": "additive",
+      "right": "additive",
+      "top": "off",
+    }
+  }
   style={
     [
       {
@@ -351,5 +399,5 @@ exports[`NoticeView when instructed to display a spinner displays a spinner 1`] 
   >
     foo bar
   </Text>
-</View>
+</RNCSafeAreaView>
 `;
