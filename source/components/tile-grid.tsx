@@ -14,6 +14,8 @@ type Props<T> = {
 	items: T[]
 	keyForItem: (item: T) => React.Key
 	renderItem: (item: T) => React.ReactNode
+	/** Overrides `useTileColumns()` for a grid whose tiles are a different size. */
+	columns?: number
 	/** Names the grid for a UI test counting the tiles inside it. */
 	accessibilityId: string
 }
@@ -25,8 +27,10 @@ export function TileGrid<T>({
 	keyForItem,
 	renderItem,
 	accessibilityId,
+	columns: columnsOverride,
 }: Props<T>): React.ReactNode {
-	let columns = useTileColumns()
+	let dynamicColumns = useTileColumns()
+	let columns = columnsOverride ?? dynamicColumns
 
 	return (
 		<Grid
