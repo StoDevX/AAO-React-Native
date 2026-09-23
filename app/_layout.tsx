@@ -1,5 +1,6 @@
 // initialization
 import '../source/init/constants'
+import '../source/init/logbox'
 import '../source/init/moment'
 import * as sentryInit from '../source/init/sentry'
 import '../source/init/api'
