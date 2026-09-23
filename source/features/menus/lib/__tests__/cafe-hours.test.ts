@@ -48,7 +48,7 @@ describe('cafeHours', () => {
 		expect(cafeHours(unscheduled, dayMoment('Fri 6:00pm'))).toEqual({
 			time: null,
 			closed: true,
-			reopening: null,
+			reopening: 'Closed',
 		})
 	})
 
@@ -218,11 +218,13 @@ describe('cafeHours', () => {
 			})
 		})
 
-		test('names no opening once nothing opens again today', () => {
+		// Past its last window it says it is shut, as a venue with one window
+		// does, rather than leaving the name standing alone.
+		test('says only that it is closed once nothing opens again today', () => {
 			expect(cafeHours(TWICE_DAILY, dayMoment('Fri 10:00pm'))).toEqual({
 				time: null,
 				closed: true,
-				reopening: null,
+				reopening: 'Closed',
 			})
 		})
 
@@ -307,7 +309,7 @@ describe('cafeHours', () => {
 		expect(cafeHours(endsInChapel, dayMoment('Mon 10:15am'))).toEqual({
 			time: null,
 			closed: true,
-			reopening: null,
+			reopening: 'Closed',
 		})
 	})
 

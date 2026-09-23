@@ -25,8 +25,9 @@ export type CafeHours = {
 	closed: boolean
 	/**
 	 * What to say about a shut cafe opening again, e.g. `Opens at 4 PM`, `Closed
-	 * until tomorrow`, or `Closed until 5 PM`, or `null` when it is open or when
-	 * there is nothing to promise.
+	 * until tomorrow`, `Closed until 5 PM`, or `Closed` when there is nothing to
+	 * promise; `null` when it is open, when its hours have not arrived, and for a
+	 * day Bon Appétit calls shut, whose name stands alone.
 	 */
 	reopening: string | null
 }
@@ -116,13 +117,17 @@ export function cafeHours(building: BuildingType | undefined, m: Moment): CafeHo
 	return shut(building, m)
 }
 
-/** A venue whose doors are shut at `m`, and when they next open today. */
+/**
+ * A venue whose doors are shut at `m`: when they next open today, or only that
+ * they are shut once nothing opens again today, as a venue with one window says
+ * after it closes.
+ */
 function shut(building: BuildingType, m: Moment): CafeHours {
 	let opening = nextOpening(building, m)
 	return {
 		time: null,
 		closed: true,
-		reopening: opening ? `Closed until ${formatStatusTime(opening)}` : null,
+		reopening: opening ? `Closed until ${formatStatusTime(opening)}` : 'Closed',
 	}
 }
 
