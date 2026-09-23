@@ -45,9 +45,9 @@ import {BusGlyph} from './components/timetable-row'
 import {
 	buildStopStrip,
 	busPropsForCell,
-	findBusTarget,
 	legsBehindTheBus,
 	stripAnchorIndex,
+	tripOnTheStrip,
 	type StopStripCell,
 } from './lib'
 import type {UnprocessedBusLine} from './types'
@@ -373,17 +373,17 @@ export function BusLineWidget({line, now, onPress}: Props): React.ReactNode {
 		line,
 		now,
 	})
-	let {cells, currentIndex, nextRoundStart} = buildStopStrip({
-		schedule,
-		busStatus: status,
-		departureIndex: currentBusIteration,
-		now,
-	})
-	let busTarget = findBusTarget(
+	let {departureIndex, busTarget} = tripOnTheStrip(
 		schedule,
 		{status, index: currentBusIteration, parkedStopIndex},
 		now,
 	)
+	let {cells, currentIndex, nextRoundStart} = buildStopStrip({
+		schedule,
+		busStatus: status,
+		departureIndex,
+		now,
+	})
 	// Leg `n` runs from stop `n` to stop `n + 1`, and the ones below this count
 	// are behind the bus, so drawn solid.
 	let legsBehind = legsBehindTheBus(cells, busTarget)

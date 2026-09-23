@@ -1,9 +1,10 @@
 import {BUS_ON_RAIL} from '../components/timetable-row'
 import React from 'react'
 import {describe, expect, jest, test} from '@jest/globals'
-import {fireEvent, render} from '@testing-library/react-native'
+import {fireEvent, render, within} from '@testing-library/react-native'
 import moment from 'moment-timezone'
 
+import {formatDeparture} from '../components/times'
 import {BusLineWidget} from '../widget'
 import type {UnprocessedBusLine} from '../types'
 
@@ -123,6 +124,34 @@ describe('BusLineWidget', () => {
 
 		let {getByText} = await renderWidget(twoRounds)
 
+		expect(getByText('Next departure')).toBeTruthy()
+	})
+
+	test("between trips, draws the bus at the end of the trip just finished, beside that trip's time", async () => {
+		let loop = makeLine({
+			schedules: [
+				{
+					days: ['Mo'],
+					coordinates: {},
+					stops: ['Depot', 'Carleton', 'Depot'],
+					times: [
+						['1:00pm', '1:05pm', '1:10pm'],
+						['2:00pm', '2:05pm', '2:10pm'],
+					],
+				},
+			],
+		})
+		let betweenTrips = MONDAY_AFTERNOON.clone().hour(13).minute(30)
+		let finishedAt = formatDeparture(MONDAY_AFTERNOON.clone().hour(13).minute(10))
+
+		let {getByLabelText, getByText} = await renderWidget(loop, jest.fn(), betweenTrips)
+
+		// The time is formatted the way the cell formats it rather than written
+		// out, so the device's locale is not pinned here.
+		let parkedAt = getByLabelText(`Depot, ${finishedAt}`)
+		expect(within(parkedAt).getByTestId(BUS_ON_RAIL)).toBeTruthy()
+		// The finished trip's end slot names the next one; the next trip's own
+		// end slot would say it is the last bus.
 		expect(getByText('Next departure')).toBeTruthy()
 	})
 
