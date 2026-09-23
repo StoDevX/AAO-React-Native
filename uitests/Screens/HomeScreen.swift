@@ -110,11 +110,74 @@ struct HomeScreen: Screen {
 		return self
 	}
 
+	/// No tile's icon reaches out past the top of its card. The glyph has no
+	/// element of its own -- a button's children merge into its one element --
+	/// but the button's frame spans everything it draws, so an icon spilling
+	/// over the card's top edge lifts the frame's top edge above the card. This
+	/// reads the screenshot at the frame's top edge, midway across, where the
+	/// icon never sits: it should find the card there, not the page.
+	@discardableResult
+	func checkTileIconsStayInsideTheirCards() -> Self {
+		let grid = app.element(matching: TestIdentifiers.Home.tileGrid)
+		XCTAssertTrue(grid.waitForExistence(timeout: 30), "Home should show its tile grid")
+		let tiles = grid.buttons.allElementsBoundByIndex.filter { app.frame.contains($0.frame) }
+		XCTAssertFalse(tiles.isEmpty, "At least one tile should be wholly on screen")
+
+		let pixels = ScreenPixels(app.screenshot().image)
+		for tile in tiles {
+			let frame = tile.frame
+			let top = frame.minY + 2
+			// The screen margin beside the card is the page's background.
+			let page = pixels.colour(at: CGPoint(x: frame.minX / 2, y: top))
+			XCTAssertFalse(
+				pixels.colour(at: CGPoint(x: frame.midX, y: top)).isClose(to: page),
+				"\(tile.label)'s card should start at the top of the tile, not below an icon spilling over it")
+		}
+		return self
+	}
+
 	private func firstTwoTiles() -> (CGRect, CGRect) {
 		let grid = app.element(matching: TestIdentifiers.Home.tileGrid)
 		XCTAssertTrue(grid.waitForExistence(timeout: 30), "Home should show its tile grid")
 		let tiles = grid.buttons
 		XCTAssertGreaterThanOrEqual(tiles.count, 2, "Home should have at least two tiles")
 		return (tiles.element(boundBy: 0).frame, tiles.element(boundBy: 1).frame)
+	}
+}
+
+/// The RGB values of a screenshot, addressed in points.
+private struct ScreenPixels {
+	struct Colour {
+		let red: Int
+		let green: Int
+		let blue: Int
+
+		/// Within a step or two per channel, which absorbs the colour-space
+		/// conversion without letting a light glyph over a light page through.
+		func isClose(to other: Colour) -> Bool {
+			abs(red - other.red) <= 2 && abs(green - other.green) <= 2 && abs(blue - other.blue) <= 2
+		}
+	}
+
+	private let bytes: [UInt8]
+	private let width: Int
+	private let scale: CGFloat
+
+	init(_ image: UIImage) {
+		let cgImage = image.cgImage!
+		width = cgImage.width
+		scale = CGFloat(cgImage.width) / image.size.width
+		var bytes = [UInt8](repeating: 0, count: cgImage.width * cgImage.height * 4)
+		let context = CGContext(
+			data: &bytes, width: cgImage.width, height: cgImage.height, bitsPerComponent: 8,
+			bytesPerRow: cgImage.width * 4, space: CGColorSpaceCreateDeviceRGB(),
+			bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue)!
+		context.draw(cgImage, in: CGRect(x: 0, y: 0, width: cgImage.width, height: cgImage.height))
+		self.bytes = bytes
+	}
+
+	func colour(at point: CGPoint) -> Colour {
+		let index = (Int(point.y * scale) * width + Int(point.x * scale)) * 4
+		return Colour(red: Int(bytes[index]), green: Int(bytes[index + 1]), blue: Int(bytes[index + 2]))
 	}
 }
