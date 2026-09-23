@@ -16,6 +16,7 @@ import {
 	buildJobFilters,
 	visibleSections,
 	type ChosenJobFilters,
+	type FilterContext,
 } from '../../source/features/sis/student-work/filters'
 import {jobRowDetail, listState} from '../../source/features/sis/student-work/lib'
 import {newPostingIds} from '../../source/features/sis/student-work/new-postings'
@@ -25,7 +26,7 @@ import {useSeenPostingsStore} from '../../source/features/sis/student-work/store
 /// Mirrored by TestIdentifiers.StudentWork.postingsList.
 const POSTINGS_LIST_ID = 'student-work-postings'
 
-const NOTHING_CHOSEN: ChosenJobFilters = {level: null, term: null}
+const NOTHING_CHOSEN: ChosenJobFilters = {area: null, posted: null, level: null, term: null}
 
 const DOT_SIZE = 10
 
@@ -74,11 +75,6 @@ export default function StudentWorkPage(): React.ReactNode {
 	let [chosen, setChosen] = React.useState<ChosenJobFilters>(NOTHING_CHOSEN)
 
 	let allJobs = React.useMemo(() => data.flatMap((category) => category.jobs), [data])
-	let filters = React.useMemo(() => buildJobFilters(allJobs, chosen), [allJobs, chosen])
-	let sections = React.useMemo(
-		() => visibleSections(data, filters, searchQuery, now().toDate()),
-		[data, filters, searchQuery],
-	)
 
 	// What went up since the last visit. The store changes only when the
 	// student leaves, so the dots stay put while they read.
@@ -86,6 +82,20 @@ export default function StudentWorkPage(): React.ReactNode {
 	let markSeen = useSeenPostingsStore((state) => state.markSeen)
 	let allIds = React.useMemo(() => allJobs.map((job) => job.id), [allJobs])
 	let newIds = React.useMemo(() => newPostingIds(allIds, seenIds), [allIds, seenIds])
+
+	// No areas yet: the landing screen that supplies them comes next.
+	let context = React.useMemo(
+		(): FilterContext => ({areas: [], membership: new Map(), newIds, today: now().toDate()}),
+		[newIds],
+	)
+	let filters = React.useMemo(
+		() => buildJobFilters(allJobs, chosen, context),
+		[allJobs, chosen, context],
+	)
+	let sections = React.useMemo(
+		() => visibleSections(data, filters, searchQuery, context),
+		[data, filters, searchQuery, context],
+	)
 
 	// Remembered on leaving Student Work, not on opening a posting: the screen
 	// stays mounted under a pushed posting, so its dots are still there on

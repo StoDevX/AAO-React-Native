@@ -6,14 +6,34 @@ import {selectedOptions} from '@frogpond/filter/selected-options'
 import type {ListType} from '@frogpond/filter/types'
 import deburr from 'lodash/deburr'
 import words from 'lodash/words'
+import type {AreaStatus, StudentWorkArea} from './areas'
 import {displayTitle, jobCode, jobTerm, LEVEL_LABELS, type JobTerm} from './posting'
+import {POSTED_NEW, POSTED_RECENT, postedTags} from './presets'
 import {recencyOf, RECENCY_ORDER} from './recency'
 
-/// What the Level and Term filters match a posting on.
-export type JobFacets = {level: string; term: string}
+/// What the filters match a posting on.
+export type JobFacets = {area: string[]; posted: string[]; level: string; term: string}
+
+/// What a posting's level and term are; worked out from its title alone.
+type TitleFacets = Pick<JobFacets, 'level' | 'term'>
 
 /// The options the student picked in each filter; `null` is untouched.
-export type ChosenJobFilters = {level: string[] | null; term: string[] | null}
+export type ChosenJobFilters = {
+	area: string[] | null
+	posted: string[] | null
+	level: string[] | null
+	term: string[] | null
+}
+
+/// What the Area and Posted filters need beyond the postings themselves.
+export type FilterContext = {
+	areas: StudentWorkArea[]
+	/// Each area's postings, keyed by slug; see `areaMembership`.
+	membership: Map<string, AreaStatus>
+	/// The postings the student had not seen when they last left Student Work.
+	newIds: Set<string>
+	today: Date
+}
 
 export type JobSection = {title: string; data: JobSummary[]}
 
@@ -32,10 +52,10 @@ const TERM_ORDER: Array<JobTerm | typeof NOT_STATED> = [
 /// Each posting's facets and title words, worked out once per posting rather
 /// than on every search or filter change. Keyed by the posting object, so a
 /// refetch's new objects start fresh and old ones are let go.
-const facetsCache = new WeakMap<JobSummary, JobFacets>()
+const facetsCache = new WeakMap<JobSummary, TitleFacets>()
 const titleWordsCache = new WeakMap<JobSummary, string[]>()
 
-function facetsOf(job: JobSummary): JobFacets {
+function facetsOf(job: JobSummary): TitleFacets {
 	let cached = facetsCache.get(job)
 	if (cached) return cached
 
@@ -48,12 +68,31 @@ function facetsOf(job: JobSummary): JobFacets {
 	return facets
 }
 
+/// A posting's areas and Posted values depend on the unit searches and the
+/// seen set, which change without the posting changing, so they are not cached.
+function fullFacetsOf(job: JobSummary, context: FilterContext): JobFacets {
+	let area = context.areas
+		.filter((candidate) => context.membership.get(candidate.slug)?.ids.has(job.id))
+		.map((candidate) => candidate.name)
+	let posted = postedTags(job, context.newIds, context.today)
+
+	// @frogpond/filter lets an empty list through every list filter, so a
+	// posting in no area, or neither recent nor new, says "Not stated" --
+	// which neither filter offers as an option, so it never matches a choice.
+	return {
+		...facetsOf(job),
+		area: area.length > 0 ? area : [NOT_STATED],
+		posted: posted.length > 0 ? posted : [NOT_STATED],
+	}
+}
+
 function listFilter(
 	key: keyof JobFacets,
 	title: string,
 	order: string[],
 	present: Set<string>,
 	chosen: string[] | null,
+	presentation: 'menu' | 'sheet' = 'menu',
 ): ListType<JobFacets> {
 	let options = order.filter((value) => present.has(value)).map((value) => ({title: value}))
 	let selected = selectedOptions(options, chosen)
@@ -63,24 +102,50 @@ function listFilter(
 		key,
 		// Selecting nothing is the resting state and shows everything.
 		enabled: selected.length > 0,
-		spec: {title, options, selected, presentation: 'menu', mode: 'OR', displayTitle: true},
+		spec: {title, options, selected, presentation, mode: 'OR', displayTitle: true},
 		apply: {key},
 	}
 }
 
-/// The Level and Term filters, offering only the values some posting has.
+/// The Area, Posted, Level, and Term filters, each offering only the values
+/// some posting has.
 export function buildJobFilters(
 	jobs: JobSummary[],
 	chosen: ChosenJobFilters,
+	context: FilterContext,
 ): ListType<JobFacets>[] {
 	if (jobs.length === 0) return []
 
-	let facets = jobs.map(facetsOf)
+	let facets = jobs.map((job) => fullFacetsOf(job, context))
+	let areaOrder = context.areas.map((area) => area.name)
 
 	return [
+		// Sixteen areas are too many rows for a pull-down menu.
+		listFilter(
+			'area',
+			'Area',
+			areaOrder,
+			new Set(facets.flatMap((f) => f.area)),
+			chosen.area,
+			'sheet',
+		),
+		listFilter(
+			'posted',
+			'Posted',
+			[POSTED_RECENT, POSTED_NEW],
+			new Set(facets.flatMap((f) => f.posted)),
+			chosen.posted,
+		),
 		listFilter('level', 'Level', LEVEL_ORDER, new Set(facets.map((f) => f.level)), chosen.level),
 		listFilter('term', 'Term', TERM_ORDER, new Set(facets.map((f) => f.term)), chosen.term),
 	]
+}
+
+/// Posted is one choice at a time: the list filter reports every ticked
+/// option, so keep only the one just added.
+export function choosePosted(previous: string[] | null, next: string[]): string[] {
+	let added = next.filter((title) => !(previous ?? []).includes(title))
+	return added.length > 0 ? added.slice(-1) : next.slice(-1)
 }
 
 const COMBINING_MARKS = /\p{M}/gu
@@ -119,13 +184,16 @@ export function visibleSections(
 	categories: JobCategory[],
 	filters: ListType<JobFacets>[],
 	query: string,
-	today: Date,
+	context: FilterContext,
 ): JobSection[] {
 	let queryWords = searchWords(query)
 
 	let visible = categories
 		.flatMap((category) => category.jobs)
-		.filter((job) => applyFiltersToItem(filters, facetsOf(job)) && matchesSearch(job, queryWords))
+		.filter(
+			(job) =>
+				applyFiltersToItem(filters, fullFacetsOf(job, context)) && matchesSearch(job, queryWords),
+		)
 
 	// `PostedDate` is `YYYY-MM-DD`, so the strings sort as the dates do. A
 	// copy and `sort`, not `toSorted`, which Hermes lacks.
@@ -133,6 +201,6 @@ export function visibleSections(
 
 	return RECENCY_ORDER.map((recency) => ({
 		title: recency,
-		data: newestFirst.filter((job) => recencyOf(job.postedDate, today) === recency),
+		data: newestFirst.filter((job) => recencyOf(job.postedDate, context.today) === recency),
 	})).filter((section) => section.data.length > 0)
 }
