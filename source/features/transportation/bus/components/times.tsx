@@ -18,7 +18,15 @@ export function formatDeparture(time: Moment | null): string {
 	return time && time.isValid() ? formatTime(time) : NOT_SERVED
 }
 
-/** A stop's departures as one line, in the order they run. */
-export function formatDepartures(times: DepartureTimeList): string {
-	return times.map(formatDeparture).join(' • ')
+/**
+ * A stop's next `count` departures as one line, in the order they run. Trips
+ * that skip the stop are left out before counting, so the line names buses a
+ * rider can catch.
+ */
+export function formatDepartures(times: DepartureTimeList, count: number): string {
+	let served = times.filter((time): time is Moment => time !== null && time.isValid())
+	if (served.length === 0) {
+		return NOT_SERVED
+	}
+	return served.slice(0, count).map(formatDeparture).join(' • ')
 }
