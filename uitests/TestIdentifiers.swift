@@ -99,6 +99,10 @@ struct TestIdentifiers {
 		/// `docs/dictionary.json`. It has a single sense.
 		static let firstEntry = "AAC"
 		static let firstEntryDefinition = "The Academic Advising Center"
+		/// A query whose results begin with `firstEntry` and run to several
+		/// screens -- 20 entries in `docs/dictionary.json`, AAC through Tomson --
+		/// so they can only be seen from the top if the list scrolls there.
+		static let firstEntrySearchTerm = "academic"
 
 		/// The entry from #7959, whose definition field showed clipped against
 		/// its row's top edge with dead space below it -- 744 characters over

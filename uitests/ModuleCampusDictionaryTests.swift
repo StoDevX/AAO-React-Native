@@ -7,6 +7,14 @@ class ModuleCampusDictionaryTests: UITestCase {
 			.verifySectionIndexRailScrolls()
 	}
 
+	func testSearchingFromFarDownTheListShowsTheFirstResult() throws {
+		try CampusDictionaryScreen(app: app)
+			.navigate()
+			.verifySectionIndexRailScrolls()
+			.search(for: TestIdentifiers.Dictionary.firstEntrySearchTerm)
+			.verifyFirstEntryIsOnScreen()
+	}
+
 	func testTappingAWordOpensAHalfHeightSheet() throws {
 		CampusDictionaryScreen(app: app)
 			.navigate()
