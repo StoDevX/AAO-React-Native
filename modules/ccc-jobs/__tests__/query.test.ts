@@ -1,7 +1,11 @@
 import {afterEach, describe, expect, jest, test} from '@jest/globals'
 import {fetchManifest, fetchSourceBody} from '@frogpond/data-sources'
-import {jobDetailOptions, jobPostingsOptions} from '../query'
-import {UITEST_JOB_CATEGORIES, UITEST_JOB_DETAILS} from '../fixtures/uitest-postings'
+import {jobDetailOptions, jobPostingsOptions, unitPostingsOptions} from '../query'
+import {
+	UITEST_JOB_CATEGORIES,
+	UITEST_JOB_DETAILS,
+	UITEST_UNIT_POSTINGS,
+} from '../fixtures/uitest-postings'
 
 jest.mock('@react-native-community/netinfo', () =>
 	// oxlint-disable-next-line typescript/no-require-imports
@@ -43,6 +47,16 @@ describe('under UI testing', () => {
 			expect(detail).toEqual(UITEST_JOB_DETAILS.find((d) => d.id === job.id))
 		}
 		expect(fetchSourceBody).not.toHaveBeenCalled()
+	})
+
+	test('answers a unit search from the UI-test fixtures', async () => {
+		await expect(run(unitPostingsOptions('22005'))).resolves.toEqual(UITEST_UNIT_POSTINGS['22005'])
+		expect(UITEST_UNIT_POSTINGS['22005']).toEqual(['uitest-3'])
+		expect(fetchSourceBody).not.toHaveBeenCalled()
+	})
+
+	test('answers a unit with no fixture postings with none', async () => {
+		await expect(run(unitPostingsOptions('99999'))).resolves.toEqual([])
 	})
 
 	test('a posting missing from the fixture is an error', async () => {

@@ -2,11 +2,22 @@ import {fetchManifest, fetchSourceBody, REL_JOBS, resolveSource} from '@frogpond
 import {isUITesting} from '@frogpond/launch-arguments'
 import {queryOptions} from '@tanstack/react-query'
 import {queryClient} from '../../source/init/tanstack-query'
-import {UITEST_JOB_CATEGORIES, UITEST_JOB_DETAILS} from './fixtures/uitest-postings'
+import {
+	UITEST_JOB_CATEGORIES,
+	UITEST_JOB_DETAILS,
+	UITEST_UNIT_POSTINGS,
+} from './fixtures/uitest-postings'
 import {parseDetail} from './parsers/description'
-import {parseCategories, parseRequisitions} from './parsers/requisitions'
+import {parseCategories, parseRequisitionIds, parseRequisitions} from './parsers/requisitions'
 import type {JobCategory, JobDetail} from './types'
-import {categoriesUrl, detailUrl, jobPageUrl, parseSiteHref, requisitionsUrl} from './urls'
+import {
+	categoriesUrl,
+	detailUrl,
+	jobPageUrl,
+	parseSiteHref,
+	requisitionsUrl,
+	unitPostingsUrl,
+} from './urls'
 
 const ORACLE_RECRUITING = 'application/vnd.oracle.recruiting-ce+json'
 const SOURCE_TYPES = [ORACLE_RECRUITING]
@@ -16,6 +27,7 @@ const LABEL = 'Jobs'
 export const keys = {
 	postings: ['jobs', 'postings'] as const,
 	detail: (id: string) => ['jobs', 'detail', id] as const,
+	unit: (unit: string) => ['jobs', 'unit', unit] as const,
 }
 
 async function resolveJobSite(): Promise<string> {
@@ -71,5 +83,20 @@ export const jobDetailOptions = (id: string) =>
 				await fetchSourceBody(detailUrl(site, id), signal, LABEL),
 				jobPageUrl(href, id),
 			)
+		},
+	})
+
+/// The IDs of the postings whose descriptions carry this St. Olaf unit number.
+// oxlint-disable-next-line typescript/explicit-module-boundary-types
+export const unitPostingsOptions = (unit: string) =>
+	queryOptions({
+		queryKey: keys.unit(unit),
+		queryFn: async ({signal}): Promise<string[]> => {
+			if (isUITesting) {
+				return UITEST_UNIT_POSTINGS[unit] ?? []
+			}
+
+			let site = parseSiteHref(await resolveJobSite())
+			return parseRequisitionIds(await fetchSourceBody(unitPostingsUrl(site, unit), signal, LABEL))
 		},
 	})

@@ -163,3 +163,22 @@ export const UITEST_JOB_CATEGORIES: JobCategory[] = [
 		})),
 	},
 ]
+
+/// Each fixture posting's unit number, as its description would carry it.
+/// The fillers share one unit, so one area has enough postings to scroll.
+const FIXTURE_UNITS: Record<string, string> = {
+	'uitest-1': '16118', // Research (CURI)
+	'uitest-2': '14001', // Library & Technology
+	'uitest-3': '22005', // Dining & BonApp
+	'uitest-extra': '11280', // Sciences & Nursing
+}
+const FILLER_UNIT = '15141' // Residence Life
+
+/// What a keyword search for each unit finds on the fixture board. Every area
+/// the fixtures leave out -- Faith & Vocation among them -- has no postings, so
+/// a UI test can find a disabled tile.
+export const UITEST_UNIT_POSTINGS: Record<string, string[]> = {}
+for (let job of UITEST_JOB_DETAILS) {
+	let unit = FIXTURE_UNITS[job.id] ?? FILLER_UNIT
+	UITEST_UNIT_POSTINGS[unit] = [...(UITEST_UNIT_POSTINGS[unit] ?? []), job.id]
+}

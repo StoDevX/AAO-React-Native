@@ -47,3 +47,16 @@ export function parseRequisitions(body: unknown): JobSummary[] {
 		location: job.PrimaryLocation ?? undefined,
 	}))
 }
+
+const IdOnlyResponseSchema = z.object({
+	items: z
+		.array(z.object({requisitionList: z.array(z.object({Id: z.string()})).optional()}))
+		.min(1),
+})
+
+/// The posting IDs from a search that asked for nothing else; see
+/// `unitPostingsUrl`.
+export function parseRequisitionIds(body: unknown): string[] {
+	let {items} = IdOnlyResponseSchema.parse(body)
+	return (items[0]?.requisitionList ?? []).map((job) => job.Id)
+}
