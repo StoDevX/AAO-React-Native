@@ -141,11 +141,12 @@ function windowsOfTheDay(building: BuildingType, m: Moment): HourPairType[] {
 
 /**
  * The line for a cafe whose day holds the one `window`: when it opens, then
- * when it closes, then that it is shut until tomorrow.
+ * when it closes, then that it is shut.
  *
- * `opensTomorrow` answers whether it does, asked only once the window has
- * closed; a cafe with nothing tomorrow is only `Closed`. Left out for a cafe
- * whose tomorrow nobody has published, which is taken to serve again.
+ * `opensTomorrow` answers whether it serves tomorrow, asked only once the
+ * window has closed, and only a cafe it says yes for is `Closed until
+ * tomorrow`. Left out for a cafe whose tomorrow nobody has published, which is
+ * only `Closed` -- the one line true either way.
  */
 export function oneWindowHours(
 	window: HourPairType,
@@ -163,7 +164,7 @@ export function oneWindowHours(
 	return {
 		time: null,
 		closed: true,
-		reopening: opensTomorrow && !opensTomorrow() ? 'Closed' : 'Closed until tomorrow',
+		reopening: opensTomorrow?.() ? 'Closed until tomorrow' : 'Closed',
 	}
 }
 

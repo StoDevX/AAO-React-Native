@@ -43,13 +43,15 @@ describe('daypartHours', () => {
 			})
 		})
 
-		// Bon Appétit publishes one day at a time, so there is no tomorrow to
-		// look for; a cafe that served today will serve again.
-		test('says it is closed until tomorrow, after it closes', () => {
+		// Bon Appétit publishes one day at a time, so there is no tomorrow to look
+		// for, and a cafe that served today may not serve tomorrow -- the day
+		// before a break, or a Friday at a cafe shut on weekends. `Closed` is the
+		// one line that is true either way.
+		test('says only that it is closed, after it closes', () => {
 			expect(daypartHours(CAGE, at('2026-09-22 21:00'))).toEqual({
 				time: null,
 				closed: true,
-				reopening: 'Closed until tomorrow',
+				reopening: 'Closed',
 			})
 		})
 

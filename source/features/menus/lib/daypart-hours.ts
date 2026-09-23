@@ -22,8 +22,8 @@ const SHUT: CafeHours = {time: null, closed: true, reopening: null}
  * hours say nothing about whether the cafe is open now. A day the cafe message
  * calls shut is shut here too, so the name and the body agree.
  *
- * Bon Appétit publishes one day at a time, so a cafe past its one daypart is
- * taken to serve again tomorrow.
+ * Bon Appétit publishes one day at a time, so a cafe past its one daypart
+ * says only that it is closed: whether it serves tomorrow is not in the data.
  */
 export function daypartHours(days: BonAppCafeDay[] | undefined, m: Moment): CafeHours | null {
 	let date = m.clone().tz(timezone()).format('YYYY-MM-DD')
