@@ -1,16 +1,7 @@
 import * as React from 'react'
 import {Alert, Image, StyleSheet, type ImageResolvedAssetSource} from 'react-native'
+import {Button, HStack, RNHostView, Spacer, Text, VStack} from '@expo/ui/swift-ui'
 import {
-	Button,
-	HStack,
-	Image as SwiftUIImage,
-	RNHostView,
-	Spacer,
-	Text,
-	VStack,
-} from '@expo/ui/swift-ui'
-import {
-	accessibilityHidden,
 	accessibilityIdentifier,
 	accessibilityLabel,
 	alignmentGuide,
@@ -25,6 +16,7 @@ import {
 	shapes,
 } from '@expo/ui/swift-ui/modifiers'
 import * as c from '@frogpond/colors'
+import {RowAccessory, destinationTraits} from '../../components/rows'
 import type {StoryType} from './types'
 
 /**
@@ -58,17 +50,6 @@ const FILL_LEADING = [frame({maxWidth: Infinity, alignment: 'leading'})]
  * rather than a bare separator-only one.
  */
 const ROW_BACKGROUND = listRowBackground(c.secondarySystemGroupedBackground)
-
-/**
- * The row's own trailing accessory. A story opens in the browser rather than
- * pushing, so it points out of the app. `@expo/ui` exposes no accessory that
- * draws one without a real `NavigationLink` push, so it is drawn by hand,
- * matching the colour `RowAccessory` uses. Gapped by the row's own `HStack`,
- * the same as the thumbnail, not a hardcoded pad. Hidden from VoiceOver: it
- * is decorative, and the row's own accessibilityLabel already says what
- * pressing it does.
- */
-const ACCESSORY_MODIFIERS = [accessibilityHidden(true)]
 
 /**
  * Starts the separator where the title/excerpt column starts: 70pt for the
@@ -126,6 +107,8 @@ export const NewsRow = (props: Props): React.ReactNode => {
 				ROW_BACKGROUND,
 				accessibilityIdentifier(`${NEWS_ROW_PREFIX}${story.title}`),
 				accessibilityLabel(`${story.title}. ${story.excerpt}`),
+				// A story opens in the browser rather than pushing.
+				...destinationTraits('external'),
 				...(thumb !== null ? SEPARATOR_INSET_WITH_THUMBNAIL : []),
 				...(props.isLast ? HIDE_BOTTOM_SEPARATOR : []),
 			]}
@@ -148,18 +131,16 @@ export const NewsRow = (props: Props): React.ReactNode => {
 					<Text modifiers={TITLE_MODIFIERS}>{story.title}</Text>
 					<Text modifiers={EXCERPT_MODIFIERS}>{story.excerpt}</Text>
 				</VStack>
-				{/* A `Spacer` beneath the glyph, inside its own `VStack`, is what
-				    pins it to the row's top edge: the outer `HStack` is
-				    `alignment="center"`, and a `VStack` stretched to the row's full
-				    height settles non-expanding content -- the image -- at its own
-				    top before the `Spacer` claims the rest. */}
+				{/* The accessory takes a column of its own beside the text, as
+				    Mail's does, rather than sharing the title's line and letting
+				    the excerpt run beneath it. A `Spacer` beneath the glyph,
+				    inside its own `VStack`, is what pins it to the row's top edge:
+				    the outer `HStack` is `alignment="center"`, and a `VStack`
+				    stretched to the row's full height settles non-expanding
+				    content -- the image -- at its own top before the `Spacer`
+				    claims the rest. */}
 				<VStack>
-					<SwiftUIImage
-						color={c.tertiaryLabel}
-						modifiers={ACCESSORY_MODIFIERS}
-						size={14}
-						systemName="arrow.up.right"
-					/>
+					<RowAccessory destination="external" />
 					<Spacer />
 				</VStack>
 			</HStack>

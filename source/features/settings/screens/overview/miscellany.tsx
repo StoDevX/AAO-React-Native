@@ -4,7 +4,7 @@ import {trackedOpenUrl} from '@frogpond/open-url'
 import {GH_BASE_URL} from '../../../../lib/constants'
 import * as storage from '../../../../lib/storage'
 import {useRouter} from 'expo-router'
-import {ActionRow, NavigationRow} from '../../../../components/rows'
+import {DisclosureRow, NavigationRow} from '../../../../components/rows'
 
 const onSourceButton = () => trackedOpenUrl({url: GH_BASE_URL, id: 'ContributingView'})
 
@@ -40,7 +40,7 @@ export let MiscellanySection = (): React.ReactNode => {
 			<NavigationRow onPress={onCreditsButton} title="Credits" />
 			<NavigationRow onPress={onPrivacyButton} title="Privacy Policy" />
 			<NavigationRow onPress={onLegalButton} title="Legal" />
-			<ActionRow onPress={onSourceButton} title="Contributing" />
+			<DisclosureRow destination="external" onPress={onSourceButton} title="Contributing" />
 		</Section>
 	)
 }

@@ -9,5 +9,13 @@ import {Stack} from 'expo-router'
  * with no way back out.
  */
 export default function DictionaryEntryLayout(): React.ReactNode {
-	return <Stack screenOptions={{headerBackButtonDisplayMode: 'minimal'}} />
+	return (
+		<Stack screenOptions={{headerBackButtonDisplayMode: 'minimal'}}>
+			{/* A sense opens its sub-senses in this same route. Keyed by the
+			    sense, navigating to a different one pushes it, where an unkeyed
+			    route would only swap the params of the sense already on top;
+			    navigating to the same one still refuses a duplicate. */}
+			<Stack.Screen dangerouslySingular={(_name, params) => String(params.senseId)} name="sense" />
+		</Stack>
+	)
 }

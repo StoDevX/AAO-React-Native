@@ -231,4 +231,22 @@ class ModuleCampusDictionaryTests: UITestCase {
 			.openSense(1)
 			.capture("Dictionary sense screen for a long definition")
 	}
+
+	/// A sense opens its sub-senses in this same screen, pushed with the
+	/// sub-sense's own id. Navigating to the route already on top only swaps
+	/// its params, which leaves the parent on screen -- its text still in the
+	/// definition field -- and sends Back straight past it.
+	func testAddingASubsenseOpensIt() throws {
+		CampusDictionaryScreen(app: app)
+			.navigate()
+			.openFirstWord()
+			.verifyDefinitionSheetIsPresented()
+			.openEditor()
+			.verifyEditFormPushedIntoSheet()
+			.openSense(1)
+			.addSubsense()
+			.capture("Dictionary sub-sense just added")
+			.verifyDefinitionIsBlank()
+			.leaveSubsenseForParent(listing: TestIdentifiers.Dictionary.blankSubsenseRow(1))
+	}
 }

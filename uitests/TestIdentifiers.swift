@@ -128,6 +128,10 @@ struct TestIdentifiers {
 		static let senseFormTitle = "Sense"
 		/// The one definition field left in the app, on the sense screen.
 		static let senseDefinitionField = "Definition"
+		static let addSubsense = "Add Sub-sense"
+		/// The row a sub-sense with no definition yet draws in its parent's
+		/// Sub-senses section.
+		static func blankSubsenseRow(_ position: Int) -> String { "Sub-sense \(position)" }
 		/// Each sense's row on the edit form. The row's accessibility *label*
 		/// is the definition itself -- which is what a reorder test reads --
 		/// so the identifier is the only stable way to address a row by

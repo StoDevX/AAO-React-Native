@@ -171,6 +171,6 @@ struct SISScreen: Screen {
 	}
 
 	private var jobsSiteLink: XCUIElement {
-		app.buttonLabelled(TestIdentifiers.SIS.jobsSiteLink)
+		app.linkLabelled(TestIdentifiers.SIS.jobsSiteLink)
 	}
 }
