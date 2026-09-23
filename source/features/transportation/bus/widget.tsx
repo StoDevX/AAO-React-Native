@@ -26,6 +26,7 @@ import {
 	id,
 	listRowInsets,
 	listRowSeparator,
+	multilineTextAlignment,
 	offset,
 	opacity,
 	scrollPosition,
@@ -244,6 +245,7 @@ function StopCell({
 						font({textStyle: 'caption'}),
 						foregroundStyle(isSkipped ? c.tertiaryLabel : c.secondaryLabel),
 						frame({width: CELL_WIDTH}),
+						multilineTextAlignment('center'),
 					]}
 				>
 					{cell.name}
@@ -349,9 +351,12 @@ function RouteEndCell({
 						font({textStyle: 'caption'}),
 						foregroundStyle(c.tertiaryLabel),
 						frame({width: CELL_WIDTH}),
+						multilineTextAlignment('center'),
 					]}
 				>
-					{time ? 'Next departure' : 'Last bus'}
+					{/* Broken by hand: on one line it fills the cell edge to edge and
+					    runs into the card's corner. */}
+					{time ? 'Next\ndeparture' : 'Last bus'}
 				</Text>
 			</VStack>
 		</Button>
