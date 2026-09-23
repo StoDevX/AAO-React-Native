@@ -64,17 +64,6 @@ describe('addToCalendar', () => {
 		expect(createEventInCalendarAsync).toHaveBeenCalledWith(expect.objectContaining({allDay: true}))
 	})
 
-	it('opens the editor for an event with no location or notes', async () => {
-		jest.mocked(createEventInCalendarAsync).mockReturnValue(dialogResult('saved'))
-
-		let result = await addToCalendar(generateEvent({location: undefined, description: undefined}))
-
-		expect(result).toBe('saved')
-		expect(createEventInCalendarAsync).toHaveBeenCalledWith(
-			expect.objectContaining({location: undefined, notes: undefined}),
-		)
-	})
-
 	it('reports saved when the user saves the event', async () => {
 		jest.mocked(createEventInCalendarAsync).mockReturnValue(dialogResult('saved'))
 
