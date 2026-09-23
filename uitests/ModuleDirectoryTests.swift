@@ -203,4 +203,18 @@ class ModuleDirectoryTests: UITestCase {
 
 		screen.capture("Directory - entry detail")
 	}
+
+	/// A department opens a fresh copy of this screen over the landing. The
+	/// two share a route, and navigating to the route already on top only
+	/// swaps its params -- which leaves nothing beneath the department for
+	/// Back to return to.
+	func testADepartmentOpensOverTheLanding() throws {
+		let screen = DirectoryScreen(app: app).navigate()
+		let department = screen.openFirstDepartment()
+
+		screen
+			.verifyDepartmentHeading(department)
+			.capture("Directory department opened from the landing")
+			.leaveDepartmentForLanding()
+	}
 }

@@ -489,6 +489,10 @@ struct TestIdentifiers {
 		/// `source/features/directory/__fixtures__/entries.ts`.
 		static let fixtureEntry = "Kari Testerson"
 		static let fixtureEntryDepartment = "Computer Science"
+		/// Each department on the landing: `directory-department-<name>`.
+		/// Mirrors DEPARTMENT_ROW_PREFIX in
+		/// source/features/directory/departments-list.tsx.
+		static let departmentRowPrefix = "directory-department-"
 	}
 
 	// MARK: - Student Orgs
