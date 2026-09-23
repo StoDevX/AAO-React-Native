@@ -8,17 +8,17 @@ describe('formatDeparture', () => {
 		expect(formatDeparture(time)).toBe('3 PM')
 	})
 
-	it('shows None for a missing departure', () => {
-		expect(formatDeparture(null)).toBe('None')
+	it('shows a dash for a trip that skips the stop', () => {
+		expect(formatDeparture(null)).toBe('—')
 	})
 
-	it('shows None for an Invalid Moment rather than throwing', () => {
+	it('shows a dash for an Invalid Moment rather than throwing', () => {
 		// A strict-mode parse of malformed feed data returns an Invalid
 		// Moment, not null -- it's still a truthy object, so a bare `time ?`
 		// check does not catch it, and Intl throws formatting an Invalid
 		// Date where moment's own .format() never did.
 		let invalid = moment.tz('garbage', 'h:mma', true, 'America/Chicago')
 		expect(() => formatDeparture(invalid)).not.toThrow()
-		expect(formatDeparture(invalid)).toBe('None')
+		expect(formatDeparture(invalid)).toBe('—')
 	})
 })
