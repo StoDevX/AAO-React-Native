@@ -58,8 +58,8 @@ struct StudentOrgsScreen: Screen {
 		XCTAssertTrue(resultsList.waitForExistence(timeout: 30), "No search results appeared")
 		let firstRowBefore = resultsList.buttons.firstMatch.label
 		// A deliberate drag rather than `swipeUp()`: the results mount while the
-		// keyboard is animating back in, and the quick flicks `swipeUp()` sends
-		// then land without scrolling anything.
+		// keyboard is animating back in, and in that window the quick flicks
+		// `swipeUp()` sends have been seen to leave the list where it was.
 		let start = resultsList.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5))
 		let end = resultsList.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.15))
 		for _ in 0..<3 {
