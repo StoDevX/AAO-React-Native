@@ -73,18 +73,12 @@ function facetsOf(job: JobSummary): TitleFacets {
 /// A posting's areas and Posted values depend on the unit searches and the
 /// seen set, which change without the posting changing, so they are not cached.
 function fullFacetsOf(job: JobSummary, context: FilterContext): JobFacets {
-	let area = context.areas
-		.filter((candidate) => context.membership.get(candidate.slug)?.ids.has(job.id))
-		.map((candidate) => candidate.name)
-	let posted = postedTags(job, context.newIds, context.today)
-
-	// @frogpond/filter lets an empty list through every list filter, so a
-	// posting in no area, or neither recent nor new, says "Not stated" --
-	// which neither filter offers as an option, so it never matches a choice.
 	return {
 		...facetsOf(job),
-		area: area.length > 0 ? area : [NOT_STATED],
-		posted: posted.length > 0 ? posted : [NOT_STATED],
+		area: context.areas
+			.filter((candidate) => context.membership.get(candidate.slug)?.ids.has(job.id))
+			.map((candidate) => candidate.name),
+		posted: postedTags(job, context.newIds, context.today),
 	}
 }
 

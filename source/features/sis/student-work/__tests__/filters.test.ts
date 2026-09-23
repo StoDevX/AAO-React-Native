@@ -268,8 +268,6 @@ describe('visibleSections', () => {
 })
 
 describe('the Area and Posted filters', () => {
-	// @frogpond/filter lets a posting with no values through any list filter,
-	// so a posting in no area, or neither recent nor new, has to say so.
 	test('leave out an old posting the student has seen when Posted is chosen', () => {
 		let old = job('old', 'AY Archive Assistant (WS-ST1)', '2026-06-01')
 		let categories: JobCategory[] = [{id: 1, name: 'Student Work', count: 2, jobs: [MAIL, old]}]
