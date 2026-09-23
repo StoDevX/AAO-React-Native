@@ -32,6 +32,7 @@ import {
 	shapes,
 	truncationMode,
 } from '@expo/ui/swift-ui/modifiers'
+import type {ModifierConfig} from '@expo/ui/swift-ui/modifiers'
 import * as c from '@frogpond/colors'
 
 import {detailLinesOf, rowLabel, type RowDetail} from './lib/row-text'
@@ -65,9 +66,10 @@ export type RowDestination =
 /**
  * The trailing glyph naming a row's destination -- see [[RowDestination]]. An
  * action draws nothing: it completes what the row names and returns you
- * here, so there is nowhere to point.
+ * here, so there is nowhere to point. Exported for a row built by hand, so
+ * every row in the app draws the same glyph at the same size.
  */
-function RowAccessory({destination}: {destination: RowDestination}): React.ReactNode {
+export function RowAccessory({destination}: {destination: RowDestination}): React.ReactNode {
 	if (destination === 'action') {
 		return null
 	}
@@ -85,7 +87,7 @@ function RowAccessory({destination}: {destination: RowDestination}): React.React
  * VoiceOver reads a row's label and never its accessory, so a row that leaves
  * the app says so with the link trait, as SwiftUI's own `Link` does.
  */
-function destinationTraits(destination: RowDestination) {
+export function destinationTraits(destination: RowDestination): ModifierConfig[] {
 	return destination === 'external' ? [accessibilityAddTraits(['isLink'])] : []
 }
 

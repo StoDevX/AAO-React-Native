@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {Button, HStack, Image, ProgressView, Section, Spacer, Text} from '@expo/ui/swift-ui'
+import {Button, HStack, ProgressView, Section, Spacer, Text} from '@expo/ui/swift-ui'
 import {
 	accessibilityLabel,
 	buttonStyle,
@@ -8,6 +8,7 @@ import {
 	shapes,
 } from '@expo/ui/swift-ui/modifiers'
 import * as c from '@frogpond/colors'
+import {RowAccessory} from '../../components/rows'
 import type {DepartmentListing} from './types'
 
 type Props = {
@@ -73,13 +74,7 @@ function DepartmentRow({name, onPress}: {name: string; onPress: () => void}): Re
 			<HStack modifiers={[contentShape(shapes.rectangle())]} spacing={8}>
 				<Text modifiers={[foregroundStyle({type: 'hierarchical', style: 'primary'})]}>{name}</Text>
 				<Spacer />
-				{/* A Button is not a NavigationLink, so the disclosure chevron the
-				    rest of the app's rows get from the platform has to be drawn. */}
-				<Image
-					modifiers={[foregroundStyle({type: 'hierarchical', style: 'tertiary'})]}
-					size={13}
-					systemName="chevron.right"
-				/>
+				<RowAccessory destination="push" />
 			</HStack>
 		</Button>
 	)
