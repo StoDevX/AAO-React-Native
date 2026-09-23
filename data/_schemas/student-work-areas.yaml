@@ -1,0 +1,44 @@
+# The areas the Student Work landing screen draws as tiles, in order, and the
+# St. Olaf unit numbers whose postings belong to each. Published separately
+# from the app (see data/sources.yaml) so a new department's unit can be
+# added without an App Store release. Unit names for the comments come from
+# https://www.stolaf.edu/apps/workauth/Autocomplete.cfc?method=setLawsonUnitsAccountNumber&returnformat=json
+$schema: http://json-schema.org/draft-07/schema#
+
+type: array
+minItems: 1
+items:
+  type: object
+  additionalProperties: false
+  required: [name, slug, icon, gradient, units]
+  properties:
+    name: {type: string, minLength: 1}
+    # The Area filter's value in a route, as /StudentWork/postings?area=dining.
+    slug: {type: string, pattern: '^[a-z0-9]+(-[a-z0-9]+)*$'}
+    # An SF Symbol name; see data/_schemas/org-categories.yaml.
+    icon: {type: string, minLength: 1}
+    # A name from GRADIENT_NAMES in modules/colors/resolve-gradient.ts.
+    gradient:
+      type: string
+      enum:
+        - red
+        - orange
+        - gold
+        - yellow
+        - green
+        - mint
+        - light-blue
+        - blue
+        - indigo
+        - purple
+        - violet
+        - pink
+        - gray
+        - sage
+        - tan
+        - pale-gold
+    units:
+      type: array
+      minItems: 1
+      uniqueItems: true
+      items: {type: string, pattern: '^[0-9]{5}$'}

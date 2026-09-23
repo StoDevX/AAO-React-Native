@@ -66,3 +66,9 @@ links:
     type: application/vnd.frogpond.org-categories+json
     titles: {und: Student Org Categories}
     properties: {'https://frogpond.tech/ns/id': stolaf}
+
+  - rel: https://frogpond.tech/rel/student-work-areas
+    href: 'https://stolaf.dev/AAO-React-Native/student-work-areas.json'
+    type: application/vnd.frogpond.student-work-areas+json
+    titles: {und: Student Work Areas}
+    properties: {'https://frogpond.tech/ns/id': stolaf}
