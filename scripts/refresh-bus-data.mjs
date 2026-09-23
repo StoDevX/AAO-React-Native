@@ -6,7 +6,7 @@ import path from 'node:path'
 import {dump, load} from 'js-yaml'
 import {findDuplicateLines, todayInChicago} from './bus-data-checks.mjs'
 import {readFeed} from './gtfs.mjs'
-import {gtfsToBusTimes} from './gtfs-to-bus-times.mjs'
+import {gtfsToBusTimes, returningRoutes} from './gtfs-to-bus-times.mjs'
 import {DATA_BASE} from './paths.mjs'
 
 const FEED_URL = 'https://data.trilliumtransit.com/gtfs/threerivers-mn-us/threerivers-mn-us.zip'
@@ -103,8 +103,9 @@ async function main() {
 			throw new Error(`the feed expired on ${feedEnd}; it is no longer being published`)
 		}
 
+		let curation = readYaml('_curation.yaml')
 		let {files, warnings} = gtfsToBusTimes(feed, {
-			curation: readYaml('_curation.yaml'),
+			curation,
 			repairs: readYaml('_repairs.yaml'),
 		})
 
@@ -119,6 +120,25 @@ async function main() {
 		let warningsFile = process.env.BUS_DATA_WARNINGS_FILE
 		if (warningsFile) {
 			fs.writeFileSync(warningsFile, warnings.map((warning) => `${warning}\n`).join(''))
+		}
+
+		// A route kept by hand because the feed's copy was wrong should not stay
+		// hand-kept once the feed is right again. BUS_ROUTE_RETURNS_FILE is how
+		// the workflow hears about it, in a week with no diff to open a PR for.
+		let handKept = new Map(
+			Object.values(curation.watched_routes ?? {}).map(({file}) => [file, readYaml(file)]),
+		)
+		let returning = returningRoutes(feed, curation, handKept, todayInChicago(new Date()))
+
+		for (let {routeId, line, file, matches} of returning) {
+			console.warn(
+				`notice: ${line} (route ${routeId}) is running in the feed again, and ${matches ? 'matches' : 'differs from'} ${file}`,
+			)
+		}
+
+		let returnsFile = process.env.BUS_ROUTE_RETURNS_FILE
+		if (returnsFile) {
+			fs.writeFileSync(returnsFile, JSON.stringify(returning))
 		}
 
 		for (let [filename, line] of files) {
