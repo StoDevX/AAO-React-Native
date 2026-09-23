@@ -7,6 +7,7 @@
 # https://www.threeriverscap.org/wp-content/uploads/ExpressXBrochureX8.28X.26X.pdf
 # Stop coordinates are the feed's, as the other lines use.
 line: Express Bus
+timezone: America/Chicago
 colors:
   bar: rgb(134, 198, 124)
   dot: rgb(32, 87, 14)
