@@ -47,9 +47,9 @@ export function TileGrid<T>({
 						<React.Fragment key={keyForItem(item)}>{renderItem(item)}</React.Fragment>
 					))}
 					{/* A short last row leaves its columns empty rather than
-					    stretching the tiles in it. Eight items divide evenly by
-					    four and two columns but not by three, so this padding
-					    matters at every column count, not just the edge cases. */}
+					    stretching the tiles in it. The column count changes with
+					    the text size, so a grid that divides evenly at one size
+					    can leave a short row at another. */}
 					{Array.from({length: columns - row.length}, (_, j) => (
 						<Spacer key={j} />
 					))}
