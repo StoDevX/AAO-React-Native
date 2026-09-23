@@ -1,5 +1,6 @@
 import * as React from 'react'
-import {View, StyleSheet, TextInput} from 'react-native'
+import {StyleSheet, TextInput} from 'react-native'
+import {SafeAreaView} from 'react-native-safe-area-context'
 
 import {LoadingView, NoticeView} from '@frogpond/notice'
 import * as c from '@frogpond/colors'
@@ -68,7 +69,7 @@ export default function APITestDetailPage(): React.ReactNode {
 				</Stack.Toolbar.Menu>
 			</Stack.Toolbar>
 
-			<View style={styles.container}>
+			<SafeAreaView edges={['left', 'right']} style={styles.container}>
 				{error !== null ? (
 					<TextInput
 						editable={false}
@@ -89,7 +90,7 @@ export default function APITestDetailPage(): React.ReactNode {
 				) : (
 					<DebugView state={JSON.parse(data || '{}') as unknown} />
 				)}
-			</View>
+			</SafeAreaView>
 		</>
 	)
 }
