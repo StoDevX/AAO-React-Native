@@ -103,6 +103,19 @@ describe('selectRoutes', () => {
 			assert.equal(found[0]?.matches, false)
 		})
 
+		it('compares only the services running today, not ones that have lapsed', () => {
+			let feed = twoServiceFeed()
+			feed.stopTimes = feed.stopTimes.map((row) =>
+				row.trip_id === 't1'
+					? {...row, departure_time: row.departure_time.replace('06:', '05:')}
+					: row,
+			)
+
+			let found = returningRoutes(feed, watching, handKeptAs([['6:00am', '6:10am']]), '20260701')
+
+			assert.equal(found[0]?.matches, true)
+		})
+
 		it('reports nothing once every service has ended', () => {
 			assert.deepEqual(returningRoutes(twoServiceFeed(), watching, handKeptAs([]), '20261202'), [])
 		})
