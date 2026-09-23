@@ -117,7 +117,7 @@ describe('cafeHours', () => {
 		})
 
 		// "Tomorrow" is a promise; a venue with nothing tomorrow cannot make it.
-		test('names no opening after closing early, when nothing opens tomorrow', () => {
+		test('says only that it is closed, when nothing opens tomorrow', () => {
 			let fridayLunch: BuildingType = {
 				...PAUSE,
 				schedule: [{title: 'Hours', hours: [{days: ['Fr'], from: '11:00am', to: '2:00pm'}]}],
@@ -126,7 +126,7 @@ describe('cafeHours', () => {
 			expect(cafeHours(fridayLunch, dayMoment('Fri 3:00pm'))).toEqual({
 				time: null,
 				closed: true,
-				reopening: null,
+				reopening: 'Closed',
 			})
 		})
 

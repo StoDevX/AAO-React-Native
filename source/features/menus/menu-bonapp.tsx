@@ -16,6 +16,7 @@ import {reduce} from 'lodash'
 import {now as currentMoment} from '@frogpond/timer'
 import {bonAppCafeOptions, bonAppMenuOptions, prepareFood} from './query'
 import {findCafeMessage} from './lib/cafe-message'
+import {daypartHours} from './lib/daypart-hours'
 import {useQuery} from '@tanstack/react-query'
 import {useIsFocused, useRouter} from 'expo-router'
 import {toLaxTitleCase} from '@frogpond/titlecase'
@@ -182,6 +183,10 @@ export function BonAppHostedMenu(props: Props): React.ReactNode {
 		isLoading: isCafeLoading,
 	} = useQuery(bonAppCafeOptions(props.cafe))
 
+	// A cafe serving one daypart today says when it opens, then when it closes,
+	// off the hours it publishes; `null` keeps the meal's window for the rest.
+	let hours = daypartHours(cafeInfo?.cafe.days, now)
+
 	// Published from here rather than from the menu below, which does not
 	// exist until its query resolves -- the screen would spend that whole
 	// first load under the previous cafe's name.
@@ -192,10 +197,9 @@ export function BonAppHostedMenu(props: Props): React.ReactNode {
 			weekdayLong,
 			date,
 			meals: mealHeader.menu,
-			time: mealHeader.time,
-			closed: mealHeader.closed,
-			// Bon Appétit says a cafe is shut without saying until when.
-			reopening: null,
+			time: hours ? hours.time : mealHeader.time,
+			closed: mealHeader.closed || (hours?.closed ?? false),
+			reopening: hours?.reopening ?? null,
 			loading: isMenuLoading || isCafeLoading,
 			filters: {visible: filtersVisible, toggle: toggleFilters},
 		},

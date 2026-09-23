@@ -74,7 +74,7 @@ export function cafeHours(building: BuildingType | undefined, m: Moment): CafeHo
 	if (status !== 'Chapel') {
 		let windows = windowsOfTheDay(building, m)
 		if (windows.length === 1) {
-			return oneWindow(building, windows[0], m)
+			return oneWindowHours(windows[0], m, opensTomorrow(building, m))
 		}
 	}
 
@@ -153,8 +153,19 @@ function windowsOfTheDay(building: BuildingType, m: Moment): HourPairType[] {
 	return windows
 }
 
-/** The line for a venue whose day holds the one `window`. */
-function oneWindow(building: BuildingType, window: HourPairType, m: Moment): CafeHours {
+/**
+ * The line for a cafe whose day holds the one `window`: when it opens, then
+ * when it closes, then that it is shut until tomorrow.
+ *
+ * `opensTomorrow` is `false` for a cafe known to have nothing tomorrow, which
+ * is only `Closed`, and `undefined` for one whose tomorrow nobody has
+ * published -- a cafe that served today is taken to serve again.
+ */
+export function oneWindowHours(
+	window: HourPairType,
+	m: Moment,
+	opensTomorrow: boolean | undefined,
+): CafeHours {
 	if (m.isBefore(window.open)) {
 		return {time: null, closed: true, reopening: `Opens at ${formatStatusTime(window.open)}`}
 	}
@@ -163,11 +174,10 @@ function oneWindow(building: BuildingType, window: HourPairType, m: Moment): Caf
 		return {time: `Closes at ${formatStatusTime(window.close)}`, closed: false, reopening: null}
 	}
 
-	// Past the day's one window, so the next is tomorrow's -- if it has one.
 	return {
 		time: null,
 		closed: true,
-		reopening: opensTomorrow(building, m) ? 'Closed until tomorrow' : null,
+		reopening: opensTomorrow === false ? 'Closed' : 'Closed until tomorrow',
 	}
 }
 
