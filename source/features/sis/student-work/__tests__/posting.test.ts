@@ -1,3 +1,4 @@
+import snapshot from '../../../../../modules/ccc-jobs/__tests__/fixtures/requisitions.json'
 import {displayTitle, jobCode, jobTerm} from '../posting'
 
 describe('jobCode', () => {
@@ -39,6 +40,18 @@ describe('jobTerm', () => {
 		expect(jobTerm('CURI Academic Year Student Researcher - Braun')).toBe('Academic Year')
 	})
 
+	test('reads a term word followed by its year', () => {
+		expect(jobTerm('Fall 26 Biology 233A Student Teaching Assistant (WS-ST2)')).toBe('Fall')
+		expect(jobTerm('Spring 27 Chemistry Grader (WS-ST2)')).toBe('Spring')
+		expect(jobTerm('Summer 2027 Camp Counselor (WS-NST1)')).toBe('Summer')
+		expect(jobTerm('AY 2026-27 Library Assistant (WS-ST1)')).toBe('Academic Year')
+	})
+
+	test('reads a spring code the way fall’s F26 is written', () => {
+		expect(jobTerm('S27 Chemistry Grader (WS-ST2)')).toBe('Spring')
+		expect(jobTerm('Sp27 Chemistry Grader (WS-ST2)')).toBe('Spring')
+	})
+
 	test('reads a semester prefix', () => {
 		expect(jobTerm('F26 Biology 150 Lab A Student Teaching Assistant (WS-ST2)')).toBe('Fall')
 		expect(jobTerm('Fall Dance 109 International Dance Student Class Assistant (WS-ST2)')).toBe(
@@ -70,6 +83,35 @@ describe('displayTitle', () => {
 			'Biology 150 Lab A Student Teaching Assistant',
 		)
 		expect(displayTitle('2026-27 MSCS Mess Editor (WS-ST2)')).toBe('MSCS Mess Editor')
+	})
+
+	test('drops a term word and the year after it', () => {
+		expect(displayTitle('Fall 26 Biology 233A Student Teaching Assistant (WS-ST2)')).toBe(
+			'Biology 233A Student Teaching Assistant',
+		)
+		expect(displayTitle('Summer 2027 Camp Counselor (WS-NST1)')).toBe('Camp Counselor')
+		expect(displayTitle('AY 2026-27 Library Assistant (WS-ST1)')).toBe('Library Assistant')
+		expect(displayTitle('Sp27 Chemistry Grader (WS-ST2)')).toBe('Chemistry Grader')
+	})
+
+	// The code is removed exactly where jobCode reads it, so a code it cannot
+	// read stays visible -- it is then the posting's only pay information --
+	// and one it can read never lingers in the title.
+	test('keeps a pay code it cannot read', () => {
+		expect(jobCode('Foo Worker (WS-ST1/2)')).toBeUndefined()
+		expect(displayTitle('Foo Worker (WS-ST1/2)')).toBe('Foo Worker (WS-ST1/2)')
+	})
+
+	test('drops a readable pay code from the middle of a title', () => {
+		expect(jobCode('Stav Server (WS-NST1) - Evenings')).toEqual({structure: 'NST', tier: 1})
+		expect(displayTitle('Stav Server (WS-NST1) - Evenings')).toBe('Stav Server - Evenings')
+	})
+
+	test('leaves no term or pay code in any title on the board snapshot', () => {
+		for (let {Title} of snapshot.items[0]?.requisitionList ?? []) {
+			let shown = displayTitle(Title)
+			expect({Title, shown}).toEqual({Title, shown: expect.not.stringMatching(/^\d|\(WS-|^AY /u)})
+		}
 	})
 
 	test('drops a pay code with a doubled closing paren', () => {

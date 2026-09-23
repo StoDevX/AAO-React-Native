@@ -8,9 +8,10 @@ export type PayTier = 1 | 2 | 3
 
 export type JobCode = {structure: PayStructure; tier: PayTier}
 
-/// A posting's title ends with its pay code, as "(WS-ST2)". Some add a space
-/// before the tier, as "(WS-OSA 1)".
-const JOB_CODE = /\(WS-(ST|NST|OSA)\s*([123])\)/u
+/// A posting's pay code, as "(WS-ST2)". Some add a space before the tier, as
+/// "(WS-OSA 1)", and some double the closing paren. `displayTitle` removes
+/// exactly what this matches, so a code it cannot read stays in the title.
+const JOB_CODE = /\s*\(WS-(ST|NST|OSA)\s*([123])\)+/u
 
 /// What each tier means to a student looking for work.
 export const LEVEL_LABELS: Record<PayTier, string> = {1: 'Entry-level', 2: 'Experienced', 3: 'Lead'}
@@ -25,14 +26,18 @@ export function jobCode(title: string): JobCode | undefined {
 
 export type JobTerm = 'Academic Year' | 'Fall' | 'Spring' | 'Summer'
 
+/// A term word's optional year, as "Fall 26" or "Summer 2027".
+const YEAR = String.raw`(?:\s+\d{2}(?:\d{2})?)?`
+
 /// The term a title opens with, and what it means. Each is its own word, so
-/// "Fallout" is not Fall.
+/// "Fallout" is not Fall. Spring's `S27` and `Sp27` are read by analogy with
+/// fall's `F26`; no live posting has used either yet.
 const TERM_PREFIXES: Array<[RegExp, JobTerm]> = [
-	[/^AY(?:\s+\d{2}-\d{2})?\s+/u, 'Academic Year'],
+	[/^AY(?:\s+(?:\d{2}|\d{4})-\d{2})?\s+/u, 'Academic Year'],
 	[/^\d{4}-\d{2}\s+/u, 'Academic Year'],
-	[/^(?:F\d{2}|Fall)\s+/u, 'Fall'],
-	[/^Spring\s+/u, 'Spring'],
-	[/^Summer\s+/u, 'Summer'],
+	[new RegExp(String.raw`^(?:F\d{2}|Fall${YEAR})\s+`, 'u'), 'Fall'],
+	[new RegExp(String.raw`^(?:Sp?\d{2}|Spring${YEAR})\s+`, 'u'), 'Spring'],
+	[new RegExp(String.raw`^Summer${YEAR}\s+`, 'u'), 'Summer'],
 ]
 
 /// CURI postings name the term in the middle of the title instead.
@@ -45,14 +50,11 @@ export function jobTerm(title: string): JobTerm | undefined {
 	return ACADEMIC_YEAR.test(title) ? 'Academic Year' : undefined
 }
 
-/// A doubled closing paren is a typo some postings carry, and goes too.
-const JOB_CODE_SUFFIX = /\s*\(WS-[^)]*\)+\s*$/u
-
 /// The title a student reads: no term prefix, which the Term filter carries,
 /// and no pay code, which the row's wage replaces.
 export function displayTitle(title: string): string {
 	let prefixed = TERM_PREFIXES.find(([prefix]) => prefix.test(title))
 	let withoutTerm = prefixed ? title.replace(prefixed[0], '') : title
 
-	return withoutTerm.replace(JOB_CODE_SUFFIX, '')
+	return withoutTerm.replace(JOB_CODE, '').trim()
 }
