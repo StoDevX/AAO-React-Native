@@ -23,11 +23,11 @@ describe('columnsForFontScale', () => {
 		expect(columnsForFontScale(1.6)).toBe(2)
 	})
 
-	test('a realistic AX5 scale still gives two', () => {
-		expect(columnsForFontScale(3.1)).toBe(2)
+	test('the AX5 scale still gives two', () => {
+		expect(columnsForFontScale(3.571)).toBe(2)
 	})
 
-	test.each([0, 0.5, 1.0, 1.19, 1.2, 1.59, 1.6, 2, 3.1, 5, 10])(
+	test.each([0, 0.5, 1.0, 1.19, 1.2, 1.59, 1.6, 2, 3.571, 5, 10])(
 		'never returns fewer than two or more than four columns for scale %d',
 		(scale) => {
 			let columns = columnsForFontScale(scale)
@@ -50,8 +50,8 @@ describe('homeColumnsForFontScale', () => {
 		expect(homeColumnsForFontScale(1.6)).toBe(1)
 	})
 
-	test('a realistic AX5 scale still gives one', () => {
-		expect(homeColumnsForFontScale(3.1)).toBe(1)
+	test('the AX5 scale still gives one', () => {
+		expect(homeColumnsForFontScale(3.571)).toBe(1)
 	})
 })
 

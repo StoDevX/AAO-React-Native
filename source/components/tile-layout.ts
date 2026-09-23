@@ -23,11 +23,12 @@ export const TILE_RADIUS = 26
 /// at an accessibility size: the icon and the label both grow with Dynamic
 /// Type (see ICON_TEXT_STYLE), while the column width does not, so a wide
 /// enough label has nowhere to go. `fontScale` is 1.0 at the default size and
-/// grows from there -- 1.2 is xxLarge, the first size past the "readable"
-/// range iOS calls out separately, and 1.6 is roughly AX1, the first
-/// accessibility size proper. Floored at two rather than one: a single
-/// column stops being a grid at all, and two still reads as one even at the
-/// largest accessibility sizes this returns for (AX5, `fontScale` ~= 3.1).
+/// grows from there (React Native's table is in `RCTUtils.mm`): 1.2 falls
+/// between xLarge (1.118) and xxLarge (1.235), so xxLarge is the first size
+/// with three columns, and 1.6 between xxxLarge (1.353) and AX1 (1.786), the
+/// first accessibility size. Floored at two rather than one: a single column
+/// stops being a grid at all, and two still reads as one even at the largest
+/// accessibility size (AX5, `fontScale` 3.571).
 export function columnsForFontScale(fontScale: number): number {
 	if (fontScale < 1.2) return 4
 	if (fontScale < 1.6) return 3
@@ -36,9 +37,9 @@ export function columnsForFontScale(fontScale: number): number {
 
 /// Home's cards carry a headline-sized title, longer than the other grids'
 /// labels, so they start at two abreast rather than four and hold there up to
-/// xxxLarge. From AX1 (`fontScale` ~= 1.6, `columnsForFontScale`'s last
-/// breakpoint) two cards leave a title too narrow to break between words, so
-/// each card takes the full width.
+/// xxxLarge, where a long title wraps onto a second line. From AX1 (the same
+/// 1.6 breakpoint as `columnsForFontScale`'s last) two cards leave a title only
+/// a few letters a line, so each card takes the full width.
 export function homeColumnsForFontScale(fontScale: number): number {
 	return fontScale < 1.6 ? 2 : 1
 }

@@ -65,6 +65,9 @@ export function DirectoryResultsGrid({
 
 					<TileGrid
 						accessibilityId={RESULTS_GRID_ID}
+						// The tile width above is worked out from this count, so the
+						// grid takes it rather than working out its own.
+						columns={columns}
 						items={indexed}
 						keyForItem={({index}) => index}
 						renderItem={({person, index}) => (

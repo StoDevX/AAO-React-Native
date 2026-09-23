@@ -20,8 +20,9 @@ type Props<T> = {
 	accessibilityId: string
 }
 
-/// Tiles laid out in rows of `useTileColumns()`. The layout around the grid --
-/// list-row modifiers, a scroll view, padding -- stays with the caller.
+/// Tiles laid out in rows of `columns`, or of `useTileColumns()` when the
+/// caller gives none. The layout around the grid -- list-row modifiers, a
+/// scroll view, padding -- stays with the caller.
 export function TileGrid<T>({
 	items,
 	keyForItem,
