@@ -362,6 +362,14 @@ struct TestIdentifiers {
 		/// The bottom-bar action on the event detail sheet. A bar item's
 		/// identifier is its title, which is what XCUITest matches on.
 		static let addToCalendar = "Add to Calendar"
+		/// The bar item's label once the system editor has saved the event. The
+		/// item is disabled then, and stays so until the event sheet closes.
+		static let addedToCalendar = "Added to Calendar"
+		/// The system new-event editor's title. The editor runs outside the app,
+		/// which is why adding an event needs no calendar access.
+		static let newEventEditor = "New Event"
+		/// The editor's save button: a checkmark, labelled Done on iOS 27.
+		static let saveNewEvent = "Done"
 		/// Dismisses the event detail sheet. A header bar item carrying only an
 		/// SF Symbol, so its accessibility label is the only thing to find it by.
 		static let closeEventDetail = "Close"
