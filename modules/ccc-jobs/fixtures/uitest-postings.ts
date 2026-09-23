@@ -7,9 +7,9 @@ import type {JobCategory, JobDetail} from '../types'
  * nothing to assert against: a test naming a posting breaks when it closes.
  *
  * Two postings, because the detail screen's layout depends on its fields.
- * The first has a field long enough to wrap onto a second line, which is the
- * shape that once let the fields' form scroll on its own inside the page; the
- * second has only short fields.
+ * The first has a field long enough to wrap onto a second line, the shape a
+ * host sized to its content measures as too short; the second has only short
+ * fields.
  */
 
 /// Mirrored by `TestIdentifiers.SIS.fixtureJobWithWrappingField`.

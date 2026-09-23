@@ -29,11 +29,11 @@ function postedOn(postedDate: string | undefined): string | undefined {
 /// The posting's fields, as a SwiftUI form that fills the screen and scrolls
 /// itself, with the description a push away.
 ///
-/// The description once shared a React Native scroll view with the form, the
-/// form in a host sized to its content. That host measures a wrapped field as
-/// a single line, so a posting with a long field got a form too short for its
-/// rows, and the form scrolled within the page: the first drag stopped at the
-/// jobs-site link, as though the posting ended there.
+/// The form fills its host rather than the host sizing to the form: a host
+/// sized to its content measures a wrapped field as a single line, leaving the
+/// form too short for its rows, so the form scrolls inside whatever holds it
+/// and a drag stops at its last row. The description is React Native markdown,
+/// and hosting it in the form would need that same content-sized measurement.
 function JobDetailView({job}: {job: JobDetail}): React.ReactNode {
 	let router = useRouter()
 	let posted = postedOn(job.postedDate)

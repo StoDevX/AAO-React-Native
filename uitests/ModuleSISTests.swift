@@ -52,10 +52,10 @@ class ModuleSISTests: UITestCase {
 			.checkJobsSiteLinkIsExternal()
 	}
 
-	/// The fields are one form that scrolls itself. When the fields and the
-	/// description shared a scrolling page, a field that wrapped left the
-	/// fields' frame too short, and the jobs-site link got stuck at the bottom
-	/// of the screen.
+	/// The fields are one form that scrolls itself, so its last row can reach
+	/// the screen. A form nested in another scroll view, sized to its content,
+	/// comes out too short when a field wraps, and a drag then stops with the
+	/// jobs-site link pinned at the bottom of the screen.
 	func testJobPostingFieldsScrollToTheJobsSiteLink() throws {
 		SISScreen(app: app)
 			.navigate()
