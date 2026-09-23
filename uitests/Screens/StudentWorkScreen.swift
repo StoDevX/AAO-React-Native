@@ -8,6 +8,65 @@ struct StudentWorkScreen: Screen {
 		navigateFromHome(to: TestIdentifiers.Buttons.studentWork)
 	}
 
+	/// Opens a preset below the tiles, whose row label leads with its title.
+	@discardableResult
+	func openPreset(_ title: String) -> Self {
+		let preset = app.elementWithLabel(startingWith: title)
+		XCTAssertTrue(areaGrid.waitForExistence(timeout: 30), "The landing should load")
+		// Below the tiles, and the list builds rows only as they near the screen.
+		scrollUntilExists(preset)
+		XCTAssertTrue(preset.waitForExistence(timeout: 10), "The landing should offer \(title)")
+		preset.tap()
+		return waitForPostings()
+	}
+
+	@discardableResult
+	func openAllPostings() -> Self {
+		openPreset(TestIdentifiers.StudentWork.allPostingsPreset)
+	}
+
+	/// Opens an area's tile, whose label leads with the area's name.
+	@discardableResult
+	func openArea(_ name: String) -> Self {
+		let tile = areaGrid.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", name)).firstMatch
+		XCTAssertTrue(tile.waitForExistence(timeout: 30), "The landing should have a \(name) tile")
+		tile.tap()
+		return waitForPostings()
+	}
+
+	@discardableResult
+	func verifyAreaTileCount(_ count: Int) -> Self {
+		XCTAssertTrue(areaGrid.waitForExistence(timeout: 30), "The landing should show its area tiles")
+		XCTAssertEqual(areaGrid.buttons.count, count, "The landing should have \(count) area tiles")
+		return self
+	}
+
+	/// The list says it has nothing, rather than showing an empty screen.
+	@discardableResult
+	func verifyNoMatchingJobs() -> Self {
+		XCTAssertTrue(
+			app.staticTexts[TestIdentifiers.StudentWork.noMatchingJobs].waitForExistence(timeout: 30),
+			"The list should say no jobs match")
+		return self
+	}
+
+	@discardableResult
+	func verifyTrigger(_ key: String, isSelected expected: Bool) -> Self {
+		FilterScreen(app: app).verifyTrigger(key, isSelected: expected)
+		return self
+	}
+
+	private var areaGrid: XCUIElement {
+		app.element(matching: TestIdentifiers.StudentWork.areaGrid)
+	}
+
+	private func waitForPostings() -> Self {
+		XCTAssertTrue(
+			app.navigationBars[TestIdentifiers.StudentWork.postingsTitle].waitForExistence(timeout: 30),
+			"The postings should open")
+		return self
+	}
+
 	/// A posting's row, found by the title it leads with.
 	private func row(_ title: String) -> XCUIElement {
 		app.elementWithLabel(startingWith: title)
@@ -129,6 +188,17 @@ struct StudentWorkScreen: Screen {
 		let header = postingsList.staticTexts[title]
 		scrollUntilExists(header, in: postingsList)
 		XCTAssertTrue(header.exists, "The postings should have a \(title) section")
+		return self
+	}
+
+	/// Leaves the postings for Student Work's landing.
+	@discardableResult
+	func navigateBackToLanding() -> Self {
+		let backButton = app.navigationBars[TestIdentifiers.StudentWork.postingsTitle]
+			.buttons[TestIdentifiers.Navigation.systemBackButton]
+		XCTAssertTrue(backButton.waitForExistence(timeout: 10), "The postings should offer a way back")
+		backButton.tap()
+		XCTAssertTrue(areaGrid.waitForExistence(timeout: 30), "Going back should land on the tiles")
 		return self
 	}
 

@@ -252,6 +252,26 @@ struct TestIdentifiers {
 		static let termRow = "Term"
 		/// The coded fixture's term, as `jobTerm` names it.
 		static let academicYear = "Academic Year"
+		/// Matches AREA_GRID_ID in source/features/sis/student-work/area-grid.tsx.
+		static let areaGrid = "student-work-area-grid"
+		/// How many areas data/student-work-areas.yaml lists.
+		static let areaCount = 16
+		/// From data/student-work-areas.yaml: one area the fixtures fill, one
+		/// they leave empty. See FIXTURE_UNITS in
+		/// modules/ccc-jobs/fixtures/uitest-postings.ts.
+		static let researchArea = "Research (CURI)"
+		static let emptyArea = "Faith & Vocation"
+		/// The list's empty state once a search or filter leaves nothing, from
+		/// source/features/sis/student-work/postings-list.tsx.
+		static let noMatchingJobs = "No matching jobs."
+		/// From PRESETS in source/features/sis/student-work/presets.ts.
+		static let allPostingsPreset = "All job postings"
+		static let entryLevelPreset = "Entry-level jobs"
+		/// The postings screen's title, whatever it was opened with. Matches
+		/// TITLE in app/(home)/StudentWork/postings.tsx.
+		static let postingsTitle = "Job Postings"
+		/// The Area filter's key, from `buildJobFilters`.
+		static let areaFilter = "area"
 		/// The tier every filler posting is at.
 		static let experienced = "Experienced"
 		/// Starts every filler posting's title, as FILLER_TITLE_PREFIX in

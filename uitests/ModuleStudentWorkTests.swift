@@ -9,6 +9,7 @@ class ModuleStudentWorkTests: UITestCase {
 	func testCodedPostingShowsItsDisplayTitleWageLevelAndTerm() throws {
 		StudentWorkScreen(app: app)
 			.navigate()
+			.openAllPostings()
 			.verifyPostingDetail(IDs.fixtureCodedJob, contains: IDs.fixtureCodedJobWage)
 			.capture("Student Work list")
 			.openJobPosting(IDs.fixtureCodedJob)
@@ -21,6 +22,7 @@ class ModuleStudentWorkTests: UITestCase {
 	func testPostingsAreSectionedByHowRecentlyTheyWentUp() throws {
 		StudentWorkScreen(app: app)
 			.navigate()
+			.openAllPostings()
 			.verifySection(IDs.thisWeek)
 			.verifySection(IDs.lastWeek)
 			.verifySection(IDs.earlier)
@@ -31,21 +33,67 @@ class ModuleStudentWorkTests: UITestCase {
 	func testPostingAddedSinceTheLastVisitIsMarkedNew() throws {
 		StudentWorkScreen(app: app)
 			.navigate()
+			.openAllPostings()
 			.verifyNothingIsNew()
+			.navigateBackToLanding()
 			.navigateBack()
 
 		relaunchKeepingState(adding: TestIdentifiers.LaunchArguments.extraJobPosting)
 
 		StudentWorkScreen(app: app)
 			.navigate()
+			.openAllPostings()
 			.verifyPostingIsNew(IDs.fixtureExtraJob)
 			.capture("Student Work with a new posting")
 			.verifyPostingIsNotNew(IDs.fixtureCodedJob)
 	}
 
+	func testLandingShowsSixteenAreas() throws {
+		StudentWorkScreen(app: app)
+			.navigate()
+			.verifyAreaTileCount(IDs.areaCount)
+			.capture("Student Work landing")
+	}
+
+	/// An empty area's tile is dimmed, not disabled: it opens, to a list that
+	/// says there is nothing in it.
+	func testEmptyAreaOpensToAListThatSaysSo() throws {
+		StudentWorkScreen(app: app)
+			.navigate()
+			.openArea(IDs.emptyArea)
+			.verifyTrigger(IDs.areaFilter, isSelected: true)
+			.verifyNoMatchingJobs()
+	}
+
+	func testAreaTileOpensTheListFilteredToThatArea() throws {
+		StudentWorkScreen(app: app)
+			.navigate()
+			.openArea(IDs.researchArea)
+			.verifyTrigger(IDs.areaFilter, isSelected: true)
+			.verifyPostingListed(IDs.fixtureJobWithWrappingField)
+			.verifyPostingHidden(IDs.fixtureJobWithShortFields)
+	}
+
+	func testEntryLevelPresetPrefillsTheLevelFilter() throws {
+		StudentWorkScreen(app: app)
+			.navigate()
+			.openPreset(IDs.entryLevelPreset)
+			.verifyTrigger(IDs.levelFilter, isSelected: true)
+			.verifyPostingListed(IDs.fixtureCodedJob)
+			.verifyPostingHidden(IDs.fixtureJobWithShortFields)
+	}
+
+	func testSearchOnTheLandingShowsMatchingPostings() throws {
+		StudentWorkScreen(app: app)
+			.navigate()
+			.search(for: IDs.fixtureCodedJobSearch)
+			.verifyPostingListed(IDs.fixtureCodedJob)
+	}
+
 	func testLevelFilterNarrowsTheList() throws {
 		StudentWorkScreen(app: app)
 			.navigate()
+			.openAllPostings()
 			.verifyPostingListed(IDs.fixtureJobWithShortFields)
 			.choose(IDs.entryLevel, inFilter: IDs.levelFilter)
 			.verifyPostingListed(IDs.fixtureCodedJob)
@@ -56,6 +104,7 @@ class ModuleStudentWorkTests: UITestCase {
 	func testChoosingAFilterFromFarDownTheListStartsAtTheTop() throws {
 		StudentWorkScreen(app: app)
 			.navigate()
+			.openAllPostings()
 			.scrollListDown()
 			.choose(IDs.experienced, inFilter: IDs.levelFilter)
 			.verifyListStartsAtTheTop()
@@ -64,6 +113,7 @@ class ModuleStudentWorkTests: UITestCase {
 	func testSearchingFromFarDownTheListStartsAtTheTop() throws {
 		StudentWorkScreen(app: app)
 			.navigate()
+			.openAllPostings()
 			.scrollListDown()
 			.search(for: IDs.fixtureFillerPrefix)
 			.verifyListStartsAtTheTop()
@@ -72,6 +122,7 @@ class ModuleStudentWorkTests: UITestCase {
 	func testSearchNarrowsTheList() throws {
 		StudentWorkScreen(app: app)
 			.navigate()
+			.openAllPostings()
 			.verifyPostingListed(IDs.fixtureJobWithShortFields)
 			.search(for: IDs.fixtureCodedJobSearch)
 			.verifyPostingListed(IDs.fixtureCodedJob)
@@ -81,6 +132,7 @@ class ModuleStudentWorkTests: UITestCase {
 	func testJobPostingLinksOutToTheJobsSite() throws {
 		StudentWorkScreen(app: app)
 			.navigate()
+			.openAllPostings()
 			.openJobPosting(TestIdentifiers.StudentWork.fixtureJobWithShortFields)
 			.checkJobsSiteLinkIsExternal()
 	}
@@ -92,6 +144,7 @@ class ModuleStudentWorkTests: UITestCase {
 	func testJobPostingFieldsScrollToTheJobsSiteLink() throws {
 		StudentWorkScreen(app: app)
 			.navigate()
+			.openAllPostings()
 			.openJobPosting(TestIdentifiers.StudentWork.fixtureJobWithWrappingField)
 			.dragJobPostingFieldsUp()
 			.capture("Job posting fields scrolled to the end")
@@ -101,6 +154,7 @@ class ModuleStudentWorkTests: UITestCase {
 	func testJobDescriptionOpensOnItsOwnScreen() throws {
 		StudentWorkScreen(app: app)
 			.navigate()
+			.openAllPostings()
 			.openJobPosting(TestIdentifiers.StudentWork.fixtureJobWithWrappingField)
 			.openJobDescription()
 			.capture("Job description screen")
