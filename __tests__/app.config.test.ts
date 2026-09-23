@@ -1,3 +1,5 @@
+import {execFileSync} from 'node:child_process'
+import path from 'node:path'
 import type {ExpoConfig} from 'expo/config'
 
 /**
@@ -120,4 +122,27 @@ describe('app.config variants', () => {
 	it('throws on an unrecognised variant rather than shipping production', () => {
 		expect(() => loadConfig('prodcution')).toThrow(/prodcution/u)
 	})
+})
+
+describe('app.config calendar access', () => {
+	// Adding an event goes through the system editor, which needs no access.
+	// expo-calendar's config plugin adds its usage strings even when unlisted,
+	// so this reads the Info.plist Expo actually resolves -- plugins included
+	// -- rather than the keys app.config.ts writes itself.
+	it('ships no calendar or reminders usage string', () => {
+		let root = path.join(__dirname, '..')
+		let env = {...process.env}
+		delete env.APP_VARIANT
+
+		let output = execFileSync(
+			process.execPath,
+			[path.join(root, 'node_modules/expo/bin/cli'), 'config', '--type', 'introspect', '--json'],
+			{cwd: root, env, encoding: 'utf8'},
+		)
+		let infoPlist = (JSON.parse(output) as ExpoConfig).ios?.infoPlist ?? {}
+
+		expect(Object.keys(infoPlist).filter((key) => /^NS(Calendars|Reminders)/u.test(key))).toEqual(
+			[],
+		)
+	}, 30_000)
 })
