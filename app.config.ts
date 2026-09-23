@@ -221,6 +221,18 @@ const config: ExpoConfig = {
 			},
 		],
 		'expo-router',
+		// The Report a Problem screen picks through PHPickerViewController, which
+		// asks for no permission; these strings exist because the module links
+		// the photo-library and camera APIs, and App Store Connect rejects a
+		// binary that links them without a purpose string.
+		[
+			'expo-image-picker',
+			{
+				photosPermission: 'Photos you choose are attached to a problem report you send.',
+				cameraPermission: 'Photos you take are attached to a problem report you send.',
+				microphonePermission: false,
+			},
+		],
 		// Adds the MapLibre SDK to the generated project. On iOS that is a
 		// Swift Package pulling a prebuilt MapLibre.xcframework from
 		// maplibre-gl-native-distribution -- no pod source build, and no
