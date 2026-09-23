@@ -92,21 +92,25 @@ struct HomeScreen: Screen {
 		return self
 	}
 
-	/// The first two tiles share a row: same top edge, the second to the right.
+	/// Two tiles to a row: the first two share a top edge, and the third starts
+	/// the next row under the first. Four to a row would pass the first half
+	/// alone, which is why the third tile is checked.
 	@discardableResult
 	func checkTilesSitTwoAbreast() -> Self {
-		let (first, second) = firstTwoTiles()
-		XCTAssertEqual(first.minY, second.minY, accuracy: 1, "The first two tiles should share a row")
-		XCTAssertGreaterThan(second.minX, first.maxX, "The second tile should sit right of the first")
+		let tiles = firstTiles(3)
+		XCTAssertEqual(tiles[0].minY, tiles[1].minY, accuracy: 1, "The first two tiles should share a row")
+		XCTAssertGreaterThan(tiles[1].minX, tiles[0].maxX, "The second tile should sit right of the first")
+		XCTAssertEqual(tiles[2].minX, tiles[0].minX, accuracy: 1, "The third tile should start a new row")
+		XCTAssertGreaterThan(tiles[2].minY, tiles[0].maxY, "The third tile should sit below the first")
 		return self
 	}
 
 	/// The first two tiles are stacked: same left edge, the second below.
 	@discardableResult
 	func checkTilesStackOnePerRow() -> Self {
-		let (first, second) = firstTwoTiles()
-		XCTAssertEqual(first.minX, second.minX, accuracy: 1, "The first two tiles should share a column")
-		XCTAssertGreaterThan(second.minY, first.maxY, "The second tile should sit below the first")
+		let tiles = firstTiles(2)
+		XCTAssertEqual(tiles[0].minX, tiles[1].minX, accuracy: 1, "The first two tiles should share a column")
+		XCTAssertGreaterThan(tiles[1].minY, tiles[0].maxY, "The second tile should sit below the first")
 		return self
 	}
 
@@ -123,25 +127,29 @@ struct HomeScreen: Screen {
 		let tiles = grid.buttons.allElementsBoundByIndex.filter { app.frame.contains($0.frame) }
 		XCTAssertFalse(tiles.isEmpty, "At least one tile should be wholly on screen")
 
-		let pixels = ScreenPixels(app.screenshot().image)
+		guard let pixels = ScreenPixels(app.screenshot().image) else {
+			XCTFail("The screenshot should be readable as pixels")
+			return self
+		}
+		// The screen margin left of the grid is the page's background, whichever
+		// column a tile sits in.
+		let marginX = grid.frame.minX / 2
 		for tile in tiles {
-			let frame = tile.frame
-			let top = frame.minY + 2
-			// The screen margin beside the card is the page's background.
-			let page = pixels.colour(at: CGPoint(x: frame.minX / 2, y: top))
+			let top = tile.frame.minY + 2
+			let page = pixels.colour(at: CGPoint(x: marginX, y: top))
 			XCTAssertFalse(
-				pixels.colour(at: CGPoint(x: frame.midX, y: top)).isClose(to: page),
+				pixels.colour(at: CGPoint(x: tile.frame.midX, y: top)).isClose(to: page),
 				"\(tile.label)'s card should start at the top of the tile, not below an icon spilling over it")
 		}
 		return self
 	}
 
-	private func firstTwoTiles() -> (CGRect, CGRect) {
+	private func firstTiles(_ count: Int) -> [CGRect] {
 		let grid = app.element(matching: TestIdentifiers.Home.tileGrid)
 		XCTAssertTrue(grid.waitForExistence(timeout: 30), "Home should show its tile grid")
 		let tiles = grid.buttons
-		XCTAssertGreaterThanOrEqual(tiles.count, 2, "Home should have at least two tiles")
-		return (tiles.element(boundBy: 0).frame, tiles.element(boundBy: 1).frame)
+		XCTAssertGreaterThanOrEqual(tiles.count, count, "Home should have at least \(count) tiles")
+		return (0..<count).map { tiles.element(boundBy: $0).frame }
 	}
 }
 
@@ -163,17 +171,27 @@ private struct ScreenPixels {
 	private let width: Int
 	private let scale: CGFloat
 
-	init(_ image: UIImage) {
-		let cgImage = image.cgImage!
-		width = cgImage.width
-		scale = CGFloat(cgImage.width) / image.size.width
-		var bytes = [UInt8](repeating: 0, count: cgImage.width * cgImage.height * 4)
-		let context = CGContext(
-			data: &bytes, width: cgImage.width, height: cgImage.height, bitsPerComponent: 8,
-			bytesPerRow: cgImage.width * 4, space: CGColorSpaceCreateDeviceRGB(),
-			bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue)!
-		context.draw(cgImage, in: CGRect(x: 0, y: 0, width: cgImage.width, height: cgImage.height))
+	init?(_ image: UIImage) {
+		guard let cgImage = image.cgImage else { return nil }
+		let width = cgImage.width
+		let height = cgImage.height
+		// Drawing inside withUnsafeMutableBytes keeps the buffer's address valid
+		// for as long as the context writes through it.
+		var bytes = [UInt8](repeating: 0, count: width * height * 4)
+		let drawn = bytes.withUnsafeMutableBytes { buffer -> Bool in
+			guard
+				let context = CGContext(
+					data: buffer.baseAddress, width: width, height: height, bitsPerComponent: 8,
+					bytesPerRow: width * 4, space: CGColorSpaceCreateDeviceRGB(),
+					bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue)
+			else { return false }
+			context.draw(cgImage, in: CGRect(x: 0, y: 0, width: width, height: height))
+			return true
+		}
+		guard drawn else { return nil }
 		self.bytes = bytes
+		self.width = width
+		self.scale = CGFloat(width) / image.size.width
 	}
 
 	func colour(at point: CGPoint) -> Colour {
