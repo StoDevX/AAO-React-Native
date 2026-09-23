@@ -1,17 +1,7 @@
 import * as React from 'react'
-import {StyleSheet} from 'react-native'
+import {StyleSheet, useWindowDimensions} from 'react-native'
 import {Stack, useRouter} from 'expo-router'
-import {
-	Button,
-	ContextMenu,
-	Grid,
-	Host,
-	RNHostView,
-	ScrollView,
-	Spacer,
-	Text,
-	VStack,
-} from '@expo/ui/swift-ui'
+import {Button, ContextMenu, Host, RNHostView, ScrollView, Text, VStack} from '@expo/ui/swift-ui'
 import {
 	accessibilityIdentifier,
 	background,
@@ -29,9 +19,14 @@ import {useDispatch, useSelector} from 'react-redux'
 import {Restart} from 'react-native-restart-newarch'
 
 import {AllViews} from '../../source/features/views'
-import type {ViewType} from '../../source/features/views'
 import {HomeScreenButton} from '../../source/features/home/button'
-import {FILL_WIDTH, SCREEN_MARGIN, TILE_SPACING} from '../../source/components/tile-layout'
+import {
+	FILL_WIDTH,
+	homeColumnsForFontScale,
+	SCREEN_MARGIN,
+	TILE_SPACING,
+} from '../../source/components/tile-layout'
+import {TileGrid} from '../../source/components/tile-grid'
 import {openUrl} from '@frogpond/open-url'
 import {selectDevModeOverride, setDevModeOverride} from '../../source/redux/parts/settings'
 import {useIsDevMode} from '../../source/lib/use-is-dev-mode'
@@ -132,24 +127,14 @@ function UnofficialAppNotice(): React.ReactNode {
 	)
 }
 
-/// Health lays its cards out as a grid, not as two columns: both cards in a row
-/// share a height, so a two-line title on one side lifts the card beside it too.
-/// Independent columns can't express that -- each card sizes to its own content
-/// and the two sides drift out of step as the taller ones accumulate -- so the
-/// views are grouped into rows and handed to a real Grid.
-function inPairs(views: ViewType[]): ViewType[][] {
-	let rows: ViewType[][] = []
-	for (let i = 0; i < views.length; i += 2) {
-		rows.push(views.slice(i, i + 2))
-	}
-	return rows
-}
+/// Mirrored by TestIdentifiers.Home.tileGrid.
+const HOME_GRID_ID = 'home-tile-grid'
 
 export default function HomePage(): React.ReactNode {
 	let router = useRouter()
 	let isDev = useIsDevMode()
 	let allViews = AllViews().filter((view) => !view.disabled && (isDev || !view.devOnly))
-	let rows = inPairs(allViews)
+	let {fontScale} = useWindowDimensions()
 
 	return (
 		<>
@@ -180,29 +165,32 @@ export default function HomePage(): React.ReactNode {
 							/>
 						</RNHostView>
 
-						<Grid horizontalSpacing={TILE_SPACING} verticalSpacing={TILE_SPACING}>
-							{rows.map((row, i) => (
-								// oxlint-disable-next-line react/no-array-index-key -- a row is its position; the buttons inside are keyed by title
-								<Grid.Row key={i}>
-									{row.map((view) => (
-										<HomeScreenButton
-											key={view.title}
-											onPress={() => {
-												if (view.type === 'url') {
-													return openUrl(view.url)
-												} else if (view.type === 'view') {
-													return router.navigate(view.view)
-												} else {
-													throw new Error(`unexpected view type ${view.type}`)
-												}
-											}}
-											view={view}
-										/>
-									))}
-									{row.length === 1 ? <Spacer /> : null}
-								</Grid.Row>
-							))}
-						</Grid>
+						{/* Health lays its cards out as a grid, not as independent
+						    columns: the cards in a row share a height, so a two-line
+						    title on one lifts the card beside it too. Independent
+						    columns cannot express that -- each card sizes to its own
+						    content, and they drift out of step as the taller ones
+						    accumulate. */}
+						<TileGrid
+							accessibilityId={HOME_GRID_ID}
+							columns={homeColumnsForFontScale(fontScale)}
+							items={allViews}
+							keyForItem={(view) => view.title}
+							renderItem={(view) => (
+								<HomeScreenButton
+									onPress={() => {
+										if (view.type === 'url') {
+											return openUrl(view.url)
+										} else if (view.type === 'view') {
+											return router.navigate(view.view)
+										} else {
+											throw new Error(`unexpected view type ${view.type}`)
+										}
+									}}
+									view={view}
+								/>
+							)}
+						/>
 
 						<UnofficialAppNotice />
 					</VStack>

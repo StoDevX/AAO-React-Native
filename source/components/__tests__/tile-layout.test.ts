@@ -1,6 +1,6 @@
 import {describe, expect, test} from '@jest/globals'
 
-import {columnsForFontScale, inRows} from '../tile-layout'
+import {columnsForFontScale, homeColumnsForFontScale, inRows} from '../tile-layout'
 
 describe('columnsForFontScale', () => {
 	test('the default scale gives four columns', () => {
@@ -35,6 +35,24 @@ describe('columnsForFontScale', () => {
 			expect(columns).toBeLessThanOrEqual(4)
 		},
 	)
+})
+
+describe('homeColumnsForFontScale', () => {
+	test('the default scale gives two columns', () => {
+		expect(homeColumnsForFontScale(1.0)).toBe(2)
+	})
+
+	test('stays at two just below the accessibility sizes', () => {
+		expect(homeColumnsForFontScale(1.59)).toBe(2)
+	})
+
+	test('drops to one at the first accessibility size', () => {
+		expect(homeColumnsForFontScale(1.6)).toBe(1)
+	})
+
+	test('a realistic AX5 scale still gives one', () => {
+		expect(homeColumnsForFontScale(3.1)).toBe(1)
+	})
 })
 
 /// Only `title` matters to `inRows` -- it slices and groups, it never reads

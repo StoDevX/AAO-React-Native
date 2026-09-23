@@ -34,6 +34,15 @@ export function columnsForFontScale(fontScale: number): number {
 	return 2
 }
 
+/// Home's cards carry a headline-sized title, longer than the other grids'
+/// labels, so they start at two abreast rather than four and hold there up to
+/// xxxLarge. From AX1 (`fontScale` ~= 1.6, `columnsForFontScale`'s last
+/// breakpoint) two cards leave a title too narrow to break between words, so
+/// each card takes the full width.
+export function homeColumnsForFontScale(fontScale: number): number {
+	return fontScale < 1.6 ? 2 : 1
+}
+
 /// Groups a flat list into the rows a SwiftUI Grid wants: its API takes
 /// children pre-split into `Grid.Row`s rather than a flat list. `columns`
 /// varies with Dynamic Type (see `columnsForFontScale`), so it is a parameter

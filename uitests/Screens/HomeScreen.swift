@@ -91,4 +91,30 @@ struct HomeScreen: Screen {
 			"DEVELOPER section should be visible after enabling dev mode")
 		return self
 	}
+
+	/// The first two tiles share a row: same top edge, the second to the right.
+	@discardableResult
+	func checkTilesSitTwoAbreast() -> Self {
+		let (first, second) = firstTwoTiles()
+		XCTAssertEqual(first.minY, second.minY, accuracy: 1, "The first two tiles should share a row")
+		XCTAssertGreaterThan(second.minX, first.maxX, "The second tile should sit right of the first")
+		return self
+	}
+
+	/// The first two tiles are stacked: same left edge, the second below.
+	@discardableResult
+	func checkTilesStackOnePerRow() -> Self {
+		let (first, second) = firstTwoTiles()
+		XCTAssertEqual(first.minX, second.minX, accuracy: 1, "The first two tiles should share a column")
+		XCTAssertGreaterThan(second.minY, first.maxY, "The second tile should sit below the first")
+		return self
+	}
+
+	private func firstTwoTiles() -> (CGRect, CGRect) {
+		let grid = app.element(matching: TestIdentifiers.Home.tileGrid)
+		XCTAssertTrue(grid.waitForExistence(timeout: 30), "Home should show its tile grid")
+		let tiles = grid.buttons
+		XCTAssertGreaterThanOrEqual(tiles.count, 2, "Home should have at least two tiles")
+		return (tiles.element(boundBy: 0).frame, tiles.element(boundBy: 1).frame)
+	}
 }

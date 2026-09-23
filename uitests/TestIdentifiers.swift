@@ -34,6 +34,7 @@ struct TestIdentifiers {
 	enum Home {
 		static let screen = "screen-homescreen"
 		static let notice = "home-notice"
+		static let tileGrid = "home-tile-grid"
 	}
 
 	enum Navigation {
