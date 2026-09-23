@@ -118,6 +118,7 @@ export default function DictionarySensePage(): React.ReactNode {
 									})
 								}
 								title={subsense.definition || `Sub-sense ${index + 1}`}
+								titleLines={2}
 							/>
 						))}
 						<Button
