@@ -2,8 +2,8 @@ import * as React from 'react'
 import {Stack, useLocalSearchParams} from 'expo-router'
 import {useQuery} from '@tanstack/react-query'
 
-import {MenuItemDetailView} from '../../modules/food-menu/food-item-detail'
-import {bonAppMenuItemOptions, pauseMenuItemOptions} from '../../source/features/menus/query'
+import {MenuItemDetailView} from '../../../modules/food-menu/food-item-detail'
+import {bonAppMenuItemOptions, pauseMenuItemOptions} from '../../../source/features/menus/query'
 import {LoadingView, NoticeView} from '@frogpond/notice'
 
 export default function MenuItemDetailPage(): React.ReactNode {

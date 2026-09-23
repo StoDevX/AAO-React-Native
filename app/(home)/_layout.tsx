@@ -5,9 +5,10 @@ import {SHEET_RESTING_FRACTION} from '../../source/lib/constants'
 
 /**
  * How every detail sheet in the app presents: a building's hours, a dictionary
- * entry, an Important Contact. One object rather than one per route, so the
- * screens cannot drift apart — two sheets stopping at different heights, or
- * dimming differently, reads as an accident rather than a decision.
+ * entry, an Important Contact, a dish's nutrition. One object rather than one
+ * per route, so the screens cannot drift apart — two sheets stopping at
+ * different heights, or dimming differently, reads as an accident rather than
+ * a decision.
  *
  * `headerShown: false` because each of these routes nests a stack of its own
  * to draw its header inside the sheet. A header drawn by this stack instead is
@@ -35,6 +36,7 @@ export default function HomeLayout(): React.ReactNode {
 	return (
 		<Stack screenOptions={{headerBackButtonDisplayMode: 'minimal'}}>
 			<Stack.Screen name="Menus" options={{title: 'Menus'}} />
+			<Stack.Screen name="MenuItemDetail" options={DETAIL_SHEET} />
 			<Stack.Screen name="Streaming Media" options={{title: 'Streaming Media'}} />
 			<Stack.Screen name="News" options={{title: 'News', headerLargeTitleEnabled: true}} />
 			<Stack.Screen name="Transportation" options={{title: 'Transportation'}} />
