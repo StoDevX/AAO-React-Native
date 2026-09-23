@@ -129,8 +129,12 @@ export function ActionRow(props: ActionRowProps): React.ReactNode {
 
 /**
  * A leading symbol, drawn by SwiftUI itself.
+ *
+ * `label` is for a symbol that means something, like an unread dot: VoiceOver
+ * reads the row as one element, so the label leads the row's own. `size`
+ * overrides the usual symbol size, for a mark smaller than an icon.
  */
-type SymbolImage = {systemName: SFSymbol; tint?: ColorValue}
+type SymbolImage = {systemName: SFSymbol; tint?: ColorValue; size?: number; label?: string}
 
 /**
  * A leading thumbnail fetched over the network. `@expo/ui`'s own `Image` reads
@@ -177,7 +181,7 @@ function LeadingImage({image}: {image: DisclosureRowImage}): React.ReactNode {
 		return (
 			<Image
 				color={image.tint ?? c.secondaryLabel}
-				size={SYMBOL_SIZE}
+				size={image.size ?? SYMBOL_SIZE}
 				systemName={image.systemName}
 			/>
 		)
@@ -231,7 +235,11 @@ export function DisclosureRow(props: DisclosureRowProps): React.ReactNode {
 		<Button
 			modifiers={[
 				buttonStyle('plain'),
-				accessibilityLabel(rowLabel(title, detail)),
+				accessibilityLabel(
+					image && 'label' in image && image.label
+						? `${image.label}, ${rowLabel(title, detail)}`
+						: rowLabel(title, detail),
+				),
 				...(identifier ? [accessibilityIdentifier(identifier)] : []),
 			]}
 			onPress={onPress}

@@ -12,6 +12,10 @@ struct TestIdentifiers {
 	enum LaunchArguments {
 		static let uiTesting = "--uitesting"
 		static let resetState = "--reset-state"
+		/// Adds one posting to the Student Work fixtures, read through
+		/// `NSUserDefaults` as EXTRA_POSTING_SETTING in
+		/// modules/ccc-jobs/fixtures/uitest-postings.ts.
+		static let extraJobPosting = ["-AAOUITestExtraJobPosting", "YES"]
 		/// The value half of `-UIPreferredContentSizeCategoryName`, UIKit's
 		/// command-line override for the app's Dynamic Type size. This is AX5,
 		/// the largest accessibility size, so a test launching with it proves a
@@ -222,6 +226,17 @@ struct TestIdentifiers {
 		static let entryLevel = "Entry-level"
 		/// The Level filter's key, from `buildJobFilters`.
 		static let levelFilter = "level"
+		/// The posting only a launch with `LaunchArguments.extraJobPosting`
+		/// has, as its row titles it. Mirrors UITEST_EXTRA_JOB_TITLE.
+		static let fixtureExtraJob = "Planetarium Student Guide"
+		/// What a new posting's row label leads with: the dot's label, from
+		/// NEW_DOT in app/(home)/StudentWork.tsx.
+		static let newPrefix = "New, "
+		/// The list's sections, from RECENCY_ORDER in
+		/// source/features/sis/student-work/recency.ts.
+		static let thisWeek = "This Week"
+		static let lastWeek = "Last Week"
+		static let earlier = "Earlier"
 		/// Row labels on a posting's screen, from `jobDetailFields` in
 		/// source/features/sis/student-work/lib.ts.
 		static let wageRow = "Wage"

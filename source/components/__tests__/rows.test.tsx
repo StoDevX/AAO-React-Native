@@ -68,6 +68,29 @@ describe('DisclosureRow leading image', () => {
 		expect(screen.getByTestId('disclosure-row-thumbnail')).toBeOnTheScreen()
 	})
 
+	/// A symbol that means something -- an unread dot -- has to say so to
+	/// VoiceOver, which reads the row as one element.
+	it('leads the row’s spoken label with the symbol’s own label', async () => {
+		await render(
+			<DisclosureRow
+				detail="$12.50/hr"
+				image={{systemName: 'circle.fill', label: 'New'}}
+				onPress={jest.fn()}
+				title="Tutor"
+			/>,
+		)
+
+		expect(screen.getByLabelText('New, Tutor, $12.50/hr')).toBeOnTheScreen()
+	})
+
+	it('adds nothing to the spoken label for a symbol without one', async () => {
+		await render(
+			<DisclosureRow image={{systemName: 'printer'}} onPress={jest.fn()} title="stoPrint-LPR" />,
+		)
+
+		expect(screen.getByLabelText('stoPrint-LPR')).toBeOnTheScreen()
+	})
+
 	it('draws no image slot when there is no image', async () => {
 		await render(<DisclosureRow onPress={jest.fn()} title="KSTO" />)
 

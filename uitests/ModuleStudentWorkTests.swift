@@ -18,6 +18,31 @@ class ModuleStudentWorkTests: UITestCase {
 			.verifyDetailRow(IDs.termRow, IDs.academicYear)
 	}
 
+	func testPostingsAreSectionedByHowRecentlyTheyWentUp() throws {
+		StudentWorkScreen(app: app)
+			.navigate()
+			.verifySection(IDs.thisWeek)
+			.verifySection(IDs.lastWeek)
+			.verifySection(IDs.earlier)
+	}
+
+	/// A first visit marks nothing new; a posting that appears before the
+	/// next visit is, and one already seen is not.
+	func testPostingAddedSinceTheLastVisitIsMarkedNew() throws {
+		StudentWorkScreen(app: app)
+			.navigate()
+			.verifyNothingIsNew()
+			.navigateBack()
+
+		relaunchKeepingState(adding: TestIdentifiers.LaunchArguments.extraJobPosting)
+
+		StudentWorkScreen(app: app)
+			.navigate()
+			.verifyPostingIsNew(IDs.fixtureExtraJob)
+			.capture("Student Work with a new posting")
+			.verifyPostingIsNotNew(IDs.fixtureCodedJob)
+	}
+
 	func testLevelFilterNarrowsTheList() throws {
 		StudentWorkScreen(app: app)
 			.navigate()

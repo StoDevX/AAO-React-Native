@@ -187,6 +187,15 @@ class UITestCase: XCTestCase {
 		app.launch()
 	}
 
+	/// Terminate and relaunch the app without `--reset-state`, so what the last
+	/// launch persisted survives, adding `arguments` to the launch.
+	func relaunchKeepingState(adding arguments: [String]) {
+		app.terminate()
+		app.launchArguments = [TestIdentifiers.LaunchArguments.uiTesting] + arguments
+		appendJsLocationIfProvided()
+		app.launch()
+	}
+
 	/// Terminate and relaunch the app at a given Dynamic Type size, passed as
 	/// `-UIPreferredContentSizeCategoryName <category>` -- a flag UIKit reads
 	/// as a command-line default, the same mechanism `--uitesting` and

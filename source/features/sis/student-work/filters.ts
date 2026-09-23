@@ -7,6 +7,7 @@ import type {ListType} from '@frogpond/filter/types'
 import deburr from 'lodash/deburr'
 import words from 'lodash/words'
 import {displayTitle, jobCode, jobTerm, LEVEL_LABELS, type JobTerm} from './posting'
+import {recencyOf, RECENCY_ORDER} from './recency'
 
 /// What the Level and Term filters match a posting on.
 export type JobFacets = {level: string; term: string}
@@ -109,21 +110,29 @@ function matchesSearch(job: JobSummary, queryWords: string[]): boolean {
 	return queryWords.every((query) => titleWords.some((word) => word.startsWith(query)))
 }
 
-/// The categories' postings that pass the filters and the search, dropping any
-/// category left empty.
+/// The postings that pass the filters and the search, sectioned by how
+/// recently they went up and newest first, dropping any section left empty.
+///
+/// Oracle's own categories are not the sections: nearly every posting is in
+/// "Student Work", and the Term filter already sorts out the summer ones.
 export function visibleSections(
 	categories: JobCategory[],
 	filters: ListType<JobFacets>[],
 	query: string,
+	today: Date,
 ): JobSection[] {
 	let queryWords = searchWords(query)
 
-	return categories
-		.map((category) => ({
-			title: category.name,
-			data: category.jobs.filter(
-				(job) => applyFiltersToItem(filters, facetsOf(job)) && matchesSearch(job, queryWords),
-			),
-		}))
-		.filter((section) => section.data.length > 0)
+	let visible = categories
+		.flatMap((category) => category.jobs)
+		.filter((job) => applyFiltersToItem(filters, facetsOf(job)) && matchesSearch(job, queryWords))
+
+	// `PostedDate` is `YYYY-MM-DD`, so the strings sort as the dates do. A
+	// copy and `sort`, not `toSorted`, which Hermes lacks.
+	let newestFirst = [...visible].sort((a, b) => b.postedDate.localeCompare(a.postedDate))
+
+	return RECENCY_ORDER.map((recency) => ({
+		title: recency,
+		data: newestFirst.filter((job) => recencyOf(job.postedDate, today) === recency),
+	})).filter((section) => section.data.length > 0)
 }

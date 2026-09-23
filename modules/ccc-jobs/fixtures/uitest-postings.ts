@@ -1,3 +1,4 @@
+import {Settings} from 'react-native'
 import type {JobCategory, JobDetail} from '../types'
 
 /**
@@ -18,7 +19,12 @@ import type {JobCategory, JobDetail} from '../types'
  * Then enough filler postings to scroll, because a list shorter than the
  * screen cannot show whether a new search or filter starts it at the top.
  * They are all tier 2, so choosing Experienced keeps a list long enough to
- * have been scrolled.
+ * have been scrolled. Their dates put some in each recency section against
+ * the UI tests' frozen clock, 2026-09-05.
+ *
+ * Last, one posting that exists only when the app is launched with
+ * `-AAOUITestExtraJobPosting YES`, so a test can add a posting between two
+ * visits and see it marked new.
  */
 
 /// Mirrored by `TestIdentifiers.StudentWork.fixtureJobWithWrappingField`.
@@ -94,6 +100,12 @@ const CODED_JOB: JobDetail = {
 /// Mirrored by `TestIdentifiers.StudentWork.fixtureFillerPrefix`.
 const FILLER_TITLE_PREFIX = 'Fixture Filler Posting'
 const FILLER_COUNT = 20
+/// This week, last week, and earlier, against the frozen 2026-09-05.
+const FILLER_DATES = [
+	'2026-09-01T15:00:00+00:00',
+	'2026-08-26T15:00:00+00:00',
+	'2026-07-15T15:00:00+00:00',
+]
 
 const FILLER_JOBS: JobDetail[] = Array.from({length: FILLER_COUNT}, (_, index) => {
 	let number = String(index + 1).padStart(2, '0')
@@ -103,14 +115,40 @@ const FILLER_JOBS: JobDetail[] = Array.from({length: FILLER_COUNT}, (_, index) =
 		category: 'Student Work',
 		schedule: 'Part time',
 		location: 'Northfield, MN, United States',
-		postedDate: '2026-09-01T15:00:00+00:00',
+		postedDate: FILLER_DATES[index % FILLER_DATES.length],
 		fields: [],
 		body: BODY,
 		url: `${SITE}/job/uitest-filler-${number}`,
 	}
 })
 
-export const UITEST_JOB_DETAILS: JobDetail[] = [WRAPPING_JOB, SHORT_JOB, CODED_JOB, ...FILLER_JOBS]
+/// The `NSUserDefaults` key a launch argument sets, which React Native's
+/// `Settings` reads. Mirrored by `TestIdentifiers.LaunchArguments.extraJobPosting`.
+const EXTRA_POSTING_SETTING = 'AAOUITestExtraJobPosting'
+/// Mirrored by `TestIdentifiers.StudentWork.fixtureExtraJob`.
+export const UITEST_EXTRA_JOB_TITLE = 'AY Planetarium Student Guide (WS-ST1)'
+
+const EXTRA_JOB: JobDetail = {
+	id: 'uitest-extra',
+	title: UITEST_EXTRA_JOB_TITLE,
+	category: 'Student Work',
+	schedule: 'Part time',
+	location: 'Northfield, MN, United States',
+	postedDate: '2026-09-04T15:00:00+00:00',
+	fields: [],
+	body: BODY,
+	url: `${SITE}/job/uitest-extra`,
+}
+
+const withExtraPosting = Boolean(Settings.get(EXTRA_POSTING_SETTING))
+
+export const UITEST_JOB_DETAILS: JobDetail[] = [
+	WRAPPING_JOB,
+	SHORT_JOB,
+	CODED_JOB,
+	...FILLER_JOBS,
+	...(withExtraPosting ? [EXTRA_JOB] : []),
+]
 
 export const UITEST_JOB_CATEGORIES: JobCategory[] = [
 	{
