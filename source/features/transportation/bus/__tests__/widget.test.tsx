@@ -109,6 +109,29 @@ describe('BusLineWidget', () => {
 		expect(getByText('Next departure')).toBeTruthy()
 	})
 
+	test('between trips on a route that does not loop, shows the trip just finished', async () => {
+		let twoRounds = makeLine({
+			schedules: [
+				{
+					days: ['Mo'],
+					coordinates: {},
+					stops: ['St. Olaf', 'Carleton'],
+					times: [
+						['1:00pm', '1:05pm'],
+						['2:00pm', '2:05pm'],
+					],
+				},
+			],
+		})
+		let betweenTrips = MONDAY_AFTERNOON.clone().hour(13).minute(30)
+
+		let {getByText} = await renderWidget(twoRounds, jest.fn(), betweenTrips)
+
+		// The finished trip's end slot names the next one; the next trip's own
+		// end slot would say it is the last bus.
+		expect(getByText('Next departure')).toBeTruthy()
+	})
+
 	test('ends the strip with an empty slot on the final round of the day', async () => {
 		let {getByText, queryByText} = await renderWidget(makeLine())
 
