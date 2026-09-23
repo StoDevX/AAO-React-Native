@@ -28,8 +28,8 @@ describe('jobDetailFields', () => {
 		])
 	})
 
-	/// The listing's own wage is what the employer wrote, so it wins; the
-	/// title's pay code only fills in when the listing states none.
+	// The listing's own wage is what the employer wrote, so it wins; the
+	// title's pay code only fills in when the listing states none.
 	test('shows the listing’s wage over the one the title implies', () => {
 		let job = posting('AY Mail Services Student Worker (WS-ST1)', [
 			{label: 'Department', value: 'Mail Services'},

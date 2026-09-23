@@ -5,7 +5,7 @@ import {accessibilityIdentifier, id, listStyle, refreshable} from '@expo/ui/swif
 import * as c from '@frogpond/colors'
 import {FilterToolbar} from '@frogpond/filter'
 import {LoadingView, NoticeView} from '@frogpond/notice'
-import {jobPostingsOptions} from '@frogpond/ccc-jobs'
+import {jobPostingsOptions, type JobSummary} from '@frogpond/ccc-jobs'
 import {useDebounce} from '@frogpond/use-debounce'
 import {Stack, useRouter} from 'expo-router'
 import {useQuery} from '@tanstack/react-query'
@@ -16,13 +16,33 @@ import {
 	visibleSections,
 	type ChosenJobFilters,
 } from '../../source/features/sis/student-work/filters'
-import {jobRowDetail} from '../../source/features/sis/student-work/lib'
+import {jobRowDetail, listState} from '../../source/features/sis/student-work/lib'
 import {displayTitle} from '../../source/features/sis/student-work/posting'
 
 /// Mirrored by TestIdentifiers.StudentWork.postingsList.
 const POSTINGS_LIST_ID = 'student-work-postings'
 
 const NOTHING_CHOSEN: ChosenJobFilters = {level: null, term: null}
+
+/// One posting's row, memoized so a keystroke in the search field -- which
+/// re-renders the screen before the debounced search changes anything --
+/// does not rebuild every row.
+const JobRow = React.memo(function JobRow({
+	job,
+	onOpen,
+}: {
+	job: JobSummary
+	onOpen: (jobId: string) => void
+}): React.ReactNode {
+	return (
+		<DisclosureRow
+			detail={jobRowDetail(job)}
+			onPress={() => onOpen(job.id)}
+			title={displayTitle(job.title)}
+			titleLines={2}
+		/>
+	)
+})
 
 export default function StudentWorkPage(): React.ReactNode {
 	let router = useRouter()
@@ -44,6 +64,20 @@ export default function StudentWorkPage(): React.ReactNode {
 
 	let isNarrowed = searchQuery !== '' || filters.some((filter) => filter.enabled)
 
+	// Keyed on what the list shows, so a search or filter that changes nothing
+	// on screen leaves the student where they were.
+	let shownIds = React.useMemo(
+		() => sections.flatMap((section) => section.data.map((job) => job.id)).join(','),
+		[sections],
+	)
+
+	let openJob = React.useCallback(
+		(jobId: string) => router.navigate({pathname: '/JobDetail', params: {jobId}}),
+		[router],
+	)
+
+	let state = listState({isError, isLoading, hasPostings: allJobs.length > 0})
+
 	// The search chrome is bound to component state, so it is rendered in
 	// every branch: the student always has a field to type into or clear.
 	let chrome = (
@@ -56,20 +90,21 @@ export default function StudentWorkPage(): React.ReactNode {
 		</>
 	)
 
-	if (isError) {
+	if (state === 'error') {
+		let message = error instanceof Error ? error.message : String(error)
 		return (
 			<>
 				{chrome}
 				<NoticeView
 					buttonText="Try Again"
 					onPress={refetch}
-					text={`A problem occured while loading: ${error}`}
+					text={`A problem occurred while loading: ${message}`}
 				/>
 			</>
 		)
 	}
 
-	if (isLoading) {
+	if (state === 'loading') {
 		return (
 			<>
 				{chrome}
@@ -85,16 +120,19 @@ export default function StudentWorkPage(): React.ReactNode {
 				{/* The toolbar is React Native, bridged into the SwiftUI stack so it
 				    sits under the navigation bar rather than behind it. */}
 				<VStack spacing={0}>
-					<RNHostView matchContents={true}>
-						<FilterToolbar
-							filters={filters}
-							onChange={(changed) => {
-								if (changed.type !== 'list') return
-								let titles = changed.spec.selected.map((option) => option.title)
-								setChosen((previous) => ({...previous, [changed.apply.key]: titles}))
-							}}
-						/>
-					</RNHostView>
+					{/* An empty board offers no filters, and an empty bar says nothing. */}
+					{filters.length > 0 ? (
+						<RNHostView matchContents={true}>
+							<FilterToolbar
+								filters={filters}
+								onChange={(changed) => {
+									if (changed.type !== 'list') return
+									let titles = changed.spec.selected.map((option) => option.title)
+									setChosen((previous) => ({...previous, [changed.apply.key]: titles}))
+								}}
+							/>
+						</RNHostView>
+					) : null}
 					<List
 						modifiers={[
 							listStyle('insetGrouped'),
@@ -102,10 +140,10 @@ export default function StudentWorkPage(): React.ReactNode {
 								await refetch()
 							}),
 							accessibilityIdentifier(POSTINGS_LIST_ID),
-							// A new search or filter is a new list, starting from the
-							// top. Without this the list keeps the offset it had, and
-							// postings that sort above it land offscreen.
-							id(JSON.stringify([searchQuery, chosen])),
+							// A new set of postings is a new list, starting from the top.
+							// Without this the list keeps the offset it had, and postings
+							// that sort above it land offscreen.
+							id(shownIds),
 						]}
 					>
 						{sections.length === 0 ? (
@@ -118,15 +156,7 @@ export default function StudentWorkPage(): React.ReactNode {
 							sections.map((section) => (
 								<Section key={section.title} title={section.title}>
 									{section.data.map((job) => (
-										<DisclosureRow
-											key={job.id}
-											detail={jobRowDetail(job)}
-											onPress={() =>
-												router.navigate({pathname: '/JobDetail', params: {jobId: job.id}})
-											}
-											title={displayTitle(job.title)}
-											titleLines={2}
-										/>
+										<JobRow key={job.id} job={job} onOpen={openJob} />
 									))}
 								</Section>
 							))

@@ -28,12 +28,23 @@ const TERM_ORDER: Array<JobTerm | typeof NOT_STATED> = [
 	NOT_STATED,
 ]
 
+/// Each posting's facets and title words, worked out once per posting rather
+/// than on every search or filter change. Keyed by the posting object, so a
+/// refetch's new objects start fresh and old ones are let go.
+const facetsCache = new WeakMap<JobSummary, JobFacets>()
+const titleWordsCache = new WeakMap<JobSummary, string[]>()
+
 function facetsOf(job: JobSummary): JobFacets {
+	let cached = facetsCache.get(job)
+	if (cached) return cached
+
 	let code = jobCode(job.title)
-	return {
+	let facets = {
 		level: code ? LEVEL_LABELS[code.tier] : NOT_STATED,
 		term: jobTerm(job.title) ?? NOT_STATED,
 	}
+	facetsCache.set(job, facets)
+	return facets
 }
 
 function listFilter(
@@ -82,10 +93,19 @@ function searchWords(text: string): string[] {
 	return words(deburr(unmarked.replaceAll(/['’]/gu, '')))
 }
 
+function titleWordsOf(job: JobSummary): string[] {
+	let cached = titleWordsCache.get(job)
+	if (cached) return cached
+
+	let titleWords = searchWords(displayTitle(job.title))
+	titleWordsCache.set(job, titleWords)
+	return titleWords
+}
+
 /// Every word of the query has to start some word of the title the student
 /// sees -- not the term prefix or pay code, which are hidden from them.
 function matchesSearch(job: JobSummary, queryWords: string[]): boolean {
-	let titleWords = searchWords(displayTitle(job.title))
+	let titleWords = titleWordsOf(job)
 	return queryWords.every((query) => titleWords.some((word) => word.startsWith(query)))
 }
 

@@ -58,8 +58,9 @@ function formatWage(code: JobCode): string {
 	return `$${hourlyWage(code).toFixed(2)}/hr`
 }
 
-/// The line under a posting's title in the list: its wage, when the title
-/// carries a pay code, and when it went up.
+/// The line under a posting's title in the list: its term, unless it is the
+/// academic year nearly every posting runs for; its wage, when the title
+/// carries a pay code; and when it went up.
 export function jobRowDetail(
 	job: Pick<JobSummary, 'title' | 'postedDate'>,
 	locales?: string,
@@ -67,7 +68,12 @@ export function jobRowDetail(
 	let code = jobCode(job.title)
 	let wage = code ? formatWage(code) : undefined
 
-	let parts = [wage, postedOn(job.postedDate, locales)].filter((part) => part !== undefined)
+	let term = jobTerm(job.title)
+	let unusualTerm = term === 'Academic Year' ? undefined : term
+
+	let parts = [unusualTerm, wage, postedOn(job.postedDate, locales)].filter(
+		(part) => part !== undefined,
+	)
 	return parts.length > 0 ? parts.join(' · ') : undefined
 }
 
@@ -107,4 +113,19 @@ export function jobDetailFields(job: JobDetail): JobField[] {
 
 	let rest = job.fields.filter((field) => field.label !== WAGE_LABEL)
 	return [...(wage ? [wage] : []), ...fromTitle, ...rest]
+}
+
+/// Which of its three states the Student Work list is in.
+///
+/// Postings are saved between launches, so a failed refetch still has the
+/// last good board to show; the error is only for a load with nothing saved.
+export function listState(query: {
+	isError: boolean
+	isLoading: boolean
+	hasPostings: boolean
+}): 'error' | 'loading' | 'list' {
+	if (query.hasPostings) return 'list'
+	if (query.isError) return 'error'
+	if (query.isLoading) return 'loading'
+	return 'list'
 }

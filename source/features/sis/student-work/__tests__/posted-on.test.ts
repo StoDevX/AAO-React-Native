@@ -14,8 +14,8 @@ describe('postedOn', () => {
 		expect(postedOn('not a date')).toBeUndefined()
 	})
 
-	/// `PostedDate` carries no zone, so parsing it as UTC would roll the date
-	/// back a day for every reader west of Greenwich -- St. Olaf included.
+	// `PostedDate` carries no zone, so parsing it as UTC would roll the date
+	// back a day for every reader west of Greenwich -- St. Olaf included.
 	test('reads the date as local time, not UTC', () => {
 		expect(postedOn('2026-01-01', 'en-US')).toBe('Posted Jan 1, 2026')
 	})
