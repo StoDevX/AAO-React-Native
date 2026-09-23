@@ -3,7 +3,8 @@ import {LoadingView, NoticeView} from '@frogpond/notice'
 import {Stack, useRouter} from 'expo-router'
 import * as React from 'react'
 import {useEffect, useMemo} from 'react'
-import {ScrollView, StyleSheet, View} from 'react-native'
+import {ScrollView, StyleSheet} from 'react-native'
+import {SafeAreaView} from 'react-native-safe-area-context'
 import {useAppSelector} from '../../source/redux/hooks'
 import {selectRecentFilters, selectRecentSearches} from '../../source/redux/parts/courses'
 import {RecentItemsList} from '../../source/features/sis/components/recents-list'
@@ -73,7 +74,7 @@ function CourseSearchView(): React.ReactNode {
 
 			<SearchBar onChangeText={setTypedQuery} value={typedQuery} />
 
-			<View style={[styles.container, styles.common]}>
+			<SafeAreaView edges={['left', 'right']} style={[styles.container, styles.common]}>
 				<ScrollView
 					// needed for handling native searchbar alignment
 					contentInsetAdjustmentBehavior="automatic"
@@ -100,7 +101,7 @@ function CourseSearchView(): React.ReactNode {
 						title="Browse"
 					/>
 				</ScrollView>
-			</View>
+			</SafeAreaView>
 		</>
 	)
 }
