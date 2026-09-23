@@ -1,14 +1,8 @@
 // app/(home)/StudentOrgs/index.tsx
 import * as React from 'react'
-import {StyleSheet, useWindowDimensions} from 'react-native'
-import {Grid, Host, ScrollView, Spacer, VStack} from '@expo/ui/swift-ui'
-import {
-	accessibilityElement,
-	accessibilityIdentifier,
-	frame,
-	padding,
-	refreshable,
-} from '@expo/ui/swift-ui/modifiers'
+import {StyleSheet} from 'react-native'
+import {Host, ScrollView, VStack} from '@expo/ui/swift-ui'
+import {frame, padding, refreshable} from '@expo/ui/swift-ui/modifiers'
 import {LoadingView, NoticeView} from '@frogpond/notice'
 import * as c from '@frogpond/colors'
 import {Stack, useRouter} from 'expo-router'
@@ -25,13 +19,8 @@ import {OrgResultsList} from '../../../source/features/student-orgs/org-results-
 import {studentOrgsOptions} from '../../../source/features/student-orgs/query'
 import {filterAndGroupOrgs} from '../../../source/features/student-orgs/search'
 import type {StudentOrgType} from '../../../source/features/student-orgs/types'
-import {
-	columnsForFontScale,
-	FILL_WIDTH,
-	inRows,
-	SCREEN_MARGIN,
-	TILE_SPACING,
-} from '../../../source/components/tile-layout'
+import {FILL_WIDTH, SCREEN_MARGIN, TILE_SPACING} from '../../../source/components/tile-layout'
+import {TileGrid} from '../../../source/components/tile-grid'
 import {SearchBar} from '../../../source/components/search-bar'
 
 const styles = StyleSheet.create({
@@ -202,10 +191,6 @@ type LandingProps = {
  * from.
  */
 function StudentOrgsLanding({tiles, onSelectCategory, onRefresh}: LandingProps): React.ReactNode {
-	let {fontScale} = useWindowDimensions()
-
-	let columns = columnsForFontScale(fontScale)
-
 	return (
 		<Host matchContents={false} style={styles.host}>
 			<ScrollView
@@ -223,34 +208,14 @@ function StudentOrgsLanding({tiles, onSelectCategory, onRefresh}: LandingProps):
 					]}
 					spacing={TILE_SPACING}
 				>
-					<Grid
-						alignment="top"
-						horizontalSpacing={TILE_SPACING}
-						// Same reason as Directory's contact grid: the Grid itself
-						// carries no accessibility presence of its own, so this gives
-						// XCUITest a stable element to count tiles inside of.
-						modifiers={[accessibilityElement('contain'), accessibilityIdentifier(CATEGORY_GRID_ID)]}
-						verticalSpacing={TILE_SPACING}
-					>
-						{inRows(tiles, columns).map((row, i) => (
-							// oxlint-disable-next-line react/no-array-index-key -- a row is its position; tiles are keyed by name
-							<Grid.Row key={i}>
-								{row.map((tile) => (
-									<CategoryTile
-										key={tile.name}
-										onPress={() => onSelectCategory(tile.name)}
-										tile={tile}
-									/>
-								))}
-								{/* A short last row leaves its columns empty rather than
-								    stretching the tiles in it -- see the same note on
-								    Directory's contact grid. */}
-								{Array.from({length: columns - row.length}, (_, j) => (
-									<Spacer key={j} />
-								))}
-							</Grid.Row>
-						))}
-					</Grid>
+					<TileGrid
+						accessibilityId={CATEGORY_GRID_ID}
+						items={tiles}
+						keyForItem={(tile) => tile.name}
+						renderItem={(tile) => (
+							<CategoryTile onPress={() => onSelectCategory(tile.name)} tile={tile} />
+						)}
+					/>
 				</VStack>
 			</ScrollView>
 		</Host>
