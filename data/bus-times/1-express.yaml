@@ -43,3 +43,15 @@ schedules:
       - [7:00pm, 7:08pm, 7:12pm, 7:16pm, 7:26pm, 7:36pm, 7:41pm, 7:50pm]
       - [8:00pm, 8:08pm, 8:12pm, 8:16pm, 8:26pm, 8:36pm, 8:41pm, 8:50pm]
       - [9:00pm, 9:08pm, 9:12pm, 9:16pm, 9:26pm, 9:36pm, 9:41pm, 9:50pm]
+    # The brochure's no-service holidays, for the year it covers. The two on a
+    # Sunday change nothing, since the Express never runs then, but are kept so
+    # this list reads against the brochure's one for one.
+    closures:
+      - {date: '2026-09-07', name: Labor Day}
+      - {date: '2026-11-26', name: Thanksgiving}
+      - {date: '2026-11-27', name: Day after Thanksgiving}
+      - {date: '2026-12-25', name: Christmas Day}
+      - {date: '2027-01-01', name: New Years Day}
+      - {date: '2027-03-28', name: Easter Sunday}
+      - {date: '2027-05-31', name: Memorial Day}
+      - {date: '2027-07-04', name: Independence Day}
