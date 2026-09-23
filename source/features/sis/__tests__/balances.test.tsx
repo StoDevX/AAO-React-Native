@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {fireEvent, render, screen} from '@testing-library/react-native'
+import {render, screen} from '@testing-library/react-native'
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query'
 
 import {BalancesView} from '../balances'
@@ -13,30 +13,32 @@ jest.mock('@expo/ui/swift-ui/modifiers', () => {
 	return require('../../../testing/expo-ui-mock') as typeof import('../../../testing/expo-ui-mock')
 })
 
-const mockNavigate = jest.fn()
-
-jest.mock('expo-router', () => ({useRouter: () => ({navigate: mockNavigate})}))
+jest.mock('expo-router', () => ({useRouter: () => ({navigate: jest.fn()})}))
 
 // The banner fetches its own FAQs, which none of these tests are about.
 jest.mock('../../../features/faqs/banner', () => ({FaqBannerGroup: () => null}))
 
 // login.ts reaches the persisted query client, and through it native modules
 // Jest does not have. Only the error class and the credentials query matter
-// here, and no account is stored.
+// here.
 jest.mock('../../../lib/login', () => ({
-	NoCredentialsError: class NoCredentialsError extends Error {},
-	credentialsOptions: {queryKey: ['credentials'], queryFn: () => Promise.resolve(null)},
+	LoginFailedError: class LoginFailedError extends Error {},
+	credentialsOptions: {
+		queryKey: ['credentials'],
+		queryFn: () => Promise.resolve({username: 'ole', password: 'lion'}),
+	},
 }))
 
-// A run with no stored account: the balances request fails the way it does
-// before anyone has logged in.
+const MOCK_LOGIN_FAILURE = 'Login failed: true'
+
+// A stored account whose login St. Olaf refuses.
 jest.mock('../../../lib/financials', () => ({
 	balancesOptions: () => ({
 		queryKey: ['balances'],
 		queryFn: () => {
-			let {NoCredentialsError} =
+			let {LoginFailedError} =
 				jest.requireMock<typeof import('../../../lib/login')>('../../../lib/login')
-			return Promise.reject(new NoCredentialsError('no credentials'))
+			return Promise.reject(new LoginFailedError(MOCK_LOGIN_FAILURE))
 		},
 		retry: false,
 	}),
@@ -58,13 +60,10 @@ function renderBalances() {
 	)
 }
 
-describe('BalancesView without an account', () => {
-	/// The row draws a chevron, so it must actually go somewhere.
-	it('sends you to Settings to log in', async () => {
+describe('BalancesView when the login fails', () => {
+	it('says why there are no figures', async () => {
 		await renderBalances()
 
-		fireEvent.press(await screen.findByLabelText('Log in with St. Olaf'))
-
-		expect(mockNavigate).toHaveBeenCalledWith('/SettingsRoot')
+		expect(await screen.findByText(MOCK_LOGIN_FAILURE)).toBeOnTheScreen()
 	})
 })
