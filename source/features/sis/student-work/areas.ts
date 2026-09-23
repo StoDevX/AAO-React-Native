@@ -43,6 +43,8 @@ export type AreaStatus = {
 	empty: boolean
 	/// Every unit's search has answered, whether or not it succeeded.
 	settled: boolean
+	/// Counted, but some of its searches failed, so postings may be missing.
+	partial: boolean
 }
 
 /// Which of the board's postings each area holds, keyed by the area's slug.
@@ -57,9 +59,11 @@ export function areaMembership(
 		let ids = new Set<string>()
 		let answered = 0
 		let settled = true
+		let failed = false
 		for (let unit of area.units) {
 			let result = units.get(unit)
 			if (result === undefined || result.status === 'pending') settled = false
+			if (result?.status === 'error') failed = true
 			if (result?.status !== 'success') continue
 			answered += 1
 			for (let id of result.ids) {
@@ -69,7 +73,13 @@ export function areaMembership(
 
 		let allAnswered = answered === area.units.length
 		let count = ids.size > 0 || allAnswered ? ids.size : undefined
-		statuses.set(area.slug, {ids, count, empty: allAnswered && ids.size === 0, settled})
+		statuses.set(area.slug, {
+			ids,
+			count,
+			empty: allAnswered && ids.size === 0,
+			settled,
+			partial: failed && count !== undefined,
+		})
 	}
 
 	return statuses
@@ -79,12 +89,13 @@ export function areaMembership(
 /// Until every search for a chosen area has answered, the list cannot tell
 /// the area's postings from the rest, and one that filled in search by search
 /// would jump back to the top each time. It fails only when no chosen area
-/// loaded: one that did is worth showing beside one that failed.
+/// loaded; when some searches failed but postings loaded, it is partial, and
+/// the list shows them with word that some may be missing.
 export function chosenAreaState(
 	chosenSlugs: string[] | null,
 	areas: StudentWorkArea[],
 	membership: Map<string, AreaStatus>,
-): 'ready' | 'loading' | 'failed' {
+): 'ready' | 'partial' | 'loading' | 'failed' {
 	let statuses = areas
 		.filter((area) => (chosenSlugs ?? []).includes(area.slug))
 		.map((area) => membership.get(area.slug))
@@ -94,6 +105,9 @@ export function chosenAreaState(
 	}
 	if (statuses.length > 0 && statuses.every((status) => status?.count === undefined)) {
 		return 'failed'
+	}
+	if (statuses.some((status) => status?.count === undefined || status?.partial)) {
+		return 'partial'
 	}
 	return 'ready'
 }

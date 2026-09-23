@@ -28,7 +28,13 @@ describe('areaMembership', () => {
 			]),
 			BOARD,
 		).get('music')
-		expect(status).toEqual({ids: new Set(['a', 'b']), count: 2, empty: false, settled: true})
+		expect(status).toEqual({
+			ids: new Set(['a', 'b']),
+			count: 2,
+			empty: false,
+			settled: true,
+			partial: false,
+		})
 	})
 
 	test('calls an area empty only when every search answered with nothing', () => {
@@ -37,7 +43,7 @@ describe('areaMembership', () => {
 			results([['1', {status: 'success', ids: []}]]),
 			BOARD,
 		).get('art')
-		expect(status).toEqual({ids: new Set(), count: 0, empty: true, settled: true})
+		expect(status).toEqual({ids: new Set(), count: 0, empty: true, settled: true, partial: false})
 	})
 
 	test('counts what loaded when one of an area’s searches failed', () => {
@@ -49,7 +55,13 @@ describe('areaMembership', () => {
 			]),
 			BOARD,
 		).get('music')
-		expect(status).toEqual({ids: new Set(['a']), count: 1, empty: false, settled: true})
+		expect(status).toEqual({
+			ids: new Set(['a']),
+			count: 1,
+			empty: false,
+			settled: true,
+			partial: true,
+		})
 	})
 
 	test('never calls an area empty when its searches failed', () => {
@@ -58,7 +70,13 @@ describe('areaMembership', () => {
 			results([['1', {status: 'error'}]]),
 			BOARD,
 		).get('music')
-		expect(status).toEqual({ids: new Set(), count: undefined, empty: false, settled: true})
+		expect(status).toEqual({
+			ids: new Set(),
+			count: undefined,
+			empty: false,
+			settled: true,
+			partial: false,
+		})
 	})
 
 	test('shows no count before any search answers', () => {
@@ -67,7 +85,13 @@ describe('areaMembership', () => {
 			results([['1', {status: 'pending'}]]),
 			BOARD,
 		).get('music')
-		expect(status).toEqual({ids: new Set(), count: undefined, empty: false, settled: false})
+		expect(status).toEqual({
+			ids: new Set(),
+			count: undefined,
+			empty: false,
+			settled: false,
+			partial: false,
+		})
 	})
 
 	test('counts a posting once when two of an area’s units return it', () => {
@@ -99,7 +123,17 @@ describe('chosenAreaState', () => {
 
 	function status(overrides: Partial<AreaStatus>): Map<string, AreaStatus> {
 		return new Map([
-			['music', {ids: new Set(), count: undefined, empty: false, settled: false, ...overrides}],
+			[
+				'music',
+				{
+					ids: new Set(),
+					count: undefined,
+					empty: false,
+					settled: false,
+					partial: false,
+					...overrides,
+				},
+			],
 		])
 	}
 
@@ -125,14 +159,25 @@ describe('chosenAreaState', () => {
 		expect(chosenAreaState(['music'], [MUSIC], status({count: 1, settled: false}))).toBe('loading')
 	})
 
-	// An area that did load is still worth showing beside one that failed.
-	test('is ready when one chosen area failed and another loaded', () => {
+	// A student should know when an area's list may be missing postings.
+	test('is partial when some of a chosen area’s searches failed', () => {
+		expect(
+			chosenAreaState(['music'], [MUSIC], status({count: 1, settled: true, partial: true})),
+		).toBe('partial')
+	})
+
+	// An area that did load is still worth showing beside one that failed, with
+	// word that the list is incomplete.
+	test('is partial when one chosen area failed and another loaded', () => {
 		const ART = area('art', ['2'])
 		let membership = new Map([
-			['music', {ids: new Set<string>(), count: undefined, empty: false, settled: true}],
-			['art', {ids: new Set(['a']), count: 1, empty: false, settled: true}],
+			[
+				'music',
+				{ids: new Set<string>(), count: undefined, empty: false, settled: true, partial: false},
+			],
+			['art', {ids: new Set(['a']), count: 1, empty: false, settled: true, partial: false}],
 		])
-		expect(chosenAreaState(['music', 'art'], [MUSIC, ART], membership)).toBe('ready')
+		expect(chosenAreaState(['music', 'art'], [MUSIC, ART], membership)).toBe('partial')
 	})
 })
 

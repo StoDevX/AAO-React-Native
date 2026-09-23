@@ -7,9 +7,16 @@ import {
 	ProgressView,
 	RNHostView,
 	Section,
+	Text,
 	VStack,
 } from '@expo/ui/swift-ui'
-import {accessibilityIdentifier, id, listStyle, refreshable} from '@expo/ui/swift-ui/modifiers'
+import {
+	accessibilityIdentifier,
+	foregroundStyle,
+	id,
+	listStyle,
+	refreshable,
+} from '@expo/ui/swift-ui/modifiers'
 import * as c from '@frogpond/colors'
 import {FilterToolbar} from '@frogpond/filter'
 import {LoadingView, NoticeView} from '@frogpond/notice'
@@ -69,6 +76,12 @@ const JobRow = React.memo(function JobRow({
 	)
 })
 
+/// Some of a chosen area's searches failed, so the list may be short.
+const PARTIAL_NOTICE = 'Some of this area’s postings couldn’t load. Pull down to try again.'
+
+/// Offline, with no board saved to show.
+const OFFLINE_NOTICE = 'Student Work needs a connection to load the job board the first time.'
+
 type PostingsListProps = {
 	/// The search the screen around the list owns.
 	searchQuery: string
@@ -108,7 +121,16 @@ export function PostingsList({searchQuery, initialChosen}: PostingsListProps): R
 		[router],
 	)
 
-	let state = listState({isError, isLoading, hasPostings: jobs.length > 0})
+	let state = listState({
+		isError,
+		isLoading,
+		isPaused: board.fetchStatus === 'paused',
+		hasPostings: jobs.length > 0,
+	})
+
+	if (state === 'offline') {
+		return <NoticeView buttonText="Try Again" onPress={refetch} text={OFFLINE_NOTICE} />
+	}
 
 	if (state === 'error') {
 		let message = error instanceof Error ? error.message : String(error)
@@ -183,20 +205,27 @@ export function PostingsList({searchQuery, initialChosen}: PostingsListProps): R
 								systemImage="wifi.exclamationmark"
 								title="Couldn’t load this area’s postings."
 							/>
-						) : sections.length === 0 ? (
+						) : sections.length === 0 && areaState !== 'partial' ? (
 							<ContentUnavailableView
 								description={isNarrowed ? 'Try a different search or filter.' : undefined}
 								systemImage="briefcase"
 								title={isNarrowed ? 'No matching jobs.' : 'There are no open job postings.'}
 							/>
 						) : (
-							sections.map((section) => (
-								<Section key={section.title} title={section.title}>
-									{section.data.map((job) => (
-										<JobRow key={job.id} isNew={newIds.has(job.id)} job={job} onOpen={openJob} />
-									))}
-								</Section>
-							))
+							<>
+								{areaState === 'partial' ? (
+									<Section>
+										<Text modifiers={[foregroundStyle(c.secondaryLabel)]}>{PARTIAL_NOTICE}</Text>
+									</Section>
+								) : null}
+								{sections.map((section) => (
+									<Section key={section.title} title={section.title}>
+										{section.data.map((job) => (
+											<JobRow key={job.id} isNew={newIds.has(job.id)} job={job} onOpen={openJob} />
+										))}
+									</Section>
+								))}
+							</>
 						)}
 					</List>
 				</VStack>

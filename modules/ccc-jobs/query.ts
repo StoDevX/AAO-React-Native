@@ -41,6 +41,9 @@ async function resolveJobSite(): Promise<string> {
 
 export const jobPostingsOptions = queryOptions({
 	queryKey: keys.postings,
+	// Every Student Work screen reads the board, so going from the landing to
+	// a list would otherwise refetch it; pull-to-refresh still does.
+	staleTime: 5 * 60 * 1000,
 	queryFn: async ({signal}): Promise<JobCategory[]> => {
 		// The live board is whatever St. Olaf is hiring for this week, which a
 		// test cannot name -- see `fixtures/uitest-postings.ts`.

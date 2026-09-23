@@ -18,8 +18,8 @@ import {unitResultOf} from './unit-result'
 export type StudentWorkBoard = {
 	board: UseQueryResult<JobCategory[]>
 	jobs: JobSummary[]
-	/// Undefined until the areas file has loaded; see `studentWorkAreasOptions`.
-	areas: StudentWorkArea[] | undefined
+	/// Always there: the areas query starts from the copy the app ships.
+	areas: StudentWorkArea[]
 	context: FilterContext
 	/// Refetch the board and every unit search, for pull-to-refresh: a failed
 	/// unit search would otherwise stay failed until it went stale.
@@ -33,7 +33,7 @@ export function useStudentWorkBoard(): StudentWorkBoard {
 	let board = useQuery(jobPostingsOptions)
 	let {data: areas} = useQuery(studentWorkAreasOptions)
 
-	let units = React.useMemo(() => (areas ?? []).flatMap((area) => area.units), [areas])
+	let units = React.useMemo(() => areas.flatMap((area) => area.units), [areas])
 	// Stable while the units are, so useQueries rebuilds the map only when some
 	// search's result changes; an inline function would rebuild it every render.
 	let combine = React.useCallback(
@@ -52,9 +52,21 @@ export function useStudentWorkBoard(): StudentWorkBoard {
 	)
 	let boardIds = React.useMemo(() => new Set(jobs.map((job) => job.id)), [jobs])
 
+	// What the searches found, as text: a search starting or finishing with
+	// the same postings leaves it unchanged, so the membership -- and every
+	// list's filters and sections after it -- is only rebuilt when a result is.
+	let unitSignature = Array.from(unitResults)
+		.map(
+			([unit, result]) =>
+				`${unit}:${result.status === 'success' ? result.ids.join(',') : result.status}`,
+		)
+		.join('|')
 	let membership = React.useMemo(
-		() => areaMembership(areas ?? [], unitResults, boardIds),
-		[areas, unitResults, boardIds],
+		() => areaMembership(areas, unitResults, boardIds),
+		// unitResults is a new map whenever any search's fetch state changes;
+		// unitSignature stands in for what it holds.
+		// oxlint-disable-next-line react-hooks/exhaustive-deps
+		[areas, unitSignature, boardIds],
 	)
 
 	// The store changes only when the student leaves Student Work, so the dots
@@ -70,13 +82,22 @@ export function useStudentWorkBoard(): StudentWorkBoard {
 	)
 
 	let context = React.useMemo(
-		(): FilterContext => ({areas: areas ?? [], membership, newIds, today: now().toDate()}),
+		(): FilterContext => ({areas, membership, newIds, today: now().toDate()}),
 		[areas, membership, newIds],
 	)
 
 	let refetchBoard = board.refetch
 	let refresh = React.useCallback(async () => {
-		await Promise.all([refetchBoard(), queryClient.refetchQueries({queryKey: keys.units})])
+		await Promise.all([
+			refetchBoard(),
+			// Only what is stale or failed: fresh searches have nothing new, and
+			// waiting on all fifty-one would make every pull slow.
+			queryClient.refetchQueries({
+				queryKey: keys.units,
+				type: 'active',
+				predicate: (query) => query.state.status === 'error' || query.isStale(),
+			}),
+		])
 	}, [refetchBoard, queryClient])
 
 	return {board, jobs, areas, context, refresh}

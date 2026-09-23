@@ -65,7 +65,7 @@ describe('under UI testing', () => {
 })
 
 describe('unitPostingsOptions', () => {
-	// Every Student Work screen asks for all 49 units; a unit's postings change
+	// Every Student Work screen asks for all 51 units; a unit's postings change
 	// on the order of days, so they are not asked for again on every screen.
 	test('keeps a unit’s postings fresh for two hours', () => {
 		expect(unitPostingsOptions('11150').staleTime).toBe(2 * 60 * 60 * 1000)
@@ -73,5 +73,13 @@ describe('unitPostingsOptions', () => {
 
 	test('files every unit search under one prefix, for retrying them together', () => {
 		expect(unitPostingsOptions('11150').queryKey.slice(0, 2)).toEqual([...keys.units])
+	})
+})
+
+describe('jobPostingsOptions', () => {
+	// Every Student Work screen reads the board, so a tap from the landing to a
+	// list would refetch it without this.
+	test('keeps the board fresh for five minutes', () => {
+		expect(jobPostingsOptions.staleTime).toBe(5 * 60 * 1000)
 	})
 })

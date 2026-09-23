@@ -41,7 +41,13 @@ const DINING: StudentWorkArea = {
 	units: ['22005'],
 }
 
-const DINING_STATUS: AreaStatus = {ids: new Set(['1', '3']), count: 2, empty: false, settled: true}
+const DINING_STATUS: AreaStatus = {
+	ids: new Set(['1', '3']),
+	count: 2,
+	empty: false,
+	settled: true,
+	partial: false,
+}
 
 const FAITH: StudentWorkArea = {
 	name: 'Faith',
@@ -51,7 +57,13 @@ const FAITH: StudentWorkArea = {
 	units: ['45158'],
 }
 
-const FAITH_STATUS: AreaStatus = {ids: new Set(), count: 0, empty: true, settled: true}
+const FAITH_STATUS: AreaStatus = {
+	ids: new Set(),
+	count: 0,
+	empty: true,
+	settled: true,
+	partial: false,
+}
 
 const CONTEXT: FilterContext = {
 	areas: [DINING, FAITH],

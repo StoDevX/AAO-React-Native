@@ -37,8 +37,9 @@ describe('useStudentWorkBoard', () => {
 		expect(result.current.context).toBe(before)
 	})
 
-	// A unit search that failed would otherwise stay failed until it went stale.
-	test('refreshes the unit searches as well as the board', async () => {
+	// A search starting or finishing with the same postings changes nothing a
+	// list shows, and must not rebuild every list's filters and sections.
+	test('keeps its context when a unit search refetches the same postings', async () => {
 		let {result} = await renderHook(
 			() => ({board: useStudentWorkBoard(), client: useQueryClient()}),
 			{wrapper: Wrapper},
@@ -47,11 +48,39 @@ describe('useStudentWorkBoard', () => {
 			expect(result.current.board.context.membership.get('dining')?.settled).toBe(true),
 		)
 
-		let unitState = () => result.current.client.getQueryState(keys.unit('22005'))
-		let before = unitState()?.dataUpdateCount ?? 0
+		let before = result.current.board.context
+		await act(async () => {
+			await result.current.client.refetchQueries({queryKey: keys.unit('22005')})
+		})
+		expect(result.current.board.context).toBe(before)
+	})
+
+	// A refresh retries what is stale or failed; re-running fresh searches
+	// would make every pull wait on all fifty-one of them.
+	test('refreshes stale unit searches and leaves fresh ones alone', async () => {
+		let {result} = await renderHook(
+			() => ({board: useStudentWorkBoard(), client: useQueryClient()}),
+			{wrapper: Wrapper},
+		)
+		await waitFor(() =>
+			expect(result.current.board.context.membership.get('dining')?.settled).toBe(true),
+		)
+
+		let updates = (unit: string) =>
+			result.current.client.getQueryState(keys.unit(unit))?.dataUpdateCount ?? 0
+		await act(async () => {
+			await result.current.client.invalidateQueries({
+				queryKey: keys.unit('22005'),
+				refetchType: 'none',
+			})
+		})
+		let staleBefore = updates('22005')
+		let freshBefore = updates('16118')
+
 		await act(async () => {
 			await result.current.board.refresh()
 		})
-		expect(unitState()?.dataUpdateCount).toBeGreaterThan(before)
+		expect(updates('22005')).toBeGreaterThan(staleBefore)
+		expect(updates('16118')).toBe(freshBefore)
 	})
 })

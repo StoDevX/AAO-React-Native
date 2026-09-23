@@ -1,5 +1,4 @@
 import * as React from 'react'
-import {LoadingView} from '@frogpond/notice'
 import {useDebounce} from '@frogpond/use-debounce'
 import {Stack, useLocalSearchParams} from 'expo-router'
 import {useQuery} from '@tanstack/react-query'
@@ -25,12 +24,9 @@ export default function StudentWorkPostingsPage(): React.ReactNode {
 	let [query, setQuery] = React.useState('')
 	let searchQuery = useDebounce(query, 200)
 
-	// The prefill names areas by slug, so the list waits for the areas file,
-	// which the app ships a copy of and so never waits long.
-	let initialChosen = React.useMemo(
-		() => (areas ? prefillFromParams(params, areas) : undefined),
-		[areas, params],
-	)
+	// The areas query starts from the copy the app ships, so the prefill can
+	// check an area's slug straight away.
+	let initialChosen = React.useMemo(() => prefillFromParams(params, areas), [areas, params])
 
 	return (
 		<>
@@ -39,11 +35,7 @@ export default function StudentWorkPostingsPage(): React.ReactNode {
 				<Stack.Toolbar.SearchBarSlot />
 			</Stack.Toolbar>
 			<SearchBar onChangeText={setQuery} value={query} />
-			{initialChosen ? (
-				<PostingsList initialChosen={initialChosen} searchQuery={searchQuery} />
-			) : (
-				<LoadingView />
-			)}
+			<PostingsList initialChosen={initialChosen} searchQuery={searchQuery} />
 		</>
 	)
 }

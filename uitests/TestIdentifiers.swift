@@ -238,7 +238,7 @@ struct TestIdentifiers {
 		/// has, as its row titles it. Mirrors UITEST_EXTRA_JOB_TITLE.
 		static let fixtureExtraJob = "Planetarium Student Guide"
 		/// What a new posting's row label leads with: the dot's label, from
-		/// NEW_DOT in app/(home)/StudentWork.tsx.
+		/// NEW_DOT in source/features/sis/student-work/postings-list.tsx.
 		static let newPrefix = "New, "
 		/// The list's sections, from RECENCY_ORDER in
 		/// source/features/sis/student-work/recency.ts.
@@ -277,7 +277,7 @@ struct TestIdentifiers {
 		/// Starts every filler posting's title, as FILLER_TITLE_PREFIX in
 		/// modules/ccc-jobs/fixtures/uitest-postings.ts.
 		static let fixtureFillerPrefix = "Fixture Filler Posting"
-		/// Matches POSTINGS_LIST_ID in app/(home)/StudentWork.tsx.
+		/// Matches POSTINGS_LIST_ID in source/features/sis/student-work/postings-list.tsx.
 		static let postingsList = "student-work-postings"
 	}
 

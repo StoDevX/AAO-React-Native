@@ -15,6 +15,9 @@ import {PRESETS, presetCounts} from '../../../source/features/sis/student-work/p
 import {useSeenPostingsStore} from '../../../source/features/sis/student-work/store'
 import {useStudentWorkBoard} from '../../../source/features/sis/student-work/use-board'
 
+/// Offline, with no board saved to show.
+const OFFLINE_NOTICE = 'Student Work needs a connection to load the job board the first time.'
+
 /// Student Work's landing: area tiles, then presets, each opening the
 /// postings list with its filters prefilled. Typing a search swaps the
 /// landing for the whole board's matching postings.
@@ -64,8 +67,18 @@ export default function StudentWorkPage(): React.ReactNode {
 	let state = listState({
 		isError: board.isError,
 		isLoading: board.isLoading,
+		isPaused: board.fetchStatus === 'paused',
 		hasPostings: jobs.length > 0,
 	})
+
+	if (state === 'offline') {
+		return (
+			<>
+				{chrome}
+				<NoticeView buttonText="Try Again" onPress={board.refetch} text={OFFLINE_NOTICE} />
+			</>
+		)
+	}
 
 	if (state === 'error') {
 		let message = board.error instanceof Error ? board.error.message : String(board.error)
@@ -81,7 +94,7 @@ export default function StudentWorkPage(): React.ReactNode {
 		)
 	}
 
-	if (state === 'loading' || !areas) {
+	if (state === 'loading') {
 		return (
 			<>
 				{chrome}
