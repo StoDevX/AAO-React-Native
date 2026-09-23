@@ -79,18 +79,17 @@ describe('the bundled bus-times data', () => {
 			}
 		}
 
-		// The real feed's Blue and Red lines each carry four closures and
-		// Express carries one; if the generator ever stopped emitting them,
-		// this loop would silently pass by finding nothing to check.
+		// The Blue and Red lines each carry four closures from the feed, and the
+		// Express its brochure's holidays; if they ever all went missing, this
+		// loop would silently pass by finding nothing to check.
 		expect(sawAClosure).toBe(true)
 	})
 
 	test('every generated line publishes a coordinate for every stop it serves', () => {
-		// The generator always sets `timezone`; a hand-maintained line, like Oles
-		// Go, never does -- that is how this picks out "generated" lines. If the
-		// generator ever stopped setting `timezone` too, this filter would match
-		// nothing and the loop below would pass by doing nothing, so the count is
-		// asserted directly rather than trusted.
+		// The schema requires `timezone` of every line, so this keeps every
+		// visible one. The count is asserted directly rather than trusted: if the
+		// filter ever matched nothing, the loop below would pass by doing
+		// nothing.
 		let generatedLines = lines.filter((line) => line.timezone !== undefined)
 
 		expect(generatedLines.length).toBeGreaterThanOrEqual(3)

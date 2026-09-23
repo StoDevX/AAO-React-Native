@@ -24,6 +24,10 @@ routes:
   # it is written out literally here rather than derived from `line` or
   # `route_id` so a future reader does not go looking for where the
   # generator computes display order.
+  #
+  # The Express (route 77629) is not listed: the feed carries last year's
+  # timetable for it, so 1-express.yaml is transcribed by hand from the
+  # operator's brochure instead. Add it back once the feed matches the brochure.
   '77627':
     expect_name: Blue - Northfield
     file: 4-blue-line.yaml
@@ -42,11 +46,11 @@ routes:
       dot: rgb(151, 27, 16)
     notice: Route that services the south part of the city. Oles ride free with a student ID.
 
+# Routes kept by hand in data/bus-times/ because the feed's copy was wrong.
+# The weekly refresh opens an issue when the feed runs one again, so the
+# hand-kept file does not outlive its reason. Keyed by GTFS route_id, like
+# `routes`; move an entry back there once the feed can be trusted.
+watched_routes:
   '77629':
-    expect_name: Express Northfield
-    file: 1-express.yaml
     line: Express Bus
-    colors:
-      bar: rgb(134, 198, 124)
-      dot: rgb(32, 87, 14)
-    notice: Route that services the majority of the city limits. Normal route service is free with a St. Olaf ID.
+    file: 1-express.yaml

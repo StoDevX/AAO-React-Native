@@ -39,6 +39,15 @@ class ModuleStudentOrgsTests: UITestCase {
 			.capture("Student Orgs search results")
 	}
 
+	func testRefiningASearchFromFarDownTheResultsStartsAtTheTop() throws {
+		StudentOrgsScreen(app: app)
+			.navigate()
+			.search(for: "a")
+			.scrollResultsDown()
+			.refineSearch(appending: "n")
+			.verifyResultsStartAtTheTop()
+	}
+
 	func testStudentOrgDetail() throws {
 		// Searching first, rather than tapping straight from the landing
 		// screen, is what disambiguates: the landing screen shows category

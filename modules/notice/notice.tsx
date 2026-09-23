@@ -1,13 +1,6 @@
 import * as React from 'react'
-import {
-	ActivityIndicator,
-	StyleProp,
-	StyleSheet,
-	Text,
-	TextStyle,
-	View,
-	ViewStyle,
-} from 'react-native'
+import {ActivityIndicator, StyleProp, StyleSheet, Text, TextStyle, ViewStyle} from 'react-native'
+import {SafeAreaView} from 'react-native-safe-area-context'
 import * as c from '@frogpond/colors'
 import {Button} from '@frogpond/button'
 
@@ -54,7 +47,7 @@ export function NoticeView(props: Props): React.ReactNode {
 	let {spinner} = props
 
 	return (
-		<View style={[styles.container, style]}>
+		<SafeAreaView edges={['left', 'right']} style={[styles.container, style]}>
 			{spinner ? <ActivityIndicator style={styles.spinner} /> : null}
 
 			{header ? (
@@ -70,6 +63,6 @@ export function NoticeView(props: Props): React.ReactNode {
 			{buttonText ? (
 				<Button disabled={buttonDisabled} onPress={onPress} title={buttonText} />
 			) : null}
-		</View>
+		</SafeAreaView>
 	)
 }

@@ -237,6 +237,6 @@ struct StudentWorkScreen: Screen {
 	}
 
 	private var jobsSiteLink: XCUIElement {
-		app.buttonLabelled(TestIdentifiers.StudentWork.jobsSiteLink)
+		app.linkLabelled(TestIdentifiers.StudentWork.jobsSiteLink)
 	}
 }

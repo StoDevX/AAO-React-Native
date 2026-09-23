@@ -38,16 +38,17 @@ struct MenusScreen: Screen {
 		return self
 	}
 
-	/// The header names this screen, without saying which meal it is showing.
-	///
-	/// For a cafe whose meals this suite does not pin down -- The Pause serves
-	/// whatever `data/pause-menu.yaml` says, and the Carleton tab is a chooser
-	/// with no meal at all.
+	/// The header names this screen over a line that starts with `detail`, as
+	/// the title's composed label writes it -- commas where the eye reads
+	/// bullets.
 	@discardableResult
-	func verifyHeaderNames(_ name: String) -> Self {
+	func verifyHeader(_ name: String, reading detail: String) -> Self {
+		let title = app.navigationBars.descendants(matching: .any)
+			.matching(NSPredicate(format: "label BEGINSWITH %@", "\(name), \(detail)"))
+			.firstMatch
 		XCTAssertTrue(
-			headerTitled(name).waitForExistence(timeout: 30),
-			"the header should name \(name)")
+			title.waitForExistence(timeout: 30),
+			"the header should read \(name) over \(detail)")
 		return self
 	}
 

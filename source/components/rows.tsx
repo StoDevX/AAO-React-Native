@@ -18,6 +18,8 @@ import {
 	VStack,
 } from '@expo/ui/swift-ui'
 import {
+	accessibilityAddTraits,
+	accessibilityRemoveTraits,
 	accessibilityIdentifier,
 	accessibilityLabel,
 	buttonStyle,
@@ -30,6 +32,7 @@ import {
 	shapes,
 	truncationMode,
 } from '@expo/ui/swift-ui/modifiers'
+import type {ModifierConfig} from '@expo/ui/swift-ui/modifiers'
 import * as c from '@frogpond/colors'
 
 import {detailLinesOf, rowLabel, type RowDetail} from './lib/row-text'
@@ -48,9 +51,7 @@ type ActionRowProps = RowProps & {
 /**
  * Where a row's tap goes, which its trailing accessory names: `push` draws
  * `chevron.right`, `action` draws nothing and tints the label instead, and
- * `external` draws `arrow.up.right`. `DetailRow` is the exception: its value
- * is secondary-coloured text that reads as static, so it tints for `external`
- * too, not just `action`.
+ * `external` draws `arrow.up.right`.
  */
 export type RowDestination =
 	/** Another screen in this navigation stack. */
@@ -63,9 +64,10 @@ export type RowDestination =
 /**
  * The trailing glyph naming a row's destination -- see [[RowDestination]]. An
  * action draws nothing: it completes what the row names and returns you
- * here, so there is nowhere to point.
+ * here, so there is nowhere to point. Exported for a row built by hand, so
+ * every row in the app draws the same glyph at the same size.
  */
-function RowAccessory({destination}: {destination: RowDestination}): React.ReactNode {
+export function RowAccessory({destination}: {destination: RowDestination}): React.ReactNode {
 	if (destination === 'action') {
 		return null
 	}
@@ -77,6 +79,18 @@ function RowAccessory({destination}: {destination: RowDestination}): React.React
 			systemName={destination === 'external' ? 'arrow.up.right' : 'chevron.right'}
 		/>
 	)
+}
+
+/**
+ * VoiceOver reads a row's label and never its accessory, so a row that leaves
+ * the app says so by reading as a link, as SwiftUI's own `Link` does. Adding
+ * `isLink` alone is not enough: a button keeps `isButton`, and iOS still
+ * reports it as a button until that trait is removed.
+ */
+export function destinationTraits(destination: RowDestination): ModifierConfig[] {
+	return destination === 'external'
+		? [accessibilityAddTraits(['isLink']), accessibilityRemoveTraits(['isButton'])]
+		: []
 }
 
 /**
@@ -108,8 +122,10 @@ export function NavigationRow(props: RowProps): React.ReactNode {
 }
 
 /**
- * A row that fires an action (open a URL, show an alert, mutate) rather than
- * pushing a screen. Tinted text and no chevron, since there is nowhere to go.
+ * A row that does something in place (show an alert, send a message, mutate)
+ * rather than going anywhere -- an `action` in [[RowDestination]]'s terms.
+ * Tinted text and no accessory, since there is nowhere to point. A row that
+ * opens a URL is `external`: use a `DisclosureRow` for it.
  */
 export function ActionRow(props: ActionRowProps): React.ReactNode {
 	let {title, onPress, disabled = false, destructive = false} = props
@@ -240,6 +256,7 @@ export function DisclosureRow(props: DisclosureRowProps): React.ReactNode {
 						? `${image.label}, ${rowLabel(title, detail)}`
 						: rowLabel(title, detail),
 				),
+				...destinationTraits(destination),
 				...(identifier ? [accessibilityIdentifier(identifier)] : []),
 			]}
 			onPress={onPress}
@@ -302,9 +319,10 @@ type DetailRowProps = {
 export function DetailRow(props: DetailRowProps): React.ReactNode {
 	let {label, value, valueLines, onPress, destination = 'push'} = props
 
-	// The value is secondary-coloured text that reads as static, so it is
-	// tinted whenever it is tappable and not a push.
-	let valueTint = onPress && destination !== 'push' ? c.systemBlue : c.secondaryLabel
+	// An action has no accessory, so the tint is its only sign of being
+	// tappable. A push or external value already has its glyph, and a tinted
+	// value would draw prose -- office hours, say -- as though it were a link.
+	let valueTint = onPress && destination === 'action' ? c.systemBlue : c.secondaryLabel
 
 	let content = (
 		<LabeledContent label={label}>
@@ -325,7 +343,11 @@ export function DetailRow(props: DetailRowProps): React.ReactNode {
 
 	return (
 		<Button
-			modifiers={[buttonStyle('plain'), accessibilityLabel(`${label}, ${value}`)]}
+			modifiers={[
+				buttonStyle('plain'),
+				accessibilityLabel(`${label}, ${value}`),
+				...destinationTraits(destination),
+			]}
 			onPress={onPress}
 		>
 			{/* contentShape on the label, not the Button -- see NavigationRow. */}

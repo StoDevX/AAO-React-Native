@@ -104,6 +104,10 @@ struct TestIdentifiers {
 		/// `docs/dictionary.json`. It has a single sense.
 		static let firstEntry = "AAC"
 		static let firstEntryDefinition = "The Academic Advising Center"
+		/// A query whose results begin with `firstEntry` and run to several
+		/// screens -- 20 entries in `docs/dictionary.json`, AAC through Tomson --
+		/// so they can only be seen from the top if the list scrolls there.
+		static let firstEntrySearchTerm = "academic"
 
 		/// The entry from #7959, whose definition field showed clipped against
 		/// its row's top edge with dead space below it -- 744 characters over
@@ -129,6 +133,10 @@ struct TestIdentifiers {
 		static let senseFormTitle = "Sense"
 		/// The one definition field left in the app, on the sense screen.
 		static let senseDefinitionField = "Definition"
+		static let addSubsense = "Add Sub-sense"
+		/// The row a sub-sense with no definition yet draws in its parent's
+		/// Sub-senses section.
+		static func blankSubsenseRow(_ position: Int) -> String { "Sub-sense \(position)" }
 		/// Each sense's row on the edit form. The row's accessibility *label*
 		/// is the definition itself -- which is what a reorder test reads --
 		/// so the identifier is the only stable way to address a row by
@@ -267,6 +275,16 @@ struct TestIdentifiers {
 		/// `data/pause-menu.yaml`, so its stations and items are fixed rather
 		/// than whatever Bon Appétit is serving today.
 		static let pause = "The Pause"
+
+		/// The Pause's navigation title, which names the venue publishing its
+		/// hours rather than repeating the tab's shorter label.
+		static let pauseTitle = "The Pause Kitchen"
+
+		/// What the Pause's title reads at the frozen clock, which is before its
+		/// one window of the day opens: the day written out, and when it opens.
+		/// A prefix, because the time that finishes it is printed in the
+		/// device's zone.
+		static let pauseClosedDetail = "Saturday, Opens at "
 
 		/// Two stations from that file, and one item from each. The Stations
 		/// filter asks for a menu outright, so its shape does not depend on how
@@ -534,6 +552,10 @@ struct TestIdentifiers {
 		/// `source/features/directory/__fixtures__/entries.ts`.
 		static let fixtureEntry = "Kari Testerson"
 		static let fixtureEntryDepartment = "Computer Science"
+		/// Each department on the landing: `directory-department-<name>`.
+		/// Mirrors DEPARTMENT_ROW_PREFIX in
+		/// source/features/directory/departments-list.tsx.
+		static let departmentRowPrefix = "directory-department-"
 	}
 
 	// MARK: - Student Orgs
@@ -541,6 +563,8 @@ struct TestIdentifiers {
 	enum StudentOrgs {
 		/// Matches CATEGORY_GRID_ID in app/(home)/StudentOrgs/index.tsx.
 		static let categoryGrid = "student-orgs-category-grid"
+		/// Matches RESULTS_LIST_ID in source/features/student-orgs/org-results-list.tsx.
+		static let resultsList = "student-orgs-results-list"
 	}
 
 	// MARK: - Campus
@@ -672,12 +696,12 @@ struct TestIdentifiers {
 		/// strip rather than doing nothing. Unlike `aStop`, which the route
 		/// visits twice (the loop starts and ends there), this one appears only
 		/// once, so its presence unambiguously means the strip scrolled forward
-		/// rather than showing a second, later occurrence of the start. It is also
-		/// the fifth stop, so it starts past the four cells the strip shows when
-		/// it opens on the first stop; a stop nearer the start would already be
-		/// on screen. Red Line's route calls here too, but that line does not run
-		/// on the frozen Saturday and its strip is collapsed.
-		static let aStopFartherAlongTheRoute = "Cub/Target"
+		/// rather than showing a second, later occurrence of the start. It is the
+		/// sixth of eight stops: past the four and a half cells the strip shows
+		/// when it opens on the first stop, and still in view once two swipes
+		/// have carried the strip to its end -- which the fifth, Cub/Target, is
+		/// not. No other line calls here.
+		static let aStopFartherAlongTheRoute = "Wells Fargo"
 		/// The horizontal strip of stops inside a line's widget, which a swipe
 		/// test aims at rather than at a stop cell: the strip opens partway
 		/// along the route, so which cells are on screen depends on where the

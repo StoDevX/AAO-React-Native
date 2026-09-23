@@ -13,9 +13,10 @@ import type {
 } from './types'
 import sample from 'lodash/sample'
 import {reduce} from 'lodash'
-import {now as currentMoment} from '@frogpond/timer'
+import {useMomentTimer} from '@frogpond/timer'
 import {bonAppCafeOptions, bonAppMenuOptions, prepareFood} from './query'
 import {findCafeMessage} from './lib/cafe-message'
+import {daypartHours} from './lib/daypart-hours'
 import {useQuery} from '@tanstack/react-query'
 import {useIsFocused, useRouter} from 'expo-router'
 import {toLaxTitleCase} from '@frogpond/titlecase'
@@ -137,7 +138,20 @@ function getErrorMessage(error: Error | undefined) {
 export function BonAppHostedMenu(props: Props): React.ReactNode {
 	// Which meal a cafe opens on is read off the clock, so a UI test run takes
 	// the frozen one its fixtures are anchored to. Noon lands in lunch.
-	let now = currentMoment().tz(timezone())
+	//
+	// A clock that ticks: the line under the name is relative to it -- `Opens
+	// at 7:30 AM` is false a minute later -- and a tab stays mounted for as long
+	// as the reader keeps coming back to it.
+	let {now} = useMomentTimer({intervalMs: 60_000, timezone: timezone()})
+
+	// The menu body's clock turns over with the day rather than the minute.
+	// Every cafe the reader has visited stays mounted and ticks, and only the
+	// header needs the minute; the body reads its clock for the meal it opens on
+	// and the day's message, both of which hold for the day.
+	let [menuNow, setMenuNow] = React.useState(now)
+	if (!menuNow.isSame(now, 'day')) {
+		setMenuNow(now)
+	}
 	let router = useRouter()
 
 	// Live focus rather than the latched `useHasEverBeenFocused` the tabs use
@@ -152,9 +166,8 @@ export function BonAppHostedMenu(props: Props): React.ReactNode {
 	// lengths of the weekday go over, since which one fits depends on whether a
 	// meal ends up sharing its line.
 	//
-	// Formatted days, not `now`: `currentMoment()` above builds a fresh Moment
-	// on every render, so a header depending on it would republish on every
-	// render and loop through the provider's state.
+	// Formatted days, not `now`: the header is read field by field, so strings
+	// republish it only when the day itself changes.
 	let weekdayShort = formatWeekday(now, 'short')
 	let weekdayLong = formatWeekday(now, 'long')
 	let date = formatDate(now, 'medium')
@@ -182,6 +195,10 @@ export function BonAppHostedMenu(props: Props): React.ReactNode {
 		isLoading: isCafeLoading,
 	} = useQuery(bonAppCafeOptions(props.cafe))
 
+	// A cafe serving one daypart today says when it opens, then when it closes,
+	// off the hours it publishes; `null` keeps the meal's window for the rest.
+	let hours = daypartHours(cafeInfo?.cafe.days, now)
+
 	// Published from here rather than from the menu below, which does not
 	// exist until its query resolves -- the screen would spend that whole
 	// first load under the previous cafe's name.
@@ -192,8 +209,9 @@ export function BonAppHostedMenu(props: Props): React.ReactNode {
 			weekdayLong,
 			date,
 			meals: mealHeader.menu,
-			time: mealHeader.time,
-			closed: mealHeader.closed,
+			time: hours ? hours.time : mealHeader.time,
+			closed: mealHeader.closed || (hours?.closed ?? false),
+			reopening: hours?.reopening ?? null,
 			loading: isMenuLoading || isCafeLoading,
 			filters: {visible: filtersVisible, toggle: toggleFilters},
 		},
@@ -275,7 +293,7 @@ export function BonAppHostedMenu(props: Props): React.ReactNode {
 
 	// We grab the "today" info from here because BonApp returns special
 	// messages in this response, like "Closed for Christmas Break"
-	let specialMessage = findCafeMessage(cafeInfo, now)
+	let specialMessage = findCafeMessage(cafeInfo, menuNow)
 
 	return (
 		<FoodMenu
@@ -284,7 +302,7 @@ export function BonAppHostedMenu(props: Props): React.ReactNode {
 			meals={meals}
 			menuCorIcons={cafeMenu.cor_icons}
 			name={props.name}
-			now={now}
+			now={menuNow}
 			onItemPress={onItemPress}
 			filtersVisible={filtersVisible}
 			onMealHeaderChange={setMealHeader}

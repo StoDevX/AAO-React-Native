@@ -1,5 +1,6 @@
 import * as React from 'react'
 import {StyleSheet} from 'react-native'
+import {useSafeAreaInsets} from 'react-native-safe-area-context'
 import {
 	ContentUnavailableView,
 	Host,
@@ -207,6 +208,11 @@ export let DayView = React.forwardRef<CalendarBodyHandle, Props>(function DayVie
 	// is found.
 	let showingAt = pages.findIndex((page) => page.isSame(selectedDay, 'day'))
 
+	// A page-style `TabView` lays each page out across the full width with no
+	// side safe area, so in landscape a page's rows would sit under the notch.
+	// The pager spans the window, so the window's insets are the page's.
+	let insets = useSafeAreaInsets()
+
 	return (
 		<Host style={styles.host}>
 			<VStack spacing={0}>
@@ -293,7 +299,14 @@ export let DayView = React.forwardRef<CalendarBodyHandle, Props>(function DayVie
 											<LazyVStack alignment="leading">
 												<VStack
 													alignment="leading"
-													modifiers={[padding({leading: 16, trailing: 16, top: 12, bottom: 8})]}
+													modifiers={[
+														padding({
+															leading: 16 + insets.left,
+															trailing: 16 + insets.right,
+															top: 12,
+															bottom: 8,
+														}),
+													]}
 												>
 													<FailureNote failed={props.failed} />
 													<Text

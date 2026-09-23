@@ -1,5 +1,6 @@
 import * as React from 'react'
 import {RefreshControl, StyleSheet, ScrollView, View, Text} from 'react-native'
+import {SafeAreaView} from 'react-native-safe-area-context'
 import * as c from '@frogpond/colors'
 import {Markdown} from '@frogpond/markdown'
 import {LoadingView, NoticeView} from '@frogpond/notice'
@@ -100,15 +101,17 @@ function FaqView(): React.ReactNode {
 			refreshControl={<RefreshControl onRefresh={refetch} refreshing={isRefetching} />}
 			style={styles.scrollView}
 		>
-			{hasLegacy ? (
-				<View style={styles.legacy}>
-					<Markdown source={faqData.legacyText ?? ''} />
-				</View>
-			) : null}
+			<SafeAreaView edges={['left', 'right']}>
+				{hasLegacy ? (
+					<View style={styles.legacy}>
+						<Markdown source={faqData.legacyText ?? ''} />
+					</View>
+				) : null}
 
-			{faqData.faqs.map((faq) => (
-				<FaqCard key={faq.id} faq={faq} isHighlighted={faq.id === highlightId} />
-			))}
+				{faqData.faqs.map((faq) => (
+					<FaqCard key={faq.id} faq={faq} isHighlighted={faq.id === highlightId} />
+				))}
+			</SafeAreaView>
 		</ScrollView>
 	)
 }

@@ -119,6 +119,20 @@ describe('DisclosureRow destination', () => {
 		expect(screen.queryByTestId('symbol-chevron.right')).not.toBeOnTheScreen()
 		expect(screen.queryByTestId('symbol-arrow.up.right')).not.toBeOnTheScreen()
 	})
+
+	/// The arrow is drawn, not read: VoiceOver hears the row's own label, so
+	/// the row has to say it leaves the app some other way.
+	it('tells VoiceOver it is a link when it opens a document elsewhere', async () => {
+		await render(<DisclosureRow destination="external" onPress={jest.fn()} title="KSTO" />)
+
+		expect(screen.getByRole('link', {name: 'KSTO'})).toBeOnTheScreen()
+	})
+
+	it('stays a plain button when it pushes', async () => {
+		await render(<DisclosureRow onPress={jest.fn()} title="Shuttle" />)
+
+		expect(screen.queryByRole('link')).not.toBeOnTheScreen()
+	})
 })
 
 describe('DetailRow destination', () => {
@@ -148,6 +162,19 @@ describe('DetailRow destination', () => {
 
 		expect(screen.queryByTestId('symbol-chevron.right')).not.toBeOnTheScreen()
 		expect(screen.queryByTestId('symbol-arrow.up.right')).not.toBeOnTheScreen()
+	})
+
+	it('tells VoiceOver it is a link when the value is a document elsewhere', async () => {
+		await render(
+			<DetailRow
+				destination="external"
+				label="Profile"
+				onPress={jest.fn()}
+				value="stolaf.edu/profile/ole"
+			/>,
+		)
+
+		expect(screen.getByRole('link', {name: 'Profile, stolaf.edu/profile/ole'})).toBeOnTheScreen()
 	})
 
 	/// Directory's office-hours row states a destination but only sometimes has
