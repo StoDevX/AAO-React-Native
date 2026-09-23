@@ -51,9 +51,9 @@ import {menuSubtitle, spokenTime, SUBTITLE_SEPARATOR} from './lib/header-title'
  * particular day's -- the Pause, whose menu is a file we keep rather than a
  * day's service -- publishes none of them.
  *
- * All arrive already formatted. `now` is a fresh `Moment` on every render of
- * the screens that publish this, so a `Moment` here would republish on every
- * render and loop through the provider's state.
+ * All arrive already formatted. The header is compared field by field, and a
+ * `Moment` compares by identity, so the screens' ticking clock carried here
+ * would republish it every minute whether or not anything on screen changed.
  */
 type MenuHeader = {
 	name: string

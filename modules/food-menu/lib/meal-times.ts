@@ -11,6 +11,11 @@ const TIME_FORMATS = ['H:mm', 'HH:mm']
 /** Minutes in a day, less the one `23:59` stops short of. */
 const WHOLE_DAY = 24 * 60 - 1
 
+/** Minutes into the day `m` reads on its own clock, which is the campus's. */
+function clockMinutes(m: moment.Moment): number {
+	return m.hours() * 60 + m.minutes()
+}
+
 /** Just enough of a meal to say when it is served. */
 type MealWindow = {
 	starttime: string
@@ -38,14 +43,19 @@ export function mealWindow(
 		return null
 	}
 
-	// Negative where the window crosses midnight, which is a real window --
-	// Sayles' Late Night -- rather than one of the empty ones.
-	let minutes = end.diff(start, 'minutes')
-	if (minutes === 0 || minutes >= WHOLE_DAY) {
+	// Measured on the clock rather than in elapsed time: the days the clocks
+	// change are an hour short or long, which would put a whole day under
+	// `WHOLE_DAY` and a real window over it. `24:00` parses to the following
+	// midnight, so it reads as the day's last minute and one more.
+	let from = clockMinutes(start)
+	let to = end.isSame(start, 'day') ? clockMinutes(end) : clockMinutes(end) + 24 * 60
+	if (from === to || (from === 0 && to >= WHOLE_DAY)) {
 		return null
 	}
 
-	if (minutes < 0) {
+	// Earlier on the clock where the window crosses midnight, which is a real
+	// window -- Sayles' Late Night -- rather than one of the empty ones.
+	if (to < from) {
 		end.add(1, 'day')
 	}
 
@@ -68,10 +78,8 @@ export function mealWindow(
  * reader's -- the same conversion `formatBuildingTimes` makes, so a cafe's
  * hours and a building's agree for a reader away from campus.
  *
- * Takes no `now`: a time-only string parses against today already, and the
- * screens above build a fresh `Moment` on every render, so a window depending
- * on one would republish the navigation bar's header on every render and loop
- * through the provider's state.
+ * Takes no `now`: a time-only string parses against today already, and a
+ * meal's window reads the same all day.
  */
 export function formatMealTimes(meal: MealWindow, locale?: string): string | null {
 	let window = mealWindow(meal)

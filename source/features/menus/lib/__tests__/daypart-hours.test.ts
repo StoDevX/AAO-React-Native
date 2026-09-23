@@ -132,26 +132,24 @@ describe('daypartHours', () => {
 			let garbled = [day('2026-09-22', ['The Cage', 'soon', 'later'])]
 			expect(daypartHours(garbled, at('2026-09-22 12:00'))).toBeNull()
 		})
+
+		// No dayparts is also what ccc-server answers with when fetching the cafe
+		// failed, while the menu beside it may be full; that is not a cafe
+		// saying it is shut.
+		test('a day with no dayparts', () => {
+			expect(daypartHours([day('2026-09-22')], at('2026-09-22 12:00'))).toBeNull()
+		})
 	})
 
-	// The body of the screen reads the same flags to decide the cafe is shut,
-	// so the line under its name agrees with it.
-	describe('reports as shut', () => {
-		test('a day Bon Appétit marks closed', () => {
-			let closed = [{...day('2026-09-22', ['The Cage', '07:30', '20:00']), status: 'closed'}]
-			expect(daypartHours(closed, at('2026-09-22 12:00'))).toEqual({
-				time: null,
-				closed: true,
-				reopening: null,
-			})
-		})
-
-		test('a day with no dayparts', () => {
-			expect(daypartHours([day('2026-09-22')], at('2026-09-22 12:00'))).toEqual({
-				time: null,
-				closed: true,
-				reopening: null,
-			})
+	// The body of the screen reads the same flag to decide the cafe is shut, so
+	// the line under its name agrees with it, in the words every other shut
+	// cafe uses.
+	test('says a day Bon Appétit marks closed is closed', () => {
+		let closed = [{...day('2026-09-22', ['The Cage', '07:30', '20:00']), status: 'closed'}]
+		expect(daypartHours(closed, at('2026-09-22 12:00'))).toEqual({
+			time: null,
+			closed: true,
+			reopening: 'Closed',
 		})
 	})
 })

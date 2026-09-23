@@ -1,13 +1,13 @@
 import type {Moment} from 'moment-timezone'
 import type {BuildingStatusType, BuildingType} from '../../building-hours/types'
-import type {HourPairType} from '../../building-hours/lib/find-open-window'
-import {isChapelTime} from '../../building-hours/lib/chapel'
+import type {HourPairType} from '../../building-hours/lib'
 import {
 	formatBuildingTimes,
 	formatStatusTime,
 	getDayOfWeek,
 	getScheduleStatusAtMoment,
 	getShortBuildingStatus,
+	isSetInService,
 	nextOpening,
 	parseHours,
 	schedulesInEffect,
@@ -26,8 +26,8 @@ export type CafeHours = {
 	/**
 	 * What to say about a shut cafe opening again, e.g. `Opens at 4 PM`, `Closed
 	 * until tomorrow`, `Closed until 5 PM`, or `Closed` when there is nothing to
-	 * promise; `null` when it is open, when its hours have not arrived, and for a
-	 * day Bon Appétit calls shut, whose name stands alone.
+	 * promise; `null` when it is open, when its hours have not arrived, and in
+	 * the minutes before chapel, when the name stands alone.
 	 */
 	reopening: string | null
 }
@@ -84,7 +84,7 @@ export function cafeHours(building: BuildingType | undefined, m: Moment): CafeHo
 	// Closed` is still serving, and `Almost Open` is about to, which is exactly
 	// when the window under the name is worth reading.
 	if (SHUT.has(status)) {
-		return shut(building, m)
+		return shut(building, m, status)
 	}
 
 	// The window the status above was reading, found the way it found it:
@@ -114,21 +114,25 @@ export function cafeHours(building: BuildingType | undefined, m: Moment): CafeHo
 		}
 	}
 
-	return shut(building, m)
+	return shut(building, m, status)
 }
 
 /**
  * A venue whose doors are shut at `m`: when they next open today, or only that
  * they are shut once nothing opens again today, as a venue with one window says
  * after it closes.
+ *
+ * Except in the minutes before chapel, when the status reads `Chapel` but when
+ * the doors reopen is only known once chapel has started: `Closed` there would
+ * read as shut for the rest of the day, so the name stands alone.
  */
-function shut(building: BuildingType, m: Moment): CafeHours {
+function shut(building: BuildingType, m: Moment, status: BuildingStatusType): CafeHours {
 	let opening = nextOpening(building, m)
-	return {
-		time: null,
-		closed: true,
-		reopening: opening ? `Closed until ${formatStatusTime(opening)}` : 'Closed',
+	if (opening) {
+		return {time: null, closed: true, reopening: `Closed until ${formatStatusTime(opening)}`}
 	}
+
+	return {time: null, closed: true, reopening: status === 'Chapel' ? null : 'Closed'}
 }
 
 /**
@@ -139,8 +143,7 @@ function shut(building: BuildingType, m: Moment): CafeHours {
  */
 function windowsOfTheDay(building: BuildingType, m: Moment): HourPairType[] {
 	return (building.schedule ?? [])
-		.filter((set) => set.isPhysicallyOpen !== false)
-		.filter((set) => !(set.closedForChapelTime && isChapelTime(m)))
+		.filter((set) => isSetInService(set, m))
 		.flatMap((set) => schedulesInEffect(set.hours, m).map((hours) => parseHours(hours, m)))
 }
 

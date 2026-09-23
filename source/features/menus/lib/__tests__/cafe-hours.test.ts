@@ -291,6 +291,29 @@ describe('cafeHours', () => {
 		})
 	})
 
+	// In the minutes before chapel the status already reads `Chapel`, while
+	// the doors are open and will reopen after it. Nothing answers when yet --
+	// the reopening is only known once chapel has started -- and `Closed` alone
+	// would read as shut for the rest of the day, so the name stands alone.
+	test('promises nothing in the minutes before chapel', () => {
+		let observesChapel: BuildingType = {
+			...PAUSE,
+			schedule: [
+				{
+					title: 'Hours',
+					closedForChapelTime: true,
+					hours: [{days: ['Mo'], from: '8:00am', to: '5:00pm'}],
+				},
+			],
+		}
+
+		expect(cafeHours(observesChapel, dayMoment('Mon 10:05am'))).toEqual({
+			time: null,
+			closed: true,
+			reopening: null,
+		})
+	})
+
 	// A window that ends while chapel has the doors shut does not reopen after
 	// it, so the status reads `Closed` rather than `Chapel` -- and the window
 	// is not one the venue is serving in.

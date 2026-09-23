@@ -18,7 +18,7 @@ const CLOSED_TODAY = 'Closed today'
  * the schema's `''` default. It is honoured here for a server that starts
  * setting it; the dayparts are what actually answer today.
  */
-export function isClosedDay(day: BonAppCafeDay): boolean {
+function isClosedDay(day: BonAppCafeDay): boolean {
 	return day.status === 'closed' || day.dayparts.length === 0
 }
 

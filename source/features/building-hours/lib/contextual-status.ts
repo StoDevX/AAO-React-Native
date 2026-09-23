@@ -3,9 +3,10 @@ import type {BuildingType, NamedBuildingScheduleType} from '../types'
 import {formatStatusTime} from './format-times'
 import {getDayOfWeek} from './get-day-of-week'
 import {findOpenWindow, windowOpeningOn} from './find-open-window'
-import {CHAPEL_COUNTDOWN_MINUTES, isChapelTime} from './chapel'
+import {CHAPEL_COUNTDOWN_MINUTES} from './chapel'
 import {findChapelReopen} from './find-chapel-reopen'
 import {findChapelPause} from './find-chapel-pause'
+import {isSetInService} from './is-set-in-service'
 
 const ALMOST_THRESHOLD_MINUTES = 30
 
@@ -16,8 +17,7 @@ type CurrentOpen = OpenWindow & {set: NamedBuildingScheduleType}
 
 function findCurrentOpen(building: BuildingType, now: Moment): CurrentOpen | null {
 	for (let set of building.schedule || []) {
-		if (set.isPhysicallyOpen === false) continue
-		if (set.closedForChapelTime && isChapelTime(now)) continue
+		if (!isSetInService(set, now)) continue
 
 		for (let hours of set.hours) {
 			// `findOpenWindow` decides this on its own, and counts a window

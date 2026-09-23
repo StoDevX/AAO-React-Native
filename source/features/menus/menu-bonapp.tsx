@@ -143,6 +143,15 @@ export function BonAppHostedMenu(props: Props): React.ReactNode {
 	// at 7:30 AM` is false a minute later -- and a tab stays mounted for as long
 	// as the reader keeps coming back to it.
 	let {now} = useMomentTimer({intervalMs: 60_000, timezone: timezone()})
+
+	// The menu body's clock turns over with the day rather than the minute.
+	// Every cafe the reader has visited stays mounted and ticks, and only the
+	// header needs the minute; the body reads its clock for the meal it opens on
+	// and the day's message, both of which hold for the day.
+	let [menuNow, setMenuNow] = React.useState(now)
+	if (!menuNow.isSame(now, 'day')) {
+		setMenuNow(now)
+	}
 	let router = useRouter()
 
 	// Live focus rather than the latched `useHasEverBeenFocused` the tabs use
@@ -284,7 +293,7 @@ export function BonAppHostedMenu(props: Props): React.ReactNode {
 
 	// We grab the "today" info from here because BonApp returns special
 	// messages in this response, like "Closed for Christmas Break"
-	let specialMessage = findCafeMessage(cafeInfo, now)
+	let specialMessage = findCafeMessage(cafeInfo, menuNow)
 
 	return (
 		<FoodMenu
@@ -293,7 +302,7 @@ export function BonAppHostedMenu(props: Props): React.ReactNode {
 			meals={meals}
 			menuCorIcons={cafeMenu.cor_icons}
 			name={props.name}
-			now={now}
+			now={menuNow}
 			onItemPress={onItemPress}
 			filtersVisible={filtersVisible}
 			onMealHeaderChange={setMealHeader}

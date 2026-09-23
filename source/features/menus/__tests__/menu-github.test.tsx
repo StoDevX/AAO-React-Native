@@ -3,6 +3,8 @@ import {afterEach, beforeEach, describe, expect, jest, test} from '@jest/globals
 import {act, render} from '@testing-library/react-native'
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query'
 
+import {FoodMenu} from '@frogpond/food-menu'
+
 import {GitHubHostedMenu} from '../menu-github'
 import {usePublishMenuHeader} from '../menu-header'
 import {pauseMenuOptions} from '../query'
@@ -14,20 +16,26 @@ import type {BuildingType} from '../../building-hours/types'
 // straight off the call rather than through the SwiftUI title that draws it.
 jest.mock('../menu-header', () => ({usePublishMenuHeader: jest.fn()}))
 
-// The menu body renders `@expo/ui`, which cannot mount under Jest, and says
-// nothing about the header.
-jest.mock('@frogpond/food-menu', () => ({FoodMenu: () => null}))
+// The menu body renders `@expo/ui`, which cannot mount under Jest. What the
+// screen hands it is read off the call.
+jest.mock('@frogpond/food-menu', () => ({FoodMenu: jest.fn(() => null)}))
 
 // The suite-wide setup runs as a UI test, whose clock is frozen and never
 // ticks -- which is the one thing this file is about.
 jest.mock('@frogpond/launch-arguments', () => ({isUITesting: false}))
 
+// One router for the whole run, as expo-router's own hook hands back.
+const mockRouter = {navigate: jest.fn()}
+
 jest.mock('expo-router', () => ({
 	useIsFocused: () => true,
-	useRouter: () => ({navigate: jest.fn()}),
+	useRouter: () => mockRouter,
 }))
 
 const mockPublish = usePublishMenuHeader as jest.MockedFunction<typeof usePublishMenuHeader>
+const mockFoodMenu = FoodMenu as unknown as jest.Mock<
+	(props: {now: unknown; onItemPress: unknown}) => null
+>
 
 /** The Pause Kitchen as `data/building-hours/1-2-pause-kitchen.yaml` has it. */
 const PAUSE: BuildingType = {
@@ -56,6 +64,7 @@ beforeEach(() => {
 	})
 	queryClient.setQueryData(buildingByNameOptions('stolaf', PAUSE_VENUE).queryKey, [PAUSE])
 	mockPublish.mockClear()
+	mockFoodMenu.mockClear()
 })
 
 afterEach(() => {
@@ -91,5 +100,26 @@ describe('GitHubHostedMenu', () => {
 			time: 'Closes at midnight',
 			reopening: null,
 		})
+	})
+
+	// Only the header needs the minute. A tick leaves what the menu body is
+	// handed as it was, so the body is not rebuilt.
+	test('keeps the menu body off the per-minute tick', async () => {
+		await render(
+			<QueryClientProvider client={queryClient}>
+				<GitHubHostedMenu loadingMessage={['Loading…']} name={PAUSE_VENUE} venue={PAUSE_VENUE} />
+			</QueryClientProvider>,
+		)
+
+		let first = mockFoodMenu.mock.calls[0]?.[0]
+		expect(first).toBeDefined()
+
+		await act(async () => {
+			await jest.advanceTimersByTimeAsync(60_000)
+		})
+
+		let last = mockFoodMenu.mock.lastCall?.[0]
+		expect(last?.now).toBe(first?.now)
+		expect(last?.onItemPress).toBe(first?.onItemPress)
 	})
 })
