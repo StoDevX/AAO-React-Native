@@ -1,6 +1,8 @@
 import {fetchManifest, fetchSourceBody, REL_JOBS, resolveSource} from '@frogpond/data-sources'
+import {isUITesting} from '@frogpond/launch-arguments'
 import {queryOptions} from '@tanstack/react-query'
 import {queryClient} from '../../source/init/tanstack-query'
+import {UITEST_JOB_CATEGORIES, UITEST_JOB_DETAILS} from './fixtures/uitest-postings'
 import {parseDetail} from './parsers/description'
 import {parseCategories, parseRequisitions} from './parsers/requisitions'
 import type {JobCategory, JobDetail} from './types'
@@ -24,6 +26,12 @@ async function resolveJobSite(): Promise<string> {
 export const jobPostingsOptions = queryOptions({
 	queryKey: keys.postings,
 	queryFn: async ({signal}): Promise<JobCategory[]> => {
+		// The live board is whatever St. Olaf is hiring for this week, which a
+		// test cannot name -- see `fixtures/uitest-postings.ts`.
+		if (isUITesting) {
+			return UITEST_JOB_CATEGORIES
+		}
+
 		let href = await resolveJobSite()
 		let site = parseSiteHref(href)
 
@@ -48,6 +56,14 @@ export const jobDetailOptions = (id: string) =>
 	queryOptions({
 		queryKey: keys.detail(id),
 		queryFn: async ({signal}): Promise<JobDetail> => {
+			if (isUITesting) {
+				let fixture = UITEST_JOB_DETAILS.find((job) => job.id === id)
+				if (!fixture) {
+					throw new Error(`no UI-test fixture for job "${id}"`)
+				}
+				return fixture
+			}
+
 			let href = await resolveJobSite()
 			let site = parseSiteHref(href)
 

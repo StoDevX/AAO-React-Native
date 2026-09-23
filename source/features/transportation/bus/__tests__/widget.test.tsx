@@ -72,6 +72,23 @@ describe('BusLineWidget', () => {
 		expect(onPress).toHaveBeenCalled()
 	})
 
+	test('says a stop the trip skips is not served, rather than reading out its dash', async () => {
+		let skipsCarleton = makeLine({
+			schedules: [
+				{
+					days: ['Mo'],
+					coordinates: {},
+					stops: ['St. Olaf', 'Carleton', 'Northfield'],
+					times: [['1:00pm', false, '1:10pm']],
+				},
+			],
+		})
+
+		let {getByLabelText} = await renderWidget(skipsCarleton)
+
+		expect(getByLabelText('Carleton, not served on this trip')).toBeTruthy()
+	})
+
 	test('draws the bus on the strip while the line is running', async () => {
 		let {getAllByTestId} = await renderWidget(makeLine())
 

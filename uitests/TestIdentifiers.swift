@@ -193,6 +193,19 @@ struct TestIdentifiers {
 		static let balancesHeader = "BALANCES"
 		static let mealPlanHeader = "MEAL PLAN"
 		static let openJobs = "Open Jobs"
+		/// Postings from modules/ccc-jobs/fixtures/uitest-postings.ts: one with
+		/// a field long enough to wrap, one with only short fields.
+		static let fixtureJobWithWrappingField = "Undergraduate Research Assistant"
+		static let fixtureJobWithShortFields = "Library Circulation Desk Assistant"
+		static let jobsSiteLink = "View on the St. Olaf jobs site"
+		/// Matches JOB_DESCRIPTION_TITLE in source/features/sis/student-work/lib.ts,
+		/// the title of both the row and the screen it opens.
+		static let jobDescriptionRow = "Description"
+		/// The start of a paragraph in the fixture postings' description.
+		static let fixtureJobDescriptionParagraph = "Transferable Skills:"
+		/// The SF Symbol `DisclosureRow` draws for an external destination,
+		/// which the image carries as its identifier.
+		static let externalLinkAccessory = "arrow.up.right"
 	}
 
 	// MARK: - Menus
