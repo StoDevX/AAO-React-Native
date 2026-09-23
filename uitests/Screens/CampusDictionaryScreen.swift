@@ -116,6 +116,20 @@ struct CampusDictionaryScreen: Screen {
 		return self
 	}
 
+	/// Asserts the first entry's row is on screen without any scrolling. A list
+	/// that keeps its old scroll offset when a search replaces its rows leaves
+	/// the earliest results above the top of the screen, never rendered.
+	@discardableResult
+	func verifyFirstEntryIsOnScreen() -> Self {
+		let row = app.elementWithLabel(startingWith: TestIdentifiers.Dictionary.firstEntry)
+		_ = row.waitForExistence(timeout: 5)
+		capture("Dictionary search results")
+		XCTAssertTrue(
+			row.exists && row.isHittable,
+			"the results should start at \(TestIdentifiers.Dictionary.firstEntry), not wherever the list was scrolled before the search")
+		return self
+	}
+
 	/// Opens an entry by name. Distinct from `openFirstWord`, which takes
 	/// whatever happens to be at the top of the list.
 	@discardableResult

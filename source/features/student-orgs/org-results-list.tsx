@@ -1,7 +1,7 @@
 import * as React from 'react'
 import {StyleSheet} from 'react-native'
 import {ContentUnavailableView, Host, List, Section} from '@expo/ui/swift-ui'
-import {listStyle, refreshable} from '@expo/ui/swift-ui/modifiers'
+import {accessibilityIdentifier, id, listStyle, refreshable} from '@expo/ui/swift-ui/modifiers'
 import * as c from '@frogpond/colors'
 import {DisclosureRow} from '../../components/rows'
 import type {OrgSection} from './search'
@@ -15,8 +15,13 @@ const styles = StyleSheet.create({
 	},
 })
 
+/// Mirrored by TestIdentifiers.StudentOrgs.resultsList.
+const RESULTS_LIST_ID = 'student-orgs-results-list'
+
 type Props = {
 	sections: OrgSection[]
+	/** The search the sections were filtered by; a new one scrolls back to the top. */
+	query: string
 	/** Shown in place of the list when `sections` is empty. */
 	emptyText: string
 	onPressOrg: (org: StudentOrgType) => void
@@ -31,6 +36,7 @@ type Props = {
  */
 export function OrgResultsList({
 	sections,
+	query,
 	emptyText,
 	onPressOrg,
 	onRefresh,
@@ -45,6 +51,11 @@ export function OrgResultsList({
 					refreshable(async () => {
 						await onRefresh()
 					}),
+					accessibilityIdentifier(RESULTS_LIST_ID),
+					// A new query is a new list, starting from the top. Without this
+					// the list keeps the offset it had, and results that sort above it
+					// land offscreen.
+					id(query),
 				]}
 			>
 				{sections.length === 0 ? (
