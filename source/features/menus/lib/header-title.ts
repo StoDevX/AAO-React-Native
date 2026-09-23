@@ -8,12 +8,18 @@ type SubtitleParts = {
 	cafeName: string
 	/** The meal on screen, or `null` for a cafe serving one meal today. */
 	mealName: string | null
-	/** The window that meal is served, e.g. `11AM – 1:30PM`. */
+	/**
+	 * The window that meal is served, e.g. `11AM – 1:30PM`, or when a venue
+	 * with one window today closes, e.g. `Closes at midnight`.
+	 */
 	time: string | null
 	/** Whether the cafe is shut, which leaves the meal and its window off the line. */
 	closed: boolean
-	/** When a shut cafe opens again today, e.g. `4PM`, or `null` if it does not. */
-	opensAt: string | null
+	/**
+	 * What a shut cafe says about opening again, e.g. `Opens at 4 PM`, or `null`
+	 * when there is nothing to promise.
+	 */
+	reopening: string | null
 }
 
 /**
@@ -36,16 +42,15 @@ export const SUBTITLE_SEPARATOR = ' • '
  *
  * A shut cafe is decided here, once, rather than left to each caller to
  * remember for each part. Neither the meal nor its window is being served, so
- * neither is drawn. One that opens again today says when, beside the day it is
- * shut on: `Sunday • Closed until 4PM`. One that does not has no line at all.
+ * neither is drawn. One with something to say about opening again says it
+ * beside the day it is shut on: `Sunday • Opens at 4 PM`. One without has no
+ * line at all.
  */
 export function menuSubtitle(parts: SubtitleParts): string {
-	let {weekdayShort, weekdayLong, cafeName, mealName, time, closed, opensAt} = parts
+	let {weekdayShort, weekdayLong, cafeName, mealName, time, closed, reopening} = parts
 
 	if (closed) {
-		return opensAt
-			? [weekdayLong, `Closed until ${opensAt}`].filter(Boolean).join(SUBTITLE_SEPARATOR)
-			: ''
+		return reopening ? [weekdayLong, reopening].filter(Boolean).join(SUBTITLE_SEPARATOR) : ''
 	}
 
 	let meal = namesTheCafe(mealName, cafeName) ? null : mealName

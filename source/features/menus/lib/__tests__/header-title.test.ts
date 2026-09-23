@@ -2,7 +2,7 @@ import {describe, expect, test} from '@jest/globals'
 
 import {menuSubtitle, spokenTime} from '../header-title'
 
-const SUNDAY = {weekdayShort: 'Sun', weekdayLong: 'Sunday', closed: false, opensAt: null}
+const SUNDAY = {weekdayShort: 'Sun', weekdayLong: 'Sunday', closed: false, reopening: null}
 
 describe('menuSubtitle', () => {
 	test('joins the day, the meal and the window', () => {
@@ -59,7 +59,7 @@ describe('menuSubtitle', () => {
 				mealName: null,
 				time: '11AM – 1PM',
 				closed: false,
-				opensAt: null,
+				reopening: null,
 			}),
 		).toBe('11AM – 1PM')
 		expect(
@@ -70,7 +70,7 @@ describe('menuSubtitle', () => {
 				mealName: null,
 				time: null,
 				closed: false,
-				opensAt: null,
+				reopening: null,
 			}),
 		).toBe('')
 	})
@@ -123,12 +123,12 @@ describe('menuSubtitle', () => {
 		).toBe('Sunday • 8AM – 10AM')
 	})
 
-	// Nothing under the name is true of a cafe that is shut and does not open
-	// again today -- not the meal, not a window, not even the day it is shut on
-	// -- so the name stands alone. The meal is the one of those that arrives
-	// from the picker rather than from the screen, and so the one a caller is
-	// liable to leave in.
-	test('says nothing at all about a cafe shut for the rest of the day', () => {
+	// Nothing under the name is true of a cafe that is shut with nothing to
+	// promise about opening again -- not the meal, not a window, not even the
+	// day it is shut on -- so the name stands alone. The meal is the one of
+	// those that arrives from the picker rather than from the screen, and so the
+	// one a caller is liable to leave in.
+	test('says nothing at all about a shut cafe with nothing to promise', () => {
 		expect(
 			menuSubtitle({
 				...SUNDAY,
@@ -136,14 +136,15 @@ describe('menuSubtitle', () => {
 				mealName: 'Lunch',
 				time: '11AM – 1:30PM',
 				closed: true,
-				opensAt: null,
+				reopening: null,
 			}),
 		).toBe('')
 	})
 
-	// A shut cafe that opens again today says when, beside the day it is shut
-	// on. The meal and its window stay out: neither is being served.
-	test('says when a shut cafe opens again today', () => {
+	// A shut cafe with something to say about opening again says it beside the
+	// day it is shut on. The meal and its window stay out: neither is being
+	// served.
+	test('says when a shut cafe opens again', () => {
 		expect(
 			menuSubtitle({
 				...SUNDAY,
@@ -151,9 +152,9 @@ describe('menuSubtitle', () => {
 				mealName: 'Menu',
 				time: null,
 				closed: true,
-				opensAt: '4PM',
+				reopening: 'Opens at 4 PM',
 			}),
-		).toBe('Sunday • Closed until 4PM')
+		).toBe('Sunday • Opens at 4 PM')
 	})
 
 	// An accent is not a different word: BonApp is not consistent about

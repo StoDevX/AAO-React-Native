@@ -35,9 +35,10 @@ import {menuSubtitle, spokenTime, SUBTITLE_SEPARATOR} from './lib/header-title'
  * `closed` is the cafe saying it is not serving. Neither the meal nor its
  * window is true of a cafe that is shut, so neither is drawn.
  *
- * `opensAt` is when a shut cafe opens again today, e.g. `4PM`, drawn beside
- * the day as `Sunday • Closed until 4PM`. It is `null` for a cafe that is
- * open, and for one that does not open again today, whose name stands alone.
+ * `reopening` is what a shut cafe says about opening again, e.g. `Opens at
+ * 4 PM`, drawn beside the day as `Sunday • Opens at 4 PM`. It is `null` for a
+ * cafe that is open, and for one with nothing to promise, whose name stands
+ * alone.
  *
  * `loading` is the menu still on its way. The clock is ours and the day is
  * already known, so the day is drawn and the rest of the line stands in for
@@ -61,7 +62,7 @@ type MenuHeader = {
 	date: string | null
 	time: string | null
 	closed: boolean
-	opensAt: string | null
+	reopening: string | null
 	loading: boolean
 	meals: MealMenuSelection | null
 	/** The filter row's own control, or `null` for a screen with no filters. */
@@ -112,7 +113,7 @@ export function MenuHeaderProvider(props: {children: React.ReactNode}): React.Re
  */
 export function usePublishMenuHeader(header: MenuHeader, focused: boolean): void {
 	let publish = React.useContext(PublishMenuHeaderContext)
-	let {name, weekdayShort, weekdayLong, date, time, closed, opensAt, loading, meals, filters} =
+	let {name, weekdayShort, weekdayLong, date, time, closed, reopening, loading, meals, filters} =
 		header
 
 	// `filters` is read apart too: a caller building it inline hands over a new
@@ -130,7 +131,7 @@ export function usePublishMenuHeader(header: MenuHeader, focused: boolean): void
 				date,
 				time,
 				closed,
-				opensAt,
+				reopening,
 				loading,
 				meals,
 				filters:
@@ -147,7 +148,7 @@ export function usePublishMenuHeader(header: MenuHeader, focused: boolean): void
 		date,
 		time,
 		closed,
-		opensAt,
+		reopening,
 		loading,
 		meals,
 		filtersVisible,
@@ -185,7 +186,7 @@ export function MenuHeaderHost(): React.ReactNode {
 				mealName: header.meals?.selected ?? null,
 				time: header.time,
 				closed: header.closed,
-				opensAt: header.opensAt,
+				reopening: header.reopening,
 			})
 
 	let subtitle = loading ? (

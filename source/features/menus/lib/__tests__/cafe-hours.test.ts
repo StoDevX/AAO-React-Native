@@ -18,32 +18,28 @@ const PAUSE: BuildingType = {
 	breakSchedule: {},
 }
 
+/** A venue serving twice on Fridays, which keeps the window-by-window line. */
+const TWICE_DAILY: BuildingType = {
+	...PAUSE,
+	schedule: [
+		{
+			title: 'Hours',
+			hours: [
+				{days: ['Fr'], from: '7:00am', to: '2:00pm'},
+				{days: ['Fr'], from: '5:00pm', to: '9:00pm'},
+			],
+		},
+	],
+}
+
 describe('cafeHours', () => {
-	test('gives the window the venue is serving', () => {
-		expect(cafeHours(PAUSE, dayMoment('Fri 6:00pm'))).toEqual({
-			time: '4PM – Midnight',
-			closed: false,
-			opensAt: null,
-		})
-	})
-
-	// The hours stay true when the doors are shut, but they are not what the
-	// header draws for a shut cafe: it says when the doors open instead.
-	test('reports a venue that is not serving as closed, and when it opens', () => {
-		expect(cafeHours(PAUSE, dayMoment('Fri 9:00am'))).toEqual({
-			time: null,
-			closed: true,
-			opensAt: '4PM',
-		})
-	})
-
 	// The menu screen draws before the buildings query resolves, and a venue
 	// that has not arrived is not a venue that is shut.
 	test('says nothing about a venue it has not been given', () => {
 		expect(cafeHours(undefined, dayMoment('Fri 6:00pm'))).toEqual({
 			time: null,
 			closed: false,
-			opensAt: null,
+			reopening: null,
 		})
 	})
 
@@ -52,159 +48,188 @@ describe('cafeHours', () => {
 		expect(cafeHours(unscheduled, dayMoment('Fri 6:00pm'))).toEqual({
 			time: null,
 			closed: true,
-			opensAt: null,
+			reopening: null,
 		})
 	})
 
-	// The Pause shuts *at* midnight rather than past it, so the small hours are
-	// the one time its flat every-day schedule is not serving.
-	test('reports the venue shut once its window has closed at midnight', () => {
-		expect(cafeHours(PAUSE, dayMoment('Sat 12:30am'))).toEqual({
-			time: null,
-			closed: true,
-			opensAt: '4PM',
+	// With one window in the day there is one thing worth knowing at a time:
+	// when it opens, then when it closes.
+	describe('a venue with one window today', () => {
+		test('says when it opens, before it does', () => {
+			expect(cafeHours(PAUSE, dayMoment('Fri 9:00am'))).toEqual({
+				time: null,
+				closed: true,
+				reopening: 'Opens at 4 PM',
+			})
+		})
+
+		// Half an hour out the status reads `Almost Open`, but the doors are
+		// still shut.
+		test('still says when it opens, just before it does', () => {
+			expect(cafeHours(PAUSE, dayMoment('Fri 3:45pm'))).toEqual({
+				time: null,
+				closed: true,
+				reopening: 'Opens at 4 PM',
+			})
+		})
+
+		test('says when it closes, while it is open', () => {
+			expect(cafeHours(PAUSE, dayMoment('Fri 6:00pm'))).toEqual({
+				time: 'Closes at midnight',
+				closed: false,
+				reopening: null,
+			})
+			expect(cafeHours(PAUSE, dayMoment('Fri 11:45pm'))).toEqual({
+				time: 'Closes at midnight',
+				closed: false,
+				reopening: null,
+			})
+		})
+
+		// The Pause shuts *at* midnight, so the small hours are already the next
+		// day, and its one window is still ahead.
+		test('says when it opens, once a midnight close has passed', () => {
+			expect(cafeHours(PAUSE, dayMoment('Sat 12:30am'))).toEqual({
+				time: null,
+				closed: true,
+				reopening: 'Opens at 4 PM',
+			})
+		})
+
+		test('says it is closed until tomorrow, after closing early', () => {
+			let lunchOnly: BuildingType = {
+				...PAUSE,
+				schedule: [
+					{
+						title: 'Hours',
+						hours: [
+							{days: ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'], from: '11:00am', to: '2:00pm'},
+						],
+					},
+				],
+			}
+
+			expect(cafeHours(lunchOnly, dayMoment('Fri 3:00pm'))).toEqual({
+				time: null,
+				closed: true,
+				reopening: 'Closed until tomorrow',
+			})
+		})
+
+		// "Tomorrow" is a promise; a venue with nothing tomorrow cannot make it.
+		test('names no opening after closing early, when nothing opens tomorrow', () => {
+			let fridayLunch: BuildingType = {
+				...PAUSE,
+				schedule: [{title: 'Hours', hours: [{days: ['Fr'], from: '11:00am', to: '2:00pm'}]}],
+			}
+
+			expect(cafeHours(fridayLunch, dayMoment('Fri 3:00pm'))).toEqual({
+				time: null,
+				closed: true,
+				reopening: null,
+			})
+		})
+
+		test('writes noon as a word', () => {
+			let fromNoon: BuildingType = {
+				...PAUSE,
+				schedule: [{title: 'Hours', hours: [{days: ['Fr'], from: '12:00pm', to: '2:00pm'}]}],
+			}
+
+			expect(cafeHours(fromNoon, dayMoment('Fri 9:00am')).reopening).toBe('Opens at noon')
+		})
+
+		// Last night's window is the one running, and today's own has not
+		// started, so the day holds one window at a time.
+		test('says when a window from last night closes', () => {
+			let lateNight: BuildingType = {
+				...PAUSE,
+				schedule: [{title: 'Hours', hours: [{days: ['Fr'], from: '9:00pm', to: '2:00am'}]}],
+			}
+
+			expect(cafeHours(lateNight, dayMoment('Sat 1:00am'))).toEqual({
+				time: 'Closes at 2 AM',
+				closed: false,
+				reopening: null,
+			})
+		})
+
+		// `isPhysicallyOpen: false` is the college saying the doors are shut
+		// whatever the hours beside them read, so that set's window is not one of
+		// the day's.
+		test('passes over a set whose doors are not open', () => {
+			let shuttered: BuildingType = {
+				...PAUSE,
+				schedule: [
+					{
+						title: 'Closed for renovation',
+						isPhysicallyOpen: false,
+						hours: [{days: ['Fr'], from: '7:00am', to: '2:00pm'}],
+					},
+					{title: 'Hours', hours: [{days: ['Fr'], from: '5:00pm', to: '9:00pm'}]},
+				],
+			}
+
+			expect(cafeHours(shuttered, dayMoment('Fri 1:00pm'))).toEqual({
+				time: null,
+				closed: true,
+				reopening: 'Opens at 5 PM',
+			})
+			expect(cafeHours(shuttered, dayMoment('Fri 6:00pm'))).toEqual({
+				time: 'Closes at 9 PM',
+				closed: false,
+				reopening: null,
+			})
 		})
 	})
 
-	// Nothing ahead today is not the same as never: the header says shut and
-	// stops, rather than naming a day it has no room for.
-	test('names no opening once nothing opens again today', () => {
-		let lunchOnly: BuildingType = {
-			...PAUSE,
-			schedule: [{title: 'Hours', hours: [{days: ['Fr'], from: '11:00am', to: '2:00pm'}]}],
-		}
-
-		expect(cafeHours(lunchOnly, dayMoment('Fri 3:00pm'))).toEqual({
-			time: null,
-			closed: true,
-			opensAt: null,
+	describe('a venue with more than one window today', () => {
+		// A venue serving twice a day publishes both windows on the same day, and
+		// `schedulesInEffect` hands back both. The one running is the one to draw.
+		test('draws the window it is running, not the first one it published', () => {
+			expect(cafeHours(TWICE_DAILY, dayMoment('Fri 6:00pm'))).toEqual({
+				time: '5PM – 9PM',
+				closed: false,
+				reopening: null,
+			})
+			expect(cafeHours(TWICE_DAILY, dayMoment('Fri 1:00pm'))).toEqual({
+				time: '7AM – 2PM',
+				closed: false,
+				reopening: null,
+			})
 		})
-	})
 
-	// Written the way the menu header writes its windows, so the opening reads
-	// as a time from the same line of the bar.
-	test('writes an opening at noon as Noon', () => {
-		let fromNoon: BuildingType = {
-			...PAUSE,
-			schedule: [{title: 'Hours', hours: [{days: ['Fr'], from: '12:00pm', to: '2:00pm'}]}],
-		}
-
-		expect(cafeHours(fromNoon, dayMoment('Fri 9:00am')).opensAt).toBe('Noon')
-	})
-
-	// A venue that does run past midnight keeps last night's window rather than
-	// reading as tonight's not-yet-started one.
-	test('keeps a window that is still running after midnight', () => {
-		let lateNight: BuildingType = {
-			...PAUSE,
-			schedule: [{title: 'Hours', hours: [{days: ['Fr'], from: '9:00pm', to: '2:00am'}]}],
-		}
-
-		expect(cafeHours(lateNight, dayMoment('Sat 1:00am'))).toEqual({
-			time: '9PM – 2AM',
-			closed: false,
-			opensAt: null,
+		// Half an hour out from opening it reads as `Almost Open`, which is when
+		// the window is worth reading. The window to read is the one about to
+		// start -- this morning's service is over by then.
+		test('draws the window about to open, not the one already finished', () => {
+			expect(cafeHours(TWICE_DAILY, dayMoment('Fri 4:40pm'))).toEqual({
+				time: '5PM – 9PM',
+				closed: false,
+				reopening: null,
+			})
 		})
-	})
-	// A venue serving twice a day publishes both windows on the same day, and
-	// `schedulesInEffect` hands back both. The one running is the one to draw.
-	test('draws the window it is running, not the first one it published', () => {
-		let twiceDaily: BuildingType = {
-			...PAUSE,
-			schedule: [
-				{
-					title: 'Hours',
-					hours: [
-						{days: ['Fr'], from: '7:00am', to: '2:00pm'},
-						{days: ['Fr'], from: '5:00pm', to: '9:00pm'},
-					],
-				},
-			],
-		}
 
-		expect(cafeHours(twiceDaily, dayMoment('Fri 6:00pm'))).toEqual({
-			time: '5PM – 9PM',
-			closed: false,
-			opensAt: null,
+		test('says when it opens again, between windows', () => {
+			expect(cafeHours(TWICE_DAILY, dayMoment('Fri 3:00pm'))).toEqual({
+				time: null,
+				closed: true,
+				reopening: 'Closed until 5PM',
+			})
 		})
-		expect(cafeHours(twiceDaily, dayMoment('Fri 1:00pm'))).toEqual({
-			time: '7AM – 2PM',
-			closed: false,
-			opensAt: null,
-		})
-	})
 
-	// `isPhysicallyOpen: false` is the college saying the doors are shut whatever
-	// the hours beside them read.
-	test('passes over a set whose doors are not open', () => {
-		let shuttered: BuildingType = {
-			...PAUSE,
-			schedule: [
-				{
-					title: 'Closed for renovation',
-					isPhysicallyOpen: false,
-					hours: [{days: ['Fr'], from: '7:00am', to: '2:00pm'}],
-				},
-				{title: 'Hours', hours: [{days: ['Fr'], from: '5:00pm', to: '9:00pm'}]},
-			],
-		}
-
-		expect(cafeHours(shuttered, dayMoment('Fri 6:00pm'))).toEqual({
-			time: '5PM – 9PM',
-			closed: false,
-			opensAt: null,
-		})
-		expect(cafeHours(shuttered, dayMoment('Fri 1:00pm'))).toEqual({
-			time: null,
-			closed: true,
-			opensAt: '5PM',
-		})
-		// Before the shuttered set's own window, whose opening is not one.
-		expect(cafeHours(shuttered, dayMoment('Fri 6:00am'))).toEqual({
-			time: null,
-			closed: true,
-			opensAt: '5PM',
-		})
-	})
-
-	// Half an hour out from closing the venue reads as `Almost Closed`, which is
-	// a venue that is still serving.
-	test('keeps a venue that is about to close open', () => {
-		expect(cafeHours(PAUSE, dayMoment('Fri 11:45pm'))).toEqual({
-			time: '4PM – Midnight',
-			closed: false,
-			opensAt: null,
-		})
-	})
-
-	// Half an hour out from opening it reads as `Almost Open`, which is when the
-	// window is worth reading. The window to read is the one about to start, not
-	// whichever the venue happened to publish first -- this morning's service is
-	// over by then.
-	test('draws the window about to open, not the one already finished', () => {
-		let twiceDaily: BuildingType = {
-			...PAUSE,
-			schedule: [
-				{
-					title: 'Hours',
-					hours: [
-						{days: ['Fr'], from: '7:00am', to: '2:00pm'},
-						{days: ['Fr'], from: '5:00pm', to: '9:00pm'},
-					],
-				},
-			],
-		}
-
-		expect(cafeHours(twiceDaily, dayMoment('Fri 4:40pm'))).toEqual({
-			time: '5PM – 9PM',
-			closed: false,
-			opensAt: null,
+		test('names no opening once nothing opens again today', () => {
+			expect(cafeHours(TWICE_DAILY, dayMoment('Fri 10:00pm'))).toEqual({
+				time: null,
+				closed: true,
+				reopening: null,
+			})
 		})
 	})
 
 	// Chapel shuts the doors too. `getShortBuildingStatus` names it rather than
 	// calling it closed, which is a distinction a menu header has no room for.
-	test('reports a venue shut for chapel as closed', () => {
+	test('reports a venue shut for chapel as closed until chapel ends', () => {
 		let observesChapel: BuildingType = {
 			...PAUSE,
 			schedule: [
@@ -219,7 +244,7 @@ describe('cafeHours', () => {
 		expect(cafeHours(observesChapel, dayMoment('Wed 10:20am'))).toEqual({
 			time: null,
 			closed: true,
-			opensAt: '10:30AM',
+			reopening: 'Closed until 10:30AM',
 		})
 	})
 })

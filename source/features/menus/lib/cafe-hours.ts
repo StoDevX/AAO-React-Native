@@ -1,25 +1,35 @@
 import type {Moment} from 'moment-timezone'
 import type {BuildingStatusType, BuildingType} from '../../building-hours/types'
+import type {HourPairType} from '../../building-hours/lib'
 import {
+	findOpenWindow,
 	formatBuildingTimes,
 	formatCompactBuildingTime,
+	formatStatusTime,
+	getDayOfWeek,
 	getScheduleStatusAtMoment,
 	getShortBuildingStatus,
 	nextOpening,
 	schedulesInEffect,
+	windowOpeningOn,
 } from '../../building-hours/lib'
 
 /** What a venue's published hours say about the cafe on screen right now. */
 export type CafeHours = {
-	/** The window it is serving, e.g. `4PM – Midnight`, or `null` when shut. */
+	/**
+	 * What to say about an open cafe's hours: when it closes, e.g. `Closes at
+	 * midnight`, for a venue with one window today, or the window it is serving,
+	 * e.g. `4PM – Midnight`, for one with several. `null` when shut.
+	 */
 	time: string | null
 	/** Whether the doors are closed. */
 	closed: boolean
 	/**
-	 * When a shut cafe next opens today, e.g. `4PM`, or `null` when it is open,
-	 * or when nothing opens again today.
+	 * What to say about a shut cafe opening again, e.g. `Opens at 4 PM`, `Closed
+	 * until tomorrow`, or `Closed until 5PM`, or `null` when it is open or when
+	 * there is nothing to promise.
 	 */
-	opensAt: string | null
+	reopening: string | null
 }
 
 /**
@@ -34,7 +44,7 @@ export type CafeHours = {
 export const PAUSE_VENUE = 'The Pause Kitchen'
 
 /** Neither open nor shut: what a screen shows before it has been told. */
-const UNKNOWN: CafeHours = {time: null, closed: false, opensAt: null}
+const UNKNOWN: CafeHours = {time: null, closed: false, reopening: null}
 
 /** The statuses that mean the doors are shut right now. */
 const SHUT = new Set<BuildingStatusType>(['Closed', 'Chapel'])
@@ -57,6 +67,16 @@ export function cafeHours(building: BuildingType | undefined, m: Moment): CafeHo
 	}
 
 	let status = getShortBuildingStatus(building, m)
+
+	// A venue with one window today has one thing worth saying at a time: when
+	// it opens, then when it closes. Chapel is left to the path below, which
+	// knows when chapel lets out.
+	if (status !== 'Chapel') {
+		let windows = windowsOfTheDay(building, m)
+		if (windows.length === 1) {
+			return oneWindow(building, windows[0], m)
+		}
+	}
 
 	// `Chapel` counts as shut -- the doors are closed either way, and a
 	// navigation bar has no room to say why -- and only the status knows about
@@ -89,7 +109,7 @@ export function cafeHours(building: BuildingType | undefined, m: Moment): CafeHo
 			return {
 				time: formatBuildingTimes(schedule, m, {compact: true}),
 				closed: false,
-				opensAt: null,
+				reopening: null,
 			}
 		}
 	}
@@ -103,6 +123,59 @@ function shut(building: BuildingType, m: Moment): CafeHours {
 	return {
 		time: null,
 		closed: true,
-		opensAt: opening ? formatCompactBuildingTime(opening) : null,
+		reopening: opening ? `Closed until ${formatCompactBuildingTime(opening)}` : null,
 	}
+}
+
+/**
+ * The windows a venue's day holds at `m`: the one running, even when it opened
+ * last night, and those that open today. Sets whose doors are not open hold
+ * none.
+ */
+function windowsOfTheDay(building: BuildingType, m: Moment): HourPairType[] {
+	let today = getDayOfWeek(m)
+	let windows: HourPairType[] = []
+
+	for (let set of building.schedule ?? []) {
+		if (set.isPhysicallyOpen === false) {
+			continue
+		}
+
+		for (let hours of set.hours) {
+			let window =
+				findOpenWindow(hours, m) ?? (hours.days.includes(today) ? windowOpeningOn(hours, m) : null)
+			if (window) {
+				windows.push(window)
+			}
+		}
+	}
+
+	return windows
+}
+
+/** The line for a venue whose day holds the one `window`. */
+function oneWindow(building: BuildingType, window: HourPairType, m: Moment): CafeHours {
+	if (m.isBefore(window.open)) {
+		return {time: null, closed: true, reopening: `Opens at ${formatStatusTime(window.open)}`}
+	}
+
+	if (m.isBefore(window.close)) {
+		return {time: `Closes at ${formatStatusTime(window.close)}`, closed: false, reopening: null}
+	}
+
+	// Past the day's one window, so the next is tomorrow's -- if it has one.
+	return {
+		time: null,
+		closed: true,
+		reopening: opensTomorrow(building, m) ? 'Closed until tomorrow' : null,
+	}
+}
+
+/** Whether any of a venue's open sets has a window starting the day after `m`. */
+function opensTomorrow(building: BuildingType, m: Moment): boolean {
+	let tomorrow = getDayOfWeek(m.clone().add(1, 'day'))
+	return (building.schedule ?? []).some(
+		(set) =>
+			set.isPhysicallyOpen !== false && set.hours.some((hours) => hours.days.includes(tomorrow)),
+	)
 }
