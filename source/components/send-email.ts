@@ -1,5 +1,6 @@
 import {Alert} from 'react-native'
 import * as Clipboard from 'expo-clipboard'
+import * as MailComposer from 'expo-mail-composer'
 import {openUrl} from '@frogpond/open-url'
 
 type Args = {
@@ -34,6 +35,43 @@ export function sendEmail(args: Args): void {
 			],
 		)
 	}
+}
+
+/**
+ * Writes an email in Mail's own compose sheet, which can carry `attachments`
+ * (file URIs). Without an account in Mail that sheet cannot open, so the email
+ * goes out as a `mailto:` link instead -- which cannot carry attachments, so
+ * the reader is asked first whether to send it without them.
+ */
+export async function composeEmail(args: Args & {attachments?: Array<string>}): Promise<void> {
+	const {attachments = [], ...email} = args
+
+	if (await MailComposer.isAvailableAsync()) {
+		const {to = [], cc = [], bcc = [], subject, body} = email
+		await MailComposer.composeAsync({
+			recipients: to,
+			ccRecipients: cc,
+			bccRecipients: bcc,
+			subject,
+			body,
+			attachments,
+		})
+		return
+	}
+
+	if (attachments.length === 0) {
+		sendEmail(email)
+		return
+	}
+
+	Alert.alert(
+		'Images cannot be attached',
+		'Mail has no account set up on this device, so the images cannot come along. You can still send the report without them.',
+		[
+			{text: 'Cancel', style: 'cancel'},
+			{text: 'Send Without Images', onPress: () => sendEmail(email)},
+		],
+	)
 }
 
 export function formatEmailParts(args: Args): string {

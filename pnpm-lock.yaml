@@ -252,6 +252,9 @@ importers:
       expo-localization:
         specifier: 57.0.2
         version: 57.0.2(expo@57.0.19)(react@19.2.3)
+      expo-mail-composer:
+        specifier: 57.0.2
+        version: 57.0.2(expo@57.0.19)
       expo-modules-core:
         specifier: 57.0.15
         version: 57.0.15(react-native-worklets@0.10.1)(react-native@0.86.3)(react@19.2.3)
@@ -3690,6 +3693,11 @@ packages:
     peerDependencies:
       expo: '*'
       react: '*'
+
+  expo-mail-composer@57.0.2:
+    resolution: {integrity: sha512-QzUUaUpAg50/jHuQGw0W9JDRtJysnOVGGRk7vcp5aOl+A+4ozfYYG6x5uE1uUbkgINiGQFOuBxvQEvvjAlD27A==}
+    peerDependencies:
+      expo: '*'
 
   expo-modules-autolinking@57.0.13:
     resolution: {integrity: sha512-Hj5NjZRlfccazhKab+wK19leRVUr1Y/PUERaRvegIbUSkq4GVxKq6lU9QHlKQyC16MdD/VS4iwsiLivB4o7lvQ==}
@@ -8587,6 +8595,10 @@ snapshots:
       expo: 57.0.19(@babel/core@7.29.7)(@expo/dom-webview@57.0.1)(@expo/metro-runtime@57.0.15)(expo-router@57.0.18)(react-native-webview@13.16.1)(react-native-worklets@0.10.1)(react-native@0.86.3)(react@19.2.3)(supports-color@8.1.1)(typescript@7.0.2)
       react: 19.2.3
       rtl-detect: 1.1.2
+
+  expo-mail-composer@57.0.2(expo@57.0.19):
+    dependencies:
+      expo: 57.0.19(@babel/core@7.29.7)(@expo/dom-webview@57.0.1)(@expo/metro-runtime@57.0.15)(expo-router@57.0.18)(react-native-webview@13.16.1)(react-native-worklets@0.10.1)(react-native@0.86.3)(react@19.2.3)(supports-color@8.1.1)(typescript@7.0.2)
 
   expo-modules-autolinking@57.0.13(supports-color@8.1.1)(typescript@7.0.2):
     dependencies:

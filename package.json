@@ -67,6 +67,7 @@
     "expo-image-picker": "57.0.19",
     "expo-linking": "57.0.9",
     "expo-localization": "57.0.2",
+    "expo-mail-composer": "57.0.2",
     "expo-modules-core": "57.0.15",
     "expo-router": "57.0.18",
     "expo-sqlite": "57.0.2",

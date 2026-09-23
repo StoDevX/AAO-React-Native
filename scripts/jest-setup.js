@@ -14,6 +14,13 @@ jest.mock('expo-clipboard', () => ({
 	setStringAsync: jest.fn(() => Promise.resolve(true)),
 	hasStringAsync: jest.fn(() => Promise.resolve(false)),
 }))
+jest.mock('expo-mail-composer', () => ({
+	isAvailableAsync: jest.fn(() => Promise.resolve(false)),
+	composeAsync: jest.fn(() => Promise.resolve({status: 'sent'})),
+}))
+jest.mock('expo-image-picker', () => ({
+	launchImageLibraryAsync: jest.fn(() => Promise.resolve({canceled: true, assets: null})),
+}))
 // These specific values are load-bearing for tests across building-hours,
 // transportation, course-search, and streaming that call a time-format helper
 // without an explicit locale -- the default falls through to deviceLocale(),

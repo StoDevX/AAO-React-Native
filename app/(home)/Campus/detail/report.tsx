@@ -19,6 +19,10 @@ import * as c from '@frogpond/colors'
 import {timezone} from '@frogpond/constants'
 import {LoadingView, NoticeView} from '@frogpond/notice'
 
+import {
+	ImageAttachmentsSection,
+	type PickedImage,
+} from '../../../../source/components/image-attachments-section'
 import {ActionRow, DetailRow, NavigationRow} from '../../../../source/components/rows'
 import {SyncedTextField} from '../../../../source/components/synced-text-field'
 import {
@@ -49,6 +53,7 @@ function useBuildingEditor(initialBuilding: BuildingType, campus: Campus) {
 	let {draft, hasUnsavedChanges, edit, note, setNote} = useBuildingReport()
 	let building = draft ?? initialBuilding
 
+	let [images, setImages] = React.useState<Array<PickedImage>>([])
 	let [submitted, setSubmitted] = React.useState(false)
 
 	/**
@@ -65,7 +70,7 @@ function useBuildingEditor(initialBuilding: BuildingType, campus: Campus) {
 	 * the formSheet's own route so a native sheet dismissal is refused too.
 	 * https://reactnavigation.org/docs/preventing-going-back
 	 */
-	usePreventRemove(hasUnsavedChanges && !submitted, ({data}) => {
+	usePreventRemove((hasUnsavedChanges || images.length > 0) && !submitted, ({data}) => {
 		Alert.alert(
 			'Discard changes?',
 			'You have made unsaved changes. Are you sure you want to discard them?',
@@ -135,10 +140,27 @@ function useBuildingEditor(initialBuilding: BuildingType, campus: Campus) {
 
 	let submit = React.useCallback((): void => {
 		setSubmitted(true)
-		submitReport(initialBuilding, building, campus, note)
-	}, [building, campus, initialBuilding, note])
+		void submitReport(
+			initialBuilding,
+			building,
+			campus,
+			note,
+			images.map((image) => image.uri),
+		)
+	}, [building, campus, images, initialBuilding, note])
 
-	return {addLink, building, dispatch: edit, note, openEditor, openLink, setNote, submit}
+	return {
+		addLink,
+		building,
+		dispatch: edit,
+		images,
+		note,
+		openEditor,
+		openLink,
+		setImages,
+		setNote,
+		submit,
+	}
 }
 
 type Props = {
@@ -157,8 +179,18 @@ let CampusProblemReportView = ({initialBuilding, campus}: Props): React.ReactNod
 		// oxlint-disable-next-line react/exhaustive-deps
 	}, [])
 
-	let {addLink, building, dispatch, note, openEditor, openLink, setNote, submit} =
-		useBuildingEditor(initialBuilding, campus)
+	let {
+		addLink,
+		building,
+		dispatch,
+		images,
+		note,
+		openEditor,
+		openLink,
+		setImages,
+		setNote,
+		submit,
+	} = useBuildingEditor(initialBuilding, campus)
 
 	let {schedule: schedules, name, subtitle, abbreviation, category, links = []} = building
 
@@ -283,6 +315,8 @@ let CampusProblemReportView = ({initialBuilding, campus}: Props): React.ReactNod
 							value={note}
 						/>
 					</Section>
+
+					<ImageAttachmentsSection images={images} onChangeImages={setImages} title="IMAGES" />
 				</List>
 			</Host>
 		</>
