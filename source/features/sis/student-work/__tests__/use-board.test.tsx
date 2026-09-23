@@ -55,6 +55,31 @@ describe('useStudentWorkBoard', () => {
 		expect(result.current.board.context).toBe(before)
 	})
 
+	// Opening Student Work checks for new postings -- that is what the New dots
+	// are for -- while a list opened from it reuses the board it just fetched.
+	test('refetches a fresh board only when asked to on mount', async () => {
+		let first = await renderHook(() => ({board: useStudentWorkBoard(), client: useQueryClient()}), {
+			wrapper: Wrapper,
+		})
+		await waitFor(() => expect(first.result.current.board.jobs.length).toBeGreaterThan(0))
+		let updates = () =>
+			first.result.current.client.getQueryState(keys.postings)?.dataUpdateCount ?? 0
+		let afterFirst = updates()
+
+		let list = await renderHook(() => useStudentWorkBoard(), {wrapper: Wrapper})
+		// Let the list's mount run its effects before counting.
+		await act(() => Promise.resolve())
+		expect(updates()).toBe(afterFirst)
+
+		let landing = await renderHook(() => useStudentWorkBoard({checkForNewPostings: true}), {
+			wrapper: Wrapper,
+		})
+		await waitFor(() => expect(updates()).toBeGreaterThan(afterFirst))
+		await first.unmount()
+		await list.unmount()
+		await landing.unmount()
+	})
+
 	// A refresh retries what is stale or failed; re-running fresh searches
 	// would make every pull wait on all fifty-one of them.
 	test('refreshes stale unit searches and leaves fresh ones alone', async () => {

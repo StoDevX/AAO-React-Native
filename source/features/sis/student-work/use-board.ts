@@ -28,9 +28,18 @@ export type StudentWorkBoard = {
 
 /// Everything both Student Work screens read: the board, the areas, what each
 /// area holds, and what is new since the last visit.
-export function useStudentWorkBoard(): StudentWorkBoard {
+///
+/// `checkForNewPostings` refetches the board on mount even while it is fresh:
+/// the landing does, since new postings are why a student opens Student Work,
+/// and a list opened from the landing then reuses what it just fetched.
+export function useStudentWorkBoard({
+	checkForNewPostings = false,
+}: {checkForNewPostings?: boolean} = {}): StudentWorkBoard {
 	let queryClient = useQueryClient()
-	let board = useQuery(jobPostingsOptions)
+	let board = useQuery({
+		...jobPostingsOptions,
+		refetchOnMount: checkForNewPostings ? 'always' : true,
+	})
 	let {data: areas} = useQuery(studentWorkAreasOptions)
 
 	let units = React.useMemo(() => areas.flatMap((area) => area.units), [areas])

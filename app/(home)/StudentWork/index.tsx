@@ -23,7 +23,7 @@ const OFFLINE_NOTICE = 'Student Work needs a connection to load the job board th
 /// landing for the whole board's matching postings.
 export default function StudentWorkPage(): React.ReactNode {
 	let router = useRouter()
-	let {board, jobs, areas, context, refresh} = useStudentWorkBoard()
+	let {board, jobs, areas, context, refresh} = useStudentWorkBoard({checkForNewPostings: true})
 
 	let [query, setQuery] = React.useState('')
 	let searchQuery = useDebounce(query, 200)
