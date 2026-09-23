@@ -144,7 +144,8 @@ export function BusLine(props: Props): React.ReactNode {
 									stop,
 									busStatus: status,
 									departureIndex: currentBusIteration,
-								}).slice(0, DEPARTURES_PER_ROW),
+								}),
+								DEPARTURES_PER_ROW,
 							)
 
 							return (
