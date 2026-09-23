@@ -93,6 +93,16 @@ struct StudentWorkScreen: Screen {
 		app.collectionViews[TestIdentifiers.StudentWork.postingsList]
 	}
 
+	/// Asserts an open posting shows this Details row. A `LabeledContent` row
+	/// reads as one element, its label and value joined by a comma.
+	@discardableResult
+	func verifyDetailRow(_ label: String, _ value: String) -> Self {
+		XCTAssertTrue(
+			app.staticTexts["\(label), \(value)"].firstMatch.waitForExistence(timeout: 10),
+			"The posting should show a \(label) row reading \(value)")
+		return self
+	}
+
 	@discardableResult
 	func search(for text: String) -> Self {
 		let field = app.searchFields.firstMatch

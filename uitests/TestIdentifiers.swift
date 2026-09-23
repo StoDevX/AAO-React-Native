@@ -220,6 +220,8 @@ struct TestIdentifiers {
 		static let entryLevel = "Entry-level"
 		/// The Level filter's key, from `buildJobFilters`.
 		static let levelFilter = "level"
+		/// The coded fixture's term, as `jobTerm` names it.
+		static let academicYear = "Academic Year"
 		/// The tier every filler posting is at.
 		static let experienced = "Experienced"
 		/// Starts every filler posting's title, as FILLER_TITLE_PREFIX in

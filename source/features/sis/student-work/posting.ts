@@ -12,6 +12,9 @@ export type JobCode = {structure: PayStructure; tier: PayTier}
 /// before the tier, as "(WS-OSA 1)".
 const JOB_CODE = /\(WS-(ST|NST|OSA)\s*([123])\)/u
 
+/// What each tier means to a student looking for work.
+export const LEVEL_LABELS: Record<PayTier, string> = {1: 'Entry-level', 2: 'Experienced', 3: 'Lead'}
+
 export function jobCode(title: string): JobCode | undefined {
 	let match = JOB_CODE.exec(title)
 	if (!match) return undefined

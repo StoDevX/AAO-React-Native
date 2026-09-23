@@ -12,6 +12,18 @@ class ModuleStudentWorkTests: UITestCase {
 			.capture("Student Work list")
 	}
 
+	/// The posting's own screen titles it as the list does, and turns what the
+	/// title's term prefix and pay code said into rows.
+	func testJobPostingShowsItsDisplayTitleAndTitleFields() throws {
+		StudentWorkScreen(app: app)
+			.navigate()
+			.openJobPosting(IDs.fixtureCodedJob)
+			.capture("Job posting with a display title")
+			.verifyDetailRow("Wage", IDs.fixtureCodedJobWage)
+			.verifyDetailRow("Level", IDs.entryLevel)
+			.verifyDetailRow("Term", IDs.academicYear)
+	}
+
 	func testLevelFilterNarrowsTheList() throws {
 		StudentWorkScreen(app: app)
 			.navigate()

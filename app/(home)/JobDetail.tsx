@@ -8,7 +8,12 @@ import {LoadingView, NoticeView} from '@frogpond/notice'
 import {openUrl} from '@frogpond/open-url'
 import * as c from '@frogpond/colors'
 import {jobDetailOptions, type JobDetail} from '@frogpond/ccc-jobs'
-import {JOB_DESCRIPTION_TITLE, shareJob} from '../../source/features/sis/student-work/lib'
+import {
+	JOB_DESCRIPTION_TITLE,
+	jobDetailFields,
+	shareJob,
+} from '../../source/features/sis/student-work/lib'
+import {displayTitle} from '../../source/features/sis/student-work/posting'
 import {format, isValid, parseISO} from 'date-fns'
 import {DetailRow, DisclosureRow, NavigationRow} from '../../source/components/rows'
 
@@ -37,21 +42,24 @@ function postedOn(postedDate: string | undefined): string | undefined {
 function JobDetailView({job}: {job: JobDetail}): React.ReactNode {
 	let router = useRouter()
 	let posted = postedOn(job.postedDate)
+	let fields = jobDetailFields(job)
 
 	return (
 		<Host style={styles.screen}>
 			<Form>
 				<Section>
-					<Text modifiers={[font({textStyle: 'title2', weight: 'bold'})]}>{job.title}</Text>
+					<Text modifiers={[font({textStyle: 'title2', weight: 'bold'})]}>
+						{displayTitle(job.title)}
+					</Text>
 					{job.category ? <DetailRow label="Category" value={job.category} /> : null}
 					{job.schedule ? <DetailRow label="Schedule" value={job.schedule} /> : null}
 					{job.location ? <DetailRow label="Location" value={job.location} /> : null}
 					{posted ? <DetailRow label="Posted" value={posted} /> : null}
 				</Section>
 
-				{job.fields.length > 0 ? (
+				{fields.length > 0 ? (
 					<Section title="Details">
-						{job.fields.map((field) => (
+						{fields.map((field) => (
 							<DetailRow key={field.label} label={field.label} value={field.value} />
 						))}
 					</Section>
@@ -116,7 +124,7 @@ export default function JobDetailPage(): React.ReactNode {
 
 	return (
 		<>
-			<Stack.Title>{job.title}</Stack.Title>
+			<Stack.Title>{displayTitle(job.title)}</Stack.Title>
 			<Stack.Toolbar placement="right">
 				<Stack.Toolbar.Button
 					accessibilityLabel="Share Job"

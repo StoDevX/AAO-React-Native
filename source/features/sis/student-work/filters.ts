@@ -6,7 +6,7 @@ import {selectedOptions} from '@frogpond/filter/selected-options'
 import type {ListType} from '@frogpond/filter/types'
 import deburr from 'lodash/deburr'
 import words from 'lodash/words'
-import {displayTitle, jobCode, jobTerm, type JobTerm, type PayTier} from './posting'
+import {displayTitle, jobCode, jobTerm, LEVEL_LABELS, type JobTerm} from './posting'
 
 /// What the Level and Term filters match a posting on.
 export type JobFacets = {level: string; term: string}
@@ -18,8 +18,7 @@ export type JobSection = {title: string; data: JobSummary[]}
 
 const NOT_STATED = 'Not stated'
 
-const LEVELS: Record<PayTier, string> = {1: 'Entry-level', 2: 'Experienced', 3: 'Lead'}
-const LEVEL_ORDER = [LEVELS[1], LEVELS[2], LEVELS[3], NOT_STATED]
+const LEVEL_ORDER = [LEVEL_LABELS[1], LEVEL_LABELS[2], LEVEL_LABELS[3], NOT_STATED]
 
 const TERM_ORDER: Array<JobTerm | typeof NOT_STATED> = [
 	'Academic Year',
@@ -32,7 +31,7 @@ const TERM_ORDER: Array<JobTerm | typeof NOT_STATED> = [
 function facetsOf(job: JobSummary): JobFacets {
 	let code = jobCode(job.title)
 	return {
-		level: code ? LEVELS[code.tier] : NOT_STATED,
+		level: code ? LEVEL_LABELS[code.tier] : NOT_STATED,
 		term: jobTerm(job.title) ?? NOT_STATED,
 	}
 }
