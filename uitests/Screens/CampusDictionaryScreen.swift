@@ -286,6 +286,52 @@ struct CampusDictionaryScreen: Screen {
 		return self
 	}
 
+	/// Adds a sub-sense to the sense on screen, which should open it.
+	@discardableResult
+	func addSubsense() -> Self {
+		let button = app.buttons[TestIdentifiers.Dictionary.addSubsense]
+		scrollUntilExists(button)
+		XCTAssertTrue(button.waitForExistence(timeout: 15), "the sense had no Add Sub-sense button")
+		button.tap()
+		XCTAssertTrue(
+			senseForm.waitForExistence(timeout: 15), "adding a sub-sense should show a sense form")
+		return self
+	}
+
+	/// The sense on screen has no definition yet -- a sub-sense just added.
+	@discardableResult
+	func verifyDefinitionIsBlank() -> Self {
+		let field = app.textFields[TestIdentifiers.Dictionary.senseDefinitionField]
+		XCTAssertTrue(
+			field.waitForExistence(timeout: 15), "the sense's definition field never appeared")
+		// An empty field reads its placeholder back as its value, and this
+		// field's placeholder is its own label -- see `typeDefinition`.
+		let value = (field.value as? String) ?? ""
+		XCTAssertTrue(
+			value.isEmpty || value == TestIdentifiers.Dictionary.senseDefinitionField,
+			"Add Sub-sense should open the new, blank sub-sense, but the definition field holds "
+				+ "\"\(value)\" -- the parent sense is still on screen")
+		return self
+	}
+
+	/// Goes back from a sub-sense, which should land on the sense it belongs
+	/// to, now listing it.
+	@discardableResult
+	func leaveSubsenseForParent(listing row: String) -> Self {
+		let back = app.navigationBars[TestIdentifiers.Dictionary.senseFormTitle]
+			.buttons[TestIdentifiers.Navigation.backButton]
+		XCTAssertTrue(back.waitForExistence(timeout: 15), "the sub-sense had no back button")
+		back.tap()
+		XCTAssertTrue(
+			senseForm.waitForExistence(timeout: 15),
+			"Back from a sub-sense should return to its parent sense, not past it to the edit form")
+		let subsense = app.buttons[row]
+		scrollUntilExists(subsense)
+		XCTAssertTrue(
+			subsense.waitForExistence(timeout: 15), "the parent sense should list \"\(row)\"")
+		return self
+	}
+
 	/// Returns to the edit form from a sense. The back button sits in the
 	/// navigation bar at the top of the screen, which the keyboard never
 	/// reaches even when it is up, so no scroll is needed -- whether or not
