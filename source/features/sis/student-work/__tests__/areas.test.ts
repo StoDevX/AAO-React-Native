@@ -1,0 +1,87 @@
+import {areaMembership, type StudentWorkArea, type UnitResult} from '../areas'
+
+function area(slug: string, units: string[]): StudentWorkArea {
+	return {name: slug, slug, icon: 'star', gradient: ['#000', '#fff'], units}
+}
+
+const BOARD = new Set(['a', 'b', 'c', 'd'])
+
+function results(entries: Array<[string, UnitResult]>): Map<string, UnitResult> {
+	return new Map(entries)
+}
+
+describe('areaMembership', () => {
+	test('counts an area whose searches all found postings', () => {
+		let status = areaMembership(
+			[area('music', ['1', '2'])],
+			results([
+				['1', {status: 'success', ids: ['a']}],
+				['2', {status: 'success', ids: ['b']}],
+			]),
+			BOARD,
+		).get('music')
+		expect(status).toEqual({ids: new Set(['a', 'b']), count: 2, disabled: false})
+	})
+
+	test('disables an area only when every search answered with nothing', () => {
+		let status = areaMembership(
+			[area('art', ['1'])],
+			results([['1', {status: 'success', ids: []}]]),
+			BOARD,
+		).get('art')
+		expect(status).toEqual({ids: new Set(), count: 0, disabled: true})
+	})
+
+	test('counts what loaded when one of an area’s searches failed', () => {
+		let status = areaMembership(
+			[area('music', ['1', '2'])],
+			results([
+				['1', {status: 'success', ids: ['a']}],
+				['2', {status: 'error'}],
+			]),
+			BOARD,
+		).get('music')
+		expect(status).toEqual({ids: new Set(['a']), count: 1, disabled: false})
+	})
+
+	test('never disables an area whose searches failed with nothing found', () => {
+		let status = areaMembership(
+			[area('music', ['1'])],
+			results([['1', {status: 'error'}]]),
+			BOARD,
+		).get('music')
+		expect(status).toEqual({ids: new Set(), count: undefined, disabled: false})
+	})
+
+	test('shows no count before any search answers', () => {
+		let status = areaMembership(
+			[area('music', ['1'])],
+			results([['1', {status: 'pending'}]]),
+			BOARD,
+		).get('music')
+		expect(status).toEqual({ids: new Set(), count: undefined, disabled: false})
+	})
+
+	test('counts a posting once when two of an area’s units return it', () => {
+		let status = areaMembership(
+			[area('dance', ['1', '2'])],
+			results([
+				['1', {status: 'success', ids: ['a']}],
+				['2', {status: 'success', ids: ['a']}],
+			]),
+			BOARD,
+		).get('dance')
+		expect(status?.count).toBe(1)
+	})
+
+	// A unit search can briefly know a posting the board has not caught up to,
+	// or one it has dropped; only the board's postings are shown or counted.
+	test('ignores IDs that are not on the board', () => {
+		let status = areaMembership(
+			[area('music', ['1'])],
+			results([['1', {status: 'success', ids: ['a', 'gone']}]]),
+			BOARD,
+		).get('music')
+		expect(status?.ids).toEqual(new Set(['a']))
+	})
+})
