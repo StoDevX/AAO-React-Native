@@ -170,10 +170,6 @@ const config: ExpoConfig = {
 				},
 			},
 			NSBonjourServices: ['_ccc-server._tcp.'],
-			// Note: remember to change this text in add-to-device-calendar's
-			// lib.ts Settings-redirect alert, too.
-			NSCalendarsUsageDescription:
-				'We use your calendar to add events to your calendar so that you remember what you wanted to attend.',
 			NSLocalNetworkUsageDescription:
 				'Used in development mode to discover a local ccc-server instance on the same network.',
 			NSLocationWhenInUseUsageDescription: 'Shows your location on the campus map.',
@@ -221,6 +217,10 @@ const config: ExpoConfig = {
 			},
 		],
 		'expo-router',
+		// Adding an event goes through the system editor, which needs no
+		// calendar access. The plugin applies itself even when unlisted and adds
+		// its usage strings; `false` removes each one.
+		['expo-calendar', {calendarPermission: false, remindersPermission: false}],
 		// Adds the MapLibre SDK to the generated project. On iOS that is a
 		// Swift Package pulling a prebuilt MapLibre.xcframework from
 		// maplibre-gl-native-distribution -- no pod source build, and no

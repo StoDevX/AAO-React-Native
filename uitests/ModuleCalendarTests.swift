@@ -70,14 +70,19 @@ class ModuleCalendarTests: UITestCase {
 			.capture("25-strip-last-week")
 	}
 
-	/// The add-to-calendar action is a bottom-bar item, which no component test
-	/// can reach -- so this is the only assertion that it exists at all.
-	func testEventDetailOffersAddToCalendar() throws {
+	/// Adding an event goes through the system editor, which runs outside the
+	/// app and needs no calendar access -- the app ships no calendar usage
+	/// string at all. A permission prompt coming back, or the editor failing to
+	/// open from the event sheet, turns this red. It also stands in for the
+	/// bottom-bar item's existence, which no component test can reach.
+	func testAddingAnEventAsksForNoCalendarAccess() throws {
 		CalendarScreen(app: app)
 			.navigate()
 			.openFirstEvent()
-			.verifyAddToCalendarButton()
-			.capture("17-event-detail-add-to-calendar")
+			.tapAddToCalendar()
+			.saveInSystemEditor(springboard: XCUIApplication(bundleIdentifier: "com.apple.springboard"))
+			.verifyAddedToCalendar()
+			.capture("17-event-detail-added-to-calendar")
 	}
 
 	/// The CALENDARS section is what makes a source controllable. UI test mode
