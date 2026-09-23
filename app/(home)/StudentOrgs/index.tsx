@@ -1,7 +1,6 @@
 // app/(home)/StudentOrgs/index.tsx
 import * as React from 'react'
 import {StyleSheet, useWindowDimensions} from 'react-native'
-import {useSafeAreaInsets} from 'react-native-safe-area-context'
 import {Grid, Host, ScrollView, Spacer, VStack} from '@expo/ui/swift-ui'
 import {
 	accessibilityElement,
@@ -203,9 +202,6 @@ type LandingProps = {
  */
 function StudentOrgsLanding({tiles, onSelectCategory, onRefresh}: LandingProps): React.ReactNode {
 	let {fontScale} = useWindowDimensions()
-	let insets = useSafeAreaInsets()
-	let leadingInset = SCREEN_MARGIN + insets.left
-	let trailingInset = SCREEN_MARGIN + insets.right
 
 	let columns = columnsForFontScale(fontScale)
 
@@ -221,7 +217,7 @@ function StudentOrgsLanding({tiles, onSelectCategory, onRefresh}: LandingProps):
 				<VStack
 					alignment="leading"
 					modifiers={[
-						padding({leading: leadingInset, trailing: trailingInset, top: SCREEN_MARGIN}),
+						padding({leading: SCREEN_MARGIN, trailing: SCREEN_MARGIN, top: SCREEN_MARGIN}),
 						frame({maxWidth: FILL_WIDTH}),
 					]}
 					spacing={TILE_SPACING}
