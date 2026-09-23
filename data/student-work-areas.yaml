@@ -145,6 +145,8 @@
     - '11398' # DOE-Up Bd-Stud Work Comm Srv
     - '45016' # Knobel-Piehl Food Insecurity
     - '45417' # Institute Freedom/Community
+    - '11378' # ETS - Student Work Comm Servic
+    - '45427' # Inst Frdm Comm-Bracken PA Con
 
 - name: Faith & Vocation
   slug: faith-vocation

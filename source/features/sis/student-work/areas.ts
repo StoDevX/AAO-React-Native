@@ -76,26 +76,25 @@ export function areaMembership(
 }
 
 /// Whether a list with these areas chosen (by name) can show its postings.
-/// Until a chosen area's searches answer, the list cannot tell its postings
-/// from the rest, and showing the whole board would pass it off as the area's.
+/// Until every search for a chosen area has answered, the list cannot tell
+/// the area's postings from the rest, and one that filled in search by search
+/// would jump back to the top each time. `retrying` is a Try Again under way,
+/// shown as loading rather than as the same failure.
 export function chosenAreaState(
 	chosenNames: string[] | null,
 	areas: StudentWorkArea[],
 	membership: Map<string, AreaStatus>,
+	retrying: boolean,
 ): 'ready' | 'loading' | 'failed' {
 	let statuses = areas
 		.filter((area) => (chosenNames ?? []).includes(area.name))
 		.map((area) => membership.get(area.slug))
 
-	if (
-		statuses.some(
-			(status) => status === undefined || (status.count === undefined && !status.settled),
-		)
-	) {
+	if (statuses.some((status) => status === undefined || !status.settled)) {
 		return 'loading'
 	}
 	if (statuses.some((status) => status?.count === undefined)) {
-		return 'failed'
+		return retrying ? 'loading' : 'failed'
 	}
 	return 'ready'
 }

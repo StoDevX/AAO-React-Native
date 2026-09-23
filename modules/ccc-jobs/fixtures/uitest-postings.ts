@@ -176,7 +176,7 @@ const FILLER_UNIT = '15141' // Residence Life
 
 /// What a keyword search for each unit finds on the fixture board. Every area
 /// the fixtures leave out -- Faith & Vocation among them -- has no postings, so
-/// a UI test can find a disabled tile.
+/// a UI test can open an empty area.
 export const UITEST_UNIT_POSTINGS: Record<string, string[]> = {}
 for (let job of UITEST_JOB_DETAILS) {
 	let unit = FIXTURE_UNITS[job.id] ?? FILLER_UNIT

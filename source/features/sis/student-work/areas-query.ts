@@ -33,4 +33,10 @@ export const studentWorkAreasOptions = queryOptions({
 		}
 	},
 	staleTime: 1000 * 60 * 5,
+	// A query that has never run does not run offline, so the fallback above
+	// would never be reached on a first, offline open. The shipped areas are
+	// there from the start instead, marked stale so the live copy replaces
+	// them as soon as it can be fetched.
+	initialData: BUNDLED_AREAS,
+	initialDataUpdatedAt: 0,
 })

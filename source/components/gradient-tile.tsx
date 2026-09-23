@@ -58,7 +58,7 @@ type Props = {
 	onPress: () => void
 	/** How many things the tile holds, drawn at the card's top-right corner. None at zero. */
 	count?: number
-	/** How VoiceOver says the count, as "13 postings"; the bare number otherwise. */
+	/** How VoiceOver says the count, as "13 postings" or "no postings"; the bare number otherwise. */
 	countLabel?: (count: number) => string
 	/** Drawn as SwiftUI draws a disabled button, but still tappable, as for an area with nothing in it. */
 	dimmed?: boolean
@@ -120,7 +120,9 @@ export function GradientTile({
 }: Props): React.ReactNode {
 	let isDarkScheme = useColorScheme() === 'dark'
 	let shownCount = count !== undefined && count > 0 ? count : undefined
-	let label = shownCount === undefined ? title : `${title}, ${countLabel(shownCount)}`
+	// A known count is spoken even at zero: a dimmed tile is not disabled, so
+	// the label is all that tells VoiceOver an empty area from a loading one.
+	let label = count === undefined ? title : `${title}, ${countLabel(count)}`
 
 	return (
 		<Button

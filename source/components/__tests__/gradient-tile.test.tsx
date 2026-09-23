@@ -43,6 +43,23 @@ describe('GradientTile', () => {
 		expect(screen.getByLabelText('Music, 4')).toBeOnTheScreen()
 	})
 
+	// A dimmed tile is not disabled, so VoiceOver has only the label to tell
+	// an empty area from one still loading.
+	it('says an empty count in the caller’s words, and draws no capsule', async () => {
+		await render(
+			<GradientTile
+				count={0}
+				countLabel={(count) => (count === 0 ? 'no postings' : `${count} postings`)}
+				gradient={blueGradient}
+				icon="sparkles"
+				onPress={jest.fn()}
+				title="Faith"
+			/>,
+		)
+		expect(screen.getByLabelText('Faith, no postings')).toBeOnTheScreen()
+		expect(screen.queryByText('0')).not.toBeOnTheScreen()
+	})
+
 	it('draws the count on the card', async () => {
 		await render(
 			<GradientTile

@@ -19,6 +19,7 @@ import {
 import type {AreaStatus, StudentWorkArea} from './areas'
 
 function postingsLabel(count: number): string {
+	if (count === 0) return 'no postings'
 	return count === 1 ? '1 posting' : `${count} postings`
 }
 

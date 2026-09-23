@@ -8,11 +8,12 @@ import {
 } from '@frogpond/ccc-jobs'
 import {now} from '@frogpond/timer'
 import {useQueries, useQuery, useQueryClient, type UseQueryResult} from '@tanstack/react-query'
-import {areaMembership, type StudentWorkArea, type UnitResult} from './areas'
+import {areaMembership, type StudentWorkArea} from './areas'
 import {studentWorkAreasOptions} from './areas-query'
 import type {FilterContext} from './filters'
 import {newPostingIds} from './new-postings'
 import {useSeenPostingsStore} from './store'
+import {unitResultOf} from './unit-result'
 
 export type StudentWorkBoard = {
 	board: UseQueryResult<JobCategory[]>
@@ -23,12 +24,6 @@ export type StudentWorkBoard = {
 	/// Refetch the board and every unit search, for pull-to-refresh: a failed
 	/// unit search would otherwise stay failed until it went stale.
 	refresh: () => Promise<void>
-}
-
-function unitResultOf(query: UseQueryResult<string[]> | undefined): UnitResult {
-	if (query?.isSuccess) return {status: 'success', ids: query.data}
-	if (query?.isError) return {status: 'error'}
-	return {status: 'pending'}
 }
 
 /// Everything both Student Work screens read: the board, the areas, what each

@@ -33,4 +33,14 @@ describe('studentWorkAreasOptions', () => {
 		expect(areas).toHaveLength(16)
 		expect(areas[0]?.slug).toBe('dining')
 	})
+
+	// A query that has never run does not run offline, so a fallback inside
+	// the fetch would never be reached; the shipped areas are there from the
+	// start instead, and marked stale so the live copy replaces them.
+	test('starts from the areas the app shipped with, already stale', () => {
+		let initial = studentWorkAreasOptions.initialData
+		let areas = typeof initial === 'function' ? initial() : initial
+		expect(areas).toHaveLength(16)
+		expect(studentWorkAreasOptions.initialDataUpdatedAt).toBe(0)
+	})
 })

@@ -1,13 +1,21 @@
 import * as React from 'react'
 import {StyleSheet} from 'react-native'
-import {ContentUnavailableView, Host, List, RNHostView, Section, VStack} from '@expo/ui/swift-ui'
+import {
+	ContentUnavailableView,
+	Host,
+	List,
+	ProgressView,
+	RNHostView,
+	Section,
+	VStack,
+} from '@expo/ui/swift-ui'
 import {accessibilityIdentifier, id, listStyle, refreshable} from '@expo/ui/swift-ui/modifiers'
 import * as c from '@frogpond/colors'
 import {FilterToolbar} from '@frogpond/filter'
 import {LoadingView, NoticeView} from '@frogpond/notice'
 import {keys, type JobSummary} from '@frogpond/ccc-jobs'
 import {useRouter} from 'expo-router'
-import {useQueryClient} from '@tanstack/react-query'
+import {useIsFetching} from '@tanstack/react-query'
 import {DisclosureRow, type DisclosureRowImage} from '../../../components/rows'
 import {chosenAreaState} from './areas'
 import {buildJobFilters, choosePosted, visibleSections, type ChosenJobFilters} from './filters'
@@ -67,7 +75,8 @@ type PostingsListProps = {
 /// shared by the landing screen's search and the postings screen.
 export function PostingsList({searchQuery, initialChosen}: PostingsListProps): React.ReactNode {
 	let router = useRouter()
-	let queryClient = useQueryClient()
+	// A Try Again under way: shown as loading, not as the same failure.
+	let retrying = useIsFetching({queryKey: keys.units}) > 0
 	let {board, jobs, context, refresh} = useStudentWorkBoard()
 	let {data = [], error, isError, refetch, isLoading} = board
 
@@ -119,21 +128,9 @@ export function PostingsList({searchQuery, initialChosen}: PostingsListProps): R
 		)
 	}
 
-	let areaState = chosenAreaState(chosen.area, context.areas, context.membership)
-
-	if (areaState === 'loading') {
-		return <LoadingView />
-	}
-
-	if (areaState === 'failed') {
-		return (
-			<NoticeView
-				buttonText="Try Again"
-				onPress={() => queryClient.refetchQueries({queryKey: keys.units})}
-				text="A problem occurred while loading this area’s postings."
-			/>
-		)
-	}
+	// The filter bar stays up while a chosen area loads or fails, so the
+	// student can change or clear the choice rather than only go back.
+	let areaState = chosenAreaState(chosen.area, context.areas, context.membership, retrying)
 
 	return (
 		<>
@@ -171,7 +168,17 @@ export function PostingsList({searchQuery, initialChosen}: PostingsListProps): R
 							id(shownIds),
 						]}
 					>
-						{sections.length === 0 ? (
+						{areaState === 'loading' ? (
+							<ProgressView />
+						) : areaState === 'failed' ? (
+							// Pull-to-refresh retries the area's searches, with the list's own
+							// spinner as the sign that it is trying.
+							<ContentUnavailableView
+								description="Pull down to try again."
+								systemImage="wifi.exclamationmark"
+								title="Couldn’t load this area’s postings."
+							/>
+						) : sections.length === 0 ? (
 							<ContentUnavailableView
 								description={isNarrowed ? 'Try a different search or filter.' : undefined}
 								systemImage="briefcase"
