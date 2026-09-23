@@ -219,6 +219,78 @@ describe('FancyMenu', () => {
 		expect(screen.queryByText('Pancakes')).toBeNull()
 	})
 
+	// A refetch of the same day hands down new objects for the same meals, which
+	// is not a new day's menu and must not cost the reader their pick.
+	test('keeps the meal the user picked when the same meals are fetched again', async () => {
+		let menu = (meals: ProcessedMealType[]) => (
+			<FancyMenu
+				foodItems={FOOD_ITEMS}
+				meals={meals}
+				menuCorIcons={COR_ICONS}
+				name="The Caf"
+				now={moment.tz(BREAKFAST_TIME, TIMEZONE)}
+				onItemPress={jest.fn()}
+			/>
+		)
+
+		let {rerender} = await render(menu(MEALS))
+		await fireEvent.press(screen.getByTestId('choose-dinner'))
+		expect(screen.getByText('Pot Roast')).toBeTruthy()
+
+		await rerender(menu(MEALS.map((meal) => ({...meal}))))
+
+		expect(screen.getByText('Pot Roast')).toBeTruthy()
+		expect(screen.queryByText('Pancakes')).toBeNull()
+	})
+
+	// A cold launch draws yesterday's menu from the disk cache, and today's
+	// arrives a moment later on the same mounted menu. When the day's meals
+	// differ -- Saturday's lunch, Sunday's brunch -- the meal chosen from
+	// yesterday's is not one today serves, and the menu has to move to today's
+	// rather than draw nothing.
+	test("moves to today's meals when they replace yesterday's", async () => {
+		let onMealHeaderChange = jest.fn()
+		let sundayMorning = moment.tz('2026-08-16T10:23:00', TIMEZONE)
+		let sundayMeals: ProcessedMealType[] = [
+			{label: 'Brunch', starttime: '10:00', endtime: '13:30', stations: [station('Grill', ['5'])]},
+			{label: 'Dinner', starttime: '17:00', endtime: '20:00', stations: [station('Home', ['3'])]},
+		]
+		let menu = (meals: ProcessedMealType[], foodItems: MenuItemContainerType) => (
+			<FancyMenu
+				foodItems={foodItems}
+				meals={meals}
+				menuCorIcons={COR_ICONS}
+				name="The Caf"
+				now={sundayMorning}
+				onItemPress={jest.fn()}
+				onMealHeaderChange={onMealHeaderChange}
+			/>
+		)
+
+		let {rerender} = await render(menu(MEALS, FOOD_ITEMS))
+		expect(screen.getByText('Pancakes')).toBeTruthy()
+
+		await rerender(
+			menu(sundayMeals, {
+				3: item('3', 'Pot Roast', 'Home'),
+				5: item('5', 'Waffles', 'Grill'),
+			}),
+		)
+
+		expect(screen.getByText('Waffles')).toBeTruthy()
+		expect(onMealHeaderChange).toHaveBeenLastCalledWith(
+			expect.objectContaining({
+				menu: expect.objectContaining({
+					options: [
+						{label: 'Brunch', time: '10AM \u2013 1:30PM'},
+						{label: 'Dinner', time: '5PM \u2013 8PM'},
+					],
+					selected: 'Brunch',
+				}),
+			}),
+		)
+	})
+
 	// The screens above draw the meal picker in their navigation bar, so the
 	// menu has to hand them what to draw -- both the one it opens on and the
 	// one the reader moves to.
