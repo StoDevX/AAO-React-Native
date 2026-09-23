@@ -51,6 +51,11 @@ describe('DisclosureRow badge', () => {
 		expect(screen.getByLabelText('Entry-level jobs, 4')).toBeOnTheScreen()
 	})
 
+	it('draws its badge count', async () => {
+		await render(<DisclosureRow badge={4} onPress={jest.fn()} title="Entry-level jobs" />)
+		expect(screen.getByText('4')).toBeOnTheScreen()
+	})
+
 	it('says nothing of a badge of zero', async () => {
 		await render(<DisclosureRow badge={0} onPress={jest.fn()} title="Summer jobs" />)
 		expect(screen.getByLabelText('Summer jobs')).toBeOnTheScreen()

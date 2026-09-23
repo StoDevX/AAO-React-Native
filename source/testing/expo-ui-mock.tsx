@@ -106,7 +106,6 @@ export const Animation: AnimationPresets = {
 
 export const aspectRatio = spreading('aspectRatio')
 export const autocorrectionDisabled = flag('autocorrectionDisabled', 'disabled')
-export const badge = named('badge', 'value')
 export const bold = bare('bold')
 export const buttonStyle = named('buttonStyle', 'style')
 export const disabled = flag('disabled', 'disabled')

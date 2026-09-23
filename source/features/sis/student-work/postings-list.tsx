@@ -5,28 +5,19 @@ import {accessibilityIdentifier, id, listStyle, refreshable} from '@expo/ui/swif
 import * as c from '@frogpond/colors'
 import {FilterToolbar} from '@frogpond/filter'
 import {LoadingView, NoticeView} from '@frogpond/notice'
-import {jobPostingsOptions, type JobSummary} from '@frogpond/ccc-jobs'
-import {now} from '@frogpond/timer'
-import {useDebounce} from '@frogpond/use-debounce'
-import {Stack, useRouter} from 'expo-router'
-import {useQuery} from '@tanstack/react-query'
-import {DisclosureRow, type DisclosureRowImage} from '../../source/components/rows'
-import {SearchBar} from '../../source/components/search-bar'
-import {
-	buildJobFilters,
-	visibleSections,
-	type ChosenJobFilters,
-	type FilterContext,
-} from '../../source/features/sis/student-work/filters'
-import {jobRowDetail, listState} from '../../source/features/sis/student-work/lib'
-import {newPostingIds} from '../../source/features/sis/student-work/new-postings'
-import {displayTitle} from '../../source/features/sis/student-work/posting'
-import {useSeenPostingsStore} from '../../source/features/sis/student-work/store'
+import type {JobSummary} from '@frogpond/ccc-jobs'
+import {useRouter} from 'expo-router'
+import {DisclosureRow, type DisclosureRowImage} from '../../../components/rows'
+import {buildJobFilters, choosePosted, visibleSections, type ChosenJobFilters} from './filters'
+import {jobRowDetail, listState} from './lib'
+import {displayTitle} from './posting'
+import {useStudentWorkBoard} from './use-board'
 
 /// Mirrored by TestIdentifiers.StudentWork.postingsList.
 const POSTINGS_LIST_ID = 'student-work-postings'
 
-const NOTHING_CHOSEN: ChosenJobFilters = {area: null, posted: null, level: null, term: null}
+/// No filter chosen: the whole board.
+export const NOTHING_CHOSEN: ChosenJobFilters = {area: null, posted: null, level: null, term: null}
 
 const DOT_SIZE = 10
 
@@ -63,48 +54,30 @@ const JobRow = React.memo(function JobRow({
 	)
 })
 
-export default function StudentWorkPage(): React.ReactNode {
-	let router = useRouter()
-	let {data = [], error, isError, refetch, isLoading} = useQuery(jobPostingsOptions)
+type PostingsListProps = {
+	/// The search the screen around the list owns.
+	searchQuery: string
+	/// The filters the list opens with; the student can change them all.
+	initialChosen: ChosenJobFilters
+}
 
-	let [query, setQuery] = React.useState('')
-	let searchQuery = useDebounce(query, 200)
+/// Student Work's postings: recency sections, New dots, and a filter bar,
+/// shared by the landing screen's search and the postings screen.
+export function PostingsList({searchQuery, initialChosen}: PostingsListProps): React.ReactNode {
+	let router = useRouter()
+	let {board, jobs, context} = useStudentWorkBoard()
+	let {data = [], error, isError, refetch, isLoading} = board
 
 	// Only the narrowing the student asked for is state; the options on offer
 	// come from the postings, so a refetch can add or drop them.
-	let [chosen, setChosen] = React.useState<ChosenJobFilters>(NOTHING_CHOSEN)
+	let [chosen, setChosen] = React.useState<ChosenJobFilters>(initialChosen)
 
-	let allJobs = React.useMemo(() => data.flatMap((category) => category.jobs), [data])
-
-	// What went up since the last visit. The store changes only when the
-	// student leaves, so the dots stay put while they read.
-	let seenIds = useSeenPostingsStore((state) => state.seenIds)
-	let markSeen = useSeenPostingsStore((state) => state.markSeen)
-	let allIds = React.useMemo(() => allJobs.map((job) => job.id), [allJobs])
-	let newIds = React.useMemo(() => newPostingIds(allIds, seenIds), [allIds, seenIds])
-
-	// No areas yet: the landing screen that supplies them comes next.
-	let context = React.useMemo(
-		(): FilterContext => ({areas: [], membership: new Map(), newIds, today: now().toDate()}),
-		[newIds],
-	)
-	let filters = React.useMemo(
-		() => buildJobFilters(allJobs, chosen, context),
-		[allJobs, chosen, context],
-	)
+	let filters = React.useMemo(() => buildJobFilters(jobs, chosen, context), [jobs, chosen, context])
 	let sections = React.useMemo(
 		() => visibleSections(data, filters, searchQuery, context),
 		[data, filters, searchQuery, context],
 	)
-
-	// Remembered on leaving Student Work, not on opening a posting: the screen
-	// stays mounted under a pushed posting, so its dots are still there on
-	// the way back.
-	let latestIds = React.useRef(allIds)
-	React.useEffect(() => {
-		latestIds.current = allIds
-	}, [allIds])
-	React.useEffect(() => () => markSeen(latestIds.current), [markSeen])
+	let {newIds} = context
 
 	let isNarrowed = searchQuery !== '' || filters.some((filter) => filter.enabled)
 
@@ -120,25 +93,12 @@ export default function StudentWorkPage(): React.ReactNode {
 		[router],
 	)
 
-	let state = listState({isError, isLoading, hasPostings: allJobs.length > 0})
-
-	// The search chrome is bound to component state, so it is rendered in
-	// every branch: the student always has a field to type into or clear.
-	let chrome = (
-		<>
-			<Stack.Title>Student Work</Stack.Title>
-			<Stack.Toolbar placement="bottom">
-				<Stack.Toolbar.SearchBarSlot />
-			</Stack.Toolbar>
-			<SearchBar onChangeText={setQuery} value={query} />
-		</>
-	)
+	let state = listState({isError, isLoading, hasPostings: jobs.length > 0})
 
 	if (state === 'error') {
 		let message = error instanceof Error ? error.message : String(error)
 		return (
 			<>
-				{chrome}
 				<NoticeView
 					buttonText="Try Again"
 					onPress={refetch}
@@ -151,7 +111,6 @@ export default function StudentWorkPage(): React.ReactNode {
 	if (state === 'loading') {
 		return (
 			<>
-				{chrome}
 				<LoadingView />
 			</>
 		)
@@ -159,7 +118,6 @@ export default function StudentWorkPage(): React.ReactNode {
 
 	return (
 		<>
-			{chrome}
 			<Host style={styles.host}>
 				{/* The toolbar is React Native, bridged into the SwiftUI stack so it
 				    sits under the navigation bar rather than behind it. */}
@@ -172,7 +130,11 @@ export default function StudentWorkPage(): React.ReactNode {
 								onChange={(changed) => {
 									if (changed.type !== 'list') return
 									let titles = changed.spec.selected.map((option) => option.title)
-									setChosen((previous) => ({...previous, [changed.apply.key]: titles}))
+									setChosen((previous) =>
+										changed.apply.key === 'posted'
+											? {...previous, posted: choosePosted(previous.posted, titles)}
+											: {...previous, [changed.apply.key]: titles},
+									)
 								}}
 							/>
 						</RNHostView>

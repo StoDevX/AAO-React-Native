@@ -24,12 +24,12 @@ import {
 	accessibilityLabel,
 	buttonStyle,
 	contentShape,
-	badge as badgeModifier,
 	disabled as disabledModifier,
 	font,
 	foregroundStyle,
 	frame,
 	lineLimit,
+	monospacedDigit,
 	shapes,
 	truncationMode,
 } from '@expo/ui/swift-ui/modifiers'
@@ -189,7 +189,7 @@ type DisclosureRowProps = {
 	 */
 	identifier?: string
 	onPress: () => void
-	/** A count for the row's trailing edge, as Settings and Mail show one. None at zero. */
+	/** A count before the chevron, as Settings shows one. None at zero. */
 	badge?: number
 	/** Drawn dimmed and not tappable, as for a view with nothing in it. */
 	disabled?: boolean
@@ -265,7 +265,6 @@ export function DisclosureRow(props: DisclosureRowProps): React.ReactNode {
 			modifiers={[
 				buttonStyle('plain'),
 				accessibilityLabel(hasBadge ? `${spokenLabel}, ${badge}` : spokenLabel),
-				...(hasBadge ? [badgeModifier(String(badge))] : []),
 				disabledModifier(disabled),
 				...destinationTraits(destination),
 				...(identifier ? [accessibilityIdentifier(identifier)] : []),
@@ -288,6 +287,14 @@ export function DisclosureRow(props: DisclosureRowProps): React.ReactNode {
 					))}
 				</VStack>
 				<Spacer />
+				{/* Drawn here rather than with SwiftUI's .badge, which puts the
+				    count at the row's trailing edge -- past this row's own
+				    chevron, where Settings never has it. */}
+				{hasBadge ? (
+					<Text modifiers={[foregroundStyle(c.secondaryLabel), monospacedDigit()]}>
+						{String(badge)}
+					</Text>
+				) : null}
 				<RowAccessory destination={destination} />
 			</HStack>
 		</Button>
