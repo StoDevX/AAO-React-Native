@@ -14,15 +14,23 @@ import Animated, {
 	useAnimatedStyle,
 	useReducedMotion,
 	useSharedValue,
+	withDecay,
 	withRepeat,
 	withTiming,
 } from 'react-native-reanimated'
 import * as c from '@frogpond/colors'
 
-import {angleAround, isTap, turnBetween} from './record-gesture'
+import {
+	angleAround,
+	isTap,
+	releaseVelocity,
+	turnBetween,
+	type ScratchSample,
+} from './record-gesture'
 
 /** One turn every 2.4 seconds, the speed of the record in KSTO's own 2017 app. */
 const MS_PER_TURN = 2400
+const DEGREES_PER_SECOND = 360 / (MS_PER_TURN / 1000)
 
 type Props = {
 	image: ImageResolvedAssetSource
@@ -40,41 +48,53 @@ type Props = {
 
 /**
  * A record a finger can scratch: dragging turns it around its centre, and a
- * touch that barely moves is a tap.
+ * touch that barely moves is a tap. Let go mid-turn and it keeps turning,
+ * slowing to a stop, or to its usual speed while the stream plays.
  */
 export function RecordLogo(props: Props): React.ReactNode {
 	let {image, style, accessibilityLabel, spinning, onTap, onHeldChange} = props
 	let reduceMotion = useReducedMotion()
 	let spins = spinning && !reduceMotion
 
-	let rotation = useSharedValue(0)
+	// The record's angle is its steady spin plus what scratching has added, so
+	// a fling can ease back into the spin rather than stopping first.
+	let spin = useSharedValue(0)
+	let scratched = useSharedValue(0)
 	let view = useRef<View>(null)
 	let centre = useRef({x: 0, y: 0})
-	let start = useRef({x: 0, y: 0})
+	let start = useRef({x: 0, y: 0, time: 0})
 	// Null until the touch has moved far enough to be a scratch.
 	let lastAngle = useRef<number | null>(null)
+	let samples = useRef<ScratchSample[]>([])
 
 	let startSpinning = useCallback(() => {
 		if (!spins) {
 			return
 		}
-		rotation.set(
-			withRepeat(
-				withTiming(rotation.get() + 360, {duration: MS_PER_TURN, easing: Easing.linear}),
-				-1,
-			),
+		spin.set(
+			withRepeat(withTiming(spin.get() + 360, {duration: MS_PER_TURN, easing: Easing.linear}), -1),
 		)
-	}, [rotation, spins])
+	}, [spin, spins])
 
 	useEffect(() => {
 		startSpinning()
-		return () => cancelAnimation(rotation)
-	}, [rotation, startSpinning])
+		return () => {
+			cancelAnimation(spin)
+			cancelAnimation(scratched)
+		}
+	}, [scratched, spin, startSpinning])
 
 	let handleGrant = (event: GestureResponderEvent) => {
 		onHeldChange?.(true)
-		start.current = {x: event.nativeEvent.pageX, y: event.nativeEvent.pageY}
+		// A finger on a coasting record stops it, as it would a real one.
+		cancelAnimation(scratched)
+		start.current = {
+			x: event.nativeEvent.pageX,
+			y: event.nativeEvent.pageY,
+			time: event.nativeEvent.timestamp,
+		}
 		lastAngle.current = null
+		samples.current = []
 		view.current?.measureInWindow((x, y, width, height) => {
 			centre.current = {x: x + width / 2, y: y + height / 2}
 		})
@@ -86,25 +106,43 @@ export function RecordLogo(props: Props): React.ReactNode {
 			if (isTap(point.x - start.current.x, point.y - start.current.y)) {
 				return
 			}
-			cancelAnimation(rotation)
+			cancelAnimation(spin)
 			lastAngle.current = angleAround(centre.current, start.current)
+			samples.current.push({angle: lastAngle.current, time: start.current.time})
 		}
 		let angle = angleAround(centre.current, point)
 		let turn = turnBetween(lastAngle.current, angle)
-		rotation.set((value) => value + turn)
+		scratched.set((value) => value + turn)
 		lastAngle.current = angle
+		samples.current.push({angle, time: event.nativeEvent.timestamp})
 	}
 
-	let handleRelease = () => {
+	let handleRelease = (event: GestureResponderEvent) => {
 		onHeldChange?.(false)
 		if (lastAngle.current === null) {
 			onTap?.()
-		} else {
-			startSpinning()
+			return
 		}
+
+		startSpinning()
+		if (reduceMotion) {
+			return
+		}
+		// Where the finger lifted counts too: touches can arrive sparsely, and
+		// the last move may be well before the lift.
+		samples.current.push({
+			angle: angleAround(centre.current, {x: event.nativeEvent.pageX, y: event.nativeEvent.pageY}),
+			time: event.nativeEvent.timestamp,
+		})
+		// The spin supplies its own speed, so the scratch coasts on only what
+		// the fling adds beyond it.
+		let velocity = releaseVelocity(samples.current, event.nativeEvent.timestamp)
+		scratched.set(withDecay({velocity: spins ? velocity - DEGREES_PER_SECOND : velocity}))
 	}
 
-	let turned = useAnimatedStyle(() => ({transform: [{rotate: `${rotation.get()}deg`}]}))
+	let turned = useAnimatedStyle(() => ({
+		transform: [{rotate: `${spin.get() + scratched.get()}deg`}],
+	}))
 
 	return (
 		<View

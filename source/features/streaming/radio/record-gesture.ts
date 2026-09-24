@@ -31,3 +31,29 @@ export function turnBetween(from: number, to: number): number {
 	}
 	return turn
 }
+
+/** Where the record pointed at a moment of the scratch, in degrees and milliseconds. */
+export type ScratchSample = {angle: number; time: number}
+
+/** How far back, in milliseconds, the release speed looks. */
+const VELOCITY_WINDOW = 100
+
+/**
+ * The record's turn rate as the finger lifts, in degrees per second, measured
+ * over the last moments of the scratch. A finger that rested before lifting
+ * leaves no samples in that window, and so no momentum.
+ */
+export function releaseVelocity(samples: ScratchSample[], releasedAt: number): number {
+	let recent = samples.filter((sample) => sample.time >= releasedAt - VELOCITY_WINDOW)
+	if (recent.length < 2) {
+		return 0
+	}
+
+	let turn = 0
+	for (let index = 1; index < recent.length; index += 1) {
+		turn += turnBetween(recent[index - 1].angle, recent[index].angle)
+	}
+	let first = recent[0].time
+	let elapsed = (recent.at(-1)?.time ?? first) - first
+	return elapsed > 0 ? (turn / elapsed) * 1000 : 0
+}

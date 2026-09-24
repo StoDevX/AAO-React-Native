@@ -1,6 +1,6 @@
 import {describe, expect, test} from '@jest/globals'
 
-import {angleAround, isTap, turnBetween} from '../record-gesture'
+import {angleAround, isTap, releaseVelocity, turnBetween} from '../record-gesture'
 
 describe('isTap', () => {
 	test('a finger that barely moved is a tap', () => {
@@ -34,5 +34,50 @@ describe('turnBetween', () => {
 	test('goes the short way across the seam at nine o’clock', () => {
 		expect(turnBetween(170, -170)).toBeCloseTo(20)
 		expect(turnBetween(-170, 170)).toBeCloseTo(-20)
+	})
+})
+
+describe('releaseVelocity', () => {
+	test('is the turn rate, in degrees per second, of a steady scratch', () => {
+		let samples = [
+			{angle: 0, time: 0},
+			{angle: 10, time: 20},
+			{angle: 20, time: 40},
+			{angle: 30, time: 60},
+		]
+		expect(releaseVelocity(samples, 60)).toBeCloseTo(500)
+	})
+
+	test('goes the short way across the seam at nine o’clock', () => {
+		let samples = [
+			{angle: 170, time: 0},
+			{angle: -175, time: 20},
+			{angle: -160, time: 40},
+		]
+		expect(releaseVelocity(samples, 40)).toBeCloseTo(750)
+	})
+
+	test('is zero when the finger stopped before it lifted', () => {
+		let samples = [
+			{angle: 0, time: 0},
+			{angle: 30, time: 60},
+		]
+		expect(releaseVelocity(samples, 300)).toBe(0)
+	})
+
+	test('reflects how the scratch ended, not how it began', () => {
+		let samples = [
+			{angle: 0, time: 0},
+			{angle: 90, time: 50},
+			{angle: 180, time: 100},
+			{angle: 181, time: 200},
+			{angle: 182, time: 250},
+		]
+		expect(releaseVelocity(samples, 250)).toBeCloseTo(20)
+	})
+
+	test('is zero with too little to measure', () => {
+		expect(releaseVelocity([], 0)).toBe(0)
+		expect(releaseVelocity([{angle: 10, time: 0}], 0)).toBe(0)
 	})
 })
