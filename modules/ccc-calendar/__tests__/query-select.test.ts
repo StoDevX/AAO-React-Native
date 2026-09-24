@@ -1,8 +1,9 @@
 import {describe, expect, jest, test} from '@jest/globals'
 import moment from 'moment-timezone'
+import {format as formatDate} from 'date-fns'
 
 import type {WireEvent} from '../parsers/events'
-import {namedCalendarOptions, scheduleCalendarOptions, sourceRankOf, tecHorizon} from '../query'
+import {namedCalendarOptions, scheduleCalendarOptions, sourceRankOf, tecWindow} from '../query'
 import {REMOTE_SOURCES} from '../sources'
 import uitestFixturesJson from '../fixtures/uitest-events.json'
 
@@ -361,13 +362,12 @@ describe('all-day events', () => {
 	})
 })
 
-describe('tecHorizon', () => {
-	// The frozen UI-test clock and the device clock can be weeks apart, and
-	// the horizon has to follow the one every other calendar date follows.
-	test("counts a month from the start of the app clock's today", () => {
-		jest.mocked(now).mockReturnValueOnce(moment('2030-01-15T12:00:00'))
-
-		expect(tecHorizon()).toEqual(moment('2030-02-15T00:00:00').toDate())
+describe('tecWindow', () => {
+	test('runs from the start of today to the same day next month', () => {
+		expect(tecWindow(new Date(2030, 0, 15, 12))).toStrictEqual({
+			from: new Date(2030, 0, 15),
+			until: new Date(2030, 1, 15),
+		})
 	})
 })
 
@@ -385,5 +385,29 @@ describe('the St. Olaf calendar', () => {
 
 		expect(jest.mocked(fetchSourceBody).mock.calls[1][0]).toBe('page-2')
 		expect(events).toHaveLength(2)
+	})
+
+	test('asks for the window by the device clock, as the server and the write do', async () => {
+		// A dev time override frozen months back would otherwise ask TEC for a
+		// window it has nothing in, and the write would take the empty feed as
+		// the whole calendar.
+		let realNow = jest.mocked(now).getMockImplementation()
+		jest.mocked(now).mockImplementation(() => moment('2020-01-01T12:00:00'))
+		jest.mocked(fetchSourceBody).mockResolvedValueOnce({events: []})
+
+		let {queryFn} = scheduleCalendarOptions('stolaf')
+		if (typeof queryFn !== 'function') throw new TypeError('no queryFn')
+		try {
+			await queryFn({queryKey: ['schedule', 'stolaf'], signal: undefined} as never)
+		} finally {
+			jest.mocked(now).mockImplementation(realNow ?? (() => moment()))
+		}
+
+		let href = jest.mocked(fetchSourceBody).mock.calls.at(-1)?.[0] ?? ''
+		let yesterday = new Date()
+		yesterday.setDate(yesterday.getDate() - 1)
+		expect(new URLSearchParams(href.split('?')[1]).get('ends_after')).toBe(
+			formatDate(yesterday, 'yyyy-MM-dd'),
+		)
 	})
 })

@@ -1,6 +1,6 @@
 import {deriveDayFlags} from '@frogpond/event-type'
 import {decode, fastGetTrimmedText, htmlToSegments} from '@frogpond/html-lib'
-import {format} from 'date-fns'
+import {format, subDays} from 'date-fns'
 import {z} from 'zod'
 import type {WireEvent} from './events'
 
@@ -66,31 +66,47 @@ const TecPageSchema = z.object({
  */
 const TEC_MAX_PAGES = 10
 
+/** TEC's largest page. Its default is 10, which would reach the cap early. */
+const TEC_PAGE_SIZE = '50'
+
 /**
- * Every page of a TEC feed from `href` on, through the events starting on
- * `until`'s date, joined into the one `{events}` body `parseTecEvents` reads.
+ * Every event in a TEC feed that runs on any day from `from` to `until`,
+ * across all its pages, joined into the one `{events}` body `parseTecEvents`
+ * reads.
  *
- * TEC pages its REST API, and a single page holds only the next few days of
- * the campus calendar. `writeSource` treats what it is handed as the whole
- * feed, so reading one page would wipe every later event.
+ * `writeSource` treats what it is handed as the whole feed: it deletes every
+ * event that has not finished before today and keeps only what comes back.
+ * So the feed has to send back everything still running -- an exhibition
+ * that opened last month as much as a talk tomorrow -- and all of it, or
+ * none. A feed longer than `TEC_MAX_PAGES` throws rather than come back
+ * short, leaving the previous rows in place.
  *
- * The horizon goes to TEC as `end_date`, which it applies to each event's
- * start, rounds to the end of that day, and carries into every
- * `next_rest_url` -- so the feed itself ends there, and the pages it names
- * are fetched as they come.
+ * TEC's `start_date` filters on an event's start, so it would drop anything
+ * already running. `ends_after` and `starts_before` filter on overlap
+ * instead. TEC rounds both up to 23:59:59 of the date given, so reaching an
+ * event that ends early on `from` takes the day before it. It carries both
+ * into every `next_rest_url`, so the pages it names are fetched as they come.
  */
 export async function fetchTecPages(
 	href: string,
-	until: Date,
+	window: {from: Date; until: Date},
 	fetchPage: (href: string) => Promise<unknown>,
 ): Promise<{events: unknown[]}> {
-	let first = new URL(href)
-	first.searchParams.set('end_date', format(until, 'yyyy-MM-dd'))
+	// Split by hand rather than through `URL`: a proxied source's href is
+	// relative, and `URL` throws on a relative href with no base.
+	let [path, query = ''] = href.split('?', 2)
+	let params = new URLSearchParams(query)
+	params.set('per_page', TEC_PAGE_SIZE)
+	params.set('ends_after', format(subDays(window.from, 1), 'yyyy-MM-dd'))
+	params.set('starts_before', format(window.until, 'yyyy-MM-dd'))
 
 	let events: unknown[] = []
-	let next: string | undefined = first.toString()
+	let next: string | undefined = `${path}?${params.toString()}`
 
-	for (let count = 0; next && count < TEC_MAX_PAGES; count++) {
+	for (let count = 0; next; count++) {
+		if (count === TEC_MAX_PAGES) {
+			throw new Error(`the TEC feed ran past ${TEC_MAX_PAGES} pages`)
+		}
 		// Sequential by nature: each page names the next.
 		// oxlint-disable-next-line eslint/no-await-in-loop
 		let page = TecPageSchema.parse(await fetchPage(next))

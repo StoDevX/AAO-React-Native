@@ -1,6 +1,7 @@
 import {fetchManifest, fetchSourceBody, REL_CALENDAR, resolveSource} from '@frogpond/data-sources'
 import {eventKey} from '@frogpond/event-list/calendar-util'
 import {queryOptions} from '@tanstack/react-query'
+import {addMonths, startOfDay} from 'date-fns'
 import * as Sentry from '@sentry/react-native'
 import {now as currentMoment} from '@frogpond/timer'
 import {queryClient} from '../../source/init/tanstack-query'
@@ -48,15 +49,18 @@ function parserFor(type: string): CalendarParser {
 }
 
 /**
- * How far ahead the St. Olaf calendar is fetched: a month from the start of
- * today. Each page of its feed covers roughly a week and a half of term, so
- * the full read window would take over a dozen requests on every refresh.
+ * The days the St. Olaf calendar is fetched for: today through the same day
+ * next month. Each page of its feed covers roughly a week and a half of term,
+ * so the full read window would take over a dozen requests on every refresh.
  *
- * Read from the app clock, like every other calendar date, so a UI test's
- * frozen day and its fetch horizon agree.
+ * Worked out from the device clock, not the app clock: TEC's server and
+ * `retentionFor` both go by real time, and a window taken from a dev time
+ * override could miss the feed altogether -- and an empty feed reads as an
+ * empty calendar.
  */
-export function tecHorizon(): Date {
-	return currentMoment().startOf('day').add(1, 'month').toDate()
+export function tecWindow(now: Date): {from: Date; until: Date} {
+	let from = startOfDay(now)
+	return {from, until: addMonths(from, 1)}
 }
 
 async function fetchCalendar(calendar: NamedCalendar, signal: AbortSignal): Promise<WireEvent[]> {
@@ -71,7 +75,7 @@ async function fetchCalendar(calendar: NamedCalendar, signal: AbortSignal): Prom
 	let parser = parserFor(resolved.type)
 	let body =
 		resolved.type === TEC_EVENTS
-			? await fetchTecPages(resolved.href, tecHorizon(), (href) =>
+			? await fetchTecPages(resolved.href, tecWindow(new Date()), (href) =>
 					fetchSourceBody(href, signal, 'Calendar', parser.format),
 				)
 			: await fetchSourceBody(resolved.href, signal, 'Calendar', parser.format)

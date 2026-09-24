@@ -364,51 +364,82 @@ describe('fetchTecPages', () => {
 	}
 
 	const FEED = 'https://wp.stolaf.edu/calendar/wp-json/tribe/events/v1/events?per_page=50'
-	const UNTIL = new Date(2026, 11, 1)
+	const WINDOW = {from: new Date(2026, 9, 11), until: new Date(2026, 10, 11)}
 
-	test('asks the feed to stop at the horizon, keeping its own parameters', async () => {
+	async function firstRequest(href: string): Promise<URLSearchParams> {
 		let fetched: string[] = []
-
-		await fetchTecPages(FEED, UNTIL, (href) => {
-			fetched.push(href)
+		await fetchTecPages(href, WINDOW, (next) => {
+			fetched.push(next)
 			return Promise.resolve(page([]))
 		})
+		return new URLSearchParams(fetched[0].split('?')[1])
+	}
 
-		let url = new URL(fetched[0])
-		expect(url.searchParams.get('end_date')).toBe('2026-12-01')
-		expect(url.searchParams.get('per_page')).toBe('50')
+	test('asks for every event still running on the first day, not only those starting on it', async () => {
+		// TEC rounds `ends_after` up to 23:59:59, so the day before is what
+		// reaches an event ending at any moment of the first day -- Fall Break,
+		// say, on its second day.
+		let params = await firstRequest(FEED)
+		expect(params.get('ends_after')).toBe('2026-10-10')
+		expect(params.has('start_date')).toBe(false)
+	})
+
+	test('asks for events starting by the last day', async () => {
+		let params = await firstRequest(FEED)
+		expect(params.get('starts_before')).toBe('2026-11-11')
+		expect(params.has('end_date')).toBe(false)
+	})
+
+	test('sets its own page size, whatever the manifest asks for', async () => {
+		let params = await firstRequest('https://wp.stolaf.edu/calendar/wp-json/tribe/events/v1/events')
+		expect(params.get('per_page')).toBe('50')
+	})
+
+	test('accepts a relative href, as a proxied source would give', async () => {
+		let fetched: string[] = []
+		await fetchTecPages('calendar/named/stolaf', WINDOW, (next) => {
+			fetched.push(next)
+			return Promise.resolve(page([]))
+		})
+		expect(fetched[0].startsWith('calendar/named/stolaf?')).toBe(true)
 	})
 
 	test('follows next_rest_url until the feed runs out', async () => {
-		// TEC carries `end_date` into each `next_rest_url`, so later pages are
+		// TEC carries the window into each `next_rest_url`, so later pages are
 		// fetched exactly as the feed names them.
 		let pages: Record<string, unknown> = {
-			second: page(['2026-09-02 10:00:00'], 'third'),
-			third: page(['2026-09-03 10:00:00']),
+			second: page(['2026-10-12 10:00:00'], 'third'),
+			third: page(['2026-10-13 10:00:00']),
 		}
 		let fetched: string[] = []
 
-		let body = await fetchTecPages(FEED, UNTIL, (href) => {
+		let body = await fetchTecPages(FEED, WINDOW, (href) => {
 			fetched.push(href)
-			return Promise.resolve(pages[href] ?? page(['2026-09-01 10:00:00'], 'second'))
+			return Promise.resolve(pages[href] ?? page(['2026-10-11 10:00:00'], 'second'))
 		})
 
 		expect(fetched.slice(1)).toStrictEqual(['second', 'third'])
 		expect(body.events).toHaveLength(3)
 	})
 
-	test('stops at ten pages rather than walking an endless feed', async () => {
-		let fetched = 0
-
-		await fetchTecPages(FEED, UNTIL, () => {
-			fetched += 1
-			return Promise.resolve(page(['2026-09-01 10:00:00'], 'loop'))
+	test('reads a tenth page that ends the feed', async () => {
+		let count = 0
+		let body = await fetchTecPages(FEED, WINDOW, () => {
+			count += 1
+			return Promise.resolve(page(['2026-10-11 10:00:00'], count < 10 ? 'next' : undefined))
 		})
+		expect(body.events).toHaveLength(10)
+	})
 
-		expect(fetched).toBe(10)
+	test('throws rather than hand back a feed cut short at ten pages', async () => {
+		// A short feed would read as the whole calendar, and every event past
+		// the cut would be deleted.
+		await expect(
+			fetchTecPages(FEED, WINDOW, () => Promise.resolve(page(['2026-10-11 10:00:00'], 'loop'))),
+		).rejects.toThrow()
 	})
 
 	test('a page that is not a TEC page throws', async () => {
-		await expect(fetchTecPages(FEED, UNTIL, () => Promise.resolve({nope: true}))).rejects.toThrow()
+		await expect(fetchTecPages(FEED, WINDOW, () => Promise.resolve({nope: true}))).rejects.toThrow()
 	})
 })
