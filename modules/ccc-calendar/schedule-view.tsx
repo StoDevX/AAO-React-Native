@@ -18,7 +18,7 @@ type Props = {
 const SOURCES: CalendarSource[] = [{id: 'schedule', title: 'the schedule', color: c.systemBlue}]
 
 /** Said in place of the list while a query with nothing saved waits for a network. */
-export const OFFLINE_MESSAGE = 'You’re offline. The schedule will load once you’re back online.'
+const OFFLINE_MESSAGE = 'You’re offline. The schedule will load once you’re back online.'
 
 export function ScheduleView(props: Props): React.ReactNode {
 	let {now} = useMomentTimer({intervalMs: 60000})
