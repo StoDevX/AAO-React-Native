@@ -60,6 +60,7 @@ export const accessibilityElement = (children = 'ignore'): Modifier =>
 	createModifier('accessibilityElement', {children})
 export const accessibilityIdentifier = named('accessibilityIdentifier', 'identifier')
 export const accessibilityLabel = named('accessibilityLabel', 'label')
+export const accessibilityRemoveTraits = named('accessibilityRemoveTraits', 'traits')
 export const animation = (animationObject: unknown, animatedValue: number | boolean): Modifier =>
 	createModifier('animation', {animationObject, animatedValue})
 
@@ -265,6 +266,7 @@ export function useScrollGeometryChange(callback?: (geometry: unknown) => void):
 export const shapes = {
 	rectangle: (): Record<string, unknown> => ({shape: 'rectangle'}),
 	circle: (): Record<string, unknown> => ({shape: 'circle'}),
+	capsule: (): Record<string, unknown> => ({shape: 'capsule'}),
 	roundedRectangle: (params: {
 		cornerRadius?: number
 		roundedCornerStyle?: string
@@ -295,6 +297,24 @@ function labelOf(modifiers?: Modifier[]): string | undefined {
 function identifierOf(modifiers?: Modifier[]): string | undefined {
 	let found = modifierOf(modifiers, 'accessibilityIdentifier')
 	return typeof found?.identifier === 'string' ? found.identifier : undefined
+}
+
+/** The traits an `accessibilityAddTraits(…)` or `accessibilityRemoveTraits(…)` names. */
+function traitsOf(modifiers: Modifier[] | undefined, type: string): unknown[] {
+	let traits = modifierOf(modifiers, type)?.traits
+	return Array.isArray(traits) ? traits : []
+}
+
+/**
+ * The role a button announces. Adding `isLink` alone is not enough: on device
+ * a button keeps `isButton` and still reads as a button, so it reads as a link
+ * only once `isButton` is removed too.
+ */
+function buttonRoleOf(modifiers?: Modifier[]): string {
+	let isLink =
+		traitsOf(modifiers, 'accessibilityAddTraits').includes('isLink') &&
+		traitsOf(modifiers, 'accessibilityRemoveTraits').includes('isButton')
+	return isLink ? 'link' : 'button'
 }
 
 /** Whether a `disabled(…)` modifier asked for the control to be off. */
@@ -642,6 +662,10 @@ export function Rectangle(_props: WithModifiers): React.ReactNode {
 	return <View />
 }
 
+export function RoundedRectangle(_props: WithModifiers & {cornerRadius?: number}): React.ReactNode {
+	return <View />
+}
+
 /**
  * A `Divider` draws a rule and carries nothing -- no label, no children, no
  * behaviour. The stand-in is an empty view: it exists so a tree containing one
@@ -747,7 +771,7 @@ export function Button({
 	return (
 		<PressableWithModifiers
 			accessibilityLabel={name}
-			accessibilityRole="button"
+			accessibilityRole={buttonRoleOf(modifiers)}
 			// `RNTL`'s `getByRole` only considers an element an accessibility
 			// element -- and so a candidate at all -- once `accessible` is
 			// explicitly set.

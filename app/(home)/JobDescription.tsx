@@ -1,5 +1,6 @@
 import * as React from 'react'
 import {ScrollView, StyleSheet} from 'react-native'
+import {SafeAreaView} from 'react-native-safe-area-context'
 import {Stack, useLocalSearchParams} from 'expo-router'
 import {useQuery} from '@tanstack/react-query'
 import {Markdown} from '@frogpond/markdown'
@@ -51,7 +52,9 @@ export default function JobDescriptionPage(): React.ReactNode {
 				contentInsetAdjustmentBehavior="automatic"
 				style={styles.screen}
 			>
-				<Markdown source={job.body} />
+				<SafeAreaView edges={['left', 'right']}>
+					<Markdown source={job.body} />
+				</SafeAreaView>
 			</ScrollView>
 		</>
 	)

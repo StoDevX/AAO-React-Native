@@ -538,13 +538,18 @@ jobs:
       - name: Wait for the simulator to be ready
         run: xcrun simctl bootstatus "${{ steps.udid.outputs.udid }}" -b
 
+      # A re-run with "Enable debug logging" ticked sets runner.debug, and this
+      # step then keeps what an ordinary run throws away: every test's
+      # screenshots, and the simulator diagnostics xcodebuild gathers after a
+      # failure. Gathering them takes about ten minutes once the tests finish,
+      # so a debug run gets the extra time.
       - name: Run UITests
-        timeout-minutes: 45
+        timeout-minutes: ${{ runner.debug == '1' && 60 || 45 }}
         # Tells Screen.capture it is in CI, so a passing test's screenshots are
         # dropped rather than uploaded. xcodebuild hands the runner only the
         # TEST_RUNNER_-prefixed variables, with the prefix stripped.
         env:
-          TEST_RUNNER_CI: 'true'
+          TEST_RUNNER_CI: ${{ runner.debug == '1' && 'false' || 'true' }}
         run: |
           set -o pipefail
           # The jsbundle was moved into the .app above, so no Metro is involved
@@ -567,12 +572,16 @@ jobs:
           # settles xcodebuild; xcbeautify holds its own output back until it
           # exits, which script(1) settles by giving the pipeline a pty to write
           # to. Without both, a shard's results land in one burst at the end --
-          # and this step is killed at 25 minutes, so a hung shard never reaches
+          # and this step is killed at its timeout, so a hung shard never reaches
           # that burst and says nothing about what it hung on.
           #
           # script passes the command's exit status through, so a failing suite
           # still fails the step. 2>&1 sends failures through the formatter
           # rather than letting them interleave raw.
+          #
+          # Left to itself, xcodebuild spends about ten minutes gathering
+          # simulator diagnostics after the last test -- in every shard, passing
+          # or not -- and nothing reads them unless someone asked for a debug run.
           cat > "$RUNNER_TEMP/run-uitests.sh" <<'SCRIPT'
           set -o pipefail
           NSUnbufferedIO=YES xcodebuild test-without-building \
@@ -580,6 +589,7 @@ jobs:
             -destination "platform=iOS Simulator,id=${{ steps.udid.outputs.udid }}" \
             ${{ matrix.tests }} \
             -retry-tests-on-failure \
+            -collect-test-diagnostics ${{ runner.debug == '1' && 'on-failure' || 'never' }} \
             -resultBundlePath uitest-results \
             2>&1 | xcbeautify --renderer github-actions
           SCRIPT
@@ -608,7 +618,7 @@ jobs:
           retention-days: 1
 
       - name: Extract failure attachments
-        if: failure() || steps.flaky.outputs.flaky == 'true'
+        if: failure() || steps.flaky.outputs.flaky == 'true' || runner.debug == '1'
         run: |
           mkdir -p uitest-attachments
           xcrun xcresulttool export attachments \
@@ -619,7 +629,7 @@ jobs:
 
       - name: Upload failure attachments
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
-        if: failure() || steps.flaky.outputs.flaky == 'true'
+        if: failure() || steps.flaky.outputs.flaky == 'true' || runner.debug == '1'
         with:
           name: uitest-attachments-${{ matrix.shard }}
           path: uitest-attachments/
@@ -627,7 +637,7 @@ jobs:
 
       - name: Upload XCResult bundle
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
-        if: failure() || steps.flaky.outputs.flaky == 'true'
+        if: failure() || steps.flaky.outputs.flaky == 'true' || runner.debug == '1'
         with:
           name: uitest-results-${{ matrix.shard }}.xcresult
           path: uitest-results.xcresult/

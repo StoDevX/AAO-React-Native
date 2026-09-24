@@ -45,6 +45,23 @@ describe('DisclosureRow', () => {
 	})
 })
 
+describe('DisclosureRow badge', () => {
+	it('carries its badge count in its spoken label', async () => {
+		await render(<DisclosureRow badge={4} onPress={jest.fn()} title="Entry-level jobs" />)
+		expect(screen.getByLabelText('Entry-level jobs, 4')).toBeOnTheScreen()
+	})
+
+	it('draws its badge count', async () => {
+		await render(<DisclosureRow badge={4} onPress={jest.fn()} title="Entry-level jobs" />)
+		expect(screen.getByText('4')).toBeOnTheScreen()
+	})
+
+	it('says nothing of a badge of zero', async () => {
+		await render(<DisclosureRow badge={0} onPress={jest.fn()} title="Summer jobs" />)
+		expect(screen.getByLabelText('Summer jobs')).toBeOnTheScreen()
+	})
+})
+
 describe('DisclosureRow leading image', () => {
 	it('shows a leading symbol', async () => {
 		await render(
@@ -66,6 +83,29 @@ describe('DisclosureRow leading image', () => {
 		)
 
 		expect(screen.getByTestId('disclosure-row-thumbnail')).toBeOnTheScreen()
+	})
+
+	/// A symbol that means something -- an unread dot -- has to say so to
+	/// VoiceOver, which reads the row as one element.
+	it('leads the row’s spoken label with the symbol’s own label', async () => {
+		await render(
+			<DisclosureRow
+				detail="$12.50/hr"
+				image={{systemName: 'circle.fill', label: 'New'}}
+				onPress={jest.fn()}
+				title="Tutor"
+			/>,
+		)
+
+		expect(screen.getByLabelText('New, Tutor, $12.50/hr')).toBeOnTheScreen()
+	})
+
+	it('adds nothing to the spoken label for a symbol without one', async () => {
+		await render(
+			<DisclosureRow image={{systemName: 'printer'}} onPress={jest.fn()} title="stoPrint-LPR" />,
+		)
+
+		expect(screen.getByLabelText('stoPrint-LPR')).toBeOnTheScreen()
 	})
 
 	it('draws no image slot when there is no image', async () => {
@@ -96,6 +136,20 @@ describe('DisclosureRow destination', () => {
 		expect(screen.queryByTestId('symbol-chevron.right')).not.toBeOnTheScreen()
 		expect(screen.queryByTestId('symbol-arrow.up.right')).not.toBeOnTheScreen()
 	})
+
+	/// The arrow is drawn, not read: VoiceOver hears the row's own label, so
+	/// the row has to say it leaves the app some other way.
+	it('tells VoiceOver it is a link when it opens a document elsewhere', async () => {
+		await render(<DisclosureRow destination="external" onPress={jest.fn()} title="KSTO" />)
+
+		expect(screen.getByRole('link', {name: 'KSTO'})).toBeOnTheScreen()
+	})
+
+	it('stays a plain button when it pushes', async () => {
+		await render(<DisclosureRow onPress={jest.fn()} title="Shuttle" />)
+
+		expect(screen.queryByRole('link')).not.toBeOnTheScreen()
+	})
 })
 
 describe('DetailRow destination', () => {
@@ -125,6 +179,19 @@ describe('DetailRow destination', () => {
 
 		expect(screen.queryByTestId('symbol-chevron.right')).not.toBeOnTheScreen()
 		expect(screen.queryByTestId('symbol-arrow.up.right')).not.toBeOnTheScreen()
+	})
+
+	it('tells VoiceOver it is a link when the value is a document elsewhere', async () => {
+		await render(
+			<DetailRow
+				destination="external"
+				label="Profile"
+				onPress={jest.fn()}
+				value="stolaf.edu/profile/ole"
+			/>,
+		)
+
+		expect(screen.getByRole('link', {name: 'Profile, stolaf.edu/profile/ole'})).toBeOnTheScreen()
 	})
 
 	/// Directory's office-hours row states a destination but only sometimes has

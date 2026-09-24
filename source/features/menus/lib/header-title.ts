@@ -8,10 +8,18 @@ type SubtitleParts = {
 	cafeName: string
 	/** The meal on screen, or `null` for a cafe serving one meal today. */
 	mealName: string | null
-	/** The window that meal is served, e.g. `11AM – 1:30PM`. */
+	/**
+	 * The window that meal is served, e.g. `11AM – 1:30PM`, or when a venue
+	 * with one window today closes, e.g. `Closes at midnight`.
+	 */
 	time: string | null
-	/** Whether the cafe is shut, which empties the line rather than filling it. */
+	/** Whether the cafe is shut, which leaves the meal and its window off the line. */
 	closed: boolean
+	/**
+	 * What a shut cafe says about opening again, e.g. `Opens at 4 PM`, or `null`
+	 * when there is nothing to promise.
+	 */
+	reopening: string | null
 }
 
 /**
@@ -32,15 +40,17 @@ export const SUBTITLE_SEPARATOR = ' • '
  * letters beside two other facts read as a day; three letters alone out there
  * read as a word that got cut off.
  *
- * A shut cafe has no line at all. Nothing under the name is true of one -- not
- * the meal, not a window, not even the day it is shut on -- so the emptying is
- * done here, once, rather than left to each caller to remember for each part.
+ * A shut cafe is decided here, once, rather than left to each caller to
+ * remember for each part. Neither the meal nor its window is being served, so
+ * neither is drawn. One with something to say about opening again says it
+ * beside the day it is shut on: `Sunday • Opens at 4 PM`. One without has no
+ * line at all.
  */
 export function menuSubtitle(parts: SubtitleParts): string {
-	let {weekdayShort, weekdayLong, cafeName, mealName, time, closed} = parts
+	let {weekdayShort, weekdayLong, cafeName, mealName, time, closed, reopening} = parts
 
 	if (closed) {
-		return ''
+		return reopening ? [weekdayLong, reopening].filter(Boolean).join(SUBTITLE_SEPARATOR) : ''
 	}
 
 	let meal = namesTheCafe(mealName, cafeName) ? null : mealName
@@ -54,15 +64,12 @@ export function menuSubtitle(parts: SubtitleParts): string {
  * nothing about which cafe is which. `Weitz Café` and `Weitz Center` are one
  * building under two of them.
  *
- * Both spellings of `cafe`, rather than folding the accent away: `normalize`
- * is the obvious tool and Hermes is not somewhere to find out whether it
- * behaves, since Jest runs on Node and would pass either way.
+ * Written without accents, since `words` folds them away before comparing.
  */
 const PLACE_WORDS = new Set([
 	'a',
 	'an',
 	'cafe',
-	'café',
 	'center',
 	'centre',
 	'commons',
@@ -71,9 +78,18 @@ const PLACE_WORDS = new Set([
 	'the',
 ])
 
-/** Every word in a name, lowercased and stripped of its punctuation. */
+/**
+ * Every word in a name, lowercased and stripped of its punctuation and accents,
+ * so `Café` and `Cafe` are one word.
+ *
+ * Decomposing and dropping the combining marks is safe on Hermes: on an iOS 27
+ * simulator its `normalize` handled every form the way Node's does, and Node
+ * is all Jest runs on.
+ */
 function words(name: string): string[] {
 	return name
+		.normalize('NFD')
+		.replaceAll(/\p{M}/gu, '')
 		.toLowerCase()
 		.split(/[^\p{L}\p{N}]+/u)
 		.filter(Boolean)

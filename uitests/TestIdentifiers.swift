@@ -12,6 +12,10 @@ struct TestIdentifiers {
 	enum LaunchArguments {
 		static let uiTesting = "--uitesting"
 		static let resetState = "--reset-state"
+		/// Adds one posting to the Student Work fixtures, read through
+		/// `NSUserDefaults` as EXTRA_POSTING_SETTING in
+		/// modules/ccc-jobs/fixtures/uitest-postings.ts.
+		static let extraJobPosting = ["-AAOUITestExtraJobPosting", "YES"]
 		/// The value half of `-UIPreferredContentSizeCategoryName`, UIKit's
 		/// command-line override for the app's Dynamic Type size. This is AX5,
 		/// the largest accessibility size, so a test launching with it proves a
@@ -75,6 +79,7 @@ struct TestIdentifiers {
 		static let stoPrint = "stoPrint"
 		static let streamingMedia = "Streaming Media"
 		static let studentOrgs = "Student Orgs"
+		static let studentWork = "Student Work"
 		static let transportation = "Transportation"
 	}
 
@@ -99,6 +104,10 @@ struct TestIdentifiers {
 		/// `docs/dictionary.json`. It has a single sense.
 		static let firstEntry = "AAC"
 		static let firstEntryDefinition = "The Academic Advising Center"
+		/// A query whose results begin with `firstEntry` and run to several
+		/// screens -- 20 entries in `docs/dictionary.json`, AAC through Tomson --
+		/// so they can only be seen from the top if the list scrolls there.
+		static let firstEntrySearchTerm = "academic"
 
 		/// The entry from #7959, whose definition field showed clipped against
 		/// its row's top edge with dead space below it -- 744 characters over
@@ -124,6 +133,10 @@ struct TestIdentifiers {
 		static let senseFormTitle = "Sense"
 		/// The one definition field left in the app, on the sense screen.
 		static let senseDefinitionField = "Definition"
+		static let addSubsense = "Add Sub-sense"
+		/// The row a sub-sense with no definition yet draws in its parent's
+		/// Sub-senses section.
+		static func blankSubsenseRow(_ position: Int) -> String { "Sub-sense \(position)" }
 		/// Each sense's row on the edit form. The row's accessibility *label*
 		/// is the definition itself -- which is what a reorder test reads --
 		/// so the identifier is the only stable way to address a row by
@@ -192,7 +205,11 @@ struct TestIdentifiers {
 		static let iAgree = "I Agree"
 		static let balancesHeader = "BALANCES"
 		static let mealPlanHeader = "MEAL PLAN"
-		static let openJobs = "Open Jobs"
+	}
+
+	// MARK: - Student Work
+
+	enum StudentWork {
 		/// Postings from modules/ccc-jobs/fixtures/uitest-postings.ts: one with
 		/// a field long enough to wrap, one with only short fields.
 		static let fixtureJobWithWrappingField = "Undergraduate Research Assistant"
@@ -206,6 +223,62 @@ struct TestIdentifiers {
 		/// The SF Symbol `DisclosureRow` draws for an external destination,
 		/// which the image carries as its identifier.
 		static let externalLinkAccessory = "arrow.up.right"
+		/// A fixture posting whose title carries a term and a pay code, shown
+		/// with both dropped. Mirrors UITEST_CODED_JOB_TITLE.
+		static let fixtureCodedJob = "Stav Student Server"
+		/// A word only the coded fixture's title holds, to search for it by.
+		static let fixtureCodedJobSearch = "stav"
+		/// Its wage, from the NST1 tier.
+		static let fixtureCodedJobWage = "$13.50/hr"
+		/// Matches LEVEL_LABELS in source/features/sis/student-work/posting.ts.
+		static let entryLevel = "Entry-level"
+		/// The Level filter's key, from `buildJobFilters`.
+		static let levelFilter = "level"
+		/// The posting only a launch with `LaunchArguments.extraJobPosting`
+		/// has, as its row titles it. Mirrors UITEST_EXTRA_JOB_TITLE.
+		static let fixtureExtraJob = "Planetarium Student Guide"
+		/// What a new posting's row label leads with: the dot's label, from
+		/// NEW_DOT in source/features/sis/student-work/postings-list.tsx.
+		static let newPrefix = "New, "
+		/// The list's sections, from RECENCY_ORDER in
+		/// source/features/sis/student-work/recency.ts.
+		static let thisWeek = "This Week"
+		static let lastWeek = "Last Week"
+		static let earlier = "Earlier"
+		/// Row labels on a posting's screen, from `jobDetailFields` in
+		/// source/features/sis/student-work/lib.ts.
+		static let wageRow = "Wage"
+		static let levelRow = "Level"
+		static let termRow = "Term"
+		/// The coded fixture's term, as `jobTerm` names it.
+		static let academicYear = "Academic Year"
+		/// Matches AREA_GRID_ID in source/features/sis/student-work/area-grid.tsx.
+		static let areaGrid = "student-work-area-grid"
+		/// How many areas data/student-work-areas.yaml lists.
+		static let areaCount = 16
+		/// From data/student-work-areas.yaml: one area the fixtures fill, one
+		/// they leave empty. See FIXTURE_UNITS in
+		/// modules/ccc-jobs/fixtures/uitest-postings.ts.
+		static let researchArea = "Research (CURI)"
+		static let emptyArea = "Faith & Vocation"
+		/// The list's empty state once a search or filter leaves nothing, from
+		/// source/features/sis/student-work/postings-list.tsx.
+		static let noMatchingJobs = "No matching jobs."
+		/// From PRESETS in source/features/sis/student-work/presets.ts.
+		static let allPostingsPreset = "All job postings"
+		static let entryLevelPreset = "Entry-level jobs"
+		/// The postings screen's title, whatever it was opened with. Matches
+		/// TITLE in app/(home)/StudentWork/postings.tsx.
+		static let postingsTitle = "Job Postings"
+		/// The Area filter's key, from `buildJobFilters`.
+		static let areaFilter = "area"
+		/// The tier every filler posting is at.
+		static let experienced = "Experienced"
+		/// Starts every filler posting's title, as FILLER_TITLE_PREFIX in
+		/// modules/ccc-jobs/fixtures/uitest-postings.ts.
+		static let fixtureFillerPrefix = "Fixture Filler Posting"
+		/// Matches POSTINGS_LIST_ID in source/features/sis/student-work/postings-list.tsx.
+		static let postingsList = "student-work-postings"
 	}
 
 	// MARK: - Menus
@@ -222,6 +295,16 @@ struct TestIdentifiers {
 		/// `data/pause-menu.yaml`, so its stations and items are fixed rather
 		/// than whatever Bon Appétit is serving today.
 		static let pause = "The Pause"
+
+		/// The Pause's navigation title, which names the venue publishing its
+		/// hours rather than repeating the tab's shorter label.
+		static let pauseTitle = "The Pause Kitchen"
+
+		/// What the Pause's title reads at the frozen clock, which is before its
+		/// one window of the day opens: the day written out, and when it opens.
+		/// A prefix, because the time that finishes it is printed in the
+		/// device's zone.
+		static let pauseClosedDetail = "Saturday, Opens at "
 
 		/// Two stations from that file, and one item from each. The Stations
 		/// filter asks for a menu outright, so its shape does not depend on how
@@ -368,6 +451,14 @@ struct TestIdentifiers {
 		/// The bottom-bar action on the event detail sheet. A bar item's
 		/// identifier is its title, which is what XCUITest matches on.
 		static let addToCalendar = "Add to Calendar"
+		/// The bar item's label once the system editor has saved the event. The
+		/// item is disabled then, and stays so until the event sheet closes.
+		static let addedToCalendar = "Added to Calendar"
+		/// The system new-event editor's title. The editor runs outside the app,
+		/// which is why adding an event needs no calendar access.
+		static let newEventEditor = "New Event"
+		/// The editor's save button: a checkmark, labelled Done on iOS 27.
+		static let saveNewEvent = "Done"
 		/// Dismisses the event detail sheet. A header bar item carrying only an
 		/// SF Symbol, so its accessibility label is the only thing to find it by.
 		static let closeEventDetail = "Close"
@@ -495,6 +586,10 @@ struct TestIdentifiers {
 		/// `source/features/directory/__fixtures__/entries.ts`.
 		static let fixtureEntry = "Kari Testerson"
 		static let fixtureEntryDepartment = "Computer Science"
+		/// Each department on the landing: `directory-department-<name>`.
+		/// Mirrors DEPARTMENT_ROW_PREFIX in
+		/// source/features/directory/departments-list.tsx.
+		static let departmentRowPrefix = "directory-department-"
 	}
 
 	// MARK: - Student Orgs
@@ -502,6 +597,8 @@ struct TestIdentifiers {
 	enum StudentOrgs {
 		/// Matches CATEGORY_GRID_ID in app/(home)/StudentOrgs/index.tsx.
 		static let categoryGrid = "student-orgs-category-grid"
+		/// Matches RESULTS_LIST_ID in source/features/student-orgs/org-results-list.tsx.
+		static let resultsList = "student-orgs-results-list"
 	}
 
 	// MARK: - Campus
@@ -633,12 +730,12 @@ struct TestIdentifiers {
 		/// strip rather than doing nothing. Unlike `aStop`, which the route
 		/// visits twice (the loop starts and ends there), this one appears only
 		/// once, so its presence unambiguously means the strip scrolled forward
-		/// rather than showing a second, later occurrence of the start. It is also
-		/// the fifth stop, so it starts past the four cells the strip shows when
-		/// it opens on the first stop; a stop nearer the start would already be
-		/// on screen. Red Line's route calls here too, but that line does not run
-		/// on the frozen Saturday and its strip is collapsed.
-		static let aStopFartherAlongTheRoute = "Cub/Target"
+		/// rather than showing a second, later occurrence of the start. It is the
+		/// sixth of eight stops: past the four and a half cells the strip shows
+		/// when it opens on the first stop, and still in view once two swipes
+		/// have carried the strip to its end -- which the fifth, Cub/Target, is
+		/// not. No other line calls here.
+		static let aStopFartherAlongTheRoute = "Wells Fargo"
 		/// The horizontal strip of stops inside a line's widget, which a swipe
 		/// test aims at rather than at a stop cell: the strip opens partway
 		/// along the route, so which cells are on screen depends on where the

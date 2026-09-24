@@ -1,4 +1,11 @@
-import {categoriesUrl, detailUrl, jobPageUrl, parseSiteHref, requisitionsUrl} from '../urls'
+import {
+	categoriesUrl,
+	detailUrl,
+	jobPageUrl,
+	parseSiteHref,
+	requisitionsUrl,
+	unitPostingsUrl,
+} from '../urls'
 
 const HREF =
 	'https://fa-ewur-saasfaprod1.fa.ocs.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_1'
@@ -57,5 +64,14 @@ describe('url building', () => {
 
 	test('the job page url does not double a trailing slash', () => {
 		expect(jobPageUrl(`${HREF}/`, '2841')).toBe(`${HREF}/job/2841`)
+	})
+})
+
+describe('unitPostingsUrl', () => {
+	test('asks for only the IDs of a unit’s postings', () => {
+		let url = unitPostingsUrl({origin: 'https://example.invalid', siteNumber: 'CX_1'}, '11150')
+		expect(url).toContain('keyword%3D11150')
+		expect(url).toContain('fields=SearchId%3BrequisitionList%3AId')
+		expect(url).toContain('limit%3D200')
 	})
 })

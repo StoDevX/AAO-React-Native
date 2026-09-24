@@ -1,5 +1,6 @@
 import * as React from 'react'
 import {StyleSheet, SectionList, ActivityIndicator, Text} from 'react-native'
+import {SafeAreaView} from 'react-native-safe-area-context'
 import {
 	updateRecentSearches,
 	updateRecentFilters,
@@ -228,24 +229,32 @@ function CourseSearchResultsView(): React.ReactNode {
 				value={searchQuery}
 			/>
 
-			<SectionList
-				ItemSeparatorComponent={ListSeparator}
-				ListEmptyComponent={messageView}
-				ListHeaderComponent={header}
-				contentContainerStyle={styles.contentContainer}
-				contentInsetAdjustmentBehavior="automatic"
-				keyExtractor={(item: CourseType) => item.clbid.toString()}
-				keyboardDismissMode="interactive"
-				renderItem={({item}) => <CourseRow course={item} onPress={handlePress} />}
-				renderSectionHeader={({section: {title}}) => <ListSectionHeader title={parseTerm(title)} />}
-				sections={results}
-				{...largeListProps}
-			/>
+			<SafeAreaView edges={['left', 'right']} style={styles.screen}>
+				<SectionList
+					ItemSeparatorComponent={ListSeparator}
+					ListEmptyComponent={messageView}
+					ListHeaderComponent={header}
+					contentContainerStyle={styles.contentContainer}
+					contentInsetAdjustmentBehavior="automatic"
+					keyExtractor={(item: CourseType) => item.clbid.toString()}
+					keyboardDismissMode="interactive"
+					renderItem={({item}) => <CourseRow course={item} onPress={handlePress} />}
+					renderSectionHeader={({section: {title}}) => (
+						<ListSectionHeader title={parseTerm(title)} />
+					)}
+					sections={results}
+					{...largeListProps}
+				/>
+			</SafeAreaView>
 		</>
 	)
 }
 
 let styles = StyleSheet.create({
+	screen: {
+		flex: 1,
+		backgroundColor: c.systemBackground,
+	},
 	contentContainer: {
 		flexGrow: 1,
 		backgroundColor: c.systemBackground,

@@ -10,7 +10,8 @@ struct NewsScreen: Screen {
 
 	@discardableResult
 	func verifyNewsRowsAppear() -> Self {
-		let row = app.buttons.matching(
+		// A story opens in the browser, so its row reads as a link.
+		let row = app.links.matching(
 			NSPredicate(format: "identifier BEGINSWITH %@", TestIdentifiers.News.rowPrefix)
 		).firstMatch
 		XCTAssertTrue(

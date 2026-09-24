@@ -1,5 +1,6 @@
 import * as React from 'react'
 import {ScrollView, StyleSheet, Text, View} from 'react-native'
+import {SafeAreaView} from 'react-native-safe-area-context'
 import {Card} from '@frogpond/silly-card'
 import {Button} from '@frogpond/button'
 import {BalancesView} from '../../../source/features/sis/balances'
@@ -64,15 +65,17 @@ function Ack(props: AcknowledgementProps) {
 
 	return (
 		<ScrollView contentContainerStyle={styles.container} contentInsetAdjustmentBehavior="automatic">
-			<Card header={title}>
-				<>
-					{children}
+			<SafeAreaView edges={['left', 'right']}>
+				<Card header={title}>
+					<>
+						{children}
 
-					<View style={styles.iosButtonRow}>
-						<Button onPress={onPositive} title="I Agree" />
-					</View>
-				</>
-			</Card>
+						<View style={styles.iosButtonRow}>
+							<Button onPress={onPositive} title="I Agree" />
+						</View>
+					</>
+				</Card>
+			</SafeAreaView>
 		</ScrollView>
 	)
 }

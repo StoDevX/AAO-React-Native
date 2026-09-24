@@ -1,45 +1,52 @@
 import XCTest
 
 class ModuleCampusDictionaryTests: UITestCase {
-	func testTappingTheSectionIndexRailScrollsTheList() throws {
+	func testSearchingFromFarDownTheListShowsTheFirstResult() throws {
 		try CampusDictionaryScreen(app: app)
 			.navigate()
 			.verifySectionIndexRailScrolls()
+			.search(for: TestIdentifiers.Dictionary.firstEntrySearchTerm)
+			.verifyFirstEntryIsOnScreen()
 	}
 
-	func testTappingAWordOpensAHalfHeightSheet() throws {
+	/// A word opens a half-height sheet whose lone sense lines up with the
+	/// headword, and the sheet closes again.
+	func testAWordOpensAHalfHeightSheetThatCloses() throws {
 		CampusDictionaryScreen(app: app)
 			.navigate()
 			.openFirstWord()
 			.verifyDefinitionSheetIsPresented()
 			.capture("Dictionary definition sheet")
 			.verifySheetIsHalfHeight()
-	}
-
-	func testALoneSenseLinesUpWithTheHeadword() throws {
-		CampusDictionaryScreen(app: app)
-			.navigate()
-			.openFirstWord()
-			.verifyDefinitionSheetIsPresented()
-			.capture("Dictionary entry with one sense")
 			.verifySenseAlignsWithHeadword(
 				TestIdentifiers.Dictionary.firstEntry,
 				definition: TestIdentifiers.Dictionary.firstEntryDefinition)
-	}
-
-	func testTheSheetCloses() throws {
-		CampusDictionaryScreen(app: app)
-			.navigate()
-			.openFirstWord()
-			.verifyDefinitionSheetIsPresented()
 			.dismissEntrySheet()
 			.verifyEntrySheetIsGone()
 	}
 
+	/// Preview should refuse to open until the draft actually differs from
+	/// the entry as opened -- retyping nothing is not a suggestion.
+	///
+	/// Once it opens, it is the whole point of the flow: an edit previews as a
+	/// marked-up diff, with every word `@expo/ui`'s `Text` would otherwise have
+	/// silently dropped still on screen, and no DEBUG marker standing in for
+	/// markup our patch should have supported. `verifyPreviewShows` is the
+	/// actual proof of that -- `verifyPreviewPresented` alone would pass
+	/// against a completely blank preview, since its identifier sits on the
+	/// outer container.
+	///
+	/// `"indeed "` rather than a shorter word, here and in every other test
+	/// that types into this field: a shorter burst does not reliably straddle
+	/// the window in which a keystroke sent to a native text field can be
+	/// dropped between renders. Seven characters is what it takes to trip that
+	/// race reliably -- `editFirstDefinition`'s read-back of the field's value
+	/// is what fails if one ever is.
+	///
 	/// Suggest an Edit pushes the edit form into the entry sheet's own stack,
 	/// rather than presenting some other way -- its own Back button is what
-	/// proves that.
-	func testTheFormPushesIntoTheEntrySheet() throws {
+	/// `verifyEditFormPushedIntoSheet` looks for.
+	func testAnEditPreviewsAsAMarkedUpDiffOnceSomethingChanges() throws {
 		CampusDictionaryScreen(app: app)
 			.navigate()
 			.search(for: TestIdentifiers.Dictionary.referenceEntry)
@@ -48,25 +55,6 @@ class ModuleCampusDictionaryTests: UITestCase {
 			.openEditor()
 			.verifyEditFormPushedIntoSheet()
 			.capture("Dictionary edit form")
-	}
-
-	/// Preview should refuse to open until the draft actually differs from
-	/// the entry as opened -- retyping nothing is not a suggestion.
-	///
-	/// `"indeed "` rather than a shorter word, here and in every other test
-	/// that types into this field: a shorter burst does not reliably straddle
-	/// the window in which a keystroke sent to a native text field can be
-	/// dropped between renders. Seven characters is what it takes to trip that
-	/// race reliably -- `editFirstDefinition`'s read-back of the field's value
-	/// is what fails if one ever is.
-	func testPreviewIsRefusedUntilSomethingChanges() throws {
-		CampusDictionaryScreen(app: app)
-			.navigate()
-			.search(for: TestIdentifiers.Dictionary.referenceEntry)
-			.openWord(TestIdentifiers.Dictionary.referenceEntry)
-			.verifyDefinitionSheetIsPresented()
-			.openEditor()
-			.verifyEditFormPushedIntoSheet()
 			.verifyPreviewDisabled()
 			.editFirstDefinition(prepending: "indeed ")
 			.verifyPreviewEnabled()
@@ -76,24 +64,6 @@ class ModuleCampusDictionaryTests: UITestCase {
 			// the state this test just put the draft into.
 			.revealInForm("Ready to preview")
 			.capture("Dictionary edit form with a change made")
-	}
-
-	/// The whole point of the flow: an edit previews as a marked-up diff, with
-	/// every word `@expo/ui`'s `Text` would otherwise have silently dropped
-	/// still on screen, and no DEBUG marker standing in for markup our patch
-	/// should have supported. `verifyPreviewShows` is the actual proof of
-	/// that -- `verifyPreviewPresented` alone would pass against a completely
-	/// blank preview, since its identifier sits on the outer container.
-	func testAnEditIsPreviewedAsAMarkedUpDiff() throws {
-		CampusDictionaryScreen(app: app)
-			.navigate()
-			.search(for: TestIdentifiers.Dictionary.referenceEntry)
-			.openWord(TestIdentifiers.Dictionary.referenceEntry)
-			.verifyDefinitionSheetIsPresented()
-			.openEditor()
-			.verifyEditFormPushedIntoSheet()
-			.editFirstDefinition(prepending: "indeed ")
-			.verifyPreviewEnabled()
 			.openPreview()
 			.verifyPreviewPresented()
 			.capture("Dictionary suggestion diff")
@@ -222,5 +192,23 @@ class ModuleCampusDictionaryTests: UITestCase {
 			.capture("Dictionary edit form for a long definition")
 			.openSense(1)
 			.capture("Dictionary sense screen for a long definition")
+	}
+
+	/// A sense opens its sub-senses in this same screen, pushed with the
+	/// sub-sense's own id. Navigating to the route already on top only swaps
+	/// its params, which leaves the parent on screen -- its text still in the
+	/// definition field -- and sends Back straight past it.
+	func testAddingASubsenseOpensIt() throws {
+		CampusDictionaryScreen(app: app)
+			.navigate()
+			.openFirstWord()
+			.verifyDefinitionSheetIsPresented()
+			.openEditor()
+			.verifyEditFormPushedIntoSheet()
+			.openSense(1)
+			.addSubsense()
+			.capture("Dictionary sub-sense just added")
+			.verifyDefinitionIsBlank()
+			.leaveSubsenseForParent(listing: TestIdentifiers.Dictionary.blankSubsenseRow(1))
 	}
 }

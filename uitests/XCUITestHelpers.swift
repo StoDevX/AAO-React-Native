@@ -37,6 +37,12 @@ extension XCUIApplication {
 		buttons.matching(NSPredicate(format: "label == %@", label)).firstMatch
 	}
 
+	/// Find a link by its label. A row that leaves the app reads as a link,
+	/// not a button, so `buttonLabelled` does not find it.
+	func linkLabelled(_ label: String) -> XCUIElement {
+		links.matching(NSPredicate(format: "label == %@", label)).firstMatch
+	}
+
 	/// Find any accessible element whose label starts with the given text.
 	/// Useful for React Native Pressable-wrapped elements whose accessibility
 	/// label is the concatenation of child text content (which may include

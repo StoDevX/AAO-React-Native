@@ -559,6 +559,46 @@ struct CalendarScreen: Screen {
 		return self
 	}
 
+	/// Tap the event detail's Add to Calendar bar item.
+	@discardableResult
+	func tapAddToCalendar() -> Self {
+		let button = app.buttons[TestIdentifiers.Calendar.addToCalendar]
+		XCTAssertTrue(
+			button.waitForExistence(timeout: 30),
+			"The event detail should offer Add to calendar in its bottom bar")
+		button.tap()
+		return self
+	}
+
+	/// Save the event in the system new-event editor. Nothing from SpringBoard
+	/// may appear first: an alert there is a calendar permission prompt, and
+	/// adding an event must not need one.
+	@discardableResult
+	func saveInSystemEditor(springboard: XCUIApplication) -> Self {
+		let editor = app.navigationBars[TestIdentifiers.Calendar.newEventEditor]
+		let prompt = springboard.alerts.firstMatch
+		XCTAssertTrue(
+			editor.waitForExistence(timeout: 10) || prompt.exists,
+			"Add to Calendar should open the system editor")
+		XCTAssertFalse(prompt.exists, "Adding an event should not ask for calendar access")
+		editor.buttons[TestIdentifiers.Calendar.saveNewEvent].tap()
+		XCTAssertTrue(
+			editor.waitForNonExistence(timeout: 10),
+			"Saving should close the system editor")
+		return self
+	}
+
+	/// Once saved, the bar item says so and can't add a second copy.
+	@discardableResult
+	func verifyAddedToCalendar() -> Self {
+		let added = app.buttons[TestIdentifiers.Calendar.addedToCalendar]
+		XCTAssertTrue(
+			added.waitForExistence(timeout: 10),
+			"The bar item should read Added to Calendar after a save")
+		XCTAssertFalse(added.isEnabled, "Added to Calendar should be disabled")
+		return self
+	}
+
 	/// Dismiss the event detail sheet, landing back on the calendar list.
 	@discardableResult
 	func closeEventDetail() -> Self {

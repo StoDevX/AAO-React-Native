@@ -1,6 +1,7 @@
 import * as React from 'react'
 import {PropsWithChildren} from 'react'
-import {Platform, StyleSheet, View} from 'react-native'
+import {Platform, StyleSheet} from 'react-native'
+import {SafeAreaView} from 'react-native-safe-area-context'
 import * as c from '@frogpond/colors'
 
 const toolbarStyles = StyleSheet.create({
@@ -25,6 +26,12 @@ const toolbarStyles = StyleSheet.create({
 
 type ToolbarPropsType = PropsWithChildren<unknown>
 
+/// A row across the top of a screen. Its contents stay clear of the notch in
+/// landscape; its background and hairline still run edge to edge.
 export function Toolbar({children}: ToolbarPropsType): React.ReactNode {
-	return <View style={[toolbarStyles.shadow, toolbarStyles.container]}>{children}</View>
+	return (
+		<SafeAreaView edges={['left', 'right']} style={[toolbarStyles.shadow, toolbarStyles.container]}>
+			{children}
+		</SafeAreaView>
+	)
 }
