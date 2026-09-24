@@ -5,13 +5,17 @@ import {RadioControllerView} from '../../../source/features/streaming/radio'
 import tinycolor from 'tinycolor2'
 import {PlayerTheme, theming} from '../../../source/features/streaming/radio/theme'
 
-let tintColor = '#37a287'
+/**
+ * A purple from the cow badge. White text on it is 6.5:1, and it is 3.3:1
+ * against Dark Mode's black, enough for the 28pt title, so one tint serves both.
+ */
+let tintColor = '#685393'
 const colors: PlayerTheme = {
 	tintColor,
 	buttonTextColor: tinycolor.mostReadable(tintColor, [sto.white, sto.black]).toRgbString(),
 	textColor: tintColor,
 	imageBorderColor: 'transparent',
-	imageBackgroundColor: tinycolor(tintColor).complement().setAlpha(0.2).toRgbString(),
+	imageBackgroundColor: 'transparent',
 }
 
 export default function KstoPage(): React.ReactNode {
