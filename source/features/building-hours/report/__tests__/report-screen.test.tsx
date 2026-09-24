@@ -1,6 +1,9 @@
 import * as React from 'react'
 import {act, fireEvent, render, screen} from '@testing-library/react-native'
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query'
+import {Alert} from 'react-native'
+import * as ImagePicker from 'expo-image-picker'
+import {usePreventRemove} from 'expo-router/react-navigation'
 
 import ReportPage from '../../../../../app/(home)/Campus/detail/report'
 import {BuildingReportProvider} from '../context'
@@ -46,9 +49,9 @@ jest.mock('expo-router', () => {
 jest.mock('expo-router/react-navigation', () => ({usePreventRemove: jest.fn()}))
 jest.mock('../../../../components/send-email')
 
-import {sendEmail} from '../../../../components/send-email'
+import {composeEmail} from '../../../../components/send-email'
 
-const mockSendEmail = sendEmail as jest.MockedFunction<typeof sendEmail>
+const mockComposeEmail = composeEmail as jest.MockedFunction<typeof composeEmail>
 
 const cage: BuildingType = {
 	name: 'The Cage',
@@ -113,7 +116,7 @@ describe('the report form', () => {
 		await fireEvent.changeText(screen.getByLabelText('Formal Name'), 'The Cage at Buntrock')
 		await fireEvent.press(screen.getByLabelText('Submit Report'))
 
-		let [args] = mockSendEmail.mock.calls.at(-1) as [{body: string}]
+		let [args] = mockComposeEmail.mock.calls.at(-1) as [{body: string}]
 		expect(args.body).toContain('The Cage at Buntrock')
 	})
 
@@ -130,8 +133,76 @@ describe('the report form', () => {
 		await fireEvent.press(screen.getByText('Libraries'))
 		await fireEvent.press(screen.getByLabelText('Submit Report'))
 
-		let [args] = mockSendEmail.mock.calls.at(-1) as [{body: string}]
+		let [args] = mockComposeEmail.mock.calls.at(-1) as [{body: string}]
 		expect(args.body).toContain('category: Libraries')
+	})
+})
+
+describe('images', () => {
+	async function pickImage(uri: string) {
+		let picker = ImagePicker.launchImageLibraryAsync as jest.MockedFunction<
+			typeof ImagePicker.launchImageLibraryAsync
+		>
+		picker.mockResolvedValueOnce({
+			canceled: false,
+			assets: [{uri, width: 100, height: 100}],
+		})
+		await fireEvent.press(screen.getByLabelText('Add Image'))
+	}
+
+	it('sends a picked image with the report', async () => {
+		await renderReport()
+
+		await pickImage('file:///tmp/sign.jpg')
+		await fireEvent.press(screen.getByLabelText('Submit Report'))
+
+		let [args] = mockComposeEmail.mock.calls.at(-1) as [{attachments: Array<string>}]
+		expect(args.attachments).toEqual(['file:///tmp/sign.jpg'])
+	})
+
+	it('counts a picked image as an unsaved change', async () => {
+		await renderReport()
+		let guard = usePreventRemove as jest.MockedFunction<typeof usePreventRemove>
+		expect(guard.mock.calls.at(-1)?.[0]).toBe(false)
+
+		await pickImage('file:///tmp/sign.jpg')
+
+		expect(guard.mock.calls.at(-1)?.[0]).toBe(true)
+	})
+
+	it('holds Submit Report while picked images are still loading', async () => {
+		await renderReport()
+		let picker = ImagePicker.launchImageLibraryAsync as jest.MockedFunction<
+			typeof ImagePicker.launchImageLibraryAsync
+		>
+		picker.mockReturnValueOnce(new Promise(() => undefined))
+
+		await fireEvent.press(screen.getByLabelText('Add Image'))
+
+		expect(screen.getByLabelText('Submit Report')).toBeDisabled()
+	})
+
+	it('sends nothing while picked images are still loading', async () => {
+		await renderReport()
+		let picker = ImagePicker.launchImageLibraryAsync as jest.MockedFunction<
+			typeof ImagePicker.launchImageLibraryAsync
+		>
+		picker.mockReturnValueOnce(new Promise(() => undefined))
+
+		await fireEvent.press(screen.getByLabelText('Add Image'))
+		await fireEvent.press(screen.getByLabelText('Submit Report'))
+
+		expect(mockComposeEmail).not.toHaveBeenCalled()
+	})
+
+	it('opens one email for two quick taps on Submit Report', async () => {
+		await renderReport()
+		mockComposeEmail.mockReturnValueOnce(new Promise(() => undefined))
+
+		await fireEvent.press(screen.getByLabelText('Submit Report'))
+		await fireEvent.press(screen.getByLabelText('Submit Report'))
+
+		expect(mockComposeEmail).toHaveBeenCalledTimes(1)
 	})
 })
 
@@ -202,7 +273,44 @@ describe("the reporter's note", () => {
 		)
 		await fireEvent.press(screen.getByLabelText('Submit Report'))
 
-		let [args] = mockSendEmail.mock.calls.at(-1) as [{body: string}]
+		let [args] = mockComposeEmail.mock.calls.at(-1) as [{body: string}]
 		expect(args.body).toContain('It closes at 9 during interim.')
+	})
+})
+
+describe('the unsaved-changes guard after Submit Report', () => {
+	function guardIsOn(): boolean | undefined {
+		let guard = usePreventRemove as jest.MockedFunction<typeof usePreventRemove>
+		return guard.mock.calls.at(-1)?.[0]
+	}
+
+	async function editAndSubmit() {
+		await renderReport()
+		await fireEvent.changeText(screen.getByLabelText('Describe the problem'), 'Closed Sundays.')
+		expect(guardIsOn()).toBe(true)
+		await fireEvent.press(screen.getByLabelText('Submit Report'))
+	}
+
+	it('lifts once the report is handed off', async () => {
+		mockComposeEmail.mockResolvedValueOnce(true)
+		await editAndSubmit()
+		expect(guardIsOn()).toBe(false)
+	})
+
+	it('stays on when the email is cancelled', async () => {
+		mockComposeEmail.mockResolvedValueOnce(false)
+		await editAndSubmit()
+		expect(guardIsOn()).toBe(true)
+	})
+
+	it('stays on when the email cannot be written', async () => {
+		mockComposeEmail.mockRejectedValueOnce(new Error('no sheet'))
+		jest.spyOn(Alert, 'alert').mockImplementation(() => undefined)
+		await editAndSubmit()
+		expect(guardIsOn()).toBe(true)
+		expect(Alert.alert).toHaveBeenCalledWith(
+			'Could not write the email',
+			'Please try sending the report again.',
+		)
 	})
 })

@@ -217,6 +217,18 @@ const config: ExpoConfig = {
 			},
 		],
 		'expo-router',
+		// The Report a Problem screen picks through PHPickerViewController, which
+		// asks for no permission; these strings exist because the module links
+		// the photo-library and camera APIs, and App Store Connect rejects a
+		// binary that links them without a purpose string.
+		[
+			'expo-image-picker',
+			{
+				photosPermission: 'Photos you choose are attached to a problem report you send.',
+				cameraPermission: 'Photos you take are attached to a problem report you send.',
+				microphonePermission: false,
+			},
+		],
 		// Adding an event goes through the system editor, which needs no
 		// calendar access. The plugin applies itself even when unlisted and adds
 		// its usage strings; `false` removes each one.

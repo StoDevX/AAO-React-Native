@@ -147,6 +147,7 @@ export const textInputAutocapitalization = named(
 	'textInputAutocapitalization',
 	'autocapitalization',
 )
+export const textContentType = named('textContentType', 'textContentType')
 export const layoutPriority = named('layoutPriority', 'priority')
 /**
  * Where a `List` row's separator starts, among other alignment guides. Jest has
