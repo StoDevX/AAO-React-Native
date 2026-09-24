@@ -29,12 +29,21 @@ const PRESENCE_EVENTS = 'application/vnd.presence.events+json'
 interface CalendarParser {
 	format: 'json' | 'text'
 	parse: (body: unknown) => WireEvent[]
+	/**
+	 * How to read the whole feed, for a type whose one request is not all of
+	 * it. `fetchPage` fetches one href in this type's `format`.
+	 */
+	fetch?: (href: string, fetchPage: (href: string) => Promise<unknown>) => Promise<unknown>
 }
 
 // One entry per media type, so its wire format and its parser can't drift
 // apart the way a separate switch and ternary could.
 const CALENDAR_PARSERS: Record<string, CalendarParser> = {
-	[TEC_EVENTS]: {format: 'json', parse: parseTecEvents},
+	[TEC_EVENTS]: {
+		format: 'json',
+		parse: parseTecEvents,
+		fetch: (href, fetchPage) => fetchTecPages(href, tecWindow(new Date()), fetchPage),
+	},
 	[FROGPOND_EVENTS]: {format: 'json', parse: parseEvents},
 	[ICAL_EVENTS]: {format: 'text', parse: parseIcalEvents},
 	[PRESENCE_EVENTS]: {format: 'json', parse: parsePresenceEvents},
@@ -73,12 +82,10 @@ async function fetchCalendar(calendar: NamedCalendar, signal: AbortSignal): Prom
 	let resolved = resolveSource(manifest, REL_CALENDAR, calendar, CALENDAR_TYPES)
 
 	let parser = parserFor(resolved.type)
-	let body =
-		resolved.type === TEC_EVENTS
-			? await fetchTecPages(resolved.href, tecWindow(new Date()), (href) =>
-					fetchSourceBody(href, signal, 'Calendar', parser.format),
-				)
-			: await fetchSourceBody(resolved.href, signal, 'Calendar', parser.format)
+	let fetchPage = (href: string) => fetchSourceBody(href, signal, 'Calendar', parser.format)
+	let body = parser.fetch
+		? await parser.fetch(resolved.href, fetchPage)
+		: await fetchPage(resolved.href)
 	return parser.parse(body)
 }
 
