@@ -12,40 +12,17 @@ import XCTest
 class ModuleFilterTests: UITestCase {
 	private typealias Keys = TestIdentifiers.Filter.MenusKeys
 
-	// MARK: - The active trigger
-
-	/// A trigger has to say which state it is in, in both directions. The
-	/// prominent tint that says it visually is invisible to XCUITest; the
-	/// `isSelected` trait set alongside it is not, and the two are written
-	/// together so neither can be lost on its own.
-	func testTriggerAnnouncesWhetherItsFilterNarrowsAnything() throws {
-		MenusScreen(app: app)
-			.navigate()
-			.verifyFoodRowsAppear()
-			.revealFilters()
-
-		let filters = FilterScreen(app: app)
-
-		// Nothing is chosen yet, so this filter narrows nothing.
-		filters.verifyTrigger(Keys.dietaryRestrictions, isSelected: false)
-
-		filters
-			.openFilter(
-				Keys.dietaryRestrictions,
-				until: filters.option(TestIdentifiers.Menus.vegan)
-			)
-			.tapOption(TestIdentifiers.Menus.vegan)
-			.dismissSheet(waitingFor: TestIdentifiers.Menus.vegan)
-
-		filters.verifyTrigger(Keys.dietaryRestrictions, isSelected: true)
-	}
-
 	// MARK: - The sheet
 
 	/// A sheet's taps accumulate in its own state and are handed over once, on
 	/// dismissal. This is the round trip that has to survive: choose a row,
 	/// close the sheet, open it again, and find the choice still drawn -- and
 	/// the rows nobody touched still unchecked.
+	///
+	/// The trigger has to say which state it is in, in both directions, either
+	/// side of that dismissal. The prominent tint that says it visually is
+	/// invisible to XCUITest; the `isSelected` trait set alongside it is not,
+	/// and the two are written together so neither can be lost on its own.
 	func testSheetSelectionSurvivesDismissAndReopen() throws {
 		MenusScreen(app: app)
 			.navigate()
@@ -55,12 +32,17 @@ class ModuleFilterTests: UITestCase {
 		let filters = FilterScreen(app: app)
 		let vegan = TestIdentifiers.Menus.vegan
 
+		// Nothing is chosen yet, so this filter narrows nothing.
+		filters.verifyTrigger(Keys.dietaryRestrictions, isSelected: false)
+
 		filters
 			.openFilter(Keys.dietaryRestrictions, until: filters.option(vegan))
 			.verifyOption(vegan, isSelected: false)
 			.tapOption(vegan)
 			.verifyOption(vegan, isSelected: true)
 			.dismissSheet(waitingFor: vegan)
+
+		filters.verifyTrigger(Keys.dietaryRestrictions, isSelected: true)
 
 		filters
 			.openFilter(Keys.dietaryRestrictions, until: filters.option(vegan))
@@ -146,12 +128,20 @@ class ModuleFilterTests: UITestCase {
 
 	// MARK: - The menu
 
-	/// The other presentation, end to end: open the pull-down menu, toggle one
+	/// The Pause's two kinds of trigger, one after the other: a toggle, then a
+	/// menu.
+	///
 	/// A toggle has one state to change, so its trigger is the control: the tap
 	/// flips it where it stands. Nothing is presented, which is the half Jest
 	/// cannot see -- a mocked render cannot tell a control that changed state
-	/// from one that opened a menu over the screen.
-	func testTogglingAFilterInPlacePresentsNothing() throws {
+	/// from one that opened a menu over the screen. It is flipped back before
+	/// the menu, so Specials Only is as the Pause left it.
+	///
+	/// Then the other presentation, end to end: open the pull-down menu, toggle
+	/// one station, and find it applied to the list behind the menu. The sheet
+	/// tests prove a selection survives dismissal; this proves a selection made
+	/// through the other presentation actually reaches the data.
+	func testTheToggleFlipsInPlaceAndAStationNarrowsTheList() throws {
 		MenusScreen(app: app)
 			.navigate()
 			.verifyFoodRowsAppear()
@@ -159,6 +149,7 @@ class ModuleFilterTests: UITestCase {
 			.revealFilters()
 
 		let filters = FilterScreen(app: app)
+		let pizza = TestIdentifiers.Menus.pizzaStation
 
 		// The toggle is built on; a meal with no specials of its own would
 		// force it off and grey it out. The Pause's current meal has them.
@@ -176,6 +167,33 @@ class ModuleFilterTests: UITestCase {
 		// And it flips back, so the control is a toggle rather than a latch.
 		filters.tapTrigger(Keys.specials)
 		filters.verifyTrigger(Keys.specials, isSelected: true)
+
+		filters.verifyTrigger(Keys.stations, isSelected: false)
+
+		XCTAssertTrue(
+			app.buttons[TestIdentifiers.Menus.specialtyPizzaItem].waitForExistence(timeout: 30),
+			"the unfiltered menu should show an item from another station")
+
+		// Nothing starts selected, which shows every station. Ticking one is
+		// what narrows the list to it. The menu stays open afterwards -- that is
+		// what lets several stations be chosen at once -- so it has to be
+		// dismissed before the list behind it can be read.
+		filters
+			.openFilter(Keys.stations, until: filters.menuItem(pizza))
+			.tapMenuItem(pizza)
+			.dismissMenu(waitingFor: pizza)
+
+		filters.verifyTrigger(Keys.stations, isSelected: true)
+
+		XCTAssertTrue(
+			app.buttons[TestIdentifiers.Menus.pizzaItem].waitForExistence(timeout: 30),
+			"the chosen station's items should stay")
+		XCTAssertTrue(
+			app.buttons[TestIdentifiers.Menus.specialtyPizzaItem].waitForNonExistence(timeout: 30),
+			"the other stations' items should be gone")
+		XCTAssertFalse(
+			app.staticTexts[TestIdentifiers.Menus.specialtyPizzaStation].exists,
+			"the other stations' headers should be gone")
 	}
 
 	/// The point of a menu that stays open: several options chosen in one
@@ -205,46 +223,5 @@ class ModuleFilterTests: UITestCase {
 		XCTAssertTrue(
 			app.buttons[TestIdentifiers.Menus.specialtyPizzaItem].waitForExistence(timeout: 30),
 			"the second station's items should show, chosen without reopening the menu")
-	}
-
-	/// station, and find it applied to the list behind the menu. The sheet tests
-	/// prove a selection survives dismissal; this one proves a selection made
-	/// through the other presentation actually reaches the data.
-	func testStationSelectionNarrowsTheFoodList() throws {
-		MenusScreen(app: app)
-			.navigate()
-			.verifyFoodRowsAppear()
-			.openCafe(TestIdentifiers.Menus.pause)
-			.revealFilters()
-
-		let filters = FilterScreen(app: app)
-		let pizza = TestIdentifiers.Menus.pizzaStation
-
-		filters.verifyTrigger(Keys.stations, isSelected: false)
-
-		XCTAssertTrue(
-			app.buttons[TestIdentifiers.Menus.specialtyPizzaItem].waitForExistence(timeout: 30),
-			"the unfiltered menu should show an item from another station")
-
-		// Nothing starts selected, which shows every station. Ticking one is
-		// what narrows the list to it. The menu stays open afterwards -- that is
-		// what lets several stations be chosen at once -- so it has to be
-		// dismissed before the list behind it can be read.
-		filters
-			.openFilter(Keys.stations, until: filters.menuItem(pizza))
-			.tapMenuItem(pizza)
-			.dismissMenu(waitingFor: pizza)
-
-		filters.verifyTrigger(Keys.stations, isSelected: true)
-
-		XCTAssertTrue(
-			app.buttons[TestIdentifiers.Menus.pizzaItem].waitForExistence(timeout: 30),
-			"the chosen station's items should stay")
-		XCTAssertTrue(
-			app.buttons[TestIdentifiers.Menus.specialtyPizzaItem].waitForNonExistence(timeout: 30),
-			"the other stations' items should be gone")
-		XCTAssertFalse(
-			app.staticTexts[TestIdentifiers.Menus.specialtyPizzaStation].exists,
-			"the other stations' headers should be gone")
 	}
 }

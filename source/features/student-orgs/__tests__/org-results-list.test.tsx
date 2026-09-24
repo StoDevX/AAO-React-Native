@@ -37,6 +37,7 @@ function renderList(sections: OrgSection[]) {
 			emptyText="No orgs"
 			onPressOrg={jest.fn()}
 			onRefresh={jest.fn(() => Promise.resolve())}
+			query=""
 			sections={sections}
 		/>,
 	)

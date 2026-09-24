@@ -9,15 +9,6 @@ struct SISScreen: Screen {
 	}
 
 	@discardableResult
-	func checkAcknowledgement() -> Self {
-		let iAgree = app.buttons[TestIdentifiers.SIS.iAgree].firstMatch
-		XCTAssertTrue(
-			iAgree.waitForExistence(timeout: 30),
-			"I Agree acknowledgement should be visible")
-		return self
-	}
-
-	@discardableResult
 	func acceptAcknowledgement() -> Self {
 		let iAgree = app.buttons[TestIdentifiers.SIS.iAgree].firstMatch
 		XCTAssertTrue(
@@ -93,14 +84,6 @@ struct SISScreen: Screen {
 		XCTAssertTrue(
 			homescreen.waitForNonExistence(timeout: 30),
 			"Reopening SIS should leave the homescreen")
-		return self
-	}
-
-	@discardableResult
-	func openJobsTab() -> Self {
-		let openJobs = app.tabButton(TestIdentifiers.SIS.openJobs)
-		XCTAssertTrue(openJobs.waitForExistence(timeout: 30))
-		openJobs.tap()
 		return self
 	}
 }

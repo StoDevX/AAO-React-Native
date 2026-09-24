@@ -1,0 +1,184 @@
+import {Settings} from 'react-native'
+import type {JobCategory, JobDetail} from '../types'
+
+/**
+ * Job postings for UI testing.
+ *
+ * The live board is whatever St. Olaf is hiring for this week, which is
+ * nothing to assert against: a test naming a posting breaks when it closes.
+ *
+ * Two postings, because the detail screen's layout depends on its fields.
+ * The first has a field long enough to wrap onto a second line, the shape a
+ * host sized to its content measures as too short; the second has only short
+ * fields.
+ *
+ * A third carries a term prefix and a pay code, as nearly every live posting
+ * does, for the list's wage, Level filter, and search to act on. The first two
+ * carry neither, so they are "Not stated" in both filters.
+ *
+ * Then enough filler postings to scroll, because a list shorter than the
+ * screen cannot show whether a new search or filter starts it at the top.
+ * They are all tier 2, so choosing Experienced keeps a list long enough to
+ * have been scrolled. Their dates put some in each recency section against
+ * the UI tests' frozen clock, 2026-09-05.
+ *
+ * Last, one posting that exists only when the app is launched with
+ * `-AAOUITestExtraJobPosting YES`, so a test can add a posting between two
+ * visits and see it marked new.
+ */
+
+/// Mirrored by `TestIdentifiers.StudentWork.fixtureJobWithWrappingField`.
+export const UITEST_WRAPPING_JOB_TITLE = 'Undergraduate Research Assistant'
+/// Mirrored by `TestIdentifiers.StudentWork.fixtureJobWithShortFields`.
+export const UITEST_SHORT_JOB_TITLE = 'Library Circulation Desk Assistant'
+/// Listed as `TestIdentifiers.StudentWork.fixtureCodedJob`, without its term
+/// prefix and pay code.
+export const UITEST_CODED_JOB_TITLE = 'AY Stav Student Server (WS-NST1)'
+
+const SITE = 'https://jobs.example.invalid/sites/CX_1'
+
+const BODY = [
+	'**Description of the Position:** Students work with a faculty mentor on a scholarly or artistic project, from the first reading to a public presentation.',
+	'**Transferable Skills:** Research, writing, and presenting to an audience.',
+	'**Duties and Responsibilities:** Each project sets its own hours per week and number of weeks. See the [project database](https://example.invalid/projects) for individual project descriptions.',
+	'**Qualifications:** Enrolled as an on-campus student. There is no grade requirement, but a student’s academic record is considered during selection. Skills depend on the individual project.',
+	'Applicants without a work award who answer No to the application questions are rejected automatically; contact the program office to resolve this.',
+	'**This job description is for general information purposes. It is not intended to list all duties and responsibilities of the position, and it may change at any time without notice.**',
+].join('\n\n')
+
+const WRAPPING_JOB: JobDetail = {
+	id: 'uitest-1',
+	title: UITEST_WRAPPING_JOB_TITLE,
+	category: 'Student Work',
+	schedule: 'Part time',
+	location: 'Northfield, MN, United States',
+	postedDate: '2026-09-10T17:20:22+00:00',
+	fields: [
+		{label: 'Classification', value: 'Student Employee (non-exempt)'},
+		{label: 'Department', value: 'Research'},
+		{label: 'Length', value: 'See Employment Authorization'},
+		// Too long for one line beside its label, as the live board's research
+		// postings have.
+		{label: 'Contact', value: 'Faculty advisor listed in the research project database'},
+		{label: 'Wage', value: '$13.50-15.50/hour'},
+	],
+	body: BODY,
+	url: `${SITE}/job/uitest-1`,
+}
+
+const SHORT_JOB: JobDetail = {
+	id: 'uitest-2',
+	title: UITEST_SHORT_JOB_TITLE,
+	category: 'Student Work',
+	schedule: 'Part time',
+	location: 'Northfield, MN, United States',
+	postedDate: '2026-09-08T15:00:00+00:00',
+	fields: [
+		{label: 'Classification', value: 'Student Employee (non-exempt)'},
+		{label: 'Department', value: 'Libraries'},
+		{label: 'Wage', value: '$12.50/hour'},
+	],
+	body: BODY,
+	url: `${SITE}/job/uitest-2`,
+}
+
+const CODED_JOB: JobDetail = {
+	id: 'uitest-3',
+	title: UITEST_CODED_JOB_TITLE,
+	category: 'Student Work',
+	schedule: 'Part time',
+	location: 'Northfield, MN, United States',
+	postedDate: '2026-09-05T15:00:00+00:00',
+	fields: [
+		{label: 'Classification', value: 'Student Employee (non-exempt)'},
+		{label: 'Department', value: 'Stav Hall'},
+	],
+	body: BODY,
+	url: `${SITE}/job/uitest-3`,
+}
+
+/// Mirrored by `TestIdentifiers.StudentWork.fixtureFillerPrefix`.
+const FILLER_TITLE_PREFIX = 'Fixture Filler Posting'
+const FILLER_COUNT = 20
+/// This week, last week, and earlier, against the frozen 2026-09-05.
+const FILLER_DATES = [
+	'2026-09-01T15:00:00+00:00',
+	'2026-08-26T15:00:00+00:00',
+	'2026-07-15T15:00:00+00:00',
+]
+
+const FILLER_JOBS: JobDetail[] = Array.from({length: FILLER_COUNT}, (_, index) => {
+	let number = String(index + 1).padStart(2, '0')
+	return {
+		id: `uitest-filler-${number}`,
+		title: `AY ${FILLER_TITLE_PREFIX} ${number} (WS-ST2)`,
+		category: 'Student Work',
+		schedule: 'Part time',
+		location: 'Northfield, MN, United States',
+		postedDate: FILLER_DATES[index % FILLER_DATES.length],
+		fields: [],
+		body: BODY,
+		url: `${SITE}/job/uitest-filler-${number}`,
+	}
+})
+
+/// The `NSUserDefaults` key a launch argument sets, which React Native's
+/// `Settings` reads. Mirrored by `TestIdentifiers.LaunchArguments.extraJobPosting`.
+const EXTRA_POSTING_SETTING = 'AAOUITestExtraJobPosting'
+/// Mirrored by `TestIdentifiers.StudentWork.fixtureExtraJob`.
+export const UITEST_EXTRA_JOB_TITLE = 'AY Planetarium Student Guide (WS-ST1)'
+
+const EXTRA_JOB: JobDetail = {
+	id: 'uitest-extra',
+	title: UITEST_EXTRA_JOB_TITLE,
+	category: 'Student Work',
+	schedule: 'Part time',
+	location: 'Northfield, MN, United States',
+	postedDate: '2026-09-04T15:00:00+00:00',
+	fields: [],
+	body: BODY,
+	url: `${SITE}/job/uitest-extra`,
+}
+
+const withExtraPosting = Boolean(Settings.get(EXTRA_POSTING_SETTING))
+
+export const UITEST_JOB_DETAILS: JobDetail[] = [
+	WRAPPING_JOB,
+	SHORT_JOB,
+	CODED_JOB,
+	...FILLER_JOBS,
+	...(withExtraPosting ? [EXTRA_JOB] : []),
+]
+
+export const UITEST_JOB_CATEGORIES: JobCategory[] = [
+	{
+		id: 1,
+		name: 'Student Work',
+		count: UITEST_JOB_DETAILS.length,
+		jobs: UITEST_JOB_DETAILS.map((job) => ({
+			id: job.id,
+			title: job.title,
+			postedDate: job.postedDate ?? '',
+			location: job.location,
+		})),
+	},
+]
+
+/// Each fixture posting's unit number, as its description would carry it.
+/// The fillers share one unit, so one area has enough postings to scroll.
+const FIXTURE_UNITS: Record<string, string> = {
+	'uitest-1': '16118', // Research (CURI)
+	'uitest-2': '14001', // Library & Technology
+	'uitest-3': '22005', // Dining & BonApp
+	'uitest-extra': '11280', // Sciences & Nursing
+}
+const FILLER_UNIT = '15141' // Residence Life
+
+/// What a keyword search for each unit finds on the fixture board. Every area
+/// the fixtures leave out -- Faith & Vocation among them -- has no postings, so
+/// a UI test can open an empty area.
+export const UITEST_UNIT_POSTINGS: Record<string, string[]> = {}
+for (let job of UITEST_JOB_DETAILS) {
+	let unit = FIXTURE_UNITS[job.id] ?? FILLER_UNIT
+	UITEST_UNIT_POSTINGS[unit] = [...(UITEST_UNIT_POSTINGS[unit] ?? []), job.id]
+}

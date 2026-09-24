@@ -37,10 +37,11 @@ on:
       - .github/workflows/refresh-bus-data.yml
 
 # `contents: write` to push the refresh branch, `pull-requests: write` to open
-# the PR against it.
+# the PR against it, `issues: write` to say when a hand-kept route returns.
 permissions:
   contents: write
   pull-requests: write
+  issues: write
 
 concurrency:
   # PRs get their own group so a dry run can never queue behind, or cancel, a
@@ -57,13 +58,17 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
-    # Read by refresh-bus-data.mjs and by the steps below, so a warning the
-    # generator raises reaches the step summary and the PR body instead of
-    # sitting in stdout where only the run log shows it.
-    env:
-      BUS_DATA_WARNINGS_FILE: ${{ runner.temp }}/bus-data-warnings.txt
-
     steps:
+      # Read by refresh-bus-data.mjs and by the steps below, so a warning the
+      # generator raises reaches the step summary and the PR body instead of
+      # sitting in stdout where only the run log shows it. Exported through
+      # $GITHUB_ENV because a job-level env: cannot read the runner context,
+      # and GitHub rejects the whole file if it tries.
+      - name: Name the warning files
+        run: |
+          echo "BUS_DATA_WARNINGS_FILE=$RUNNER_TEMP/bus-data-warnings.txt" >> "$GITHUB_ENV"
+          echo "BUS_ROUTE_RETURNS_FILE=$RUNNER_TEMP/bus-route-returns.json" >> "$GITHUB_ENV"
+
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - uses: jdx/mise-action@c2a87611a18de5b3828c5652fe268e992400cb5c # v4.3.0
@@ -116,7 +121,46 @@ jobs:
               echo
               sed 's/^/- /' "$BUS_DATA_WARNINGS_FILE"
             fi
+
+            if [ -s "$BUS_ROUTE_RETURNS_FILE" ] && [ "$(jq length "$BUS_ROUTE_RETURNS_FILE")" -gt 0 ]; then
+              echo
+              echo "## Back in the feed"
+              echo
+              jq -r '.[] | "- \(.line) (route \(.routeId)) \(if .matches then "matches" else "differs from" end) \(.file)"' "$BUS_ROUTE_RETURNS_FILE"
+            fi
           } >> "$GITHUB_STEP_SUMMARY"
+
+      # Runs whether or not the timetables changed: the week a hand-kept route
+      # comes back may be one with nothing else to open a PR for.
+      - name: Say when a hand-kept route returns
+        if: github.event_name != 'pull_request'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          [ -s "$BUS_ROUTE_RETURNS_FILE" ] || exit 0
+
+          jq -c '.[]' "$BUS_ROUTE_RETURNS_FILE" | while read -r route; do
+            line="$(jq -r .line <<<"$route")"
+            title="The $line is back in the GTFS feed"
+
+            # Exact-title match: `--search` is fuzzy, so filter its results.
+            if gh issue list --state open --search "in:title \"$title\"" --json title \
+                --jq '.[].title' | grep -qxF "$title"; then
+              echo "An issue is already open: $title"
+              continue
+            fi
+
+            body="$(jq -r '
+              "The feed runs route \(.routeId) again, which \(.file) is kept by hand in place of.\n\n" +
+              (if .matches
+                then "Its timetable matches \(.file), so it can go back to being generated: move its entry from `watched_routes:` to `routes:` in `data/bus-times/_curation.yaml`.\n"
+                else "Its timetable differs from \(.file). Check both against the brochure before moving its entry from `watched_routes:` to `routes:` in `data/bus-times/_curation.yaml`.\n"
+              end) +
+              "\nRaised by \(env.GITHUB_WORKFLOW), run \(env.GITHUB_RUN_ID)."
+            ' <<<"$route")"
+
+            gh issue create --title "$title" --body "$body"
+          done
 
       - name: Open a pull request
         if: github.event_name != 'pull_request'

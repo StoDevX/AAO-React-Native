@@ -27,7 +27,9 @@ export const athleticsOptions = queryOptions({
 		if (!scores?.length) {
 			return IDLE_INTERVAL
 		}
-		const hasActiveGame = scores.some((score) => score.status.indicator === 'A')
-		return hasActiveGame ? ACTIVE_GAME_INTERVAL : IDLE_INTERVAL
+		// 'O' marks a game in progress, the same reading ccc-server's cache TTL
+		// uses; 'A' covers every game not being played, scheduled or final.
+		const hasOngoingGame = scores.some((score) => score.status.indicator === 'O')
+		return hasOngoingGame ? ACTIVE_GAME_INTERVAL : IDLE_INTERVAL
 	},
 })

@@ -1,22 +1,14 @@
 import XCTest
 
 class ModuleMenusTests: UITestCase {
-	// MARK: - Navigation
+	// MARK: - Navigation and the header
 
-	/// Also the opening state of the screen: the header names the cafe and the
-	/// day, and the filter row is collapsed behind the navigation bar's button
-	/// so a menu opens as food rather than as chrome.
-	func testIsReachableFromHomescreen() throws {
-		MenusScreen(app: app)
-			.navigate()
-			.verifyCafeHeader(TestIdentifiers.Menus.stOlafCafes[0], showing: TestIdentifiers.Menus.openingMeal)
-			.verifyFilters(visible: false)
-			.revealFilters()
-			.verifyFilters(visible: true)
-	}
-
-	// MARK: - The navigation header
-
+	/// The screen as it opens, and the header as the cafe tabs change under it.
+	///
+	/// The opening state: the header names the cafe and the day, and the filter
+	/// row is collapsed behind the navigation bar's button so a menu opens as
+	/// food rather than as chrome.
+	///
 	/// The header belongs to the stack, above all four tabs, so it is the one
 	/// piece of this screen a tab switch has to rewrite. Asserting the previous
 	/// name is *absent* is the point: the header is only ever late, never
@@ -27,11 +19,16 @@ class ModuleMenusTests: UITestCase {
 	/// cafe's, down to a live meal picker that re-filtered a tab the reader
 	/// could not see, and `Stack.Screen`'s `setOptions` has no cleanup to undo
 	/// it.
-	func testHeaderFollowsTheCafeTab() throws {
-		let menus = MenusScreen(app: app).navigate()
+	func testOpensOnStavAndTheHeaderFollowsTheCafeTab() throws {
 		let stav = TestIdentifiers.Menus.stOlafCafes[0]
-
-		menus.verifyCafeHeader(stav, showing: TestIdentifiers.Menus.openingMeal)
+		let menus = MenusScreen(app: app)
+			.navigate()
+			.verifyCafeHeader(stav, showing: TestIdentifiers.Menus.openingMeal)
+			.verifyFilters(visible: false)
+			.revealFilters()
+			.verifyFilters(visible: true)
+			.verifyFoodRowsAppear()
+			.verifyDietaryInfoIsAnnounced()
 
 		// Proves the query the Carleton leg below asserts the *absence* of can
 		// match something in the first place. A cafe's title carries a line under
@@ -42,9 +39,13 @@ class ModuleMenusTests: UITestCase {
 			menus.headerDetailed(stav).exists,
 			"a cafe's title should carry a line beneath its name")
 
+		// The frozen clock sits before the Pause opens for the day, so its title
+		// says when it does rather than standing alone over nothing.
 		menus
 			.openCafe(TestIdentifiers.Menus.pause)
-			.verifyHeaderNames(TestIdentifiers.Menus.pause)
+			.verifyHeader(
+				TestIdentifiers.Menus.pauseTitle,
+				reading: TestIdentifiers.Menus.pauseClosedDetail)
 
 		XCTAssertFalse(
 			menus.headerTitled(stav).exists,
@@ -58,7 +59,7 @@ class ModuleMenusTests: UITestCase {
 			menus.headerTitled(TestIdentifiers.Menus.carleton).waitForExistence(timeout: 30),
 			"the chooser should name itself Carleton")
 		XCTAssertFalse(
-			menus.headerTitled(TestIdentifiers.Menus.pause).exists,
+			menus.headerTitled(TestIdentifiers.Menus.pauseTitle).exists,
 			"the chooser should not carry a cafe's name")
 
 		// The title reads as one element carrying the name and the line beneath
@@ -70,6 +71,9 @@ class ModuleMenusTests: UITestCase {
 		XCTAssertFalse(
 			menus.headerDetailed(TestIdentifiers.Menus.carleton).exists,
 			"the chooser shows no single day, so it should carry no line beneath its name")
+
+		// Every St. Olaf tab still opens with the Carleton chooser in front.
+		menus.checkStOlafCafes()
 	}
 
 	/// The meal picker is the title itself, drawn as a custom view because a
@@ -99,14 +103,6 @@ class ModuleMenusTests: UITestCase {
 	}
 
 	// MARK: - St. Olaf menus
-
-	func testStOlafMenusCanBeOpened() throws {
-		MenusScreen(app: app)
-			.navigate()
-			.verifyFoodRowsAppear()
-			.verifyDietaryInfoIsAnnounced()
-			.checkStOlafCafes()
-	}
 
 	/// A dish's nutrition opens over the menu as a sheet, like every other
 	/// detail in the app, rather than as a page of its own. The Pause is used

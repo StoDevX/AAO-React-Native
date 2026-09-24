@@ -1,18 +1,14 @@
 import XCTest
 
 class ModuleCourseCatalogTests: UITestCase {
-	func testIsReachableFromHomescreen() throws {
-		CourseCatalogScreen(app: app)
+	/// Opens on its Recent section, then searches the catalogue, which under UI
+	/// testing holds one course, and opens it. That course carries something
+	/// for every section the detail screen draws.
+	func testSearchingOpensACourseDetail() throws {
+		let screen = CourseCatalogScreen(app: app)
 			.navigate()
 			.verifyCourseCatalogTitle()
 			.checkRecentSectionExists()
-	}
-
-	/// Searches the catalogue, which under UI testing holds one course, and
-	/// opens it. That course carries something for every section the detail
-	/// screen draws.
-	func testCourseDetail() throws {
-		let screen = CourseCatalogScreen(app: app).navigate()
 
 		let field = app.searchFields.firstMatch
 		XCTAssertTrue(field.waitForExistence(timeout: 30), "Course search should offer a field")

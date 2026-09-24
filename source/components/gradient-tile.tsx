@@ -4,6 +4,7 @@ import {Button, Image, RoundedRectangle, Text, VStack, ZStack} from '@expo/ui/sw
 import {
 	accessibilityLabel,
 	aspectRatio,
+	background,
 	buttonStyle,
 	contentShape,
 	environment,
@@ -11,14 +12,32 @@ import {
 	foregroundStyle,
 	frame,
 	lineLimit,
+	monospacedDigit,
 	multilineTextAlignment,
 	opacity,
+	padding,
 	shadow,
 	shapes,
 } from '@expo/ui/swift-ui/modifiers'
 import type {SFSymbol} from 'sf-symbols-typescript'
+import * as c from '@frogpond/colors'
 import {displayP3, type Gradient} from '@frogpond/colors'
 import {FILL_WIDTH, TILE_ASPECT} from './tile-layout'
+
+/// SwiftUI's own disabled look for a plain button, measured on the simulator:
+/// the whole tile, card and label alike, at half opacity. A dimmed tile wears
+/// it without being disabled, so it can still be opened.
+const DIMMED_OPACITY = 0.5
+
+/// A neutral capsule rather than a red one, which would read as unread.
+const COUNT_MODIFIERS = [
+	font({textStyle: 'caption', weight: 'semibold'}),
+	monospacedDigit(),
+	foregroundStyle(c.label),
+	padding({horizontal: 7, vertical: 2}),
+	background(c.secondarySystemBackground, shapes.capsule()),
+	padding({top: 8, trailing: 8}),
+]
 
 /// Space between the card and the name beneath it.
 const LABEL_GAP = 8
@@ -37,6 +56,12 @@ type Props = {
 	ratio?: number
 	/** Opens whatever this tile represents. */
 	onPress: () => void
+	/** How many things the tile holds, drawn at the card's top-right corner. None at zero. */
+	count?: number
+	/** How VoiceOver says the count, as "13 postings" or "no postings"; the bare number otherwise. */
+	countLabel?: (count: number) => string
+	/** Drawn as SwiftUI draws a disabled button, but still tappable, as for an area with nothing in it. */
+	dimmed?: boolean
 }
 
 export function GradientRoundedRectangle({
@@ -89,27 +114,50 @@ export function GradientTile({
 	gradient,
 	ratio = TILE_ASPECT,
 	onPress,
+	count,
+	countLabel = String,
+	dimmed = false,
 }: Props): React.ReactNode {
 	let isDarkScheme = useColorScheme() === 'dark'
+	let shownCount = count !== undefined && count > 0 ? count : undefined
+	// A known count is spoken even at zero: a dimmed tile is not disabled, so
+	// the label is all that tells VoiceOver an empty area from a loading one.
+	let label = count === undefined ? title : `${title}, ${countLabel(count)}`
 
 	return (
-		<Button modifiers={[buttonStyle('plain'), accessibilityLabel(title)]} onPress={onPress}>
+		<Button
+			modifiers={[
+				buttonStyle('plain'),
+				accessibilityLabel(label),
+				...(dimmed ? [opacity(DIMMED_OPACITY)] : []),
+			]}
+			onPress={onPress}
+		>
 			<VStack modifiers={[contentShape(shapes.rectangle())]} spacing={LABEL_GAP}>
+				{/* The count sits in the card's corner, over the centred icon, as
+				    a Home Screen badge sits on an app icon. */}
 				<ZStack
+					alignment="topTrailing"
 					modifiers={[frame({maxWidth: FILL_WIDTH}), aspectRatio({ratio, contentMode: 'fit'})]}
 				>
-					<GradientRoundedRectangle gradient={gradient} showShadow={isDarkScheme} />
+					<ZStack modifiers={[frame({maxWidth: FILL_WIDTH, maxHeight: FILL_WIDTH})]}>
+						<GradientRoundedRectangle gradient={gradient} showShadow={isDarkScheme} />
 
-					<Image
-						modifiers={[
-							// force the colors of the Image here to be inverted from typical expectations
-							environment({key: 'colorScheme', value: isDarkScheme ? 'light' : 'dark'}),
-							font({textStyle: 'largeTitle'}),
-							foregroundStyle({type: 'hierarchical', style: 'primary'}),
-							opacity(0.8),
-						]}
-						systemName={icon}
-					/>
+						<Image
+							modifiers={[
+								// force the colors of the Image here to be inverted from typical expectations
+								environment({key: 'colorScheme', value: isDarkScheme ? 'light' : 'dark'}),
+								font({textStyle: 'largeTitle'}),
+								foregroundStyle({type: 'hierarchical', style: 'primary'}),
+								opacity(0.8),
+							]}
+							systemName={icon}
+						/>
+					</ZStack>
+
+					{shownCount !== undefined ? (
+						<Text modifiers={COUNT_MODIFIERS}>{String(shownCount)}</Text>
+					) : null}
 				</ZStack>
 
 				<Text

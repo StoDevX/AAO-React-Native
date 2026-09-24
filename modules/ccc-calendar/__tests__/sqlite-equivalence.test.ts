@@ -118,7 +118,9 @@ function runOldPath(sources: {sourceId: string; wire: WireEvent[]}[], now: Date)
 // -----------------------------------------------------------------------
 // New path glue -- this is the real production plumbing (`toRows`,
 // `occurrencesQuery`, `organizationsQuery`, `hydrate`), wired up the same way
-// `source/database/calendar/read.ts`'s `useOccurrences` wires it up. It is
+// `source/database/calendar/read.ts`'s `useOccurrences` wires it up, except
+// that it passes no `exclude`: the equivalence is between the two ingest
+// paths, and hiding events is a screen's choice layered on top. It is
 // deliberately NOT imported from `read.ts`: that file also imports
 // `getRunner` from `client.ts`, which reaches for `expo-sqlite` and cannot
 // load under Jest. So the two lines of glue connecting these functions

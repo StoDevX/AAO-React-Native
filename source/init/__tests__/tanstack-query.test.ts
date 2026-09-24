@@ -37,8 +37,8 @@ const WINDOW = {fromUtc: 0, toUtc: 1, fromDate: '2026-08-16', toDate: '2027-03-1
  * strings -- into AsyncStorage and crashed the next cold launch.
  */
 const CALENDAR_KEYS: [string, readonly unknown[]][] = [
-	['useOccurrences', ['calendar-db', 'occurrences', 0, WINDOW, ['stolaf'], []]],
-	['useFacets', ['calendar-db', 'facets', 0, 'category', WINDOW, ['stolaf']]],
+	['useOccurrences', ['calendar-db', 'occurrences', 0, WINDOW, ['stolaf'], [], []]],
+	['useFacets', ['calendar-db', 'facets', 0, 'category', WINDOW, ['stolaf'], []]],
 	['useEvent', ['calendar-db', 'event', 0, 'stolaf', '2026-09-20T18:00:00.000Z|Soccer']],
 	['a read hook not yet written', [CALENDAR_READ_KEY, 'something-new']],
 	// The ingest receipt, from `modules/ccc-calendar/query.ts`. Spelled out

@@ -506,3 +506,49 @@ export function gtfsToBusTimes(
 
 	return {files, warnings}
 }
+
+/** A line's schedules reduced to what a rider sees, for comparing two copies. */
+function timetable(schedules) {
+	return JSON.stringify((schedules ?? []).map(({days, stops, times}) => ({days, stops, times})))
+}
+
+/**
+ * The watched routes -- ones kept by hand because the feed's copy was wrong --
+ * that the feed runs again today, and whether its timetable now matches the
+ * hand-kept file.
+ *
+ * Generated from today's services alone: a feed that brings a route back
+ * usually still lists the services that lapsed, and those would make the
+ * comparison fail however right the new timetable is.
+ */
+export function returningRoutes(feed, curation, handKept, today) {
+	let found = []
+
+	for (let [routeId, {line, file}] of Object.entries(curation.watched_routes ?? {})) {
+		let serviceIds = new Set(
+			feed.trips.filter((trip) => trip.route_id === routeId).map((trip) => trip.service_id),
+		)
+		let running = feed.calendar.filter(
+			(row) => serviceIds.has(row.service_id) && row.start_date <= today && today <= row.end_date,
+		)
+		if (running.length === 0) {
+			continue
+		}
+
+		let {files} = gtfsToBusTimes(
+			{...feed, calendar: running},
+			{
+				curation: {stop_names: curation.stop_names, routes: {[routeId]: {line, file}}},
+				repairs: {repairs: []},
+			},
+		)
+		found.push({
+			routeId,
+			line,
+			file,
+			matches: timetable(files.get(file)?.schedules) === timetable(handKept.get(file)?.schedules),
+		})
+	}
+
+	return found
+}

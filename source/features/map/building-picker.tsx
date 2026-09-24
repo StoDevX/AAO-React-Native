@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {Button, HStack, Image, List, Section, Spacer, Text, VStack} from '@expo/ui/swift-ui'
+import {Button, HStack, List, Section, Spacer, Text, VStack} from '@expo/ui/swift-ui'
 import {
 	buttonStyle,
 	contentShape,
@@ -12,6 +12,7 @@ import {useQuery} from '@tanstack/react-query'
 import {CampusSearchBar} from '@frogpond/campus-search-bar'
 import {useDebounce} from '@frogpond/use-debounce'
 
+import {RowAccessory} from '../../components/rows'
 import type {Campus} from '../building-hours/types'
 import {CategoryPicker} from './category-picker'
 import type {CategoryLabel} from './lib/categories'
@@ -178,13 +179,7 @@ function BuildingRow({
 					) : null}
 				</VStack>
 				<Spacer />
-				{/* A Button is not a NavigationLink, so the disclosure chevron the
-				    rest of the app's rows get from the platform has to be drawn. */}
-				<Image
-					modifiers={[foregroundStyle({type: 'hierarchical', style: 'tertiary'})]}
-					size={13}
-					systemName="chevron.right"
-				/>
+				<RowAccessory destination="push" />
 			</HStack>
 		</Button>
 	)

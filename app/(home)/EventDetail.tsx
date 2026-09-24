@@ -16,7 +16,11 @@ import {useDismissOnce} from '../../source/lib/use-dismiss-once'
 import {AddToCalendar} from '@frogpond/add-to-device-calendar'
 import {scheduleEventOptions, useCalendarSource, useCalendarSources} from '@frogpond/ccc-calendar'
 import {LoadingView, NoticeView} from '@frogpond/notice'
-import {PRESENCE_POWERED_BY, STOLAF_POWERED_BY} from '../../source/features/calendar/constants'
+import {
+	HIDDEN_FROM_CALENDAR,
+	PRESENCE_POWERED_BY,
+	STOLAF_POWERED_BY,
+} from '../../source/features/calendar/constants'
 import {KSTO_POWERED_BY, KRLX_POWERED_BY} from '../../source/features/streaming/radio/constants'
 import {Host} from '@expo/ui/swift-ui'
 import {useEvent, useNeighbours} from '../../source/database/calendar/read'
@@ -132,6 +136,7 @@ export default function EventDetailPage(): React.ReactNode {
 	let neighbours = useNeighbours({
 		window: windowRange ? occurrenceWindowFor(windowRange) : null,
 		sourceIds: enabledIds,
+		exclude: HIDDEN_FROM_CALENDAR,
 	})
 
 	let timeline =
@@ -214,7 +219,6 @@ export default function EventDetailPage(): React.ReactNode {
 			<AddToCalendar
 				compactMessages={true}
 				event={event}
-				eventKey={`${source}|${eventKey}`}
 				render={({message, disabled, onPress}) => (
 					// Host forces a fresh SwiftUI view hierarchy on each render,
 					// sidestepping expo/expo#44493 where react-native-screens reuses

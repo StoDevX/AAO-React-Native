@@ -1,21 +1,17 @@
 import * as React from 'react'
 import {StyleSheet, useWindowDimensions} from 'react-native'
 import {useSafeAreaInsets} from 'react-native-safe-area-context'
-import {Grid, Host, ScrollView, Spacer, Text as UIText, VStack} from '@expo/ui/swift-ui'
+import {Host, ScrollView, Text as UIText, VStack} from '@expo/ui/swift-ui'
 import {font, frame, padding, refreshable} from '@expo/ui/swift-ui/modifiers'
 import * as c from '@frogpond/colors'
-import {
-	columnsForFontScale,
-	FILL_WIDTH,
-	inRows,
-	SCREEN_MARGIN,
-	TILE_SPACING,
-} from '../../components/tile-layout'
+import {TileGrid, useTileColumns} from '../../components/tile-grid'
+import {FILL_WIDTH, SCREEN_MARGIN, TILE_SPACING} from '../../components/tile-layout'
 import {PersonTile} from './person-tile'
 import type {DirectoryItem} from './types'
 
 /// Mirrored by TestIdentifiers.Directory.tilePrefix.
 const TILE_PREFIX = 'directory-tile-'
+const RESULTS_GRID_ID = 'directory-results-grid'
 
 type Props = {
 	items: DirectoryItem[]
@@ -33,19 +29,18 @@ export function DirectoryResultsGrid({
 	onSelectIndex,
 	onRefresh,
 }: Props): React.ReactNode {
-	let {width: screenWidth, fontScale} = useWindowDimensions()
-	// The SwiftUI `ScrollView` fills the `Host` edge to edge, so in landscape
-	// the outer columns would sit under the notch / home indicator without this.
+	let {width: screenWidth} = useWindowDimensions()
+	// SwiftUI's `ScrollView` keeps its content inside the safe area, so in
+	// landscape the columns share the width left once the notch's side insets
+	// are taken -- the padding below is only the screen margin.
 	let insets = useSafeAreaInsets()
-	let leadingInset = SCREEN_MARGIN + insets.left
-	let trailingInset = SCREEN_MARGIN + insets.right
+	let contentWidth = screenWidth - insets.left - insets.right
 
-	let columns = columnsForFontScale(fontScale)
+	let columns = useTileColumns()
 	// `@expo/ui` has no `LazyVGrid`, and a `Grid` sizes a cell to its content --
 	// so a lone tile in a short row would fill the screen. Pin every tile to a
 	// column's width instead.
-	let tileWidth =
-		(screenWidth - leadingInset - trailingInset - (columns - 1) * TILE_SPACING) / columns
+	let tileWidth = (contentWidth - 2 * SCREEN_MARGIN - (columns - 1) * TILE_SPACING) / columns
 
 	let indexed = items.map((person, index) => ({person, index}))
 
@@ -61,36 +56,29 @@ export function DirectoryResultsGrid({
 				<VStack
 					alignment="leading"
 					modifiers={[
-						padding({leading: leadingInset, trailing: trailingInset, top: SCREEN_MARGIN}),
+						padding({leading: SCREEN_MARGIN, trailing: SCREEN_MARGIN, top: SCREEN_MARGIN}),
 						frame({maxWidth: FILL_WIDTH}),
 					]}
 					spacing={TILE_SPACING}
 				>
 					{heading ? <UIText modifiers={[font({textStyle: 'headline'})]}>{heading}</UIText> : null}
 
-					<Grid
-						alignment="topLeading"
-						horizontalSpacing={TILE_SPACING}
-						verticalSpacing={TILE_SPACING}
-					>
-						{inRows(indexed, columns).map((row, i) => (
-							// oxlint-disable-next-line react/no-array-index-key -- a row is its position; tiles are keyed by their person's index
-							<Grid.Row key={i}>
-								{row.map(({person, index}) => (
-									<PersonTile
-										key={index}
-										onPress={() => onSelectIndex(index)}
-										person={person}
-										testID={`${TILE_PREFIX}${index}`}
-										width={tileWidth}
-									/>
-								))}
-								{Array.from({length: columns - row.length}, (_, j) => (
-									<Spacer key={j} />
-								))}
-							</Grid.Row>
-						))}
-					</Grid>
+					<TileGrid
+						accessibilityId={RESULTS_GRID_ID}
+						// The tile width above is worked out from this count, so the
+						// grid takes it rather than working out its own.
+						columns={columns}
+						items={indexed}
+						keyForItem={({index}) => index}
+						renderItem={({person, index}) => (
+							<PersonTile
+								onPress={() => onSelectIndex(index)}
+								person={person}
+								testID={`${TILE_PREFIX}${index}`}
+								width={tileWidth}
+							/>
+						)}
+					/>
 				</VStack>
 			</ScrollView>
 		</Host>

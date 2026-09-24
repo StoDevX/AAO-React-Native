@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {useColorScheme} from 'react-native'
+import {useColorScheme, useWindowDimensions} from 'react-native'
 import {Button, Image, Text, VStack, ZStack, type ImageProps} from '@expo/ui/swift-ui'
 import {
 	accessibilityLabel,
@@ -30,6 +30,8 @@ function HomeScreenButtonLabel({
 	icon: NonNullable<ImageProps['systemName']>
 	isDarkScheme: boolean
 }) {
+	let {fontScale} = useWindowDimensions()
+
 	return (
 		<VStack
 			alignment="leading"
@@ -42,7 +44,11 @@ function HomeScreenButtonLabel({
 		>
 			<Image
 				modifiers={[
-					frame({height: 86 / 3}),
+					// A fixed box, as Health's is, so glyphs of different heights
+					// still give every card one height. It was measured at the
+					// default text size, and the glyph grows with Dynamic Type, so
+					// the box grows too or the glyph spills over the card's top.
+					frame({height: (86 / 3) * fontScale}),
 					imageScale('large'),
 					font({textStyle: 'title3'}),
 					foregroundStyle({type: 'hierarchical', style: 'primary'}),

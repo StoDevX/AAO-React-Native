@@ -121,6 +121,13 @@ export const AllViews = (): Array<ViewType> => {
 		},
 		{
 			type: 'view',
+			view: '/StudentWork',
+			title: 'Student Work',
+			icon: 'briefcase.fill',
+			gradient: c.orangeGradient,
+		},
+		{
+			type: 'view',
 			view: '/Athletics',
 			title: 'Athletics',
 			icon: 'trophy.fill',

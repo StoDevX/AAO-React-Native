@@ -6,7 +6,8 @@ import type {BusStateEnum} from './get-current-bus-iteration'
 /** Where to draw the bus: the stop it is heading for, and how far along it is. */
 export type BusTarget = {targetIndex: number; progress: number; atStop: boolean}
 
-type Iteration = {
+/** Where the line is in its day, as `getCurrentBusIteration` reports it. */
+export type Iteration = {
 	status: BusStateEnum
 	index: null | number
 	parkedStopIndex: null | number

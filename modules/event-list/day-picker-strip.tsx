@@ -8,6 +8,7 @@ import {
 	View,
 	type LayoutChangeEvent,
 } from 'react-native'
+import {SafeAreaView} from 'react-native-safe-area-context'
 import type {Moment} from 'moment-timezone'
 import * as c from '@frogpond/colors'
 import {formatDate, formatDayOfMonth, formatWeekday} from '@frogpond/time-format'
@@ -157,7 +158,8 @@ export let DayPickerStrip = React.forwardRef<DayPickerStripHandle, Props>(functi
 	// sits in the leftover space and shows at the strip's trailing edge. A
 	// fixed cell width can't promise that on every phone, so the width is
 	// derived from what actually got measured -- floored at the 44pt minimum
-	// tap target for a phone too narrow to reach it otherwise.
+	// tap target for a phone too narrow to reach it otherwise. What is measured
+	// is the scroller, inside the notch's side insets in landscape.
 	let cellTotalWidth =
 		containerWidth > 0
 			? Math.max(MIN_CELL_TOTAL_WIDTH, (containerWidth - PADDING_HORIZONTAL * 2) / DAYS_PER_WEEK)
@@ -241,36 +243,41 @@ export let DayPickerStrip = React.forwardRef<DayPickerStripHandle, Props>(functi
 	}
 
 	return (
-		<View style={styles.container} onLayout={handleLayout}>
-			<ScrollView
-				contentContainerStyle={[
-					styles.scrollContent,
-					{paddingEnd: PADDING_HORIZONTAL + trailingInset},
-				]}
-				decelerationRate="fast"
-				horizontal={true}
-				ref={scrollRef}
-				showsHorizontalScrollIndicator={false}
-				snapToOffsets={weekStarts.map((week) => week.offset)}
-			>
-				{days.map((day) => {
-					let isToday = day.isSame(now, 'day')
-					let isSelected = selectedDay ? day.isSame(selectedDay, 'day') : false
+		<View style={styles.container}>
+			{/* The background and hairline run edge to edge; the days stay clear
+			    of the notch in landscape. */}
+			<SafeAreaView edges={['left', 'right']}>
+				<ScrollView
+					onLayout={handleLayout}
+					contentContainerStyle={[
+						styles.scrollContent,
+						{paddingEnd: PADDING_HORIZONTAL + trailingInset},
+					]}
+					decelerationRate="fast"
+					horizontal={true}
+					ref={scrollRef}
+					showsHorizontalScrollIndicator={false}
+					snapToOffsets={weekStarts.map((week) => week.offset)}
+				>
+					{days.map((day) => {
+						let isToday = day.isSame(now, 'day')
+						let isSelected = selectedDay ? day.isSame(selectedDay, 'day') : false
 
-					return (
-						<DayCell
-							day={day}
-							hasEvents={daysWithEvents.has(day.format('YYYY-MM-DD'))}
-							isPast={day.isBefore(now, 'day')}
-							isSelected={isSelected}
-							isToday={isToday}
-							key={day.format('YYYY-MM-DD')}
-							onPress={onSelectDay}
-							width={cellWidth}
-						/>
-					)
-				})}
-			</ScrollView>
+						return (
+							<DayCell
+								day={day}
+								hasEvents={daysWithEvents.has(day.format('YYYY-MM-DD'))}
+								isPast={day.isBefore(now, 'day')}
+								isSelected={isSelected}
+								isToday={isToday}
+								key={day.format('YYYY-MM-DD')}
+								onPress={onSelectDay}
+								width={cellWidth}
+							/>
+						)
+					})}
+				</ScrollView>
+			</SafeAreaView>
 		</View>
 	)
 })

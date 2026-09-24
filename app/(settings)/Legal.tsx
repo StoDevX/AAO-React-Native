@@ -1,6 +1,7 @@
 import * as React from 'react'
 import {Stack, useNavigation} from 'expo-router'
 import {ScrollView, StyleSheet} from 'react-native'
+import {SafeAreaView} from 'react-native-safe-area-context'
 import * as c from '@frogpond/colors'
 import {Markdown} from '@frogpond/markdown'
 
@@ -44,7 +45,9 @@ export default function LegalPage(): React.ReactNode {
 			</Stack.Toolbar>
 
 			<ScrollView contentInsetAdjustmentBehavior="automatic" style={styles.scroll}>
-				<Markdown source={legalMarkdown} />
+				<SafeAreaView edges={['left', 'right']}>
+					<Markdown source={legalMarkdown} />
+				</SafeAreaView>
 			</ScrollView>
 		</>
 	)
