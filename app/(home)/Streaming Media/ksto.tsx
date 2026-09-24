@@ -32,7 +32,7 @@ export default function KstoPage(): React.ReactNode {
 						tinycolor(DUMPSTER_TINT).complement().setAlpha(0.2).toRgbString(),
 					),
 				},
-				{name: 'record', image: logos.kstoRecord, theme: tintedTheme(RECORD_TINT), spins: true},
+				{name: 'record', image: logos.kstoRecord, theme: tintedTheme(RECORD_TINT), record: true},
 			]}
 			playerUrl="https://www.stolaf.edu/multimedia/play/embed/ksto.html"
 			scheduleHref="/KSTOSchedule"

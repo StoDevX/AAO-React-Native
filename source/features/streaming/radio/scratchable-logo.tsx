@@ -19,16 +19,19 @@ import Animated, {
 	withSpring,
 	withTiming,
 } from 'react-native-reanimated'
+import {scheduleOnRN} from 'react-native-worklets'
 import * as c from '@frogpond/colors'
 
-import {PRESSED_SCALE} from './logo-button'
 import {
 	angleAround,
 	isTap,
 	releaseVelocity,
 	turnBetween,
 	type ScratchSample,
-} from './record-gesture'
+} from './scratch-gesture'
+
+/** How far a pressed logo shrinks: about 4pt across a 268pt logo. */
+const PRESSED_SCALE = 0.985
 
 /** One turn every 2.4 seconds, the speed of the record in KSTO's own 2017 app. */
 const MS_PER_TURN = 2400
@@ -38,32 +41,35 @@ type Props = {
 	image: ImageResolvedAssetSource
 	style: StyleProp<ImageStyle>
 	accessibilityLabel: string
-	/** Spins the record, unless Reduce Motion is on. */
-	spinning: boolean
+	/** A record, drawn with a rim, which turns on its own while `playing`. */
+	record: boolean
+	playing: boolean
 	onTap?: () => void
 	/**
-	 * Told when a finger lands on the record and when it lifts, so a scroll
-	 * view around it can hold still while the record is scratched.
+	 * Told when a finger lands on the logo and when it lifts, so a scroll view
+	 * around it can hold still while the logo is scratched.
 	 */
 	onHeldChange?: (held: boolean) => void
+	/** Told when a scratch is over and the logo has stopped coasting. */
+	onSettle?: () => void
 }
 
 /**
- * A record a finger can scratch: dragging turns it around its centre, and a
- * touch that barely moves is a tap. Let go mid-turn and it keeps turning,
- * slowing to a stop, or to its usual speed while the stream plays.
+ * A logo a finger can scratch like a record: dragging turns it around its
+ * centre, and a touch that barely moves is a tap. Let go mid-turn and it keeps
+ * turning, slowing to a stop, or for a record to its usual speed while the
+ * stream plays.
  */
-export function RecordLogo(props: Props): React.ReactNode {
-	let {image, style, accessibilityLabel, spinning, onTap, onHeldChange} = props
+export function ScratchableLogo(props: Props): React.ReactNode {
+	let {image, style, accessibilityLabel, record, playing, onTap, onHeldChange, onSettle} = props
 	let reduceMotion = useReducedMotion()
-	let spins = spinning && !reduceMotion
+	let spins = record && playing && !reduceMotion
 
-	// The record's angle is its steady spin plus what scratching has added, so
-	// a fling can ease back into the spin rather than stopping first.
+	// The logo's angle is its steady spin plus what scratching has added, so a
+	// fling can ease back into the spin rather than stopping first.
 	let spin = useSharedValue(0)
 	let scratched = useSharedValue(0)
-	// Shrinks under a finger like the other logos, until the touch becomes a
-	// scratch.
+	// Shrinks under a finger, until the touch becomes a scratch.
 	let scale = useSharedValue(1)
 	let view = useRef<View>(null)
 	let centre = useRef({x: 0, y: 0})
@@ -92,7 +98,7 @@ export function RecordLogo(props: Props): React.ReactNode {
 	let handleGrant = (event: GestureResponderEvent) => {
 		onHeldChange?.(true)
 		scale.set(withSpring(PRESSED_SCALE, {duration: 150}))
-		// A finger on a coasting record stops it, as it would a real one.
+		// A finger on a coasting logo stops it, as it would a real record.
 		cancelAnimation(scratched)
 		start.current = {
 			x: event.nativeEvent.pageX,
@@ -129,11 +135,13 @@ export function RecordLogo(props: Props): React.ReactNode {
 		scale.set(withSpring(1, {duration: 250}))
 		if (lastAngle.current === null) {
 			onTap?.()
+			onSettle?.()
 			return
 		}
 
 		startSpinning()
 		if (reduceMotion) {
+			onSettle?.()
 			return
 		}
 		// Where the finger lifted counts too: touches can arrive sparsely, and
@@ -145,7 +153,13 @@ export function RecordLogo(props: Props): React.ReactNode {
 		// The spin supplies its own speed, so the scratch coasts on only what
 		// the fling adds beyond it.
 		let velocity = releaseVelocity(samples.current, event.nativeEvent.timestamp)
-		scratched.set(withDecay({velocity: spins ? velocity - DEGREES_PER_SECOND : velocity}))
+		scratched.set(
+			withDecay({velocity: spins ? velocity - DEGREES_PER_SECOND : velocity}, (finished) => {
+				if (finished && onSettle) {
+					scheduleOnRN(onSettle)
+				}
+			}),
+		)
 	}
 
 	let turned = useAnimatedStyle(() => ({
@@ -167,13 +181,18 @@ export function RecordLogo(props: Props): React.ReactNode {
 				onHeldChange?.(false)
 				scale.set(withSpring(1, {duration: 250}))
 				startSpinning()
+				onSettle?.()
 			}}
 			// A scroll view would otherwise take over a scratch that drifts
 			// vertically.
 			onResponderTerminationRequest={() => false}
 			onStartShouldSetResponder={() => true}
 		>
-			<Animated.Image resizeMode="contain" source={image} style={[style, styles.rim, turned]} />
+			<Animated.Image
+				resizeMode="contain"
+				source={image}
+				style={[style, record && styles.rim, turned]}
+			/>
 		</View>
 	)
 }

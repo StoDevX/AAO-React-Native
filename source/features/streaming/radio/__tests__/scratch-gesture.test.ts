@@ -1,6 +1,6 @@
 import {describe, expect, test} from '@jest/globals'
 
-import {angleAround, isTap, releaseVelocity, turnBetween} from '../record-gesture'
+import {angleAround, isTap, releaseVelocity, turnBetween} from '../scratch-gesture'
 
 describe('isTap', () => {
 	test('a finger that barely moved is a tap', () => {

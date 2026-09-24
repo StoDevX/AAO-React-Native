@@ -1,6 +1,6 @@
 import * as React from 'react'
 import {useCallback, useEffect, useState} from 'react'
-import {Image, ScrollView, StyleSheet, Text, View, useWindowDimensions} from 'react-native'
+import {ScrollView, StyleSheet, Text, View, useWindowDimensions} from 'react-native'
 import {SafeAreaView} from 'react-native-safe-area-context'
 import noop from 'lodash/noop'
 import * as c from '@frogpond/colors'
@@ -10,9 +10,9 @@ import {StreamPlayer} from './player'
 import type {HtmlAudioError, PlayState} from './types'
 import {theming, type RadioLogo} from './theme'
 import {ActionButton, CallButton, ShowCalendarButton} from './buttons'
-import {LogoButton} from './logo-button'
 import {openUrl} from '@frogpond/open-url'
-import {RecordLogo} from './record'
+import {ScratchableLogo} from './scratchable-logo'
+import {useSwipeBackHold} from './swipe-back-hold'
 import {useNavigation, useRouter} from 'expo-router'
 
 // If you want to fix the inline player, switch to `true`
@@ -101,15 +101,33 @@ function RadioScreen(props: RadioScreenProps): React.ReactNode {
 
 	let [playState, setPlayState] = useState<PlayState>('paused')
 	let [streamError, setStreamError] = useState<HtmlAudioError | null>(null)
-	let [recordHeld, setRecordHeld] = useState(false)
+	let [logoHeld, setLogoHeld] = useState(false)
 
 	// iOS 26 and later go back on a swipe from anywhere on the screen, which a
-	// scratch would trigger. The stack holding these tabs owns that gesture;
+	// scratch would set off. The stack holding these tabs owns that gesture;
 	// the left-edge swipe and the Back button still work.
 	let navigation = useNavigation()
+	let setSwipeBackEnabled = useCallback(
+		(enabled: boolean) => navigation.getParent()?.setOptions({fullScreenGestureEnabled: enabled}),
+		[navigation],
+	)
+	let swipeBack = useSwipeBackHold(setSwipeBackEnabled)
+	let {hold: holdSwipeBack, settle: settleSwipeBack} = swipeBack
+
+	// A new logo invites a scratch, so the swipe waits again.
 	useEffect(() => {
-		navigation.getParent()?.setOptions({fullScreenGestureEnabled: !recordHeld})
-	}, [navigation, recordHeld])
+		settleSwipeBack()
+	}, [logo.name, settleSwipeBack])
+
+	let handleLogoHeld = useCallback(
+		(held: boolean) => {
+			setLogoHeld(held)
+			if (held) {
+				holdSwipeBack()
+			}
+		},
+		[holdSwipeBack],
+	)
 
 	let play = () => {
 		setPlayState('checking')
@@ -214,7 +232,6 @@ function RadioScreen(props: RadioScreenProps): React.ReactNode {
 	let logoBorderColor = {borderColor: theme.imageBorderColor}
 	let logoBg = {backgroundColor: theme.imageBackgroundColor}
 	let logoStyle = [styles.logoBorder, logoSize, logoBorderColor, logoBg]
-	let logoImage = <Image resizeMode="contain" source={logo.image} style={logoStyle} />
 	let logoWrapper = [styles.logoWrapper, sideways && landscape.logoWrapper]
 
 	return (
@@ -222,28 +239,20 @@ function RadioScreen(props: RadioScreenProps): React.ReactNode {
 			<ScrollView
 				contentContainerStyle={root}
 				contentInsetAdjustmentBehavior="automatic"
-				scrollEnabled={!recordHeld}
+				scrollEnabled={!logoHeld}
 			>
 				<View style={logoWrapper}>
-					{logo.spins ? (
-						<RecordLogo
-							accessibilityLabel={`${stationName} logo, ${logo.name}`}
-							image={logo.image}
-							onHeldChange={setRecordHeld}
-							onTap={onPressLogo}
-							spinning={playState === 'playing'}
-							style={logoStyle}
-						/>
-					) : onPressLogo ? (
-						<LogoButton
-							accessibilityLabel={`${stationName} logo, ${logo.name}`}
-							onPress={onPressLogo}
-						>
-							{logoImage}
-						</LogoButton>
-					) : (
-						logoImage
-					)}
+					<ScratchableLogo
+						key={logo.name}
+						accessibilityLabel={`${stationName} logo, ${logo.name}`}
+						image={logo.image}
+						onHeldChange={handleLogoHeld}
+						onSettle={settleSwipeBack}
+						onTap={onPressLogo}
+						playing={playState === 'playing'}
+						record={logo.record ?? false}
+						style={logoStyle}
+					/>
 				</View>
 
 				<View style={styles.container}>
