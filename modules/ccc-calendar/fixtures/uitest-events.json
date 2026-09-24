@@ -31,6 +31,21 @@
   },
   {
     "dataSource": "uitest",
+    "startTime": "2026-09-05T13:00:00-05:00",
+    "endTime": "2026-09-05T16:00:00-05:00",
+    "isAllDay": false,
+    "isMultiDay": false,
+    "isSameInstant": false,
+    "title": "Football vs. Carleton College",
+    "description": "Home football game.",
+    "location": "Klein Field",
+    "isOngoing": false,
+    "links": [],
+    "categories": ["Athletics"],
+    "config": {"startTime": true, "endTime": true, "subtitle": "location"}
+  },
+  {
+    "dataSource": "uitest",
     "startTime": "2026-09-05T14:00:00-05:00",
     "endTime": "2026-09-05T16:00:00-05:00",
     "isAllDay": false,

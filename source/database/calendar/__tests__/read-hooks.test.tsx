@@ -82,9 +82,12 @@ describe('useNeighbours', () => {
 			<QueryClientProvider client={client}>{children}</QueryClientProvider>
 		)
 
-		let {result} = await renderHook(() => useNeighbours({window: null, sourceIds: ['stolaf']}), {
-			wrapper,
-		})
+		let {result} = await renderHook(
+			() => useNeighbours({window: null, sourceIds: ['stolaf'], exclude: []}),
+			{
+				wrapper,
+			},
+		)
 
 		await waitFor(() => expect(result.current).toEqual([]))
 

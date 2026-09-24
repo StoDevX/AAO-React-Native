@@ -33,9 +33,18 @@ class ModuleCalendarTests: UITestCase {
 	/// actually reach the screen in. The category submenu is opened last:
 	/// descending into an axis replaces what is on screen, so the top-level rows
 	/// have to be read while they are still the thing presented.
+	///
+	/// Athletics events never reach the Calendar; the Athletics screen lists
+	/// games instead. The fixture puts one on the frozen day beside rows that
+	/// do show, so its absence means it was hidden rather than not yet built.
+	/// Its category leaves the picker too, since choosing it could only empty
+	/// the list.
 	func testDayModeOpensReadyToUse() throws {
 		let screen = CalendarScreen(app: app)
 			.navigate()
+			.verifyRowPresent(TestIdentifiers.Calendar.unfilteredDayRow)
+			.capture("37-athletics-hidden")
+			.verifyRowAbsent(TestIdentifiers.Calendar.hiddenAthleticsRow)
 			.verifyStripIsPresent()
 			.verifySundayLeadsTheStrip()
 			.capture("21-day-picker-strip")
@@ -60,6 +69,12 @@ class ModuleCalendarTests: UITestCase {
 		screen
 			.checkCategoriesListed()
 			.capture("35-category-submenu")
+
+		let athletics = app.buttons.matching(
+			NSPredicate(format: "label BEGINSWITH %@", TestIdentifiers.Calendar.hiddenCategory))
+		XCTAssertEqual(
+			athletics.count, 0,
+			"The picker should not offer the \(TestIdentifiers.Calendar.hiddenCategory) category")
 	}
 
 	/// Swiping the strip browses: it settles on a week boundary, and it does
