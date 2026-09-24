@@ -29,6 +29,7 @@ import {
 	foregroundStyle,
 	frame,
 	lineLimit,
+	monospacedDigit,
 	shapes,
 	truncationMode,
 } from '@expo/ui/swift-ui/modifiers'
@@ -145,8 +146,12 @@ export function ActionRow(props: ActionRowProps): React.ReactNode {
 
 /**
  * A leading symbol, drawn by SwiftUI itself.
+ *
+ * `label` is for a symbol that means something, like an unread dot: VoiceOver
+ * reads the row as one element, so the label leads the row's own. `size`
+ * overrides the usual symbol size, for a mark smaller than an icon.
  */
-type SymbolImage = {systemName: SFSymbol; tint?: ColorValue}
+type SymbolImage = {systemName: SFSymbol; tint?: ColorValue; size?: number; label?: string}
 
 /**
  * A leading thumbnail fetched over the network. `@expo/ui`'s own `Image` reads
@@ -184,6 +189,8 @@ type DisclosureRowProps = {
 	 */
 	identifier?: string
 	onPress: () => void
+	/** A count before the chevron, as Settings shows one. None at zero. */
+	badge?: number
 	/** Where tapping the row goes. Defaults to a push. */
 	destination?: RowDestination
 }
@@ -193,7 +200,7 @@ function LeadingImage({image}: {image: DisclosureRowImage}): React.ReactNode {
 		return (
 			<Image
 				color={image.tint ?? c.secondaryLabel}
-				size={SYMBOL_SIZE}
+				size={image.size ?? SYMBOL_SIZE}
 				systemName={image.systemName}
 			/>
 		)
@@ -229,8 +236,15 @@ export function DisclosureRow(props: DisclosureRowProps): React.ReactNode {
 		image,
 		identifier,
 		onPress,
+		badge,
 		destination = 'push',
 	} = props
+
+	let hasBadge = badge !== undefined && badge > 0
+	let spokenLabel =
+		image && 'label' in image && image.label
+			? `${image.label}, ${rowLabel(title, detail)}`
+			: rowLabel(title, detail)
 
 	let details = detailLinesOf(detail)
 	let detailModifiers = [
@@ -247,7 +261,7 @@ export function DisclosureRow(props: DisclosureRowProps): React.ReactNode {
 		<Button
 			modifiers={[
 				buttonStyle('plain'),
-				accessibilityLabel(rowLabel(title, detail)),
+				accessibilityLabel(hasBadge ? `${spokenLabel}, ${badge}` : spokenLabel),
 				...destinationTraits(destination),
 				...(identifier ? [accessibilityIdentifier(identifier)] : []),
 			]}
@@ -269,6 +283,14 @@ export function DisclosureRow(props: DisclosureRowProps): React.ReactNode {
 					))}
 				</VStack>
 				<Spacer />
+				{/* Drawn here rather than with SwiftUI's .badge, which puts the
+				    count at the row's trailing edge -- past this row's own
+				    chevron, where Settings never has it. */}
+				{hasBadge ? (
+					<Text modifiers={[foregroundStyle(c.secondaryLabel), monospacedDigit()]}>
+						{String(badge)}
+					</Text>
+				) : null}
 				<RowAccessory destination={destination} />
 			</HStack>
 		</Button>

@@ -1,0 +1,156 @@
+# The Student Work landing screen's tiles, in the order it draws them, and
+# the St. Olaf unit numbers whose job postings belong to each. A posting is in
+# an area when a keyword search for one of the area's units finds it; a unit
+# listed nowhere here leaves its postings under "All job postings" only.
+#
+# Each unit is written with its name from the work-authorisation list, for
+# whoever edits this file next:
+# https://www.stolaf.edu/apps/workauth/Autocomplete.cfc?method=setLawsonUnitsAccountNumber&returnformat=json
+# 22005 and 24200 are not on that list; their names come from their postings.
+
+- name: Dining & BonApp
+  slug: dining
+  icon: fork.knife
+  gradient: green
+  units:
+    - '22005' # Bon Appétit Cafeteria
+    - '15203' # The Lions Pause - Payroll
+    - '23040' # Bon Appetit - Sto Cost Ctr Charg
+
+- name: Research (CURI)
+  slug: research
+  icon: flask.fill
+  gradient: indigo
+  units:
+    - '16118' # CURI - Summer Research
+
+- name: Residence Life
+  slug: residence-life
+  icon: house.fill
+  gradient: orange
+  units:
+    - '15141' # Residence Life - Operating
+
+- name: Athletics & Recreation
+  slug: athletics
+  icon: sportscourt.fill
+  gradient: red
+  units:
+    - '11725' # General Co-Ed Athletics
+    - '11707' # Football
+    - '11714' # Softball
+    - '11730' # Campus Recreation
+    - '17068' # Ice Arena - Athletics
+    - '16214' # Sports Information
+
+- name: Music
+  slug: music
+  icon: music.note
+  gradient: purple
+  units:
+    - '11230' # Music Department
+    - '11756' # Music Organizations
+    - '11753' # Orchestra Tour
+
+- name: Dance & Theater
+  slug: dance-theater
+  icon: theatermasks.fill
+  gradient: pink
+  units:
+    - '11150' # Dance Department
+    - '11738' # Dance Companies
+    - '11733' # Theater Productions
+
+- name: Art
+  slug: art
+  icon: paintpalette.fill
+  gradient: violet
+  units:
+    - '11111' # Dept of Art and Art History
+
+- name: Sciences & Nursing
+  slug: sciences
+  icon: atom
+  gradient: blue
+  units:
+    - '11280' # Physics Department
+    - '11130' # Chemistry Department
+    - '11120' # Biology Department
+    - '11135' # Chemical Hygiene - Osha
+    - '11237' # Neuro Science
+    - '11250' # Nursing Department
+    - '11220' # MSCS (Math, Stats & Comp Sci)
+
+- name: Humanities & Social Sciences
+  slug: humanities
+  icon: book.fill
+  gradient: tan
+  units:
+    - '11180' # English Department
+    - '11240' # Norwegian Department
+    - '11447' # Asian Studies
+    - '11270' # Philosophy Department
+    - '11350' # Sociology Department
+    - '11300' # Political Science Department
+    - '11353' # Social Work & Family Studies
+
+- name: Library & Technology
+  slug: library-technology
+  icon: desktopcomputer
+  gradient: light-blue
+  units:
+    - '14001' # Library
+    - '14115' # IT-Academic Computer Center
+    - '14105' # Academic Computer Stud Hardwar
+    - '14127' # Broadcast Media - Operations
+
+- name: Communications
+  slug: communications
+  icon: megaphone.fill
+  gradient: gold
+  units:
+    - '16220' # Communications
+    - '16202' # Alumni and Parent Relations
+
+- name: Student Government
+  slug: student-government
+  icon: building.columns.fill
+  gradient: yellow
+  units:
+    - '15204' # SGA - Salaries and Stipends
+
+- name: Campus Services
+  slug: campus-services
+  icon: wrench.and.screwdriver.fill
+  gradient: gray
+  units:
+    - '15118' # Post Office and Mail Services
+    - '16315' # Public Safety
+    - '24200' # Human Resources
+
+- name: Student Support
+  slug: student-support
+  icon: person.2.fill
+  gradient: mint
+  units:
+    - '14152' # Academic Success Center
+    - '15225' # Disabled Student Services
+
+- name: Community Engagement
+  slug: community
+  icon: hands.sparkles.fill
+  gradient: sage
+  units:
+    - '13001' # Off Campus-Community Service
+    - '11398' # DOE-Up Bd-Stud Work Comm Srv
+    - '45016' # Knobel-Piehl Food Insecurity
+    - '45417' # Institute Freedom/Community
+    - '11378' # ETS - Student Work Comm Servic
+    - '45427' # Inst Frdm Comm-Bracken PA Con
+
+- name: Faith & Vocation
+  slug: faith-vocation
+  icon: sparkles
+  gradient: pale-gold
+  units:
+    - '45158' # Lilly End: Nourish Voc Chldrn

@@ -60,6 +60,20 @@ export function requisitionsUrl(site: JobSite, options: {categoryId?: number} = 
 	return `${site.origin}${REQUISITIONS}?${params}`
 }
 
+/// One unit's postings, by the unit number each posting's description carries.
+/// Oracle's keyword search reads descriptions, and narrowing `fields` to IDs
+/// cuts a response from about 14 KB to about 2 KB.
+export function unitPostingsUrl(site: JobSite, unit: string): string {
+	let params = query([
+		['onlyData', 'true'],
+		['expand', 'requisitionList'],
+		['fields', 'SearchId;requisitionList:Id'],
+		['finder', findReqs(site, [`limit=${REQUISITION_LIMIT}`, `keyword=${unit}`])],
+	])
+
+	return `${site.origin}${REQUISITIONS}?${params}`
+}
+
 export function detailUrl(site: JobSite, id: string): string {
 	let params = query([
 		['onlyData', 'true'],

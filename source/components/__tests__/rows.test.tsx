@@ -45,6 +45,23 @@ describe('DisclosureRow', () => {
 	})
 })
 
+describe('DisclosureRow badge', () => {
+	it('carries its badge count in its spoken label', async () => {
+		await render(<DisclosureRow badge={4} onPress={jest.fn()} title="Entry-level jobs" />)
+		expect(screen.getByLabelText('Entry-level jobs, 4')).toBeOnTheScreen()
+	})
+
+	it('draws its badge count', async () => {
+		await render(<DisclosureRow badge={4} onPress={jest.fn()} title="Entry-level jobs" />)
+		expect(screen.getByText('4')).toBeOnTheScreen()
+	})
+
+	it('says nothing of a badge of zero', async () => {
+		await render(<DisclosureRow badge={0} onPress={jest.fn()} title="Summer jobs" />)
+		expect(screen.getByLabelText('Summer jobs')).toBeOnTheScreen()
+	})
+})
+
 describe('DisclosureRow leading image', () => {
 	it('shows a leading symbol', async () => {
 		await render(
@@ -66,6 +83,29 @@ describe('DisclosureRow leading image', () => {
 		)
 
 		expect(screen.getByTestId('disclosure-row-thumbnail')).toBeOnTheScreen()
+	})
+
+	/// A symbol that means something -- an unread dot -- has to say so to
+	/// VoiceOver, which reads the row as one element.
+	it('leads the row’s spoken label with the symbol’s own label', async () => {
+		await render(
+			<DisclosureRow
+				detail="$12.50/hr"
+				image={{systemName: 'circle.fill', label: 'New'}}
+				onPress={jest.fn()}
+				title="Tutor"
+			/>,
+		)
+
+		expect(screen.getByLabelText('New, Tutor, $12.50/hr')).toBeOnTheScreen()
+	})
+
+	it('adds nothing to the spoken label for a symbol without one', async () => {
+		await render(
+			<DisclosureRow image={{systemName: 'printer'}} onPress={jest.fn()} title="stoPrint-LPR" />,
+		)
+
+		expect(screen.getByLabelText('stoPrint-LPR')).toBeOnTheScreen()
 	})
 
 	it('draws no image slot when there is no image', async () => {

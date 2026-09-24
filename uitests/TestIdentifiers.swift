@@ -12,6 +12,10 @@ struct TestIdentifiers {
 	enum LaunchArguments {
 		static let uiTesting = "--uitesting"
 		static let resetState = "--reset-state"
+		/// Adds one posting to the Student Work fixtures, read through
+		/// `NSUserDefaults` as EXTRA_POSTING_SETTING in
+		/// modules/ccc-jobs/fixtures/uitest-postings.ts.
+		static let extraJobPosting = ["-AAOUITestExtraJobPosting", "YES"]
 		/// The value half of `-UIPreferredContentSizeCategoryName`, UIKit's
 		/// command-line override for the app's Dynamic Type size. This is AX5,
 		/// the largest accessibility size, so a test launching with it proves a
@@ -75,6 +79,7 @@ struct TestIdentifiers {
 		static let stoPrint = "stoPrint"
 		static let streamingMedia = "Streaming Media"
 		static let studentOrgs = "Student Orgs"
+		static let studentWork = "Student Work"
 		static let transportation = "Transportation"
 	}
 
@@ -200,7 +205,11 @@ struct TestIdentifiers {
 		static let iAgree = "I Agree"
 		static let balancesHeader = "BALANCES"
 		static let mealPlanHeader = "MEAL PLAN"
-		static let openJobs = "Open Jobs"
+	}
+
+	// MARK: - Student Work
+
+	enum StudentWork {
 		/// Postings from modules/ccc-jobs/fixtures/uitest-postings.ts: one with
 		/// a field long enough to wrap, one with only short fields.
 		static let fixtureJobWithWrappingField = "Undergraduate Research Assistant"
@@ -214,6 +223,62 @@ struct TestIdentifiers {
 		/// The SF Symbol `DisclosureRow` draws for an external destination,
 		/// which the image carries as its identifier.
 		static let externalLinkAccessory = "arrow.up.right"
+		/// A fixture posting whose title carries a term and a pay code, shown
+		/// with both dropped. Mirrors UITEST_CODED_JOB_TITLE.
+		static let fixtureCodedJob = "Stav Student Server"
+		/// A word only the coded fixture's title holds, to search for it by.
+		static let fixtureCodedJobSearch = "stav"
+		/// Its wage, from the NST1 tier.
+		static let fixtureCodedJobWage = "$13.50/hr"
+		/// Matches LEVEL_LABELS in source/features/sis/student-work/posting.ts.
+		static let entryLevel = "Entry-level"
+		/// The Level filter's key, from `buildJobFilters`.
+		static let levelFilter = "level"
+		/// The posting only a launch with `LaunchArguments.extraJobPosting`
+		/// has, as its row titles it. Mirrors UITEST_EXTRA_JOB_TITLE.
+		static let fixtureExtraJob = "Planetarium Student Guide"
+		/// What a new posting's row label leads with: the dot's label, from
+		/// NEW_DOT in source/features/sis/student-work/postings-list.tsx.
+		static let newPrefix = "New, "
+		/// The list's sections, from RECENCY_ORDER in
+		/// source/features/sis/student-work/recency.ts.
+		static let thisWeek = "This Week"
+		static let lastWeek = "Last Week"
+		static let earlier = "Earlier"
+		/// Row labels on a posting's screen, from `jobDetailFields` in
+		/// source/features/sis/student-work/lib.ts.
+		static let wageRow = "Wage"
+		static let levelRow = "Level"
+		static let termRow = "Term"
+		/// The coded fixture's term, as `jobTerm` names it.
+		static let academicYear = "Academic Year"
+		/// Matches AREA_GRID_ID in source/features/sis/student-work/area-grid.tsx.
+		static let areaGrid = "student-work-area-grid"
+		/// How many areas data/student-work-areas.yaml lists.
+		static let areaCount = 16
+		/// From data/student-work-areas.yaml: one area the fixtures fill, one
+		/// they leave empty. See FIXTURE_UNITS in
+		/// modules/ccc-jobs/fixtures/uitest-postings.ts.
+		static let researchArea = "Research (CURI)"
+		static let emptyArea = "Faith & Vocation"
+		/// The list's empty state once a search or filter leaves nothing, from
+		/// source/features/sis/student-work/postings-list.tsx.
+		static let noMatchingJobs = "No matching jobs."
+		/// From PRESETS in source/features/sis/student-work/presets.ts.
+		static let allPostingsPreset = "All job postings"
+		static let entryLevelPreset = "Entry-level jobs"
+		/// The postings screen's title, whatever it was opened with. Matches
+		/// TITLE in app/(home)/StudentWork/postings.tsx.
+		static let postingsTitle = "Job Postings"
+		/// The Area filter's key, from `buildJobFilters`.
+		static let areaFilter = "area"
+		/// The tier every filler posting is at.
+		static let experienced = "Experienced"
+		/// Starts every filler posting's title, as FILLER_TITLE_PREFIX in
+		/// modules/ccc-jobs/fixtures/uitest-postings.ts.
+		static let fixtureFillerPrefix = "Fixture Filler Posting"
+		/// Matches POSTINGS_LIST_ID in source/features/sis/student-work/postings-list.tsx.
+		static let postingsList = "student-work-postings"
 	}
 
 	// MARK: - Menus
