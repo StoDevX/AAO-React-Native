@@ -16,45 +16,84 @@ class ModuleCalendarTests: UITestCase {
 
 	// MARK: - Day picker strip
 
+	/// Day mode as the calendar opens in it, before anything is touched.
+	///
 	/// The strip leads with Sunday — the leftmost cell is Sunday of the current
-	/// week, not today.
-	/// Day mode is what the calendar opens in, so the strip is there from the
-	/// start, already leading with a Sunday.
-	func testDayPickerStripLeadsWithSunday() throws {
-		CalendarScreen(app: app)
+	/// week, not today. Day mode is what the calendar opens in, so the strip is
+	/// there from the start, already leading with a Sunday.
+	///
+	/// Nothing in Jest can measure a rendered frame, so this is the only place
+	/// the cells are checked against the 44pt minimum.
+	///
+	/// Reset Filters is an undo, so it has nothing to offer an unfiltered list.
+	///
+	/// The picker is three lists in one: which calendars contribute events, and a
+	/// row per axis the list can be narrowed along. SwiftUI renders a Menu's
+	/// contents bottom-to-top, so only a screenshot settles the order they
+	/// actually reach the screen in. The category submenu is opened last:
+	/// descending into an axis replaces what is on screen, so the top-level rows
+	/// have to be read while they are still the thing presented.
+	func testDayModeOpensReadyToUse() throws {
+		let screen = CalendarScreen(app: app)
 			.navigate()
 			.verifyStripIsPresent()
 			.verifySundayLeadsTheStrip()
 			.capture("21-day-picker-strip")
-	}
-
-	/// Nothing in Jest can measure a rendered frame, so this is the only place
-	/// the cells are checked against the 44pt minimum.
-	func testDayCellsMeetTheMinimumTapTarget() throws {
-		CalendarScreen(app: app)
-			.navigate()
 			.verifyDayCellsAreTappable()
+			.openPicker()
+			.verifyMenuSection(TestIdentifiers.Calendar.calendarsSection)
+
+		XCTAssertFalse(
+			app.buttons[TestIdentifiers.Calendar.resetFilters].exists,
+			"Reset Filters should be absent while the list is unfiltered")
+
+		for row in [
+			TestIdentifiers.Calendar.categoryMenu, TestIdentifiers.Calendar.organizationMenu,
+		] {
+			XCTAssertTrue(
+				app.buttons[row].waitForExistence(timeout: 30),
+				"\(row) should be a row of the open picker")
+		}
+
+		screen.capture("30-picker-rows")
+
+		screen
+			.checkCategoriesListed()
+			.capture("35-category-submenu")
 	}
 
-	/// Swiping the strip settles on a week boundary: the Sunday of whichever week
-	/// it lands on comes to rest at the same leading edge, with no partial week
-	/// behind it.
+	/// Swiping the strip browses: it settles on a week boundary, and it does
+	/// not move the selection.
 	///
-	/// The last week is the one that matters. It only reaches the leading edge
-	/// because of the trailing scroll inset -- without it the strip runs out of
-	/// content and the week comes to rest short, still showing a Sunday but not
-	/// at the edge. Hence measuring where the Sunday lands rather than only
-	/// which day it is. Neither the inset nor the snap offsets are visible to
-	/// Jest: a strip rendered there has no layout pass and no scroll view.
-	func testSwipingTheStripSettlesOnASunday() throws {
+	/// The Sunday of whichever week it lands on comes to rest at the same
+	/// leading edge, with no partial week behind it. The last week is the one
+	/// that matters. It only reaches the leading edge because of the trailing
+	/// scroll inset -- without it the strip runs out of content and the week
+	/// comes to rest short, still showing a Sunday but not at the edge. Hence
+	/// measuring where the Sunday lands rather than only which day it is.
+	/// Neither the inset nor the snap offsets are visible to Jest: a strip
+	/// rendered there has no layout pass and no scroll view.
+	///
+	/// Dragging the strip and choosing a day are the pair of gestures that used
+	/// to disagree, so the selection is read either side of the first swipe.
+	func testSwipingTheStripSettlesOnASundayAndKeepsTheSelection() throws {
 		let screen = CalendarScreen(app: app)
 			.navigate()
 			.verifySundayLeadsTheStrip()
+
+		guard let selected = screen.selectedDay() else {
+			XCTFail("A day should be selected before dragging the strip")
+			return
+		}
 
 		screen
 			.swipeStripToNextWeek()
 			.verifySundayLeadsTheStrip(weeksOn: 1)
 			.capture("24-strip-second-week")
+
+		XCTAssertEqual(
+			screen.selectedDay(), selected,
+			"Scrolling the strip should show another week, not choose a day in it")
 
 		// The resting edge of a snapped week, read off the one week that is
 		// certainly reachable, so the last week is measured against the app's own
@@ -155,15 +194,6 @@ class ModuleCalendarTests: UITestCase {
 		screen.verifyRowPresent(TestIdentifiers.Calendar.unfilteredDayRow)
 	}
 
-	/// Reset Filters is an undo, so it has nothing to offer an unfiltered list.
-	func testResetFiltersIsAbsentWhileUnfiltered() throws {
-		CalendarScreen(app: app).navigate().openPicker()
-
-		XCTAssertFalse(
-			app.buttons[TestIdentifiers.Calendar.resetFilters].exists,
-			"Reset Filters should be absent while the list is unfiltered")
-	}
-
 	/// The Upcoming list mounts a screen or so of rows and mounts more as the
 	/// reader nears the end, because mounting every row at once freezes the
 	/// screen. Nothing in Jest scrolls, so this is the only check that the list
@@ -192,10 +222,14 @@ class ModuleCalendarTests: UITestCase {
 	///
 	/// Reset is checked against a named row the filter excluded, for the reason
 	/// `testResetFiltersClearsTheFilter` gives.
+	///
+	/// The view menu is checked on the way in: it offers the two views that
+	/// exist, and not the one that does not.
 	func testFilteringByOrganizationNarrowsTheUpcomingList() throws {
 		let screen = CalendarScreen(app: app)
 		screen.navigate()
 			.openModeMenu()
+			.verifyModeAbsent(TestIdentifiers.Calendar.timelineMode)
 			.selectMode(TestIdentifiers.Calendar.upcomingMode)
 			.verifyStripAbsent()
 		let unfiltered = screen.visibleRowCount()
@@ -223,28 +257,36 @@ class ModuleCalendarTests: UITestCase {
 		screen.verifyRowPresent(TestIdentifiers.Calendar.unfilteredUpcomingRow)
 	}
 
+	/// The event sheet, opened and closed twice, and then the calendar left by
+	/// its edge swipe.
+	///
 	/// The list merges several calendars and so credits none of them; the
 	/// detail screen credits the one its event came from.
+	///
 	/// Closing the event sheet twice should leave you on the calendar both
 	/// times. The close button calls `router.back()`, and on a screen presented
 	/// as a sheet that can consume the sheet's own dismissal as well as its
 	/// own -- taking the calendar with it and landing on the home screen.
-	func testClosingTheEventSheetTwiceStaysOnTheCalendar() throws {
-		let screen = CalendarScreen(app: app).navigate()
+	///
+	/// A paged TabView inside a navigation stack is the classic way to lose the
+	/// interactive pop gesture: the pager claims the horizontal pan and the edge
+	/// swipe never fires. Day mode pages horizontally, so this is the one thing
+	/// that has to keep working. It leaves the calendar, so it goes last.
+	func testTheEventSheetClosesTwiceAndTheEdgeSwipeLeaves() throws {
+		let screen = CalendarScreen(app: app)
+			.navigate()
+			.verifyNoAttribution()
 
-		screen.openFirstEvent().closeEventDetail()
+		screen
+			.openFirstEvent()
+			.verifyAttributionOnDetail()
+			.capture("33-detail-attribution")
+			.closeEventDetail()
 		screen.openFirstEvent().closeEventDetail()
 
 		screen.capture("closed-the-event-sheet-twice")
 		screen.verifyCalendarTitle()
-	}
-
-	/// A paged TabView inside a navigation stack is the classic way to lose the
-	/// interactive pop gesture: the pager claims the horizontal pan and the edge
-	/// swipe never fires. Day mode pages horizontally, so this is the one thing
-	/// that has to keep working.
-	func testSwipingFromTheLeftEdgeLeavesTheCalendar() throws {
-		CalendarScreen(app: app).navigate().verifyStripIsPresent()
+		screen.verifyStripIsPresent()
 
 		// Started hard against the left edge, where UIKit's screen-edge
 		// recogniser lives, and dragged most of the way across so the gesture
@@ -285,43 +327,7 @@ class ModuleCalendarTests: UITestCase {
 			"Today should bring back the day it opened on, with its events drawn")
 	}
 
-	func testAttributionOnlyOnTheDetailScreen() throws {
-		CalendarScreen(app: app)
-			.navigate()
-			.verifyNoAttribution()
-			.openFirstEvent()
-			.verifyAttributionOnDetail()
-			.capture("33-detail-attribution")
-	}
-
 	// MARK: - View mode
-
-	/// The menu offers the two views that exist, and not the one that does not.
-	func testViewMenuOffersDayAndUpcoming() throws {
-		CalendarScreen(app: app)
-			.navigate()
-			.openModeMenu()
-			.verifyModeAbsent(TestIdentifiers.Calendar.timelineMode)
-			.selectMode(TestIdentifiers.Calendar.upcomingMode)
-			.verifyStripAbsent()
-	}
-
-	/// Dragging the strip browses; it must not move the selection. This is the
-	/// pair of gestures that used to disagree.
-	func testDraggingTheStripLeavesTheSelectionAlone() throws {
-		let calendar = CalendarScreen(app: app)
-		calendar.navigate().verifyStripIsPresent()
-
-		guard let before = calendar.selectedDay() else {
-			XCTFail("A day should be selected before dragging the strip")
-			return
-		}
-		calendar.swipeStripToNextWeek()
-
-		XCTAssertEqual(
-			calendar.selectedDay(), before,
-			"Scrolling the strip should show another week, not choose a day in it")
-	}
 
 	/// An empty day is a day you can land on now, so it has to keep the strip.
 	///
@@ -385,34 +391,5 @@ class ModuleCalendarTests: UITestCase {
 		calendar.verifySelectedDay(
 			TestIdentifiers.Calendar.dayCellPrefix + afterScroll,
 			message: "A coordinate tap after scrolling the strip should still select the cell it lands on")
-	}
-
-	/// The picker is three lists in one: which calendars contribute events, and a
-	/// row per axis the list can be narrowed along. SwiftUI renders a Menu's
-	/// contents bottom-to-top, so only a screenshot settles the order they
-	/// actually reach the screen in.
-	///
-	/// The category submenu is opened afterwards, not before: descending into an
-	/// axis replaces what is on screen, so the top-level rows have to be read
-	/// while they are still the thing presented.
-	func testPickerMenuShowsItsRowsAndCategories() throws {
-		let screen = CalendarScreen(app: app)
-			.navigate()
-			.openPicker()
-			.verifyMenuSection(TestIdentifiers.Calendar.calendarsSection)
-
-		for row in [
-			TestIdentifiers.Calendar.categoryMenu, TestIdentifiers.Calendar.organizationMenu,
-		] {
-			XCTAssertTrue(
-				app.buttons[row].waitForExistence(timeout: 30),
-				"\(row) should be a row of the open picker")
-		}
-
-		screen.capture("30-picker-rows")
-
-		screen
-			.checkCategoriesListed()
-			.capture("35-category-submenu")
 	}
 }
