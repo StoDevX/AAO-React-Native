@@ -1,19 +1,15 @@
 import * as React from 'react'
-import {Alert, useWindowDimensions} from 'react-native'
+import {Alert} from 'react-native'
 import {type UseQueryResult} from '@tanstack/react-query'
 import {
 	Button,
-	Grid,
 	HStack,
 	Image as UIImage,
 	ProgressView,
-	Spacer,
 	Text as UIText,
 	VStack,
 } from '@expo/ui/swift-ui'
 import {
-	accessibilityElement,
-	accessibilityIdentifier,
 	accessibilityLabel,
 	buttonStyle,
 	foregroundStyle,
@@ -24,12 +20,8 @@ import {
 } from '@expo/ui/swift-ui/modifiers'
 import * as c from '@frogpond/colors'
 import {ContactTile} from '../../../source/features/directory/tile'
-import {
-	columnsForFontScale,
-	FILL_WIDTH,
-	inRows,
-	TILE_SPACING,
-} from '../../../source/components/tile-layout'
+import {FILL_WIDTH, TILE_SPACING} from '../../../source/components/tile-layout'
+import {TileGrid} from '../../../source/components/tile-grid'
 import type {ContactType} from '../../../source/features/directory/types'
 
 /// Mirrored by TestIdentifiers.Directory.contactGrid.
@@ -49,8 +41,6 @@ export function ImportantContactsGrid({
 		isLoading: contactsLoading,
 		refetch: refetchContacts,
 	} = query
-	let {fontScale} = useWindowDimensions()
-	let columns = columnsForFontScale(fontScale)
 
 	let showContactsError = React.useCallback(() => {
 		Alert.alert(
@@ -85,37 +75,14 @@ export function ImportantContactsGrid({
 			</HStack>
 
 			{contacts ? (
-				<Grid
-					alignment="top"
-					horizontalSpacing={TILE_SPACING}
-					// The Grid itself carries no accessibility presence of its
-					// own, so accessibilityIdentifier alone lands on its first
-					// button descendant instead of the grid -- contain() gives it
-					// one, keeping the tiles as its individually-navigable
-					// children, which is what a UI test counting them needs.
-					modifiers={[accessibilityElement('contain'), accessibilityIdentifier(CONTACT_GRID_ID)]}
-					verticalSpacing={TILE_SPACING}
-				>
-					{inRows(contacts, columns).map((row, i) => (
-						// oxlint-disable-next-line react/no-array-index-key -- a row is its position; tiles are keyed by title
-						<Grid.Row key={i}>
-							{row.map((contact) => (
-								<ContactTile
-									key={contact.title}
-									contact={contact}
-									onPress={() => onSelectContact(contact)}
-								/>
-							))}
-							{/* A short last row leaves its columns empty rather than
-                                stretching the tiles in it. 8 contacts divide evenly by
-                                4 and 2 columns but not by 3, so this padding matters at
-                                every column count, not just the edge cases. */}
-							{Array.from({length: columns - row.length}, (_, j) => (
-								<Spacer key={j} />
-							))}
-						</Grid.Row>
-					))}
-				</Grid>
+				<TileGrid
+					accessibilityId={CONTACT_GRID_ID}
+					items={contacts}
+					keyForItem={(contact) => contact.title}
+					renderItem={(contact) => (
+						<ContactTile contact={contact} onPress={() => onSelectContact(contact)} />
+					)}
+				/>
 			) : contactsLoading ? (
 				<ProgressView />
 			) : (
