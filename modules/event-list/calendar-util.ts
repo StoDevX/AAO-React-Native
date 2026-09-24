@@ -2,7 +2,8 @@ import {Share, ShareAction} from 'react-native'
 
 import type {EventType} from '@frogpond/event-type'
 import {formatDate} from '@frogpond/time-format'
-import {allDayLastDay, detailTimes} from './times'
+import {lastDayCovered} from './days'
+import {detailTimes} from './times'
 
 // This file imports react-native for Share, so the key format has to live
 // somewhere a test that cannot load react-native can still reach it.
@@ -23,7 +24,7 @@ export function getTimes(event: EventType): string {
 	let {allDay, start, end} = detailTimes(event)
 
 	if (allDay) {
-		let lastDay = allDayLastDay(event)
+		let lastDay = lastDayCovered(event)
 		if (lastDay.isSame(event.startTime, 'day')) {
 			return `All-Day on ${formatDate(event.startTime, 'short')}`
 		}

@@ -2,6 +2,7 @@ import type {Moment} from 'moment-timezone'
 import type {EventType} from '@frogpond/event-type'
 import type {EventDetailTime} from '@frogpond/event-list/types'
 import {formatDate, formatDateTime, formatTime, formatWeekday} from '@frogpond/time-format'
+import {lastDayCovered} from './days'
 
 /**
  * The share sheet's one-line summary of when an event is. A same-day event
@@ -86,20 +87,6 @@ export function listTimeLines(event: EventType, locale?: string): EventDetailTim
 }
 
 /**
- * The last day an all-day event covers.
- *
- * The two sources disagree about where an all-day event ends: the web
- * calendars end it exclusively, at midnight the following day, while EventKit
- * ends it inclusively, at 23:59:59 the same day. The last day it actually
- * covers is the instant before its end under either convention.
- */
-export function allDayLastDay(event: EventType): Moment {
-	return event.endTime.isAfter(event.startTime)
-		? event.endTime.clone().subtract(1, 'millisecond')
-		: event.startTime
-}
-
-/**
  * `locale` defaults to the device locale via `@frogpond/time-format`'s
  * `deviceLocale()`, which composes the OS's 24-hour preference onto the
  * language tag -- bare `undefined` does not carry that preference.
@@ -109,7 +96,7 @@ export function detailTimeLines(event: EventType, locale?: string): EventTimeLin
 	let endDate = formatDate(event.endTime, 'long', locale)
 
 	if (event.isAllDay) {
-		let lastDay = allDayLastDay(event)
+		let lastDay = lastDayCovered(event)
 
 		if (lastDay.isSame(event.startTime, 'day')) {
 			return [{prefix: 'All day', time: '', date: startDate}]

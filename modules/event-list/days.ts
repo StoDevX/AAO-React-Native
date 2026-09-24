@@ -1,8 +1,23 @@
 import type {Moment} from 'moment-timezone'
 
+import type {EventType} from '@frogpond/event-type'
 import type {SourcedEvent} from './types'
 
 export const DAYS_PER_WEEK = 7
+
+/**
+ * A moment on the last day `event` covers.
+ *
+ * An event's end is exclusive, so the instant before it is the last one the
+ * event covers. That holds under both conventions for an all-day event: the
+ * web calendars end one at midnight the following day, and EventKit at
+ * 23:59:59 the same day. A zero-length event covers only its start.
+ */
+export function lastDayCovered(event: Pick<EventType, 'startTime' | 'endTime'>): Moment {
+	return event.endTime.isAfter(event.startTime)
+		? event.endTime.clone().subtract(1, 'millisecond')
+		: event.startTime
+}
 
 /**
  * Generates a continuous range of whole weeks, from Sunday of the current week
@@ -23,11 +38,8 @@ export function deriveDays(events: readonly SourcedEvent[], now: Moment): Moment
 		}
 
 		// The last day the event covers, since `eventsByDay` puts it on each of
-		// them. Its end is exclusive, so a millisecond back is that day.
-		let {startTime, endTime} = entry.event
-		let day = (endTime.isAfter(startTime) ? endTime.clone().subtract(1, 'ms') : startTime)
-			.clone()
-			.startOf('day')
+		// them.
+		let day = lastDayCovered(entry.event).clone().startOf('day')
 
 		if (day.isBefore(today, 'day')) {
 			continue
@@ -97,12 +109,12 @@ export function eventsByDay(
 	})
 
 	for (let entry of events) {
-		let {startTime, endTime} = entry.event
-		let startDayEnd = startTime.clone().endOf('day')
+		let {startTime} = entry.event
+		let last = lastDayCovered(entry.event)
 
-		if (endTime.isAfter(startDayEnd)) {
+		if (last.isAfter(startTime, 'day')) {
 			for (let {bucket, start, end} of calendar) {
-				if (!startTime.isAfter(end) && endTime.isAfter(start)) {
+				if (!startTime.isAfter(end) && !last.isBefore(start)) {
 					bucket.push(entry)
 				}
 			}
