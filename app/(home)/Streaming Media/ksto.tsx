@@ -12,6 +12,11 @@ import {tintedTheme} from '../../../source/features/streaming/radio/theme'
 const COW_TINT = '#685393'
 const WORDMARK_TINT = '#5a52b0'
 const DUMPSTER_TINT = '#2a7d68'
+/**
+ * The slate of the record's label, #494e73, lightened just enough to clear
+ * 3:1 against black.
+ */
+const RECORD_TINT = '#525881'
 
 export default function KstoPage(): React.ReactNode {
 	return (
@@ -27,7 +32,7 @@ export default function KstoPage(): React.ReactNode {
 						tinycolor(DUMPSTER_TINT).complement().setAlpha(0.2).toRgbString(),
 					),
 				},
-				{name: 'record', image: logos.kstoRecord, theme: tintedTheme(COW_TINT), spins: true},
+				{name: 'record', image: logos.kstoRecord, theme: tintedTheme(RECORD_TINT), spins: true},
 			]}
 			playerUrl="https://www.stolaf.edu/multimedia/play/embed/ksto.html"
 			scheduleHref="/KSTOSchedule"
