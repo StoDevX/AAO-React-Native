@@ -1,5 +1,6 @@
 import * as React from 'react'
 import {timezone} from '@frogpond/constants'
+import moment from 'moment-timezone'
 import {LoadingView, NoticeView} from '@frogpond/notice'
 import {FoodMenu} from '@frogpond/food-menu'
 import type {
@@ -165,18 +166,6 @@ export function BonAppHostedMenu(props: Props): React.ReactNode {
 	let isFocused = useIsFocused()
 	let [mealHeader, setMealHeader] = React.useState<MealHeaderState>(EMPTY_MEAL_HEADER)
 
-	// The weekday alone under the cafe's name, where the line is already tight
-	// -- the date beside it said which today it is, which the reader knows --
-	// and the whole date over the meal picker, which has room for it. Both
-	// lengths of the weekday go over, since which one fits depends on whether a
-	// meal ends up sharing its line.
-	//
-	// Formatted days, not `now`: the header is read field by field, so strings
-	// republish it only when the day itself changes.
-	let weekdayShort = formatWeekday(now, 'short')
-	let weekdayLong = formatWeekday(now, 'long')
-	let date = formatDate(now, 'medium')
-
 	// Collapsed to begin with: a menu opens as food rather than as chrome, and
 	// the navigation bar carries the control that reveals the row.
 	let [filtersVisible, setFiltersVisible] = React.useState(false)
@@ -210,9 +199,33 @@ export function BonAppHostedMenu(props: Props): React.ReactNode {
 	let isLoading = menu.kind === 'loading' || (menu.kind === 'content' && isCafeLoading)
 	let showsMenu = menu.kind === 'content' && !isCafeLoading && !isUnknownCafe && !hasNoDays
 
+	// The day the menu in hand is for. Asked for today's shortly after
+	// midnight, the server can still answer with the day before's, so the
+	// header names the menu's own day rather than the clock's.
+	let menuDate = cafeMenu?.days.at(0)?.date ?? null
+	let isOtherDay = menuDate !== null && menuDate !== day
+	let otherDay = React.useMemo(
+		() => (isOtherDay && menuDate ? moment.tz(menuDate, 'YYYY-MM-DD', timezone()) : null),
+		[isOtherDay, menuDate],
+	)
+	let shownDay = otherDay ?? now
+
+	// The weekday alone under the cafe's name, where the line is already tight
+	// -- the date beside it said which today it is, which the reader knows --
+	// and the whole date over the meal picker, which has room for it. Both
+	// lengths of the weekday go over, since which one fits depends on whether a
+	// meal ends up sharing its line.
+	//
+	// Formatted days, not `now`: the header is read field by field, so strings
+	// republish it only when the day itself changes.
+	let weekdayShort = formatWeekday(shownDay, 'short')
+	let weekdayLong = formatWeekday(shownDay, 'long')
+	let date = formatDate(shownDay, 'medium')
+
 	// A cafe serving one daypart today says when it opens, then when it closes,
 	// off the hours it publishes; `null` keeps the meal's window for the rest.
-	let hours = daypartHours(cafeInfo?.cafe.days, now)
+	// Today's hours say nothing about another day's menu.
+	let hours = isOtherDay ? null : daypartHours(cafeInfo?.cafe.days, now)
 
 	// The meal picker and its hours belong to the menu body, which is not drawn
 	// behind a notice.

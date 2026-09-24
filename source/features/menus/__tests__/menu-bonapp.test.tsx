@@ -2,10 +2,13 @@ import * as React from 'react'
 import {afterEach, beforeEach, describe, expect, jest, test} from '@jest/globals'
 import {act, render, screen, waitFor} from '@testing-library/react-native'
 import {QueryClient, QueryClientProvider, onlineManager} from '@tanstack/react-query'
+import moment from 'moment-timezone'
 
 import {client} from '@frogpond/api'
+import {timezone} from '@frogpond/constants'
 import {FoodMenu} from '@frogpond/food-menu'
 import type {MealHeaderState, MenuItemType} from '@frogpond/food-menu'
+import {formatDate, formatWeekday} from '@frogpond/time-format'
 
 import {BonAppHostedMenu} from '../menu-bonapp'
 import {usePublishMenuHeader} from '../menu-header'
@@ -327,5 +330,27 @@ describe('BonAppHostedMenu', () => {
 			pathname: '/MenuItemDetail',
 			params: {source: 'bonapp', cafe: 'the-cage', day: '2026-09-22', itemId: '42'},
 		})
+	})
+
+	// Asked for today's menu shortly after midnight, the server can still answer
+	// with the day before's, as Weitz's did at half past twelve.
+	test('labels a menu the server answers for an earlier day with that day', async () => {
+		jest.setSystemTime(new Date('2026-09-23T05:30:00Z'))
+		queryClient.setQueryData(bonAppMenuOptions('the-cage', '2026-09-23').queryKey, CAGE_MENU)
+		// Today's hours, which say nothing about the day before's menu.
+		let todaysCafe = {
+			cafe: {...CAGE_CAFE.cafe, days: [{...CAGE_CAFE.cafe.days[0], date: '2026-09-23'}]},
+		}
+		queryClient.setQueryData(bonAppCafeOptions('the-cage', '2026-09-23').queryKey, todaysCafe)
+		await renderCage()
+
+		let menuDay = moment.tz('2026-09-22', timezone())
+		expect(lastHeader()).toMatchObject({
+			weekdayLong: formatWeekday(menuDay, 'long'),
+			weekdayShort: formatWeekday(menuDay, 'short'),
+			date: formatDate(menuDay, 'medium'),
+			reopening: null,
+		})
+		expect(mockFoodMenu).toHaveBeenCalled()
 	})
 })
