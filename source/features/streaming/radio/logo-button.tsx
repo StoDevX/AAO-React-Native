@@ -2,8 +2,8 @@ import * as React from 'react'
 import {Pressable} from 'react-native'
 import Animated, {useAnimatedStyle, useSharedValue, withSpring} from 'react-native-reanimated'
 
-/** How far the logo shrinks under a finger. */
-const PRESSED_SCALE = 0.95
+/** How far a pressed logo shrinks: about 4pt across a 268pt logo. */
+export const PRESSED_SCALE = 0.985
 
 type Props = {
 	accessibilityLabel: string
