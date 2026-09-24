@@ -19,7 +19,7 @@ export function submitReport(
 	campus: Campus,
 	note: string,
 	attachments: Array<string> = [],
-): Promise<void> {
+): Promise<boolean> {
 	// calling trim() on these to remove the trailing newlines
 	let before = stringifyBuilding(current).trim()
 	let after = stringifyBuilding(suggestion).trim()

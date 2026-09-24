@@ -141,26 +141,31 @@ function useBuildingEditor(initialBuilding: BuildingType, campus: Campus) {
 	}, [building.links, edit, openLink])
 
 	let submit = React.useCallback(async (): Promise<void> => {
-		if (sendingNow.current) {
+		// Picked images still loading would be left out of the email.
+		if (sendingNow.current || attachments.picking) {
 			return
 		}
 		sendingNow.current = true
-		setSubmitted(true)
 
 		try {
-			await submitReport(
+			let handedOff = await submitReport(
 				initialBuilding,
 				building,
 				campus,
 				note,
 				attachments.images.map((image) => image.uri),
 			)
+			// Only a report that actually left lifts the unsaved-changes guard;
+			// after a cancel the form is still the only copy of the edits.
+			if (handedOff) {
+				setSubmitted(true)
+			}
 		} catch {
 			Alert.alert('Could not write the email', 'Please try sending the report again.')
 		} finally {
 			sendingNow.current = false
 		}
-	}, [attachments.images, building, campus, initialBuilding, note])
+	}, [attachments.images, attachments.picking, building, campus, initialBuilding, note])
 
 	return {
 		addLink,

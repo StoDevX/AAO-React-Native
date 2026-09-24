@@ -1,6 +1,7 @@
 import * as React from 'react'
 import {act, fireEvent, render, screen} from '@testing-library/react-native'
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query'
+import {Alert} from 'react-native'
 import * as ImagePicker from 'expo-image-picker'
 import {usePreventRemove} from 'expo-router/react-navigation'
 
@@ -181,6 +182,19 @@ describe('images', () => {
 		expect(screen.getByLabelText('Submit Report')).toBeDisabled()
 	})
 
+	it('sends nothing while picked images are still loading', async () => {
+		await renderReport()
+		let picker = ImagePicker.launchImageLibraryAsync as jest.MockedFunction<
+			typeof ImagePicker.launchImageLibraryAsync
+		>
+		picker.mockReturnValueOnce(new Promise(() => undefined))
+
+		await fireEvent.press(screen.getByLabelText('Add Image'))
+		await fireEvent.press(screen.getByLabelText('Submit Report'))
+
+		expect(mockComposeEmail).not.toHaveBeenCalled()
+	})
+
 	it('opens one email for two quick taps on Submit Report', async () => {
 		await renderReport()
 		mockComposeEmail.mockReturnValueOnce(new Promise(() => undefined))
@@ -261,5 +275,42 @@ describe("the reporter's note", () => {
 
 		let [args] = mockComposeEmail.mock.calls.at(-1) as [{body: string}]
 		expect(args.body).toContain('It closes at 9 during interim.')
+	})
+})
+
+describe('the unsaved-changes guard after Submit Report', () => {
+	function guardIsOn(): boolean | undefined {
+		let guard = usePreventRemove as jest.MockedFunction<typeof usePreventRemove>
+		return guard.mock.calls.at(-1)?.[0]
+	}
+
+	async function editAndSubmit() {
+		await renderReport()
+		await fireEvent.changeText(screen.getByLabelText('Describe the problem'), 'Closed Sundays.')
+		expect(guardIsOn()).toBe(true)
+		await fireEvent.press(screen.getByLabelText('Submit Report'))
+	}
+
+	it('lifts once the report is handed off', async () => {
+		mockComposeEmail.mockResolvedValueOnce(true)
+		await editAndSubmit()
+		expect(guardIsOn()).toBe(false)
+	})
+
+	it('stays on when the email is cancelled', async () => {
+		mockComposeEmail.mockResolvedValueOnce(false)
+		await editAndSubmit()
+		expect(guardIsOn()).toBe(true)
+	})
+
+	it('stays on when the email cannot be written', async () => {
+		mockComposeEmail.mockRejectedValueOnce(new Error('no sheet'))
+		jest.spyOn(Alert, 'alert').mockImplementation(() => undefined)
+		await editAndSubmit()
+		expect(guardIsOn()).toBe(true)
+		expect(Alert.alert).toHaveBeenCalledWith(
+			'Could not write the email',
+			'Please try sending the report again.',
+		)
 	})
 })
