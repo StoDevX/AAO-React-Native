@@ -13,6 +13,8 @@ import {getRunner} from '../../../source/database/client'
 import {bumpCalendarRevision} from '../../../source/database/calendar/revision'
 import {writeSource} from '../../../source/database/calendar/write'
 import * as Sentry from '@sentry/react-native'
+import {fetchSourceBody} from '@frogpond/data-sources'
+import tecFixture from './fixtures/tec-events.json'
 
 // The shared query client `query.ts` imports subscribes to network
 // reachability at module load. That does not run here: every test below calls
@@ -39,6 +41,14 @@ jest.mock('../../../source/database/calendar/write', () => ({
 	retentionFor: jest.fn(() => 'the-retention'),
 }))
 jest.mock('@sentry/react-native', () => ({captureException: jest.fn()}))
+// The manifest and the page fetch stand in for the network. An empty
+// manifest falls back to the bundled one, so a real calendar resolves to its
+// real source and type.
+jest.mock('@frogpond/data-sources', () => ({
+	...(jest.requireActual('@frogpond/data-sources') as object),
+	fetchManifest: jest.fn(() => Promise.resolve({links: []})),
+	fetchSourceBody: jest.fn(),
+}))
 
 // `queryOptions` types `select`/`queryFn` as optional, so these name the
 // assertion once rather than at every call below.
@@ -358,5 +368,22 @@ describe('tecHorizon', () => {
 		jest.mocked(now).mockReturnValueOnce(moment('2030-01-15T12:00:00'))
 
 		expect(tecHorizon()).toEqual(moment('2030-02-15T00:00:00').toDate())
+	})
+})
+
+describe('the St. Olaf calendar', () => {
+	test('reads every page of its feed, not only the first', async () => {
+		let [first, second] = tecFixture.events
+		jest
+			.mocked(fetchSourceBody)
+			.mockResolvedValueOnce({events: [first], next_rest_url: 'page-2'})
+			.mockResolvedValueOnce({events: [second]})
+
+		let {queryFn} = scheduleCalendarOptions('stolaf')
+		if (typeof queryFn !== 'function') throw new TypeError('no queryFn')
+		let events = await queryFn({queryKey: ['schedule', 'stolaf'], signal: undefined} as never)
+
+		expect(jest.mocked(fetchSourceBody).mock.calls[1][0]).toBe('page-2')
+		expect(events).toHaveLength(2)
 	})
 })
