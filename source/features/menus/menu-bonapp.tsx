@@ -195,8 +195,13 @@ export function BonAppHostedMenu(props: Props): React.ReactNode {
 	let {data: cafeInfo, refetch: cafeReload} = cafeQuery
 	let isCafeLoading = menuView(cafeQuery).kind === 'loading'
 
+	// The API returns an empty array for the cafeInfo.cafe value if there is no
+	// matching cafe with the inputted id number, otherwise it returns an non-array object
+	let isUnknownCafe = cafeInfo !== undefined && Array.isArray(cafeInfo.cafe)
+	let hasNoDays = menu.kind === 'content' && menu.data.days.length === 0
+
 	let isLoading = menu.kind === 'loading' || (menu.kind === 'content' && isCafeLoading)
-	let showsMenu = menu.kind === 'content' && !isCafeLoading
+	let showsMenu = menu.kind === 'content' && !isCafeLoading && !isUnknownCafe && !hasNoDays
 
 	// A cafe serving one daypart today says when it opens, then when it closes,
 	// off the hours it publishes; `null` keeps the meal's window for the rest.
@@ -280,9 +285,7 @@ export function BonAppHostedMenu(props: Props): React.ReactNode {
 		return <LoadingView text={sample(props.loadingMessage)} />
 	}
 
-	// The API returns an empty array for the cafeInfo.cafe value if there is no
-	// matching cafe with the inputted id number, otherwise it returns an non-array object
-	if (cafeInfo && Array.isArray(cafeInfo.cafe)) {
+	if (isUnknownCafe) {
 		return (
 			<NoticeView
 				text={`There is no cafe with id #${
@@ -292,7 +295,7 @@ export function BonAppHostedMenu(props: Props): React.ReactNode {
 		)
 	}
 
-	if (menu.data.days.length === 0) {
+	if (hasNoDays) {
 		return <NoticeView text={`${props.name} has not posted a menu for today.`} />
 	}
 

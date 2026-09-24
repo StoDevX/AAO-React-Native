@@ -4,6 +4,7 @@ import {act, render, screen} from '@testing-library/react-native'
 import {QueryClient, QueryClientProvider, onlineManager} from '@tanstack/react-query'
 
 import {FoodMenu} from '@frogpond/food-menu'
+import type {MealHeaderState} from '@frogpond/food-menu'
 
 import {BonAppHostedMenu} from '../menu-bonapp'
 import {usePublishMenuHeader} from '../menu-header'
@@ -39,7 +40,9 @@ jest.mock('expo-router', () => ({
 }))
 
 const mockPublish = usePublishMenuHeader as jest.MockedFunction<typeof usePublishMenuHeader>
-const mockFoodMenu = FoodMenu as unknown as jest.Mock<(props: {now: unknown}) => null>
+const mockFoodMenu = FoodMenu as unknown as jest.Mock<
+	(props: {now: unknown; onMealHeaderChange: (header: MealHeaderState) => void}) => null
+>
 
 /** The Cage's one daypart, as Bon Appétit publishes it. */
 const CAGE_DAYPART = {
@@ -206,5 +209,47 @@ describe('BonAppHostedMenu', () => {
 
 		expect(screen.getByText('The Cage has not posted a menu for today.')).toBeTruthy()
 		expect(mockFoodMenu).not.toHaveBeenCalled()
+	})
+
+	// The meal picker belongs to the menu body. Once a notice replaces the body,
+	// the picker it last reported has nothing under it.
+	describe('drops the meal picker when a notice replaces the menu', () => {
+		async function renderWithPicker() {
+			await renderCage()
+			await act(() => {
+				mockFoodMenu.mock.lastCall?.[0].onMealHeaderChange({
+					menu: {} as MealHeaderState['menu'],
+					time: '7:30 AM – 8 PM',
+					closed: false,
+				})
+			})
+			expect(lastHeader()?.meals).not.toBeNull()
+		}
+
+		test('for a refetch that comes back with no days', async () => {
+			await renderWithPicker()
+
+			await act(async () => {
+				queryClient.setQueryData(bonAppMenuOptions('the-cage').queryKey, {...CAGE_MENU, days: []})
+				await jest.runOnlyPendingTimersAsync()
+			})
+
+			expect(screen.getByText('The Cage has not posted a menu for today.')).toBeTruthy()
+			expect(lastHeader()?.meals).toBeNull()
+		})
+
+		test('for cafe details that name no cafe', async () => {
+			await renderWithPicker()
+
+			await act(async () => {
+				queryClient.setQueryData(bonAppCafeOptions('the-cage').queryKey, {
+					cafe: [],
+				} as unknown as EditedBonAppCafeInfoType)
+				await jest.runOnlyPendingTimersAsync()
+			})
+
+			expect(screen.getByText(/There is no cafe with id/u)).toBeTruthy()
+			expect(lastHeader()?.meals).toBeNull()
+		})
 	})
 })
