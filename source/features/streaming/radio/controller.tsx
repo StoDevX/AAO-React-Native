@@ -39,6 +39,7 @@ function PlayButton(props: PlayButtonProps): React.ReactNode {
 		return (
 			<ActionButton
 				accessibilityLabel={`Open ${stationName} website`}
+				accessibilityRole="link"
 				icon="globe"
 				onPress={onLink}
 				text="Open"

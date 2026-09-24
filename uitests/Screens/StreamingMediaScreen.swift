@@ -61,16 +61,23 @@ struct StreamingMediaScreen: Screen {
 	func checkStationButtons(_ labels: [String]) -> Self {
 		for label in labels {
 			XCTContext.runActivity(named: label) { _ in
-				let button = app.buttonLabelled(label)
-				XCTAssertTrue(
-					button.waitForExistence(timeout: 30),
-					"A button labelled \"\(label)\" should exist")
-				XCTAssertGreaterThanOrEqual(
-					button.frame.height, 44, "\"\(label)\" should be at least 44pt tall")
-				XCTAssertGreaterThanOrEqual(
-					button.frame.width, 44, "\"\(label)\" should be at least 44pt wide")
+				checkTouchTarget(app.buttonLabelled(label), named: "A button labelled \"\(label)\"")
 			}
 		}
 		return self
+	}
+
+	/// Check the station's website control reads as a link, since it leaves
+	/// the app, with a touch target of at least 44pt on each side.
+	@discardableResult
+	func checkStationLink(_ label: String) -> Self {
+		checkTouchTarget(app.linkLabelled(label), named: "A link labelled \"\(label)\"")
+		return self
+	}
+
+	private func checkTouchTarget(_ element: XCUIElement, named name: String) {
+		XCTAssertTrue(element.waitForExistence(timeout: 30), "\(name) should exist")
+		XCTAssertGreaterThanOrEqual(element.frame.height, 44, "\(name) should be at least 44pt tall")
+		XCTAssertGreaterThanOrEqual(element.frame.width, 44, "\(name) should be at least 44pt wide")
 	}
 }

@@ -11,12 +11,14 @@ type ActionButtonProps = {
 	text: string
 	/** What VoiceOver reads; defaults to the visible text. */
 	accessibilityLabel?: string
+	/** A button that leaves the app reads as a link. */
+	accessibilityRole?: 'button' | 'link'
 	onPress: () => unknown
 }
 
 export function ActionButton(props: ActionButtonProps): React.ReactNode {
 	let theme = theming.useTheme()
-	let {icon, text, accessibilityLabel = text, onPress} = props
+	let {icon, text, accessibilityLabel = text, accessibilityRole = 'button', onPress} = props
 	let bg = {backgroundColor: theme.tintColor}
 	let fg = {color: theme.buttonTextColor}
 	let style = [styles.button, styles.largeButton, bg]
@@ -24,7 +26,7 @@ export function ActionButton(props: ActionButtonProps): React.ReactNode {
 	return (
 		<Touchable
 			accessibilityLabel={accessibilityLabel}
-			accessibilityRole="button"
+			accessibilityRole={accessibilityRole}
 			highlight={false}
 			onPress={onPress}
 			style={style}
@@ -63,7 +65,10 @@ export function ShowCalendarButton({stationName, onPress}: StationButtonProps): 
 }
 
 /** An icon with no text, so VoiceOver has only the label to go on. */
-type SmallActionButtonProps = Omit<ActionButtonProps, 'text' | 'accessibilityLabel'> & {
+type SmallActionButtonProps = Omit<
+	ActionButtonProps,
+	'text' | 'accessibilityLabel' | 'accessibilityRole'
+> & {
 	accessibilityLabel: string
 }
 
