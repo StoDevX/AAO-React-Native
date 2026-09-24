@@ -161,7 +161,7 @@ function referenceExpandOccurrences(
 	function tryPush(occurrenceTime: ICAL.Time): void {
 		let details = event.getOccurrenceDetails(occurrenceTime)
 		if (isAfter(referenceToInstant(details.startDate), windowEnd)) return
-		if (!isAfter(referenceToInstant(details.endDate), startOfToday)) return
+		if (isBefore(referenceToInstant(details.endDate), startOfToday)) return
 		occurrences.push(referenceToWireEvent(details.item, details.startDate, details.endDate, now))
 	}
 
@@ -266,7 +266,7 @@ function referenceParseIcalEvents(
 	}
 
 	let startOfToday = startOfDay(now)
-	let future = events.filter((event) => isAfter(new Date(event.endTime), startOfToday))
+	let future = events.filter((event) => !isBefore(new Date(event.endTime), startOfToday))
 	return future.sort((a, b) => (a.startTime < b.startTime ? -1 : a.startTime > b.startTime ? 1 : 0))
 }
 
@@ -985,7 +985,7 @@ END:VEVENT`),
 		// straight past any occurrence that started earlier than the seed --
 		// regardless of how long it runs past that point -- silently
 		// dropping exactly the occurrence `isOngoing` and the
-		// `endTime > startOfToday` filter in ical.ts exist to keep.
+		// `endTime >= startOfToday` filter in ical.ts exist to keep.
 		name: 'a long-duration recurring occurrence still in progress at NOW, old enough to be seeded',
 		body: calendar(`BEGIN:VEVENT
 UID:long-duration-seeded@test

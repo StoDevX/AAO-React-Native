@@ -381,7 +381,7 @@ export function seekableRule(component: ICAL.Component): ICAL.Recur | undefined 
 /// `now` on the reachable side of the seed. Caught directly: an unpadded
 /// seed against a multi-day-occurrence `DAILY` rule silently dropped every
 /// occurrence still running at `now`, the exact case `parseIcalEvents`'s own
-/// `isOngoing` and `endTime > startOfToday` handling exist to keep.
+/// `isOngoing` and `endTime >= startOfToday` handling exist to keep.
 ///
 /// Returns `undefined` when there's nothing to gain -- `DTSTART` is already
 /// within a few periods of `now` -- since the unseeded walk from `DTSTART` is
@@ -475,7 +475,7 @@ function expandOccurrences(event: ICAL.Event, now: Date, limits: ExpansionLimits
 	function tryPush(occurrenceTime: ICAL.Time): void {
 		let details = event.getOccurrenceDetails(occurrenceTime)
 		if (isAfter(toInstant(details.startDate), windowEnd)) return
-		if (!isAfter(toInstant(details.endDate), startOfToday)) return
+		if (isBefore(toInstant(details.endDate), startOfToday)) return
 
 		occurrences.push(toWireEvent(details.item, details.startDate, details.endDate, now))
 		if (occurrences.length >= limits.maxOccurrences) {
@@ -693,7 +693,7 @@ export function parseIcalEvents(
 	// Everything that has not finished before today, which is exactly what
 	// `writeSource` deletes and expects the feed to send back.
 	let startOfToday = startOfDay(now)
-	let future = events.filter((event) => isAfter(new Date(event.endTime), startOfToday))
+	let future = events.filter((event) => !isBefore(new Date(event.endTime), startOfToday))
 
 	return future.sort((a, b) => (a.startTime < b.startTime ? -1 : a.startTime > b.startTime ? 1 : 0))
 }

@@ -110,6 +110,46 @@ END:VEVENT`),
 	})
 })
 
+describe('an event ending exactly at the start of today', () => {
+	// `writeSource` counts an event finished only when it ends before today's
+	// midnight, so it deletes this one and expects the feed to send it back.
+	let midnight = new Date(NOW)
+	midnight.setHours(0, 0, 0, 0)
+	let icalTime = (date: Date) => date.toISOString().replaceAll(/[-:]|\.\d{3}/gu, '')
+	let twoHoursBefore = new Date(midnight.getTime() - 2 * 60 * 60 * 1000)
+
+	test('is kept when it is a single event', () => {
+		const events = parseIcalEvents(
+			calendar(`BEGIN:VEVENT
+UID:late@test
+DTSTART:${icalTime(twoHoursBefore)}
+DTEND:${icalTime(midnight)}
+SUMMARY:Late show
+END:VEVENT`),
+			NOW,
+		)
+
+		expect(events.map((event) => event.title)).toStrictEqual(['Late show'])
+	})
+
+	test('is kept when it is an occurrence of a recurring event', () => {
+		let weekBefore = new Date(twoHoursBefore.getTime() - 7 * 24 * 60 * 60 * 1000)
+		let weekBeforeEnd = new Date(midnight.getTime() - 7 * 24 * 60 * 60 * 1000)
+		const events = parseIcalEvents(
+			calendar(`BEGIN:VEVENT
+UID:late-daily@test
+DTSTART:${icalTime(weekBefore)}
+DTEND:${icalTime(weekBeforeEnd)}
+RRULE:FREQ=DAILY;COUNT=8
+SUMMARY:Late show
+END:VEVENT`),
+			NOW,
+		)
+
+		expect(events.map((event) => event.endTime)).toContain(midnight.toISOString())
+	})
+})
+
 test('parses a timed event', () => {
 	const [event] = parseIcalEvents(
 		calendar(`BEGIN:VEVENT
