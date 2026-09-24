@@ -186,7 +186,8 @@ export function RadioControllerView(props: Props): React.ReactNode {
 	let root = [styles.root, sideways && landscape.root]
 	let logoBorderColor = {borderColor: theme.imageBorderColor}
 	let logoBg = {backgroundColor: theme.imageBackgroundColor}
-	let logo = [styles.logoBorder, logoSize, logoBorderColor, logoBg]
+	let logoTint = {tintColor: theme.imageTintColor}
+	let logo = [styles.logoBorder, logoSize, logoBorderColor, logoBg, logoTint]
 	let logoWrapper = [styles.logoWrapper, sideways && landscape.logoWrapper]
 
 	return (

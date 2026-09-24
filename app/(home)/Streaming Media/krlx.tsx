@@ -8,7 +8,8 @@ import {PlayerTheme, theming} from '../../../source/features/streaming/radio/the
 
 /**
  * KRLX's navy is about 2:1 against Dark Mode's black background, so the dark
- * variant is lightened until the 28pt title clears 4:1.
+ * variant is lightened until the 28pt title clears 4:1. The logo is drawn in
+ * that navy alone, so it takes the tint too.
  */
 const LIGHT_TINT = '#33348e'
 const DARK_TINT = '#6162c6'
@@ -23,6 +24,7 @@ const colors: PlayerTheme = {
 	textColor: tintColor,
 	imageBorderColor: tintColor,
 	imageBackgroundColor: 'transparent',
+	imageTintColor: tintColor,
 }
 
 export default function KrlxPage(): React.ReactNode {

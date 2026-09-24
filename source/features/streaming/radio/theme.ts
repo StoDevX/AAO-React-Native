@@ -7,6 +7,8 @@ export type PlayerTheme = {
 	textColor?: ColorValue
 	imageBorderColor?: ColorValue
 	imageBackgroundColor?: ColorValue
+	/** Recolours a single-colour logo; leave unset for a logo with several colours. */
+	imageTintColor?: ColorValue
 }
 
 const defaultTheme: PlayerTheme = {
