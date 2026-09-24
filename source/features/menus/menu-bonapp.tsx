@@ -20,6 +20,7 @@ import {daypartHours} from './lib/daypart-hours'
 import {useQuery} from '@tanstack/react-query'
 import {useIsFocused, useRouter} from 'expo-router'
 import {toLaxTitleCase} from '@frogpond/titlecase'
+import {decode} from '@frogpond/html-lib'
 import {formatDate, formatWeekday} from '@frogpond/time-format'
 import type {MealHeaderState} from '@frogpond/food-menu'
 import {usePublishMenuHeader} from './menu-header'
@@ -90,10 +91,11 @@ function prepareSingleMenu(
 		stationMenus = buildCustomStationMenu(foodItems)
 	}
 
-	// Make sure to titlecase the station menus list, too, so the sort works
+	// Make sure to titlecase the station menus list, too, so the sort works,
+	// decoding it first as the items' own stations are
 	stationMenus = stationMenus.map((s) => ({
 		...s,
-		label: toLaxTitleCase(s.label),
+		label: toLaxTitleCase(decode(s.label)),
 	}))
 
 	return {

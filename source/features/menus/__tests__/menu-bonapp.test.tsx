@@ -353,4 +353,35 @@ describe('BonAppHostedMenu', () => {
 		})
 		expect(mockFoodMenu).toHaveBeenCalled()
 	})
+
+	test('decodes entities in the station names a meal lists', async () => {
+		let station = {
+			id: '1',
+			order_id: '1',
+			label: 'warm &amp; soulful',
+			items: [],
+			note: '',
+			price: '',
+			soup: false,
+		}
+		let withStation = {
+			...CAGE_MENU,
+			days: [
+				{
+					...CAGE_MENU.days[0],
+					cafe: {
+						...CAGE_MENU.days[0].cafe,
+						dayparts: [[{...CAGE_DAYPART, abbreviation: 'CB', stations: [station]}]],
+					},
+				},
+			],
+		}
+		queryClient.setQueryData(bonAppMenuOptions('the-cage', '2026-09-22').queryKey, withStation)
+		await renderCage()
+
+		let props = mockFoodMenu.mock.lastCall?.[0] as unknown as {
+			meals: Array<{stations: Array<{label: string}>}>
+		}
+		expect(props.meals[0].stations[0].label).toBe('Warm & Soulful')
+	})
 })

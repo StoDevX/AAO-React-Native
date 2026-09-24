@@ -66,8 +66,10 @@ function buildCafePath(cafeParam: string | {id: string}) {
 export function prepareFood(cafeMenu: EditedBonAppMenuInfoType): MenuItemContainerType {
 	return mapValues(cafeMenu.items, (item) => ({
 		...item,
-		station: decode(toLaxTitleCase(trimStationName(item.station))),
-		label: decode(trimItemLabel(item.label)),
+		// Decoded before title-casing, which would otherwise turn `&amp;` into
+		// `&Amp;`, which is no longer an entity.
+		station: toLaxTitleCase(decode(trimStationName(item.station))),
+		label: trimItemLabel(decode(item.label)),
 		description: innerTextWithSpaces(parseHtml(item.description || '')),
 	}))
 }
