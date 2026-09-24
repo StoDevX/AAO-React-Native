@@ -175,18 +175,6 @@ class UITestCase: XCTestCase {
 		}
 	}
 
-	/// Terminate and relaunch the app with `--reset-state` to clear persisted
-	/// data (AsyncStorage, UserDefaults).
-	func relaunchWithFreshState() {
-		app.terminate()
-		app.launchArguments = [
-			TestIdentifiers.LaunchArguments.uiTesting,
-			TestIdentifiers.LaunchArguments.resetState,
-		]
-		appendJsLocationIfProvided()
-		app.launch()
-	}
-
 	/// Terminate and relaunch the app at a given Dynamic Type size, passed as
 	/// `-UIPreferredContentSizeCategoryName <category>` -- a flag UIKit reads
 	/// as a command-line default, the same mechanism `--uitesting` and

@@ -1,20 +1,18 @@
 import XCTest
 
 class ModuleSISTests: UITestCase {
-	// MARK: - Balances (need fresh state)
+	// MARK: - Balances
+	//
+	// setUp launches with --reset-state, so each of these starts before the
+	// "I Agree" acknowledgement has been accepted.
 
 	func testHasAcknowledgementVisibleByDefault() throws {
-		// Relaunch with fresh state to clear any prior "I Agree" acceptance
-		relaunchWithFreshState()
-
 		SISScreen(app: app)
 			.navigate()
 			.checkAcknowledgement()
 	}
 
 	func testShowsBalancesAfterAcknowledgement() throws {
-		relaunchWithFreshState()
-
 		SISScreen(app: app)
 			.navigate()
 			.acceptAcknowledgement()
@@ -24,8 +22,6 @@ class ModuleSISTests: UITestCase {
 	}
 
 	func testContinuesToShowBalancesAfterReopening() throws {
-		relaunchWithFreshState()
-
 		SISScreen(app: app)
 			.navigate()
 			.acceptAcknowledgement()
@@ -34,6 +30,8 @@ class ModuleSISTests: UITestCase {
 			.navigateBack()
 			.waitForHomescreenVisible()
 			.navigateToSISAgain()
+			.checkBalancesVisible()
+			.checkAcknowledgementNotPresent()
 	}
 
 	// MARK: - Tabs
