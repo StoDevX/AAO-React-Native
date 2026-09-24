@@ -1,13 +1,14 @@
 import * as React from 'react'
 import {afterEach, beforeEach, describe, expect, jest, test} from '@jest/globals'
-import {act, render} from '@testing-library/react-native'
-import {QueryClient, QueryClientProvider} from '@tanstack/react-query'
+import {act, render, screen} from '@testing-library/react-native'
+import {QueryClient, QueryClientProvider, onlineManager} from '@tanstack/react-query'
 
 import {FoodMenu} from '@frogpond/food-menu'
 
 import {BonAppHostedMenu} from '../menu-bonapp'
 import {usePublishMenuHeader} from '../menu-header'
 import {bonAppCafeOptions, bonAppMenuOptions} from '../query'
+import {OFFLINE_MESSAGE} from '../lib/menu-view'
 import type {EditedBonAppCafeInfoType, EditedBonAppMenuInfoType} from '../types'
 
 // The header is the thing under test, so what the screen publishes is read
@@ -22,6 +23,12 @@ jest.mock('@frogpond/food-menu', () => ({FoodMenu: jest.fn(() => null)}))
 // ticks -- which is the one thing this file is about. It also swaps the
 // network for fixtures, which the seeded queries below make unnecessary.
 jest.mock('@frogpond/launch-arguments', () => ({isUITesting: false}))
+
+// Every fetch fails, so a test that refetches sees what a 5xx or a captive
+// portal would hand the screen.
+jest.mock('@frogpond/api', () => ({
+	client: {get: jest.fn(() => ({json: () => Promise.reject(new Error('HTTP 503'))}))},
+}))
 
 // One router for the whole run, as expo-router's own hook hands back.
 const mockRouter = {navigate: jest.fn()}
@@ -80,9 +87,18 @@ beforeEach(() => {
 })
 
 afterEach(() => {
+	onlineManager.setOnline(true)
 	queryClient.clear()
 	jest.useRealTimers()
 })
+
+function renderCage() {
+	return render(
+		<QueryClientProvider client={queryClient}>
+			<BonAppHostedMenu cafe="the-cage" loadingMessage={['Loading…']} name="The Cage" />
+		</QueryClientProvider>,
+	)
+}
 
 /** What the screen last put in the navigation bar. */
 function lastHeader() {
@@ -128,5 +144,67 @@ describe('BonAppHostedMenu', () => {
 		})
 
 		expect(mockFoodMenu.mock.lastCall?.[0].now).toBe(firstNow)
+	})
+
+	// React Query keeps a query's data when a refetch of it fails, so the menu
+	// already on screen is still there to show.
+	test('keeps a cached menu on screen when its refetch fails', async () => {
+		await renderCage()
+
+		await act(async () => {
+			await queryClient.refetchQueries()
+			await jest.runOnlyPendingTimersAsync()
+		})
+
+		expect(queryClient.getQueryState(bonAppMenuOptions('the-cage').queryKey)?.status).toBe('error')
+		expect(screen.queryByText(/HTTP 503/u)).toBeNull()
+		expect(mockFoodMenu).toHaveBeenCalled()
+	})
+
+	// The cafe's hours and closure notices come from a second query. The menu
+	// can be shown without them.
+	test('shows the menu when only the cafe details fail to load', async () => {
+		queryClient.removeQueries({queryKey: bonAppCafeOptions('the-cage').queryKey})
+		await renderCage()
+
+		await act(async () => {
+			await jest.runOnlyPendingTimersAsync()
+		})
+
+		expect(screen.queryByText(/HTTP 503/u)).toBeNull()
+		expect(mockFoodMenu).toHaveBeenCalled()
+	})
+
+	test('says it is offline when nothing is cached and there is no network', async () => {
+		queryClient.clear()
+		onlineManager.setOnline(false)
+		await renderCage()
+
+		expect(screen.getByText(OFFLINE_MESSAGE)).toBeTruthy()
+		expect(screen.queryByText(/Something went wrong/u)).toBeNull()
+		expect(lastHeader()).toMatchObject({loading: false, meals: null})
+	})
+
+	test('shows an error with a retry when the first load fails', async () => {
+		queryClient.clear()
+		await renderCage()
+
+		await act(async () => {
+			await jest.runOnlyPendingTimersAsync()
+		})
+
+		expect(screen.getByText('Error: HTTP 503')).toBeTruthy()
+		expect(screen.getByText('Again!')).toBeTruthy()
+		expect(mockFoodMenu).not.toHaveBeenCalled()
+	})
+
+	// A cafe with no day in its menu response has nothing to show, which is not
+	// a reason to crash the screen.
+	test('says there is no menu when the response has no days', async () => {
+		queryClient.setQueryData(bonAppMenuOptions('the-cage').queryKey, {...CAGE_MENU, days: []})
+		await renderCage()
+
+		expect(screen.getByText('The Cage has not posted a menu for today.')).toBeTruthy()
+		expect(mockFoodMenu).not.toHaveBeenCalled()
 	})
 })

@@ -7,13 +7,13 @@ import sample from 'lodash/sample'
 import {pauseMenuOptions} from './query'
 import {useQuery} from '@tanstack/react-query'
 import {useIsFocused, useRouter} from 'expo-router'
-import type {GithubMenuType} from './types'
 import {useMomentTimer} from '@frogpond/timer'
 import {formatWeekday} from '@frogpond/time-format'
 import type {MealHeaderState, MenuItemType} from '@frogpond/food-menu'
 import {buildingByNameOptions} from '../building-hours/query'
 import {cafeHours} from './lib/cafe-hours'
 import {usePublishMenuHeader} from './menu-header'
+import {OFFLINE_MESSAGE, menuView} from './lib/menu-view'
 
 type Props = {
 	name: string
@@ -30,16 +30,8 @@ type Props = {
 	venue?: string
 }
 
-// Module-level so its identity is stable across renders. `useQuery` reports
-// `data: undefined` while offline (`networkMode: 'online'` leaves `isLoading`
-// false once the fetch is merely paused) and transiently during cold-launch
-// cache restoration, so this default is live far more often than "no data
-// yet" suggests -- a fresh object literal here would hand `FoodMenu` a new
-// `corIcons` reference on every one of those renders.
-const EMPTY_MENU: GithubMenuType = {foodItems: {}, meals: [], corIcons: {}}
-
-// Module-level for the same reason: one identity rather than a fresh object
-// per mount.
+// Module-level so the state below starts on one identity rather than a fresh
+// object per mount.
 const EMPTY_MEAL_HEADER: MealHeaderState = {menu: null, time: null, closed: false}
 
 export function GitHubHostedMenu(props: Props): React.ReactNode {
@@ -47,14 +39,9 @@ export function GitHubHostedMenu(props: Props): React.ReactNode {
 	let isFocused = useIsFocused()
 	let [mealHeader, setMealHeader] = React.useState<MealHeaderState>(EMPTY_MEAL_HEADER)
 
-	let {
-		data = EMPTY_MENU,
-		error,
-		isError,
-		isLoading,
-		refetch,
-		dataUpdatedAt,
-	} = useQuery(pauseMenuOptions)
+	let menuQuery = useQuery(pauseMenuOptions)
+	let {refetch, dataUpdatedAt} = menuQuery
+	let menu = menuView(menuQuery)
 
 	// Read off the clock rather than off `menuDate`, which is when the menu was
 	// fetched, and a clock that ticks: the line under the name is relative to
@@ -99,6 +86,10 @@ export function GitHubHostedMenu(props: Props): React.ReactNode {
 	let weekdayLong = formatWeekday(clock, 'long')
 	let hours = cafeHours(venue, clock)
 
+	// The meal picker and its hours belong to the menu body, which is not drawn
+	// behind a notice.
+	let shownMealHeader = menu.kind === 'content' ? mealHeader : EMPTY_MEAL_HEADER
+
 	usePublishMenuHeader(
 		{
 			// The day is the hours' day rather than the menu's: this menu is a
@@ -109,11 +100,11 @@ export function GitHubHostedMenu(props: Props): React.ReactNode {
 			weekdayShort,
 			weekdayLong,
 			date: null,
-			meals: mealHeader.menu,
-			time: props.venue && venue ? hours.time : mealHeader.time,
-			closed: mealHeader.closed || hours.closed,
+			meals: shownMealHeader.menu,
+			time: props.venue && venue ? hours.time : shownMealHeader.time,
+			closed: shownMealHeader.closed || hours.closed,
 			reopening: hours.reopening,
-			loading: isLoading || isVenueLoading,
+			loading: menu.kind === 'loading' || isVenueLoading,
 			filters: {visible: filtersVisible, toggle: toggleFilters},
 		},
 		isFocused,
@@ -130,25 +121,29 @@ export function GitHubHostedMenu(props: Props): React.ReactNode {
 		[router],
 	)
 
-	if (isLoading) {
+	if (menu.kind === 'loading') {
 		return <LoadingView text={sample(props.loadingMessage)} />
 	}
 
-	if (isError) {
+	if (menu.kind === 'offline') {
+		return <NoticeView text={OFFLINE_MESSAGE} />
+	}
+
+	if (menu.kind === 'error') {
 		return (
 			<NoticeView
 				buttonText="Try Again"
 				onPress={refetch}
-				text={`A problem occured while loading: ${error}`}
+				text={`A problem occured while loading: ${menu.error}`}
 			/>
 		)
 	}
 
 	return (
 		<FoodMenu
-			foodItems={data.foodItems}
-			meals={data.meals}
-			menuCorIcons={data.corIcons}
+			foodItems={menu.data.foodItems}
+			meals={menu.data.meals}
+			menuCorIcons={menu.data.corIcons}
 			name={props.name}
 			now={menuDate}
 			onItemPress={onItemPress}

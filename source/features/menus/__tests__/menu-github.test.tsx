@@ -1,7 +1,7 @@
 import * as React from 'react'
 import {afterEach, beforeEach, describe, expect, jest, test} from '@jest/globals'
-import {act, render} from '@testing-library/react-native'
-import {QueryClient, QueryClientProvider} from '@tanstack/react-query'
+import {act, render, screen} from '@testing-library/react-native'
+import {QueryClient, QueryClientProvider, onlineManager} from '@tanstack/react-query'
 
 import {FoodMenu} from '@frogpond/food-menu'
 
@@ -10,6 +10,7 @@ import {usePublishMenuHeader} from '../menu-header'
 import {pauseMenuOptions} from '../query'
 import {buildingByNameOptions} from '../../building-hours/query'
 import {PAUSE_VENUE} from '../lib/cafe-hours'
+import {OFFLINE_MESSAGE} from '../lib/menu-view'
 import type {BuildingType} from '../../building-hours/types'
 
 // The header is the thing under test, so what the screen publishes is read
@@ -23,6 +24,12 @@ jest.mock('@frogpond/food-menu', () => ({FoodMenu: jest.fn(() => null)}))
 // The suite-wide setup runs as a UI test, whose clock is frozen and never
 // ticks -- which is the one thing this file is about.
 jest.mock('@frogpond/launch-arguments', () => ({isUITesting: false}))
+
+// Every fetch fails, so a test that refetches sees what a 5xx or a captive
+// portal would hand the screen.
+jest.mock('@frogpond/api', () => ({
+	client: {get: jest.fn(() => ({json: () => Promise.reject(new Error('HTTP 503'))}))},
+}))
 
 // One router for the whole run, as expo-router's own hook hands back.
 const mockRouter = {navigate: jest.fn()}
@@ -68,9 +75,18 @@ beforeEach(() => {
 })
 
 afterEach(() => {
+	onlineManager.setOnline(true)
 	queryClient.clear()
 	jest.useRealTimers()
 })
+
+function renderPause() {
+	return render(
+		<QueryClientProvider client={queryClient}>
+			<GitHubHostedMenu loadingMessage={['Loading…']} name={PAUSE_VENUE} venue={PAUSE_VENUE} />
+		</QueryClientProvider>,
+	)
+}
 
 /** What the screen last put in the navigation bar. */
 function lastHeader() {
@@ -121,5 +137,30 @@ describe('GitHubHostedMenu', () => {
 		let last = mockFoodMenu.mock.lastCall?.[0]
 		expect(last?.now).toBe(first?.now)
 		expect(last?.onItemPress).toBe(first?.onItemPress)
+	})
+
+	// React Query keeps a query's data when a refetch of it fails, so the menu
+	// already on screen is still there to show.
+	test('keeps a cached menu on screen when its refetch fails', async () => {
+		await renderPause()
+
+		await act(async () => {
+			await queryClient.refetchQueries({queryKey: pauseMenuOptions.queryKey})
+			await jest.runOnlyPendingTimersAsync()
+		})
+
+		expect(queryClient.getQueryState(pauseMenuOptions.queryKey)?.status).toBe('error')
+		expect(screen.queryByText(/HTTP 503/u)).toBeNull()
+		expect(mockFoodMenu).toHaveBeenCalled()
+	})
+
+	test('says it is offline when nothing is cached and there is no network', async () => {
+		queryClient.removeQueries({queryKey: pauseMenuOptions.queryKey})
+		onlineManager.setOnline(false)
+		await renderPause()
+
+		expect(screen.getByText(OFFLINE_MESSAGE)).toBeTruthy()
+		expect(mockFoodMenu).not.toHaveBeenCalled()
+		expect(lastHeader()).toMatchObject({loading: false, meals: null})
 	})
 })

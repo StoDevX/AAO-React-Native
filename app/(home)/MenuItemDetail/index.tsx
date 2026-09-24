@@ -5,6 +5,7 @@ import {useQuery} from '@tanstack/react-query'
 import {MenuItemDetailView} from '../../../modules/food-menu/food-item-detail'
 import {bonAppMenuItemOptions, pauseMenuItemOptions} from '../../../source/features/menus/query'
 import {LoadingView, NoticeView} from '@frogpond/notice'
+import {OFFLINE_MESSAGE, menuView} from '../../../source/features/menus/lib/menu-view'
 
 export default function MenuItemDetailPage(): React.ReactNode {
 	let {source, cafe, itemId} = useLocalSearchParams<{
@@ -23,11 +24,13 @@ export default function MenuItemDetailPage(): React.ReactNode {
 		enabled: source === 'pause',
 	})
 
-	let {data, isLoading, error, refetch} = source === 'bonapp' ? bonAppQuery : pauseQuery
+	let query = source === 'bonapp' ? bonAppQuery : pauseQuery
+	let {refetch} = query
+	let view = menuView(query)
 
 	let screen = <Stack.Title>Nutrition</Stack.Title>
 
-	if (isLoading) {
+	if (view.kind === 'loading') {
 		return (
 			<>
 				{screen}
@@ -36,22 +39,30 @@ export default function MenuItemDetailPage(): React.ReactNode {
 		)
 	}
 
-	if (error) {
+	if (view.kind === 'offline') {
+		return (
+			<>
+				{screen}
+				<NoticeView text={OFFLINE_MESSAGE} />
+			</>
+		)
+	}
+
+	if (view.kind === 'error') {
 		return (
 			<>
 				{screen}
 				<NoticeView
 					buttonText="Try Again"
 					onPress={refetch}
-					text={`A problem occured while loading: ${
-						error instanceof Error ? error.message : 'Unknown error'
-					}`}
+					text={`A problem occured while loading: ${view.error.message}`}
 				/>
 			</>
 		)
 	}
 
-	if (!data?.item) {
+	let {data} = view
+	if (!data.item) {
 		return (
 			<>
 				{screen}

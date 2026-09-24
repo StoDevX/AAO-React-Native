@@ -1,6 +1,5 @@
 import * as React from 'react'
 import {timezone} from '@frogpond/constants'
-import {SUPPORT_EMAIL} from '../../lib/constants'
 import {LoadingView, NoticeView} from '@frogpond/notice'
 import {FoodMenu} from '@frogpond/food-menu'
 import type {
@@ -23,6 +22,7 @@ import {toLaxTitleCase} from '@frogpond/titlecase'
 import {formatDate, formatWeekday} from '@frogpond/time-format'
 import type {MealHeaderState} from '@frogpond/food-menu'
 import {usePublishMenuHeader} from './menu-header'
+import {OFFLINE_MESSAGE, menuView} from './lib/menu-view'
 
 const BONAPP_HTML_ERROR_CODE = 'bonapp-html'
 
@@ -112,8 +112,13 @@ function getMeals(
 
 	// We hard-code to the first day returned because we're only requesting
 	// one day. `cafes` is a map of cafe ids to cafes, but we only request one
-	// cafe at a time, so we just grab the one we requested.
-	let dayparts = cafeMenu.days[0].cafe.dayparts
+	// cafe at a time, so we just grab the one we requested. A response with no
+	// day has no meals; the screen says so rather than drawing an empty menu.
+	let day = cafeMenu.days.at(0)
+	if (!day) {
+		return []
+	}
+	let dayparts = day.cafe.dayparts
 
 	// either use the meals as provided by bonapp, or make our own
 	let mealInfoItems = dayparts[0]?.length ? dayparts[0] : DEFAULT_MENU
@@ -179,25 +184,27 @@ export function BonAppHostedMenu(props: Props): React.ReactNode {
 		setFiltersVisible((visible) => !visible)
 	}, [])
 
-	let {
-		data: cafeMenu,
-		error: menuError,
-		refetch: menuReload,
-		isError: isMenuError,
-		isLoading: isMenuLoading,
-	} = useQuery(bonAppMenuOptions(props.cafe))
+	let menuQuery = useQuery(bonAppMenuOptions(props.cafe))
+	let {data: cafeMenu, refetch: menuReload} = menuQuery
+	let menu = menuView(menuQuery)
 
-	let {
-		data: cafeInfo,
-		error: cafeError,
-		refetch: cafeReload,
-		isError: isCafeError,
-		isLoading: isCafeLoading,
-	} = useQuery(bonAppCafeOptions(props.cafe))
+	// The cafe's details carry its hours and any closure notice. The menu is
+	// shown without them when they cannot be had, so only their first load
+	// holds the screen.
+	let cafeQuery = useQuery(bonAppCafeOptions(props.cafe))
+	let {data: cafeInfo, refetch: cafeReload} = cafeQuery
+	let isCafeLoading = menuView(cafeQuery).kind === 'loading'
+
+	let isLoading = menu.kind === 'loading' || (menu.kind === 'content' && isCafeLoading)
+	let showsMenu = menu.kind === 'content' && !isCafeLoading
 
 	// A cafe serving one daypart today says when it opens, then when it closes,
 	// off the hours it publishes; `null` keeps the meal's window for the rest.
 	let hours = daypartHours(cafeInfo?.cafe.days, now)
+
+	// The meal picker and its hours belong to the menu body, which is not drawn
+	// behind a notice.
+	let shownMealHeader = showsMenu ? mealHeader : EMPTY_MEAL_HEADER
 
 	// Published from here rather than from the menu below, which does not
 	// exist until its query resolves -- the screen would spend that whole
@@ -208,11 +215,11 @@ export function BonAppHostedMenu(props: Props): React.ReactNode {
 			weekdayShort,
 			weekdayLong,
 			date,
-			meals: mealHeader.menu,
-			time: hours ? hours.time : mealHeader.time,
-			closed: mealHeader.closed || (hours?.closed ?? false),
+			meals: shownMealHeader.menu,
+			time: hours ? hours.time : shownMealHeader.time,
+			closed: shownMealHeader.closed || (hours?.closed ?? false),
 			reopening: hours?.reopening ?? null,
-			loading: isMenuLoading || isCafeLoading,
+			loading: isLoading,
 			filters: {visible: filtersVisible, toggle: toggleFilters},
 		},
 		isFocused,
@@ -252,12 +259,16 @@ export function BonAppHostedMenu(props: Props): React.ReactNode {
 		[cafeReload, menuReload],
 	)
 
-	if (isMenuLoading || isCafeLoading) {
+	if (menu.kind === 'loading') {
 		return <LoadingView text={sample(props.loadingMessage)} />
 	}
 
-	if (isMenuError && menuError instanceof Error) {
-		let errorMessage = getErrorMessage(menuError)
+	if (menu.kind === 'offline') {
+		return <NoticeView text={OFFLINE_MESSAGE} />
+	}
+
+	if (menu.kind === 'error') {
+		let errorMessage = getErrorMessage(menu.error)
 		let msg = `Error: ${errorMessage}`
 		if (errorMessage === BONAPP_HTML_ERROR_CODE) {
 			msg = 'Something between you and BonApp is having problems. Try again in a minute or two?'
@@ -265,23 +276,13 @@ export function BonAppHostedMenu(props: Props): React.ReactNode {
 		return <NoticeView buttonText="Again!" onPress={menuReload} text={msg} />
 	}
 
-	if (isCafeError && cafeError instanceof Error) {
-		let errorMessage = getErrorMessage(cafeError)
-		let msg = `Error: ${errorMessage}`
-		if (errorMessage === BONAPP_HTML_ERROR_CODE) {
-			msg = 'Something between you and BonApp is having problems. Try again in a minute or two?'
-		}
-		return <NoticeView buttonText="Again!" onPress={cafeReload} text={msg} />
-	}
-
-	if (!cafeMenu || !cafeInfo) {
-		let msg = `Something went wrong. Email ${SUPPORT_EMAIL} to let them know?`
-		return <NoticeView text={msg} />
+	if (isCafeLoading) {
+		return <LoadingView text={sample(props.loadingMessage)} />
 	}
 
 	// The API returns an empty array for the cafeInfo.cafe value if there is no
 	// matching cafe with the inputted id number, otherwise it returns an non-array object
-	if (Array.isArray(cafeInfo.cafe)) {
+	if (cafeInfo && Array.isArray(cafeInfo.cafe)) {
 		return (
 			<NoticeView
 				text={`There is no cafe with id #${
@@ -291,16 +292,20 @@ export function BonAppHostedMenu(props: Props): React.ReactNode {
 		)
 	}
 
+	if (menu.data.days.length === 0) {
+		return <NoticeView text={`${props.name} has not posted a menu for today.`} />
+	}
+
 	// We grab the "today" info from here because BonApp returns special
 	// messages in this response, like "Closed for Christmas Break"
-	let specialMessage = findCafeMessage(cafeInfo, menuNow)
+	let specialMessage = cafeInfo ? findCafeMessage(cafeInfo, menuNow) : null
 
 	return (
 		<FoodMenu
 			cafeMessage={specialMessage}
 			foodItems={foodItems}
 			meals={meals}
-			menuCorIcons={cafeMenu.cor_icons}
+			menuCorIcons={menu.data.cor_icons}
 			name={props.name}
 			now={menuNow}
 			onItemPress={onItemPress}
