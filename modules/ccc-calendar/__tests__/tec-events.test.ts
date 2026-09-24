@@ -1,5 +1,5 @@
 import fixture from './fixtures/tec-events.json'
-import {parseTecEvents} from '../parsers/tec-events'
+import {fetchTecPages, parseTecEvents} from '../parsers/tec-events'
 
 test('parses the live fixture', () => {
 	expect(parseTecEvents(fixture)).toHaveLength(fixture.events.length)
@@ -353,4 +353,69 @@ test('carries the organisations the live fixture names', () => {
 	// An unsponsored event is unsponsored, not sponsored by nobody: the parser
 	// never emits an empty list, so "no organisation" has one representation.
 	expect(events.every((event) => event.organization?.length !== 0)).toBe(true)
+})
+
+describe('fetchTecPages', () => {
+	function page(starts: string[], next?: string) {
+		return {
+			events: starts.map((start) => ({utc_start_date: start})),
+			...(next ? {next_rest_url: next} : {}),
+		}
+	}
+
+	const UNTIL = new Date('2026-12-01T00:00:00Z')
+
+	test('follows next_rest_url until the feed runs out', async () => {
+		let pages: Record<string, unknown> = {
+			first: page(['2026-09-01 10:00:00'], 'second'),
+			second: page(['2026-09-02 10:00:00'], 'third'),
+			third: page(['2026-09-03 10:00:00']),
+		}
+		let fetched: string[] = []
+
+		let body = await fetchTecPages('first', UNTIL, (href) => {
+			fetched.push(href)
+			return Promise.resolve(pages[href])
+		})
+
+		expect(fetched).toStrictEqual(['first', 'second', 'third'])
+		expect(body.events).toHaveLength(3)
+	})
+
+	test('stops once a page reaches past the window', async () => {
+		let pages: Record<string, unknown> = {
+			first: page(['2026-11-30 10:00:00', '2026-12-02 10:00:00'], 'second'),
+			second: page(['2026-12-03 10:00:00']),
+		}
+		let fetched: string[] = []
+
+		await fetchTecPages('first', UNTIL, (href) => {
+			fetched.push(href)
+			return Promise.resolve(pages[href])
+		})
+
+		expect(fetched).toStrictEqual(['first'])
+	})
+
+	test('stops at the page cap rather than walking an endless feed', async () => {
+		let fetched = 0
+
+		await fetchTecPages(
+			'loop',
+			UNTIL,
+			() => {
+				fetched += 1
+				return Promise.resolve(page(['2026-09-01 10:00:00'], 'loop'))
+			},
+			5,
+		)
+
+		expect(fetched).toBe(5)
+	})
+
+	test('a page that is not a TEC page throws', async () => {
+		await expect(
+			fetchTecPages('first', UNTIL, () => Promise.resolve({nope: true})),
+		).rejects.toThrow()
+	})
 })

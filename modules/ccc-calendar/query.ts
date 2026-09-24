@@ -5,6 +5,7 @@ import * as Sentry from '@sentry/react-native'
 import {now as currentMoment} from '@frogpond/timer'
 import {queryClient} from '../../source/init/tanstack-query'
 import {getRunner} from '../../source/database/client'
+import {dayWindow} from '../../source/database/calendar/read'
 import {bumpCalendarRevision} from '../../source/database/calendar/revision'
 import {retentionFor, writeSource} from '../../source/database/calendar/write'
 import {convertEvents, type EventMapper} from './convert'
@@ -12,7 +13,7 @@ import uitestFixtures from './fixtures/uitest-events.json'
 import {parseEvents, type WireEvent} from './parsers/events'
 import {parseIcalEvents} from './parsers/ical'
 import {parsePresenceEvents} from './parsers/presence'
-import {parseTecEvents} from './parsers/tec-events'
+import {fetchTecPages, parseTecEvents} from './parsers/tec-events'
 import {REMOTE_SOURCES, type SourcedEvent} from './sources'
 import {NamedCalendar} from './types'
 
@@ -57,7 +58,12 @@ async function fetchCalendar(calendar: NamedCalendar, signal: AbortSignal): Prom
 	let resolved = resolveSource(manifest, REL_CALENDAR, calendar, CALENDAR_TYPES)
 
 	let parser = parserFor(resolved.type)
-	let body = await fetchSourceBody(resolved.href, signal, 'Calendar', parser.format)
+	let body =
+		resolved.type === TEC_EVENTS
+			? await fetchTecPages(resolved.href, new Date(dayWindow(new Date()).toUtc), (href) =>
+					fetchSourceBody(href, signal, 'Calendar', parser.format),
+				)
+			: await fetchSourceBody(resolved.href, signal, 'Calendar', parser.format)
 	return parser.parse(body)
 }
 

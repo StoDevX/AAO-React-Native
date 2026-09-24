@@ -53,6 +53,55 @@ function organizationNames(organizers: z.infer<typeof OrganizerSchema>): string[
 
 const TecEventsSchema = z.object({events: z.array(z.unknown())})
 
+const TecPageSchema = z.object({
+	events: z.array(z.unknown()),
+	next_rest_url: z.string().optional(),
+})
+
+const TecPageStartSchema = z.object({utc_start_date: z.string()})
+
+/**
+ * The most pages `fetchTecPages` will follow. At 50 events a page that is
+ * several times what the campus calendar lists across the read window, so
+ * reaching it means a feed that never stops handing out a next page.
+ */
+const TEC_MAX_PAGES = 40
+
+/**
+ * Every page of a TEC feed from `href` on, joined into the one `{events}`
+ * body `parseTecEvents` reads.
+ *
+ * TEC pages its REST API, and a single page holds only the next few days of
+ * the campus calendar. `writeSource` treats what it is handed as the whole
+ * feed, so reading one page would wipe every later event.
+ *
+ * Stops at the first page whose last event starts after `until`: the feed is
+ * sorted by start, so every later page lies past the window too.
+ */
+export async function fetchTecPages(
+	href: string,
+	until: Date,
+	fetchPage: (href: string) => Promise<unknown>,
+	maxPages = TEC_MAX_PAGES,
+): Promise<{events: unknown[]}> {
+	let events: unknown[] = []
+	let next: string | undefined = href
+
+	for (let count = 0; next && count < maxPages; count++) {
+		// Sequential by nature: each page names the next.
+		// oxlint-disable-next-line eslint/no-await-in-loop
+		let page = TecPageSchema.parse(await fetchPage(next))
+		events.push(...page.events)
+
+		let last = TecPageStartSchema.safeParse(page.events.at(-1))
+		if (last.success && new Date(toIsoString(last.data.utc_start_date)) > until) break
+
+		next = page.next_rest_url
+	}
+
+	return {events}
+}
+
 /**
  * TEC reports `utc_start_date` as "2026-08-17 13:00:00" — UTC, but with a
  * space separator and no zone marker. Left alone it would be read as local
