@@ -2,7 +2,7 @@ import {describe, expect, jest, test} from '@jest/globals'
 import moment from 'moment-timezone'
 
 import type {WireEvent} from '../parsers/events'
-import {namedCalendarOptions, scheduleCalendarOptions, sourceRankOf} from '../query'
+import {namedCalendarOptions, scheduleCalendarOptions, sourceRankOf, tecHorizon} from '../query'
 import {REMOTE_SOURCES} from '../sources'
 import uitestFixturesJson from '../fixtures/uitest-events.json'
 
@@ -348,5 +348,15 @@ describe('all-day events', () => {
 		let selected = selectSchedule('krlx-schedule')([event])
 
 		expect(selected).toHaveLength(1)
+	})
+})
+
+describe('tecHorizon', () => {
+	// The frozen UI-test clock and the device clock can be weeks apart, and
+	// the horizon has to follow the one every other calendar date follows.
+	test("counts a month from the start of the app clock's today", () => {
+		jest.mocked(now).mockReturnValueOnce(moment('2030-01-15T12:00:00'))
+
+		expect(tecHorizon()).toEqual(moment('2030-02-15T00:00:00').toDate())
 	})
 })

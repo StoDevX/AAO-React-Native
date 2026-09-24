@@ -51,11 +51,12 @@ function parserFor(type: string): CalendarParser {
  * How far ahead the St. Olaf calendar is fetched: a month from the start of
  * today. Each page of its feed covers roughly a week and a half of term, so
  * the full read window would take over a dozen requests on every refresh.
+ *
+ * Read from the app clock, like every other calendar date, so a UI test's
+ * frozen day and its fetch horizon agree.
  */
-function tecHorizon(now: Date): Date {
-	let horizon = new Date(now.getFullYear(), now.getMonth(), now.getDate())
-	horizon.setMonth(horizon.getMonth() + 1)
-	return horizon
+export function tecHorizon(): Date {
+	return currentMoment().startOf('day').add(1, 'month').toDate()
 }
 
 async function fetchCalendar(calendar: NamedCalendar, signal: AbortSignal): Promise<WireEvent[]> {
@@ -70,7 +71,7 @@ async function fetchCalendar(calendar: NamedCalendar, signal: AbortSignal): Prom
 	let parser = parserFor(resolved.type)
 	let body =
 		resolved.type === TEC_EVENTS
-			? await fetchTecPages(resolved.href, tecHorizon(new Date()), (href) =>
+			? await fetchTecPages(resolved.href, tecHorizon(), (href) =>
 					fetchSourceBody(href, signal, 'Calendar', parser.format),
 				)
 			: await fetchSourceBody(resolved.href, signal, 'Calendar', parser.format)
