@@ -1,4 +1,4 @@
-import type {ImageResolvedAssetSource} from 'react-native'
+import {DynamicColorIOS, type ColorValue, type ImageResolvedAssetSource} from 'react-native'
 import {createTheming} from '@callstack/react-theme-provider'
 import * as c from '@frogpond/colors'
 import tinycolor from 'tinycolor2'
@@ -6,7 +6,7 @@ import tinycolor from 'tinycolor2'
 export type PlayerTheme = {
 	tintColor?: string
 	buttonTextColor?: string
-	textColor?: string
+	textColor?: ColorValue
 	imageBorderColor?: string
 	imageBackgroundColor?: string
 }
@@ -20,14 +20,16 @@ export type RadioLogo = {
 }
 
 /**
- * A theme drawn in one tint: the text and buttons take it, and the button text
- * is whichever of white or black reads better on it.
+ * A theme drawn in one tint: the buttons take it, and the button text is
+ * whichever of white or black reads better on it. The title and station name
+ * take it too in light mode, and turn white in Dark Mode, where a tint dark
+ * enough for white button text reads dimly against black.
  */
 export function tintedTheme(tintColor: string, imageBackgroundColor = 'transparent'): PlayerTheme {
 	return {
 		tintColor,
 		buttonTextColor: tinycolor.mostReadable(tintColor, [c.white, c.black]).toRgbString(),
-		textColor: tintColor,
+		textColor: DynamicColorIOS({light: tintColor, dark: c.white}),
 		imageBorderColor: 'transparent',
 		imageBackgroundColor,
 	}

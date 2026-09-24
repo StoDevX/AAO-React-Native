@@ -11,8 +11,8 @@ export default function KrlxPage(): React.ReactNode {
 					name: 'krlx 88.1',
 					image: logos.krlx,
 					// The purple of the logo's "krlx". White text on it is 5.5:1, and
-					// it is 3.8:1 against Dark Mode's black, enough for the 28pt
-					// title, so one tint serves both.
+					// it is 3.8:1 against Dark Mode's black, so the buttons stand out
+					// in both modes.
 					theme: tintedTheme('#8a529e'),
 				},
 			]}

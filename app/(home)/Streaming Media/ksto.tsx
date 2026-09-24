@@ -6,8 +6,8 @@ import {tintedTheme} from '../../../source/features/streaming/radio/theme'
 
 /**
  * Each tint passes the same checks: white button text on it is at least 4.5:1,
- * and it is at least 3:1 against both the light background and Dark Mode's
- * black, enough for the 28pt title.
+ * and it is at least 3:1 against both the light background, enough for the
+ * 28pt title, and Dark Mode's black, so the buttons stand out there too.
  */
 const COW_TINT = '#685393'
 const WORDMARK_TINT = '#5a52b0'
