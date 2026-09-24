@@ -8,19 +8,6 @@ import XCTest
 /// which can state the mocked and unmocked cases alike.
 class ModuleStoPrintTests: UITestCase {
 
-	func testPrintJobsList() throws {
-		let screen = StoPrintScreen(app: app).navigate()
-
-		// A section header from the mocked jobs, so the capture waits for the
-		// list rather than the spinner that precedes it.
-		let pendingRelease = app.staticTexts["Pending Release"].firstMatch
-		XCTAssertTrue(
-			pendingRelease.waitForExistence(timeout: 30),
-			"Print Jobs should list the mocked jobs")
-
-		screen.capture("Print Jobs")
-	}
-
 	/// A job that is not pending release goes to the release screen rather than
 	/// the printer picker, which is the screen this reaches.
 	func testPrintReleaseScreen() throws {
@@ -40,6 +27,8 @@ class ModuleStoPrintTests: UITestCase {
 		screen.capture("Print release")
 	}
 
+	/// The job list, then a pending job released through the printer list.
+	///
 	/// The release screen with its actions available, which is a different
 	/// state: a job already sent has nothing left to print or cancel, so those
 	/// rows are drawn only when one is pending and a printer has been chosen.
@@ -47,8 +36,17 @@ class ModuleStoPrintTests: UITestCase {
 	/// Choosing a printer means passing through the printer list, which only
 	/// a Pending Release job's row pushes to; every other status goes straight
 	/// to the release screen.
-	func testPrintReleaseActions() throws {
+	func testAPendingJobReleasesThroughThePrinterList() throws {
 		let screen = StoPrintScreen(app: app).navigate()
+
+		// A section header from the mocked jobs, so the capture waits for the
+		// list rather than the spinner that precedes it.
+		let pendingRelease = app.staticTexts["Pending Release"].firstMatch
+		XCTAssertTrue(
+			pendingRelease.waitForExistence(timeout: 30),
+			"Print Jobs should list the mocked jobs")
+
+		screen.capture("Print Jobs")
 
 		let job = app.buttons
 			.matching(NSPredicate(format: "label BEGINSWITH %@", "IMG_2259-COLLAGE.jpg"))
