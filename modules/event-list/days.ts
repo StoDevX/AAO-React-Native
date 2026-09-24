@@ -6,8 +6,8 @@ export const DAYS_PER_WEEK = 7
 
 /**
  * Generates a continuous range of whole weeks, from Sunday of the current week
- * through the Saturday of the last event's week. Whole weeks keep every day
- * sitting under a Sunday the strip can snap to.
+ * through the Saturday of the week holding the last day any event covers.
+ * Whole weeks keep every day sitting under a Sunday the strip can snap to.
  *
  * Always yields at least the current week. Day mode has nothing but the strip
  * to navigate with, so a range that could come back empty would leave that
@@ -22,7 +22,12 @@ export function deriveDays(events: readonly SourcedEvent[], now: Moment): Moment
 			continue
 		}
 
-		let day = entry.event.startTime.clone().startOf('day')
+		// The last day the event covers, since `eventsByDay` puts it on each of
+		// them. Its end is exclusive, so a millisecond back is that day.
+		let {startTime, endTime} = entry.event
+		let day = (endTime.isAfter(startTime) ? endTime.clone().subtract(1, 'ms') : startTime)
+			.clone()
+			.startOf('day')
 
 		if (day.isBefore(today, 'day')) {
 			continue
@@ -66,9 +71,13 @@ export function deriveDays(events: readonly SourcedEvent[], now: Moment): Moment
  * rows cannot disagree -- a dot is a bucket that is not empty, and the rows
  * are that same bucket.
  *
- * An event that is ongoing belongs to every day it spans, so it is the one
- * case that still has to be checked against each day. Everything else lands in
- * one bucket by its start date.
+ * An event belongs to every day it spans -- an exhibition already running, and
+ * equally a weekend retreat or a dance past midnight that has not begun -- so
+ * one that runs past its start day is checked against each day. Everything
+ * else lands in one bucket by its start date.
+ *
+ * The end is exclusive, which is how an all-day event is stored: one on Aug 24
+ * ends at the start of Aug 25 and belongs to Aug 24 alone.
  */
 export function eventsByDay(
 	events: readonly SourcedEvent[],
@@ -77,7 +86,7 @@ export function eventsByDay(
 	let buckets = new Map<string, SourcedEvent[]>()
 
 	// Each day's key and its two bounds, worked out once. Formatting a moment
-	// and cloning one both cost, and an ongoing event has to be checked against
+	// and cloning one both cost, and a spanning event has to be checked against
 	// every day in the range -- doing it inside that loop would rebuild the same
 	// handful of values for every event.
 	let calendar = days.map((day) => {
@@ -88,16 +97,19 @@ export function eventsByDay(
 	})
 
 	for (let entry of events) {
-		if (entry.event.isOngoing) {
+		let {startTime, endTime} = entry.event
+		let startDayEnd = startTime.clone().endOf('day')
+
+		if (endTime.isAfter(startDayEnd)) {
 			for (let {bucket, start, end} of calendar) {
-				if (!entry.event.startTime.isAfter(end) && !entry.event.endTime.isBefore(start)) {
+				if (!startTime.isAfter(end) && endTime.isAfter(start)) {
 					bucket.push(entry)
 				}
 			}
 			continue
 		}
 
-		buckets.get(entry.event.startTime.format('YYYY-MM-DD'))?.push(entry)
+		buckets.get(startTime.format('YYYY-MM-DD'))?.push(entry)
 	}
 
 	// `useMergedEvents` hands over one calendar's events at a time, so without

@@ -161,6 +161,22 @@ function eventInZone(start: string, end = start, isOngoing = false): SourcedEven
 	} as unknown as SourcedEvent
 }
 
+describe('deriveDays, for an event that spans days', () => {
+	test("reaches the week of the event's last day, not its first", () => {
+		// Saturday night into Sunday morning: Sunday opens a second week.
+		let late = eventInZone('2026-08-29T20:00:00', '2026-08-30T01:00:00')
+		let result = deriveDays([late], moment.tz('2026-08-23T12:00:00', 'America/Chicago'))
+		expect(isoDays(result).at(-1)).toBe('2026-09-05')
+	})
+
+	test('stops at the last day an all-day event covers', () => {
+		// Ends at the midnight that opens Sunday, so it covers only Saturday.
+		let saturday = eventInZone('2026-08-29T00:00:00', '2026-08-30T00:00:00')
+		let result = deriveDays([saturday], moment.tz('2026-08-23T12:00:00', 'America/Chicago'))
+		expect(isoDays(result).at(-1)).toBe('2026-08-29')
+	})
+})
+
 describe('eventsByDay', () => {
 	let week = () => deriveDays([], moment.tz('2026-08-23T12:00:00', 'America/Chicago'))
 
@@ -185,6 +201,31 @@ describe('eventsByDay', () => {
 		expect(buckets.get('2026-08-25')).toHaveLength(1)
 		expect(buckets.get('2026-08-26')).toHaveLength(1)
 		expect(buckets.get('2026-08-27')).toEqual([])
+	})
+
+	test('puts an event that has not started yet on every day it spans', () => {
+		// A Friday-night dance that runs past midnight belongs to Saturday too.
+		let dance = eventInZone('2026-08-28T20:00:00', '2026-08-29T01:00:00')
+		let buckets = eventsByDay([dance], week())
+		expect(buckets.get('2026-08-28')).toHaveLength(1)
+		expect(buckets.get('2026-08-29')).toHaveLength(1)
+	})
+
+	test('treats an all-day end as exclusive', () => {
+		// Stored as the midnight after its last day, so Aug 24-26 ends at the
+		// start of Aug 27.
+		let fallBreak = eventInZone('2026-08-24T00:00:00', '2026-08-27T00:00:00')
+		let buckets = eventsByDay([fallBreak], week())
+		expect(buckets.get('2026-08-24')).toHaveLength(1)
+		expect(buckets.get('2026-08-25')).toHaveLength(1)
+		expect(buckets.get('2026-08-26')).toHaveLength(1)
+		expect(buckets.get('2026-08-27')).toEqual([])
+	})
+
+	test('keeps an instant at midnight on its own day', () => {
+		let buckets = eventsByDay([eventInZone('2026-08-25T00:00:00')], week())
+		expect(buckets.get('2026-08-25')).toHaveLength(1)
+		expect(buckets.get('2026-08-24')).toEqual([])
 	})
 
 	test('leaves out an ongoing event that ended before the range', () => {
