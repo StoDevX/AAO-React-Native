@@ -5,9 +5,9 @@ import {QueryClient, QueryClientProvider, onlineManager} from '@tanstack/react-q
 
 import MenuItemDetailPage from '../../../../app/(home)/MenuItemDetail'
 import {MenuItemDetailView} from '../../../../modules/food-menu/food-item-detail'
-import {pauseMenuOptions} from '../query'
+import {bonAppMenuOptions, pauseMenuOptions} from '../query'
 import {OFFLINE_MESSAGE} from '../lib/menu-view'
-import type {GithubMenuResponse} from '../types'
+import type {EditedBonAppMenuInfoType, GithubMenuResponse} from '../types'
 
 // The detail view renders `@expo/ui`, which cannot mount under Jest. What the
 // screen hands it is read off the call.
@@ -24,7 +24,10 @@ jest.mock('@frogpond/api', () => ({
 }))
 
 // A Pause item's id is its place in the menu.
-let mockParams: {source: string; itemId: string} = {source: 'pause', itemId: '0'}
+let mockParams: {source: string; itemId: string; cafe?: string; day?: string} = {
+	source: 'pause',
+	itemId: '0',
+}
 
 jest.mock('expo-router', () => ({
 	Stack: {Screen: () => null, Title: () => null},
@@ -91,5 +94,28 @@ describe('MenuItemDetailPage', () => {
 		await renderDetail()
 
 		expect(screen.getByText('Could not find this menu item.')).toBeTruthy()
+	})
+
+	// Two days' menus can sit in the cache across midnight. The item comes from
+	// the one its list was showing.
+	test('reads a BonApp item from the menu of the day it was listed on', async () => {
+		let menuWith = (label: string, date: string) =>
+			({
+				items: {'42': {id: '42', label, station: 'Grill', description: ''}},
+				cor_icons: {},
+				days: [{date, cafe: {name: 'The Cage', menu_id: '1', dayparts: [[]]}}],
+			}) as unknown as EditedBonAppMenuInfoType
+		queryClient.setQueryData(
+			bonAppMenuOptions('the-cage', '2026-09-22').queryKey,
+			menuWith('Nachos', '2026-09-22'),
+		)
+		queryClient.setQueryData(
+			bonAppMenuOptions('the-cage', '2026-09-23').queryKey,
+			menuWith('Tacos', '2026-09-23'),
+		)
+		mockParams = {source: 'bonapp', cafe: 'the-cage', day: '2026-09-22', itemId: '42'}
+		await renderDetail()
+
+		expect(mockDetailView.mock.lastCall?.[0]).toMatchObject({item: {label: 'Nachos'}})
 	})
 })

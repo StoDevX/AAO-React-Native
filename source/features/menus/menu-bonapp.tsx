@@ -184,14 +184,21 @@ export function BonAppHostedMenu(props: Props): React.ReactNode {
 		setFiltersVisible((visible) => !visible)
 	}, [])
 
-	let menuQuery = useQuery(bonAppMenuOptions(props.cafe))
+	// The day the menu and the cafe's details are for. It turns over with
+	// `menuNow`, and the new day's are fetched in place of the last day's.
+	// Memoized on `menuNow` so that the item links built from it keep their
+	// identity: the React Compiler reads a moment's `format` as a read of an
+	// object that may change under it.
+	let day = React.useMemo(() => menuNow.format('YYYY-MM-DD'), [menuNow])
+
+	let menuQuery = useQuery(bonAppMenuOptions(props.cafe, day))
 	let {data: cafeMenu, refetch: menuReload} = menuQuery
 	let menu = menuView(menuQuery)
 
 	// The cafe's details carry its hours and any closure notice. The menu is
 	// shown without them when they cannot be had, so only their first load
 	// holds the screen.
-	let cafeQuery = useQuery(bonAppCafeOptions(props.cafe))
+	let cafeQuery = useQuery(bonAppCafeOptions(props.cafe, day))
 	let {data: cafeInfo, refetch: cafeReload} = cafeQuery
 	let isCafeLoading = menuView(cafeQuery).kind === 'loading'
 
@@ -252,11 +259,12 @@ export function BonAppHostedMenu(props: Props): React.ReactNode {
 				params: {
 					source: 'bonapp',
 					cafe: typeof props.cafe === 'string' ? props.cafe : props.cafe.id,
+					day,
 					itemId: item.id,
 				},
 			})
 		},
-		[router, props.cafe],
+		[router, props.cafe, day],
 	)
 
 	let onRefresh = React.useCallback(

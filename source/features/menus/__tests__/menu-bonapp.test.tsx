@@ -1,10 +1,11 @@
 import * as React from 'react'
 import {afterEach, beforeEach, describe, expect, jest, test} from '@jest/globals'
-import {act, render, screen} from '@testing-library/react-native'
+import {act, render, screen, waitFor} from '@testing-library/react-native'
 import {QueryClient, QueryClientProvider, onlineManager} from '@tanstack/react-query'
 
+import {client} from '@frogpond/api'
 import {FoodMenu} from '@frogpond/food-menu'
-import type {MealHeaderState} from '@frogpond/food-menu'
+import type {MealHeaderState, MenuItemType} from '@frogpond/food-menu'
 
 import {BonAppHostedMenu} from '../menu-bonapp'
 import {usePublishMenuHeader} from '../menu-header'
@@ -41,8 +42,13 @@ jest.mock('expo-router', () => ({
 
 const mockPublish = usePublishMenuHeader as jest.MockedFunction<typeof usePublishMenuHeader>
 const mockFoodMenu = FoodMenu as unknown as jest.Mock<
-	(props: {now: unknown; onMealHeaderChange: (header: MealHeaderState) => void}) => null
+	(props: {
+		now: unknown
+		onItemPress: (item: MenuItemType) => void
+		onMealHeaderChange: (header: MealHeaderState) => void
+	}) => null
 >
+const mockGet = client.get as unknown as jest.Mock
 
 /** The Cage's one daypart, as Bon Appétit publishes it. */
 const CAGE_DAYPART = {
@@ -83,10 +89,12 @@ beforeEach(() => {
 
 	// Seeded fresh, so no query refetches through a network Jest does not have.
 	queryClient = new QueryClient({defaultOptions: {queries: {staleTime: Infinity, retry: false}}})
-	queryClient.setQueryData(bonAppMenuOptions('the-cage').queryKey, CAGE_MENU)
-	queryClient.setQueryData(bonAppCafeOptions('the-cage').queryKey, CAGE_CAFE)
+	queryClient.setQueryData(bonAppMenuOptions('the-cage', '2026-09-22').queryKey, CAGE_MENU)
+	queryClient.setQueryData(bonAppCafeOptions('the-cage', '2026-09-22').queryKey, CAGE_CAFE)
 	mockPublish.mockClear()
 	mockFoodMenu.mockClear()
+	mockGet.mockClear()
+	mockRouter.navigate.mockClear()
 })
 
 afterEach(() => {
@@ -159,7 +167,9 @@ describe('BonAppHostedMenu', () => {
 			await jest.runOnlyPendingTimersAsync()
 		})
 
-		expect(queryClient.getQueryState(bonAppMenuOptions('the-cage').queryKey)?.status).toBe('error')
+		expect(
+			queryClient.getQueryState(bonAppMenuOptions('the-cage', '2026-09-22').queryKey)?.status,
+		).toBe('error')
 		expect(screen.queryByText(/HTTP 503/u)).toBeNull()
 		expect(mockFoodMenu).toHaveBeenCalled()
 	})
@@ -167,7 +177,7 @@ describe('BonAppHostedMenu', () => {
 	// The cafe's hours and closure notices come from a second query. The menu
 	// can be shown without them.
 	test('shows the menu when only the cafe details fail to load', async () => {
-		queryClient.removeQueries({queryKey: bonAppCafeOptions('the-cage').queryKey})
+		queryClient.removeQueries({queryKey: bonAppCafeOptions('the-cage', '2026-09-22').queryKey})
 		await renderCage()
 
 		await act(async () => {
@@ -204,7 +214,10 @@ describe('BonAppHostedMenu', () => {
 	// A cafe with no day in its menu response has nothing to show, which is not
 	// a reason to crash the screen.
 	test('says there is no menu when the response has no days', async () => {
-		queryClient.setQueryData(bonAppMenuOptions('the-cage').queryKey, {...CAGE_MENU, days: []})
+		queryClient.setQueryData(bonAppMenuOptions('the-cage', '2026-09-22').queryKey, {
+			...CAGE_MENU,
+			days: [],
+		})
 		await renderCage()
 
 		expect(screen.getByText('The Cage has not posted a menu for today.')).toBeTruthy()
@@ -230,7 +243,10 @@ describe('BonAppHostedMenu', () => {
 			await renderWithPicker()
 
 			await act(async () => {
-				queryClient.setQueryData(bonAppMenuOptions('the-cage').queryKey, {...CAGE_MENU, days: []})
+				queryClient.setQueryData(bonAppMenuOptions('the-cage', '2026-09-22').queryKey, {
+					...CAGE_MENU,
+					days: [],
+				})
 				await jest.runOnlyPendingTimersAsync()
 			})
 
@@ -242,7 +258,7 @@ describe('BonAppHostedMenu', () => {
 			await renderWithPicker()
 
 			await act(async () => {
-				queryClient.setQueryData(bonAppCafeOptions('the-cage').queryKey, {
+				queryClient.setQueryData(bonAppCafeOptions('the-cage', '2026-09-22').queryKey, {
 					cafe: [],
 				} as unknown as EditedBonAppCafeInfoType)
 				await jest.runOnlyPendingTimersAsync()
@@ -250,6 +266,66 @@ describe('BonAppHostedMenu', () => {
 
 			expect(screen.getByText(/There is no cafe with id/u)).toBeTruthy()
 			expect(lastHeader()?.meals).toBeNull()
+		})
+	})
+
+	// A menu fetched shortly before midnight is still fresh by the clock after
+	// it, and one restored from the disk cache can be a day old.
+	test("fetches today's menu rather than showing an earlier day's", async () => {
+		jest.setSystemTime(new Date('2026-09-23T13:00:00Z'))
+		await renderCage()
+
+		expect(mockGet).toHaveBeenCalledWith('food/named/menu/the-cage', expect.anything())
+		expect(mockFoodMenu).not.toHaveBeenCalled()
+	})
+
+	// The menu body builds its meal picker and filters once, from the meals it
+	// is first handed. Stav serves Breakfast, Lunch and Dinner every day, so a
+	// new day's menu looks like the old one by its meals alone.
+	test("fetches a new day's menu into a fresh menu body when the day turns", async () => {
+		let nextDay = {...CAGE_MENU, days: [{...CAGE_MENU.days[0], date: '2026-09-23'}]}
+		let nextCafe = {
+			cafe: {...CAGE_CAFE.cafe, days: [{...CAGE_CAFE.cafe.days[0], date: '2026-09-23'}]},
+		}
+		mockGet.mockImplementation((path) => ({
+			json: () => Promise.resolve(path === 'food/named/menu/the-cage' ? nextDay : nextCafe),
+		}))
+		let mounts = 0
+		mockFoodMenu.mockImplementation(() => {
+			React.useEffect(() => {
+				mounts += 1
+			}, [])
+			return null
+		})
+
+		await renderCage()
+		expect(mounts).toBe(1)
+
+		await act(async () => {
+			jest.setSystemTime(new Date('2026-09-23T13:00:00Z'))
+			await jest.advanceTimersByTimeAsync(60_000)
+		})
+
+		expect(mockGet).toHaveBeenCalledWith('food/named/menu/the-cage', expect.anything())
+		// React Query hands the fetched menu over on a timer of its own.
+		await waitFor(() => expect(mounts).toBe(2))
+
+		mockFoodMenu.mockImplementation(() => null)
+		mockGet.mockImplementation(() => ({json: () => Promise.reject(new Error('HTTP 503'))}))
+	})
+
+	// The detail screen reads the item out of the menu this screen fetched,
+	// which is cached under the day it is for.
+	test('links an item to the day of the menu it came from', async () => {
+		await renderCage()
+
+		await act(() => {
+			mockFoodMenu.mock.lastCall?.[0].onItemPress({id: '42'} as MenuItemType)
+		})
+
+		expect(mockRouter.navigate).toHaveBeenCalledWith({
+			pathname: '/MenuItemDetail',
+			params: {source: 'bonapp', cafe: 'the-cage', day: '2026-09-22', itemId: '42'},
 		})
 	})
 })

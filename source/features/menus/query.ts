@@ -20,13 +20,18 @@ import type {
 	StationMenuType,
 } from './types'
 
+/**
+ * A BonApp menu and a cafe's details are each for the day they were fetched,
+ * as `YYYY-MM-DD` in campus time. The day is in their keys so that a new day
+ * fetches its own, rather than showing the last day's while it is still fresh.
+ */
 export const menuKeys = {
-	bonAppCcc: (cafePath: string) => ['cafe-menu', 'bonApp', cafePath] as const,
+	bonAppCcc: (cafePath: string, day: string) => ['cafe-menu', 'bonApp', cafePath, day] as const,
 	hosted: (url: string) => ['cafe-menu', 'hosted', url] as const,
 }
 
 export const cafeKeys = {
-	bonAppCcc: (cafePath: string) => ['cafe-info', 'bonApp', cafePath] as const,
+	bonAppCcc: (cafePath: string, day: string) => ['cafe-info', 'bonApp', cafePath, day] as const,
 	hosted: (url: string) => ['cafe-info', 'hosted', url] as const,
 }
 
@@ -99,9 +104,9 @@ async function fetchBonAppMenu(
 }
 
 // oxlint-disable-next-line typescript/explicit-module-boundary-types
-export const bonAppCafeOptions = (cafeParam: string | {id: string}) =>
+export const bonAppCafeOptions = (cafeParam: string | {id: string}, day: string) =>
 	queryOptions({
-		queryKey: cafeKeys.bonAppCcc(buildCafePath(cafeParam)),
+		queryKey: cafeKeys.bonAppCcc(buildCafePath(cafeParam), day),
 		queryFn: async ({signal}) => {
 			let path = buildCafePath(cafeParam)
 
@@ -117,17 +122,21 @@ export const bonAppCafeOptions = (cafeParam: string | {id: string}) =>
 	})
 
 // oxlint-disable-next-line typescript/explicit-module-boundary-types
-export const bonAppMenuOptions = (cafeParam: string | {id: string}) =>
+export const bonAppMenuOptions = (cafeParam: string | {id: string}, day: string) =>
 	queryOptions({
-		queryKey: menuKeys.bonAppCcc(buildMenuPath(cafeParam)),
+		queryKey: menuKeys.bonAppCcc(buildMenuPath(cafeParam), day),
 		queryFn: ({signal}) => fetchBonAppMenu(cafeParam, signal),
 		staleTime: 1000 * 60 * 60, // 1 hour
 	})
 
-// oxlint-disable-next-line typescript/explicit-module-boundary-types
-export const bonAppMenuItemOptions = (cafeParam: string | {id: string}, itemId: string) =>
+export const bonAppMenuItemOptions = (
+	cafeParam: string | {id: string},
+	day: string,
+	itemId: string,
+	// oxlint-disable-next-line typescript/explicit-module-boundary-types
+) =>
 	queryOptions({
-		queryKey: menuKeys.bonAppCcc(buildMenuPath(cafeParam)),
+		queryKey: menuKeys.bonAppCcc(buildMenuPath(cafeParam), day),
 		queryFn: ({signal}) => fetchBonAppMenu(cafeParam, signal),
 		staleTime: 1000 * 60 * 60, // 1 hour
 		select: (data) => ({
