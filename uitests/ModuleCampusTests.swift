@@ -9,12 +9,23 @@ class ModuleCampusTests: UITestCase {
 	/// The reverse direction matters too: `aBuilding` (Rølvaag Library) is
 	/// St. Olaf-only, so also asserting its absence here is what would fail if
 	/// the two campuses' lists were ever merged rather than kept separate.
-	func testCarletonTileShowsCarletonVenues() throws {
+	///
+	/// Every Carleton venue carries no `building` key -- its hours data lives
+	/// outside this repo -- so the absence of a cutout in its detail sheet has
+	/// to read as deliberate, not as a broken map that silently failed to
+	/// draw. Every other detail-sheet test in this file goes through St.
+	/// Olaf's tile, so this is also the one that proves the `campus` param
+	/// survives the push into `/Campus/detail/[name]` for a Carleton venue.
+	func testCarletonTileShowsCarletonVenuesAndTheirDetails() throws {
 		CampusScreen(app: app)
 			.navigateToCarleton()
 			.verifyTitle(TestIdentifiers.Buttons.carletonCampus)
 			.verifyRowShown(TestIdentifiers.Campus.carletonBuilding)
 			.verifyRowHidden(TestIdentifiers.Campus.aBuilding)
+			.tapRow(TestIdentifiers.Campus.carletonBuilding)
+			.verifyDetailSheetTitled(TestIdentifiers.Campus.carletonBuilding)
+			.verifyNoCutoutShown()
+			.capture("Campus detail sheet for a Carleton venue, with no cutout")
 	}
 
 	/// The map now serves both campuses -- St. Olaf's Campus screen offers the
@@ -67,23 +78,46 @@ class ModuleCampusTests: UITestCase {
 			.capture("Campus no-results state")
 	}
 
-	func testTappingARowPresentsTheDetailSheet() throws {
+	/// A detail sheet's whole life with no edits: it opens over the list, its
+	/// menu pushes Report a Problem into the sheet's own stack, and the sheet
+	/// still closes afterwards.
+	///
+	/// Dismissing the report back to the detail sheet, rather than straight to
+	/// the list, is what proves the report pushed into the sheet's own stack
+	/// instead of replacing it.
+	///
+	/// The detail sheet offers no close control of its own -- only an overflow
+	/// menu and a favourite button -- so drag and backdrop are its only exits.
+	/// `preventNativeDismiss` on the report route makes the drag worth proving
+	/// directly: a `preventedRoutes` entry that outlived the report screen
+	/// would trap the user in a sheet nothing could close.
+	///
+	/// Tapping a row behind the sheet comes last, on a sheet opened afresh,
+	/// because that tap is allowed to dismiss the sheet.
+	/// `sheetLargestUndimmedDetentIndex: 'none'` is what makes it safe: UIKit
+	/// dims and blocks touches to the list behind the sheet at every detent,
+	/// not merely below the largest one. Without it, a tap on a different
+	/// building's row lands on the list and pushes a second detail sheet on
+	/// top of the first.
+	func testTheDetailSheetLeadsToReportAndStillCloses() throws {
 		CampusScreen(app: app)
 			.navigate()
 			.tapRow(TestIdentifiers.Campus.anExcludedBuilding)
 			.verifyDetailSheetPresented(for: TestIdentifiers.Campus.anExcludedBuilding)
 			.verifyListStillBehind()
 			.capture("Campus detail sheet at the smaller detent")
-	}
-
-	/// `sheetLargestUndimmedDetentIndex: 'none'` is what makes this true: UIKit
-	/// dims and blocks touches to the list behind the sheet at every detent,
-	/// not merely below the largest one. Without it, a tap on a different
-	/// building's row lands on the list and pushes a second detail sheet on
-	/// top of the first.
-	func testTappingARowBehindTheSheetDoesNotStackASecondSheet() throws {
-		CampusScreen(app: app)
-			.navigate()
+			.openDetailMenu()
+			.verifyReportActionOffered()
+			.tapReportAction()
+			.verifyReportScreenPresented()
+			.verifyReportPushedIntoSheet()
+			.verifySubmitReportReachable()
+			.capture("Campus report screen")
+			.dismissReportScreen()
+			.verifyNoDiscardChangesAlertPresented()
+			.verifyDetailSheetPresented(for: TestIdentifiers.Campus.anExcludedBuilding)
+			.attemptToDragSheetClosed()
+			.verifyDetailSheetGone(for: TestIdentifiers.Campus.anExcludedBuilding)
 			.tapRow(TestIdentifiers.Campus.anExcludedBuilding)
 			.verifyDetailSheetPresented(for: TestIdentifiers.Campus.anExcludedBuilding)
 			.attemptToTapRowBehindSheet(TestIdentifiers.Campus.aSecondBuilding)
@@ -128,63 +162,6 @@ class ModuleCampusTests: UITestCase {
 			.verifyDetailSheetTitled(TestIdentifiers.Campus.aBuildingWithCutout)
 			.verifyCutoutShown(for: TestIdentifiers.Campus.aBuildingWithCutoutFrames)
 			.capture("Campus detail sheet showing a building cutout")
-	}
-
-	/// Every Carleton venue carries no `building` key -- its hours data lives
-	/// outside this repo -- so the absence of a cutout has to read as
-	/// deliberate, not as a broken map that silently failed to draw.
-	///
-	/// Every other detail-sheet test in this file goes through St. Olaf's
-	/// tile, so this is also the one that proves the `campus` param survives
-	/// the push into `/Campus/detail/[name]` for a Carleton venue.
-	func testDetailSheetShowsNoCutoutForACarletonVenue() throws {
-		CampusScreen(app: app)
-			.navigateToCarleton()
-			.tapRow(TestIdentifiers.Campus.carletonBuilding)
-			.verifyDetailSheetTitled(TestIdentifiers.Campus.carletonBuilding)
-			.verifyNoCutoutShown()
-			.capture("Campus detail sheet for a Carleton venue, with no cutout")
-	}
-
-	func testDetailSheetMenuOffersReportAProblem() throws {
-		CampusScreen(app: app)
-			.navigate()
-			.tapRow(TestIdentifiers.Campus.anExcludedBuilding)
-			.verifyDetailSheetPresented(for: TestIdentifiers.Campus.anExcludedBuilding)
-			.openDetailMenu()
-			.verifyReportActionOffered()
-			.tapReportAction()
-			.verifyReportScreenPresented()
-			.verifyReportPushedIntoSheet()
-			.verifySubmitReportReachable()
-			.capture("Campus report screen")
-			// Dismissing back to the detail sheet, rather than straight to the
-			// list, is what proves the report pushed into the sheet's own
-			// stack instead of replacing it.
-			.dismissReportScreen()
-			.verifyDetailSheetPresented(for: TestIdentifiers.Campus.anExcludedBuilding)
-	}
-
-	/// The detail sheet offers no close control of its own -- only an overflow
-	/// menu and a favourite button -- so drag and backdrop are its only exits.
-	/// `preventNativeDismiss` on the report route makes this worth proving
-	/// directly: a `preventedRoutes` entry that outlived the report screen
-	/// would trap the user in a sheet nothing could close. This goes back with
-	/// no edits (so no alert should appear) and then drags the sheet itself
-	/// closed, confirming the exit still works once the report route is gone.
-	func testDismissingTheDetailSheetAfterVisitingReportWithNoEditsWorks() throws {
-		CampusScreen(app: app)
-			.navigate()
-			.tapRow(TestIdentifiers.Campus.anExcludedBuilding)
-			.verifyDetailSheetPresented(for: TestIdentifiers.Campus.anExcludedBuilding)
-			.openDetailMenu()
-			.tapReportAction()
-			.verifyReportScreenPresented()
-			.dismissReportScreen()
-			.verifyNoDiscardChangesAlertPresented()
-			.verifyDetailSheetPresented(for: TestIdentifiers.Campus.anExcludedBuilding)
-			.attemptToDragSheetClosed()
-			.verifyDetailSheetGone(for: TestIdentifiers.Campus.anExcludedBuilding)
 	}
 
 	/// The report screen's unsaved-changes guard has to survive every way out,
