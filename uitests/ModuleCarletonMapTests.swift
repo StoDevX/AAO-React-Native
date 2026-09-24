@@ -1,43 +1,6 @@
 import XCTest
 
 class ModuleCarletonMapTests: UITestCase {
-	/// The whole path a user takes: open the map, reach into the sheet, and
-	/// come out with a building's card.
-	func testSelectingABuildingShowsItsCard() throws {
-		CarletonMapScreen(app: app)
-			.navigate()
-			.checkSheetPresented()
-			.expandSheet()
-			.selectBuilding(named: TestIdentifiers.CarletonMap.aBuilding)
-			.checkBuildingCardPresented()
-			.capture("Carleton map sheet at its middle detent, showing a building's card")
-	}
-
-	/// The module pins the field at 44pt with a constraint UIKit is free to
-	/// overrule silently, so the height is worth a test of its own.
-	func testTheSearchFieldIsAppleMapsHeight() throws {
-		CarletonMapScreen(app: app)
-			.navigate()
-			.checkSheetPresented()
-			.expandSheet()
-			.verifySearchFieldHeight()
-	}
-
-	func testFocusingSearchRaisesTheSheetAndCancelReturnsIt() throws {
-		let screen = CarletonMapScreen(app: app)
-			.navigate()
-			.checkSheetPresented()
-		let collapsedTop = screen.searchFieldTop()
-
-		screen
-			.focusSearch()
-			.capture("Carleton map sheet raised by search focus")
-			.verifySheetMoved(from: collapsedTop, direction: "up", "Focusing search should raise the sheet to large")
-			.cancelSearch()
-			.capture("Carleton map sheet after cancelling search")
-			.verifySheetReturned(to: collapsedTop)
-	}
-
 	/// The bar reports each keystroke to JavaScript and takes the echo back as
 	/// a prop, which is a round trip with a race in it. Typing a whole name is
 	/// what shows whether a character was lost on the way: the field is read
@@ -55,39 +18,18 @@ class ModuleCarletonMapTests: UITestCase {
 			.verifyFilteredOut(TestIdentifiers.CarletonMap.anotherBuilding)
 	}
 
-	func testTappingARowFromTheFullSheetDropsItToMedium() throws {
-		let screen = CarletonMapScreen(app: app)
-			.navigate()
-			.checkSheetPresented()
-			.expandSheet()
-		let largeTop = screen.searchFieldTop()
-
-		screen
-			.selectBuilding(named: TestIdentifiers.CarletonMap.aBuilding)
-			.capture("Carleton map card after a row tap from large")
-			.verifyCardDroppedFrom(largeTop)
-			.verifyCardAtMedium()
-	}
-
-	func testTappingAFootprintWhileCollapsedRaisesTheCardToMedium() throws {
-		CarletonMapScreen(app: app)
-			.navigate()
-			.checkSheetPresented()
-			.verifyCollapsed()
-			.tapAFootprint()
-			.capture("Carleton map card after a footprint tap from collapsed")
-			.verifyCardAtMedium()
-	}
-
-	/// The sheet opens on its smallest stop, at the foot of the screen, holding
-	/// the whole search field and nothing else.
+	/// The collapsed sheet, and the two things that raise it.
 	///
-	/// The margins are read in screen space rather than taken from the layout
-	/// numbers that went in: UIKit shrinks a presented sheet by a scale that
-	/// depends on the detent, so a symmetric inset going in is not necessarily a
-	/// symmetric one coming out.
-	func testTheSheetOpensCollapsedAroundItsField() throws {
-		CarletonMapScreen(app: app)
+	/// The sheet opens on its smallest stop, at the foot of the screen, holding
+	/// the whole search field and nothing else. The margins are read in screen
+	/// space rather than taken from the layout numbers that went in: UIKit
+	/// shrinks a presented sheet by a scale that depends on the detent, so a
+	/// symmetric inset going in is not necessarily a symmetric one coming out.
+	///
+	/// Focusing search raises the sheet and cancelling puts it back, which
+	/// leaves it collapsed for the footprint tap that ends the test.
+	func testTheCollapsedSheetRisesForSearchAndForAFootprint() throws {
+		let screen = CarletonMapScreen(app: app)
 			.navigate()
 			.checkSheetPresented()
 			.capture("Carleton map sheet collapsed")
@@ -95,5 +37,38 @@ class ModuleCarletonMapTests: UITestCase {
 			.verifyFieldWithinSheet()
 			.verifyCollapsedMarginsSymmetric()
 			.verifyAttributionClearOfSheet()
+		let collapsedTop = screen.searchFieldTop()
+
+		screen
+			.focusSearch()
+			.capture("Carleton map sheet raised by search focus")
+			.verifySheetMoved(from: collapsedTop, direction: "up", "Focusing search should raise the sheet to large")
+			.cancelSearch()
+			.capture("Carleton map sheet after cancelling search")
+			.verifySheetReturned(to: collapsedTop)
+			.verifyCollapsed()
+			.tapAFootprint()
+			.capture("Carleton map card after a footprint tap from collapsed")
+			.verifyCardAtMedium()
+	}
+
+	/// The full sheet, and a row tapped from it.
+	///
+	/// The module pins the field at 44pt with a constraint UIKit is free to
+	/// overrule silently, so the height is checked before anything else moves
+	/// the sheet.
+	func testTheFullSheetDropsToMediumForARow() throws {
+		let screen = CarletonMapScreen(app: app)
+			.navigate()
+			.checkSheetPresented()
+			.expandSheet()
+			.verifySearchFieldHeight()
+		let largeTop = screen.searchFieldTop()
+
+		screen
+			.selectBuilding(named: TestIdentifiers.CarletonMap.aBuilding)
+			.capture("Carleton map card after a row tap from large")
+			.verifyCardDroppedFrom(largeTop)
+			.verifyCardAtMedium()
 	}
 }

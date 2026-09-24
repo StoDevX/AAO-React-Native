@@ -175,18 +175,6 @@ class UITestCase: XCTestCase {
 		}
 	}
 
-	/// Terminate and relaunch the app with `--reset-state` to clear persisted
-	/// data (AsyncStorage, UserDefaults).
-	func relaunchWithFreshState() {
-		app.terminate()
-		app.launchArguments = [
-			TestIdentifiers.LaunchArguments.uiTesting,
-			TestIdentifiers.LaunchArguments.resetState,
-		]
-		appendJsLocationIfProvided()
-		app.launch()
-	}
-
 	/// Terminate and relaunch the app without `--reset-state`, so what the last
 	/// launch persisted survives, adding `arguments` to the launch.
 	func relaunchKeepingState(adding arguments: [String]) {

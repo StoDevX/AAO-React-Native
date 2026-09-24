@@ -1,29 +1,32 @@
 import XCTest
 
 class ModuleTransportationTests: UITestCase {
-	/// Every line gets a widget, so the screen answers "what is running" without
-	/// a tap -- except one the feed has retired, which keeps its entry for
-	/// released app versions to read and earns no widget here. Both halves ride
-	/// one cold launch; the absence sweep goes last because it scrolls the list
-	/// to the bottom.
-	func testEveryLineHasAWidget() throws {
-		TransportationScreen(app: app)
-			.navigate()
-			.verifyLineWidgetShown(TestIdentifiers.Transportation.aLine)
-			.verifyLineWidgetShown("Red Line")
-			.capture("Transportation - widgets")
-			.verifyLineWidgetAbsent(TestIdentifiers.Transportation.aHiddenLine)
-	}
-
+	/// The landing screen, top to bottom, on one cold launch.
+	///
 	/// The strip is a horizontal scroll view inside a list row, which is the
 	/// arrangement most likely to have the list steal the gesture.
-	func testTheStopStripScrollsSideways() throws {
+	///
+	/// Every line gets a widget, so the screen answers "what is running" without
+	/// a tap -- except one the feed has retired, which keeps its entry for
+	/// released app versions to read and earns no widget here. The absence
+	/// sweep scrolls the list to the bottom, so it comes after everything that
+	/// reads the top.
+	///
+	/// Other Modes has no tab of its own -- it is a set of sections below the
+	/// bus widgets, on the same screen.
+	func testTheLandingScreenFromStripToOtherModes() throws {
 		TransportationScreen(app: app)
 			.navigate()
 			.verifyStripHasNotReached(TestIdentifiers.Transportation.aStopFartherAlongTheRoute)
 			.swipeStripLeft()
 			.verifyStripAdvancedTo(TestIdentifiers.Transportation.aStopFartherAlongTheRoute)
 			.capture("Transportation - strip scrolled")
+			.verifyLineWidgetShown(TestIdentifiers.Transportation.aLine)
+			.verifyLineWidgetShown("Red Line")
+			.capture("Transportation - widgets")
+			.verifyLineWidgetAbsent(TestIdentifiers.Transportation.aHiddenLine)
+			.scrollToOtherModes()
+			.capture("Transportation - Other Modes")
 	}
 
 	/// A single stop's schedule draws the same progress bar down its departure
@@ -60,14 +63,5 @@ class ModuleTransportationTests: UITestCase {
 			.pickDay(TestIdentifiers.Transportation.aDay)
 			.capture("Transportation - Sunday schedule")
 			.verifyLineNotRunning(on: TestIdentifiers.Transportation.aDay)
-	}
-
-	/// Other Modes has no tab of its own -- it is a set of sections below the
-	/// bus widgets, on the same screen.
-	func testOtherModesSitsBelowTheWidgets() throws {
-		TransportationScreen(app: app)
-			.navigate()
-			.scrollToOtherModes()
-			.capture("Transportation - Other Modes")
 	}
 }

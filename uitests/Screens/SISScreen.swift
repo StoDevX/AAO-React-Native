@@ -9,15 +9,6 @@ struct SISScreen: Screen {
 	}
 
 	@discardableResult
-	func checkAcknowledgement() -> Self {
-		let iAgree = app.buttons[TestIdentifiers.SIS.iAgree].firstMatch
-		XCTAssertTrue(
-			iAgree.waitForExistence(timeout: 30),
-			"I Agree acknowledgement should be visible")
-		return self
-	}
-
-	@discardableResult
 	func acceptAcknowledgement() -> Self {
 		let iAgree = app.buttons[TestIdentifiers.SIS.iAgree].firstMatch
 		XCTAssertTrue(
