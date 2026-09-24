@@ -44,9 +44,8 @@ test('the live fixture expands its weekly recurrences into a substantial number 
 	// The fixture is a trimmed capture of KSTO's real show schedule: 6 events,
 	// each FREQ=WEEKLY with no UNTIL, dated back to 2019. Expanded across the
 	// 90-day window from NOW, that's 77 occurrences not yet finished before
-	// today, in every time zone from UTC-12 to UTC+14.
-	// Either way it is nowhere near the old "0 events" behaviour this test
-	// exists to catch a regression back to.
+	// today, in every time zone from UTC-12 to UTC+14. The loose bound below
+	// only has to tell that expansion apart from an empty one.
 	const events = parseIcalEvents(fixture, NOW)
 
 	expect(events.length).toBeGreaterThanOrEqual(70)
@@ -79,8 +78,8 @@ test('the live fixture expands its weekly recurrences into a substantial number 
 
 describe('an event ending later today', () => {
 	// NOW is 12:00Z. Each event below ends ten minutes after it, which is
-	// before the end of NOW's local day in every time zone -- the case a
-	// filter on the end of today, rather than the start of it, dropped.
+	// before the end of NOW's local day in every time zone, so a filter on
+	// the end of today would drop it.
 	test('is kept when it is a single event already in progress', () => {
 		const events = parseIcalEvents(
 			calendar(`BEGIN:VEVENT
@@ -809,14 +808,13 @@ END:VEVENT`),
 	// The 2160 hours ahead of NOW, plus the hours of NOW's local day already
 	// run -- up to 24 more, depending on the runner's time zone (hourly
 	// granularity means the today/window-edge boundaries this file's other
-	// tests keep clear of are unavoidable here). Well above the old 2000 cap
-	// either way, and nowhere near the new cap (4320), so this is squarely
-	// "the whole window", not "still truncated, just less obviously".
+	// tests keep clear of are unavoidable here). The cap of 4320 is far above
+	// that, so this is the whole window, not a truncated one.
 	expect(events.length).toBeGreaterThanOrEqual(2150)
 	expect(events.length).toBeLessThanOrEqual(2185)
 
-	// The window runs through ~2026-11-13; the old cap's last occurrence was
-	// 2026-11-07. This one should reach within a day of the real edge.
+	// The window runs through ~2026-11-13, so the last occurrence should
+	// start within a couple of days of it.
 	const lastStart = new Date(events[events.length - 1].startTime)
 	expect(lastStart.getTime()).toBeGreaterThan(new Date('2026-11-11T00:00:00Z').getTime())
 })

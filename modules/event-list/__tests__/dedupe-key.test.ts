@@ -63,9 +63,8 @@ test('an accented title matches its unaccented twin', () => {
 	expect(dedupeKey(event('Café Concert'))).toBe(dedupeKey(event('Cafe Concert')))
 })
 
-// A fold to ASCII letters and digits reduced a title in any other script to
-// nothing, so every such event at one start time shared a key and all but
-// one were dropped from the list.
+// Folded to nothing, every title in another script at one start time would
+// share a key, and all but one of those events would drop from the list.
 test('titles in other scripts keep their letters', () => {
 	let titles = ['中秋节晚会', '추석 모임', 'Диско', 'إفطار رمضان']
 	let keys = titles.map((title) => dedupeKey(event(title)))
