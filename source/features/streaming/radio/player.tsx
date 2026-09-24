@@ -49,7 +49,8 @@ function playerJs(selector: string): string {
 			/*******
 			 *******/
 
-			document.addEventListener('message', function (event) {
+			/* iOS delivers the app's messages to window; Android to document. */
+			function receive(event) {
 				switch (event.data) {
 					case 'play':
 						player.muted = false;
@@ -60,23 +61,34 @@ function playerJs(selector: string): string {
 						player.pause();
 						break;
 				}
-			});
+			}
+
+			window.addEventListener('message', receive);
+			document.addEventListener('message', receive);
 
 			/*******
 			 *******/
 
 			function message(data) {
-				window.postMessage(JSON.stringify(data));
+				window.ReactNativeWebView.postMessage(JSON.stringify(data));
 			}
 
 			function send(event) {
 				message({type: event.type});
 			}
 
+			/* Called with the <audio> element's error event, or with the
+			 * rejection from play(). */
 			function error(event) {
+				var mediaError = player.error;
 				message({
-					type: event.type,
-					error: 'error',
+					type: 'error',
+					error: {
+						code: mediaError ? mediaError.code : 0,
+						message: mediaError
+							? mediaError.message || 'The stream could not be played.'
+							: String((event && event.message) || event),
+					},
 				});
 			}
 
@@ -152,7 +164,14 @@ export function StreamPlayer(props: Props): React.ReactNode {
 
 	let handleMessage = useCallback(
 		(event: WebViewMessageEvent): unknown => {
-			let data = JSON.parse(event.nativeEvent.data) as HtmlAudioEvent
+			// An embedded page can post messages of its own, which need not be
+			// ours or even JSON.
+			let data: HtmlAudioEvent
+			try {
+				data = JSON.parse(event.nativeEvent.data) as HtmlAudioEvent
+			} catch {
+				return
+			}
 
 			// console.log('<audio> dispatched event', data.type)
 
