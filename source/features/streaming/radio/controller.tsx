@@ -1,14 +1,6 @@
 import * as React from 'react'
 import {useCallback, useState} from 'react'
-import {
-	Image,
-	ImageResolvedAssetSource,
-	ScrollView,
-	StyleSheet,
-	Text,
-	View,
-	useWindowDimensions,
-} from 'react-native'
+import {Image, ScrollView, StyleSheet, Text, View, useWindowDimensions} from 'react-native'
 import {SafeAreaView} from 'react-native-safe-area-context'
 import noop from 'lodash/noop'
 import * as c from '@frogpond/colors'
@@ -16,9 +8,10 @@ import {callPhone} from '../../../components/call-phone'
 import {Row} from '@frogpond/layout'
 import {StreamPlayer} from './player'
 import type {HtmlAudioError, PlayState} from './types'
-import {theming} from './theme'
+import {theming, type RadioLogo} from './theme'
 import {ActionButton, CallButton, ShowCalendarButton} from './buttons'
 import {openUrl} from '@frogpond/open-url'
+import {Touchable} from '@frogpond/touchable'
 import {useRouter} from 'expo-router'
 
 // If you want to fix the inline player, switch to `true`
@@ -63,7 +56,8 @@ function PlayButton(props: PlayButtonProps): React.ReactNode {
 }
 
 type Props = {
-	image: ImageResolvedAssetSource
+	/** The station's logos. With more than one, tapping the logo shows the next. */
+	logos: [RadioLogo, ...RadioLogo[]]
 	playerUrl: string
 	stationNumber: string
 	title: string
@@ -77,8 +71,30 @@ type Props = {
 }
 
 export function RadioControllerView(props: Props): React.ReactNode {
+	let {logos, ...screenProps} = props
+	// Always the first logo on arrival; a tap's choice lasts only while the
+	// screen is open.
+	let [logoIndex, setLogoIndex] = useState(0)
+	let logo = logos[logoIndex]
+	let showNextLogo =
+		logos.length > 1 ? () => setLogoIndex((index) => (index + 1) % logos.length) : undefined
+
+	return (
+		<theming.ThemeProvider theme={logo.theme}>
+			<RadioScreen {...screenProps} logo={logo} onPressLogo={showNextLogo} />
+		</theming.ThemeProvider>
+	)
+}
+
+type RadioScreenProps = Omit<Props, 'logos'> & {
+	logo: RadioLogo
+	onPressLogo?: () => void
+}
+
+function RadioScreen(props: RadioScreenProps): React.ReactNode {
 	const theme = theming.useTheme()
-	const {source, title, stationName, image, scheduleHref, stationNumber, playerUrl} = props
+	const {source, title, stationName, logo, onPressLogo, scheduleHref, stationNumber, playerUrl} =
+		props
 
 	let router = useRouter()
 
@@ -187,14 +203,27 @@ export function RadioControllerView(props: Props): React.ReactNode {
 	let root = [styles.root, sideways && landscape.root]
 	let logoBorderColor = {borderColor: theme.imageBorderColor}
 	let logoBg = {backgroundColor: theme.imageBackgroundColor}
-	let logo = [styles.logoBorder, logoSize, logoBorderColor, logoBg]
+	let logoStyle = [styles.logoBorder, logoSize, logoBorderColor, logoBg]
+	let logoImage = <Image resizeMode="contain" source={logo.image} style={logoStyle} />
 	let logoWrapper = [styles.logoWrapper, sideways && landscape.logoWrapper]
 
 	return (
 		<SafeAreaView edges={['left', 'right']} style={styles.screen}>
 			<ScrollView contentContainerStyle={root} contentInsetAdjustmentBehavior="automatic">
 				<View style={logoWrapper}>
-					<Image resizeMode="contain" source={image} style={logo} />
+					{onPressLogo ? (
+						<Touchable
+							accessibilityHint="Shows another logo."
+							accessibilityLabel={`${stationName} logo, ${logo.name}`}
+							accessibilityRole="button"
+							highlight={false}
+							onPress={onPressLogo}
+						>
+							{logoImage}
+						</Touchable>
+					) : (
+						logoImage
+					)}
 				</View>
 
 				<View style={styles.container}>

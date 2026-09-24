@@ -80,4 +80,33 @@ struct StreamingMediaScreen: Screen {
 		XCTAssertGreaterThanOrEqual(element.frame.height, 44, "\(name) should be at least 44pt tall")
 		XCTAssertGreaterThanOrEqual(element.frame.width, 44, "\(name) should be at least 44pt wide")
 	}
+
+	/// Tap the logo through every one of `labels`, capturing each, and check
+	/// the tap after the last one comes back to the first.
+	@discardableResult
+	func checkLogoCycles(_ labels: [String]) -> Self {
+		for (index, label) in labels.enumerated() {
+			XCTContext.runActivity(named: label) { _ in
+				let logo = app.buttonLabelled(label)
+				XCTAssertTrue(
+					logo.waitForExistence(timeout: 10),
+					"Logo \(index + 1) should be a button labelled \"\(label)\"")
+				capture(label)
+				logo.tap()
+			}
+		}
+
+		XCTAssertTrue(
+			app.buttonLabelled(labels[0]).waitForExistence(timeout: 10),
+			"Tapping the last logo should come back to \"\(labels[0])\"")
+		return self
+	}
+
+	/// Check a station with one logo leaves it as a picture, not a button.
+	@discardableResult
+	func checkLogoIsNotAButton(_ labelPrefix: String) -> Self {
+		let logoButtons = app.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", labelPrefix))
+		XCTAssertEqual(logoButtons.count, 0, "No button should be labelled \"\(labelPrefix)…\"")
+		return self
+	}
 }

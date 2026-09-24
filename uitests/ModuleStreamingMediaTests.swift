@@ -12,5 +12,16 @@ class ModuleStreamingMediaTests: UITestCase {
 			)
 			.checkStationButtons(TestIdentifiers.StreamingMedia.krlxButtons)
 			.checkStationLink(TestIdentifiers.StreamingMedia.krlxWebsiteLink)
+			.checkLogoIsNotAButton(TestIdentifiers.StreamingMedia.krlxLogoPrefix)
+	}
+
+	func testKstoLogoCyclesOnTap() throws {
+		StreamingMediaScreen(app: app)
+			.navigate()
+			.openStation(
+				TestIdentifiers.StreamingMedia.kstoTab,
+				expecting: TestIdentifiers.StreamingMedia.kstoLogos[0]
+			)
+			.checkLogoCycles(TestIdentifiers.StreamingMedia.kstoLogos)
 	}
 }
