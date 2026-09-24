@@ -6,5 +6,10 @@ class ModuleStreamingMediaTests: UITestCase {
 			.navigate()
 			.checkStreamListExists()
 			.checkTabs()
+			.openStation(
+				TestIdentifiers.StreamingMedia.krlxTab,
+				expecting: TestIdentifiers.StreamingMedia.krlxButtons[0]
+			)
+			.checkStationButtons(TestIdentifiers.StreamingMedia.krlxButtons)
 	}
 }

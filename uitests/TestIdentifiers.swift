@@ -525,6 +525,14 @@ struct TestIdentifiers {
 
 	enum StreamingMedia {
 		static let tabs = ["Webcams", "KSTO", "KRLX"]
+		static let krlxTab = "KRLX"
+		/// The station screen's buttons, as VoiceOver names them. Two of them
+		/// are icons alone, so these labels are all a listener has to go on.
+		static let krlxButtons = [
+			"Open 88.1 KRLX-FM website",
+			"Call 88.1 KRLX-FM",
+			"88.1 KRLX-FM schedule",
+		]
 	}
 
 	// MARK: - Settings

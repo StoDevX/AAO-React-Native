@@ -29,13 +29,21 @@ type PlayButtonProps = {
 	onPlay: () => unknown
 	onPause: () => unknown
 	onLink: () => unknown
+	stationName: string
 }
 
 function PlayButton(props: PlayButtonProps): React.ReactNode {
-	const {state, onPlay, onPause, onLink} = props
+	const {state, onPlay, onPause, onLink, stationName} = props
 
 	if (!ALLOW_INLINE_PLAYER) {
-		return <ActionButton icon="globe" onPress={onLink} text="Open" />
+		return (
+			<ActionButton
+				accessibilityLabel={`Open ${stationName} website`}
+				icon="globe"
+				onPress={onLink}
+				text="Open"
+			/>
+		)
 	}
 
 	switch (state) {
@@ -46,7 +54,7 @@ function PlayButton(props: PlayButtonProps): React.ReactNode {
 			return <ActionButton icon="ellipsis" onPress={onPause} text="Starting" />
 
 		case 'playing':
-			return <ActionButton icon="pause" onPress={onPlay} text="Pause" />
+			return <ActionButton icon="pause" onPress={onPause} text="Pause" />
 
 		default:
 			return <ActionButton icon="ladybug" onPress={noop} text="Error" />
@@ -135,11 +143,17 @@ export function RadioControllerView(props: Props): React.ReactNode {
 
 	let controlsBlock = (
 		<Row>
-			<PlayButton onLink={openStreamWebsite} onPause={pause} onPlay={play} state={playState} />
+			<PlayButton
+				onLink={openStreamWebsite}
+				onPause={pause}
+				onPlay={play}
+				state={playState}
+				stationName={stationName}
+			/>
 			<View style={styles.spacer} />
-			<CallButton onPress={callStation} />
+			<CallButton onPress={callStation} stationName={stationName} />
 			<View style={styles.spacer} />
-			<ShowCalendarButton onPress={openSchedule} />
+			<ShowCalendarButton onPress={openSchedule} stationName={stationName} />
 		</Row>
 	)
 
@@ -247,7 +261,7 @@ const styles = StyleSheet.create({
 		display: 'none',
 	},
 	spacer: {
-		width: 5,
+		width: 8,
 	},
 })
 
