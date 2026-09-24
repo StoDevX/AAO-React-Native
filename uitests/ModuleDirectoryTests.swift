@@ -10,40 +10,55 @@ import XCTest
 // driven at a speed a runner cannot misread.
 class ModuleDirectoryTests: UITestCase {
 
+	/// The landing grid and a contact's sheet, from opening to swiping away.
+	///
 	/// Every contact in data/contact-info/ gets a tile. The count is the point:
 	/// a grid that silently drops the last row still looks right in isolation.
-	func testShowsEveryContactBeforeASearch() throws {
+	/// Contact cards are square so that three rows of them leave the
+	/// department list in view below the grid.
+	///
+	/// A contact is read and dismissed, so it presents as a sheet rather than
+	/// a push -- and the grid staying in the hierarchy behind it is the tell.
+	/// A push would replace the grid, so this fails outright on one. Reaching
+	/// the detail at all is covered too, by the action button: it appears only
+	/// on the detail, the grid's tile merely navigating, so finding it is proof
+	/// the tap went somewhere.
+	///
+	/// The contact sheet carries no close button, and a formSheet route has no
+	/// back button either -- the drag is the only way out. If it does not
+	/// dismiss, the reader is stuck on a contact with no way back to the grid.
+	///
+	/// Tapping a tile behind the sheet comes last, on a sheet opened afresh,
+	/// because that tap is allowed to dismiss the sheet.
+	/// `sheetLargestUndimmedDetentIndex: 'none'` is what makes it safe: UIKit
+	/// dims and blocks touches to the grid behind the sheet at every detent,
+	/// not merely below the largest one. Without it, a tap on another
+	/// contact's tile reaches the grid and stacks a second sheet on the first.
+	func testTheContactGridAndItsSheet() throws {
 		DirectoryScreen(app: app)
 			.navigate()
 			.verifyDirectoryTitle()
 			.verifyContactsHeading()
 			.verifyContactTiles(count: 11)
 			.capture("Directory contact grid")
-	}
-
-	/// Contact cards are square so that three rows of them leave the
-	/// department list in view below the grid.
-	func testContactTilesAreSquare() throws {
-		DirectoryScreen(app: app)
-			.navigate()
-			.capture("Directory contact grid with square tiles")
 			.verifyContactTileIsSquare(TestIdentifiers.Directory.aContact)
-	}
-
-	/// A contact is read and dismissed, so it presents as a sheet rather than
-	/// a push -- and the grid staying in the hierarchy behind it is the tell.
-	/// A push would replace the grid, so this fails outright on one.
-	///
-	/// Reaching the detail at all is covered here too, by the action button:
-	/// it appears only on the detail, the grid's tile merely navigating, so
-	/// finding it is proof the tap went somewhere.
-	func testTappingAContactPresentsASheet() throws {
-		DirectoryScreen(app: app)
-			.navigate()
 			.openContact(TestIdentifiers.Directory.aContact)
 			.verifyDetailAction(TestIdentifiers.Directory.aContactAction)
 			.verifyContactGridStillBehind()
 			.capture("Contact detail as a sheet")
+			.dismissContactSheet(
+				titled: TestIdentifiers.Directory.aContact,
+				waitingFor: TestIdentifiers.Directory.aContactAction)
+			.capture("Directory after dismissing a contact sheet")
+			.verifyContactsHeading()
+			.verifyContactTiles(count: 11)
+			.openContact(TestIdentifiers.Directory.aContact)
+			.verifyDetailAction(TestIdentifiers.Directory.aContactAction)
+			.attemptToTapContactBehindSheet(
+				TestIdentifiers.Directory.aSecondContact,
+				whileShowing: TestIdentifiers.Directory.aContact)
+			.capture("Directory after tapping a tile behind the contact sheet")
+			.verifyNoSecondContactSheet(TestIdentifiers.Directory.aSecondContactAction)
 	}
 
 	/// A contact carries either a phone number or a link, and its one button
@@ -56,38 +71,6 @@ class ModuleDirectoryTests: UITestCase {
 			.verifyDetailAction(TestIdentifiers.Directory.aLinkContactAction)
 			.followDetailLink(TestIdentifiers.Directory.aLinkContactAction)
 			.capture("Contact link opened in the in-app browser")
-	}
-
-	/// The contact sheet carries no close button, and a formSheet route has no
-	/// back button either -- the drag is the only way out. If it does not
-	/// dismiss, the reader is stuck on a contact with no way back to the grid.
-	func testTheContactSheetCanBeSwipedAway() throws {
-		DirectoryScreen(app: app)
-			.navigate()
-			.openContact(TestIdentifiers.Directory.aContact)
-			.verifyDetailAction(TestIdentifiers.Directory.aContactAction)
-			.dismissContactSheet(
-				titled: TestIdentifiers.Directory.aContact,
-				waitingFor: TestIdentifiers.Directory.aContactAction)
-			.capture("Directory after dismissing a contact sheet")
-			.verifyContactsHeading()
-			.verifyContactTiles(count: 11)
-	}
-
-	/// `sheetLargestUndimmedDetentIndex: 'none'` is what makes this true: UIKit
-	/// dims and blocks touches to the grid behind the sheet at every detent,
-	/// not merely below the largest one. Without it, a tap on another
-	/// contact's tile reaches the grid and stacks a second sheet on the first.
-	func testTappingATileBehindTheSheetDoesNotStackASecondSheet() throws {
-		DirectoryScreen(app: app)
-			.navigate()
-			.openContact(TestIdentifiers.Directory.aContact)
-			.verifyDetailAction(TestIdentifiers.Directory.aContactAction)
-			.attemptToTapContactBehindSheet(
-				TestIdentifiers.Directory.aSecondContact,
-				whileShowing: TestIdentifiers.Directory.aContact)
-			.capture("Directory after tapping a tile behind the contact sheet")
-			.verifyNoSecondContactSheet(TestIdentifiers.Directory.aSecondContactAction)
 	}
 
 	/// At an accessibility Dynamic Type size the label and glyph both grow,
@@ -104,30 +87,26 @@ class ModuleDirectoryTests: UITestCase {
 			.capture("Directory contact grid at an accessibility size")
 	}
 
-	/// A screen opened from a department link is showing that department, and
-	/// the title says so. Cancelling a search the reader never started has to
-	/// leave both alone -- otherwise the list empties while the title goes on
-	/// naming a department, and the only way back is to navigate in again.
-	func testCancellingSearchKeepsTheLinkedDepartment() throws {
-		let department = TestIdentifiers.Directory.fixtureEntryDepartment
-
-		DirectoryScreen(app: app)
-			.navigate()
-			.search(for: "testerson")
-			.openDepartment(
-				of: TestIdentifiers.Directory.fixtureEntry, named: department)
-			.verifyDepartmentHeading(department)
-			.verifyResultsShown()
-			.cancelSearch()
-			.capture("Directory department screen after cancelling search")
-			.verifyDepartmentHeading(department)
-			.verifyResultsShown()
-	}
-
+	/// A screen opened from a department link: what it shows, how its results
+	/// can be viewed, and what cancelling search leaves behind.
+	///
 	/// The title stays "Directory" wherever the screen was opened from, so a
 	/// department has to name itself above its own results -- otherwise nothing
 	/// on screen says whose names these are.
-	func testDepartmentLinkIsNamedAboveTheResults() throws {
+	///
+	/// The toolbar button swaps the results between the gallery and the list,
+	/// both ways. It is tested here rather than after a typed search: the
+	/// toggle shares the bottom toolbar with the search field, and while that
+	/// field is active the toolbar holds only its own Clear and Close buttons.
+	/// A department's results arrive with the field idle, which is the one
+	/// state where the toggle is on screen to tap -- so the toggle goes before
+	/// the cancel.
+	///
+	/// Cancelling a search the reader never started has to leave the
+	/// department and its title alone -- otherwise the list empties while the
+	/// title goes on naming a department, and the only way back is to navigate
+	/// in again.
+	func testALinkedDepartmentNamesItselfTogglesAndSurvivesCancel() throws {
 		let department = TestIdentifiers.Directory.fixtureEntryDepartment
 
 		DirectoryScreen(app: app)
@@ -137,6 +116,16 @@ class ModuleDirectoryTests: UITestCase {
 				of: TestIdentifiers.Directory.fixtureEntry, named: department)
 			.capture("Directory opened from a department link")
 			.verifyDirectoryTitle()
+			.verifyDepartmentHeading(department)
+			.verifyResultsShown()
+			.verifyResultsGalleried()
+			.showAsList()
+			.verifyResultsListed()
+			.capture("Directory search results as a list")
+			.showAsTiles()
+			.verifyResultsGalleried()
+			.cancelSearch()
+			.capture("Directory department screen after cancelling search")
 			.verifyDepartmentHeading(department)
 			.verifyResultsShown()
 	}
@@ -149,29 +138,6 @@ class ModuleDirectoryTests: UITestCase {
 			.search(for: "olaf")
 			.verifyResultsGalleried()
 			.capture("Directory search results as a tile gallery")
-	}
-
-	/// The toolbar button swaps the results between the gallery and the list,
-	/// both ways.
-	///
-	/// Driven from a department link rather than a typed search: the toggle
-	/// shares the bottom toolbar with the search field, and while that field is
-	/// active the toolbar holds only its own Clear and Close buttons. A
-	/// department's results arrive with the field idle, which is the one state
-	/// where the toggle is on screen to tap.
-	func testTheResultsToggleSwitchesTheView() throws {
-		DirectoryScreen(app: app)
-			.navigate()
-			.search(for: "testerson")
-			.openDepartment(
-				of: TestIdentifiers.Directory.fixtureEntry,
-				named: TestIdentifiers.Directory.fixtureEntryDepartment)
-			.verifyResultsGalleried()
-			.showAsList()
-			.verifyResultsListed()
-			.capture("Directory search results as a list")
-			.showAsTiles()
-			.verifyResultsGalleried()
 	}
 
 	/// A directory *entry*, reached by searching -- not an Important Contact
