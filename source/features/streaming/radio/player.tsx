@@ -74,9 +74,11 @@ function playerJs(selector: string): string {
 			}
 
 			/* Called with the <audio> element's error event, or with the
-			 * rejection from play(). */
+			 * rejection from play(). Only the element's own event describes
+			 * player.error; a rejection carries its reason itself, and an older
+			 * MediaError may still be set on the element. */
 			function error(event) {
-				var mediaError = player.error;
+				var mediaError = event && event.type === 'error' ? player.error : null;
 				message({
 					type: 'error',
 					error: {
@@ -161,13 +163,17 @@ export function StreamPlayer(props: Props): React.ReactNode {
 	let handleMessage = useCallback(
 		(event: WebViewMessageEvent): unknown => {
 			// An embedded page can post messages of its own, which need not be
-			// ours or even JSON.
-			let data: HtmlAudioEvent
+			// ours, JSON, or even an object.
+			let parsed: unknown
 			try {
-				data = JSON.parse(event.nativeEvent.data) as HtmlAudioEvent
+				parsed = JSON.parse(event.nativeEvent.data)
 			} catch {
 				return
 			}
+			if (typeof parsed !== 'object' || parsed === null || !('type' in parsed)) {
+				return
+			}
+			let data = parsed as HtmlAudioEvent
 
 			// console.log('<audio> dispatched event', data.type)
 
