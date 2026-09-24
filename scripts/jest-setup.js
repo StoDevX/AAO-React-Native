@@ -26,3 +26,13 @@ jest.mock('expo-localization', () => ({
 jest.mock('@frogpond/launch-arguments', () => ({
 	isUITesting: true,
 }))
+// Settings reads NSUserDefaults through a native module Jest does not have.
+// Every key reads as unset, as on a launch with no extra arguments.
+jest.mock('react-native/Libraries/Settings/NativeSettingsManager', () => ({
+	__esModule: true,
+	default: {
+		getConstants: () => ({settings: {}}),
+		setValues: jest.fn(),
+		deleteValues: jest.fn(),
+	},
+}))

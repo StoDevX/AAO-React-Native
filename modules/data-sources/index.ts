@@ -8,6 +8,7 @@ export {
 	REL_JOBS,
 	REL_NEWS,
 	REL_ORG_CATEGORIES,
+	REL_STUDENT_WORK_AREAS,
 	type Jrd,
 	type ResolvedSource,
 } from './types'

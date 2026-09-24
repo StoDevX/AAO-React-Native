@@ -1,4 +1,4 @@
-import {parseCategories, parseRequisitions} from '../parsers/requisitions'
+import {parseCategories, parseRequisitionIds, parseRequisitions} from '../parsers/requisitions'
 import categories from './fixtures/categories.json'
 import requisitions from './fixtures/requisitions.json'
 
@@ -51,5 +51,16 @@ describe('parseRequisitions', () => {
 		expect(() =>
 			parseRequisitions({items: [{TotalJobsCount: 1, requisitionList: [{Id: '1'}]}]}),
 		).toThrow()
+	})
+})
+
+describe('parseRequisitionIds', () => {
+	test('reads the IDs from an IDs-only search', () => {
+		let body = {items: [{SearchId: 1, requisitionList: [{Id: '3040'}, {Id: '2953'}]}]}
+		expect(parseRequisitionIds(body)).toEqual(['3040', '2953'])
+	})
+
+	test('reads no IDs from a search that matched nothing', () => {
+		expect(parseRequisitionIds({items: [{SearchId: 1}]})).toEqual([])
 	})
 })
