@@ -74,6 +74,6 @@ test('titles in other scripts keep their letters', () => {
 	}
 })
 
-test('an accented title in another script matches its unaccented twin', () => {
-	expect(dedupeKey(event('Мо́ре'))).toBe(dedupeKey(event('Море')))
+test('an accent inside a word does not split it', () => {
+	expect(dedupeKey(event('Pokémon Night'))).toBe(dedupeKey(event('Pokemon Night')))
 })

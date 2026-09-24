@@ -229,7 +229,7 @@ describe('eventsByDay', () => {
 		expect(buckets.get('2026-08-27')).toEqual([])
 	})
 
-	test('keeps an instant at midnight on its own day', () => {
+	test('keeps a deadline at 12:00 AM on its own day', () => {
 		let buckets = eventsByDay([eventInZone('2026-08-25T00:00:00')], week())
 		expect(buckets.get('2026-08-25')).toHaveLength(1)
 		expect(buckets.get('2026-08-24')).toEqual([])
