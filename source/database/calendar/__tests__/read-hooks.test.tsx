@@ -5,6 +5,7 @@ import {QueryClient, QueryClientProvider} from '@tanstack/react-query'
 
 import type {SqlRunner} from '../../sql'
 import {useEvent, useNeighbours} from '../read'
+import {bumpCalendarRevision} from '../revision'
 
 // `client.ts` reaches `expo-sqlite`, a native module Jest cannot load. The
 // runner stands in for the database so a test can make a read throw.
@@ -28,6 +29,23 @@ afterEach(() => {
 })
 
 describe('useEvent', () => {
+	test('an event with no row reads as missing, not as a failed read', async () => {
+		// A refresh can rekey or delete the event an open detail screen names.
+		mockAll.mockReturnValue([])
+
+		let client = new QueryClient({defaultOptions: {queries: {retry: false}}})
+		trackedQueryClients.push(client)
+		let wrapper = ({children}: {children: React.ReactNode}) => (
+			<QueryClientProvider client={client}>{children}</QueryClientProvider>
+		)
+
+		let {result} = await renderHook(() => useEvent('stolaf', 'gone', ['stolaf']), {wrapper})
+
+		await waitFor(() => expect(result.current.isPending).toBe(false))
+		expect(result.current.error).toBeNull()
+		expect(result.current.event).toBeUndefined()
+	})
+
 	test('while Try Again waits to retry a failed read, it is pending rather than missing', async () => {
 		mockAll.mockImplementation(() => {
 			throw new Error('disk I/O error')
@@ -97,5 +115,35 @@ describe('useNeighbours', () => {
 		expect(query?.state.fetchStatus).toBe('idle')
 		expect(query?.state.status).toBe('pending')
 		expect(mockAll).not.toHaveBeenCalled()
+	})
+})
+
+describe('after a write', () => {
+	test('the read it replaced does not stay cached', async () => {
+		mockAll.mockReturnValue([])
+		jest.useFakeTimers()
+
+		// The app-wide default keeps an unwatched query for a day, which is
+		// what a read left behind by a revision bump would otherwise get.
+		let client = new QueryClient({defaultOptions: {queries: {retry: false, gcTime: 86_400_000}}})
+		trackedQueryClients.push(client)
+		let wrapper = ({children}: {children: React.ReactNode}) => (
+			<QueryClientProvider client={client}>{children}</QueryClientProvider>
+		)
+
+		let {result, unmount} = await renderHook(() => useEvent('stolaf', 'key', ['stolaf']), {wrapper})
+		await waitFor(() => expect(result.current.isPending).toBe(false))
+
+		await act(() => {
+			bumpCalendarRevision()
+		})
+		await waitFor(() => expect(client.getQueryCache().getAll()).toHaveLength(2))
+
+		await act(async () => {
+			await jest.advanceTimersByTimeAsync(60_000)
+		})
+		expect(client.getQueryCache().getAll()).toHaveLength(1)
+
+		await unmount()
 	})
 })

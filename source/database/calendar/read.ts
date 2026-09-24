@@ -47,6 +47,16 @@ const FORWARD_DAYS = 180
 export const CALENDAR_READ_KEY = 'calendar-db'
 
 /**
+ * How long a read's result stays cached once nothing is watching it.
+ *
+ * Every write bumps the revision in each read's key, which leaves the
+ * previous window's hydrated events with no observer. The app-wide default
+ * would keep each of those for a day; the rows are in SQLite, so rereading
+ * them costs little and there is nothing worth keeping them for.
+ */
+const READ_GC_TIME_MS = 30_000
+
+/**
  * The two-sided window the screens read from: `RETENTION_DAYS` back, `FORWARD_DAYS`
  * forward, floored to today's local midnight.
  *
@@ -190,6 +200,7 @@ export function useOccurrences(args: {
 						return hydrate(rows, sponsors, now().toDate())
 					}),
 		placeholderData: keepPreviousData,
+		gcTime: READ_GC_TIME_MS,
 	})
 
 	return {events: result.data ?? [], isPending: result.isPending, failed: result.isError}
@@ -217,6 +228,7 @@ export function useFacets(args: {
 				getRunner().all<CalendarFilterOption>(facetsQuery({axis, window, sourceIds})),
 			),
 		placeholderData: keepPreviousData,
+		gcTime: READ_GC_TIME_MS,
 	})
 
 	return result.data ?? []
@@ -257,13 +269,17 @@ export function useEvent(
 					[sourceId, ...sourceIds],
 				)
 				let [entry] = hydrate(rows, sponsors, now().toDate())
-				return entry?.event
+				// `null`, not `undefined`: React Query fails a read that resolves to
+				// `undefined`, and an event a refresh rekeyed or deleted is missing,
+				// not an error.
+				return entry?.event ?? null
 			}),
 		placeholderData: keepPreviousData,
+		gcTime: READ_GC_TIME_MS,
 	})
 
 	return {
-		event: result.data,
+		event: result.data ?? undefined,
 		isPending: result.isPending,
 		error: result.error,
 		refetch: () => void result.refetch(),
