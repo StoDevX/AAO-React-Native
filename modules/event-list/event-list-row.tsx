@@ -1,5 +1,6 @@
 import * as React from 'react'
 import type {ColorValue} from 'react-native'
+import type {Moment} from 'moment-timezone'
 import {Button, HStack, Image, Spacer, Text, VStack} from '@expo/ui/swift-ui'
 import {
 	accessibilityIdentifier,
@@ -68,6 +69,11 @@ type Props = {
 	 * The accent bar's colour -- the calendar this event came from.
 	 */
 	color: ColorValue
+	/**
+	 * The day this row sits under, in Day view. An event that began on an
+	 * earlier day shows its start date as well as its time.
+	 */
+	shownOn?: Moment
 }
 
 /**
@@ -78,8 +84,11 @@ type Props = {
  * a line is left empty rather than showing a nonsense time, which also hands
  * that line's width back to the title or the location.
  */
-function trailingText(event: EventType): {first: string; second: string; firstIsTime: boolean} {
-	let {start, end, allDay} = listTimeLines(event)
+function trailingText(
+	event: EventType,
+	shownOn?: Moment,
+): {first: string; second: string; firstIsTime: boolean} {
+	let {start, end, allDay} = listTimeLines(event, undefined, shownOn)
 
 	if (allDay) {
 		return {first: 'all-day', second: '', firstIsTime: false}
@@ -139,10 +148,16 @@ function RowLine({
  * (when present) a location line under it, and the start/end times trailing,
  * as Calendar.app's list has them.
  */
-export function EventListRow({event, onPress, isLastInSection, color}: Props): React.ReactNode {
+export function EventListRow({
+	event,
+	onPress,
+	isLastInSection,
+	color,
+	shownOn,
+}: Props): React.ReactNode {
 	let title = event.title
 	let subtitle = event[event.config.subtitle]?.trim()
-	let {first, second, firstIsTime} = trailingText(event)
+	let {first, second, firstIsTime} = trailingText(event, shownOn)
 
 	return (
 		<Button

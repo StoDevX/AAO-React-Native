@@ -60,14 +60,25 @@ export function formatSectionHeader(value: Moment, locale?: string): string {
  * it. Unlike `detailTimeLines`, there is no prefix -- Calendar.app's list
  * puts the start above the end with no words between them -- and an all-day
  * event carries no text at all, since the row shows `all-day` in its place.
+ *
+ * `shownOn` is the day the row sits under in Day view. On any day but the
+ * event's first, the start carries its date as well as its time, so a play
+ * that opened Saturday does not read as starting on Monday.
  */
-export function listTimeLines(event: EventType, locale?: string): EventDetailTime {
+export function listTimeLines(
+	event: EventType,
+	locale?: string,
+	shownOn?: Moment,
+): EventDetailTime {
 	if (event.isAllDay) {
 		return {start: '', end: '', allDay: true}
 	}
 
 	let start, end
-	if (event.isOngoing) {
+	if (shownOn && !shownOn.isSame(event.startTime, 'day')) {
+		start = `${formatDate(event.startTime, 'short', locale)}, ${formatTime(event.startTime, locale)}`
+		end = `${formatDate(event.endTime, 'short', locale)}, ${formatTime(event.endTime, locale)}`
+	} else if (event.isOngoing) {
 		start = formatDate(event.startTime, 'short', locale)
 		end = formatDate(event.endTime, 'short', locale)
 	} else if (event.isMultiDay) {
