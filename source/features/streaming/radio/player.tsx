@@ -49,8 +49,7 @@ function playerJs(selector: string): string {
 			/*******
 			 *******/
 
-			/* iOS delivers the app's messages to window; Android to document. */
-			function receive(event) {
+			window.addEventListener('message', function (event) {
 				switch (event.data) {
 					case 'play':
 						player.muted = false;
@@ -61,10 +60,7 @@ function playerJs(selector: string): string {
 						player.pause();
 						break;
 				}
-			}
-
-			window.addEventListener('message', receive);
-			document.addEventListener('message', receive);
+			});
 
 			/*******
 			 *******/
