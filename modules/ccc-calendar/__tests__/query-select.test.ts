@@ -1,4 +1,5 @@
 import {describe, expect, jest, test} from '@jest/globals'
+import {QueryClient} from '@tanstack/react-query'
 import moment from 'moment-timezone'
 import {format as formatDate} from 'date-fns'
 
@@ -126,6 +127,26 @@ describe('namedCalendarOptions', () => {
 			uitestFixtures,
 			'the-retention' as never,
 		)
+	})
+
+	test('does not refetch a calendar within the hour, just because a screen asked again', async () => {
+		jest.useFakeTimers()
+		try {
+			// The app's client keeps a query for a day; React Query's default of
+			// five minutes would drop it before the hour was up.
+			let client = new QueryClient({defaultOptions: {queries: {gcTime: 24 * 60 * 60 * 1000}}})
+			await client.query(namedCalendarOptions('uitest'))
+			jest.advanceTimersByTime(59 * 60 * 1000)
+			await client.query(namedCalendarOptions('uitest'))
+			expect(writeSource).toHaveBeenCalledTimes(1)
+
+			jest.advanceTimersByTime(2 * 60 * 1000)
+			await client.query(namedCalendarOptions('uitest'))
+			expect(writeSource).toHaveBeenCalledTimes(2)
+			client.clear()
+		} finally {
+			jest.useRealTimers()
+		}
 	})
 
 	test('bumps the calendar revision after a successful write', async () => {

@@ -95,6 +95,9 @@ export function sourceRankOf(sourceId: string): number {
 	return index === -1 ? REMOTE_SOURCES.length : index
 }
 
+/** How long a remote calendar's write stays fresh. */
+const CALENDAR_STALE_TIME_MS = 60 * 60 * 1000
+
 /**
  * Fetches a remote calendar and writes it into the database -- the calendar
  * screens read from `source/database/calendar/read.ts`, not from this query's
@@ -107,6 +110,9 @@ export const namedCalendarOptions = (
 ) =>
 	queryOptions({
 		queryKey: keys.named(calendar),
+		// Returning to a calendar screen does not refetch within the hour;
+		// pull-to-refresh still does, since `refetch` ignores it.
+		staleTime: CALENDAR_STALE_TIME_MS,
 		queryFn: async ({queryKey, signal}): Promise<{writtenAt: number; count: number}> => {
 			let wire = await fetchCalendar(queryKey[2], signal)
 
