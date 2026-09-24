@@ -1,6 +1,5 @@
 import type {Moment} from 'moment'
 import moment from 'moment-timezone'
-import findIndex from 'lodash/findIndex'
 import {timezone} from '@frogpond/constants'
 import type {DayPartMenuType, DayPartsCollectionType, ProcessedMealType} from '../types'
 
@@ -58,18 +57,38 @@ function findMenuIndex(dayparts: DayPartMenuType[], now: Moment): number {
 		end: moment.tz(endtime, TIME_FORMATS, true, timezone()).dayOfYear(now.dayOfYear()),
 	}))
 
-	// We grab the first meal still running at `now`. A meal's end is the minute
-	// it stops being served, so where one meal's end is the next one's start,
-	// that minute belongs to the meal coming in rather than the one going out.
-	// The only time this really fails is in the early morning, if it's like 1am
-	// and you're wondering what there was at dinner.
-	let mealIndex = findIndex(times, ({end}) => now.isBefore(end))
+	// A meal's end is the minute it stops being served, so where one meal's end
+	// is the next one's start, that minute belongs to the meal coming in rather
+	// than the one going out. BonApp lists dayparts in no particular order, and
+	// Weitz Center's café opens hours before the lunch it is listed after, so
+	// each rule below reads the times rather than the order.
+	const indices = times.map((_, index) => index)
 
-	// If we didn't find a meal, we must be after the last meal, so we want to
-	// return the last meal of the day.
-	if (mealIndex === -1) {
-		mealIndex = times.length - 1
+	// A meal being served now. Where two are, the one ending first, and of two
+	// that end together, the one that opened later: Weitz's lunch, not the
+	// café that has been open all morning.
+	const open = indices.filter((i) => !now.isBefore(times[i].start) && now.isBefore(times[i].end))
+	if (open.length > 0) {
+		return open.reduce((best, i) => {
+			const {start, end} = times[i]
+			if (end.isBefore(times[best].end)) {
+				return i
+			}
+			if (end.isSame(times[best].end) && start.isAfter(times[best].start)) {
+				return i
+			}
+			return best
+		})
 	}
 
-	return mealIndex
+	// Otherwise the next meal to open.
+	const upcoming = indices.filter((i) => now.isBefore(times[i].start))
+	if (upcoming.length > 0) {
+		return upcoming.reduce((best, i) => (times[i].start.isBefore(times[best].start) ? i : best))
+	}
+
+	// Otherwise we are after the last meal of the day, so we return the last
+	// one. The only time this really fails is in the early morning, if it's
+	// like 1am and you're wondering what there was at dinner.
+	return times.length - 1
 }

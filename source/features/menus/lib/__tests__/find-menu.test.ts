@@ -68,3 +68,42 @@ it('should return the next menu if `now` is between two times', () => {
 
 	expect(findMenu(dayparts, now)).toBe(dayparts[0][1])
 })
+
+// Weitz Center publishes its dayparts in this order: Lunch, then the café
+// that opened hours before it. Both close at three.
+const weitz = () => generateDayparts({start: '11:00', end: '15:00'}, {start: '07:30', end: '15:00'})
+
+it('should return the menu that is open, when a later one closes at the same time', () => {
+	let now = moment.tz('8:00', 'H:mm', true, CENTRAL_TZ)
+	let dayparts = weitz()
+
+	expect(findMenu(dayparts, now)).toBe(dayparts[0][1])
+})
+
+it('should return the menu that opens first, if `now` is before any open', () => {
+	let now = moment.tz('7:00', 'H:mm', true, CENTRAL_TZ)
+	let dayparts = weitz()
+
+	expect(findMenu(dayparts, now)).toBe(dayparts[0][1])
+})
+
+it('should return the menu that opened last, when two are open and close together', () => {
+	let now = moment.tz('12:00', 'H:mm', true, CENTRAL_TZ)
+	let dayparts = weitz()
+
+	expect(findMenu(dayparts, now)).toBe(dayparts[0][0])
+})
+
+it('should return the menu that ends first, when two are open', () => {
+	let now = moment.tz('9:30', 'H:mm', true, CENTRAL_TZ)
+	let dayparts = generateDayparts({start: '07:00', end: '10:00'}, {start: '09:00', end: '13:00'})
+
+	expect(findMenu(dayparts, now)).toBe(dayparts[0][0])
+})
+
+it('should give the minute a menu ends to the menu coming in', () => {
+	let now = moment.tz('11:00', 'H:mm', true, CENTRAL_TZ)
+	let dayparts = generateDayparts({start: '07:00', end: '11:00'}, {start: '11:00', end: '14:00'})
+
+	expect(findMenu(dayparts, now)).toBe(dayparts[0][1])
+})
