@@ -3,13 +3,13 @@ import {StyleSheet} from 'react-native'
 import {Host, List, Section} from '@expo/ui/swift-ui'
 import {listStyle, refreshable} from '@expo/ui/swift-ui/modifiers'
 import * as c from '@frogpond/colors'
-import {LoadingView, NoticeView} from '@frogpond/notice'
+import {LoadingView, NoticeView, listState} from '@frogpond/notice'
 import {useDebounce} from '@frogpond/use-debounce'
+import {onlineManager} from '@tanstack/react-query'
 import {Stack, useRouter} from 'expo-router'
 import {DisclosureRow} from '../../../source/components/rows'
 import {SearchBar} from '../../../source/components/search-bar'
 import {AreaGrid} from '../../../source/features/sis/student-work/area-grid'
-import {listState} from '../../../source/features/sis/student-work/lib'
 import {NOTHING_CHOSEN, PostingsList} from '../../../source/features/sis/student-work/postings-list'
 import {PRESETS, presetCounts} from '../../../source/features/sis/student-work/presets'
 import {useSeenPostingsStore} from '../../../source/features/sis/student-work/store'
@@ -65,10 +65,11 @@ export default function StudentWorkPage(): React.ReactNode {
 	}
 
 	let state = listState({
+		hasData: jobs.length > 0,
 		isError: board.isError,
-		isLoading: board.isLoading,
-		isPaused: board.fetchStatus === 'paused',
-		hasPostings: jobs.length > 0,
+		isPending: board.isPending,
+		isPaused: board.isPaused,
+		isOnline: onlineManager.isOnline(),
 	})
 
 	if (state === 'offline') {
