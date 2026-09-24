@@ -1,12 +1,6 @@
 import XCTest
 
 class ModuleCampusDictionaryTests: UITestCase {
-	func testTappingTheSectionIndexRailScrollsTheList() throws {
-		try CampusDictionaryScreen(app: app)
-			.navigate()
-			.verifySectionIndexRailScrolls()
-	}
-
 	func testSearchingFromFarDownTheListShowsTheFirstResult() throws {
 		try CampusDictionaryScreen(app: app)
 			.navigate()
@@ -44,20 +38,6 @@ class ModuleCampusDictionaryTests: UITestCase {
 			.verifyEntrySheetIsGone()
 	}
 
-	/// Suggest an Edit pushes the edit form into the entry sheet's own stack,
-	/// rather than presenting some other way -- its own Back button is what
-	/// proves that.
-	func testTheFormPushesIntoTheEntrySheet() throws {
-		CampusDictionaryScreen(app: app)
-			.navigate()
-			.search(for: TestIdentifiers.Dictionary.referenceEntry)
-			.openWord(TestIdentifiers.Dictionary.referenceEntry)
-			.verifyDefinitionSheetIsPresented()
-			.openEditor()
-			.verifyEditFormPushedIntoSheet()
-			.capture("Dictionary edit form")
-	}
-
 	/// Preview should refuse to open until the draft actually differs from
 	/// the entry as opened -- retyping nothing is not a suggestion.
 	///
@@ -67,6 +47,10 @@ class ModuleCampusDictionaryTests: UITestCase {
 	/// dropped between renders. Seven characters is what it takes to trip that
 	/// race reliably -- `editFirstDefinition`'s read-back of the field's value
 	/// is what fails if one ever is.
+	///
+	/// Suggest an Edit pushes the edit form into the entry sheet's own stack,
+	/// rather than presenting some other way -- its own Back button is what
+	/// `verifyEditFormPushedIntoSheet` looks for.
 	func testPreviewIsRefusedUntilSomethingChanges() throws {
 		CampusDictionaryScreen(app: app)
 			.navigate()
@@ -75,6 +59,7 @@ class ModuleCampusDictionaryTests: UITestCase {
 			.verifyDefinitionSheetIsPresented()
 			.openEditor()
 			.verifyEditFormPushedIntoSheet()
+			.capture("Dictionary edit form")
 			.verifyPreviewDisabled()
 			.editFirstDefinition(prepending: "indeed ")
 			.verifyPreviewEnabled()

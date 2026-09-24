@@ -30,19 +30,13 @@ class ModuleStudentOrgsTests: UITestCase {
 
 	/// The landing search bar searches every org, so it has to be able to
 	/// find something outside whatever category a reader happened to look
-	/// at last -- this only proves results can appear at all, not which
-	/// ones, since the org list is live data.
-	func testLandingSearchCanReturnResults() throws {
-		StudentOrgsScreen(app: app)
-			.navigate()
-			.search(for: "a")
-			.capture("Student Orgs search results")
-	}
-
+	/// at last. Scrolling the results proves some appeared, not which ones,
+	/// since the org list is live data.
 	func testRefiningASearchFromFarDownTheResultsStartsAtTheTop() throws {
 		StudentOrgsScreen(app: app)
 			.navigate()
 			.search(for: "a")
+			.capture("Student Orgs search results")
 			.scrollResultsDown()
 			.refineSearch(appending: "n")
 			.verifyResultsStartAtTheTop()

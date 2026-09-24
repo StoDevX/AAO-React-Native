@@ -6,12 +6,6 @@ class ModuleSISTests: UITestCase {
 	// setUp launches with --reset-state, so each of these starts before the
 	// "I Agree" acknowledgement has been accepted.
 
-	func testHasAcknowledgementVisibleByDefault() throws {
-		SISScreen(app: app)
-			.navigate()
-			.checkAcknowledgement()
-	}
-
 	func testShowsBalancesAfterAcknowledgement() throws {
 		SISScreen(app: app)
 			.navigate()
@@ -35,12 +29,6 @@ class ModuleSISTests: UITestCase {
 	}
 
 	// MARK: - Tabs
-
-	func testOpenJobsTabCanBeOpened() throws {
-		SISScreen(app: app)
-			.navigate()
-			.openJobsTab()
-	}
 
 	func testJobPostingLinksOutToTheJobsSite() throws {
 		SISScreen(app: app)

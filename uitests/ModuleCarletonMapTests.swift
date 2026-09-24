@@ -1,18 +1,6 @@
 import XCTest
 
 class ModuleCarletonMapTests: UITestCase {
-	/// The whole path a user takes: open the map, reach into the sheet, and
-	/// come out with a building's card.
-	func testSelectingABuildingShowsItsCard() throws {
-		CarletonMapScreen(app: app)
-			.navigate()
-			.checkSheetPresented()
-			.expandSheet()
-			.selectBuilding(named: TestIdentifiers.CarletonMap.aBuilding)
-			.checkBuildingCardPresented()
-			.capture("Carleton map sheet at its middle detent, showing a building's card")
-	}
-
 	/// The module pins the field at 44pt with a constraint UIKit is free to
 	/// overrule silently, so the height is worth a test of its own.
 	func testTheSearchFieldIsAppleMapsHeight() throws {

@@ -33,17 +33,6 @@ class ModuleCampusTests: UITestCase {
 			.capture("St. Olaf map showing a building's card")
 	}
 
-	/// Every other detail-sheet test in this file goes through St. Olaf's
-	/// tile. This is the one that proves the `campus` param actually survives
-	/// the push into `/Campus/detail/[name]` for a Carleton venue too, rather
-	/// than the sheet only ever having been exercised for St. Olaf.
-	func testTappingACarletonRowPresentsItsDetailSheet() throws {
-		CampusScreen(app: app)
-			.navigateToCarleton()
-			.tapRow(TestIdentifiers.Campus.carletonBuilding)
-			.verifyDetailSheetTitled(TestIdentifiers.Campus.carletonBuilding)
-	}
-
 	func testSearchNarrowsTheList() throws {
 		CampusScreen(app: app)
 			.navigate()
@@ -144,6 +133,10 @@ class ModuleCampusTests: UITestCase {
 	/// Every Carleton venue carries no `building` key -- its hours data lives
 	/// outside this repo -- so the absence of a cutout has to read as
 	/// deliberate, not as a broken map that silently failed to draw.
+	///
+	/// Every other detail-sheet test in this file goes through St. Olaf's
+	/// tile, so this is also the one that proves the `campus` param survives
+	/// the push into `/Campus/detail/[name]` for a Carleton venue.
 	func testDetailSheetShowsNoCutoutForACarletonVenue() throws {
 		CampusScreen(app: app)
 			.navigateToCarleton()
