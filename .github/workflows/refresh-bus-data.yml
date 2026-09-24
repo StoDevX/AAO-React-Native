@@ -58,14 +58,17 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
-    # Read by refresh-bus-data.mjs and by the steps below, so a warning the
-    # generator raises reaches the step summary and the PR body instead of
-    # sitting in stdout where only the run log shows it.
-    env:
-      BUS_DATA_WARNINGS_FILE: ${{ runner.temp }}/bus-data-warnings.txt
-      BUS_ROUTE_RETURNS_FILE: ${{ runner.temp }}/bus-route-returns.json
-
     steps:
+      # Read by refresh-bus-data.mjs and by the steps below, so a warning the
+      # generator raises reaches the step summary and the PR body instead of
+      # sitting in stdout where only the run log shows it. Exported through
+      # $GITHUB_ENV because a job-level env: cannot read the runner context,
+      # and GitHub rejects the whole file if it tries.
+      - name: Name the warning files
+        run: |
+          echo "BUS_DATA_WARNINGS_FILE=$RUNNER_TEMP/bus-data-warnings.txt" >> "$GITHUB_ENV"
+          echo "BUS_ROUTE_RETURNS_FILE=$RUNNER_TEMP/bus-route-returns.json" >> "$GITHUB_ENV"
+
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - uses: jdx/mise-action@c2a87611a18de5b3828c5652fe268e992400cb5c # v4.3.0
