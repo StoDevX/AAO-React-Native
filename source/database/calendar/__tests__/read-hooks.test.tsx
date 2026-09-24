@@ -121,7 +121,6 @@ describe('useNeighbours', () => {
 describe('after a write', () => {
 	test('the read it replaced does not stay cached', async () => {
 		mockAll.mockReturnValue([])
-		jest.useFakeTimers()
 
 		// The app-wide default keeps an unwatched query for a day, which is
 		// what a read left behind by a revision bump would otherwise get.
@@ -134,16 +133,42 @@ describe('after a write', () => {
 		let {result, unmount} = await renderHook(() => useEvent('stolaf', 'key', ['stolaf']), {wrapper})
 		await waitFor(() => expect(result.current.isPending).toBe(false))
 
+		let revisionBeforeBump = client.getQueryCache().getAll()[0].queryKey[2] as number
+		let revisionAfterBump = revisionBeforeBump + 1
 		await act(() => {
 			bumpCalendarRevision()
 		})
-		await waitFor(() => expect(client.getQueryCache().getAll()).toHaveLength(2))
+		await waitFor(() =>
+			expect(
+				client
+					.getQueryCache()
+					.getAll()
+					.map((query) => query.queryKey[2]),
+			).toStrictEqual([revisionAfterBump]),
+		)
+
+		await unmount()
+	})
+
+	test('the current read stays cached while its screen is closed', async () => {
+		// Leaving Calendar for a minute and coming back should not re-read and
+		// re-hydrate the whole window.
+		mockAll.mockReturnValue([])
+		jest.useFakeTimers()
+
+		let client = new QueryClient({defaultOptions: {queries: {retry: false, gcTime: 86_400_000}}})
+		trackedQueryClients.push(client)
+		let wrapper = ({children}: {children: React.ReactNode}) => (
+			<QueryClientProvider client={client}>{children}</QueryClientProvider>
+		)
+
+		let {result, unmount} = await renderHook(() => useEvent('stolaf', 'key', ['stolaf']), {wrapper})
+		await waitFor(() => expect(result.current.isPending).toBe(false))
+		await unmount()
 
 		await act(async () => {
 			await jest.advanceTimersByTimeAsync(60_000)
 		})
 		expect(client.getQueryCache().getAll()).toHaveLength(1)
-
-		await unmount()
 	})
 })

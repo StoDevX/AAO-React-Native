@@ -1,7 +1,9 @@
+import {useEffect} from 'react'
+
 import type {EventType} from '@frogpond/event-type'
 import {now} from '@frogpond/timer'
 import * as Sentry from '@sentry/react-native'
-import {keepPreviousData, skipToken, useQuery} from '@tanstack/react-query'
+import {keepPreviousData, skipToken, useQuery, useQueryClient} from '@tanstack/react-query'
 
 import type {SourcedEvent} from '../../../modules/event-list/types.ts'
 import type {CalendarFilterOption} from '../../features/calendar/filter.ts'
@@ -47,14 +49,27 @@ const FORWARD_DAYS = 180
 export const CALENDAR_READ_KEY = 'calendar-db'
 
 /**
- * How long a read's result stays cached once nothing is watching it.
+ * Drops every read keyed to a revision older than `revision` that nothing is
+ * watching any more.
  *
  * Every write bumps the revision in each read's key, which leaves the
- * previous window's hydrated events with no observer. The app-wide default
- * would keep each of those for a day; the rows are in SQLite, so rereading
- * them costs little and there is nothing worth keeping them for.
+ * previous window's hydrated events with no observer, and the app-wide
+ * `gcTime` would keep each of those for a day. The current read keeps that
+ * `gcTime`, so a screen reopened within the day shows at once.
+ *
+ * Called after `useQuery`, so its effect runs once the query has moved its
+ * observer to the new key and the old read is inactive.
  */
-const READ_GC_TIME_MS = 30_000
+function useDropSupersededReads(revision: number): void {
+	let queryClient = useQueryClient()
+	useEffect(() => {
+		queryClient.removeQueries({
+			queryKey: [CALENDAR_READ_KEY],
+			type: 'inactive',
+			predicate: (query) => query.queryKey[2] !== revision,
+		})
+	}, [queryClient, revision])
+}
 
 /**
  * The two-sided window the screens read from: `RETENTION_DAYS` back, `FORWARD_DAYS`
@@ -200,8 +215,8 @@ export function useOccurrences(args: {
 						return hydrate(rows, sponsors, now().toDate())
 					}),
 		placeholderData: keepPreviousData,
-		gcTime: READ_GC_TIME_MS,
 	})
+	useDropSupersededReads(revision)
 
 	return {events: result.data ?? [], isPending: result.isPending, failed: result.isError}
 }
@@ -228,8 +243,8 @@ export function useFacets(args: {
 				getRunner().all<CalendarFilterOption>(facetsQuery({axis, window, sourceIds})),
 			),
 		placeholderData: keepPreviousData,
-		gcTime: READ_GC_TIME_MS,
 	})
+	useDropSupersededReads(revision)
 
 	return result.data ?? []
 }
@@ -275,8 +290,8 @@ export function useEvent(
 				return entry?.event ?? null
 			}),
 		placeholderData: keepPreviousData,
-		gcTime: READ_GC_TIME_MS,
 	})
+	useDropSupersededReads(revision)
 
 	return {
 		event: result.data ?? undefined,
