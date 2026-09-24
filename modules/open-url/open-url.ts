@@ -2,17 +2,18 @@ import {Linking} from 'react-native'
 import * as WebBrowser from 'expo-web-browser'
 import * as storage from '../../source/lib/storage'
 
-function genericOpen(url: string): Promise<boolean> {
-	return Linking.canOpenURL(url)
-		.then((isSupported) => {
-			if (!isSupported) {
-				console.warn('cannot handle', url)
-			}
-			return Linking.openURL(url)
-		})
-		.catch((err) => {
-			console.error(err)
-		})
+/** Hands `url` to iOS, resolving to whether anything opened it. */
+async function genericOpen(url: string): Promise<boolean> {
+	try {
+		if (!(await Linking.canOpenURL(url))) {
+			console.warn('cannot handle', url)
+		}
+		await Linking.openURL(url)
+		return true
+	} catch (err) {
+		console.error(err)
+		return false
+	}
 }
 
 async function launchBrowser(url: string): Promise<boolean> {

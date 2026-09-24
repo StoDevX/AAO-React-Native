@@ -10,27 +10,38 @@ type Options = {
 
 export function callPhone(phoneNumber: string, opts?: Options): void {
 	const {prompt = true, title = ''} = opts || {}
-	try {
-		let phoneNumberAsUrl = `tel:${phoneNumber}`
-		void (prompt ? promptCall(title, phoneNumberAsUrl, phoneNumber) : openUrl(phoneNumberAsUrl))
-	} catch (_err) {
-		Alert.alert(
-			"Apologies, we couldn't call that number",
-			`We were trying to call "${phoneNumber}".`,
-			[
-				{
-					text: 'Darn',
-					onPress: () => {
-						// do nothing.
-					},
-				},
-				{
-					text: 'Copy number',
-					onPress: () => void Clipboard.setStringAsync(phoneNumber),
-				},
-			],
-		)
+	let phoneNumberAsUrl = `tel:${phoneNumber}`
+
+	if (prompt) {
+		promptCall(title, phoneNumberAsUrl, phoneNumber)
+	} else {
+		void placeCall(phoneNumberAsUrl, phoneNumber)
 	}
+}
+
+/**
+ * Opens the `tel:` link, and offers to copy the number when nothing answers
+ * it -- an iPad without Continuity calling has no way to place the call.
+ */
+async function placeCall(phoneNumberAsUrl: string, phoneNumber: string): Promise<void> {
+	if (await openUrl(phoneNumberAsUrl)) {
+		return
+	}
+
+	Alert.alert(
+		"Apologies, we couldn't call that number",
+		`We were trying to call "${phoneNumber}".`,
+		[
+			{
+				text: 'Darn',
+				onPress: noop,
+			},
+			{
+				text: 'Copy number',
+				onPress: () => void Clipboard.setStringAsync(phoneNumber),
+			},
+		],
+	)
 }
 
 export const formatNumber = (phoneNumber: string): string => {
@@ -50,6 +61,6 @@ export const formatNumber = (phoneNumber: string): string => {
 const promptCall = (buttonText: string, phoneNumberAsUrl: string, phoneNumber: string) => {
 	Alert.alert(buttonText, formatNumber(phoneNumber), [
 		{text: 'Cancel', onPress: noop},
-		{text: 'Call', onPress: () => openUrl(phoneNumberAsUrl)},
+		{text: 'Call', onPress: () => void placeCall(phoneNumberAsUrl, phoneNumber)},
 	])
 }
