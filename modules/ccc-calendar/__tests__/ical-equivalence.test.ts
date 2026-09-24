@@ -1,7 +1,7 @@
 import {readdirSync, readFileSync} from 'node:fs'
 import {join} from 'node:path'
 import {decode, htmlToSegments} from '@frogpond/html-lib'
-import {addDays, endOfDay, isAfter, isBefore, startOfDay, isSameDay, isSameMinute} from 'date-fns'
+import {addDays, isAfter, isBefore, startOfDay, isSameDay, isSameMinute} from 'date-fns'
 import ICAL from 'ical.js'
 import {
 	computeSeedTime,
@@ -115,7 +115,7 @@ function referenceToWireEvent(
 		title: item.summary ?? '',
 		description: decode(descriptionHtml).replaceAll(/\s+/gu, ' ').trim(),
 		location: item.location ?? '',
-		isOngoing: isBefore(new Date(startIso), startOfDay(now)),
+		isOngoing: isBefore(new Date(startIso), startOfDay(now)) && isAfter(new Date(endIso), now),
 		links: referenceLinksIn(descriptionHtml),
 		categories: [],
 		config: {
@@ -155,13 +155,13 @@ function referenceExpandOccurrences(
 	}
 
 	let windowEnd = addDays(now, windowDays)
-	let endOfToday = endOfDay(now)
+	let startOfToday = startOfDay(now)
 	let occurrences: WireEvent[] = []
 
 	function tryPush(occurrenceTime: ICAL.Time): void {
 		let details = event.getOccurrenceDetails(occurrenceTime)
 		if (isAfter(referenceToInstant(details.startDate), windowEnd)) return
-		if (!isAfter(referenceToInstant(details.endDate), endOfToday)) return
+		if (!isAfter(referenceToInstant(details.endDate), startOfToday)) return
 		occurrences.push(referenceToWireEvent(details.item, details.startDate, details.endDate, now))
 	}
 
@@ -265,8 +265,8 @@ function referenceParseIcalEvents(
 		throw new Error('every ical event was malformed', {cause: lastError})
 	}
 
-	let endOfToday = endOfDay(now)
-	let future = events.filter((event) => isAfter(new Date(event.endTime), endOfToday))
+	let startOfToday = startOfDay(now)
+	let future = events.filter((event) => isAfter(new Date(event.endTime), startOfToday))
 	return future.sort((a, b) => (a.startTime < b.startTime ? -1 : a.startTime > b.startTime ? 1 : 0))
 }
 
@@ -312,7 +312,7 @@ function seededMasterCount(body: string, now: Date): number {
 			(referenceToInstant(event.endDate).getTime() -
 				referenceToInstant(event.startDate).getTime()) /
 			1000
-		if (computeSeedTime(event.startDate, rule, now, durationSeconds)) count += 1
+		if (computeSeedTime(event.startDate, rule, startOfDay(now), durationSeconds)) count += 1
 	}
 	return count
 }
@@ -985,7 +985,7 @@ END:VEVENT`),
 		// straight past any occurrence that started earlier than the seed --
 		// regardless of how long it runs past that point -- silently
 		// dropping exactly the occurrence `isOngoing` and the
-		// `endTime > endOfToday` filter in ical.ts exist to keep.
+		// `endTime > startOfToday` filter in ical.ts exist to keep.
 		name: 'a long-duration recurring occurrence still in progress at NOW, old enough to be seeded',
 		body: calendar(`BEGIN:VEVENT
 UID:long-duration-seeded@test
@@ -1055,7 +1055,7 @@ test('enough synthetic cases actually take the seeded path to make the harness m
 // `DTSTART` also excludes `DTSTART`'s own occurrence for any event whose
 // duration doesn't cross a calendar-day boundary (this parser's
 // "not already over" filter operates on whole days -- see `toWireEvent`'s
-// `isOngoing`/`endOfToday` handling in `ical.ts`). Combined, a full count
+// `isOngoing`/`startOfToday` handling in `ical.ts`). Combined, a full count
 // (see the assertions at the bottom of this section) showed 95 of the 140
 // file/pass combinations were comparing `[] === []`: two empty arrays agree
 // trivially, proving nothing about whether the parser and the reference walk
@@ -1349,8 +1349,13 @@ function anySeekable(masters: ICAL.Component[]): boolean {
 function seededNowFor({masters}: CorpusCase): Date {
 	if (!anySeekable(masters)) return unseededNowFor(masters)
 
+	// A day more than the gap, because `ical.ts` seeds from the start of
+	// `now`'s day: without it, an hourly rule's anchor falls back behind the
+	// gap and the walk never seeds.
 	let gapSeconds =
-		CORPUS_SEED_GAP_PERIODS * fastestNominalPeriodSeconds(masters) + longestDurationSeconds(masters)
+		CORPUS_SEED_GAP_PERIODS * fastestNominalPeriodSeconds(masters) +
+		longestDurationSeconds(masters) +
+		24 * 60 * 60
 	return new Date(earliestDtstart(masters).getTime() + gapSeconds * 1000)
 }
 
