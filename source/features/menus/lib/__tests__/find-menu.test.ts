@@ -107,3 +107,14 @@ it('should give the minute a menu ends to the menu coming in', () => {
 
 	expect(findMenu(dayparts, now)).toBe(dayparts[0][1])
 })
+
+it('should return the meal that closes last, not the one listed last, after all close', () => {
+	let now = moment.tz('22:00', 'H:mm', true, CENTRAL_TZ)
+	let dayparts = generateDayparts(
+		{start: '17:00', end: '19:30'},
+		{start: '7:00', end: '9:30'},
+		{start: '11:00', end: '13:30'},
+	)
+
+	expect(findMenu(dayparts, now)).toBe(dayparts[0][0])
+})

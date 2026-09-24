@@ -87,8 +87,10 @@ function findMenuIndex(dayparts: DayPartMenuType[], now: Moment): number {
 		return upcoming.reduce((best, i) => (times[i].start.isBefore(times[best].start) ? i : best))
 	}
 
-	// Otherwise we are after the last meal of the day, so we return the last
-	// one. The only time this really fails is in the early morning, if it's
-	// like 1am and you're wondering what there was at dinner.
-	return times.length - 1
+	// Otherwise we are after the last meal of the day, so we return the one
+	// that closed last; of two that closed together, or of hours that do not
+	// parse, the one listed later. The only time this really fails is in the
+	// early morning, if it's like 1am and you're wondering what there was at
+	// dinner.
+	return indices.reduce((best, i) => (times[i].end.isBefore(times[best].end) ? best : i))
 }
