@@ -9,37 +9,32 @@ class ModuleCampusDictionaryTests: UITestCase {
 			.verifyFirstEntryIsOnScreen()
 	}
 
-	func testTappingAWordOpensAHalfHeightSheet() throws {
+	/// A word opens a half-height sheet whose lone sense lines up with the
+	/// headword, and the sheet closes again.
+	func testAWordOpensAHalfHeightSheetThatCloses() throws {
 		CampusDictionaryScreen(app: app)
 			.navigate()
 			.openFirstWord()
 			.verifyDefinitionSheetIsPresented()
 			.capture("Dictionary definition sheet")
 			.verifySheetIsHalfHeight()
-	}
-
-	func testALoneSenseLinesUpWithTheHeadword() throws {
-		CampusDictionaryScreen(app: app)
-			.navigate()
-			.openFirstWord()
-			.verifyDefinitionSheetIsPresented()
-			.capture("Dictionary entry with one sense")
 			.verifySenseAlignsWithHeadword(
 				TestIdentifiers.Dictionary.firstEntry,
 				definition: TestIdentifiers.Dictionary.firstEntryDefinition)
-	}
-
-	func testTheSheetCloses() throws {
-		CampusDictionaryScreen(app: app)
-			.navigate()
-			.openFirstWord()
-			.verifyDefinitionSheetIsPresented()
 			.dismissEntrySheet()
 			.verifyEntrySheetIsGone()
 	}
 
 	/// Preview should refuse to open until the draft actually differs from
 	/// the entry as opened -- retyping nothing is not a suggestion.
+	///
+	/// Once it opens, it is the whole point of the flow: an edit previews as a
+	/// marked-up diff, with every word `@expo/ui`'s `Text` would otherwise have
+	/// silently dropped still on screen, and no DEBUG marker standing in for
+	/// markup our patch should have supported. `verifyPreviewShows` is the
+	/// actual proof of that -- `verifyPreviewPresented` alone would pass
+	/// against a completely blank preview, since its identifier sits on the
+	/// outer container.
 	///
 	/// `"indeed "` rather than a shorter word, here and in every other test
 	/// that types into this field: a shorter burst does not reliably straddle
@@ -51,7 +46,7 @@ class ModuleCampusDictionaryTests: UITestCase {
 	/// Suggest an Edit pushes the edit form into the entry sheet's own stack,
 	/// rather than presenting some other way -- its own Back button is what
 	/// `verifyEditFormPushedIntoSheet` looks for.
-	func testPreviewIsRefusedUntilSomethingChanges() throws {
+	func testAnEditPreviewsAsAMarkedUpDiffOnceSomethingChanges() throws {
 		CampusDictionaryScreen(app: app)
 			.navigate()
 			.search(for: TestIdentifiers.Dictionary.referenceEntry)
@@ -69,24 +64,6 @@ class ModuleCampusDictionaryTests: UITestCase {
 			// the state this test just put the draft into.
 			.revealInForm("Ready to preview")
 			.capture("Dictionary edit form with a change made")
-	}
-
-	/// The whole point of the flow: an edit previews as a marked-up diff, with
-	/// every word `@expo/ui`'s `Text` would otherwise have silently dropped
-	/// still on screen, and no DEBUG marker standing in for markup our patch
-	/// should have supported. `verifyPreviewShows` is the actual proof of
-	/// that -- `verifyPreviewPresented` alone would pass against a completely
-	/// blank preview, since its identifier sits on the outer container.
-	func testAnEditIsPreviewedAsAMarkedUpDiff() throws {
-		CampusDictionaryScreen(app: app)
-			.navigate()
-			.search(for: TestIdentifiers.Dictionary.referenceEntry)
-			.openWord(TestIdentifiers.Dictionary.referenceEntry)
-			.verifyDefinitionSheetIsPresented()
-			.openEditor()
-			.verifyEditFormPushedIntoSheet()
-			.editFirstDefinition(prepending: "indeed ")
-			.verifyPreviewEnabled()
 			.openPreview()
 			.verifyPreviewPresented()
 			.capture("Dictionary suggestion diff")
