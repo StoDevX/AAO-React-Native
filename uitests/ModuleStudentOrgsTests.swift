@@ -1,28 +1,20 @@
 import XCTest
 
 class ModuleStudentOrgsTests: UITestCase {
-	func testIsReachableFromHomescreen() throws {
-		StudentOrgsScreen(app: app)
-			.navigate()
-			.verifyStudentOrgsTitle()
-	}
-
 	/// The landing screen is category tiles, not a flat list -- this is the
-	/// whole point of the feature, so it is worth asserting on its own
-	/// before any test that taps into one.
-	func testShowsCategoryTilesBeforeASearch() throws {
-		StudentOrgsScreen(app: app)
-			.navigate()
-			.verifyCategoryTilesShown()
-			.capture("Student Orgs category grid")
-	}
-
+	/// whole point of the feature, so it is asserted before anything taps into
+	/// one.
+	///
 	/// Tapping a tile has to land on a screen scoped to that category, not
 	/// the flat list -- the title naming the tapped category is the proof,
 	/// since which orgs happen to be in it is Presence.io's business, not
 	/// this test's.
-	func testTappingACategoryOpensItsOwnScreen() throws {
-		let screen = StudentOrgsScreen(app: app).navigate()
+	func testTheLandingTilesOpenTheirOwnCategories() throws {
+		let screen = StudentOrgsScreen(app: app)
+			.navigate()
+			.verifyStudentOrgsTitle()
+			.verifyCategoryTilesShown()
+			.capture("Student Orgs category grid")
 		let category = screen.openFirstCategory()
 
 		screen.verifyTitle(category)
