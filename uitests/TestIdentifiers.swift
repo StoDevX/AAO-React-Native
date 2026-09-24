@@ -435,6 +435,12 @@ struct TestIdentifiers {
 		/// Upcoming list mounts only its first fifteen rows up front, so this
 		/// one exists only once scrolling has made the list mount more.
 		static let lastUpcomingRow = "Fall Family Weekend"
+		/// An athletics event on the frozen day. The Calendar hides athletics, so
+		/// this row must never appear, though it sits beside rows that do.
+		static let hiddenAthleticsRow = "Football vs. Carleton College"
+		/// The category the fixture files that event under. The picker draws a
+		/// category as its name then its count, so a test matches the prefix.
+		static let hiddenCategory = "Athletics"
 		/// The one calendar UI test mode enables, from `REMOTE_SOURCES`.
 		static let uitestCalendar = "UI Test Fixtures"
 		/// Every attribution caption opens with this. The list should carry
