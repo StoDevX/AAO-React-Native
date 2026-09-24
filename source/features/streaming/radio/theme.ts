@@ -1,11 +1,12 @@
+import type {ColorValue} from 'react-native'
 import {createTheming} from '@callstack/react-theme-provider'
 
 export type PlayerTheme = {
-	tintColor?: string
-	buttonTextColor?: string
-	textColor?: string
-	imageBorderColor?: string
-	imageBackgroundColor?: string
+	tintColor?: ColorValue
+	buttonTextColor?: ColorValue
+	textColor?: ColorValue
+	imageBorderColor?: ColorValue
+	imageBackgroundColor?: ColorValue
 }
 
 const defaultTheme: PlayerTheme = {
