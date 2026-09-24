@@ -17,29 +17,29 @@ describe('useSwipeBackHold', () => {
 		jest.useRealTimers()
 	})
 
-	test('holds the swipe off for 2s after the screen opens', async () => {
+	test('holds the swipe off for 1s after the screen opens', async () => {
 		let setEnabled = jest.fn<(enabled: boolean) => void>()
 		await renderHook(() => useSwipeBackHold(setEnabled))
 
 		expect(lastSetting(setEnabled)).toBe(false)
-		await act(() => jest.advanceTimersByTime(1999))
+		await act(() => jest.advanceTimersByTime(999))
 		expect(lastSetting(setEnabled)).toBe(false)
 		await act(() => jest.advanceTimersByTime(1))
 		expect(lastSetting(setEnabled)).toBe(true)
 	})
 
-	test('holds it off again for 2s from each settle', async () => {
+	test('holds it off again for 1s from each settle', async () => {
 		let setEnabled = jest.fn<(enabled: boolean) => void>()
 		let {result} = await renderHook(() => useSwipeBackHold(setEnabled))
-		await act(() => jest.advanceTimersByTime(2000))
+		await act(() => jest.advanceTimersByTime(1000))
 
 		await act(() => result.current.settle())
 		expect(lastSetting(setEnabled)).toBe(false)
-		await act(() => jest.advanceTimersByTime(1500))
+		await act(() => jest.advanceTimersByTime(750))
 		await act(() => result.current.settle())
-		await act(() => jest.advanceTimersByTime(1500))
+		await act(() => jest.advanceTimersByTime(750))
 		expect(lastSetting(setEnabled)).toBe(false)
-		await act(() => jest.advanceTimersByTime(500))
+		await act(() => jest.advanceTimersByTime(250))
 		expect(lastSetting(setEnabled)).toBe(true)
 	})
 
@@ -52,7 +52,7 @@ describe('useSwipeBackHold', () => {
 		expect(lastSetting(setEnabled)).toBe(false)
 
 		await act(() => result.current.settle())
-		await act(() => jest.advanceTimersByTime(2000))
+		await act(() => jest.advanceTimersByTime(1000))
 		expect(lastSetting(setEnabled)).toBe(true)
 	})
 

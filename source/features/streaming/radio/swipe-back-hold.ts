@@ -1,17 +1,17 @@
 import {useCallback, useEffect, useRef} from 'react'
 
 /** How long the swipe stays off once the logo has settled. */
-const HOLD_MS = 2000
+const HOLD_MS = 1000
 
 /**
  * Holds off iOS's full-width swipe back while the logo is likely to be
- * scratched: for 2s after the screen opens, for as long as a finger is down,
- * and for 2s after each `settle` -- a new logo, or a scratch that has stopped
+ * scratched: for 1s after the screen opens, for as long as a finger is down,
+ * and for 1s after each `settle` -- a new logo, or a scratch that has stopped
  * coasting.
  *
  * Switching the swipe off at touch-down would be too late: iOS decides a drag
  * is a swipe back before the setting reaches it. So it is off ahead of time,
- * and a first scratch after 2s idle still goes back.
+ * and a first scratch after 1s idle still goes back.
  */
 export function useSwipeBackHold(setEnabled: (enabled: boolean) => void): {
 	hold: () => void
