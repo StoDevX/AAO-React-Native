@@ -1,5 +1,4 @@
 import * as React from 'react'
-import {DynamicColorIOS} from 'react-native'
 import * as c from '@frogpond/colors'
 import * as logos from '../../../images/streaming'
 import {RadioControllerView} from '../../../source/features/streaming/radio'
@@ -7,24 +6,16 @@ import tinycolor from 'tinycolor2'
 import {PlayerTheme, theming} from '../../../source/features/streaming/radio/theme'
 
 /**
- * KRLX's navy is about 2:1 against Dark Mode's black background, so the dark
- * variant is lightened until the 28pt title clears 4:1. The logo is drawn in
- * that navy alone, so it takes the tint too.
+ * The purple of the logo's "krlx". White text on it is 5.5:1, and it is 3.8:1
+ * against Dark Mode's black, enough for the 28pt title, so one tint serves both.
  */
-const LIGHT_TINT = '#33348e'
-const DARK_TINT = '#6162c6'
-
-let tintColor = DynamicColorIOS({light: LIGHT_TINT, dark: DARK_TINT})
+let tintColor = '#8a529e'
 const colors: PlayerTheme = {
 	tintColor,
-	buttonTextColor: DynamicColorIOS({
-		light: tinycolor.mostReadable(LIGHT_TINT, [c.white, c.black]).toRgbString(),
-		dark: tinycolor.mostReadable(DARK_TINT, [c.white, c.black]).toRgbString(),
-	}),
+	buttonTextColor: tinycolor.mostReadable(tintColor, [c.white, c.black]).toRgbString(),
 	textColor: tintColor,
-	imageBorderColor: tintColor,
+	imageBorderColor: 'transparent',
 	imageBackgroundColor: 'transparent',
-	imageTintColor: tintColor,
 }
 
 export default function KrlxPage(): React.ReactNode {

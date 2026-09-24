@@ -1,14 +1,11 @@
-import type {ColorValue} from 'react-native'
 import {createTheming} from '@callstack/react-theme-provider'
 
 export type PlayerTheme = {
-	tintColor?: ColorValue
-	buttonTextColor?: ColorValue
-	textColor?: ColorValue
-	imageBorderColor?: ColorValue
-	imageBackgroundColor?: ColorValue
-	/** Recolours a single-colour logo; leave unset for a logo with several colours. */
-	imageTintColor?: ColorValue
+	tintColor?: string
+	buttonTextColor?: string
+	textColor?: string
+	imageBorderColor?: string
+	imageBackgroundColor?: string
 }
 
 const defaultTheme: PlayerTheme = {
