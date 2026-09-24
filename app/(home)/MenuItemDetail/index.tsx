@@ -30,6 +30,17 @@ export default function MenuItemDetailPage(): React.ReactNode {
 
 	let screen = <Stack.Title>Nutrition</Stack.Title>
 
+	// A source neither query knows leaves both disabled, and a disabled query
+	// with no data stays pending for good, which would read as loading.
+	if (source !== 'bonapp' && source !== 'pause') {
+		return (
+			<>
+				{screen}
+				<NoticeView text="Could not find this menu item." />
+			</>
+		)
+	}
+
 	if (view.kind === 'loading') {
 		return (
 			<>

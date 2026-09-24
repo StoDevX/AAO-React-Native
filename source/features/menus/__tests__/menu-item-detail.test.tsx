@@ -23,10 +23,12 @@ jest.mock('@frogpond/api', () => ({
 	client: {get: jest.fn(() => ({json: () => Promise.reject(new Error('HTTP 503'))}))},
 }))
 
+// A Pause item's id is its place in the menu.
+let mockParams: {source: string; itemId: string} = {source: 'pause', itemId: '0'}
+
 jest.mock('expo-router', () => ({
 	Stack: {Screen: () => null, Title: () => null},
-	// A Pause item's id is its place in the menu.
-	useLocalSearchParams: () => ({source: 'pause', itemId: '0'}),
+	useLocalSearchParams: () => mockParams,
 }))
 
 const mockDetailView = MenuItemDetailView as unknown as jest.Mock<(props: unknown) => null>
@@ -44,6 +46,7 @@ beforeEach(() => {
 	jest.useFakeTimers()
 	queryClient = new QueryClient({defaultOptions: {queries: {staleTime: Infinity, retry: false}}})
 	queryClient.setQueryData(pauseMenuOptions.queryKey, PAUSE_RESPONSE)
+	mockParams = {source: 'pause', itemId: '0'}
 	mockDetailView.mockClear()
 })
 
@@ -81,5 +84,12 @@ describe('MenuItemDetailPage', () => {
 		await renderDetail()
 
 		expect(screen.getByText(OFFLINE_MESSAGE)).toBeTruthy()
+	})
+
+	test('says it cannot find an item from a source it does not know', async () => {
+		mockParams = {source: 'unknown', itemId: '0'}
+		await renderDetail()
+
+		expect(screen.getByText('Could not find this menu item.')).toBeTruthy()
 	})
 })
