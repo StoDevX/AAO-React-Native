@@ -5,14 +5,10 @@ import * as Clipboard from 'expo-clipboard'
 import {hasAppFor, openUrl} from '@frogpond/open-url'
 import {formatEmailParts, sendEmail} from '../send-email'
 import {lastAlertTitle, pressAlertButton} from '../../testing/alert'
+import {settle} from '../../testing/settle'
 
 jest.mock('@frogpond/open-url', () => ({openUrl: jest.fn(), hasAppFor: jest.fn()}))
 jest.mock('expo-clipboard', () => ({setStringAsync: jest.fn()}))
-
-/** Lets the email's pending checks settle. */
-function settle(): Promise<void> {
-	return new Promise((resolve) => setImmediate(resolve))
-}
 
 describe('sendEmail', () => {
 	beforeEach(() => {

@@ -19,6 +19,8 @@ import * as c from '@frogpond/colors'
 import {timezone} from '@frogpond/constants'
 import {LoadingView, NoticeView} from '@frogpond/notice'
 
+import {ImageAttachmentsSection} from '../../../../source/components/image-attachments-section'
+import {useImageAttachments} from '../../../../source/components/use-image-attachments'
 import {ActionRow, DetailRow, NavigationRow} from '../../../../source/components/rows'
 import {SyncedTextField} from '../../../../source/components/synced-text-field'
 import {
@@ -49,7 +51,12 @@ function useBuildingEditor(initialBuilding: BuildingType, campus: Campus) {
 	let {draft, hasUnsavedChanges, edit, note, setNote} = useBuildingReport()
 	let building = draft ?? initialBuilding
 
+	let attachments = useImageAttachments()
 	let [submitted, setSubmitted] = React.useState(false)
+
+	// A ref, not state: a second tap can land before the render that would
+	// show the first one, and Mail's compose sheet opens only once at a time.
+	let sendingNow = React.useRef(false)
 
 	/**
 	 * Checks for unsaved edits before this screen leaves the stack, whether
@@ -65,7 +72,7 @@ function useBuildingEditor(initialBuilding: BuildingType, campus: Campus) {
 	 * the formSheet's own route so a native sheet dismissal is refused too.
 	 * https://reactnavigation.org/docs/preventing-going-back
 	 */
-	usePreventRemove(hasUnsavedChanges && !submitted, ({data}) => {
+	usePreventRemove((hasUnsavedChanges || attachments.images.length > 0) && !submitted, ({data}) => {
 		Alert.alert(
 			'Discard changes?',
 			'You have made unsaved changes. Are you sure you want to discard them?',
@@ -133,12 +140,44 @@ function useBuildingEditor(initialBuilding: BuildingType, campus: Campus) {
 		openLink(linkIndex)
 	}, [building.links, edit, openLink])
 
-	let submit = React.useCallback((): void => {
-		setSubmitted(true)
-		submitReport(initialBuilding, building, campus, note)
-	}, [building, campus, initialBuilding, note])
+	let submit = React.useCallback(async (): Promise<void> => {
+		// Picked images still loading would be left out of the email.
+		if (sendingNow.current || attachments.picking) {
+			return
+		}
+		sendingNow.current = true
 
-	return {addLink, building, dispatch: edit, note, openEditor, openLink, setNote, submit}
+		try {
+			let handedOff = await submitReport(
+				initialBuilding,
+				building,
+				campus,
+				note,
+				attachments.images.map((image) => image.uri),
+			)
+			// Only a report that actually left lifts the unsaved-changes guard;
+			// after a cancel the form is still the only copy of the edits.
+			if (handedOff) {
+				setSubmitted(true)
+			}
+		} catch {
+			Alert.alert('Could not write the email', 'Please try sending the report again.')
+		} finally {
+			sendingNow.current = false
+		}
+	}, [attachments.images, attachments.picking, building, campus, initialBuilding, note])
+
+	return {
+		addLink,
+		attachments,
+		building,
+		dispatch: edit,
+		note,
+		openEditor,
+		openLink,
+		setNote,
+		submit,
+	}
 }
 
 type Props = {
@@ -157,7 +196,7 @@ let CampusProblemReportView = ({initialBuilding, campus}: Props): React.ReactNod
 		// oxlint-disable-next-line react/exhaustive-deps
 	}, [])
 
-	let {addLink, building, dispatch, note, openEditor, openLink, setNote, submit} =
+	let {addLink, attachments, building, dispatch, note, openEditor, openLink, setNote, submit} =
 		useBuildingEditor(initialBuilding, campus)
 
 	let {schedule: schedules, name, subtitle, abbreviation, category, links = []} = building
@@ -172,7 +211,11 @@ let CampusProblemReportView = ({initialBuilding, campus}: Props): React.ReactNod
 			 * cell at the bottom further down a sheet that shows about half a
 			 * screen. Here it is reachable at any detent, whatever the venue. */}
 			<Stack.Toolbar placement="right">
-				<Stack.Toolbar.Button accessibilityLabel="Submit Report" onPress={submit}>
+				<Stack.Toolbar.Button
+					accessibilityLabel="Submit Report"
+					disabled={attachments.picking}
+					onPress={() => void submit()}
+				>
 					Submit
 				</Stack.Toolbar.Button>
 			</Stack.Toolbar>
@@ -283,6 +326,8 @@ let CampusProblemReportView = ({initialBuilding, campus}: Props): React.ReactNod
 							value={note}
 						/>
 					</Section>
+
+					<ImageAttachmentsSection attachments={attachments} title="IMAGES" />
 				</List>
 			</Host>
 		</>

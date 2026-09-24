@@ -16,6 +16,79 @@ export type FilterSelection = {axis: 'category' | 'organization'; value: string}
 export const RANGE_PREDICATE = `(  (o.all_day = 0 and o.start_utc  < ? and o.end_utc  > ?)
 or (o.all_day = 1 and o.start_date < ? and o.end_date > ?) )`
 
+/**
+ * An `exists` over the dedupe group of the row aliased `e`: some copy of the
+ * event, from one of `sourceIds`, carries `tag`.
+ *
+ * It matches over the group rather than the winning row so that a filter, an
+ * exclusion and the facet tally all see the same tags -- the union
+ * `organizationsQuery` rebuilds and `hydrate` prints. `alias` keeps this
+ * subquery's table names apart from any other clause's in the same statement.
+ */
+function groupCarriesTag(alias: string, sourceIds: string[], tag: FilterSelection): Statement {
+	return {
+		sql: `exists (
+    select 1 from event_tag t${alias}
+    join event c${alias} on c${alias}.source_id = t${alias}.source_id
+      and c${alias}.event_key = t${alias}.event_key
+    where c${alias}.dedupe_key = e.dedupe_key
+      and c${alias}.source_id in (${placeholders(sourceIds.length)})
+      and t${alias}.axis = ? and t${alias}.value = ?
+  )`,
+		params: [...sourceIds, tag.axis, tag.value],
+	}
+}
+
+/**
+ * The dedupe keys `exclude` hides, as a subquery for `e.dedupe_key not in
+ * (...)`: every event some in-scope copy tags with an excluded value, less
+ * every event some in-scope copy also files under a category the list does
+ * not exclude.
+ *
+ * The second half is what keeps an event that is only partly athletics. The
+ * campus calendar files Homecoming under Alumni, Athletics, Music and Special
+ * Events, and it belongs in the Calendar; a game filed under Athletics alone
+ * does not. Presence gives events no category, so a Presence copy is judged
+ * by its sponsor alone unless a twin from another calendar files it
+ * elsewhere.
+ *
+ * Uncorrelated, so SQLite builds the set once per statement rather than once
+ * per row it filters.
+ */
+function hiddenDedupeKeys(sourceIds: string[], exclude: FilterSelection[]): Statement {
+	let categories = exclude.filter((tag) => tag.axis === 'category').map((tag) => tag.value)
+	let otherCategory =
+		categories.length > 0 ? `and t.value not in (${placeholders(categories.length)})` : ''
+	let tagged = (clause: string) => `select c.dedupe_key from event c
+    join event_tag t on t.source_id = c.source_id and t.event_key = c.event_key
+    where c.source_id in (${placeholders(sourceIds.length)})
+      and ${clause}`
+
+	return {
+		sql: `${tagged(`(${exclude.map(() => '(t.axis = ? and t.value = ?)').join(' or ')})`)}
+    except
+    ${tagged(`t.axis = 'category' ${otherCategory}`)}`,
+		params: [
+			...sourceIds,
+			...exclude.flatMap((tag) => [tag.axis, tag.value]),
+			...sourceIds,
+			...categories,
+		],
+	}
+}
+
+/**
+ * `and e.dedupe_key not in (...)` for a statement whose event row is aliased
+ * `e`, or nothing at all when there is nothing to exclude.
+ */
+function exclusionClause(sourceIds: string[], exclude: FilterSelection[]): Statement {
+	if (exclude.length === 0) {
+		return {sql: '', params: []}
+	}
+	let hidden = hiddenDedupeKeys(sourceIds, exclude)
+	return {sql: `  and e.dedupe_key not in (\n    ${hidden.sql}\n  )`, params: hidden.params}
+}
+
 export function rangeParams(window: Window): BindValue[] {
 	return [window.toUtc, window.fromUtc, window.toDate, window.fromDate]
 }
@@ -41,8 +114,10 @@ export function occurrencesQuery(args: {
 	window: Window
 	sourceIds: string[]
 	filters: FilterSelection[]
+	/** Tags that hide an event, unless it is also filed under another category. See `hiddenDedupeKeys`. */
+	exclude?: FilterSelection[]
 }): Statement {
-	let {window, sourceIds, filters} = args
+	let {window, sourceIds, filters, exclude = []} = args
 
 	// One `exists` per filter, ANDed, so several filters read as an AND -- a
 	// single clause with an `in (...)` would match an event carrying *any* of
@@ -55,19 +130,8 @@ export function occurrencesQuery(args: {
 	// For `category` this is broader on purpose: `facetsQuery` tallies
 	// categories across all in-scope copies, so matching only the winner would
 	// offer a value that filters to nothing.
-	let matches = filters
-		.map(
-			(_, index) =>
-				`  and exists (
-    select 1 from event_tag t${index}
-    join event c${index} on c${index}.source_id = t${index}.source_id
-      and c${index}.event_key = t${index}.event_key
-    where c${index}.dedupe_key = e.dedupe_key
-      and c${index}.source_id in (${placeholders(sourceIds.length)})
-      and t${index}.axis = ? and t${index}.value = ?
-  )`,
-		)
-		.join('\n')
+	let matches = filters.map((filter, index) => groupCarriesTag(`${index}`, sourceIds, filter))
+	let exclusion = exclusionClause(sourceIds, exclude)
 
 	let sql = `
 select e.source_id, e.event_key, e.dedupe_key, e.wire, o.start_utc
@@ -79,19 +143,20 @@ from (
 join occurrence o on o.source_id = e.source_id and o.event_key = e.event_key
 where e.rn = 1
   and ${RANGE_PREDICATE}
-${matches}
+${matches.map((match) => `  and ${match.sql}`).join('\n')}
+${exclusion.sql}
 order by o.start_utc`
 
 	// Bound in the order the placeholders appear in the SQL above: the ranking
-	// subquery's source list, the window, then -- per filter, in order -- that
-	// `exists` clause's own copy of the source list followed by its axis and
-	// value. The source list appears once per filter as well as once up top, so
-	// this sequence is longer than it looks; `queries.test.ts` counts the
-	// assembled statement's placeholders rather than trusting the template.
+	// subquery's source list, the window, each filter's clause, then the
+	// exclusion. Each fragment carries its own bindings, so they cannot drift
+	// from the SQL they belong to; `queries.test.ts` still counts the assembled
+	// statement's placeholders as a backstop.
 	let params: BindValue[] = [
 		...sourceIds,
 		...rangeParams(window),
-		...filters.flatMap((filter) => [...sourceIds, filter.axis, filter.value]),
+		...matches.flatMap((match) => match.params),
+		...exclusion.params,
 	]
 
 	return {sql, params}
@@ -122,6 +187,9 @@ order by o.start_utc`
  * `count(distinct e.dedupe_key)` sees to — and a tag either copy contributes
  * should count, which is the same union the hydrated row applies.
  *
+ * `exclude` drops events the list hides, so the menu never offers or counts a
+ * value that could only filter to hidden events.
+ *
  * Sorted Z-A because SwiftUI's `Menu` renders its contents bottom-to-top, so
  * this reads A-Z on screen. See `source/features/calendar/filter.ts`.
  *
@@ -135,8 +203,11 @@ export function facetsQuery(args: {
 	axis: 'category' | 'organization'
 	window: Window
 	sourceIds: string[]
+	/** Tags that hide an event from the list; a hidden event is left out of the tally too. */
+	exclude?: FilterSelection[]
 }): Statement {
-	let {axis, window, sourceIds} = args
+	let {axis, window, sourceIds, exclude = []} = args
+	let exclusion = exclusionClause(sourceIds, exclude)
 
 	let sql = `
 select t.value as value, count(distinct e.dedupe_key) as count
@@ -149,10 +220,14 @@ where t.axis = ?
     where o.source_id = e.source_id and o.event_key = e.event_key
       and ${RANGE_PREDICATE}
   )
+${exclusion.sql}
 group by t.value
 order by t.value collate nocase desc`
 
-	return {sql, params: [axis, ...sourceIds, ...rangeParams(window)]}
+	return {
+		sql,
+		params: [axis, ...sourceIds, ...rangeParams(window), ...exclusion.params],
+	}
 }
 
 /** Separator for `group_concat`. A unit separator cannot occur in a sponsor name. */

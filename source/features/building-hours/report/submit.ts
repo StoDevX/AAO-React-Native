@@ -1,6 +1,6 @@
 import {dump} from 'js-yaml'
 import type {BuildingType, Campus} from '../types'
-import {sendEmail} from '../../../components/send-email'
+import {composeEmail} from '../../../components/send-email'
 import {GH_NEW_ISSUE_URL, SUPPORT_EMAIL} from '../../../lib/constants'
 
 /**
@@ -18,17 +18,19 @@ export function submitReport(
 	suggestion: BuildingType,
 	campus: Campus,
 	note: string,
-): void {
+	attachments: Array<string> = [],
+): Promise<boolean> {
 	// calling trim() on these to remove the trailing newlines
 	let before = stringifyBuilding(current).trim()
 	let after = stringifyBuilding(suggestion).trim()
 
 	let body = makeEmailBody(before, after, current.name, campus, note)
 
-	return sendEmail({
+	return composeEmail({
 		to: [SUPPORT_EMAIL],
 		subject: `[building] Suggestion for ${current.name} (${campusLabel(campus)})`,
 		body,
+		attachments,
 	})
 }
 

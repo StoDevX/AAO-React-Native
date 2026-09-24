@@ -3,10 +3,10 @@ import type {BuildingType} from '../../types'
 
 jest.mock('../../../../components/send-email')
 
-import {sendEmail} from '../../../../components/send-email'
+import {composeEmail} from '../../../../components/send-email'
 import {submitReport} from '../submit'
 
-const mockSendEmail = sendEmail as jest.MockedFunction<typeof sendEmail>
+const mockComposeEmail = composeEmail as jest.MockedFunction<typeof composeEmail>
 
 function makeBuilding(name: string): BuildingType {
 	return {
@@ -24,21 +24,28 @@ describe('submitReport', () => {
 	it('names the campus in the email subject', () => {
 		submitReport(makeBuilding('Bookstore'), makeBuilding('Bookstore'), 'carleton', '')
 
-		let [args] = mockSendEmail.mock.calls.at(-1) as [{subject: string}]
+		let [args] = mockComposeEmail.mock.calls.at(-1) as [{subject: string}]
 		expect(args.subject).toBe('[building] Suggestion for Bookstore (Carleton)')
+	})
+
+	it('attaches the images picked for the report', () => {
+		submitReport(makeBuilding('Cage'), makeBuilding('Cage'), 'stolaf', '', ['file:///tmp/sign.jpg'])
+
+		let [args] = mockComposeEmail.mock.calls.at(-1) as [{attachments: Array<string>}]
+		expect(args.attachments).toEqual(['file:///tmp/sign.jpg'])
 	})
 
 	it('names St. Olaf in the subject for a St. Olaf report', () => {
 		submitReport(makeBuilding('Bookstore'), makeBuilding('Bookstore'), 'stolaf', '')
 
-		let [args] = mockSendEmail.mock.calls.at(-1) as [{subject: string}]
+		let [args] = mockComposeEmail.mock.calls.at(-1) as [{subject: string}]
 		expect(args.subject).toBe('[building] Suggestion for Bookstore (St. Olaf)')
 	})
 
 	it('names the campus in the pre-filled issue title', () => {
 		submitReport(makeBuilding('Registrar'), makeBuilding('Registrar'), 'carleton', '')
 
-		let [args] = mockSendEmail.mock.calls.at(-1) as [{body: string}]
+		let [args] = mockComposeEmail.mock.calls.at(-1) as [{body: string}]
 		let issueUrl = /Project maintainers: (\S+)/u.exec(args.body)?.[1] ?? ''
 		let title = new URL(issueUrl).searchParams.get('title')
 
@@ -48,7 +55,7 @@ describe('submitReport', () => {
 	it('puts the note in the email, above the do-not-change line', () => {
 		submitReport(makeBuilding('Cage'), makeBuilding('Cage'), 'stolaf', 'Closed all of interim.')
 
-		let [args] = mockSendEmail.mock.calls.at(-1) as [{body: string}]
+		let [args] = mockComposeEmail.mock.calls.at(-1) as [{body: string}]
 		let noteAt = args.body.indexOf('Closed all of interim.')
 		let lineAt = args.body.indexOf('------------')
 
@@ -59,7 +66,7 @@ describe('submitReport', () => {
 	it('puts the note in the pre-filled issue body', () => {
 		submitReport(makeBuilding('Cage'), makeBuilding('Cage'), 'stolaf', 'Closed all of interim.')
 
-		let [args] = mockSendEmail.mock.calls.at(-1) as [{body: string}]
+		let [args] = mockComposeEmail.mock.calls.at(-1) as [{body: string}]
 		let issueUrl = /Project maintainers: (\S+)/u.exec(args.body)?.[1] ?? ''
 		let body = new URL(issueUrl).searchParams.get('body') ?? ''
 		let noteAt = body.indexOf('Closed all of interim.')
@@ -74,7 +81,7 @@ describe('submitReport', () => {
 	it('changes nothing when there is no note', () => {
 		submitReport(makeBuilding('Cage'), makeBuilding('Cage'), 'stolaf', '')
 
-		let [args] = mockSendEmail.mock.calls.at(-1) as [{body: string}]
+		let [args] = mockComposeEmail.mock.calls.at(-1) as [{body: string}]
 		expect(args.body).toContain(
 			'Hi! Thanks for letting us know about a change.\n\nPlease do not change anything below this line.',
 		)
@@ -86,7 +93,7 @@ describe('submitReport', () => {
 		let after: BuildingType = {...makeBuilding('Cage'), links: [{title: '', url: ''}]}
 		submitReport(makeBuilding('Cage'), after, 'stolaf', '')
 
-		let [args] = mockSendEmail.mock.calls.at(-1) as [{body: string}]
+		let [args] = mockComposeEmail.mock.calls.at(-1) as [{body: string}]
 		expect(args.body).not.toContain('links:')
 	})
 
@@ -95,7 +102,7 @@ describe('submitReport', () => {
 		let after: BuildingType = {...makeBuilding('Cage'), links: [{title: 'Instagram', url: ''}]}
 		submitReport(makeBuilding('Cage'), after, 'stolaf', '')
 
-		let [args] = mockSendEmail.mock.calls.at(-1) as [{body: string}]
+		let [args] = mockComposeEmail.mock.calls.at(-1) as [{body: string}]
 		expect(args.body).toContain('title: Instagram')
 	})
 })

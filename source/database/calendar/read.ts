@@ -1,7 +1,9 @@
+import {useEffect} from 'react'
+
 import type {EventType} from '@frogpond/event-type'
 import {now} from '@frogpond/timer'
 import * as Sentry from '@sentry/react-native'
-import {keepPreviousData, skipToken, useQuery} from '@tanstack/react-query'
+import {keepPreviousData, skipToken, useQuery, useQueryClient} from '@tanstack/react-query'
 
 import type {SourcedEvent} from '../../../modules/event-list/types.ts'
 import type {CalendarFilterOption} from '../../features/calendar/filter.ts'
@@ -45,6 +47,29 @@ const FORWARD_DAYS = 180
  * how all three hooks below came to be persisted in the first place.
  */
 export const CALENDAR_READ_KEY = 'calendar-db'
+
+/**
+ * Drops every read keyed to a revision older than `revision` that nothing is
+ * watching any more.
+ *
+ * Every write bumps the revision in each read's key, which leaves the
+ * previous window's hydrated events with no observer, and the app-wide
+ * `gcTime` would keep each of those for a day. The current read keeps that
+ * `gcTime`, so a screen reopened within the day shows at once.
+ *
+ * Called after `useQuery`, so its effect runs once the query has moved its
+ * observer to the new key and the old read is inactive.
+ */
+function useDropSupersededReads(revision: number): void {
+	let queryClient = useQueryClient()
+	useEffect(() => {
+		queryClient.removeQueries({
+			queryKey: [CALENDAR_READ_KEY],
+			type: 'inactive',
+			predicate: (query) => query.queryKey[2] !== revision,
+		})
+	}, [queryClient, revision])
+}
 
 /**
  * The two-sided window the screens read from: `RETENTION_DAYS` back, `FORWARD_DAYS`
@@ -150,20 +175,23 @@ export function reportingFailures<T>(read: () => T): T {
 }
 
 /**
- * Every occurrence in `window`, narrowed to `sourceIds` and `filters`,
- * hydrated into `SourcedEvent`s. `failed` says the read itself threw, which
- * the screen reports as every enabled calendar being unavailable.
+ * Every occurrence in `window`, narrowed to `sourceIds` and `filters`, less
+ * what `exclude` hides (see `occurrencesQuery`), hydrated into
+ * `SourcedEvent`s.
+ * `failed` says the read itself threw, which the screen reports as every
+ * enabled calendar being unavailable.
  */
 export function useOccurrences(args: {
 	window: Window | null
 	sourceIds: string[]
 	filters: FilterSelection[]
+	exclude: FilterSelection[]
 }): {events: SourcedEvent[]; isPending: boolean; failed: boolean} {
-	let {window, sourceIds, filters} = args
+	let {window, sourceIds, filters, exclude} = args
 	let revision = useCalendarRevision()
 
 	let result = useQuery({
-		queryKey: [CALENDAR_READ_KEY, 'occurrences', revision, window, sourceIds, filters],
+		queryKey: [CALENDAR_READ_KEY, 'occurrences', revision, window, sourceIds, filters, exclude],
 		// A `null` window means there is nothing to read -- the detail screen
 		// asks for neighbours only when it has a timeline to draw them on.
 		// `skipToken` is what switches the query off while keeping the key and
@@ -175,7 +203,7 @@ export function useOccurrences(args: {
 					reportingFailures(() => {
 						let runner = getRunner()
 						let rows = runner.all<OccurrenceRowResult>(
-							occurrencesQuery({window, sourceIds, filters}),
+							occurrencesQuery({window, sourceIds, filters, exclude}),
 						)
 						let dedupeKeys = [...new Set(rows.map((row) => row.dedupe_key))]
 						let sponsors = sponsorsFor(runner, dedupeKeys, sourceIds)
@@ -191,6 +219,7 @@ export function useOccurrences(args: {
 					}),
 		placeholderData: keepPreviousData,
 	})
+	useDropSupersededReads(revision)
 
 	return {events: result.data ?? [], isPending: result.isPending, failed: result.isError}
 }
@@ -206,18 +235,20 @@ export function useFacets(args: {
 	axis: 'category' | 'organization'
 	window: Window
 	sourceIds: string[]
+	exclude: FilterSelection[]
 }): CalendarFilterOption[] {
-	let {axis, window, sourceIds} = args
+	let {axis, window, sourceIds, exclude} = args
 	let revision = useCalendarRevision()
 
 	let result = useQuery({
-		queryKey: [CALENDAR_READ_KEY, 'facets', revision, axis, window, sourceIds],
+		queryKey: [CALENDAR_READ_KEY, 'facets', revision, axis, window, sourceIds, exclude],
 		queryFn: () =>
 			reportingFailures(() =>
-				getRunner().all<CalendarFilterOption>(facetsQuery({axis, window, sourceIds})),
+				getRunner().all<CalendarFilterOption>(facetsQuery({axis, window, sourceIds, exclude})),
 			),
 		placeholderData: keepPreviousData,
 	})
+	useDropSupersededReads(revision)
 
 	return result.data ?? []
 }
@@ -257,13 +288,17 @@ export function useEvent(
 					[sourceId, ...sourceIds],
 				)
 				let [entry] = hydrate(rows, sponsors, now().toDate())
-				return entry?.event
+				// `null`, not `undefined`: React Query fails a read that resolves to
+				// `undefined`, and an event a refresh rekeyed or deleted is missing,
+				// not an error.
+				return entry?.event ?? null
 			}),
 		placeholderData: keepPreviousData,
 	})
+	useDropSupersededReads(revision)
 
 	return {
-		event: result.data,
+		event: result.data ?? undefined,
 		isPending: result.isPending,
 		error: result.error,
 		refetch: () => void result.refetch(),
@@ -274,7 +309,16 @@ export function useEvent(
  * `useOccurrences` over the timeline's own window, with no filter narrowing it.
  * A `null` window -- an event with no timeline of its own -- reads nothing.
  */
-export function useNeighbours(args: {window: Window | null; sourceIds: string[]}): SourcedEvent[] {
-	let {events} = useOccurrences({window: args.window, sourceIds: args.sourceIds, filters: []})
+export function useNeighbours(args: {
+	window: Window | null
+	sourceIds: string[]
+	exclude: FilterSelection[]
+}): SourcedEvent[] {
+	let {events} = useOccurrences({
+		window: args.window,
+		sourceIds: args.sourceIds,
+		filters: [],
+		exclude: args.exclude,
+	})
 	return events
 }

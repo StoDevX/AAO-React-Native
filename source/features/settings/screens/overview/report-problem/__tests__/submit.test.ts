@@ -20,7 +20,7 @@ describe('submitReport', () => {
 		jest.clearAllMocks()
 	})
 
-	it('sends the message, name, email, and device tags to Sentry', () => {
+	it('sends the message, name, email, and device tags to Sentry, with no attachments', () => {
 		let result = submitReport({
 			message: 'it crashed',
 			name: 'Wren',
@@ -29,19 +29,35 @@ describe('submitReport', () => {
 
 		expect(result).toBe(true)
 		expect(Sentry.captureFeedback).toHaveBeenCalledTimes(1)
-		expect(Sentry.captureFeedback).toHaveBeenCalledWith({
-			message: 'it crashed',
-			name: 'Wren',
-			email: 'wren@example.com',
-			tags: {
-				deviceBrand: 'Apple',
-				deviceModel: 'iPhone 14 Pro',
-				deviceModelId: 'iPhone15,2',
-				osName: 'iOS',
-				osVersion: '18.6',
-				appVersion: '2.8.0',
-				buildNumber: '17',
+		expect(Sentry.captureFeedback).toHaveBeenCalledWith(
+			{
+				message: 'it crashed',
+				name: 'Wren',
+				email: 'wren@example.com',
+				tags: {
+					deviceBrand: 'Apple',
+					deviceModel: 'iPhone 14 Pro',
+					deviceModelId: 'iPhone15,2',
+					osName: 'iOS',
+					osVersion: '18.6',
+					appVersion: '2.8.0',
+					buildNumber: '17',
+				},
 			},
+			{attachments: []},
+		)
+	})
+
+	it('sends attached images with the feedback', () => {
+		let data = new Uint8Array([1, 2, 3])
+
+		submitReport({
+			message: 'the map is blank',
+			attachments: [{filename: 'IMG_0001.jpg', data, contentType: 'image/jpeg'}],
+		})
+
+		expect(Sentry.captureFeedback).toHaveBeenCalledWith(expect.anything(), {
+			attachments: [{filename: 'IMG_0001.jpg', data, contentType: 'image/jpeg'}],
 		})
 	})
 })

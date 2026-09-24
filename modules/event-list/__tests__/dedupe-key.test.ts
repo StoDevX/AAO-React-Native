@@ -62,3 +62,28 @@ test('a combined listing does not match either half', () => {
 test('an accented title matches its unaccented twin', () => {
 	expect(dedupeKey(event('Café Concert'))).toBe(dedupeKey(event('Cafe Concert')))
 })
+
+// Folded to nothing, every title in another script at one start time would
+// share a key, and all but one of those events would drop from the list.
+test('titles in other scripts keep their letters', () => {
+	let titles = ['中秋节晚会', '추석 모임', 'Диско', 'إفطار رمضان']
+	let keys = titles.map((title) => dedupeKey(event(title)))
+	expect(new Set(keys).size).toBe(titles.length)
+	for (let key of keys) {
+		expect(key.split('|')[1]).not.toBe('')
+	}
+})
+
+test('an accent inside a word does not split it', () => {
+	expect(dedupeKey(event('Pokémon Night'))).toBe(dedupeKey(event('Pokemon Night')))
+})
+
+// In Japanese, Hindi and Thai a combining mark is part of the letter, so
+// dropping it turns one word into another.
+test.each([
+	['ガラ', 'カラ'],
+	['किताब', 'कताब'],
+	['ปีใหม่', 'ปใหม'],
+])('%s keeps a key apart from %s', (marked, bare) => {
+	expect(dedupeKey(event(marked))).not.toBe(dedupeKey(event(bare)))
+})

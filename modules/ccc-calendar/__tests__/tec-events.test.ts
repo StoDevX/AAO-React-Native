@@ -1,5 +1,5 @@
 import fixture from './fixtures/tec-events.json'
-import {parseTecEvents} from '../parsers/tec-events'
+import {fetchTecPages, parseTecEvents} from '../parsers/tec-events'
 
 test('parses the live fixture', () => {
 	expect(parseTecEvents(fixture)).toHaveLength(fixture.events.length)
@@ -353,4 +353,93 @@ test('carries the organisations the live fixture names', () => {
 	// An unsponsored event is unsponsored, not sponsored by nobody: the parser
 	// never emits an empty list, so "no organisation" has one representation.
 	expect(events.every((event) => event.organization?.length !== 0)).toBe(true)
+})
+
+describe('fetchTecPages', () => {
+	function page(starts: string[], next?: string) {
+		return {
+			events: starts.map((start) => ({utc_start_date: start})),
+			...(next ? {next_rest_url: next} : {}),
+		}
+	}
+
+	const FEED = 'https://wp.stolaf.edu/calendar/wp-json/tribe/events/v1/events?per_page=50'
+	const WINDOW = {from: new Date(2026, 9, 11), until: new Date(2026, 10, 11)}
+
+	async function firstRequest(href: string): Promise<URLSearchParams> {
+		let fetched: string[] = []
+		await fetchTecPages(href, WINDOW, (next) => {
+			fetched.push(next)
+			return Promise.resolve(page([]))
+		})
+		return new URLSearchParams(fetched[0].split('?')[1])
+	}
+
+	test('asks for every event still running on the first day, not only those starting on it', async () => {
+		// TEC rounds `ends_after` up to 23:59:59, so the day before is what
+		// reaches an event ending at any moment of the first day -- Fall Break,
+		// say, on its second day.
+		let params = await firstRequest(FEED)
+		expect(params.get('ends_after')).toBe('2026-10-10')
+		expect(params.has('start_date')).toBe(false)
+	})
+
+	test('asks for events starting by the last day', async () => {
+		let params = await firstRequest(FEED)
+		expect(params.get('starts_before')).toBe('2026-11-11')
+		expect(params.has('end_date')).toBe(false)
+	})
+
+	test('sets its own page size, whatever the manifest asks for', async () => {
+		let params = await firstRequest('https://wp.stolaf.edu/calendar/wp-json/tribe/events/v1/events')
+		expect(params.get('per_page')).toBe('50')
+	})
+
+	test('accepts a relative href, as a proxied source would give', async () => {
+		let fetched: string[] = []
+		await fetchTecPages('calendar/named/stolaf', WINDOW, (next) => {
+			fetched.push(next)
+			return Promise.resolve(page([]))
+		})
+		expect(fetched[0].startsWith('calendar/named/stolaf?')).toBe(true)
+	})
+
+	test('follows next_rest_url until the feed runs out', async () => {
+		// TEC carries the window into each `next_rest_url`, so later pages are
+		// fetched exactly as the feed names them.
+		let pages: Record<string, unknown> = {
+			second: page(['2026-10-12 10:00:00'], 'third'),
+			third: page(['2026-10-13 10:00:00']),
+		}
+		let fetched: string[] = []
+
+		let body = await fetchTecPages(FEED, WINDOW, (href) => {
+			fetched.push(href)
+			return Promise.resolve(pages[href] ?? page(['2026-10-11 10:00:00'], 'second'))
+		})
+
+		expect(fetched.slice(1)).toStrictEqual(['second', 'third'])
+		expect(body.events).toHaveLength(3)
+	})
+
+	test('reads a tenth page that ends the feed', async () => {
+		let count = 0
+		let body = await fetchTecPages(FEED, WINDOW, () => {
+			count += 1
+			return Promise.resolve(page(['2026-10-11 10:00:00'], count < 10 ? 'next' : undefined))
+		})
+		expect(body.events).toHaveLength(10)
+	})
+
+	test('throws rather than hand back a feed cut short at ten pages', async () => {
+		// A short feed would read as the whole calendar, and every event past
+		// the cut would be deleted.
+		await expect(
+			fetchTecPages(FEED, WINDOW, () => Promise.resolve(page(['2026-10-11 10:00:00'], 'loop'))),
+		).rejects.toThrow()
+	})
+
+	test('a page that is not a TEC page throws', async () => {
+		await expect(fetchTecPages(FEED, WINDOW, () => Promise.resolve({nope: true}))).rejects.toThrow()
+	})
 })

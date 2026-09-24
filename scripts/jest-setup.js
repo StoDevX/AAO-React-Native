@@ -14,6 +14,28 @@ jest.mock('expo-clipboard', () => ({
 	setStringAsync: jest.fn(() => Promise.resolve(true)),
 	hasStringAsync: jest.fn(() => Promise.resolve(false)),
 }))
+jest.mock('expo-mail-composer', () => ({
+	isAvailableAsync: jest.fn(() => Promise.resolve(false)),
+	composeAsync: jest.fn(() => Promise.resolve({status: 'sent'})),
+}))
+jest.mock('expo-image-picker', () => ({
+	launchImageLibraryAsync: jest.fn(() => Promise.resolve({canceled: true, assets: null})),
+	UIImagePickerPreferredAssetRepresentationMode: {Compatible: 'compatible'},
+}))
+// Re-encoding hands each image back under the uri it came in with, so a test
+// can follow a picked image through to whatever it is sent with.
+jest.mock('expo-image-manipulator', () => ({
+	ImageManipulator: {
+		manipulate: jest.fn((uri) => {
+			let context = {
+				resize: () => context,
+				renderAsync: () => Promise.resolve({saveAsync: () => Promise.resolve({uri})}),
+			}
+			return context
+		}),
+	},
+	SaveFormat: {JPEG: 'jpeg'},
+}))
 // These specific values are load-bearing for tests across building-hours,
 // transportation, course-search, and streaming that call a time-format helper
 // without an explicit locale -- the default falls through to deviceLocale(),

@@ -26,10 +26,16 @@ export function eventKey(event: EventType): string {
  * together, and merging means deleting a real event from the list.
  */
 export function dedupeKey(event: EventType): string {
+	// Letters and digits of any script, so a title in Chinese or Cyrillic
+	// keeps a key of its own rather than folding to nothing. Only the accents
+	// of Latin, Greek and Cyrillic are dropped, so Café matches Cafe: in
+	// Japanese, Hindi or Thai a combining mark is part of the letter, and
+	// dropping it spells a different word.
 	let title = event.title
 		.normalize('NFKD')
+		.replaceAll(/[\u0300-\u036F]+/gu, '')
 		.toLowerCase()
-		.replaceAll(/[^a-z0-9]+/gu, ' ')
+		.replaceAll(/[^\p{L}\p{M}\p{N}]+/gu, ' ')
 		.trim()
 	return `${event.startTime.toISOString()}|${title}`
 }

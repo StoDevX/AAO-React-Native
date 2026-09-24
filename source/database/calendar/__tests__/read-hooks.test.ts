@@ -10,7 +10,8 @@ import type {WireEvent} from '../../../../modules/ccc-calendar/parsers/events'
 import {getRunner} from '../../client'
 import {ensureSchema} from '../../schema'
 import {openTestDatabase} from '../../testing/harness'
-import {dayWindow, useEvent, useOccurrences} from '../read'
+import type {FilterSelection} from '../queries'
+import {dayWindow, useEvent, useFacets, useNeighbours, useOccurrences} from '../read'
 import {retentionFor, writeSource} from '../write'
 
 // `read.ts` reports a failed read to Sentry, which ships ESM-only and cannot
@@ -77,7 +78,12 @@ describe('isOngoing follows the app clock, not the device clock', () => {
 	test('in the window the list reads', async () => {
 		let {result} = await renderHook(
 			() =>
-				useOccurrences({window: dayWindow(APP_NOW.toDate()), sourceIds: ['uitest'], filters: []}),
+				useOccurrences({
+					window: dayWindow(APP_NOW.toDate()),
+					sourceIds: ['uitest'],
+					filters: [],
+					exclude: [],
+				}),
 			{wrapper},
 		)
 
@@ -93,5 +99,68 @@ describe('isOngoing follows the app clock, not the device clock', () => {
 
 		await waitFor(() => expect(result.current.event).toBeDefined())
 		expect(result.current.event?.isOngoing).toBe(true)
+	})
+})
+
+const GAME: WireEvent = {
+	...ORIENTATION,
+	startTime: '2026-09-05T13:00:00-05:00',
+	endTime: '2026-09-05T16:00:00-05:00',
+	isMultiDay: false,
+	title: 'Football vs. Carleton College',
+	categories: ['Athletics'],
+}
+
+const ATHLETICS: FilterSelection[] = [{axis: 'category', value: 'Athletics'}]
+
+// The hooks apply whatever exclusion their caller names, and no other: what
+// the Calendar hides is the Calendar screen's decision, not the database's.
+describe('the read hooks hide what the caller excludes', () => {
+	beforeEach(() => {
+		writeSource(getRunner(), 'uitest', 0, [ORIENTATION, GAME], retentionFor(APP_NOW.toDate()))
+	})
+
+	let window = dayWindow(APP_NOW.toDate())
+	let titles = (events: {event: {title: string}}[]) => events.map((entry) => entry.event.title)
+
+	test('useOccurrences', async () => {
+		let {result} = await renderHook(
+			() => ({
+				open: useOccurrences({window, sourceIds: ['uitest'], filters: [], exclude: []}),
+				hidden: useOccurrences({window, sourceIds: ['uitest'], filters: [], exclude: ATHLETICS}),
+			}),
+			{wrapper},
+		)
+
+		await waitFor(() => expect(titles(result.current.open.events)).toContain(GAME.title))
+		await waitFor(() => expect(result.current.hidden.events).toHaveLength(1))
+		expect(titles(result.current.hidden.events)).toEqual([ORIENTATION.title])
+	})
+
+	test('useNeighbours', async () => {
+		let {result} = await renderHook(
+			() => ({
+				open: useNeighbours({window, sourceIds: ['uitest'], exclude: []}),
+				hidden: useNeighbours({window, sourceIds: ['uitest'], exclude: ATHLETICS}),
+			}),
+			{wrapper},
+		)
+
+		await waitFor(() => expect(titles(result.current.open)).toContain(GAME.title))
+		await waitFor(() => expect(result.current.hidden).toHaveLength(1))
+		expect(titles(result.current.hidden)).toEqual([ORIENTATION.title])
+	})
+
+	test('useFacets', async () => {
+		let {result} = await renderHook(
+			() => ({
+				open: useFacets({axis: 'category', window, sourceIds: ['uitest'], exclude: []}),
+				hidden: useFacets({axis: 'category', window, sourceIds: ['uitest'], exclude: ATHLETICS}),
+			}),
+			{wrapper},
+		)
+
+		await waitFor(() => expect(result.current.open).toEqual([{value: 'Athletics', count: 1}]))
+		expect(result.current.hidden).toEqual([])
 	})
 })

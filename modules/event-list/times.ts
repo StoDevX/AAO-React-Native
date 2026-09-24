@@ -2,6 +2,7 @@ import type {Moment} from 'moment-timezone'
 import type {EventType} from '@frogpond/event-type'
 import type {EventDetailTime} from '@frogpond/event-list/types'
 import {formatDate, formatDateTime, formatTime, formatWeekday} from '@frogpond/time-format'
+import {lastDayCovered} from './days'
 
 /**
  * The share sheet's one-line summary of when an event is. A same-day event
@@ -59,14 +60,25 @@ export function formatSectionHeader(value: Moment, locale?: string): string {
  * it. Unlike `detailTimeLines`, there is no prefix -- Calendar.app's list
  * puts the start above the end with no words between them -- and an all-day
  * event carries no text at all, since the row shows `all-day` in its place.
+ *
+ * `shownOn` is the day the row sits under in Day view. On any day but the
+ * event's first, the start carries its date as well as its time, so a play
+ * that opened Saturday does not read as starting on Monday.
  */
-export function listTimeLines(event: EventType, locale?: string): EventDetailTime {
+export function listTimeLines(
+	event: EventType,
+	locale?: string,
+	shownOn?: Moment,
+): EventDetailTime {
 	if (event.isAllDay) {
 		return {start: '', end: '', allDay: true}
 	}
 
 	let start, end
-	if (event.isOngoing) {
+	if (shownOn && !shownOn.isSame(event.startTime, 'day')) {
+		start = `${formatDate(event.startTime, 'short', locale)}, ${formatTime(event.startTime, locale)}`
+		end = `${formatDate(event.endTime, 'short', locale)}, ${formatTime(event.endTime, locale)}`
+	} else if (event.isOngoing) {
 		start = formatDate(event.startTime, 'short', locale)
 		end = formatDate(event.endTime, 'short', locale)
 	} else if (event.isMultiDay) {
@@ -95,13 +107,7 @@ export function detailTimeLines(event: EventType, locale?: string): EventTimeLin
 	let endDate = formatDate(event.endTime, 'long', locale)
 
 	if (event.isAllDay) {
-		// The two sources disagree about where an all-day event ends: the web
-		// calendars end it exclusively, at midnight the following day, while
-		// EventKit ends it inclusively, at 23:59:59 the same day. The last day it
-		// actually covers is the instant before its end under either convention.
-		let lastDay = event.endTime.isAfter(event.startTime)
-			? event.endTime.clone().subtract(1, 'millisecond')
-			: event.startTime
+		let lastDay = lastDayCovered(event)
 
 		if (lastDay.isSame(event.startTime, 'day')) {
 			return [{prefix: 'All day', time: '', date: startDate}]

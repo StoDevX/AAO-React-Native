@@ -1,6 +1,6 @@
 import {deriveDayFlags} from '@frogpond/event-type'
 import {decode, htmlToSegments} from '@frogpond/html-lib'
-import {addDays, endOfDay, isAfter, isBefore, startOfDay} from 'date-fns'
+import {addDays, isAfter, isBefore, startOfDay} from 'date-fns'
 import ICAL from 'ical.js'
 import {z} from 'zod'
 import type {WireEvent} from './events'
@@ -381,7 +381,7 @@ export function seekableRule(component: ICAL.Component): ICAL.Recur | undefined 
 /// `now` on the reachable side of the seed. Caught directly: an unpadded
 /// seed against a multi-day-occurrence `DAILY` rule silently dropped every
 /// occurrence still running at `now`, the exact case `parseIcalEvents`'s own
-/// `isOngoing` and `endTime > endOfToday` handling exist to keep.
+/// `isOngoing` and `endTime >= startOfToday` handling exist to keep.
 ///
 /// Returns `undefined` when there's nothing to gain -- `DTSTART` is already
 /// within a few periods of `now` -- since the unseeded walk from `DTSTART` is
@@ -454,11 +454,15 @@ function expandOccurrences(event: ICAL.Event, now: Date, limits: ExpansionLimits
 	}
 
 	let windowEnd = addDays(now, limits.windowDays)
-	let endOfToday = endOfDay(now)
+	let startOfToday = startOfDay(now)
 	let rule = seekableRule(event.component)
 	let durationSeconds =
 		(toInstant(event.endDate).getTime() - toInstant(event.startDate).getTime()) / 1000
-	let seedTime = rule ? computeSeedTime(event.startDate, rule, now, durationSeconds) : undefined
+	// Seeded from the start of today, not `now`: an occurrence that finished
+	// earlier today is still kept, so the walk has to reach it.
+	let seedTime = rule
+		? computeSeedTime(event.startDate, rule, startOfToday, durationSeconds)
+		: undefined
 	let iterator = event.iterator(seedTime)
 	let occurrences: WireEvent[] = []
 
@@ -471,7 +475,7 @@ function expandOccurrences(event: ICAL.Event, now: Date, limits: ExpansionLimits
 	function tryPush(occurrenceTime: ICAL.Time): void {
 		let details = event.getOccurrenceDetails(occurrenceTime)
 		if (isAfter(toInstant(details.startDate), windowEnd)) return
-		if (!isAfter(toInstant(details.endDate), endOfToday)) return
+		if (isBefore(toInstant(details.endDate), startOfToday)) return
 
 		occurrences.push(toWireEvent(details.item, details.startDate, details.endDate, now))
 		if (occurrences.length >= limits.maxOccurrences) {
@@ -686,8 +690,10 @@ export function parseIcalEvents(
 		throw new Error('every ical event was malformed', {cause: lastError})
 	}
 
-	let endOfToday = endOfDay(now)
-	let future = events.filter((event) => isAfter(new Date(event.endTime), endOfToday))
+	// Everything that has not finished before today, which is exactly what
+	// `writeSource` deletes and expects the feed to send back.
+	let startOfToday = startOfDay(now)
+	let future = events.filter((event) => !isBefore(new Date(event.endTime), startOfToday))
 
 	return future.sort((a, b) => (a.startTime < b.startTime ? -1 : a.startTime > b.startTime ? 1 : 0))
 }

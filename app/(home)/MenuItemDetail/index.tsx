@@ -5,16 +5,22 @@ import {useQuery} from '@tanstack/react-query'
 import {MenuItemDetailView} from '../../../modules/food-menu/food-item-detail'
 import {bonAppMenuItemOptions, pauseMenuItemOptions} from '../../../source/features/menus/query'
 import {LoadingView, NoticeView} from '@frogpond/notice'
+import {OFFLINE_MESSAGE, menuView} from '../../../source/features/menus/lib/menu-view'
 
 export default function MenuItemDetailPage(): React.ReactNode {
-	let {source, cafe, itemId} = useLocalSearchParams<{
+	let {source, cafe, cafeId, day, itemId} = useLocalSearchParams<{
 		source: string
+		/** A BonApp cafe's name, as the dining screens name theirs. */
 		cafe?: string
+		/** A BonApp cafe's id, as the BonApp Picker names its cafe. */
+		cafeId?: string
+		/** The day of the BonApp menu the item was listed on, as `YYYY-MM-DD`. */
+		day?: string
 		itemId: string
 	}>()
 
 	let bonAppQuery = useQuery({
-		...bonAppMenuItemOptions(cafe ?? '', itemId),
+		...bonAppMenuItemOptions(cafeId ? {id: cafeId} : (cafe ?? ''), day ?? '', itemId),
 		enabled: source === 'bonapp',
 	})
 
@@ -23,11 +29,24 @@ export default function MenuItemDetailPage(): React.ReactNode {
 		enabled: source === 'pause',
 	})
 
-	let {data, isLoading, error, refetch} = source === 'bonapp' ? bonAppQuery : pauseQuery
+	let query = source === 'bonapp' ? bonAppQuery : pauseQuery
+	let {refetch} = query
+	let view = menuView(query)
 
 	let screen = <Stack.Title>Nutrition</Stack.Title>
 
-	if (isLoading) {
+	// A source neither query knows leaves both disabled, and a disabled query
+	// with no data stays pending for good, which would read as loading.
+	if (source !== 'bonapp' && source !== 'pause') {
+		return (
+			<>
+				{screen}
+				<NoticeView text="Could not find this menu item." />
+			</>
+		)
+	}
+
+	if (view.kind === 'loading') {
 		return (
 			<>
 				{screen}
@@ -36,22 +55,30 @@ export default function MenuItemDetailPage(): React.ReactNode {
 		)
 	}
 
-	if (error) {
+	if (view.kind === 'offline') {
+		return (
+			<>
+				{screen}
+				<NoticeView text={OFFLINE_MESSAGE} />
+			</>
+		)
+	}
+
+	if (view.kind === 'error') {
 		return (
 			<>
 				{screen}
 				<NoticeView
 					buttonText="Try Again"
 					onPress={refetch}
-					text={`A problem occured while loading: ${
-						error instanceof Error ? error.message : 'Unknown error'
-					}`}
+					text={`A problem occured while loading: ${view.error.message}`}
 				/>
 			</>
 		)
 	}
 
-	if (!data?.item) {
+	let {data} = view
+	if (!data.item) {
 		return (
 			<>
 				{screen}

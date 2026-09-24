@@ -6,17 +6,13 @@ import {hasAppFor, openUrl} from '@frogpond/open-url'
 
 import {callPhone} from '../call-phone'
 import {lastAlertTitle, pressAlertButton} from '../../testing/alert'
+import {settle} from '../../testing/settle'
 
 jest.mock('@frogpond/open-url', () => ({openUrl: jest.fn(), hasAppFor: jest.fn()}))
 jest.mock('expo-clipboard', () => ({setStringAsync: jest.fn()}))
 
 const NUMBER = '+15072224127'
 const CANNOT_CALL = "Apologies, we couldn't call that number"
-
-/** Lets the call's pending checks settle. */
-function settle(): Promise<void> {
-	return new Promise((resolve) => setImmediate(resolve))
-}
 
 describe('callPhone', () => {
 	beforeEach(() => {
