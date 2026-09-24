@@ -39,11 +39,15 @@ export const cafeKeys = {
 // BonApp
 //
 
+// A cafe named by id is asked for with the id in the query string as well as
+// the path. ccc-server reads it only from the query, and answers without it
+// with a 400, `?cafeId is required`.
+
 function buildMenuPath(cafeParam: string | {id: string}) {
 	if (typeof cafeParam === 'string') {
 		return `food/named/menu/${cafeParam}`
 	} else if ('id' in cafeParam) {
-		return `food/menu/${cafeParam.id}`
+		return `food/menu/${cafeParam.id}?cafeId=${cafeParam.id}`
 	} else {
 		throw new Error(`Unexpected cafe parameter: ${cafeParam}`)
 	}
@@ -53,7 +57,7 @@ function buildCafePath(cafeParam: string | {id: string}) {
 	if (typeof cafeParam === 'string') {
 		return `food/named/cafe/${cafeParam}`
 	} else if ('id' in cafeParam) {
-		return `food/cafe/${cafeParam.id}`
+		return `food/cafe/${cafeParam.id}?cafeId=${cafeParam.id}`
 	} else {
 		throw new Error(`Unexpected cafe parameter: ${cafeParam}`)
 	}

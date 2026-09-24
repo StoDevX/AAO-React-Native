@@ -384,4 +384,27 @@ describe('BonAppHostedMenu', () => {
 		}
 		expect(props.meals[0].stations[0].label).toBe('Warm & Soulful')
 	})
+
+	// The BonApp Picker names its cafe by id. Flattened into the `cafe` param,
+	// the id would be read back as a cafe's name.
+	test('links an item of a cafe named by id to that cafe', async () => {
+		queryClient.setQueryData(bonAppMenuOptions({id: '261'}, '2026-09-22').queryKey, CAGE_MENU)
+		queryClient.setQueryData(bonAppCafeOptions({id: '261'}, '2026-09-22').queryKey, CAGE_CAFE)
+		mockRouter.navigate.mockClear()
+		await render(
+			<QueryClientProvider client={queryClient}>
+				<BonAppHostedMenu cafe={{id: '261'}} loadingMessage={['Loading…']} name="BonApp" />
+			</QueryClientProvider>,
+		)
+
+		let props = mockFoodMenu.mock.lastCall?.[0] as unknown as {
+			onItemPress: (item: {id: string}) => void
+		}
+		props.onItemPress({id: '5'})
+
+		expect(mockRouter.navigate).toHaveBeenCalledWith({
+			pathname: '/MenuItemDetail',
+			params: {source: 'bonapp', cafeId: '261', day: '2026-09-22', itemId: '5'},
+		})
+	})
 })

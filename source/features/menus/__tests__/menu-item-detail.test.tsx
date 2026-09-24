@@ -24,10 +24,8 @@ jest.mock('@frogpond/api', () => ({
 }))
 
 // A Pause item's id is its place in the menu.
-let mockParams: {source: string; itemId: string; cafe?: string; day?: string} = {
-	source: 'pause',
-	itemId: '0',
-}
+const PAUSE_PARAMS = {source: 'pause', itemId: '0'}
+let mockParams: Record<string, string> = PAUSE_PARAMS
 
 jest.mock('expo-router', () => ({
 	Stack: {Screen: () => null, Title: () => null},
@@ -49,8 +47,8 @@ beforeEach(() => {
 	jest.useFakeTimers()
 	queryClient = new QueryClient({defaultOptions: {queries: {staleTime: Infinity, retry: false}}})
 	queryClient.setQueryData(pauseMenuOptions.queryKey, PAUSE_RESPONSE)
-	mockParams = {source: 'pause', itemId: '0'}
 	mockDetailView.mockClear()
+	mockParams = PAUSE_PARAMS
 })
 
 afterEach(() => {
@@ -117,5 +115,21 @@ describe('MenuItemDetailPage', () => {
 		await renderDetail()
 
 		expect(mockDetailView.mock.lastCall?.[0]).toMatchObject({item: {label: 'Nachos'}})
+	})
+
+	// The BonApp Picker names its cafe by id rather than by name, and the item
+	// is read from the menu fetched for that id.
+	test('reads an item from the menu of a cafe named by id', async () => {
+		let menu = {
+			items: {'5': {id: '5', label: 'toast', station: 'grill', description: ''}},
+			cor_icons: {},
+			days: [],
+		} as unknown as EditedBonAppMenuInfoType
+		queryClient.setQueryData(bonAppMenuOptions({id: '261'}, '2026-09-22').queryKey, menu)
+		mockParams = {source: 'bonapp', cafeId: '261', day: '2026-09-22', itemId: '5'}
+
+		await renderDetail()
+
+		expect(mockDetailView.mock.lastCall?.[0]).toMatchObject({item: {label: 'Toast'}})
 	})
 })

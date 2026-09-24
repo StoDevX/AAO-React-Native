@@ -267,16 +267,17 @@ export function BonAppHostedMenu(props: Props): React.ReactNode {
 
 	// Stable so that a menu re-rendering for any other reason does not force
 	// every one of its rows to re-render with it.
+	//
+	// A cafe named by id goes over as `cafeId` rather than `cafe`, which the
+	// detail screen reads as a cafe's name.
 	let onItemPress = React.useCallback(
 		(item: MenuItemType) => {
 			router.navigate({
 				pathname: '/MenuItemDetail',
-				params: {
-					source: 'bonapp',
-					cafe: typeof props.cafe === 'string' ? props.cafe : props.cafe.id,
-					day,
-					itemId: item.id,
-				},
+				params:
+					typeof props.cafe === 'string'
+						? {source: 'bonapp', cafe: props.cafe, day, itemId: item.id}
+						: {source: 'bonapp', cafeId: props.cafe.id, day, itemId: item.id},
 			})
 		},
 		[router, props.cafe, day],

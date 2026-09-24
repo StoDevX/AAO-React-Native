@@ -8,16 +8,19 @@ import {LoadingView, NoticeView} from '@frogpond/notice'
 import {OFFLINE_MESSAGE, menuView} from '../../../source/features/menus/lib/menu-view'
 
 export default function MenuItemDetailPage(): React.ReactNode {
-	let {source, cafe, day, itemId} = useLocalSearchParams<{
+	let {source, cafe, cafeId, day, itemId} = useLocalSearchParams<{
 		source: string
+		/** A BonApp cafe's name, as the dining screens name theirs. */
 		cafe?: string
+		/** A BonApp cafe's id, as the BonApp Picker names its cafe. */
+		cafeId?: string
 		/** The day of the BonApp menu the item was listed on, as `YYYY-MM-DD`. */
 		day?: string
 		itemId: string
 	}>()
 
 	let bonAppQuery = useQuery({
-		...bonAppMenuItemOptions(cafe ?? '', day ?? '', itemId),
+		...bonAppMenuItemOptions(cafeId ? {id: cafeId} : (cafe ?? ''), day ?? '', itemId),
 		enabled: source === 'bonapp',
 	})
 
