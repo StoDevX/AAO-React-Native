@@ -26,10 +26,13 @@ export function eventKey(event: EventType): string {
  * together, and merging means deleting a real event from the list.
  */
 export function dedupeKey(event: EventType): string {
+	// Letters and digits of any script, so a title in Chinese or Cyrillic
+	// keeps a key of its own rather than folding to nothing.
 	let title = event.title
 		.normalize('NFKD')
+		.replaceAll(/\p{M}+/gu, '')
 		.toLowerCase()
-		.replaceAll(/[^a-z0-9]+/gu, ' ')
+		.replaceAll(/[^\p{L}\p{N}]+/gu, ' ')
 		.trim()
 	return `${event.startTime.toISOString()}|${title}`
 }

@@ -62,3 +62,19 @@ test('a combined listing does not match either half', () => {
 test('an accented title matches its unaccented twin', () => {
 	expect(dedupeKey(event('Café Concert'))).toBe(dedupeKey(event('Cafe Concert')))
 })
+
+// A fold to ASCII letters and digits reduced a title in any other script to
+// nothing, so every such event at one start time shared a key and all but
+// one were dropped from the list.
+test('titles in other scripts keep their letters', () => {
+	let titles = ['中秋节晚会', '추석 모임', 'Диско', 'إفطار رمضان']
+	let keys = titles.map((title) => dedupeKey(event(title)))
+	expect(new Set(keys).size).toBe(titles.length)
+	for (let key of keys) {
+		expect(key.split('|')[1]).not.toBe('')
+	}
+})
+
+test('an accented title in another script matches its unaccented twin', () => {
+	expect(dedupeKey(event('Мо́ре'))).toBe(dedupeKey(event('Море')))
+})
