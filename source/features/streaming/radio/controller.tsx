@@ -10,8 +10,8 @@ import {StreamPlayer} from './player'
 import type {HtmlAudioError, PlayState} from './types'
 import {theming, type RadioLogo} from './theme'
 import {ActionButton, CallButton, ShowCalendarButton} from './buttons'
+import {LogoButton} from './logo-button'
 import {openUrl} from '@frogpond/open-url'
-import {Touchable} from '@frogpond/touchable'
 import {useRouter} from 'expo-router'
 
 // If you want to fix the inline player, switch to `true`
@@ -212,15 +212,12 @@ function RadioScreen(props: RadioScreenProps): React.ReactNode {
 			<ScrollView contentContainerStyle={root} contentInsetAdjustmentBehavior="automatic">
 				<View style={logoWrapper}>
 					{onPressLogo ? (
-						<Touchable
-							accessibilityHint="Shows another logo."
+						<LogoButton
 							accessibilityLabel={`${stationName} logo, ${logo.name}`}
-							accessibilityRole="button"
-							highlight={false}
 							onPress={onPressLogo}
 						>
 							{logoImage}
-						</Touchable>
+						</LogoButton>
 					) : (
 						logoImage
 					)}
