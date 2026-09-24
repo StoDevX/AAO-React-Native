@@ -158,6 +158,10 @@ const config: ExpoConfig = {
 				},
 			},
 
+			// Without these, iOS answers canOpenURL "no" for calls and email on
+			// every device, so the app could not tell whether it can call or email.
+			LSApplicationQueriesSchemes: ['tel', 'mailto'],
+
 			CADisableMinimumFrameDurationOnPhone: true,
 			ITSAppUsesNonExemptEncryption: false,
 

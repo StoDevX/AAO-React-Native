@@ -5,13 +5,24 @@ import * as storage from '../../source/lib/storage'
 /** Hands `url` to iOS, resolving to whether anything opened it. */
 async function genericOpen(url: string): Promise<boolean> {
 	try {
-		if (!(await Linking.canOpenURL(url))) {
-			console.warn('cannot handle', url)
-		}
-		await Linking.openURL(url)
-		return true
+		return (await Linking.openURL(url)) !== false
 	} catch (err) {
 		console.error(err)
+		return false
+	}
+}
+
+/**
+ * Whether the device has an app for `url`, such as a phone for `tel:`.
+ *
+ * iOS answers no for a scheme missing from `LSApplicationQueriesSchemes` in
+ * app.config.ts, and React Native turns that answer into a rejection, which
+ * this also reads as no.
+ */
+export async function hasAppFor(url: string): Promise<boolean> {
+	try {
+		return await Linking.canOpenURL(url)
+	} catch {
 		return false
 	}
 }

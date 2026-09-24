@@ -1,73 +1,79 @@
-import {Alert, type AlertButton} from 'react-native'
+import {Alert} from 'react-native'
 import noop from 'lodash/noop'
-import {afterEach, describe, expect, jest, test} from '@jest/globals'
-import {openUrl} from '@frogpond/open-url'
+import {afterEach, beforeEach, describe, expect, jest, test} from '@jest/globals'
+import * as Clipboard from 'expo-clipboard'
+import {hasAppFor, openUrl} from '@frogpond/open-url'
 
 import {callPhone} from '../call-phone'
+import {lastAlertTitle, pressAlertButton} from '../../testing/alert'
 
-jest.mock('@frogpond/open-url', () => ({openUrl: jest.fn()}))
+jest.mock('@frogpond/open-url', () => ({openUrl: jest.fn(), hasAppFor: jest.fn()}))
 jest.mock('expo-clipboard', () => ({setStringAsync: jest.fn()}))
 
-const mockedOpenUrl = jest.mocked(openUrl)
+const NUMBER = '+15072224127'
+const CANNOT_CALL = "Apologies, we couldn't call that number"
 
-/** Presses the button titled `text` on the alert most recently shown. */
-function press(text: string): void {
-	let buttons = jest.mocked(Alert.alert).mock.lastCall?.[2] as AlertButton[] | undefined
-	let button = buttons?.find((candidate) => candidate.text === text)
-	if (!button?.onPress) {
-		throw new Error(`No "${text}" button on the last alert`)
-	}
-	button.onPress()
-}
-
-/** Lets the call's pending `openUrl` settle. */
+/** Lets the call's pending checks settle. */
 function settle(): Promise<void> {
 	return new Promise((resolve) => setImmediate(resolve))
 }
 
 describe('callPhone', () => {
+	beforeEach(() => {
+		jest.spyOn(Alert, 'alert').mockImplementation(noop)
+	})
+
 	afterEach(() => {
 		jest.restoreAllMocks()
-		mockedOpenUrl.mockReset()
+		jest.mocked(openUrl).mockReset()
+		jest.mocked(hasAppFor).mockReset()
+		jest.mocked(Clipboard.setStringAsync).mockReset()
 	})
 
-	test('offers to copy the number when the call cannot be placed', async () => {
-		jest.spyOn(Alert, 'alert').mockImplementation(noop)
-		mockedOpenUrl.mockResolvedValue(false)
+	test('offers to copy the number on a device that cannot call', async () => {
+		jest.mocked(hasAppFor).mockResolvedValue(false)
 
-		callPhone('+15072224127', {title: 'KRLX'})
-		press('Call')
+		callPhone(NUMBER, {title: 'KRLX'})
+		pressAlertButton('Call')
 		await settle()
 
-		expect(mockedOpenUrl).toHaveBeenCalledWith('tel:+15072224127')
-		expect(Alert.alert).toHaveBeenLastCalledWith(
-			"Apologies, we couldn't call that number",
-			expect.any(String),
-			expect.arrayContaining([expect.objectContaining({text: 'Copy number'})]),
-		)
+		expect(lastAlertTitle()).toBe(CANNOT_CALL)
+		expect(openUrl).not.toHaveBeenCalled()
+
+		pressAlertButton('Copy number')
+		expect(Clipboard.setStringAsync).toHaveBeenCalledWith(NUMBER)
 	})
 
-	test('shows nothing more once the call is placed', async () => {
-		jest.spyOn(Alert, 'alert').mockImplementation(noop)
-		mockedOpenUrl.mockResolvedValue(true)
+	// Whether the call then goes through is iOS's to say: cancelling its own
+	// "Call …?" confirmation reports failure, and that is not an apology.
+	test('opens the call and says nothing more, however iOS answers', async () => {
+		jest.mocked(hasAppFor).mockResolvedValue(true)
+		jest.mocked(openUrl).mockResolvedValue(false)
 
-		callPhone('+15072224127', {title: 'KRLX'})
-		press('Call')
+		callPhone(NUMBER, {title: 'KRLX'})
+		pressAlertButton('Call')
 		await settle()
 
+		expect(openUrl).toHaveBeenCalledWith(`tel:${NUMBER}`)
 		expect(Alert.alert).toHaveBeenCalledTimes(1)
 	})
 
-	test('offers the fallback without a prompt too', async () => {
-		jest.spyOn(Alert, 'alert').mockImplementation(noop)
-		mockedOpenUrl.mockResolvedValue(false)
-
-		callPhone('+15072224127', {prompt: false})
+	test('does nothing when the prompt is cancelled', async () => {
+		callPhone(NUMBER, {title: 'KRLX'})
+		pressAlertButton('Cancel')
 		await settle()
 
-		expect(Alert.alert).toHaveBeenCalledTimes(1)
-		expect(jest.mocked(Alert.alert).mock.lastCall?.[0]).toBe(
-			"Apologies, we couldn't call that number",
-		)
+		expect(hasAppFor).not.toHaveBeenCalled()
+		expect(openUrl).not.toHaveBeenCalled()
+	})
+
+	test('calls straight away without a prompt', async () => {
+		jest.mocked(hasAppFor).mockResolvedValue(true)
+
+		callPhone(NUMBER, {prompt: false})
+		await settle()
+
+		expect(Alert.alert).not.toHaveBeenCalled()
+		expect(openUrl).toHaveBeenCalledWith(`tel:${NUMBER}`)
 	})
 })

@@ -1,6 +1,4 @@
-import {Alert} from 'react-native'
-import * as Clipboard from 'expo-clipboard'
-import {openUrl} from '@frogpond/open-url'
+import {openOrOfferCopy} from './open-or-offer-copy'
 
 type Args = {
 	to?: Array<string>
@@ -11,29 +9,15 @@ type Args = {
 }
 
 export function sendEmail(args: Args): void {
-	try {
-		openUrl(formatEmailParts(args))
-	} catch (_err) {
-		const {to = []} = args
-		const toString = to.join(', ')
+	const {to = []} = args
+	const toString = to.join(', ')
 
-		Alert.alert(
-			"Apologies, we couldn't open an email client",
-			`We were trying to email "${toString}".`,
-			[
-				{
-					text: 'Darn',
-					onPress: () => {
-						// do nothing
-					},
-				},
-				{
-					text: 'Copy addresses',
-					onPress: () => void Clipboard.setStringAsync(toString),
-				},
-			],
-		)
-	}
+	void openOrOfferCopy(formatEmailParts(args), {
+		title: "Apologies, we couldn't open an email client",
+		message: `We were trying to email "${toString}".`,
+		copyLabel: 'Copy addresses',
+		copyText: toString,
+	})
 }
 
 export function formatEmailParts(args: Args): string {

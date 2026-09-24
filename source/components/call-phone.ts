@@ -1,7 +1,6 @@
 import {Alert} from 'react-native'
-import * as Clipboard from 'expo-clipboard'
-import {openUrl} from '@frogpond/open-url'
 import {noop} from 'lodash'
+import {openOrOfferCopy} from './open-or-offer-copy'
 
 type Options = {
 	prompt?: boolean
@@ -19,29 +18,14 @@ export function callPhone(phoneNumber: string, opts?: Options): void {
 	}
 }
 
-/**
- * Opens the `tel:` link, and offers to copy the number when nothing answers
- * it -- an iPad without Continuity calling has no way to place the call.
- */
-async function placeCall(phoneNumberAsUrl: string, phoneNumber: string): Promise<void> {
-	if (await openUrl(phoneNumberAsUrl)) {
-		return
-	}
-
-	Alert.alert(
-		"Apologies, we couldn't call that number",
-		`We were trying to call "${phoneNumber}".`,
-		[
-			{
-				text: 'Darn',
-				onPress: noop,
-			},
-			{
-				text: 'Copy number',
-				onPress: () => void Clipboard.setStringAsync(phoneNumber),
-			},
-		],
-	)
+/** Places the call, or offers to copy the number on a device that cannot call. */
+function placeCall(phoneNumberAsUrl: string, phoneNumber: string): Promise<void> {
+	return openOrOfferCopy(phoneNumberAsUrl, {
+		title: "Apologies, we couldn't call that number",
+		message: `We were trying to call "${phoneNumber}".`,
+		copyLabel: 'Copy number',
+		copyText: phoneNumber,
+	})
 }
 
 export const formatNumber = (phoneNumber: string): string => {
