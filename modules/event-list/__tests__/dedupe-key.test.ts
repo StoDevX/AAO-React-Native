@@ -77,3 +77,13 @@ test('titles in other scripts keep their letters', () => {
 test('an accent inside a word does not split it', () => {
 	expect(dedupeKey(event('Pokémon Night'))).toBe(dedupeKey(event('Pokemon Night')))
 })
+
+// In Japanese, Hindi and Thai a combining mark is part of the letter, so
+// dropping it turns one word into another.
+test.each([
+	['ガラ', 'カラ'],
+	['किताब', 'कताब'],
+	['ปีใหม่', 'ปใหม'],
+])('%s keeps a key apart from %s', (marked, bare) => {
+	expect(dedupeKey(event(marked))).not.toBe(dedupeKey(event(bare)))
+})
