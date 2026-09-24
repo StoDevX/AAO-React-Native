@@ -169,6 +169,13 @@ describe('deriveDays, for an event that spans days', () => {
 		expect(isoDays(result).at(-1)).toBe('2026-09-05')
 	})
 
+	test('leaves the strip alone for an ongoing event, however long it runs', () => {
+		// An exhibition that opened last week and closes in December: it shows on
+		// every day in range, but it is no reason to stretch the strip to its end.
+		let exhibition = event('2026-08-15T10:00:00Z', '2026-12-15T17:00:00Z', true)
+		expect(isoDays(deriveDays([exhibition], NOW)).at(-1)).toBe('2026-08-29')
+	})
+
 	test('stops at the last day an all-day event covers', () => {
 		// Ends at the midnight that opens Sunday, so it covers only Saturday.
 		let saturday = eventInZone('2026-08-29T00:00:00', '2026-08-30T00:00:00')
