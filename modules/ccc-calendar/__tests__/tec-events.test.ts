@@ -382,19 +382,20 @@ describe('fetchTecPages', () => {
 		expect(body.events).toHaveLength(3)
 	})
 
-	test('stops once a page reaches past the window', async () => {
+	test('stops once a page reaches past the horizon, and keeps nothing beyond it', async () => {
 		let pages: Record<string, unknown> = {
 			first: page(['2026-11-30 10:00:00', '2026-12-02 10:00:00'], 'second'),
 			second: page(['2026-12-03 10:00:00']),
 		}
 		let fetched: string[] = []
 
-		await fetchTecPages('first', UNTIL, (href) => {
+		let body = await fetchTecPages('first', UNTIL, (href) => {
 			fetched.push(href)
 			return Promise.resolve(pages[href])
 		})
 
 		expect(fetched).toStrictEqual(['first'])
+		expect(body.events).toStrictEqual([{utc_start_date: '2026-11-30 10:00:00'}])
 	})
 
 	test('stops at the page cap rather than walking an endless feed', async () => {

@@ -5,7 +5,6 @@ import * as Sentry from '@sentry/react-native'
 import {now as currentMoment} from '@frogpond/timer'
 import {queryClient} from '../../source/init/tanstack-query'
 import {getRunner} from '../../source/database/client'
-import {dayWindow} from '../../source/database/calendar/read'
 import {bumpCalendarRevision} from '../../source/database/calendar/revision'
 import {retentionFor, writeSource} from '../../source/database/calendar/write'
 import {convertEvents, type EventMapper} from './convert'
@@ -48,6 +47,17 @@ function parserFor(type: string): CalendarParser {
 	return parser
 }
 
+/**
+ * How far ahead the St. Olaf calendar is fetched: a month from the start of
+ * today. Each page of its feed covers roughly a week and a half of term, so
+ * the full read window would take over a dozen requests on every refresh.
+ */
+function tecHorizon(now: Date): Date {
+	let horizon = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+	horizon.setMonth(horizon.getMonth() + 1)
+	return horizon
+}
+
 async function fetchCalendar(calendar: NamedCalendar, signal: AbortSignal): Promise<WireEvent[]> {
 	// UI test fixture calendar returns bundled data instead of network fetch
 	if (calendar === 'uitest') {
@@ -60,7 +70,7 @@ async function fetchCalendar(calendar: NamedCalendar, signal: AbortSignal): Prom
 	let parser = parserFor(resolved.type)
 	let body =
 		resolved.type === TEC_EVENTS
-			? await fetchTecPages(resolved.href, new Date(dayWindow(new Date()).toUtc), (href) =>
+			? await fetchTecPages(resolved.href, tecHorizon(new Date()), (href) =>
 					fetchSourceBody(href, signal, 'Calendar', parser.format),
 				)
 			: await fetchSourceBody(resolved.href, signal, 'Calendar', parser.format)

@@ -62,21 +62,24 @@ const TecPageStartSchema = z.object({utc_start_date: z.string()})
 
 /**
  * The most pages `fetchTecPages` will follow. At 50 events a page that is
- * several times what the campus calendar lists across the read window, so
- * reaching it means a feed that never stops handing out a next page.
+ * several times what the campus calendar lists before any horizon it is
+ * given, so reaching it means a feed that never stops handing out a next
+ * page.
  */
 const TEC_MAX_PAGES = 40
 
 /**
- * Every page of a TEC feed from `href` on, joined into the one `{events}`
- * body `parseTecEvents` reads.
+ * Every page of a TEC feed from `href` on, up to the events starting by
+ * `until`, joined into the one `{events}` body `parseTecEvents` reads.
  *
  * TEC pages its REST API, and a single page holds only the next few days of
  * the campus calendar. `writeSource` treats what it is handed as the whole
  * feed, so reading one page would wipe every later event.
  *
  * Stops at the first page whose last event starts after `until`: the feed is
- * sorted by start, so every later page lies past the window too.
+ * sorted by start, so every later page lies past it too. That page's events
+ * past `until` are dropped, so the calendar ends at one clean horizon rather
+ * than wherever the page happened to.
  */
 export async function fetchTecPages(
 	href: string,
@@ -91,11 +94,19 @@ export async function fetchTecPages(
 		// Sequential by nature: each page names the next.
 		// oxlint-disable-next-line eslint/no-await-in-loop
 		let page = TecPageSchema.parse(await fetchPage(next))
-		events.push(...page.events)
+		let reachedHorizon = false
 
-		let last = TecPageStartSchema.safeParse(page.events.at(-1))
-		if (last.success && new Date(toIsoString(last.data.utc_start_date)) > until) break
+		for (let raw of page.events) {
+			// One whose start can't be read is left for `parseTecEvents` to judge.
+			let start = TecPageStartSchema.safeParse(raw)
+			if (start.success && new Date(toIsoString(start.data.utc_start_date)) > until) {
+				reachedHorizon = true
+				continue
+			}
+			events.push(raw)
+		}
 
+		if (reachedHorizon) break
 		next = page.next_rest_url
 	}
 
