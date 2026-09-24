@@ -16,10 +16,12 @@ import Animated, {
 	useSharedValue,
 	withDecay,
 	withRepeat,
+	withSpring,
 	withTiming,
 } from 'react-native-reanimated'
 import * as c from '@frogpond/colors'
 
+import {PRESSED_SCALE} from './logo-button'
 import {
 	angleAround,
 	isTap,
@@ -60,6 +62,9 @@ export function RecordLogo(props: Props): React.ReactNode {
 	// a fling can ease back into the spin rather than stopping first.
 	let spin = useSharedValue(0)
 	let scratched = useSharedValue(0)
+	// Shrinks under a finger like the other logos, until the touch becomes a
+	// scratch.
+	let scale = useSharedValue(1)
 	let view = useRef<View>(null)
 	let centre = useRef({x: 0, y: 0})
 	let start = useRef({x: 0, y: 0, time: 0})
@@ -86,6 +91,7 @@ export function RecordLogo(props: Props): React.ReactNode {
 
 	let handleGrant = (event: GestureResponderEvent) => {
 		onHeldChange?.(true)
+		scale.set(withSpring(PRESSED_SCALE, {duration: 150}))
 		// A finger on a coasting record stops it, as it would a real one.
 		cancelAnimation(scratched)
 		start.current = {
@@ -107,6 +113,7 @@ export function RecordLogo(props: Props): React.ReactNode {
 				return
 			}
 			cancelAnimation(spin)
+			scale.set(withSpring(1, {duration: 250}))
 			lastAngle.current = angleAround(centre.current, start.current)
 			samples.current.push({angle: lastAngle.current, time: start.current.time})
 		}
@@ -119,6 +126,7 @@ export function RecordLogo(props: Props): React.ReactNode {
 
 	let handleRelease = (event: GestureResponderEvent) => {
 		onHeldChange?.(false)
+		scale.set(withSpring(1, {duration: 250}))
 		if (lastAngle.current === null) {
 			onTap?.()
 			return
@@ -141,7 +149,7 @@ export function RecordLogo(props: Props): React.ReactNode {
 	}
 
 	let turned = useAnimatedStyle(() => ({
-		transform: [{rotate: `${spin.get() + scratched.get()}deg`}],
+		transform: [{scale: scale.get()}, {rotate: `${spin.get() + scratched.get()}deg`}],
 	}))
 
 	return (
@@ -157,6 +165,7 @@ export function RecordLogo(props: Props): React.ReactNode {
 			onResponderRelease={handleRelease}
 			onResponderTerminate={() => {
 				onHeldChange?.(false)
+				scale.set(withSpring(1, {duration: 250}))
 				startSpinning()
 			}}
 			// A scroll view would otherwise take over a scratch that drifts

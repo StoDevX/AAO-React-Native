@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {useCallback, useState} from 'react'
+import {useCallback, useEffect, useState} from 'react'
 import {Image, ScrollView, StyleSheet, Text, View, useWindowDimensions} from 'react-native'
 import {SafeAreaView} from 'react-native-safe-area-context'
 import noop from 'lodash/noop'
@@ -13,7 +13,7 @@ import {ActionButton, CallButton, ShowCalendarButton} from './buttons'
 import {LogoButton} from './logo-button'
 import {openUrl} from '@frogpond/open-url'
 import {RecordLogo} from './record'
-import {useRouter} from 'expo-router'
+import {useNavigation, useRouter} from 'expo-router'
 
 // If you want to fix the inline player, switch to `true`
 const ALLOW_INLINE_PLAYER = false
@@ -102,6 +102,14 @@ function RadioScreen(props: RadioScreenProps): React.ReactNode {
 	let [playState, setPlayState] = useState<PlayState>('paused')
 	let [streamError, setStreamError] = useState<HtmlAudioError | null>(null)
 	let [recordHeld, setRecordHeld] = useState(false)
+
+	// iOS 26 and later go back on a swipe from anywhere on the screen, which a
+	// scratch would trigger. The stack holding these tabs owns that gesture;
+	// the left-edge swipe and the Back button still work.
+	let navigation = useNavigation()
+	useEffect(() => {
+		navigation.getParent()?.setOptions({fullScreenGestureEnabled: !recordHeld})
+	}, [navigation, recordHeld])
 
 	let play = () => {
 		setPlayState('checking')
