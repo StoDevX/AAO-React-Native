@@ -1,6 +1,6 @@
 import * as React from 'react'
 import {timezone} from '@frogpond/constants'
-import {SUPPORT_EMAIL} from '../../lib/constants'
+import moment from 'moment-timezone'
 import {LoadingView, NoticeView} from '@frogpond/notice'
 import {FoodMenu} from '@frogpond/food-menu'
 import type {
@@ -20,9 +20,11 @@ import {daypartHours} from './lib/daypart-hours'
 import {useQuery} from '@tanstack/react-query'
 import {useIsFocused, useRouter} from 'expo-router'
 import {toLaxTitleCase} from '@frogpond/titlecase'
+import {decode} from '@frogpond/html-lib'
 import {formatDate, formatWeekday} from '@frogpond/time-format'
 import type {MealHeaderState} from '@frogpond/food-menu'
 import {usePublishMenuHeader} from './menu-header'
+import {OFFLINE_MESSAGE, menuView} from './lib/menu-view'
 
 const BONAPP_HTML_ERROR_CODE = 'bonapp-html'
 
@@ -89,10 +91,11 @@ function prepareSingleMenu(
 		stationMenus = buildCustomStationMenu(foodItems)
 	}
 
-	// Make sure to titlecase the station menus list, too, so the sort works
+	// Make sure to titlecase the station menus list, too, so the sort works,
+	// decoding it first as the items' own stations are
 	stationMenus = stationMenus.map((s) => ({
 		...s,
-		label: toLaxTitleCase(s.label),
+		label: toLaxTitleCase(decode(s.label)),
 	}))
 
 	return {
@@ -112,8 +115,13 @@ function getMeals(
 
 	// We hard-code to the first day returned because we're only requesting
 	// one day. `cafes` is a map of cafe ids to cafes, but we only request one
-	// cafe at a time, so we just grab the one we requested.
-	let dayparts = cafeMenu.days[0].cafe.dayparts
+	// cafe at a time, so we just grab the one we requested. A response with no
+	// day has no meals; the screen says so rather than drawing an empty menu.
+	let day = cafeMenu.days.at(0)
+	if (!day) {
+		return []
+	}
+	let dayparts = day.cafe.dayparts
 
 	// either use the meals as provided by bonapp, or make our own
 	let mealInfoItems = dayparts[0]?.length ? dayparts[0] : DEFAULT_MENU
@@ -160,6 +168,50 @@ export function BonAppHostedMenu(props: Props): React.ReactNode {
 	let isFocused = useIsFocused()
 	let [mealHeader, setMealHeader] = React.useState<MealHeaderState>(EMPTY_MEAL_HEADER)
 
+	// Collapsed to begin with: a menu opens as food rather than as chrome, and
+	// the navigation bar carries the control that reveals the row.
+	let [filtersVisible, setFiltersVisible] = React.useState(false)
+	let toggleFilters = React.useCallback(() => {
+		setFiltersVisible((visible) => !visible)
+	}, [])
+
+	// The day the menu and the cafe's details are for. It turns over with
+	// `menuNow`, and the new day's are fetched in place of the last day's.
+	// Memoized on `menuNow` so that the item links built from it keep their
+	// identity: the React Compiler reads a moment's `format` as a read of an
+	// object that may change under it.
+	let day = React.useMemo(() => menuNow.format('YYYY-MM-DD'), [menuNow])
+
+	let menuQuery = useQuery(bonAppMenuOptions(props.cafe, day))
+	let {data: cafeMenu, refetch: menuReload} = menuQuery
+	let menu = menuView(menuQuery)
+
+	// The cafe's details carry its hours and any closure notice. The menu is
+	// shown without them when they cannot be had, so only their first load
+	// holds the screen.
+	let cafeQuery = useQuery(bonAppCafeOptions(props.cafe, day))
+	let {data: cafeInfo, refetch: cafeReload} = cafeQuery
+	let isCafeLoading = menuView(cafeQuery).kind === 'loading'
+
+	// The API returns an empty array for the cafeInfo.cafe value if there is no
+	// matching cafe with the inputted id number, otherwise it returns an non-array object
+	let isUnknownCafe = cafeInfo !== undefined && Array.isArray(cafeInfo.cafe)
+	let hasNoDays = menu.kind === 'content' && menu.data.days.length === 0
+
+	let isLoading = menu.kind === 'loading' || (menu.kind === 'content' && isCafeLoading)
+	let showsMenu = menu.kind === 'content' && !isCafeLoading && !isUnknownCafe && !hasNoDays
+
+	// The day the menu in hand is for. Asked for today's shortly after
+	// midnight, the server can still answer with the day before's, so the
+	// header names the menu's own day rather than the clock's.
+	let menuDate = cafeMenu?.days.at(0)?.date ?? null
+	let isOtherDay = menuDate !== null && menuDate !== day
+	let otherDay = React.useMemo(
+		() => (isOtherDay && menuDate ? moment.tz(menuDate, 'YYYY-MM-DD', timezone()) : null),
+		[isOtherDay, menuDate],
+	)
+	let shownDay = otherDay ?? now
+
 	// The weekday alone under the cafe's name, where the line is already tight
 	// -- the date beside it said which today it is, which the reader knows --
 	// and the whole date over the meal picker, which has room for it. Both
@@ -168,36 +220,18 @@ export function BonAppHostedMenu(props: Props): React.ReactNode {
 	//
 	// Formatted days, not `now`: the header is read field by field, so strings
 	// republish it only when the day itself changes.
-	let weekdayShort = formatWeekday(now, 'short')
-	let weekdayLong = formatWeekday(now, 'long')
-	let date = formatDate(now, 'medium')
-
-	// Collapsed to begin with: a menu opens as food rather than as chrome, and
-	// the navigation bar carries the control that reveals the row.
-	let [filtersVisible, setFiltersVisible] = React.useState(false)
-	let toggleFilters = React.useCallback(() => {
-		setFiltersVisible((visible) => !visible)
-	}, [])
-
-	let {
-		data: cafeMenu,
-		error: menuError,
-		refetch: menuReload,
-		isError: isMenuError,
-		isLoading: isMenuLoading,
-	} = useQuery(bonAppMenuOptions(props.cafe))
-
-	let {
-		data: cafeInfo,
-		error: cafeError,
-		refetch: cafeReload,
-		isError: isCafeError,
-		isLoading: isCafeLoading,
-	} = useQuery(bonAppCafeOptions(props.cafe))
+	let weekdayShort = formatWeekday(shownDay, 'short')
+	let weekdayLong = formatWeekday(shownDay, 'long')
+	let date = formatDate(shownDay, 'medium')
 
 	// A cafe serving one daypart today says when it opens, then when it closes,
 	// off the hours it publishes; `null` keeps the meal's window for the rest.
-	let hours = daypartHours(cafeInfo?.cafe.days, now)
+	// Today's hours say nothing about another day's menu.
+	let hours = isOtherDay ? null : daypartHours(cafeInfo?.cafe.days, now)
+
+	// The meal picker and its hours belong to the menu body, which is not drawn
+	// behind a notice.
+	let shownMealHeader = showsMenu ? mealHeader : EMPTY_MEAL_HEADER
 
 	// Published from here rather than from the menu below, which does not
 	// exist until its query resolves -- the screen would spend that whole
@@ -208,11 +242,11 @@ export function BonAppHostedMenu(props: Props): React.ReactNode {
 			weekdayShort,
 			weekdayLong,
 			date,
-			meals: mealHeader.menu,
-			time: hours ? hours.time : mealHeader.time,
-			closed: mealHeader.closed || (hours?.closed ?? false),
+			meals: shownMealHeader.menu,
+			time: hours ? hours.time : shownMealHeader.time,
+			closed: shownMealHeader.closed || (hours?.closed ?? false),
 			reopening: hours?.reopening ?? null,
-			loading: isMenuLoading || isCafeLoading,
+			loading: isLoading,
 			filters: {visible: filtersVisible, toggle: toggleFilters},
 		},
 		isFocused,
@@ -233,18 +267,20 @@ export function BonAppHostedMenu(props: Props): React.ReactNode {
 
 	// Stable so that a menu re-rendering for any other reason does not force
 	// every one of its rows to re-render with it.
+	//
+	// A cafe named by id goes over as `cafeId` rather than `cafe`, which the
+	// detail screen reads as a cafe's name.
 	let onItemPress = React.useCallback(
 		(item: MenuItemType) => {
 			router.navigate({
 				pathname: '/MenuItemDetail',
-				params: {
-					source: 'bonapp',
-					cafe: typeof props.cafe === 'string' ? props.cafe : props.cafe.id,
-					itemId: item.id,
-				},
+				params:
+					typeof props.cafe === 'string'
+						? {source: 'bonapp', cafe: props.cafe, day, itemId: item.id}
+						: {source: 'bonapp', cafeId: props.cafe.id, day, itemId: item.id},
 			})
 		},
-		[router, props.cafe],
+		[router, props.cafe, day],
 	)
 
 	let onRefresh = React.useCallback(
@@ -252,12 +288,16 @@ export function BonAppHostedMenu(props: Props): React.ReactNode {
 		[cafeReload, menuReload],
 	)
 
-	if (isMenuLoading || isCafeLoading) {
+	if (menu.kind === 'loading') {
 		return <LoadingView text={sample(props.loadingMessage)} />
 	}
 
-	if (isMenuError && menuError instanceof Error) {
-		let errorMessage = getErrorMessage(menuError)
+	if (menu.kind === 'offline') {
+		return <NoticeView text={OFFLINE_MESSAGE} />
+	}
+
+	if (menu.kind === 'error') {
+		let errorMessage = getErrorMessage(menu.error)
 		let msg = `Error: ${errorMessage}`
 		if (errorMessage === BONAPP_HTML_ERROR_CODE) {
 			msg = 'Something between you and BonApp is having problems. Try again in a minute or two?'
@@ -265,23 +305,11 @@ export function BonAppHostedMenu(props: Props): React.ReactNode {
 		return <NoticeView buttonText="Again!" onPress={menuReload} text={msg} />
 	}
 
-	if (isCafeError && cafeError instanceof Error) {
-		let errorMessage = getErrorMessage(cafeError)
-		let msg = `Error: ${errorMessage}`
-		if (errorMessage === BONAPP_HTML_ERROR_CODE) {
-			msg = 'Something between you and BonApp is having problems. Try again in a minute or two?'
-		}
-		return <NoticeView buttonText="Again!" onPress={cafeReload} text={msg} />
+	if (isCafeLoading) {
+		return <LoadingView text={sample(props.loadingMessage)} />
 	}
 
-	if (!cafeMenu || !cafeInfo) {
-		let msg = `Something went wrong. Email ${SUPPORT_EMAIL} to let them know?`
-		return <NoticeView text={msg} />
-	}
-
-	// The API returns an empty array for the cafeInfo.cafe value if there is no
-	// matching cafe with the inputted id number, otherwise it returns an non-array object
-	if (Array.isArray(cafeInfo.cafe)) {
+	if (isUnknownCafe) {
 		return (
 			<NoticeView
 				text={`There is no cafe with id #${
@@ -291,16 +319,20 @@ export function BonAppHostedMenu(props: Props): React.ReactNode {
 		)
 	}
 
+	if (hasNoDays) {
+		return <NoticeView text={`${props.name} has not posted a menu for today.`} />
+	}
+
 	// We grab the "today" info from here because BonApp returns special
 	// messages in this response, like "Closed for Christmas Break"
-	let specialMessage = findCafeMessage(cafeInfo, menuNow)
+	let specialMessage = cafeInfo ? findCafeMessage(cafeInfo, menuNow) : null
 
 	return (
 		<FoodMenu
 			cafeMessage={specialMessage}
 			foodItems={foodItems}
 			meals={meals}
-			menuCorIcons={cafeMenu.cor_icons}
+			menuCorIcons={menu.data.cor_icons}
 			name={props.name}
 			now={menuNow}
 			onItemPress={onItemPress}

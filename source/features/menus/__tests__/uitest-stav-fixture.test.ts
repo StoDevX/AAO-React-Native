@@ -65,7 +65,7 @@ describe('the Stav Hall UI test fixture', () => {
 /// `queryOptions` types `queryFn` as optional, so narrow it once rather than
 /// asserting at each call.
 function menuFetcherFor(cafe: string) {
-	let {queryFn} = bonAppMenuOptions(cafe)
+	let {queryFn} = bonAppMenuOptions(cafe, '2026-09-05')
 	if (typeof queryFn !== 'function') {
 		throw new TypeError(`bonAppMenuOptions('${cafe}') built no queryFn`)
 	}

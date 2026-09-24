@@ -20,13 +20,18 @@ import type {
 	StationMenuType,
 } from './types'
 
+/**
+ * A BonApp menu and a cafe's details are each for the day they were fetched,
+ * as `YYYY-MM-DD` in campus time. The day is in their keys so that a new day
+ * fetches its own, rather than showing the last day's while it is still fresh.
+ */
 export const menuKeys = {
-	bonAppCcc: (cafePath: string) => ['cafe-menu', 'bonApp', cafePath] as const,
+	bonAppCcc: (cafePath: string, day: string) => ['cafe-menu', 'bonApp', cafePath, day] as const,
 	hosted: (url: string) => ['cafe-menu', 'hosted', url] as const,
 }
 
 export const cafeKeys = {
-	bonAppCcc: (cafePath: string) => ['cafe-info', 'bonApp', cafePath] as const,
+	bonAppCcc: (cafePath: string, day: string) => ['cafe-info', 'bonApp', cafePath, day] as const,
 	hosted: (url: string) => ['cafe-info', 'hosted', url] as const,
 }
 
@@ -34,11 +39,15 @@ export const cafeKeys = {
 // BonApp
 //
 
+// A cafe named by id is asked for with the id in the query string as well as
+// the path. ccc-server reads it only from the query, and answers without it
+// with a 400, `?cafeId is required`.
+
 function buildMenuPath(cafeParam: string | {id: string}) {
 	if (typeof cafeParam === 'string') {
 		return `food/named/menu/${cafeParam}`
 	} else if ('id' in cafeParam) {
-		return `food/menu/${cafeParam.id}`
+		return `food/menu/${cafeParam.id}?cafeId=${cafeParam.id}`
 	} else {
 		throw new Error(`Unexpected cafe parameter: ${cafeParam}`)
 	}
@@ -48,7 +57,7 @@ function buildCafePath(cafeParam: string | {id: string}) {
 	if (typeof cafeParam === 'string') {
 		return `food/named/cafe/${cafeParam}`
 	} else if ('id' in cafeParam) {
-		return `food/cafe/${cafeParam.id}`
+		return `food/cafe/${cafeParam.id}?cafeId=${cafeParam.id}`
 	} else {
 		throw new Error(`Unexpected cafe parameter: ${cafeParam}`)
 	}
@@ -61,8 +70,10 @@ function buildCafePath(cafeParam: string | {id: string}) {
 export function prepareFood(cafeMenu: EditedBonAppMenuInfoType): MenuItemContainerType {
 	return mapValues(cafeMenu.items, (item) => ({
 		...item,
-		station: decode(toLaxTitleCase(trimStationName(item.station))),
-		label: decode(trimItemLabel(item.label)),
+		// Decoded before title-casing, which would otherwise turn `&amp;` into
+		// `&Amp;`, which is no longer an entity.
+		station: toLaxTitleCase(decode(trimStationName(item.station))),
+		label: trimItemLabel(decode(item.label)),
 		description: innerTextWithSpaces(parseHtml(item.description || '')),
 	}))
 }
@@ -99,9 +110,9 @@ async function fetchBonAppMenu(
 }
 
 // oxlint-disable-next-line typescript/explicit-module-boundary-types
-export const bonAppCafeOptions = (cafeParam: string | {id: string}) =>
+export const bonAppCafeOptions = (cafeParam: string | {id: string}, day: string) =>
 	queryOptions({
-		queryKey: cafeKeys.bonAppCcc(buildCafePath(cafeParam)),
+		queryKey: cafeKeys.bonAppCcc(buildCafePath(cafeParam), day),
 		queryFn: async ({signal}) => {
 			let path = buildCafePath(cafeParam)
 
@@ -117,17 +128,21 @@ export const bonAppCafeOptions = (cafeParam: string | {id: string}) =>
 	})
 
 // oxlint-disable-next-line typescript/explicit-module-boundary-types
-export const bonAppMenuOptions = (cafeParam: string | {id: string}) =>
+export const bonAppMenuOptions = (cafeParam: string | {id: string}, day: string) =>
 	queryOptions({
-		queryKey: menuKeys.bonAppCcc(buildMenuPath(cafeParam)),
+		queryKey: menuKeys.bonAppCcc(buildMenuPath(cafeParam), day),
 		queryFn: ({signal}) => fetchBonAppMenu(cafeParam, signal),
 		staleTime: 1000 * 60 * 60, // 1 hour
 	})
 
-// oxlint-disable-next-line typescript/explicit-module-boundary-types
-export const bonAppMenuItemOptions = (cafeParam: string | {id: string}, itemId: string) =>
+export const bonAppMenuItemOptions = (
+	cafeParam: string | {id: string},
+	day: string,
+	itemId: string,
+	// oxlint-disable-next-line typescript/explicit-module-boundary-types
+) =>
 	queryOptions({
-		queryKey: menuKeys.bonAppCcc(buildMenuPath(cafeParam)),
+		queryKey: menuKeys.bonAppCcc(buildMenuPath(cafeParam), day),
 		queryFn: ({signal}) => fetchBonAppMenu(cafeParam, signal),
 		staleTime: 1000 * 60 * 60, // 1 hour
 		select: (data) => ({
