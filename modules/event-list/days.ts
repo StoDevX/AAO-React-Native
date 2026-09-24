@@ -21,8 +21,9 @@ export function lastDayCovered(event: Pick<EventType, 'startTime' | 'endTime'>):
 
 /**
  * Generates a continuous range of whole weeks, from Sunday of the current week
- * through the Saturday of the week holding the last day any event covers.
- * Whole weeks keep every day sitting under a Sunday the strip can snap to.
+ * through the Saturday of the week holding the last day any event covers, or
+ * the first day of an event running longer than a week. Whole weeks keep
+ * every day sitting under a Sunday the strip can snap to.
  *
  * Always yields at least the current week. Day mode has nothing but the strip
  * to navigate with, so a range that could come back empty would leave that
@@ -38,8 +39,11 @@ export function deriveDays(events: readonly SourcedEvent[], now: Moment): Moment
 		}
 
 		// The last day the event covers, since `eventsByDay` puts it on each of
-		// them.
-		let day = lastDayCovered(entry.event).clone().startOf('day')
+		// them -- unless it runs longer than a week. An exhibition open into
+		// December is no reason to hang months of empty days off the strip.
+		let first = entry.event.startTime.clone().startOf('day')
+		let last = lastDayCovered(entry.event).clone().startOf('day')
+		let day = last.diff(first, 'days') < DAYS_PER_WEEK ? last : first
 
 		if (day.isBefore(today, 'day')) {
 			continue
