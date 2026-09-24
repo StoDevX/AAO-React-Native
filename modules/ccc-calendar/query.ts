@@ -1,6 +1,7 @@
 import {fetchManifest, fetchSourceBody, REL_CALENDAR, resolveSource} from '@frogpond/data-sources'
 import {eventKey} from '@frogpond/event-list/calendar-util'
 import {queryOptions} from '@tanstack/react-query'
+import {addMonths, startOfDay} from 'date-fns'
 import * as Sentry from '@sentry/react-native'
 import {now as currentMoment} from '@frogpond/timer'
 import {queryClient} from '../../source/init/tanstack-query'
@@ -12,7 +13,7 @@ import uitestFixtures from './fixtures/uitest-events.json'
 import {parseEvents, type WireEvent} from './parsers/events'
 import {parseIcalEvents} from './parsers/ical'
 import {parsePresenceEvents} from './parsers/presence'
-import {parseTecEvents} from './parsers/tec-events'
+import {fetchTecPages, parseTecEvents} from './parsers/tec-events'
 import {REMOTE_SOURCES, type SourcedEvent} from './sources'
 import {NamedCalendar} from './types'
 
@@ -28,12 +29,21 @@ const PRESENCE_EVENTS = 'application/vnd.presence.events+json'
 interface CalendarParser {
 	format: 'json' | 'text'
 	parse: (body: unknown) => WireEvent[]
+	/**
+	 * How to read the whole feed, for a type whose one request is not all of
+	 * it. `fetchPage` fetches one href in this type's `format`.
+	 */
+	fetch?: (href: string, fetchPage: (href: string) => Promise<unknown>) => Promise<unknown>
 }
 
 // One entry per media type, so its wire format and its parser can't drift
 // apart the way a separate switch and ternary could.
 const CALENDAR_PARSERS: Record<string, CalendarParser> = {
-	[TEC_EVENTS]: {format: 'json', parse: parseTecEvents},
+	[TEC_EVENTS]: {
+		format: 'json',
+		parse: parseTecEvents,
+		fetch: (href, fetchPage) => fetchTecPages(href, tecWindow(new Date()), fetchPage),
+	},
 	[FROGPOND_EVENTS]: {format: 'json', parse: parseEvents},
 	[ICAL_EVENTS]: {format: 'text', parse: parseIcalEvents},
 	[PRESENCE_EVENTS]: {format: 'json', parse: parsePresenceEvents},
@@ -47,6 +57,21 @@ function parserFor(type: string): CalendarParser {
 	return parser
 }
 
+/**
+ * The days the St. Olaf calendar is fetched for: today through the same day
+ * next month. Each page of its feed covers roughly a week and a half of term,
+ * so the full read window would take over a dozen requests on every refresh.
+ *
+ * Worked out from the device clock, not the app clock: TEC's server and
+ * `retentionFor` both go by real time, and a window taken from a dev time
+ * override could miss the feed altogether -- and an empty feed reads as an
+ * empty calendar.
+ */
+export function tecWindow(now: Date): {from: Date; until: Date} {
+	let from = startOfDay(now)
+	return {from, until: addMonths(from, 1)}
+}
+
 async function fetchCalendar(calendar: NamedCalendar, signal: AbortSignal): Promise<WireEvent[]> {
 	// UI test fixture calendar returns bundled data instead of network fetch
 	if (calendar === 'uitest') {
@@ -57,7 +82,10 @@ async function fetchCalendar(calendar: NamedCalendar, signal: AbortSignal): Prom
 	let resolved = resolveSource(manifest, REL_CALENDAR, calendar, CALENDAR_TYPES)
 
 	let parser = parserFor(resolved.type)
-	let body = await fetchSourceBody(resolved.href, signal, 'Calendar', parser.format)
+	let fetchPage = (href: string) => fetchSourceBody(href, signal, 'Calendar', parser.format)
+	let body = parser.fetch
+		? await parser.fetch(resolved.href, fetchPage)
+		: await fetchPage(resolved.href)
 	return parser.parse(body)
 }
 
@@ -74,6 +102,9 @@ export function sourceRankOf(sourceId: string): number {
 	return index === -1 ? REMOTE_SOURCES.length : index
 }
 
+/** How long a remote calendar's write stays fresh. */
+const CALENDAR_STALE_TIME_MS = 60 * 60 * 1000
+
 /**
  * Fetches a remote calendar and writes it into the database -- the calendar
  * screens read from `source/database/calendar/read.ts`, not from this query's
@@ -86,6 +117,9 @@ export const namedCalendarOptions = (
 ) =>
 	queryOptions({
 		queryKey: keys.named(calendar),
+		// Returning to a calendar screen does not refetch within the hour;
+		// pull-to-refresh still does, since `refetch` ignores it.
+		staleTime: CALENDAR_STALE_TIME_MS,
 		queryFn: async ({queryKey, signal}): Promise<{writtenAt: number; count: number}> => {
 			let wire = await fetchCalendar(queryKey[2], signal)
 

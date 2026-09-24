@@ -43,12 +43,9 @@ END:VCALENDAR
 test('the live fixture expands its weekly recurrences into a substantial number of upcoming events', () => {
 	// The fixture is a trimmed capture of KSTO's real show schedule: 6 events,
 	// each FREQ=WEEKLY with no UNTIL, dated back to 2019. Expanded across the
-	// 90-day window from NOW, that's 76 or 77 upcoming occurrences depending
-	// on the runner's local time zone (a small number of occurrences sit
-	// right at the "is this today or already past" boundary) -- computed
-	// directly against the fixture with ical.js, independent of this parser.
-	// Either way it is nowhere near the old "0 events" behaviour this test
-	// exists to catch a regression back to.
+	// 90-day window from NOW, that's 77 occurrences not yet finished before
+	// today, in every time zone from UTC-12 to UTC+14. The loose bound below
+	// only has to tell that expansion apart from an empty one.
 	const events = parseIcalEvents(fixture, NOW)
 
 	expect(events.length).toBeGreaterThanOrEqual(70)
@@ -77,6 +74,80 @@ test('the live fixture expands its weekly recurrences into a substantial number 
 	// America/Chicago VTIMEZONE.
 	const pendingReviews = events.filter((event) => event.title === 'Pending Review')
 	expect(pendingReviews.map((event) => event.startTime)).toContain('2026-09-14T02:00:00.000Z')
+})
+
+describe('an event ending later today', () => {
+	// NOW is 12:00Z. Each event below ends ten minutes after it, which is
+	// before the end of NOW's local day in every time zone, so a filter on
+	// the end of today would drop it.
+	test('is kept when it is a single event already in progress', () => {
+		const events = parseIcalEvents(
+			calendar(`BEGIN:VEVENT
+UID:now@test
+DTSTART:20260815T110000Z
+DTEND:20260815T121000Z
+SUMMARY:On air now
+END:VEVENT`),
+			NOW,
+		)
+
+		expect(events.map((event) => event.title)).toStrictEqual(['On air now'])
+	})
+
+	test('is kept when it is an occurrence of a recurring event', () => {
+		const events = parseIcalEvents(
+			calendar(`BEGIN:VEVENT
+UID:daily@test
+DTSTART:20260810T110000Z
+DTEND:20260810T121000Z
+RRULE:FREQ=DAILY;COUNT=6
+SUMMARY:Daily show
+END:VEVENT`),
+			NOW,
+		)
+
+		expect(events.map((event) => event.startTime)).toContain('2026-08-15T11:00:00.000Z')
+	})
+})
+
+describe('an event ending exactly at the start of today', () => {
+	// `writeSource` counts an event finished only when it ends before today's
+	// midnight, so it deletes this one and expects the feed to send it back.
+	let midnight = new Date(NOW)
+	midnight.setHours(0, 0, 0, 0)
+	let icalTime = (date: Date) => date.toISOString().replaceAll(/[-:]|\.\d{3}/gu, '')
+	let twoHoursBefore = new Date(midnight.getTime() - 2 * 60 * 60 * 1000)
+
+	test('is kept when it is a single event', () => {
+		const events = parseIcalEvents(
+			calendar(`BEGIN:VEVENT
+UID:late@test
+DTSTART:${icalTime(twoHoursBefore)}
+DTEND:${icalTime(midnight)}
+SUMMARY:Late show
+END:VEVENT`),
+			NOW,
+		)
+
+		expect(events.map((event) => event.title)).toStrictEqual(['Late show'])
+	})
+
+	test('is kept when it is an occurrence of a recurring event', () => {
+		let weekBefore = new Date(twoHoursBefore.getTime() - 7 * 24 * 60 * 60 * 1000)
+		let weekBeforeEnd = new Date(midnight.getTime() - 7 * 24 * 60 * 60 * 1000)
+		const events = parseIcalEvents(
+			calendar(`BEGIN:VEVENT
+UID:late-daily@test
+DTSTART:${icalTime(weekBefore)}
+DTEND:${icalTime(weekBeforeEnd)}
+RRULE:FREQ=DAILY;COUNT=8
+SUMMARY:Late show
+END:VEVENT`),
+			NOW,
+		)
+
+		expect(events.map((event) => event.endTime)).toContain(midnight.toISOString())
+	})
 })
 
 test('parses a timed event', () => {
@@ -774,17 +845,16 @@ END:VEVENT`),
 		NOW,
 	)
 
-	// Computed directly against this rule and NOW: 2138-2159 across every
-	// time zone from UTC-12 to UTC+14 (hourly granularity means the
-	// today/window-edge boundaries this file's other tests keep clear of are
-	// unavoidable here). Well above the old 2000 cap either way, and nowhere
-	// near the new cap (4320), so this is squarely "the whole window", not
-	// "still truncated, just less obviously".
-	expect(events.length).toBeGreaterThanOrEqual(2130)
-	expect(events.length).toBeLessThanOrEqual(2160)
+	// The 2160 hours ahead of NOW, plus the hours of NOW's local day already
+	// run -- up to 24 more, depending on the runner's time zone (hourly
+	// granularity means the today/window-edge boundaries this file's other
+	// tests keep clear of are unavoidable here). The cap of 4320 is far above
+	// that, so this is the whole window, not a truncated one.
+	expect(events.length).toBeGreaterThanOrEqual(2150)
+	expect(events.length).toBeLessThanOrEqual(2185)
 
-	// The window runs through ~2026-11-13; the old cap's last occurrence was
-	// 2026-11-07. This one should reach within a day of the real edge.
+	// The window runs through ~2026-11-13, so the last occurrence should
+	// start within a couple of days of it.
 	const lastStart = new Date(events[events.length - 1].startTime)
 	expect(lastStart.getTime()).toBeGreaterThan(new Date('2026-11-11T00:00:00Z').getTime())
 })

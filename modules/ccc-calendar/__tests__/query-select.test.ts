@@ -1,8 +1,10 @@
 import {describe, expect, jest, test} from '@jest/globals'
+import {QueryClient} from '@tanstack/react-query'
 import moment from 'moment-timezone'
+import {format as formatDate} from 'date-fns'
 
 import type {WireEvent} from '../parsers/events'
-import {namedCalendarOptions, scheduleCalendarOptions, sourceRankOf} from '../query'
+import {namedCalendarOptions, scheduleCalendarOptions, sourceRankOf, tecWindow} from '../query'
 import {REMOTE_SOURCES} from '../sources'
 import uitestFixturesJson from '../fixtures/uitest-events.json'
 
@@ -13,6 +15,8 @@ import {getRunner} from '../../../source/database/client'
 import {bumpCalendarRevision} from '../../../source/database/calendar/revision'
 import {writeSource} from '../../../source/database/calendar/write'
 import * as Sentry from '@sentry/react-native'
+import {fetchSourceBody} from '@frogpond/data-sources'
+import tecFixture from './fixtures/tec-events.json'
 
 // The shared query client `query.ts` imports subscribes to network
 // reachability at module load. That does not run here: every test below calls
@@ -39,6 +43,14 @@ jest.mock('../../../source/database/calendar/write', () => ({
 	retentionFor: jest.fn(() => 'the-retention'),
 }))
 jest.mock('@sentry/react-native', () => ({captureException: jest.fn()}))
+// The manifest and the page fetch stand in for the network. An empty
+// manifest falls back to the bundled one, so a real calendar resolves to its
+// real source and type.
+jest.mock('@frogpond/data-sources', () => ({
+	...(jest.requireActual('@frogpond/data-sources') as object),
+	fetchManifest: jest.fn(() => Promise.resolve({links: []})),
+	fetchSourceBody: jest.fn(),
+}))
 
 // `queryOptions` types `select`/`queryFn` as optional, so these name the
 // assertion once rather than at every call below.
@@ -115,6 +127,26 @@ describe('namedCalendarOptions', () => {
 			uitestFixtures,
 			'the-retention' as never,
 		)
+	})
+
+	test('does not refetch a calendar within the hour, just because a screen asked again', async () => {
+		jest.useFakeTimers()
+		try {
+			// The app's client keeps a query for a day; React Query's default of
+			// five minutes would drop it before the hour was up.
+			let client = new QueryClient({defaultOptions: {queries: {gcTime: 24 * 60 * 60 * 1000}}})
+			await client.query(namedCalendarOptions('uitest'))
+			jest.advanceTimersByTime(59 * 60 * 1000)
+			await client.query(namedCalendarOptions('uitest'))
+			expect(writeSource).toHaveBeenCalledTimes(1)
+
+			jest.advanceTimersByTime(2 * 60 * 1000)
+			await client.query(namedCalendarOptions('uitest'))
+			expect(writeSource).toHaveBeenCalledTimes(2)
+			client.clear()
+		} finally {
+			jest.useRealTimers()
+		}
 	})
 
 	test('bumps the calendar revision after a successful write', async () => {
@@ -348,5 +380,55 @@ describe('all-day events', () => {
 		let selected = selectSchedule('krlx-schedule')([event])
 
 		expect(selected).toHaveLength(1)
+	})
+})
+
+describe('tecWindow', () => {
+	test('runs from the start of today to the same day next month', () => {
+		expect(tecWindow(new Date(2030, 0, 15, 12))).toStrictEqual({
+			from: new Date(2030, 0, 15),
+			until: new Date(2030, 1, 15),
+		})
+	})
+})
+
+describe('the St. Olaf calendar', () => {
+	test('reads every page of its feed, not only the first', async () => {
+		let [first, second] = tecFixture.events
+		jest
+			.mocked(fetchSourceBody)
+			.mockResolvedValueOnce({events: [first], next_rest_url: 'page-2'})
+			.mockResolvedValueOnce({events: [second]})
+
+		let {queryFn} = scheduleCalendarOptions('stolaf')
+		if (typeof queryFn !== 'function') throw new TypeError('no queryFn')
+		let events = await queryFn({queryKey: ['schedule', 'stolaf'], signal: undefined} as never)
+
+		expect(jest.mocked(fetchSourceBody).mock.calls[1][0]).toBe('page-2')
+		expect(events).toHaveLength(2)
+	})
+
+	test('asks for the window by the device clock, as the server and the write do', async () => {
+		// A dev time override frozen months back would otherwise ask TEC for a
+		// window it has nothing in, and the write would take the empty feed as
+		// the whole calendar.
+		let realNow = jest.mocked(now).getMockImplementation()
+		jest.mocked(now).mockImplementation(() => moment('2020-01-01T12:00:00'))
+		jest.mocked(fetchSourceBody).mockResolvedValueOnce({events: []})
+
+		let {queryFn} = scheduleCalendarOptions('stolaf')
+		if (typeof queryFn !== 'function') throw new TypeError('no queryFn')
+		try {
+			await queryFn({queryKey: ['schedule', 'stolaf'], signal: undefined} as never)
+		} finally {
+			jest.mocked(now).mockImplementation(realNow ?? (() => moment()))
+		}
+
+		let href = jest.mocked(fetchSourceBody).mock.calls.at(-1)?.[0] ?? ''
+		let yesterday = new Date()
+		yesterday.setDate(yesterday.getDate() - 1)
+		expect(new URLSearchParams(href.split('?')[1]).get('ends_after')).toBe(
+			formatDate(yesterday, 'yyyy-MM-dd'),
+		)
 	})
 })

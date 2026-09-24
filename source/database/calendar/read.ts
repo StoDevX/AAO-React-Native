@@ -1,7 +1,9 @@
+import {useEffect} from 'react'
+
 import type {EventType} from '@frogpond/event-type'
 import {now} from '@frogpond/timer'
 import * as Sentry from '@sentry/react-native'
-import {keepPreviousData, skipToken, useQuery} from '@tanstack/react-query'
+import {keepPreviousData, skipToken, useQuery, useQueryClient} from '@tanstack/react-query'
 
 import type {SourcedEvent} from '../../../modules/event-list/types.ts'
 import type {CalendarFilterOption} from '../../features/calendar/filter.ts'
@@ -45,6 +47,29 @@ const FORWARD_DAYS = 180
  * how all three hooks below came to be persisted in the first place.
  */
 export const CALENDAR_READ_KEY = 'calendar-db'
+
+/**
+ * Drops every read keyed to a revision older than `revision` that nothing is
+ * watching any more.
+ *
+ * Every write bumps the revision in each read's key, which leaves the
+ * previous window's hydrated events with no observer, and the app-wide
+ * `gcTime` would keep each of those for a day. The current read keeps that
+ * `gcTime`, so a screen reopened within the day shows at once.
+ *
+ * Called after `useQuery`, so its effect runs once the query has moved its
+ * observer to the new key and the old read is inactive.
+ */
+function useDropSupersededReads(revision: number): void {
+	let queryClient = useQueryClient()
+	useEffect(() => {
+		queryClient.removeQueries({
+			queryKey: [CALENDAR_READ_KEY],
+			type: 'inactive',
+			predicate: (query) => query.queryKey[2] !== revision,
+		})
+	}, [queryClient, revision])
+}
 
 /**
  * The two-sided window the screens read from: `RETENTION_DAYS` back, `FORWARD_DAYS`
@@ -194,6 +219,7 @@ export function useOccurrences(args: {
 					}),
 		placeholderData: keepPreviousData,
 	})
+	useDropSupersededReads(revision)
 
 	return {events: result.data ?? [], isPending: result.isPending, failed: result.isError}
 }
@@ -222,6 +248,7 @@ export function useFacets(args: {
 			),
 		placeholderData: keepPreviousData,
 	})
+	useDropSupersededReads(revision)
 
 	return result.data ?? []
 }
@@ -261,13 +288,17 @@ export function useEvent(
 					[sourceId, ...sourceIds],
 				)
 				let [entry] = hydrate(rows, sponsors, now().toDate())
-				return entry?.event
+				// `null`, not `undefined`: React Query fails a read that resolves to
+				// `undefined`, and an event a refresh rekeyed or deleted is missing,
+				// not an error.
+				return entry?.event ?? null
 			}),
 		placeholderData: keepPreviousData,
 	})
+	useDropSupersededReads(revision)
 
 	return {
-		event: result.data,
+		event: result.data ?? undefined,
 		isPending: result.isPending,
 		error: result.error,
 		refetch: () => void result.refetch(),

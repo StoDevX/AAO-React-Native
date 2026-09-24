@@ -324,6 +324,7 @@ export let DayView = React.forwardRef<CalendarBodyHandle, Props>(function DayVie
 															isLastInSection={index === dayRows.length - 1}
 															key={`${entry.sourceId}|${entry.key}`}
 															onPress={() => props.onPressEvent(entry)}
+															shownOn={day}
 														/>
 													))}
 												</VStack>

@@ -416,6 +416,47 @@ describe('listTimeLines', () => {
 
 		expect(listTimeLines(event, 'en-US')).toEqual({start: '7:45 AM', end: '', allDay: false})
 	})
+
+	describe('shown under a day in Day view', () => {
+		// A play running Saturday night through Monday night, as TEC lists it.
+		let play = () => generateEvent('2026-10-24T19:30:00', '2026-10-26T21:30:00')
+
+		test('a later day dates its start, so it does not read as starting that day', () => {
+			expect(listTimeLines(play(), 'en-US', moment('2026-10-26T12:00:00'))).toEqual({
+				start: 'Oct 24, 7:30 PM',
+				end: 'Oct 26, 9:30 PM',
+				allDay: false,
+			})
+		})
+
+		test('its start day gives the start as a bare time', () => {
+			expect(listTimeLines(play(), 'en-US', moment('2026-10-24T12:00:00'))).toEqual({
+				start: '7:30 PM',
+				end: 'Oct 26, 9:30 PM',
+				allDay: false,
+			})
+		})
+
+		test('an ongoing event keeps its times as well as its dates', () => {
+			let event = generateEvent('2026-10-24T19:30:00', '2026-10-26T21:30:00', {isOngoing: true})
+
+			expect(listTimeLines(event, 'en-US', moment('2026-10-25T12:00:00'))).toEqual({
+				start: 'Oct 24, 7:30 PM',
+				end: 'Oct 26, 9:30 PM',
+				allDay: false,
+			})
+		})
+
+		test('an all-day event is still all-day', () => {
+			let event = generateEvent('2026-10-10T00:00:00', '2026-10-14T00:00:00', {config: ALL_DAY})
+
+			expect(listTimeLines(event, 'en-US', moment('2026-10-11T12:00:00'))).toEqual({
+				start: '',
+				end: '',
+				allDay: true,
+			})
+		})
+	})
 })
 
 describe('formatHourLabel', () => {
