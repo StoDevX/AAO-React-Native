@@ -9,11 +9,11 @@ import {PlayerTheme, theming} from '../../../source/features/streaming/radio/the
  * The purple of the logo's "krlx". White text on it is 5.5:1, and it is 3.8:1
  * against Dark Mode's black, enough for the 28pt title, so one tint serves both.
  */
-let tintColor = '#8a529e'
+const TINT_COLOR = '#8a529e'
 const colors: PlayerTheme = {
-	tintColor,
-	buttonTextColor: tinycolor.mostReadable(tintColor, [c.white, c.black]).toRgbString(),
-	textColor: tintColor,
+	tintColor: TINT_COLOR,
+	buttonTextColor: tinycolor.mostReadable(TINT_COLOR, [c.white, c.black]).toRgbString(),
+	textColor: TINT_COLOR,
 	imageBorderColor: 'transparent',
 	imageBackgroundColor: 'transparent',
 }

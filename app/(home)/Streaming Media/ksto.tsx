@@ -9,11 +9,11 @@ import {PlayerTheme, theming} from '../../../source/features/streaming/radio/the
  * A purple from the cow badge. White text on it is 6.5:1, and it is 3.3:1
  * against Dark Mode's black, enough for the 28pt title, so one tint serves both.
  */
-let tintColor = '#685393'
+const TINT_COLOR = '#685393'
 const colors: PlayerTheme = {
-	tintColor,
-	buttonTextColor: tinycolor.mostReadable(tintColor, [sto.white, sto.black]).toRgbString(),
-	textColor: tintColor,
+	tintColor: TINT_COLOR,
+	buttonTextColor: tinycolor.mostReadable(TINT_COLOR, [sto.white, sto.black]).toRgbString(),
+	textColor: TINT_COLOR,
 	imageBorderColor: 'transparent',
 	imageBackgroundColor: 'transparent',
 }
