@@ -543,11 +543,13 @@ struct TestIdentifiers {
 		/// KRLX has one logo, so nothing labelled with this may be a button.
 		static let krlxLogoPrefix = "88.1 KRLX-FM logo"
 		static let kstoTab = "KSTO"
+		static let kstoLogoPrefix = "KSTO 93.1 FM logo"
 		/// KSTO's logos in the order a tap cycles through them.
 		static let kstoLogos = [
 			"KSTO 93.1 FM logo, cow badge",
 			"KSTO 93.1 FM logo, wordmark",
 			"KSTO 93.1 FM logo, dumpster fire",
+			"KSTO 93.1 FM logo, record",
 		]
 	}
 

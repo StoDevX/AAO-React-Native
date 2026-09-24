@@ -109,4 +109,34 @@ struct StreamingMediaScreen: Screen {
 		XCTAssertEqual(logoButtons.count, 0, "No button should be labelled \"\(labelPrefix)…\"")
 		return self
 	}
+
+	/// Tap the logo whose label begins `prefix` until it reads `target`.
+	@discardableResult
+	func tapLogo(labelled prefix: String, until target: String) -> Self {
+		let logo = app.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", prefix)).firstMatch
+		XCTAssertTrue(logo.waitForExistence(timeout: 10), "A logo labelled \"\(prefix)…\" should be a button")
+		for _ in 0..<5 where !app.buttonLabelled(target).waitForExistence(timeout: 2) {
+			logo.tap()
+		}
+		XCTAssertTrue(app.buttonLabelled(target).waitForExistence(timeout: 5), "Tapping the logo should reach \"\(target)\"")
+		return self
+	}
+
+	/// Drag across the logo, well past a tap's slop, and check it is still
+	/// the same logo: a scrub turns the record and must not count as a tap.
+	@discardableResult
+	func checkScrubKeepsLogo(_ label: String) -> Self {
+		let logo = app.buttonLabelled(label)
+		XCTAssertTrue(logo.waitForExistence(timeout: 10), "\"\(label)\" should be showing before the scrub")
+
+		let start = logo.coordinate(withNormalizedOffset: CGVector(dx: 0.8, dy: 0.25))
+		let end = logo.coordinate(withNormalizedOffset: CGVector(dx: 0.25, dy: 0.2))
+		start.press(forDuration: 0.1, thenDragTo: end, withVelocity: .slow, thenHoldForDuration: 0.2)
+		capture("\(label) after a scrub")
+
+		XCTAssertTrue(
+			app.buttonLabelled(label).waitForExistence(timeout: 5),
+			"A scrub should leave the logo as \"\(label)\"")
+		return self
+	}
 }

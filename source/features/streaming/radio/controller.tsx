@@ -12,6 +12,7 @@ import {theming, type RadioLogo} from './theme'
 import {ActionButton, CallButton, ShowCalendarButton} from './buttons'
 import {LogoButton} from './logo-button'
 import {openUrl} from '@frogpond/open-url'
+import {RecordLogo} from './record'
 import {useRouter} from 'expo-router'
 
 // If you want to fix the inline player, switch to `true`
@@ -100,6 +101,7 @@ function RadioScreen(props: RadioScreenProps): React.ReactNode {
 
 	let [playState, setPlayState] = useState<PlayState>('paused')
 	let [streamError, setStreamError] = useState<HtmlAudioError | null>(null)
+	let [recordHeld, setRecordHeld] = useState(false)
 
 	let play = () => {
 		setPlayState('checking')
@@ -209,9 +211,22 @@ function RadioScreen(props: RadioScreenProps): React.ReactNode {
 
 	return (
 		<SafeAreaView edges={['left', 'right']} style={styles.screen}>
-			<ScrollView contentContainerStyle={root} contentInsetAdjustmentBehavior="automatic">
+			<ScrollView
+				contentContainerStyle={root}
+				contentInsetAdjustmentBehavior="automatic"
+				scrollEnabled={!recordHeld}
+			>
 				<View style={logoWrapper}>
-					{onPressLogo ? (
+					{logo.spins ? (
+						<RecordLogo
+							accessibilityLabel={`${stationName} logo, ${logo.name}`}
+							image={logo.image}
+							onHeldChange={setRecordHeld}
+							onTap={onPressLogo}
+							spinning={playState === 'playing'}
+							style={logoStyle}
+						/>
+					) : onPressLogo ? (
 						<LogoButton
 							accessibilityLabel={`${stationName} logo, ${logo.name}`}
 							onPress={onPressLogo}

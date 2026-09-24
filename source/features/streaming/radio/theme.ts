@@ -17,6 +17,8 @@ export type RadioLogo = {
 	name: string
 	image: ImageResolvedAssetSource
 	theme: PlayerTheme
+	/** A record: it spins while the stream plays, and a finger can scratch it. */
+	spins?: boolean
 }
 
 /**

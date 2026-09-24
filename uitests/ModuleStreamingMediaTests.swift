@@ -24,4 +24,13 @@ class ModuleStreamingMediaTests: UITestCase {
 			)
 			.checkLogoCycles(TestIdentifiers.StreamingMedia.kstoLogos)
 	}
+
+	func testKstoRecordScrubKeepsTheRecord() throws {
+		let logos = TestIdentifiers.StreamingMedia.kstoLogos
+		StreamingMediaScreen(app: app)
+			.navigate()
+			.openStation(TestIdentifiers.StreamingMedia.kstoTab, expecting: logos[0])
+			.tapLogo(labelled: TestIdentifiers.StreamingMedia.kstoLogoPrefix, until: logos[3])
+			.checkScrubKeepsLogo(logos[3])
+	}
 }
