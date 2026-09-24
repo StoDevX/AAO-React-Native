@@ -6,21 +6,15 @@ class ModuleSISTests: UITestCase {
 	// setUp launches with --reset-state, so each of these starts before the
 	// "I Agree" acknowledgement has been accepted.
 
-	func testShowsBalancesAfterAcknowledgement() throws {
+	/// Accepting the acknowledgement shows the balances, and they are still
+	/// there, with no acknowledgement, when SIS is opened again.
+	func testBalancesShowAfterAcknowledgementAndOnReopening() throws {
 		SISScreen(app: app)
 			.navigate()
 			.acceptAcknowledgement()
 			.checkAcknowledgementDismissed()
 			.checkBalancesVisible()
 			.checkMealPlanVisible()
-	}
-
-	func testContinuesToShowBalancesAfterReopening() throws {
-		SISScreen(app: app)
-			.navigate()
-			.acceptAcknowledgement()
-			.checkBalancesVisible()
-			.checkAcknowledgementNotPresent()
 			.navigateBack()
 			.waitForHomescreenVisible()
 			.navigateToSISAgain()
