@@ -2,6 +2,28 @@ $schema: http://json-schema.org/draft-07/schema#
 $id: _defs.json
 
 definitions:
+  # A name from GRADIENT_NAMES in modules/colors/resolve-gradient.ts, which
+  # mirrors this list; renaming an exported gradient breaks both.
+  gradient-name:
+    type: string
+    enum:
+      - red
+      - orange
+      - gold
+      - yellow
+      - green
+      - mint
+      - light-blue
+      - blue
+      - indigo
+      - purple
+      - violet
+      - pink
+      - gray
+      - sage
+      - tan
+      - pale-gold
+
   time:
     type: string
     pattern: ^1?\d:[0-5]?\d[ap]m$

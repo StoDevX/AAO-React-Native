@@ -27,24 +27,7 @@ properties:
   # gradients.ts and modules/colors/display-p3.ts.
   gradient:
     oneOf:
-      - type: string
-        enum:
-          - red
-          - orange
-          - gold
-          - yellow
-          - green
-          - mint
-          - light-blue
-          - blue
-          - indigo
-          - purple
-          - violet
-          - pink
-          - gray
-          - sage
-          - tan
-          - pale-gold
+      - $ref: '_defs.json#/definitions/gradient-name'
       - type: array
         minItems: 2
         maxItems: 2

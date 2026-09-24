@@ -52,7 +52,17 @@ export function applyListFilter<T extends object>(filter: ListType<T>, item: T):
 		itemValue = values(rawItemValue)
 	}
 
-	// if it's not an array of strings, then let it through
+	// a missing value is an item with no values
+	if (rawItemValue === undefined || rawItemValue === null) {
+		itemValue = []
+	}
+
+	// an item with no values has none of the chosen ones, in either mode
+	if (Array.isArray(itemValue) && itemValue.length === 0) {
+		return false
+	}
+
+	// a value the filter cannot read, like a number, is left to the caller
 	if (!isArrayOfString(itemValue)) {
 		return true
 	}

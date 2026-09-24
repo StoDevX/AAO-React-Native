@@ -20,8 +20,8 @@ import {
 } from './gradients'
 
 /// The names a data file may use, in the kebab-case those files are written in.
-/// Mirrored by the `gradient` enum in `data/_schemas/contact-info.yaml`;
-/// renaming an exported gradient breaks both.
+/// Mirrored by `gradient-name` in `data/_schemas/_defs.yaml`, which every data
+/// schema with a gradient uses; renaming an exported gradient breaks both.
 const NAMED_GRADIENTS = new Map<string, Gradient>([
 	['red', redGradient],
 	['orange', orangeGradient],

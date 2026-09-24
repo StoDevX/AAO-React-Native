@@ -8,8 +8,13 @@ import {LoadingView, NoticeView} from '@frogpond/notice'
 import {openUrl} from '@frogpond/open-url'
 import * as c from '@frogpond/colors'
 import {jobDetailOptions, type JobDetail} from '@frogpond/ccc-jobs'
-import {JOB_DESCRIPTION_TITLE, shareJob} from '../../source/features/sis/student-work/lib'
-import {format, isValid, parseISO} from 'date-fns'
+import {
+	formatPostedDate,
+	JOB_DESCRIPTION_TITLE,
+	jobDetailFields,
+	shareJob,
+} from '../../source/features/sis/student-work/lib'
+import {displayTitle} from '../../source/features/sis/student-work/posting'
 import {DetailRow, DisclosureRow, NavigationRow} from '../../source/components/rows'
 
 const styles = StyleSheet.create({
@@ -18,13 +23,6 @@ const styles = StyleSheet.create({
 		backgroundColor: c.systemGroupedBackground,
 	},
 })
-
-function postedOn(postedDate: string | undefined): string | undefined {
-	if (!postedDate) return undefined
-
-	let parsed = parseISO(postedDate)
-	return isValid(parsed) ? format(parsed, 'MMMM d, yyyy') : undefined
-}
 
 /// The posting's fields, as a SwiftUI form that fills the screen and scrolls
 /// itself, with the description a push away.
@@ -36,22 +34,25 @@ function postedOn(postedDate: string | undefined): string | undefined {
 /// and hosting it in the form would need that same content-sized measurement.
 function JobDetailView({job}: {job: JobDetail}): React.ReactNode {
 	let router = useRouter()
-	let posted = postedOn(job.postedDate)
+	let posted = formatPostedDate(job.postedDate)
+	let fields = jobDetailFields(job)
 
 	return (
 		<Host style={styles.screen}>
 			<Form>
 				<Section>
-					<Text modifiers={[font({textStyle: 'title2', weight: 'bold'})]}>{job.title}</Text>
+					<Text modifiers={[font({textStyle: 'title2', weight: 'bold'})]}>
+						{displayTitle(job.title)}
+					</Text>
 					{job.category ? <DetailRow label="Category" value={job.category} /> : null}
 					{job.schedule ? <DetailRow label="Schedule" value={job.schedule} /> : null}
 					{job.location ? <DetailRow label="Location" value={job.location} /> : null}
 					{posted ? <DetailRow label="Posted" value={posted} /> : null}
 				</Section>
 
-				{job.fields.length > 0 ? (
+				{fields.length > 0 ? (
 					<Section title="Details">
-						{job.fields.map((field) => (
+						{fields.map((field) => (
 							<DetailRow key={field.label} label={field.label} value={field.value} />
 						))}
 					</Section>
@@ -116,7 +117,7 @@ export default function JobDetailPage(): React.ReactNode {
 
 	return (
 		<>
-			<Stack.Title>{job.title}</Stack.Title>
+			<Stack.Title>{displayTitle(job.title)}</Stack.Title>
 			<Stack.Toolbar placement="right">
 				<Stack.Toolbar.Button
 					accessibilityLabel="Share Job"
