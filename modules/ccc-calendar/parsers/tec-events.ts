@@ -1,5 +1,6 @@
 import {deriveDayFlags} from '@frogpond/event-type'
 import {decode, fastGetTrimmedText, htmlToSegments} from '@frogpond/html-lib'
+import {format} from 'date-fns'
 import {z} from 'zod'
 import type {WireEvent} from './events'
 
@@ -58,55 +59,42 @@ const TecPageSchema = z.object({
 	next_rest_url: z.string().optional(),
 })
 
-const TecPageStartSchema = z.object({utc_start_date: z.string()})
-
 /**
- * The most pages `fetchTecPages` will follow. At 50 events a page that is
- * several times what the campus calendar lists before any horizon it is
- * given, so reaching it means a feed that never stops handing out a next
- * page.
+ * The most pages `fetchTecPages` will follow: 500 events, over three times
+ * what the campus calendar lists in a month of term. Reaching it means a
+ * feed that never stops handing out a next page.
  */
-const TEC_MAX_PAGES = 40
+const TEC_MAX_PAGES = 10
 
 /**
- * Every page of a TEC feed from `href` on, up to the events starting by
- * `until`, joined into the one `{events}` body `parseTecEvents` reads.
+ * Every page of a TEC feed from `href` on, through the events starting on
+ * `until`'s date, joined into the one `{events}` body `parseTecEvents` reads.
  *
  * TEC pages its REST API, and a single page holds only the next few days of
  * the campus calendar. `writeSource` treats what it is handed as the whole
  * feed, so reading one page would wipe every later event.
  *
- * Stops at the first page whose last event starts after `until`: the feed is
- * sorted by start, so every later page lies past it too. That page's events
- * past `until` are dropped, so the calendar ends at one clean horizon rather
- * than wherever the page happened to.
+ * The horizon goes to TEC as `end_date`, which it applies to each event's
+ * start, rounds to the end of that day, and carries into every
+ * `next_rest_url` -- so the feed itself ends there, and the pages it names
+ * are fetched as they come.
  */
 export async function fetchTecPages(
 	href: string,
 	until: Date,
 	fetchPage: (href: string) => Promise<unknown>,
-	maxPages = TEC_MAX_PAGES,
 ): Promise<{events: unknown[]}> {
-	let events: unknown[] = []
-	let next: string | undefined = href
+	let first = new URL(href)
+	first.searchParams.set('end_date', format(until, 'yyyy-MM-dd'))
 
-	for (let count = 0; next && count < maxPages; count++) {
+	let events: unknown[] = []
+	let next: string | undefined = first.toString()
+
+	for (let count = 0; next && count < TEC_MAX_PAGES; count++) {
 		// Sequential by nature: each page names the next.
 		// oxlint-disable-next-line eslint/no-await-in-loop
 		let page = TecPageSchema.parse(await fetchPage(next))
-		let reachedHorizon = false
-
-		for (let raw of page.events) {
-			// One whose start can't be read is left for `parseTecEvents` to judge.
-			let start = TecPageStartSchema.safeParse(raw)
-			if (start.success && new Date(toIsoString(start.data.utc_start_date)) > until) {
-				reachedHorizon = true
-				continue
-			}
-			events.push(raw)
-		}
-
-		if (reachedHorizon) break
+		events.push(...page.events)
 		next = page.next_rest_url
 	}
 

@@ -363,60 +363,52 @@ describe('fetchTecPages', () => {
 		}
 	}
 
-	const UNTIL = new Date('2026-12-01T00:00:00Z')
+	const FEED = 'https://wp.stolaf.edu/calendar/wp-json/tribe/events/v1/events?per_page=50'
+	const UNTIL = new Date(2026, 11, 1)
+
+	test('asks the feed to stop at the horizon, keeping its own parameters', async () => {
+		let fetched: string[] = []
+
+		await fetchTecPages(FEED, UNTIL, (href) => {
+			fetched.push(href)
+			return Promise.resolve(page([]))
+		})
+
+		let url = new URL(fetched[0])
+		expect(url.searchParams.get('end_date')).toBe('2026-12-01')
+		expect(url.searchParams.get('per_page')).toBe('50')
+	})
 
 	test('follows next_rest_url until the feed runs out', async () => {
+		// TEC carries `end_date` into each `next_rest_url`, so later pages are
+		// fetched exactly as the feed names them.
 		let pages: Record<string, unknown> = {
-			first: page(['2026-09-01 10:00:00'], 'second'),
 			second: page(['2026-09-02 10:00:00'], 'third'),
 			third: page(['2026-09-03 10:00:00']),
 		}
 		let fetched: string[] = []
 
-		let body = await fetchTecPages('first', UNTIL, (href) => {
+		let body = await fetchTecPages(FEED, UNTIL, (href) => {
 			fetched.push(href)
-			return Promise.resolve(pages[href])
+			return Promise.resolve(pages[href] ?? page(['2026-09-01 10:00:00'], 'second'))
 		})
 
-		expect(fetched).toStrictEqual(['first', 'second', 'third'])
+		expect(fetched.slice(1)).toStrictEqual(['second', 'third'])
 		expect(body.events).toHaveLength(3)
 	})
 
-	test('stops once a page reaches past the horizon, and keeps nothing beyond it', async () => {
-		let pages: Record<string, unknown> = {
-			first: page(['2026-11-30 10:00:00', '2026-12-02 10:00:00'], 'second'),
-			second: page(['2026-12-03 10:00:00']),
-		}
-		let fetched: string[] = []
-
-		let body = await fetchTecPages('first', UNTIL, (href) => {
-			fetched.push(href)
-			return Promise.resolve(pages[href])
-		})
-
-		expect(fetched).toStrictEqual(['first'])
-		expect(body.events).toStrictEqual([{utc_start_date: '2026-11-30 10:00:00'}])
-	})
-
-	test('stops at the page cap rather than walking an endless feed', async () => {
+	test('stops at ten pages rather than walking an endless feed', async () => {
 		let fetched = 0
 
-		await fetchTecPages(
-			'loop',
-			UNTIL,
-			() => {
-				fetched += 1
-				return Promise.resolve(page(['2026-09-01 10:00:00'], 'loop'))
-			},
-			5,
-		)
+		await fetchTecPages(FEED, UNTIL, () => {
+			fetched += 1
+			return Promise.resolve(page(['2026-09-01 10:00:00'], 'loop'))
+		})
 
-		expect(fetched).toBe(5)
+		expect(fetched).toBe(10)
 	})
 
 	test('a page that is not a TEC page throws', async () => {
-		await expect(
-			fetchTecPages('first', UNTIL, () => Promise.resolve({nope: true})),
-		).rejects.toThrow()
+		await expect(fetchTecPages(FEED, UNTIL, () => Promise.resolve({nope: true}))).rejects.toThrow()
 	})
 })
