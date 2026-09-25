@@ -81,6 +81,14 @@ export const messFeedOptions = queryOptions({
 	},
 })
 
+/** A post that came back but holds no story the reader can show. */
+export class MissingMessStoryError extends Error {
+	constructor(id: number) {
+		super(`no Mess story ${id}`)
+		this.name = 'MissingMessStoryError'
+	}
+}
+
 /** One story, by its WordPress post id. */
 // oxlint-disable-next-line typescript/explicit-module-boundary-types
 export const messStoryOptions = (id: number) =>
@@ -89,7 +97,7 @@ export const messStoryOptions = (id: number) =>
 		staleTime: FIVE_MINUTES_IN_MS,
 		queryFn: async ({signal}): Promise<MessStory> => {
 			let [story] = await storiesAt(`posts/${id}?_embed=true`, signal, 'Olaf Messenger story')
-			if (!story) throw new Error(`no Mess story ${id}`)
+			if (!story) throw new MissingMessStoryError(id)
 			return story
 		},
 	})

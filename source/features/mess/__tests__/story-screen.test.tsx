@@ -4,6 +4,8 @@ import {act, fireEvent, render, screen} from '@testing-library/react-native'
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query'
 import {openUrl} from '@frogpond/open-url'
 import {fetchManifest, fetchSourceBody, type Jrd} from '@frogpond/data-sources'
+import categories from './fixtures/categories.json'
+import posts from './fixtures/posts.json'
 
 import {queryClient as appQueryClient} from '../../../init/tanstack-query'
 import {StoryScreen} from '../story-screen'
@@ -117,6 +119,19 @@ afterEach(() => {
 	jest.clearAllMocks()
 })
 
+/** The hrefs `fetchSourceBody` was asked for, in order. */
+function fetchedHrefs(): string[] {
+	return mockBody.mock.calls.map((call) => call[0])
+}
+
+/** Answers the categories URL with the fixture tree, and any other URL with `answer(href)`. */
+function serve(answer: (href: string) => unknown): void {
+	mockManifest.mockResolvedValue({links: []} as unknown as Jrd)
+	mockBody.mockImplementation((href) =>
+		href.includes('/categories') ? Promise.resolve(categories) : Promise.resolve(answer(href)),
+	)
+}
+
 function renderStory(id: number) {
 	return render(
 		<QueryClientProvider client={queryClient}>
@@ -126,9 +141,43 @@ function renderStory(id: number) {
 }
 
 describe('StoryScreen', () => {
-	test('says a story is unavailable when it is not in the feed', async () => {
+	test('reads a story in the cached feed without fetching the single post', async () => {
+		await renderStory(36911)
+		await act(() => new Promise((resolve) => setTimeout(resolve, 0)))
+
+		expect(screen.getByText('Cows, Comments and Confessions')).toBeTruthy()
+		expect(mockBody).not.toHaveBeenCalled()
+	})
+
+	test('fetches a story that is not in the feed on its own', async () => {
+		serve((href) => (href.includes('/posts/36859') ? posts[0] : []))
+		await renderStory(36859)
+
+		expect(
+			await screen.findByText(
+				'Student workers deliver petition urging St. Olaf to reverse work award cap policy',
+			),
+		).toBeTruthy()
+		expect(fetchedHrefs()).toContain(
+			'https://olafmessenger.com/wp-json/wp/v2/posts/36859?_embed=true',
+		)
+	})
+
+	test('offers Try Again when a story outside the feed fails to load', async () => {
+		mockManifest.mockResolvedValue({links: []} as unknown as Jrd)
+		mockBody.mockRejectedValue(new Error('offline'))
 		await renderStory(1)
-		expect(screen.getByText('Story unavailable')).toBeTruthy()
+
+		expect(await screen.findByText('Try Again')).toBeTruthy()
+		expect(screen.queryByText('Story unavailable')).toBeNull()
+	})
+
+	test('says a story is unavailable when its post comes back empty', async () => {
+		serve(() => [])
+		await renderStory(1)
+
+		expect(await screen.findByText('Story unavailable')).toBeTruthy()
+		expect(screen.queryByText('Try Again')).toBeNull()
 	})
 
 	test('shows the loading view while the feed is on its way', async () => {
@@ -170,6 +219,7 @@ describe('StoryScreen', () => {
 	test('says a story is unavailable when the id is not a number', async () => {
 		await renderStory(Number('not-a-number'))
 		expect(screen.getByText('Story unavailable')).toBeTruthy()
+		expect(mockBody).not.toHaveBeenCalled()
 	})
 
 	test('shows the headline, kicker and byline', async () => {

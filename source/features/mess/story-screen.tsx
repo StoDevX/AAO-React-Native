@@ -4,15 +4,14 @@ import {Stack} from 'expo-router'
 import {Divider, Host, LazyVStack, ScrollView, useNativeState} from '@expo/ui/swift-ui'
 import {background, padding, scrollPosition, scrollTargetLayout} from '@expo/ui/swift-ui/modifiers'
 import {LoadingView, NoticeView} from '@frogpond/notice'
-import {useQuery} from '@tanstack/react-query'
 import {useSafeAreaInsets} from 'react-native-safe-area-context'
 import {AuthorCard} from './author-card'
 import {HoroscopesView} from './horoscopes-view'
 import {paper} from './palette'
-import {messFeedOptions} from './query'
 import {SiteLinkCard, StoryBlock} from './story-blocks'
 import {StoryHeader} from './story-header'
 import type {MessStory} from './types'
+import {useMessStory} from './use-mess-story'
 
 const COLUMN_MARGIN = 20
 const PAGE = [background(paper)]
@@ -28,12 +27,7 @@ export function StoryScreen({id}: Props): React.ReactNode {
 	let insets = useSafeAreaInsets()
 	// The scroll view's content sits inside the side safe areas, which landscape widens.
 	let columnWidth = width - insets.left - insets.right - COLUMN_MARGIN * 2
-	// A stable selector, so the story is found again only when the feed or the id changes.
-	let selectStory = React.useCallback(
-		(stories: MessStory[]) => stories.find((s) => s.id === id),
-		[id],
-	)
-	let query = useQuery({...messFeedOptions, select: selectStory})
+	let query = useMessStory(id)
 	let story = query.data
 	// The id of the part of the page to scroll to; a template sets it to move the reader.
 	let scrollTarget = useNativeState<string | null>(null)
