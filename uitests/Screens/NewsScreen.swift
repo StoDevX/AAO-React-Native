@@ -2,10 +2,22 @@ import XCTest
 
 struct NewsScreen: Screen {
 	let app: XCUIApplication
+	/// The home tile that opens this feed
+	let tile: String
+	/// The feed's navigation bar title
+	let title: String
 
 	@discardableResult
 	func navigate() -> Self {
-		navigateFromHome(to: TestIdentifiers.Buttons.news)
+		navigateFromHome(to: tile)
+	}
+
+	@discardableResult
+	func verifyTitle() -> Self {
+		XCTAssertTrue(
+			app.navigationBars[title].waitForExistence(timeout: 10),
+			"the navigation bar should read \(title)")
+		return self
 	}
 
 	@discardableResult
