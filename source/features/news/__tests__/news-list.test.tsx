@@ -61,4 +61,27 @@ describe('NewsList', () => {
 		expect(onPressStory).toHaveBeenCalledWith(STORY)
 		expect(openUrl).not.toHaveBeenCalled()
 	})
+
+	test('keeps two stories that share a title apart', async () => {
+		// A Mess column names every week's post "Horoscopes"; only its link sets it apart.
+		let first = {...STORY, title: 'Horoscopes', link: 'https://olafmessenger.com/horoscopes/'}
+		let second = {...STORY, title: 'Horoscopes', link: 'https://olafmessenger.com/horoscopes-2/'}
+		let consoleError = jest.spyOn(console, 'error').mockImplementation(() => undefined)
+
+		try {
+			await render(
+				<NewsList
+					entries={[first, second]}
+					query={QUERY}
+					selectedCategory={null}
+					thumbnail={false}
+				/>,
+			)
+
+			expect(screen.getAllByText('Horoscopes')).toHaveLength(2)
+			expect(consoleError).not.toHaveBeenCalled()
+		} finally {
+			consoleError.mockRestore()
+		}
+	})
 })

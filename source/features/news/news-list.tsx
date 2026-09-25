@@ -62,7 +62,8 @@ export const NewsList = (props: Props): React.ReactNode => {
 					) : (
 						filteredEntries.map((story, index) => (
 							<NewsRow
-								key={story.title}
+								// A title can repeat, as a weekly column's does; a story's link is its own.
+								key={story.link ?? story.title}
 								destination={props.onPressStory ? 'push' : 'external'}
 								isLast={index === filteredEntries.length - 1}
 								onPress={() =>
