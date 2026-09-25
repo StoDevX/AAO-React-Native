@@ -58,6 +58,7 @@ export const accessibilityAddTraits = named('accessibilityAddTraits', 'traits')
 /** Defaults to 'ignore', as the real one does. */
 export const accessibilityElement = (children = 'ignore'): Modifier =>
 	createModifier('accessibilityElement', {children})
+export const accessibilityHidden = flag('accessibilityHidden', 'hidden')
 export const accessibilityIdentifier = named('accessibilityIdentifier', 'identifier')
 export const accessibilityLabel = named('accessibilityLabel', 'label')
 export const accessibilityRemoveTraits = named('accessibilityRemoveTraits', 'traits')
@@ -804,6 +805,11 @@ export function Button({
 			// `RNTL`'s `getByRole` only considers an element an accessibility
 			// element -- and so a candidate at all -- once `accessible` is
 			// explicitly set.
+			// `isSelected` is how SwiftUI marks the chosen one of a set of buttons,
+			// and VoiceOver reads it as "selected".
+			accessibilityState={{
+				selected: traitsOf(modifiers, 'accessibilityAddTraits').includes('isSelected'),
+			}}
 			accessible={true}
 			disabled={isDisabled(modifiers)}
 			modifiers={modifiers}

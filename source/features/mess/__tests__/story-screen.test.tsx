@@ -7,6 +7,8 @@ import {fetchManifest, fetchSourceBody, type Jrd} from '@frogpond/data-sources'
 
 import {StoryScreen} from '../story-screen'
 import {messKeys} from '../query'
+import {useMessStore} from '../store'
+import {ZODIAC_SIGNS} from '../lib/zodiac'
 import type {MessStory, StaffProfile} from '../types'
 
 jest.mock('@expo/ui/swift-ui', () => {
@@ -74,6 +76,20 @@ const ARTWORK: MessStory = {
 	blocks: [],
 }
 
+/** A Horoscopes post; its readings live in its layout, and it has no blocks to draw. */
+const HOROSCOPES: MessStory = {
+	...STORY,
+	id: 36518,
+	title: 'Horoscopes',
+	link: 'https://olafmessenger.com/36518/',
+	blocks: [],
+	layout: {
+		kind: 'horoscopes',
+		intro: [],
+		signs: ZODIAC_SIGNS.map((sign) => ({sign, reading: [[{text: `${sign} reading`}]]})),
+	},
+}
+
 const PROFILE: StaffProfile = {
 	name: 'Kenzie Nguyen',
 	bio: 'Kenzie is a senior.',
@@ -85,7 +101,8 @@ let queryClient: QueryClient
 
 beforeEach(() => {
 	queryClient = new QueryClient({defaultOptions: {queries: {staleTime: Infinity, retry: false}}})
-	queryClient.setQueryData(messKeys.feed, [STORY, ARTWORK])
+	queryClient.setQueryData(messKeys.feed, [STORY, ARTWORK, HOROSCOPES])
+	useMessStore.setState({lastSign: null})
 	// Ashlyn has no profile; Kenzie has one.
 	queryClient.setQueryData(messKeys.profile(423), null)
 	queryClient.setQueryData(messKeys.profile(392), PROFILE)
@@ -183,5 +200,29 @@ describe('StoryScreen', () => {
 		fireEvent.press(screen.getByText('Read on olafmessenger.com'))
 
 		expect(openUrl).toHaveBeenCalledWith('https://olafmessenger.com/36950/')
+	})
+	test('draws a Horoscopes post with its own template and no site link', async () => {
+		await renderStory(36518)
+
+		expect(screen.getByText('Pick your sign')).toBeTruthy()
+		expect(screen.getByRole('button', {name: 'Aries, March 21 to April 19'})).toBeTruthy()
+		expect(screen.queryByText('Read on olafmessenger.com')).toBeNull()
+	})
+
+	test('opens a Horoscopes post on the remembered sign', async () => {
+		useMessStore.setState({lastSign: 'leo'})
+		await renderStory(36518)
+
+		expect(screen.getByText('leo reading')).toBeTruthy()
+		expect(screen.getByRole('button', {name: 'Leo', selected: true})).toBeTruthy()
+	})
+
+	test('draws an article as an article even with a sign remembered', async () => {
+		useMessStore.setState({lastSign: 'taurus'})
+		await renderStory(36911)
+
+		expect(screen.getByText('Body text\\.')).toBeTruthy()
+		expect(screen.queryByRole('button', {name: 'Taurus'})).toBeNull()
+		expect(screen.queryByText('Pick your sign')).toBeNull()
 	})
 })

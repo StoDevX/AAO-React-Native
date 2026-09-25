@@ -33,6 +33,22 @@ export const SIGN_DATES: Record<ZodiacSign, string> = {
 	pisces: 'Feb 19 – Mar 20',
 }
 
+/** The same dates as `SIGN_DATES`, spelled out for VoiceOver. */
+export const SPOKEN_DATES: Record<ZodiacSign, string> = {
+	aries: 'March 21 to April 19',
+	taurus: 'April 20 to May 20',
+	gemini: 'May 21 to June 20',
+	cancer: 'June 21 to July 22',
+	leo: 'July 23 to August 22',
+	virgo: 'August 23 to September 22',
+	libra: 'September 23 to October 22',
+	scorpio: 'October 23 to November 21',
+	sagittarius: 'November 22 to December 21',
+	capricorn: 'December 22 to January 19',
+	aquarius: 'January 20 to February 18',
+	pisces: 'February 19 to March 20',
+}
+
 /** Each sign's symbol, with U+FE0E so it draws as text rather than emoji. */
 export const SIGN_GLYPHS: Record<ZodiacSign, string> = Object.fromEntries(
 	ZODIAC_SIGNS.map((sign, index) => [sign, `${String.fromCodePoint(0x2648 + index)}\uFE0E`]),

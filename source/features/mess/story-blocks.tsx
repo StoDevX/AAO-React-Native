@@ -37,7 +37,8 @@ const OPENING = [font({textStyle: 'body', design: 'serif', smallCaps: true})]
 const SITE_LINK = [font({textStyle: 'callout', weight: 'semibold'}), foregroundStyle(messRed)]
 const SITE_LINK_ICON = [foregroundStyle(messRed)]
 
-function Paragraph({
+/** A paragraph of body text, drawn from its runs as Markdown. */
+export function Paragraph({
 	runs,
 	modifiers = PROSE,
 }: {
