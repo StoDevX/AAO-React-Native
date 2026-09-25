@@ -1,11 +1,16 @@
 diff --git a/build/swift-ui/HangingText/index.d.ts b/build/swift-ui/HangingText/index.d.ts
 new file mode 100644
-index 0000000000000000000000000000000000000000..45a9ba41b9acdf93015cfd9dd3c6a4378ce9b6b7
+index 0000000000000000000000000000000000000000..d08232a073aef5a8f011f7ce4e26ceaada54d8d5
 --- /dev/null
 +++ b/build/swift-ui/HangingText/index.d.ts
-@@ -0,0 +1,34 @@
+@@ -0,0 +1,40 @@
 +import type { ColorValue } from 'react-native';
 +import { type CommonViewModifierProps } from '../types';
++/**
++ * `HangingText` is drawn by UIKit, so SwiftUI `font` and `foregroundStyle`
++ * modifiers do not reach its text: its own `serif`, `color`, `linkColor` and
++ * `lineSpacing` props set it. Layout modifiers such as `padding` still apply.
++ */
 +export interface HangingTextProps extends CommonViewModifierProps {
 +    /**
 +     * Inline Markdown: emphasis, strong emphasis and links.
@@ -34,8 +39,9 @@ index 0000000000000000000000000000000000000000..45a9ba41b9acdf93015cfd9dd3c6a437
 +}
 +/**
 + * Body text whose wrapped lines sit `hangingIndent` points past its first
-+ * line, drawn by a `UILabel` with a paragraph style, which SwiftUI's `Text`
-+ * does not have. It follows Dynamic Type.
++ * line, drawn by a read-only `UITextView` with a paragraph style, which
++ * SwiftUI's `Text` does not have. It follows Dynamic Type, and its links open
++ * when tapped.
 + */
 +export declare function HangingText({ children, modifiers, ...props }: HangingTextProps): import("react/jsx-runtime").JSX.Element;
 diff --git a/build/swift-ui/index.d.ts b/build/swift-ui/index.d.ts
@@ -80,13 +86,14 @@ index 4eed0f19fede0f28af6e8b74507805927acf004e..231004c9640e3850be7e7722cd1f4753
      ExpoUIView(BackgroundView.self)
 diff --git a/ios/HangingTextView.swift b/ios/HangingTextView.swift
 new file mode 100644
-index 0000000000000000000000000000000000000000..872435c461dc3bbf6b6c190105c47f8be768c527
+index 0000000000000000000000000000000000000000..be85cdf81df97d3e426e3f5086fb6ae124290743
 --- /dev/null
 +++ b/ios/HangingTextView.swift
-@@ -0,0 +1,105 @@
+@@ -0,0 +1,135 @@
 +// A line of text whose wrapped continuation lines sit further in than its first
 +// line -- a hanging indent. SwiftUI's `Text` has no paragraph style, so this
-+// draws through a UILabel with an NSParagraphStyle instead.
++// draws through a read-only UITextView with an NSParagraphStyle instead, which
++// also keeps its links tappable and announced as links.
 +
 +import SwiftUI
 +import UIKit
@@ -107,6 +114,28 @@ index 0000000000000000000000000000000000000000..872435c461dc3bbf6b6c190105c47f8b
 +  override var defaultFrameAlignment: Alignment { .leading }
 +}
 +
++/// The ASCII punctuation CommonMark lets a backslash escape.
++private let escapable = Set("!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~")
++
++/// Markdown source with its backslash escapes removed, for when it cannot be parsed.
++private func unescaped(_ markdown: String) -> String {
++  var result = ""
++  var pendingBackslash = false
++  for character in markdown {
++    if pendingBackslash {
++      if !escapable.contains(character) { result.append("\\") }
++      result.append(character)
++      pendingBackslash = false
++    } else if character == "\\" {
++      pendingBackslash = true
++    } else {
++      result.append(character)
++    }
++  }
++  if pendingBackslash { result.append("\\") }
++  return result
++}
++
 +public struct HangingTextView: ExpoSwiftUI.View {
 +  @ObservedObject public var props: HangingTextViewProps
 +  @Environment(\.dynamicTypeSize) private var dynamicTypeSize
@@ -116,7 +145,7 @@ index 0000000000000000000000000000000000000000..872435c461dc3bbf6b6c190105c47f8b
 +  }
 +
 +  public var body: some View {
-+    HangingLabel(text: attributedText())
++    HangingLabel(text: attributedText(), linkColor: props.linkColor ?? UIColor.link)
 +  }
 +
 +  private func bodyFont(bold: Bool, italic: Bool) -> UIFont {
@@ -140,7 +169,7 @@ index 0000000000000000000000000000000000000000..872435c461dc3bbf6b6c190105c47f8b
 +      interpretedSyntax: .inlineOnlyPreservingWhitespace
 +    )
 +    let parsed = (try? AttributedString(markdown: props.text, options: options))
-+      ?? AttributedString(props.text)
++      ?? AttributedString(unescaped(props.text))
 +
 +    let paragraph = NSMutableParagraphStyle()
 +    paragraph.firstLineHeadIndent = 0
@@ -156,8 +185,9 @@ index 0000000000000000000000000000000000000000..872435c461dc3bbf6b6c190105c47f8b
 +        .paragraphStyle: paragraph,
 +        .foregroundColor: props.color ?? UIColor.label,
 +      ]
-+      if run.link != nil {
-+        attributes[.foregroundColor] = props.linkColor ?? UIColor.link
++      // The text view draws a link in its `linkTextAttributes`, and opens it when tapped.
++      if let link = run.link {
++        attributes[.link] = link
 +      }
 +      result.append(NSAttributedString(string: String(parsed[run.range].characters), attributes: attributes))
 +    }
@@ -165,27 +195,33 @@ index 0000000000000000000000000000000000000000..872435c461dc3bbf6b6c190105c47f8b
 +  }
 +}
 +
-+/// A multi-line UILabel that tells SwiftUI how tall it is at the width it is offered.
++/// A read-only, unscrolled UITextView that tells SwiftUI how tall it is at the width it is offered.
 +private struct HangingLabel: UIViewRepresentable {
 +  let text: NSAttributedString
++  let linkColor: UIColor
 +
-+  func makeUIView(context: Context) -> UILabel {
-+    let label = UILabel()
-+    label.numberOfLines = 0
-+    label.lineBreakMode = .byWordWrapping
-+    label.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
-+    label.setContentHuggingPriority(.defaultLow, for: .horizontal)
-+    return label
++  func makeUIView(context: Context) -> UITextView {
++    let view = UITextView()
++    view.isEditable = false
++    view.isScrollEnabled = false
++    view.backgroundColor = .clear
++    view.textContainerInset = .zero
++    view.textContainer.lineFragmentPadding = 0
++    view.textContainer.lineBreakMode = .byWordWrapping
++    view.adjustsFontForContentSizeCategory = false
++    view.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
++    view.setContentHuggingPriority(.defaultLow, for: .horizontal)
++    return view
 +  }
 +
-+  func updateUIView(_ label: UILabel, context: Context) {
-+    label.attributedText = text
++  func updateUIView(_ view: UITextView, context: Context) {
++    view.linkTextAttributes = [.foregroundColor: linkColor]
++    view.attributedText = text
 +  }
 +
-+  func sizeThatFits(_ proposal: ProposedViewSize, uiView label: UILabel, context: Context) -> CGSize? {
++  func sizeThatFits(_ proposal: ProposedViewSize, uiView view: UITextView, context: Context) -> CGSize? {
 +    let width = proposal.width ?? .greatestFiniteMagnitude
-+    label.preferredMaxLayoutWidth = width
-+    let fitted = label.sizeThatFits(CGSize(width: width, height: .greatestFiniteMagnitude))
++    let fitted = view.sizeThatFits(CGSize(width: width, height: .greatestFiniteMagnitude))
 +    return CGSize(width: min(width, ceil(fitted.width)), height: ceil(fitted.height))
 +  }
 +}
@@ -369,16 +405,21 @@ index 8c426dffff1df73809436999f23a6155b0a72ef8..d46585fb204a0a923fdb4f2eea88242f
      }
 diff --git a/src/swift-ui/HangingText/index.tsx b/src/swift-ui/HangingText/index.tsx
 new file mode 100644
-index 0000000000000000000000000000000000000000..329ae7cf80f38a41207669e74926ad8d2f2fb88d
+index 0000000000000000000000000000000000000000..bfba4b327a1542d05ceabe0c74041e40c4cd3913
 --- /dev/null
 +++ b/src/swift-ui/HangingText/index.tsx
-@@ -0,0 +1,55 @@
+@@ -0,0 +1,61 @@
 +import { requireNativeView } from 'expo';
 +import type { ColorValue } from 'react-native';
 +
 +import { createViewModifierEventListener } from '../modifiers/utils';
 +import { type CommonViewModifierProps } from '../types';
 +
++/**
++ * `HangingText` is drawn by UIKit, so SwiftUI `font` and `foregroundStyle`
++ * modifiers do not reach its text: its own `serif`, `color`, `linkColor` and
++ * `lineSpacing` props set it. Layout modifiers such as `padding` still apply.
++ */
 +export interface HangingTextProps extends CommonViewModifierProps {
 +  /**
 +   * Inline Markdown: emphasis, strong emphasis and links.
@@ -415,8 +456,9 @@ index 0000000000000000000000000000000000000000..329ae7cf80f38a41207669e74926ad8d
 +
 +/**
 + * Body text whose wrapped lines sit `hangingIndent` points past its first
-+ * line, drawn by a `UILabel` with a paragraph style, which SwiftUI's `Text`
-+ * does not have. It follows Dynamic Type.
++ * line, drawn by a read-only `UITextView` with a paragraph style, which
++ * SwiftUI's `Text` does not have. It follows Dynamic Type, and its links open
++ * when tapped.
 + */
 +export function HangingText({ children, modifiers, ...props }: HangingTextProps) {
 +  return (
