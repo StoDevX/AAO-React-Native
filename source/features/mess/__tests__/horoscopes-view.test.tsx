@@ -67,6 +67,11 @@ describe('HoroscopesView', () => {
 			expect(rows).toStrictEqual(ROW_LABELS)
 		})
 
+		test('draws no chevron on a row, since a row changes this page rather than opening another', async () => {
+			await renderView()
+			expect(screen.queryByTestId('symbol-chevron.right')).toBeNull()
+		})
+
 		test('shows no chosen sign and no reading', async () => {
 			await renderView()
 
@@ -141,6 +146,19 @@ describe('HoroscopesView', () => {
 			expect(screen.getByRole('button', {name: 'Gemini', selected: true})).toBeTruthy()
 			expect(screen.getByRole('button', {name: 'Taurus, April 20 to May 20'})).toBeTruthy()
 			expect(scrollTo).toHaveBeenCalledWith('gemini')
+		})
+
+		test('does nothing when the chosen glyph is pressed again', async () => {
+			await renderView()
+			let storeChanges = jest.fn()
+			let unsubscribe = useMessStore.subscribe(storeChanges)
+
+			await fireEvent.press(screen.getByRole('button', {name: 'Taurus'}))
+			unsubscribe()
+
+			expect(storeChanges).not.toHaveBeenCalled()
+			expect(useMessStore.getState().lastSign).toBe('taurus')
+			expect(scrollTo).not.toHaveBeenCalled()
 		})
 
 		test('shows, remembers and scrolls to the sign whose glyph is pressed', async () => {

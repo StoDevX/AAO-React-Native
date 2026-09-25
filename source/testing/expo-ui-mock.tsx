@@ -802,14 +802,14 @@ export function Button({
 		<PressableWithModifiers
 			accessibilityLabel={name}
 			accessibilityRole={buttonRoleOf(modifiers)}
-			// `RNTL`'s `getByRole` only considers an element an accessibility
-			// element -- and so a candidate at all -- once `accessible` is
-			// explicitly set.
 			// `isSelected` is how SwiftUI marks the chosen one of a set of buttons,
 			// and VoiceOver reads it as "selected".
 			accessibilityState={{
 				selected: traitsOf(modifiers, 'accessibilityAddTraits').includes('isSelected'),
 			}}
+			// `RNTL`'s `getByRole` only considers an element an accessibility
+			// element -- and so a candidate at all -- once `accessible` is
+			// explicitly set.
 			accessible={true}
 			disabled={isDisabled(modifiers)}
 			modifiers={modifiers}

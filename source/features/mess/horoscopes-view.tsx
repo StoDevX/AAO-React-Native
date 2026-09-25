@@ -184,7 +184,7 @@ function SignRows({signs, onChoose}: SignRowsProps): React.ReactNode {
 						<Text modifiers={ROW_NAME}>{SIGN_NAMES[sign]}</Text>
 						<Spacer />
 						<Text modifiers={DATES}>{SIGN_DATES[sign]}</Text>
-						<RowAccessory destination="push" />
+						<RowAccessory destination="action" />
 					</HStack>
 				</Button>
 			))}
