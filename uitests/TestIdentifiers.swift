@@ -540,6 +540,29 @@ struct TestIdentifiers {
 
 		/// The reader's share button label, in source/features/mess/story-screen.tsx.
 		static let shareStory = "Share Story"
+
+		/// The Mess section whose columns the Variety templates draw, and two of
+		/// those columns, as the filter in source/features/mess/mess-picker.tsx
+		/// names them. They are the paper's own category names, from themess.net.
+		static let varietySection = "Variety"
+		static let horoscopesColumn = "Horoscopes"
+		static let comicColumn = "Comic"
+
+		/// A sign's name, as a Horoscopes glyph button is labelled and a sign row's
+		/// label begins, in source/features/mess/lib/horoscopes.ts.
+		static let gemini = "Gemini"
+		static let leo = "Leo"
+
+		/// The framed comic or artwork that opens the zoom viewer, in
+		/// source/features/mess/image-view.tsx.
+		static let storyImage = "mess-story-image"
+
+		/// The zoom viewer's close button, in source/features/mess/image-viewer.tsx.
+		static let imageViewerClose = "mess-image-viewer-close"
+		static let imageViewerCloseLabel = "Close"
+
+		/// Every thumbnail in a comic's series row, in source/features/mess/series-row.tsx.
+		static let seriesStory = "mess-series-story"
 	}
 
 	// MARK: - Streaming Media
