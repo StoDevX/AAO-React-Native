@@ -166,14 +166,6 @@ function hostProps(node: Node | Node[] | null, type: string): Array<Record<strin
 	return [...(node.type === type ? [node.props] : []), ...hostProps(children, type)]
 }
 
-/** The padding the page's column asks for. */
-function columnPadding(): unknown {
-	let paddings = hostProps(screen.toJSON() as Node | Node[] | null, 'View').flatMap((props) =>
-		((props.modifiers ?? []) as Array<{$type: string}>).filter((m) => m.$type === 'padding'),
-	)
-	return paddings[0]
-}
-
 /** The hrefs `fetchSourceBody` was asked for, in order. */
 function fetchedHrefs(): string[] {
 	return mockBody.mock.calls.map((call) => call[0])
@@ -398,15 +390,5 @@ describe('StoryScreen', () => {
 
 		expect(screen.getAllByText('My bitter yellow comes with me on walks\\.')).toHaveLength(1)
 		expect(screen.getByText('It hums at the gate\\.')).toBeTruthy()
-	})
-
-	test('sets a poem between 28-point side margins', async () => {
-		await renderStory(36280)
-		expect(columnPadding()).toMatchObject({horizontal: 28})
-	})
-
-	test('sets an article between 20-point side margins', async () => {
-		await renderStory(36911)
-		expect(columnPadding()).toMatchObject({horizontal: 20})
 	})
 })

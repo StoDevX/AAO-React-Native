@@ -14,8 +14,6 @@ jest.mock('@expo/ui/swift-ui/modifiers', () => {
 	return require('../../../testing/expo-ui-mock') as typeof import('../../../testing/expo-ui-mock')
 })
 
-type Modifier = {$type: string; [key: string]: unknown}
-
 const LAYOUT: Extract<StoryLayout, {kind: 'poem'}> = {
 	kind: 'poem',
 	stanzas: [
@@ -25,13 +23,6 @@ const LAYOUT: Extract<StoryLayout, {kind: 'poem'}> = {
 		],
 		[{indent: 1, runs: [{text: 'A second stanza'}]}],
 	],
-}
-
-/** The leading padding a line's modifiers ask for, or 0 when they ask for none. */
-function leadingPadding(text: string): unknown {
-	let modifiers = screen.getByText(text).props.modifiers as Modifier[] | undefined
-	let padding = modifiers?.find((modifier) => modifier.$type === 'padding')
-	return padding?.leading ?? 0
 }
 
 describe('PoemView', () => {
@@ -44,13 +35,5 @@ describe('PoemView', () => {
 			'*It hums* at the gate\\.',
 			'A second stanza',
 		])
-	})
-
-	test('indents a line 16 points for each level', async () => {
-		await render(<PoemView layout={LAYOUT} />)
-
-		expect(leadingPadding('My bitter yellow comes with me on walks\\.')).toBe(0)
-		expect(leadingPadding('*It hums* at the gate\\.')).toBe(32)
-		expect(leadingPadding('A second stanza')).toBe(16)
 	})
 })

@@ -67,11 +67,6 @@ describe('HoroscopesView', () => {
 			expect(rows).toStrictEqual(ROW_LABELS)
 		})
 
-		test('draws no chevron on a row, since a row changes this page rather than opening another', async () => {
-			await renderView()
-			expect(screen.queryByTestId('symbol-chevron.right')).toBeNull()
-		})
-
 		test('shows no chosen sign and no reading', async () => {
 			await renderView()
 

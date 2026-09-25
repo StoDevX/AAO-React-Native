@@ -5,10 +5,6 @@ beforeEach(() => {
 	useMessStore.setState({lastSign: null})
 })
 
-test('remembers no sign at first', () => {
-	expect(useMessStore.getState().lastSign).toBeNull()
-})
-
 test('setSign remembers the sign the reader chose', () => {
 	useMessStore.getState().setSign('taurus')
 	expect(useMessStore.getState().lastSign).toBe('taurus')

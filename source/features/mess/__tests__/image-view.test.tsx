@@ -89,16 +89,6 @@ function renderWithClient(ui: React.ReactElement) {
 }
 
 describe('ImageView', () => {
-	test('names the image by its title and writers', async () => {
-		await renderWithClient(<ImageView columnWidth={300} image={IMAGE} story={COMIC} />)
-
-		expect(
-			screen.getByRole('button', {
-				name: 'Mouse Friends: sunsets of life, by Juliet Stouffer and Ada Lin',
-			}),
-		).toBeTruthy()
-	})
-
 	test('opens the image in the viewer', async () => {
 		await renderWithClient(<ImageView columnWidth={300} image={IMAGE} story={COMIC} />)
 

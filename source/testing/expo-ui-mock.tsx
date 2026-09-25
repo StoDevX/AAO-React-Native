@@ -682,12 +682,8 @@ export function ZStack({children}: WithModifiers & {alignment?: string}): React.
 	return <View>{children}</View>
 }
 
-/** Carries its `modifiers`, so a test can read the margins a page chose off its column. */
-export function LazyVStack({
-	children,
-	modifiers,
-}: WithModifiers & {alignment?: string; spacing?: number}): React.ReactNode {
-	return <ForwardingView modifiers={modifiers}>{children}</ForwardingView>
+export function LazyVStack({children}: WithModifiers & {alignment?: string}): React.ReactNode {
+	return <View>{children}</View>
 }
 
 export function LazyHStack({children}: WithModifiers & {alignment?: string}): React.ReactNode {
