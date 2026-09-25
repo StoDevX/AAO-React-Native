@@ -57,7 +57,7 @@ const TITLE_INSET = BUTTON_SIZE + HEADER_PADDING
 /// Glass pads its label about 7pt on every side (measured on iOS 27), so a
 /// 30pt frame round the glyph comes out as Maps' 44pt button.
 const CLOSE_GLYPH_FRAME = 30
-const CLOSE_GLYPH_SIZE = 20
+const CLOSE_GLYPH_SIZE = 22
 
 /// The card's own dismiss button. The search bar's Cancel carries the same
 /// "Close" accessibility label, so a screen-wide query for that label could
@@ -277,7 +277,14 @@ function BuildingCard({
 function CloseButton({onClose}: {onClose: () => void}): React.ReactNode {
 	return (
 		<Button
-			modifiers={[accessibilityLabel('Close'), buttonStyle('glass'), buttonBorderShape('circle')]}
+			modifiers={[
+				accessibilityLabel('Close'),
+				buttonStyle('glass'),
+				buttonBorderShape('circle'),
+				// Maps' button and glyph stay the same size at every text size;
+				// without this the glass padding grows and squeezes the glyph.
+				dynamicTypeSize({max: 'large'}),
+			]}
 			onPress={onClose}
 			testID={CARD_CLOSE_BUTTON_ID}
 		>

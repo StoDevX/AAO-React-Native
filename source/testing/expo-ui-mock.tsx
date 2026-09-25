@@ -165,6 +165,14 @@ export const truncationMode = named('truncationMode', 'mode')
 export const underline = spreading('underline')
 export const fixedSize = spreading('fixedSize')
 
+/** Mirrors the real overloads: one fixed size, or a `{min, max}` range. */
+export function dynamicTypeSize(sizeOrRange: string | {min?: string; max?: string}): Modifier {
+	if (typeof sizeOrRange === 'object' && sizeOrRange !== null) {
+		return createModifier('dynamicTypeSize', {min: sizeOrRange.min, max: sizeOrRange.max})
+	}
+	return createModifier('dynamicTypeSize', {size: sizeOrRange})
+}
+
 export const background = (color: unknown, shape?: Record<string, unknown>): Modifier =>
 	createModifier('background', {color, ...shape})
 
