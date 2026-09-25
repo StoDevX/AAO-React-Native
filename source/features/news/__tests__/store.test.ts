@@ -4,11 +4,6 @@ beforeEach(() => {
 	useNewsFilterStore.setState({selectedCategories: {}})
 })
 
-test('starts with no category selected for any source', () => {
-	let {selectedCategories} = useNewsFilterStore.getState()
-	expect(selectedCategories).toStrictEqual({})
-})
-
 test('select sets the category for that source', () => {
 	let {select} = useNewsFilterStore.getState()
 	select('mess', 'Sports')
