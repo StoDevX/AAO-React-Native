@@ -34,17 +34,26 @@ struct PlaceCardScaffoldView: ExpoSwiftUI.View {
 			// never build; wrapping it directly crashes on first render.
 			let header: any View = children[0].childView
 			let list: any View = children[1].childView
-			AnyView(list)
-				// nil keeps the list's own margin at the other stops.
-				.contentMargins(.top, props.large ? 0 : nil, for: .scrollContent)
-				.onScrollGeometryChange(for: Bool.self) { geometry in
-					geometry.contentOffset.y > -geometry.contentInsets.top + 0.5
-				} action: { _, isScrolled in
-					scrolled = isScrolled
-				}
-				.scrollEdgeEffectHidden(!scrolled, for: .top)
-				.scrollEdgeEffectStyle(.hard, for: .top)
-				.safeAreaBar(edge: .top, spacing: 0) { AnyView(header) }
+			// A GeometryReader takes exactly the height the sheet offers and
+			// sets the card at its top. Without it the card reports its own
+			// height, and at the collapsed stop, when large text makes the
+			// header taller than the stop, the sheet centres it and cuts off
+			// the close button and the top of the title. Pinned, the header
+			// runs off the bottom instead, as Maps' does.
+			GeometryReader { box in
+				AnyView(list)
+					// nil keeps the list's own margin at the other stops.
+					.contentMargins(.top, props.large ? 0 : nil, for: .scrollContent)
+					.onScrollGeometryChange(for: Bool.self) { geometry in
+						geometry.contentOffset.y > -geometry.contentInsets.top + 0.5
+					} action: { _, isScrolled in
+						scrolled = isScrolled
+					}
+					.scrollEdgeEffectHidden(!scrolled, for: .top)
+					.scrollEdgeEffectStyle(.hard, for: .top)
+					.safeAreaBar(edge: .top, spacing: 0) { AnyView(header) }
+					.frame(width: box.size.width, height: box.size.height, alignment: .top)
+			}
 		} else {
 			Children()
 		}

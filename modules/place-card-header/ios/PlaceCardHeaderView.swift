@@ -145,9 +145,12 @@ private struct MarqueeTitle: View {
 				.offset(x: offset)
 			}
 			.mask { fade }
-			// Drawn flat because without it the masked title blanks for one
-			// frame as a pass starts. The cause is not known.
-			.drawingGroup()
+			// Composited as one layer because without it the masked title
+			// blanks for one frame as a pass starts; the cause is not known.
+			// Not `drawingGroup()`, which draws into a buffer the size of this
+			// view's frame and so cut the title short of the card's edge when
+			// large text made it taller than the header's row.
+			.compositingGroup()
 			.task(id: Cycle(title: props.title, overflows: overflows, reduceMotion: reduceMotion)) {
 				await run()
 			}
