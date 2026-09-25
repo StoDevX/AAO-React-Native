@@ -481,6 +481,24 @@ struct CarletonMapScreen: Screen {
 		return self
 	}
 
+	/// For a header taller than the collapsed stop, as at the largest text
+	/// sizes. The close button has to lie wholly inside the sheet, and the title
+	/// block's top edge at or below the sheet's top. The title's bottom may run
+	/// past the sheet's bottom edge: that is the intended behaviour, and Apple
+	/// Maps' own, since the header keeps its top in view and gives up its foot.
+	@discardableResult
+	func verifyCardHeaderTopWithinSheet() -> Self {
+		let sheet = sheetFrame()
+		verifyWithinSheet("close button", closeButton.frame, sheet)
+		XCTAssertTrue(cardTitle.waitForExistence(timeout: 10), "The card should show the building's name")
+		let title = cardTitle.frame
+		XCTContext.runActivity(named: "title \(title) in sheet \(sheet)") { _ in }
+		XCTAssertTrue(
+			title.minY >= sheet.minY,
+			"The collapsed card should keep the top of the title in view: title \(title), sheet \(sheet)")
+		return self
+	}
+
 	private func verifyWithinSheet(_ name: String, _ box: CGRect, _ sheet: CGRect) {
 		XCTContext.runActivity(named: "\(name) \(box) in sheet \(sheet)") { _ in }
 		XCTAssertTrue(

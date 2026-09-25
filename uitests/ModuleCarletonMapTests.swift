@@ -86,4 +86,40 @@ class ModuleCarletonMapTests: UITestCase {
 			.capture("Carleton map card collapsed with a long name")
 			.verifyCardHeaderWithinSheet()
 	}
+
+	/// St. Olaf's card adds a subtitle under the name, which Carleton's cards
+	/// lack, so the collapsed header has two lines to hold instead of one.
+	func testTheCollapsedStOlafCardHoldsItsWholeHeader() throws {
+		CarletonMapScreen(app: app)
+			.navigate(from: TestIdentifiers.Buttons.campus)
+			.checkSheetPresented()
+			.focusSearch()
+			.typeIntoSearch(TestIdentifiers.CarletonMap.aSubtitledStOlafBuilding)
+			.selectBuilding(named: TestIdentifiers.CarletonMap.aSubtitledStOlafBuilding)
+			.collapseCard()
+			.verifyCardCollapsed()
+			.capture("St. Olaf map card collapsed with a subtitle")
+			.verifyCardHeaderWithinSheet()
+	}
+
+	/// At the largest text size the header is taller than the collapsed stop.
+	/// The card has to keep its close button and the top of its name in view
+	/// and let the rest run off the bottom, as Apple Maps does, rather than
+	/// centre the header and cut off the close button.
+	///
+	/// A card with a subtitle, because a one-line header -- a Carleton card --
+	/// still fits the stop at this size, and a centred header would pass.
+	func testTheCollapsedCardKeepsItsHeaderTopAtTheLargestTextSize() throws {
+		relaunch(atContentSizeCategory: TestIdentifiers.LaunchArguments.accessibilityExtraExtraExtraLarge)
+		CarletonMapScreen(app: app)
+			.navigate(from: TestIdentifiers.Buttons.campus)
+			.checkSheetPresented()
+			.focusSearch()
+			.typeIntoSearch(TestIdentifiers.CarletonMap.aSubtitledStOlafBuilding)
+			.selectBuilding(named: TestIdentifiers.CarletonMap.aSubtitledStOlafBuilding)
+			.collapseCard()
+			.verifyCardCollapsed()
+			.capture("St. Olaf map card collapsed at the largest text size")
+			.verifyCardHeaderTopWithinSheet()
+	}
 }
