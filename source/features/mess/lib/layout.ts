@@ -1,5 +1,7 @@
 import type {Block, MessStory, StoryLayout} from '../types'
+import {parseHoroscopes} from './horoscopes'
 
+/** What a story brings to `chooseLayout`: its column, its parsed body and photo, and the raw HTML. */
 export type LayoutInput = {
 	column: string | null
 	blocks: Block[]
@@ -14,6 +16,9 @@ export type LayoutInput = {
  */
 export function chooseLayout(input: LayoutInput): {layout: StoryLayout; blocks: Block[]} {
 	switch (input.column) {
+		// The reader draws the layout rather than the blocks; they stay for the article fallback.
+		case 'Horoscopes':
+			return {layout: parseHoroscopes(input.blocks), blocks: input.blocks}
 		default:
 			return {layout: {kind: 'article'}, blocks: input.blocks}
 	}

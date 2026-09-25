@@ -52,6 +52,7 @@ export type StaffProfile = {
 	year: string
 }
 
+/** A sign of the zodiac, as a lowercase key. */
 export type ZodiacSign =
 	| 'aries'
 	| 'taurus'

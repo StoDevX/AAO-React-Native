@@ -1,6 +1,8 @@
 import {describe, expect, it} from '@jest/globals'
 import posts from '../../__tests__/fixtures/posts.json'
 import categoriesJson from '../../__tests__/fixtures/categories.json'
+import variety from '../../__tests__/fixtures/variety-posts.json'
+import {parseBlocks} from '../blocks'
 import {parseMessCategories, parseMessPosts} from '../posts'
 import {chooseLayout} from '../layout'
 
@@ -9,6 +11,13 @@ describe('chooseLayout', () => {
 		expect(
 			chooseLayout({column: 'StoReview', blocks: [], photo: null, html: ''}).layout,
 		).toStrictEqual({kind: 'article'})
+	})
+
+	it('lays out a Horoscopes story sign by sign', () => {
+		let blocks = parseBlocks(variety.find((p) => p.id === 36518)?.content.rendered ?? '')
+		let chosen = chooseLayout({column: 'Horoscopes', blocks, photo: null, html: ''})
+		expect(chosen.layout.kind).toBe('horoscopes')
+		expect(chosen.blocks).toBe(blocks)
 	})
 
 	it('gives a story with no column the article layout', () => {
