@@ -1,4 +1,4 @@
-import {bigTitleScrolledAway, titleMayMove} from '../card-title'
+import {bigTitleScrolledAway, restingOffsetFrom, titleMayMove} from '../card-title'
 
 describe('titleMayMove', () => {
 	// Maps' header title keeps its marquee at both stops that show it.
@@ -38,5 +38,21 @@ describe('bigTitleScrolledAway', () => {
 	// Before the row reports its size there is nothing to have scrolled past.
 	it('is false before the big title has been measured', () => {
 		expect(bigTitleScrolledAway(500, 0, 0)).toBe(false)
+	})
+})
+
+describe('restingOffsetFrom', () => {
+	it('keeps a resting offset it already has', () => {
+		expect(restingOffsetFrom(-76, {contentOffsetY: 40, containerHeight: 812})).toBe(-76)
+	})
+
+	// Before layout the offset ignores the header's inset.
+	it('ignores a report made before layout', () => {
+		expect(restingOffsetFrom(null, {contentOffsetY: 0, containerHeight: 0})).toBeNull()
+		expect(restingOffsetFrom(null, {contentOffsetY: -76, containerHeight: 0})).toBeNull()
+	})
+
+	it('takes the first report made after layout', () => {
+		expect(restingOffsetFrom(null, {contentOffsetY: -76, containerHeight: 812})).toBe(-76)
 	})
 })

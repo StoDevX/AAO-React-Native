@@ -1,18 +1,38 @@
 import * as React from 'react'
 import {Image as RNImage, Linking, StyleSheet} from 'react-native'
-import {Button, Image, List, RNHostView, Section, Text, ZStack} from '@expo/ui/swift-ui'
+import {
+	Button,
+	Image,
+	List,
+	RNHostView,
+	type ScrollGeometry,
+	Section,
+	Spacer,
+	Text,
+	VStack,
+	ZStack,
+} from '@expo/ui/swift-ui'
 import {
 	accessibilityLabel,
 	buttonBorderShape,
 	buttonStyle,
+	font,
+	foregroundStyle,
 	frame,
+	lineLimit,
+	listRowBackground,
 	listRowInsets,
+	multilineTextAlignment,
+	onGeometryChange,
 	padding,
+	truncationMode,
+	useScrollGeometryChange,
 } from '@expo/ui/swift-ui/modifiers'
 import {openUrl} from '@frogpond/open-url'
 import {PlaceCardHeader, PlaceCardScaffold} from '@frogpond/place-card-header'
 
-import {titleMayMove} from './lib/card-title'
+import {FILL_WIDTH} from '../../components/tile-layout'
+import {bigTitleScrolledAway, restingOffsetFrom, titleMayMove} from './lib/card-title'
 import {normalizeLinks} from './lib/normalize-link'
 import type {SheetDetent} from './lib/sheet-moves'
 import type {Building, Feature, LabelLink, LabelLinkString} from './types'
@@ -22,6 +42,10 @@ import {appleMapsSearchUrl, buildingPhotoUrl} from './urls'
 /// 44pt buttons -- 76pt in all, the sheet's collapsed stop
 /// (`SHEET_COLLAPSED_HEIGHT` in `Map/index.tsx`).
 const HEADER_PADDING = 16
+
+/// How far the header's small title keeps from each edge of the header: the
+/// close button's 44pt plus `HEADER_PADDING`, so the title clears it.
+const TITLE_INSET = 60
 
 /// Glass pads its label about 7pt on every side (measured on iOS 27), so a
 /// 30pt frame round the glyph comes out as Maps' 44pt button.
@@ -59,6 +83,42 @@ export function BuildingInfo({building, onClose, stop}: Props): React.ReactNode 
 		)
 	}
 
+	// A new building starts over with its big title in view.
+	return <BuildingCard building={building} key={building.id} onClose={onClose} stop={stop} />
+}
+
+/// A found building's card: the pinned header over the list of its details.
+function BuildingCard({
+	building,
+	onClose,
+	stop,
+}: {
+	building: Feature<Building>
+	onClose: () => void
+	stop: SheetDetent
+}): React.ReactNode {
+	let large = stop === 'large'
+	let [bigTitleAway, setBigTitleAway] = React.useState(false)
+	// A ref, not state: it feeds the scroll callback, which fires every frame,
+	// and only the answer it reaches is worth a render.
+	let restingOffset = React.useRef<number | null>(null)
+	// State, not a ref: the callback that measures the title is written during
+	// render, where a ref may not be touched. It changes about once, so the
+	// extra render costs little.
+	let [bigTitleHeight, setBigTitleHeight] = React.useState(0)
+
+	// Not a worklet: the answer only changes when the title crosses under the
+	// header, and React skips the render when it has not.
+	let scrollObserver = useScrollGeometryChange((geometry: ScrollGeometry) => {
+		restingOffset.current = restingOffsetFrom(restingOffset.current, geometry)
+		if (restingOffset.current === null) {
+			return
+		}
+		setBigTitleAway(
+			bigTitleScrolledAway(geometry.contentOffsetY, restingOffset.current, bigTitleHeight),
+		)
+	})
+
 	let {
 		accessibility,
 		address,
@@ -77,16 +137,74 @@ export function BuildingInfo({building, onClose, stop}: Props): React.ReactNode 
 	return (
 		<PlaceCardScaffold>
 			<ZStack alignment="topTrailing" modifiers={[padding({all: HEADER_PADDING})]}>
-				<PlaceCardHeader
-					animate={titleMayMove(stop)}
-					subtitle={subtitle}
-					testID={CARD_TITLE_ID}
-					title={name}
-				/>
+				{large ? (
+					bigTitleAway ? (
+						// Maps' inline title at large: an ellipsis, no marquee, no
+						// subtitle, clear of the button at the trailing edge.
+						<Text
+							modifiers={[
+								font({textStyle: 'title3', weight: 'bold'}),
+								lineLimit(1),
+								truncationMode('tail'),
+								padding({horizontal: TITLE_INSET}),
+								frame({maxWidth: FILL_WIDTH, minHeight: 44}),
+							]}
+						>
+							{name}
+						</Text>
+					) : (
+						<Spacer modifiers={[frame({height: 44})]} />
+					)
+				) : (
+					<PlaceCardHeader
+						animate={titleMayMove(stop)}
+						subtitle={subtitle}
+						testID={CARD_TITLE_ID}
+						title={name}
+					/>
+				)}
 				<CloseButton onClose={onClose} />
 			</ZStack>
 
-			<List>
+			<List modifiers={scrollObserver ? [scrollObserver] : []}>
+				{large ? (
+					<Section
+						modifiers={[
+							// Straight on the sheet, as Maps draws it, not in a row's
+							// rounded box.
+							listRowBackground('clear'),
+							listRowInsets({top: 0, leading: 0, bottom: 0, trailing: 0}),
+						]}
+					>
+						<VStack
+							modifiers={[
+								frame({maxWidth: FILL_WIDTH}),
+								onGeometryChange((box) => setBigTitleHeight(box.height)),
+							]}
+							spacing={4}
+						>
+							<Text
+								modifiers={[
+									font({textStyle: 'title', weight: 'bold'}),
+									multilineTextAlignment('center'),
+								]}
+							>
+								{name}
+							</Text>
+							{subtitle ? (
+								<Text
+									modifiers={[
+										font({textStyle: 'subheadline', weight: 'semibold'}),
+										foregroundStyle({type: 'hierarchical', style: 'secondary'}),
+									]}
+								>
+									{subtitle}
+								</Text>
+							) : null}
+						</VStack>
+					</Section>
+				) : null}
+
 				{nickname ? (
 					<Section title="Abbreviation">
 						<Text>{nickname}</Text>

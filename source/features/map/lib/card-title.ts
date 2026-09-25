@@ -21,3 +21,17 @@ export function bigTitleScrolledAway(
 ): boolean {
 	return bigTitleHeight > 0 && offsetY - restingOffsetY >= bigTitleHeight
 }
+
+/// The list's offset at rest, taken from the first report made after layout.
+/// Reports arrive before the list is laid out, with a container height of 0
+/// and an offset that ignores the header's inset; resting there would make
+/// every later reading short by the header's height.
+export function restingOffsetFrom(
+	resting: number | null,
+	geometry: {contentOffsetY: number; containerHeight: number},
+): number | null {
+	if (resting !== null) {
+		return resting
+	}
+	return geometry.containerHeight > 0 ? geometry.contentOffsetY : null
+}

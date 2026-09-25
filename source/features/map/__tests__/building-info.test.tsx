@@ -186,3 +186,35 @@ describe('BuildingInfo header', () => {
 		expect(onClose).toHaveBeenCalledTimes(1)
 	})
 })
+
+describe('BuildingInfo at large', () => {
+	it('shows the name as the big title, with no header title', async () => {
+		await render(
+			<BuildingInfo
+				building={makeBuilding({id: 'a', name: 'Regents Hall', type: 'Administrative & Academic'})}
+				onClose={jest.fn()}
+				stop="large"
+			/>,
+		)
+
+		// Maps' header holds only its buttons while the big title is in view.
+		expect(screen.queryByTestId('card-title')).toBeNull()
+		expect(screen.getByText('Regents Hall')).toBeTruthy()
+		expect(screen.getByText('Administrative & Academic')).toBeTruthy()
+	})
+
+	it('keeps the close button in the header', async () => {
+		let onClose = jest.fn()
+		await render(
+			<BuildingInfo
+				building={makeBuilding({id: 'a', name: 'Regents Hall'})}
+				onClose={onClose}
+				stop="large"
+			/>,
+		)
+
+		await fireEvent.press(screen.getByLabelText('Close'))
+
+		expect(onClose).toHaveBeenCalledTimes(1)
+	})
+})
