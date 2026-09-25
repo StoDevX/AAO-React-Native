@@ -3,7 +3,6 @@ import {Linking, Share, StyleSheet, useWindowDimensions} from 'react-native'
 import {Stack} from 'expo-router'
 import {Divider, Host, LazyVStack, ScrollView, useNativeState} from '@expo/ui/swift-ui'
 import {background, padding, scrollPosition, scrollTargetLayout} from '@expo/ui/swift-ui/modifiers'
-import {LoadingView, NoticeView} from '@frogpond/notice'
 import {useSafeAreaInsets} from 'react-native-safe-area-context'
 import {AuthorCard} from './author-card'
 import {HoroscopesView} from './horoscopes-view'
@@ -12,6 +11,7 @@ import {paper} from './palette'
 import {SeriesRow} from './series-row'
 import {SiteLinkCard, StoryBlock} from './story-blocks'
 import {StoryHeader} from './story-header'
+import {StoryLookupNotice} from './story-lookup-notice'
 import type {MessStory} from './types'
 import {useMessStory} from './use-mess-story'
 
@@ -39,17 +39,7 @@ export function StoryScreen({id}: Props): React.ReactNode {
 		return (
 			<>
 				<Stack.Screen options={{title: ''}} />
-				{query.isPending ? (
-					<LoadingView />
-				) : query.isLoadingError ? (
-					<NoticeView
-						buttonText="Try Again"
-						onPress={() => query.refetch()}
-						text={`A problem occurred while loading: ${query.error}`}
-					/>
-				) : (
-					<NoticeView text="Story unavailable" />
-				)}
+				<StoryLookupNotice query={query} unavailableText="Story unavailable" />
 			</>
 		)
 	}

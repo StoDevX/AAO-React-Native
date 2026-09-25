@@ -191,20 +191,31 @@ describe('StoryScreen', () => {
 	})
 
 	test('offers Try Again when a story outside the feed fails to load', async () => {
-		mockManifest.mockResolvedValue({links: []} as unknown as Jrd)
-		mockBody.mockRejectedValue(new Error('offline'))
-		await renderStory(1)
+		// A failed fetch is retried with a growing delay, which fake timers skip.
+		jest.useFakeTimers()
+		try {
+			mockManifest.mockResolvedValue({links: []} as unknown as Jrd)
+			mockBody.mockRejectedValue(new Error('offline'))
+			await renderStory(1)
 
-		expect(await screen.findByText('Try Again')).toBeTruthy()
-		expect(screen.queryByText('Story unavailable')).toBeNull()
+			expect(await screen.findByText('Try Again', {}, {timeout: 20_000})).toBeTruthy()
+			expect(screen.queryByText('Story unavailable')).toBeNull()
+		} finally {
+			jest.useRealTimers()
+		}
 	})
 
-	test('says a story is unavailable when its post comes back empty', async () => {
+	test('says a story is unavailable when its post comes back empty, without retrying', async () => {
+		// The app's own retry default, which the query must override for a missing story.
+		queryClient.clear()
+		queryClient = new QueryClient({defaultOptions: {queries: {staleTime: Infinity}}})
+		queryClient.setQueryData(messKeys.feed, [STORY])
 		serve(() => [])
 		await renderStory(1)
 
 		expect(await screen.findByText('Story unavailable')).toBeTruthy()
 		expect(screen.queryByText('Try Again')).toBeNull()
+		expect(fetchedHrefs().filter((href) => href.includes('/posts/1?'))).toHaveLength(1)
 	})
 
 	test('shows the loading view while the feed is on its way', async () => {

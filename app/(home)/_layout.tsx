@@ -42,7 +42,16 @@ export default function HomeLayout(): React.ReactNode {
 				name="Messenger/index"
 				options={{title: 'The Olaf Messenger', headerLargeTitleEnabled: true}}
 			/>
-			<Stack.Screen name="Messenger/story" options={{title: ''}} />
+			{/* A series thumbnail opens another story over the one being read.
+			    Keyed by the story's id, navigating to a different one pushes it,
+			    where an unkeyed route would only swap the params of the story
+			    already on top, and Back would skip the one the reader came from;
+			    navigating to the same one still refuses a duplicate. */}
+			<Stack.Screen
+				dangerouslySingular={(_name, params) => String(params.id ?? '')}
+				name="Messenger/story"
+				options={{title: ''}}
+			/>
 			<Stack.Screen
 				name="Messenger/image"
 				options={{presentation: 'fullScreenModal', headerShown: false}}

@@ -95,6 +95,8 @@ export const messStoryOptions = (id: number) =>
 	queryOptions({
 		queryKey: messKeys.story(id),
 		staleTime: FIVE_MINUTES_IN_MS,
+		// A post that holds no story will hold none on a second try either.
+		retry: (failureCount, error) => !(error instanceof MissingMessStoryError) && failureCount < 3,
 		queryFn: async ({signal}): Promise<MessStory> => {
 			let [story] = await storiesAt(`posts/${id}?_embed=true`, signal, 'Olaf Messenger story')
 			if (!story) throw new MissingMessStoryError(id)

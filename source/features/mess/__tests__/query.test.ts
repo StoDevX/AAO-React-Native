@@ -7,6 +7,7 @@ import varietyPosts from './fixtures/variety-posts.json'
 import {parseMessCategories, parseMessPosts} from '../lib/posts'
 import {queryClient} from '../../../init/tanstack-query'
 import {
+	MissingMessStoryError,
 	messCategoryOptions,
 	messFeedOptions,
 	messSeriesOptions,
@@ -142,6 +143,13 @@ describe('messStoryOptions', () => {
 		expect(fetchedHrefs()).toContain(
 			'https://olafmessenger.com/wp-json/wp/v2/posts/36859?_embed=true',
 		)
+	})
+
+	test('retries a failed fetch, but not a post that holds no story', () => {
+		let retry = messStoryOptions(1).retry as (count: number, error: Error) => boolean
+		expect(retry(0, new Error('offline'))).toBe(true)
+		expect(retry(3, new Error('offline'))).toBe(false)
+		expect(retry(0, new MissingMessStoryError(1))).toBe(false)
 	})
 
 	test('fails when the post parses to no story', async () => {

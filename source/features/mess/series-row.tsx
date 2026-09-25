@@ -3,6 +3,7 @@ import {useRouter} from 'expo-router'
 import {Button, LazyHStack, Rectangle, ScrollView, Text, VStack} from '@expo/ui/swift-ui'
 import {
 	accessibilityAddTraits,
+	accessibilityIdentifier,
 	buttonStyle,
 	contentShape,
 	font,
@@ -31,6 +32,12 @@ const TITLE = [
 	foregroundStyle(ink),
 	lineLimit(2),
 	frame({width: THUMBNAIL, alignment: 'leading'}),
+]
+const THUMBNAIL_BUTTON = [
+	buttonStyle('plain'),
+	contentShape(shapes.rectangle()),
+	// One id for every thumbnail: a UI test opens the first, whichever story it is.
+	accessibilityIdentifier('mess-series-story'),
 ]
 /** Where a story has no picture, a blank of the same size keeps the row even. */
 const BLANK = [foregroundStyle(faded), opacity(0.2), frame({width: THUMBNAIL, height: THUMBNAIL})]
@@ -61,7 +68,7 @@ export function SeriesRow({story}: Props): React.ReactNode {
 						return (
 							<Button
 								key={other.id}
-								modifiers={[buttonStyle('plain'), contentShape(shapes.rectangle())]}
+								modifiers={THUMBNAIL_BUTTON}
 								onPress={() =>
 									router.navigate({pathname: '/Messenger/story', params: {id: String(other.id)}})
 								}

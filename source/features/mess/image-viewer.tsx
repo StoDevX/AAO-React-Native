@@ -22,10 +22,10 @@ import {
 	frame,
 	shapes,
 } from '@expo/ui/swift-ui/modifiers'
-import {LoadingView, NoticeView} from '@frogpond/notice'
 import {SafeAreaView} from 'react-native-safe-area-context'
 import {useDismissOnce} from '../../lib/use-dismiss-once'
 import {imageLabel} from './lib/byline'
+import {StoryLookupNotice} from './story-lookup-notice'
 import {useMessStory} from './use-mess-story'
 
 /** Apple's smallest comfortable tap target, in points. */
@@ -98,7 +98,14 @@ export function ImageViewer({id}: Props): React.ReactNode {
 		[width, height],
 	)
 
-	let content: React.ReactNode
+	let content: React.ReactNode = (
+		<StoryLookupNotice
+			query={query}
+			style={styles.notice}
+			textStyle={styles.noticeText}
+			unavailableText="Image unavailable"
+		/>
+	)
 	if (image && story) {
 		content = (
 			<ScrollView
@@ -120,26 +127,11 @@ export function ImageViewer({id}: Props): React.ReactNode {
 						accessible={true}
 						resizeMode="contain"
 						source={{uri: image.url}}
-						style={{width, height}}
+						// Sized to the window, which the image fills at 1×.
+						style={[styles.image, {width, height}]}
 					/>
 				</Pressable>
 			</ScrollView>
-		)
-	} else if (query.isPending) {
-		content = <LoadingView />
-	} else if (query.isLoadingError) {
-		content = (
-			<NoticeView
-				buttonText="Try Again"
-				onPress={() => query.refetch()}
-				style={styles.notice}
-				text={`A problem occurred while loading: ${query.error}`}
-				textStyle={styles.noticeText}
-			/>
-		)
-	} else {
-		content = (
-			<NoticeView style={styles.notice} text="Image unavailable" textStyle={styles.noticeText} />
 		)
 	}
 
@@ -166,6 +158,7 @@ export function ImageViewer({id}: Props): React.ReactNode {
 const styles = StyleSheet.create({
 	page: {flex: 1, backgroundColor: 'black'},
 	fill: {flex: 1},
+	image: {backgroundColor: 'black'},
 	overlay: {position: 'absolute', top: 0, right: 0, bottom: 0, left: 0},
 	closeRow: {flexDirection: 'row', justifyContent: 'flex-end', padding: 8},
 	closeHost: {width: TAP_TARGET, height: TAP_TARGET},
