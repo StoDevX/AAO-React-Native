@@ -14,6 +14,7 @@ import {
 import {openUrl} from '@frogpond/open-url'
 import type {SFSymbol} from 'sf-symbols-typescript'
 import {runsToMarkdown} from './lib/markdown'
+import {splitOpening} from './lib/opening'
 import {faded, ink, messRed} from './palette'
 import {RemotePhoto} from './remote-photo'
 import type {Block, Run} from './types'
@@ -31,6 +32,8 @@ const QUOTE = [
 	accessibilityIdentifier(BODY_ID),
 ]
 const CAPTION = [font({textStyle: 'footnote', design: 'serif'}), italic(), foregroundStyle(faded)]
+/** A story's opening words, in the font's own small capitals. */
+const OPENING = [font({textStyle: 'body', design: 'serif', smallCaps: true})]
 const SITE_LINK = [font({textStyle: 'callout', weight: 'semibold'}), foregroundStyle(messRed)]
 const SITE_LINK_ICON = [foregroundStyle(messRed)]
 
@@ -44,6 +47,22 @@ function Paragraph({
 	return (
 		<Text markdownEnabled={true} modifiers={modifiers}>
 			{runsToMarkdown(runs)}
+		</Text>
+	)
+}
+
+/**
+ * A story's first paragraph, its opening words set in small caps the way a
+ * newspaper sets them. A paragraph that opens with styled text is drawn as it is.
+ */
+function OpeningParagraph({runs}: {runs: Run[]}): React.ReactNode {
+	let {opening, rest} = splitOpening(runs)
+	if (opening === '') return <Paragraph runs={runs} />
+
+	return (
+		<Text modifiers={PROSE}>
+			<Text modifiers={OPENING}>{opening}</Text>
+			<Text markdownEnabled={true}>{runsToMarkdown(rest)}</Text>
 		</Text>
 	)
 }
@@ -74,13 +93,24 @@ export function SiteLinkCard({icon, label, url}: SiteLinkProps): React.ReactNode
 	)
 }
 
-type Props = {block: Block; columnWidth: number; storyLink: string}
+type Props = {
+	block: Block
+	columnWidth: number
+	storyLink: string
+	/** Whether this block opens the story, and so sets its first words in small caps */
+	isOpening?: boolean
+}
 
 /** One block of a story body. */
-export function StoryBlock({block, columnWidth, storyLink}: Props): React.ReactNode {
+export function StoryBlock({
+	block,
+	columnWidth,
+	storyLink,
+	isOpening = false,
+}: Props): React.ReactNode {
 	switch (block.type) {
 		case 'paragraph':
-			return <Paragraph runs={block.runs} />
+			return isOpening ? <OpeningParagraph runs={block.runs} /> : <Paragraph runs={block.runs} />
 		case 'quote':
 			return <Paragraph modifiers={QUOTE} runs={block.runs} />
 		case 'list':

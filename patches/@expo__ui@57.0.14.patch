@@ -1,3 +1,43 @@
+diff --git a/build/swift-ui/modifiers/index.d.ts b/build/swift-ui/modifiers/index.d.ts
+index 9b6dba1653de433e8848b80f481f71dc8ef097d0..f7f672931780a8ad947d7c58c0bd0ca7dd106a40 100644
+--- a/build/swift-ui/modifiers/index.d.ts
++++ b/build/swift-ui/modifiers/index.d.ts
+@@ -1068,6 +1068,11 @@ export declare const font: (params: {
+      * Dynamic Type setting.
+      */
+     textStyle?: "largeTitle" | "title" | "title2" | "title3" | "headline" | "subheadline" | "body" | "callout" | "footnote" | "caption" | "caption2";
++    /**
++     * Draws lowercase letters as small capitals, using the font's own small-cap
++     * glyphs. Mirrors SwiftUI's `Font.smallCaps()`.
++     */
++    smallCaps?: boolean;
+ }) => ModifierConfig;
+ /**
+  * A standard size for Dynamic Type, from `xSmall` through the five
+diff --git a/ios/Modifiers/FontModifier.swift b/ios/Modifiers/FontModifier.swift
+index 094cee1a9b3ff97f38777c38d44f79391fa2c9db..08cf58b869acecbe476279341252554d03cba414 100644
+--- a/ios/Modifiers/FontModifier.swift
++++ b/ios/Modifiers/FontModifier.swift
+@@ -81,6 +81,7 @@ internal struct FontModifier: ViewModifier, Record {
+   @Field var weight: FontWeight?
+   @Field var design: FontDesign?
+   @Field var textStyle: FontTextStyle?
++  @Field var smallCaps: Bool?
+ 
+   func body(content: Content) -> some View {
+     content.font(resolveFont())
+@@ -90,6 +91,11 @@ internal struct FontModifier: ViewModifier, Record {
+   // same `Font` as the view path, instead of a fixed-size `Font.custom` that
+   // drops `relativeTo` (Dynamic Type) and `weight`.
+   func resolveFont() -> Font {
++    let font = resolveBaseFont()
++    return smallCaps == true ? font.smallCaps() : font
++  }
++
++  private func resolveBaseFont() -> Font {
+     if let family = family {
+       let baseSize = size ?? 17
+       var font: Font = if let textStyle = textStyle {
 diff --git a/ios/Modifiers/ScrollPositionModifier.swift b/ios/Modifiers/ScrollPositionModifier.swift
 index 2b9e034d0c6aff0255d44c36de08733ffca5e892..9f6733772e31741e848cfc70b970c5a259e6fbc9 100644
 --- a/ios/Modifiers/ScrollPositionModifier.swift

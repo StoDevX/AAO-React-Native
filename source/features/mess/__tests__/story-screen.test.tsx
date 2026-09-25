@@ -58,7 +58,10 @@ const STORY: MessStory = {
 		{id: 392, name: 'Kenzie Nguyen'},
 	],
 	photo: null,
-	blocks: [{type: 'paragraph', runs: [{text: 'Body text.'}]}],
+	blocks: [
+		{type: 'paragraph', runs: [{text: 'The petition was delivered on Tuesday.'}]},
+		{type: 'paragraph', runs: [{text: 'Body text.'}]},
+	],
 }
 
 /** An Artwork post: the REST API gives it no body at all. */
@@ -127,6 +130,8 @@ describe('StoryScreen', () => {
 
 	test('reads a freshly cached feed without fetching it again', async () => {
 		// The app's own default: data goes stale at once unless a query says otherwise.
+		// The client from beforeEach is cleared first; its cache timers would keep Jest running.
+		queryClient.clear()
 		queryClient = new QueryClient({defaultOptions: {queries: {retry: false}}})
 		queryClient.setQueryData(messKeys.feed, [STORY, ARTWORK])
 		queryClient.setQueryData(messKeys.profile(423), null)
@@ -158,7 +163,13 @@ describe('StoryScreen', () => {
 		expect(screen.queryByText('Ashlyn Wuench', {exact: true})).toBeNull()
 	})
 
-	test('draws a paragraph as Markdown', async () => {
+	test('sets the opening words of the first paragraph apart for small caps', async () => {
+		await renderStory(36911)
+		expect(screen.getByText('The petition was delivered')).toBeTruthy()
+		expect(screen.getByText(' on Tuesday\\.')).toBeTruthy()
+	})
+
+	test('draws a later paragraph as Markdown', async () => {
 		await renderStory(36911)
 		expect(screen.getByText('Body text\\.')).toBeTruthy()
 		expect(screen.queryByText('Read on olafmessenger.com')).toBeNull()

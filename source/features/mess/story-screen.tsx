@@ -52,6 +52,9 @@ export function StoryScreen({id}: Props): React.ReactNode {
 		)
 	}
 
+	// The first paragraph opens the story, even when a photo comes before it.
+	let openingIndex = story.blocks.findIndex((block) => block.type === 'paragraph')
+
 	return (
 		<>
 			{/* A transparent header lays the page out from the top of the screen, so the paper
@@ -78,6 +81,7 @@ export function StoryScreen({id}: Props): React.ReactNode {
 							<StoryBlock
 								block={block}
 								columnWidth={columnWidth}
+								isOpening={index === openingIndex}
 								// oxlint-disable-next-line react/no-array-index-key -- blocks have no id; a story's body is fixed, so its order is its identity
 								key={index}
 								storyLink={story.link}
