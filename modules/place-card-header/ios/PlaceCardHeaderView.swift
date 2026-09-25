@@ -4,7 +4,6 @@ import SwiftUI
 // Apple Maps' place-card header, measured on an iPhone 17 Pro simulator running
 // iOS 27 on 2026-09-24 and 25. All in the sheet's own layout points: UIKit
 // scales the whole sheet by its stop, so these need no scaling of their own.
-// See `.superpowers/specs/2026-09-24-map-building-card-header-design.md`.
 
 /// Maps' header buttons, and the gap between a button and the title.
 private let buttonSize: CGFloat = 44
@@ -146,10 +145,8 @@ private struct MarqueeTitle: View {
 				.offset(x: offset)
 			}
 			.mask { fade }
-			// Drawn flat. Without this the masked title vanished for one frame
-			// as its first pass started (3 recordings of 3; none of 2 with
-			// it, none with the mask removed). Why is not known; this was
-			// chosen by that experiment.
+			// Drawn flat because without it the masked title blanks for one
+			// frame as a pass starts. The cause is not known.
 			.drawingGroup()
 			.task(id: Cycle(title: props.title, overflows: overflows, reduceMotion: reduceMotion)) {
 				await run()

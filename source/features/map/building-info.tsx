@@ -48,9 +48,13 @@ const HEADER_PADDING = 16
 /// under the buttons, and the list's first row starts at the header's edge.
 const LARGE_HEADER_BOTTOM_PADDING = 8
 
+/// Maps' header buttons are 44pt square, and the header's title row is as
+/// tall as they are.
+const BUTTON_SIZE = 44
+
 /// How far the header's small title keeps from each edge of the header: the
-/// close button's 44pt plus `HEADER_PADDING`, so the title clears it.
-const TITLE_INSET = 60
+/// close button plus `HEADER_PADDING`, so the title clears it.
+const TITLE_INSET = BUTTON_SIZE + HEADER_PADDING
 
 /// Glass pads its label about 7pt on every side (measured on iOS 27), so a
 /// 30pt frame round the glyph comes out as Maps' 44pt button.
@@ -66,6 +70,9 @@ const CARD_CLOSE_BUTTON_ID = 'card-close-button'
 /// The header's title. Matches `TestIdentifiers.CarletonMap.cardTitle` in
 /// `TestIdentifiers.swift`.
 const CARD_TITLE_ID = 'card-title'
+
+/// The big title's subtitle at the large stop.
+const CARD_BIG_SUBTITLE_ID = 'card-big-subtitle'
 
 type Props = {
 	building: Feature<Building> | undefined
@@ -106,6 +113,14 @@ function BuildingCard({
 	let [bigTitleAway, setBigTitleAway] = React.useState(false)
 	// A ref, not state: it feeds the scroll callback, which fires every frame,
 	// and only the answer it reaches is worth a render.
+	//
+	// Taken once, at the middle stop where a card opens, and kept at large,
+	// where the header is 8pt shorter and the list has no top margin. The swap
+	// still lands at the header's edge there (measured on iOS 27) because the
+	// big title's top is taken only while the list sits at this offset, so the
+	// scrolled distance and the swap distance count from the same point.
+	// A Dynamic Type change while the card is open at large leaves
+	// `bigTitleTopAtRest` stale until the card is reopened.
 	let restingOffset = React.useRef<number | null>(null)
 	// State, not refs: oxlint's react(refs) rule rejects a ref written in an
 	// `onGeometryChange` callback. None of these changes often -- React skips
@@ -197,13 +212,13 @@ function BuildingCard({
 								lineLimit(1),
 								truncationMode('tail'),
 								padding({horizontal: TITLE_INSET}),
-								frame({maxWidth: FILL_WIDTH, minHeight: 44}),
+								frame({maxWidth: FILL_WIDTH, minHeight: BUTTON_SIZE}),
 							]}
 						>
 							{name}
 						</Text>
 					) : (
-						<Spacer modifiers={[frame({height: 44})]} />
+						<Spacer modifiers={[frame({height: BUTTON_SIZE})]} />
 					)
 				) : (
 					<PlaceCardHeader
@@ -246,6 +261,7 @@ function BuildingCard({
 										font({textStyle: 'subheadline', weight: 'semibold'}),
 										foregroundStyle({type: 'hierarchical', style: 'secondary'}),
 									]}
+									testID={CARD_BIG_SUBTITLE_ID}
 								>
 									{subtitle}
 								</Text>

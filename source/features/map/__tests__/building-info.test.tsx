@@ -109,7 +109,7 @@ describe('BuildingInfo header', () => {
 		)
 
 		expect(screen.getByTestId('card-title')).toHaveTextContent('Regents Hall')
-		expect(screen.getByText('Administrative & Academic')).toBeTruthy()
+		expect(screen.getByTestId('card-subtitle')).toHaveTextContent('Administrative & Academic')
 	})
 
 	// Carleton's feed carries no type at all.
@@ -123,7 +123,7 @@ describe('BuildingInfo header', () => {
 		)
 
 		expect(screen.getByTestId('card-title')).toHaveTextContent('Sayles-Hill Campus Center')
-		expect(screen.queryByText('Administrative & Academic')).toBeNull()
+		expect(screen.queryByTestId('card-subtitle')).toBeNull()
 	})
 
 	it.each(['collapsed', 'medium'] as const)('lets the title move at %s', async (stop) => {
@@ -200,8 +200,25 @@ describe('BuildingInfo at large', () => {
 		// Maps' header holds only its buttons while the big title is in view.
 		expect(screen.queryByTestId('card-title')).toBeNull()
 		expect(screen.getByText('Regents Hall')).toBeTruthy()
-		expect(screen.getByText('Administrative & Academic')).toBeTruthy()
+		expect(screen.getByTestId('card-big-subtitle')).toHaveTextContent('Administrative & Academic')
 	})
+
+	// Carleton's feed carries no type at all.
+	it.each([undefined, null, ''])(
+		'shows no subtitle under the big title for a type of %p',
+		async (type) => {
+			await render(
+				<BuildingInfo
+					building={makeBuilding({id: 'a', name: 'Sayles-Hill Campus Center', type})}
+					onClose={jest.fn()}
+					stop="large"
+				/>,
+			)
+
+			expect(screen.getByText('Sayles-Hill Campus Center')).toBeTruthy()
+			expect(screen.queryByTestId('card-big-subtitle')).toBeNull()
+		},
+	)
 
 	it('keeps the close button in the header', async () => {
 		let onClose = jest.fn()

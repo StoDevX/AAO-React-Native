@@ -5,7 +5,8 @@ import type {PlaceCardHeaderProps, PlaceCardScaffoldProps} from '@frogpond/place
 
 /// The module reaches expo-modules-core's native view registry, which does
 /// not exist under Jest, so the card's tests render this instead. It shows
-/// the title and subtitle, and reports `animate` as the title's accessibility
+/// the title and subtitle, gives the subtitle a testID so a test can tell
+/// whether the card asked for one at all, and reports `animate` as the title's accessibility
 /// value so a test can read which stop allowed motion.
 ///
 /// Nothing here fades, scrolls or truncates, so a Jest test is never evidence
@@ -21,7 +22,7 @@ export function PlaceCardHeader({
 			<Text accessibilityValue={{text: animate ? 'animating' : 'still'}} testID={testID}>
 				{title}
 			</Text>
-			{subtitle ? <Text>{subtitle}</Text> : null}
+			{subtitle ? <Text testID="card-subtitle">{subtitle}</Text> : null}
 		</View>
 	)
 }

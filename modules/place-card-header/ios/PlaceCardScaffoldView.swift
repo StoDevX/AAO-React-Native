@@ -14,7 +14,7 @@ final class PlaceCardScaffoldProps: ExpoSwiftUI.ViewProps {
 ///
 /// Takes exactly two children, the header and then the list. The header has
 /// to be the bar's real content: an empty bar with the header layered over it
-/// gets no edge effect at all (tried; see the plan's Task 0).
+/// gets no edge effect at all.
 struct PlaceCardScaffoldView: ExpoSwiftUI.View {
 	@ObservedObject var props: PlaceCardScaffoldProps
 
