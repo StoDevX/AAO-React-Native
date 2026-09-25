@@ -72,8 +72,8 @@ export const AllViews = (): Array<ViewType> => {
 		},
 		{
 			type: 'view',
-			view: '/News',
-			title: 'News',
+			view: '/Messenger',
+			title: 'Olaf Messenger',
 			icon: 'newspaper.fill',
 			gradient: c.purpleGradient,
 		},
@@ -125,6 +125,13 @@ export const AllViews = (): Array<ViewType> => {
 			title: 'Student Work',
 			icon: 'briefcase.fill',
 			gradient: c.orangeGradient,
+		},
+		{
+			type: 'view',
+			view: '/StOlafNews',
+			title: 'St. Olaf News',
+			icon: 'megaphone.fill',
+			gradient: c.indigoGradient,
 		},
 		{
 			type: 'view',

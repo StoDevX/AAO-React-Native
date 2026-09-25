@@ -9,7 +9,7 @@ import type {StoryType} from './types'
 import {NewsRow} from './news-row'
 import {filterByCategory} from './lib/util'
 import {emptyStateProps} from './lib/empty-state'
-import type {NewsFeedQuery} from './lib/combine'
+import type {NewsFeedQuery} from './lib/feed'
 
 type Props = {
 	query: NewsFeedQuery
