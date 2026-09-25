@@ -12,10 +12,15 @@ import type {PlaceCardHeaderProps, PlaceCardScaffoldProps} from '@frogpond/place
 /// about any of that -- only about what the card asked for.
 export function PlaceCardHeader({
 	animate,
+	hidden,
 	subtitle,
 	testID,
 	title,
 }: PlaceCardHeaderProps): React.ReactNode {
+	// Hidden natively means no space, nothing drawn, nothing for VoiceOver.
+	if (hidden) {
+		return null
+	}
 	return (
 		<View>
 			<Text accessibilityValue={{text: animate ? 'animating' : 'still'}} testID={testID}>

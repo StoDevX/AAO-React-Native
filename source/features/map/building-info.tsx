@@ -145,9 +145,10 @@ function BuildingCard({
 						horizontal: HEADER_PADDING,
 						bottom: large ? LARGE_HEADER_BOTTOM_PADDING : HEADER_PADDING,
 					}),
-					// Only the large card swaps its title, so only there is the
-					// header's edge worth a render as the sheet moves.
-					...(large ? [onGeometryChange((box) => setHeaderBottom(box.y + box.height))] : []),
+					// At every stop, though only large uses it: adding or dropping a
+					// modifier rebuilds the stack's children in SwiftUI, which would
+					// restart the title's marquee on every trip to large.
+					onGeometryChange((box) => setHeaderBottom(box.y + box.height)),
 				]}
 			>
 				{large ? (
@@ -171,14 +172,16 @@ function BuildingCard({
 					) : (
 						<Spacer modifiers={[frame({height: BUTTON_SIZE})]} />
 					)
-				) : (
-					<PlaceCardHeader
-						animate={titleMayMove(stop)}
-						subtitle={subtitle}
-						testID={CARD_TITLE_ID}
-						title={name}
-					/>
-				)}
+				) : null}
+				{/* Mounted at every stop, hidden at large, so its marquee keeps
+				    one clock across stop changes as Maps' does. */}
+				<PlaceCardHeader
+					animate={titleMayMove(stop)}
+					hidden={large}
+					subtitle={subtitle}
+					testID={CARD_TITLE_ID}
+					title={name}
+				/>
 				<CloseButton onClose={onClose} />
 			</ZStack>
 

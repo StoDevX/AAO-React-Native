@@ -8,6 +8,9 @@ export type PlaceCardHeaderProps = {
 	/// True at the sheet stops where Apple Maps lets a long title move. A title
 	/// that fits never moves, whatever this says.
 	animate: boolean
+	/// True where the card shows its name some other way. The header takes no
+	/// space and draws nothing, but stays mounted so its marquee keeps time.
+	hidden?: boolean
 	testID?: string
 }
 

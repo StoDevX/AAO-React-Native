@@ -34,6 +34,10 @@ final class PlaceCardHeaderProps: ExpoSwiftUI.ViewProps {
 	/// True at the stops where Maps lets a long name move. The view still
 	/// decides for itself whether the name is long enough to need it.
 	@Field var animate: Bool = false
+	/// True where the card shows its name some other way (Maps' large stop).
+	/// The view takes no space and draws nothing, but stays mounted, so the
+	/// marquee's clock keeps running across the stop change as Maps' does.
+	@Field var hidden: Bool = false
 	@Field var testID: String?
 }
 
@@ -94,6 +98,9 @@ struct PlaceCardHeaderView: ExpoSwiftUI.View {
 				.accessibilityLabel([props.title, subtitle].compactMap { $0 }.joined(separator: ", "))
 				.accessibilityIdentifier(props.testID ?? "")
 		}
+		.frame(height: props.hidden ? 0 : nil)
+		.opacity(props.hidden ? 0 : 1)
+		.accessibilityHidden(props.hidden)
 	}
 }
 
