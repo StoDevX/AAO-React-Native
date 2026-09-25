@@ -60,12 +60,16 @@ struct PlaceCardHeaderView: ExpoSwiftUI.View {
 		titleTopOffset + titleHeight < buttonSize
 	}
 
+	private var subtitle: String? {
+		props.subtitle.flatMap { $0.isEmpty ? nil : $0 }
+	}
+
 	var body: some View {
 		VStack(spacing: 0) {
 			MarqueeTitle(props: props)
 				.padding(.horizontal, titleInset + marqueeInset)
 				.onGeometryChange(for: CGFloat.self) { $0.size.height } action: { titleHeight = $0 }
-			if let subtitle = props.subtitle, !subtitle.isEmpty {
+			if let subtitle {
 				Text(subtitle)
 					.font(.subheadline.weight(.semibold))
 					.foregroundStyle(.secondary)
@@ -74,8 +78,13 @@ struct PlaceCardHeaderView: ExpoSwiftUI.View {
 					.padding(.horizontal, subtitleBesideButtons ? titleInset : 0)
 			}
 		}
-		.padding(.top, titleTopOffset)
-		.frame(maxWidth: .infinity, alignment: .top)
+		// A title with no subtitle under it centres on the buttons, as Maps
+		// centres a place with no category.
+		.padding(.top, subtitle == nil ? 0 : titleTopOffset)
+		.frame(
+			maxWidth: .infinity,
+			minHeight: subtitle == nil ? buttonSize : nil,
+			alignment: subtitle == nil ? .center : .top)
 		// The element is a clear layer over the header, not the header with
 		// its children ignored: an element built from the header takes its
 		// frame from the marquee's moving copies, which run far past the card.
