@@ -42,8 +42,9 @@ struct PlaceCardScaffoldView: ExpoSwiftUI.View {
 			// runs off the bottom instead, as Maps' does.
 			GeometryReader { box in
 				AnyView(list)
-					// nil keeps the list's own margin at the other stops.
-					.contentMargins(.top, props.large ? 0 : nil, for: .scrollContent)
+					// At large Maps starts its big title 4pt up under the header's
+					// edge; nil keeps the list's own margin at the other stops.
+					.contentMargins(.top, props.large ? -4 : nil, for: .scrollContent)
 					.onScrollGeometryChange(for: Bool.self) { geometry in
 						geometry.contentOffset.y > -geometry.contentInsets.top + 0.5
 					} action: { _, isScrolled in

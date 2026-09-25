@@ -488,7 +488,7 @@ struct CarletonMapScreen: Screen {
 			"The collapsed card should hold the whole \(name), not clip it: \(name) \(box), sheet \(sheet)")
 	}
 
-	/// The middle stop is `MAP_MIDDLE_FRACTION` (0.463, Apple Maps' stop) of
+	/// The middle stop is `MAP_MIDDLE_FRACTION` (0.4613, Apple Maps' stop) of
 	/// the window less its top inset, so the card's close button lands a little
 	/// past halfway down (about 0.57 of an iPhone 17 Pro's window). A top in the
 	/// band from 0.35 to 0.75 of the screen is at it: higher is `large`, lower

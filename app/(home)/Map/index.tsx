@@ -92,19 +92,25 @@ const SHEET_COLLAPSED_HEIGHT = 76
 const COLLAPSED_DETENT: PresentationDetent = {height: SHEET_COLLAPSED_HEIGHT}
 
 /// Apple Maps' middle stop for a place card, as a fraction of the height the
-/// sheet is allowed: its grabber and ours sit at the same height on an
+/// sheet is allowed: its close button and ours sit at the same height on an
 /// iPhone 17 Pro simulator running iOS 27. Lower than the app's other detail
 /// sheets (`SHEET_RESTING_FRACTION`), because this sheet copies Maps' card.
-const MAP_MIDDLE_FRACTION = 0.463
+const MAP_MIDDLE_FRACTION = 0.4613
 const MIDDLE_DETENT: PresentationDetent = {fraction: MAP_MIDDLE_FRACTION}
-const SHEET_DETENTS: PresentationDetent[] = [COLLAPSED_DETENT, MIDDLE_DETENT, 'large']
+
+/// Apple Maps' top stop for a place card sits a little below UIKit's `large`,
+/// leaving a strip of map showing: its close button and big title sit at the
+/// same heights as ours on an iPhone 17 Pro simulator running iOS 27.
+const MAP_LARGE_FRACTION = 0.9873
+const LARGE_DETENT: PresentationDetent = {fraction: MAP_LARGE_FRACTION}
+const SHEET_DETENTS: PresentationDetent[] = [COLLAPSED_DETENT, MIDDLE_DETENT, LARGE_DETENT]
 
 /// The rules speak in names; the modifier speaks in detents. The rules' middle
-/// stop is `MIDDLE_DETENT`, not UIKit's `medium`.
+/// and large stops are Maps' fractions, not UIKit's `medium` and `large`.
 const DETENT_FOR: Record<SheetDetent, PresentationDetent> = {
 	collapsed: COLLAPSED_DETENT,
 	medium: MIDDLE_DETENT,
-	large: 'large',
+	large: LARGE_DETENT,
 }
 
 /// Structural like `sheetHeightFor`, since a detent handed back by the sheet
@@ -113,8 +119,13 @@ function nameOf(detent: PresentationDetent): SheetDetent {
 	if (detent === 'large') {
 		return 'large'
 	}
-	if (detent === 'medium' || 'fraction' in detent) {
+	if (detent === 'medium') {
 		return 'medium'
+	}
+	// Both fractional stops come back as fractions; the halfway point between
+	// them tells them apart without trusting an exact float to round-trip.
+	if ('fraction' in detent) {
+		return detent.fraction > (MAP_MIDDLE_FRACTION + MAP_LARGE_FRACTION) / 2 ? 'large' : 'medium'
 	}
 	return 'collapsed'
 }

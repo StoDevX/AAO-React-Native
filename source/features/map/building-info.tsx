@@ -42,9 +42,10 @@ import {appleMapsSearchUrl, buildingPhotoUrl} from './urls'
 /// (`SHEET_COLLAPSED_HEIGHT` in `Map/index.tsx`).
 const HEADER_PADDING = 16
 
-/// The header's bottom padding at the large stop: Maps' big title starts 8pt
-/// under the buttons, and the list's first row starts at the header's edge.
-const LARGE_HEADER_BOTTOM_PADDING = 8
+/// The header's bottom padding at the large stop, which puts its edge 12pt
+/// under the buttons, where Maps' is. Maps' big title starts 8pt under the
+/// buttons, 4pt up under that edge; the scaffold lifts the list to match.
+const LARGE_HEADER_BOTTOM_PADDING = 12
 
 /// Maps' header buttons are 44pt square, and the header's title row is as
 /// tall as they are.
