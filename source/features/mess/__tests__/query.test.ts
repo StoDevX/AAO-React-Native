@@ -143,6 +143,11 @@ describe('messStoryOptions', () => {
 			'https://olafmessenger.com/wp-json/wp/v2/posts/36859?_embed=true',
 		)
 	})
+
+	test('fails when the post parses to no story', async () => {
+		serve(() => [])
+		await expect(run(messStoryOptions(1))).rejects.toThrow('no Mess story 1')
+	})
 })
 
 describe('messCategoryOptions', () => {
@@ -178,11 +183,48 @@ describe('messSeriesOptions', () => {
 
 		let series = await run<{title: string; stories: MessStory[]}>(messSeriesOptions(story(36819)))
 
-		expect(series.title).toBe('More Mouse Friends')
+		// Spelled as the newest other episode spells it.
+		expect(series.title).toBe('More Mouse friends')
 		expect(series.stories.map((s) => s.id)).toStrictEqual([1, 2])
 		expect(fetchedHrefs()).toContain(
 			'https://olafmessenger.com/wp-json/wp/v2/posts?categories=63&per_page=30&_embed=true',
 		)
+	})
+
+	test('heads the row with the newest episode’s spelling of the series', async () => {
+		serve(() => [
+			retitled(1, 36819, 'Mouse Friends episode 3: cheese'),
+			retitled(2, 36819, 'Mouse friends episode 2: Mary! Gold!'),
+		])
+
+		let series = await run<{title: string; stories: MessStory[]}>(
+			messSeriesOptions({...story(36819), title: 'mouse friends episode 1: hello'}),
+		)
+
+		expect(series.title).toBe('More Mouse Friends')
+	})
+
+	test('shows at most six other episodes', async () => {
+		serve(() =>
+			Array.from({length: 8}, (_, index) =>
+				retitled(index + 1, 36819, `Mouse Friends episode ${index + 1}: more`),
+			),
+		)
+
+		let series = await run<{title: string; stories: MessStory[]}>(messSeriesOptions(story(36819)))
+
+		expect(series.stories.map((s) => s.id)).toStrictEqual([1, 2, 3, 4, 5, 6])
+	})
+
+	test('fails when the column cannot be fetched', async () => {
+		mockManifest.mockResolvedValue({links: []} as unknown as Jrd)
+		mockBody.mockImplementation((href) =>
+			href.includes('/categories')
+				? Promise.resolve(categories)
+				: Promise.reject(new Error('offline')),
+		)
+
+		await expect(run(messSeriesOptions(story(36819)))).rejects.toThrow('offline')
 	})
 
 	test("falls back to the writer's other work when a series has no other episodes", async () => {

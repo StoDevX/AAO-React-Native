@@ -19,6 +19,10 @@ describe('seriesName', () => {
 	it('gives nothing for a title that opens with a colon', () => {
 		expect(seriesName(': a sunny thanks')).toBeNull()
 	})
+
+	it('gives nothing when the text before the colon has no letter, as in a time', () => {
+		expect(seriesName('2:46am on a Monday Morning')).toBeNull()
+	})
 })
 
 describe('seriesKey', () => {
@@ -34,5 +38,9 @@ describe('seriesKey', () => {
 
 	it('gives nothing for a title without a colon', () => {
 		expect(seriesKey('A sunny thanks')).toBeNull()
+	})
+
+	it('gives nothing when the text before the colon has no letter, as in a time', () => {
+		expect(seriesKey('2:46am on a Monday Morning')).toBeNull()
 	})
 })

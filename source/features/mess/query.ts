@@ -132,8 +132,10 @@ export const messSeriesOptions = (story: MessStory) =>
 					'Olaf Messenger series',
 				)
 				let episodes = recent.filter((s) => s.id !== story.id && seriesKey(s.title) === key)
-				if (episodes.length > 0) {
-					return {title: `More ${name}`, stories: episodes.slice(0, 6)}
+				// The newest episode spells the series as the paper now does, which an older title may not.
+				let newest = episodes[0]
+				if (newest) {
+					return {title: `More ${seriesName(newest.title) ?? name}`, stories: episodes.slice(0, 6)}
 				}
 			}
 
