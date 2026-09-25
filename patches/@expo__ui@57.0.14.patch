@@ -1,3 +1,55 @@
+diff --git a/build/swift-ui/HangingText/index.d.ts b/build/swift-ui/HangingText/index.d.ts
+new file mode 100644
+index 0000000000000000000000000000000000000000..45a9ba41b9acdf93015cfd9dd3c6a4378ce9b6b7
+--- /dev/null
++++ b/build/swift-ui/HangingText/index.d.ts
+@@ -0,0 +1,34 @@
++import type { ColorValue } from 'react-native';
++import { type CommonViewModifierProps } from '../types';
++export interface HangingTextProps extends CommonViewModifierProps {
++    /**
++     * Inline Markdown: emphasis, strong emphasis and links.
++     */
++    children: string;
++    /**
++     * How far wrapped continuation lines sit past the first line, in points.
++     */
++    hangingIndent: number;
++    /**
++     * Extra space between wrapped lines, in points.
++     */
++    lineSpacing?: number;
++    /**
++     * The text colour.
++     */
++    color?: ColorValue;
++    /**
++     * The colour of a link's text.
++     */
++    linkColor?: ColorValue;
++    /**
++     * Sets the body text style in the serif design rather than the system face.
++     */
++    serif?: boolean;
++}
++/**
++ * Body text whose wrapped lines sit `hangingIndent` points past its first
++ * line, drawn by a `UILabel` with a paragraph style, which SwiftUI's `Text`
++ * does not have. It follows Dynamic Type.
++ */
++export declare function HangingText({ children, modifiers, ...props }: HangingTextProps): import("react/jsx-runtime").JSX.Element;
+diff --git a/build/swift-ui/index.d.ts b/build/swift-ui/index.d.ts
+index e6cc8665ed24acc90e6b9acaf034a6bbc39afcc0..26ff12ef81061e9b1679d5f9f895a90916783db5 100644
+--- a/build/swift-ui/index.d.ts
++++ b/build/swift-ui/index.d.ts
+@@ -10,6 +10,7 @@ export * from './ControlGroup';
+ export * from './ContextMenu';
+ export * from './DatePicker';
+ export * from './Divider';
++export * from './HangingText';
+ export * from './DisclosureGroup';
+ export * from './Form';
+ export * from './Gauge';
 diff --git a/build/swift-ui/modifiers/index.d.ts b/build/swift-ui/modifiers/index.d.ts
 index 9b6dba1653de433e8848b80f481f71dc8ef097d0..f7f672931780a8ad947d7c58c0bd0ca7dd106a40 100644
 --- a/build/swift-ui/modifiers/index.d.ts
@@ -14,6 +66,129 @@ index 9b6dba1653de433e8848b80f481f71dc8ef097d0..f7f672931780a8ad947d7c58c0bd0ca7
  }) => ModifierConfig;
  /**
   * A standard size for Dynamic Type, from `xSmall` through the five
+diff --git a/ios/ExpoUIModule.swift b/ios/ExpoUIModule.swift
+index 4eed0f19fede0f28af6e8b74507805927acf004e..231004c9640e3850be7e7722cd1f47533058f028 100644
+--- a/ios/ExpoUIModule.swift
++++ b/ios/ExpoUIModule.swift
+@@ -191,6 +191,7 @@ public final class ExpoUIModule: Module {
+     ExpoUIView(CircleView.self)
+     ExpoUIView(ConcentricRectangleView.self)
+     ExpoUIView(DividerView.self)
++    ExpoUIView(HangingTextView.self)
+     ExpoUIView(PopoverView.self)
+     ExpoUIView(OverlayView.self)
+     ExpoUIView(BackgroundView.self)
+diff --git a/ios/HangingTextView.swift b/ios/HangingTextView.swift
+new file mode 100644
+index 0000000000000000000000000000000000000000..872435c461dc3bbf6b6c190105c47f8be768c527
+--- /dev/null
++++ b/ios/HangingTextView.swift
+@@ -0,0 +1,105 @@
++// A line of text whose wrapped continuation lines sit further in than its first
++// line -- a hanging indent. SwiftUI's `Text` has no paragraph style, so this
++// draws through a UILabel with an NSParagraphStyle instead.
++
++import SwiftUI
++import UIKit
++import ExpoModulesCore
++
++public final class HangingTextViewProps: UIBaseViewProps {
++  /// Inline Markdown: emphasis, strong and links.
++  @Field public var text: String = ""
++  /// How far continuation lines sit past the first, in points.
++  @Field public var hangingIndent: Double = 0
++  /// Extra space between wrapped lines, in points.
++  @Field public var lineSpacing: Double = 0
++  @Field public var color: UIColor?
++  @Field public var linkColor: UIColor?
++  /// Sets the body text style in the serif design (New York) rather than the system face.
++  @Field public var serif: Bool = false
++
++  override var defaultFrameAlignment: Alignment { .leading }
++}
++
++public struct HangingTextView: ExpoSwiftUI.View {
++  @ObservedObject public var props: HangingTextViewProps
++  @Environment(\.dynamicTypeSize) private var dynamicTypeSize
++
++  public init(props: HangingTextViewProps) {
++    self.props = props
++  }
++
++  public var body: some View {
++    HangingLabel(text: attributedText())
++  }
++
++  private func bodyFont(bold: Bool, italic: Bool) -> UIFont {
++    var traits = UITraitCollection.current
++    if #available(iOS 17.0, tvOS 17.0, *) {
++      traits = UITraitCollection(preferredContentSizeCategory: UIContentSizeCategory(dynamicTypeSize))
++    }
++    var descriptor = UIFontDescriptor.preferredFontDescriptor(withTextStyle: .body, compatibleWith: traits)
++    if props.serif, let serif = descriptor.withDesign(.serif) {
++      descriptor = serif
++    }
++    var symbolic = descriptor.symbolicTraits
++    if bold { symbolic.insert(.traitBold) }
++    if italic { symbolic.insert(.traitItalic) }
++    descriptor = descriptor.withSymbolicTraits(symbolic) ?? descriptor
++    return UIFont(descriptor: descriptor, size: 0)
++  }
++
++  private func attributedText() -> NSAttributedString {
++    let options = AttributedString.MarkdownParsingOptions(
++      interpretedSyntax: .inlineOnlyPreservingWhitespace
++    )
++    let parsed = (try? AttributedString(markdown: props.text, options: options))
++      ?? AttributedString(props.text)
++
++    let paragraph = NSMutableParagraphStyle()
++    paragraph.firstLineHeadIndent = 0
++    paragraph.headIndent = props.hangingIndent
++    paragraph.lineSpacing = props.lineSpacing
++    paragraph.lineBreakMode = .byWordWrapping
++
++    let result = NSMutableAttributedString()
++    for run in parsed.runs {
++      let intent = run.inlinePresentationIntent ?? []
++      var attributes: [NSAttributedString.Key: Any] = [
++        .font: bodyFont(bold: intent.contains(.stronglyEmphasized), italic: intent.contains(.emphasized)),
++        .paragraphStyle: paragraph,
++        .foregroundColor: props.color ?? UIColor.label,
++      ]
++      if run.link != nil {
++        attributes[.foregroundColor] = props.linkColor ?? UIColor.link
++      }
++      result.append(NSAttributedString(string: String(parsed[run.range].characters), attributes: attributes))
++    }
++    return result
++  }
++}
++
++/// A multi-line UILabel that tells SwiftUI how tall it is at the width it is offered.
++private struct HangingLabel: UIViewRepresentable {
++  let text: NSAttributedString
++
++  func makeUIView(context: Context) -> UILabel {
++    let label = UILabel()
++    label.numberOfLines = 0
++    label.lineBreakMode = .byWordWrapping
++    label.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
++    label.setContentHuggingPriority(.defaultLow, for: .horizontal)
++    return label
++  }
++
++  func updateUIView(_ label: UILabel, context: Context) {
++    label.attributedText = text
++  }
++
++  func sizeThatFits(_ proposal: ProposedViewSize, uiView label: UILabel, context: Context) -> CGSize? {
++    let width = proposal.width ?? .greatestFiniteMagnitude
++    label.preferredMaxLayoutWidth = width
++    let fitted = label.sizeThatFits(CGSize(width: width, height: .greatestFiniteMagnitude))
++    return CGSize(width: min(width, ceil(fitted.width)), height: ceil(fitted.height))
++  }
++}
 diff --git a/ios/Modifiers/FontModifier.swift b/ios/Modifiers/FontModifier.swift
 index 094cee1a9b3ff97f38777c38d44f79391fa2c9db..08cf58b869acecbe476279341252554d03cba414 100644
 --- a/ios/Modifiers/FontModifier.swift
@@ -192,3 +367,76 @@ index 8c426dffff1df73809436999f23a6155b0a72ef8..d46585fb204a0a923fdb4f2eea88242f
      register("moveDisabled") { params, appContext, _ in
        return try MoveDisabledModifier(from: params, appContext: appContext)
      }
+diff --git a/src/swift-ui/HangingText/index.tsx b/src/swift-ui/HangingText/index.tsx
+new file mode 100644
+index 0000000000000000000000000000000000000000..329ae7cf80f38a41207669e74926ad8d2f2fb88d
+--- /dev/null
++++ b/src/swift-ui/HangingText/index.tsx
+@@ -0,0 +1,55 @@
++import { requireNativeView } from 'expo';
++import type { ColorValue } from 'react-native';
++
++import { createViewModifierEventListener } from '../modifiers/utils';
++import { type CommonViewModifierProps } from '../types';
++
++export interface HangingTextProps extends CommonViewModifierProps {
++  /**
++   * Inline Markdown: emphasis, strong emphasis and links.
++   */
++  children: string;
++  /**
++   * How far wrapped continuation lines sit past the first line, in points.
++   */
++  hangingIndent: number;
++  /**
++   * Extra space between wrapped lines, in points.
++   */
++  lineSpacing?: number;
++  /**
++   * The text colour.
++   */
++  color?: ColorValue;
++  /**
++   * The colour of a link's text.
++   */
++  linkColor?: ColorValue;
++  /**
++   * Sets the body text style in the serif design rather than the system face.
++   */
++  serif?: boolean;
++}
++
++type NativeHangingTextProps = Omit<HangingTextProps, 'children'> & { text: string };
++
++const HangingTextNativeView: React.ComponentType<NativeHangingTextProps> = requireNativeView(
++  'ExpoUI',
++  'HangingTextView'
++);
++
++/**
++ * Body text whose wrapped lines sit `hangingIndent` points past its first
++ * line, drawn by a `UILabel` with a paragraph style, which SwiftUI's `Text`
++ * does not have. It follows Dynamic Type.
++ */
++export function HangingText({ children, modifiers, ...props }: HangingTextProps) {
++  return (
++    <HangingTextNativeView
++      text={children}
++      modifiers={modifiers}
++      {...(modifiers ? createViewModifierEventListener(modifiers) : undefined)}
++      {...props}
++    />
++  );
++}
+diff --git a/src/swift-ui/index.tsx b/src/swift-ui/index.tsx
+index be4b9f732505b9dc8060a8e5ccbbe0f6b7112709..77c0096917bf338b00260147b4aae6a30aabc211 100644
+--- a/src/swift-ui/index.tsx
++++ b/src/swift-ui/index.tsx
+@@ -10,6 +10,7 @@ export * from './ControlGroup';
+ export * from './ContextMenu';
+ export * from './DatePicker';
+ export * from './Divider';
++export * from './HangingText';
+ export * from './DisclosureGroup';
+ export * from './Form';
+ export * from './Gauge';
