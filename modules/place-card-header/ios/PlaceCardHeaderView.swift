@@ -73,9 +73,16 @@ struct PlaceCardHeaderView: ExpoSwiftUI.View {
 		}
 		.padding(.top, titleTopOffset)
 		.frame(maxWidth: .infinity, alignment: .top)
-		.accessibilityElement(children: .ignore)
-		.accessibilityLabel([props.title, props.subtitle ?? ""].filter { !$0.isEmpty }.joined(separator: ", "))
-		.accessibilityIdentifier(props.testID ?? "")
+		// The element is a clear layer over the header, not the header with
+		// its children ignored: an element built from the header takes its
+		// frame from the marquee's moving copies, which run far past the card.
+		.accessibilityHidden(true)
+		.overlay {
+			Color.clear
+				.accessibilityElement()
+				.accessibilityLabel([props.title, props.subtitle ?? ""].filter { !$0.isEmpty }.joined(separator: ", "))
+				.accessibilityIdentifier(props.testID ?? "")
+		}
 	}
 }
 
