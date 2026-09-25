@@ -27,14 +27,19 @@ export function PlaceCardHeader(props: PlaceCardHeaderProps): React.ReactNode {
 export type PlaceCardScaffoldProps = {
 	/// Exactly two: the header, then the list it sits over.
 	children: [React.ReactNode, React.ReactNode]
+	/// True at the sheet's large stop, where the list's first row sits
+	/// straight against the header.
+	large: boolean
 }
 
-const PlaceCardScaffoldNativeView: React.ComponentType<{children: React.ReactNode}> =
-	requireNativeView('PlaceCardHeader', 'PlaceCardScaffoldView')
+const PlaceCardScaffoldNativeView: React.ComponentType<{
+	children: React.ReactNode
+	large: boolean
+}> = requireNativeView('PlaceCardHeader', 'PlaceCardScaffoldView')
 
 /// A place card's header pinned over its list, as Apple Maps pins one: the
 /// list scrolls beneath the header, blurred there, with a crisp edge at the
 /// header's bottom. Renders only inside a `Host`.
-export function PlaceCardScaffold({children}: PlaceCardScaffoldProps): React.ReactNode {
-	return <PlaceCardScaffoldNativeView>{children}</PlaceCardScaffoldNativeView>
+export function PlaceCardScaffold({children, large}: PlaceCardScaffoldProps): React.ReactNode {
+	return <PlaceCardScaffoldNativeView large={large}>{children}</PlaceCardScaffoldNativeView>
 }

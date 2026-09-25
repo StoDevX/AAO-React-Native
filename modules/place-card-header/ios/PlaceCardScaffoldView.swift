@@ -1,7 +1,11 @@
 import ExpoModulesCore
 import SwiftUI
 
-final class PlaceCardScaffoldProps: ExpoSwiftUI.ViewProps {}
+final class PlaceCardScaffoldProps: ExpoSwiftUI.ViewProps {
+	/// True at the sheet's large stop, where the list's first row is the big
+	/// title and sits straight against the header, as Maps sets it.
+	@Field var large: Bool = false
+}
 
 /// A place card's header pinned over its list, as Apple Maps pins one: the
 /// header is the list's top safe-area bar, so the list scrolls beneath it and
@@ -27,6 +31,8 @@ struct PlaceCardScaffoldView: ExpoSwiftUI.View {
 			let header: any View = children[0].childView
 			let list: any View = children[1].childView
 			AnyView(list)
+				// nil keeps the list's own margin at the other stops.
+				.contentMargins(.top, props.large ? 0 : nil, for: .scrollContent)
 				.scrollEdgeEffectStyle(.hard, for: .top)
 				.safeAreaBar(edge: .top, spacing: 0) { AnyView(header) }
 		} else {

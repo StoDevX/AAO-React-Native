@@ -44,6 +44,10 @@ import {appleMapsSearchUrl, buildingPhotoUrl} from './urls'
 /// (`SHEET_COLLAPSED_HEIGHT` in `Map/index.tsx`).
 const HEADER_PADDING = 16
 
+/// The header's bottom padding at the large stop: Maps' big title starts 8pt
+/// under the buttons, and the list's first row starts at the header's edge.
+const LARGE_HEADER_BOTTOM_PADDING = 8
+
 /// How far the header's small title keeps from each edge of the header: the
 /// close button's 44pt plus `HEADER_PADDING`, so the title clears it.
 const TITLE_INSET = 60
@@ -163,11 +167,17 @@ function BuildingCard({
 	let subtitle = building.properties.type || null
 
 	return (
-		<PlaceCardScaffold>
+		<PlaceCardScaffold large={large}>
 			<ZStack
 				alignment="topTrailing"
 				modifiers={[
-					padding({all: HEADER_PADDING}),
+					// At large Maps sets the big title 8pt under the buttons, so
+					// the header ends there.
+					padding({
+						top: HEADER_PADDING,
+						horizontal: HEADER_PADDING,
+						bottom: large ? LARGE_HEADER_BOTTOM_PADDING : HEADER_PADDING,
+					}),
 					// Only the large card swaps its title, so only there is the
 					// header's edge worth a render as the sheet moves.
 					...(large ? [onGeometryChange((box) => setHeaderBottom(box.y + box.height))] : []),
@@ -215,7 +225,8 @@ function BuildingCard({
 							listRowInsets({top: 0, leading: 0, bottom: 0, trailing: 0}),
 						]}
 					>
-						<VStack modifiers={[frame({maxWidth: FILL_WIDTH})]} spacing={4}>
+						{/* Maps sets the subtitle straight under the name. */}
+						<VStack modifiers={[frame({maxWidth: FILL_WIDTH})]} spacing={0}>
 							{/* The name alone is measured, not the subtitle under it:
 							    Maps swaps titles once the name has gone under the
 							    header, with the subtitle still in view. */}
