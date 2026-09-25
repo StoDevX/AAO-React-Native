@@ -1,6 +1,6 @@
 [tools]
 node = "24.21.0"
-pnpm = "12.5.0"
+pnpm = "12.6.0"
 hk = "2.2.0"
 ruby = "3.4.10"
 "gem:bundler" = "4.0.21"
