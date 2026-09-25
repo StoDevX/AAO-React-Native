@@ -469,8 +469,9 @@ struct CarletonMapScreen: Screen {
 	/// lower edge. Frames, because `isHittable` answers true for content the
 	/// sheet clips away.
 	///
-	/// The close button is checked first because it is the half that can go
-	/// red on the old card, which gave its title no identifier.
+	/// The close button is checked first because its query does not depend on
+	/// the title block being found, so a clipped close button is reported even
+	/// if the title's lookup fails.
 	@discardableResult
 	func verifyCardHeaderWithinSheet() -> Self {
 		let sheet = sheetFrame()

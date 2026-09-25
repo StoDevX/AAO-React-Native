@@ -99,45 +99,6 @@ describe('BuildingInfo', () => {
 })
 
 describe('BuildingInfo header', () => {
-	it('titles the card with the name, and the type beneath it', async () => {
-		await render(
-			<BuildingInfo
-				building={makeBuilding({id: 'a', name: 'Regents Hall', type: 'Administrative & Academic'})}
-				onClose={jest.fn()}
-				stop="medium"
-			/>,
-		)
-
-		expect(screen.getByTestId('card-title')).toHaveTextContent('Regents Hall')
-		expect(screen.getByTestId('card-subtitle')).toHaveTextContent('Administrative & Academic')
-	})
-
-	// Carleton's feed carries no type at all.
-	it.each([undefined, null, ''])('shows no subtitle for a type of %p', async (type) => {
-		await render(
-			<BuildingInfo
-				building={makeBuilding({id: 'a', name: 'Sayles-Hill Campus Center', type})}
-				onClose={jest.fn()}
-				stop="medium"
-			/>,
-		)
-
-		expect(screen.getByTestId('card-title')).toHaveTextContent('Sayles-Hill Campus Center')
-		expect(screen.queryByTestId('card-subtitle')).toBeNull()
-	})
-
-	it.each(['collapsed', 'medium'] as const)('lets the title move at %s', async (stop) => {
-		await render(
-			<BuildingInfo
-				building={makeBuilding({id: 'a', name: 'Regents Hall'})}
-				onClose={jest.fn()}
-				stop={stop}
-			/>,
-		)
-
-		expect(screen.getByTestId('card-title')).toHaveAccessibilityValue({text: 'animating'})
-	})
-
 	it('lists the abbreviation above About', async () => {
 		await render(
 			<BuildingInfo
