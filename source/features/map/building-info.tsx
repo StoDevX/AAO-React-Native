@@ -129,7 +129,8 @@ function BuildingCard({
 		if (!large) {
 			return
 		}
-		if (bigTitleTopAtRest === null || headerBottom === null) {
+		// Unmeasured until the big title and the header have both reported.
+		if (bigTitleTopAtRest === null || headerBottom === null || bigTitleHeight === 0) {
 			setBigTitleAway(false)
 			return
 		}

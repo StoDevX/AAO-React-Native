@@ -17,11 +17,11 @@ describe('bigTitleScrolledAway', () => {
 		expect(bigTitleScrolledAway(0, 0, 80)).toBe(false)
 	})
 
-	it('is false while any of the big title is still below the header', () => {
+	it('is false before the list has moved the swap distance', () => {
 		expect(bigTitleScrolledAway(79, 0, 80)).toBe(false)
 	})
 
-	it('is true once the whole big title has scrolled under the header', () => {
+	it('is true once the list has moved the swap distance', () => {
 		expect(bigTitleScrolledAway(80, 0, 80)).toBe(true)
 	})
 
@@ -35,8 +35,8 @@ describe('bigTitleScrolledAway', () => {
 		expect(bigTitleScrolledAway(-30, 0, 80)).toBe(false)
 	})
 
-	// Before the row reports its size there is nothing to have scrolled past.
-	it('is false before the big title has been measured', () => {
+	// Before the distance is known there is nothing to have scrolled past.
+	it('is false before the swap distance is known', () => {
 		expect(bigTitleScrolledAway(500, 0, 0)).toBe(false)
 	})
 })

@@ -9,17 +9,18 @@ export function titleMayMove(stop: SheetDetent): boolean {
 
 /// Whether the big title at the top of the large card has scrolled all the
 /// way up under the pinned header, which is when Maps puts the small title
-/// back in the header.
+/// back in the header: once the list has moved `distanceToSwap` from rest
+/// (see `swapDistance`).
 ///
 /// Measured from `restingOffsetY` rather than zero: a List inset by a
-/// safe-area bar rests at a negative offset. An unmeasured title
-/// (`bigTitleHeight` of 0) has not gone anywhere.
+/// safe-area bar rests at a negative offset. A `distanceToSwap` of 0 or less
+/// means it is not known yet, and the title has not gone anywhere.
 export function bigTitleScrolledAway(
 	offsetY: number,
 	restingOffsetY: number,
-	bigTitleHeight: number,
+	distanceToSwap: number,
 ): boolean {
-	return bigTitleHeight > 0 && offsetY - restingOffsetY >= bigTitleHeight
+	return distanceToSwap > 0 && offsetY - restingOffsetY >= distanceToSwap
 }
 
 /// The list's offset at rest, taken from the first report made after layout.
