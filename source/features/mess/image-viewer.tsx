@@ -22,7 +22,7 @@ import {
 	frame,
 	shapes,
 } from '@expo/ui/swift-ui/modifiers'
-import {SafeAreaView} from 'react-native-safe-area-context'
+import {useSafeAreaInsets} from 'react-native-safe-area-context'
 import {useDismissOnce} from '../../lib/use-dismiss-once'
 import {imageLabel} from './lib/byline'
 import {StoryLookupNotice} from './story-lookup-notice'
@@ -59,6 +59,7 @@ type Props = {id: number}
 export function ImageViewer({id}: Props): React.ReactNode {
 	let close = useDismissOnce()
 	let {width, height} = useWindowDimensions()
+	let insets = useSafeAreaInsets()
 	let query = useMessStory(id)
 	let story = query.data
 	let image = story?.layout.kind === 'image' ? story.layout.image : null
@@ -138,10 +139,12 @@ export function ImageViewer({id}: Props): React.ReactNode {
 	return (
 		<View style={styles.page}>
 			{content}
-			<SafeAreaView
-				edges={['top', 'left', 'right']}
+			<View
 				pointerEvents="box-none"
-				style={styles.overlay}
+				style={[
+					styles.overlay,
+					{paddingTop: insets.top, paddingLeft: insets.left, paddingRight: insets.right},
+				]}
 			>
 				<View pointerEvents="box-none" style={styles.closeRow}>
 					<Host style={styles.closeHost}>
@@ -150,7 +153,7 @@ export function ImageViewer({id}: Props): React.ReactNode {
 						</Button>
 					</Host>
 				</View>
-			</SafeAreaView>
+			</View>
 		</View>
 	)
 }
