@@ -32,6 +32,39 @@ describe('parseMessPosts', () => {
 		expect(byId(36843)).toMatchObject({section: 'Variety', column: 'Playlist'})
 	})
 
+	it('flags a story featured only from a category named Featured*, not from its children', () => {
+		let onlineExclusive = {...posts[0], categories: [55]}
+		expect(parseMessPosts([onlineExclusive], categories)[0]).toMatchObject({
+			featured: false,
+			section: null,
+			column: null,
+		})
+	})
+
+	it('prefers a main section over another top-level category, whatever the order', () => {
+		let both = {...posts[0], categories: [1139, 69]}
+		expect(parseMessPosts([both], categories)[0]).toMatchObject({
+			section: 'Variety',
+			column: 'Poetry',
+		})
+	})
+
+	it('falls back to another top-level category when no main section is present', () => {
+		let specialEdition = {...posts[0], categories: [1139]}
+		expect(parseMessPosts([specialEdition], categories)[0]).toMatchObject({
+			section: 'Special Edition',
+			column: 'Spring 2026',
+		})
+	})
+
+	it('never makes Uncategorized a section', () => {
+		let uncategorized = {...posts[0], categories: [1]}
+		expect(parseMessPosts([uncategorized], categories)[0]).toMatchObject({
+			section: null,
+			column: null,
+		})
+	})
+
 	it('reads every byline', () => {
 		expect(byId(36911)?.bylines.map((b) => b.name)).toStrictEqual([
 			'Ashlyn Wuench',
@@ -72,6 +105,12 @@ describe('parseMessPosts', () => {
 	it('skips a malformed post and keeps the rest', () => {
 		let parsed = parseMessPosts([{id: 'nope'}, ...posts], categories)
 		expect(parsed).toHaveLength(5)
+	})
+
+	it('skips a post with an unreadable date and keeps the rest', () => {
+		let badDate = {...posts[0], date_gmt: 'nope'}
+		let parsed = parseMessPosts([badDate, posts[1]], categories)
+		expect(parsed.map((s) => s.id)).toStrictEqual([36911])
 	})
 
 	it('throws when every post is malformed', () => {

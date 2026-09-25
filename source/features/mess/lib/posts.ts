@@ -28,9 +28,14 @@ const MediaSchema = z.object({
 	media_details: z.object({width: z.number(), height: z.number()}),
 })
 
+/// WordPress reports `date_gmt` as UTC but omits the marker.
+function utcDate(dateGmt: string): Date {
+	return new Date(dateGmt.endsWith('Z') ? dateGmt : `${dateGmt}Z`)
+}
+
 const PostSchema = z.object({
 	id: z.number(),
-	date_gmt: z.string(),
+	date_gmt: z.string().refine((date) => !Number.isNaN(utcDate(date).getTime())),
 	link: z.string(),
 	title: z.object({rendered: z.string()}),
 	excerpt: z.object({rendered: z.string()}),
@@ -49,8 +54,14 @@ const PostSchema = z.object({
 
 type Post = z.infer<typeof PostSchema>
 
-/** Whether a top-level category is one of the site's Featured flags rather than a section. */
+/** Whether a category is one of the site's Featured flags rather than a section. */
 const isFeaturedFlag = (name: string): boolean => /^featured\b/iu.test(name)
+
+/** The sections that name a story whenever one is present, ahead of any other top-level category. */
+const MAIN_SECTIONS = ['News', 'Opinions', 'Arts & Entertainment', 'Sports', 'Variety']
+
+/** WordPress's default category, which never names a section. */
+const UNCATEGORIZED = 'Uncategorized'
 
 /** The top-level ancestor of a category, or undefined when the tree is broken. */
 function rootOf(category: MessCategory, byId: Map<number, MessCategory>): MessCategory | undefined {
@@ -64,22 +75,22 @@ function rootOf(category: MessCategory, byId: Map<number, MessCategory>): MessCa
 
 /** Where a story sits: its section, the column within it, and whether it is featured. */
 function placement(ids: number[], byId: Map<number, MessCategory>) {
-	let section: string | null = null
-	let column: string | null = null
-	let featured = false
-	for (let id of ids) {
+	let placed = ids.flatMap((id) => {
 		let category = byId.get(id)
-		if (!category) continue
-		let root = rootOf(category, byId)
-		if (!root) continue
-		if (isFeaturedFlag(root.name)) {
-			featured = true
-			continue
-		}
-		section ??= root.name
-		if (category.parent !== 0 && root.name === section) column ??= category.name
-	}
-	return {section, column, featured}
+		let root = category && rootOf(category, byId)
+		return category && root ? [{category, root}] : []
+	})
+	let featured = placed.some(({category}) => isFeaturedFlag(category.name))
+	// Neither a Featured* flag nor its children, such as Online Exclusive, name a section.
+	let candidates = placed.filter(
+		({root}) => !isFeaturedFlag(root.name) && root.name !== UNCATEGORIZED,
+	)
+	let chosen = candidates.find(({root}) => MAIN_SECTIONS.includes(root.name)) ?? candidates[0]
+	let section = chosen?.root ?? null
+	let column = candidates.find(
+		({category, root}) => root === section && category !== section,
+	)?.category
+	return {section: section?.name ?? null, column: column?.name ?? null, featured}
 }
 
 /** The story's `staff_name` terms, from any term group. */
@@ -106,12 +117,6 @@ function photoOf(post: Post): MessStory['photo'] {
 	}
 }
 
-/// WordPress reports `date_gmt` as UTC but omits the marker.
-function toIso(dateGmt: string): string {
-	let stamped = dateGmt.endsWith('Z') ? dateGmt : `${dateGmt}Z`
-	return new Date(stamped).toISOString()
-}
-
 /** One validated post as a story. */
 function toStory(post: Post, byId: Map<number, MessCategory>): MessStory {
 	return {
@@ -119,7 +124,7 @@ function toStory(post: Post, byId: Map<number, MessCategory>): MessStory {
 		title: decode(post.title.rendered),
 		excerpt: fastGetTrimmedText(post.excerpt.rendered),
 		link: post.link,
-		published: toIso(post.date_gmt),
+		published: utcDate(post.date_gmt).toISOString(),
 		...placement(post.categories, byId),
 		bylines: bylinesOf(post),
 		photo: photoOf(post),
