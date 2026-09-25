@@ -134,6 +134,9 @@ private struct MarqueeTitle: View {
 				.offset(x: offset)
 			}
 			.mask { fade }
+			// Drawn flat. Otherwise the masked title vanishes for a frame as
+			// its first pass starts.
+			.drawingGroup()
 			.task(id: Cycle(title: props.title, overflows: overflows, reduceMotion: reduceMotion)) {
 				await run()
 			}
