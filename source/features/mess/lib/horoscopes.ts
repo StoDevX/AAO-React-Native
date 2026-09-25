@@ -35,7 +35,7 @@ export const SIGN_DATES: Record<ZodiacSign, string> = {
 
 /** Each sign's symbol, with U+FE0E so it draws as text rather than emoji. */
 export const SIGN_GLYPHS: Record<ZodiacSign, string> = Object.fromEntries(
-	ZODIAC_SIGNS.map((sign, index) => [sign, `${String.fromCodePoint(0x2648 + index)}︎`]),
+	ZODIAC_SIGNS.map((sign, index) => [sign, `${String.fromCodePoint(0x2648 + index)}\uFE0E`]),
 ) as Record<ZodiacSign, string>
 
 /** A sign's name, optional spaces and a colon at the start of a paragraph, with the spaces after it. */

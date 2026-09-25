@@ -1,7 +1,7 @@
 import {describe, expect, it} from '@jest/globals'
 import variety from '../../__tests__/fixtures/variety-posts.json'
 import {parseBlocks} from '../blocks'
-import {parseHoroscopes} from '../horoscopes'
+import {parseHoroscopes, SIGN_GLYPHS} from '../horoscopes'
 import {ZODIAC_SIGNS} from '../zodiac'
 import type {Block} from '../../types'
 
@@ -48,7 +48,10 @@ describe('parseHoroscopes', () => {
 			runs: [{text: `${sign}:`, bold: true}, {text: ' a reading'}],
 		}))
 		let layout = parseHoroscopes(blocks)
-		expect(layout.kind).toBe('horoscopes')
+		if (layout.kind !== 'horoscopes') throw new Error('expected horoscopes')
+		expect(layout.signs.map((s) => text(s.reading[0] ?? []))).toStrictEqual(
+			ZODIAC_SIGNS.map(() => 'a reading'),
+		)
 	})
 
 	it('recognises a label split across runs', () => {
@@ -56,7 +59,11 @@ describe('parseHoroscopes', () => {
 			type: 'paragraph',
 			runs: [{text: sign.slice(0, 3), bold: true}, {text: `${sign.slice(3)}: a reading`}],
 		}))
-		expect(parseHoroscopes(blocks).kind).toBe('horoscopes')
+		let layout = parseHoroscopes(blocks)
+		if (layout.kind !== 'horoscopes') throw new Error('expected horoscopes')
+		expect(layout.signs.map((s) => text(s.reading[0] ?? []))).toStrictEqual(
+			ZODIAC_SIGNS.map(() => 'a reading'),
+		)
 	})
 
 	it('keeps paragraphs before the first sign as the intro', () => {
@@ -93,5 +100,12 @@ describe('parseHoroscopes', () => {
 			runs: [{text: `${sign}: go`}],
 		}))
 		expect(parseHoroscopes(blocks)).toStrictEqual({kind: 'article'})
+	})
+})
+
+describe('SIGN_GLYPHS', () => {
+	it('draws each sign as its zodiac character in text presentation', () => {
+		expect(SIGN_GLYPHS.aries).toBe('\u2648\uFE0E')
+		expect(SIGN_GLYPHS.pisces).toBe('\u2653\uFE0E')
 	})
 })
