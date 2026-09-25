@@ -59,7 +59,7 @@ type Post = z.infer<typeof PostSchema>
 const isFeaturedFlag = (name: string): boolean => /^featured\b/iu.test(name)
 
 /** The sections that name a story whenever one is present, ahead of any other top-level category. */
-const MAIN_SECTIONS = ['News', 'Opinions', 'Arts & Entertainment', 'Sports', 'Variety']
+export const MAIN_SECTIONS = ['News', 'Opinions', 'Arts & Entertainment', 'Sports', 'Variety']
 
 /** WordPress's default category, which never names a section. */
 const UNCATEGORIZED = 'Uncategorized'

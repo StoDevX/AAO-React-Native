@@ -63,6 +63,26 @@ async function storiesAt(path: string, signal: AbortSignal, label: string): Prom
 	return parseMessPosts(Array.isArray(body) ? body : [body], categories)
 }
 
+/** The feed's stories, with sections worked out from the category tree. */
+async function feedStories(signal: AbortSignal): Promise<MessStory[]> {
+	let href = await feedHref()
+	// A failed categories fetch fails the feed on purpose: sections come from it.
+	let [postsBody, categories] = await Promise.all([
+		fetchSourceBody(href, signal, 'Olaf Messenger'),
+		queryClient.query(messCategoriesOptions),
+	])
+	return parseMessPosts(postsBody, categories)
+}
+
+/** A category's 30 newest stories. */
+function categoryStories(categoryId: number, signal: AbortSignal): Promise<MessStory[]> {
+	return storiesAt(
+		`posts?categories=${categoryId}&per_page=30&_embed=true`,
+		signal,
+		'Olaf Messenger section',
+	)
+}
+
 /** The Mess's newest stories, with sections worked out from its category tree. */
 export const messFeedOptions = queryOptions({
 	queryKey: messKeys.feed,
@@ -70,15 +90,7 @@ export const messFeedOptions = queryOptions({
 	// whole feed again. Five minutes spans a sitting of reading; the paper publishes a few times a
 	// week, and pull-to-refresh fetches regardless, since refetch ignores stale time.
 	staleTime: FIVE_MINUTES_IN_MS,
-	queryFn: async ({signal}): Promise<MessStory[]> => {
-		let href = await feedHref()
-		// A failed categories fetch fails the feed on purpose: sections come from it.
-		let [postsBody, categories] = await Promise.all([
-			fetchSourceBody(href, signal, 'Olaf Messenger'),
-			queryClient.query(messCategoriesOptions),
-		])
-		return parseMessPosts(postsBody, categories)
-	},
+	queryFn: ({signal}) => feedStories(signal),
 })
 
 /** A post that came back but holds no story the reader can show. */
@@ -110,12 +122,21 @@ export const messCategoryOptions = (categoryId: number) =>
 	queryOptions({
 		queryKey: messKeys.category(categoryId),
 		staleTime: FIVE_MINUTES_IN_MS,
+		queryFn: ({signal}) => categoryStories(categoryId, signal),
+	})
+
+/**
+ * What the Mess list shows: the feed, or a section's or column's newest stories, cached under the
+ * same keys as `messFeedOptions` and `messCategoryOptions`. One query rather than a choice of the
+ * two, because their keys differ in shape and `useQuery` will not take a union of them.
+ */
+// oxlint-disable-next-line typescript/explicit-module-boundary-types
+export const messListOptions = (categoryId: number | null) =>
+	queryOptions({
+		queryKey: categoryId === null ? messKeys.feed : messKeys.category(categoryId),
+		staleTime: FIVE_MINUTES_IN_MS,
 		queryFn: ({signal}) =>
-			storiesAt(
-				`posts?categories=${categoryId}&per_page=30&_embed=true`,
-				signal,
-				'Olaf Messenger section',
-			),
+			categoryId === null ? feedStories(signal) : categoryStories(categoryId, signal),
 	})
 
 /**

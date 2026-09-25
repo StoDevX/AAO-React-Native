@@ -10,6 +10,8 @@ import {
 	MissingMessStoryError,
 	messCategoryOptions,
 	messFeedOptions,
+	messKeys,
+	messListOptions,
 	messSeriesOptions,
 	messStoryOptions,
 	staffProfileOptions,
@@ -177,6 +179,29 @@ describe('messCategoryOptions', () => {
 		await run(messCategoryOptions(23))
 
 		expect(fetchedHrefs().filter((href) => href.includes('/categories'))).toHaveLength(1)
+	})
+})
+
+describe('messListOptions', () => {
+	// The reader looks a story up in the feed's cache, so the list must fill that same entry.
+	test('with no category, is the feed under the feed’s key', async () => {
+		serve(() => posts)
+
+		await run(messListOptions(null))
+
+		expect(messListOptions(null).queryKey).toStrictEqual(messKeys.feed)
+		expect(fetchedHrefs().filter((href) => href.includes('/posts?categories='))).toStrictEqual([])
+	})
+
+	test('with a category, is that category’s posts under its key', async () => {
+		serve(() => varietyPosts)
+
+		await run(messListOptions(69))
+
+		expect(messListOptions(69).queryKey).toStrictEqual(messKeys.category(69))
+		expect(fetchedHrefs()).toContain(
+			'https://olafmessenger.com/wp-json/wp/v2/posts?categories=69&per_page=30&_embed=true',
+		)
 	})
 })
 

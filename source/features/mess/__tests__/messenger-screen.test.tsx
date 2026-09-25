@@ -1,12 +1,16 @@
 import * as React from 'react'
 import {afterEach, beforeEach, describe, expect, jest, test} from '@jest/globals'
-import {fireEvent, render, screen} from '@testing-library/react-native'
+import {act, fireEvent, render, screen} from '@testing-library/react-native'
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query'
 import {fetchManifest, fetchSourceBody, type Jrd} from '@frogpond/data-sources'
 
+import categoriesJson from './fixtures/categories.json'
 import {queryClient as appQueryClient} from '../../../init/tanstack-query'
+import {parseMessCategories} from '../lib/posts'
 import {MessengerScreen} from '../messenger-screen'
+import {MessPicker} from '../mess-picker'
 import {messKeys} from '../query'
+import {OLAF_MESSENGER} from '../../news/sources'
 import {useNewsFilterStore} from '../../news/store'
 import type {MessStory} from '../types'
 
@@ -38,10 +42,31 @@ jest.mock('expo-router', () => ({
 }))
 
 // The picker is a native toolbar menu; what it is handed is read off the call.
-jest.mock('../../news/news-picker', () => ({NewsPicker: jest.fn(() => null)}))
+jest.mock('../mess-picker', () => ({MessPicker: jest.fn(() => null)}))
 
 const mockManifest = fetchManifest as jest.Mock<() => Promise<Jrd>>
 const mockBody = fetchSourceBody as jest.Mock<(href: string) => Promise<unknown>>
+const mockPicker = MessPicker as jest.Mock<typeof MessPicker>
+
+const categories = parseMessCategories(categoriesJson)
+const POETRY = 69
+
+/** The props the picker was last rendered with. */
+function pickerProps(): Parameters<typeof MessPicker>[0] {
+	let props = mockPicker.mock.lastCall?.[0]
+	if (!props) throw new Error('the picker never rendered')
+	return props
+}
+
+/** Chooses a section or column in the picker, as tapping it would. */
+async function choose(name: string | null): Promise<void> {
+	await act(() => pickerProps().onSelect(name))
+}
+
+/** Saves a filter choice, as an earlier visit would have. */
+function saveChoice(name: string): void {
+	useNewsFilterStore.setState({selectedCategories: {[OLAF_MESSENGER.id]: name}})
+}
 
 const story = (id: number, title: string, section: string): MessStory => ({
 	id,
@@ -95,17 +120,79 @@ describe('MessengerScreen', () => {
 		})
 	})
 
-	test('offers sections as the picker categories', async () => {
-		queryClient.setQueryData(messKeys.feed, [
-			story(1, 'A', 'Sports'),
-			story(2, 'B', 'News'),
-			story(3, 'C', 'News'),
-		])
+	test('hands the picker the paper’s sections and columns', async () => {
+		queryClient.setQueryData(messKeys.categories, categories)
+		queryClient.setQueryData(messKeys.feed, [story(1, 'A', 'Sports')])
 		await renderScreen()
 
-		// oxlint-disable-next-line typescript/no-require-imports
-		let {NewsPicker} = require('../../news/news-picker') as {NewsPicker: jest.Mock}
-		expect(NewsPicker.mock.lastCall?.[0]).toMatchObject({categories: ['News', 'Sports']})
+		let {tree, selected} = pickerProps()
+		expect(tree.map((branch) => branch.section.name)).toStrictEqual([
+			'News',
+			'Opinions',
+			'Arts & Entertainment',
+			'Sports',
+			'Variety',
+			'Special Edition',
+		])
+		expect(selected).toBeNull()
+	})
+
+	test('choosing a column lists that column’s stories rather than the feed', async () => {
+		queryClient.setQueryData(messKeys.categories, categories)
+		queryClient.setQueryData(messKeys.feed, [story(1, 'Front page', 'News')])
+		queryClient.setQueryData(messKeys.category(POETRY), [story(2, 'Ode to the Cage', 'Variety')])
+		await renderScreen()
+
+		await choose('Poetry')
+
+		expect(await screen.findByText('Ode to the Cage')).toBeTruthy()
+		expect(screen.queryByText('Front page')).toBeNull()
+		expect(pickerProps().selected).toBe('Poetry')
+	})
+
+	test('All Stories lists the feed again', async () => {
+		saveChoice('Poetry')
+		queryClient.setQueryData(messKeys.categories, categories)
+		queryClient.setQueryData(messKeys.feed, [story(1, 'Front page', 'News')])
+		queryClient.setQueryData(messKeys.category(POETRY), [story(2, 'Ode to the Cage', 'Variety')])
+		await renderScreen()
+		expect(screen.getByText('Ode to the Cage')).toBeTruthy()
+
+		await choose(null)
+
+		expect(await screen.findByText('Front page')).toBeTruthy()
+		expect(screen.queryByText('Ode to the Cage')).toBeNull()
+	})
+
+	test('pull-to-refresh on a column fetches the column, not the feed', async () => {
+		saveChoice('Poetry')
+		queryClient.setQueryData(messKeys.categories, categories)
+		queryClient.setQueryData(messKeys.feed, [story(1, 'Front page', 'News')])
+		queryClient.setQueryData(messKeys.category(POETRY), [story(2, 'Ode to the Cage', 'Variety')])
+		mockManifest.mockResolvedValue({links: []} as unknown as Jrd)
+		mockBody.mockImplementation((href) =>
+			Promise.resolve(href.includes('/categories') ? categoriesJson : []),
+		)
+		await renderScreen()
+
+		let refresh = screen.getByTestId('refreshable').props.onRefresh as () => Promise<void>
+		await act(() => refresh())
+
+		let postHrefs = mockBody.mock.calls
+			.map((call) => call[0])
+			.filter((h) => !h.includes('/categories'))
+		expect(postHrefs).toHaveLength(1)
+		expect(postHrefs[0]).toContain(`/wp-json/wp/v2/posts?categories=${POETRY}&per_page=30`)
+	})
+
+	test('a saved name the paper no longer has shows the feed', async () => {
+		saveChoice('Classifieds')
+		queryClient.setQueryData(messKeys.categories, categories)
+		queryClient.setQueryData(messKeys.feed, [story(1, 'Front page', 'News')])
+		await renderScreen()
+
+		expect(screen.getByText('Front page')).toBeTruthy()
+		expect(pickerProps().selected).toBeNull()
 	})
 
 	test('shows the error notice with Try Again when the feed fails', async () => {

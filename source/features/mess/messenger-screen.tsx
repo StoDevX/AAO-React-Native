@@ -3,32 +3,37 @@ import {Stack, useRouter} from 'expo-router'
 import {useQuery} from '@tanstack/react-query'
 
 import {NewsList} from '../news/news-list'
-import {NewsPicker} from '../news/news-picker'
-import {extractCategories, resolveCategory} from '../news/lib/util'
 import {OLAF_MESSENGER} from '../news/sources'
 import {useNewsFilterStore} from '../news/store'
 import type {StoryType} from '../news/types'
 import {asStory} from './lib/as-story'
-import {messFeedOptions} from './query'
+import {filterTree, resolveFilter} from './lib/filter'
+import {MessPicker} from './mess-picker'
+import {messCategoriesOptions, messListOptions} from './query'
 import type {MessStory} from './types'
 
 /// Defined out here so React Query keeps the result between renders.
 const selectRows = (stories: MessStory[]): Array<{id: number; row: StoryType}> =>
 	stories.map((story) => ({id: story.id, row: asStory(story)}))
 
-/** The Mess's newest stories, filtered by section; a story opens in the reader. */
+/**
+ * The Mess's newest stories, or one section's or column's; a story opens in the reader.
+ * A chosen section or column is fetched on its own, so its list reaches past the feed.
+ */
 export function MessengerScreen(): React.ReactNode {
 	let router = useRouter()
-	let query = useQuery({...messFeedOptions, select: selectRows})
-	let savedCategory = useNewsFilterStore(
-		(state) => state.selectedCategories[OLAF_MESSENGER.id] ?? null,
-	)
+	let categories = useQuery(messCategoriesOptions)
+	let tree = React.useMemo(() => filterTree(categories.data ?? []), [categories.data])
+	let savedName = useNewsFilterStore((state) => state.selectedCategories[OLAF_MESSENGER.id] ?? null)
 	let select = useNewsFilterStore((state) => state.select)
+
+	// A name the tree no longer has falls back to the feed.
+	let selectedId = resolveFilter(savedName, tree)
+	let selectedName = selectedId === null ? null : savedName
+	let query = useQuery({...messListOptions(selectedId), select: selectRows})
 
 	let rows = React.useMemo(() => query.data ?? [], [query.data])
 	let entries = React.useMemo(() => rows.map((r) => r.row), [rows])
-	let categories = React.useMemo(() => extractCategories(entries), [entries])
-	let category = resolveCategory(savedCategory, categories)
 
 	let openStory = (story: StoryType) => {
 		let id = rows.find((r) => r.row === story)?.id
@@ -43,13 +48,14 @@ export function MessengerScreen(): React.ReactNode {
 				entries={entries}
 				onPressStory={openStory}
 				query={query}
-				selectedCategory={category}
+				// The query has already narrowed the list to the chosen section or column.
+				selectedCategory={null}
 				thumbnail={OLAF_MESSENGER.thumbnail}
 			/>
-			<NewsPicker
-				categories={categories}
+			<MessPicker
 				onSelect={(next) => select(OLAF_MESSENGER.id, next)}
-				selectedCategory={category}
+				selected={selectedName}
+				tree={tree}
 			/>
 		</>
 	)
