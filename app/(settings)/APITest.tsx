@@ -83,7 +83,7 @@ export default function APITestPage(): React.ReactNode {
 					<NoticeView
 						buttonText="Try Again"
 						onPress={routesRefetch}
-						text={`A problem occured while loading: ${routesError}`}
+						text={`A problem occurred while loading: ${routesError}`}
 					/>
 				) : !groupedRoutes ? (
 					<NoticeView text="No routes were found." />

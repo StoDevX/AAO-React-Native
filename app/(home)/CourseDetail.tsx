@@ -190,7 +190,7 @@ export default function CourseDetailPage(): React.ReactNode {
 				<NoticeView
 					buttonText="Try Again"
 					onPress={refetch}
-					text={`A problem occured while loading: ${
+					text={`A problem occurred while loading: ${
 						error instanceof Error ? error.message : 'Unknown error'
 					}`}
 				/>

@@ -71,7 +71,7 @@ export default function MenuItemDetailPage(): React.ReactNode {
 				<NoticeView
 					buttonText="Try Again"
 					onPress={refetch}
-					text={`A problem occured while loading: ${view.error.message}`}
+					text={`A problem occurred while loading: ${view.error.message}`}
 				/>
 			</>
 		)

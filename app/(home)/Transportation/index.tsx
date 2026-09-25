@@ -74,7 +74,7 @@ export default function TransportationPage(): React.ReactNode {
 	if (busesErrored) {
 		busSection = (
 			<ContentUnavailableView
-				description={`A problem occured while loading: ${busError}`}
+				description={`A problem occurred while loading: ${busError}`}
 				systemImage="exclamationmark.triangle"
 				title="Couldn't Load Bus Lines"
 			/>
@@ -107,7 +107,7 @@ export default function TransportationPage(): React.ReactNode {
 	if (otherModesErrored) {
 		otherModesSection = (
 			<ContentUnavailableView
-				description={`A problem occured while loading: ${otherModesError}`}
+				description={`A problem occurred while loading: ${otherModesError}`}
 				systemImage="exclamationmark.triangle"
 				title="Couldn't Load Other Modes"
 			/>
