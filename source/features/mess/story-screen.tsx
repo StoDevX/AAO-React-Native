@@ -11,6 +11,7 @@ import {paper} from './palette'
 import {messFeedOptions} from './query'
 import {SiteLinkCard, StoryBlock} from './story-blocks'
 import {StoryHeader} from './story-header'
+import type {MessStory} from './types'
 
 const COLUMN_MARGIN = 20
 const PAGE = [background(paper)]
@@ -24,10 +25,12 @@ export function StoryScreen({id}: Props): React.ReactNode {
 	let insets = useSafeAreaInsets()
 	// The scroll view's content sits inside the side safe areas, which landscape widens.
 	let columnWidth = width - insets.left - insets.right - COLUMN_MARGIN * 2
-	let query = useQuery({
-		...messFeedOptions,
-		select: (stories) => stories.find((s) => s.id === id),
-	})
+	// A stable selector, so the story is found again only when the feed or the id changes.
+	let selectStory = React.useCallback(
+		(stories: MessStory[]) => stories.find((s) => s.id === id),
+		[id],
+	)
+	let query = useQuery({...messFeedOptions, select: selectStory})
 	let story = query.data
 
 	if (!story) {

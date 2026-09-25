@@ -7,6 +7,7 @@ import type {MessStory, StaffProfile} from './types'
 
 const WP_V2_POSTS = 'application/vnd.wordpress.v2.posts+json'
 const ONE_DAY_IN_MS = 24 * 60 * 60 * 1000
+const FIVE_MINUTES_IN_MS = 5 * 60 * 1000
 
 export const messKeys = {
 	feed: ['mess', 'feed'] as const,
@@ -27,6 +28,10 @@ async function feedHref(): Promise<string> {
 /** The Mess's newest stories, with sections worked out from its category tree. */
 export const messFeedOptions = queryOptions({
 	queryKey: messKeys.feed,
+	// The reader shares this query, so without a stale time every story opened would fetch the
+	// whole feed again. Five minutes spans a sitting of reading; the paper publishes a few times a
+	// week, and pull-to-refresh fetches regardless, since refetch ignores stale time.
+	staleTime: FIVE_MINUTES_IN_MS,
 	queryFn: async ({signal}): Promise<MessStory[]> => {
 		let href = await feedHref()
 		// Assumes the resolved feed href is an absolute WordPress URL.

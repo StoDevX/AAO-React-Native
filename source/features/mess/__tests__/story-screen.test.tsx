@@ -1,6 +1,6 @@
 import * as React from 'react'
 import {afterEach, beforeEach, describe, expect, jest, test} from '@jest/globals'
-import {fireEvent, render, screen} from '@testing-library/react-native'
+import {act, fireEvent, render, screen} from '@testing-library/react-native'
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query'
 import {openUrl} from '@frogpond/open-url'
 import {fetchManifest, fetchSourceBody, type Jrd} from '@frogpond/data-sources'
@@ -123,6 +123,21 @@ describe('StoryScreen', () => {
 
 		expect(await screen.findByText('Try Again')).toBeTruthy()
 		expect(screen.queryByText('Story unavailable')).toBeNull()
+	})
+
+	test('reads a freshly cached feed without fetching it again', async () => {
+		// The app's own default: data goes stale at once unless a query says otherwise.
+		queryClient = new QueryClient({defaultOptions: {queries: {retry: false}}})
+		queryClient.setQueryData(messKeys.feed, [STORY, ARTWORK])
+		queryClient.setQueryData(messKeys.profile(423), null)
+		queryClient.setQueryData(messKeys.profile(392), PROFILE)
+		mockManifest.mockReturnValue(new Promise(() => undefined))
+		await renderStory(36911)
+		await act(() => new Promise((resolve) => setTimeout(resolve, 0)))
+
+		expect(screen.getByText('Cows, Comments and Confessions')).toBeTruthy()
+		expect(mockManifest).not.toHaveBeenCalled()
+		expect(mockBody).not.toHaveBeenCalled()
 	})
 
 	test('says a story is unavailable when the id is not a number', async () => {
