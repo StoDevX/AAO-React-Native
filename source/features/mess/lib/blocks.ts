@@ -15,6 +15,24 @@ const SKIPPED = new Set(['script', 'style'])
 /** Elements that stand as their own block even when WordPress wraps them in a paragraph. */
 const MEDIA = ['img', 'iframe']
 
+/** Elements a browser starts on a line of their own. */
+const BLOCK_LEVEL = new Set([
+	'p',
+	'div',
+	'li',
+	'blockquote',
+	'h1',
+	'h2',
+	'h3',
+	'h4',
+	'h5',
+	'h6',
+	'figure',
+	'figcaption',
+	'ul',
+	'ol',
+])
+
 /** Collapses whitespace the way a browser would, keeping the newlines `<br>` produced. */
 function collapse(text: string): string {
 	return text.replaceAll(/[ \t\r\n\u00A0]+/gu, ' ')
@@ -34,6 +52,13 @@ function pushRun(runs: Run[], text: string, style: Style): void {
 	runs.push({text, ...style})
 }
 
+/** Ends the current line, unless it is already ended or nothing precedes it. */
+function breakLine(runs: Run[], style: Style): void {
+	let last = runs.at(-1)
+	if (!last || /\n *$/u.test(last.text)) return
+	pushRun(runs, '\n', style)
+}
+
 function collectRuns(nodes: ChildNode[], style: Style, runs: Run[]): void {
 	for (let node of nodes) {
 		if (isText(node)) {
@@ -43,6 +68,13 @@ function collectRuns(nodes: ChildNode[], style: Style, runs: Run[]): void {
 		if (!isTag(node) || SKIPPED.has(node.name)) continue
 		if (node.name === 'br') {
 			pushRun(runs, '\n', style)
+			continue
+		}
+		if (BLOCK_LEVEL.has(node.name)) {
+			// Adjacent blocks inside one run of text keep their words apart.
+			breakLine(runs, style)
+			collectRuns(node.children, style, runs)
+			breakLine(runs, style)
 			continue
 		}
 		let next: Style = {...style}
@@ -61,10 +93,17 @@ function runsOf(nodes: ChildNode[]): Run[] {
 	let runs: Run[] = []
 	collectRuns(nodes, {}, runs)
 	for (let run of runs) run.text = run.text.replaceAll(/ ?\n ?/gu, '\n')
-	let first = runs[0]
-	if (first) first.text = first.text.trimStart()
-	let last = runs.at(-1)
-	if (last) last.text = last.text.trimEnd()
+	// A run left empty by trimming lets the trim reach the one beside it.
+	for (let first = runs[0]; first; first = runs[0]) {
+		first.text = first.text.trimStart()
+		if (first.text !== '') break
+		runs.shift()
+	}
+	for (let last = runs.at(-1); last; last = runs.at(-1)) {
+		last.text = last.text.trimEnd()
+		if (last.text !== '') break
+		runs.pop()
+	}
 	return runs.filter((run) => run.text !== '')
 }
 
@@ -83,8 +122,9 @@ function figureFrom(img: Element, caption: string): Block | null {
 	let url = img.attribs.src
 	let width = Number.parseInt(img.attribs.width ?? '', 10)
 	let height = Number.parseInt(img.attribs.height ?? '', 10)
-	// An image with no size cannot be given its frame before it loads.
-	if (!url || !Number.isFinite(width) || !Number.isFinite(height)) return null
+	// An image with no size cannot be given its frame before it loads, and a
+	// zero size gives no aspect ratio.
+	if (!url || !(width > 0 && height > 0)) return null
 	return {type: 'figure', url, width, height, caption}
 }
 
@@ -116,12 +156,23 @@ function blocksOf(node: Element, blocks: Block[]): void {
 		case 'figure': {
 			let iframe = descendants(node, 'iframe')[0]
 			if (iframe) return blocksOf(iframe, blocks)
+			let nested = descendants(node, 'figure')
+			if (nested.length > 0) {
+				// A gallery: each image is its own figure, and the gallery's own caption follows them.
+				for (let figure of nested) blocksOf(figure, blocks)
+				pushParagraph(
+					blocks,
+					node.children.filter((child) => isTag(child) && child.name === 'figcaption'),
+				)
+				return
+			}
 			let img = descendants(node, 'img')[0]
 			let caption = descendants(node, 'figcaption')[0]
 			let captionText = caption ? collapse(textContent(caption)).trim() : ''
 			let figure = img ? figureFrom(img, captionText) : null
 			if (figure) blocks.push(figure)
-			else if (!img) pushParagraph(blocks, node.children)
+			// An image that cannot be shown contributes no runs, so this keeps only the caption's words.
+			else pushParagraph(blocks, node.children)
 			return
 		}
 		case 'img': {

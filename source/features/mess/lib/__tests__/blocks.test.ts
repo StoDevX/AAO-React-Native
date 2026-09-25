@@ -102,6 +102,48 @@ describe('parseBlocks', () => {
 		expect(parseBlocks('<figure><img src="https://x.test/c.jpg"></figure>')).toStrictEqual([])
 	})
 
+	it('keeps the caption of an image without a size as a paragraph', () => {
+		let html = '<figure><img src="https://x.test/c.jpg"><figcaption>Old Main.</figcaption></figure>'
+		expect(parseBlocks(html)).toStrictEqual([{type: 'paragraph', runs: [{text: 'Old Main.'}]}])
+	})
+
+	it('drops an image with a zero size, which has no aspect ratio', () => {
+		let html =
+			'<img src="https://x.test/d.jpg" width="0" height="20"><img src="https://x.test/e.jpg" width="10" height="0">'
+		expect(parseBlocks(html)).toStrictEqual([])
+	})
+
+	it('reads a gallery as one figure per image, then its own caption', () => {
+		let html =
+			'<figure class="wp-block-gallery">' +
+			'<figure><img src="https://x.test/a.jpg" width="1" height="2"><figcaption>A</figcaption></figure>' +
+			'<figure><img src="https://x.test/b.jpg" width="3" height="4"><figcaption>B</figcaption></figure>' +
+			'<figcaption>Both.</figcaption></figure>'
+		expect(parseBlocks(html)).toStrictEqual([
+			{type: 'figure', url: 'https://x.test/a.jpg', width: 1, height: 2, caption: 'A'},
+			{type: 'figure', url: 'https://x.test/b.jpg', width: 3, height: 4, caption: 'B'},
+			{type: 'paragraph', runs: [{text: 'Both.'}]},
+		])
+	})
+
+	it('breaks the line between paragraphs inside a quote, so their words stay apart', () => {
+		expect(parseBlocks('<blockquote><p>A</p><p>B</p></blockquote>')).toStrictEqual([
+			{type: 'quote', runs: [{text: 'A\nB'}]},
+		])
+	})
+
+	it('breaks the line once between paragraphs separated by whitespace', () => {
+		expect(parseBlocks('<blockquote>\n<p>A</p>\n<p>B</p>\n</blockquote>')).toStrictEqual([
+			{type: 'quote', runs: [{text: 'A\nB'}]},
+		])
+	})
+
+	it('breaks the line between paragraphs inside an unknown element', () => {
+		expect(parseBlocks('<div><p><b>A</b></p><p>B</p></div>')).toStrictEqual([
+			{type: 'paragraph', runs: [{text: 'A', bold: true}, {text: '\nB'}]},
+		])
+	})
+
 	it('reads an iframe as an embed, even inside a figure', () => {
 		let html = '<figure><iframe src="https://open.spotify.com/embed/p"></iframe></figure>'
 		expect(parseBlocks(html)).toStrictEqual([
