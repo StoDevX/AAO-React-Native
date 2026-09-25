@@ -6,7 +6,6 @@ import {
 	font,
 	foregroundStyle,
 	italic,
-	textCase,
 } from '@expo/ui/swift-ui/modifiers'
 import {useQuery} from '@tanstack/react-query'
 import {bylineText, kickerText} from './lib/byline'
@@ -15,9 +14,9 @@ import {staffProfileOptions} from './query'
 import {RemotePhoto} from './remote-photo'
 import type {MessStory} from './types'
 
+/** The section over a headline, in small caps as a newspaper sets it. */
 const KICKER = [
-	font({textStyle: 'caption', weight: 'bold'}),
-	textCase('uppercase'),
+	font({textStyle: 'caption', weight: 'bold', smallCaps: true}),
 	foregroundStyle(messRed),
 ]
 const HEADLINE = [
