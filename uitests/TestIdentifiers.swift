@@ -530,6 +530,14 @@ struct TestIdentifiers {
 		/// The reader's headline, in source/features/mess/story-header.tsx.
 		static let storyHeadline = "mess-story-headline"
 
+		/// Each paragraph, quote and list item of a story's body, in
+		/// source/features/mess/story-blocks.tsx.
+		static let storyBody = "mess-story-body"
+
+		/// The card that sends a story with no body, or an embed the reader
+		/// cannot play, to olafmessenger.com, in source/features/mess/story-blocks.tsx.
+		static let storySiteLink = "mess-story-site-link"
+
 		/// The reader's share button label, in source/features/mess/story-screen.tsx.
 		static let shareStory = "Share Story"
 	}
