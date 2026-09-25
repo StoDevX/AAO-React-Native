@@ -5,7 +5,6 @@ import {
 	Image,
 	List,
 	RNHostView,
-	type ScrollGeometry,
 	Section,
 	Spacer,
 	Text,
@@ -27,13 +26,12 @@ import {
 	onGeometryChange,
 	padding,
 	truncationMode,
-	useScrollGeometryChange,
 } from '@expo/ui/swift-ui/modifiers'
 import {openUrl} from '@frogpond/open-url'
 import {PlaceCardHeader, PlaceCardScaffold} from '@frogpond/place-card-header'
 
 import {FILL_WIDTH} from '../../components/tile-layout'
-import {bigTitleScrolledAway, restingOffsetFrom, swapDistance, titleMayMove} from './lib/card-title'
+import {nameUnderHeader, titleMayMove} from './lib/card-title'
 import {normalizeLinks} from './lib/normalize-link'
 import type {SheetDetent} from './lib/sheet-moves'
 import type {Building, Feature, LabelLink, LabelLinkString} from './types'
@@ -111,60 +109,13 @@ function BuildingCard({
 }): React.ReactNode {
 	let large = stop === 'large'
 	let [bigTitleAway, setBigTitleAway] = React.useState(false)
-	// A ref, not state: it feeds the scroll callback, which fires every frame,
-	// and only the answer it reaches is worth a render.
-	//
-	// Taken once, at the middle stop where a card opens, and kept at large,
-	// where the header is 8pt shorter and the list has no top margin. The swap
-	// still lands at the header's edge there (measured on iOS 27) because the
-	// big title's top is taken only while the list sits at this offset, so the
-	// scrolled distance and the swap distance count from the same point.
-	// A Dynamic Type change while the card is open at large leaves
-	// `bigTitleTopAtRest` stale until the card is reopened.
-	let restingOffset = React.useRef<number | null>(null)
-	// State, not refs: oxlint's react(refs) rule rejects a ref written in an
-	// `onGeometryChange` callback. None of these changes often -- React skips
-	// the render when a measurement repeats -- so the extra renders cost little.
-	let [bigTitleHeight, setBigTitleHeight] = React.useState(0)
-	let [bigTitleTopAtRest, setBigTitleTopAtRest] = React.useState<number | null>(null)
 	let [headerBottom, setHeaderBottom] = React.useState<number | null>(null)
-	// The big title's top is only worth keeping when measured at rest.
-	let [listAtRest, setListAtRest] = React.useState(false)
 
-	// Not a worklet: the answer only changes when the title crosses under the
-	// header, and React skips the render when it has not.
-	let scrollObserver = useScrollGeometryChange((geometry: ScrollGeometry) => {
-		restingOffset.current = restingOffsetFrom(restingOffset.current, geometry)
-		if (restingOffset.current === null) {
-			return
-		}
-		// Within a point, to allow for rounding in the reported offset.
-		setListAtRest(Math.abs(geometry.contentOffsetY - restingOffset.current) < 1)
-		// Only the large card has a big title to swap for.
-		if (!large) {
-			return
-		}
-		// Unmeasured until the big title and the header have both reported.
-		if (bigTitleTopAtRest === null || headerBottom === null || bigTitleHeight === 0) {
-			setBigTitleAway(false)
-			return
-		}
-		setBigTitleAway(
-			bigTitleScrolledAway(
-				geometry.contentOffsetY,
-				restingOffset.current,
-				swapDistance(bigTitleTopAtRest, bigTitleHeight, headerBottom),
-			),
-		)
-	})
-
-	// Both frames are in window coordinates, so the title's top is comparable
-	// with the header's bottom.
+	// The name's frame reports on every step of a scroll, in window
+	// coordinates like the header's, so comparing the two is exact at any
+	// stop and text size. React skips the render while the answer holds.
 	let measureBigTitle = (box: {y: number; height: number}) => {
-		setBigTitleHeight(box.height)
-		if (listAtRest && headerBottom !== null) {
-			setBigTitleTopAtRest((top) => top ?? box.y)
-		}
+		setBigTitleAway(nameUnderHeader(box, headerBottom))
 	}
 
 	let {
@@ -231,7 +182,7 @@ function BuildingCard({
 				<CloseButton onClose={onClose} />
 			</ZStack>
 
-			<List modifiers={scrollObserver ? [scrollObserver] : []}>
+			<List>
 				{large ? (
 					<Section
 						modifiers={[
