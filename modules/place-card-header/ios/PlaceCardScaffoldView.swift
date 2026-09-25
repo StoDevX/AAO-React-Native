@@ -22,6 +22,10 @@ struct PlaceCardScaffoldView: ExpoSwiftUI.View {
 		self.props = props
 	}
 
+	/// Whether any of the list has gone under the header. Maps shows no edge
+	/// until something has.
+	@State private var scrolled = false
+
 	var body: some View {
 		let children = props.children ?? []
 		if children.count == 2 {
@@ -33,6 +37,12 @@ struct PlaceCardScaffoldView: ExpoSwiftUI.View {
 			AnyView(list)
 				// nil keeps the list's own margin at the other stops.
 				.contentMargins(.top, props.large ? 0 : nil, for: .scrollContent)
+				.onScrollGeometryChange(for: Bool.self) { geometry in
+					geometry.contentOffset.y > -geometry.contentInsets.top + 0.5
+				} action: { _, isScrolled in
+					scrolled = isScrolled
+				}
+				.scrollEdgeEffectHidden(!scrolled, for: .top)
 				.scrollEdgeEffectStyle(.hard, for: .top)
 				.safeAreaBar(edge: .top, spacing: 0) { AnyView(header) }
 		} else {
