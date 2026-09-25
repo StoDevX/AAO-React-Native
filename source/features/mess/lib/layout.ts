@@ -22,6 +22,21 @@ export function chooseLayout(input: LayoutInput): {layout: StoryLayout; blocks: 
 			return {layout: parseHoroscopes(input.blocks), blocks: input.blocks}
 		case 'Poetry':
 			return {layout: parsePoem(input.html), blocks: input.blocks}
+		case 'Comic':
+		case 'Artwork': {
+			if (input.photo) {
+				let {url, width, height} = input.photo
+				return {layout: {kind: 'image', image: {url, width, height}}, blocks: input.blocks}
+			}
+			let index = input.blocks.findIndex((b) => b.type === 'figure')
+			let figure = input.blocks[index]
+			if (figure?.type !== 'figure') return {layout: {kind: 'article'}, blocks: input.blocks}
+			let {url, width, height} = figure
+			return {
+				layout: {kind: 'image', image: {url, width, height}},
+				blocks: input.blocks.filter((_, i) => i !== index),
+			}
+		}
 		default:
 			return {layout: {kind: 'article'}, blocks: input.blocks}
 	}
