@@ -306,6 +306,7 @@ export default function MapPage(): React.ReactNode {
 							<BuildingInfo
 								building={selectedBuilding}
 								onClose={() => setSelectedBuildingId(null)}
+								stop={sheet.current}
 							/>
 						) : (
 							<BuildingPicker

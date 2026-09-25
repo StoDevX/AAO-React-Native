@@ -108,6 +108,8 @@ export const aspectRatio = spreading('aspectRatio')
 export const autocorrectionDisabled = flag('autocorrectionDisabled', 'disabled')
 export const bold = bare('bold')
 export const buttonStyle = named('buttonStyle', 'style')
+export const buttonBorderShape = (shape: string, cornerRadius?: number): Modifier =>
+	createModifier('buttonBorderShape', {shape, cornerRadius})
 export const disabled = flag('disabled', 'disabled')
 export const font = spreading('font')
 export const foregroundStyle = named('foregroundStyle', 'style')

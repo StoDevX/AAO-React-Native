@@ -1,31 +1,32 @@
 import * as React from 'react'
 import {Image as RNImage, Linking, StyleSheet} from 'react-native'
-import {
-	Button,
-	HStack,
-	Image,
-	List,
-	RNHostView,
-	Section,
-	Spacer,
-	Text,
-	VStack,
-} from '@expo/ui/swift-ui'
+import {Button, Image, List, RNHostView, Section, Text, ZStack} from '@expo/ui/swift-ui'
 import {
 	accessibilityLabel,
+	buttonBorderShape,
 	buttonStyle,
+	frame,
 	listRowInsets,
-	font,
-	foregroundStyle,
+	padding,
 } from '@expo/ui/swift-ui/modifiers'
 import {openUrl} from '@frogpond/open-url'
+import {PlaceCardHeader, PlaceCardScaffold} from '@frogpond/place-card-header'
 
+import {titleMayMove} from './lib/card-title'
 import {normalizeLinks} from './lib/normalize-link'
+import type {SheetDetent} from './lib/sheet-moves'
 import type {Building, Feature, LabelLink, LabelLinkString} from './types'
 import {appleMapsSearchUrl, buildingPhotoUrl} from './urls'
 
-/// Matches the glyph Apple uses to close a sheet.
-const CLOSE_GLYPH_SIZE = 26
+/// Apple Maps' place-card header, measured on iOS 27: 16pt of padding round
+/// 44pt buttons -- 76pt in all, the sheet's collapsed stop
+/// (`SHEET_COLLAPSED_HEIGHT` in `Map/index.tsx`).
+const HEADER_PADDING = 16
+
+/// Glass pads its label about 7pt on every side (measured on iOS 27), so a
+/// 30pt frame round the glyph comes out as Maps' 44pt button.
+const CLOSE_GLYPH_FRAME = 30
+const CLOSE_GLYPH_SIZE = 20
 
 /// The card's own dismiss button. The search bar's Cancel carries the same
 /// "Close" accessibility label, so a screen-wide query for that label could
@@ -33,32 +34,26 @@ const CLOSE_GLYPH_SIZE = 26
 /// `TestIdentifiers.CarletonMap.cardCloseButton` in `TestIdentifiers.swift`.
 const CARD_CLOSE_BUTTON_ID = 'card-close-button'
 
+/// The header's title. Matches `TestIdentifiers.CarletonMap.cardTitle` in
+/// `TestIdentifiers.swift`.
+const CARD_TITLE_ID = 'card-title'
+
 type Props = {
 	building: Feature<Building> | undefined
 	onClose: () => void
+	/// Which stop the sheet is at: large lays the name out differently, and only the other two let a long one move.
+	stop: SheetDetent
 }
 
 /// The info card's contents, as SwiftUI. The sheet that presents them belongs
 /// to the map screen, which swaps between this and the picker.
-export function BuildingInfo({building, onClose}: Props): React.ReactNode {
+export function BuildingInfo({building, onClose, stop}: Props): React.ReactNode {
 	if (!building) {
 		return (
 			<List>
 				<Section>
 					<Text>Building not found.</Text>
-					<Button
-						modifiers={[accessibilityLabel('Close'), buttonStyle('plain')]}
-						onPress={onClose}
-						testID={CARD_CLOSE_BUTTON_ID}
-					>
-						{/* The filled xmark Apple's sheets close with now, rather than a
-						    text button. */}
-						<Image
-							modifiers={[foregroundStyle({type: 'hierarchical', style: 'secondary'})]}
-							size={CLOSE_GLYPH_SIZE}
-							systemName="xmark.circle.fill"
-						/>
-					</Button>
+					<CloseButton onClose={onClose} />
 				</Section>
 			</List>
 		)
@@ -77,84 +72,87 @@ export function BuildingInfo({building, onClose}: Props): React.ReactNode {
 		photos,
 	} = building.properties
 
+	let subtitle = building.properties.type || null
+
 	return (
-		<List>
-			<Section>
-				{/* `center`, so the name sits on the same axis as Close rather than
-					    riding up against the top of the row. */}
-				<HStack alignment="center" spacing={12}>
-					<VStack alignment="leading" spacing={2}>
-						<Text modifiers={[font({textStyle: 'title2', weight: 'bold'})]}>{name}</Text>
-						{nickname ? (
-							<Text
-								modifiers={[
-									font({textStyle: 'subheadline'}),
-									foregroundStyle({type: 'hierarchical', style: 'secondary'}),
-								]}
-							>
-								{nickname}
-							</Text>
-						) : null}
-					</VStack>
-					<Spacer />
-					<Button
-						modifiers={[accessibilityLabel('Close'), buttonStyle('plain')]}
-						onPress={onClose}
-						testID={CARD_CLOSE_BUTTON_ID}
+		<PlaceCardScaffold>
+			<ZStack alignment="topTrailing" modifiers={[padding({all: HEADER_PADDING})]}>
+				<PlaceCardHeader
+					animate={titleMayMove(stop)}
+					subtitle={subtitle}
+					testID={CARD_TITLE_ID}
+					title={name}
+				/>
+				<CloseButton onClose={onClose} />
+			</ZStack>
+
+			<List>
+				{nickname ? (
+					<Section title="Abbreviation">
+						<Text>{nickname}</Text>
+					</Section>
+				) : null}
+
+				{photos?.[0] ? (
+					<Section
+						modifiers={[
+							// A List row insets its content, which framed the photograph in
+							// white on all four sides. Here the photo is the row.
+							listRowInsets({top: 0, leading: 0, bottom: 0, trailing: 0}),
+						]}
 					>
-						{/* The filled xmark Apple's sheets close with now, rather than a
-						    text button. */}
-						<Image
-							modifiers={[foregroundStyle({type: 'hierarchical', style: 'secondary'})]}
-							size={CLOSE_GLYPH_SIZE}
-							systemName="xmark.circle.fill"
-						/>
-					</Button>
-				</HStack>
-			</Section>
+						{/* SwiftUI's Image reads a local file synchronously; these are
+							    remote, so the React Native image loader does the work and
+							    SwiftUI hosts the result. */}
+						<RNHostView matchContents={true}>
+							<RNImage
+								accessibilityLabel={`Photo of ${name}`}
+								source={{uri: buildingPhotoUrl(photos[0])}}
+								style={styles.photo}
+							/>
+						</RNHostView>
+					</Section>
+				) : null}
 
-			{photos?.[0] ? (
-				<Section
-					modifiers={[
-						// A List row insets its content, which framed the photograph in
-						// white on all four sides. Here the photo is the row.
-						listRowInsets({top: 0, leading: 0, bottom: 0, trailing: 0}),
-					]}
-				>
-					{/* SwiftUI's Image reads a local file synchronously; these are
-						    remote, so the React Native image loader does the work and
-						    SwiftUI hosts the result. */}
-					<RNHostView matchContents={true}>
-						<RNImage
-							accessibilityLabel={`Photo of ${name}`}
-							source={{uri: buildingPhotoUrl(photos[0])}}
-							style={styles.photo}
-						/>
-					</RNHostView>
+				{description ? (
+					<Section title="About">
+						<Text>{description}</Text>
+					</Section>
+				) : null}
+
+				{address ? (
+					<Section title="Address">
+						<AddressLink address={address} />
+					</Section>
+				) : null}
+
+				<Section title="Accessibility">
+					<Text>{accessibilityCopy(accessibility)}</Text>
 				</Section>
-			) : null}
 
-			{description ? (
-				<Section title="About">
-					<Text>{description}</Text>
-				</Section>
-			) : null}
+				<LinkSection items={departments} title="Departments" />
+				<LinkSection items={offices} title="Offices" />
+				<LinkSection items={floors} title="Floors" />
+				<LinkSection items={links} title="Links" />
+			</List>
+		</PlaceCardScaffold>
+	)
+}
 
-			{address ? (
-				<Section title="Address">
-					<AddressLink address={address} />
-				</Section>
-			) : null}
-
-			<Section title="Accessibility">
-				<Text>{accessibilityCopy(accessibility)}</Text>
-			</Section>
-
-			<LinkSection items={departments} title="Departments" />
-			<LinkSection items={offices} title="Offices" />
-			<LinkSection items={floors} title="Floors" />
-			<LinkSection items={links} title="Links" />
-		</List>
+/// Maps' close button: a glass circle holding a plain xmark.
+function CloseButton({onClose}: {onClose: () => void}): React.ReactNode {
+	return (
+		<Button
+			modifiers={[accessibilityLabel('Close'), buttonStyle('glass'), buttonBorderShape('circle')]}
+			onPress={onClose}
+			testID={CARD_CLOSE_BUTTON_ID}
+		>
+			<Image
+				modifiers={[frame({width: CLOSE_GLYPH_FRAME, height: CLOSE_GLYPH_FRAME})]}
+				size={CLOSE_GLYPH_SIZE}
+				systemName="xmark"
+			/>
+		</Button>
 	)
 }
 
