@@ -11,6 +11,9 @@ private let buttonSize: CGFloat = 44
 private let buttonGap: CGFloat = 16
 /// How far the title slot sits in from each side of this view.
 private let titleInset: CGFloat = buttonSize + buttonGap
+/// Maps draws its moving title 8pt further in than the slot on each side, a
+/// 234pt box on a 402pt card.
+private let marqueeInset: CGFloat = 8
 /// Maps sets the title's top about 1.7pt below the buttons' top.
 private let titleTopOffset: CGFloat = 1.7
 
@@ -23,8 +26,8 @@ private let leadIn: Duration = .milliseconds(1400)
 private let speed: CGFloat = 30
 /// Space between the end of the name and the copy that follows it round.
 private let gap: CGFloat = 40
-private let leadingFade: CGFloat = 14
-private let trailingFade: CGFloat = 42
+private let leadingFade: CGFloat = 8
+private let trailingFade: CGFloat = 48
 
 final class PlaceCardHeaderProps: ExpoSwiftUI.ViewProps {
 	@Field var title: String = ""
@@ -60,7 +63,7 @@ struct PlaceCardHeaderView: ExpoSwiftUI.View {
 	var body: some View {
 		VStack(spacing: 0) {
 			MarqueeTitle(props: props)
-				.padding(.horizontal, titleInset)
+				.padding(.horizontal, titleInset + marqueeInset)
 				.onGeometryChange(for: CGFloat.self) { $0.size.height } action: { titleHeight = $0 }
 			if let subtitle = props.subtitle, !subtitle.isEmpty {
 				Text(subtitle)
