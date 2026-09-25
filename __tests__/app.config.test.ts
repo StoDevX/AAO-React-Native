@@ -146,3 +146,14 @@ describe('app.config calendar access', () => {
 		)
 	}, 30_000)
 })
+
+describe('app.config link schemes', () => {
+	// iOS answers canOpenURL "no" for any scheme the app has not declared, and
+	// React Native turns that answer into a rejection. The call and email
+	// helpers ask it whether the device can call or send mail at all.
+	it('declares tel and mailto, so the app can ask whether it can call or email', () => {
+		expect(loadConfig().ios?.infoPlist?.LSApplicationQueriesSchemes).toEqual(
+			expect.arrayContaining(['tel', 'mailto']),
+		)
+	})
+})

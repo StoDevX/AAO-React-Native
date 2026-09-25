@@ -1,5 +1,51 @@
-import {describe, expect, it} from '@jest/globals'
-import {formatEmailParts} from '../send-email'
+import {Alert} from 'react-native'
+import noop from 'lodash/noop'
+import {afterEach, beforeEach, describe, expect, it, jest} from '@jest/globals'
+import * as Clipboard from 'expo-clipboard'
+import {hasAppFor, openUrl} from '@frogpond/open-url'
+import {formatEmailParts, sendEmail} from '../send-email'
+import {lastAlertTitle, pressAlertButton} from '../../testing/alert'
+import {settle} from '../../testing/settle'
+
+jest.mock('@frogpond/open-url', () => ({openUrl: jest.fn(), hasAppFor: jest.fn()}))
+jest.mock('expo-clipboard', () => ({setStringAsync: jest.fn()}))
+
+describe('sendEmail', () => {
+	beforeEach(() => {
+		jest.spyOn(Alert, 'alert').mockImplementation(noop)
+	})
+
+	afterEach(() => {
+		jest.restoreAllMocks()
+		jest.mocked(openUrl).mockReset()
+		jest.mocked(hasAppFor).mockReset()
+		jest.mocked(Clipboard.setStringAsync).mockReset()
+	})
+
+	it('offers to copy the addresses on a device with no mail app', async () => {
+		jest.mocked(hasAppFor).mockResolvedValue(false)
+
+		sendEmail({to: ['a@stolaf.edu', 'b@stolaf.edu']})
+		await settle()
+
+		expect(lastAlertTitle()).toBe("Apologies, we couldn't open an email client")
+		expect(openUrl).not.toHaveBeenCalled()
+
+		pressAlertButton('Copy addresses')
+		expect(Clipboard.setStringAsync).toHaveBeenCalledWith('a@stolaf.edu, b@stolaf.edu')
+	})
+
+	it('opens the email and says nothing more, however iOS answers', async () => {
+		jest.mocked(hasAppFor).mockResolvedValue(true)
+		jest.mocked(openUrl).mockResolvedValue(false)
+
+		sendEmail({to: ['a@stolaf.edu']})
+		await settle()
+
+		expect(openUrl).toHaveBeenCalledWith('mailto:a@stolaf.edu')
+		expect(Alert.alert).not.toHaveBeenCalled()
+	})
+})
 
 describe('formatEmailParts', () => {
 	it('should format empty inputs', () => {

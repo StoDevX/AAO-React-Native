@@ -4,6 +4,7 @@ import * as MailComposer from 'expo-mail-composer'
 import {openUrl} from '@frogpond/open-url'
 
 import {composeEmail} from '../send-email'
+import {settle} from '../../testing/settle'
 
 jest.mock('expo-mail-composer', () => ({
 	isAvailableAsync: jest.fn(),
@@ -15,7 +16,10 @@ jest.mock('expo-mail-composer', () => ({
 		CANCELLED: 'cancelled',
 	},
 }))
-jest.mock('@frogpond/open-url', () => ({openUrl: jest.fn()}))
+jest.mock('@frogpond/open-url', () => ({
+	openUrl: jest.fn(),
+	hasAppFor: jest.fn(() => Promise.resolve(true)),
+}))
 
 const mockIsAvailable = MailComposer.isAvailableAsync as jest.MockedFunction<
 	typeof MailComposer.isAvailableAsync
@@ -93,6 +97,7 @@ describe('composeEmail', () => {
 		let alert = jest.spyOn(Alert, 'alert')
 
 		let handedOff = await composeEmail(email)
+		await settle()
 
 		expect(mockOpenUrl).toHaveBeenCalledWith(
 			'mailto:help@example.com?subject=a%20report&body=the%20details',
@@ -126,6 +131,7 @@ describe('composeEmail', () => {
 			expect(mockOpenUrl).not.toHaveBeenCalled()
 
 			press(buttons, 'Send Without Images')
+			await settle()
 
 			expect(mockOpenUrl).toHaveBeenCalledWith(
 				'mailto:help@example.com?subject=a%20report&body=the%20details',

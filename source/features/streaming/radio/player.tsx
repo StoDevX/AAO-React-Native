@@ -49,7 +49,7 @@ function playerJs(selector: string): string {
 			/*******
 			 *******/
 
-			document.addEventListener('message', function (event) {
+			window.addEventListener('message', function (event) {
 				switch (event.data) {
 					case 'play':
 						player.muted = false;
@@ -66,17 +66,27 @@ function playerJs(selector: string): string {
 			 *******/
 
 			function message(data) {
-				window.postMessage(JSON.stringify(data));
+				window.ReactNativeWebView.postMessage(JSON.stringify(data));
 			}
 
 			function send(event) {
 				message({type: event.type});
 			}
 
+			/* Called with the <audio> element's error event, or with the
+			 * rejection from play(). Only the element's own event describes
+			 * player.error; a rejection carries its reason itself, and an older
+			 * MediaError may still be set on the element. */
 			function error(event) {
+				var mediaError = event && event.type === 'error' ? player.error : null;
 				message({
-					type: event.type,
-					error: 'error',
+					type: 'error',
+					error: {
+						code: mediaError ? mediaError.code : 0,
+						message: mediaError
+							? mediaError.message || 'The stream could not be played.'
+							: String((event && event.message) || event),
+					},
 				});
 			}
 
@@ -152,7 +162,18 @@ export function StreamPlayer(props: Props): React.ReactNode {
 
 	let handleMessage = useCallback(
 		(event: WebViewMessageEvent): unknown => {
-			let data = JSON.parse(event.nativeEvent.data) as HtmlAudioEvent
+			// An embedded page can post messages of its own, which need not be
+			// ours, JSON, or even an object.
+			let parsed: unknown
+			try {
+				parsed = JSON.parse(event.nativeEvent.data)
+			} catch {
+				return
+			}
+			if (typeof parsed !== 'object' || parsed === null || !('type' in parsed)) {
+				return
+			}
+			let data = parsed as HtmlAudioEvent
 
 			// console.log('<audio> dispatched event', data.type)
 

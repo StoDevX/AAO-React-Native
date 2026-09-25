@@ -114,22 +114,3 @@ export function jobDetailFields(job: JobDetail): JobField[] {
 	let rest = job.fields.filter((field) => field.label !== WAGE_LABEL)
 	return [...(wage ? [wage] : []), ...fromTitle, ...rest]
 }
-
-/// Which state the Student Work list is in.
-///
-/// Postings are saved between launches, so a failed refetch still has the
-/// last good board to show; the error is only for a load with nothing saved.
-/// Offline with nothing saved, the board waits for a connection, which is not
-/// an empty board and not a spinner's worth of waiting.
-export function listState(query: {
-	isError: boolean
-	isLoading: boolean
-	isPaused: boolean
-	hasPostings: boolean
-}): 'error' | 'offline' | 'loading' | 'list' {
-	if (query.hasPostings) return 'list'
-	if (query.isError) return 'error'
-	if (query.isPaused) return 'offline'
-	if (query.isLoading) return 'loading'
-	return 'list'
-}

@@ -19,8 +19,9 @@ import {
 } from '@expo/ui/swift-ui/modifiers'
 import * as c from '@frogpond/colors'
 import {FilterToolbar} from '@frogpond/filter'
-import {LoadingView, NoticeView} from '@frogpond/notice'
+import {LoadingView, NoticeView, listState} from '@frogpond/notice'
 import type {JobSummary} from '@frogpond/ccc-jobs'
+import {onlineManager} from '@tanstack/react-query'
 import {useRouter} from 'expo-router'
 import {DisclosureRow, type DisclosureRowImage} from '../../../components/rows'
 import {chosenAreaState} from './areas'
@@ -31,7 +32,7 @@ import {
 	visibleSections,
 	type ChosenJobFilters,
 } from './filters'
-import {jobRowDetail, listState} from './lib'
+import {jobRowDetail} from './lib'
 import {displayTitle} from './posting'
 import {useStudentWorkBoard} from './use-board'
 
@@ -94,7 +95,7 @@ type PostingsListProps = {
 export function PostingsList({searchQuery, initialChosen}: PostingsListProps): React.ReactNode {
 	let router = useRouter()
 	let {board, jobs, context, refresh} = useStudentWorkBoard()
-	let {data = [], error, isError, refetch, isLoading} = board
+	let {data = [], error, isError, refetch, isPending, isPaused} = board
 
 	// Only the narrowing the student asked for is state; the options on offer
 	// come from the postings, so a refetch can add or drop them.
@@ -122,10 +123,11 @@ export function PostingsList({searchQuery, initialChosen}: PostingsListProps): R
 	)
 
 	let state = listState({
+		hasData: jobs.length > 0,
 		isError,
-		isLoading,
-		isPaused: board.fetchStatus === 'paused',
-		hasPostings: jobs.length > 0,
+		isPending,
+		isPaused,
+		isOnline: onlineManager.isOnline(),
 	})
 
 	if (state === 'offline') {

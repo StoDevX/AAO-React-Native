@@ -1,14 +1,6 @@
 import * as React from 'react'
-import {useCallback, useState} from 'react'
-import {
-	Image,
-	ImageResolvedAssetSource,
-	ScrollView,
-	StyleSheet,
-	Text,
-	View,
-	useWindowDimensions,
-} from 'react-native'
+import {useCallback, useEffect, useState} from 'react'
+import {ScrollView, StyleSheet, Text, View, useWindowDimensions} from 'react-native'
 import {SafeAreaView} from 'react-native-safe-area-context'
 import noop from 'lodash/noop'
 import * as c from '@frogpond/colors'
@@ -16,10 +8,12 @@ import {callPhone} from '../../../components/call-phone'
 import {Row} from '@frogpond/layout'
 import {StreamPlayer} from './player'
 import type {HtmlAudioError, PlayState} from './types'
-import {theming} from './theme'
+import {theming, type RadioLogo} from './theme'
 import {ActionButton, CallButton, ShowCalendarButton} from './buttons'
 import {openUrl} from '@frogpond/open-url'
-import {useRouter} from 'expo-router'
+import {ScratchableLogo} from './scratchable-logo'
+import {useSwipeBackHold} from './swipe-back-hold'
+import {useNavigation, useRouter} from 'expo-router'
 
 // If you want to fix the inline player, switch to `true`
 const ALLOW_INLINE_PLAYER = false
@@ -29,13 +23,22 @@ type PlayButtonProps = {
 	onPlay: () => unknown
 	onPause: () => unknown
 	onLink: () => unknown
+	stationName: string
 }
 
 function PlayButton(props: PlayButtonProps): React.ReactNode {
-	const {state, onPlay, onPause, onLink} = props
+	const {state, onPlay, onPause, onLink, stationName} = props
 
 	if (!ALLOW_INLINE_PLAYER) {
-		return <ActionButton icon="globe" onPress={onLink} text="Open" />
+		return (
+			<ActionButton
+				accessibilityLabel={`Open ${stationName} website`}
+				accessibilityRole="link"
+				icon="globe"
+				onPress={onLink}
+				text="Open"
+			/>
+		)
 	}
 
 	switch (state) {
@@ -46,7 +49,7 @@ function PlayButton(props: PlayButtonProps): React.ReactNode {
 			return <ActionButton icon="ellipsis" onPress={onPause} text="Starting" />
 
 		case 'playing':
-			return <ActionButton icon="pause" onPress={onPlay} text="Pause" />
+			return <ActionButton icon="pause" onPress={onPause} text="Pause" />
 
 		default:
 			return <ActionButton icon="ladybug" onPress={noop} text="Error" />
@@ -54,7 +57,8 @@ function PlayButton(props: PlayButtonProps): React.ReactNode {
 }
 
 type Props = {
-	image: ImageResolvedAssetSource
+	/** The station's logos. With more than one, tapping the logo shows the next. */
+	logos: [RadioLogo, ...RadioLogo[]]
 	playerUrl: string
 	stationNumber: string
 	title: string
@@ -68,13 +72,62 @@ type Props = {
 }
 
 export function RadioControllerView(props: Props): React.ReactNode {
+	let {logos, ...screenProps} = props
+	// Always the first logo on arrival; a tap's choice lasts only while the
+	// screen is open.
+	let [logoIndex, setLogoIndex] = useState(0)
+	let logo = logos[logoIndex]
+	let showNextLogo =
+		logos.length > 1 ? () => setLogoIndex((index) => (index + 1) % logos.length) : undefined
+
+	return (
+		<theming.ThemeProvider theme={logo.theme}>
+			<RadioScreen {...screenProps} logo={logo} onPressLogo={showNextLogo} />
+		</theming.ThemeProvider>
+	)
+}
+
+type RadioScreenProps = Omit<Props, 'logos'> & {
+	logo: RadioLogo
+	onPressLogo?: () => void
+}
+
+function RadioScreen(props: RadioScreenProps): React.ReactNode {
 	const theme = theming.useTheme()
-	const {source, title, stationName, image, scheduleHref, stationNumber, playerUrl} = props
+	const {source, title, stationName, logo, onPressLogo, scheduleHref, stationNumber, playerUrl} =
+		props
 
 	let router = useRouter()
 
 	let [playState, setPlayState] = useState<PlayState>('paused')
 	let [streamError, setStreamError] = useState<HtmlAudioError | null>(null)
+	let [logoHeld, setLogoHeld] = useState(false)
+
+	// iOS 26 and later go back on a swipe from anywhere on the screen, which a
+	// scratch would set off. The stack holding these tabs owns that gesture;
+	// the left-edge swipe and the Back button still work.
+	let navigation = useNavigation()
+	let setSwipeBackEnabled = useCallback(
+		(enabled: boolean) => navigation.getParent()?.setOptions({fullScreenGestureEnabled: enabled}),
+		[navigation],
+	)
+	let swipeBack = useSwipeBackHold(setSwipeBackEnabled)
+	let {hold: holdSwipeBack, settle: settleSwipeBack} = swipeBack
+
+	// A new logo invites a scratch, so the swipe waits again.
+	useEffect(() => {
+		settleSwipeBack()
+	}, [logo.name, settleSwipeBack])
+
+	let handleLogoHeld = useCallback(
+		(held: boolean) => {
+			setLogoHeld(held)
+			if (held) {
+				holdSwipeBack()
+			}
+		},
+		[holdSwipeBack],
+	)
 
 	let play = () => {
 		setPlayState('checking')
@@ -135,11 +188,17 @@ export function RadioControllerView(props: Props): React.ReactNode {
 
 	let controlsBlock = (
 		<Row>
-			<PlayButton onLink={openStreamWebsite} onPause={pause} onPlay={play} state={playState} />
+			<PlayButton
+				onLink={openStreamWebsite}
+				onPause={pause}
+				onPlay={play}
+				state={playState}
+				stationName={stationName}
+			/>
 			<View style={styles.spacer} />
-			<CallButton onPress={callStation} />
+			<CallButton onPress={callStation} stationName={stationName} />
 			<View style={styles.spacer} />
-			<ShowCalendarButton onPress={openSchedule} />
+			<ShowCalendarButton onPress={openSchedule} stationName={stationName} />
 		</Row>
 	)
 
@@ -164,22 +223,30 @@ export function RadioControllerView(props: Props): React.ReactNode {
 	let sideways = width > height
 
 	let logoSmallestDimension = Math.min(width / 1.5, height / 1.75)
-	let logoSize = {
-		width: logoSmallestDimension,
-		height: logoSmallestDimension,
-	}
 
 	let root = [styles.root, sideways && landscape.root]
-	let logoBorderColor = {borderColor: theme.imageBorderColor}
-	let logoBg = {backgroundColor: theme.imageBackgroundColor}
-	let logo = [styles.logoBorder, logoSize, logoBorderColor, logoBg]
 	let logoWrapper = [styles.logoWrapper, sideways && landscape.logoWrapper]
 
 	return (
 		<SafeAreaView edges={['left', 'right']} style={styles.screen}>
-			<ScrollView contentContainerStyle={root} contentInsetAdjustmentBehavior="automatic">
+			<ScrollView
+				contentContainerStyle={root}
+				contentInsetAdjustmentBehavior="automatic"
+				scrollEnabled={!logoHeld}
+			>
 				<View style={logoWrapper}>
-					<Image resizeMode="contain" source={image} style={logo} />
+					<ScratchableLogo
+						key={logo.name}
+						accessibilityLabel={`${stationName} logo, ${logo.name}`}
+						image={logo.image}
+						onHeldChange={handleLogoHeld}
+						onSettle={settleSwipeBack}
+						onTap={onPressLogo}
+						playing={playState === 'playing'}
+						labelColor={logo.labelColor}
+						labelScale={logo.labelScale ?? 0.8}
+						size={logoSmallestDimension}
+					/>
 				</View>
 
 				<View style={styles.container}>
@@ -213,11 +280,6 @@ const styles = StyleSheet.create({
 		justifyContent: 'center',
 		flex: 1,
 	},
-	logoBorder: {
-		borderRadius: 6,
-		borderColor: c.systemBackground,
-		borderWidth: 3,
-	},
 	titleWrapper: {
 		alignItems: 'center',
 		marginBottom: 20,
@@ -247,7 +309,7 @@ const styles = StyleSheet.create({
 		display: 'none',
 	},
 	spacer: {
-		width: 5,
+		width: 8,
 	},
 })
 

@@ -2,17 +2,29 @@ import {Linking} from 'react-native'
 import * as WebBrowser from 'expo-web-browser'
 import * as storage from '../../source/lib/storage'
 
-function genericOpen(url: string): Promise<boolean> {
-	return Linking.canOpenURL(url)
-		.then((isSupported) => {
-			if (!isSupported) {
-				console.warn('cannot handle', url)
-			}
-			return Linking.openURL(url)
-		})
-		.catch((err) => {
-			console.error(err)
-		})
+/** Hands `url` to iOS, resolving to whether anything opened it. */
+async function genericOpen(url: string): Promise<boolean> {
+	try {
+		return (await Linking.openURL(url)) !== false
+	} catch (err) {
+		console.error(err)
+		return false
+	}
+}
+
+/**
+ * Whether the device has an app for `url`, such as a phone for `tel:`.
+ *
+ * iOS answers no for a scheme missing from `LSApplicationQueriesSchemes` in
+ * app.config.ts, and React Native turns that answer into a rejection, which
+ * this also reads as no.
+ */
+export async function hasAppFor(url: string): Promise<boolean> {
+	try {
+		return await Linking.canOpenURL(url)
+	} catch {
+		return false
+	}
 }
 
 async function launchBrowser(url: string): Promise<boolean> {

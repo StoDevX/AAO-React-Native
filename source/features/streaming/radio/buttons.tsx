@@ -9,18 +9,28 @@ import {theming} from './theme'
 type ActionButtonProps = {
 	icon: SFSymbol
 	text: string
+	/** What VoiceOver reads; defaults to the visible text. */
+	accessibilityLabel?: string
+	/** A button that leaves the app reads as a link. */
+	accessibilityRole?: 'button' | 'link'
 	onPress: () => unknown
 }
 
 export function ActionButton(props: ActionButtonProps): React.ReactNode {
 	let theme = theming.useTheme()
-	let {icon, text, onPress} = props
+	let {icon, text, accessibilityLabel = text, accessibilityRole = 'button', onPress} = props
 	let bg = {backgroundColor: theme.tintColor}
 	let fg = {color: theme.buttonTextColor}
 	let style = [styles.button, styles.largeButton, bg]
 
 	return (
-		<Touchable highlight={false} onPress={onPress} style={style}>
+		<Touchable
+			accessibilityLabel={accessibilityLabel}
+			accessibilityRole={accessibilityRole}
+			highlight={false}
+			onPress={onPress}
+			style={style}
+		>
 			<View style={styles.wrapper}>
 				<SymbolView name={icon} size={30} tintColor={theme.buttonTextColor} />
 				<Text style={[styles.action, fg]}>{text}</Text>
@@ -29,32 +39,53 @@ export function ActionButton(props: ActionButtonProps): React.ReactNode {
 	)
 }
 
-type CallButtonProps = {
+type StationButtonProps = {
+	stationName: string
 	onPress: () => unknown
 }
 
-export function CallButton({onPress}: CallButtonProps): React.ReactNode {
-	return <SmallActionButton icon="phone.fill" onPress={onPress} />
+export function CallButton({stationName, onPress}: StationButtonProps): React.ReactNode {
+	return (
+		<SmallActionButton
+			accessibilityLabel={`Call ${stationName}`}
+			icon="phone.fill"
+			onPress={onPress}
+		/>
+	)
 }
 
-type ShowCalendarButtonProps = {
-	onPress: () => unknown
+export function ShowCalendarButton({stationName, onPress}: StationButtonProps): React.ReactNode {
+	return (
+		<SmallActionButton
+			accessibilityLabel={`${stationName} schedule`}
+			icon="calendar"
+			onPress={onPress}
+		/>
+	)
 }
 
-export function ShowCalendarButton({onPress}: ShowCalendarButtonProps): React.ReactNode {
-	return <SmallActionButton icon="calendar" onPress={onPress} />
+/** An icon with no text, so VoiceOver has only the label to go on. */
+type SmallActionButtonProps = Omit<
+	ActionButtonProps,
+	'text' | 'accessibilityLabel' | 'accessibilityRole'
+> & {
+	accessibilityLabel: string
 }
-
-type SmallActionButtonProps = Omit<ActionButtonProps, 'text'>
 
 export function SmallActionButton(props: SmallActionButtonProps): React.ReactNode {
 	let theme = theming.useTheme()
-	let {icon, onPress} = props
+	let {icon, accessibilityLabel, onPress} = props
 	let bg = {backgroundColor: theme.tintColor}
 	let style = [styles.button, styles.smallButton, bg]
 
 	return (
-		<Touchable highlight={false} onPress={onPress} style={style}>
+		<Touchable
+			accessibilityLabel={accessibilityLabel}
+			accessibilityRole="button"
+			highlight={false}
+			onPress={onPress}
+			style={style}
+		>
 			<SymbolView name={icon} size={30} tintColor={theme.buttonTextColor} />
 		</Touchable>
 	)
@@ -63,6 +94,8 @@ export function SmallActionButton(props: SmallActionButtonProps): React.ReactNod
 const styles = StyleSheet.create({
 	button: {
 		alignItems: 'center',
+		justifyContent: 'center',
+		minHeight: 44,
 		paddingVertical: 5,
 		borderRadius: 8,
 		overflow: 'hidden',

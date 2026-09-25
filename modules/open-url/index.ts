@@ -1,1 +1,1 @@
-export {openUrl, trackedOpenUrl, canOpenUrl} from './open-url'
+export {openUrl, trackedOpenUrl, canOpenUrl, hasAppFor} from './open-url'
