@@ -3,8 +3,9 @@ import {Linking, Share, StyleSheet, useWindowDimensions} from 'react-native'
 import {Stack} from 'expo-router'
 import {Divider, Host, LazyVStack, ScrollView} from '@expo/ui/swift-ui'
 import {background, padding} from '@expo/ui/swift-ui/modifiers'
-import {NoticeView} from '@frogpond/notice'
+import {LoadingView, NoticeView} from '@frogpond/notice'
 import {useQuery} from '@tanstack/react-query'
+import {useSafeAreaInsets} from 'react-native-safe-area-context'
 import {AuthorCard} from './author-card'
 import {paper} from './palette'
 import {messFeedOptions} from './query'
@@ -20,17 +21,30 @@ type Props = {id: number}
 /** A Mess story, set as a broadsheet page. */
 export function StoryScreen({id}: Props): React.ReactNode {
 	let {width} = useWindowDimensions()
-	let columnWidth = width - COLUMN_MARGIN * 2
-	let story = useQuery({
+	let insets = useSafeAreaInsets()
+	// The scroll view's content sits inside the side safe areas, which landscape widens.
+	let columnWidth = width - insets.left - insets.right - COLUMN_MARGIN * 2
+	let query = useQuery({
 		...messFeedOptions,
 		select: (stories) => stories.find((s) => s.id === id),
-	}).data
+	})
+	let story = query.data
 
 	if (!story) {
 		return (
 			<>
 				<Stack.Screen options={{title: ''}} />
-				<NoticeView text="Story unavailable" />
+				{query.isPending ? (
+					<LoadingView />
+				) : query.isLoadingError ? (
+					<NoticeView
+						buttonText="Try Again"
+						onPress={() => query.refetch()}
+						text={`A problem occured while loading: ${query.error}`}
+					/>
+				) : (
+					<NoticeView text="Story unavailable" />
+				)}
 			</>
 		)
 	}

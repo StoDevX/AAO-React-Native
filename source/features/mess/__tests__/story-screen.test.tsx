@@ -3,6 +3,7 @@ import {afterEach, beforeEach, describe, expect, jest, test} from '@jest/globals
 import {fireEvent, render, screen} from '@testing-library/react-native'
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query'
 import {openUrl} from '@frogpond/open-url'
+import {fetchManifest, fetchSourceBody, type Jrd} from '@frogpond/data-sources'
 
 import {StoryScreen} from '../story-screen'
 import {messKeys} from '../query'
@@ -20,11 +21,28 @@ jest.mock('@react-native-community/netinfo', () =>
 	// oxlint-disable-next-line typescript/no-require-imports
 	require('@react-native-community/netinfo/jest/netinfo-mock'),
 )
+// The library's own stand-in: zero insets, where the real hook needs a native provider.
+jest.mock(
+	'react-native-safe-area-context',
+	() =>
+		// oxlint-disable-next-line typescript/no-require-imports
+		require('react-native-safe-area-context/jest/mock').default,
+)
 jest.mock('expo-router', () =>
 	// oxlint-disable-next-line typescript/no-require-imports
 	require('../../../testing/expo-router-mock'),
 )
 jest.mock('@frogpond/open-url', () => ({openUrl: jest.fn()}))
+
+// The feed's fetches, so an uncached feed never reaches a network Jest does not have.
+jest.mock('@frogpond/data-sources', () => ({
+	...(jest.requireActual('@frogpond/data-sources') as object),
+	fetchManifest: jest.fn(),
+	fetchSourceBody: jest.fn(),
+}))
+
+const mockManifest = fetchManifest as jest.Mock<() => Promise<Jrd>>
+const mockBody = fetchSourceBody as jest.Mock<(href: string) => Promise<unknown>>
 
 const STORY: MessStory = {
 	id: 36911,
@@ -86,6 +104,25 @@ describe('StoryScreen', () => {
 	test('says a story is unavailable when it is not in the feed', async () => {
 		await renderStory(1)
 		expect(screen.getByText('Story unavailable')).toBeTruthy()
+	})
+
+	test('shows the loading view while the feed is on its way', async () => {
+		queryClient.removeQueries({queryKey: messKeys.feed})
+		mockManifest.mockReturnValue(new Promise(() => undefined))
+		await renderStory(36911)
+
+		expect(screen.getByText('Loading…')).toBeTruthy()
+		expect(screen.queryByText('Story unavailable')).toBeNull()
+	})
+
+	test('offers Try Again when the feed fails', async () => {
+		queryClient.removeQueries({queryKey: messKeys.feed})
+		mockManifest.mockResolvedValue({links: []} as unknown as Jrd)
+		mockBody.mockRejectedValue(new Error('offline'))
+		await renderStory(36911)
+
+		expect(await screen.findByText('Try Again')).toBeTruthy()
+		expect(screen.queryByText('Story unavailable')).toBeNull()
 	})
 
 	test('says a story is unavailable when the id is not a number', async () => {

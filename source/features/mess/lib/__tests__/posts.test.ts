@@ -89,6 +89,15 @@ describe('parseMessPosts', () => {
 		expect(parseMessPosts([withWhiteLogo], categories)[0]?.photo).toBeNull()
 	})
 
+	it.each([
+		['width', {width: 0, height: 1334}],
+		['height', {width: 2001, height: 0}],
+	])('gives a photo with no %s no photo, since it has no aspect ratio', (_side, size) => {
+		let unsized = structuredClone(posts[0])
+		unsized._embedded['wp:featuredmedia'][0].media_details = size
+		expect(parseMessPosts([unsized], categories)[0]?.photo).toBeNull()
+	})
+
 	it('gives a post without featured media no photo', () => {
 		expect(byId(36843)?.photo).toBeNull()
 	})

@@ -104,15 +104,19 @@ function bylinesOf(post: Post): Byline[] {
 	})
 }
 
-/** The story's featured photo, or null when it has none or it is the Mess logo. */
+/** The story's featured photo, or null when it has none, has no size, or is the Mess logo. */
 function photoOf(post: Post): MessStory['photo'] {
 	if (post.featured_media === 0 || MESS_LOGO_MEDIA_IDS.has(post.featured_media)) return null
 	let media = MediaSchema.safeParse(post._embedded?.['wp:featuredmedia']?.[0])
 	if (!media.success) return null
+	let {width, height} = media.data.media_details
+	// WordPress reports 0 for a size it does not know, such as an SVG's, and a
+	// zero size gives no aspect ratio to frame the photo by.
+	if (!(width > 0 && height > 0)) return null
 	return {
 		url: media.data.source_url,
-		width: media.data.media_details.width,
-		height: media.data.media_details.height,
+		width,
+		height,
 		caption: fastGetTrimmedText(media.data.caption?.rendered ?? ''),
 	}
 }

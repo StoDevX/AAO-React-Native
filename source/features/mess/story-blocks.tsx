@@ -3,6 +3,7 @@ import {Button, HStack, Image, Text, VStack} from '@expo/ui/swift-ui'
 import {
 	accessibilityLabel,
 	buttonStyle,
+	controlSize,
 	font,
 	foregroundStyle,
 	italic,
@@ -49,7 +50,7 @@ type SiteLinkProps = {
 export function SiteLinkCard({icon, label, url}: SiteLinkProps): React.ReactNode {
 	return (
 		<Button
-			modifiers={[buttonStyle('bordered'), accessibilityLabel(label)]}
+			modifiers={[buttonStyle('bordered'), controlSize('large'), accessibilityLabel(label)]}
 			onPress={() => openUrl(url)}
 		>
 			<HStack spacing={8}>
