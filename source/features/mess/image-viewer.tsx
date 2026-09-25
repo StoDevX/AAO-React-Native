@@ -25,13 +25,12 @@ import {
 import {useSafeAreaInsets} from 'react-native-safe-area-context'
 import {useDismissOnce} from '../../lib/use-dismiss-once'
 import {imageLabel} from './lib/byline'
+import {doubleTapZoom} from './lib/zoom'
 import {StoryLookupNotice} from './story-lookup-notice'
 import {useMessStory} from './use-mess-story'
 
 /** Apple's smallest comfortable tap target, in points. */
 const TAP_TARGET = 44
-/** How far a double tap zooms in. */
-const DOUBLE_TAP_SCALE = 2.5
 /** The longest gap between two taps that still makes a double tap, in milliseconds. */
 const DOUBLE_TAP_MS = 300
 
@@ -65,7 +64,8 @@ export function ImageViewer({id}: Props): React.ReactNode {
 	let image = story?.layout.kind === 'image' ? story.layout.image : null
 
 	let scrollView = React.useRef<ScrollView>(null)
-	// The scroll view zooms itself on a pinch, so its scale is read back from its scroll events.
+	// The scroll view zooms itself on a pinch, so its scale is read back from its scroll events,
+	// which React Native sends for every frame of a zoom at a throttle of one frame or less.
 	let scale = React.useRef(1)
 	let lastTap = React.useRef(0)
 
@@ -80,21 +80,13 @@ export function ImageViewer({id}: Props): React.ReactNode {
 			lastTap.current = isDoubleTap ? 0 : now
 			if (!isDoubleTap) return
 
-			if (scale.current > 1) {
-				scrollView.current?.scrollResponderZoomTo({x: 0, y: 0, width, height, animated: true})
-				return
-			}
-			// Zoom in on the point tapped, which the image's own coordinates give at any scale.
+			// The point tapped, in the image's own coordinates, which hold at any scale.
 			let {locationX, locationY} = event.nativeEvent
-			let zoomedWidth = width / DOUBLE_TAP_SCALE
-			let zoomedHeight = height / DOUBLE_TAP_SCALE
-			scrollView.current?.scrollResponderZoomTo({
-				x: locationX - zoomedWidth / 2,
-				y: locationY - zoomedHeight / 2,
-				width: zoomedWidth,
-				height: zoomedHeight,
-				animated: true,
-			})
+			let zoom = doubleTapZoom(scale.current, {x: locationX, y: locationY}, {width, height})
+			scrollView.current?.scrollResponderZoomTo({...zoom.rect, animated: true})
+			// Where the zoom will land, so a double tap before its scroll events arrive still
+			// knows which way to go.
+			scale.current = zoom.scale
 		},
 		[width, height],
 	)
