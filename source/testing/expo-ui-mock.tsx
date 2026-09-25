@@ -440,7 +440,7 @@ export function Text({
 }
 
 /**
- * The patch's `HangingText` draws one Markdown string through a `UILabel`, and
+ * The patch's `HangingText` draws one Markdown string through a `UITextView`, and
  * takes that string as its only child -- anything else is a type error on the
  * real component, so the stand-in rejects it too. Like `Text`, it prints the
  * Markdown source, and its host text carries the `modifiers` it was given.
