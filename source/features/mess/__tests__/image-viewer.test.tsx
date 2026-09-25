@@ -92,6 +92,18 @@ describe('ImageViewer', () => {
 		expect(mockGoBack).toHaveBeenCalledTimes(1)
 	})
 
+	test('closes on the VoiceOver escape gesture', async () => {
+		await renderViewer(36819)
+
+		// The gesture is handled by the page, so it closes from anywhere in the viewer.
+		fireEvent(
+			screen.getByRole('image', {name: 'Mouse Friends: sunsets of life, by Juliet Stouffer'}),
+			'accessibilityEscape',
+		)
+
+		expect(mockGoBack).toHaveBeenCalledTimes(1)
+	})
+
 	test('says the image is unavailable for a story without one, and can still close', async () => {
 		await renderViewer(36911)
 

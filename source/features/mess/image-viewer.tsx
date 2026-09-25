@@ -129,7 +129,8 @@ export function ImageViewer({id}: Props): React.ReactNode {
 	}
 
 	return (
-		<View style={styles.page}>
+		// The page takes VoiceOver's escape gesture, a two-finger scrub, as Close.
+		<View onAccessibilityEscape={close} style={styles.page}>
 			{content}
 			<View
 				pointerEvents="box-none"
