@@ -297,7 +297,7 @@ struct CarletonMapScreen: Screen {
 	}
 
 	/// A move is a change of at least a hundred points: the collapsed stop
-	/// renders at about 65pt, the middle stop at `SHEET_RESTING_FRACTION` of
+	/// renders at about 65pt, the middle stop at `MAP_MIDDLE_FRACTION` of
 	/// the screen, and large at nearly all of it, so anything smaller is a
 	/// scroll or a wobble, not a detent change.
 	@discardableResult
@@ -488,16 +488,17 @@ struct CarletonMapScreen: Screen {
 			"The collapsed card should hold the whole \(name), not clip it: \(name) \(box), sheet \(sheet)")
 	}
 
-	/// The middle stop is `SHEET_RESTING_FRACTION` (0.68) of the window, so the
-	/// card's top lands about a third of the way down. A top in the band from
-	/// a fifth to a half of the screen is at it: higher is `large`, lower is
-	/// still collapsed.
+	/// The middle stop is `MAP_MIDDLE_FRACTION` (0.463, Apple Maps' stop) of
+	/// the window less its top inset, so the card's close button lands a little
+	/// past halfway down (about 0.57 of an iPhone 17 Pro's window). A top in the
+	/// band from 0.35 to 0.75 of the screen is at it: higher is `large`, lower
+	/// is still collapsed.
 	@discardableResult
 	func verifyCardAtMedium() -> Self {
 		let top = closeButtonTop()
 		let height = app.windows.firstMatch.frame.height
 		XCTAssertTrue(
-			top > height * 0.2 && top < height * 0.5,
+			top > height * 0.35 && top < height * 0.75,
 			"The card should be at the middle stop; its top is at \(top) of \(height)")
 		return self
 	}

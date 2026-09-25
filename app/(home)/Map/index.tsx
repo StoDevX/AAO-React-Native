@@ -29,7 +29,6 @@ import {parseCampus} from '../../../source/features/building-hours/query'
 import type {Campus} from '../../../source/features/building-hours/types'
 import {BuildingInfo} from '../../../source/features/map/building-info'
 import {BuildingPicker} from '../../../source/features/map/building-picker'
-import {SHEET_RESTING_FRACTION} from '../../../source/lib/constants'
 import {sheetHeightFor} from '../../../source/features/map/lib/sheet-height'
 import {toBuildingFootprints} from '../../../source/features/map/lib/building-footprints'
 import {
@@ -92,9 +91,12 @@ const ATTRIBUTION_POSITION = {top: 8, right: 8}
 const SHEET_COLLAPSED_HEIGHT = 76
 const COLLAPSED_DETENT: PresentationDetent = {height: SHEET_COLLAPSED_HEIGHT}
 
-/// A fraction rather than UIKit's own `medium`, which is exactly a half and
-/// leaves the list feeling cut off at the point most people stop dragging.
-const MIDDLE_DETENT: PresentationDetent = {fraction: SHEET_RESTING_FRACTION}
+/// Apple Maps' middle stop for a place card, as a fraction of the height the
+/// sheet is allowed: its grabber and ours sit at the same height on an
+/// iPhone 17 Pro simulator running iOS 27. Lower than the app's other detail
+/// sheets (`SHEET_RESTING_FRACTION`), because this sheet copies Maps' card.
+const MAP_MIDDLE_FRACTION = 0.463
+const MIDDLE_DETENT: PresentationDetent = {fraction: MAP_MIDDLE_FRACTION}
 const SHEET_DETENTS: PresentationDetent[] = [COLLAPSED_DETENT, MIDDLE_DETENT, 'large']
 
 /// The rules speak in names; the modifier speaks in detents. The rules' middle
