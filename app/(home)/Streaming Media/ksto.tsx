@@ -1,5 +1,4 @@
 import * as React from 'react'
-import tinycolor from 'tinycolor2'
 import * as logos from '../../../images/streaming'
 import {RadioControllerView} from '../../../source/features/streaming/radio'
 import {tintedTheme} from '../../../source/features/streaming/radio/theme'
@@ -12,27 +11,41 @@ import {tintedTheme} from '../../../source/features/streaming/radio/theme'
 const COW_TINT = '#685393'
 const WORDMARK_TINT = '#5a52b0'
 const DUMPSTER_TINT = '#2a7d68'
-/**
- * The slate of the record's label, #494e73, lightened just enough to clear
- * 3:1 against black.
- */
-const RECORD_TINT = '#525881'
+/** The narwhal's slate, #494e73, lightened just enough to clear 3:1 against black. */
+const NARWHAL_TINT = '#525881'
 
 export default function KstoPage(): React.ReactNode {
 	return (
 		<RadioControllerView
 			logos={[
-				{name: 'cow badge', image: logos.ksto, theme: tintedTheme(COW_TINT)},
-				{name: 'wordmark', image: logos.kstoWordmark, theme: tintedTheme(WORDMARK_TINT)},
+				{
+					name: 'cow badge',
+					image: logos.ksto,
+					theme: tintedTheme(COW_TINT),
+					labelColor: '#e4d7f2',
+					labelScale: 0.86,
+				},
+				{
+					name: 'wordmark',
+					image: logos.kstoWordmark,
+					theme: tintedTheme(WORDMARK_TINT),
+					labelColor: '#e8e0ef',
+					labelScale: 1,
+				},
 				{
 					name: 'dumpster fire',
 					image: logos.kstoDumpster,
-					theme: tintedTheme(
-						DUMPSTER_TINT,
-						tinycolor(DUMPSTER_TINT).complement().setAlpha(0.2).toRgbString(),
-					),
+					theme: tintedTheme(DUMPSTER_TINT),
+					labelColor: '#e5d4d9',
+					labelScale: 0.72,
 				},
-				{name: 'record', image: logos.kstoRecord, theme: tintedTheme(RECORD_TINT), record: true},
+				{
+					name: 'narwhal',
+					image: logos.kstoNarwhal,
+					theme: tintedTheme(NARWHAL_TINT),
+					labelColor: '#494e73',
+					labelScale: 1,
+				},
 			]}
 			playerUrl="https://www.stolaf.edu/multimedia/play/embed/ksto.html"
 			scheduleHref="/KSTOSchedule"

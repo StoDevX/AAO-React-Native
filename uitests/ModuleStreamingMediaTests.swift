@@ -25,7 +25,7 @@ class ModuleStreamingMediaTests: UITestCase {
 			.checkLogoCycles(TestIdentifiers.StreamingMedia.kstoLogos)
 	}
 
-	func testKstoRecordScrubKeepsTheRecord() throws {
+	func testKstoScratchKeepsTheLogo() throws {
 		let logos = TestIdentifiers.StreamingMedia.kstoLogos
 		StreamingMediaScreen(app: app)
 			.navigate()

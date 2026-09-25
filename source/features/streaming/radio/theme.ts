@@ -7,8 +7,6 @@ export type PlayerTheme = {
 	tintColor?: string
 	buttonTextColor?: string
 	textColor?: ColorValue
-	imageBorderColor?: string
-	imageBackgroundColor?: string
 }
 
 /** One of a station's logos, and the colours its screen takes while it shows. */
@@ -17,8 +15,10 @@ export type RadioLogo = {
 	name: string
 	image: ImageResolvedAssetSource
 	theme: PlayerTheme
-	/** A record: drawn with a rim, and turning on its own while the stream plays. */
-	record?: boolean
+	/** The paper of the record's centre label, behind the logo. */
+	labelColor: string
+	/** How much of the label's width the logo takes; 0.8 when unset. */
+	labelScale?: number
 }
 
 /**
@@ -27,13 +27,11 @@ export type RadioLogo = {
  * take it too in light mode, and turn white in Dark Mode, where a tint dark
  * enough for white button text reads dimly against black.
  */
-export function tintedTheme(tintColor: string, imageBackgroundColor = 'transparent'): PlayerTheme {
+export function tintedTheme(tintColor: string): PlayerTheme {
 	return {
 		tintColor,
 		buttonTextColor: tinycolor.mostReadable(tintColor, [c.white, c.black]).toRgbString(),
 		textColor: DynamicColorIOS({light: tintColor, dark: c.white}),
-		imageBorderColor: 'transparent',
-		imageBackgroundColor,
 	}
 }
 
@@ -41,8 +39,6 @@ const defaultTheme: PlayerTheme = {
 	tintColor: '#000',
 	buttonTextColor: '#fff',
 	textColor: '#000',
-	imageBorderColor: '#000',
-	imageBackgroundColor: 'transparent',
 }
 
 export const theming = createTheming<PlayerTheme>(defaultTheme)

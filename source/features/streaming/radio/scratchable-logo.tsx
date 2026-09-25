@@ -2,9 +2,8 @@ import * as React from 'react'
 import {useCallback, useEffect, useRef} from 'react'
 import {
 	GestureResponderEvent,
+	Image,
 	ImageResolvedAssetSource,
-	ImageStyle,
-	StyleProp,
 	StyleSheet,
 	View,
 } from 'react-native'
@@ -21,6 +20,7 @@ import Animated, {
 } from 'react-native-reanimated'
 import {scheduleOnRN} from 'react-native-worklets'
 import * as c from '@frogpond/colors'
+import * as logos from '../../../../images/streaming'
 
 import {
 	angleAround,
@@ -33,16 +33,23 @@ import {
 /** How far a pressed logo shrinks: about 4pt across a 268pt logo. */
 const PRESSED_SCALE = 0.985
 
+/** The centre label's share of the record's width, near a 7-inch single's. */
+const LABEL_SIZE = 0.55
+
 /** One turn every 2.4 seconds, the speed of the record in KSTO's own 2017 app. */
 const MS_PER_TURN = 2400
 const DEGREES_PER_SECOND = 360 / (MS_PER_TURN / 1000)
 
 type Props = {
+	/** The logo, drawn on the record's centre label. */
 	image: ImageResolvedAssetSource
-	style: StyleProp<ImageStyle>
+	labelColor: string
+	/** How much of the label's width the logo takes. */
+	labelScale: number
+	/** The record's width and height, in points. */
+	size: number
 	accessibilityLabel: string
-	/** A record, drawn with a rim, which turns on its own while `playing`. */
-	record: boolean
+	/** Turns the record on its own, unless Reduce Motion is on. */
 	playing: boolean
 	onTap?: () => void
 	/**
@@ -55,15 +62,16 @@ type Props = {
 }
 
 /**
- * A logo a finger can scratch like a record: dragging turns it around its
- * centre, and a touch that barely moves is a tap. Let go mid-turn and it keeps
- * turning, slowing to a stop, or for a record to its usual speed while the
+ * A logo on the label of a record a finger can scratch: dragging turns it
+ * around its centre, and a touch that barely moves is a tap. Let go mid-turn
+ * and it keeps turning, slowing to a stop, or to its usual speed while the
  * stream plays.
  */
 export function ScratchableLogo(props: Props): React.ReactNode {
-	let {image, style, accessibilityLabel, record, playing, onTap, onHeldChange, onSettle} = props
+	let {image, labelColor, labelScale, size, accessibilityLabel, playing} = props
+	let {onTap, onHeldChange, onSettle} = props
 	let reduceMotion = useReducedMotion()
-	let spins = record && playing && !reduceMotion
+	let spins = playing && !reduceMotion
 
 	// The logo's angle is its steady spin plus what scratching has added, so a
 	// fling can ease back into the spin rather than stopping first.
@@ -188,19 +196,38 @@ export function ScratchableLogo(props: Props): React.ReactNode {
 			onResponderTerminationRequest={() => false}
 			onStartShouldSetResponder={() => true}
 		>
-			<Animated.Image
-				resizeMode="contain"
-				source={image}
-				style={[style, record && styles.rim, turned]}
-			/>
+			<Animated.View style={[{width: size, height: size}, turned]}>
+				<Image source={logos.vinyl} style={styles.disc} />
+				<View style={[styles.label, {backgroundColor: labelColor}]}>
+					<Image
+						resizeMode="contain"
+						source={image}
+						style={{width: `${labelScale * 100}%`, height: `${labelScale * 100}%`}}
+					/>
+				</View>
+			</Animated.View>
 		</View>
 	)
 }
 
 const styles = StyleSheet.create({
+	label: {
+		position: 'absolute',
+		top: `${((1 - LABEL_SIZE) / 2) * 100}%`,
+		left: `${((1 - LABEL_SIZE) / 2) * 100}%`,
+		width: `${LABEL_SIZE * 100}%`,
+		height: `${LABEL_SIZE * 100}%`,
+		borderRadius: 9999,
+		overflow: 'hidden',
+		alignItems: 'center',
+		justifyContent: 'center',
+	},
 	// The vinyl is nearly black, so without a rim its edge disappears against
-	// Dark Mode's background.
-	rim: {
+	// Dark Mode's background. The size is explicit because an image source
+	// carries its own, which would otherwise win over the fill.
+	disc: {
+		width: '100%',
+		height: '100%',
 		borderRadius: 9999,
 		borderColor: c.systemGray4,
 		borderWidth: 1,

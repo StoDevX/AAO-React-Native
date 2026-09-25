@@ -14,6 +14,7 @@ export default function KrlxPage(): React.ReactNode {
 					// it is 3.8:1 against Dark Mode's black, so the buttons stand out
 					// in both modes.
 					theme: tintedTheme('#8a529e'),
+					labelColor: '#f6f1e4',
 				},
 			]}
 			playerUrl="https://live.krlx.org"

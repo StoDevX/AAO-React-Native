@@ -549,7 +549,7 @@ struct TestIdentifiers {
 			"KSTO 93.1 FM logo, cow badge",
 			"KSTO 93.1 FM logo, wordmark",
 			"KSTO 93.1 FM logo, dumpster fire",
-			"KSTO 93.1 FM logo, record",
+			"KSTO 93.1 FM logo, narwhal",
 		]
 	}
 

@@ -223,15 +223,8 @@ function RadioScreen(props: RadioScreenProps): React.ReactNode {
 	let sideways = width > height
 
 	let logoSmallestDimension = Math.min(width / 1.5, height / 1.75)
-	let logoSize = {
-		width: logoSmallestDimension,
-		height: logoSmallestDimension,
-	}
 
 	let root = [styles.root, sideways && landscape.root]
-	let logoBorderColor = {borderColor: theme.imageBorderColor}
-	let logoBg = {backgroundColor: theme.imageBackgroundColor}
-	let logoStyle = [styles.logoBorder, logoSize, logoBorderColor, logoBg]
 	let logoWrapper = [styles.logoWrapper, sideways && landscape.logoWrapper]
 
 	return (
@@ -250,8 +243,9 @@ function RadioScreen(props: RadioScreenProps): React.ReactNode {
 						onSettle={settleSwipeBack}
 						onTap={onPressLogo}
 						playing={playState === 'playing'}
-						record={logo.record ?? false}
-						style={logoStyle}
+						labelColor={logo.labelColor}
+						labelScale={logo.labelScale ?? 0.8}
+						size={logoSmallestDimension}
 					/>
 				</View>
 
@@ -285,11 +279,6 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		justifyContent: 'center',
 		flex: 1,
-	},
-	logoBorder: {
-		borderRadius: 6,
-		borderColor: c.systemBackground,
-		borderWidth: 3,
 	},
 	titleWrapper: {
 		alignItems: 'center',
