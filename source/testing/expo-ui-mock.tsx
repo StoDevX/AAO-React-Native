@@ -625,9 +625,35 @@ export function HStack({
 
 export function VStack({
 	children,
+	modifiers,
 	testID,
 }: WithModifiers & {alignment?: string; spacing?: number; testID?: string}): React.ReactNode {
-	return <View testID={testID}>{children}</View>
+	let handler = modifierOf(modifiers, 'onAppear')?.handler as (() => void) | undefined
+	let identity = modifierOf(modifiers, 'id')?.id
+	// SwiftUI builds a new view for a new id, so the stack remounts, and appears again, when it changes.
+	return (
+		<Appearing key={String(identity)} onAppear={handler}>
+			<View testID={testID}>{children}</View>
+		</Appearing>
+	)
+}
+
+/**
+ * Calls `onAppear` once, when it mounts, as SwiftUI's modifier does when the
+ * view it is on is first built. The latest handler is the one called.
+ */
+function Appearing({
+	children,
+	onAppear,
+}: {
+	children: React.ReactNode
+	onAppear?: () => void
+}): React.ReactNode {
+	let appear = React.useEffectEvent(() => onAppear?.())
+	React.useEffect(() => {
+		appear()
+	}, [])
+	return children
 }
 
 /**

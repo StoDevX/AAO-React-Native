@@ -11,6 +11,7 @@ import {
 	foregroundStyle,
 	frame,
 	id,
+	onAppear,
 	shapes,
 } from '@expo/ui/swift-ui/modifiers'
 import {RowAccessory} from '../../components/rows'
@@ -70,19 +71,20 @@ type Props = {
 export function HoroscopesView({layout, scrollTo}: Props): React.ReactNode {
 	let lastSign = useMessStore((state) => state.lastSign)
 	let setSign = useMessStore((state) => state.setSign)
-	// A sign the reader has just picked. Its section only carries the sign's id once it
-	// has been drawn, so the scroll waits for the render that follows the pick.
-	let pendingScroll = React.useRef<ZodiacSign | null>(null)
+	// A sign the reader has just picked. SwiftUI ignores a scroll to an id it has not yet
+	// built, and a React effect can run before the native view carrying the new sign's id
+	// exists, so the scroll waits for that view's own onAppear.
+	let [pendingScroll, setPendingScroll] = React.useState<ZodiacSign | null>(null)
 
-	React.useEffect(() => {
-		if (pendingScroll.current === null) return
-		scrollTo(pendingScroll.current)
-		pendingScroll.current = null
-	}, [lastSign, scrollTo])
+	let scrollToPicked = () => {
+		if (pendingScroll === null) return
+		scrollTo(pendingScroll)
+		setPendingScroll(null)
+	}
 
 	let choose = (sign: ZodiacSign) => {
 		if (sign === lastSign) return
-		pendingScroll.current = sign
+		setPendingScroll(sign)
 		setSign(sign)
 	}
 
@@ -105,7 +107,12 @@ export function HoroscopesView({layout, scrollTo}: Props): React.ReactNode {
 	return (
 		<>
 			{intro}
-			<VStack alignment="leading" modifiers={[id(chosen.sign)]} spacing={10}>
+			<VStack
+				alignment="leading"
+				// A new id is a new view to SwiftUI, so this appears again for each sign picked.
+				modifiers={[id(chosen.sign), onAppear(scrollToPicked)]}
+				spacing={10}
+			>
 				<GlyphGrid chosen={chosen.sign} onChoose={choose} />
 				<Text modifiers={LARGE_GLYPH}>{SIGN_GLYPHS[chosen.sign]}</Text>
 				<VStack alignment="leading" spacing={2}>
