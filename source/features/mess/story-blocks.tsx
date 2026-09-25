@@ -19,7 +19,7 @@ import {faded, ink, messRed} from './palette'
 import {RemotePhoto} from './remote-photo'
 import type {Block, Run} from './types'
 
-const BODY_ID = 'mess-story-body'
+export const BODY_ID = 'mess-story-body'
 const BODY = [font({textStyle: 'body', design: 'serif'}), foregroundStyle(ink)]
 /** Body text that can hold a link, which SwiftUI draws in the tint colour. */
 const PROSE = [...BODY, tint(messRed), accessibilityIdentifier(BODY_ID)]

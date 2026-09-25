@@ -14,6 +14,22 @@ export function bylineText(bylines: Byline[]): string | null {
 	return names ? `By ${names}` : null
 }
 
+/** The day a story ran, spelled out: "April 29, 2026". */
+export function bylineDate(published: string): string {
+	return new Date(published).toLocaleDateString('en-US', {
+		month: 'long',
+		day: 'numeric',
+		year: 'numeric',
+	})
+}
+
+/** The writers and the date on one line, as a quieter page credits them: "A and B · April 29, 2026". */
+export function creditLine(story: Pick<MessStory, 'bylines' | 'published'>): string {
+	let names = writerNames(story.bylines)
+	let date = bylineDate(story.published)
+	return names ? `${names} · ${date}` : date
+}
+
 /** What VoiceOver reads for a comic or artwork, which comes with no alt text: "Title, by A". */
 export function imageLabel(story: Pick<MessStory, 'title' | 'bylines'>): string {
 	let names = writerNames(story.bylines)

@@ -8,6 +8,8 @@ import {AuthorCard} from './author-card'
 import {HoroscopesView} from './horoscopes-view'
 import {ImageView} from './image-view'
 import {paper} from './palette'
+import {PoemView} from './poem-view'
+import {QuietHeader} from './quiet-header'
 import {SeriesRow} from './series-row'
 import {SiteLinkCard, StoryBlock} from './story-blocks'
 import {StoryHeader} from './story-header'
@@ -16,8 +18,11 @@ import type {MessStory} from './types'
 import {useMessStory} from './use-mess-story'
 
 const COLUMN_MARGIN = 20
+/** A poem's wider margins, which give its lines more air. */
+const POEM_MARGIN = 28
 const PAGE = [background(paper)]
 const COLUMN = [padding({horizontal: COLUMN_MARGIN, vertical: 16})]
+const POEM_COLUMN = [padding({horizontal: POEM_MARGIN, vertical: 16})]
 /** A column whose children can be scrolled to by their `id`. */
 const TARGET_COLUMN = [...COLUMN, scrollTargetLayout()]
 
@@ -27,10 +32,12 @@ type Props = {id: number}
 export function StoryScreen({id}: Props): React.ReactNode {
 	let {width} = useWindowDimensions()
 	let insets = useSafeAreaInsets()
-	// The scroll view's content sits inside the side safe areas, which landscape widens.
-	let columnWidth = width - insets.left - insets.right - COLUMN_MARGIN * 2
 	let query = useMessStory(id)
 	let story = query.data
+	let isPoem = story?.layout.kind === 'poem'
+	// The scroll view's content sits inside the side safe areas, which landscape widens.
+	let margin = isPoem ? POEM_MARGIN : COLUMN_MARGIN
+	let columnWidth = width - insets.left - insets.right - margin * 2
 	// The id of the part of the page to scroll to; a template sets it to move the reader.
 	let scrollTarget = useNativeState<string | null>(null)
 	let scrollTo = React.useCallback((target: string) => scrollTarget.set(target), [scrollTarget])
@@ -46,6 +53,7 @@ export function StoryScreen({id}: Props): React.ReactNode {
 
 	// Only a template that scrolls the page binds its position, so an article scrolls as it always has.
 	let scrolls = story.layout.kind === 'horoscopes'
+	let column = scrolls ? TARGET_COLUMN : isPoem ? POEM_COLUMN : COLUMN
 
 	return (
 		<>
@@ -69,13 +77,17 @@ export function StoryScreen({id}: Props): React.ReactNode {
 				<ScrollView
 					modifiers={scrolls ? [...PAGE, scrollPosition(scrollTarget, {anchor: 'top'})] : PAGE}
 				>
-					<LazyVStack alignment="leading" modifiers={scrolls ? TARGET_COLUMN : COLUMN} spacing={14}>
-						{/* A comic or artwork is its own picture, so the header leaves it to the body. */}
-						<StoryHeader
-							columnWidth={columnWidth}
-							showPhoto={story.layout.kind !== 'image'}
-							story={story}
-						/>
+					<LazyVStack alignment="leading" modifiers={column} spacing={14}>
+						{isPoem ? (
+							<QuietHeader story={story} />
+						) : (
+							// A comic or artwork is its own picture, so the header leaves it to the body.
+							<StoryHeader
+								columnWidth={columnWidth}
+								showPhoto={story.layout.kind !== 'image'}
+								story={story}
+							/>
+						)}
 						<StoryBody columnWidth={columnWidth} scrollTo={scrollTo} story={story} />
 						<Divider />
 						{story.bylines.map((byline) => (
@@ -102,6 +114,7 @@ type StoryBodyProps = {
 function StoryBody({story, columnWidth, scrollTo}: StoryBodyProps): React.ReactNode {
 	let {layout} = story
 	if (layout.kind === 'horoscopes') return <HoroscopesView layout={layout} scrollTo={scrollTo} />
+	if (layout.kind === 'poem') return <PoemView layout={layout} />
 	if (layout.kind === 'image') {
 		return (
 			<>

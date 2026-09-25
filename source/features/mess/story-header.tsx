@@ -8,7 +8,7 @@ import {
 	italic,
 } from '@expo/ui/swift-ui/modifiers'
 import {useQuery} from '@tanstack/react-query'
-import {bylineText, kickerText} from './lib/byline'
+import {bylineDate, bylineText, kickerText} from './lib/byline'
 import {ink, faded, messRed} from './palette'
 import {staffProfileOptions} from './query'
 import {RemotePhoto} from './remote-photo'
@@ -38,24 +38,25 @@ type Props = {
 	showPhoto?: boolean
 }
 
+/** The section and column over a story's title; nothing for a story with no section. */
+export function Kicker({story}: {story: MessStory}): React.ReactNode {
+	let kicker = kickerText(story)
+	return kicker ? <Text modifiers={KICKER}>{kicker}</Text> : null
+}
+
 /** The top of a story: kicker, headline, byline and date, and the lead photo. */
 export function StoryHeader({story, columnWidth, showPhoto = true}: Props): React.ReactNode {
-	let kicker = kickerText(story)
 	let byline = bylineText(story.bylines)
 	let firstWriter = story.bylines[0]
 	let profile = useQuery({
 		...staffProfileOptions(firstWriter?.id ?? 0),
 		enabled: firstWriter !== undefined,
 	})
-	let date = new Date(story.published).toLocaleDateString('en-US', {
-		month: 'long',
-		day: 'numeric',
-		year: 'numeric',
-	})
+	let date = bylineDate(story.published)
 
 	return (
 		<VStack alignment="leading" spacing={10}>
-			{kicker ? <Text modifiers={KICKER}>{kicker}</Text> : null}
+			<Kicker story={story} />
 			<Text modifiers={HEADLINE}>{story.title}</Text>
 			<Divider />
 			<HStack spacing={8}>

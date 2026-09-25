@@ -110,6 +110,26 @@ const COMIC: MessStory = {
 	layout: {kind: 'image', image: COMIC_IMAGE},
 }
 
+/** A Poetry post: its lines live in its layout. */
+const POEM: MessStory = {
+	...STORY,
+	id: 36280,
+	title: 'A room in Oklahoma',
+	link: 'https://olafmessenger.com/36280/',
+	section: 'Variety',
+	column: 'Poetry',
+	blocks: [{type: 'paragraph', runs: [{text: 'My bitter yellow comes with me on walks.'}]}],
+	layout: {
+		kind: 'poem',
+		stanzas: [
+			[
+				{indent: 0, runs: [{text: 'My bitter yellow comes with me on walks.'}]},
+				{indent: 1, runs: [{text: 'It hums at the gate.'}]},
+			],
+		],
+	},
+}
+
 const PROFILE: StaffProfile = {
 	name: 'Kenzie Nguyen',
 	bio: 'Kenzie is a senior.',
@@ -121,7 +141,7 @@ let queryClient: QueryClient
 
 beforeEach(() => {
 	queryClient = new QueryClient({defaultOptions: {queries: {staleTime: Infinity, retry: false}}})
-	queryClient.setQueryData(messKeys.feed, [STORY, ARTWORK, HOROSCOPES, COMIC])
+	queryClient.setQueryData(messKeys.feed, [STORY, ARTWORK, HOROSCOPES, COMIC, POEM])
 	useMessStore.setState({lastSign: null})
 	// Ashlyn has no profile; Kenzie has one.
 	queryClient.setQueryData(messKeys.profile(423), null)
@@ -144,6 +164,14 @@ function hostProps(node: Node | Node[] | null, type: string): Array<Record<strin
 	if (Array.isArray(node)) return node.flatMap((n) => hostProps(n, type))
 	let children = (node.children ?? []).filter((child): child is Node => typeof child !== 'string')
 	return [...(node.type === type ? [node.props] : []), ...hostProps(children, type)]
+}
+
+/** The padding the page's column asks for. */
+function columnPadding(): unknown {
+	let paddings = hostProps(screen.toJSON() as Node | Node[] | null, 'View').flatMap((props) =>
+		((props.modifiers ?? []) as Array<{$type: string}>).filter((m) => m.$type === 'padding'),
+	)
+	return paddings[0]
 }
 
 /** The hrefs `fetchSourceBody` was asked for, in order. */
@@ -355,5 +383,30 @@ describe('StoryScreen', () => {
 		expect(screen.getByText('Body text\\.')).toBeTruthy()
 		expect(screen.queryByRole('button', {name: 'Taurus'})).toBeNull()
 		expect(screen.queryByText('Pick your sign')).toBeNull()
+	})
+	test('sets a poem under a quieter header: the title, then its writers and date on one line', async () => {
+		await renderStory(36280)
+
+		expect(screen.getByText('A room in Oklahoma')).toBeTruthy()
+		expect(screen.getByText('Variety · Poetry')).toBeTruthy()
+		expect(screen.getByText('Ashlyn Wuench and Kenzie Nguyen · April 29, 2026')).toBeTruthy()
+		expect(screen.queryByText(/^By /u)).toBeNull()
+	})
+
+	test("draws a poem's lines, each once, rather than its paragraphs", async () => {
+		await renderStory(36280)
+
+		expect(screen.getAllByText('My bitter yellow comes with me on walks\\.')).toHaveLength(1)
+		expect(screen.getByText('It hums at the gate\\.')).toBeTruthy()
+	})
+
+	test('sets a poem between 28-point side margins', async () => {
+		await renderStory(36280)
+		expect(columnPadding()).toMatchObject({horizontal: 28})
+	})
+
+	test('sets an article between 20-point side margins', async () => {
+		await renderStory(36911)
+		expect(columnPadding()).toMatchObject({horizontal: 20})
 	})
 })

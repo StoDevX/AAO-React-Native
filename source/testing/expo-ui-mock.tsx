@@ -397,6 +397,11 @@ const PressableWithModifiers = Pressable as unknown as React.ComponentType<
 	}
 >
 
+/** `Text` forwards unknown props onto its host node too, as `View` and `Pressable` do. */
+const ForwardingText = RNText as unknown as React.ComponentType<
+	WithModifiers & {accessibilityLabel?: string}
+>
+
 export function Host({children}: WithModifiers & {matchContents?: boolean}): React.ReactNode {
 	return <View>{children}</View>
 }
@@ -431,6 +436,33 @@ export function Text({
 		<RNText accessibilityLabel={labelOf(modifiers)} testID={testID}>
 			{kept}
 		</RNText>
+	)
+}
+
+/**
+ * The patch's `HangingText` draws one Markdown string through a `UILabel`, and
+ * takes that string as its only child -- anything else is a type error on the
+ * real component, so the stand-in rejects it too. Like `Text`, it prints the
+ * Markdown source, and its host text carries the `modifiers` it was given.
+ */
+export function HangingText({
+	children,
+	modifiers,
+}: WithModifiers & {
+	children: string
+	hangingIndent: number
+	lineSpacing?: number
+	color?: unknown
+	linkColor?: unknown
+	serif?: boolean
+}): React.ReactNode {
+	if (typeof children !== 'string') {
+		throw new TypeError('HangingText takes one string of Markdown as its child')
+	}
+	return (
+		<ForwardingText accessibilityLabel={labelOf(modifiers)} modifiers={modifiers}>
+			{children}
+		</ForwardingText>
 	)
 }
 
@@ -624,8 +656,12 @@ export function ZStack({children}: WithModifiers & {alignment?: string}): React.
 	return <View>{children}</View>
 }
 
-export function LazyVStack({children}: WithModifiers & {alignment?: string}): React.ReactNode {
-	return <View>{children}</View>
+/** Carries its `modifiers`, so a test can read the margins a page chose off its column. */
+export function LazyVStack({
+	children,
+	modifiers,
+}: WithModifiers & {alignment?: string; spacing?: number}): React.ReactNode {
+	return <ForwardingView modifiers={modifiers}>{children}</ForwardingView>
 }
 
 export function LazyHStack({children}: WithModifiers & {alignment?: string}): React.ReactNode {
