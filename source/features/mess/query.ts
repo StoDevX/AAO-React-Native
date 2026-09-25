@@ -14,7 +14,7 @@ export const messKeys = {
 }
 
 /** The site root a WordPress REST URL belongs to, such as `https://olafmessenger.com`. */
-export function MESS_ORIGIN(href: string): string {
+function originOf(href: string): string {
 	return new URL(href).origin
 }
 
@@ -29,7 +29,9 @@ export const messFeedOptions = queryOptions({
 	queryKey: messKeys.feed,
 	queryFn: async ({signal}): Promise<MessStory[]> => {
 		let href = await feedHref()
-		let categoriesHref = `${MESS_ORIGIN(href)}/wp-json/wp/v2/categories?per_page=100&_fields=id,name,parent`
+		// Assumes the resolved feed href is an absolute WordPress URL.
+		let categoriesHref = `${originOf(href)}/wp-json/wp/v2/categories?per_page=100&_fields=id,name,parent`
+		// A failed categories fetch fails the feed on purpose: sections come from it.
 		let [postsBody, categoriesBody] = await Promise.all([
 			fetchSourceBody(href, signal, 'Olaf Messenger'),
 			fetchSourceBody(categoriesHref, signal, 'Olaf Messenger categories'),
@@ -45,7 +47,8 @@ export const staffProfileOptions = (staffId: number) =>
 		queryKey: messKeys.profile(staffId),
 		staleTime: ONE_DAY_IN_MS,
 		queryFn: async ({signal}): Promise<StaffProfile | null> => {
-			let origin = MESS_ORIGIN(await feedHref())
+			// Assumes the resolved feed href is an absolute WordPress URL.
+			let origin = originOf(await feedHref())
 			let body = await fetchSourceBody(
 				`${origin}/wp-json/wp/v2/staff_profile?staff_name=${staffId}&_embed=true`,
 				signal,
