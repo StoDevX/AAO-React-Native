@@ -51,7 +51,7 @@ export function StoryScreen({id}: Props): React.ReactNode {
 		)
 	}
 
-	// Only a template that scrolls the page binds its position, so an article scrolls as it always has.
+	// Only a template that moves the reader binds the page's scroll position.
 	let scrolls = story.layout.kind === 'horoscopes'
 	let column = scrolls ? TARGET_COLUMN : isPoem ? POEM_COLUMN : COLUMN
 

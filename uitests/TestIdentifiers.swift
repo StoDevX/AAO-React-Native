@@ -543,7 +543,7 @@ struct TestIdentifiers {
 
 		/// The Mess section whose columns the Variety templates draw, and two of
 		/// those columns, as the filter in source/features/mess/mess-picker.tsx
-		/// names them. They are the paper's own category names, from themess.net.
+		/// names them. They are the paper's own category names, from olafmessenger.com.
 		static let varietySection = "Variety"
 		static let horoscopesColumn = "Horoscopes"
 		static let comicColumn = "Comic"
