@@ -8,9 +8,11 @@ import {
 } from '@frogpond/html-lib'
 import type {Block, Run} from '../types'
 
-type Style = Omit<Run, 'text'>
+/** The formatting a run carries, without its text. */
+export type Style = Omit<Run, 'text'>
 
-const SKIPPED = new Set(['script', 'style'])
+/** Elements whose text is never shown. */
+export const SKIPPED = new Set(['script', 'style'])
 
 /** Elements that stand as their own block even when WordPress wraps them in a paragraph. */
 const MEDIA = ['img', 'iframe']
@@ -42,7 +44,8 @@ function sameStyle(a: Style, b: Style): boolean {
 	return a.bold === b.bold && a.italic === b.italic && a.href === b.href
 }
 
-function pushRun(runs: Run[], text: string, style: Style): void {
+/** Appends text to the last run when the style matches, or starts a new run. Drops empty text. */
+export function pushRun(runs: Run[], text: string, style: Style): void {
 	if (text === '') return
 	let last = runs.at(-1)
 	if (last && sameStyle(last, style)) {
@@ -50,6 +53,15 @@ function pushRun(runs: Run[], text: string, style: Style): void {
 		return
 	}
 	runs.push({text, ...style})
+}
+
+/** The style of the text inside `node`: the enclosing style plus whatever bold, italic or link `node` adds. */
+export function styleWithin(node: Element, style: Style): Style {
+	let next: Style = {...style}
+	if (node.name === 'b' || node.name === 'strong') next.bold = true
+	if (node.name === 'i' || node.name === 'em') next.italic = true
+	if (node.name === 'a' && node.attribs.href) next.href = node.attribs.href
+	return next
 }
 
 /** Ends the current line, unless it is already ended or nothing precedes it. */
@@ -77,22 +89,12 @@ function collectRuns(nodes: ChildNode[], style: Style, runs: Run[]): void {
 			breakLine(runs, style)
 			continue
 		}
-		let next: Style = {...style}
-		if (node.name === 'b' || node.name === 'strong') next.bold = true
-		if (node.name === 'i' || node.name === 'em') next.italic = true
-		if (node.name === 'a' && node.attribs.href) next.href = node.attribs.href
-		collectRuns(node.children, next, runs)
+		collectRuns(node.children, styleWithin(node, style), runs)
 	}
 }
 
-/**
- * Runs with the whitespace at either end of the block removed, and a space
- * beside a line break dropped. Empty when the block held no words.
- */
-function runsOf(nodes: ChildNode[]): Run[] {
-	let runs: Run[] = []
-	collectRuns(nodes, {}, runs)
-	for (let run of runs) run.text = run.text.replaceAll(/ ?\n ?/gu, '\n')
+/** Runs with the whitespace at either end removed, and any run left empty dropped. */
+export function trimRuns(runs: Run[]): Run[] {
 	// A run left empty by trimming lets the trim reach the one beside it.
 	for (let first = runs[0]; first; first = runs[0]) {
 		first.text = first.text.trimStart()
@@ -105,6 +107,17 @@ function runsOf(nodes: ChildNode[]): Run[] {
 		runs.pop()
 	}
 	return runs.filter((run) => run.text !== '')
+}
+
+/**
+ * Runs with the whitespace at either end of the block removed, and a space
+ * beside a line break dropped. Empty when the block held no words.
+ */
+function runsOf(nodes: ChildNode[]): Run[] {
+	let runs: Run[] = []
+	collectRuns(nodes, {}, runs)
+	for (let run of runs) run.text = run.text.replaceAll(/ ?\n ?/gu, '\n')
+	return trimRuns(runs)
 }
 
 /** Every element below `node` with one of `names`, in document order. */

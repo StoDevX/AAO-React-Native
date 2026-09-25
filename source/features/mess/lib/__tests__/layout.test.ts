@@ -20,6 +20,14 @@ describe('chooseLayout', () => {
 		expect(chosen.blocks).toBe(blocks)
 	})
 
+	it('lays out a Poetry story line by line from its raw HTML', () => {
+		let html = variety.find((p) => p.id === 36280)?.content.rendered ?? ''
+		let blocks = parseBlocks(html)
+		let chosen = chooseLayout({column: 'Poetry', blocks, photo: null, html})
+		expect(chosen.layout.kind).toBe('poem')
+		expect(chosen.blocks).toBe(blocks)
+	})
+
 	it('gives a story with no column the article layout', () => {
 		expect(chooseLayout({column: null, blocks: [], photo: null, html: ''}).layout).toStrictEqual({
 			kind: 'article',
