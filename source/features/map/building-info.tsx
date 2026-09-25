@@ -32,7 +32,7 @@ import {openUrl} from '@frogpond/open-url'
 import {PlaceCardHeader, PlaceCardScaffold} from '@frogpond/place-card-header'
 
 import {FILL_WIDTH} from '../../components/tile-layout'
-import {bigTitleScrolledAway, restingOffsetFrom, titleMayMove} from './lib/card-title'
+import {bigTitleScrolledAway, restingOffsetFrom, swapDistance, titleMayMove} from './lib/card-title'
 import {normalizeLinks} from './lib/normalize-link'
 import type {SheetDetent} from './lib/sheet-moves'
 import type {Building, Feature, LabelLink, LabelLinkString} from './types'
@@ -102,10 +102,14 @@ function BuildingCard({
 	// A ref, not state: it feeds the scroll callback, which fires every frame,
 	// and only the answer it reaches is worth a render.
 	let restingOffset = React.useRef<number | null>(null)
-	// State, not a ref: the callback that measures the title is written during
-	// render, where a ref may not be touched. It changes about once, so the
-	// extra render costs little.
+	// State, not refs: oxlint's react(refs) rule rejects a ref written in an
+	// `onGeometryChange` callback. None of these changes often -- React skips
+	// the render when a measurement repeats -- so the extra renders cost little.
 	let [bigTitleHeight, setBigTitleHeight] = React.useState(0)
+	let [bigTitleTopAtRest, setBigTitleTopAtRest] = React.useState<number | null>(null)
+	let [headerBottom, setHeaderBottom] = React.useState<number | null>(null)
+	// The big title's top is only worth keeping when measured at rest.
+	let [listAtRest, setListAtRest] = React.useState(false)
 
 	// Not a worklet: the answer only changes when the title crosses under the
 	// header, and React skips the render when it has not.
@@ -114,10 +118,33 @@ function BuildingCard({
 		if (restingOffset.current === null) {
 			return
 		}
+		// Within a point, to allow for rounding in the reported offset.
+		setListAtRest(Math.abs(geometry.contentOffsetY - restingOffset.current) < 1)
+		// Only the large card has a big title to swap for.
+		if (!large) {
+			return
+		}
+		if (bigTitleTopAtRest === null || headerBottom === null) {
+			setBigTitleAway(false)
+			return
+		}
 		setBigTitleAway(
-			bigTitleScrolledAway(geometry.contentOffsetY, restingOffset.current, bigTitleHeight),
+			bigTitleScrolledAway(
+				geometry.contentOffsetY,
+				restingOffset.current,
+				swapDistance(bigTitleTopAtRest, bigTitleHeight, headerBottom),
+			),
 		)
 	})
+
+	// Both frames are in window coordinates, so the title's top is comparable
+	// with the header's bottom.
+	let measureBigTitle = (box: {y: number; height: number}) => {
+		setBigTitleHeight(box.height)
+		if (listAtRest && headerBottom !== null) {
+			setBigTitleTopAtRest((top) => top ?? box.y)
+		}
+	}
 
 	let {
 		accessibility,
@@ -136,7 +163,15 @@ function BuildingCard({
 
 	return (
 		<PlaceCardScaffold>
-			<ZStack alignment="topTrailing" modifiers={[padding({all: HEADER_PADDING})]}>
+			<ZStack
+				alignment="topTrailing"
+				modifiers={[
+					padding({all: HEADER_PADDING}),
+					// Only the large card swaps its title, so only there is the
+					// header's edge worth a render as the sheet moves.
+					...(large ? [onGeometryChange((box) => setHeaderBottom(box.y + box.height))] : []),
+				]}
+			>
 				{large ? (
 					bigTitleAway ? (
 						// Maps' inline title at large: an ellipsis, no marquee, no
@@ -177,10 +212,7 @@ function BuildingCard({
 						]}
 					>
 						<VStack
-							modifiers={[
-								frame({maxWidth: FILL_WIDTH}),
-								onGeometryChange((box) => setBigTitleHeight(box.height)),
-							]}
+							modifiers={[frame({maxWidth: FILL_WIDTH}), onGeometryChange(measureBigTitle)]}
 							spacing={4}
 						>
 							<Text

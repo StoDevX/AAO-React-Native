@@ -35,3 +35,16 @@ export function restingOffsetFrom(
 	}
 	return geometry.containerHeight > 0 ? geometry.contentOffsetY : null
 }
+
+/// How far the list must scroll from rest before the big title has gone
+/// wholly under the header. The list rests with a margin between the
+/// header's bottom edge and the big title's top, so the title has only gone
+/// once that margin and its own height have scrolled by. All three values
+/// are in one coordinate space, taken with the list at rest.
+export function swapDistance(
+	bigTitleTopAtRest: number,
+	bigTitleHeight: number,
+	headerBottom: number,
+): number {
+	return bigTitleTopAtRest - headerBottom + bigTitleHeight
+}

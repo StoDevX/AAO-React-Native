@@ -1,4 +1,4 @@
-import {bigTitleScrolledAway, restingOffsetFrom, titleMayMove} from '../card-title'
+import {bigTitleScrolledAway, restingOffsetFrom, swapDistance, titleMayMove} from '../card-title'
 
 describe('titleMayMove', () => {
 	// Maps' header title keeps its marquee at both stops that show it.
@@ -54,5 +54,16 @@ describe('restingOffsetFrom', () => {
 
 	it('takes the first report made after layout', () => {
 		expect(restingOffsetFrom(null, {contentOffsetY: -76, containerHeight: 812})).toBe(-76)
+	})
+})
+
+describe('swapDistance', () => {
+	// The list rests with a margin between the header and the big title.
+	it('adds the margin under the header to the big title height', () => {
+		expect(swapDistance(111, 90, 76)).toBe(125)
+	})
+
+	it('is the big title height when the title rests against the header', () => {
+		expect(swapDistance(76, 90, 76)).toBe(90)
 	})
 })
