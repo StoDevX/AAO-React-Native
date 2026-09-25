@@ -43,7 +43,7 @@ export function StoryScreen({id}: Props): React.ReactNode {
 					<NoticeView
 						buttonText="Try Again"
 						onPress={() => query.refetch()}
-						text={`A problem occured while loading: ${query.error}`}
+						text={`A problem occurred while loading: ${query.error}`}
 					/>
 				) : (
 					<NoticeView text="Story unavailable" />
@@ -67,7 +67,7 @@ export function StoryScreen({id}: Props): React.ReactNode {
 				<Stack.Toolbar.Button
 					accessibilityLabel="Open in Safari"
 					icon="safari"
-					onPress={() => Linking.openURL(story.link)}
+					onPress={() => Linking.openURL(story.link).catch(() => undefined)}
 				/>
 			</Stack.Toolbar>
 			<Host style={styles.page}>

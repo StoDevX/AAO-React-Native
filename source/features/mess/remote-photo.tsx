@@ -15,14 +15,17 @@ type Props = {
 /**
  * A photo from the web. `@expo/ui` has no image that loads a URL, so this is
  * a React Native image hosted in a fixed frame; the frame keeps the layout
- * still while it loads.
+ * still while it loads. VoiceOver skips it: a writer's photo says nothing
+ * their name does not, and a figure's caption is read as its own text.
  */
 export function RemotePhoto({url, width, height, round = false}: Props): React.ReactNode {
 	return (
 		<VStack modifiers={[frame({width, height})]}>
 			<RNHostView matchContents={false}>
 				<Image
+					accessibilityElementsHidden={true}
 					accessibilityIgnoresInvertColors={true}
+					accessible={false}
 					source={{uri: url}}
 					style={[{width, height}, round ? {borderRadius: width / 2} : styles.square]}
 				/>

@@ -32,6 +32,7 @@ const QUOTE = [
 ]
 const CAPTION = [font({textStyle: 'footnote', design: 'serif'}), italic(), foregroundStyle(faded)]
 const SITE_LINK = [font({textStyle: 'callout', weight: 'semibold'}), foregroundStyle(messRed)]
+const SITE_LINK_ICON = [foregroundStyle(messRed)]
 
 function Paragraph({
 	runs,
@@ -66,7 +67,7 @@ export function SiteLinkCard({icon, label, url}: SiteLinkProps): React.ReactNode
 			onPress={() => openUrl(url)}
 		>
 			<HStack spacing={8}>
-				<Image systemName={icon} />
+				<Image modifiers={SITE_LINK_ICON} systemName={icon} />
 				<Text modifiers={SITE_LINK}>{label}</Text>
 			</HStack>
 		</Button>
@@ -109,7 +110,7 @@ export function StoryBlock({block, columnWidth, storyLink}: Props): React.ReactN
 			return (
 				<SiteLinkCard
 					icon="play.rectangle"
-					label="Playlist or video — open on olafmessenger.com"
+					label="Open the playlist or video on the web"
 					url={storyLink}
 				/>
 			)
