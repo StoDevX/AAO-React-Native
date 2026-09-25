@@ -75,7 +75,9 @@ const EXCERPT_MODIFIERS = [
 ]
 
 type Props = {
-	onPress: (link: string) => void
+	onPress: () => void
+	/** Where a tap goes: the browser, or another screen in this app. */
+	destination: 'external' | 'push'
 	story: StoryType
 	thumbnail: false | ImageResolvedAssetSource
 	/** Whether this is the last row in the list -- it draws no bottom separator. */
@@ -84,11 +86,11 @@ type Props = {
 
 export const NewsRow = (props: Props): React.ReactNode => {
 	let _onPress = () => {
-		if (!props.story.link) {
+		if (props.destination === 'external' && !props.story.link) {
 			Alert.alert('There is nowhere to go for this story')
 			return
 		}
-		props.onPress(props.story.link)
+		props.onPress()
 	}
 
 	let {story} = props
@@ -107,8 +109,7 @@ export const NewsRow = (props: Props): React.ReactNode => {
 				ROW_BACKGROUND,
 				accessibilityIdentifier(`${NEWS_ROW_PREFIX}${story.title}`),
 				accessibilityLabel(`${story.title}. ${story.excerpt}`),
-				// A story opens in the browser rather than pushing.
-				...destinationTraits('external'),
+				...destinationTraits(props.destination),
 				...(thumb !== null ? SEPARATOR_INSET_WITH_THUMBNAIL : []),
 				...(props.isLast ? HIDE_BOTTOM_SEPARATOR : []),
 			]}
@@ -140,7 +141,7 @@ export const NewsRow = (props: Props): React.ReactNode => {
 				    content -- the image -- at its own top before the `Spacer`
 				    claims the rest. */}
 				<VStack>
-					<RowAccessory destination="external" />
+					<RowAccessory destination={props.destination} />
 					<Spacer />
 				</VStack>
 			</HStack>

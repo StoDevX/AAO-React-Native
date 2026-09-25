@@ -17,6 +17,8 @@ type Props = {
 	entries: StoryType[]
 	thumbnail: false | ImageResolvedAssetSource
 	selectedCategory: string | null
+	/** Opens a story in the app. Without it, a story opens its link in the browser. */
+	onPressStory?: (story: StoryType) => void
 }
 
 export const NewsList = (props: Props): React.ReactNode => {
@@ -61,8 +63,11 @@ export const NewsList = (props: Props): React.ReactNode => {
 						filteredEntries.map((story, index) => (
 							<NewsRow
 								key={story.title}
+								destination={props.onPressStory ? 'push' : 'external'}
 								isLast={index === filteredEntries.length - 1}
-								onPress={(url: string) => openUrl(url)}
+								onPress={() =>
+									props.onPressStory ? props.onPressStory(story) : story.link && openUrl(story.link)
+								}
 								story={story}
 								thumbnail={props.thumbnail}
 							/>

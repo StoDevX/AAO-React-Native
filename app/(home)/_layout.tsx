@@ -39,9 +39,10 @@ export default function HomeLayout(): React.ReactNode {
 			<Stack.Screen name="MenuItemDetail" options={DETAIL_SHEET} />
 			<Stack.Screen name="Streaming Media" options={{title: 'Streaming Media'}} />
 			<Stack.Screen
-				name="Messenger"
+				name="Messenger/index"
 				options={{title: 'The Olaf Messenger', headerLargeTitleEnabled: true}}
 			/>
+			<Stack.Screen name="Messenger/story" options={{title: ''}} />
 			<Stack.Screen
 				name="StOlafNews"
 				options={{title: 'St. Olaf News', headerLargeTitleEnabled: true}}
