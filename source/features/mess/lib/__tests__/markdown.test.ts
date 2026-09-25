@@ -12,6 +12,18 @@ describe('runsToMarkdown', () => {
 		)
 	})
 
+	it("escapes tildes, so a story's own ~~ never strikes text through", () => {
+		expect(runsToMarkdown([{text: '~~old~~'}])).toBe('\\~\\~old\\~\\~')
+	})
+
+	it('escapes an angle bracket, so a literal <url> never becomes an autolink', () => {
+		expect(runsToMarkdown([{text: '<https://x.test/>'}])).toBe('\\<https://x\\.test/>')
+	})
+
+	it('escapes an ampersand, so a literal entity is never decoded', () => {
+		expect(runsToMarkdown([{text: '&copy;'}])).toBe('\\&copy;')
+	})
+
 	it('wraps bold and italic runs', () => {
 		expect(
 			runsToMarkdown([
@@ -59,5 +71,29 @@ describe('runsToMarkdown', () => {
 
 	it('keeps line breaks at the edges of a styled run outside the markers', () => {
 		expect(runsToMarkdown([{text: '\nword\n', italic: true}])).toBe('\n*word*\n')
+	})
+
+	it('separates a word from a styled run that opens on punctuation', () => {
+		expect(runsToMarkdown([{text: 'word'}, {text: '(note)', bold: true}])).toBe(
+			'word\u200B**\\(note\\)**',
+		)
+	})
+
+	it('separates a styled run that closes on punctuation from a following word', () => {
+		expect(runsToMarkdown([{text: 'Note:', bold: true}, {text: 'Text'}])).toBe(
+			'**Note:**\u200BText',
+		)
+	})
+
+	it('adds no separator where a space already sits at the join', () => {
+		expect(runsToMarkdown([{text: 'word '}, {text: '(note)', italic: true}, {text: ' Text'}])).toBe(
+			'word *\\(note\\)* Text',
+		)
+	})
+
+	it('adds no separator between letters', () => {
+		expect(runsToMarkdown([{text: 'un'}, {text: 'break', bold: true}, {text: 'able'}])).toBe(
+			'un**break**able',
+		)
 	})
 })
