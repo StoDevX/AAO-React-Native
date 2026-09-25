@@ -51,7 +51,10 @@ export function StoryScreen({id}: Props): React.ReactNode {
 
 	return (
 		<>
-			<Stack.Screen options={{title: ''}} />
+			{/* A transparent header lays the page out from the top of the screen, so the paper
+			    runs behind the bars and the story scrolls under them; the SwiftUI scroll view
+			    still starts its content below the bar, inside the safe area. */}
+			<Stack.Screen options={{title: '', headerTransparent: true}} />
 			<Stack.Toolbar placement="right">
 				<Stack.Toolbar.Button
 					accessibilityLabel="Share Story"

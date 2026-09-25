@@ -1,6 +1,7 @@
 import * as React from 'react'
 import {Button, HStack, Image, Text, VStack} from '@expo/ui/swift-ui'
 import {
+	accessibilityIdentifier,
 	accessibilityLabel,
 	buttonStyle,
 	controlSize,
@@ -8,6 +9,7 @@ import {
 	foregroundStyle,
 	italic,
 	padding,
+	tint,
 } from '@expo/ui/swift-ui/modifiers'
 import {openUrl} from '@frogpond/open-url'
 import type {SFSymbol} from 'sf-symbols-typescript'
@@ -16,22 +18,27 @@ import {faded, ink, messRed} from './palette'
 import {RemotePhoto} from './remote-photo'
 import type {Block, Run} from './types'
 
+const BODY_ID = 'mess-story-body'
 const BODY = [font({textStyle: 'body', design: 'serif'}), foregroundStyle(ink)]
+/** Body text that can hold a link, which SwiftUI draws in the tint colour. */
+const PROSE = [...BODY, tint(messRed), accessibilityIdentifier(BODY_ID)]
 const QUOTE = [
 	font({textStyle: 'body', design: 'serif'}),
 	italic(),
 	foregroundStyle(ink),
+	tint(messRed),
 	padding({leading: 16}),
+	accessibilityIdentifier(BODY_ID),
 ]
 const CAPTION = [font({textStyle: 'footnote', design: 'serif'}), italic(), foregroundStyle(faded)]
 const SITE_LINK = [font({textStyle: 'callout', weight: 'semibold'}), foregroundStyle(messRed)]
 
 function Paragraph({
 	runs,
-	modifiers = BODY,
+	modifiers = PROSE,
 }: {
 	runs: Run[]
-	modifiers?: typeof BODY
+	modifiers?: typeof PROSE
 }): React.ReactNode {
 	return (
 		<Text markdownEnabled={true} modifiers={modifiers}>
@@ -50,7 +57,12 @@ type SiteLinkProps = {
 export function SiteLinkCard({icon, label, url}: SiteLinkProps): React.ReactNode {
 	return (
 		<Button
-			modifiers={[buttonStyle('bordered'), controlSize('large'), accessibilityLabel(label)]}
+			modifiers={[
+				buttonStyle('bordered'),
+				controlSize('large'),
+				accessibilityLabel(label),
+				accessibilityIdentifier('mess-story-site-link'),
+			]}
 			onPress={() => openUrl(url)}
 		>
 			<HStack spacing={8}>
