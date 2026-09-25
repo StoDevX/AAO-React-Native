@@ -193,6 +193,7 @@ describe('StoryScreen', () => {
 		await act(() => new Promise((resolve) => setTimeout(resolve, 0)))
 
 		expect(screen.getByText('Cows, Comments and Confessions')).toBeTruthy()
+		expect(mockManifest).not.toHaveBeenCalled()
 		expect(mockBody).not.toHaveBeenCalled()
 	})
 

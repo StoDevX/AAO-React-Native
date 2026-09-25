@@ -23,7 +23,12 @@ describe('parseHoroscopes', () => {
 		let layout = parseHoroscopes(blocksOf(36775))
 		expect(layout.kind).toBe('horoscopes')
 		if (layout.kind !== 'horoscopes') return
-		expect(layout.signs[0]?.sign).toBe('aries')
+		expect(layout.signs.map((s) => s.sign)).toStrictEqual([...ZODIAC_SIGNS])
+		expect(layout.intro).toStrictEqual([])
+		let capricorn = layout.signs.find((s) => s.sign === 'capricorn')
+		expect(text(capricorn?.reading[0] ?? [])).toBe(
+			'This spring break, you will reconnect with your inner self. Take time to relax and enjoy the space to think.',
+		)
 	})
 
 	it('reads a post with no intro that starts at Gemini, in zodiac order', () => {
@@ -84,6 +89,22 @@ describe('parseHoroscopes', () => {
 		let layout = parseHoroscopes(blocks)
 		if (layout.kind !== 'horoscopes') throw new Error('expected horoscopes')
 		expect(layout.signs[0]?.reading[0]).toContainEqual({text: 'this', italic: true})
+	})
+
+	it('keeps a list or a quote inside a reading as paragraphs of it', () => {
+		let blocks: Block[] = ZODIAC_SIGNS.flatMap((sign): Block[] => [
+			{type: 'paragraph', runs: [{text: `${sign}: go`}]},
+			{type: 'list', ordered: false, items: [[{text: `${sign} one`}], [{text: `${sign} two`}]]},
+			{type: 'quote', runs: [{text: `${sign} said`}]},
+		])
+		let layout = parseHoroscopes(blocks)
+		if (layout.kind !== 'horoscopes') throw new Error('expected horoscopes')
+		expect(layout.signs[0]?.reading.map(text)).toStrictEqual([
+			'go',
+			'aries one',
+			'aries two',
+			'aries said',
+		])
 	})
 
 	it('falls back to an article when a sign is missing', () => {

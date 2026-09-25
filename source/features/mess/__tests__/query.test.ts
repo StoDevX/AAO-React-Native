@@ -290,6 +290,17 @@ describe('messSeriesOptions', () => {
 		expect(series.stories).toStrictEqual([])
 	})
 
+	test('gives nothing for a story with neither a series nor a writer', async () => {
+		serve(() => [])
+
+		let series = await run<{title: string; stories: MessStory[]}>(
+			messSeriesOptions({...story(34645), bylines: []}),
+		)
+
+		expect(series).toStrictEqual({title: '', stories: []})
+		expect(fetchedHrefs().some((href) => href.includes('/posts'))).toBe(false)
+	})
+
 	test('gives nothing for a story with no column', async () => {
 		serve(() => [])
 
