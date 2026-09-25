@@ -16,6 +16,7 @@ import {
 	accessibilityLabel,
 	buttonBorderShape,
 	buttonStyle,
+	dynamicTypeSize,
 	font,
 	foregroundStyle,
 	frame,
@@ -175,10 +176,13 @@ function BuildingCard({
 				{large ? (
 					bigTitleAway ? (
 						// Maps' inline title at large: an ellipsis, no marquee, no
-						// subtitle, clear of the button at the trailing edge.
+						// subtitle, clear of the button at the trailing edge. Maps
+						// stops it growing at about xxxLarge, so the header keeps
+						// to the buttons' row and does not jump taller at the swap.
 						<Text
 							modifiers={[
 								font({textStyle: 'title3', weight: 'bold'}),
+								dynamicTypeSize({max: 'xxxLarge'}),
 								lineLimit(1),
 								truncationMode('tail'),
 								padding({horizontal: TITLE_INSET}),
