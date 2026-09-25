@@ -4,6 +4,7 @@ import {fireEvent, render, screen} from '@testing-library/react-native'
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query'
 import {fetchManifest, fetchSourceBody, type Jrd} from '@frogpond/data-sources'
 
+import {queryClient as appQueryClient} from '../../../init/tanstack-query'
 import {MessengerScreen} from '../messenger-screen'
 import {messKeys} from '../query'
 import {useNewsFilterStore} from '../../news/store'
@@ -67,6 +68,9 @@ beforeEach(() => {
 
 afterEach(() => {
 	queryClient.clear()
+	// The feed fetches its categories through the app's own client, whose cached queries
+	// hold a day-long gc timer that would keep Jest running.
+	appQueryClient.clear()
 	jest.clearAllMocks()
 })
 

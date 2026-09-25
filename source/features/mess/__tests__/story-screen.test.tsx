@@ -5,6 +5,7 @@ import {QueryClient, QueryClientProvider} from '@tanstack/react-query'
 import {openUrl} from '@frogpond/open-url'
 import {fetchManifest, fetchSourceBody, type Jrd} from '@frogpond/data-sources'
 
+import {queryClient as appQueryClient} from '../../../init/tanstack-query'
 import {StoryScreen} from '../story-screen'
 import {messKeys} from '../query'
 import {useMessStore} from '../store'
@@ -110,6 +111,9 @@ beforeEach(() => {
 
 afterEach(() => {
 	queryClient.clear()
+	// The feed fetches its categories through the app's own client, whose cached queries
+	// hold a day-long gc timer that would keep Jest running.
+	appQueryClient.clear()
 	jest.clearAllMocks()
 })
 
