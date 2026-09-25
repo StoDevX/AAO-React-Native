@@ -526,6 +526,12 @@ struct TestIdentifiers {
 
 		/// The bottom toolbar menu's accessibilityLabel, in news-picker.tsx.
 		static let picker = "News filter"
+
+		/// The reader's headline, in source/features/mess/story-header.tsx.
+		static let storyHeadline = "mess-story-headline"
+
+		/// The reader's share button label, in source/features/mess/story-screen.tsx.
+		static let shareStory = "Share Story"
 	}
 
 	// MARK: - Streaming Media

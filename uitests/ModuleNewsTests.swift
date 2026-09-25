@@ -14,4 +14,11 @@ class ModuleNewsTests: UITestCase {
 			.verifyTitle()
 			.verifyNewsRowsAppear()
 	}
+
+	func testOlafMessengerOpensAStoryInTheApp() throws {
+		NewsScreen(app: app, tile: TestIdentifiers.Buttons.olafMessenger, title: "The Olaf Messenger")
+			.navigate()
+			.openFirstStory()
+			.verifyStoryAppears()
+	}
 }
