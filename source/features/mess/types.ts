@@ -39,6 +39,8 @@ export type MessStory = {
 	/** Null when there is no photo, or the photo is the Mess logo */
 	photo: (Photo & {caption: string}) | null
 	blocks: Block[]
+	/** Which template draws the story */
+	layout: StoryLayout
 }
 
 /** A writer's profile for one staff year. */
@@ -49,3 +51,27 @@ export type StaffProfile = {
 	/** The staff_year term, such as `2025-2026` */
 	year: string
 }
+
+export type ZodiacSign =
+	| 'aries'
+	| 'taurus'
+	| 'gemini'
+	| 'cancer'
+	| 'leo'
+	| 'virgo'
+	| 'libra'
+	| 'scorpio'
+	| 'sagittarius'
+	| 'capricorn'
+	| 'aquarius'
+	| 'pisces'
+
+/** One line of a poem: its runs, and how many levels the poet indented it. */
+export type PoemLine = {indent: number; runs: Run[]}
+
+/** How the reader lays a story out; every template falls back to `article`. */
+export type StoryLayout =
+	| {kind: 'article'}
+	| {kind: 'horoscopes'; intro: Run[][]; signs: Array<{sign: ZodiacSign; reading: Run[][]}>}
+	| {kind: 'image'; image: Photo}
+	| {kind: 'poem'; stanzas: PoemLine[][]}

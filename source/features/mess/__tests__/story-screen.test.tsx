@@ -62,6 +62,7 @@ const STORY: MessStory = {
 		{type: 'paragraph', runs: [{text: 'The petition was delivered on Tuesday.'}]},
 		{type: 'paragraph', runs: [{text: 'Body text.'}]},
 	],
+	layout: {kind: 'article'},
 }
 
 /** An Artwork post: the REST API gives it no body at all. */

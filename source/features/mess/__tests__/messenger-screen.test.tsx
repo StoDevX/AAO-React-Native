@@ -54,6 +54,7 @@ const story = (id: number, title: string, section: string): MessStory => ({
 	bylines: [],
 	photo: null,
 	blocks: [],
+	layout: {kind: 'article'},
 })
 
 let queryClient: QueryClient

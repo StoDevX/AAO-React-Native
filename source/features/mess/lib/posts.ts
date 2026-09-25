@@ -1,6 +1,7 @@
 import {decode, fastGetTrimmedText} from '@frogpond/html-lib'
 import {z} from 'zod'
 import {parseBlocks} from './blocks'
+import {chooseLayout} from './layout'
 import type {Byline, MessCategory, MessStory} from '../types'
 
 /**
@@ -123,16 +124,25 @@ function photoOf(post: Post): MessStory['photo'] {
 
 /** One validated post as a story. */
 function toStory(post: Post, byId: Map<number, MessCategory>): MessStory {
+	let placed = placement(post.categories, byId)
+	let photo = photoOf(post)
+	let {layout, blocks} = chooseLayout({
+		column: placed.column,
+		blocks: parseBlocks(post.content.rendered),
+		photo,
+		html: post.content.rendered,
+	})
 	return {
 		id: post.id,
 		title: decode(post.title.rendered),
 		excerpt: fastGetTrimmedText(post.excerpt.rendered),
 		link: post.link,
 		published: utcDate(post.date_gmt).toISOString(),
-		...placement(post.categories, byId),
+		...placed,
 		bylines: bylinesOf(post),
-		photo: photoOf(post),
-		blocks: parseBlocks(post.content.rendered),
+		photo,
+		blocks,
+		layout,
 	}
 }
 

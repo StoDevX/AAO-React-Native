@@ -14,6 +14,7 @@ const base: MessStory = {
 	bylines: [{id: 390, name: 'Maya Betti'}],
 	photo: {url: 'https://x.test/p.jpg', width: 600, height: 400, caption: ''},
 	blocks: [],
+	layout: {kind: 'article'},
 }
 
 describe('asStory', () => {
