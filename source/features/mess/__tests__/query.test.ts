@@ -224,6 +224,20 @@ describe('messSeriesOptions', () => {
 		)
 	})
 
+	test('reads the episodes from the column list’s cache', async () => {
+		serve(() => [])
+		let episode = parseMessPosts(
+			[retitled(1, 36819, 'Mouse friends episode 2: Mary! Gold!')],
+			parseMessCategories(categories),
+		)
+		queryClient.setQueryData(messKeys.category(63), episode)
+
+		let series = await run<{title: string; stories: MessStory[]}>(messSeriesOptions(story(36819)))
+
+		expect(series.stories.map((s) => s.id)).toStrictEqual([1])
+		expect(fetchedHrefs().some((href) => href.includes('/posts'))).toBe(false)
+	})
+
 	test('heads the row with the newest episode’s spelling of the series', async () => {
 		serve(() => [
 			retitled(1, 36819, 'Mouse Friends episode 3: cheese'),

@@ -157,11 +157,8 @@ export const messSeriesOptions = (story: MessStory) =>
 			let name = seriesName(story.title)
 			if (name) {
 				let key = name.toLowerCase()
-				let recent = await storiesAt(
-					`posts?categories=${column.id}&per_page=30&_embed=true`,
-					signal,
-					'Olaf Messenger series',
-				)
+				// The column's list, cached under the same key the Mess list uses for it.
+				let recent = await queryClient.query(messCategoryOptions(column.id))
 				let episodes = recent.filter((s) => s.id !== story.id && seriesKey(s.title) === key)
 				// The newest episode spells the series as the paper now does, which an older title may not.
 				let newest = episodes[0]
