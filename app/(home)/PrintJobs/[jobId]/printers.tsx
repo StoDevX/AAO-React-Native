@@ -196,7 +196,7 @@ function PrinterListLoader(): React.ReactNode {
 			<NoticeView
 				buttonText="Try Again"
 				onPress={jobRefetch}
-				text={`A problem occured while loading: ${
+				text={`A problem occurred while loading: ${
 					jobError instanceof Error ? jobError.message : 'Unknown error'
 				}`}
 			/>

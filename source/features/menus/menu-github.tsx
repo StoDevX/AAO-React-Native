@@ -134,7 +134,7 @@ export function GitHubHostedMenu(props: Props): React.ReactNode {
 			<NoticeView
 				buttonText="Try Again"
 				onPress={refetch}
-				text={`A problem occured while loading: ${menu.error}`}
+				text={`A problem occurred while loading: ${menu.error}`}
 			/>
 		)
 	}
