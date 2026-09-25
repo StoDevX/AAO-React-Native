@@ -178,6 +178,12 @@ struct TestIdentifiers {
 		/// query runs, so a label-only query could answer for either. Matches
 		/// `CARD_CLOSE_BUTTON_ID` in `source/features/map/building-info.tsx`.
 		static let cardCloseButton = "card-close-button"
+		/// The building card's title block. Matches `CARD_TITLE_ID` in
+		/// `source/features/map/building-info.tsx`.
+		static let cardTitle = "card-title"
+		/// Carleton's longest building name as of 2026-09-24, long enough to
+		/// overflow the header's title slot at `title3` bold.
+		static let aLongNamedBuilding = "Center for Math & Computing"
 		/// MapLibre's attribution button, found by the label it gives itself. It
 		/// carries the OpenStreetMap credit, so it has to stay reachable.
 		static let attribution = "About this map"

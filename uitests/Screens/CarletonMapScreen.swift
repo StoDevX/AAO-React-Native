@@ -54,6 +54,12 @@ struct CarletonMapScreen: Screen {
 		app.buttons[TestIdentifiers.CarletonMap.cardCloseButton].firstMatch
 	}
 
+	/// The card's title block. One accessibility element of no fixed type,
+	/// so it is found by identifier alone.
+	private var cardTitle: XCUIElement {
+		app.descendants(matching: .any)[TestIdentifiers.CarletonMap.cardTitle].firstMatch
+	}
+
 	/// The map has no home tile of its own -- both campuses' Campus screens
 	/// carry the map button now, so getting to `/Map` means opening one of
 	/// those screens first and tapping its top-right button. Defaults to
@@ -427,6 +433,40 @@ struct CarletonMapScreen: Screen {
 			after - before > 100,
 			"A row tapped from the full sheet should drop it to medium; the content's top went from \(before) to \(after)")
 		return self
+	}
+
+	/// Drags the card from wherever it rests down to the collapsed stop.
+	@discardableResult
+	func collapseCard() -> Self {
+		let grabber = app.buttons[TestIdentifiers.CarletonMap.sheetGrabber].firstMatch
+		grabber.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5))
+			.press(
+				forDuration: 0.1,
+				thenDragTo: app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.99)))
+		return self
+	}
+
+	/// The issue this guards against: a collapsed card that cut through the
+	/// building's name and its close button. Both have to lie wholly inside the
+	/// sheet's own box -- frames, because `isHittable` answers true for content
+	/// the sheet clips away.
+	///
+	/// The close button is checked first because it is the half that can go
+	/// red on the old card, which gave its title no identifier.
+	@discardableResult
+	func verifyCardHeaderWithinSheet() -> Self {
+		let sheet = sheetFrame()
+		verifyWithinSheet("close button", closeButton.frame, sheet)
+		XCTAssertTrue(cardTitle.waitForExistence(timeout: 10), "The card should show the building's name")
+		verifyWithinSheet("title", cardTitle.frame, sheet)
+		return self
+	}
+
+	private func verifyWithinSheet(_ name: String, _ box: CGRect, _ sheet: CGRect) {
+		XCTContext.runActivity(named: "\(name) \(box) in sheet \(sheet)") { _ in }
+		XCTAssertTrue(
+			box.minY >= sheet.minY && box.maxY <= sheet.maxY,
+			"The collapsed card should hold the whole \(name), not clip it: \(name) \(box), sheet \(sheet)")
 	}
 
 	/// The middle stop is `SHEET_RESTING_FRACTION` (0.68) of the window, so the

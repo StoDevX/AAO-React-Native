@@ -71,4 +71,18 @@ class ModuleCarletonMapTests: UITestCase {
 			.verifyCardDroppedFrom(largeTop)
 			.verifyCardAtMedium()
 	}
+
+	/// Issue #7962: the collapsed card cut off the bottom of the building's
+	/// name. A long name, because a short one fits whatever the header does.
+	func testTheCollapsedCardHoldsItsWholeHeader() throws {
+		CarletonMapScreen(app: app)
+			.navigate()
+			.checkSheetPresented()
+			.focusSearch()
+			.typeIntoSearch(TestIdentifiers.CarletonMap.aLongNamedBuilding)
+			.selectBuilding(named: TestIdentifiers.CarletonMap.aLongNamedBuilding)
+			.collapseCard()
+			.capture("Carleton map card collapsed with a long name")
+			.verifyCardHeaderWithinSheet()
+	}
 }
