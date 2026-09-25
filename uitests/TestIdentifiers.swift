@@ -552,6 +552,11 @@ struct TestIdentifiers {
 		/// label begins, in source/features/mess/lib/horoscopes.ts.
 		static let gemini = "Gemini"
 		static let leo = "Leo"
+		/// All twelve, as the glyph buttons are labelled.
+		static let signs = [
+			"Aries", "Taurus", "Gemini", "Cancer", "Leo", "Virgo",
+			"Libra", "Scorpio", "Sagittarius", "Capricorn", "Aquarius", "Pisces",
+		]
 
 		/// The framed comic or artwork that opens the zoom viewer, in
 		/// source/features/mess/image-view.tsx.

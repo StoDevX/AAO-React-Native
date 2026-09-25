@@ -66,4 +66,13 @@ extension XCUIElement {
 		let expectation = XCTNSPredicateExpectation(predicate: predicate, object: self)
 		return XCTWaiter().wait(for: [expectation], timeout: timeout) == .completed
 	}
+
+	/// Wait for this element to become hittable: on screen, and not covered.
+	/// A readiness check before a single tap, so a control that drops its first
+	/// tap fails the test instead of being tapped again.
+	func waitForHittable(timeout: TimeInterval = 30) -> Bool {
+		let expectation = XCTNSPredicateExpectation(
+			predicate: NSPredicate(format: "isHittable == true"), object: self)
+		return XCTWaiter().wait(for: [expectation], timeout: timeout) == .completed
+	}
 }

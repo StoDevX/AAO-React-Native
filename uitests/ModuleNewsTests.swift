@@ -30,8 +30,10 @@ class ModuleNewsTests: UITestCase {
 		news.openFirstStory()
 			.pickSignFromList(TestIdentifiers.News.gemini)
 			.verifySignChosen(TestIdentifiers.News.gemini)
+			.verifyScrolledToChosenSign(TestIdentifiers.News.gemini)
 			.tapSignGlyph(TestIdentifiers.News.leo)
 			.verifySignChosen(TestIdentifiers.News.leo)
+			.verifyScrolledToChosenSign(TestIdentifiers.News.leo)
 	}
 
 	func testComicOpensTheZoomViewer() throws {

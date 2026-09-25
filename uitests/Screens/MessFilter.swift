@@ -25,7 +25,16 @@ struct MessFilter: Screen {
 		return self
 	}
 
+	/// Open the menu with one tap, once the list's rows are showing. A row on
+	/// screen means the push onto this screen has finished; a tap sent while
+	/// it is still running goes nowhere. The button's own `isHittable` is no
+	/// use as the signal: XCUITest reports a control drawn in a SwiftUI host as
+	/// not hittable, though a tap at its centre works.
 	private func open() {
+		let row = app.descendants(matching: .any)
+			.matching(NSPredicate(format: "identifier BEGINSWITH %@", TestIdentifiers.News.rowPrefix))
+			.firstMatch
+		XCTAssertTrue(row.waitForExistence(timeout: 30), "the list should show its rows before the filter is opened")
 		let picker = app.buttons[TestIdentifiers.News.picker]
 		XCTAssertTrue(picker.waitForExistence(timeout: 30), "the filter should be in the toolbar")
 		picker.tap()
@@ -46,7 +55,12 @@ struct MessFilter: Screen {
 	}
 
 	/// The menu stays open as a choice is ticked, so it is closed the way a
-	/// reader closes it: by tapping outside it, above the list.
+	/// reader closes it: by tapping outside it. A pull-down menu offers no
+	/// element to dismiss it by -- neither XCUITest nor the accessibility tree
+	/// shows one while it is open -- so the tap goes to a point on the screen.
+	/// A fifth of the way down is above the menu, which opens upward from the
+	/// bottom toolbar, and below the navigation bar, whose Back button would
+	/// take the tap as its own.
 	private func dismiss(waitingFor label: String) {
 		app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.2)).tap()
 		XCTAssertTrue(

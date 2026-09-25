@@ -50,8 +50,30 @@ struct MessStoryScreen: Screen {
 		).firstMatch
 		XCTAssertTrue(chosen.waitForExistence(timeout: 30), "\(sign) should be the chosen sign")
 		capture("Horoscopes open on \(sign)")
-		let selected = app.buttons.matching(NSPredicate(format: "isSelected == true"))
-		XCTAssertEqual(selected.count, 1, "only \(sign) should be marked as chosen")
+		let selectedSigns = app.buttons.matching(
+			NSPredicate(format: "label IN %@ AND isSelected == true", TestIdentifiers.News.signs))
+		XCTAssertEqual(selectedSigns.count, 1, "only \(sign) should be marked as chosen")
+		return self
+	}
+
+	/// Assert the page scrolled the chosen sign's section up to the navigation
+	/// bar's bottom edge: the section opens with the glyph grid, so the grid's
+	/// first row is where the section begins. A page that never scrolled leaves
+	/// the grid wherever the rows it replaced were, above or below that edge.
+	@discardableResult
+	func verifyScrolledToChosenSign(_ sign: String) -> Self {
+		let glyph = app.buttons.matching(NSPredicate(format: "label == %@", sign)).firstMatch
+		let bar = app.navigationBars.firstMatch
+		XCTAssertTrue(bar.waitForExistence(timeout: 10), "the reader should have a navigation bar")
+		let landed = NSPredicate { _, _ in
+			glyph.exists && abs(glyph.frame.minY - bar.frame.maxY) <= 1
+		}
+		let settled = XCTWaiter().wait(
+			for: [XCTNSPredicateExpectation(predicate: landed, object: nil)], timeout: 10)
+		capture("Horoscopes scrolled to \(sign)")
+		XCTAssertEqual(
+			settled, .completed,
+			"the grid should sit just below the navigation bar at \(bar.frame.maxY), not at \(glyph.frame.minY)")
 		return self
 	}
 
@@ -69,21 +91,11 @@ struct MessStoryScreen: Screen {
 	}
 
 	/// Close the zoom viewer and wait to be back on the story.
-	///
-	/// The tap is retried, as `navigateFromHome` retries: Close is hittable as
-	/// soon as its host mounts, but its action has to reach JavaScript, and a
-	/// tap in between is dropped. Seen once by hand, just after the viewer
-	/// appeared.
 	@discardableResult
 	func closeImageViewer() -> Self {
-		for attempt in 1...3 {
-			closeButton.tap()
-			if closeButton.waitForNonExistence(timeout: 10) {
-				break
-			}
-			XCTContext.runActivity(named: "Tap \(attempt) on Close did not dismiss the viewer; retrying") { _ in }
-		}
-		XCTAssertFalse(closeButton.exists, "Close should dismiss the zoom viewer")
+		XCTAssertTrue(closeButton.waitForHittable(), "Close should be ready to tap")
+		closeButton.tap()
+		XCTAssertTrue(closeButton.waitForNonExistence(timeout: 30), "Close should dismiss the zoom viewer")
 		XCTAssertTrue(
 			app.staticTexts[TestIdentifiers.News.storyHeadline].waitForExistence(timeout: 10),
 			"closing the viewer should return to the story")
