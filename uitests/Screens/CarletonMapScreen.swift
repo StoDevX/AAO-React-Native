@@ -506,6 +506,49 @@ struct CarletonMapScreen: Screen {
 			"The collapsed card should hold the whole \(name), not clip it: \(name) \(box), sheet \(sheet)")
 	}
 
+	/// The stretch of map above the sheet as it rests now, clear of the
+	/// navigation bar at the top and of the sheet's grabber at the bottom.
+	/// Taken before the sheet moves, it stays map at every lower stop.
+	func mapAboveSheet() -> CGRect {
+		XCTAssertTrue(mapView.waitForExistence(timeout: 30), "The map should be on screen")
+		let map = mapView.frame
+		let sheetTop = sheetFrame().minY
+		return CGRect(x: map.minX, y: map.minY + 8, width: map.width, height: sheetTop - 24 - map.minY)
+	}
+
+	/// A screenshot taken once `region` has stopped changing, so a camera
+	/// still easing to a building is not mistaken for where it rests.
+	func settledMap(in region: CGRect) -> ScreenPixels? {
+		guard var previous = ScreenPixels(app.screenshot().image) else {
+			XCTFail("The screenshot should be readable as pixels")
+			return nil
+		}
+		for _ in 1...20 {
+			Thread.sleep(forTimeInterval: 0.5)
+			guard let next = ScreenPixels(app.screenshot().image) else { break }
+			if next.fractionDiffering(from: previous, in: region) == 0 {
+				return next
+			}
+			previous = next
+		}
+		XCTFail("The map in \(region) never stopped moving")
+		return nil
+	}
+
+	/// Apple Maps leaves the map where it is when its sheet changes stop; only
+	/// selecting a place moves the camera. A panned map changes a quarter or
+	/// more of the region, so anything past 1% is a move rather than noise.
+	@discardableResult
+	func verifyMapHeldStill(since before: ScreenPixels?, in region: CGRect) -> Self {
+		guard let before, let after = settledMap(in: region) else { return self }
+		let moved = after.fractionDiffering(from: before, in: region)
+		XCTContext.runActivity(named: "\(Int(moved * 100))% of the map in \(region) changed") { _ in }
+		XCTAssertTrue(
+			moved < 0.01,
+			"The map should stay put while the sheet changes stop; \(Int(moved * 100))% of \(region) changed")
+		return self
+	}
+
 	/// The middle stop is `MAP_MIDDLE_FRACTION` (0.4613, Apple Maps' stop) of
 	/// the window less its top inset, so the card's close button lands a little
 	/// past halfway down (about 0.57 of an iPhone 17 Pro's window). A top in the

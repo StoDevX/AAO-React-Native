@@ -219,12 +219,12 @@ export default function MapPage(): React.ReactNode {
 		return point ? {id: match.id, name: match.properties.name, point} : null
 	}, [selectedBuildingId, buildings])
 
-	React.useEffect(() => {
-		if (!selectedPoint) {
-			return
-		}
+	// Reads the sheet's height at the moment of selection without depending on
+	// it: Apple Maps leaves the map where it is when its sheet changes stop, so
+	// only a new selection moves the camera.
+	let easeToSelection = React.useEffectEvent((point: Point) => {
 		cameraRef.current?.easeTo({
-			center: selectedPoint.point.coordinates,
+			center: point.coordinates,
 			duration: CAMERA_ANIMATION_MS,
 			// The sheet sits over the bottom of the map, so centring on the
 			// building put the thing just selected underneath it. Pad by where
@@ -233,7 +233,13 @@ export default function MapPage(): React.ReactNode {
 			padding: {bottom: sheetHeight},
 			zoom: SELECTION_ZOOM,
 		})
-	}, [selectedPoint, sheetHeight])
+	})
+
+	React.useEffect(() => {
+		if (selectedPoint) {
+			easeToSelection(selectedPoint.point)
+		}
+	}, [selectedPoint])
 
 	return (
 		<View style={StyleSheet.absoluteFill}>

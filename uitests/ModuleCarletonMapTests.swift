@@ -72,6 +72,26 @@ class ModuleCarletonMapTests: UITestCase {
 			.verifyCardAtMedium()
 	}
 
+	/// Selecting a building moves the camera to it; the sheet then changing
+	/// stop does not, as in Apple Maps. Collapsing the card is the move that
+	/// shows it: the map above the middle stop stays in view, so a camera
+	/// re-padded for the shorter sheet would slide it.
+	func testTheMapHoldsStillWhenTheCardChangesStop() throws {
+		let screen = CarletonMapScreen(app: app)
+			.navigate()
+			.checkSheetPresented()
+			.tapAFootprint()
+			.verifyCardAtMedium()
+		let region = screen.mapAboveSheet()
+		let before = screen.settledMap(in: region)
+
+		screen
+			.collapseCard()
+			.verifyCardCollapsed()
+			.capture("Carleton map after the card collapses")
+			.verifyMapHeldStill(since: before, in: region)
+	}
+
 	/// Issue #7962: the collapsed card cut off the bottom of the building's
 	/// name. A long name, because a short one fits whatever the header does.
 	func testTheCollapsedCardHoldsItsWholeHeader() throws {
