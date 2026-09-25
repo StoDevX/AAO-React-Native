@@ -215,14 +215,15 @@ function BuildingCard({
 							listRowInsets({top: 0, leading: 0, bottom: 0, trailing: 0}),
 						]}
 					>
-						<VStack
-							modifiers={[frame({maxWidth: FILL_WIDTH}), onGeometryChange(measureBigTitle)]}
-							spacing={4}
-						>
+						<VStack modifiers={[frame({maxWidth: FILL_WIDTH})]} spacing={4}>
+							{/* The name alone is measured, not the subtitle under it:
+							    Maps swaps titles once the name has gone under the
+							    header, with the subtitle still in view. */}
 							<Text
 								modifiers={[
 									font({textStyle: 'title', weight: 'bold'}),
 									multilineTextAlignment('center'),
+									onGeometryChange(measureBigTitle),
 								]}
 							>
 								{name}
