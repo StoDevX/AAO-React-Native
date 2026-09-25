@@ -446,10 +446,28 @@ struct CarletonMapScreen: Screen {
 		return self
 	}
 
+	/// The collapsed stop rests at the foot of the screen. Checked on the sheet's
+	/// own box rather than on anything inside it, so that a drag which stopped
+	/// at the middle stop fails here instead of letting the header check pass
+	/// on a card tall enough to hold anything.
+	@discardableResult
+	func verifyCardCollapsed() -> Self {
+		let sheet = sheetFrame()
+		let windowHeight = app.windows.firstMatch.frame.height
+		XCTContext.runActivity(named: "sheet \(sheet) in a window \(windowHeight) tall") { _ in }
+		XCTAssertTrue(
+			sheet.minY > windowHeight * 0.8,
+			"The card should rest at the collapsed stop, at the foot of the screen; "
+				+ "the sheet's top is at \(sheet.minY) of \(windowHeight)")
+		return self
+	}
+
 	/// The issue this guards against: a collapsed card that cut through the
-	/// building's name and its close button. Both have to lie wholly inside the
-	/// sheet's own box -- frames, because `isHittable` answers true for content
-	/// the sheet clips away.
+	/// building's name and its close button. Both have to lie between the
+	/// sheet's top and bottom edges -- top-and-bottom only, because the stop is
+	/// too short rather than too narrow, so a header that does not fit loses its
+	/// lower edge. Frames, because `isHittable` answers true for content the
+	/// sheet clips away.
 	///
 	/// The close button is checked first because it is the half that can go
 	/// red on the old card, which gave its title no identifier.

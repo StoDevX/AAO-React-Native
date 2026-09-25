@@ -82,6 +82,7 @@ class ModuleCarletonMapTests: UITestCase {
 			.typeIntoSearch(TestIdentifiers.CarletonMap.aLongNamedBuilding)
 			.selectBuilding(named: TestIdentifiers.CarletonMap.aLongNamedBuilding)
 			.collapseCard()
+			.verifyCardCollapsed()
 			.capture("Carleton map card collapsed with a long name")
 			.verifyCardHeaderWithinSheet()
 	}
