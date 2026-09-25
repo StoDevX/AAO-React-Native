@@ -8,6 +8,7 @@ import {
 	buttonStyle,
 	contentShape,
 	environment,
+	fixedSize,
 	font,
 	foregroundStyle,
 	frame,
@@ -133,7 +134,17 @@ export function GradientTile({
 			]}
 			onPress={onPress}
 		>
-			<VStack modifiers={[contentShape(shapes.rectangle())]} spacing={LABEL_GAP}>
+			{/* fixedSize keeps the tile at its own full height. Without it, a
+			    row mixing one-line and two-line names is offered less height
+			    than a two-line tile needs -- 11pt short at xSmall -- and the
+			    card, being the one flexible part, shrinks to absorb it. */}
+			<VStack
+				modifiers={[
+					contentShape(shapes.rectangle()),
+					fixedSize({horizontal: false, vertical: true}),
+				]}
+				spacing={LABEL_GAP}
+			>
 				{/* The count sits in the card's corner, over the centred icon, as
 				    a Home Screen badge sits on an app icon. */}
 				<ZStack
