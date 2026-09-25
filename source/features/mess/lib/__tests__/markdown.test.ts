@@ -104,4 +104,49 @@ describe('runsToMarkdown', () => {
 			'un**break**able',
 		)
 	})
+
+	it('moves opening punctuation outside the markers when a styled word touches it', () => {
+		expect(
+			runsToMarkdown([
+				{text: 'word', bold: true},
+				{text: '(note)', italic: true},
+			]),
+		).toBe('**word**\\(*note\\)*')
+	})
+
+	it('moves closing punctuation outside the markers when a styled word follows it', () => {
+		expect(
+			runsToMarkdown([
+				{text: 'Note:', bold: true},
+				{text: 'Text', italic: true},
+			]),
+		).toBe('**Note**:*Text*')
+	})
+
+	it('moves punctuation between an italic word and a bold run', () => {
+		expect(
+			runsToMarkdown([
+				{text: 'word', italic: true},
+				{text: '(note)', bold: true},
+			]),
+		).toBe('*word*\\(**note\\)**')
+	})
+
+	it('treats a link beside a styled run as punctuation, since its brackets sit outside', () => {
+		expect(
+			runsToMarkdown([
+				{text: 'go', href: 'https://x.test/'},
+				{text: '(x)', bold: true},
+			]),
+		).toBe('[go](https://x.test/)**\\(x\\)**')
+	})
+
+	it('moves nothing where punctuation meets punctuation between styled runs', () => {
+		expect(
+			runsToMarkdown([
+				{text: 'Note:', bold: true},
+				{text: '(x)', italic: true},
+			]),
+		).toBe('**Note:***\\(x\\)*')
+	})
 })

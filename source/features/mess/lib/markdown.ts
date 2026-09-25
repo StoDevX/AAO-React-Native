@@ -15,10 +15,10 @@ function escapeHref(href: string): string {
 }
 
 /**
- * One run's Markdown. `before` and `after` are the characters the neighbouring runs put next to it,
+ * One run's Markdown. `before` and `after` are the neighbouring runs' edge characters, from `edgeOf`,
  * or '' at either end of the paragraph.
  */
-function runToMarkdown(run: Run, before = '', after = ''): string {
+function runToMarkdown(run: Run, before: string, after: string): string {
 	// Emphasis cannot open or close on a space, so the markers wrap only the words.
 	let match = /^(\s*)(.*?)(\s*)$/su.exec(run.text)
 	let [lead, core, trail] = [match?.[1] ?? '', match?.[2] ?? '', match?.[3] ?? '']
@@ -46,12 +46,21 @@ function runToMarkdown(run: Run, before = '', after = ''): string {
 	return escapeText(lead) + core + escapeText(trail)
 }
 
+/**
+ * The character a neighbouring run sets against a run's markers. A styled neighbour's own markers
+ * merge with this run's into one delimiter run, so what counts is the text inside them. A link
+ * always ends in `)` and begins with `[` or its own markers, so it offers no letter.
+ */
+function edgeOf(run: Run | undefined, index: 0 | -1): string {
+	if (!run || run.href) return ''
+	return run.text.at(index) ?? ''
+}
+
 /** Runs as inline Markdown for a `markdownEnabled` `Text`. */
 export function runsToMarkdown(runs: Run[]): string {
-	// Moving punctuation never changes whether a run begins or ends with a letter, so each run's
-	// plain rendering tells its neighbours what they will touch.
-	let plain = runs.map((run) => runToMarkdown(run))
 	return runs
-		.map((run, index) => runToMarkdown(run, plain[index - 1]?.at(-1), plain[index + 1]?.at(0)))
+		.map((run, index) =>
+			runToMarkdown(run, edgeOf(runs[index - 1], -1), edgeOf(runs[index + 1], 0)),
+		)
 		.join('')
 }
