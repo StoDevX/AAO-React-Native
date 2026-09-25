@@ -16,7 +16,7 @@ describe('runsToMarkdown', () => {
 		expect(runsToMarkdown([{text: '~~old~~'}])).toBe('\\~\\~old\\~\\~')
 	})
 
-	it('escapes an angle bracket, so a literal <url> never becomes an autolink', () => {
+	it('escapes an angle bracket, so a literal <url> is not read as an angle-bracket autolink', () => {
 		expect(runsToMarkdown([{text: '<https://x.test/>'}])).toBe('\\<https://x\\.test/>')
 	})
 
@@ -73,25 +73,33 @@ describe('runsToMarkdown', () => {
 		expect(runsToMarkdown([{text: '\nword\n', italic: true}])).toBe('\n*word*\n')
 	})
 
-	it('separates a word from a styled run that opens on punctuation', () => {
+	it('moves opening punctuation outside the markers when a word touches it', () => {
 		expect(runsToMarkdown([{text: 'word'}, {text: '(note)', bold: true}])).toBe(
-			'word\u200B**\\(note\\)**',
+			'word\\(**note\\)**',
 		)
 	})
 
-	it('separates a styled run that closes on punctuation from a following word', () => {
-		expect(runsToMarkdown([{text: 'Note:', bold: true}, {text: 'Text'}])).toBe(
-			'**Note:**\u200BText',
-		)
+	it('moves closing punctuation outside the markers when a word follows it', () => {
+		expect(runsToMarkdown([{text: 'Note:', bold: true}, {text: 'Text'}])).toBe('**Note**:Text')
 	})
 
-	it('adds no separator where a space already sits at the join', () => {
+	it('leaves a styled run of only punctuation beside a word unwrapped', () => {
+		expect(runsToMarkdown([{text: 'Hi'}, {text: '!', bold: true}])).toBe('Hi\\!')
+	})
+
+	it('keeps punctuation inside a link, whose brackets already part the markers from the word', () => {
+		expect(
+			runsToMarkdown([{text: 'word'}, {text: '(note)', bold: true, href: 'https://x.test/'}]),
+		).toBe('word[**\\(note\\)**](https://x.test/)')
+	})
+
+	it('keeps punctuation inside the markers where a space sits at the join', () => {
 		expect(runsToMarkdown([{text: 'word '}, {text: '(note)', italic: true}, {text: ' Text'}])).toBe(
 			'word *\\(note\\)* Text',
 		)
 	})
 
-	it('adds no separator between letters', () => {
+	it('keeps adjacent letter edges as they are', () => {
 		expect(runsToMarkdown([{text: 'un'}, {text: 'break', bold: true}, {text: 'able'}])).toBe(
 			'un**break**able',
 		)
