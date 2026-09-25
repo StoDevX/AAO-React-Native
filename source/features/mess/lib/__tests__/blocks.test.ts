@@ -126,6 +126,16 @@ describe('parseBlocks', () => {
 		])
 	})
 
+	it('reads a figure nested three deep once', () => {
+		let html =
+			'<figure class="wp-block-gallery">' +
+			'<figure><figure><img src="https://x.test/a.jpg" width="1" height="2"><figcaption>A</figcaption></figure></figure>' +
+			'</figure>'
+		expect(parseBlocks(html)).toStrictEqual([
+			{type: 'figure', url: 'https://x.test/a.jpg', width: 1, height: 2, caption: 'A'},
+		])
+	})
+
 	it('breaks the line between paragraphs inside a quote, so their words stay apart', () => {
 		expect(parseBlocks('<blockquote><p>A</p><p>B</p></blockquote>')).toStrictEqual([
 			{type: 'quote', runs: [{text: 'A\nB'}]},

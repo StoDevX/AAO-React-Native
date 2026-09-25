@@ -49,7 +49,7 @@ function runToMarkdown(run: Run, before: string, after: string): string {
 /**
  * The character a neighbouring run sets against a run's markers. A styled neighbour's own markers
  * merge with this run's into one delimiter run, so what counts is the text inside them. A link
- * always ends in `)` and begins with `[` or its own markers, so it offers no letter.
+ * always begins with `[` and ends in `)`, or with whitespace outside them, so it offers no letter.
  */
 function edgeOf(run: Run | undefined, index: 0 | -1): string {
 	if (!run || run.href) return ''

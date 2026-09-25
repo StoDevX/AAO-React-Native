@@ -118,6 +118,17 @@ function descendants(node: Element, ...names: string[]): Element[] {
 	return found
 }
 
+/** The elements below `node` named `name` that no other such element encloses, in document order. */
+function outermost(node: Element, name: string): Element[] {
+	let found: Element[] = []
+	for (let child of node.children) {
+		if (!isTag(child)) continue
+		if (child.name === name) found.push(child)
+		else found.push(...outermost(child, name))
+	}
+	return found
+}
+
 function figureFrom(img: Element, caption: string): Block | null {
 	let url = img.attribs.src
 	let width = Number.parseInt(img.attribs.width ?? '', 10)
@@ -156,7 +167,8 @@ function blocksOf(node: Element, blocks: Block[]): void {
 		case 'figure': {
 			let iframe = descendants(node, 'iframe')[0]
 			if (iframe) return blocksOf(iframe, blocks)
-			let nested = descendants(node, 'figure')
+			// Each nested figure reads its own nested figures, so only the outermost are read here.
+			let nested = outermost(node, 'figure')
 			if (nested.length > 0) {
 				// A gallery: each image is its own figure, and the gallery's own caption follows them.
 				for (let figure of nested) blocksOf(figure, blocks)
