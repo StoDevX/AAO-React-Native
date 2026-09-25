@@ -33,6 +33,19 @@ struct MessStoryScreen: Screen {
 		return self
 	}
 
+	/// Scroll down the page until a sign's row is on screen, which at a large
+	/// text size carries the chosen sign's section, if any, well out of sight.
+	@discardableResult
+	func scrollToSignRow(_ sign: String) -> Self {
+		let row = app.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", "\(sign), ")).firstMatch
+		for _ in 0..<20 {
+			if row.exists && row.isHittable { break }
+			app.swipeUp()
+		}
+		XCTAssertTrue(row.waitForHittable(timeout: 10), "scrolling down should reach the \(sign) row")
+		return self
+	}
+
 	/// Tap a sign's glyph in the grid a Horoscopes post shows once a sign is chosen.
 	@discardableResult
 	func tapSignGlyph(_ sign: String) -> Self {
@@ -60,9 +73,12 @@ struct MessStoryScreen: Screen {
 	/// bar's bottom edge: the section opens with the glyph grid, so the grid's
 	/// first row is where the section begins. A page that never scrolled leaves
 	/// the grid wherever the rows it replaced were, above or below that edge.
+	/// The first glyph marks that row whichever sign is chosen; the chosen
+	/// sign's own glyph may be in the second.
 	@discardableResult
 	func verifyScrolledToChosenSign(_ sign: String) -> Self {
-		let glyph = app.buttons.matching(NSPredicate(format: "label == %@", sign)).firstMatch
+		let firstSign = TestIdentifiers.News.signs[0]
+		let glyph = app.buttons.matching(NSPredicate(format: "label == %@", firstSign)).firstMatch
 		let bar = app.navigationBars.firstMatch
 		XCTAssertTrue(bar.waitForExistence(timeout: 10), "the reader should have a navigation bar")
 		let landed = NSPredicate { _, _ in

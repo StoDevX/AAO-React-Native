@@ -552,6 +552,9 @@ struct TestIdentifiers {
 		/// label begins, in source/features/mess/lib/horoscopes.ts.
 		static let gemini = "Gemini"
 		static let leo = "Leo"
+		/// The last sign row, before a sign is picked and after Pisces is.
+		static let pisces = "Pisces"
+		static let aquarius = "Aquarius"
 		/// All twelve, as the glyph buttons are labelled.
 		static let signs = [
 			"Aries", "Taurus", "Gemini", "Cancer", "Leo", "Virgo",

@@ -1,7 +1,7 @@
 import * as React from 'react'
 import {Linking, Share, StyleSheet, useWindowDimensions} from 'react-native'
 import {Stack} from 'expo-router'
-import {Divider, Host, LazyVStack, ScrollView, useNativeState} from '@expo/ui/swift-ui'
+import {Divider, Host, LazyVStack, ScrollView, useNativeState, VStack} from '@expo/ui/swift-ui'
 import {background, padding, scrollPosition, scrollTargetLayout} from '@expo/ui/swift-ui/modifiers'
 import {useSafeAreaInsets} from 'react-native-safe-area-context'
 import {AuthorCard} from './author-card'
@@ -54,6 +54,10 @@ export function StoryScreen({id}: Props): React.ReactNode {
 	// Only a template that moves the reader binds the page's scroll position.
 	let scrolls = story.layout.kind === 'horoscopes'
 	let column = scrolls ? TARGET_COLUMN : isPoem ? POEM_COLUMN : COLUMN
+	// A lazy stack builds a part only near the screen, so a part the page must scroll to could
+	// be missing, and never appear, while the reader is far below it. A page that scrolls is
+	// one short post, so it builds every part up front.
+	let Column = scrolls ? VStack : LazyVStack
 
 	return (
 		<>
@@ -77,7 +81,7 @@ export function StoryScreen({id}: Props): React.ReactNode {
 				<ScrollView
 					modifiers={scrolls ? [...PAGE, scrollPosition(scrollTarget, {anchor: 'top'})] : PAGE}
 				>
-					<LazyVStack alignment="leading" modifiers={column} spacing={14}>
+					<Column alignment="leading" modifiers={column} spacing={14}>
 						{isPoem ? (
 							<QuietHeader story={story} />
 						) : (
@@ -93,7 +97,7 @@ export function StoryScreen({id}: Props): React.ReactNode {
 						{story.bylines.map((byline) => (
 							<AuthorCard byline={byline} key={byline.id} />
 						))}
-					</LazyVStack>
+					</Column>
 				</ScrollView>
 			</Host>
 		</>

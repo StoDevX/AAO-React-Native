@@ -109,8 +109,9 @@ export function HoroscopesView({layout, scrollTo}: Props): React.ReactNode {
 			{intro}
 			<VStack
 				alignment="leading"
-				// A new id is a new view to SwiftUI, so this appears again for each sign picked.
-				modifiers={[id(chosen.sign), onAppear(scrollToPicked)]}
+				// A new id is a new view to SwiftUI, so this appears again for each sign picked. The
+				// id goes last: a modifier outside it keeps its identity, so it would not appear again.
+				modifiers={[onAppear(scrollToPicked), id(chosen.sign)]}
 				spacing={10}
 			>
 				<GlyphGrid chosen={chosen.sign} onChoose={choose} />
