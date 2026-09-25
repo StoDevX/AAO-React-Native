@@ -143,6 +143,7 @@ export const strikethrough = spreading('strikethrough')
 export const submitLabel = named('submitLabel', 'submitLabel')
 export const tabViewStyle = spreading('tabViewStyle')
 export const tag = named('tag', 'tag')
+export const textCase = named('textCase', 'value')
 export const textInputAutocapitalization = named(
 	'textInputAutocapitalization',
 	'autocapitalization',
@@ -407,12 +408,16 @@ export function RNHostView({children}: WithModifiers & {matchContents?: boolean}
  * anything else -- a custom component, a `Fragment` -- with no warning on
  * device. Filtering here the same way turns that into a Jest failure instead
  * of a blank sentence discovered on a phone.
+ *
+ * `markdownEnabled` changes only how SwiftUI draws the string, so the stand-in
+ * prints the Markdown source as given: that string is what the component
+ * receives.
  */
 export function Text({
 	children,
 	modifiers,
 	testID,
-}: WithModifiers & {testID?: string}): React.ReactNode {
+}: WithModifiers & {markdownEnabled?: boolean; testID?: string}): React.ReactNode {
 	let kept = React.Children.toArray(children).filter(
 		(child) =>
 			typeof child === 'string' ||
