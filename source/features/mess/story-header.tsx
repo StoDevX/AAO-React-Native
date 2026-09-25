@@ -31,10 +31,15 @@ const CAPTION = [font({textStyle: 'footnote', design: 'serif'}), italic(), foreg
 
 const AVATAR = 30
 
-type Props = {story: MessStory; columnWidth: number}
+type Props = {
+	story: MessStory
+	columnWidth: number
+	/** Whether to draw the lead photo; a template that draws the picture itself leaves it out */
+	showPhoto?: boolean
+}
 
 /** The top of a story: kicker, headline, byline and date, and the lead photo. */
-export function StoryHeader({story, columnWidth}: Props): React.ReactNode {
+export function StoryHeader({story, columnWidth, showPhoto = true}: Props): React.ReactNode {
 	let kicker = kickerText(story)
 	let byline = bylineText(story.bylines)
 	let firstWriter = story.bylines[0]
@@ -63,7 +68,7 @@ export function StoryHeader({story, columnWidth}: Props): React.ReactNode {
 				</VStack>
 			</HStack>
 			<Divider />
-			{story.photo ? (
+			{showPhoto && story.photo ? (
 				<VStack alignment="leading" spacing={4}>
 					<RemotePhoto
 						height={Math.round((columnWidth * story.photo.height) / story.photo.width)}

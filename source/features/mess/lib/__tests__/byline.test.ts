@@ -1,5 +1,5 @@
 import {describe, expect, it} from '@jest/globals'
-import {bylineText, kickerText} from '../byline'
+import {bylineText, imageLabel, kickerText} from '../byline'
 
 const b = (name: string) => ({id: 1, name})
 
@@ -15,6 +15,15 @@ describe('bylineText', () => {
 	})
 	it('gives nothing when there is no byline', () => {
 		expect(bylineText([])).toBeNull()
+	})
+})
+
+describe('imageLabel', () => {
+	it('names an image by its title and writers', () => {
+		expect(imageLabel({title: 'Spring', bylines: [b('A'), b('B')]})).toBe('Spring, by A and B')
+	})
+	it('names an image with no writer by its title alone', () => {
+		expect(imageLabel({title: 'Spring', bylines: []})).toBe('Spring')
 	})
 })
 

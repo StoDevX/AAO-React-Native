@@ -1,11 +1,23 @@
 import type {Byline, MessStory} from '../types'
 
-/** "By A", "By A and B", "By A, B and C"; null with no writers. */
-export function bylineText(bylines: Byline[]): string | null {
+/** "A", "A and B", "A, B and C"; null with no writers. */
+function writerNames(bylines: Byline[]): string | null {
 	let names = bylines.map((b) => b.name)
 	if (names.length === 0) return null
-	if (names.length === 1) return `By ${names[0]}`
-	return `By ${names.slice(0, -1).join(', ')} and ${names.at(-1)}`
+	if (names.length === 1) return names[0] ?? null
+	return `${names.slice(0, -1).join(', ')} and ${names.at(-1)}`
+}
+
+/** "By A", "By A and B", "By A, B and C"; null with no writers. */
+export function bylineText(bylines: Byline[]): string | null {
+	let names = writerNames(bylines)
+	return names ? `By ${names}` : null
+}
+
+/** What VoiceOver reads for a comic or artwork, which comes with no alt text: "Title, by A". */
+export function imageLabel(story: Pick<MessStory, 'title' | 'bylines'>): string {
+	let names = writerNames(story.bylines)
+	return names ? `${story.title}, by ${names}` : story.title
 }
 
 /** The Mess's own short name for a section, where it uses one. */

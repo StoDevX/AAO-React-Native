@@ -7,7 +7,9 @@ import {LoadingView, NoticeView} from '@frogpond/notice'
 import {useSafeAreaInsets} from 'react-native-safe-area-context'
 import {AuthorCard} from './author-card'
 import {HoroscopesView} from './horoscopes-view'
+import {ImageView} from './image-view'
 import {paper} from './palette'
+import {SeriesRow} from './series-row'
 import {SiteLinkCard, StoryBlock} from './story-blocks'
 import {StoryHeader} from './story-header'
 import type {MessStory} from './types'
@@ -78,7 +80,12 @@ export function StoryScreen({id}: Props): React.ReactNode {
 					modifiers={scrolls ? [...PAGE, scrollPosition(scrollTarget, {anchor: 'top'})] : PAGE}
 				>
 					<LazyVStack alignment="leading" modifiers={scrolls ? TARGET_COLUMN : COLUMN} spacing={14}>
-						<StoryHeader columnWidth={columnWidth} story={story} />
+						{/* A comic or artwork is its own picture, so the header leaves it to the body. */}
+						<StoryHeader
+							columnWidth={columnWidth}
+							showPhoto={story.layout.kind !== 'image'}
+							story={story}
+						/>
 						<StoryBody columnWidth={columnWidth} scrollTo={scrollTo} story={story} />
 						<Divider />
 						{story.bylines.map((byline) => (
@@ -105,27 +112,43 @@ type StoryBodyProps = {
 function StoryBody({story, columnWidth, scrollTo}: StoryBodyProps): React.ReactNode {
 	let {layout} = story
 	if (layout.kind === 'horoscopes') return <HoroscopesView layout={layout} scrollTo={scrollTo} />
+	if (layout.kind === 'image') {
+		return (
+			<>
+				<ImageView columnWidth={columnWidth} image={layout.image} story={story} />
+				<StoryBlocks columnWidth={columnWidth} story={story} />
+				<SeriesRow story={story} />
+			</>
+		)
+	}
 
-	// The first paragraph opens the story, even when a photo comes before it.
-	let openingIndex = story.blocks.findIndex((block) => block.type === 'paragraph')
 	return (
 		<>
-			{story.blocks.map((block, index) => (
-				<StoryBlock
-					block={block}
-					columnWidth={columnWidth}
-					isOpening={index === openingIndex}
-					// oxlint-disable-next-line react/no-array-index-key -- blocks have no id; a story's body is fixed, so its order is its identity
-					key={index}
-					storyLink={story.link}
-				/>
-			))}
-			{/* Artwork, comics and playlists come through the API with no body. */}
+			<StoryBlocks columnWidth={columnWidth} story={story} />
+			{/* Playlists, and artwork or comics with no image, come through the API with no body. */}
 			{story.blocks.length === 0 ? (
 				<SiteLinkCard icon="safari" label="Read on olafmessenger.com" url={story.link} />
 			) : null}
 		</>
 	)
+}
+
+type StoryBlocksProps = {story: MessStory; columnWidth: number}
+
+/** A story's blocks in reading order, returned side by side to land in the page's column. */
+function StoryBlocks({story, columnWidth}: StoryBlocksProps): React.ReactNode {
+	// The first paragraph opens the story, even when a photo comes before it.
+	let openingIndex = story.blocks.findIndex((block) => block.type === 'paragraph')
+	return story.blocks.map((block, index) => (
+		<StoryBlock
+			block={block}
+			columnWidth={columnWidth}
+			isOpening={index === openingIndex}
+			// oxlint-disable-next-line react/no-array-index-key -- blocks have no id; a story's body is fixed, so its order is its identity
+			key={index}
+			storyLink={story.link}
+		/>
+	))
 }
 
 const styles = StyleSheet.create({

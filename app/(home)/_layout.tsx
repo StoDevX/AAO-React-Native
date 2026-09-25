@@ -44,6 +44,10 @@ export default function HomeLayout(): React.ReactNode {
 			/>
 			<Stack.Screen name="Messenger/story" options={{title: ''}} />
 			<Stack.Screen
+				name="Messenger/image"
+				options={{presentation: 'fullScreenModal', headerShown: false}}
+			/>
+			<Stack.Screen
 				name="StOlafNews"
 				options={{title: 'St. Olaf News', headerLargeTitleEnabled: true}}
 			/>

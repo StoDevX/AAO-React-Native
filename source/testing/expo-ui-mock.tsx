@@ -108,6 +108,7 @@ export const Animation: AnimationPresets = {
 export const aspectRatio = spreading('aspectRatio')
 export const autocorrectionDisabled = flag('autocorrectionDisabled', 'disabled')
 export const bold = bare('bold')
+export const border = spreading('border')
 export const buttonStyle = named('buttonStyle', 'style')
 export const controlSize = named('controlSize', 'size')
 export const disabled = flag('disabled', 'disabled')

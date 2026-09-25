@@ -33,10 +33,12 @@ jest.mock(
 		// oxlint-disable-next-line typescript/no-require-imports
 		require('react-native-safe-area-context/jest/mock').default,
 )
-jest.mock('expo-router', () =>
+const mockNavigate = jest.fn()
+jest.mock('expo-router', () => ({
 	// oxlint-disable-next-line typescript/no-require-imports
-	require('../../../testing/expo-router-mock'),
-)
+	...(require('../../../testing/expo-router-mock') as object),
+	useRouter: () => ({navigate: mockNavigate}),
+}))
 jest.mock('@frogpond/open-url', () => ({openUrl: jest.fn()}))
 
 // The feed's fetches, so an uncached feed never reaches a network Jest does not have.
@@ -93,6 +95,21 @@ const HOROSCOPES: MessStory = {
 	},
 }
 
+const COMIC_IMAGE = {url: 'https://olafmessenger.com/comic.png', width: 1000, height: 1400}
+
+/** A Comic post: its image is the body, and a line of text follows it. */
+const COMIC: MessStory = {
+	...STORY,
+	id: 36819,
+	title: 'Mouse Friends: sunsets of life',
+	link: 'https://olafmessenger.com/36819/',
+	section: 'Variety',
+	column: 'Comic',
+	photo: {...COMIC_IMAGE, caption: ''},
+	blocks: [{type: 'paragraph', runs: [{text: 'The mice watch the sun go down.'}]}],
+	layout: {kind: 'image', image: COMIC_IMAGE},
+}
+
 const PROFILE: StaffProfile = {
 	name: 'Kenzie Nguyen',
 	bio: 'Kenzie is a senior.',
@@ -104,7 +121,7 @@ let queryClient: QueryClient
 
 beforeEach(() => {
 	queryClient = new QueryClient({defaultOptions: {queries: {staleTime: Infinity, retry: false}}})
-	queryClient.setQueryData(messKeys.feed, [STORY, ARTWORK, HOROSCOPES])
+	queryClient.setQueryData(messKeys.feed, [STORY, ARTWORK, HOROSCOPES, COMIC])
 	useMessStore.setState({lastSign: null})
 	// Ashlyn has no profile; Kenzie has one.
 	queryClient.setQueryData(messKeys.profile(423), null)
@@ -118,6 +135,16 @@ afterEach(() => {
 	appQueryClient.clear()
 	jest.clearAllMocks()
 })
+
+type Node = {type: string; props: Record<string, unknown>; children: Array<Node | string> | null}
+
+/** The props of every rendered host element of `type`, depth first. */
+function hostProps(node: Node | Node[] | null, type: string): Array<Record<string, unknown>> {
+	if (node === null) return []
+	if (Array.isArray(node)) return node.flatMap((n) => hostProps(n, type))
+	let children = (node.children ?? []).filter((child): child is Node => typeof child !== 'string')
+	return [...(node.type === type ? [node.props] : []), ...hostProps(children, type)]
+}
 
 /** The hrefs `fetchSourceBody` was asked for, in order. */
 function fetchedHrefs(): string[] {
@@ -269,6 +296,45 @@ describe('StoryScreen', () => {
 
 		expect(screen.getByText('leo reading')).toBeTruthy()
 		expect(screen.getByRole('button', {name: 'Leo', selected: true})).toBeTruthy()
+	})
+
+	test('draws a comic as a framed image that opens the viewer', async () => {
+		queryClient.setQueryData(messKeys.series(COMIC.id), {title: '', stories: []})
+		await renderStory(36819)
+
+		fireEvent.press(
+			screen.getByRole('button', {
+				name: 'Mouse Friends: sunsets of life, by Ashlyn Wuench and Kenzie Nguyen',
+			}),
+		)
+
+		expect(mockNavigate).toHaveBeenCalledWith({
+			pathname: '/Messenger/image',
+			params: {id: '36819'},
+		})
+	})
+
+	test('draws a comic once, as its body rather than as a lead photo too', async () => {
+		queryClient.setQueryData(messKeys.series(COMIC.id), {title: '', stories: []})
+		await renderStory(36819)
+
+		let uris = hostProps(screen.toJSON() as Node | Node[] | null, 'Image').map(
+			(props) => (props.source as {uri?: string} | undefined)?.uri,
+		)
+		expect(uris.filter((uri) => uri === COMIC_IMAGE.url)).toHaveLength(1)
+	})
+
+	test("follows a comic's image with its remaining text and its series, and no site link", async () => {
+		queryClient.setQueryData(messKeys.series(COMIC.id), {
+			title: 'More Mouse Friends',
+			stories: [{...COMIC, id: 2, title: 'Mouse Friends episode 2: Mary! Gold!'}],
+		})
+		await renderStory(36819)
+
+		expect(screen.getByText(/^The mice watch/u)).toBeTruthy()
+		expect(screen.getByText('More Mouse Friends')).toBeTruthy()
+		expect(screen.getByRole('button', {name: 'Mouse Friends episode 2: Mary! Gold!'})).toBeTruthy()
+		expect(screen.queryByText('Read on olafmessenger.com')).toBeNull()
 	})
 
 	test('draws an article as an article even with a sign remembered', async () => {
