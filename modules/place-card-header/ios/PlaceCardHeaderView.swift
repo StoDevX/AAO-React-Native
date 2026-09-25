@@ -92,7 +92,7 @@ struct PlaceCardHeaderView: ExpoSwiftUI.View {
 		.overlay {
 			Color.clear
 				.accessibilityElement()
-				.accessibilityLabel([props.title, props.subtitle ?? ""].filter { !$0.isEmpty }.joined(separator: ", "))
+				.accessibilityLabel([props.title, subtitle].compactMap { $0 }.joined(separator: ", "))
 				.accessibilityIdentifier(props.testID ?? "")
 		}
 	}
@@ -146,8 +146,10 @@ private struct MarqueeTitle: View {
 				.offset(x: offset)
 			}
 			.mask { fade }
-			// Drawn flat. Otherwise the masked title vanishes for a frame as
-			// its first pass starts.
+			// Drawn flat. Without this the masked title vanished for one frame
+			// as its first pass started (3 recordings of 3; none of 2 with
+			// it, none with the mask removed). Why is not known; this was
+			// chosen by that experiment.
 			.drawingGroup()
 			.task(id: Cycle(title: props.title, overflows: overflows, reduceMotion: reduceMotion)) {
 				await run()
