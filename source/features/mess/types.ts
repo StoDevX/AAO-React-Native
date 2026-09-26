@@ -70,9 +70,13 @@ export type ZodiacSign =
 /** One line of a poem: its runs, and how many levels the poet indented it. */
 export type PoemLine = {indent: number; runs: Run[]}
 
+/** An Amuse Labs PuzzleMe puzzle, as the placeholder in a Crossword post names it. */
+export type CrosswordPuzzle = {id: string; set: string}
+
 /** How the reader lays a story out; every template falls back to `article`. */
 export type StoryLayout =
 	| {kind: 'article'}
 	| {kind: 'horoscopes'; intro: Run[][]; signs: Array<{sign: ZodiacSign; reading: Run[][]}>}
 	| {kind: 'image'; image: Photo}
 	| {kind: 'poem'; stanzas: PoemLine[][]}
+	| {kind: 'crossword'; puzzle: CrosswordPuzzle}
