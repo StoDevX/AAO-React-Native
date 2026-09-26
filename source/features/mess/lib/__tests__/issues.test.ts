@@ -73,6 +73,13 @@ describe('groupIssues', () => {
 		])
 	})
 
+	// WordPress pages by offset, so a post published between two page fetches pushes the last
+	// post of one page onto the next as well.
+	it('counts a post once when it arrives on two pages', () => {
+		let pages = [...spring.slice(0, 100), spring[99], ...spring.slice(100)]
+		expect(outline(groupIssues(pages, false))).toStrictEqual(outline(groupIssues(spring, false)))
+	})
+
 	it('joins the strays of Mar 23 and 24 to Mar 18, and ends it at the next issue', () => {
 		expect(issueOn('2026-03-18')).toMatchObject({
 			count: 31,

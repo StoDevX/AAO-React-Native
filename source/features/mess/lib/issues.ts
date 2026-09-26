@@ -62,11 +62,15 @@ type Group = {day: string; posts: LightPost[]}
  * The issues the loaded posts make, newest first. The posts come newest first, as WordPress
  * lists them. A day with at least five posts is an issue; a day with fewer joins the most
  * recent issue before it, and a stray older than every issue is left out. While another page
- * remains, the oldest day is left out too, since that page may hold more of it.
+ * remains, the oldest day is left out too, since that page may hold more of it. WordPress pages
+ * by offset, so a post published between two page fetches repeats one post; each counts once.
  */
 export function groupIssues(posts: LightPost[], hasMore: boolean): MessIssue[] {
+	let seen = new Set<number>()
 	let days: LightPost[][] = []
 	for (let post of posts) {
+		if (seen.has(post.id)) continue
+		seen.add(post.id)
 		let last = days.at(-1)
 		if (last && last[0]?.day === post.day) last.push(post)
 		else days.push([post])
