@@ -150,7 +150,7 @@ describe('the Mess issues', () => {
 		expect(cache.clientState.queries.map((query) => query.queryKey)).toStrictEqual([messKeys.feed])
 	})
 
-	// Review: a next page that fails mid-scroll leaves the list in an error state, still holding
+	// A next page that fails mid-scroll leaves the list in an error state, still holding
 	// its loaded pages, and Top's issue is chosen from those pages.
 	test('dehydrates an issue list whose further page failed, since its pages still stand', () => {
 		let failed = {

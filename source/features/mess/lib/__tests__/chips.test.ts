@@ -31,7 +31,6 @@ describe('chipOf', () => {
 		})
 	})
 
-	// Review Focus 5.
 	it('opens on Top for a column the old filter saved', () => {
 		expect(chipOf('Poetry')).toStrictEqual({kind: 'top'})
 	})

@@ -134,7 +134,7 @@ describe('expo-ui-mock', () => {
 			expect(appeared).toHaveBeenCalledTimes(2)
 		})
 
-		// Seen on a simulator: the Mess issue list stopped paging with its id first.
+		// On a simulator, the Mess issue list's end row never appeared again with its id first.
 		test('does not fire again when an id before it changes, which rebuilds only the view inside', async () => {
 			let appeared = jest.fn()
 			let view = await render(

@@ -195,7 +195,7 @@ describe('FrontPageScreen', () => {
 		expect(screen.getByRole('button', {name: 'All Opinions'})).toBeTruthy()
 	})
 
-	// Review: Top's stories were cached a day under a key the issue's new stories did not change.
+	// The newest issue's range has no end, so only its count shows that a story joined it.
 	test('fetches Top again once the issue list counts another story for it', async () => {
 		seedTop()
 		serve(() => [])
@@ -295,7 +295,6 @@ describe('FrontPageScreen', () => {
 		expect(screen.getByText('5 stories')).toBeTruthy()
 	})
 
-	// Review Focus 5.
 	test('opens on Top when the saved choice is a column the old filter offered', async () => {
 		saveChoice('Poetry')
 		seedTop()
@@ -348,7 +347,7 @@ describe('FrontPageScreen', () => {
 		expect(screen.getByRole('button', {name: 'All Opinions'})).toBeTruthy()
 	})
 
-	// Review Focus 1: offline, the issue list is paused rather than failed.
+	// Offline, the issue list is paused rather than failed.
 	test('falls back to the feed when offline with no issue list cached', async () => {
 		queryClient.setQueryData(messKeys.feed, ISSUE_STORIES)
 		onlineManager.setOnline(false)
@@ -360,7 +359,7 @@ describe('FrontPageScreen', () => {
 		).toBeTruthy()
 	})
 
-	// Review: the list was saved from an earlier visit to Issues, but Top's own stories never were.
+	// The list was saved from an earlier visit to Issues, but Top's own stories never were.
 	test("says Top's issue loads once back online when offline with only the list cached", async () => {
 		queryClient.setQueryData(messKeys.issues, {pages: [ISSUE_STORIES.map(light)], pageParams: [1]})
 		onlineManager.setOnline(false)
@@ -413,7 +412,7 @@ describe('FrontPageScreen', () => {
 		expect(screen.getByText('Latest stories')).toBeTruthy()
 	})
 
-	// Review: an infinite query refetches every page it holds, one after another.
+	// An infinite query refetches every page it holds, one after another.
 	test('pull-to-refresh fetches only the first page of the issue list, however many are loaded', async () => {
 		seedTop()
 		let [first] = queryClient.getQueryData<{pages: LightPost[][]}>(messKeys.issues)?.pages ?? []

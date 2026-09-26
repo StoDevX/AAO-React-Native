@@ -173,7 +173,7 @@ describe('IssueList', () => {
 		await waitForQueriesToSettle(queryClient)
 	})
 
-	// Review Focus 3: page 2 completes Mar 18 but leaves the list's end on screen.
+	// Page 2 completes Mar 18 but leaves the list's end on screen, so the end has to fetch again.
 	test('fetches the next page each time the end comes into view, until the last', async () => {
 		serve(springPage)
 		await renderIssues()
@@ -184,7 +184,6 @@ describe('IssueList', () => {
 		await waitForQueriesToSettle(queryClient)
 	})
 
-	// Review Focus 4.
 	test('keeps the loaded issues when a further page fails, and offers Try Again at the end', async () => {
 		serve((href) =>
 			href.includes('page=1&') || href.includes('/media/')

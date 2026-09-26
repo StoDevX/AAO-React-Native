@@ -129,7 +129,7 @@ describe('groupIssues', () => {
 		expect(groupIssues(fromMarch, false).at(-1)).toMatchObject({day: '2026-03-04', count: 26})
 	})
 
-	// Review Focus 2: page 1 ends 27 posts into Mar 18, whose other two are on page 2.
+	// Page 1 ends 27 posts into Mar 18, whose other two are on page 2.
 	it('holds back the oldest day while another page may hold more of it', () => {
 		expect(outline(groupIssues(spring.slice(0, 100), true))).toStrictEqual([
 			['2026-05-12', 11],
