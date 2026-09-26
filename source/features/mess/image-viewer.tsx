@@ -27,6 +27,7 @@ import {imageLabel} from './lib/byline'
 import {doubleTapZoom} from './lib/zoom'
 import {StoryLookupNotice} from './story-lookup-notice'
 import {useMessStory} from './use-mess-story'
+import type {MessStory, Photo} from './types'
 
 /** Apple's smallest comfortable tap target, in points. */
 const TAP_TARGET = 44
@@ -44,21 +45,35 @@ const CLOSE_ICON = [
 	contentShape(shapes.circle()),
 ]
 
-type Props = {id: number}
+/**
+ * The picture the viewer shows: a comic's or artwork's one picture, or the feature page's
+ * picture at `index`. Null when the story has no picture there.
+ */
+function pictureOf(story: MessStory | undefined, index: number): Photo | null {
+	if (story?.layout.kind === 'image') return story.layout.image
+	if (story?.layout.kind === 'feature') return story.layout.images[index] ?? null
+	return null
+}
+
+type Props = {
+	id: number
+	/** Which of a feature page's pictures to show; a comic or artwork has only the one */
+	index?: number
+}
 
 /**
- * A comic or piece of artwork on its own, on black, to pinch or double-tap to zoom.
+ * A comic, a piece of artwork or a feature page's picture on its own, on black, to pinch or double-tap to zoom.
  *
  * The zooming view is a React Native `ScrollView`, because `@expo/ui` has no view that
  * zooms; the close button over it is SwiftUI.
  */
-export function ImageViewer({id}: Props): React.ReactNode {
+export function ImageViewer({id, index = 0}: Props): React.ReactNode {
 	let close = useDismissOnce()
 	let {width, height} = useWindowDimensions()
 	let insets = useSafeAreaInsets()
 	let query = useMessStory(id)
 	let story = query.data
-	let image = story?.layout.kind === 'image' ? story.layout.image : null
+	let image = pictureOf(story, index)
 
 	let scrollView = React.useRef<ScrollView>(null)
 	// The scroll view zooms itself on a pinch, so its scale is read back from its scroll events,
