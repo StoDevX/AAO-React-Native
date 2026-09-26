@@ -7,6 +7,8 @@ import categories from './fixtures/categories.json'
 import profiles from './fixtures/profiles-390.json'
 import varietyPosts from './fixtures/variety-posts.json'
 import crosswordPlaylist from './fixtures/crossword-playlist-posts.json'
+import springPosts from './fixtures/issue-posts.json'
+import {parseLightPosts} from '../lib/issues'
 import {parseMessCategories, parseMessPosts} from '../lib/posts'
 import {QueryClient, onlineManager} from '@tanstack/react-query'
 import {queryClient} from '../../../init/tanstack-query'
@@ -14,14 +16,17 @@ import {
 	MissingMessStoryError,
 	messCategoryOptions,
 	messFeedOptions,
-	messKeys,
 	messListOptions,
 	messPlaylistPageOptions,
 	messSeriesOptions,
 	messStoryOptions,
 	staffProfileOptions,
+	messIssueOptions,
+	messIssuesOptions,
+	messMediaOptions,
 } from '../query'
-import type {MessStory, SpotifyRef} from '../types'
+import {messKeys} from '../lib/keys'
+import type {LightPost, MessStory, SpotifyRef} from '../types'
 
 jest.mock('@react-native-community/netinfo', () =>
 	// oxlint-disable-next-line typescript/no-require-imports
@@ -41,6 +46,15 @@ function run<T>(options: {queryFn?: unknown}): Promise<T> {
 	let queryFn = options.queryFn as (context: {signal: AbortSignal; queryKey: unknown}) => Promise<T>
 	return queryFn({signal: new AbortController().signal, queryKey: []})
 }
+
+/** Runs an infinite query's page fetch for one page. */
+function runPage<T>(options: {queryFn?: unknown}, pageParam: number): Promise<T> {
+	let queryFn = options.queryFn as (context: {signal: AbortSignal; pageParam: number}) => Promise<T>
+	return queryFn({signal: new AbortController().signal, pageParam})
+}
+
+/** This spring's posts as the issue list parses them. */
+const spring = parseLightPosts(springPosts, parseMessCategories(categories))
 
 afterEach(() => {
 	jest.clearAllMocks()
@@ -386,6 +400,72 @@ describe('messPlaylistPageOptions', () => {
 	test('is cached per story', () => {
 		expect(messPlaylistPageOptions(playlistStory(36532)).queryKey).toStrictEqual(
 			messKeys.playlistPage(36532),
+		)
+	})
+})
+
+describe('messIssuesOptions', () => {
+	test('asks for a page of light posts, and reads them against the category tree', async () => {
+		serve(() => springPosts.slice(0, 100))
+
+		let page = await runPage<LightPost[]>(messIssuesOptions, 2)
+
+		expect(page).toStrictEqual(spring.slice(0, 100))
+		expect(fetchedHrefs()).toContain(
+			'https://olafmessenger.com/wp-json/wp/v2/posts?per_page=100&page=2&_fields=id,date,title,categories,featured_media',
+		)
+	})
+
+	test('asks for another page after a full one, and none after a short one', () => {
+		let full = spring.slice(0, 100)
+		let short = spring.slice(200)
+		expect(messIssuesOptions.getNextPageParam(full, [full], 1, [1])).toBe(2)
+		expect(
+			messIssuesOptions.getNextPageParam(short, [full, full, short], 3, [1, 2, 3]),
+		).toBeUndefined()
+	})
+})
+
+describe('messIssueOptions', () => {
+	test("fetches an older issue's stories, from its day to the next issue's", async () => {
+		serve(() => posts)
+
+		let stories = await run<MessStory[]>(
+			messIssueOptions({after: '2026-03-24T23:59:59', before: '2026-04-29T00:00:00'}),
+		)
+
+		expect(stories.map((s) => s.id)).toStrictEqual([36859, 36911, 36885, 36904, 36843])
+		expect(fetchedHrefs()).toContain(
+			'https://olafmessenger.com/wp-json/wp/v2/posts?after=2026-03-24T23:59:59&before=2026-04-29T00:00:00&per_page=100&_embed=true',
+		)
+	})
+
+	test('runs the newest issue to now', async () => {
+		serve(() => posts)
+
+		await run(messIssueOptions({after: '2026-05-11T23:59:59', before: null}))
+
+		expect(fetchedHrefs()).toContain(
+			'https://olafmessenger.com/wp-json/wp/v2/posts?after=2026-05-11T23:59:59&per_page=100&_embed=true',
+		)
+	})
+
+	test('keys an issue by its range, and keeps it for a day', () => {
+		let options = messIssueOptions({after: '2026-05-11T23:59:59', before: null})
+		expect(options.queryKey).toStrictEqual(['mess', 'issue', '2026-05-11T23:59:59', null])
+		expect(options.staleTime).toBe(24 * 60 * 60 * 1000)
+	})
+})
+
+describe('messMediaOptions', () => {
+	test("looks up a photo's address by its media id", async () => {
+		serve(() => ({source_url: 'https://olafmessenger.com/wp-content/uploads/2026/04/grant.png'}))
+
+		expect(await run(messMediaOptions(36902))).toBe(
+			'https://olafmessenger.com/wp-content/uploads/2026/04/grant.png',
+		)
+		expect(fetchedHrefs()).toContain(
+			'https://olafmessenger.com/wp-json/wp/v2/media/36902?_fields=source_url',
 		)
 	})
 })

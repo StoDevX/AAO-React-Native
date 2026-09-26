@@ -1,25 +1,17 @@
 import {fetchManifest, fetchSourceBody, REL_NEWS, resolveSource} from '@frogpond/data-sources'
-import {queryOptions} from '@tanstack/react-query'
+import {infiniteQueryOptions, queryOptions} from '@tanstack/react-query'
 import {queryClient} from '../../init/tanstack-query'
 import {parseMessCategories, parseMessPosts} from './lib/posts'
+import {ISSUE_PAGE_SIZE, parseLightPosts, parseMediaUrl} from './lib/issues'
 import {latestProfile, parseStaffProfiles} from './lib/profiles'
 import {seriesKey, seriesName} from './lib/series'
 import {findSpotifyRef} from './lib/spotify'
-import type {MessCategory, MessStory, SpotifyRef, StaffProfile} from './types'
+import {messKeys} from './lib/keys'
+import type {LightPost, MessCategory, MessIssue, MessStory, SpotifyRef, StaffProfile} from './types'
 
 const WP_V2_POSTS = 'application/vnd.wordpress.v2.posts+json'
 const ONE_DAY_IN_MS = 24 * 60 * 60 * 1000
 const FIVE_MINUTES_IN_MS = 5 * 60 * 1000
-
-export const messKeys = {
-	feed: ['mess', 'feed'] as const,
-	profile: (staffId: number) => ['mess', 'profile', staffId] as const,
-	categories: ['mess', 'categories'] as const,
-	story: (id: number) => ['mess', 'story', id] as const,
-	category: (categoryId: number) => ['mess', 'category', categoryId] as const,
-	series: (storyId: number) => ['mess', 'series', storyId] as const,
-	playlistPage: (storyId: number) => ['mess', 'playlist-page', storyId] as const,
-}
 
 /** Other stories to read after one, under a heading such as `More Mouse Friends`. */
 export type MessSeries = {title: string; stories: MessStory[]}
@@ -125,6 +117,67 @@ export const messCategoryOptions = (categoryId: number) =>
 		queryKey: messKeys.category(categoryId),
 		staleTime: FIVE_MINUTES_IN_MS,
 		queryFn: ({signal}) => categoryStories(categoryId, signal),
+	})
+/**
+ * Every post the paper has published, newest first, a page at a time and in only the fields an
+ * issue needs, for grouping into issues. A short page is the last.
+ */
+export const messIssuesOptions = infiniteQueryOptions({
+	queryKey: messKeys.issues,
+	// As the feed: a sitting of reading, while pull to refresh fetches regardless.
+	staleTime: FIVE_MINUTES_IN_MS,
+	initialPageParam: 1,
+	queryFn: async ({pageParam, signal}): Promise<LightPost[]> => {
+		// Assumes the resolved feed href is an absolute WordPress URL.
+		let origin = originOf(await feedHref())
+		// A failed categories fetch fails the page on purpose: sections come from it.
+		let [body, categories] = await Promise.all([
+			fetchSourceBody(
+				`${origin}/wp-json/wp/v2/posts?per_page=${ISSUE_PAGE_SIZE}&page=${pageParam}&_fields=id,date,title,categories,featured_media`,
+				signal,
+				'Olaf Messenger issues',
+			),
+			queryClient.query(messCategoriesOptions),
+		])
+		return parseLightPosts(body, categories)
+	},
+	getNextPageParam: (lastPage, _allPages, lastPageParam) =>
+		lastPage.length < ISSUE_PAGE_SIZE ? undefined : lastPageParam + 1,
+})
+
+/** One issue's stories: every post from its day up to the next issue's, parsed like the feed. */
+// oxlint-disable-next-line typescript/explicit-module-boundary-types
+export const messIssueOptions = (issue: Pick<MessIssue, 'after' | 'before'>) =>
+	queryOptions({
+		queryKey: messKeys.issue(issue.after, issue.before),
+		// A published issue rarely changes.
+		staleTime: ONE_DAY_IN_MS,
+		queryFn: ({signal}) => {
+			let range =
+				issue.before === null
+					? `after=${issue.after}`
+					: `after=${issue.after}&before=${issue.before}`
+			return storiesAt(`posts?${range}&per_page=100&_embed=true`, signal, 'Olaf Messenger issue')
+		},
+	})
+
+/** A photo's address, by its WordPress media id, for an issue's lead on the Issues list. */
+// oxlint-disable-next-line typescript/explicit-module-boundary-types
+export const messMediaOptions = (mediaId: number) =>
+	queryOptions({
+		queryKey: messKeys.media(mediaId),
+		// A published photo's address does not change.
+		staleTime: ONE_DAY_IN_MS,
+		queryFn: async ({signal}): Promise<string> => {
+			// Assumes the resolved feed href is an absolute WordPress URL.
+			let origin = originOf(await feedHref())
+			let body = await fetchSourceBody(
+				`${origin}/wp-json/wp/v2/media/${mediaId}?_fields=source_url`,
+				signal,
+				'Olaf Messenger photo',
+			)
+			return parseMediaUrl(body)
+		},
 	})
 
 /**
