@@ -7,6 +7,7 @@ import {act, fireEvent, render, screen} from '@testing-library/react-native'
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query'
 import {openUrl} from '@frogpond/open-url'
 import {fetchManifest, fetchSourceBody, type Jrd} from '@frogpond/data-sources'
+import {useKeepAwake} from 'expo-keep-awake'
 import categories from './fixtures/categories.json'
 import posts from './fixtures/posts.json'
 
@@ -186,6 +187,34 @@ const PAGE_PLAYLIST: MessStory = {
 	layout: {kind: 'playlist', spotify: null},
 }
 
+/** A Recipes post: an introduction, two ingredients, two steps sections that each count from one, and a closing line. */
+const RECIPE: MessStory = {
+	...STORY,
+	id: 36493,
+	title: 'Recipe: Lemon bars',
+	link: 'https://olafmessenger.com/36493/',
+	section: 'Variety',
+	column: 'Recipes',
+	layout: {
+		kind: 'recipe',
+		intro: [{type: 'paragraph', runs: [{text: 'We can all use a little sunshine.'}]}],
+		sections: [
+			{
+				label: 'Shortbread ingredients',
+				kind: 'ingredients',
+				items: [[{text: '½ tsp table salt'}], [{text: '4 large eggs'}]],
+			},
+			{
+				label: 'Instructions',
+				kind: 'steps',
+				items: [[{text: 'Preheat the oven.'}], [{text: 'Bake for 20 minutes.'}]],
+			},
+			{label: 'Icing instructions', kind: 'steps', items: [[{text: 'Whisk the sugar.'}]]},
+		],
+		after: [{type: 'paragraph', runs: [{text: 'Store in the fridge.'}]}],
+	},
+}
+
 const PLAYLIST_PAGE = readFileSync(join(__dirname, 'fixtures/playlist-page-36532.html'), 'utf8')
 
 const PROFILE: StaffProfile = {
@@ -210,6 +239,7 @@ beforeEach(() => {
 		CROSSWORD,
 		PLAYLIST,
 		PAGE_PLAYLIST,
+		RECIPE,
 	])
 	openInIOS = jest.spyOn(Linking, 'openURL').mockResolvedValue(true)
 	useMessStore.setState({lastSign: null})
@@ -574,5 +604,72 @@ describe('StoryScreen', () => {
 			await screen.findByRole('button', {name: 'Open on the Mess'}, {timeout: 3000}),
 		).toBeTruthy()
 		expect(screen.queryByLabelText('Loading')).toBeNull()
+	})
+
+	test('draws a recipe as its introduction, labelled sections of rows, and what follows', async () => {
+		await renderStory(36493)
+
+		expect(screen.getByText('We can all use')).toBeTruthy()
+		expect(screen.getByText('Shortbread ingredients')).toBeTruthy()
+		expect(screen.getByRole('button', {name: '½ tsp table salt', selected: false})).toBeTruthy()
+		expect(
+			screen.getByRole('button', {name: 'Step 1, Preheat the oven.', selected: false}),
+		).toBeTruthy()
+		// VoiceOver reads a step's number before its text; an ingredient has none.
+		expect(screen.getByRole('button', {name: 'Step 2, Bake for 20 minutes.'})).toBeTruthy()
+		expect(screen.getByText('Store in the fridge\\.')).toBeTruthy()
+		// Each steps section counts from one.
+		expect(screen.getAllByText('1')).toHaveLength(2)
+		expect(screen.getAllByText('2')).toHaveLength(1)
+	})
+
+	test('ticks an ingredient and a step, and unticks one tapped again', async () => {
+		await renderStory(36493)
+
+		await fireEvent.press(screen.getByRole('button', {name: '½ tsp table salt'}))
+		await fireEvent.press(screen.getByRole('button', {name: 'Step 1, Preheat the oven.'}))
+
+		expect(screen.getByRole('button', {name: '½ tsp table salt', selected: true})).toBeTruthy()
+		expect(
+			screen.getByRole('button', {name: 'Step 1, Preheat the oven.', selected: true}),
+		).toBeTruthy()
+		expect(screen.getByRole('button', {name: '4 large eggs', selected: false})).toBeTruthy()
+		// A ticked step's number gives way to a check.
+		expect(screen.getAllByText('1')).toHaveLength(1)
+
+		await fireEvent.press(screen.getByRole('button', {name: '½ tsp table salt'}))
+		expect(screen.getByRole('button', {name: '½ tsp table salt', selected: false})).toBeTruthy()
+	})
+
+	// Review Focus 3.
+	test('ticks a step without ticking the row in the same place in another section', async () => {
+		await renderStory(36493)
+
+		await fireEvent.press(screen.getByRole('button', {name: 'Step 1, Preheat the oven.'}))
+
+		expect(
+			screen.getByRole('button', {name: 'Step 1, Whisk the sugar.', selected: false}),
+		).toBeTruthy()
+		expect(screen.getByRole('button', {name: '½ tsp table salt', selected: false})).toBeTruthy()
+	})
+
+	test('forgets the ticks when the page is left', async () => {
+		let first = await renderStory(36493)
+		await fireEvent.press(screen.getByRole('button', {name: '½ tsp table salt'}))
+		await first.unmount()
+
+		await renderStory(36493)
+
+		expect(screen.getByRole('button', {name: '½ tsp table salt', selected: false})).toBeTruthy()
+	})
+
+	test('keeps the screen awake on a recipe page, and not on an article', async () => {
+		let article = await renderStory(36911)
+		expect(useKeepAwake).not.toHaveBeenCalled()
+		await article.unmount()
+
+		await renderStory(36493)
+
+		expect(useKeepAwake).toHaveBeenCalled()
 	})
 })

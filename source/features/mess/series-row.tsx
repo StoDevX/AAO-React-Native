@@ -2,7 +2,6 @@ import * as React from 'react'
 import {useRouter} from 'expo-router'
 import {Button, LazyHStack, Rectangle, ScrollView, Text, VStack} from '@expo/ui/swift-ui'
 import {
-	accessibilityAddTraits,
 	accessibilityIdentifier,
 	buttonStyle,
 	contentShape,
@@ -17,16 +16,12 @@ import {useQuery} from '@tanstack/react-query'
 import {FramedPhoto} from './image-view'
 import {faded, ink} from './palette'
 import {messSeriesOptions} from './query'
+import {SECTION_HEADING} from './story-blocks'
 import type {MessStory, Photo} from './types'
 
 /** A thumbnail's side, in points. */
 const THUMBNAIL = 120
 
-const HEADING = [
-	font({textStyle: 'headline', design: 'serif', smallCaps: true}),
-	foregroundStyle(ink),
-	accessibilityAddTraits(['isHeader']),
-]
 const TITLE = [
 	font({textStyle: 'footnote', design: 'serif'}),
 	foregroundStyle(ink),
@@ -62,7 +57,7 @@ export function SeriesRow({story}: Props): React.ReactNode {
 
 	return (
 		<VStack alignment="leading" spacing={8}>
-			<Text modifiers={HEADING}>{data.title}</Text>
+			<Text modifiers={SECTION_HEADING}>{data.title}</Text>
 			<ScrollView axes="horizontal" showsIndicators={false}>
 				<LazyHStack alignment="top" spacing={12}>
 					{data.stories.map((other) => {

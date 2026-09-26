@@ -1,6 +1,7 @@
 import * as React from 'react'
 import {Button, HStack, Image, Text, VStack} from '@expo/ui/swift-ui'
 import {
+	accessibilityAddTraits,
 	accessibilityIdentifier,
 	accessibilityLabel,
 	buttonStyle,
@@ -43,6 +44,13 @@ const CAPTION = [
 const OPENING = [font({textStyle: 'body', design: 'serif', smallCaps: true})]
 const SITE_LINK = [font({textStyle: 'callout', weight: 'semibold'}), foregroundStyle(messRed)]
 const SITE_LINK_ICON = [foregroundStyle(messRed)]
+
+/** A section's heading, in small capitals as a newspaper sets one: a series row's, or a recipe's. */
+export const SECTION_HEADING = [
+	font({textStyle: 'headline', design: 'serif', smallCaps: true}),
+	foregroundStyle(ink),
+	accessibilityAddTraits(['isHeader']),
+]
 
 /** A paragraph of body text, drawn from its runs as Markdown. */
 export function Paragraph({
@@ -187,13 +195,25 @@ export function StoryBlock({
 	}
 }
 
-type StoryBlocksProps = {story: MessStory; columnWidth: number}
+type StoryBlocksProps = {
+	story: MessStory
+	columnWidth: number
+	/** The blocks to draw, where a template draws the rest of the body itself; by default the story's own */
+	blocks?: Block[]
+	/** Whether the first paragraph opens the story, its first words in small caps */
+	opens?: boolean
+}
 
 /** A story's blocks in reading order, returned side by side to land in the page's column. */
-export function StoryBlocks({story, columnWidth}: StoryBlocksProps): React.ReactNode {
+export function StoryBlocks({
+	story,
+	columnWidth,
+	blocks = story.blocks,
+	opens = true,
+}: StoryBlocksProps): React.ReactNode {
 	// The first paragraph opens the story, even when a photo comes before it.
-	let openingIndex = story.blocks.findIndex((block) => block.type === 'paragraph')
-	return story.blocks.map((block, index) => (
+	let openingIndex = opens ? blocks.findIndex((block) => block.type === 'paragraph') : -1
+	return blocks.map((block, index) => (
 		<StoryBlock
 			block={block}
 			columnWidth={columnWidth}

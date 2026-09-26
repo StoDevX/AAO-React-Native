@@ -67,6 +67,7 @@
     "expo-font": "57.0.3",
     "expo-image-manipulator": "57.0.19",
     "expo-image-picker": "57.0.19",
+    "expo-keep-awake": "57.0.2",
     "expo-linking": "57.0.9",
     "expo-localization": "57.0.2",
     "expo-mail-composer": "57.0.2",
