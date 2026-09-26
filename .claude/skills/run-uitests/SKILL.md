@@ -37,12 +37,19 @@ TEST_RUNNER_AAO_JS_LOCATION=localhost:8091 xcodebuild test-without-building \
   -xctestrun $(find ios/build/Build/Products -name '*.xctestrun' -print -quit) \
   -destination "platform=iOS Simulator,id=<UDID>" \
   -only-testing:AllAboutOlafUITests/ModuleDirectoryTests/testSomething \
+  -collect-test-diagnostics never \
   -resultBundlePath /tmp/results
 ```
 
 Pipe step 4 through `grep -E "^Test Case|error:|XCTAssert|Executed|\*\*"`.
 Unfiltered xcodebuild output is thousands of lines, most of it exported build
 settings, and it will bury the one assertion message you ran the test for.
+
+**Keep `-collect-test-diagnostics never`.** Without it, xcodebuild spends about
+ten minutes gathering simulator diagnostics after the last test, passing or
+not, and prints nothing while it does. That reads as a hung test: the run's
+`scheduling.log` says the tests finished long before xcodebuild exits. CI passes
+the same flag for the same reason.
 
 ## Sharing a machine with other checkouts
 
