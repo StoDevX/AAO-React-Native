@@ -12,12 +12,13 @@ const ROW_LENGTHS = [6, 4, 3, FEWEST_PER_ROW]
 
 /**
  * The height of a glyph's line at each accessibility text size, in points, keyed by the
- * least `fontScale` of that size. React Native's `fontScale` follows the body style, not
- * the glyphs' title 2, and outgrows it (3.571 at AX5, where title 2 grows only from 22pt
- * to 56pt), so it picks a size rather than scaling a length. Each threshold sits midway
- * between two sizes' scales in `RCTFontSizeMultiplier`: AX2 2.143, AX3 2.643, AX4 3.143,
- * AX5 3.571. The heights are the serif title 2 line as the simulator lays it out. Below
- * AX2 the line is shorter than a tap target, so the target sets the cell.
+ * `fontScale` from which that size applies. React Native's `fontScale` follows the body
+ * style, not the glyphs' title 2, and outgrows it (3.571 at AX5, where title 2 grows only
+ * from 22pt to 56pt), so it picks a size rather than scaling a length. Each key sits midway
+ * between that size's scale in `RCTFontSizeMultiplier` and the next smaller size's, so a
+ * scale between two sizes takes the nearer: AX2 2.143, AX3 2.643, AX4 3.143, AX5 3.571.
+ * The heights are the serif title 2 line as the simulator lays it out. Below AX2 the line
+ * is shorter than a tap target, so the target sets the cell.
  */
 const GLYPH_LINE_HEIGHTS = [
 	{fontScale: 3.357, height: 67},
