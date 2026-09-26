@@ -55,7 +55,7 @@ overrides:
   finalhandler@1>on-finished: 2.4.1
   accepts@1>negotiator: 0.6.4
   mime-types@2>mime-db: 1.54.0
-  color-convert@1>color-name: 1.1.4
+  color-convert@1>color-name: 2.1.1
   simple-plist@1>bplist-parser: 0.3.2
 
 patchedDependencies:
@@ -3300,6 +3300,10 @@ packages:
 
   color-name@1.1.4:
     resolution: {integrity: sha512-dOy+3AuW3a2wNbZHIuMZpTcgjGuLU/uBL/ubcZF9OXbDo8ff4O8yVp5Bf0efS8uEoYo5q4Fx7dY9OgQGXgAsQA==}
+
+  color-name@2.1.1:
+    resolution: {integrity: sha512-p2FdgwVx1a9yWBHP2wI0VgShkDpgN4kZISkxdNipGBJWpa5G6b04OINlVWCyJj0JmfvcPrgqt95E9k8yvaOJFg==}
+    engines: {node: '>=12.20'}
 
   color-string@1.9.1:
     resolution: {integrity: sha512-shrVawQFojnZv6xM40anx4CkoDP+fZsw/ZerEMsW/pyzsRbElpsL/DBVW7q3ExxwusdNXI3lXpuhEZkzs8p5Eg==}
@@ -8173,13 +8177,15 @@ snapshots:
 
   color-convert@1.9.3:
     dependencies:
-      color-name: 1.1.4
+      color-name: 2.1.1
 
   color-convert@2.0.1:
     dependencies:
       color-name: 1.1.4
 
   color-name@1.1.4: {}
+
+  color-name@2.1.1: {}
 
   color-string@1.9.1:
     dependencies:

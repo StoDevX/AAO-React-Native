@@ -192,7 +192,7 @@ overrides:
   'finalhandler@1>on-finished': '2.4.1'
   'accepts@1>negotiator': '0.6.4'
   'mime-types@2>mime-db': '1.54.0'
-  'color-convert@1>color-name': '1.1.4'
+  'color-convert@1>color-name': '2.1.1'
   'simple-plist@1>bplist-parser': '0.3.2'
 
 # bind top-level dependencies to exact versions, so lockfile-maintenance MRs
