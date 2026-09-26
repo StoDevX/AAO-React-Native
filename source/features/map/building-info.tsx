@@ -39,7 +39,10 @@ import {PlacesSection} from './card/places-section'
 import {cardActions, WALKING_DIRECTIONS} from './lib/card-actions'
 import {nameUnderHeader, titleMayMove} from './lib/card-title'
 import {goodToKnowRows} from './lib/good-to-know'
-import {placeTiles} from './lib/place-tiles'
+import {placeTiles, toPlaceTiles} from './lib/place-tiles'
+import {alsoHere, type StackEntry} from './lib/also-here'
+import {AlsoHereSection} from './card/also-here-section'
+import {mapDataOptions} from './query'
 import type {SheetDetent} from './lib/sheet-moves'
 import type {Building, Coordinate, Feature, Point} from './types'
 
@@ -91,11 +94,14 @@ type Props = {
 	onClose: () => void
 	/// Which stop the sheet is at: large lays the name out differently, and only the other two let a long one move.
 	stop: SheetDetent
+	/// Stacks a place's card over this one; without it the card lists nothing
+	/// as also at its location.
+	onOpen?: (entry: StackEntry) => void
 }
 
 /// The info card's contents, as SwiftUI. The sheet that presents them belongs
 /// to the map screen, which swaps between this and the picker.
-export function BuildingInfo({building, campus, onClose, stop}: Props): React.ReactNode {
+export function BuildingInfo({building, campus, onClose, onOpen, stop}: Props): React.ReactNode {
 	if (!building) {
 		return (
 			<List>
@@ -114,6 +120,7 @@ export function BuildingInfo({building, campus, onClose, stop}: Props): React.Re
 			campus={campus}
 			key={building.id}
 			onClose={onClose}
+			onOpen={onOpen}
 			stop={stop}
 		/>
 	)
@@ -124,11 +131,13 @@ function BuildingCard({
 	building,
 	campus,
 	onClose,
+	onOpen,
 	stop,
 }: {
 	building: Feature<Building>
 	campus: Campus
 	onClose: () => void
+	onOpen?: (entry: StackEntry) => void
 	stop: SheetDetent
 }): React.ReactNode {
 	let large = stop === 'large'
@@ -161,6 +170,8 @@ function BuildingCard({
 		staleTime: HOURS_STALE_TIME,
 	})
 	let hours = ownHours(venues, building)
+	// The map screen's own query, so the card reads its warm cache.
+	let {data: features = []} = useQuery(mapDataOptions(campus))
 
 	return (
 		<PlaceCardScaffold large={large}>
@@ -261,6 +272,12 @@ function BuildingCard({
 				/>
 				<PhotoStrip name={name} photos={photos} />
 				{hours ? <CardHours venue={hours} /> : null}
+				{onOpen ? (
+					<AlsoHereSection
+						onOpen={onOpen}
+						tiles={toPlaceTiles(alsoHere(building, features, venues))}
+					/>
+				) : null}
 				<AboutSection text={description} />
 				<GoodToKnowSection rows={goodToKnowRows(building.properties)} />
 				<PlacesSection id="departments" tiles={departmentTiles} title="Departments" />

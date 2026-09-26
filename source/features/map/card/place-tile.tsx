@@ -1,4 +1,5 @@
 import * as React from 'react'
+import type {ColorValue} from 'react-native'
 import {Button, HStack, Image, Spacer, Text, VStack} from '@expo/ui/swift-ui'
 import {
 	accessibilityElement,
@@ -19,6 +20,7 @@ import * as c from '@frogpond/colors'
 import {openUrl} from '@frogpond/open-url'
 
 import {FILL_WIDTH} from '../../../components/tile-layout'
+import type {StackEntry} from '../lib/also-here'
 import type {PlaceTile} from '../lib/place-tiles'
 
 // Maps' "Also at This Location" tiles, measured on iOS 27: about 170 by 124pt
@@ -60,16 +62,25 @@ function cardFrame(fill: boolean) {
 const SYMBOL = {
 	department: 'building.2.fill',
 	office: 'person.2.fill',
+	place: 'mappin.and.ellipse',
 } as const
 
-/// One department or office, as a Maps place tile. A tile with a link opens
-/// it; one without is only the card.
+/// A place's live status on its tile: "Open until 9 PM", in its colour.
+export type TileStatus = {text: string; color: ColorValue}
+
+/// One department, office or place, as a Maps place tile. A tile that opens a
+/// place stacks its card; one with only a link opens the page; one with
+/// neither is only the card.
 export function PlaceTileView({
 	tile,
 	fill = false,
+	status,
+	onOpen,
 }: {
 	tile: PlaceTile
 	fill?: boolean
+	status?: TileStatus
+	onOpen?: (entry: StackEntry) => void
 }): React.ReactNode {
 	let symbol = SYMBOL[tile.kind]
 	let card = (
@@ -101,9 +112,28 @@ export function PlaceTileView({
 			>
 				{tile.label}
 			</Text>
+			{status ? (
+				<Text modifiers={[font({textStyle: 'subheadline'}), foregroundStyle(status.color)]}>
+					{status.text}
+				</Text>
+			) : null}
 			<Spacer />
 		</VStack>
 	)
+	let opens = tile.opens
+	if (opens && onOpen) {
+		return (
+			<Button
+				modifiers={[
+					buttonStyle('plain'),
+					accessibilityLabel(status ? `${tile.label}, ${status.text}` : tile.label),
+				]}
+				onPress={() => onOpen(opens)}
+			>
+				{card}
+			</Button>
+		)
+	}
 	let href = tile.href
 	if (!href) {
 		return card

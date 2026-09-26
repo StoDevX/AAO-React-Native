@@ -5,6 +5,7 @@ import {QueryClient, QueryClientProvider} from '@tanstack/react-query'
 import {openUrl} from '@frogpond/open-url'
 
 import {keys} from '../../building-hours/query'
+import {keys as mapKeys} from '../query'
 import type {BuildingType} from '../../building-hours/types'
 import {BuildingInfo} from '../building-info'
 import {makeBuilding} from './fixtures'
@@ -60,6 +61,8 @@ function renderCard(ui: React.ReactElement) {
 	trackedQueryClients.push(client)
 	client.setQueryData(keys.all('stolaf'), mockVenues.stolaf)
 	client.setQueryData(keys.all('carleton'), mockVenues.carleton)
+	client.setQueryData(mapKeys.all('stolaf'), [])
+	client.setQueryData(mapKeys.all('carleton'), [])
 	return render(<QueryClientProvider client={client}>{ui}</QueryClientProvider>)
 }
 
