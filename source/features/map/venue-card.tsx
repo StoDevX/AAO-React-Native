@@ -37,6 +37,7 @@ export function VenueCard({
 	placeName,
 	extraLinks,
 	onClose,
+	stacked,
 	stop,
 }: {
 	venue: BuildingType | undefined
@@ -45,6 +46,8 @@ export function VenueCard({
 	/// The page of a Departments or Offices tile merged with this venue.
 	extraLinks?: Array<LabelLink>
 	onClose: () => void
+	/// The sheet stacked over this card, if any.
+	stacked?: React.ReactNode
 	stop: SheetDetent
 }): React.ReactNode {
 	if (!venue) {
@@ -53,6 +56,7 @@ export function VenueCard({
 				<Section>
 					<Text>Place not found.</Text>
 					<CloseButton onClose={onClose} />
+					{stacked}
 				</Section>
 			</List>
 		)
@@ -68,7 +72,13 @@ export function VenueCard({
 	]
 
 	return (
-		<PlaceCard name={venue.name} onClose={onClose} stop={stop} subtitle={subtitle || null}>
+		<PlaceCard
+			name={venue.name}
+			onClose={onClose}
+			stacked={stacked}
+			stop={stop}
+			subtitle={subtitle || null}
+		>
 			{formalName ? (
 				<Section>
 					<Text modifiers={FORMAL_NAME_ROW}>{formalName}</Text>

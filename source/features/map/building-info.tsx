@@ -98,17 +98,27 @@ type Props = {
 	/// Stacks a place's card over this one; without it the card lists nothing
 	/// as also at its location.
 	onOpen?: (entry: StackEntry) => void
+	/// The sheet stacked over this card, if any.
+	stacked?: React.ReactNode
 }
 
 /// The info card's contents, as SwiftUI. The sheet that presents them belongs
 /// to the map screen, which swaps between this and the picker.
-export function BuildingInfo({building, campus, onClose, onOpen, stop}: Props): React.ReactNode {
+export function BuildingInfo({
+	building,
+	campus,
+	onClose,
+	onOpen,
+	stacked,
+	stop,
+}: Props): React.ReactNode {
 	if (!building) {
 		return (
 			<List>
 				<Section>
 					<Text>Building not found.</Text>
 					<CloseButton onClose={onClose} />
+					{stacked}
 				</Section>
 			</List>
 		)
@@ -122,6 +132,7 @@ export function BuildingInfo({building, campus, onClose, onOpen, stop}: Props): 
 			key={building.id}
 			onClose={onClose}
 			onOpen={onOpen}
+			stacked={stacked}
 			stop={stop}
 		/>
 	)
@@ -133,12 +144,14 @@ function BuildingCard({
 	campus,
 	onClose,
 	onOpen,
+	stacked,
 	stop,
 }: {
 	building: Feature<Building>
 	campus: Campus
 	onClose: () => void
 	onOpen?: (entry: StackEntry) => void
+	stacked?: React.ReactNode
 	stop: SheetDetent
 }): React.ReactNode {
 	let {address, description, floors, links, name, photos} = building.properties
@@ -163,7 +176,7 @@ function BuildingCard({
 	)
 
 	return (
-		<PlaceCard name={name} onClose={onClose} stop={stop} subtitle={subtitle}>
+		<PlaceCard name={name} onClose={onClose} stacked={stacked} stop={stop} subtitle={subtitle}>
 			<ActionsRow
 				actions={cardActions({point: pointOf(building), walkingDirections: WALKING_DIRECTIONS})}
 			/>
@@ -194,12 +207,16 @@ export function PlaceCard({
 	subtitle,
 	stop,
 	onClose,
+	stacked,
 	children,
 }: {
 	name: string
 	subtitle: string | null
 	stop: SheetDetent
 	onClose: () => void
+	/// The sheet stacked over this card, if any. It rides in the header, since
+	/// presenting draws nothing in place and the list would give it a row.
+	stacked?: React.ReactNode
 	children: React.ReactNode
 }): React.ReactNode {
 	let large = stop === 'large'
@@ -267,6 +284,7 @@ export function PlaceCard({
 					title={name}
 				/>
 				<CloseButton onClose={onClose} />
+				{stacked}
 			</ZStack>
 
 			{/* Plain, on the sheet's own colour: Maps lays its sections straight
