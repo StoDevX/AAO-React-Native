@@ -117,7 +117,9 @@ type StoryBodyProps = {
  */
 function StoryBody({story, columnWidth, scrollTo}: StoryBodyProps): React.ReactNode {
 	let {layout} = story
-	if (layout.kind === 'horoscopes') return <HoroscopesView layout={layout} scrollTo={scrollTo} />
+	if (layout.kind === 'horoscopes') {
+		return <HoroscopesView columnWidth={columnWidth} layout={layout} scrollTo={scrollTo} />
+	}
 	if (layout.kind === 'poem') return <PoemView layout={layout} />
 	if (layout.kind === 'image') {
 		return (

@@ -1,4 +1,5 @@
 import * as React from 'react'
+import {useWindowDimensions} from 'react-native'
 import {Button, Divider, Grid, HStack, Spacer, Text, VStack} from '@expo/ui/swift-ui'
 import {
 	accessibilityAddTraits,
@@ -15,7 +16,9 @@ import {
 	shapes,
 	textSelection,
 } from '@expo/ui/swift-ui/modifiers'
+import {FILL_WIDTH, inRows} from '../../components/tile-layout'
 import {RowAccessory} from '../../components/rows'
+import {GLYPH_SPACING, glyphsPerRow, TAP_TARGET} from './lib/glyph-grid'
 import {SIGN_DATES, SIGN_GLYPHS, SIGN_NAMES, SPOKEN_DATES} from './lib/horoscopes'
 import {ZODIAC_SIGNS} from './lib/zodiac'
 import {faded, ink, messRed, paper} from './palette'
@@ -23,13 +26,11 @@ import {useMessStore} from './store'
 import {Paragraph} from './story-blocks'
 import type {StoryLayout, ZodiacSign} from './types'
 
-/** Apple's smallest comfortable tap target, in points. */
-const TAP_TARGET = 44
-
 const PROMPT = [font({textStyle: 'headline', design: 'serif'}), foregroundStyle(ink)]
 const GLYPH_CELL = [
 	font({textStyle: 'title2', design: 'serif'}),
-	frame({minWidth: TAP_TARGET, minHeight: TAP_TARGET}),
+	// Each cell takes an equal share of the row, so the grid spans the column.
+	frame({minWidth: TAP_TARGET, maxWidth: FILL_WIDTH, minHeight: TAP_TARGET}),
 	contentShape(shapes.rectangle()),
 ]
 const GLYPH = [...GLYPH_CELL, foregroundStyle(ink)]
@@ -55,13 +56,12 @@ const ROW_GLYPH = [
 ]
 const ROW_NAME = [font({textStyle: 'body', design: 'serif'}), foregroundStyle(ink)]
 
-/** The zodiac as two rows of six, for the grid of glyphs. */
-const GRID_ROWS = [ZODIAC_SIGNS.slice(0, 6), ZODIAC_SIGNS.slice(6)]
-
 type HoroscopesLayout = Extract<StoryLayout, {kind: 'horoscopes'}>
 
 type Props = {
 	layout: HoroscopesLayout
+	/** The width of the page's text column, which the glyph grid spans. */
+	columnWidth: number
 	/** Scrolls the page to the view carrying this id. */
 	scrollTo: (target: string) => void
 }
@@ -73,7 +73,7 @@ type Props = {
  * The parts are returned side by side, not in a stack, so each lands directly in
  * the page's scroll-target layout, where the chosen sign's `id` can be scrolled to.
  */
-export function HoroscopesView({layout, scrollTo}: Props): React.ReactNode {
+export function HoroscopesView({layout, columnWidth, scrollTo}: Props): React.ReactNode {
 	let lastSign = useMessStore((state) => state.lastSign)
 	let setSign = useMessStore((state) => state.setSign)
 	// A sign the reader has just picked. SwiftUI ignores a scroll to an id it has not yet
@@ -119,7 +119,7 @@ export function HoroscopesView({layout, scrollTo}: Props): React.ReactNode {
 				modifiers={[onAppear(scrollToPicked), id(chosen.sign)]}
 				spacing={10}
 			>
-				<GlyphGrid chosen={chosen.sign} onChoose={choose} />
+				<GlyphGrid chosen={chosen.sign} columnWidth={columnWidth} onChoose={choose} />
 				<Text modifiers={LARGE_GLYPH}>{SIGN_GLYPHS[chosen.sign]}</Text>
 				<VStack alignment="leading" spacing={2}>
 					<Text modifiers={NAME}>{SIGN_NAMES[chosen.sign]}</Text>
@@ -143,14 +143,20 @@ export function HoroscopesView({layout, scrollTo}: Props): React.ReactNode {
 
 type GlyphGridProps = {
 	chosen: ZodiacSign
+	columnWidth: number
 	onChoose: (sign: ZodiacSign) => void
 }
 
-/** The twelve glyphs as buttons, six to a row, with the chosen one filled. */
-function GlyphGrid({chosen, onChoose}: GlyphGridProps): React.ReactNode {
+/**
+ * The twelve glyphs as buttons across the column, with the chosen one filled: six to a
+ * row, or fewer at a text size where six would crowd.
+ */
+function GlyphGrid({chosen, columnWidth, onChoose}: GlyphGridProps): React.ReactNode {
+	let {fontScale} = useWindowDimensions()
+	let rows = inRows([...ZODIAC_SIGNS], glyphsPerRow(columnWidth, fontScale))
 	return (
-		<Grid horizontalSpacing={4} verticalSpacing={4}>
-			{GRID_ROWS.map((row) => (
+		<Grid horizontalSpacing={GLYPH_SPACING} verticalSpacing={GLYPH_SPACING}>
+			{rows.map((row) => (
 				<Grid.Row key={row[0]}>
 					{row.map((sign) => {
 						let isChosen = sign === chosen

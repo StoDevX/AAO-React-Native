@@ -47,7 +47,7 @@ beforeEach(() => {
 
 function renderView() {
 	if (LAYOUT.kind !== 'horoscopes') throw new Error('expected the fixture to parse as horoscopes')
-	return render(<HoroscopesView layout={LAYOUT} scrollTo={scrollTo} />)
+	return render(<HoroscopesView columnWidth={362} layout={LAYOUT} scrollTo={scrollTo} />)
 }
 
 describe('HoroscopesView', () => {
