@@ -218,6 +218,32 @@ describe('FrontPageScreen', () => {
 		await waitForQueriesToSettle(queryClient)
 	})
 
+	// A reader part way down Top should not lose the page to a spinner when a story joins it.
+	test("keeps Top's stories on screen while it fetches them again for a new story", async () => {
+		seedTop()
+		let answer: (value: unknown) => void = () => undefined
+		serve(() => new Promise((resolve) => (answer = resolve)))
+		await renderScreen()
+
+		let late = {...light(PETITION), id: 99, title: 'A late story'}
+		await act(async () => {
+			queryClient.setQueryData(messKeys.issues, {
+				pages: [[late, ...ISSUE_STORIES.map(light)]],
+				pageParams: [1],
+			})
+			await flushQueryNotifications()
+		})
+
+		expect(screen.getByText('April 29, 2026 · 6 stories')).toBeTruthy()
+		expect(
+			screen.getByRole('button', {name: 'Student workers deliver petition, News'}),
+		).toBeTruthy()
+		await act(() => {
+			answer(ISSUE_STORIES)
+		})
+		await waitForQueriesToSettle(queryClient)
+	})
+
 	test('puts Top on the newest regular issue, under a banner for a newer special edition', async () => {
 		seedTopUnderSpecial()
 		await renderScreen()

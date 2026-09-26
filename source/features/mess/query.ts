@@ -159,10 +159,16 @@ export const messIssuesOptions = infiniteQueryOptions({
 /** One issue's stories: every post from its day up to the next issue's, parsed like the feed. */
 // oxlint-disable-next-line typescript/explicit-module-boundary-types
 export const messIssueOptions = (issue: Pick<MessIssue, 'after' | 'before' | 'count'>) =>
-	queryOptions({
+	queryOptions<MessStory[]>({
 		queryKey: messKeys.issue(issue),
 		// A published issue rarely changes.
 		staleTime: ONE_DAY_IN_MS,
+		// A story joining the issue changes its count, and so its key; the stories already on
+		// screen stay while the fuller set loads. Another issue's stories never stand in.
+		placeholderData: (previous, previousQuery) =>
+			previousQuery?.queryKey[2] === issue.after && previousQuery.queryKey[3] === issue.before
+				? previous
+				: undefined,
 		queryFn: ({signal}) => {
 			let range =
 				issue.before === null
