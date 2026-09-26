@@ -1,6 +1,6 @@
 import * as React from 'react'
 import type {ColorValue} from 'react-native'
-import {HStack, Section, Spacer, Text, VStack} from '@expo/ui/swift-ui'
+import {HStack, LabeledContent, Section, Text, VStack} from '@expo/ui/swift-ui'
 import {
 	accessibilityElement,
 	accessibilityIdentifier,
@@ -13,6 +13,7 @@ import {
 	listRowInsets,
 	listRowSeparator,
 } from '@expo/ui/swift-ui/modifiers'
+import type {ModifierConfig} from '@expo/ui/swift-ui/modifiers'
 import type {Moment} from 'moment-timezone'
 
 import {CARD_INSET, ROW_PADDING} from '../../components/place-card/card-style'
@@ -126,23 +127,13 @@ export function HoursSection({venue, now}: Props): React.ReactNode {
 function StatusRow({venue, now, accent}: Props & {accent: ColorValue}): React.ReactNode {
 	let today = todaysHours(venue.schedule ?? [], now)
 	return (
-		<HStack
-			modifiers={[
-				...BAR_ROW,
-				accessibilityElement('combine'),
-				accessibilityIdentifier(HOURS_STATUS_ID),
-			]}
-			spacing={BAR_GAP}
-		>
-			<AccentBar color={accent} />
-			<Text modifiers={[font({textStyle: 'body', weight: 'semibold'})]}>
-				{contextualStatus(venue, now).long}
-			</Text>
-			<Spacer />
-			{today ? (
-				<Text modifiers={[font({textStyle: 'body', weight: 'semibold'})]}>{today}</Text>
-			) : null}
-		</HStack>
+		<HoursRow
+			bar={accent}
+			label={contextualStatus(venue, now).long}
+			modifiers={[...BAR_ROW, accessibilityIdentifier(HOURS_STATUS_ID)]}
+			times={today ? [today] : []}
+			weight="semibold"
+		/>
 	)
 }
 
@@ -161,26 +152,16 @@ function WeekRows({
 	let groups = groupHoursByDays(block, now)
 	return groups.map((group, index) => {
 		let current = group.entries.some((entry) => entry.isActive)
-		let weight = current ? ('semibold' as const) : ('regular' as const)
 		let last = index === groups.length - 1 && !block.notes
 		return (
-			<HStack
+			<HoursRow
 				key={group.entries[0].sourceIndex}
-				alignment="top"
-				modifiers={[...(last ? LAST_BAR_ROW : BAR_ROW), accessibilityElement('combine')]}
-				spacing={BAR_GAP}
-			>
-				<AccentBar color={current ? accent : null} />
-				<Text modifiers={[font({textStyle: 'body', weight})]}>{group.label}</Text>
-				<Spacer />
-				<VStack alignment="trailing" spacing={2}>
-					{group.entries.map((entry) => (
-						<Text key={entry.sourceIndex} modifiers={[font({textStyle: 'body', weight})]}>
-							{formatBuildingTimes(entry.schedule, now)}
-						</Text>
-					))}
-				</VStack>
-			</HStack>
+				bar={current ? accent : null}
+				label={group.label}
+				modifiers={last ? LAST_BAR_ROW : BAR_ROW}
+				times={group.entries.map((entry) => formatBuildingTimes(entry.schedule, now))}
+				weight={current ? 'semibold' : 'regular'}
+			/>
 		)
 	})
 }
@@ -203,6 +184,47 @@ function todaysHours(blocks: Array<NamedBuildingScheduleType>, now: Moment): str
 		}
 	}
 	return null
+}
+
+/// A label beside its times, which stack under it at accessibility text sizes,
+/// where two columns leave each too narrow to read -- as Details does.
+function HoursRow({
+	bar,
+	label,
+	times,
+	weight,
+	modifiers,
+}: {
+	bar: ColorValue | null
+	label: string
+	times: Array<string>
+	weight: 'regular' | 'semibold'
+	modifiers: ModifierConfig[]
+}): React.ReactNode {
+	let text = [
+		font({textStyle: 'body', weight}),
+		foregroundStyle({type: 'hierarchical', style: 'primary'}),
+	]
+	// The bar stands beside the whole row, outside LabeledContent, so the times
+	// line up under the label when they stack.
+	return (
+		<HStack
+			alignment="top"
+			modifiers={[...modifiers, accessibilityElement('combine')]}
+			spacing={BAR_GAP}
+		>
+			<AccentBar color={bar} />
+			<LabeledContent label={<Text modifiers={text}>{label}</Text>}>
+				<VStack alignment="trailing" spacing={2}>
+					{times.map((time) => (
+						<Text key={time} modifiers={text}>
+							{time}
+						</Text>
+					))}
+				</VStack>
+			</LabeledContent>
+		</HStack>
+	)
 }
 
 /// A thin capsule in a status's colour. With no colour it still takes its

@@ -955,9 +955,10 @@ export function TextField({
 export function LabeledContent({
 	children,
 	label,
+	modifiers,
 }: WithModifiers & {label?: React.ReactNode}): React.ReactNode {
 	return (
-		<View>
+		<View testID={identifierOf(modifiers)}>
 			{typeof label === 'string' ? <RNText>{label}</RNText> : label}
 			{children}
 		</View>
