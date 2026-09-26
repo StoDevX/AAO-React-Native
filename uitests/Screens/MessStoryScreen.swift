@@ -22,28 +22,36 @@ struct MessStoryScreen: Screen {
 	}
 
 	/// The headline of the story on top, once one other than `previous` is drawn.
+	/// Mid-push or mid-pop both screens' headlines are in the tree, and reading a
+	/// label then fails on the ambiguous match, so this waits until only one is.
 	func headline(otherThan previous: String? = nil) -> String {
-		let headline = headlineText
-		let drawn = NSPredicate { _, _ in headline.exists && headline.label != previous }
+		let headlines = headlineTexts
+		let drawn = NSPredicate { _, _ in
+			headlines.count == 1 && headlines.firstMatch.label != previous
+		}
 		let settled = XCTWaiter().wait(
 			for: [XCTNSPredicateExpectation(predicate: drawn, object: nil)], timeout: 30)
 		XCTAssertEqual(
 			settled, .completed,
 			previous.map { "a story other than \"\($0)\" should open" } ?? "a story's headline should be visible")
-		return headline.label
+		return headlines.firstMatch.label
 	}
 
-	/// Assert the story on top is the one headlined `expected`.
+	/// Assert the story on top is the one headlined `expected`. The match is by
+	/// identifier and label together, so it holds while a transition leaves two
+	/// headlines in the tree.
 	@discardableResult
 	func verifyHeadline(_ expected: String, _ message: String) -> Self {
-		let headline = headlineText
-		let drawn = NSPredicate { _, _ in headline.exists && headline.label == expected }
-		let settled = XCTWaiter().wait(
-			for: [XCTNSPredicateExpectation(predicate: drawn, object: nil)], timeout: 30)
+		let headline = app.staticTexts
+			.matching(NSPredicate(
+				format: "identifier == %@ AND label == %@", TestIdentifiers.News.storyHeadline, expected))
+			.firstMatch
+		let drawn = headline.waitForExistence(timeout: 30)
 		capture("The story on top, expecting \(expected)")
-		XCTAssertEqual(
-			settled, .completed,
-			"\(message): expected \"\(expected)\" on top, but found \(headline.exists ? "\"\(headline.label)\"" : "no story")")
+		let found = headlineTexts.allElementsBoundByIndex.map { "\"\($0.label)\"" }
+		XCTAssertTrue(
+			drawn,
+			"\(message): expected \"\(expected)\" on top, but found \(found.isEmpty ? "no story" : found.joined(separator: ", "))")
 		return self
 	}
 
@@ -227,8 +235,9 @@ struct MessStoryScreen: Screen {
 	}
 
 	/// The headline of the story on top.
-	private var headlineText: XCUIElement {
-		app.staticTexts[TestIdentifiers.News.storyHeadline]
+	/// Every story headline in the tree: one at rest, two mid-transition.
+	private var headlineTexts: XCUIElementQuery {
+		app.staticTexts.matching(identifier: TestIdentifiers.News.storyHeadline)
 	}
 
 	/// The picture in the zoom viewer.
