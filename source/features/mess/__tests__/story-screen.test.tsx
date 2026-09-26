@@ -758,12 +758,16 @@ describe('StoryScreen', () => {
 		await renderStory(33129)
 
 		expect(screen.getByText('At the cup')).toBeTruthy()
-		let pictures = screen.getAllByRole('button', {
-			name: 'Bees drinking lemonade, by Ashlyn Wuench and Kenzie Nguyen',
-		})
-		let [, second] = pictures
-		if (!second) throw new Error('expected two pictures')
-		await fireEvent.press(second)
+		expect(
+			screen.getByRole('button', {
+				name: 'Bees drinking lemonade, by Ashlyn Wuench and Kenzie Nguyen, picture 1 of 2',
+			}),
+		).toBeTruthy()
+		await fireEvent.press(
+			screen.getByRole('button', {
+				name: 'Bees drinking lemonade, by Ashlyn Wuench and Kenzie Nguyen, picture 2 of 2',
+			}),
+		)
 
 		expect(mockNavigate).toHaveBeenCalledWith({
 			pathname: '/Messenger/image',
