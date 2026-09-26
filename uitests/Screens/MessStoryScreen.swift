@@ -21,6 +21,61 @@ struct MessStoryScreen: Screen {
 		return self
 	}
 
+	/// The headline of the story on top, once one other than `previous` is drawn.
+	func headline(otherThan previous: String? = nil) -> String {
+		let headline = headlineText
+		let drawn = NSPredicate { _, _ in headline.exists && headline.label != previous }
+		let settled = XCTWaiter().wait(
+			for: [XCTNSPredicateExpectation(predicate: drawn, object: nil)], timeout: 30)
+		XCTAssertEqual(
+			settled, .completed,
+			previous.map { "a story other than \"\($0)\" should open" } ?? "a story's headline should be visible")
+		return headline.label
+	}
+
+	/// Assert the story on top is the one headlined `expected`.
+	@discardableResult
+	func verifyHeadline(_ expected: String, _ message: String) -> Self {
+		let headline = headlineText
+		let drawn = NSPredicate { _, _ in headline.exists && headline.label == expected }
+		let settled = XCTWaiter().wait(
+			for: [XCTNSPredicateExpectation(predicate: drawn, object: nil)], timeout: 30)
+		capture("The story on top, expecting \(expected)")
+		XCTAssertEqual(
+			settled, .completed,
+			"\(message): expected \"\(expected)\" on top, but found \(headline.exists ? "\"\(headline.label)\"" : "no story")")
+		return self
+	}
+
+	/// Scroll down to the row of related stories under a story and open one: the one
+	/// titled `title`, or the first.
+	@discardableResult
+	func openSeriesStory(titled title: String? = nil) -> Self {
+		let thumbnails = app.buttons.matching(identifier: TestIdentifiers.News.seriesStory)
+		let thumbnail =
+			title.map { thumbnails.matching(NSPredicate(format: "label CONTAINS %@", $0)).firstMatch }
+			?? thumbnails.firstMatch
+		for _ in 0..<20 {
+			if thumbnail.exists && thumbnail.isHittable { break }
+			app.swipeUp()
+		}
+		XCTAssertTrue(
+			thumbnail.waitForHittable(timeout: 10),
+			title.map { "the series row should offer \"\($0)\"" } ?? "the story should have a series row")
+		capture("A story's series row")
+		thumbnail.tap()
+		return self
+	}
+
+	/// Go back one screen with the navigation bar's back button.
+	@discardableResult
+	func goBack() -> Self {
+		let back = app.navigationBars.firstMatch.buttons[TestIdentifiers.Navigation.systemBackButton]
+		XCTAssertTrue(back.waitForHittable(timeout: 10), "the story should offer a way back")
+		back.tap()
+		return self
+	}
+
 	/// Long-press the story's first paragraph and assert iOS offers to copy it,
 	/// which it does only for text that can be selected.
 	@discardableResult
@@ -169,6 +224,11 @@ struct MessStoryScreen: Screen {
 				? "a double tap should zoom the picture in past the window's width of \(window), but it is \(image.frame.width) wide"
 				: "a double tap when zoomed in should fit the picture back to the window's width of \(window), but it is \(image.frame.width) wide")
 		return self
+	}
+
+	/// The headline of the story on top.
+	private var headlineText: XCUIElement {
+		app.staticTexts[TestIdentifiers.News.storyHeadline]
 	}
 
 	/// The picture in the zoom viewer.

@@ -43,12 +43,14 @@ export default function HomeLayout(): React.ReactNode {
 				options={{title: 'The Olaf Messenger', headerLargeTitleEnabled: true}}
 			/>
 			{/* A series thumbnail opens another story over the one being read.
-			    Keyed by the story's id, navigating to a different one pushes it,
-			    where an unkeyed route would only swap the params of the story
-			    already on top, and Back would skip the one the reader came from;
-			    navigating to the same one still refuses a duplicate. */}
+			    Keyed by the story and the row that opened it, a tap always opens
+			    a fresh screen: an unkeyed route would swap the params of the
+			    story on top, and one keyed by story alone would move a story
+			    already open further down to the top, and either way Back would
+			    not retrace the reader's steps. A second tap on the same thumbnail
+			    finds the screen the first one opened, so it adds no duplicate. */}
 			<Stack.Screen
-				dangerouslySingular={(_name, params) => String(params.id ?? '')}
+				dangerouslySingular={(_name, params) => `${params.id ?? ''}:${params.from ?? ''}`}
 				name="Messenger/story"
 				options={{title: ''}}
 			/>

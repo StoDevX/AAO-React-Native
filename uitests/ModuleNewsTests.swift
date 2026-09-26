@@ -73,6 +73,25 @@ class ModuleNewsTests: UITestCase {
 			.closeImageViewer()
 	}
 
+	/// Each story opened from a series row is a screen of its own, even one already
+	/// open further down, so Back retraces every step in the order it was taken.
+	func testSeriesStoriesStackInTheOrderTheyWereOpened() throws {
+		let news = NewsScreen(app: app, tile: TestIdentifiers.Buttons.olafMessenger, title: "The Olaf Messenger")
+			.navigate()
+		MessFilter(app: app)
+			.choose(column: TestIdentifiers.News.comicColumn, in: TestIdentifiers.News.varietySection)
+		let reader = news.openFirstStory()
+		let first = reader.headline()
+		reader.openSeriesStory()
+		let second = reader.headline(otherThan: first)
+		reader.openSeriesStory(titled: first)
+			.verifyHeadline(first, "a series row should open the story it names")
+			.goBack()
+			.verifyHeadline(second, "Back should return to the story whose row was tapped")
+			.goBack()
+			.verifyHeadline(first, "Back again should return to the story opened first")
+	}
+
 	func testComicZoomsByDoubleTapAndPinch() throws {
 		let news = NewsScreen(app: app, tile: TestIdentifiers.Buttons.olafMessenger, title: "The Olaf Messenger")
 			.navigate()

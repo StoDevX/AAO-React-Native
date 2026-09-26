@@ -55,6 +55,8 @@ type Props = {story: MessStory}
  */
 export function SeriesRow({story}: Props): React.ReactNode {
 	let router = useRouter()
+	// Names this row as the opener of the stories it opens; no other screen's row shares it.
+	let opener = React.useId()
 	let {data} = useQuery(messSeriesOptions(story))
 	if (!data || data.stories.length === 0) return null
 
@@ -70,7 +72,10 @@ export function SeriesRow({story}: Props): React.ReactNode {
 								key={other.id}
 								modifiers={THUMBNAIL_BUTTON}
 								onPress={() =>
-									router.navigate({pathname: '/Messenger/story', params: {id: String(other.id)}})
+									router.navigate({
+										pathname: '/Messenger/story',
+										params: {id: String(other.id), from: opener},
+									})
 								}
 							>
 								<VStack alignment="leading" spacing={6}>

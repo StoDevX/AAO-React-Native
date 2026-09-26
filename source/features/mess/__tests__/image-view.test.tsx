@@ -114,16 +114,42 @@ describe('SeriesRow', () => {
 		expect(screen.getByRole('button', {name: 'Mouse Friends Episode One: bickering'})).toBeTruthy()
 	})
 
-	test('opens a story from the row in the reader', async () => {
+	// Each row names itself as the opener, and the story route is keyed by story and opener,
+	// so a story already open further down gets a fresh screen rather than being moved to the
+	// top, while a second tap on the same thumbnail finds the screen the first one opened.
+	test('opens a story from the row in the reader, naming this row as the opener', async () => {
 		queryClient.setQueryData(messKeys.series(COMIC.id), {
 			title: 'More Mouse Friends',
 			stories: [EPISODE_TWO, EPISODE_ONE],
 		})
-		await renderWithClient(<SeriesRow story={COMIC} />)
+		await renderWithClient(
+			<>
+				<SeriesRow story={COMIC} />
+				<SeriesRow story={COMIC} />
+			</>,
+		)
 
-		fireEvent.press(screen.getByRole('button', {name: 'Mouse Friends Episode One: bickering'}))
+		let [first, second] = screen.getAllByRole('button', {
+			name: 'Mouse Friends Episode One: bickering',
+		})
+		if (!first || !second) throw new Error('expected two rows')
+		await fireEvent.press(first)
+		await fireEvent.press(first)
+		await fireEvent.press(second)
 
-		expect(mockNavigate).toHaveBeenCalledWith({pathname: '/Messenger/story', params: {id: '1'}})
+		let opened = mockNavigate.mock.calls.map(
+			(call) => call[0] as {pathname: string; params: {id: string; from: string}},
+		)
+		expect(opened.map((href) => href.pathname)).toStrictEqual([
+			'/Messenger/story',
+			'/Messenger/story',
+			'/Messenger/story',
+		])
+		expect(opened.map((href) => href.params.id)).toStrictEqual(['1', '1', '1'])
+		let [a, b, c] = opened.map((href) => href.params.from)
+		expect(a).toEqual(expect.any(String))
+		expect(b).toBe(a)
+		expect(c).not.toBe(a)
 	})
 
 	test('shows nothing for a series with no other stories', async () => {
