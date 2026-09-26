@@ -1,6 +1,8 @@
 import * as React from 'react'
 import {HStack, Image, Section, Text, VStack} from '@expo/ui/swift-ui'
 import {
+	accessibilityElement,
+	accessibilityHidden,
 	font,
 	foregroundStyle,
 	frame,
@@ -22,8 +24,9 @@ const ROW = [
 ]
 
 /// Small, and in a column wide enough for the widest of them, so the texts
-/// line up, as Maps' amenity icons are.
-const ICON = [imageScale('small'), frame({width: 28})]
+/// line up, as Maps' amenity icons are. The text says what the icon shows,
+/// so VoiceOver skips the icon.
+const ICON = [imageScale('small'), frame({width: 28}), accessibilityHidden(true)]
 
 const SYMBOL = {
 	abbreviation: 'textformat.abc',
@@ -40,7 +43,14 @@ export function GoodToKnowSection({rows}: {rows: Array<GoodToKnowRow>}): React.R
 		<Section>
 			<SectionHeading title="Good to Know" />
 			{rows.map((row) => (
-				<HStack key={row.kind} alignment="firstTextBaseline" modifiers={ROW} spacing={12}>
+				// One element per fact, so VoiceOver reads a nickname's older
+				// names with the current one.
+				<HStack
+					key={row.kind}
+					alignment="firstTextBaseline"
+					modifiers={[...ROW, accessibilityElement('combine')]}
+					spacing={12}
+				>
 					<Image
 						modifiers={[
 							...ICON,

@@ -1,4 +1,10 @@
-import {font, listRowBackground, listRowInsets, listRowSeparator} from '@expo/ui/swift-ui/modifiers'
+import {
+	accessibilityAddTraits,
+	font,
+	listRowBackground,
+	listRowInsets,
+	listRowSeparator,
+} from '@expo/ui/swift-ui/modifiers'
 
 // Apple Maps' place card, measured on an iPhone 17 Pro simulator running
 // iOS 27: content keeps 16pt from each side, a Details row is 50pt with 15pt
@@ -14,8 +20,12 @@ export const ROW_PADDING = 15
 /// Space between the end of one section and the top of the next heading's text.
 export const SECTION_GAP = 30
 
-/// Maps sets its section headings in bold `title3`.
-export const HEADING_TEXT = [font({textStyle: 'title3', weight: 'bold'})]
+/// Maps sets its section headings in bold `title3`. The header trait lets
+/// VoiceOver's headings rotor jump between sections.
+export const HEADING_TEXT = [
+	font({textStyle: 'title3', weight: 'bold'}),
+	accessibilityAddTraits(['isHeader']),
+]
 
 /// A section heading's row: on the sheet, scrolling with the card rather than
 /// pinned as a list's section header would be.

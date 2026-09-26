@@ -1,6 +1,8 @@
 import * as React from 'react'
 import {Button, Image, Spacer, Text, VStack} from '@expo/ui/swift-ui'
 import {
+	accessibilityElement,
+	accessibilityHidden,
 	accessibilityLabel,
 	background,
 	buttonStyle,
@@ -58,6 +60,8 @@ export function PlaceTileView({
 					c.secondarySystemGroupedBackground,
 					shapes.roundedRectangle({cornerRadius: CORNER_RADIUS}),
 				),
+				// One element, linked or not: the name is all there is to read.
+				accessibilityElement('combine'),
 			]}
 			spacing={6}
 		>
@@ -70,6 +74,8 @@ export function PlaceTileView({
 					foregroundStyle('white'),
 					frame({width: ICON_SIZE, height: ICON_SIZE}),
 					background(c.systemGray, shapes.circle()),
+					// The section's heading already says which kind this is.
+					accessibilityHidden(true),
 				]}
 				systemName={symbol}
 			/>

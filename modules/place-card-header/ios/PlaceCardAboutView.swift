@@ -74,8 +74,12 @@ struct PlaceCardAboutView: ExpoSwiftUI.View {
 			// screen, an action shows the rest.
 			.accessibilityElement(children: .ignore)
 			.accessibilityLabel(props.text)
-			.accessibilityAction(named: "Show more") {
-				if truncated { expanded = true }
+			.accessibilityActions {
+				// Only while there is more to show: once expanded, or for text
+				// that was never cut short, the action would do nothing.
+				if truncated {
+					Button("Show more") { expanded = true }
+				}
 			}
 			.accessibilityIdentifier(props.testID ?? "")
 	}
