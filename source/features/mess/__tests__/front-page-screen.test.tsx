@@ -6,7 +6,7 @@ import {fetchManifest, fetchSourceBody, type Jrd} from '@frogpond/data-sources'
 
 import categoriesJson from './fixtures/categories.json'
 import {queryClient as appQueryClient} from '../../../init/tanstack-query'
-import {flushQueryNotifications} from '../../../testing/query-notifications'
+import {flushQueryNotifications, waitForQueriesToSettle} from '../../../testing/query-notifications'
 import {FrontPageScreen} from '../front-page-screen'
 import {messKeys} from '../lib/keys'
 import {parseMessCategories} from '../lib/posts'
@@ -344,8 +344,9 @@ describe('FrontPageScreen', () => {
 			]),
 		)
 		expect(postHrefs().filter((href) => href.includes('categories='))).toStrictEqual([])
-		// The refreshed list is empty, so Top settles on the feed.
-		expect(await screen.findByText('Latest stories')).toBeTruthy()
+		// The refreshed list is empty, so Top falls back to the feed, which fetches.
+		await waitForQueriesToSettle(queryClient)
+		expect(screen.getByText('Latest stories')).toBeTruthy()
 	})
 
 	test('pull-to-refresh on a section fetches that section, and nothing else', async () => {

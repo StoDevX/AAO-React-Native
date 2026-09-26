@@ -7,6 +7,7 @@ import {fetchManifest, fetchSourceBody, type Jrd} from '@frogpond/data-sources'
 import categoriesJson from './fixtures/categories.json'
 import springPosts from './fixtures/issue-posts.json'
 import {queryClient as appQueryClient} from '../../../init/tanstack-query'
+import {waitForQueriesToSettle} from '../../../testing/query-notifications'
 import {IssueList} from '../issue-list'
 import {messKeys} from '../lib/keys'
 import type {LightPost, MessIssue} from '../types'
@@ -139,6 +140,8 @@ describe('IssueList', () => {
 				name: 'April 29, 2026, Student workers deliver petition, 5 stories',
 			}),
 		).toBeTruthy()
+
+		await waitForQueriesToSettle(queryClient)
 	})
 
 	test("shows the lead's photo, looked up by its media id", async () => {
@@ -150,6 +153,8 @@ describe('IssueList', () => {
 			(props) => (props.source as {uri?: string} | undefined)?.uri,
 		)
 		expect(uris).toStrictEqual(['https://olafmessenger.com/petition.jpg'])
+
+		await waitForQueriesToSettle(queryClient)
 	})
 
 	test('opens an issue', async () => {
@@ -163,6 +168,8 @@ describe('IssueList', () => {
 		)
 
 		expect(onOpen.mock.lastCall?.[0]).toMatchObject({day: '2026-04-29'})
+
+		await waitForQueriesToSettle(queryClient)
 	})
 
 	// Review Focus 3: page 2 completes Mar 18 but leaves the list's end on screen.
@@ -172,6 +179,8 @@ describe('IssueList', () => {
 
 		await waitFor(() => expect(rowsDrawn()).toBe(8))
 		expect(pagesFetched()).toStrictEqual(['1', '2', '3'])
+
+		await waitForQueriesToSettle(queryClient)
 	})
 
 	// Review Focus 4.
@@ -190,5 +199,7 @@ describe('IssueList', () => {
 		await fireEvent.press(screen.getByRole('button', {name: 'Try Again'}))
 
 		await waitFor(() => expect(rowsDrawn()).toBe(8))
+
+		await waitForQueriesToSettle(queryClient)
 	})
 })
