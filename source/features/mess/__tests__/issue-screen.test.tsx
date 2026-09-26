@@ -106,7 +106,7 @@ describe('IssueScreen', () => {
 		await renderIssue('2026-03-25')
 
 		expect(screen.getByText('March 25, 2026 · 5 stories')).toBeTruthy()
-		expect(screen.getByRole('button', {name: 'March story 0'})).toBeTruthy()
+		expect(screen.getByRole('button', {name: 'March story 0, News'})).toBeTruthy()
 	})
 
 	test('"All ›" goes back to the front page, showing that section', async () => {

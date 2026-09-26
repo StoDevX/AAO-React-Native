@@ -130,8 +130,10 @@ describe('IssuePage', () => {
 		await renderIssue()
 
 		expect(screen.getByText('April 29, 2026 · 5 stories')).toBeTruthy()
-		expect(screen.getByRole('button', {name: 'Student workers deliver petition'})).toBeTruthy()
-		expect(screen.getByText('News · Maya Betti')).toBeTruthy()
+		// VoiceOver reads the lead's section and writers after its headline, as drawn.
+		expect(
+			screen.getByRole('button', {name: 'Student workers deliver petition, News · Maya Betti'}),
+		).toBeTruthy()
 		let texts = textsOf(screen.toJSON() as Node | Node[] | null)
 		let [news, opinions, more] = ['News', 'Opinions', 'More'].map((heading) =>
 			texts.indexOf(heading),
@@ -145,18 +147,19 @@ describe('IssuePage', () => {
 		queryClient.setQueryData(messKeys.issue(ISSUE), STORIES)
 		await renderIssue()
 
-		expect(screen.getAllByRole('button', {name: 'Student workers deliver petition'})).toHaveLength(
-			1,
-		)
+		expect(
+			screen.getAllByRole('button', {name: /^Student workers deliver petition/u}),
+		).toHaveLength(1)
 	})
 
 	test('gives a story with no photo a text-only card, named by its column or section', async () => {
 		queryClient.setQueryData(messKeys.issue(ISSUE), STORIES)
 		await renderIssue()
 
-		let textCard = screen.getByRole('button', {name: 'Cats or dogs?'})
+		// VoiceOver reads a text card's column or section after its headline, as drawn.
+		let textCard = screen.getByRole('button', {name: 'Cats or dogs?, Messenger Wars'})
 		expect(within(textCard).getByText('Messenger Wars')).toBeTruthy()
-		let sectionCard = screen.getByRole('button', {name: 'Blazers on loan'})
+		let sectionCard = screen.getByRole('button', {name: 'Blazers on loan, News'})
 		expect(within(sectionCard).getByText('News')).toBeTruthy()
 		let photoCard = screen.getByRole('button', {name: 'Hunger Free Campus grant'})
 		expect(within(photoCard).queryByText('News')).toBeNull()
@@ -177,7 +180,9 @@ describe('IssuePage', () => {
 		await renderIssue()
 
 		await fireEvent.press(screen.getByRole('button', {name: 'Hunger Free Campus grant'}))
-		await fireEvent.press(screen.getByRole('button', {name: 'Student workers deliver petition'}))
+		await fireEvent.press(
+			screen.getByRole('button', {name: 'Student workers deliver petition, News · Maya Betti'}),
+		)
 
 		expect(mockNavigate.mock.calls).toStrictEqual([
 			[{pathname: '/Messenger/story', params: {id: '4'}}],
@@ -209,7 +214,7 @@ describe('IssuePage', () => {
 		expect(screen.queryByRole('button', {name: 'Try Again'})).toBeNull()
 		expect(
 			screen.getByRole('button', {
-				name: 'Student workers deliver petition urging St. Olaf to reverse work award cap policy',
+				name: 'Student workers deliver petition urging St. Olaf to reverse work award cap policy, News · Maya Betti',
 			}),
 		).toBeTruthy()
 	})

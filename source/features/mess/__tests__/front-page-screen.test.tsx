@@ -189,7 +189,9 @@ describe('FrontPageScreen', () => {
 
 		expect(screen.getByRole('button', {name: 'Top', selected: true})).toBeTruthy()
 		expect(screen.getByText('April 29, 2026 · 5 stories')).toBeTruthy()
-		expect(screen.getByRole('button', {name: 'Student workers deliver petition'})).toBeTruthy()
+		expect(
+			screen.getByRole('button', {name: 'Student workers deliver petition, News'}),
+		).toBeTruthy()
 		expect(screen.getByRole('button', {name: 'All Opinions'})).toBeTruthy()
 	})
 
@@ -221,7 +223,9 @@ describe('FrontPageScreen', () => {
 		await renderScreen()
 
 		expect(screen.getByText('April 29, 2026 · 5 stories')).toBeTruthy()
-		expect(screen.getByRole('button', {name: 'Student workers deliver petition'})).toBeTruthy()
+		expect(
+			screen.getByRole('button', {name: 'Student workers deliver petition, News'}),
+		).toBeTruthy()
 
 		await fireEvent.press(
 			screen.getByRole('button', {name: 'Special Edition · May 12, Letter from the editors'}),
@@ -298,7 +302,9 @@ describe('FrontPageScreen', () => {
 		await renderScreen()
 
 		expect(screen.getByRole('button', {name: 'Top', selected: true})).toBeTruthy()
-		expect(screen.getByRole('button', {name: 'Student workers deliver petition'})).toBeTruthy()
+		expect(
+			screen.getByRole('button', {name: 'Student workers deliver petition, News'}),
+		).toBeTruthy()
 	})
 
 	test('"All ›" on a shelf switches to that section\'s chip', async () => {
@@ -336,7 +342,9 @@ describe('FrontPageScreen', () => {
 		await renderScreen()
 
 		expect(await screen.findByText('Latest stories')).toBeTruthy()
-		expect(screen.getByRole('button', {name: 'Student workers deliver petition'})).toBeTruthy()
+		expect(
+			screen.getByRole('button', {name: 'Student workers deliver petition, News'}),
+		).toBeTruthy()
 		expect(screen.getByRole('button', {name: 'All Opinions'})).toBeTruthy()
 	})
 
@@ -347,7 +355,9 @@ describe('FrontPageScreen', () => {
 		await renderScreen()
 
 		expect(screen.getByText('Latest stories')).toBeTruthy()
-		expect(screen.getByRole('button', {name: 'Student workers deliver petition'})).toBeTruthy()
+		expect(
+			screen.getByRole('button', {name: 'Student workers deliver petition, News'}),
+		).toBeTruthy()
 	})
 
 	// Review: the list was saved from an earlier visit to Issues, but Top's own stories never were.

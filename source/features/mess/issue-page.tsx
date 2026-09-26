@@ -165,9 +165,11 @@ type LeadStoryProps = {story: MessStory; columnWidth: number; onPress: () => voi
 /** The lead: its photo at the column's width, a large headline, then its section and writers. */
 function LeadStory({story, columnWidth, onPress}: LeadStoryProps): React.ReactNode {
 	let credit = sectionCredit(story)
+	// Read as drawn: the headline, then the section and writers under it.
+	let label = credit ? `${story.title}, ${credit}` : story.title
 	return (
 		<Button
-			modifiers={[PLAIN, accessibilityLabel(story.title), accessibilityIdentifier(LEAD_STORY_ID)]}
+			modifiers={[PLAIN, accessibilityLabel(label), accessibilityIdentifier(LEAD_STORY_ID)]}
 			onPress={onPress}
 		>
 			{/* contentShape on the label, not the Button -- see NavigationRow in components/rows.tsx. */}
@@ -231,9 +233,11 @@ function ShelfRow({shelf, onOpen, onShowSection}: ShelfRowProps): React.ReactNod
  */
 function StoryCard({story, onPress}: {story: MessStory; onPress: () => void}): React.ReactNode {
 	let kicker = cardKicker(story)
+	// A text card draws its column or section; a photo card draws its headline alone.
+	let label = !story.photo && kicker ? `${story.title}, ${kicker}` : story.title
 	return (
 		<Button
-			modifiers={[PLAIN, accessibilityLabel(story.title), accessibilityIdentifier(STORY_CARD_ID)]}
+			modifiers={[PLAIN, accessibilityLabel(label), accessibilityIdentifier(STORY_CARD_ID)]}
 			onPress={onPress}
 		>
 			{story.photo ? (
