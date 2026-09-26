@@ -11,8 +11,38 @@ import type {Block} from '../../types'
 
 let varietyStories = parseMessPosts(variety, parseMessCategories(categoriesJson))
 let puzzleStories = parseMessPosts(crosswordPlaylist, parseMessCategories(categoriesJson))
+let recipeFeatureStories = parseMessPosts(recipeFeature, parseMessCategories(categoriesJson))
 
 describe('chooseLayout', () => {
+	it('lays a Photo story out around its pictures, taking them out of the body', () => {
+		let story = recipeFeatureStories.find((s) => s.id === 36845)
+		expect(story?.layout).toStrictEqual({
+			kind: 'feature',
+			images: [
+				{
+					url: 'https://olafmessenger.com/wp-content/uploads/2026/04/IMG_7781.jpg',
+					width: 1501,
+					height: 2001,
+					caption: '',
+				},
+			],
+		})
+		expect(recipeFeatureStories.find((s) => s.id === 33129)?.blocks).toHaveLength(1)
+	})
+
+	it('lays a Short Story with no picture out as a feature with none', () => {
+		let story = recipeFeatureStories.find((s) => s.id === 36835)
+		expect(story?.layout).toStrictEqual({kind: 'feature', images: []})
+		expect(story?.blocks.length).toBeGreaterThan(0)
+	})
+
+	it('lays a Photo story with neither picture nor words out as a feature', () => {
+		expect(chooseLayout({column: 'Photo', blocks: [], photo: null, html: ''})).toStrictEqual({
+			layout: {kind: 'feature', images: []},
+			blocks: [],
+		})
+	})
+
 	it('lays a Recipes story out in sections, keeping its body for the article', () => {
 		let html = recipeFeature.find((p) => p.id === 36493)?.content.rendered ?? ''
 		let blocks = parseBlocks(html)
