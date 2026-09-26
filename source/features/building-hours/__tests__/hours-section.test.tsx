@@ -59,6 +59,17 @@ function renderSection(venue: BuildingType) {
 	)
 }
 
+// The Cage's shape: a first block titled "Hours", then one more.
+const cage: BuildingType = {
+	name: 'The Cage',
+	category: 'Food',
+	kind: 'space',
+	schedule: [
+		{title: 'Hours', hours: [{days: ['Mo'], from: '7:30am', to: '8:00pm'}]},
+		{title: 'Continental Breakfast', hours: [{days: ['Su'], from: '10:00am', to: '11:30am'}]},
+	],
+}
+
 describe('HoursSection', () => {
 	test('heads a single block "Hours", with a row per day group', async () => {
 		await renderSection(holland)
@@ -110,6 +121,17 @@ describe('HoursSection', () => {
 		let breakfastAt = row.indexOf('"Breakfast"')
 		expect(lunchAt).toBeGreaterThan(statusAt)
 		expect(lunchAt).toBeLessThan(breakfastAt)
+	})
+
+	// A first block titled "Hours" shares the status's section, rather than
+	// heading its own with the same word straight after.
+	test('heads the status and a first block titled "Hours" once', async () => {
+		await renderSection(cage)
+		expect(screen.getAllByText('Hours')).toHaveLength(1)
+		expect(screen.getByText('Continental Breakfast')).toBeTruthy()
+		let tree = JSON.stringify(screen.toJSON())
+		expect(tree.indexOf('"Normal Hours"')).toBeGreaterThan(tree.indexOf('"Hours"'))
+		expect(tree.indexOf('"Continental Breakfast"')).toBeGreaterThan(tree.indexOf('"Normal Hours"'))
 	})
 
 	test('marks the status row for UI tests to find', async () => {

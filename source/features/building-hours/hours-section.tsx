@@ -86,33 +86,30 @@ export function HoursSection({venue, now}: Props): React.ReactNode {
 	if (withContent.length === 0) {
 		return null
 	}
-	let single = withContent.length === 1
+	let [first, ...rest] = withContent
+	// A lone block, or a first block titled "Hours", is the venue's own week,
+	// so it shares the status's "Hours" section. Otherwise the status speaks
+	// for every block and takes a section to itself above them.
+	let shared = rest.length === 0 || first.title === 'Hours'
 	// Alone in its section, the status is its last row and takes no hairline.
-	let status = scheduled ? <StatusRow last={!single} now={now} venue={venue} /> : null
+	let status = scheduled ? <StatusRow last={!shared} now={now} venue={venue} /> : null
 
-	if (single) {
-		let [block] = withContent
-		return (
-			<Section>
-				<SectionHeading title="Hours" />
-				{status}
-				<WeekRows block={block} heading="Normal Hours" now={now} />
-				{block.notes ? <Text modifiers={NOTE_ROW}>{block.notes}</Text> : null}
-			</Section>
-		)
-	}
-
-	// The status speaks for the whole venue rather than its first block, so it
-	// takes its own section, headed "Hours", above the blocks.
 	return (
 		<>
-			{status ? (
+			{shared ? (
+				<Section>
+					<SectionHeading title="Hours" />
+					{status}
+					<WeekRows block={first} heading="Normal Hours" now={now} />
+					{first.notes ? <Text modifiers={NOTE_ROW}>{first.notes}</Text> : null}
+				</Section>
+			) : status ? (
 				<Section>
 					<SectionHeading title="Hours" />
 					{status}
 				</Section>
 			) : null}
-			{withContent.map((block) => (
+			{(shared ? rest : withContent).map((block) => (
 				<Section key={block.title}>
 					<SectionHeading title={block.title} />
 					<WeekRows block={block} now={now} />
