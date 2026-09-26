@@ -1,6 +1,6 @@
 import * as React from 'react'
 import {useWindowDimensions, type ColorValue} from 'react-native'
-import {HStack, LabeledContent, Section, Text, VStack} from '@expo/ui/swift-ui'
+import {HStack, Section, Text, VStack} from '@expo/ui/swift-ui'
 import {
 	accessibilityElement,
 	accessibilityIdentifier,
@@ -18,6 +18,7 @@ import type {Moment} from 'moment-timezone'
 
 import {CARD_INSET, ROW_PADDING} from '../../components/place-card/card-style'
 import {SectionHeading} from '../../components/place-card/section-heading'
+import {DetailRow} from '../../components/rows'
 import {
 	accentBarWidth,
 	contextualStatus,
@@ -68,7 +69,10 @@ export function HoursSection({venue, now}: Props): React.ReactNode {
 	let single = withContent.length === 1
 	let accent = getAccentBackgroundColor(getShortBuildingStatus(venue, now))
 
-	let status = scheduled ? <StatusRow accent={accent} now={now} venue={venue} /> : null
+	// Alone in its section, the status is its last row and takes no hairline.
+	let status = scheduled ? (
+		<StatusRow accent={accent} last={!single} now={now} venue={venue} />
+	) : null
 
 	if (single) {
 		let [block] = withContent
@@ -105,22 +109,27 @@ export function HoursSection({venue, now}: Props): React.ReactNode {
 
 /// "Open until 10 PM" beside a bar in the status's colour, and today's hours
 /// opposite.
-function StatusRow({venue, now, accent}: Props & {accent: ColorValue}): React.ReactNode {
+function StatusRow({
+	venue,
+	now,
+	accent,
+	last,
+}: Props & {accent: ColorValue; last: boolean}): React.ReactNode {
 	let today = todaysHours(venue.schedule ?? [], now)
 	return (
 		<HoursRow
 			bar={accent}
 			label={contextualStatus(venue, now).long}
 			identifier={HOURS_STATUS_ID}
+			last={last}
 			times={today ? [today] : []}
-			weight="semibold"
+			emphasized={true}
 		/>
 	)
 }
 
 /// One row per run of days with the same hours. The run that covers now is
-/// set in semibold beside a bar in the status's colour, as the Hours list
-/// marks it.
+/// marked with a bar in the status's colour, as the Hours list marks it.
 function WeekRows({
 	block,
 	now,
@@ -141,7 +150,6 @@ function WeekRows({
 				label={group.label}
 				last={last}
 				times={group.entries.map((entry) => formatBuildingTimes(entry.schedule, now))}
-				weight={current ? 'semibold' : 'regular'}
 			/>
 		)
 	})
@@ -177,14 +185,15 @@ function HoursRow({
 	bar,
 	label,
 	times,
-	weight,
+	emphasized = false,
 	last = false,
 	identifier,
 }: {
 	bar: ColorValue | null
 	label: string
 	times: Array<string>
-	weight: 'regular' | 'semibold'
+	/// Sets the label in semibold: the status, which a reader wants first.
+	emphasized?: boolean
 	/// The last row of a section has no hairline under it, as in Maps.
 	last?: boolean
 	identifier?: string
@@ -198,24 +207,12 @@ function HoursRow({
 		...(identifier ? [accessibilityIdentifier(identifier)] : []),
 		accessibilityElement('combine'),
 	]
-	let text = [
-		font({textStyle: 'body', weight}),
-		foregroundStyle({type: 'hierarchical', style: 'primary'}),
-	]
-	// The bar stands beside the whole row, outside LabeledContent, so the times
-	// line up under the label when they stack.
+	// The bar stands beside the whole row, outside the label and value, so
+	// the value lines up under the label when the two stack.
 	return (
 		<HStack alignment="top" modifiers={row} spacing={gap}>
 			<AccentBar color={bar} width={barWidth} />
-			<LabeledContent label={<Text modifiers={text}>{label}</Text>}>
-				<VStack alignment="trailing" spacing={2}>
-					{times.map((time) => (
-						<Text key={time} modifiers={text}>
-							{time}
-						</Text>
-					))}
-				</VStack>
-			</LabeledContent>
+			<DetailRow emphasized={emphasized} label={label} value={times.join('\n')} />
 		</HStack>
 	)
 }
