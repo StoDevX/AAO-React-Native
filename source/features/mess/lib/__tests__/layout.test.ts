@@ -12,6 +12,22 @@ let varietyStories = parseMessPosts(variety, parseMessCategories(categoriesJson)
 let puzzleStories = parseMessPosts(crosswordPlaylist, parseMessCategories(categoriesJson))
 
 describe('chooseLayout', () => {
+	it('lays a Playlist story out around its Spotify reference', () => {
+		let story = puzzleStories.find((s) => s.id === 30713)
+		expect(story?.layout).toStrictEqual({
+			kind: 'playlist',
+			spotify: {kind: 'playlist', id: '6bscojNnnO6nZcAnnXI1Cs'},
+		})
+		expect(story?.blocks).toHaveLength(1)
+	})
+
+	it('lays a Playlist story with an empty body out with no reference yet', () => {
+		expect(puzzleStories.find((s) => s.id === 36532)?.layout).toStrictEqual({
+			kind: 'playlist',
+			spotify: null,
+		})
+	})
+
 	it('lays a Crossword story out around its puzzle', () => {
 		let story = puzzleStories.find((s) => s.id === 36814)
 		expect(story?.layout).toStrictEqual({
@@ -108,8 +124,14 @@ describe('chooseLayout', () => {
 })
 
 describe('parseMessPosts', () => {
-	it('sets a layout on every story', () => {
+	it('sets a layout on every story, from its column', () => {
 		let stories = parseMessPosts(posts, parseMessCategories(categoriesJson))
-		expect(stories.every((s) => s.layout.kind === 'article')).toBe(true)
+		expect(stories.map((s) => [s.id, s.layout.kind])).toStrictEqual([
+			[36859, 'article'],
+			[36911, 'article'],
+			[36885, 'article'],
+			[36904, 'article'],
+			[36843, 'playlist'],
+		])
 	})
 })

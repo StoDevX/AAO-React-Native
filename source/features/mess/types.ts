@@ -83,3 +83,4 @@ export type StoryLayout =
 	| {kind: 'image'; image: Photo}
 	| {kind: 'poem'; stanzas: PoemLine[][]}
 	| {kind: 'crossword'; puzzle: CrosswordPuzzle}
+	| {kind: 'playlist'; spotify: SpotifyRef | null}
