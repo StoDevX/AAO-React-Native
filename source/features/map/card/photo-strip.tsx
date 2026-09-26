@@ -4,7 +4,7 @@ import {RNHostView, Section, VStack} from '@expo/ui/swift-ui'
 import {listRowBackground, listRowInsets, listRowSeparator} from '@expo/ui/swift-ui/modifiers'
 
 import {buildingPhotoUrl} from '../urls'
-import {CARD_INSET} from './card-style'
+import {CARD_INSET} from '../../../components/place-card/card-style'
 import {PhotoViewerModal} from './photo-viewer-modal'
 
 /// Maps' photo tiles are square, with rounded corners.

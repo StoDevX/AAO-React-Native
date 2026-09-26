@@ -31,9 +31,9 @@ import {
 import * as c from '@frogpond/colors'
 
 import {CAROUSEL_TILE_LIMIT, type PlaceTile} from '../lib/place-tiles'
-import {CARD_INSET} from './card-style'
+import {CARD_INSET} from '../../../components/place-card/card-style'
 import {MoreTileView, PlaceTileView} from './place-tile'
-import {SectionHeading} from './section-heading'
+import {SectionHeading} from '../../../components/place-card/section-heading'
 
 const TILE_SPACING = 12
 
