@@ -29,7 +29,7 @@ import {GoodToKnowSection} from './card/good-to-know-section'
 import {LinkListSection} from './card/link-list-section'
 import {PhotoStrip} from './card/photo-strip'
 import {PlacesSection} from './card/places-section'
-import {cardActions} from './lib/card-actions'
+import {cardActions, WALKING_DIRECTIONS} from './lib/card-actions'
 import {nameUnderHeader, titleMayMove} from './lib/card-title'
 import {goodToKnowRows} from './lib/good-to-know'
 import {placeTiles} from './lib/place-tiles'
@@ -223,7 +223,9 @@ function BuildingCard({
 					</Section>
 				) : null}
 
-				<ActionsRow actions={cardActions({point: pointOf(building)})} />
+				<ActionsRow
+					actions={cardActions({point: pointOf(building), walkingDirections: WALKING_DIRECTIONS})}
+				/>
 				<PhotoStrip name={name} photos={photos} />
 				<AboutSection text={description} />
 				<GoodToKnowSection rows={goodToKnowRows(building.properties)} />

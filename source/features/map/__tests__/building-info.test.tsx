@@ -4,7 +4,6 @@ import {fireEvent, render, screen} from '@testing-library/react-native'
 import {openUrl} from '@frogpond/open-url'
 
 import {BuildingInfo} from '../building-info'
-import type {Building, Feature} from '../types'
 import {makeBuilding} from './fixtures'
 
 jest.mock('@expo/ui/swift-ui', () => {
@@ -181,17 +180,6 @@ describe('BuildingInfo at large', () => {
 	})
 })
 
-/// A building with a map point, which is what Directions routes to.
-function withPoint(building: Feature<Building>): Feature<Building> {
-	return {
-		...building,
-		geometry: {
-			type: 'GeometryCollection',
-			geometries: [{type: 'Point', coordinates: [-93.1839, 44.4618]}],
-		},
-	}
-}
-
 function sectionOrder(): Array<string> {
 	let tree = JSON.stringify(screen.toJSON())
 	return ['About', 'Good to Know', 'Departments', 'Offices', 'Floors', 'Links', 'Details']
@@ -280,21 +268,8 @@ describe('BuildingInfo sections', () => {
 		expect(tree.indexOf('"More"')).toBeLessThan(tree.indexOf('"Offices"'))
 	})
 
-	it("opens directions to the building's point", async () => {
-		await render(
-			<BuildingInfo
-				building={withPoint(makeBuilding({id: 'a', name: 'Alpha Hall'}))}
-				onClose={jest.fn()}
-				stop="medium"
-			/>,
-		)
-
-		await fireEvent.press(screen.getByRole('button', {name: 'Directions'}))
-
-		expect(mockOpenURL).toHaveBeenCalledWith('https://maps.apple.com/?daddr=44.4618,-93.1839')
-	})
-
-	it('offers no Directions without a point', async () => {
+	// Directions waits on a walking routing engine; see building-info.tsx.
+	it('offers no Directions', async () => {
 		await render(
 			<BuildingInfo
 				building={makeBuilding({id: 'a', name: 'Alpha Hall'})}
