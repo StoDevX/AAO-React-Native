@@ -92,6 +92,8 @@ type IssuePageProps = {
 	onShowSection: (section: string) => void
 	/** Whether the page opens under the masthead, as Top does, or with its dateline alone */
 	showMasthead: boolean
+	/** Drawn above the dateline, under the masthead: Top's banner for a newer special edition */
+	banner?: React.ReactNode
 }
 
 /** One issue laid out as its front page: its dateline, its lead story, then a shelf per section. */
@@ -100,12 +102,17 @@ export function IssuePage({
 	columnWidth,
 	onShowSection,
 	showMasthead,
+	banner,
 }: IssuePageProps): React.ReactNode {
 	let stories = useQuery(messIssueOptions(issue))
 	let dateline = datelineText(issue)
 	return (
 		<>
-			{showMasthead ? <Masthead dateline={dateline} /> : <Dateline text={dateline} />}
+			{showMasthead ? (
+				<Masthead banner={banner} dateline={dateline} />
+			) : (
+				<Dateline text={dateline} />
+			)}
 			{stories.data ? (
 				<IssueStories
 					columnWidth={columnWidth}

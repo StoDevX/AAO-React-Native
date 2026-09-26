@@ -37,12 +37,19 @@ export function Dateline({text}: {text: string}): React.ReactNode {
 	return <Text modifiers={DATELINE}>{text}</Text>
 }
 
+type MastheadProps = {
+	dateline?: string
+	/** Drawn between the rule and the dateline: Top's banner for a newer special edition */
+	banner?: React.ReactNode
+}
+
 /** The paper's name across the top of the front page, a rule under it, then the dateline; they scroll with the page. */
-export function Masthead({dateline}: {dateline?: string}): React.ReactNode {
+export function Masthead({dateline, banner}: MastheadProps): React.ReactNode {
 	return (
 		<VStack spacing={6}>
 			<Text modifiers={MASTHEAD}>{OLAF_MESSENGER.title}</Text>
 			<Divider />
+			{banner}
 			{dateline ? <Dateline text={dateline} /> : null}
 		</VStack>
 	)

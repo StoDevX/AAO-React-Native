@@ -181,20 +181,6 @@ export const messMediaOptions = (mediaId: number) =>
 	})
 
 /**
- * What the Mess list shows: the feed, or a section's or column's newest stories, cached under the
- * same keys as `messFeedOptions` and `messCategoryOptions`. One query rather than a choice of the
- * two, because their keys differ in shape and `useQuery` will not take a union of them.
- */
-// oxlint-disable-next-line typescript/explicit-module-boundary-types
-export const messListOptions = (categoryId: number | null) =>
-	queryOptions({
-		queryKey: categoryId === null ? messKeys.feed : messKeys.category(categoryId),
-		staleTime: FIVE_MINUTES_IN_MS,
-		queryFn: ({signal}) =>
-			categoryId === null ? feedStories(signal) : categoryStories(categoryId, signal),
-	})
-
-/**
  * What to read after a story: the other episodes of its series, such as a comic's, or failing
  * that its writer's other work in the same column. Never includes the story itself.
  */

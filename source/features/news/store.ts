@@ -3,7 +3,10 @@ import {create} from 'zustand'
 import {persist, createJSONStorage} from 'zustand/middleware'
 
 type NewsFilterStore = {
-	/** The chosen category keyed by source id; absent or null shows every story */
+	/**
+	 * The chosen category keyed by source id; absent or null shows every story. For the Mess it is
+	 * the front page's chip, as `chipKey` in source/features/mess/lib/chips.ts writes it.
+	 */
 	selectedCategories: Record<string, string | null>
 	select: (source: string, category: string | null) => void
 }
