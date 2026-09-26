@@ -1,16 +1,16 @@
 import * as React from 'react'
-import {Linking, Share, StyleSheet, useWindowDimensions} from 'react-native'
+import {Linking, Share, StyleSheet} from 'react-native'
 import {Stack} from 'expo-router'
 import {Divider, Host, LazyVStack, ScrollView, useNativeState, VStack} from '@expo/ui/swift-ui'
 import {background, padding, scrollPosition, scrollTargetLayout} from '@expo/ui/swift-ui/modifiers'
 import {openUrl} from '@frogpond/open-url'
-import {useSafeAreaInsets} from 'react-native-safe-area-context'
 import {openURLAction} from '../../lib/open-url-action'
 import {AuthorCard} from './author-card'
 import {HoroscopesView} from './horoscopes-view'
 import {FeatureView} from './feature-view'
 import {ImageView} from './image-view'
 import {crosswordUrl} from './lib/crossword'
+import {PAGE_MARGIN} from './mess-page'
 import {paper} from './palette'
 import {PlaylistView} from './playlist-view'
 import {RecipeView} from './recipe-view'
@@ -21,14 +21,14 @@ import {SiteLinkCard, StoryBlocks} from './story-blocks'
 import {StoryHeader} from './story-header'
 import {StoryLookupNotice} from './story-lookup-notice'
 import type {MessStory} from './types'
+import {useColumnWidth} from './use-column-width'
 import {useMessStory} from './use-mess-story'
 
-const COLUMN_MARGIN = 20
 /** A quiet page's wider margins, a poem's or a feature's, which give its words and pictures more air. */
 const QUIET_MARGIN = 28
 /** The paper, and a link in the story's text opening where the reader's link setting says. */
 const PAGE = [background(paper), openURLAction(openUrl)]
-const COLUMN = [padding({horizontal: COLUMN_MARGIN, vertical: 16})]
+const COLUMN = [padding({horizontal: PAGE_MARGIN, vertical: 16})]
 const QUIET_COLUMN = [padding({horizontal: QUIET_MARGIN, vertical: 16})]
 /** A column whose children can be scrolled to by their `id`. */
 const TARGET_COLUMN = [...COLUMN, scrollTargetLayout()]
@@ -40,15 +40,12 @@ type Props = {id: number}
 
 /** A Mess story, set as a broadsheet page. */
 export function StoryScreen({id}: Props): React.ReactNode {
-	let {width} = useWindowDimensions()
-	let insets = useSafeAreaInsets()
 	let query = useMessStory(id)
 	let story = query.data
 	// A poem, photo or short story is set quietly: a lighter header and wider margins.
 	let isQuiet = story?.layout.kind === 'poem' || story?.layout.kind === 'feature'
-	// The scroll view's content sits inside the side safe areas, which landscape widens.
-	let margin = isQuiet ? QUIET_MARGIN : COLUMN_MARGIN
-	let columnWidth = width - insets.left - insets.right - margin * 2
+	let margin = isQuiet ? QUIET_MARGIN : PAGE_MARGIN
+	let columnWidth = useColumnWidth(margin)
 	// The id of the part of the page to scroll to; a template sets it to move the reader.
 	let scrollTarget = useNativeState<string | null>(null)
 	let scrollTo = React.useCallback((target: string) => scrollTarget.set(target), [scrollTarget])
