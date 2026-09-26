@@ -35,6 +35,7 @@ export default function CarletonPage(): React.ReactNode {
 		{href: '/CarletonLDCMenu', title: 'LDC'},
 		{href: '/CarletonWeitzMenu', title: 'Weitz Center'},
 		{href: '/CarletonSaylesMenu', title: 'Sayles Hill'},
+		{href: '/CarletonSchulzeMenu', title: 'Schulze'},
 	] as const
 
 	return (
