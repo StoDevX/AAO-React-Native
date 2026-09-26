@@ -46,6 +46,9 @@ function hasUnmatchedCloser(url: string): boolean {
 /**
  * Text outside any link, escaped, with each bare URL made an explicit link: a link's text is
  * read with its escapes, where a bare URL's is not.
+ *
+ * This sees one run at a time, so a URL split across styled runs, such as one whose path is in
+ * italics, links only as far as the first run goes, and the rest shows unlinked.
  */
 function escapeProse(text: string): string {
 	let out = ''
