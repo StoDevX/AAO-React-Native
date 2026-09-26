@@ -109,14 +109,18 @@ function BuildingCard({
 	stop: SheetDetent
 }): React.ReactNode {
 	let large = stop === 'large'
-	let [bigTitleAway, setBigTitleAway] = React.useState(false)
+	// Both edges are in window coordinates, so comparing them is exact at any
+	// stop and text size. Each is kept as it reports and the verdict derived
+	// here, so whichever of the two frames arrives last decides it.
+	let [nameBottom, setNameBottom] = React.useState<number | null>(null)
 	let [headerBottom, setHeaderBottom] = React.useState<number | null>(null)
+	// The name's edge outlives a trip off the large stop on purpose: the list
+	// keeps its scroll, and a name scrolled out of view reports no new frame
+	// when the list is laid out again, so the last edge is still the answer.
+	let bigTitleAway = large && nameUnderHeader(nameBottom, headerBottom)
 
-	// The name's frame reports on every step of a scroll, in window
-	// coordinates like the header's, so comparing the two is exact at any
-	// stop and text size. React skips the render while the answer holds.
 	let measureBigTitle = (box: {y: number; height: number}) => {
-		setBigTitleAway(nameUnderHeader(box, headerBottom))
+		setNameBottom(box.y + box.height)
 	}
 
 	let {

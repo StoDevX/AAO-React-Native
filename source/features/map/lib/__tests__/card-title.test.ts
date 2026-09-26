@@ -15,20 +15,26 @@ describe('titleMayMove', () => {
 describe('nameUnderHeader', () => {
 	// At rest the big title's top sits at the header's bottom edge.
 	it('is false at rest', () => {
-		expect(nameUnderHeader({y: 130, height: 68}, 130)).toBe(false)
+		expect(nameUnderHeader(198, 130)).toBe(false)
 	})
 
 	it('is false while any of the name is still below the header', () => {
-		expect(nameUnderHeader({y: 63, height: 68}, 130)).toBe(false)
+		expect(nameUnderHeader(131, 130)).toBe(false)
 	})
 
 	it("is true once the name's bottom has reached the header's bottom edge", () => {
-		expect(nameUnderHeader({y: 62, height: 68}, 130)).toBe(true)
-		expect(nameUnderHeader({y: 10, height: 68}, 130)).toBe(true)
+		expect(nameUnderHeader(130, 130)).toBe(true)
+		expect(nameUnderHeader(78, 130)).toBe(true)
 	})
 
 	// Before the header reports its frame there is nothing to compare with.
 	it('is false before the header has been measured', () => {
-		expect(nameUnderHeader({y: 10, height: 68}, null)).toBe(false)
+		expect(nameUnderHeader(78, null)).toBe(false)
+	})
+
+	// The big title is drawn only at large, so until the card first gets there
+	// the name has no frame.
+	it('is false before the name has been measured', () => {
+		expect(nameUnderHeader(null, 130)).toBe(false)
 	})
 })
