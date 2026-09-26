@@ -127,7 +127,7 @@ export function HoursSection({venue, now}: Props): React.ReactNode {
 /// "Open until 10 PM" in the status's colour, as Maps writes Open, and today's
 /// hours opposite.
 function StatusRow({venue, now, last}: Props & {last: boolean}): React.ReactNode {
-	let window = statusWindow(venue.schedule ?? [], now)
+	let window = statusWindow(venue, now)
 	return (
 		<HoursLine
 			emphasized={true}
