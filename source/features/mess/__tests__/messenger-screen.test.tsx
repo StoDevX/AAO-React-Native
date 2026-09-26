@@ -6,6 +6,7 @@ import {fetchManifest, fetchSourceBody, type Jrd} from '@frogpond/data-sources'
 
 import categoriesJson from './fixtures/categories.json'
 import {queryClient as appQueryClient} from '../../../init/tanstack-query'
+import {flushQueryNotifications} from '../../../testing/query-notifications'
 import {parseMessCategories} from '../lib/posts'
 import {MessengerScreen} from '../messenger-screen'
 import {MessPicker} from '../mess-picker'
@@ -178,8 +179,7 @@ describe('MessengerScreen', () => {
 		let refresh = screen.getByTestId('refreshable').props.onRefresh as () => Promise<void>
 		await act(async () => {
 			await refresh()
-			// React Query tells the screen on the turn after the fetch settles.
-			await new Promise((resolve) => setTimeout(resolve, 0))
+			await flushQueryNotifications()
 		})
 
 		let postHrefs = mockBody.mock.calls
@@ -242,8 +242,7 @@ describe('MessengerScreen', () => {
 		await act(async () => {
 			fireEvent.press(screen.getByText('Try Again'))
 			await queryClient.getQueryCache().find({queryKey: messKeys.categories})?.promise
-			// React Query tells the screen on the turn after the fetch settles.
-			await new Promise((resolve) => setTimeout(resolve, 0))
+			await flushQueryNotifications()
 		})
 
 		expect(screen.getByText('Ode to the Cage')).toBeTruthy()

@@ -11,6 +11,7 @@ import {keys} from '../../query'
 import type {BuildingType} from '../../types'
 import {simulateFocus} from '../../../../testing/expo-router-mock'
 import type * as ExpoRouterMock from '../../../../testing/expo-router-mock'
+import {flushQueryNotifications} from '../../../../testing/query-notifications'
 
 // report.tsx pulls in the redux barrel through query.ts, for
 // useGroupedBuildings' favorites selector elsewhere in that module. That
@@ -89,14 +90,9 @@ async function renderReport() {
 		</QueryClientProvider>,
 	)
 
-	// React Query's notifyManager schedules subscriber notifications with a
-	// real setTimeout(0) (see notifyManager.ts's systemSetTimeoutZero), not a
-	// microtask, so it lands after render returns and re-renders outside
-	// act(). The queries here are seeded, so there is nothing to fetch -- only
-	// that timer to flush.
-	await act(async () => {
-		await new Promise((resolve) => setTimeout(resolve, 0))
-	})
+	// The queries here are seeded, so there is nothing to fetch -- only React
+	// Query's notification timer to flush.
+	await act(flushQueryNotifications)
 
 	return view
 }

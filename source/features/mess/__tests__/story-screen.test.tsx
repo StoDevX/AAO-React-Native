@@ -8,6 +8,7 @@ import categories from './fixtures/categories.json'
 import posts from './fixtures/posts.json'
 
 import {queryClient as appQueryClient} from '../../../init/tanstack-query'
+import {flushQueryNotifications} from '../../../testing/query-notifications'
 import {StoryScreen} from '../story-screen'
 import {messKeys} from '../query'
 import {useMessStore} from '../store'
@@ -190,7 +191,7 @@ function renderStory(id: number) {
 describe('StoryScreen', () => {
 	test('reads a story in the cached feed without fetching the single post', async () => {
 		await renderStory(36911)
-		await act(() => new Promise((resolve) => setTimeout(resolve, 0)))
+		await act(flushQueryNotifications)
 
 		expect(screen.getByText('Cows, Comments and Confessions')).toBeTruthy()
 		expect(mockManifest).not.toHaveBeenCalled()
@@ -225,8 +226,7 @@ describe('StoryScreen', () => {
 				: Promise.reject(new Error('offline')),
 		)
 		await act(() => queryClient.refetchQueries({queryKey: messKeys.feed}))
-		// The screen draws the failed refetch on the next turn.
-		await act(() => new Promise((resolve) => setTimeout(resolve, 0)))
+		await act(flushQueryNotifications)
 
 		expect(queryClient.getQueryState(messKeys.feed)?.status).toBe('error')
 		expect(screen.getByText(headline)).toBeTruthy()
@@ -289,7 +289,7 @@ describe('StoryScreen', () => {
 		queryClient.setQueryData(messKeys.profile(392), PROFILE)
 		mockManifest.mockReturnValue(new Promise(() => undefined))
 		await renderStory(36911)
-		await act(() => new Promise((resolve) => setTimeout(resolve, 0)))
+		await act(flushQueryNotifications)
 
 		expect(screen.getByText('Cows, Comments and Confessions')).toBeTruthy()
 		expect(mockManifest).not.toHaveBeenCalled()
