@@ -1,4 +1,4 @@
-import {MAIN_SECTIONS} from './posts'
+import {MAIN_SECTIONS, SPECIAL_EDITION} from './posts'
 import type {MessCategory} from '../types'
 
 /** One section the filter offers, with its columns A–Z. */
@@ -9,7 +9,7 @@ export type FilterBranch = {section: MessCategory; columns: MessCategory[]}
  * Uncategorized and the paper's minor top-level categories are left out by
  * naming only these.
  */
-const FILTER_SECTIONS = [...MAIN_SECTIONS, 'Special Edition']
+const FILTER_SECTIONS = [...MAIN_SECTIONS, SPECIAL_EDITION]
 
 /** The paper's sections and their columns, as the filter menu lists them. */
 export function filterTree(categories: MessCategory[]): FilterBranch[] {

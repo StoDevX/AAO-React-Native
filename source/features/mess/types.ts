@@ -46,6 +46,38 @@ export type MessStory = {
 	layout: StoryLayout
 }
 
+/** A post as the issue list reads it: enough to group it into an issue and choose the issue's lead. */
+export type LightPost = {
+	id: number
+	/** The day it ran, as YYYY-MM-DD in the paper's own time zone */
+	day: string
+	title: string
+	/** The top-level category, never a Featured flag */
+	section: string | null
+	/** Whether any Featured* category is present */
+	featured: boolean
+	/** Its featured photo's media id; null with none, or with the Mess logo */
+	photo: number | null
+}
+
+/** One issue of the paper: a day's batch of posts, with the strays that joined it. */
+export type MessIssue = {
+	/** The issue's day, as YYYY-MM-DD in the paper's time zone */
+	day: string
+	/** The moment before the issue's day, for WordPress's `after`, which leaves out the moment itself */
+	after: string
+	/** The next issue's day, for WordPress's `before`; null for the newest issue, which runs to now */
+	before: string | null
+	/** How many posts it holds, strays included */
+	count: number
+	/** The lead story, chosen from the light fields */
+	leadId: number
+	leadTitle: string
+	/** The lead's photo, as a media id; null when it has none */
+	leadPhoto: number | null
+	isSpecial: boolean
+}
+
 /** A writer's profile for one staff year. */
 export type StaffProfile = {
 	name: string

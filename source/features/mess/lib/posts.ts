@@ -61,6 +61,9 @@ const isFeaturedFlag = (name: string): boolean => /^featured\b/iu.test(name)
 /** The sections that name a story whenever one is present, ahead of any other top-level category. */
 export const MAIN_SECTIONS = ['News', 'Opinions', 'Arts & Entertainment', 'Sports', 'Variety']
 
+/** The section a special edition's posts sit in, and nothing else. */
+export const SPECIAL_EDITION = 'Special Edition'
+
 /** WordPress's default category, which never names a section. */
 const UNCATEGORIZED = 'Uncategorized'
 
@@ -75,7 +78,10 @@ function rootOf(category: MessCategory, byId: Map<number, MessCategory>): MessCa
 }
 
 /** Where a story sits: its section, the column within it, and whether it is featured. */
-function placement(ids: number[], byId: Map<number, MessCategory>) {
+export function placement(
+	ids: number[],
+	byId: Map<number, MessCategory>,
+): Pick<MessStory, 'section' | 'column' | 'featured'> {
 	let placed = ids.flatMap((id) => {
 		let category = byId.get(id)
 		let root = category && rootOf(category, byId)
