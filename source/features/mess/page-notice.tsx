@@ -26,13 +26,20 @@ const TRY_AGAIN = [buttonStyle('bordered'), tint(messRed), accessibilityLabel('T
  * that instead of spinning until then.
  */
 export function PageLoading({paused = false}: {paused?: boolean}): React.ReactNode {
+	return paused ? (
+		<PageMessage text="No connection. This page loads when you’re back online." />
+	) : (
+		<VStack modifiers={NOTICE}>
+			<ProgressView />
+		</VStack>
+	)
+}
+
+/** A line in place of a page's stories, saying why there are none. */
+export function PageMessage({text}: {text: string}): React.ReactNode {
 	return (
 		<VStack modifiers={NOTICE}>
-			{paused ? (
-				<Text modifiers={MESSAGE}>No connection. This page loads when you’re back online.</Text>
-			) : (
-				<ProgressView />
-			)}
+			<Text modifiers={MESSAGE}>{text}</Text>
 		</VStack>
 	)
 }

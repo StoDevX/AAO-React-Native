@@ -123,6 +123,20 @@ describe('SectionPage', () => {
 		])
 	})
 
+	// WordPress could rename or drop a section a saved chip still names.
+	test('says the section is missing when the categories have no such section', async () => {
+		const NEWS = 7
+		queryClient.setQueryData(
+			messKeys.categories,
+			parseMessCategories(categoriesJson).filter(
+				(category) => category.id !== NEWS && category.parent !== NEWS,
+			),
+		)
+		await renderSection('News')
+
+		expect(screen.getByText('The Mess has no News section right now.')).toBeTruthy()
+	})
+
 	test('says it loads once back online when offline with its sections not cached', async () => {
 		queryClient.removeQueries({queryKey: messKeys.categories})
 		onlineManager.setOnline(false)
