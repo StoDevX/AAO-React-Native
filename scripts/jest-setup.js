@@ -48,6 +48,14 @@ jest.mock('expo-localization', () => ({
 jest.mock('@frogpond/launch-arguments', () => ({
 	isUITesting: true,
 }))
+// WebView looks up its native module when imported, and Jest has none.
+jest.mock('react-native-webview/lib/NativeRNCWebViewModule', () => ({
+	__esModule: true,
+	default: {
+		isFileUploadSupported: jest.fn(() => Promise.resolve(false)),
+		shouldStartLoadWithLockIdentifier: jest.fn(),
+	},
+}))
 // Settings reads NSUserDefaults through a native module Jest does not have.
 // Every key reads as unset, as on a launch with no extra arguments.
 jest.mock('react-native/Libraries/Settings/NativeSettingsManager', () => ({
