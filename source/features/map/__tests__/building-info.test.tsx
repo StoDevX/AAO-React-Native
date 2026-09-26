@@ -505,3 +505,40 @@ describe('BuildingInfo hours', () => {
 		expect(screen.queryByText('Hours')).toBeNull()
 	})
 })
+
+describe('BuildingInfo places', () => {
+	// St. Olaf's feed files offices under departments, so the Registrar's link
+	// is a department; its Hours venue is an office. They are one place.
+	it('shows a linked office once, where its link is, opening its card', async () => {
+		mockVenues.stolaf = [
+			venue('Tomson Hall', 'toh', 'building'),
+			venue('Registrar', 'toh', 'office'),
+			venue('Writing Desk', 'toh', 'office'),
+		]
+		let onOpen = jest.fn()
+		await renderCard(
+			<BuildingInfo
+				building={makeBuilding({
+					id: 'toh',
+					name: 'Tomson Hall',
+					departments: ['Registrar <https://wp.stolaf.edu/registrar>'],
+				})}
+				campus="stolaf"
+				onClose={jest.fn()}
+				onOpen={onOpen}
+				stop="medium"
+			/>,
+		)
+
+		expect(screen.getAllByText('Registrar')).toHaveLength(1)
+		await fireEvent.press(screen.getByRole('button', {name: /^Registrar/u}))
+		expect(onOpen).toHaveBeenCalledWith({
+			kind: 'venue',
+			name: 'Registrar',
+			link: {label: 'Registrar', href: 'https://wp.stolaf.edu/registrar'},
+		})
+		expect(screen.getByText('Writing Desk')).toBeTruthy()
+		expect(screen.getByText('Offices')).toBeTruthy()
+		expect(screen.queryByText('Also at This Location')).toBeNull()
+	})
+})

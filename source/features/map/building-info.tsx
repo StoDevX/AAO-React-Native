@@ -39,7 +39,8 @@ import {PlacesSection} from './card/places-section'
 import {cardActions, WALKING_DIRECTIONS} from './lib/card-actions'
 import {nameUnderHeader, titleMayMove} from './lib/card-title'
 import {goodToKnowRows} from './lib/good-to-know'
-import {placeTiles, toPlaceTiles} from './lib/place-tiles'
+import {placeTiles, toPlaceTiles, type PlaceTile} from './lib/place-tiles'
+import {placeSections} from './lib/place-sections'
 import {alsoHere, type StackEntry} from './lib/also-here'
 import {AlsoHereSection} from './card/also-here-section'
 import {mapDataOptions} from './query'
@@ -156,9 +157,6 @@ function BuildingCard({
 	}
 
 	let {address, description, floors, links, name, photos} = building.properties
-	let tiles = placeTiles(building.properties)
-	let departmentTiles = tiles.filter((tile) => tile.kind === 'department')
-	let officeTiles = tiles.filter((tile) => tile.kind === 'office')
 
 	let subtitle = building.properties.type || null
 
@@ -172,6 +170,12 @@ function BuildingCard({
 	let hours = ownHours(venues, building)
 	// The map screen's own query, so the card reads its warm cache.
 	let {data: features = []} = useQuery(mapDataOptions(campus))
+	// Each place appears once: a department or office link that names a place
+	// here opens that place's card, and Also at This Location keeps the rest.
+	let sections = placeSections(
+		placeTiles(building.properties),
+		onOpen ? toPlaceTiles(alsoHere(building, features, venues)) : [],
+	)
 
 	return (
 		<PlaceCardScaffold large={large}>
@@ -272,22 +276,43 @@ function BuildingCard({
 				/>
 				<PhotoStrip name={name} photos={photos} />
 				{hours ? <CardHours venue={hours} /> : null}
-				{onOpen ? (
-					<AlsoHereSection
-						onOpen={onOpen}
-						tiles={toPlaceTiles(alsoHere(building, features, venues))}
-					/>
-				) : null}
+				{onOpen ? <AlsoHereSection onOpen={onOpen} tiles={sections.alsoHere} /> : null}
 				<AboutSection text={description} />
 				<GoodToKnowSection rows={goodToKnowRows(building.properties)} />
-				<PlacesSection id="departments" tiles={departmentTiles} title="Departments" />
-				<PlacesSection id="offices" tiles={officeTiles} title="Offices" />
+				<LinkedPlaces
+					id="departments"
+					onOpen={onOpen}
+					tiles={sections.departments}
+					title="Departments"
+				/>
+				<LinkedPlaces id="offices" onOpen={onOpen} tiles={sections.offices} title="Offices" />
 				<LinkListSection items={floors} title="Floors" />
 				<LinkListSection items={links} title="Links" />
 				<DetailsSection address={address} />
 			</List>
 		</PlaceCardScaffold>
 	)
+}
+
+type LinkedPlacesProps = {
+	id: string
+	title: string
+	tiles: Array<PlaceTile>
+	onOpen?: (entry: StackEntry) => void
+}
+
+/// Departments or Offices. Tiles that open a place show its live status, so
+/// only a section with such a tile keeps the minute's tick.
+function LinkedPlaces(props: LinkedPlacesProps): React.ReactNode {
+	if (!props.tiles.some((tile) => tile.venue)) {
+		return <PlacesSection {...props} />
+	}
+	return <TimedPlaces {...props} />
+}
+
+function TimedPlaces(props: LinkedPlacesProps): React.ReactNode {
+	let {now} = useMomentTimer({intervalMs: 60000, timezone: timezone()})
+	return <PlacesSection {...props} now={now} />
 }
 
 /// A place's hours, kept current. The minute's tick lives here rather than on
