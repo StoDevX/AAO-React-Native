@@ -2,6 +2,8 @@ import {AppState, Platform} from 'react-native'
 import {addEventListener} from '@react-native-community/netinfo'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import {createAsyncStoragePersister} from '@tanstack/query-async-storage-persister'
+import type {PersistedClient} from '@tanstack/react-query-persist-client'
+import {withPersistedIssues} from '../features/mess/lib/persist'
 import {
 	QueryClient,
 	onlineManager,
@@ -24,7 +26,19 @@ export const queryClient = new QueryClient({
 	},
 })
 
-export const persister = createAsyncStoragePersister({storage: AsyncStorage})
+/**
+ * How the persisted cache is written: as JSON, with the Mess issue list cut to its first page
+ * and only Top's issue kept. The whole cache is one AsyncStorage value, and every issue opened
+ * would otherwise grow it for good.
+ */
+export function serializeCache(client: PersistedClient): string {
+	return JSON.stringify(withPersistedIssues(client))
+}
+
+export const persister = createAsyncStoragePersister({
+	storage: AsyncStorage,
+	serialize: serializeCache,
+})
 
 /**
  * Whether a query belongs to the calendar, whose data lives in SQLite rather
