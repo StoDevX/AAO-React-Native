@@ -176,7 +176,11 @@ describe('MessengerScreen', () => {
 		await renderScreen()
 
 		let refresh = screen.getByTestId('refreshable').props.onRefresh as () => Promise<void>
-		await act(() => refresh())
+		await act(async () => {
+			await refresh()
+			// React Query tells the screen on the turn after the fetch settles.
+			await new Promise((resolve) => setTimeout(resolve, 0))
+		})
 
 		let postHrefs = mockBody.mock.calls
 			.map((call) => call[0])
