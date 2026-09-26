@@ -108,6 +108,8 @@ export const aspectRatio = spreading('aspectRatio')
 export const autocorrectionDisabled = flag('autocorrectionDisabled', 'disabled')
 export const bold = bare('bold')
 export const buttonStyle = named('buttonStyle', 'style')
+export const buttonBorderShape = (shape: string, cornerRadius?: number): Modifier =>
+	createModifier('buttonBorderShape', {shape, cornerRadius})
 export const disabled = flag('disabled', 'disabled')
 export const font = spreading('font')
 export const foregroundStyle = named('foregroundStyle', 'style')
@@ -162,6 +164,14 @@ export const tint = named('tint', 'color')
 export const truncationMode = named('truncationMode', 'mode')
 export const underline = spreading('underline')
 export const fixedSize = spreading('fixedSize')
+
+/** Mirrors the real overloads: one fixed size, or a `{min, max}` range. */
+export function dynamicTypeSize(sizeOrRange: string | {min?: string; max?: string}): Modifier {
+	if (typeof sizeOrRange === 'object' && sizeOrRange !== null) {
+		return createModifier('dynamicTypeSize', {min: sizeOrRange.min, max: sizeOrRange.max})
+	}
+	return createModifier('dynamicTypeSize', {size: sizeOrRange})
+}
 
 export const background = (color: unknown, shape?: Record<string, unknown>): Modifier =>
 	createModifier('background', {color, ...shape})

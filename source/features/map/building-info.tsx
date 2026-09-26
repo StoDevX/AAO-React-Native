@@ -2,7 +2,6 @@ import * as React from 'react'
 import {Image as RNImage, Linking, StyleSheet} from 'react-native'
 import {
 	Button,
-	HStack,
 	Image,
 	List,
 	RNHostView,
@@ -10,22 +9,56 @@ import {
 	Spacer,
 	Text,
 	VStack,
+	ZStack,
 } from '@expo/ui/swift-ui'
 import {
 	accessibilityLabel,
+	buttonBorderShape,
 	buttonStyle,
-	listRowInsets,
+	dynamicTypeSize,
 	font,
 	foregroundStyle,
+	frame,
+	lineLimit,
+	listRowBackground,
+	listRowInsets,
+	multilineTextAlignment,
+	onGeometryChange,
+	padding,
+	truncationMode,
 } from '@expo/ui/swift-ui/modifiers'
 import {openUrl} from '@frogpond/open-url'
+import {PlaceCardHeader, PlaceCardScaffold} from '@frogpond/place-card-header'
 
+import {FILL_WIDTH} from '../../components/tile-layout'
+import {nameUnderHeader, titleMayMove} from './lib/card-title'
 import {normalizeLinks} from './lib/normalize-link'
+import type {SheetDetent} from './lib/sheet-moves'
 import type {Building, Feature, LabelLink, LabelLinkString} from './types'
 import {appleMapsSearchUrl, buildingPhotoUrl} from './urls'
 
-/// Matches the glyph Apple uses to close a sheet.
-const CLOSE_GLYPH_SIZE = 26
+/// Apple Maps' place-card header, measured on iOS 27: 16pt of padding round
+/// 44pt buttons -- 76pt in all, the sheet's collapsed stop
+/// (`SHEET_COLLAPSED_HEIGHT` in `Map/index.tsx`).
+const HEADER_PADDING = 16
+
+/// The header's bottom padding at the large stop, which puts its edge 12pt
+/// under the buttons, where Maps' is. Maps' big title starts 8pt under the
+/// buttons, 4pt up under that edge; the scaffold lifts the list to match.
+const LARGE_HEADER_BOTTOM_PADDING = 12
+
+/// Maps' header buttons are 44pt square, and the header's title row is as
+/// tall as they are.
+const BUTTON_SIZE = 44
+
+/// How far the header's small title keeps from each edge of the header: the
+/// close button plus `HEADER_PADDING`, so the title clears it.
+const TITLE_INSET = BUTTON_SIZE + HEADER_PADDING
+
+/// Glass pads its label about 7pt on every side (measured on iOS 27), so a
+/// 30pt frame round the glyph comes out as Maps' 44pt button.
+const CLOSE_GLYPH_FRAME = 30
+const CLOSE_GLYPH_SIZE = 22
 
 /// The card's own dismiss button. The search bar's Cancel carries the same
 /// "Close" accessibility label, so a screen-wide query for that label could
@@ -33,35 +66,61 @@ const CLOSE_GLYPH_SIZE = 26
 /// `TestIdentifiers.CarletonMap.cardCloseButton` in `TestIdentifiers.swift`.
 const CARD_CLOSE_BUTTON_ID = 'card-close-button'
 
+/// The header's title. Matches `TestIdentifiers.CarletonMap.cardTitle` in
+/// `TestIdentifiers.swift`.
+const CARD_TITLE_ID = 'card-title'
+
+/// The big title's subtitle at the large stop.
+const CARD_BIG_SUBTITLE_ID = 'card-big-subtitle'
+
 type Props = {
 	building: Feature<Building> | undefined
 	onClose: () => void
+	/// Which stop the sheet is at: large lays the name out differently, and only the other two let a long one move.
+	stop: SheetDetent
 }
 
 /// The info card's contents, as SwiftUI. The sheet that presents them belongs
 /// to the map screen, which swaps between this and the picker.
-export function BuildingInfo({building, onClose}: Props): React.ReactNode {
+export function BuildingInfo({building, onClose, stop}: Props): React.ReactNode {
 	if (!building) {
 		return (
 			<List>
 				<Section>
 					<Text>Building not found.</Text>
-					<Button
-						modifiers={[accessibilityLabel('Close'), buttonStyle('plain')]}
-						onPress={onClose}
-						testID={CARD_CLOSE_BUTTON_ID}
-					>
-						{/* The filled xmark Apple's sheets close with now, rather than a
-						    text button. */}
-						<Image
-							modifiers={[foregroundStyle({type: 'hierarchical', style: 'secondary'})]}
-							size={CLOSE_GLYPH_SIZE}
-							systemName="xmark.circle.fill"
-						/>
-					</Button>
+					<CloseButton onClose={onClose} />
 				</Section>
 			</List>
 		)
+	}
+
+	// A new building starts over with its big title in view.
+	return <BuildingCard building={building} key={building.id} onClose={onClose} stop={stop} />
+}
+
+/// A found building's card: the pinned header over the list of its details.
+function BuildingCard({
+	building,
+	onClose,
+	stop,
+}: {
+	building: Feature<Building>
+	onClose: () => void
+	stop: SheetDetent
+}): React.ReactNode {
+	let large = stop === 'large'
+	// Both edges are in window coordinates, so comparing them is exact at any
+	// stop and text size. Each is kept as it reports and the verdict derived
+	// here, so whichever of the two frames arrives last decides it.
+	let [nameBottom, setNameBottom] = React.useState<number | null>(null)
+	let [headerBottom, setHeaderBottom] = React.useState<number | null>(null)
+	// The name's edge outlives a trip off the large stop on purpose: the list
+	// keeps its scroll, and a name scrolled out of view reports no new frame
+	// when the list is laid out again, so the last edge is still the answer.
+	let bigTitleAway = large && nameUnderHeader(nameBottom, headerBottom)
+
+	let measureBigTitle = (box: {y: number; height: number}) => {
+		setNameBottom(box.y + box.height)
 	}
 
 	let {
@@ -77,84 +136,172 @@ export function BuildingInfo({building, onClose}: Props): React.ReactNode {
 		photos,
 	} = building.properties
 
+	let subtitle = building.properties.type || null
+
 	return (
-		<List>
-			<Section>
-				{/* `center`, so the name sits on the same axis as Close rather than
-					    riding up against the top of the row. */}
-				<HStack alignment="center" spacing={12}>
-					<VStack alignment="leading" spacing={2}>
-						<Text modifiers={[font({textStyle: 'title2', weight: 'bold'})]}>{name}</Text>
-						{nickname ? (
+		<PlaceCardScaffold large={large}>
+			<ZStack
+				alignment="topTrailing"
+				modifiers={[
+					// At large Maps sets the big title 8pt under the buttons, so
+					// the header ends there.
+					padding({
+						top: HEADER_PADDING,
+						horizontal: HEADER_PADDING,
+						bottom: large ? LARGE_HEADER_BOTTOM_PADDING : HEADER_PADDING,
+					}),
+					// At every stop, though only large uses it: adding or dropping a
+					// modifier rebuilds the stack's children in SwiftUI, which would
+					// restart the title's marquee on every trip to large.
+					onGeometryChange((box) => setHeaderBottom(box.y + box.height)),
+				]}
+			>
+				{large ? (
+					bigTitleAway ? (
+						// Maps' inline title at large: an ellipsis, no marquee, no
+						// subtitle, clear of the button at the trailing edge. Maps
+						// stops it growing at about xxxLarge, so the header keeps
+						// to the buttons' row and does not jump taller at the swap.
+						<Text
+							modifiers={[
+								font({textStyle: 'title3', weight: 'bold'}),
+								dynamicTypeSize({max: 'xxxLarge'}),
+								lineLimit(1),
+								truncationMode('tail'),
+								padding({horizontal: TITLE_INSET}),
+								frame({maxWidth: FILL_WIDTH, minHeight: BUTTON_SIZE}),
+							]}
+						>
+							{name}
+						</Text>
+					) : (
+						<Spacer modifiers={[frame({height: BUTTON_SIZE})]} />
+					)
+				) : null}
+				{/* Mounted at every stop, hidden at large, so its marquee keeps
+				    one clock across stop changes as Maps' does. */}
+				<PlaceCardHeader
+					animate={titleMayMove(stop)}
+					hidden={large}
+					subtitle={subtitle}
+					testID={CARD_TITLE_ID}
+					title={name}
+				/>
+				<CloseButton onClose={onClose} />
+			</ZStack>
+
+			<List>
+				{large ? (
+					<Section
+						modifiers={[
+							// Straight on the sheet, as Maps draws it, not in a row's
+							// rounded box.
+							listRowBackground('clear'),
+							listRowInsets({top: 0, leading: 0, bottom: 0, trailing: 0}),
+						]}
+					>
+						{/* Maps sets the subtitle straight under the name. */}
+						<VStack modifiers={[frame({maxWidth: FILL_WIDTH})]} spacing={0}>
+							{/* The name alone is measured, not the subtitle under it:
+							    Maps swaps titles once the name has gone under the
+							    header, with the subtitle still in view. */}
 							<Text
 								modifiers={[
-									font({textStyle: 'subheadline'}),
-									foregroundStyle({type: 'hierarchical', style: 'secondary'}),
+									font({textStyle: 'title', weight: 'bold'}),
+									multilineTextAlignment('center'),
+									onGeometryChange(measureBigTitle),
 								]}
 							>
-								{nickname}
+								{name}
 							</Text>
-						) : null}
-					</VStack>
-					<Spacer />
-					<Button
-						modifiers={[accessibilityLabel('Close'), buttonStyle('plain')]}
-						onPress={onClose}
-						testID={CARD_CLOSE_BUTTON_ID}
+							{subtitle ? (
+								<Text
+									modifiers={[
+										font({textStyle: 'subheadline', weight: 'semibold'}),
+										foregroundStyle({type: 'hierarchical', style: 'secondary'}),
+									]}
+									testID={CARD_BIG_SUBTITLE_ID}
+								>
+									{subtitle}
+								</Text>
+							) : null}
+						</VStack>
+					</Section>
+				) : null}
+
+				{nickname ? (
+					<Section title="Abbreviation">
+						<Text>{nickname}</Text>
+					</Section>
+				) : null}
+
+				{photos?.[0] ? (
+					<Section
+						modifiers={[
+							// A List row insets its content, which framed the photograph in
+							// white on all four sides. Here the photo is the row.
+							listRowInsets({top: 0, leading: 0, bottom: 0, trailing: 0}),
+						]}
 					>
-						{/* The filled xmark Apple's sheets close with now, rather than a
-						    text button. */}
-						<Image
-							modifiers={[foregroundStyle({type: 'hierarchical', style: 'secondary'})]}
-							size={CLOSE_GLYPH_SIZE}
-							systemName="xmark.circle.fill"
-						/>
-					</Button>
-				</HStack>
-			</Section>
+						{/* SwiftUI's Image reads a local file synchronously; these are
+							    remote, so the React Native image loader does the work and
+							    SwiftUI hosts the result. */}
+						<RNHostView matchContents={true}>
+							<RNImage
+								accessibilityLabel={`Photo of ${name}`}
+								source={{uri: buildingPhotoUrl(photos[0])}}
+								style={styles.photo}
+							/>
+						</RNHostView>
+					</Section>
+				) : null}
 
-			{photos?.[0] ? (
-				<Section
-					modifiers={[
-						// A List row insets its content, which framed the photograph in
-						// white on all four sides. Here the photo is the row.
-						listRowInsets({top: 0, leading: 0, bottom: 0, trailing: 0}),
-					]}
-				>
-					{/* SwiftUI's Image reads a local file synchronously; these are
-						    remote, so the React Native image loader does the work and
-						    SwiftUI hosts the result. */}
-					<RNHostView matchContents={true}>
-						<RNImage
-							accessibilityLabel={`Photo of ${name}`}
-							source={{uri: buildingPhotoUrl(photos[0])}}
-							style={styles.photo}
-						/>
-					</RNHostView>
+				{description ? (
+					<Section title="About">
+						<Text>{description}</Text>
+					</Section>
+				) : null}
+
+				{address ? (
+					<Section title="Address">
+						<AddressLink address={address} />
+					</Section>
+				) : null}
+
+				<Section title="Accessibility">
+					<Text>{accessibilityCopy(accessibility)}</Text>
 				</Section>
-			) : null}
 
-			{description ? (
-				<Section title="About">
-					<Text>{description}</Text>
-				</Section>
-			) : null}
+				<LinkSection items={departments} title="Departments" />
+				<LinkSection items={offices} title="Offices" />
+				<LinkSection items={floors} title="Floors" />
+				<LinkSection items={links} title="Links" />
+			</List>
+		</PlaceCardScaffold>
+	)
+}
 
-			{address ? (
-				<Section title="Address">
-					<AddressLink address={address} />
-				</Section>
-			) : null}
-
-			<Section title="Accessibility">
-				<Text>{accessibilityCopy(accessibility)}</Text>
-			</Section>
-
-			<LinkSection items={departments} title="Departments" />
-			<LinkSection items={offices} title="Offices" />
-			<LinkSection items={floors} title="Floors" />
-			<LinkSection items={links} title="Links" />
-		</List>
+/// Maps' close button: a glass circle holding a plain xmark.
+function CloseButton({onClose}: {onClose: () => void}): React.ReactNode {
+	return (
+		<Button
+			modifiers={[
+				accessibilityLabel('Close'),
+				buttonStyle('glass'),
+				buttonBorderShape('circle'),
+				// Maps' button and glyph stay the same size at every text size;
+				// without this the glass padding grows and squeezes the glyph.
+				dynamicTypeSize({max: 'large'}),
+			]}
+			onPress={onClose}
+			testID={CARD_CLOSE_BUTTON_ID}
+		>
+			<Image
+				modifiers={[frame({width: CLOSE_GLYPH_FRAME, height: CLOSE_GLYPH_FRAME})]}
+				size={CLOSE_GLYPH_SIZE}
+				systemName="xmark"
+			/>
+		</Button>
 	)
 }
 
