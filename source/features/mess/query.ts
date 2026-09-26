@@ -1,4 +1,10 @@
-import {fetchManifest, fetchSourceBody, REL_NEWS, resolveSource} from '@frogpond/data-sources'
+import {
+	fetchManifest,
+	fetchSourceBody,
+	REL_NEWS,
+	resolveSource,
+	SourceFetchError,
+} from '@frogpond/data-sources'
 import {infiniteQueryOptions, queryOptions} from '@tanstack/react-query'
 import {queryClient} from '../../init/tanstack-query'
 import {parseMessCategories, parseMessPosts} from './lib/posts'
@@ -136,7 +142,12 @@ export const messIssuesOptions = infiniteQueryOptions({
 				`${origin}/wp-json/wp/v2/posts?per_page=${ISSUE_PAGE_SIZE}&page=${pageParam}&_fields=id,date,title,categories,featured_media`,
 				signal,
 				'Olaf Messenger issues',
-			),
+			).catch((error: unknown) => {
+				// WordPress answers 400 for a page past the last, which is asked for when the post count
+				// is a multiple of the page size and the last page is full: there is nothing more.
+				if (pageParam > 1 && error instanceof SourceFetchError && error.status === 400) return []
+				throw error
+			}),
 			queryClient.query(messCategoriesOptions),
 		])
 		return parseLightPosts(body, categories)

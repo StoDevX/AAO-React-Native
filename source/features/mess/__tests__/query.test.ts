@@ -1,7 +1,7 @@
 import {readFileSync} from 'node:fs'
 import {join} from 'node:path'
 import {afterEach, describe, expect, jest, test} from '@jest/globals'
-import {fetchManifest, fetchSourceBody, type Jrd} from '@frogpond/data-sources'
+import {fetchManifest, fetchSourceBody, SourceFetchError, type Jrd} from '@frogpond/data-sources'
 import posts from './fixtures/posts.json'
 import categories from './fixtures/categories.json'
 import profiles from './fixtures/profiles-390.json'
@@ -390,6 +390,27 @@ describe('messIssuesOptions', () => {
 		expect(fetchedHrefs()).toContain(
 			'https://olafmessenger.com/wp-json/wp/v2/posts?per_page=100&page=2&_fields=id,date,title,categories,featured_media',
 		)
+	})
+
+	// WordPress answers 400 for a page past the last, which it asks for when the post count is a
+	// multiple of a hundred, since the last page is then full.
+	test("reads WordPress's answer for a page past the last as an empty last page", async () => {
+		serve(() =>
+			Promise.reject(new SourceFetchError('Olaf Messenger issues fetch failed: 400', 400)),
+		)
+
+		let page = await runPage<LightPost[]>(messIssuesOptions, 54)
+
+		expect(page).toStrictEqual([])
+		expect(messIssuesOptions.getNextPageParam(page, [page], 54, [54])).toBeUndefined()
+	})
+
+	test('still fails a page on any other error', async () => {
+		serve(() =>
+			Promise.reject(new SourceFetchError('Olaf Messenger issues fetch failed: 500', 500)),
+		)
+
+		await expect(runPage<LightPost[]>(messIssuesOptions, 2)).rejects.toThrow('failed: 500')
 	})
 
 	test('asks for another page after a full one, and none after a short one', () => {
