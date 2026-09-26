@@ -11,6 +11,7 @@ import {HoroscopesView} from './horoscopes-view'
 import {ImageView} from './image-view'
 import {crosswordUrl} from './lib/crossword'
 import {paper} from './palette'
+import {PlaylistView} from './playlist-view'
 import {PoemView} from './poem-view'
 import {QuietHeader} from './quiet-header'
 import {SeriesRow} from './series-row'
@@ -92,10 +93,10 @@ export function StoryScreen({id}: Props): React.ReactNode {
 						{isPoem ? (
 							<QuietHeader story={story} />
 						) : (
-							// A comic or artwork is its own picture, so the header leaves it to the body.
+							// A comic, artwork or playlist draws its picture in the body, so the header leaves it out.
 							<StoryHeader
 								columnWidth={columnWidth}
-								showPhoto={story.layout.kind !== 'image'}
+								showPhoto={story.layout.kind !== 'image' && story.layout.kind !== 'playlist'}
 								story={story}
 							/>
 						)}
@@ -153,11 +154,14 @@ function StoryBody({story, columnWidth, scrollTo}: StoryBodyProps): React.ReactN
 			</>
 		)
 	}
+	if (layout.kind === 'playlist') {
+		return <PlaylistView columnWidth={columnWidth} layout={layout} story={story} />
+	}
 
 	return (
 		<>
 			<StoryBlocks columnWidth={columnWidth} story={story} />
-			{/* Playlists, and artwork or comics with no image, come through the API with no body. */}
+			{/* Artwork or comics with no image come through the API with no body. */}
 			{story.blocks.length === 0 ? (
 				<SiteLinkCard icon="safari" label="Read on olafmessenger.com" url={story.link} />
 			) : null}

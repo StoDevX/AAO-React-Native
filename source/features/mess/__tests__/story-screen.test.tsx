@@ -1,4 +1,7 @@
+import {readFileSync} from 'node:fs'
+import {join} from 'node:path'
 import * as React from 'react'
+import {Linking} from 'react-native'
 import {afterEach, beforeEach, describe, expect, jest, test} from '@jest/globals'
 import {act, fireEvent, render, screen} from '@testing-library/react-native'
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query'
@@ -41,6 +44,10 @@ jest.mock('expo-router', () => ({
 	useRouter: () => ({navigate: mockNavigate}),
 }))
 jest.mock('@frogpond/open-url', () => ({openUrl: jest.fn()}))
+jest.mock('react-native-webview', () => {
+	// oxlint-disable-next-line typescript/no-require-imports
+	return require('./webview-mock') as typeof import('./webview-mock')
+})
 
 // The feed's fetches, so an uncached feed never reaches a network Jest does not have.
 jest.mock('@frogpond/data-sources', () => ({
@@ -148,6 +155,39 @@ const CROSSWORD: MessStory = {
 	layout: {kind: 'crossword', puzzle: PUZZLE},
 }
 
+const PLAYLIST_PHOTO = {
+	url: 'https://olafmessenger.com/wp-content/uploads/2020/05/AE_Quarentunes_Anna_Weimholt_04_30-1.png',
+	width: 386,
+	height: 386,
+}
+
+/** A Playlist post whose body names its playlist, with a writer's note and a featured image. */
+const PLAYLIST: MessStory = {
+	...STORY,
+	id: 30713,
+	title: 'Spotify Playlist: best of grammy noms 2022',
+	link: 'https://olafmessenger.com/30713/variety/spotify-playlist-best-of-grammy-noms-2022/',
+	section: 'Variety',
+	column: 'Playlist',
+	photo: {...PLAYLIST_PHOTO, caption: ''},
+	blocks: [{type: 'paragraph', runs: [{text: 'While you listen, check out my picks.'}]}],
+	layout: {kind: 'playlist', spotify: {kind: 'playlist', id: '6bscojNnnO6nZcAnnXI1Cs'}},
+}
+
+/** A Playlist post with an empty body, whose playlist is on its web page. */
+const PAGE_PLAYLIST: MessStory = {
+	...STORY,
+	id: 36532,
+	title: 'Spotify playlist: summer (kind of)',
+	link: 'https://olafmessenger.com/36532/variety/spotify-playlist-summer-kind-of/',
+	section: 'Variety',
+	column: 'Playlist',
+	blocks: [],
+	layout: {kind: 'playlist', spotify: null},
+}
+
+const PLAYLIST_PAGE = readFileSync(join(__dirname, 'fixtures/playlist-page-36532.html'), 'utf8')
+
 const PROFILE: StaffProfile = {
 	name: 'Kenzie Nguyen',
 	bio: 'Kenzie is a senior.',
@@ -156,10 +196,22 @@ const PROFILE: StaffProfile = {
 }
 
 let queryClient: QueryClient
+/** iOS's own link opener, which "Open in Spotify" hands its link to. */
+let openInIOS: jest.Spied<typeof Linking.openURL>
 
 beforeEach(() => {
 	queryClient = new QueryClient({defaultOptions: {queries: {staleTime: Infinity, retry: false}}})
-	queryClient.setQueryData(messKeys.feed, [STORY, ARTWORK, HOROSCOPES, COMIC, POEM, CROSSWORD])
+	queryClient.setQueryData(messKeys.feed, [
+		STORY,
+		ARTWORK,
+		HOROSCOPES,
+		COMIC,
+		POEM,
+		CROSSWORD,
+		PLAYLIST,
+		PAGE_PLAYLIST,
+	])
+	openInIOS = jest.spyOn(Linking, 'openURL').mockResolvedValue(true)
 	useMessStore.setState({lastSign: null})
 	// Ashlyn has no profile; Kenzie has one.
 	queryClient.setQueryData(messKeys.profile(423), null)
@@ -172,6 +224,7 @@ afterEach(() => {
 	// hold a day-long gc timer that would keep Jest running.
 	appQueryClient.clear()
 	jest.clearAllMocks()
+	jest.restoreAllMocks()
 })
 
 type Node = {type: string; props: Record<string, unknown>; children: Array<Node | string> | null}
@@ -441,5 +494,79 @@ describe('StoryScreen', () => {
 		)
 		expect(screen.getByText(/^Answers/u)).toBeTruthy()
 		expect(screen.queryByText('Read on olafmessenger.com')).toBeNull()
+	})
+
+	test("draws a Playlist post as a button to Spotify and Spotify's player, then its text", async () => {
+		await renderStory(30713)
+
+		fireEvent.press(screen.getByRole('button', {name: 'Open in Spotify'}))
+
+		// Handed to iOS, never the in-app sheet, which cannot pass a link on to the Spotify app.
+		expect(openInIOS).toHaveBeenCalledWith(
+			'https://open.spotify.com/playlist/6bscojNnnO6nZcAnnXI1Cs',
+		)
+		expect(openUrl).not.toHaveBeenCalled()
+		expect(screen.getByTestId('mess-playlist-embed').props.source).toStrictEqual({
+			uri: 'https://open.spotify.com/embed/playlist/6bscojNnnO6nZcAnnXI1Cs',
+		})
+		expect(screen.getByText(/^While you listen/u)).toBeTruthy()
+		expect(screen.queryByText('Open on the Mess')).toBeNull()
+		// Its body named the playlist, so its web page is never read.
+		expect(mockBody).not.toHaveBeenCalled()
+	})
+
+	// Review Focus 5.
+	test("draws a Playlist post's picture once, in its card rather than as a lead photo too", async () => {
+		await renderStory(30713)
+
+		let uris = hostProps(screen.toJSON() as Node | Node[] | null, 'Image').map(
+			(props) => (props.source as {uri?: string} | undefined)?.uri,
+		)
+		expect(uris.filter((uri) => uri === PLAYLIST_PHOTO.url)).toHaveLength(1)
+	})
+
+	test('reads a Playlist post with nothing in its body from its web page', async () => {
+		serve((href) => (href === PAGE_PLAYLIST.link ? PLAYLIST_PAGE : []))
+		await renderStory(36532)
+
+		let embed = await screen.findByTestId('mess-playlist-embed')
+
+		expect(embed.props.source).toStrictEqual({
+			uri: 'https://open.spotify.com/embed/playlist/5dJFJNxZlxoRbwIgqCTxWk',
+		})
+		expect(screen.getByRole('button', {name: 'Open in Spotify'})).toBeTruthy()
+		expect(fetchedHrefs()).toStrictEqual([PAGE_PLAYLIST.link])
+	})
+
+	test('holds one loading place for the button and player while the web page is read', async () => {
+		mockBody.mockReturnValue(new Promise(() => undefined))
+		await renderStory(36532)
+
+		expect(screen.getByLabelText('Loading')).toBeTruthy()
+		expect(screen.queryByRole('button', {name: 'Open in Spotify'})).toBeNull()
+		expect(screen.queryByTestId('mess-playlist-embed')).toBeNull()
+		expect(screen.queryByText('Open on the Mess')).toBeNull()
+	})
+
+	test('falls back to the article with a link to the page when the page names no playlist', async () => {
+		serve(() => '<html><body><p>No player here.</p></body></html>')
+		await renderStory(36532)
+
+		fireEvent.press(await screen.findByRole('button', {name: 'Open on the Mess'}))
+
+		expect(openUrl).toHaveBeenCalledWith(PAGE_PLAYLIST.link)
+		expect(screen.queryByRole('button', {name: 'Open in Spotify'})).toBeNull()
+		expect(screen.queryByTestId('mess-playlist-embed')).toBeNull()
+		expect(screen.queryByLabelText('Loading')).toBeNull()
+		expect(screen.queryByText('Read on olafmessenger.com')).toBeNull()
+	})
+
+	// Review Focus 4.
+	test('falls back the same way when the web page cannot be read', async () => {
+		mockBody.mockRejectedValue(new Error('offline'))
+		await renderStory(36532)
+
+		expect(await screen.findByRole('button', {name: 'Open on the Mess'})).toBeTruthy()
+		expect(screen.queryByLabelText('Loading')).toBeNull()
 	})
 })
