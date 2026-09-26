@@ -22,7 +22,7 @@ export default function KrlxPage(): React.ReactNode {
 			source={{
 				useEmbeddedPlayer: false,
 				embeddedPlayerUrl: 'https://live.krlx.org',
-				streamSourceUrl: 'http://radio.krlx.org/mp3/high_quality',
+				streamSourceUrl: 'http://stream.krlx.org:8000/_a',
 			}}
 			stationName="88.1 KRLX-FM"
 			stationNumber="+15072224127"

@@ -15,8 +15,7 @@ import {ScratchableLogo} from './scratchable-logo'
 import {useSwipeBackHold} from './swipe-back-hold'
 import {useNavigation, useRouter} from 'expo-router'
 
-// If you want to fix the inline player, switch to `true`
-const ALLOW_INLINE_PLAYER = false
+const ALLOW_INLINE_PLAYER = true
 
 type PlayButtonProps = {
 	state: PlayState
@@ -305,8 +304,13 @@ const styles = StyleSheet.create({
 		marginTop: 15,
 		marginBottom: 5,
 	},
+	// Out of sight but still mounted: a view with display "none" is never
+	// created, so its page would never load.
 	webview: {
-		display: 'none',
+		position: 'absolute',
+		width: 1,
+		height: 1,
+		opacity: 0,
 	},
 	spacer: {
 		width: 8,
