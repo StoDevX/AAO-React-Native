@@ -1,13 +1,15 @@
 import * as React from 'react'
-import {StyleSheet, Image, useWindowDimensions} from 'react-native'
+import {StyleSheet, Image} from 'react-native'
 import {Host, List, RNHostView, Section, Text, VStack} from '@expo/ui/swift-ui'
 import {
 	font,
 	foregroundStyle,
+	frame,
 	listRowBackground,
 	listRowInsets,
 	listRowSeparator,
 	listStyle,
+	onGeometryChange,
 	padding,
 	scrollContentBackground,
 } from '@expo/ui/swift-ui/modifiers'
@@ -22,6 +24,7 @@ import {images as buildingImages} from '../../../../images/spaces'
 import {buildingPhoto} from '../lib/building-photo'
 import {HoursSection} from '../hours-section'
 import {LinkListSection} from '../../map/card/link-list-section'
+import {FILL_WIDTH} from '../../../components/tile-layout'
 import {
 	CARD_INSET,
 	PICTURE_CORNER_RADIUS,
@@ -58,9 +61,19 @@ type Props = {
  */
 export function BuildingDetailSwiftUI({building, now, campus}: Props): React.ReactNode {
 	let photo = buildingPhoto(campus, building.image, buildingImages)
-	// The sheet spans the window. A picture is given its width outright, since
-	// 100% inside RNHostView resolves against the whole sheet, not the row.
-	let pictureWidth = useWindowDimensions().width - 2 * CARD_INSET
+	// A picture is given the row's width outright, since 100% inside
+	// RNHostView resolves against the whole sheet, and the sheet itself can be
+	// narrower than the window -- an iPad's form sheet, or iOS 26's resting
+	// sheet, inset from the screen's edges. The row fills its width whatever
+	// the picture's, so measuring it can't feed back on itself.
+	let [pictureWidth, setPictureWidth] = React.useState(0)
+	// The list's row modifiers go last: outside the frame, where the list
+	// reads them.
+	let pictureRow = [
+		frame({maxWidth: FILL_WIDTH}),
+		onGeometryChange((box) => setPictureWidth(box.width)),
+		...PICTURE_ROW,
+	]
 
 	let links = (building.links || []).map(({title, url}) => ({label: title, href: url}))
 
@@ -109,7 +122,7 @@ export function BuildingDetailSwiftUI({building, now, campus}: Props): React.Rea
 					<Section>
 						{/* On a wrapping stack because RNHostView takes no modifiers of
 						    its own. */}
-						<VStack modifiers={PICTURE_ROW}>
+						<VStack modifiers={pictureRow}>
 							<BuildingCutout campus={campus} feature={feature} width={pictureWidth} />
 						</VStack>
 					</Section>
@@ -117,7 +130,7 @@ export function BuildingDetailSwiftUI({building, now, campus}: Props): React.Rea
 
 				{photo ? (
 					<Section>
-						<VStack modifiers={PICTURE_ROW}>
+						<VStack modifiers={pictureRow}>
 							<RNHostView matchContents={true}>
 								<Image
 									accessibilityIgnoresInvertColors={true}
