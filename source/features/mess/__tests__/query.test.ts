@@ -391,6 +391,10 @@ describe('messIssuesOptions', () => {
 		)
 	})
 
+	test('saves only its first page for the next launch, which is all Top needs', () => {
+		expect(messIssuesOptions.meta).toStrictEqual({persistPages: 1})
+	})
+
 	test("looks up the page's photos in one request", async () => {
 		serve((href) =>
 			href.includes('/media')
@@ -475,6 +479,12 @@ describe('messIssueOptions', () => {
 		expect(fetchedHrefs()).toContain(
 			'https://olafmessenger.com/wp-json/wp/v2/posts?after=2026-05-11T23:59:59&per_page=100&_embed=true',
 		)
+	})
+
+	test("saves an issue's stories for the next launch only when asked, as Top's are", () => {
+		let issue = {after: '2026-04-28T23:59:59', before: null, count: 5}
+		expect(messIssueOptions(issue).meta).toStrictEqual({persist: false})
+		expect(messIssueOptions(issue, {persist: true}).meta).toStrictEqual({persist: true})
 	})
 
 	test('keys an issue by its range and story count, and keeps it for a day', () => {

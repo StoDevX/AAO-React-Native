@@ -1,14 +1,15 @@
 import * as React from 'react'
 import {afterEach, beforeEach, describe, expect, jest, test} from '@jest/globals'
 import {act, fireEvent, render, screen} from '@testing-library/react-native'
-import {onlineManager, QueryClient, QueryClientProvider} from '@tanstack/react-query'
+import {dehydrate, onlineManager, QueryClient, QueryClientProvider} from '@tanstack/react-query'
 import {fetchManifest, fetchSourceBody, type Jrd} from '@frogpond/data-sources'
 
 import categoriesJson from './fixtures/categories.json'
 import springPosts from './fixtures/issue-posts.json'
-import {queryClient as appQueryClient} from '../../../init/tanstack-query'
+import {queryClient as appQueryClient, persistOptions} from '../../../init/tanstack-query'
 import {flushQueryNotifications, waitForQueriesToSettle} from '../../../testing/query-notifications'
 import {FrontPageScreen} from '../front-page-screen'
+import {messIssueOptions} from '../query'
 import {parseLightPosts} from '../lib/issues'
 import {messKeys} from '../lib/keys'
 import {parseMessCategories} from '../lib/posts'
@@ -245,6 +246,24 @@ describe('FrontPageScreen', () => {
 			answer(ISSUE_STORIES)
 		})
 		await waitForQueriesToSettle(queryClient)
+	})
+
+	test("saves Top's issue for the next launch, and no other issue", async () => {
+		seedTop()
+		// An older issue opened from Issues, made through its options as the app makes it.
+		let older = {after: '2026-03-24T23:59:59', before: '2026-04-29T00:00:00', count: 5}
+		await queryClient.query({...messIssueOptions(older), initialData: ISSUE_STORIES})
+		await renderScreen()
+
+		let saved = dehydrate(queryClient, persistOptions.dehydrateOptions).queries.map(
+			(query) => query.queryKey,
+		)
+		expect(saved).toContainEqual(
+			messKeys.issue({after: '2026-04-28T23:59:59', before: null, count: 5}),
+		)
+		expect(saved).not.toContainEqual(
+			messKeys.issue({after: '2026-03-24T23:59:59', before: '2026-04-29T00:00:00', count: 5}),
+		)
 	})
 
 	test('puts Top on the newest regular issue, under a banner for a newer special edition', async () => {

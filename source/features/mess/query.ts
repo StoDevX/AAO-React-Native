@@ -133,6 +133,8 @@ export const messIssuesOptions = infiniteQueryOptions({
 	queryKey: messKeys.issues,
 	// As the feed: a sitting of reading, while pull to refresh fetches regardless.
 	staleTime: FIVE_MINUTES_IN_MS,
+	// Top needs only the first page at launch; the rest load again as Issues scrolls to them.
+	meta: {persistPages: 1},
 	initialPageParam: 1,
 	queryFn: async ({pageParam, signal}): Promise<LightPost[]> => {
 		// Assumes the resolved feed href is an absolute WordPress URL.
@@ -168,11 +170,18 @@ export const messIssuesOptions = infiniteQueryOptions({
 		lastPage.length < ISSUE_PAGE_SIZE ? undefined : lastPageParam + 1,
 })
 
-/** One issue's stories: every post from its day up to the next issue's, parsed like the feed. */
-// oxlint-disable-next-line typescript/explicit-module-boundary-types
-export const messIssueOptions = (issue: Pick<MessIssue, 'after' | 'before' | 'count'>) =>
+/**
+ * One issue's stories: every post from its day up to the next issue's, parsed like the feed.
+ * Only Top's are saved for the next launch; any other issue is fetched again when opened.
+ */
+/* oxlint-disable typescript/explicit-module-boundary-types -- queryOptions' own return type */
+export const messIssueOptions = (
+	issue: Pick<MessIssue, 'after' | 'before' | 'count'>,
+	{persist = false}: {persist?: boolean} = {},
+) =>
 	queryOptions<MessStory[]>({
 		queryKey: messKeys.issue(issue),
+		meta: {persist},
 		// A published issue rarely changes.
 		staleTime: ONE_DAY_IN_MS,
 		// A story joining the issue changes its count, and so its key; the stories already on
@@ -189,6 +198,7 @@ export const messIssueOptions = (issue: Pick<MessIssue, 'after' | 'before' | 'co
 			return storiesAt(`posts?${range}&per_page=100&_embed=true`, signal, 'Olaf Messenger issue')
 		},
 	})
+/* oxlint-enable typescript/explicit-module-boundary-types */
 
 /**
  * What to read after a story: the other episodes of its series, such as a comic's, or failing

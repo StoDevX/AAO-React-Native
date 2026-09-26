@@ -94,6 +94,8 @@ type IssuePageProps = {
 	showMasthead: boolean
 	/** Drawn above the dateline, under the masthead: Top's banner for a newer special edition */
 	banner?: React.ReactNode
+	/** Whether its stories are saved for the next launch, as Top's are */
+	persist?: boolean
 }
 
 /** One issue laid out as its front page: its dateline, its lead story, then a shelf per section. */
@@ -103,8 +105,9 @@ export function IssuePage({
 	onShowSection,
 	showMasthead,
 	banner,
+	persist = false,
 }: IssuePageProps): React.ReactNode {
-	let stories = useQuery(messIssueOptions(issue))
+	let stories = useQuery(messIssueOptions(issue, {persist}))
 	let dateline = datelineText(issue)
 	return (
 		<>

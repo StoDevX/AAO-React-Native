@@ -19,12 +19,6 @@ jest.mock('@sentry/react-native', () => ({captureException: jest.fn()}))
 import type {Query} from '@tanstack/react-query'
 import type {PersistedClient} from '@tanstack/react-query-persist-client'
 
-import categoriesJson from '../../features/mess/__tests__/fixtures/categories.json'
-import springPosts from '../../features/mess/__tests__/fixtures/issue-posts.json'
-import {parseLightPosts} from '../../features/mess/lib/issues'
-import {messKeys} from '../../features/mess/lib/keys'
-import {parseMessCategories} from '../../features/mess/lib/posts'
-
 import {CALENDAR_READ_KEY} from '../../database/calendar/read'
 import {persistOptions, serializeCache} from '../tanstack-query'
 
@@ -86,120 +80,63 @@ describe('shouldDehydrateQuery', () => {
 	})
 })
 
-describe('the Mess issues', () => {
-	/** This spring's posts as the issue list parses them. */
-	const spring = parseLightPosts(springPosts, parseMessCategories(categoriesJson))
-	/** Top today: Apr 29, ending where the May 12 special edition begins. */
-	const TOP = messKeys.issue({
-		after: '2026-04-28T23:59:59',
-		before: '2026-05-12T00:00:00',
-		count: 35,
-	})
-	const SPECIAL = messKeys.issue({after: '2026-05-11T23:59:59', before: null, count: 11})
-	const OLDER = messKeys.issue({
-		after: '2026-03-24T23:59:59',
-		before: '2026-04-29T00:00:00',
-		count: 25,
-	})
-
-	/** A query as the persister is handed it. */
-	const cached = (queryKey: readonly unknown[], data: unknown) => ({
+describe('a query that sets how it persists, in its meta', () => {
+	/** A query as the persister is handed it, with the meta it was made with. */
+	const cached = (queryKey: readonly unknown[], state: object, meta?: object) => ({
 		queryKey,
 		queryHash: JSON.stringify(queryKey),
-		state: {status: 'success', data},
+		state,
+		...(meta ? {meta} : {}),
 	})
+	const LIST = {pages: [['first'], ['second'], ['third']], pageParams: [1, 2, 3]}
 
 	/** What the persister writes for these queries, read back. */
 	function written(queries: Array<ReturnType<typeof cached>>): PersistedClient {
 		let client = {timestamp: 1, buster: '', clientState: {mutations: [], queries}}
 		return JSON.parse(serializeCache(client as unknown as PersistedClient)) as PersistedClient
 	}
+	const dehydrates = (query: ReturnType<typeof cached>) =>
+		persistOptions.dehydrateOptions.shouldDehydrateQuery(query as unknown as Query)
 
-	test("writes the issue list's first page, and of the issues only Top's stories", () => {
+	test('stays out of storage with `persist: false`, even when it succeeded', () => {
+		expect(
+			dehydrates(cached(['mess', 'issue'], {status: 'success', data: []}, {persist: false})),
+		).toBe(false)
+		expect(
+			dehydrates(cached(['mess', 'issue'], {status: 'success', data: []}, {persist: true})),
+		).toBe(true)
+	})
+
+	test('is written with only its first pages, as loaded, with `persistPages`', () => {
 		let cache = written([
-			cached(messKeys.issues, {
-				pages: [spring.slice(0, 100), spring.slice(100, 200)],
-				pageParams: [1, 2],
-			}),
-			cached(SPECIAL, ['special edition stories']),
-			cached(TOP, ['top stories']),
-			cached(OLDER, ['older stories']),
-			cached(messKeys.feed, ['feed']),
-			// Shaped like a list of pages too, to show only the issue list is cut.
-			cached(['news', 'stolaf'], {pages: [['kept'], ['kept too']], pageParams: [1, 2]}),
+			cached(['a-list'], {status: 'success', data: LIST}, {persistPages: 1}),
+			// Shaped like a list of pages too, to show only a query that asks is cut.
+			cached(['news', 'stolaf'], {status: 'success', data: LIST}),
 		])
-
-		expect(cache.clientState.queries.map((query) => query.queryKey)).toStrictEqual([
-			messKeys.issues,
-			TOP,
-			messKeys.feed,
-			['news', 'stolaf'],
+		expect(cache.clientState.queries.map((query) => query.state.data)).toStrictEqual([
+			{pages: [['first']], pageParams: [1]},
+			LIST,
 		])
-		expect(cache.clientState.queries[0]?.state.data).toStrictEqual({
-			pages: [spring.slice(0, 100)],
-			pageParams: [1],
-		})
-		expect(cache.clientState.queries[3]?.state.data).toStrictEqual({
-			pages: [['kept'], ['kept too']],
-			pageParams: [1, 2],
-		})
 	})
 
-	test("writes no issue's stories when the issue list is not cached", () => {
-		let cache = written([cached(TOP, ['top stories']), cached(messKeys.feed, ['feed'])])
-		expect(cache.clientState.queries.map((query) => query.queryKey)).toStrictEqual([messKeys.feed])
-	})
-
-	// A next page that fails mid-scroll leaves the list in an error state, still holding
-	// its loaded pages, and Top's issue is chosen from those pages.
-	test('dehydrates an issue list whose further page failed, since its pages still stand', () => {
-		let failed = {
-			queryKey: messKeys.issues,
-			state: {status: 'error', data: {pages: [spring.slice(0, 100)], pageParams: [1]}},
-		} as unknown as Query
-		expect(persistOptions.dehydrateOptions.shouldDehydrateQuery(failed)).toBe(true)
-	})
-
-	test('dehydrates no failed issue list with no pages, nor any other failed query', () => {
-		let failed = (queryKey: readonly unknown[]) =>
-			({queryKey, state: {status: 'error', data: undefined}}) as unknown as Query
-		expect(persistOptions.dehydrateOptions.shouldDehydrateQuery(failed(messKeys.issues))).toBe(
-			false,
+	// A further page that fails leaves a list in an error state, but the pages it loaded stand.
+	test('persists its pages after a further page fails, written as loaded', () => {
+		let failed = cached(
+			['a-list'],
+			{status: 'error', data: LIST, error: {}, fetchFailureCount: 1},
+			{persistPages: 1},
 		)
-		expect(persistOptions.dehydrateOptions.shouldDehydrateQuery(failed(['news', 'stolaf']))).toBe(
-			false,
-		)
-	})
-
-	test("writes a failed list's first page as loaded, and keeps Top's stories", () => {
-		let failedList = {
-			...cached(messKeys.issues, {
-				pages: [spring.slice(0, 100), spring.slice(100, 200)],
-				pageParams: [1, 2],
-			}),
-			state: {
-				status: 'error',
-				data: {pages: [spring.slice(0, 100), spring.slice(100, 200)], pageParams: [1, 2]},
-				error: {},
-				fetchFailureCount: 1,
-			},
-		}
-		let cache = written([failedList, cached(TOP, ['top stories'])])
-
-		expect(cache.clientState.queries.map((query) => query.queryKey)).toStrictEqual([
-			messKeys.issues,
-			TOP,
-		])
-		expect(cache.clientState.queries[0]?.state).toMatchObject({
+		expect(dehydrates(failed)).toBe(true)
+		expect(written([failed]).clientState.queries[0]?.state).toMatchObject({
 			status: 'success',
 			error: null,
 			fetchFailureCount: 0,
-			data: {pages: [spring.slice(0, 100)], pageParams: [1]},
+			data: {pages: [['first']], pageParams: [1]},
 		})
 	})
 
-	test('still dehydrates every issue, leaving the choice to the writer', () => {
-		expect(shouldDehydrate(OLDER)).toBe(true)
-		expect(shouldDehydrate(messKeys.issues)).toBe(true)
+	test('persists no failed list without pages, nor any other failed query', () => {
+		expect(dehydrates(cached(['a-list'], {status: 'error'}, {persistPages: 1}))).toBe(false)
+		expect(dehydrates(cached(['news', 'stolaf'], {status: 'error', data: LIST}))).toBe(false)
 	})
 })

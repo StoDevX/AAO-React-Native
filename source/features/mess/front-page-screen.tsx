@@ -15,8 +15,9 @@ import {
 	shapes,
 	textCase,
 } from '@expo/ui/swift-ui/modifiers'
-import {useQuery, useQueryClient} from '@tanstack/react-query'
+import {useQuery, useQueryClient, type InfiniteData} from '@tanstack/react-query'
 import {RowAccessory} from '../../components/rows'
+import {firstPagesOf} from '../../lib/infinite-data'
 import {OLAF_MESSENGER} from '../news/sources'
 import {useNewsFilterStore} from '../news/store'
 import {ChipRow} from './chip-row'
@@ -26,14 +27,13 @@ import {chipKey, chipOf, type MessChip} from './lib/chips'
 import {TAP_TARGET} from './lib/glyph-grid'
 import {bannerKicker, topOf} from './lib/issues'
 import {messKeys} from './lib/keys'
-import {firstPageOf} from './lib/persist'
 import {Masthead, PaperNameTitle} from './masthead'
 import {MessPage, PAGE_MARGIN} from './mess-page'
 import {PageLoading, PageNotice} from './page-notice'
 import {ink, messRed, wash} from './palette'
 import {messFeedOptions} from './query'
 import {SectionPage} from './section-page'
-import type {MessIssue} from './types'
+import type {LightPost, MessIssue} from './types'
 import {useColumnWidth} from './use-column-width'
 import {useMessIssues} from './use-mess-issues'
 
@@ -91,7 +91,9 @@ export function FrontPageScreen(): React.ReactNode {
 				// refreshes that chip alone. The issue list is cut to its first page first, since an
 				// infinite query refetches every page it holds, one after another.
 				onRefresh={() => {
-					queryClient.setQueryData(messKeys.issues, (data) => data && firstPageOf(data))
+					queryClient.setQueryData<InfiniteData<LightPost[]>>(messKeys.issues, (data) =>
+						data ? firstPagesOf(data, 1) : data,
+					)
 					return queryClient.refetchQueries({queryKey: messKeys.all, type: 'active'})
 				}}
 				pinned={<ChipRow chosen={chip} onChoose={choose} />}
@@ -145,6 +147,7 @@ function TopPage({columnWidth, onShowSection}: TopPageProps): React.ReactNode {
 				columnWidth={columnWidth}
 				issue={top}
 				onShowSection={onShowSection}
+				persist={true}
 				showMasthead={true}
 			/>
 		)

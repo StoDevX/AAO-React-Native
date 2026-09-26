@@ -3,7 +3,7 @@ import {addEventListener} from '@react-native-community/netinfo'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import {createAsyncStoragePersister} from '@tanstack/query-async-storage-persister'
 import type {PersistedClient} from '@tanstack/react-query-persist-client'
-import {hasIssuePages, withPersistedIssues} from '../features/mess/lib/persist'
+import {firstPagesOf, isInfiniteData} from '../lib/infinite-data'
 import {
 	QueryClient,
 	onlineManager,
@@ -26,13 +26,41 @@ export const queryClient = new QueryClient({
 	},
 })
 
+/** How a query asks to be persisted, in its `meta`. */
+type PersistMeta = {
+	/** False keeps the query out of storage, even when it succeeded */
+	persist?: boolean
+	/** An infinite query persists only this many of its first pages, and persists them even after a later page fails */
+	persistPages?: number
+}
+
+/** The persistence a query asks for, read from its `meta`, which carries no type of its own. */
+function persistMeta(meta: unknown): PersistMeta {
+	if (typeof meta !== 'object' || meta === null) return {}
+	let {persist, persistPages} = meta as Record<string, unknown>
+	return {
+		persist: typeof persist === 'boolean' ? persist : undefined,
+		persistPages: typeof persistPages === 'number' ? persistPages : undefined,
+	}
+}
+
 /**
- * How the persisted cache is written: as JSON, with the Mess issue list cut to its first page
- * and only Top's issue kept. The whole cache is one AsyncStorage value, and every issue opened
- * would otherwise grow it for good.
+ * How the persisted cache is written: as JSON, with each query that sets `persistPages` cut to its
+ * first pages and written as loaded, since any failure belonged to a later page. The whole cache is
+ * one AsyncStorage value, and a list paged through would otherwise grow it for good.
  */
 export function serializeCache(client: PersistedClient): string {
-	return JSON.stringify(withPersistedIssues(client))
+	let queries = client.clientState.queries.map((query) => {
+		let {persistPages} = persistMeta(query.meta)
+		let data = query.state.data
+		if (persistPages === undefined || !isInfiniteData(data)) return query
+		let state = {...query.state, data: firstPagesOf(data, persistPages), status: 'success' as const}
+		return {
+			...query,
+			state: {...state, error: null, fetchFailureCount: 0, fetchFailureReason: null},
+		}
+	})
+	return JSON.stringify({...client, clientState: {...client.clientState, queries}})
 }
 
 export const persister = createAsyncStoragePersister({
@@ -78,11 +106,14 @@ export const persistOptions = {
 		// failed and pending queries for every other feature in the app -- news,
 		// dining, directory, building hours -- writing error states to AsyncStorage
 		// and restoring them on launch. Verified against @tanstack/query-core 5.102.8.
-		// The Mess issue list is the one exception: it persists whenever it holds pages, even after
-		// a further page failed (see `hasIssuePages`).
-		shouldDehydrateQuery: (query: Query): boolean =>
-			(defaultShouldDehydrateQuery(query) || hasIssuePages(query)) &&
-			!isCalendarQueryKey(query.queryKey),
+		// A query can also set its own rule in `meta` (see `PersistMeta`).
+		shouldDehydrateQuery: (query: Query): boolean => {
+			if (isCalendarQueryKey(query.queryKey)) return false
+			let {persist, persistPages} = persistMeta(query.meta)
+			if (persist === false) return false
+			if (persistPages !== undefined && isInfiniteData(query.state.data)) return true
+			return defaultShouldDehydrateQuery(query)
+		},
 	},
 }
 
