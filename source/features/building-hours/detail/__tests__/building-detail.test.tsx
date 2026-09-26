@@ -1,7 +1,7 @@
 import React from 'react'
 import moment from 'moment-timezone'
 import {afterEach, describe, expect, test} from '@jest/globals'
-import {render} from '@testing-library/react-native'
+import {render, screen} from '@testing-library/react-native'
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query'
 
 import type {BuildingType, Campus} from '../../types'
@@ -175,5 +175,23 @@ describe('BuildingDetailSwiftUI', () => {
 		let {queryByText} = await renderDetail(building)
 
 		expect(queryByText('(ASC)')).not.toBeNull()
+	})
+
+	// The detail sheet draws its hours with the map card's HoursSection, so a
+	// block is headed as written, as the card heads it, not in list capitals.
+	test('heads each schedule block as the map card does, under one status', async () => {
+		await renderDetail(
+			makeBuilding({
+				name: 'Stav Hall',
+				schedule: [
+					{title: 'Breakfast', hours: [{days: ['Mo'], from: '7:15am', to: '9:45am'}]},
+					{title: 'Lunch', hours: [{days: ['Mo'], from: '10:30am', to: '2:00pm'}]},
+				],
+			}),
+		)
+
+		expect(screen.getByText('Breakfast')).toBeTruthy()
+		expect(screen.getByText('Lunch')).toBeTruthy()
+		expect(screen.getAllByText(/^(Open|Closed|Opens|Closes|Reopens)/u)).toHaveLength(1)
 	})
 })

@@ -727,9 +727,7 @@ struct TestIdentifiers {
 		static let aSecondBuilding = "Stav Hall"
 		/// A building with three schedule sections -- enough combined content to
 		/// overflow the sheet's smaller detent, unlike `anExcludedBuilding`'s
-		/// single short section. None of its sections is titled "Hours", so a
-		/// test opening it checks the sheet's title rather than
-		/// `detailSchedule`.
+		/// single short section.
 		static let aBuildingWithLongSchedule = "Stav Hall"
 		/// A query no building matches, so the screen must say no results were
 		/// found rather than claim the data is missing -- the two states read
@@ -746,9 +744,10 @@ struct TestIdentifiers {
 		/// The section the list grows at its top once anything is favourited.
 		/// Every test launches with `--reset-state`, so it starts absent.
 		static let favoritesSection = "Favorites"
-		/// A schedule section heading on the detail sheet, shown only once a
-		/// building is open in the sheet.
-		static let detailSchedule = "HOURS"
+		/// The status row of a venue's hours ("Open until 10 PM"), on the
+		/// detail sheet and the map card alike. Mirrors HOURS_STATUS_ID in
+		/// source/features/building-hours/hours-section.tsx.
+		static let status = "hours-status"
 		/// The detail sheet's overflow menu button, labelled "More" -- the same
 		/// string as `Buttons.more`, the Home screen's own tile, purely by
 		/// coincidence of wording rather than a shared identifier. The two

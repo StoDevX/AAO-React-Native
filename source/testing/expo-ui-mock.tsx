@@ -610,7 +610,7 @@ export function HStack({
 	let rowTag = tagOf(modifiers)
 
 	if (!list || rowTag === undefined) {
-		return <View testID={testID}>{children}</View>
+		return <View testID={identifierOf(modifiers) ?? testID}>{children}</View>
 	}
 
 	let isSelected = list.selection.includes(rowTag)

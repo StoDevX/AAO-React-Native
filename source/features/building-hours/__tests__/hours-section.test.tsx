@@ -75,6 +75,11 @@ describe('HoursSection', () => {
 		expect(screen.getAllByText(/^(Open|Closed|Opens|Closes|Reopens)/u)).toHaveLength(1)
 	})
 
+	test('marks the status row for UI tests to find', async () => {
+		await renderSection(holland)
+		expect(screen.getByTestId('hours-status')).toBeTruthy()
+	})
+
 	test('shows a note under its block', async () => {
 		await renderSection(stav)
 		expect(screen.getByText('Grill closes at 1.')).toBeTruthy()

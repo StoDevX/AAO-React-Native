@@ -2,6 +2,8 @@ import * as React from 'react'
 import type {ColorValue} from 'react-native'
 import {HStack, Section, Spacer, Text, VStack} from '@expo/ui/swift-ui'
 import {
+	accessibilityElement,
+	accessibilityIdentifier,
 	font,
 	foregroundStyle,
 	listRowBackground,
@@ -42,6 +44,10 @@ const NOTE_ROW = [
 	listRowInsets({top: 8, leading: CARD_INSET, bottom: 0, trailing: CARD_INSET}),
 ]
 
+/// The status row, for UI tests to find. Matches
+/// `TestIdentifiers.Hours.status` in `TestIdentifiers.swift`.
+const HOURS_STATUS_ID = 'hours-status'
+
 type Props = {
 	venue: BuildingType
 	now: Moment
@@ -81,7 +87,13 @@ function StatusRow({venue, now}: Props): React.ReactNode {
 	let status = getShortBuildingStatus(venue, now)
 	let today = todaysHours(venue.schedule ?? [], now)
 	return (
-		<HStack modifiers={DETAIL_ROW}>
+		<HStack
+			modifiers={[
+				...DETAIL_ROW,
+				accessibilityElement('combine'),
+				accessibilityIdentifier(HOURS_STATUS_ID),
+			]}
+		>
 			<Text
 				modifiers={[
 					font({textStyle: 'body', weight: 'semibold'}),
@@ -108,7 +120,7 @@ function WeekRows({block, now}: {block: NamedBuildingScheduleType; now: Moment})
 			<HStack
 				key={group.entries[0].sourceIndex}
 				alignment="firstTextBaseline"
-				modifiers={last ? LAST_ROW : DETAIL_ROW}
+				modifiers={[...(last ? LAST_ROW : DETAIL_ROW), accessibilityElement('combine')]}
 			>
 				<Text modifiers={[font({textStyle: 'body', weight})]}>{group.label}</Text>
 				<Spacer />
