@@ -1,12 +1,16 @@
 import type {Block, CaptionedPhoto, MessStory} from '../types'
 
 /**
- * A WordPress upload's address without its scheme or its size suffix, so that
- * `http://…/matcha-1024x957.jpg`, the copy WordPress made for a post's body, names the same
+ * A WordPress upload's address without its scheme, query, Jetpack CDN host or size suffix, so
+ * that `http://…/matcha-1024x957.jpg`, the copy WordPress made for a post's body, and
+ * `https://i0.wp.com/olafmessenger.com/…/matcha-1024x957.jpg?resize=…` both name the same
  * picture as the featured `https://…/matcha.jpg`.
  */
 function pictureKey(url: string): string {
-	return url.replace(/^https?:/iu, '').replace(/-\d+x\d+(?=\.[a-z]+$)/iu, '')
+	return url
+		.replace(/[?#].*$/u, '')
+		.replace(/^https?:\/\/(i\d\.wp\.com\/)?/iu, '')
+		.replace(/-\d+x\d+(?=\.[a-z]+$)/iu, '')
 }
 
 /**

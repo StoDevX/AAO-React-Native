@@ -145,6 +145,26 @@ describe('parseFeature', () => {
 		})
 	})
 
+	// Hand-written: no live post serves its pictures through Jetpack's CDN or with a query.
+	it('knows the featured photo in the body through a CDN copy with a query string', () => {
+		let featured: CaptionedPhoto = {
+			url: 'https://olafmessenger.com/wp-content/uploads/2026/04/matcha.jpg',
+			width: 1024,
+			height: 957,
+			caption: '',
+		}
+		let copy: Block = {
+			type: 'figure',
+			url: 'https://i0.wp.com/olafmessenger.com/wp-content/uploads/2026/04/matcha-1024x957.jpg?resize=1024%2C957&ssl=1',
+			width: 1024,
+			height: 957,
+			caption: 'Matcha, by the cup',
+		}
+		expect(parseFeature(featured, [copy]).images).toStrictEqual([
+			{...featured, caption: 'Matcha, by the cup'},
+		])
+	})
+
 	it('gives a story with no picture none, and leaves its words (36835)', () => {
 		let [photo, blocks] = post(36835)
 		expect(parseFeature(photo, blocks)).toStrictEqual({images: [], blocks})
