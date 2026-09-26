@@ -70,11 +70,12 @@ struct TestIdentifiers {
 		static let athletics = "Athletics"
 		static let calendar = "Calendar"
 		static let sis = "SIS"
-		static let campus = "Campus"
+		static let hours = "Hours"
 		static let dictionary = "Dictionary"
 		static let carletonCampus = "Carleton Campus"
 		static let courseCatalog = "Course Catalog"
 		static let directory = "Directory"
+		static let map = "Map"
 		static let more = "More"
 		static let olafMessenger = "Olaf Messenger"
 		static let stOlafNews = "St. Olaf News"
@@ -82,7 +83,7 @@ struct TestIdentifiers {
 		static let streamingMedia = "Streaming Media"
 		static let studentOrgs = "Student Orgs"
 		static let studentWork = "Student Work"
-		static let transportation = "Transportation"
+		static let transit = "Transit"
 	}
 
 	// MARK: - Dictionary
@@ -635,9 +636,9 @@ struct TestIdentifiers {
 		static let resultsList = "student-orgs-results-list"
 	}
 
-	// MARK: - Campus
+	// MARK: - Hours
 
-	enum Campus {
+	enum Hours {
 		/// A St. Olaf venue. Under test the app reads St. Olaf's hours from this
 		/// repository's bundled copy rather than a server, so this is whatever
 		/// `data/building-hours/` says today.
@@ -710,10 +711,10 @@ struct TestIdentifiers {
 		/// if the campus parameter is ignored and St. Olaf's list loads instead.
 		static let carletonBuilding = "Sayles Café"
 
-		/// Both campuses' Campus screens carry this top-right toolbar button,
-		/// which pushes to `/Map` for whichever campus is showing -- the
-		/// hand-hosted map screen stays where it is, so this is a navigation,
-		/// not a mode switch.
+		/// Carleton's Hours screen carries this top-right toolbar button, which
+		/// pushes to `/Map` for Carleton -- the hand-hosted map screen stays
+		/// where it is, so this is a navigation, not a mode switch. St. Olaf's
+		/// Hours screen has none: its map has a home tile of its own.
 		static let mapButton = "Map"
 
 		/// A St. Olaf venue whose `building` key (`toh`) resolves to a
@@ -747,9 +748,9 @@ struct TestIdentifiers {
 		static let notLoggedIn = "You are not logged in"
 	}
 
-	// MARK: - Transportation
+	// MARK: - Transit
 
-	enum Transportation {
+	enum Transit {
 		/// The line every UI test drives, and a stop it always calls at. The
 		/// stop is the college itself, so it is not going to be renamed out
 		/// from under this test.
@@ -774,7 +775,7 @@ struct TestIdentifiers {
 		/// test aims at rather than at a stop cell: the strip opens partway
 		/// along the route, so which cells are on screen depends on where the
 		/// bus is.
-		/// Mirrored by `STOP_STRIP` in `source/features/transportation/bus/widget.tsx`.
+		/// Mirrored by `STOP_STRIP` in `source/features/transit/bus/widget.tsx`.
 		static let stopStrip = "stop-strip"
 
 		/// The navigation bar's day menu, labelled by the day it is showing.
@@ -791,12 +792,12 @@ struct TestIdentifiers {
 		static let aStopOnEveryRunningDay = "Food Co-op"
 		/// The empty state that replaces the timetable on a day the line does not
 		/// run. A prefix: a holiday appends its name. Matches `BusLine` in
-		/// `source/features/transportation/bus/line.tsx`.
+		/// `source/features/transit/bus/line.tsx`.
 		static let lineNotRunning = "This line is not running today"
 		/// What a row shows in place of a departure the route skips; matches
-		/// `formatDeparture` in `source/features/transportation/bus/components/times.tsx`.
+		/// `formatDeparture` in `source/features/transit/bus/components/times.tsx`.
 		static let skippedDeparture = "None"
-		/// The last row on the Transportation screen. It sits in Other Modes'
+		/// The last row on the Transit screen. It sits in Other Modes'
 		/// final section, which carries no heading -- its entries have an empty
 		/// `category` -- so reaching this row proves the list scrolls past both
 		/// the widgets and the two headed sections into the headerless one.

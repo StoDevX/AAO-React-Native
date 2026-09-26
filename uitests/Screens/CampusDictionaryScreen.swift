@@ -387,7 +387,7 @@ struct CampusDictionaryScreen: Screen {
 	/// Asserts the edit form actually pushed into the entry sheet's own
 	/// stack, rather than presenting some other way. A back button on the
 	/// form's own bar is what a plain modal would not have -- the same
-	/// discriminator `CampusScreen.verifyReportPushedIntoSheet` uses for the
+	/// discriminator `HoursScreen.verifyReportPushedIntoSheet` uses for the
 	/// building-hours report screen, scoped the same way, because the list's
 	/// bar behind the sheet carries a button with this label too.
 	@discardableResult
@@ -624,7 +624,7 @@ struct CampusDictionaryScreen: Screen {
 	///
 	/// Swiped by coordinate rather than `row.swipeLeft()`, and only about a
 	/// third of the row's width, for the same reason
-	/// `CampusScreen.revealSwipeAction` is: a full swipe performs the delete
+	/// `HoursScreen.revealSwipeAction` is: a full swipe performs the delete
 	/// outright and the button never lingers to be found, so a test asserting
 	/// on it would be asserting on an element the gesture had already
 	/// consumed.
@@ -771,7 +771,7 @@ struct CampusDictionaryScreen: Screen {
 	}
 
 	/// Attempts to drag the edit form's sheet closed -- the same downward
-	/// drag `CampusScreen.attemptToDragSheetClosed` uses on the building-hours
+	/// drag `HoursScreen.attemptToDragSheetClosed` uses on the building-hours
 	/// report screen, past the bottom of the screen so UIKit reads it as a
 	/// dismissal rather than a detent change.
 	@discardableResult

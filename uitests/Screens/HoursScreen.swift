@@ -1,16 +1,16 @@
 import XCTest
 
-struct CampusScreen: Screen {
+struct HoursScreen: Screen {
 	let app: XCUIApplication
 
-	/// Opens the St. Olaf Campus tile, which defaults to `'stolaf'` with no
-	/// `?campus=` param.
+	/// Opens the Hours tile, which defaults to `'stolaf'` with no `?campus=`
+	/// param.
 	@discardableResult
 	func navigate() -> Self {
-		navigateFromHome(to: TestIdentifiers.Buttons.campus)
+		navigateFromHome(to: TestIdentifiers.Buttons.hours)
 	}
 
-	/// Opens the Carleton Campus tile, which pushes `/Campus?campus=carleton`.
+	/// Opens the Carleton Campus tile, which pushes `/Hours?campus=carleton`.
 	@discardableResult
 	func navigateToCarleton() -> Self {
 		let tile = app.buttons[TestIdentifiers.Buttons.carletonCampus].firstMatch
@@ -35,7 +35,7 @@ struct CampusScreen: Screen {
 	func search(for text: String) -> Self {
 		XCTAssertTrue(
 			searchField.waitForExistence(timeout: 30),
-			"Campus should offer a search field")
+			"Hours should offer a search field")
 		searchField.tap()
 		searchField.typeText(text)
 
@@ -50,7 +50,7 @@ struct CampusScreen: Screen {
 
 	@discardableResult
 	func verifyRowShown(_ name: String) -> Self {
-		let row = app.element(matching: TestIdentifiers.Campus.rowPrefix + name)
+		let row = app.element(matching: TestIdentifiers.Hours.rowPrefix + name)
 		XCTAssertTrue(
 			row.waitForExistence(timeout: 30),
 			"\(name) should be listed")
@@ -59,7 +59,7 @@ struct CampusScreen: Screen {
 
 	@discardableResult
 	func verifyRowHidden(_ name: String) -> Self {
-		let row = app.element(matching: TestIdentifiers.Campus.rowPrefix + name)
+		let row = app.element(matching: TestIdentifiers.Hours.rowPrefix + name)
 		XCTAssertTrue(
 			row.waitForNonExistence(timeout: 30),
 			"\(name) should have been filtered out")
@@ -74,7 +74,7 @@ struct CampusScreen: Screen {
 		let message = app.staticTexts["No results found for \"\(query)\"."]
 		XCTAssertTrue(
 			message.waitForExistence(timeout: 30),
-			"Campus should report no results for \"\(query)\"")
+			"Hours should report no results for \"\(query)\"")
 		return self
 	}
 
@@ -95,7 +95,7 @@ struct CampusScreen: Screen {
 	/// the test fails somewhere later with a message about the wrong thing.
 	@discardableResult
 	func revealSwipeAction(on name: String) -> Self {
-		let row = app.element(matching: TestIdentifiers.Campus.rowPrefix + name)
+		let row = app.element(matching: TestIdentifiers.Hours.rowPrefix + name)
 		XCTAssertTrue(
 			row.waitForExistence(timeout: 30),
 			"\(name) should be listed before it can be swiped")
@@ -126,7 +126,7 @@ struct CampusScreen: Screen {
 	func tapAddToFavorites() -> Self {
 		// Matched on label across every element type: what a SwiftUI swipe
 		// action lands as in the XCUITest tree is not something to assume.
-		let action = app.elementWithLabel(startingWith: TestIdentifiers.Campus.addToFavorites)
+		let action = app.elementWithLabel(startingWith: TestIdentifiers.Hours.addToFavorites)
 		if !action.waitForExistence(timeout: 10) {
 			XCTFail(
 				"""
@@ -141,16 +141,26 @@ struct CampusScreen: Screen {
 
 	@discardableResult
 	func verifyFavoritesSectionShown() -> Self {
-		let heading = app.staticTexts[TestIdentifiers.Campus.favoritesSection].firstMatch
+		let heading = app.staticTexts[TestIdentifiers.Hours.favoritesSection].firstMatch
 		XCTAssertTrue(
 			heading.waitForExistence(timeout: 30),
 			"Favouriting a building should grow a Favorites section at the top of the list")
 		return self
 	}
 
+	/// Checked once the list has loaded, so the toolbar has had its chance to
+	/// draw the button.
+	@discardableResult
+	func verifyNoMapButton() -> Self {
+		XCTAssertFalse(
+			app.buttons[TestIdentifiers.Hours.mapButton].exists,
+			"St. Olaf's Hours screen should offer no map button; the map has its own tile")
+		return self
+	}
+
 	@discardableResult
 	func verifyFavoritesSectionAbsent() -> Self {
-		let heading = app.staticTexts[TestIdentifiers.Campus.favoritesSection].firstMatch
+		let heading = app.staticTexts[TestIdentifiers.Hours.favoritesSection].firstMatch
 		XCTAssertFalse(
 			heading.exists,
 			"Nothing is favourited on a freshly reset launch, so there should be no Favorites section")
@@ -159,7 +169,7 @@ struct CampusScreen: Screen {
 
 	@discardableResult
 	func tapRow(_ name: String) -> Self {
-		let row = app.element(matching: TestIdentifiers.Campus.rowPrefix + name)
+		let row = app.element(matching: TestIdentifiers.Hours.rowPrefix + name)
 		XCTAssertTrue(
 			row.waitForExistence(timeout: 30),
 			"\(name) should be listed before it can be tapped")
@@ -207,7 +217,7 @@ struct CampusScreen: Screen {
 			app.staticTexts[name].waitForExistence(timeout: 30),
 			"The detail sheet should be titled \(name)")
 		XCTAssertTrue(
-			app.staticTexts[TestIdentifiers.Campus.detailSchedule]
+			app.staticTexts[TestIdentifiers.Hours.detailSchedule]
 				.waitForExistence(timeout: 30),
 			"The detail sheet should show \(name)'s schedule")
 		return self
@@ -228,7 +238,7 @@ struct CampusScreen: Screen {
 	/// which is a different claim than the one this test makes.
 	@discardableResult
 	func attemptToTapRowBehindSheet(_ name: String) -> Self {
-		let row = app.element(matching: TestIdentifiers.Campus.rowPrefix + name)
+		let row = app.element(matching: TestIdentifiers.Hours.rowPrefix + name)
 		XCTAssertTrue(
 			row.waitForExistence(timeout: 30),
 			"\(name) should still be in the list behind the sheet")
@@ -320,7 +330,7 @@ struct CampusScreen: Screen {
 
 	@discardableResult
 	func openDetailMenu() -> Self {
-		let menu = app.buttons[TestIdentifiers.Campus.detailMenu].firstMatch
+		let menu = app.buttons[TestIdentifiers.Hours.detailMenu].firstMatch
 		XCTAssertTrue(
 			menu.waitForExistence(timeout: 30),
 			"The detail sheet should offer an overflow menu")
@@ -331,7 +341,7 @@ struct CampusScreen: Screen {
 	@discardableResult
 	func verifyReportActionOffered() -> Self {
 		XCTAssertTrue(
-			app.buttons[TestIdentifiers.Campus.reportAction]
+			app.buttons[TestIdentifiers.Hours.reportAction]
 				.waitForExistence(timeout: 30),
 			"The menu should offer Report a Problem")
 		return self
@@ -342,7 +352,7 @@ struct CampusScreen: Screen {
 	/// rather than the action merely existing as a menu item.
 	@discardableResult
 	func tapReportAction() -> Self {
-		let action = app.buttons[TestIdentifiers.Campus.reportAction]
+		let action = app.buttons[TestIdentifiers.Hours.reportAction]
 		XCTAssertTrue(
 			action.waitForExistence(timeout: 30),
 			"The menu should offer Report a Problem before it can be tapped")
@@ -357,7 +367,7 @@ struct CampusScreen: Screen {
 	@discardableResult
 	func verifyReportScreenPresented() -> Self {
 		XCTAssertTrue(
-			app.staticTexts[TestIdentifiers.Campus.reportScreenPrompt]
+			app.staticTexts[TestIdentifiers.Hours.reportScreenPrompt]
 				.waitForExistence(timeout: 30),
 			"Report a Problem should present the report screen")
 		return self
@@ -375,7 +385,7 @@ struct CampusScreen: Screen {
 	/// part that broke.
 	@discardableResult
 	func verifySubmitReportReachable() -> Self {
-		let submit = app.navigationBars.buttons[TestIdentifiers.Campus.submitReportAction]
+		let submit = app.navigationBars.buttons[TestIdentifiers.Hours.submitReportAction]
 		XCTAssertTrue(
 			submit.waitForExistence(timeout: 30),
 			"The report screen should offer Submit Report")
@@ -397,11 +407,11 @@ struct CampusScreen: Screen {
 	@discardableResult
 	func verifyReportPushedIntoSheet() -> Self {
 		XCTAssertTrue(
-			app.staticTexts[TestIdentifiers.Campus.reportScreenPrompt]
+			app.staticTexts[TestIdentifiers.Hours.reportScreenPrompt]
 				.waitForExistence(timeout: 30),
 			"The report screen should be up")
 
-		let back = app.navigationBars[TestIdentifiers.Campus.reportScreenTitle]
+		let back = app.navigationBars[TestIdentifiers.Hours.reportScreenTitle]
 			.buttons[TestIdentifiers.Navigation.backButton]
 		XCTAssertTrue(
 			back.exists && back.isHittable,
@@ -414,7 +424,7 @@ struct CampusScreen: Screen {
 	/// screen's navigation bar -- see `verifyReportPushedIntoSheet`.
 	@discardableResult
 	func dismissReportScreen() -> Self {
-		let back = app.navigationBars[TestIdentifiers.Campus.reportScreenTitle]
+		let back = app.navigationBars[TestIdentifiers.Hours.reportScreenTitle]
 			.buttons[TestIdentifiers.Navigation.backButton]
 		XCTAssertTrue(
 			back.waitForExistence(timeout: 30),
@@ -505,7 +515,7 @@ struct CampusScreen: Screen {
 	@discardableResult
 	func verifyReportScreenGone(buildingName: String) -> Self {
 		XCTAssertTrue(
-			app.staticTexts[TestIdentifiers.Campus.reportScreenPrompt]
+			app.staticTexts[TestIdentifiers.Hours.reportScreenPrompt]
 				.waitForNonExistence(timeout: 15),
 			"Confirming the discard should have let the dismissal go through")
 		XCTAssertTrue(
@@ -586,8 +596,8 @@ struct CampusScreen: Screen {
 	@discardableResult
 	func verifyListStillBehind() -> Self {
 		let row = app.element(
-			matching: TestIdentifiers.Campus.rowPrefix
-				+ TestIdentifiers.Campus.anExcludedBuilding)
+			matching: TestIdentifiers.Hours.rowPrefix
+				+ TestIdentifiers.Hours.anExcludedBuilding)
 		XCTAssertTrue(
 			row.exists,
 			"The list should still be behind the sheet, not replaced by it")
@@ -615,7 +625,7 @@ struct CampusScreen: Screen {
 	/// position the same way `scrollUntilExists` proves any lazily-built row.
 	@discardableResult
 	func verifyCutoutShown(for buildingName: String) -> Self {
-		let cutout = app.elementWithLabel(startingWith: TestIdentifiers.Campus.cutoutLabelPrefix + buildingName)
+		let cutout = app.elementWithLabel(startingWith: TestIdentifiers.Hours.cutoutLabelPrefix + buildingName)
 		scrollUntilExists(cutout)
 		XCTAssertTrue(
 			cutout.waitForExistence(timeout: 30),
@@ -635,7 +645,7 @@ struct CampusScreen: Screen {
 	/// here would only spend its full timeout on every passing run.
 	@discardableResult
 	func verifyNoCutoutShown() -> Self {
-		let cutout = app.elementWithLabel(startingWith: TestIdentifiers.Campus.cutoutLabelPrefix)
+		let cutout = app.elementWithLabel(startingWith: TestIdentifiers.Hours.cutoutLabelPrefix)
 		XCTAssertFalse(
 			cutout.exists,
 			"No cutout map should appear for a venue with no building key")

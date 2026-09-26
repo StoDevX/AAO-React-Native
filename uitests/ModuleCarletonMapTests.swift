@@ -111,7 +111,7 @@ class ModuleCarletonMapTests: UITestCase {
 	/// lack, so the collapsed header has two lines to hold instead of one.
 	func testTheCollapsedStOlafCardHoldsItsWholeHeader() throws {
 		CarletonMapScreen(app: app)
-			.navigate(from: TestIdentifiers.Buttons.campus)
+			.navigateFromMapTile()
 			.checkSheetPresented()
 			.focusSearch()
 			.typeIntoSearch(TestIdentifiers.CarletonMap.aSubtitledStOlafBuilding)
@@ -132,7 +132,7 @@ class ModuleCarletonMapTests: UITestCase {
 	func testTheCollapsedCardKeepsItsHeaderTopAtTheLargestTextSize() throws {
 		relaunch(atContentSizeCategory: TestIdentifiers.LaunchArguments.accessibilityExtraExtraExtraLarge)
 		CarletonMapScreen(app: app)
-			.navigate(from: TestIdentifiers.Buttons.campus)
+			.navigateFromMapTile()
 			.checkSheetPresented()
 			.focusSearch()
 			.typeIntoSearch(TestIdentifiers.CarletonMap.aSubtitledStOlafBuilding)

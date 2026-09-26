@@ -14,7 +14,7 @@ import {BuildingReportProvider} from '../../../../source/features/building-hours
  * draft they share is held here, above the two of them, and goes away with the
  * sheet.
  */
-export default function CampusDetailLayout(): React.ReactNode {
+export default function HoursDetailLayout(): React.ReactNode {
 	return (
 		<BuildingReportProvider>
 			<Stack screenOptions={{headerBackButtonDisplayMode: 'minimal'}} />

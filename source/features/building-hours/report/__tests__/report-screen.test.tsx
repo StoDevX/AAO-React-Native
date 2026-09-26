@@ -5,7 +5,7 @@ import {Alert} from 'react-native'
 import * as ImagePicker from 'expo-image-picker'
 import {usePreventRemove} from 'expo-router/react-navigation'
 
-import ReportPage from '../../../../../app/(home)/Campus/detail/report'
+import ReportPage from '../../../../../app/(home)/Hours/detail/report'
 import {BuildingReportProvider} from '../context'
 import {keys} from '../../query'
 import type {BuildingType} from '../../types'
@@ -230,7 +230,7 @@ describe('links', () => {
 
 		await fireEvent.press(screen.getByLabelText('Instagram, www.instagram.com'))
 		expect(mockNavigate).toHaveBeenCalledWith({
-			pathname: '/Campus/detail/link-editor',
+			pathname: '/Hours/detail/link-editor',
 			params: {linkIndex: '0'},
 		})
 	})

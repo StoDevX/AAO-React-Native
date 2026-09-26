@@ -32,7 +32,7 @@ export default function DictionaryPreviewPage(): React.ReactNode {
 		// Both sides through `normalizeDraft`, so the emailed before/after differs
 		// only where the reader actually edited -- not in how the two were built.
 		//
-		// No navigation here, on purpose -- match `Campus/detail/report.tsx`'s own
+		// No navigation here, on purpose -- match `Hours/detail/report.tsx`'s own
 		// report screen. `usePreventRemove`'s guard arms off committed React
 		// state, not off however far this callback has run: it registers the
 		// route from an effect keyed on its own argument, and its `beforeRemove`

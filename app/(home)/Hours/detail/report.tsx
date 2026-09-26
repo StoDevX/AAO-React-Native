@@ -90,7 +90,7 @@ function useBuildingEditor(initialBuilding: BuildingType, campus: Campus) {
 	let openEditor = React.useCallback(
 		(scheduleIdx: number, setIdx: number) =>
 			router.navigate({
-				pathname: '/Campus/detail/schedule-editor',
+				pathname: '/Hours/detail/schedule-editor',
 				params: {
 					scheduleIndex: String(scheduleIdx),
 					setIndex: String(setIdx),
@@ -102,7 +102,7 @@ function useBuildingEditor(initialBuilding: BuildingType, campus: Campus) {
 	let openLink = React.useCallback(
 		(linkIndex: number) =>
 			router.navigate({
-				pathname: '/Campus/detail/link-editor',
+				pathname: '/Hours/detail/link-editor',
 				params: {linkIndex: String(linkIndex)},
 			}),
 		[router],
@@ -185,7 +185,7 @@ type Props = {
 	campus: Campus
 }
 
-let CampusProblemReportView = ({initialBuilding, campus}: Props): React.ReactNode => {
+let HoursProblemReportView = ({initialBuilding, campus}: Props): React.ReactNode => {
 	let {start, clear} = useBuildingReport()
 
 	React.useEffect(() => {
@@ -441,7 +441,7 @@ const TimesRow = ({set, now, onPress, zone}: TimesRowProps) => (
 	/>
 )
 
-function CampusProblemReportLoader(): React.ReactNode {
+function HoursProblemReportLoader(): React.ReactNode {
 	let {name, campus: campusParam} = useLocalSearchParams<{name: string; campus?: string}>()
 	let campus = parseCampus(campusParam)
 	let {data: building, isLoading, error, refetch} = useQuery(buildingByNameOptions(campus, name))
@@ -466,10 +466,10 @@ function CampusProblemReportLoader(): React.ReactNode {
 		return <NoticeView text={`Could not find the "${name}" building.`} />
 	}
 
-	return <CampusProblemReportView campus={campus} initialBuilding={building} />
+	return <HoursProblemReportView campus={campus} initialBuilding={building} />
 }
 
-export default function CampusProblemReportPage(): React.ReactNode {
+export default function HoursProblemReportPage(): React.ReactNode {
 	const navigation = useNavigation()
 
 	return (
@@ -489,7 +489,7 @@ export default function CampusProblemReportPage(): React.ReactNode {
 				/>
 			</Stack.Toolbar>
 
-			<CampusProblemReportLoader />
+			<HoursProblemReportLoader />
 		</>
 	)
 }

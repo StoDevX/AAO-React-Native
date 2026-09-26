@@ -73,7 +73,7 @@ const NO_LATER_DEPARTURE = '—'
 /// The strip itself, for a UI test to aim a sideways swipe at. A stop cell is
 /// no use for that: the strip opens partway along the route, so which cells
 /// are on screen depends on where the bus is.
-/// Mirrored by `TestIdentifiers.Transportation.stopStrip`.
+/// Mirrored by `TestIdentifiers.Transit.stopStrip`.
 export const STOP_STRIP = 'stop-strip'
 
 type Props = {

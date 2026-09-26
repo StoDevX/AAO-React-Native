@@ -133,7 +133,7 @@ function nameOf(detent: PresentationDetent): SheetDetent {
 export default function MapPage(): React.ReactNode {
 	// `/Map` has served Carleton alone since before it read the route, so a
 	// missing param keeps that default rather than falling through to
-	// parseCampus' own St. Olaf default, which belongs to `/Campus`. A param
+	// parseCampus' own St. Olaf default, which belongs to `/Hours`. A param
 	// that is present but unrecognised still falls back through parseCampus
 	// rather than crashing.
 	let {campus: campusParam} = useLocalSearchParams<{campus?: string}>()

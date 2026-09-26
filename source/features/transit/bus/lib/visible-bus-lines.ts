@@ -1,7 +1,7 @@
 import type {UnprocessedBusLine} from '../types'
 
 /**
- * The lines the Transportation screen draws a widget for: every line the feed
+ * The lines the Transit screen draws a widget for: every line the feed
  * publishes, less the ones it has retired.
  *
  * Filtered here rather than in the query: `busLineOptions` shares the query's

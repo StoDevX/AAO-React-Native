@@ -16,7 +16,7 @@ no typing. **`axe` has all three**, and it is already installed:
 
 ```bash
 axe describe-ui --udid "$UDID"          # the accessibility tree, with frames
-axe tap --label "Campus" --tap-style physical --udid "$UDID"
+axe tap --label "Hours" --tap-style physical --udid "$UDID"
 axe tap -x 201 -y 234 --tap-style physical --udid "$UDID"
 axe type "shirt" --udid "$UDID"
 axe swipe --start-x 200 --start-y 600 --end-x 200 --end-y 200 --udid "$UDID"
@@ -202,7 +202,7 @@ xcrun simctl launch "$UDID" NFMTHAZVS9.com.drewvolz.stolaf \
 
 # 5. Drive it and look.
 axe describe-ui --udid "$UDID"
-axe tap --label "Campus" --tap-style physical --udid "$UDID"
+axe tap --label "Hours" --tap-style physical --udid "$UDID"
 xcrun simctl io "$UDID" screenshot /tmp/shot.png    # then Read the png
 ```
 

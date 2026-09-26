@@ -14,7 +14,7 @@ import {
 	toggleFavoriteBuilding,
 } from '../../../../source/redux/parts/buildings'
 
-export default function CampusDetailPage(): React.ReactNode {
+export default function HoursDetailPage(): React.ReactNode {
 	let dispatch = useAppDispatch()
 	let router = useRouter()
 
@@ -34,7 +34,7 @@ export default function CampusDetailPage(): React.ReactNode {
 	let reportProblem = React.useCallback(
 		() =>
 			router.navigate({
-				pathname: '/Campus/detail/report',
+				pathname: '/Hours/detail/report',
 				params: {name, campus},
 			}),
 		[campus, name, router],

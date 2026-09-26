@@ -5,10 +5,10 @@ import {timezone} from '@frogpond/constants'
 import {useMomentTimer} from '@frogpond/timer'
 import {LoadingView, NoticeView} from '@frogpond/notice'
 
-import {BusLine} from '../../../../source/features/transportation/bus/line'
-import {busLineOptions} from '../../../../source/features/transportation/bus/query'
-import {DAYS_OF_WEEK} from '../../../../source/features/transportation/bus/components/days'
-import type {DayOfWeek} from '../../../../source/features/transportation/bus/types'
+import {BusLine} from '../../../../source/features/transit/bus/line'
+import {busLineOptions} from '../../../../source/features/transit/bus/query'
+import {DAYS_OF_WEEK} from '../../../../source/features/transit/bus/components/days'
+import type {DayOfWeek} from '../../../../source/features/transit/bus/types'
 
 export default function BusLinePage(): React.ReactNode {
 	let {line: lineName} = useLocalSearchParams<{line: string}>()
@@ -92,7 +92,7 @@ export default function BusLinePage(): React.ReactNode {
 				now={now}
 				onPressStop={(stopName) => {
 					router.navigate({
-						pathname: '/Transportation/line/stop',
+						pathname: '/Transit/line/stop',
 						params: {line: lineName, day: selectedDay ?? '', stopName},
 					})
 				}}

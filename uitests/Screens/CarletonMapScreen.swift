@@ -60,29 +60,17 @@ struct CarletonMapScreen: Screen {
 		app.descendants(matching: .any)[TestIdentifiers.CarletonMap.cardTitle].firstMatch
 	}
 
-	/// The map has no home tile of its own -- both campuses' Campus screens
-	/// carry the map button now, so getting to `/Map` means opening one of
-	/// those screens first and tapping its top-right button. Defaults to
-	/// Carleton's tile; pass `TestIdentifiers.Buttons.campus` for St. Olaf's.
+	/// Carleton's map has no home tile of its own, so getting to it means
+	/// opening the dev-only Carleton Campus tile first and tapping its
+	/// top-right map button.
 	@discardableResult
-	func navigate(from campusTile: String = TestIdentifiers.Buttons.carletonCampus) -> Self {
-		let tile = app.buttons[campusTile].firstMatch
-		if !tile.waitForExistence(timeout: 10) {
-			HomeScreen(app: app)
-				.longPressNotice()
-				.tapEnableDevMode()
+	func navigate() -> Self {
+		HoursScreen(app: app).navigateToCarleton()
 
-			XCTAssertTrue(
-				tile.waitForExistence(timeout: 30),
-				"\(campusTile) tile should appear once dev mode is on")
-		}
-
-		navigateFromHome(to: campusTile)
-
-		let mapButton = app.buttons[TestIdentifiers.Campus.mapButton].firstMatch
+		let mapButton = app.buttons[TestIdentifiers.Hours.mapButton].firstMatch
 		XCTAssertTrue(
 			mapButton.waitForExistence(timeout: 30),
-			"\(campusTile)'s Campus screen should offer a map button")
+			"Carleton's Hours screen should offer a map button")
 
 		// Retried for the reason navigateFromHome retries: a synthesized press
 		// on a button whose host has mounted but whose action still has to
@@ -99,6 +87,12 @@ struct CarletonMapScreen: Screen {
 
 		XCTFail("Tapping the map button never opened the map")
 		return self
+	}
+
+	/// St. Olaf's map is a home tile of its own, pushing `/Map?campus=stolaf`.
+	@discardableResult
+	func navigateFromMapTile() -> Self {
+		navigateFromHome(to: TestIdentifiers.Buttons.map)
 	}
 
 	/// The map draws through MapLibre, which XCUITest cannot see into, so the

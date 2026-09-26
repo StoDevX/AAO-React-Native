@@ -46,10 +46,10 @@ export default function HomeLayout(): React.ReactNode {
 				name="StOlafNews"
 				options={{title: 'St. Olaf News', headerLargeTitleEnabled: true}}
 			/>
-			<Stack.Screen name="Transportation" options={{title: 'Transportation'}} />
-			<Stack.Screen name="Transportation/line" options={DETAIL_SHEET} />
-			<Stack.Screen name="Campus" />
-			<Stack.Screen name="Campus/detail" options={DETAIL_SHEET} />
+			<Stack.Screen name="Transit" options={{title: 'Transit'}} />
+			<Stack.Screen name="Transit/line" options={DETAIL_SHEET} />
+			<Stack.Screen name="Hours" />
+			<Stack.Screen name="Hours/detail" options={DETAIL_SHEET} />
 			<Stack.Screen name="Dictionary/entry" options={DETAIL_SHEET} />
 			{/* A department opens a fresh copy of the Directory over the landing.
 			    Keyed by the search it shows, navigating to a different one pushes

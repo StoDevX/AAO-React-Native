@@ -96,7 +96,7 @@ export default function DictionaryEditPage(): React.ReactNode {
 			<Stack.Title>Suggest an Edit</Stack.Title>
 			{/* On device, the edge-swipe gesture did not reliably surface the
 			    unsaved-changes alert -- turned off here rather than guarded.
-			    See Campus/detail/report.tsx. */}
+			    See Hours/detail/report.tsx. */}
 			<Stack.Screen options={{gestureEnabled: false}} />
 			<Stack.Toolbar placement="left">
 				{/* The default native back button had the same problem on device.
