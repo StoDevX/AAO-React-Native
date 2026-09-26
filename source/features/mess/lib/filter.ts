@@ -23,9 +23,17 @@ export function filterTree(categories: MessCategory[]): FilterBranch[] {
 	})
 }
 
-/** The category id a saved section or column name stands for, or null for the whole feed. */
-export function resolveFilter(name: string | null, tree: FilterBranch[]): number | null {
+/**
+ * The category id a saved section or column name stands for, or null for the whole feed.
+ * Undefined while a name is saved but the tree has not loaded, since only the tree can tell
+ * which list the name means.
+ */
+export function resolveFilter(
+	name: string | null,
+	tree: FilterBranch[] | undefined,
+): number | null | undefined {
 	if (name === null) return null
+	if (tree === undefined) return undefined
 	let match = tree
 		.flatMap((branch) => [branch.section, ...branch.columns])
 		.find((category) => category.name === name)

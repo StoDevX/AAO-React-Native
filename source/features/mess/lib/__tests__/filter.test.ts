@@ -76,4 +76,12 @@ describe('resolveFilter', () => {
 	it('gives null for a name the picker leaves out, such as a Featured flag', () => {
 		expect(resolveFilter('Featured', tree)).toBeNull()
 	})
+
+	it('gives undefined for a saved name while the tree has not loaded', () => {
+		expect(resolveFilter('Poetry', undefined)).toBeUndefined()
+	})
+
+	it('gives null for no choice while the tree has not loaded', () => {
+		expect(resolveFilter(null, undefined)).toBeNull()
+	})
 })

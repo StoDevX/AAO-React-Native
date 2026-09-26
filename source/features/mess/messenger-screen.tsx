@@ -23,16 +23,26 @@ const selectRows = (stories: MessStory[]): Array<{id: number; row: StoryType}> =
 export function MessengerScreen(): React.ReactNode {
 	let router = useRouter()
 	let categories = useQuery(messCategoriesOptions)
-	let tree = React.useMemo(() => filterTree(categories.data ?? []), [categories.data])
+	let tree = React.useMemo(
+		() => (categories.data === undefined ? undefined : filterTree(categories.data)),
+		[categories.data],
+	)
 	let savedName = useNewsFilterStore((state) => state.selectedCategories[OLAF_MESSENGER.id] ?? null)
 	let select = useNewsFilterStore((state) => state.select)
 
-	// A name the tree no longer has falls back to the feed.
+	// A name the tree no longer has falls back to the feed. A saved name waits for the tree, so
+	// the feed never stands in for the chosen list while the categories load or after they fail.
 	let selectedId = resolveFilter(savedName, tree)
+	let resolving = selectedId === undefined
 	let selectedName = selectedId === null ? null : savedName
-	let query = useQuery({...messListOptions(selectedId), select: selectRows})
+	let list = useQuery({
+		...messListOptions(selectedId ?? null),
+		select: selectRows,
+		enabled: !resolving,
+	})
+	let query = resolving ? categories : list
 
-	let rows = React.useMemo(() => query.data ?? [], [query.data])
+	let rows = React.useMemo(() => list.data ?? [], [list.data])
 	let entries = React.useMemo(() => rows.map((r) => r.row), [rows])
 
 	let openStory = (story: StoryType) => {
@@ -55,7 +65,7 @@ export function MessengerScreen(): React.ReactNode {
 			<MessPicker
 				onSelect={(next) => select(OLAF_MESSENGER.id, next)}
 				selected={selectedName}
-				tree={tree}
+				tree={tree ?? []}
 			/>
 		</>
 	)

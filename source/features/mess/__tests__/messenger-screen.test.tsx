@@ -199,6 +199,42 @@ describe('MessengerScreen', () => {
 		expect(pickerProps().selected).toBeNull()
 	})
 
+	test('waits for the categories before listing a saved column, rather than the feed', async () => {
+		saveChoice('Poetry')
+		queryClient.setQueryData(messKeys.feed, [story(1, 'Front page', 'News')])
+		mockManifest.mockReturnValue(new Promise(() => undefined))
+		await renderScreen()
+
+		expect(screen.getByText('Loading…')).toBeTruthy()
+		expect(screen.queryByText('Front page')).toBeNull()
+		expect(pickerProps().selected).toBe('Poetry')
+	})
+
+	test('offers Try Again when the categories fail with a column saved, then lists the column', async () => {
+		saveChoice('Poetry')
+		queryClient.setQueryData(messKeys.feed, [story(1, 'Front page', 'News')])
+		queryClient.setQueryData(messKeys.category(POETRY), [story(2, 'Ode to the Cage', 'Variety')])
+		mockManifest.mockResolvedValue({links: []} as unknown as Jrd)
+		mockBody.mockRejectedValue(new Error('offline'))
+		await renderScreen()
+
+		expect(await screen.findByText('Try Again')).toBeTruthy()
+		expect(screen.queryByText('Front page')).toBeNull()
+
+		mockBody.mockImplementation((href) =>
+			Promise.resolve(href.includes('/categories') ? categoriesJson : []),
+		)
+		await act(async () => {
+			fireEvent.press(screen.getByText('Try Again'))
+			await queryClient.getQueryCache().find({queryKey: messKeys.categories})?.promise
+			// React Query tells the screen on the turn after the fetch settles.
+			await new Promise((resolve) => setTimeout(resolve, 0))
+		})
+
+		expect(screen.getByText('Ode to the Cage')).toBeTruthy()
+		expect(screen.queryByText('Front page')).toBeNull()
+	})
+
 	test('shows the error notice with Try Again when the feed fails', async () => {
 		mockManifest.mockResolvedValue({links: []} as unknown as Jrd)
 		mockBody.mockRejectedValue(new Error('offline'))
