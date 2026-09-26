@@ -70,6 +70,9 @@ export type ZodiacSign =
 /** One line of a poem: its runs, and how many levels the poet indented it. */
 export type PoemLine = {indent: number; runs: Run[]}
 
+/** A Spotify playlist, album or track, by Spotify's base-62 id. */
+export type SpotifyRef = {kind: 'playlist' | 'album' | 'track'; id: string}
+
 /** An Amuse Labs PuzzleMe puzzle, as the placeholder in a Crossword post names it. */
 export type CrosswordPuzzle = {id: string; set: string}
 
