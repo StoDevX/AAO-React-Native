@@ -16,7 +16,7 @@ import {openUrl} from '@frogpond/open-url'
 import type {SFSymbol} from 'sf-symbols-typescript'
 import {runsToMarkdown} from './lib/markdown'
 import {splitOpening} from './lib/opening'
-import {faded, ink, messRed} from './palette'
+import {faded, ink, messRed, onMessRed} from './palette'
 import {RemotePhoto} from './remote-photo'
 import type {Block, MessStory, Run} from './types'
 
@@ -78,8 +78,12 @@ function OpeningParagraph({runs}: {runs: Run[]}): React.ReactNode {
 /** Names the card that sends a story to olafmessenger.com, for a UI test. */
 export const SITE_LINK_ID = 'mess-story-site-link'
 
-/** A prominent card's label, which SwiftUI draws in white on the card's red. */
-const PROMINENT_LINK = [font({textStyle: 'callout', weight: 'semibold'})]
+/** A prominent card's label and icon, in a colour that reads on the card's red in either appearance. */
+const PROMINENT_LINK = [
+	font({textStyle: 'callout', weight: 'semibold'}),
+	foregroundStyle(onMessRed),
+]
+const PROMINENT_LINK_ICON = [foregroundStyle(onMessRed)]
 
 type SiteLinkProps = {
 	icon: SFSymbol
@@ -117,7 +121,7 @@ export function SiteLinkCard({
 			onPress={() => open(url)}
 		>
 			<HStack spacing={8}>
-				<Image modifiers={prominent ? [] : SITE_LINK_ICON} systemName={icon} />
+				<Image modifiers={prominent ? PROMINENT_LINK_ICON : SITE_LINK_ICON} systemName={icon} />
 				<Text modifiers={prominent ? PROMINENT_LINK : SITE_LINK}>{label}</Text>
 			</HStack>
 		</Button>
