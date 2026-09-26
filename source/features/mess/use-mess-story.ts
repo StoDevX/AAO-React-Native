@@ -25,8 +25,9 @@ export function useMessStory(id: number): MessStoryLookup {
 		[id],
 	)
 	let feed = useQuery({...messFeedOptions, select: selectStory})
-	// An id that is not a number names no post, so there is nothing to fetch.
-	let outsideFeed = feed.isSuccess && feed.data === undefined && Number.isInteger(id)
+	// Whether the feed holds stories at all: a failed refetch keeps them, and their time, but turns
+	// `isSuccess` false. An id that is not a number names no post, so there is nothing to fetch.
+	let outsideFeed = feed.dataUpdatedAt > 0 && feed.data === undefined && Number.isInteger(id)
 	let single = useQuery({...messStoryOptions(id), enabled: outsideFeed})
 
 	if (!outsideFeed) return feed

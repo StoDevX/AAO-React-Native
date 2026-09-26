@@ -211,6 +211,27 @@ describe('StoryScreen', () => {
 		)
 	})
 
+	test('keeps a story from outside the feed when a refetch of the feed fails', async () => {
+		serve((href) => (href.includes('/posts/36859') ? posts[0] : []))
+		await renderStory(36859)
+		let headline =
+			'Student workers deliver petition urging St. Olaf to reverse work award cap policy'
+		expect(await screen.findByText(headline)).toBeTruthy()
+
+		// The feed still holds its earlier stories, but its next fetch fails.
+		mockBody.mockImplementation((href) =>
+			href.includes('/posts/36859')
+				? Promise.resolve(posts[0])
+				: Promise.reject(new Error('offline')),
+		)
+		await act(() => queryClient.refetchQueries({queryKey: messKeys.feed}))
+		// The screen draws the failed refetch on the next turn.
+		await act(() => new Promise((resolve) => setTimeout(resolve, 0)))
+
+		expect(queryClient.getQueryState(messKeys.feed)?.status).toBe('error')
+		expect(screen.getByText(headline)).toBeTruthy()
+	})
+
 	test('offers Try Again when a story outside the feed fails to load', async () => {
 		// A failed fetch is retried with a growing delay, which fake timers skip.
 		jest.useFakeTimers()
