@@ -12,6 +12,7 @@ import {
 	shapes,
 	tint,
 } from '@expo/ui/swift-ui/modifiers'
+import {useIsFocused} from 'expo-router'
 import {useKeepAwake} from 'expo-keep-awake'
 import {TAP_TARGET} from './lib/glyph-grid'
 import {runsToMarkdown} from './lib/markdown'
@@ -98,6 +99,12 @@ function RecipeRow({runs, number, ticked, onToggle}: RowProps): React.ReactNode 
 	)
 }
 
+/** Holds the screen awake for as long as it is drawn; a cook's hands are busy. */
+function StayAwake(): React.ReactNode {
+	useKeepAwake()
+	return null
+}
+
 type Props = {
 	story: MessStory
 	layout: Extract<StoryLayout, {kind: 'recipe'}>
@@ -111,8 +118,9 @@ type Props = {
  * land in the page's column.
  */
 export function RecipeView({story, layout, columnWidth}: Props): React.ReactNode {
-	// Released when the page goes, so only an open recipe holds the screen awake.
-	useKeepAwake()
+	// The stack keeps a recipe mounted under a page pushed over it or while another tab is in
+	// front, so the screen is held awake only while the recipe is the page being read.
+	let isFocused = useIsFocused()
 	// Each row by its section and its place there, so rows in the same place in two sections differ.
 	let [ticked, setTicked] = React.useState<ReadonlySet<string>>(() => new Set())
 	let toggle = (key: string) =>
@@ -124,6 +132,7 @@ export function RecipeView({story, layout, columnWidth}: Props): React.ReactNode
 
 	return (
 		<>
+			{isFocused ? <StayAwake /> : null}
 			<StoryBlocks blocks={layout.intro} columnWidth={columnWidth} story={story} />
 			{layout.sections.map((section, sectionIndex) => (
 				// oxlint-disable-next-line react/no-array-index-key -- a recipe is fixed, so its order is its identity

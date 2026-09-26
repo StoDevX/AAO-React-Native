@@ -39,10 +39,13 @@ jest.mock(
 		require('react-native-safe-area-context/jest/mock').default,
 )
 const mockNavigate = jest.fn()
+/** Whether the story's screen is the one in front; a page pushed over it, or another tab, hides it. */
+let mockIsFocused = true
 jest.mock('expo-router', () => ({
 	// oxlint-disable-next-line typescript/no-require-imports
 	...(require('../../../testing/expo-router-mock') as object),
 	useRouter: () => ({navigate: mockNavigate}),
+	useIsFocused: () => mockIsFocused,
 }))
 jest.mock('@frogpond/open-url', () => ({openUrl: jest.fn()}))
 jest.mock('react-native-webview', () => {
@@ -289,6 +292,7 @@ let queryClient: QueryClient
 let openInIOS: jest.Spied<typeof Linking.openURL>
 
 beforeEach(() => {
+	mockIsFocused = true
 	queryClient = new QueryClient({defaultOptions: {queries: {staleTime: Infinity, retry: false}}})
 	queryClient.setQueryData(messKeys.feed, [
 		STORY,
@@ -733,6 +737,14 @@ describe('StoryScreen', () => {
 		await renderStory(36493)
 
 		expect(useKeepAwake).toHaveBeenCalled()
+	})
+
+	test('lets the screen sleep while a recipe page is covered by another', async () => {
+		mockIsFocused = false
+		await renderStory(36493)
+
+		expect(screen.getByText('Shortbread ingredients')).toBeTruthy()
+		expect(useKeepAwake).not.toHaveBeenCalled()
 	})
 
 	test('sets a feature page under the quiet header: title, then writers and date on one line', async () => {
