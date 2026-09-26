@@ -1,4 +1,4 @@
-import {appleMapsSearchUrl, buildingPhotoUrl, mapStyleUrl} from '../urls'
+import {appleMapsDirectionsUrl, appleMapsSearchUrl, buildingPhotoUrl, mapStyleUrl} from '../urls'
 
 describe('buildingPhotoUrl', () => {
 	// ccc-server stores `photos` as bare filenames, so a record is useless
@@ -31,5 +31,13 @@ describe('mapStyleUrl', () => {
 	// anonymous cluster of grey footprints.
 	it('gives each campus its own basemap', () => {
 		expect(mapStyleUrl('stolaf')).not.toBe(mapStyleUrl('carleton'))
+	})
+})
+
+describe('appleMapsDirectionsUrl', () => {
+	it('routes to a point, latitude first', () => {
+		expect(appleMapsDirectionsUrl([-93.1839, 44.4618])).toBe(
+			'https://maps.apple.com/?daddr=44.4618,-93.1839',
+		)
 	})
 })

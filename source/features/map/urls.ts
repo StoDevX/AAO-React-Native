@@ -1,4 +1,5 @@
 import type {Campus} from '../building-hours/types'
+import type {Coordinate} from './types'
 /**
  * The MapLibre style JSON the campus map renders, self-hosted from
  * carls-app/map-tiles: OSM-derived vector tiles covering Northfield, plus the
@@ -60,4 +61,12 @@ export function buildingPhotoUrl(filename: string): string {
  */
 export function appleMapsSearchUrl(address: string): string {
 	return `https://maps.apple.com/?q=${encodeURIComponent(address)}`
+}
+
+/**
+ * Directions to a point in Maps. `daddr` takes "latitude,longitude"; GeoJSON
+ * stores the pair the other way round.
+ */
+export function appleMapsDirectionsUrl([longitude, latitude]: Coordinate): string {
+	return `https://maps.apple.com/?daddr=${latitude},${longitude}`
 }

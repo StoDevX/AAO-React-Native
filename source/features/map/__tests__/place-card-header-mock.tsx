@@ -1,7 +1,11 @@
 import * as React from 'react'
 import {Text, View} from 'react-native'
 
-import type {PlaceCardHeaderProps, PlaceCardScaffoldProps} from '@frogpond/place-card-header'
+import type {
+	PlaceCardAboutProps,
+	PlaceCardHeaderProps,
+	PlaceCardScaffoldProps,
+} from '@frogpond/place-card-header'
 
 /// The module reaches expo-modules-core's native view registry, which does
 /// not exist under Jest, so the card's tests render this instead. It shows
@@ -35,4 +39,10 @@ export function PlaceCardHeader({
 /// check. The pinning and the frost are native and belong to a UI test.
 export function PlaceCardScaffold({children}: PlaceCardScaffoldProps): React.ReactNode {
 	return <View>{children}</View>
+}
+
+/// The whole text, always: the five-line clamp and MORE are native, so Jest
+/// sees only what the card passed in.
+export function PlaceCardAbout({testID, text}: PlaceCardAboutProps): React.ReactNode {
+	return <Text testID={testID}>{text}</Text>
 }

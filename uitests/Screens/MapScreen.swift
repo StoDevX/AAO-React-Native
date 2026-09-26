@@ -524,4 +524,137 @@ struct MapScreen: Screen {
 			"The card should be at the middle stop; its top is at \(top) of \(height)")
 		return self
 	}
+
+	/// Carleton's map has no home tile of its own: its dev-only "Carleton
+	/// Campus" tile opens Carleton's Hours screen, whose toolbar carries the
+	/// map button. Dev mode is switched on if the tile is not there.
+	@discardableResult
+	func navigateToCarleton() -> Self {
+		let tile = app.buttons[TestIdentifiers.Map.carletonCampusTile].firstMatch
+		if !tile.waitForExistence(timeout: 10) {
+			HomeScreen(app: app).longPressNotice().tapEnableDevMode()
+		}
+		navigateFromHome(to: TestIdentifiers.Map.carletonCampusTile)
+		let mapButton = app.buttons[TestIdentifiers.Hours.mapButton].firstMatch
+		XCTAssertTrue(
+			mapButton.waitForExistence(timeout: 30),
+			"Carleton's Hours screen should offer a map button")
+		for _ in 1...3 {
+			mapButton.tap()
+			if searchField.waitForExistence(timeout: 10) { return self }
+		}
+		XCTFail("Tapping the map button never opened Carleton's map")
+		return self
+	}
+
+	/// Drags the card from wherever it rests up to the large stop.
+	@discardableResult
+	func expandCard() -> Self {
+		let grabber = app.buttons[TestIdentifiers.Map.sheetGrabber].firstMatch
+		grabber.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5))
+			.press(
+				forDuration: 0.1,
+				thenDragTo: app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.02)))
+		// The stop is only settled once the close button stops moving.
+		var previous = closeButton.frame.minY
+		for _ in 1...10 {
+			Thread.sleep(forTimeInterval: 0.3)
+			let now = closeButton.frame.minY
+			if abs(now - previous) < 0.5 { break }
+			previous = now
+		}
+		return self
+	}
+
+	/// The card's section headings, in the order they appear from the top.
+	///
+	/// The card is a lazy list: a heading below the fold has no element until
+	/// it is scrolled into view. So the card is scrolled a screen at a time, and
+	/// each heading is placed by the scroll step it first appeared in, then by
+	/// its height within that step.
+	@discardableResult
+	func verifySectionOrder(_ expected: [String], among all: [String]) -> Self {
+		var seen: [String: (step: Int, y: CGFloat)] = [:]
+		for step in 0..<8 {
+			for title in all where seen[title] == nil {
+				let heading = app.staticTexts.matching(NSPredicate(format: "label == %@", title)).firstMatch
+				if heading.exists && heading.frame.minY > closeButton.frame.maxY {
+					seen[title] = (step, heading.frame.minY)
+				}
+			}
+			app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.75))
+				.press(forDuration: 0.05, thenDragTo: app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.35)))
+		}
+		let order = seen.sorted { ($0.value.step, $0.value.y) < ($1.value.step, $1.value.y) }.map(\.key)
+		XCTContext.runActivity(named: "Headings in order: \(order)") { _ in }
+		XCTAssertEqual(order, expected, "The card's sections should run in Maps' order")
+		return self
+	}
+
+	/// Maps' photo tiles are square.
+	@discardableResult
+	func verifyPhotoTileSquare() -> Self {
+		let tile = app.descendants(matching: .any)[TestIdentifiers.Map.cardPhoto].firstMatch
+		XCTAssertTrue(tile.waitForExistence(timeout: 30), "The card should show its building's photo")
+		let frame = tile.frame
+		XCTContext.runActivity(named: "photo tile \(frame)") { _ in }
+		XCTAssertEqual(frame.width, frame.height, accuracy: 1, "The photo tile should be square: \(frame)")
+		return self
+	}
+
+	/// Opens the photo full screen and closes it, twice: the viewer has to
+	/// cover the sheet, and to open again after it has been closed. The card
+	/// has to be where it was each time.
+	@discardableResult
+	func verifyPhotoOpensFullScreenTwice() -> Self {
+		let tile = app.descendants(matching: .any)[TestIdentifiers.Map.cardPhoto].firstMatch
+		let viewer = app.descendants(matching: .any)[TestIdentifiers.Map.photoViewerImage].firstMatch
+		let close = app.descendants(matching: .any)[TestIdentifiers.Map.photoViewerClose].firstMatch
+		let window = app.windows.firstMatch.frame
+		let cardTop = closeButtonTop()
+		for round in 1...2 {
+			XCTAssertTrue(tile.waitForExistence(timeout: 30), "The card should show its photo (round \(round))")
+			tile.tap()
+			XCTAssertTrue(viewer.waitForExistence(timeout: 10), "The photo should open full screen (round \(round))")
+			capture("Map photo viewer, round \(round)")
+			XCTAssertEqual(viewer.frame.width, window.width, accuracy: 1, "The viewer should span the screen")
+			XCTAssertEqual(viewer.frame.height, window.height, accuracy: 1, "The viewer should cover the sheet")
+			close.tap()
+			XCTAssertTrue(viewer.waitForNonExistence(timeout: 10), "Close should close the viewer (round \(round))")
+			XCTAssertTrue(closeButton.waitForExistence(timeout: 10), "The card should still be there (round \(round))")
+			XCTAssertEqual(closeButtonTop(), cardTop, accuracy: 1, "The card should be at the same stop (round \(round))")
+		}
+		return self
+	}
+
+	/// More on the Departments heading opens every department in a grid.
+	@discardableResult
+	func verifyMoreShowsEveryDepartment(_ count: Int) -> Self {
+		let more = app.buttons[TestIdentifiers.Map.departmentsMore].firstMatch
+		XCTAssertTrue(more.waitForExistence(timeout: 30), "Departments should offer More")
+		XCTContext.runActivity(named: "More \(more.frame)") { _ in }
+		XCTAssertGreaterThanOrEqual(more.frame.width, 44, "More should be at least 44pt wide to tap")
+		XCTAssertGreaterThanOrEqual(more.frame.height, 44, "More should be at least 44pt tall to tap")
+		more.tap()
+		let grid = app.descendants(matching: .any)[TestIdentifiers.Map.departmentsGrid].firstMatch
+		XCTAssertTrue(grid.waitForExistence(timeout: 10), "More should open the grid")
+		capture("Departments grid")
+		let tiles = grid.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", "Open ")).count
+		XCTAssertEqual(tiles, count, "The grid should hold every department")
+		return self
+	}
+
+	/// About opens clamped, and a tap shows the rest.
+	@discardableResult
+	func verifyAboutExpands() -> Self {
+		let about = app.descendants(matching: .any)[TestIdentifiers.Map.cardAbout].firstMatch
+		XCTAssertTrue(about.waitForExistence(timeout: 30), "The card should show its About text")
+		let before = about.frame.height
+		about.tap()
+		Thread.sleep(forTimeInterval: 0.6)
+		let after = about.frame.height
+		XCTContext.runActivity(named: "About \(before) then \(after)") { _ in }
+		XCTAssertGreaterThan(after, before + 20, "A tap should show the rest of a clamped About")
+		return self
+	}
 }

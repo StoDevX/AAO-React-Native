@@ -1,16 +1,5 @@
 import * as React from 'react'
-import {Image as RNImage, Linking, StyleSheet} from 'react-native'
-import {
-	Button,
-	Image,
-	List,
-	RNHostView,
-	Section,
-	Spacer,
-	Text,
-	VStack,
-	ZStack,
-} from '@expo/ui/swift-ui'
+import {Button, Image, List, Section, Spacer, Text, VStack, ZStack} from '@expo/ui/swift-ui'
 import {
 	accessibilityLabel,
 	buttonBorderShape,
@@ -22,20 +11,30 @@ import {
 	lineLimit,
 	listRowBackground,
 	listRowInsets,
+	listRowSeparator,
+	listStyle,
 	multilineTextAlignment,
 	onGeometryChange,
 	padding,
+	scrollContentBackground,
 	truncationMode,
 } from '@expo/ui/swift-ui/modifiers'
-import {openUrl} from '@frogpond/open-url'
 import {PlaceCardHeader, PlaceCardScaffold} from '@frogpond/place-card-header'
 
 import {FILL_WIDTH} from '../../components/tile-layout'
+import {AboutSection} from './card/about-section'
+import {ActionsRow} from './card/actions-row'
+import {DetailsSection} from './card/details-section'
+import {GoodToKnowSection} from './card/good-to-know-section'
+import {LinkListSection} from './card/link-list-section'
+import {PhotoStrip} from './card/photo-strip'
+import {PlacesSection} from './card/places-section'
+import {cardActions, WALKING_DIRECTIONS} from './lib/card-actions'
 import {nameUnderHeader, titleMayMove} from './lib/card-title'
-import {normalizeLinks} from './lib/normalize-link'
+import {goodToKnowRows} from './lib/good-to-know'
+import {placeTiles} from './lib/place-tiles'
 import type {SheetDetent} from './lib/sheet-moves'
-import type {Building, Feature, LabelLink, LabelLinkString} from './types'
-import {appleMapsSearchUrl, buildingPhotoUrl} from './urls'
+import type {Building, Coordinate, Feature, Point} from './types'
 
 /// Apple Maps' place-card header, measured on iOS 27: 16pt of padding round
 /// 44pt buttons -- 76pt in all, the sheet's collapsed stop
@@ -123,18 +122,10 @@ function BuildingCard({
 		setNameBottom(box.y + box.height)
 	}
 
-	let {
-		accessibility,
-		address,
-		departments,
-		description,
-		floors,
-		links,
-		name,
-		nickname,
-		offices,
-		photos,
-	} = building.properties
+	let {address, description, floors, links, name, photos} = building.properties
+	let tiles = placeTiles(building.properties)
+	let departmentTiles = tiles.filter((tile) => tile.kind === 'department')
+	let officeTiles = tiles.filter((tile) => tile.kind === 'office')
 
 	let subtitle = building.properties.type || null
 
@@ -190,13 +181,16 @@ function BuildingCard({
 				<CloseButton onClose={onClose} />
 			</ZStack>
 
-			<List>
+			{/* Plain, on the sheet's own colour: Maps lays its sections straight
+			    on the card, not in rounded row boxes. */}
+			<List modifiers={[listStyle('plain'), scrollContentBackground('hidden')]}>
 				{large ? (
 					<Section
 						modifiers={[
 							// Straight on the sheet, as Maps draws it, not in a row's
-							// rounded box.
+							// rounded box, and with no hairline under it.
 							listRowBackground('clear'),
+							listRowSeparator('hidden'),
 							listRowInsets({top: 0, leading: 0, bottom: 0, trailing: 0}),
 						]}
 					>
@@ -229,53 +223,17 @@ function BuildingCard({
 					</Section>
 				) : null}
 
-				{nickname ? (
-					<Section title="Abbreviation">
-						<Text>{nickname}</Text>
-					</Section>
-				) : null}
-
-				{photos?.[0] ? (
-					<Section
-						modifiers={[
-							// A List row insets its content, which framed the photograph in
-							// white on all four sides. Here the photo is the row.
-							listRowInsets({top: 0, leading: 0, bottom: 0, trailing: 0}),
-						]}
-					>
-						{/* SwiftUI's Image reads a local file synchronously; these are
-							    remote, so the React Native image loader does the work and
-							    SwiftUI hosts the result. */}
-						<RNHostView matchContents={true}>
-							<RNImage
-								accessibilityLabel={`Photo of ${name}`}
-								source={{uri: buildingPhotoUrl(photos[0])}}
-								style={styles.photo}
-							/>
-						</RNHostView>
-					</Section>
-				) : null}
-
-				{description ? (
-					<Section title="About">
-						<Text>{description}</Text>
-					</Section>
-				) : null}
-
-				{address ? (
-					<Section title="Address">
-						<AddressLink address={address} />
-					</Section>
-				) : null}
-
-				<Section title="Accessibility">
-					<Text>{accessibilityCopy(accessibility)}</Text>
-				</Section>
-
-				<LinkSection items={departments} title="Departments" />
-				<LinkSection items={offices} title="Offices" />
-				<LinkSection items={floors} title="Floors" />
-				<LinkSection items={links} title="Links" />
+				<ActionsRow
+					actions={cardActions({point: pointOf(building), walkingDirections: WALKING_DIRECTIONS})}
+				/>
+				<PhotoStrip name={name} photos={photos} />
+				<AboutSection text={description} />
+				<GoodToKnowSection rows={goodToKnowRows(building.properties)} />
+				<PlacesSection id="departments" tiles={departmentTiles} title="Departments" />
+				<PlacesSection id="offices" tiles={officeTiles} title="Offices" />
+				<LinkListSection items={floors} title="Floors" />
+				<LinkListSection items={links} title="Links" />
+				<DetailsSection address={address} />
 			</List>
 		</PlaceCardScaffold>
 	)
@@ -305,73 +263,8 @@ function CloseButton({onClose}: {onClose: () => void}): React.ReactNode {
 	)
 }
 
-function AddressLink({address}: {address: string}): React.ReactNode {
-	// Linking rather than openUrl: maps.apple.com is a universal link that iOS
-	// hands to Maps.app, and openUrl would offer to show it in the in-app
-	// browser instead, which lands on Apple's web fallback page.
-	let onPress = () => {
-		let url = appleMapsSearchUrl(address)
-		Linking.openURL(url).catch((err: unknown) => {
-			console.warn(`could not open ${url}`, err)
-		})
-	}
-	return (
-		<Button modifiers={[accessibilityLabel(`Open ${address} in Maps`)]} onPress={onPress}>
-			<Text>{address}</Text>
-		</Button>
-	)
+/// Where Directions routes: the building's map point, if the feed gives one.
+function pointOf(building: Feature<Building>): Coordinate | null {
+	let point = building.geometry.geometries.find((geo): geo is Point => geo.type === 'Point')
+	return point?.coordinates ?? null
 }
-
-function LinkSection({
-	title,
-	items,
-}: {
-	title: string
-	// The server is not schema-validated at the boundary, so a record that
-	// omits the field arrives as undefined rather than as an empty array.
-	// St. Olaf serves these as {label, href} objects where Carleton serves
-	// "Label <url>" strings, hence the union -- normalizeLinks reconciles them.
-	items: Array<LabelLinkString | LabelLink> | undefined
-}): React.ReactNode {
-	let normalized = normalizeLinks(items)
-	if (normalized.length === 0) {
-		return null
-	}
-	return (
-		<Section title={title}>
-			{normalized.map(({label, href}, index) => {
-				// Neither field is unique on its own -- two entries can share a
-				// label, and a label-only entry has no href at all -- so the key
-				// combines both with the row's position.
-				let key = `${label}-${href}-${index}`
-				if (!href) {
-					return <Text key={key}>{label}</Text>
-				}
-				return (
-					<Button
-						key={key}
-						modifiers={[accessibilityLabel(`Open ${label}`)]}
-						onPress={() => openUrl(href)}
-					>
-						<Text>{label}</Text>
-					</Button>
-				)
-			})}
-		</Section>
-	)
-}
-
-function accessibilityCopy(value: Building['accessibility']): string {
-	switch (value) {
-		case 'wheelchair':
-			return 'Wheelchair-accessible.'
-		case 'none':
-			return 'Not wheelchair-accessible.'
-		default:
-			return 'Accessibility information not available.'
-	}
-}
-
-const styles = StyleSheet.create({
-	photo: {width: '100%', height: 180},
-})

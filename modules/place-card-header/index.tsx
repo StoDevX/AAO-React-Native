@@ -46,3 +46,19 @@ const PlaceCardScaffoldNativeView: React.ComponentType<{
 export function PlaceCardScaffold({children, large}: PlaceCardScaffoldProps): React.ReactNode {
 	return <PlaceCardScaffoldNativeView large={large}>{children}</PlaceCardScaffoldNativeView>
 }
+
+export type PlaceCardAboutProps = {
+	text: string
+	testID?: string
+}
+
+const PlaceCardAboutNativeView: React.ComponentType<PlaceCardAboutProps> = requireNativeView(
+	'PlaceCardHeader',
+	'PlaceCardAboutView',
+)
+
+/// A place card's About text as Apple Maps sets it: five lines, then MORE,
+/// which shows the rest in place. Renders only inside a `Host`.
+export function PlaceCardAbout(props: PlaceCardAboutProps): React.ReactNode {
+	return <PlaceCardAboutNativeView {...props} />
+}
