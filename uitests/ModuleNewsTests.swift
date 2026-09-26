@@ -75,6 +75,10 @@ class ModuleNewsTests: UITestCase {
 
 	/// Each story opened from a series row is a screen of its own, even one already
 	/// open further down, so Back retraces every step in the order it was taken.
+	///
+	/// This reads live data: the first Comic's series row has to list a story whose
+	/// own series row lists that first Comic back. A Comic without a series, or one
+	/// whose series has moved on, fails the test without anything being wrong.
 	func testSeriesStoriesStackInTheOrderTheyWereOpened() throws {
 		let news = NewsScreen(app: app, tile: TestIdentifiers.Buttons.olafMessenger, title: "The Olaf Messenger")
 			.navigate()
