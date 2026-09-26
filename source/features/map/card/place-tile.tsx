@@ -74,7 +74,7 @@ export function PlaceTileView({
 				systemName={symbol}
 			/>
 			<Text
-				modifiers={[font({textStyle: 'headline'}), lineLimit(2), multilineTextAlignment('leading')]}
+				modifiers={[font({textStyle: 'headline'}), lineLimit(3), multilineTextAlignment('leading')]}
 			>
 				{tile.label}
 			</Text>

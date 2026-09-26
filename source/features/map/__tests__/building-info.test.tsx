@@ -220,6 +220,24 @@ describe('BuildingInfo sections', () => {
 		])
 	})
 
+	// The feed is not validated at the boundary, so a record can omit these.
+	it('copes with a description and nickname the feed left out', async () => {
+		await render(
+			<BuildingInfo
+				building={makeBuilding({
+					id: 'a',
+					name: 'Lot Q',
+					description: undefined as never,
+					nickname: undefined as never,
+				})}
+				onClose={jest.fn()}
+				stop="medium"
+			/>,
+		)
+
+		expect(sectionOrder()).toEqual([])
+	})
+
 	it('leaves out every section with nothing to show', async () => {
 		await render(
 			<BuildingInfo
@@ -261,18 +279,24 @@ describe('BuildingInfo sections', () => {
 			/>,
 		)
 
-		// One More, and it is the Departments heading's: Offices has only six.
-		expect(screen.getAllByRole('button', {name: 'More'})).toHaveLength(1)
-		let tree = JSON.stringify(screen.toJSON())
-		expect(tree.indexOf('"More"')).toBeGreaterThan(tree.indexOf('"Departments"'))
-		expect(tree.indexOf('"More"')).toBeLessThan(tree.indexOf('"Offices"'))
+		// Named for its section, so VoiceOver can tell the two apart.
+		expect(screen.getByRole('button', {name: 'More departments'})).toBeTruthy()
+		expect(screen.queryByRole('button', {name: 'More offices'})).toBeNull()
 	})
 
-	// Directions waits on a walking routing engine; see building-info.tsx.
+	// Directions waits on a walking routing engine; see lib/card-actions.ts.
+	// The building has a point, so only that switch keeps Directions away.
 	it('offers no Directions', async () => {
+		let building = makeBuilding({id: 'a', name: 'Alpha Hall'})
 		await render(
 			<BuildingInfo
-				building={makeBuilding({id: 'a', name: 'Alpha Hall'})}
+				building={{
+					...building,
+					geometry: {
+						type: 'GeometryCollection',
+						geometries: [{type: 'Point', coordinates: [-93.1839, 44.4618]}],
+					},
+				}}
 				onClose={jest.fn()}
 				stop="medium"
 			/>,

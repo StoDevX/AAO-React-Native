@@ -178,7 +178,8 @@ class ModuleMapTests: UITestCase {
 
 	/// A Carleton card carries what St. Olaf's feed lacks: a photo, an address
 	/// and accessibility. Its photo is a square tile that opens full screen
-	/// over the sheet, and opens again after closing.
+	/// over the sheet, and opens again after closing, at the middle stop and
+	/// at the large one, leaving the card where it was each time.
 	func testACarletonCardShowsItsPhotoAndDetails() throws {
 		let name = TestIdentifiers.Map.aCarletonBuildingWithAPhoto
 		MapScreen(app: app)
@@ -187,6 +188,8 @@ class ModuleMapTests: UITestCase {
 			.focusSearch()
 			.typeIntoSearch(name)
 			.selectBuilding(named: name)
+			.verifyCardAtMedium()
+			.verifyPhotoOpensFullScreenTwice()
 			.expandCard()
 			.capture("Sayles-Hill's card at the large stop")
 			.verifyPhotoTileSquare()

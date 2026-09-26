@@ -31,6 +31,11 @@ describe('goodToKnowRows', () => {
 		])
 	})
 
+	// The feed is not validated at the boundary, so a record can omit it.
+	it('copes with a nickname the feed left out', () => {
+		expect(goodToKnowRows({...base, nickname: undefined as never})).toEqual([])
+	})
+
 	it('ignores blank names', () => {
 		expect(goodToKnowRows({...base, nickname: ['  ', '']})).toEqual([])
 	})

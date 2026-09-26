@@ -150,7 +150,11 @@ function BuildingRow({
 	building: Feature<Building>
 	onSelect: (id: string) => void
 }): React.ReactNode {
-	let {name, nickname} = building.properties
+	let {name} = building.properties
+	// A house renamed each year for its residents carries every name, newest
+	// first; the row shows the current one.
+	let names = building.properties.nickname ?? []
+	let nickname = typeof names === 'string' ? names : names[0]
 	return (
 		<Button
 			// Without `plain`, SwiftUI tints a Button's whole label with the accent

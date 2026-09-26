@@ -18,7 +18,9 @@ export function goodToKnowRows(
 		rows.push({kind: 'abbreviation', text: `Abbreviated ${abbreviation}`})
 	}
 
-	let names = typeof building.nickname === 'string' ? [building.nickname] : building.nickname
+	// The feed is not validated at the boundary, so a record can omit it.
+	let nickname = building.nickname ?? []
+	let names = typeof nickname === 'string' ? [nickname] : nickname
 	let nicknames = [...new Set(names.map((name) => name.trim()))].filter(
 		(name) => name !== '' && name !== abbreviation,
 	)

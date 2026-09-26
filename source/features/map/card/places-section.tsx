@@ -17,12 +17,15 @@ import {
 	background,
 	buttonBorderShape,
 	buttonStyle,
+	contentShape,
 	font,
+	frame,
 	listRowBackground,
 	listRowInsets,
 	listRowSeparator,
 	padding,
 	presentationDragIndicator,
+	shapes,
 } from '@expo/ui/swift-ui/modifiers'
 
 import * as c from '@frogpond/colors'
@@ -33,6 +36,9 @@ import {PlaceTileView} from './place-tile'
 import {SectionHeading} from './section-heading'
 
 const TILE_SPACING = 12
+
+/// Apple's smallest comfortable tap target, in points.
+const TAP_TARGET = 44
 
 /// The carousel runs to the sheet's edges, so its row has no insets of its own.
 const CAROUSEL_ROW = [
@@ -82,10 +88,24 @@ export function PlacesSection({
 						// the section, the list would give it an empty row.
 						<HStack>
 							<Button
-								modifiers={[buttonStyle('borderless'), accessibilityIdentifier(`${id}-more`)]}
+								modifiers={[
+									buttonStyle('borderless'),
+									// Named for its section, so VoiceOver tells the two apart.
+									accessibilityLabel(`More ${title.toLowerCase()}`),
+									accessibilityIdentifier(`${id}-more`),
+								]}
 								onPress={() => setShowingAll(true)}
 							>
-								<Text>More</Text>
+								{/* A borderless button answers only where its label draws,
+								    so the label takes the 44pt minimum itself. */}
+								<Text
+									modifiers={[
+										frame({minWidth: TAP_TARGET, minHeight: TAP_TARGET, alignment: 'trailing'}),
+										contentShape(shapes.rectangle()),
+									]}
+								>
+									More
+								</Text>
 							</Button>
 							<BottomSheet isPresented={showingAll} onIsPresentedChange={setShowingAll}>
 								<VStack
@@ -104,9 +124,9 @@ export function PlacesSection({
 												buttonStyle('glass'),
 												buttonBorderShape('circle'),
 												accessibilityLabel('Close'),
+												accessibilityIdentifier(`${id}-grid-close`),
 											]}
 											onPress={() => setShowingAll(false)}
-											testID="places-grid-close"
 										>
 											<Image systemName="xmark" />
 										</Button>

@@ -632,6 +632,9 @@ struct MapScreen: Screen {
 	func verifyMoreShowsEveryDepartment(_ count: Int) -> Self {
 		let more = app.buttons[TestIdentifiers.Map.departmentsMore].firstMatch
 		XCTAssertTrue(more.waitForExistence(timeout: 30), "Departments should offer More")
+		XCTContext.runActivity(named: "More \(more.frame)") { _ in }
+		XCTAssertGreaterThanOrEqual(more.frame.width, 44, "More should be at least 44pt wide to tap")
+		XCTAssertGreaterThanOrEqual(more.frame.height, 44, "More should be at least 44pt tall to tap")
 		more.tap()
 		let grid = app.descendants(matching: .any)[TestIdentifiers.Map.departmentsGrid].firstMatch
 		XCTAssertTrue(grid.waitForExistence(timeout: 10), "More should open the grid")

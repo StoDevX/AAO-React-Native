@@ -25,6 +25,21 @@ export const HEADING_ROW = [
 	listRowInsets({top: SECTION_GAP, leading: CARD_INSET, bottom: 0, trailing: CARD_INSET}),
 ]
 
+/// A heading row holding a 44pt control beside its 24pt text: the control
+/// overhangs the text by 10pt above and below, so the row gives those back
+/// and the heading keeps its place.
+const CONTROL_OVERHANG = (44 - 24) / 2
+export const HEADING_ROW_WITH_CONTROL = [
+	listRowBackground('clear'),
+	listRowSeparator('hidden'),
+	listRowInsets({
+		top: SECTION_GAP - CONTROL_OVERHANG,
+		leading: CARD_INSET,
+		bottom: -CONTROL_OVERHANG,
+		trailing: CARD_INSET,
+	}),
+]
+
 /// A Details-style row: on the sheet, with a hairline under it.
 export const DETAIL_ROW = [
 	listRowBackground('clear'),

@@ -42,6 +42,7 @@ afterEach(() => {
 })
 
 async function renderPicker({
+	buildings = fixtures,
 	compact = false,
 	onSelect = jest.fn(),
 	onSearchFocusChange = jest.fn(),
@@ -51,7 +52,7 @@ async function renderPicker({
 	trackedQueryClients.push(client)
 	// Seeding the cache rather than mocking the query module keeps the
 	// component on its real data path.
-	client.setQueryData(keys.all('carleton'), fixtures)
+	client.setQueryData(keys.all('carleton'), buildings)
 	await render(
 		<QueryClientProvider client={client}>
 			<BuildingPicker
@@ -142,5 +143,23 @@ describe('BuildingPicker', () => {
 			expect(screen.getByText('Outdoors')).toBeTruthy()
 		})
 		expect(screen.getByText('Alpha Hall')).toBeTruthy()
+	})
+
+	// An honor house renamed each year carries every name, newest first; the
+	// row shows the current one.
+	it("shows a building's first nickname when it has several", async () => {
+		await renderPicker({
+			buildings: [
+				makeBuilding({
+					id: 'h',
+					name: 'Holtan House',
+					categories: ['building'],
+					nickname: ['Food Justice House', 'Ecology House'],
+				}),
+			],
+		})
+
+		expect(screen.getByText('Food Justice House')).toBeTruthy()
+		expect(screen.queryByText(/Ecology House/u)).toBeNull()
 	})
 })

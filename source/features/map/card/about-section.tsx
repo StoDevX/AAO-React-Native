@@ -14,8 +14,9 @@ const TEXT_ROW = [
 ]
 
 /// The building's description under an About heading, clamped as Maps clamps it.
-export function AboutSection({text}: {text: string}): React.ReactNode {
-	if (!text.trim()) {
+export function AboutSection({text}: {text: string | undefined}): React.ReactNode {
+	// The feed is not validated at the boundary, so a record can omit it.
+	if (!text?.trim()) {
 		return null
 	}
 	return (
