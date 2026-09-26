@@ -192,6 +192,25 @@ struct TestIdentifiers {
 		/// reads "Regents Hall of Natural Sciences, RNS"; `selectBuilding(named:)`
 		/// matches on the prefix. St. Olaf can rename it.
 		static let aSubtitledBuilding = "Regents Hall of Natural Sciences"
+		/// St. Olaf's fullest card: a long About, twenty-one departments (so
+		/// More appears), and Links. Its feed lists its offices as departments.
+		/// St. Olaf can rename it.
+		static let aBuildingWithManyDepartments = "Tomson Hall"
+		/// A St. Olaf building whose description runs well past five lines.
+		static let aBuildingWithALongAbout = "Holland Hall"
+		/// Carleton's fullest card: a photo, an address, accessibility, nine
+		/// offices, and floors. Carleton can rename it.
+		static let aCarletonBuildingWithAPhoto = "Sayles-Hill Campus Center"
+		/// The dev-only home tile that opens Carleton's Hours screen, whose
+		/// toolbar carries the button to Carleton's map.
+		static let carletonCampusTile = "Carleton Campus"
+		/// Matches the section identifiers in `source/features/map/card/`.
+		static let cardPhoto = "card-photo"
+		static let cardAbout = "card-about"
+		static let photoViewerImage = "map-photo-viewer-image"
+		static let photoViewerClose = "map-photo-viewer-close"
+		static let departmentsGrid = "departments-grid"
+		static let departmentsMore = "departments-more"
 		/// MapLibre's attribution button, found by the label it gives itself. It
 		/// carries the OpenStreetMap credit, so it has to stay reachable.
 		static let attribution = "About this map"

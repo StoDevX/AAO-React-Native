@@ -40,13 +40,16 @@ export function PhotoStrip({
 				    remote, so the React Native image loader does the work and
 				    SwiftUI hosts the result. React Native takes the tap too. */}
 				<RNHostView matchContents={true}>
+					{/* The square is the Pressable's, so only the photo answers a
+					    tap: the host stretches its child to the card's width. */}
 					<Pressable
 						accessibilityLabel={label}
 						accessibilityRole="imagebutton"
 						onPress={() => setViewing(true)}
+						style={styles.tile}
 						testID="card-photo"
 					>
-						<RNImage resizeMode="cover" source={{uri}} style={styles.tile} />
+						<RNImage resizeMode="cover" source={{uri}} style={styles.photo} />
 					</Pressable>
 				</RNHostView>
 				<PhotoViewerModal
@@ -61,5 +64,6 @@ export function PhotoStrip({
 }
 
 const styles = StyleSheet.create({
-	tile: {width: TILE, height: TILE, borderRadius: CORNER_RADIUS},
+	tile: {width: TILE, height: TILE, borderRadius: CORNER_RADIUS, overflow: 'hidden'},
+	photo: {width: '100%', height: '100%'},
 })

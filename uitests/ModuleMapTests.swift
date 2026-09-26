@@ -132,4 +132,65 @@ class ModuleMapTests: UITestCase {
 			.capture("St. Olaf map card collapsed at the largest text size")
 			.verifyCardHeaderTopWithinSheet()
 	}
+
+	/// Every heading a card can have, for placing the ones a card shows.
+	private let cardSections = ["About", "Good to Know", "Departments", "Offices", "Floors", "Links", "Details"]
+
+	/// A St. Olaf card lays its sections out in Maps' order, and More on a long
+	/// Departments section opens every one of them.
+	func testAStOlafCardListsItsSectionsInMapsOrder() throws {
+		let name = TestIdentifiers.Map.aBuildingWithManyDepartments
+		MapScreen(app: app)
+			.navigate()
+			.checkSheetPresented()
+			.focusSearch()
+			.typeIntoSearch(name)
+			.selectBuilding(named: name)
+			.expandCard()
+			.capture("Tomson Hall's card at the large stop")
+			.verifySectionOrder(["About", "Good to Know", "Departments", "Links"], among: cardSections)
+	}
+
+	func testMoreOpensEveryDepartmentInAGrid() throws {
+		let name = TestIdentifiers.Map.aBuildingWithManyDepartments
+		MapScreen(app: app)
+			.navigate()
+			.checkSheetPresented()
+			.focusSearch()
+			.typeIntoSearch(name)
+			.selectBuilding(named: name)
+			.expandCard()
+			.verifyMoreShowsEveryDepartment(21)
+	}
+
+	func testAboutExpandsFromItsFirstFiveLines() throws {
+		let name = TestIdentifiers.Map.aBuildingWithALongAbout
+		MapScreen(app: app)
+			.navigate()
+			.checkSheetPresented()
+			.focusSearch()
+			.typeIntoSearch(name)
+			.selectBuilding(named: name)
+			.expandCard()
+			.capture("Holland Hall's About, clamped")
+			.verifyAboutExpands()
+	}
+
+	/// A Carleton card carries what St. Olaf's feed lacks: a photo, an address
+	/// and accessibility. Its photo is a square tile that opens full screen
+	/// over the sheet, and opens again after closing.
+	func testACarletonCardShowsItsPhotoAndDetails() throws {
+		let name = TestIdentifiers.Map.aCarletonBuildingWithAPhoto
+		MapScreen(app: app)
+			.navigateToCarleton()
+			.checkSheetPresented()
+			.focusSearch()
+			.typeIntoSearch(name)
+			.selectBuilding(named: name)
+			.expandCard()
+			.capture("Sayles-Hill's card at the large stop")
+			.verifyPhotoTileSquare()
+			.verifyPhotoOpensFullScreenTwice()
+			.verifySectionOrder(["About", "Good to Know", "Offices", "Floors", "Details"], among: cardSections)
+	}
 }

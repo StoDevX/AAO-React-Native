@@ -23,7 +23,7 @@ export function AboutSection({text}: {text: string}): React.ReactNode {
 			<SectionHeading title="About" />
 			{/* The native view takes no list modifiers of its own. */}
 			<VStack modifiers={TEXT_ROW}>
-				<PlaceCardAbout text={text} />
+				<PlaceCardAbout testID="card-about" text={text} />
 			</VStack>
 		</Section>
 	)
