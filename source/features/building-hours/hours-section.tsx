@@ -4,36 +4,48 @@ import {HStack, Section, Spacer, Text, VStack} from '@expo/ui/swift-ui'
 import {
 	accessibilityElement,
 	accessibilityIdentifier,
+	background,
+	clipShape,
 	font,
 	foregroundStyle,
+	frame,
 	listRowBackground,
 	listRowInsets,
 	listRowSeparator,
 } from '@expo/ui/swift-ui/modifiers'
-import * as c from '@frogpond/colors'
 import type {Moment} from 'moment-timezone'
 
-import {CARD_INSET, DETAIL_ROW, LAST_ROW} from '../../components/place-card/card-style'
+import {CARD_INSET, ROW_PADDING} from '../../components/place-card/card-style'
 import {SectionHeading} from '../../components/place-card/section-heading'
 import {
 	contextualStatus,
 	formatBuildingTimes,
+	getAccentBackgroundColor,
 	getDayOfWeek,
 	getShortBuildingStatus,
 	groupHoursByDays,
 	hasDisplayableHours,
 } from './lib'
-import type {BuildingStatusType, BuildingType, NamedBuildingScheduleType} from './types'
+import type {BuildingType, NamedBuildingScheduleType} from './types'
 
-/// The status word's colour. Maps writes a place's status in green, orange or
-/// red; the Hours list's yellow is for its bars and too faint as text.
-const STATUS_TEXT: Record<BuildingStatusType, ColorValue> = {
-	Open: c.systemGreen,
-	'Almost Open': c.systemOrange,
-	'Almost Closed': c.systemOrange,
-	Chapel: c.systemOrange,
-	Closed: c.systemRed,
-}
+/// An accent bar's width, and the gap between it and the text beside it.
+const BAR_WIDTH = 4
+const BAR_GAP = 8
+
+/// A row with an accent bar: a Details row whose bar hangs in the side
+/// margin, so its text lines up with the headings and notes above and below.
+const BAR_ROW = [
+	listRowBackground('clear'),
+	listRowInsets({
+		top: ROW_PADDING,
+		leading: CARD_INSET - BAR_WIDTH - BAR_GAP,
+		bottom: ROW_PADDING,
+		trailing: CARD_INSET,
+	}),
+]
+
+/// The last row of a section has no hairline under it, as in Maps.
+const LAST_BAR_ROW = [...BAR_ROW, listRowSeparator('hidden', 'bottom')]
 
 /// A note sits under its block's rows, in grey, with nothing drawn round it.
 const NOTE_ROW = [
@@ -71,46 +83,55 @@ export function HoursSection({venue, now}: Props): React.ReactNode {
 		return null
 	}
 	let single = withContent.length === 1
+	let accent = getAccentBackgroundColor(getShortBuildingStatus(venue, now))
 
 	return withContent.map((block, index) => (
 		<Section key={block.title}>
 			<SectionHeading title={single ? 'Hours' : block.title} />
-			{index === 0 && scheduled ? <StatusRow now={now} venue={venue} /> : null}
-			<WeekRows block={block} now={now} />
+			{index === 0 && scheduled ? <StatusRow accent={accent} now={now} venue={venue} /> : null}
+			<WeekRows accent={accent} block={block} now={now} />
 			{block.notes ? <Text modifiers={NOTE_ROW}>{block.notes}</Text> : null}
 		</Section>
 	))
 }
 
-/// "Open until 10 PM" in the status's colour, and today's hours opposite.
-function StatusRow({venue, now}: Props): React.ReactNode {
-	let status = getShortBuildingStatus(venue, now)
+/// "Open until 10 PM" beside a bar in the status's colour, and today's hours
+/// opposite.
+function StatusRow({venue, now, accent}: Props & {accent: ColorValue}): React.ReactNode {
 	let today = todaysHours(venue.schedule ?? [], now)
 	return (
 		<HStack
 			modifiers={[
-				...DETAIL_ROW,
+				...BAR_ROW,
 				accessibilityElement('combine'),
 				accessibilityIdentifier(HOURS_STATUS_ID),
 			]}
+			spacing={BAR_GAP}
 		>
-			<Text
-				modifiers={[
-					font({textStyle: 'body', weight: 'semibold'}),
-					foregroundStyle(STATUS_TEXT[status]),
-				]}
-			>
+			<AccentBar color={accent} />
+			<Text modifiers={[font({textStyle: 'body', weight: 'semibold'})]}>
 				{contextualStatus(venue, now).long}
 			</Text>
 			<Spacer />
-			{today ? <Text>{today}</Text> : null}
+			{today ? (
+				<Text modifiers={[font({textStyle: 'body', weight: 'semibold'})]}>{today}</Text>
+			) : null}
 		</HStack>
 	)
 }
 
 /// One row per run of days with the same hours. The run that covers now is
-/// set in semibold, as the Hours list marks it.
-function WeekRows({block, now}: {block: NamedBuildingScheduleType; now: Moment}): React.ReactNode {
+/// set in semibold beside a bar in the status's colour, as the Hours list
+/// marks it.
+function WeekRows({
+	block,
+	now,
+	accent,
+}: {
+	block: NamedBuildingScheduleType
+	now: Moment
+	accent: ColorValue
+}): React.ReactNode {
 	let groups = groupHoursByDays(block, now)
 	return groups.map((group, index) => {
 		let current = group.entries.some((entry) => entry.isActive)
@@ -119,9 +140,11 @@ function WeekRows({block, now}: {block: NamedBuildingScheduleType; now: Moment})
 		return (
 			<HStack
 				key={group.entries[0].sourceIndex}
-				alignment="firstTextBaseline"
-				modifiers={[...(last ? LAST_ROW : DETAIL_ROW), accessibilityElement('combine')]}
+				alignment="top"
+				modifiers={[...(last ? LAST_BAR_ROW : BAR_ROW), accessibilityElement('combine')]}
+				spacing={BAR_GAP}
 			>
+				<AccentBar color={current ? accent : null} />
 				<Text modifiers={[font({textStyle: 'body', weight})]}>{group.label}</Text>
 				<Spacer />
 				<VStack alignment="trailing" spacing={2}>
@@ -154,4 +177,19 @@ function todaysHours(blocks: Array<NamedBuildingScheduleType>, now: Moment): str
 		}
 	}
 	return null
+}
+
+/// A thin capsule in a status's colour. With no colour it still takes its
+/// width, so every row's label starts at the same place.
+function AccentBar({color}: {color: ColorValue | null}): React.ReactNode {
+	return (
+		<VStack
+			modifiers={[
+				frame({minWidth: BAR_WIDTH, maxWidth: BAR_WIDTH, maxHeight: Infinity}),
+				...(color ? [background(color), clipShape('capsule')] : []),
+			]}
+		>
+			{null}
+		</VStack>
+	)
 }
