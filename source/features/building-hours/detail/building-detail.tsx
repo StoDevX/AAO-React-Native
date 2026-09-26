@@ -1,8 +1,7 @@
 import * as React from 'react'
-import {StyleSheet, Image} from 'react-native'
+import {StyleSheet, Image, useWindowDimensions} from 'react-native'
 import {Host, List, RNHostView, Section, Text, VStack} from '@expo/ui/swift-ui'
 import {
-	clipShape,
 	font,
 	foregroundStyle,
 	listRowBackground,
@@ -23,11 +22,11 @@ import {images as buildingImages} from '../../../../images/spaces'
 import {buildingPhoto} from '../lib/building-photo'
 import {HoursSection} from '../hours-section'
 import {LinkListSection} from '../../map/card/link-list-section'
-import {CARD_INSET, SECTION_GAP} from '../../../components/place-card/card-style'
-
-/// The corner a picture on the sheet is rounded to, as the map card's photo
-/// tile is.
-const PICTURE_CORNER = 12
+import {
+	CARD_INSET,
+	PICTURE_CORNER_RADIUS,
+	SECTION_GAP,
+} from '../../../components/place-card/card-style'
 
 /// A picture's row: on the sheet, inset from its sides like every other row,
 /// with a section's gap above it and no hairline.
@@ -35,7 +34,6 @@ const PICTURE_ROW = [
 	listRowBackground('clear'),
 	listRowSeparator('hidden'),
 	listRowInsets({top: SECTION_GAP, leading: CARD_INSET, bottom: 0, trailing: CARD_INSET}),
-	clipShape('roundedRectangle', PICTURE_CORNER),
 ]
 
 /// The formal name sits straight under the sheet's title, as the map card's
@@ -60,6 +58,9 @@ type Props = {
  */
 export function BuildingDetailSwiftUI({building, now, campus}: Props): React.ReactNode {
 	let photo = buildingPhoto(campus, building.image, buildingImages)
+	// The sheet spans the window. A picture is given its width outright, since
+	// 100% inside RNHostView resolves against the whole sheet, not the row.
+	let pictureWidth = useWindowDimensions().width - 2 * CARD_INSET
 
 	let links = (building.links || []).map(({title, url}) => ({label: title, href: url}))
 
@@ -109,7 +110,7 @@ export function BuildingDetailSwiftUI({building, now, campus}: Props): React.Rea
 						{/* On a wrapping stack because RNHostView takes no modifiers of
 						    its own. */}
 						<VStack modifiers={PICTURE_ROW}>
-							<BuildingCutout campus={campus} feature={feature} />
+							<BuildingCutout campus={campus} feature={feature} width={pictureWidth} />
 						</VStack>
 					</Section>
 				) : null}
@@ -122,7 +123,7 @@ export function BuildingDetailSwiftUI({building, now, campus}: Props): React.Rea
 									accessibilityIgnoresInvertColors={true}
 									resizeMode="cover"
 									source={photo}
-									style={styles.image}
+									style={[styles.image, {width: pictureWidth}]}
 									testID="building-photo"
 								/>
 							</RNHostView>
@@ -156,7 +157,7 @@ const styles = StyleSheet.create({
 		backgroundColor: c.systemGroupedBackground,
 	},
 	image: {
-		width: '100%',
 		height: 100,
+		borderRadius: PICTURE_CORNER_RADIUS,
 	},
 })

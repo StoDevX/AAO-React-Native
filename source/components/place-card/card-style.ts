@@ -20,6 +20,9 @@ export const ROW_PADDING = 15
 /// Space between the end of one section and the top of the next heading's text.
 export const SECTION_GAP = 30
 
+/// The corner radius of a photo or map on the card, as Maps rounds its photos.
+export const PICTURE_CORNER_RADIUS = 16
+
 /// Maps sets its section headings in bold `title3`. The header trait lets
 /// VoiceOver's headings rotor jump between sections.
 export const HEADING_TEXT = [
