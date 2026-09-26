@@ -452,5 +452,48 @@
         ]
       ]
     }
+  },
+  {
+    "id": 31436,
+    "date_gmt": "2022-11-04T21:22:45",
+    "link": "https://olafmessenger.com/31436/variety/in-devotion-to-the-forest/",
+    "title": {
+      "rendered": "In Devotion to the Forest"
+    },
+    "excerpt": {
+      "rendered": "<p>Forest Eyes &nbsp; Her iris smells of morning rain, Of decomposing leaves in soil. Her gaze grows mushrooms in my brain, And grapevines cross my flesh like coil. &nbsp; We sit beside a waterfall. My roots plant firmly in the rock So that I cannot move at all. I only listen to Her talk. &nbsp;&#8230;</p>\n",
+      "protected": false
+    },
+    "content": {
+      "rendered": "<ol>\n<li>\n<div class=\"title-h6\"><span style=\"font-weight: 400;\"> Forest Eyes</span></div>\n</li>\n</ol>\n<p>&nbsp;</p>\n<p><span style=\"font-weight: 400;\">Her iris smells of morning rain,</span></p>\n<p><span style=\"font-weight: 400;\">Of decomposing leaves in soil.</span></p>\n<p><span style=\"font-weight: 400;\">Her gaze grows mushrooms in my brain,</span></p>\n<p><span style=\"font-weight: 400;\">And grapevines cross my flesh like coil.</span></p>\n<p>&nbsp;</p>\n<p><span style=\"font-weight: 400;\">We sit beside a waterfall.</span></p>\n<p><span style=\"font-weight: 400;\">My roots plant firmly in the rock</span></p>\n<p><span style=\"font-weight: 400;\">So that I cannot move at all.</span></p>\n<p><span style=\"font-weight: 400;\">I only listen to Her talk.</span></p>\n<p>&nbsp;</p>\n<p><span style=\"font-weight: 400;\">Her voice sounds sweet like chirping birds</span></p>\n<p><span style=\"font-weight: 400;\">A song to mesmerize my heart,</span></p>\n<p><span style=\"font-weight: 400;\">I cherish every given word</span></p>\n<p><span style=\"font-weight: 400;\">And feel the sounds tear me apart.</span></p>\n<p>&nbsp;</p>\n<p><span style=\"font-weight: 400;\">Within Her eyes, a forest thrives.</span></p>\n<p><span style=\"font-weight: 400;\">Admiring them, I feel alive.</span></p>\n<p>&nbsp;</p>\n<ol start=\"2\">\n<li>\n<h6><span style=\"font-weight: 400;\"> Forest Woman</span></h6>\n</li>\n</ol>\n<p>&nbsp;</p>\n<p><span style=\"font-weight: 400;\">As the night approaches,</span></p>\n<p><span style=\"font-weight: 400;\">And the wind grows cold.</span></p>\n<p><span style=\"font-weight: 400;\">As the sound of the stream</span></p>\n<p><span style=\"font-weight: 400;\">Carves through the trees,</span></p>\n<p><span style=\"font-weight: 400;\">And the animals come for me.</span></p>\n<p>&nbsp;</p>\n<p><span style=\"font-weight: 400;\">I caress Your hair like moss.</span></p>\n<p><span style=\"font-weight: 400;\">I hold You close to me</span></p>\n<p><span style=\"font-weight: 400;\">And smell the wildflowers</span></p>\n<p><span style=\"font-weight: 400;\">That grow from within You.</span></p>\n<p>&nbsp;</p>\n<p><span style=\"font-weight: 400;\">I kiss the bark of the trees,</span></p>\n<p><span style=\"font-weight: 400;\">I lay on the smooth stones,</span></p>\n<p><span style=\"font-weight: 400;\">I open myself up to the forest,</span></p>\n<p><span style=\"font-weight: 400;\">And I want You to consume me.</span></p>\n<p>&nbsp;</p>\n<p><span style=\"font-weight: 400;\">Yet, You never do,</span></p>\n<p><span style=\"font-weight: 400;\">But I don’t mind.</span></p>\n<p><span style=\"font-weight: 400;\">I release my heart into Your winds,</span></p>\n<p><span style=\"font-weight: 400;\">And I cherish the whisper in return.</span></p>\n<p>&nbsp;</p>\n<ol start=\"3\">\n<li>\n<h6><span style=\"font-weight: 400;\"> Forest Fire</span></h6>\n</li>\n</ol>\n<p>&nbsp;</p>\n<p><span style=\"font-weight: 400;\">I would do anything to kiss you just once.</span></p>\n<p>&nbsp;</p>\n<p><span style=\"font-weight: 400;\">To feel the fire singe my lips</span></p>\n<p><span style=\"font-weight: 400;\">       And spread across my cheeks as you hold them.</span></p>\n<p><span style=\"font-weight: 400;\">To feel your perfume like smoke tickle my nose.</span></p>\n<p><span style=\"font-weight: 400;\">To feel the flames of your hair tangle with mine</span></p>\n<p><span style=\"font-weight: 400;\">       And intertwine like branches in a forest fire.</span></p>\n<p><span style=\"font-weight: 400;\">To feel my body grow hot as you step close</span></p>\n<p><span style=\"font-weight: 400;\">       And as your weight presses against me</span></p>\n<p><span style=\"font-weight: 400;\">       Our skin melts into molten passion.</span></p>\n<p><span style=\"font-weight: 400;\">To feel innocent in the chaos.</span></p>\n<p><span style=\"font-weight: 400;\">To feel the fire cleanse us of worry and doubt.</span></p>\n<p><span style=\"font-weight: 400;\">To feel like everything will burn down around us.</span></p>\n<p>&nbsp;</p>\n<p><span style=\"font-weight: 400;\">And even if we never kiss again,</span></p>\n<p><span style=\"font-weight: 400;\">At least my heart will have been consumed by our fire.</span></p>\n<p>&nbsp;</p>\n",
+      "protected": false
+    },
+    "categories": [69, 23],
+    "featured_media": 30573,
+    "_embedded": {
+      "wp:featuredmedia": [],
+      "wp:term": [
+        [
+          {
+            "id": 69,
+            "name": "Poetry",
+            "taxonomy": "category"
+          },
+          {
+            "id": 23,
+            "name": "Variety",
+            "taxonomy": "category"
+          }
+        ],
+        [],
+        [
+          {
+            "id": 448,
+            "name": "Karen Larionova",
+            "taxonomy": "staff_name"
+          }
+        ]
+      ]
+    }
   }
 ]

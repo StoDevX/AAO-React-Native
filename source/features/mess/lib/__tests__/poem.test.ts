@@ -46,21 +46,29 @@ describe('parsePoem', () => {
 	})
 
 	it('ranks the distinct leading widths as indent levels', () => {
-		let layout = parsePoem('<p>flush</p><p>    four spaces</p><p>' + ' '.repeat(40) + 'deep</p>')
+		let layout = parsePoem(
+			'<p>flush</p><p>' +
+				'&nbsp;'.repeat(4) +
+				'four spaces</p><p>' +
+				'&nbsp;'.repeat(40) +
+				'deep</p>',
+		)
 		if (layout.kind !== 'poem') throw new Error('expected a poem')
 		expect(layout.stanzas[0]?.map((l) => l.indent)).toStrictEqual([0, 1, 2])
 		expect(layout.stanzas[0]?.map(lineText)).toStrictEqual(['flush', 'four spaces', 'deep'])
 	})
 
 	it('gives lines of the same width the same level', () => {
-		let layout = parsePoem('<p>  a</p><p>' + ' '.repeat(9) + 'b</p><p>  c</p>')
+		let layout = parsePoem(
+			'<p>&nbsp;&nbsp;a</p><p>' + '&nbsp;'.repeat(9) + 'b</p><p>&nbsp;&nbsp;c</p>',
+		)
 		if (layout.kind !== 'poem') throw new Error('expected a poem')
 		expect(layout.stanzas[0]?.map((l) => l.indent)).toStrictEqual([1, 2, 1])
 	})
 
 	it('caps the indent at six levels', () => {
 		let widths = [0, 1, 2, 3, 4, 5, 6, 7, 8]
-		let layout = parsePoem(widths.map((w) => `<p>${' '.repeat(w)}x</p>`).join(''))
+		let layout = parsePoem(widths.map((w) => `<p>${'&nbsp;'.repeat(w)}x</p>`).join(''))
 		if (layout.kind !== 'poem') throw new Error('expected a poem')
 		expect(layout.stanzas[0]?.map((l) => l.indent)).toStrictEqual([0, 1, 2, 3, 4, 5, 6, 6, 6])
 	})
@@ -69,6 +77,39 @@ describe('parsePoem', () => {
 		let layout = parsePoem('<p>flush</p><p>&nbsp;&nbsp;&nbsp;&nbsp;in</p>')
 		if (layout.kind !== 'poem') throw new Error('expected a poem')
 		expect(layout.stanzas[0]?.map((l) => l.indent)).toStrictEqual([0, 1])
+	})
+
+	it('draws a line led by ordinary spaces flush, as HTML drops them', () => {
+		let layout = parsePoem('<p>flush</p><p>   three spaces</p><p>\t tab and space</p>')
+		if (layout.kind !== 'poem') throw new Error('expected a poem')
+		expect(layout.stanzas[0]?.map((l) => l.indent)).toStrictEqual([0, 0, 0])
+		expect(layout.stanzas[0]?.map(lineText)).toStrictEqual([
+			'flush',
+			'three spaces',
+			'tab and space',
+		])
+	})
+
+	it('measures an indent as HTML draws it, with ordinary spaces between non-breaking ones collapsed', () => {
+		// Three, five and four characters wide on the page: the four spaces in the first draw as one.
+		let layout = parsePoem(
+			'<p>flush</p><p>&nbsp;    &nbsp;b</p><p>&nbsp; &nbsp; &nbsp;c</p><p>&nbsp;&nbsp;&nbsp;&nbsp;d</p>',
+		)
+		if (layout.kind !== 'poem') throw new Error('expected a poem')
+		expect(layout.stanzas[0]?.map((l) => l.indent)).toStrictEqual([0, 1, 3, 2])
+	})
+
+	it('draws a real poem flush where the site does, and indents it where the site does', () => {
+		// Its section titles lead with an ordinary space, which the site drops; four lines lead
+		// with seven non-breaking spaces, which the site draws 35 pixels in.
+		let layout = parsePoem(html(31436))
+		if (layout.kind !== 'poem') throw new Error('expected a poem')
+		let lines = layout.stanzas.flat()
+		let indented = lines.filter((l) => l.indent > 0).map(lineText)
+		expect(lines.find((l) => lineText(l) === 'Forest Eyes')?.indent).toBe(0)
+		expect(indented).toHaveLength(4)
+		expect(indented[0]).toMatch(/^And spread across/u)
+		expect(lines.filter((l) => l.indent > 0).every((l) => l.indent === 1)).toBe(true)
 	})
 
 	it('collapses runs of spaces after the indent', () => {

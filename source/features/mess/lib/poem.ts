@@ -5,7 +5,10 @@ import {pushRun, SKIPPED, styleWithin, trimRuns, type Style} from './blocks'
 /** The deepest indent level; wider indents share it. */
 const MAX_INDENT = 6
 
-/** A line before its indent is ranked: how many spaces led it, and its tidied runs. */
+/** A run of the spacing HTML collapses to one space: everything but the non-breaking space. */
+const COLLAPSIBLE = /[ \t\r\n]+/gu
+
+/** A line before its indent is ranked: how many characters wide its indent draws, and its tidied runs. */
 type MeasuredLine = {width: number; runs: Run[]}
 
 /** A paragraph's runs split at each `<br>`, spaces inside a run kept as written. */
@@ -14,10 +17,9 @@ function linesOf(nodes: ChildNode[], style: Style, lines: Run[][]): void {
 		if (isText(node)) {
 			let current = lines.at(-1)
 			if (!current) continue
-			// A non-breaking space counts as a space, so indentation made of them is
-			// measured too. Newlines stay until the line is measured.
-			let text = node.data.replaceAll('\u00A0', ' ').replaceAll('\t', ' ')
-			pushRun(current, text, style)
+			// Spacing stays as written until the line is measured, which tells ordinary spaces
+			// from non-breaking ones.
+			pushRun(current, node.data, style)
 			continue
 		}
 		if (!isTag(node) || SKIPPED.has(node.name)) continue
@@ -29,15 +31,20 @@ function linesOf(nodes: ChildNode[], style: Style, lines: Run[][]): void {
 	}
 }
 
-/** A line's leading-space width, with the rest of its spacing collapsed; null when blank. */
+/**
+ * A line's indent width as the site draws it, with the rest of its spacing collapsed; null when
+ * blank. HTML collapses each run of ordinary spaces, tabs and newlines to one space and drops it
+ * at the start of a line, but keeps every non-breaking space; so only an indent made of
+ * non-breaking spaces shows, and an ordinary space counts only between them.
+ */
 function measure(runs: Run[]): MeasuredLine | null {
 	let plain = runs.map((run) => run.text).join('')
 	if (plain.trim() === '') return null
-	// A newline is the source wrapping after a `<br>`, not the poet's indent.
-	let width = /^[\r\n]*( *)/u.exec(plain)?.[1]?.length ?? 0
+	let drawn = plain.replaceAll(COLLAPSIBLE, ' ').replace(/^ /u, '')
+	let width = /^[\u00A0 ]*/u.exec(drawn)?.[0].length ?? 0
 	let tidy = runs.map((run) => ({
 		...run,
-		text: run.text.replaceAll(/[\r\n]+/gu, ' ').replaceAll(/ {2,}/gu, ' '),
+		text: run.text.replaceAll('\u00A0', ' ').replaceAll(COLLAPSIBLE, ' '),
 	}))
 	return {width, runs: trimRuns(tidy)}
 }
