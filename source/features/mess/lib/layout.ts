@@ -1,5 +1,6 @@
 import type {Block, MessStory, StoryLayout} from '../types'
 import {parseCrossword} from './crossword'
+import {parseFeature} from './feature'
 import {parseHoroscopes} from './horoscopes'
 import {parsePlaylist} from './playlist'
 import {parsePoem} from './poem'
@@ -50,6 +51,11 @@ export function chooseLayout(input: LayoutInput): {layout: StoryLayout; blocks: 
 		case 'Playlist': {
 			let {spotify, blocks} = parsePlaylist(input.html, input.blocks)
 			return {layout: {kind: 'playlist', spotify}, blocks}
+		}
+		case 'Photo':
+		case 'Short Story': {
+			let {images, blocks} = parseFeature(input.photo, input.blocks)
+			return {layout: {kind: 'feature', images}, blocks}
 		}
 		default:
 			return {layout: {kind: 'article'}, blocks: input.blocks}

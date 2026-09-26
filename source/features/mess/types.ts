@@ -19,6 +19,9 @@ export type MessCategory = {id: number; name: string; parent: number}
 
 export type Photo = {url: string; width: number; height: number}
 
+/** A photo with the caption or credit printed under it. */
+export type CaptionedPhoto = Photo & {caption: string}
+
 /** One `staff_name` term on a story. */
 export type Byline = {id: number; name: string}
 
@@ -37,7 +40,7 @@ export type MessStory = {
 	featured: boolean
 	bylines: Byline[]
 	/** Null when there is no photo, or the photo is the Mess logo */
-	photo: (Photo & {caption: string}) | null
+	photo: CaptionedPhoto | null
 	blocks: Block[]
 	/** Which template draws the story */
 	layout: StoryLayout
@@ -88,3 +91,4 @@ export type StoryLayout =
 	| {kind: 'crossword'; puzzle: CrosswordPuzzle}
 	| {kind: 'playlist'; spotify: SpotifyRef | null}
 	| {kind: 'recipe'; intro: Block[]; sections: RecipeSection[]; after: Block[]}
+	| {kind: 'feature'; images: CaptionedPhoto[]}
