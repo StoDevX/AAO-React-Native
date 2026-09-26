@@ -143,4 +143,26 @@ class ModuleNewsTests: UITestCase {
 		news.openFirstStory()
 			.verifyPlaylistOffered()
 	}
+	/// Reads live data: the newest Recipes post has to have an ingredient section.
+	func testRecipeTicksAnIngredient() throws {
+		let news = NewsScreen(app: app, tile: TestIdentifiers.Buttons.olafMessenger, title: "The Olaf Messenger")
+			.navigate()
+		MessFilter(app: app)
+			.choose(column: TestIdentifiers.News.recipesColumn, in: TestIdentifiers.News.varietySection)
+		news.openFirstStory()
+			.tickFirstIngredient()
+	}
+
+	/// Reads live data: the newest Photo post has to have a picture.
+	func testPhotoOpensTheZoomViewer() throws {
+		let news = NewsScreen(app: app, tile: TestIdentifiers.Buttons.olafMessenger, title: "The Olaf Messenger")
+			.navigate()
+		MessFilter(app: app)
+			.choose(column: TestIdentifiers.News.photoColumn, in: TestIdentifiers.News.varietySection)
+		news.openFirstStory()
+			.openImageViewer()
+			.verifyViewerShowsImage()
+			.closeImageViewer()
+	}
+
 }

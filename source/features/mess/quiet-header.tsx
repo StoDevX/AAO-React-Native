@@ -24,9 +24,9 @@ const TITLE = [
 const CREDIT = [font({textStyle: 'caption'}), foregroundStyle(faded), textSelection(true)]
 
 /**
- * The top of a poem: kicker, an italic title, and one light line of writers and
- * date. It leaves out the rules and the avatar, so the poem is the loudest thing
- * on the page.
+ * The top of a poem, photo or short story: kicker, an italic title, and one light
+ * line of writers and date. It leaves out the rules and the avatar, so the poem or
+ * picture is the loudest thing on the page.
  */
 export function QuietHeader({story}: {story: MessStory}): React.ReactNode {
 	return (

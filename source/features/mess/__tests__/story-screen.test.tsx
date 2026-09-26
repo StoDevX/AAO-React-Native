@@ -7,6 +7,7 @@ import {act, fireEvent, render, screen} from '@testing-library/react-native'
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query'
 import {openUrl} from '@frogpond/open-url'
 import {fetchManifest, fetchSourceBody, type Jrd} from '@frogpond/data-sources'
+import {useKeepAwake} from 'expo-keep-awake'
 import categories from './fixtures/categories.json'
 import posts from './fixtures/posts.json'
 
@@ -38,10 +39,13 @@ jest.mock(
 		require('react-native-safe-area-context/jest/mock').default,
 )
 const mockNavigate = jest.fn()
+/** Whether the story's screen is the one in front; a page pushed over it, or another tab, hides it. */
+let mockIsFocused = true
 jest.mock('expo-router', () => ({
 	// oxlint-disable-next-line typescript/no-require-imports
 	...(require('../../../testing/expo-router-mock') as object),
 	useRouter: () => ({navigate: mockNavigate}),
+	useIsFocused: () => mockIsFocused,
 }))
 jest.mock('@frogpond/open-url', () => ({openUrl: jest.fn()}))
 jest.mock('react-native-webview', () => {
@@ -186,6 +190,94 @@ const PAGE_PLAYLIST: MessStory = {
 	layout: {kind: 'playlist', spotify: null},
 }
 
+/** A Recipes post: an introduction, two ingredients, two steps sections that each count from one, and a closing line. */
+const RECIPE: MessStory = {
+	...STORY,
+	id: 36493,
+	title: 'Recipe: Lemon bars',
+	link: 'https://olafmessenger.com/36493/',
+	section: 'Variety',
+	column: 'Recipes',
+	layout: {
+		kind: 'recipe',
+		intro: [{type: 'paragraph', runs: [{text: 'We can all use a little sunshine.'}]}],
+		sections: [
+			{
+				label: 'Shortbread ingredients',
+				kind: 'ingredients',
+				items: [[{text: '½ tsp table salt'}], [{text: '4 large eggs'}]],
+			},
+			{
+				label: 'Instructions',
+				kind: 'steps',
+				items: [[{text: 'Preheat the oven.'}], [{text: 'Bake for 20 minutes.'}]],
+			},
+			{label: 'Icing instructions', kind: 'steps', items: [[{text: 'Whisk the sugar.'}]]},
+		],
+		after: [{type: 'paragraph', runs: [{text: 'Store in the fridge.'}]}],
+	},
+}
+
+const BEES = {url: 'https://olafmessenger.com/bees-1.jpg', width: 300, height: 200, caption: ''}
+const CUP = {
+	url: 'https://olafmessenger.com/bees-2.jpg',
+	width: 300,
+	height: 200,
+	caption: 'At the cup',
+}
+
+/** A Photo post: a set of two pictures and a line of words. */
+const PHOTO_SET: MessStory = {
+	...STORY,
+	id: 33129,
+	title: 'Bees drinking lemonade',
+	link: 'https://olafmessenger.com/33129/',
+	section: 'Variety',
+	column: 'Photo',
+	blocks: [{type: 'paragraph', runs: [{text: 'By Megan Lu on the Hill'}]}],
+	layout: {kind: 'feature', images: [BEES, CUP]},
+}
+
+/** A Photo post that lost its picture and has no words. */
+const EMPTY_PHOTO: MessStory = {
+	...STORY,
+	id: 28051,
+	title: 'Untitled',
+	link: 'https://olafmessenger.com/28051/',
+	section: 'Variety',
+	column: 'Photo',
+	blocks: [],
+	layout: {kind: 'feature', images: []},
+}
+
+const MICROFICTION_ART = {
+	url: 'https://olafmessenger.com/wp-content/uploads/2020/10/microfiction.jpg',
+	width: 2048,
+	height: 2048,
+}
+
+/** A Short Story in a series, with its featured picture. */
+const SHORT_STORY: MessStory = {
+	...STORY,
+	id: 28702,
+	title: 'Microfiction Corner: The Dummy',
+	link: 'https://olafmessenger.com/28702/',
+	section: 'Variety',
+	column: 'Short Story',
+	photo: {...MICROFICTION_ART, caption: 'Illustration by Kenzie Todd'},
+	blocks: [{type: 'paragraph', runs: [{text: 'She sat and watched as the leaves grew back.'}]}],
+	layout: {
+		kind: 'feature',
+		images: [{...MICROFICTION_ART, caption: 'Illustration by Kenzie Todd'}],
+	},
+}
+
+const NEXT_EPISODE: MessStory = {
+	...SHORT_STORY,
+	id: 28117,
+	title: 'Microfiction corner: Quarters for Flowers',
+}
+
 const PLAYLIST_PAGE = readFileSync(join(__dirname, 'fixtures/playlist-page-36532.html'), 'utf8')
 
 const PROFILE: StaffProfile = {
@@ -200,6 +292,7 @@ let queryClient: QueryClient
 let openInIOS: jest.Spied<typeof Linking.openURL>
 
 beforeEach(() => {
+	mockIsFocused = true
 	queryClient = new QueryClient({defaultOptions: {queries: {staleTime: Infinity, retry: false}}})
 	queryClient.setQueryData(messKeys.feed, [
 		STORY,
@@ -210,6 +303,10 @@ beforeEach(() => {
 		CROSSWORD,
 		PLAYLIST,
 		PAGE_PLAYLIST,
+		RECIPE,
+		PHOTO_SET,
+		EMPTY_PHOTO,
+		SHORT_STORY,
 	])
 	openInIOS = jest.spyOn(Linking, 'openURL').mockResolvedValue(true)
 	useMessStore.setState({lastSign: null})
@@ -474,7 +571,7 @@ describe('StoryScreen', () => {
 		expect(screen.getByText('A room in Oklahoma')).toBeTruthy()
 		expect(screen.getByText('Variety · Poetry')).toBeTruthy()
 		expect(screen.getByText('Ashlyn Wuench and Kenzie Nguyen · April 29, 2026')).toBeTruthy()
-		expect(screen.queryByText(/^By /u)).toBeNull()
+		expect(screen.queryByText(/^By Ashlyn/u)).toBeNull()
 	})
 
 	test("draws a poem's lines, each once, rather than its paragraphs", async () => {
@@ -574,5 +671,176 @@ describe('StoryScreen', () => {
 			await screen.findByRole('button', {name: 'Open on the Mess'}, {timeout: 3000}),
 		).toBeTruthy()
 		expect(screen.queryByLabelText('Loading')).toBeNull()
+	})
+
+	test('draws a recipe as its introduction, labelled sections of rows, and what follows', async () => {
+		await renderStory(36493)
+
+		expect(screen.getByText('We can all use')).toBeTruthy()
+		expect(screen.getByText('Shortbread ingredients')).toBeTruthy()
+		expect(screen.getByRole('button', {name: '½ tsp table salt', selected: false})).toBeTruthy()
+		expect(
+			screen.getByRole('button', {name: 'Step 1, Preheat the oven.', selected: false}),
+		).toBeTruthy()
+		// VoiceOver reads a step's number before its text; an ingredient has none.
+		expect(screen.getByRole('button', {name: 'Step 2, Bake for 20 minutes.'})).toBeTruthy()
+		expect(screen.getByText('Store in the fridge\\.')).toBeTruthy()
+		// Each steps section counts from one.
+		expect(screen.getAllByText('1')).toHaveLength(2)
+		expect(screen.getAllByText('2')).toHaveLength(1)
+	})
+
+	test('ticks an ingredient and a step, and unticks one tapped again', async () => {
+		await renderStory(36493)
+
+		await fireEvent.press(screen.getByRole('button', {name: '½ tsp table salt'}))
+		await fireEvent.press(screen.getByRole('button', {name: 'Step 1, Preheat the oven.'}))
+
+		expect(screen.getByRole('button', {name: '½ tsp table salt', selected: true})).toBeTruthy()
+		expect(
+			screen.getByRole('button', {name: 'Step 1, Preheat the oven.', selected: true}),
+		).toBeTruthy()
+		expect(screen.getByRole('button', {name: '4 large eggs', selected: false})).toBeTruthy()
+		// A ticked step's number gives way to a check.
+		expect(screen.getAllByText('1')).toHaveLength(1)
+
+		await fireEvent.press(screen.getByRole('button', {name: '½ tsp table salt'}))
+		expect(screen.getByRole('button', {name: '½ tsp table salt', selected: false})).toBeTruthy()
+	})
+
+	test('ticks a step without ticking the row in the same place in another section', async () => {
+		await renderStory(36493)
+
+		await fireEvent.press(screen.getByRole('button', {name: 'Step 1, Preheat the oven.'}))
+
+		expect(
+			screen.getByRole('button', {name: 'Step 1, Whisk the sugar.', selected: false}),
+		).toBeTruthy()
+		expect(screen.getByRole('button', {name: '½ tsp table salt', selected: false})).toBeTruthy()
+	})
+
+	test('forgets the ticks when the page is left', async () => {
+		let first = await renderStory(36493)
+		await fireEvent.press(screen.getByRole('button', {name: '½ tsp table salt'}))
+		await first.unmount()
+
+		await renderStory(36493)
+
+		expect(screen.getByRole('button', {name: '½ tsp table salt', selected: false})).toBeTruthy()
+	})
+
+	test('keeps the screen awake on a recipe page, and not on an article', async () => {
+		let article = await renderStory(36911)
+		expect(useKeepAwake).not.toHaveBeenCalled()
+		await article.unmount()
+
+		await renderStory(36493)
+
+		expect(useKeepAwake).toHaveBeenCalled()
+	})
+
+	test('lets the screen sleep while a recipe page is covered by another', async () => {
+		mockIsFocused = false
+		await renderStory(36493)
+
+		expect(screen.getByText('Shortbread ingredients')).toBeTruthy()
+		expect(useKeepAwake).not.toHaveBeenCalled()
+	})
+
+	test('sets a feature page under the quiet header: title, then writers and date on one line', async () => {
+		await renderStory(33129)
+
+		expect(screen.getByText('Ashlyn Wuench and Kenzie Nguyen · April 29, 2026')).toBeTruthy()
+		expect(screen.queryByText(/^By Ashlyn/u)).toBeNull()
+	})
+
+	test("draws a Photo post's pictures, captioned, each opening the viewer at itself", async () => {
+		await renderStory(33129)
+
+		expect(screen.getByText('At the cup')).toBeTruthy()
+		expect(
+			screen.getByRole('button', {
+				name: 'Bees drinking lemonade, by Ashlyn Wuench and Kenzie Nguyen, picture 1 of 2',
+			}),
+		).toBeTruthy()
+		await fireEvent.press(
+			screen.getByRole('button', {
+				name: 'Bees drinking lemonade, by Ashlyn Wuench and Kenzie Nguyen, picture 2 of 2',
+			}),
+		)
+
+		expect(mockNavigate).toHaveBeenCalledWith({
+			pathname: '/Messenger/image',
+			params: {id: '33129', index: '1'},
+		})
+	})
+
+	// The type itself is checked by eye; Jest sees which branch set the words.
+	test("sets a Photo post's words as a caption, with no small-caps opening", async () => {
+		await renderStory(33129)
+
+		expect(screen.getByText('By Megan Lu on the Hill')).toBeTruthy()
+		expect(screen.queryByText('By Megan Lu on')).toBeNull()
+	})
+
+	test('sets a Short Story as prose opening in small caps, then its series', async () => {
+		queryClient.setQueryData(messKeys.series(SHORT_STORY.id), {
+			title: 'More Microfiction Corner',
+			stories: [NEXT_EPISODE],
+		})
+		await renderStory(28702)
+
+		expect(screen.getByText('Illustration by Kenzie Todd')).toBeTruthy()
+		expect(screen.getByText('She sat and watched')).toBeTruthy()
+		expect(screen.getByText(' as the leaves grew back\\.')).toBeTruthy()
+		expect(screen.getByText('More Microfiction Corner')).toBeTruthy()
+		expect(
+			screen.getByRole('button', {name: 'Microfiction corner: Quarters for Flowers'}),
+		).toBeTruthy()
+	})
+
+	test('leaves the series row off a Photo post', async () => {
+		queryClient.setQueryData(messKeys.series(PHOTO_SET.id), {
+			title: 'More by Ashlyn Wuench',
+			stories: [{...PHOTO_SET, id: 5, title: 'Another photo'}],
+		})
+		await renderStory(33129)
+
+		expect(screen.queryByText('More by Ashlyn Wuench')).toBeNull()
+	})
+
+	test('does not keep the screen awake on a feature page', async () => {
+		await renderStory(33129)
+		expect(useKeepAwake).not.toHaveBeenCalled()
+	})
+
+	test('sends a Photo post with neither picture nor words to olafmessenger.com', async () => {
+		await renderStory(28051)
+
+		await fireEvent.press(screen.getByText('Read on olafmessenger.com'))
+
+		expect(openUrl).toHaveBeenCalledWith('https://olafmessenger.com/28051/')
+	})
+
+	test('offers no site link on a Photo post that has its pictures', async () => {
+		await renderStory(33129)
+		expect(screen.queryByText('Read on olafmessenger.com')).toBeNull()
+	})
+
+	test("lists a short story's series as titles, with no thumbnails", async () => {
+		queryClient.setQueryData(messKeys.series(SHORT_STORY.id), {
+			title: 'More Microfiction Corner',
+			stories: [NEXT_EPISODE],
+		})
+		await renderStory(28702)
+
+		expect(
+			screen.getByRole('button', {name: 'Microfiction corner: Quarters for Flowers'}),
+		).toBeTruthy()
+		// The page draws its own picture; the next episode's copy of the same banner is not drawn.
+		let uris = hostProps(screen.toJSON() as Node | Node[] | null, 'Image').map(
+			(props) => (props.source as {uri?: string} | undefined)?.uri,
+		)
+		expect(uris.filter((uri) => uri === MICROFICTION_ART.url)).toHaveLength(1)
 	})
 })

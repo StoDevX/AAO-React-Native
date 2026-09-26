@@ -30,10 +30,30 @@ export function creditLine(story: Pick<MessStory, 'bylines' | 'published'>): str
 	return names ? `${names} · ${date}` : date
 }
 
-/** What VoiceOver reads for a comic or artwork, which comes with no alt text: "Title, by A". */
-export function imageLabel(story: Pick<MessStory, 'title' | 'bylines'>): string {
+/** Where a picture sits in a set: its place from zero, and how many there are. */
+export type PicturePlace = {index: number; count: number}
+
+/**
+ * What VoiceOver reads for a picture, which comes with no alt text: "Title, by A", and for
+ * one of a set, "Title, by A, picture 2 of 3", so each picture reads apart.
+ */
+export function imageLabel(
+	story: Pick<MessStory, 'title' | 'bylines'>,
+	place?: PicturePlace,
+): string {
 	let names = writerNames(story.bylines)
-	return names ? `${story.title}, by ${names}` : story.title
+	let label = names ? `${story.title}, by ${names}` : story.title
+	if (!place || place.count < 2) return label
+	return `${label}, picture ${place.index + 1} of ${place.count}`
+}
+
+/** A picture's place in a feature page's set, or none for a comic's or artwork's one picture. */
+export function picturePlace(
+	story: Pick<MessStory, 'layout'>,
+	index: number | undefined,
+): PicturePlace | undefined {
+	if (index === undefined || story.layout.kind !== 'feature') return undefined
+	return {index, count: story.layout.images.length}
 }
 
 /** The Mess's own short name for a section, where it uses one. */

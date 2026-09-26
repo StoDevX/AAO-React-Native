@@ -19,6 +19,9 @@ export type MessCategory = {id: number; name: string; parent: number}
 
 export type Photo = {url: string; width: number; height: number}
 
+/** A photo with the caption or credit printed under it. */
+export type CaptionedPhoto = Photo & {caption: string}
+
 /** One `staff_name` term on a story. */
 export type Byline = {id: number; name: string}
 
@@ -37,7 +40,7 @@ export type MessStory = {
 	featured: boolean
 	bylines: Byline[]
 	/** Null when there is no photo, or the photo is the Mess logo */
-	photo: (Photo & {caption: string}) | null
+	photo: CaptionedPhoto | null
 	blocks: Block[]
 	/** Which template draws the story */
 	layout: StoryLayout
@@ -70,6 +73,9 @@ export type ZodiacSign =
 /** One line of a poem: its runs, and how many levels the poet indented it. */
 export type PoemLine = {indent: number; runs: Run[]}
 
+/** One labelled part of a recipe: what goes in, or what to do, one item per ingredient or step. */
+export type RecipeSection = {label: string; kind: 'ingredients' | 'steps'; items: Run[][]}
+
 /** A Spotify playlist, album or track, by Spotify's base-62 id. */
 export type SpotifyRef = {kind: 'playlist' | 'album' | 'track'; id: string}
 
@@ -84,3 +90,5 @@ export type StoryLayout =
 	| {kind: 'poem'; stanzas: PoemLine[][]}
 	| {kind: 'crossword'; puzzle: CrosswordPuzzle}
 	| {kind: 'playlist'; spotify: SpotifyRef | null}
+	| {kind: 'recipe'; intro: Block[]; sections: RecipeSection[]; after: Block[]}
+	| {kind: 'feature'; images: CaptionedPhoto[]}

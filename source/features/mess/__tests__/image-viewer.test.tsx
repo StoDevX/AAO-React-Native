@@ -56,11 +56,37 @@ const COMIC: MessStory = {
 
 const ARTICLE: MessStory = {...COMIC, id: 36911, title: 'An article', layout: {kind: 'article'}}
 
+const BEES = {url: 'https://olafmessenger.com/bees-1.jpg', width: 300, height: 200, caption: ''}
+const CUP = {
+	url: 'https://olafmessenger.com/bees-2.jpg',
+	width: 300,
+	height: 200,
+	caption: 'At the cup',
+}
+
+/** A Photo post's set of two pictures. */
+const PHOTO_SET: MessStory = {
+	...COMIC,
+	id: 33129,
+	title: 'Bees drinking lemonade',
+	column: 'Photo',
+	layout: {kind: 'feature', images: [BEES, CUP]},
+}
+
+/** A Photo post that lost its picture. */
+const NO_PICTURE: MessStory = {
+	...COMIC,
+	id: 28051,
+	title: 'Untitled',
+	column: 'Photo',
+	layout: {kind: 'feature', images: []},
+}
+
 let queryClient: QueryClient
 
 beforeEach(() => {
 	queryClient = new QueryClient({defaultOptions: {queries: {staleTime: Infinity, retry: false}}})
-	queryClient.setQueryData(messKeys.feed, [COMIC, ARTICLE])
+	queryClient.setQueryData(messKeys.feed, [COMIC, ARTICLE, PHOTO_SET, NO_PICTURE])
 })
 
 afterEach(() => {
@@ -71,15 +97,45 @@ afterEach(() => {
 	jest.clearAllMocks()
 })
 
-function renderViewer(id: number) {
+function renderViewer(id: number, index?: number) {
 	return render(
 		<QueryClientProvider client={queryClient}>
-			<ImageViewer id={id} />
+			<ImageViewer id={id} index={index} />
 		</QueryClientProvider>,
 	)
 }
 
 describe('ImageViewer', () => {
+	test('shows the picture of a feature page that was tapped', async () => {
+		await renderViewer(33129, 1)
+		expect(screen.getByTestId('mess-image-viewer-image').props.source).toStrictEqual({uri: CUP.url})
+	})
+
+	test("shows a feature page's first picture when given no index", async () => {
+		await renderViewer(33129)
+		expect(screen.getByTestId('mess-image-viewer-image').props.source).toStrictEqual({
+			uri: BEES.url,
+		})
+	})
+
+	test('says the image is unavailable for an index with no picture, and can still close', async () => {
+		await renderViewer(33129, 2)
+
+		expect(screen.getByText('Image unavailable')).toBeTruthy()
+		await fireEvent.press(screen.getByRole('button', {name: 'Close'}))
+		expect(mockGoBack).toHaveBeenCalledTimes(1)
+	})
+
+	test('says the image is unavailable for an index that is not a number', async () => {
+		await renderViewer(33129, Number('first'))
+		expect(screen.getByText('Image unavailable')).toBeTruthy()
+	})
+
+	test('says the image is unavailable for a feature page with no pictures', async () => {
+		await renderViewer(28051)
+		expect(screen.getByText('Image unavailable')).toBeTruthy()
+	})
+
 	test("shows the story's image, named by its title and writer", async () => {
 		await renderViewer(36819)
 
