@@ -28,9 +28,10 @@ import {
 } from './lib'
 import type {BuildingType, NamedBuildingScheduleType} from './types'
 
-/// An accent bar's width, and the gap between it and the text beside it.
+/// An accent bar's width, and the gap between it and the text beside it:
+/// the bar sits centred in the side margin.
 const BAR_WIDTH = 4
-const BAR_GAP = 8
+const BAR_GAP = (CARD_INSET - BAR_WIDTH) / 2
 
 /// A row with an accent bar: a Details row whose bar hangs in the side
 /// margin, so its text lines up with the headings and notes above and below.
