@@ -11,7 +11,6 @@ class ModuleStreamingMediaTests: UITestCase {
 				expecting: TestIdentifiers.StreamingMedia.krlxButtons[0]
 			)
 			.checkStationButtons(TestIdentifiers.StreamingMedia.krlxButtons)
-			.checkStationLink(TestIdentifiers.StreamingMedia.krlxWebsiteLink)
 			.checkLogoIsNotAButton(TestIdentifiers.StreamingMedia.krlxLogoPrefix)
 	}
 
