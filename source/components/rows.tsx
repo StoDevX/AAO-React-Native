@@ -321,8 +321,6 @@ type DetailRowProps = {
 	onPress?: () => void
 	/** Where tapping the row goes. Defaults to a push. Ignored without `onPress`. */
 	destination?: RowDestination
-	/** Sets the label in semibold, for the one row a reader should see first. */
-	emphasized?: boolean
 }
 
 /**
@@ -333,7 +331,7 @@ type DetailRowProps = {
  * row in the list and follow the platform's own emphasis rather than ours.
  */
 export function DetailRow(props: DetailRowProps): React.ReactNode {
-	let {label, value, valueLines, onPress, destination = 'push', emphasized = false} = props
+	let {label, value, valueLines, onPress, destination = 'push'} = props
 
 	// An action has no accessory, so the tint is its only sign of being
 	// tappable. A push or external value already has its glyph, and a tinted
@@ -341,15 +339,7 @@ export function DetailRow(props: DetailRowProps): React.ReactNode {
 	let valueTint = onPress && destination === 'action' ? c.systemBlue : c.secondaryLabel
 
 	let content = (
-		<LabeledContent
-			label={
-				emphasized ? (
-					<Text modifiers={[font({textStyle: 'body', weight: 'semibold'})]}>{label}</Text>
-				) : (
-					label
-				)
-			}
-		>
+		<LabeledContent label={label}>
 			<HStack spacing={6}>
 				<Text
 					modifiers={[foregroundStyle(valueTint), ...(valueLines ? [lineLimit(valueLines)] : [])]}
