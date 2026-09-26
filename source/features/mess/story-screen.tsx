@@ -4,8 +4,10 @@ import {Stack} from 'expo-router'
 import {Divider, Host, LazyVStack, ScrollView} from '@expo/ui/swift-ui'
 import {background, padding} from '@expo/ui/swift-ui/modifiers'
 import {LoadingView, NoticeView} from '@frogpond/notice'
+import {openUrl} from '@frogpond/open-url'
 import {useQuery} from '@tanstack/react-query'
 import {useSafeAreaInsets} from 'react-native-safe-area-context'
+import {openURLAction} from '../../lib/open-url-action'
 import {AuthorCard} from './author-card'
 import {paper} from './palette'
 import {messFeedOptions} from './query'
@@ -14,7 +16,8 @@ import {StoryHeader} from './story-header'
 import type {MessStory} from './types'
 
 const COLUMN_MARGIN = 20
-const PAGE = [background(paper)]
+/** The paper, and a link in the story's text opening where the reader's link setting says. */
+const PAGE = [background(paper), openURLAction(openUrl)]
 const COLUMN = [padding({horizontal: COLUMN_MARGIN, vertical: 16})]
 
 type Props = {id: number}

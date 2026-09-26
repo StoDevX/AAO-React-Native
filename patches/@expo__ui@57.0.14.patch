@@ -112,7 +112,7 @@ index 2b9e034d0c6aff0255d44c36de08733ffca5e892..9f6733772e31741e848cfc70b970c5a2
 +  }
  }
 diff --git a/ios/Modifiers/ViewModifierRegistry.swift b/ios/Modifiers/ViewModifierRegistry.swift
-index 8c426dffff1df73809436999f23a6155b0a72ef8..d46585fb204a0a923fdb4f2eea88242f8114bfad 100644
+index 8c426dffff1df73809436999f23a6155b0a72ef8..b139aab97e2724039db0f18f585274500a91b43e 100644
 --- a/ios/Modifiers/ViewModifierRegistry.swift
 +++ b/ios/Modifiers/ViewModifierRegistry.swift
 @@ -43,6 +43,22 @@ internal struct CornerRadiusModifier: ViewModifier, Record {
@@ -138,7 +138,35 @@ index 8c426dffff1df73809436999f23a6155b0a72ef8..d46585fb204a0a923fdb4f2eea88242f
  internal struct ShadowModifier: ViewModifier, Record {
    @Field var color: Color = .white
    @Field var radius: CGFloat = 0
-@@ -1157,6 +1173,23 @@ internal enum TextLinePattern: String, Enumerable {
+@@ -513,6 +529,27 @@ internal struct OnAppearModifier: ViewModifier, Record {
+   }
+ }
+ 
++/// Sends a tapped link in the text below this view to JavaScript, instead of
++/// letting SwiftUI's default action open it in Safari, so the app can choose
++/// where the link opens.
++internal struct OpenURLActionModifier: ViewModifier, Record {
++  var eventDispatcher: EventDispatcher?
++
++  init() {}
++
++  init(from params: Dict, appContext: AppContext, eventDispatcher: EventDispatcher) throws {
++    try self = .init(from: params, appContext: appContext)
++    self.eventDispatcher = eventDispatcher
++  }
++
++  func body(content: Content) -> some View {
++    content.environment(\.openURL, OpenURLAction { url in
++      eventDispatcher?(["openURLAction": ["url": url.absoluteString]])
++      return .handled
++    })
++  }
++}
++
+ internal struct OnDisappearModifier: ViewModifier, Record {
+   var eventDispatcher: EventDispatcher?
+ 
+@@ -1157,6 +1194,23 @@ internal enum TextLinePattern: String, Enumerable {
    case dashDotDot
  }
  
@@ -162,7 +190,7 @@ index 8c426dffff1df73809436999f23a6155b0a72ef8..d46585fb204a0a923fdb4f2eea88242f
  internal struct TextUnderLine: ViewModifier, Record {
    @Field var isActive: Bool = false
    @Field var pattern: TextLinePattern = .solid
-@@ -1599,6 +1632,18 @@ public class ViewModifierRegistry {
+@@ -1599,6 +1653,18 @@ public class ViewModifierRegistry {
            return text.foregroundColor(color)
        } 
        return text
@@ -181,10 +209,14 @@ index 8c426dffff1df73809436999f23a6155b0a72ef8..d46585fb204a0a923fdb4f2eea88242f
      default:
        #if DEBUG
        return Text(" ['\(type)' not supported for nested Text]").foregroundColor(.red)
-@@ -2306,6 +2351,10 @@ extension ViewModifierRegistry {
+@@ -2306,6 +2372,14 @@ extension ViewModifierRegistry {
        return try ListStyleModifier(from: params, appContext: appContext)
      }
  
++    register("openURLAction") { params, appContext, eventDispatcher in
++      return try OpenURLActionModifier(from: params, appContext: appContext, eventDispatcher: eventDispatcher)
++    }
++
 +    register("sectionIndexLabel") { params, appContext, _ in
 +      return try SectionIndexLabelModifier(from: params, appContext: appContext)
 +    }
