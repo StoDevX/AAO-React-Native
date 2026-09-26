@@ -86,10 +86,10 @@ index 4eed0f19fede0f28af6e8b74507805927acf004e..231004c9640e3850be7e7722cd1f4753
      ExpoUIView(BackgroundView.self)
 diff --git a/ios/HangingTextView.swift b/ios/HangingTextView.swift
 new file mode 100644
-index 0000000000000000000000000000000000000000..be85cdf81df97d3e426e3f5086fb6ae124290743
+index 0000000000000000000000000000000000000000..2c04f3920f054dfca5fc76d612c1c5249bfca635
 --- /dev/null
 +++ b/ios/HangingTextView.swift
-@@ -0,0 +1,135 @@
+@@ -0,0 +1,163 @@
 +// A line of text whose wrapped continuation lines sit further in than its first
 +// line -- a hanging indent. SwiftUI's `Text` has no paragraph style, so this
 +// draws through a read-only UITextView with an NSParagraphStyle instead, which
@@ -200,8 +200,13 @@ index 0000000000000000000000000000000000000000..be85cdf81df97d3e426e3f5086fb6ae1
 +  let text: NSAttributedString
 +  let linkColor: UIColor
 +
++  func makeCoordinator() -> Coordinator {
++    Coordinator()
++  }
++
 +  func makeUIView(context: Context) -> UITextView {
 +    let view = UITextView()
++    view.delegate = context.coordinator
 +    view.isEditable = false
 +    view.isScrollEnabled = false
 +    view.backgroundColor = .clear
@@ -215,6 +220,7 @@ index 0000000000000000000000000000000000000000..be85cdf81df97d3e426e3f5086fb6ae1
 +  }
 +
 +  func updateUIView(_ view: UITextView, context: Context) {
++    context.coordinator.openURL = context.environment.openURL
 +    view.linkTextAttributes = [.foregroundColor: linkColor]
 +    view.attributedText = text
 +  }
@@ -223,6 +229,28 @@ index 0000000000000000000000000000000000000000..be85cdf81df97d3e426e3f5086fb6ae1
 +    let width = proposal.width ?? .greatestFiniteMagnitude
 +    let fitted = view.sizeThatFits(CGSize(width: width, height: .greatestFiniteMagnitude))
 +    return CGSize(width: min(width, ceil(fitted.width)), height: ceil(fitted.height))
++  }
++
++  /// Sends a tapped web link to SwiftUI's `openURL` action, as a SwiftUI `Text` link goes, so an
++  /// `openURLAction` modifier above this view decides where it opens. A UITextView otherwise
++  /// opens its links itself, in Safari. Any other scheme, such as `mailto:`, keeps the text
++  /// view's own action.
++  final class Coordinator: NSObject, UITextViewDelegate {
++    var openURL: OpenURLAction?
++
++    // The pod builds for older iOS than the app, which targets 27.0, so the app always has this.
++    @available(iOS 17.0, *)
++    func textView(
++      _ textView: UITextView,
++      primaryActionFor textItem: UITextItem,
++      defaultAction: UIAction
++    ) -> UIAction? {
++      guard case .link(let url) = textItem.content,
++            let scheme = url.scheme?.lowercased(), scheme == "http" || scheme == "https",
++            let openURL
++      else { return defaultAction }
++      return UIAction { _ in openURL(url) }
++    }
 +  }
 +}
 diff --git a/ios/Modifiers/FontModifier.swift b/ios/Modifiers/FontModifier.swift
