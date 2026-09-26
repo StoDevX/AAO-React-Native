@@ -1,5 +1,5 @@
 import * as React from 'react'
-import type {ColorValue} from 'react-native'
+import {useWindowDimensions, type ColorValue} from 'react-native'
 import {HStack, LabeledContent, Section, Text, VStack} from '@expo/ui/swift-ui'
 import {
 	accessibilityElement,
@@ -19,6 +19,7 @@ import type {Moment} from 'moment-timezone'
 import {CARD_INSET, ROW_PADDING} from '../../components/place-card/card-style'
 import {SectionHeading} from '../../components/place-card/section-heading'
 import {
+	accentBarWidth,
 	contextualStatus,
 	formatBuildingTimes,
 	getAccentBackgroundColor,
@@ -28,26 +29,6 @@ import {
 	hasDisplayableHours,
 } from './lib'
 import type {BuildingType, NamedBuildingScheduleType} from './types'
-
-/// An accent bar's width, and the gap between it and the text beside it:
-/// the bar sits centred in the side margin.
-const BAR_WIDTH = 4
-const BAR_GAP = (CARD_INSET - BAR_WIDTH) / 2
-
-/// A row with an accent bar: a Details row whose bar hangs in the side
-/// margin, so its text lines up with the headings and notes above and below.
-const BAR_ROW = [
-	listRowBackground('clear'),
-	listRowInsets({
-		top: ROW_PADDING,
-		leading: CARD_INSET - BAR_WIDTH - BAR_GAP,
-		bottom: ROW_PADDING,
-		trailing: CARD_INSET,
-	}),
-]
-
-/// The last row of a section has no hairline under it, as in Maps.
-const LAST_BAR_ROW = [...BAR_ROW, listRowSeparator('hidden', 'bottom')]
 
 /// A note sits under its block's rows, in grey, with nothing drawn round it.
 const NOTE_ROW = [
@@ -130,7 +111,7 @@ function StatusRow({venue, now, accent}: Props & {accent: ColorValue}): React.Re
 		<HoursRow
 			bar={accent}
 			label={contextualStatus(venue, now).long}
-			modifiers={[...BAR_ROW, accessibilityIdentifier(HOURS_STATUS_ID)]}
+			identifier={HOURS_STATUS_ID}
 			times={today ? [today] : []}
 			weight="semibold"
 		/>
@@ -158,7 +139,7 @@ function WeekRows({
 				key={group.entries[0].sourceIndex}
 				bar={current ? accent : null}
 				label={group.label}
-				modifiers={last ? LAST_BAR_ROW : BAR_ROW}
+				last={last}
 				times={group.entries.map((entry) => formatBuildingTimes(entry.schedule, now))}
 				weight={current ? 'semibold' : 'regular'}
 			/>
@@ -188,19 +169,35 @@ function todaysHours(blocks: Array<NamedBuildingScheduleType>, now: Moment): str
 
 /// A label beside its times, which stack under it at accessibility text sizes,
 /// where two columns leave each too narrow to read -- as Details does.
+///
+/// A Details row whose accent bar hangs centred in the side margin, so its
+/// text lines up with the headings and notes above and below. The bar widens
+/// with the text, and the gaps either side of it give way.
 function HoursRow({
 	bar,
 	label,
 	times,
 	weight,
-	modifiers,
+	last = false,
+	identifier,
 }: {
 	bar: ColorValue | null
 	label: string
 	times: Array<string>
 	weight: 'regular' | 'semibold'
-	modifiers: ModifierConfig[]
+	/// The last row of a section has no hairline under it, as in Maps.
+	last?: boolean
+	identifier?: string
 }): React.ReactNode {
+	let barWidth = accentBarWidth(useWindowDimensions().fontScale)
+	let gap = (CARD_INSET - barWidth) / 2
+	let row: ModifierConfig[] = [
+		listRowBackground('clear'),
+		listRowInsets({top: ROW_PADDING, leading: gap, bottom: ROW_PADDING, trailing: CARD_INSET}),
+		...(last ? [listRowSeparator('hidden', 'bottom')] : []),
+		...(identifier ? [accessibilityIdentifier(identifier)] : []),
+		accessibilityElement('combine'),
+	]
 	let text = [
 		font({textStyle: 'body', weight}),
 		foregroundStyle({type: 'hierarchical', style: 'primary'}),
@@ -208,12 +205,8 @@ function HoursRow({
 	// The bar stands beside the whole row, outside LabeledContent, so the times
 	// line up under the label when they stack.
 	return (
-		<HStack
-			alignment="top"
-			modifiers={[...modifiers, accessibilityElement('combine')]}
-			spacing={BAR_GAP}
-		>
-			<AccentBar color={bar} />
+		<HStack alignment="top" modifiers={row} spacing={gap}>
+			<AccentBar color={bar} width={barWidth} />
 			<LabeledContent label={<Text modifiers={text}>{label}</Text>}>
 				<VStack alignment="trailing" spacing={2}>
 					{times.map((time) => (
@@ -229,11 +222,11 @@ function HoursRow({
 
 /// A thin capsule in a status's colour. With no colour it still takes its
 /// width, so every row's label starts at the same place.
-function AccentBar({color}: {color: ColorValue | null}): React.ReactNode {
+function AccentBar({color, width}: {color: ColorValue | null; width: number}): React.ReactNode {
 	return (
 		<VStack
 			modifiers={[
-				frame({minWidth: BAR_WIDTH, maxWidth: BAR_WIDTH, maxHeight: Infinity}),
+				frame({minWidth: width, maxWidth: width, maxHeight: Infinity}),
 				...(color ? [background(color), clipShape('capsule')] : []),
 			]}
 		>
