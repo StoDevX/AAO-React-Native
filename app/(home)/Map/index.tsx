@@ -324,6 +324,7 @@ export default function MapPage(): React.ReactNode {
 						{selectedBuildingId ? (
 							<BuildingInfo
 								building={selectedBuilding}
+								campus={campus}
 								onClose={() => setSelectedBuildingId(null)}
 								stop={sheet.current}
 							/>

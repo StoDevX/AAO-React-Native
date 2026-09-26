@@ -20,8 +20,15 @@ import {
 	truncationMode,
 } from '@expo/ui/swift-ui/modifiers'
 import {PlaceCardHeader, PlaceCardScaffold} from '@frogpond/place-card-header'
+import {timezone} from '@frogpond/constants'
+import {useMomentTimer} from '@frogpond/timer'
+import {useQuery} from '@tanstack/react-query'
 
 import {FILL_WIDTH} from '../../components/tile-layout'
+import {HoursSection} from '../building-hours/hours-section'
+import {ownHours} from '../building-hours/lib'
+import {buildingsOptions} from '../building-hours/query'
+import type {Campus} from '../building-hours/types'
 import {AboutSection} from './card/about-section'
 import {ActionsRow} from './card/actions-row'
 import {DetailsSection} from './card/details-section'
@@ -74,6 +81,8 @@ const CARD_BIG_SUBTITLE_ID = 'card-big-subtitle'
 
 type Props = {
 	building: Feature<Building> | undefined
+	/// Whose Hours to look the building up in.
+	campus: Campus
 	onClose: () => void
 	/// Which stop the sheet is at: large lays the name out differently, and only the other two let a long one move.
 	stop: SheetDetent
@@ -81,7 +90,7 @@ type Props = {
 
 /// The info card's contents, as SwiftUI. The sheet that presents them belongs
 /// to the map screen, which swaps between this and the picker.
-export function BuildingInfo({building, onClose, stop}: Props): React.ReactNode {
+export function BuildingInfo({building, campus, onClose, stop}: Props): React.ReactNode {
 	if (!building) {
 		return (
 			<List>
@@ -94,16 +103,26 @@ export function BuildingInfo({building, onClose, stop}: Props): React.ReactNode 
 	}
 
 	// A new building starts over with its big title in view.
-	return <BuildingCard building={building} key={building.id} onClose={onClose} stop={stop} />
+	return (
+		<BuildingCard
+			building={building}
+			campus={campus}
+			key={building.id}
+			onClose={onClose}
+			stop={stop}
+		/>
+	)
 }
 
 /// A found building's card: the pinned header over the list of its details.
 function BuildingCard({
 	building,
+	campus,
 	onClose,
 	stop,
 }: {
 	building: Feature<Building>
+	campus: Campus
 	onClose: () => void
 	stop: SheetDetent
 }): React.ReactNode {
@@ -128,6 +147,11 @@ function BuildingCard({
 	let officeTiles = tiles.filter((tile) => tile.kind === 'office')
 
 	let subtitle = building.properties.type || null
+
+	// The Hours screen's own query, so the card reads its warm cache.
+	let {data: venues = []} = useQuery(buildingsOptions(campus))
+	let {now} = useMomentTimer({intervalMs: 60000, timezone: timezone()})
+	let hours = ownHours(venues, building)
 
 	return (
 		<PlaceCardScaffold large={large}>
@@ -227,6 +251,7 @@ function BuildingCard({
 					actions={cardActions({point: pointOf(building), walkingDirections: WALKING_DIRECTIONS})}
 				/>
 				<PhotoStrip name={name} photos={photos} />
+				{hours ? <HoursSection now={now} venue={hours} /> : null}
 				<AboutSection text={description} />
 				<GoodToKnowSection rows={goodToKnowRows(building.properties)} />
 				<PlacesSection id="departments" tiles={departmentTiles} title="Departments" />
