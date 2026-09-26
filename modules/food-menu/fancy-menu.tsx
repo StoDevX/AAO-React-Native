@@ -24,6 +24,7 @@ import {isClosedLabel} from './lib/closed'
 import {emptyMessage} from './lib/empty-message'
 import {mealHeaderMenu, type MealHeaderMenu} from './lib/meal-header'
 import {formatMealTimes} from './lib/meal-times'
+import {isFeatured} from './lib/is-featured'
 import {offerSpecials} from './lib/offer-specials'
 import type {
 	MasterCorIconMapType,
@@ -196,7 +197,13 @@ export function FancyMenu(props: Props): React.ReactNode {
 	// the user toggles something unrelated. What the answer is used for is
 	// `offerSpecials`' business.
 	const mealHasSpecials = useMemo(
-		() => stations.some((station) => station.items.some((id) => foodItems[id]?.special)),
+		() =>
+			stations.some((station) =>
+				station.items.some((id) => {
+					let item = foodItems[id]
+					return item !== undefined && isFeatured(item)
+				}),
+			),
 		[stations, foodItems],
 	)
 

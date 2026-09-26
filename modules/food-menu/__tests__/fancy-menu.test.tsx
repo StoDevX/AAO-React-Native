@@ -103,7 +103,6 @@ function item(id: string, label: string, stationName: string): MenuItemType {
 		sub_station: '',
 		sub_station_id: '',
 		sub_station_order: '',
-		tier3: false,
 		zero_entree: '',
 	}
 }
@@ -194,6 +193,34 @@ describe('FancyMenu', () => {
 		await fireEvent.press(screen.getByTestId('choose-dinner'))
 		expect(screen.getByText('Prime Rib')).toBeTruthy()
 		expect(screen.queryByText('Pot Roast')).toBeNull()
+	})
+
+	// The Cage most days: one special at most, and a couple dozen burgers and
+	// wraps filed as additional favorites beside a hundred-odd condiments. A
+	// meal with favorites but no special still has a short menu worth showing.
+	test('applies the specials filter to a meal with only additional favorites', async () => {
+		let dinnerMeals: ProcessedMealType[] = MEALS.map((meal) =>
+			meal.label === 'Dinner' ? {...meal, stations: [station('Home', ['3', '4'])]} : meal,
+		)
+
+		await render(
+			<FancyMenu
+				foodItems={{
+					1: item('1', 'Pancakes', 'Grill'),
+					3: {...item('3', 'Ketchup', 'Home'), tier: 3},
+					4: {...item('4', 'Beef Smash Burger', 'Home'), tier: 2},
+				}}
+				meals={dinnerMeals}
+				menuCorIcons={COR_ICONS}
+				name="The Cage"
+				now={moment.tz(BREAKFAST_TIME, TIMEZONE)}
+				onItemPress={jest.fn()}
+			/>,
+		)
+
+		await fireEvent.press(screen.getByTestId('choose-dinner'))
+		expect(screen.getByText('Beef Smash Burger')).toBeTruthy()
+		expect(screen.queryByText('Ketchup')).toBeNull()
 	})
 
 	// Which meal the menu starts on is `chooseMeal`'s decision, covered directly

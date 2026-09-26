@@ -23,6 +23,5 @@ export const item: (params: {
 	sub_station_order: '',
 	sub_station_id: '',
 	price: '',
-	tier3: false,
 	zero_entree: '',
 })
