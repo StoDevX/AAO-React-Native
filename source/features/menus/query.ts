@@ -73,6 +73,7 @@ export function prepareFood(cafeMenu: EditedBonAppMenuInfoType): MenuItemContain
 		// Decoded before title-casing, which would otherwise turn `&amp;` into
 		// `&Amp;`, which is no longer an entity.
 		station: toLaxTitleCase(decode(trimStationName(item.station))),
+		sub_station: toLaxTitleCase(decode(item.sub_station || '')),
 		label: trimItemLabel(decode(item.label)),
 		description: innerTextWithSpaces(parseHtml(item.description || '')),
 	}))
