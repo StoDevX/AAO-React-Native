@@ -161,6 +161,20 @@ describe('parseBlocks', () => {
 		])
 	})
 
+	it("keeps an embed block's caption as a paragraph after the embed", () => {
+		let html =
+			'<figure class="wp-block-embed is-type-rich is-provider-spotify wp-block-embed-spotify">' +
+			'<div class="wp-block-embed__wrapper">\n<iframe src="https://open.spotify.com/embed/p"></iframe>\n</div>' +
+			'<figcaption class="wp-element-caption">Songs for <em>finals</em> week</figcaption></figure>'
+		expect(parseBlocks(html)).toStrictEqual([
+			{type: 'embed', url: 'https://open.spotify.com/embed/p'},
+			{
+				type: 'paragraph',
+				runs: [{text: 'Songs for '}, {text: 'finals', italic: true}, {text: ' week'}],
+			},
+		])
+	})
+
 	it('reads an iframe inside a paragraph as an embed, as WordPress wraps a Spotify player', () => {
 		let html = '<p><iframe src="https://open.spotify.com/embed/p"></iframe></p>'
 		expect(parseBlocks(html)).toStrictEqual([

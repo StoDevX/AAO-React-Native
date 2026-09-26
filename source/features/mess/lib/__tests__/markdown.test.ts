@@ -17,11 +17,62 @@ describe('runsToMarkdown', () => {
 	})
 
 	it('escapes an angle bracket, so a literal <url> is not read as an angle-bracket autolink', () => {
-		expect(runsToMarkdown([{text: '<https://x.test/>'}])).toBe('\\<https://x\\.test/>')
+		expect(runsToMarkdown([{text: '<https://x.test/>'}])).toBe(
+			'\\<[https://x\\.test/](https://x.test/)>',
+		)
 	})
 
 	it('escapes an ampersand, so a literal entity is never decoded', () => {
 		expect(runsToMarkdown([{text: '&copy;'}])).toBe('\\&copy;')
+	})
+
+	it("links a bare URL, whose escapes Apple's parser would show", () => {
+		// The attribution line of Olaf Messenger post 36814, as its runs reach the reader.
+		let text =
+			'Constructed using the <a href="https://amuselabs.com/games/crossword/" target="_blank" style="color: #666666; text-decoration: underline;">cross word builder</a> from Amuse Labs'
+		expect(runsToMarkdown([{text}])).toBe(
+			'Constructed using the \\<a href="[https://amuselabs\\.com/games/crossword/](https://amuselabs.com/games/crossword/)" target="\\_blank" style="color: \\#666666; text\\-decoration: underline;">cross word builder\\</a> from Amuse Labs',
+		)
+	})
+
+	it('links a bare URL in any case, and one that follows a digit', () => {
+		expect(runsToMarkdown([{text: 'HTTP://x.test 1ftp://y.test'}])).toBe(
+			'[HTTP://x\\.test](HTTP://x.test) 1[ftp://y\\.test](ftp://y.test)',
+		)
+	})
+
+	it('leaves a scheme that runs on from a word as text', () => {
+		expect(runsToMarkdown([{text: 'xhttps://x.test'}])).toBe('xhttps://x\\.test')
+	})
+
+	it("ends a bare URL's link before trailing punctuation", () => {
+		expect(runsToMarkdown([{text: 'See https://x.test/a_(b), then (https://y.test).'}])).toBe(
+			'See [https://x\\.test/a\\_\\(b\\)](https://x.test/a_%28b%29), then \\([https://y\\.test](https://y.test)\\)\\.',
+		)
+	})
+
+	it("ends a bare URL's link before a curly closing quote", () => {
+		expect(runsToMarkdown([{text: '“https://x.test”'}])).toBe(
+			'“[https://x\\.test](https://x.test)”',
+		)
+	})
+
+	it("ends a bare URL's link before a square bracket it did not open", () => {
+		expect(runsToMarkdown([{text: 'see [https://x.test] and https://y.test/a[1]'}])).toBe(
+			'see \\[[https://x\\.test](https://x.test)\\] and [https://y\\.test/a\\[1\\]](https://y.test/a[1])',
+		)
+	})
+
+	it('keeps a bare URL inside a styled run within its markers', () => {
+		expect(runsToMarkdown([{text: 'at https://x.test', bold: true}])).toBe(
+			'**at [https://x\\.test](https://x.test)**',
+		)
+	})
+
+	it("leaves a URL inside a link's text to the link", () => {
+		expect(runsToMarkdown([{text: 'https://x.test', href: 'https://x.test/'}])).toBe(
+			'[https://x\\.test](https://x.test/)',
+		)
 	})
 
 	it('wraps bold and italic runs', () => {

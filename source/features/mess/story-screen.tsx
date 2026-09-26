@@ -3,7 +3,9 @@ import {Linking, Share, StyleSheet, useWindowDimensions} from 'react-native'
 import {Stack} from 'expo-router'
 import {Divider, Host, LazyVStack, ScrollView, useNativeState, VStack} from '@expo/ui/swift-ui'
 import {background, padding, scrollPosition, scrollTargetLayout} from '@expo/ui/swift-ui/modifiers'
+import {openUrl} from '@frogpond/open-url'
 import {useSafeAreaInsets} from 'react-native-safe-area-context'
+import {openURLAction} from '../../lib/open-url-action'
 import {AuthorCard} from './author-card'
 import {HoroscopesView} from './horoscopes-view'
 import {ImageView} from './image-view'
@@ -20,7 +22,8 @@ import {useMessStory} from './use-mess-story'
 const COLUMN_MARGIN = 20
 /** A poem's wider margins, which give its lines more air. */
 const POEM_MARGIN = 28
-const PAGE = [background(paper)]
+/** The paper, and a link in the story's text opening where the reader's link setting says. */
+const PAGE = [background(paper), openURLAction(openUrl)]
 const COLUMN = [padding({horizontal: COLUMN_MARGIN, vertical: 16})]
 const POEM_COLUMN = [padding({horizontal: POEM_MARGIN, vertical: 16})]
 /** A column whose children can be scrolled to by their `id`. */

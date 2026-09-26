@@ -157,6 +157,14 @@ function pushParagraph(blocks: Block[], nodes: ChildNode[]): void {
 	if (runs.length > 0) blocks.push({type: 'paragraph', runs})
 }
 
+/** A figure's own caption, as a paragraph of its own. */
+function pushFigcaption(blocks: Block[], figure: Element): void {
+	pushParagraph(
+		blocks,
+		figure.children.filter((child) => isTag(child) && child.name === 'figcaption'),
+	)
+}
+
 function blocksOf(node: Element, blocks: Block[]): void {
 	switch (node.name) {
 		case 'ol':
@@ -179,16 +187,18 @@ function blocksOf(node: Element, blocks: Block[]): void {
 		}
 		case 'figure': {
 			let iframe = descendants(node, 'iframe')[0]
-			if (iframe) return blocksOf(iframe, blocks)
+			if (iframe) {
+				// An embed block: the player, then the caption WordPress sets below it.
+				blocksOf(iframe, blocks)
+				pushFigcaption(blocks, node)
+				return
+			}
 			// Each nested figure reads its own nested figures, so only the outermost are read here.
 			let nested = outermost(node, 'figure')
 			if (nested.length > 0) {
 				// A gallery: each image is its own figure, and the gallery's own caption follows them.
 				for (let figure of nested) blocksOf(figure, blocks)
-				pushParagraph(
-					blocks,
-					node.children.filter((child) => isTag(child) && child.name === 'figcaption'),
-				)
+				pushFigcaption(blocks, node)
 				return
 			}
 			let img = descendants(node, 'img')[0]
