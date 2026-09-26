@@ -181,6 +181,19 @@ overrides:
   # sourcemaps at all. Drop it -- it's dead weight that costs every install a
   # platform-specific CLI binary download for nothing.
   '@sentry/cli': '-'
+  # react-native-gesture-handler lists test-only type definitions as a runtime
+  # dependency, which put a second copy beside our own devDependency.
+  'react-native-gesture-handler>@types/react-test-renderer': '-'
+  # Old dependents that pin a transitive dependency to one patch (or, for
+  # finalhandler, one minor), so each held a second copy of a package the tree
+  # already has a newer compatible release of. Widening the pin to a caret
+  # range lets autoDedupe collapse the pair onto that newer release.
+  'debug@2>ms': '^2.0.0'
+  'finalhandler@1>on-finished': '^2.3.0'
+  'accepts@1>negotiator': '^0.6.3'
+  'mime-types@2>mime-db': '^1.52.0'
+  'color-convert@1>color-name': '^1.1.3'
+  'simple-plist@1>bplist-parser': '^0.3.1'
 
 # bind top-level dependencies to exact versions, so lockfile-maintenance MRs
 # can't bump them without us noticing
