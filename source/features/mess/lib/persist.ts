@@ -28,6 +28,17 @@ function isInfiniteData(data: unknown): data is InfiniteData<unknown, unknown> {
 }
 
 /**
+ * Whether a query is the issue list holding pages. A further page that fails leaves the list in an
+ * error state, but the pages it loaded still stand, and Top is chosen from them.
+ */
+export function hasIssuePages(query: {
+	queryKey: readonly unknown[]
+	state: {data?: unknown}
+}): boolean {
+	return sameKey(query.queryKey, messKeys.issues) && isInfiniteData(query.state.data)
+}
+
+/**
  * The persisted cache with the Mess issues cut down: the issue list keeps its first page, which
  * is all Top needs, and of the issues' stories only Top's stay, Top being the newest regular
  * issue that first page names. Every other issue is fetched again when opened, and a special
@@ -48,7 +59,11 @@ export function withPersistedIssues(client: PersistedClient): PersistedClient {
 		if (isIssueKey(query.queryKey)) {
 			return topKey && sameKey(query.queryKey, topKey) ? [query] : []
 		}
-		if (query === list && firstPage) return [{...query, state: {...query.state, data: firstPage}}]
+		if (query === list && firstPage) {
+			// The first page loaded; any failure belonged to a later page, which is cut here.
+			let state = {...query.state, data: firstPage, status: 'success' as const, error: null}
+			return [{...query, state: {...state, fetchFailureCount: 0, fetchFailureReason: null}}]
+		}
 		return [query]
 	})
 	return {...client, clientState: {...client.clientState, queries: kept}}

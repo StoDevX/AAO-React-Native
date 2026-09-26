@@ -3,7 +3,7 @@ import {addEventListener} from '@react-native-community/netinfo'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import {createAsyncStoragePersister} from '@tanstack/query-async-storage-persister'
 import type {PersistedClient} from '@tanstack/react-query-persist-client'
-import {withPersistedIssues} from '../features/mess/lib/persist'
+import {hasIssuePages, withPersistedIssues} from '../features/mess/lib/persist'
 import {
 	QueryClient,
 	onlineManager,
@@ -78,8 +78,11 @@ export const persistOptions = {
 		// failed and pending queries for every other feature in the app -- news,
 		// dining, directory, building hours -- writing error states to AsyncStorage
 		// and restoring them on launch. Verified against @tanstack/query-core 5.102.8.
+		// The Mess issue list is the one exception: it persists whenever it holds pages, even after
+		// a further page failed (see `hasIssuePages`).
 		shouldDehydrateQuery: (query: Query): boolean =>
-			defaultShouldDehydrateQuery(query) && !isCalendarQueryKey(query.queryKey),
+			(defaultShouldDehydrateQuery(query) || hasIssuePages(query)) &&
+			!isCalendarQueryKey(query.queryKey),
 	},
 }
 

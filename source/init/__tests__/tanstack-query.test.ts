@@ -142,6 +142,54 @@ describe('the Mess issues', () => {
 		expect(cache.clientState.queries.map((query) => query.queryKey)).toStrictEqual([messKeys.feed])
 	})
 
+	// Review: a next page that fails mid-scroll leaves the list in an error state, still holding
+	// its loaded pages, and Top's issue is chosen from those pages.
+	test('dehydrates an issue list whose further page failed, since its pages still stand', () => {
+		let failed = {
+			queryKey: messKeys.issues,
+			state: {status: 'error', data: {pages: [spring.slice(0, 100)], pageParams: [1]}},
+		} as unknown as Query
+		expect(persistOptions.dehydrateOptions.shouldDehydrateQuery(failed)).toBe(true)
+	})
+
+	test('dehydrates no failed issue list with no pages, nor any other failed query', () => {
+		let failed = (queryKey: readonly unknown[]) =>
+			({queryKey, state: {status: 'error', data: undefined}}) as unknown as Query
+		expect(persistOptions.dehydrateOptions.shouldDehydrateQuery(failed(messKeys.issues))).toBe(
+			false,
+		)
+		expect(persistOptions.dehydrateOptions.shouldDehydrateQuery(failed(['news', 'stolaf']))).toBe(
+			false,
+		)
+	})
+
+	test("writes a failed list's first page as loaded, and keeps Top's stories", () => {
+		let failedList = {
+			...cached(messKeys.issues, {
+				pages: [spring.slice(0, 100), spring.slice(100, 200)],
+				pageParams: [1, 2],
+			}),
+			state: {
+				status: 'error',
+				data: {pages: [spring.slice(0, 100), spring.slice(100, 200)], pageParams: [1, 2]},
+				error: {},
+				fetchFailureCount: 1,
+			},
+		}
+		let cache = written([failedList, cached(TOP, ['top stories'])])
+
+		expect(cache.clientState.queries.map((query) => query.queryKey)).toStrictEqual([
+			messKeys.issues,
+			TOP,
+		])
+		expect(cache.clientState.queries[0]?.state).toMatchObject({
+			status: 'success',
+			error: null,
+			fetchFailureCount: 0,
+			data: {pages: [spring.slice(0, 100)], pageParams: [1]},
+		})
+	})
+
 	test('still dehydrates every issue, leaving the choice to the writer', () => {
 		expect(shouldDehydrate(OLDER)).toBe(true)
 		expect(shouldDehydrate(messKeys.issues)).toBe(true)
