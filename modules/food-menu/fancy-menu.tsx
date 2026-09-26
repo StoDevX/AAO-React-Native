@@ -26,6 +26,7 @@ import {mealHeaderMenu, type MealHeaderMenu} from './lib/meal-header'
 import {formatMealTimes} from './lib/meal-times'
 import {isFeatured} from './lib/is-featured'
 import {offerSpecials} from './lib/offer-specials'
+import {stationSections, type MenuSection} from './lib/station-sections'
 import type {
 	MasterCorIconMapType,
 	MenuItemContainerType,
@@ -105,7 +106,7 @@ const groupMenuData = (args: {
 	stations: Array<StationMenuType>
 	foodItems: MenuItemContainerType
 	applyFilters: FilterFunc
-}): {title: string; data: Array<MenuItemType>}[] => {
+}): MenuSection[] => {
 	const {applyFilters, foodItems, stations, filters} = args
 
 	const dietsFilterEnabled = areDietsFiltered(filters)
@@ -126,14 +127,9 @@ const groupMenuData = (args: {
 				return item && applyFilters(filters, item)
 			})
 
-	const stationMenusByLabel: [string, MenuItemType[]][] = stations.map((menu: StationMenuType) => [
-		menu.label,
-		dereferenceMenuItems(menu),
-	])
-
-	return stationMenusByLabel
-		.filter(([_, items]) => items.length)
-		.map(([title, data]) => ({title, data}))
+	return stations.flatMap((menu: StationMenuType) =>
+		stationSections(menu.label, dereferenceMenuItems(menu)),
+	)
 }
 
 /**
@@ -221,11 +217,16 @@ export function FancyMenu(props: Props): React.ReactNode {
 	// builds the JSX: a `Map.get()` read from within that map reads as a
 	// possible mutation of `stations` to the compiler, and it responds by
 	// giving up on `groupedMenuData`'s memoization above.
+	//
+	// A station split into sub-stations says its note once, at its head.
 	const sectionsWithNotes = useMemo(() => {
 		const stationsByLabel = new Map(stations.map((station) => [station.label, station]))
-		return groupedMenuData.map((section) => ({
+		return groupedMenuData.map((section, index) => ({
 			...section,
-			note: stationsByLabel.get(section.title)?.note,
+			note:
+				groupedMenuData[index - 1]?.station === section.station
+					? undefined
+					: stationsByLabel.get(section.station)?.note,
 		}))
 	}, [groupedMenuData, stations])
 
@@ -316,7 +317,7 @@ export function FancyMenu(props: Props): React.ReactNode {
 						sectionsWithNotes.map((section) =>
 							section.data.length === 1 && isClosedLabel(section.data[0].label) ? (
 								<Section key={section.title} {...sectionHeaderProps('', section.note)}>
-									<ContentUnavailableView systemImage="clock" title={section.title} />
+									<ContentUnavailableView systemImage="clock" title={section.station} />
 								</Section>
 							) : (
 								<Section key={section.title} {...sectionHeaderProps(section.title, section.note)}>
