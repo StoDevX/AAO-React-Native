@@ -25,6 +25,16 @@ describe('imageLabel', () => {
 	it('names an image with no writer by its title alone', () => {
 		expect(imageLabel({title: 'Spring', bylines: []})).toBe('Spring')
 	})
+	it('says which picture of a set it is, so each reads apart', () => {
+		expect(imageLabel({title: 'Spring', bylines: [b('A')]}, {index: 1, count: 3})).toBe(
+			'Spring, by A, picture 2 of 3',
+		)
+	})
+	it('says nothing more for a set of one', () => {
+		expect(imageLabel({title: 'Spring', bylines: [b('A')]}, {index: 0, count: 1})).toBe(
+			'Spring, by A',
+		)
+	})
 })
 
 describe('kickerText', () => {

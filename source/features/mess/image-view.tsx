@@ -10,7 +10,7 @@ import {
 	shadow,
 	shapes,
 } from '@expo/ui/swift-ui/modifiers'
-import {imageLabel} from './lib/byline'
+import {imageLabel, picturePlace} from './lib/byline'
 import {faded} from './palette'
 import {RemotePhoto} from './remote-photo'
 import type {MessStory, Photo} from './types'
@@ -47,7 +47,7 @@ export function ImageView({story, image, columnWidth, index}: Props): React.Reac
 			modifiers={[
 				buttonStyle('plain'),
 				// The images carry no alt text, so the title and writers stand in for it.
-				accessibilityLabel(imageLabel(story)),
+				accessibilityLabel(imageLabel(story, picturePlace(story, index))),
 				accessibilityIdentifier('mess-story-image'),
 				contentShape(shapes.rectangle()),
 			]}

@@ -23,7 +23,7 @@ import {
 import {useSafeAreaInsets} from 'react-native-safe-area-context'
 import {DoubleTapView, type DoubleTapPoint} from '@frogpond/double-tap'
 import {useDismissOnce} from '../../lib/use-dismiss-once'
-import {imageLabel} from './lib/byline'
+import {imageLabel, picturePlace} from './lib/byline'
 import {doubleTapZoom} from './lib/zoom'
 import {StoryLookupNotice} from './story-lookup-notice'
 import {useMessStory} from './use-mess-story'
@@ -120,7 +120,7 @@ export function ImageViewer({id, index = 0}: Props): React.ReactNode {
 				<DoubleTapView onDoubleTap={onDoubleTap}>
 					<RNImage
 						accessibilityIgnoresInvertColors={true}
-						accessibilityLabel={imageLabel(story)}
+						accessibilityLabel={imageLabel(story, picturePlace(story, index))}
 						accessibilityRole="image"
 						accessible={true}
 						resizeMode="contain"
