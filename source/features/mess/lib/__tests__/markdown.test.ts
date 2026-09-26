@@ -57,6 +57,12 @@ describe('runsToMarkdown', () => {
 		)
 	})
 
+	it("ends a bare URL's link before a square bracket it did not open", () => {
+		expect(runsToMarkdown([{text: 'see [https://x.test] and https://y.test/a[1]'}])).toBe(
+			'see \\[[https://x\\.test](https://x.test)\\] and [https://y\\.test/a\\[1\\]](https://y.test/a[1])',
+		)
+	})
+
 	it('keeps a bare URL inside a styled run within its markers', () => {
 		expect(runsToMarkdown([{text: 'at https://x.test', bold: true}])).toBe(
 			'**at [https://x\\.test](https://x.test)**',

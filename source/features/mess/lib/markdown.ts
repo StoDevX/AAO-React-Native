@@ -26,16 +26,21 @@ const BARE_URL = /(?<!\p{L})(?:https?|ftp):\/\/[^\s<]+/giu
  */
 const TRAILING_PUNCTUATION = /[?!.,:*_~'">\p{Pf}]$/u
 
-/** The URL within a bare-URL match, without the punctuation or unmatched `)` that follows it. */
+/** Each closing bracket a URL can end in, with the bracket that opens it. */
+const OPENERS: Record<string, string> = {')': '(', ']': '['}
+
+/** The URL within a bare-URL match, without the punctuation or unmatched bracket that follows it. */
 function trimUrl(match: string): string {
 	let url = match
 	while (TRAILING_PUNCTUATION.test(url) || hasUnmatchedCloser(url)) url = url.slice(0, -1)
 	return url
 }
 
-/** Whether `url` ends in a `)` that no `(` in it opened. */
+/** Whether `url` ends in a `)` or `]` that no opening bracket in it opened. */
 function hasUnmatchedCloser(url: string): boolean {
-	return url.endsWith(')') && url.split(')').length > url.split('(').length
+	let closer = url.at(-1) ?? ''
+	let opener = OPENERS[closer]
+	return opener !== undefined && url.split(closer).length > url.split(opener).length
 }
 
 /**
