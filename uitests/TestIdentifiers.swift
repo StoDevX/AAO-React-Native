@@ -546,6 +546,9 @@ struct TestIdentifiers {
 		static let issuesChip = "Issues"
 		static let newsSection = "News"
 
+		/// The paper's name, drawn in the navigation bar by source/features/mess/front-page-screen.tsx.
+		static let paperName = "The Olaf Messenger"
+
 		/// A page's dateline, in source/features/mess/masthead.tsx.
 		static let dateline = "mess-dateline"
 

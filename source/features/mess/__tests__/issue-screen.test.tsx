@@ -102,7 +102,6 @@ describe('IssueScreen', () => {
 		await renderIssue('2026-03-25')
 
 		expect(screen.getByText('March 25, 2026 · 5 stories')).toBeTruthy()
-		expect(screen.queryByText('The Olaf Messenger')).toBeNull()
 		expect(screen.getByRole('button', {name: 'March story 0'})).toBeTruthy()
 	})
 

@@ -128,7 +128,6 @@ describe('IssuePage', () => {
 		queryClient.setQueryData(messKeys.issue(ISSUE.after, ISSUE.before), STORIES)
 		await renderIssue()
 
-		expect(screen.getByText('The Olaf Messenger')).toBeTruthy()
 		expect(screen.getByText('April 29, 2026 · 5 stories')).toBeTruthy()
 		expect(screen.getByRole('button', {name: 'Student workers deliver petition'})).toBeTruthy()
 		expect(screen.getByText('News · Maya Betti')).toBeTruthy()
@@ -219,7 +218,6 @@ describe('IssuePage', () => {
 		queryClient.setQueryData(messKeys.issue(ISSUE.after, ISSUE.before), STORIES)
 		await renderIssue(ISSUE, false)
 
-		expect(screen.queryByText('The Olaf Messenger')).toBeNull()
 		expect(screen.getByText('April 29, 2026 · 5 stories')).toBeTruthy()
 	})
 })

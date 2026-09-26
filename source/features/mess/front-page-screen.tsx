@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {Stack, useRouter} from 'expo-router'
+import {useRouter} from 'expo-router'
 import {Button, HStack, Spacer, Text, VStack} from '@expo/ui/swift-ui'
 import {
 	accessibilityIdentifier,
@@ -26,7 +26,7 @@ import {chipKey, chipOf, type MessChip} from './lib/chips'
 import {TAP_TARGET} from './lib/glyph-grid'
 import {bannerKicker, topOf} from './lib/issues'
 import {messKeys} from './lib/keys'
-import {Masthead} from './masthead'
+import {Masthead, PaperNameTitle} from './masthead'
 import {MessPage, PAGE_MARGIN} from './mess-page'
 import {PageLoading, PageNotice} from './page-notice'
 import {ink, messRed, wash} from './palette'
@@ -84,7 +84,7 @@ export function FrontPageScreen(): React.ReactNode {
 
 	return (
 		<>
-			<Stack.Screen options={{title: OLAF_MESSENGER.title}} />
+			<PaperNameTitle />
 			<MessPage
 				// Only the chip showing has queries mounted, so refetching the active Mess queries
 				// refreshes that chip alone.

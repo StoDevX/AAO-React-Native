@@ -20,6 +20,25 @@ struct MessFrontPage: Screen {
 			chip(TestIdentifiers.News.topChip).waitForHittable(),
 			"the chips should sit below the navigation bar, where a tap reaches them")
 		capture("The Messenger's Top page")
+		verifyPaperNamedOnce()
+		return self
+	}
+
+	/// The paper's name sits in the navigation bar, and the page under it does not repeat it.
+	@discardableResult
+	func verifyPaperNamedOnce() -> Self {
+		let name = NSPredicate(format: "label == %@", TestIdentifiers.News.paperName)
+		XCTAssertTrue(
+			app.navigationBars.staticTexts.matching(name).firstMatch.waitForExistence(timeout: 10),
+			"the navigation bar should name the paper")
+		// The bar lists its own heading for the title and the text drawn inside it, so the name
+		// is counted by where it sits rather than by how many times it appears.
+		let bar = app.navigationBars.firstMatch.frame
+		for element in app.staticTexts.matching(name).allElementsBoundByIndex {
+			XCTAssertTrue(
+				bar.contains(element.frame),
+				"the paper's name should sit in the navigation bar, not again on the page (found at \(element.frame))")
+		}
 		return self
 	}
 

@@ -182,7 +182,6 @@ describe('FrontPageScreen', () => {
 		await renderScreen()
 
 		expect(screen.getByRole('button', {name: 'Top', selected: true})).toBeTruthy()
-		expect(screen.getByText('The Olaf Messenger')).toBeTruthy()
 		expect(screen.getByText('April 29, 2026 · 5 stories')).toBeTruthy()
 		expect(screen.getByRole('button', {name: 'Student workers deliver petition'})).toBeTruthy()
 		expect(screen.getByRole('button', {name: 'All Opinions'})).toBeTruthy()
