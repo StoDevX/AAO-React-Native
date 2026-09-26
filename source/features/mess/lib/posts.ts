@@ -122,6 +122,17 @@ function photoOf(post: Post): MessStory['photo'] {
 	}
 }
 
+/** Web addresses at the start of a stretch of text, with the space after them. */
+const OPENING_ADDRESSES = /^(?:https?:\/\/\S+\s*)+/u
+
+/**
+ * A post's excerpt as plain text, less any web address it opens with: a post whose body is
+ * only a link, such as a playlist, would otherwise show that link raw in a list row.
+ */
+function excerptOf(html: string): string {
+	return fastGetTrimmedText(html).replace(OPENING_ADDRESSES, '')
+}
+
 /** One validated post as a story. */
 function toStory(post: Post, byId: Map<number, MessCategory>): MessStory {
 	let placed = placement(post.categories, byId)
@@ -135,7 +146,7 @@ function toStory(post: Post, byId: Map<number, MessCategory>): MessStory {
 	return {
 		id: post.id,
 		title: decode(post.title.rendered),
-		excerpt: fastGetTrimmedText(post.excerpt.rendered),
+		excerpt: excerptOf(post.excerpt.rendered),
 		link: post.link,
 		published: utcDate(post.date_gmt).toISOString(),
 		...placed,
