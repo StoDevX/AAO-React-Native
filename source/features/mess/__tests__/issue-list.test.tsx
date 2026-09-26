@@ -49,6 +49,7 @@ function issueDay(
 		day,
 		title: `Story ${newestId - offset}`,
 		section,
+		special: section === 'Special Edition',
 		featured: false,
 		photo: null,
 		...(offset === 0 ? first : {}),

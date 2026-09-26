@@ -77,6 +77,14 @@ function rootOf(category: MessCategory, byId: Map<number, MessCategory>): MessCa
 	return current?.parent === 0 ? current : undefined
 }
 
+/** Whether any of a post's categories sits under Special Edition, or is it. */
+export function inSpecialEdition(ids: number[], byId: Map<number, MessCategory>): boolean {
+	return ids.some((id) => {
+		let category = byId.get(id)
+		return category !== undefined && rootOf(category, byId)?.name === SPECIAL_EDITION
+	})
+}
+
 /** Where a story sits: its section, the column within it, and whether it is featured. */
 export function placement(
 	ids: number[],

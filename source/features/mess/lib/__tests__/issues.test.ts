@@ -30,6 +30,7 @@ describe('parseLightPosts', () => {
 			day: '2026-05-12',
 			title: 'Appropriation or fusion: student thoughts on Stav food stall names',
 			section: 'Special Edition',
+			special: true,
 			featured: false,
 			// Its featured image is the Mess logo, which is no photo.
 			photo: null,
@@ -39,9 +40,15 @@ describe('parseLightPosts', () => {
 			day: '2026-04-29',
 			title: 'St. Olaf awarded 2026-27 Hunger Free Campus grant',
 			section: 'News',
+			special: false,
 			featured: true,
 			photo: 36902,
 		})
+	})
+
+	it('marks a special-edition post filed under a print section too', () => {
+		let [post] = parseLightPosts([{...springPosts[0], categories: [7, 1139]}], categories)
+		expect(post).toMatchObject({section: 'News', special: true})
 	})
 
 	it("decodes a title's entities", () => {
@@ -78,6 +85,19 @@ describe('groupIssues', () => {
 	it('counts a post once when it arrives on two pages', () => {
 		let pages = [...spring.slice(0, 100), spring[99], ...spring.slice(100)]
 		expect(outline(groupIssues(pages, false))).toStrictEqual(outline(groupIssues(spring, false)))
+	})
+
+	it('names an issue special when most of its posts are, whatever sections they sit in', () => {
+		let filedUnderNews = spring.map((post) => (post.special ? {...post, section: 'News'} : post))
+		expect(groupIssues(filedUnderNews, false)[0]).toMatchObject({
+			day: '2026-05-12',
+			isSpecial: true,
+		})
+	})
+
+	it('keeps an issue regular when one of its posts is from a special edition', () => {
+		let oneSpecial = spring.map((post) => (post.id === 36896 ? {...post, special: true} : post))
+		expect(groupIssues(oneSpecial, false)[1]).toMatchObject({day: '2026-04-29', isSpecial: false})
 	})
 
 	it('joins the strays of Mar 23 and 24 to Mar 18, and ends it at the next issue', () => {

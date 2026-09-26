@@ -92,6 +92,7 @@ const light = (s: MessStory): LightPost => ({
 	day: '2026-04-29',
 	title: s.title,
 	section: s.section,
+	special: false,
 	featured: s.featured,
 	photo: null,
 })
@@ -111,6 +112,7 @@ const SPECIAL_POSTS: LightPost[] = [0, 1, 2, 3, 4].map((n) => ({
 	day: '2026-05-12',
 	title: n === 0 ? 'Letter from the editors' : `Special edition story ${n}`,
 	section: 'Special Edition',
+	special: true,
 	featured: false,
 	photo: null,
 }))

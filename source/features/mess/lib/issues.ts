@@ -1,6 +1,6 @@
 import {decode} from '@frogpond/html-lib'
 import {z} from 'zod'
-import {MESS_LOGO_MEDIA_IDS, SPECIAL_EDITION, placement} from './posts'
+import {MESS_LOGO_MEDIA_IDS, SPECIAL_EDITION, inSpecialEdition, placement} from './posts'
 import {leadStory} from './shelves'
 import type {LightPost, MessCategory, MessIssue} from '../types'
 
@@ -38,6 +38,7 @@ export function parseLightPosts(body: unknown, categories: MessCategory[]): Ligh
 				day: date.slice(0, 10),
 				title: decode(title.rendered),
 				section,
+				special: inSpecialEdition(ids, byId),
 				featured,
 				photo: hasPhoto ? media : null,
 			},
@@ -102,7 +103,8 @@ export function groupIssues(posts: LightPost[], hasMore: boolean): MessIssue[] {
 				leadId: lead.id,
 				leadTitle: lead.title,
 				leadPhoto: lead.photo,
-				isSpecial: lead.section === SPECIAL_EDITION,
+				// Most of its posts, since one special-edition post can run on a regular day.
+				isSpecial: group.posts.filter((post) => post.special).length * 2 > group.posts.length,
 			},
 		]
 	})

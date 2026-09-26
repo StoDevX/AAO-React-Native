@@ -54,6 +54,8 @@ export type LightPost = {
 	title: string
 	/** The top-level category, never a Featured flag */
 	section: string | null
+	/** Whether it belongs to a special edition, even when also filed under a print section */
+	special: boolean
 	/** Whether any Featured* category is present */
 	featured: boolean
 	/** Its featured photo's media id; null with none, or with the Mess logo */

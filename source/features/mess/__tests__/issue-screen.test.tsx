@@ -59,6 +59,7 @@ const light = (s: MessStory): LightPost => ({
 	day: s.published.slice(0, 10),
 	title: s.title,
 	section: s.section,
+	special: false,
 	featured: false,
 	photo: null,
 })
