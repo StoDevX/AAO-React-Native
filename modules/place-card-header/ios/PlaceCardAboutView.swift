@@ -127,6 +127,7 @@ private func shortenedText(_ text: String, width: CGFloat, font: UIFont, reserve
 		}
 	}
 	// A hard break before the last line: cut short, it could otherwise fit
-	// back on the line above and leave MORE over that line's end.
-	return trimmed(head) + "\n" + trimmed(last) + "…"
+	// back on the line above and leave MORE over that line's end. The lines
+	// above are shown whole, so only the space before the break goes.
+	return head.trimmingCharacters(in: .whitespacesAndNewlines) + "\n" + trimmed(last) + "…"
 }

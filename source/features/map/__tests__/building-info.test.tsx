@@ -308,9 +308,30 @@ describe('BuildingInfo sections', () => {
 		expect(screen.queryByText('RNS')).toBeNull()
 	})
 
-	it('offers More on a section only past six of its own', async () => {
-		let departments = Array.from({length: 7}, (_, i) => `Dept ${i} <https://example.com/${i}>`)
-		let offices = Array.from({length: 6}, (_, i) => `Office ${i} <https://example.com/o${i}>`)
+	// The feed can list one department twice, or two with a name and no link.
+	it('keeps each tile apart when two share a name and link', async () => {
+		let error = jest.spyOn(console, 'error').mockImplementation(() => undefined)
+		await renderCard(
+			<BuildingInfo
+				campus="stolaf"
+				building={makeBuilding({
+					id: 'a',
+					name: 'Tomson Hall',
+					departments: ['Biology <https://example.com/b>', 'Biology <https://example.com/b>'],
+				})}
+				onClose={jest.fn()}
+				stop="medium"
+			/>,
+		)
+
+		expect(screen.getAllByText('Biology')).toHaveLength(2)
+		let warnings = error.mock.calls.map((args) => args.map(String).join(' '))
+		expect(warnings.filter((warning) => warning.includes('same key'))).toEqual([])
+	})
+
+	it('offers More on a section only when it hides two or more', async () => {
+		let departments = Array.from({length: 8}, (_, i) => `Dept ${i} <https://example.com/${i}>`)
+		let offices = Array.from({length: 7}, (_, i) => `Office ${i} <https://example.com/o${i}>`)
 		await renderCard(
 			<BuildingInfo
 				campus="stolaf"
@@ -324,8 +345,10 @@ describe('BuildingInfo sections', () => {
 		expect(screen.getByRole('button', {name: 'More departments'})).toBeTruthy()
 		expect(screen.queryByRole('button', {name: 'More offices'})).toBeNull()
 		// The carousel ends on a tile counting what it left out.
-		expect(screen.getByRole('button', {name: 'Show all 7 departments'})).toBeTruthy()
-		expect(screen.getByText('1 more')).toBeTruthy()
+		expect(screen.getByRole('button', {name: 'Show all 8 departments'})).toBeTruthy()
+		expect(screen.getByText('2 more')).toBeTruthy()
+		// Seven offices show all seven: a More tile would stand in for just one.
+		expect(screen.getByText('Office 6')).toBeTruthy()
 		expect(screen.queryByRole('button', {name: /Show all \d+ offices/u})).toBeNull()
 	})
 
@@ -349,6 +372,21 @@ describe('BuildingInfo sections', () => {
 		)
 
 		expect(screen.queryByRole('button', {name: 'Directions'})).toBeNull()
+	})
+
+	// Trailing blank lines would count as lines of their own, so a short
+	// description could be clamped with MORE and nothing behind it.
+	it('hands About its text without trailing blank lines', async () => {
+		await renderCard(
+			<BuildingInfo
+				campus="stolaf"
+				building={makeBuilding({id: 'a', name: 'Alpha Hall', description: 'A hall.\n\n'})}
+				onClose={jest.fn()}
+				stop="medium"
+			/>,
+		)
+
+		expect(screen.getByText('A hall.', {normalizer: (text) => text})).toBeTruthy()
 	})
 
 	it('shows a photo tile for a building with a photo', async () => {

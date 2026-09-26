@@ -30,7 +30,7 @@ import {
 
 import * as c from '@frogpond/colors'
 
-import {CAROUSEL_TILE_LIMIT, type PlaceTile} from '../lib/place-tiles'
+import {splitCarousel, type PlaceTile} from '../lib/place-tiles'
 import {CARD_INSET} from '../../../components/place-card/card-style'
 import {MoreTileView, PlaceTileView} from './place-tile'
 import {SectionHeading} from '../../../components/place-card/section-heading'
@@ -47,9 +47,10 @@ const CAROUSEL_ROW = [
 	listRowInsets({top: 12, leading: 0, bottom: 0, trailing: 0}),
 ]
 
-/// A tile's identity among its building's: its kind, name and link together.
-function tileKey(tile: PlaceTile): string {
-	return `${tile.kind}-${tile.label}-${tile.href ?? ''}`
+/// A tile's identity among its building's. The feed can list one entry twice,
+/// so its position goes into the key alongside its kind, name and link.
+function tileKey(tile: PlaceTile, index: number): string {
+	return `${tile.kind}-${tile.label}-${tile.href ?? ''}-${index}`
 }
 
 /// Pairs of tiles, one pair to each row of the More grid.
@@ -77,7 +78,8 @@ export function PlacesSection({
 	if (tiles.length === 0) {
 		return null
 	}
-	let hasMore = tiles.length > CAROUSEL_TILE_LIMIT
+	let {shown, hidden} = splitCarousel(tiles)
+	let hasMore = hidden.length > 0
 	return (
 		<Section>
 			<SectionHeading
@@ -137,10 +139,15 @@ export function PlacesSection({
 											modifiers={[padding({horizontal: CARD_INSET, bottom: CARD_INSET})]}
 											verticalSpacing={TILE_SPACING}
 										>
-											{rowsOfTwo(tiles).map((row) => (
-												<Grid.Row key={row.map(tileKey).join('|')}>
-													{row.map((tile) => (
-														<PlaceTileView key={tileKey(tile)} fill={true} tile={tile} />
+											{rowsOfTwo(tiles).map((row, rowIndex) => (
+												// oxlint-disable-next-line react/no-array-index-key -- a row is a pair of tiles, and its place in the grid is its identity
+												<Grid.Row key={rowIndex}>
+													{row.map((tile, index) => (
+														<PlaceTileView
+															key={tileKey(tile, rowIndex * 2 + index)}
+															fill={true}
+															tile={tile}
+														/>
 													))}
 												</Grid.Row>
 											))}
@@ -154,12 +161,12 @@ export function PlacesSection({
 			/>
 			<ScrollView axes="horizontal" modifiers={CAROUSEL_ROW} showsIndicators={false}>
 				<HStack modifiers={[padding({horizontal: CARD_INSET})]} spacing={TILE_SPACING}>
-					{tiles.slice(0, CAROUSEL_TILE_LIMIT).map((tile) => (
-						<PlaceTileView key={tileKey(tile)} tile={tile} />
+					{shown.map((tile, index) => (
+						<PlaceTileView key={tileKey(tile, index)} tile={tile} />
 					))}
 					{hasMore ? (
 						<MoreTileView
-							hidden={tiles.slice(CAROUSEL_TILE_LIMIT).map((tile) => tile.label)}
+							hidden={hidden.map((tile) => tile.label)}
 							noun={title.toLowerCase()}
 							onPress={() => setShowingAll(true)}
 							total={tiles.length}

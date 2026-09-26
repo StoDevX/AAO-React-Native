@@ -9,8 +9,8 @@ export type CardAction = {kind: 'directions'; url: string}
 /// Apple Maps' row holds Directions and up to three more.
 export const MAX_CARD_ACTIONS = 4
 
-/// Whether the card may offer Directions. Maps routes by car and transit, and
-/// campus is walked, so Directions waits on a walking routing engine.
+/// Whether the card may offer Directions. It stays hidden until a walking
+/// routing engine is available.
 export const WALKING_DIRECTIONS = false
 
 /// The actions a building's card offers, in the row's order.
