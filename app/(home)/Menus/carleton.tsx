@@ -1,10 +1,11 @@
 import * as React from 'react'
-import {Platform, ScrollView, StyleSheet, View} from 'react-native'
-import {SafeAreaView} from 'react-native-safe-area-context'
-import {Row} from '@frogpond/layout'
-import {ListRow, ListSeparator, Title} from '@frogpond/lists'
+import {StyleSheet} from 'react-native'
+import {Host, List, Section} from '@expo/ui/swift-ui'
+import {listStyle} from '@expo/ui/swift-ui/modifiers'
+import * as c from '@frogpond/colors'
 import {useIsFocused, useRouter} from 'expo-router'
 
+import {NavigationRow} from '../../../source/components/rows'
 import {usePublishMenuHeader} from '../../../source/features/menus/menu-header'
 
 export default function CarletonPage(): React.ReactNode {
@@ -37,28 +38,25 @@ export default function CarletonPage(): React.ReactNode {
 	] as const
 
 	return (
-		<ScrollView contentInsetAdjustmentBehavior="automatic" style={styles.container}>
-			<SafeAreaView edges={['left', 'right']}>
-				{carletonCafes.map((loc, i, collection) => (
-					<View key={loc.href}>
-						<ListRow arrowPosition="center" onPress={() => router.navigate(loc.href)}>
-							<Row alignItems="center">
-								<Title style={styles.rowText}>{loc.title}</Title>
-							</Row>
-						</ListRow>
-						{i < collection.length - 1 ? <ListSeparator spacing={{left: 15}} /> : null}
-					</View>
-				))}
-			</SafeAreaView>
-		</ScrollView>
+		<Host matchContents={false} style={styles.host}>
+			<List modifiers={[listStyle('insetGrouped')]}>
+				<Section>
+					{carletonCafes.map((loc) => (
+						<NavigationRow
+							key={loc.href}
+							onPress={() => router.navigate(loc.href)}
+							title={loc.title}
+						/>
+					))}
+				</Section>
+			</List>
+		</Host>
 	)
 }
 
 const styles = StyleSheet.create({
-	rowText: {
-		paddingVertical: 6,
-	},
-	container: {
-		paddingTop: Platform.OS === 'ios' ? 20 : 0,
+	host: {
+		flex: 1,
+		backgroundColor: c.systemGroupedBackground,
 	},
 })
