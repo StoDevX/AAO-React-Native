@@ -9,6 +9,7 @@ import springPosts from './fixtures/issue-posts.json'
 import {queryClient as appQueryClient} from '../../../init/tanstack-query'
 import {flushQueryNotifications, waitForQueriesToSettle} from '../../../testing/query-notifications'
 import {FrontPageScreen} from '../front-page-screen'
+import {parseLightPosts} from '../lib/issues'
 import {messKeys} from '../lib/keys'
 import {parseMessCategories} from '../lib/posts'
 import {OLAF_MESSENGER} from '../../news/sources'
@@ -456,6 +457,40 @@ describe('FrontPageScreen', () => {
 			expect.stringContaining('/posts?per_page=100&page=1&_fields='),
 		])
 		await waitForQueriesToSettle(queryClient)
+	})
+
+	// The end row appears the moment a refresh cuts the list to one page, and a fetch of the
+	// next page would cancel the refresh.
+	test('pull-to-refresh on Issues brings in the fresh first page', async () => {
+		saveChoice('Issues')
+		let pages = [0, 1, 2].map((n) =>
+			parseLightPosts(springPosts.slice(n * 100, n * 100 + 100), categories),
+		)
+		queryClient.setQueryData(messKeys.issues, {pages, pageParams: [1, 2, 3]})
+		let fresh = [
+			{...springPosts[0], title: {rendered: 'A fresh headline'}},
+			...springPosts.slice(1, 100),
+		]
+		// The first page answers only once the end row has had its chance to appear.
+		let answerFirst: () => void = () => undefined
+		serve((href) => {
+			if (href.includes('/media/')) return {source_url: 'https://olafmessenger.com/lead.jpg'}
+			let page = Number(/[?&]page=(\d+)&_fields/u.exec(href)?.[1])
+			if (page === 1) return new Promise((resolve) => (answerFirst = () => resolve(fresh)))
+			return springPosts.slice((page - 1) * 100, page * 100)
+		})
+		await renderScreen()
+
+		let refresh = screen.getByTestId('refreshable').props.onRefresh as () => Promise<void>
+		let refreshed = refresh()
+		await act(flushQueryNotifications)
+		await act(async () => {
+			answerFirst()
+			await refreshed
+		})
+		await waitForQueriesToSettle(queryClient)
+
+		expect(screen.getByText('A fresh headline')).toBeTruthy()
 	})
 
 	test('pull-to-refresh on a section fetches that section, and nothing else', async () => {

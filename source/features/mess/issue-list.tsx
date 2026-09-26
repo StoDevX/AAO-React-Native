@@ -101,7 +101,11 @@ type Props = {
  */
 export function IssueList({issues, query, onOpen}: Props): React.ReactNode {
 	let pageCount = query.data?.pages.length ?? 0
-	let fetchMore = () => (query.isFetchingNextPage ? undefined : query.fetchNextPage())
+	// Any fetch in flight, a refresh too, is left to finish: asking for the next page would
+	// cancel it. The end row's id carries whether a fetch is in flight, so it appears again,
+	// and asks, once that fetch settles.
+	let fetchMore = () => (query.isFetching ? undefined : query.fetchNextPage())
+	let endId = `issues-page-${pageCount}-${query.isFetching ? 'fetching' : 'settled'}`
 
 	let end: React.ReactNode = null
 	if (query.isFetchNextPageError) {
@@ -109,7 +113,7 @@ export function IssueList({issues, query, onOpen}: Props): React.ReactNode {
 	} else if (query.hasNextPage) {
 		end = (
 			// The id wraps the onAppear, so a new page rebuilds the view the onAppear sits on.
-			<VStack modifiers={[onAppear(fetchMore), id(`issues-page-${pageCount}`)]}>
+			<VStack modifiers={[onAppear(fetchMore), id(endId)]}>
 				<ProgressView />
 			</VStack>
 		)
