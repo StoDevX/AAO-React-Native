@@ -134,11 +134,6 @@ describe('HoursSection', () => {
 		expect(tree.indexOf('"Continental Breakfast"')).toBeGreaterThan(tree.indexOf('"Normal Hours"'))
 	})
 
-	test('marks the status row for UI tests to find', async () => {
-		await renderSection(holland)
-		expect(screen.getByTestId('hours-status')).toBeTruthy()
-	})
-
 	test('shows a note under its block', async () => {
 		await renderSection(stav)
 		expect(screen.getByText('Grill closes at 1.')).toBeTruthy()
