@@ -564,7 +564,10 @@ describe('StoryScreen', () => {
 		mockBody.mockRejectedValue(new Error('offline'))
 		await renderStory(36532)
 
-		expect(await screen.findByRole('button', {name: 'Open on the Mess'})).toBeTruthy()
+		// The page read retries once, a second later, before it gives up.
+		expect(
+			await screen.findByRole('button', {name: 'Open on the Mess'}, {timeout: 3000}),
+		).toBeTruthy()
 		expect(screen.queryByLabelText('Loading')).toBeNull()
 	})
 })

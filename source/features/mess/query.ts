@@ -196,6 +196,11 @@ export const messPlaylistPageOptions = (story: MessStory) =>
 		queryKey: messKeys.playlistPage(story.id),
 		// A published post's playlist does not change.
 		staleTime: ONE_DAY_IN_MS,
+		// The page shows a placeholder until this settles, so it fails at once offline, and
+		// after one retry otherwise, letting the page fall back; it is fetched again when the
+		// network returns.
+		networkMode: 'always',
+		retry: 1,
 		queryFn: async ({signal}): Promise<SpotifyRef | null> => {
 			let page = await fetchSourceBody(story.link, signal, 'Olaf Messenger page', 'text')
 			return typeof page === 'string' ? findSpotifyRef(page) : null

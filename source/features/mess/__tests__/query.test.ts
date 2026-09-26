@@ -8,6 +8,7 @@ import profiles from './fixtures/profiles-390.json'
 import varietyPosts from './fixtures/variety-posts.json'
 import crosswordPlaylist from './fixtures/crossword-playlist-posts.json'
 import {parseMessCategories, parseMessPosts} from '../lib/posts'
+import {QueryClient, onlineManager} from '@tanstack/react-query'
 import {queryClient} from '../../../init/tanstack-query'
 import {
 	MissingMessStoryError,
@@ -366,6 +367,20 @@ describe('messPlaylistPageOptions', () => {
 	test('fails when the page cannot be fetched', async () => {
 		mockBody.mockRejectedValue(new Error('offline'))
 		await expect(run(messPlaylistPageOptions(playlistStory(36532)))).rejects.toThrow('offline')
+	})
+
+	test('fails at once when offline, so the page can fall back, rather than waiting for the network', async () => {
+		mockBody.mockRejectedValue(new Error('offline'))
+		let client = new QueryClient()
+		onlineManager.setOnline(false)
+		try {
+			await expect(client.query(messPlaylistPageOptions(playlistStory(36532)))).rejects.toThrow(
+				'offline',
+			)
+		} finally {
+			onlineManager.setOnline(true)
+			client.clear()
+		}
 	})
 
 	test('is cached per story', () => {
