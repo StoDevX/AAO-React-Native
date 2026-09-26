@@ -248,7 +248,7 @@ function PrintJobReleaseLoader(): React.ReactNode {
 			<NoticeView
 				buttonText="Try Again"
 				onPress={jobRefetch}
-				text={`A problem occured while loading: ${
+				text={`A problem occurred while loading: ${
 					jobError instanceof Error ? jobError.message : 'Unknown error'
 				}`}
 			/>
@@ -264,7 +264,7 @@ function PrintJobReleaseLoader(): React.ReactNode {
 			<NoticeView
 				buttonText="Try Again"
 				onPress={printerRefetch}
-				text={`A problem occured while loading: ${
+				text={`A problem occurred while loading: ${
 					printerError instanceof Error ? printerError.message : 'Unknown error'
 				}`}
 			/>

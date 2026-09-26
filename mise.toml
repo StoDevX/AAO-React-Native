@@ -1,6 +1,6 @@
 [tools]
 node = "24.21.0"
-pnpm = "12.5.0"
+pnpm = "12.6.0"
 hk = "2.2.0"
 ruby = "3.4.10"
 "gem:bundler" = "4.0.21"
@@ -253,8 +253,10 @@ run = "node scripts/validate-workspace-deps.mjs"
 # every CI job at install.
 #
 # `--lockfile-only` resolves without touching node_modules, and
-# `--trust-lockfile` skips pnpm's supply-chain re-verification, which reaches
-# the registry and takes over a minute on a cold cache. That check belongs in
+# `trust-lockfile` skips pnpm's supply-chain re-verification, which reaches
+# the registry and takes over a minute on a cold cache. It is set through
+# `--config.` because pnpm 12.6's install rejects the `--trust-lockfile` flag
+# its own help lists. That check belongs in
 # CI, where the network is a given; here the question is only whether the
 # lockfile still describes the package.json files.
 # metro-config is a direct dependency pinned exactly while metro itself is
@@ -301,7 +303,7 @@ run = "node scripts/validate-expo-versions.mjs"
 
 [tasks."validate-lockfile"]
 description = "Check that pnpm-lock.yaml matches the package.json files"
-run = "pnpm install --frozen-lockfile --lockfile-only --trust-lockfile"
+run = "pnpm install --frozen-lockfile --lockfile-only --config.trust-lockfile=true"
 
 # CI keys its toolchain cache on mise.lock alone, so a lock that has drifted
 # from mise.toml would otherwise restore a cache that satisfies neither. The

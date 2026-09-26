@@ -7,12 +7,12 @@ export const CARLETON_DEFAULT_URL = 'https://carleton.api.frogpond.tech/v1/'
 export const SUPPORT_EMAIL = 'allaboutolaf@frogpond.tech'
 
 /**
- * A sheet's middle stop, as a fraction of the height it is allowed.
+ * A detail sheet's middle stop, as a fraction of the height it is allowed.
  *
- * The building detail sheet opens here; the map's sheet opens collapsed and
- * comes here when a building is picked. Shared so the two cannot drift apart --
- * they already had, by a point -- since two sheets in one app stopping at
- * different heights reads as an accident rather than a decision.
+ * Every detail sheet opens here. Shared so they cannot drift apart, since two
+ * sheets in one app stopping at different heights reads as an accident rather
+ * than a decision. The map's building card is the exception: it copies Apple
+ * Maps' place card, stops where Maps does, and says so in `Map/index.tsx`.
  *
  * A fraction is measured against UIKit's maximum detent value, which is the
  * window less its top inset, not the window.

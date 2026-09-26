@@ -76,3 +76,68 @@ extension XCUIElement {
 		return XCTWaiter().wait(for: [expectation], timeout: timeout) == .completed
 	}
 }
+
+/// The RGB values of a screenshot, addressed in points.
+struct ScreenPixels {
+	struct Colour {
+		let red: Int
+		let green: Int
+		let blue: Int
+
+		/// Within a step or two per channel, which absorbs the colour-space
+		/// conversion without letting a light glyph over a light page through.
+		func isClose(to other: Colour) -> Bool {
+			abs(red - other.red) <= 2 && abs(green - other.green) <= 2 && abs(blue - other.blue) <= 2
+		}
+	}
+
+	private let bytes: [UInt8]
+	private let width: Int
+	private let scale: CGFloat
+
+	init?(_ image: UIImage) {
+		guard let cgImage = image.cgImage else { return nil }
+		let width = cgImage.width
+		let height = cgImage.height
+		// Drawing inside withUnsafeMutableBytes keeps the buffer's address valid
+		// for as long as the context writes through it.
+		var bytes = [UInt8](repeating: 0, count: width * height * 4)
+		let drawn = bytes.withUnsafeMutableBytes { buffer -> Bool in
+			guard
+				let context = CGContext(
+					data: buffer.baseAddress, width: width, height: height, bitsPerComponent: 8,
+					bytesPerRow: width * 4, space: CGColorSpaceCreateDeviceRGB(),
+					bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue)
+			else { return false }
+			context.draw(cgImage, in: CGRect(x: 0, y: 0, width: width, height: height))
+			return true
+		}
+		guard drawn else { return nil }
+		self.bytes = bytes
+		self.width = width
+		self.scale = CGFloat(width) / image.size.width
+	}
+
+	func colour(at point: CGPoint) -> Colour {
+		let index = (Int(point.y * scale) * width + Int(point.x * scale)) * 4
+		return Colour(red: Int(bytes[index]), green: Int(bytes[index + 1]), blue: Int(bytes[index + 2]))
+	}
+
+	/// The share of `region` whose colour differs between this screenshot and
+	/// `other`, sampled every two points: 0 for the same picture, near 1 for
+	/// an unrelated one.
+	func fractionDiffering(from other: ScreenPixels, in region: CGRect) -> Double {
+		var sampled = 0
+		var differing = 0
+		for y in stride(from: region.minY, to: region.maxY, by: 2) {
+			for x in stride(from: region.minX, to: region.maxX, by: 2) {
+				let point = CGPoint(x: x, y: y)
+				sampled += 1
+				if !colour(at: point).isClose(to: other.colour(at: point)) {
+					differing += 1
+				}
+			}
+		}
+		return sampled == 0 ? 0 : Double(differing) / Double(sampled)
+	}
+}

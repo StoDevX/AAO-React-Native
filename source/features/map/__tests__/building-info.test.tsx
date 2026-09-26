@@ -15,6 +15,10 @@ jest.mock('@expo/ui/swift-ui/modifiers', () => {
 	return require('../../../testing/expo-ui-mock') as typeof import('../../../testing/expo-ui-mock')
 })
 jest.mock('@frogpond/open-url', () => ({openUrl: jest.fn()}))
+jest.mock('@frogpond/place-card-header', () => {
+	// oxlint-disable-next-line typescript/no-require-imports
+	return require('./place-card-header-mock') as typeof import('./place-card-header-mock')
+})
 
 const mockOpenUrl = jest.mocked(openUrl)
 
@@ -42,6 +46,7 @@ describe('BuildingInfo', () => {
 					address: '1520 St Olaf Ave',
 				})}
 				onClose={jest.fn()}
+				stop="medium"
 			/>,
 		)
 
@@ -59,6 +64,7 @@ describe('BuildingInfo', () => {
 					departments: ['Registrar <https://wp.stolaf.edu/registrar>'],
 				})}
 				onClose={jest.fn()}
+				stop="medium"
 			/>,
 		)
 
@@ -76,6 +82,7 @@ describe('BuildingInfo', () => {
 					links: [{label: 'Directions', href: 'https://wp.stolaf.edu/directions'}],
 				})}
 				onClose={jest.fn()}
+				stop="medium"
 			/>,
 		)
 
@@ -85,8 +92,107 @@ describe('BuildingInfo', () => {
 	})
 
 	it('renders a not-found state when the building is missing', async () => {
-		await render(<BuildingInfo building={undefined} onClose={jest.fn()} />)
+		await render(<BuildingInfo building={undefined} onClose={jest.fn()} stop="medium" />)
 
 		expect(screen.getByText(/not found/iu)).toBeTruthy()
+	})
+})
+
+describe('BuildingInfo header', () => {
+	it('lists the abbreviation above About', async () => {
+		await render(
+			<BuildingInfo
+				building={makeBuilding({
+					id: 'a',
+					name: 'Regents Hall',
+					nickname: 'RNS',
+					description: 'Science.',
+				})}
+				onClose={jest.fn()}
+				stop="medium"
+			/>,
+		)
+
+		expect(screen.getByText('RNS')).toBeTruthy()
+		// Earlier in the rendered tree means drawn above it in the list.
+		let tree = JSON.stringify(screen.toJSON())
+		expect(tree.indexOf('Abbreviation')).toBeGreaterThan(-1)
+		expect(tree.indexOf('Abbreviation')).toBeLessThan(tree.indexOf('About'))
+	})
+
+	it('has no Abbreviation section without a nickname', async () => {
+		await render(
+			<BuildingInfo
+				building={makeBuilding({id: 'a', name: 'Regents Hall'})}
+				onClose={jest.fn()}
+				stop="medium"
+			/>,
+		)
+
+		expect(screen.queryByText('Abbreviation')).toBeNull()
+	})
+
+	it('closes from the header button', async () => {
+		let onClose = jest.fn()
+		await render(
+			<BuildingInfo
+				building={makeBuilding({id: 'a', name: 'Regents Hall'})}
+				onClose={onClose}
+				stop="collapsed"
+			/>,
+		)
+
+		await fireEvent.press(screen.getByLabelText('Close'))
+
+		expect(onClose).toHaveBeenCalledTimes(1)
+	})
+})
+
+describe('BuildingInfo at large', () => {
+	it('shows the name as the big title, with no header title', async () => {
+		await render(
+			<BuildingInfo
+				building={makeBuilding({id: 'a', name: 'Regents Hall', type: 'Administrative & Academic'})}
+				onClose={jest.fn()}
+				stop="large"
+			/>,
+		)
+
+		// Maps' header holds only its buttons while the big title is in view.
+		expect(screen.queryByTestId('card-title')).toBeNull()
+		expect(screen.getByText('Regents Hall')).toBeTruthy()
+		expect(screen.getByTestId('card-big-subtitle')).toHaveTextContent('Administrative & Academic')
+	})
+
+	// Carleton's feed carries no type at all.
+	it.each([undefined, null, ''])(
+		'shows no subtitle under the big title for a type of %p',
+		async (type) => {
+			await render(
+				<BuildingInfo
+					building={makeBuilding({id: 'a', name: 'Sayles-Hill Campus Center', type})}
+					onClose={jest.fn()}
+					stop="large"
+				/>,
+			)
+
+			expect(screen.getByText('Sayles-Hill Campus Center')).toBeTruthy()
+			expect(screen.queryByTestId('card-big-subtitle')).toBeNull()
+		},
+	)
+
+	it('keeps the close button in the header', async () => {
+		let onClose = jest.fn()
+		await render(
+			<BuildingInfo
+				building={makeBuilding({id: 'a', name: 'Regents Hall'})}
+				onClose={onClose}
+				stop="large"
+			/>,
+		)
+
+		await fireEvent.press(screen.getByLabelText('Close'))
+
+		expect(onClose).toHaveBeenCalledTimes(1)
 	})
 })
