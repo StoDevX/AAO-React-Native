@@ -28,9 +28,10 @@ const ROW = [
 /// so VoiceOver skips the icon.
 const ICON = [imageScale('small'), frame({width: 28}), accessibilityHidden(true)]
 
+/// Solid, as Maps draws its Good to Know glyphs, and as the wheelchair is.
 const SYMBOL = {
-	abbreviation: 'textformat.abc',
-	nickname: 'quote.bubble',
+	abbreviation: 'tag.fill',
+	nickname: 'quote.bubble.fill',
 	accessibility: 'figure.roll',
 } as const satisfies Record<GoodToKnowRow['kind'], string>
 
