@@ -46,13 +46,24 @@ class ModuleNewsTests: UITestCase {
 
 	/// At the largest text size the chosen sign's section sits a long way above
 	/// the last rows, so the page has to scroll to a section it has not yet drawn.
+	///
+	/// The column is chosen at the default size and the app relaunched at AX5
+	/// keeping it. At AX5 on a small phone the filter menu can scroll away from
+	/// an item once it is ticked, taking it out of the accessibility tree, so the
+	/// filter could not confirm the choice it had just made -- and the menu is not
+	/// what this test is about.
 	func testHoroscopesScrollToASignPickedFromTheLastRow() throws {
-		relaunch(atContentSizeCategory: TestIdentifiers.LaunchArguments.accessibilityExtraExtraExtraLarge)
-		let news = NewsScreen(app: app, tile: TestIdentifiers.Buttons.olafMessenger, title: "The Olaf Messenger")
+		let tile = TestIdentifiers.Buttons.olafMessenger
+		NewsScreen(app: app, tile: tile, title: "The Olaf Messenger")
 			.navigate()
 		MessFilter(app: app)
 			.choose(column: TestIdentifiers.News.horoscopesColumn, in: TestIdentifiers.News.varietySection)
-		news.openFirstStory()
+		relaunchKeepingState(
+			adding: TestIdentifiers.LaunchArguments.contentSizeCategory(
+				TestIdentifiers.LaunchArguments.accessibilityExtraExtraExtraLarge))
+		NewsScreen(app: app, tile: tile, title: "The Olaf Messenger")
+			.navigate()
+			.openFirstStory()
 			.scrollToSignRow(TestIdentifiers.News.pisces)
 			.pickSignFromList(TestIdentifiers.News.pisces)
 			.verifySignChosen(TestIdentifiers.News.pisces)

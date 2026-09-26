@@ -27,6 +27,13 @@ struct TestIdentifiers {
 		/// RCTAccessibilityManager fails to find a multiplier for it silently
 		/// rather than refusing to launch.
 		static let accessibilityExtraExtraExtraLarge = "UICTContentSizeCategoryAccessibilityXXXL"
+
+		/// Launch the app at a given Dynamic Type size. UIKit reads
+		/// `-UIPreferredContentSizeCategoryName` as a command-line default, the
+		/// same mechanism `--uitesting` and `--reset-state` rely on.
+		static func contentSizeCategory(_ category: String) -> [String] {
+			["-UIPreferredContentSizeCategoryName", category]
+		}
 	}
 
 	// MARK: - testID-based identifiers

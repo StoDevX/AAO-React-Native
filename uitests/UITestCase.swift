@@ -184,18 +184,15 @@ class UITestCase: XCTestCase {
 		app.launch()
 	}
 
-	/// Terminate and relaunch the app at a given Dynamic Type size, passed as
-	/// `-UIPreferredContentSizeCategoryName <category>` -- a flag UIKit reads
-	/// as a command-line default, the same mechanism `--uitesting` and
-	/// `--reset-state` rely on. Lets a test prove a layout at a size larger
-	/// than whatever the simulator's own Settings happen to be set to.
+	/// Terminate and relaunch the app with fresh state at a given Dynamic Type
+	/// size. Lets a test prove a layout at a size larger than whatever the
+	/// simulator's own Settings happen to be set to.
 	func relaunch(atContentSizeCategory category: String) {
 		app.terminate()
 		app.launchArguments = [
 			TestIdentifiers.LaunchArguments.uiTesting,
 			TestIdentifiers.LaunchArguments.resetState,
-			"-UIPreferredContentSizeCategoryName", category,
-		]
+		] + TestIdentifiers.LaunchArguments.contentSizeCategory(category)
 		appendJsLocationIfProvided()
 		app.launch()
 	}
