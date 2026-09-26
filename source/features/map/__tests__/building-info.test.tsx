@@ -4,6 +4,7 @@ import {fireEvent, render, screen} from '@testing-library/react-native'
 import {openUrl} from '@frogpond/open-url'
 
 import {BuildingInfo} from '../building-info'
+import type {Building, Feature} from '../types'
 import {makeBuilding} from './fixtures'
 
 jest.mock('@expo/ui/swift-ui', () => {
@@ -13,6 +14,10 @@ jest.mock('@expo/ui/swift-ui', () => {
 jest.mock('@expo/ui/swift-ui/modifiers', () => {
 	// oxlint-disable-next-line typescript/no-require-imports
 	return require('../../../testing/expo-ui-mock') as typeof import('../../../testing/expo-ui-mock')
+})
+jest.mock('@frogpond/double-tap', () => {
+	// oxlint-disable-next-line typescript/no-require-imports
+	return require('../../mess/__tests__/double-tap-mock') as typeof import('../../mess/__tests__/double-tap-mock')
 })
 jest.mock('@frogpond/open-url', () => ({openUrl: jest.fn()}))
 jest.mock('@frogpond/place-card-header', () => {
@@ -55,7 +60,19 @@ describe('BuildingInfo', () => {
 		expect(mockOpenURL).toHaveBeenCalledWith('https://maps.apple.com/?q=1520%20St%20Olaf%20Ave')
 	})
 
-	it('opens a parsed department link', async () => {
+	it('shows the address under Details', async () => {
+		await render(
+			<BuildingInfo
+				building={makeBuilding({id: 'a', name: 'Alpha Hall', address: '1520 St Olaf Ave'})}
+				onClose={jest.fn()}
+				stop="medium"
+			/>,
+		)
+
+		expect(screen.getByText('Details')).toBeTruthy()
+	})
+
+	it('opens a parsed department link from its tile', async () => {
 		await render(
 			<BuildingInfo
 				building={makeBuilding({
@@ -99,39 +116,6 @@ describe('BuildingInfo', () => {
 })
 
 describe('BuildingInfo header', () => {
-	it('lists the abbreviation above About', async () => {
-		await render(
-			<BuildingInfo
-				building={makeBuilding({
-					id: 'a',
-					name: 'Regents Hall',
-					nickname: 'RNS',
-					description: 'Science.',
-				})}
-				onClose={jest.fn()}
-				stop="medium"
-			/>,
-		)
-
-		expect(screen.getByText('RNS')).toBeTruthy()
-		// Earlier in the rendered tree means drawn above it in the list.
-		let tree = JSON.stringify(screen.toJSON())
-		expect(tree.indexOf('Abbreviation')).toBeGreaterThan(-1)
-		expect(tree.indexOf('Abbreviation')).toBeLessThan(tree.indexOf('About'))
-	})
-
-	it('has no Abbreviation section without a nickname', async () => {
-		await render(
-			<BuildingInfo
-				building={makeBuilding({id: 'a', name: 'Regents Hall'})}
-				onClose={jest.fn()}
-				stop="medium"
-			/>,
-		)
-
-		expect(screen.queryByText('Abbreviation')).toBeNull()
-	})
-
 	it('closes from the header button', async () => {
 		let onClose = jest.fn()
 		await render(
@@ -194,5 +178,143 @@ describe('BuildingInfo at large', () => {
 		await fireEvent.press(screen.getByLabelText('Close'))
 
 		expect(onClose).toHaveBeenCalledTimes(1)
+	})
+})
+
+/// A building with a map point, which is what Directions routes to.
+function withPoint(building: Feature<Building>): Feature<Building> {
+	return {
+		...building,
+		geometry: {
+			type: 'GeometryCollection',
+			geometries: [{type: 'Point', coordinates: [-93.1839, 44.4618]}],
+		},
+	}
+}
+
+function sectionOrder(): Array<string> {
+	let tree = JSON.stringify(screen.toJSON())
+	return ['About', 'Good to Know', 'Departments', 'Offices', 'Floors', 'Links', 'Details']
+		.map((title) => ({title, at: tree.indexOf(`"${title}"`)}))
+		.filter(({at}) => at !== -1)
+		.sort((a, b) => a.at - b.at)
+		.map(({title}) => title)
+}
+
+describe('BuildingInfo sections', () => {
+	it('lays out every section in Maps order', async () => {
+		await render(
+			<BuildingInfo
+				building={makeBuilding({
+					id: 'a',
+					name: 'Alpha Hall',
+					description: 'A hall.',
+					abbreviation: 'AH',
+					departments: ['Biology <https://wp.stolaf.edu/biology>'],
+					offices: ['Registrar <https://wp.stolaf.edu/registrar>'],
+					floors: ['Floor 1 <https://example.com/1.pdf>'],
+					links: [{label: 'Website', href: 'https://example.com'}],
+					address: '1520 St Olaf Ave',
+				})}
+				onClose={jest.fn()}
+				stop="medium"
+			/>,
+		)
+
+		expect(sectionOrder()).toEqual([
+			'About',
+			'Good to Know',
+			'Departments',
+			'Offices',
+			'Floors',
+			'Links',
+			'Details',
+		])
+	})
+
+	it('leaves out every section with nothing to show', async () => {
+		await render(
+			<BuildingInfo
+				building={makeBuilding({id: 'a', name: 'Lot Q'})}
+				onClose={jest.fn()}
+				stop="medium"
+			/>,
+		)
+
+		expect(sectionOrder()).toEqual([])
+	})
+
+	it('names the abbreviation in Good to Know, once when the nickname matches it', async () => {
+		await render(
+			<BuildingInfo
+				building={makeBuilding({
+					id: 'a',
+					name: 'Regents Hall',
+					abbreviation: 'RNS',
+					nickname: 'RNS',
+				})}
+				onClose={jest.fn()}
+				stop="medium"
+			/>,
+		)
+
+		expect(screen.getByText('Abbreviated RNS')).toBeTruthy()
+		expect(screen.queryByText('RNS')).toBeNull()
+	})
+
+	it('offers More on a section only past six of its own', async () => {
+		let departments = Array.from({length: 7}, (_, i) => `Dept ${i} <https://example.com/${i}>`)
+		let offices = Array.from({length: 6}, (_, i) => `Office ${i} <https://example.com/o${i}>`)
+		await render(
+			<BuildingInfo
+				building={makeBuilding({id: 'a', name: 'Tomson Hall', departments, offices})}
+				onClose={jest.fn()}
+				stop="medium"
+			/>,
+		)
+
+		// One More, and it is the Departments heading's: Offices has only six.
+		expect(screen.getAllByRole('button', {name: 'More'})).toHaveLength(1)
+		let tree = JSON.stringify(screen.toJSON())
+		expect(tree.indexOf('"More"')).toBeGreaterThan(tree.indexOf('"Departments"'))
+		expect(tree.indexOf('"More"')).toBeLessThan(tree.indexOf('"Offices"'))
+	})
+
+	it("opens directions to the building's point", async () => {
+		await render(
+			<BuildingInfo
+				building={withPoint(makeBuilding({id: 'a', name: 'Alpha Hall'}))}
+				onClose={jest.fn()}
+				stop="medium"
+			/>,
+		)
+
+		await fireEvent.press(screen.getByRole('button', {name: 'Directions'}))
+
+		expect(mockOpenURL).toHaveBeenCalledWith('https://maps.apple.com/?daddr=44.4618,-93.1839')
+	})
+
+	it('offers no Directions without a point', async () => {
+		await render(
+			<BuildingInfo
+				building={makeBuilding({id: 'a', name: 'Alpha Hall'})}
+				onClose={jest.fn()}
+				stop="medium"
+			/>,
+		)
+
+		expect(screen.queryByRole('button', {name: 'Directions'})).toBeNull()
+	})
+
+	it('shows a photo tile for a building with a photo', async () => {
+		await render(
+			<BuildingInfo
+				building={makeBuilding({id: 'a', name: 'Alpha Hall', photos: ['alpha.jpg']})}
+				onClose={jest.fn()}
+				stop="medium"
+			/>,
+		)
+
+		expect(screen.getByLabelText('Photo of Alpha Hall')).toBeTruthy()
 	})
 })

@@ -19,7 +19,7 @@ import {FILL_WIDTH} from '../../../components/tile-layout'
 import type {PlaceTile} from '../lib/place-tiles'
 
 // Maps' "Also at This Location" tiles, measured on iOS 27: about 170 by 124pt,
-// with 20pt corners, a small round icon, a bold two-line name and a grey kind.
+// with 20pt corners, a small round icon and a bold name of up to three lines.
 
 /// The carousel's tile width; tiles in the More grid fill their column instead.
 export const PLACE_TILE_WIDTH = 170
@@ -27,9 +27,9 @@ const TILE_HEIGHT = 124
 const CORNER_RADIUS = 20
 const ICON_SIZE = 28
 
-const LOOK = {
-	department: {kind: 'Department', symbol: 'building.2.fill'},
-	office: {kind: 'Office', symbol: 'person.2.fill'},
+const SYMBOL = {
+	department: 'building.2.fill',
+	office: 'person.2.fill',
 } as const
 
 /// One department or office, as a Maps place tile. A tile with a link opens
@@ -41,7 +41,7 @@ export function PlaceTileView({
 	tile: PlaceTile
 	fill?: boolean
 }): React.ReactNode {
-	let {kind, symbol} = LOOK[tile.kind]
+	let symbol = SYMBOL[tile.kind]
 	let card = (
 		<VStack
 			alignment="leading"
@@ -72,14 +72,6 @@ export function PlaceTileView({
 				modifiers={[font({textStyle: 'headline'}), lineLimit(2), multilineTextAlignment('leading')]}
 			>
 				{tile.label}
-			</Text>
-			<Text
-				modifiers={[
-					font({textStyle: 'subheadline'}),
-					foregroundStyle({type: 'hierarchical', style: 'secondary'}),
-				]}
-			>
-				{kind}
 			</Text>
 			<Spacer />
 		</VStack>

@@ -2,6 +2,7 @@ import * as React from 'react'
 import {Linking} from 'react-native'
 import {Button, HStack, Image, Section, Text, VStack} from '@expo/ui/swift-ui'
 import {
+	accessibilityIdentifier,
 	accessibilityLabel,
 	buttonBorderShape,
 	buttonStyle,
@@ -50,13 +51,13 @@ export function ActionsRow({actions}: {actions: Array<CardAction>}): React.React
 								buttonStyle(index === 0 ? 'borderedProminent' : 'bordered'),
 								buttonBorderShape('roundedRectangle', CORNER_RADIUS),
 								accessibilityLabel(title),
+								accessibilityIdentifier(`card-action-${action.kind}`),
 							]}
 							onPress={() => {
 								Linking.openURL(action.url).catch((err: unknown) => {
 									console.warn(`could not open ${action.url}`, err)
 								})
 							}}
-							testID={`card-action-${action.kind}`}
 						>
 							<VStack
 								modifiers={[frame({maxWidth: FILL_WIDTH, minHeight: LABEL_HEIGHT})]}

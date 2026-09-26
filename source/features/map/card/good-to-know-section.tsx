@@ -4,6 +4,7 @@ import {
 	font,
 	foregroundStyle,
 	frame,
+	imageScale,
 	listRowBackground,
 	listRowInsets,
 	listRowSeparator,
@@ -20,8 +21,9 @@ const ROW = [
 	listRowInsets({top: 4, leading: CARD_INSET, bottom: 4, trailing: CARD_INSET}),
 ]
 
-/// Wide enough for the widest of the row icons, so the texts line up.
-const ICON = [frame({width: 28})]
+/// Small, and in a column wide enough for the widest of them, so the texts
+/// line up, as Maps' amenity icons are.
+const ICON = [imageScale('small'), frame({width: 28})]
 
 const SYMBOL = {
 	abbreviation: 'textformat.abc',

@@ -12,7 +12,9 @@ import {
 	VStack,
 } from '@expo/ui/swift-ui'
 import {
+	accessibilityIdentifier,
 	accessibilityLabel,
+	background,
 	buttonBorderShape,
 	buttonStyle,
 	font,
@@ -22,6 +24,8 @@ import {
 	padding,
 	presentationDragIndicator,
 } from '@expo/ui/swift-ui/modifiers'
+
+import * as c from '@frogpond/colors'
 
 import {CAROUSEL_TILE_LIMIT, type PlaceTile} from '../lib/place-tiles'
 import {CARD_INSET} from './card-style'
@@ -51,9 +55,18 @@ function rowsOfTwo(tiles: Array<PlaceTile>): Array<Array<PlaceTile>> {
 	return rows
 }
 
-/// A building's departments and offices as a carousel of tiles, after Maps'
-/// "Also at This Location". Past six tiles, More opens every one in a grid.
-export function PlacesSection({tiles}: {tiles: Array<PlaceTile>}): React.ReactNode {
+/// A building's departments, or its offices, as a carousel of tiles, after
+/// Maps' "Also at This Location". Past six tiles, More opens every one in a
+/// grid. `id` names the section's controls for tests: `{id}-more`, `{id}-grid`.
+export function PlacesSection({
+	title,
+	id,
+	tiles,
+}: {
+	title: string
+	id: string
+	tiles: Array<PlaceTile>
+}): React.ReactNode {
 	let [showingAll, setShowingAll] = React.useState(false)
 	if (tiles.length === 0) {
 		return null
@@ -62,16 +75,60 @@ export function PlacesSection({tiles}: {tiles: Array<PlaceTile>}): React.ReactNo
 	return (
 		<Section>
 			<SectionHeading
-				title="Departments & Offices"
+				title={title}
 				trailing={
 					hasMore ? (
-						<Button
-							modifiers={[buttonStyle('borderless')]}
-							onPress={() => setShowingAll(true)}
-							testID="places-more"
-						>
-							<Text>More</Text>
-						</Button>
+						// The grid's sheet rides on the heading's row: on its own in
+						// the section, the list would give it an empty row.
+						<HStack>
+							<Button
+								modifiers={[buttonStyle('borderless'), accessibilityIdentifier(`${id}-more`)]}
+								onPress={() => setShowingAll(true)}
+							>
+								<Text>More</Text>
+							</Button>
+							<BottomSheet isPresented={showingAll} onIsPresentedChange={setShowingAll}>
+								<VStack
+									modifiers={[
+										presentationDragIndicator('visible'),
+										// The card's own grey, so the white tiles stand out on it.
+										background(c.systemGroupedBackground),
+									]}
+									spacing={0}
+								>
+									<HStack modifiers={[padding({horizontal: CARD_INSET, top: 20, bottom: 12})]}>
+										<Text modifiers={[font({textStyle: 'title2', weight: 'bold'})]}>{title}</Text>
+										<Spacer />
+										<Button
+											modifiers={[
+												buttonStyle('glass'),
+												buttonBorderShape('circle'),
+												accessibilityLabel('Close'),
+											]}
+											onPress={() => setShowingAll(false)}
+											testID="places-grid-close"
+										>
+											<Image systemName="xmark" />
+										</Button>
+									</HStack>
+									<ScrollView modifiers={[accessibilityIdentifier(`${id}-grid`)]}>
+										<Grid
+											horizontalSpacing={TILE_SPACING}
+											modifiers={[padding({horizontal: CARD_INSET, bottom: CARD_INSET})]}
+											verticalSpacing={TILE_SPACING}
+										>
+											{rowsOfTwo(tiles).map((row) => (
+												<Grid.Row key={row.map(tileKey).join('|')}>
+													{row.map((tile) => (
+														<PlaceTileView key={tileKey(tile)} fill={true} tile={tile} />
+													))}
+												</Grid.Row>
+											))}
+										</Grid>
+									</ScrollView>
+								</VStack>
+							</BottomSheet>
+						</HStack>
 					) : undefined
 				}
 			/>
@@ -82,44 +139,6 @@ export function PlacesSection({tiles}: {tiles: Array<PlaceTile>}): React.ReactNo
 					))}
 				</HStack>
 			</ScrollView>
-			{hasMore ? (
-				<BottomSheet isPresented={showingAll} onIsPresentedChange={setShowingAll}>
-					<VStack modifiers={[presentationDragIndicator('visible')]} spacing={0}>
-						<HStack modifiers={[padding({horizontal: CARD_INSET, top: 20, bottom: 12})]}>
-							<Text modifiers={[font({textStyle: 'title2', weight: 'bold'})]}>
-								Departments & Offices
-							</Text>
-							<Spacer />
-							<Button
-								modifiers={[
-									buttonStyle('glass'),
-									buttonBorderShape('circle'),
-									accessibilityLabel('Close'),
-								]}
-								onPress={() => setShowingAll(false)}
-								testID="places-grid-close"
-							>
-								<Image systemName="xmark" />
-							</Button>
-						</HStack>
-						<ScrollView testID="places-grid">
-							<Grid
-								horizontalSpacing={TILE_SPACING}
-								modifiers={[padding({horizontal: CARD_INSET, bottom: CARD_INSET})]}
-								verticalSpacing={TILE_SPACING}
-							>
-								{rowsOfTwo(tiles).map((row) => (
-									<Grid.Row key={row.map(tileKey).join('|')}>
-										{row.map((tile) => (
-											<PlaceTileView key={tileKey(tile)} fill={true} tile={tile} />
-										))}
-									</Grid.Row>
-								))}
-							</Grid>
-						</ScrollView>
-					</VStack>
-				</BottomSheet>
-			) : null}
 		</Section>
 	)
 }
