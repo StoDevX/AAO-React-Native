@@ -66,8 +66,12 @@ export type BuildingType = {
 	 * a building's own hours, an office, a space inside a building, or a service
 	 * with hours and no place (the SARN Hotline). A building's map card shows its
 	 * `building` venue.
+	 *
+	 * Optional: Carleton's feed has no `kind`, and neither does St. Olaf's
+	 * server feed, nor a cache persisted from it, until the server serves this
+	 * data. The bundled data always carries it.
 	 */
-	kind: 'building' | 'office' | 'space' | 'service'
+	kind?: 'building' | 'office' | 'space' | 'service'
 	links?: BuildingLinkType[]
 	schedule: NamedBuildingScheduleType[]
 	breakSchedule?: BreakScheduleContainerType
