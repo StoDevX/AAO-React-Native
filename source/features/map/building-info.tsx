@@ -28,7 +28,7 @@ import {
 	truncationMode,
 } from '@expo/ui/swift-ui/modifiers'
 import {openUrl} from '@frogpond/open-url'
-import {PlaceCardHeader, PlaceCardScaffold} from '@frogpond/place-card-header'
+import {PlaceCardAbout, PlaceCardHeader, PlaceCardScaffold} from '@frogpond/place-card-header'
 
 import {FILL_WIDTH} from '../../components/tile-layout'
 import {nameUnderHeader, titleMayMove} from './lib/card-title'
@@ -258,7 +258,7 @@ function BuildingCard({
 
 				{description ? (
 					<Section title="About">
-						<Text>{description}</Text>
+						<PlaceCardAbout text={description} />
 					</Section>
 				) : null}
 

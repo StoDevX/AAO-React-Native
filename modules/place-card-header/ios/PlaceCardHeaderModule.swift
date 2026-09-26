@@ -6,5 +6,6 @@ public class PlaceCardHeaderModule: Module {
 
 		View(PlaceCardHeaderView.self)
 		View(PlaceCardScaffoldView.self)
+		View(PlaceCardAboutView.self)
 	}
 }
