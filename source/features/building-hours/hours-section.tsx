@@ -70,7 +70,7 @@ type Props = {
  * A place's hours as Apple Maps lays them out: its status and today's hours,
  * then the week, one row per run of days. A venue with several schedule
  * blocks (Stav's breakfast, lunch and dinner) gets a section for each, headed
- * by its title, under the one status. Used by the map card and by the Hours
+ * by its title, under one status headed "Hours". Used by the map card and by the Hours
  * screen's detail sheet, so the two always agree.
  *
  * A venue with no hours listed is unscheduled rather than closed, so it shows
@@ -86,14 +86,39 @@ export function HoursSection({venue, now}: Props): React.ReactNode {
 	let single = withContent.length === 1
 	let accent = getAccentBackgroundColor(getShortBuildingStatus(venue, now))
 
-	return withContent.map((block, index) => (
-		<Section key={block.title}>
-			<SectionHeading title={single ? 'Hours' : block.title} />
-			{index === 0 && scheduled ? <StatusRow accent={accent} now={now} venue={venue} /> : null}
-			<WeekRows accent={accent} block={block} now={now} />
-			{block.notes ? <Text modifiers={NOTE_ROW}>{block.notes}</Text> : null}
-		</Section>
-	))
+	let status = scheduled ? <StatusRow accent={accent} now={now} venue={venue} /> : null
+
+	if (single) {
+		let [block] = withContent
+		return (
+			<Section>
+				<SectionHeading title="Hours" />
+				{status}
+				<WeekRows accent={accent} block={block} now={now} />
+				{block.notes ? <Text modifiers={NOTE_ROW}>{block.notes}</Text> : null}
+			</Section>
+		)
+	}
+
+	// The status speaks for the whole venue rather than its first block, so it
+	// takes its own section, headed "Hours", above the blocks.
+	return (
+		<>
+			{status ? (
+				<Section>
+					<SectionHeading title="Hours" />
+					{status}
+				</Section>
+			) : null}
+			{withContent.map((block) => (
+				<Section key={block.title}>
+					<SectionHeading title={block.title} />
+					<WeekRows accent={accent} block={block} now={now} />
+					{block.notes ? <Text modifiers={NOTE_ROW}>{block.notes}</Text> : null}
+				</Section>
+			))}
+		</>
+	)
 }
 
 /// "Open until 10 PM" beside a bar in the status's colour, and today's hours

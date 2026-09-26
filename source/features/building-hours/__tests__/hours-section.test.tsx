@@ -5,6 +5,7 @@ import {render, screen} from '@testing-library/react-native'
 import {List} from '@expo/ui/swift-ui'
 
 import {HoursSection} from '../hours-section'
+import {contextualStatus} from '../lib'
 import type {BuildingType} from '../types'
 
 jest.mock('@expo/ui/swift-ui', () => {
@@ -68,11 +69,23 @@ describe('HoursSection', () => {
 
 	test('heads each of several blocks by its own title, under one status', async () => {
 		await renderSection(stav)
-		expect(screen.queryByText('Hours')).toBeNull()
 		for (let title of ['Breakfast', 'Lunch', 'Dinner']) {
 			expect(screen.getByText(title)).toBeTruthy()
 		}
 		expect(screen.getAllByText(/^(Open|Closed|Opens|Closes|Reopens)/u)).toHaveLength(1)
+	})
+
+	// The status speaks for the whole venue, not for its first block, so it
+	// sits under its own "Hours" heading above them all.
+	test('puts the status of several blocks under "Hours", before the first block', async () => {
+		await renderSection(stav)
+		let tree = JSON.stringify(screen.toJSON())
+		let hours = tree.indexOf('"Hours"')
+		let status = tree.indexOf(`"${contextualStatus(stav, NOW).long}"`)
+		let breakfast = tree.indexOf('"Breakfast"')
+		expect(hours).toBeGreaterThan(-1)
+		expect(status).toBeGreaterThan(hours)
+		expect(breakfast).toBeGreaterThan(status)
 	})
 
 	test('marks the status row for UI tests to find', async () => {
