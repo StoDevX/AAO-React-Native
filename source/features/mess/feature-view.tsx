@@ -49,7 +49,8 @@ export function FeatureView({story, layout, columnWidth}: Props): React.ReactNod
 			{isEmpty ? (
 				<SiteLinkCard icon="safari" label="Read on olafmessenger.com" url={story.link} />
 			) : null}
-			{isShortStory ? <SeriesRow story={story} /> : null}
+			{/* Every Microfiction Corner post carries the same banner, so its series is listed by title. */}
+			{isShortStory ? <SeriesRow asTitles={true} story={story} /> : null}
 		</>
 	)
 }
