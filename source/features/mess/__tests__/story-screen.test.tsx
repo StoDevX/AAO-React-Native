@@ -131,6 +131,23 @@ const POEM: MessStory = {
 	},
 }
 
+const PUZZLE = {
+	id: 'af644d78',
+	set: 'c2b247b419ae1dc89954424eb39235cd774839006bb020ce26abcf072f7ecaf4',
+}
+
+/** A Crossword post: its puzzle lives in its layout, and a line of text follows the button. */
+const CROSSWORD: MessStory = {
+	...STORY,
+	id: 36814,
+	title: 'Crossword: Sunrise & Sunset',
+	link: 'https://olafmessenger.com/36814/variety/crossword/crossword-sunrise-sunset/',
+	section: 'Variety',
+	column: 'Crossword',
+	blocks: [{type: 'paragraph', runs: [{text: 'Answers in next week’s issue.'}]}],
+	layout: {kind: 'crossword', puzzle: PUZZLE},
+}
+
 const PROFILE: StaffProfile = {
 	name: 'Kenzie Nguyen',
 	bio: 'Kenzie is a senior.',
@@ -142,7 +159,7 @@ let queryClient: QueryClient
 
 beforeEach(() => {
 	queryClient = new QueryClient({defaultOptions: {queries: {staleTime: Infinity, retry: false}}})
-	queryClient.setQueryData(messKeys.feed, [STORY, ARTWORK, HOROSCOPES, COMIC, POEM])
+	queryClient.setQueryData(messKeys.feed, [STORY, ARTWORK, HOROSCOPES, COMIC, POEM, CROSSWORD])
 	useMessStore.setState({lastSign: null})
 	// Ashlyn has no profile; Kenzie has one.
 	queryClient.setQueryData(messKeys.profile(423), null)
@@ -412,5 +429,17 @@ describe('StoryScreen', () => {
 
 		expect(screen.getAllByText('My bitter yellow comes with me on walks\\.')).toHaveLength(1)
 		expect(screen.getByText('It hums at the gate\\.')).toBeTruthy()
+	})
+
+	test('draws a Crossword post with a button that opens its puzzle, then its text', async () => {
+		await renderStory(36814)
+
+		fireEvent.press(screen.getByRole('button', {name: 'Solve the crossword'}))
+
+		expect(openUrl).toHaveBeenCalledWith(
+			'https://puzzleme.amuselabs.com/pmm/crossword?id=af644d78&set=c2b247b419ae1dc89954424eb39235cd774839006bb020ce26abcf072f7ecaf4&embed=1',
+		)
+		expect(screen.getByText(/^Answers/u)).toBeTruthy()
+		expect(screen.queryByText('Read on olafmessenger.com')).toBeNull()
 	})
 })
