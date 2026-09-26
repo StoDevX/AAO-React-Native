@@ -107,6 +107,28 @@ describe('parseRecipe', () => {
 		})
 	})
 
+	// A figure right after a label ends the section before it takes anything.
+	it('draws a post whose sections hold nothing as an article', () => {
+		let figure: Block = {
+			type: 'figure',
+			url: 'https://olafmessenger.com/a.jpg',
+			width: 1,
+			height: 1,
+			caption: '',
+		}
+		expect(
+			parseRecipe([
+				...body('Ingredients:', ['1 egg']),
+				...body('Directions:'),
+				figure,
+				...body('Stir.', 'Bake.'),
+			]),
+		).toStrictEqual({kind: 'article'})
+		expect(parseRecipe([...body('Directions:'), figure, ...body('Stir.', 'Bake.')])).toStrictEqual({
+			kind: 'article',
+		})
+	})
+
 	it('takes an ordered list with no label as steps labelled Directions', () => {
 		let layout = recipe(body('A family favourite.', ['Stir.', 'Bake.'], 'Enjoy!'))
 		expect(outline(layout)).toStrictEqual([['Directions', 'steps', 2]])

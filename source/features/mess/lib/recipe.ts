@@ -35,8 +35,8 @@ function labelOf(block: Block): string | null {
  * follows them. A label starts a section; its items are the list right after the label, or
  * else each paragraph up to the next label, list or figure. An ordered list with no label
  * of its own is a steps section. Every block lands in the introduction, a section or what
- * follows, so a post with a block stranded between two sections, or with no steps, is
- * drawn as an article.
+ * follows, so a post with a block stranded between two sections, a section holding nothing,
+ * or no steps, is drawn as an article.
  */
 export function parseRecipe(blocks: Block[]): StoryLayout {
 	let intro: Block[] = []
@@ -83,6 +83,8 @@ export function parseRecipe(blocks: Block[]): StoryLayout {
 		;(sections.length === 0 ? intro : after).push(block)
 	}
 
+	// A section with nothing under it would draw an empty heading over prose that belongs to it.
+	if (sections.some((section) => section.items.length === 0)) return {kind: 'article'}
 	if (!sections.some((section) => section.kind === 'steps')) return {kind: 'article'}
 	return {kind: 'recipe', intro, sections, after}
 }
