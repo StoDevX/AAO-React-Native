@@ -1,7 +1,7 @@
 import * as React from 'react'
 import {afterEach, beforeEach, describe, expect, jest, test} from '@jest/globals'
 import {act, fireEvent, render, screen} from '@testing-library/react-native'
-import {QueryClient, QueryClientProvider} from '@tanstack/react-query'
+import {onlineManager, QueryClient, QueryClientProvider} from '@tanstack/react-query'
 import {fetchManifest, fetchSourceBody, type Jrd} from '@frogpond/data-sources'
 
 import categoriesJson from './fixtures/categories.json'
@@ -208,6 +208,21 @@ describe('MessengerScreen', () => {
 		expect(screen.getByText('Loading…')).toBeTruthy()
 		expect(screen.queryByText('Front page')).toBeNull()
 		expect(pickerProps().selected).toBe('Poetry')
+	})
+
+	test('keeps the cached feed out of a saved column while offline, with the categories paused', async () => {
+		saveChoice('Poetry')
+		queryClient.setQueryData(messKeys.feed, [story(1, 'Front page', 'News')])
+		// Offline, the categories query pauses rather than loads, so it is pending but not loading.
+		onlineManager.setOnline(false)
+		try {
+			await renderScreen()
+
+			expect(screen.queryByText('Front page')).toBeNull()
+			expect(pickerProps().selected).toBe('Poetry')
+		} finally {
+			onlineManager.setOnline(true)
+		}
 	})
 
 	test('offers Try Again when the categories fail with a column saved, then lists the column', async () => {

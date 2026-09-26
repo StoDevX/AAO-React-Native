@@ -42,7 +42,9 @@ export function MessengerScreen(): React.ReactNode {
 	})
 	let query = resolving ? categories : list
 
-	let rows = React.useMemo(() => list.data ?? [], [list.data])
+	// While waiting, `list` is disabled but keyed to the feed, so its data is the cached feed; offline,
+	// the categories pause without loading, and the feed would show under the saved name.
+	let rows = React.useMemo(() => (resolving ? [] : (list.data ?? [])), [resolving, list.data])
 	let entries = React.useMemo(() => rows.map((r) => r.row), [rows])
 
 	let openStory = (story: StoryType) => {
