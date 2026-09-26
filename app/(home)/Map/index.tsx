@@ -24,6 +24,7 @@ import {useQuery} from '@tanstack/react-query'
 import {Stack, useLocalSearchParams} from 'expo-router'
 import * as c from '@frogpond/colors'
 import {NoticeView} from '@frogpond/notice'
+import {openUrl} from '@frogpond/open-url'
 
 import {parseCampus} from '../../../source/features/building-hours/query'
 import type {Campus} from '../../../source/features/building-hours/types'
@@ -39,7 +40,7 @@ import {
 } from '../../../source/features/map/lib/sheet-moves'
 import {mapDataOptions} from '../../../source/features/map/query'
 import type {Coordinate, Point} from '../../../source/features/map/types'
-import {mapStyleUrl} from '../../../source/features/map/urls'
+import {mapCredits, mapStyleUrl} from '../../../source/features/map/urls'
 
 /** Each campus's starting camera position. Carleton's predates this file
  * reading a campus from the route, and is kept exactly as it was. St. Olaf's
@@ -70,10 +71,6 @@ const MARKER_HIT_SLOP = (MIN_TOUCH_TARGET - MARKER_SIZE) / 2
 /// should still hit-test, since it is `visibility: none` rather than opacity
 /// that drops a layer from the tree.
 const FOOTPRINT_OPACITY = 0
-
-/// Under the header, clear of the sheet at every stop but `large`, which
-/// covers the whole map anyway.
-const ATTRIBUTION_POSITION = {top: 8, right: 8}
 
 /// The collapsed detent, requested in the sheet content's own layout space.
 /// UIKit shrinks whatever a sheet presents by a scale tied to the detent --
@@ -243,12 +240,25 @@ export default function MapPage(): React.ReactNode {
 
 	return (
 		<View style={StyleSheet.absoluteFill}>
-			<Stack.Title>{CAMPUS_TITLE[campus]}</Stack.Title>
-			{/* The attribution button carries the OpenStreetMap credit the tiles'
-			    licence requires, so it stays; it moves to the top corner because
-			    the sheet's floating collapsed stop sat on top of it at the bottom. */}
+			{/* The map runs up under a clear header, as Maps' does: only the Back
+			    button and the About menu float over it. The title stays for the
+			    next screen's Back button, but the header draws none. */}
+			<Stack.Screen
+				options={{title: CAMPUS_TITLE[campus], headerTitle: '', headerTransparent: true}}
+			/>
+			{/* The credits the tiles' licence requires, in place of MapLibre's own
+			    button, which would sit loose on the map beside Back. */}
+			<Stack.Toolbar placement="right">
+				<Stack.Toolbar.Menu accessibilityLabel="About this map" icon="info.circle">
+					{mapCredits(campus).map((credit) => (
+						<Stack.Toolbar.MenuAction key={credit.url} onPress={() => openUrl(credit.url)}>
+							{credit.label}
+						</Stack.Toolbar.MenuAction>
+					))}
+				</Stack.Toolbar.Menu>
+			</Stack.Toolbar>
 			<Map
-				attributionPosition={ATTRIBUTION_POSITION}
+				attribution={false}
 				logo={false}
 				mapStyle={mapStyleUrl(campus)}
 				style={StyleSheet.absoluteFill}
