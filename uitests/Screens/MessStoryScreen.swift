@@ -241,6 +241,43 @@ struct MessStoryScreen: Screen {
 		return self
 	}
 
+	/// Tap a Crossword post's Solve button and assert the in-app browser opened. Its Done
+	/// button is drawn before PuzzleMe's page loads, so this holds whatever the network does.
+	/// The in-app browser is the default link setting, which a reset launch keeps.
+	@discardableResult
+	func solveCrossword() -> Self {
+		let solve = app.buttons.matching(
+			NSPredicate(
+				format: "identifier == %@ AND label == %@",
+				TestIdentifiers.News.crosswordSolve, TestIdentifiers.News.crosswordSolveLabel)
+		).firstMatch
+		XCTAssertTrue(solve.waitForExistence(timeout: 30), "a Crossword post should offer to solve its puzzle")
+		capture("A Crossword post")
+		XCTAssertTrue(solve.waitForHittable(), "the Solve button should be ready to tap")
+		solve.tap()
+		let done = app.buttons[TestIdentifiers.Directory.inAppBrowserDone].firstMatch
+		XCTAssertTrue(
+			done.waitForExistence(timeout: 30),
+			"Solve the crossword should open the puzzle in the in-app browser")
+		capture("The crossword in the in-app browser")
+		return self
+	}
+
+	/// Assert a Playlist post offers its playlist in Spotify and draws Spotify's player.
+	@discardableResult
+	func verifyPlaylistOffered() -> Self {
+		let button = app.buttons.matching(
+			NSPredicate(
+				format: "identifier == %@ AND label == %@",
+				TestIdentifiers.News.playlistSpotify, TestIdentifiers.News.playlistSpotifyLabel)
+		).firstMatch
+		XCTAssertTrue(button.waitForExistence(timeout: 30), "a Playlist post should offer Open in Spotify")
+		let player = app.element(matching: TestIdentifiers.News.playlistEmbed)
+		XCTAssertTrue(player.waitForExistence(timeout: 30), "a Playlist post should draw Spotify's player")
+		capture("A Playlist post")
+		return self
+	}
+
 	/// The headline of the story on top.
 	/// Every story headline in the tree: one at rest, two mid-transition.
 	private var headlineTexts: XCUIElementQuery {
