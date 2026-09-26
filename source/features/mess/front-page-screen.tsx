@@ -26,6 +26,7 @@ import {chipKey, chipOf, type MessChip} from './lib/chips'
 import {TAP_TARGET} from './lib/glyph-grid'
 import {bannerKicker, topOf} from './lib/issues'
 import {messKeys} from './lib/keys'
+import {firstPageOf} from './lib/persist'
 import {Masthead, PaperNameTitle} from './masthead'
 import {MessPage, PAGE_MARGIN} from './mess-page'
 import {PageLoading, PageNotice} from './page-notice'
@@ -87,8 +88,12 @@ export function FrontPageScreen(): React.ReactNode {
 			<PaperNameTitle />
 			<MessPage
 				// Only the chip showing has queries mounted, so refetching the active Mess queries
-				// refreshes that chip alone.
-				onRefresh={() => queryClient.refetchQueries({queryKey: messKeys.all, type: 'active'})}
+				// refreshes that chip alone. The issue list is cut to its first page first, since an
+				// infinite query refetches every page it holds, one after another.
+				onRefresh={() => {
+					queryClient.setQueryData(messKeys.issues, (data) => data && firstPageOf(data))
+					return queryClient.refetchQueries({queryKey: messKeys.all, type: 'active'})
+				}}
 				pinned={<ChipRow chosen={chip} onChoose={choose} />}
 			>
 				{page}

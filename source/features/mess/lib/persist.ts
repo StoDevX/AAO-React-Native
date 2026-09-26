@@ -28,6 +28,18 @@ function isInfiniteData(data: unknown): data is InfiniteData<unknown, unknown> {
 }
 
 /**
+ * An issue list cut to its first page, which is all Top needs; undefined for anything that is not
+ * a list of pages. Later pages load again as the Issues list scrolls to them.
+ */
+export function firstPageOf<T>(data: InfiniteData<T, unknown>): InfiniteData<T, unknown>
+export function firstPageOf(data: unknown): InfiniteData<unknown, unknown> | undefined
+export function firstPageOf(data: unknown): InfiniteData<unknown, unknown> | undefined {
+	return isInfiniteData(data)
+		? {pages: data.pages.slice(0, 1), pageParams: data.pageParams.slice(0, 1)}
+		: undefined
+}
+
+/**
  * Whether a query is the issue list holding pages. A further page that fails leaves the list in an
  * error state, but the pages it loaded still stand, and Top is chosen from them.
  */
@@ -47,10 +59,7 @@ export function hasIssuePages(query: {
 export function withPersistedIssues(client: PersistedClient): PersistedClient {
 	let {queries} = client.clientState
 	let list = queries.find((query) => sameKey(query.queryKey, messKeys.issues))
-	let data = list?.state.data
-	let firstPage = isInfiniteData(data)
-		? {pages: data.pages.slice(0, 1), pageParams: data.pageParams.slice(0, 1)}
-		: undefined
+	let firstPage = firstPageOf(list?.state.data)
 	let posts = (firstPage?.pages[0] ?? []) as LightPost[]
 	let {top} = topOf(groupIssues(posts, posts.length >= ISSUE_PAGE_SIZE))
 	let topKey = top ? messKeys.issue(top) : undefined

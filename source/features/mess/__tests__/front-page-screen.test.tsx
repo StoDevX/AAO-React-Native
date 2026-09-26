@@ -5,6 +5,7 @@ import {onlineManager, QueryClient, QueryClientProvider} from '@tanstack/react-q
 import {fetchManifest, fetchSourceBody, type Jrd} from '@frogpond/data-sources'
 
 import categoriesJson from './fixtures/categories.json'
+import springPosts from './fixtures/issue-posts.json'
 import {queryClient as appQueryClient} from '../../../init/tanstack-query'
 import {flushQueryNotifications, waitForQueriesToSettle} from '../../../testing/query-notifications'
 import {FrontPageScreen} from '../front-page-screen'
@@ -212,6 +213,7 @@ describe('FrontPageScreen', () => {
 		expect(postHrefs()).toStrictEqual([
 			expect.stringContaining('/posts?after=2026-04-28T23:59:59&per_page=100&_embed=true'),
 		])
+		await waitForQueriesToSettle(queryClient)
 	})
 
 	test('puts Top on the newest regular issue, under a banner for a newer special edition', async () => {
@@ -399,6 +401,26 @@ describe('FrontPageScreen', () => {
 		// The refreshed list is empty, so Top falls back to the feed, which fetches.
 		await waitForQueriesToSettle(queryClient)
 		expect(screen.getByText('Latest stories')).toBeTruthy()
+	})
+
+	// Review: an infinite query refetches every page it holds, one after another.
+	test('pull-to-refresh fetches only the first page of the issue list, however many are loaded', async () => {
+		seedTop()
+		let [first] = queryClient.getQueryData<{pages: LightPost[][]}>(messKeys.issues)?.pages ?? []
+		queryClient.setQueryData(messKeys.issues, {pages: [first, [], []], pageParams: [1, 2, 3]})
+		// Full pages, as the live list's are, so a refetch of every page would go on past the first.
+		serve((href) => {
+			let page = Number(/[?&]page=(\d+)&_fields/u.exec(href)?.[1])
+			return page ? springPosts.slice((page - 1) * 100, page * 100) : []
+		})
+		await renderScreen()
+
+		await pullToRefresh()
+
+		expect(postHrefs().filter((href) => href.includes('_fields='))).toStrictEqual([
+			expect.stringContaining('/posts?per_page=100&page=1&_fields='),
+		])
+		await waitForQueriesToSettle(queryClient)
 	})
 
 	test('pull-to-refresh on a section fetches that section, and nothing else', async () => {
