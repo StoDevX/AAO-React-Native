@@ -100,6 +100,18 @@ describe('HoursSection', () => {
 		expect(screen.queryByText('Normal Hours')).toBeNull()
 	})
 
+	// Between breakfast and lunch, the status reads "Opens at 10:30 AM", so the
+	// times beside it are lunch's, not the breakfast that has already ended.
+	test("puts the next window's times beside the status", async () => {
+		await renderSection(stav)
+		let row = JSON.stringify(screen.toJSON())
+		let statusAt = row.indexOf(`"${contextualStatus(stav, NOW).long}"`)
+		let lunchAt = row.indexOf('"10:30 AM — 2 PM"', statusAt)
+		let breakfastAt = row.indexOf('"Breakfast"')
+		expect(lunchAt).toBeGreaterThan(statusAt)
+		expect(lunchAt).toBeLessThan(breakfastAt)
+	})
+
 	test('marks the status row for UI tests to find', async () => {
 		await renderSection(holland)
 		expect(screen.getByTestId('hours-status')).toBeTruthy()

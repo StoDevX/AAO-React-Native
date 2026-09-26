@@ -19,10 +19,10 @@ import {SectionHeading} from '../../components/place-card/section-heading'
 import {
 	contextualStatus,
 	formatBuildingTimes,
-	getDayOfWeek,
 	getShortBuildingStatus,
 	groupHoursByDays,
 	hasDisplayableHours,
+	statusWindow,
 } from './lib'
 import type {BuildingStatusType, BuildingType, NamedBuildingScheduleType} from './types'
 
@@ -126,7 +126,7 @@ export function HoursSection({venue, now}: Props): React.ReactNode {
 /// "Open until 10 PM" in the status's colour, as Maps writes Open, and today's
 /// hours opposite.
 function StatusRow({venue, now, last}: Props & {last: boolean}): React.ReactNode {
-	let today = todaysHours(venue.schedule ?? [], now)
+	let window = statusWindow(venue.schedule ?? [], now)
 	return (
 		<HoursLine
 			emphasized={true}
@@ -143,7 +143,7 @@ function StatusRow({venue, now, last}: Props & {last: boolean}): React.ReactNode
 				...(last ? [listRowSeparator('hidden', 'bottom')] : []),
 				accessibilityIdentifier(HOURS_STATUS_ID),
 			]}
-			times={today ? [today] : []}
+			times={window ? [formatBuildingTimes(window, now)] : []}
 		/>
 	)
 }
@@ -180,26 +180,6 @@ function WeekRows({
 			</VStack>
 		</VStack>
 	)
-}
-
-/// Today's hours for the status row: the set running now, else the first set
-/// that includes today, across every block.
-function todaysHours(blocks: Array<NamedBuildingScheduleType>, now: Moment): string | null {
-	let day = getDayOfWeek(now)
-	for (let block of blocks) {
-		let groups = groupHoursByDays(block, now)
-		let active = groups.flatMap((group) => group.entries).find((entry) => entry.isActive)
-		if (active) {
-			return formatBuildingTimes(active.schedule, now)
-		}
-	}
-	for (let block of blocks) {
-		let todays = block.hours.find((set) => set.days.includes(day))
-		if (todays) {
-			return formatBuildingTimes(todays, now)
-		}
-	}
-	return null
 }
 
 /// A label beside its times, which stack under it at accessibility text sizes,
