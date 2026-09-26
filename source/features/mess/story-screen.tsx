@@ -12,6 +12,7 @@ import {ImageView} from './image-view'
 import {crosswordUrl} from './lib/crossword'
 import {paper} from './palette'
 import {PlaylistView} from './playlist-view'
+import {RecipeView} from './recipe-view'
 import {PoemView} from './poem-view'
 import {QuietHeader} from './quiet-header'
 import {SeriesRow} from './series-row'
@@ -156,6 +157,9 @@ function StoryBody({story, columnWidth, scrollTo}: StoryBodyProps): React.ReactN
 	}
 	if (layout.kind === 'playlist') {
 		return <PlaylistView columnWidth={columnWidth} layout={layout} story={story} />
+	}
+	if (layout.kind === 'recipe') {
+		return <RecipeView columnWidth={columnWidth} layout={layout} story={story} />
 	}
 
 	return (
