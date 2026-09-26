@@ -17,6 +17,9 @@ autoInstallPeers: true
 strictPeerDependencies: true
 # set peer dependency suffixes to use version-only identifiers (name@version) instead of full dep paths
 dedupePeers: true
+# collapse compatible duplicate versions on every install, rather than only
+# when someone remembers to run `pnpm dedupe`
+autoDedupe: true
 
 # pre-existing, individually-reviewed peer mismatches that strictPeerDependencies
 # would otherwise fail the install on -- each is a case where the declared range
