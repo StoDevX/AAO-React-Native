@@ -1,9 +1,12 @@
+import {readFileSync} from 'node:fs'
+import {join} from 'node:path'
 import {afterEach, describe, expect, jest, test} from '@jest/globals'
 import {fetchManifest, fetchSourceBody, type Jrd} from '@frogpond/data-sources'
 import posts from './fixtures/posts.json'
 import categories from './fixtures/categories.json'
 import profiles from './fixtures/profiles-390.json'
 import varietyPosts from './fixtures/variety-posts.json'
+import crosswordPlaylist from './fixtures/crossword-playlist-posts.json'
 import {parseMessCategories, parseMessPosts} from '../lib/posts'
 import {queryClient} from '../../../init/tanstack-query'
 import {
@@ -12,11 +15,12 @@ import {
 	messFeedOptions,
 	messKeys,
 	messListOptions,
+	messPlaylistPageOptions,
 	messSeriesOptions,
 	messStoryOptions,
 	staffProfileOptions,
 } from '../query'
-import type {MessStory} from '../types'
+import type {MessStory, SpotifyRef} from '../types'
 
 jest.mock('@react-native-community/netinfo', () =>
 	// oxlint-disable-next-line typescript/no-require-imports
@@ -30,7 +34,7 @@ jest.mock('@frogpond/data-sources', () => ({
 }))
 
 const mockManifest = fetchManifest as jest.Mock<() => Promise<Jrd>>
-const mockBody = fetchSourceBody as jest.Mock<(href: string) => Promise<unknown>>
+const mockBody = fetchSourceBody as jest.Mock<typeof fetchSourceBody>
 
 function run<T>(options: {queryFn?: unknown}): Promise<T> {
 	let queryFn = options.queryFn as (context: {signal: AbortSignal; queryKey: unknown}) => Promise<T>
@@ -324,5 +328,49 @@ describe('messSeriesOptions', () => {
 
 		expect(series).toStrictEqual({title: '', stories: []})
 		expect(fetchedHrefs().some((href) => href.includes('/posts'))).toBe(false)
+	})
+})
+
+const PLAYLIST_PAGE = readFileSync(join(__dirname, 'fixtures/playlist-page-36532.html'), 'utf8')
+
+/** A fixture Crossword or Playlist post as the app parses it. */
+function playlistStory(id: number): MessStory {
+	let [parsed] = parseMessPosts(
+		crosswordPlaylist.filter((p) => p.id === id),
+		parseMessCategories(categories),
+	)
+	if (!parsed) throw new Error(`fixture post ${id} did not parse`)
+	return parsed
+}
+
+describe('messPlaylistPageOptions', () => {
+	test("reads the playlist from the post's web page, fetched as text", async () => {
+		mockBody.mockResolvedValue(PLAYLIST_PAGE)
+
+		let spotify = await run<SpotifyRef | null>(messPlaylistPageOptions(playlistStory(36532)))
+
+		expect(spotify).toStrictEqual({kind: 'playlist', id: '5dJFJNxZlxoRbwIgqCTxWk'})
+		expect(mockBody).toHaveBeenCalledWith(
+			'https://olafmessenger.com/36532/variety/spotify-playlist-summer-kind-of/',
+			expect.any(AbortSignal),
+			'Olaf Messenger page',
+			'text',
+		)
+	})
+
+	test('gives null for a page with no playlist', async () => {
+		mockBody.mockResolvedValue('<html><body><p>No player here.</p></body></html>')
+		expect(await run(messPlaylistPageOptions(playlistStory(36532)))).toBeNull()
+	})
+
+	test('fails when the page cannot be fetched', async () => {
+		mockBody.mockRejectedValue(new Error('offline'))
+		await expect(run(messPlaylistPageOptions(playlistStory(36532)))).rejects.toThrow('offline')
+	})
+
+	test('is cached per story', () => {
+		expect(messPlaylistPageOptions(playlistStory(36532)).queryKey).toStrictEqual(
+			messKeys.playlistPage(36532),
+		)
 	})
 })
