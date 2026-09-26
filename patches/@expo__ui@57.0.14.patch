@@ -112,7 +112,7 @@ index 2b9e034d0c6aff0255d44c36de08733ffca5e892..9f6733772e31741e848cfc70b970c5a2
 +  }
  }
 diff --git a/ios/Modifiers/ViewModifierRegistry.swift b/ios/Modifiers/ViewModifierRegistry.swift
-index 8c426dffff1df73809436999f23a6155b0a72ef8..b139aab97e2724039db0f18f585274500a91b43e 100644
+index 8c426dffff1df73809436999f23a6155b0a72ef8..f8a2d52b031afea9f5dfe582b2a3ee716bc897bc 100644
 --- a/ios/Modifiers/ViewModifierRegistry.swift
 +++ b/ios/Modifiers/ViewModifierRegistry.swift
 @@ -43,6 +43,22 @@ internal struct CornerRadiusModifier: ViewModifier, Record {
@@ -138,13 +138,15 @@ index 8c426dffff1df73809436999f23a6155b0a72ef8..b139aab97e2724039db0f18f58527450
  internal struct ShadowModifier: ViewModifier, Record {
    @Field var color: Color = .white
    @Field var radius: CGFloat = 0
-@@ -513,6 +529,27 @@ internal struct OnAppearModifier: ViewModifier, Record {
+@@ -513,6 +529,32 @@ internal struct OnAppearModifier: ViewModifier, Record {
    }
  }
  
-+/// Sends a tapped link in the text below this view to JavaScript, instead of
-+/// letting SwiftUI's default action open it in Safari, so the app can choose
-+/// where the link opens.
++/// Sends a tapped web link in the text below this view to JavaScript, instead
++/// of letting SwiftUI's default action open it in Safari, so the app can choose
++/// where the page opens. A link with any other scheme, such as `mailto:`,
++/// `tel:` or `sms:`, takes the system's own action, since only the system
++/// knows which app opens it.
 +internal struct OpenURLActionModifier: ViewModifier, Record {
 +  var eventDispatcher: EventDispatcher?
 +
@@ -157,6 +159,9 @@ index 8c426dffff1df73809436999f23a6155b0a72ef8..b139aab97e2724039db0f18f58527450
 +
 +  func body(content: Content) -> some View {
 +    content.environment(\.openURL, OpenURLAction { url in
++      guard let scheme = url.scheme?.lowercased(), scheme == "http" || scheme == "https" else {
++        return .systemAction
++      }
 +      eventDispatcher?(["openURLAction": ["url": url.absoluteString]])
 +      return .handled
 +    })
@@ -166,7 +171,7 @@ index 8c426dffff1df73809436999f23a6155b0a72ef8..b139aab97e2724039db0f18f58527450
  internal struct OnDisappearModifier: ViewModifier, Record {
    var eventDispatcher: EventDispatcher?
  
-@@ -1157,6 +1194,23 @@ internal enum TextLinePattern: String, Enumerable {
+@@ -1157,6 +1199,23 @@ internal enum TextLinePattern: String, Enumerable {
    case dashDotDot
  }
  
@@ -190,7 +195,7 @@ index 8c426dffff1df73809436999f23a6155b0a72ef8..b139aab97e2724039db0f18f58527450
  internal struct TextUnderLine: ViewModifier, Record {
    @Field var isActive: Bool = false
    @Field var pattern: TextLinePattern = .solid
-@@ -1599,6 +1653,18 @@ public class ViewModifierRegistry {
+@@ -1599,6 +1658,18 @@ public class ViewModifierRegistry {
            return text.foregroundColor(color)
        } 
        return text
@@ -209,7 +214,7 @@ index 8c426dffff1df73809436999f23a6155b0a72ef8..b139aab97e2724039db0f18f58527450
      default:
        #if DEBUG
        return Text(" ['\(type)' not supported for nested Text]").foregroundColor(.red)
-@@ -2306,6 +2372,14 @@ extension ViewModifierRegistry {
+@@ -2306,6 +2377,14 @@ extension ViewModifierRegistry {
        return try ListStyleModifier(from: params, appContext: appContext)
      }
  
