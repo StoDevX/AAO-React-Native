@@ -39,8 +39,24 @@ export default function HomeLayout(): React.ReactNode {
 			<Stack.Screen name="MenuItemDetail" options={DETAIL_SHEET} />
 			<Stack.Screen name="Streaming Media" options={{title: 'Streaming Media'}} />
 			<Stack.Screen
-				name="Messenger"
+				name="Messenger/index"
 				options={{title: 'The Olaf Messenger', headerLargeTitleEnabled: true}}
+			/>
+			{/* A series thumbnail opens another story over the one being read.
+			    Keyed by the story and the row that opened it, a tap always opens
+			    a fresh screen: an unkeyed route would swap the params of the
+			    story on top, and one keyed by story alone would move a story
+			    already open further down to the top, and either way Back would
+			    not retrace the reader's steps. A second tap on the same thumbnail
+			    finds the screen the first one opened, so it adds no duplicate. */}
+			<Stack.Screen
+				dangerouslySingular={(_name, params) => `${params.id ?? ''}:${params.from ?? ''}`}
+				name="Messenger/story"
+				options={{title: ''}}
+			/>
+			<Stack.Screen
+				name="Messenger/image"
+				options={{presentation: 'fullScreenModal', headerShown: false}}
 			/>
 			<Stack.Screen
 				name="StOlafNews"

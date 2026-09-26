@@ -59,7 +59,7 @@ overrides:
   simple-plist@1>bplist-parser: 0.3.2
 
 patchedDependencies:
-  '@expo/ui@57.0.14': 6801032808d0d6b51cda7a251c272fdb20040ff2808524082289181f7a775240
+  '@expo/ui@57.0.14': c6646a6e1ad7d06c702ccd9997a3b4f73fcb01a06efc33b1b6d3e706b88eeea5
   react-native-change-icon@5.0.0: 7576d2a458dd256e90b703b84345bf87a19dfa2e3dea523e4691e395dfddfcff
   react-native@0.86.3: 6ca2e1225f38672b073b92b9d13f24feebbe9e37ba67708a3f1569275ce99191
 
@@ -81,7 +81,7 @@ importers:
         version: 57.0.15(@expo/log-box@57.0.4)(expo@57.0.19)(react-native@0.86.3)(react@19.2.3)
       '@expo/ui':
         specifier: 57.0.14
-        version: 57.0.14(patch_hash=6801032808d0d6b51cda7a251c272fdb20040ff2808524082289181f7a775240)(@babel/core@7.29.7)(expo@57.0.19)(react-native-worklets@0.10.1)(react-native@0.86.3)(react@19.2.3)
+        version: 57.0.14(patch_hash=c6646a6e1ad7d06c702ccd9997a3b4f73fcb01a06efc33b1b6d3e706b88eeea5)(@babel/core@7.29.7)(expo@57.0.19)(react-native-worklets@0.10.1)(react-native@0.86.3)(react@19.2.3)
       '@frogpond/add-to-device-calendar':
         specifier: workspace:*
         version: link:modules/add-to-device-calendar
@@ -118,6 +118,9 @@ importers:
       '@frogpond/datepicker':
         specifier: workspace:*
         version: link:modules/datepicker
+      '@frogpond/double-tap':
+        specifier: workspace:*
+        version: link:modules/double-tap
       '@frogpond/event-list':
         specifier: workspace:*
         version: link:modules/event-list
@@ -653,7 +656,7 @@ importers:
     dependencies:
       '@expo/ui':
         specifier: 57.0.14
-        version: 57.0.14(patch_hash=6801032808d0d6b51cda7a251c272fdb20040ff2808524082289181f7a775240)(@babel/core@7.29.7)(expo@57.0.19)(react-native-worklets@0.10.1)(react-native@0.86.3)(react@19.2.3)
+        version: 57.0.14(patch_hash=c6646a6e1ad7d06c702ccd9997a3b4f73fcb01a06efc33b1b6d3e706b88eeea5)(@babel/core@7.29.7)(expo@57.0.19)(react-native-worklets@0.10.1)(react-native@0.86.3)(react@19.2.3)
       moment-timezone:
         specifier: ^0.6.4
         version: 0.6.4
@@ -663,6 +666,8 @@ importers:
       react-native:
         specifier: 'catalog:'
         version: 0.86.3(patch_hash=6ca2e1225f38672b073b92b9d13f24feebbe9e37ba67708a3f1569275ce99191)(@babel/core@7.29.7)(@react-native/jest-preset@0.86.3)(@types/react@19.2.18)(react@19.2.3)(supports-color@8.1.1)
+
+  modules/double-tap: {}
 
   modules/event-list:
     dependencies:
@@ -707,7 +712,7 @@ importers:
     dependencies:
       '@expo/ui':
         specifier: 57.0.14
-        version: 57.0.14(patch_hash=6801032808d0d6b51cda7a251c272fdb20040ff2808524082289181f7a775240)(@babel/core@7.29.7)(expo@57.0.19)(react-native-worklets@0.10.1)(react-native@0.86.3)(react@19.2.3)
+        version: 57.0.14(patch_hash=c6646a6e1ad7d06c702ccd9997a3b4f73fcb01a06efc33b1b6d3e706b88eeea5)(@babel/core@7.29.7)(expo@57.0.19)(react-native-worklets@0.10.1)(react-native@0.86.3)(react@19.2.3)
       '@frogpond/colors':
         specifier: workspace:*
         version: link:../colors
@@ -731,7 +736,7 @@ importers:
         version: 3.0.9(react@19.2.3)
       '@expo/ui':
         specifier: 57.0.14
-        version: 57.0.14(patch_hash=6801032808d0d6b51cda7a251c272fdb20040ff2808524082289181f7a775240)(@babel/core@7.29.7)(expo@57.0.19)(react-native-worklets@0.10.1)(react-native@0.86.3)(react@19.2.3)
+        version: 57.0.14(patch_hash=c6646a6e1ad7d06c702ccd9997a3b4f73fcb01a06efc33b1b6d3e706b88eeea5)(@babel/core@7.29.7)(expo@57.0.19)(react-native-worklets@0.10.1)(react-native@0.86.3)(react@19.2.3)
       '@frogpond/colors':
         specifier: workspace:*
         version: link:../colors
@@ -6612,7 +6617,7 @@ snapshots:
 
   '@expo/sudo-prompt@9.3.2': {}
 
-  '@expo/ui@57.0.14(patch_hash=6801032808d0d6b51cda7a251c272fdb20040ff2808524082289181f7a775240)(@babel/core@7.29.7)(expo@57.0.19)(react-native-worklets@0.10.1)(react-native@0.86.3)(react@19.2.3)':
+  '@expo/ui@57.0.14(patch_hash=c6646a6e1ad7d06c702ccd9997a3b4f73fcb01a06efc33b1b6d3e706b88eeea5)(@babel/core@7.29.7)(expo@57.0.19)(react-native-worklets@0.10.1)(react-native@0.86.3)(react@19.2.3)':
     dependencies:
       expo: 57.0.19(@babel/core@7.29.7)(@expo/dom-webview@57.0.1)(@expo/metro-runtime@57.0.15)(expo-router@57.0.18)(react-native-webview@13.16.1)(react-native-worklets@0.10.1)(react-native@0.86.3)(react@19.2.3)(supports-color@8.1.1)(typescript@7.0.2)
       react: 19.2.3
@@ -8606,7 +8611,7 @@ snapshots:
       '@expo/log-box': 57.0.4(@expo/dom-webview@57.0.1)(expo@57.0.19)(react-native@0.86.3)(react@19.2.3)
       '@expo/metro-runtime': 57.0.15(@expo/log-box@57.0.4)(expo@57.0.19)(react-native@0.86.3)(react@19.2.3)
       '@expo/schema-utils': 57.0.2
-      '@expo/ui': 57.0.14(patch_hash=6801032808d0d6b51cda7a251c272fdb20040ff2808524082289181f7a775240)(@babel/core@7.29.7)(expo@57.0.19)(react-native-worklets@0.10.1)(react-native@0.86.3)(react@19.2.3)
+      '@expo/ui': 57.0.14(patch_hash=c6646a6e1ad7d06c702ccd9997a3b4f73fcb01a06efc33b1b6d3e706b88eeea5)(@babel/core@7.29.7)(expo@57.0.19)(react-native-worklets@0.10.1)(react-native@0.86.3)(react@19.2.3)
       '@radix-ui/react-slot': 1.3.3(@types/react@19.2.18)(react@19.2.3)
       '@radix-ui/react-tabs': 1.1.21(@types/react@19.2.18)(react@19.2.3)
       '@react-native-masked-view/masked-view': 0.3.2(react-native@0.86.3)(react@19.2.3)

@@ -7,6 +7,7 @@ import {FaqBanner, FaqBannerGroup} from '../banner'
 import {useFaqBannerStore} from '../store'
 import type {Faq, FaqQueryData} from '../types'
 import {FAQ_TARGETS} from '../constants'
+import {flushQueryNotifications} from '../../../testing/query-notifications'
 
 const FAQS_QUERY_KEY = ['faqs'] as const
 
@@ -83,9 +84,7 @@ const buildStaleQueryClient = (faqs: Faq[]): QueryClient => {
 
 /// Runs the queued refetch and its rejection to completion.
 const settlePendingRefetch = async (): Promise<void> => {
-	await act(async () => {
-		await new Promise((resolve) => setTimeout(resolve, 0))
-	})
+	await act(flushQueryNotifications)
 }
 
 const renderWithFaqs = (faqs: Faq[], props?: {onPressOverride?: () => void}) => {

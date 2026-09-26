@@ -88,10 +88,11 @@ test('resolveSources drops an entry whose fetched and bundled types are both uns
 	// 'stolaf' is unsupported here (both its fetched type and its bundled
 	// type -- the real wordpress type -- are excluded), so it must be
 	// dropped rather than thrown for the whole list or returned unusable.
+	// 'mess' is a WordPress source too, so it goes the same way.
 	const ids = resolveSources(edited, REL_NEWS, ['application/vnd.frogpond.feed-items+json']).map(
 		(s) => s.id,
 	)
-	expect(ids).toStrictEqual(['mess', 'oleville'])
+	expect(ids).toStrictEqual(['oleville'])
 })
 
 test('resolveSources: an id missing from the fetched document still appears, from the bundled entry', () => {

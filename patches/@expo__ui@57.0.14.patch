@@ -1,3 +1,282 @@
+diff --git a/build/swift-ui/HangingText/index.d.ts b/build/swift-ui/HangingText/index.d.ts
+new file mode 100644
+index 0000000000000000000000000000000000000000..d08232a073aef5a8f011f7ce4e26ceaada54d8d5
+--- /dev/null
++++ b/build/swift-ui/HangingText/index.d.ts
+@@ -0,0 +1,40 @@
++import type { ColorValue } from 'react-native';
++import { type CommonViewModifierProps } from '../types';
++/**
++ * `HangingText` is drawn by UIKit, so SwiftUI `font` and `foregroundStyle`
++ * modifiers do not reach its text: its own `serif`, `color`, `linkColor` and
++ * `lineSpacing` props set it. Layout modifiers such as `padding` still apply.
++ */
++export interface HangingTextProps extends CommonViewModifierProps {
++    /**
++     * Inline Markdown: emphasis, strong emphasis and links.
++     */
++    children: string;
++    /**
++     * How far wrapped continuation lines sit past the first line, in points.
++     */
++    hangingIndent: number;
++    /**
++     * Extra space between wrapped lines, in points.
++     */
++    lineSpacing?: number;
++    /**
++     * The text colour.
++     */
++    color?: ColorValue;
++    /**
++     * The colour of a link's text.
++     */
++    linkColor?: ColorValue;
++    /**
++     * Sets the body text style in the serif design rather than the system face.
++     */
++    serif?: boolean;
++}
++/**
++ * Body text whose wrapped lines sit `hangingIndent` points past its first
++ * line, drawn by a read-only `UITextView` with a paragraph style, which
++ * SwiftUI's `Text` does not have. It follows Dynamic Type, and its links open
++ * when tapped.
++ */
++export declare function HangingText({ children, modifiers, ...props }: HangingTextProps): import("react/jsx-runtime").JSX.Element;
+diff --git a/build/swift-ui/index.d.ts b/build/swift-ui/index.d.ts
+index e6cc8665ed24acc90e6b9acaf034a6bbc39afcc0..26ff12ef81061e9b1679d5f9f895a90916783db5 100644
+--- a/build/swift-ui/index.d.ts
++++ b/build/swift-ui/index.d.ts
+@@ -10,6 +10,7 @@ export * from './ControlGroup';
+ export * from './ContextMenu';
+ export * from './DatePicker';
+ export * from './Divider';
++export * from './HangingText';
+ export * from './DisclosureGroup';
+ export * from './Form';
+ export * from './Gauge';
+diff --git a/build/swift-ui/modifiers/index.d.ts b/build/swift-ui/modifiers/index.d.ts
+index 9b6dba1653de433e8848b80f481f71dc8ef097d0..f7f672931780a8ad947d7c58c0bd0ca7dd106a40 100644
+--- a/build/swift-ui/modifiers/index.d.ts
++++ b/build/swift-ui/modifiers/index.d.ts
+@@ -1068,6 +1068,11 @@ export declare const font: (params: {
+      * Dynamic Type setting.
+      */
+     textStyle?: "largeTitle" | "title" | "title2" | "title3" | "headline" | "subheadline" | "body" | "callout" | "footnote" | "caption" | "caption2";
++    /**
++     * Draws lowercase letters as small capitals, using the font's own small-cap
++     * glyphs. Mirrors SwiftUI's `Font.smallCaps()`.
++     */
++    smallCaps?: boolean;
+ }) => ModifierConfig;
+ /**
+  * A standard size for Dynamic Type, from `xSmall` through the five
+diff --git a/ios/ExpoUIModule.swift b/ios/ExpoUIModule.swift
+index 4eed0f19fede0f28af6e8b74507805927acf004e..231004c9640e3850be7e7722cd1f47533058f028 100644
+--- a/ios/ExpoUIModule.swift
++++ b/ios/ExpoUIModule.swift
+@@ -191,6 +191,7 @@ public final class ExpoUIModule: Module {
+     ExpoUIView(CircleView.self)
+     ExpoUIView(ConcentricRectangleView.self)
+     ExpoUIView(DividerView.self)
++    ExpoUIView(HangingTextView.self)
+     ExpoUIView(PopoverView.self)
+     ExpoUIView(OverlayView.self)
+     ExpoUIView(BackgroundView.self)
+diff --git a/ios/HangingTextView.swift b/ios/HangingTextView.swift
+new file mode 100644
+index 0000000000000000000000000000000000000000..2c04f3920f054dfca5fc76d612c1c5249bfca635
+--- /dev/null
++++ b/ios/HangingTextView.swift
+@@ -0,0 +1,163 @@
++// A line of text whose wrapped continuation lines sit further in than its first
++// line -- a hanging indent. SwiftUI's `Text` has no paragraph style, so this
++// draws through a read-only UITextView with an NSParagraphStyle instead, which
++// also keeps its links tappable and announced as links.
++
++import SwiftUI
++import UIKit
++import ExpoModulesCore
++
++public final class HangingTextViewProps: UIBaseViewProps {
++  /// Inline Markdown: emphasis, strong and links.
++  @Field public var text: String = ""
++  /// How far continuation lines sit past the first, in points.
++  @Field public var hangingIndent: Double = 0
++  /// Extra space between wrapped lines, in points.
++  @Field public var lineSpacing: Double = 0
++  @Field public var color: UIColor?
++  @Field public var linkColor: UIColor?
++  /// Sets the body text style in the serif design (New York) rather than the system face.
++  @Field public var serif: Bool = false
++
++  override var defaultFrameAlignment: Alignment { .leading }
++}
++
++/// The ASCII punctuation CommonMark lets a backslash escape.
++private let escapable = Set("!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~")
++
++/// Markdown source with its backslash escapes removed, for when it cannot be parsed.
++private func unescaped(_ markdown: String) -> String {
++  var result = ""
++  var pendingBackslash = false
++  for character in markdown {
++    if pendingBackslash {
++      if !escapable.contains(character) { result.append("\\") }
++      result.append(character)
++      pendingBackslash = false
++    } else if character == "\\" {
++      pendingBackslash = true
++    } else {
++      result.append(character)
++    }
++  }
++  if pendingBackslash { result.append("\\") }
++  return result
++}
++
++public struct HangingTextView: ExpoSwiftUI.View {
++  @ObservedObject public var props: HangingTextViewProps
++  @Environment(\.dynamicTypeSize) private var dynamicTypeSize
++
++  public init(props: HangingTextViewProps) {
++    self.props = props
++  }
++
++  public var body: some View {
++    HangingLabel(text: attributedText(), linkColor: props.linkColor ?? UIColor.link)
++  }
++
++  private func bodyFont(bold: Bool, italic: Bool) -> UIFont {
++    var traits = UITraitCollection.current
++    if #available(iOS 17.0, tvOS 17.0, *) {
++      traits = UITraitCollection(preferredContentSizeCategory: UIContentSizeCategory(dynamicTypeSize))
++    }
++    var descriptor = UIFontDescriptor.preferredFontDescriptor(withTextStyle: .body, compatibleWith: traits)
++    if props.serif, let serif = descriptor.withDesign(.serif) {
++      descriptor = serif
++    }
++    var symbolic = descriptor.symbolicTraits
++    if bold { symbolic.insert(.traitBold) }
++    if italic { symbolic.insert(.traitItalic) }
++    descriptor = descriptor.withSymbolicTraits(symbolic) ?? descriptor
++    return UIFont(descriptor: descriptor, size: 0)
++  }
++
++  private func attributedText() -> NSAttributedString {
++    let options = AttributedString.MarkdownParsingOptions(
++      interpretedSyntax: .inlineOnlyPreservingWhitespace
++    )
++    let parsed = (try? AttributedString(markdown: props.text, options: options))
++      ?? AttributedString(unescaped(props.text))
++
++    let paragraph = NSMutableParagraphStyle()
++    paragraph.firstLineHeadIndent = 0
++    paragraph.headIndent = props.hangingIndent
++    paragraph.lineSpacing = props.lineSpacing
++    paragraph.lineBreakMode = .byWordWrapping
++
++    let result = NSMutableAttributedString()
++    for run in parsed.runs {
++      let intent = run.inlinePresentationIntent ?? []
++      var attributes: [NSAttributedString.Key: Any] = [
++        .font: bodyFont(bold: intent.contains(.stronglyEmphasized), italic: intent.contains(.emphasized)),
++        .paragraphStyle: paragraph,
++        .foregroundColor: props.color ?? UIColor.label,
++      ]
++      // The text view draws a link in its `linkTextAttributes`, and opens it when tapped.
++      if let link = run.link {
++        attributes[.link] = link
++      }
++      result.append(NSAttributedString(string: String(parsed[run.range].characters), attributes: attributes))
++    }
++    return result
++  }
++}
++
++/// A read-only, unscrolled UITextView that tells SwiftUI how tall it is at the width it is offered.
++private struct HangingLabel: UIViewRepresentable {
++  let text: NSAttributedString
++  let linkColor: UIColor
++
++  func makeCoordinator() -> Coordinator {
++    Coordinator()
++  }
++
++  func makeUIView(context: Context) -> UITextView {
++    let view = UITextView()
++    view.delegate = context.coordinator
++    view.isEditable = false
++    view.isScrollEnabled = false
++    view.backgroundColor = .clear
++    view.textContainerInset = .zero
++    view.textContainer.lineFragmentPadding = 0
++    view.textContainer.lineBreakMode = .byWordWrapping
++    view.adjustsFontForContentSizeCategory = false
++    view.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
++    view.setContentHuggingPriority(.defaultLow, for: .horizontal)
++    return view
++  }
++
++  func updateUIView(_ view: UITextView, context: Context) {
++    context.coordinator.openURL = context.environment.openURL
++    view.linkTextAttributes = [.foregroundColor: linkColor]
++    view.attributedText = text
++  }
++
++  func sizeThatFits(_ proposal: ProposedViewSize, uiView view: UITextView, context: Context) -> CGSize? {
++    let width = proposal.width ?? .greatestFiniteMagnitude
++    let fitted = view.sizeThatFits(CGSize(width: width, height: .greatestFiniteMagnitude))
++    return CGSize(width: min(width, ceil(fitted.width)), height: ceil(fitted.height))
++  }
++
++  /// Sends a tapped web link to SwiftUI's `openURL` action, as a SwiftUI `Text` link goes, so an
++  /// `openURLAction` modifier above this view decides where it opens. A UITextView otherwise
++  /// opens its links itself, in Safari. Any other scheme, such as `mailto:`, keeps the text
++  /// view's own action.
++  final class Coordinator: NSObject, UITextViewDelegate {
++    var openURL: OpenURLAction?
++
++    // The pod builds for older iOS than the app, which targets 27.0, so the app always has this.
++    @available(iOS 17.0, *)
++    func textView(
++      _ textView: UITextView,
++      primaryActionFor textItem: UITextItem,
++      defaultAction: UIAction
++    ) -> UIAction? {
++      guard case .link(let url) = textItem.content,
++            let scheme = url.scheme?.lowercased(), scheme == "http" || scheme == "https",
++            let openURL
++      else { return defaultAction }
++      return UIAction { _ in openURL(url) }
++    }
++  }
++}
+diff --git a/ios/Modifiers/FontModifier.swift b/ios/Modifiers/FontModifier.swift
+index 094cee1a9b3ff97f38777c38d44f79391fa2c9db..08cf58b869acecbe476279341252554d03cba414 100644
+--- a/ios/Modifiers/FontModifier.swift
++++ b/ios/Modifiers/FontModifier.swift
+@@ -81,6 +81,7 @@ internal struct FontModifier: ViewModifier, Record {
+   @Field var weight: FontWeight?
+   @Field var design: FontDesign?
+   @Field var textStyle: FontTextStyle?
++  @Field var smallCaps: Bool?
+ 
+   func body(content: Content) -> some View {
+     content.font(resolveFont())
+@@ -90,6 +91,11 @@ internal struct FontModifier: ViewModifier, Record {
+   // same `Font` as the view path, instead of a fixed-size `Font.custom` that
+   // drops `relativeTo` (Dynamic Type) and `weight`.
+   func resolveFont() -> Font {
++    let font = resolveBaseFont()
++    return smallCaps == true ? font.smallCaps() : font
++  }
++
++  private func resolveBaseFont() -> Font {
+     if let family = family {
+       let baseSize = size ?? 17
+       var font: Font = if let textStyle = textStyle {
 diff --git a/ios/Modifiers/ScrollPositionModifier.swift b/ios/Modifiers/ScrollPositionModifier.swift
 index 2b9e034d0c6aff0255d44c36de08733ffca5e892..9f6733772e31741e848cfc70b970c5a259e6fbc9 100644
 --- a/ios/Modifiers/ScrollPositionModifier.swift
@@ -72,7 +351,7 @@ index 2b9e034d0c6aff0255d44c36de08733ffca5e892..9f6733772e31741e848cfc70b970c5a2
 +  }
  }
 diff --git a/ios/Modifiers/ViewModifierRegistry.swift b/ios/Modifiers/ViewModifierRegistry.swift
-index 8c426dffff1df73809436999f23a6155b0a72ef8..d46585fb204a0a923fdb4f2eea88242f8114bfad 100644
+index 8c426dffff1df73809436999f23a6155b0a72ef8..f8a2d52b031afea9f5dfe582b2a3ee716bc897bc 100644
 --- a/ios/Modifiers/ViewModifierRegistry.swift
 +++ b/ios/Modifiers/ViewModifierRegistry.swift
 @@ -43,6 +43,22 @@ internal struct CornerRadiusModifier: ViewModifier, Record {
@@ -98,7 +377,40 @@ index 8c426dffff1df73809436999f23a6155b0a72ef8..d46585fb204a0a923fdb4f2eea88242f
  internal struct ShadowModifier: ViewModifier, Record {
    @Field var color: Color = .white
    @Field var radius: CGFloat = 0
-@@ -1157,6 +1173,23 @@ internal enum TextLinePattern: String, Enumerable {
+@@ -513,6 +529,32 @@ internal struct OnAppearModifier: ViewModifier, Record {
+   }
+ }
+ 
++/// Sends a tapped web link in the text below this view to JavaScript, instead
++/// of letting SwiftUI's default action open it in Safari, so the app can choose
++/// where the page opens. A link with any other scheme, such as `mailto:`,
++/// `tel:` or `sms:`, takes the system's own action, since only the system
++/// knows which app opens it.
++internal struct OpenURLActionModifier: ViewModifier, Record {
++  var eventDispatcher: EventDispatcher?
++
++  init() {}
++
++  init(from params: Dict, appContext: AppContext, eventDispatcher: EventDispatcher) throws {
++    try self = .init(from: params, appContext: appContext)
++    self.eventDispatcher = eventDispatcher
++  }
++
++  func body(content: Content) -> some View {
++    content.environment(\.openURL, OpenURLAction { url in
++      guard let scheme = url.scheme?.lowercased(), scheme == "http" || scheme == "https" else {
++        return .systemAction
++      }
++      eventDispatcher?(["openURLAction": ["url": url.absoluteString]])
++      return .handled
++    })
++  }
++}
++
+ internal struct OnDisappearModifier: ViewModifier, Record {
+   var eventDispatcher: EventDispatcher?
+ 
+@@ -1157,6 +1199,23 @@ internal enum TextLinePattern: String, Enumerable {
    case dashDotDot
  }
  
@@ -122,7 +434,7 @@ index 8c426dffff1df73809436999f23a6155b0a72ef8..d46585fb204a0a923fdb4f2eea88242f
  internal struct TextUnderLine: ViewModifier, Record {
    @Field var isActive: Bool = false
    @Field var pattern: TextLinePattern = .solid
-@@ -1599,6 +1632,18 @@ public class ViewModifierRegistry {
+@@ -1599,6 +1658,18 @@ public class ViewModifierRegistry {
            return text.foregroundColor(color)
        } 
        return text
@@ -141,10 +453,14 @@ index 8c426dffff1df73809436999f23a6155b0a72ef8..d46585fb204a0a923fdb4f2eea88242f
      default:
        #if DEBUG
        return Text(" ['\(type)' not supported for nested Text]").foregroundColor(.red)
-@@ -2306,6 +2351,10 @@ extension ViewModifierRegistry {
+@@ -2306,6 +2377,14 @@ extension ViewModifierRegistry {
        return try ListStyleModifier(from: params, appContext: appContext)
      }
  
++    register("openURLAction") { params, appContext, eventDispatcher in
++      return try OpenURLActionModifier(from: params, appContext: appContext, eventDispatcher: eventDispatcher)
++    }
++
 +    register("sectionIndexLabel") { params, appContext, _ in
 +      return try SectionIndexLabelModifier(from: params, appContext: appContext)
 +    }
@@ -152,3 +468,82 @@ index 8c426dffff1df73809436999f23a6155b0a72ef8..d46585fb204a0a923fdb4f2eea88242f
      register("moveDisabled") { params, appContext, _ in
        return try MoveDisabledModifier(from: params, appContext: appContext)
      }
+diff --git a/src/swift-ui/HangingText/index.tsx b/src/swift-ui/HangingText/index.tsx
+new file mode 100644
+index 0000000000000000000000000000000000000000..bfba4b327a1542d05ceabe0c74041e40c4cd3913
+--- /dev/null
++++ b/src/swift-ui/HangingText/index.tsx
+@@ -0,0 +1,61 @@
++import { requireNativeView } from 'expo';
++import type { ColorValue } from 'react-native';
++
++import { createViewModifierEventListener } from '../modifiers/utils';
++import { type CommonViewModifierProps } from '../types';
++
++/**
++ * `HangingText` is drawn by UIKit, so SwiftUI `font` and `foregroundStyle`
++ * modifiers do not reach its text: its own `serif`, `color`, `linkColor` and
++ * `lineSpacing` props set it. Layout modifiers such as `padding` still apply.
++ */
++export interface HangingTextProps extends CommonViewModifierProps {
++  /**
++   * Inline Markdown: emphasis, strong emphasis and links.
++   */
++  children: string;
++  /**
++   * How far wrapped continuation lines sit past the first line, in points.
++   */
++  hangingIndent: number;
++  /**
++   * Extra space between wrapped lines, in points.
++   */
++  lineSpacing?: number;
++  /**
++   * The text colour.
++   */
++  color?: ColorValue;
++  /**
++   * The colour of a link's text.
++   */
++  linkColor?: ColorValue;
++  /**
++   * Sets the body text style in the serif design rather than the system face.
++   */
++  serif?: boolean;
++}
++
++type NativeHangingTextProps = Omit<HangingTextProps, 'children'> & { text: string };
++
++const HangingTextNativeView: React.ComponentType<NativeHangingTextProps> = requireNativeView(
++  'ExpoUI',
++  'HangingTextView'
++);
++
++/**
++ * Body text whose wrapped lines sit `hangingIndent` points past its first
++ * line, drawn by a read-only `UITextView` with a paragraph style, which
++ * SwiftUI's `Text` does not have. It follows Dynamic Type, and its links open
++ * when tapped.
++ */
++export function HangingText({ children, modifiers, ...props }: HangingTextProps) {
++  return (
++    <HangingTextNativeView
++      text={children}
++      modifiers={modifiers}
++      {...(modifiers ? createViewModifierEventListener(modifiers) : undefined)}
++      {...props}
++    />
++  );
++}
+diff --git a/src/swift-ui/index.tsx b/src/swift-ui/index.tsx
+index be4b9f732505b9dc8060a8e5ccbbe0f6b7112709..77c0096917bf338b00260147b4aae6a30aabc211 100644
+--- a/src/swift-ui/index.tsx
++++ b/src/swift-ui/index.tsx
+@@ -10,6 +10,7 @@ export * from './ControlGroup';
+ export * from './ContextMenu';
+ export * from './DatePicker';
+ export * from './Divider';
++export * from './HangingText';
+ export * from './DisclosureGroup';
+ export * from './Form';
+ export * from './Gauge';

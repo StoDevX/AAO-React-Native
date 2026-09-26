@@ -8,8 +8,8 @@ links:
     properties: {'https://frogpond.tech/ns/id': stolaf}
 
   - rel: https://frogpond.tech/rel/news
-    href: 'news/named/mess'
-    type: application/vnd.frogpond.feed-items+json
+    href: 'https://olafmessenger.com/wp-json/wp/v2/posts?per_page=50&_embed=true'
+    type: application/vnd.wordpress.v2.posts+json
     titles: {und: The Olaf Messenger}
     properties: {'https://frogpond.tech/ns/id': mess}
 

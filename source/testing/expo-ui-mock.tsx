@@ -58,6 +58,7 @@ export const accessibilityAddTraits = named('accessibilityAddTraits', 'traits')
 /** Defaults to 'ignore', as the real one does. */
 export const accessibilityElement = (children = 'ignore'): Modifier =>
 	createModifier('accessibilityElement', {children})
+export const accessibilityHidden = flag('accessibilityHidden', 'hidden')
 export const accessibilityIdentifier = named('accessibilityIdentifier', 'identifier')
 export const accessibilityLabel = named('accessibilityLabel', 'label')
 export const accessibilityRemoveTraits = named('accessibilityRemoveTraits', 'traits')
@@ -107,9 +108,11 @@ export const Animation: AnimationPresets = {
 export const aspectRatio = spreading('aspectRatio')
 export const autocorrectionDisabled = flag('autocorrectionDisabled', 'disabled')
 export const bold = bare('bold')
+export const border = spreading('border')
 export const buttonStyle = named('buttonStyle', 'style')
 export const buttonBorderShape = (shape: string, cornerRadius?: number): Modifier =>
 	createModifier('buttonBorderShape', {shape, cornerRadius})
+export const controlSize = named('controlSize', 'size')
 export const disabled = flag('disabled', 'disabled')
 export const font = spreading('font')
 export const foregroundStyle = named('foregroundStyle', 'style')
@@ -145,6 +148,7 @@ export const strikethrough = spreading('strikethrough')
 export const submitLabel = named('submitLabel', 'submitLabel')
 export const tabViewStyle = spreading('tabViewStyle')
 export const tag = named('tag', 'tag')
+export const textCase = named('textCase', 'value')
 export const textInputAutocapitalization = named(
 	'textInputAutocapitalization',
 	'autocapitalization',
@@ -403,6 +407,11 @@ const PressableWithModifiers = Pressable as unknown as React.ComponentType<
 	}
 >
 
+/** `Text` forwards unknown props onto its host node too, as `View` and `Pressable` do. */
+const ForwardingText = RNText as unknown as React.ComponentType<
+	WithModifiers & {accessibilityLabel?: string}
+>
+
 export function Host({children}: WithModifiers & {matchContents?: boolean}): React.ReactNode {
 	return <View>{children}</View>
 }
@@ -417,12 +426,16 @@ export function RNHostView({children}: WithModifiers & {matchContents?: boolean}
  * anything else -- a custom component, a `Fragment` -- with no warning on
  * device. Filtering here the same way turns that into a Jest failure instead
  * of a blank sentence discovered on a phone.
+ *
+ * `markdownEnabled` changes only how SwiftUI draws the string, so the stand-in
+ * prints the Markdown source as given: that string is what the component
+ * receives.
  */
 export function Text({
 	children,
 	modifiers,
 	testID,
-}: WithModifiers & {testID?: string}): React.ReactNode {
+}: WithModifiers & {markdownEnabled?: boolean; testID?: string}): React.ReactNode {
 	let kept = React.Children.toArray(children).filter(
 		(child) =>
 			typeof child === 'string' ||
@@ -433,6 +446,33 @@ export function Text({
 		<RNText accessibilityLabel={labelOf(modifiers)} testID={testID}>
 			{kept}
 		</RNText>
+	)
+}
+
+/**
+ * The patch's `HangingText` draws one Markdown string through a `UITextView`, and
+ * takes that string as its only child -- anything else is a type error on the
+ * real component, so the stand-in rejects it too. Like `Text`, it prints the
+ * Markdown source, and its host text carries the `modifiers` it was given.
+ */
+export function HangingText({
+	children,
+	modifiers,
+}: WithModifiers & {
+	children: string
+	hangingIndent: number
+	lineSpacing?: number
+	color?: unknown
+	linkColor?: unknown
+	serif?: boolean
+}): React.ReactNode {
+	if (typeof children !== 'string') {
+		throw new TypeError('HangingText takes one string of Markdown as its child')
+	}
+	return (
+		<ForwardingText accessibilityLabel={labelOf(modifiers)} modifiers={modifiers}>
+			{children}
+		</ForwardingText>
 	)
 }
 
@@ -595,9 +635,35 @@ export function HStack({
 
 export function VStack({
 	children,
+	modifiers,
 	testID,
 }: WithModifiers & {alignment?: string; spacing?: number; testID?: string}): React.ReactNode {
-	return <View testID={testID}>{children}</View>
+	let handler = modifierOf(modifiers, 'onAppear')?.handler as (() => void) | undefined
+	let identity = modifierOf(modifiers, 'id')?.id
+	// SwiftUI builds a new view for a new id, so the stack remounts, and appears again, when it changes.
+	return (
+		<Appearing key={String(identity)} onAppear={handler}>
+			<View testID={testID}>{children}</View>
+		</Appearing>
+	)
+}
+
+/**
+ * Calls `onAppear` once, when it mounts, as SwiftUI's modifier does when the
+ * view it is on is first built. The latest handler is the one called.
+ */
+function Appearing({
+	children,
+	onAppear,
+}: {
+	children: React.ReactNode
+	onAppear?: () => void
+}): React.ReactNode {
+	let appear = React.useEffectEvent(() => onAppear?.())
+	React.useEffect(() => {
+		appear()
+	}, [])
+	return children
 }
 
 /**
@@ -805,6 +871,11 @@ export function Button({
 		<PressableWithModifiers
 			accessibilityLabel={name}
 			accessibilityRole={buttonRoleOf(modifiers)}
+			// `isSelected` is how SwiftUI marks the chosen one of a set of buttons,
+			// and VoiceOver reads it as "selected".
+			accessibilityState={{
+				selected: traitsOf(modifiers, 'accessibilityAddTraits').includes('isSelected'),
+			}}
 			// `RNTL`'s `getByRole` only considers an element an accessibility
 			// element -- and so a candidate at all -- once `accessible` is
 			// explicitly set.

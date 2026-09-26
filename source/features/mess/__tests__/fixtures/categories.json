@@ -1,0 +1,182 @@
+[
+  {
+    "id": 943,
+    "name": "2024 Elections",
+    "parent": 7
+  },
+  {
+    "id": 4,
+    "name": "Arts &amp; Entertainment",
+    "parent": 0
+  },
+  {
+    "id": 986,
+    "name": "Artwork",
+    "parent": 23
+  },
+  {
+    "id": 941,
+    "name": "Club Sport Spotlight",
+    "parent": 6
+  },
+  {
+    "id": 63,
+    "name": "Comic",
+    "parent": 23
+  },
+  {
+    "id": 1059,
+    "name": "Crossword",
+    "parent": 23
+  },
+  {
+    "id": 45,
+    "name": "Featured",
+    "parent": 0
+  },
+  {
+    "id": 46,
+    "name": "featured A&amp;E",
+    "parent": 0
+  },
+  {
+    "id": 47,
+    "name": "Featured Opinions",
+    "parent": 0
+  },
+  {
+    "id": 48,
+    "name": "Featured Sports",
+    "parent": 0
+  },
+  {
+    "id": 49,
+    "name": "featured Variety",
+    "parent": 0
+  },
+  {
+    "id": 65,
+    "name": "Good Questions",
+    "parent": 7
+  },
+  {
+    "id": 50,
+    "name": "Heartbeat",
+    "parent": 4
+  },
+  {
+    "id": 66,
+    "name": "Horoscopes",
+    "parent": 23
+  },
+  {
+    "id": 1028,
+    "name": "KSTO: Get to Know the Show",
+    "parent": 0
+  },
+  {
+    "id": 1079,
+    "name": "Local Finds",
+    "parent": 7
+  },
+  {
+    "id": 945,
+    "name": "Messenger Wars",
+    "parent": 8
+  },
+  {
+    "id": 51,
+    "name": "Multimedia",
+    "parent": 0
+  },
+  {
+    "id": 7,
+    "name": "News",
+    "parent": 0
+  },
+  {
+    "id": 1086,
+    "name": "Ole Athlete Spotlight",
+    "parent": 6
+  },
+  {
+    "id": 942,
+    "name": "Ole Athletics Commentary and Suggestion Box",
+    "parent": 6
+  },
+  {
+    "id": 55,
+    "name": "Online Exclusive",
+    "parent": 45
+  },
+  {
+    "id": 8,
+    "name": "Opinions",
+    "parent": 0
+  },
+  {
+    "id": 67,
+    "name": "Photo",
+    "parent": 23
+  },
+  {
+    "id": 68,
+    "name": "Playlist",
+    "parent": 23
+  },
+  {
+    "id": 69,
+    "name": "Poetry",
+    "parent": 23
+  },
+  {
+    "id": 940,
+    "name": "Recipes",
+    "parent": 23
+  },
+  {
+    "id": 70,
+    "name": "Short Story",
+    "parent": 23
+  },
+  {
+    "id": 1140,
+    "name": "Special Edition",
+    "parent": 0
+  },
+  {
+    "id": 6,
+    "name": "Sports",
+    "parent": 0
+  },
+  {
+    "id": 1139,
+    "name": "Spring 2026",
+    "parent": 1140
+  },
+  {
+    "id": 1082,
+    "name": "StoReview",
+    "parent": 4
+  },
+  {
+    "id": 62,
+    "name": "This Week In History",
+    "parent": 0
+  },
+  {
+    "id": 1,
+    "name": "Uncategorized",
+    "parent": 0
+  },
+  {
+    "id": 23,
+    "name": "Variety",
+    "parent": 0
+  },
+  {
+    "id": 12,
+    "name": "Video",
+    "parent": 0
+  }
+]

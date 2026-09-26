@@ -27,6 +27,13 @@ struct TestIdentifiers {
 		/// RCTAccessibilityManager fails to find a multiplier for it silently
 		/// rather than refusing to launch.
 		static let accessibilityExtraExtraExtraLarge = "UICTContentSizeCategoryAccessibilityXXXL"
+
+		/// Launch the app at a given Dynamic Type size. UIKit reads
+		/// `-UIPreferredContentSizeCategoryName` as a command-line default, the
+		/// same mechanism `--uitesting` and `--reset-state` rely on.
+		static func contentSizeCategory(_ category: String) -> [String] {
+			["-UIPreferredContentSizeCategoryName", category]
+		}
 	}
 
 	// MARK: - testID-based identifiers
@@ -530,6 +537,54 @@ struct TestIdentifiers {
 
 		/// The bottom toolbar menu's accessibilityLabel, in news-picker.tsx.
 		static let picker = "News filter"
+
+		/// The reader's headline, in source/features/mess/story-header.tsx.
+		static let storyHeadline = "mess-story-headline"
+
+		/// Each paragraph, quote and list item of a story's body, in
+		/// source/features/mess/story-blocks.tsx.
+		static let storyBody = "mess-story-body"
+
+		/// The card that sends a story with no body, or an embed the reader
+		/// cannot play, to olafmessenger.com, in source/features/mess/story-blocks.tsx.
+		static let storySiteLink = "mess-story-site-link"
+
+		/// The reader's share button label, in source/features/mess/story-screen.tsx.
+		static let shareStory = "Share Story"
+
+		/// The Mess section whose columns the Variety templates draw, and two of
+		/// those columns, as the filter in source/features/mess/mess-picker.tsx
+		/// names them. They are the paper's own category names, from olafmessenger.com.
+		static let varietySection = "Variety"
+		static let horoscopesColumn = "Horoscopes"
+		static let comicColumn = "Comic"
+
+		/// A sign's name, as a Horoscopes glyph button is labelled and a sign row's
+		/// label begins, in source/features/mess/lib/horoscopes.ts.
+		static let gemini = "Gemini"
+		static let leo = "Leo"
+		/// The last sign row, before a sign is picked and after Pisces is.
+		static let pisces = "Pisces"
+		static let aquarius = "Aquarius"
+		/// All twelve, as the glyph buttons are labelled.
+		static let signs = [
+			"Aries", "Taurus", "Gemini", "Cancer", "Leo", "Virgo",
+			"Libra", "Scorpio", "Sagittarius", "Capricorn", "Aquarius", "Pisces",
+		]
+
+		/// The framed comic or artwork that opens the zoom viewer, in
+		/// source/features/mess/image-view.tsx.
+		static let storyImage = "mess-story-image"
+
+		/// The zoom viewer's close button, in source/features/mess/image-viewer.tsx.
+		static let imageViewerClose = "mess-image-viewer-close"
+		static let imageViewerCloseLabel = "Close"
+
+		/// The picture inside the zoom viewer, in source/features/mess/image-viewer.tsx.
+		static let imageViewerImage = "mess-image-viewer-image"
+
+		/// Every thumbnail in a comic's series row, in source/features/mess/series-row.tsx.
+		static let seriesStory = "mess-series-story"
 	}
 
 	// MARK: - Streaming Media

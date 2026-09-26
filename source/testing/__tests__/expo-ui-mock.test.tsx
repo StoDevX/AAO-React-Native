@@ -10,8 +10,10 @@ import {
 	Button,
 	disabled,
 	HStack,
+	id,
 	List,
 	Menu,
+	onAppear,
 	Picker,
 	refreshable,
 	Section,
@@ -19,6 +21,7 @@ import {
 	tag,
 	Text,
 	Toggle,
+	VStack,
 } from '../expo-ui-mock'
 
 /**
@@ -112,6 +115,32 @@ describe('expo-ui-mock', () => {
 			['disabled', disabled(), {$type: 'disabled', disabled: true}],
 		])('%s', (_name, built, expected) => {
 			expect(built).toEqual(expected)
+		})
+	})
+
+	describe('VStack onAppear', () => {
+		test('fires once when the stack mounts', async () => {
+			let appeared = jest.fn()
+			await render(<VStack modifiers={[onAppear(appeared)]}>{null}</VStack>)
+			expect(appeared).toHaveBeenCalledTimes(1)
+		})
+
+		test('fires again when its id changes, since SwiftUI builds a new view for a new id', async () => {
+			let appeared = jest.fn()
+			let view = await render(
+				<VStack modifiers={[id('gemini'), onAppear(appeared)]}>{null}</VStack>,
+			)
+			await view.rerender(<VStack modifiers={[id('leo'), onAppear(appeared)]}>{null}</VStack>)
+			expect(appeared).toHaveBeenCalledTimes(2)
+		})
+
+		test('does not fire again when it re-renders with the same id', async () => {
+			let appeared = jest.fn()
+			let view = await render(
+				<VStack modifiers={[id('gemini'), onAppear(appeared)]}>{null}</VStack>,
+			)
+			await view.rerender(<VStack modifiers={[id('gemini'), onAppear(appeared)]}>{null}</VStack>)
+			expect(appeared).toHaveBeenCalledTimes(1)
 		})
 	})
 

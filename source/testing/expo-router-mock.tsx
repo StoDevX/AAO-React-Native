@@ -28,6 +28,10 @@ export const Stack = Object.assign(({children}: {children?: React.ReactNode}) =>
 				</Pressable>
 			)
 		},
+		/// A flexible gap between toolbar items; there is nothing to lay out here.
+		Spacer: () => null,
+		/// Hosts a custom view in the toolbar, so the view itself renders.
+		View: ({children}: {children?: React.ReactNode}) => children ?? null,
 	}),
 })
 
