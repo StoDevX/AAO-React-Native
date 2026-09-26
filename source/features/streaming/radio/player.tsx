@@ -20,7 +20,10 @@ type Props = {
 
 type HtmlAudioState = 'waiting' | 'ended' | 'stalled' | 'playing' | 'play' | 'pause'
 
-type HtmlAudioEvent = {type: HtmlAudioState} | {type: 'error'; error: HtmlAudioError}
+type HtmlAudioEvent =
+	| {type: HtmlAudioState}
+	| {type: 'error'; error: HtmlAudioError}
+	| {type: 'ready'}
 
 function playerHtml(url: string): string {
 	return `
@@ -62,26 +65,40 @@ function playerJs(selector: string): string {
 			 *******/
 
 			window.addEventListener('message', function (event) {
+				/* Before the <audio> exists there is nothing to act on; the app
+				 * sends its state again once "ready" reports it. */
+				if (!findPlayer()) {
+					return;
+				}
 				switch (event.data) {
 					case 'play':
-						if (!findPlayer()) {
-							message({
-								type: 'error',
-								error: {code: 0, message: 'The stream could not be found.'},
-							});
-							break;
-						}
 						player.muted = false;
 						player.play().catch(error);
 						break;
 
 					case 'pause':
-						if (findPlayer()) {
-							player.pause();
-						}
+						player.pause();
 						break;
 				}
 			});
+
+			/* Tells the app it can control the <audio>. A message sent before
+			 * this is lost, so the app waits for it before relying on one. */
+			function announceReady() {
+				message({type: 'ready'});
+			}
+
+			if (findPlayer()) {
+				announceReady();
+			} else {
+				var observer = new MutationObserver(function () {
+					if (findPlayer()) {
+						observer.disconnect();
+						announceReady();
+					}
+				});
+				observer.observe(document.documentElement, {childList: true, subtree: true});
+			}
 
 			/*******
 			 *******/
@@ -166,9 +183,7 @@ export function StreamPlayer(props: Props): React.ReactNode {
 		}
 	}, [pausePlayback])
 
-	useEffect(() => {
-		// console.log('<StreamPlayer> state changed to', playState)
-
+	let sendPlayState = useCallback((): void => {
 		switch (playState) {
 			case 'paused':
 				return pausePlayback()
@@ -182,6 +197,10 @@ export function StreamPlayer(props: Props): React.ReactNode {
 				return
 		}
 	}, [pausePlayback, beginPlayback, playState])
+
+	useEffect(() => {
+		sendPlayState()
+	}, [sendPlayState])
 
 	let handleMessage = useCallback(
 		(event: WebViewMessageEvent): unknown => {
@@ -201,6 +220,11 @@ export function StreamPlayer(props: Props): React.ReactNode {
 			// console.log('<audio> dispatched event', data.type)
 
 			switch (data.type) {
+				// A cold WebView can take seconds to load its page, and anything
+				// sent before then is lost, so send the state again.
+				case 'ready':
+					return sendPlayState()
+
 				case 'waiting':
 					return onWaiting?.()
 
@@ -225,7 +249,7 @@ export function StreamPlayer(props: Props): React.ReactNode {
 					return
 			}
 		},
-		[onWaiting, onEnded, onStalled, onPause, onPlay, onError],
+		[sendPlayState, onWaiting, onEnded, onStalled, onPause, onPlay, onError],
 	)
 
 	return (

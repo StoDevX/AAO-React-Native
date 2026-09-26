@@ -1,8 +1,10 @@
 import * as React from 'react'
 import {describe, expect, jest, test} from '@jest/globals'
 import {fireEvent, render} from '@testing-library/react-native'
+import {Commands} from 'react-native-webview/lib/RNCWebViewNativeComponent'
 
 import {StreamPlayer} from '../player'
+import type {PlayState} from '../types'
 
 type Callbacks = {
 	onPlay: jest.Mock<() => void>
@@ -11,7 +13,9 @@ type Callbacks = {
 }
 
 /** Renders the player and returns a way to post a message from its page. */
-async function renderPlayer(): Promise<Callbacks & {post: (data: unknown) => Promise<void>}> {
+async function renderPlayer(
+	playState: PlayState = 'paused',
+): Promise<Callbacks & {post: (data: unknown) => Promise<void>}> {
 	let callbacks: Callbacks = {
 		onPlay: jest.fn(),
 		onPause: jest.fn(),
@@ -20,7 +24,7 @@ async function renderPlayer(): Promise<Callbacks & {post: (data: unknown) => Pro
 	let screen = await render(
 		<StreamPlayer
 			embeddedPlayerUrl=""
-			playState="paused"
+			playState={playState}
 			streamSourceUrl="https://example.com/stream"
 			style={undefined}
 			useEmbeddedPlayer={false}
@@ -38,7 +42,34 @@ async function renderPlayer(): Promise<Callbacks & {post: (data: unknown) => Pro
 	return {...callbacks, post}
 }
 
+/** Records each message the player sends into its page. */
+function watchSentMessages(): jest.Mock<(ref: unknown, data: string) => void> {
+	return jest.spyOn(Commands, 'postMessage').mockReturnValue(undefined) as jest.Mock<
+		(ref: unknown, data: string) => void
+	>
+}
+
 describe('StreamPlayer', () => {
+	test('sends play once the page is ready, when it was asked to play before then', async () => {
+		let sent = watchSentMessages()
+		let {post} = await renderPlayer('checking')
+		sent.mockClear()
+
+		await post({type: 'ready'})
+
+		expect(sent.mock.calls.map(([, data]) => data)).toEqual(['play'])
+	})
+
+	test('does not send play when the page becomes ready while paused', async () => {
+		let sent = watchSentMessages()
+		let {post} = await renderPlayer('paused')
+		sent.mockClear()
+
+		await post({type: 'ready'})
+
+		expect(sent.mock.calls.map(([, data]) => data)).not.toContain('play')
+	})
+
 	test('does not report playing when the page has only asked the audio to play', async () => {
 		let {onPlay, post} = await renderPlayer()
 
