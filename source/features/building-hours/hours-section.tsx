@@ -129,7 +129,8 @@ function StatusRow({
 }
 
 /// One row per run of days with the same hours. The run that covers now is
-/// marked with a bar in the status's colour, as the Hours list marks it.
+/// set in semibold beside a bar in the status's colour, as the Hours list
+/// marks it.
 function WeekRows({
 	block,
 	now,
@@ -147,6 +148,7 @@ function WeekRows({
 			<HoursRow
 				key={group.entries[0].sourceIndex}
 				bar={current ? accent : null}
+				emphasized={current}
 				label={group.label}
 				last={last}
 				times={group.entries.map((entry) => formatBuildingTimes(entry.schedule, now))}
@@ -192,7 +194,7 @@ function HoursRow({
 	bar: ColorValue | null
 	label: string
 	times: Array<string>
-	/// Sets the label in semibold: the status, which a reader wants first.
+	/// Sets the label in semibold: the status, and the run of days covering now.
 	emphasized?: boolean
 	/// The last row of a section has no hairline under it, as in Maps.
 	last?: boolean
