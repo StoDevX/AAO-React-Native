@@ -169,7 +169,7 @@ const PLAYLIST: MessStory = {
 	link: 'https://olafmessenger.com/30713/variety/spotify-playlist-best-of-grammy-noms-2022/',
 	section: 'Variety',
 	column: 'Playlist',
-	photo: {...PLAYLIST_PHOTO, caption: ''},
+	photo: {...PLAYLIST_PHOTO, caption: 'Anna Weimholt ’22'},
 	blocks: [{type: 'paragraph', runs: [{text: 'While you listen, check out my picks.'}]}],
 	layout: {kind: 'playlist', spotify: {kind: 'playlist', id: '6bscojNnnO6nZcAnnXI1Cs'}},
 }
@@ -522,6 +522,11 @@ describe('StoryScreen', () => {
 			(props) => (props.source as {uri?: string} | undefined)?.uri,
 		)
 		expect(uris.filter((uri) => uri === PLAYLIST_PHOTO.url)).toHaveLength(1)
+	})
+
+	test("credits a Playlist post's picture under it", async () => {
+		await renderStory(30713)
+		expect(screen.getAllByText('Anna Weimholt ’22')).toHaveLength(1)
 	})
 
 	test('reads a Playlist post with nothing in its body from its web page', async () => {

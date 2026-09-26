@@ -168,7 +168,7 @@ export function StoryBlock({
 						url={block.url}
 						width={columnWidth}
 					/>
-					{block.caption ? <Text modifiers={CAPTION}>{block.caption}</Text> : null}
+					<PhotoCaption caption={block.caption} />
 				</VStack>
 			)
 		case 'embed':
@@ -203,4 +203,9 @@ export function StoryBlocks({story, columnWidth}: StoryBlocksProps): React.React
 			storyLink={story.link}
 		/>
 	))
+}
+
+/** A photo's caption or credit, under it; nothing when it has none. */
+export function PhotoCaption({caption}: {caption: string}): React.ReactNode {
+	return caption ? <Text modifiers={CAPTION}>{caption}</Text> : null
 }

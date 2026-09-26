@@ -7,7 +7,7 @@ import {FramedPhoto} from './image-view'
 import {spotifyUrl} from './lib/spotify'
 import {messPlaylistPageOptions} from './query'
 import {EMBED_HEIGHT, SpotifyEmbed} from './spotify-embed'
-import {SiteLinkCard, StoryBlocks} from './story-blocks'
+import {PhotoCaption, SiteLinkCard, StoryBlocks} from './story-blocks'
 import type {MessStory, StoryLayout} from './types'
 
 /** Names a Playlist post's button to Spotify, for a UI test. */
@@ -44,11 +44,14 @@ export function PlaylistView({story, layout, columnWidth}: Props): React.ReactNo
 	return (
 		<>
 			{photo ? (
-				<FramedPhoto
-					height={Math.round((columnWidth * photo.height) / photo.width)}
-					url={photo.url}
-					width={columnWidth}
-				/>
+				<VStack alignment="leading" spacing={4}>
+					<FramedPhoto
+						height={Math.round((columnWidth * photo.height) / photo.width)}
+						url={photo.url}
+						width={columnWidth}
+					/>
+					<PhotoCaption caption={photo.caption} />
+				</VStack>
 			) : null}
 			{spotify ? (
 				<>

@@ -5,7 +5,6 @@ import {
 	accessibilityIdentifier,
 	font,
 	foregroundStyle,
-	italic,
 	textSelection,
 } from '@expo/ui/swift-ui/modifiers'
 import {useQuery} from '@tanstack/react-query'
@@ -13,6 +12,7 @@ import {bylineDate, bylineText, kickerText} from './lib/byline'
 import {ink, faded, messRed} from './palette'
 import {staffProfileOptions} from './query'
 import {RemotePhoto} from './remote-photo'
+import {PhotoCaption} from './story-blocks'
 import type {MessStory} from './types'
 
 /** The section over a headline, in small caps as a newspaper sets it. */
@@ -34,12 +34,6 @@ const BYLINE = [
 	textSelection(true),
 ]
 const DATE = [font({textStyle: 'caption'}), foregroundStyle(faded), textSelection(true)]
-const CAPTION = [
-	font({textStyle: 'footnote', design: 'serif'}),
-	italic(),
-	foregroundStyle(faded),
-	textSelection(true),
-]
 
 const AVATAR = 30
 
@@ -88,7 +82,7 @@ export function StoryHeader({story, columnWidth, showPhoto = true}: Props): Reac
 						url={story.photo.url}
 						width={columnWidth}
 					/>
-					{story.photo.caption ? <Text modifiers={CAPTION}>{story.photo.caption}</Text> : null}
+					<PhotoCaption caption={story.photo.caption} />
 				</VStack>
 			) : null}
 		</VStack>
