@@ -20,6 +20,7 @@ import {
 	frame,
 	lineLimit,
 	opacity,
+	padding,
 	shapes,
 } from '@expo/ui/swift-ui/modifiers'
 import {useQuery} from '@tanstack/react-query'
@@ -49,8 +50,15 @@ const THUMBNAIL_BUTTON = [
 ]
 /** Where a story has no picture, a blank of the same size keeps the row even. */
 const BLANK = [foregroundStyle(faded), opacity(0.2), frame({width: THUMBNAIL, height: THUMBNAIL})]
-/** A title row takes a tap across its whole width, and is never shorter than a comfortable target. */
-const TITLE_ROW = [frame({minHeight: TAP_TARGET}), contentShape(shapes.rectangle())]
+/**
+ * A title row takes a tap across its whole width, and is never shorter than a comfortable
+ * target; a title that wraps keeps some air above and below, so rows read apart.
+ */
+const TITLE_ROW = [
+	padding({vertical: 6}),
+	frame({minHeight: TAP_TARGET}),
+	contentShape(shapes.rectangle()),
+]
 const ROW_TITLE = [font({textStyle: 'body', design: 'serif'}), foregroundStyle(ink)]
 
 /** The picture a story shows in the row: its comic or artwork, else its lead photo. */
