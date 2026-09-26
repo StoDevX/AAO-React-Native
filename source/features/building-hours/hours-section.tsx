@@ -40,6 +40,10 @@ const STATUS_TEXT: Record<BuildingStatusType, ColorValue> = {
 /// The space between the week's lines, which Maps sets 27pt apart.
 const WEEK_LINE_GAP = 5
 
+/// The space under the week's grey title, a little more than between its
+/// lines, so the title reads as a heading rather than a first line.
+const WEEK_TITLE_GAP = 8
+
 const PRIMARY = foregroundStyle({type: 'hierarchical', style: 'primary'})
 const SECONDARY = foregroundStyle({type: 'hierarchical', style: 'secondary'})
 
@@ -163,7 +167,7 @@ function WeekRows({
 		return null
 	}
 	return (
-		<VStack alignment="leading" modifiers={WEEK_ROW} spacing={0}>
+		<VStack alignment="leading" modifiers={WEEK_ROW} spacing={WEEK_TITLE_GAP}>
 			{heading ? <Text modifiers={[SECONDARY]}>{heading}</Text> : null}
 			<VStack alignment="leading" spacing={WEEK_LINE_GAP}>
 				{groups.map((group) => (
