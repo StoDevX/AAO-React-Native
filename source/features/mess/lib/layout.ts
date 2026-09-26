@@ -3,6 +3,7 @@ import {parseCrossword} from './crossword'
 import {parseHoroscopes} from './horoscopes'
 import {parsePlaylist} from './playlist'
 import {parsePoem} from './poem'
+import {parseRecipe} from './recipe'
 
 /** What a story brings to `chooseLayout`: its column, its parsed body and photo, and the raw HTML. */
 export type LayoutInput = {
@@ -24,6 +25,8 @@ export function chooseLayout(input: LayoutInput): {layout: StoryLayout; blocks: 
 			return {layout: parseHoroscopes(input.blocks), blocks: input.blocks}
 		case 'Poetry':
 			return {layout: parsePoem(input.html), blocks: input.blocks}
+		case 'Recipes':
+			return {layout: parseRecipe(input.blocks), blocks: input.blocks}
 		case 'Comic':
 		case 'Artwork': {
 			if (input.photo) {
