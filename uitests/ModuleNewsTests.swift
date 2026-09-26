@@ -64,4 +64,20 @@ class ModuleNewsTests: UITestCase {
 			.openImageViewer()
 			.closeImageViewer()
 	}
+
+	func testComicZoomsByDoubleTapAndPinch() throws {
+		let news = NewsScreen(app: app, tile: TestIdentifiers.Buttons.olafMessenger, title: "The Olaf Messenger")
+			.navigate()
+		MessFilter(app: app)
+			.choose(column: TestIdentifiers.News.comicColumn, in: TestIdentifiers.News.varietySection)
+		news.openFirstStory()
+			.openImageViewer()
+			.doubleTapViewerImage()
+			.verifyViewerImageZoomed(true)
+			.doubleTapViewerImage()
+			.verifyViewerImageZoomed(false)
+			.pinchOutViewerImage()
+			.verifyViewerImageZoomed(true)
+			.closeImageViewer()
+	}
 }

@@ -3,12 +3,10 @@ import {
 	Image as RNImage,
 	type NativeScrollEvent,
 	type NativeSyntheticEvent,
-	Pressable,
 	ScrollView,
 	StyleSheet,
 	View,
 	useWindowDimensions,
-	type GestureResponderEvent,
 } from 'react-native'
 import {Button, Host, Image} from '@expo/ui/swift-ui'
 import {
@@ -23,6 +21,7 @@ import {
 	shapes,
 } from '@expo/ui/swift-ui/modifiers'
 import {useSafeAreaInsets} from 'react-native-safe-area-context'
+import {DoubleTapView, type DoubleTapPoint} from '@frogpond/double-tap'
 import {useDismissOnce} from '../../lib/use-dismiss-once'
 import {imageLabel} from './lib/byline'
 import {doubleTapZoom} from './lib/zoom'
@@ -31,8 +30,6 @@ import {useMessStory} from './use-mess-story'
 
 /** Apple's smallest comfortable tap target, in points. */
 const TAP_TARGET = 44
-/** The longest gap between two taps that still makes a double tap, in milliseconds. */
-const DOUBLE_TAP_MS = 300
 
 const CLOSE = [
 	buttonStyle('plain'),
@@ -67,22 +64,15 @@ export function ImageViewer({id}: Props): React.ReactNode {
 	// The scroll view zooms itself on a pinch, so its scale is read back from its scroll events,
 	// which React Native sends for every frame of a zoom at a throttle of one frame or less.
 	let scale = React.useRef(1)
-	let lastTap = React.useRef(0)
 
 	let onScroll = React.useCallback((event: NativeSyntheticEvent<NativeScrollEvent>) => {
 		scale.current = event.nativeEvent.zoomScale
 	}, [])
 
-	let onTap = React.useCallback(
-		(event: GestureResponderEvent) => {
-			let now = event.nativeEvent.timestamp
-			let isDoubleTap = now - lastTap.current < DOUBLE_TAP_MS
-			lastTap.current = isDoubleTap ? 0 : now
-			if (!isDoubleTap) return
-
-			// The point tapped, in the image's own coordinates, which hold at any scale.
-			let {locationX, locationY} = event.nativeEvent
-			let zoom = doubleTapZoom(scale.current, {x: locationX, y: locationY}, {width, height})
+	// The point arrives in the image's own coordinates, which hold at any scale.
+	let onDoubleTap = React.useCallback(
+		(point: DoubleTapPoint) => {
+			let zoom = doubleTapZoom(scale.current, point, {width, height})
 			scrollView.current?.scrollResponderZoomTo({...zoom.rect, animated: true})
 			// Where the zoom will land, so a double tap before its scroll events arrive still
 			// knows which way to go.
@@ -112,7 +102,7 @@ export function ImageViewer({id}: Props): React.ReactNode {
 				showsVerticalScrollIndicator={false}
 				style={styles.fill}
 			>
-				<Pressable accessible={false} onPress={onTap}>
+				<DoubleTapView onDoubleTap={onDoubleTap}>
 					<RNImage
 						accessibilityIgnoresInvertColors={true}
 						accessibilityLabel={imageLabel(story)}
@@ -122,8 +112,9 @@ export function ImageViewer({id}: Props): React.ReactNode {
 						source={{uri: image.url}}
 						// Sized to the window, which the image fills at 1×.
 						style={[styles.image, {width, height}]}
+						testID="mess-image-viewer-image"
 					/>
-				</Pressable>
+				</DoubleTapView>
 			</ScrollView>
 		)
 	}

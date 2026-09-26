@@ -118,6 +118,50 @@ struct MessStoryScreen: Screen {
 		return self
 	}
 
+	/// Double-tap the middle of the picture in the zoom viewer.
+	@discardableResult
+	func doubleTapViewerImage() -> Self {
+		let image = viewerImage
+		XCTAssertTrue(image.waitForExistence(timeout: 30), "the zoom viewer should show the picture")
+		image.doubleTap()
+		return self
+	}
+
+	/// Spread two fingers on the picture in the zoom viewer.
+	@discardableResult
+	func pinchOutViewerImage() -> Self {
+		let image = viewerImage
+		XCTAssertTrue(image.waitForExistence(timeout: 30), "the zoom viewer should show the picture")
+		image.pinch(withScale: 3, velocity: 1)
+		return self
+	}
+
+	/// Assert the picture is drawn wider than the window, as a zoom in leaves it,
+	/// or back to the window's width, as it opens at 1×.
+	@discardableResult
+	func verifyViewerImageZoomed(_ zoomed: Bool) -> Self {
+		let image = viewerImage
+		let window = app.windows.firstMatch.frame.width
+		let landed = NSPredicate { _, _ in
+			let width = image.frame.width
+			return zoomed ? width > window * 1.5 : abs(width - window) <= 1
+		}
+		let settled = XCTWaiter().wait(
+			for: [XCTNSPredicateExpectation(predicate: landed, object: nil)], timeout: 10)
+		capture(zoomed ? "The zoom viewer zoomed in" : "The zoom viewer back at fit")
+		XCTAssertEqual(
+			settled, .completed,
+			zoomed
+				? "a double tap should zoom the picture in past the window's width of \(window), but it is \(image.frame.width) wide"
+				: "a double tap when zoomed in should fit the picture back to the window's width of \(window), but it is \(image.frame.width) wide")
+		return self
+	}
+
+	/// The picture in the zoom viewer.
+	private var viewerImage: XCUIElement {
+		app.element(matching: TestIdentifiers.News.imageViewerImage)
+	}
+
 	/// The viewer's close button, by its identifier and the label VoiceOver reads.
 	private var closeButton: XCUIElement {
 		app.buttons.matching(

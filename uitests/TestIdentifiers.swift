@@ -569,6 +569,9 @@ struct TestIdentifiers {
 		static let imageViewerClose = "mess-image-viewer-close"
 		static let imageViewerCloseLabel = "Close"
 
+		/// The picture inside the zoom viewer, in source/features/mess/image-viewer.tsx.
+		static let imageViewerImage = "mess-image-viewer-image"
+
 		/// Every thumbnail in a comic's series row, in source/features/mess/series-row.tsx.
 		static let seriesStory = "mess-series-story"
 	}

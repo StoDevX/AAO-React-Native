@@ -16,6 +16,10 @@ jest.mock('@expo/ui/swift-ui/modifiers', () => {
 	// oxlint-disable-next-line typescript/no-require-imports
 	return require('../../../testing/expo-ui-mock') as typeof import('../../../testing/expo-ui-mock')
 })
+jest.mock('@frogpond/double-tap', () => {
+	// oxlint-disable-next-line typescript/no-require-imports
+	return require('./double-tap-mock') as typeof import('./double-tap-mock')
+})
 jest.mock('@react-native-community/netinfo', () =>
 	// oxlint-disable-next-line typescript/no-require-imports
 	require('@react-native-community/netinfo/jest/netinfo-mock'),

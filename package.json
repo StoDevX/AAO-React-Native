@@ -20,6 +20,7 @@
     "@frogpond/constants": "workspace:*",
     "@frogpond/data-sources": "workspace:*",
     "@frogpond/datepicker": "workspace:*",
+    "@frogpond/double-tap": "workspace:*",
     "@frogpond/event-list": "workspace:*",
     "@frogpond/event-type": "workspace:*",
     "@frogpond/filter": "workspace:*",
