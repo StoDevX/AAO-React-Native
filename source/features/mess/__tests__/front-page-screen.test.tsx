@@ -97,6 +97,7 @@ const light = (s: MessStory): LightPost => ({
 	special: false,
 	featured: s.featured,
 	photo: null,
+	photoUrl: null,
 })
 
 let queryClient: QueryClient
@@ -120,6 +121,7 @@ const SPECIAL_POSTS: LightPost[] = [0, 1, 2, 3, 4].map((n) => ({
 	special: true,
 	featured: false,
 	photo: null,
+	photoUrl: null,
 }))
 
 /** A special edition newer than the Apr 29 issue, whose range now ends where the special edition begins. */
@@ -453,7 +455,7 @@ describe('FrontPageScreen', () => {
 
 		await pullToRefresh()
 
-		expect(postHrefs().filter((href) => href.includes('_fields='))).toStrictEqual([
+		expect(postHrefs().filter((href) => href.includes('/posts?per_page='))).toStrictEqual([
 			expect.stringContaining('/posts?per_page=100&page=1&_fields='),
 		])
 		await waitForQueriesToSettle(queryClient)
@@ -474,7 +476,7 @@ describe('FrontPageScreen', () => {
 		// The first page answers only once the end row has had its chance to appear.
 		let answerFirst: () => void = () => undefined
 		serve((href) => {
-			if (href.includes('/media/')) return {source_url: 'https://olafmessenger.com/lead.jpg'}
+			if (href.includes('/media')) return []
 			let page = Number(/[?&]page=(\d+)&_fields/u.exec(href)?.[1])
 			if (page === 1) return new Promise((resolve) => (answerFirst = () => resolve(fresh)))
 			return springPosts.slice((page - 1) * 100, page * 100)
@@ -482,11 +484,16 @@ describe('FrontPageScreen', () => {
 		await renderScreen()
 
 		let refresh = screen.getByTestId('refreshable').props.onRefresh as () => Promise<void>
-		let refreshed = refresh()
-		await act(flushQueryNotifications)
+		// Started inside act, since it cuts the list at once, but not awaited: page 1 is held open.
+		let refreshed: Promise<void> = Promise.resolve()
+		await act(async () => {
+			refreshed = refresh()
+			await flushQueryNotifications()
+		})
 		await act(async () => {
 			answerFirst()
 			await refreshed
+			await flushQueryNotifications()
 		})
 		await waitForQueriesToSettle(queryClient)
 

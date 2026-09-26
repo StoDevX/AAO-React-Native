@@ -41,6 +41,7 @@ export function parseLightPosts(body: unknown, categories: MessCategory[]): Ligh
 				special: inSpecialEdition(ids, byId),
 				featured,
 				photo: hasPhoto ? media : null,
+				photoUrl: null,
 			},
 		]
 	})
@@ -102,7 +103,7 @@ export function groupIssues(posts: LightPost[], hasMore: boolean): MessIssue[] {
 				count: group.posts.length,
 				leadId: lead.id,
 				leadTitle: lead.title,
-				leadPhoto: lead.photo,
+				leadPhoto: lead.photoUrl,
 				// Most of its posts, since one special-edition post can run on a regular day.
 				isSpecial: group.posts.filter((post) => post.special).length * 2 > group.posts.length,
 			},
@@ -161,9 +162,23 @@ export function topOf(issues: MessIssue[]): {
 	}
 }
 
-const MediaUrlSchema = z.object({source_url: z.string()})
+const MediaUrlSchema = z.object({id: z.number(), source_url: z.string()})
 
-/** A media item's address, from `media/<id>?_fields=source_url`. */
-export function parseMediaUrl(body: unknown): string {
-	return MediaUrlSchema.parse(body).source_url
+/** Each photo's address by its media id, from `media?include=…&_fields=id,source_url`. */
+export function parseMediaUrls(body: unknown): Map<number, string> {
+	let items = z.array(z.unknown()).parse(body)
+	return new Map(
+		items.flatMap((raw): Array<[number, string]> => {
+			let item = MediaUrlSchema.safeParse(raw)
+			return item.success ? [[item.data.id, item.data.source_url]] : []
+		}),
+	)
+}
+
+/** The posts with their photos' addresses; a photo missing from `urls` has none. */
+export function withPhotoUrls(posts: LightPost[], urls: Map<number, string>): LightPost[] {
+	return posts.map((post) => ({
+		...post,
+		photoUrl: post.photo === null ? null : (urls.get(post.photo) ?? null),
+	}))
 }

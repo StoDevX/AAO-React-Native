@@ -52,6 +52,7 @@ function issueDay(
 		special: section === 'Special Edition',
 		featured: false,
 		photo: null,
+		photoUrl: null,
 		...(offset === 0 ? first : {}),
 	}))
 }
@@ -62,6 +63,7 @@ const TWO_ISSUES = [
 		title: 'Student workers deliver petition',
 		featured: true,
 		photo: 1,
+		photoUrl: 'https://olafmessenger.com/petition.jpg',
 	}),
 ]
 
@@ -85,7 +87,7 @@ function serve(answer: (href: string) => unknown): void {
 
 /** The spring's pages by their number, and a photo address for any lead. */
 function springPage(href: string): unknown {
-	if (href.includes('/media/')) return {source_url: 'https://olafmessenger.com/lead.jpg'}
+	if (href.includes('/media')) return []
 	let page = Number(/[?&]page=(\d+)/u.exec(href)?.[1])
 	return PAGES[page - 1]
 }
@@ -145,9 +147,8 @@ describe('IssueList', () => {
 		await waitForQueriesToSettle(queryClient)
 	})
 
-	test("shows the lead's photo, looked up by its media id", async () => {
+	test("shows the lead's photo, and a tinted square for a lead with none", async () => {
 		queryClient.setQueryData(messKeys.issues, {pages: [TWO_ISSUES], pageParams: [1]})
-		queryClient.setQueryData(messKeys.media(1), 'https://olafmessenger.com/petition.jpg')
 		await renderIssues()
 
 		let uris = hostProps(screen.toJSON() as Node | Node[] | null, 'Image').map(

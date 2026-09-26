@@ -60,6 +60,8 @@ export type LightPost = {
 	featured: boolean
 	/** Its featured photo's media id; null with none, or with the Mess logo */
 	photo: number | null
+	/** That photo's address, looked up with the rest of its page's; null when not found */
+	photoUrl: string | null
 }
 
 /** One issue of the paper: a day's batch of posts, with the strays that joined it. */
@@ -75,8 +77,8 @@ export type MessIssue = {
 	/** The lead story, chosen from the light fields */
 	leadId: number
 	leadTitle: string
-	/** The lead's photo, as a media id; null when it has none */
-	leadPhoto: number | null
+	/** The lead's photo's address; null when it has none, or it was not found */
+	leadPhoto: string | null
 	isSpecial: boolean
 }
 

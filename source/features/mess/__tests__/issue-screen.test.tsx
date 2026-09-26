@@ -62,6 +62,7 @@ const light = (s: MessStory): LightPost => ({
 	special: false,
 	featured: false,
 	photo: null,
+	photoUrl: null,
 })
 
 /** Five stories a day on Apr 29 and Mar 25: two issues, the older ending where the newer begins. */

@@ -22,7 +22,6 @@ import {
 	staffProfileOptions,
 	messIssueOptions,
 	messIssuesOptions,
-	messMediaOptions,
 } from '../query'
 import {messKeys} from '../lib/keys'
 import type {LightPost, MessStory, SpotifyRef} from '../types'
@@ -382,7 +381,7 @@ describe('messPlaylistPageOptions', () => {
 
 describe('messIssuesOptions', () => {
 	test('asks for a page of light posts, and reads them against the category tree', async () => {
-		serve(() => springPosts.slice(0, 100))
+		serve((href) => (href.includes('/media') ? [] : springPosts.slice(0, 100)))
 
 		let page = await runPage<LightPost[]>(messIssuesOptions, 2)
 
@@ -390,6 +389,37 @@ describe('messIssuesOptions', () => {
 		expect(fetchedHrefs()).toContain(
 			'https://olafmessenger.com/wp-json/wp/v2/posts?per_page=100&page=2&_fields=id,date,title,categories,featured_media',
 		)
+	})
+
+	test("looks up the page's photos in one request", async () => {
+		serve((href) =>
+			href.includes('/media')
+				? [{id: 36902, source_url: 'https://olafmessenger.com/grant.png'}]
+				: springPosts.slice(0, 100),
+		)
+
+		let page = await runPage<LightPost[]>(messIssuesOptions, 1)
+
+		let media = fetchedHrefs().filter((href) => href.includes('/media'))
+		expect(media).toHaveLength(1)
+		expect(media[0]).toMatch(
+			/\/wp-json\/wp\/v2\/media\?include=(\d+,)*36902(,\d+)*&per_page=100&_fields=id,source_url$/u,
+		)
+		expect(page.find((post) => post.id === 36896)?.photoUrl).toBe(
+			'https://olafmessenger.com/grant.png',
+		)
+	})
+
+	test.each([
+		['cannot be reached', () => Promise.reject(new Error('offline'))],
+		['answer in a shape it cannot read', () => ({code: 'rest_forbidden'})],
+	])('still gives the page when its photos %s', async (_name, answer) => {
+		serve((href) => (href.includes('/media') ? answer() : springPosts.slice(0, 100)))
+
+		let page = await runPage<LightPost[]>(messIssuesOptions, 1)
+
+		expect(page).toHaveLength(100)
+		expect(page.every((post) => post.photoUrl === null)).toBe(true)
 	})
 
 	// WordPress answers 400 for a page past the last, which it asks for when the post count is a
@@ -451,18 +481,5 @@ describe('messIssueOptions', () => {
 		let options = messIssueOptions({after: '2026-05-11T23:59:59', before: null, count: 11})
 		expect(options.queryKey).toStrictEqual(['mess', 'issue', '2026-05-11T23:59:59', null, 11])
 		expect(options.staleTime).toBe(24 * 60 * 60 * 1000)
-	})
-})
-
-describe('messMediaOptions', () => {
-	test("looks up a photo's address by its media id", async () => {
-		serve(() => ({source_url: 'https://olafmessenger.com/wp-content/uploads/2026/04/grant.png'}))
-
-		expect(await run(messMediaOptions(36902))).toBe(
-			'https://olafmessenger.com/wp-content/uploads/2026/04/grant.png',
-		)
-		expect(fetchedHrefs()).toContain(
-			'https://olafmessenger.com/wp-json/wp/v2/media/36902?_fields=source_url',
-		)
 	})
 })

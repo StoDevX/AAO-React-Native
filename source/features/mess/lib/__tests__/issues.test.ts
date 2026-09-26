@@ -9,8 +9,9 @@ import {
 	issueDate,
 	issueName,
 	parseLightPosts,
-	parseMediaUrl,
+	parseMediaUrls,
 	topOf,
+	withPhotoUrls,
 } from '../issues'
 import {parseMessCategories} from '../posts'
 
@@ -34,6 +35,7 @@ describe('parseLightPosts', () => {
 			featured: false,
 			// Its featured image is the Mess logo, which is no photo.
 			photo: null,
+			photoUrl: null,
 		})
 		expect(spring.find((post) => post.id === 36896)).toStrictEqual({
 			id: 36896,
@@ -43,6 +45,8 @@ describe('parseLightPosts', () => {
 			special: false,
 			featured: true,
 			photo: 36902,
+			// Looked up with the rest of its page's photos, after parsing.
+			photoUrl: null,
 		})
 	})
 
@@ -138,14 +142,15 @@ describe('groupIssues', () => {
 		])
 	})
 
-	it("picks each issue's lead from its light fields", () => {
-		let issues = groupIssues(spring, false)
+	it("picks each issue's lead from its light fields, with its photo's address", () => {
+		let photos = new Map([[36902, 'https://olafmessenger.com/grant.png']])
+		let issues = groupIssues(withPhotoUrls(spring, photos), false)
 		expect(issues.map((issue) => issue.leadId)).toStrictEqual([
 			36949, 36896, 36726, 36715, 36572, 36452, 36361, 36284,
 		])
 		expect(issues[1]).toMatchObject({
 			leadTitle: 'St. Olaf awarded 2026-27 Hunger Free Campus grant',
-			leadPhoto: 36902,
+			leadPhoto: 'https://olafmessenger.com/grant.png',
 		})
 		expect(issues[0]?.leadPhoto).toBeNull()
 	})
@@ -231,14 +236,31 @@ describe('bannerKicker', () => {
 	})
 })
 
-describe('parseMediaUrl', () => {
-	it("reads a photo's address", () => {
-		expect(parseMediaUrl({source_url: 'https://olafmessenger.com/grant.png'})).toBe(
-			'https://olafmessenger.com/grant.png',
-		)
+describe('parseMediaUrls', () => {
+	it("reads each photo's address by its media id", () => {
+		let urls = parseMediaUrls([
+			{id: 36902, source_url: 'https://olafmessenger.com/grant.png'},
+			{id: 7, source_url: 'https://olafmessenger.com/petition.jpg'},
+		])
+		expect([...urls]).toStrictEqual([
+			[36902, 'https://olafmessenger.com/grant.png'],
+			[7, 'https://olafmessenger.com/petition.jpg'],
+		])
 	})
 
-	it('throws for a body without one', () => {
-		expect(() => parseMediaUrl({code: 'rest_post_invalid_id'})).toThrow()
+	it('skips an item without an address', () => {
+		expect([
+			...parseMediaUrls([{id: 1}, {id: 2, source_url: 'https://x.test/a.jpg'}]),
+		]).toStrictEqual([[2, 'https://x.test/a.jpg']])
+	})
+})
+
+describe('withPhotoUrls', () => {
+	it("gives each post its photo's address, and none to a post whose photo went unfound", () => {
+		let posts = withPhotoUrls(spring, new Map([[36902, 'https://olafmessenger.com/grant.png']]))
+		expect(posts.find((post) => post.id === 36896)?.photoUrl).toBe(
+			'https://olafmessenger.com/grant.png',
+		)
+		expect(posts.filter((post) => post.photoUrl !== null)).toHaveLength(1)
 	})
 })

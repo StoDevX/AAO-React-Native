@@ -24,5 +24,4 @@ export const messKeys = {
 	 */
 	issue: (issue: Pick<MessIssue, 'after' | 'before' | 'count'>) =>
 		[...ANY_ISSUE, issue.after, issue.before, issue.count] as const,
-	media: (mediaId: number) => ['mess', 'media', mediaId] as const,
 }

@@ -8,7 +8,7 @@ import {
 import {infiniteQueryOptions, queryOptions} from '@tanstack/react-query'
 import {queryClient} from '../../init/tanstack-query'
 import {parseMessCategories, parseMessPosts} from './lib/posts'
-import {ISSUE_PAGE_SIZE, parseLightPosts, parseMediaUrl} from './lib/issues'
+import {ISSUE_PAGE_SIZE, parseLightPosts, parseMediaUrls, withPhotoUrls} from './lib/issues'
 import {latestProfile, parseStaffProfiles} from './lib/profiles'
 import {seriesKey, seriesName} from './lib/series'
 import {findSpotifyRef} from './lib/spotify'
@@ -126,7 +126,8 @@ export const messCategoryOptions = (categoryId: number) =>
 	})
 /**
  * Every post the paper has published, newest first, a page at a time and in only the fields an
- * issue needs, for grouping into issues. A short page is the last.
+ * issue needs, for grouping into issues, with the page's photo addresses looked up in one more
+ * request. A short page is the last.
  */
 export const messIssuesOptions = infiniteQueryOptions({
 	queryKey: messKeys.issues,
@@ -150,7 +151,18 @@ export const messIssuesOptions = infiniteQueryOptions({
 			}),
 			queryClient.query(messCategoriesOptions),
 		])
-		return parseLightPosts(body, categories)
+		let posts = parseLightPosts(body, categories)
+		let photoIds = [...new Set(posts.flatMap((post) => (post.photo === null ? [] : [post.photo])))]
+		if (photoIds.length === 0) return posts
+		// A row without its photo draws a tinted square, so a failed lookup leaves the page whole.
+		let urls = await fetchSourceBody(
+			`${origin}/wp-json/wp/v2/media?include=${photoIds.join(',')}&per_page=${ISSUE_PAGE_SIZE}&_fields=id,source_url`,
+			signal,
+			'Olaf Messenger photos',
+		)
+			.then(parseMediaUrls)
+			.catch(() => new Map<number, string>())
+		return withPhotoUrls(posts, urls)
 	},
 	getNextPageParam: (lastPage, _allPages, lastPageParam) =>
 		lastPage.length < ISSUE_PAGE_SIZE ? undefined : lastPageParam + 1,
@@ -175,25 +187,6 @@ export const messIssueOptions = (issue: Pick<MessIssue, 'after' | 'before' | 'co
 					? `after=${issue.after}`
 					: `after=${issue.after}&before=${issue.before}`
 			return storiesAt(`posts?${range}&per_page=100&_embed=true`, signal, 'Olaf Messenger issue')
-		},
-	})
-
-/** A photo's address, by its WordPress media id, for an issue's lead on the Issues list. */
-// oxlint-disable-next-line typescript/explicit-module-boundary-types
-export const messMediaOptions = (mediaId: number) =>
-	queryOptions({
-		queryKey: messKeys.media(mediaId),
-		// A published photo's address does not change.
-		staleTime: ONE_DAY_IN_MS,
-		queryFn: async ({signal}): Promise<string> => {
-			// Assumes the resolved feed href is an absolute WordPress URL.
-			let origin = originOf(await feedHref())
-			let body = await fetchSourceBody(
-				`${origin}/wp-json/wp/v2/media/${mediaId}?_fields=source_url`,
-				signal,
-				'Olaf Messenger photo',
-			)
-			return parseMediaUrl(body)
 		},
 	})
 

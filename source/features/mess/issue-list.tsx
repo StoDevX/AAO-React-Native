@@ -22,12 +22,10 @@ import {
 	onAppear,
 	shapes,
 } from '@expo/ui/swift-ui/modifiers'
-import {useQuery} from '@tanstack/react-query'
 import {TAP_TARGET} from './lib/glyph-grid'
 import {issueName} from './lib/issues'
 import {PageNotice} from './page-notice'
 import {faded, ink, messRed, wash} from './palette'
-import {messMediaOptions} from './query'
 import {RemotePhoto} from './remote-photo'
 import type {MessIssue} from './types'
 import type {MessIssuesQuery} from './use-mess-issues'
@@ -53,11 +51,6 @@ const COUNT = [font({textStyle: 'caption'}), foregroundStyle(faded)]
 
 /** An issue: its lead's photo, its date, its lead headline and how many stories it holds. */
 function IssueRow({issue, onPress}: {issue: MessIssue; onPress: () => void}): React.ReactNode {
-	// The light fields name the lead's photo only by its media id; the rows on screen look up its address.
-	let photo = useQuery({
-		...messMediaOptions(issue.leadPhoto ?? 0),
-		enabled: issue.leadPhoto !== null,
-	})
 	let name = issueName(issue)
 	let count = `${issue.count} stories`
 	return (
@@ -71,8 +64,8 @@ function IssueRow({issue, onPress}: {issue: MessIssue; onPress: () => void}): Re
 		>
 			{/* contentShape on the label, not the Button -- see NavigationRow in components/rows.tsx. */}
 			<HStack alignment="top" modifiers={ROW} spacing={12}>
-				{photo.data ? (
-					<RemotePhoto height={THUMBNAIL} url={photo.data} width={THUMBNAIL} />
+				{issue.leadPhoto ? (
+					<RemotePhoto height={THUMBNAIL} url={issue.leadPhoto} width={THUMBNAIL} />
 				) : (
 					<Rectangle modifiers={BLANK} />
 				)}
