@@ -64,9 +64,10 @@ export function appleMapsSearchUrl(address: string): string {
 }
 
 /**
- * Directions to a point in Maps. `daddr` takes "latitude,longitude"; GeoJSON
- * stores the pair the other way round.
+ * Walking directions to a point in Maps: campus is walked, and `dirflg=w`
+ * asks for walking rather than driving. `daddr` takes "latitude,longitude";
+ * GeoJSON stores the pair the other way round.
  */
 export function appleMapsDirectionsUrl([longitude, latitude]: Coordinate): string {
-	return `https://maps.apple.com/?daddr=${latitude},${longitude}`
+	return `https://maps.apple.com/?daddr=${latitude},${longitude}&dirflg=w`
 }

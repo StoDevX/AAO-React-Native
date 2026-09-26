@@ -35,9 +35,9 @@ describe('mapStyleUrl', () => {
 })
 
 describe('appleMapsDirectionsUrl', () => {
-	it('routes to a point, latitude first', () => {
+	it('asks for walking directions to a point, latitude first', () => {
 		expect(appleMapsDirectionsUrl([-93.1839, 44.4618])).toBe(
-			'https://maps.apple.com/?daddr=44.4618,-93.1839',
+			'https://maps.apple.com/?daddr=44.4618,-93.1839&dirflg=w',
 		)
 	})
 })

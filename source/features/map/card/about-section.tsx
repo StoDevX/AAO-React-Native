@@ -16,7 +16,10 @@ const TEXT_ROW = [
 /// The building's description under an About heading, clamped as Maps clamps it.
 export function AboutSection({text}: {text: string | undefined}): React.ReactNode {
 	// The feed is not validated at the boundary, so a record can omit it.
-	if (!text?.trim()) {
+	// Trimmed, because a trailing blank line counts as a line of its own and
+	// could earn a short description a MORE with nothing behind it.
+	let trimmed = text?.trim()
+	if (!trimmed) {
 		return null
 	}
 	return (
@@ -24,7 +27,7 @@ export function AboutSection({text}: {text: string | undefined}): React.ReactNod
 			<SectionHeading title="About" />
 			{/* The native view takes no list modifiers of its own. */}
 			<VStack modifiers={TEXT_ROW}>
-				<PlaceCardAbout testID="card-about" text={text} />
+				<PlaceCardAbout testID="card-about" text={trimmed} />
 			</VStack>
 		</Section>
 	)
