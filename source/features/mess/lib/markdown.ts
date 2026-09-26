@@ -15,6 +15,46 @@ function escapeHref(href: string): string {
 }
 
 /**
+ * A bare URL as Apple's parser finds one: a scheme not run on from a letter, up to whitespace or `<`.
+ * The parser reads such a span without its escapes, so they would show as backslashes.
+ */
+const BARE_URL = /(?<!\p{L})(?:https?|ftp):\/\/[^\s<]+/giu
+
+/**
+ * Punctuation that closes the sentence or brackets around a URL rather than ending the URL, as
+ * GFM's autolinks trim it, and the `>` of a `<url>`.
+ */
+const TRAILING_PUNCTUATION = /[?!.,:*_~'">]$/u
+
+/** The URL within a bare-URL match, without the punctuation or unmatched `)` that follows it. */
+function trimUrl(match: string): string {
+	let url = match
+	while (TRAILING_PUNCTUATION.test(url) || hasUnmatchedCloser(url)) url = url.slice(0, -1)
+	return url
+}
+
+/** Whether `url` ends in a `)` that no `(` in it opened. */
+function hasUnmatchedCloser(url: string): boolean {
+	return url.endsWith(')') && url.split(')').length > url.split('(').length
+}
+
+/**
+ * Text outside any link, escaped, with each bare URL made an explicit link: a link's text is
+ * read with its escapes, where a bare URL's is not.
+ */
+function escapeProse(text: string): string {
+	let out = ''
+	let from = 0
+	for (let match of text.matchAll(BARE_URL)) {
+		let url = trimUrl(match[0])
+		out += escapeText(text.slice(from, match.index))
+		out += `[${escapeText(url)}](${escapeHref(url)})`
+		from = match.index + url.length
+	}
+	return out + escapeText(text.slice(from))
+}
+
+/**
  * One run's Markdown. `before` and `after` are the neighbouring runs' edge characters, from `edgeOf`,
  * or '' at either end of the paragraph.
  */
@@ -38,12 +78,14 @@ function runToMarkdown(run: Run, before: string, after: string): string {
 			core = core.slice(0, core.length - edge.length)
 		}
 	}
-	if (core === '') return escapeText(run.text)
-	core = escapeText(core)
+	// A link's own text is already inside a link, so only text outside one has bare URLs to link.
+	let escape = run.href ? escapeText : escapeProse
+	if (core === '') return escape(run.text)
+	core = escape(core)
 	if (run.italic) core = `*${core}*`
 	if (run.bold) core = `**${core}**`
 	if (run.href) core = `[${core}](${escapeHref(run.href)})`
-	return escapeText(lead) + core + escapeText(trail)
+	return escape(lead) + core + escape(trail)
 }
 
 /**
