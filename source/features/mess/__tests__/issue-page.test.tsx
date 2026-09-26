@@ -1,7 +1,7 @@
 import * as React from 'react'
 import {afterEach, beforeEach, describe, expect, jest, test} from '@jest/globals'
 import {act, fireEvent, render, screen, within} from '@testing-library/react-native'
-import {QueryClient, QueryClientProvider} from '@tanstack/react-query'
+import {onlineManager, QueryClient, QueryClientProvider} from '@tanstack/react-query'
 import {fetchManifest, fetchSourceBody, type Jrd} from '@frogpond/data-sources'
 
 import categoriesJson from './fixtures/categories.json'
@@ -105,6 +105,7 @@ beforeEach(() => {
 })
 
 afterEach(() => {
+	onlineManager.setOnline(true)
 	queryClient.clear()
 	appQueryClient.clear()
 	jest.clearAllMocks()
@@ -212,6 +213,13 @@ describe('IssuePage', () => {
 				name: 'Student workers deliver petition urging St. Olaf to reverse work award cap policy',
 			}),
 		).toBeTruthy()
+	})
+
+	test('says it loads once back online, rather than spinning, when offline with nothing cached', async () => {
+		onlineManager.setOnline(false)
+		await renderIssue()
+
+		expect(screen.getByText('No connection. This page loads when you’re back online.')).toBeTruthy()
 	})
 
 	test('opens with its dateline alone when it has a page of its own', async () => {

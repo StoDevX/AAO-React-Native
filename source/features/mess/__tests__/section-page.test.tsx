@@ -1,7 +1,7 @@
 import * as React from 'react'
 import {afterEach, beforeEach, describe, expect, jest, test} from '@jest/globals'
 import {fireEvent, render, screen} from '@testing-library/react-native'
-import {QueryClient, QueryClientProvider} from '@tanstack/react-query'
+import {onlineManager, QueryClient, QueryClientProvider} from '@tanstack/react-query'
 import {fetchManifest, fetchSourceBody, type Jrd} from '@frogpond/data-sources'
 
 import categoriesJson from './fixtures/categories.json'
@@ -62,6 +62,7 @@ beforeEach(() => {
 })
 
 afterEach(() => {
+	onlineManager.setOnline(true)
 	queryClient.clear()
 	appQueryClient.clear()
 	jest.clearAllMocks()
@@ -120,6 +121,22 @@ describe('SectionPage', () => {
 			[{pathname: '/Messenger/column', params: {id: '65'}}],
 			[{pathname: '/Messenger/story', params: {id: '36896'}}],
 		])
+	})
+
+	test('says it loads once back online when offline with its sections not cached', async () => {
+		queryClient.removeQueries({queryKey: messKeys.categories})
+		onlineManager.setOnline(false)
+		await renderSection()
+
+		expect(screen.getByText('No connection. This page loads when you’re back online.')).toBeTruthy()
+	})
+
+	test('says its stories load once back online when offline with them not cached', async () => {
+		onlineManager.setOnline(false)
+		await renderSection()
+
+		expect(screen.getByRole('button', {name: 'Good Questions'})).toBeTruthy()
+		expect(screen.getByText('No connection. This page loads when you’re back online.')).toBeTruthy()
 	})
 
 	test('offers Try Again when its stories fail, and still offers its columns', async () => {

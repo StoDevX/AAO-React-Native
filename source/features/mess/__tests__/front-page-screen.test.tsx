@@ -321,6 +321,32 @@ describe('FrontPageScreen', () => {
 		expect(screen.getByRole('button', {name: 'Student workers deliver petition'})).toBeTruthy()
 	})
 
+	// Review: the list was saved from an earlier visit to Issues, but Top's own stories never were.
+	test("says Top's issue loads once back online when offline with only the list cached", async () => {
+		queryClient.setQueryData(messKeys.issues, {pages: [ISSUE_STORIES.map(light)], pageParams: [1]})
+		onlineManager.setOnline(false)
+		await renderScreen()
+
+		expect(screen.getByText('April 29, 2026 · 5 stories')).toBeTruthy()
+		expect(screen.getByText('No connection. This page loads when you’re back online.')).toBeTruthy()
+	})
+
+	test('says the feed loads once back online when offline with nothing cached', async () => {
+		onlineManager.setOnline(false)
+		await renderScreen()
+
+		expect(screen.getByText('Latest stories')).toBeTruthy()
+		expect(screen.getByText('No connection. This page loads when you’re back online.')).toBeTruthy()
+	})
+
+	test('says Issues loads once back online when offline with nothing cached', async () => {
+		saveChoice('Issues')
+		onlineManager.setOnline(false)
+		await renderScreen()
+
+		expect(screen.getByText('No connection. This page loads when you’re back online.')).toBeTruthy()
+	})
+
 	test('shows Try Again on Issues when the issue list fails', async () => {
 		saveChoice('Issues')
 		serve(() => Promise.reject(new Error('offline')))

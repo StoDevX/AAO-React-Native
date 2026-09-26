@@ -59,7 +59,7 @@ export function SectionPage({name}: {name: string}): React.ReactNode {
 	} else if (categories.isError) {
 		body = <PageNotice error={categories.error} onRetry={() => categories.refetch()} />
 	} else {
-		body = <PageLoading />
+		body = <PageLoading paused={categories.fetchStatus === 'paused'} />
 	}
 
 	return (

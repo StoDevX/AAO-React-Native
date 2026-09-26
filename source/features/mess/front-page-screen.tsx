@@ -185,7 +185,7 @@ function LatestStories({
 			/>
 		)
 	} else {
-		body = <PageLoading />
+		body = <PageLoading paused={feed.fetchStatus === 'paused'} />
 	}
 	return (
 		<>
@@ -213,7 +213,7 @@ function IssuesPage(): React.ReactNode {
 	} else if (query.isError) {
 		body = <PageNotice error={query.error} onRetry={() => query.refetch()} />
 	} else {
-		body = <PageLoading />
+		body = <PageLoading paused={query.fetchStatus === 'paused'} />
 	}
 	return (
 		<>

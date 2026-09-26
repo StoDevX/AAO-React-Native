@@ -1,7 +1,7 @@
 import * as React from 'react'
 import {afterEach, beforeEach, describe, expect, jest, test} from '@jest/globals'
 import {act, fireEvent, render, screen} from '@testing-library/react-native'
-import {QueryClient, QueryClientProvider} from '@tanstack/react-query'
+import {onlineManager, QueryClient, QueryClientProvider} from '@tanstack/react-query'
 import {fetchManifest, fetchSourceBody, type Jrd} from '@frogpond/data-sources'
 
 import categoriesJson from './fixtures/categories.json'
@@ -70,6 +70,7 @@ beforeEach(() => {
 })
 
 afterEach(() => {
+	onlineManager.setOnline(true)
 	queryClient.clear()
 	appQueryClient.clear()
 	jest.clearAllMocks()
@@ -90,6 +91,14 @@ describe('ColumnScreen', () => {
 		await fireEvent.press(screen.getByRole('button', {name: 'Why is the Cage so loud?, Apr 29'}))
 
 		expect(mockNavigate).toHaveBeenCalledWith({pathname: '/Messenger/story', params: {id: '36800'}})
+	})
+
+	test('says it loads once back online when offline with its stories not cached', async () => {
+		queryClient.removeQueries({queryKey: messKeys.category(GOOD_QUESTIONS)})
+		onlineManager.setOnline(false)
+		await renderColumn()
+
+		expect(screen.getByText('No connection. This page loads when you’re back online.')).toBeTruthy()
 	})
 
 	test('pull-to-refresh fetches the column, and nothing else', async () => {

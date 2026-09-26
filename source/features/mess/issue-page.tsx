@@ -122,7 +122,7 @@ export function IssuePage({
 			) : stories.isError ? (
 				<PageNotice error={stories.error} onRetry={() => stories.refetch()} />
 			) : (
-				<PageLoading />
+				<PageLoading paused={stories.fetchStatus === 'paused'} />
 			)}
 		</>
 	)

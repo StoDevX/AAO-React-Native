@@ -20,11 +20,19 @@ const MESSAGE = [
 ]
 const TRY_AGAIN = [buttonStyle('bordered'), tint(messRed), accessibilityLabel('Try Again')]
 
-/** Stands in for a page's stories while they load. */
-export function PageLoading(): React.ReactNode {
+/**
+ * Stands in for a page's stories while they load. Offline, a query with nothing cached is paused
+ * rather than loading, and React Query fetches it once the connection returns, so the page says
+ * that instead of spinning until then.
+ */
+export function PageLoading({paused = false}: {paused?: boolean}): React.ReactNode {
 	return (
 		<VStack modifiers={NOTICE}>
-			<ProgressView />
+			{paused ? (
+				<Text modifiers={MESSAGE}>No connection. This page loads when you’re back online.</Text>
+			) : (
+				<ProgressView />
+			)}
 		</VStack>
 	)
 }

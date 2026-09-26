@@ -77,7 +77,7 @@ export function CategoryStories({categoryId}: {categoryId: number}): React.React
 		return stories.isError ? (
 			<PageNotice error={stories.error} onRetry={() => stories.refetch()} />
 		) : (
-			<PageLoading />
+			<PageLoading paused={stories.fetchStatus === 'paused'} />
 		)
 	}
 	if (stories.data.length === 0) return <Text modifiers={EMPTY}>No stories yet</Text>
