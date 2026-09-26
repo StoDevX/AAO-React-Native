@@ -1,5 +1,14 @@
 import {describe, expect, it} from '@jest/globals'
-import {bylineDate, bylineText, creditLine, imageLabel, kickerText} from '../byline'
+import {
+	bylineDate,
+	bylineText,
+	cardKicker,
+	creditLine,
+	imageLabel,
+	kickerText,
+	sectionCredit,
+	shortSection,
+} from '../byline'
 
 const b = (name: string) => ({id: 1, name})
 
@@ -66,5 +75,46 @@ describe('creditLine', () => {
 	})
 	it('gives the date alone when there is no writer', () => {
 		expect(creditLine({bylines: [], published: '2026-04-29T22:24:19.000Z'})).toBe('April 29, 2026')
+	})
+})
+
+describe('shortSection', () => {
+	it("uses the paper's own short name where it has one", () => {
+		expect(shortSection('Arts & Entertainment')).toBe('A&E')
+		expect(shortSection('Sports')).toBe('Sports')
+	})
+})
+
+describe('creditLine, short', () => {
+	it('gives the writers and a short date', () => {
+		let story = {bylines: [b('Maya Betti')], published: '2026-04-29T17:00:00.000Z'}
+		expect(creditLine(story, 'short')).toBe('Maya Betti · Apr 29')
+	})
+	it('gives the short date alone with no writer', () => {
+		expect(creditLine({bylines: [], published: '2026-04-29T17:00:00.000Z'}, 'short')).toBe('Apr 29')
+	})
+})
+
+describe('sectionCredit', () => {
+	it('gives the section, then the writers', () => {
+		expect(sectionCredit({section: 'News', bylines: [b('Maya Betti')]})).toBe('News · Maya Betti')
+	})
+	it("uses the section's short name", () => {
+		expect(sectionCredit({section: 'Arts & Entertainment', bylines: []})).toBe('A&E')
+	})
+	it('gives nothing with neither', () => {
+		expect(sectionCredit({section: null, bylines: []})).toBe('')
+	})
+})
+
+describe('cardKicker', () => {
+	it('names a card by its column', () => {
+		expect(cardKicker({section: 'Opinions', column: 'Messenger Wars'})).toBe('Messenger Wars')
+	})
+	it("falls back to the section's short name", () => {
+		expect(cardKicker({section: 'Arts & Entertainment', column: null})).toBe('A&E')
+	})
+	it('gives nothing with neither', () => {
+		expect(cardKicker({section: null, column: null})).toBeNull()
 	})
 })
