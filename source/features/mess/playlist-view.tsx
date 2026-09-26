@@ -32,13 +32,16 @@ type Props = {
  * own player; then whatever the writer added. A post whose body names no playlist has its
  * web page read for one; while it is read, one placeholder holds the button's and player's
  * place, and when the page names none, or cannot be read, the post is drawn as an article
- * with a link to the page. Returned side by side, to land in the page's column.
+ * with a link to the page, unless its body already links there. Returned side by side, to land in the page's column.
  */
 export function PlaylistView({story, layout, columnWidth}: Props): React.ReactNode {
 	let page = useQuery({...messPlaylistPageOptions(story), enabled: layout.spotify === null})
 	let spotify = layout.spotify ?? page.data ?? null
 	// Only a body with no playlist is read from its page, so only that page can come back empty.
 	let unfound = spotify === null && !page.isPending
+	// An embed the reader cannot play stays in the body as its own link to the page, which is
+	// link enough; a second to the same page would read as two ways to different places.
+	let bodyLinksToPage = story.blocks.some((block) => block.type === 'embed')
 	let photo = story.photo
 
 	return (
@@ -71,7 +74,9 @@ export function PlaylistView({story, layout, columnWidth}: Props): React.ReactNo
 				</VStack>
 			)}
 			<StoryBlocks columnWidth={columnWidth} story={story} />
-			{unfound ? <SiteLinkCard icon="safari" label="Open on the Mess" url={story.link} /> : null}
+			{unfound && !bodyLinksToPage ? (
+				<SiteLinkCard icon="safari" label="Open on the Mess" url={story.link} />
+			) : null}
 		</>
 	)
 }

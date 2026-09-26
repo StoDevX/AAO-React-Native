@@ -565,6 +565,25 @@ describe('StoryScreen', () => {
 		expect(screen.queryByText('Read on olafmessenger.com')).toBeNull()
 	})
 
+	// An embed the reader cannot play, such as an artist, stays in the body as a link card.
+	test('offers one link, not two, when the body keeps an embed it cannot play', async () => {
+		let artist: MessStory = {
+			...PAGE_PLAYLIST,
+			blocks: [
+				{type: 'embed', url: 'https://open.spotify.com/embed/artist/4Z8W4fKeB5YxbusRsdQVPb'},
+			],
+		}
+		queryClient.setQueryData(messKeys.feed, [artist])
+		serve(() => '<html><body><p>No player here.</p></body></html>')
+		await renderStory(artist.id)
+
+		let link = await screen.findByRole('button', {name: 'Open the playlist or video on the web'})
+		await act(flushQueryNotifications)
+
+		expect(link).toBeTruthy()
+		expect(screen.queryByRole('button', {name: 'Open on the Mess'})).toBeNull()
+	})
+
 	test('falls back the same way when the web page cannot be read', async () => {
 		mockBody.mockRejectedValue(new Error('offline'))
 		await renderStory(36532)
