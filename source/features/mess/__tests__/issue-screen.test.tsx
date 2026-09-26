@@ -81,7 +81,10 @@ beforeEach(() => {
 		pages: [[...APRIL, ...MARCH].map(light)],
 		pageParams: [1],
 	})
-	queryClient.setQueryData(messKeys.issue('2026-03-24T23:59:59', '2026-04-29T00:00:00'), MARCH)
+	queryClient.setQueryData(
+		messKeys.issue({after: '2026-03-24T23:59:59', before: '2026-04-29T00:00:00', count: 5}),
+		MARCH,
+	)
 })
 
 afterEach(() => {

@@ -103,7 +103,10 @@ let queryClient: QueryClient
 function seedTop(): void {
 	queryClient.setQueryData(messKeys.issues, {pages: [ISSUE_STORIES.map(light)], pageParams: [1]})
 	// The range groupIssues gives a day of five posts on Apr 29 with no issue after it.
-	queryClient.setQueryData(messKeys.issue('2026-04-28T23:59:59', null), ISSUE_STORIES)
+	queryClient.setQueryData(
+		messKeys.issue({after: '2026-04-28T23:59:59', before: null, count: 5}),
+		ISSUE_STORIES,
+	)
 }
 
 /** Five posts of a special edition on May 12, newer than the Apr 29 issue. */
@@ -124,7 +127,7 @@ function seedTopUnderSpecial(): void {
 		pageParams: [1],
 	})
 	queryClient.setQueryData(
-		messKeys.issue('2026-04-28T23:59:59', '2026-05-12T00:00:00'),
+		messKeys.issue({after: '2026-04-28T23:59:59', before: '2026-05-12T00:00:00', count: 5}),
 		ISSUE_STORIES,
 	)
 }
@@ -187,6 +190,28 @@ describe('FrontPageScreen', () => {
 		expect(screen.getByText('April 29, 2026 · 5 stories')).toBeTruthy()
 		expect(screen.getByRole('button', {name: 'Student workers deliver petition'})).toBeTruthy()
 		expect(screen.getByRole('button', {name: 'All Opinions'})).toBeTruthy()
+	})
+
+	// Review: Top's stories were cached a day under a key the issue's new stories did not change.
+	test('fetches Top again once the issue list counts another story for it', async () => {
+		seedTop()
+		serve(() => [])
+		await renderScreen()
+		expect(postHrefs()).toStrictEqual([])
+
+		let petition = {...light(PETITION), id: 99, title: 'A late story'}
+		await act(async () => {
+			queryClient.setQueryData(messKeys.issues, {
+				pages: [[petition, ...ISSUE_STORIES.map(light)]],
+				pageParams: [1],
+			})
+			await flushQueryNotifications()
+		})
+
+		expect(screen.getByText('April 29, 2026 · 6 stories')).toBeTruthy()
+		expect(postHrefs()).toStrictEqual([
+			expect.stringContaining('/posts?after=2026-04-28T23:59:59&per_page=100&_embed=true'),
+		])
 	})
 
 	test('puts Top on the newest regular issue, under a banner for a newer special edition', async () => {

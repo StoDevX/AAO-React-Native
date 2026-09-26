@@ -126,7 +126,7 @@ function renderIssue(issue: MessIssue = ISSUE, showMasthead = true) {
 
 describe('IssuePage', () => {
 	test('lays an issue out under the masthead: its dateline, its lead, then a shelf per section', async () => {
-		queryClient.setQueryData(messKeys.issue(ISSUE.after, ISSUE.before), STORIES)
+		queryClient.setQueryData(messKeys.issue(ISSUE), STORIES)
 		await renderIssue()
 
 		expect(screen.getByText('April 29, 2026 · 5 stories')).toBeTruthy()
@@ -142,7 +142,7 @@ describe('IssuePage', () => {
 	})
 
 	test('leaves the lead story off its shelf', async () => {
-		queryClient.setQueryData(messKeys.issue(ISSUE.after, ISSUE.before), STORIES)
+		queryClient.setQueryData(messKeys.issue(ISSUE), STORIES)
 		await renderIssue()
 
 		expect(screen.getAllByRole('button', {name: 'Student workers deliver petition'})).toHaveLength(
@@ -151,7 +151,7 @@ describe('IssuePage', () => {
 	})
 
 	test('gives a story with no photo a text-only card, named by its column or section', async () => {
-		queryClient.setQueryData(messKeys.issue(ISSUE.after, ISSUE.before), STORIES)
+		queryClient.setQueryData(messKeys.issue(ISSUE), STORIES)
 		await renderIssue()
 
 		let textCard = screen.getByRole('button', {name: 'Cats or dogs?'})
@@ -163,7 +163,7 @@ describe('IssuePage', () => {
 	})
 
 	test('"All ›" asks for its section; the More shelf has none', async () => {
-		queryClient.setQueryData(messKeys.issue(ISSUE.after, ISSUE.before), STORIES)
+		queryClient.setQueryData(messKeys.issue(ISSUE), STORIES)
 		await renderIssue()
 
 		await fireEvent.press(screen.getByRole('button', {name: 'All Opinions'}))
@@ -173,7 +173,7 @@ describe('IssuePage', () => {
 	})
 
 	test("opens a card's story, and the lead's, in the reader", async () => {
-		queryClient.setQueryData(messKeys.issue(ISSUE.after, ISSUE.before), STORIES)
+		queryClient.setQueryData(messKeys.issue(ISSUE), STORIES)
 		await renderIssue()
 
 		await fireEvent.press(screen.getByRole('button', {name: 'Hunger Free Campus grant'}))
@@ -202,8 +202,7 @@ describe('IssuePage', () => {
 		await act(async () => {
 			fireEvent.press(screen.getByRole('button', {name: 'Try Again'}))
 			// `find` matches the whole key, so it names this issue's range exactly.
-			await queryClient.getQueryCache().find({queryKey: messKeys.issue(ISSUE.after, ISSUE.before)})
-				?.promise
+			await queryClient.getQueryCache().find({queryKey: messKeys.issue(ISSUE)})?.promise
 			await flushQueryNotifications()
 		})
 
@@ -223,7 +222,7 @@ describe('IssuePage', () => {
 	})
 
 	test('opens with its dateline alone when it has a page of its own', async () => {
-		queryClient.setQueryData(messKeys.issue(ISSUE.after, ISSUE.before), STORIES)
+		queryClient.setQueryData(messKeys.issue(ISSUE), STORIES)
 		await renderIssue(ISSUE, false)
 
 		expect(screen.getByText('April 29, 2026 · 5 stories')).toBeTruthy()

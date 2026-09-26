@@ -1,3 +1,5 @@
+import type {MessIssue} from '../types'
+
 /** The prefix of every issue's key. */
 const ANY_ISSUE = ['mess', 'issue'] as const
 
@@ -16,7 +18,11 @@ export const messKeys = {
 	playlistPage: (storyId: number) => ['mess', 'playlist-page', storyId] as const,
 	issues: ['mess', 'issues'] as const,
 	anyIssue: ANY_ISSUE,
-	/** One issue's stories, by the range WordPress fetches them with */
-	issue: (after: string, before: string | null) => [...ANY_ISSUE, after, before] as const,
+	/**
+	 * One issue's stories, by the range WordPress fetches them with and how many the issue list
+	 * counts, so a story added to the newest issue, whose range has no end, fetches it again
+	 */
+	issue: (issue: Pick<MessIssue, 'after' | 'before' | 'count'>) =>
+		[...ANY_ISSUE, issue.after, issue.before, issue.count] as const,
 	media: (mediaId: number) => ['mess', 'media', mediaId] as const,
 }

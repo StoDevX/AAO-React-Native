@@ -158,9 +158,9 @@ export const messIssuesOptions = infiniteQueryOptions({
 
 /** One issue's stories: every post from its day up to the next issue's, parsed like the feed. */
 // oxlint-disable-next-line typescript/explicit-module-boundary-types
-export const messIssueOptions = (issue: Pick<MessIssue, 'after' | 'before'>) =>
+export const messIssueOptions = (issue: Pick<MessIssue, 'after' | 'before' | 'count'>) =>
 	queryOptions({
-		queryKey: messKeys.issue(issue.after, issue.before),
+		queryKey: messKeys.issue(issue),
 		// A published issue rarely changes.
 		staleTime: ONE_DAY_IN_MS,
 		queryFn: ({signal}) => {

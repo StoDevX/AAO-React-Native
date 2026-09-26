@@ -90,9 +90,17 @@ describe('the Mess issues', () => {
 	/** This spring's posts as the issue list parses them. */
 	const spring = parseLightPosts(springPosts, parseMessCategories(categoriesJson))
 	/** Top today: Apr 29, ending where the May 12 special edition begins. */
-	const TOP = messKeys.issue('2026-04-28T23:59:59', '2026-05-12T00:00:00')
-	const SPECIAL = messKeys.issue('2026-05-11T23:59:59', null)
-	const OLDER = messKeys.issue('2026-03-24T23:59:59', '2026-04-29T00:00:00')
+	const TOP = messKeys.issue({
+		after: '2026-04-28T23:59:59',
+		before: '2026-05-12T00:00:00',
+		count: 35,
+	})
+	const SPECIAL = messKeys.issue({after: '2026-05-11T23:59:59', before: null, count: 11})
+	const OLDER = messKeys.issue({
+		after: '2026-03-24T23:59:59',
+		before: '2026-04-29T00:00:00',
+		count: 25,
+	})
 
 	/** A query as the persister is handed it. */
 	const cached = (queryKey: readonly unknown[], data: unknown) => ({

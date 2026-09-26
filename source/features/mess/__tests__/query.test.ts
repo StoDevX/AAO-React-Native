@@ -428,7 +428,7 @@ describe('messIssueOptions', () => {
 		serve(() => posts)
 
 		let stories = await run<MessStory[]>(
-			messIssueOptions({after: '2026-03-24T23:59:59', before: '2026-04-29T00:00:00'}),
+			messIssueOptions({after: '2026-03-24T23:59:59', before: '2026-04-29T00:00:00', count: 5}),
 		)
 
 		expect(stories.map((s) => s.id)).toStrictEqual([36859, 36911, 36885, 36904, 36843])
@@ -440,16 +440,16 @@ describe('messIssueOptions', () => {
 	test('runs the newest issue to now', async () => {
 		serve(() => posts)
 
-		await run(messIssueOptions({after: '2026-05-11T23:59:59', before: null}))
+		await run(messIssueOptions({after: '2026-05-11T23:59:59', before: null, count: 11}))
 
 		expect(fetchedHrefs()).toContain(
 			'https://olafmessenger.com/wp-json/wp/v2/posts?after=2026-05-11T23:59:59&per_page=100&_embed=true',
 		)
 	})
 
-	test('keys an issue by its range, and keeps it for a day', () => {
-		let options = messIssueOptions({after: '2026-05-11T23:59:59', before: null})
-		expect(options.queryKey).toStrictEqual(['mess', 'issue', '2026-05-11T23:59:59', null])
+	test('keys an issue by its range and story count, and keeps it for a day', () => {
+		let options = messIssueOptions({after: '2026-05-11T23:59:59', before: null, count: 11})
+		expect(options.queryKey).toStrictEqual(['mess', 'issue', '2026-05-11T23:59:59', null, 11])
 		expect(options.staleTime).toBe(24 * 60 * 60 * 1000)
 	})
 })

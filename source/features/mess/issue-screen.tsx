@@ -40,7 +40,6 @@ export function IssueScreen({day}: {day: string}): React.ReactNode {
 		)
 	}
 
-	let {after, before} = issue
 	// "All ›" shows that section on the front page, which is the screen under this one.
 	let showSection = (name: string) => {
 		select(OLAF_MESSENGER.id, chipKey({kind: 'section', name}))
@@ -50,9 +49,7 @@ export function IssueScreen({day}: {day: string}): React.ReactNode {
 	return (
 		<>
 			<Stack.Screen options={{title: issueDate(issue.day)}} />
-			<MessPage
-				onRefresh={() => queryClient.refetchQueries({queryKey: messKeys.issue(after, before)})}
-			>
+			<MessPage onRefresh={() => queryClient.refetchQueries({queryKey: messKeys.issue(issue)})}>
 				<IssuePage
 					columnWidth={columnWidth}
 					issue={issue}

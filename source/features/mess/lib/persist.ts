@@ -12,7 +12,7 @@ function sameKey(a: readonly unknown[], b: readonly unknown[]): boolean {
 /** Whether a query key names one issue's stories. */
 function isIssueKey(queryKey: readonly unknown[]): boolean {
 	let [root, kind] = messKeys.anyIssue
-	return queryKey.length === 4 && queryKey[0] === root && queryKey[1] === kind
+	return queryKey.length === 5 && queryKey[0] === root && queryKey[1] === kind
 }
 
 /** Whether some data is an infinite query's pages. */
@@ -53,7 +53,7 @@ export function withPersistedIssues(client: PersistedClient): PersistedClient {
 		: undefined
 	let posts = (firstPage?.pages[0] ?? []) as LightPost[]
 	let {top} = topOf(groupIssues(posts, posts.length >= ISSUE_PAGE_SIZE))
-	let topKey = top ? messKeys.issue(top.after, top.before) : undefined
+	let topKey = top ? messKeys.issue(top) : undefined
 
 	let kept = queries.flatMap((query) => {
 		if (isIssueKey(query.queryKey)) {
