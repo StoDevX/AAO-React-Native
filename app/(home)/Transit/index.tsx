@@ -11,11 +11,11 @@ import {openUrl} from '@frogpond/open-url'
 import {useMomentTimer} from '@frogpond/timer'
 
 import {DisclosureRow} from '../../../source/components/rows'
-import {BUS_FOOTER_MESSAGE} from '../../../source/features/transportation/bus/constants'
-import {visibleBusLines} from '../../../source/features/transportation/bus/lib'
-import {busRoutesOptions} from '../../../source/features/transportation/bus/query'
-import {BusLineWidget} from '../../../source/features/transportation/bus/widget'
-import {otherModesGroupedOptions} from '../../../source/features/transportation/other-modes/query'
+import {BUS_FOOTER_MESSAGE} from '../../../source/features/transit/bus/constants'
+import {visibleBusLines} from '../../../source/features/transit/bus/lib'
+import {busRoutesOptions} from '../../../source/features/transit/bus/query'
+import {BusLineWidget} from '../../../source/features/transit/bus/widget'
+import {otherModesGroupedOptions} from '../../../source/features/transit/other-modes/query'
 
 const styles = StyleSheet.create({
 	host: {
@@ -29,7 +29,7 @@ const styles = StyleSheet.create({
  * drives every widget: a clock per line would have them ticking over at
  * slightly different moments.
  */
-export default function TransportationPage(): React.ReactNode {
+export default function TransitPage(): React.ReactNode {
 	let router = useRouter()
 	let {now} = useMomentTimer({intervalMs: 1000 * 60, timezone: timezone()})
 
@@ -95,7 +95,7 @@ export default function TransportationPage(): React.ReactNode {
 				now={now}
 				onPress={() => {
 					router.navigate({
-						pathname: '/Transportation/line/[line]',
+						pathname: '/Transit/line/[line]',
 						params: {line: line.line},
 					})
 				}}

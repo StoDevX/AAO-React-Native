@@ -44,8 +44,8 @@ export const AllViews = (): Array<ViewType> => {
 		},
 		{
 			type: 'view',
-			view: '/Campus',
-			title: 'Campus',
+			view: '/Hours',
+			title: 'Hours',
 			icon: 'clock.fill',
 			gradient: c.blueGradient,
 		},
@@ -79,8 +79,15 @@ export const AllViews = (): Array<ViewType> => {
 		},
 		{
 			type: 'view',
-			view: '/Transportation',
-			title: 'Transportation',
+			view: '/Map?campus=stolaf',
+			title: 'Map',
+			icon: 'map.fill',
+			gradient: c.greenGradient,
+		},
+		{
+			type: 'view',
+			view: '/Transit',
+			title: 'Transit',
 			icon: 'bus.fill',
 			gradient: c.grayGradient,
 		},
@@ -143,7 +150,7 @@ export const AllViews = (): Array<ViewType> => {
 		},
 		{
 			type: 'view',
-			view: '/Campus?campus=carleton',
+			view: '/Hours?campus=carleton',
 			title: 'Carleton Campus',
 			icon: 'building.2.fill',
 			gradient: c.blueGradient,

@@ -72,7 +72,7 @@ export function GitHubHostedMenu(props: Props): React.ReactNode {
 	// in place of dayparts nobody publishes for the Pause, and `formatMealTimes`
 	// reports a whole-day window as no window at all.
 	//
-	// Shares the Campus screen's cache key, so a reader who has been there pays
+	// Shares the Hours screen's cache key, so a reader who has been there pays
 	// nothing for this.
 	let {data: venue, isLoading: isVenueLoading} = useQuery({
 		...buildingByNameOptions('stolaf', props.venue ?? ''),

@@ -13,7 +13,7 @@ import {Stack} from 'expo-router'
  * across the title. A header inside the sheet has a background to sit on and
  * does not.
  *
- * `Campus/detail` and `Dictionary/entry` both nest a stack for a second
+ * `Hours/detail` and `Dictionary/entry` both nest a stack for a second
  * reason this route does not share: a screen pushed while the sheet is up
  * needs somewhere to get a back button. Nothing pushes from a contact.
  */

@@ -38,7 +38,7 @@ export type UnprocessedBusLine = {
 	colors: BusLineColors
 	notice?: string
 	/**
-	 * True when the line should not appear on the Transportation screen.
+	 * True when the line should not appear on the Transit screen.
 	 * The line stays in the feed for older app versions, which have no idea
 	 * about this field and render the line as before; a newer version reads
 	 * it and leaves the line off the screen.

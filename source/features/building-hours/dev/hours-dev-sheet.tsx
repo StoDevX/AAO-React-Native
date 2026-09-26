@@ -46,7 +46,7 @@ function isJumpSelected(jump: TimeJump, frozen: moment.Moment | null): boolean {
  * Dev-only controls for the two things that make building hours hard to look
  * at: the clock, and where the data comes from.
  */
-export function CampusDevSheet({isPresented, onIsPresentedChange}: Props): React.ReactNode {
+export function HoursDevSheet({isPresented, onIsPresentedChange}: Props): React.ReactNode {
 	let frozen = useNowOverride((state) => state.frozen)
 	let freeze = useNowOverride((state) => state.freeze)
 	let clear = useNowOverride((state) => state.clear)

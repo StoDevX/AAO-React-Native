@@ -70,11 +70,11 @@ struct TestIdentifiers {
 		static let athletics = "Athletics"
 		static let calendar = "Calendar"
 		static let sis = "SIS"
-		static let campus = "Campus"
+		static let hours = "Hours"
 		static let dictionary = "Dictionary"
-		static let carletonCampus = "Carleton Campus"
 		static let courseCatalog = "Course Catalog"
 		static let directory = "Directory"
+		static let map = "Map"
 		static let more = "More"
 		static let olafMessenger = "Olaf Messenger"
 		static let stOlafNews = "St. Olaf News"
@@ -82,7 +82,7 @@ struct TestIdentifiers {
 		static let streamingMedia = "Streaming Media"
 		static let studentOrgs = "Student Orgs"
 		static let studentWork = "Student Work"
-		static let transportation = "Transportation"
+		static let transit = "Transit"
 	}
 
 	// MARK: - Dictionary
@@ -156,12 +156,9 @@ struct TestIdentifiers {
 		static let unsupportedNestedModifier = "not supported for nested Text"
 	}
 
-	// MARK: - Carleton Map
-	//
-	// `/Map` now serves both campuses; this enum keeps its original name since
-	// it is the shared map screen's own identifiers, not Carleton-specific ones.
+	// MARK: - Map
 
-	enum CarletonMap {
+	enum Map {
 		/// The sheet's search field. The bar's testID is its placeholder, and
 		/// UIKit puts the identifier on the text field, so this is a
 		/// `searchFields` query.
@@ -182,15 +179,12 @@ struct TestIdentifiers {
 		/// The building card's title block. Matches `CARD_TITLE_ID` in
 		/// `source/features/map/building-info.tsx`.
 		static let cardTitle = "card-title"
-		/// Carleton's longest building name as of 2026-09-24, long enough to
-		/// overflow the header's title slot at `title3` bold.
-		static let aLongNamedBuilding = "Center for Math & Computing"
 		/// A St. Olaf building whose card carries a subtitle
 		/// ("Administrative & Academic") under a long name, so title and subtitle
 		/// together are the tightest fit the collapsed header has to hold. Its row
 		/// reads "Regents Hall of Natural Sciences, RNS"; `selectBuilding(named:)`
 		/// matches on the prefix. St. Olaf can rename it.
-		static let aSubtitledStOlafBuilding = "Regents Hall of Natural Sciences"
+		static let aSubtitledBuilding = "Regents Hall of Natural Sciences"
 		/// MapLibre's attribution button, found by the label it gives itself. It
 		/// carries the OpenStreetMap credit, so it has to stay reachable.
 		static let attribution = "About this map"
@@ -198,19 +192,17 @@ struct TestIdentifiers {
 		/// it carries no identifier. Its element is the sheet's child, which is
 		/// how the sheet's own box is found.
 		static let sheetGrabber = "Sheet Grabber"
-		/// A building near the top of the alphabetical list, so the expanded
-		/// sheet shows it without scrolling.
-		static let aBuilding = "Allen House"
-		/// A St. Olaf-only building, also near the top of the alphabetical list
-		/// -- absent from Carleton's map data, so selecting it is what would
-		/// fail if the map's campus parameter were ignored.
-		static let aStolafBuilding = "Buntrock Commons"
+		/// A St. Olaf-only building near the top of the list, so the expanded
+		/// sheet shows it without scrolling -- and absent from Carleton's map
+		/// data, so selecting it is what would fail if the map's campus parameter
+		/// were ignored.
+		static let aBuilding = "Buntrock Commons"
 		/// A second building, high enough in the list to be on screen even with
 		/// the keyboard up, and not a match for `aBuilding` under the picker's
-		/// subsequence search -- so typing that query has to drop it. Carleton can
+		/// subsequence search -- so typing that query has to drop it. St. Olaf can
 		/// rename either of these; a failure here is worth checking against the
 		/// list before it is blamed on the filter.
-		static let anotherBuilding = "216 College Street"
+		static let anotherBuilding = "Alumni Hall"
 	}
 
 	// MARK: - SIS
@@ -635,9 +627,9 @@ struct TestIdentifiers {
 		static let resultsList = "student-orgs-results-list"
 	}
 
-	// MARK: - Campus
+	// MARK: - Hours
 
-	enum Campus {
+	enum Hours {
 		/// A St. Olaf venue. Under test the app reads St. Olaf's hours from this
 		/// repository's bundled copy rather than a server, so this is whatever
 		/// `data/building-hours/` says today.
@@ -705,15 +697,10 @@ struct TestIdentifiers {
 		/// The report screen's own submit control, in the navigation bar.
 		static let submitReportAction = "Submit Report"
 
-		/// A Carleton-only venue: present in Carleton's live `spaces/hours` but
-		/// absent from St. Olaf's, so a test tapping into the Carleton tile fails
-		/// if the campus parameter is ignored and St. Olaf's list loads instead.
-		static let carletonBuilding = "Sayles Café"
-
-		/// Both campuses' Campus screens carry this top-right toolbar button,
-		/// which pushes to `/Map` for whichever campus is showing -- the
-		/// hand-hosted map screen stays where it is, so this is a navigation,
-		/// not a mode switch.
+		/// Carleton's Hours screen carries this top-right toolbar button, which
+		/// pushes to `/Map` for Carleton -- the hand-hosted map screen stays
+		/// where it is, so this is a navigation, not a mode switch. St. Olaf's
+		/// Hours screen has none: its map has a home tile of its own.
 		static let mapButton = "Map"
 
 		/// A St. Olaf venue whose `building` key (`toh`) resolves to a
@@ -747,9 +734,9 @@ struct TestIdentifiers {
 		static let notLoggedIn = "You are not logged in"
 	}
 
-	// MARK: - Transportation
+	// MARK: - Transit
 
-	enum Transportation {
+	enum Transit {
 		/// The line every UI test drives, and a stop it always calls at. The
 		/// stop is the college itself, so it is not going to be renamed out
 		/// from under this test.
@@ -774,7 +761,7 @@ struct TestIdentifiers {
 		/// test aims at rather than at a stop cell: the strip opens partway
 		/// along the route, so which cells are on screen depends on where the
 		/// bus is.
-		/// Mirrored by `STOP_STRIP` in `source/features/transportation/bus/widget.tsx`.
+		/// Mirrored by `STOP_STRIP` in `source/features/transit/bus/widget.tsx`.
 		static let stopStrip = "stop-strip"
 
 		/// The navigation bar's day menu, labelled by the day it is showing.
@@ -791,12 +778,12 @@ struct TestIdentifiers {
 		static let aStopOnEveryRunningDay = "Food Co-op"
 		/// The empty state that replaces the timetable on a day the line does not
 		/// run. A prefix: a holiday appends its name. Matches `BusLine` in
-		/// `source/features/transportation/bus/line.tsx`.
+		/// `source/features/transit/bus/line.tsx`.
 		static let lineNotRunning = "This line is not running today"
 		/// What a row shows in place of a departure the route skips; matches
-		/// `formatDeparture` in `source/features/transportation/bus/components/times.tsx`.
+		/// `formatDeparture` in `source/features/transit/bus/components/times.tsx`.
 		static let skippedDeparture = "None"
-		/// The last row on the Transportation screen. It sits in Other Modes'
+		/// The last row on the Transit screen. It sits in Other Modes'
 		/// final section, which carries no heading -- its entries have an empty
 		/// `category` -- so reaching this row proves the list scrolls past both
 		/// the widgets and the two headed sections into the headerless one.

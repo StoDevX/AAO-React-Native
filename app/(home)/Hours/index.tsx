@@ -17,14 +17,14 @@ import {useDebounce} from '@frogpond/use-debounce'
 import {Stack, useLocalSearchParams, useRouter} from 'expo-router'
 import {useMomentTimer, useNowOverride} from '@frogpond/timer'
 import {useIsDevMode} from '../../../source/lib/use-is-dev-mode'
-import {CampusDevSheet} from '../../../source/features/building-hours/dev/campus-dev-sheet'
+import {HoursDevSheet} from '../../../source/features/building-hours/dev/hours-dev-sheet'
 import {useForceBundledData} from '../../../source/features/building-hours/dev/data-source-store'
 
 type Props = {
 	campus: Campus
 }
 
-function CampusView({campus}: Props): React.ReactNode {
+function HoursView({campus}: Props): React.ReactNode {
 	let router = useRouter()
 	let dispatch = useAppDispatch()
 	let allFavorites = useAppSelector(selectFavoriteBuildings)
@@ -59,7 +59,7 @@ function CampusView({campus}: Props): React.ReactNode {
 	let onSelect = React.useCallback(
 		(building: BuildingType) =>
 			router.navigate({
-				pathname: '/Campus/detail/[name]',
+				pathname: '/Hours/detail/[name]',
 				params: {name: building.name, campus},
 			}),
 		[campus, router],
@@ -68,9 +68,8 @@ function CampusView({campus}: Props): React.ReactNode {
 	// The search chrome is bound to component state (the change handler
 	// updates query), so it can't move to a static outer component. Compute
 	// it once and render it in every branch, so the user always has a search
-	// bar to type into or clear. Both campuses have a map now, so the button
-	// forwards whichever campus this screen is showing to the hand-hosted
-	// `/Map` screen -- it has no inline mode here.
+	// bar to type into or clear. St. Olaf's map has a home tile of its own;
+	// Carleton's has none, so its Hours screen carries the button to it.
 	let chrome = (
 		<>
 			<Stack.Toolbar placement="bottom">
@@ -85,16 +84,18 @@ function CampusView({campus}: Props): React.ReactNode {
 						onPress={() => setDevSheetPresented(true)}
 					/>
 				) : null}
-				<Stack.Toolbar.Button
-					accessibilityLabel="Map"
-					icon="map"
-					onPress={() => router.navigate({pathname: '/Map', params: {campus}})}
-				/>
+				{campus === 'carleton' ? (
+					<Stack.Toolbar.Button
+						accessibilityLabel="Map"
+						icon="map"
+						onPress={() => router.navigate({pathname: '/Map', params: {campus}})}
+					/>
+				) : null}
 			</Stack.Toolbar>
 
 			<SearchBar onChangeText={setQuery} value={query} />
 
-			<CampusDevSheet isPresented={devSheetPresented} onIsPresentedChange={setDevSheetPresented} />
+			<HoursDevSheet isPresented={devSheetPresented} onIsPresentedChange={setDevSheetPresented} />
 		</>
 	)
 
@@ -137,14 +138,14 @@ function CampusView({campus}: Props): React.ReactNode {
 	)
 }
 
-export default function CampusPage(): React.ReactNode {
+export default function HoursPage(): React.ReactNode {
 	let {campus: campusParam} = useLocalSearchParams<{campus?: string}>()
 	let campus = parseCampus(campusParam)
 
 	return (
 		<>
-			<Stack.Title>{campus === 'carleton' ? 'Carleton Campus' : 'Campus'}</Stack.Title>
-			<CampusView campus={campus} />
+			<Stack.Title>{campus === 'carleton' ? 'Carleton Campus' : 'Hours'}</Stack.Title>
+			<HoursView campus={campus} />
 		</>
 	)
 }

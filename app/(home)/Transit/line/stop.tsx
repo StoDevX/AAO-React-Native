@@ -11,22 +11,22 @@ import {useMomentTimer} from '@frogpond/timer'
 
 import type {Moment} from 'moment-timezone'
 
-import {busLineOptions} from '../../../../source/features/transportation/bus/query'
-import {createMomentForDay} from '../../../../source/features/transportation/bus/components/days'
+import {busLineOptions} from '../../../../source/features/transit/bus/query'
+import {createMomentForDay} from '../../../../source/features/transit/bus/components/days'
 import type {
 	DayOfWeek,
 	BusTimetableEntry,
 	UnprocessedBusLine,
-} from '../../../../source/features/transportation/bus/types'
+} from '../../../../source/features/transit/bus/types'
 import {
 	findBusStopStatus as findStopStatus,
 	type BusStateEnum,
 	type BusStopStatusEnum,
-} from '../../../../source/features/transportation/bus/lib'
-import {useLineState} from '../../../../source/features/transportation/bus/use-line-state'
-import {formatDeparture} from '../../../../source/features/transportation/bus/components/times'
-import {TimetableRow} from '../../../../source/features/transportation/bus/components/timetable-row'
-import {BUS_FOOTER_MESSAGE} from '../../../../source/features/transportation/bus/constants'
+} from '../../../../source/features/transit/bus/lib'
+import {useLineState} from '../../../../source/features/transit/bus/use-line-state'
+import {formatDeparture} from '../../../../source/features/transit/bus/components/times'
+import {TimetableRow} from '../../../../source/features/transit/bus/components/timetable-row'
+import {BUS_FOOTER_MESSAGE} from '../../../../source/features/transit/bus/constants'
 
 const styles = StyleSheet.create({
 	host: {

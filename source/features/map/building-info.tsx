@@ -63,10 +63,10 @@ const CLOSE_GLYPH_SIZE = 22
 /// The card's own dismiss button. The search bar's Cancel carries the same
 /// "Close" accessibility label, so a screen-wide query for that label could
 /// answer for either; this testID scopes a test to the card alone. Matches
-/// `TestIdentifiers.CarletonMap.cardCloseButton` in `TestIdentifiers.swift`.
+/// `TestIdentifiers.Map.cardCloseButton` in `TestIdentifiers.swift`.
 const CARD_CLOSE_BUTTON_ID = 'card-close-button'
 
-/// The header's title. Matches `TestIdentifiers.CarletonMap.cardTitle` in
+/// The header's title. Matches `TestIdentifiers.Map.cardTitle` in
 /// `TestIdentifiers.swift`.
 const CARD_TITLE_ID = 'card-title'
 

@@ -53,7 +53,7 @@ earlier one will match both.
 **A `Stack.SearchBar` is `app.searchFields.firstMatch`**, wherever the screen
 puts it — the bottom-toolbar placement most screens use here is reached the same
 way as a header one. `searchField.value as? String` returns the placeholder, not
-`nil`, when the field is empty. The Carleton map's field is a `UISearchBar`
+`nil`, when the field is empty. The map's field is a `UISearchBar`
 inside an `@expo/ui` sheet, so it is `app.searchFields[...]` too. Its cancel
 button carries no identifier and, on iOS 26, the label `Close` — which the
 building card's own dismiss button also has — so query it inside the bar rather

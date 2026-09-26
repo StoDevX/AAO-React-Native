@@ -10,7 +10,7 @@ import type {UnprocessedBusLine} from './types'
  *
  * `processBusLine` runs a strict `moment` parse over every time in every one of
  * the line's schedules -- roughly 500 of them across the four lines the
- * Transportation screen draws at once, some 15ms of work. The clock's only
+ * Transit screen draws at once, some 15ms of work. The clock's only
  * contribution to that is the date each parsed time is stamped with, so the
  * key is the day rather than the moment and the minute's tick reuses the parse.
  */

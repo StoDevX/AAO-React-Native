@@ -1,11 +1,11 @@
 import XCTest
 
-struct TransportationScreen: Screen {
+struct TransitScreen: Screen {
 	let app: XCUIApplication
 
 	@discardableResult
 	func navigate() -> Self {
-		navigateFromHome(to: TestIdentifiers.Buttons.transportation)
+		navigateFromHome(to: TestIdentifiers.Buttons.transit)
 	}
 
 	/// A line's widget header, which carries the line name and what it is
@@ -79,7 +79,7 @@ struct TransportationScreen: Screen {
 	/// The first line's strip, which a swipe is aimed at and a stop is looked
 	/// for inside.
 	private var stopStrip: XCUIElement {
-		app.scrollViews[TestIdentifiers.Transportation.stopStrip].firstMatch
+		app.scrollViews[TestIdentifiers.Transit.stopStrip].firstMatch
 	}
 
 	/// Whether a stop cell has actually been scrolled into the strip's window.
@@ -153,7 +153,7 @@ struct TransportationScreen: Screen {
 	/// because a presented sheet makes the screen behind it accessibility-inert.
 	@discardableResult
 	func verifyTimetableShown() -> Self {
-		let menu = app.buttons[TestIdentifiers.Transportation.dayMenuDefaultLabel].firstMatch
+		let menu = app.buttons[TestIdentifiers.Transit.dayMenuDefaultLabel].firstMatch
 		XCTAssertTrue(
 			menu.waitForExistence(timeout: 30),
 			"The sheet should show the line's full timetable, day menu and all")
@@ -163,10 +163,10 @@ struct TransportationScreen: Screen {
 	/// Open a stop's own schedule from inside the sheet's timetable.
 	@discardableResult
 	func openFirstStop() -> Self {
-		let stop = app.elementWithLabel(startingWith: TestIdentifiers.Transportation.aStop)
+		let stop = app.elementWithLabel(startingWith: TestIdentifiers.Transit.aStop)
 		XCTAssertTrue(
 			stop.waitForExistence(timeout: 30),
-			"The route should list \(TestIdentifiers.Transportation.aStop) as a stop")
+			"The route should list \(TestIdentifiers.Transit.aStop) as a stop")
 		stop.tap()
 		return self
 	}
@@ -177,7 +177,7 @@ struct TransportationScreen: Screen {
 		// element -- "ST. OLAF COLLEGE — STARTS IN 3 HOURS", drawn in caps --
 		// so the match is both a prefix and case-insensitive.
 		let heading = app.staticTexts.matching(
-			NSPredicate(format: "label BEGINSWITH[c] %@", TestIdentifiers.Transportation.aStop)
+			NSPredicate(format: "label BEGINSWITH[c] %@", TestIdentifiers.Transit.aStop)
 		).firstMatch
 		XCTAssertTrue(
 			heading.waitForExistence(timeout: 30),
@@ -188,7 +188,7 @@ struct TransportationScreen: Screen {
 	/// Pick a day from the sheet's navigation bar menu.
 	@discardableResult
 	func pickDay(_ day: String) -> Self {
-		let menu = app.buttons[TestIdentifiers.Transportation.dayMenuDefaultLabel].firstMatch
+		let menu = app.buttons[TestIdentifiers.Transit.dayMenuDefaultLabel].firstMatch
 		XCTAssertTrue(
 			menu.waitForExistence(timeout: 30),
 			"The sheet's navigation bar should offer a day menu labelled Today")
@@ -212,7 +212,7 @@ struct TransportationScreen: Screen {
 			row.waitForExistence(timeout: 30),
 			"The timetable should list \(stop)")
 		XCTAssertFalse(
-			row.label.hasPrefix("\(stop), \(TestIdentifiers.Transportation.skippedDeparture)"),
+			row.label.hasPrefix("\(stop), \(TestIdentifiers.Transit.skippedDeparture)"),
 			"\(stop) should have departure times before the day changes")
 		return self
 	}
@@ -227,7 +227,7 @@ struct TransportationScreen: Screen {
 			"The day menu should relabel itself to \(day)")
 
 		let emptyState = app.elementWithLabel(
-			startingWith: TestIdentifiers.Transportation.lineNotRunning)
+			startingWith: TestIdentifiers.Transit.lineNotRunning)
 		XCTAssertTrue(
 			emptyState.waitForExistence(timeout: 30),
 			"Picking \(day) should redraw the timetable as a line that is not running")
@@ -240,11 +240,11 @@ struct TransportationScreen: Screen {
 	/// past the widgets and that the unlabelled section is actually reached.
 	@discardableResult
 	func scrollToOtherModes() -> Self {
-		let row = app.elementWithLabel(startingWith: TestIdentifiers.Transportation.lastOtherModesRow)
+		let row = app.elementWithLabel(startingWith: TestIdentifiers.Transit.lastOtherModesRow)
 		scrollUntilExists(row, in: list)
 		XCTAssertTrue(
 			row.exists,
-			"Scrolling past the widgets should reach \(TestIdentifiers.Transportation.lastOtherModesRow), the last row in Other Modes' unlabelled section")
+			"Scrolling past the widgets should reach \(TestIdentifiers.Transit.lastOtherModesRow), the last row in Other Modes' unlabelled section")
 		return self
 	}
 }
