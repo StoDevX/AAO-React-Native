@@ -1,14 +1,22 @@
 import * as React from 'react'
 import {HStack, Text, VStack} from '@expo/ui/swift-ui'
-import {font, foregroundStyle} from '@expo/ui/swift-ui/modifiers'
+import {font, foregroundStyle, textSelection} from '@expo/ui/swift-ui/modifiers'
 import {useQuery} from '@tanstack/react-query'
 import {faded, ink} from './palette'
 import {staffProfileOptions} from './query'
 import {RemotePhoto} from './remote-photo'
 import type {Byline} from './types'
 
-const NAME = [font({textStyle: 'headline', design: 'serif'}), foregroundStyle(ink)]
-const BIO = [font({textStyle: 'footnote', design: 'serif'}), foregroundStyle(faded)]
+const NAME = [
+	font({textStyle: 'headline', design: 'serif'}),
+	foregroundStyle(ink),
+	textSelection(true),
+]
+const BIO = [
+	font({textStyle: 'footnote', design: 'serif'}),
+	foregroundStyle(faded),
+	textSelection(true),
+]
 const PHOTO = 44
 
 /** A writer's photo and bio. Draws nothing for a writer with no staff profile. */

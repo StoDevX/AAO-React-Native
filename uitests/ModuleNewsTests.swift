@@ -22,6 +22,14 @@ class ModuleNewsTests: UITestCase {
 			.verifyStoryAppears()
 	}
 
+	func testOlafMessengerStoryTextOffersCopy() throws {
+		NewsScreen(app: app, tile: TestIdentifiers.Buttons.olafMessenger, title: "The Olaf Messenger")
+			.navigate()
+			.openFirstStory()
+			.verifyStoryAppears()
+			.verifyBodyOffersCopy()
+	}
+
 	func testHoroscopesOpenOnAChosenSign() throws {
 		let news = NewsScreen(app: app, tile: TestIdentifiers.Buttons.olafMessenger, title: "The Olaf Messenger")
 			.navigate()

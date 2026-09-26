@@ -13,6 +13,7 @@ import {
 	id,
 	onAppear,
 	shapes,
+	textSelection,
 } from '@expo/ui/swift-ui/modifiers'
 import {RowAccessory} from '../../components/rows'
 import {SIGN_DATES, SIGN_GLYPHS, SIGN_NAMES, SPOKEN_DATES} from './lib/horoscopes'
@@ -40,7 +41,11 @@ const LARGE_GLYPH = [
 	// The name beneath says the same thing in words.
 	accessibilityHidden(true),
 ]
-const NAME = [font({textStyle: 'title3', design: 'serif', weight: 'bold'}), foregroundStyle(ink)]
+const NAME = [
+	font({textStyle: 'title3', design: 'serif', weight: 'bold'}),
+	foregroundStyle(ink),
+	textSelection(true),
+]
 const DATES = [font({textStyle: 'caption'}), foregroundStyle(faded)]
 const ROW = [frame({minHeight: TAP_TARGET}), contentShape(shapes.rectangle())]
 const ROW_GLYPH = [

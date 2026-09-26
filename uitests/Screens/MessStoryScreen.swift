@@ -21,6 +21,20 @@ struct MessStoryScreen: Screen {
 		return self
 	}
 
+	/// Long-press the story's first paragraph and assert iOS offers to copy it,
+	/// which it does only for text that can be selected.
+	@discardableResult
+	func verifyBodyOffersCopy() -> Self {
+		let body = app.element(matching: TestIdentifiers.News.storyBody)
+		XCTAssertTrue(body.waitForExistence(timeout: 10), "the story should have a paragraph to long-press")
+		body.press(forDuration: 1.0)
+		let copy = app.descendants(matching: .any).matching(NSPredicate(format: "label == %@", "Copy")).firstMatch
+		let offered = copy.waitForExistence(timeout: 5)
+		capture("Long press on a story paragraph")
+		XCTAssertTrue(offered, "a long press on a story's paragraph should offer Copy")
+		return self
+	}
+
 	/// Pick a sign from a Horoscopes post's list of all twelve, which is what a
 	/// reader who has never picked one sees. A row's label is the sign's name
 	/// followed by its dates.

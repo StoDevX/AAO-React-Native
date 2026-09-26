@@ -9,6 +9,7 @@ import {
 	foregroundStyle,
 	italic,
 	padding,
+	textSelection,
 	tint,
 } from '@expo/ui/swift-ui/modifiers'
 import {openUrl} from '@frogpond/open-url'
@@ -22,7 +23,7 @@ import type {Block, Run} from './types'
 export const BODY_ID = 'mess-story-body'
 const BODY = [font({textStyle: 'body', design: 'serif'}), foregroundStyle(ink)]
 /** Body text that can hold a link, which SwiftUI draws in the tint colour. */
-const PROSE = [...BODY, tint(messRed), accessibilityIdentifier(BODY_ID)]
+const PROSE = [...BODY, tint(messRed), accessibilityIdentifier(BODY_ID), textSelection(true)]
 const QUOTE = [
 	font({textStyle: 'body', design: 'serif'}),
 	italic(),
@@ -30,8 +31,14 @@ const QUOTE = [
 	tint(messRed),
 	padding({leading: 16}),
 	accessibilityIdentifier(BODY_ID),
+	textSelection(true),
 ]
-const CAPTION = [font({textStyle: 'footnote', design: 'serif'}), italic(), foregroundStyle(faded)]
+const CAPTION = [
+	font({textStyle: 'footnote', design: 'serif'}),
+	italic(),
+	foregroundStyle(faded),
+	textSelection(true),
+]
 /** A story's opening words, in the font's own small capitals. */
 const OPENING = [font({textStyle: 'body', design: 'serif', smallCaps: true})]
 const SITE_LINK = [font({textStyle: 'callout', weight: 'semibold'}), foregroundStyle(messRed)]

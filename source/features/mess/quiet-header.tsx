@@ -6,6 +6,7 @@ import {
 	font,
 	foregroundStyle,
 	italic,
+	textSelection,
 } from '@expo/ui/swift-ui/modifiers'
 import {creditLine} from './lib/byline'
 import {faded, ink} from './palette'
@@ -18,8 +19,9 @@ const TITLE = [
 	foregroundStyle(ink),
 	accessibilityAddTraits(['isHeader']),
 	accessibilityIdentifier('mess-story-headline'),
+	textSelection(true),
 ]
-const CREDIT = [font({textStyle: 'caption'}), foregroundStyle(faded)]
+const CREDIT = [font({textStyle: 'caption'}), foregroundStyle(faded), textSelection(true)]
 
 /**
  * The top of a poem: kicker, an italic title, and one light line of writers and
