@@ -21,10 +21,10 @@ function escapeHref(href: string): string {
 const BARE_URL = /(?<!\p{L})(?:https?|ftp):\/\/[^\s<]+/giu
 
 /**
- * Punctuation that closes the sentence or brackets around a URL rather than ending the URL, as
- * GFM's autolinks trim it, and the `>` of a `<url>`.
+ * Punctuation that closes the sentence or quote around a URL rather than ending the URL: GFM's
+ * autolink list, plus the `>` of a `<url>` and closing quotes of any kind, straight or curly.
  */
-const TRAILING_PUNCTUATION = /[?!.,:*_~'">]$/u
+const TRAILING_PUNCTUATION = /[?!.,:*_~'">\p{Pf}]$/u
 
 /** The URL within a bare-URL match, without the punctuation or unmatched `)` that follows it. */
 function trimUrl(match: string): string {

@@ -51,6 +51,12 @@ describe('runsToMarkdown', () => {
 		)
 	})
 
+	it("ends a bare URL's link before a curly closing quote", () => {
+		expect(runsToMarkdown([{text: '“https://x.test”'}])).toBe(
+			'“[https://x\\.test](https://x.test)”',
+		)
+	})
+
 	it('keeps a bare URL inside a styled run within its markers', () => {
 		expect(runsToMarkdown([{text: 'at https://x.test', bold: true}])).toBe(
 			'**at [https://x\\.test](https://x.test)**',
