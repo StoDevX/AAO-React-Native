@@ -108,7 +108,8 @@ export function IssueList({issues, query, onOpen}: Props): React.ReactNode {
 		end = <PageNotice error={query.error} onRetry={() => query.fetchNextPage()} />
 	} else if (query.hasNextPage) {
 		end = (
-			<VStack modifiers={[id(`issues-page-${pageCount}`), onAppear(fetchMore)]}>
+			// The id wraps the onAppear, so a new page rebuilds the view the onAppear sits on.
+			<VStack modifiers={[onAppear(fetchMore), id(`issues-page-${pageCount}`)]}>
 				<ProgressView />
 			</VStack>
 		)

@@ -639,8 +639,12 @@ export function VStack({
 	testID,
 }: WithModifiers & {alignment?: string; spacing?: number; testID?: string}): React.ReactNode {
 	let handler = modifierOf(modifiers, 'onAppear')?.handler as (() => void) | undefined
-	let identity = modifierOf(modifiers, 'id')?.id
-	// SwiftUI builds a new view for a new id, so the stack remounts, and appears again, when it changes.
+	// SwiftUI builds a new view for a new id, so `.onAppear{}.id(x)` appears again when x changes.
+	// Modifiers apply in order, so an id before the onAppear rebuilds only the view inside it, and
+	// the onAppear outside does not fire again.
+	let appearIndex = modifiers?.findIndex((modifier) => modifier.$type === 'onAppear') ?? -1
+	let idIndex = modifiers?.findIndex((modifier) => modifier.$type === 'id') ?? -1
+	let identity = idIndex > appearIndex ? modifiers?.[idIndex]?.id : undefined
 	return (
 		<Appearing key={String(identity)} onAppear={handler}>
 			<View testID={testID}>{children}</View>

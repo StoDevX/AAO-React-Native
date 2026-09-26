@@ -22,6 +22,13 @@ class ModuleNewsTests: UITestCase {
 			.openSecondIssue()
 	}
 
+	/// Reads live data: the paper has to have published issues in 2025, three pages back.
+	func testOlafMessengerIssuesLoadOlderPages() throws {
+		MessFrontPage(app: app)
+			.navigate()
+			.scrollIssues(untilAnIssueFrom: "2025")
+	}
+
 	/// Reads live data: News has to have its Good Questions column, with a story in it.
 	func testOlafMessengerSectionOpensAColumn() throws {
 		MessFrontPage(app: app)

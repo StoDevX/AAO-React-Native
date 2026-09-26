@@ -56,6 +56,26 @@ struct MessFrontPage: Screen {
 		return self
 	}
 
+	/// Scroll the Issues list until it shows an issue from `year`, which the list reaches only by
+	/// loading page after page as its end comes into view.
+	@discardableResult
+	func scrollIssues(untilAnIssueFrom year: String) -> Self {
+		choose(chip: TestIdentifiers.News.issuesChip)
+		let rows = app.buttons.matching(identifier: TestIdentifiers.News.issueRow)
+		XCTAssertTrue(rows.firstMatch.waitForExistence(timeout: 30), "Issues should list the issues")
+		let older = rows.matching(NSPredicate(format: "label CONTAINS %@", ", \(year),")).firstMatch
+		let top = app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.3))
+		let bottom = app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.85))
+		for _ in 0..<40 where !older.exists {
+			bottom.press(forDuration: 0.05, thenDragTo: top)
+		}
+		capture("The Issues list, paged back to \(year)")
+		XCTAssertTrue(
+			older.waitForExistence(timeout: 30),
+			"scrolling Issues should keep loading older pages until it reaches \(year)")
+		return self
+	}
+
 	/// Open the Issues list's second issue and wait for its own page to lead with a story.
 	@discardableResult
 	func openSecondIssue() -> Self {
