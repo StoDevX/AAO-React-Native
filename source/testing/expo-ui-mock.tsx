@@ -963,6 +963,23 @@ export function LabeledContent({
 	)
 }
 
+/**
+ * A title beside its icon. A custom title view in `children` takes precedence
+ * over `title`, as it does natively.
+ */
+export function Label({
+	children,
+	systemImage,
+	title,
+}: WithModifiers & {title?: string; systemImage?: string}): React.ReactNode {
+	return (
+		<View>
+			{systemImage ? <Image systemName={systemImage} /> : null}
+			{children ?? (title ? <RNText>{title}</RNText> : null)}
+		</View>
+	)
+}
+
 export function Picker<T>({
 	children,
 	label,

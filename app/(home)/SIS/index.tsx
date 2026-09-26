@@ -1,15 +1,36 @@
 import * as React from 'react'
-import {ScrollView, StyleSheet, Text, View} from 'react-native'
-import {SafeAreaView} from 'react-native-safe-area-context'
-import {Card} from '@frogpond/silly-card'
-import {Button} from '@frogpond/button'
-import {BalancesView} from '../../../source/features/sis/balances'
+import {StyleSheet} from 'react-native'
+import type {SFSymbol} from 'sf-symbols-typescript'
+import {Host, Image, Label, List, Section, Text, VStack} from '@expo/ui/swift-ui'
+import {
+	font,
+	foregroundStyle,
+	frame,
+	listRowBackground,
+	listStyle,
+	multilineTextAlignment,
+} from '@expo/ui/swift-ui/modifiers'
 import * as c from '@frogpond/colors'
+import {ActionRow} from '../../../source/components/rows'
+import {BalancesView} from '../../../source/features/sis/balances'
 import {useAppDispatch, useAppSelector} from '../../../source/redux'
 import {
 	acknowledgeAcknowledgement,
 	selectAcknowledgement,
 } from '../../../source/redux/parts/settings'
+
+/** What a student agrees to before the app shows their balances. */
+const TERMS: {symbol: SFSymbol; text: string}[] = [
+	{
+		symbol: 'exclamationmark.triangle',
+		text: 'The information in the app may not be completely accurate.',
+	},
+	{
+		symbol: 'checkmark.seal',
+		text: 'Bon Appétit is always the final authority on any discrepancies.',
+	},
+	{symbol: 'building.columns', text: 'This app is not an official college app.'},
+]
 
 export default function SISBalancesPage(): React.ReactNode {
 	let dispatch = useAppDispatch()
@@ -19,87 +40,49 @@ export default function SISBalancesPage(): React.ReactNode {
 		return <BalancesView />
 	}
 
-	let content = (
-		<>
-			<Text selectable={true} style={[styles.paragraph, styles.cardText]}>
-				We want to make sure you have the most up-to-date information in the app, but please keep in
-				mind that there may be some inaccuracies.
-			</Text>
-			<Text selectable={true} style={[styles.paragraph, styles.cardText]}>
-				With that in mind, before you can view your balances in the app, we ask that you agree to
-				the following.{'\n'}
-			</Text>
-
-			<Text selectable={true} style={[styles.paragraph, styles.bonappNotice]}>
-				The information in the app may not be completely accurate.{'\n'}
-				{'\n'}
-				Bon Appétit is always the final authority on any discrepancies.{'\n'}
-				{'\n'}
-				This app is not an official college app.{'\n'}
-			</Text>
-
-			<Text selectable={true} style={[styles.paragraph, styles.cardText]}>
-				If you do not agree to these terms, you will not be able to see your balances in the app,
-				but you can still use the rest of the features.
-			</Text>
-		</>
-	)
-
-	let ackProps = {
-		onPositive: () => dispatch(acknowledgeAcknowledgement(true)),
-		subtitle: 'Bon Appétit is always right',
-		title: 'Before you continue…',
-	}
-
-	return <Ack {...ackProps}>{content}</Ack>
-}
-
-type AcknowledgementProps = React.PropsWithChildren<{
-	title: string
-	subtitle: string
-	onPositive: () => void
-}>
-
-function Ack(props: AcknowledgementProps) {
-	let {title, children, onPositive} = props
-
 	return (
-		<ScrollView contentContainerStyle={styles.container} contentInsetAdjustmentBehavior="automatic">
-			<SafeAreaView edges={['left', 'right']}>
-				<Card header={title}>
-					<>
-						{children}
+		<Host matchContents={false} style={styles.host}>
+			<List modifiers={[listStyle('insetGrouped')]}>
+				{/* The introduction sits on the list's own background, above the
+				    cards, rather than in a card of its own. */}
+				<Section modifiers={[listRowBackground('clear')]}>
+					<VStack modifiers={[frame({maxWidth: Infinity})]} spacing={12}>
+						<Image color={c.systemBlue} size={44} systemName="checkmark.shield" />
+						<Text modifiers={[font({textStyle: 'title2', weight: 'bold'})]}>
+							Before You Continue
+						</Text>
+						<Text modifiers={[foregroundStyle(c.secondaryLabel), multilineTextAlignment('center')]}>
+							We want to make sure you have the most up-to-date information in the app, but please
+							keep in mind that there may be some inaccuracies.
+						</Text>
+					</VStack>
+				</Section>
 
-						<View style={styles.iosButtonRow}>
-							<Button onPress={onPositive} title="I Agree" />
-						</View>
-					</>
-				</Card>
-			</SafeAreaView>
-		</ScrollView>
+				<Section
+					footer={
+						<Text>
+							If you do not agree to these terms, you will not be able to see your balances in the
+							app, but you can still use the rest of the features.
+						</Text>
+					}
+					title="By continuing, you agree that"
+				>
+					{TERMS.map((term) => (
+						<Label key={term.text} systemImage={term.symbol} title={term.text} />
+					))}
+				</Section>
+
+				<Section>
+					<ActionRow onPress={() => dispatch(acknowledgeAcknowledgement(true))} title="I Agree" />
+				</Section>
+			</List>
+		</Host>
 	)
 }
 
-let styles = StyleSheet.create({
-	container: {
-		marginVertical: 10,
-	},
-	paragraph: {
-		marginVertical: 3,
-		paddingRight: 4,
-		fontSize: 17,
-		color: c.label,
-	},
-	cardText: {
-		color: c.secondaryLabel,
-	},
-	bonappNotice: {
-		fontWeight: '600',
-		color: c.label,
-		textAlign: 'center',
-	},
-	iosButtonRow: {
-		flexDirection: 'row',
-		justifyContent: 'space-around',
+const styles = StyleSheet.create({
+	host: {
+		flex: 1,
+		backgroundColor: c.systemGroupedBackground,
 	},
 })
