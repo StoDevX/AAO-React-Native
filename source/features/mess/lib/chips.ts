@@ -12,8 +12,8 @@ export const MESS_CHIPS: MessChip[] = [
 ]
 
 /**
- * What the news filter store keeps for a chip: `Top`, `Issues`, or the section's full name, which
- * is also what the old filter saved for a section.
+ * What the news filter store keeps for a chip: `Top`, `Issues`, or the section's full name. A
+ * section saved by name on an installed app therefore reads back as its chip.
  */
 export function chipKey(chip: MessChip): string {
 	switch (chip.kind) {
