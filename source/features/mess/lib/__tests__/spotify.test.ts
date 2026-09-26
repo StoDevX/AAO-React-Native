@@ -46,6 +46,27 @@ describe('spotifyRefOf', () => {
 		expect(spotifyRefOf('https://www.youtube.com/embed/dQw4w9WgXcQ')).toBeNull()
 	})
 
+	// Hand-written: Spotify's share sheet adds a region to the address in some countries.
+	it('reads a regional share link', () => {
+		expect(
+			spotifyRefOf(
+				'https://open.spotify.com/intl-de/playlist/072f2dzlfGFgJkx9SNXaQz?si=vgY9EsYUTf6FBwFE_UjcPw',
+			),
+		).toStrictEqual({kind: 'playlist', id: '072f2dzlfGFgJkx9SNXaQz'})
+		expect(
+			spotifyRefOf('https://open.spotify.com/intl-pt-br/track/11dFghVXANMlKmJXsNCbNl'),
+		).toStrictEqual({
+			kind: 'track',
+			id: '11dFghVXANMlKmJXsNCbNl',
+		})
+	})
+
+	it('finds a regional share link in text', () => {
+		expect(
+			findSpotifyRef('<p>https://open.spotify.com/intl-fr/album/4aawyAB9vmqN3uQ7FjRGTy</p>'),
+		).toStrictEqual({kind: 'album', id: '4aawyAB9vmqN3uQ7FjRGTy'})
+	})
+
 	it('takes no address with words around it', () => {
 		expect(
 			spotifyRefOf('Listen: https://open.spotify.com/playlist/072f2dzlfGFgJkx9SNXaQz'),

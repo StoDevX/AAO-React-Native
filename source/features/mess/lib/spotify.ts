@@ -5,8 +5,11 @@ import {SKIPPED} from './blocks'
 /** What the reader can open and play; an artist or a podcast is none of these. */
 const KINDS: ReadonlyArray<SpotifyRef['kind']> = ['playlist', 'album', 'track']
 
-/** A Spotify address, as a link or as its embed player. */
-const ADDRESS = String.raw`https?://open\.spotify\.com/(?:embed/)?([a-z]+)/([A-Za-z0-9]+)`
+/**
+ * A Spotify address, as a link or as its embed player. A link shared in some countries
+ * carries a region first, such as `intl-de/`.
+ */
+const ADDRESS = String.raw`https?://open\.spotify\.com/(?:intl-[a-z-]+/)?(?:embed/)?([a-z]+)/([A-Za-z0-9]+)`
 /** An address and nothing else, with any query or fragment after the id. */
 const WHOLE_ADDRESS = new RegExp(`^${ADDRESS}(?:[/?#]\\S*)?$`, 'u')
 /** Every address in a stretch of text. */
