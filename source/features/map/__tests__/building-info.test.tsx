@@ -428,6 +428,28 @@ describe('BuildingInfo hours', () => {
 		expect(screen.queryByText('Hours')).toBeNull()
 	})
 
+	// Carleton's venues carry no building key, so no card there could match
+	// one; fetching the whole feed on every tap would be wasted.
+	it('never fetches Hours for a Carleton card', async () => {
+		let client = new QueryClient({defaultOptions: {queries: {retry: false}}})
+		trackedQueryClients.push(client)
+		await render(
+			<QueryClientProvider client={client}>
+				<BuildingInfo
+					building={makeBuilding({id: 'sayles', name: 'Sayles-Hill'})}
+					campus="carleton"
+					onClose={jest.fn()}
+					stop="medium"
+				/>
+			</QueryClientProvider>,
+		)
+
+		// Idle and still pending: it neither ran nor is running.
+		let state = client.getQueryState(keys.all('carleton'))
+		expect(state?.fetchStatus).toBe('idle')
+		expect(state?.status).toBe('pending')
+	})
+
 	it('shows no Hours on a Carleton card, whose venues carry no building', async () => {
 		mockVenues.carleton = [venue('Sayles-Hill', undefined, 'building')]
 		await renderCard(

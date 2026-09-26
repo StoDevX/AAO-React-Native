@@ -28,7 +28,7 @@ import {FILL_WIDTH} from '../../components/tile-layout'
 import {HoursSection} from '../building-hours/hours-section'
 import {ownHours} from '../building-hours/lib'
 import {buildingsOptions} from '../building-hours/query'
-import type {Campus} from '../building-hours/types'
+import type {BuildingType, Campus} from '../building-hours/types'
 import {AboutSection} from './card/about-section'
 import {ActionsRow} from './card/actions-row'
 import {DetailsSection} from './card/details-section'
@@ -42,6 +42,11 @@ import {goodToKnowRows} from './lib/good-to-know'
 import {placeTiles} from './lib/place-tiles'
 import type {SheetDetent} from './lib/sheet-moves'
 import type {Building, Coordinate, Feature, Point} from './types'
+
+/// How long the card treats the Hours feed as current. Each building's card
+/// mounts afresh, so without this every tap would refetch the whole feed; the
+/// hours themselves change a few times a term.
+const HOURS_STALE_TIME = 5 * 60 * 1000
 
 /// Apple Maps' place-card header, measured on iOS 27: 16pt of padding round
 /// 44pt buttons -- 76pt in all, the sheet's collapsed stop
@@ -148,9 +153,13 @@ function BuildingCard({
 
 	let subtitle = building.properties.type || null
 
-	// The Hours screen's own query, so the card reads its warm cache.
-	let {data: venues = []} = useQuery(buildingsOptions(campus))
-	let {now} = useMomentTimer({intervalMs: 60000, timezone: timezone()})
+	// The Hours screen's own query, so the card reads its warm cache. Only
+	// St. Olaf's venues carry building keys, so a Carleton card never asks.
+	let {data: venues = []} = useQuery({
+		...buildingsOptions(campus),
+		enabled: campus === 'stolaf',
+		staleTime: HOURS_STALE_TIME,
+	})
 	let hours = ownHours(venues, building)
 
 	return (
@@ -251,7 +260,7 @@ function BuildingCard({
 					actions={cardActions({point: pointOf(building), walkingDirections: WALKING_DIRECTIONS})}
 				/>
 				<PhotoStrip name={name} photos={photos} />
-				{hours ? <HoursSection now={now} venue={hours} /> : null}
+				{hours ? <CardHours venue={hours} /> : null}
 				<AboutSection text={description} />
 				<GoodToKnowSection rows={goodToKnowRows(building.properties)} />
 				<PlacesSection id="departments" tiles={departmentTiles} title="Departments" />
@@ -262,6 +271,13 @@ function BuildingCard({
 			</List>
 		</PlaceCardScaffold>
 	)
+}
+
+/// A place's hours, kept current. The minute's tick lives here rather than on
+/// the card, so each tick redraws this section alone.
+function CardHours({venue}: {venue: BuildingType}): React.ReactNode {
+	let {now} = useMomentTimer({intervalMs: 60000, timezone: timezone()})
+	return <HoursSection now={now} venue={venue} />
 }
 
 /// Maps' close button: a glass circle holding a plain xmark.
