@@ -75,12 +75,19 @@ struct MessStoryScreen: Screen {
 		return self
 	}
 
-	/// Go back one screen with the navigation bar's back button.
+	/// Go back one screen with the navigation bar's back button. iOS 27 can keep
+	/// more than one navigation bar in the tree, and a story's bar has no title to
+	/// pick it out by, so this takes the back button a tap can reach: the covered
+	/// bars' buttons are not hittable.
 	@discardableResult
 	func goBack() -> Self {
-		let back = app.navigationBars.firstMatch.buttons[TestIdentifiers.Navigation.systemBackButton]
-		XCTAssertTrue(back.waitForHittable(timeout: 10), "the story should offer a way back")
-		back.tap()
+		let backs = app.navigationBars.buttons.matching(identifier: TestIdentifiers.Navigation.systemBackButton)
+		let reachable = { backs.allElementsBoundByIndex.first { $0.isHittable } }
+		let offered = XCTWaiter().wait(
+			for: [XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in reachable() != nil }, object: nil)],
+			timeout: 10)
+		XCTAssertEqual(offered, .completed, "the story should offer a way back")
+		reachable()?.tap()
 		return self
 	}
 
