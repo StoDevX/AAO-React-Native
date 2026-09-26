@@ -812,4 +812,21 @@ describe('StoryScreen', () => {
 		await renderStory(33129)
 		expect(screen.queryByText('Read on olafmessenger.com')).toBeNull()
 	})
+
+	test("lists a short story's series as titles, with no thumbnails", async () => {
+		queryClient.setQueryData(messKeys.series(SHORT_STORY.id), {
+			title: 'More Microfiction Corner',
+			stories: [NEXT_EPISODE],
+		})
+		await renderStory(28702)
+
+		expect(
+			screen.getByRole('button', {name: 'Microfiction corner: Quarters for Flowers'}),
+		).toBeTruthy()
+		// The page draws its own picture; the next episode's copy of the same banner is not drawn.
+		let uris = hostProps(screen.toJSON() as Node | Node[] | null, 'Image').map(
+			(props) => (props.source as {uri?: string} | undefined)?.uri,
+		)
+		expect(uris.filter((uri) => uri === MICROFICTION_ART.url)).toHaveLength(1)
+	})
 })
