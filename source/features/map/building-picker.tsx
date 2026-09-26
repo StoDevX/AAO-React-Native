@@ -121,7 +121,7 @@ export function BuildingPicker({
 					{isError ? (
 						<Button onPress={() => void refetch()}>
 							<VStack alignment="leading" spacing={2}>
-								<Text>{`A problem occured while loading: ${error}`}</Text>
+								<Text>{`A problem occurred while loading: ${error}`}</Text>
 								<Text>Tap to try again.</Text>
 							</VStack>
 						</Button>

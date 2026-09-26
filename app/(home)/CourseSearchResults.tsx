@@ -177,7 +177,7 @@ function CourseSearchResultsView(): React.ReactNode {
 				}}
 				text={
 					(courseTermsInError.length === 1 ? 'A problem' : 'Some problems') +
-					` occured while loading: ${errors}`
+					` occurred while loading: ${errors}`
 				}
 			/>
 		)

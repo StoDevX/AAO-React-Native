@@ -32,6 +32,7 @@
     "@frogpond/markdown": "workspace:*",
     "@frogpond/notice": "workspace:*",
     "@frogpond/open-url": "workspace:*",
+    "@frogpond/place-card-header": "workspace:*",
     "@frogpond/separator": "workspace:*",
     "@frogpond/silly-card": "workspace:*",
     "@frogpond/storage": "workspace:*",
@@ -153,7 +154,7 @@
   "engines": {
     "node": ">=18"
   },
-  "packageManager": "pnpm@12.5.0",
+  "packageManager": "pnpm@12.6.0",
   "enriched-markdown": {
     "enableMath": false
   }

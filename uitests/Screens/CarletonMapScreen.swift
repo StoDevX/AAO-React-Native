@@ -54,6 +54,12 @@ struct CarletonMapScreen: Screen {
 		app.buttons[TestIdentifiers.CarletonMap.cardCloseButton].firstMatch
 	}
 
+	/// The card's title block. One accessibility element of no fixed type,
+	/// so it is found by identifier alone.
+	private var cardTitle: XCUIElement {
+		app.descendants(matching: .any)[TestIdentifiers.CarletonMap.cardTitle].firstMatch
+	}
+
 	/// The map has no home tile of its own -- both campuses' Campus screens
 	/// carry the map button now, so getting to `/Map` means opening one of
 	/// those screens first and tapping its top-right button. Defaults to
@@ -291,7 +297,7 @@ struct CarletonMapScreen: Screen {
 	}
 
 	/// A move is a change of at least a hundred points: the collapsed stop
-	/// renders at about 65pt, the middle stop at `SHEET_RESTING_FRACTION` of
+	/// renders at about 65pt, the middle stop at `MAP_MIDDLE_FRACTION` of
 	/// the screen, and large at nearly all of it, so anything smaller is a
 	/// scroll or a wobble, not a detent change.
 	@discardableResult
@@ -429,16 +435,131 @@ struct CarletonMapScreen: Screen {
 		return self
 	}
 
-	/// The middle stop is `SHEET_RESTING_FRACTION` (0.68) of the window, so the
-	/// card's top lands about a third of the way down. A top in the band from
-	/// a fifth to a half of the screen is at it: higher is `large`, lower is
-	/// still collapsed.
+	/// Drags the card from wherever it rests down to the collapsed stop.
+	@discardableResult
+	func collapseCard() -> Self {
+		let grabber = app.buttons[TestIdentifiers.CarletonMap.sheetGrabber].firstMatch
+		grabber.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5))
+			.press(
+				forDuration: 0.1,
+				thenDragTo: app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.99)))
+		return self
+	}
+
+	/// The collapsed stop rests at the foot of the screen. Checked on the sheet's
+	/// own box rather than on anything inside it, so that a drag which stopped
+	/// at the middle stop fails here instead of letting the header check pass
+	/// on a card tall enough to hold anything.
+	@discardableResult
+	func verifyCardCollapsed() -> Self {
+		let sheet = sheetFrame()
+		let windowHeight = app.windows.firstMatch.frame.height
+		XCTContext.runActivity(named: "sheet \(sheet) in a window \(windowHeight) tall") { _ in }
+		XCTAssertTrue(
+			sheet.minY > windowHeight * 0.8,
+			"The card should rest at the collapsed stop, at the foot of the screen; "
+				+ "the sheet's top is at \(sheet.minY) of \(windowHeight)")
+		return self
+	}
+
+	/// The issue this guards against: a collapsed card that cut through the
+	/// building's name and its close button. Both have to lie between the
+	/// sheet's top and bottom edges -- top-and-bottom only, because the stop is
+	/// too short rather than too narrow, so a header that does not fit loses its
+	/// lower edge. Frames, because `isHittable` answers true for content the
+	/// sheet clips away.
+	///
+	/// The close button is checked first because its query does not depend on
+	/// the title block being found, so a clipped close button is reported even
+	/// if the title's lookup fails.
+	@discardableResult
+	func verifyCardHeaderWithinSheet() -> Self {
+		let sheet = sheetFrame()
+		verifyWithinSheet("close button", closeButton.frame, sheet)
+		XCTAssertTrue(cardTitle.waitForExistence(timeout: 10), "The card should show the building's name")
+		verifyWithinSheet("title", cardTitle.frame, sheet)
+		return self
+	}
+
+	/// For a header taller than the collapsed stop, as at the largest text
+	/// sizes. The close button has to lie wholly inside the sheet, and the title
+	/// block's top edge at or below the sheet's top. The title's bottom may run
+	/// past the sheet's bottom edge: that is the intended behaviour, and Apple
+	/// Maps' own, since the header keeps its top in view and gives up its foot.
+	@discardableResult
+	func verifyCardHeaderTopWithinSheet() -> Self {
+		let sheet = sheetFrame()
+		verifyWithinSheet("close button", closeButton.frame, sheet)
+		XCTAssertTrue(cardTitle.waitForExistence(timeout: 10), "The card should show the building's name")
+		let title = cardTitle.frame
+		XCTContext.runActivity(named: "title \(title) in sheet \(sheet)") { _ in }
+		XCTAssertTrue(
+			title.minY >= sheet.minY,
+			"The collapsed card should keep the top of the title in view: title \(title), sheet \(sheet)")
+		return self
+	}
+
+	private func verifyWithinSheet(_ name: String, _ box: CGRect, _ sheet: CGRect) {
+		XCTContext.runActivity(named: "\(name) \(box) in sheet \(sheet)") { _ in }
+		XCTAssertTrue(
+			box.minY >= sheet.minY && box.maxY <= sheet.maxY,
+			"The collapsed card should hold the whole \(name), not clip it: \(name) \(box), sheet \(sheet)")
+	}
+
+	/// The stretch of map above the sheet as it rests now, clear of the
+	/// navigation bar at the top and of the sheet's grabber at the bottom.
+	/// Taken before the sheet moves, it stays map at every lower stop.
+	func mapAboveSheet() -> CGRect {
+		XCTAssertTrue(mapView.waitForExistence(timeout: 30), "The map should be on screen")
+		let map = mapView.frame
+		let sheetTop = sheetFrame().minY
+		return CGRect(x: map.minX, y: map.minY + 8, width: map.width, height: sheetTop - 24 - map.minY)
+	}
+
+	/// A screenshot taken once `region` has stopped changing, so a camera
+	/// still easing to a building is not mistaken for where it rests.
+	func settledMap(in region: CGRect) -> ScreenPixels? {
+		guard var previous = ScreenPixels(app.screenshot().image) else {
+			XCTFail("The screenshot should be readable as pixels")
+			return nil
+		}
+		for _ in 1...20 {
+			Thread.sleep(forTimeInterval: 0.5)
+			guard let next = ScreenPixels(app.screenshot().image) else { break }
+			if next.fractionDiffering(from: previous, in: region) == 0 {
+				return next
+			}
+			previous = next
+		}
+		XCTFail("The map in \(region) never stopped moving")
+		return nil
+	}
+
+	/// Apple Maps leaves the map where it is when its sheet changes stop; only
+	/// selecting a place moves the camera. A panned map changes a quarter or
+	/// more of the region, so anything past 1% is a move rather than noise.
+	@discardableResult
+	func verifyMapHeldStill(since before: ScreenPixels?, in region: CGRect) -> Self {
+		guard let before, let after = settledMap(in: region) else { return self }
+		let moved = after.fractionDiffering(from: before, in: region)
+		XCTContext.runActivity(named: "\(Int(moved * 100))% of the map in \(region) changed") { _ in }
+		XCTAssertTrue(
+			moved < 0.01,
+			"The map should stay put while the sheet changes stop; \(Int(moved * 100))% of \(region) changed")
+		return self
+	}
+
+	/// The middle stop is `MAP_MIDDLE_FRACTION` (0.4613, Apple Maps' stop) of
+	/// the window less its top inset, so the card's close button lands a little
+	/// past halfway down (about 0.57 of an iPhone 17 Pro's window). A top in the
+	/// band from 0.35 to 0.75 of the screen is at it: higher is `large`, lower
+	/// is still collapsed.
 	@discardableResult
 	func verifyCardAtMedium() -> Self {
 		let top = closeButtonTop()
 		let height = app.windows.firstMatch.frame.height
 		XCTAssertTrue(
-			top > height * 0.2 && top < height * 0.5,
+			top > height * 0.35 && top < height * 0.75,
 			"The card should be at the middle stop; its top is at \(top) of \(height)")
 		return self
 	}

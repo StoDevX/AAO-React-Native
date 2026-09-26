@@ -29,7 +29,6 @@ import {parseCampus} from '../../../source/features/building-hours/query'
 import type {Campus} from '../../../source/features/building-hours/types'
 import {BuildingInfo} from '../../../source/features/map/building-info'
 import {BuildingPicker} from '../../../source/features/map/building-picker'
-import {SHEET_RESTING_FRACTION} from '../../../source/lib/constants'
 import {sheetHeightFor} from '../../../source/features/map/lib/sheet-height'
 import {toBuildingFootprints} from '../../../source/features/map/lib/building-footprints'
 import {
@@ -92,17 +91,26 @@ const ATTRIBUTION_POSITION = {top: 8, right: 8}
 const SHEET_COLLAPSED_HEIGHT = 76
 const COLLAPSED_DETENT: PresentationDetent = {height: SHEET_COLLAPSED_HEIGHT}
 
-/// A fraction rather than UIKit's own `medium`, which is exactly a half and
-/// leaves the list feeling cut off at the point most people stop dragging.
-const MIDDLE_DETENT: PresentationDetent = {fraction: SHEET_RESTING_FRACTION}
-const SHEET_DETENTS: PresentationDetent[] = [COLLAPSED_DETENT, MIDDLE_DETENT, 'large']
+/// Apple Maps' middle stop for a place card, as a fraction of the height the
+/// sheet is allowed: its close button and ours sit at the same height on an
+/// iPhone 17 Pro simulator running iOS 27. Lower than the app's other detail
+/// sheets (`SHEET_RESTING_FRACTION`), because this sheet copies Maps' card.
+const MAP_MIDDLE_FRACTION = 0.4613
+const MIDDLE_DETENT: PresentationDetent = {fraction: MAP_MIDDLE_FRACTION}
+
+/// Apple Maps' top stop for a place card sits a little below UIKit's `large`,
+/// leaving a strip of map showing: its close button and big title sit at the
+/// same heights as ours on an iPhone 17 Pro simulator running iOS 27.
+const MAP_LARGE_FRACTION = 0.9873
+const LARGE_DETENT: PresentationDetent = {fraction: MAP_LARGE_FRACTION}
+const SHEET_DETENTS: PresentationDetent[] = [COLLAPSED_DETENT, MIDDLE_DETENT, LARGE_DETENT]
 
 /// The rules speak in names; the modifier speaks in detents. The rules' middle
-/// stop is `MIDDLE_DETENT`, not UIKit's `medium`.
+/// and large stops are Maps' fractions, not UIKit's `medium` and `large`.
 const DETENT_FOR: Record<SheetDetent, PresentationDetent> = {
 	collapsed: COLLAPSED_DETENT,
 	medium: MIDDLE_DETENT,
-	large: 'large',
+	large: LARGE_DETENT,
 }
 
 /// Structural like `sheetHeightFor`, since a detent handed back by the sheet
@@ -111,8 +119,13 @@ function nameOf(detent: PresentationDetent): SheetDetent {
 	if (detent === 'large') {
 		return 'large'
 	}
-	if (detent === 'medium' || 'fraction' in detent) {
+	if (detent === 'medium') {
 		return 'medium'
+	}
+	// Both fractional stops come back as fractions; the halfway point between
+	// them tells them apart without trusting an exact float to round-trip.
+	if ('fraction' in detent) {
+		return detent.fraction > (MAP_MIDDLE_FRACTION + MAP_LARGE_FRACTION) / 2 ? 'large' : 'medium'
 	}
 	return 'collapsed'
 }
@@ -206,12 +219,12 @@ export default function MapPage(): React.ReactNode {
 		return point ? {id: match.id, name: match.properties.name, point} : null
 	}, [selectedBuildingId, buildings])
 
-	React.useEffect(() => {
-		if (!selectedPoint) {
-			return
-		}
+	// Reads the sheet's height at the moment of selection without depending on
+	// it: Apple Maps leaves the map where it is when its sheet changes stop, so
+	// only a new selection moves the camera.
+	let easeToSelection = React.useEffectEvent((point: Point) => {
 		cameraRef.current?.easeTo({
-			center: selectedPoint.point.coordinates,
+			center: point.coordinates,
 			duration: CAMERA_ANIMATION_MS,
 			// The sheet sits over the bottom of the map, so centring on the
 			// building put the thing just selected underneath it. Pad by where
@@ -220,7 +233,13 @@ export default function MapPage(): React.ReactNode {
 			padding: {bottom: sheetHeight},
 			zoom: SELECTION_ZOOM,
 		})
-	}, [selectedPoint, sheetHeight])
+	})
+
+	React.useEffect(() => {
+		if (selectedPoint) {
+			easeToSelection(selectedPoint.point)
+		}
+	}, [selectedPoint])
 
 	return (
 		<View style={StyleSheet.absoluteFill}>
@@ -306,6 +325,7 @@ export default function MapPage(): React.ReactNode {
 							<BuildingInfo
 								building={selectedBuilding}
 								onClose={() => setSelectedBuildingId(null)}
+								stop={sheet.current}
 							/>
 						) : (
 							<BuildingPicker

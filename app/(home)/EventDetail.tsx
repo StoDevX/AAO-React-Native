@@ -181,7 +181,7 @@ export default function EventDetailPage(): React.ReactNode {
 				<NoticeView
 					buttonText="Try Again"
 					onPress={refetch}
-					text={`A problem occured while loading: ${
+					text={`A problem occurred while loading: ${
 						error instanceof Error ? error.message : 'Unknown error'
 					}`}
 				/>
