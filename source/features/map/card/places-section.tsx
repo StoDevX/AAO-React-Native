@@ -32,7 +32,7 @@ import * as c from '@frogpond/colors'
 
 import {CAROUSEL_TILE_LIMIT, type PlaceTile} from '../lib/place-tiles'
 import {CARD_INSET} from './card-style'
-import {PlaceTileView} from './place-tile'
+import {MoreTileView, PlaceTileView} from './place-tile'
 import {SectionHeading} from './section-heading'
 
 const TILE_SPACING = 12
@@ -157,6 +157,14 @@ export function PlacesSection({
 					{tiles.slice(0, CAROUSEL_TILE_LIMIT).map((tile) => (
 						<PlaceTileView key={tileKey(tile)} tile={tile} />
 					))}
+					{hasMore ? (
+						<MoreTileView
+							hidden={tiles.slice(CAROUSEL_TILE_LIMIT).map((tile) => tile.label)}
+							noun={title.toLowerCase()}
+							onPress={() => setShowingAll(true)}
+							total={tiles.length}
+						/>
+					) : null}
 				</HStack>
 			</ScrollView>
 		</Section>

@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {Button, Image, Spacer, Text, VStack} from '@expo/ui/swift-ui'
+import {Button, HStack, Image, Spacer, Text, VStack} from '@expo/ui/swift-ui'
 import {
 	accessibilityElement,
 	accessibilityHidden,
@@ -31,6 +31,32 @@ const TILE_HEIGHT = 124
 const CORNER_RADIUS = 20
 const ICON_SIZE = 28
 
+/// How many of the hidden names the carousel's last tile shows.
+const MORE_PREVIEW = 3
+
+/// A tile's card. In the carousel every tile stretches to the tallest, so
+/// the row stays even when large text makes one name wrap further; in the
+/// More grid a tile fills its column.
+function cardFrame(fill: boolean) {
+	return [
+		padding({all: 14}),
+		frame(
+			fill
+				? {maxWidth: FILL_WIDTH, minHeight: TILE_HEIGHT, alignment: 'topLeading'}
+				: {
+						width: PLACE_TILE_WIDTH,
+						minHeight: TILE_HEIGHT,
+						maxHeight: FILL_WIDTH,
+						alignment: 'topLeading',
+					},
+		),
+		background(
+			c.secondarySystemGroupedBackground,
+			shapes.roundedRectangle({cornerRadius: CORNER_RADIUS}),
+		),
+	]
+}
+
 const SYMBOL = {
 	department: 'building.2.fill',
 	office: 'person.2.fill',
@@ -50,16 +76,7 @@ export function PlaceTileView({
 		<VStack
 			alignment="leading"
 			modifiers={[
-				padding({all: 14}),
-				frame(
-					fill
-						? {maxWidth: FILL_WIDTH, minHeight: TILE_HEIGHT, alignment: 'topLeading'}
-						: {width: PLACE_TILE_WIDTH, minHeight: TILE_HEIGHT, alignment: 'topLeading'},
-				),
-				background(
-					c.secondarySystemGroupedBackground,
-					shapes.roundedRectangle({cornerRadius: CORNER_RADIUS}),
-				),
+				...cardFrame(fill),
 				// One element, linked or not: the name is all there is to read.
 				accessibilityElement('combine'),
 			]}
@@ -97,6 +114,57 @@ export function PlaceTileView({
 			onPress={() => openUrl(href)}
 		>
 			{card}
+		</Button>
+	)
+}
+
+/// The tile that ends a carousel with more than it shows: the next few names
+/// it left out, so the one wanted may be among them, and a tinted count that
+/// opens the same grid as the heading's More.
+export function MoreTileView({
+	hidden,
+	total,
+	noun,
+	onPress,
+}: {
+	/// The names the carousel left out, in order.
+	hidden: Array<string>
+	/// How many there are in all, for VoiceOver.
+	total: number
+	/// The plural, lowercase: "departments".
+	noun: string
+	onPress: () => void
+}): React.ReactNode {
+	let preview = hidden.slice(0, MORE_PREVIEW).join(', ') + (hidden.length > MORE_PREVIEW ? '…' : '')
+	return (
+		<Button
+			modifiers={[buttonStyle('plain'), accessibilityLabel(`Show all ${total} ${noun}`)]}
+			onPress={onPress}
+		>
+			<VStack alignment="leading" modifiers={cardFrame(false)} spacing={6}>
+				<Text
+					modifiers={[
+						font({textStyle: 'subheadline'}),
+						foregroundStyle({type: 'hierarchical', style: 'secondary'}),
+						lineLimit(3),
+					]}
+				>
+					{preview}
+				</Text>
+				<Spacer />
+				<HStack spacing={4}>
+					<Text modifiers={[font({textStyle: 'headline'}), foregroundStyle(c.systemBlue)]}>
+						{`${hidden.length} more`}
+					</Text>
+					<Image
+						modifiers={[
+							font({textStyle: 'footnote', weight: 'bold'}),
+							foregroundStyle(c.systemBlue),
+						]}
+						systemName="chevron.right"
+					/>
+				</HStack>
+			</VStack>
 		</Button>
 	)
 }

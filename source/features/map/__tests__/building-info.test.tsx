@@ -282,6 +282,10 @@ describe('BuildingInfo sections', () => {
 		// Named for its section, so VoiceOver can tell the two apart.
 		expect(screen.getByRole('button', {name: 'More departments'})).toBeTruthy()
 		expect(screen.queryByRole('button', {name: 'More offices'})).toBeNull()
+		// The carousel ends on a tile counting what it left out.
+		expect(screen.getByRole('button', {name: 'Show all 7 departments'})).toBeTruthy()
+		expect(screen.getByText('1 more')).toBeTruthy()
+		expect(screen.queryByRole('button', {name: /Show all \d+ offices/u})).toBeNull()
 	})
 
 	// Directions waits on a walking routing engine; see lib/card-actions.ts.
