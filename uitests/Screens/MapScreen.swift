@@ -591,6 +591,15 @@ struct MapScreen: Screen {
 		return self
 	}
 
+	/// The card's Hours status row ("Open until 10 PM"), which only a card
+	/// showing some venue's hours has.
+	@discardableResult
+	func verifyHoursStatus() -> Self {
+		let status = app.descendants(matching: .any)[TestIdentifiers.Hours.status].firstMatch
+		XCTAssertTrue(status.waitForExistence(timeout: 30), "The card should show its hours' status row")
+		return self
+	}
+
 	/// Maps' photo tiles are square.
 	@discardableResult
 	func verifyPhotoTileSquare() -> Self {

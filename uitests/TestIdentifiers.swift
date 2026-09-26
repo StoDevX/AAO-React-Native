@@ -201,6 +201,9 @@ struct TestIdentifiers {
 		/// Carleton's fullest card: a photo, an address, accessibility, nine
 		/// offices, and floors. Carleton can rename it.
 		static let aCarletonBuildingWithAPhoto = "Sayles-Hill Campus Center"
+		/// A point inside a building with exactly one venue in the Hours data,
+		/// so its card shows that venue's hours as its own.
+		static let aPointWithItsOwnHours = "The Cage"
 		/// The dev-only home tile that opens Carleton's Hours screen, whose
 		/// toolbar carries the button to Carleton's map.
 		static let carletonCampusTile = "Carleton Campus"

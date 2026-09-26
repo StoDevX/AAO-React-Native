@@ -134,7 +134,7 @@ class ModuleMapTests: UITestCase {
 	}
 
 	/// Every heading a card can have, for placing the ones a card shows.
-	private let cardSections = ["About", "Good to Know", "Departments", "Offices", "Floors", "Links", "Details"]
+	private let cardSections = ["Hours", "About", "Good to Know", "Departments", "Offices", "Floors", "Links", "Details"]
 
 	/// A St. Olaf card lays its sections out in Maps' order, and More on a long
 	/// Departments section opens every one of them.
@@ -148,7 +148,7 @@ class ModuleMapTests: UITestCase {
 			.selectBuilding(named: name)
 			.expandCard()
 			.capture("Tomson Hall's card at the large stop")
-			.verifySectionOrder(["About", "Good to Know", "Departments", "Links"], among: cardSections)
+			.verifySectionOrder(["Hours", "About", "Good to Know", "Departments", "Links"], among: cardSections)
 	}
 
 	func testMoreOpensEveryDepartmentInAGrid() throws {
@@ -174,6 +174,39 @@ class ModuleMapTests: UITestCase {
 			.expandCard()
 			.capture("Holland Hall's About, clamped")
 			.verifyAboutExpands()
+	}
+
+	/// A building's card shows its own hours -- a status row, then the week
+	/// -- after the photo's place and before About.
+	func testACardShowsItsBuildingsOwnHours() throws {
+		let name = TestIdentifiers.Map.aBuildingWithALongAbout
+		MapScreen(app: app)
+			.navigate()
+			.checkSheetPresented()
+			.focusSearch()
+			.typeIntoSearch(name)
+			.selectBuilding(named: name)
+			.capture("Holland Hall's card at the middle stop")
+			.verifyHoursStatus()
+			.expandCard()
+			.capture("Holland Hall's card at the large stop")
+			.verifySectionOrder(["Hours", "About", "Good to Know", "Links"], among: cardSections)
+	}
+
+	/// A point inside a building with one venue of its own shows that venue's
+	/// hours, whatever kind of venue it is.
+	func testAPointShowsItsOwnHours() throws {
+		let name = TestIdentifiers.Map.aPointWithItsOwnHours
+		MapScreen(app: app)
+			.navigate()
+			.checkSheetPresented()
+			.focusSearch()
+			.typeIntoSearch(name)
+			.selectBuilding(named: name)
+			.capture("The Cage's card at the middle stop")
+			.verifyHoursStatus()
+			.expandCard()
+			.capture("The Cage's card at the large stop")
 	}
 
 	/// A Carleton card carries what St. Olaf's feed lacks: a photo, an address
