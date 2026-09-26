@@ -147,7 +147,7 @@ describe('parseRecipe', () => {
 		])
 	})
 
-	// Review Focus 2: the note would belong to neither the introduction nor what follows.
+	// The note would belong to neither the introduction nor what follows.
 	it('draws a post with a block stranded between two sections as an article', () => {
 		let blocks: Block[] = [
 			{type: 'paragraph', runs: [{text: 'Ingredients:'}]},

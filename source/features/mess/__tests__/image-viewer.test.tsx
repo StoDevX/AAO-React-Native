@@ -118,7 +118,6 @@ describe('ImageViewer', () => {
 		})
 	})
 
-	// Review Focus 4.
 	test('says the image is unavailable for an index with no picture, and can still close', async () => {
 		await renderViewer(33129, 2)
 
