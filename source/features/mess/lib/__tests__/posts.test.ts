@@ -1,6 +1,7 @@
 import {describe, expect, it} from '@jest/globals'
 import posts from '../../__tests__/fixtures/posts.json'
 import categoriesJson from '../../__tests__/fixtures/categories.json'
+import crosswordPlaylist from '../../__tests__/fixtures/crossword-playlist-posts.json'
 import {parseMessCategories, parseMessPosts} from '../posts'
 
 const categories = parseMessCategories(categoriesJson)
@@ -103,7 +104,7 @@ describe('parseMessPosts', () => {
 	})
 
 	it('decodes the title and parses the body', () => {
-		expect(byId(36843)?.blocks.some((b) => b.type === 'embed')).toBe(true)
+		expect(byId(36911)?.blocks.length).toBeGreaterThan(0)
 		expect(byId(36911)?.title).not.toContain('&#')
 	})
 
@@ -130,5 +131,33 @@ describe('parseMessPosts', () => {
 
 	it('returns nothing for an empty feed', () => {
 		expect(parseMessPosts([], categories)).toStrictEqual([])
+	})
+})
+
+describe('a story excerpt', () => {
+	let playlists = parseMessPosts(crosswordPlaylist, categories)
+	let excerptOf = (id: number) => playlists.find((s) => s.id === id)?.excerpt
+
+	it('drops a web address that opens it, which a list row would show raw (36639)', () => {
+		expect(excerptOf(36639)).toBe('')
+	})
+
+	it('keeps the text after an opening address', () => {
+		let [story] = parseMessPosts(
+			[
+				{
+					...crosswordPlaylist[3],
+					excerpt: {
+						rendered: '<p>https://open.spotify.com/playlist/a1 Songs for a slow Sunday.</p>',
+					},
+				},
+			],
+			categories,
+		)
+		expect(story?.excerpt).toBe('Songs for a slow Sunday.')
+	})
+
+	it('keeps an address inside the text', () => {
+		expect(excerptOf(29321)).toMatch(/^For all of the sad Oles/u)
 	})
 })

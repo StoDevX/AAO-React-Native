@@ -226,10 +226,10 @@ function blocksOf(node: Element, blocks: Block[]): void {
 	}
 }
 
-/** A story's HTML body as blocks, in reading order. No words are dropped; scripts and styles are. */
-export function parseBlocks(html: string): Block[] {
+/** Parsed HTML nodes as blocks, in reading order. No words are dropped; scripts and styles are. */
+export function blocksFromNodes(nodes: ChildNode[]): Block[] {
 	let blocks: Block[] = []
-	for (let node of parseHtml(html).children) {
+	for (let node of nodes) {
 		if (isText(node)) {
 			pushParagraph(blocks, [node])
 			continue
@@ -237,4 +237,9 @@ export function parseBlocks(html: string): Block[] {
 		if (isTag(node) && !SKIPPED.has(node.name)) blocksOf(node, blocks)
 	}
 	return blocks
+}
+
+/** A story's HTML body as blocks, in reading order. No words are dropped; scripts and styles are. */
+export function parseBlocks(html: string): Block[] {
+	return blocksFromNodes(parseHtml(html).children)
 }

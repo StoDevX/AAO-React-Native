@@ -558,6 +558,8 @@ struct TestIdentifiers {
 		static let varietySection = "Variety"
 		static let horoscopesColumn = "Horoscopes"
 		static let comicColumn = "Comic"
+		static let crosswordColumn = "Crossword"
+		static let playlistColumn = "Playlist"
 
 		/// A sign's name, as a Horoscopes glyph button is labelled and a sign row's
 		/// label begins, in source/features/mess/lib/horoscopes.ts.
@@ -585,6 +587,18 @@ struct TestIdentifiers {
 
 		/// Every thumbnail in a comic's series row, in source/features/mess/series-row.tsx.
 		static let seriesStory = "mess-series-story"
+
+		/// A Crossword post's button that opens its puzzle, in
+		/// source/features/mess/story-screen.tsx.
+		static let crosswordSolve = "mess-crossword-solve"
+		static let crosswordSolveLabel = "Solve the crossword"
+
+		/// A Playlist post's button to Spotify, in source/features/mess/playlist-view.tsx.
+		static let playlistSpotify = "mess-playlist-spotify"
+		static let playlistSpotifyLabel = "Open in Spotify"
+
+		/// Spotify's player on a Playlist post, in source/features/mess/spotify-embed.tsx.
+		static let playlistEmbed = "mess-playlist-embed"
 	}
 
 	// MARK: - Streaming Media

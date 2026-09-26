@@ -2,14 +2,56 @@ import {describe, expect, it} from '@jest/globals'
 import posts from '../../__tests__/fixtures/posts.json'
 import categoriesJson from '../../__tests__/fixtures/categories.json'
 import variety from '../../__tests__/fixtures/variety-posts.json'
+import crosswordPlaylist from '../../__tests__/fixtures/crossword-playlist-posts.json'
 import {parseBlocks} from '../blocks'
 import {parseMessCategories, parseMessPosts} from '../posts'
 import {chooseLayout} from '../layout'
 import type {Block} from '../../types'
 
 let varietyStories = parseMessPosts(variety, parseMessCategories(categoriesJson))
+let puzzleStories = parseMessPosts(crosswordPlaylist, parseMessCategories(categoriesJson))
 
 describe('chooseLayout', () => {
+	it('lays a Playlist story out around its Spotify reference', () => {
+		let story = puzzleStories.find((s) => s.id === 30713)
+		expect(story?.layout).toStrictEqual({
+			kind: 'playlist',
+			spotify: {kind: 'playlist', id: '6bscojNnnO6nZcAnnXI1Cs'},
+		})
+		expect(story?.blocks).toHaveLength(1)
+	})
+
+	it('lays a Playlist story with an empty body out with no reference yet', () => {
+		expect(puzzleStories.find((s) => s.id === 36532)?.layout).toStrictEqual({
+			kind: 'playlist',
+			spotify: null,
+		})
+	})
+
+	it('lays a Crossword story out around its puzzle', () => {
+		let story = puzzleStories.find((s) => s.id === 36814)
+		expect(story?.layout).toStrictEqual({
+			kind: 'crossword',
+			puzzle: {
+				id: 'af644d78',
+				set: 'c2b247b419ae1dc89954424eb39235cd774839006bb020ce26abcf072f7ecaf4',
+			},
+		})
+		expect(story?.blocks).toStrictEqual([])
+	})
+
+	it('keeps a Crossword story with no puzzle as an article, body and all', () => {
+		let blocks: Block[] = [{type: 'paragraph', runs: [{text: 'No puzzle this week.'}]}]
+		let chosen = chooseLayout({
+			column: 'Crossword',
+			blocks,
+			photo: null,
+			html: '<p>No puzzle this week.</p>',
+		})
+		expect(chosen.layout).toStrictEqual({kind: 'article'})
+		expect(chosen.blocks).toBe(blocks)
+	})
+
 	it('gives a column with no template the article layout', () => {
 		expect(
 			chooseLayout({column: 'StoReview', blocks: [], photo: null, html: ''}).layout,
@@ -82,8 +124,14 @@ describe('chooseLayout', () => {
 })
 
 describe('parseMessPosts', () => {
-	it('sets a layout on every story', () => {
+	it('sets a layout on every story, from its column', () => {
 		let stories = parseMessPosts(posts, parseMessCategories(categoriesJson))
-		expect(stories.every((s) => s.layout.kind === 'article')).toBe(true)
+		expect(stories.map((s) => [s.id, s.layout.kind])).toStrictEqual([
+			[36859, 'article'],
+			[36911, 'article'],
+			[36885, 'article'],
+			[36904, 'article'],
+			[36843, 'playlist'],
+		])
 	})
 })
