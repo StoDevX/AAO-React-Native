@@ -8,6 +8,7 @@ function makeBuilding(schedule: BuildingType['schedule']): BuildingType {
 	return {
 		name: 'Test Building',
 		category: 'Test',
+		kind: 'building',
 		schedule,
 	}
 }

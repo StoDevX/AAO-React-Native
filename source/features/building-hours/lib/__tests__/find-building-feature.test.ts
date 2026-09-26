@@ -4,7 +4,7 @@ import {findBuildingFeature, resolveCutoutFeature} from '../find-building-featur
 import type {BuildingType} from '../../types'
 
 function makeVenue(overrides: Partial<BuildingType> & {name: string}): BuildingType {
-	return {category: 'Academia', schedule: [], ...overrides}
+	return {category: 'Academia', kind: 'building', schedule: [], ...overrides}
 }
 
 describe('findBuildingFeature', () => {

@@ -38,6 +38,7 @@ function makeBuilding(overrides: Partial<BuildingType> = {}): BuildingType {
 	return {
 		name: 'The Cage',
 		category: 'Food',
+		kind: 'building',
 		schedule: [
 			{
 				title: 'Hours',

@@ -1,5 +1,6 @@
 name: IT Helpdesk
 category: Help and Support
+kind: office
 building: rml
 
 schedule:

@@ -61,6 +61,13 @@ export type BuildingType = {
 	noticeMessage?: string
 	image?: string
 	category: string
+	/**
+	 * What the venue is, where `category` is only how the Hours list groups it:
+	 * a building's own hours, an office, a space inside a building, or a service
+	 * with hours and no place (the SARN Hotline). A building's map card shows its
+	 * `building` venue.
+	 */
+	kind: 'building' | 'office' | 'space' | 'service'
 	links?: BuildingLinkType[]
 	schedule: NamedBuildingScheduleType[]
 	breakSchedule?: BreakScheduleContainerType

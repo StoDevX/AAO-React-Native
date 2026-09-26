@@ -1,6 +1,7 @@
 name: Bookstore
 image: bookstore
 category: Supplies and Books
+kind: space
 building: stolafcollegebookstore
 
 schedule:
