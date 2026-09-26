@@ -137,7 +137,7 @@ describe('spotifyUrl and spotifyEmbedUrl', () => {
 	})
 })
 
-// Review Focus 3: only what belongs to the player loads in it.
+// Only what belongs to the player loads in it.
 describe('loadsInPlayer', () => {
 	it("loads the player's own pages, whatever their query", () => {
 		expect(

@@ -28,7 +28,7 @@ describe('parsePlaylist', () => {
 		expect(parsePlaylist(...post(36532))).toStrictEqual({spotify: null, blocks: []})
 	})
 
-	// Review Focus 2: the player goes, the writer's note stays.
+	// The player goes, the writer's note stays.
 	it("keeps a writer's note beside the player (30713)", () => {
 		expect(parsePlaylist(...post(30713))).toStrictEqual({
 			spotify: {kind: 'playlist', id: '6bscojNnnO6nZcAnnXI1Cs'},
@@ -55,7 +55,7 @@ describe('parsePlaylist', () => {
 		})
 	})
 
-	// Review Focus 2, hand-written: only the player the page shows is taken out.
+	// Hand-written: only the player the page shows is taken out.
 	it('keeps a second, different player', () => {
 		let html =
 			'<p><iframe src="https://open.spotify.com/embed/playlist/7l7eNnU0hgD1beeMK7znYv"></iframe></p>' +

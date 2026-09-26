@@ -22,7 +22,7 @@ describe('parseCrossword', () => {
 		})
 	})
 
-	// Review Focus 1: the credit line must not reach the page as literal markup.
+	// The credit line must not reach the page as literal markup.
 	it('reads a placeholder wrapped in <p><span>, leaving no body', () => {
 		expect(parseCrossword(html(36760))).toStrictEqual({
 			puzzle: {

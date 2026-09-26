@@ -515,7 +515,6 @@ describe('StoryScreen', () => {
 		expect(mockBody).not.toHaveBeenCalled()
 	})
 
-	// Review Focus 5.
 	test("draws a Playlist post's picture once, in its card rather than as a lead photo too", async () => {
 		await renderStory(30713)
 
@@ -561,7 +560,6 @@ describe('StoryScreen', () => {
 		expect(screen.queryByText('Read on olafmessenger.com')).toBeNull()
 	})
 
-	// Review Focus 4.
 	test('falls back the same way when the web page cannot be read', async () => {
 		mockBody.mockRejectedValue(new Error('offline'))
 		await renderStory(36532)

@@ -56,7 +56,7 @@ describe('SpotifyEmbed', () => {
 		})
 	})
 
-	// Review Focus 3: the wiring of `loadsInPlayer` into the web view.
+	// The wiring of `loadsInPlayer` into the web view.
 	test('sends a link tapped in the player to openUrl, and keeps it out of the player', async () => {
 		await render(<SpotifyEmbed spotify={REF} width={320} />)
 		let track = 'https://open.spotify.com/track/11dFghVXANMlKmJXsNCbNl'
