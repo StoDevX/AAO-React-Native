@@ -704,7 +704,6 @@ describe('StoryScreen', () => {
 		expect(screen.getByRole('button', {name: '½ tsp table salt', selected: false})).toBeTruthy()
 	})
 
-	// Review Focus 3.
 	test('ticks a step without ticking the row in the same place in another section', async () => {
 		await renderStory(36493)
 
@@ -799,7 +798,6 @@ describe('StoryScreen', () => {
 		expect(useKeepAwake).not.toHaveBeenCalled()
 	})
 
-	// Review Focus 5.
 	test('sends a Photo post with neither picture nor words to olafmessenger.com', async () => {
 		await renderStory(28051)
 

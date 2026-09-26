@@ -81,7 +81,6 @@ describe('parseFeature', () => {
 		})
 	})
 
-	// Review Focus 1.
 	it('draws a featured photo the body repeats at another size once (29162)', () => {
 		let {images, blocks} = parseFeature(...post(29162))
 		expect(images).toStrictEqual([
