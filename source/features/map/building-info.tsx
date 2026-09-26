@@ -141,21 +141,6 @@ function BuildingCard({
 	onOpen?: (entry: StackEntry) => void
 	stop: SheetDetent
 }): React.ReactNode {
-	let large = stop === 'large'
-	// Both edges are in window coordinates, so comparing them is exact at any
-	// stop and text size. Each is kept as it reports and the verdict derived
-	// here, so whichever of the two frames arrives last decides it.
-	let [nameBottom, setNameBottom] = React.useState<number | null>(null)
-	let [headerBottom, setHeaderBottom] = React.useState<number | null>(null)
-	// The name's edge outlives a trip off the large stop on purpose: the list
-	// keeps its scroll, and a name scrolled out of view reports no new frame
-	// when the list is laid out again, so the last edge is still the answer.
-	let bigTitleAway = large && nameUnderHeader(nameBottom, headerBottom)
-
-	let measureBigTitle = (box: {y: number; height: number}) => {
-		setNameBottom(box.y + box.height)
-	}
-
 	let {address, description, floors, links, name, photos} = building.properties
 
 	let subtitle = building.properties.type || null
@@ -176,6 +161,61 @@ function BuildingCard({
 		placeTiles(building.properties),
 		onOpen ? toPlaceTiles(alsoHere(building, features, venues)) : [],
 	)
+
+	return (
+		<PlaceCard name={name} onClose={onClose} stop={stop} subtitle={subtitle}>
+			<ActionsRow
+				actions={cardActions({point: pointOf(building), walkingDirections: WALKING_DIRECTIONS})}
+			/>
+			<PhotoStrip name={name} photos={photos} />
+			{hours ? <CardHours venue={hours} /> : null}
+			{onOpen ? <AlsoHereSection onOpen={onOpen} tiles={sections.alsoHere} /> : null}
+			<AboutSection text={description} />
+			<GoodToKnowSection rows={goodToKnowRows(building.properties)} />
+			<LinkedPlaces
+				id="departments"
+				onOpen={onOpen}
+				tiles={sections.departments}
+				title="Departments"
+			/>
+			<LinkedPlaces id="offices" onOpen={onOpen} tiles={sections.offices} title="Offices" />
+			<LinkListSection items={floors} title="Floors" />
+			<LinkListSection items={links} title="Links" />
+			<DetailsSection address={address} />
+		</PlaceCard>
+	)
+}
+
+/// A place card as Maps draws one: the pinned header with its close button,
+/// the name as a big title at the large stop, and the place's sections on the
+/// sheet beneath. A building's card and a venue's both use it.
+export function PlaceCard({
+	name,
+	subtitle,
+	stop,
+	onClose,
+	children,
+}: {
+	name: string
+	subtitle: string | null
+	stop: SheetDetent
+	onClose: () => void
+	children: React.ReactNode
+}): React.ReactNode {
+	let large = stop === 'large'
+	// Both edges are in window coordinates, so comparing them is exact at any
+	// stop and text size. Each is kept as it reports and the verdict derived
+	// here, so whichever of the two frames arrives last decides it.
+	let [nameBottom, setNameBottom] = React.useState<number | null>(null)
+	let [headerBottom, setHeaderBottom] = React.useState<number | null>(null)
+	// The name's edge outlives a trip off the large stop on purpose: the list
+	// keeps its scroll, and a name scrolled out of view reports no new frame
+	// when the list is laid out again, so the last edge is still the answer.
+	let bigTitleAway = large && nameUnderHeader(nameBottom, headerBottom)
+
+	let measureBigTitle = (box: {y: number; height: number}) => {
+		setNameBottom(box.y + box.height)
+	}
 
 	return (
 		<PlaceCardScaffold large={large}>
@@ -271,24 +311,7 @@ function BuildingCard({
 					</Section>
 				) : null}
 
-				<ActionsRow
-					actions={cardActions({point: pointOf(building), walkingDirections: WALKING_DIRECTIONS})}
-				/>
-				<PhotoStrip name={name} photos={photos} />
-				{hours ? <CardHours venue={hours} /> : null}
-				{onOpen ? <AlsoHereSection onOpen={onOpen} tiles={sections.alsoHere} /> : null}
-				<AboutSection text={description} />
-				<GoodToKnowSection rows={goodToKnowRows(building.properties)} />
-				<LinkedPlaces
-					id="departments"
-					onOpen={onOpen}
-					tiles={sections.departments}
-					title="Departments"
-				/>
-				<LinkedPlaces id="offices" onOpen={onOpen} tiles={sections.offices} title="Offices" />
-				<LinkListSection items={floors} title="Floors" />
-				<LinkListSection items={links} title="Links" />
-				<DetailsSection address={address} />
+				{children}
 			</List>
 		</PlaceCardScaffold>
 	)
@@ -317,13 +340,13 @@ function TimedPlaces(props: LinkedPlacesProps): React.ReactNode {
 
 /// A place's hours, kept current. The minute's tick lives here rather than on
 /// the card, so each tick redraws this section alone.
-function CardHours({venue}: {venue: BuildingType}): React.ReactNode {
+export function CardHours({venue}: {venue: BuildingType}): React.ReactNode {
 	let {now} = useMomentTimer({intervalMs: 60000, timezone: timezone()})
 	return <HoursSection now={now} venue={venue} />
 }
 
 /// Maps' close button: a glass circle holding a plain xmark.
-function CloseButton({onClose}: {onClose: () => void}): React.ReactNode {
+export function CloseButton({onClose}: {onClose: () => void}): React.ReactNode {
 	return (
 		<Button
 			modifiers={[
