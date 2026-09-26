@@ -143,6 +143,18 @@ describe('IssuePage', () => {
 		expect(more).toBeGreaterThan(opinions)
 	})
 
+	// The Issues row and Top's banner name the lead from the light fields; the page must agree
+	// even when the full stories would pick another, as when a lead's photo fails to embed.
+	test('leads with the story the issue list named, and leaves it off its shelf', async () => {
+		let named = {...ISSUE, leadId: 4, leadTitle: 'Hunger Free Campus grant'}
+		queryClient.setQueryData(messKeys.issue(named), STORIES)
+		await renderIssue(named)
+
+		expect(screen.getByRole('button', {name: 'Hunger Free Campus grant, News'})).toBeTruthy()
+		expect(screen.getAllByRole('button', {name: /^Hunger Free Campus grant/u})).toHaveLength(1)
+		expect(screen.getByRole('button', {name: 'Student workers deliver petition'})).toBeTruthy()
+	})
+
 	test('leaves the lead story off its shelf', async () => {
 		queryClient.setQueryData(messKeys.issue(ISSUE), STORIES)
 		await renderIssue()

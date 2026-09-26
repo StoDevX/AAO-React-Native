@@ -116,6 +116,7 @@ export function IssuePage({
 			{stories.data ? (
 				<IssueStories
 					columnWidth={columnWidth}
+					leadId={issue.leadId}
 					onShowSection={onShowSection}
 					stories={stories.data}
 				/>
@@ -131,6 +132,8 @@ export function IssuePage({
 type IssueStoriesProps = {
 	/** Newest first, as WordPress lists them */
 	stories: MessStory[]
+	/** The lead the issue list named, so the page agrees with its row and banner */
+	leadId?: number
 	columnWidth: number
 	onShowSection: (section: string) => void
 }
@@ -138,11 +141,12 @@ type IssueStoriesProps = {
 /** Stories laid out as a front page: the lead, then a shelf of cards per section, in print order. */
 export function IssueStories({
 	stories,
+	leadId,
 	columnWidth,
 	onShowSection,
 }: IssueStoriesProps): React.ReactNode {
 	let open = useOpenStory()
-	let lead = leadStory(stories)
+	let lead = stories.find((story) => story.id === leadId) ?? leadStory(stories)
 	return (
 		<>
 			{lead ? (
