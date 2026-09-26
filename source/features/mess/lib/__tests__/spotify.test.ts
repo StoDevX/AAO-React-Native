@@ -160,7 +160,7 @@ describe('spotifyUrl and spotifyEmbedUrl', () => {
 
 // Only what belongs to the player loads in it.
 describe('loadsInPlayer', () => {
-	it("loads the player's own pages, whatever their query", () => {
+	it("loads the player's own pages, whatever their query or fragment", () => {
 		expect(
 			loadsInPlayer({
 				url: 'https://open.spotify.com/embed/playlist/5dJFJNxZlxoRbwIgqCTxWk',
@@ -175,7 +175,7 @@ describe('loadsInPlayer', () => {
 		).toBe(true)
 		expect(
 			loadsInPlayer({
-				url: 'https://open.spotify.com/embed/playlist/5dJFJNxZlxoRbwIgqCTxWk?utm_source=generator&theme=0',
+				url: 'https://open.spotify.com/embed/playlist/5dJFJNxZlxoRbwIgqCTxWk#tracks',
 				isTopFrame: true,
 			}),
 		).toBe(true)
