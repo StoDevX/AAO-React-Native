@@ -88,6 +88,18 @@ describe('HoursSection', () => {
 		expect(breakfast).toBeGreaterThan(status)
 	})
 
+	// Maps titles its week "Normal Hours" under the status; with several
+	// blocks, each block's own heading names its week instead.
+	test('titles a single week "Normal Hours"', async () => {
+		await renderSection(holland)
+		expect(screen.getByText('Normal Hours')).toBeTruthy()
+	})
+
+	test('leaves "Normal Hours" off when blocks name their own weeks', async () => {
+		await renderSection(stav)
+		expect(screen.queryByText('Normal Hours')).toBeNull()
+	})
+
 	test('marks the status row for UI tests to find', async () => {
 		await renderSection(holland)
 		expect(screen.getByTestId('hours-status')).toBeTruthy()
