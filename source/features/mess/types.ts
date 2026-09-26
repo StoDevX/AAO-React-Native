@@ -70,6 +70,9 @@ export type ZodiacSign =
 /** One line of a poem: its runs, and how many levels the poet indented it. */
 export type PoemLine = {indent: number; runs: Run[]}
 
+/** One labelled part of a recipe: what goes in, or what to do, one item per ingredient or step. */
+export type RecipeSection = {label: string; kind: 'ingredients' | 'steps'; items: Run[][]}
+
 /** A Spotify playlist, album or track, by Spotify's base-62 id. */
 export type SpotifyRef = {kind: 'playlist' | 'album' | 'track'; id: string}
 
@@ -84,3 +87,4 @@ export type StoryLayout =
 	| {kind: 'poem'; stanzas: PoemLine[][]}
 	| {kind: 'crossword'; puzzle: CrosswordPuzzle}
 	| {kind: 'playlist'; spotify: SpotifyRef | null}
+	| {kind: 'recipe'; intro: Block[]; sections: RecipeSection[]; after: Block[]}

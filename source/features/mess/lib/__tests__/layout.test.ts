@@ -3,6 +3,7 @@ import posts from '../../__tests__/fixtures/posts.json'
 import categoriesJson from '../../__tests__/fixtures/categories.json'
 import variety from '../../__tests__/fixtures/variety-posts.json'
 import crosswordPlaylist from '../../__tests__/fixtures/crossword-playlist-posts.json'
+import recipeFeature from '../../__tests__/fixtures/recipe-feature-posts.json'
 import {parseBlocks} from '../blocks'
 import {parseMessCategories, parseMessPosts} from '../posts'
 import {chooseLayout} from '../layout'
@@ -12,6 +13,24 @@ let varietyStories = parseMessPosts(variety, parseMessCategories(categoriesJson)
 let puzzleStories = parseMessPosts(crosswordPlaylist, parseMessCategories(categoriesJson))
 
 describe('chooseLayout', () => {
+	it('lays a Recipes story out in sections, keeping its body for the article', () => {
+		let html = recipeFeature.find((p) => p.id === 36493)?.content.rendered ?? ''
+		let blocks = parseBlocks(html)
+		let chosen = chooseLayout({column: 'Recipes', blocks, photo: null, html})
+		expect(chosen.layout.kind).toBe('recipe')
+		expect(chosen.blocks).toBe(blocks)
+	})
+
+	it('keeps a Recipes story with no steps as an article', () => {
+		let blocks: Block[] = [
+			{type: 'paragraph', runs: [{text: 'Ingredients:'}]},
+			{type: 'paragraph', runs: [{text: '1 egg'}]},
+		]
+		expect(chooseLayout({column: 'Recipes', blocks, photo: null, html: ''}).layout).toStrictEqual({
+			kind: 'article',
+		})
+	})
+
 	it('lays a Playlist story out around its Spotify reference', () => {
 		let story = puzzleStories.find((s) => s.id === 30713)
 		expect(story?.layout).toStrictEqual({
