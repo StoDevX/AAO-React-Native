@@ -540,8 +540,31 @@ struct TestIdentifiers {
 		/// Matches NEWS_ROW_PREFIX in source/features/news/news-row.tsx.
 		static let rowPrefix = "news-row-"
 
-		/// The bottom toolbar menu's accessibilityLabel, in news-picker.tsx.
-		static let picker = "News filter"
+		/// The front page's chips, each told apart by its label, in source/features/mess/chip-row.tsx.
+		static let chip = "mess-chip"
+		static let topChip = "Top"
+		static let issuesChip = "Issues"
+		static let newsSection = "News"
+
+		/// A page's dateline, in source/features/mess/masthead.tsx.
+		static let dateline = "mess-dateline"
+
+		/// The lead story, and every card on a shelf, in source/features/mess/issue-page.tsx.
+		static let leadStory = "mess-lead-story"
+		static let storyCard = "mess-story-card"
+
+		/// Every issue on the Issues chip, in source/features/mess/issue-list.tsx.
+		static let issueRow = "mess-issue-row"
+
+		/// A section's column chips, each labelled with its column, in source/features/mess/section-page.tsx.
+		static let columnChip = "mess-column-chip"
+
+		/// Every row of a section's or column's stories starts with this, in
+		/// source/features/mess/story-list.tsx.
+		static let storyRowPrefix = "mess-row-"
+
+		/// A News column with stories in it, from olafmessenger.com.
+		static let goodQuestionsColumn = "Good Questions"
 
 		/// The reader's headline, in source/features/mess/story-header.tsx.
 		static let storyHeadline = "mess-story-headline"
@@ -558,8 +581,8 @@ struct TestIdentifiers {
 		static let shareStory = "Share Story"
 
 		/// The Mess section whose columns the Variety templates draw, and the columns
-		/// the tests open, as the filter in source/features/mess/mess-picker.tsx
-		/// names them. They are the paper's own category names, from olafmessenger.com.
+		/// the tests open, as the section chips and column chips in source/features/mess/
+		/// name them. They are the paper's own category names, from olafmessenger.com.
 		static let varietySection = "Variety"
 		static let horoscopesColumn = "Horoscopes"
 		static let comicColumn = "Comic"
