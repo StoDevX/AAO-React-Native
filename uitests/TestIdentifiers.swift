@@ -552,14 +552,16 @@ struct TestIdentifiers {
 		/// The reader's share button label, in source/features/mess/story-screen.tsx.
 		static let shareStory = "Share Story"
 
-		/// The Mess section whose columns the Variety templates draw, and two of
-		/// those columns, as the filter in source/features/mess/mess-picker.tsx
+		/// The Mess section whose columns the Variety templates draw, and the columns
+		/// the tests open, as the filter in source/features/mess/mess-picker.tsx
 		/// names them. They are the paper's own category names, from olafmessenger.com.
 		static let varietySection = "Variety"
 		static let horoscopesColumn = "Horoscopes"
 		static let comicColumn = "Comic"
 		static let crosswordColumn = "Crossword"
 		static let playlistColumn = "Playlist"
+		static let recipesColumn = "Recipes"
+		static let photoColumn = "Photo"
 
 		/// A sign's name, as a Horoscopes glyph button is labelled and a sign row's
 		/// label begins, in source/features/mess/lib/horoscopes.ts.
@@ -599,6 +601,9 @@ struct TestIdentifiers {
 
 		/// Spotify's player on a Playlist post, in source/features/mess/spotify-embed.tsx.
 		static let playlistEmbed = "mess-playlist-embed"
+
+		/// Every ingredient row on a recipe page, in source/features/mess/recipe-view.tsx.
+		static let recipeIngredient = "mess-recipe-ingredient"
 	}
 
 	// MARK: - Streaming Media
