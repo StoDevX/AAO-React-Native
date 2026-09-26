@@ -215,6 +215,66 @@ const RECIPE: MessStory = {
 	},
 }
 
+const BEES = {url: 'https://olafmessenger.com/bees-1.jpg', width: 300, height: 200, caption: ''}
+const CUP = {
+	url: 'https://olafmessenger.com/bees-2.jpg',
+	width: 300,
+	height: 200,
+	caption: 'At the cup',
+}
+
+/** A Photo post: a set of two pictures and a line of words. */
+const PHOTO_SET: MessStory = {
+	...STORY,
+	id: 33129,
+	title: 'Bees drinking lemonade',
+	link: 'https://olafmessenger.com/33129/',
+	section: 'Variety',
+	column: 'Photo',
+	blocks: [{type: 'paragraph', runs: [{text: 'By Megan Lu on the Hill'}]}],
+	layout: {kind: 'feature', images: [BEES, CUP]},
+}
+
+/** A Photo post that lost its picture and has no words. */
+const EMPTY_PHOTO: MessStory = {
+	...STORY,
+	id: 28051,
+	title: 'Untitled',
+	link: 'https://olafmessenger.com/28051/',
+	section: 'Variety',
+	column: 'Photo',
+	blocks: [],
+	layout: {kind: 'feature', images: []},
+}
+
+const MICROFICTION_ART = {
+	url: 'https://olafmessenger.com/wp-content/uploads/2020/10/microfiction.jpg',
+	width: 2048,
+	height: 2048,
+}
+
+/** A Short Story in a series, with its featured picture. */
+const SHORT_STORY: MessStory = {
+	...STORY,
+	id: 28702,
+	title: 'Microfiction Corner: The Dummy',
+	link: 'https://olafmessenger.com/28702/',
+	section: 'Variety',
+	column: 'Short Story',
+	photo: {...MICROFICTION_ART, caption: 'Illustration by Kenzie Todd'},
+	blocks: [{type: 'paragraph', runs: [{text: 'She sat and watched as the leaves grew back.'}]}],
+	layout: {
+		kind: 'feature',
+		images: [{...MICROFICTION_ART, caption: 'Illustration by Kenzie Todd'}],
+	},
+}
+
+const NEXT_EPISODE: MessStory = {
+	...SHORT_STORY,
+	id: 28117,
+	title: 'Microfiction corner: Quarters for Flowers',
+}
+
 const PLAYLIST_PAGE = readFileSync(join(__dirname, 'fixtures/playlist-page-36532.html'), 'utf8')
 
 const PROFILE: StaffProfile = {
@@ -240,6 +300,9 @@ beforeEach(() => {
 		PLAYLIST,
 		PAGE_PLAYLIST,
 		RECIPE,
+		PHOTO_SET,
+		EMPTY_PHOTO,
+		SHORT_STORY,
 	])
 	openInIOS = jest.spyOn(Linking, 'openURL').mockResolvedValue(true)
 	useMessStore.setState({lastSign: null})
@@ -504,7 +567,7 @@ describe('StoryScreen', () => {
 		expect(screen.getByText('A room in Oklahoma')).toBeTruthy()
 		expect(screen.getByText('Variety · Poetry')).toBeTruthy()
 		expect(screen.getByText('Ashlyn Wuench and Kenzie Nguyen · April 29, 2026')).toBeTruthy()
-		expect(screen.queryByText(/^By /u)).toBeNull()
+		expect(screen.queryByText(/^By Ashlyn/u)).toBeNull()
 	})
 
 	test("draws a poem's lines, each once, rather than its paragraphs", async () => {
@@ -671,5 +734,82 @@ describe('StoryScreen', () => {
 		await renderStory(36493)
 
 		expect(useKeepAwake).toHaveBeenCalled()
+	})
+
+	test('sets a feature page under the quiet header: title, then writers and date on one line', async () => {
+		await renderStory(33129)
+
+		expect(screen.getByText('Ashlyn Wuench and Kenzie Nguyen · April 29, 2026')).toBeTruthy()
+		expect(screen.queryByText(/^By Ashlyn/u)).toBeNull()
+	})
+
+	test("draws a Photo post's pictures, captioned, each opening the viewer at itself", async () => {
+		await renderStory(33129)
+
+		expect(screen.getByText('At the cup')).toBeTruthy()
+		let pictures = screen.getAllByRole('button', {
+			name: 'Bees drinking lemonade, by Ashlyn Wuench and Kenzie Nguyen',
+		})
+		let [, second] = pictures
+		if (!second) throw new Error('expected two pictures')
+		await fireEvent.press(second)
+
+		expect(mockNavigate).toHaveBeenCalledWith({
+			pathname: '/Messenger/image',
+			params: {id: '33129', index: '1'},
+		})
+	})
+
+	// The type itself is checked by eye; Jest sees which branch set the words.
+	test("sets a Photo post's words as a caption, with no small-caps opening", async () => {
+		await renderStory(33129)
+
+		expect(screen.getByText('By Megan Lu on the Hill')).toBeTruthy()
+		expect(screen.queryByText('By Megan Lu on')).toBeNull()
+	})
+
+	test('sets a Short Story as prose opening in small caps, then its series', async () => {
+		queryClient.setQueryData(messKeys.series(SHORT_STORY.id), {
+			title: 'More Microfiction Corner',
+			stories: [NEXT_EPISODE],
+		})
+		await renderStory(28702)
+
+		expect(screen.getByText('Illustration by Kenzie Todd')).toBeTruthy()
+		expect(screen.getByText('She sat and watched')).toBeTruthy()
+		expect(screen.getByText(' as the leaves grew back\\.')).toBeTruthy()
+		expect(screen.getByText('More Microfiction Corner')).toBeTruthy()
+		expect(
+			screen.getByRole('button', {name: 'Microfiction corner: Quarters for Flowers'}),
+		).toBeTruthy()
+	})
+
+	test('leaves the series row off a Photo post', async () => {
+		queryClient.setQueryData(messKeys.series(PHOTO_SET.id), {
+			title: 'More by Ashlyn Wuench',
+			stories: [{...PHOTO_SET, id: 5, title: 'Another photo'}],
+		})
+		await renderStory(33129)
+
+		expect(screen.queryByText('More by Ashlyn Wuench')).toBeNull()
+	})
+
+	test('does not keep the screen awake on a feature page', async () => {
+		await renderStory(33129)
+		expect(useKeepAwake).not.toHaveBeenCalled()
+	})
+
+	// Review Focus 5.
+	test('sends a Photo post with neither picture nor words to olafmessenger.com', async () => {
+		await renderStory(28051)
+
+		await fireEvent.press(screen.getByText('Read on olafmessenger.com'))
+
+		expect(openUrl).toHaveBeenCalledWith('https://olafmessenger.com/28051/')
+	})
+
+	test('offers no site link on a Photo post that has its pictures', async () => {
+		await renderStory(33129)
+		expect(screen.queryByText('Read on olafmessenger.com')).toBeNull()
 	})
 })

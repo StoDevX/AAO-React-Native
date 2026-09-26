@@ -8,6 +8,7 @@ import {useSafeAreaInsets} from 'react-native-safe-area-context'
 import {openURLAction} from '../../lib/open-url-action'
 import {AuthorCard} from './author-card'
 import {HoroscopesView} from './horoscopes-view'
+import {FeatureView} from './feature-view'
 import {ImageView} from './image-view'
 import {crosswordUrl} from './lib/crossword'
 import {paper} from './palette'
@@ -23,12 +24,12 @@ import type {MessStory} from './types'
 import {useMessStory} from './use-mess-story'
 
 const COLUMN_MARGIN = 20
-/** A poem's wider margins, which give its lines more air. */
-const POEM_MARGIN = 28
+/** A quiet page's wider margins, a poem's or a feature's, which give its words and pictures more air. */
+const QUIET_MARGIN = 28
 /** The paper, and a link in the story's text opening where the reader's link setting says. */
 const PAGE = [background(paper), openURLAction(openUrl)]
 const COLUMN = [padding({horizontal: COLUMN_MARGIN, vertical: 16})]
-const POEM_COLUMN = [padding({horizontal: POEM_MARGIN, vertical: 16})]
+const QUIET_COLUMN = [padding({horizontal: QUIET_MARGIN, vertical: 16})]
 /** A column whose children can be scrolled to by their `id`. */
 const TARGET_COLUMN = [...COLUMN, scrollTargetLayout()]
 
@@ -43,9 +44,10 @@ export function StoryScreen({id}: Props): React.ReactNode {
 	let insets = useSafeAreaInsets()
 	let query = useMessStory(id)
 	let story = query.data
-	let isPoem = story?.layout.kind === 'poem'
+	// A poem, photo or short story is set quietly: a lighter header and wider margins.
+	let isQuiet = story?.layout.kind === 'poem' || story?.layout.kind === 'feature'
 	// The scroll view's content sits inside the side safe areas, which landscape widens.
-	let margin = isPoem ? POEM_MARGIN : COLUMN_MARGIN
+	let margin = isQuiet ? QUIET_MARGIN : COLUMN_MARGIN
 	let columnWidth = width - insets.left - insets.right - margin * 2
 	// The id of the part of the page to scroll to; a template sets it to move the reader.
 	let scrollTarget = useNativeState<string | null>(null)
@@ -62,7 +64,7 @@ export function StoryScreen({id}: Props): React.ReactNode {
 
 	// Only a template that moves the reader binds the page's scroll position.
 	let scrolls = story.layout.kind === 'horoscopes'
-	let column = scrolls ? TARGET_COLUMN : isPoem ? POEM_COLUMN : COLUMN
+	let column = scrolls ? TARGET_COLUMN : isQuiet ? QUIET_COLUMN : COLUMN
 	// A lazy stack builds a part only near the screen, so a part the page must scroll to could
 	// be missing, and never appear, while the reader is far below it. A page that scrolls is
 	// one short post, so it builds every part up front.
@@ -91,7 +93,7 @@ export function StoryScreen({id}: Props): React.ReactNode {
 					modifiers={scrolls ? [...PAGE, scrollPosition(scrollTarget, {anchor: 'top'})] : PAGE}
 				>
 					<Column alignment="leading" modifiers={column} spacing={14}>
-						{isPoem ? (
+						{isQuiet ? (
 							<QuietHeader story={story} />
 						) : (
 							// A comic, artwork or playlist draws its picture in the body, so the header leaves it out.
@@ -160,6 +162,9 @@ function StoryBody({story, columnWidth, scrollTo}: StoryBodyProps): React.ReactN
 	}
 	if (layout.kind === 'recipe') {
 		return <RecipeView columnWidth={columnWidth} layout={layout} story={story} />
+	}
+	if (layout.kind === 'feature') {
+		return <FeatureView columnWidth={columnWidth} layout={layout} story={story} />
 	}
 
 	return (

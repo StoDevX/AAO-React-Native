@@ -11,7 +11,7 @@ const INDENT_STEP = 16
 /** How far a line's wrapped remainder sits past its start, so it cannot pass for a new line. */
 const HANGING_INDENT = 14
 /** Extra space between lines, which brings body text near 1.65 line height. */
-const LINE_SPACING = 6
+export const LINE_SPACING = 6
 /** Space between stanzas, about a blank line. */
 const STANZA_SPACING = 24
 
