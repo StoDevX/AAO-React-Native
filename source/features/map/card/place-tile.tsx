@@ -4,6 +4,7 @@ import {
 	accessibilityLabel,
 	background,
 	buttonStyle,
+	dynamicTypeSize,
 	font,
 	foregroundStyle,
 	frame,
@@ -18,7 +19,8 @@ import {openUrl} from '@frogpond/open-url'
 import {FILL_WIDTH} from '../../../components/tile-layout'
 import type {PlaceTile} from '../lib/place-tiles'
 
-// Maps' "Also at This Location" tiles, measured on iOS 27: about 170 by 124pt,
+// Maps' "Also at This Location" tiles, measured on iOS 27: about 170 by 124pt
+// (taller at large text sizes, so a name is never cut short),
 // with 20pt corners, a small round icon and a bold name of up to three lines.
 
 /// The carousel's tile width; tiles in the More grid fill their column instead.
@@ -50,7 +52,7 @@ export function PlaceTileView({
 				frame(
 					fill
 						? {maxWidth: FILL_WIDTH, minHeight: TILE_HEIGHT, alignment: 'topLeading'}
-						: {width: PLACE_TILE_WIDTH, height: TILE_HEIGHT, alignment: 'topLeading'},
+						: {width: PLACE_TILE_WIDTH, minHeight: TILE_HEIGHT, alignment: 'topLeading'},
 				),
 				background(
 					c.secondarySystemGroupedBackground,
@@ -62,6 +64,9 @@ export function PlaceTileView({
 			<Image
 				modifiers={[
 					font({textStyle: 'footnote'}),
+					// The circle keeps its size at every text size, so the glyph
+					// in it has to as well.
+					dynamicTypeSize({max: 'large'}),
 					foregroundStyle('white'),
 					frame({width: ICON_SIZE, height: ICON_SIZE}),
 					background(c.systemGray, shapes.circle()),

@@ -42,6 +42,9 @@ struct PlaceCardScaffoldView: ExpoSwiftUI.View {
 			// runs off the bottom instead, as Maps' does.
 			GeometryReader { box in
 				AnyView(list)
+					// Maps' Details rows are 50pt; a plain list holds every row to
+					// at least 52pt, which would add 2pt to each.
+					.environment(\.defaultMinListRowHeight, 0)
 					// At large Maps starts its big title 4pt up under the header's
 					// edge; nil keeps the list's own margin at the other stops.
 					.contentMargins(.top, props.large ? -4 : nil, for: .scrollContent)

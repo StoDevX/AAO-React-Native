@@ -1,6 +1,11 @@
 import * as React from 'react'
 import {Button, HStack, Image, Section, Spacer, Text} from '@expo/ui/swift-ui'
-import {accessibilityLabel, buttonStyle, foregroundStyle} from '@expo/ui/swift-ui/modifiers'
+import {
+	accessibilityLabel,
+	buttonStyle,
+	foregroundStyle,
+	imageScale,
+} from '@expo/ui/swift-ui/modifiers'
 import {openUrl} from '@frogpond/open-url'
 
 import {normalizeLinks} from '../lib/normalize-link'
@@ -50,8 +55,13 @@ export function LinkListSection({
 						<HStack>
 							<Text>{label}</Text>
 							<Spacer />
+							{/* Small, so the arrow is no taller than the label and the
+							    row keeps Maps' 50pt. */}
 							<Image
-								modifiers={[foregroundStyle({type: 'hierarchical', style: 'secondary'})]}
+								modifiers={[
+									imageScale('small'),
+									foregroundStyle({type: 'hierarchical', style: 'secondary'}),
+								]}
 								systemName="arrow.up.right"
 							/>
 						</HStack>
