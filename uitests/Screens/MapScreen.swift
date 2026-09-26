@@ -1,12 +1,12 @@
 import XCTest
 
-struct CarletonMapScreen: Screen {
+struct MapScreen: Screen {
 	let app: XCUIApplication
 
 	/// The picker sheet's search field: a UISearchBar's text field, which is
 	/// the sheet's only content at the collapsed detent it opens at.
 	private var searchField: XCUIElement {
-		app.searchFields[TestIdentifiers.CarletonMap.search].firstMatch
+		app.searchFields[TestIdentifiers.Map.search].firstMatch
 	}
 
 	/// The box the sheet actually draws, which is what its content is clipped
@@ -25,14 +25,14 @@ struct CarletonMapScreen: Screen {
 	private func sheetFrame() -> CGRect {
 		let window = app.windows.firstMatch.frame
 		let candidates = app.otherElements
-			.containing(NSPredicate(format: "label == %@", TestIdentifiers.CarletonMap.sheetGrabber))
+			.containing(NSPredicate(format: "label == %@", TestIdentifiers.Map.sheetGrabber))
 			.allElementsBoundByIndex
 			.map(\.frame)
 			.filter { $0.height < window.height }
 		guard let sheet = candidates.min(by: { $0.height < $1.height }) else {
 			XCTFail(
 				"The presented sheet's own box should be findable as the shortest element "
-					+ "holding the \(TestIdentifiers.CarletonMap.sheetGrabber)")
+					+ "holding the \(TestIdentifiers.Map.sheetGrabber)")
 			return .null
 		}
 		return sheet
@@ -42,8 +42,8 @@ struct CarletonMapScreen: Screen {
 	/// card's own dismiss button carries the same label, so an unscoped query
 	/// could answer for either.
 	private var cancelButton: XCUIElement {
-		app.otherElements[TestIdentifiers.CarletonMap.search]
-			.buttons[TestIdentifiers.CarletonMap.cancel].firstMatch
+		app.otherElements[TestIdentifiers.Map.search]
+			.buttons[TestIdentifiers.Map.cancel].firstMatch
 	}
 
 	/// Its own `testID` rather than a label query: the search bar's Cancel
@@ -51,47 +51,18 @@ struct CarletonMapScreen: Screen {
 	/// this is waited on, so a label-only query could be satisfied by the
 	/// wrong element.
 	private var closeButton: XCUIElement {
-		app.buttons[TestIdentifiers.CarletonMap.cardCloseButton].firstMatch
+		app.buttons[TestIdentifiers.Map.cardCloseButton].firstMatch
 	}
 
 	/// The card's title block. One accessibility element of no fixed type,
 	/// so it is found by identifier alone.
 	private var cardTitle: XCUIElement {
-		app.descendants(matching: .any)[TestIdentifiers.CarletonMap.cardTitle].firstMatch
-	}
-
-	/// Carleton's map has no home tile of its own, so getting to it means
-	/// opening the dev-only Carleton Campus tile first and tapping its
-	/// top-right map button.
-	@discardableResult
-	func navigate() -> Self {
-		HoursScreen(app: app).navigateToCarleton()
-
-		let mapButton = app.buttons[TestIdentifiers.Hours.mapButton].firstMatch
-		XCTAssertTrue(
-			mapButton.waitForExistence(timeout: 30),
-			"Carleton's Hours screen should offer a map button")
-
-		// Retried for the reason navigateFromHome retries: a synthesized press
-		// on a button whose host has mounted but whose action still has to
-		// reach JavaScript lands natively and does nothing.
-		for attempt in 1...3 {
-			mapButton.tap()
-			if searchField.waitForExistence(timeout: 10) {
-				return self
-			}
-			XCTContext.runActivity(
-				named: "Tap \(attempt) on the map button did not open the map; retrying"
-			) { _ in }
-		}
-
-		XCTFail("Tapping the map button never opened the map")
-		return self
+		app.descendants(matching: .any)[TestIdentifiers.Map.cardTitle].firstMatch
 	}
 
 	/// St. Olaf's map is a home tile of its own, pushing `/Map?campus=stolaf`.
 	@discardableResult
-	func navigateFromMapTile() -> Self {
+	func navigate() -> Self {
 		navigateFromHome(to: TestIdentifiers.Buttons.map)
 	}
 
@@ -176,12 +147,19 @@ struct CarletonMapScreen: Screen {
 		return self
 	}
 
+	/// A building's row in the sheet's list. Matched on the label's prefix, not
+	/// the whole label: a building carrying an abbreviation reads as "Buntrock
+	/// Commons, BC", so an exact match would find only the ones without one.
+	private func row(named name: String) -> XCUIElement {
+		app.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", name)).firstMatch
+	}
+
 	/// Reads a row off the unfiltered list, so that its absence later means the
 	/// filter dropped it rather than that it was never there.
 	@discardableResult
 	func verifyListed(_ name: String) -> Self {
 		XCTAssertTrue(
-			app.buttons[name].firstMatch.waitForExistence(timeout: 30),
+			row(named: name).waitForExistence(timeout: 30),
 			"The expanded sheet should list \(name) before anything is typed")
 		return self
 	}
@@ -192,7 +170,7 @@ struct CarletonMapScreen: Screen {
 	@discardableResult
 	func verifyFilteredOut(_ name: String) -> Self {
 		XCTAssertTrue(
-			app.buttons[name].firstMatch.waitForNonExistence(timeout: 30),
+			row(named: name).waitForNonExistence(timeout: 30),
 			"Searching should drop \(name) from the list")
 		return self
 	}
@@ -277,7 +255,7 @@ struct CarletonMapScreen: Screen {
 	/// button's whole frame above the sheet's top edge, and still tappable.
 	@discardableResult
 	func verifyAttributionClearOfSheet() -> Self {
-		let button = app.buttons[TestIdentifiers.CarletonMap.attribution].firstMatch
+		let button = app.buttons[TestIdentifiers.Map.attribution].firstMatch
 		XCTAssertTrue(
 			button.waitForExistence(timeout: 30) && button.isHittable,
 			"The map's attribution button should be on screen and tappable")
@@ -320,12 +298,9 @@ struct CarletonMapScreen: Screen {
 	/// on a row whose host has mounted but whose action still has to reach
 	/// JavaScript lands natively and does nothing. Waiting longer does not
 	/// help a dropped tap; tapping again does.
-	/// Matched on the label's prefix, not the whole label: a building carrying
-	/// an abbreviation reads as "Buntrock Commons, BC", so an exact match finds
-	/// St. Olaf's rows only by accident of them not having one.
 	@discardableResult
 	func selectBuilding(named name: String) -> Self {
-		let row = app.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", name)).firstMatch
+		let row = self.row(named: name)
 		XCTAssertTrue(
 			row.waitForExistence(timeout: 30),
 			"The expanded sheet should list \(name)")
@@ -353,7 +328,7 @@ struct CarletonMapScreen: Screen {
 	/// `Other` labelled "Map", valued `Zoom 16x.`, and no footprints -- so a
 	/// test cannot ask for a building. It can ask where the map is.
 	private var mapView: XCUIElement {
-		app.otherElements[TestIdentifiers.CarletonMap.map].firstMatch
+		app.otherElements[TestIdentifiers.Map.map].firstMatch
 	}
 
 	/// Points within the map's own bounds, tried in turn until one lands on a
@@ -364,11 +339,11 @@ struct CarletonMapScreen: Screen {
 	/// collapsed sheet, and a screen-relative offset moves off it whenever
 	/// either changes height.
 	///
-	/// The map's centre is not among them on its own, because it is not a
-	/// building: on a hosted runner the initial camera puts Gould Lane there,
-	/// and the road between two footprints is what the tap hit. Which building
-	/// answers does not matter -- the test is about what a footprint tap does
-	/// to the sheet -- but some building has to.
+	/// The map's centre is not enough on its own, because it is not always a
+	/// building: what lies there depends on the campus's starting camera and
+	/// the device's screen, and a road between two footprints takes no tap.
+	/// Which building answers does not matter -- the test is about what a
+	/// footprint tap does to the sheet -- but some building has to.
 	private static let footprintProbes: [CGVector] = [
 		CGVector(dx: 0.50, dy: 0.45),
 		CGVector(dx: 0.30, dy: 0.52),
@@ -404,14 +379,6 @@ struct CarletonMapScreen: Screen {
 		return self
 	}
 
-	@discardableResult
-	func checkBuildingCardPresented() -> Self {
-		XCTAssertTrue(
-			closeButton.waitForExistence(timeout: 30),
-			"Selecting a building should show its card, which offers a way out")
-		return self
-	}
-
 	/// The card's close button is the card's top edge for measuring purposes,
 	/// the way the field is the picker's.
 	func closeButtonTop() -> CGFloat {
@@ -432,7 +399,7 @@ struct CarletonMapScreen: Screen {
 	/// Drags the card from wherever it rests down to the collapsed stop.
 	@discardableResult
 	func collapseCard() -> Self {
-		let grabber = app.buttons[TestIdentifiers.CarletonMap.sheetGrabber].firstMatch
+		let grabber = app.buttons[TestIdentifiers.Map.sheetGrabber].firstMatch
 		grabber.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5))
 			.press(
 				forDuration: 0.1,

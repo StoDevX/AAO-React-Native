@@ -10,23 +10,6 @@ struct HoursScreen: Screen {
 		navigateFromHome(to: TestIdentifiers.Buttons.hours)
 	}
 
-	/// Opens the Carleton Campus tile, which pushes `/Hours?campus=carleton`.
-	@discardableResult
-	func navigateToCarleton() -> Self {
-		let tile = app.buttons[TestIdentifiers.Buttons.carletonCampus].firstMatch
-		if !tile.waitForExistence(timeout: 10) {
-			HomeScreen(app: app)
-				.longPressNotice()
-				.tapEnableDevMode()
-
-			XCTAssertTrue(
-				tile.waitForExistence(timeout: 30),
-				"Carleton Campus tile should appear once dev mode is on")
-		}
-
-		return navigateFromHome(to: TestIdentifiers.Buttons.carletonCampus)
-	}
-
 	private var searchField: XCUIElement {
 		app.searchFields.firstMatch
 	}
@@ -178,7 +161,7 @@ struct HoursScreen: Screen {
 		// check can read a just-mounted row as not yet hittable even though it
 		// is fully drawn and would take a real tap fine, which would abort the
 		// test outright rather than let this loop retry. The row's centre is
-		// what `selectBuilding` in CarletonMapScreen taps for the same reason.
+		// what `selectBuilding` in MapScreen taps for the same reason.
 		//
 		// The loop itself is retried for the reason navigateFromHome retries: a
 		// synthesized press on a row whose host has mounted but whose action
@@ -287,7 +270,7 @@ struct HoursScreen: Screen {
 	}
 
 	/// Drags the sheet from its smaller detent up to its larger one, the way
-	/// `CarletonMapScreen.expandSheet` drags the map's building sheet.
+	/// `MapScreen.expandSheet` drags the map's building sheet.
 	@discardableResult
 	func expandDetailSheet() -> Self {
 		verifyDetailSheetAtSmallDetent()
@@ -630,25 +613,6 @@ struct HoursScreen: Screen {
 		XCTAssertTrue(
 			cutout.waitForExistence(timeout: 30),
 			"The detail sheet should show a cutout map framing \(buildingName)")
-		return self
-	}
-
-	/// Assert no cutout map appears anywhere in the detail sheet -- the case
-	/// for every Carleton venue, which carries no `building` key at all. Not
-	/// scoped to one building's label: no cutout should exist for any building
-	/// here, so this checks for the shared label prefix instead.
-	///
-	/// Checks `exists` outright rather than waiting one out. A missing key
-	/// disables the map query, so the sheet decides against a cutout from the
-	/// same venue data that gave it the title -- and callers assert that title
-	/// first. There is no later moment for a cutout to arrive in, so a wait
-	/// here would only spend its full timeout on every passing run.
-	@discardableResult
-	func verifyNoCutoutShown() -> Self {
-		let cutout = app.elementWithLabel(startingWith: TestIdentifiers.Hours.cutoutLabelPrefix)
-		XCTAssertFalse(
-			cutout.exists,
-			"No cutout map should appear for a venue with no building key")
 		return self
 	}
 }

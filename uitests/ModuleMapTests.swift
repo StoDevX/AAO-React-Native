@@ -1,21 +1,21 @@
 import XCTest
 
-class ModuleCarletonMapTests: UITestCase {
+class ModuleMapTests: UITestCase {
 	/// The bar reports each keystroke to JavaScript and takes the echo back as
 	/// a prop, which is a round trip with a race in it. Typing a whole name is
 	/// what shows whether a character was lost on the way: the field is read
 	/// back, and a building the query cannot match has to leave the list, which
 	/// is the half that can only happen if the text arrived in JavaScript.
 	func testTypingIntoSearchKeepsEveryCharacter() throws {
-		CarletonMapScreen(app: app)
+		MapScreen(app: app)
 			.navigate()
 			.checkSheetPresented()
 			.focusSearch()
-			.capture("Carleton map list before a query is typed")
-			.verifyListed(TestIdentifiers.CarletonMap.anotherBuilding)
-			.typeIntoSearch(TestIdentifiers.CarletonMap.aBuilding)
-			.capture("Carleton map sheet with a typed query")
-			.verifyFilteredOut(TestIdentifiers.CarletonMap.anotherBuilding)
+			.capture("St. Olaf map list before a query is typed")
+			.verifyListed(TestIdentifiers.Map.anotherBuilding)
+			.typeIntoSearch(TestIdentifiers.Map.aBuilding)
+			.capture("St. Olaf map sheet with a typed query")
+			.verifyFilteredOut(TestIdentifiers.Map.anotherBuilding)
 	}
 
 	/// The collapsed sheet, and the two things that raise it.
@@ -29,10 +29,10 @@ class ModuleCarletonMapTests: UITestCase {
 	/// Focusing search raises the sheet and cancelling puts it back, which
 	/// leaves it collapsed for the footprint tap that ends the test.
 	func testTheCollapsedSheetRisesForSearchAndForAFootprint() throws {
-		let screen = CarletonMapScreen(app: app)
+		let screen = MapScreen(app: app)
 			.navigate()
 			.checkSheetPresented()
-			.capture("Carleton map sheet collapsed")
+			.capture("St. Olaf map sheet collapsed")
 			.verifyCollapsed()
 			.verifyFieldWithinSheet()
 			.verifyCollapsedMarginsSymmetric()
@@ -41,14 +41,14 @@ class ModuleCarletonMapTests: UITestCase {
 
 		screen
 			.focusSearch()
-			.capture("Carleton map sheet raised by search focus")
+			.capture("St. Olaf map sheet raised by search focus")
 			.verifySheetMoved(from: collapsedTop, direction: "up", "Focusing search should raise the sheet to large")
 			.cancelSearch()
-			.capture("Carleton map sheet after cancelling search")
+			.capture("St. Olaf map sheet after cancelling search")
 			.verifySheetReturned(to: collapsedTop)
 			.verifyCollapsed()
 			.tapAFootprint()
-			.capture("Carleton map card after a footprint tap from collapsed")
+			.capture("St. Olaf map card after a footprint tap from collapsed")
 			.verifyCardAtMedium()
 	}
 
@@ -57,8 +57,12 @@ class ModuleCarletonMapTests: UITestCase {
 	/// The module pins the field at 44pt with a constraint UIKit is free to
 	/// overrule silently, so the height is checked before anything else moves
 	/// the sheet.
+	///
+	/// `aBuilding` is absent from Carleton's map, so this also fails if the Map
+	/// tile forwarded the wrong campus, or none at all, to `/Map` -- which falls
+	/// back to Carleton.
 	func testTheFullSheetDropsToMediumForARow() throws {
-		let screen = CarletonMapScreen(app: app)
+		let screen = MapScreen(app: app)
 			.navigate()
 			.checkSheetPresented()
 			.expandSheet()
@@ -66,8 +70,8 @@ class ModuleCarletonMapTests: UITestCase {
 		let largeTop = screen.searchFieldTop()
 
 		screen
-			.selectBuilding(named: TestIdentifiers.CarletonMap.aBuilding)
-			.capture("Carleton map card after a row tap from large")
+			.selectBuilding(named: TestIdentifiers.Map.aBuilding)
+			.capture("St. Olaf map card after a row tap from large")
 			.verifyCardDroppedFrom(largeTop)
 			.verifyCardAtMedium()
 	}
@@ -77,7 +81,7 @@ class ModuleCarletonMapTests: UITestCase {
 	/// shows it: the map above the middle stop stays in view, so a camera
 	/// re-padded for the shorter sheet would slide it.
 	func testTheMapHoldsStillWhenTheCardChangesStop() throws {
-		let screen = CarletonMapScreen(app: app)
+		let screen = MapScreen(app: app)
 			.navigate()
 			.checkSheetPresented()
 			.tapAFootprint()
@@ -88,34 +92,20 @@ class ModuleCarletonMapTests: UITestCase {
 		screen
 			.collapseCard()
 			.verifyCardCollapsed()
-			.capture("Carleton map after the card collapses")
+			.capture("St. Olaf map after the card collapses")
 			.verifyMapHeldStill(since: before, in: region)
 	}
 
 	/// Issue #7962: the collapsed card cut off the bottom of the building's
-	/// name. A long name, because a short one fits whatever the header does.
+	/// name. A long name with a subtitle under it, because that is the most the
+	/// collapsed header has to hold, and a short one fits whatever it does.
 	func testTheCollapsedCardHoldsItsWholeHeader() throws {
-		CarletonMapScreen(app: app)
+		MapScreen(app: app)
 			.navigate()
 			.checkSheetPresented()
 			.focusSearch()
-			.typeIntoSearch(TestIdentifiers.CarletonMap.aLongNamedBuilding)
-			.selectBuilding(named: TestIdentifiers.CarletonMap.aLongNamedBuilding)
-			.collapseCard()
-			.verifyCardCollapsed()
-			.capture("Carleton map card collapsed with a long name")
-			.verifyCardHeaderWithinSheet()
-	}
-
-	/// St. Olaf's card adds a subtitle under the name, which Carleton's cards
-	/// lack, so the collapsed header has two lines to hold instead of one.
-	func testTheCollapsedStOlafCardHoldsItsWholeHeader() throws {
-		CarletonMapScreen(app: app)
-			.navigateFromMapTile()
-			.checkSheetPresented()
-			.focusSearch()
-			.typeIntoSearch(TestIdentifiers.CarletonMap.aSubtitledStOlafBuilding)
-			.selectBuilding(named: TestIdentifiers.CarletonMap.aSubtitledStOlafBuilding)
+			.typeIntoSearch(TestIdentifiers.Map.aSubtitledBuilding)
+			.selectBuilding(named: TestIdentifiers.Map.aSubtitledBuilding)
 			.collapseCard()
 			.verifyCardCollapsed()
 			.capture("St. Olaf map card collapsed with a subtitle")
@@ -127,16 +117,16 @@ class ModuleCarletonMapTests: UITestCase {
 	/// and let the rest run off the bottom, as Apple Maps does, rather than
 	/// centre the header and cut off the close button.
 	///
-	/// A card with a subtitle, because a one-line header -- a Carleton card --
-	/// still fits the stop at this size, and a centred header would pass.
+	/// A card with a subtitle, because a one-line header still fits the stop
+	/// at this size, and a centred header would pass.
 	func testTheCollapsedCardKeepsItsHeaderTopAtTheLargestTextSize() throws {
 		relaunch(atContentSizeCategory: TestIdentifiers.LaunchArguments.accessibilityExtraExtraExtraLarge)
-		CarletonMapScreen(app: app)
-			.navigateFromMapTile()
+		MapScreen(app: app)
+			.navigate()
 			.checkSheetPresented()
 			.focusSearch()
-			.typeIntoSearch(TestIdentifiers.CarletonMap.aSubtitledStOlafBuilding)
-			.selectBuilding(named: TestIdentifiers.CarletonMap.aSubtitledStOlafBuilding)
+			.typeIntoSearch(TestIdentifiers.Map.aSubtitledBuilding)
+			.selectBuilding(named: TestIdentifiers.Map.aSubtitledBuilding)
 			.collapseCard()
 			.verifyCardCollapsed()
 			.capture("St. Olaf map card collapsed at the largest text size")

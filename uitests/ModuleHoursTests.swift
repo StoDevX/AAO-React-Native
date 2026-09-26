@@ -1,50 +1,9 @@
 import XCTest
 
 class ModuleHoursTests: UITestCase {
-	/// The campus parameter, not just the route, has to actually select the
-	/// venue list: `carletonBuilding` exists in Carleton's `spaces/hours` but
-	/// not St. Olaf's, so this fails if the Carleton tile's `?campus=carleton`
-	/// were ignored and St. Olaf's list loaded instead.
-	///
-	/// The reverse direction matters too: `aBuilding` (Rølvaag Library) is
-	/// St. Olaf-only, so also asserting its absence here is what would fail if
-	/// the two campuses' lists were ever merged rather than kept separate.
-	///
-	/// Every Carleton venue carries no `building` key -- its hours data lives
-	/// outside this repo -- so the absence of a cutout in its detail sheet has
-	/// to read as deliberate, not as a broken map that silently failed to
-	/// draw. Every other detail-sheet test in this file goes through St.
-	/// Olaf's tile, so this is also the one that proves the `campus` param
-	/// survives the push into `/Hours/detail/[name]` for a Carleton venue.
-	func testCarletonTileShowsCarletonVenuesAndTheirDetails() throws {
-		HoursScreen(app: app)
-			.navigateToCarleton()
-			.verifyTitle(TestIdentifiers.Buttons.carletonCampus)
-			.verifyRowShown(TestIdentifiers.Hours.carletonBuilding)
-			.verifyRowHidden(TestIdentifiers.Hours.aBuilding)
-			.tapRow(TestIdentifiers.Hours.carletonBuilding)
-			.verifyDetailSheetTitled(TestIdentifiers.Hours.carletonBuilding)
-			.verifyNoCutoutShown()
-			.capture("Hours detail sheet for a Carleton venue, with no cutout")
-	}
-
-	/// The Map tile has to open St. Olaf's own map data. `aStolafBuilding` is
-	/// absent from Carleton's map, so this fails if the tile forwarded the
-	/// wrong campus, or none at all, to `/Map` -- which falls back to Carleton.
-	func testMapTileOpensStolafMap() throws {
-		CarletonMapScreen(app: app)
-			.navigateFromMapTile()
-			.checkSheetPresented()
-			.capture("St. Olaf map with its building sheet")
-			.expandSheet()
-			.selectBuilding(named: TestIdentifiers.CarletonMap.aStolafBuilding)
-			.checkBuildingCardPresented()
-			.capture("St. Olaf map showing a building's card")
-	}
-
 	/// St. Olaf's map is reached from its own home tile, so St. Olaf's Hours
-	/// screen carries no map button; only Carleton's does.
-	func testOnlyCarletonHoursOffersAMapButton() throws {
+	/// screen carries no map button.
+	func testStolafHoursOffersNoMapButton() throws {
 		HoursScreen(app: app)
 			.navigate()
 			.verifyRowShown(TestIdentifiers.Hours.aBuilding)
