@@ -9,13 +9,15 @@ final class PlaceCardAboutProps: ExpoSwiftUI.ViewProps {
 	@Field var testID: String?
 }
 
-/// A place card's About text as Apple Maps sets it: the first five lines, and a
-/// trailing MORE over the last of them when there is more to read. A tap on the
-/// text or on MORE shows the rest in place.
+/// Maps leaves this much space between the ellipsis and MORE.
+private let moreGap: CGFloat = 12
+
+/// A place card's About text as Apple Maps sets it: the first five lines, the
+/// last of them cut short with an ellipsis, and MORE at its trailing end when
+/// there is more to read. A tap on the text or on MORE shows the rest in place.
 ///
-/// Native because it has to know whether the text was cut short, which takes
-/// laying the text out twice -- clamped, and at its full height -- and
-/// comparing the two.
+/// Native because only TextKit can say where the fifth line starts, which is
+/// what cutting that line short to make room for MORE needs.
 struct PlaceCardAboutView: ExpoSwiftUI.View {
 	@ObservedObject var props: PlaceCardAboutProps
 
@@ -23,50 +25,48 @@ struct PlaceCardAboutView: ExpoSwiftUI.View {
 		self.props = props
 	}
 
+	@Environment(\.dynamicTypeSize) private var dynamicTypeSize
 	@State private var expanded = false
-	@State private var clampedHeight: CGFloat = 0
-	@State private var fullHeight: CGFloat = 0
+	@State private var width: CGFloat = 0
 
-	private var truncated: Bool {
-		!expanded && fullHeight > clampedHeight + 0.5
+	/// The body font at the current text size. The text is drawn in exactly
+	/// the font it is measured in, so TextKit and SwiftUI break its lines alike.
+	private var bodyFont: UIFont {
+		let traits = UITraitCollection(preferredContentSizeCategory: UIContentSizeCategory(dynamicTypeSize))
+		return UIFont.preferredFont(forTextStyle: .body, compatibleWith: traits)
+	}
+
+	private var moreFont: UIFont {
+		UIFont.systemFont(ofSize: bodyFont.pointSize, weight: .semibold)
+	}
+
+	/// The text cut short to leave room for MORE, or nil when it all fits in
+	/// five lines -- or has been expanded.
+	private var shortened: String? {
+		guard !expanded, width > 0 else { return nil }
+		let reserve = ("MORE" as NSString).size(withAttributes: [.font: moreFont]).width + moreGap
+		return shortenedText(props.text, width: width, font: bodyFont, reserve: reserve)
 	}
 
 	var body: some View {
-		Text(props.text)
+		let shortened = self.shortened
+		Text(shortened ?? props.text)
+			.font(Font(bodyFont))
+			// A backstop for the frame before the width is known, and for any
+			// line SwiftUI breaks differently from TextKit.
 			.lineLimit(expanded ? nil : clampedLines)
 			.frame(maxWidth: .infinity, alignment: .leading)
-			.onGeometryChange(for: CGFloat.self) { $0.size.height } action: { clampedHeight = $0 }
-			// The same text, unclamped and unseen, at the width the clamped copy
-			// was given: its height is the whole text's.
-			.background(alignment: .topLeading) {
-				Text(props.text)
-					.fixedSize(horizontal: false, vertical: true)
-					.hidden()
-					.accessibilityHidden(true)
-					.onGeometryChange(for: CGFloat.self) { $0.size.height } action: { fullHeight = $0 }
-			}
+			.onGeometryChange(for: CGFloat.self) { $0.size.width } action: { width = $0 }
 			.overlay(alignment: .bottomTrailing) {
-				if truncated {
+				if shortened != nil {
 					Text("MORE")
-						.font(.body.weight(.semibold))
-						.padding(.leading, 24)
-						// Fades the last line out under MORE, as Maps does, on the
-						// sheet's own colour.
-						.background {
-							LinearGradient(
-								stops: [
-									.init(color: Color(uiColor: .systemGroupedBackground).opacity(0), location: 0),
-									.init(color: Color(uiColor: .systemGroupedBackground), location: 0.4),
-								],
-								startPoint: .leading,
-								endPoint: .trailing)
-						}
+						.font(Font(moreFont))
 						.accessibilityHidden(true)
 				}
 			}
 			.contentShape(Rectangle())
 			.onTapGesture {
-				if truncated {
+				if shortened != nil {
 					withAnimation { expanded = true }
 				}
 			}
@@ -77,10 +77,56 @@ struct PlaceCardAboutView: ExpoSwiftUI.View {
 			.accessibilityActions {
 				// Only while there is more to show: once expanded, or for text
 				// that was never cut short, the action would do nothing.
-				if truncated {
+				if shortened != nil {
 					Button("Show more") { expanded = true }
 				}
 			}
 			.accessibilityIdentifier(props.testID ?? "")
 	}
+}
+
+/// `text` as its first five lines at `width`, the fifth cut back a word at a
+/// time until it and an ellipsis leave `reserve` points free at its end; nil
+/// when the text fits in five lines as it is.
+private func shortenedText(_ text: String, width: CGFloat, font: UIFont, reserve: CGFloat) -> String? {
+	let storage = NSTextStorage(string: text, attributes: [.font: font])
+	let layout = NSLayoutManager()
+	let container = NSTextContainer(size: CGSize(width: width, height: .greatestFiniteMagnitude))
+	container.lineFragmentPadding = 0
+	layout.addTextContainer(container)
+	storage.addLayoutManager(layout)
+
+	var lineStarts: [Int] = []
+	layout.enumerateLineFragments(forGlyphRange: layout.glyphRange(for: container)) { _, _, _, glyphs, stop in
+		lineStarts.append(layout.characterIndexForGlyph(at: glyphs.location))
+		if lineStarts.count > clampedLines { stop.pointee = true }
+	}
+	guard lineStarts.count > clampedLines else { return nil }
+
+	let whole = text as NSString
+	let lastStart = lineStarts[clampedLines - 1]
+	let head = whole.substring(to: lastStart)
+	var last = whole.substring(with: NSRange(location: lastStart, length: lineStarts[clampedLines] - lastStart))
+
+	let room = width - reserve
+	let trailing = CharacterSet.whitespacesAndNewlines.union(CharacterSet(charactersIn: ",;:"))
+	func trimmed(_ line: String) -> String {
+		String(line.unicodeScalars.reversed().drop(while: trailing.contains).reversed().map(Character.init))
+	}
+	func fits(_ line: String) -> Bool {
+		(trimmed(line) + "…").size(withAttributes: [.font: font]).width <= room
+	}
+	while !last.isEmpty && !fits(last) {
+		// Back a word at a time; a single word too long for the line goes back
+		// a character at a time instead.
+		let words = trimmed(last)
+		if let space = words.rangeOfCharacter(from: .whitespaces, options: .backwards) {
+			last = String(words[..<space.lowerBound])
+		} else {
+			last = String(words.dropLast())
+		}
+	}
+	// A hard break before the last line: cut short, it could otherwise fit
+	// back on the line above and leave MORE over that line's end.
+	return trimmed(head) + "\n" + trimmed(last) + "…"
 }
