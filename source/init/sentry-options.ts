@@ -41,7 +41,7 @@ export function privacyOptions({
 	consented,
 	isPrerelease,
 	isConsented,
-}: Gates): ReactNativeOptions {
+}: Gates): ReactNativeOptions & {enableNetworkBreadcrumbs: boolean} {
 	function unlessOptedOut<T>(item: T): T | null {
 		return isConsented() ? item : null
 	}
@@ -60,6 +60,11 @@ export function privacyOptions({
 		enableLogs: true,
 		logsOrigin: 'js',
 		enableAutoConsoleLogs: false,
+		// The native SDK records request breadcrumbs of its own, with full URLs
+		// that JS never sees to scrub, and they ride along on native crash
+		// reports. sentry-cocoa reads this key (Options+Dictionary.swift) though
+		// @sentry/react-native's types leave it out.
+		enableNetworkBreadcrumbs: false,
 		// URLs carry StoPrint usernames and Directory search text; console
 		// breadcrumbs carry whatever the app logged. See scrub.ts.
 		beforeBreadcrumb: scrubBreadcrumb,

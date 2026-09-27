@@ -50,6 +50,22 @@ describe('scrubBreadcrumb', () => {
 		})
 	})
 
+	// A touch breadcrumb names the text under the finger -- a recent course
+	// search, say.
+	it.each(['touch', 'ui.multiClick'])('drops %s breadcrumbs', (category) => {
+		expect(scrubBreadcrumb({category, message: 'Touch event within element: bio 150'})).toBeNull()
+	})
+
+	it('drops the query and fragment fields a request breadcrumb can carry', () => {
+		let crumb: Breadcrumb = {
+			category: 'http',
+			type: 'http',
+			data: {url: 'https://example.test/search', 'http.query': 'name=Jane', 'http.fragment': 'top'},
+		}
+
+		expect(scrubBreadcrumb(crumb)?.data).toStrictEqual({url: 'https://example.test/search'})
+	})
+
 	it('passes a navigation breadcrumb through', () => {
 		let crumb: Breadcrumb = {category: 'navigation', data: {from: 'Home', to: 'Menus'}}
 
@@ -119,6 +135,35 @@ describe('scrubEvent', () => {
 			url: 'https://example.test/users/[username]/jobs',
 			method: 'GET',
 		})
+	})
+
+	// The native SDK records its own request breadcrumbs, which JS
+	// beforeBreadcrumb never sees; they reach JS events merged in.
+	it('scrubs the breadcrumbs an event carries, and drops the ones that are not allowed', () => {
+		let event: ErrorEvent = {
+			type: undefined,
+			breadcrumbs: [
+				{category: 'http', type: 'http', data: {url: 'https://example.test/users/jdoe/jobs'}},
+				{category: 'console', message: 'jdoe logged in'},
+				{category: 'navigation', data: {from: 'Home', to: 'Menus'}},
+			],
+		}
+
+		expect(scrubEvent(event).breadcrumbs).toStrictEqual([
+			{category: 'http', type: 'http', data: {url: 'https://example.test/users/[username]/jobs'}},
+			{category: 'navigation', data: {from: 'Home', to: 'Menus'}},
+		])
+	})
+
+	// A hash that stays the same across opting out and back in, so it would
+	// join the two periods the new device ID keeps apart.
+	it('removes the device app hash and keeps the rest of the app context', () => {
+		let event: ErrorEvent = {
+			type: undefined,
+			contexts: {app: {device_app_hash: 'abc123', app_identifier: 'com.example'}},
+		}
+
+		expect(scrubEvent(event).contexts).toStrictEqual({app: {app_identifier: 'com.example'}})
 	})
 
 	it('leaves an event with no request alone', () => {

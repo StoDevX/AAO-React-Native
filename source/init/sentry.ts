@@ -30,7 +30,8 @@ function start(): void {
 		tracesSampleRate: 0.2,
 		profilesSampleRate: 0.1,
 		enableMetricKit: true,
-		enableUserInteractionTracing: true,
+		// Off: interaction spans are named after the text under the finger.
+		enableUserInteractionTracing: false,
 		enableCaptureFailedRequests: true,
 
 		tracePropagationTargets: ['localhost', 'frogpond.tech', /^\//u],

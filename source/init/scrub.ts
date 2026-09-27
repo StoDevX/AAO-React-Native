@@ -23,18 +23,31 @@ export function scrubUrl(url: string): string {
 }
 
 /**
- * Drops console breadcrumbs, which hold whatever the app logged, and scrubs
- * the URL on request breadcrumbs.
+ * Breadcrumbs dropped outright: console output holds whatever the app logged,
+ * and a touch or rage-tap breadcrumb names the text under the finger.
+ */
+const DROPPED_CATEGORIES: ReadonlySet<string> = new Set(['console', 'touch', 'ui.multiClick'])
+
+/**
+ * Drops breadcrumbs that can hold free text, and scrubs the URL and query
+ * fields on request breadcrumbs.
  */
 export function scrubBreadcrumb(breadcrumb: Breadcrumb): Breadcrumb | null {
-	if (breadcrumb.category === 'console') {
+	if (breadcrumb.category !== undefined && DROPPED_CATEGORIES.has(breadcrumb.category)) {
 		return null
 	}
-	let url: unknown = breadcrumb.data?.url
-	if (typeof url !== 'string') {
+	let data = breadcrumb.data
+	if (!data || !(typeof data.url === 'string' || QUERY_FIELDS.some((field) => field in data))) {
 		return breadcrumb
 	}
-	return {...breadcrumb, data: {...breadcrumb.data, url: scrubUrl(url)}}
+	let scrubbed = {...data}
+	for (let field of QUERY_FIELDS) {
+		delete scrubbed[field]
+	}
+	if (typeof scrubbed.url === 'string') {
+		scrubbed.url = scrubUrl(scrubbed.url)
+	}
+	return {...breadcrumb, data: scrubbed}
 }
 
 /**
@@ -57,16 +70,34 @@ export function scrubSpan(span: SpanJSON): SpanJSON {
 }
 
 /**
- * Scrubs the request a failed-request event carries: its URL, query string
- * and cookies.
+ * Scrubs what an error or failed-request event carries beyond its own
+ * message: the request (URL, query string, cookies), the breadcrumbs --
+ * including the native SDK's, which JS `beforeBreadcrumb` never sees -- and
+ * the device app hash, which survives opting out and back in.
  */
 export function scrubEvent<E extends Event>(event: E): E {
-	if (!event.request) {
-		return event
+	let scrubbed: E = {...event}
+	let changed = false
+
+	if (event.request) {
+		let {query_string: _query, cookies: _cookies, ...request} = event.request
+		scrubbed.request = {...request, ...(request.url ? {url: scrubUrl(request.url)} : {})}
+		changed = true
 	}
-	let {query_string: _query, cookies: _cookies, ...request} = event.request
-	return {
-		...event,
-		request: {...request, ...(request.url ? {url: scrubUrl(request.url)} : {})},
+
+	if (event.breadcrumbs) {
+		scrubbed.breadcrumbs = event.breadcrumbs
+			.map(scrubBreadcrumb)
+			.filter((crumb): crumb is Breadcrumb => crumb !== null)
+		changed = true
 	}
+
+	let app = event.contexts?.app
+	if (app && 'device_app_hash' in app) {
+		let {device_app_hash: _hash, ...rest} = app
+		scrubbed.contexts = {...event.contexts, app: rest}
+		changed = true
+	}
+
+	return changed ? scrubbed : event
 }

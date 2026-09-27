@@ -86,6 +86,12 @@ describe('privacyOptions', () => {
 
 	// The scrubbers themselves are tested in scrub.test.ts; these check that
 	// each hook uses one.
+	// The native SDK's own request breadcrumbs carry full URLs that JS never
+	// sees to scrub; they ride along on native crash reports.
+	it('turns off native request breadcrumbs', () => {
+		expect(options()).toMatchObject({enableNetworkBreadcrumbs: false})
+	})
+
 	it('drops console breadcrumbs', () => {
 		expect(options().beforeBreadcrumb?.({category: 'console', message: 'x'})).toBeNull()
 	})

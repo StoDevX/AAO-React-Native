@@ -64,6 +64,13 @@ describe('starting Sentry', () => {
 		expect(mockSentry.setUser).toHaveBeenCalledWith({id: 'id-1'})
 	})
 
+	// Interaction spans are named after the text under the finger.
+	it('does not trace touches', () => {
+		launch()
+
+		expect(lastInitOptions()).toMatchObject({enableUserInteractionTracing: false})
+	})
+
 	it('an opted-out person starts with nothing sent and no user', () => {
 		mockItems.set(
 			'telemetry-consent',
