@@ -205,7 +205,9 @@ describe('IssuePage', () => {
 				? Promise.resolve(categoriesJson)
 				: Promise.reject(new Error('offline')),
 		)
-		await renderIssue()
+		// The issue holds the posts the fetch answers with, as the issue list would say.
+		let served = {...ISSUE, storyIds: posts.map((post) => post.id)}
+		await renderIssue(served)
 
 		expect(await screen.findByRole('button', {name: 'Try Again'})).toBeTruthy()
 
@@ -215,7 +217,7 @@ describe('IssuePage', () => {
 		await act(async () => {
 			fireEvent.press(screen.getByRole('button', {name: 'Try Again'}))
 			// `find` matches the whole key, so it names this issue's range exactly.
-			await queryClient.getQueryCache().find({queryKey: messKeys.issue(ISSUE)})?.promise
+			await queryClient.getQueryCache().find({queryKey: messKeys.issue(served)})?.promise
 			await flushQueryNotifications()
 		})
 

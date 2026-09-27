@@ -4,7 +4,7 @@ import {MESS_LOGO_MEDIA_IDS, SPECIAL_EDITION, inSpecialEdition, placement} from 
 import {leadStory} from './shelves'
 import type {LightPost, MessCategory, MessIssue} from '../types'
 
-/** A day with at least this many posts is an issue; a day with fewer holds strays. */
+/** A week with at least this many posts is an issue, as is a day with this many special-edition posts. */
 export const ISSUE_MIN_POSTS = 5
 
 /** How many posts a page of the issue list asks for: WordPress's most. A shorter page is the last. */
@@ -51,65 +51,134 @@ export function parseLightPosts(body: unknown, categories: MessCategory[]): Ligh
 	return posts
 }
 
-/** The day before a YYYY-MM-DD day, worked out in UTC so no time zone moves it. */
-function dayBefore(day: string): string {
+/** The day `days` after a YYYY-MM-DD day, worked out in UTC so no time zone moves it. */
+function dayAfter(day: string, days = 1): string {
 	let date = new Date(`${day}T00:00:00Z`)
-	date.setUTCDate(date.getUTCDate() - 1)
+	date.setUTCDate(date.getUTCDate() + days)
 	return date.toISOString().slice(0, 10)
 }
 
-type Group = {day: string; posts: LightPost[]}
+/** The Monday that starts a day's week, in the paper's own days. */
+function weekOf(day: string): string {
+	let weekday = new Date(`${day}T00:00:00Z`).getUTCDay()
+	return dayAfter(day, -((weekday + 6) % 7))
+}
+
+/** A day's posts that are a special edition's, and enough of them to be an issue. */
+function specialDays(posts: LightPost[]): Set<string> {
+	let counts = new Map<string, number>()
+	for (let post of posts) {
+		if (post.special) counts.set(post.day, (counts.get(post.day) ?? 0) + 1)
+	}
+	return new Set([...counts].filter(([, count]) => count >= ISSUE_MIN_POSTS).map(([day]) => day))
+}
+
+/** The day with the most posts, the newest of any tie: the day the paper printed. */
+function busiestDay(posts: LightPost[]): string {
+	let counts = new Map<string, number>()
+	for (let post of posts) counts.set(post.day, (counts.get(post.day) ?? 0) + 1)
+	let best = ''
+	let most = 0
+	for (let [day, count] of counts) {
+		if (count > most || (count === most && day > best)) {
+			best = day
+			most = count
+		}
+	}
+	return best
+}
+
+/** Posts that print together: a week's regular posts, or one day's special edition. */
+type Group = {
+	/** The week's Monday, or the special edition's day */
+	start: string
+	special: boolean
+	posts: LightPost[]
+}
 
 /**
  * The issues the loaded posts make, newest first. The posts come newest first, as WordPress
- * lists them. A day with at least five posts is an issue; a day with fewer joins the most
- * recent issue before it, and a stray older than every issue is left out. While another page
- * remains, the oldest day is left out too, since that page may hold more of it. WordPress pages
- * by offset, so a post published between two page fetches repeats one post; each counts once.
+ * lists them. A week, Monday to Sunday, with at least five posts is an issue, named by its busiest
+ * day; a quieter week joins the most recent issue before it, and one older than every issue is
+ * left out. A special edition -- a day with at least five special-edition posts -- is an issue of
+ * its own, apart from the rest of its week. While another page remains, the oldest week is left
+ * out, since that page may hold more of it. WordPress pages by offset, so a post published between
+ * two page fetches repeats one post; each counts once.
  */
 export function groupIssues(posts: LightPost[], hasMore: boolean): MessIssue[] {
 	let seen = new Set<number>()
-	let days: LightPost[][] = []
-	for (let post of posts) {
-		if (seen.has(post.id)) continue
+	let unique = posts.filter((post) => {
+		if (seen.has(post.id)) return false
 		seen.add(post.id)
-		let last = days.at(-1)
-		if (last && last[0]?.day === post.day) last.push(post)
-		else days.push([post])
+		return true
+	})
+	let oldest = unique.at(-1)
+	if (hasMore && oldest) {
+		let partial = weekOf(oldest.day)
+		unique = unique.filter((post) => weekOf(post.day) !== partial)
 	}
-	if (hasMore) days.pop()
 
-	// Oldest first, so each stray finds the issue before it already made.
+	let specials = specialDays(unique)
+	let keyOf = (post: LightPost) =>
+		post.special && specials.has(post.day) ? `special:${post.day}` : `week:${weekOf(post.day)}`
+	let byKey = new Map<string, Group>()
+	for (let post of unique) {
+		let key = keyOf(post)
+		let group = byKey.get(key)
+		if (group) group.posts.push(post)
+		else {
+			let special = key.startsWith('special:')
+			byKey.set(key, {start: special ? post.day : weekOf(post.day), special, posts: [post]})
+		}
+	}
+
+	// Oldest first, so each quiet week finds the issue before it already made.
 	let groups: Group[] = []
-	for (let day of days.toReversed()) {
-		let first = day[0]
-		if (!first) continue
-		let current = groups.at(-1)
-		if (day.length >= ISSUE_MIN_POSTS) groups.push({day: first.day, posts: [...day]})
-		// A stray is newer than every post the issue already holds, so it goes first.
-		else if (current) current.posts.unshift(...day)
+	// Hermes has no toSorted, so the copy is sorted in place.
+	let ordered = [...byKey.values()].sort((a, b) =>
+		a.start < b.start ? -1 : a.start > b.start ? 1 : 0,
+	)
+	let previous: Group | undefined
+	for (let group of ordered) {
+		if (group.special) groups.push(group)
+		else if (group.posts.length >= ISSUE_MIN_POSTS) {
+			groups.push(group)
+			previous = group
+		}
+		// A quiet week is newer than every post the issue already holds, so it goes first.
+		else if (previous) previous.posts.unshift(...group.posts)
 	}
 
-	let newestFirst = groups.toReversed()
-	return newestFirst.flatMap((group, index): MessIssue[] => {
+	let regular = groups.filter((group) => !group.special)
+	let issues = groups.flatMap((group): MessIssue[] => {
 		let lead = leadStory(group.posts)
 		if (!lead) return []
-		let newer = newestFirst[index - 1]
+		let day = group.special ? group.start : busiestDay(group.posts)
+		// A week runs to the next regular issue's Monday, taking in any quiet weeks between; the
+		// newest runs to now. A special edition runs for its day.
+		let newer = regular[regular.indexOf(group) + 1]
+		let before = group.special
+			? `${dayAfter(group.start)}T00:00:00`
+			: newer
+				? `${newer.start}T00:00:00`
+				: null
 		return [
 			{
-				day: group.day,
-				after: `${dayBefore(group.day)}T23:59:59`,
-				before: newer ? `${newer.day}T00:00:00` : null,
+				day,
+				after: `${dayAfter(group.start, -1)}T23:59:59`,
+				before,
 				count: group.posts.length,
 				storyIds: group.posts.map((post) => post.id),
 				leadId: lead.id,
 				leadTitle: lead.title,
 				leadPhoto: lead.photoUrl,
-				// Most of its posts, since one special-edition post can run on a regular day.
-				isSpecial: group.posts.filter((post) => post.special).length * 2 > group.posts.length,
+				isSpecial: group.special,
 			},
 		]
 	})
+	// Newest first by the day each is named for, so a Wednesday's paper lists before the special
+	// edition of the Tuesday before it.
+	return issues.sort((a, b) => (a.day < b.day ? 1 : a.day > b.day ? -1 : 0))
 }
 
 /**

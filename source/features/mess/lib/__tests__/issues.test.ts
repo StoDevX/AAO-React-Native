@@ -69,12 +69,12 @@ describe('parseLightPosts', () => {
 })
 
 describe('groupIssues', () => {
-	it("finds the spring's eight issues, newest first", () => {
+	it("finds the spring's eight issues, a week each, newest first", () => {
 		expect(outline(groupIssues(spring, false))).toStrictEqual([
 			['2026-05-12', 11],
 			['2026-04-29', 35],
-			['2026-03-25', 25],
-			['2026-03-18', 31],
+			['2026-03-25', 27],
+			['2026-03-18', 29],
 			['2026-03-11', 32],
 			['2026-03-04', 26],
 			['2026-02-25', 30],
@@ -100,8 +100,31 @@ describe('groupIssues', () => {
 		)
 		// The post that arrived on two pages sits in Mar 18.
 		let march = issues.find((issue) => issue.day === '2026-03-18')
-		expect(march?.storyIds).toHaveLength(31)
-		expect(new Set(march?.storyIds).size).toBe(31)
+		expect(march?.storyIds).toHaveLength(29)
+		expect(new Set(march?.storyIds).size).toBe(29)
+	})
+
+	// A special edition on the Tuesday and the paper on the Wednesday are two issues.
+	it('keeps a special edition apart from the regular issue of its week', () => {
+		let tuesday = spring
+			.filter((post) => post.day === '2026-05-12')
+			.map((post) => ({...post, day: '2026-04-28'}))
+		let week = [...spring.filter((post) => post.day === '2026-04-29'), ...tuesday]
+		expect(
+			groupIssues(week, false).map((issue) => [issue.day, issue.count, issue.isSpecial]),
+		).toStrictEqual([
+			['2026-04-29', 34, false],
+			['2026-04-28', 11, true],
+		])
+	})
+
+	it("names a week's issue by its busiest day, the day it printed", () => {
+		let early = spring
+			.filter((post) => post.day === '2026-03-18')
+			.slice(0, 6)
+			.map((post) => ({...post, day: '2026-03-20'}))
+		let rest = spring.filter((post) => post.day === '2026-03-18').slice(6)
+		expect(outline(groupIssues([...early, ...rest], false))).toStrictEqual([['2026-03-18', 29]])
 	})
 
 	it('names an issue special when most of its posts are, whatever sections they sit in', () => {
@@ -117,28 +140,39 @@ describe('groupIssues', () => {
 		expect(groupIssues(oneSpecial, false)[1]).toMatchObject({day: '2026-04-29', isSpecial: false})
 	})
 
-	it('joins the strays of Mar 23 and 24 to Mar 18, and ends it at the next issue', () => {
+	it('runs a week from Monday to the Monday of the next issue', () => {
 		expect(issueOn('2026-03-18')).toMatchObject({
-			count: 31,
-			after: '2026-03-17T23:59:59',
-			before: '2026-03-25T00:00:00',
+			count: 29,
+			after: '2026-03-15T23:59:59',
+			before: '2026-03-23T00:00:00',
 		})
 	})
 
-	it('joins the stray of Mar 26 to Mar 25', () => {
-		expect(issueOn('2026-03-25')).toMatchObject({count: 25, before: '2026-04-29T00:00:00'})
+	it('takes in the posts of Mar 23, 24 and 26, all in the week of Mar 25', () => {
+		expect(issueOn('2026-03-25')).toMatchObject({
+			count: 27,
+			after: '2026-03-22T23:59:59',
+			before: '2026-04-27T00:00:00',
+		})
 	})
 
-	it('joins the stray of May 7 to Apr 29', () => {
-		expect(issueOn('2026-04-29')).toMatchObject({count: 35, before: '2026-05-12T00:00:00'})
+	it('joins the quiet week of May 7 to Apr 29, the issue before it', () => {
+		expect(issueOn('2026-04-29')).toMatchObject({count: 35, after: '2026-04-26T23:59:59'})
 	})
 
-	it('joins the stray of Mar 1 to Feb 25', () => {
-		expect(issueOn('2026-02-25')).toMatchObject({count: 30, before: '2026-03-04T00:00:00'})
+	it('takes in Sunday, Mar 1, in the week of Feb 25', () => {
+		expect(issueOn('2026-02-25')).toMatchObject({count: 30, before: '2026-03-02T00:00:00'})
 	})
 
-	it('runs the newest issue to now', () => {
-		expect(issueOn('2026-05-12')).toMatchObject({after: '2026-05-11T23:59:59', before: null})
+	it('runs the newest regular issue to now, past a special edition newer than it', () => {
+		expect(issueOn('2026-04-29')).toMatchObject({before: null})
+	})
+
+	it('runs a special edition for its day alone', () => {
+		expect(issueOn('2026-05-12')).toMatchObject({
+			after: '2026-05-11T23:59:59',
+			before: '2026-05-13T00:00:00',
+		})
 	})
 
 	it('leaves out a stray older than every issue', () => {
@@ -147,11 +181,11 @@ describe('groupIssues', () => {
 	})
 
 	// Page 1 ends 27 posts into Mar 18, whose other two are on page 2.
-	it('holds back the oldest day while another page may hold more of it', () => {
+	it('holds back the oldest week while another page may hold more of it', () => {
 		expect(outline(groupIssues(spring.slice(0, 100), true))).toStrictEqual([
 			['2026-05-12', 11],
 			['2026-04-29', 35],
-			['2026-03-25', 25],
+			['2026-03-25', 27],
 		])
 	})
 
@@ -159,7 +193,7 @@ describe('groupIssues', () => {
 		let photos = new Map([[36902, 'https://olafmessenger.com/grant.png']])
 		let issues = groupIssues(withPhotoUrls(spring, photos), false)
 		expect(issues.map((issue) => issue.leadId)).toStrictEqual([
-			36949, 36896, 36726, 36715, 36572, 36452, 36361, 36284,
+			36949, 36896, 36726, 36650, 36572, 36452, 36361, 36284,
 		])
 		expect(issues[1]).toMatchObject({
 			leadTitle: 'St. Olaf awarded 2026-27 Hunger Free Campus grant',

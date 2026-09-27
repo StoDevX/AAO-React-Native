@@ -113,7 +113,7 @@ function seedTop(): void {
 	queryClient.setQueryData(messKeys.issues, {pages: [ISSUE_STORIES.map(light)], pageParams: [1]})
 	// The range groupIssues gives a day of five posts on Apr 29 with no issue after it.
 	queryClient.setQueryData(
-		messKeys.issue({after: '2026-04-28T23:59:59', before: null, count: 5}),
+		messKeys.issue({after: '2026-04-26T23:59:59', before: null, count: 5}),
 		ISSUE_STORIES,
 	)
 }
@@ -257,7 +257,7 @@ describe('FrontPageScreen', () => {
 		})
 
 		expect(postHrefs()).toStrictEqual([
-			expect.stringContaining('/posts?after=2026-04-28T23:59:59&per_page=100&_embed=true'),
+			expect.stringContaining('/posts?after=2026-04-26T23:59:59&per_page=100&_embed=true'),
 		])
 		await waitForQueriesToSettle(queryClient)
 	})
@@ -265,7 +265,7 @@ describe('FrontPageScreen', () => {
 	test("saves the top tile's issue for the next launch, and no other issue", async () => {
 		seedTop()
 		// An older issue opened from its tile, made through its options as the app makes it.
-		let older = {after: '2026-03-24T23:59:59', before: '2026-04-29T00:00:00', count: 5}
+		let older = {after: '2026-03-22T23:59:59', before: '2026-04-27T00:00:00', count: 5}
 		await queryClient.query({...messIssueOptions(older), initialData: ISSUE_STORIES})
 		await renderScreen()
 
@@ -273,10 +273,10 @@ describe('FrontPageScreen', () => {
 			(query) => query.queryKey,
 		)
 		expect(saved).toContainEqual(
-			messKeys.issue({after: '2026-04-28T23:59:59', before: null, count: 5}),
+			messKeys.issue({after: '2026-04-26T23:59:59', before: null, count: 5}),
 		)
 		expect(saved).not.toContainEqual(
-			messKeys.issue({after: '2026-03-24T23:59:59', before: '2026-04-29T00:00:00', count: 5}),
+			messKeys.issue({after: '2026-03-22T23:59:59', before: '2026-04-27T00:00:00', count: 5}),
 		)
 	})
 
@@ -320,7 +320,7 @@ describe('FrontPageScreen', () => {
 		expect(postHrefs()).toEqual(
 			expect.arrayContaining([
 				expect.stringContaining('/posts?per_page=100&page=1&_fields='),
-				expect.stringContaining('/posts?after=2026-04-28T23:59:59&per_page=100&_embed=true'),
+				expect.stringContaining('/posts?after=2026-04-26T23:59:59&per_page=100&_embed=true'),
 			]),
 		)
 		expect(postHrefs().filter((href) => href.includes('categories='))).toStrictEqual([])

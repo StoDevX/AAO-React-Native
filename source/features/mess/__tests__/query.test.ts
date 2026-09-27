@@ -471,6 +471,22 @@ describe('messIssueOptions', () => {
 		)
 	})
 
+	// A week's range can take in a special edition that is an issue of its own.
+	test("keeps only the issue's own stories from its range", async () => {
+		serve(() => posts)
+
+		let stories = await run<MessStory[]>(
+			messIssueOptions({
+				after: '2026-03-24T23:59:59',
+				before: '2026-04-29T00:00:00',
+				count: 2,
+				storyIds: [36911, 36904],
+			}),
+		)
+
+		expect(stories.map((s) => s.id)).toStrictEqual([36911, 36904])
+	})
+
 	test('runs the newest issue to now', async () => {
 		serve(() => posts)
 
