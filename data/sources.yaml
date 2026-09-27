@@ -73,6 +73,12 @@ links:
     titles: {und: Student Work Areas}
     properties: {'https://frogpond.tech/ns/id': stolaf}
 
+  - rel: https://frogpond.tech/rel/student-wages
+    href: 'https://stolaf.dev/AAO-React-Native/student-wages.json'
+    type: application/vnd.frogpond.student-wages+json
+    titles: {und: Student Wages}
+    properties: {'https://frogpond.tech/ns/id': stolaf}
+
   - rel: https://frogpond.tech/rel/student-work-units
     href: 'student-work/units'
     type: application/vnd.frogpond.student-work-units+json
