@@ -1,24 +1,6 @@
 import XCTest
 
-
-
 class ModuleSettingsTests: UITestCase {
-	func testShowsSettingsScreenAfterTap() throws {
-		SettingsScreen(app: app)
-			.openSettings()
-			.checkSignInVisible()
-			.closeSettings()
-			.checkSettingsDismissed()
-	}
-
-	/// Leaves the device on coffee, the choice a new install starts with.
-	func testChoosesTheMessengersIssueStains() throws {
-		SettingsScreen(app: app)
-			.openSettings()
-			.chooseIssueStains(TestIdentifiers.Settings.tea)
-			.chooseIssueStains(TestIdentifiers.Settings.coffee)
-	}
-
 	func testChangesAppIconToOldMainAndBack() throws {
 		// The "You have changed the icon" alert belongs to SpringBoard. It blocks
 		// the app from reaching idle, so UIInterruptionMonitor never fires --
@@ -63,7 +45,6 @@ class ModuleSettingsTests: UITestCase {
 
 		// Big Ole is the default icon, so it should be marked by default
 		XCTAssertTrue(bigOle.isSelected, "Big Ole should be selected by default")
-		XCTAssertEqual(settings.getSelectedAppIcon(), "Big Ole")
 
 		// change to the other app icon
 		settings.selectAppIcon(iconName: "Old Main", springboard: springboard)

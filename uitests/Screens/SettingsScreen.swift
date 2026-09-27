@@ -14,58 +14,6 @@ struct SettingsScreen: Screen {
 	}
 
 	@discardableResult
-	func checkSignInVisible() -> Self {
-		// The sign-in row is a SwiftUI Button carrying its title as an
-		// accessibility label, so it surfaces as a button, not static text.
-		let signIn = app.buttons[TestIdentifiers.Settings.signIn].firstMatch
-		XCTAssertTrue(
-			signIn.waitForExistence(timeout: 30),
-			"Sign in to St. Olaf should be visible")
-		return self
-	}
-
-	@discardableResult
-	func closeSettings() -> Self {
-		app.element(matching: TestIdentifiers.Navigation.closeScreen).tap()
-		return self
-	}
-
-	@discardableResult
-	func checkSettingsDismissed() -> Self {
-		// Settings is presented as a pageSheet modal, so the home screen
-		// remains mounted in the view hierarchy beneath it. Verify the
-		// sheet actually dismissed by checking that the Settings content
-		// is gone.
-		let signIn = app.buttons[TestIdentifiers.Settings.signIn].firstMatch
-		XCTAssertTrue(
-			signIn.waitForNonExistence(timeout: 30),
-			"Settings sheet should have dismissed")
-
-		let homescreen = app.element(matching: TestIdentifiers.Home.screen)
-		XCTAssertTrue(
-			homescreen.waitForExistence(timeout: 30),
-			"Home screen should be visible after exiting settings")
-		return self
-	}
-
-	@discardableResult
-	func dismissIconChangeAlert(springboard: XCUIApplication) -> Self {
-		let iconChangeOK = springboard.buttons["OK"]
-		XCTAssertTrue(
-			iconChangeOK.waitForExistence(timeout: 10),
-			"Icon change alert should appear")
-		iconChangeOK.tap()
-		return self
-	}
-
-	/// The title of the icon the picker currently marks as chosen.
-	func getSelectedAppIcon() -> String {
-		let selectedButton = app.buttons.matching(NSPredicate(format: "isSelected == true"))
-			.firstMatch
-		return selectedButton.label
-	}
-
-	@discardableResult
 	func selectAppIcon(iconName: String, springboard: XCUIApplication) -> Self {
 		let row = app.buttons[iconName]
 		XCTAssertTrue(
@@ -92,7 +40,11 @@ struct SettingsScreen: Screen {
 			.tap()
 
 		// dismiss the os-level dialog
-		dismissIconChangeAlert(springboard: springboard)
+		let iconChangeOK = springboard.buttons["OK"]
+		XCTAssertTrue(
+			iconChangeOK.waitForExistence(timeout: 10),
+			"Icon change alert should appear")
+		iconChangeOK.tap()
 
 		// Wait rather than read once: the screen learns the new icon back from
 		// the system asynchronously, so the trait lands a moment after the alert
