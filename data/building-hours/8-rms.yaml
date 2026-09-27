@@ -2,6 +2,7 @@ name: RMS
 subtitle: Regents Hall of Mathematical Sciences
 category: Academia
 kind: building
+listed: false
 building: rms
 # image: regents-hall-math
 

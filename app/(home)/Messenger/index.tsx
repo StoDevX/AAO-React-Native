@@ -1,7 +1,7 @@
 import * as React from 'react'
 
-import {MessengerScreen} from '../../../source/features/mess/messenger-screen'
+import {FrontPageScreen} from '../../../source/features/mess/front-page-screen'
 
 export default function MessengerPage(): React.ReactNode {
-	return <MessengerScreen />
+	return <FrontPageScreen />
 }

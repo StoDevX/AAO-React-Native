@@ -22,6 +22,11 @@ jest.mock('expo-image-picker', () => ({
 	launchImageLibraryAsync: jest.fn(() => Promise.resolve({canceled: true, assets: null})),
 	UIImagePickerPreferredAssetRepresentationMode: {Compatible: 'compatible'},
 }))
+
+// Keeping the screen awake goes through a native module Jest does not have.
+jest.mock('expo-keep-awake', () => ({
+	useKeepAwake: jest.fn(),
+}))
 // Re-encoding hands each image back under the uri it came in with, so a test
 // can follow a picked image through to whatever it is sent with.
 jest.mock('expo-image-manipulator', () => ({

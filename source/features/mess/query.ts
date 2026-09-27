@@ -1,25 +1,24 @@
-import {fetchManifest, fetchSourceBody, REL_NEWS, resolveSource} from '@frogpond/data-sources'
-import {queryOptions} from '@tanstack/react-query'
+import {
+	fetchManifest,
+	fetchSourceBody,
+	REL_NEWS,
+	resolveSource,
+	SourceFetchError,
+} from '@frogpond/data-sources'
+import {infiniteQueryOptions, queryOptions} from '@tanstack/react-query'
 import {queryClient} from '../../init/tanstack-query'
 import {parseMessCategories, parseMessPosts} from './lib/posts'
+import {bodyParagraphs} from './lib/issue-grid'
+import {ISSUE_PAGE_SIZE, parseLightPosts, parseMediaUrls, withPhotoUrls} from './lib/issues'
 import {latestProfile, parseStaffProfiles} from './lib/profiles'
 import {seriesKey, seriesName} from './lib/series'
 import {findSpotifyRef} from './lib/spotify'
-import type {MessCategory, MessStory, SpotifyRef, StaffProfile} from './types'
+import {messKeys} from './lib/keys'
+import type {LightPost, MessCategory, MessIssue, MessStory, SpotifyRef, StaffProfile} from './types'
 
 const WP_V2_POSTS = 'application/vnd.wordpress.v2.posts+json'
 const ONE_DAY_IN_MS = 24 * 60 * 60 * 1000
 const FIVE_MINUTES_IN_MS = 5 * 60 * 1000
-
-export const messKeys = {
-	feed: ['mess', 'feed'] as const,
-	profile: (staffId: number) => ['mess', 'profile', staffId] as const,
-	categories: ['mess', 'categories'] as const,
-	story: (id: number) => ['mess', 'story', id] as const,
-	category: (categoryId: number) => ['mess', 'category', categoryId] as const,
-	series: (storyId: number) => ['mess', 'series', storyId] as const,
-	playlistPage: (storyId: number) => ['mess', 'playlist-page', storyId] as const,
-}
 
 /** Other stories to read after one, under a heading such as `More Mouse Friends`. */
 export type MessSeries = {title: string; stories: MessStory[]}
@@ -118,6 +117,30 @@ export const messStoryOptions = (id: number) =>
 		},
 	})
 
+/**
+ * A story's words alone, for the columns under a grid tile's fold: its body and nothing else,
+ * a few kilobytes. Fetched again each launch rather than saved, since every photo-less tile a
+ * reader scrolls past would otherwise add one to the saved cache.
+ */
+// oxlint-disable-next-line typescript/explicit-module-boundary-types
+export const messLeadTextOptions = (id: number) =>
+	queryOptions({
+		queryKey: messKeys.leadText(id),
+		// A story's words rarely change once it runs.
+		staleTime: ONE_DAY_IN_MS,
+		meta: {persist: false},
+		queryFn: async ({signal}): Promise<string[]> => {
+			// Assumes the resolved feed href is an absolute WordPress URL.
+			let origin = originOf(await feedHref())
+			let body = await fetchSourceBody(
+				`${origin}/wp-json/wp/v2/posts/${id}?_fields=content`,
+				signal,
+				'Olaf Messenger story text',
+			)
+			return bodyParagraphs(body)
+		},
+	})
+
 /** A category's newest stories, such as every Variety column's. */
 // oxlint-disable-next-line typescript/explicit-module-boundary-types
 export const messCategoryOptions = (categoryId: number) =>
@@ -126,20 +149,98 @@ export const messCategoryOptions = (categoryId: number) =>
 		staleTime: FIVE_MINUTES_IN_MS,
 		queryFn: ({signal}) => categoryStories(categoryId, signal),
 	})
+/**
+ * Every post the paper has published, newest first, a page at a time and in only the fields an
+ * issue needs, for grouping into issues, with the page's photo addresses looked up in one more
+ * request. A short page is the last.
+ */
+export const messIssuesOptions = infiniteQueryOptions({
+	queryKey: messKeys.issues,
+	// As the feed: a sitting of reading, while pull to refresh fetches regardless.
+	staleTime: FIVE_MINUTES_IN_MS,
+	// Top needs only the first page at launch; the rest load again as Issues scrolls to them.
+	meta: {persistPages: 1},
+	initialPageParam: 1,
+	queryFn: async ({pageParam, signal}): Promise<LightPost[]> => {
+		// Assumes the resolved feed href is an absolute WordPress URL.
+		let origin = originOf(await feedHref())
+		// A failed categories fetch fails the page on purpose: sections come from it.
+		let [body, categories] = await Promise.all([
+			fetchSourceBody(
+				`${origin}/wp-json/wp/v2/posts?per_page=${ISSUE_PAGE_SIZE}&page=${pageParam}&_fields=id,date,title,categories,featured_media`,
+				signal,
+				'Olaf Messenger issues',
+			).catch((error: unknown) => {
+				// WordPress answers 400 for a page past the last, which is asked for when the post count
+				// is a multiple of the page size and the last page is full: there is nothing more.
+				if (pageParam > 1 && error instanceof SourceFetchError && error.status === 400) return []
+				throw error
+			}),
+			queryClient.query(messCategoriesOptions),
+		])
+		let posts = parseLightPosts(body, categories)
+		let photoIds = [...new Set(posts.flatMap((post) => (post.photo === null ? [] : [post.photo])))]
+		if (photoIds.length === 0) return posts
+		// A row without its photo draws a tinted square, so a failed lookup leaves the page whole.
+		let urls = await fetchSourceBody(
+			`${origin}/wp-json/wp/v2/media?include=${photoIds.join(',')}&per_page=${ISSUE_PAGE_SIZE}&_fields=id,source_url`,
+			signal,
+			'Olaf Messenger photos',
+		)
+			.then(parseMediaUrls)
+			.catch(() => new Map<number, string>())
+		return withPhotoUrls(posts, urls)
+	},
+	getNextPageParam: (lastPage, _allPages, lastPageParam) =>
+		lastPage.length < ISSUE_PAGE_SIZE ? undefined : lastPageParam + 1,
+})
 
 /**
- * What the Mess list shows: the feed, or a section's or column's newest stories, cached under the
- * same keys as `messFeedOptions` and `messCategoryOptions`. One query rather than a choice of the
- * two, because their keys differ in shape and `useQuery` will not take a union of them.
+ * One issue's stories, asked for by their ids and parsed like the feed. Only the newest issue's,
+ * the front page's top tile, are saved for the next launch; any other is fetched again when opened.
  */
-// oxlint-disable-next-line typescript/explicit-module-boundary-types
-export const messListOptions = (categoryId: number | null) =>
-	queryOptions({
-		queryKey: categoryId === null ? messKeys.feed : messKeys.category(categoryId),
-		staleTime: FIVE_MINUTES_IN_MS,
-		queryFn: ({signal}) =>
-			categoryId === null ? feedStories(signal) : categoryStories(categoryId, signal),
+/* oxlint-disable typescript/explicit-module-boundary-types -- queryOptions' own return type */
+export const messIssueOptions = (
+	issue: Pick<MessIssue, 'key' | 'storyIds'>,
+	{persist = false}: {persist?: boolean} = {},
+) =>
+	queryOptions<MessStory[]>({
+		queryKey: messKeys.issue(issue),
+		meta: {persist},
+		// A published issue rarely changes.
+		staleTime: ONE_DAY_IN_MS,
+		// A story joining or leaving the issue changes its key; the stories already on screen stay
+		// while the new set loads. Another issue's stories never stand in.
+		placeholderData: (previous, previousQuery) =>
+			previousQuery?.queryKey[2] === issue.key ? previous : undefined,
+		// By id rather than by date: a week's range can take in a special edition, which is an issue
+		// of its own. WordPress answers at most a page of ids at once, and an issue that runs over a
+		// quiet summer can hold more, so they are asked for a page at a time.
+		queryFn: async ({signal, client}) => {
+			let batches = []
+			for (let i = 0; i < issue.storyIds.length; i += ISSUE_PAGE_SIZE) {
+				batches.push(issue.storyIds.slice(i, i + ISSUE_PAGE_SIZE))
+			}
+			let stories = await Promise.all(
+				batches.map((ids) =>
+					storiesAt(
+						`posts?include=${ids.join(',')}&per_page=${ISSUE_PAGE_SIZE}&_embed=true`,
+						signal,
+						'Olaf Messenger issue',
+					),
+				),
+			)
+			// The issue's ids change as its paper goes up, and each earlier set is a query of its own,
+			// saved for the next launch with every story's body. The current set replaces them.
+			let current = JSON.stringify(issue.storyIds)
+			client.removeQueries({
+				queryKey: [...messKeys.anyIssue, issue.key],
+				predicate: (query) => JSON.stringify(query.queryKey[3]) !== current,
+			})
+			return stories.flat()
+		},
 	})
+/* oxlint-enable typescript/explicit-module-boundary-types */
 
 /**
  * What to read after a story: the other episodes of its series, such as a comic's, or failing
