@@ -31,6 +31,7 @@
     "@frogpond/layout": "workspace:*",
     "@frogpond/lists": "workspace:*",
     "@frogpond/markdown": "workspace:*",
+    "@frogpond/mess-issue-tile": "workspace:*",
     "@frogpond/notice": "workspace:*",
     "@frogpond/open-url": "workspace:*",
     "@frogpond/place-card-header": "workspace:*",

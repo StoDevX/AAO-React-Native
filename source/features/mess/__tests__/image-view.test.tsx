@@ -8,7 +8,7 @@ import categories from './fixtures/categories.json'
 import {queryClient as appQueryClient} from '../../../init/tanstack-query'
 import {ImageView} from '../image-view'
 import {SeriesRow} from '../series-row'
-import {messKeys} from '../query'
+import {messKeys} from '../lib/keys'
 import type {MessStory} from '../types'
 
 jest.mock('@expo/ui/swift-ui', () => {

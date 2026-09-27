@@ -46,6 +46,48 @@ export type MessStory = {
 	layout: StoryLayout
 }
 
+/** A post as the issue list reads it: enough to group it into an issue and choose the issue's lead. */
+export type LightPost = {
+	id: number
+	/** The day it ran, as YYYY-MM-DD in the paper's own time zone */
+	day: string
+	title: string
+	/** The top-level category, never a Featured flag */
+	section: string | null
+	/** Whether it belongs to a special edition, even when also filed under a print section */
+	special: boolean
+	/** Whether any Featured* category is present */
+	featured: boolean
+	/** Its featured photo's media id; null with none, or with the Mess logo */
+	photo: number | null
+	/** That photo's address, looked up with the rest of its page's; null when not found */
+	photoUrl: string | null
+}
+
+/** One issue of the paper: a week's posts, or a week's special edition, with the strays that joined it. */
+export type MessIssue = {
+	/**
+	 * Names the issue uniquely: `week:` or `special:`, and its week's Monday. A week can hold both a
+	 * paper and a special edition, and an edition's day can change as more of its posts go up, so
+	 * neither the week nor the day alone names it.
+	 */
+	key: string
+	/** The issue's day, as YYYY-MM-DD in the paper's time zone */
+	day: string
+	/** How many posts it holds, strays included */
+	count: number
+	/** Its posts' ids, newest first, strays included, each once */
+	storyIds: number[]
+	/** The lead story, chosen from the light fields */
+	leadId: number
+	leadTitle: string
+	/** The lead's photo's address; null when it has none, or it was not found */
+	leadPhoto: string | null
+	/** Whether the lead has a photo, whether or not its address was found */
+	leadHasPhoto: boolean
+	isSpecial: boolean
+}
+
 /** A writer's profile for one staff year. */
 export type StaffProfile = {
 	name: string

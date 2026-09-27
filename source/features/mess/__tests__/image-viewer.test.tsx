@@ -5,7 +5,7 @@ import {QueryClient, QueryClientProvider} from '@tanstack/react-query'
 
 import {queryClient as appQueryClient} from '../../../init/tanstack-query'
 import {ImageViewer} from '../image-viewer'
-import {messKeys} from '../query'
+import {messKeys} from '../lib/keys'
 import type {MessStory} from '../types'
 
 jest.mock('@expo/ui/swift-ui', () => {

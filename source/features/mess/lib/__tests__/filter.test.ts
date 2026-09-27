@@ -1,7 +1,7 @@
 import {describe, expect, it} from '@jest/globals'
 import categoriesJson from '../../__tests__/fixtures/categories.json'
 import {parseMessCategories} from '../posts'
-import {filterTree, resolveFilter} from '../filter'
+import {filterTree} from '../filter'
 
 const tree = filterTree(parseMessCategories(categoriesJson))
 
@@ -53,35 +53,5 @@ describe('filterTree', () => {
 		expect(filterTree(withoutSpecial).map((branch) => branch.section.name)).not.toContain(
 			'Special Edition',
 		)
-	})
-})
-
-describe('resolveFilter', () => {
-	it('finds a column’s category id', () => {
-		expect(resolveFilter('Poetry', tree)).toBe(69)
-	})
-
-	it('finds a section’s category id', () => {
-		expect(resolveFilter('Variety', tree)).toBe(23)
-	})
-
-	it('gives null for no choice', () => {
-		expect(resolveFilter(null, tree)).toBeNull()
-	})
-
-	it('gives null for a name the tree no longer has', () => {
-		expect(resolveFilter('Classifieds', tree)).toBeNull()
-	})
-
-	it('gives null for a name the picker leaves out, such as a Featured flag', () => {
-		expect(resolveFilter('Featured', tree)).toBeNull()
-	})
-
-	it('gives undefined for a saved name while the tree has not loaded', () => {
-		expect(resolveFilter('Poetry', undefined)).toBeUndefined()
-	})
-
-	it('gives null for no choice while the tree has not loaded', () => {
-		expect(resolveFilter(null, undefined)).toBeNull()
 	})
 })
