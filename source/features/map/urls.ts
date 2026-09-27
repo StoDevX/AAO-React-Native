@@ -25,6 +25,21 @@ export function mapStyleUrl(campus: Campus): string {
 	return campus === 'stolaf' ? STOLAF_MAP_STYLE_URL : MAP_STYLE_URL
 }
 
+/// A credit the map shows, and where it leads.
+export type MapCredit = {label: string; url: string}
+
+/**
+ * The credits a campus's map carries, as its style's sources state them: the
+ * OpenStreetMap credit the tiles' licence requires, then the college's.
+ * Shown by the map screen's own About menu, since MapLibre's button is hidden.
+ */
+export function mapCredits(campus: Campus): Array<MapCredit> {
+	let osm = {label: '© OpenStreetMap contributors', url: 'https://www.openstreetmap.org/copyright'}
+	return campus === 'stolaf'
+		? [osm, {label: 'St. Olaf College', url: 'https://wp.stolaf.edu/'}]
+		: [osm, {label: 'Carleton College', url: 'https://www.carleton.edu/'}]
+}
+
 /**
  * The same tileset as a single PMTiles archive, which MapLibre resolves over
  * HTTP range requests instead of a request per tile.

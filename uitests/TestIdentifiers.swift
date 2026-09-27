@@ -192,9 +192,15 @@ struct TestIdentifiers {
 		/// reads "Regents Hall of Natural Sciences, RNS"; `selectBuilding(named:)`
 		/// matches on the prefix. St. Olaf can rename it.
 		static let aSubtitledBuilding = "Regents Hall of Natural Sciences"
-		/// MapLibre's attribution button, found by the label it gives itself. It
-		/// carries the OpenStreetMap credit, so it has to stay reachable.
+		/// The About menu in the map's header. It carries the OpenStreetMap
+		/// credit, so it has to stay reachable. Mirrors the accessibilityLabel
+		/// in app/(home)/Map/index.tsx.
 		static let attribution = "About this map"
+		/// The credit the tiles' licence requires, one of the About menu's
+		/// items. Mirrors `mapCredits` in source/features/map/urls.ts.
+		static let osmCredit = "© OpenStreetMap contributors"
+		/// The map screen's title, which its header no longer draws.
+		static let stolafTitle = "St. Olaf Map"
 		/// UIKit's own drag indicator on the presented sheet, found by label --
 		/// it carries no identifier. Its element is the sheet's child, which is
 		/// how the sheet's own box is found.

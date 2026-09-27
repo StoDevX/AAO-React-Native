@@ -1,4 +1,4 @@
-import {appleMapsSearchUrl, buildingPhotoUrl, mapStyleUrl} from '../urls'
+import {appleMapsSearchUrl, buildingPhotoUrl, mapCredits, mapStyleUrl} from '../urls'
 
 describe('buildingPhotoUrl', () => {
 	// ccc-server stores `photos` as bare filenames, so a record is useless
@@ -31,5 +31,23 @@ describe('mapStyleUrl', () => {
 	// anonymous cluster of grey footprints.
 	it('gives each campus its own basemap', () => {
 		expect(mapStyleUrl('stolaf')).not.toBe(mapStyleUrl('carleton'))
+	})
+})
+
+// The tiles' licence requires the OpenStreetMap credit; each campus's style
+// also credits its college. These mirror the styles' own source attributions.
+describe('mapCredits', () => {
+	it("credits OpenStreetMap, then St. Olaf, for St. Olaf's map", () => {
+		expect(mapCredits('stolaf')).toEqual([
+			{label: '© OpenStreetMap contributors', url: 'https://www.openstreetmap.org/copyright'},
+			{label: 'St. Olaf College', url: 'https://wp.stolaf.edu/'},
+		])
+	})
+
+	it("credits OpenStreetMap, then Carleton, for Carleton's map", () => {
+		expect(mapCredits('carleton')).toEqual([
+			{label: '© OpenStreetMap contributors', url: 'https://www.openstreetmap.org/copyright'},
+			{label: 'Carleton College', url: 'https://www.carleton.edu/'},
+		])
 	})
 })
