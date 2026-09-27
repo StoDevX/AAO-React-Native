@@ -9,10 +9,12 @@ import springPosts from './fixtures/issue-posts.json'
 import {queryClient as appQueryClient, persistOptions} from '../../../init/tanstack-query'
 import {flushQueryNotifications, waitForQueriesToSettle} from '../../../testing/query-notifications'
 import {FrontPageScreen} from '../front-page-screen'
+import {TOP_TILE_ID} from '../issue-grid'
 import {messIssueOptions} from '../query'
 import {parseLightPosts} from '../lib/issues'
 import {messKeys} from '../lib/keys'
 import {parseMessCategories} from '../lib/posts'
+import {DATELINE_ID} from '../masthead'
 import {OLAF_MESSENGER} from '../../news/sources'
 import {useNewsFilterStore} from '../../news/store'
 import type {LightPost, MessStory} from '../types'
@@ -24,6 +26,10 @@ jest.mock('@expo/ui/swift-ui', () => {
 jest.mock('@expo/ui/swift-ui/modifiers', () => {
 	// oxlint-disable-next-line typescript/no-require-imports
 	return require('../../../testing/expo-ui-mock') as typeof import('../../../testing/expo-ui-mock')
+})
+jest.mock('@frogpond/mess-issue-tile', () => {
+	// oxlint-disable-next-line typescript/no-require-imports
+	return require('./mess-issue-tile-mock') as typeof import('./mess-issue-tile-mock')
 })
 jest.mock('@react-native-community/netinfo', () =>
 	// oxlint-disable-next-line typescript/no-require-imports
@@ -106,36 +112,21 @@ let queryClient: QueryClient
 /** The issue list, and the stories of its one issue, as a warm cache holds them. */
 function seedTop(): void {
 	queryClient.setQueryData(messKeys.issues, {pages: [ISSUE_STORIES.map(light)], pageParams: [1]})
-	// The range groupIssues gives a day of five posts on Apr 29 with no issue after it.
+	// The week groupIssues makes of five posts on Apr 29.
 	queryClient.setQueryData(
-		messKeys.issue({after: '2026-04-28T23:59:59', before: null, count: 5}),
+		messKeys.issue({key: 'week:2026-04-27', storyIds: [5, 4, 3, 2, 1]}),
 		ISSUE_STORIES,
 	)
 }
 
-/** Five posts of a special edition on May 12, newer than the Apr 29 issue. */
-const SPECIAL_POSTS: LightPost[] = [0, 1, 2, 3, 4].map((n) => ({
-	id: 20 - n,
-	day: '2026-05-12',
-	title: n === 0 ? 'Letter from the editors' : `Special edition story ${n}`,
-	section: 'Special Edition',
-	special: true,
-	featured: false,
-	photo: null,
-	photoUrl: null,
-}))
+/** What the masthead's dateline says the page holds. */
+const dateline = () => screen.getByTestId(DATELINE_ID)
 
-/** A special edition newer than the Apr 29 issue, whose range now ends where the special edition begins. */
-function seedTopUnderSpecial(): void {
-	queryClient.setQueryData(messKeys.issues, {
-		pages: [[...SPECIAL_POSTS, ...ISSUE_STORIES.map(light)]],
-		pageParams: [1],
-	})
-	queryClient.setQueryData(
-		messKeys.issue({after: '2026-04-28T23:59:59', before: '2026-05-12T00:00:00', count: 5}),
-		ISSUE_STORIES,
-	)
-}
+/** An item of the view menu in the header, by its label. */
+const menuItem = (name: string) => screen.getByRole('menuitem', {name})
+
+/** Whether the view menu's item shows its checkmark. */
+const isChecked = (name: string) => Boolean(menuItem(name).props.accessibilityState?.checked)
 
 function saveChoice(key: string): void {
 	useNewsFilterStore.setState({selectedCategories: {[OLAF_MESSENGER.id]: key}})
@@ -187,47 +178,99 @@ function renderScreen() {
 }
 
 describe('FrontPageScreen', () => {
-	test('opens on Top: the newest issue under the masthead, its lead, then its shelves', async () => {
+	test("opens on By Issue, under the paper's nameplate and no dateline, with the newest issue as the top tile", async () => {
 		seedTop()
 		await renderScreen()
 
-		expect(screen.getByRole('button', {name: 'Top', selected: true})).toBeTruthy()
-		expect(screen.getByText('April 29, 2026 · 5 stories')).toBeTruthy()
-		expect(
-			screen.getByRole('button', {name: 'Student workers deliver petition, News'}),
-		).toBeTruthy()
-		expect(screen.getByRole('button', {name: 'All Opinions'})).toBeTruthy()
+		expect(isChecked('By Issue')).toBe(true)
+		expect(isChecked('Latest')).toBe(false)
+		expect(screen.getByText('The Olaf Messenger')).toBeTruthy()
+		expect(screen.queryByTestId(DATELINE_ID)).toBeNull()
+		expect(screen.getByTestId(TOP_TILE_ID).props.accessibilityLabel).toBe(
+			'April 29, 2026, Student workers deliver petition',
+		)
+	})
+
+	test.each(['Top', 'Issues', 'News', 'Messenger Wars'])(
+		'opens on By Issue when the saved choice is %p, which names no view',
+		async (saved) => {
+			seedTop()
+			saveChoice(saved)
+			await renderScreen()
+
+			expect(isChecked('By Issue')).toBe(true)
+			expect(screen.getByTestId(TOP_TILE_ID)).toBeTruthy()
+		},
+	)
+
+	test('names the menu by the view it shows, for VoiceOver', async () => {
+		seedTop()
+		await renderScreen()
+		expect(screen.getByLabelText('View: By Issue')).toBeTruthy()
+
+		await fireEvent.press(menuItem('Latest'))
+		expect(screen.getByLabelText('View: Latest')).toBeTruthy()
+	})
+
+	test('offers the sections in Latest only, and remembers the view', async () => {
+		seedTop()
+		queryClient.setQueryData(messKeys.feed, ISSUE_STORIES)
+		await renderScreen()
+		expect(screen.queryByRole('menuitem', {name: 'Opinions'})).toBeNull()
+
+		await fireEvent.press(menuItem('Latest'))
+
+		expect(savedChoice()).toBe('Latest')
+		expect(isChecked('Latest')).toBe(true)
+		expect(isChecked('All Stories')).toBe(true)
+		expect(isChecked('Opinions')).toBe(false)
+		expect(dateline()).toHaveTextContent('Latest stories')
+	})
+
+	test('narrows Latest to the section picked, and keeps it across a visit to By Issue', async () => {
+		seedTop()
+		saveChoice('Latest')
+		queryClient.setQueryData(messKeys.feed, ISSUE_STORIES)
+		queryClient.setQueryData(messKeys.categories, categories)
+		queryClient.setQueryData(messKeys.category(OPINIONS), [WATERS])
+		await renderScreen()
+
+		await fireEvent.press(menuItem('Opinions'))
+
+		expect(savedChoice()).toBe('Latest:Opinions')
+		expect(isChecked('Opinions')).toBe(true)
+		expect(isChecked('All Stories')).toBe(false)
+		expect(dateline()).toHaveTextContent('Opinions')
+		expect(screen.getByRole('button', {name: /^I grew up in the Boundary Waters,/u})).toBeTruthy()
+
+		await fireEvent.press(menuItem('By Issue'))
+		expect(savedChoice()).toBe('Issues:Opinions')
+
+		await fireEvent.press(menuItem('Latest'))
+		expect(savedChoice()).toBe('Latest:Opinions')
+
+		await fireEvent.press(menuItem('All Stories'))
+		expect(savedChoice()).toBe('Latest')
+	})
+
+	test('opens an issue on its own page from its tile', async () => {
+		seedTop()
+		await renderScreen()
+
+		await fireEvent.press(screen.getByTestId(TOP_TILE_ID))
+
+		expect(mockNavigate).toHaveBeenCalledWith({
+			pathname: '/Messenger/issue',
+			params: {key: 'week:2026-04-27'},
+		})
 	})
 
 	// The newest issue's range has no end, so only its count shows that a story joined it.
-	test('fetches Top again once the issue list counts another story for it', async () => {
+	test("fetches the top tile's issue again once the issue list counts another story for it", async () => {
 		seedTop()
 		serve(() => [])
 		await renderScreen()
 		expect(postHrefs()).toStrictEqual([])
-
-		let petition = {...light(PETITION), id: 99, title: 'A late story'}
-		await act(async () => {
-			queryClient.setQueryData(messKeys.issues, {
-				pages: [[petition, ...ISSUE_STORIES.map(light)]],
-				pageParams: [1],
-			})
-			await flushQueryNotifications()
-		})
-
-		expect(screen.getByText('April 29, 2026 · 6 stories')).toBeTruthy()
-		expect(postHrefs()).toStrictEqual([
-			expect.stringContaining('/posts?after=2026-04-28T23:59:59&per_page=100&_embed=true'),
-		])
-		await waitForQueriesToSettle(queryClient)
-	})
-
-	// A reader part way down Top should not lose the page to a spinner when a story joins it.
-	test("keeps Top's stories on screen while it fetches them again for a new story", async () => {
-		seedTop()
-		let answer: (value: unknown) => void = () => undefined
-		serve(() => new Promise((resolve) => (answer = resolve)))
-		await renderScreen()
 
 		let late = {...light(PETITION), id: 99, title: 'A late story'}
 		await act(async () => {
@@ -238,20 +281,16 @@ describe('FrontPageScreen', () => {
 			await flushQueryNotifications()
 		})
 
-		expect(screen.getByText('April 29, 2026 · 6 stories')).toBeTruthy()
-		expect(
-			screen.getByRole('button', {name: 'Student workers deliver petition, News'}),
-		).toBeTruthy()
-		await act(() => {
-			answer(ISSUE_STORIES)
-		})
+		expect(postHrefs()).toStrictEqual([
+			expect.stringContaining('/posts?include=99,5,4,3,2,1&per_page=100&_embed=true'),
+		])
 		await waitForQueriesToSettle(queryClient)
 	})
 
-	test("saves Top's issue for the next launch, and no other issue", async () => {
+	test("saves the top tile's issue for the next launch, and no other issue", async () => {
 		seedTop()
-		// An older issue opened from Issues, made through its options as the app makes it.
-		let older = {after: '2026-03-24T23:59:59', before: '2026-04-29T00:00:00', count: 5}
+		// An older issue opened from its tile, made through its options as the app makes it.
+		let older = {key: 'week:2026-03-23', storyIds: [5, 4, 3, 2, 1]}
 		await queryClient.query({...messIssueOptions(older), initialData: ISSUE_STORIES})
 		await renderScreen()
 
@@ -259,189 +298,60 @@ describe('FrontPageScreen', () => {
 			(query) => query.queryKey,
 		)
 		expect(saved).toContainEqual(
-			messKeys.issue({after: '2026-04-28T23:59:59', before: null, count: 5}),
+			messKeys.issue({key: 'week:2026-04-27', storyIds: [5, 4, 3, 2, 1]}),
 		)
-		expect(saved).not.toContainEqual(
-			messKeys.issue({after: '2026-03-24T23:59:59', before: '2026-04-29T00:00:00', count: 5}),
-		)
+		expect(saved).not.toContainEqual(messKeys.issue(older))
 	})
 
-	test('puts Top on the newest regular issue, under a banner for a newer special edition', async () => {
-		seedTopUnderSpecial()
+	test('says the issues load once back online when offline with nothing cached', async () => {
+		onlineManager.setOnline(false)
 		await renderScreen()
 
-		expect(screen.getByText('April 29, 2026 · 5 stories')).toBeTruthy()
-		expect(
-			screen.getByRole('button', {name: 'Student workers deliver petition, News'}),
-		).toBeTruthy()
-
-		await fireEvent.press(
-			screen.getByRole('button', {name: 'Special Edition · May 12, Letter from the editors'}),
-		)
-
-		expect(mockNavigate).toHaveBeenCalledWith({
-			pathname: '/Messenger/issue',
-			params: {day: '2026-05-12'},
-		})
+		expect(screen.getByText('No connection. This page loads when you’re back online.')).toBeTruthy()
 	})
 
-	test('shows no banner when the newest issue is regular', async () => {
-		seedTop()
+	test('says Latest loads once back online when offline with nothing cached', async () => {
+		saveChoice('Latest')
+		onlineManager.setOnline(false)
 		await renderScreen()
 
-		expect(screen.queryByText(/^Special Edition/u)).toBeNull()
+		expect(dateline()).toHaveTextContent('Latest stories')
+		expect(screen.getByText('No connection. This page loads when you’re back online.')).toBeTruthy()
 	})
 
-	test('falls back to the feed when the issue list holds only a special edition', async () => {
-		queryClient.setQueryData(messKeys.issues, {pages: [SPECIAL_POSTS], pageParams: [1]})
+	test('offline with no issues cached, shows the saved latest stories under the notice', async () => {
 		queryClient.setQueryData(messKeys.feed, ISSUE_STORIES)
+		onlineManager.setOnline(false)
 		await renderScreen()
 
-		expect(screen.getByText('Latest stories')).toBeTruthy()
-		expect(screen.queryByText(/^Special Edition/u)).toBeNull()
+		expect(screen.getByText('No connection. This page loads when you’re back online.')).toBeTruthy()
+		expect(screen.getByRole('button', {name: /^Student workers deliver petition,/u})).toBeTruthy()
 	})
 
-	test('lists a special edition on the Issues chip with its label', async () => {
-		saveChoice('Issues')
-		seedTopUnderSpecial()
-		await renderScreen()
-
-		expect(screen.getByText('Special Edition · May 12, 2026')).toBeTruthy()
-		expect(screen.getByText('April 29, 2026')).toBeTruthy()
-	})
-
-	test('offers every chip, in order', async () => {
-		seedTop()
-		await renderScreen()
-
-		for (let label of ['Top', 'Issues', 'News', 'Opinions', 'A&E', 'Sports', 'Variety']) {
-			expect(screen.getByRole('button', {name: label})).toBeTruthy()
-		}
-	})
-
-	test('shows the chosen chip, and remembers it', async () => {
-		seedTop()
-		queryClient.setQueryData(messKeys.categories, categories)
-		queryClient.setQueryData(messKeys.category(NEWS), [GRANT])
-		await renderScreen()
-
-		await fireEvent.press(screen.getByRole('button', {name: 'News'}))
-
-		expect(screen.getByRole('button', {name: 'News', selected: true})).toBeTruthy()
-		expect(screen.getByRole('button', {name: 'Good Questions'})).toBeTruthy()
-		expect(screen.getByRole('button', {name: 'Hunger Free Campus grant, Apr 29'})).toBeTruthy()
-		expect(savedChoice()).toBe('News')
-	})
-
-	test('opens on the chip chosen last time', async () => {
-		saveChoice('Issues')
-		seedTop()
-		await renderScreen()
-
-		expect(screen.getByRole('button', {name: 'Issues', selected: true})).toBeTruthy()
-		expect(screen.getByText('Every issue')).toBeTruthy()
-		expect(screen.getByText('5 stories')).toBeTruthy()
-	})
-
-	test('opens on Top when the saved choice is a column the old filter offered', async () => {
-		saveChoice('Poetry')
-		seedTop()
-		await renderScreen()
-
-		expect(screen.getByRole('button', {name: 'Top', selected: true})).toBeTruthy()
-		expect(
-			screen.getByRole('button', {name: 'Student workers deliver petition, News'}),
-		).toBeTruthy()
-	})
-
-	test('"All ›" on a shelf switches to that section\'s chip', async () => {
-		seedTop()
-		queryClient.setQueryData(messKeys.categories, categories)
-		queryClient.setQueryData(messKeys.category(OPINIONS), [WATERS])
-		await renderScreen()
-
-		await fireEvent.press(screen.getByRole('button', {name: 'All Opinions'}))
-
-		expect(screen.getByRole('button', {name: 'Opinions', selected: true})).toBeTruthy()
-		expect(savedChoice()).toBe('Opinions')
-	})
-
-	test('lists the issues, and opens one on its own page', async () => {
-		saveChoice('Issues')
-		seedTop()
-		await renderScreen()
-
-		await fireEvent.press(
-			screen.getByRole('button', {
-				name: 'April 29, 2026, Student workers deliver petition, 5 stories',
-			}),
-		)
-
-		expect(mockNavigate).toHaveBeenCalledWith({
-			pathname: '/Messenger/issue',
-			params: {day: '2026-04-29'},
-		})
-	})
-
-	test('falls back to the feed under "Latest stories" when the issue list fails', async () => {
+	test('when the issue list fails, offers Try Again over the saved latest stories', async () => {
 		queryClient.setQueryData(messKeys.feed, ISSUE_STORIES)
 		serve(() => Promise.reject(new Error('offline')))
 		await renderScreen()
 
-		expect(await screen.findByText('Latest stories')).toBeTruthy()
-		expect(
-			screen.getByRole('button', {name: 'Student workers deliver petition, News'}),
-		).toBeTruthy()
-		expect(screen.getByRole('button', {name: 'All Opinions'})).toBeTruthy()
+		expect(await screen.findByRole('button', {name: 'Try Again'})).toBeTruthy()
+		expect(screen.getByRole('button', {name: /^Student workers deliver petition,/u})).toBeTruthy()
 	})
 
-	// Offline, the issue list is paused rather than failed.
-	test('falls back to the feed when offline with no issue list cached', async () => {
-		queryClient.setQueryData(messKeys.feed, ISSUE_STORIES)
-		onlineManager.setOnline(false)
-		await renderScreen()
-
-		expect(screen.getByText('Latest stories')).toBeTruthy()
-		expect(
-			screen.getByRole('button', {name: 'Student workers deliver petition, News'}),
-		).toBeTruthy()
-	})
-
-	// The list was saved from an earlier visit to Issues, but Top's own stories never were.
-	test("says Top's issue loads once back online when offline with only the list cached", async () => {
-		queryClient.setQueryData(messKeys.issues, {pages: [ISSUE_STORIES.map(light)], pageParams: [1]})
-		onlineManager.setOnline(false)
-		await renderScreen()
-
-		expect(screen.getByText('April 29, 2026 · 5 stories')).toBeTruthy()
-		expect(screen.getByText('No connection. This page loads when you’re back online.')).toBeTruthy()
-	})
-
-	test('says the feed loads once back online when offline with nothing cached', async () => {
-		onlineManager.setOnline(false)
-		await renderScreen()
-
-		expect(screen.getByText('Latest stories')).toBeTruthy()
-		expect(screen.getByText('No connection. This page loads when you’re back online.')).toBeTruthy()
-	})
-
-	test('says Issues loads once back online when offline with nothing cached', async () => {
-		saveChoice('Issues')
-		onlineManager.setOnline(false)
-		await renderScreen()
-
-		expect(screen.getByText('No connection. This page loads when you’re back online.')).toBeTruthy()
-	})
-
-	test('shows Try Again on Issues when the issue list fails', async () => {
-		saveChoice('Issues')
+	test('shows Try Again when the issue list fails', async () => {
 		serve(() => Promise.reject(new Error('offline')))
 		await renderScreen()
 
 		expect(await screen.findByRole('button', {name: 'Try Again'})).toBeTruthy()
 	})
 
-	test('pull-to-refresh on Top fetches the issue list and the newest issue', async () => {
+	test('says so when the paper has no issues', async () => {
+		queryClient.setQueryData(messKeys.issues, {pages: [[]], pageParams: [1]})
+		await renderScreen()
+
+		expect(screen.getByText('The Mess has no issues yet.')).toBeTruthy()
+	})
+
+	test('pull-to-refresh fetches the issue list and the newest issue', async () => {
 		seedTop()
 		serve(() => [])
 		await renderScreen()
@@ -451,13 +361,11 @@ describe('FrontPageScreen', () => {
 		expect(postHrefs()).toEqual(
 			expect.arrayContaining([
 				expect.stringContaining('/posts?per_page=100&page=1&_fields='),
-				expect.stringContaining('/posts?after=2026-04-28T23:59:59&per_page=100&_embed=true'),
+				expect.stringContaining('/posts?include=5,4,3,2,1&per_page=100&_embed=true'),
 			]),
 		)
 		expect(postHrefs().filter((href) => href.includes('categories='))).toStrictEqual([])
-		// The refreshed list is empty, so Top falls back to the feed, which fetches.
 		await waitForQueriesToSettle(queryClient)
-		expect(screen.getByText('Latest stories')).toBeTruthy()
 	})
 
 	// An infinite query refetches every page it holds, one after another.
@@ -472,9 +380,17 @@ describe('FrontPageScreen', () => {
 		})
 		await renderScreen()
 
-		await pullToRefresh()
+		// What the refresh itself fetched; afterwards the grid's end row, always on screen here,
+		// goes on to page 2 and 3 as it would once a reader scrolled down.
+		let refresh = screen.getByTestId('refreshable').props.onRefresh as () => Promise<void>
+		let fetchedByRefresh: string[] = []
+		await act(async () => {
+			await refresh()
+			fetchedByRefresh = postHrefs().filter((href) => href.includes('/posts?per_page='))
+			await flushQueryNotifications()
+		})
 
-		expect(postHrefs().filter((href) => href.includes('/posts?per_page='))).toStrictEqual([
+		expect(fetchedByRefresh).toStrictEqual([
 			expect.stringContaining('/posts?per_page=100&page=1&_fields='),
 		])
 		await waitForQueriesToSettle(queryClient)
@@ -482,8 +398,7 @@ describe('FrontPageScreen', () => {
 
 	// The end row appears the moment a refresh cuts the list to one page, and a fetch of the
 	// next page would cancel the refresh.
-	test('pull-to-refresh on Issues brings in the fresh first page', async () => {
-		saveChoice('Issues')
+	test('pull-to-refresh brings in the fresh first page', async () => {
 		let pages = [0, 1, 2].map((n) =>
 			parseLightPosts(springPosts.slice(n * 100, n * 100 + 100), categories),
 		)
@@ -498,7 +413,7 @@ describe('FrontPageScreen', () => {
 			if (href.includes('/media')) return []
 			let page = Number(/[?&]page=(\d+)&_fields/u.exec(href)?.[1])
 			if (page === 1) return new Promise((resolve) => (answerFirst = () => resolve(fresh)))
-			return springPosts.slice((page - 1) * 100, page * 100)
+			return page ? springPosts.slice((page - 1) * 100, page * 100) : []
 		})
 		await renderScreen()
 
@@ -516,11 +431,12 @@ describe('FrontPageScreen', () => {
 		})
 		await waitForQueriesToSettle(queryClient)
 
-		expect(screen.getByText('A fresh headline')).toBeTruthy()
+		let [firstPage] = queryClient.getQueryData<{pages: LightPost[][]}>(messKeys.issues)?.pages ?? []
+		expect(firstPage?.[0]?.title).toBe('A fresh headline')
 	})
 
-	test('pull-to-refresh on a section fetches that section, and nothing else', async () => {
-		saveChoice('News')
+	test('pull-to-refresh on a narrowed Latest fetches that section, and nothing else', async () => {
+		saveChoice('Latest:News')
 		seedTop()
 		queryClient.setQueryData(messKeys.categories, categories)
 		queryClient.setQueryData(messKeys.category(NEWS), [GRANT])

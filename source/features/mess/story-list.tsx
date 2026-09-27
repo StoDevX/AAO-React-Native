@@ -66,12 +66,20 @@ function StoryRow({story, onPress}: {story: MessStory; onPress: () => void}): Re
 	)
 }
 
-/**
- * A section's or column's newest stories, a row each, opening in the reader; returned side by
- * side to land in the page's column.
- */
-export function CategoryStories({categoryId}: {categoryId: number}): React.ReactNode {
+/** Stories as rows, each opening in the reader; returned side by side to land in the page's column. */
+export function StoryRows({stories}: {stories: MessStory[]}): React.ReactNode {
 	let open = useOpenStory()
+	if (stories.length === 0) return <Text modifiers={EMPTY}>No stories yet</Text>
+	return stories.map((story) => (
+		<VStack alignment="leading" key={story.id} spacing={10}>
+			<StoryRow onPress={() => open(story)} story={story} />
+			<Divider />
+		</VStack>
+	))
+}
+
+/** A section's or column's newest stories, a row each. */
+export function CategoryStories({categoryId}: {categoryId: number}): React.ReactNode {
 	let stories = useQuery(messCategoryOptions(categoryId))
 	if (stories.data === undefined) {
 		return stories.isError ? (
@@ -80,11 +88,5 @@ export function CategoryStories({categoryId}: {categoryId: number}): React.React
 			<PageLoading paused={stories.fetchStatus === 'paused'} />
 		)
 	}
-	if (stories.data.length === 0) return <Text modifiers={EMPTY}>No stories yet</Text>
-	return stories.data.map((story) => (
-		<VStack alignment="leading" key={story.id} spacing={10}>
-			<StoryRow onPress={() => open(story)} story={story} />
-			<Divider />
-		</VStack>
-	))
+	return <StoryRows stories={stories.data} />
 }

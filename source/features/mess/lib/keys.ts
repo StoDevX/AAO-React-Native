@@ -13,15 +13,17 @@ export const messKeys = {
 	profile: (staffId: number) => ['mess', 'profile', staffId] as const,
 	categories: ['mess', 'categories'] as const,
 	story: (id: number) => ['mess', 'story', id] as const,
+	/** A story's words alone, for a grid tile with no photo */
+	leadText: (id: number) => ['mess', 'lead-text', id] as const,
 	category: (categoryId: number) => ['mess', 'category', categoryId] as const,
 	series: (storyId: number) => ['mess', 'series', storyId] as const,
 	playlistPage: (storyId: number) => ['mess', 'playlist-page', storyId] as const,
 	issues: ['mess', 'issues'] as const,
 	anyIssue: ANY_ISSUE,
 	/**
-	 * One issue's stories, by the range WordPress fetches them with and how many the issue list
-	 * counts, so a story added to the newest issue, whose range has no end, fetches it again
+	 * One issue's stories, by the issue's name and the ids it is fetched by, so a story joining
+	 * or leaving the issue fetches it again
 	 */
-	issue: (issue: Pick<MessIssue, 'after' | 'before' | 'count'>) =>
-		[...ANY_ISSUE, issue.after, issue.before, issue.count] as const,
+	issue: (issue: Pick<MessIssue, 'key' | 'storyIds'>) =>
+		[...ANY_ISSUE, issue.key, issue.storyIds] as const,
 }

@@ -1,11 +1,24 @@
 import XCTest
 
 class ModuleNewsTests: UITestCase {
-	/// Reads live data: the newest issue has to have a story besides its lead.
-	func testOlafMessengerTopShowsALeadAndAShelf() throws {
+	/// Reads live data: the paper has to have published at least two issues.
+	func testOlafMessengerOpensOnTheIssueGrid() throws {
 		MessFrontPage(app: app)
 			.navigate()
-			.verifyTopShowsALeadAndAShelf()
+			.verifyByIssueShowsTheGrid()
+	}
+
+	func testOlafMessengerLatestOffersItsSections() throws {
+		MessFrontPage(app: app)
+			.navigate()
+			.verifyLatestListsStoriesWithSections()
+	}
+
+	/// Reads live data: the paper has to have a News section.
+	func testOlafMessengerLatestNarrowsToASection() throws {
+		MessFrontPage(app: app)
+			.navigate()
+			.filterLatest(to: TestIdentifiers.News.newsSection)
 	}
 
 	func testStOlafNewsIsReachableFromHomescreen() throws {
@@ -69,10 +82,18 @@ class ModuleNewsTests: UITestCase {
 	///
 	/// The app is relaunched at AX5 before the column is opened.
 	func testHoroscopesScrollToASignPickedFromTheLastRow() throws {
-		relaunch(atContentSizeCategory: TestIdentifiers.LaunchArguments.accessibilityExtraExtraExtraLarge)
+		// Latest is narrowed to Variety at the usual text size and kept across the relaunch: at the
+		// largest size the section menu scrolls to its chosen row as it opens, and XCUITest reads the
+		// rows' frames from before that scroll, so a tap there lands on the wrong section.
 		MessFrontPage(app: app)
 			.navigate()
-			.openColumn(TestIdentifiers.News.horoscopesColumn, in: TestIdentifiers.News.varietySection)
+			.filterLatest(to: TestIdentifiers.News.varietySection)
+		relaunchKeepingState(
+			adding: TestIdentifiers.LaunchArguments.contentSizeCategory(
+				TestIdentifiers.LaunchArguments.accessibilityExtraExtraExtraLarge))
+		MessFrontPage(app: app)
+			.navigate()
+			.openColumn(TestIdentifiers.News.horoscopesColumn, inShown: TestIdentifiers.News.varietySection)
 			.openFirstStory()
 			.scrollToSignRow(TestIdentifiers.News.pisces)
 			.pickSignFromList(TestIdentifiers.News.pisces)

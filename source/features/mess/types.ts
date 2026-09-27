@@ -64,21 +64,27 @@ export type LightPost = {
 	photoUrl: string | null
 }
 
-/** One issue of the paper: a day's batch of posts, with the strays that joined it. */
+/** One issue of the paper: a week's posts, or a week's special edition, with the strays that joined it. */
 export type MessIssue = {
+	/**
+	 * Names the issue uniquely: `week:` or `special:`, and its week's Monday. A week can hold both a
+	 * paper and a special edition, and an edition's day can change as more of its posts go up, so
+	 * neither the week nor the day alone names it.
+	 */
+	key: string
 	/** The issue's day, as YYYY-MM-DD in the paper's time zone */
 	day: string
-	/** The moment before the issue's day, for WordPress's `after`, which leaves out the moment itself */
-	after: string
-	/** The next issue's day, for WordPress's `before`; null for the newest issue, which runs to now */
-	before: string | null
 	/** How many posts it holds, strays included */
 	count: number
+	/** Its posts' ids, newest first, strays included, each once */
+	storyIds: number[]
 	/** The lead story, chosen from the light fields */
 	leadId: number
 	leadTitle: string
 	/** The lead's photo's address; null when it has none, or it was not found */
 	leadPhoto: string | null
+	/** Whether the lead has a photo, whether or not its address was found */
+	leadHasPhoto: boolean
 	isSpecial: boolean
 }
 

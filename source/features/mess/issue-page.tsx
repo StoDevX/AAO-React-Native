@@ -27,7 +27,7 @@ import {cardKicker, sectionCredit} from './lib/byline'
 import {TAP_TARGET} from './lib/glyph-grid'
 import {datelineText} from './lib/issues'
 import {leadStory, shelvesOf, type Shelf} from './lib/shelves'
-import {Dateline, Masthead} from './masthead'
+import {Dateline} from './masthead'
 import {PageLoading, PageNotice} from './page-notice'
 import {faded, ink, messRed, wash} from './palette'
 import {messIssueOptions} from './query'
@@ -88,13 +88,9 @@ const TEXT_CARD_HEADLINE = [
 type IssuePageProps = {
 	issue: MessIssue
 	columnWidth: number
-	/** Shows a section's chip on the front page, for a shelf's "All ›" */
+	/** Shows a section in Latest on the front page, for a shelf's "All ›" */
 	onShowSection: (section: string) => void
-	/** Whether the page opens under the masthead, as Top does, or with its dateline alone */
-	showMasthead: boolean
-	/** Drawn above the dateline, under the masthead: Top's banner for a newer special edition */
-	banner?: React.ReactNode
-	/** Whether its stories are saved for the next launch, as Top's are */
+	/** Whether its stories are saved for the next launch, as the front page's top tile's are */
 	persist?: boolean
 }
 
@@ -103,19 +99,13 @@ export function IssuePage({
 	issue,
 	columnWidth,
 	onShowSection,
-	showMasthead,
-	banner,
 	persist = false,
 }: IssuePageProps): React.ReactNode {
 	let stories = useQuery(messIssueOptions(issue, {persist}))
 	let dateline = datelineText(issue)
 	return (
 		<>
-			{showMasthead ? (
-				<Masthead banner={banner} dateline={dateline} />
-			) : (
-				<Dateline text={dateline} />
-			)}
+			<Dateline text={dateline} />
 			{stories.data ? (
 				<IssueStories
 					columnWidth={columnWidth}
@@ -135,7 +125,7 @@ export function IssuePage({
 type IssueStoriesProps = {
 	/** Newest first, as WordPress lists them */
 	stories: MessStory[]
-	/** The lead the issue list named, so the page agrees with its row and banner */
+	/** The lead the issue list named, so the page agrees with its tile */
 	leadId?: number
 	columnWidth: number
 	onShowSection: (section: string) => void

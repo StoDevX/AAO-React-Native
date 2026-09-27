@@ -4,7 +4,6 @@ import {HStack, ScrollView} from '@expo/ui/swift-ui'
 import {useQuery} from '@tanstack/react-query'
 import {Chip} from './chip'
 import {filterTree} from './lib/filter'
-import {Masthead} from './masthead'
 import {PageLoading, PageMessage, PageNotice} from './page-notice'
 import {messCategoriesOptions} from './query'
 import {CategoryStories} from './story-list'
@@ -35,10 +34,10 @@ function ColumnChips({columns}: {columns: MessCategory[]}): React.ReactNode {
 }
 
 /**
- * A section's chip: the masthead dated with the section's name, its columns as a row of chips,
- * each opening that column's list on a page of its own, then the section's newest stories.
+ * A section's columns as a row of chips, each opening that column's list on a page of its own,
+ * then the section's newest stories.
  */
-export function SectionPage({name}: {name: string}): React.ReactNode {
+export function SectionStories({name}: {name: string}): React.ReactNode {
 	let categories = useQuery(messCategoriesOptions)
 	let branch = React.useMemo(
 		() =>
@@ -57,7 +56,7 @@ export function SectionPage({name}: {name: string}): React.ReactNode {
 			</>
 		)
 	} else if (categories.data) {
-		// A saved chip can name a section WordPress has since renamed or dropped.
+		// A saved filter can name a section WordPress has since renamed or dropped.
 		body = <PageMessage text={`The Mess has no ${name} section right now.`} />
 	} else if (categories.isError) {
 		body = <PageNotice error={categories.error} onRetry={() => categories.refetch()} />
@@ -65,10 +64,5 @@ export function SectionPage({name}: {name: string}): React.ReactNode {
 		body = <PageLoading paused={categories.fetchStatus === 'paused'} />
 	}
 
-	return (
-		<>
-			<Masthead dateline={name} />
-			{body}
-		</>
-	)
+	return body
 }

@@ -8,6 +8,7 @@ import {
 import {infiniteQueryOptions, queryOptions} from '@tanstack/react-query'
 import {queryClient} from '../../init/tanstack-query'
 import {parseMessCategories, parseMessPosts} from './lib/posts'
+import {bodyParagraphs} from './lib/issue-grid'
 import {ISSUE_PAGE_SIZE, parseLightPosts, parseMediaUrls, withPhotoUrls} from './lib/issues'
 import {latestProfile, parseStaffProfiles} from './lib/profiles'
 import {seriesKey, seriesName} from './lib/series'
@@ -116,6 +117,30 @@ export const messStoryOptions = (id: number) =>
 		},
 	})
 
+/**
+ * A story's words alone, for the columns under a grid tile's fold: its body and nothing else,
+ * a few kilobytes. Fetched again each launch rather than saved, since every photo-less tile a
+ * reader scrolls past would otherwise add one to the saved cache.
+ */
+// oxlint-disable-next-line typescript/explicit-module-boundary-types
+export const messLeadTextOptions = (id: number) =>
+	queryOptions({
+		queryKey: messKeys.leadText(id),
+		// A story's words rarely change once it runs.
+		staleTime: ONE_DAY_IN_MS,
+		meta: {persist: false},
+		queryFn: async ({signal}): Promise<string[]> => {
+			// Assumes the resolved feed href is an absolute WordPress URL.
+			let origin = originOf(await feedHref())
+			let body = await fetchSourceBody(
+				`${origin}/wp-json/wp/v2/posts/${id}?_fields=content`,
+				signal,
+				'Olaf Messenger story text',
+			)
+			return bodyParagraphs(body)
+		},
+	})
+
 /** A category's newest stories, such as every Variety column's. */
 // oxlint-disable-next-line typescript/explicit-module-boundary-types
 export const messCategoryOptions = (categoryId: number) =>
@@ -171,12 +196,12 @@ export const messIssuesOptions = infiniteQueryOptions({
 })
 
 /**
- * One issue's stories: every post from its day up to the next issue's, parsed like the feed.
- * Only Top's are saved for the next launch; any other issue is fetched again when opened.
+ * One issue's stories, asked for by their ids and parsed like the feed. Only the newest issue's,
+ * the front page's top tile, are saved for the next launch; any other is fetched again when opened.
  */
 /* oxlint-disable typescript/explicit-module-boundary-types -- queryOptions' own return type */
 export const messIssueOptions = (
-	issue: Pick<MessIssue, 'after' | 'before' | 'count'>,
+	issue: Pick<MessIssue, 'key' | 'storyIds'>,
 	{persist = false}: {persist?: boolean} = {},
 ) =>
 	queryOptions<MessStory[]>({
@@ -184,18 +209,35 @@ export const messIssueOptions = (
 		meta: {persist},
 		// A published issue rarely changes.
 		staleTime: ONE_DAY_IN_MS,
-		// A story joining the issue changes its count, and so its key; the stories already on
-		// screen stay while the fuller set loads. Another issue's stories never stand in.
+		// A story joining or leaving the issue changes its key; the stories already on screen stay
+		// while the new set loads. Another issue's stories never stand in.
 		placeholderData: (previous, previousQuery) =>
-			previousQuery?.queryKey[2] === issue.after && previousQuery.queryKey[3] === issue.before
-				? previous
-				: undefined,
-		queryFn: ({signal}) => {
-			let range =
-				issue.before === null
-					? `after=${issue.after}`
-					: `after=${issue.after}&before=${issue.before}`
-			return storiesAt(`posts?${range}&per_page=100&_embed=true`, signal, 'Olaf Messenger issue')
+			previousQuery?.queryKey[2] === issue.key ? previous : undefined,
+		// By id rather than by date: a week's range can take in a special edition, which is an issue
+		// of its own. WordPress answers at most a page of ids at once, and an issue that runs over a
+		// quiet summer can hold more, so they are asked for a page at a time.
+		queryFn: async ({signal, client}) => {
+			let batches = []
+			for (let i = 0; i < issue.storyIds.length; i += ISSUE_PAGE_SIZE) {
+				batches.push(issue.storyIds.slice(i, i + ISSUE_PAGE_SIZE))
+			}
+			let stories = await Promise.all(
+				batches.map((ids) =>
+					storiesAt(
+						`posts?include=${ids.join(',')}&per_page=${ISSUE_PAGE_SIZE}&_embed=true`,
+						signal,
+						'Olaf Messenger issue',
+					),
+				),
+			)
+			// The issue's ids change as its paper goes up, and each earlier set is a query of its own,
+			// saved for the next launch with every story's body. The current set replaces them.
+			let current = JSON.stringify(issue.storyIds)
+			client.removeQueries({
+				queryKey: [...messKeys.anyIssue, issue.key],
+				predicate: (query) => JSON.stringify(query.queryKey[3]) !== current,
+			})
+			return stories.flat()
 		},
 	})
 /* oxlint-enable typescript/explicit-module-boundary-types */

@@ -40,13 +40,14 @@ const mockManifest = fetchManifest as jest.Mock<() => Promise<Jrd>>
 const mockBody = fetchSourceBody as jest.Mock<(href: string) => Promise<unknown>>
 
 const ISSUE: MessIssue = {
+	key: 'week:2026-04-27',
 	day: '2026-04-29',
-	after: '2026-04-28T23:59:59',
-	before: null,
 	count: 5,
+	storyIds: [5, 4, 3, 2, 1],
 	leadId: 5,
 	leadTitle: 'Student workers deliver petition',
 	leadPhoto: 'https://olafmessenger.com/petition.jpg',
+	leadHasPhoto: true,
 	isSpecial: false,
 }
 const PHOTO = {url: 'https://olafmessenger.com/petition.jpg', width: 1200, height: 800, caption: ''}
@@ -111,21 +112,16 @@ afterEach(() => {
 	jest.clearAllMocks()
 })
 
-function renderIssue(issue: MessIssue = ISSUE, showMasthead = true) {
+function renderIssue(issue: MessIssue = ISSUE) {
 	return render(
 		<QueryClientProvider client={queryClient}>
-			<IssuePage
-				columnWidth={350}
-				issue={issue}
-				onShowSection={onShowSection}
-				showMasthead={showMasthead}
-			/>
+			<IssuePage columnWidth={350} issue={issue} onShowSection={onShowSection} />
 		</QueryClientProvider>,
 	)
 }
 
 describe('IssuePage', () => {
-	test('lays an issue out under the masthead: its dateline, its lead, then a shelf per section', async () => {
+	test('lays an issue out: its dateline, its lead, then a shelf per section', async () => {
 		queryClient.setQueryData(messKeys.issue(ISSUE), STORIES)
 		await renderIssue()
 
@@ -143,7 +139,7 @@ describe('IssuePage', () => {
 		expect(more).toBeGreaterThan(opinions)
 	})
 
-	// The Issues row and Top's banner name the lead from the light fields; the page must agree
+	// The issue's tile names the lead from the light fields; the page must agree
 	// even when the full stories would pick another, as when a lead's photo fails to embed.
 	test('leads with the story the issue list named, and leaves it off its shelf', async () => {
 		let named = {...ISSUE, leadId: 4, leadTitle: 'Hunger Free Campus grant'}
@@ -209,7 +205,9 @@ describe('IssuePage', () => {
 				? Promise.resolve(categoriesJson)
 				: Promise.reject(new Error('offline')),
 		)
-		await renderIssue()
+		// The issue holds the posts the fetch answers with, as the issue list would say.
+		let served = {...ISSUE, storyIds: posts.map((post) => post.id)}
+		await renderIssue(served)
 
 		expect(await screen.findByRole('button', {name: 'Try Again'})).toBeTruthy()
 
@@ -219,7 +217,7 @@ describe('IssuePage', () => {
 		await act(async () => {
 			fireEvent.press(screen.getByRole('button', {name: 'Try Again'}))
 			// `find` matches the whole key, so it names this issue's range exactly.
-			await queryClient.getQueryCache().find({queryKey: messKeys.issue(ISSUE)})?.promise
+			await queryClient.getQueryCache().find({queryKey: messKeys.issue(served)})?.promise
 			await flushQueryNotifications()
 		})
 
@@ -236,12 +234,5 @@ describe('IssuePage', () => {
 		await renderIssue()
 
 		expect(screen.getByText('No connection. This page loads when you’re back online.')).toBeTruthy()
-	})
-
-	test('opens with its dateline alone when it has a page of its own', async () => {
-		queryClient.setQueryData(messKeys.issue(ISSUE), STORIES)
-		await renderIssue(ISSUE, false)
-
-		expect(screen.getByText('April 29, 2026 · 5 stories')).toBeTruthy()
 	})
 })

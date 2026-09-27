@@ -41,8 +41,12 @@ const mockManifest = fetchManifest as jest.Mock<() => Promise<Jrd>>
 const mockBody = fetchSourceBody as jest.Mock<typeof fetchSourceBody>
 
 function run<T>(options: {queryFn?: unknown}): Promise<T> {
-	let queryFn = options.queryFn as (context: {signal: AbortSignal; queryKey: unknown}) => Promise<T>
-	return queryFn({signal: new AbortController().signal, queryKey: []})
+	let queryFn = options.queryFn as (context: {
+		signal: AbortSignal
+		queryKey: unknown
+		client: QueryClient
+	}) => Promise<T>
+	return queryFn({signal: new AbortController().signal, queryKey: [], client: new QueryClient()})
 }
 
 /** Runs an infinite query's page fetch for one page. */
@@ -458,38 +462,76 @@ describe('messIssuesOptions', () => {
 })
 
 describe('messIssueOptions', () => {
-	test("fetches an older issue's stories, from its day to the next issue's", async () => {
+	// Asked for by id, not by date: an issue's range can run over a quiet summer and past a
+	// special edition, which is an issue of its own.
+	test("fetches an issue's stories by their ids", async () => {
 		serve(() => posts)
 
 		let stories = await run<MessStory[]>(
-			messIssueOptions({after: '2026-03-24T23:59:59', before: '2026-04-29T00:00:00', count: 5}),
+			messIssueOptions({key: 'week:2026-03-23', storyIds: [36859, 36911, 36885, 36904, 36843]}),
 		)
 
 		expect(stories.map((s) => s.id)).toStrictEqual([36859, 36911, 36885, 36904, 36843])
 		expect(fetchedHrefs()).toContain(
-			'https://olafmessenger.com/wp-json/wp/v2/posts?after=2026-03-24T23:59:59&before=2026-04-29T00:00:00&per_page=100&_embed=true',
+			'https://olafmessenger.com/wp-json/wp/v2/posts?include=36859,36911,36885,36904,36843&per_page=100&_embed=true',
 		)
 	})
 
-	test('runs the newest issue to now', async () => {
+	test('asks for an issue of more than 100 stories 100 at a time, keeping every one', async () => {
+		let storyIds = Array.from({length: 150}, (_, i) => 1000 - i)
 		serve(() => posts)
 
-		await run(messIssueOptions({after: '2026-05-11T23:59:59', before: null, count: 11}))
+		let stories = await run<MessStory[]>(messIssueOptions({key: 'week:2025-06-02', storyIds}))
 
-		expect(fetchedHrefs()).toContain(
-			'https://olafmessenger.com/wp-json/wp/v2/posts?after=2026-05-11T23:59:59&per_page=100&_embed=true',
+		let issueHrefs = fetchedHrefs().filter((href) => href.includes('posts?include='))
+		expect(issueHrefs).toStrictEqual([
+			`https://olafmessenger.com/wp-json/wp/v2/posts?include=${storyIds.slice(0, 100).join(',')}&per_page=100&_embed=true`,
+			`https://olafmessenger.com/wp-json/wp/v2/posts?include=${storyIds.slice(100).join(',')}&per_page=100&_embed=true`,
+		])
+		// Each batch is answered with the same five fixture posts here, so both batches' arrive.
+		expect(stories).toHaveLength(10)
+	})
+
+	// The newest issue's ids change as its paper goes up, and each set is a query saved for the next
+	// launch with every story's body.
+	test("drops an issue's older sets of stories once its current set loads, and no other issue's", async () => {
+		serve(() => posts)
+		let client = new QueryClient()
+		let older = messKeys.issue({key: 'week:2026-03-23', storyIds: [36911, 36885]})
+		let other = messKeys.issue({key: 'week:2026-03-16', storyIds: [1, 2]})
+		client.setQueryData(older, [])
+		client.setQueryData(other, [])
+
+		await client.query(
+			messIssueOptions({key: 'week:2026-03-23', storyIds: [36859, 36911, 36885, 36904, 36843]}),
 		)
+
+		expect(client.getQueryData(older)).toBeUndefined()
+		expect(client.getQueryData(other)).toStrictEqual([])
+		client.clear()
 	})
 
 	test("saves an issue's stories for the next launch only when asked, as Top's are", () => {
-		let issue = {after: '2026-04-28T23:59:59', before: null, count: 5}
+		let issue = {key: 'week:2026-04-27', storyIds: [5, 4, 3, 2, 1]}
 		expect(messIssueOptions(issue).meta).toStrictEqual({persist: false})
 		expect(messIssueOptions(issue, {persist: true}).meta).toStrictEqual({persist: true})
 	})
 
-	test('keys an issue by its range and story count, and keeps it for a day', () => {
-		let options = messIssueOptions({after: '2026-05-11T23:59:59', before: null, count: 11})
-		expect(options.queryKey).toStrictEqual(['mess', 'issue', '2026-05-11T23:59:59', null, 11])
+	test('keys an issue by its name and its stories, and keeps it for a day', () => {
+		let options = messIssueOptions({key: 'week:2026-05-11', storyIds: [11, 10, 9]})
+		expect(options.queryKey).toStrictEqual(['mess', 'issue', 'week:2026-05-11', [11, 10, 9]])
 		expect(options.staleTime).toBe(24 * 60 * 60 * 1000)
+	})
+
+	test("shows an issue's stories while its changed set loads, and never another issue's", () => {
+		let placeholder = messIssueOptions({key: 'week:2026-05-11', storyIds: [12, 11, 10]})
+			.placeholderData as unknown as (previous: unknown, query: {queryKey: unknown[]}) => unknown
+		let shown = ['stories']
+		expect(placeholder(shown, {queryKey: ['mess', 'issue', 'week:2026-05-11', [11, 10]]})).toBe(
+			shown,
+		)
+		expect(
+			placeholder(shown, {queryKey: ['mess', 'issue', 'week:2026-05-04', [9, 8]]}),
+		).toBeUndefined()
 	})
 })

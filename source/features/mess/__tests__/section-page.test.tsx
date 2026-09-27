@@ -8,7 +8,7 @@ import categoriesJson from './fixtures/categories.json'
 import {queryClient as appQueryClient} from '../../../init/tanstack-query'
 import {messKeys} from '../lib/keys'
 import {parseMessCategories} from '../lib/posts'
-import {SectionPage} from '../section-page'
+import {SectionStories} from '../section-page'
 import type {MessStory} from '../types'
 
 jest.mock('@expo/ui/swift-ui', () => {
@@ -71,17 +71,16 @@ afterEach(() => {
 function renderSection(name = 'News') {
 	return render(
 		<QueryClientProvider client={queryClient}>
-			<SectionPage name={name} />
+			<SectionStories name={name} />
 		</QueryClientProvider>,
 	)
 }
 
-describe('SectionPage', () => {
+describe('SectionStories', () => {
 	test("offers a section's columns A–Z as chips, above its newest stories", async () => {
 		queryClient.setQueryData(messKeys.category(NEWS), [GRANT])
 		await renderSection()
 
-		expect(screen.getByText('News')).toBeTruthy()
 		expect(
 			screen.getAllByRole('button').map((button) => button.props.accessibilityLabel),
 		).toStrictEqual([

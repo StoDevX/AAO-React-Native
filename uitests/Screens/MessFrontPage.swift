@@ -1,7 +1,8 @@
 import XCTest
 
-/// The Olaf Messenger's front page: the chips pinned under the navigation bar, Top's lead and
-/// shelves, the Issues list, and a section's stories and columns.
+/// The Olaf Messenger's front page: a navigation bar with no title and a view menu at its right,
+/// over the paper's masthead; then the grid of issues with the newest on top, or Latest's stories,
+/// which the menu narrows to one section and its columns.
 struct MessFrontPage: Screen {
 	let app: XCUIApplication
 
@@ -10,94 +11,130 @@ struct MessFrontPage: Screen {
 		navigateFromHome(to: TestIdentifiers.Buttons.olafMessenger)
 	}
 
-	/// Top leads with a story over at least one shelf of cards, under chips a reader can tap.
+	/// By Issue leads with the newest issue as the top tile, over older issues as tiles, under the
+	/// paper's masthead.
 	@discardableResult
-	func verifyTopShowsALeadAndAShelf() -> Self {
-		XCTAssertTrue(lead.waitForExistence(timeout: 30), "Top should lead with a story")
-		let card = app.buttons.matching(identifier: TestIdentifiers.News.storyCard).firstMatch
-		XCTAssertTrue(card.waitForExistence(timeout: 30), "Top should show at least one shelf of stories")
+	func verifyByIssueShowsTheGrid() -> Self {
+		XCTAssertTrue(topTile.waitForExistence(timeout: 30), "By Issue should lead with the newest issue")
+		XCTAssertTrue(tiles.firstMatch.waitForExistence(timeout: 30), "By Issue should show older issues as tiles")
 		XCTAssertTrue(
-			chip(TestIdentifiers.News.topChip).waitForHittable(),
-			"the chips should sit below the navigation bar, where a tap reaches them")
-		capture("The Messenger's Top page")
+			viewMenu.waitForLabel(viewMenuLabel(TestIdentifiers.News.byIssue), timeout: 10),
+			"By Issue should be the view chosen (the menu reads \(viewMenu.label))")
+		capture("The Messenger's By Issue grid")
 		verifyPaperNamedOnce()
 		return self
 	}
 
-	/// The paper's name sits in the navigation bar, and the page under it does not repeat it.
+	/// The navigation bar has no title, and the paper's name heads the page as its masthead, once
+	/// outside the issues' own nameplates.
 	@discardableResult
 	func verifyPaperNamedOnce() -> Self {
 		let name = NSPredicate(format: "label == %@", TestIdentifiers.News.paperName)
 		XCTAssertTrue(
-			app.navigationBars.staticTexts.matching(name).firstMatch.waitForExistence(timeout: 10),
-			"the navigation bar should name the paper")
-		// The bar lists its own heading for the title and the text drawn inside it, so the name
-		// is counted by where it sits rather than by how many times it appears.
-		let bar = app.navigationBars.firstMatch.frame
-		for element in app.staticTexts.matching(name).allElementsBoundByIndex {
-			XCTAssertTrue(
-				bar.contains(element.frame),
-				"the paper's name should sit in the navigation bar, not again on the page (found at \(element.frame))")
-		}
+			app.staticTexts.matching(name).firstMatch.waitForExistence(timeout: 10),
+			"the page should carry the paper's masthead")
+		XCTAssertEqual(
+			app.navigationBars.staticTexts.count, 0,
+			"the navigation bar should have no title; the masthead names the paper")
+		// Each tile prints the name as its nameplate; VoiceOver reads a tile by its label alone, but
+		// XCUITest still lists the text inside it, so the name is counted outside the tiles.
+		let nameplates = (tiles.allElementsBoundByIndex + [topTile]).map(\.frame)
+		let outsideTiles = app.staticTexts.matching(name).allElementsBoundByIndex
+			.filter { element in !nameplates.contains(where: { $0.contains(element.frame) }) }
+		XCTAssertEqual(outsideTiles.count, 1, "the page should name the paper once, in its masthead")
 		return self
 	}
 
-	/// Choose a chip with one tap and wait for it to read as chosen. A chip that reads as
-	/// selected means the page's JavaScript has drawn, so a tap then reaches it.
+	/// Pick a view from the menu at the top right, unless it shows already, and wait for the menu
+	/// to name it.
 	@discardableResult
-	func choose(chip label: String) -> Self {
-		let chosen = chips.matching(NSPredicate(format: "isSelected == true")).firstMatch
-		XCTAssertTrue(chosen.waitForExistence(timeout: 30), "the front page should show a chosen chip")
-		let button = chip(label)
-		scrollRow(chips, toReveal: button)
-		XCTAssertTrue(button.waitForHittable(timeout: 10), "the \(label) chip should be ready to tap")
-		button.tap()
-		XCTAssertTrue(button.waitForSelected(true), "tapping \(label) should choose it")
+	func choose(view label: String) -> Self {
+		XCTAssertTrue(viewMenu.waitForHittable(timeout: 30), "the view menu should be ready to tap")
+		if viewMenu.label == viewMenuLabel(label) { return self }
+		pickFromViewMenu(label)
+		XCTAssertTrue(
+			viewMenu.waitForLabel(viewMenuLabel(label), timeout: 10),
+			"picking \(label) should show it (the menu reads \(viewMenu.label))")
 		return self
 	}
 
-	/// Scroll the Issues list until it shows an issue from `year`, which the list reaches only by
-	/// loading page after page as its end comes into view.
+	/// Latest lists stories, and its menu offers the paper's sections.
+	@discardableResult
+	func verifyLatestListsStoriesWithSections() -> Self {
+		choose(view: TestIdentifiers.News.latest)
+		XCTAssertTrue(storyRows.firstMatch.waitForExistence(timeout: 30), "Latest should list stories")
+		viewMenu.tap()
+		XCTAssertTrue(
+			waitForOnScreen(menuItem(TestIdentifiers.News.newsSection), timeout: 10),
+			"Latest's menu should offer the paper's sections")
+		capture("The Messenger's Latest stories, with its menu open")
+		closeMenu()
+		return self
+	}
+
+	/// Narrow Latest to a section from the view menu, and wait for the dateline to name the section.
+	@discardableResult
+	func filterLatest(to section: String) -> Self {
+		choose(view: TestIdentifiers.News.latest)
+		pickFromViewMenu(section)
+		let dateline = app.staticTexts.matching(identifier: TestIdentifiers.News.dateline).firstMatch
+		XCTAssertTrue(
+			dateline.waitForLabel(section, timeout: 30),
+			"Latest should now show \(section) (its dateline reads \(dateline.label))")
+		capture("Latest narrowed to \(section)")
+		return self
+	}
+
+	/// Scroll the grid until it shows an issue from `year`, which it reaches only by loading page
+	/// after page as its end comes into view.
 	@discardableResult
 	func scrollIssues(untilAnIssueFrom year: String) -> Self {
-		choose(chip: TestIdentifiers.News.issuesChip)
-		let rows = app.buttons.matching(identifier: TestIdentifiers.News.issueRow)
-		XCTAssertTrue(rows.firstMatch.waitForExistence(timeout: 30), "Issues should list the issues")
-		let older = rows.matching(NSPredicate(format: "label CONTAINS %@", ", \(year),")).firstMatch
+		XCTAssertTrue(tiles.firstMatch.waitForExistence(timeout: 30), "By Issue should show its tiles")
+		let older = tiles.matching(NSPredicate(format: "label CONTAINS %@", ", \(year),")).firstMatch
 		let top = app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.3))
 		let bottom = app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.85))
-		for _ in 0..<40 where !older.exists {
+		for _ in 0..<60 where !older.exists {
 			bottom.press(forDuration: 0.05, thenDragTo: top)
 		}
-		capture("The Issues list, paged back to \(year)")
+		capture("The issue grid, paged back to \(year)")
 		XCTAssertTrue(
 			older.waitForExistence(timeout: 30),
-			"scrolling Issues should keep loading older pages until it reaches \(year)")
+			"scrolling should keep loading older issues until it reaches \(year)")
 		return self
 	}
 
-	/// Open the Issues list's second issue and wait for its own page to lead with a story.
+	/// Open the first tile under the top one and wait for its issue's page to lead with a story.
 	@discardableResult
 	func openSecondIssue() -> Self {
-		choose(chip: TestIdentifiers.News.issuesChip)
-		let second = app.buttons.matching(identifier: TestIdentifiers.News.issueRow).element(boundBy: 1)
-		XCTAssertTrue(second.waitForExistence(timeout: 30), "Issues should list at least two issues")
-		capture("The Messenger's Issues list")
-		XCTAssertTrue(second.waitForHittable(), "the second issue should be ready to tap")
+		let second = tiles.firstMatch
+		XCTAssertTrue(second.waitForExistence(timeout: 30), "By Issue should show a tile under the top one")
+		XCTAssertTrue(second.waitForHittable(), "the tile should be ready to tap")
 		second.tap()
 		XCTAssertTrue(
-			chips.firstMatch.waitForNonExistence(timeout: 30),
-			"tapping an issue should open it on a page of its own")
+			viewMenu.waitForNonExistence(timeout: 30),
+			"tapping a tile should open its issue on a page of its own")
 		XCTAssertTrue(lead.waitForExistence(timeout: 30), "an opened issue should lead with a story")
 		capture("An older issue of the Messenger")
 		return self
 	}
 
-	/// Choose a section's chip, then open one of its columns from the row of column chips at the
-	/// top of the section, and wait for the column's list.
+	/// Narrow Latest to a section, then open one of its columns from the row of column chips at
+	/// the top, and wait for the column's list.
 	@discardableResult
 	func openColumn(_ column: String, in section: String) -> Self {
-		choose(chip: section)
+		filterLatest(to: section)
+		return openColumn(column, inShown: section)
+	}
+
+	/// Open a column of the section Latest already shows -- one the app remembered from before it
+	/// was relaunched -- from the row of column chips at the top, and wait for the column's list.
+	@discardableResult
+	func openColumn(_ column: String, inShown section: String) -> Self {
+		choose(view: TestIdentifiers.News.latest)
+		let dateline = app.staticTexts.matching(identifier: TestIdentifiers.News.dateline).firstMatch
+		XCTAssertTrue(
+			dateline.waitForLabel(section, timeout: 30),
+			"Latest should still show \(section) (its dateline reads \(dateline.label))")
 		let columns = app.buttons.matching(identifier: TestIdentifiers.News.columnChip)
 		let button = columns.matching(NSPredicate(format: "label == %@", column)).firstMatch
 		XCTAssertTrue(button.waitForExistence(timeout: 30), "\(section) should offer its \(column) column")
@@ -106,16 +143,18 @@ struct MessFrontPage: Screen {
 		capture("\(section) and its columns")
 		button.tap()
 		XCTAssertTrue(
-			chips.firstMatch.waitForNonExistence(timeout: 30),
+			viewMenu.waitForNonExistence(timeout: 30),
 			"tapping a column should open its list on a page of its own")
 		XCTAssertTrue(storyRows.firstMatch.waitForExistence(timeout: 30), "the \(column) list should show its stories")
 		return self
 	}
 
-	/// Open the lead story in the reader.
+	/// Open the newest issue from its tile, then its lead story in the reader.
 	@discardableResult
 	func openLeadStory() -> MessStoryScreen {
-		XCTAssertTrue(lead.waitForHittable(), "the lead story should be ready to tap")
+		XCTAssertTrue(topTile.waitForHittable(), "the newest issue's tile should be ready to tap")
+		topTile.tap()
+		XCTAssertTrue(lead.waitForHittable(), "the newest issue should lead with a story")
 		lead.tap()
 		return MessStoryScreen(app: app)
 	}
@@ -127,6 +166,43 @@ struct MessFrontPage: Screen {
 		XCTAssertTrue(row.waitForHittable(), "a story row should be ready to tap")
 		row.tap()
 		return MessStoryScreen(app: app)
+	}
+
+	/// Open the view menu and tap its item named `label`.
+	private func pickFromViewMenu(_ label: String) {
+		XCTAssertTrue(viewMenu.waitForHittable(timeout: 30), "the view menu should be ready to tap")
+		viewMenu.tap()
+		let item = menuItem(label)
+		XCTAssertTrue(waitForOnScreen(item, timeout: 10), "the view menu should offer \(label)")
+		tapCentre(item)
+		// A menu holding checkmarks can stay open after a pick; close it if it did.
+		if item.exists { closeMenu() }
+	}
+
+	/// Close an open menu with a tap outside it, at the top left of the masthead, where a tap
+	/// opens nothing.
+	private func closeMenu() {
+		app.coordinate(withNormalizedOffset: CGVector(dx: 0.1, dy: 0.2)).tap()
+	}
+
+	/// Wait for `element` to exist with its frame inside the window and holding still. A menu's
+	/// rows move while the menu opens, so a frame read too soon lands a tap on the row next to the
+	/// one meant.
+	private func waitForOnScreen(_ element: XCUIElement, timeout: TimeInterval = 30) -> Bool {
+		guard element.waitForExistence(timeout: timeout) else { return false }
+		var last = CGRect.null
+		let settled = NSPredicate { _, _ in
+			let frame = element.frame
+			defer { last = frame }
+			return !frame.isEmpty && self.app.frame.contains(frame) && frame == last
+		}
+		let expectation = XCTNSPredicateExpectation(predicate: settled, object: nil)
+		return XCTWaiter().wait(for: [expectation], timeout: timeout) == .completed
+	}
+
+	/// Tap the middle of `element`'s frame, for a menu row XCUITest will not call hittable.
+	private func tapCentre(_ element: XCUIElement) {
+		element.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
 	}
 
 	/// Drag a row of chips sideways until `button` is on screen. A row scrolls on its own, and a
@@ -145,12 +221,28 @@ struct MessFrontPage: Screen {
 		}
 	}
 
-	private var chips: XCUIElementQuery {
-		app.buttons.matching(identifier: TestIdentifiers.News.chip)
+	private var topTile: XCUIElement {
+		app.buttons.matching(identifier: TestIdentifiers.News.topTile).firstMatch
 	}
 
-	private func chip(_ label: String) -> XCUIElement {
-		chips.matching(NSPredicate(format: "label == %@", label)).firstMatch
+	private var tiles: XCUIElementQuery {
+		app.buttons.matching(identifier: TestIdentifiers.News.issueTile)
+	}
+
+	/// The glass button at the top right, labelled by the view it shows.
+	private var viewMenu: XCUIElement {
+		app.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", TestIdentifiers.News.viewMenuPrefix)).firstMatch
+	}
+
+	private func viewMenuLabel(_ view: String) -> String {
+		TestIdentifiers.News.viewMenuPrefix + view
+	}
+
+	/// An item of an open menu: anything but the text inside it, which shares its label.
+	private func menuItem(_ label: String) -> XCUIElement {
+		app.descendants(matching: .any)
+			.matching(NSPredicate(format: "label == %@ AND elementType != %d", label, XCUIElement.ElementType.staticText.rawValue))
+			.firstMatch
 	}
 
 	private var lead: XCUIElement {

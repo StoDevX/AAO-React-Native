@@ -1,0 +1,28 @@
+import {MAIN_SECTIONS} from './posts'
+
+/**
+ * The Mess front page's view: issues as a grid, or the latest stories, and the section Latest is
+ * narrowed to. The section is kept while By Issue shows, so Latest comes back as it was left.
+ */
+export type MessView = {mode: 'issues' | 'latest'; section: string | null}
+
+const MODES = {issues: 'Issues', latest: 'Latest'} as const
+
+/** What the news filter store keeps for a view: `Issues` or `Latest`, then `:Section` when narrowed. */
+export function viewKey(view: MessView): string {
+	let mode = MODES[view.mode]
+	return view.section ? `${mode}:${view.section}` : mode
+}
+
+/**
+ * The view a saved key names. Anything else opens By Issue with no section: nothing saved, or a
+ * key an installed copy may still hold that names no view, such as `Top` or a section's name.
+ */
+export function viewOf(saved: string | null): MessView {
+	let [mode, ...rest] = (saved ?? '').split(':')
+	let section = rest.join(':')
+	let known = section === '' ? null : MAIN_SECTIONS.includes(section) ? section : undefined
+	if (mode === MODES.latest && known !== undefined) return {mode: 'latest', section: known}
+	if (mode === MODES.issues && known !== undefined) return {mode: 'issues', section: known}
+	return {mode: 'issues', section: null}
+}
