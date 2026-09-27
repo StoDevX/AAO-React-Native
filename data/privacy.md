@@ -52,15 +52,18 @@ sends Sentry:
   location.
 4. _A random ID made when you install the app_, so we can count devices
   rather than visits. It is not linked to you, and a new one is made if you
-  turn sharing off and on again or reinstall.
+  turn sharing off and on again or reinstall. Crash reports also carry an ID
+  that Sentry's own crash reporter makes for itself; turning sharing off
+  does not reset that one.
 5. _The titles of public campus events you add to your calendar_, sent
   separately and without the random ID, so we can see which events are
   popular.
 
 You can turn all of this off, crash reports included, under Settings, "Share
 anonymous usage and crash data". If you send us a problem report, it goes
-without the random ID; with sharing off, the app offers to send it by email
-instead.
+without the random ID and without the record of what you did in the app
+beforehand; with sharing off, the app offers to send it by email instead.
+Sentry may estimate the city a report came from using your network address.
 
 If you send us suggestions for updates to building hours, we will anonymously add
 them to the app if we determine that they are correct.  We do not currently give
