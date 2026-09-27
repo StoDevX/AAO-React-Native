@@ -540,20 +540,20 @@ struct TestIdentifiers {
 		/// Matches NEWS_ROW_PREFIX in source/features/news/news-row.tsx.
 		static let rowPrefix = "news-row-"
 
-		/// The By Issue / Latest switch's segments, in source/features/mess/front-page-screen.tsx.
+		/// The views the front page's menu offers, and the start of the menu button's label, which
+		/// names the view shown; in source/features/mess/front-page-screen.tsx.
 		static let byIssue = "By Issue"
 		static let latest = "Latest"
+		static let viewMenuPrefix = "View: "
 
 		/// The newest issue's tile and every other issue's, in source/features/mess/issue-grid.tsx.
 		static let topTile = "mess-top-tile"
 		static let issueTile = "mess-issue-tile"
 
-		/// Latest's section filter, in source/features/news/news-picker.tsx.
-		static let sectionFilter = "News filter"
-		/// A section the filter offers, as source/features/mess/lib/posts.ts names it.
+		/// A section the view menu offers, as source/features/mess/lib/posts.ts names it.
 		static let newsSection = "News"
 
-		/// The paper's name, drawn in the navigation bar by source/features/mess/front-page-screen.tsx.
+		/// The paper's name, set as the front page's masthead by source/features/mess/masthead.tsx.
 		static let paperName = "The Olaf Messenger"
 
 		/// A page's dateline, in source/features/mess/masthead.tsx.

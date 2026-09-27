@@ -1,8 +1,8 @@
 import XCTest
 
-/// The Olaf Messenger's front page: the By Issue / Latest switch pinned under the navigation bar,
-/// the grid of issues with the newest on top, and Latest's stories with a filter that narrows them
-/// to one section and its columns.
+/// The Olaf Messenger's front page: a navigation bar with no title and a view menu at its right,
+/// over the paper's masthead; then the grid of issues with the newest on top, or Latest's stories,
+/// which the menu narrows to one section and its columns.
 struct MessFrontPage: Screen {
 	let app: XCUIApplication
 
@@ -11,78 +11,72 @@ struct MessFrontPage: Screen {
 		navigateFromHome(to: TestIdentifiers.Buttons.olafMessenger)
 	}
 
-	/// By Issue leads with the newest issue as the top tile, over older issues as tiles, and keeps
-	/// the section filter for Latest.
+	/// By Issue leads with the newest issue as the top tile, over older issues as tiles, under the
+	/// paper's masthead.
 	@discardableResult
 	func verifyByIssueShowsTheGrid() -> Self {
 		XCTAssertTrue(topTile.waitForExistence(timeout: 30), "By Issue should lead with the newest issue")
 		XCTAssertTrue(tiles.firstMatch.waitForExistence(timeout: 30), "By Issue should show older issues as tiles")
 		XCTAssertTrue(
-			segment(TestIdentifiers.News.byIssue).waitForSelected(true),
-			"By Issue should be the view chosen")
-		XCTAssertFalse(filter.exists, "the section filter belongs to Latest only")
+			viewMenu.waitForLabel(viewMenuLabel(TestIdentifiers.News.byIssue), timeout: 10),
+			"By Issue should be the view chosen (the menu reads \(viewMenu.label))")
 		capture("The Messenger's By Issue grid")
 		verifyPaperNamedOnce()
 		return self
 	}
 
-	/// The paper's name sits in the navigation bar, and the page under it does not repeat it
+	/// The navigation bar has no title, and the paper's name heads the page as its masthead, once
 	/// outside the issues' own nameplates.
 	@discardableResult
 	func verifyPaperNamedOnce() -> Self {
 		let name = NSPredicate(format: "label == %@", TestIdentifiers.News.paperName)
 		XCTAssertTrue(
-			app.navigationBars.staticTexts.matching(name).firstMatch.waitForExistence(timeout: 10),
-			"the navigation bar should name the paper")
-		// The bar lists its own heading for the title and the text drawn inside it, so the name
-		// is counted by where it sits rather than by how many times it appears. Each tile prints
-		// the name as its nameplate; VoiceOver reads a tile by its label alone, but XCUITest
-		// still lists the text inside it.
-		let bar = app.navigationBars.firstMatch.frame
+			app.staticTexts.matching(name).firstMatch.waitForExistence(timeout: 10),
+			"the page should carry the paper's masthead")
+		XCTAssertEqual(
+			app.navigationBars.staticTexts.count, 0,
+			"the navigation bar should have no title; the masthead names the paper")
+		// Each tile prints the name as its nameplate; VoiceOver reads a tile by its label alone, but
+		// XCUITest still lists the text inside it, so the name is counted outside the tiles.
 		let nameplates = (tiles.allElementsBoundByIndex + [topTile]).map(\.frame)
-		for element in app.staticTexts.matching(name).allElementsBoundByIndex {
-			let frame = element.frame
-			if nameplates.contains(where: { $0.contains(frame) }) { continue }
-			XCTAssertTrue(
-				bar.contains(frame),
-				"the paper's name should sit in the navigation bar, not again on the page (found at \(frame))")
-		}
+		let outsideTiles = app.staticTexts.matching(name).allElementsBoundByIndex
+			.filter { element in !nameplates.contains(where: { $0.contains(element.frame) }) }
+		XCTAssertEqual(outsideTiles.count, 1, "the page should name the paper once, in its masthead")
 		return self
 	}
 
-	/// Choose a segment of the switch with one tap and wait for it to read as chosen.
+	/// Pick a view from the menu at the top right, unless it shows already, and wait for the menu
+	/// to name it.
 	@discardableResult
 	func choose(view label: String) -> Self {
-		let button = segment(label)
-		XCTAssertTrue(button.waitForHittable(timeout: 30), "the \(label) segment should be ready to tap")
-		button.tap()
-		XCTAssertTrue(button.waitForSelected(true), "tapping \(label) should choose it")
+		XCTAssertTrue(viewMenu.waitForHittable(timeout: 30), "the view menu should be ready to tap")
+		if viewMenu.label == viewMenuLabel(label) { return self }
+		pickFromViewMenu(label)
+		XCTAssertTrue(
+			viewMenu.waitForLabel(viewMenuLabel(label), timeout: 10),
+			"picking \(label) should show it (the menu reads \(viewMenu.label))")
 		return self
 	}
 
-	/// Latest lists stories, with its section filter in the toolbar.
+	/// Latest lists stories, and its menu offers the paper's sections.
 	@discardableResult
-	func verifyLatestListsStoriesWithAFilter() -> Self {
+	func verifyLatestListsStoriesWithSections() -> Self {
 		choose(view: TestIdentifiers.News.latest)
 		XCTAssertTrue(storyRows.firstMatch.waitForExistence(timeout: 30), "Latest should list stories")
-		XCTAssertTrue(waitForOnScreen(filter), "Latest should offer its section filter")
-		capture("The Messenger's Latest stories")
+		viewMenu.tap()
+		XCTAssertTrue(
+			waitForOnScreen(menuItem(TestIdentifiers.News.newsSection), timeout: 10),
+			"Latest's menu should offer the paper's sections")
+		capture("The Messenger's Latest stories, with its menu open")
+		closeMenu()
 		return self
 	}
 
-	/// Narrow Latest to a section with its filter, and wait for the dateline to name the section.
+	/// Narrow Latest to a section from the view menu, and wait for the dateline to name the section.
 	@discardableResult
 	func filterLatest(to section: String) -> Self {
 		choose(view: TestIdentifiers.News.latest)
-		XCTAssertTrue(waitForOnScreen(filter), "Latest should offer its section filter")
-		tapCentre(filter)
-		let option = app.descendants(matching: .any)
-			.matching(NSPredicate(format: "label == %@ AND elementType != %d", section, XCUIElement.ElementType.staticText.rawValue))
-			.firstMatch
-		XCTAssertTrue(waitForOnScreen(option, timeout: 10), "the filter should offer \(section)")
-		tapCentre(option)
-		// The menu stays open while a reader chooses; a tap outside it closes it.
-		app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
+		pickFromViewMenu(section)
 		let dateline = app.staticTexts.matching(identifier: TestIdentifiers.News.dateline).firstMatch
 		XCTAssertTrue(
 			dateline.waitForLabel(section, timeout: 30),
@@ -117,7 +111,7 @@ struct MessFrontPage: Screen {
 		XCTAssertTrue(second.waitForHittable(), "the tile should be ready to tap")
 		second.tap()
 		XCTAssertTrue(
-			segment(TestIdentifiers.News.byIssue).waitForNonExistence(timeout: 30),
+			viewMenu.waitForNonExistence(timeout: 30),
 			"tapping a tile should open its issue on a page of its own")
 		XCTAssertTrue(lead.waitForExistence(timeout: 30), "an opened issue should lead with a story")
 		capture("An older issue of the Messenger")
@@ -149,7 +143,7 @@ struct MessFrontPage: Screen {
 		capture("\(section) and its columns")
 		button.tap()
 		XCTAssertTrue(
-			segment(TestIdentifiers.News.latest).waitForNonExistence(timeout: 30),
+			viewMenu.waitForNonExistence(timeout: 30),
 			"tapping a column should open its list on a page of its own")
 		XCTAssertTrue(storyRows.firstMatch.waitForExistence(timeout: 30), "the \(column) list should show its stories")
 		return self
@@ -174,11 +168,26 @@ struct MessFrontPage: Screen {
 		return MessStoryScreen(app: app)
 	}
 
-	/// Wait for `element` to exist with its frame inside the window and holding still. A button
-	/// hosted in the bottom toolbar sits under views that report no frame, so XCUITest never calls
-	/// it hittable although a finger reaches it; its own frame is the check that it is on screen. A
-	/// menu's rows move while the menu opens, so a frame read too soon lands a tap on the row next
-	/// to the one meant.
+	/// Open the view menu and tap its item named `label`.
+	private func pickFromViewMenu(_ label: String) {
+		XCTAssertTrue(viewMenu.waitForHittable(timeout: 30), "the view menu should be ready to tap")
+		viewMenu.tap()
+		let item = menuItem(label)
+		XCTAssertTrue(waitForOnScreen(item, timeout: 10), "the view menu should offer \(label)")
+		tapCentre(item)
+		// A menu holding checkmarks can stay open after a pick; close it if it did.
+		if item.exists { closeMenu() }
+	}
+
+	/// Close an open menu with a tap outside it, at the top left of the masthead, where a tap
+	/// opens nothing.
+	private func closeMenu() {
+		app.coordinate(withNormalizedOffset: CGVector(dx: 0.1, dy: 0.2)).tap()
+	}
+
+	/// Wait for `element` to exist with its frame inside the window and holding still. A menu's
+	/// rows move while the menu opens, so a frame read too soon lands a tap on the row next to the
+	/// one meant.
 	private func waitForOnScreen(_ element: XCUIElement, timeout: TimeInterval = 30) -> Bool {
 		guard element.waitForExistence(timeout: timeout) else { return false }
 		var last = CGRect.null
@@ -191,7 +200,7 @@ struct MessFrontPage: Screen {
 		return XCTWaiter().wait(for: [expectation], timeout: timeout) == .completed
 	}
 
-	/// Tap the middle of `element`'s frame, for a button XCUITest will not call hittable.
+	/// Tap the middle of `element`'s frame, for a menu row XCUITest will not call hittable.
 	private func tapCentre(_ element: XCUIElement) {
 		element.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
 	}
@@ -220,12 +229,20 @@ struct MessFrontPage: Screen {
 		app.buttons.matching(identifier: TestIdentifiers.News.issueTile)
 	}
 
-	private var filter: XCUIElement {
-		app.buttons[TestIdentifiers.News.sectionFilter].firstMatch
+	/// The glass button at the top right, labelled by the view it shows.
+	private var viewMenu: XCUIElement {
+		app.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", TestIdentifiers.News.viewMenuPrefix)).firstMatch
 	}
 
-	private func segment(_ label: String) -> XCUIElement {
-		app.segmentedControls.buttons[label].firstMatch
+	private func viewMenuLabel(_ view: String) -> String {
+		TestIdentifiers.News.viewMenuPrefix + view
+	}
+
+	/// An item of an open menu: anything but the text inside it, which shares its label.
+	private func menuItem(_ label: String) -> XCUIElement {
+		app.descendants(matching: .any)
+			.matching(NSPredicate(format: "label == %@ AND elementType != %d", label, XCUIElement.ElementType.staticText.rawValue))
+			.firstMatch
 	}
 
 	private var lead: XCUIElement {

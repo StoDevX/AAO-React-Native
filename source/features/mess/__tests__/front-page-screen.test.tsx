@@ -14,6 +14,7 @@ import {messIssueOptions} from '../query'
 import {parseLightPosts} from '../lib/issues'
 import {messKeys} from '../lib/keys'
 import {parseMessCategories} from '../lib/posts'
+import {DATELINE_ID} from '../masthead'
 import {OLAF_MESSENGER} from '../../news/sources'
 import {useNewsFilterStore} from '../../news/store'
 import type {LightPost, MessStory} from '../types'
@@ -118,6 +119,15 @@ function seedTop(): void {
 	)
 }
 
+/** What the masthead's dateline says the page holds. */
+const dateline = () => screen.getByTestId(DATELINE_ID)
+
+/** An item of the view menu in the header, by its label. */
+const menuItem = (name: string) => screen.getByRole('menuitem', {name})
+
+/** Whether the view menu's item shows its checkmark. */
+const isChecked = (name: string) => Boolean(menuItem(name).props.accessibilityState?.checked)
+
 function saveChoice(key: string): void {
 	useNewsFilterStore.setState({selectedCategories: {[OLAF_MESSENGER.id]: key}})
 }
@@ -168,40 +178,53 @@ function renderScreen() {
 }
 
 describe('FrontPageScreen', () => {
-	test('opens on By Issue: the newest issue as the top tile', async () => {
+	test("opens on By Issue, under the paper's nameplate and no dateline, with the newest issue as the top tile", async () => {
 		seedTop()
 		await renderScreen()
 
-		expect(screen.getByRole('button', {name: 'By Issue', selected: true})).toBeTruthy()
+		expect(isChecked('By Issue')).toBe(true)
+		expect(isChecked('Latest')).toBe(false)
+		expect(screen.getByText('The Olaf Messenger')).toBeTruthy()
+		expect(screen.queryByTestId(DATELINE_ID)).toBeNull()
 		expect(screen.getByTestId(TOP_TILE_ID).props.accessibilityLabel).toBe(
 			'April 29, 2026, Student workers deliver petition',
 		)
 	})
 
 	test.each(['Top', 'Issues', 'News', 'Messenger Wars'])(
-		'opens on By Issue when the saved choice is %p, from the chips it replaced',
+		'opens on By Issue when the saved choice is %p, which names no view',
 		async (saved) => {
 			seedTop()
 			saveChoice(saved)
 			await renderScreen()
 
-			expect(screen.getByRole('button', {name: 'By Issue', selected: true})).toBeTruthy()
+			expect(isChecked('By Issue')).toBe(true)
 			expect(screen.getByTestId(TOP_TILE_ID)).toBeTruthy()
 		},
 	)
 
-	test('shows the section filter in Latest only, and remembers the view', async () => {
+	test('names the menu by the view it shows, for VoiceOver', async () => {
+		seedTop()
+		await renderScreen()
+		expect(screen.getByLabelText('View: By Issue')).toBeTruthy()
+
+		await fireEvent.press(menuItem('Latest'))
+		expect(screen.getByLabelText('View: Latest')).toBeTruthy()
+	})
+
+	test('offers the sections in Latest only, and remembers the view', async () => {
 		seedTop()
 		queryClient.setQueryData(messKeys.feed, ISSUE_STORIES)
 		await renderScreen()
-		expect(screen.queryByLabelText('News filter')).toBeNull()
+		expect(screen.queryByRole('menuitem', {name: 'Opinions'})).toBeNull()
 
-		await fireEvent.press(screen.getByRole('button', {name: 'Latest'}))
+		await fireEvent.press(menuItem('Latest'))
 
 		expect(savedChoice()).toBe('Latest')
-		expect(screen.getByRole('button', {name: 'Latest', selected: true})).toBeTruthy()
-		expect(screen.getByText('Latest stories')).toBeTruthy()
-		expect(screen.getByLabelText('News filter')).toBeTruthy()
+		expect(isChecked('Latest')).toBe(true)
+		expect(isChecked('All Stories')).toBe(true)
+		expect(isChecked('Opinions')).toBe(false)
+		expect(dateline()).toHaveTextContent('Latest stories')
 	})
 
 	test('narrows Latest to the section picked, and keeps it across a visit to By Issue', async () => {
@@ -212,20 +235,22 @@ describe('FrontPageScreen', () => {
 		queryClient.setQueryData(messKeys.category(OPINIONS), [WATERS])
 		await renderScreen()
 
-		await fireEvent.press(screen.getByRole('menuitem', {name: 'Opinions'}))
+		await fireEvent.press(menuItem('Opinions'))
 
 		expect(savedChoice()).toBe('Latest:Opinions')
-		expect(screen.getByRole('menuitem', {name: 'Opinions'}).props.accessibilityState.checked).toBe(
-			true,
-		)
-		expect(screen.queryByText('Latest stories')).toBeNull()
+		expect(isChecked('Opinions')).toBe(true)
+		expect(isChecked('All Stories')).toBe(false)
+		expect(dateline()).toHaveTextContent('Opinions')
 		expect(screen.getByRole('button', {name: /^I grew up in the Boundary Waters,/u})).toBeTruthy()
 
-		await fireEvent.press(screen.getByRole('button', {name: 'By Issue'}))
+		await fireEvent.press(menuItem('By Issue'))
 		expect(savedChoice()).toBe('Issues:Opinions')
 
-		await fireEvent.press(screen.getByRole('button', {name: 'Latest'}))
+		await fireEvent.press(menuItem('Latest'))
 		expect(savedChoice()).toBe('Latest:Opinions')
+
+		await fireEvent.press(menuItem('All Stories'))
+		expect(savedChoice()).toBe('Latest')
 	})
 
 	test('opens an issue on its own page from its tile', async () => {
@@ -290,7 +315,7 @@ describe('FrontPageScreen', () => {
 		onlineManager.setOnline(false)
 		await renderScreen()
 
-		expect(screen.getByText('Latest stories')).toBeTruthy()
+		expect(dateline()).toHaveTextContent('Latest stories')
 		expect(screen.getByText('No connection. This page loads when you’re back online.')).toBeTruthy()
 	})
 

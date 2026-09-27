@@ -28,6 +28,33 @@ export const Stack = Object.assign(({children}: {children?: React.ReactNode}) =>
 				</Pressable>
 			)
 		},
+		/// A toolbar menu, or a titled group inside one: a view carrying its label, then its title
+		/// as text a query can read, then its items. Nothing opens or closes here; every item is
+		/// always on hand to press.
+		Menu: (props: {accessibilityLabel?: string; title?: string; children?: React.ReactNode}) => {
+			// oxlint-disable-next-line typescript/no-require-imports
+			let {Text, View} = require('react-native')
+			return (
+				<View accessibilityLabel={props.accessibilityLabel}>
+					{props.title ? <Text>{props.title}</Text> : null}
+					{props.children}
+				</View>
+			)
+		},
+		/// A menu's item: a `menuitem` a query can press, checked as `isOn` says.
+		MenuAction: (props: {isOn?: boolean; onPress?: () => void; children?: React.ReactNode}) => {
+			// oxlint-disable-next-line typescript/no-require-imports
+			let {Pressable, Text} = require('react-native')
+			return (
+				<Pressable
+					accessibilityRole="menuitem"
+					accessibilityState={{checked: Boolean(props.isOn)}}
+					onPress={props.onPress}
+				>
+					<Text>{props.children}</Text>
+				</Pressable>
+			)
+		},
 		/// A flexible gap between toolbar items; there is nothing to lay out here.
 		Spacer: () => null,
 		/// Hosts a custom view in the toolbar, so the view itself renders.

@@ -8,10 +8,10 @@ class ModuleNewsTests: UITestCase {
 			.verifyByIssueShowsTheGrid()
 	}
 
-	func testOlafMessengerLatestListsStoriesWithAFilter() throws {
+	func testOlafMessengerLatestOffersItsSections() throws {
 		MessFrontPage(app: app)
 			.navigate()
-			.verifyLatestListsStoriesWithAFilter()
+			.verifyLatestListsStoriesWithSections()
 	}
 
 	/// Reads live data: the paper has to have a News section.
