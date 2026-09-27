@@ -7,6 +7,9 @@
 # whoever edits this file next:
 # https://www.stolaf.edu/apps/workauth/Autocomplete.cfc?method=setLawsonUnitsAccountNumber&returnformat=json
 # 22005 and 24200 are not on that list; their names come from their postings.
+#
+# A weekly workflow opens an issue when a posting carries a unit no area lists;
+# `mise run check-student-work-areas` prints the same report.
 
 - name: Dining & BonApp
   slug: dining
