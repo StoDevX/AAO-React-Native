@@ -42,11 +42,12 @@ struct MessIssueTileView: ExpoSwiftUI.View {
 	}
 
 	@Environment(\.colorScheme) private var scheme
-	/// A photo that failed to load; the tile is then drawn as one with no photo.
-	@State private var photoFailed = false
+	/// The lead photo, loaded once and drawn in both halves of the folded sheet.
+	@StateObject private var photoLoader = PhotoLoader()
 
 	private var palette: PaperPalette { PaperPalette(scheme) }
-	private var hasPhoto: Bool { props.photoUrl != nil && !photoFailed }
+	/// A photo that failed to load draws the tile as one with no photo.
+	private var hasPhoto: Bool { props.photoUrl != nil && !photoLoader.failed }
 
 	var body: some View {
 		Button {
@@ -59,7 +60,7 @@ struct MessIssueTileView: ExpoSwiftUI.View {
 		.accessibilityLabel(props.label)
 		.accessibilityAddTraits(.isButton)
 		.accessibilityIdentifier(props.testID ?? "")
-		.onChange(of: props.photoUrl) { photoFailed = false }
+		.onChange(of: props.photoUrl, initial: true) { photoLoader.load(props.photoUrl) }
 	}
 
 	private var outline: PaperOutline {
@@ -207,31 +208,33 @@ struct MessIssueTileView: ExpoSwiftUI.View {
 	/// Dark Mode, and drifting a little against the page as it scrolls.
 	private var photo: some View {
 		GeometryReader { proxy in
-			AsyncImage(url: props.photoUrl) { phase in
-				switch phase {
-				case .success(let image):
-					image
-						.resizable()
-						.scaledToFill()
-						.grayscale(scheme == .dark ? 1 : 0.3)
-						.contrast(0.88)
-						.brightness(scheme == .dark ? -0.05 : 0.04)
-						// Headroom for the drift, so it never shows the photo's edge.
-						.scaleEffect(1.12)
-						.visualEffect { content, geometry in
-							let frame = geometry.frame(in: .scrollView)
-							let height = geometry.bounds(of: .scrollView)?.height ?? frame.height
-							let travel = (frame.midY / max(height, 1)) - 0.5
-							return content.offset(y: -travel * frame.height * 0.1)
+			if let image = photoLoader.image {
+				Image(uiImage: image)
+					.resizable()
+					.scaledToFill()
+					.grayscale(scheme == .dark ? 1 : 0.3)
+					.contrast(0.88)
+					.brightness(scheme == .dark ? -0.05 : 0.04)
+					// Headroom for the drift, so it never shows the photo's edge.
+					.scaleEffect(1.12)
+					.visualEffect { content, geometry in
+						// Where the photo sits in the visible part of the scroll view, from -0.5 at its top
+						// edge to 0.5 at its bottom, measured in the photo's own coordinates.
+						let height = geometry.size.height
+						let travel: CGFloat
+						if let visible = geometry.bounds(of: .scrollView), visible.height > 0 {
+							travel = min(max((height / 2 - visible.midY) / visible.height, -0.5), 0.5)
+						} else {
+							travel = 0
 						}
-						.frame(width: proxy.size.width, height: proxy.size.height)
-						.clipped()
-						.overlay(TextureLayer(image: Textures.grain).blendMode(.overlay).opacity(0.55))
-				case .failure:
-					Color.clear.onAppear { photoFailed = true }
-				default:
-					palette.placeholder
-				}
+						// The photo is drawn 12% larger, so a drift of 10% of its height never shows an edge.
+						return content.offset(y: -travel * height * 0.1)
+					}
+					.frame(width: proxy.size.width, height: proxy.size.height)
+					.clipped()
+					.overlay(TextureLayer(image: Textures.grain).blendMode(.overlay).opacity(0.55))
+			} else {
+				palette.placeholder
 			}
 		}
 		.blendMode(scheme == .dark ? .normal : .multiply)
@@ -240,5 +243,34 @@ struct MessIssueTileView: ExpoSwiftUI.View {
 				colors: [.black, .black, .black.opacity(0.5)],
 				center: .center, startRadius: 0, endRadius: 140))
 		.accessibilityHidden(true)
+	}
+}
+
+/// Loads a tile's photo once, so the two halves of its folded sheet draw the same picture and
+/// neither waits on a load of its own. URLSession's shared cache keeps a photo seen before.
+@MainActor
+final class PhotoLoader: ObservableObject {
+	@Published private(set) var image: UIImage?
+	@Published private(set) var failed = false
+	private var url: URL?
+	private var task: Task<Void, Never>?
+
+	func load(_ next: URL?) {
+		guard next != url else { return }
+		url = next
+		task?.cancel()
+		image = nil
+		failed = false
+		guard let next else { return }
+		task = Task { [weak self] in
+			do {
+				let (data, _) = try await URLSession.shared.data(from: next)
+				guard !Task.isCancelled else { return }
+				guard let image = UIImage(data: data) else { throw URLError(.cannotDecodeContentData) }
+				self?.image = image
+			} catch {
+				if !Task.isCancelled { self?.failed = true }
+			}
+		}
 	}
 }
