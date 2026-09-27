@@ -1,11 +1,24 @@
 import XCTest
 
 class ModuleNewsTests: UITestCase {
-	func testOlafMessengerIsReachableFromHomescreen() throws {
-		NewsScreen(app: app, tile: TestIdentifiers.Buttons.olafMessenger, title: "The Olaf Messenger")
+	/// Reads live data: the paper has to have published at least two issues.
+	func testOlafMessengerOpensOnTheIssueGrid() throws {
+		MessFrontPage(app: app)
 			.navigate()
-			.verifyTitle()
-			.verifyNewsRowsAppear()
+			.verifyByIssueShowsTheGrid()
+	}
+
+	func testOlafMessengerLatestOffersItsSections() throws {
+		MessFrontPage(app: app)
+			.navigate()
+			.verifyLatestListsStoriesWithSections()
+	}
+
+	/// Reads live data: the paper has to have a News section.
+	func testOlafMessengerLatestNarrowsToASection() throws {
+		MessFrontPage(app: app)
+			.navigate()
+			.filterLatest(to: TestIdentifiers.News.newsSection)
 	}
 
 	func testStOlafNewsIsReachableFromHomescreen() throws {
@@ -15,27 +28,47 @@ class ModuleNewsTests: UITestCase {
 			.verifyNewsRowsAppear()
 	}
 
-	func testOlafMessengerOpensAStoryInTheApp() throws {
-		NewsScreen(app: app, tile: TestIdentifiers.Buttons.olafMessenger, title: "The Olaf Messenger")
+	/// Reads live data: the paper has to have published at least two issues.
+	func testOlafMessengerOpensAnOlderIssue() throws {
+		MessFrontPage(app: app)
 			.navigate()
-			.openFirstStory()
+			.openSecondIssue()
+	}
+
+	/// Reads live data: the paper has to have published issues in 2025, three pages back.
+	func testOlafMessengerIssuesLoadOlderPages() throws {
+		MessFrontPage(app: app)
+			.navigate()
+			.scrollIssues(untilAnIssueFrom: "2025")
+	}
+
+	/// Reads live data: News has to have its Good Questions column, with a story in it.
+	func testOlafMessengerSectionOpensAColumn() throws {
+		MessFrontPage(app: app)
+			.navigate()
+			.openColumn(TestIdentifiers.News.goodQuestionsColumn, in: TestIdentifiers.News.newsSection)
+	}
+
+	func testOlafMessengerOpensAStoryInTheApp() throws {
+		MessFrontPage(app: app)
+			.navigate()
+			.openLeadStory()
 			.verifyStoryAppears()
 	}
 
 	func testOlafMessengerStoryTextOffersCopy() throws {
-		NewsScreen(app: app, tile: TestIdentifiers.Buttons.olafMessenger, title: "The Olaf Messenger")
+		MessFrontPage(app: app)
 			.navigate()
-			.openFirstStory()
+			.openLeadStory()
 			.verifyStoryAppears()
 			.verifyBodyOffersCopy()
 	}
 
 	func testHoroscopesOpenOnAChosenSign() throws {
-		let news = NewsScreen(app: app, tile: TestIdentifiers.Buttons.olafMessenger, title: "The Olaf Messenger")
+		MessFrontPage(app: app)
 			.navigate()
-		MessFilter(app: app)
-			.choose(column: TestIdentifiers.News.horoscopesColumn, in: TestIdentifiers.News.varietySection)
-		news.openFirstStory()
+			.openColumn(TestIdentifiers.News.horoscopesColumn, in: TestIdentifiers.News.varietySection)
+			.openFirstStory()
 			.pickSignFromList(TestIdentifiers.News.gemini)
 			.verifySignChosen(TestIdentifiers.News.gemini)
 			.verifyScrolledToChosenSign(TestIdentifiers.News.gemini)
@@ -47,22 +80,20 @@ class ModuleNewsTests: UITestCase {
 	/// At the largest text size the chosen sign's section sits a long way above
 	/// the last rows, so the page has to scroll to a section it has not yet drawn.
 	///
-	/// The column is chosen at the default size and the app relaunched at AX5
-	/// keeping it. At AX5 on a small phone the filter menu can scroll away from
-	/// an item once it is ticked, taking it out of the accessibility tree, so the
-	/// filter could not confirm the choice it had just made -- and the menu is not
-	/// what this test is about.
+	/// The app is relaunched at AX5 before the column is opened.
 	func testHoroscopesScrollToASignPickedFromTheLastRow() throws {
-		let tile = TestIdentifiers.Buttons.olafMessenger
-		NewsScreen(app: app, tile: tile, title: "The Olaf Messenger")
+		// Latest is narrowed to Variety at the usual text size and kept across the relaunch: at the
+		// largest size the section menu scrolls to its chosen row as it opens, and XCUITest reads the
+		// rows' frames from before that scroll, so a tap there lands on the wrong section.
+		MessFrontPage(app: app)
 			.navigate()
-		MessFilter(app: app)
-			.choose(column: TestIdentifiers.News.horoscopesColumn, in: TestIdentifiers.News.varietySection)
+			.filterLatest(to: TestIdentifiers.News.varietySection)
 		relaunchKeepingState(
 			adding: TestIdentifiers.LaunchArguments.contentSizeCategory(
 				TestIdentifiers.LaunchArguments.accessibilityExtraExtraExtraLarge))
-		NewsScreen(app: app, tile: tile, title: "The Olaf Messenger")
+		MessFrontPage(app: app)
 			.navigate()
+			.openColumn(TestIdentifiers.News.horoscopesColumn, inShown: TestIdentifiers.News.varietySection)
 			.openFirstStory()
 			.scrollToSignRow(TestIdentifiers.News.pisces)
 			.pickSignFromList(TestIdentifiers.News.pisces)
@@ -75,11 +106,10 @@ class ModuleNewsTests: UITestCase {
 	}
 
 	func testComicOpensTheZoomViewer() throws {
-		let news = NewsScreen(app: app, tile: TestIdentifiers.Buttons.olafMessenger, title: "The Olaf Messenger")
+		MessFrontPage(app: app)
 			.navigate()
-		MessFilter(app: app)
-			.choose(column: TestIdentifiers.News.comicColumn, in: TestIdentifiers.News.varietySection)
-		news.openFirstStory()
+			.openColumn(TestIdentifiers.News.comicColumn, in: TestIdentifiers.News.varietySection)
+			.openFirstStory()
 			.openImageViewer()
 			.closeImageViewer()
 	}
@@ -91,11 +121,10 @@ class ModuleNewsTests: UITestCase {
 	/// own series row lists that first Comic back. A Comic without a series, or one
 	/// whose series has moved on, fails the test without anything being wrong.
 	func testSeriesStoriesStackInTheOrderTheyWereOpened() throws {
-		let news = NewsScreen(app: app, tile: TestIdentifiers.Buttons.olafMessenger, title: "The Olaf Messenger")
+		let reader = MessFrontPage(app: app)
 			.navigate()
-		MessFilter(app: app)
-			.choose(column: TestIdentifiers.News.comicColumn, in: TestIdentifiers.News.varietySection)
-		let reader = news.openFirstStory()
+			.openColumn(TestIdentifiers.News.comicColumn, in: TestIdentifiers.News.varietySection)
+			.openFirstStory()
 		let first = reader.headline()
 		reader.openSeriesStory()
 		let second = reader.headline(otherThan: first)
@@ -108,11 +137,10 @@ class ModuleNewsTests: UITestCase {
 	}
 
 	func testComicZoomsByDoubleTapAndPinch() throws {
-		let news = NewsScreen(app: app, tile: TestIdentifiers.Buttons.olafMessenger, title: "The Olaf Messenger")
+		MessFrontPage(app: app)
 			.navigate()
-		MessFilter(app: app)
-			.choose(column: TestIdentifiers.News.comicColumn, in: TestIdentifiers.News.varietySection)
-		news.openFirstStory()
+			.openColumn(TestIdentifiers.News.comicColumn, in: TestIdentifiers.News.varietySection)
+			.openFirstStory()
 			.openImageViewer()
 			.doubleTapViewerImage()
 			.verifyViewerImageZoomed(true)
@@ -125,22 +153,40 @@ class ModuleNewsTests: UITestCase {
 
 	/// Reads live data: the newest Crossword post has to carry PuzzleMe's placeholder.
 	func testCrosswordOpensThePuzzleInTheBrowser() throws {
-		let news = NewsScreen(app: app, tile: TestIdentifiers.Buttons.olafMessenger, title: "The Olaf Messenger")
+		MessFrontPage(app: app)
 			.navigate()
-		MessFilter(app: app)
-			.choose(column: TestIdentifiers.News.crosswordColumn, in: TestIdentifiers.News.varietySection)
-		news.openFirstStory()
+			.openColumn(TestIdentifiers.News.crosswordColumn, in: TestIdentifiers.News.varietySection)
+			.openFirstStory()
 			.solveCrossword()
 	}
 
 	/// Reads live data: the newest Playlist post has to name its playlist, in its body or on
 	/// its web page.
 	func testPlaylistDrawsSpotifysPlayer() throws {
-		let news = NewsScreen(app: app, tile: TestIdentifiers.Buttons.olafMessenger, title: "The Olaf Messenger")
+		MessFrontPage(app: app)
 			.navigate()
-		MessFilter(app: app)
-			.choose(column: TestIdentifiers.News.playlistColumn, in: TestIdentifiers.News.varietySection)
-		news.openFirstStory()
+			.openColumn(TestIdentifiers.News.playlistColumn, in: TestIdentifiers.News.varietySection)
+			.openFirstStory()
 			.verifyPlaylistOffered()
+	}
+
+	/// Reads live data: the newest Recipes post has to have an ingredient section.
+	func testRecipeTicksAnIngredient() throws {
+		MessFrontPage(app: app)
+			.navigate()
+			.openColumn(TestIdentifiers.News.recipesColumn, in: TestIdentifiers.News.varietySection)
+			.openFirstStory()
+			.tickFirstIngredient()
+	}
+
+	/// Reads live data: the newest Photo post has to have a picture.
+	func testPhotoOpensTheZoomViewer() throws {
+		MessFrontPage(app: app)
+			.navigate()
+			.openColumn(TestIdentifiers.News.photoColumn, in: TestIdentifiers.News.varietySection)
+			.openFirstStory()
+			.openImageViewer()
+			.verifyViewerShowsImage()
+			.closeImageViewer()
 	}
 }

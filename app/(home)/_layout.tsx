@@ -38,10 +38,9 @@ export default function HomeLayout(): React.ReactNode {
 			<Stack.Screen name="Menus" options={{title: 'Menus'}} />
 			<Stack.Screen name="MenuItemDetail" options={DETAIL_SHEET} />
 			<Stack.Screen name="Streaming Media" options={{title: 'Streaming Media'}} />
-			<Stack.Screen
-				name="Messenger/index"
-				options={{title: 'The Olaf Messenger', headerLargeTitleEnabled: true}}
-			/>
+			{/* No large title: the front page draws the paper's name in the bar, in its serif,
+			    and a large title would show the plain name until the page scrolled. */}
+			<Stack.Screen name="Messenger/index" options={{title: 'The Olaf Messenger'}} />
 			{/* A series thumbnail opens another story over the one being read.
 			    Keyed by the story and the row that opened it, a tap always opens
 			    a fresh screen: an unkeyed route would swap the params of the
@@ -65,6 +64,7 @@ export default function HomeLayout(): React.ReactNode {
 			<Stack.Screen name="Transit" options={{title: 'Transit'}} />
 			<Stack.Screen name="Transit/line" options={DETAIL_SHEET} />
 			<Stack.Screen name="Hours" />
+			<Stack.Screen name="Hours/all-spaces" />
 			<Stack.Screen name="Hours/detail" options={DETAIL_SHEET} />
 			<Stack.Screen name="Dictionary/entry" options={DETAIL_SHEET} />
 			{/* A department opens a fresh copy of the Directory over the landing.

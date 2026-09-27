@@ -2,18 +2,33 @@ import * as React from 'react'
 import {StyleSheet} from 'react-native'
 import {ZoomImageViewer} from '../../components/zoom-image-viewer'
 import {useDismissOnce} from '../../lib/use-dismiss-once'
-import {imageLabel} from './lib/byline'
+import {imageLabel, picturePlace} from './lib/byline'
 import {StoryLookupNotice} from './story-lookup-notice'
 import {useMessStory} from './use-mess-story'
+import type {MessStory, Photo} from './types'
 
-type Props = {id: number}
+/**
+ * The picture the viewer shows: a comic's or artwork's one picture, or the feature page's
+ * picture at `index`. Null when the story has no picture there.
+ */
+function pictureOf(story: MessStory | undefined, index: number): Photo | null {
+	if (story?.layout.kind === 'image') return story.layout.image
+	if (story?.layout.kind === 'feature') return story.layout.images[index] ?? null
+	return null
+}
 
-/** A comic or piece of artwork on its own, on black, to pinch or double-tap to zoom. */
-export function ImageViewer({id}: Props): React.ReactNode {
+type Props = {
+	id: number
+	/** Which of a feature page's pictures to show; a comic or artwork has only the one */
+	index?: number
+}
+
+/** A comic, a piece of artwork or a feature page's picture on its own, on black, to pinch or double-tap to zoom. */
+export function ImageViewer({id, index = 0}: Props): React.ReactNode {
 	let close = useDismissOnce()
 	let query = useMessStory(id)
 	let story = query.data
-	let image = story?.layout.kind === 'image' ? story.layout.image : null
+	let image = pictureOf(story, index)
 
 	return (
 		<ZoomImageViewer
@@ -22,7 +37,7 @@ export function ImageViewer({id}: Props): React.ReactNode {
 				image && story
 					? {
 							uri: image.url,
-							accessibilityLabel: imageLabel(story),
+							accessibilityLabel: imageLabel(story, picturePlace(story, index)),
 							testID: 'mess-image-viewer-image',
 						}
 					: null

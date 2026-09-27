@@ -2,6 +2,7 @@ name: Old Main
 image: old-main
 category: Academia
 kind: building
+listed: false
 building: om
 
 schedule:

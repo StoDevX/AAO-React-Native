@@ -2,6 +2,7 @@ name: Theater Building
 image: theater
 category: Academia
 kind: building
+listed: false
 building: tb
 
 schedule:
