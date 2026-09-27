@@ -5,6 +5,7 @@ import {GH_BASE_URL} from '../../../../lib/constants'
 import * as storage from '../../../../lib/storage'
 import {useRouter} from 'expo-router'
 import {DisclosureRow, NavigationRow} from '../../../../components/rows'
+import {IssueStainsRow} from './issue-stains-row'
 
 const onSourceButton = () => trackedOpenUrl({url: GH_BASE_URL, id: 'ContributingView'})
 
@@ -32,6 +33,7 @@ export let MiscellanySection = (): React.ReactNode => {
 
 	return (
 		<Section title="Miscellany">
+			<IssueStainsRow />
 			<Toggle
 				isOn={openInApplinkPreference}
 				label="Open links in-app"

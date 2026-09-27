@@ -2,6 +2,7 @@ name: RNS
 subtitle: Regents Hall of Natural Sciences
 category: Academia
 kind: building
+listed: false
 building: rns
 image: regents-hall
 

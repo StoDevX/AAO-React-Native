@@ -8,7 +8,7 @@ import categories from './fixtures/categories.json'
 import {queryClient as appQueryClient} from '../../../init/tanstack-query'
 import {ImageView} from '../image-view'
 import {SeriesRow} from '../series-row'
-import {messKeys} from '../query'
+import {messKeys} from '../lib/keys'
 import type {MessStory} from '../types'
 
 jest.mock('@expo/ui/swift-ui', () => {
@@ -89,6 +89,19 @@ function renderWithClient(ui: React.ReactElement) {
 }
 
 describe('ImageView', () => {
+	test("opens a feature page's picture in the viewer at its place on the page", async () => {
+		await renderWithClient(<ImageView columnWidth={300} image={IMAGE} index={2} story={COMIC} />)
+
+		await fireEvent.press(
+			screen.getByRole('button', {name: /^Mouse Friends: sunsets of life, by/u}),
+		)
+
+		expect(mockNavigate).toHaveBeenCalledWith({
+			pathname: '/Messenger/image',
+			params: {id: '36819', index: '2'},
+		})
+	})
+
 	test('opens the image in the viewer', async () => {
 		await renderWithClient(<ImageView columnWidth={300} image={IMAGE} story={COMIC} />)
 

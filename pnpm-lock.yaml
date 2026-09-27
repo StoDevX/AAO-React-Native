@@ -151,6 +151,9 @@ importers:
       '@frogpond/markdown':
         specifier: workspace:*
         version: link:modules/markdown
+      '@frogpond/mess-issue-tile':
+        specifier: workspace:*
+        version: link:modules/mess-issue-tile
       '@frogpond/notice':
         specifier: workspace:*
         version: link:modules/notice
@@ -259,6 +262,9 @@ importers:
       expo-image-picker:
         specifier: 57.0.19
         version: 57.0.19(expo@57.0.19)
+      expo-keep-awake:
+        specifier: 57.0.2
+        version: 57.0.2(expo@57.0.19)(react@19.2.3)
       expo-linking:
         specifier: 57.0.9
         version: 57.0.9(expo@57.0.19)(react-native@0.86.3)(react@19.2.3)(supports-color@8.1.1)
@@ -874,6 +880,8 @@ importers:
       react-native-enriched-markdown:
         specifier: 1.0.2
         version: 1.0.2(react-native@0.86.3)(react@19.2.3)
+
+  modules/mess-issue-tile: {}
 
   modules/notice:
     dependencies:

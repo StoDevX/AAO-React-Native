@@ -48,6 +48,26 @@ struct SettingsScreen: Screen {
 		return self
 	}
 
+	/// Pick the Messenger's stain kind from its menu, and wait for the row to show the choice.
+	@discardableResult
+	func chooseIssueStains(_ kind: String) -> Self {
+		let picker = app.buttons[TestIdentifiers.Settings.issueStains].firstMatch
+		scrollUntilExists(picker)
+		XCTAssertTrue(picker.waitForHittable(timeout: 30), "the Issue Stains row should be ready to tap")
+		picker.tap()
+		let option = app.buttons.matching(NSPredicate(format: "label == %@", kind)).firstMatch
+		XCTAssertTrue(option.waitForHittable(timeout: 10), "the Issue Stains menu should offer \(kind)")
+		option.tap()
+		// A menu picker's row names its choice in its value, or after its title in its label.
+		let chosen = NSPredicate(format: "value == %@ OR label CONTAINS %@", kind, kind)
+		let expectation = XCTNSPredicateExpectation(predicate: chosen, object: picker)
+		XCTAssertEqual(
+			XCTWaiter().wait(for: [expectation], timeout: 10), .completed,
+			"the Issue Stains row should show \(kind) (it reads \(picker.label), \(String(describing: picker.value)))")
+		capture("Issue Stains set to \(kind)")
+		return self
+	}
+
 	@discardableResult
 	func tapCreditsRowInItsEmptySpace() -> Self {
 		let creditsRow = app.buttons["Credits"].firstMatch

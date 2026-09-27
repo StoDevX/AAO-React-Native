@@ -11,6 +11,14 @@ class ModuleSettingsTests: UITestCase {
 			.checkSettingsDismissed()
 	}
 
+	/// Leaves the device on coffee, the choice a new install starts with.
+	func testChoosesTheMessengersIssueStains() throws {
+		SettingsScreen(app: app)
+			.openSettings()
+			.chooseIssueStains(TestIdentifiers.Settings.tea)
+			.chooseIssueStains(TestIdentifiers.Settings.coffee)
+	}
+
 	/// Guards the whole row being tappable, not just its title text.
 	func testCreditsRowIsTappableAwayFromItsCentre() throws {
 		SettingsScreen(app: app)

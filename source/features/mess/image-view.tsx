@@ -10,7 +10,7 @@ import {
 	shadow,
 	shapes,
 } from '@expo/ui/swift-ui/modifiers'
-import {imageLabel} from './lib/byline'
+import {imageLabel, picturePlace} from './lib/byline'
 import {faded} from './palette'
 import {RemotePhoto} from './remote-photo'
 import type {MessStory, Photo} from './types'
@@ -33,10 +33,12 @@ type Props = {
 	story: MessStory
 	image: Photo
 	columnWidth: number
+	/** Which of a feature page's pictures this is, for the viewer to open at; none for a comic's or artwork's one picture */
+	index?: number
 }
 
-/** A comic or a piece of artwork, framed at the column's width; tapping it opens the zoom viewer. */
-export function ImageView({story, image, columnWidth}: Props): React.ReactNode {
+/** A comic, a piece of artwork or a feature page's picture, framed at the column's width; tapping it opens the zoom viewer. */
+export function ImageView({story, image, columnWidth, index}: Props): React.ReactNode {
 	let router = useRouter()
 	let height = Math.round((columnWidth * image.height) / image.width)
 
@@ -45,12 +47,18 @@ export function ImageView({story, image, columnWidth}: Props): React.ReactNode {
 			modifiers={[
 				buttonStyle('plain'),
 				// The images carry no alt text, so the title and writers stand in for it.
-				accessibilityLabel(imageLabel(story)),
+				accessibilityLabel(imageLabel(story, picturePlace(story, index))),
 				accessibilityIdentifier('mess-story-image'),
 				contentShape(shapes.rectangle()),
 			]}
 			onPress={() =>
-				router.navigate({pathname: '/Messenger/image', params: {id: String(story.id)}})
+				router.navigate({
+					pathname: '/Messenger/image',
+					params:
+						index === undefined
+							? {id: String(story.id)}
+							: {id: String(story.id), index: String(index)},
+				})
 			}
 		>
 			<FramedPhoto height={height} url={image.url} width={columnWidth} />
