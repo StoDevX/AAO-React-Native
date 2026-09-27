@@ -1,6 +1,6 @@
 import React from 'react'
 import {Linking} from 'react-native'
-import {act, fireEvent, render, screen, waitFor} from '@testing-library/react-native'
+import {act, fireEvent, render, screen} from '@testing-library/react-native'
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query'
 import {openUrl} from '@frogpond/open-url'
 
@@ -568,13 +568,14 @@ describe('BuildingInfo while the Hours feed loads', () => {
 		// The grid repeats its section's title at its top.
 		expect(screen.getAllByText('Departments')).toHaveLength(2)
 
-		act(() => {
+		// The cache tells its observers on the next tick, so the arrival is
+		// awaited past it.
+		await act(async () => {
 			client.setQueryData(keys.all('stolaf'), [venue('Dept 0', 'toh', 'office')])
+			await new Promise((resolve) => setTimeout(resolve, 0))
 		})
 		// The venue has merged with its department: the tile now opens it.
-		await waitFor(() => {
-			expect(screen.getAllByRole('button', {name: /^Dept 0/u}).length).toBeGreaterThan(0)
-		})
+		expect(screen.getAllByRole('button', {name: /^Dept 0/u}).length).toBeGreaterThan(0)
 		expect(screen.getAllByText('Departments')).toHaveLength(2)
 	})
 })
