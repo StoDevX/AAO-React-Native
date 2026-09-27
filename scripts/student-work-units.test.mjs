@@ -64,6 +64,11 @@ test('never turns escaped markup back into a tag', () => {
 	assert.equal(unitFieldOf(html), '&lt;script&gt;11707')
 })
 
+test('leaves no angle bracket from markup that nests inside a tag', () => {
+	let html = '<p><b>Unit Number:</b> <scr<b>ipt>11707</p>'
+	assert.doesNotMatch(unitFieldOf(html), /[<>]/u)
+})
+
 test('keeps whatever else was written in the field', () => {
 	assert.equal(unitFieldOf(description('detail-account-string')), '41203-11184-53000-00512')
 	assert.equal(unitFieldOf(description('detail-not-applicable')), 'n/a')

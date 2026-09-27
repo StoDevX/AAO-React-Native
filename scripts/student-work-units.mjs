@@ -6,6 +6,12 @@
 /** A block's end, however the editor wrote it: the template puts each label on its own paragraph or line. */
 const LINE_END = /<br\s*\/?>|<\/(?:p|div|li|h[1-6])>/giu
 const TAG = /<[^>]*>/gu
+
+/**
+ * What one pass of `TAG` can leave behind, as in `<scr<b>ipt>`. A unit number
+ * never holds either, and the field lands in an issue body.
+ */
+const ANGLE_BRACKET = /[<>]/gu
 /**
  * The one entity a unit number line carries, left after a value by some editors.
  * Nothing else is decoded: the field lands in an issue body, and decoding `&lt;`
@@ -24,7 +30,11 @@ const UNIT_LINE = /^\s*unit number[^:\n]*:(.*)$/imu
 export function unitFieldOf(html) {
 	if (!html) return
 
-	let text = html.replaceAll(LINE_END, '\n').replaceAll(TAG, '').replaceAll(NBSP, ' ')
+	let text = html
+		.replaceAll(LINE_END, '\n')
+		.replaceAll(TAG, '')
+		.replaceAll(ANGLE_BRACKET, '')
+		.replaceAll(NBSP, ' ')
 	let match = UNIT_LINE.exec(text)
 	return match ? match[1].trim() : undefined
 }
