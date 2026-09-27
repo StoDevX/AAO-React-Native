@@ -30,7 +30,7 @@ const SEARCH_DEBOUNCE_MS = 200
 /// layout space and the bar's `.minimal` style paints none of it. So the
 /// picker's header block is `16 + 44 + 16 = 76`pt, which is what the sheet's
 /// collapsed stop is sized to hold; see `SHEET_COLLAPSED_HEIGHT` in
-/// `Map/index.tsx`.
+/// `lib/sheet-detents.ts`.
 const SEARCH_MARGIN = 16
 const SEARCH_PLACEHOLDER = 'Search for a place'
 

@@ -48,7 +48,7 @@ import type {Building, Coordinate, Feature, LabelLink, Point} from './types'
 
 /// Apple Maps' place-card header, measured on iOS 27: 16pt of padding round
 /// 44pt buttons -- 76pt in all, the sheet's collapsed stop
-/// (`SHEET_COLLAPSED_HEIGHT` in `Map/index.tsx`).
+/// (`SHEET_COLLAPSED_HEIGHT` in `lib/sheet-detents.ts`).
 const HEADER_PADDING = 16
 
 /// The header's bottom padding at the large stop, which puts its edge 12pt
