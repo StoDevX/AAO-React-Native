@@ -183,6 +183,23 @@ Bon Appétit's café pages are the better source generally: the Weekly Schedule
 table is in the server HTML, and `wp.stolaf.edu/buntrock/eat/` has been wrong
 about Stav twice.
 
+### Student Wages
+
+`data/student-wages.yaml` holds the hourly rate for each pay code (ST1–3,
+NST1–3, OSA1–3). A monthly scrape of St. Olaf's compensation page, through the
+WordPress REST API, opens a pull request when it falls behind; merging
+publishes the new rates to the app with no release.
+
+```bash
+mise run scrape-student-wages                    # update the file now
+node scripts/scrape-student-wages.mjs --check    # report without writing; exits 1 on drift
+```
+
+A page that drops, repeats or adds a pay code fails the run and writes
+nothing. A new code needs a change to `JobCode` in
+`source/features/sis/student-work/posting.ts` first. Jest and the UI tests
+read `FIXED_WAGES`, not the data file, so a rate change never breaks them.
+
 ## Agent Workflow
 
 **Session startup:** Always run `mise run agent:setup` at the start of every session. This installs dependencies and bundles data files.

@@ -1,7 +1,13 @@
 // Turns a Bon Appétit café page into the `schedule:` block of a building-hours
-// file. Everything here is pure -- no network, no filesystem, no clock, no
-// imports -- so the whole pipeline is exercised by scripts/bonapp-schedule.test.mjs
-// against committed fixtures. scripts/scrape-bonapp.mjs does the I/O.
+// file. Everything here is pure -- no network, no filesystem, no clock, and no
+// imports beyond html-text.mjs -- so the whole pipeline is exercised by
+// scripts/bonapp-schedule.test.mjs against committed fixtures.
+// scripts/scrape-bonapp.mjs does the I/O.
+
+// The page escapes its punctuation: the Cave's "Grab 'n' Go" arrives as
+// `Grab &#039;n&#039; Go`, and a daypart name has to match the overrides file
+// exactly or composing throws.
+import {htmlText} from './html-text.mjs'
 
 /** The week in the order the data files list it. */
 export const DAYS = ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su']
@@ -17,27 +23,6 @@ const TIME = /^1?\d:[0-5]?\d[ap]m$/u
 // name no day, so taking them would invent hours for the whole week.
 const ROW = /<li class=['"][^'"]*\bday-part\b[^'"]*['"]>(.*?)<\/li>/gsu
 const SPAN = /<span class=['"][^'"]*['"]>(.*?)<\/span>/gsu
-
-// The page escapes its punctuation: the Cave's "Grab 'n' Go" arrives as
-// `Grab &#039;n&#039; Go`, and a daypart name has to match the overrides file
-// exactly or composing throws.
-const NAMED = {nbsp: ' ', amp: '&', lt: '<', gt: '>', quot: '"', apos: "'"}
-
-let decode = (html) =>
-	html.replaceAll(/&(#x[0-9a-f]+|#\d+|[a-z]+);/giu, (entity, body) => {
-		if (body.startsWith('#x') || body.startsWith('#X')) {
-			return String.fromCodePoint(Number.parseInt(body.slice(2), 16))
-		}
-		if (body.startsWith('#')) {
-			return String.fromCodePoint(Number(body.slice(1)))
-		}
-		return NAMED[body.toLowerCase()] ?? entity
-	})
-
-let text = (html) =>
-	decode(html.replaceAll(/<[^>]+>/gu, ' '))
-		.replaceAll(/\s+/gu, ' ')
-		.trim()
 
 let normalizeTime = (raw) => raw.replaceAll(/\s+/gu, '').toLowerCase()
 
@@ -71,8 +56,8 @@ export function parseWeeklySchedule(html) {
 
 	let rows = []
 	for (let [, inner] of html.matchAll(ROW)) {
-		let spans = [...inner.matchAll(SPAN)].map(([, span]) => text(span))
-		let [daypart, when] = spans.length >= 2 ? spans : [text(inner), '']
+		let spans = [...inner.matchAll(SPAN)].map(([, span]) => htmlText(span))
+		let [daypart, when] = spans.length >= 2 ? spans : [htmlText(inner), '']
 		let match = /^(.+?),\s*(\S+\s*[ap]m)\s*-\s*(\S+\s*[ap]m)$/iu.exec(when)
 		if (!match) {
 			throw new Error(`bonapp: could not read hours from "${when}"`)

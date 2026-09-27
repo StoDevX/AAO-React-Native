@@ -1,0 +1,8 @@
+building: rms
+floors:
+  - name: 3rd floor
+    entries:
+      - {name: Computer Science, room: '307'}
+      - {name: Mathematics, room: '307'}
+      - {name: 'Mathematics, Statistics, and Computer Science', room: '307'}
+      - {name: Statistics and Data Science, room: '307'}

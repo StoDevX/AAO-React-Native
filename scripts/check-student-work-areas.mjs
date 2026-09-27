@@ -3,11 +3,10 @@
 // Finds the Student Work postings that belong to no area tile, and explains
 // each from the unit number in its description.
 //
-// A posting is in an area when a keyword search for one of the area's units
-// finds it, so this runs the app's own searches -- the same URLs and parsers,
-// imported from modules/ccc-jobs -- and takes what none of them found. Reading
-// unit numbers first and comparing them with the areas file would miss the
-// postings whose unit is listed but mistyped, which no tile shows either.
+// A posting is in an area when the unit ccc-server publishes for it is one the
+// area lists, and a posting the published map lacks is read from its detail.
+// This sorts the board the same way, with the app's own URLs and parsers from
+// modules/ccc-jobs, and reports what lands in no area.
 //
 // Prints a Markdown report. With --check, exits 1 when some posting carries a
 // unit that no area lists; postings with no usable unit number are reported
@@ -16,24 +15,22 @@
 
 import {readFileSync} from 'node:fs'
 import {load} from 'js-yaml'
-import {parseRequisitionIds, parseRequisitions} from '../modules/ccc-jobs/parsers/requisitions.ts'
-import {
-	detailUrl,
-	jobPageUrl,
-	parseSiteHref,
-	requisitionsUrl,
-	unitPostingsUrl,
-} from '../modules/ccc-jobs/urls.ts'
+import {parseRequisitions} from '../modules/ccc-jobs/parsers/requisitions.ts'
+import {detailUrl, jobPageUrl, parseSiteHref, requisitionsUrl} from '../modules/ccc-jobs/urls.ts'
 import {
 	classifyUnassigned,
 	formatReport,
 	parseUnitNames,
+	postingsOutsideAreas,
 	unitFieldOf,
 } from './student-work-units.mjs'
 
 const AREAS = new URL('../data/student-work-areas.yaml', import.meta.url)
 const SOURCES = new URL('../data/sources.yaml', import.meta.url)
 const REL_JOBS = 'https://frogpond.tech/rel/jobs'
+const REL_UNITS = 'https://frogpond.tech/rel/student-work-units'
+/** What the app resolves a relative source against; see source/lib/constants.ts. */
+const API_ROOT = 'https://stolaf.api.frogpond.tech/v1/'
 const UNIT_NAMES_URL =
 	'https://www.stolaf.edu/apps/workauth/Autocomplete.cfc?method=setLawsonUnitsAccountNumber&returnformat=json'
 
@@ -54,25 +51,22 @@ async function main() {
 	let jobs = links.find((entry) => entry.rel === REL_JOBS)
 	if (!jobs) throw new Error(`student-work: no ${REL_JOBS} link in data/sources.yaml`)
 	let site = parseSiteHref(jobs.href)
+	let units = links.find((entry) => entry.rel === REL_UNITS)
+	if (!units) throw new Error(`student-work: no ${REL_UNITS} link in data/sources.yaml`)
 
 	let areas = load(readFileSync(AREAS, 'utf8'))
 	let listedUnits = new Set(areas.flatMap((area) => area.units))
 
-	let [board, searches] = await Promise.all([
+	let [board, published] = await Promise.all([
 		fetchJson(requisitionsUrl(site)).then(parseRequisitions),
-		Promise.all(
-			Array.from(listedUnits, async (unit) =>
-				parseRequisitionIds(await fetchJson(unitPostingsUrl(site, unit))),
-			),
-		),
+		fetchJson(new URL(units.href, API_ROOT)),
 	])
 
-	let found = new Set(searches.flat())
-	let unassigned = board.filter((job) => !found.has(job.id))
+	let outside = postingsOutsideAreas(board, published, listedUnits)
 
 	let [postings, names] = await Promise.all([
 		Promise.all(
-			unassigned.map(async (job) => {
+			outside.map(async (job) => {
 				let {items} = await fetchJson(detailUrl(site, job.id))
 				return {
 					id: job.id,
@@ -85,10 +79,12 @@ async function main() {
 		fetchJson(UNIT_NAMES_URL).then(parseUnitNames),
 	])
 
-	let result = classifyUnassigned(postings, listedUnits)
+	let result = classifyUnassigned(postings, listedUnits, published)
+	let unassigned =
+		[...result.unlisted.values()].flat().length + result.missed.length + result.unreadable.length
 
 	console.log(
-		`${board.length} postings on the board; ${board.length - unassigned.length} are in an area.\n`,
+		`${board.length} postings on the board; ${board.length - unassigned} are in an area.\n`,
 	)
 	console.log(formatReport(result, names))
 

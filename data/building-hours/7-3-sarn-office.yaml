@@ -3,6 +3,11 @@ subtitle: Sexual Assault Resource Network
 category: Health and Wellness
 kind: office
 building: bc
+links:
+  - {
+      title: 'SARN appointments',
+      url: 'https://pages.stolaf.edu/sarn/services/schedule-an-appointment/',
+    }
 
 schedule:
   - title: Hours

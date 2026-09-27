@@ -2,13 +2,15 @@ import {ownHours} from '../../building-hours/lib'
 import type {BuildingType} from '../../building-hours/types'
 import type {Building, Feature} from '../types'
 
-/// What a card opens when stacked over the map: a map feature, or a venue from
-/// the Hours data that has no feature of its own.
+/// What a card opens when stacked over the map: a map feature, a venue from
+/// the Hours data that has no feature of its own, or one floor of a
+/// building's directory (`floor` indexes the directory's floors).
 /// `link`: the web page of a Departments or Offices tile merged with the
 /// place, which its card lists among its links.
 export type StackEntry =
 	| {kind: 'feature'; id: string; link?: {label: string; href: string}}
 	| {kind: 'venue'; name: string; link?: {label: string; href: string}}
+	| {kind: 'floor'; building: string; floor: number}
 
 /// One place at a location, before Departments and Offices take their share.
 export type AlsoHereTile = {

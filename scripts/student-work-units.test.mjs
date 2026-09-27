@@ -4,6 +4,7 @@ import {test} from 'node:test'
 import {
 	classifyUnassigned,
 	formatReport,
+	postingsOutsideAreas,
 	parseUnitNames,
 	unitFieldOf,
 	unitNumberOf,
@@ -106,6 +107,25 @@ test('names units from the work-authorisation list, whatever the fund', () => {
 	assert.equal(names.size, 2)
 })
 
+test('takes the postings whose published unit no area lists', () => {
+	let board = [{id: '1'}, {id: '2'}, {id: '3'}]
+	let published = {1: '22005', 2: '15120', 3: null}
+	assert.deepEqual(
+		postingsOutsideAreas(board, published, new Set(['22005'])).map((job) => job.id),
+		['2', '3'],
+	)
+})
+
+// The map is an hour behind the board, so a new posting is in no area until
+// its detail says otherwise.
+test('takes the postings the published map does not have yet', () => {
+	let board = [{id: '1'}, {id: '9'}]
+	assert.deepEqual(
+		postingsOutsideAreas(board, {1: '22005'}, new Set(['22005'])).map((job) => job.id),
+		['9'],
+	)
+})
+
 test('groups postings by the unlisted unit they carry', () => {
 	let result = classifyUnassigned(
 		[
@@ -114,6 +134,7 @@ test('groups postings by the unlisted unit they carry', () => {
 			posting('3', 'Intl Student Worker', '11681'),
 		],
 		new Set(['22005']),
+		{1: '15120', 2: '15120', 3: '11681'},
 	)
 
 	assert.deepEqual(
@@ -127,16 +148,29 @@ test('groups postings by the unlisted unit they carry', () => {
 	assert.deepEqual(result.unreadable, [])
 })
 
-test('sets aside a listed unit that the keyword search still missed', () => {
+test('sets aside a listed unit that ccc-server published no unit for', () => {
 	let result = classifyUnassigned(
 		[posting('4', 'Football Data Entry', '11707')],
 		new Set(['11707']),
+		{4: null},
 	)
 	assert.equal(result.unlisted.size, 0)
 	assert.deepEqual(
 		result.missed.map((p) => p.id),
 		['4'],
 	)
+})
+
+// The app reads a posting the map lacks from its detail, and files it under
+// the unit it finds there.
+test('drops a posting the map lacks when its own unit is listed', () => {
+	let result = classifyUnassigned(
+		[posting('9', 'New Scorekeeper', '11707'), posting('10', 'New Tutor', '15120')],
+		new Set(['11707']),
+		{},
+	)
+	assert.deepEqual(result.missed, [])
+	assert.deepEqual([...result.unlisted.keys()], ['15120'])
 })
 
 test('sets aside postings whose unit number cannot be read', () => {
@@ -182,6 +216,7 @@ test('reports unreadable and missed postings with what the field said', () => {
 			posting('8', 'Scorekeeper', '11707'),
 		],
 		new Set(['11707']),
+		{8: null},
 	)
 	let report = formatReport(result, new Map())
 

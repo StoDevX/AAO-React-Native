@@ -4,6 +4,8 @@ category: Academia
 kind: building
 listed: false
 building: bc
+links:
+  - {title: 'Buntrock Commons', url: 'https://wp.stolaf.edu/buntrock/'}
 
 schedule:
   - title: Hours

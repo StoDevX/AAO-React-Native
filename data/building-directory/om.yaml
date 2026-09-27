@@ -1,0 +1,8 @@
+building: om
+floors:
+  - name: 1st floor
+    entries:
+      - {name: Religion, room: '130C'}
+  - name: 3rd floor
+    entries:
+      - {name: Middle East Studies, room: '320D'}

@@ -310,6 +310,43 @@ struct MapScreen: Screen {
 		}
 	}
 
+	/// Opens a floor of the card's Directory, scrolling the card to it first.
+	@discardableResult
+	func openDirectoryFloor(_ index: Int) -> Self {
+		let row = app.buttons[TestIdentifiers.Map.directoryFloor(index)].firstMatch
+		scrollCard(toReach: row)
+		XCTAssertTrue(row.exists && row.isHittable, "The card's Directory should list floor \(index)")
+		row.tap()
+		return self
+	}
+
+	/// The top sheet is a floor's: one of its entry rows can be tapped. Only a
+	/// floor sheet has them, and the Directory's own row on the card beneath
+	/// shares the floor's name, so the name alone cannot tell them apart.
+	@discardableResult
+	func verifyFloorSheetOnTop() -> Self {
+		let entries = app.buttons.matching(identifier: TestIdentifiers.Map.directoryEntry)
+		XCTAssertTrue(entries.firstMatch.waitForExistence(timeout: 10), "A floor's sheet should be up")
+		XCTAssertTrue(
+			entries.allElementsBoundByIndex.contains { $0.isHittable },
+			"The floor's sheet should be on top")
+		return self
+	}
+
+	/// Opens an entry on the floor sheet on top. Matched by the entry
+	/// identifier as well as its name: the card beneath can list a tile of the
+	/// same name, covered but still in the tree.
+	@discardableResult
+	func openDirectoryEntry(named name: String) -> Self {
+		let row = app.buttons
+			.matching(NSPredicate(
+				format: "identifier == %@ AND label BEGINSWITH %@", TestIdentifiers.Map.directoryEntry, name))
+			.firstMatch
+		XCTAssertTrue(row.waitForExistence(timeout: 10) && row.isHittable, "The floor should list \(name)")
+		row.tap()
+		return self
+	}
+
 	/// The top card is `name`'s: only one card's close button can be tapped,
 	/// and `name` can be seen, as the header's title or, at the large stop,
 	/// the big title in its place. A title's label carries its subtitle after
@@ -325,6 +362,37 @@ struct MapScreen: Screen {
 		XCTContext.runActivity(named: "\(visible.count) visible \(name), \(closes.count) close buttons") { _ in }
 		XCTAssertFalse(visible.isEmpty, "\(name)'s card should be in view")
 		XCTAssertEqual(closes.count, 1, "Only the top card's close button should be tappable")
+		return self
+	}
+
+	/// `name`'s card is back as the only card, and closing it by a tap where
+	/// its close button is drawn returns to the search sheet.
+	///
+	/// Checked by touch rather than by `isHittable`: after two stacked sheets
+	/// close in quick succession, the accessibility tree has shown an empty
+	/// second window above the card and the card's close button as not
+	/// hittable, while a tap at the button still closed the card. Whether
+	/// VoiceOver can reach the card then is unchecked.
+	@discardableResult
+	func verifyBaseCardAnswersTouch(_ name: String) -> Self {
+		let title = app.descendants(matching: .any)
+			.matching(NSPredicate(format: "label BEGINSWITH %@", name)).firstMatch
+		XCTAssertTrue(title.waitForExistence(timeout: 20), "\(name)'s card should be back")
+		// The sheets above may still be leaving; their close buttons go with them.
+		let query = app.buttons.matching(identifier: TestIdentifiers.Map.cardCloseButton)
+		let deadline = Date().addingTimeInterval(5)
+		while query.count != 1 && Date() < deadline {
+			Thread.sleep(forTimeInterval: 0.25)
+		}
+		let closes = query.allElementsBoundByIndex
+		XCTAssertEqual(closes.count, 1, "Only \(name)'s card should be left")
+		guard let close = closes.first else { return self }
+		app.coordinate(withNormalizedOffset: .zero)
+			.withOffset(CGVector(dx: close.frame.midX, dy: close.frame.midY))
+			.tap()
+		XCTAssertTrue(
+			searchField.waitForExistence(timeout: 10),
+			"Tapping \(name)'s close button should close the card")
 		return self
 	}
 
