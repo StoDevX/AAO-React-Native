@@ -1,6 +1,7 @@
 name: Tomson Hall
 image: tomson
 category: Academia
+listed: false
 building: toh
 
 schedule:

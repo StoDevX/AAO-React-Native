@@ -37,6 +37,27 @@ class ModuleHoursTests: UITestCase {
 			.verifyFavoritesSectionShown()
 	}
 
+	/// A venue marked unlisted is left out of the list's sections, and found
+	/// on the All spaces screen the list ends with.
+	func testAnUnlistedVenueLivesUnderAllSpaces() throws {
+		HoursScreen(app: app)
+			.navigate()
+			.verifyRowShown(TestIdentifiers.Hours.anExcludedBuilding)
+			.scrollToAllSpaces(checkingAbsenceOf: TestIdentifiers.Hours.anUnlistedBuilding)
+			.capture("Hours list ending in All spaces")
+			.openAllSpaces()
+			.scrollToRow(TestIdentifiers.Hours.anUnlistedBuilding)
+			.capture("All spaces, with an unlisted venue")
+	}
+
+	/// Search reaches every venue, listed or not.
+	func testSearchFindsAnUnlistedVenue() throws {
+		HoursScreen(app: app)
+			.navigate()
+			.search(for: TestIdentifiers.Hours.anUnlistedBuilding)
+			.verifyRowShown(TestIdentifiers.Hours.anUnlistedBuilding)
+	}
+
 	func testSearchWithNoMatchesShowsNoResults() throws {
 		HoursScreen(app: app)
 			.navigate()

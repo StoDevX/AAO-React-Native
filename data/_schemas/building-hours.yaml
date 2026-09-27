@@ -8,6 +8,9 @@ properties:
   subtitle: {type: string}
   abbreviation: {type: string}
   category: {type: string}
+  # False keeps the venue out of the Hours list's categories. It stays
+  # reachable through search and the All spaces screen. Absent means listed.
+  listed: {type: boolean}
   image: {type: string}
   building: {type: string, pattern: '^[a-z0-9-]+$'}
   isNotice: {type: boolean}

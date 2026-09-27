@@ -1,7 +1,7 @@
 import React from 'react'
 import moment from 'moment-timezone'
 import {describe, expect, test} from '@jest/globals'
-import {render} from '@testing-library/react-native'
+import {fireEvent, render} from '@testing-library/react-native'
 
 import {BuildingList} from '../building-list'
 import type {BuildingType} from '../../types'
@@ -98,5 +98,21 @@ describe('which state the list shows', () => {
 
 		expect(queryByText('Academia')).not.toBeNull()
 		expect(queryByText('Athletics')).toBeNull()
+	})
+})
+
+describe('the All spaces row', () => {
+	test('ends the list, and opens All spaces', async () => {
+		let onShowAllSpaces = jest.fn()
+		let {getByRole} = await renderList({onShowAllSpaces})
+
+		await fireEvent.press(getByRole('button', {name: 'All spaces'}))
+		expect(onShowAllSpaces).toHaveBeenCalledTimes(1)
+	})
+
+	test('is left off when there is nowhere else to go', async () => {
+		let {queryByText} = await renderList()
+
+		expect(queryByText('All spaces')).toBeNull()
 	})
 })
