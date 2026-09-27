@@ -258,6 +258,23 @@ describe('IssueGrid', () => {
 		])
 	})
 
+	// The photos' addresses are looked up page by page, and a failed lookup leaves every lead's
+	// address blank; a lead that has a photo is still no photo-less lead.
+	test("asks for no words for a lead with a photo whose address wasn't found", async () => {
+		let unfound = POSTS.map((post) => (post.id === 20 ? {...post, photoUrl: null} : post))
+		queryClient.setQueryData(messKeys.issues, {pages: [unfound], pageParams: [1]})
+		await render(
+			<QueryClientProvider client={queryClient}>
+				<Grid landscape={false} />
+			</QueryClientProvider>,
+		)
+		await waitForQueriesToSettle(queryClient)
+
+		expect(postHrefs().filter((href) => href.includes('/posts/20?_fields=content'))).toStrictEqual(
+			[],
+		)
+	})
+
 	test('opens the issue a tile shows', async () => {
 		await renderGrid()
 

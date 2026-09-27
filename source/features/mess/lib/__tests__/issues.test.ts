@@ -127,7 +127,24 @@ describe('groupIssues', () => {
 			]),
 		).toStrictEqual([
 			['week:2026-05-11', '2026-05-13', 5, false],
-			['special:2026-05-12', '2026-05-12', 5, true],
+			['special:2026-05-11', '2026-05-12', 5, true],
+		])
+	})
+
+	// A reader can be on an edition's page while its posts are still going up.
+	it("keeps a special edition's key as more of its posts go up and its busiest day changes", () => {
+		let wednesday = postsOn('2026-05-13', 3, 300, true)
+		let tuesday = postsOn('2026-05-12', 3, 200, true)
+		let before = groupIssues([...wednesday, ...tuesday], false)
+		let after = groupIssues(
+			[...wednesday, ...tuesday, ...postsOn('2026-05-12', 1, 150, true)],
+			false,
+		)
+		expect(before.map((issue) => [issue.key, issue.day])).toStrictEqual([
+			['special:2026-05-11', '2026-05-13'],
+		])
+		expect(after.map((issue) => [issue.key, issue.day])).toStrictEqual([
+			['special:2026-05-11', '2026-05-12'],
 		])
 	})
 
@@ -195,7 +212,7 @@ describe('groupIssues', () => {
 		let day = [...special, ...spring.filter((post) => post.day === '2026-04-29')]
 		let issues = groupIssues(day, false)
 		expect(issues.map((issue) => [issue.key, issue.day, issue.isSpecial])).toStrictEqual([
-			['special:2026-04-29', '2026-04-29', true],
+			['special:2026-04-27', '2026-04-29', true],
 			['week:2026-04-27', '2026-04-29', false],
 		])
 	})

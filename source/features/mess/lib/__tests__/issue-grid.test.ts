@@ -21,6 +21,7 @@ function issue(day: string, extra: Partial<MessIssue> = {}): MessIssue {
 		leadId: 1,
 		leadTitle: `Lead of ${day}`,
 		leadPhoto: null,
+		leadHasPhoto: false,
 		isSpecial: false,
 		...extra,
 	}

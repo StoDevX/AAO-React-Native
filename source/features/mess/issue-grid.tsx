@@ -89,6 +89,7 @@ const Tile = React.memo(function Tile({
 			onPress={() => onOpen(issue)}
 			paragraphs={paragraphs}
 			sheet={sheet}
+			hasPhoto={issue.leadHasPhoto}
 			photoUrl={issue.leadPhoto}
 			special={issue.isSpecial}
 			stainKind={kind}
@@ -126,9 +127,12 @@ function WordsTile({issue, read, onOpen}: TileProps): React.ReactNode {
 	return <Tile issue={issue} onOpen={onOpen} paragraphs={words.data ?? NO_PARAGRAPHS} read={read} />
 }
 
-/** A grid tile: its lead photo, or with none, its lead story's words. */
+/**
+ * A grid tile: its lead photo, or with none, its lead story's words. A lead whose photo's address
+ * was not found is still a lead with a photo, and is not given words.
+ */
 const GridTile = React.memo(function GridTile({issue, read, onOpen}: TileProps): React.ReactNode {
-	return issue.leadPhoto === null ? (
+	return !issue.leadHasPhoto ? (
 		<WordsTile issue={issue} onOpen={onOpen} read={read} />
 	) : (
 		<Tile issue={issue} onOpen={onOpen} read={read} />

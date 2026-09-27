@@ -64,11 +64,12 @@ export type LightPost = {
 	photoUrl: string | null
 }
 
-/** One issue of the paper: a week's posts, or one day's special edition, with the strays that joined it. */
+/** One issue of the paper: a week's posts, or a week's special edition, with the strays that joined it. */
 export type MessIssue = {
 	/**
-	 * Names the issue uniquely: `week:` and its Monday, or `special:` and its day. Two issues can
-	 * share a day, a special edition printed beside the week's paper, so the day alone does not.
+	 * Names the issue uniquely: `week:` or `special:`, and its week's Monday. A week can hold both a
+	 * paper and a special edition, and an edition's day can change as more of its posts go up, so
+	 * neither the week nor the day alone names it.
 	 */
 	key: string
 	/** The issue's day, as YYYY-MM-DD in the paper's time zone */
@@ -82,6 +83,8 @@ export type MessIssue = {
 	leadTitle: string
 	/** The lead's photo's address; null when it has none, or it was not found */
 	leadPhoto: string | null
+	/** Whether the lead has a photo, whether or not its address was found */
+	leadHasPhoto: boolean
 	isSpecial: boolean
 }
 

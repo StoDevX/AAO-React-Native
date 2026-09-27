@@ -4,7 +4,7 @@ import {MESS_LOGO_MEDIA_IDS, SPECIAL_EDITION, inSpecialEdition, placement} from 
 import {leadStory} from './shelves'
 import type {LightPost, MessCategory, MessIssue} from '../types'
 
-/** A week with at least this many posts is an issue, as is a day with this many special-edition posts. */
+/** A week with at least this many posts is an issue, as are a week's special-edition posts when there are this many. */
 export const ISSUE_MIN_POSTS = 5
 
 /** How many posts a page of the issue list asks for: WordPress's most. A shorter page is the last. */
@@ -106,7 +106,7 @@ type Group = {
  * day. A quieter week joins the next issue after it, so a paper that starts going up late on
  * Sunday prints with the rest of its posts; a quiet week newer than every issue joins the issue
  * before it instead. A week's special-edition posts, when there are at least five, are an issue
- * of their own, apart from the rest of the week and named by their busiest day. While another page remains, the oldest week is left
+ * of their own, apart from the rest of the week and dated by their busiest day. While another page remains, the oldest week is left
  * out, since that page may hold more of it. WordPress pages by offset, so a post published between
  * two page fetches repeats one post; each counts once.
  */
@@ -163,13 +163,15 @@ export function groupIssues(posts: LightPost[], hasMore: boolean): MessIssue[] {
 		let day = busiestDay(group.posts)
 		return [
 			{
-				key: group.special ? `special:${day}` : `week:${group.start}`,
+				// By the week rather than the busiest day, which can change as an edition goes up.
+				key: `${group.special ? 'special' : 'week'}:${group.start}`,
 				day,
 				count: group.posts.length,
 				storyIds: group.posts.map((post) => post.id),
 				leadId: lead.id,
 				leadTitle: lead.title,
 				leadPhoto: lead.photoUrl,
+				leadHasPhoto: lead.photo !== null,
 				isSpecial: group.special,
 			},
 		]

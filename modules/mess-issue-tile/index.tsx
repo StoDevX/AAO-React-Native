@@ -51,6 +51,11 @@ export type MessIssueTileProps = {
 	/** The issue's date as words, "April 29, 2026"; the tile sets it in capitals */
 	date: string
 	special: boolean
+	/**
+	 * Whether the lead has a photo: the tile keeps a photo's layout, with a placeholder, while its
+	 * address is unknown or it fails to load
+	 */
+	hasPhoto: boolean
 	photoUrl: string | null
 	stains: StainMark[]
 	stainKind: StainKind

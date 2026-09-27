@@ -47,6 +47,7 @@ const ISSUE: MessIssue = {
 	leadId: 5,
 	leadTitle: 'Student workers deliver petition',
 	leadPhoto: 'https://olafmessenger.com/petition.jpg',
+	leadHasPhoto: true,
 	isSpecial: false,
 }
 const PHOTO = {url: 'https://olafmessenger.com/petition.jpg', width: 1200, height: 800, caption: ''}
