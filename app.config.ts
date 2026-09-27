@@ -100,15 +100,44 @@ const config: ExpoConfig = {
 		// Expo's schema covers both keys the PrivacyInfo.xcprivacy needs, so no
 		// plugin.
 		privacyManifests: {
-			// The map shows where you are on campus and nothing else: the
-			// coordinate never leaves the device, is not tied to an account,
+			// Location: the map shows where you are on campus and nothing else.
+			// The coordinate never leaves the device, is not tied to an account,
 			// and is not used for tracking.
+			//
+			// The rest is what Sentry sends when sharing is on (the Settings
+			// switch): crash reports, performance traces, counts of which screens
+			// and features are used, and a random ID made per install. None of it
+			// is tied to a person, and none of it is used for tracking.
 			NSPrivacyCollectedDataTypes: [
 				{
 					NSPrivacyCollectedDataType: 'NSPrivacyCollectedDataTypePreciseLocation',
 					NSPrivacyCollectedDataTypeLinked: false,
 					NSPrivacyCollectedDataTypeTracking: false,
 					NSPrivacyCollectedDataTypePurposes: ['NSPrivacyCollectedDataTypePurposeAppFunctionality'],
+				},
+				{
+					NSPrivacyCollectedDataType: 'NSPrivacyCollectedDataTypeCrashData',
+					NSPrivacyCollectedDataTypeLinked: false,
+					NSPrivacyCollectedDataTypeTracking: false,
+					NSPrivacyCollectedDataTypePurposes: ['NSPrivacyCollectedDataTypePurposeAppFunctionality'],
+				},
+				{
+					NSPrivacyCollectedDataType: 'NSPrivacyCollectedDataTypePerformanceData',
+					NSPrivacyCollectedDataTypeLinked: false,
+					NSPrivacyCollectedDataTypeTracking: false,
+					NSPrivacyCollectedDataTypePurposes: ['NSPrivacyCollectedDataTypePurposeAppFunctionality'],
+				},
+				{
+					NSPrivacyCollectedDataType: 'NSPrivacyCollectedDataTypeProductInteraction',
+					NSPrivacyCollectedDataTypeLinked: false,
+					NSPrivacyCollectedDataTypeTracking: false,
+					NSPrivacyCollectedDataTypePurposes: ['NSPrivacyCollectedDataTypePurposeAnalytics'],
+				},
+				{
+					NSPrivacyCollectedDataType: 'NSPrivacyCollectedDataTypeDeviceID',
+					NSPrivacyCollectedDataTypeLinked: false,
+					NSPrivacyCollectedDataTypeTracking: false,
+					NSPrivacyCollectedDataTypePurposes: ['NSPrivacyCollectedDataTypePurposeAnalytics'],
 				},
 			],
 			NSPrivacyAccessedAPITypes: [
