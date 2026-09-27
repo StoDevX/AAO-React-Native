@@ -40,6 +40,7 @@ const mockManifest = fetchManifest as jest.Mock<() => Promise<Jrd>>
 const mockBody = fetchSourceBody as jest.Mock<(href: string) => Promise<unknown>>
 
 const ISSUE: MessIssue = {
+	key: 'week:2026-04-27',
 	day: '2026-04-29',
 	after: '2026-04-28T23:59:59',
 	before: null,

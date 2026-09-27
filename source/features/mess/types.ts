@@ -64,8 +64,13 @@ export type LightPost = {
 	photoUrl: string | null
 }
 
-/** One issue of the paper: a day's batch of posts, with the strays that joined it. */
+/** One issue of the paper: a week's posts, or one day's special edition, with the strays that joined it. */
 export type MessIssue = {
+	/**
+	 * Names the issue uniquely: `week:` and its Monday, or `special:` and its day. Two issues can
+	 * share a day, a special edition printed beside the week's paper, so the day alone does not.
+	 */
+	key: string
 	/** The issue's day, as YYYY-MM-DD in the paper's time zone */
 	day: string
 	/** The moment before the issue's day, for WordPress's `after`, which leaves out the moment itself */

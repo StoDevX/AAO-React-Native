@@ -236,7 +236,7 @@ describe('FrontPageScreen', () => {
 
 		expect(mockNavigate).toHaveBeenCalledWith({
 			pathname: '/Messenger/issue',
-			params: {day: '2026-04-29'},
+			params: {key: 'week:2026-04-27'},
 		})
 	})
 

@@ -14,6 +14,7 @@ import type {MessIssue, MessStory} from '../../types'
 
 function issue(day: string, extra: Partial<MessIssue> = {}): MessIssue {
 	return {
+		key: `week:${day}`,
 		day,
 		after: `${day}T00:00:00`,
 		before: null,

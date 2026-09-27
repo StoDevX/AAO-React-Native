@@ -14,13 +14,13 @@ import {useMessIssues} from './use-mess-issues'
 import {useDismissOnce} from '../../lib/use-dismiss-once'
 
 /** One issue, opened from its tile, laid out as a front page, and titled with its date. */
-export function IssueScreen({day}: {day: string}): React.ReactNode {
+export function IssueScreen({issueKey}: {issueKey: string}): React.ReactNode {
 	let goBack = useDismissOnce()
 	let queryClient = useQueryClient()
 	let select = useNewsFilterStore((state) => state.select)
 	let columnWidth = useColumnWidth(PAGE_MARGIN)
 	let {issues, query} = useMessIssues()
-	let issue = issues?.find((candidate) => candidate.day === day)
+	let issue = issues?.find((candidate) => candidate.key === issueKey)
 
 	if (!issue) {
 		return (
@@ -56,7 +56,7 @@ export function IssueScreen({day}: {day: string}): React.ReactNode {
 					onShowSection={showSection}
 					// The newest issue is the front page's top tile, saved for the next launch; this
 					// page shares its query.
-					persist={issues?.[0]?.day === issue.day}
+					persist={issues?.[0]?.key === issue.key}
 				/>
 			</MessPage>
 		</>

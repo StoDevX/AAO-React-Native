@@ -94,18 +94,18 @@ function generator(seed: number): () => number {
 const clamp = (value: number) => Math.min(1, Math.max(0, value))
 
 /**
- * An issue's stains. The day seeds one shuffle of the spots, so the same issue always stains the
+ * An issue's stains. Its key seeds one shuffle of the spots, so the same issue always stains the
  * same way, and the k-th stain has a seed of its own, so a new stain never moves the ones before.
  */
-export function stainMarks(day: string, count: number): StainMark[] {
-	let shuffle = generator(hash(day))
+export function stainMarks(issueKey: string, count: number): StainMark[] {
+	let shuffle = generator(hash(issueKey))
 	let spots = [...SPOTS]
 	for (let i = spots.length - 1; i > 0; i--) {
 		let j = Math.floor(shuffle() * (i + 1))
 		;[spots[i], spots[j]] = [spots[j] as (typeof spots)[number], spots[i] as (typeof spots)[number]]
 	}
 	return spots.slice(0, count).map(([x, y], k) => {
-		let next = generator(hash(`${day}#${k}`))
+		let next = generator(hash(`${issueKey}#${k}`))
 		return {
 			x: clamp(x + (next() - 0.5) * 0.08),
 			y: clamp(y + (next() - 0.5) * 0.06),
@@ -120,13 +120,13 @@ export function stainMarks(day: string, count: number): StainMark[] {
 const DOG_EARS: readonly DogEar[] = ['topRight', 'bottomRight', 'bottomLeft']
 
 /**
- * How an issue's sheet has been handled, seeded by its day like its stains, so a sheet looks the
+ * How an issue's sheet has been handled, seeded by its key like its stains, so a sheet looks the
  * same every time it is drawn: a slight tilt, now and then a turned corner, two or three faint
  * creases, and the bend below its fold. The top tile is tilted less, since its columns are read
  * as lines of type.
  */
-export function sheetShape(day: string, top: boolean): SheetShape {
-	let next = generator(hash(`${day}#sheet`))
+export function sheetShape(issueKey: string, top: boolean): SheetShape {
+	let next = generator(hash(`${issueKey}#sheet`))
 	let tilt = (next() * 2 - 1) * (top ? 0.3 : 0.8)
 	// About one sheet in four has a corner turned; never the top left, where the nameplate sits.
 	let earRoll = next()
@@ -140,7 +140,7 @@ export function sheetShape(day: string, top: boolean): SheetShape {
 		tilt,
 		dogEar,
 		creases,
-		edgeSeed: hash(`${day}#edges`),
+		edgeSeed: hash(`${issueKey}#edges`),
 		bend: 4 + next() * 5,
 	}
 }

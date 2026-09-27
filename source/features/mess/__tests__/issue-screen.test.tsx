@@ -94,24 +94,24 @@ afterEach(() => {
 	jest.clearAllMocks()
 })
 
-function renderIssue(day: string) {
+function renderIssue(issueKey: string) {
 	return render(
 		<QueryClientProvider client={queryClient}>
-			<IssueScreen day={day} />
+			<IssueScreen issueKey={issueKey} />
 		</QueryClientProvider>,
 	)
 }
 
 describe('IssueScreen', () => {
-	test('lays out the issue its day names, under its dateline alone', async () => {
-		await renderIssue('2026-03-25')
+	test('lays out the issue its key names, under its dateline alone', async () => {
+		await renderIssue('week:2026-03-23')
 
 		expect(screen.getByText('March 25, 2026 · 5 stories')).toBeTruthy()
 		expect(screen.getByRole('button', {name: 'March story 0, News'})).toBeTruthy()
 	})
 
 	test('"All ›" goes back to the front page, showing that section in Latest', async () => {
-		await renderIssue('2026-03-25')
+		await renderIssue('week:2026-03-23')
 
 		await fireEvent.press(screen.getByRole('button', {name: 'All Opinions'}))
 
@@ -125,8 +125,8 @@ describe('IssueScreen', () => {
 	test('saves the newest issue for the next launch, and no older one', async () => {
 		let april = {after: '2026-04-26T23:59:59', before: null, count: 5}
 		queryClient.setQueryData(messKeys.issue(april), APRIL)
-		await renderIssue('2026-04-29')
-		await renderIssue('2026-03-25')
+		await renderIssue('week:2026-04-27')
+		await renderIssue('week:2026-03-23')
 
 		let saved = dehydrate(queryClient, persistOptions.dehydrateOptions).queries.map(
 			(query) => query.queryKey,
@@ -138,7 +138,7 @@ describe('IssueScreen', () => {
 	})
 
 	test('says an issue the list does not hold is unavailable', async () => {
-		await renderIssue('2026-01-01')
+		await renderIssue('week:2025-12-29')
 
 		expect(screen.getByText('Issue unavailable')).toBeTruthy()
 	})

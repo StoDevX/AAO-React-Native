@@ -72,7 +72,7 @@ function Tile({
 		() => readCount(issue.storyIds, new Set(opened)),
 		[issue.storyIds, opened],
 	)
-	let stains = stainMarks(issue.day, stainCount(read, issue.storyIds.length))
+	let stains = stainMarks(issue.key, stainCount(read, issue.storyIds.length))
 	return (
 		<MessIssueTile
 			accessibilityLabel={tileLabel(issue, read)}
@@ -80,7 +80,7 @@ function Tile({
 			layout={layout}
 			onPress={() => onOpen(issue)}
 			paragraphs={paragraphs}
-			sheet={sheetShape(issue.day, layout !== 'grid')}
+			sheet={sheetShape(issue.key, layout !== 'grid')}
 			photoUrl={issue.leadPhoto}
 			special={issue.isSpecial}
 			stainKind={kind}
@@ -161,7 +161,7 @@ export function IssueGrid({issues, query, landscape, onOpen}: Props): React.Reac
 
 	return (
 		<>
-			{top ? <TopTile issue={top} landscape={landscape} key={top.day} onOpen={onOpen} /> : null}
+			{top ? <TopTile issue={top} landscape={landscape} key={top.key} onOpen={onOpen} /> : null}
 			{yearGroups(issues).flatMap((group) => [
 				<HStack key={`year-${group.year}`} modifiers={YEAR_ROW}>
 					<Text modifiers={YEAR}>{group.year}</Text>
@@ -171,9 +171,9 @@ export function IssueGrid({issues, query, landscape, onOpen}: Props): React.Reac
 					>{`${group.count} ${group.count === 1 ? 'issue' : 'issues'}`}</Text>
 				</HStack>,
 				...rowsOf(group.issues, perRow).map((row) => (
-					<HStack alignment="top" key={row.map((each) => each.day).join('+')} spacing={12}>
+					<HStack alignment="top" key={row.map((each) => each.key).join('+')} spacing={12}>
 						{row.map((each) => (
-							<VStack key={each.day} modifiers={SHARE}>
+							<VStack key={each.key} modifiers={SHARE}>
 								<GridTile issue={each} onOpen={onOpen} />
 							</VStack>
 						))}

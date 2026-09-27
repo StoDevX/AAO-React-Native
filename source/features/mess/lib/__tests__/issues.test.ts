@@ -118,6 +118,19 @@ describe('groupIssues', () => {
 		])
 	})
 
+	// A special edition printed on the same day as the week's paper is still an issue of its own.
+	it('tells apart a special edition and the regular issue printed the same day', () => {
+		let special = spring
+			.filter((post) => post.day === '2026-05-12')
+			.map((post) => ({...post, day: '2026-04-29'}))
+		let day = [...special, ...spring.filter((post) => post.day === '2026-04-29')]
+		let issues = groupIssues(day, false)
+		expect(issues.map((issue) => [issue.key, issue.day, issue.isSpecial])).toStrictEqual([
+			['special:2026-04-29', '2026-04-29', true],
+			['week:2026-04-27', '2026-04-29', false],
+		])
+	})
+
 	it("names a week's issue by its busiest day, the day it printed", () => {
 		let early = spring
 			.filter((post) => post.day === '2026-03-18')

@@ -59,7 +59,7 @@ function ByIssuePage(): React.ReactNode {
 				issues={issues}
 				landscape={width > height}
 				onOpen={(issue) =>
-					router.navigate({pathname: '/Messenger/issue', params: {day: issue.day}})
+					router.navigate({pathname: '/Messenger/issue', params: {key: issue.key}})
 				}
 				query={query}
 			/>

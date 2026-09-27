@@ -164,6 +164,7 @@ export function groupIssues(posts: LightPost[], hasMore: boolean): MessIssue[] {
 				: null
 		return [
 			{
+				key: group.special ? `special:${group.start}` : `week:${group.start}`,
 				day,
 				after: `${dayAfter(group.start, -1)}T23:59:59`,
 				before,
@@ -177,8 +178,11 @@ export function groupIssues(posts: LightPost[], hasMore: boolean): MessIssue[] {
 		]
 	})
 	// Newest first by the day each is named for, so a Wednesday's paper lists before the special
-	// edition of the Tuesday before it.
-	return issues.sort((a, b) => (a.day < b.day ? 1 : a.day > b.day ? -1 : 0))
+	// edition of the Tuesday before it; a special edition printed the same day lists first.
+	return issues.sort((a, b) => {
+		if (a.day !== b.day) return a.day < b.day ? 1 : -1
+		return Number(b.isSpecial) - Number(a.isSpecial)
+	})
 }
 
 /**
