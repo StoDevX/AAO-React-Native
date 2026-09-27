@@ -1,0 +1,5 @@
+building: bmc
+floors:
+  - name: 1st floor
+    entries:
+      - {name: College Ministry, room: '18'}

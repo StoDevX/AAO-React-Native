@@ -14,12 +14,14 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import {load as loadYaml} from 'js-yaml'
+import {directoryKeyProblems} from './building-directory-keys.mjs'
 import {duplicateBuildingHours} from './building-hours-kinds.mjs'
 import {isDataEntry} from './data-entries.mjs'
 import {DATA_BASE} from './paths.mjs'
 
 const GEOJSON_URL = 'https://stolaf.api.frogpond.tech/v1/map/geojson'
 const BUILDING_HOURS_DIR = path.join(DATA_BASE, 'building-hours')
+const BUILDING_DIRECTORY_DIR = path.join(DATA_BASE, 'building-directory')
 
 // Exit codes distinguish "could not check" from "checked and it's wrong",
 // so a caller (the CI job) can treat a network blip differently from an
@@ -70,6 +72,21 @@ function readBuildingHoursFiles() {
 			let filepath = path.join(BUILDING_HOURS_DIR, filename)
 			let data = loadYaml(fs.readFileSync(filepath, 'utf-8'), {filename: filepath})
 			return {filename, name: data.name, building: data.building, kind: data.kind}
+		})
+}
+
+function readBuildingDirectoryFiles() {
+	return fs
+		.readdirSync(BUILDING_DIRECTORY_DIR)
+		.filter(isDataEntry)
+		.filter((filename) => filename.endsWith('.yaml'))
+		.map((filename) => {
+			let filepath = path.join(BUILDING_DIRECTORY_DIR, filename)
+			let data = loadYaml(fs.readFileSync(filepath, 'utf-8'), {filename: filepath})
+			let points = data.floors.flatMap((floor) =>
+				floor.entries.map((entry) => entry.point).filter(Boolean),
+			)
+			return {filename, building: data.building, points}
 		})
 }
 
@@ -148,8 +165,15 @@ async function main() {
 		console.log(`  closest ids: ${suggestions}`)
 	}
 
+	let directoryProblems = directoryKeyProblems(readBuildingDirectoryFiles(), featureIds)
+	for (let problem of directoryProblems) {
+		console.log(problem)
+	}
+
 	if (failures.length > 0) {
 		console.log(`${failures.length} of ${entries.length} building keys failed to resolve`)
+	}
+	if (failures.length > 0 || directoryProblems.length > 0) {
 		process.exit(EXIT_INVALID_KEY)
 	}
 

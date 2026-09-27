@@ -1,0 +1,17 @@
+building: ahl
+floors:
+  - name: 1st floor
+    entries:
+      - {name: Alumni and Parent Relations, room: '160'}
+      - {name: Annual Giving, room: '180'}
+      - {name: Public Safety, room: '160'}
+  - name: 2nd floor
+    entries:
+      - {name: Advancement, room: '260'}
+      - {name: Advancement Operations and Strategies, room: '280'}
+      - {name: Music Organizations, room: '269'}
+  - name: 3rd floor
+    entries:
+      - {name: Alumni and Family Travel, room: '373'}
+      - {name: Development, room: '362'}
+      - {name: Donor Relations, room: '368'}

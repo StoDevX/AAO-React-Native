@@ -166,6 +166,16 @@ struct TestIdentifiers {
 	// MARK: - Map
 
 	enum Map {
+		/// Mirrors directoryFloorId in source/features/map/card/directory-section.tsx.
+		static func directoryFloor(_ index: Int) -> String { "directory-floor-\(index)" }
+		/// Mirrors DIRECTORY_ENTRY_ID in source/features/map/floor-card.tsx.
+		static let directoryEntry = "directory-entry"
+		/// A building with a directory file (data/building-directory/toh.yaml),
+		/// whose first floor (index 1) lists Financial Aid, an Hours venue.
+		static let aBuildingWithADirectory = "Tomson Hall"
+		static let aDirectoryFloor = "1st floor"
+		static let aDirectoryFloorIndex = 1
+		static let aDirectoryVenue = "Financial Aid"
 		/// The sheet's search field. The bar's testID is its placeholder, and
 		/// UIKit puts the identifier on the text field, so this is a
 		/// `searchFields` query.

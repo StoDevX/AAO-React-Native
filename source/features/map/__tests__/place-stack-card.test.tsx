@@ -6,6 +6,7 @@ import {QueryClient, QueryClientProvider} from '@tanstack/react-query'
 import {PlaceStackCard} from '../place-stack-card'
 import type {StackEntry} from '../lib/place-stack'
 import {keys as mapKeys} from '../query'
+import {directoryKeys} from '../card-queries'
 import {keys as hoursKeys} from '../../building-hours/query'
 import type {BuildingType} from '../../building-hours/types'
 import {makeBuilding} from './fixtures'
@@ -38,6 +39,21 @@ const features = [
 ]
 const venues = [venue('OSA', 'office', 'bc'), venue('The Cage', 'space', 'thecage')]
 
+const directories = [
+	{
+		building: 'bc',
+		floors: [
+			{
+				name: '1st floor',
+				entries: [
+					{name: 'OSA', room: '110'},
+					{name: 'Mail Room', room: '120'},
+				],
+			},
+		],
+	},
+]
+
 const buntrock: StackEntry = {kind: 'feature', id: 'bc'}
 const theCage: StackEntry = {kind: 'feature', id: 'thecage'}
 
@@ -55,6 +71,7 @@ async function renderStack(stack: Array<StackEntry>, dispatch = jest.fn()) {
 	trackedQueryClients.push(client)
 	client.setQueryData(mapKeys.all('stolaf'), features)
 	client.setQueryData(hoursKeys.all('stolaf'), venues)
+	client.setQueryData(directoryKeys.all('stolaf'), directories)
 	await render(
 		<QueryClientProvider client={client}>
 			<PlaceStackCard campus="stolaf" depth={0} dispatch={dispatch} stack={stack} stop="medium" />
@@ -126,6 +143,7 @@ describe('PlaceStackCard caching', () => {
 		trackedQueryClients.push(client)
 		client.setQueryData(mapKeys.all('stolaf'), features)
 		client.setQueryData(hoursKeys.all('stolaf'), venues)
+		client.setQueryData(directoryKeys.all('stolaf'), directories)
 		await render(
 			<QueryClientProvider client={client}>
 				<PlaceStackCard
@@ -142,5 +160,33 @@ describe('PlaceStackCard caching', () => {
 		expect(client.getQueryState(mapKeys.all('stolaf'))?.fetchStatus).toBe('idle')
 		expect(client.getQueryState(hoursKeys.all('stolaf'))?.dataUpdateCount).toBe(1)
 		expect(client.getQueryState(mapKeys.all('stolaf'))?.dataUpdateCount).toBe(1)
+		expect(client.getQueryState(directoryKeys.all('stolaf'))?.dataUpdateCount).toBe(1)
+	})
+})
+
+describe('PlaceStackCard floors', () => {
+	const floor: StackEntry = {kind: 'floor', building: 'bc', floor: 0}
+
+	test("stacks a floor's sheet, titled for the floor", async () => {
+		await renderStack([buntrock, floor])
+		expect(titles()).toEqual(['Buntrock Commons', '1st floor'])
+	})
+
+	test("stacks an entry's card when it opens one", async () => {
+		let dispatch = await renderStack([buntrock, floor])
+		// Buntrock's card beneath lists OSA too; the floor's row reads its room.
+		await fireEvent.press(screen.getByRole('button', {name: 'OSA, 110'}))
+		expect(dispatch).toHaveBeenCalledWith({type: 'push', entry: {kind: 'venue', name: 'OSA'}})
+	})
+
+	test('a row that opens nothing is not a button', async () => {
+		await renderStack([buntrock, floor])
+		expect(screen.getByText('Mail Room')).toBeTruthy()
+		expect(screen.queryByRole('button', {name: /^Mail Room/u})).toBeNull()
+	})
+
+	test('says so when the floor is gone', async () => {
+		await renderStack([buntrock, {kind: 'floor', building: 'bc', floor: 5}])
+		expect(screen.getByText('Floor not found.')).toBeTruthy()
 	})
 })
