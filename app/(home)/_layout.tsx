@@ -65,6 +65,7 @@ export default function HomeLayout(): React.ReactNode {
 			<Stack.Screen name="Transit" options={{title: 'Transit'}} />
 			<Stack.Screen name="Transit/line" options={DETAIL_SHEET} />
 			<Stack.Screen name="Hours" />
+			<Stack.Screen name="Hours/all-spaces" />
 			<Stack.Screen name="Hours/detail" options={DETAIL_SHEET} />
 			<Stack.Screen name="Dictionary/entry" options={DETAIL_SHEET} />
 			{/* A department opens a fresh copy of the Directory over the landing.

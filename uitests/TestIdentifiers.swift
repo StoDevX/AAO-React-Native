@@ -738,6 +738,12 @@ struct TestIdentifiers {
 		/// Mirrors BUILDING_ROW_PREFIX in
 		/// source/features/building-hours/list/building-list-row.tsx.
 		static let rowPrefix = "building-row-"
+		/// A venue marked `listed: false` in `data/building-hours/`: left out of
+		/// the Hours list's sections, found by search and on All spaces.
+		static let anUnlistedBuilding = "Tomson Hall"
+		/// Mirrors ALL_SPACES_ROW_ID in
+		/// source/features/building-hours/list/building-list.tsx.
+		static let allSpacesRow = "hours-all-spaces"
 		/// The swipe action's two labels. Mirrors ADD_TO_FAVORITES and
 		/// REMOVE_FROM_FAVORITES in
 		/// source/features/building-hours/list/building-list-row.tsx.
