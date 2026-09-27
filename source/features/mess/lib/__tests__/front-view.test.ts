@@ -13,7 +13,7 @@ describe('viewOf', () => {
 		expect(viewOf(saved)).toStrictEqual(view)
 	})
 
-	// Saved by the chip row the switch replaced.
+	// Keys an installed copy may still hold that name no view.
 	test.each(['Top', 'News', 'Variety', 'Messenger Wars', 'Latest:Horoscopes', ''])(
 		'opens By Issue with no filter for %p',
 		(saved) => {

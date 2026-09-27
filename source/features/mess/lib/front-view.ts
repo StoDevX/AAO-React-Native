@@ -15,8 +15,8 @@ export function viewKey(view: MessView): string {
 }
 
 /**
- * The view a saved key names. Anything else -- nothing saved, or a key the old chip row wrote,
- * such as `Top` or a section's name -- opens By Issue with no section.
+ * The view a saved key names. Anything else opens By Issue with no section: nothing saved, or a
+ * key an installed copy may still hold that names no view, such as `Top` or a section's name.
  */
 export function viewOf(saved: string | null): MessView {
 	let [mode, ...rest] = (saved ?? '').split(':')
