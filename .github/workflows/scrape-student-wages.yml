@@ -69,6 +69,17 @@ jobs:
         if: github.event_name != 'pull_request'
         run: pnpm exec oxfmt --check data/student-wages.yaml
 
+      # A PR opened by GITHUB_TOKEN does not trigger other workflows, so
+      # check.yml will not run on it. These are the only tests the new rates
+      # get before a person reads them: test:node holds the check that the
+      # file is laid out as the scrape writes it, and test:jest checks the
+      # bundled copy against the schema the app applies at runtime.
+      - name: Test
+        if: github.event_name != 'pull_request'
+        run: |
+          mise run test:node
+          mise run test:jest
+
       - name: Open or update the pull request
         if: github.event_name != 'pull_request'
         env:
@@ -103,5 +114,9 @@ jobs:
 
           Merging publishes the new rates, and the app picks them up without a
           release. The run summary lists each rate that changed.
+
+          `validate-data`, `test:node` and `test:jest` passed in the run that
+          opened this. Nothing else did — a PR opened by `GITHUB_TOKEN` does not
+          trigger `check.yml`, so push an empty commit to run the required checks.
           BODY
           )"
