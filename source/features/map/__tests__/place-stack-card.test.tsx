@@ -109,3 +109,30 @@ describe('PlaceStackCard', () => {
 		expect(screen.getByText('Place not found.')).toBeTruthy()
 	})
 })
+
+// Each tile pushes a card that mounts its own observers; a feed already in
+// the cache must not be refetched for each one.
+describe('PlaceStackCard caching', () => {
+	test('reads the cached feeds without refetching them', async () => {
+		let client = new QueryClient({defaultOptions: {queries: {retry: false}}})
+		trackedQueryClients.push(client)
+		client.setQueryData(mapKeys.all('stolaf'), features)
+		client.setQueryData(hoursKeys.all('stolaf'), venues)
+		await render(
+			<QueryClientProvider client={client}>
+				<PlaceStackCard
+					campus="stolaf"
+					depth={0}
+					dispatch={jest.fn()}
+					stack={[buntrock, theCage]}
+					stop="medium"
+				/>
+			</QueryClientProvider>,
+		)
+
+		expect(client.getQueryState(hoursKeys.all('stolaf'))?.fetchStatus).toBe('idle')
+		expect(client.getQueryState(mapKeys.all('stolaf'))?.fetchStatus).toBe('idle')
+		expect(client.getQueryState(hoursKeys.all('stolaf'))?.dataUpdateCount).toBe(1)
+		expect(client.getQueryState(mapKeys.all('stolaf'))?.dataUpdateCount).toBe(1)
+	})
+})

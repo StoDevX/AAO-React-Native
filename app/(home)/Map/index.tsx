@@ -24,7 +24,8 @@ import {Stack, useLocalSearchParams} from 'expo-router'
 import * as c from '@frogpond/colors'
 import {NoticeView} from '@frogpond/notice'
 
-import {buildingsOptions, parseCampus} from '../../../source/features/building-hours/query'
+import {parseCampus} from '../../../source/features/building-hours/query'
+import {cardVenuesOptions} from '../../../source/features/map/card-queries'
 import type {Campus} from '../../../source/features/building-hours/types'
 import {PlaceStackCard} from '../../../source/features/map/place-stack-card'
 import {highlightedFeatureId, placeStack} from '../../../source/features/map/lib/place-stack'
@@ -98,7 +99,7 @@ export default function MapPage(): React.ReactNode {
 	let [stack, dispatchStack] = React.useReducer(placeStack, [])
 	let {data: buildings = [], error} = useQuery(mapDataOptions(campus))
 	// For which feature a venue on top of the stack highlights.
-	let {data: venues = []} = useQuery({...buildingsOptions(campus), enabled: campus === 'stolaf'})
+	let {data: venues = []} = useQuery(cardVenuesOptions(campus))
 	let {height: windowHeight} = useWindowDimensions()
 	let insets = useSafeAreaInsets()
 	let [sheetPresented, setSheetPresented] = React.useState(true)

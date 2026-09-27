@@ -27,7 +27,6 @@ import {useQuery} from '@tanstack/react-query'
 import {FILL_WIDTH} from '../../components/tile-layout'
 import {HoursSection} from '../building-hours/hours-section'
 import {ownHours} from '../building-hours/lib'
-import {buildingsOptions} from '../building-hours/query'
 import type {BuildingType, Campus} from '../building-hours/types'
 import {AboutSection} from './card/about-section'
 import {ActionsRow} from './card/actions-row'
@@ -43,14 +42,9 @@ import {placeTiles, toPlaceTiles, type PlaceTile} from './lib/place-tiles'
 import {placeSections} from './lib/place-sections'
 import {alsoHere, type StackEntry} from './lib/also-here'
 import {AlsoHereSection} from './card/also-here-section'
-import {mapDataOptions} from './query'
+import {cardFeaturesOptions, cardVenuesOptions} from './card-queries'
 import type {SheetDetent} from './lib/sheet-moves'
 import type {Building, Coordinate, Feature, Point} from './types'
-
-/// How long the card treats the Hours feed as current. Each building's card
-/// mounts afresh, so without this every tap would refetch the whole feed; the
-/// hours themselves change a few times a term.
-const HOURS_STALE_TIME = 5 * 60 * 1000
 
 /// Apple Maps' place-card header, measured on iOS 27: 16pt of padding round
 /// 44pt buttons -- 76pt in all, the sheet's collapsed stop
@@ -158,16 +152,9 @@ function BuildingCard({
 
 	let subtitle = building.properties.type || null
 
-	// The Hours screen's own query, so the card reads its warm cache. Only
-	// St. Olaf's venues carry building keys, so a Carleton card never asks.
-	let {data: venues = []} = useQuery({
-		...buildingsOptions(campus),
-		enabled: campus === 'stolaf',
-		staleTime: HOURS_STALE_TIME,
-	})
+	let {data: venues = []} = useQuery(cardVenuesOptions(campus))
 	let hours = ownHours(venues, building)
-	// The map screen's own query, so the card reads its warm cache.
-	let {data: features = []} = useQuery(mapDataOptions(campus))
+	let {data: features = []} = useQuery(cardFeaturesOptions(campus))
 	// Each place appears once: a department or office link that names a place
 	// here opens that place's card, and Also at This Location keeps the rest.
 	let sections = placeSections(

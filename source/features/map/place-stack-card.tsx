@@ -10,13 +10,12 @@ import {
 import {useQuery} from '@tanstack/react-query'
 import * as c from '@frogpond/colors'
 
-import {buildingsOptions} from '../building-hours/query'
 import type {Campus} from '../building-hours/types'
 import {BuildingInfo} from './building-info'
 import type {PlaceStackAction, StackEntry} from './lib/place-stack'
 import {DETENT_FOR, nameOf, SHEET_DETENTS} from './lib/sheet-detents'
 import type {SheetDetent} from './lib/sheet-moves'
-import {mapDataOptions} from './query'
+import {cardFeaturesOptions, cardVenuesOptions} from './card-queries'
 import {VenueCard} from './venue-card'
 
 type Props = {
@@ -36,8 +35,8 @@ type Props = {
  */
 export function PlaceStackCard({stack, depth, campus, dispatch, stop}: Props): React.ReactNode {
 	// The screens' own queries, so every card reads the same warm caches.
-	let {data: features = []} = useQuery(mapDataOptions(campus))
-	let {data: venues = []} = useQuery({...buildingsOptions(campus), enabled: campus === 'stolaf'})
+	let {data: features = []} = useQuery(cardFeaturesOptions(campus))
+	let {data: venues = []} = useQuery(cardVenuesOptions(campus))
 
 	let entry = stack[depth]
 	let above = stack[depth + 1]
