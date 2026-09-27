@@ -1,7 +1,7 @@
 name: Health Services
 category: Health and Wellness
 kind: office
-building: toh
+building: newhall
 links:
   - {title: 'Health Services', url: 'https://wp.stolaf.edu/health/'}
 
