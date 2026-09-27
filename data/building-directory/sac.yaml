@@ -1,0 +1,6 @@
+building: sac
+floors:
+  - name: 1st floor
+    entries:
+      - {name: Athletics, room: '104'}
+      - {name: Kinesiology, room: '114'}

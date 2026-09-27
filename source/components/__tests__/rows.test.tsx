@@ -264,3 +264,20 @@ describe('ActionRow', () => {
 		expect(onPress).not.toHaveBeenCalled()
 	})
 })
+
+describe('DisclosureRow status', () => {
+	it('shows the status and reads it with the row', async () => {
+		await render(
+			<DisclosureRow
+				detail="TOH 120"
+				onPress={jest.fn()}
+				status={{text: 'Open until 4:30 PM', color: 'green'}}
+				title="Financial Aid"
+			/>,
+		)
+		expect(screen.getByText('Open until 4:30 PM')).toBeTruthy()
+		expect(
+			screen.getByRole('button', {name: 'Financial Aid, TOH 120, Open until 4:30 PM'}),
+		).toBeTruthy()
+	})
+})

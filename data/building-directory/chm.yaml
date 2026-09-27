@@ -1,0 +1,5 @@
+building: chm
+floors:
+  - name: 1st floor
+    entries:
+      - {name: Music, room: '101'}

@@ -1,0 +1,19 @@
+building: hh
+floors:
+  - name: 3rd floor
+    entries:
+      - {name: Economics, room: '317'}
+      - {name: History, room: '327'}
+  - name: 4th floor
+    entries:
+      - {name: Philosophy, room: '426'}
+      - {name: 'Sociology/Anthropology', room: '426'}
+  - name: 5th floor
+    entries:
+      - {name: Environmental Studies, room: '504'}
+      - {name: Family Studies, room: '512'}
+      - {name: Political Science, room: '512'}
+      - {name: Social Work and Family Studies, room: '512'}
+  - name: 6th floor
+    entries:
+      - {name: Enduring Questions, room: '604'}

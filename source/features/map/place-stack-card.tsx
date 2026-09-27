@@ -12,10 +12,13 @@ import * as c from '@frogpond/colors'
 
 import type {Campus} from '../building-hours/types'
 import {BuildingInfo} from './building-info'
-import type {PlaceStackAction, StackEntry} from './lib/place-stack'
+import {stackEntryKey, type PlaceStackAction, type StackEntry} from './lib/place-stack'
 import {DETENT_FOR, nameOf, SHEET_DETENTS} from './lib/sheet-detents'
 import type {SheetDetent} from './lib/sheet-moves'
-import {cardFeaturesOptions, cardVenuesOptions} from './card-queries'
+import {cardDirectoryOptions, cardFeaturesOptions, cardVenuesOptions} from './card-queries'
+import {directoryFor} from './directory/directory'
+import {FloorCard} from './floor-card'
+import {placeTiles} from './lib/place-tiles'
 import {VenueCard} from './venue-card'
 
 type Props = {
@@ -37,12 +40,13 @@ export function PlaceStackCard({stack, depth, campus, dispatch, stop}: Props): R
 	// The screens' own queries, so every card reads the same warm caches.
 	let {data: features = []} = useQuery(cardFeaturesOptions(campus))
 	let {data: venues = []} = useQuery(cardVenuesOptions(campus))
+	let {data: directories = []} = useQuery(cardDirectoryOptions(campus))
 
 	let entry = stack[depth]
 	let above = stack[depth + 1]
 	let stacked = above ? (
 		<StackedSheet
-			key={`${depth + 1}-${above.kind === 'feature' ? above.id : above.name}`}
+			key={`${depth + 1}-${stackEntryKey(above)}`}
 			campus={campus}
 			depth={depth + 1}
 			dispatch={dispatch}
@@ -60,6 +64,22 @@ export function PlaceStackCard({stack, depth, campus, dispatch, stop}: Props): R
 				extraLinks={entry.link ? [entry.link] : undefined}
 				onClose={onClose}
 				onOpen={(next) => dispatch({type: 'push', entry: next})}
+				stacked={stacked}
+				stop={stop}
+			/>
+		)
+	}
+
+	if (entry.kind === 'floor') {
+		let building = features.find((feature) => feature.id === entry.building)
+		let floor = directoryFor(directories, entry.building)?.floors[entry.floor]
+		return (
+			<FloorCard
+				building={building}
+				floor={floor}
+				onClose={onClose}
+				onOpen={(next) => dispatch({type: 'push', entry: next})}
+				place={{features, venues, links: building ? placeTiles(building.properties) : []}}
 				stacked={stacked}
 				stop={stop}
 			/>
