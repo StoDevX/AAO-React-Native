@@ -149,25 +149,14 @@ export function groupIssues(posts: LightPost[], hasMore: boolean): MessIssue[] {
 		else if (previous) previous.posts.unshift(...group.posts)
 	}
 
-	let regular = groups.filter((group) => !group.special)
 	let issues = groups.flatMap((group): MessIssue[] => {
 		let lead = leadStory(group.posts)
 		if (!lead) return []
 		let day = group.special ? group.start : busiestDay(group.posts)
-		// A week runs to the next regular issue's Monday, taking in any quiet weeks between; the
-		// newest runs to now. A special edition runs for its day.
-		let newer = regular[regular.indexOf(group) + 1]
-		let before = group.special
-			? `${dayAfter(group.start)}T00:00:00`
-			: newer
-				? `${newer.start}T00:00:00`
-				: null
 		return [
 			{
 				key: group.special ? `special:${group.start}` : `week:${group.start}`,
 				day,
-				after: `${dayAfter(group.start, -1)}T23:59:59`,
-				before,
 				count: group.posts.length,
 				storyIds: group.posts.map((post) => post.id),
 				leadId: lead.id,

@@ -111,9 +111,9 @@ let queryClient: QueryClient
 /** The issue list, and the stories of its one issue, as a warm cache holds them. */
 function seedTop(): void {
 	queryClient.setQueryData(messKeys.issues, {pages: [ISSUE_STORIES.map(light)], pageParams: [1]})
-	// The range groupIssues gives a day of five posts on Apr 29 with no issue after it.
+	// The week groupIssues makes of five posts on Apr 29.
 	queryClient.setQueryData(
-		messKeys.issue({after: '2026-04-26T23:59:59', before: null, count: 5}),
+		messKeys.issue({key: 'week:2026-04-27', storyIds: [5, 4, 3, 2, 1]}),
 		ISSUE_STORIES,
 	)
 }
@@ -265,12 +265,7 @@ describe('FrontPageScreen', () => {
 	test("saves the top tile's issue for the next launch, and no other issue", async () => {
 		seedTop()
 		// An older issue opened from its tile, made through its options as the app makes it.
-		let older = {
-			after: '2026-03-22T23:59:59',
-			before: '2026-04-27T00:00:00',
-			count: 5,
-			storyIds: [5, 4, 3, 2, 1],
-		}
+		let older = {key: 'week:2026-03-23', storyIds: [5, 4, 3, 2, 1]}
 		await queryClient.query({...messIssueOptions(older), initialData: ISSUE_STORIES})
 		await renderScreen()
 
@@ -278,11 +273,9 @@ describe('FrontPageScreen', () => {
 			(query) => query.queryKey,
 		)
 		expect(saved).toContainEqual(
-			messKeys.issue({after: '2026-04-26T23:59:59', before: null, count: 5}),
+			messKeys.issue({key: 'week:2026-04-27', storyIds: [5, 4, 3, 2, 1]}),
 		)
-		expect(saved).not.toContainEqual(
-			messKeys.issue({after: '2026-03-22T23:59:59', before: '2026-04-27T00:00:00', count: 5}),
-		)
+		expect(saved).not.toContainEqual(messKeys.issue(older))
 	})
 
 	test('says the issues load once back online when offline with nothing cached', async () => {

@@ -16,8 +16,6 @@ function issue(day: string, extra: Partial<MessIssue> = {}): MessIssue {
 	return {
 		key: `week:${day}`,
 		day,
-		after: `${day}T00:00:00`,
-		before: null,
 		count: 5,
 		storyIds: [1, 2, 3, 4, 5],
 		leadId: 1,

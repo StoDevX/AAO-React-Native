@@ -83,7 +83,7 @@ beforeEach(() => {
 		pageParams: [1],
 	})
 	queryClient.setQueryData(
-		messKeys.issue({after: '2026-03-22T23:59:59', before: '2026-04-27T00:00:00', count: 5}),
+		messKeys.issue({key: 'week:2026-03-23', storyIds: [10, 9, 8, 7, 6]}),
 		MARCH,
 	)
 })
@@ -123,7 +123,7 @@ describe('IssueScreen', () => {
 
 	// The newest issue is the front page's top tile, whose query is saved for the next launch.
 	test('saves the newest issue for the next launch, and no older one', async () => {
-		let april = {after: '2026-04-26T23:59:59', before: null, count: 5}
+		let april = {key: 'week:2026-04-27', storyIds: [20, 19, 18, 17, 16]}
 		queryClient.setQueryData(messKeys.issue(april), APRIL)
 		await renderIssue('week:2026-04-27')
 		await renderIssue('week:2026-03-23')
@@ -133,7 +133,7 @@ describe('IssueScreen', () => {
 		)
 		expect(saved).toContainEqual(messKeys.issue(april))
 		expect(saved).not.toContainEqual(
-			messKeys.issue({after: '2026-03-22T23:59:59', before: '2026-04-27T00:00:00', count: 5}),
+			messKeys.issue({key: 'week:2026-03-23', storyIds: [10, 9, 8, 7, 6]}),
 		)
 	})
 

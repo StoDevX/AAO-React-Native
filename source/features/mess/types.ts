@@ -73,10 +73,6 @@ export type MessIssue = {
 	key: string
 	/** The issue's day, as YYYY-MM-DD in the paper's time zone */
 	day: string
-	/** The moment before the issue's day, for WordPress's `after`, which leaves out the moment itself */
-	after: string
-	/** The next issue's day, for WordPress's `before`; null for the newest issue, which runs to now */
-	before: string | null
 	/** How many posts it holds, strays included */
 	count: number
 	/** Its posts' ids, newest first, strays included, each once */

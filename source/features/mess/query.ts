@@ -201,7 +201,7 @@ export const messIssuesOptions = infiniteQueryOptions({
  */
 /* oxlint-disable typescript/explicit-module-boundary-types -- queryOptions' own return type */
 export const messIssueOptions = (
-	issue: Pick<MessIssue, 'after' | 'before' | 'count' | 'storyIds'>,
+	issue: Pick<MessIssue, 'key' | 'storyIds'>,
 	{persist = false}: {persist?: boolean} = {},
 ) =>
 	queryOptions<MessStory[]>({
@@ -209,20 +209,29 @@ export const messIssueOptions = (
 		meta: {persist},
 		// A published issue rarely changes.
 		staleTime: ONE_DAY_IN_MS,
-		// A story joining the issue changes its count, and so its key; the stories already on
-		// screen stay while the fuller set loads. Another issue's stories never stand in.
+		// A story joining or leaving the issue changes its key; the stories already on screen stay
+		// while the new set loads. Another issue's stories never stand in.
 		placeholderData: (previous, previousQuery) =>
-			previousQuery?.queryKey[2] === issue.after && previousQuery.queryKey[3] === issue.before
-				? previous
-				: undefined,
+			previousQuery?.queryKey[2] === issue.key ? previous : undefined,
 		// By id rather than by date: a week's range can take in a special edition, which is an issue
-		// of its own, and can run over a quiet summer to more posts than one page holds.
-		queryFn: ({signal}) =>
-			storiesAt(
-				`posts?include=${issue.storyIds.join(',')}&per_page=100&_embed=true`,
-				signal,
-				'Olaf Messenger issue',
-			),
+		// of its own. WordPress answers at most a page of ids at once, and an issue that runs over a
+		// quiet summer can hold more, so they are asked for a page at a time.
+		queryFn: async ({signal}) => {
+			let batches = []
+			for (let i = 0; i < issue.storyIds.length; i += ISSUE_PAGE_SIZE) {
+				batches.push(issue.storyIds.slice(i, i + ISSUE_PAGE_SIZE))
+			}
+			let stories = await Promise.all(
+				batches.map((ids) =>
+					storiesAt(
+						`posts?include=${ids.join(',')}&per_page=${ISSUE_PAGE_SIZE}&_embed=true`,
+						signal,
+						'Olaf Messenger issue',
+					),
+				),
+			)
+			return stories.flat()
+		},
 	})
 /* oxlint-enable typescript/explicit-module-boundary-types */
 

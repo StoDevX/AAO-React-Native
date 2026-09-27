@@ -22,6 +22,16 @@ const outline = (issues: MessIssue[]) => issues.map((issue) => [issue.day, issue
 
 const issueOn = (day: string) => groupIssues(spring, false).find((issue) => issue.day === day)
 
+/** The first and last days an issue's posts went up, found from the ids it fetches its stories by. */
+function daysIn(issue: MessIssue | undefined): {first: string; last: string} {
+	let ids = new Set(issue?.storyIds)
+	let days = spring
+		.filter((post) => ids.has(post.id))
+		.map((post) => post.day)
+		.sort()
+	return {first: days[0] ?? '', last: days.at(-1) ?? ''}
+}
+
 describe('parseLightPosts', () => {
 	it("reads a post's day as the paper dated it, with its section, flag and photo", () => {
 		expect(spring[0]).toStrictEqual({
@@ -154,38 +164,33 @@ describe('groupIssues', () => {
 	})
 
 	it('runs a week from Monday to the Monday of the next issue', () => {
-		expect(issueOn('2026-03-18')).toMatchObject({
-			count: 29,
-			after: '2026-03-15T23:59:59',
-			before: '2026-03-23T00:00:00',
-		})
+		expect(issueOn('2026-03-18')?.count).toBe(29)
+		let {first, last} = daysIn(issueOn('2026-03-18'))
+		expect(first >= '2026-03-16' && last < '2026-03-23').toBe(true)
 	})
 
 	it('takes in the posts of Mar 23, 24 and 26, all in the week of Mar 25', () => {
-		expect(issueOn('2026-03-25')).toMatchObject({
-			count: 27,
-			after: '2026-03-22T23:59:59',
-			before: '2026-04-27T00:00:00',
-		})
+		expect(issueOn('2026-03-25')?.count).toBe(27)
+		expect(daysIn(issueOn('2026-03-25')).first).toBe('2026-03-23')
+		expect(daysIn(issueOn('2026-03-25')).last < '2026-04-27').toBe(true)
 	})
 
 	it('joins the quiet week of May 7 to Apr 29, the issue before it', () => {
-		expect(issueOn('2026-04-29')).toMatchObject({count: 35, after: '2026-04-26T23:59:59'})
+		expect(issueOn('2026-04-29')?.count).toBe(35)
+		expect(daysIn(issueOn('2026-04-29')).first >= '2026-04-27').toBe(true)
 	})
 
 	it('takes in Sunday, Mar 1, in the week of Feb 25', () => {
-		expect(issueOn('2026-02-25')).toMatchObject({count: 30, before: '2026-03-02T00:00:00'})
+		expect(issueOn('2026-02-25')?.count).toBe(30)
+		expect(daysIn(issueOn('2026-02-25')).last).toBe('2026-03-01')
 	})
 
 	it('runs the newest regular issue to now, past a special edition newer than it', () => {
-		expect(issueOn('2026-04-29')).toMatchObject({before: null})
+		expect(daysIn(issueOn('2026-04-29')).last).toBe('2026-05-07')
 	})
 
 	it('runs a special edition for its day alone', () => {
-		expect(issueOn('2026-05-12')).toMatchObject({
-			after: '2026-05-11T23:59:59',
-			before: '2026-05-13T00:00:00',
-		})
+		expect(daysIn(issueOn('2026-05-12'))).toStrictEqual({first: '2026-05-12', last: '2026-05-12'})
 	})
 
 	it('leaves out a stray older than every issue', () => {
