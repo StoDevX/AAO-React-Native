@@ -3,6 +3,13 @@ import standard from './fixtures/detail-standard.json'
 import romanNumerals from './fixtures/detail-roman-numerals.json'
 import brSeparated from './fixtures/detail-no-description-label.json'
 import summer from './fixtures/detail-summer.json'
+import fundPrefix from './fixtures/detail-fund-prefix.json'
+import twoUnits from './fixtures/detail-two-units.json'
+import zeroWidth from './fixtures/detail-zero-width.json'
+import mistyped from './fixtures/detail-mistyped-unit.json'
+import unitNa from './fixtures/detail-unit-na.json'
+import blankUnit from './fixtures/detail-blank-unit.json'
+import noUnitLabel from './fixtures/detail-no-unit-label.json'
 
 function descriptionOf(fixture: unknown): string {
 	const item = (fixture as {items: Array<{ExternalDescriptionStr: string}>}).items[0]
@@ -97,7 +104,7 @@ describe('parseDescription', () => {
 	})
 
 	test('an empty description yields nothing', () => {
-		expect(parseDescription('')).toEqual({fields: [], body: ''})
+		expect(parseDescription('')).toEqual({fields: [], body: '', unit: null})
 	})
 })
 
@@ -134,5 +141,34 @@ describe('parseDetail', () => {
 
 	test('an empty collection throws', () => {
 		expect(() => parseDetail({items: []}, URL)).toThrow()
+	})
+})
+
+describe('the unit a description names', () => {
+	test.each([
+		['standard', standard, '11725'],
+		['summer', summer, '11727'],
+		['roman numerals', romanNumerals, '15141'],
+		['line-break separated', brSeparated, '16322'],
+		['fund prefix', fundPrefix, '11725'],
+		['two units', twoUnits, '13001'],
+		['zero-width space', zeroWidth, '11150'],
+		['mistyped', mistyped, null],
+		['n/a', unitNa, null],
+		['blank', blankUnit, null],
+		['no label', noUnitLabel, null],
+	])('%s', (_name, fixture, unit) => {
+		expect(parseDescription(descriptionOf(fixture)).unit).toBe(unit)
+	})
+
+	test('stays out of the fields and the body', () => {
+		const {fields, body} = parseDescription(descriptionOf(fundPrefix))
+
+		expect(fields.map((field) => field.label)).not.toContain('Unit Number')
+		expect(body).not.toContain('Unit Number')
+	})
+
+	test('reaches the parsed detail', () => {
+		expect(parseDetail(standard, 'https://example.test/job/1').unit).toBe('11725')
 	})
 })
