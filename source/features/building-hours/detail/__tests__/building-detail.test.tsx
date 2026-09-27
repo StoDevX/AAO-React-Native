@@ -181,6 +181,31 @@ describe('BuildingDetailSwiftUI', () => {
 		expect(queryByLabelText('Map showing Tomson Hall')).toBeTruthy()
 	})
 
+	// The St. Olaf basemap names buildings itself, so the cutout's own label
+	// would draw the name twice unless the basemap's copy is filtered out.
+	test('hides the basemap label for the framed building on St. Olaf', async () => {
+		let building = makeBuilding({name: 'Registrar', building: 'toh'})
+
+		let {queryByTestId} = await renderDetail(building, 'stolaf', [makeFramedFeature()])
+		await layOutPictureRows(355)
+
+		expect(queryByTestId('layer:campus_labels_buildings')).toBeTruthy()
+	})
+
+	// Carleton's basemap has no such layer; overriding one it lacks is a
+	// native error rather than a no-op.
+	test('leaves the Carleton basemap labels alone', async () => {
+		let building = makeBuilding({name: 'Registrar', building: 'toh'})
+
+		let {queryByLabelText, queryByTestId} = await renderDetail(building, 'carleton', [
+			makeFramedFeature(),
+		])
+		await layOutPictureRows(355)
+
+		expect(queryByLabelText('Map showing Tomson Hall')).toBeTruthy()
+		expect(queryByTestId('layer:campus_labels_buildings')).toBeNull()
+	})
+
 	// Every Carleton venue, and any St. Olaf one not yet keyed to a building,
 	// is this case -- no cutout, no placeholder, no empty frame.
 	test('shows no cutout when the venue carries no building key', async () => {

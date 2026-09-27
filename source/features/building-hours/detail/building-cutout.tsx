@@ -17,6 +17,11 @@ const CUTOUT_HEIGHT = 160
  * against either glyph endpoint.
  */
 const LABEL_FONT = ['Noto Sans Medium']
+/**
+ * The St. Olaf basemap's building-name layer. Carleton's style has no layer by
+ * this id.
+ */
+const STOLAF_BUILDING_LABELS = 'campus_labels_buildings'
 /** Points of breathing room around the framed building, so its footprint
  * doesn't run flush against the cutout's edges. */
 const CUTOUT_PADDING = 32
@@ -89,6 +94,23 @@ export function BuildingCutout({campus, feature, width}: Props): React.ReactNode
 							},
 						}}
 					/>
+
+					{/* A Layer whose id the style already has adopts that layer, and
+					    its filter replaces the style's own. This one keeps the style's
+					    `kind` match and drops the framed building, whose name the label
+					    below draws instead. Every St. Olaf label carries `buildingId`,
+					    the same id as `feature`. */}
+					{campus === 'stolaf' ? (
+						<Layer
+							filter={[
+								'all',
+								['match', ['get', 'kind'], ['building'], true, false],
+								['!=', ['get', 'buildingId'], feature.id],
+							]}
+							id={STOLAF_BUILDING_LABELS}
+							type="symbol"
+						/>
+					) : null}
 
 					{/* The basemap names whichever buildings its own collision rules
 				    allow, which at this zoom is usually the neighbours and not the
