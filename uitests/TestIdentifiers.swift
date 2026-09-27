@@ -571,8 +571,38 @@ struct TestIdentifiers {
 		/// Matches NEWS_ROW_PREFIX in source/features/news/news-row.tsx.
 		static let rowPrefix = "news-row-"
 
-		/// The bottom toolbar menu's accessibilityLabel, in news-picker.tsx.
-		static let picker = "News filter"
+		/// The views the front page's menu offers, and the start of the menu button's label, which
+		/// names the view shown; in source/features/mess/front-page-screen.tsx.
+		static let byIssue = "By Issue"
+		static let latest = "Latest"
+		static let viewMenuPrefix = "View: "
+
+		/// The newest issue's tile and every other issue's, in source/features/mess/issue-grid.tsx.
+		static let topTile = "mess-top-tile"
+		static let issueTile = "mess-issue-tile"
+
+		/// A section the view menu offers, as source/features/mess/lib/posts.ts names it.
+		static let newsSection = "News"
+
+		/// The paper's name, set as the front page's masthead by source/features/mess/masthead.tsx.
+		static let paperName = "The Olaf Messenger"
+
+		/// A page's dateline, in source/features/mess/masthead.tsx.
+		static let dateline = "mess-dateline"
+
+		/// The lead story, and every card on a shelf, in source/features/mess/issue-page.tsx.
+		static let leadStory = "mess-lead-story"
+		static let storyCard = "mess-story-card"
+
+		/// A section's column chips, each labelled with its column, in source/features/mess/section-page.tsx.
+		static let columnChip = "mess-column-chip"
+
+		/// Every row of a section's or column's stories starts with this, in
+		/// source/features/mess/story-list.tsx.
+		static let storyRowPrefix = "mess-row-"
+
+		/// A News column with stories in it, from olafmessenger.com.
+		static let goodQuestionsColumn = "Good Questions"
 
 		/// The reader's headline, in source/features/mess/story-header.tsx.
 		static let storyHeadline = "mess-story-headline"
@@ -588,14 +618,16 @@ struct TestIdentifiers {
 		/// The reader's share button label, in source/features/mess/story-screen.tsx.
 		static let shareStory = "Share Story"
 
-		/// The Mess section whose columns the Variety templates draw, and two of
-		/// those columns, as the filter in source/features/mess/mess-picker.tsx
-		/// names them. They are the paper's own category names, from olafmessenger.com.
+		/// The Mess section whose columns the Variety templates draw, and the columns
+		/// the tests open, as the section chips and column chips in source/features/mess/
+		/// name them. They are the paper's own category names, from olafmessenger.com.
 		static let varietySection = "Variety"
 		static let horoscopesColumn = "Horoscopes"
 		static let comicColumn = "Comic"
 		static let crosswordColumn = "Crossword"
 		static let playlistColumn = "Playlist"
+		static let recipesColumn = "Recipes"
+		static let photoColumn = "Photo"
 
 		/// A sign's name, as a Horoscopes glyph button is labelled and a sign row's
 		/// label begins, in source/features/mess/lib/horoscopes.ts.
@@ -635,6 +667,9 @@ struct TestIdentifiers {
 
 		/// Spotify's player on a Playlist post, in source/features/mess/spotify-embed.tsx.
 		static let playlistEmbed = "mess-playlist-embed"
+
+		/// Every ingredient row on a recipe page, in source/features/mess/recipe-view.tsx.
+		static let recipeIngredient = "mess-recipe-ingredient"
 	}
 
 	// MARK: - Streaming Media
@@ -667,6 +702,11 @@ struct TestIdentifiers {
 
 	enum Settings {
 		static let signIn = "Sign in to St. Olaf"
+		/// The Messenger's stain picker, in
+		/// source/features/settings/screens/overview/issue-stains-row.tsx, and choices it offers.
+		static let issueStains = "settings-issue-stains"
+		static let tea = "Tea"
+		static let coffee = "Coffee"
 		static let developer = "Developer"
 		static let enableDevMode = "Enable dev mode"
 	}
@@ -767,6 +807,12 @@ struct TestIdentifiers {
 		/// Mirrors BUILDING_ROW_PREFIX in
 		/// source/features/building-hours/list/building-list-row.tsx.
 		static let rowPrefix = "building-row-"
+		/// A venue marked `listed: false` in `data/building-hours/`: left out of
+		/// the Hours list's sections, found by search and on All spaces.
+		static let anUnlistedBuilding = "Tomson Hall"
+		/// Mirrors ALL_SPACES_ROW_ID in
+		/// source/features/building-hours/list/building-list.tsx.
+		static let allSpacesRow = "hours-all-spaces"
 		/// The swipe action's two labels. Mirrors ADD_TO_FAVORITES and
 		/// REMOVE_FROM_FAVORITES in
 		/// source/features/building-hours/list/building-list-row.tsx.

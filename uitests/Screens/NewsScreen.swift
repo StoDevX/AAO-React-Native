@@ -31,14 +31,6 @@ struct NewsScreen: Screen {
 		return self
 	}
 
-	@discardableResult
-	func openFirstStory() -> MessStoryScreen {
-		let row = app.buttons.matching(storyRow).firstMatch
-		XCTAssertTrue(row.waitForExistence(timeout: 30), "a story row should be visible")
-		row.tap()
-		return MessStoryScreen(app: app)
-	}
-
 	private var storyRow: NSPredicate {
 		NSPredicate(format: "identifier BEGINSWITH %@", TestIdentifiers.News.rowPrefix)
 	}

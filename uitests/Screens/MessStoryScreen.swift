@@ -177,18 +177,29 @@ struct MessStoryScreen: Screen {
 		return self
 	}
 
-	/// Tap a comic or artwork's framed picture and wait for the zoom viewer.
+	/// Tap a comic, artwork or feature page's framed picture and wait for the zoom viewer.
 	@discardableResult
 	func openImageViewer() -> Self {
 		let image = app.element(matching: TestIdentifiers.News.storyImage)
 		XCTAssertTrue(image.waitForExistence(timeout: 30), "the story should draw its picture framed")
-		capture("A comic in the reader")
+		capture("A framed picture in the reader")
+		XCTAssertTrue(image.waitForHittable(), "the picture should be ready to tap")
 		image.tap()
 		let close = closeButton
 		XCTAssertTrue(close.waitForExistence(timeout: 30), "tapping the picture should open the zoom viewer")
 		capture("The zoom viewer")
 		return self
 	}
+
+	/// Assert the zoom viewer drew a picture, not its "Image unavailable" notice.
+	@discardableResult
+	func verifyViewerShowsImage() -> Self {
+		XCTAssertTrue(
+			viewerImage.waitForExistence(timeout: 30),
+			"the zoom viewer should show the picture that was tapped")
+		return self
+	}
+
 
 	/// Close the zoom viewer and wait to be back on the story.
 	@discardableResult
@@ -275,6 +286,25 @@ struct MessStoryScreen: Screen {
 		let player = app.element(matching: TestIdentifiers.News.playlistEmbed)
 		XCTAssertTrue(player.waitForExistence(timeout: 30), "a Playlist post should draw Spotify's player")
 		capture("A Playlist post")
+		return self
+	}
+
+	/// Scroll a recipe page to its first ingredient, tick it, and assert it reads as selected.
+	/// A lazy stack builds a row only near the screen, so the row may not exist until the
+	/// page scrolls to it.
+	@discardableResult
+	func tickFirstIngredient() -> Self {
+		let ingredient = app.buttons.matching(identifier: TestIdentifiers.News.recipeIngredient).firstMatch
+		for _ in 0..<20 {
+			if ingredient.exists && ingredient.isHittable { break }
+			app.swipeUp()
+		}
+		XCTAssertTrue(ingredient.waitForHittable(timeout: 10), "a recipe should list an ingredient to tick")
+		XCTAssertTrue(ingredient.waitForSelected(false, timeout: 5), "an ingredient should start unticked")
+		capture("A recipe before an ingredient is ticked")
+		ingredient.tap()
+		XCTAssertTrue(ingredient.waitForSelected(true), "tapping an ingredient should tick it")
+		capture("A recipe with its first ingredient ticked")
 		return self
 	}
 

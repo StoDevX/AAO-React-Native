@@ -1,6 +1,7 @@
 import * as React from 'react'
 import {Button, HStack, Image, Text, VStack} from '@expo/ui/swift-ui'
 import {
+	accessibilityAddTraits,
 	accessibilityIdentifier,
 	accessibilityLabel,
 	buttonStyle,
@@ -23,7 +24,7 @@ import type {Block, MessStory, Run} from './types'
 export const BODY_ID = 'mess-story-body'
 const BODY = [font({textStyle: 'body', design: 'serif'}), foregroundStyle(ink)]
 /** Body text that can hold a link, which SwiftUI draws in the tint colour. */
-const PROSE = [...BODY, tint(messRed), accessibilityIdentifier(BODY_ID), textSelection(true)]
+export const PROSE = [...BODY, tint(messRed), accessibilityIdentifier(BODY_ID), textSelection(true)]
 const QUOTE = [
 	font({textStyle: 'body', design: 'serif'}),
 	italic(),
@@ -33,7 +34,7 @@ const QUOTE = [
 	accessibilityIdentifier(BODY_ID),
 	textSelection(true),
 ]
-const CAPTION = [
+export const CAPTION = [
 	font({textStyle: 'footnote', design: 'serif'}),
 	italic(),
 	foregroundStyle(faded),
@@ -43,6 +44,13 @@ const CAPTION = [
 const OPENING = [font({textStyle: 'body', design: 'serif', smallCaps: true})]
 const SITE_LINK = [font({textStyle: 'callout', weight: 'semibold'}), foregroundStyle(messRed)]
 const SITE_LINK_ICON = [foregroundStyle(messRed)]
+
+/** A section's heading, in small capitals as a newspaper sets one: a series row's, or a recipe's. */
+export const SECTION_HEADING = [
+	font({textStyle: 'headline', design: 'serif', smallCaps: true}),
+	foregroundStyle(ink),
+	accessibilityAddTraits(['isHeader']),
+]
 
 /** A paragraph of body text, drawn from its runs as Markdown. */
 export function Paragraph({
@@ -63,12 +71,18 @@ export function Paragraph({
  * A story's first paragraph, its opening words set in small caps the way a
  * newspaper sets them. A paragraph that opens with styled text is drawn as it is.
  */
-function OpeningParagraph({runs}: {runs: Run[]}): React.ReactNode {
+function OpeningParagraph({
+	runs,
+	modifiers,
+}: {
+	runs: Run[]
+	modifiers: typeof PROSE
+}): React.ReactNode {
 	let {opening, rest} = splitOpening(runs)
-	if (opening === '') return <Paragraph runs={runs} />
+	if (opening === '') return <Paragraph modifiers={modifiers} runs={runs} />
 
 	return (
-		<Text modifiers={PROSE}>
+		<Text modifiers={modifiers}>
 			<Text modifiers={OPENING}>{opening}</Text>
 			<Text markdownEnabled={true}>{runsToMarkdown(rest)}</Text>
 		</Text>
@@ -134,6 +148,8 @@ type Props = {
 	storyLink: string
 	/** Whether this block opens the story, and so sets its first words in small caps */
 	isOpening?: boolean
+	/** How a paragraph is set; by default as body text */
+	paragraph?: typeof PROSE
 }
 
 /** One block of a story body. */
@@ -142,10 +158,15 @@ export function StoryBlock({
 	columnWidth,
 	storyLink,
 	isOpening = false,
+	paragraph = PROSE,
 }: Props): React.ReactNode {
 	switch (block.type) {
 		case 'paragraph':
-			return isOpening ? <OpeningParagraph runs={block.runs} /> : <Paragraph runs={block.runs} />
+			return isOpening ? (
+				<OpeningParagraph modifiers={paragraph} runs={block.runs} />
+			) : (
+				<Paragraph modifiers={paragraph} runs={block.runs} />
+			)
 		case 'quote':
 			return <Paragraph modifiers={QUOTE} runs={block.runs} />
 		case 'list':
@@ -187,17 +208,33 @@ export function StoryBlock({
 	}
 }
 
-type StoryBlocksProps = {story: MessStory; columnWidth: number}
+type StoryBlocksProps = {
+	story: MessStory
+	columnWidth: number
+	/** The blocks to draw, where a template draws the rest of the body itself; by default the story's own */
+	blocks?: Block[]
+	/** Whether the first paragraph opens the story, its first words in small caps */
+	opens?: boolean
+	/** How a paragraph is set; by default as body text */
+	paragraph?: typeof PROSE
+}
 
 /** A story's blocks in reading order, returned side by side to land in the page's column. */
-export function StoryBlocks({story, columnWidth}: StoryBlocksProps): React.ReactNode {
+export function StoryBlocks({
+	story,
+	columnWidth,
+	blocks = story.blocks,
+	opens = true,
+	paragraph = PROSE,
+}: StoryBlocksProps): React.ReactNode {
 	// The first paragraph opens the story, even when a photo comes before it.
-	let openingIndex = story.blocks.findIndex((block) => block.type === 'paragraph')
-	return story.blocks.map((block, index) => (
+	let openingIndex = opens ? blocks.findIndex((block) => block.type === 'paragraph') : -1
+	return blocks.map((block, index) => (
 		<StoryBlock
 			block={block}
 			columnWidth={columnWidth}
 			isOpening={index === openingIndex}
+			paragraph={paragraph}
 			// oxlint-disable-next-line react/no-array-index-key -- blocks have no id; a story's body is fixed, so its order is its identity
 			key={index}
 			storyLink={story.link}
