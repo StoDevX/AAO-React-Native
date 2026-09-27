@@ -142,6 +142,10 @@ export const scrollTargetBehavior = named('scrollTargetBehavior', 'behavior')
 export const pickerStyle = named('pickerStyle', 'style')
 export const presentationBackground = named('presentationBackground', 'color')
 export const presentationDragIndicator = named('presentationDragIndicator', 'visibility')
+export const presentationBackgroundInteraction = named(
+	'presentationBackgroundInteraction',
+	'interaction',
+)
 export const scrollContentBackground = named('scrollContentBackground', 'visible')
 export const scrollTargetLayout = bare('scrollTargetLayout')
 export const shadow = spreading('shadow')
@@ -610,7 +614,7 @@ export function HStack({
 	let rowTag = tagOf(modifiers)
 
 	if (!list || rowTag === undefined) {
-		return <View testID={testID}>{children}</View>
+		return <View testID={identifierOf(modifiers) ?? testID}>{children}</View>
 	}
 
 	let isSelected = list.selection.includes(rowTag)
@@ -959,9 +963,10 @@ export function TextField({
 export function LabeledContent({
 	children,
 	label,
+	modifiers,
 }: WithModifiers & {label?: React.ReactNode}): React.ReactNode {
 	return (
-		<View>
+		<View testID={identifierOf(modifiers)}>
 			{typeof label === 'string' ? <RNText>{label}</RNText> : label}
 			{children}
 		</View>

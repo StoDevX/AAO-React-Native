@@ -21,6 +21,7 @@ function building(name: string): BuildingType {
 	return {
 		name,
 		category: 'Academia',
+		kind: 'building',
 		schedule: [
 			{
 				title: 'Hours',

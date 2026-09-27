@@ -4,12 +4,11 @@ import {RNHostView, Section, VStack} from '@expo/ui/swift-ui'
 import {listRowBackground, listRowInsets, listRowSeparator} from '@expo/ui/swift-ui/modifiers'
 
 import {buildingPhotoUrl} from '../urls'
-import {CARD_INSET} from './card-style'
+import {CARD_INSET, PICTURE_CORNER_RADIUS} from '../../../components/place-card/card-style'
 import {PhotoViewerModal} from './photo-viewer-modal'
 
-/// Maps' photo tiles are square, with rounded corners.
+/// Maps' photo tiles are square.
 const TILE = 170
-const CORNER_RADIUS = 16
 
 const ROW = [
 	listRowBackground('clear'),
@@ -64,6 +63,6 @@ export function PhotoStrip({
 }
 
 const styles = StyleSheet.create({
-	tile: {width: TILE, height: TILE, borderRadius: CORNER_RADIUS, overflow: 'hidden'},
+	tile: {width: TILE, height: TILE, borderRadius: PICTURE_CORNER_RADIUS, overflow: 'hidden'},
 	photo: {width: '100%', height: '100%'},
 })

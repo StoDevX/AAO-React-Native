@@ -3,8 +3,8 @@ import {Section, VStack} from '@expo/ui/swift-ui'
 import {listRowBackground, listRowInsets, listRowSeparator} from '@expo/ui/swift-ui/modifiers'
 import {PlaceCardAbout} from '@frogpond/place-card-header'
 
-import {CARD_INSET} from './card-style'
-import {SectionHeading} from './section-heading'
+import {CARD_INSET} from '../../../components/place-card/card-style'
+import {SectionHeading} from '../../../components/place-card/section-heading'
 
 /// The About text sits straight under its heading, with nothing drawn between.
 const TEXT_ROW = [

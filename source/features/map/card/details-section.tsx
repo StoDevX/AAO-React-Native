@@ -4,8 +4,8 @@ import {Button, LabeledContent, Section, Text} from '@expo/ui/swift-ui'
 import {accessibilityLabel, buttonStyle, foregroundStyle} from '@expo/ui/swift-ui/modifiers'
 
 import {appleMapsSearchUrl} from '../urls'
-import {LAST_ROW} from './card-style'
-import {SectionHeading} from './section-heading'
+import {LAST_ROW} from '../../../components/place-card/card-style'
+import {SectionHeading} from '../../../components/place-card/section-heading'
 
 /// Label/value rows, as in Maps' Details: the label grey on the left, the
 /// value on the right, the value under the label at accessibility text sizes.

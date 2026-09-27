@@ -57,10 +57,16 @@ const mockComposeEmail = composeEmail as jest.MockedFunction<typeof composeEmail
 const cage: BuildingType = {
 	name: 'The Cage',
 	category: 'Food',
+	kind: 'building',
 	links: [{title: 'Instagram', url: 'https://www.instagram.com/lionspause/'}],
 	schedule: [{title: 'Hours', hours: [{days: ['Mo'], from: '8:00am', to: '5:00pm'}]}],
 }
-const library: BuildingType = {name: 'Rolvaag', category: 'Libraries', schedule: []}
+const library: BuildingType = {
+	name: 'Rolvaag',
+	category: 'Libraries',
+	kind: 'building',
+	schedule: [],
+}
 
 // Every query left without observers gets a garbage-collection timeout, and
 // React Query's default is five minutes -- long enough to outlive the run and

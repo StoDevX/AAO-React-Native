@@ -14,6 +14,7 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import {load as loadYaml} from 'js-yaml'
+import {duplicateBuildingHours} from './building-hours-kinds.mjs'
 import {isDataEntry} from './data-entries.mjs'
 import {DATA_BASE} from './paths.mjs'
 
@@ -68,7 +69,7 @@ function readBuildingHoursFiles() {
 		.map((filename) => {
 			let filepath = path.join(BUILDING_HOURS_DIR, filename)
 			let data = loadYaml(fs.readFileSync(filepath, 'utf-8'), {filename: filepath})
-			return {filename, name: data.name, building: data.building}
+			return {filename, name: data.name, building: data.building, kind: data.kind}
 		})
 }
 
@@ -98,6 +99,18 @@ function closestIds(id, allIds, count = 3) {
 }
 
 async function main() {
+	// Checked before the network: it needs only the files, so a feed that is
+	// down must not hide it.
+	let duplicates = duplicateBuildingHours(readBuildingHoursFiles())
+	for (let {building, names} of duplicates) {
+		console.log(
+			`building "${building}" has more than one kind: building venue: ${names.join(', ')}`,
+		)
+	}
+	if (duplicates.length > 0) {
+		process.exit(EXIT_INVALID_KEY)
+	}
+
 	let featureIds
 	try {
 		featureIds = await fetchFeatureIds()

@@ -1,5 +1,6 @@
 name: Ice Arena
 category: Gym
+kind: space
 building: tostrudcenter
 
 schedule:

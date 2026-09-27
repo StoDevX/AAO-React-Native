@@ -15,7 +15,7 @@ import {
 
 import {FILL_WIDTH} from '../../../components/tile-layout'
 import type {CardAction} from '../lib/card-actions'
-import {CARD_INSET} from './card-style'
+import {CARD_INSET} from '../../../components/place-card/card-style'
 
 /// Maps' action buttons are 53pt tall with 12pt corners; the label's height
 /// plus the bordered style's own padding comes to that.

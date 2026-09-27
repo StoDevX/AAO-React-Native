@@ -13,8 +13,8 @@ import {
 } from '@expo/ui/swift-ui/modifiers'
 
 import type {GoodToKnowRow} from '../lib/good-to-know'
-import {CARD_INSET} from './card-style'
-import {SectionHeading} from './section-heading'
+import {CARD_INSET} from '../../../components/place-card/card-style'
+import {SectionHeading} from '../../../components/place-card/section-heading'
 
 /// Maps' amenity rows sit close together, with no hairlines between them.
 const ROW = [

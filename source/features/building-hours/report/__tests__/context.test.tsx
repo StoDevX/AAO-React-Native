@@ -7,6 +7,7 @@ import {BuildingReportProvider, useBuildingReport} from '../context'
 const BUILDING: BuildingType = {
 	name: 'Stav Hall',
 	category: 'Dining',
+	kind: 'building',
 	schedule: [{title: 'Hours', hours: [{days: ['Mo'], from: '7:00am', to: '8:00pm'}]}],
 }
 

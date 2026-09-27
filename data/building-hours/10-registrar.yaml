@@ -1,5 +1,6 @@
 name: Registrar
 category: Offices
+kind: office
 building: toh
 
 schedule:

@@ -176,7 +176,10 @@ struct MapScreen: Screen {
 	}
 
 	/// The collapsed stop rests at the foot of the screen with the field on it,
-	/// which is what tells it apart from medium and large.
+	/// which is what tells it apart from medium and large. The line is drawn at
+	/// 70% of the screen, between the two: the middle stop puts the field near
+	/// 60%, and the collapsed stop, grown to hold the field at the largest text
+	/// size, near 80% on a 17e.
 	///
 	/// How much of the field the stop shows is `verifyFieldWithinSheet`'s
 	/// question, not this one: `isHittable` answers true for content the sheet
@@ -187,7 +190,7 @@ struct MapScreen: Screen {
 		let top = searchFieldTop()
 		let windowHeight = app.windows.firstMatch.frame.height
 		XCTAssertTrue(
-			top > windowHeight * 0.8,
+			top > windowHeight * 0.7,
 			"The collapsed sheet should rest at the foot of the screen; the field's top is at \(top) of \(windowHeight)")
 		XCTAssertFalse(cancelButton.exists, "An empty, unfocused field has nothing to cancel")
 		return self
@@ -250,6 +253,23 @@ struct MapScreen: Screen {
 		return self
 	}
 
+	/// The field sits in the sheet with room above and below it, as Maps'
+	/// does at every text size, rather than touching or crossing the sheet's
+	/// edges. `verifyCollapsedMarginsSymmetric` checks the exact margins at the
+	/// default size; this one holds at any size, where the field's height is
+	/// not known in advance.
+	@discardableResult
+	func verifyFieldHasMarginsInSheet() -> Self {
+		let field = searchField.frame
+		let sheet = sheetFrame()
+		let above = field.minY - sheet.minY
+		let below = sheet.maxY - field.maxY
+		XCTContext.runActivity(named: "\(above)pt above the field, \(below)pt below it") { _ in }
+		XCTAssertGreaterThanOrEqual(above, 8, "The field should sit clear of the sheet's top: \(above)pt")
+		XCTAssertGreaterThanOrEqual(below, 8, "The field should sit clear of the sheet's bottom: \(below)pt")
+		return self
+	}
+
 	/// The attribution button sits over the map, and the collapsed sheet
 	/// floats over the bottom of it, so the two have to be kept apart: the
 	/// button's whole frame above the sheet's top edge, and still tappable.
@@ -265,6 +285,56 @@ struct MapScreen: Screen {
 			button.frame.maxY < sheet.minY,
 			"The attribution button should sit clear of the sheet, not under it: "
 				+ "button \(button.frame), sheet \(sheet)")
+		return self
+	}
+
+	/// A place tile on the card, found by its name, which begins its label;
+	/// the card is scrolled a screen at a time until the tile can be tapped.
+	@discardableResult
+	func openPlaceTile(named name: String) -> Self {
+		let tile = app.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", name)).firstMatch
+		scrollCard(toReach: tile)
+		XCTAssertTrue(tile.waitForExistence(timeout: 10) && tile.isHittable, "The card should list \(name)")
+		tile.tap()
+		return self
+	}
+
+	/// Scrolls the card a screen at a time until `element` can be tapped. The
+	/// card's list builds only the rows near the screen, so a section further
+	/// down is not there to find until the card reaches it -- and how far down
+	/// that is depends on the screen and on what the live feed puts above it.
+	private func scrollCard(toReach element: XCUIElement) {
+		for _ in 0..<6 where !(element.exists && element.isHittable) {
+			app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.8))
+				.press(forDuration: 0.05, thenDragTo: app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)))
+		}
+	}
+
+	/// The top card is `name`'s: only one card's close button can be tapped,
+	/// and `name` can be seen, as the header's title or, at the large stop,
+	/// the big title in its place. A title's label carries its subtitle after
+	/// the name, so it is matched by its start.
+	@discardableResult
+	func verifyTopCard(_ name: String) -> Self {
+		let named = app.descendants(matching: .any)
+			.matching(NSPredicate(format: "label BEGINSWITH %@", name))
+		XCTAssertTrue(named.firstMatch.waitForExistence(timeout: 20), "\(name)'s card should be up")
+		let visible = named.allElementsBoundByIndex.filter { $0.isHittable }
+		let closes = app.buttons.matching(identifier: TestIdentifiers.Map.cardCloseButton)
+			.allElementsBoundByIndex.filter { $0.isHittable }
+		XCTContext.runActivity(named: "\(visible.count) visible \(name), \(closes.count) close buttons") { _ in }
+		XCTAssertFalse(visible.isEmpty, "\(name)'s card should be in view")
+		XCTAssertEqual(closes.count, 1, "Only the top card's close button should be tappable")
+		return self
+	}
+
+	/// Closes the top card, which returns to the card beneath it.
+	@discardableResult
+	func closeTopCard() -> Self {
+		let closes = app.buttons.matching(identifier: TestIdentifiers.Map.cardCloseButton)
+			.allElementsBoundByIndex.filter { $0.isHittable }
+		XCTAssertEqual(closes.count, 1, "Only the top card's close button should be tappable")
+		closes.first?.tap()
 		return self
 	}
 
@@ -609,6 +679,15 @@ struct MapScreen: Screen {
 		return self
 	}
 
+	/// The card's Hours status row ("Open until 10 PM"), which only a card
+	/// showing some venue's hours has.
+	@discardableResult
+	func verifyHoursStatus() -> Self {
+		let status = app.descendants(matching: .any)[TestIdentifiers.Hours.status].firstMatch
+		XCTAssertTrue(status.waitForExistence(timeout: 30), "The card should show its hours' status row")
+		return self
+	}
+
 	/// Maps' photo tiles are square.
 	@discardableResult
 	func verifyPhotoTileSquare() -> Self {
@@ -648,16 +727,22 @@ struct MapScreen: Screen {
 	/// More on the Departments heading opens every department in a grid.
 	@discardableResult
 	func verifyMoreShowsEveryDepartment(_ count: Int) -> Self {
+		XCTAssertTrue(cardTitle.waitForExistence(timeout: 30), "The card should be up")
 		let more = app.buttons[TestIdentifiers.Map.departmentsMore].firstMatch
-		XCTAssertTrue(more.waitForExistence(timeout: 30), "Departments should offer More")
+		scrollCard(toReach: more)
+		XCTAssertTrue(more.waitForExistence(timeout: 10), "Departments should offer More")
 		XCTContext.runActivity(named: "More \(more.frame)") { _ in }
-		XCTAssertGreaterThanOrEqual(more.frame.width, 44, "More should be at least 44pt wide to tap")
-		XCTAssertGreaterThanOrEqual(more.frame.height, 44, "More should be at least 44pt tall to tap")
+		// A frame read after scrolling carries floating-point error: a 44pt
+		// button has measured 43.99999999999994.
+		XCTAssertGreaterThanOrEqual(more.frame.width, 44 - 0.01, "More should be at least 44pt wide to tap")
+		XCTAssertGreaterThanOrEqual(more.frame.height, 44 - 0.01, "More should be at least 44pt tall to tap")
 		more.tap()
 		let grid = app.descendants(matching: .any)[TestIdentifiers.Map.departmentsGrid].firstMatch
 		XCTAssertTrue(grid.waitForExistence(timeout: 10), "More should open the grid")
 		capture("Departments grid")
-		let tiles = grid.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", "Open ")).count
+		// Every tile is a button: a web page's reads "Open …", and one that
+		// opens a place's card reads its name and status.
+		let tiles = grid.buttons.count
 		XCTAssertEqual(tiles, count, "The grid should hold every department")
 		return self
 	}

@@ -12,6 +12,7 @@ function makeBuilding(name: string): BuildingType {
 	return {
 		name,
 		category: 'Food',
+		kind: 'building',
 		schedule: [{title: 'Hours', hours: [{days: ['Mo'], from: '8:00am', to: '5:00pm'}]}],
 	}
 }

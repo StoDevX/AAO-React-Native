@@ -10,8 +10,8 @@ import {openUrl} from '@frogpond/open-url'
 
 import {normalizeLinks} from '../lib/normalize-link'
 import type {LabelLink, LabelLinkString} from '../types'
-import {DETAIL_ROW, LAST_ROW} from './card-style'
-import {SectionHeading} from './section-heading'
+import {DETAIL_ROW, LAST_ROW} from '../../../components/place-card/card-style'
+import {SectionHeading} from '../../../components/place-card/section-heading'
 
 /// A headed list of labelled links -- a building's floors, or its other links
 /// -- one row each, with a ↗ on the rows that open something.
