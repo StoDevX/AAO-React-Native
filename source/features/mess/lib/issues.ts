@@ -64,13 +64,17 @@ function weekOf(day: string): string {
 	return dayAfter(day, -((weekday + 6) % 7))
 }
 
-/** A day's posts that are a special edition's, and enough of them to be an issue. */
-function specialDays(posts: LightPost[]): Set<string> {
+/**
+ * The weeks with enough special-edition posts to make an edition, by their Monday. Counted by the
+ * week rather than the day, so an edition that goes up either side of midnight stays one.
+ */
+function specialWeeks(posts: LightPost[]): Set<string> {
 	let counts = new Map<string, number>()
 	for (let post of posts) {
-		if (post.special) counts.set(post.day, (counts.get(post.day) ?? 0) + 1)
+		let week = weekOf(post.day)
+		if (post.special) counts.set(week, (counts.get(week) ?? 0) + 1)
 	}
-	return new Set([...counts].filter(([, count]) => count >= ISSUE_MIN_POSTS).map(([day]) => day))
+	return new Set([...counts].filter(([, count]) => count >= ISSUE_MIN_POSTS).map(([week]) => week))
 }
 
 /** The day with the most posts, the newest of any tie: the day the paper printed. */
@@ -88,9 +92,9 @@ function busiestDay(posts: LightPost[]): string {
 	return best
 }
 
-/** Posts that print together: a week's regular posts, or one day's special edition. */
+/** Posts that print together: a week's regular posts, or its special edition. */
 type Group = {
-	/** The week's Monday, or the special edition's day */
+	/** The week's Monday */
 	start: string
 	special: boolean
 	posts: LightPost[]
@@ -99,9 +103,10 @@ type Group = {
 /**
  * The issues the loaded posts make, newest first. The posts come newest first, as WordPress
  * lists them. A week, Monday to Sunday, with at least five posts is an issue, named by its busiest
- * day; a quieter week joins the most recent issue before it, and one older than every issue is
- * left out. A special edition -- a day with at least five special-edition posts -- is an issue of
- * its own, apart from the rest of its week. While another page remains, the oldest week is left
+ * day. A quieter week joins the next issue after it, so a paper that starts going up late on
+ * Sunday prints with the rest of its posts; a quiet week newer than every issue joins the issue
+ * before it instead. A week's special-edition posts, when there are at least five, are an issue
+ * of their own, apart from the rest of the week and named by their busiest day. While another page remains, the oldest week is left
  * out, since that page may hold more of it. WordPress pages by offset, so a post published between
  * two page fetches repeats one post; each counts once.
  */
@@ -118,44 +123,47 @@ export function groupIssues(posts: LightPost[], hasMore: boolean): MessIssue[] {
 		unique = unique.filter((post) => weekOf(post.day) !== partial)
 	}
 
-	let specials = specialDays(unique)
-	let keyOf = (post: LightPost) =>
-		post.special && specials.has(post.day) ? `special:${post.day}` : `week:${weekOf(post.day)}`
+	let specials = specialWeeks(unique)
 	let byKey = new Map<string, Group>()
 	for (let post of unique) {
-		let key = keyOf(post)
+		let week = weekOf(post.day)
+		let special = post.special && specials.has(week)
+		let key = `${special ? 'special' : 'week'}:${week}`
 		let group = byKey.get(key)
 		if (group) group.posts.push(post)
-		else {
-			let special = key.startsWith('special:')
-			byKey.set(key, {start: special ? post.day : weekOf(post.day), special, posts: [post]})
-		}
+		else byKey.set(key, {start: week, special, posts: [post]})
 	}
 
-	// Oldest first, so each quiet week finds the issue before it already made.
+	// Newest first, so each quiet week finds the issue after it already made.
 	let groups: Group[] = []
 	// Hermes has no toSorted, so the copy is sorted in place.
 	let ordered = [...byKey.values()].sort((a, b) =>
-		a.start < b.start ? -1 : a.start > b.start ? 1 : 0,
+		a.start < b.start ? 1 : a.start > b.start ? -1 : 0,
 	)
-	let previous: Group | undefined
+	let next: Group | undefined
+	// Quiet weeks newer than every issue, waiting for the issue before them.
+	let newest: LightPost[] = []
 	for (let group of ordered) {
 		if (group.special) groups.push(group)
 		else if (group.posts.length >= ISSUE_MIN_POSTS) {
+			// Newer than every post the issue holds, so they go first.
+			group.posts.unshift(...newest)
+			newest = []
 			groups.push(group)
-			previous = group
+			next = group
 		}
-		// A quiet week is newer than every post the issue already holds, so it goes first.
-		else if (previous) previous.posts.unshift(...group.posts)
+		// Older than every post the next issue holds, so they go last.
+		else if (next) next.posts.push(...group.posts)
+		else newest.push(...group.posts)
 	}
 
 	let issues = groups.flatMap((group): MessIssue[] => {
 		let lead = leadStory(group.posts)
 		if (!lead) return []
-		let day = group.special ? group.start : busiestDay(group.posts)
+		let day = busiestDay(group.posts)
 		return [
 			{
-				key: group.special ? `special:${group.start}` : `week:${group.start}`,
+				key: group.special ? `special:${day}` : `week:${group.start}`,
 				day,
 				count: group.posts.length,
 				storyIds: group.posts.map((post) => post.id),

@@ -1,7 +1,7 @@
 import {describe, expect, it} from '@jest/globals'
 import categoriesJson from '../../__tests__/fixtures/categories.json'
 import springPosts from '../../__tests__/fixtures/issue-posts.json'
-import type {MessIssue} from '../../types'
+import type {LightPost, MessIssue} from '../../types'
 import {
 	datelineText,
 	groupIssues,
@@ -78,7 +78,66 @@ describe('parseLightPosts', () => {
 	})
 })
 
+/** `count` posts on `day`, ids counting down from `newestId`, marked special as `special` says. */
+function postsOn(day: string, count: number, newestId: number, special = false): LightPost[] {
+	return Array.from({length: count}, (_, offset) => ({
+		id: newestId - offset,
+		day,
+		title: `Story ${newestId - offset}`,
+		section: special ? 'Special Edition' : 'News',
+		special,
+		featured: false,
+		photo: null,
+		photoUrl: null,
+	}))
+}
+
 describe('groupIssues', () => {
+	// The paper starts going up late on Sunday, before the Monday its week begins.
+	it('joins a quiet week to the issue after it, so a late-Sunday start goes with its paper', () => {
+		let posts = [
+			...postsOn('2026-03-23', 6, 200),
+			...postsOn('2026-03-22', 4, 100),
+			...postsOn('2026-03-11', 5, 50),
+		]
+		expect(outline(groupIssues(posts, false))).toStrictEqual([
+			['2026-03-23', 10],
+			['2026-03-11', 5],
+		])
+	})
+
+	it('joins a quiet week newer than every issue to the issue before it', () => {
+		let posts = [...postsOn('2026-03-23', 2, 200), ...postsOn('2026-03-11', 5, 50)]
+		expect(outline(groupIssues(posts, false))).toStrictEqual([['2026-03-11', 7]])
+	})
+
+	// A special edition that goes up either side of midnight is still one edition.
+	it("makes one special edition of a week's special posts, named by their busiest day", () => {
+		let posts = [
+			...postsOn('2026-05-12', 3, 300, true),
+			...postsOn('2026-05-11', 2, 200, true),
+			...postsOn('2026-05-13', 5, 100),
+		]
+		expect(
+			groupIssues(posts, false).map((issue) => [
+				issue.key,
+				issue.day,
+				issue.count,
+				issue.isSpecial,
+			]),
+		).toStrictEqual([
+			['week:2026-05-11', '2026-05-13', 5, false],
+			['special:2026-05-12', '2026-05-12', 5, true],
+		])
+	})
+
+	it('keeps a week with too few special posts for an edition regular', () => {
+		let posts = [...postsOn('2026-05-12', 4, 300, true), ...postsOn('2026-05-13', 5, 100)]
+		expect(groupIssues(posts, false).map((issue) => [issue.day, issue.isSpecial])).toStrictEqual([
+			['2026-05-13', false],
+		])
+	})
+
 	it("finds the spring's eight issues, a week each, newest first", () => {
 		expect(outline(groupIssues(spring, false))).toStrictEqual([
 			['2026-05-12', 11],
@@ -193,9 +252,9 @@ describe('groupIssues', () => {
 		expect(daysIn(issueOn('2026-05-12'))).toStrictEqual({first: '2026-05-12', last: '2026-05-12'})
 	})
 
-	it('leaves out a stray older than every issue', () => {
+	it('joins a stray older than every issue, Sunday, Mar 1, to the issue after it', () => {
 		let fromMarch = spring.filter((post) => post.day >= '2026-03-01')
-		expect(groupIssues(fromMarch, false).at(-1)).toMatchObject({day: '2026-03-04', count: 26})
+		expect(groupIssues(fromMarch, false).at(-1)).toMatchObject({day: '2026-03-04', count: 27})
 	})
 
 	// Page 1 ends 27 posts into Mar 18, whose other two are on page 2.
