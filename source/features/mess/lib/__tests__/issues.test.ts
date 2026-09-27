@@ -104,6 +104,47 @@ describe('groupIssues', () => {
 		])
 	})
 
+	// A quiet week's posts join the issue, but went up after it printed.
+	it("leads and names an issue by its own week's posts, not a quiet week that joined it", () => {
+		let paper = [
+			...postsOn('2026-04-29', 2, 120),
+			...postsOn('2026-04-28', 2, 110),
+			...postsOn('2026-04-27', 1, 100),
+		].map((post) => (post.id === 120 ? {...post, featured: true} : post))
+		let quiet = postsOn('2026-05-07', 3, 200).map((post) => ({...post, featured: true}))
+		let [issue] = groupIssues([...quiet, ...paper], false)
+		expect(issue).toMatchObject({day: '2026-04-29', count: 8, leadId: 120})
+	})
+
+	// The next page may hold the rest of the oldest week, special edition included.
+	it('leaves out the oldest week, special edition too, while another page remains', () => {
+		let posts = [
+			...postsOn('2026-03-11', 5, 300),
+			...postsOn('2026-03-04', 5, 200),
+			...postsOn('2026-03-03', 2, 100, true),
+		]
+		expect(outline(groupIssues(posts, true))).toStrictEqual([['2026-03-11', 5]])
+		expect(outline(groupIssues(posts, false))).toStrictEqual([
+			['2026-03-11', 5],
+			['2026-03-04', 5],
+			['2026-03-03', 2],
+		])
+	})
+
+	it('joins a quiet week to the regular issue before it, not to a special edition between', () => {
+		let posts = [
+			...postsOn('2026-03-19', 1, 400),
+			...postsOn('2026-03-10', 3, 300, true),
+			...postsOn('2026-03-04', 5, 200),
+		]
+		expect(
+			groupIssues(posts, false).map((issue) => [issue.day, issue.count, issue.isSpecial]),
+		).toStrictEqual([
+			['2026-03-10', 3, true],
+			['2026-03-04', 6, false],
+		])
+	})
+
 	it('joins a quiet week newer than every issue to the issue before it', () => {
 		let posts = [...postsOn('2026-03-23', 2, 200), ...postsOn('2026-03-11', 5, 50)]
 		expect(outline(groupIssues(posts, false))).toStrictEqual([['2026-03-11', 7]])

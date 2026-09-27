@@ -84,6 +84,9 @@ type Group = {
 	/** The week's Monday */
 	start: string
 	special: boolean
+	/** The week's own posts, which choose the issue's lead and name its day */
+	own: LightPost[]
+	/** The own posts and the quiet weeks' that joined them, newest first */
 	posts: LightPost[]
 }
 
@@ -114,8 +117,8 @@ export function groupIssues(posts: LightPost[], hasMore: boolean): MessIssue[] {
 		let week = weekOf(post.day)
 		let key = `${post.special ? 'special' : 'week'}:${week}`
 		let group = byKey.get(key)
-		if (group) group.posts.push(post)
-		else byKey.set(key, {start: week, special: post.special, posts: [post]})
+		if (group) group.own.push(post)
+		else byKey.set(key, {start: week, special: post.special, own: [post], posts: []})
 	}
 
 	// Oldest first, so each quiet week finds the issue before it already made.
@@ -126,19 +129,21 @@ export function groupIssues(posts: LightPost[], hasMore: boolean): MessIssue[] {
 	)
 	let previous: Group | undefined
 	for (let group of ordered) {
+		group.posts = [...group.own]
 		if (group.special) groups.push(group)
-		else if (group.posts.length >= ISSUE_MIN_POSTS) {
+		else if (group.own.length >= ISSUE_MIN_POSTS) {
 			groups.push(group)
 			previous = group
 		}
 		// A quiet week is newer than every post the issue already holds, so it goes first.
-		else if (previous) previous.posts.unshift(...group.posts)
+		else if (previous) previous.posts.unshift(...group.own)
 	}
 
 	let issues = groups.flatMap((group): MessIssue[] => {
-		let lead = leadStory(group.posts)
+		// The quiet weeks' posts went up after the paper printed, so they neither lead it nor name it.
+		let lead = leadStory(group.own)
 		if (!lead) return []
-		let day = busiestDay(group.posts)
+		let day = busiestDay(group.own)
 		return [
 			{
 				// By the week rather than the busiest day, which can change as an edition goes up.
