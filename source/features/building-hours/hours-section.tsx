@@ -200,18 +200,19 @@ function HoursLine({
 	emphasized?: boolean
 	modifiers?: ModifierConfig[]
 }): React.ReactNode {
+	let labelStyle = [
+		font({textStyle: 'body', weight: emphasized ? 'semibold' : 'regular'}),
+		labelColor ? foregroundStyle(labelColor) : PRIMARY,
+	]
+	// With no times -- a status on a day with no hours -- the label alone. A
+	// LabeledContent with nothing to label draws only its label, and the
+	// modifiers on it, the status row's identifier among them, are lost.
+	if (times.length === 0) {
+		return <Text modifiers={[...labelStyle, ...(modifiers ?? [])]}>{label}</Text>
+	}
 	return (
 		<LabeledContent
-			label={
-				<Text
-					modifiers={[
-						font({textStyle: 'body', weight: emphasized ? 'semibold' : 'regular'}),
-						labelColor ? foregroundStyle(labelColor) : PRIMARY,
-					]}
-				>
-					{label}
-				</Text>
-			}
+			label={<Text modifiers={labelStyle}>{label}</Text>}
 			modifiers={[...(modifiers ?? []), accessibilityElement('combine')]}
 		>
 			<VStack alignment="trailing" spacing={2}>

@@ -48,6 +48,7 @@ export function PlaceStackCard({stack, depth, campus, dispatch, stop}: Props): R
 			depth={depth + 1}
 			dispatch={dispatch}
 			stack={stack}
+			under={stop}
 		/>
 	) : null
 	let onClose = depth === 0 ? () => dispatch({type: 'clear'}) : () => dispatch({type: 'pop', depth})
@@ -79,11 +80,19 @@ export function PlaceStackCard({stack, depth, campus, dispatch, stop}: Props): R
 	)
 }
 
-/// A place's card in a sheet over the card beneath: the map sheet's stops,
-/// opening at the middle one, with the map still live behind it.
-function StackedSheet(props: Omit<Props, 'stop'>): React.ReactNode {
-	// Given, or a nested sheet opens at its first stop, the collapsed one.
-	let [detent, setDetent] = React.useState<PresentationDetent>(DETENT_FOR.medium)
+/// A place's card in a sheet over the card beneath, with the map still live
+/// behind it. It opens at the height of the card beneath, covering it as Maps
+/// covers one place sheet with the next; over the collapsed stop, which holds
+/// only a header, it opens at the middle one.
+function StackedSheet({
+	under,
+	...props
+}: Omit<Props, 'stop'> & {under: SheetDetent}): React.ReactNode {
+	// Always given: without a selection a nested sheet opens at its first
+	// stop, the collapsed one.
+	let [detent, setDetent] = React.useState<PresentationDetent>(
+		DETENT_FOR[under === 'collapsed' ? 'medium' : under],
+	)
 	let {depth, dispatch} = props
 	return (
 		<BottomSheet
