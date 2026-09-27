@@ -1,10 +1,14 @@
 import * as React from 'react'
 import {StyleSheet, useWindowDimensions, View, type NativeSyntheticEvent} from 'react-native'
 import {useSafeAreaInsets} from 'react-native-safe-area-context'
-import {BottomSheet, Group, Host} from '@expo/ui/swift-ui'
+import {BottomSheet, Group, Host, ZStack} from '@expo/ui/swift-ui'
 import {
+	accessibilityHidden,
 	background,
+	disabled,
+	frame,
 	interactiveDismissDisabled,
+	opacity,
 	presentationBackgroundInteraction,
 	presentationDetents,
 	presentationDragIndicator,
@@ -103,6 +107,8 @@ export default function MapPage(): React.ReactNode {
 	let {data: venues = []} = useQuery(cardVenuesOptions(campus))
 	let {height: windowHeight} = useWindowDimensions()
 	let insets = useSafeAreaInsets()
+	// A card covers the picker while any place is open.
+	let covered = stack.length > 0
 	let [sheetPresented, setSheetPresented] = React.useState(true)
 	// Where the sheet rests, and where a search focus lifted it from. Every
 	// move goes through `nextSheetDetent`, including the user's own drags.
@@ -135,7 +141,7 @@ export default function MapPage(): React.ReactNode {
 	// does: at large text sizes its header keeps its top in view and runs off
 	// the bottom.
 	let [pickerHeaderHeight, setPickerHeaderHeight] = React.useState<number | null>(null)
-	let collapsedHeight = stack.length > 0 ? null : pickerHeaderHeight
+	let collapsedHeight = covered ? null : pickerHeaderHeight
 	let detents = React.useMemo(
 		() => detentsFor(collapsedDetentFor(collapsedHeight)),
 		[collapsedHeight],
@@ -292,31 +298,53 @@ export default function MapPage(): React.ReactNode {
 							interactiveDismissDisabled(true),
 						]}
 					>
-						{stack.length > 0 ? (
-							<PlaceStackCard
-								campus={campus}
-								depth={0}
-								dispatch={dispatchStack}
-								stack={stack}
-								stop={sheet.current}
-							/>
-						) : (
-							<BuildingPicker
-								campus={campus}
-								compact={sheet.current === 'collapsed'}
-								onHeaderHeightChange={setPickerHeaderHeight}
-								onSearchCancel={() => dispatchSheet({type: 'search-cancelled'})}
-								onSearchFocusChange={(focused, hasText) =>
-									dispatchSheet(
-										focused ? {type: 'search-focused'} : {type: 'search-blurred', hasText},
-									)
-								}
-								onSelect={(id) => {
-									dispatchStack({type: 'start', id})
-									dispatchSheet({type: 'row-tapped'})
-								}}
-							/>
-						)}
+						{/* The picker stays mounted under a card, so closing the card
+						    returns to the list as it was left: the same category, query
+						    and scroll. Hidden by opacity rather than `hidden()`, which
+						    @expo/ui applies in an if/else -- a new view identity each time
+						    it flips, and a list scrolled back to the top.
+
+						    A ZStack is as tall as its tallest child, and at the largest
+						    text size the picker's header is taller than the collapsed
+						    stop. The sheet would then centre the stack and cut off the
+						    card's header, so a covered picker takes no height. Always
+						    the flexible frame: @expo/ui switches to a fixed one, and a
+						    new identity, once `height` is set. */}
+						<ZStack alignment="top">
+							<Group
+								modifiers={[
+									frame({maxHeight: covered ? 0 : undefined, alignment: 'top'}),
+									opacity(covered ? 0 : 1),
+									disabled(covered),
+									accessibilityHidden(covered),
+								]}
+							>
+								<BuildingPicker
+									campus={campus}
+									compact={sheet.current === 'collapsed'}
+									onHeaderHeightChange={setPickerHeaderHeight}
+									onSearchCancel={() => dispatchSheet({type: 'search-cancelled'})}
+									onSearchFocusChange={(focused, hasText) =>
+										dispatchSheet(
+											focused ? {type: 'search-focused'} : {type: 'search-blurred', hasText},
+										)
+									}
+									onSelect={(id) => {
+										dispatchStack({type: 'start', id})
+										dispatchSheet({type: 'row-tapped'})
+									}}
+								/>
+							</Group>
+							{covered ? (
+								<PlaceStackCard
+									campus={campus}
+									depth={0}
+									dispatch={dispatchStack}
+									stack={stack}
+									stop={sheet.current}
+								/>
+							) : null}
+						</ZStack>
 					</Group>
 				</BottomSheet>
 			</Host>
