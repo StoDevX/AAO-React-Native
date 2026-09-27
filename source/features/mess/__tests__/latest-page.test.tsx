@@ -82,11 +82,10 @@ function renderLatest(section: string | null) {
 }
 
 describe('LatestPage', () => {
-	test('lists the newest stories under "Latest stories"', async () => {
+	test('lists the newest stories', async () => {
 		queryClient.setQueryData(messKeys.feed, [WATERS, GRANT])
 		await renderLatest(null)
 
-		expect(screen.getByText('Latest stories')).toBeTruthy()
 		expect(
 			screen.getAllByRole('button').map((button) => button.props.accessibilityLabel),
 		).toStrictEqual([
@@ -95,11 +94,10 @@ describe('LatestPage', () => {
 		])
 	})
 
-	test('narrowed to a section, lists that section under its name, with its columns', async () => {
+	test('narrowed to a section, lists that section with its columns', async () => {
 		queryClient.setQueryData(messKeys.category(NEWS), [GRANT])
 		await renderLatest('News')
 
-		expect(screen.getByText('News')).toBeTruthy()
 		expect(
 			screen.getAllByRole('button').map((button) => button.props.accessibilityLabel),
 		).toStrictEqual([

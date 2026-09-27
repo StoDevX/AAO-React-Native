@@ -11,7 +11,7 @@ class ModuleNewsTests: UITestCase {
 	func testOlafMessengerLatestListsStoriesWithAFilter() throws {
 		MessFrontPage(app: app)
 			.navigate()
-			.verifyLatestListsStoriesWithAFilter()
+			.verifyLatestListsStoriesWithSections()
 	}
 
 	/// Reads live data: the paper has to have a News section.

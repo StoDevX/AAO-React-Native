@@ -443,7 +443,7 @@ export function Text({
 			(React.isValidElement(child) && child.type === Text),
 	)
 	return (
-		<RNText accessibilityLabel={labelOf(modifiers)} testID={testID}>
+		<RNText accessibilityLabel={labelOf(modifiers)} testID={identifierOf(modifiers) ?? testID}>
 			{kept}
 		</RNText>
 	)

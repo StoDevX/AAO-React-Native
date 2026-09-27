@@ -1,11 +1,8 @@
 import * as React from 'react'
 import {useWindowDimensions} from 'react-native'
-import {useRouter} from 'expo-router'
-import {Picker, Text, VStack} from '@expo/ui/swift-ui'
-import {accessibilityIdentifier, padding, pickerStyle, tag} from '@expo/ui/swift-ui/modifiers'
+import {Stack, useRouter} from 'expo-router'
 import {useQuery, useQueryClient, type InfiniteData} from '@tanstack/react-query'
 import {firstPagesOf} from '../../lib/infinite-data'
-import {NewsPicker} from '../news/news-picker'
 import {OLAF_MESSENGER} from '../news/sources'
 import {useNewsFilterStore} from '../news/store'
 import {IssueGrid} from './issue-grid'
@@ -13,40 +10,72 @@ import {LatestPage} from './latest-page'
 import {viewKey, viewOf, type MessView} from './lib/front-view'
 import {messKeys} from './lib/keys'
 import {MAIN_SECTIONS} from './lib/posts'
-import {PaperNameTitle} from './masthead'
-import {MessPage, PAGE_MARGIN} from './mess-page'
+import {Masthead} from './masthead'
+import {MessPage} from './mess-page'
 import {PageLoading, PageMessage, PageNotice} from './page-notice'
 import {messFeedOptions} from './query'
 import {StoryRows} from './story-list'
 import type {LightPost, MessIssue} from './types'
 import {useMessIssues} from './use-mess-issues'
 
-/** Names the By Issue / Latest switch, for a UI test. */
-export const MODE_SWITCH_ID = 'mess-mode-switch'
+/** The name each view goes by in the menu, and in the menu button's label. */
+const VIEW_NAMES = {issues: 'By Issue', latest: 'Latest'} as const
 
-const SWITCH = [
-	pickerStyle('segmented'),
-	padding({horizontal: PAGE_MARGIN, vertical: 8}),
-	accessibilityIdentifier(MODE_SWITCH_ID),
-]
+/** Latest's dateline, naming what it lists; By Issue's tiles carry their own dates, so it has none. */
+function datelineOf(view: MessView): string | null {
+	if (view.mode === 'issues') return null
+	return view.section ?? 'Latest stories'
+}
 
-type Mode = MessView['mode']
-
-/** By Issue or Latest, pinned under the navigation bar. */
-function ModeSwitch({
-	mode,
+/**
+ * The glass button at the top right: a menu to pick By Issue or Latest, and, in Latest, the
+ * section to narrow it to. Its label names the view showing, since the icon alone does not.
+ */
+function ViewMenu({
+	view,
 	onChoose,
 }: {
-	mode: Mode
-	onChoose: (mode: Mode) => void
+	view: MessView
+	onChoose: (view: MessView) => void
 }): React.ReactNode {
 	return (
-		<VStack>
-			<Picker<Mode> modifiers={SWITCH} onSelectionChange={onChoose} selection={mode}>
-				<Text modifiers={[tag('issues')]}>By Issue</Text>
-				<Text modifiers={[tag('latest')]}>Latest</Text>
-			</Picker>
-		</VStack>
+		<Stack.Toolbar placement="right">
+			<Stack.Toolbar.Menu accessibilityLabel={`View: ${VIEW_NAMES[view.mode]}`} icon="newspaper">
+				<Stack.Toolbar.Menu inline={true} title="View">
+					<Stack.Toolbar.MenuAction
+						isOn={view.mode === 'issues'}
+						onPress={() => onChoose({...view, mode: 'issues'})}
+					>
+						{VIEW_NAMES.issues}
+					</Stack.Toolbar.MenuAction>
+					<Stack.Toolbar.MenuAction
+						isOn={view.mode === 'latest'}
+						onPress={() => onChoose({...view, mode: 'latest'})}
+					>
+						{VIEW_NAMES.latest}
+					</Stack.Toolbar.MenuAction>
+				</Stack.Toolbar.Menu>
+				{view.mode === 'latest' ? (
+					<Stack.Toolbar.Menu inline={true} title="Section">
+						<Stack.Toolbar.MenuAction
+							isOn={view.section === null}
+							onPress={() => onChoose({mode: 'latest', section: null})}
+						>
+							All Stories
+						</Stack.Toolbar.MenuAction>
+						{MAIN_SECTIONS.map((section) => (
+							<Stack.Toolbar.MenuAction
+								key={section}
+								isOn={view.section === section}
+								onPress={() => onChoose({mode: 'latest', section})}
+							>
+								{section}
+							</Stack.Toolbar.MenuAction>
+						))}
+					</Stack.Toolbar.Menu>
+				) : null}
+			</Stack.Toolbar.Menu>
+		</Stack.Toolbar>
 	)
 }
 
@@ -91,9 +120,10 @@ function SavedLatestStories(): React.ReactNode {
 }
 
 /**
- * The Mess's front page: the By Issue / Latest switch pinned under the navigation bar, then that
- * view's page; in Latest, a filter in the bottom toolbar narrows it to one section. The view and
- * the section are remembered in the news filter store.
+ * The Mess's front page: a clear navigation bar with the view menu at its right, over the paper's
+ * masthead and then the view's page. The bar keeps no title, so the masthead names the paper; the
+ * screen's title is still what the Back button reads. The view and the section are remembered in
+ * the news filter store.
  */
 export function FrontPageScreen(): React.ReactNode {
 	let queryClient = useQueryClient()
@@ -104,14 +134,10 @@ export function FrontPageScreen(): React.ReactNode {
 
 	return (
 		<>
-			<PaperNameTitle />
-			{view.mode === 'latest' ? (
-				<NewsPicker
-					categories={MAIN_SECTIONS}
-					onSelect={(section) => choose({mode: 'latest', section})}
-					selectedCategory={view.section}
-				/>
-			) : null}
+			<Stack.Screen
+				options={{title: OLAF_MESSENGER.title, headerTitle: '', headerTransparent: true}}
+			/>
+			<ViewMenu onChoose={choose} view={view} />
 			<MessPage
 				// Only the view showing has queries mounted, so refetching the active Mess queries
 				// refreshes that view alone. The issue list is cut to its first page first, since an
@@ -122,8 +148,8 @@ export function FrontPageScreen(): React.ReactNode {
 					)
 					return queryClient.refetchQueries({queryKey: messKeys.all, type: 'active'})
 				}}
-				pinned={<ModeSwitch mode={view.mode} onChoose={(mode) => choose({...view, mode})} />}
 			>
+				<Masthead dateline={datelineOf(view)} />
 				{view.mode === 'issues' ? <ByIssuePage /> : <LatestPage section={view.section} />}
 			</MessPage>
 		</>
