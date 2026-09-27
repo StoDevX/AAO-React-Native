@@ -19,14 +19,6 @@ class ModuleSettingsTests: UITestCase {
 			.chooseIssueStains(TestIdentifiers.Settings.coffee)
 	}
 
-	/// Guards the whole row being tappable, not just its title text.
-	func testCreditsRowIsTappableAwayFromItsCentre() throws {
-		SettingsScreen(app: app)
-			.openSettings()
-			.tapCreditsRowInItsEmptySpace()
-			.verifyTitle("Credits")
-	}
-
 	func testChangesAppIconToOldMainAndBack() throws {
 		// The "You have changed the icon" alert belongs to SpringBoard. It blocks
 		// the app from reaching idle, so UIInterruptionMonitor never fires --

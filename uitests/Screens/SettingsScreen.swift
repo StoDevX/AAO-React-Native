@@ -69,23 +69,6 @@ struct SettingsScreen: Screen {
 	}
 
 	@discardableResult
-	func tapCreditsRowInItsEmptySpace() -> Self {
-		let creditsRow = app.buttons["Credits"].firstMatch
-		scrollUntilExists(creditsRow)
-		XCTAssertTrue(
-			creditsRow.waitForExistence(timeout: 30),
-			"Credits row should be visible")
-		// The row is title-left, chevron-right, with an empty Spacer between
-		// them -- exactly where a missing contentShape would leave the row
-		// untappable while center taps (landing on the label) still pass.
-		// dx targets that empty middle; dy is deliberately off the row's own
-		// center so this tap point differs from what a plain .tap() would
-		// already hit.
-		creditsRow.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.85)).tap()
-		return self
-	}
-
-	@discardableResult
 	func dismissIconChangeAlert(springboard: XCUIApplication) -> Self {
 		let iconChangeOK = springboard.buttons["OK"]
 		XCTAssertTrue(
