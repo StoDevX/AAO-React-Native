@@ -142,6 +142,10 @@ export const scrollTargetBehavior = named('scrollTargetBehavior', 'behavior')
 export const pickerStyle = named('pickerStyle', 'style')
 export const presentationBackground = named('presentationBackground', 'color')
 export const presentationDragIndicator = named('presentationDragIndicator', 'visibility')
+export const presentationBackgroundInteraction = named(
+	'presentationBackgroundInteraction',
+	'interaction',
+)
 export const scrollContentBackground = named('scrollContentBackground', 'visible')
 export const scrollTargetLayout = bare('scrollTargetLayout')
 export const shadow = spreading('shadow')

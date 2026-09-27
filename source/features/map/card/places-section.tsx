@@ -29,10 +29,18 @@ import {
 } from '@expo/ui/swift-ui/modifiers'
 
 import * as c from '@frogpond/colors'
+import type {Moment} from 'moment-timezone'
 
 import {splitCarousel, type PlaceTile} from '../lib/place-tiles'
 import {CARD_INSET} from '../../../components/place-card/card-style'
-import {MoreTileView, PlaceTileView} from './place-tile'
+import {MoreTileView, PlaceTileView, type TileStatus} from './place-tile'
+import type {StackEntry} from '../lib/also-here'
+import {STATUS_TEXT} from '../../building-hours/hours-section'
+import {
+	contextualStatus,
+	getShortBuildingStatus,
+	hasDisplayableHours,
+} from '../../building-hours/lib'
 import {SectionHeading} from '../../../components/place-card/section-heading'
 
 const TILE_SPACING = 12
@@ -53,6 +61,19 @@ function tileKey(tile: PlaceTile, index: number): string {
 	return `${tile.kind}-${tile.label}-${tile.href ?? ''}-${index}`
 }
 
+/// A tile's live status, from its venue's hours; none for a tile with no
+/// venue, or a venue with no hours listed.
+function statusOf(tile: PlaceTile, now: Moment | undefined): TileStatus | undefined {
+	let venue = tile.venue
+	if (!now || !venue || !hasDisplayableHours(venue.schedule ?? [])) {
+		return undefined
+	}
+	return {
+		text: contextualStatus(venue, now).long,
+		color: STATUS_TEXT[getShortBuildingStatus(venue, now)],
+	}
+}
+
 /// Pairs of tiles, one pair to each row of the More grid.
 function rowsOfTwo(tiles: Array<PlaceTile>): Array<Array<PlaceTile>> {
 	let rows: Array<Array<PlaceTile>> = []
@@ -62,17 +83,23 @@ function rowsOfTwo(tiles: Array<PlaceTile>): Array<Array<PlaceTile>> {
 	return rows
 }
 
-/// A building's departments, or its offices, as a carousel of tiles, after
-/// Maps' "Also at This Location". Past six tiles, More opens every one in a
-/// grid. `id` names the section's controls for tests: `{id}-more`, `{id}-grid`.
+/// A carousel of place tiles, after Maps' "Also at This Location": a
+/// building's departments, its offices, or what else is there. Past seven
+/// tiles, More opens every one in a grid.
+/// `id` names the section's controls for tests: `{id}-more`, `{id}-grid`.
 export function PlacesSection({
 	title,
 	id,
 	tiles,
+	now,
+	onOpen,
 }: {
 	title: string
 	id: string
 	tiles: Array<PlaceTile>
+	/// The time statuses are read at; without it, tiles show no status.
+	now?: Moment
+	onOpen?: (entry: StackEntry) => void
 }): React.ReactNode {
 	let [showingAll, setShowingAll] = React.useState(false)
 	if (tiles.length === 0) {
@@ -134,24 +161,9 @@ export function PlacesSection({
 										</Button>
 									</HStack>
 									<ScrollView modifiers={[accessibilityIdentifier(`${id}-grid`)]}>
-										<Grid
-											horizontalSpacing={TILE_SPACING}
-											modifiers={[padding({horizontal: CARD_INSET, bottom: CARD_INSET})]}
-											verticalSpacing={TILE_SPACING}
-										>
-											{rowsOfTwo(tiles).map((row, rowIndex) => (
-												// oxlint-disable-next-line react/no-array-index-key -- a row is a pair of tiles, and its place in the grid is its identity
-												<Grid.Row key={rowIndex}>
-													{row.map((tile, index) => (
-														<PlaceTileView
-															key={tileKey(tile, rowIndex * 2 + index)}
-															fill={true}
-															tile={tile}
-														/>
-													))}
-												</Grid.Row>
-											))}
-										</Grid>
+										<VStack alignment="leading" spacing={0}>
+											<TileGrid now={now} onOpen={onOpen} tiles={tiles} />
+										</VStack>
 									</ScrollView>
 								</VStack>
 							</BottomSheet>
@@ -162,7 +174,12 @@ export function PlacesSection({
 			<ScrollView axes="horizontal" modifiers={CAROUSEL_ROW} showsIndicators={false}>
 				<HStack modifiers={[padding({horizontal: CARD_INSET})]} spacing={TILE_SPACING}>
 					{shown.map((tile, index) => (
-						<PlaceTileView key={tileKey(tile, index)} tile={tile} />
+						<PlaceTileView
+							key={tileKey(tile, index)}
+							onOpen={onOpen}
+							status={statusOf(tile, now)}
+							tile={tile}
+						/>
 					))}
 					{hasMore ? (
 						<MoreTileView
@@ -175,5 +192,39 @@ export function PlacesSection({
 				</HStack>
 			</ScrollView>
 		</Section>
+	)
+}
+
+/// The More grid's tiles, two to a row.
+function TileGrid({
+	tiles,
+	now,
+	onOpen,
+}: {
+	tiles: Array<PlaceTile>
+	now?: Moment
+	onOpen?: (entry: StackEntry) => void
+}): React.ReactNode {
+	return (
+		<Grid
+			horizontalSpacing={TILE_SPACING}
+			modifiers={[padding({horizontal: CARD_INSET, bottom: CARD_INSET})]}
+			verticalSpacing={TILE_SPACING}
+		>
+			{rowsOfTwo(tiles).map((row, rowIndex) => (
+				// oxlint-disable-next-line react/no-array-index-key -- a row is a pair of tiles, and its place in the grid is its identity
+				<Grid.Row key={rowIndex}>
+					{row.map((tile, index) => (
+						<PlaceTileView
+							key={tileKey(tile, rowIndex * 2 + index)}
+							fill={true}
+							onOpen={onOpen}
+							status={statusOf(tile, now)}
+							tile={tile}
+						/>
+					))}
+				</Grid.Row>
+			))}
+		</Grid>
 	)
 }

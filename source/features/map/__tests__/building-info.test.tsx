@@ -1,10 +1,11 @@
 import React from 'react'
 import {Linking} from 'react-native'
-import {fireEvent, render, screen} from '@testing-library/react-native'
+import {act, fireEvent, render, screen} from '@testing-library/react-native'
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query'
 import {openUrl} from '@frogpond/open-url'
 
 import {keys} from '../../building-hours/query'
+import {keys as mapKeys} from '../query'
 import type {BuildingType} from '../../building-hours/types'
 import {BuildingInfo} from '../building-info'
 import {makeBuilding} from './fixtures'
@@ -60,6 +61,8 @@ function renderCard(ui: React.ReactElement) {
 	trackedQueryClients.push(client)
 	client.setQueryData(keys.all('stolaf'), mockVenues.stolaf)
 	client.setQueryData(keys.all('carleton'), mockVenues.carleton)
+	client.setQueryData(mapKeys.all('stolaf'), [])
+	client.setQueryData(mapKeys.all('carleton'), [])
 	return render(<QueryClientProvider client={client}>{ui}</QueryClientProvider>)
 }
 
@@ -500,5 +503,79 @@ describe('BuildingInfo hours', () => {
 		)
 
 		expect(screen.queryByText('Hours')).toBeNull()
+	})
+})
+
+describe('BuildingInfo places', () => {
+	// St. Olaf's feed files offices under departments, so the Registrar's link
+	// is a department; its Hours venue is an office. They are one place.
+	it('shows a linked office once, where its link is, opening its card', async () => {
+		mockVenues.stolaf = [
+			venue('Tomson Hall', 'toh', 'building'),
+			venue('Registrar', 'toh', 'office'),
+			venue('Writing Desk', 'toh', 'office'),
+		]
+		let onOpen = jest.fn()
+		await renderCard(
+			<BuildingInfo
+				building={makeBuilding({
+					id: 'toh',
+					name: 'Tomson Hall',
+					departments: ['Registrar <https://wp.stolaf.edu/registrar>'],
+				})}
+				campus="stolaf"
+				onClose={jest.fn()}
+				onOpen={onOpen}
+				stop="medium"
+			/>,
+		)
+
+		expect(screen.getAllByText('Registrar')).toHaveLength(1)
+		await fireEvent.press(screen.getByRole('button', {name: /^Registrar/u}))
+		expect(onOpen).toHaveBeenCalledWith({
+			kind: 'venue',
+			name: 'Registrar',
+			link: {label: 'Registrar', href: 'https://wp.stolaf.edu/registrar'},
+		})
+		expect(screen.getByText('Writing Desk')).toBeTruthy()
+		expect(screen.getByText('Offices')).toBeTruthy()
+		expect(screen.queryByText('Also at This Location')).toBeNull()
+	})
+})
+
+describe('BuildingInfo while the Hours feed loads', () => {
+	// When venues arrive, a department can merge with one and gain a status;
+	// a grid already open must stay open.
+	it('keeps the Departments grid open as the Hours feed arrives', async () => {
+		let client = new QueryClient({defaultOptions: {queries: {retry: false, staleTime: Infinity}}})
+		trackedQueryClients.push(client)
+		client.setQueryData(mapKeys.all('stolaf'), [])
+		// Empty for now, as a feed still on its way is.
+		client.setQueryData(keys.all('stolaf'), [])
+		let departments = Array.from({length: 8}, (_, i) => `Dept ${i} <https://example.com/${i}>`)
+		await render(
+			<QueryClientProvider client={client}>
+				<BuildingInfo
+					building={makeBuilding({id: 'toh', name: 'Tomson Hall', departments})}
+					campus="stolaf"
+					onClose={jest.fn()}
+					onOpen={jest.fn()}
+					stop="medium"
+				/>
+			</QueryClientProvider>,
+		)
+		await fireEvent.press(screen.getByRole('button', {name: 'More departments'}))
+		// The grid repeats its section's title at its top.
+		expect(screen.getAllByText('Departments')).toHaveLength(2)
+
+		// The cache tells its observers on the next tick, so the arrival is
+		// awaited past it.
+		await act(async () => {
+			client.setQueryData(keys.all('stolaf'), [venue('Dept 0', 'toh', 'office')])
+			await new Promise((resolve) => setTimeout(resolve, 0))
+		})
+		// The venue has merged with its department: the tile now opens it.
+		expect(screen.getAllByRole('button', {name: /^Dept 0/u}).length).toBeGreaterThan(0)
+		expect(screen.getAllByText('Departments')).toHaveLength(2)
 	})
 })

@@ -27,7 +27,6 @@ import {useQuery} from '@tanstack/react-query'
 import {FILL_WIDTH} from '../../components/tile-layout'
 import {HoursSection} from '../building-hours/hours-section'
 import {ownHours} from '../building-hours/lib'
-import {buildingsOptions} from '../building-hours/query'
 import type {BuildingType, Campus} from '../building-hours/types'
 import {AboutSection} from './card/about-section'
 import {ActionsRow} from './card/actions-row'
@@ -39,18 +38,17 @@ import {PlacesSection} from './card/places-section'
 import {cardActions, WALKING_DIRECTIONS} from './lib/card-actions'
 import {nameUnderHeader, titleMayMove} from './lib/card-title'
 import {goodToKnowRows} from './lib/good-to-know'
-import {placeTiles} from './lib/place-tiles'
+import {placeTiles, toPlaceTiles, type PlaceTile} from './lib/place-tiles'
+import {placeSections} from './lib/place-sections'
+import {alsoHere, type StackEntry} from './lib/also-here'
+import {AlsoHereSection} from './card/also-here-section'
+import {cardFeaturesOptions, cardVenuesOptions} from './card-queries'
 import type {SheetDetent} from './lib/sheet-moves'
-import type {Building, Coordinate, Feature, Point} from './types'
-
-/// How long the card treats the Hours feed as current. Each building's card
-/// mounts afresh, so without this every tap would refetch the whole feed; the
-/// hours themselves change a few times a term.
-const HOURS_STALE_TIME = 5 * 60 * 1000
+import type {Building, Coordinate, Feature, LabelLink, Point} from './types'
 
 /// Apple Maps' place-card header, measured on iOS 27: 16pt of padding round
 /// 44pt buttons -- 76pt in all, the sheet's collapsed stop
-/// (`SHEET_COLLAPSED_HEIGHT` in `Map/index.tsx`).
+/// (`SHEET_COLLAPSED_HEIGHT` in `lib/sheet-detents.ts`).
 const HEADER_PADDING = 16
 
 /// The header's bottom padding at the large stop, which puts its edge 12pt
@@ -91,17 +89,33 @@ type Props = {
 	onClose: () => void
 	/// Which stop the sheet is at: large lays the name out differently, and only the other two let a long one move.
 	stop: SheetDetent
+	/// Stacks a place's card over this one; without it the card lists nothing
+	/// as also at its location.
+	onOpen?: (entry: StackEntry) => void
+	/// The sheet stacked over this card, if any.
+	stacked?: React.ReactNode
+	/// The page of a Departments or Offices tile merged with this place.
+	extraLinks?: Array<LabelLink>
 }
 
 /// The info card's contents, as SwiftUI. The sheet that presents them belongs
 /// to the map screen, which swaps between this and the picker.
-export function BuildingInfo({building, campus, onClose, stop}: Props): React.ReactNode {
+export function BuildingInfo({
+	building,
+	campus,
+	extraLinks,
+	onClose,
+	onOpen,
+	stacked,
+	stop,
+}: Props): React.ReactNode {
 	if (!building) {
 		return (
 			<List>
 				<Section>
 					<Text>Building not found.</Text>
 					<CloseButton onClose={onClose} />
+					{stacked}
 				</Section>
 			</List>
 		)
@@ -112,8 +126,11 @@ export function BuildingInfo({building, campus, onClose, stop}: Props): React.Re
 		<BuildingCard
 			building={building}
 			campus={campus}
+			extraLinks={extraLinks}
 			key={building.id}
 			onClose={onClose}
+			onOpen={onOpen}
+			stacked={stacked}
 			stop={stop}
 		/>
 	)
@@ -123,13 +140,77 @@ export function BuildingInfo({building, campus, onClose, stop}: Props): React.Re
 function BuildingCard({
 	building,
 	campus,
+	extraLinks,
 	onClose,
+	onOpen,
+	stacked,
 	stop,
 }: {
 	building: Feature<Building>
 	campus: Campus
+	extraLinks?: Array<LabelLink>
 	onClose: () => void
+	onOpen?: (entry: StackEntry) => void
+	stacked?: React.ReactNode
 	stop: SheetDetent
+}): React.ReactNode {
+	let {address, description, floors, links, name, photos} = building.properties
+
+	let subtitle = building.properties.type || null
+
+	let {data: venues = []} = useQuery(cardVenuesOptions(campus))
+	let hours = ownHours(venues, building)
+	let {data: features = []} = useQuery(cardFeaturesOptions(campus))
+	// Each place appears once: a department or office link that names a place
+	// here opens that place's card, and Also at This Location keeps the rest.
+	let sections = placeSections(
+		placeTiles(building.properties),
+		onOpen ? toPlaceTiles(alsoHere(building, features, venues)) : [],
+	)
+
+	return (
+		<PlaceCard name={name} onClose={onClose} stacked={stacked} stop={stop} subtitle={subtitle}>
+			<ActionsRow
+				actions={cardActions({point: pointOf(building), walkingDirections: WALKING_DIRECTIONS})}
+			/>
+			<PhotoStrip name={name} photos={photos} />
+			{hours ? <CardHours venue={hours} /> : null}
+			{onOpen ? <AlsoHereSection onOpen={onOpen} tiles={sections.alsoHere} /> : null}
+			<AboutSection text={description} />
+			<GoodToKnowSection rows={goodToKnowRows(building.properties)} />
+			<LinkedPlaces
+				id="departments"
+				onOpen={onOpen}
+				tiles={sections.departments}
+				title="Departments"
+			/>
+			<LinkedPlaces id="offices" onOpen={onOpen} tiles={sections.offices} title="Offices" />
+			<LinkListSection items={floors} title="Floors" />
+			<LinkListSection items={[...(links ?? []), ...(extraLinks ?? [])]} title="Links" />
+			<DetailsSection address={address} />
+		</PlaceCard>
+	)
+}
+
+/// A place card as Maps draws one: the pinned header with its close button,
+/// the name as a big title at the large stop, and the place's sections on the
+/// sheet beneath. A building's card and a venue's both use it.
+export function PlaceCard({
+	name,
+	subtitle,
+	stop,
+	onClose,
+	stacked,
+	children,
+}: {
+	name: string
+	subtitle: string | null
+	stop: SheetDetent
+	onClose: () => void
+	/// The sheet stacked over this card, if any. It rides in the header, since
+	/// presenting draws nothing in place and the list would give it a row.
+	stacked?: React.ReactNode
+	children: React.ReactNode
 }): React.ReactNode {
 	let large = stop === 'large'
 	// Both edges are in window coordinates, so comparing them is exact at any
@@ -145,22 +226,6 @@ function BuildingCard({
 	let measureBigTitle = (box: {y: number; height: number}) => {
 		setNameBottom(box.y + box.height)
 	}
-
-	let {address, description, floors, links, name, photos} = building.properties
-	let tiles = placeTiles(building.properties)
-	let departmentTiles = tiles.filter((tile) => tile.kind === 'department')
-	let officeTiles = tiles.filter((tile) => tile.kind === 'office')
-
-	let subtitle = building.properties.type || null
-
-	// The Hours screen's own query, so the card reads its warm cache. Only
-	// St. Olaf's venues carry building keys, so a Carleton card never asks.
-	let {data: venues = []} = useQuery({
-		...buildingsOptions(campus),
-		enabled: campus === 'stolaf',
-		staleTime: HOURS_STALE_TIME,
-	})
-	let hours = ownHours(venues, building)
 
 	return (
 		<PlaceCardScaffold large={large}>
@@ -212,6 +277,7 @@ function BuildingCard({
 					title={name}
 				/>
 				<CloseButton onClose={onClose} />
+				{stacked}
 			</ZStack>
 
 			{/* Plain, on the sheet's own colour: Maps lays its sections straight
@@ -256,32 +322,37 @@ function BuildingCard({
 					</Section>
 				) : null}
 
-				<ActionsRow
-					actions={cardActions({point: pointOf(building), walkingDirections: WALKING_DIRECTIONS})}
-				/>
-				<PhotoStrip name={name} photos={photos} />
-				{hours ? <CardHours venue={hours} /> : null}
-				<AboutSection text={description} />
-				<GoodToKnowSection rows={goodToKnowRows(building.properties)} />
-				<PlacesSection id="departments" tiles={departmentTiles} title="Departments" />
-				<PlacesSection id="offices" tiles={officeTiles} title="Offices" />
-				<LinkListSection items={floors} title="Floors" />
-				<LinkListSection items={links} title="Links" />
-				<DetailsSection address={address} />
+				{children}
 			</List>
 		</PlaceCardScaffold>
 	)
 }
 
+type LinkedPlacesProps = {
+	id: string
+	title: string
+	tiles: Array<PlaceTile>
+	onOpen?: (entry: StackEntry) => void
+}
+
+/// Departments or Offices. A tile that opens a place shows its live status.
+/// One component whether or not any tile has one yet: swapping components
+/// when the Hours feed arrives would remount the section and close its grid.
+function LinkedPlaces(props: LinkedPlacesProps): React.ReactNode {
+	let {now} = useMomentTimer({intervalMs: 60000, timezone: timezone()})
+	let withStatus = props.tiles.some((tile) => tile.venue)
+	return <PlacesSection {...props} now={withStatus ? now : undefined} />
+}
+
 /// A place's hours, kept current. The minute's tick lives here rather than on
 /// the card, so each tick redraws this section alone.
-function CardHours({venue}: {venue: BuildingType}): React.ReactNode {
+export function CardHours({venue}: {venue: BuildingType}): React.ReactNode {
 	let {now} = useMomentTimer({intervalMs: 60000, timezone: timezone()})
 	return <HoursSection now={now} venue={venue} />
 }
 
 /// Maps' close button: a glass circle holding a plain xmark.
-function CloseButton({onClose}: {onClose: () => void}): React.ReactNode {
+export function CloseButton({onClose}: {onClose: () => void}): React.ReactNode {
 	return (
 		<Button
 			modifiers={[

@@ -58,6 +58,7 @@ async function renderPicker({
 			<BuildingPicker
 				campus="carleton"
 				compact={compact}
+				onHeaderHeightChange={jest.fn()}
 				onSearchCancel={onSearchCancel}
 				onSearchFocusChange={onSearchFocusChange}
 				onSelect={onSelect}
