@@ -146,10 +146,13 @@ describe('groupIssues', () => {
 		])
 	})
 
-	it('keeps a week with too few special posts for an edition regular', () => {
-		let posts = [...postsOn('2026-05-12', 4, 300, true), ...postsOn('2026-05-13', 5, 100)]
-		expect(groupIssues(posts, false).map((issue) => [issue.day, issue.isSpecial])).toStrictEqual([
-			['2026-05-13', false],
+	it("makes a special edition of a week's special posts however few there are", () => {
+		let posts = [...postsOn('2026-05-12', 2, 300, true), ...postsOn('2026-05-13', 5, 100)]
+		expect(
+			groupIssues(posts, false).map((issue) => [issue.day, issue.count, issue.isSpecial]),
+		).toStrictEqual([
+			['2026-05-13', 5, false],
+			['2026-05-12', 2, true],
 		])
 	})
 
@@ -224,7 +227,7 @@ describe('groupIssues', () => {
 		expect(outline(groupIssues([...early, ...rest], false))).toStrictEqual([['2026-03-18', 29]])
 	})
 
-	it('names an issue special when most of its posts are, whatever sections they sit in', () => {
+	it('makes a special edition of its posts whatever sections they sit in', () => {
 		let filedUnderNews = spring.map((post) => (post.special ? {...post, section: 'News'} : post))
 		expect(groupIssues(filedUnderNews, false)[0]).toMatchObject({
 			day: '2026-05-12',
@@ -232,9 +235,13 @@ describe('groupIssues', () => {
 		})
 	})
 
-	it('keeps an issue regular when one of its posts is from a special edition', () => {
+	it("takes a special edition's post out of its week's regular issue", () => {
 		let oneSpecial = spring.map((post) => (post.id === 36896 ? {...post, special: true} : post))
-		expect(groupIssues(oneSpecial, false)[1]).toMatchObject({day: '2026-04-29', isSpecial: false})
+		let april = groupIssues(oneSpecial, false).filter((issue) => issue.day === '2026-04-29')
+		expect(april.map((issue) => [issue.count, issue.isSpecial])).toStrictEqual([
+			[1, true],
+			[34, false],
+		])
 	})
 
 	it('runs a week from Monday to the Monday of the next issue', () => {

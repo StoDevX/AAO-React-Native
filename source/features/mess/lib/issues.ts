@@ -4,7 +4,7 @@ import {MESS_LOGO_MEDIA_IDS, SPECIAL_EDITION, inSpecialEdition, placement} from 
 import {leadStory} from './shelves'
 import type {LightPost, MessCategory, MessIssue} from '../types'
 
-/** A week with at least this many posts is an issue, as are a week's special-edition posts when there are this many. */
+/** A week with at least this many posts is an issue; a quieter one joins the issue before it. */
 export const ISSUE_MIN_POSTS = 5
 
 /** How many posts a page of the issue list asks for: WordPress's most. A shorter page is the last. */
@@ -64,19 +64,6 @@ function weekOf(day: string): string {
 	return dayAfter(day, -((weekday + 6) % 7))
 }
 
-/**
- * The weeks with enough special-edition posts to make an edition, by their Monday. Counted by the
- * week rather than the day, so an edition that goes up either side of midnight stays one.
- */
-function specialWeeks(posts: LightPost[]): Set<string> {
-	let counts = new Map<string, number>()
-	for (let post of posts) {
-		let week = weekOf(post.day)
-		if (post.special) counts.set(week, (counts.get(week) ?? 0) + 1)
-	}
-	return new Set([...counts].filter(([, count]) => count >= ISSUE_MIN_POSTS).map(([week]) => week))
-}
-
 /** The day with the most posts, the newest of any tie: the day the paper printed. */
 function busiestDay(posts: LightPost[]): string {
 	let counts = new Map<string, number>()
@@ -104,8 +91,8 @@ type Group = {
  * The issues the loaded posts make, newest first. The posts come newest first, as WordPress
  * lists them. A week, Monday to Sunday, with at least five posts is an issue, named by its busiest
  * day. The paper's stray posts follow it, so a quieter week joins the most recent issue before it,
- * and one older than every issue is left out. A week's special-edition posts, when there are at least five, are an issue
- * of their own, apart from the rest of the week and dated by their busiest day. While another page remains, the oldest week is left
+ * and one older than every issue is left out. A week's posts in the Special Edition section are an issue of their own,
+ * apart from the rest of the week and dated by their busiest day. While another page remains, the oldest week is left
  * out, since that page may hold more of it. WordPress pages by offset, so a post published between
  * two page fetches repeats one post; each counts once.
  */
@@ -122,15 +109,13 @@ export function groupIssues(posts: LightPost[], hasMore: boolean): MessIssue[] {
 		unique = unique.filter((post) => weekOf(post.day) !== partial)
 	}
 
-	let specials = specialWeeks(unique)
 	let byKey = new Map<string, Group>()
 	for (let post of unique) {
 		let week = weekOf(post.day)
-		let special = post.special && specials.has(week)
-		let key = `${special ? 'special' : 'week'}:${week}`
+		let key = `${post.special ? 'special' : 'week'}:${week}`
 		let group = byKey.get(key)
 		if (group) group.posts.push(post)
-		else byKey.set(key, {start: week, special, posts: [post]})
+		else byKey.set(key, {start: week, special: post.special, posts: [post]})
 	}
 
 	// Oldest first, so each quiet week finds the issue before it already made.
