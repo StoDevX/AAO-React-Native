@@ -220,6 +220,20 @@ class ModuleMapTests: UITestCase {
 			.verifySectionOrder(["Hours", "About", "Good to Know", "Links"], among: cardSections)
 	}
 
+	/// A link row takes a tap anywhere across it, not only on its label and
+	/// its arrow.
+	func testALinkRowOpensFromItsEmptySpace() throws {
+		let name = TestIdentifiers.Map.aBuildingWithAShortLink
+		MapScreen(app: app)
+			.navigate()
+			.checkSheetPresented()
+			.focusSearch()
+			.typeIntoSearch(name)
+			.selectBuilding(named: name)
+			.expandCard()
+			.openFirstLinkByItsEmptySpace()
+	}
+
 	/// A point inside a building with one venue of its own shows that venue's
 	/// hours, whatever kind of venue it is.
 	func testAPointShowsItsOwnHours() throws {
@@ -255,6 +269,19 @@ class ModuleMapTests: UITestCase {
 			.verifyPhotoTileSquare()
 			.verifyPhotoOpensFullScreenTwice()
 			.verifySectionOrder(["About", "Good to Know", "Offices", "Floors", "Details"], among: cardSections)
+	}
+
+	/// The Address row takes a tap anywhere across it, not only on its text.
+	func testTheAddressRowOpensMapsFromItsEmptySpace() throws {
+		let name = TestIdentifiers.Map.aCarletonBuildingWithAPhoto
+		MapScreen(app: app)
+			.navigateToCarleton()
+			.checkSheetPresented()
+			.focusSearch()
+			.typeIntoSearch(name)
+			.selectBuilding(named: name)
+			.expandCard()
+			.openAddressByItsEmptySpace()
 	}
 
 	/// A place's card lists what else is there, and each opens its own card in

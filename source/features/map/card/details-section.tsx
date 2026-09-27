@@ -1,7 +1,13 @@
 import * as React from 'react'
 import {Linking} from 'react-native'
 import {Button, LabeledContent, Section, Text} from '@expo/ui/swift-ui'
-import {accessibilityLabel, buttonStyle, foregroundStyle} from '@expo/ui/swift-ui/modifiers'
+import {
+	accessibilityLabel,
+	buttonStyle,
+	contentShape,
+	foregroundStyle,
+	shapes,
+} from '@expo/ui/swift-ui/modifiers'
 
 import {appleMapsSearchUrl} from '../urls'
 import {LAST_ROW} from '../../../components/place-card/card-style'
@@ -39,8 +45,11 @@ export function DetailsSection({address}: {address: string | null}): React.React
 				onPress={openAddress}
 			>
 				{/* Maps' colours, which are Settings' the other way round: the
-				    label grey, the value black. */}
+				    label grey, the value black. contentShape on the label, not the
+				    Button -- see NavigationRow in components/rows.tsx. Without it
+				    the row takes a tap only on its two texts. */}
 				<LabeledContent
+					modifiers={[contentShape(shapes.rectangle())]}
 					label={
 						<Text modifiers={[foregroundStyle({type: 'hierarchical', style: 'secondary'})]}>
 							Address

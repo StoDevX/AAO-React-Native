@@ -3,8 +3,10 @@ import {Button, HStack, Image, Section, Spacer, Text} from '@expo/ui/swift-ui'
 import {
 	accessibilityLabel,
 	buttonStyle,
+	contentShape,
 	foregroundStyle,
 	imageScale,
+	shapes,
 } from '@expo/ui/swift-ui/modifiers'
 import {openUrl} from '@frogpond/open-url'
 
@@ -52,7 +54,10 @@ export function LinkListSection({
 						modifiers={[...row, buttonStyle('plain'), accessibilityLabel(`Open ${label}`)]}
 						onPress={() => openUrl(href)}
 					>
-						<HStack>
+						{/* contentShape on the label, not the Button -- see NavigationRow
+						    in components/rows.tsx. Without it the row takes a tap only on
+						    its text and its arrow. */}
+						<HStack modifiers={[contentShape(shapes.rectangle())]}>
 							<Text>{label}</Text>
 							<Spacer />
 							{/* Small, so the arrow is no taller than the label and the

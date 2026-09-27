@@ -207,6 +207,9 @@ struct TestIdentifiers {
 		static let anOffice = "Registrar"
 		/// A St. Olaf building whose description runs well past five lines.
 		static let aBuildingWithALongAbout = "Holland Hall"
+		/// A St. Olaf building whose one link has a short label ("Website"),
+		/// leaving most of the row empty. St. Olaf can rename the link.
+		static let aBuildingWithAShortLink = "Memorial Chime Tower"
 		/// Carleton's fullest card: a photo, an address, accessibility, nine
 		/// offices, and floors. Carleton can rename it.
 		static let aCarletonBuildingWithAPhoto = "Sayles-Hill Campus Center"
