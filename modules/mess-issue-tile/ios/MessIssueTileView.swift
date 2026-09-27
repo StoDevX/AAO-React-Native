@@ -1,4 +1,5 @@
 import ExpoModulesCore
+import ImageIO
 import SwiftUI
 
 enum TileLayout: String, Enumerable {
@@ -47,6 +48,10 @@ struct MessIssueTileView: ExpoSwiftUI.View {
 	@StateObject private var photoLoader = PhotoLoader()
 
 	private var palette: PaperPalette { PaperPalette(scheme) }
+	/// The most pixels a photo needs along its longer side: a grid tile's is about 180 points wide
+	/// and the top tile's up to about 460, at three pixels a point.
+	private var photoPixels: CGFloat { isTop ? 1400 : 600 }
+
 	/// A photo that failed to load draws the tile as one with no photo.
 	private var hasPhoto: Bool { props.photoUrl != nil && !photoLoader.failed }
 
@@ -61,7 +66,9 @@ struct MessIssueTileView: ExpoSwiftUI.View {
 		.accessibilityLabel(props.label)
 		.accessibilityAddTraits(.isButton)
 		.accessibilityIdentifier(props.testID ?? "")
-		.onChange(of: props.photoUrl, initial: true) { photoLoader.load(props.photoUrl) }
+		.onChange(of: props.photoUrl, initial: true) {
+			photoLoader.load(props.photoUrl, maxPixels: photoPixels)
+		}
 	}
 
 	/// How far along each edge a turned corner reaches: small enough to nick a headline's last
@@ -269,7 +276,11 @@ struct MessIssueTileView: ExpoSwiftUI.View {
 }
 
 /// Loads a tile's photo once, so the two halves of its folded sheet draw the same picture and
-/// neither waits on a load of its own. URLSession's shared cache keeps a photo seen before.
+/// neither waits on a load of its own. WordPress serves each photo as uploaded, often thousands of
+/// pixels across, so it is decoded off the main thread straight to the size the tile draws it at:
+/// a full-size decode on first draw stalls scrolling, and a grid of them holds far more memory
+/// than the screen shows. The shared URL cache is too small to keep most originals, so a tile
+/// built again fetches its photo again.
 @MainActor
 final class PhotoLoader: ObservableObject {
 	@Published private(set) var image: UIImage?
@@ -277,7 +288,8 @@ final class PhotoLoader: ObservableObject {
 	private var url: URL?
 	private var task: Task<Void, Never>?
 
-	func load(_ next: URL?) {
+	/// Load `next`, decoded no larger than `maxPixels` along its longer side.
+	func load(_ next: URL?, maxPixels: CGFloat) {
 		guard next != url else { return }
 		url = next
 		task?.cancel()
@@ -288,11 +300,29 @@ final class PhotoLoader: ObservableObject {
 			do {
 				let (data, _) = try await URLSession.shared.data(from: next)
 				guard !Task.isCancelled else { return }
-				guard let image = UIImage(data: data) else { throw URLError(.cannotDecodeContentData) }
-				self?.image = image
+				let decoded = await Task.detached(priority: .userInitiated) {
+					PhotoLoader.thumbnail(of: data, maxPixels: maxPixels)
+				}.value
+				guard !Task.isCancelled else { return }
+				guard let decoded else { throw URLError(.cannotDecodeContentData) }
+				self?.image = decoded
 			} catch {
 				if !Task.isCancelled { self?.failed = true }
 			}
 		}
+	}
+
+	/// The photo decoded at no more than `maxPixels` along its longer side, upright.
+	nonisolated static func thumbnail(of data: Data, maxPixels: CGFloat) -> UIImage? {
+		let sourceOptions = [kCGImageSourceShouldCache: false] as CFDictionary
+		guard let source = CGImageSourceCreateWithData(data as CFData, sourceOptions) else { return nil }
+		let thumbnailOptions = [
+			kCGImageSourceCreateThumbnailFromImageAlways: true,
+			kCGImageSourceCreateThumbnailWithTransform: true,
+			kCGImageSourceShouldCacheImmediately: true,
+			kCGImageSourceThumbnailMaxPixelSize: maxPixels,
+		] as CFDictionary
+		guard let image = CGImageSourceCreateThumbnailAtIndex(source, 0, thumbnailOptions) else { return nil }
+		return UIImage(cgImage: image)
 	}
 }

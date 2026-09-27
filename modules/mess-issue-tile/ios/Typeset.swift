@@ -80,12 +80,21 @@ struct ColumnText: UIViewRepresentable {
 	}
 
 	func updateUIView(_ view: ColumnTextView, context: Context) {
+		let ink = UIColor(ink)
+		let rule = UIColor(rule)
+		// SwiftUI updates the view whenever anything above it changes, such as a story being
+		// opened elsewhere; laying out the columns again is only worth it when what they show
+		// has changed. A change of size redraws on its own, through `contentMode = .redraw`.
+		let changed = view.paragraphs != paragraphs || view.columns != columns
+			|| view.clearedColumns != clearedColumns || view.clearHeight != clearHeight
+			|| view.ink != ink || view.rule != rule || view.size != size
+		guard changed else { return }
 		view.paragraphs = paragraphs
 		view.columns = columns
 		view.clearedColumns = clearedColumns
 		view.clearHeight = clearHeight
-		view.ink = UIColor(ink)
-		view.rule = UIColor(rule)
+		view.ink = ink
+		view.rule = rule
 		view.size = size
 		view.setNeedsDisplay()
 	}
