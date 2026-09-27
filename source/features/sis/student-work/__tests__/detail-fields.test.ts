@@ -1,4 +1,5 @@
 import type {JobDetail} from '@frogpond/ccc-jobs'
+import {FIXED_WAGES} from '../fixed-wages'
 import {jobDetailFields} from '../lib'
 
 function posting(title: string, fields: JobDetail['fields']): JobDetail {
@@ -10,6 +11,7 @@ function posting(title: string, fields: JobDetail['fields']): JobDetail {
 		location: undefined,
 		postedDate: undefined,
 		fields,
+		unit: null,
 		body: '',
 		url: 'https://example.invalid/job/1',
 	}
@@ -20,7 +22,7 @@ describe('jobDetailFields', () => {
 		let job = posting('AY Stav Student Supervisor (WS-NST3)', [
 			{label: 'Department', value: 'Stav Hall'},
 		])
-		expect(jobDetailFields(job)).toEqual([
+		expect(jobDetailFields(job, FIXED_WAGES)).toEqual([
 			{label: 'Wage', value: '$15.50/hr'},
 			{label: 'Level', value: 'Lead'},
 			{label: 'Term', value: 'Academic Year'},
@@ -35,7 +37,7 @@ describe('jobDetailFields', () => {
 			{label: 'Department', value: 'Mail Services'},
 			{label: 'Wage', value: '$12.00-13.00/hour'},
 		])
-		expect(jobDetailFields(job)).toEqual([
+		expect(jobDetailFields(job, FIXED_WAGES)).toEqual([
 			{label: 'Wage', value: '$12.00-13.00/hour'},
 			{label: 'Level', value: 'Entry-level'},
 			{label: 'Term', value: 'Academic Year'},
@@ -47,7 +49,7 @@ describe('jobDetailFields', () => {
 		let job = posting('CURI Academic Year Student Researcher - Braun', [
 			{label: 'Wage', value: '$13.50-15.50/hour'},
 		])
-		expect(jobDetailFields(job)).toEqual([
+		expect(jobDetailFields(job, FIXED_WAGES)).toEqual([
 			{label: 'Wage', value: '$13.50-15.50/hour'},
 			{label: 'Term', value: 'Academic Year'},
 		])
@@ -55,6 +57,8 @@ describe('jobDetailFields', () => {
 
 	test('adds nothing for a title that carries nothing', () => {
 		let fields = [{label: 'Department', value: 'Libraries'}]
-		expect(jobDetailFields(posting('Library Circulation Desk Assistant', fields))).toEqual(fields)
+		expect(
+			jobDetailFields(posting('Library Circulation Desk Assistant', fields), FIXED_WAGES),
+		).toEqual(fields)
 	})
 })

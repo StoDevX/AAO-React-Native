@@ -70,8 +70,8 @@ function facetsOf(job: JobSummary): TitleFacets {
 	return facets
 }
 
-/// A posting's areas and Posted values depend on the unit searches and the
-/// seen set, which change without the posting changing, so they are not cached.
+/// A posting's areas and Posted values depend on the units and the seen set,
+/// which change without the posting changing, so they are not cached.
 function fullFacetsOf(job: JobSummary, context: FilterContext): JobFacets {
 	return {
 		...facetsOf(job),
@@ -122,8 +122,8 @@ export function buildJobFilters(
 		chosen.area === null
 			? null
 			: context.areas.filter((area) => chosen.area?.includes(area.slug)).map((area) => area.name)
-	// Every area whose searches have answered, empty ones too: an empty
-	// area's tile still opens, to a list filtered to it that says so.
+	// Every area, once the units have loaded, empty ones too: an empty area's
+	// tile still opens, to a list filtered to it that says so.
 	let knownAreas = new Set(
 		context.areas
 			.filter((area) => context.membership.get(area.slug)?.count !== undefined)

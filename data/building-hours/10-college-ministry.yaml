@@ -2,6 +2,8 @@ name: College Ministry
 category: Offices
 kind: office
 building: bmc
+links:
+  - {title: 'College Ministry', url: 'https://wp.stolaf.edu/ministry/'}
 
 schedule:
   - title: Hours

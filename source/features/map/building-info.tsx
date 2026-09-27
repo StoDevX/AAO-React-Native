@@ -42,7 +42,9 @@ import {placeTiles, toPlaceTiles, type PlaceTile} from './lib/place-tiles'
 import {placeSections} from './lib/place-sections'
 import {alsoHere, type StackEntry} from './lib/also-here'
 import {AlsoHereSection} from './card/also-here-section'
-import {cardFeaturesOptions, cardVenuesOptions} from './card-queries'
+import {cardDirectoryOptions, cardFeaturesOptions, cardVenuesOptions} from './card-queries'
+import {DirectorySection} from './card/directory-section'
+import {directoryFor} from './directory/directory'
 import type {SheetDetent} from './lib/sheet-moves'
 import type {Building, Coordinate, Feature, LabelLink, Point} from './types'
 
@@ -161,6 +163,7 @@ function BuildingCard({
 	let {data: venues = []} = useQuery(cardVenuesOptions(campus))
 	let hours = ownHours(venues, building)
 	let {data: features = []} = useQuery(cardFeaturesOptions(campus))
+	let {data: directories = []} = useQuery(cardDirectoryOptions(campus))
 	// Each place appears once: a department or office link that names a place
 	// here opens that place's card, and Also at This Location keeps the rest.
 	let sections = placeSections(
@@ -185,6 +188,9 @@ function BuildingCard({
 				title="Departments"
 			/>
 			<LinkedPlaces id="offices" onOpen={onOpen} tiles={sections.offices} title="Offices" />
+			{onOpen ? (
+				<DirectorySection directory={directoryFor(directories, building.id)} onOpen={onOpen} />
+			) : null}
 			<LinkListSection items={floors} title="Floors" />
 			<LinkListSection items={[...(links ?? []), ...(extraLinks ?? [])]} title="Links" />
 			<DetailsSection address={address} />

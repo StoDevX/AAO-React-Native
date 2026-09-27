@@ -63,15 +63,30 @@ export function parseUnitNames(entries) {
 }
 
 /**
- * Sorts postings that no area's search found into three groups:
+ * The board postings in no area by ccc-server's published units: those whose
+ * unit no area lists, and those the map does not have yet, since the map runs
+ * behind the board.
+ */
+export function postingsOutsideAreas(board, published, listedUnits) {
+	return board.filter(
+		(job) => !Object.hasOwn(published, job.id) || !listedUnits.has(published[job.id]),
+	)
+}
+
+/**
+ * Sorts the postings outside every area into three groups, by the unit their
+ * descriptions carry:
  *
  * - `unlisted`: carries a unit that no area lists, keyed by that unit. These
  *   are the ones an edit to data/student-work-areas.yaml can fix.
- * - `missed`: carries a unit an area does list, but that unit's keyword search
- *   did not find it.
+ * - `missed`: carries a unit an area does list, but ccc-server published a
+ *   different unit, or none, for it.
  * - `unreadable`: the unit number is missing, blank, or not a unit number.
+ *
+ * A posting the published map lacks, whose own unit an area lists, is in that
+ * area: the app reads it from the posting's detail, as this does.
  */
-export function classifyUnassigned(postings, listedUnits) {
+export function classifyUnassigned(postings, listedUnits, published) {
 	let unlisted = new Map()
 	let missed = []
 	let unreadable = []
@@ -81,7 +96,7 @@ export function classifyUnassigned(postings, listedUnits) {
 		if (unit === undefined) {
 			unreadable.push(posting)
 		} else if (listedUnits.has(unit)) {
-			missed.push(posting)
+			if (Object.hasOwn(published, posting.id)) missed.push(posting)
 		} else {
 			let group = unlisted.get(unit) ?? []
 			group.push(posting)
@@ -130,9 +145,9 @@ export function formatReport({unlisted, missed, unreadable}, names) {
 	if (missed.length > 0) {
 		sections.push(
 			[
-				'## Listed units the search missed',
+				'## Listed units ccc-server placed elsewhere',
 				'',
-				"These carry a unit an area lists, but Oracle's keyword search for that unit did not return them.",
+				'These carry a unit an area lists, but ccc-server published a different unit, or none, for them.',
 				'',
 				'| Posting | Unit Number |',
 				'| --- | --- |',

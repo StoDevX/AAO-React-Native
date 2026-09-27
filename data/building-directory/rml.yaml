@@ -1,0 +1,14 @@
+building: rml
+floors:
+  - name: 2nd floor
+    entries:
+      - {name: Center for College History, room: '213'}
+      - {name: Kierkegaard Library, room: '225D'}
+      - {name: Norwegian-American Historical Association, room: '200'}
+  - name: 4th floor
+    entries:
+      - {name: Information Technology, venue: IT Helpdesk}
+  - name: 5th floor
+    entries:
+      - {name: English, room: '526A'}
+      - {name: Race and Ethnic Studies, room: '526'}

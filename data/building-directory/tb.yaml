@@ -1,0 +1,5 @@
+building: tb
+floors:
+  - name: 1st floor
+    entries:
+      - {name: Theater, room: '117'}

@@ -6,6 +6,7 @@ import {openUrl} from '@frogpond/open-url'
 
 import {keys} from '../../building-hours/query'
 import {keys as mapKeys} from '../query'
+import {directoryKeys} from '../card-queries'
 import type {BuildingType} from '../../building-hours/types'
 import {BuildingInfo} from '../building-info'
 import {makeBuilding} from './fixtures'
@@ -62,6 +63,7 @@ function renderCard(ui: React.ReactElement) {
 	client.setQueryData(keys.all('stolaf'), mockVenues.stolaf)
 	client.setQueryData(keys.all('carleton'), mockVenues.carleton)
 	client.setQueryData(mapKeys.all('stolaf'), [])
+	client.setQueryData(directoryKeys.all('stolaf'), [])
 	client.setQueryData(mapKeys.all('carleton'), [])
 	return render(<QueryClientProvider client={client}>{ui}</QueryClientProvider>)
 }
@@ -550,6 +552,7 @@ describe('BuildingInfo while the Hours feed loads', () => {
 		let client = new QueryClient({defaultOptions: {queries: {retry: false, staleTime: Infinity}}})
 		trackedQueryClients.push(client)
 		client.setQueryData(mapKeys.all('stolaf'), [])
+		client.setQueryData(directoryKeys.all('stolaf'), [])
 		// Empty for now, as a feed still on its way is.
 		client.setQueryData(keys.all('stolaf'), [])
 		let departments = Array.from({length: 8}, (_, i) => `Dept ${i} <https://example.com/${i}>`)

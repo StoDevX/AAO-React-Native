@@ -1,0 +1,10 @@
+building: rns
+floors:
+  - name: 2nd floor
+    entries:
+      - {name: Biology, room: '260'}
+      - {name: Psychology, room: '236'}
+  - name: 3rd floor
+    entries:
+      - {name: Chemical Hygiene - OSHA, room: '312'}
+      - {name: Chemistry, room: '336'}
