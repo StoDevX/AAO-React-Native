@@ -39,8 +39,8 @@ export function placeStack(stack: Array<StackEntry>, action: PlaceStackAction): 
 }
 
 /**
- * The feature the map highlights: the top place's own, or for a venue the
- * feature it is keyed to. A venue that can't be placed on the map defers to
+ * The feature the map highlights: the top place's own, for a venue the
+ * feature it is keyed to, and for a floor its building. A venue that can't be placed on the map defers to
  * the place beneath it.
  */
 export function highlightedFeatureId(
@@ -51,10 +51,30 @@ export function highlightedFeatureId(
 		if (entry.kind === 'feature') {
 			return entry.id
 		}
+		if (entry.kind === 'floor') {
+			return entry.building
+		}
 		let building = venues.find((venue) => venue.name === entry.name)?.building
 		if (building) {
 			return building
 		}
 	}
 	return null
+}
+
+/// A stack entry's identity, which keys its sheet: a different place at the
+/// same depth is a different sheet.
+export function stackEntryKey(entry: StackEntry): string {
+	switch (entry.kind) {
+		case 'feature':
+			return `feature:${entry.id}`
+		case 'venue':
+			return `venue:${entry.name}`
+		case 'floor':
+			return `floor:${entry.building}:${entry.floor}`
+		default: {
+			let _exhaustive: never = entry
+			throw new Error(`Unhandled stack entry: ${JSON.stringify(_exhaustive)}`)
+		}
+	}
 }

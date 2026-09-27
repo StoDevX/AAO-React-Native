@@ -12,7 +12,7 @@ import * as c from '@frogpond/colors'
 
 import type {Campus} from '../building-hours/types'
 import {BuildingInfo} from './building-info'
-import type {PlaceStackAction, StackEntry} from './lib/place-stack'
+import {stackEntryKey, type PlaceStackAction, type StackEntry} from './lib/place-stack'
 import {DETENT_FOR, nameOf, SHEET_DETENTS} from './lib/sheet-detents'
 import type {SheetDetent} from './lib/sheet-moves'
 import {cardFeaturesOptions, cardVenuesOptions} from './card-queries'
@@ -42,7 +42,7 @@ export function PlaceStackCard({stack, depth, campus, dispatch, stop}: Props): R
 	let above = stack[depth + 1]
 	let stacked = above ? (
 		<StackedSheet
-			key={`${depth + 1}-${above.kind === 'feature' ? above.id : above.name}`}
+			key={`${depth + 1}-${stackEntryKey(above)}`}
 			campus={campus}
 			depth={depth + 1}
 			dispatch={dispatch}
@@ -64,6 +64,10 @@ export function PlaceStackCard({stack, depth, campus, dispatch, stop}: Props): R
 				stop={stop}
 			/>
 		)
+	}
+
+	if (entry.kind === 'floor') {
+		return null
 	}
 
 	let venue = venues.find((candidate) => candidate.name === entry.name)
