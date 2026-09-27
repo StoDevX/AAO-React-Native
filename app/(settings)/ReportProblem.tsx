@@ -18,6 +18,7 @@ import {
 	reportEmail,
 	submitReport,
 } from '../../source/features/settings/screens/overview/report-problem/submit'
+import {useTelemetryStore} from '../../source/features/telemetry/store'
 
 const styles = StyleSheet.create({
 	host: {
@@ -45,10 +46,48 @@ export default function ReportProblemPage(): React.ReactNode {
 		}
 	}, [])
 
+	let report = () => ({
+		message: message.trim(),
+		name: name.trim() || undefined,
+		email: email.trim() || undefined,
+	})
+
+	// Sharing is off, so Sentry is closed and the report can't go that way.
+	let offerEmail = () => {
+		Alert.alert(
+			'Sharing is off',
+			'Problem reports go through the same service as crash data, which you turned off. Send this report by email instead?',
+			[
+				{text: 'Cancel', style: 'cancel'},
+				{
+					text: 'Send by Email',
+					onPress: async () => {
+						let handedOff = await composeEmail({
+							...reportEmail(report()),
+							attachments: attachments.images.map((image) => image.uri),
+						})
+						if (handedOff) {
+							navigation.goBack()
+						}
+					},
+				},
+			],
+		)
+	}
+
 	let submit = async () => {
 		if (sendingNow.current) {
 			return
 		}
+
+		// Decided before the images are read: reading one goes through Sentry's
+		// native side, which opting out has closed, and email needs only its
+		// address.
+		if (!useTelemetryStore.getState().enabled) {
+			offerEmail()
+			return
+		}
+
 		sendingNow.current = true
 		setSending(true)
 
@@ -70,12 +109,7 @@ export default function ReportProblemPage(): React.ReactNode {
 			return
 		}
 
-		let report = {
-			message: message.trim(),
-			name: name.trim() || undefined,
-			email: email.trim() || undefined,
-		}
-		let result = submitReport({...report, attachments: files})
+		let result = submitReport({...report(), attachments: files})
 
 		if (result === 'sent') {
 			navigation.goBack()
@@ -90,26 +124,7 @@ export default function ReportProblemPage(): React.ReactNode {
 			return
 		}
 
-		// Sharing is off, so Sentry is closed and the report can't go that way.
-		Alert.alert(
-			'Sharing is off',
-			'Problem reports go through the same service as crash data, which you turned off. Send this report by email instead?',
-			[
-				{text: 'Cancel', style: 'cancel'},
-				{
-					text: 'Send by Email',
-					onPress: async () => {
-						let handedOff = await composeEmail({
-							...reportEmail(report),
-							attachments: attachments.images.map((image) => image.uri),
-						})
-						if (handedOff) {
-							navigation.goBack()
-						}
-					},
-				},
-			],
-		)
+		offerEmail()
 	}
 
 	return (

@@ -9,6 +9,7 @@ import type * as ExpoRouterMock from '../../../../../../testing/expo-router-mock
 import {readAttachment} from '../attachments'
 import {composeEmail} from '../../../../../../components/send-email'
 import {submitReport} from '../submit'
+import {useTelemetryStore} from '../../../../../telemetry/store'
 
 jest.mock('@expo/ui/swift-ui', () => {
 	// oxlint-disable-next-line typescript/no-require-imports -- jest.mock factories cannot use import
@@ -30,6 +31,11 @@ jest.mock('../../../../../../components/use-image-attachments', () => ({
 	useImageAttachments: jest.fn(),
 }))
 jest.mock('../attachments', () => ({readAttachment: jest.fn()}))
+// The consent store persists through a native key-value store Jest lacks.
+jest.mock('expo-sqlite/kv-store', () => ({
+	Storage: {getItemSync: () => null, setItemSync: () => undefined, removeItemSync: () => true},
+}))
+jest.mock('expo-crypto', () => ({randomUUID: () => 'id-1'}))
 jest.mock('../submit', () => ({
 	submitReport: jest.fn(() => 'sent'),
 	reportEmail: jest.fn(() => ({
@@ -69,6 +75,7 @@ async function renderWithMessage() {
 
 beforeEach(() => {
 	jest.clearAllMocks()
+	useTelemetryStore.setState({enabled: true, deviceId: 'id-1'})
 	mockRead.mockResolvedValue({filename: 'image-1.jpg', data: new Uint8Array([1])})
 })
 
@@ -169,5 +176,24 @@ describe('the Report a Problem screen', () => {
 
 		expect(mockGoBack).not.toHaveBeenCalled()
 		expect(screen.getByLabelText('Submit')).not.toBeDisabled()
+	})
+
+	// Opting out closes Sentry's native side, and reading an image needs it;
+	// the email route needs only the image's address.
+	it('offers email without reading the images when sharing is off', async () => {
+		mockAttachments.mockReturnValue(attachments())
+		useTelemetryStore.setState({enabled: false, deviceId: null})
+		mockRead.mockRejectedValue(new Error('native SDK is closed'))
+		await renderWithMessage()
+
+		await fireEvent.press(screen.getByLabelText('Submit'))
+
+		expect(mockRead).not.toHaveBeenCalled()
+		expect(mockSubmit).not.toHaveBeenCalled()
+		expect(alertSpy).toHaveBeenLastCalledWith(
+			'Sharing is off',
+			expect.any(String),
+			expect.any(Array),
+		)
 	})
 })
