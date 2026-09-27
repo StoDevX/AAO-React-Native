@@ -112,21 +112,16 @@ afterEach(() => {
 	jest.clearAllMocks()
 })
 
-function renderIssue(issue: MessIssue = ISSUE, showMasthead = true) {
+function renderIssue(issue: MessIssue = ISSUE) {
 	return render(
 		<QueryClientProvider client={queryClient}>
-			<IssuePage
-				columnWidth={350}
-				issue={issue}
-				onShowSection={onShowSection}
-				showMasthead={showMasthead}
-			/>
+			<IssuePage columnWidth={350} issue={issue} onShowSection={onShowSection} />
 		</QueryClientProvider>,
 	)
 }
 
 describe('IssuePage', () => {
-	test('lays an issue out under the masthead: its dateline, its lead, then a shelf per section', async () => {
+	test('lays an issue out: its dateline, its lead, then a shelf per section', async () => {
 		queryClient.setQueryData(messKeys.issue(ISSUE), STORIES)
 		await renderIssue()
 
@@ -144,7 +139,7 @@ describe('IssuePage', () => {
 		expect(more).toBeGreaterThan(opinions)
 	})
 
-	// The Issues row and Top's banner name the lead from the light fields; the page must agree
+	// The issue's tile names the lead from the light fields; the page must agree
 	// even when the full stories would pick another, as when a lead's photo fails to embed.
 	test('leads with the story the issue list named, and leaves it off its shelf', async () => {
 		let named = {...ISSUE, leadId: 4, leadTitle: 'Hunger Free Campus grant'}
@@ -237,12 +232,5 @@ describe('IssuePage', () => {
 		await renderIssue()
 
 		expect(screen.getByText('No connection. This page loads when you’re back online.')).toBeTruthy()
-	})
-
-	test('opens with its dateline alone when it has a page of its own', async () => {
-		queryClient.setQueryData(messKeys.issue(ISSUE), STORIES)
-		await renderIssue(ISSUE, false)
-
-		expect(screen.getByText('April 29, 2026 · 5 stories')).toBeTruthy()
 	})
 })

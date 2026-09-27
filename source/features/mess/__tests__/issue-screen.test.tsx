@@ -1,9 +1,9 @@
 import * as React from 'react'
 import {afterEach, beforeEach, describe, expect, jest, test} from '@jest/globals'
 import {fireEvent, render, screen} from '@testing-library/react-native'
-import {QueryClient, QueryClientProvider} from '@tanstack/react-query'
+import {dehydrate, QueryClient, QueryClientProvider} from '@tanstack/react-query'
 
-import {queryClient as appQueryClient} from '../../../init/tanstack-query'
+import {queryClient as appQueryClient, persistOptions} from '../../../init/tanstack-query'
 import {IssueScreen} from '../issue-screen'
 import {messKeys} from '../lib/keys'
 import {OLAF_MESSENGER} from '../../news/sources'
@@ -110,13 +110,31 @@ describe('IssueScreen', () => {
 		expect(screen.getByRole('button', {name: 'March story 0, News'})).toBeTruthy()
 	})
 
-	test('"All ›" goes back to the front page, showing that section', async () => {
+	test('"All ›" goes back to the front page, showing that section in Latest', async () => {
 		await renderIssue('2026-03-25')
 
 		await fireEvent.press(screen.getByRole('button', {name: 'All Opinions'}))
 
-		expect(useNewsFilterStore.getState().selectedCategories[OLAF_MESSENGER.id]).toBe('Opinions')
+		expect(useNewsFilterStore.getState().selectedCategories[OLAF_MESSENGER.id]).toBe(
+			'Latest:Opinions',
+		)
 		expect(mockBack).toHaveBeenCalledTimes(1)
+	})
+
+	// The newest issue is the front page's top tile, whose query is saved for the next launch.
+	test('saves the newest issue for the next launch, and no older one', async () => {
+		let april = {after: '2026-04-28T23:59:59', before: null, count: 5}
+		queryClient.setQueryData(messKeys.issue(april), APRIL)
+		await renderIssue('2026-04-29')
+		await renderIssue('2026-03-25')
+
+		let saved = dehydrate(queryClient, persistOptions.dehydrateOptions).queries.map(
+			(query) => query.queryKey,
+		)
+		expect(saved).toContainEqual(messKeys.issue(april))
+		expect(saved).not.toContainEqual(
+			messKeys.issue({after: '2026-03-24T23:59:59', before: '2026-04-29T00:00:00', count: 5}),
+		)
 	})
 
 	test('says an issue the list does not hold is unavailable', async () => {

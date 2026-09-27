@@ -136,33 +136,6 @@ export function datelineText(issue: Pick<MessIssue, 'day' | 'isSpecial' | 'count
 	return `${issueName(issue)} · ${issue.count} stories`
 }
 
-/** The kicker on Top's banner for a special edition: "Special Edition · May 12", in UTC as `issueDate` is. */
-export function bannerKicker(issue: Pick<MessIssue, 'day'>): string {
-	let date = new Date(`${issue.day}T00:00:00Z`).toLocaleDateString('en-US', {
-		month: 'long',
-		day: 'numeric',
-		timeZone: 'UTC',
-	})
-	return `${SPECIAL_EDITION} · ${date}`
-}
-
-/**
- * The issue Top shows, and the banner above it. Top is the newest issue that is not a special
- * edition; `special` is a special edition newer than Top, if there is one. With no regular
- * issue loaded, there is no Top, and Top falls back to the feed.
- */
-export function topOf(issues: MessIssue[]): {
-	top: MessIssue | undefined
-	special: MessIssue | undefined
-} {
-	let index = issues.findIndex((issue) => !issue.isSpecial)
-	let newer = index === -1 ? issues : issues.slice(0, index)
-	return {
-		top: index === -1 ? undefined : issues[index],
-		special: newer.find((issue) => issue.isSpecial),
-	}
-}
-
 const MediaUrlSchema = z.object({id: z.number(), source_url: z.string()})
 
 /** Each photo's address by its media id, from `media?include=…&_fields=id,source_url`. */

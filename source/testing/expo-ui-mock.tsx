@@ -1004,8 +1004,10 @@ export function Picker<T>({
 						? tagOf(child.props.modifiers)
 						: undefined
 				) as T
+				// Each option is a button, as UIKit exposes a segmented control's segments.
 				return (
 					<Pressable
+						accessibilityRole="button"
 						accessibilityState={{selected: value === selection}}
 						onPress={() => onSelectionChange?.(value)}
 					>

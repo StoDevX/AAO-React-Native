@@ -12,7 +12,7 @@ import * as c from '@frogpond/colors'
  * Category picker for one feed. Deselecting a category shows every story.
  */
 type Props = {
-	/** The feed's categories, sorted A-Z */
+	/** The feed's categories, in the order the menu lists them */
 	categories: string[]
 	selectedCategory: string | null
 	onSelect: (category: string | null) => void

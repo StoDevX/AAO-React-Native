@@ -3,14 +3,12 @@ import categoriesJson from '../../__tests__/fixtures/categories.json'
 import springPosts from '../../__tests__/fixtures/issue-posts.json'
 import type {MessIssue} from '../../types'
 import {
-	bannerKicker,
 	datelineText,
 	groupIssues,
 	issueDate,
 	issueName,
 	parseLightPosts,
 	parseMediaUrls,
-	topOf,
 	withPhotoUrls,
 } from '../issues'
 import {parseMessCategories} from '../posts'
@@ -188,43 +186,6 @@ describe('groupIssues', () => {
 	})
 })
 
-describe('topOf', () => {
-	let issues = groupIssues(spring, false)
-
-	it('puts Top on the newest regular issue, with the newer special edition for its banner', () => {
-		let {top, special} = topOf(issues)
-		expect(top?.day).toBe('2026-04-29')
-		expect(special?.day).toBe('2026-05-12')
-	})
-
-	it('has no banner when the newest issue is regular', () => {
-		let {top, special} = topOf(issues.slice(1))
-		expect(top?.day).toBe('2026-04-29')
-		expect(special).toBeUndefined()
-	})
-
-	it('has no banner for a special edition older than Top', () => {
-		let [may12, april29] = issues
-		if (!may12 || !april29) throw new Error('the spring has no May 12 or Apr 29 issue')
-		let {top, special} = topOf([
-			{...april29, before: null},
-			{...may12, day: '2026-04-01'},
-		])
-		expect(top?.day).toBe('2026-04-29')
-		expect(special).toBeUndefined()
-	})
-
-	it('has no Top when every loaded issue is a special edition', () => {
-		let {top, special} = topOf(issues.slice(0, 1))
-		expect(top).toBeUndefined()
-		expect(special?.day).toBe('2026-05-12')
-	})
-
-	it('has neither for no issues', () => {
-		expect(topOf([])).toStrictEqual({top: undefined, special: undefined})
-	})
-})
-
 describe('issueName', () => {
 	it("spells out the issue's day", () => {
 		expect(issueDate('2026-04-29')).toBe('April 29, 2026')
@@ -242,12 +203,6 @@ describe('issueName', () => {
 		expect(datelineText({day: '2026-05-12', isSpecial: true, count: 11})).toBe(
 			'Special Edition · May 12, 2026 · 11 stories',
 		)
-	})
-})
-
-describe('bannerKicker', () => {
-	it('names a special edition by its day, without the year', () => {
-		expect(bannerKicker({day: '2026-05-12'})).toBe('Special Edition · May 12')
 	})
 })
 

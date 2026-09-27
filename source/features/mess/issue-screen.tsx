@@ -4,7 +4,7 @@ import {useQueryClient} from '@tanstack/react-query'
 import {OLAF_MESSENGER} from '../news/sources'
 import {useNewsFilterStore} from '../news/store'
 import {IssuePage} from './issue-page'
-import {chipKey} from './lib/chips'
+import {viewKey} from './lib/front-view'
 import {issueDate} from './lib/issues'
 import {messKeys} from './lib/keys'
 import {MessPage, PAGE_MARGIN} from './mess-page'
@@ -13,7 +13,7 @@ import {useColumnWidth} from './use-column-width'
 import {useMessIssues} from './use-mess-issues'
 import {useDismissOnce} from '../../lib/use-dismiss-once'
 
-/** One issue, opened from the Issues list, laid out as Top lays out the newest, and titled with its date. */
+/** One issue, opened from its tile, laid out as a front page, and titled with its date. */
 export function IssueScreen({day}: {day: string}): React.ReactNode {
 	let goBack = useDismissOnce()
 	let queryClient = useQueryClient()
@@ -40,9 +40,9 @@ export function IssueScreen({day}: {day: string}): React.ReactNode {
 		)
 	}
 
-	// "All ›" shows that section on the front page, which is the screen under this one.
+	// "All ›" shows that section in Latest, on the front page under this one.
 	let showSection = (name: string) => {
-		select(OLAF_MESSENGER.id, chipKey({kind: 'section', name}))
+		select(OLAF_MESSENGER.id, viewKey({mode: 'latest', section: name}))
 		goBack()
 	}
 
@@ -54,7 +54,9 @@ export function IssueScreen({day}: {day: string}): React.ReactNode {
 					columnWidth={columnWidth}
 					issue={issue}
 					onShowSection={showSection}
-					showMasthead={false}
+					// The newest issue is the front page's top tile, saved for the next launch; this
+					// page shares its query.
+					persist={issues?.[0]?.day === issue.day}
 				/>
 			</MessPage>
 		</>

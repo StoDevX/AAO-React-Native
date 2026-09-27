@@ -46,12 +46,6 @@ export function Dateline({text}: {text: string}): React.ReactNode {
 	return <Text modifiers={DATELINE}>{text}</Text>
 }
 
-type MastheadProps = {
-	dateline?: string
-	/** Drawn between the rule and the dateline: Top's banner for a newer special edition */
-	banner?: React.ReactNode
-}
-
 /**
  * Sets the paper's name, in its serif, as the screen's navigation bar title. The plain title is
  * what the Back button and VoiceOver's fallback read. Mount it inside the route's own screen.
@@ -71,13 +65,12 @@ export function PaperNameTitle(): React.ReactNode {
 	)
 }
 
-/** A rule across the top of the front page, then the dateline; they scroll with the page. */
-export function Masthead({dateline, banner}: MastheadProps): React.ReactNode {
+/** A rule across the top of a page, then its dateline; they scroll with the page. */
+export function Masthead({dateline}: {dateline: string}): React.ReactNode {
 	return (
 		<VStack spacing={6}>
 			<Divider />
-			{banner}
-			{dateline ? <Dateline text={dateline} /> : null}
+			<Dateline text={dateline} />
 		</VStack>
 	)
 }
