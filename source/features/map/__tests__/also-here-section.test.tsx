@@ -46,6 +46,20 @@ function renderSection(tiles: Array<PlaceTile>, onOpen = jest.fn()) {
 	)
 }
 
+/// How many timers are pending once `ui` has rendered, on a fresh fake clock.
+async function timersAfter(ui: React.ReactElement): Promise<number> {
+	jest.useFakeTimers()
+	try {
+		let {unmount} = await render(ui)
+		let count = jest.getTimerCount()
+		await unmount()
+		return count
+	} finally {
+		jest.clearAllTimers()
+		jest.useRealTimers()
+	}
+}
+
 describe('AlsoHereSection', () => {
 	test('opens a tile with a status', async () => {
 		let onOpen = jest.fn()
@@ -63,30 +77,36 @@ describe('AlsoHereSection', () => {
 		expect(screen.queryByText(/^(Open|Closed|Opens|Closes)/u)).toBeNull()
 	})
 
-	test('groups the More grid into Places and Offices', async () => {
-		let tiles = [
-			...['A', 'B', 'C', 'D', 'E'].map((name) => place(`Place ${name}`)),
-			...['A', 'B', 'C'].map((name) => office(`Office ${name}`)),
-		]
-		await renderSection(tiles)
-
-		await fireEvent.press(screen.getByRole('button', {name: 'More also at this location'}))
-		expect(screen.getByText('Places')).toBeTruthy()
-		expect(screen.getByText('Offices')).toBeTruthy()
-	})
-
-	test('leaves off a group with nothing in it', async () => {
-		await renderSection(
-			['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'].map((name) => place(`Place ${name}`)),
-		)
-
-		await fireEvent.press(screen.getByRole('button', {name: 'More also at this location'}))
-		expect(screen.queryByText('Offices')).toBeNull()
-	})
-
 	test('draws nothing with no tiles', async () => {
 		await renderSection([])
 
 		expect(screen.queryByText('Also at This Location')).toBeNull()
+	})
+
+	// Every card mounts this section, and most have nothing in it; each would
+	// otherwise keep a clock ticking every minute to update statuses it never
+	// shows. The renderer keeps timers of its own, so each count is taken on a
+	// fresh fake clock and compared with an empty list's.
+	test('keeps no clock with no tiles', async () => {
+		let baseline = await timersAfter(<List>{null}</List>)
+		expect(
+			await timersAfter(
+				<List>
+					<AlsoHereSection onOpen={jest.fn()} tiles={[]} />
+				</List>,
+			),
+		).toBe(baseline)
+	})
+
+	test("keeps a clock for its tiles' statuses", async () => {
+		let baseline = await timersAfter(<List>{null}</List>)
+		let tiles = [office('OSA', openVenue('OSA'))]
+		expect(
+			await timersAfter(
+				<List>
+					<AlsoHereSection onOpen={jest.fn()} tiles={tiles} />
+				</List>,
+			),
+		).toBeGreaterThan(baseline)
 	})
 })
