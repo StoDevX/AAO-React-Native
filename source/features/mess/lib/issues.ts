@@ -103,9 +103,8 @@ type Group = {
 /**
  * The issues the loaded posts make, newest first. The posts come newest first, as WordPress
  * lists them. A week, Monday to Sunday, with at least five posts is an issue, named by its busiest
- * day. A quieter week joins the next issue after it, so a paper that starts going up late on
- * Sunday prints with the rest of its posts; a quiet week newer than every issue joins the issue
- * before it instead. A week's special-edition posts, when there are at least five, are an issue
+ * day. The paper's stray posts follow it, so a quieter week joins the most recent issue before it,
+ * and one older than every issue is left out. A week's special-edition posts, when there are at least five, are an issue
  * of their own, apart from the rest of the week and dated by their busiest day. While another page remains, the oldest week is left
  * out, since that page may hold more of it. WordPress pages by offset, so a post published between
  * two page fetches repeats one post; each counts once.
@@ -134,27 +133,21 @@ export function groupIssues(posts: LightPost[], hasMore: boolean): MessIssue[] {
 		else byKey.set(key, {start: week, special, posts: [post]})
 	}
 
-	// Newest first, so each quiet week finds the issue after it already made.
+	// Oldest first, so each quiet week finds the issue before it already made.
 	let groups: Group[] = []
 	// Hermes has no toSorted, so the copy is sorted in place.
 	let ordered = [...byKey.values()].sort((a, b) =>
-		a.start < b.start ? 1 : a.start > b.start ? -1 : 0,
+		a.start < b.start ? -1 : a.start > b.start ? 1 : 0,
 	)
-	let next: Group | undefined
-	// Quiet weeks newer than every issue, waiting for the issue before them.
-	let newest: LightPost[] = []
+	let previous: Group | undefined
 	for (let group of ordered) {
 		if (group.special) groups.push(group)
 		else if (group.posts.length >= ISSUE_MIN_POSTS) {
-			// Newer than every post the issue holds, so they go first.
-			group.posts.unshift(...newest)
-			newest = []
 			groups.push(group)
-			next = group
+			previous = group
 		}
-		// Older than every post the next issue holds, so they go last.
-		else if (next) next.posts.push(...group.posts)
-		else newest.push(...group.posts)
+		// A quiet week is newer than every post the issue already holds, so it goes first.
+		else if (previous) previous.posts.unshift(...group.posts)
 	}
 
 	let issues = groups.flatMap((group): MessIssue[] => {

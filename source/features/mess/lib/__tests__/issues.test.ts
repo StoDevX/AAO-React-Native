@@ -93,16 +93,14 @@ function postsOn(day: string, count: number, newestId: number, special = false):
 }
 
 describe('groupIssues', () => {
-	// The paper starts going up late on Sunday, before the Monday its week begins.
-	it('joins a quiet week to the issue after it, so a late-Sunday start goes with its paper', () => {
-		let posts = [
-			...postsOn('2026-03-23', 6, 200),
-			...postsOn('2026-03-22', 4, 100),
-			...postsOn('2026-03-11', 5, 50),
-		]
-		expect(outline(groupIssues(posts, false))).toStrictEqual([
-			['2026-03-23', 10],
-			['2026-03-11', 5],
+	// The paper's stray posts follow it: May 7 went up the week after Apr 29's paper.
+	it('keeps a quiet week with the issue before it once a newer issue loads', () => {
+		let september = postsOn('2026-09-09', 6, 50000)
+		let issues = groupIssues([...september, ...spring], false)
+		expect(outline(issues).slice(0, 3)).toStrictEqual([
+			['2026-09-09', 6],
+			['2026-05-12', 11],
+			['2026-04-29', 35],
 		])
 	})
 
@@ -269,9 +267,9 @@ describe('groupIssues', () => {
 		expect(daysIn(issueOn('2026-05-12'))).toStrictEqual({first: '2026-05-12', last: '2026-05-12'})
 	})
 
-	it('joins a stray older than every issue, Sunday, Mar 1, to the issue after it', () => {
+	it('leaves out a stray older than every issue', () => {
 		let fromMarch = spring.filter((post) => post.day >= '2026-03-01')
-		expect(groupIssues(fromMarch, false).at(-1)).toMatchObject({day: '2026-03-04', count: 27})
+		expect(groupIssues(fromMarch, false).at(-1)).toMatchObject({day: '2026-03-04', count: 26})
 	})
 
 	// Page 1 ends 27 posts into Mar 18, whose other two are on page 2.
