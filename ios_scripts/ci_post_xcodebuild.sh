@@ -38,13 +38,10 @@ export SENTRY_PROJECT='all-about-olaf'
 # live beside the .xcworkspace, so the repository root is two levels up.
 cd ../../
 
-# ci_post_clone.sh recorded mise's node in .xcode.env.local. Read that one line
-# rather than sourcing the file, which also holds the token.
-NODE_BINARY="$(sed -n 's/^export NODE_BINARY=//p' ios/.xcode.env.local)"
-
-# The sentry-cli the Xcode build phases ran: the one @sentry/react-native pins.
-cli_package="$("${NODE_BINARY}" --print "require('path').dirname(require.resolve('@sentry/cli/package.json', {paths: [require.resolve('@sentry/react-native/package.json')]}))")"
-SENTRY_CLI="${cli_package}/bin/sentry-cli"
+# The sentry-cli the Xcode build phases ran: the one mise installed, whose path
+# ci_post_clone.sh recorded in .xcode.env.local. Read that one line rather than
+# sourcing the file, which also holds the token.
+SENTRY_CLI="$(sed -n 's/^export SENTRY_CLI_BINARY=//p' ios/.xcode.env.local)"
 echo "sentry-cli: $("${SENTRY_CLI}" --version)"
 
 # Read the release name from the archived app rather than rebuilding it, so it
