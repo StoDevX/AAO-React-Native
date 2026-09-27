@@ -33,9 +33,6 @@ export function DetailsSection({address}: {address: string | null}): React.React
 	return (
 		<Section>
 			<SectionHeading title="Details" />
-			{/* LabeledContent sets the label and value side by side, as Maps
-			    does, and stacks them at accessibility text sizes, where two
-			    columns leave each too narrow to read. */}
 			<Button
 				modifiers={[
 					...LAST_ROW,
@@ -44,10 +41,6 @@ export function DetailsSection({address}: {address: string | null}): React.React
 				]}
 				onPress={openAddress}
 			>
-				{/* Maps' colours, which are Settings' the other way round: the
-				    label grey, the value black. contentShape on the label, not the
-				    Button -- see NavigationRow in components/rows.tsx. Without it
-				    the row takes a tap only on its two texts. */}
 				<LabeledContent
 					modifiers={[contentShape(shapes.rectangle())]}
 					label={
