@@ -1,0 +1,11 @@
+building: bc
+floors:
+  - name: Ground floor
+    entries:
+      - {name: Buntrock Commons, room: '007'}
+  - name: 1st floor
+    entries:
+      - {name: 'Lutheran Center for Faith, Values, and Community', room: '146'}
+      - {name: Student Activities, room: '108'}
+      - {name: Taylor Center for Equity and Inclusion, room: '111'}
+      - {name: Wellness Center, room: '120'}

@@ -1,0 +1,7 @@
+building: cad
+floors:
+  - name: 2nd floor
+    entries:
+      - {name: Art and Art History, room: '200'}
+      - {name: Dance, room: '200'}
+      - {name: Flaten Art Museum, room: '204'}
