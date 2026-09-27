@@ -9,6 +9,7 @@ export {
 	REL_NEWS,
 	REL_ORG_CATEGORIES,
 	REL_STUDENT_WORK_AREAS,
+	REL_STUDENT_WORK_UNITS,
 	type Jrd,
 	type ResolvedSource,
 } from './types'

@@ -187,3 +187,19 @@ for (let job of UITEST_JOB_DETAILS) {
 	let unit = FIXTURE_UNITS[job.id] ?? FILLER_UNIT
 	UITEST_UNIT_POSTINGS[unit] = [...(UITEST_UNIT_POSTINGS[unit] ?? []), job.id]
 }
+
+/// What ccc-server's `/student-work/units` would publish for the fixture
+/// board. The extra posting is left out, as one newer than the server's last
+/// hour would be, so a UI test covers the app reading a unit from a detail.
+export const UITEST_POSTING_UNITS: Record<string, string | null> = Object.fromEntries(
+	UITEST_JOB_DETAILS.filter((job) => job.id !== EXTRA_JOB.id).map((job) => [job.id, job.unit]),
+)
+
+/// Mirrored by `TestIdentifiers.LaunchArguments.studentWorkUnitsUnavailable`.
+const UNITS_UNAVAILABLE_SETTING = 'AAOUITestStudentWorkUnitsUnavailable'
+
+/// Whether a UI test launched with the units map failing, and nothing saved.
+/// Read on each call, so a Jest test can set it.
+export function uitestUnitsUnavailable(): boolean {
+	return Boolean(Settings.get(UNITS_UNAVAILABLE_SETTING))
+}

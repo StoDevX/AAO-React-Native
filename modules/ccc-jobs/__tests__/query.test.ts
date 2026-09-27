@@ -1,9 +1,17 @@
 import {afterEach, describe, expect, jest, test} from '@jest/globals'
+import {Settings} from 'react-native'
 import {fetchManifest, fetchSourceBody} from '@frogpond/data-sources'
-import {jobDetailOptions, jobPostingsOptions, keys, unitPostingsOptions} from '../query'
+import {
+	jobDetailOptions,
+	jobPostingsOptions,
+	keys,
+	postingUnitsOptions,
+	unitPostingsOptions,
+} from '../query'
 import {
 	UITEST_JOB_CATEGORIES,
 	UITEST_JOB_DETAILS,
+	UITEST_POSTING_UNITS,
 	UITEST_UNIT_POSTINGS,
 } from '../fixtures/uitest-postings'
 
@@ -61,6 +69,35 @@ describe('under UI testing', () => {
 
 	test('a posting missing from the fixture is an error', async () => {
 		await expect(run(jobDetailOptions('not-a-fixture'))).rejects.toThrow('not-a-fixture')
+	})
+
+	test('answers the units map from the UI-test fixtures', async () => {
+		await expect(run(postingUnitsOptions)).resolves.toEqual(UITEST_POSTING_UNITS)
+		expect(fetchSourceBody).not.toHaveBeenCalled()
+	})
+
+	test('the fixture map gives each listed posting its unit', () => {
+		expect(UITEST_POSTING_UNITS['uitest-3']).toBe('22005')
+	})
+
+	// The extra posting stands for one newer than the server's last hour, so
+	// the app has to read its unit from its detail.
+	test('the fixture map leaves out the extra posting', () => {
+		expect('uitest-extra' in UITEST_POSTING_UNITS).toBe(false)
+	})
+
+	test('fails when a UI test launches with the units unavailable', async () => {
+		let get = jest
+			.spyOn(Settings, 'get')
+			.mockImplementation((key: string) => key === 'AAOUITestStudentWorkUnitsUnavailable')
+		await expect(run(postingUnitsOptions)).rejects.toThrow('unavailable')
+		get.mockRestore()
+	})
+})
+
+describe('postingUnitsOptions', () => {
+	test('stays fresh for an hour, matching the server', () => {
+		expect(postingUnitsOptions.staleTime).toBe(60 * 60 * 1000)
 	})
 })
 
