@@ -89,6 +89,17 @@ describe('resolveEntry', () => {
 		expect(resolveEntry({name: 'Holland Office'}, place)).toEqual({kind: 'none'})
 	})
 
+	// A floor of Tomson listing "Tomson Hall" would otherwise stack the
+	// building's own hours over the building's own floor.
+	test("does not open the building's own hours", () => {
+		let own: BuildingType = {...venue('Tomson Hall', 'toh'), kind: 'building'}
+		expect(resolveEntry({name: 'Tomson Hall'}, {...place, venues: [...place.venues, own]})).toEqual(
+			{
+				kind: 'none',
+			},
+		)
+	})
+
 	test('opens nothing for an unknown name', () => {
 		expect(resolveEntry({name: 'Mail Room'}, place)).toEqual({kind: 'none'})
 	})

@@ -38,8 +38,12 @@ export function resolveEntry(
 ): EntryTarget {
 	let points = features.filter((feature) => feature.properties.parent === building.id)
 	let here = new Set([building.id, ...points.map((point) => point.id)])
+	// The building's own hours are its card beneath, not a place on a floor.
 	let venuesHere = venues.filter(
-		(venue) => venue.building !== undefined && here.has(venue.building),
+		(venue) =>
+			venue.building !== undefined &&
+			here.has(venue.building) &&
+			!(venue.kind === 'building' && venue.building === building.id),
 	)
 	let key = nameKey(entry.name)
 
