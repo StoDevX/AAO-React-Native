@@ -6,25 +6,26 @@ import type {StackEntry} from '../lib/also-here'
 import type {PlaceTile} from '../lib/place-tiles'
 import {PlacesSection} from './places-section'
 
-/// What else is at a place, as tiles with each one's live status, after Maps'
-/// "Also at This Location". The More grid groups them into Places and Offices.
-export function AlsoHereSection({
-	tiles,
-	onOpen,
-}: {
+type Props = {
 	tiles: Array<PlaceTile>
 	onOpen: (entry: StackEntry) => void
-}): React.ReactNode {
-	let {now} = useMomentTimer({intervalMs: 60000, timezone: timezone()})
+}
+
+/// What else is at a place, as tiles with each one's live status, after Maps'
+/// "Also at This Location". Most places have nothing else, so the section
+/// draws nothing and keeps no clock.
+export function AlsoHereSection({tiles, onOpen}: Props): React.ReactNode {
 	if (tiles.length === 0) {
 		return null
 	}
+	return <AlsoHereTiles onOpen={onOpen} tiles={tiles} />
+}
+
+/// The section itself, kept current: the minute's tick redraws the statuses.
+function AlsoHereTiles({tiles, onOpen}: Props): React.ReactNode {
+	let {now} = useMomentTimer({intervalMs: 60000, timezone: timezone()})
 	return (
 		<PlacesSection
-			groups={[
-				{title: 'Places', tiles: tiles.filter((tile) => tile.kind !== 'office')},
-				{title: 'Offices', tiles: tiles.filter((tile) => tile.kind === 'office')},
-			]}
 			id="also-here"
 			now={now}
 			onOpen={onOpen}

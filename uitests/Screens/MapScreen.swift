@@ -290,13 +290,21 @@ struct MapScreen: Screen {
 	@discardableResult
 	func openPlaceTile(named name: String) -> Self {
 		let tile = app.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", name)).firstMatch
-		for _ in 0..<6 where !(tile.exists && tile.isHittable) {
-			app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.8))
-				.press(forDuration: 0.05, thenDragTo: app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)))
-		}
+		scrollCard(toReach: tile)
 		XCTAssertTrue(tile.waitForExistence(timeout: 10) && tile.isHittable, "The card should list \(name)")
 		tile.tap()
 		return self
+	}
+
+	/// Scrolls the card a screen at a time until `element` can be tapped. The
+	/// card's list builds only the rows near the screen, so a section further
+	/// down is not there to find until the card reaches it -- and how far down
+	/// that is depends on the screen and on what the live feed puts above it.
+	private func scrollCard(toReach element: XCUIElement) {
+		for _ in 0..<6 where !(element.exists && element.isHittable) {
+			app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.8))
+				.press(forDuration: 0.05, thenDragTo: app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)))
+		}
 	}
 
 	/// The top card is `name`'s: only one card's close button can be tapped,
@@ -716,8 +724,10 @@ struct MapScreen: Screen {
 	/// More on the Departments heading opens every department in a grid.
 	@discardableResult
 	func verifyMoreShowsEveryDepartment(_ count: Int) -> Self {
+		XCTAssertTrue(cardTitle.waitForExistence(timeout: 30), "The card should be up")
 		let more = app.buttons[TestIdentifiers.Map.departmentsMore].firstMatch
-		XCTAssertTrue(more.waitForExistence(timeout: 30), "Departments should offer More")
+		scrollCard(toReach: more)
+		XCTAssertTrue(more.waitForExistence(timeout: 10), "Departments should offer More")
 		XCTContext.runActivity(named: "More \(more.frame)") { _ in }
 		XCTAssertGreaterThanOrEqual(more.frame.width, 44, "More should be at least 44pt wide to tap")
 		XCTAssertGreaterThanOrEqual(more.frame.height, 44, "More should be at least 44pt tall to tap")

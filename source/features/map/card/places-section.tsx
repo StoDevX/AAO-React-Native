@@ -83,26 +83,20 @@ function rowsOfTwo(tiles: Array<PlaceTile>): Array<Array<PlaceTile>> {
 	return rows
 }
 
-/// A group of tiles in the More grid, under its own heading.
-export type TileGroup = {title: string; tiles: Array<PlaceTile>}
-
 /// A carousel of place tiles, after Maps' "Also at This Location": a
 /// building's departments, its offices, or what else is there. Past seven
-/// tiles, More opens every one in a grid, grouped when `groups` is given.
+/// tiles, More opens every one in a grid.
 /// `id` names the section's controls for tests: `{id}-more`, `{id}-grid`.
 export function PlacesSection({
 	title,
 	id,
 	tiles,
-	groups,
 	now,
 	onOpen,
 }: {
 	title: string
 	id: string
 	tiles: Array<PlaceTile>
-	/// The More grid's groups, in order; empty ones are left out.
-	groups?: Array<TileGroup>
 	/// The time statuses are read at; without it, tiles show no status.
 	now?: Moment
 	onOpen?: (entry: StackEntry) => void
@@ -168,23 +162,7 @@ export function PlacesSection({
 									</HStack>
 									<ScrollView modifiers={[accessibilityIdentifier(`${id}-grid`)]}>
 										<VStack alignment="leading" spacing={0}>
-											{(groups ?? [{title: '', tiles}])
-												.filter((group) => group.tiles.length > 0)
-												.map((group) => (
-													<VStack key={group.title} alignment="leading" spacing={0}>
-														{group.title ? (
-															<Text
-																modifiers={[
-																	font({textStyle: 'title3', weight: 'bold'}),
-																	padding({horizontal: CARD_INSET, top: 12, bottom: 8}),
-																]}
-															>
-																{group.title}
-															</Text>
-														) : null}
-														<TileGrid now={now} onOpen={onOpen} tiles={group.tiles} />
-													</VStack>
-												))}
+											<TileGrid now={now} onOpen={onOpen} tiles={tiles} />
 										</VStack>
 									</ScrollView>
 								</VStack>
