@@ -38,6 +38,25 @@ test('stops at the end of the line rather than reading the next label', () => {
 	assert.equal(unitFieldOf(description('detail-blank')), '')
 })
 
+test('reads a unit number that shares its paragraph with another label', () => {
+	// "Department Name: College Events<br>Unit Number (5 digits): 16322", one <p>.
+	let {items} = JSON.parse(
+		readFileSync(
+			new URL(
+				'../modules/ccc-jobs/__tests__/fixtures/detail-no-description-label.json',
+				import.meta.url,
+			),
+			'utf8',
+		),
+	)
+	assert.equal(unitFieldOf(items[0].ExternalDescriptionStr), '16322')
+})
+
+test('ends a line at a closing paragraph even with no newline after it', () => {
+	let html = '<p><b>Unit Number:</b>&nbsp;</p><p><b>Length of Position:</b> One year</p>'
+	assert.equal(unitFieldOf(html), '')
+})
+
 test('keeps whatever else was written in the field', () => {
 	assert.equal(unitFieldOf(description('detail-account-string')), '41203-11184-53000-00512')
 	assert.equal(unitFieldOf(description('detail-not-applicable')), 'n/a')

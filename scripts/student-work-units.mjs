@@ -48,7 +48,7 @@ export function parseUnitNames(entries) {
 	let names = new Map()
 	for (let entry of entries) {
 		let match = UNIT_NAME.exec(entry.trim())
-		if (match) names.set(match[1], match[2].trim())
+		if (match) names.set(match[1], match[2])
 	}
 	return names
 }
