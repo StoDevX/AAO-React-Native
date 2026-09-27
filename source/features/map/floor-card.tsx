@@ -9,10 +9,9 @@ import type {Moment} from 'moment-timezone'
 
 import {DETAIL_ROW, LAST_ROW} from '../../components/place-card/card-style'
 import {DisclosureRow} from '../../components/rows'
-import {STATUS_TEXT} from '../building-hours/hours-section'
-import {contextualStatus, getShortBuildingStatus, hasDisplayableHours} from '../building-hours/lib'
 import type {BuildingType} from '../building-hours/types'
 import {CloseButton, PlaceCard} from './building-info'
+import {venueStatus} from './card/venue-status'
 import {resolveEntry, roomLabel, sortedEntries, type EntryTarget} from './directory/directory'
 import type {DirectoryEntry, DirectoryFloor} from './directory/types'
 import type {StackEntry} from './lib/also-here'
@@ -27,17 +26,6 @@ type Place = {
 	features: Array<Feature<Building>>
 	venues: Array<BuildingType>
 	links: Array<PlaceTile>
-}
-
-/// A venue's live status, as a place tile shows it; none without hours.
-function statusOf(venue: BuildingType | undefined, now: Moment) {
-	if (!venue || !hasDisplayableHours(venue.schedule ?? [])) {
-		return
-	}
-	return {
-		text: contextualStatus(venue, now).long,
-		color: STATUS_TEXT[getShortBuildingStatus(venue, now)],
-	}
 }
 
 /**
@@ -130,7 +118,7 @@ function EntryRow({
 				detail={room}
 				identifier={DIRECTORY_ENTRY_ID}
 				onPress={() => onOpen(target.opens)}
-				status={statusOf(target.venue, now)}
+				status={venueStatus(target.venue, now)}
 				title={entry.name}
 			/>
 		)
