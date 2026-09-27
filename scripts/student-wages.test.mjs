@@ -109,3 +109,10 @@ test('lists each changed rate', () => {
 test('lists nothing when the rates match', () => {
 	assert.deepEqual(diffWages(PUBLISHED, PUBLISHED), [])
 })
+
+// A committed file laid out differently from what the scrape writes would
+// open a formatting-only pull request every month.
+test('the committed data file is exactly what the scrape writes', () => {
+	let committed = readFileSync(new URL('../data/student-wages.yaml', import.meta.url), 'utf8')
+	assert.equal(renderWages(load(committed)), committed)
+})
