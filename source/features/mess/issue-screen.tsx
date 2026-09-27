@@ -49,7 +49,15 @@ export function IssueScreen({issueKey}: {issueKey: string}): React.ReactNode {
 	return (
 		<>
 			<Stack.Screen options={{title: issueDate(issue.day)}} />
-			<MessPage onRefresh={() => queryClient.refetchQueries({queryKey: messKeys.issue(issue)})}>
+			<MessPage
+				// The issue's stories are fetched by the ids the list gives it, so the list comes first: a
+				// story added to the issue since it loaded gives the issue a new key, which fetches it.
+				// Every loaded page is fetched again, since an older issue may sit on any of them.
+				onRefresh={async () => {
+					await queryClient.refetchQueries({queryKey: messKeys.issues})
+					await queryClient.refetchQueries({queryKey: messKeys.anyIssue, type: 'active'})
+				}}
+			>
 				<IssuePage
 					columnWidth={columnWidth}
 					issue={issue}

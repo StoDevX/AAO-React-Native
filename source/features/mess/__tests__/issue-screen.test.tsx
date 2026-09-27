@@ -1,9 +1,12 @@
 import * as React from 'react'
 import {afterEach, beforeEach, describe, expect, jest, test} from '@jest/globals'
-import {fireEvent, render, screen} from '@testing-library/react-native'
+import {act, fireEvent, render, screen} from '@testing-library/react-native'
 import {dehydrate, QueryClient, QueryClientProvider} from '@tanstack/react-query'
+import {fetchManifest, fetchSourceBody, type Jrd} from '@frogpond/data-sources'
 
+import categoriesJson from './fixtures/categories.json'
 import {queryClient as appQueryClient, persistOptions} from '../../../init/tanstack-query'
+import {flushQueryNotifications} from '../../../testing/query-notifications'
 import {IssueScreen} from '../issue-screen'
 import {messKeys} from '../lib/keys'
 import {OLAF_MESSENGER} from '../../news/sources'
@@ -28,6 +31,15 @@ jest.mock(
 		// oxlint-disable-next-line typescript/no-require-imports
 		require('react-native-safe-area-context/jest/mock').default,
 )
+jest.mock('@frogpond/data-sources', () => ({
+	...(jest.requireActual('@frogpond/data-sources') as object),
+	fetchManifest: jest.fn(),
+	fetchSourceBody: jest.fn(),
+}))
+
+const mockManifest = fetchManifest as jest.Mock<() => Promise<Jrd>>
+const mockBody = fetchSourceBody as jest.Mock<(href: string) => Promise<unknown>>
+
 const mockNavigate = jest.fn()
 const mockBack = jest.fn()
 jest.mock('expo-router', () => ({
@@ -103,6 +115,40 @@ function renderIssue(issueKey: string) {
 }
 
 describe('IssueScreen', () => {
+	// A story can go up after the list was loaded, and the issue fetches its stories by the ids the
+	// list gives it.
+	test('pull-to-refresh fetches the issue list again, and with it a story added to the issue', async () => {
+		/** A News post on Apr 29, as WordPress lists it. */
+		let listed = (id: number) => ({
+			id,
+			date: '2026-04-29T17:00:00',
+			title: {rendered: `April story ${id}`},
+			categories: [45],
+			featured_media: 0,
+		})
+		mockManifest.mockResolvedValue({links: []} as unknown as Jrd)
+		mockBody.mockImplementation((href) => {
+			if (href.includes('/categories')) return Promise.resolve(categoriesJson)
+			if (href.includes('&page=1&')) return Promise.resolve([21, 20, 19, 18, 17, 16].map(listed))
+			return Promise.resolve([])
+		})
+		queryClient.setQueryData(
+			messKeys.issue({key: 'week:2026-04-27', storyIds: [20, 19, 18, 17, 16]}),
+			APRIL,
+		)
+		await renderIssue('week:2026-04-27')
+
+		let refresh = screen.getByTestId('refreshable').props.onRefresh as () => Promise<void>
+		await act(async () => {
+			await refresh()
+			await flushQueryNotifications()
+		})
+
+		expect(mockBody.mock.calls.map((call) => call[0])).toContainEqual(
+			expect.stringContaining('/posts?include=21,20,19,18,17,16&per_page=100&_embed=true'),
+		)
+	})
+
 	test('lays out the issue its key names, under its dateline alone', async () => {
 		await renderIssue('week:2026-03-23')
 
