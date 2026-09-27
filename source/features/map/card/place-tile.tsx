@@ -62,7 +62,7 @@ function cardFrame(fill: boolean) {
 const SYMBOL = {
 	department: 'building.2.fill',
 	office: 'person.2.fill',
-	place: 'mappin.and.ellipse',
+	place: 'mappin',
 } as const
 
 /// A place's live status on its tile: "Open until 9 PM", in its colour.
