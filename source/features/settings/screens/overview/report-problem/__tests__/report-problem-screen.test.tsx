@@ -1,4 +1,5 @@
 import * as React from 'react'
+import {Alert, type AlertButton} from 'react-native'
 import {act, fireEvent, render, screen} from '@testing-library/react-native'
 
 import ReportProblemPage from '../../../../../../../app/(settings)/ReportProblem'
@@ -6,6 +7,7 @@ import type {ImageAttachments} from '../../../../../../components/use-image-atta
 import {useImageAttachments} from '../../../../../../components/use-image-attachments'
 import type * as ExpoRouterMock from '../../../../../../testing/expo-router-mock'
 import {readAttachment} from '../attachments'
+import {composeEmail} from '../../../../../../components/send-email'
 import {submitReport} from '../submit'
 
 jest.mock('@expo/ui/swift-ui', () => {
@@ -28,11 +30,23 @@ jest.mock('../../../../../../components/use-image-attachments', () => ({
 	useImageAttachments: jest.fn(),
 }))
 jest.mock('../attachments', () => ({readAttachment: jest.fn()}))
-jest.mock('../submit', () => ({submitReport: jest.fn(() => true)}))
+jest.mock('../submit', () => ({
+	submitReport: jest.fn(() => 'sent'),
+	reportEmail: jest.fn(() => ({
+		to: ['support@example.test'],
+		subject: 'Report',
+		body: 'the map is blank',
+	})),
+}))
+jest.mock('../../../../../../components/send-email', () => ({
+	composeEmail: jest.fn(() => Promise.resolve(true)),
+}))
 
 const mockAttachments = useImageAttachments as jest.MockedFunction<typeof useImageAttachments>
 const mockRead = readAttachment as jest.MockedFunction<typeof readAttachment>
 const mockSubmit = submitReport as jest.MockedFunction<typeof submitReport>
+const mockCompose = composeEmail as jest.MockedFunction<typeof composeEmail>
+let alertSpy = jest.spyOn(Alert, 'alert').mockReturnValue(undefined)
 
 function attachments(overrides: Partial<ImageAttachments> = {}): ImageAttachments {
 	return {
@@ -93,5 +107,67 @@ describe('the Report a Problem screen', () => {
 		})
 
 		expect(mockSubmit).not.toHaveBeenCalled()
+	})
+
+	it('closes once the report is sent', async () => {
+		mockAttachments.mockReturnValue(attachments())
+		await renderWithMessage()
+
+		await fireEvent.press(screen.getByLabelText('Submit'))
+
+		expect(mockGoBack).toHaveBeenCalledTimes(1)
+	})
+
+	it('says so, and stays open, in a build that sends nothing', async () => {
+		mockAttachments.mockReturnValue(attachments())
+		mockSubmit.mockReturnValueOnce('disabled')
+		await renderWithMessage()
+
+		await fireEvent.press(screen.getByLabelText('Submit'))
+
+		expect(alertSpy).toHaveBeenCalledWith('Sentry is disabled', expect.any(String))
+		expect(mockGoBack).not.toHaveBeenCalled()
+	})
+
+	// Sharing off means Sentry is closed; the report would vanish while the
+	// screen said it was sent.
+	it('offers email, with the images, when sharing is off', async () => {
+		mockAttachments.mockReturnValue(attachments())
+		mockSubmit.mockReturnValueOnce('opted-out')
+		await renderWithMessage()
+
+		await fireEvent.press(screen.getByLabelText('Submit'))
+
+		expect(mockGoBack).not.toHaveBeenCalled()
+		let buttons = alertSpy.mock.lastCall?.[2] as AlertButton[]
+		let sendByEmail = buttons.find((button) => button.text === 'Send by Email')
+		// act() lets the email hand-off settle before the assertions.
+		await act(() => {
+			sendByEmail?.onPress?.()
+		})
+
+		expect(mockCompose).toHaveBeenCalledWith({
+			to: ['support@example.test'],
+			subject: 'Report',
+			body: 'the map is blank',
+			attachments: ['file:///a.jpg'],
+		})
+		expect(mockGoBack).toHaveBeenCalledTimes(1)
+	})
+
+	it('stays open when the email is abandoned', async () => {
+		mockAttachments.mockReturnValue(attachments())
+		mockSubmit.mockReturnValueOnce('opted-out')
+		mockCompose.mockResolvedValueOnce(false)
+		await renderWithMessage()
+
+		await fireEvent.press(screen.getByLabelText('Submit'))
+		let buttons = alertSpy.mock.lastCall?.[2] as AlertButton[]
+		await act(() => {
+			buttons.find((button) => button.text === 'Send by Email')?.onPress?.()
+		})
+
+		expect(mockGoBack).not.toHaveBeenCalled()
+		expect(screen.getByLabelText('Submit')).not.toBeDisabled()
 	})
 })

@@ -13,7 +13,11 @@ import {Stack, useNavigation} from 'expo-router'
 import {ImageAttachmentsSection} from '../../source/components/image-attachments-section'
 import {useImageAttachments} from '../../source/components/use-image-attachments'
 import {readAttachment} from '../../source/features/settings/screens/overview/report-problem/attachments'
-import {submitReport} from '../../source/features/settings/screens/overview/report-problem/submit'
+import {composeEmail} from '../../source/components/send-email'
+import {
+	reportEmail,
+	submitReport,
+} from '../../source/features/settings/screens/overview/report-problem/submit'
 
 const styles = StyleSheet.create({
 	host: {
@@ -66,20 +70,46 @@ export default function ReportProblemPage(): React.ReactNode {
 			return
 		}
 
-		let submitted = submitReport({
+		let report = {
 			message: message.trim(),
 			name: name.trim() || undefined,
 			email: email.trim() || undefined,
-			attachments: files,
-		})
-
-		if (submitted) {
-			navigation.goBack()
-		} else {
-			sendingNow.current = false
-			setSending(false)
-			Alert.alert('Sentry is disabled', 'Problem reporting only works in production builds.')
 		}
+		let result = submitReport({...report, attachments: files})
+
+		if (result === 'sent') {
+			navigation.goBack()
+			return
+		}
+
+		sendingNow.current = false
+		setSending(false)
+
+		if (result === 'disabled') {
+			Alert.alert('Sentry is disabled', 'Problem reporting only works in production builds.')
+			return
+		}
+
+		// Sharing is off, so Sentry is closed and the report can't go that way.
+		Alert.alert(
+			'Sharing is off',
+			'Problem reports go through the same service as crash data, which you turned off. Send this report by email instead?',
+			[
+				{text: 'Cancel', style: 'cancel'},
+				{
+					text: 'Send by Email',
+					onPress: async () => {
+						let handedOff = await composeEmail({
+							...reportEmail(report),
+							attachments: attachments.images.map((image) => image.uri),
+						})
+						if (handedOff) {
+							navigation.goBack()
+						}
+					},
+				},
+			],
+		)
 	}
 
 	return (
