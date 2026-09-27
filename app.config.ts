@@ -251,6 +251,22 @@ const config: ExpoConfig = {
 		// maplibre-gl-native-distribution -- no pod source build, and no
 		// access token anywhere in the pipeline.
 		'@maplibre/maplibre-react-native',
+		// Wraps the bundle phase so a Release build uploads its source maps, and
+		// adds a phase that uploads the dSYMs. Both skip Debug builds, which is
+		// all GitHub Actions and `mise run device` make. The auth token comes from
+		// the build environment; passing it here would write it into
+		// ios/sentry.properties.
+		//
+		// with-sentry-debug-files-environment edits a phase this plugin writes,
+		// and Expo runs a later plugin's project mod first, so it goes above.
+		'./plugins/with-sentry-debug-files-environment',
+		[
+			'@sentry/react-native/expo',
+			{
+				organization: 'frog-pond-labs',
+				project: 'all-about-olaf',
+			},
+		],
 		// react-native-enriched-markdown 1.0.2 dropped its Expo config plugin;
 		// its options now live in the `enriched-markdown` block of package.json.
 		'./plugins/with-app-delegate-customizations',

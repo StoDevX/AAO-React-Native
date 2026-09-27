@@ -7,7 +7,6 @@ export MISE_AUTO_INSTALL='false'
 
 export SENTRY_ORG='frog-pond-labs'
 export SENTRY_PROJECT='all-about-olaf'
-# export SENTRY_AUTH_TOKEN='${{ secrets.HOSTED_SENTRY_AUTH_TOKEN }}'
 
 # Xcode Cloud runs this with ci_scripts as the working directory, and it must
 # live beside the .xcworkspace, so the repository root is two levels up.
@@ -81,7 +80,27 @@ cat "${resolved_dir}/Package.resolved"
 echo "Writing ios/.xcode.env.local with NODE_BINARY=${NODE_PATH}"
 {
   printf 'export NODE_BINARY=%s\n' "${NODE_PATH}"
+
+  # A failed Sentry upload warns rather than failing the archive, so a Sentry
+  # outage cannot hold up a TestFlight build.
+  printf 'export SENTRY_ALLOW_FAILURE=true\n'
 } > ios/.xcode.env.local
 
 echo "Contents of ios/.xcode.env.local:"
 cat ios/.xcode.env.local
+
+# The Sentry build phases upload source maps and dSYMs with SENTRY_AUTH_TOKEN,
+# a secret on the Xcode Cloud workflow. Workflow variables are not known to
+# reach Xcode's Run Script phases, but both phases source .xcode.env.local, so
+# the token goes there. It is appended after the file is printed above, and
+# with tracing off, so it never reaches the build log.
+set +x
+if [ -n "${SENTRY_AUTH_TOKEN:-}" ]; then
+  printf 'export SENTRY_AUTH_TOKEN=%q\n' "${SENTRY_AUTH_TOKEN}" >> ios/.xcode.env.local
+  echo "Added SENTRY_AUTH_TOKEN to ios/.xcode.env.local"
+else
+  # Without a token every upload would fail, so skip them outright.
+  printf 'export SENTRY_DISABLE_AUTO_UPLOAD=true\n' >> ios/.xcode.env.local
+  echo "SENTRY_AUTH_TOKEN is not set; Sentry uploads are disabled for this build"
+fi
+set -x
