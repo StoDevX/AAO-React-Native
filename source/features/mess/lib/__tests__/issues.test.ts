@@ -91,6 +91,21 @@ describe('groupIssues', () => {
 		expect(outline(groupIssues(pages, false))).toStrictEqual(outline(groupIssues(spring, false)))
 	})
 
+	it('lists every post of an issue by id, newest first, strays included, each once', () => {
+		let pages = [...spring.slice(0, 100), spring[99], ...spring.slice(100)].filter(
+			(post) => post !== undefined,
+		)
+		let issues = groupIssues(pages, false)
+		let april = spring.filter((post) => post.day >= '2026-04-29' && post.day < '2026-05-12')
+		expect(issues.find((issue) => issue.day === '2026-04-29')?.storyIds).toStrictEqual(
+			april.map((post) => post.id),
+		)
+		// The post that arrived on two pages sits in Mar 18.
+		let march = issues.find((issue) => issue.day === '2026-03-18')
+		expect(march?.storyIds).toHaveLength(31)
+		expect(new Set(march?.storyIds).size).toBe(31)
+	})
+
 	it('names an issue special when most of its posts are, whatever sections they sit in', () => {
 		let filedUnderNews = spring.map((post) => (post.special ? {...post, section: 'News'} : post))
 		expect(groupIssues(filedUnderNews, false)[0]).toMatchObject({

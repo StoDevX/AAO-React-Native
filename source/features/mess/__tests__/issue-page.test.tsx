@@ -44,6 +44,7 @@ const ISSUE: MessIssue = {
 	after: '2026-04-28T23:59:59',
 	before: null,
 	count: 5,
+	storyIds: [5, 4, 3, 2, 1],
 	leadId: 5,
 	leadTitle: 'Student workers deliver petition',
 	leadPhoto: 'https://olafmessenger.com/petition.jpg',

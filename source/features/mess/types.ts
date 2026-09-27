@@ -74,6 +74,8 @@ export type MessIssue = {
 	before: string | null
 	/** How many posts it holds, strays included */
 	count: number
+	/** Its posts' ids, newest first, strays included, each once */
+	storyIds: number[]
 	/** The lead story, chosen from the light fields */
 	leadId: number
 	leadTitle: string

@@ -101,6 +101,7 @@ export function groupIssues(posts: LightPost[], hasMore: boolean): MessIssue[] {
 				after: `${dayBefore(group.day)}T23:59:59`,
 				before: newer ? `${newer.day}T00:00:00` : null,
 				count: group.posts.length,
+				storyIds: group.posts.map((post) => post.id),
 				leadId: lead.id,
 				leadTitle: lead.title,
 				leadPhoto: lead.photoUrl,
