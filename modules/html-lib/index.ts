@@ -1,9 +1,9 @@
 import {parseDocument} from 'htmlparser2'
-import {getElementsByTagName, textContent} from 'domutils'
+import {getElementsByTagName, removeElement, textContent} from 'domutils'
 import {AnyNode, Document, Element, isText, isTag, type ChildNode} from 'domhandler'
 import cssSelect from 'css-select'
 
-export {textContent, cssSelect, getElementsByTagName, isTag, isText}
+export {textContent, cssSelect, getElementsByTagName, isTag, isText, removeElement}
 export {encode, decode} from 'html-entities'
 export type {AnyNode, ChildNode, Document, Element} from 'domhandler'
 

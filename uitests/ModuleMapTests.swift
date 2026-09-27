@@ -28,6 +28,16 @@ class ModuleMapTests: UITestCase {
 	///
 	/// Focusing search raises the sheet and cancelling puts it back, which
 	/// leaves it collapsed for the footprint tap that ends the test.
+	/// Like Maps, the map runs under a clear header, and the credits the
+	/// tiles' licence requires sit in a menu there.
+	func testTheMapRunsUnderAClearHeaderWithItsCredits() throws {
+		MapScreen(app: app)
+			.navigate()
+			.checkSheetPresented()
+			.capture("The map under its clear header")
+			.verifyClearHeaderWithCredits()
+	}
+
 	func testTheCollapsedSheetRisesForSearchAndForAFootprint() throws {
 		let screen = MapScreen(app: app)
 			.navigate()

@@ -122,4 +122,25 @@ class ModuleNewsTests: UITestCase {
 			.verifyViewerImageZoomed(true)
 			.closeImageViewer()
 	}
+
+	/// Reads live data: the newest Crossword post has to carry PuzzleMe's placeholder.
+	func testCrosswordOpensThePuzzleInTheBrowser() throws {
+		let news = NewsScreen(app: app, tile: TestIdentifiers.Buttons.olafMessenger, title: "The Olaf Messenger")
+			.navigate()
+		MessFilter(app: app)
+			.choose(column: TestIdentifiers.News.crosswordColumn, in: TestIdentifiers.News.varietySection)
+		news.openFirstStory()
+			.solveCrossword()
+	}
+
+	/// Reads live data: the newest Playlist post has to name its playlist, in its body or on
+	/// its web page.
+	func testPlaylistDrawsSpotifysPlayer() throws {
+		let news = NewsScreen(app: app, tile: TestIdentifiers.Buttons.olafMessenger, title: "The Olaf Messenger")
+			.navigate()
+		MessFilter(app: app)
+			.choose(column: TestIdentifiers.News.playlistColumn, in: TestIdentifiers.News.varietySection)
+		news.openFirstStory()
+			.verifyPlaylistOffered()
+	}
 }

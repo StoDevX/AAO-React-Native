@@ -4,7 +4,8 @@ import {queryClient} from '../../init/tanstack-query'
 import {parseMessCategories, parseMessPosts} from './lib/posts'
 import {latestProfile, parseStaffProfiles} from './lib/profiles'
 import {seriesKey, seriesName} from './lib/series'
-import type {MessCategory, MessStory, StaffProfile} from './types'
+import {findSpotifyRef} from './lib/spotify'
+import type {MessCategory, MessStory, SpotifyRef, StaffProfile} from './types'
 
 const WP_V2_POSTS = 'application/vnd.wordpress.v2.posts+json'
 const ONE_DAY_IN_MS = 24 * 60 * 60 * 1000
@@ -17,6 +18,7 @@ export const messKeys = {
 	story: (id: number) => ['mess', 'story', id] as const,
 	category: (categoryId: number) => ['mess', 'category', categoryId] as const,
 	series: (storyId: number) => ['mess', 'series', storyId] as const,
+	playlistPage: (storyId: number) => ['mess', 'playlist-page', storyId] as const,
 }
 
 /** Other stories to read after one, under a heading such as `More Mouse Friends`. */
@@ -179,6 +181,29 @@ export const messSeriesOptions = (story: MessStory) =>
 				title: `More by ${writer.name}`,
 				stories: byWriter.filter((s) => s.id !== story.id).slice(0, 6),
 			}
+		},
+	})
+
+/**
+ * The Spotify playlist on a Playlist post's web page, for a post whose body names none: the
+ * site's theme draws those players from a field the REST API does not return. Null when the
+ * page names none either.
+ */
+// oxlint-disable-next-line typescript/explicit-module-boundary-types
+export const messPlaylistPageOptions = (story: MessStory) =>
+	// oxlint-disable-next-line @tanstack/query/exhaustive-deps -- the link follows from the id
+	queryOptions({
+		queryKey: messKeys.playlistPage(story.id),
+		// A published post's playlist does not change.
+		staleTime: ONE_DAY_IN_MS,
+		// The page shows a placeholder until this settles, so it fails at once offline, and
+		// after one retry otherwise, letting the page fall back; it is fetched again when the
+		// network returns.
+		networkMode: 'always',
+		retry: 1,
+		queryFn: async ({signal}): Promise<SpotifyRef | null> => {
+			let page = await fetchSourceBody(story.link, signal, 'Olaf Messenger page', 'text')
+			return typeof page === 'string' ? findSpotifyRef(page) : null
 		},
 	})
 

@@ -268,6 +268,24 @@ struct MapScreen: Screen {
 		return self
 	}
 
+	/// The map runs under a clear header: no title drawn, and the About menu
+	/// there opens the map's credits.
+	@discardableResult
+	func verifyClearHeaderWithCredits() -> Self {
+		XCTAssertFalse(
+			app.navigationBars.staticTexts[TestIdentifiers.Map.stolafTitle].exists,
+			"The map's header should draw no title")
+		let about = app.buttons[TestIdentifiers.Map.attribution].firstMatch
+		XCTAssertTrue(about.waitForExistence(timeout: 30), "The header should offer the map's credits")
+		about.tap()
+		let credit = app.buttons[TestIdentifiers.Map.osmCredit].firstMatch
+		XCTAssertTrue(
+			credit.waitForExistence(timeout: 10),
+			"The About menu should credit OpenStreetMap, as the tiles' licence requires")
+		capture("The map's About menu")
+		return self
+	}
+
 	/// A move is a change of at least a hundred points: the collapsed stop
 	/// renders at about 65pt, the middle stop at `MAP_MIDDLE_FRACTION` of
 	/// the screen, and large at nearly all of it, so anything smaller is a
