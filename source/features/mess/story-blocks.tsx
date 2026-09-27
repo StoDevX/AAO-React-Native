@@ -16,9 +16,9 @@ import {openUrl} from '@frogpond/open-url'
 import type {SFSymbol} from 'sf-symbols-typescript'
 import {runsToMarkdown} from './lib/markdown'
 import {splitOpening} from './lib/opening'
-import {faded, ink, messRed} from './palette'
+import {faded, ink, messRed, onMessRed} from './palette'
 import {RemotePhoto} from './remote-photo'
-import type {Block, Run} from './types'
+import type {Block, MessStory, Run} from './types'
 
 export const BODY_ID = 'mess-story-body'
 const BODY = [font({textStyle: 'body', design: 'serif'}), foregroundStyle(ink)]
@@ -75,27 +75,54 @@ function OpeningParagraph({runs}: {runs: Run[]}): React.ReactNode {
 	)
 }
 
+/** Names the card that sends a story to olafmessenger.com, for a UI test. */
+export const SITE_LINK_ID = 'mess-story-site-link'
+
+/** A prominent card's label and icon, in a colour that reads on the card's red in either appearance. */
+const PROMINENT_LINK = [
+	font({textStyle: 'callout', weight: 'semibold'}),
+	foregroundStyle(onMessRed),
+]
+const PROMINENT_LINK_ICON = [foregroundStyle(onMessRed)]
+
 type SiteLinkProps = {
 	icon: SFSymbol
 	label: string
 	url: string
+	/** Fills the card in the Mess red, for the one thing its page is for, such as solving a crossword */
+	prominent?: boolean
+	/** The card's name for a UI test */
+	identifier?: string
+	/** How the card opens its page; by default the app's link setting decides, through `openUrl` */
+	open?: (url: string) => unknown
 }
 
-/** A bordered card that opens a page on olafmessenger.com, for what the reader cannot show. */
-export function SiteLinkCard({icon, label, url}: SiteLinkProps): React.ReactNode {
+/**
+ * A card that opens a web page: the story on olafmessenger.com for what the reader cannot
+ * show, or where a page's puzzle or playlist lives.
+ */
+export function SiteLinkCard({
+	icon,
+	label,
+	url,
+	prominent = false,
+	identifier = SITE_LINK_ID,
+	open = openUrl,
+}: SiteLinkProps): React.ReactNode {
 	return (
 		<Button
 			modifiers={[
-				buttonStyle('bordered'),
+				buttonStyle(prominent ? 'borderedProminent' : 'bordered'),
 				controlSize('large'),
+				...(prominent ? [tint(messRed)] : []),
 				accessibilityLabel(label),
-				accessibilityIdentifier('mess-story-site-link'),
+				accessibilityIdentifier(identifier),
 			]}
-			onPress={() => openUrl(url)}
+			onPress={() => open(url)}
 		>
 			<HStack spacing={8}>
-				<Image modifiers={SITE_LINK_ICON} systemName={icon} />
-				<Text modifiers={SITE_LINK}>{label}</Text>
+				<Image modifiers={prominent ? PROMINENT_LINK_ICON : SITE_LINK_ICON} systemName={icon} />
+				<Text modifiers={prominent ? PROMINENT_LINK : SITE_LINK}>{label}</Text>
 			</HStack>
 		</Button>
 	)
@@ -141,7 +168,7 @@ export function StoryBlock({
 						url={block.url}
 						width={columnWidth}
 					/>
-					{block.caption ? <Text modifiers={CAPTION}>{block.caption}</Text> : null}
+					<PhotoCaption caption={block.caption} />
 				</VStack>
 			)
 		case 'embed':
@@ -158,4 +185,27 @@ export function StoryBlock({
 			return null
 		}
 	}
+}
+
+type StoryBlocksProps = {story: MessStory; columnWidth: number}
+
+/** A story's blocks in reading order, returned side by side to land in the page's column. */
+export function StoryBlocks({story, columnWidth}: StoryBlocksProps): React.ReactNode {
+	// The first paragraph opens the story, even when a photo comes before it.
+	let openingIndex = story.blocks.findIndex((block) => block.type === 'paragraph')
+	return story.blocks.map((block, index) => (
+		<StoryBlock
+			block={block}
+			columnWidth={columnWidth}
+			isOpening={index === openingIndex}
+			// oxlint-disable-next-line react/no-array-index-key -- blocks have no id; a story's body is fixed, so its order is its identity
+			key={index}
+			storyLink={story.link}
+		/>
+	))
+}
+
+/** A photo's caption or credit, under it; nothing when it has none. */
+export function PhotoCaption({caption}: {caption: string}): React.ReactNode {
+	return caption ? <Text modifiers={CAPTION}>{caption}</Text> : null
 }

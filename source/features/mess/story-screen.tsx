@@ -9,11 +9,13 @@ import {openURLAction} from '../../lib/open-url-action'
 import {AuthorCard} from './author-card'
 import {HoroscopesView} from './horoscopes-view'
 import {ImageView} from './image-view'
+import {crosswordUrl} from './lib/crossword'
 import {paper} from './palette'
+import {PlaylistView} from './playlist-view'
 import {PoemView} from './poem-view'
 import {QuietHeader} from './quiet-header'
 import {SeriesRow} from './series-row'
-import {SiteLinkCard, StoryBlock} from './story-blocks'
+import {SiteLinkCard, StoryBlocks} from './story-blocks'
 import {StoryHeader} from './story-header'
 import {StoryLookupNotice} from './story-lookup-notice'
 import type {MessStory} from './types'
@@ -28,6 +30,9 @@ const COLUMN = [padding({horizontal: COLUMN_MARGIN, vertical: 16})]
 const POEM_COLUMN = [padding({horizontal: POEM_MARGIN, vertical: 16})]
 /** A column whose children can be scrolled to by their `id`. */
 const TARGET_COLUMN = [...COLUMN, scrollTargetLayout()]
+
+/** Names a Crossword post's Solve button, for a UI test. */
+export const CROSSWORD_SOLVE_ID = 'mess-crossword-solve'
 
 type Props = {id: number}
 
@@ -88,10 +93,10 @@ export function StoryScreen({id}: Props): React.ReactNode {
 						{isPoem ? (
 							<QuietHeader story={story} />
 						) : (
-							// A comic or artwork is its own picture, so the header leaves it to the body.
+							// A comic, artwork or playlist draws its picture in the body, so the header leaves it out.
 							<StoryHeader
 								columnWidth={columnWidth}
-								showPhoto={story.layout.kind !== 'image'}
+								showPhoto={story.layout.kind !== 'image' && story.layout.kind !== 'playlist'}
 								story={story}
 							/>
 						)}
@@ -133,34 +138,35 @@ function StoryBody({story, columnWidth, scrollTo}: StoryBodyProps): React.ReactN
 			</>
 		)
 	}
+	if (layout.kind === 'crossword') {
+		return (
+			<>
+				{/* PuzzleMe's player opens in the browser sheet, which keeps a half-solved puzzle's
+				    progress between visits. */}
+				<SiteLinkCard
+					icon="square.grid.3x3"
+					identifier={CROSSWORD_SOLVE_ID}
+					label="Solve the crossword"
+					prominent={true}
+					url={crosswordUrl(layout.puzzle)}
+				/>
+				<StoryBlocks columnWidth={columnWidth} story={story} />
+			</>
+		)
+	}
+	if (layout.kind === 'playlist') {
+		return <PlaylistView columnWidth={columnWidth} layout={layout} story={story} />
+	}
 
 	return (
 		<>
 			<StoryBlocks columnWidth={columnWidth} story={story} />
-			{/* Playlists, and artwork or comics with no image, come through the API with no body. */}
+			{/* Artwork or comics with no image come through the API with no body. */}
 			{story.blocks.length === 0 ? (
 				<SiteLinkCard icon="safari" label="Read on olafmessenger.com" url={story.link} />
 			) : null}
 		</>
 	)
-}
-
-type StoryBlocksProps = {story: MessStory; columnWidth: number}
-
-/** A story's blocks in reading order, returned side by side to land in the page's column. */
-function StoryBlocks({story, columnWidth}: StoryBlocksProps): React.ReactNode {
-	// The first paragraph opens the story, even when a photo comes before it.
-	let openingIndex = story.blocks.findIndex((block) => block.type === 'paragraph')
-	return story.blocks.map((block, index) => (
-		<StoryBlock
-			block={block}
-			columnWidth={columnWidth}
-			isOpening={index === openingIndex}
-			// oxlint-disable-next-line react/no-array-index-key -- blocks have no id; a story's body is fixed, so its order is its identity
-			key={index}
-			storyLink={story.link}
-		/>
-	))
 }
 
 const styles = StyleSheet.create({
