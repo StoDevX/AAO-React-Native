@@ -34,13 +34,8 @@ import type {Moment} from 'moment-timezone'
 import {splitCarousel, type PlaceTile} from '../lib/place-tiles'
 import {CARD_INSET} from '../../../components/place-card/card-style'
 import {MoreTileView, PlaceTileView, type TileStatus} from './place-tile'
+import {venueStatus} from './venue-status'
 import type {StackEntry} from '../lib/also-here'
-import {STATUS_TEXT} from '../../building-hours/hours-section'
-import {
-	contextualStatus,
-	getShortBuildingStatus,
-	hasDisplayableHours,
-} from '../../building-hours/lib'
 import {SectionHeading} from '../../../components/place-card/section-heading'
 
 const TILE_SPACING = 12
@@ -61,17 +56,9 @@ function tileKey(tile: PlaceTile, index: number): string {
 	return `${tile.kind}-${tile.label}-${tile.href ?? ''}-${index}`
 }
 
-/// A tile's live status, from its venue's hours; none for a tile with no
-/// venue, or a venue with no hours listed.
+/// A tile's live status, from its venue's hours.
 function statusOf(tile: PlaceTile, now: Moment | undefined): TileStatus | undefined {
-	let venue = tile.venue
-	if (!now || !venue || !hasDisplayableHours(venue.schedule ?? [])) {
-		return undefined
-	}
-	return {
-		text: contextualStatus(venue, now).long,
-		color: STATUS_TEXT[getShortBuildingStatus(venue, now)],
-	}
+	return venueStatus(tile.venue, now)
 }
 
 /// Pairs of tiles, one pair to each row of the More grid.

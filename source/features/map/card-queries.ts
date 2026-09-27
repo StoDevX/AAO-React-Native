@@ -1,5 +1,6 @@
 import {buildingsOptions} from '../building-hours/query'
 import type {Campus} from '../building-hours/types'
+import {fetchDirectories} from './directory/fetch'
 import {mapDataOptions} from './query'
 
 /// How long a card treats the feeds it reads as current. Every card, and every
@@ -21,4 +22,22 @@ export const cardVenuesOptions = (campus: Campus) => ({
 export const cardFeaturesOptions = (campus: Campus) => ({
 	...mapDataOptions(campus),
 	staleTime: CARD_STALE_TIME,
+})
+
+/// The building directories' cache key.
+export const directoryKeys = {
+	all: (campus: Campus) => ['building-directory', campus] as const,
+}
+
+/// Every building's directory, as a card reads it. St. Olaf's only: Carleton
+/// keeps no directory files.
+// oxlint-disable-next-line typescript/explicit-module-boundary-types
+export const cardDirectoryOptions = (campus: Campus) => ({
+	queryKey: directoryKeys.all(campus),
+	queryFn: ({signal}: {signal: AbortSignal}) => fetchDirectories(signal),
+	enabled: campus === 'stolaf',
+	staleTime: CARD_STALE_TIME,
+	// Offline, an online-only query pauses without calling its function, and
+	// the bundled copy -- the fallback inside it -- would never stand in.
+	networkMode: 'offlineFirst' as const,
 })
