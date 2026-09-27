@@ -411,6 +411,73 @@ struct MapScreen: Screen {
 		return self
 	}
 
+	/// Picks a category segment in the sheet's picker.
+	@discardableResult
+	func chooseCategory(_ label: String) -> Self {
+		let segment = app.buttons[label].firstMatch
+		XCTAssertTrue(segment.waitForExistence(timeout: 30), "The sheet should offer \(label)")
+		segment.tap()
+		XCTAssertTrue(segment.isSelected, "\(label) should be selected once tapped")
+		return self
+	}
+
+	/// Scrolls the sheet's list until `name`'s row sits just under the header,
+	/// and returns how far below the search field its top is. The field does
+	/// not scroll, so this distance is the list's scroll position as a row
+	/// sees it. Near the header, the row stays in view at the middle stop too.
+	func scrollListToReach(_ name: String) -> CGFloat {
+		let row = self.row(named: name)
+		var drags = 0
+		// Into the upper part of the screen, clear of the bottom edge, where a
+		// drag that starts on the row reliably takes.
+		let upper = app.frame.height * 0.6
+		for _ in 0..<8 where !(row.exists && row.isHittable && row.frame.minY < upper) {
+			app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.8))
+				.press(forDuration: 0.05, thenDragTo: app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)))
+			drags += 1
+		}
+		XCTAssertTrue(row.exists && row.isHittable, "Scrolling should reach \(name)")
+		// A row already on screen would leave nothing for a later check of the
+		// scroll position to catch.
+		XCTAssertGreaterThan(drags, 1, "\(name) should be more than a screen down the list")
+		// Slowly, and held at the end, so the list does not coast past.
+		let underHeader = searchField.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0))
+			.withOffset(CGVector(dx: 0, dy: 150))
+		row.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0))
+			.press(forDuration: 0.05, thenDragTo: underHeader, withVelocity: .slow, thenHoldForDuration: 0.5)
+		settle { row.frame.minY }
+		return row.frame.minY - searchField.frame.minY
+	}
+
+	/// Waits until `position` stops moving.
+	private func settle(_ position: () -> CGFloat) {
+		var previous = position()
+		for _ in 1...10 {
+			Thread.sleep(forTimeInterval: 0.3)
+			let now = position()
+			if abs(now - previous) < 0.5 { break }
+			previous = now
+		}
+	}
+
+	/// The list came back as it was left: `category` still picked, and
+	/// `name`'s row the same distance below the search field.
+	@discardableResult
+	func verifyListKeptItsPlace(category: String, row name: String, offset: CGFloat) -> Self {
+		settle { searchField.frame.minY }
+		capture("The list after closing the card")
+		XCTAssertTrue(
+			app.buttons[category].firstMatch.isSelected,
+			"\(category) should still be selected after closing a card")
+		let row = self.row(named: name)
+		XCTAssertTrue(row.waitForExistence(timeout: 10), "\(name) should still be listed")
+		let now = row.frame.minY - searchField.frame.minY
+		// The list shifts a few points as the sheet changes stop. A list that lost
+		// its place would put this row two screens away, not twenty points.
+		XCTAssertEqual(now, offset, accuracy: 20, "The list should keep its scroll position after closing a card")
+		return self
+	}
+
 	/// The map view. MapLibre publishes a single element for the whole map and
 	/// nothing per building -- a hierarchy dump from a failing run shows one
 	/// `Other` labelled "Map", valued `Zoom 16x.`, and no footprints -- so a

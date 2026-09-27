@@ -207,6 +207,12 @@ struct TestIdentifiers {
 		static let anOffice = "Registrar"
 		/// A St. Olaf building whose description runs well past five lines.
 		static let aBuildingWithALongAbout = "Holland Hall"
+		/// A category segment in the map sheet's picker, other than the one it
+		/// opens on, with a list long enough to scroll.
+		static let parkingCategory = "Parking"
+		/// A row two screens down `parkingCategory`, behind every Accessible
+		/// Parking space. St. Olaf can rename it.
+		static let aRowFarDownParking = "Alumni Hall Road"
 		/// Carleton's fullest card: a photo, an address, accessibility, nine
 		/// offices, and floors. Carleton can rename it.
 		static let aCarletonBuildingWithAPhoto = "Sayles-Hill Campus Center"
