@@ -2,6 +2,8 @@ name: Admissions
 category: Offices
 kind: office
 building: admissionsoffice
+links:
+  - {title: 'Admissions', url: 'https://wp.stolaf.edu/admissions/'}
 
 schedule:
   - title: Hours

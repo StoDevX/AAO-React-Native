@@ -2,6 +2,8 @@ name: Registrar
 category: Offices
 kind: office
 building: toh
+links:
+  - {title: 'Registrar', url: 'https://wp.stolaf.edu/registrar/'}
 
 schedule:
   - title: Hours

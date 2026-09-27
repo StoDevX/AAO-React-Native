@@ -1,13 +1,17 @@
-name: STORP
-subtitle: St. Olaf Outdoor Recreation Program
+name: Ole Expeditions Rental Center
+subtitle: Free outdoor gear rentals, formerly STORP
 category: Gym
 kind: space
 building: tostrudcenter
+links:
+  - {title: 'Ole Expeditions', url: 'https://wp.stolaf.edu/recreation/oleexpeditions/'}
 
 schedule:
   - title: Hours
     hours:
-      - {days: [Mo, Th], from: '4:00pm', to: '6:00pm'}
+      - {days: [Su, Mo, Tu, We, Th], from: '5:00pm', to: '9:00pm'}
+      - {days: [Fr], from: '5:00pm', to: '8:00pm'}
+      - {days: [Sa], from: '12:00pm', to: '3:00pm'}
 
 breakSchedule:
   fall: []

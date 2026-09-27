@@ -2,6 +2,8 @@ name: Events Management Office
 category: Offices
 kind: office
 building: bc
+links:
+  - {title: 'College Events', url: 'https://wp.stolaf.edu/conferences/contact-us/'}
 
 schedule:
   - title: Hours

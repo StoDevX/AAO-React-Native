@@ -2,13 +2,15 @@ name: Health Services
 category: Health and Wellness
 kind: office
 building: toh
+links:
+  - {title: 'Health Services', url: 'https://wp.stolaf.edu/health/'}
 
 schedule:
   - title: Hours
     closedForChapelTime: true
     hours:
-      - {days: [Mo, Tu, We, Th, Fr], from: '9:00am', to: '11:30am'}
-      - {days: [Mo, Tu, We, Th, Fr], from: '1:00pm', to: '4:00pm'}
+      - {days: [Mo, Tu, We, Th, Fr], from: '8:00am', to: '12:00pm'}
+      - {days: [Mo, Tu, We, Th, Fr], from: '1:00pm', to: '5:00pm'}
 
 breakSchedule:
   fall: []

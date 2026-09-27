@@ -4,13 +4,16 @@ image: disco
 category: Libraries
 kind: space
 building: rml
+links:
+  - {title: 'DiSCO', url: 'https://wp.stolaf.edu/lits/disco/'}
 
 schedule:
   - title: Hours
     hours:
-      - {days: [Mo, Tu, We, Th], from: '8:00am', to: '9:00pm'}
-      - {days: [Fr], from: '8:00am', to: '5:00pm'}
-      - {days: [Sa, Su], from: '12:00pm', to: '9:00pm'}
+      - {days: [Mo, Tu, We, Th], from: '3:00pm', to: '9:00pm'}
+      - {days: [Fr], from: '3:00pm', to: '6:00pm'}
+      - {days: [Sa], from: '12:00pm', to: '4:00pm'}
+      - {days: [Su], from: '12:00pm', to: '9:00pm'}
 
 breakSchedule:
   fall: []

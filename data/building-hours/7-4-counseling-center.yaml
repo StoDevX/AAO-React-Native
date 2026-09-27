@@ -2,6 +2,8 @@ name: Counseling Center
 category: Health and Wellness
 kind: office
 building: bc
+links:
+  - {title: 'Counseling Center', url: 'https://wp.stolaf.edu/counseling-center/'}
 
 schedule:
   - title: Hours
