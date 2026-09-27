@@ -52,8 +52,10 @@ struct MessIssueTileView: ExpoSwiftUI.View {
 	/// and the top tile's up to about 460, at three pixels a point.
 	private var photoPixels: CGFloat { isTop ? 1400 : 600 }
 
-	/// A photo that failed to load draws the tile as one with no photo.
-	private var hasPhoto: Bool { props.photoUrl != nil && !photoLoader.failed }
+	/// A tile with a photo keeps the photo's layout even when the photo fails to load, drawing the
+	/// placeholder in its place: the words that fill a photo-less tile below its fold are fetched
+	/// only for a lead story with no photo at all.
+	private var hasPhoto: Bool { props.photoUrl != nil }
 
 	var body: some View {
 		Button {
@@ -280,13 +282,17 @@ struct MessIssueTileView: ExpoSwiftUI.View {
 /// pixels across, so it is decoded off the main thread straight to the size the tile draws it at:
 /// a full-size decode on first draw stalls scrolling, and a grid of them holds far more memory
 /// than the screen shows. The shared URL cache is too small to keep most originals, so a tile
-/// built again fetches its photo again.
+/// built again fetches its photo again. A tile scrolled away and freed stops its load, so a fast
+/// scroll through the grid does not leave downloads and decodes running for photos nobody sees.
 @MainActor
 final class PhotoLoader: ObservableObject {
 	@Published private(set) var image: UIImage?
-	@Published private(set) var failed = false
 	private var url: URL?
 	private var task: Task<Void, Never>?
+
+	isolated deinit {
+		task?.cancel()
+	}
 
 	/// Load `next`, decoded no larger than `maxPixels` along its longer side.
 	func load(_ next: URL?, maxPixels: CGFloat) {
@@ -294,21 +300,25 @@ final class PhotoLoader: ObservableObject {
 		url = next
 		task?.cancel()
 		image = nil
-		failed = false
 		guard let next else { return }
 		task = Task { [weak self] in
-			do {
-				let (data, _) = try await URLSession.shared.data(from: next)
-				guard !Task.isCancelled else { return }
-				let decoded = await Task.detached(priority: .userInitiated) {
-					PhotoLoader.thumbnail(of: data, maxPixels: maxPixels)
-				}.value
-				guard !Task.isCancelled else { return }
-				guard let decoded else { throw URLError(.cannotDecodeContentData) }
-				self?.image = decoded
-			} catch {
-				if !Task.isCancelled { self?.failed = true }
+			// A photo that fails to load leaves the placeholder drawn.
+			guard let (data, _) = try? await URLSession.shared.data(from: next), !Task.isCancelled else {
+				return
 			}
+			// A detached task does not share its parent's cancellation, so it is passed on, and a
+			// decode not yet begun is skipped.
+			let decode = Task.detached(priority: .userInitiated) { () -> UIImage? in
+				guard !Task.isCancelled else { return nil }
+				return PhotoLoader.thumbnail(of: data, maxPixels: maxPixels)
+			}
+			let decoded = await withTaskCancellationHandler {
+				await decode.value
+			} onCancel: {
+				decode.cancel()
+			}
+			guard let decoded, !Task.isCancelled else { return }
+			self?.image = decoded
 		}
 	}
 

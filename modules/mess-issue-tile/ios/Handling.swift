@@ -42,6 +42,9 @@ struct PaperOutline: Shape {
 
 		func edge(from start: CGPoint, to end: CGPoint) -> [CGPoint] {
 			let length = hypot(end.x - start.x, end.y - start.y)
+			// A lazy stack can propose a zero-size sheet before its real one; an edge of no length has
+			// no direction to wander in.
+			guard length > 0 else { return [start] }
 			let count = max(Int(length / step), 1)
 			// Level with the edge, so the wander never cuts into the sheet's corners.
 			let normal = CGPoint(x: -(end.y - start.y) / length, y: (end.x - start.x) / length)
