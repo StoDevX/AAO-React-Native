@@ -63,11 +63,15 @@ struct MessIssueTileView: ExpoSwiftUI.View {
 		.onChange(of: props.photoUrl, initial: true) { photoLoader.load(props.photoUrl) }
 	}
 
+	/// How far along each edge a turned corner reaches: small enough to nick a headline's last
+	/// letter at most, not hide a word.
+	private var earSize: CGFloat { isTop ? 14 : 10 }
+
 	private var outline: PaperOutline {
 		PaperOutline(
 			seed: UInt32(truncatingIfNeeded: Int(props.sheet.edgeSeed)),
 			dogEar: props.sheet.dogEar,
-			earSize: isTop ? 22 : 14)
+			earSize: earSize)
 	}
 
 	/// The flat sheet with everything on it: paper, the page, stains, creases, a turned corner,
@@ -85,7 +89,7 @@ struct MessIssueTileView: ExpoSwiftUI.View {
 			.overlay(CreaseLayer(creases: props.sheet.creases, scheme: scheme))
 			.overlay(FoldShade(palette: palette))
 			.clipShape(outline)
-			.overlay(DogEarFlap(dogEar: props.sheet.dogEar, earSize: isTop ? 22 : 14, palette: palette))
+			.overlay(DogEarFlap(dogEar: props.sheet.dogEar, earSize: earSize, palette: palette))
 			.background(SheetEdges(palette: palette, outline: outline))
 	}
 
