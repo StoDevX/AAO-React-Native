@@ -196,6 +196,15 @@ struct TestIdentifiers {
 		/// More appears), and Links. Its feed lists its offices as departments.
 		/// St. Olaf can rename it.
 		static let aBuildingWithManyDepartments = "Tomson Hall"
+		/// The section listing what else is at a place. Mirrors the title in
+		/// source/features/map/card/also-here-section.tsx.
+		static let alsoHereSection = "Also at This Location"
+		/// A building with points inside it: The Cage, Stav Hall and more.
+		static let aBuildingWithPoints = "Buntrock Commons"
+		/// A point inside `aBuildingWithPoints`.
+		static let aPointInside = "The Cage"
+		/// An office in the Hours data, keyed to `aBuildingWithManyDepartments`.
+		static let anOffice = "Registrar"
 		/// A St. Olaf building whose description runs well past five lines.
 		static let aBuildingWithALongAbout = "Holland Hall"
 		/// Carleton's fullest card: a photo, an address, accessibility, nine

@@ -148,7 +148,10 @@ class ModuleMapTests: UITestCase {
 			.selectBuilding(named: name)
 			.expandCard()
 			.capture("Tomson Hall's card at the large stop")
-			.verifySectionOrder(["Hours", "About", "Good to Know", "Departments", "Links"], among: cardSections)
+			// Tomson's Hours offices with no department link of their own join
+			// Offices.
+			.verifySectionOrder(
+				["Hours", "About", "Good to Know", "Departments", "Offices", "Links"], among: cardSections)
 	}
 
 	func testMoreOpensEveryDepartmentInAGrid() throws {
@@ -228,5 +231,81 @@ class ModuleMapTests: UITestCase {
 			.verifyPhotoTileSquare()
 			.verifyPhotoOpensFullScreenTwice()
 			.verifySectionOrder(["About", "Good to Know", "Offices", "Floors", "Details"], among: cardSections)
+	}
+
+	/// A place's card lists what else is there, and each opens its own card in
+	/// a sheet over it, as Maps stacks place sheets.
+	func testAPlacesCardListsWhatElseIsThere() throws {
+		let name = TestIdentifiers.Map.aBuildingWithPoints
+		MapScreen(app: app)
+			.navigate()
+			.checkSheetPresented()
+			.focusSearch()
+			.typeIntoSearch(name)
+			.selectBuilding(named: name)
+			.expandCard()
+			.capture("Buntrock's card, with what else is there")
+			.verifySectionOrder(
+				[TestIdentifiers.Map.alsoHereSection, "About"],
+				among: [TestIdentifiers.Map.alsoHereSection, "About"])
+	}
+
+	func testATileOpensItsCardOverTheCardBeneath() throws {
+		let name = TestIdentifiers.Map.aBuildingWithPoints
+		let point = TestIdentifiers.Map.aPointInside
+		let screen = MapScreen(app: app)
+			.navigate()
+			.checkSheetPresented()
+			.focusSearch()
+			.typeIntoSearch(name)
+			.selectBuilding(named: name)
+			.openPlaceTile(named: point)
+		sleep(1)
+		screen
+			.capture("The Cage stacked over Buntrock")
+			.verifyTopCard(point)
+			.closeTopCard()
+		sleep(1)
+		screen
+			.capture("Back on Buntrock")
+			.verifyTopCard(name)
+	}
+
+	func testAnOfficeOpensItsOwnCard() throws {
+		let name = TestIdentifiers.Map.aBuildingWithManyDepartments
+		let office = TestIdentifiers.Map.anOffice
+		let screen = MapScreen(app: app)
+			.navigate()
+			.checkSheetPresented()
+			.focusSearch()
+			.typeIntoSearch(name)
+			.selectBuilding(named: name)
+			.expandCard()
+			.openPlaceTile(named: office)
+		sleep(1)
+		screen
+			.capture("The Registrar's card over Tomson Hall")
+			.verifyTopCard(office)
+			.verifyHoursStatus()
+	}
+
+	/// Tapping the map while cards are stacked starts afresh from the place
+	/// tapped, rather than leaving a sheet over the new card.
+	func testTappingTheMapStartsAfresh() throws {
+		let name = TestIdentifiers.Map.aBuildingWithPoints
+		let screen = MapScreen(app: app)
+			.navigate()
+			.checkSheetPresented()
+			.focusSearch()
+			.typeIntoSearch(name)
+			.selectBuilding(named: name)
+			.openPlaceTile(named: TestIdentifiers.Map.aPointInside)
+		sleep(1)
+		screen.tapAFootprint()
+		sleep(2)
+		screen.capture("After a footprint tap over a stacked sheet")
+		let closes = app.buttons.matching(identifier: TestIdentifiers.Map.cardCloseButton)
+			.allElementsBoundByIndex.filter { $0.isHittable }
+		XCTAssertEqual(closes.count, 1, "A tap on the map should leave one card, not a stack")
 	}
 }

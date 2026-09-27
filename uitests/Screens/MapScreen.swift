@@ -268,6 +268,48 @@ struct MapScreen: Screen {
 		return self
 	}
 
+	/// A place tile on the card, found by its name, which begins its label;
+	/// the card is scrolled a screen at a time until the tile can be tapped.
+	@discardableResult
+	func openPlaceTile(named name: String) -> Self {
+		let tile = app.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", name)).firstMatch
+		for _ in 0..<6 where !(tile.exists && tile.isHittable) {
+			app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.8))
+				.press(forDuration: 0.05, thenDragTo: app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)))
+		}
+		XCTAssertTrue(tile.waitForExistence(timeout: 10) && tile.isHittable, "The card should list \(name)")
+		tile.tap()
+		return self
+	}
+
+	/// The top card is `name`'s: only one card's close button can be tapped,
+	/// and `name` can be seen, as the header's title or, at the large stop,
+	/// the big title in its place. A title's label carries its subtitle after
+	/// the name, so it is matched by its start.
+	@discardableResult
+	func verifyTopCard(_ name: String) -> Self {
+		let named = app.descendants(matching: .any)
+			.matching(NSPredicate(format: "label BEGINSWITH %@", name))
+		XCTAssertTrue(named.firstMatch.waitForExistence(timeout: 20), "\(name)'s card should be up")
+		let visible = named.allElementsBoundByIndex.filter { $0.isHittable }
+		let closes = app.buttons.matching(identifier: TestIdentifiers.Map.cardCloseButton)
+			.allElementsBoundByIndex.filter { $0.isHittable }
+		XCTContext.runActivity(named: "\(visible.count) visible \(name), \(closes.count) close buttons") { _ in }
+		XCTAssertFalse(visible.isEmpty, "\(name)'s card should be in view")
+		XCTAssertEqual(closes.count, 1, "Only the top card's close button should be tappable")
+		return self
+	}
+
+	/// Closes the top card, which returns to the card beneath it.
+	@discardableResult
+	func closeTopCard() -> Self {
+		let closes = app.buttons.matching(identifier: TestIdentifiers.Map.cardCloseButton)
+			.allElementsBoundByIndex.filter { $0.isHittable }
+		XCTAssertEqual(closes.count, 1, "Only the top card's close button should be tappable")
+		closes.first?.tap()
+		return self
+	}
+
 	/// A move is a change of at least a hundred points: the collapsed stop
 	/// renders at about 65pt, the middle stop at `MAP_MIDDLE_FRACTION` of
 	/// the screen, and large at nearly all of it, so anything smaller is a
@@ -648,7 +690,9 @@ struct MapScreen: Screen {
 		let grid = app.descendants(matching: .any)[TestIdentifiers.Map.departmentsGrid].firstMatch
 		XCTAssertTrue(grid.waitForExistence(timeout: 10), "More should open the grid")
 		capture("Departments grid")
-		let tiles = grid.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", "Open ")).count
+		// Every tile is a button: a web page's reads "Open …", and one that
+		// opens a place's card reads its name and status.
+		let tiles = grid.buttons.count
 		XCTAssertEqual(tiles, count, "The grid should hold every department")
 		return self
 	}
