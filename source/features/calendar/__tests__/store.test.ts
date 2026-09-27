@@ -1,6 +1,10 @@
+import {track} from '../../telemetry/track'
 import {migrate, useCalendarFilterStore} from '../store'
 
+jest.mock('../../telemetry/track', () => ({track: jest.fn()}))
+
 beforeEach(() => {
+	jest.clearAllMocks()
 	useCalendarFilterStore.setState({filter: null})
 })
 
@@ -63,5 +67,28 @@ describe('mode', () => {
 		useCalendarFilterStore.getState().selectFilter({axis: 'category', value: 'Music'})
 		useCalendarFilterStore.getState().selectMode('upcoming')
 		expect(useCalendarFilterStore.getState().filter).toEqual({axis: 'category', value: 'Music'})
+	})
+})
+
+describe('counting filter use', () => {
+	test('counts a filter by its axis, never its value', () => {
+		useCalendarFilterStore.getState().selectFilter({axis: 'organization', value: 'Wellness Center'})
+
+		expect(track).toHaveBeenCalledWith({
+			name: 'calendar.filter.apply',
+			attributes: {axis: 'organization'},
+		})
+	})
+
+	test('counts clearing the filter as none', () => {
+		useCalendarFilterStore.getState().selectFilter(null)
+
+		expect(track).toHaveBeenCalledWith({name: 'calendar.filter.apply', attributes: {axis: 'none'}})
+	})
+
+	test('does not count a mode change', () => {
+		useCalendarFilterStore.getState().selectMode('upcoming')
+
+		expect(track).not.toHaveBeenCalled()
 	})
 })
