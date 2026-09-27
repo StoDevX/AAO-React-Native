@@ -3,8 +3,10 @@ import {Button, HStack, Image, Section, Spacer, Text} from '@expo/ui/swift-ui'
 import {
 	accessibilityLabel,
 	buttonStyle,
+	contentShape,
 	foregroundStyle,
 	imageScale,
+	shapes,
 } from '@expo/ui/swift-ui/modifiers'
 import {openUrl} from '@frogpond/open-url'
 
@@ -20,10 +22,6 @@ export function LinkListSection({
 	items,
 }: {
 	title: string
-	// The server is not schema-validated at the boundary, so a record that
-	// omits the field arrives as undefined rather than as an empty array.
-	// St. Olaf serves these as {label, href} objects where Carleton serves
-	// "Label <url>" strings, hence the union -- normalizeLinks reconciles them.
 	items: Array<LabelLinkString | LabelLink> | undefined
 }): React.ReactNode {
 	let links = normalizeLinks(items)
@@ -52,11 +50,9 @@ export function LinkListSection({
 						modifiers={[...row, buttonStyle('plain'), accessibilityLabel(`Open ${label}`)]}
 						onPress={() => openUrl(href)}
 					>
-						<HStack>
+						<HStack modifiers={[contentShape(shapes.rectangle())]}>
 							<Text>{label}</Text>
 							<Spacer />
-							{/* Small, so the arrow is no taller than the label and the
-							    row keeps Maps' 50pt. */}
 							<Image
 								modifiers={[
 									imageScale('small'),
