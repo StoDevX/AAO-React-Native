@@ -61,6 +61,9 @@ export type BuildingType = {
 	noticeMessage?: string
 	image?: string
 	category: string
+	/** False keeps the venue out of the Hours list's categories; it is still
+	 * found by search and listed on the All spaces screen. Absent means listed. */
+	listed?: boolean
 	links?: BuildingLinkType[]
 	schedule: NamedBuildingScheduleType[]
 	breakSchedule?: BreakScheduleContainerType

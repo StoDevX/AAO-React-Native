@@ -40,6 +40,18 @@ async function fetchWithTimeout(href: string, signal: AbortSignal): Promise<Resp
 	}
 }
 
+/// An absolute source that answered with an error status, carrying the status so a caller can
+/// tell one kind of refusal from another.
+export class SourceFetchError extends Error {
+	constructor(
+		message: string,
+		readonly status: number,
+	) {
+		super(message)
+		this.name = 'SourceFetchError'
+	}
+}
+
 /// Fetches and parses the body of a resolved source, dispatching on whether
 /// its href is absolute. A relative href goes through `client`, which
 /// resolves against the configured api root (honouring the Settings
@@ -63,7 +75,7 @@ export async function fetchSourceBody(
 
 	let response = await fetchWithTimeout(href, signal)
 	if (!response.ok) {
-		throw new Error(`${label} fetch failed: ${response.status}`)
+		throw new SourceFetchError(`${label} fetch failed: ${response.status}`, response.status)
 	}
 
 	return format === 'text' ? response.text() : response.json()

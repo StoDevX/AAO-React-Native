@@ -6,6 +6,10 @@ import * as c from '@frogpond/colors'
 import type {Moment} from 'moment-timezone'
 import type {BuildingType} from '../types'
 import {BuildingListRow} from './building-list-row'
+import {DisclosureRow} from '../../../components/rows'
+
+/** Names the All spaces row for UI tests. */
+export const ALL_SPACES_ROW_ID = 'hours-all-spaces'
 
 type SectionData = {
 	title: string
@@ -24,6 +28,9 @@ type Props = {
 	 * a search with no matches from the genuine no-data case, which need different
 	 * wording. */
 	searchQuery: string
+	/** Given, the list ends in a row opening the All spaces screen, where the
+	 * venues left out of these sections are. */
+	onShowAllSpaces?: () => void
 }
 
 export const BuildingList = React.memo(function BuildingList({
@@ -35,6 +42,7 @@ export const BuildingList = React.memo(function BuildingList({
 	onRefresh,
 	isLoading,
 	searchQuery,
+	onShowAllSpaces,
 }: Props): React.ReactNode {
 	let isEmpty = sections.every((s) => s.data.length === 0)
 	// Trimmed to match `filterBuildings`, which treats a blank query as no
@@ -80,6 +88,15 @@ export const BuildingList = React.memo(function BuildingList({
 							</Section>
 						))
 				)}
+				{onShowAllSpaces ? (
+					<Section>
+						<DisclosureRow
+							identifier={ALL_SPACES_ROW_ID}
+							onPress={onShowAllSpaces}
+							title="All spaces"
+						/>
+					</Section>
+				) : null}
 			</List>
 		</Host>
 	)

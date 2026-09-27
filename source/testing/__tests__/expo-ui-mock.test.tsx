@@ -125,21 +125,31 @@ describe('expo-ui-mock', () => {
 			expect(appeared).toHaveBeenCalledTimes(1)
 		})
 
-		test('fires again when its id changes, since SwiftUI builds a new view for a new id', async () => {
+		test('fires again when an id after it changes, since SwiftUI builds a new view for a new id', async () => {
+			let appeared = jest.fn()
+			let view = await render(
+				<VStack modifiers={[onAppear(appeared), id('gemini')]}>{null}</VStack>,
+			)
+			await view.rerender(<VStack modifiers={[onAppear(appeared), id('leo')]}>{null}</VStack>)
+			expect(appeared).toHaveBeenCalledTimes(2)
+		})
+
+		// On a simulator, the Mess issue list's end row never appeared again with its id first.
+		test('does not fire again when an id before it changes, which rebuilds only the view inside', async () => {
 			let appeared = jest.fn()
 			let view = await render(
 				<VStack modifiers={[id('gemini'), onAppear(appeared)]}>{null}</VStack>,
 			)
 			await view.rerender(<VStack modifiers={[id('leo'), onAppear(appeared)]}>{null}</VStack>)
-			expect(appeared).toHaveBeenCalledTimes(2)
+			expect(appeared).toHaveBeenCalledTimes(1)
 		})
 
 		test('does not fire again when it re-renders with the same id', async () => {
 			let appeared = jest.fn()
 			let view = await render(
-				<VStack modifiers={[id('gemini'), onAppear(appeared)]}>{null}</VStack>,
+				<VStack modifiers={[onAppear(appeared), id('gemini')]}>{null}</VStack>,
 			)
-			await view.rerender(<VStack modifiers={[id('gemini'), onAppear(appeared)]}>{null}</VStack>)
+			await view.rerender(<VStack modifiers={[onAppear(appeared), id('gemini')]}>{null}</VStack>)
 			expect(appeared).toHaveBeenCalledTimes(1)
 		})
 	})

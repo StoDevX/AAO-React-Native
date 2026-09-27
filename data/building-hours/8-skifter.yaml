@@ -1,6 +1,7 @@
 name: Skifter Hall
 image: skifter-studioa
 category: Academia
+listed: false
 building: skh
 
 schedule:

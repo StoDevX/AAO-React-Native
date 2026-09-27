@@ -1,5 +1,5 @@
 import {setApiRoot} from '@frogpond/api'
-import {fetchSourceBody, isAbsoluteHref} from '../fetch-source'
+import {fetchSourceBody, isAbsoluteHref, SourceFetchError} from '../fetch-source'
 
 describe('isAbsoluteHref', () => {
 	test('an absolute href has a scheme', () => {
@@ -53,6 +53,24 @@ describe('fetchSourceBody', () => {
 
 		expect(body).toEqual({ok: true})
 		expect(fetchMock).toHaveBeenCalledTimes(1)
+	})
+
+	test('an absolute href answered with an error status throws, carrying the status', async () => {
+		global.fetch = jest.fn(() =>
+			Promise.resolve(new Response('{"code":"rest_post_invalid_page_number"}', {status: 400})),
+		) as unknown as typeof fetch
+
+		let failure = fetchSourceBody(
+			'https://olafmessenger.com/wp-json/wp/v2/posts?page=54',
+			new AbortController().signal,
+			'Olaf Messenger issues',
+		)
+
+		await expect(failure).rejects.toBeInstanceOf(SourceFetchError)
+		await expect(failure).rejects.toMatchObject({
+			status: 400,
+			message: 'Olaf Messenger issues fetch failed: 400',
+		})
 	})
 
 	// This app's `AbortSignal` comes from react-native's `abort-controller`

@@ -32,6 +32,9 @@ describe('seriesKey', () => {
 		['Mouse friends episode 2: Mary! Gold!', 'mouse friends'],
 		['Mouse Friends Episode One: “I’m Lucky to Bicker With You”', 'mouse friends'],
 		['Coloring Page: flying into summer', 'coloring page'],
+		['Microfiction Corner: The Dummy', 'microfiction corner'],
+		['Microfiction corner: Quarters for Flowers', 'microfiction corner'],
+		['The Aeneid Reboot: Chapter 1', 'the aeneid reboot'],
 	])('reads %s as %s', (title, key) => {
 		expect(seriesKey(title)).toBe(key)
 	})

@@ -3,6 +3,10 @@ import {parseCampus, useGroupedBuildings} from '../../../source/features/buildin
 import {BuildingType, Campus} from '../../../source/features/building-hours/types'
 import {BuildingList} from '../../../source/features/building-hours/list'
 import {filterBuildings} from '../../../source/features/building-hours/lib'
+import {
+	hasUnlisted,
+	listedSections,
+} from '../../../source/features/building-hours/lib/listed-sections'
 import {SearchBar} from '../../../source/components/search-bar'
 import {useAppDispatch, useAppSelector} from '../../../source/redux/hooks'
 import {
@@ -49,7 +53,13 @@ function HoursView({campus}: Props): React.ReactNode {
 	let [query, setQuery] = React.useState('')
 	let searchQuery = useDebounce(query, 200)
 
-	let sections = React.useMemo(() => filterBuildings(data, searchQuery), [data, searchQuery])
+	let sections = React.useMemo(
+		() => filterBuildings(listedSections(data, searchQuery), searchQuery),
+		[data, searchQuery],
+	)
+	// A search already reaches every venue, so the way to the rest is offered
+	// only when nothing is typed, and only when something is left out.
+	let offerAllSpaces = hasUnlisted(data) && !searchQuery.trim()
 
 	let onToggleFavorite = React.useCallback(
 		(building: BuildingType) => dispatch(toggleFavoriteBuilding({campus, name: building.name})),
@@ -62,6 +72,11 @@ function HoursView({campus}: Props): React.ReactNode {
 				pathname: '/Hours/detail/[name]',
 				params: {name: building.name, campus},
 			}),
+		[campus, router],
+	)
+
+	let onShowAllSpaces = React.useCallback(
+		() => router.navigate({pathname: '/Hours/all-spaces', params: {campus}}),
 		[campus, router],
 	)
 
@@ -130,6 +145,7 @@ function HoursView({campus}: Props): React.ReactNode {
 				now={now}
 				onRefresh={refetch}
 				onSelect={onSelect}
+				onShowAllSpaces={offerAllSpaces ? onShowAllSpaces : undefined}
 				onToggleFavorite={onToggleFavorite}
 				searchQuery={searchQuery}
 				sections={sections}

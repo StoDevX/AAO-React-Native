@@ -1,4 +1,4 @@
-export {fetchSourceBody, isAbsoluteHref} from './fetch-source'
+export {fetchSourceBody, isAbsoluteHref, SourceFetchError} from './fetch-source'
 export {fetchManifest, manifestOptions, resolveSource, resolveSources} from './resolve'
 export {
 	ID_PROPERTY,

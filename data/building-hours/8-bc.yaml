@@ -1,6 +1,7 @@
 name: Buntrock Commons
 image: buntrock
 category: Academia
+listed: false
 building: bc
 
 schedule:
