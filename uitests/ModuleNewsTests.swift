@@ -8,7 +8,7 @@ class ModuleNewsTests: UITestCase {
 			.verifyByIssueShowsTheGrid()
 	}
 
-	func testOlafMessengerLatestListsStoriesWithAFilter() throws {
+	func testOlafMessengerLatestOffersItsSections() throws {
 		MessFrontPage(app: app)
 			.navigate()
 			.verifyLatestListsStoriesWithSections()
