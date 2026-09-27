@@ -267,6 +267,63 @@ export function addTestableToScheme(
 	return scheme.replace('</Testables>', `${testable}      </Testables>`)
 }
 
+/**
+ * The scheme's test plan, which exists to turn off xcodebuild's diagnostic
+ * collection. Left on, it spends about ten minutes gathering simulator
+ * diagnostics after the last test and prints nothing while it does, so every
+ * run that forgets `-collect-test-diagnostics never` looks hung. The flag still
+ * wins over the plan, so `-collect-test-diagnostics on-failure` turns it back on.
+ *
+ * Apple does not document the option. Xcode 27 reads it into the .xctestrun as
+ * `DiagnosticCollectionPolicy`, and rejects the whole plan as unreadable for
+ * any value other than `Never`, `Always` or leaving it out.
+ */
+export function testPlanFor({name, identifier, container}: SchemeOptions): string {
+	let plan = {
+		configurations: [
+			{
+				// Fixed, so that prebuild writes the same file every time.
+				id: '5B3F2E1A-0C4D-4B7E-9A61-2D8F3C7E1B05',
+				name: 'Default',
+				options: {},
+			},
+		],
+		defaultOptions: {
+			diagnosticCollectionPolicy: 'Never',
+		},
+		testTargets: [
+			{
+				target: {
+					containerPath: `container:${container}`,
+					identifier,
+					name,
+				},
+			},
+		],
+		version: 1,
+	}
+	return `${JSON.stringify(plan, null, 2)}\n`
+}
+
+/** Make `planFile`, beside the project, the scheme's default test plan. */
+export function addTestPlanToScheme(scheme: string, planFile: string): string {
+	if (scheme.includes('<TestPlans>')) {
+		return scheme
+	}
+
+	require_(scheme, '<Testables>', 'the scheme test action')
+
+	let plans = `<TestPlans>
+         <TestPlanReference
+            reference = "container:${planFile}"
+            default = "YES">
+         </TestPlanReference>
+      </TestPlans>
+      `
+
+	return scheme.replace('<Testables>', `${plans}<Testables>`)
+}
+
 const withXcuitestTarget: ConfigPlugin = (config) => {
 	let withPodfile = withDangerousMod(config, [
 		'ios',
@@ -293,13 +350,19 @@ const withXcuitestTarget: ConfigPlugin = (config) => {
 			'xcshareddata/xcschemes',
 			`${projectName as string}.xcscheme`,
 		)
+		let testable = {
+			name: UITEST_TARGET,
+			identifier: mod.modResults.findTargetKey(UITEST_TARGET) as string,
+			container: `${projectName as string}.xcodeproj`,
+		}
+		let planFile = `${projectName as string}.xctestplan`
+		writeFileSync(join(platformProjectRoot, planFile), testPlanFor(testable))
 		writeFileSync(
 			schemePath,
-			addTestableToScheme(readFileSync(schemePath, 'utf8'), {
-				name: UITEST_TARGET,
-				identifier: mod.modResults.findTargetKey(UITEST_TARGET) as string,
-				container: `${projectName as string}.xcodeproj`,
-			}),
+			addTestPlanToScheme(
+				addTestableToScheme(readFileSync(schemePath, 'utf8'), testable),
+				planFile,
+			),
 		)
 
 		return mod

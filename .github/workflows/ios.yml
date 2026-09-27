@@ -579,9 +579,10 @@ jobs:
           # still fails the step. 2>&1 sends failures through the formatter
           # rather than letting them interleave raw.
           #
-          # Left to itself, xcodebuild spends about ten minutes gathering
-          # simulator diagnostics after the last test -- in every shard, passing
-          # or not -- and nothing reads them unless someone asked for a debug run.
+          # Gathering simulator diagnostics takes about ten minutes after the
+          # last test, and nothing reads them unless someone asked for a debug
+          # run. The test plan already turns them off; the flag says so here too,
+          # and turns them on for a debug run.
           cat > "$RUNNER_TEMP/run-uitests.sh" <<'SCRIPT'
           set -o pipefail
           NSUnbufferedIO=YES xcodebuild test-without-building \
