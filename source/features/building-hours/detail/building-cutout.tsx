@@ -37,7 +37,7 @@ type Props = {
  * tap to do.
  *
  * Renders `null` when there is nothing to frame, which `cutoutBounds` signals
- * by returning `undefined`.
+ * by returning `undefined`, and until `width` is known.
  */
 export function BuildingCutout({campus, feature, width}: Props): React.ReactNode {
 	// Framed on the same geometry the layers below draw, so the two cannot
@@ -46,6 +46,13 @@ export function BuildingCutout({campus, feature, width}: Props): React.ReactNode
 	// its own.
 	let bounds = cutoutBounds(feature)
 	if (!bounds) {
+		return null
+	}
+
+	// MapLibre fits the camera to `bounds` once, on the map's first layout, and
+	// never again. Mounted before its row reports a width, the map fits the
+	// building into zero points and stays at zoom 0 -- a map of the world.
+	if (width <= 0) {
 		return null
 	}
 
