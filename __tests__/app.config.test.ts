@@ -125,11 +125,13 @@ describe('app.config variants', () => {
 })
 
 describe('app.config calendar access', () => {
-	// Adding an event goes through the system editor, which needs no access.
-	// expo-calendar's config plugin adds its usage strings even when unlisted,
-	// so this reads the Info.plist Expo actually resolves -- plugins included
-	// -- rather than the keys app.config.ts writes itself.
-	it('ships no calendar or reminders usage string', () => {
+	// Adding an event goes through the system editor, which needs no access,
+	// but expo-calendar links EventKit and App Store Connect rejects an upload
+	// that links it without a calendar usage string (ITMS-90683). Its config
+	// plugin adds usage strings even when unlisted, so this reads the
+	// Info.plist Expo actually resolves -- plugins included -- rather than the
+	// keys app.config.ts writes itself.
+	it('ships the calendar usage string, and no reminders one', () => {
 		let root = path.join(__dirname, '..')
 		let env = {...process.env}
 		delete env.APP_VARIANT
@@ -141,9 +143,11 @@ describe('app.config calendar access', () => {
 		)
 		let infoPlist = (JSON.parse(output) as ExpoConfig).ios?.infoPlist ?? {}
 
-		expect(Object.keys(infoPlist).filter((key) => /^NS(Calendars|Reminders)/u.test(key))).toEqual(
-			[],
-		)
+		expect(
+			Object.keys(infoPlist)
+				.filter((key) => /^NS(Calendars|Reminders)/u.test(key))
+				.sort(),
+		).toEqual(['NSCalendarsFullAccessUsageDescription', 'NSCalendarsUsageDescription'])
 	}, 30_000)
 })
 

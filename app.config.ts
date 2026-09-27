@@ -234,9 +234,18 @@ const config: ExpoConfig = {
 			},
 		],
 		// Adding an event goes through the system editor, which needs no
-		// calendar access. The plugin applies itself even when unlisted and adds
-		// its usage strings; `false` removes each one.
-		['expo-calendar', {calendarPermission: false, remindersPermission: false}],
+		// calendar access, but the module links EventKit, and App Store Connect
+		// rejects an upload that does so without a calendar usage string
+		// (ITMS-90683). The plugin applies itself even when unlisted and adds
+		// its usage strings; `false` removes one, so reminders stay out.
+		[
+			'expo-calendar',
+			{
+				calendarPermission:
+					'We use your calendar to add events to your calendar so that you remember what you wanted to attend.',
+				remindersPermission: false,
+			},
+		],
 		// Adds the MapLibre SDK to the generated project. On iOS that is a
 		// Swift Package pulling a prebuilt MapLibre.xcframework from
 		// maplibre-gl-native-distribution -- no pod source build, and no
