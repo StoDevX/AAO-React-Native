@@ -3,7 +3,7 @@ import {useWindowDimensions} from 'react-native'
 import {useRouter} from 'expo-router'
 import {Picker, Text, VStack} from '@expo/ui/swift-ui'
 import {accessibilityIdentifier, padding, pickerStyle, tag} from '@expo/ui/swift-ui/modifiers'
-import {useQueryClient, type InfiniteData} from '@tanstack/react-query'
+import {useQuery, useQueryClient, type InfiniteData} from '@tanstack/react-query'
 import {firstPagesOf} from '../../lib/infinite-data'
 import {NewsPicker} from '../news/news-picker'
 import {OLAF_MESSENGER} from '../news/sources'
@@ -16,7 +16,9 @@ import {MAIN_SECTIONS} from './lib/posts'
 import {PaperNameTitle} from './masthead'
 import {MessPage, PAGE_MARGIN} from './mess-page'
 import {PageLoading, PageMessage, PageNotice} from './page-notice'
-import type {LightPost} from './types'
+import {messFeedOptions} from './query'
+import {StoryRows} from './story-list'
+import type {LightPost, MessIssue} from './types'
 import {useMessIssues} from './use-mess-issues'
 
 /** Names the By Issue / Latest switch, for a UI test. */
@@ -53,21 +55,39 @@ function ByIssuePage(): React.ReactNode {
 	let router = useRouter()
 	let {width, height} = useWindowDimensions()
 	let {issues, query} = useMessIssues()
+	// Kept the same across renders, so the grid's memoized tiles are not all drawn again.
+	let open = React.useCallback(
+		(issue: MessIssue) => router.navigate({pathname: '/Messenger/issue', params: {key: issue.key}}),
+		[router],
+	)
 	if (issues && issues.length > 0) {
-		return (
-			<IssueGrid
-				issues={issues}
-				landscape={width > height}
-				onOpen={(issue) =>
-					router.navigate({pathname: '/Messenger/issue', params: {key: issue.key}})
-				}
-				query={query}
-			/>
-		)
+		return <IssueGrid issues={issues} landscape={width > height} onOpen={open} query={query} />
 	}
 	if (issues) return <PageMessage text="The Mess has no issues yet." />
-	if (query.isError) return <PageNotice error={query.error} onRetry={() => query.refetch()} />
-	return <PageLoading paused={query.fetchStatus === 'paused'} />
+	if (query.isError) {
+		return (
+			<>
+				<PageNotice error={query.error} onRetry={() => query.refetch()} />
+				<SavedLatestStories />
+			</>
+		)
+	}
+	let paused = query.fetchStatus === 'paused'
+	return (
+		<>
+			<PageLoading paused={paused} />
+			{paused ? <SavedLatestStories /> : null}
+		</>
+	)
+}
+
+/**
+ * Latest's stories as saved from an earlier visit, under By Issue's notice when its issue list
+ * cannot load, so an offline reader still has something to read. Nothing is fetched for them.
+ */
+function SavedLatestStories(): React.ReactNode {
+	let feed = useQuery({...messFeedOptions, enabled: false})
+	return feed.data ? <StoryRows stories={feed.data} /> : null
 }
 
 /**

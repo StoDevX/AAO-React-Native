@@ -294,6 +294,24 @@ describe('FrontPageScreen', () => {
 		expect(screen.getByText('No connection. This page loads when you’re back online.')).toBeTruthy()
 	})
 
+	test('offline with no issues cached, shows the saved latest stories under the notice', async () => {
+		queryClient.setQueryData(messKeys.feed, ISSUE_STORIES)
+		onlineManager.setOnline(false)
+		await renderScreen()
+
+		expect(screen.getByText('No connection. This page loads when you’re back online.')).toBeTruthy()
+		expect(screen.getByRole('button', {name: /^Student workers deliver petition,/u})).toBeTruthy()
+	})
+
+	test('when the issue list fails, offers Try Again over the saved latest stories', async () => {
+		queryClient.setQueryData(messKeys.feed, ISSUE_STORIES)
+		serve(() => Promise.reject(new Error('offline')))
+		await renderScreen()
+
+		expect(await screen.findByRole('button', {name: 'Try Again'})).toBeTruthy()
+		expect(screen.getByRole('button', {name: /^Student workers deliver petition,/u})).toBeTruthy()
+	})
+
 	test('shows Try Again when the issue list fails', async () => {
 		serve(() => Promise.reject(new Error('offline')))
 		await renderScreen()
