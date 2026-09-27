@@ -1,4 +1,6 @@
 import type {DogEar, SheetShape, StainMark} from '@frogpond/mess-issue-tile'
+import {z} from 'zod'
+import {parseBlocks} from './blocks'
 import {issueDate} from './issues'
 import type {Block, MessIssue, MessStory, Run} from '../types'
 
@@ -153,9 +155,23 @@ function blockTexts(block: Block): string[] {
 	}
 }
 
+const textsOf = (blocks: Block[]): string[] =>
+	blocks.flatMap(blockTexts).filter((text) => text.length > 0)
+
 /** The lead story's words for the top tile's columns: its paragraphs, quotes and list items. */
 export function leadParagraphs(story: MessStory | undefined): string[] {
-	return (story?.blocks ?? []).flatMap(blockTexts).filter((text) => text.length > 0)
+	return textsOf(story?.blocks ?? [])
+}
+
+const BodySchema = z.object({content: z.object({rendered: z.string()})})
+
+/**
+ * A post's words from `posts/{id}?_fields=content`, as `leadParagraphs` reads a full story's:
+ * a grid tile with no photo sets them under its fold. A body it cannot read has none.
+ */
+export function bodyParagraphs(body: unknown): string[] {
+	let post = BodySchema.safeParse(body)
+	return post.success ? textsOf(parseBlocks(post.data.content.rendered)) : []
 }
 
 /** What VoiceOver reads for a tile: its date, whether it is a special edition, its headline, and the reading. */

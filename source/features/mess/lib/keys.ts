@@ -13,6 +13,8 @@ export const messKeys = {
 	profile: (staffId: number) => ['mess', 'profile', staffId] as const,
 	categories: ['mess', 'categories'] as const,
 	story: (id: number) => ['mess', 'story', id] as const,
+	/** A story's words alone, for a grid tile with no photo */
+	leadText: (id: number) => ['mess', 'lead-text', id] as const,
 	category: (categoryId: number) => ['mess', 'category', categoryId] as const,
 	series: (storyId: number) => ['mess', 'series', storyId] as const,
 	playlistPage: (storyId: number) => ['mess', 'playlist-page', storyId] as const,

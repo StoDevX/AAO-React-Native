@@ -60,7 +60,11 @@ function issueDay(day: string, newestId: number, first: Partial<LightPost> = {})
 
 const POSTS = [
 	...issueDay('2026-05-12', 25, {title: 'Letter from the editors'}),
-	...issueDay('2026-04-29', 20, {title: 'Hunger Free Campus grant'}),
+	...issueDay('2026-04-29', 20, {
+		title: 'Hunger Free Campus grant',
+		photo: 1,
+		photoUrl: 'https://olafmessenger.com/grant.jpg',
+	}),
 	...issueDay('2026-03-25', 15),
 	...issueDay('2025-12-03', 10),
 ]
@@ -101,6 +105,10 @@ function springPage(href: string): unknown {
 	return PAGES[page - 1]
 }
 
+/** The post hrefs fetched, leaving out the category tree. */
+const postHrefs = () =>
+	mockBody.mock.calls.map((call) => call[0]).filter((href) => !href.includes('/categories'))
+
 /** How many tiles are drawn, the top tile's included. */
 const tilesDrawn = () =>
 	screen.queryAllByTestId(ISSUE_TILE_ID).length + screen.queryAllByTestId(TOP_TILE_ID).length
@@ -112,6 +120,8 @@ beforeEach(() => {
 	queryClient = new QueryClient({defaultOptions: {queries: {staleTime: Infinity, retry: false}}})
 	onOpen = jest.fn()
 	useMessStore.setState({openedStories: [], stainKind: 'coffee'})
+	// A tile with no photo asks for its lead story's words; unless a test says otherwise, it has none.
+	serve(() => ({content: {rendered: ''}}))
 })
 
 afterEach(() => {
@@ -128,19 +138,23 @@ function Grid({landscape}: {landscape: boolean}): React.ReactNode {
 	) : null
 }
 
-/** The grid over the four issues, with the newest issue's stories cached as `stories` says. */
-function renderGrid({
+/**
+ * The grid over the four issues, with the newest issue's stories cached as `stories` says, once
+ * the photo-less tiles have their words. With no stories cached the fetches are left in flight.
+ */
+async function renderGrid({
 	landscape = false,
 	stories = [LEAD],
-}: {landscape?: boolean; stories?: MessStory[] | null} = {}) {
+}: {landscape?: boolean; stories?: MessStory[] | null} = {}): Promise<void> {
 	queryClient.setQueryData(messKeys.issues, {pages: [POSTS], pageParams: [1]})
 	let top = ISSUES[0] as MessIssue
 	if (stories) queryClient.setQueryData(messKeys.issue(top), stories)
-	return render(
+	await render(
 		<QueryClientProvider client={queryClient}>
 			<Grid landscape={landscape} />
 		</QueryClientProvider>,
 	)
+	if (stories) await waitForQueriesToSettle(queryClient)
 }
 
 describe('IssueGrid', () => {
@@ -188,6 +202,27 @@ describe('IssueGrid', () => {
 			name: 'April 29, 2026, Hunger Free Campus grant, 4 of 5 stories read',
 		})
 		expect(tile.props.accessibilityValue.text).toBe('grid, 3 tea, 0 paragraphs')
+	})
+
+	test("sets a tile with no photo with its lead story's words, below its fold", async () => {
+		serve((href) =>
+			href.includes('/posts/15?_fields=content')
+				? {content: {rendered: '<p>One.</p><p>Two.</p><p>Three.</p>'}}
+				: {content: {rendered: ''}},
+		)
+		await renderGrid()
+
+		let march = screen.getByRole('button', {name: /^March 25, 2026/u})
+		expect(march.props.accessibilityValue.text).toBe('grid, 0 coffee, 3 paragraphs')
+	})
+
+	test('asks for no words for a tile with a photo', async () => {
+		await renderGrid()
+
+		expect(postHrefs().filter((href) => href.includes('_fields=content'))).toStrictEqual([
+			expect.stringContaining('/posts/15?_fields=content'),
+			expect.stringContaining('/posts/10?_fields=content'),
+		])
 	})
 
 	test('opens the issue a tile shows', async () => {

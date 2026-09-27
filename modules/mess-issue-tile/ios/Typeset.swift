@@ -66,6 +66,8 @@ struct ColumnText: UIViewRepresentable {
 	let clearHeight: CGFloat
 	let ink: Color
 	let rule: Color
+	/// Points: the top tile's type, or the smaller type under a grid tile's fold
+	var size: CGFloat = 4.6
 
 	func makeUIView(context: Context) -> ColumnTextView {
 		let view = ColumnTextView()
@@ -84,6 +86,7 @@ struct ColumnText: UIViewRepresentable {
 		view.clearHeight = clearHeight
 		view.ink = UIColor(ink)
 		view.rule = UIColor(rule)
+		view.size = size
 		view.setNeedsDisplay()
 	}
 }
@@ -96,8 +99,8 @@ final class ColumnTextView: UIView {
 	var ink: UIColor = .label
 	var rule: UIColor = .separator
 
-	private let gutter: CGFloat = 9
-	private let size: CGFloat = 4.6
+	var size: CGFloat = 4.6
+	private var gutter: CGFloat { size * 2 }
 
 	override func draw(_ rect: CGRect) {
 		guard !paragraphs.isEmpty, columns > 0 else { return }
@@ -107,7 +110,7 @@ final class ColumnTextView: UIView {
 		let storage = NSTextStorage(string: paragraphs.joined(separator: "\n"), attributes: [
 			.font: UIFont(descriptor: UIFontDescriptor(name: "Georgia", size: size), size: size),
 			.foregroundColor: ink.withAlphaComponent(0.8),
-			.paragraphStyle: paperStyle(justified: true, indent: 5, after: 2),
+			.paragraphStyle: paperStyle(justified: true, indent: size, after: size * 0.4),
 		])
 		let layout = NSLayoutManager()
 		storage.addLayoutManager(layout)

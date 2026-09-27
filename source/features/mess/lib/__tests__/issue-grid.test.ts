@@ -1,5 +1,6 @@
 import {describe, expect, test} from '@jest/globals'
 import {
+	bodyParagraphs,
 	leadParagraphs,
 	readCount,
 	sheetShape,
@@ -226,5 +227,23 @@ describe('sheetShape', () => {
 	test("gives each sheet's edges a seed of their own", () => {
 		let seeds = new Set(DAYS.map((day) => sheetShape(day, false).edgeSeed))
 		expect(seeds.size).toBe(DAYS.length)
+	})
+})
+
+describe('bodyParagraphs', () => {
+	test("reads a post's body as the plain text of its paragraphs, quotes and list items", () => {
+		let body = {
+			content: {
+				rendered:
+					'<p>One <strong>two</strong></p><figure><img src="x.jpg"/></figure>' +
+					'<blockquote><p>Said so.</p></blockquote><ul><li>a</li><li>b</li></ul>',
+			},
+		}
+		expect(bodyParagraphs(body)).toStrictEqual(['One two', 'Said so.', 'a', 'b'])
+	})
+
+	test('has nothing for a body it cannot read', () => {
+		expect(bodyParagraphs({})).toStrictEqual([])
+		expect(bodyParagraphs(null)).toStrictEqual([])
 	})
 })

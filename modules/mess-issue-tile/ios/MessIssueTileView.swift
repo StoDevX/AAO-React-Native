@@ -79,6 +79,7 @@ struct MessIssueTileView: ExpoSwiftUI.View {
 			.overlay(alignment: .topLeading) {
 				content.padding(7)
 			}
+			.overlay { wordsBelowFold }
 			.background(PaperBackground(palette: palette, scheme: scheme))
 			.overlay(StainLayer(marks: props.stains, kind: props.stainKind, scheme: scheme))
 			.overlay(CreaseLayer(creases: props.sheet.creases, scheme: scheme))
@@ -105,6 +106,22 @@ struct MessIssueTileView: ExpoSwiftUI.View {
 		.rotationEffect(.degrees(props.sheet.tilt))
 		.padding([.trailing, .bottom], 5)
 		.contentShape(.rect)
+	}
+
+	/// A grid tile with no photo keeps its headline above the fold and sets its lead story in two
+	/// columns below it.
+	@ViewBuilder private var wordsBelowFold: some View {
+		if props.layout == .grid, !hasPhoto, !props.paragraphs.isEmpty {
+			GeometryReader { proxy in
+				let top = proxy.size.height * foldLine + 5
+				ColumnText(
+					paragraphs: props.paragraphs, columns: 2, clearedColumns: 0, clearHeight: 0,
+					ink: palette.ink, rule: palette.columnRule, size: 3.4)
+					.frame(width: proxy.size.width - 14, height: max(proxy.size.height - top - 7, 0))
+					.offset(x: 7, y: top)
+			}
+			.allowsHitTesting(false)
+		}
 	}
 
 	@ViewBuilder private var content: some View {

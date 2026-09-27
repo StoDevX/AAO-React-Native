@@ -8,6 +8,7 @@ import {
 import {infiniteQueryOptions, queryOptions} from '@tanstack/react-query'
 import {queryClient} from '../../init/tanstack-query'
 import {parseMessCategories, parseMessPosts} from './lib/posts'
+import {bodyParagraphs} from './lib/issue-grid'
 import {ISSUE_PAGE_SIZE, parseLightPosts, parseMediaUrls, withPhotoUrls} from './lib/issues'
 import {latestProfile, parseStaffProfiles} from './lib/profiles'
 import {seriesKey, seriesName} from './lib/series'
@@ -113,6 +114,30 @@ export const messStoryOptions = (id: number) =>
 			let [story] = await storiesAt(`posts/${id}?_embed=true`, signal, 'Olaf Messenger story')
 			if (!story) throw new MissingMessStoryError(id)
 			return story
+		},
+	})
+
+/**
+ * A story's words alone, for the columns under a grid tile's fold: its body and nothing else,
+ * a few kilobytes. Fetched again each launch rather than saved, since every photo-less tile a
+ * reader scrolls past would otherwise add one to the saved cache.
+ */
+// oxlint-disable-next-line typescript/explicit-module-boundary-types
+export const messLeadTextOptions = (id: number) =>
+	queryOptions({
+		queryKey: messKeys.leadText(id),
+		// A story's words rarely change once it runs.
+		staleTime: ONE_DAY_IN_MS,
+		meta: {persist: false},
+		queryFn: async ({signal}): Promise<string[]> => {
+			// Assumes the resolved feed href is an absolute WordPress URL.
+			let origin = originOf(await feedHref())
+			let body = await fetchSourceBody(
+				`${origin}/wp-json/wp/v2/posts/${id}?_fields=content`,
+				signal,
+				'Olaf Messenger story text',
+			)
+			return bodyParagraphs(body)
 		},
 	})
 

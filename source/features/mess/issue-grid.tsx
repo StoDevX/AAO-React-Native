@@ -26,7 +26,7 @@ import {
 import {issueDate} from './lib/issues'
 import {PageNotice} from './page-notice'
 import {faded, ink} from './palette'
-import {messIssueOptions} from './query'
+import {messIssueOptions, messLeadTextOptions} from './query'
 import {useMessStore} from './store'
 import type {MessIssue} from './types'
 import type {MessIssuesQuery} from './use-mess-issues'
@@ -103,6 +103,21 @@ function TopTile({issue, onOpen, landscape}: TileProps & {landscape: boolean}): 
 	)
 }
 
+/** A grid tile with no photo, set with its lead story's words below its fold. */
+function WordsTile({issue, onOpen}: TileProps): React.ReactNode {
+	let words = useQuery(messLeadTextOptions(issue.leadId))
+	return <Tile issue={issue} onOpen={onOpen} paragraphs={words.data ?? NO_PARAGRAPHS} />
+}
+
+/** A grid tile: its lead photo, or with none, its lead story's words. */
+function GridTile({issue, onOpen}: TileProps): React.ReactNode {
+	return issue.leadPhoto === null ? (
+		<WordsTile issue={issue} onOpen={onOpen} />
+	) : (
+		<Tile issue={issue} onOpen={onOpen} />
+	)
+}
+
 const pairs = (issues: MessIssue[]): MessIssue[][] =>
 	issues.flatMap((each, index) => (index % 2 === 0 ? [issues.slice(index, index + 2)] : []))
 
@@ -156,7 +171,7 @@ export function IssueGrid({issues, query, landscape, onOpen}: Props): React.Reac
 					<HStack alignment="top" key={pair.map((each) => each.day).join('+')} spacing={12}>
 						{pair.map((each) => (
 							<VStack key={each.day} modifiers={HALF}>
-								<Tile issue={each} onOpen={onOpen} />
+								<GridTile issue={each} onOpen={onOpen} />
 							</VStack>
 						))}
 						{pair.length === 1 ? <Spacer modifiers={HALF} /> : null}
