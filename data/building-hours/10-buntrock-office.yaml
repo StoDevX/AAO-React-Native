@@ -1,0 +1,21 @@
+name: Buntrock Commons Office
+category: Offices
+kind: office
+building: bc
+links:
+  - title: 'Buntrock Commons'
+    url: 'https://wp.stolaf.edu/buntrock/'
+
+schedule:
+  - title: Hours
+    hours:
+      - {days: [Mo, Tu, We, Th, Fr, Sa, Su], from: '9:00am', to: '9:00pm'}
+
+breakSchedule:
+  fall: []
+  thanksgiving: []
+  winter: []
+  interim: []
+  spring: []
+  easter: []
+  summer: []
