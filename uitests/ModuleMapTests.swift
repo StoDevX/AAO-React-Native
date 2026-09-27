@@ -334,7 +334,7 @@ class ModuleMapTests: UITestCase {
 			.closeTopCard()
 			.verifyTopCard(TestIdentifiers.Map.aDirectoryFloor)
 			.closeTopCard()
-			.verifyTopCard(name)
+			.verifyBaseCardAnswersTouch(name)
 	}
 
 	func testTappingTheMapStartsAfresh() throws {

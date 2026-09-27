@@ -352,6 +352,30 @@ struct MapScreen: Screen {
 		return self
 	}
 
+	/// `name`'s card is back as the only card, and closing it by a tap where
+	/// its close button is drawn returns to the search sheet.
+	///
+	/// Checked by touch rather than by `isHittable`: after two stacked sheets
+	/// close in quick succession, UIKit can leave an empty presentation window
+	/// above the card, which XCUITest counts as covering it while taps pass
+	/// straight through to the card.
+	@discardableResult
+	func verifyBaseCardAnswersTouch(_ name: String) -> Self {
+		let title = app.descendants(matching: .any)
+			.matching(NSPredicate(format: "label BEGINSWITH %@", name)).firstMatch
+		XCTAssertTrue(title.waitForExistence(timeout: 20), "\(name)'s card should be back")
+		let closes = app.buttons.matching(identifier: TestIdentifiers.Map.cardCloseButton).allElementsBoundByIndex
+		XCTAssertEqual(closes.count, 1, "Only \(name)'s card should be left")
+		guard let close = closes.first else { return self }
+		app.coordinate(withNormalizedOffset: .zero)
+			.withOffset(CGVector(dx: close.frame.midX, dy: close.frame.midY))
+			.tap()
+		XCTAssertTrue(
+			searchField.waitForExistence(timeout: 10),
+			"Tapping \(name)'s close button should close the card")
+		return self
+	}
+
 	/// Closes the top card, which returns to the card beneath it.
 	@discardableResult
 	func closeTopCard() -> Self {
