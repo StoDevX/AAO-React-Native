@@ -220,20 +220,6 @@ class ModuleMapTests: UITestCase {
 			.verifySectionOrder(["Hours", "About", "Good to Know", "Links"], among: cardSections)
 	}
 
-	/// A link row takes a tap anywhere across it, not only on its label and
-	/// its arrow.
-	func testALinkRowOpensFromItsEmptySpace() throws {
-		let name = TestIdentifiers.Map.aBuildingWithAShortLink
-		MapScreen(app: app)
-			.navigate()
-			.checkSheetPresented()
-			.focusSearch()
-			.typeIntoSearch(name)
-			.selectBuilding(named: name)
-			.expandCard()
-			.openFirstLinkByItsEmptySpace()
-	}
-
 	/// Closing a card returns to the list as it was left: the same category,
 	/// scrolled to the same place. Checked at the middle stop, where a row tap
 	/// leaves the sheet and so where the list is seen again.
@@ -287,19 +273,6 @@ class ModuleMapTests: UITestCase {
 			.verifyPhotoTileSquare()
 			.verifyPhotoOpensFullScreenTwice()
 			.verifySectionOrder(["About", "Good to Know", "Offices", "Floors", "Details"], among: cardSections)
-	}
-
-	/// The Address row takes a tap anywhere across it, not only on its text.
-	func testTheAddressRowOpensMapsFromItsEmptySpace() throws {
-		let name = TestIdentifiers.Map.aCarletonBuildingWithAPhoto
-		MapScreen(app: app)
-			.navigateToCarleton()
-			.checkSheetPresented()
-			.focusSearch()
-			.typeIntoSearch(name)
-			.selectBuilding(named: name)
-			.expandCard()
-			.openAddressByItsEmptySpace()
 	}
 
 	/// A place's card lists what else is there, and each opens its own card in

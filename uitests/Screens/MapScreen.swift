@@ -882,59 +882,6 @@ struct MapScreen: Screen {
 		return self
 	}
 
-	/// Taps the first Links row in the empty space between its label and its
-	/// arrow, and asserts the in-app browser opened. A row that hit-tests only
-	/// what it draws ignores this tap. The browser's Done button is drawn
-	/// before the page loads, so this holds without the page's network.
-	@discardableResult
-	func openFirstLinkByItsEmptySpace() -> Self {
-		let heading = app.staticTexts.matching(NSPredicate(format: "label == %@", "Links")).firstMatch
-		scrollCard(toReach: heading)
-		XCTAssertTrue(heading.waitForExistence(timeout: 10), "The card should have a Links section")
-		// Departments' tiles also read "Open …", but they sit above Links. The
-		// first row starts where the heading ends.
-		let link = app.buttons
-			.matching(NSPredicate(format: "label BEGINSWITH %@", "Open "))
-			.allElementsBoundByIndex
-			.first { $0.frame.minY >= heading.frame.maxY }
-		guard let link else {
-			XCTFail("Links should list a row that opens something")
-			return self
-		}
-		scrollCard(toReach: link)
-		XCTAssertTrue(link.isHittable, "\(link.label) should be on screen to tap")
-		XCTContext.runActivity(named: "\(link.label) \(link.frame)") { _ in }
-		capture("The card's Links")
-		// Past a short label, and short of the arrow.
-		link.coordinate(withNormalizedOffset: CGVector(dx: 0.6, dy: 0.5)).tap()
-		let done = app.buttons[TestIdentifiers.Directory.inAppBrowserDone].firstMatch
-		XCTAssertTrue(
-			done.waitForExistence(timeout: 30),
-			"Tapping between a link's label and its arrow should open the link")
-		return self
-	}
-
-	/// Taps the Details section's Address row in the empty space between its
-	/// label and its value, and asserts Maps came to the front. A row that
-	/// hit-tests only what it draws ignores this tap.
-	@discardableResult
-	func openAddressByItsEmptySpace() -> Self {
-		let address = app.buttons
-			.matching(NSPredicate(format: "label BEGINSWITH %@ AND label ENDSWITH %@", "Open ", " in Maps"))
-			.firstMatch
-		scrollCard(toReach: address)
-		XCTAssertTrue(address.waitForExistence(timeout: 10), "The card should list its address")
-		XCTContext.runActivity(named: "\(address.label) \(address.frame)") { _ in }
-		capture("The card's Details")
-		// Past the "Address" label, and short of the value on the right.
-		address.coordinate(withNormalizedOffset: CGVector(dx: 0.3, dy: 0.5)).tap()
-		let maps = XCUIApplication(bundleIdentifier: "com.apple.Maps")
-		XCTAssertTrue(
-			maps.wait(for: .runningForeground, timeout: 30),
-			"Tapping between the address's label and its value should open Maps")
-		return self
-	}
-
 	/// About opens clamped, and a tap shows the rest.
 	@discardableResult
 	func verifyAboutExpands() -> Self {

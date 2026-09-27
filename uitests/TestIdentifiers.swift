@@ -220,9 +220,6 @@ struct TestIdentifiers {
 		static let anOffice = "Registrar"
 		/// A St. Olaf building whose description runs well past five lines.
 		static let aBuildingWithALongAbout = "Holland Hall"
-		/// A St. Olaf building whose one link has a short label ("Website"),
-		/// leaving most of the row empty. St. Olaf can rename the link.
-		static let aBuildingWithAShortLink = "Memorial Chime Tower"
 		/// A category segment in the map sheet's picker, other than the one it
 		/// opens on, with a list long enough to scroll.
 		static let parkingCategory = "Parking"
