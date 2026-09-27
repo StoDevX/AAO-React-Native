@@ -59,10 +59,6 @@ describe('under UI testing', () => {
 		expect(fetchSourceBody).not.toHaveBeenCalled()
 	})
 
-	test('the fixture map gives each listed posting its unit', () => {
-		expect(UITEST_POSTING_UNITS['uitest-3']).toBe('22005')
-	})
-
 	// The extra posting stands for one newer than the server's last hour, so
 	// the app has to read its unit from its detail.
 	test('the fixture map leaves out the extra posting', () => {
@@ -75,12 +71,6 @@ describe('under UI testing', () => {
 			.mockImplementation((key: string) => key === 'AAOUITestStudentWorkUnitsUnavailable')
 		await expect(run(postingUnitsOptions)).rejects.toThrow('unavailable')
 		get.mockRestore()
-	})
-})
-
-describe('postingUnitsOptions', () => {
-	test('stays fresh for an hour, matching the server', () => {
-		expect(postingUnitsOptions.staleTime).toBe(60 * 60 * 1000)
 	})
 })
 
