@@ -41,8 +41,12 @@ const mockManifest = fetchManifest as jest.Mock<() => Promise<Jrd>>
 const mockBody = fetchSourceBody as jest.Mock<typeof fetchSourceBody>
 
 function run<T>(options: {queryFn?: unknown}): Promise<T> {
-	let queryFn = options.queryFn as (context: {signal: AbortSignal; queryKey: unknown}) => Promise<T>
-	return queryFn({signal: new AbortController().signal, queryKey: []})
+	let queryFn = options.queryFn as (context: {
+		signal: AbortSignal
+		queryKey: unknown
+		client: QueryClient
+	}) => Promise<T>
+	return queryFn({signal: new AbortController().signal, queryKey: [], client: new QueryClient()})
 }
 
 /** Runs an infinite query's page fetch for one page. */
@@ -486,6 +490,25 @@ describe('messIssueOptions', () => {
 		])
 		// Each batch is answered with the same five fixture posts here, so both batches' arrive.
 		expect(stories).toHaveLength(10)
+	})
+
+	// The newest issue's ids change as its paper goes up, and each set is a query saved for the next
+	// launch with every story's body.
+	test("drops an issue's older sets of stories once its current set loads, and no other issue's", async () => {
+		serve(() => posts)
+		let client = new QueryClient()
+		let older = messKeys.issue({key: 'week:2026-03-23', storyIds: [36911, 36885]})
+		let other = messKeys.issue({key: 'week:2026-03-16', storyIds: [1, 2]})
+		client.setQueryData(older, [])
+		client.setQueryData(other, [])
+
+		await client.query(
+			messIssueOptions({key: 'week:2026-03-23', storyIds: [36859, 36911, 36885, 36904, 36843]}),
+		)
+
+		expect(client.getQueryData(older)).toBeUndefined()
+		expect(client.getQueryData(other)).toStrictEqual([])
+		client.clear()
 	})
 
 	test("saves an issue's stories for the next launch only when asked, as Top's are", () => {

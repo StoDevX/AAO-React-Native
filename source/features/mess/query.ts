@@ -216,7 +216,7 @@ export const messIssueOptions = (
 		// By id rather than by date: a week's range can take in a special edition, which is an issue
 		// of its own. WordPress answers at most a page of ids at once, and an issue that runs over a
 		// quiet summer can hold more, so they are asked for a page at a time.
-		queryFn: async ({signal}) => {
+		queryFn: async ({signal, client}) => {
 			let batches = []
 			for (let i = 0; i < issue.storyIds.length; i += ISSUE_PAGE_SIZE) {
 				batches.push(issue.storyIds.slice(i, i + ISSUE_PAGE_SIZE))
@@ -230,6 +230,13 @@ export const messIssueOptions = (
 					),
 				),
 			)
+			// The issue's ids change as its paper goes up, and each earlier set is a query of its own,
+			// saved for the next launch with every story's body. The current set replaces them.
+			let current = JSON.stringify(issue.storyIds)
+			client.removeQueries({
+				queryKey: [...messKeys.anyIssue, issue.key],
+				predicate: (query) => JSON.stringify(query.queryKey[3]) !== current,
+			})
 			return stories.flat()
 		},
 	})
