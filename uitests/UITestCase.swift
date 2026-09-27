@@ -35,8 +35,7 @@ class UITestCase: XCTestCase {
 	/// `continueAfterFailure` is false, so a failed test stops at its assertion
 	/// and the screen is still whatever the assertion was unhappy about --
 	/// which is the one picture worth having and the one nobody thinks to take
-	/// in advance. Xcode's own automatic screenshots need a test plan this
-	/// project does not have, and the scheme defaults throw them away.
+	/// in advance.
 	///
 	/// `.keepAlways` rather than `.deleteOnSuccess`: this only runs for a
 	/// failure, so there is no success for the latter to key off, and CI's
