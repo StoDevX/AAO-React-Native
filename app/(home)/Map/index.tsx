@@ -30,6 +30,7 @@ import {parseCampus} from '../../../source/features/building-hours/query'
 import type {Campus} from '../../../source/features/building-hours/types'
 import {BuildingInfo} from '../../../source/features/map/building-info'
 import {BuildingPicker} from '../../../source/features/map/building-picker'
+import {collapsedDetentFor} from '../../../source/features/map/lib/collapsed-detent'
 import {sheetHeightFor} from '../../../source/features/map/lib/sheet-height'
 import {toBuildingFootprints} from '../../../source/features/map/lib/building-footprints'
 import {
@@ -72,22 +73,6 @@ const MARKER_HIT_SLOP = (MIN_TOUCH_TARGET - MARKER_SIZE) / 2
 /// that drops a layer from the tree.
 const FOOTPRINT_OPACITY = 0
 
-/// The collapsed detent, requested in the sheet content's own layout space.
-/// UIKit shrinks whatever a sheet presents by a scale tied to the detent --
-/// 0.86 at this one on an iPhone 17 Pro simulator -- so the stop renders at
-/// `SHEET_COLLAPSED_HEIGHT * scale` and this is not the height it takes on
-/// screen.
-///
-/// It is the picker's header block, `16 + 44 + 16` (see `SEARCH_MARGIN` in
-/// `building-picker.tsx`), which at this stop is all the picker draws, so it
-/// holds on any device. A shorter stop cannot hold the block, and SwiftUI
-/// centres content too tall for the box it is presented in rather than
-/// clipping its bottom, so the field's top edge is what a shorter stop cuts
-/// off; a taller one gives the slack to the list, and the space below the
-/// field grows. `testSheetOpensOnItsCollapsedStop` checks the field is whole.
-const SHEET_COLLAPSED_HEIGHT = 76
-const COLLAPSED_DETENT: PresentationDetent = {height: SHEET_COLLAPSED_HEIGHT}
-
 /// Apple Maps' middle stop for a place card, as a fraction of the height the
 /// sheet is allowed: its close button and ours sit at the same height on an
 /// iPhone 17 Pro simulator running iOS 27. Lower than the app's other detail
@@ -100,14 +85,12 @@ const MIDDLE_DETENT: PresentationDetent = {fraction: MAP_MIDDLE_FRACTION}
 /// same heights as ours on an iPhone 17 Pro simulator running iOS 27.
 const MAP_LARGE_FRACTION = 0.9873
 const LARGE_DETENT: PresentationDetent = {fraction: MAP_LARGE_FRACTION}
-const SHEET_DETENTS: PresentationDetent[] = [COLLAPSED_DETENT, MIDDLE_DETENT, LARGE_DETENT]
 
 /// The rules speak in names; the modifier speaks in detents. The rules' middle
-/// and large stops are Maps' fractions, not UIKit's `medium` and `large`.
-const DETENT_FOR: Record<SheetDetent, PresentationDetent> = {
-	collapsed: COLLAPSED_DETENT,
-	medium: MIDDLE_DETENT,
-	large: LARGE_DETENT,
+/// and large stops are Maps' fractions, not UIKit's `medium` and `large`. The
+/// collapsed stop is measured from the picker, so it is passed in.
+function detentsFor(collapsed: PresentationDetent): Record<SheetDetent, PresentationDetent> {
+	return {collapsed, medium: MIDDLE_DETENT, large: LARGE_DETENT}
 }
 
 /// Structural like `sheetHeightFor`, since a detent handed back by the sheet
@@ -176,7 +159,14 @@ export default function MapPage(): React.ReactNode {
 	// camera has to keep clear.
 	// A fraction is measured against the window less the top inset, so the
 	// camera is padded against the same thing rather than the whole window.
-	let sheetHeight = sheetHeightFor(DETENT_FOR[sheet.current], windowHeight - insets.top)
+	// The picker's search field grows with the text size, and the collapsed
+	// stop grows to hold it.
+	let [pickerHeaderHeight, setPickerHeaderHeight] = React.useState<number | null>(null)
+	let detents = React.useMemo(
+		() => detentsFor(collapsedDetentFor(pickerHeaderHeight)),
+		[pickerHeaderHeight],
+	)
+	let sheetHeight = sheetHeightFor(detents[sheet.current], windowHeight - insets.top)
 
 	let footprints = React.useMemo(() => toBuildingFootprints(buildings), [buildings])
 
@@ -318,8 +308,8 @@ export default function MapPage(): React.ReactNode {
 							// than the hex `presentationBackground` wants, so the sheet
 							// still follows the system appearance.
 							background(c.systemGroupedBackground),
-							presentationDetents(SHEET_DETENTS, {
-								selection: DETENT_FOR[sheet.current],
+							presentationDetents([detents.collapsed, detents.medium, detents.large], {
+								selection: detents[sheet.current],
 								onSelectionChange: (to) => dispatchSheet({type: 'dragged', to: nameOf(to)}),
 							}),
 							presentationDragIndicator('visible'),
@@ -341,6 +331,7 @@ export default function MapPage(): React.ReactNode {
 							<BuildingPicker
 								campus={campus}
 								compact={sheet.current === 'collapsed'}
+								onHeaderHeightChange={setPickerHeaderHeight}
 								onSearchCancel={() => dispatchSheet({type: 'search-cancelled'})}
 								onSearchFocusChange={(focused, hasText) =>
 									dispatchSheet(

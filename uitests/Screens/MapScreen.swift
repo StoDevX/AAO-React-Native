@@ -250,6 +250,23 @@ struct MapScreen: Screen {
 		return self
 	}
 
+	/// The field sits in the sheet with room above and below it, as Maps'
+	/// does at every text size, rather than touching or crossing the sheet's
+	/// edges. `verifyCollapsedMarginsSymmetric` checks the exact margins at the
+	/// default size; this one holds at any size, where the field's height is
+	/// not known in advance.
+	@discardableResult
+	func verifyFieldHasMarginsInSheet() -> Self {
+		let field = searchField.frame
+		let sheet = sheetFrame()
+		let above = field.minY - sheet.minY
+		let below = sheet.maxY - field.maxY
+		XCTContext.runActivity(named: "\(above)pt above the field, \(below)pt below it") { _ in }
+		XCTAssertGreaterThanOrEqual(above, 8, "The field should sit clear of the sheet's top: \(above)pt")
+		XCTAssertGreaterThanOrEqual(below, 8, "The field should sit clear of the sheet's bottom: \(below)pt")
+		return self
+	}
+
 	/// The attribution button sits over the map, and the collapsed sheet
 	/// floats over the bottom of it, so the two have to be kept apart: the
 	/// button's whole frame above the sheet's top edge, and still tappable.
