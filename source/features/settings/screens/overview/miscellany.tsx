@@ -5,6 +5,7 @@ import {GH_BASE_URL} from '../../../../lib/constants'
 import * as storage from '../../../../lib/storage'
 import {useRouter} from 'expo-router'
 import {DisclosureRow, NavigationRow} from '../../../../components/rows'
+import {ShareTelemetryToggle} from '../../../telemetry/consent-toggle'
 import {IssueStainsRow} from './issue-stains-row'
 
 const onSourceButton = () => trackedOpenUrl({url: GH_BASE_URL, id: 'ContributingView'})
@@ -40,6 +41,7 @@ export let MiscellanySection = (): React.ReactNode => {
 				onIsOnChange={handleOpenLinkOnChange}
 			/>
 			<NavigationRow onPress={onCreditsButton} title="Credits" />
+			<ShareTelemetryToggle />
 			<NavigationRow onPress={onPrivacyButton} title="Privacy Policy" />
 			<NavigationRow onPress={onLegalButton} title="Legal" />
 			<DisclosureRow destination="external" onPress={onSourceButton} title="Contributing" />

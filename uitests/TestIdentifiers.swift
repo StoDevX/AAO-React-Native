@@ -709,6 +709,8 @@ struct TestIdentifiers {
 		static let coffee = "Coffee"
 		static let developer = "Developer"
 		static let enableDevMode = "Enable dev mode"
+		/// Matches the label in source/features/telemetry/consent-toggle.tsx.
+		static let shareTelemetry = "Share anonymous usage and crash data"
 	}
 
 	// MARK: - Directory
