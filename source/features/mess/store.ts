@@ -1,11 +1,11 @@
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import {create} from 'zustand'
 import {createJSONStorage, persist} from 'zustand/middleware'
+import type {StainKind} from '@frogpond/mess-issue-tile'
 import {ZODIAC_SIGNS} from './lib/zodiac'
 import type {ZodiacSign} from './types'
 
-/** What an issue's tile shows for the stories read: coffee rings, tea rings, or nothing. */
-export type StainKind = 'coffee' | 'tea' | 'none'
+export type {StainKind}
 
 type MessStore = {
 	/** The sign the reader last read; Horoscopes posts open on it */

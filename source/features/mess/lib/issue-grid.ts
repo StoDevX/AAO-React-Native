@@ -1,5 +1,8 @@
+import type {StainMark} from '@frogpond/mess-issue-tile'
 import {issueDate} from './issues'
 import type {Block, MessIssue, MessStory, Run} from '../types'
+
+export type {StainMark}
 
 /** A year's issues on the grid, and how many issues of that year are loaded. */
 export type YearGroup = {year: string; count: number; issues: MessIssue[]}
@@ -41,20 +44,6 @@ export function stainCount(read: number, total: number): number {
 	if (share >= 0.75) return 3
 	if (share >= 0.5) return 2
 	return 1
-}
-
-/** Where one stain sits on a tile, as shares of the tile's width and height. */
-export type StainMark = {
-	/** The ring's centre */
-	x: number
-	y: number
-	/** The ring's radius, as a share of the tile's width */
-	radius: number
-	/** Turns the ring's wobble, in degrees */
-	rotation: number
-	/** Where the ring's drawn edge starts, and how much of the circle it runs, as shares of a turn */
-	arcStart: number
-	arcLength: number
 }
 
 /** The spots a stain can land on: the corners, the sides' middles, and the upper and lower middle. */
