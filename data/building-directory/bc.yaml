@@ -6,6 +6,6 @@ floors:
   - name: 1st floor
     entries:
       - {name: 'Lutheran Center for Faith, Values, and Community', room: '146'}
-      - {name: Student Activities, room: '108'}
-      - {name: Taylor Center for Equity and Inclusion, room: '111'}
+      - {name: Student Activities, room: '108', venue: OSA}
+      - {name: Taylor Center for Equity and Inclusion, room: '111', venue: Taylor Center}
       - {name: Wellness Center, room: '120'}

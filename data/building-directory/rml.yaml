@@ -7,7 +7,7 @@ floors:
       - {name: Norwegian-American Historical Association, room: '200'}
   - name: 4th floor
     entries:
-      - {name: Information Technology}
+      - {name: Information Technology, venue: IT Helpdesk}
   - name: 5th floor
     entries:
       - {name: English, room: '526A'}
