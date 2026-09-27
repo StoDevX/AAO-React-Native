@@ -10,6 +10,9 @@ import type {MessIssueTileProps} from '@frogpond/mess-issue-tile'
  * test is never evidence of how a tile looks.
  */
 export function MessIssueTile(props: MessIssueTileProps): React.ReactNode {
+	tileEvents.renders.push(props.accessibilityLabel)
+	// A state initializer runs once per mount: the label a tile had when it was built.
+	React.useState(() => tileEvents.mounts.push(props.accessibilityLabel))
 	let value = `${props.layout}, ${props.stains.length} ${props.stainKind}, ${props.paragraphs.length} paragraphs`
 	return (
 		<Pressable
@@ -23,3 +26,9 @@ export function MessIssueTile(props: MessIssueTileProps): React.ReactNode {
 		</Pressable>
 	)
 }
+
+/**
+ * Each tile's label as it rendered and as it mounted, in order. A tile mounted again is a native
+ * view built again, and a tile rendered again sends its props across to native again.
+ */
+export const tileEvents: {renders: string[]; mounts: string[]} = {renders: [], mounts: []}

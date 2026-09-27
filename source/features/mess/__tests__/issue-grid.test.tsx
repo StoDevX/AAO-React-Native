@@ -1,19 +1,20 @@
 import * as React from 'react'
 import {afterEach, beforeEach, describe, expect, jest, test} from '@jest/globals'
-import {fireEvent, render, screen, waitFor} from '@testing-library/react-native'
+import {act, fireEvent, render, screen, waitFor} from '@testing-library/react-native'
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query'
 import {fetchManifest, fetchSourceBody, type Jrd} from '@frogpond/data-sources'
 
 import categoriesJson from './fixtures/categories.json'
 import springPosts from './fixtures/issue-posts.json'
 import {queryClient as appQueryClient} from '../../../init/tanstack-query'
-import {waitForQueriesToSettle} from '../../../testing/query-notifications'
+import {flushQueryNotifications, waitForQueriesToSettle} from '../../../testing/query-notifications'
 import {ISSUE_TILE_ID, IssueGrid, TOP_TILE_ID} from '../issue-grid'
 import {groupIssues} from '../lib/issues'
 import {messKeys} from '../lib/keys'
 import {useMessStore} from '../store'
 import type {LightPost, MessIssue, MessStory} from '../types'
 import {useMessIssues} from '../use-mess-issues'
+import {tileEvents} from './mess-issue-tile-mock'
 
 jest.mock('@expo/ui/swift-ui', () => {
 	// oxlint-disable-next-line typescript/no-require-imports
@@ -120,6 +121,8 @@ beforeEach(() => {
 	queryClient = new QueryClient({defaultOptions: {queries: {staleTime: Infinity, retry: false}}})
 	onOpen = jest.fn()
 	useMessStore.setState({openedStories: [], stainKind: 'coffee'})
+	tileEvents.renders.length = 0
+	tileEvents.mounts.length = 0
 	// A tile with no photo asks for its lead story's words; unless a test says otherwise, it has none.
 	serve(() => ({content: {rendered: ''}}))
 })
@@ -158,6 +161,36 @@ async function renderGrid({
 }
 
 describe('IssueGrid', () => {
+	test('keeps the tiles that stay in their row when a newer issue arrives', async () => {
+		await renderGrid()
+		tileEvents.mounts.length = 0
+
+		// A newer issue takes the top; the old top joins the grid, pushing each tile along a slot.
+		await act(async () => {
+			queryClient.setQueryData(messKeys.issues, {
+				pages: [[...issueDay('2026-05-20', 30), ...POSTS]],
+				pageParams: [1],
+			})
+			await flushQueryNotifications()
+		})
+
+		// Apr 29 moves from the first slot of 2026's first row to the second, and stays; Mar 25 moves
+		// down to a row of its own, so it is built again.
+		expect(tileEvents.mounts).not.toContainEqual(expect.stringMatching(/^April 29, 2026/u))
+		expect(tileEvents.mounts).toContainEqual(expect.stringMatching(/^March 25, 2026/u))
+	})
+
+	test('draws again only the tile of the issue a story was opened from', async () => {
+		await renderGrid()
+		tileEvents.renders.length = 0
+
+		await act(() => {
+			useMessStore.setState({openedStories: [15]})
+		})
+
+		expect(tileEvents.renders).toStrictEqual([expect.stringMatching(/^March 25, 2026/u)])
+	})
+
 	test('leads with the newest issue as the top tile, carrying its lead story in columns', async () => {
 		await renderGrid()
 
