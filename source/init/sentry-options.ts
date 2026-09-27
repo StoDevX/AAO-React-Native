@@ -1,6 +1,7 @@
 import type {ReactNativeOptions} from '@sentry/react-native'
 
 import {ANONYMOUS_MARKER} from '../features/telemetry/catalog'
+import {scrubBreadcrumb, scrubEvent, scrubSpan} from './scrub'
 
 /** What ties a log to a device or a trace. Removed from anonymous logs, with the marker. */
 const LINKING_ATTRIBUTES = [
@@ -59,7 +60,14 @@ export function privacyOptions({
 		enableLogs: true,
 		logsOrigin: 'js',
 		enableAutoConsoleLogs: false,
-		beforeSend: unlessOptedOut,
+		// URLs carry StoPrint usernames and Directory search text; console
+		// breadcrumbs carry whatever the app logged. See scrub.ts.
+		beforeBreadcrumb: scrubBreadcrumb,
+		beforeSendSpan: scrubSpan,
+		beforeSend: (event) => {
+			let kept = unlessOptedOut(event)
+			return kept && scrubEvent(kept)
+		},
 		beforeSendTransaction: unlessOptedOut,
 		beforeSendMetric: unlessOptedOut,
 		beforeSendLog: (log) => {

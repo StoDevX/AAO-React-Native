@@ -84,6 +84,33 @@ describe('privacyOptions', () => {
 		expect(options().beforeSendLog?.(log)).toBe(log)
 	})
 
+	// The scrubbers themselves are tested in scrub.test.ts; these check that
+	// each hook uses one.
+	it('drops console breadcrumbs', () => {
+		expect(options().beforeBreadcrumb?.({category: 'console', message: 'x'})).toBeNull()
+	})
+
+	it('scrubs URLs in spans', () => {
+		let span = {
+			span_id: 'a',
+			trace_id: 'b',
+			start_timestamp: 1,
+			description: 'GET https://example.test/search?name=Jane',
+			data: {},
+		}
+
+		expect(options().beforeSendSpan?.(span).description).toBe('GET https://example.test/search')
+	})
+
+	it('scrubs the request on an error event', () => {
+		let event = {type: undefined, request: {url: 'https://example.test/search?name=Jane'}}
+
+		expect(options().beforeSend?.(event, {})).toStrictEqual({
+			type: undefined,
+			request: {url: 'https://example.test/search'},
+		})
+	})
+
 	it('drops anything sent after an opt-out, reading the choice at send time', () => {
 		let shared = true
 		let built = options({isConsented: () => shared})
