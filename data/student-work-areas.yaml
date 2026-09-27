@@ -130,6 +130,8 @@
     - '15118' # Post Office and Mail Services
     - '16315' # Public Safety
     - '24200' # Human Resources
+    - '15120' # Admissions Office
+    - '15880' # Student Service Allocated
 
 - name: Student Support
   slug: student-support
@@ -138,6 +140,7 @@
   units:
     - '14152' # Academic Success Center
     - '15225' # Disabled Student Services
+    - '11681' # Intl Stud Services
 
 - name: Community Engagement
   slug: community
