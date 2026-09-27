@@ -23,6 +23,14 @@ done
 codesign --force --sign - --timestamp=none "$MISE_TOOL_INSTALL_PATH/axe"
 """
 
+# Sentry's Xcode build phases upload source maps and dSYMs with this, found
+# through SENTRY_CLI_EXECUTABLE, rather than the npm @sentry/cli that
+# pnpm-workspace.yaml drops. Pinned to the version @sentry/react-native pins.
+# macOS only: only an Xcode archive uploads, so the Linux jobs never need it.
+[tools.sentry]
+version = "3.6.2"
+os = ["macos"]
+
 [env]
 _.path = ["node_modules/.bin"]
 HK_PKL_BACKEND = "pklr"
