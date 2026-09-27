@@ -3,6 +3,7 @@ import {
 	bodyParagraphs,
 	leadParagraphs,
 	readCount,
+	rowsOf,
 	sheetShape,
 	stainCount,
 	stainMarks,
@@ -245,5 +246,24 @@ describe('bodyParagraphs', () => {
 	test('has nothing for a body it cannot read', () => {
 		expect(bodyParagraphs({})).toStrictEqual([])
 		expect(bodyParagraphs(null)).toStrictEqual([])
+	})
+})
+
+describe('rowsOf', () => {
+	test('sets the tiles two to a row, the last row short when they run out', () => {
+		let days = ['a', 'b', 'c', 'd', 'e'].map((day) => issue(day))
+		expect(rowsOf(days, 2).map((row) => row.map((each) => each.day))).toStrictEqual([
+			['a', 'b'],
+			['c', 'd'],
+			['e'],
+		])
+	})
+
+	test('sets them four to a row across a landscape screen', () => {
+		let days = ['a', 'b', 'c', 'd', 'e'].map((day) => issue(day))
+		expect(rowsOf(days, 4).map((row) => row.map((each) => each.day))).toStrictEqual([
+			['a', 'b', 'c', 'd'],
+			['e'],
+		])
 	})
 })

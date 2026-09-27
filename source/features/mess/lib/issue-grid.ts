@@ -30,6 +30,15 @@ export function yearGroups(issues: MessIssue[]): YearGroup[] {
 	return groups
 }
 
+/** A year's tiles in rows of `perRow`, the last row short when they run out. */
+export function rowsOf(issues: MessIssue[], perRow: number): MessIssue[][] {
+	let rows: MessIssue[][] = []
+	for (let index = 0; index < issues.length; index += perRow) {
+		rows.push(issues.slice(index, index + perRow))
+	}
+	return rows
+}
+
 /** How many of an issue's stories the reader has opened. */
 export function readCount(storyIds: number[], opened: ReadonlySet<number>): number {
 	return storyIds.filter((id) => opened.has(id)).length

@@ -17,6 +17,7 @@ import {MessIssueTile} from '@frogpond/mess-issue-tile'
 import {
 	leadParagraphs,
 	readCount,
+	rowsOf,
 	sheetShape,
 	stainCount,
 	stainMarks,
@@ -48,7 +49,8 @@ const YEAR_ROW = [
 	accessibilityAddTraits(['isHeader']),
 	accessibilityIdentifier(YEAR_HEADER_ID),
 ]
-const HALF = [frame({maxWidth: Infinity})]
+/** Each tile, and each gap in a short row, takes an equal share of the row. */
+const SHARE = [frame({maxWidth: Infinity})]
 /** A grid tile's columns hold nothing: only the top tile sets its lead story. */
 const NO_PARAGRAPHS: string[] = []
 
@@ -118,8 +120,8 @@ function GridTile({issue, onOpen}: TileProps): React.ReactNode {
 	)
 }
 
-const pairs = (issues: MessIssue[]): MessIssue[][] =>
-	issues.flatMap((each, index) => (index % 2 === 0 ? [issues.slice(index, index + 2)] : []))
+/** Tiles to a row: two on a phone held upright, four across a landscape screen. */
+const PER_ROW = {portrait: 2, landscape: 4}
 
 type Props = {
 	issues: MessIssue[]
@@ -129,7 +131,7 @@ type Props = {
 }
 
 /**
- * Every issue the loaded pages hold: the newest as the top tile, then the rest two to a row under
+ * Every issue the loaded pages hold: the newest as the top tile, then the rest in rows under
  * their year, returned side by side to land in the page's lazy column so rows are built as they
  * scroll in. The row at the end fetches the next page as it comes into view; it takes a new
  * identity with each page, so it fetches again when a page adds too few issues to push it off the
@@ -137,6 +139,7 @@ type Props = {
  */
 export function IssueGrid({issues, query, landscape, onOpen}: Props): React.ReactNode {
 	let top = issues[0]
+	let perRow = landscape ? PER_ROW.landscape : PER_ROW.portrait
 	let pageCount = query.data?.pages.length ?? 0
 	// Any fetch in flight, a refresh too, is left to finish: asking for the next page would
 	// cancel it. The end row's id carries whether a fetch is in flight, so it appears again,
@@ -167,14 +170,17 @@ export function IssueGrid({issues, query, landscape, onOpen}: Props): React.Reac
 						modifiers={YEAR_COUNT}
 					>{`${group.count} ${group.count === 1 ? 'issue' : 'issues'}`}</Text>
 				</HStack>,
-				...pairs(group.issues).map((pair) => (
-					<HStack alignment="top" key={pair.map((each) => each.day).join('+')} spacing={12}>
-						{pair.map((each) => (
-							<VStack key={each.day} modifiers={HALF}>
+				...rowsOf(group.issues, perRow).map((row) => (
+					<HStack alignment="top" key={row.map((each) => each.day).join('+')} spacing={12}>
+						{row.map((each) => (
+							<VStack key={each.day} modifiers={SHARE}>
 								<GridTile issue={each} onOpen={onOpen} />
 							</VStack>
 						))}
-						{pair.length === 1 ? <Spacer modifiers={HALF} /> : null}
+						{/* A short last row keeps its tiles the width of a full row's. */}
+						{Array.from({length: perRow - row.length}, (_, index) => (
+							<Spacer key={`gap-${index}`} modifiers={SHARE} />
+						))}
 					</HStack>
 				)),
 			])}

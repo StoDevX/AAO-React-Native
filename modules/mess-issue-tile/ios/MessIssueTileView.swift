@@ -11,7 +11,8 @@ enum TileLayout: String, Enumerable {
 		switch self {
 		case .grid: 2.0 / 3.0
 		case .topPortrait: 0.96
-		case .topLandscape: 1.6
+		// Wide enough to sit on a landscape screen under the bar and the switch.
+		case .topLandscape: 2.4
 		}
 	}
 }
