@@ -37,29 +37,38 @@ export function submitReport(args: SubmitReportArgs): SubmitResult {
 
 	let {message, name, email, attachments = []} = args
 
-	// A report carries a name and email; with the device ID beside them, it
-	// would name everything that device has sent. Feedback skips `beforeSend`,
-	// so the user is removed on this report's own scope.
-	Sentry.withScope((scope) => {
-		scope.addEventProcessor(({user: _user, ...event}) => event)
-		Sentry.captureFeedback(
-			{
-				message,
-				name,
-				email,
-				tags: {
-					deviceBrand: Device.brand,
-					deviceModel: Device.modelName,
-					deviceModelId: Device.modelId as string | null,
-					osName: Device.osName,
-					osVersion: Device.osVersion,
-					appVersion: Application.nativeApplicationVersion,
-					buildNumber: Application.nativeBuildVersion,
-				},
-			},
-			{attachments},
-		)
+	// A report carries a name and email, so nothing may tie it to the device.
+	// A scope of its own gives it a trace no screen.view metric shares, and
+	// its processor, which runs after the SDK's own, removes the device ID,
+	// the device's breadcrumbs and the device app hash. Feedback skips
+	// `beforeSend`, so this is the only place to do it.
+	let scope = new Sentry.Scope()
+	scope.addEventProcessor(({user: _user, breadcrumbs: _breadcrumbs, ...event}) => {
+		let app = event.contexts?.app
+		if (!app) {
+			return event
+		}
+		let {device_app_hash: _hash, ...rest} = app
+		return {...event, contexts: {...event.contexts, app: rest}}
 	})
+	Sentry.captureFeedback(
+		{
+			message,
+			name,
+			email,
+			tags: {
+				deviceBrand: Device.brand,
+				deviceModel: Device.modelName,
+				deviceModelId: Device.modelId as string | null,
+				osName: Device.osName,
+				osVersion: Device.osVersion,
+				appVersion: Application.nativeApplicationVersion,
+				buildNumber: Application.nativeBuildVersion,
+			},
+		},
+		{attachments},
+		scope,
+	)
 
 	return 'sent'
 }

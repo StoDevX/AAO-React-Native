@@ -3,11 +3,19 @@ import * as Sentry from '@sentry/react-native'
 import {useTelemetryStore} from '../../../../../telemetry/store'
 import {reportEmail, submitReport} from '../submit'
 
-const mockScope = {addEventProcessor: jest.fn()}
 jest.mock('@sentry/react-native', () => ({
 	captureFeedback: jest.fn(),
-	withScope: jest.fn((callback: (scope: typeof mockScope) => void) => callback(mockScope)),
+	Scope: jest.fn(function Scope(this: {addEventProcessor: jest.Mock}) {
+		this.addEventProcessor = jest.fn()
+	}),
 }))
+
+type MockScope = {addEventProcessor: jest.Mock}
+
+/** The scope the last report was captured on. */
+function reportScope(): MockScope {
+	return jest.mocked(Sentry.captureFeedback).mock.lastCall?.[2] as unknown as MockScope
+}
 // The consent store persists through a native key-value store Jest lacks.
 jest.mock('expo-sqlite/kv-store', () => ({
 	Storage: {getItemSync: () => null, setItemSync: () => undefined, removeItemSync: () => true},
@@ -60,6 +68,7 @@ describe('submitReport', () => {
 				},
 			},
 			{attachments: []},
+			expect.any(Sentry.Scope),
 		)
 	})
 
@@ -71,19 +80,41 @@ describe('submitReport', () => {
 			attachments: [{filename: 'IMG_0001.jpg', data, contentType: 'image/jpeg'}],
 		})
 
-		expect(Sentry.captureFeedback).toHaveBeenCalledWith(expect.anything(), {
-			attachments: [{filename: 'IMG_0001.jpg', data, contentType: 'image/jpeg'}],
-		})
+		expect(Sentry.captureFeedback).toHaveBeenCalledWith(
+			expect.anything(),
+			{attachments: [{filename: 'IMG_0001.jpg', data, contentType: 'image/jpeg'}]},
+			expect.any(Sentry.Scope),
+		)
 	})
 
-	// A report carries a name and email; with the device ID beside them, one
-	// report would name everything that device ever sent.
-	it('sends the report without the device ID', () => {
+	// A report carries a name and email. Anything tying it to the device --
+	// the device ID, the device's breadcrumbs, the device app hash, or the
+	// trace a screen.view metric also carries -- would name everything that
+	// device ever sent.
+	it('sends the report on a scope of its own, so it gets a trace of its own', () => {
 		submitReport({message: 'it crashed', name: 'Wren'})
 
-		let [[removeUser]] = mockScope.addEventProcessor.mock.calls as [[(event: object) => object]]
-		expect(removeUser({message: 'it crashed', user: {id: 'id-1'}})).toStrictEqual({
+		expect(Sentry.Scope).toHaveBeenCalledTimes(1)
+		expect(reportScope()).toBe(jest.mocked(Sentry.Scope).mock.instances[0])
+	})
+
+	it('removes the device ID, breadcrumbs and device app hash from the report', () => {
+		submitReport({message: 'it crashed', name: 'Wren'})
+
+		let [[strip]] = reportScope().addEventProcessor.mock.calls as [[(event: object) => object]]
+		expect(
+			strip({
+				message: 'it crashed',
+				user: {id: 'id-1'},
+				breadcrumbs: [{category: 'http', data: {url: 'https://example.test/users/jdoe'}}],
+				contexts: {
+					app: {device_app_hash: 'abc123', app_identifier: 'com.example'},
+					feedback: {name: 'Wren'},
+				},
+			}),
+		).toStrictEqual({
 			message: 'it crashed',
+			contexts: {app: {app_identifier: 'com.example'}, feedback: {name: 'Wren'}},
 		})
 	})
 
