@@ -14,6 +14,8 @@ import * as c from '@frogpond/colors'
 
 import {useDismissOnce} from '../../source/lib/use-dismiss-once'
 import {AddToCalendar} from '@frogpond/add-to-device-calendar'
+import {addToCalendarEvents} from '../../source/features/telemetry/calendar-events'
+import {track} from '../../source/features/telemetry/track'
 import {scheduleEventOptions, useCalendarSource, useCalendarSources} from '@frogpond/ccc-calendar'
 import {LoadingView, NoticeView} from '@frogpond/notice'
 import {
@@ -219,6 +221,11 @@ export default function EventDetailPage(): React.ReactNode {
 			<AddToCalendar
 				compactMessages={true}
 				event={event}
+				onResult={(result) => {
+					for (let telemetryEvent of addToCalendarEvents(result, source, event)) {
+						track(telemetryEvent)
+					}
+				}}
 				render={({message, disabled, onPress}) => (
 					// Host forces a fresh SwiftUI view hierarchy on each render,
 					// sidestepping expo/expo#44493 where react-native-screens reuses

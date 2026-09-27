@@ -27,6 +27,25 @@ class ModuleSettingsTests: UITestCase {
 			.verifyTitle("Credits")
 	}
 
+	/// The switch starts on and flips both ways. Whether Sentry actually stops
+	/// sending is not visible from here; that is checked by hand against
+	/// Sentry itself.
+	func testShareTelemetrySwitchTurnsOffAndOn() throws {
+		let settings = SettingsScreen(app: app)
+		settings.openSettings()
+
+		let row = app.switches[TestIdentifiers.Settings.shareTelemetry]
+		settings.scrollUntilExists(row)
+		XCTAssertEqual(row.value as? String, "1", "Sharing should be on by default")
+
+		// Tap the switch itself: in a Form, tapping the label does nothing.
+		row.switches.firstMatch.tap()
+		XCTAssertEqual(row.value as? String, "0", "Sharing should turn off")
+
+		row.switches.firstMatch.tap()
+		XCTAssertEqual(row.value as? String, "1", "Sharing should turn back on")
+	}
+
 	func testChangesAppIconToOldMainAndBack() throws {
 		// The "You have changed the icon" alert belongs to SpringBoard. It blocks
 		// the app from reaching idle, so UIInterruptionMonitor never fires --

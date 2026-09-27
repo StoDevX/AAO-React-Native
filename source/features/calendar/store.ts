@@ -2,6 +2,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 import {create} from 'zustand'
 import {persist, createJSONStorage} from 'zustand/middleware'
 
+import {track} from '../telemetry/track'
+
 /**
  * What the calendar is narrowed to, and along which axis. One selection at a
  * time rather than one per axis: a Presence event has no category and a campus
@@ -43,7 +45,10 @@ export const useCalendarFilterStore = create<CalendarFilterStore>()(
 	persist(
 		(set) => ({
 			filter: null,
-			selectFilter: (filter) => set({filter}),
+			selectFilter: (filter) => {
+				set({filter})
+				track({name: 'calendar.filter.apply', attributes: {axis: filter?.axis ?? 'none'}})
+			},
 			mode: 'day',
 			selectMode: (mode) => set({mode}),
 		}),

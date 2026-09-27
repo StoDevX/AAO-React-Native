@@ -6,6 +6,7 @@ import {BuildingPicker} from '../building-picker'
 import {CATEGORY_LABELS} from '../lib/categories'
 import {keys} from '../query'
 import {makeBuilding} from './fixtures'
+import {track} from '../../telemetry/track'
 
 jest.mock('@expo/ui/swift-ui', () => {
 	// oxlint-disable-next-line typescript/no-require-imports
@@ -19,6 +20,7 @@ jest.mock('@frogpond/campus-search-bar', () => {
 	// oxlint-disable-next-line typescript/no-require-imports
 	return require('./campus-search-bar-mock') as typeof import('./campus-search-bar-mock')
 })
+jest.mock('../../telemetry/track', () => ({track: jest.fn()}))
 
 const fixtures = [
 	makeBuilding({id: 'a', name: 'Alpha Hall', categories: ['building']}),
@@ -162,5 +164,49 @@ describe('BuildingPicker', () => {
 
 		expect(screen.getByText('Food Justice House')).toBeTruthy()
 		expect(screen.queryByText(/Ecology House/u)).toBeNull()
+	})
+
+	describe('counting searches that find nothing', () => {
+		beforeEach(() => {
+			jest.mocked(track).mockClear()
+		})
+
+		it('counts a search that finds nothing, without its text', async () => {
+			await renderPicker()
+
+			await fireEvent.changeText(screen.getByLabelText('Search for a place'), 'zzz')
+			await waitFor(() => {
+				expect(screen.getByText('No buildings to show.')).toBeTruthy()
+			})
+
+			expect(track).toHaveBeenCalledWith({name: 'map.search.empty', attributes: {}})
+		})
+
+		it('counts it once while the search keeps finding nothing', async () => {
+			await renderPicker()
+			let field = screen.getByLabelText('Search for a place')
+
+			await fireEvent.changeText(field, 'zzz')
+			await waitFor(() => {
+				expect(track).toHaveBeenCalledTimes(1)
+			})
+			await fireEvent.changeText(field, 'zzzz')
+			await waitFor(() => {
+				expect(screen.getByText('No buildings to show.')).toBeTruthy()
+			})
+
+			expect(track).toHaveBeenCalledTimes(1)
+		})
+
+		it('does not count a search that finds something', async () => {
+			await renderPicker()
+
+			await fireEvent.changeText(screen.getByLabelText('Search for a place'), 'gamma')
+			await waitFor(() => {
+				expect(screen.getByText('Gamma Field')).toBeTruthy()
+			})
+
+			expect(track).not.toHaveBeenCalled()
+		})
 	})
 })

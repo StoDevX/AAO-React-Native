@@ -20,6 +20,7 @@ import type {CategoryLabel} from './lib/categories'
 import {visibleBuildings} from './lib/visible-buildings'
 import {mapDataOptions} from './query'
 import type {Building, Feature} from './types'
+import {track} from '../telemetry/track'
 
 /// Matches the debounce every other search screen in the app uses.
 const SEARCH_DEBOUNCE_MS = 200
@@ -92,6 +93,15 @@ export function BuildingPicker({
 		() => visibleBuildings(buildings, category, query),
 		[buildings, category, query],
 	)
+
+	// Counted when a search first comes up empty, not on every keystroke that
+	// keeps it empty. The query itself is never sent.
+	let isEmptySearch = query !== '' && !isLoading && !isError && visible.length === 0
+	React.useEffect(() => {
+		if (isEmptySearch) {
+			track({name: 'map.search.empty', attributes: {}})
+		}
+	}, [isEmptySearch])
 
 	let cancelSearch = React.useCallback(() => {
 		setTypedQuery('')

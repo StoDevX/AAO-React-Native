@@ -9,6 +9,7 @@ import {diffEntry} from '../../../../source/features/dictionary/lib/diff'
 import {normalizeDraft, startDraft} from '../../../../source/features/dictionary/lib/draft'
 import {submitReport} from '../../../../source/features/dictionary/report/submit'
 import {useDictionaryDraftStore} from '../../../../source/features/dictionary/store'
+import {track} from '../../../../source/features/telemetry/track'
 
 const styles = StyleSheet.create({
 	host: {flex: 1},
@@ -66,6 +67,7 @@ export default function DictionaryPreviewPage(): React.ReactNode {
 		}
 
 		markSubmitted()
+		track({name: 'dictionary.edit.submit', attributes: {}})
 	}, [draft, markSubmitted, original])
 
 	if (!diff) {

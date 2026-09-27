@@ -30,12 +30,15 @@ const event: EventType = {
 }
 
 /** Render the component and keep hold of what it last asked to draw. */
-async function renderButton(): Promise<() => RenderArgs> {
+async function renderButton(
+	onResult?: (result: AddToCalendarResult) => void,
+): Promise<() => RenderArgs> {
 	let latest: RenderArgs | undefined
 	await render(
 		<AddToCalendar
 			compactMessages={true}
 			event={event}
+			onResult={onResult}
 			render={(args) => {
 				latest = args
 				return <Text>{args.message}</Text>
@@ -106,4 +109,18 @@ describe('AddToCalendar', () => {
 
 		expect(current()).toMatchObject({message: 'Error. Try again?', disabled: false})
 	})
+
+	it.each(['saved', 'cancelled', 'error'] as const)(
+		'tells the screen the editor ended with %s',
+		async (result) => {
+			jest.mocked(addToCalendar).mockResolvedValue(result)
+			let onResult = jest.fn()
+			let current = await renderButton(onResult)
+
+			await press(current)
+
+			expect(onResult).toHaveBeenCalledTimes(1)
+			expect(onResult).toHaveBeenCalledWith(result)
+		},
+	)
 })
