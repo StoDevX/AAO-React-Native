@@ -38,7 +38,11 @@ import {
 	type SheetEvent,
 	type SheetState,
 } from '../../../source/features/map/lib/sheet-moves'
-import {DETENT_FOR, nameOf, SHEET_DETENTS} from '../../../source/features/map/lib/sheet-detents'
+import {
+	collapsedDetentFor,
+	detentsFor,
+	nameOf,
+} from '../../../source/features/map/lib/sheet-detents'
 import {mapDataOptions} from '../../../source/features/map/query'
 import type {Coordinate, Point} from '../../../source/features/map/types'
 import {mapCredits, mapStyleUrl} from '../../../source/features/map/urls'
@@ -126,7 +130,17 @@ export default function MapPage(): React.ReactNode {
 	// camera has to keep clear.
 	// A fraction is measured against the window less the top inset, so the
 	// camera is padded against the same thing rather than the whole window.
-	let sheetHeight = sheetHeightFor(DETENT_FOR[sheet.current], windowHeight - insets.top)
+	// The picker's search field grows with the text size, and the collapsed
+	// stop grows to hold it. A card keeps the default stop, as Apple Maps'
+	// does: at large text sizes its header keeps its top in view and runs off
+	// the bottom.
+	let [pickerHeaderHeight, setPickerHeaderHeight] = React.useState<number | null>(null)
+	let collapsedHeight = stack.length > 0 ? null : pickerHeaderHeight
+	let detents = React.useMemo(
+		() => detentsFor(collapsedDetentFor(collapsedHeight)),
+		[collapsedHeight],
+	)
+	let sheetHeight = sheetHeightFor(detents[sheet.current], windowHeight - insets.top)
 
 	let footprints = React.useMemo(() => toBuildingFootprints(buildings), [buildings])
 
@@ -265,8 +279,8 @@ export default function MapPage(): React.ReactNode {
 							// than the hex `presentationBackground` wants, so the sheet
 							// still follows the system appearance.
 							background(c.systemGroupedBackground),
-							presentationDetents(SHEET_DETENTS, {
-								selection: DETENT_FOR[sheet.current],
+							presentationDetents([detents.collapsed, detents.medium, detents.large], {
+								selection: detents[sheet.current],
 								onSelectionChange: (to) => dispatchSheet({type: 'dragged', to: nameOf(to)}),
 							}),
 							presentationDragIndicator('visible'),
@@ -290,6 +304,7 @@ export default function MapPage(): React.ReactNode {
 							<BuildingPicker
 								campus={campus}
 								compact={sheet.current === 'collapsed'}
+								onHeaderHeightChange={setPickerHeaderHeight}
 								onSearchCancel={() => dispatchSheet({type: 'search-cancelled'})}
 								onSearchFocusChange={(focused, hasText) =>
 									dispatchSheet(

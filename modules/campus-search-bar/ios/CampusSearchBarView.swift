@@ -2,11 +2,17 @@ import ExpoModulesCore
 import SwiftUI
 import UIKit
 
-/// Apple Maps' search field is 44pt tall. UIKit's default is shorter, so the
-/// height is pinned rather than inherited. The picker's margins, the
-/// collapsed detent's height, and `CarletonMapScreen.swift`'s scale
-/// derivation are all sized against this constant.
+/// Apple Maps' search field is 44pt tall at the default text size. UIKit's
+/// default is shorter, so this is the field's floor; at larger text sizes the
+/// field grows to fit its text, as Maps' does. `CarletonMapScreen.swift`'s
+/// scale derivation is sized against this constant.
 private let fieldHeight: CGFloat = 44
+
+/// What `UISearchBar` draws above and below its text field, measured on an
+/// iPhone 17 Pro simulator running iOS 27: the bar reports 64pt around a
+/// 44pt field at the default text size, and 144pt around a 124pt field at the
+/// largest.
+private let barChrome: CGFloat = 10
 
 /// The bar owns its text. JavaScript hears every change through
 /// `onTextChange` and never writes text back: the one change it could want,
@@ -31,7 +37,6 @@ struct CampusSearchBarView: ExpoSwiftUI.View {
 
 	var body: some View {
 		SearchBar(props: props)
-			.frame(height: fieldHeight)
 	}
 }
 
@@ -65,6 +70,19 @@ private struct SearchBar: UIViewRepresentable {
 		textFieldHeight.priority = UILayoutPriority(999)
 		textFieldHeight.isActive = true
 		return bar
+	}
+
+	/// The bar takes the height of its text field: 44pt, or taller when the
+	/// text size needs it. `UISearchBar` draws its own chrome above and below
+	/// the field, but that overflow takes no layout space and `.minimal` paints
+	/// none of it, so the field's height is the whole slot.
+	///
+	/// The field's own `intrinsicContentSize` undersells it -- 79pt at the
+	/// largest text size, where the bar lays it out at 124pt -- so the height
+	/// comes from the bar's, less the chrome.
+	func sizeThatFits(_ proposal: ProposedViewSize, uiView bar: UISearchBar, context: Context) -> CGSize? {
+		let height = max(fieldHeight, bar.intrinsicContentSize.height - 2 * barChrome)
+		return CGSize(width: proposal.width ?? bar.intrinsicContentSize.width, height: height)
 	}
 
 	func updateUIView(_ bar: UISearchBar, context: Context) {

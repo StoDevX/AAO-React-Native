@@ -38,6 +38,20 @@ class ModuleMapTests: UITestCase {
 			.verifyClearHeaderWithCredits()
 	}
 
+	/// At the largest text size the search field grows to fit its text, and
+	/// the collapsed stop grows with it, as Apple Maps' does: the whole field
+	/// stays inside the sheet with a margin above and below it.
+	func testTheCollapsedSheetHoldsTheSearchFieldAtTheLargestTextSize() throws {
+		relaunch(atContentSizeCategory: TestIdentifiers.LaunchArguments.accessibilityExtraExtraExtraLarge)
+		MapScreen(app: app)
+			.navigate()
+			.checkSheetPresented()
+			.capture("St. Olaf map sheet collapsed at the largest text size")
+			.verifyCollapsed()
+			.verifyFieldWithinSheet()
+			.verifyFieldHasMarginsInSheet()
+	}
+
 	func testTheCollapsedSheetRisesForSearchAndForAFootprint() throws {
 		let screen = MapScreen(app: app)
 			.navigate()

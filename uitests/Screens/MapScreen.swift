@@ -176,7 +176,10 @@ struct MapScreen: Screen {
 	}
 
 	/// The collapsed stop rests at the foot of the screen with the field on it,
-	/// which is what tells it apart from medium and large.
+	/// which is what tells it apart from medium and large. The line is drawn at
+	/// 70% of the screen, between the two: the middle stop puts the field near
+	/// 60%, and the collapsed stop, grown to hold the field at the largest text
+	/// size, near 80% on a 17e.
 	///
 	/// How much of the field the stop shows is `verifyFieldWithinSheet`'s
 	/// question, not this one: `isHittable` answers true for content the sheet
@@ -187,7 +190,7 @@ struct MapScreen: Screen {
 		let top = searchFieldTop()
 		let windowHeight = app.windows.firstMatch.frame.height
 		XCTAssertTrue(
-			top > windowHeight * 0.8,
+			top > windowHeight * 0.7,
 			"The collapsed sheet should rest at the foot of the screen; the field's top is at \(top) of \(windowHeight)")
 		XCTAssertFalse(cancelButton.exists, "An empty, unfocused field has nothing to cancel")
 		return self
@@ -247,6 +250,23 @@ struct MapScreen: Screen {
 			field.minY >= sheet.minY && field.maxY <= sheet.maxY,
 			"The collapsed sheet should hold the whole search field, not clip it: "
 				+ "field \(field), sheet \(sheet)")
+		return self
+	}
+
+	/// The field sits in the sheet with room above and below it, as Maps'
+	/// does at every text size, rather than touching or crossing the sheet's
+	/// edges. `verifyCollapsedMarginsSymmetric` checks the exact margins at the
+	/// default size; this one holds at any size, where the field's height is
+	/// not known in advance.
+	@discardableResult
+	func verifyFieldHasMarginsInSheet() -> Self {
+		let field = searchField.frame
+		let sheet = sheetFrame()
+		let above = field.minY - sheet.minY
+		let below = sheet.maxY - field.maxY
+		XCTContext.runActivity(named: "\(above)pt above the field, \(below)pt below it") { _ in }
+		XCTAssertGreaterThanOrEqual(above, 8, "The field should sit clear of the sheet's top: \(above)pt")
+		XCTAssertGreaterThanOrEqual(below, 8, "The field should sit clear of the sheet's bottom: \(below)pt")
 		return self
 	}
 
