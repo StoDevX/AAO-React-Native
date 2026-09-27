@@ -74,6 +74,21 @@ class ModuleStudentWorkTests: UITestCase {
 			.verifyPostingHidden(IDs.fixtureJobWithShortFields)
 	}
 
+	/// With no units map, an area cannot sort its postings, and says so; every
+	/// posting is still one tap away under All job postings.
+	func testAreaSaysSoWhenItsPostingsCannotBeSorted() throws {
+		relaunchWithFreshState(adding: TestIdentifiers.LaunchArguments.studentWorkUnitsUnavailable)
+
+		StudentWorkScreen(app: app)
+			.navigate()
+			.openArea(IDs.researchArea)
+			.verifyAreaUnavailable()
+			.capture("Student Work area unavailable")
+			.navigateBackToLanding()
+			.openAllPostings()
+			.verifyPostingListed(IDs.fixtureJobWithWrappingField)
+	}
+
 	func testEntryLevelPresetPrefillsTheLevelFilter() throws {
 		StudentWorkScreen(app: app)
 			.navigate()

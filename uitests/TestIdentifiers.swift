@@ -16,6 +16,9 @@ struct TestIdentifiers {
 		/// `NSUserDefaults` as EXTRA_POSTING_SETTING in
 		/// modules/ccc-jobs/fixtures/uitest-postings.ts.
 		static let extraJobPosting = ["-AAOUITestExtraJobPosting", "YES"]
+		/// Makes the Student Work units map fail, read through `NSUserDefaults`
+		/// as UNITS_UNAVAILABLE_SETTING in modules/ccc-jobs/fixtures/uitest-postings.ts.
+		static let studentWorkUnitsUnavailable = ["-AAOUITestStudentWorkUnitsUnavailable", "YES"]
 		/// The value half of `-UIPreferredContentSizeCategoryName`, UIKit's
 		/// command-line override for the app's Dynamic Type size. This is AX5,
 		/// the largest accessibility size, so a test launching with it proves a
@@ -320,6 +323,9 @@ struct TestIdentifiers {
 		/// they leave empty. See FIXTURE_UNITS in
 		/// modules/ccc-jobs/fixtures/uitest-postings.ts.
 		static let researchArea = "Research (CURI)"
+		/// Matches the unavailable title in
+		/// source/features/sis/student-work/postings-list.tsx.
+		static let areaUnavailable = "Couldn’t load this area’s postings."
 		static let emptyArea = "Faith & Vocation"
 		/// The list's empty state once a search or filter leaves nothing, from
 		/// source/features/sis/student-work/postings-list.tsx.

@@ -145,6 +145,19 @@ class UITestCase: XCTestCase {
 		app.launch()
 	}
 
+	/// Terminate and relaunch the app with fresh state, adding `arguments` to
+	/// the launch, so nothing an earlier launch saved can stand in for what the
+	/// arguments change.
+	func relaunchWithFreshState(adding arguments: [String]) {
+		app.terminate()
+		app.launchArguments = [
+			TestIdentifiers.LaunchArguments.uiTesting,
+			TestIdentifiers.LaunchArguments.resetState,
+		] + arguments
+		appendJsLocationIfProvided()
+		app.launch()
+	}
+
 	/// Terminate and relaunch the app with fresh state at a given Dynamic Type
 	/// size. Lets a test prove a layout at a size larger than whatever the
 	/// simulator's own Settings happen to be set to.
