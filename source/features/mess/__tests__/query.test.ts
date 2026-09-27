@@ -458,53 +458,39 @@ describe('messIssuesOptions', () => {
 })
 
 describe('messIssueOptions', () => {
-	test("fetches an older issue's stories, from its day to the next issue's", async () => {
-		serve(() => posts)
-
-		let stories = await run<MessStory[]>(
-			messIssueOptions({after: '2026-03-24T23:59:59', before: '2026-04-29T00:00:00', count: 5}),
-		)
-
-		expect(stories.map((s) => s.id)).toStrictEqual([36859, 36911, 36885, 36904, 36843])
-		expect(fetchedHrefs()).toContain(
-			'https://olafmessenger.com/wp-json/wp/v2/posts?after=2026-03-24T23:59:59&before=2026-04-29T00:00:00&per_page=100&_embed=true',
-		)
-	})
-
-	// A week's range can take in a special edition that is an issue of its own.
-	test("keeps only the issue's own stories from its range", async () => {
+	// Asked for by id, not by date: an issue's range can run over a quiet summer and past a
+	// special edition, and a range past 100 posts would lose stories.
+	test("fetches an issue's stories by their ids", async () => {
 		serve(() => posts)
 
 		let stories = await run<MessStory[]>(
 			messIssueOptions({
-				after: '2026-03-24T23:59:59',
-				before: '2026-04-29T00:00:00',
-				count: 2,
-				storyIds: [36911, 36904],
+				after: '2026-03-22T23:59:59',
+				before: '2026-04-27T00:00:00',
+				count: 5,
+				storyIds: [36859, 36911, 36885, 36904, 36843],
 			}),
 		)
 
-		expect(stories.map((s) => s.id)).toStrictEqual([36911, 36904])
-	})
-
-	test('runs the newest issue to now', async () => {
-		serve(() => posts)
-
-		await run(messIssueOptions({after: '2026-05-11T23:59:59', before: null, count: 11}))
-
+		expect(stories.map((s) => s.id)).toStrictEqual([36859, 36911, 36885, 36904, 36843])
 		expect(fetchedHrefs()).toContain(
-			'https://olafmessenger.com/wp-json/wp/v2/posts?after=2026-05-11T23:59:59&per_page=100&_embed=true',
+			'https://olafmessenger.com/wp-json/wp/v2/posts?include=36859,36911,36885,36904,36843&per_page=100&_embed=true',
 		)
 	})
 
 	test("saves an issue's stories for the next launch only when asked, as Top's are", () => {
-		let issue = {after: '2026-04-28T23:59:59', before: null, count: 5}
+		let issue = {after: '2026-04-28T23:59:59', before: null, count: 5, storyIds: [5, 4, 3, 2, 1]}
 		expect(messIssueOptions(issue).meta).toStrictEqual({persist: false})
 		expect(messIssueOptions(issue, {persist: true}).meta).toStrictEqual({persist: true})
 	})
 
 	test('keys an issue by its range and story count, and keeps it for a day', () => {
-		let options = messIssueOptions({after: '2026-05-11T23:59:59', before: null, count: 11})
+		let options = messIssueOptions({
+			after: '2026-05-11T23:59:59',
+			before: null,
+			count: 11,
+			storyIds: [11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1],
+		})
 		expect(options.queryKey).toStrictEqual(['mess', 'issue', '2026-05-11T23:59:59', null, 11])
 		expect(options.staleTime).toBe(24 * 60 * 60 * 1000)
 	})

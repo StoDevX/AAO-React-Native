@@ -196,12 +196,12 @@ export const messIssuesOptions = infiniteQueryOptions({
 })
 
 /**
- * One issue's stories: every post from its day up to the next issue's, parsed like the feed.
- * Only Top's are saved for the next launch; any other issue is fetched again when opened.
+ * One issue's stories, asked for by their ids and parsed like the feed. Only the newest issue's,
+ * the front page's top tile, are saved for the next launch; any other is fetched again when opened.
  */
 /* oxlint-disable typescript/explicit-module-boundary-types -- queryOptions' own return type */
 export const messIssueOptions = (
-	issue: Pick<MessIssue, 'after' | 'before' | 'count'> & Partial<Pick<MessIssue, 'storyIds'>>,
+	issue: Pick<MessIssue, 'after' | 'before' | 'count' | 'storyIds'>,
 	{persist = false}: {persist?: boolean} = {},
 ) =>
 	queryOptions<MessStory[]>({
@@ -215,20 +215,14 @@ export const messIssueOptions = (
 			previousQuery?.queryKey[2] === issue.after && previousQuery.queryKey[3] === issue.before
 				? previous
 				: undefined,
-		queryFn: async ({signal}) => {
-			let range =
-				issue.before === null
-					? `after=${issue.after}`
-					: `after=${issue.after}&before=${issue.before}`
-			let stories = await storiesAt(
-				`posts?${range}&per_page=100&_embed=true`,
+		// By id rather than by date: a week's range can take in a special edition, which is an issue
+		// of its own, and can run over a quiet summer to more posts than one page holds.
+		queryFn: ({signal}) =>
+			storiesAt(
+				`posts?include=${issue.storyIds.join(',')}&per_page=100&_embed=true`,
 				signal,
 				'Olaf Messenger issue',
-			)
-			// A week's range can take in a special edition, which is an issue of its own.
-			let own = issue.storyIds ? new Set(issue.storyIds) : null
-			return own ? stories.filter((story) => own.has(story.id)) : stories
-		},
+			),
 	})
 /* oxlint-enable typescript/explicit-module-boundary-types */
 

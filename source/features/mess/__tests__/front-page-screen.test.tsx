@@ -257,7 +257,7 @@ describe('FrontPageScreen', () => {
 		})
 
 		expect(postHrefs()).toStrictEqual([
-			expect.stringContaining('/posts?after=2026-04-26T23:59:59&per_page=100&_embed=true'),
+			expect.stringContaining('/posts?include=99,5,4,3,2,1&per_page=100&_embed=true'),
 		])
 		await waitForQueriesToSettle(queryClient)
 	})
@@ -265,7 +265,12 @@ describe('FrontPageScreen', () => {
 	test("saves the top tile's issue for the next launch, and no other issue", async () => {
 		seedTop()
 		// An older issue opened from its tile, made through its options as the app makes it.
-		let older = {after: '2026-03-22T23:59:59', before: '2026-04-27T00:00:00', count: 5}
+		let older = {
+			after: '2026-03-22T23:59:59',
+			before: '2026-04-27T00:00:00',
+			count: 5,
+			storyIds: [5, 4, 3, 2, 1],
+		}
 		await queryClient.query({...messIssueOptions(older), initialData: ISSUE_STORIES})
 		await renderScreen()
 
@@ -320,7 +325,7 @@ describe('FrontPageScreen', () => {
 		expect(postHrefs()).toEqual(
 			expect.arrayContaining([
 				expect.stringContaining('/posts?per_page=100&page=1&_fields='),
-				expect.stringContaining('/posts?after=2026-04-26T23:59:59&per_page=100&_embed=true'),
+				expect.stringContaining('/posts?include=5,4,3,2,1&per_page=100&_embed=true'),
 			]),
 		)
 		expect(postHrefs().filter((href) => href.includes('categories='))).toStrictEqual([])
