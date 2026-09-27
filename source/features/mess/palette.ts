@@ -10,3 +10,5 @@ export const faded = DynamicColorIOS({light: '#5C5850', dark: '#A8A196'})
 export const messRed = DynamicColorIOS({light: '#8A1C1C', dark: '#E0736B'})
 /** Type on a Mess red fill: white on the deep light-mode red, dark paper on the light dark-mode red. */
 export const onMessRed = DynamicColorIOS({light: '#FFFFFF', dark: '#1C1A17'})
+/** A tinted card or square, a shade off the paper. */
+export const wash = DynamicColorIOS({light: '#ECE7DC', dark: '#2A2723'})
