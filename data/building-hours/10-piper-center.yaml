@@ -2,6 +2,8 @@ name: Piper Center
 category: Offices
 kind: office
 building: toh
+links:
+  - {title: 'Piper Center', url: 'https://wp.stolaf.edu/pipercenter/'}
 
 schedule:
   - title: Hours

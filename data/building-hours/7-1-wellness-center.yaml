@@ -3,12 +3,16 @@ image: wellness
 category: Health and Wellness
 kind: office
 building: bc
+links:
+  - {title: 'Wellness Center', url: 'https://wp.stolaf.edu/wellness/'}
 
 schedule:
   - title: Hours
     hours:
-      - {days: [Mo, Tu, We, Th], from: '1:00pm', to: '8:00pm'}
-      - {days: [Fr, Su], from: '10:00am', to: '5:00pm'}
+      - {days: [Mo, Fr], from: '9:00am', to: '5:00pm'}
+      - {days: [Tu, Th], from: '9:00am', to: '11:00am'}
+      - {days: [Tu, We, Th], from: '1:00pm', to: '5:00pm'}
+      - {days: [Su], from: '1:00pm', to: '6:00pm'}
 
 breakSchedule:
   fall: []
