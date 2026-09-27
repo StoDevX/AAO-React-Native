@@ -313,8 +313,6 @@ class ModuleMapTests: UITestCase {
 			.verifyHoursStatus()
 	}
 
-	/// Tapping the map while cards are stacked starts afresh from the place
-	/// tapped, rather than leaving a sheet over the new card.
 	/// A building's Directory lists its floors; a floor stacks its sheet over
 	/// the card, and a place on it stacks its own card over the floor.
 	func testAFloorOpensWhatIsOnIt() throws {
@@ -328,15 +326,19 @@ class ModuleMapTests: UITestCase {
 			.expandCard()
 			.openDirectoryFloor(TestIdentifiers.Map.aDirectoryFloorIndex)
 			.verifyTopCard(TestIdentifiers.Map.aDirectoryFloor)
+			.verifyFloorSheetOnTop()
 			.capture("A floor of Tomson's Directory")
 			.openDirectoryEntry(named: TestIdentifiers.Map.aDirectoryVenue)
 			.verifyTopCard(TestIdentifiers.Map.aDirectoryVenue)
 			.closeTopCard()
 			.verifyTopCard(TestIdentifiers.Map.aDirectoryFloor)
+			.verifyFloorSheetOnTop()
 			.closeTopCard()
 			.verifyBaseCardAnswersTouch(name)
 	}
 
+	/// Tapping the map while cards are stacked starts afresh from the place
+	/// tapped, rather than leaving a sheet over the new card.
 	func testTappingTheMapStartsAfresh() throws {
 		let name = TestIdentifiers.Map.aBuildingWithPoints
 		let screen = MapScreen(app: app)
