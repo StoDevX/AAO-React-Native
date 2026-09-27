@@ -67,6 +67,14 @@ extension XCUIElement {
 		return XCTWaiter().wait(for: [expectation], timeout: timeout) == .completed
 	}
 
+	/// Wait for this element's label to read `expected`. A label drawn by JavaScript changes a
+	/// render after the tap that asks for it.
+	func waitForLabel(_ expected: String, timeout: TimeInterval = 30) -> Bool {
+		let expectation = XCTNSPredicateExpectation(
+			predicate: NSPredicate(format: "label == %@", expected), object: self)
+		return XCTWaiter().wait(for: [expectation], timeout: timeout) == .completed
+	}
+
 	/// Wait for this element to become hittable: on screen, and not covered.
 	/// A readiness check before a single tap, so a control that drops its first
 	/// tap fails the test instead of being tapped again.

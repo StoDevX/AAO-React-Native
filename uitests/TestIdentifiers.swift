@@ -540,10 +540,17 @@ struct TestIdentifiers {
 		/// Matches NEWS_ROW_PREFIX in source/features/news/news-row.tsx.
 		static let rowPrefix = "news-row-"
 
-		/// The front page's chips, each told apart by its label, in source/features/mess/chip-row.tsx.
-		static let chip = "mess-chip"
-		static let topChip = "Top"
-		static let issuesChip = "Issues"
+		/// The By Issue / Latest switch's segments, in source/features/mess/front-page-screen.tsx.
+		static let byIssue = "By Issue"
+		static let latest = "Latest"
+
+		/// The newest issue's tile and every other issue's, in source/features/mess/issue-grid.tsx.
+		static let topTile = "mess-top-tile"
+		static let issueTile = "mess-issue-tile"
+
+		/// Latest's section filter, in source/features/news/news-picker.tsx.
+		static let sectionFilter = "News filter"
+		/// A section the filter offers, as source/features/mess/lib/posts.ts names it.
 		static let newsSection = "News"
 
 		/// The paper's name, drawn in the navigation bar by source/features/mess/front-page-screen.tsx.
@@ -555,9 +562,6 @@ struct TestIdentifiers {
 		/// The lead story, and every card on a shelf, in source/features/mess/issue-page.tsx.
 		static let leadStory = "mess-lead-story"
 		static let storyCard = "mess-story-card"
-
-		/// Every issue on the Issues chip, in source/features/mess/issue-list.tsx.
-		static let issueRow = "mess-issue-row"
 
 		/// A section's column chips, each labelled with its column, in source/features/mess/section-page.tsx.
 		static let columnChip = "mess-column-chip"
@@ -667,6 +671,11 @@ struct TestIdentifiers {
 
 	enum Settings {
 		static let signIn = "Sign in to St. Olaf"
+		/// The Messenger's stain picker, in
+		/// source/features/settings/screens/overview/issue-stains-row.tsx, and choices it offers.
+		static let issueStains = "settings-issue-stains"
+		static let tea = "Tea"
+		static let coffee = "Coffee"
 		static let developer = "Developer"
 		static let enableDevMode = "Enable dev mode"
 	}
