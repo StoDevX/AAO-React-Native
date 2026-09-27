@@ -240,6 +240,11 @@ run = "node scripts/scrape-bonapp.mjs"
 description = "Check that every building: key resolves to a real map feature"
 run = "node scripts/validate-building-keys.mjs"
 
+# Needs the network too: it runs every area's search against the live board.
+[tasks."check-student-work-areas"]
+description = "Report Student Work postings that no area tile holds"
+run = "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/check-student-work-areas.mjs"
+
 # An undeclared -- or orphaned -- @frogpond dependency resolves fine locally
 # through the root node_modules hoist, so format, lint, tsc and test all pass
 # and CI is the first thing to say otherwise. Same reasoning as
