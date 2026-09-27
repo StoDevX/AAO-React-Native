@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {StyleSheet, useWindowDimensions} from 'react-native'
+import {StyleSheet} from 'react-native'
 import {Stack, useRouter} from 'expo-router'
 import {Button, ContextMenu, Host, RNHostView, ScrollView, Text, VStack} from '@expo/ui/swift-ui'
 import {
@@ -18,17 +18,14 @@ import sample from 'lodash/sample'
 import {useDispatch, useSelector} from 'react-redux'
 import {Restart} from 'react-native-restart-newarch'
 
-import {AllViews} from '../../source/features/views'
-import {HomeScreenButton} from '../../source/features/home/button'
-import {
-	FILL_WIDTH,
-	homeColumnsForFontScale,
-	SCREEN_MARGIN,
-	TILE_SPACING,
-} from '../../source/components/tile-layout'
+import {AllViews, homeSections, type HomeSection, type ViewType} from '../../source/features/views'
+import {HomeGroupHeader} from '../../source/features/home/group-header'
+import {FILL_WIDTH, SCREEN_MARGIN, TILE_SPACING} from '../../source/components/tile-layout'
 import {TileGrid} from '../../source/components/tile-grid'
+import {GradientTile} from '../../source/components/gradient-tile'
 import {openUrl} from '@frogpond/open-url'
 import {selectDevModeOverride, setDevModeOverride} from '../../source/redux/parts/settings'
+import {selectCollapsedHomeGroups, toggleHomeGroup} from '../../source/redux/parts/home'
 import {useIsDevMode} from '../../source/lib/use-is-dev-mode'
 import {FaqBannerGroup} from '../../source/features/faqs/banner'
 import {FAQ_TARGETS} from '../../source/features/faqs/constants'
@@ -127,14 +124,77 @@ function UnofficialAppNotice(): React.ReactNode {
 	)
 }
 
-/// Mirrored by TestIdentifiers.Home.tileGrid.
-const HOME_GRID_ID = 'home-tile-grid'
+/// Mirrored by TestIdentifiers.Home.groupGrid.
+const groupGridId = (group: string): string => `home-group-grid-${group}`
+/// Names a group's header, for a UI test.
+const groupHeaderId = (group: string): string => `home-group-header-${group}`
+
+/** A tile's destination: a screen in the app, or a page opened outside it. */
+function useOpenView(): (view: ViewType) => void {
+	let router = useRouter()
+	return React.useCallback(
+		(view: ViewType) => {
+			if (view.type === 'url') {
+				openUrl(view.url)
+			} else if (view.type === 'view') {
+				router.navigate(view.view)
+			} else {
+				throw new Error(`unexpected view type ${view.type}`)
+			}
+		},
+		[router],
+	)
+}
+
+/// One group: its header, then its tiles four abreast unless it is collapsed.
+function HomeGroupView({
+	section,
+	collapsed,
+	onToggle,
+	onOpen,
+}: {
+	section: HomeSection
+	collapsed: boolean
+	onToggle: () => void
+	onOpen: (view: ViewType) => void
+}): React.ReactNode {
+	return (
+		<VStack modifiers={[frame({maxWidth: FILL_WIDTH})]} spacing={TILE_SPACING / 2}>
+			<HomeGroupHeader
+				accessibilityId={groupHeaderId(section.id)}
+				collapsed={collapsed}
+				count={section.views.length}
+				onToggle={section.collapsible ? onToggle : undefined}
+				title={section.title}
+			/>
+			{collapsed ? null : (
+				<TileGrid
+					accessibilityId={groupGridId(section.id)}
+					items={section.views}
+					keyForItem={(view) => view.id}
+					renderItem={(view) => (
+						<GradientTile
+							gradient={view.gradient}
+							icon={view.icon}
+							onPress={() => onOpen(view)}
+							ratio={1}
+							spokenTitle={view.title}
+							title={view.label ?? view.title}
+						/>
+					)}
+				/>
+			)}
+		</VStack>
+	)
+}
 
 export default function HomePage(): React.ReactNode {
 	let router = useRouter()
+	let dispatch = useDispatch()
 	let isDev = useIsDevMode()
-	let allViews = AllViews().filter((view) => !view.disabled && (isDev || !view.devOnly))
-	let {fontScale} = useWindowDimensions()
+	let collapsedGroups = useSelector(selectCollapsedHomeGroups)
+	let openView = useOpenView()
+	let sections = homeSections(AllViews(), {isDev})
 
 	return (
 		<>
@@ -155,7 +215,7 @@ export default function HomePage(): React.ReactNode {
 				<ScrollView>
 					<VStack
 						modifiers={[padding({all: SCREEN_MARGIN}), frame({maxWidth: FILL_WIDTH})]}
-						spacing={TILE_SPACING}
+						spacing={TILE_SPACING * 2}
 					>
 						<RNHostView matchContents={true}>
 							<FaqBannerGroup
@@ -165,32 +225,15 @@ export default function HomePage(): React.ReactNode {
 							/>
 						</RNHostView>
 
-						{/* Health lays its cards out as a grid, not as independent
-						    columns: the cards in a row share a height, so a two-line
-						    title on one lifts the card beside it too. Independent
-						    columns cannot express that -- each card sizes to its own
-						    content, and they drift out of step as the taller ones
-						    accumulate. */}
-						<TileGrid
-							accessibilityId={HOME_GRID_ID}
-							columns={homeColumnsForFontScale(fontScale)}
-							items={allViews}
-							keyForItem={(view) => view.title}
-							renderItem={(view) => (
-								<HomeScreenButton
-									onPress={() => {
-										if (view.type === 'url') {
-											return openUrl(view.url)
-										} else if (view.type === 'view') {
-											return router.navigate(view.view)
-										} else {
-											throw new Error(`unexpected view type ${view.type}`)
-										}
-									}}
-									view={view}
-								/>
-							)}
-						/>
+						{sections.map((section) => (
+							<HomeGroupView
+								collapsed={section.collapsible && collapsedGroups.includes(section.id)}
+								key={section.id}
+								onOpen={openView}
+								onToggle={() => dispatch(toggleHomeGroup(section.id))}
+								section={section}
+							/>
+						))}
 
 						<UnofficialAppNotice />
 					</VStack>

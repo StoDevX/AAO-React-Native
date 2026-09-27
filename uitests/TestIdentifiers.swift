@@ -44,7 +44,10 @@ struct TestIdentifiers {
 	enum Home {
 		static let screen = "screen-homescreen"
 		static let notice = "home-notice"
-		static let tileGrid = "home-tile-grid"
+		/// The first group on home, and one that fills a row at the default size.
+		static let eatGroup = "eat"
+		/// Mirrors groupGridId in app/(home)/index.tsx.
+		static func groupGrid(_ group: String) -> String { "home-group-grid-\(group)" }
 	}
 
 	enum Navigation {
@@ -75,21 +78,29 @@ struct TestIdentifiers {
 
 	// MARK: - Home screen button labels
 
+	/// A tile is found by its full name, which VoiceOver reads, even where the
+	/// tile itself shows a shorter one -- "Student Work" for the tile reading
+	/// "Jobs".
 	enum Buttons {
-		static let menus = "Menus"
+		static let stavHall = "Stav Hall"
+		static let theCage = "The Cage"
+		static let thePause = "The Pause"
 		static let athletics = "Athletics"
 		static let calendar = "Calendar"
-		static let sis = "SIS"
+		static let balances = "Balances"
 		static let hours = "Hours"
 		static let dictionary = "Dictionary"
 		static let courseCatalog = "Course Catalog"
 		static let directory = "Directory"
 		static let map = "Map"
-		static let more = "More"
+		static let more = "A–Z"
 		static let olafMessenger = "Olaf Messenger"
 		static let stOlafNews = "St. Olaf News"
 		static let stoPrint = "stoPrint"
-		static let streamingMedia = "Streaming Media"
+		static let streams = "Streams"
+		static let webcams = "Webcams"
+		static let ksto = "KSTO"
+		static let krlx = "KRLX"
 		static let studentOrgs = "Student Orgs"
 		static let studentWork = "Student Work"
 		static let transit = "Transit"
@@ -351,7 +362,6 @@ struct TestIdentifiers {
 
 	enum Menus {
 		static let stOlafCafes = ["Stav Hall", "The Cage", "The Pause"]
-		static let carleton = "Carleton"
 
 		/// Matches FOOD_ROW_PREFIX in modules/food-menu/food-item-row.tsx.
 		static let foodRowPrefix = "food-row-"
@@ -362,7 +372,7 @@ struct TestIdentifiers {
 		static let pause = "The Pause"
 
 		/// The Pause's navigation title, which names the venue publishing its
-		/// hours rather than repeating the tab's shorter label.
+		/// hours rather than repeating the tile's shorter label.
 		static let pauseTitle = "The Pause Kitchen"
 
 		/// What the Pause's title reads at the frozen clock, which is before its
@@ -691,8 +701,6 @@ struct TestIdentifiers {
 	// MARK: - Streaming Media
 
 	enum StreamingMedia {
-		static let tabs = ["Webcams", "KSTO", "KRLX"]
-		static let krlxTab = "KRLX"
 		/// The station screen's buttons, as VoiceOver names them. Call and
 		/// schedule are icons alone, so their labels are all a listener has
 		/// to go on.
@@ -703,7 +711,6 @@ struct TestIdentifiers {
 		]
 		/// KRLX has one logo, so nothing labelled with this may be a button.
 		static let krlxLogoPrefix = "88.1 KRLX-FM logo"
-		static let kstoTab = "KSTO"
 		static let kstoLogoPrefix = "KSTO 93.1 FM logo"
 		/// KSTO's logos in the order a tap cycles through them.
 		static let kstoLogos = [

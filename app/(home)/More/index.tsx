@@ -88,7 +88,7 @@ function MoreView(): React.ReactNode {
 export default function MorePage(): React.ReactNode {
 	return (
 		<>
-			<Stack.Title>More</Stack.Title>
+			<Stack.Title>A–Z</Stack.Title>
 			<MoreView />
 		</>
 	)

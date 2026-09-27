@@ -3,9 +3,10 @@ import XCTest
 struct StreamingMediaScreen: Screen {
 	let app: XCUIApplication
 
+	/// Opens the Streams list, the first of Listen & Watch's tiles.
 	@discardableResult
 	func navigate() -> Self {
-		navigateFromHome(to: TestIdentifiers.Buttons.streamingMedia)
+		navigateFromHome(to: TestIdentifiers.Buttons.streams)
 	}
 
 	@discardableResult
@@ -17,41 +18,13 @@ struct StreamingMediaScreen: Screen {
 		return self
 	}
 
+	/// Open a station from its home tile and wait for its buttons.
 	@discardableResult
-	func checkTabs() -> Self {
-		for tab in TestIdentifiers.StreamingMedia.tabs {
-			XCTContext.runActivity(named: tab) { _ in
-				let tabButton = app.tabButton(tab)
-				XCTAssertTrue(
-					tabButton.waitForExistence(timeout: 30),
-					"\(tab) tab button should be visible")
-			}
-		}
-		return self
-	}
-
-	/// Switch to a station's tab and wait for its buttons.
-	///
-	/// The tap is retried: a native tab switch can be dropped the same way a
-	/// home-screen tile's can, and waiting longer on a dropped one achieves
-	/// nothing.
-	@discardableResult
-	func openStation(_ tab: String, expecting label: String) -> Self {
-		let tabButton = app.tabButton(tab)
+	func openStation(_ tile: String, expecting label: String) -> Self {
+		navigateFromHome(to: tile)
 		XCTAssertTrue(
-			tabButton.waitForExistence(timeout: 30),
-			"\(tab) tab button should be visible before switching to it")
-
-		let marker = app.buttonLabelled(label)
-		for attempt in 1...3 {
-			tabButton.tap()
-			if marker.waitForExistence(timeout: 10) {
-				return self
-			}
-			XCTContext.runActivity(named: "Tap \(attempt) on \(tab) showed no station; retrying") { _ in }
-		}
-
-		XCTFail("Switching to \(tab) never showed a button labelled \"\(label)\"")
+			app.buttonLabelled(label).waitForExistence(timeout: 30),
+			"\(tile) should show a button labelled \"\(label)\"")
 		return self
 	}
 

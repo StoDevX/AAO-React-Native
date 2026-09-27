@@ -1,9 +1,10 @@
 import * as React from 'react'
+import {Stack} from 'expo-router'
 import * as logos from '../../../images/streaming'
 import {RadioControllerView} from '../../../source/features/streaming/radio'
 import {tintedTheme} from '../../../source/features/streaming/radio/theme'
 
-export default function KrlxPage(): React.ReactNode {
+function KrlxView(): React.ReactNode {
 	return (
 		<RadioControllerView
 			logos={[
@@ -28,5 +29,14 @@ export default function KrlxPage(): React.ReactNode {
 			stationNumber="+15072224127"
 			title="Carleton College Radio"
 		/>
+	)
+}
+
+export default function KrlxPage(): React.ReactNode {
+	return (
+		<>
+			<Stack.Title>KRLX</Stack.Title>
+			<KrlxView />
+		</>
 	)
 }

@@ -1,6 +1,6 @@
 import {describe, expect, it} from '@jest/globals'
 import fixtures from '../../__tests__/fixtures/crossword-playlist-posts.json'
-import {crosswordUrl, parseCrossword} from '../crossword'
+import {crosswordColumnId, crosswordUrl, parseCrossword} from '../crossword'
 
 const html = (id: number) => fixtures.find((p) => p.id === id)?.content.rendered ?? ''
 
@@ -74,5 +74,20 @@ describe('crosswordUrl', () => {
 		expect(crosswordUrl({id: 'a b', set: 'x&y=z'})).toBe(
 			'https://puzzleme.amuselabs.com/pmm/crossword?id=a%20b&set=x%26y%3Dz&embed=1',
 		)
+	})
+})
+
+describe('crosswordColumnId', () => {
+	it('finds the crossword column by name', () => {
+		let categories = [
+			{id: 24, name: 'Comic', parent: 7},
+			{id: 1059, name: 'Crossword', parent: 7},
+		]
+
+		expect(crosswordColumnId(categories)).toBe(1059)
+	})
+
+	it('finds nothing when the paper has no crossword column', () => {
+		expect(crosswordColumnId([{id: 24, name: 'Comic', parent: 7}])).toBeUndefined()
 	})
 })

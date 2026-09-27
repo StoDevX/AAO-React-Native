@@ -3,9 +3,10 @@ import XCTest
 struct MenusScreen: Screen {
 	let app: XCUIApplication
 
+	/// Opens Stav Hall, the first cafe on home.
 	@discardableResult
 	func navigate() -> Self {
-		navigateFromHome(to: TestIdentifiers.Buttons.menus)
+		navigateFromHome(to: TestIdentifiers.Buttons.stavHall)
 	}
 
 	/// The navigation bar names the cafe and the day and meal it is showing, on
@@ -13,8 +14,7 @@ struct MenusScreen: Screen {
 	///
 	/// Asserted against the title's composed accessibility label rather than
 	/// its two halves: the label is ours, and it names the cafe, the day and
-	/// the meal in one element. Scoped to `navigationBars` besides, since a
-	/// cafe's name is also its tab's label.
+	/// the meal in one element.
 	@discardableResult
 	func verifyCafeHeader(_ cafe: String, showing meal: String) -> Self {
 		XCTAssertTrue(
@@ -176,12 +176,12 @@ struct MenusScreen: Screen {
 		return self
 	}
 
-	/// Switch to another St. Olaf cafe's tab and wait for its menu to draw.
+	/// Go home and open another St. Olaf cafe from its tile, then wait for its
+	/// menu to draw.
 	@discardableResult
 	func openCafe(_ cafe: String) -> Self {
-		let tab = app.tabButton(cafe)
-		XCTAssertTrue(tab.waitForExistence(timeout: 30), "\(cafe) tab should be visible")
-		tab.tap()
+		returnHome()
+		navigateFromHome(to: cafe)
 		return verifyFoodRowsAppear()
 	}
 
@@ -213,20 +213,6 @@ struct MenusScreen: Screen {
 			title.frame.minY, windowHeight * 0.25,
 			"the title should sit in a sheet resting below the top of the screen,"
 				+ " not at the top of a pushed page (title at \(title.frame.minY) of \(windowHeight))")
-		return self
-	}
-
-	@discardableResult
-	func checkStOlafCafes() -> Self {
-		for cafe in TestIdentifiers.Menus.stOlafCafes {
-			XCTContext.runActivity(named: cafe) { _ in
-				let tab = app.tabButton(cafe)
-				XCTAssertTrue(
-					tab.waitForExistence(timeout: 30),
-					"\(cafe) tab should be visible")
-				tab.tap()
-			}
-		}
 		return self
 	}
 }

@@ -5,7 +5,7 @@ struct SISScreen: Screen {
 
 	@discardableResult
 	func navigate() -> Self {
-		navigateFromHome(to: TestIdentifiers.Buttons.sis)
+		navigateFromHome(to: TestIdentifiers.Buttons.balances)
 	}
 
 	@discardableResult
@@ -59,11 +59,11 @@ struct SISScreen: Screen {
 	/// in the app reads `Back`, so the label says nothing about which one.
 	@discardableResult
 	func navigateBack() -> Self {
-		let backButton = app.navigationBars[TestIdentifiers.Buttons.sis]
+		let backButton = app.navigationBars[TestIdentifiers.Buttons.balances]
 			.buttons[TestIdentifiers.Navigation.systemBackButton]
 		XCTAssertTrue(
 			backButton.waitForExistence(timeout: 10),
-			"SIS should offer a back button to leave by")
+			"Balances should offer a back button to leave by")
 		backButton.tap()
 		return self
 	}
@@ -80,7 +80,7 @@ struct SISScreen: Screen {
 	@discardableResult
 	func navigateToSISAgain() -> Self {
 		let homescreen = app.element(matching: TestIdentifiers.Home.screen)
-		app.buttons[TestIdentifiers.Buttons.sis].firstMatch.tap()
+		app.buttons[TestIdentifiers.Buttons.balances].firstMatch.tap()
 		XCTAssertTrue(
 			homescreen.waitForNonExistence(timeout: 30),
 			"Reopening SIS should leave the homescreen")

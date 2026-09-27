@@ -148,13 +148,12 @@ export function BonAppHostedMenu(props: Props): React.ReactNode {
 	// the frozen one its fixtures are anchored to. Noon lands in lunch.
 	//
 	// A clock that ticks: the line under the name is relative to it -- `Opens
-	// at 7:30 AM` is false a minute later -- and a tab stays mounted for as long
-	// as the reader keeps coming back to it.
+	// at 7:30 AM` is false a minute later -- and the menu stays open for as long
+	// as the reader keeps it open.
 	let {now} = useMomentTimer({intervalMs: 60_000, timezone: timezone()})
 
 	// The menu body's clock turns over with the day rather than the minute.
-	// Every cafe the reader has visited stays mounted and ticks, and only the
-	// header needs the minute; the body reads its clock for the meal it opens on
+	// Only the header needs the minute; the body reads its clock for the meal it opens on
 	// and the day's message, both of which hold for the day.
 	let [menuNow, setMenuNow] = React.useState(now)
 	if (!menuNow.isSame(now, 'day')) {
@@ -162,9 +161,7 @@ export function BonAppHostedMenu(props: Props): React.ReactNode {
 	}
 	let router = useRouter()
 
-	// Live focus rather than the latched `useHasEverBeenFocused` the tabs use
-	// to defer their mounting: every cafe the reader has already visited stays
-	// mounted, and only the one in front of them may title the screen.
+	// Live focus: only a menu in front of the reader may title the screen.
 	let isFocused = useIsFocused()
 	let [mealHeader, setMealHeader] = React.useState<MealHeaderState>(EMPTY_MEAL_HEADER)
 

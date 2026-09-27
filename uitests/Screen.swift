@@ -57,6 +57,12 @@ extension Screen {
 			tile.waitForExistence(timeout: 30),
 			"\(button) button should exist on the home screen")
 
+		// Home is taller than the screen, and its lower groups start out below
+		// the fold. Their tiles are in the tree all the same, just not hittable.
+		for _ in 0..<8 where !tile.isHittable {
+			homescreen.swipeUp()
+		}
+
 		for attempt in 1...3 {
 			tile.tap()
 			if homescreen.waitForNonExistence(timeout: 10) {
@@ -68,6 +74,24 @@ extension Screen {
 		}
 
 		XCTFail("Tapping \(button) never left the home screen")
+		return self
+	}
+
+	/// Back out through the navigation bar until the home screen shows again.
+	///
+	/// Each destination is its own home tile, so reaching the next one means
+	/// going home first.
+	@discardableResult
+	func returnHome() -> Self {
+		let homescreen = app.element(matching: TestIdentifiers.Home.screen)
+		for _ in 0..<3 where !homescreen.exists {
+			let back = app.navigationBars.buttons[TestIdentifiers.Navigation.systemBackButton].firstMatch
+			if back.waitForExistence(timeout: 10) {
+				back.tap()
+			}
+			_ = homescreen.waitForExistence(timeout: 10)
+		}
+		XCTAssertTrue(homescreen.exists, "Going back should reach the home screen")
 		return self
 	}
 

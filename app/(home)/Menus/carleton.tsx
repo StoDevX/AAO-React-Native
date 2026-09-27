@@ -12,8 +12,8 @@ export default function CarletonPage(): React.ReactNode {
 	let router = useRouter()
 
 	// A chooser rather than a menu: no day on it, no hours, and no meal to
-	// pick. It publishes all the same, so the cafe tab the reader came from
-	// does not leave its name and its live picker sitting over this list.
+	// pick. It publishes all the same, so the bar names Carleton rather than
+	// falling back to the route's own title.
 	usePublishMenuHeader(
 		{
 			name: 'Carleton',

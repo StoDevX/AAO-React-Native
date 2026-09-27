@@ -12,15 +12,6 @@ struct HomeScreen: Screen {
 		return self
 	}
 
-	@discardableResult
-	func checkMenusButtonExists() -> Self {
-		let menus = app.buttons[TestIdentifiers.Buttons.menus]
-		XCTAssertTrue(
-			menus.waitForExistence(timeout: 30),
-			"Home screen should show Menus button")
-		return self
-	}
-
 	/// Taps a home tile near its top-right corner rather than its centre.
 	///
 	/// A SwiftUI button's hit region comes from its label, so a tile whose fill
@@ -35,8 +26,8 @@ struct HomeScreen: Screen {
 			tile.waitForExistence(timeout: 30),
 			"\(label) tile should be visible")
 		// Top-right: the icon is centred and narrow, so this corner is empty
-		// fill. The bottom of the tile is riskier -- a long title like
-		// "Carleton Campus" runs most of the width.
+		// fill on the card. The bottom of the tile is its label, which a long
+		// name runs most of the width of.
 		tile.coordinate(withNormalizedOffset: CGVector(dx: 0.9, dy: 0.15)).tap()
 		return self
 	}
@@ -56,6 +47,11 @@ struct HomeScreen: Screen {
 		XCTAssertTrue(
 			notice.waitForExistence(timeout: 30),
 			"Home notice widget should be visible")
+		// The notice sits under every group, below the fold.
+		let homescreen = app.element(matching: TestIdentifiers.Home.screen)
+		for _ in 0..<10 where !notice.isHittable {
+			homescreen.swipeUp()
+		}
 		notice.press(forDuration: 1.0)
 		return self
 	}
@@ -92,6 +88,18 @@ struct HomeScreen: Screen {
 		return self
 	}
 
+	/// Four tiles to a row: the first group's four share a top edge, each to
+	/// the right of the one before.
+	@discardableResult
+	func checkTilesSitFourAbreast() -> Self {
+		let tiles = firstTiles(4)
+		for i in 1..<4 {
+			XCTAssertEqual(tiles[i].minY, tiles[0].minY, accuracy: 1, "Tile \(i + 1) should share the first row")
+			XCTAssertGreaterThan(tiles[i].minX, tiles[i - 1].maxX, "Tile \(i + 1) should sit right of tile \(i)")
+		}
+		return self
+	}
+
 	/// Two tiles to a row: the first two share a top edge, and the third starts
 	/// the next row under the first. Four to a row would pass the first half
 	/// alone, which is why the third tile is checked.
@@ -105,15 +113,6 @@ struct HomeScreen: Screen {
 		return self
 	}
 
-	/// The first two tiles are stacked: same left edge, the second below.
-	@discardableResult
-	func checkTilesStackOnePerRow() -> Self {
-		let tiles = firstTiles(2)
-		XCTAssertEqual(tiles[0].minX, tiles[1].minX, accuracy: 1, "The first two tiles should share a column")
-		XCTAssertGreaterThan(tiles[1].minY, tiles[0].maxY, "The second tile should sit below the first")
-		return self
-	}
-
 	/// No tile's icon reaches out past the top of its card. The glyph has no
 	/// element of its own -- a button's children merge into its one element --
 	/// but the button's frame spans everything it draws, so an icon spilling
@@ -122,8 +121,8 @@ struct HomeScreen: Screen {
 	/// icon never sits: it should find the card there, not the page.
 	@discardableResult
 	func checkTileIconsStayInsideTheirCards() -> Self {
-		let grid = app.element(matching: TestIdentifiers.Home.tileGrid)
-		XCTAssertTrue(grid.waitForExistence(timeout: 30), "Home should show its tile grid")
+		let grid = app.element(matching: TestIdentifiers.Home.groupGrid(TestIdentifiers.Home.eatGroup))
+		XCTAssertTrue(grid.waitForExistence(timeout: 30), "Home should show its first group's tiles")
 		let tiles = grid.buttons.allElementsBoundByIndex.filter { app.frame.contains($0.frame) }
 		XCTAssertFalse(tiles.isEmpty, "At least one tile should be wholly on screen")
 
@@ -145,8 +144,8 @@ struct HomeScreen: Screen {
 	}
 
 	private func firstTiles(_ count: Int) -> [CGRect] {
-		let grid = app.element(matching: TestIdentifiers.Home.tileGrid)
-		XCTAssertTrue(grid.waitForExistence(timeout: 30), "Home should show its tile grid")
+		let grid = app.element(matching: TestIdentifiers.Home.groupGrid(TestIdentifiers.Home.eatGroup))
+		XCTAssertTrue(grid.waitForExistence(timeout: 30), "Home should show its first group's tiles")
 		let tiles = grid.buttons
 		XCTAssertGreaterThanOrEqual(tiles.count, count, "Home should have at least \(count) tiles")
 		return (0..<count).map { tiles.element(boundBy: $0).frame }

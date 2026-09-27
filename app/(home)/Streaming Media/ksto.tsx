@@ -1,4 +1,5 @@
 import * as React from 'react'
+import {Stack} from 'expo-router'
 import * as logos from '../../../images/streaming'
 import {RadioControllerView} from '../../../source/features/streaming/radio'
 import {tintedTheme} from '../../../source/features/streaming/radio/theme'
@@ -14,7 +15,7 @@ const DUMPSTER_TINT = '#2a7d68'
 /** The narwhal's slate, #494e73, lightened just enough to clear 3:1 against black. */
 const NARWHAL_TINT = '#525881'
 
-export default function KstoPage(): React.ReactNode {
+function KstoView(): React.ReactNode {
 	return (
 		<RadioControllerView
 			logos={[
@@ -58,5 +59,14 @@ export default function KstoPage(): React.ReactNode {
 			stationNumber="+15077863602"
 			title="St. Olaf College Radio"
 		/>
+	)
+}
+
+export default function KstoPage(): React.ReactNode {
+	return (
+		<>
+			<Stack.Title>KSTO</Stack.Title>
+			<KstoView />
+		</>
 	)
 }

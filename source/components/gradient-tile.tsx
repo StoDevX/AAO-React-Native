@@ -2,6 +2,7 @@ import * as React from 'react'
 import {useColorScheme} from 'react-native'
 import {Button, Image, RoundedRectangle, Text, VStack, ZStack} from '@expo/ui/swift-ui'
 import {
+	accessibilityInputLabels,
 	accessibilityLabel,
 	aspectRatio,
 	background,
@@ -51,6 +52,11 @@ const LABEL_LINES = 2
 
 type Props = {
 	title: string
+	/**
+	 * The full name VoiceOver reads, when `title` is a shortened one -- "Jobs"
+	 * on the tile, "Student Work" aloud. Voice Control answers to either.
+	 */
+	spokenTitle?: string
 	icon: SFSymbol
 	gradient: Gradient
 	/** Overrides the default portrait ratio (`TILE_ASPECT`) -- pass 1 for a square tile. */
@@ -100,7 +106,7 @@ export function GradientRoundedRectangle({
 
 /**
  * One card in the shape of a Phone.app favorite: a portrait gradient card
- * carrying a single SF Symbol, with a label beneath it. Shared between
+ * carrying a single SF Symbol, with a label beneath it. Shared between home,
  * Directory's curated contacts and Student Orgs' categories -- same visual
  * language, different data behind it.
  *
@@ -111,6 +117,7 @@ export function GradientRoundedRectangle({
  */
 export function GradientTile({
 	title,
+	spokenTitle = title,
 	icon,
 	gradient,
 	ratio = TILE_ASPECT,
@@ -123,13 +130,14 @@ export function GradientTile({
 	let shownCount = count !== undefined && count > 0 ? count : undefined
 	// A known count is spoken even at zero: a dimmed tile is not disabled, so
 	// the label is all that tells VoiceOver an empty area from a loading one.
-	let label = count === undefined ? title : `${title}, ${countLabel(count)}`
+	let label = count === undefined ? spokenTitle : `${spokenTitle}, ${countLabel(count)}`
 
 	return (
 		<Button
 			modifiers={[
 				buttonStyle('plain'),
 				accessibilityLabel(label),
+				...(spokenTitle === title ? [] : [accessibilityInputLabels([title, spokenTitle])]),
 				...(dimmed ? [opacity(DIMMED_OPACITY)] : []),
 			]}
 			onPress={onPress}

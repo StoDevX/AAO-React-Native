@@ -5,7 +5,7 @@ class ModuleHomeTests: UITestCase {
 	func testTileIsTappableAwayFromItsCentre() throws {
 		HomeScreen(app: app)
 			.checkHomescreenExists()
-			.tapTileNearItsEdge(TestIdentifiers.Buttons.menus)
+			.tapTileNearItsEdge(TestIdentifiers.Buttons.stavHall)
 			.checkHomescreenDismissed()
 	}
 
@@ -18,26 +18,26 @@ class ModuleHomeTests: UITestCase {
 			.checkDeveloperSectionVisible()
 	}
 
-	/// Cards sit two abreast at the default text size, each icon inside its
+	/// Tiles sit four abreast at the default text size, each icon inside its
 	/// card.
-	func testTilesSitTwoAbreast() throws {
+	func testTilesSitFourAbreast() throws {
 		HomeScreen(app: app)
 			.checkHomescreenExists()
 			.capture("Home tiles at the default text size")
-			.checkTilesSitTwoAbreast()
+			.checkTilesSitFourAbreast()
 			.checkTileIconsStayInsideTheirCards()
 	}
 
-	/// At an accessibility text size a card's title has no room beside its
-	/// neighbour, so each card takes a row of its own. The icon grows with the
-	/// text too, far past its size at the default one, and its card has to
-	/// grow to hold it.
-	func testTilesStackOnePerRowAtAnAccessibilitySize() throws {
+	/// At an accessibility text size a quarter of the screen leaves a label
+	/// no room, so tiles sit two abreast instead. The icon grows with the text
+	/// too, far past its size at the default one, and its card has to grow to
+	/// hold it.
+	func testTilesSitTwoAbreastAtAnAccessibilitySize() throws {
 		relaunch(atContentSizeCategory: TestIdentifiers.LaunchArguments.accessibilityExtraExtraExtraLarge)
 		HomeScreen(app: app)
 			.checkHomescreenExists()
 			.capture("Home tiles at an accessibility text size")
-			.checkTilesStackOnePerRow()
+			.checkTilesSitTwoAbreast()
 			.checkTileIconsStayInsideTheirCards()
 	}
 }

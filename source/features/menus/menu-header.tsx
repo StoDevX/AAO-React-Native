@@ -73,9 +73,8 @@ type MenuHeader = {
  * The published header, read by the host alone.
  *
  * Separate from the publisher below so that a publish re-renders only the host.
- * Every cafe tab stays mounted once visited, each hosting a SwiftUI list, and
- * one context carrying both would re-render all of them whenever any one of
- * them published.
+ * One context carrying both would re-render the cafe's SwiftUI list whenever
+ * it published.
  */
 const MenuHeaderContext = React.createContext<MenuHeader | null>(null)
 
@@ -85,9 +84,9 @@ const PublishMenuHeaderContext = React.createContext<((header: MenuHeader) => vo
 /**
  * Holds the header for whichever menu is on screen.
  *
- * The four St. Olaf cafes are tabs of one stack route, so they share a single
- * navigation bar and cannot each own it. A cafe publishes into this while it
- * holds focus, and the host below draws whatever was published last.
+ * The cafes are children of one stack route, so the navigation bar belongs to
+ * that route rather than to the cafe. A cafe publishes into this while it holds
+ * focus, and the host below draws whatever was published last.
  */
 export function MenuHeaderProvider(props: {children: React.ReactNode}): React.ReactNode {
 	let [header, setHeader] = React.useState<MenuHeader | null>(null)
@@ -102,9 +101,8 @@ export function MenuHeaderProvider(props: {children: React.ReactNode}): React.Re
 /**
  * Publishes a menu's header while its screen holds focus.
  *
- * `NativeTabs` mounts every tab as soon as Menus opens, so three cafes the
- * reader never asked for are live at any moment; without the gate they would
- * take turns titling the screen.
+ * The gate keeps a menu that is not in front of the reader from retitling the
+ * screen.
  *
  * The header is read field by field rather than by identity, so a caller may
  * build it inline. Depending on the object would make an unmemoized caller
@@ -161,9 +159,9 @@ export function usePublishMenuHeader(header: MenuHeader, focused: boolean): void
  * Draws the published header.
  *
  * Must be mounted as a direct child of the stack -- `app/(home)/Menus/_layout.tsx`
- * for the tabs, or a Carleton page for its own screen. Expo Router keys these
- * options by the nearest route, so the same components inside a tab register
- * against the tab's route and are dropped without a word.
+ * for the cafes, or a Carleton page for its own screen. Expo Router keys these
+ * options by the nearest stack route, so the same components mounted anywhere
+ * else register against the wrong route and are dropped without a word.
  */
 export function MenuHeaderHost(): React.ReactNode {
 	let header = React.useContext(MenuHeaderContext)
