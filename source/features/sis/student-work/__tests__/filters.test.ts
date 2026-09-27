@@ -285,7 +285,7 @@ describe('the Area and Posted filters', () => {
 	})
 
 	// An empty area's tile still opens, to a list filtered to that area.
-	test('offer every area whose searches have answered, empty ones too', () => {
+	test('offer every area once the units have loaded, empty ones too', () => {
 		let area = filterNamed(buildJobFilters(ALL_JOBS, NOTHING_CHOSEN, CONTEXT), 'Area')
 		expect(optionTitles(area)).toEqual(['Dining', 'Faith'])
 	})
@@ -295,7 +295,7 @@ describe('the Area and Posted filters', () => {
 		expect(ids(visibleSections(CATEGORIES, filters, '', CONTEXT))).toEqual([])
 	})
 
-	test('offer no areas before the unit searches answer', () => {
+	test('offer no areas before the units load', () => {
 		let area = filterNamed(
 			buildJobFilters(ALL_JOBS, NOTHING_CHOSEN, {...CONTEXT, membership: new Map()}),
 			'Area',

@@ -1,7 +1,9 @@
 # The Student Work landing screen's tiles, in the order it draws them, and
 # the St. Olaf unit numbers whose job postings belong to each. A posting is in
-# an area when a keyword search for one of the area's units finds it; a unit
-# listed nowhere here leaves its postings under "All job postings" only.
+# an area when the Unit Number in its description is one of the area's units,
+# five digits without any fund prefix, as ccc-server's /student-work/units
+# reads it; a unit listed nowhere here leaves its postings under "All job
+# postings" only.
 #
 # Each unit is written with its name from the work-authorisation list, for
 # whoever edits this file next:

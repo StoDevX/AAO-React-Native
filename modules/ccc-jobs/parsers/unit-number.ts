@@ -1,7 +1,7 @@
 import {innerTextWithSpaces, parseHtml} from '@frogpond/html-lib'
 
 /// Zero-width characters the posting editor leaves around values.
-const INVISIBLE = /[​-‍﻿]/gu
+const INVISIBLE = /[\u200B-\u200D\uFEFF]/gu
 
 /// A St. Olaf unit: five digits, sometimes behind a two- or three-digit fund
 /// ("10-13001", "010-11725"). The fund is not part of the unit, and

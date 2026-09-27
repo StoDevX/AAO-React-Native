@@ -1,4 +1,4 @@
-import {unitNumber} from '../parsers/unit-number'
+import {unitNumber, unitNumberOfDescription} from '../parsers/unit-number'
 
 describe('unitNumber', () => {
 	test('reads a plain five-digit unit', () => {
@@ -15,10 +15,19 @@ describe('unitNumber', () => {
 	})
 
 	test('ignores zero-width characters and spaces', () => {
-		expect(unitNumber('​ 11150 ')).toBe('11150')
+		expect(unitNumber('\u200B 11150 ')).toBe('11150')
 	})
 
 	test.each(['', 'n/a', '11-707', '1172', '117250'])('is null for %j', (value) => {
 		expect(unitNumber(value)).toBeNull()
+	})
+})
+
+describe('unitNumberOfDescription', () => {
+	// ccc-server reads the same input the same way; see its unit-number tests.
+	test('keeps a unit apart from a paragraph that follows with no space', () => {
+		let html = '<p><strong>Unit Number:</strong> 11725</p><p>2026-27 academic year</p>'
+
+		expect(unitNumberOfDescription(html)).toBe('11725')
 	})
 })
