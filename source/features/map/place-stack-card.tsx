@@ -15,7 +15,10 @@ import {BuildingInfo} from './building-info'
 import {stackEntryKey, type PlaceStackAction, type StackEntry} from './lib/place-stack'
 import {DETENT_FOR, nameOf, SHEET_DETENTS} from './lib/sheet-detents'
 import type {SheetDetent} from './lib/sheet-moves'
-import {cardFeaturesOptions, cardVenuesOptions} from './card-queries'
+import {cardDirectoryOptions, cardFeaturesOptions, cardVenuesOptions} from './card-queries'
+import {directoryFor} from './directory/directory'
+import {FloorCard} from './floor-card'
+import {placeTiles} from './lib/place-tiles'
 import {VenueCard} from './venue-card'
 
 type Props = {
@@ -37,6 +40,7 @@ export function PlaceStackCard({stack, depth, campus, dispatch, stop}: Props): R
 	// The screens' own queries, so every card reads the same warm caches.
 	let {data: features = []} = useQuery(cardFeaturesOptions(campus))
 	let {data: venues = []} = useQuery(cardVenuesOptions(campus))
+	let {data: directories = []} = useQuery(cardDirectoryOptions(campus))
 
 	let entry = stack[depth]
 	let above = stack[depth + 1]
@@ -67,7 +71,19 @@ export function PlaceStackCard({stack, depth, campus, dispatch, stop}: Props): R
 	}
 
 	if (entry.kind === 'floor') {
-		return null
+		let building = features.find((feature) => feature.id === entry.building)
+		let floor = directoryFor(directories, entry.building)?.floors[entry.floor]
+		return (
+			<FloorCard
+				building={building}
+				floor={floor}
+				onClose={onClose}
+				onOpen={(next) => dispatch({type: 'push', entry: next})}
+				place={{features, venues, links: building ? placeTiles(building.properties) : []}}
+				stacked={stacked}
+				stop={stop}
+			/>
+		)
 	}
 
 	let venue = venues.find((candidate) => candidate.name === entry.name)
