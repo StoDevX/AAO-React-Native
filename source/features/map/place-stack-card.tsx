@@ -57,6 +57,7 @@ export function PlaceStackCard({stack, depth, campus, dispatch, stop}: Props): R
 			<BuildingInfo
 				building={features.find((feature) => feature.id === entry.id)}
 				campus={campus}
+				extraLinks={entry.link ? [entry.link] : undefined}
 				onClose={onClose}
 				onOpen={(next) => dispatch({type: 'push', entry: next})}
 				stacked={stacked}

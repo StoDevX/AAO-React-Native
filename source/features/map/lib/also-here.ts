@@ -4,10 +4,10 @@ import type {Building, Feature} from '../types'
 
 /// What a card opens when stacked over the map: a map feature, or a venue from
 /// the Hours data that has no feature of its own.
+/// `link`: the web page of a Departments or Offices tile merged with the
+/// place, which its card lists among its links.
 export type StackEntry =
-	| {kind: 'feature'; id: string}
-	/// `link`: the web page of a Departments or Offices tile merged with this
-	/// venue, which its card lists among its links.
+	| {kind: 'feature'; id: string; link?: {label: string; href: string}}
 	| {kind: 'venue'; name: string; link?: {label: string; href: string}}
 
 /// One place at a location, before Departments and Offices take their share.

@@ -67,6 +67,23 @@ describe('placeSections', () => {
 		expect(sections.alsoHere).toEqual([theCage])
 	})
 
+	// A point opens its own card; the link's page must reach it too.
+	test("carries a link's page to a point it merges with", () => {
+		let theCage: PlaceTile = {
+			kind: 'place',
+			label: 'The Cage',
+			href: null,
+			opens: {kind: 'feature', id: 'thecage'},
+		}
+		let sections = placeSections([link('department', 'The Cage')], [theCage])
+
+		expect(sections.departments[0].opens).toEqual({
+			kind: 'feature',
+			id: 'thecage',
+			link: {label: 'The Cage', href: 'https://example.com/The Cage'},
+		})
+	})
+
 	test('merges a place with at most one link', () => {
 		let sections = placeSections(
 			[link('department', 'Registrar'), link('department', 'Registrar')],

@@ -44,7 +44,7 @@ export function placeSections(
 		}
 		let [candidate] = unused.splice(index, 1)
 		let opens =
-			candidate.opens?.kind === 'venue' && tile.href
+			candidate.opens && tile.href
 				? {...candidate.opens, link: {label: tile.label, href: tile.href}}
 				: candidate.opens
 		return {...tile, opens, venue: candidate.venue}

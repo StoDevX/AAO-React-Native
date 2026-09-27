@@ -104,6 +104,14 @@ describe('PlaceStackCard', () => {
 		expect(screen.getByText('Office · Buntrock Commons')).toBeTruthy()
 	})
 
+	test('lists the page of a link merged with a stacked point', async () => {
+		await renderStack([
+			buntrock,
+			{kind: 'feature', id: 'thecage', link: {label: 'The Cage', href: 'https://example.com/cage'}},
+		])
+		expect(screen.getByRole('button', {name: 'Open The Cage'})).toBeTruthy()
+	})
+
 	test('says so when a stacked venue is not in the Hours data', async () => {
 		await renderStack([buntrock, {kind: 'venue', name: 'Nope'}])
 		expect(screen.getByText('Place not found.')).toBeTruthy()

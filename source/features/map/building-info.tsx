@@ -44,7 +44,7 @@ import {alsoHere, type StackEntry} from './lib/also-here'
 import {AlsoHereSection} from './card/also-here-section'
 import {cardFeaturesOptions, cardVenuesOptions} from './card-queries'
 import type {SheetDetent} from './lib/sheet-moves'
-import type {Building, Coordinate, Feature, Point} from './types'
+import type {Building, Coordinate, Feature, LabelLink, Point} from './types'
 
 /// Apple Maps' place-card header, measured on iOS 27: 16pt of padding round
 /// 44pt buttons -- 76pt in all, the sheet's collapsed stop
@@ -94,6 +94,8 @@ type Props = {
 	onOpen?: (entry: StackEntry) => void
 	/// The sheet stacked over this card, if any.
 	stacked?: React.ReactNode
+	/// The page of a Departments or Offices tile merged with this place.
+	extraLinks?: Array<LabelLink>
 }
 
 /// The info card's contents, as SwiftUI. The sheet that presents them belongs
@@ -101,6 +103,7 @@ type Props = {
 export function BuildingInfo({
 	building,
 	campus,
+	extraLinks,
 	onClose,
 	onOpen,
 	stacked,
@@ -123,6 +126,7 @@ export function BuildingInfo({
 		<BuildingCard
 			building={building}
 			campus={campus}
+			extraLinks={extraLinks}
 			key={building.id}
 			onClose={onClose}
 			onOpen={onOpen}
@@ -136,6 +140,7 @@ export function BuildingInfo({
 function BuildingCard({
 	building,
 	campus,
+	extraLinks,
 	onClose,
 	onOpen,
 	stacked,
@@ -143,6 +148,7 @@ function BuildingCard({
 }: {
 	building: Feature<Building>
 	campus: Campus
+	extraLinks?: Array<LabelLink>
 	onClose: () => void
 	onOpen?: (entry: StackEntry) => void
 	stacked?: React.ReactNode
@@ -180,7 +186,7 @@ function BuildingCard({
 			/>
 			<LinkedPlaces id="offices" onOpen={onOpen} tiles={sections.offices} title="Offices" />
 			<LinkListSection items={floors} title="Floors" />
-			<LinkListSection items={links} title="Links" />
+			<LinkListSection items={[...(links ?? []), ...(extraLinks ?? [])]} title="Links" />
 			<DetailsSection address={address} />
 		</PlaceCard>
 	)
