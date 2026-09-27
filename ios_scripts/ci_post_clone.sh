@@ -37,11 +37,19 @@ mise install pnpm
 mise install ruby
 mise install 'gem:bundler'
 
+# Sentry's build phases upload with the sentry-cli mise.toml pins; the npm
+# copy is dropped in pnpm-workspace.yaml. Explicit for the same reason again.
+mise install sentry
+
 # `mise which` returns an absolute path, which is what xcodebuild needs below.
 NODE_PATH="$(mise which node)"
 
 echo "node path: ${NODE_PATH}"
 "${NODE_PATH}" --version
+
+SENTRY_CLI_PATH="$(mise which sentry-cli)"
+echo "sentry-cli path: ${SENTRY_CLI_PATH}"
+"${SENTRY_CLI_PATH}" --version
 
 # Put node on PATH for the rest of this script
 export PATH="$(dirname "${NODE_PATH}"):$PATH"
@@ -74,12 +82,19 @@ cp ios_scripts/Package.resolved "${resolved_dir}/Package.resolved"
 echo "Contents of ${resolved_dir}/Package.resolved:"
 cat "${resolved_dir}/Package.resolved"
 
-# Write ios/.xcode.env.local so Xcode Cloud's xcodebuild can find node.
+# Write ios/.xcode.env.local so Xcode Cloud's xcodebuild can find node and
+# sentry-cli.
 # PATH changes in this script don't carry over into xcodebuild build phases,
 # so we bake in the absolute mise-managed path now.
 echo "Writing ios/.xcode.env.local with NODE_BINARY=${NODE_PATH}"
 {
   printf 'export NODE_BINARY=%s\n' "${NODE_PATH}"
+
+  # Sentry's build phase scripts run SENTRY_CLI_EXECUTABLE with node instead
+  # of looking for npm's @sentry/cli, which is not installed. sentry-cli.cjs
+  # hands their arguments to the mise binary; see that file for why.
+  printf 'export SENTRY_CLI_EXECUTABLE=%s\n' "${PWD}/ios_scripts/sentry-cli.cjs"
+  printf 'export SENTRY_CLI_BINARY=%s\n' "${SENTRY_CLI_PATH}"
 
   # A failed Sentry upload warns rather than failing the archive, so a Sentry
   # outage cannot hold up a TestFlight build.
