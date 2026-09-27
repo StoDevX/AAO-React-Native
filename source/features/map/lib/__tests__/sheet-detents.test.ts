@@ -1,5 +1,5 @@
 import {describe, expect, test} from '@jest/globals'
-import {collapsedDetentFor} from '../collapsed-detent'
+import {collapsedDetentFor} from '../sheet-detents'
 
 describe('collapsedDetentFor', () => {
 	test('holds the default header block before it has been measured', () => {

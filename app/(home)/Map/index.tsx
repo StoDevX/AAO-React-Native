@@ -8,7 +8,6 @@ import {
 	presentationBackgroundInteraction,
 	presentationDetents,
 	presentationDragIndicator,
-	type PresentationDetent,
 } from '@expo/ui/swift-ui/modifiers'
 import {
 	Camera,
@@ -27,18 +26,23 @@ import {NoticeView} from '@frogpond/notice'
 import {openUrl} from '@frogpond/open-url'
 
 import {parseCampus} from '../../../source/features/building-hours/query'
+import {cardVenuesOptions} from '../../../source/features/map/card-queries'
 import type {Campus} from '../../../source/features/building-hours/types'
-import {BuildingInfo} from '../../../source/features/map/building-info'
+import {PlaceStackCard} from '../../../source/features/map/place-stack-card'
+import {highlightedFeatureId, placeStack} from '../../../source/features/map/lib/place-stack'
 import {BuildingPicker} from '../../../source/features/map/building-picker'
-import {collapsedDetentFor} from '../../../source/features/map/lib/collapsed-detent'
 import {sheetHeightFor} from '../../../source/features/map/lib/sheet-height'
 import {toBuildingFootprints} from '../../../source/features/map/lib/building-footprints'
 import {
 	nextSheetDetent,
-	type SheetDetent,
 	type SheetEvent,
 	type SheetState,
 } from '../../../source/features/map/lib/sheet-moves'
+import {
+	collapsedDetentFor,
+	detentsFor,
+	nameOf,
+} from '../../../source/features/map/lib/sheet-detents'
 import {mapDataOptions} from '../../../source/features/map/query'
 import type {Coordinate, Point} from '../../../source/features/map/types'
 import {mapCredits, mapStyleUrl} from '../../../source/features/map/urls'
@@ -73,43 +77,6 @@ const MARKER_HIT_SLOP = (MIN_TOUCH_TARGET - MARKER_SIZE) / 2
 /// that drops a layer from the tree.
 const FOOTPRINT_OPACITY = 0
 
-/// Apple Maps' middle stop for a place card, as a fraction of the height the
-/// sheet is allowed: its close button and ours sit at the same height on an
-/// iPhone 17 Pro simulator running iOS 27. Lower than the app's other detail
-/// sheets (`SHEET_RESTING_FRACTION`), because this sheet copies Maps' card.
-const MAP_MIDDLE_FRACTION = 0.4613
-const MIDDLE_DETENT: PresentationDetent = {fraction: MAP_MIDDLE_FRACTION}
-
-/// Apple Maps' top stop for a place card sits a little below UIKit's `large`,
-/// leaving a strip of map showing: its close button and big title sit at the
-/// same heights as ours on an iPhone 17 Pro simulator running iOS 27.
-const MAP_LARGE_FRACTION = 0.9873
-const LARGE_DETENT: PresentationDetent = {fraction: MAP_LARGE_FRACTION}
-
-/// The rules speak in names; the modifier speaks in detents. The rules' middle
-/// and large stops are Maps' fractions, not UIKit's `medium` and `large`. The
-/// collapsed stop is measured from the picker, so it is passed in.
-function detentsFor(collapsed: PresentationDetent): Record<SheetDetent, PresentationDetent> {
-	return {collapsed, medium: MIDDLE_DETENT, large: LARGE_DETENT}
-}
-
-/// Structural like `sheetHeightFor`, since a detent handed back by the sheet
-/// is not promised to be the object that went in.
-function nameOf(detent: PresentationDetent): SheetDetent {
-	if (detent === 'large') {
-		return 'large'
-	}
-	if (detent === 'medium') {
-		return 'medium'
-	}
-	// Both fractional stops come back as fractions; the halfway point between
-	// them tells them apart without trusting an exact float to round-trip.
-	if ('fraction' in detent) {
-		return detent.fraction > (MAP_MIDDLE_FRACTION + MAP_LARGE_FRACTION) / 2 ? 'large' : 'medium'
-	}
-	return 'collapsed'
-}
-
 export default function MapPage(): React.ReactNode {
 	// `/Map` has served Carleton alone since before it read the route, so a
 	// missing param keeps that default rather than falling through to
@@ -119,7 +86,7 @@ export default function MapPage(): React.ReactNode {
 	let {campus: campusParam} = useLocalSearchParams<{campus?: string}>()
 	// Wrapped in useMemo, rather than a plain `let`, so the React Compiler
 	// treats it as one reactive value with a clear dependency -- otherwise it
-	// loses track of `setSelectedBuildingId`'s stability below and refuses to
+	// loses track of `dispatchStack`'s stability below and refuses to
 	// preserve handleBuildingPress's manual memoization.
 	let campus = React.useMemo(
 		() => (campusParam === undefined ? 'carleton' : parseCampus(campusParam)),
@@ -128,8 +95,12 @@ export default function MapPage(): React.ReactNode {
 
 	let cameraRef = React.useRef<CameraRef>(null)
 	// The sheet is the map's, not a route's, so its selection is the map's too.
-	let [selectedBuildingId, setSelectedBuildingId] = React.useState<string | null>(null)
+	// The places open on the map, bottom to top: the sheet's card, then each
+	// stacked over it.
+	let [stack, dispatchStack] = React.useReducer(placeStack, [])
 	let {data: buildings = [], error} = useQuery(mapDataOptions(campus))
+	// For which feature a venue on top of the stack highlights.
+	let {data: venues = []} = useQuery(cardVenuesOptions(campus))
 	let {height: windowHeight} = useWindowDimensions()
 	let insets = useSafeAreaInsets()
 	let [sheetPresented, setSheetPresented] = React.useState(true)
@@ -164,7 +135,7 @@ export default function MapPage(): React.ReactNode {
 	// does: at large text sizes its header keeps its top in view and runs off
 	// the bottom.
 	let [pickerHeaderHeight, setPickerHeaderHeight] = React.useState<number | null>(null)
-	let collapsedHeight = selectedBuildingId ? null : pickerHeaderHeight
+	let collapsedHeight = stack.length > 0 ? null : pickerHeaderHeight
 	let detents = React.useMemo(
 		() => detentsFor(collapsedDetentFor(collapsedHeight)),
 		[collapsedHeight],
@@ -184,30 +155,27 @@ export default function MapPage(): React.ReactNode {
 			if (typeof id !== 'string') {
 				return
 			}
-			// One sheet, whose contents swap. Tapping a second building while the
-			// card is up is a state change, not a presentation.
-			setSelectedBuildingId(id)
+			// One sheet, whose contents swap. Tapping a second building while
+			// cards are up starts afresh from it, as Maps does.
+			dispatchStack({type: 'start', id})
 			dispatchSheet({type: 'footprint-tapped'})
 		},
 		[dispatchSheet],
 	)
 
-	let selectedBuilding = React.useMemo(
-		() => buildings.find((b) => b.id === selectedBuildingId),
-		[buildings, selectedBuildingId],
-	)
-
+	// The map follows the top of the stack.
+	let highlightedId = highlightedFeatureId(stack, venues)
 	let selectedPoint = React.useMemo(() => {
-		if (!selectedBuildingId) {
+		if (!highlightedId) {
 			return null
 		}
-		let match = buildings.find((b) => b.id === selectedBuildingId)
+		let match = buildings.find((b) => b.id === highlightedId)
 		if (!match) {
 			return null
 		}
 		let point = match.geometry.geometries.find((geo): geo is Point => geo.type === 'Point')
 		return point ? {id: match.id, name: match.properties.name, point} : null
-	}, [selectedBuildingId, buildings])
+	}, [highlightedId, buildings])
 
 	// Reads the sheet's height at the moment of selection without depending on
 	// it: Apple Maps leaves the map where it is when its sheet changes stop, so
@@ -324,10 +292,12 @@ export default function MapPage(): React.ReactNode {
 							interactiveDismissDisabled(true),
 						]}
 					>
-						{selectedBuildingId ? (
-							<BuildingInfo
-								building={selectedBuilding}
-								onClose={() => setSelectedBuildingId(null)}
+						{stack.length > 0 ? (
+							<PlaceStackCard
+								campus={campus}
+								depth={0}
+								dispatch={dispatchStack}
+								stack={stack}
 								stop={sheet.current}
 							/>
 						) : (
@@ -342,7 +312,7 @@ export default function MapPage(): React.ReactNode {
 									)
 								}
 								onSelect={(id) => {
-									setSelectedBuildingId(id)
+									dispatchStack({type: 'start', id})
 									dispatchSheet({type: 'row-tapped'})
 								}}
 							/>

@@ -3,7 +3,7 @@ import {filterBuildings} from '../filter-buildings'
 import type {BuildingType} from '../../types'
 
 function makeBuilding(overrides: Partial<BuildingType> & {name: string}): BuildingType {
-	return {category: 'Academia', schedule: [], ...overrides}
+	return {category: 'Academia', kind: 'building', schedule: [], ...overrides}
 }
 
 const sections = [
@@ -19,6 +19,7 @@ const sections = [
 				name: 'DiSCO',
 				abbreviation: 'DSC',
 				category: 'Libraries',
+				kind: 'building',
 				subtitle: 'Digital Scholarship Center',
 			}),
 		],

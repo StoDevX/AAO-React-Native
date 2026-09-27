@@ -1,10 +1,7 @@
 import * as React from 'react'
 import {StyleSheet, Image} from 'react-native'
-import {Host, List, RNHostView, Section, Text, Button, HStack, VStack} from '@expo/ui/swift-ui'
+import {Host, List, RNHostView, Section, Text, VStack} from '@expo/ui/swift-ui'
 import {
-	background,
-	buttonStyle,
-	clipShape,
 	font,
 	foregroundStyle,
 	frame,
@@ -12,7 +9,9 @@ import {
 	listRowInsets,
 	listRowSeparator,
 	listStyle,
+	onGeometryChange,
 	padding,
+	scrollContentBackground,
 } from '@expo/ui/swift-ui/modifiers'
 import {useQuery} from '@tanstack/react-query'
 import * as c from '@frogpond/colors'
@@ -23,17 +22,32 @@ import type {BuildingType, Campus} from '../types'
 import {mapDataOptions} from '../../map/query'
 import {images as buildingImages} from '../../../../images/spaces'
 import {buildingPhoto} from '../lib/building-photo'
+import {HoursSection} from '../hours-section'
+import {LinkListSection} from '../../map/card/link-list-section'
+import {FILL_WIDTH} from '../../../components/tile-layout'
 import {
-	getShortBuildingStatus,
-	getAccentBackgroundColor,
-	contextualStatus,
-	groupHoursByDays,
-} from '../lib'
-import {ScheduleRowSwiftUI} from './schedule-row-swiftui'
-import {openUrl} from '@frogpond/open-url'
+	CARD_INSET,
+	PICTURE_CORNER_RADIUS,
+	SECTION_GAP,
+} from '../../../components/place-card/card-style'
 
-/** The gap between the accent bar and the text beside it. */
-const BAR_GAP = 8
+/// A picture's row: on the sheet, inset from its sides like every other row,
+/// with a section's gap above it and no hairline.
+const PICTURE_ROW = [
+	listRowBackground('clear'),
+	listRowSeparator('hidden'),
+	listRowInsets({top: SECTION_GAP, leading: CARD_INSET, bottom: 0, trailing: CARD_INSET}),
+]
+
+/// The formal name sits straight under the sheet's title, as the map card's
+/// subtitle sits under its name.
+const FORMAL_NAME_ROW = [
+	font({textStyle: 'subheadline', weight: 'semibold'}),
+	foregroundStyle(c.secondaryLabel),
+	listRowBackground('clear'),
+	listRowSeparator('hidden'),
+	listRowInsets({top: 0, leading: CARD_INSET, bottom: 0, trailing: CARD_INSET}),
+]
 
 type Props = {
 	building: BuildingType
@@ -42,18 +56,26 @@ type Props = {
 }
 
 /**
- * The building detail screen: current status, one section per schedule, the
- * building's photo, and any links for the building.
+ * The building detail screen, in the map card's look: the venue's hours as
+ * the card draws them, then where it is, its photo, and any links for it.
  */
 export function BuildingDetailSwiftUI({building, now, campus}: Props): React.ReactNode {
 	let photo = buildingPhoto(campus, building.image, buildingImages)
+	// A picture is given the row's width outright, since 100% inside
+	// RNHostView resolves against the whole sheet, and the sheet itself can be
+	// narrower than the window -- an iPad's form sheet, or iOS 26's resting
+	// sheet, inset from the screen's edges. The row fills its width whatever
+	// the picture's, so measuring it can't feed back on itself.
+	let [pictureWidth, setPictureWidth] = React.useState(0)
+	// The list's row modifiers go last: outside the frame, where the list
+	// reads them.
+	let pictureRow = [
+		frame({maxWidth: FILL_WIDTH}),
+		onGeometryChange((box) => setPictureWidth(box.width)),
+		...PICTURE_ROW,
+	]
 
-	let status = getShortBuildingStatus(building, now)
-	let accentColor = getAccentBackgroundColor(status)
-	let statusText = contextualStatus(building, now)
-
-	let schedules = building.schedule || []
-	let links = building.links || []
+	let links = (building.links || []).map(({title, url}) => ({label: title, href: url}))
 
 	// A venue is listed under the name people say, so this is the only place it
 	// is spelled out: DiSCO is the Digital Scholarship Center, SARN the Sexual
@@ -86,82 +108,35 @@ export function BuildingDetailSwiftUI({building, now, campus}: Props): React.Rea
 		// view carries a UIKit autoresizing mask, so it fills its superview on
 		// its own, without the Fabric coercion an RN scroll view would need.
 		<Host style={styles.host}>
-			<List modifiers={[listStyle('insetGrouped')]}>
-				<Section>
-					<HStack alignment="center" spacing={BAR_GAP}>
-						<VStack
-							modifiers={[
-								frame({minWidth: 4, maxWidth: 4, minHeight: 24}),
-								background(accentColor),
-								clipShape('capsule'),
-							]}
-						>
-							{null}
-						</VStack>
-						<VStack alignment="leading" spacing={2}>
-							<Text
-								modifiers={[
-									font({textStyle: 'body', weight: 'semibold'}),
-									foregroundStyle(c.label),
-								]}
-							>
-								{statusText.long}
-							</Text>
-							{formalName ? (
-								<Text
-									modifiers={[font({textStyle: 'subheadline'}), foregroundStyle(c.secondaryLabel)]}
-								>
-									{formalName}
-								</Text>
-							) : null}
-						</VStack>
-					</HStack>
-				</Section>
+			{/* Plain, on the sheet's own colour, as the map card is. */}
+			<List modifiers={[listStyle('plain'), scrollContentBackground('hidden')]}>
+				{formalName ? (
+					<Section>
+						<Text modifiers={FORMAL_NAME_ROW}>{formalName}</Text>
+					</Section>
+				) : null}
 
-				{schedules.map((schedule) => {
-					let groups = groupHoursByDays(schedule, now)
-					return (
-						<Section
-							key={schedule.title}
-							footer={schedule.notes ? <Text>{schedule.notes}</Text> : undefined}
-							title={schedule.title.toUpperCase()}
-						>
-							{groups.map((group) => (
-								<ScheduleRowSwiftUI
-									key={group.entries[0].sourceIndex}
-									accentColor={accentColor}
-									entries={group.entries}
-									label={group.label}
-									now={now}
-								/>
-							))}
-						</Section>
-					)
-				})}
+				<HoursSection now={now} venue={building} />
 
 				{feature ? (
 					<Section>
-						{/* Zeroed the same way the photo below is: RNHostView takes no
-						    modifiers of its own, so the inset has to come from the
-						    wrapping stack. */}
-						<VStack modifiers={[listRowInsets({top: 0, bottom: 0, leading: 0, trailing: 0})]}>
-							<BuildingCutout campus={campus} feature={feature} />
+						{/* On a wrapping stack because RNHostView takes no modifiers of
+						    its own. */}
+						<VStack modifiers={pictureRow}>
+							<BuildingCutout campus={campus} feature={feature} width={pictureWidth} />
 						</VStack>
 					</Section>
 				) : null}
 
 				{photo ? (
 					<Section>
-						{/* The insets are zeroed on a wrapping stack because RNHostView
-						    takes no modifiers of its own, and they are zeroed so the photo
-						    meets the row's edges the way an image row reads on iOS. */}
-						<VStack modifiers={[listRowInsets({top: 0, bottom: 0, leading: 0, trailing: 0})]}>
+						<VStack modifiers={pictureRow}>
 							<RNHostView matchContents={true}>
 								<Image
 									accessibilityIgnoresInvertColors={true}
 									resizeMode="cover"
 									source={photo}
-									style={styles.image}
+									style={[styles.image, {width: pictureWidth}]}
 									testID="building-photo"
 								/>
 							</RNHostView>
@@ -169,26 +144,14 @@ export function BuildingDetailSwiftUI({building, now, campus}: Props): React.Rea
 					</Section>
 				) : null}
 
-				{links.length > 0 ? (
-					<Section title="RESOURCES">
-						{links.map((link) => (
-							<Button
-								key={link.url}
-								modifiers={[buttonStyle('plain')]}
-								onPress={() => openUrl(link.url)}
-							>
-								<Text modifiers={[foregroundStyle(c.systemBlue)]}>{link.title}</Text>
-							</Button>
-						))}
-					</Section>
-				) : null}
+				<LinkListSection items={links} title="Links" />
 
 				<Text
 					modifiers={[
 						font({textStyle: 'footnote'}),
 						foregroundStyle(c.secondaryLabel),
-						padding({top: 16, horizontal: 16}),
-						listRowBackground(c.systemGroupedBackground),
+						padding({top: SECTION_GAP, horizontal: CARD_INSET}),
+						listRowBackground('clear'),
 						listRowInsets({top: 0, bottom: 0, leading: 0, trailing: 0}),
 						listRowSeparator('hidden'),
 					]}
@@ -207,7 +170,7 @@ const styles = StyleSheet.create({
 		backgroundColor: c.systemGroupedBackground,
 	},
 	image: {
-		width: '100%',
 		height: 100,
+		borderRadius: PICTURE_CORNER_RADIUS,
 	},
 })

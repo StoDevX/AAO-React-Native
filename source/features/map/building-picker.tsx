@@ -25,7 +25,7 @@ import type {Building, Feature} from './types'
 const SEARCH_DEBOUNCE_MS = 200
 
 /// The margin above and below the search field, in LAYOUT space, and the
-/// margin the field visibly gets: `CampusSearchBarView` pins the bar to a 44pt
+/// margin the field visibly gets: `CampusSearchBarView` gives the bar a 44pt
 /// slot, and although `UISearchBar` draws 64pt tall -- its 44pt text field
 /// centred, 10pt of its own chrome above and below -- that overflow takes no
 /// layout space and the bar's `.minimal` style paints none of it. So the
@@ -159,7 +159,11 @@ function BuildingRow({
 	building: Feature<Building>
 	onSelect: (id: string) => void
 }): React.ReactNode {
-	let {name, nickname} = building.properties
+	let {name} = building.properties
+	// A house renamed each year for its residents carries every name, newest
+	// first; the row shows the current one.
+	let names = building.properties.nickname ?? []
+	let nickname = typeof names === 'string' ? names : names[0]
 	return (
 		<Button
 			// Without `plain`, SwiftUI tints a Button's whole label with the accent

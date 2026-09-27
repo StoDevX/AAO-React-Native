@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {StyleSheet} from 'react-native'
+import {StyleSheet, View} from 'react-native'
 import {RNHostView} from '@expo/ui/swift-ui'
 import {Camera, GeoJSONSource, Layer, Map} from '@maplibre/maplibre-react-native'
 import * as c from '@frogpond/colors'
@@ -8,6 +8,7 @@ import {cutoutBounds} from '../../map/lib/cutout-bounds'
 import type {Building, Feature} from '../../map/types'
 import {mapStyleUrl} from '../../map/urls'
 import type {Campus} from '../types'
+import {PICTURE_CORNER_RADIUS} from '../../../components/place-card/card-style'
 
 /** How tall the cutout draws. */
 const CUTOUT_HEIGHT = 160
@@ -23,6 +24,9 @@ const CUTOUT_PADDING = 32
 type Props = {
 	campus: Campus
 	feature: Feature<Building>
+	/// How wide the cutout draws. A width of 100% would resolve against the
+	/// whole sheet rather than the inset row the cutout sits in.
+	width: number
 }
 
 /**
@@ -35,7 +39,7 @@ type Props = {
  * Renders `null` when there is nothing to frame, which `cutoutBounds` signals
  * by returning `undefined`.
  */
-export function BuildingCutout({campus, feature}: Props): React.ReactNode {
+export function BuildingCutout({campus, feature, width}: Props): React.ReactNode {
 	// Framed on the same geometry the layers below draw, so the two cannot
 	// disagree. Callers are expected to have checked `hasFootprint` already --
 	// this guard is the belt to that braces, and keeps the component honest on
@@ -49,80 +53,88 @@ export function BuildingCutout({campus, feature}: Props): React.ReactNode {
 
 	return (
 		<RNHostView matchContents={true}>
-			<Map
-				accessibilityLabel={`Map showing ${feature.properties.name}`}
-				accessibilityRole="image"
-				attribution={false}
-				compass={false}
-				doubleTapHoldZoom={false}
-				doubleTapZoom={false}
-				dragPan={false}
-				logo={false}
-				mapStyle={mapStyleUrl(campus)}
-				scaleBar={false}
-				style={styles.map}
-				touchPitch={false}
-				touchRotate={false}
-				touchZoom={false}
-			>
-				<Camera
-					initialViewState={{
-						bounds,
-						padding: {
-							top: CUTOUT_PADDING,
-							right: CUTOUT_PADDING,
-							bottom: CUTOUT_PADDING,
-							left: CUTOUT_PADDING,
-						},
-					}}
-				/>
+			{/* Rounded here: SwiftUI cannot clip a hosted native view. */}
+			<View style={[styles.frame, {width}]}>
+				<Map
+					accessibilityLabel={`Map showing ${feature.properties.name}`}
+					accessibilityRole="image"
+					attribution={false}
+					compass={false}
+					doubleTapHoldZoom={false}
+					doubleTapZoom={false}
+					dragPan={false}
+					logo={false}
+					mapStyle={mapStyleUrl(campus)}
+					scaleBar={false}
+					style={styles.map}
+					touchPitch={false}
+					touchRotate={false}
+					touchZoom={false}
+				>
+					<Camera
+						initialViewState={{
+							bounds,
+							padding: {
+								top: CUTOUT_PADDING,
+								right: CUTOUT_PADDING,
+								bottom: CUTOUT_PADDING,
+								left: CUTOUT_PADDING,
+							},
+						}}
+					/>
 
-				{/* The basemap names whichever buildings its own collision rules
+					{/* The basemap names whichever buildings its own collision rules
 				    allow, which at this zoom is usually the neighbours and not the
 				    one being framed. Drawing this building's own outline and name
 				    puts the subject beyond doubt: `text-allow-overlap` and
 				    `text-ignore-placement` keep the label from being dropped in
 				    favour of a neighbour's. */}
-				<GeoJSONSource data={footprints} id="cutout-building">
-					<Layer
-						id="cutout-building-fill"
-						paint={{'fill-color': c.gold, 'fill-opacity': 0.35}}
-						type="fill"
-					/>
-					<Layer
-						id="cutout-building-outline"
-						paint={{'line-color': c.gold, 'line-width': 2}}
-						type="line"
-					/>
-					<Layer
-						id="cutout-building-label"
-						layout={{
-							'text-allow-overlap': true,
-							'text-field': ['get', 'name'],
-							'text-font': LABEL_FONT,
-							'text-ignore-placement': true,
-							'text-size': 13,
-						}}
-						// Literal colours, not PlatformColor: MapLibre's paint spec takes
-						// style-spec strings and cannot resolve a dynamic system colour.
-						// Both campuses' basemaps are light, so dark-on-white reads in
-						// either appearance.
-						paint={{
-							'text-color': 'rgb(28, 28, 30)',
-							'text-halo-color': 'rgb(255, 255, 255)',
-							'text-halo-width': 1.5,
-						}}
-						type="symbol"
-					/>
-				</GeoJSONSource>
-			</Map>
+					<GeoJSONSource data={footprints} id="cutout-building">
+						<Layer
+							id="cutout-building-fill"
+							paint={{'fill-color': c.gold, 'fill-opacity': 0.35}}
+							type="fill"
+						/>
+						<Layer
+							id="cutout-building-outline"
+							paint={{'line-color': c.gold, 'line-width': 2}}
+							type="line"
+						/>
+						<Layer
+							id="cutout-building-label"
+							layout={{
+								'text-allow-overlap': true,
+								'text-field': ['get', 'name'],
+								'text-font': LABEL_FONT,
+								'text-ignore-placement': true,
+								'text-size': 13,
+							}}
+							// Literal colours, not PlatformColor: MapLibre's paint spec takes
+							// style-spec strings and cannot resolve a dynamic system colour.
+							// Both campuses' basemaps are light, so dark-on-white reads in
+							// either appearance.
+							paint={{
+								'text-color': 'rgb(28, 28, 30)',
+								'text-halo-color': 'rgb(255, 255, 255)',
+								'text-halo-width': 1.5,
+							}}
+							type="symbol"
+						/>
+					</GeoJSONSource>
+				</Map>
+			</View>
 		</RNHostView>
 	)
 }
 
 const styles = StyleSheet.create({
+	frame: {
+		height: CUTOUT_HEIGHT,
+		borderRadius: PICTURE_CORNER_RADIUS,
+		overflow: 'hidden',
+	},
 	map: {
 		width: '100%',
-		height: CUTOUT_HEIGHT,
+		height: '100%',
 	},
 })

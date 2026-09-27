@@ -1,6 +1,7 @@
 name: Wellness Center
 image: wellness
 category: Health and Wellness
+kind: office
 building: bc
 
 schedule:

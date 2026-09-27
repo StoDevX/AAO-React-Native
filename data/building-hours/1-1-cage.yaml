@@ -1,6 +1,7 @@
 name: The Cage
 image: cage
 category: Food
+kind: space
 building: thecage
 
 schedule:

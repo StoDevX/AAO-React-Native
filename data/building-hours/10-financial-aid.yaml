@@ -1,5 +1,6 @@
 name: Financial Aid
 category: Offices
+kind: office
 building: toh
 
 schedule:

@@ -156,4 +156,180 @@ class ModuleMapTests: UITestCase {
 			.capture("St. Olaf map card collapsed at the largest text size")
 			.verifyCardHeaderTopWithinSheet()
 	}
+
+	/// Every heading a card can have, for placing the ones a card shows.
+	private let cardSections = ["Hours", "About", "Good to Know", "Departments", "Offices", "Floors", "Links", "Details"]
+
+	/// A St. Olaf card lays its sections out in Maps' order, and More on a long
+	/// Departments section opens every one of them.
+	func testAStOlafCardListsItsSectionsInMapsOrder() throws {
+		let name = TestIdentifiers.Map.aBuildingWithManyDepartments
+		MapScreen(app: app)
+			.navigate()
+			.checkSheetPresented()
+			.focusSearch()
+			.typeIntoSearch(name)
+			.selectBuilding(named: name)
+			.expandCard()
+			.capture("Tomson Hall's card at the large stop")
+			// Tomson's Hours offices with no department link of their own join
+			// Offices.
+			.verifySectionOrder(
+				["Hours", "About", "Good to Know", "Departments", "Offices", "Links"], among: cardSections)
+	}
+
+	func testMoreOpensEveryDepartmentInAGrid() throws {
+		let name = TestIdentifiers.Map.aBuildingWithManyDepartments
+		MapScreen(app: app)
+			.navigate()
+			.checkSheetPresented()
+			.focusSearch()
+			.typeIntoSearch(name)
+			.selectBuilding(named: name)
+			.expandCard()
+			.verifyMoreShowsEveryDepartment(21)
+	}
+
+	func testAboutExpandsFromItsFirstFiveLines() throws {
+		let name = TestIdentifiers.Map.aBuildingWithALongAbout
+		MapScreen(app: app)
+			.navigate()
+			.checkSheetPresented()
+			.focusSearch()
+			.typeIntoSearch(name)
+			.selectBuilding(named: name)
+			.expandCard()
+			.capture("Holland Hall's About, clamped")
+			.verifyAboutExpands()
+	}
+
+	/// A building's card shows its own hours -- a status row, then the week
+	/// -- after the photo's place and before About.
+	func testACardShowsItsBuildingsOwnHours() throws {
+		let name = TestIdentifiers.Map.aBuildingWithALongAbout
+		MapScreen(app: app)
+			.navigate()
+			.checkSheetPresented()
+			.focusSearch()
+			.typeIntoSearch(name)
+			.selectBuilding(named: name)
+			.capture("Holland Hall's card at the middle stop")
+			.verifyHoursStatus()
+			.expandCard()
+			.capture("Holland Hall's card at the large stop")
+			.verifySectionOrder(["Hours", "About", "Good to Know", "Links"], among: cardSections)
+	}
+
+	/// A point inside a building with one venue of its own shows that venue's
+	/// hours, whatever kind of venue it is.
+	func testAPointShowsItsOwnHours() throws {
+		let name = TestIdentifiers.Map.aPointWithItsOwnHours
+		MapScreen(app: app)
+			.navigate()
+			.checkSheetPresented()
+			.focusSearch()
+			.typeIntoSearch(name)
+			.selectBuilding(named: name)
+			.capture("The Cage's card at the middle stop")
+			.verifyHoursStatus()
+			.expandCard()
+			.capture("The Cage's card at the large stop")
+	}
+
+	/// A Carleton card carries what St. Olaf's feed lacks: a photo, an address
+	/// and accessibility. Its photo is a square tile that opens full screen
+	/// over the sheet, and opens again after closing, at the middle stop and
+	/// at the large one, leaving the card where it was each time.
+	func testACarletonCardShowsItsPhotoAndDetails() throws {
+		let name = TestIdentifiers.Map.aCarletonBuildingWithAPhoto
+		MapScreen(app: app)
+			.navigateToCarleton()
+			.checkSheetPresented()
+			.focusSearch()
+			.typeIntoSearch(name)
+			.selectBuilding(named: name)
+			.verifyCardAtMedium()
+			.verifyPhotoOpensFullScreenTwice()
+			.expandCard()
+			.capture("Sayles-Hill's card at the large stop")
+			.verifyPhotoTileSquare()
+			.verifyPhotoOpensFullScreenTwice()
+			.verifySectionOrder(["About", "Good to Know", "Offices", "Floors", "Details"], among: cardSections)
+	}
+
+	/// A place's card lists what else is there, and each opens its own card in
+	/// a sheet over it, as Maps stacks place sheets.
+	func testAPlacesCardListsWhatElseIsThere() throws {
+		let name = TestIdentifiers.Map.aBuildingWithPoints
+		MapScreen(app: app)
+			.navigate()
+			.checkSheetPresented()
+			.focusSearch()
+			.typeIntoSearch(name)
+			.selectBuilding(named: name)
+			.expandCard()
+			.capture("Buntrock's card, with what else is there")
+			.verifySectionOrder(
+				[TestIdentifiers.Map.alsoHereSection, "About"],
+				among: [TestIdentifiers.Map.alsoHereSection, "About"])
+	}
+
+	func testATileOpensItsCardOverTheCardBeneath() throws {
+		let name = TestIdentifiers.Map.aBuildingWithPoints
+		let point = TestIdentifiers.Map.aPointInside
+		let screen = MapScreen(app: app)
+			.navigate()
+			.checkSheetPresented()
+			.focusSearch()
+			.typeIntoSearch(name)
+			.selectBuilding(named: name)
+			.openPlaceTile(named: point)
+		sleep(1)
+		screen
+			.capture("The Cage stacked over Buntrock")
+			.verifyTopCard(point)
+			.closeTopCard()
+		sleep(1)
+		screen
+			.capture("Back on Buntrock")
+			.verifyTopCard(name)
+	}
+
+	func testAnOfficeOpensItsOwnCard() throws {
+		let name = TestIdentifiers.Map.aBuildingWithManyDepartments
+		let office = TestIdentifiers.Map.anOffice
+		let screen = MapScreen(app: app)
+			.navigate()
+			.checkSheetPresented()
+			.focusSearch()
+			.typeIntoSearch(name)
+			.selectBuilding(named: name)
+			.expandCard()
+			.openPlaceTile(named: office)
+		sleep(1)
+		screen
+			.capture("The Registrar's card over Tomson Hall")
+			.verifyTopCard(office)
+			.verifyHoursStatus()
+	}
+
+	/// Tapping the map while cards are stacked starts afresh from the place
+	/// tapped, rather than leaving a sheet over the new card.
+	func testTappingTheMapStartsAfresh() throws {
+		let name = TestIdentifiers.Map.aBuildingWithPoints
+		let screen = MapScreen(app: app)
+			.navigate()
+			.checkSheetPresented()
+			.focusSearch()
+			.typeIntoSearch(name)
+			.selectBuilding(named: name)
+			.openPlaceTile(named: TestIdentifiers.Map.aPointInside)
+		sleep(1)
+		screen.tapAFootprint()
+		sleep(2)
+		screen.capture("After a footprint tap over a stacked sheet")
+		let closes = app.buttons.matching(identifier: TestIdentifiers.Map.cardCloseButton)
+			.allElementsBoundByIndex.filter { $0.isHittable }
+		XCTAssertEqual(closes.count, 1, "A tap on the map should leave one card, not a stack")
+	}
 }

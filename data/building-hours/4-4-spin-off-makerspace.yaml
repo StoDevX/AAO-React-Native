@@ -1,6 +1,7 @@
 name: The Spin-Off Makerspace
 subtitle: 3D printing, textiles and electronics, next to DiSCO
 category: Libraries
+kind: space
 building: rml
 links:
   - title: 'DiSCO Resource Request'

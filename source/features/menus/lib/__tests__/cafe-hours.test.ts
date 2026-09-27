@@ -9,6 +9,7 @@ import {dayMoment} from '../../../building-hours/lib/__tests__/moment.helper'
 const PAUSE: BuildingType = {
 	name: 'The Pause Kitchen',
 	category: 'Food',
+	kind: 'space',
 	schedule: [
 		{
 			title: 'Hours',
