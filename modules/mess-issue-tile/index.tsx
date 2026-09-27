@@ -15,6 +15,31 @@ export type StainMark = {
 	arcLength: number
 }
 
+/** A corner turned down, as a handled sheet's are. */
+export type DogEar = 'topRight' | 'bottomRight' | 'bottomLeft'
+
+/** A line where the sheet was once crumpled, across it at an angle. */
+export type Crease = {
+	/** Where it crosses the sheet's middle, as a share of the sheet's height */
+	position: number
+	/** Its slope, in degrees from level */
+	angle: number
+	/** How deep it shows, from faint to plain */
+	strength: number
+}
+
+/** How one issue's sheet has been handled: its tilt, a turned corner, its creases, its fold. */
+export type SheetShape = {
+	/** Degrees the whole sheet sits turned, either way */
+	tilt: number
+	dogEar: DogEar | null
+	creases: Crease[]
+	/** Seeds the small wander of the sheet's edges */
+	edgeSeed: number
+	/** Degrees the part below the fold bends back */
+	bend: number
+}
+
 /** What an issue's tile shows for the stories read: coffee rings, tea rings, or nothing. */
 export type StainKind = 'coffee' | 'tea' | 'none'
 
@@ -32,6 +57,8 @@ export type MessIssueTileProps = {
 	layout: TileLayout
 	/** The lead story's words, for the top tile's columns; none draws blank paper there */
 	paragraphs: string[]
+	/** How the sheet has been handled; see sheetShape in the Mess feature */
+	sheet: SheetShape
 	/** The tile is one button; this is all VoiceOver reads of it */
 	accessibilityLabel: string
 	testID?: string

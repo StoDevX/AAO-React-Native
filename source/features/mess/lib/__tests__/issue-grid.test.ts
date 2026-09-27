@@ -2,6 +2,7 @@ import {describe, expect, test} from '@jest/globals'
 import {
 	leadParagraphs,
 	readCount,
+	sheetShape,
 	stainCount,
 	stainMarks,
 	tileLabel,
@@ -162,5 +163,68 @@ describe('tileLabel', () => {
 		expect(tileLabel(issue('2026-05-12', {leadTitle: 'Letter', isSpecial: true}), 0)).toBe(
 			'May 12, 2026, special edition, Letter',
 		)
+	})
+})
+
+describe('sheetShape', () => {
+	const DAYS = Array.from({length: 60}, (_, n) => {
+		let date = new Date(Date.UTC(2025, 0, 1 + n * 7))
+		return date.toISOString().slice(0, 10)
+	})
+
+	test('handles the same issue the same way every time', () => {
+		expect(sheetShape('2026-04-29', false)).toStrictEqual(sheetShape('2026-04-29', false))
+	})
+
+	test('handles two issues differently', () => {
+		expect(sheetShape('2026-03-25', false)).not.toStrictEqual(sheetShape('2026-04-29', false))
+	})
+
+	test('tilts a grid sheet a little either way, and the top sheet less', () => {
+		let tilts = DAYS.map((day) => sheetShape(day, false).tilt)
+		expect(Math.max(...tilts.map(Math.abs))).toBeLessThanOrEqual(0.8)
+		expect(tilts.some((tilt) => tilt < 0)).toBe(true)
+		expect(tilts.some((tilt) => tilt > 0)).toBe(true)
+		for (let day of DAYS) {
+			expect(Math.abs(sheetShape(day, true).tilt)).toBeLessThanOrEqual(0.3)
+		}
+	})
+
+	test('dog-ears some sheets, not most, and never the top-left corner under the nameplate', () => {
+		let corners = DAYS.map((day) => sheetShape(day, false).dogEar)
+		let eared = corners.filter((corner) => corner !== null)
+		expect(eared.length).toBeGreaterThan(0)
+		expect(eared.length).toBeLessThan(DAYS.length / 2)
+		for (let corner of eared) {
+			expect(['topRight', 'bottomRight', 'bottomLeft']).toContain(corner)
+		}
+	})
+
+	test('creases each sheet two or three times, across it, faintly', () => {
+		for (let day of DAYS) {
+			let {creases} = sheetShape(day, false)
+			expect(creases.length).toBeGreaterThanOrEqual(2)
+			expect(creases.length).toBeLessThanOrEqual(3)
+			for (let crease of creases) {
+				expect(crease.position).toBeGreaterThanOrEqual(0.15)
+				expect(crease.position).toBeLessThanOrEqual(0.85)
+				expect(Math.abs(crease.angle)).toBeLessThanOrEqual(35)
+				expect(crease.strength).toBeGreaterThanOrEqual(0.3)
+				expect(crease.strength).toBeLessThanOrEqual(1)
+			}
+		}
+	})
+
+	test('bends the sheet back at its fold by a few degrees', () => {
+		for (let day of DAYS) {
+			let {bend} = sheetShape(day, false)
+			expect(bend).toBeGreaterThanOrEqual(4)
+			expect(bend).toBeLessThanOrEqual(9)
+		}
+	})
+
+	test("gives each sheet's edges a seed of their own", () => {
+		let seeds = new Set(DAYS.map((day) => sheetShape(day, false).edgeSeed))
+		expect(seeds.size).toBe(DAYS.length)
 	})
 })

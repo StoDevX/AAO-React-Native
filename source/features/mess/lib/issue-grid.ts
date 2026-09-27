@@ -1,8 +1,8 @@
-import type {StainMark} from '@frogpond/mess-issue-tile'
+import type {DogEar, SheetShape, StainMark} from '@frogpond/mess-issue-tile'
 import {issueDate} from './issues'
 import type {Block, MessIssue, MessStory, Run} from '../types'
 
-export type {StainMark}
+export type {SheetShape, StainMark}
 
 /** A year's issues on the grid, and how many issues of that year are loaded. */
 export type YearGroup = {year: string; count: number; issues: MessIssue[]}
@@ -104,6 +104,34 @@ export function stainMarks(day: string, count: number): StainMark[] {
 			arcLength: 0.62 + next() * 0.3,
 		}
 	})
+}
+
+const DOG_EARS: readonly DogEar[] = ['topRight', 'bottomRight', 'bottomLeft']
+
+/**
+ * How an issue's sheet has been handled, seeded by its day like its stains, so a sheet looks the
+ * same every time it is drawn: a slight tilt, now and then a turned corner, two or three faint
+ * creases, and the bend below its fold. The top tile is tilted less, since its columns are read
+ * as lines of type.
+ */
+export function sheetShape(day: string, top: boolean): SheetShape {
+	let next = generator(hash(`${day}#sheet`))
+	let tilt = (next() * 2 - 1) * (top ? 0.3 : 0.8)
+	// About one sheet in four has a corner turned; never the top left, where the nameplate sits.
+	let earRoll = next()
+	let dogEar = earRoll < 0.25 ? (DOG_EARS[Math.floor(next() * DOG_EARS.length)] ?? null) : null
+	let creases = Array.from({length: next() < 0.5 ? 2 : 3}, () => ({
+		position: 0.15 + next() * 0.7,
+		angle: (next() * 2 - 1) * 35,
+		strength: 0.3 + next() * 0.7,
+	}))
+	return {
+		tilt,
+		dogEar,
+		creases,
+		edgeSeed: hash(`${day}#edges`),
+		bend: 4 + next() * 5,
+	}
 }
 
 const textOf = (runs: Run[]): string =>

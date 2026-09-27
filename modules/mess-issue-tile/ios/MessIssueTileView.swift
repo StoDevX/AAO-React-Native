@@ -25,6 +25,7 @@ final class MessIssueTileProps: ExpoSwiftUI.ViewProps {
 	@Field var stainKind: StainKind = .coffee
 	@Field var layout: TileLayout = .grid
 	@Field var paragraphs: [String] = []
+	@Field var sheet: SheetShape = SheetShape()
 	@Field var label: String = ""
 	@Field var testID: String?
 	var onTilePress = EventDispatcher()
@@ -61,7 +62,16 @@ struct MessIssueTileView: ExpoSwiftUI.View {
 		.onChange(of: props.photoUrl) { photoFailed = false }
 	}
 
-	private var sheet: some View {
+	private var outline: PaperOutline {
+		PaperOutline(
+			seed: UInt32(truncatingIfNeeded: Int(props.sheet.edgeSeed)),
+			dogEar: props.sheet.dogEar,
+			earSize: isTop ? 22 : 14)
+	}
+
+	/// The flat sheet with everything on it: paper, the page, stains, creases, a turned corner,
+	/// and the sheets showing behind it.
+	private var flatSheet: some View {
 		Color.clear
 			.aspectRatio(props.layout.aspect, contentMode: .fit)
 			.frame(maxWidth: .infinity)
@@ -70,10 +80,30 @@ struct MessIssueTileView: ExpoSwiftUI.View {
 			}
 			.background(PaperBackground(palette: palette, scheme: scheme))
 			.overlay(StainLayer(marks: props.stains, kind: props.stainKind, scheme: scheme))
-			.clipShape(.rect(cornerRadius: 2))
-			.background(SheetEdges(palette: palette))
-			.padding([.trailing, .bottom], 5)
-			.contentShape(.rect)
+			.overlay(CreaseLayer(creases: props.sheet.creases, scheme: scheme))
+			.overlay(FoldShade(palette: palette))
+			.clipShape(outline)
+			.overlay(DogEarFlap(dogEar: props.sheet.dogEar, earSize: isTop ? 22 : 14, palette: palette))
+			.background(SheetEdges(palette: palette, outline: outline))
+	}
+
+	/// The sheet folded: the part below the fold bends back away from the reader, photo, type and
+	/// all, then the whole sheet sits at its slight tilt.
+	private var sheet: some View {
+		ZStack {
+			flatSheet
+				.clipShape(Band(from: 0, to: foldLine))
+			flatSheet
+				.clipShape(Band(from: foldLine, to: 1.2))
+				.rotation3DEffect(
+					.degrees(props.sheet.bend), axis: (x: 1, y: 0, z: 0),
+					anchor: UnitPoint(x: 0.5, y: foldLine), perspective: 0.4)
+				// The bent half is a second drawing of the same sheet; VoiceOver has the tile's label.
+				.accessibilityHidden(true)
+		}
+		.rotationEffect(.degrees(props.sheet.tilt))
+		.padding([.trailing, .bottom], 5)
+		.contentShape(.rect)
 	}
 
 	@ViewBuilder private var content: some View {

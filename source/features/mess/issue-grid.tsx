@@ -17,6 +17,7 @@ import {MessIssueTile} from '@frogpond/mess-issue-tile'
 import {
 	leadParagraphs,
 	readCount,
+	sheetShape,
 	stainCount,
 	stainMarks,
 	tileLabel,
@@ -77,6 +78,7 @@ function Tile({
 			layout={layout}
 			onPress={() => onOpen(issue)}
 			paragraphs={paragraphs}
+			sheet={sheetShape(issue.day, layout !== 'grid')}
 			photoUrl={issue.leadPhoto}
 			special={issue.isSpecial}
 			stainKind={kind}

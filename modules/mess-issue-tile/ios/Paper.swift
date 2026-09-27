@@ -86,7 +86,8 @@ struct TextureLayer: View {
 	}
 }
 
-/// The sheet itself: paper, pulp, fibres, and a fold 70% of the way down.
+/// The sheet itself: paper, pulp and fibres. The fold and creases are drawn over the whole sheet
+/// by `FoldShade` and `CreaseLayer`, so they cross the photo and the type too.
 struct PaperBackground: View {
 	let palette: PaperPalette
 	let scheme: ColorScheme
@@ -98,19 +99,6 @@ struct PaperBackground: View {
 				.blendMode(scheme == .dark ? .softLight : .multiply)
 			TextureLayer(image: Textures.fibres)
 				.blendMode(scheme == .dark ? .softLight : .multiply)
-			GeometryReader { proxy in
-				let y = proxy.size.height * 0.7
-				Rectangle()
-					.fill(LinearGradient(
-						colors: [.clear, palette.crease, palette.creaseLight, .clear],
-						startPoint: .top, endPoint: .bottom))
-					.frame(height: 6)
-					.offset(y: y - 3)
-				Rectangle()
-					.fill(palette.crease)
-					.frame(height: 1)
-					.offset(y: y)
-			}
 		}
 	}
 }
@@ -118,11 +106,12 @@ struct PaperBackground: View {
 /// Two sheets showing behind the top one, down and to the right, with a soft shadow.
 struct SheetEdges: View {
 	let palette: PaperPalette
+	let outline: PaperOutline
 
 	var body: some View {
 		ZStack {
-			Rectangle().fill(palette.edgeFar).offset(x: 4, y: 4)
-			Rectangle().fill(palette.edgeNear).offset(x: 2, y: 2)
+			outline.fill(palette.edgeFar).offset(x: 4, y: 4)
+			outline.fill(palette.edgeNear).offset(x: 2, y: 2)
 		}
 		.shadow(color: palette.shadow, radius: 4, x: 3, y: 3)
 	}
