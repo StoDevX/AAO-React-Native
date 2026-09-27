@@ -50,6 +50,7 @@ struct TestIdentifiers {
 	enum Navigation {
 		static let openSettings = "Open Settings"
 		static let closeScreen = "Close Screen"
+    static let settingsSheetTitle = "Settings"
 		/// The label every back button carries. UIKit gives its own back
 		/// buttons this label too, so a query using it must be scoped to one
 		/// navigation bar -- `app.navigationBars.buttons[backButton]` matches

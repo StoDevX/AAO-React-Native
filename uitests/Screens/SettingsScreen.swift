@@ -4,16 +4,6 @@ struct SettingsScreen: Screen {
 	let app: XCUIApplication
 
 	@discardableResult
-	func openSettings() -> Self {
-		let settingsButton = app.buttons[TestIdentifiers.Navigation.openSettings]
-		XCTAssertTrue(
-			settingsButton.waitForExistence(timeout: 30),
-			"Settings button should appear on home screen")
-		settingsButton.tap()
-		return self
-	}
-
-	@discardableResult
 	func selectAppIcon(iconName: String, springboard: XCUIApplication) -> Self {
 		let row = app.buttons[iconName]
 		XCTAssertTrue(
