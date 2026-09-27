@@ -310,6 +310,30 @@ struct MapScreen: Screen {
 		}
 	}
 
+	/// Opens a floor of the card's Directory, scrolling the card to it first.
+	@discardableResult
+	func openDirectoryFloor(_ index: Int) -> Self {
+		let row = app.buttons[TestIdentifiers.Map.directoryFloor(index)].firstMatch
+		scrollCard(toReach: row)
+		XCTAssertTrue(row.exists && row.isHittable, "The card's Directory should list floor \(index)")
+		row.tap()
+		return self
+	}
+
+	/// Opens an entry on the floor sheet on top. Matched by the entry
+	/// identifier as well as its name: the card beneath can list a tile of the
+	/// same name, covered but still in the tree.
+	@discardableResult
+	func openDirectoryEntry(named name: String) -> Self {
+		let row = app.buttons
+			.matching(NSPredicate(
+				format: "identifier == %@ AND label BEGINSWITH %@", TestIdentifiers.Map.directoryEntry, name))
+			.firstMatch
+		XCTAssertTrue(row.waitForExistence(timeout: 10) && row.isHittable, "The floor should list \(name)")
+		row.tap()
+		return self
+	}
+
 	/// The top card is `name`'s: only one card's close button can be tapped,
 	/// and `name` can be seen, as the header's title or, at the large stop,
 	/// the big title in its place. A title's label carries its subtitle after
