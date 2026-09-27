@@ -103,7 +103,6 @@ function item(id: string, label: string, stationName: string): MenuItemType {
 		sub_station: '',
 		sub_station_id: '',
 		sub_station_order: '',
-		tier3: false,
 		zero_entree: '',
 	}
 }
@@ -194,6 +193,89 @@ describe('FancyMenu', () => {
 		await fireEvent.press(screen.getByTestId('choose-dinner'))
 		expect(screen.getByText('Prime Rib')).toBeTruthy()
 		expect(screen.queryByText('Pot Roast')).toBeNull()
+	})
+
+	// The Cage most days: one special at most, and a couple dozen burgers and
+	// wraps filed as additional favorites beside a hundred-odd condiments. A
+	// meal with favorites but no special still has a short menu worth showing.
+	test('applies the specials filter to a meal with only additional favorites', async () => {
+		let dinnerMeals: ProcessedMealType[] = MEALS.map((meal) =>
+			meal.label === 'Dinner' ? {...meal, stations: [station('Home', ['3', '4'])]} : meal,
+		)
+
+		await render(
+			<FancyMenu
+				foodItems={{
+					1: item('1', 'Pancakes', 'Grill'),
+					3: {...item('3', 'Ketchup', 'Home'), tier: 3},
+					4: {...item('4', 'Beef Smash Burger', 'Home'), tier: 2},
+				}}
+				meals={dinnerMeals}
+				menuCorIcons={COR_ICONS}
+				name="The Cage"
+				now={moment.tz(BREAKFAST_TIME, TIMEZONE)}
+				onItemPress={jest.fn()}
+			/>,
+		)
+
+		await fireEvent.press(screen.getByTestId('choose-dinner'))
+		expect(screen.getByText('Beef Smash Burger')).toBeTruthy()
+		expect(screen.queryByText('Ketchup')).toBeNull()
+	})
+
+	// The Cage files a special, and dozens of burgers, wraps and sandwiches,
+	// under the one `Daily Special` station. Each sub-station is a section of
+	// its own, so the special stands apart from the regular fare.
+	test('sections a station by its sub-stations', async () => {
+		let dinnerMeals: ProcessedMealType[] = MEALS.map((meal) =>
+			meal.label === 'Dinner'
+				? {...meal, stations: [station('Daily Special', ['3', '4', '5'], 'closes at 8pm')]}
+				: meal,
+		)
+
+		await render(
+			<FancyMenu
+				foodItems={{
+					1: item('1', 'Pancakes', 'Grill'),
+					3: {
+						...item('3', 'Beef Smash Burger', 'Daily Special'),
+						sub_station: 'Burgers',
+						tier: 2,
+						sub_station_order: '22',
+					},
+					4: {...item('4', 'Poutine', 'Daily Special'), special: true},
+					5: {
+						...item('5', 'Chicken Caesar Salad Wrap', 'Daily Special'),
+						sub_station: 'Wraps',
+						tier: 2,
+						sub_station_order: '21',
+					},
+				}}
+				meals={dinnerMeals}
+				menuCorIcons={COR_ICONS}
+				name="The Cage"
+				now={moment.tz(BREAKFAST_TIME, TIMEZONE)}
+				onItemPress={jest.fn()}
+			/>,
+		)
+
+		await fireEvent.press(screen.getByTestId('choose-dinner'))
+
+		let order = [
+			'Daily Special',
+			'Poutine',
+			'Daily Special • Wraps',
+			'Chicken Caesar Salad Wrap',
+			'Daily Special • Burgers',
+			'Beef Smash Burger',
+		]
+		let tree = JSON.stringify(screen.toJSON())
+		let positions = order.map((text) => tree.indexOf(`"${text}"`))
+		expect(positions.every((p) => p >= 0)).toBe(true)
+		expect(positions).toEqual([...positions].sort((a, b) => a - b))
+
+		// The station's note belongs to the station, said once at its head.
+		expect(screen.getAllByText('closes at 8pm')).toHaveLength(1)
 	})
 
 	// Which meal the menu starts on is `chooseMeal`'s decision, covered directly
@@ -406,6 +488,37 @@ describe('FancyMenu', () => {
 		)
 
 		expect(onMealHeaderChange).toHaveBeenLastCalledWith({menu: null, time: null, closed: true})
+	})
+
+	// ccc-server's stand-in for a shut cafe files its one `Closed` item under a
+	// `Closed` sub-station of a `Closed` station.
+	test('names a shut cafe once, not by station and sub-station', async () => {
+		let closedMeal: ProcessedMealType = {
+			label: 'Closed',
+			starttime: '00:00',
+			endtime: '24:00',
+			stations: [station('Closed', ['1'])],
+		}
+
+		await render(
+			<FancyMenu
+				foodItems={{
+					1: {
+						...item('1', 'Closed', 'Closed'),
+						sub_station: 'Closed',
+						sub_station_order: '1',
+					},
+				}}
+				meals={[closedMeal]}
+				menuCorIcons={COR_ICONS}
+				name="Weitz Center"
+				now={moment.tz(BREAKFAST_TIME, TIMEZONE)}
+				onItemPress={jest.fn()}
+			/>,
+		)
+
+		expect(screen.getByText('Closed')).toBeTruthy()
+		expect(screen.queryByText('Closed • Closed')).toBeNull()
 	})
 
 	// The callback the screen above uses to move between meals, which nothing

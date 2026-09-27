@@ -32,7 +32,6 @@ function item(overrides: Partial<MenuItemType>): MenuItemType {
 		sub_station: '',
 		sub_station_id: '',
 		sub_station_order: '',
-		tier3: false,
 		zero_entree: '',
 		...overrides,
 	}

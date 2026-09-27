@@ -1,4 +1,10 @@
-import {appleMapsDirectionsUrl, appleMapsSearchUrl, buildingPhotoUrl, mapStyleUrl} from '../urls'
+import {
+	appleMapsDirectionsUrl,
+	appleMapsSearchUrl,
+	buildingPhotoUrl,
+	mapCredits,
+	mapStyleUrl,
+} from '../urls'
 
 describe('buildingPhotoUrl', () => {
 	// ccc-server stores `photos` as bare filenames, so a record is useless
@@ -39,5 +45,23 @@ describe('appleMapsDirectionsUrl', () => {
 		expect(appleMapsDirectionsUrl([-93.1839, 44.4618])).toBe(
 			'https://maps.apple.com/?daddr=44.4618,-93.1839&dirflg=w',
 		)
+	})
+})
+
+// The tiles' licence requires the OpenStreetMap credit; each campus's style
+// also credits its college. These mirror the styles' own source attributions.
+describe('mapCredits', () => {
+	it("credits OpenStreetMap, then St. Olaf, for St. Olaf's map", () => {
+		expect(mapCredits('stolaf')).toEqual([
+			{label: '© OpenStreetMap contributors', url: 'https://www.openstreetmap.org/copyright'},
+			{label: 'St. Olaf College', url: 'https://wp.stolaf.edu/'},
+		])
+	})
+
+	it("credits OpenStreetMap, then Carleton, for Carleton's map", () => {
+		expect(mapCredits('carleton')).toEqual([
+			{label: '© OpenStreetMap contributors', url: 'https://www.openstreetmap.org/copyright'},
+			{label: 'Carleton College', url: 'https://www.carleton.edu/'},
+		])
 	})
 })

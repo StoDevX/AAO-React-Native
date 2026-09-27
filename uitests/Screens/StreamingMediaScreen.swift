@@ -67,14 +67,6 @@ struct StreamingMediaScreen: Screen {
 		return self
 	}
 
-	/// Check the station's website control reads as a link, since it leaves
-	/// the app, with a touch target of at least 44pt on each side.
-	@discardableResult
-	func checkStationLink(_ label: String) -> Self {
-		checkTouchTarget(app.linkLabelled(label), named: "A link labelled \"\(label)\"")
-		return self
-	}
-
 	private func checkTouchTarget(_ element: XCUIElement, named name: String) {
 		XCTAssertTrue(element.waitForExistence(timeout: 30), "\(name) should exist")
 		XCTAssertGreaterThanOrEqual(element.frame.height, 44, "\(name) should be at least 44pt tall")

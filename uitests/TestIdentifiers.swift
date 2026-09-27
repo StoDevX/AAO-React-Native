@@ -223,9 +223,15 @@ struct TestIdentifiers {
 		static let photoViewerClose = "map-photo-viewer-close"
 		static let departmentsGrid = "departments-grid"
 		static let departmentsMore = "departments-more"
-		/// MapLibre's attribution button, found by the label it gives itself. It
-		/// carries the OpenStreetMap credit, so it has to stay reachable.
+		/// The About menu in the map's header. It carries the OpenStreetMap
+		/// credit, so it has to stay reachable. Mirrors the accessibilityLabel
+		/// in app/(home)/Map/index.tsx.
 		static let attribution = "About this map"
+		/// The credit the tiles' licence requires, one of the About menu's
+		/// items. Mirrors `mapCredits` in source/features/map/urls.ts.
+		static let osmCredit = "© OpenStreetMap contributors"
+		/// The map screen's title, which its header no longer draws.
+		static let stolafTitle = "St. Olaf Map"
 		/// UIKit's own drag indicator on the presented sheet, found by label --
 		/// it carries no identifier. Its element is the sheet's child, which is
 		/// how the sheet's own box is found.
@@ -330,7 +336,6 @@ struct TestIdentifiers {
 	enum Menus {
 		static let stOlafCafes = ["Stav Hall", "The Cage", "The Pause"]
 		static let carleton = "Carleton"
-		static let carletonCafes = ["Burton", "LDC", "Weitz Center", "Sayles Hill"]
 
 		/// Matches FOOD_ROW_PREFIX in modules/food-menu/food-item-row.tsx.
 		static let foodRowPrefix = "food-row-"
@@ -589,6 +594,8 @@ struct TestIdentifiers {
 		static let varietySection = "Variety"
 		static let horoscopesColumn = "Horoscopes"
 		static let comicColumn = "Comic"
+		static let crosswordColumn = "Crossword"
+		static let playlistColumn = "Playlist"
 
 		/// A sign's name, as a Horoscopes glyph button is labelled and a sign row's
 		/// label begins, in source/features/mess/lib/horoscopes.ts.
@@ -616,6 +623,18 @@ struct TestIdentifiers {
 
 		/// Every thumbnail in a comic's series row, in source/features/mess/series-row.tsx.
 		static let seriesStory = "mess-series-story"
+
+		/// A Crossword post's button that opens its puzzle, in
+		/// source/features/mess/story-screen.tsx.
+		static let crosswordSolve = "mess-crossword-solve"
+		static let crosswordSolveLabel = "Solve the crossword"
+
+		/// A Playlist post's button to Spotify, in source/features/mess/playlist-view.tsx.
+		static let playlistSpotify = "mess-playlist-spotify"
+		static let playlistSpotifyLabel = "Open in Spotify"
+
+		/// Spotify's player on a Playlist post, in source/features/mess/spotify-embed.tsx.
+		static let playlistEmbed = "mess-playlist-embed"
 	}
 
 	// MARK: - Streaming Media
@@ -623,14 +642,14 @@ struct TestIdentifiers {
 	enum StreamingMedia {
 		static let tabs = ["Webcams", "KSTO", "KRLX"]
 		static let krlxTab = "KRLX"
-		/// The station screen's buttons, as VoiceOver names them. Both are
-		/// icons alone, so these labels are all a listener has to go on.
+		/// The station screen's buttons, as VoiceOver names them. Call and
+		/// schedule are icons alone, so their labels are all a listener has
+		/// to go on.
 		static let krlxButtons = [
+			"Listen",
 			"Call 88.1 KRLX-FM",
 			"88.1 KRLX-FM schedule",
 		]
-		/// Open leaves the app for the station's website, so it reads as a link.
-		static let krlxWebsiteLink = "Open 88.1 KRLX-FM website"
 		/// KRLX has one logo, so nothing labelled with this may be a button.
 		static let krlxLogoPrefix = "88.1 KRLX-FM logo"
 		static let kstoTab = "KSTO"
