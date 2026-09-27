@@ -1,6 +1,6 @@
 import React from 'react'
 import {Linking} from 'react-native'
-import {fireEvent, render, screen} from '@testing-library/react-native'
+import {act, fireEvent, render, screen, waitFor} from '@testing-library/react-native'
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query'
 import {openUrl} from '@frogpond/open-url'
 
@@ -540,5 +540,41 @@ describe('BuildingInfo places', () => {
 		expect(screen.getByText('Writing Desk')).toBeTruthy()
 		expect(screen.getByText('Offices')).toBeTruthy()
 		expect(screen.queryByText('Also at This Location')).toBeNull()
+	})
+})
+
+describe('BuildingInfo while the Hours feed loads', () => {
+	// When venues arrive, a department can merge with one and gain a status;
+	// a grid already open must stay open.
+	it('keeps the Departments grid open as the Hours feed arrives', async () => {
+		let client = new QueryClient({defaultOptions: {queries: {retry: false, staleTime: Infinity}}})
+		trackedQueryClients.push(client)
+		client.setQueryData(mapKeys.all('stolaf'), [])
+		// Empty for now, as a feed still on its way is.
+		client.setQueryData(keys.all('stolaf'), [])
+		let departments = Array.from({length: 8}, (_, i) => `Dept ${i} <https://example.com/${i}>`)
+		await render(
+			<QueryClientProvider client={client}>
+				<BuildingInfo
+					building={makeBuilding({id: 'toh', name: 'Tomson Hall', departments})}
+					campus="stolaf"
+					onClose={jest.fn()}
+					onOpen={jest.fn()}
+					stop="medium"
+				/>
+			</QueryClientProvider>,
+		)
+		await fireEvent.press(screen.getByRole('button', {name: 'More departments'}))
+		// The grid repeats its section's title at its top.
+		expect(screen.getAllByText('Departments')).toHaveLength(2)
+
+		act(() => {
+			client.setQueryData(keys.all('stolaf'), [venue('Dept 0', 'toh', 'office')])
+		})
+		// The venue has merged with its department: the tile now opens it.
+		await waitFor(() => {
+			expect(screen.getAllByRole('button', {name: /^Dept 0/u}).length).toBeGreaterThan(0)
+		})
+		expect(screen.getAllByText('Departments')).toHaveLength(2)
 	})
 })

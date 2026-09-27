@@ -329,18 +329,13 @@ type LinkedPlacesProps = {
 	onOpen?: (entry: StackEntry) => void
 }
 
-/// Departments or Offices. Tiles that open a place show its live status, so
-/// only a section with such a tile keeps the minute's tick.
+/// Departments or Offices. A tile that opens a place shows its live status.
+/// One component whether or not any tile has one yet: swapping components
+/// when the Hours feed arrives would remount the section and close its grid.
 function LinkedPlaces(props: LinkedPlacesProps): React.ReactNode {
-	if (!props.tiles.some((tile) => tile.venue)) {
-		return <PlacesSection {...props} />
-	}
-	return <TimedPlaces {...props} />
-}
-
-function TimedPlaces(props: LinkedPlacesProps): React.ReactNode {
 	let {now} = useMomentTimer({intervalMs: 60000, timezone: timezone()})
-	return <PlacesSection {...props} now={now} />
+	let withStatus = props.tiles.some((tile) => tile.venue)
+	return <PlacesSection {...props} now={withStatus ? now : undefined} />
 }
 
 /// A place's hours, kept current. The minute's tick lives here rather than on
