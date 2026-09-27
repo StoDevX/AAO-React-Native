@@ -45,8 +45,6 @@ const DINING_STATUS: AreaStatus = {
 	ids: new Set(['1', '3']),
 	count: 2,
 	empty: false,
-	settled: true,
-	partial: false,
 }
 
 const FAITH: StudentWorkArea = {
@@ -61,8 +59,6 @@ const FAITH_STATUS: AreaStatus = {
 	ids: new Set(),
 	count: 0,
 	empty: true,
-	settled: true,
-	partial: false,
 }
 
 const CONTEXT: FilterContext = {

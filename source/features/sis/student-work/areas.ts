@@ -1,5 +1,6 @@
 import {resolveGradient, type Gradient} from '@frogpond/colors'
 import type {SFSymbol} from 'sf-symbols-typescript'
+import type {UnitsAvailability} from './units'
 
 /// An area as data/student-work-areas.yaml writes it.
 export type AreaEntry = {
@@ -28,86 +29,44 @@ export function toAreas(entries: AreaEntry[]): StudentWorkArea[] {
 	}))
 }
 
-/// Where one unit's keyword search has got to.
-export type UnitResult =
-	| {status: 'success'; ids: string[]}
-	| {status: 'error'}
-	| {status: 'pending'}
-
 export type AreaStatus = {
-	/// The board's postings in this area, from the unit searches that answered.
+	/// The board's postings in this area.
 	ids: Set<string>
-	/// How many, or undefined while nothing about the area is known.
-	count: number | undefined
-	/// Known to hold nothing: every unit's search answered and none found anything.
+	count: number
+	/// Holds nothing, so its tile is dimmed.
 	empty: boolean
-	/// Every unit's search has answered, whether or not it succeeded.
-	settled: boolean
-	/// Counted, but some of its searches failed, so postings may be missing.
-	partial: boolean
 }
 
-/// Which of the board's postings each area holds, keyed by the area's slug.
+/// Which of the board's postings each area holds, keyed by the area's slug. A
+/// posting belongs to every area that lists its unit; one whose unit is null,
+/// or not known yet, belongs to none.
 export function areaMembership(
 	areas: StudentWorkArea[],
-	units: Map<string, UnitResult>,
+	unitsById: Map<string, string | null>,
 	boardIds: Set<string>,
 ): Map<string, AreaStatus> {
 	let statuses = new Map<string, AreaStatus>()
 
 	for (let area of areas) {
+		let units = new Set(area.units)
 		let ids = new Set<string>()
-		let answered = 0
-		let settled = true
-		let failed = false
-		for (let unit of area.units) {
-			let result = units.get(unit)
-			if (result === undefined || result.status === 'pending') settled = false
-			if (result?.status === 'error') failed = true
-			if (result?.status !== 'success') continue
-			answered += 1
-			for (let id of result.ids) {
-				if (boardIds.has(id)) ids.add(id)
-			}
+		for (let id of boardIds) {
+			let unit = unitsById.get(id)
+			if (unit !== undefined && unit !== null && units.has(unit)) ids.add(id)
 		}
-
-		let allAnswered = answered === area.units.length
-		let count = ids.size > 0 || allAnswered ? ids.size : undefined
-		statuses.set(area.slug, {
-			ids,
-			count,
-			empty: allAnswered && ids.size === 0,
-			settled,
-			partial: failed && count !== undefined,
-		})
+		statuses.set(area.slug, {ids, count: ids.size, empty: ids.size === 0})
 	}
 
 	return statuses
 }
 
 /// Whether a list with these areas chosen (by slug) can show its postings.
-/// Until every search for a chosen area has answered, the list cannot tell
-/// the area's postings from the rest, and one that filled in search by search
-/// would jump back to the top each time. It fails only when no chosen area
-/// loaded; when some searches failed but postings loaded, it is partial, and
-/// the list shows them with word that some may be missing.
+/// With none chosen it always can; with some, it waits on the units, since
+/// until they load it cannot tell the areas' postings from the rest.
 export function chosenAreaState(
 	chosenSlugs: string[] | null,
-	areas: StudentWorkArea[],
-	membership: Map<string, AreaStatus>,
-): 'ready' | 'partial' | 'loading' | 'failed' {
-	let statuses = areas
-		.filter((area) => (chosenSlugs ?? []).includes(area.slug))
-		.map((area) => membership.get(area.slug))
-
-	if (statuses.some((status) => status === undefined || !status.settled)) {
-		return 'loading'
-	}
-	if (statuses.length > 0 && statuses.every((status) => status?.count === undefined)) {
-		return 'failed'
-	}
-	if (statuses.some((status) => status?.count === undefined || status?.partial)) {
-		return 'partial'
-	}
-	return 'ready'
+	availability: UnitsAvailability,
+): UnitsAvailability {
+	if (chosenSlugs === null || chosenSlugs.length === 0) return 'ready'
+	return availability
 }

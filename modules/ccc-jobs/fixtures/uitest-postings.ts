@@ -48,6 +48,8 @@ const BODY = [
 
 /// Each fixture posting's unit number, as its description would carry it.
 /// The fillers share one unit, so one area has enough postings to scroll.
+/// Every area these leave out -- Faith & Vocation among them -- has no
+/// postings, so a UI test can open an empty area.
 const FIXTURE_UNITS: Record<string, string> = {
 	'uitest-1': '16118', // Research (CURI)
 	'uitest-2': '14001', // Library & Technology
@@ -178,15 +180,6 @@ export const UITEST_JOB_CATEGORIES: JobCategory[] = [
 		})),
 	},
 ]
-
-/// What a keyword search for each unit finds on the fixture board. Every area
-/// the fixtures leave out -- Faith & Vocation among them -- has no postings, so
-/// a UI test can open an empty area.
-export const UITEST_UNIT_POSTINGS: Record<string, string[]> = {}
-for (let job of UITEST_JOB_DETAILS) {
-	let unit = FIXTURE_UNITS[job.id] ?? FILLER_UNIT
-	UITEST_UNIT_POSTINGS[unit] = [...(UITEST_UNIT_POSTINGS[unit] ?? []), job.id]
-}
 
 /// What ccc-server's `/student-work/units` would publish for the fixture
 /// board. The extra posting is left out, as one newer than the server's last

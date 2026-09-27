@@ -1,29 +1,41 @@
 import * as React from 'react'
 import {
+	jobDetailOptions,
 	jobPostingsOptions,
-	keys,
-	unitPostingsOptions,
+	postingUnitsOptions,
 	type JobCategory,
+	type JobDetail,
 	type JobSummary,
 } from '@frogpond/ccc-jobs'
 import {now} from '@frogpond/timer'
-import {useQueries, useQuery, useQueryClient, type UseQueryResult} from '@tanstack/react-query'
-import {areaMembership, type StudentWorkArea} from './areas'
+import {useQueries, useQuery, type UseQueryResult} from '@tanstack/react-query'
+import {areaMembership, type AreaStatus, type StudentWorkArea} from './areas'
 import {studentWorkAreasOptions} from './areas-query'
 import type {FilterContext} from './filters'
 import {newPostingIds} from './new-postings'
 import {useSeenPostingsStore} from './store'
-import {unitResultOf} from './unit-result'
+import {idsNeedingDetail, unitsAvailability, unitsByPosting, type UnitsAvailability} from './units'
 
 export type StudentWorkBoard = {
 	board: UseQueryResult<JobCategory[]>
 	jobs: JobSummary[]
 	/// Always there: the areas query starts from the copy the app ships.
 	areas: StudentWorkArea[]
+	/// Whether postings can be sorted into areas yet.
+	availability: UnitsAvailability
 	context: FilterContext
-	/// Refetch the board and every unit search, for pull-to-refresh: a failed
-	/// unit search would otherwise stay failed until it went stale.
+	/// Refetch the board and the units map, for pull-to-refresh.
 	refresh: () => Promise<void>
+}
+
+/// The units the app read from details, by posting ID. A module-level
+/// function, so useQueries rebuilds its result only when a detail changes.
+function detailUnits(queries: Array<UseQueryResult<JobDetail>>): Map<string, string | null> {
+	let units = new Map<string, string | null>()
+	for (let query of queries) {
+		if (query.data) units.set(query.data.id, query.data.unit)
+	}
+	return units
 }
 
 /// Everything both Student Work screens read: the board, the areas, what each
@@ -35,47 +47,49 @@ export type StudentWorkBoard = {
 export function useStudentWorkBoard({
 	checkForNewPostings = false,
 }: {checkForNewPostings?: boolean} = {}): StudentWorkBoard {
-	let queryClient = useQueryClient()
 	let board = useQuery({
 		...jobPostingsOptions,
 		refetchOnMount: checkForNewPostings ? 'always' : true,
 	})
 	let {data: areas} = useQuery(studentWorkAreasOptions)
-
-	let units = React.useMemo(() => areas.flatMap((area) => area.units), [areas])
-	// Stable while the units are, so useQueries rebuilds the map only when some
-	// search's result changes; an inline function would rebuild it every render.
-	let combine = React.useCallback(
-		(queries: Array<UseQueryResult<string[]>>) =>
-			new Map(units.map((unit, index) => [unit, unitResultOf(queries[index])])),
-		[units],
-	)
-	let unitResults = useQueries({
-		queries: units.map((unit) => unitPostingsOptions(unit)),
-		combine,
-	})
+	let units = useQuery(postingUnitsOptions)
+	let availability = unitsAvailability(units)
 
 	let jobs = React.useMemo(
 		() => (board.data ?? []).flatMap((category) => category.jobs),
 		[board.data],
 	)
-	let boardIds = React.useMemo(() => new Set(jobs.map((job) => job.id)), [jobs])
+	let boardIdList = React.useMemo(() => jobs.map((job) => job.id), [jobs])
+	let boardIds = React.useMemo(() => new Set(boardIdList), [boardIdList])
 
-	// What the searches found, as text: a search starting or finishing with
-	// the same postings leaves it unchanged, so the membership -- and every
-	// list's filters and sections after it -- is only rebuilt when a result is.
-	let unitSignature = Array.from(unitResults)
-		.map(
-			([unit, result]) =>
-				`${unit}:${result.status === 'success' ? result.ids.join(',') : result.status}`,
-		)
+	let published = React.useMemo(
+		() => (units.data === undefined ? undefined : new Map(Object.entries(units.data))),
+		[units.data],
+	)
+	let missing = React.useMemo(
+		() => idsNeedingDetail(boardIdList, published),
+		[boardIdList, published],
+	)
+	let fromDetails = useQueries({
+		queries: missing.map((id) => jobDetailOptions(id)),
+		combine: detailUnits,
+	})
+
+	// What the details found, as text: a detail refetching with the same unit
+	// leaves it unchanged, so the membership -- and every list's filters and
+	// sections after it -- is only rebuilt when a unit is.
+	let detailSignature = Array.from(fromDetails)
+		.map(([id, unit]) => `${id}:${unit ?? ''}`)
 		.join('|')
 	let membership = React.useMemo(
-		() => areaMembership(areas, unitResults, boardIds),
-		// unitResults is a new map whenever any search's fetch state changes;
-		// unitSignature stands in for what it holds.
+		() =>
+			availability === 'ready'
+				? areaMembership(areas, unitsByPosting(published, fromDetails), boardIds)
+				: new Map<string, AreaStatus>(),
+		// fromDetails is a new map whenever any detail's fetch state changes;
+		// detailSignature stands in for what it holds.
 		// oxlint-disable-next-line react-hooks/exhaustive-deps
-		[areas, unitSignature, boardIds],
+		[availability, areas, published, detailSignature, boardIds],
 	)
 
 	// The store changes only when the student leaves Student Work, so the dots
@@ -96,18 +110,10 @@ export function useStudentWorkBoard({
 	)
 
 	let refetchBoard = board.refetch
+	let refetchUnits = units.refetch
 	let refresh = React.useCallback(async () => {
-		await Promise.all([
-			refetchBoard(),
-			// Only what is stale or failed: fresh searches have nothing new, and
-			// waiting on all fifty-one would make every pull slow.
-			queryClient.refetchQueries({
-				queryKey: keys.units,
-				type: 'active',
-				predicate: (query) => query.state.status === 'error' || query.isStale(),
-			}),
-		])
-	}, [refetchBoard, queryClient])
+		await Promise.all([refetchBoard(), refetchUnits()])
+	}, [refetchBoard, refetchUnits])
 
-	return {board, jobs, areas, context, refresh}
+	return {board, jobs, areas, availability, context, refresh}
 }
