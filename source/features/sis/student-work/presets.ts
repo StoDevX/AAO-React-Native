@@ -38,7 +38,7 @@ export function postedTags(job: JobSummary, newIds: Set<string>, today: Date): s
 }
 
 /// Each preset's posting count, from the board alone, so none waits on the
-/// unit searches.
+/// units.
 export function presetCounts(
 	jobs: JobSummary[],
 	newIds: Set<string>,

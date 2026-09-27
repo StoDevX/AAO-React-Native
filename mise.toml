@@ -23,6 +23,14 @@ done
 codesign --force --sign - --timestamp=none "$MISE_TOOL_INSTALL_PATH/axe"
 """
 
+# Sentry's Xcode build phases upload source maps and dSYMs with this, found
+# through SENTRY_CLI_EXECUTABLE, rather than the npm @sentry/cli that
+# pnpm-workspace.yaml drops. Pinned to the version @sentry/react-native pins.
+# macOS only: only an Xcode archive uploads, so the Linux jobs never need it.
+[tools.sentry]
+version = "3.6.2"
+os = ["macos"]
+
 [env]
 _.path = ["node_modules/.bin"]
 HK_PKL_BACKEND = "pklr"
@@ -229,12 +237,17 @@ run = "node scripts/validate-bus-schedules.mjs"
 description = "Validate data files"
 run = "node scripts/validate-data.mjs"
 
-# Needs the network -- it fetches the live campus geojson -- so it stays out
-# of validate-data, which gates three workflows including deploy-data. A
 [tasks."scrape-dining"]
 description = "Update data/building-hours/ from Bon Appétit's café pages"
 run = "node scripts/scrape-bonapp.mjs"
 
+# Needs the network, so it stays out of validate-data, as scrape-dining does.
+[tasks."scrape-student-wages"]
+description = "Update data/student-wages.yaml from St. Olaf's compensation page"
+run = "node scripts/scrape-student-wages.mjs"
+
+# Needs the network -- it fetches the live campus geojson -- so it stays out
+# of validate-data, which gates three workflows including deploy-data. A
 # ccc-server blip should not block an unrelated pull request from merging.
 [tasks."validate-building-keys"]
 description = "Check that every building: key resolves to a real map feature"

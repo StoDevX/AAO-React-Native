@@ -1,6 +1,6 @@
 import {describe, expect, test} from '@jest/globals'
 
-import {highlightedFeatureId, placeStack, type StackEntry} from '../place-stack'
+import {highlightedFeatureId, placeStack, type StackEntry, stackEntryKey} from '../place-stack'
 import type {BuildingType} from '../../../building-hours/types'
 
 const buntrock: StackEntry = {kind: 'feature', id: 'bc'}
@@ -59,5 +59,25 @@ describe('highlightedFeatureId', () => {
 	test('falls back down the stack for a venue it cannot place', () => {
 		expect(highlightedFeatureId([buntrock, kitchen], [])).toBe('bc')
 		expect(highlightedFeatureId([buntrock, kitchen], [venue('The Pause Kitchen')])).toBe('bc')
+	})
+})
+
+describe('a floor on the stack', () => {
+	const floor = {kind: 'floor', building: 'toh', floor: 1} as const
+
+	test('stacks over its building and pops back to it', () => {
+		let stack = placeStack([{kind: 'feature', id: 'toh'}], {type: 'push', entry: floor})
+		expect(stack).toEqual([{kind: 'feature', id: 'toh'}, floor])
+		expect(placeStack(stack, {type: 'pop', depth: 1})).toEqual([{kind: 'feature', id: 'toh'}])
+	})
+
+	// The card beneath is another place, so falling through to it would show.
+	test('highlights its own building', () => {
+		expect(highlightedFeatureId([{kind: 'feature', id: 'bc'}, floor], [])).toBe('toh')
+	})
+
+	test('keys each floor apart', () => {
+		expect(stackEntryKey(floor)).not.toBe(stackEntryKey({...floor, floor: 2}))
+		expect(stackEntryKey({kind: 'venue', name: 'Registrar'})).toBe('venue:Registrar')
 	})
 })

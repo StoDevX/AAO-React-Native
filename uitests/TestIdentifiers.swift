@@ -16,6 +16,9 @@ struct TestIdentifiers {
 		/// `NSUserDefaults` as EXTRA_POSTING_SETTING in
 		/// modules/ccc-jobs/fixtures/uitest-postings.ts.
 		static let extraJobPosting = ["-AAOUITestExtraJobPosting", "YES"]
+		/// Makes the Student Work units map fail, read through `NSUserDefaults`
+		/// as UNITS_UNAVAILABLE_SETTING in modules/ccc-jobs/fixtures/uitest-postings.ts.
+		static let studentWorkUnitsUnavailable = ["-AAOUITestStudentWorkUnitsUnavailable", "YES"]
 		/// The value half of `-UIPreferredContentSizeCategoryName`, UIKit's
 		/// command-line override for the app's Dynamic Type size. This is AX5,
 		/// the largest accessibility size, so a test launching with it proves a
@@ -166,6 +169,16 @@ struct TestIdentifiers {
 	// MARK: - Map
 
 	enum Map {
+		/// Mirrors directoryFloorId in source/features/map/card/directory-section.tsx.
+		static func directoryFloor(_ index: Int) -> String { "directory-floor-\(index)" }
+		/// Mirrors DIRECTORY_ENTRY_ID in source/features/map/floor-card.tsx.
+		static let directoryEntry = "directory-entry"
+		/// A building with a directory file (data/building-directory/toh.yaml),
+		/// whose first floor (index 1) lists Financial Aid, an Hours venue.
+		static let aBuildingWithADirectory = "Tomson Hall"
+		static let aDirectoryFloor = "1st floor"
+		static let aDirectoryFloorIndex = 1
+		static let aDirectoryVenue = "Financial Aid"
 		/// The sheet's search field. The bar's testID is its placeholder, and
 		/// UIKit puts the identifier on the text field, so this is a
 		/// `searchFields` query.
@@ -210,6 +223,12 @@ struct TestIdentifiers {
 		/// A St. Olaf building whose one link has a short label ("Website"),
 		/// leaving most of the row empty. St. Olaf can rename the link.
 		static let aBuildingWithAShortLink = "Memorial Chime Tower"
+		/// A category segment in the map sheet's picker, other than the one it
+		/// opens on, with a list long enough to scroll.
+		static let parkingCategory = "Parking"
+		/// A row two screens down `parkingCategory`, behind every Accessible
+		/// Parking space. St. Olaf can rename it.
+		static let aRowFarDownParking = "Alumni Hall Road"
 		/// Carleton's fullest card: a photo, an address, accessibility, nine
 		/// offices, and floors. Carleton can rename it.
 		static let aCarletonBuildingWithAPhoto = "Sayles-Hill Campus Center"
@@ -313,6 +332,9 @@ struct TestIdentifiers {
 		/// they leave empty. See FIXTURE_UNITS in
 		/// modules/ccc-jobs/fixtures/uitest-postings.ts.
 		static let researchArea = "Research (CURI)"
+		/// Matches the unavailable title in
+		/// source/features/sis/student-work/postings-list.tsx.
+		static let areaUnavailable = "Couldn’t load this area’s postings."
 		static let emptyArea = "Faith & Vocation"
 		/// The list's empty state once a search or filter leaves nothing, from
 		/// source/features/sis/student-work/postings-list.tsx.

@@ -3,6 +3,9 @@ image: cage
 category: Food
 kind: space
 building: thecage
+links:
+  - {title: 'The Cage on Bon Appétit', url: 'https://stolaf.cafebonappetit.com/cafe/the-cage/'}
+  - {title: 'Eat at Buntrock', url: 'https://wp.stolaf.edu/buntrock/eat/'}
 
 schedule:
   - title: Hours

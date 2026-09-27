@@ -390,6 +390,7 @@ const ForwardingView = View as unknown as React.ComponentType<
 		accessibilityLabel?: string
 		testID?: string
 		onRefresh?: () => Promise<void>
+		onGeometryChange?: unknown
 		onDelete?: unknown
 		onMove?: unknown
 	}
@@ -650,9 +651,14 @@ export function VStack({
 	let appearIndex = modifiers?.findIndex((modifier) => modifier.$type === 'onAppear') ?? -1
 	let idIndex = modifiers?.findIndex((modifier) => modifier.$type === 'id') ?? -1
 	let identity = idIndex > appearIndex ? modifiers?.[idIndex]?.id : undefined
+	// Carried onto the host node so a test can report a frame the way a layout
+	// pass would; `onGeometryChange` itself never fires here.
+	let onGeometryChange = modifierOf(modifiers, 'onGeometryChange')?.onGeometryChange
 	return (
 		<Appearing key={String(identity)} onAppear={handler}>
-			<View testID={testID}>{children}</View>
+			<ForwardingView onGeometryChange={onGeometryChange} testID={testID}>
+				{children}
+			</ForwardingView>
 		</Appearing>
 	)
 }

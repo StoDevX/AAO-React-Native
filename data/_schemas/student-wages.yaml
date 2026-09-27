@@ -1,0 +1,23 @@
+# Dollars an hour for student work, by pay structure and tier. Published
+# separately from the app (see data/sources.yaml) so a new year's rates reach
+# students without an App Store release. scripts/scrape-student-wages.mjs
+# writes the data file; the structures and tiers match the app's JobCode type.
+$schema: http://json-schema.org/draft-07/schema#
+
+definitions:
+  tiers:
+    type: object
+    additionalProperties: false
+    required: ['1', '2', '3']
+    properties:
+      '1': {type: number, exclusiveMinimum: 0}
+      '2': {type: number, exclusiveMinimum: 0}
+      '3': {type: number, exclusiveMinimum: 0}
+
+type: object
+additionalProperties: false
+required: [ST, NST, OSA]
+properties:
+  ST: {$ref: '#/definitions/tiers'}
+  NST: {$ref: '#/definitions/tiers'}
+  OSA: {$ref: '#/definitions/tiers'}

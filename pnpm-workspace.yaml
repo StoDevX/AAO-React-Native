@@ -174,12 +174,12 @@ overrides:
   # Pinned to the major version so an @expo/ui SDK bump forces a re-check
   # that vaul is still unused before silently dropping it again.
   '@expo/ui@57>vaul': '-'
-  # @sentry/cli is a dependency of both @sentry/react-native and
-  # @sentry/expo-upload-sourcemaps, but neither is wired into a build phase
-  # here: the Xcode "Bundle React Native code and images" step runs plain
-  # react-native-xcode.sh, not Sentry's wrapper, and nothing uploads
-  # sourcemaps at all. Drop it -- it's dead weight that costs every install a
-  # platform-specific CLI binary download for nothing.
+  # @sentry/cli is a dependency of @sentry/react-native,
+  # @sentry/expo-upload-sourcemaps and @sentry/bundler-plugins. Sentry's Xcode
+  # build phases do run it, but take it from mise (see [tools.sentry] in
+  # mise.toml) through SENTRY_CLI_EXECUTABLE, which ci_post_clone.sh sets.
+  # Drop the npm copies -- they cost every install a platform-specific CLI
+  # binary download, on Linux jobs that never upload anything.
   '@sentry/cli': '-'
   # react-native-gesture-handler lists test-only type definitions as a runtime
   # dependency, which put a second copy beside our own devDependency.

@@ -3,6 +3,9 @@ image: stav
 category: Food
 kind: space
 building: stavhall
+links:
+  - {title: 'Stav Hall on Bon Appétit', url: 'https://stolaf.cafebonappetit.com/cafe/stav-hall/'}
+  - {title: 'Eat at Buntrock', url: 'https://wp.stolaf.edu/buntrock/eat/'}
 
 schedule:
   - title: Breakfast

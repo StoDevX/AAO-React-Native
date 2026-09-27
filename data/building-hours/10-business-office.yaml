@@ -2,6 +2,8 @@ name: Business Office
 category: Offices
 kind: office
 building: ahl
+links:
+  - {title: 'Business Office', url: 'https://wp.stolaf.edu/treasurer/business-office/'}
 
 schedule:
   - title: Hours

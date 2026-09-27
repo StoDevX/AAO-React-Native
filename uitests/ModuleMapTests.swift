@@ -234,6 +234,24 @@ class ModuleMapTests: UITestCase {
 			.openFirstLinkByItsEmptySpace()
 	}
 
+	/// Closing a card returns to the list as it was left: the same category,
+	/// scrolled to the same place. Checked at the middle stop, where a row tap
+	/// leaves the sheet and so where the list is seen again.
+	func testClosingACardKeepsTheListsPlace() throws {
+		let category = TestIdentifiers.Map.parkingCategory
+		let name = TestIdentifiers.Map.aRowFarDownParking
+		let screen = MapScreen(app: app)
+			.navigate()
+			.checkSheetPresented()
+			.expandSheet()
+			.chooseCategory(category)
+		let offset = screen.scrollListToReach(name)
+		screen
+			.selectBuilding(named: name)
+			.closeTopCard()
+			.verifyListKeptItsPlace(category: category, row: name, offset: offset)
+	}
+
 	/// A point inside a building with one venue of its own shows that venue's
 	/// hours, whatever kind of venue it is.
 	func testAPointShowsItsOwnHours() throws {
@@ -338,6 +356,30 @@ class ModuleMapTests: UITestCase {
 			.capture("The Registrar's card over Tomson Hall")
 			.verifyTopCard(office)
 			.verifyHoursStatus()
+	}
+
+	/// A building's Directory lists its floors; a floor stacks its sheet over
+	/// the card, and a place on it stacks its own card over the floor.
+	func testAFloorOpensWhatIsOnIt() throws {
+		let name = TestIdentifiers.Map.aBuildingWithADirectory
+		MapScreen(app: app)
+			.navigate()
+			.checkSheetPresented()
+			.focusSearch()
+			.typeIntoSearch(name)
+			.selectBuilding(named: name)
+			.expandCard()
+			.openDirectoryFloor(TestIdentifiers.Map.aDirectoryFloorIndex)
+			.verifyTopCard(TestIdentifiers.Map.aDirectoryFloor)
+			.verifyFloorSheetOnTop()
+			.capture("A floor of Tomson's Directory")
+			.openDirectoryEntry(named: TestIdentifiers.Map.aDirectoryVenue)
+			.verifyTopCard(TestIdentifiers.Map.aDirectoryVenue)
+			.closeTopCard()
+			.verifyTopCard(TestIdentifiers.Map.aDirectoryFloor)
+			.verifyFloorSheetOnTop()
+			.closeTopCard()
+			.verifyBaseCardAnswersTouch(name)
 	}
 
 	/// Tapping the map while cards are stacked starts afresh from the place

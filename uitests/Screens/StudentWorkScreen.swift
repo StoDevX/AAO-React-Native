@@ -50,6 +50,16 @@ struct StudentWorkScreen: Screen {
 		return self
 	}
 
+	/// The list says the area's postings could not load, rather than that it
+	/// has none.
+	@discardableResult
+	func verifyAreaUnavailable() -> Self {
+		XCTAssertTrue(
+			app.staticTexts[TestIdentifiers.StudentWork.areaUnavailable].waitForExistence(timeout: 30),
+			"The list should say the area's postings couldn't load")
+		return self
+	}
+
 	@discardableResult
 	func verifyTrigger(_ key: String, isSelected expected: Bool) -> Self {
 		FilterScreen(app: app).verifyTrigger(key, isSelected: expected)

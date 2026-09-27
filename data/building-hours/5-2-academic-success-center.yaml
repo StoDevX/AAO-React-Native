@@ -3,6 +3,8 @@ abbreviation: ASC
 category: Help and Support
 kind: office
 building: toh
+links:
+  - {title: 'Academic Success Center', url: 'https://wp.stolaf.edu/academic-success/writing-desk/'}
 
 schedule:
   - title: Hours

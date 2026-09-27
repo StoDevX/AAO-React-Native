@@ -310,6 +310,43 @@ struct MapScreen: Screen {
 		}
 	}
 
+	/// Opens a floor of the card's Directory, scrolling the card to it first.
+	@discardableResult
+	func openDirectoryFloor(_ index: Int) -> Self {
+		let row = app.buttons[TestIdentifiers.Map.directoryFloor(index)].firstMatch
+		scrollCard(toReach: row)
+		XCTAssertTrue(row.exists && row.isHittable, "The card's Directory should list floor \(index)")
+		row.tap()
+		return self
+	}
+
+	/// The top sheet is a floor's: one of its entry rows can be tapped. Only a
+	/// floor sheet has them, and the Directory's own row on the card beneath
+	/// shares the floor's name, so the name alone cannot tell them apart.
+	@discardableResult
+	func verifyFloorSheetOnTop() -> Self {
+		let entries = app.buttons.matching(identifier: TestIdentifiers.Map.directoryEntry)
+		XCTAssertTrue(entries.firstMatch.waitForExistence(timeout: 10), "A floor's sheet should be up")
+		XCTAssertTrue(
+			entries.allElementsBoundByIndex.contains { $0.isHittable },
+			"The floor's sheet should be on top")
+		return self
+	}
+
+	/// Opens an entry on the floor sheet on top. Matched by the entry
+	/// identifier as well as its name: the card beneath can list a tile of the
+	/// same name, covered but still in the tree.
+	@discardableResult
+	func openDirectoryEntry(named name: String) -> Self {
+		let row = app.buttons
+			.matching(NSPredicate(
+				format: "identifier == %@ AND label BEGINSWITH %@", TestIdentifiers.Map.directoryEntry, name))
+			.firstMatch
+		XCTAssertTrue(row.waitForExistence(timeout: 10) && row.isHittable, "The floor should list \(name)")
+		row.tap()
+		return self
+	}
+
 	/// The top card is `name`'s: only one card's close button can be tapped,
 	/// and `name` can be seen, as the header's title or, at the large stop,
 	/// the big title in its place. A title's label carries its subtitle after
@@ -325,6 +362,37 @@ struct MapScreen: Screen {
 		XCTContext.runActivity(named: "\(visible.count) visible \(name), \(closes.count) close buttons") { _ in }
 		XCTAssertFalse(visible.isEmpty, "\(name)'s card should be in view")
 		XCTAssertEqual(closes.count, 1, "Only the top card's close button should be tappable")
+		return self
+	}
+
+	/// `name`'s card is back as the only card, and closing it by a tap where
+	/// its close button is drawn returns to the search sheet.
+	///
+	/// Checked by touch rather than by `isHittable`: after two stacked sheets
+	/// close in quick succession, the accessibility tree has shown an empty
+	/// second window above the card and the card's close button as not
+	/// hittable, while a tap at the button still closed the card. Whether
+	/// VoiceOver can reach the card then is unchecked.
+	@discardableResult
+	func verifyBaseCardAnswersTouch(_ name: String) -> Self {
+		let title = app.descendants(matching: .any)
+			.matching(NSPredicate(format: "label BEGINSWITH %@", name)).firstMatch
+		XCTAssertTrue(title.waitForExistence(timeout: 20), "\(name)'s card should be back")
+		// The sheets above may still be leaving; their close buttons go with them.
+		let query = app.buttons.matching(identifier: TestIdentifiers.Map.cardCloseButton)
+		let deadline = Date().addingTimeInterval(5)
+		while query.count != 1 && Date() < deadline {
+			Thread.sleep(forTimeInterval: 0.25)
+		}
+		let closes = query.allElementsBoundByIndex
+		XCTAssertEqual(closes.count, 1, "Only \(name)'s card should be left")
+		guard let close = closes.first else { return self }
+		app.coordinate(withNormalizedOffset: .zero)
+			.withOffset(CGVector(dx: close.frame.midX, dy: close.frame.midY))
+			.tap()
+		XCTAssertTrue(
+			searchField.waitForExistence(timeout: 10),
+			"Tapping \(name)'s close button should close the card")
 		return self
 	}
 
@@ -408,6 +476,73 @@ struct MapScreen: Screen {
 		}
 
 		XCTFail("Tapping \(name) never opened its card")
+		return self
+	}
+
+	/// Picks a category segment in the sheet's picker.
+	@discardableResult
+	func chooseCategory(_ label: String) -> Self {
+		let segment = app.buttons[label].firstMatch
+		XCTAssertTrue(segment.waitForExistence(timeout: 30), "The sheet should offer \(label)")
+		segment.tap()
+		XCTAssertTrue(segment.isSelected, "\(label) should be selected once tapped")
+		return self
+	}
+
+	/// Scrolls the sheet's list until `name`'s row sits just under the header,
+	/// and returns how far below the search field its top is. The field does
+	/// not scroll, so this distance is the list's scroll position as a row
+	/// sees it. Near the header, the row stays in view at the middle stop too.
+	func scrollListToReach(_ name: String) -> CGFloat {
+		let row = self.row(named: name)
+		var drags = 0
+		// Into the upper part of the screen, clear of the bottom edge, where a
+		// drag that starts on the row reliably takes.
+		let upper = app.frame.height * 0.6
+		for _ in 0..<8 where !(row.exists && row.isHittable && row.frame.minY < upper) {
+			app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.8))
+				.press(forDuration: 0.05, thenDragTo: app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)))
+			drags += 1
+		}
+		XCTAssertTrue(row.exists && row.isHittable, "Scrolling should reach \(name)")
+		// A row already on screen would leave nothing for a later check of the
+		// scroll position to catch.
+		XCTAssertGreaterThan(drags, 1, "\(name) should be more than a screen down the list")
+		// Slowly, and held at the end, so the list does not coast past.
+		let underHeader = searchField.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0))
+			.withOffset(CGVector(dx: 0, dy: 150))
+		row.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0))
+			.press(forDuration: 0.05, thenDragTo: underHeader, withVelocity: .slow, thenHoldForDuration: 0.5)
+		settle { row.frame.minY }
+		return row.frame.minY - searchField.frame.minY
+	}
+
+	/// Waits until `position` stops moving.
+	private func settle(_ position: () -> CGFloat) {
+		var previous = position()
+		for _ in 1...10 {
+			Thread.sleep(forTimeInterval: 0.3)
+			let now = position()
+			if abs(now - previous) < 0.5 { break }
+			previous = now
+		}
+	}
+
+	/// The list came back as it was left: `category` still picked, and
+	/// `name`'s row the same distance below the search field.
+	@discardableResult
+	func verifyListKeptItsPlace(category: String, row name: String, offset: CGFloat) -> Self {
+		settle { searchField.frame.minY }
+		capture("The list after closing the card")
+		XCTAssertTrue(
+			app.buttons[category].firstMatch.isSelected,
+			"\(category) should still be selected after closing a card")
+		let row = self.row(named: name)
+		XCTAssertTrue(row.waitForExistence(timeout: 10), "\(name) should still be listed")
+		let now = row.frame.minY - searchField.frame.minY
+		// The list shifts a few points as the sheet changes stop. A list that lost
+		// its place would put this row two screens away, not twenty points.
+		XCTAssertEqual(now, offset, accuracy: 20, "The list should keep its scroll position after closing a card")
 		return self
 	}
 
