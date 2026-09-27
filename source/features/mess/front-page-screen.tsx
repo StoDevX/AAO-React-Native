@@ -32,7 +32,7 @@ import {MessPage, PAGE_MARGIN} from './mess-page'
 import {PageLoading, PageNotice} from './page-notice'
 import {ink, messRed, wash} from './palette'
 import {messFeedOptions} from './query'
-import {SectionPage} from './section-page'
+import {LatestPage} from './latest-page'
 import type {LightPost, MessIssue} from './types'
 import {useColumnWidth} from './use-column-width'
 import {useMessIssues} from './use-mess-issues'
@@ -81,7 +81,7 @@ export function FrontPageScreen(): React.ReactNode {
 	let page: React.ReactNode
 	if (chip.kind === 'top') page = <TopPage columnWidth={columnWidth} onShowSection={showSection} />
 	else if (chip.kind === 'issues') page = <IssuesPage />
-	else page = <SectionPage name={chip.name} />
+	else page = <LatestPage section={chip.name} />
 
 	return (
 		<>
