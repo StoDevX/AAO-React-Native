@@ -57,6 +57,13 @@ test('ends a line at a closing paragraph even with no newline after it', () => {
 	assert.equal(unitFieldOf(html), '')
 })
 
+test('never turns escaped markup back into a tag', () => {
+	// The field lands in an issue body, so decoding `&lt;` after stripping tags
+	// would let a posting write HTML into it.
+	let html = '<p><b>Unit Number:</b> &lt;script&gt;11707</p>'
+	assert.equal(unitFieldOf(html), '&lt;script&gt;11707')
+})
+
 test('keeps whatever else was written in the field', () => {
 	assert.equal(unitFieldOf(description('detail-account-string')), '41203-11184-53000-00512')
 	assert.equal(unitFieldOf(description('detail-not-applicable')), 'n/a')

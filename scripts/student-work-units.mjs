@@ -6,13 +6,12 @@
 /** A block's end, however the editor wrote it: the template puts each label on its own paragraph or line. */
 const LINE_END = /<br\s*\/?>|<\/(?:p|div|li|h[1-6])>/giu
 const TAG = /<[^>]*>/gu
-const NAMED = {nbsp: ' ', amp: '&', lt: '<', gt: '>', quot: '"', apos: "'"}
-
-let decode = (text) =>
-	text.replaceAll(/&(#\d+|[a-z]+);/giu, (entity, body) => {
-		if (body.startsWith('#')) return String.fromCodePoint(Number.parseInt(body.slice(1), 10))
-		return NAMED[body.toLowerCase()] ?? entity
-	})
+/**
+ * The one entity a unit number line carries, left after a value by some editors.
+ * Nothing else is decoded: the field lands in an issue body, and decoding `&lt;`
+ * after stripping tags would put markup back.
+ */
+const NBSP = /&nbsp;|&#160;/giu
 
 /** "Unit Number:" or "Unit Number (5 digits):", then the value up to the end of its line. */
 const UNIT_LINE = /^\s*unit number[^:\n]*:(.*)$/imu
@@ -25,7 +24,7 @@ const UNIT_LINE = /^\s*unit number[^:\n]*:(.*)$/imu
 export function unitFieldOf(html) {
 	if (!html) return
 
-	let text = decode(html.replaceAll(LINE_END, '\n').replaceAll(TAG, ''))
+	let text = html.replaceAll(LINE_END, '\n').replaceAll(TAG, '').replaceAll(NBSP, ' ')
 	let match = UNIT_LINE.exec(text)
 	return match ? match[1].trim() : undefined
 }
