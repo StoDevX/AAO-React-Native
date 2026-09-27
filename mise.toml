@@ -28,7 +28,7 @@ codesign --force --sign - --timestamp=none "$MISE_TOOL_INSTALL_PATH/axe"
 # pnpm-workspace.yaml drops. Pinned to the version @sentry/react-native pins.
 # macOS only: only an Xcode archive uploads, so the Linux jobs never need it.
 [tools.sentry]
-version = "3.6.2"
+version = "3.8.0"
 os = ["macos"]
 
 [env]
