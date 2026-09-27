@@ -201,10 +201,8 @@ struct HoursScreen: Screen {
 		// synthesized press on a row whose host has mounted but whose action
 		// still has to reach JavaScript lands natively and does nothing.
 		//
-		// Success is the sheet's own nav-bar title, not `detailSchedule` --
-		// that heading's text is a schedule's own title, and not every
-		// building titles its schedule "Hours" (Carleton's Sayles Café titles
-		// its section "Café").
+		// Success is the sheet's own nav-bar title, which every venue has;
+		// a venue with no hours listed has no status row.
 		for _ in 1...3 {
 			row.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
 			if app.navigationBars.staticTexts[name].waitForExistence(timeout: 10) {
@@ -214,10 +212,8 @@ struct HoursScreen: Screen {
 		return self
 	}
 
-	/// Asserts the detail sheet's own title is up, without assuming its
-	/// schedule section is titled "Hours" the way `verifyDetailSheetPresented`
-	/// does -- not every building's schedule uses that title (Carleton's
-	/// Sayles Café titles its section "Café"). Scoped to `navigationBars`
+	/// Asserts the detail sheet's own title is up, without the status row
+	/// `verifyDetailSheetPresented` also waits for. Scoped to `navigationBars`
 	/// rather than a bare `staticTexts` lookup: the building's name is also a
 	/// list row's own label, which never goes away.
 	@discardableResult
@@ -234,7 +230,7 @@ struct HoursScreen: Screen {
 			app.staticTexts[name].waitForExistence(timeout: 30),
 			"The detail sheet should be titled \(name)")
 		XCTAssertTrue(
-			app.staticTexts[TestIdentifiers.Hours.detailSchedule]
+			app.descendants(matching: .any)[TestIdentifiers.Hours.status]
 				.waitForExistence(timeout: 30),
 			"The detail sheet should show \(name)'s schedule")
 		return self
@@ -267,7 +263,7 @@ struct HoursScreen: Screen {
 	/// (its meal periods) that no other screen here shows -- never appeared.
 	/// That is the tell for a second sheet having stacked over the first: a
 	/// tap that reached Stav Hall's row rather than being blocked by the
-	/// dimmed backdrop would push its own detail sheet, showing "BREAKFAST".
+	/// dimmed backdrop would push its own detail sheet, showing "Breakfast".
 	///
 	/// Whether the tap also dismissed whatever sheet was already up is not
 	/// asserted here -- tapping a dimmed backdrop dismissing the sheet in
@@ -276,7 +272,7 @@ struct HoursScreen: Screen {
 	@discardableResult
 	func verifyNoSecondSheetForStavHall() -> Self {
 		XCTAssertFalse(
-			app.staticTexts["BREAKFAST"].waitForExistence(timeout: 5),
+			app.staticTexts["Breakfast"].waitForExistence(timeout: 5),
 			"Stav Hall's own detail content should never have appeared -- its row's tap should "
 				+ "have been blocked by the dimmed sheet behind it, not reached through to stack a "
 				+ "second sheet")

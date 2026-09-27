@@ -1,5 +1,6 @@
 name: Skoglund Pool
 category: Gym
+kind: space
 building: sac
 
 schedule:

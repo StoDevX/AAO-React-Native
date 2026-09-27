@@ -1,6 +1,7 @@
 name: Skoglund
 image: skoglund
 category: Gym
+kind: building
 building: sac
 
 schedule:

@@ -1,5 +1,6 @@
 name: College Ministry
 category: Offices
+kind: office
 building: bmc
 
 schedule:

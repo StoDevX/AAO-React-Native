@@ -4,6 +4,7 @@ import type {BuildingType} from '../../types'
 const baseBuilding: BuildingType = {
 	name: 'Test Hall',
 	category: 'academic',
+	kind: 'building',
 	schedule: [
 		{
 			title: 'Regular Hours',

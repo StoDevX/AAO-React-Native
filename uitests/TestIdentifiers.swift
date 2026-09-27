@@ -192,6 +192,37 @@ struct TestIdentifiers {
 		/// reads "Regents Hall of Natural Sciences, RNS"; `selectBuilding(named:)`
 		/// matches on the prefix. St. Olaf can rename it.
 		static let aSubtitledBuilding = "Regents Hall of Natural Sciences"
+		/// St. Olaf's fullest card: a long About, twenty-one departments (so
+		/// More appears), and Links. Its feed lists its offices as departments.
+		/// St. Olaf can rename it.
+		static let aBuildingWithManyDepartments = "Tomson Hall"
+		/// The section listing what else is at a place. Mirrors the title in
+		/// source/features/map/card/also-here-section.tsx.
+		static let alsoHereSection = "Also at This Location"
+		/// A building with points inside it: The Cage, Stav Hall and more.
+		static let aBuildingWithPoints = "Buntrock Commons"
+		/// A point inside `aBuildingWithPoints`.
+		static let aPointInside = "The Cage"
+		/// An office in the Hours data, keyed to `aBuildingWithManyDepartments`.
+		static let anOffice = "Registrar"
+		/// A St. Olaf building whose description runs well past five lines.
+		static let aBuildingWithALongAbout = "Holland Hall"
+		/// Carleton's fullest card: a photo, an address, accessibility, nine
+		/// offices, and floors. Carleton can rename it.
+		static let aCarletonBuildingWithAPhoto = "Sayles-Hill Campus Center"
+		/// A point inside a building with exactly one venue in the Hours data,
+		/// so its card shows that venue's hours as its own.
+		static let aPointWithItsOwnHours = "The Cage"
+		/// The dev-only home tile that opens Carleton's Hours screen, whose
+		/// toolbar carries the button to Carleton's map.
+		static let carletonCampusTile = "Carleton Campus"
+		/// Matches the section identifiers in `source/features/map/card/`.
+		static let cardPhoto = "card-photo"
+		static let cardAbout = "card-about"
+		static let photoViewerImage = "map-photo-viewer-image"
+		static let photoViewerClose = "map-photo-viewer-close"
+		static let departmentsGrid = "departments-grid"
+		static let departmentsMore = "departments-more"
 		/// The About menu in the map's header. It carries the OpenStreetMap
 		/// credit, so it has to stay reachable. Mirrors the accessibilityLabel
 		/// in app/(home)/Map/index.tsx.
@@ -767,9 +798,7 @@ struct TestIdentifiers {
 		static let aSecondBuilding = "Stav Hall"
 		/// A building with three schedule sections -- enough combined content to
 		/// overflow the sheet's smaller detent, unlike `anExcludedBuilding`'s
-		/// single short section. None of its sections is titled "Hours", so a
-		/// test opening it checks the sheet's title rather than
-		/// `detailSchedule`.
+		/// single short section.
 		static let aBuildingWithLongSchedule = "Stav Hall"
 		/// A query no building matches, so the screen must say no results were
 		/// found rather than claim the data is missing -- the two states read
@@ -792,9 +821,10 @@ struct TestIdentifiers {
 		/// The section the list grows at its top once anything is favourited.
 		/// Every test launches with `--reset-state`, so it starts absent.
 		static let favoritesSection = "Favorites"
-		/// A schedule section heading on the detail sheet, shown only once a
-		/// building is open in the sheet.
-		static let detailSchedule = "HOURS"
+		/// The status row of a venue's hours ("Open until 10 PM"), on the
+		/// detail sheet and the map card alike. Mirrors HOURS_STATUS_ID in
+		/// source/features/building-hours/hours-section.tsx.
+		static let status = "hours-status"
 		/// The detail sheet's overflow menu button, labelled "More" -- the same
 		/// string as `Buttons.more`, the Home screen's own tile, purely by
 		/// coincidence of wording rather than a shared identifier. The two

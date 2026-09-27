@@ -1,5 +1,6 @@
 name: Admissions
 category: Offices
+kind: office
 building: admissionsoffice
 
 schedule:
