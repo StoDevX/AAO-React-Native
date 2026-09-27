@@ -1,6 +1,7 @@
 name: Print Center
 image: print
 category: Mail and Packages
+kind: office
 building: bc
 
 schedule:

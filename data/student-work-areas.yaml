@@ -1,12 +1,17 @@
 # The Student Work landing screen's tiles, in the order it draws them, and
 # the St. Olaf unit numbers whose job postings belong to each. A posting is in
-# an area when a keyword search for one of the area's units finds it; a unit
-# listed nowhere here leaves its postings under "All job postings" only.
+# an area when the Unit Number in its description is one of the area's units,
+# five digits without any fund prefix, as ccc-server's /student-work/units
+# reads it; a unit listed nowhere here leaves its postings under "All job
+# postings" only.
 #
 # Each unit is written with its name from the work-authorisation list, for
 # whoever edits this file next:
 # https://www.stolaf.edu/apps/workauth/Autocomplete.cfc?method=setLawsonUnitsAccountNumber&returnformat=json
 # 22005 and 24200 are not on that list; their names come from their postings.
+#
+# A weekly workflow opens an issue when a posting carries a unit no area lists;
+# `mise run check-student-work-areas` prints the same report.
 
 - name: Dining & BonApp
   slug: dining
@@ -127,6 +132,8 @@
     - '15118' # Post Office and Mail Services
     - '16315' # Public Safety
     - '24200' # Human Resources
+    - '15120' # Admissions Office
+    - '15880' # Student Service Allocated
 
 - name: Student Support
   slug: student-support
@@ -135,6 +142,7 @@
   units:
     - '14152' # Academic Success Center
     - '15225' # Disabled Student Services
+    - '11681' # Intl Stud Services
 
 - name: Community Engagement
   slug: community

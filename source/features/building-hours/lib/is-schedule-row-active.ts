@@ -4,8 +4,8 @@ import type {NamedBuildingScheduleType, SingleBuildingScheduleType} from '../typ
 import {isScheduleOpenAtMoment} from './is-schedule-open'
 
 /**
- * Whether a single schedule row is the one running at `now`, for the accent
- * bar on a building's detail sheet.
+ * Whether a single schedule row is the one running at `now`, which a place's
+ * hours set in semibold.
  *
  * `isScheduleOpenAtMoment` already decides which day a window belongs to --
  * a Friday 9:00pm-2:00am window is still the Friday row at Saturday 1:00am --

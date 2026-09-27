@@ -1,6 +1,7 @@
 name: Lion's Pause Pizza Delivery
 image: pause-kitchen
 category: Food
+kind: space
 building: thelionspause
 
 schedule:

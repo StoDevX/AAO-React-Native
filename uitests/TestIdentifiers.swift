@@ -16,6 +16,9 @@ struct TestIdentifiers {
 		/// `NSUserDefaults` as EXTRA_POSTING_SETTING in
 		/// modules/ccc-jobs/fixtures/uitest-postings.ts.
 		static let extraJobPosting = ["-AAOUITestExtraJobPosting", "YES"]
+		/// Makes the Student Work units map fail, read through `NSUserDefaults`
+		/// as UNITS_UNAVAILABLE_SETTING in modules/ccc-jobs/fixtures/uitest-postings.ts.
+		static let studentWorkUnitsUnavailable = ["-AAOUITestStudentWorkUnitsUnavailable", "YES"]
 		/// The value half of `-UIPreferredContentSizeCategoryName`, UIKit's
 		/// command-line override for the app's Dynamic Type size. This is AX5,
 		/// the largest accessibility size, so a test launching with it proves a
@@ -166,6 +169,16 @@ struct TestIdentifiers {
 	// MARK: - Map
 
 	enum Map {
+		/// Mirrors directoryFloorId in source/features/map/card/directory-section.tsx.
+		static func directoryFloor(_ index: Int) -> String { "directory-floor-\(index)" }
+		/// Mirrors DIRECTORY_ENTRY_ID in source/features/map/floor-card.tsx.
+		static let directoryEntry = "directory-entry"
+		/// A building with a directory file (data/building-directory/toh.yaml),
+		/// whose first floor (index 1) lists Financial Aid, an Hours venue.
+		static let aBuildingWithADirectory = "Tomson Hall"
+		static let aDirectoryFloor = "1st floor"
+		static let aDirectoryFloorIndex = 1
+		static let aDirectoryVenue = "Financial Aid"
 		/// The sheet's search field. The bar's testID is its placeholder, and
 		/// UIKit puts the identifier on the text field, so this is a
 		/// `searchFields` query.
@@ -192,6 +205,37 @@ struct TestIdentifiers {
 		/// reads "Regents Hall of Natural Sciences, RNS"; `selectBuilding(named:)`
 		/// matches on the prefix. St. Olaf can rename it.
 		static let aSubtitledBuilding = "Regents Hall of Natural Sciences"
+		/// St. Olaf's fullest card: a long About, twenty-one departments (so
+		/// More appears), and Links. Its feed lists its offices as departments.
+		/// St. Olaf can rename it.
+		static let aBuildingWithManyDepartments = "Tomson Hall"
+		/// The section listing what else is at a place. Mirrors the title in
+		/// source/features/map/card/also-here-section.tsx.
+		static let alsoHereSection = "Also at This Location"
+		/// A building with points inside it: The Cage, Stav Hall and more.
+		static let aBuildingWithPoints = "Buntrock Commons"
+		/// A point inside `aBuildingWithPoints`.
+		static let aPointInside = "The Cage"
+		/// An office in the Hours data, keyed to `aBuildingWithManyDepartments`.
+		static let anOffice = "Registrar"
+		/// A St. Olaf building whose description runs well past five lines.
+		static let aBuildingWithALongAbout = "Holland Hall"
+		/// Carleton's fullest card: a photo, an address, accessibility, nine
+		/// offices, and floors. Carleton can rename it.
+		static let aCarletonBuildingWithAPhoto = "Sayles-Hill Campus Center"
+		/// A point inside a building with exactly one venue in the Hours data,
+		/// so its card shows that venue's hours as its own.
+		static let aPointWithItsOwnHours = "The Cage"
+		/// The dev-only home tile that opens Carleton's Hours screen, whose
+		/// toolbar carries the button to Carleton's map.
+		static let carletonCampusTile = "Carleton Campus"
+		/// Matches the section identifiers in `source/features/map/card/`.
+		static let cardPhoto = "card-photo"
+		static let cardAbout = "card-about"
+		static let photoViewerImage = "map-photo-viewer-image"
+		static let photoViewerClose = "map-photo-viewer-close"
+		static let departmentsGrid = "departments-grid"
+		static let departmentsMore = "departments-more"
 		/// The About menu in the map's header. It carries the OpenStreetMap
 		/// credit, so it has to stay reachable. Mirrors the accessibilityLabel
 		/// in app/(home)/Map/index.tsx.
@@ -279,6 +323,9 @@ struct TestIdentifiers {
 		/// they leave empty. See FIXTURE_UNITS in
 		/// modules/ccc-jobs/fixtures/uitest-postings.ts.
 		static let researchArea = "Research (CURI)"
+		/// Matches the unavailable title in
+		/// source/features/sis/student-work/postings-list.tsx.
+		static let areaUnavailable = "Couldn’t load this area’s postings."
 		static let emptyArea = "Faith & Vocation"
 		/// The list's empty state once a search or filter leaves nothing, from
 		/// source/features/sis/student-work/postings-list.tsx.
@@ -767,9 +814,7 @@ struct TestIdentifiers {
 		static let aSecondBuilding = "Stav Hall"
 		/// A building with three schedule sections -- enough combined content to
 		/// overflow the sheet's smaller detent, unlike `anExcludedBuilding`'s
-		/// single short section. None of its sections is titled "Hours", so a
-		/// test opening it checks the sheet's title rather than
-		/// `detailSchedule`.
+		/// single short section.
 		static let aBuildingWithLongSchedule = "Stav Hall"
 		/// A query no building matches, so the screen must say no results were
 		/// found rather than claim the data is missing -- the two states read
@@ -792,9 +837,10 @@ struct TestIdentifiers {
 		/// The section the list grows at its top once anything is favourited.
 		/// Every test launches with `--reset-state`, so it starts absent.
 		static let favoritesSection = "Favorites"
-		/// A schedule section heading on the detail sheet, shown only once a
-		/// building is open in the sheet.
-		static let detailSchedule = "HOURS"
+		/// The status row of a venue's hours ("Open until 10 PM"), on the
+		/// detail sheet and the map card alike. Mirrors HOURS_STATUS_ID in
+		/// source/features/building-hours/hours-section.tsx.
+		static let status = "hours-status"
 		/// The detail sheet's overflow menu button, labelled "More" -- the same
 		/// string as `Buttons.more`, the Home screen's own tile, purely by
 		/// coincidence of wording rather than a shared identifier. The two

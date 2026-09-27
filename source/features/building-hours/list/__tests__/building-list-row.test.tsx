@@ -21,6 +21,7 @@ const now = moment.tz('2026-09-07 14:00', 'America/Chicago') // Monday 2pm
 const scheduled: BuildingType = {
 	name: 'Tomson Hall',
 	category: 'Academia',
+	kind: 'building',
 	schedule: [
 		{title: 'Hours', hours: [{days: ['Mo', 'Tu', 'We', 'Th', 'Fr'], from: '8:00am', to: '5:00pm'}]},
 	],
@@ -29,18 +30,21 @@ const scheduled: BuildingType = {
 const noticeOnly: BuildingType = {
 	name: 'The Cage',
 	category: 'Dining',
+	kind: 'building',
 	schedule: [{title: 'Hours', notes: 'Closed for renovation.', hours: []}],
 }
 
 const almostOpen: BuildingType = {
 	name: 'Buntrock Commons',
 	category: 'Student Life',
+	kind: 'building',
 	schedule: [{title: 'Hours', hours: [{days: ['Mo'], from: '2:15pm', to: '5:00pm'}]}],
 }
 
 const almostClosed: BuildingType = {
 	name: 'Rolvaag Memorial Library',
 	category: 'Academia',
+	kind: 'building',
 	schedule: [{title: 'Hours', hours: [{days: ['Mo'], from: '8:00am', to: '2:15pm'}]}],
 }
 
@@ -77,7 +81,7 @@ describe('what the row says on its status line', () => {
 	})
 
 	test('says nothing rather than guessing when there are neither hours nor a note', async () => {
-		let bare: BuildingType = {name: 'Nowhere', category: 'Other', schedule: []}
+		let bare: BuildingType = {name: 'Nowhere', category: 'Other', kind: 'space', schedule: []}
 		let {queryByText} = await renderRow(bare)
 
 		expect(queryByText('Closed')).toBeNull()
@@ -112,6 +116,7 @@ describe('what the row says under the name', () => {
 			name: 'DiSCO',
 			subtitle: 'Digital Scholarship Center at St. Olaf',
 			category: 'Libraries',
+			kind: 'building',
 			schedule: [{title: 'Hours', hours: [{days: ['Mo'], from: '8:00am', to: '9:00pm'}]}],
 		}
 
@@ -125,6 +130,7 @@ describe('what the row says under the name', () => {
 			name: 'Academic Success Center',
 			abbreviation: 'ASC',
 			category: 'Help and Support',
+			kind: 'building',
 			schedule: [{title: 'Hours', hours: [{days: ['Mo'], from: '8:00am', to: '5:00pm'}]}],
 		}
 

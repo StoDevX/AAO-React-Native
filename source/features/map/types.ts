@@ -50,7 +50,9 @@ export type Building = {
 	description: string
 	floors: Array<LabelLinkString>
 	name: string
-	nickname: string
+	/** St. Olaf: usually equal to `abbreviation`. An honor house renamed each
+	 * year for its residents carries a list of names. */
+	nickname: string | Array<string>
 	offices: Array<LabelLinkString>
 	photos?: Array<string>
 	/** St. Olaf-only: the building's short code, e.g. "AB" for Flaten Art Barn. */

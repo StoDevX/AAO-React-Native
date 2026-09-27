@@ -259,7 +259,7 @@ describe('expo-ui-mock', () => {
 				</List>,
 			)
 
-			expect(screen.queryByTestId('row:art')).toBeNull()
+			expect(screen.queryByRole('button')).toBeNull()
 			expect(screen.getByText('Art')).toBeTruthy()
 		})
 	})

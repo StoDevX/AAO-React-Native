@@ -1,6 +1,7 @@
 name: Stav Hall
 image: stav
 category: Food
+kind: space
 building: stavhall
 
 schedule:

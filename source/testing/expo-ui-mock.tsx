@@ -126,6 +126,7 @@ export const kerning = named('kerning', 'value')
 export const lineSpacing = named('lineSpacing', 'value')
 export const listRowBackground = named('listRowBackground', 'color')
 export const listRowInsets = spreading('listRowInsets')
+export const imageScale = named('imageScale', 'scale')
 export const listStyle = named('listStyle', 'style')
 export const menuActionDismissBehavior = named('menuActionDismissBehavior', 'behavior')
 export const menuIndicator = named('menuIndicator', 'visibility')
@@ -141,6 +142,10 @@ export const scrollTargetBehavior = named('scrollTargetBehavior', 'behavior')
 export const pickerStyle = named('pickerStyle', 'style')
 export const presentationBackground = named('presentationBackground', 'color')
 export const presentationDragIndicator = named('presentationDragIndicator', 'visibility')
+export const presentationBackgroundInteraction = named(
+	'presentationBackgroundInteraction',
+	'interaction',
+)
 export const scrollContentBackground = named('scrollContentBackground', 'visible')
 export const scrollTargetLayout = bare('scrollTargetLayout')
 export const shadow = spreading('shadow')
@@ -385,6 +390,7 @@ const ForwardingView = View as unknown as React.ComponentType<
 		accessibilityLabel?: string
 		testID?: string
 		onRefresh?: () => Promise<void>
+		onGeometryChange?: unknown
 		onDelete?: unknown
 		onMove?: unknown
 	}
@@ -609,7 +615,7 @@ export function HStack({
 	let rowTag = tagOf(modifiers)
 
 	if (!list || rowTag === undefined) {
-		return <View testID={testID}>{children}</View>
+		return <View testID={identifierOf(modifiers) ?? testID}>{children}</View>
 	}
 
 	let isSelected = list.selection.includes(rowTag)
@@ -645,9 +651,14 @@ export function VStack({
 	let appearIndex = modifiers?.findIndex((modifier) => modifier.$type === 'onAppear') ?? -1
 	let idIndex = modifiers?.findIndex((modifier) => modifier.$type === 'id') ?? -1
 	let identity = idIndex > appearIndex ? modifiers?.[idIndex]?.id : undefined
+	// Carried onto the host node so a test can report a frame the way a layout
+	// pass would; `onGeometryChange` itself never fires here.
+	let onGeometryChange = modifierOf(modifiers, 'onGeometryChange')?.onGeometryChange
 	return (
 		<Appearing key={String(identity)} onAppear={handler}>
-			<View testID={testID}>{children}</View>
+			<ForwardingView onGeometryChange={onGeometryChange} testID={testID}>
+				{children}
+			</ForwardingView>
 		</Appearing>
 	)
 }
@@ -958,9 +969,10 @@ export function TextField({
 export function LabeledContent({
 	children,
 	label,
+	modifiers,
 }: WithModifiers & {label?: React.ReactNode}): React.ReactNode {
 	return (
-		<View>
+		<View testID={identifierOf(modifiers)}>
 			{typeof label === 'string' ? <RNText>{label}</RNText> : label}
 			{children}
 		</View>

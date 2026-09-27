@@ -1,6 +1,7 @@
 name: Taylor Center
 category: Offices
-building: toh
+kind: office
+building: bc
 
 schedule:
   - title: Hours

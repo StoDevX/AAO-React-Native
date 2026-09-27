@@ -193,6 +193,9 @@ type DisclosureRowProps = {
 	badge?: number
 	/** Where tapping the row goes. Defaults to a push. */
 	destination?: RowDestination
+	/** A live status under the details, in its own colour, as a place's open
+	 * or closed state reads. */
+	status?: {text: string; color: ColorValue}
 }
 
 function LeadingImage({image}: {image: DisclosureRowImage}): React.ReactNode {
@@ -238,13 +241,15 @@ export function DisclosureRow(props: DisclosureRowProps): React.ReactNode {
 		onPress,
 		badge,
 		destination = 'push',
+		status,
 	} = props
 
 	let hasBadge = badge !== undefined && badge > 0
+	let spokenDetail = status ? [...detailLinesOf(detail), status.text] : detail
 	let spokenLabel =
 		image && 'label' in image && image.label
-			? `${image.label}, ${rowLabel(title, detail)}`
-			: rowLabel(title, detail)
+			? `${image.label}, ${rowLabel(title, spokenDetail)}`
+			: rowLabel(title, spokenDetail)
 
 	let details = detailLinesOf(detail)
 	let detailModifiers = [
@@ -281,6 +286,11 @@ export function DisclosureRow(props: DisclosureRowProps): React.ReactNode {
 							{line}
 						</Text>
 					))}
+					{status ? (
+						<Text modifiers={[font({textStyle: 'subheadline'}), foregroundStyle(status.color)]}>
+							{status.text}
+						</Text>
+					) : null}
 				</VStack>
 				<Spacer />
 				{/* Drawn here rather than with SwiftUI's .badge, which puts the

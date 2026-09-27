@@ -1,0 +1,30 @@
+building: toh
+floors:
+  - name: Ground floor
+    entries:
+      - {name: College Events, room: '021'}
+      - {name: Marketing-Communications, room: '021'}
+  - name: 1st floor
+    entries:
+      - {name: Academic Success Center, room: '153'}
+      - {name: Finance Office, room: '130'}
+      - {name: Financial Aid, room: '120'}
+      - {name: Human Resources, room: '180'}
+      - {name: Individual Majors Program, room: '153'}
+      - {name: Residence Life, room: '148'}
+      - {name: TRIO Student Support Services for Students with Disabilities, room: '153'}
+  - name: 2nd floor
+    entries:
+      - {name: Admissions, room: '220'}
+      - {name: Center for Innovation in the Liberal Arts, room: '283'}
+      - {name: Education, room: '290'}
+      - {name: Piper Center for Vocation and Career, room: '270', venue: Piper Center}
+      - {name: 'President’s Office', room: '260'}
+      - {name: TRIO Educational Talent Search, room: '290'}
+      - {name: TRIO McNair Scholars Program, room: '290H'}
+      - {name: TRIO Upward Bound, room: '290 Balcony'}
+  - name: 3rd floor
+    entries:
+      - {name: French, room: '331'}
+      - {name: Smith Center for Global Engagement, room: '380'}
+      - {name: Spanish, room: '331'}

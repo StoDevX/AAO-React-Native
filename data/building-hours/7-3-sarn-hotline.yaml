@@ -1,6 +1,7 @@
 name: SARN Hotline
 subtitle: Sexual Assault Resource Network
 category: Health and Wellness
+kind: service
 
 schedule:
   - title: Hours

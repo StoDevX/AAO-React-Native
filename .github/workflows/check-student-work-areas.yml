@@ -1,0 +1,94 @@
+name: Check Student Work areas
+
+on:
+  # Weekly, Mondays at 07:30 UTC. A department posting its first job is rare,
+  # so a week is soon enough to notice that its postings sit in no tile.
+  schedule:
+    - cron: '30 7 * * 1'
+
+  workflow_dispatch:
+
+  # Run the check on every PR that touches it, so the workflow can be exercised
+  # without merging it. Without --check: the live board usually carries some
+  # unlisted unit, which would turn every such PR red for a reason it did not
+  # cause.
+  pull_request:
+    paths:
+      - data/student-work-areas.yaml
+      - scripts/check-student-work-areas.mjs
+      - scripts/student-work-units.mjs
+      - modules/ccc-jobs/urls.ts
+      - modules/ccc-jobs/parsers/requisitions.ts
+      - .github/workflows/check-student-work-areas.yml
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: >-
+    ${{ github.event_name == 'pull_request'
+        && format('check-student-work-areas-dryrun-{0}', github.ref)
+        || 'check-student-work-areas' }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+env:
+  MISE_RUBY_COMPILE: 'false'
+
+jobs:
+  check:
+    name: Check for postings in no area
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Check out the code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: jdx/mise-action@c2a87611a18de5b3828c5652fe268e992400cb5c # v4.3.0
+        # Keyed on mise.lock rather than mise.toml -- see the note in check.yml.
+        with:
+          cache_key: mise-v2-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('mise.lock') }}
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Check (dry run)
+        if: github.event_name == 'pull_request'
+        run: mise run check-student-work-areas | tee "$GITHUB_STEP_SUMMARY"
+
+      # --check exits 1 only for a unit no area lists: the one problem an edit
+      # to data/student-work-areas.yaml can fix. That exit is what opens the
+      # issue, so it is caught here rather than failing the run.
+      - name: Check
+        id: check
+        if: github.event_name != 'pull_request'
+        run: |
+          set +e
+          mise run check-student-work-areas -- --check > report.md
+          status=$?
+          set -e
+          cat report.md >> "$GITHUB_STEP_SUMMARY"
+          case $status in
+            0) echo "unlisted=false" >> "$GITHUB_OUTPUT" ;;
+            1) echo "unlisted=true" >> "$GITHUB_OUTPUT" ;;
+            *) exit "$status" ;;
+          esac
+
+      - name: Open or update the issue
+        if: steps.check.outputs.unlisted == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TITLE: Student Work postings that no area holds
+        run: |
+          # A unit left unlisted for a month must not produce four issues, so
+          # rewrite the open one when there is one.
+          open=$(gh issue list --state open --search "in:title \"$TITLE\"" \
+            --json number,title --jq ".[] | select(.title == \"$TITLE\") | .number" | head -n 1)
+
+          if [ -n "$open" ]; then
+            gh issue edit "$open" --body-file report.md
+            echo "Updated issue #${open}."
+          else
+            gh issue create --title "$TITLE" --body-file report.md
+          fi

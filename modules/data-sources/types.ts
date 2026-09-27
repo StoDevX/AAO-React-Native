@@ -7,6 +7,7 @@ export const REL_JOBS = 'https://frogpond.tech/rel/jobs'
 export const REL_ORG_CATEGORIES = 'https://frogpond.tech/rel/org-categories'
 export const REL_STUDENT_WORK_AREAS = 'https://frogpond.tech/rel/student-work-areas'
 export const REL_STUDENT_WAGES = 'https://frogpond.tech/rel/student-wages'
+export const REL_STUDENT_WORK_UNITS = 'https://frogpond.tech/rel/student-work-units'
 
 /// JRD `properties` member names are URIs (RFC 7033 §4.4.4.5), so the source
 /// id is keyed by one rather than a bare string.

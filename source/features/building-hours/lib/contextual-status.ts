@@ -1,5 +1,5 @@
 import type {Moment} from 'moment-timezone'
-import type {BuildingType, NamedBuildingScheduleType} from '../types'
+import type {BuildingType, NamedBuildingScheduleType, SingleBuildingScheduleType} from '../types'
 import {formatStatusTime} from './format-times'
 import {getDayOfWeek} from './get-day-of-week'
 import {findOpenWindow, windowOpeningOn} from './find-open-window'
@@ -12,10 +12,11 @@ const ALMOST_THRESHOLD_MINUTES = 30
 
 type OpenWindow = {open: Moment; close: Moment}
 
-/** The window a building is open under, and the set that posted it. */
-type CurrentOpen = OpenWindow & {set: NamedBuildingScheduleType}
+/** The window a building is open under, and the set and hours that posted it. */
+type CurrentOpen = OpenWindow & {set: NamedBuildingScheduleType; hours: SingleBuildingScheduleType}
 
-function findCurrentOpen(building: BuildingType, now: Moment): CurrentOpen | null {
+/** The window a building is open under at `now`, or null when it is shut. */
+export function findCurrentOpen(building: BuildingType, now: Moment): CurrentOpen | null {
 	for (let set of building.schedule || []) {
 		if (!isSetInService(set, now)) continue
 
@@ -25,7 +26,7 @@ function findCurrentOpen(building: BuildingType, now: Moment): CurrentOpen | nul
 			// discard exactly those.
 			let window = findOpenWindow(hours, now)
 			if (window) {
-				return {...window, set}
+				return {...window, set, hours}
 			}
 		}
 	}
@@ -44,32 +45,40 @@ function findChapelReopenForBuilding(building: BuildingType, now: Moment): Momen
 	return null
 }
 
+/** A window opening on `now`'s day, and the hours that post it. */
+export type WindowToday = OpenWindow & {hours: SingleBuildingScheduleType}
+
 /**
- * The soonest window today that has not opened yet at `now`, or null when
- * nothing opens again today.
+ * Every window that opens on `now`'s day, from sets whose doors are open,
+ * soonest first. A set's rows name the days they open on, so a set with no
+ * days opens on none.
  *
- * Every window is weighed rather than returning at the first future one, because
- * sets are grouped by what they describe and not by time -- a set written later
- * can hold the earlier window, and its rows need not run in order either.
+ * Every window is weighed rather than stopping at the first, because sets are
+ * grouped by what they describe and not by time -- a set written later can
+ * hold the earlier window, and its rows need not run in order either.
  */
-function findNextOpenToday(building: BuildingType, now: Moment): OpenWindow | null {
+export function windowsOpeningToday(building: BuildingType, now: Moment): Array<WindowToday> {
 	let dayOfWeek = getDayOfWeek(now)
-	let earliest: OpenWindow | null = null
+	let windows: Array<WindowToday> = []
 
 	for (let set of building.schedule || []) {
 		if (set.isPhysicallyOpen === false) continue
 
 		for (let hours of set.hours) {
 			if (!hours.days.includes(dayOfWeek)) continue
-
-			let window = windowOpeningOn(hours, now)
-			if (now.isBefore(window.open) && (!earliest || window.open.isBefore(earliest.open))) {
-				earliest = window
-			}
+			windows.push({...windowOpeningOn(hours, now), hours})
 		}
 	}
 
-	return earliest
+	return windows.sort((a, b) => a.open.valueOf() - b.open.valueOf())
+}
+
+/**
+ * The soonest window today that has not opened yet at `now`, or null when
+ * nothing opens again today.
+ */
+function findNextOpenToday(building: BuildingType, now: Moment): OpenWindow | null {
+	return windowsOpeningToday(building, now).find((window) => now.isBefore(window.open)) ?? null
 }
 
 /**

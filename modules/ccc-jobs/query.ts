@@ -1,37 +1,34 @@
-import {fetchManifest, fetchSourceBody, REL_JOBS, resolveSource} from '@frogpond/data-sources'
+import {
+	fetchManifest,
+	fetchSourceBody,
+	REL_JOBS,
+	REL_STUDENT_WORK_UNITS,
+	resolveSource,
+} from '@frogpond/data-sources'
 import {isUITesting} from '@frogpond/launch-arguments'
 import {queryOptions} from '@tanstack/react-query'
+import {z} from 'zod'
 import {queryClient} from '../../source/init/tanstack-query'
 import {
 	UITEST_JOB_CATEGORIES,
 	UITEST_JOB_DETAILS,
-	UITEST_UNIT_POSTINGS,
+	UITEST_POSTING_UNITS,
+	uitestUnitsUnavailable,
 } from './fixtures/uitest-postings'
 import {parseDetail} from './parsers/description'
-import {parseCategories, parseRequisitionIds, parseRequisitions} from './parsers/requisitions'
+import {parseCategories, parseRequisitions} from './parsers/requisitions'
 import type {JobCategory, JobDetail} from './types'
-import {
-	categoriesUrl,
-	detailUrl,
-	jobPageUrl,
-	parseSiteHref,
-	requisitionsUrl,
-	unitPostingsUrl,
-} from './urls'
+import {categoriesUrl, detailUrl, jobPageUrl, parseSiteHref, requisitionsUrl} from './urls'
 
 const ORACLE_RECRUITING = 'application/vnd.oracle.recruiting-ce+json'
 const SOURCE_TYPES = [ORACLE_RECRUITING]
 const SOURCE_ID = 'stolaf'
 const LABEL = 'Jobs'
 
-/// Two hours.
-const UNIT_STALE_TIME = 2 * 60 * 60 * 1000
-
 export const keys = {
 	postings: ['jobs', 'postings'] as const,
 	detail: (id: string) => ['jobs', 'detail', id] as const,
-	units: ['jobs', 'unit'] as const,
-	unit: (unit: string) => ['jobs', 'unit', unit] as const,
+	postingUnits: ['jobs', 'posting-units'] as const,
 }
 
 async function resolveJobSite(): Promise<string> {
@@ -93,21 +90,32 @@ export const jobDetailOptions = (id: string) =>
 		},
 	})
 
-/// The IDs of the postings whose descriptions carry this St. Olaf unit number.
-// oxlint-disable-next-line typescript/explicit-module-boundary-types
-export const unitPostingsOptions = (unit: string) =>
-	queryOptions({
-		queryKey: keys.unit(unit),
-		// Every Student Work screen asks for all of them, and a unit's postings
-		// change on the order of days; new postings reach the list through the
-		// board regardless.
-		staleTime: UNIT_STALE_TIME,
-		queryFn: async ({signal}): Promise<string[]> => {
-			if (isUITesting) {
-				return UITEST_UNIT_POSTINGS[unit] ?? []
-			}
+const UNITS_TYPE = 'application/vnd.frogpond.student-work-units+json'
+const UNITS_LABEL = 'Student Work units'
 
-			let site = parseSiteHref(await resolveJobSite())
-			return parseRequisitionIds(await fetchSourceBody(unitPostingsUrl(site, unit), signal, LABEL))
-		},
-	})
+const PostingUnitsSchema = z.record(z.string(), z.string().nullable())
+
+/// Each board posting's unit by posting ID, from ccc-server. A posting the
+/// server could not read is absent; one whose description names no unit is
+/// null.
+export type PostingUnits = z.infer<typeof PostingUnitsSchema>
+
+/// One hour, as long as ccc-server caches its answer.
+const POSTING_UNITS_STALE_TIME = 60 * 60 * 1000
+
+export const postingUnitsOptions = queryOptions({
+	queryKey: keys.postingUnits,
+	staleTime: POSTING_UNITS_STALE_TIME,
+	queryFn: async ({signal}): Promise<PostingUnits> => {
+		if (isUITesting) {
+			if (uitestUnitsUnavailable()) {
+				throw new Error('Student Work units are unavailable in this UI test')
+			}
+			return UITEST_POSTING_UNITS
+		}
+
+		let manifest = await fetchManifest(queryClient)
+		let source = resolveSource(manifest, REL_STUDENT_WORK_UNITS, SOURCE_ID, [UNITS_TYPE])
+		return PostingUnitsSchema.parse(await fetchSourceBody(source.href, signal, UNITS_LABEL))
+	},
+})

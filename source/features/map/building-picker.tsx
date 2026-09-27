@@ -5,6 +5,7 @@ import {
 	contentShape,
 	font,
 	foregroundStyle,
+	onGeometryChange,
 	padding,
 	shapes,
 } from '@expo/ui/swift-ui/modifiers'
@@ -24,13 +25,13 @@ import type {Building, Feature} from './types'
 const SEARCH_DEBOUNCE_MS = 200
 
 /// The margin above and below the search field, in LAYOUT space, and the
-/// margin the field visibly gets: `CampusSearchBarView` pins the bar to a 44pt
+/// margin the field visibly gets: `CampusSearchBarView` gives the bar a 44pt
 /// slot, and although `UISearchBar` draws 64pt tall -- its 44pt text field
 /// centred, 10pt of its own chrome above and below -- that overflow takes no
 /// layout space and the bar's `.minimal` style paints none of it. So the
-/// picker's header block is `16 + 44 + 16 = 76`pt, which is what the sheet's
-/// collapsed stop is sized to hold; see `SHEET_COLLAPSED_HEIGHT` in
-/// `Map/index.tsx`.
+/// picker's header block is `16 + 44 + 16 = 76`pt at the default text size,
+/// and taller as the field grows with the text. The sheet's collapsed stop is
+/// sized to hold the block as measured; see `collapsedDetentFor`.
 const SEARCH_MARGIN = 16
 const SEARCH_PLACEHOLDER = 'Search for a place'
 
@@ -60,6 +61,10 @@ type Props = {
 	/// only reports what happened.
 	onSearchFocusChange: (focused: boolean, hasText: boolean) => void
 	onSearchCancel: () => void
+	/// The height of the search field and its margins, which is all the
+	/// picker draws at the collapsed stop, so the screen can size that stop to
+	/// hold it.
+	onHeaderHeightChange: (height: number) => void
 }
 
 /// The picker's contents, as SwiftUI. The sheet that presents them, and the
@@ -75,6 +80,7 @@ export function BuildingPicker({
 	onSelect,
 	onSearchFocusChange,
 	onSearchCancel,
+	onHeaderHeightChange,
 }: Props): React.ReactNode {
 	let [category, setCategory] = React.useState<CategoryLabel>('Buildings')
 	let [typedQuery, setTypedQuery] = React.useState('')
@@ -97,7 +103,10 @@ export function BuildingPicker({
 			{/* CampusSearchBar takes no modifiers, so its margins live on the
 			    stack around it. */}
 			<VStack
-				modifiers={[padding({horizontal: SEARCH_BAR_HORIZONTAL_PADDING, vertical: SEARCH_MARGIN})]}
+				modifiers={[
+					padding({horizontal: SEARCH_BAR_HORIZONTAL_PADDING, vertical: SEARCH_MARGIN}),
+					onGeometryChange(({height}) => onHeaderHeightChange(height)),
+				]}
 			>
 				<CampusSearchBar
 					onCancel={cancelSearch}
@@ -150,7 +159,11 @@ function BuildingRow({
 	building: Feature<Building>
 	onSelect: (id: string) => void
 }): React.ReactNode {
-	let {name, nickname} = building.properties
+	let {name} = building.properties
+	// A house renamed each year for its residents carries every name, newest
+	// first; the row shows the current one.
+	let names = building.properties.nickname ?? []
+	let nickname = typeof names === 'string' ? names : names[0]
 	return (
 		<Button
 			// Without `plain`, SwiftUI tints a Button's whole label with the accent

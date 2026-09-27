@@ -6,34 +6,7 @@ import XCTest
 class UITestCase: XCTestCase {
 	var app: XCUIApplication!
 
-	/// The test that failed, once one has, as `-[Class method]`.
-	///
-	/// A shard that has already failed cannot go green, so every test after the
-	/// failure only adds wall-clock: each one cold-launches the app, and a full
-	/// shard runs about twenty-five minutes. Reporting the failure sooner is
-	/// worth more than the results of tests nobody will read until it is fixed.
-	private static var failedTest: String?
-
-	override func record(_ issue: XCTIssue) {
-		// `isFailure` rather than the issue's type: a skip arrives here as an
-		// issue too, and treating one as a failure would let the first skipped
-		// test stand in for the failure that caused it. XCTest documents this
-		// property as the way to ask the question, over reading `severity`.
-		if issue.isFailure {
-			UITestCase.failedTest = name
-		}
-		super.record(issue)
-	}
-
 	override func setUpWithError() throws {
-		// Only bail once a *different* test has failed. `-retry-tests-on-failure`
-		// re-runs a failing test in this same process, and those repetitions
-		// carry the same `name` -- skipping them would turn the retry the CI
-		// step relies on into a no-op, and a launch flake back into a failure.
-		if let failed = UITestCase.failedTest, failed != name {
-			throw XCTSkip("\(failed) failed; skipping the rest of this run so it reports sooner")
-		}
-
 		continueAfterFailure = false
 
 		// Before the app launches: a run with no known JS source measures
@@ -51,19 +24,9 @@ class UITestCase: XCTestCase {
 		app.launch()
 	}
 
-	/// Release the latch when the test that set it turns out to have passed.
-	///
-	/// `-retry-tests-on-failure` re-runs a failed test in this same process, so
-	/// a failure recorded on one attempt is not a failure of the run. Without
-	/// this, a rescued flake skips every test after it and the shard reports
-	/// green having run almost nothing.
 	override func tearDownWithError() throws {
 		if (testRun?.failureCount ?? 0) > 0 {
 			captureFailureScreen()
-		}
-
-		if UITestCase.failedTest == name, testRun?.failureCount == 0 {
-			UITestCase.failedTest = nil
 		}
 	}
 
@@ -72,8 +35,7 @@ class UITestCase: XCTestCase {
 	/// `continueAfterFailure` is false, so a failed test stops at its assertion
 	/// and the screen is still whatever the assertion was unhappy about --
 	/// which is the one picture worth having and the one nobody thinks to take
-	/// in advance. Xcode's own automatic screenshots need a test plan this
-	/// project does not have, and the scheme defaults throw them away.
+	/// in advance.
 	///
 	/// `.keepAlways` rather than `.deleteOnSuccess`: this only runs for a
 	/// failure, so there is no success for the latter to key off, and CI's
@@ -153,8 +115,7 @@ class UITestCase: XCTestCase {
 
 	/// Thrown, not skipped: a skipped suite exits 0 and reads as "nothing to
 	/// do", which is how a misconfigured run gets mistaken for a clean one.
-	/// A thrown error fails the test, and the fail-fast latch above turns that
-	/// into a non-zero exit before any other test runs.
+	/// A thrown error fails the test, and so the run.
 	struct UnknownJsSource: Error, CustomStringConvertible {
 		var description: String {
 			"""
@@ -180,6 +141,19 @@ class UITestCase: XCTestCase {
 	func relaunchKeepingState(adding arguments: [String]) {
 		app.terminate()
 		app.launchArguments = [TestIdentifiers.LaunchArguments.uiTesting] + arguments
+		appendJsLocationIfProvided()
+		app.launch()
+	}
+
+	/// Terminate and relaunch the app with fresh state, adding `arguments` to
+	/// the launch, so nothing an earlier launch saved can stand in for what the
+	/// arguments change.
+	func relaunchWithFreshState(adding arguments: [String]) {
+		app.terminate()
+		app.launchArguments = [
+			TestIdentifiers.LaunchArguments.uiTesting,
+			TestIdentifiers.LaunchArguments.resetState,
+		] + arguments
 		appendJsLocationIfProvided()
 		app.launch()
 	}

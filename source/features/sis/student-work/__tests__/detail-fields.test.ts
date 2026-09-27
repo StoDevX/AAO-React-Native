@@ -11,6 +11,7 @@ function posting(title: string, fields: JobDetail['fields']): JobDetail {
 		location: undefined,
 		postedDate: undefined,
 		fields,
+		unit: null,
 		body: '',
 		url: 'https://example.invalid/job/1',
 	}

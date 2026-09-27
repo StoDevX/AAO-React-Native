@@ -1,5 +1,6 @@
 name: Events Management Office
 category: Offices
+kind: office
 building: bc
 
 schedule:

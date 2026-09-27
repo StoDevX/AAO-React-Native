@@ -1,6 +1,7 @@
 name: Rølvaag Library
 image: rolvaag-library
 category: Libraries
+kind: building
 building: rml
 
 schedule:
