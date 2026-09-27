@@ -21,7 +21,7 @@ import * as c from '@frogpond/colors'
 import {FilterToolbar} from '@frogpond/filter'
 import {LoadingView, NoticeView, listState} from '@frogpond/notice'
 import type {JobSummary} from '@frogpond/ccc-jobs'
-import {onlineManager} from '@tanstack/react-query'
+import {onlineManager, useQuery} from '@tanstack/react-query'
 import {useRouter} from 'expo-router'
 import {DisclosureRow, type DisclosureRowImage} from '../../../components/rows'
 import {chosenAreaState} from './areas'
@@ -35,6 +35,8 @@ import {
 import {jobRowDetail} from './lib'
 import {displayTitle} from './posting'
 import {useStudentWorkBoard} from './use-board'
+import type {HourlyWages} from './wages'
+import {studentWagesOptions} from './wages-query'
 
 /// Mirrored by TestIdentifiers.StudentWork.postingsList.
 const POSTINGS_LIST_ID = 'student-work-postings'
@@ -61,14 +63,16 @@ const JobRow = React.memo(function JobRow({
 	job,
 	isNew,
 	onOpen,
+	wages,
 }: {
 	job: JobSummary
 	isNew: boolean
 	onOpen: (jobId: string) => void
+	wages: HourlyWages
 }): React.ReactNode {
 	return (
 		<DisclosureRow
-			detail={jobRowDetail(job)}
+			detail={jobRowDetail(job, wages)}
 			image={isNew ? NEW_DOT : NO_DOT}
 			onPress={() => onOpen(job.id)}
 			title={displayTitle(job.title)}
@@ -96,6 +100,7 @@ export function PostingsList({searchQuery, initialChosen}: PostingsListProps): R
 	let router = useRouter()
 	let {board, jobs, context, refresh} = useStudentWorkBoard()
 	let {data = [], error, isError, refetch, isPending, isPaused} = board
+	let {data: wages} = useQuery(studentWagesOptions)
 
 	// Only the narrowing the student asked for is state; the options on offer
 	// come from the postings, so a refetch can add or drop them.
@@ -223,7 +228,13 @@ export function PostingsList({searchQuery, initialChosen}: PostingsListProps): R
 								{sections.map((section) => (
 									<Section key={section.title} title={section.title}>
 										{section.data.map((job) => (
-											<JobRow key={job.id} isNew={newIds.has(job.id)} job={job} onOpen={openJob} />
+											<JobRow
+												key={job.id}
+												isNew={newIds.has(job.id)}
+												job={job}
+												onOpen={openJob}
+												wages={wages}
+											/>
 										))}
 									</Section>
 								))}

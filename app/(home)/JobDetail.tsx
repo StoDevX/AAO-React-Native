@@ -15,6 +15,7 @@ import {
 	shareJob,
 } from '../../source/features/sis/student-work/lib'
 import {displayTitle} from '../../source/features/sis/student-work/posting'
+import {studentWagesOptions} from '../../source/features/sis/student-work/wages-query'
 import {DetailRow, DisclosureRow, NavigationRow} from '../../source/components/rows'
 
 const styles = StyleSheet.create({
@@ -35,7 +36,8 @@ const styles = StyleSheet.create({
 function JobDetailView({job}: {job: JobDetail}): React.ReactNode {
 	let router = useRouter()
 	let posted = formatPostedDate(job.postedDate)
-	let fields = jobDetailFields(job)
+	let {data: wages} = useQuery(studentWagesOptions)
+	let fields = jobDetailFields(job, wages)
 
 	return (
 		<Host style={styles.screen}>
