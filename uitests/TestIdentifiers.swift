@@ -282,6 +282,9 @@ struct TestIdentifiers {
 		/// they leave empty. See FIXTURE_UNITS in
 		/// modules/ccc-jobs/fixtures/uitest-postings.ts.
 		static let researchArea = "Research (CURI)"
+		/// Matches the unavailable title in
+		/// source/features/sis/student-work/postings-list.tsx.
+		static let areaUnavailable = "Couldn’t load this area’s postings."
 		static let emptyArea = "Faith & Vocation"
 		/// The list's empty state once a search or filter leaves nothing, from
 		/// source/features/sis/student-work/postings-list.tsx.
