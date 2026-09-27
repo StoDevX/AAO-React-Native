@@ -365,6 +365,22 @@ describe('StoryScreen', () => {
 		expect(mockBody).not.toHaveBeenCalled()
 	})
 
+	test('counts a story as read once it opens', async () => {
+		useMessStore.setState({openedStories: [5]})
+		await renderStory(36911)
+		await act(flushQueryNotifications)
+
+		expect(useMessStore.getState().openedStories).toStrictEqual([5, 36911])
+	})
+
+	test('counts a story as read while it is still loading', async () => {
+		useMessStore.setState({openedStories: []})
+		serve(() => new Promise(() => undefined))
+		await renderStory(4242)
+
+		expect(useMessStore.getState().openedStories).toStrictEqual([4242])
+	})
+
 	test('fetches a story that is not in the feed on its own', async () => {
 		serve((href) => (href.includes('/posts/36859') ? posts[0] : []))
 		await renderStory(36859)

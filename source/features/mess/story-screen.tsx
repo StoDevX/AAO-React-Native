@@ -20,6 +20,7 @@ import {SeriesRow} from './series-row'
 import {SiteLinkCard, StoryBlocks} from './story-blocks'
 import {StoryHeader} from './story-header'
 import {StoryLookupNotice} from './story-lookup-notice'
+import {useMessStore} from './store'
 import type {MessStory} from './types'
 import {useColumnWidth} from './use-column-width'
 import {useMessStory} from './use-mess-story'
@@ -41,6 +42,11 @@ type Props = {id: number}
 /** A Mess story, set as a broadsheet page. */
 export function StoryScreen({id}: Props): React.ReactNode {
 	let query = useMessStory(id)
+	let recordOpened = useMessStore((state) => state.recordOpened)
+	// Every way into a story ends here, so this one call counts it towards its issue's stains.
+	React.useEffect(() => {
+		recordOpened(id)
+	}, [id, recordOpened])
 	let story = query.data
 	// A poem, photo or short story is set quietly: a lighter header and wider margins.
 	let isQuiet = story?.layout.kind === 'poem' || story?.layout.kind === 'feature'
