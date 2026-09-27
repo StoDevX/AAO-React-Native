@@ -343,9 +343,19 @@ struct MapScreen: Screen {
 		let named = app.descendants(matching: .any)
 			.matching(NSPredicate(format: "label BEGINSWITH %@", name))
 		XCTAssertTrue(named.firstMatch.waitForExistence(timeout: 20), "\(name)'s card should be up")
-		let visible = named.allElementsBoundByIndex.filter { $0.isHittable }
-		let closes = app.buttons.matching(identifier: TestIdentifiers.Map.cardCloseButton)
-			.allElementsBoundByIndex.filter { $0.isHittable }
+		// A sheet closing over the card is still sliding away, and the card's
+		// header title still fading in, for a moment after the close is
+		// tapped, so the card is read once it has settled.
+		var visible: [XCUIElement] = []
+		var closes: [XCUIElement] = []
+		let deadline = Date().addingTimeInterval(5)
+		repeat {
+			visible = named.allElementsBoundByIndex.filter { $0.isHittable }
+			closes = app.buttons.matching(identifier: TestIdentifiers.Map.cardCloseButton)
+				.allElementsBoundByIndex.filter { $0.isHittable }
+			if !visible.isEmpty && closes.count == 1 { break }
+			Thread.sleep(forTimeInterval: 0.25)
+		} while Date() < deadline
 		XCTContext.runActivity(named: "\(visible.count) visible \(name), \(closes.count) close buttons") { _ in }
 		XCTAssertFalse(visible.isEmpty, "\(name)'s card should be in view")
 		XCTAssertEqual(closes.count, 1, "Only the top card's close button should be tappable")
