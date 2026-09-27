@@ -143,6 +143,7 @@ describe('PlaceStackCard caching', () => {
 		trackedQueryClients.push(client)
 		client.setQueryData(mapKeys.all('stolaf'), features)
 		client.setQueryData(hoursKeys.all('stolaf'), venues)
+		client.setQueryData(directoryKeys.all('stolaf'), directories)
 		await render(
 			<QueryClientProvider client={client}>
 				<PlaceStackCard
@@ -159,6 +160,7 @@ describe('PlaceStackCard caching', () => {
 		expect(client.getQueryState(mapKeys.all('stolaf'))?.fetchStatus).toBe('idle')
 		expect(client.getQueryState(hoursKeys.all('stolaf'))?.dataUpdateCount).toBe(1)
 		expect(client.getQueryState(mapKeys.all('stolaf'))?.dataUpdateCount).toBe(1)
+		expect(client.getQueryState(directoryKeys.all('stolaf'))?.dataUpdateCount).toBe(1)
 	})
 })
 

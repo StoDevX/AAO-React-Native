@@ -40,8 +40,8 @@ export function placeStack(stack: Array<StackEntry>, action: PlaceStackAction): 
 
 /**
  * The feature the map highlights: the top place's own, for a venue the
- * feature it is keyed to, and for a floor its building. A venue that can't be placed on the map defers to
- * the place beneath it.
+ * feature it is keyed to, and for a floor its building. A venue that can't
+ * be placed on the map defers to the place beneath it.
  */
 export function highlightedFeatureId(
 	stack: Array<StackEntry>,
