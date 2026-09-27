@@ -160,11 +160,14 @@ export default function MapPage(): React.ReactNode {
 	// A fraction is measured against the window less the top inset, so the
 	// camera is padded against the same thing rather than the whole window.
 	// The picker's search field grows with the text size, and the collapsed
-	// stop grows to hold it.
+	// stop grows to hold it. A card keeps the default stop, as Apple Maps'
+	// does: at large text sizes its header keeps its top in view and runs off
+	// the bottom.
 	let [pickerHeaderHeight, setPickerHeaderHeight] = React.useState<number | null>(null)
+	let collapsedHeight = selectedBuildingId ? null : pickerHeaderHeight
 	let detents = React.useMemo(
-		() => detentsFor(collapsedDetentFor(pickerHeaderHeight)),
-		[pickerHeaderHeight],
+		() => detentsFor(collapsedDetentFor(collapsedHeight)),
+		[collapsedHeight],
 	)
 	let sheetHeight = sheetHeightFor(detents[sheet.current], windowHeight - insets.top)
 

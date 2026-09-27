@@ -12,7 +12,8 @@ const DEFAULT_HEADER_HEIGHT = 76
 /// too tall for the box it is presented in rather than clipping its bottom,
 /// so the field's top edge is what a short stop cuts off -- hence rounding up.
 /// Until the block has been measured, or while it reports the zero height a
-/// view can give before layout, the default block's height stands in.
+/// view can give before layout, the default block's height stands in. A
+/// place card takes the default stop too, passing no height.
 ///
 /// The height is in the sheet content's own layout space. UIKit shrinks
 /// whatever a sheet presents by a scale tied to the detent -- 0.86 at this
