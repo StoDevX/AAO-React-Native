@@ -15,6 +15,7 @@ on:
     paths:
       - scripts/bonapp-overrides.yaml
       - scripts/bonapp-schedule.mjs
+      - scripts/html-text.mjs
       - scripts/scrape-bonapp.mjs
       - .github/workflows/scrape-dining.yml
 
