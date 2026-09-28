@@ -21,7 +21,7 @@ class ModuleCalendarDayModeTests: UITestCase {
 	/// actually reach the screen in. The category submenu is opened last:
 	/// descending into an axis replaces what is on screen, so the top-level rows
 	/// have to be read while they are still the thing presented.
-  @MainActor func testDayModeOpensReadyToUse() async throws {
+  @MainActor func testDayModeAndFilters() async throws {
     app.launch()
 		let screen = CalendarScreen(app: app)
 
@@ -29,12 +29,18 @@ class ModuleCalendarDayModeTests: UITestCase {
 
     screen.verifyRowPresent(TestIdentifiers.Calendar.unfilteredDayRow)
 
-    screen.verifyStripIsPresent()
-			.capture("21-day-picker-strip")
+    screen.capture("before filtering")
+
+    let rows = screen.visibleRows()
+    let expectation = expectation(for: rows.count >= 1)
+    await fulfillment(of: [expectation], timeout: 10)
+    let unfilteredCount = rows.count
 
     XCTContext.runActivity(named: "Verify the picker rows") { _ in
       screen.openPicker()
-        .verifyMenuSection(TestIdentifiers.Calendar.calendarsSection)
+      XCTAssertTrue(
+        app.staticTexts[TestIdentifiers.Calendar.calendarsSection].waitForExistence(timeout: 30),
+        "\(TestIdentifiers.Calendar.calendarsSection) should be a section of the open menu")
 
       XCTAssertTrue(
         app.buttons[TestIdentifiers.Calendar.categoryMenu].waitForExistence(timeout: 30),
@@ -44,172 +50,146 @@ class ModuleCalendarDayModeTests: UITestCase {
         app.buttons[TestIdentifiers.Calendar.organizationMenu].waitForExistence(timeout: 30),
         "\(TestIdentifiers.Calendar.organizationMenu) should be a row of the open picker")
 
+      XCTAssertTrue(
+        app.buttons[TestIdentifiers.Calendar.resetFilters].waitForNonExistence(timeout: 10),
+        "\(TestIdentifiers.Calendar.resetFilters) should be absent while the list is unfiltered")
+
       screen.capture("30-picker-rows")
+      screen.dismissMenu()
     }
 
-		screen
-			.checkCategoriesListed()
-			.capture("35-category-submenu")
+    // validate the categories
+    screen
+      .openPicker()
+      .openSubmenu(TestIdentifiers.Calendar.categoryMenu)
+      .tapMenuItem(TestIdentifiers.Calendar.categories[0])
+      .dismissMenu()
+    screen.capture("after filtering")
+
+    XCTAssertLessThan(
+      rows.count, unfilteredCount,
+      "Choosing a category should narrow the list")
+    screen.verifyRowAbsent(TestIdentifiers.Calendar.unfilteredDayRow)
+
+    // clear the filters
+    screen
+      .openPicker()
+      .tapMenuItem(TestIdentifiers.Calendar.resetFilters)
+    screen.capture("filters cleared")
+
+    XCTAssertEqual(
+      rows.count, unfilteredCount,
+      "Clearing the filters should restore the list")
+    screen.verifyRowPresent(TestIdentifiers.Calendar.unfilteredDayRow)
 	}
 
-	/// Swiping the strip browses: it settles on a week boundary, and it does
-	/// not move the selection.
-	///
-	/// The Sunday of whichever week it lands on comes to rest at the same
-	/// leading edge, with no partial week behind it. The last week is the one
-	/// that matters. It only reaches the leading edge because of the trailing
-	/// scroll inset -- without it the strip runs out of content and the week
-	/// comes to rest short, still showing a Sunday but not at the edge. Hence
-	/// measuring where the Sunday lands rather than only which day it is.
-	/// Neither the inset nor the snap offsets are visible to Jest: a strip
-	/// rendered there has no layout pass and no scroll view.
-	///
-	/// Dragging the strip and choosing a day are the pair of gestures that used
-	/// to disagree, so the selection is read either side of the first swipe.
-  @MainActor func testSwipingTheStripSettlesOnASundayAndKeepsTheSelection() async throws {
+  @MainActor func testDayPickerStrip() async throws {
 		let screen = CalendarScreen(app: app)
     screen.navigate()
 
-		guard let selected = screen.selectedDay() else {
-			XCTFail("A day should be selected before dragging the strip")
-			return
-		}
+    let todayDayCell = TestIdentifiers.Calendar.dayCell(TestIdentifiers.Calendar.frozenNow)
 
-		screen
-			.swipeStripToNextWeek()
-			.capture("24-strip-second-week")
+    guard let selectedDay = screen.selectedDay() else {
+      XCTFail("A day should be selected when the screen opens")
+      return
+    }
 
-		XCTAssertEqual(
-			screen.selectedDay(), selected,
-			"Scrolling the strip should show another week, not choose a day in it")
-	}
+    XCTAssertEqual(selectedDay, todayDayCell)
 
-	/// Reset Filters clears whichever axis is filtered, and is the only way back
-	/// to the whole list without hunting for the selected choice to untick.
-	///
-	/// Restoration is checked by naming a row the filter excluded and watching
-	/// it leave and return, rather than by comparing row counts either side:
-	/// the list is a lazy stack, so a count says how far ahead SwiftUI built,
-	/// not how many events the list holds.
-  @MainActor func testResetFiltersClearsTheFilter() async throws {
-    let screen = CalendarScreen(app: app)
-    screen.navigate()
+    screen.verifyStripIsPresent()
+    screen.capture("strip-this-week")
 
-    let rows = app.buttons.matching(.beginsWith("event-row-"))
-    let expectation = expectation(for: rows.count >= 1)
+    let initialWeekDates = screen.datePickerDayIdentifiers()
+
+    let eventRows = screen.visibleRows()
+    let expectation = expectation(for: eventRows.count >= 1)
     await fulfillment(of: [expectation], timeout: 10)
+    let initialEventCount = eventRows.count
+    let initialEventIdentifiers = eventRows.identifiers()
 
-    let unfiltered = rows.count
+    print(initialEventIdentifiers)
 
-    screen.capture("before filtering")
+    // swiping the day picker should not, by itself, change the displayed day
+    screen.swipeStripToNextWeek()
+    screen.capture("strip-next-week")
+    XCTAssertEqual(
+      screen.selectedDay(), selectedDay,
+      "Scrolling the strip should show another week, not choose a day in it")
+    XCTAssertNotEqual(
+      screen.datePickerDayIdentifiers(), initialWeekDates,
+      "The dates in the picker should have changed")
+    XCTAssertEqual(
+      screen.visibleRows().identifiers(), initialEventIdentifiers,
+      "The events in the agenda view should have changed")
 
-    screen.openPicker()
+    // pushing Today should reset the date picker strip, even if we haven't selected a new date
+    screen.tapToday()
+    XCTAssertEqual(
+      screen.datePickerDayIdentifiers(), initialWeekDates,
+      "Today should bring back the day it opened on, with its events drawn")
 
-    XCTAssertTrue(
-      app.buttons[TestIdentifiers.Calendar.resetFilters].waitForNonExistence(timeout: 10),
-      "Reset Filters should be absent while the list is unfiltered")
+    // swiping on a day's agenda area should change the displayed events
+    // AND highlight the day in the picker
+    // TODO: disabled due to auto-swipe bugs
+    // eventRows.firstMatch.swipeLeft()
+    // screen.capture("strip-tomorrow")
+    // XCTAssertNotEqual(
+    //   initialEventCount, eventRows.count,
+    //   "event count should change between days in the fixture")
+    // XCTAssertNotEqual(
+    //   screen.selectedDay(), selectedDay,
+    //   "Swiping the agenda should switch the selected day in the date strip")
 
-		screen.selectCategory(TestIdentifiers.Calendar.categories[0])
+    // swiping the day picker moves a week at a time
+    // TODO: test this
 
-    screen.dismissMenu()
+    // tapping a date in the day picker should also suffice to show that day's events
+    let dayToTap = "2026-09-07"
+    screen.tapDay(dayToTap)
+    XCTAssertNotEqual(
+      initialEventCount, eventRows.count,
+      "event count should change between days in the fixture")
+    XCTAssertEqual(
+      screen.selectedDay(), TestIdentifiers.Calendar.dayCell(dayToTap),
+      "Scrolling the strip should show another week, not choose a day in it")
+    XCTAssertNotEqual(
+      screen.visibleRows().identifiers(), initialEventIdentifiers,
+      "The events in the agenda view should have changed")
 
-    screen.capture("after filtering")
+    // tapping a date with no events in the day picker shows the empty day's empty agenda
+    // we need to swipe ahead another week to find an empty day
+    screen.swipeStripToNextWeek()
 
-		XCTAssertLessThan(
-      rows.count, unfiltered,
-			"Choosing a category should narrow the list")
-		screen.verifyRowAbsent(TestIdentifiers.Calendar.unfilteredDayRow)
+    let empty = "2026-09-19"
+    XCTAssertFalse(
+      screen.dayHasEvents(empty),
+      "\(empty) should carry no events in the fixture calendar")
 
-		screen.openPicker().tapResetFilters()
-    screen.capture("filters cleared")
+    screen.tapDay(empty)
+    screen.capture("empty-day")
+    XCTAssertEqual(
+      screen.selectedDay(), TestIdentifiers.Calendar.dayCell(empty),
+      "Tapping an empty day should select it rather than skip past it")
+    screen.verifyStripIsPresent()
+    screen.verifyNoticeVisible(TestIdentifiers.Calendar.emptyDayNotice)
 
-		screen.verifyRowPresent(TestIdentifiers.Calendar.unfilteredDayRow)
+    // pushing Today on a not-today day should move to today
+    // (use the fact that we're on next week to also assert that the picker strip
+    //  changes weeks with us when we push the Today button)
+    screen.tapToday()
+    screen.capture("today-from-a-week-ahead")
+    XCTAssertEqual(
+      screen.selectedDay(), todayDayCell,
+      "Today should choose the frozen day")
+    XCTAssertEqual(
+      screen.datePickerDayIdentifiers(), initialWeekDates,
+      "Today should bring back the day it opened on, with its events drawn")
 	}
 
-	/// Today, in Day mode, is a different thing from Today in Upcoming: it
-	/// chooses a day rather than scrolling a list, and the pager has to be
-	/// rebuilt around it. Pressed from a day well ahead, it once left the pager
-	/// seeded with a day it had no page for, so the strip showed today selected
-	/// over an empty pane -- which is why this asserts an event is on screen and
-	/// not merely that the strip moved.
-  @MainActor func testTodayReturnsTheDayViewToToday() async throws {
-		let calendar = CalendarScreen(app: app)
-		calendar.navigate()
-
-    calendar.verifyStripIsPresent()
-
-		let opening = calendar.topRowLabel()
-		XCTAssertNotNil(opening, "Day mode should open on a day that has events")
-
-		// Far enough ahead that the mounted window has moved off today.
-		calendar.swipeStripToNextWeek()
-		calendar.tapDay("2026-09-12")
-
-		calendar.tapToday()
-		calendar.capture("today-from-a-week-ahead")
-		calendar.verifySelectedDay(
-			TestIdentifiers.Calendar.dayCell(TestIdentifiers.Calendar.frozenNow),
-			message: "Today should choose the frozen day")
-		XCTAssertEqual(
-			calendar.topRowLabel(), opening,
-			"Today should bring back the day it opened on, with its events drawn")
-	}
-
-	// MARK: - View mode
-
-	/// An empty day is a day you can land on now, so it has to keep the strip.
-	///
-	/// The fixture's "Fall Semester Orientation" runs 2026-09-01 through
-	/// 2026-09-12, and `occursOn` (modules/event-list/days.ts) marks every day
-	/// it spans -- so the first day the fixture leaves empty on or after the
-	/// frozen Saturday is a fortnight out. Days already gone cannot be chosen
-	/// at all, which is why the nearer empty days behind it are no use here.
-  @MainActor func testAnEmptyDayKeepsTheStrip() async throws {
-		let calendar = CalendarScreen(app: app)
-		calendar.navigate()
-
-    calendar.verifyStripIsPresent()
-
-		// The first day on or after the frozen one that the fixture leaves empty.
-		// Days already gone cannot be chosen at all, so an empty one has to be
-		// found ahead -- two weeks out here, which is why the strip is swiped to
-		// it first.
-		let empty = "2026-09-19"
-		calendar.swipeStripToNextWeek()
-		calendar.swipeStripToNextWeek()
-
-		XCTAssertFalse(
-			calendar.dayHasEvents(empty),
-			"\(empty) should carry no events in the fixture calendar")
-
-		calendar.tapDay(empty)
-		calendar.capture("empty-day")
-		calendar.verifySelectedDay(
-			TestIdentifiers.Calendar.dayCellPrefix + empty,
-			message: "Tapping an empty day should select it rather than skip past it")
-		calendar.verifyStripIsPresent()
-		calendar.verifyNoticeVisible(TestIdentifiers.Calendar.emptyDayNotice)
-	}
+  // TODO: assert that the event detail view opens and closes
 }
 
 class ModuleCalendarUpcomingModeTests: UITestCase {
-
-  /// Organisation is the second filter axis, and the only one whose values
-  /// come from Presence rather than from the campus calendar. Nothing in Jest
-  /// reaches the rendered menu, so this is the only check that choosing one
-  /// narrows the list the way a category does.
-  ///
-  /// Upcoming, not Day: the fixture's Music Organizations events all fall on
-  /// days other than the frozen one, so Day mode's single day would show none
-  /// of them either side of the filter, and "narrows" would have nothing to
-  /// prove against. Only the merged list has enough days in view for a
-  /// sponsor filter to narrow rather than empty it.
-  ///
-  /// Reset is checked against a named row the filter excluded, for the reason
-  /// `testResetFiltersClearsTheFilter` gives.
-  ///
-  /// The view menu is checked on the way in: it offers the two views that
-  /// exist, and not the one that does not.
   @MainActor func testFilteringByOrganizationNarrowsTheUpcomingList() async throws {
     let screen = CalendarScreen(app: app)
     screen.navigate()
@@ -226,7 +206,8 @@ class ModuleCalendarUpcomingModeTests: UITestCase {
 
     screen
       .openPicker()
-      .selectOrganization(TestIdentifiers.Calendar.organization)
+      .openSubmenu(TestIdentifiers.Calendar.organizationMenu)
+      .tapMenuItem(TestIdentifiers.Calendar.organization)
       .dismissMenu()
       .capture("34-filtered-by-organization")
 

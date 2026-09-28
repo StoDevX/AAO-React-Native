@@ -132,6 +132,11 @@ extension XCUIElementQuery {
     return self.matching(matcher.nsPredicate)
   }
 
+  /// Collect just the accessibility identifiers from the query elements
+  func identifiers() -> [String] {
+    return allElementsBoundByIndex.map { $0.identifier }
+  }
+
   /// Wait for element count to reach a specified threshold
   @discardableResult
   func waitForCount(

@@ -586,6 +586,10 @@ struct TestIdentifiers {
 			formatter.dateFormat = "yyyy-MM-dd"
 			return dayCellPrefix + formatter.string(from: date)
 		}
+
+    static func dayCell(_ s: String) -> String {
+      return dayCellPrefix + s
+    }
 	}
 
 	// MARK: - News
