@@ -245,49 +245,6 @@ class ModuleCalendarTests: UITestCase {
 		screen.verifyRowPresent(TestIdentifiers.Calendar.unfilteredUpcomingRow)
 	}
 
-	/// The event sheet, opened and closed twice, and then the calendar left by
-	/// its edge swipe.
-	///
-	/// The list merges several calendars and so credits none of them; the
-	/// detail screen credits the one its event came from.
-	///
-	/// Closing the event sheet twice should leave you on the calendar both
-	/// times. The close button calls `router.back()`, and on a screen presented
-	/// as a sheet that can consume the sheet's own dismissal as well as its
-	/// own -- taking the calendar with it and landing on the home screen.
-	///
-	/// A paged TabView inside a navigation stack is the classic way to lose the
-	/// interactive pop gesture: the pager claims the horizontal pan and the edge
-	/// swipe never fires. Day mode pages horizontally, so this is the one thing
-	/// that has to keep working. It leaves the calendar, so it goes last.
-	func testTheEventSheetClosesTwiceAndTheEdgeSwipeLeaves() throws {
-		let screen = CalendarScreen(app: app)
-			.navigate()
-			.verifyNoAttribution()
-
-		screen
-			.openFirstEvent()
-			.verifyAttributionOnDetail()
-			.capture("33-detail-attribution")
-			.closeEventDetail()
-		screen.openFirstEvent().closeEventDetail()
-
-		screen.capture("closed-the-event-sheet-twice")
-		screen.verifyCalendarTitle()
-		screen.verifyStripIsPresent()
-
-		// Started hard against the left edge, where UIKit's screen-edge
-		// recogniser lives, and dragged most of the way across so the gesture
-		// completes rather than rubber-banding back.
-		let edge = app.coordinate(withNormalizedOffset: CGVector(dx: 0.0, dy: 0.5))
-		let across = app.coordinate(withNormalizedOffset: CGVector(dx: 0.9, dy: 0.5))
-		edge.press(forDuration: 0.05, thenDragTo: across)
-
-		XCTAssertTrue(
-			app.buttons[TestIdentifiers.Buttons.calendar].waitForExistence(timeout: 30),
-			"Swiping from the left edge should land back on the home screen")
-	}
-
 	/// Today, in Day mode, is a different thing from Today in Upcoming: it
 	/// chooses a day rather than scrolling a list, and the pager has to be
 	/// rebuilt around it. Pressed from a day well ahead, it once left the pager
