@@ -4,6 +4,7 @@ import {Button, Image, Text, VStack, ZStack, type ImageProps} from '@expo/ui/swi
 import {
 	accessibilityHint,
 	accessibilityLabel,
+	background,
 	buttonStyle,
 	environment,
 	font,
@@ -12,6 +13,7 @@ import {
 	imageScale,
 	opacity,
 	padding,
+	shapes,
 } from '@expo/ui/swift-ui/modifiers'
 import {opensInBrowser, type ViewType} from '../views'
 import {GradientRoundedRectangle} from '../../components/gradient-tile'
@@ -70,20 +72,30 @@ function HomeScreenButtonLabel({
 	)
 }
 
+/// The badge's diameter, in points.
+const BADGE_SIZE = 26
+/// How far the badge sits in from the card's top and trailing edges.
+const BADGE_INSET = 10
+
 /// Marks a tile that opens a web page rather than one of the app's own screens.
 function WebLinkBadge({isDarkScheme}: {isDarkScheme: boolean}) {
 	return (
 		<Image
 			modifiers={[
-				font({textStyle: 'footnote', weight: 'semibold'}),
+				font({textStyle: 'caption', weight: 'bold'}),
 				foregroundStyle({type: 'hierarchical', style: 'primary'}),
-				opacity(0.8),
-				padding({all: 12}),
+				frame({width: BADGE_SIZE, height: BADGE_SIZE}),
+				// a wash of the glyph's own colour, so the gradient shows through
+				background(
+					isDarkScheme ? 'rgba(0, 0, 0, 0.2)' : 'rgba(255, 255, 255, 0.25)',
+					shapes.circle(),
+				),
+				padding({all: BADGE_INSET}),
 				frame({maxWidth: FILL_WIDTH, maxHeight: FILL_WIDTH, alignment: 'topTrailing'}),
 				// match the label's inverted colors
 				environment({key: 'colorScheme', value: isDarkScheme ? 'light' : 'dark'}),
 			]}
-			systemName="globe"
+			systemName="arrow.up.right"
 		/>
 	)
 }
