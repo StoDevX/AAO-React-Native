@@ -5,7 +5,7 @@ struct CalendarScreen: Screen {
 
 	@discardableResult
 	func navigate() -> Self {
-		navigateFromHome(to: TestIdentifiers.Buttons.calendar)
+		open(route: "/Calendar")
 	}
 
 	@discardableResult
@@ -17,9 +17,9 @@ struct CalendarScreen: Screen {
 	@discardableResult
 	func openPicker() -> Self {
 		let picker = app.buttons[TestIdentifiers.Calendar.picker]
-		XCTAssertTrue(
-			picker.waitForExistence(timeout: 30),
-			"Calendar picker should be in the toolbar")
+    assert(
+      picker.waitForExistence(timeout: 30),
+      "Calendar picker should be in the toolbar")
 		picker.tap()
 		return self
 	}
@@ -30,7 +30,7 @@ struct CalendarScreen: Screen {
 		openSubmenu(TestIdentifiers.Calendar.categoryMenu)
 		for category in TestIdentifiers.Calendar.categories {
 			XCTContext.runActivity(named: category) { _ in
-				XCTAssertTrue(
+				assert(
 					app.buttons[category].waitForExistence(timeout: 30),
 					"\(category) should be offered in the picker")
 			}
@@ -578,15 +578,17 @@ struct CalendarScreen: Screen {
 		return self
 	}
 
+  func visibleRows() -> XCUIElementQuery {
+    app.buttons.matching(.beginsWith(TestIdentifiers.Calendar.eventRowPrefix))
+  }
+
 	/// How many event rows are on screen.
 	///
 	/// A count of what is rendered, not of what the calendar holds -- the list
 	/// is lazy. Enough to tell "some rows" from "none", and to tell a narrowed
 	/// list from an unnarrowed one, which is all any assertion here claims.
 	func visibleRowCount() -> Int {
-		app.buttons.matching(
-			NSPredicate(format: "identifier BEGINSWITH %@", TestIdentifiers.Calendar.eventRowPrefix)
-		).count
+		visibleRows().count
 	}
 
 	/// A row for `title` is in the list, found by its own identifier.

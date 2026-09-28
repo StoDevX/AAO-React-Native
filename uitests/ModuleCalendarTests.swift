@@ -21,7 +21,8 @@ class ModuleCalendarTests: UITestCase {
 	/// actually reach the screen in. The category submenu is opened last:
 	/// descending into an axis replaces what is on screen, so the top-level rows
 	/// have to be read while they are still the thing presented.
-	func testDayModeOpensReadyToUse() throws {
+  @MainActor func testDayModeOpensReadyToUse() async throws {
+    app.launch()
 		let screen = CalendarScreen(app: app)
 
     screen.navigate()
@@ -67,9 +68,9 @@ class ModuleCalendarTests: UITestCase {
 	///
 	/// Dragging the strip and choosing a day are the pair of gestures that used
 	/// to disagree, so the selection is read either side of the first swipe.
-	func testSwipingTheStripSettlesOnASundayAndKeepsTheSelection() throws {
+  @MainActor func testSwipingTheStripSettlesOnASundayAndKeepsTheSelection() async throws {
 		let screen = CalendarScreen(app: app)
-			.navigate()
+    screen.navigate()
 
 		guard let selected = screen.selectedDay() else {
 			XCTFail("A day should be selected before dragging the strip")
@@ -92,9 +93,17 @@ class ModuleCalendarTests: UITestCase {
 	/// it leave and return, rather than by comparing row counts either side:
 	/// the list is a lazy stack, so a count says how far ahead SwiftUI built,
 	/// not how many events the list holds.
-	func testResetFiltersClearsTheFilter() throws {
-		let screen = CalendarScreen(app: app).navigate()
-		let unfiltered = screen.visibleRowCount()
+  @MainActor func testResetFiltersClearsTheFilter() async throws {
+    let screen = CalendarScreen(app: app)
+    screen.navigate()
+
+    let rows = app.buttons.matching(.beginsWith("event-row-"))
+    let expectation = expectation(for: rows.count >= 1)
+    await fulfillment(of: [expectation], timeout: 10)
+
+    let unfiltered = rows.count
+
+    screen.capture("before filtering")
 
     screen.openPicker()
 
@@ -106,17 +115,15 @@ class ModuleCalendarTests: UITestCase {
 
     screen.dismissMenu()
 
+    screen.capture("after filtering")
+
 		XCTAssertLessThan(
-			screen.visibleRowCount(), unfiltered,
+      rows.count, unfiltered,
 			"Choosing a category should narrow the list")
 		screen.verifyRowAbsent(TestIdentifiers.Calendar.unfilteredDayRow)
 
-		screen
-			.openPicker()
-			.capture("36-reset-filters-offered")
-
-    screen.tapResetFilters()
-			.capture("32-filter-cleared")
+		screen.openPicker().tapResetFilters()
+    screen.capture("filters cleared")
 
 		screen.verifyRowPresent(TestIdentifiers.Calendar.unfilteredDayRow)
 	}
