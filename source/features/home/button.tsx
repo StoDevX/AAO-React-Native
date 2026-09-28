@@ -13,7 +13,6 @@ import {
 import {
 	accessibilityHint,
 	accessibilityLabel,
-	background,
 	buttonStyle,
 	environment,
 	font,
@@ -22,7 +21,6 @@ import {
 	imageScale,
 	opacity,
 	padding,
-	shapes,
 } from '@expo/ui/swift-ui/modifiers'
 import {opensInBrowser, type ViewType} from '../views'
 import {GradientRoundedRectangle} from '../../components/gradient-tile'
@@ -75,7 +73,7 @@ function HomeScreenButtonLabel({
 				{isWebLink ? (
 					<>
 						<Spacer />
-						<WebLinkBadge isDarkScheme={isDarkScheme} />
+						<WebLinkBadge />
 					</>
 				) : null}
 			</HStack>
@@ -92,23 +90,16 @@ function HomeScreenButtonLabel({
 	)
 }
 
-/// The badge's diameter, in points.
-const BADGE_SIZE = 26
-
 /// Marks a tile that opens a web page rather than one of the app's own screens.
 /// It sits in the icon's row, as a Shortcuts tile's run button does.
-function WebLinkBadge({isDarkScheme}: {isDarkScheme: boolean}) {
+function WebLinkBadge() {
 	return (
 		<Image
 			modifiers={[
 				font({textStyle: 'caption', weight: 'bold'}),
+				// the icon's colour, which it sits beside
 				foregroundStyle({type: 'hierarchical', style: 'primary'}),
-				frame({width: BADGE_SIZE, height: BADGE_SIZE}),
-				// a wash of the glyph's own colour, so the gradient shows through
-				background(
-					isDarkScheme ? 'rgba(0, 0, 0, 0.2)' : 'rgba(255, 255, 255, 0.25)',
-					shapes.circle(),
-				),
+				opacity(0.8),
 			]}
 			systemName="arrow.up.right"
 		/>
@@ -131,11 +122,7 @@ export function HomeScreenButton({view, onPress}: Props): React.ReactNode {
 			onPress={onPress}
 		>
 			<ZStack alignment="topLeading">
-				<GradientRoundedRectangle
-					gradient={view.gradient}
-					outlined={isWebLink}
-					showShadow={isDarkScheme}
-				/>
+				<GradientRoundedRectangle gradient={view.gradient} showShadow={isDarkScheme} />
 				<HomeScreenButtonLabel
 					icon={view.icon}
 					isDarkScheme={isDarkScheme}

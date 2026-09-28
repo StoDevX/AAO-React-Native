@@ -19,7 +19,6 @@ import {
 	padding,
 	shadow,
 	shapes,
-	strokeBorder,
 } from '@expo/ui/swift-ui/modifiers'
 import type {SFSymbol} from 'sf-symbols-typescript'
 import * as c from '@frogpond/colors'
@@ -66,42 +65,19 @@ type Props = {
 	dimmed?: boolean
 }
 
-/// The card's corner radius, in points.
-const CARD_RADIUS = 27
-/// How far the fill of an outlined card lets the page behind it show through.
-const OUTLINED_FILL_OPACITY = 0.8
-/// The width of an outlined card's rim, in points.
-const OUTLINE_WIDTH = 8
-
 export function GradientRoundedRectangle({
 	gradient,
 	showShadow,
-	outlined = false,
 }: {
 	gradient: Gradient
 	showShadow: boolean
-	/** Draws the fill slightly translucent inside an opaque rim of the same gradient. */
-	outlined?: boolean
 }): React.ReactNode {
 	let [start, end] = gradient
 
 	return (
 		<RoundedRectangle
-			cornerRadius={CARD_RADIUS}
+			cornerRadius={27}
 			modifiers={[
-				// Both come before the gradient, so the rim -- an overlay -- is
-				// left out of the fill's opacity but still painted by the
-				// gradient, which reaches it through the environment.
-				...(outlined
-					? [
-							opacity(OUTLINED_FILL_OPACITY),
-							strokeBorder({
-								style: {lineWidth: OUTLINE_WIDTH},
-								shape: 'roundedRectangle',
-								cornerRadius: CARD_RADIUS,
-							}),
-						]
-					: []),
 				showShadow
 					? shadow({
 							color: displayP3(end, 0.4),

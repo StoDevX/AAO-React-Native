@@ -151,7 +151,6 @@ export const scrollContentBackground = named('scrollContentBackground', 'visible
 export const scrollTargetLayout = bare('scrollTargetLayout')
 export const shadow = spreading('shadow')
 export const strikethrough = spreading('strikethrough')
-export const strokeBorder = spreading('strokeBorder')
 export const submitLabel = named('submitLabel', 'submitLabel')
 export const tabViewStyle = spreading('tabViewStyle')
 export const tag = named('tag', 'tag')
