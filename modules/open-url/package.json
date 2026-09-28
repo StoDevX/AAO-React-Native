@@ -10,7 +10,7 @@
   },
   "dependencies": {},
   "peerDependencies": {
-    "expo-web-browser": "~57.0.2",
+    "expo-web-browser": "~57.0.3",
     "react-native": "catalog:"
   }
 }
