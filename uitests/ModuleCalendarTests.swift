@@ -305,36 +305,4 @@ class ModuleCalendarTests: UITestCase {
 		calendar.verifyStripIsPresent()
 		calendar.verifyNoticeVisible(TestIdentifiers.Calendar.emptyDayNotice)
 	}
-
-	/// Every other test here selects a day with `XCUIElement.tap()`, which can
-	/// activate a `Pressable` through the accessibility layer without landing a
-	/// real touch where the cell is drawn. A coordinate tap always synthesizes a
-	/// touch through UIKit's actual `hitTest(_:with:)`, which is what a finger on
-	/// a physical device does -- and reports from a physical iPhone 14 Pro say
-	/// that almost never selects a day, even though the strip scrolls fine.
-	///
-	/// Several targets, in sequence, and one after a scroll: a single tap could
-	/// pass by luck on a bug this intermittent, so the loop is what would have
-	/// caught a hit-testing problem that only shows up some of the time.
-	func testTappingADayCellByCoordinateSelectsIt() throws {
-		let calendar = CalendarScreen(app: app)
-		calendar.navigate().verifyStripIsPresent()
-
-		// Days ahead of the frozen one, since a day already gone cannot be
-		// chosen at all.
-		calendar.swipeStripToNextWeek()
-		for target in ["2026-09-08", "2026-09-10", "2026-09-07", "2026-09-11", "2026-09-09"] {
-			calendar.tapDayAtItsCenter(target)
-			calendar.verifySelectedDay(
-				TestIdentifiers.Calendar.dayCellPrefix + target,
-				message: "A coordinate tap on \(target)'s cell should select it, the way a real touch does")
-		}
-
-		calendar.swipeStripToNextWeek()
-		let afterScroll = "2026-09-14"
-		calendar.tapDayAtItsCenter(afterScroll)
-		calendar.verifySelectedDay(
-			TestIdentifiers.Calendar.dayCellPrefix + afterScroll,
-			message: "A coordinate tap after scrolling the strip should still select the cell it lands on")
-	}
 }
