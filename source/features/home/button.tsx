@@ -1,6 +1,15 @@
 import * as React from 'react'
 import {useColorScheme, useWindowDimensions} from 'react-native'
-import {Button, Image, Text, VStack, ZStack, type ImageProps} from '@expo/ui/swift-ui'
+import {
+	Button,
+	HStack,
+	Image,
+	Spacer,
+	Text,
+	VStack,
+	ZStack,
+	type ImageProps,
+} from '@expo/ui/swift-ui'
 import {
 	accessibilityHint,
 	accessibilityLabel,
@@ -28,10 +37,12 @@ function HomeScreenButtonLabel({
 	title,
 	icon,
 	isDarkScheme,
+	isWebLink,
 }: {
 	title: string
 	icon: NonNullable<ImageProps['systemName']>
 	isDarkScheme: boolean
+	isWebLink: boolean
 }) {
 	let {fontScale} = useWindowDimensions()
 
@@ -45,20 +56,29 @@ function HomeScreenButtonLabel({
 			]}
 			spacing={10}
 		>
-			<Image
-				modifiers={[
-					// A fixed box, as Health's is, so glyphs of different heights
-					// still give every card one height. It was measured at the
-					// default text size, and the glyph grows with Dynamic Type, so
-					// the box grows too or the glyph spills over the card's top.
-					frame({height: (86 / 3) * fontScale}),
-					imageScale('large'),
-					font({textStyle: 'title3'}),
-					foregroundStyle({type: 'hierarchical', style: 'primary'}),
-					opacity(0.8),
-				]}
-				systemName={icon}
-			/>
+			<HStack>
+				<Image
+					modifiers={[
+						// A fixed box, as Health's is, so glyphs of different heights
+						// still give every card one height. It was measured at the
+						// default text size, and the glyph grows with Dynamic Type, so
+						// the box grows too or the glyph spills over the card's top.
+						frame({height: (86 / 3) * fontScale}),
+						imageScale('large'),
+						font({textStyle: 'title3'}),
+						foregroundStyle({type: 'hierarchical', style: 'primary'}),
+						opacity(0.8),
+					]}
+					systemName={icon}
+				/>
+
+				{isWebLink ? (
+					<>
+						<Spacer />
+						<WebLinkBadge isDarkScheme={isDarkScheme} />
+					</>
+				) : null}
+			</HStack>
 
 			<Text
 				modifiers={[
@@ -74,10 +94,9 @@ function HomeScreenButtonLabel({
 
 /// The badge's diameter, in points.
 const BADGE_SIZE = 26
-/// How far the badge sits in from the card's top and trailing edges.
-const BADGE_INSET = 10
 
 /// Marks a tile that opens a web page rather than one of the app's own screens.
+/// It sits in the icon's row, as a Shortcuts tile's run button does.
 function WebLinkBadge({isDarkScheme}: {isDarkScheme: boolean}) {
 	return (
 		<Image
@@ -90,10 +109,6 @@ function WebLinkBadge({isDarkScheme}: {isDarkScheme: boolean}) {
 					isDarkScheme ? 'rgba(0, 0, 0, 0.2)' : 'rgba(255, 255, 255, 0.25)',
 					shapes.circle(),
 				),
-				padding({all: BADGE_INSET}),
-				frame({maxWidth: FILL_WIDTH, maxHeight: FILL_WIDTH, alignment: 'topTrailing'}),
-				// match the label's inverted colors
-				environment({key: 'colorScheme', value: isDarkScheme ? 'light' : 'dark'}),
 			]}
 			systemName="arrow.up.right"
 		/>
@@ -116,9 +131,17 @@ export function HomeScreenButton({view, onPress}: Props): React.ReactNode {
 			onPress={onPress}
 		>
 			<ZStack alignment="topLeading">
-				<GradientRoundedRectangle gradient={view.gradient} showShadow={isDarkScheme} />
-				<HomeScreenButtonLabel title={view.title} icon={view.icon} isDarkScheme={isDarkScheme} />
-				{isWebLink ? <WebLinkBadge isDarkScheme={isDarkScheme} /> : null}
+				<GradientRoundedRectangle
+					gradient={view.gradient}
+					outlined={isWebLink}
+					showShadow={isDarkScheme}
+				/>
+				<HomeScreenButtonLabel
+					icon={view.icon}
+					isDarkScheme={isDarkScheme}
+					isWebLink={isWebLink}
+					title={view.title}
+				/>
 			</ZStack>
 		</Button>
 	)
