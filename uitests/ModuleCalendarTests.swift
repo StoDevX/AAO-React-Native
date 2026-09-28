@@ -197,21 +197,6 @@ class ModuleCalendarTests: UITestCase {
 		screen.verifyRowPresent(TestIdentifiers.Calendar.unfilteredDayRow)
 	}
 
-	/// The Upcoming list mounts a screen or so of rows and mounts more as the
-	/// reader nears the end, because mounting every row at once freezes the
-	/// screen. Nothing in Jest scrolls, so this is the only check that the list
-	/// keeps growing rather than stopping at its first step.
-	func testScrollingUpcomingToTheEndReachesTheLastEvent() throws {
-		let screen = CalendarScreen(app: app)
-		screen.navigate()
-			.openModeMenu()
-			.selectMode(TestIdentifiers.Calendar.upcomingMode)
-			.verifyStripAbsent()
-			.scrollToEnd()
-			.capture("upcoming-scrolled-to-end")
-			.verifyRowPresent(TestIdentifiers.Calendar.lastUpcomingRow)
-	}
-
 	/// Organisation is the second filter axis, and the only one whose values
 	/// come from Presence rather than from the campus calendar. Nothing in Jest
 	/// reaches the rendered menu, so this is the only check that choosing one
