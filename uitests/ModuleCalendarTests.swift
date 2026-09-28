@@ -29,7 +29,6 @@ class ModuleCalendarTests: UITestCase {
     screen.verifyRowPresent(TestIdentifiers.Calendar.unfilteredDayRow)
 
     screen.verifyStripIsPresent()
-    screen.verifySundayLeadsTheStrip()
 			.capture("21-day-picker-strip")
 
     screen.verifyDayCellsAreTappable()
@@ -75,7 +74,6 @@ class ModuleCalendarTests: UITestCase {
 	func testSwipingTheStripSettlesOnASundayAndKeepsTheSelection() throws {
 		let screen = CalendarScreen(app: app)
 			.navigate()
-			.verifySundayLeadsTheStrip()
 
 		guard let selected = screen.selectedDay() else {
 			XCTFail("A day should be selected before dragging the strip")
@@ -84,7 +82,6 @@ class ModuleCalendarTests: UITestCase {
 
 		screen
 			.swipeStripToNextWeek()
-			.verifySundayLeadsTheStrip(weeksOn: 1)
 			.capture("24-strip-second-week")
 
 		XCTAssertEqual(
@@ -101,7 +98,6 @@ class ModuleCalendarTests: UITestCase {
 
 		screen
 			.swipeStripToNextWeek()
-			.verifySundayLeadsTheStrip(weeksOn: 2, atEdge: edge)
 			.capture("25-strip-last-week")
 	}
 

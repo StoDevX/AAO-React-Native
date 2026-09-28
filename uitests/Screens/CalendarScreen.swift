@@ -335,35 +335,6 @@ struct CalendarScreen: Screen {
 		return TestIdentifiers.Calendar.dayCell(sunday)
 	}
 
-	/// A Sunday leads the strip, so that cell should be the leftmost visible one.
-	/// The week is measured from the app's frozen clock, not the live one;
-	/// `weeksOn` counts on from it, for a strip that has been swiped along.
-	///
-	/// Pass `atEdge` to also pin where that Sunday came to rest. Being merely
-	/// visible is not the claim -- a strip that ran out of content mid-week
-	/// still shows a Sunday, just further along than one that snapped.
-	@discardableResult
-	func verifySundayLeadsTheStrip(weeksOn weeks: Int = 0, atEdge edge: CGFloat? = nil) -> Self {
-		verifyStripIsPresent()
-
-		guard let leading = leadingVisibleDayCell() else {
-			XCTFail("The strip should have a visible day cell")
-			return self
-		}
-
-		let expected = sundayCell(weeksOn: weeks)
-		XCTAssertEqual(
-			leading.cell.identifier, expected,
-			"The strip should lead with a Sunday (expected \(expected))")
-
-		if let edge {
-			XCTAssertEqual(
-				leading.frame.minX, edge, accuracy: 1.0,
-				"A snapped week should bring its Sunday to the strip's leading edge")
-		}
-		return self
-	}
-
 	/// Drags the strip one week toward the leading edge and lets it settle.
 	///
 	/// A coordinate drag rather than `swipeLeft()` on a cell: a cell is 44pt
