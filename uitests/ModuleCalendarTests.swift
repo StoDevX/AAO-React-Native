@@ -1,6 +1,6 @@
 import XCTest
 
-class ModuleCalendarTests: UITestCase {
+class ModuleCalendarDayModeTests: UITestCase {
 
 	// MARK: - Day picker strip
 
@@ -126,59 +126,6 @@ class ModuleCalendarTests: UITestCase {
 		screen.verifyRowPresent(TestIdentifiers.Calendar.unfilteredDayRow)
 	}
 
-	/// Organisation is the second filter axis, and the only one whose values
-	/// come from Presence rather than from the campus calendar. Nothing in Jest
-	/// reaches the rendered menu, so this is the only check that choosing one
-	/// narrows the list the way a category does.
-	///
-	/// Upcoming, not Day: the fixture's Music Organizations events all fall on
-	/// days other than the frozen one, so Day mode's single day would show none
-	/// of them either side of the filter, and "narrows" would have nothing to
-	/// prove against. Only the merged list has enough days in view for a
-	/// sponsor filter to narrow rather than empty it.
-	///
-	/// Reset is checked against a named row the filter excluded, for the reason
-	/// `testResetFiltersClearsTheFilter` gives.
-	///
-	/// The view menu is checked on the way in: it offers the two views that
-	/// exist, and not the one that does not.
-  @MainActor func testFilteringByOrganizationNarrowsTheUpcomingList() async throws {
-    let screen = CalendarScreen(app: app)
-    screen.navigate()
-
-    screen.openModeMenu()
-    screen.verifyModeAbsent(TestIdentifiers.Calendar.timelineMode)
-    screen.selectMode(TestIdentifiers.Calendar.upcomingMode)
-    screen.verifyStripAbsent()
-
-    let rows = app.buttons.matching(.beginsWith("event-row-"))
-    let expectation = expectation(for: rows.count >= 1)
-    await fulfillment(of: [expectation], timeout: 10)
-    let unfiltered = rows.count
-
-		screen
-			.openPicker()
-			.selectOrganization(TestIdentifiers.Calendar.organization)
-			.dismissMenu()
-			.capture("34-filtered-by-organization")
-
-    let filtered = rows.count
-
-		XCTAssertLessThan(
-			filtered, unfiltered,
-			"Choosing an organisation should narrow the list")
-		XCTAssertGreaterThan(
-			filtered, 0,
-			"The organisation sponsors several events, so rows should remain")
-		screen.verifyRowAbsent(TestIdentifiers.Calendar.unfilteredUpcomingRow)
-
-		screen
-			.openPicker()
-			.tapResetFilters()
-
-		screen.verifyRowPresent(TestIdentifiers.Calendar.unfilteredUpcomingRow)
-	}
-
 	/// Today, in Day mode, is a different thing from Today in Upcoming: it
 	/// chooses a day rather than scrolling a list, and the pager has to be
 	/// rebuilt around it. Pressed from a day well ahead, it once left the pager
@@ -243,4 +190,60 @@ class ModuleCalendarTests: UITestCase {
 		calendar.verifyStripIsPresent()
 		calendar.verifyNoticeVisible(TestIdentifiers.Calendar.emptyDayNotice)
 	}
+}
+
+class ModuleCalendarUpcomingModeTests: UITestCase {
+
+  /// Organisation is the second filter axis, and the only one whose values
+  /// come from Presence rather than from the campus calendar. Nothing in Jest
+  /// reaches the rendered menu, so this is the only check that choosing one
+  /// narrows the list the way a category does.
+  ///
+  /// Upcoming, not Day: the fixture's Music Organizations events all fall on
+  /// days other than the frozen one, so Day mode's single day would show none
+  /// of them either side of the filter, and "narrows" would have nothing to
+  /// prove against. Only the merged list has enough days in view for a
+  /// sponsor filter to narrow rather than empty it.
+  ///
+  /// Reset is checked against a named row the filter excluded, for the reason
+  /// `testResetFiltersClearsTheFilter` gives.
+  ///
+  /// The view menu is checked on the way in: it offers the two views that
+  /// exist, and not the one that does not.
+  @MainActor func testFilteringByOrganizationNarrowsTheUpcomingList() async throws {
+    let screen = CalendarScreen(app: app)
+    screen.navigate()
+
+    screen.openModeMenu()
+    screen.verifyModeAbsent(TestIdentifiers.Calendar.timelineMode)
+    screen.selectMode(TestIdentifiers.Calendar.upcomingMode)
+    screen.verifyStripAbsent()
+
+    let rows = app.buttons.matching(.beginsWith("event-row-"))
+    let expectation = expectation(for: rows.count >= 1)
+    await fulfillment(of: [expectation], timeout: 10)
+    let unfiltered = rows.count
+
+    screen
+      .openPicker()
+      .selectOrganization(TestIdentifiers.Calendar.organization)
+      .dismissMenu()
+      .capture("34-filtered-by-organization")
+
+    let filtered = rows.count
+
+    XCTAssertLessThan(
+      filtered, unfiltered,
+      "Choosing an organisation should narrow the list")
+    XCTAssertGreaterThan(
+      filtered, 0,
+      "The organisation sponsors several events, so rows should remain")
+    screen.verifyRowAbsent(TestIdentifiers.Calendar.unfilteredUpcomingRow)
+
+    screen
+      .openPicker()
+      .tapResetFilters()
+
+    screen.verifyRowPresent(TestIdentifiers.Calendar.unfilteredUpcomingRow)
+  }
 }
