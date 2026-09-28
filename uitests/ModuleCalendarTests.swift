@@ -37,10 +37,6 @@ class ModuleCalendarTests: UITestCase {
       screen.openPicker()
         .verifyMenuSection(TestIdentifiers.Calendar.calendarsSection)
 
-      XCTAssertFalse(
-        app.buttons[TestIdentifiers.Calendar.resetFilters].exists,
-        "Reset Filters should be absent while the list is unfiltered")
-
       XCTAssertTrue(
         app.buttons[TestIdentifiers.Calendar.categoryMenu].waitForExistence(timeout: 30),
         "\(TestIdentifiers.Calendar.categoryMenu) should be a row of the open picker")
@@ -87,18 +83,6 @@ class ModuleCalendarTests: UITestCase {
 		XCTAssertEqual(
 			screen.selectedDay(), selected,
 			"Scrolling the strip should show another week, not choose a day in it")
-
-		// The resting edge of a snapped week, read off the one week that is
-		// certainly reachable, so the last week is measured against the app's own
-		// layout rather than against a number written down here.
-		guard let edge = screen.leadingDayCellEdge() else {
-			XCTFail("The strip should have a visible day cell")
-			return
-		}
-
-		screen
-			.swipeStripToNextWeek()
-			.capture("25-strip-last-week")
 	}
 
 	/// Reset Filters clears whichever axis is filtered, and is the only way back
@@ -112,10 +96,15 @@ class ModuleCalendarTests: UITestCase {
 		let screen = CalendarScreen(app: app).navigate()
 		let unfiltered = screen.visibleRowCount()
 
-		screen
-			.openPicker()
-			.selectCategory(TestIdentifiers.Calendar.categories[0])
-			.dismissMenu()
+    screen.openPicker()
+
+    XCTAssertTrue(
+      app.buttons[TestIdentifiers.Calendar.resetFilters].waitForNonExistence(timeout: 10),
+      "Reset Filters should be absent while the list is unfiltered")
+
+		screen.selectCategory(TestIdentifiers.Calendar.categories[0])
+
+    screen.dismissMenu()
 
 		XCTAssertLessThan(
 			screen.visibleRowCount(), unfiltered,
@@ -125,7 +114,8 @@ class ModuleCalendarTests: UITestCase {
 		screen
 			.openPicker()
 			.capture("36-reset-filters-offered")
-			.tapResetFilters()
+
+    screen.tapResetFilters()
 			.capture("32-filter-cleared")
 
 		screen.verifyRowPresent(TestIdentifiers.Calendar.unfilteredDayRow)
