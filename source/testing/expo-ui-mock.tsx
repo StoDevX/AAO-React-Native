@@ -59,6 +59,7 @@ export const accessibilityAddTraits = named('accessibilityAddTraits', 'traits')
 export const accessibilityElement = (children = 'ignore'): Modifier =>
 	createModifier('accessibilityElement', {children})
 export const accessibilityHidden = flag('accessibilityHidden', 'hidden')
+export const accessibilityHint = named('accessibilityHint', 'hint')
 export const accessibilityIdentifier = named('accessibilityIdentifier', 'identifier')
 export const accessibilityLabel = named('accessibilityLabel', 'label')
 export const accessibilityRemoveTraits = named('accessibilityRemoveTraits', 'traits')

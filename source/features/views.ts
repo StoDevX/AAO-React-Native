@@ -26,6 +26,11 @@ type WebLinkView = {
 
 export type ViewType = CommonView & (NativeView | WebLinkView)
 
+/** Whether tapping `view` leaves the app's own screens for a web page. */
+export function opensInBrowser(view: ViewType): boolean {
+	return view.type !== 'view'
+}
+
 export const AllViews = (): Array<ViewType> => {
 	return [
 		{
@@ -36,8 +41,8 @@ export const AllViews = (): Array<ViewType> => {
 			gradient: c.greenGradient,
 		},
 		{
-			type: 'view',
-			view: '/SIS',
+			type: 'url',
+			url: 'https://sis.stolaf.edu/sis/landing-page.cfm',
 			title: 'SIS',
 			icon: 'person.text.rectangle.fill',
 			gradient: c.goldGradient,
