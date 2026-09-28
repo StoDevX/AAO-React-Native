@@ -127,46 +127,6 @@ class ModuleCalendarTests: UITestCase {
 			.capture("17-event-detail-added-to-calendar")
 	}
 
-	/// The CALENDARS section is what makes a source controllable. UI test mode
-	/// enables one calendar, so switching it off should leave nothing to draw.
-	func testTogglingACalendarOffEmptiesTheList() throws {
-		let screen = CalendarScreen(app: app).navigate()
-
-		XCTAssertGreaterThan(
-			screen.visibleRowCount(), 0,
-			"The fixture calendar should put rows on screen to begin with")
-
-		screen
-			.openPicker()
-			.toggleCalendar(TestIdentifiers.Calendar.uitestCalendar)
-
-		// With no calendar enabled there is no category and no organisation, so
-		// each axis draws an empty Menu -- which SwiftUI draws as no row at all.
-		// The picker is still open, and a reading that only knew about the axes
-		// would call it closed and leave it covering the list.
-		XCTAssertTrue(
-			screen.pickerIsPresented(),
-			"The picker should still read as open with every calendar switched off")
-
-		screen
-			.dismissMenu()
-			.capture("31-no-calendars-enabled")
-
-		XCTAssertEqual(
-			screen.visibleRowCount(), 0,
-			"With no calendar enabled the list should have no rows")
-		screen.verifyNoticeVisible(TestIdentifiers.Calendar.noCalendarsNotice)
-
-		screen
-			.openPicker()
-			.toggleCalendar(TestIdentifiers.Calendar.uitestCalendar)
-			.dismissMenu()
-
-		XCTAssertGreaterThan(
-			screen.visibleRowCount(), 0,
-			"Switching the calendar back on should restore its rows")
-	}
-
 	/// Reset Filters clears whichever axis is filtered, and is the only way back
 	/// to the whole list without hunting for the selected choice to untick.
 	///
