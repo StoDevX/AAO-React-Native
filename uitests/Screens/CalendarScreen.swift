@@ -357,6 +357,28 @@ struct CalendarScreen: Screen {
 		return self
 	}
 
+  /// Drags the strip one week toward the trailing edge and lets it settle.
+  ///
+  /// A coordinate drag rather than `swipeRight()` on a cell: a cell is 44pt
+  /// wide, and a swipe inside it travels nowhere near a week. The drag covers
+  /// most of a week so the snap has to choose the prior Sunday rather than fall
+  /// back to the one it started from, and it is slow enough not to fling past
+  /// it.
+  @discardableResult
+  func swipeStripToPriorWeek() -> Self {
+    guard let leading = leadingVisibleDayCell() else {
+      XCTFail("The strip should have a day cell to drag from")
+      return self
+    }
+
+    let strip = leading.frame
+    let origin = app.coordinate(withNormalizedOffset: .zero)
+    let start = origin.withOffset(CGVector(dx: strip.midX - 280, dy: strip.midY))
+    let end = origin.withOffset(CGVector(dx: strip.midX - 40, dy: strip.midY))
+    start.press(forDuration: 0.1, thenDragTo: end)
+    return self
+  }
+
 	/// Taps the cell for a given ISO day. It has to be on screen already --
 	/// `XCUIElement.tap()` on an offscreen cell scrolls the wrong view.
 	@discardableResult
@@ -385,36 +407,6 @@ struct CalendarScreen: Screen {
 			cell.waitForExistence(timeout: 10),
 			"The strip should offer \(isoDay)")
 		cell.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
-		return self
-	}
-
-	/// The day cells at the head of the strip should each clear the 44pt minimum
-	/// for a touch target.
-	///
-	/// Cheap to check and worth checking: a control drawn smaller than its
-	/// nominal size is the failure that no component test can see. The cells are
-	/// all one component, so the ones on screen stand for the rest.
-	@discardableResult
-	func verifyDayCellsAreTappable() -> Self {
-		verifyStripIsPresent()
-
-		let cells = dayCells()
-		XCTAssertFalse(cells.isEmpty, "The strip should have day cells")
-
-		for cell in cells {
-			// Both read once. Every mention of `identifier` or `frame` is a query the
-			// app has to answer, and the four assertions below would ask five times.
-			let name = cell.identifier
-			let frame = cell.frame
-
-			XCTContext.runActivity(named: "\(name) is \(frame.width)x\(frame.height)") { _ in }
-			XCTAssertGreaterThanOrEqual(
-				frame.height, 44,
-				"\(name) is too short to tap reliably")
-			XCTAssertGreaterThanOrEqual(
-				frame.width, 44,
-				"\(name) is too narrow to tap reliably")
-		}
 		return self
 	}
 

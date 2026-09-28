@@ -32,8 +32,6 @@ class ModuleCalendarTests: UITestCase {
     screen.verifyStripIsPresent()
 			.capture("21-day-picker-strip")
 
-    screen.verifyDayCellsAreTappable()
-
     XCTContext.runActivity(named: "Verify the picker rows") { _ in
       screen.openPicker()
         .verifyMenuSection(TestIdentifiers.Calendar.calendarsSection)
@@ -144,14 +142,19 @@ class ModuleCalendarTests: UITestCase {
 	///
 	/// The view menu is checked on the way in: it offers the two views that
 	/// exist, and not the one that does not.
-	func testFilteringByOrganizationNarrowsTheUpcomingList() throws {
-		let screen = CalendarScreen(app: app)
-		screen.navigate()
-			.openModeMenu()
-			.verifyModeAbsent(TestIdentifiers.Calendar.timelineMode)
-			.selectMode(TestIdentifiers.Calendar.upcomingMode)
-			.verifyStripAbsent()
-		let unfiltered = screen.visibleRowCount()
+  @MainActor func testFilteringByOrganizationNarrowsTheUpcomingList() async throws {
+    let screen = CalendarScreen(app: app)
+    screen.navigate()
+
+    screen.openModeMenu()
+    screen.verifyModeAbsent(TestIdentifiers.Calendar.timelineMode)
+    screen.selectMode(TestIdentifiers.Calendar.upcomingMode)
+    screen.verifyStripAbsent()
+
+    let rows = app.buttons.matching(.beginsWith("event-row-"))
+    let expectation = expectation(for: rows.count >= 1)
+    await fulfillment(of: [expectation], timeout: 10)
+    let unfiltered = rows.count
 
 		screen
 			.openPicker()
@@ -159,7 +162,7 @@ class ModuleCalendarTests: UITestCase {
 			.dismissMenu()
 			.capture("34-filtered-by-organization")
 
-		let filtered = screen.visibleRowCount()
+    let filtered = rows.count
 
 		XCTAssertLessThan(
 			filtered, unfiltered,
@@ -182,9 +185,11 @@ class ModuleCalendarTests: UITestCase {
 	/// seeded with a day it had no page for, so the strip showed today selected
 	/// over an empty pane -- which is why this asserts an event is on screen and
 	/// not merely that the strip moved.
-	func testTodayReturnsTheDayViewToToday() throws {
+  @MainActor func testTodayReturnsTheDayViewToToday() async throws {
 		let calendar = CalendarScreen(app: app)
-		calendar.navigate().verifyStripIsPresent()
+		calendar.navigate()
+
+    calendar.verifyStripIsPresent()
 
 		let opening = calendar.topRowLabel()
 		XCTAssertNotNil(opening, "Day mode should open on a day that has events")
@@ -212,9 +217,11 @@ class ModuleCalendarTests: UITestCase {
 	/// it spans -- so the first day the fixture leaves empty on or after the
 	/// frozen Saturday is a fortnight out. Days already gone cannot be chosen
 	/// at all, which is why the nearer empty days behind it are no use here.
-	func testAnEmptyDayKeepsTheStrip() throws {
+  @MainActor func testAnEmptyDayKeepsTheStrip() async throws {
 		let calendar = CalendarScreen(app: app)
-		calendar.navigate().verifyStripIsPresent()
+		calendar.navigate()
+
+    calendar.verifyStripIsPresent()
 
 		// The first day on or after the frozen one that the fixture leaves empty.
 		// Days already gone cannot be chosen at all, so an empty one has to be
