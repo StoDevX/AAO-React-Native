@@ -63,6 +63,26 @@ extension Screen {
 		return self
 	}
 
+	/// Open a route by deep link, skipping the home screen's tiles.
+	///
+	/// `route` is an Expo Router path, which drops route groups:
+	/// `app/(home)/Calendar.tsx` is `/Calendar`. `XCUIApplication.open(_:)`
+	/// raises no "Open in…?" sheet, unlike `simctl openurl`.
+	///
+	/// The home screen is waited for first, so the URL reaches an app that has
+	/// finished launching, and then waited out, so the caller starts on the
+	/// route rather than on a Home still animating away.
+	@discardableResult
+	func open(route: String) -> Self {
+		app.open(URL(string: "AllAboutOlaf://\(route)")!)
+
+    let homescreen = app.element(matching: TestIdentifiers.Home.screen)
+		XCTAssertTrue(
+			homescreen.waitForNonExistence(timeout: 10),
+			"Opening \(route) never left the home screen")
+		return self
+	}
+
 	/// Scrolls until `element` enters the accessibility tree.
 	///
 	/// SwiftUI's `Form` builds its rows lazily: anything below the fold is

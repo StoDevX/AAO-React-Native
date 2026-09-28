@@ -100,6 +100,13 @@ export function patchAppDelegate(contents: string): string {
 /// produced. Moving the whole of it into the scene delegate would be the more
 /// thorough adoption and a much larger change to generated code.
 ///
+/// The scene manifest also moves URL delivery: iOS hands a deep link or a
+/// universal link to the scene delegate, and never calls AppDelegate's
+/// handlers. Those handlers are what tell expo-linking and RCTLinkingManager
+/// about a URL, so the scene delegate passes each one back to them. On a cold
+/// launch expo-linking keeps the URL as the initial one, which is where Expo
+/// Router looks before JavaScript has subscribed to anything.
+///
 /// Appended to AppDelegate.swift rather than written as its own file: a new
 /// source file would have to be threaded into the generated Xcode project,
 /// and Swift does not care which file a class lives in.
@@ -121,6 +128,29 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     existing.windowScene = windowScene
     self.window = existing
     existing.makeKeyAndVisible()
+
+    for context in connectionOptions.urlContexts {
+      open(context.url)
+    }
+    for userActivity in connectionOptions.userActivities {
+      self.scene(scene, continue: userActivity)
+    }
+  }
+
+  func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
+    for context in URLContexts {
+      open(context.url)
+    }
+  }
+
+  func scene(_ scene: UIScene, continue userActivity: NSUserActivity) {
+    guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
+    _ = appDelegate.application(UIApplication.shared, continue: userActivity) { _ in }
+  }
+
+  private func open(_ url: URL) {
+    guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
+    _ = appDelegate.application(UIApplication.shared, open: url, options: [:])
   }
 }
 `
