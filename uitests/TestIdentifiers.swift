@@ -848,13 +848,8 @@ struct TestIdentifiers {
 		/// detail sheet and the map card alike. Mirrors HOURS_STATUS_ID in
 		/// source/features/building-hours/hours-section.tsx.
 		static let status = "hours-status"
-		/// The detail sheet's overflow menu button, labelled "More" -- the same
-		/// string as `Buttons.more`, the Home screen's own tile, purely by
-		/// coincidence of wording rather than a shared identifier. The two
-		/// screens are never on screen together, so today's bare-label match in
-		/// `openDetailMenu` cannot collide with the tile, but reusing the
-		/// constant keeps that coincidence from drifting into two truths.
-		static let detailMenu = Buttons.more
+		/// The detail sheet's overflow menu button, labelled "More".
+		static let detailMenu = "More"
 		/// The one action the detail sheet's overflow menu offers.
 		static let reportAction = "Report a Problem"
 		/// The report screen's own prompt -- distinct from
