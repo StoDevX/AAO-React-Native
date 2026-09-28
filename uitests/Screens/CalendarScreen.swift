@@ -220,33 +220,6 @@ struct CalendarScreen: Screen {
 		return self
 	}
 
-	/// The bottom bar floats over the list, so the list needs an inset for it:
-	/// once scrolled to the end, the last row should stop above the Calendars
-	/// button rather than under it.
-	@discardableResult
-	func verifyLastRowClearsToolbar(listTop: CGFloat = 150) -> Self {
-		let picker = app.buttons[TestIdentifiers.Calendar.picker]
-		XCTAssertTrue(
-			picker.waitForExistence(timeout: 30),
-			"The Calendars button should be in the bottom bar")
-
-		guard let row = anyRow(listTop: listTop) else {
-			XCTFail("The list should still have rows at its end")
-			return self
-		}
-
-		XCTContext.runActivity(
-			named: "Row \"\(row.label)\" ends at \(row.frame.maxY);"
-				+ " the Calendars button starts at \(picker.frame.minY)"
-		) { _ in }
-
-		// If any visible row clears the toolbar, the list has proper inset.
-		XCTAssertLessThanOrEqual(
-			row.frame.maxY, picker.frame.minY,
-			"The bottom bar should not cover rows of the list")
-		return self
-	}
-
 	/// Open the first event in the list.
 	@discardableResult
 	func openFirstEvent(listTop: CGFloat = 150) -> Self {

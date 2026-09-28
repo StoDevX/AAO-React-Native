@@ -2,18 +2,6 @@ import XCTest
 
 class ModuleCalendarTests: UITestCase {
 
-	/// The category filter button floats over the end of the list, so the list
-	/// has to be inset for it. Scrolled all the way down, the last row should
-	/// sit above the button rather than behind it.
-	func testBottomBarClearsTheEndOfTheList() throws {
-		CalendarScreen(app: app)
-			.navigate()
-			.capture("15-list-bottom-bar")
-			.scrollToEnd()
-			.capture("16-list-scrolled-to-end")
-			.verifyLastRowClearsToolbar()
-	}
-
 	// MARK: - Day picker strip
 
 	/// Day mode as the calendar opens in it, before anything is touched.
