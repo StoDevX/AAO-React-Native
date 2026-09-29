@@ -109,4 +109,37 @@ describe('copyAlternateIcons', () => {
 			/assets\/windmill-day\.icon is missing/u,
 		)
 	})
+
+	// actool reports a missing layer only as "Icon export exited with status
+	// 255", naming neither the layer nor the fact that one is missing.
+	it('fails loudly when a layer image is missing', () => {
+		let root = makeProjectRoot(ALTERNATE_ICONS)
+		rmSync(join(root, 'assets', 'windmill-day.icon', 'Assets', 'Layer.png'))
+		let destination = join(root, 'ios', 'AllAboutOlaf')
+		mkdirSync(destination, {recursive: true})
+
+		assert.throws(
+			() => copyAlternateIcons(root, destination),
+			/assets\/windmill-day\.icon\/Assets\/Layer\.png is missing/u,
+		)
+	})
+})
+
+describe('assertLayersPresent', () => {
+	it('accepts a document whose every layer image is present', () => {
+		let root = makeProjectRoot(['windmill'])
+		assert.doesNotThrow(() => assertLayersPresent(root, 'assets/windmill.icon'))
+	})
+
+	it('names each missing layer, however deeply the document nests it', () => {
+		let root = makeProjectRoot(['windmill'])
+		writeFileSync(
+			join(root, 'assets', 'windmill.icon', 'icon.json'),
+			iconJSON('Layer.png', 'Layer 3.png'),
+		)
+		assert.throws(
+			() => assertLayersPresent(root, 'assets/windmill.icon'),
+			/assets\/windmill\.icon\/Assets\/Layer 3\.png is missing/u,
+		)
+	})
 })
