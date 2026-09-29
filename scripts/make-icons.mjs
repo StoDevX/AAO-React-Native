@@ -1,48 +1,81 @@
-import {spawnSync as childSpawn} from 'node:child_process'
-const source = 'icon-source.png'
+/**
+ * Render the in-app previews of each Icon Composer document in assets/: the
+ * Settings picker's tile and the Credits screen's logo. Run after editing an
+ * `.icon`; the PNGs are committed, since the renderer only ships with Xcode.
+ */
+import {execFileSync} from 'node:child_process'
+import {readdirSync} from 'node:fs'
+import {basename, join} from 'node:path'
 
-const spawn = (cmd, ...args) => {
-	console.log(cmd, ...args)
-	childSpawn(cmd, args)
-}
+/**
+ * Icon Composer's own renderer. `xcrun ictool` is a different tool that shares
+ * the name and rejects `--export-image`.
+ */
+const ICTOOL =
+	'/Applications/Xcode.app/Contents/Applications/Icon Composer.app/Contents/Executables/ictool'
 
-const resize = (img, width, toFile) => spawn('convert', img, '-resize', `${width}x${width}`, toFile)
+const SOURCE_DIR = 'assets'
+const OUTPUT_DIR = join('images', 'icons')
 
-// iOS app icons
-const iosSizes = [
-	[29, 1],
-	[29, 2],
-	[29, 3],
-	[40, 2],
-	[40, 3],
-	[60, 2],
-	[60, 3],
+/** Every iPhone the app supports is @3x; an iPad scales the preview down. */
+const SCALE = 3
+
+/** The size in points each preview is drawn at. */
+const PREVIEWS = [
+	// The picker row's tile; ICON_SIZE in change-icon.tsx.
+	{suffix: 'icon', points: 28},
+	// AppLogo on the Credits screen.
+	{suffix: 'logo', points: 100},
 ]
-for (const [width, density] of iosSizes) {
-	resize(source, width * density, `icons/ios/AppIcon.appiconset/Icon-${width}@${density}x.png`)
+
+/**
+ * @param {string[]} entries the names in assets/
+ * @returns {{input: string, output: string, points: number}[]}
+ */
+export function exportPlan(entries) {
+	return entries
+		.filter((entry) => entry.endsWith('.icon'))
+		.flatMap((entry) =>
+			PREVIEWS.map(({suffix, points}) => ({
+				input: join(SOURCE_DIR, entry),
+				output: join(OUTPUT_DIR, `${basename(entry, '.icon')}-${suffix}.png`),
+				points,
+			})),
+		)
 }
 
-// iTunes icons
-const itunes = [
-	[512, 1],
-	[1024, 2],
-	[1536, 3],
-]
-for (const [width, density] of itunes) {
-	resize(source, width, `icons/ios/iTunesArtwork@${density}x.png`)
+function main() {
+	let plan = exportPlan(readdirSync(SOURCE_DIR))
+
+	for (let {input, output, points} of plan) {
+		console.log(`make-icons: ${input} -> ${output}`)
+		execFileSync(ICTOOL, [
+			input,
+			'--export-image',
+			'--output-file',
+			output,
+			'--platform',
+			'iOS',
+			'--rendition',
+			'Default',
+			'--width',
+			String(points),
+			'--height',
+			String(points),
+			'--scale',
+			String(SCALE),
+		])
+	}
+
+	execFileSync(
+		'oxipng',
+		['-o', 'max', '--strip', 'safe', '--zopfli', ...plan.map((p) => p.output)],
+		{
+			stdio: 'inherit',
+		},
+	)
 }
 
-// Android app icons
-const androidSizes = [
-	['ldpi', 36],
-	['mdpi', 48],
-	['hdpi', 72],
-	['xhdpi', 96],
-	['xxhdpi', 144],
-	['xxxhdpi', 192],
-]
-for (const [label, size] of androidSizes) {
-	resize(source, size, `icons/android/mipmap-${label}/ic_launcher.png`)
+if (import.meta.main) {
+	main()
 }
-
-resize(source, '512', 'icons/android/playstore-icon.png')

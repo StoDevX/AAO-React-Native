@@ -31,6 +31,11 @@ codesign --force --sign - --timestamp=none "$MISE_TOOL_INSTALL_PATH/axe"
 version = "3.8.0"
 os = ["macos"]
 
+# Shrinks the icon previews `mise run icons` renders. macOS only, as ictool is.
+[tools.oxipng]
+version = "10.2.1"
+os = ["macos"]
+
 [env]
 _.path = ["node_modules/.bin"]
 HK_PKL_BACKEND = "pklr"
@@ -240,6 +245,10 @@ run = "node scripts/validate-data.mjs"
 [tasks."scrape-dining"]
 description = "Update data/building-hours/ from Bon Appétit's café pages"
 run = "node scripts/scrape-bonapp.mjs"
+
+[tasks.icons]
+description = "Render the in-app icon previews from assets/*.icon"
+run = "node scripts/make-icons.mjs"
 
 # Needs the network, so it stays out of validate-data, as scrape-dining does.
 [tasks."scrape-student-wages"]
