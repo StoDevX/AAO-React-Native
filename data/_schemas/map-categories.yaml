@@ -1,0 +1,35 @@
+# The category tiles the map sheet draws, per campus. Published separately
+# from the app (see data/sources.yaml) so a group can be added, renamed,
+# reordered or restyled without an App Store release. A group whose
+# `categories` match no place on its campus draws no tile, so an entry can
+# ship ahead of the data it waits for.
+$schema: http://json-schema.org/draft-07/schema#
+
+definitions:
+  group:
+    type: object
+    additionalProperties: false
+    required: [label, categories, icon, gradient]
+    properties:
+      label: {type: string, minLength: 1}
+      # Raw values from the campus's map/geojson `categories`. A place
+      # matching any of them belongs to the group.
+      categories:
+        type: array
+        minItems: 1
+        uniqueItems: true
+        items: {type: string, minLength: 1}
+      # An SF Symbol name. Nothing can check one here; a wrong name draws a
+      # blank circle.
+      icon: {type: string, minLength: 1}
+      gradient: {$ref: '_defs.json#/definitions/gradient-name'}
+  groups:
+    type: array
+    items: {$ref: '#/definitions/group'}
+
+type: object
+additionalProperties: false
+required: [stolaf, carleton]
+properties:
+  stolaf: {$ref: '#/definitions/groups'}
+  carleton: {$ref: '#/definitions/groups'}
