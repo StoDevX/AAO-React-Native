@@ -28,26 +28,35 @@ const PREVIEWS = [
 	{suffix: 'logo', points: 100},
 ]
 
+/** ictool's renditions, one per app appearance the previews follow. */
+const APPEARANCES = [
+	{suffix: '', rendition: 'Default'},
+	{suffix: '-dark', rendition: 'Dark'},
+]
+
 /**
  * @param {string[]} entries the names in assets/
- * @returns {{input: string, output: string, points: number}[]}
+ * @returns {{input: string, output: string, points: number, rendition: string}[]}
  */
 export function exportPlan(entries) {
 	return entries
 		.filter((entry) => entry.endsWith('.icon'))
 		.flatMap((entry) =>
-			PREVIEWS.map(({suffix, points}) => ({
-				input: join(SOURCE_DIR, entry),
-				output: join(OUTPUT_DIR, `${basename(entry, '.icon')}-${suffix}.png`),
-				points,
-			})),
+			PREVIEWS.flatMap(({suffix, points}) =>
+				APPEARANCES.map((appearance) => ({
+					input: join(SOURCE_DIR, entry),
+					output: join(OUTPUT_DIR, `${basename(entry, '.icon')}-${suffix}${appearance.suffix}.png`),
+					points,
+					rendition: appearance.rendition,
+				})),
+			),
 		)
 }
 
 function main() {
 	let plan = exportPlan(readdirSync(SOURCE_DIR))
 
-	for (let {input, output, points} of plan) {
+	for (let {input, output, points, rendition} of plan) {
 		console.log(`make-icons: ${input} -> ${output}`)
 		execFileSync(ICTOOL, [
 			input,
@@ -57,7 +66,7 @@ function main() {
 			'--platform',
 			'iOS',
 			'--rendition',
-			'Default',
+			rendition,
 			'--width',
 			String(points),
 			'--height',
