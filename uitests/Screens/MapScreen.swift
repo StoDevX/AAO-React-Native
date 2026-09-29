@@ -489,7 +489,7 @@ struct MapScreen: Screen {
 		return self
 	}
 
-	/// Scrolls the sheet's list until `name`'s row sits just under the header,
+	/// Scrolls the sheet's list until `name`'s row sits a row or two under the header,
 	/// and returns how far below the search field its top is. The field does
 	/// not scroll, so this distance is the list's scroll position as a row
 	/// sees it. Near the header, the row stays in view at the middle stop too.
@@ -499,21 +499,37 @@ struct MapScreen: Screen {
 		// Into the upper part of the screen, clear of the bottom edge, where a
 		// drag that starts on the row reliably takes.
 		let upper = app.frame.height * 0.6
-		for _ in 0..<8 where !(row.exists && row.isHittable && row.frame.minY < upper) {
+		// Each drag is slow and held, so the list stops where the drag ends. A
+		// quick one flings it, and the check below then reads a row that is still
+		// moving -- one that looks in range can coast on under the header.
+		for _ in 0..<12 where !(row.exists && row.isHittable && row.frame.minY < upper) {
 			app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.8))
-				.press(forDuration: 0.05, thenDragTo: app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)))
+				.press(
+					forDuration: 0.05,
+					thenDragTo: app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)),
+					withVelocity: .slow, thenHoldForDuration: 0.5)
 			drags += 1
 		}
 		XCTAssertTrue(row.exists && row.isHittable, "Scrolling should reach \(name)")
 		// A row already on screen would leave nothing for a later check of the
 		// scroll position to catch.
 		XCTAssertGreaterThan(drags, 1, "\(name) should be more than a screen down the list")
-		// Slowly, and held at the end, so the list does not coast past.
-		let underHeader = searchField.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0))
-			.withOffset(CGVector(dx: 0, dy: 150))
-		row.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0))
-			.press(forDuration: 0.05, thenDragTo: underHeader, withVelocity: .slow, thenHoldForDuration: 0.5)
-		settle { row.frame.minY }
+		// Slowly, and held at the end, so the list does not coast past. Only
+		// when the row is well below the header, though: a drag of a few points
+		// barely clears the scroll view's touch slop, and one in eight on the
+		// simulator flung the list well over a hundred points, carrying the row
+		// up under the header and out of the accessibility tree.
+		let underHeader = searchField.frame.minY + 150
+		if row.frame.minY - underHeader > 100 {
+			row.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0))
+				.press(
+					forDuration: 0.05,
+					thenDragTo: searchField.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0))
+						.withOffset(CGVector(dx: 0, dy: 150)),
+					withVelocity: .slow, thenHoldForDuration: 0.5)
+		}
+		settle { row.exists ? row.frame.minY : -1 }
+		XCTAssertTrue(row.exists && row.isHittable, "\(name) should still be on screen once the list stops")
 		return row.frame.minY - searchField.frame.minY
 	}
 
