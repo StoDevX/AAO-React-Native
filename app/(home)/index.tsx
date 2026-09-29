@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {StyleSheet} from 'react-native'
+import {StyleSheet, useWindowDimensions} from 'react-native'
 import {Stack, useRouter} from 'expo-router'
 import {Button, ContextMenu, Host, RNHostView, ScrollView, Text, VStack} from '@expo/ui/swift-ui'
 import {
@@ -21,7 +21,7 @@ import {Restart} from 'react-native-restart-newarch'
 import {AllViews, homeSections, type HomeSection, type ViewType} from '../../source/features/views'
 import {HomeGroupHeader} from '../../source/features/home/group-header'
 import {FILL_WIDTH, SCREEN_MARGIN, TILE_SPACING} from '../../source/components/tile-layout'
-import {TileGrid} from '../../source/components/tile-grid'
+import {TileGrid, useTileColumns} from '../../source/components/tile-grid'
 import {GradientTile} from '../../source/components/gradient-tile'
 import {openUrl} from '@frogpond/open-url'
 import {selectDevModeOverride, setDevModeOverride} from '../../source/redux/parts/settings'
@@ -158,8 +158,20 @@ function HomeGroupView({
 	onToggle: () => void
 	onOpen: (view: ViewType) => void
 }): React.ReactNode {
+	let {width: screenWidth} = useWindowDimensions()
+	let columns = useTileColumns()
+	// Every group's tiles share one width, so a group of two or three is not
+	// stretched to fill the row.
+	let tileWidth = Math.floor(
+		(screenWidth - 2 * SCREEN_MARGIN - (columns - 1) * TILE_SPACING) / columns,
+	)
+
 	return (
-		<VStack modifiers={[frame({maxWidth: FILL_WIDTH})]} spacing={TILE_SPACING / 2}>
+		<VStack
+			alignment="leading"
+			modifiers={[frame({maxWidth: FILL_WIDTH})]}
+			spacing={TILE_SPACING / 2}
+		>
 			<HomeGroupHeader
 				accessibilityId={groupHeaderId(section.id)}
 				collapsed={collapsed}
@@ -178,6 +190,7 @@ function HomeGroupView({
 							icon={view.icon}
 							onPress={() => onOpen(view)}
 							ratio={1}
+							width={tileWidth}
 							spokenTitle={view.title}
 							title={view.label ?? view.title}
 						/>
@@ -195,6 +208,7 @@ export default function HomePage(): React.ReactNode {
 	let collapsedGroups = useSelector(selectCollapsedHomeGroups)
 	let openView = useOpenView()
 	let sections = homeSections(AllViews(), {isDev})
+	let {width: screenWidth} = useWindowDimensions()
 
 	return (
 		<>
@@ -214,7 +228,10 @@ export default function HomePage(): React.ReactNode {
 			>
 				<ScrollView>
 					<VStack
-						modifiers={[padding({all: SCREEN_MARGIN}), frame({maxWidth: FILL_WIDTH})]}
+						modifiers={[
+							frame({width: screenWidth - 2 * SCREEN_MARGIN}),
+							padding({all: SCREEN_MARGIN}),
+						]}
 						spacing={TILE_SPACING * 2}
 					>
 						<RNHostView matchContents={true}>

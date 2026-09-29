@@ -18,6 +18,7 @@ import {
 	multilineTextAlignment,
 	opacity,
 	padding,
+	resizable,
 	shadow,
 	shapes,
 } from '@expo/ui/swift-ui/modifiers'
@@ -41,6 +42,13 @@ const COUNT_MODIFIERS = [
 	padding({top: 8, trailing: 8}),
 ]
 
+/// Every symbol is fitted into a square this fraction of the card's width, so
+/// a wide one (a credit card) and a tall one (a fork and knife) read as the
+/// same weight, and the icons grow with the card at larger text sizes.
+const ICON_FRACTION = 0.44
+/// The square's side on a card whose width the grid decides.
+const DEFAULT_ICON_SIZE = 36
+
 /// Space between the card and the name beneath it.
 const LABEL_GAP = 8
 /// Two lines, with an ellipsis for whatever still doesn't fit, rather than
@@ -59,6 +67,8 @@ type Props = {
 	spokenTitle?: string
 	icon: SFSymbol
 	gradient: Gradient
+	/** Fixes the tile's width in points; without it the tile takes whatever its grid column offers. */
+	width?: number
 	/** Overrides the default portrait ratio (`TILE_ASPECT`) -- pass 1 for a square tile. */
 	ratio?: number
 	/** Opens whatever this tile represents. */
@@ -120,6 +130,7 @@ export function GradientTile({
 	spokenTitle = title,
 	icon,
 	gradient,
+	width,
 	ratio = TILE_ASPECT,
 	onPress,
 	count,
@@ -127,6 +138,14 @@ export function GradientTile({
 	dimmed = false,
 }: Props): React.ReactNode {
 	let isDarkScheme = useColorScheme() === 'dark'
+	let iconSize = width === undefined ? DEFAULT_ICON_SIZE : Math.round(width * ICON_FRACTION)
+	let widthModifier = frame(width === undefined ? {maxWidth: FILL_WIDTH} : {width})
+	// A fixed width fixes the card's height too: an aspect ratio alone lets the
+	// card grow taller when its grid row does, as a row beside an empty slot can.
+	let cardModifiers =
+		width === undefined
+			? [widthModifier, aspectRatio({ratio, contentMode: 'fit'})]
+			: [frame({width, height: width / ratio})]
 	let shownCount = count !== undefined && count > 0 ? count : undefined
 	// A known count is spoken even at zero: a dimmed tile is not disabled, so
 	// the label is all that tells VoiceOver an empty area from a loading one.
@@ -150,15 +169,13 @@ export function GradientTile({
 				modifiers={[
 					contentShape(shapes.rectangle()),
 					fixedSize({horizontal: false, vertical: true}),
+					...(width === undefined ? [] : [frame({width})]),
 				]}
 				spacing={LABEL_GAP}
 			>
 				{/* The count sits in the card's corner, over the centred icon, as
 				    a Home Screen badge sits on an app icon. */}
-				<ZStack
-					alignment="topTrailing"
-					modifiers={[frame({maxWidth: FILL_WIDTH}), aspectRatio({ratio, contentMode: 'fit'})]}
-				>
+				<ZStack alignment="topTrailing" modifiers={cardModifiers}>
 					<ZStack modifiers={[frame({maxWidth: FILL_WIDTH, maxHeight: FILL_WIDTH})]}>
 						<GradientRoundedRectangle gradient={gradient} showShadow={isDarkScheme} />
 
@@ -166,7 +183,9 @@ export function GradientTile({
 							modifiers={[
 								// force the colors of the Image here to be inverted from typical expectations
 								environment({key: 'colorScheme', value: isDarkScheme ? 'light' : 'dark'}),
-								font({textStyle: 'largeTitle'}),
+								resizable(),
+								aspectRatio({contentMode: 'fit'}),
+								frame({width: iconSize, height: iconSize}),
 								foregroundStyle({type: 'hierarchical', style: 'primary'}),
 								opacity(0.8),
 							]}
