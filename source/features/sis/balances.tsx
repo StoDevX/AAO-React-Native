@@ -56,7 +56,7 @@ export const BalancesView = (): React.ReactNode => {
 						<FaqBannerGroup
 							onPressFaq={(faqId) => router.navigate({pathname: '/Faq', params: {faqId}})}
 							style={styles.banner}
-							target={FAQ_TARGETS.SIS}
+							target={FAQ_TARGETS.BALANCES}
 						/>
 					</RNHostView>
 				</Section>

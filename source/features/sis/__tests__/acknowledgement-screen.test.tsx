@@ -3,7 +3,7 @@ import {describe, expect, jest, test, beforeEach} from '@jest/globals'
 import {fireEvent, render, screen} from '@testing-library/react-native'
 import {Text} from 'react-native'
 
-import SISBalancesPage from '../../../../app/(home)/SIS/index'
+import BalancesPage from '../../../../app/(home)/Balances/index'
 import {acknowledgeAcknowledgement} from '../../../redux/parts/settings'
 
 // The redux barrel configures the real store on import, which wires up
@@ -34,14 +34,14 @@ jest.mock('@expo/ui/swift-ui/modifiers', () => {
 	return require('../../../testing/expo-ui-mock') as typeof import('../../../testing/expo-ui-mock')
 })
 
-describe('SIS balances page', () => {
+describe('Balances page', () => {
 	beforeEach(() => {
 		mockDispatch.mockClear()
 		mockAcknowledged = false
 	})
 
 	test('asks for agreement to each term before showing balances', async () => {
-		await render(<SISBalancesPage />)
+		await render(<BalancesPage />)
 
 		expect(
 			screen.getByText('The information in the app may not be completely accurate.'),
@@ -55,7 +55,7 @@ describe('SIS balances page', () => {
 	})
 
 	test('records the agreement when I Agree is pressed', async () => {
-		await render(<SISBalancesPage />)
+		await render(<BalancesPage />)
 
 		fireEvent.press(screen.getByRole('button', {name: 'I Agree'}))
 
@@ -65,7 +65,7 @@ describe('SIS balances page', () => {
 	test('shows balances, and no acknowledgement, once agreed', async () => {
 		mockAcknowledged = true
 
-		await render(<SISBalancesPage />)
+		await render(<BalancesPage />)
 
 		expect(screen.getByText('balances')).toBeTruthy()
 		expect(screen.queryByRole('button', {name: 'I Agree'})).toBeNull()

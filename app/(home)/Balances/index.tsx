@@ -32,7 +32,7 @@ const TERMS: {symbol: SFSymbol; text: string}[] = [
 	{symbol: 'building.columns', text: 'This app is not an official college app.'},
 ]
 
-export default function SISBalancesPage(): React.ReactNode {
+export default function BalancesPage(): React.ReactNode {
 	let dispatch = useAppDispatch()
 	let alertSeen = useAppSelector(selectAcknowledgement)
 

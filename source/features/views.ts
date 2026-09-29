@@ -26,6 +26,11 @@ type WebLinkView = {
 
 export type ViewType = CommonView & (NativeView | WebLinkView)
 
+/** Whether tapping `view` leaves the app's own screens for a web page. */
+export function opensInBrowser(view: ViewType): boolean {
+	return view.type !== 'view'
+}
+
 export const AllViews = (): Array<ViewType> => {
 	return [
 		{
@@ -36,11 +41,22 @@ export const AllViews = (): Array<ViewType> => {
 			gradient: c.greenGradient,
 		},
 		{
+			type: 'url',
+			url: 'https://sis.stolaf.edu/sis/index.cfm',
+			title: 'Balances',
+			icon: 'arrow.up.right',
+			gradient: c.goldGradient,
+		},
+		// Balances opens SIS on the web instead. To bring the native screen
+		// back, move `disabled` to the entry above: the home grid keys tiles by
+		// title, so only one Balances can be on at a time.
+		{
 			type: 'view',
-			view: '/SIS',
-			title: 'SIS',
+			view: '/Balances',
+			title: 'Balances',
 			icon: 'person.text.rectangle.fill',
 			gradient: c.goldGradient,
+			disabled: true,
 		},
 		{
 			type: 'view',

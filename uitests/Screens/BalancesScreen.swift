@@ -1,16 +1,16 @@
 import XCTest
 
-struct SISScreen: Screen {
+struct BalancesScreen: Screen {
 	let app: XCUIApplication
 
 	@discardableResult
 	func navigate() -> Self {
-		navigateFromHome(to: TestIdentifiers.Buttons.sis)
+		navigateFromHome(to: TestIdentifiers.Buttons.balances)
 	}
 
 	@discardableResult
 	func acceptAcknowledgement() -> Self {
-		let iAgree = app.buttons[TestIdentifiers.SIS.iAgree].firstMatch
+		let iAgree = app.buttons[TestIdentifiers.Balances.iAgree].firstMatch
 		XCTAssertTrue(
 			iAgree.waitForExistence(timeout: 30),
 			"I Agree acknowledgement should be visible")
@@ -20,7 +20,7 @@ struct SISScreen: Screen {
 
 	@discardableResult
 	func checkAcknowledgementDismissed() -> Self {
-		let iAgree = app.buttons[TestIdentifiers.SIS.iAgree].firstMatch
+		let iAgree = app.buttons[TestIdentifiers.Balances.iAgree].firstMatch
 		XCTAssertTrue(
 			iAgree.waitForNonExistence(timeout: 10),
 			"I Agree should be hidden after tapping")
@@ -29,7 +29,7 @@ struct SISScreen: Screen {
 
 	@discardableResult
 	func checkAcknowledgementNotPresent() -> Self {
-		let iAgree = app.buttons[TestIdentifiers.SIS.iAgree].firstMatch
+		let iAgree = app.buttons[TestIdentifiers.Balances.iAgree].firstMatch
 		XCTAssertFalse(
 			iAgree.exists,
 			"I Agree should be hidden after tapping")
@@ -38,7 +38,7 @@ struct SISScreen: Screen {
 
 	@discardableResult
 	func checkBalancesVisible() -> Self {
-		let balances = app.staticTexts[TestIdentifiers.SIS.balancesHeader].firstMatch
+		let balances = app.staticTexts[TestIdentifiers.Balances.balancesHeader].firstMatch
 		XCTAssertTrue(
 			balances.waitForExistence(timeout: 30),
 			"BALANCES should be visible")
@@ -47,23 +47,23 @@ struct SISScreen: Screen {
 
 	@discardableResult
 	func checkMealPlanVisible() -> Self {
-		let mealPlan = app.staticTexts[TestIdentifiers.SIS.mealPlanHeader].firstMatch
+		let mealPlan = app.staticTexts[TestIdentifiers.Balances.mealPlanHeader].firstMatch
 		XCTAssertTrue(
 			mealPlan.waitForExistence(timeout: 30),
 			"MEAL PLAN should be visible")
 		return self
 	}
 
-	/// Leaves SIS via the navigation bar's back button, scoped to that bar and
+	/// Leaves Balances via the navigation bar's back button, scoped to that bar and
 	/// queried by UIKit's identifier rather than its label: every back button
 	/// in the app reads `Back`, so the label says nothing about which one.
 	@discardableResult
 	func navigateBack() -> Self {
-		let backButton = app.navigationBars[TestIdentifiers.Buttons.sis]
+		let backButton = app.navigationBars[TestIdentifiers.Buttons.balances]
 			.buttons[TestIdentifiers.Navigation.systemBackButton]
 		XCTAssertTrue(
 			backButton.waitForExistence(timeout: 10),
-			"SIS should offer a back button to leave by")
+			"Balances should offer a back button to leave by")
 		backButton.tap()
 		return self
 	}
@@ -73,17 +73,17 @@ struct SISScreen: Screen {
 		let homescreen = app.element(matching: TestIdentifiers.Home.screen)
 		XCTAssertTrue(
 			homescreen.waitForExistence(timeout: 30),
-			"Leaving SIS should land back on the homescreen")
+			"Leaving Balances should land back on the homescreen")
 		return self
 	}
 
 	@discardableResult
-	func navigateToSISAgain() -> Self {
+	func navigateToBalancesAgain() -> Self {
 		let homescreen = app.element(matching: TestIdentifiers.Home.screen)
-		app.buttons[TestIdentifiers.Buttons.sis].firstMatch.tap()
+		app.buttons[TestIdentifiers.Buttons.balances].firstMatch.tap()
 		XCTAssertTrue(
 			homescreen.waitForNonExistence(timeout: 30),
-			"Reopening SIS should leave the homescreen")
+			"Reopening Balances should leave the homescreen")
 		return self
 	}
 }

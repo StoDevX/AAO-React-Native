@@ -2,6 +2,7 @@ import * as React from 'react'
 import {useColorScheme, useWindowDimensions} from 'react-native'
 import {Button, Image, Text, VStack, ZStack, type ImageProps} from '@expo/ui/swift-ui'
 import {
+	accessibilityHint,
 	accessibilityLabel,
 	buttonStyle,
 	environment,
@@ -12,7 +13,7 @@ import {
 	opacity,
 	padding,
 } from '@expo/ui/swift-ui/modifiers'
-import type {ViewType} from '../views'
+import {opensInBrowser, type ViewType} from '../views'
 import {GradientRoundedRectangle} from '../../components/gradient-tile'
 import {FILL_WIDTH} from '../../components/tile-layout'
 
@@ -79,6 +80,7 @@ export function HomeScreenButton({view, onPress}: Props): React.ReactNode {
 				// make a card grow to match a taller one beside it
 				frame({maxWidth: FILL_WIDTH, maxHeight: FILL_WIDTH}),
 				accessibilityLabel(view.title),
+				...(opensInBrowser(view) ? [accessibilityHint('Opens in a browser')] : []),
 			]}
 			onPress={onPress}
 		>
