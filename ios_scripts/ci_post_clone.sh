@@ -73,7 +73,7 @@ mise run prebuild
 # with automatic resolution turned off, so it demands a Package.resolved inside
 # the .xcworkspace -- a path that lives under the generated ios/ and so can
 # never be committed. Keep the file beside this script and put it in place
-# instead. The ios-build job in check.yml resolves from scratch and diffs
+# instead. The ios-build job in ios.yml resolves from scratch and diffs
 # against it, so a MapLibre version bump fails there rather than here.
 resolved_dir='ios/AllAboutOlaf.xcworkspace/xcshareddata/swiftpm'
 mkdir -p "${resolved_dir}"
