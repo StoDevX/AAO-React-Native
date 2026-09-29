@@ -80,23 +80,6 @@ struct FilterScreen: Screen {
 		return self
 	}
 
-	/// Turn a toggle filter off, whether or not it started on.
-	///
-	/// A toggle whose default is drawn from the day's data cannot be assumed
-	/// either way, so this reads the trigger before deciding to tap it. Tapping
-	/// unconditionally would switch an already-off filter on.
-	@discardableResult
-	func clearTrigger(_ key: String) -> Self {
-		waitForTrigger(key)
-		if trigger(key).isSelected {
-			tapTrigger(key)
-		}
-		XCTAssertTrue(
-			trigger(key).waitForSelected(false),
-			"the \(key) trigger should be off")
-		return self
-	}
-
 	/// Open a filter, and wait for something inside its presentation.
 	///
 	/// The tap goes by coordinate rather than `.tap()`: a trigger draws its
@@ -138,27 +121,6 @@ struct FilterScreen: Screen {
 		return self
 	}
 
-	@discardableResult
-	func tapOption(_ title: String) -> Self {
-		let row = option(title)
-		XCTAssertTrue(row.waitForExistence(timeout: 30), "the sheet should offer a \(title) row")
-		row.tap()
-		return self
-	}
-
-	/// Assert whether a sheet row draws its checkmark. The checkmark is an SF
-	/// Symbol the system names "Selected", which is what puts the trait on the
-	/// row it sits in.
-	@discardableResult
-	func verifyOption(_ title: String, isSelected expected: Bool) -> Self {
-		let row = option(title)
-		XCTAssertTrue(row.waitForExistence(timeout: 30), "the sheet should offer a \(title) row")
-		XCTAssertTrue(
-			row.waitForSelected(expected),
-			"the \(title) row should\(expected ? "" : " not") be checked")
-		return self
-	}
-
 	/// Swipe the sheet away.
 	///
 	/// The header's Done button commits too, so this is one of two paths a
@@ -175,25 +137,6 @@ struct FilterScreen: Screen {
 		XCTAssertTrue(
 			option(row).waitForNonExistence(timeout: 30),
 			"the sheet should be gone after a swipe down")
-		return self
-	}
-
-	/// Close the sheet with its header's Done button -- the other of the two
-	/// paths a selection can take out of a sheet.
-	///
-	/// A plain `.tap()` rather than the coordinate tap a trigger needs: this
-	/// button's label is text, so XCUITest reports it hittable and finds its
-	/// centre on its own.
-	@discardableResult
-	func tapDone(waitingFor row: String) -> Self {
-		let done = app.buttons[TestIdentifiers.Filter.closeButton].firstMatch
-		XCTAssertTrue(
-			done.waitForExistence(timeout: 30), "the sheet's header should offer a Done button")
-		done.tap()
-
-		XCTAssertTrue(
-			option(row).waitForNonExistence(timeout: 30),
-			"the sheet should be gone after pressing Done")
 		return self
 	}
 }

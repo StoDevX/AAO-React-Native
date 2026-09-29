@@ -25,15 +25,6 @@ private var isCI: Bool {
 }
 
 extension Screen {
-	/// Assert that the home screen is visible.
-	@discardableResult
-	func waitForHomescreen() -> Self {
-		let homescreen = app.element(matching: TestIdentifiers.Home.screen)
-		XCTAssertTrue(
-			homescreen.waitForExistence(timeout: 30),
-			"Home screen should be visible")
-		return self
-	}
 
 	/// Tap a home-screen tile and wait for the home screen to disappear.
 	@discardableResult
@@ -145,26 +136,6 @@ extension Screen {
 		treeDump.name = name
 		treeDump.lifetime = captureLifetime
 		XCTContext.runActivity(named: name) { $0.add(treeDump) }
-		return self
-	}
-
-	/// Pull the screen most of the way off with the back gesture, then let go
-	/// without completing it, so the stack settles back where it started.
-	///
-	/// The drag stops short of half the width and moves slowly: UIKit decides an
-	/// interactive pop on how far the finger travelled and how fast it was going
-	/// when it lifted, so a slow release at a third of the way across is read as
-	/// "put it back". Holding before the release is what drains the velocity --
-	/// a fast flick from the same place would complete the pop instead.
-	@discardableResult
-	func cancelSwipeBack() -> Self {
-		let edge = app.coordinate(withNormalizedOffset: CGVector(dx: 0.0, dy: 0.5))
-		let partway = app.coordinate(withNormalizedOffset: CGVector(dx: 0.35, dy: 0.5))
-		edge.press(
-			forDuration: 0.2,
-			thenDragTo: partway,
-			withVelocity: .slow,
-			thenHoldForDuration: 1.0)
 		return self
 	}
 
