@@ -31,6 +31,8 @@ faqs:
     bannerText: Balances login now appears to require Google sign-in on St. Olaf's end, which the All About Olaf app can't currently access or support.
     targets:
       - Balances
+      # the same screen, under its name in app versions already installed
+      - SIS
       - Settings
       - SettingsRoot
     severity: alert
