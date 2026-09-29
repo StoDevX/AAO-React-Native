@@ -486,13 +486,6 @@ struct TestIdentifiers {
 		/// A sponsoring organisation named by the fixture calendar's events,
 		/// written as the menu draws it. It sponsors three of them, so filtering
 		/// to it leaves the list narrowed rather than empty.
-		///
-		/// The fixture names two organisations, and short ones. iOS scrolls a
-		/// menu taller than the screen, and a section header scrolled out of the
-		/// viewport is absent from the accessibility hierarchy rather than
-		/// merely offscreen -- so `verifyMenuSection` fails on a menu that is
-		/// only too long. A name long enough to wrap its row costs half again
-		/// the height of one that does not.
 		static let organization = "Music Organizations (3)"
 		/// An event on the frozen day that carries neither of the values the
 		/// two filter tests choose -- Academic Year rather than Music, and no
