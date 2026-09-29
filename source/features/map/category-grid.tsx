@@ -4,10 +4,13 @@ import {
 	accessibilityLabel,
 	buttonStyle,
 	contentShape,
+	dynamicTypeSize,
+	fixedSize,
 	font,
 	foregroundStyle,
 	frame,
 	lineLimit,
+	minimumScaleFactor,
 	multilineTextAlignment,
 	shapes,
 } from '@expo/ui/swift-ui/modifiers'
@@ -26,6 +29,9 @@ export const CATEGORY_GRID_ID = 'map-category-grid'
 const CIRCLE_DIAMETER = 56
 const LABEL_GAP = 6
 const LABEL_LINES = 2
+/// How far a label may shrink before it breaks a word: at the accessibility
+/// sizes a single word such as "Athletics" is wider than its column.
+const LABEL_MIN_SCALE = 0.6
 
 type Props = {
 	groups: CategoryGroup[]
@@ -58,8 +64,14 @@ function CategoryTile({
 			{/* contentShape on the label, not the Button: SwiftUI hit-tests a
 			    button by what its label draws, and the gaps beside the circle
 			    would otherwise miss. */}
+			{/* fixedSize keeps the tile at its own full height; without it the
+			    grid row offers one line's height and a two-line name truncates. */}
 			<VStack
-				modifiers={[contentShape(shapes.rectangle()), frame({maxWidth: FILL_WIDTH})]}
+				modifiers={[
+					contentShape(shapes.rectangle()),
+					frame({maxWidth: FILL_WIDTH}),
+					fixedSize({horizontal: false, vertical: true}),
+				]}
 				spacing={LABEL_GAP}
 			>
 				<ZStack>
@@ -76,7 +88,13 @@ function CategoryTile({
 						]}
 					/>
 					<Image
-						modifiers={[font({textStyle: 'title2'}), foregroundStyle(c.white)]}
+						modifiers={[
+							font({textStyle: 'title2'}),
+							// The circle keeps its size at every text size, so the glyph
+							// in it has to as well.
+							dynamicTypeSize({max: 'large'}),
+							foregroundStyle(c.white),
+						]}
 						systemName={group.icon}
 					/>
 				</ZStack>
@@ -85,6 +103,8 @@ function CategoryTile({
 						font({textStyle: 'subheadline'}),
 						multilineTextAlignment('center'),
 						lineLimit(LABEL_LINES),
+						minimumScaleFactor(LABEL_MIN_SCALE),
+						frame({maxWidth: FILL_WIDTH}),
 					]}
 				>
 					{group.label}
