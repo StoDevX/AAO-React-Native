@@ -1,2 +1,4 @@
 *.png
 *.sketch
+# Layers inside an Icon Composer document are part of the icon
+!*.icon/Assets/*.png
