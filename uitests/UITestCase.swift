@@ -6,7 +6,10 @@ import XCTest
 class UITestCaseUnbooted: XCTestCase {
 	var app: XCUIApplication!
 
-  @MainActor override func setUp() async throws {
+	/// Synchronous on purpose. With `continueAfterFailure` false, an async
+	/// `setUp` makes every failure end the test runner process, and
+	/// `-retry-tests-on-failure` never gets to retry the test.
+	override func setUpWithError() throws {
 		continueAfterFailure = false
 
 		// Before the app launches: a run with no known JS source measures
