@@ -35,15 +35,27 @@ const APPEARANCES = [
 ]
 
 /**
+ * The home screen's tinted look, which the app cannot detect, so nothing
+ * shows these. `--all` renders them to review an icon change by eye; they
+ * are gitignored.
+ */
+const TINTED_APPEARANCES = [
+	{suffix: '-tinted-light', rendition: 'TintedLight'},
+	{suffix: '-tinted-dark', rendition: 'TintedDark'},
+]
+
+/**
  * @param {string[]} entries the names in assets/
+ * @param {{all?: boolean}} [options] `all` adds the tinted renditions
  * @returns {{input: string, output: string, points: number, rendition: string}[]}
  */
-export function exportPlan(entries) {
+export function exportPlan(entries, {all = false} = {}) {
+	let appearances = all ? [...APPEARANCES, ...TINTED_APPEARANCES] : APPEARANCES
 	return entries
 		.filter((entry) => entry.endsWith('.icon'))
 		.flatMap((entry) =>
 			PREVIEWS.flatMap(({suffix, points}) =>
-				APPEARANCES.map((appearance) => ({
+				appearances.map((appearance) => ({
 					input: join(SOURCE_DIR, entry),
 					output: join(OUTPUT_DIR, `${basename(entry, '.icon')}-${suffix}${appearance.suffix}.png`),
 					points,
@@ -54,7 +66,7 @@ export function exportPlan(entries) {
 }
 
 function main() {
-	let plan = exportPlan(readdirSync(SOURCE_DIR))
+	let plan = exportPlan(readdirSync(SOURCE_DIR), {all: process.argv.includes('--all')})
 
 	for (let {input, output, points, rendition} of plan) {
 		console.log(`make-icons: ${input} -> ${output}`)

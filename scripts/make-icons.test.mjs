@@ -13,6 +13,21 @@ describe('exportPlan', () => {
 		])
 	})
 
+	it('adds the tinted renditions when asked for all of them', () => {
+		let tinted = exportPlan(['windmill.icon'], {all: true}).filter((p) =>
+			p.rendition.startsWith('Tinted'),
+		)
+		assert.deepEqual(
+			tinted.map((p) => [p.output, p.rendition]),
+			[
+				['images/icons/windmill-icon-tinted-light.png', 'TintedLight'],
+				['images/icons/windmill-icon-tinted-dark.png', 'TintedDark'],
+				['images/icons/windmill-logo-tinted-light.png', 'TintedLight'],
+				['images/icons/windmill-logo-tinted-dark.png', 'TintedDark'],
+			],
+		)
+	})
+
 	it('ignores anything that is not an Icon Composer document', () => {
 		assert.deepEqual(exportPlan(['0-source-icons', '.DS_Store']), [])
 	})
