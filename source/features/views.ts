@@ -43,9 +43,19 @@ export const AllViews = (): Array<ViewType> => {
 		{
 			type: 'url',
 			url: 'https://sis.stolaf.edu/sis/landing-page.cfm',
+			title: 'Balances',
+			icon: 'person.text.rectangle.fill',
+			gradient: c.goldGradient,
+		},
+		// Balances opens SIS on the web instead; clear `disabled` to bring the
+		// native screen back.
+		{
+			type: 'view',
+			view: '/SIS',
 			title: 'SIS',
 			icon: 'person.text.rectangle.fill',
 			gradient: c.goldGradient,
+			disabled: true,
 		},
 		{
 			type: 'view',

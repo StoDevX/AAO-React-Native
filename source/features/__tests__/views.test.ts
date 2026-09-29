@@ -12,7 +12,7 @@ function viewTitled(title: string): ViewType {
 
 describe('opensInBrowser', () => {
 	test('is true for a web link', () => {
-		expect(opensInBrowser(viewTitled('SIS'))).toBe(true)
+		expect(opensInBrowser(viewTitled('Balances'))).toBe(true)
 	})
 
 	test('is false for a native screen', () => {
@@ -20,11 +20,15 @@ describe('opensInBrowser', () => {
 	})
 })
 
-describe('SIS', () => {
+describe('Balances', () => {
 	test('opens the SIS landing page on the web', () => {
-		expect(viewTitled('SIS')).toMatchObject({
+		expect(viewTitled('Balances')).toMatchObject({
 			type: 'url',
 			url: 'https://sis.stolaf.edu/sis/landing-page.cfm',
 		})
+	})
+
+	test('keeps the native SIS screen listed, but turned off', () => {
+		expect(viewTitled('SIS')).toMatchObject({type: 'view', view: '/SIS', disabled: true})
 	})
 })
