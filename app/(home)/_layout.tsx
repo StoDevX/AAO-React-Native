@@ -80,7 +80,7 @@ export default function HomeLayout(): React.ReactNode {
 			/>
 			<Stack.Screen name="Directory/named" options={DETAIL_SHEET} />
 			<Stack.Screen name="Map" />
-			<Stack.Screen name="SIS/index" options={{title: 'SIS'}} />
+			<Stack.Screen name="Balances/index" options={{title: 'Balances'}} />
 			<Stack.Screen
 				name="EventDetail"
 				options={{

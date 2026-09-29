@@ -18,15 +18,17 @@ jest.mock('@expo/ui/swift-ui/modifiers', () => {
 const common = {title: 'Tile', icon: 'star.fill', gradient: c.blueGradient} as const
 
 describe('HomeScreenButton', () => {
-	test('marks a web link with an external-link badge', async () => {
+	test('tells VoiceOver a web link opens in a browser', async () => {
 		let view: ViewType = {...common, type: 'url', url: 'https://example.com'}
 		await render(<HomeScreenButton onPress={jest.fn()} view={view} />)
-		expect(screen.getByTestId('symbol-arrow.up.right')).toBeTruthy()
+		expect(screen.getByRole('button', {name: 'Tile'}).props.accessibilityHint).toBe(
+			'Opens in a browser',
+		)
 	})
 
-	test('leaves a native screen unmarked', async () => {
+	test('gives a native screen no hint', async () => {
 		let view: ViewType = {...common, type: 'view', view: '/Menus'}
 		await render(<HomeScreenButton onPress={jest.fn()} view={view} />)
-		expect(screen.queryByTestId('symbol-arrow.up.right')).toBeNull()
+		expect(screen.getByRole('button', {name: 'Tile'}).props.accessibilityHint).toBeUndefined()
 	})
 })

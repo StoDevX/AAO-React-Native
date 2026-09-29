@@ -314,6 +314,12 @@ function labelOf(modifiers?: Modifier[]): string | undefined {
 	return typeof found?.label === 'string' ? found.label : undefined
 }
 
+/** The hint an `accessibilityHint(…)` modifier gives. */
+function hintOf(modifiers?: Modifier[]): string | undefined {
+	let found = modifierOf(modifiers, 'accessibilityHint')
+	return typeof found?.hint === 'string' ? found.hint : undefined
+}
+
 /** The identifier an `accessibilityIdentifier(…)` modifier asks for. */
 function identifierOf(modifiers?: Modifier[]): string | undefined {
 	let found = modifierOf(modifiers, 'accessibilityIdentifier')
@@ -404,6 +410,7 @@ const ForwardingView = View as unknown as React.ComponentType<
  */
 const PressableWithModifiers = Pressable as unknown as React.ComponentType<
 	WithModifiers & {
+		accessibilityHint?: string
 		accessibilityLabel?: string
 		accessibilityRole?: string
 		accessibilityState?: {checked?: boolean; selected?: boolean}
@@ -885,6 +892,7 @@ export function Button({
 
 	return (
 		<PressableWithModifiers
+			accessibilityHint={hintOf(modifiers)}
 			accessibilityLabel={name}
 			accessibilityRole={buttonRoleOf(modifiers)}
 			// `isSelected` is how SwiftUI marks the chosen one of a set of buttons,

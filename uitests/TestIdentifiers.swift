@@ -79,7 +79,7 @@ struct TestIdentifiers {
 		static let menus = "Menus"
 		static let athletics = "Athletics"
 		static let calendar = "Calendar"
-		static let sis = "SIS"
+		static let balances = "Balances"
 		static let hours = "Hours"
 		static let dictionary = "Dictionary"
 		static let courseCatalog = "Course Catalog"
@@ -268,9 +268,9 @@ struct TestIdentifiers {
 		static let anotherBuilding = "Alumni Hall"
 	}
 
-	// MARK: - SIS
+	// MARK: - Balances
 
-	enum SIS {
+	enum Balances {
 		static let iAgree = "I Agree"
 		static let balancesHeader = "BALANCES"
 		static let mealPlanHeader = "MEAL PLAN"

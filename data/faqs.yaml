@@ -30,7 +30,7 @@ faqs:
     bannerTitle: Login and Balances Unavailable
     bannerText: Balances login now appears to require Google sign-in on St. Olaf's end, which the All About Olaf app can't currently access or support.
     targets:
-      - SIS
+      - Balances
       - Settings
       - SettingsRoot
     severity: alert
