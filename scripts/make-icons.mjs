@@ -2,9 +2,12 @@
  * Render the in-app previews of each Icon Composer document in assets/: the
  * Settings picker's tile and the Credits screen's logo. Run after editing an
  * `.icon`; the PNGs are committed, since the renderer only ships with Xcode.
+ *
+ * `--all` adds the tinted renditions; `--table` writes a gallery of every logo
+ * to images/icons/logos.html. Both outputs are gitignored.
  */
 import {execFileSync} from 'node:child_process'
-import {readdirSync} from 'node:fs'
+import {readdirSync, writeFileSync} from 'node:fs'
 import {basename, join} from 'node:path'
 
 /**
@@ -45,9 +48,18 @@ const TINTED_APPEARANCES = [
 ]
 
 /**
+ * @typedef {object} Export
+ * @property {string} input the Icon Composer document
+ * @property {string} preview which preview this is, `icon` or `logo`
+ * @property {string} output the PNG to write
+ * @property {number} points the preview's size on screen
+ * @property {string} rendition the ictool rendition
+ */
+
+/**
  * @param {string[]} entries the names in assets/
  * @param {{all?: boolean}} [options] `all` adds the tinted renditions
- * @returns {{input: string, output: string, points: number, rendition: string}[]}
+ * @returns {Export[]}
  */
 export function exportPlan(entries, {all = false} = {}) {
 	let appearances = all ? [...APPEARANCES, ...TINTED_APPEARANCES] : APPEARANCES
@@ -57,12 +69,47 @@ export function exportPlan(entries, {all = false} = {}) {
 			PREVIEWS.flatMap(({suffix, points}) =>
 				appearances.map((appearance) => ({
 					input: join(SOURCE_DIR, entry),
+					preview: suffix,
 					output: join(OUTPUT_DIR, `${basename(entry, '.icon')}-${suffix}${appearance.suffix}.png`),
 					points,
 					rendition: appearance.rendition,
 				})),
 			),
 		)
+}
+
+/**
+ * An HTML gallery of every logo in the plan, one row per icon and one column
+ * per rendition, linking to files beside it in images/icons/. HTML rather than
+ * Markdown because Quick Look renders its images.
+ *
+ * @param {Export[]} plan
+ * @returns {string}
+ */
+export function logoGallery(plan) {
+	let logos = plan.filter((p) => p.preview === 'logo')
+	let renditions = [...new Set(logos.map((p) => p.rendition))]
+	let icons = [...new Set(logos.map((p) => basename(p.input, '.icon')))]
+
+	let rows = icons.map((icon) => {
+		let cells = renditions.map((rendition) => {
+			let logo = logos.find((p) => basename(p.input, '.icon') === icon && p.rendition === rendition)
+			return logo ? `<td><img src="${basename(logo.output)}" width="150"></td>` : '<td></td>'
+		})
+		return `<tr><th>${icon}</th>${cells.join('')}</tr>`
+	})
+
+	return [
+		'<!doctype html>',
+		'<meta charset="utf-8">',
+		'<title>App icon logos</title>',
+		'<style>body { background: white; font: 14px -apple-system, sans-serif; } th { text-align: left; }</style>',
+		'<table>',
+		`<tr><th>Icon</th>${renditions.map((r) => `<th>${r}</th>`).join('')}</tr>`,
+		...rows,
+		'</table>',
+		'',
+	].join('\n')
 }
 
 function main() {
@@ -95,6 +142,12 @@ function main() {
 			stdio: 'inherit',
 		},
 	)
+
+	if (process.argv.includes('--table')) {
+		let gallery = join(OUTPUT_DIR, 'logos.html')
+		writeFileSync(gallery, logoGallery(plan))
+		console.log(`make-icons: ${gallery}`)
+	}
 }
 
 if (import.meta.main) {

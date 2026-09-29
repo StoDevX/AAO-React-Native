@@ -90,3 +90,5 @@ expo-env.d.ts
 # @end expo-cli
 # Tinted icon previews from `mise run icons -- --all`, for review only
 images/icons/*-tinted-*.png
+# The logo gallery from `mise run icons -- --table`
+images/icons/logos.html
