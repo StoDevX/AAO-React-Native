@@ -69,7 +69,7 @@ const colorExamples: Faq[] = [
 	fixture({
 		id: 'color-both',
 		bannerTitle: 'both overrides',
-		bannerText: 'This is the palette the live SIS banner ships with.',
+		bannerText: 'This is the palette the live Balances banner ships with.',
 		severity: 'alert',
 		backgroundColor: '#fef3f2',
 		foregroundColor: '#b42318',

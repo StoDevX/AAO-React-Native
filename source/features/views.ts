@@ -63,6 +63,11 @@ type WebLinkView = {
 
 export type ViewType = CommonView & (NativeView | WebLinkView)
 
+/** Whether tapping `view` leaves the app's own screens for a web page. */
+export function opensInBrowser(view: ViewType): boolean {
+	return view.type !== 'view'
+}
+
 export const AllViews = (): Array<ViewType> => {
 	return [
 		// Eat
@@ -97,13 +102,25 @@ export const AllViews = (): Array<ViewType> => {
 			group: 'eat',
 		},
 		{
-			type: 'view',
-			view: '/SIS',
+			type: 'url',
+			url: 'https://sis.stolaf.edu/sis/index.cfm',
 			id: 'balances',
+			title: 'Balances',
+			icon: 'arrow.up.right',
+			gradient: c.goldGradient,
+			group: 'eat',
+		},
+		// Balances opens SIS on the web instead. To bring the native screen
+		// back, move `disabled` to the entry above.
+		{
+			type: 'view',
+			view: '/Balances',
+			id: 'balances-screen',
 			title: 'Balances',
 			icon: 'creditcard.fill',
 			gradient: c.goldGradient,
 			group: 'eat',
+			disabled: true,
 		},
 
 		// Get around

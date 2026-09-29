@@ -15,7 +15,7 @@
     "zod": "4.6.5"
   },
   "peerDependencies": {
-    "@tanstack/react-query": "^5.103.1",
+    "@tanstack/react-query": "^5.104.0",
     "react": "catalog:"
   }
 }

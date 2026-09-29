@@ -18,7 +18,13 @@ import sample from 'lodash/sample'
 import {useDispatch, useSelector} from 'react-redux'
 import {Restart} from 'react-native-restart-newarch'
 
-import {AllViews, homeSections, type HomeSection, type ViewType} from '../../source/features/views'
+import {
+	AllViews,
+	homeSections,
+	opensInBrowser,
+	type HomeSection,
+	type ViewType,
+} from '../../source/features/views'
 import {HomeGroupHeader} from '../../source/features/home/group-header'
 import {FILL_WIDTH, SCREEN_MARGIN, TILE_SPACING} from '../../source/components/tile-layout'
 import {TileGrid, useTileColumns} from '../../source/components/tile-grid'
@@ -187,6 +193,7 @@ function HomeGroupView({
 					renderItem={(view) => (
 						<GradientTile
 							gradient={view.gradient}
+							hint={opensInBrowser(view) ? 'Opens in a browser' : undefined}
 							icon={view.icon}
 							onPress={() => onOpen(view)}
 							ratio={1}

@@ -32,6 +32,14 @@ const DETAIL_SHEET: React.ComponentProps<typeof Stack.Screen>['options'] = {
 	sheetLargestUndimmedDetentIndex: 'none',
 }
 
+/**
+ * Keeps the home screen beneath whatever a cold-start deep link opens, so
+ * Back from, say, `/Calendar` lands on Home rather than on nothing.
+ */
+export const unstable_settings = {
+	anchor: 'index',
+}
+
 export default function HomeLayout(): React.ReactNode {
 	return (
 		<Stack screenOptions={{headerBackButtonDisplayMode: 'minimal'}}>
@@ -80,7 +88,7 @@ export default function HomeLayout(): React.ReactNode {
 			/>
 			<Stack.Screen name="Directory/named" options={DETAIL_SHEET} />
 			<Stack.Screen name="Map" />
-			<Stack.Screen name="SIS/index" options={{title: 'Balances'}} />
+			<Stack.Screen name="Balances/index" options={{title: 'Balances'}} />
 			<Stack.Screen
 				name="EventDetail"
 				options={{

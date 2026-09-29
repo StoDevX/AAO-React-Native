@@ -13,7 +13,12 @@ import {Stack, useNavigation} from 'expo-router'
 import {ImageAttachmentsSection} from '../../source/components/image-attachments-section'
 import {useImageAttachments} from '../../source/components/use-image-attachments'
 import {readAttachment} from '../../source/features/settings/screens/overview/report-problem/attachments'
-import {submitReport} from '../../source/features/settings/screens/overview/report-problem/submit'
+import {composeEmail} from '../../source/components/send-email'
+import {
+	reportEmail,
+	submitReport,
+} from '../../source/features/settings/screens/overview/report-problem/submit'
+import {useTelemetryStore} from '../../source/features/telemetry/store'
 
 const styles = StyleSheet.create({
 	host: {
@@ -41,10 +46,48 @@ export default function ReportProblemPage(): React.ReactNode {
 		}
 	}, [])
 
+	let report = () => ({
+		message: message.trim(),
+		name: name.trim() || undefined,
+		email: email.trim() || undefined,
+	})
+
+	// Sharing is off, so Sentry is closed and the report can't go that way.
+	let offerEmail = () => {
+		Alert.alert(
+			'Sharing is off',
+			'Problem reports go through the same service as crash data, which you turned off. Send this report by email instead?',
+			[
+				{text: 'Cancel', style: 'cancel'},
+				{
+					text: 'Send by Email',
+					onPress: async () => {
+						let handedOff = await composeEmail({
+							...reportEmail(report()),
+							attachments: attachments.images.map((image) => image.uri),
+						})
+						if (handedOff) {
+							navigation.goBack()
+						}
+					},
+				},
+			],
+		)
+	}
+
 	let submit = async () => {
 		if (sendingNow.current) {
 			return
 		}
+
+		// Decided before the images are read: reading one goes through Sentry's
+		// native side, which opting out has closed, and email needs only its
+		// address.
+		if (!useTelemetryStore.getState().enabled) {
+			offerEmail()
+			return
+		}
+
 		sendingNow.current = true
 		setSending(true)
 
@@ -66,20 +109,22 @@ export default function ReportProblemPage(): React.ReactNode {
 			return
 		}
 
-		let submitted = submitReport({
-			message: message.trim(),
-			name: name.trim() || undefined,
-			email: email.trim() || undefined,
-			attachments: files,
-		})
+		let result = submitReport({...report(), attachments: files})
 
-		if (submitted) {
+		if (result === 'sent') {
 			navigation.goBack()
-		} else {
-			sendingNow.current = false
-			setSending(false)
-			Alert.alert('Sentry is disabled', 'Problem reporting only works in production builds.')
+			return
 		}
+
+		sendingNow.current = false
+		setSending(false)
+
+		if (result === 'disabled') {
+			Alert.alert('Sentry is disabled', 'Problem reporting only works in production builds.')
+			return
+		}
+
+		offerEmail()
 	}
 
 	return (

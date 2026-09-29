@@ -2,6 +2,7 @@ import * as React from 'react'
 import {useColorScheme} from 'react-native'
 import {Button, Image, RoundedRectangle, Text, VStack, ZStack} from '@expo/ui/swift-ui'
 import {
+	accessibilityHint,
 	accessibilityInputLabels,
 	accessibilityLabel,
 	aspectRatio,
@@ -71,6 +72,8 @@ type Props = {
 	width?: number
 	/** Overrides the default portrait ratio (`TILE_ASPECT`) -- pass 1 for a square tile. */
 	ratio?: number
+	/** What VoiceOver says after the name, when the name alone leaves out where the tile goes. */
+	hint?: string
 	/** Opens whatever this tile represents. */
 	onPress: () => void
 	/** How many things the tile holds, drawn at the card's top-right corner. None at zero. */
@@ -132,6 +135,7 @@ export function GradientTile({
 	gradient,
 	width,
 	ratio = TILE_ASPECT,
+	hint,
 	onPress,
 	count,
 	countLabel = String,
@@ -156,6 +160,7 @@ export function GradientTile({
 			modifiers={[
 				buttonStyle('plain'),
 				accessibilityLabel(label),
+				...(hint === undefined ? [] : [accessibilityHint(hint)]),
 				...(spokenTitle === title ? [] : [accessibilityInputLabels([title, spokenTitle])]),
 				...(dimmed ? [opacity(DIMMED_OPACITY)] : []),
 			]}

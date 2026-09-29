@@ -1,11 +1,13 @@
 import * as React from 'react'
 import type {EventType} from '@frogpond/event-type'
-import {addToCalendar} from './lib'
+import {addToCalendar, type AddToCalendarResult} from './lib'
 import delay from 'delay'
 
 type Props = {
 	event: EventType
 	compactMessages?: boolean
+	/** Called once the system editor closes, with how it ended. */
+	onResult?: (result: AddToCalendarResult) => void
 	render: (args: {message: string; disabled: boolean; onPress: () => void}) => React.ReactNode
 }
 
@@ -28,7 +30,7 @@ const COMPACT_MESSAGES = {
  * only add a copy.
  */
 export function AddToCalendar(props: Props): React.ReactNode {
-	let {event, compactMessages, render} = props
+	let {event, compactMessages, onResult, render} = props
 	let MESSAGES = compactMessages ? COMPACT_MESSAGES : VERBOSE_MESSAGES
 
 	let [message, setMessage] = React.useState('')
@@ -40,6 +42,7 @@ export function AddToCalendar(props: Props): React.ReactNode {
 		setDisabled(true)
 
 		let result = await addToCalendar(event)
+		onResult?.(result)
 
 		let elapsed = Date.now() - start
 		if (elapsed < 500) {
@@ -55,7 +58,7 @@ export function AddToCalendar(props: Props): React.ReactNode {
 			setMessage(MESSAGES.error)
 			setDisabled(false)
 		}
-	}, [event, MESSAGES])
+	}, [event, MESSAGES, onResult])
 
 	return render({message, disabled, onPress})
 }

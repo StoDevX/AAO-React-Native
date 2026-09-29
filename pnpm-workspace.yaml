@@ -152,7 +152,7 @@ overrides:
   # fast-uri@3.1.0 (via ajv, used by our own eslint/ajv-formats devDeps):
   # path-traversal and host-confusion advisories (GHSA-q3j6-qgpj-74h6,
   # GHSA-v39h-62p7-jpjc); fixed within the same 3.1.x line.
-  'fast-uri@3.1': '4.2.0'
+  'fast-uri@3.1': '4.2.1'
   # js-yaml@3.14.2 (via @istanbuljs/load-nyc-config, Jest's coverage
   # instrumentation): quadratic-CPU merge-key bug (GHSA-52cp-r559-cp3m) and
   # a prototype-adjacent parsing issue (GHSA-h67p-54hq-rp68). No fix within
@@ -174,12 +174,12 @@ overrides:
   # Pinned to the major version so an @expo/ui SDK bump forces a re-check
   # that vaul is still unused before silently dropping it again.
   '@expo/ui@57>vaul': '-'
-  # @sentry/cli is a dependency of both @sentry/react-native and
-  # @sentry/expo-upload-sourcemaps, but neither is wired into a build phase
-  # here: the Xcode "Bundle React Native code and images" step runs plain
-  # react-native-xcode.sh, not Sentry's wrapper, and nothing uploads
-  # sourcemaps at all. Drop it -- it's dead weight that costs every install a
-  # platform-specific CLI binary download for nothing.
+  # @sentry/cli is a dependency of @sentry/react-native,
+  # @sentry/expo-upload-sourcemaps and @sentry/bundler-plugins. Sentry's Xcode
+  # build phases do run it, but take it from mise (see [tools.sentry] in
+  # mise.toml) through SENTRY_CLI_EXECUTABLE, which ci_post_clone.sh sets.
+  # Drop the npm copies -- they cost every install a platform-specific CLI
+  # binary download, on Linux jobs that never upload anything.
   '@sentry/cli': '-'
   # react-native-gesture-handler lists test-only type definitions as a runtime
   # dependency, which put a second copy beside our own devDependency.

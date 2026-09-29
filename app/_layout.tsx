@@ -6,6 +6,9 @@ import * as sentryInit from '../source/init/sentry'
 import '../source/init/api'
 import '../source/init/theme'
 import {queryClient, persistOptions} from '../source/init/tanstack-query'
+import {useScreenViews} from '../source/features/telemetry/use-screen-views'
+import {watchQueryFailures} from '../source/features/telemetry/query-failures'
+import {track} from '../source/features/telemetry/track'
 
 import * as React from 'react'
 import {PersistGate} from 'redux-persist/integration/react'
@@ -36,6 +39,8 @@ function RootLayout(): React.ReactNode {
 	const theme = scheme === 'dark' ? CombinedDarkTheme : CombinedLightTheme
 	const statusBarStyle = scheme === 'dark' ? 'light-content' : 'dark-content'
 	const navigationContainerRef = useNavigationContainerRef()
+	useScreenViews()
+	React.useEffect(() => watchQueryFailures(queryClient.getQueryCache(), track), [])
 
 	React.useEffect(() => {
 		if (!IS_PRODUCTION) {

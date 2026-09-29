@@ -5,12 +5,12 @@
 
 // export type FaqTarget = keyof (RootViewsParamList & SettingsStackParamList)
 
-export type FaqTarget = 'Home' | 'SIS' | 'SettingsRoot'
+export type FaqTarget = 'Home' | 'Balances' | 'SettingsRoot'
 
 /** Canonical list of screens that support FAQ banners. Type-checked against FaqTarget. */
 export const FAQ_TARGET_SCREENS: FaqTarget[] = [
 	// 'Home',
-	// 'SIS',
+	// 'Balances',
 	// 'SettingsRoot',
 	// 'Faq',
 	// 'BuildingHours',

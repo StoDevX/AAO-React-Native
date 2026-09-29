@@ -39,9 +39,31 @@ following information is logged:
 3. _What you requested and how long it took_, which is widely considered to be
   fully anonymous.
 
-We also use _Sentry_, which collects crash reports and cannot be disabled
-currently. Sentry collects in-depth information about the device and
-circumstances leading up to a given crash.
+We also use _Sentry_ to learn when the app crashes, how quickly it responds,
+and which screens and features people use. Unless you turn it off, the app
+sends Sentry:
+
+1. _Crash reports_, with the app version and the kind of phone.
+2. _Performance data_, such as how long a screen took to load and which
+  requests failed. Addresses are sent without their search terms or your
+  username.
+3. _Counts of what you used_: which screen you opened, or that a search on
+  the map found nothing. Never what you searched for, and never your name or
+  location.
+4. _A random ID made when you install the app_, so we can count devices
+  rather than visits. It is not linked to you, and a new one is made if you
+  turn sharing off and on again or reinstall. Crash reports also carry an ID
+  that Sentry's own crash reporter makes for itself; turning sharing off
+  does not reset that one.
+5. _The titles of public campus events you add to your calendar_, sent
+  separately and without the random ID, so we can see which events are
+  popular.
+
+You can turn all of this off, crash reports included, under Settings, "Share
+anonymous usage and crash data". If you send us a problem report, it goes
+without the random ID and without the record of what you did in the app
+beforehand; with sharing off, the app offers to send it by email instead.
+Sentry may estimate the city a report came from using your network address.
 
 If you send us suggestions for updates to building hours, we will anonymously add
 them to the app if we determine that they are correct.  We do not currently give
