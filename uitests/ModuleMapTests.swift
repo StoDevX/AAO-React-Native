@@ -59,7 +59,8 @@ class ModuleMapTests: UITestCase {
 			.verifyCardAtMedium()
 	}
 
-	/// The full sheet, and a row tapped from it.
+	/// The full sheet, and a row tapped from it, reached through the grid's
+	/// All Buildings group.
 	///
 	/// The module pins the field at 44pt with a constraint UIKit is free to
 	/// overrule silently, so the height is checked before anything else moves
@@ -74,6 +75,7 @@ class ModuleMapTests: UITestCase {
 			.checkSheetPresented()
 			.expandSheet()
 			.verifySearchFieldHeight()
+			.openCategory(TestIdentifiers.Map.allBuildingsCategory)
 		let largeTop = screen.searchFieldTop()
 
 		screen
@@ -178,7 +180,7 @@ class ModuleMapTests: UITestCase {
 			.verifySectionOrder(["Hours", "About", "Good to Know", "Links"], among: cardSections)
 	}
 
-	/// Closing a card returns to the list as it was left: the same category,
+	/// Closing a card returns to the list as it was left: the same group,
 	/// scrolled to the same place. Checked at the middle stop, where a row tap
 	/// leaves the sheet and so where the list is seen again.
 	func testClosingACardKeepsTheListsPlace() throws {
@@ -188,7 +190,7 @@ class ModuleMapTests: UITestCase {
 			.navigate()
 			.checkSheetPresented()
 			.expandSheet()
-			.chooseCategory(category)
+			.openCategory(category)
 		let offset = screen.scrollListToReach(name)
 		screen
 			.selectBuilding(named: name)
@@ -310,5 +312,44 @@ class ModuleMapTests: UITestCase {
 		let closes = app.buttons.matching(identifier: TestIdentifiers.Map.cardCloseButton)
 			.allElementsBoundByIndex.filter { $0.isHittable }
 		XCTAssertEqual(closes.count, 1, "A tap on the map should leave one card, not a stack")
+	}
+
+	/// At the middle stop the sheet offers its categories as a grid, as Maps
+	/// does for a shopping centre, and a group opens its places under a
+	/// header naming it.
+	func testTheGridOpensAGroupAndGoesBack() throws {
+		MapScreen(app: app)
+			.navigate()
+			.checkSheetPresented()
+			.expandSheet()
+			.capture("St. Olaf map category grid")
+			.openCategory(TestIdentifiers.Map.diningCategory)
+			.capture("St. Olaf map Dining group")
+			.verifyGroupOpen(TestIdentifiers.Map.diningCategory)
+			.verifyListed(TestIdentifiers.Map.aDiningPlace)
+			.goBackToCategories()
+	}
+
+	/// Search runs over every place, whichever group is open.
+	func testSearchFromAGroupFindsPlacesOutsideIt() throws {
+		MapScreen(app: app)
+			.navigate()
+			.checkSheetPresented()
+			.expandSheet()
+			.openCategory(TestIdentifiers.Map.diningCategory)
+			.focusSearch()
+			.typeIntoSearch(TestIdentifiers.Map.aPlaceOutsideDining)
+			.verifyListed(TestIdentifiers.Map.aPlaceOutsideDining)
+	}
+
+	/// The grid at the largest text size, for a person to look at: tiles
+	/// wrap to fewer columns and no label is cut off.
+	func testTheGridAtTheLargestTextSize() throws {
+		relaunch(atContentSizeCategory: TestIdentifiers.LaunchArguments.accessibilityExtraExtraExtraLarge)
+		MapScreen(app: app)
+			.navigate()
+			.checkSheetPresented()
+			.expandSheet()
+			.capture("St. Olaf map category grid at the largest text size")
 	}
 }
