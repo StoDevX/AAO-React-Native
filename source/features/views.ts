@@ -42,7 +42,7 @@ export const AllViews = (): Array<ViewType> => {
 		},
 		{
 			type: 'url',
-			url: 'https://sis.stolaf.edu/sis/landing-page.cfm',
+			url: 'https://sis.stolaf.edu/sis/index.cfm',
 			title: 'Balances',
 			icon: 'arrow.up.right',
 			gradient: c.goldGradient,

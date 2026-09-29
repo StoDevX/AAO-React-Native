@@ -26,7 +26,7 @@ describe('opensInBrowser', () => {
 describe('Balances', () => {
 	test('opens the SIS landing page on the web', () => {
 		expect(balancesOnTheWeb).toMatchObject({
-			url: 'https://sis.stolaf.edu/sis/landing-page.cfm',
+			url: 'https://sis.stolaf.edu/sis/index.cfm',
 			icon: 'arrow.up.right',
 		})
 		expect(balancesOnTheWeb.disabled).toBeFalsy()
