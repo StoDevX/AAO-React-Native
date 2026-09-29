@@ -150,6 +150,11 @@ kept in `images/icons/`. Regenerate them after editing an `.icon`:
 mise run icons
 ```
 
+Each icon gets a light and a dark preview, and the screens follow the app's
+appearance. `mise run icons -- --all` also renders the tinted look, to review
+a change by eye; the app cannot tell when the home screen is tinted, so those
+files are gitignored.
+
 The task needs Xcode, whose Icon Composer renders the previews, and runs them
 through oxipng. A new alternate also needs an entry in `ALTERNATE_ICONS` in
 the plugin, in `appIcons` in `images/icons/index.ts`, and in the picker's list

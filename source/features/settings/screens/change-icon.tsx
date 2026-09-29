@@ -1,9 +1,9 @@
 import * as React from 'react'
-import {Image as RNImage, ImageSourcePropType, StyleSheet} from 'react-native'
+import {Image as RNImage, StyleSheet, useColorScheme} from 'react-native'
 import {changeIcon, getIcon, resetIcon} from 'react-native-change-icon'
 import {HStack, Picker, RNHostView, Section, Text} from '@expo/ui/swift-ui'
 import {contentShape, frame, pickerStyle, shapes, tag} from '@expo/ui/swift-ui/modifiers'
-import {DEFAULT_ICON, type AppIconName, appIcons, iconFor} from '../../../../images/icons'
+import {DEFAULT_ICON, type AppIconName, iconFor, previewsFor} from '../../../../images/icons'
 import * as c from '@frogpond/colors'
 
 /// Measured off a Settings.app screenshot on an iPhone 14 Pro (1179x2556,
@@ -25,15 +25,14 @@ const styles = StyleSheet.create({
 })
 
 type Icon = {
-	src: ImageSourcePropType
 	title: string
 	type: AppIconName
 }
 
 export const icons: Array<Icon> = [
-	{src: appIcons.windmill.icon, title: 'Big Ole', type: 'windmill'},
-	{src: appIcons['sunset-behind-main'].icon, title: 'Old Main', type: 'sunset-behind-main'},
-	{src: appIcons['windmill-day'].icon, title: 'Windmill (Day)', type: 'windmill-day'},
+	{title: 'Big Ole', type: 'windmill'},
+	{title: 'Old Main', type: 'sunset-behind-main'},
+	{title: 'Windmill (Day)', type: 'windmill-day'},
 ]
 
 export let IconSettingsView = (): React.ReactNode => {
@@ -84,12 +83,17 @@ type IconCellProps = {
 
 let IconCell = (props: IconCellProps) => {
 	let {icon} = props
+	let scheme = useColorScheme()
 
 	return (
 		<HStack modifiers={[tag(icon.type), contentShape(shapes.rectangle())]} spacing={ICON_LABEL_GAP}>
 			<HStack modifiers={[frame({width: ICON_SIZE, height: ICON_SIZE})]}>
 				<RNHostView matchContents={false}>
-					<RNImage accessibilityIgnoresInvertColors={true} source={icon.src} style={styles.icon} />
+					<RNImage
+						accessibilityIgnoresInvertColors={true}
+						source={previewsFor(icon.type, scheme).icon}
+						style={styles.icon}
+					/>
 				</RNHostView>
 			</HStack>
 			<Text>{icon.title}</Text>
