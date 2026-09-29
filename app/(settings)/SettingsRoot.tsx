@@ -1,7 +1,12 @@
 import * as React from 'react'
 import {StyleSheet} from 'react-native'
 import {Form, Host, RNHostView, VStack} from '@expo/ui/swift-ui'
-import {listRowBackground, listRowInsets, listRowSeparator} from '@expo/ui/swift-ui/modifiers'
+import {
+	accessibilityIdentifier,
+	listRowBackground,
+	listRowInsets,
+	listRowSeparator,
+} from '@expo/ui/swift-ui/modifiers'
 import {Stack, useNavigation} from 'expo-router'
 
 import {useIsDevMode} from '../../source/lib/use-is-dev-mode'
@@ -40,7 +45,7 @@ export default function SettingsRootPage(): React.ReactNode {
 				/>
 			</Stack.Toolbar>
 
-			<Host style={styles.host}>
+			<Host style={styles.host} modifiers={[accessibilityIdentifier('screen-settings')]}>
 				<Form>
 					<VStack
 						modifiers={[

@@ -294,7 +294,7 @@ describe('the real suite', () => {
 	it('finds the UITest classes and nothing else', () => {
 		const found = discoverTests(realTestFiles()).map((c) => c.className)
 
-		assert.ok(found.includes('ModuleCalendarTests'))
+		assert.ok(found.includes('ModuleCalendarDayModeTests'))
 		// A base class with no test methods, and a page object that is not a
 		// test case at all. Neither belongs in a shard.
 		assert.ok(!found.includes('UITestCase'))

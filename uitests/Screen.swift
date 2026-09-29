@@ -36,38 +36,50 @@ extension Screen {
 	}
 
 	/// Tap a home-screen tile and wait for the home screen to disappear.
-	///
-	/// The tap is retried, because it can be dropped. A home-screen tile is a
-	/// SwiftUI button that becomes hittable as soon as its host mounts, while
-	/// its action has to reach JavaScript to push the next screen. A press
-	/// synthesized in between lands natively and nothing happens: the element
-	/// is found, the event is delivered, and the app stays put.
-	///
-	/// Retrying is the fix rather than a longer timeout, since a dropped tap is
-	/// not a slow one -- waiting on it achieves nothing.
 	@discardableResult
-	func navigateFromHome(to button: String) -> Self {
+  func navigateFromHome(to button: String) -> Self {
 		let homescreen = app.element(matching: TestIdentifiers.Home.screen)
 		XCTAssertTrue(
 			homescreen.waitForExistence(timeout: 30),
 			"Home screen should be visible before navigating to \(button)")
 
-		let tile = app.buttons[button].firstMatch
+		let button = app.buttons[button].firstMatch
 		XCTAssertTrue(
-			tile.waitForExistence(timeout: 30),
+      button.waitForExistence(timeout: 30),
 			"\(button) button should exist on the home screen")
 
 		for attempt in 1...3 {
-			tile.tap()
-			if homescreen.waitForNonExistence(timeout: 10) {
-				return self
-			}
-			XCTContext.runActivity(
-				named: "Tap \(attempt) on \(button) did not navigate; retrying"
-			) { _ in }
+      button.tap()
+
+      if homescreen.waitForNonExistence(timeout: 10) {
+        return self
+      }
+      XCTContext.runActivity(
+        named: "Tap \(attempt) on \(button) did not navigate; retrying"
+      ) { _ in }
 		}
 
 		XCTFail("Tapping \(button) never left the home screen")
+		return self
+	}
+
+	/// Open a route by deep link, skipping the home screen's tiles.
+	///
+	/// `route` is an Expo Router path, which drops route groups:
+	/// `app/(home)/Calendar.tsx` is `/Calendar`. `XCUIApplication.open(_:)`
+	/// raises no "Open in…?" sheet, unlike `simctl openurl`.
+	///
+	/// The home screen is waited for first, so the URL reaches an app that has
+	/// finished launching, and then waited out, so the caller starts on the
+	/// route rather than on a Home still animating away.
+	@discardableResult
+	func open(route: String) -> Self {
+		app.open(URL(string: "AllAboutOlaf://\(route)")!)
+
+    let homescreen = app.element(matching: TestIdentifiers.Home.screen)
+		XCTAssertTrue(
+			homescreen.waitForNonExistence(timeout: 10),
+			"Opening \(route) never left the home screen")
 		return self
 	}
 

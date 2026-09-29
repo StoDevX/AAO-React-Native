@@ -85,6 +85,71 @@ extension XCUIElement {
 	}
 }
 
+extension XCTestCase {
+  /// Creates an expectation for monitoring the given condition.
+  ///
+  /// - Parameters:
+  ///   - condition: The condition to evaluate to be `true`.
+  ///   - description: A string to display in the test log for this expectation, to help diagnose failures.
+  /// - Returns: The expectation for matching the condition.
+  func expectation(for condition: @autoclosure @escaping @MainActor () -> Bool, description: String = "") -> XCTestExpectation {
+    // learned from https://www.avanderlee.com/swift/nspredicate-xctestexpectations
+    let predicate = NSPredicate { _, _ in
+      // Ensures the XCUIElementQuery is safely read on the Main Actor during polling
+      MainActor.assumeIsolated {
+        return condition()
+      }
+    }
+
+    return XCTNSPredicateExpectation(predicate: predicate, object: nil)
+  }
+}
+
+enum StringMatcher {
+  case beginsWith(String)
+  case contains(String)
+  case endsWith(String)
+  case equals(String)
+
+  var predicateFormat: (format: String, value: String) {
+    switch self {
+    case .beginsWith(let str): return ("identifier BEGINSWITH %@", str)
+    case .contains(let str):   return ("identifier CONTAINS %@", str)
+    case .endsWith(let str):   return ("identifier ENDSWITH %@", str)
+    case .equals(let str):     return ("identifier == %@", str)
+    }
+  }
+
+  var nsPredicate: NSPredicate {
+    let (format, value) = predicateFormat
+    return NSPredicate(format: format, value)
+  }
+}
+
+extension XCUIElementQuery {
+  /// Filter elements by identifier using a type-safe StringMatcher
+  func matching(_ matcher: StringMatcher) -> XCUIElementQuery {
+    return self.matching(matcher.nsPredicate)
+  }
+
+  /// Collect just the accessibility identifiers from the query elements
+  func identifiers() -> [String] {
+    return allElementsBoundByIndex.map { $0.identifier }
+  }
+
+  /// Wait for element count to reach a specified threshold
+  @discardableResult
+  func waitForCount(
+    _ comparison: String = ">=",
+    count targetCount: Int,
+    timeout: TimeInterval = 10.0
+  ) -> Bool {
+    let predicate = NSPredicate(format: "count \(comparison) %d", targetCount)
+    let expectation = XCTNSPredicateExpectation(predicate: predicate, object: self)
+    return XCTWaiter().wait(for: [expectation], timeout: timeout) == .completed
+  }
+}
+
 /// The RGB values of a screenshot, addressed in points.
 struct ScreenPixels {
 	struct Colour {

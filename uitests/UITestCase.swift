@@ -3,10 +3,10 @@ import XCTest
 /// Base class for all UI tests. Provides common setup (launch arguments,
 /// `continueAfterFailure = false`) so individual test files stay focused
 /// on assertions.
-class UITestCase: XCTestCase {
+class UITestCaseUnbooted: XCTestCase {
 	var app: XCUIApplication!
 
-	override func setUpWithError() throws {
+  @MainActor override func setUp() async throws {
 		continueAfterFailure = false
 
 		// Before the app launches: a run with no known JS source measures
@@ -21,7 +21,7 @@ class UITestCase: XCTestCase {
 		// inverts if dev mode is already on, and failed only in long runs.
 		app.launchArguments.append(TestIdentifiers.LaunchArguments.resetState)
 		appendJsLocationIfProvided()
-		app.launch()
+    app.launch()
 	}
 
 	override func tearDownWithError() throws {
@@ -79,7 +79,7 @@ class UITestCase: XCTestCase {
 	/// `__XCODE_BUILT_PRODUCTS_DIR_PATHS`, and a simulator process can read
 	/// the host filesystem, so the bundle can simply be looked for. A flag
 	/// saying "a bundle is embedded" would be one more thing that can be wrong.
-	private func requireKnownJsSource() throws {
+	func requireKnownJsSource() throws {
 		if ProcessInfo.processInfo.environment["AAO_JS_LOCATION"] != nil {
 			return
 		}
@@ -170,4 +170,11 @@ class UITestCase: XCTestCase {
 		appendJsLocationIfProvided()
 		app.launch()
 	}
+}
+
+class UITestCase: UITestCaseUnbooted {
+//  override func setUp() async throws {
+//    try super.setUpWithError()
+//    app.launch()
+//  }
 }

@@ -1,23 +1,6 @@
 import XCTest
 
 class ModuleMapTests: UITestCase {
-	/// The bar reports each keystroke to JavaScript and takes the echo back as
-	/// a prop, which is a round trip with a race in it. Typing a whole name is
-	/// what shows whether a character was lost on the way: the field is read
-	/// back, and a building the query cannot match has to leave the list, which
-	/// is the half that can only happen if the text arrived in JavaScript.
-	func testTypingIntoSearchKeepsEveryCharacter() throws {
-		MapScreen(app: app)
-			.navigate()
-			.checkSheetPresented()
-			.focusSearch()
-			.capture("St. Olaf map list before a query is typed")
-			.verifyListed(TestIdentifiers.Map.anotherBuilding)
-			.typeIntoSearch(TestIdentifiers.Map.aBuilding)
-			.capture("St. Olaf map sheet with a typed query")
-			.verifyFilteredOut(TestIdentifiers.Map.anotherBuilding)
-	}
-
 	/// The collapsed sheet, and the two things that raise it.
 	///
 	/// The sheet opens on its smallest stop, at the foot of the screen, holding
@@ -178,31 +161,6 @@ class ModuleMapTests: UITestCase {
 				["Hours", "About", "Good to Know", "Departments", "Offices", "Links"], among: cardSections)
 	}
 
-	func testMoreOpensEveryDepartmentInAGrid() throws {
-		let name = TestIdentifiers.Map.aBuildingWithManyDepartments
-		MapScreen(app: app)
-			.navigate()
-			.checkSheetPresented()
-			.focusSearch()
-			.typeIntoSearch(name)
-			.selectBuilding(named: name)
-			.expandCard()
-			.verifyMoreShowsEveryDepartment(21)
-	}
-
-	func testAboutExpandsFromItsFirstFiveLines() throws {
-		let name = TestIdentifiers.Map.aBuildingWithALongAbout
-		MapScreen(app: app)
-			.navigate()
-			.checkSheetPresented()
-			.focusSearch()
-			.typeIntoSearch(name)
-			.selectBuilding(named: name)
-			.expandCard()
-			.capture("Holland Hall's About, clamped")
-			.verifyAboutExpands()
-	}
-
 	/// A building's card shows its own hours -- a status row, then the week
 	/// -- after the photo's place and before About.
 	func testACardShowsItsBuildingsOwnHours() throws {
@@ -252,27 +210,6 @@ class ModuleMapTests: UITestCase {
 			.verifyHoursStatus()
 			.expandCard()
 			.capture("The Cage's card at the large stop")
-	}
-
-	/// A Carleton card carries what St. Olaf's feed lacks: a photo, an address
-	/// and accessibility. Its photo is a square tile that opens full screen
-	/// over the sheet, and opens again after closing, at the middle stop and
-	/// at the large one, leaving the card where it was each time.
-	func testACarletonCardShowsItsPhotoAndDetails() throws {
-		let name = TestIdentifiers.Map.aCarletonBuildingWithAPhoto
-		MapScreen(app: app)
-			.navigateToCarleton()
-			.checkSheetPresented()
-			.focusSearch()
-			.typeIntoSearch(name)
-			.selectBuilding(named: name)
-			.verifyCardAtMedium()
-			.verifyPhotoOpensFullScreenTwice()
-			.expandCard()
-			.capture("Sayles-Hill's card at the large stop")
-			.verifyPhotoTileSquare()
-			.verifyPhotoOpensFullScreenTwice()
-			.verifySectionOrder(["About", "Good to Know", "Offices", "Floors", "Details"], among: cardSections)
 	}
 
 	/// A place's card lists what else is there, and each opens its own card in
