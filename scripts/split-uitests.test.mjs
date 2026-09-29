@@ -54,6 +54,27 @@ describe('discoverTests', () => {
 		)
 	})
 
+	it('gives each method to the class that declares it when a file holds two', () => {
+		assert.deepEqual(
+			discoverTests([
+				swiftFile(
+					'ModuleThingTests.swift',
+					'class ModuleThingDayTests: UITestCase {\n' +
+						'\tfunc testOne() throws {}\n' +
+						'}\n' +
+						'\n' +
+						'class ModuleThingWeekTests: UITestCase {\n' +
+						'\tfunc testTwo() throws {}\n' +
+						'}\n',
+				),
+			]),
+			[
+				{className: 'ModuleThingDayTests', methods: ['testOne']},
+				{className: 'ModuleThingWeekTests', methods: ['testTwo']},
+			],
+		)
+	})
+
 	it('skips files with no test class and classes with no tests', () => {
 		assert.deepEqual(
 			discoverTests([
@@ -275,30 +296,32 @@ describe('the real suite', () => {
 		assert.deepEqual(placed.sort(), classes.map((c) => c.className).sort())
 	})
 
-	it('places every method in exactly one shard', () => {
-		const classes = discoverTests(realTestFiles())
-		const items = weighMethods(classes, {})
-		const placed = packShards(items, 3)
+	it('places every method in the suite exactly once', () => {
+		// Counted straight from the Swift text rather than from discoverTests, so
+		// a method the planner drops or names twice cannot also shrink the target.
+		const declared = realTestFiles().flatMap((file) => [
+			...file.text.matchAll(/func\s+(test\w+)\s*\(/gu),
+		])
+		const placed = packShards(weighMethods(discoverTests(realTestFiles()), {}), 3)
 			.flat()
 			.map((i) => i.name)
 
-		const expected = classes.flatMap((c) => c.methods.map((method) => `${c.className}/${method}`))
-
-		// Length first: two equal sets built from arrays of different length
-		// would still pass a set-only comparison, hiding a dropped method that
-		// was balanced out by a duplicated one.
-		assert.equal(placed.length, expected.length)
-		assert.deepEqual(new Set(placed), new Set(expected))
+		assert.equal(placed.length, declared.length)
+		assert.equal(new Set(placed).size, placed.length)
 	})
 
-	it('finds the UITest classes and nothing else', () => {
+	it('finds every UITestCase subclass and nothing else', () => {
+		const declared = realTestFiles().flatMap((file) =>
+			[...file.text.matchAll(/class\s+(\w+)\s*:\s*UITestCase\b/gu)].map((m) => m[1]),
+		)
 		const found = discoverTests(realTestFiles()).map((c) => c.className)
 
-		assert.ok(found.includes('ModuleCalendarDayModeTests'))
-		// A base class with no test methods, and a page object that is not a
-		// test case at all. Neither belongs in a shard.
-		assert.ok(!found.includes('UITestCase'))
-		assert.ok(!found.includes('Screen'))
+		// Every class in a file, not just its first: a method credited to the
+		// wrong class becomes an -only-testing name that matches no test. The
+		// base classes and page objects hold no tests, so they are absent from
+		// both lists.
+		const byName = (a, b) => a.localeCompare(b)
+		assert.deepEqual(found.sort(byName), declared.sort(byName))
 	})
 
 	it('balances the shards to within one class of each other', () => {
