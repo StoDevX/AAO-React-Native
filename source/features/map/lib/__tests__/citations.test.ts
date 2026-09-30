@@ -32,6 +32,12 @@ describe('citationLine', () => {
 		)
 	})
 
+	it('skips a citation the feed left empty or unlabelled', () => {
+		expect(citationLine([null as never, {href: 'https://x/n'} as never, HISTORY])).toBe(
+			'Source: [History of the Natural Lands](https://x/history/)',
+		)
+	})
+
 	it('keeps a bracket in a label inside its link', () => {
 		expect(citationLine([{label: 'Map [2024]', href: 'https://x/m'}])).toBe(
 			'Source: [Map \\[2024\\]](https://x/m)',
