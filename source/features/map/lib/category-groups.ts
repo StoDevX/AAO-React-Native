@@ -37,8 +37,8 @@ function belongs(group: {categories: string[]}, place: Feature<Building>): boole
 }
 
 /// The campus's groups that hold at least one place, in the file's order. An
-/// entry can ship before the feed carries its values -- St. Olaf's Outdoors
-/// does -- and draws no tile until then.
+/// entry can ship before the feed carries its values, and draws no tile
+/// until it does.
 export function groupsFor(
 	table: MapCategoryTable,
 	campus: Campus,

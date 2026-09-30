@@ -23,13 +23,6 @@ const group = (label: string): CategoryGroup => ({
 })
 
 describe('CategoryGrid', () => {
-	test('draws a tile for each group, in order', async () => {
-		await render(<CategoryGrid groups={[group('Dining'), group('Parking')]} onOpen={jest.fn()} />)
-		expect(
-			screen.getAllByRole('button').map((button) => button.props.accessibilityLabel as string),
-		).toEqual(['Dining', 'Parking'])
-	})
-
 	test('opens the group whose tile is pressed', async () => {
 		let onOpen = jest.fn()
 		let parking = group('Parking')

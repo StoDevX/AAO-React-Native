@@ -37,7 +37,7 @@ describe('groupsFor', () => {
 		expect(labels(TABLE)).toEqual(['All Buildings', 'Academic', 'Housing'])
 	})
 
-	// St. Olaf's feed has no `outdoors` places yet; the entry waits for them.
+	// An entry can wait for places its campus's feed does not carry.
 	test('hides a group with no places', () => {
 		expect(labels(TABLE)).not.toContain('Outdoors')
 	})
@@ -111,7 +111,7 @@ describe('placesIn', () => {
 		expect(holding.map((group) => group.label)).toEqual(['All Buildings', 'Housing'])
 	})
 
-	// The windmill once arrived with no categories at all.
+	// A record can carry no categories at all.
 	test('leaves out a place that lists no categories', () => {
 		let bare = [makeBuilding({id: 'windmill', name: 'Windmill', categories: []})]
 		expect(placesIn(housing(), bare)).toEqual([])

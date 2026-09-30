@@ -215,7 +215,7 @@ export function BuildingPicker({
 						))
 					) : compact ? null : (
 						// The grid is one row of the list, drawn without the row's
-						// card, so Recents can later sit below it as its own section.
+						// card, so other sections can sit below it in the same list.
 						<VStack
 							modifiers={[
 								listRowBackground('clear'),

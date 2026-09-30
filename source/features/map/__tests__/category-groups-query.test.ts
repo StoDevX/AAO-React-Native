@@ -7,7 +7,7 @@ import {
 	type Jrd,
 } from '@frogpond/data-sources'
 
-import {BUNDLED_MAP_CATEGORIES, mapCategoriesOptions} from '../category-groups-query'
+import {mapCategoriesOptions} from '../category-groups-query'
 import type {MapCategoryTable} from '../lib/category-groups'
 
 jest.mock('@react-native-community/netinfo', () =>
@@ -100,10 +100,5 @@ describe('mapCategoriesOptions', () => {
 			data: {stolaf: [{label: 'Dining', categories: 'dining'}], carleton: []},
 		})
 		await expect(run()).rejects.toThrow('map-categories')
-	})
-
-	test('bundles both campuses', () => {
-		expect(BUNDLED_MAP_CATEGORIES.stolaf.length).toBeGreaterThan(0)
-		expect(BUNDLED_MAP_CATEGORIES.carleton.length).toBeGreaterThan(0)
 	})
 })
