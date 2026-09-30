@@ -1,6 +1,6 @@
 import XCTest
 
-class ModuleStudentWorkTests: UITestCase {
+class ModuleStudentWorkTests: UITestCaseUnbooted {
 	private typealias IDs = TestIdentifiers.StudentWork
 
 	/// A row drops its title's term and pay code and shows the wage the code

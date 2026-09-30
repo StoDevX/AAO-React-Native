@@ -1,6 +1,6 @@
 import XCTest
 
-class ModuleMoreTests: UITestCase {
+class ModuleMoreTests: UITestCaseUnbooted {
 	func testIsReachableFromHomescreen() throws {
 		MoreScreen(app: app)
 			.navigate()

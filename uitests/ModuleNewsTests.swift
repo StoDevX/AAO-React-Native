@@ -1,6 +1,6 @@
 import XCTest
 
-class ModuleNewsTests: UITestCase {
+class ModuleNewsTests: UITestCaseUnbooted {
 	/// Reads live data: the paper has to have published at least two issues.
 	func testOlafMessengerOpensOnTheIssueGrid() throws {
 		MessFrontPage(app: app)

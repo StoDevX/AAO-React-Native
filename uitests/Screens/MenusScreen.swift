@@ -5,7 +5,7 @@ struct MenusScreen: Screen {
 
 	@discardableResult
 	func navigate() -> Self {
-		navigateFromHome(to: TestIdentifiers.Buttons.menus)
+		open(route: "/Menus", mountedWhen: app.navigationBars.buttons[TestIdentifiers.Menus.filtersButton].firstMatch)
 	}
 
 	/// The navigation bar names the cafe and the day and meal it is showing, on

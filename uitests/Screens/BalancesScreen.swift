@@ -5,7 +5,7 @@ struct BalancesScreen: Screen {
 
 	@discardableResult
 	func navigate() -> Self {
-		navigateFromHome(to: TestIdentifiers.Buttons.balances)
+		open(route: "/Balances", mountedWhen: app.buttons[TestIdentifiers.Balances.iAgree].firstMatch)
 	}
 
 	@discardableResult

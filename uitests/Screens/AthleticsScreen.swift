@@ -10,17 +10,6 @@ struct AthleticsScreen: Screen {
 	/// the previous test may already have left behind.
 	@discardableResult
 	func navigate() -> Self {
-		let tile = app.buttons[TestIdentifiers.Buttons.athletics].firstMatch
-		if !tile.waitForExistence(timeout: 10) {
-			HomeScreen(app: app)
-				.longPressNotice()
-				.tapEnableDevMode()
-
-			XCTAssertTrue(
-				tile.waitForExistence(timeout: 30),
-				"Athletics tile should appear once dev mode is on")
-		}
-
-		return navigateFromHome(to: TestIdentifiers.Buttons.athletics)
+		open(route: "/Athletics", mountedWhen: app.navigationBars["Athletics"])
 	}
 }

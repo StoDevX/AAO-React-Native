@@ -9,7 +9,7 @@ struct NewsScreen: Screen {
 
 	@discardableResult
 	func navigate() -> Self {
-		navigateFromHome(to: tile)
+		open(route: "/StOlafNews", mountedWhen: app.navigationBars[title])
 	}
 
 	@discardableResult

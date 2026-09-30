@@ -83,6 +83,23 @@ extension Screen {
 		return self
 	}
 
+	/// Open a route by deep link and wait for `mounted`, an element only that
+	/// route's screen draws.
+	///
+	/// `open(route:)` alone is not enough: the relaunched app has no home
+	/// screen while it is still blank, so its check passes before anything has
+	/// mounted, and a test's first action can land on nothing.
+	@discardableResult
+	func open(route: String, mountedWhen mounted: XCUIElement, timeout: TimeInterval = 30) -> Self {
+		// No wait for Home to go: `mounted` belongs to the route alone, and
+		// each wait costs a second of polling.
+		app.open(URL(string: "AllAboutOlaf://\(route)")!)
+		XCTAssertTrue(
+			mounted.waitForExistence(timeout: timeout),
+			"\(route) should mount \(mounted)")
+		return self
+	}
+
 	/// Scrolls until `element` enters the accessibility tree.
 	///
 	/// SwiftUI's `Form` builds its rows lazily: anything below the fold is

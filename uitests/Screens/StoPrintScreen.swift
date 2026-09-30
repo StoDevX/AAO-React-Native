@@ -5,7 +5,7 @@ struct StoPrintScreen: Screen {
 
 	@discardableResult
 	func navigate() -> Self {
-		navigateFromHome(to: TestIdentifiers.Buttons.stoPrint)
+		open(route: "/PrintJobs", mountedWhen: app.navigationBars.firstMatch)
 	}
 
 	@discardableResult

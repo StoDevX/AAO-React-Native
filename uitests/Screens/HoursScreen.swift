@@ -7,7 +7,7 @@ struct HoursScreen: Screen {
 	/// param.
 	@discardableResult
 	func navigate() -> Self {
-		navigateFromHome(to: TestIdentifiers.Buttons.hours)
+		open(route: "/Hours", mountedWhen: searchField)
 	}
 
 	private var searchField: XCUIElement {

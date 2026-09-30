@@ -5,7 +5,7 @@ struct StreamingMediaScreen: Screen {
 
 	@discardableResult
 	func navigate() -> Self {
-		navigateFromHome(to: TestIdentifiers.Buttons.streamingMedia)
+		open(route: "/Streaming%20Media", mountedWhen: app.element(matching: TestIdentifiers.Streaming.list))
 	}
 
 	@discardableResult

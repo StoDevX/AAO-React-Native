@@ -8,7 +8,7 @@ struct MessFrontPage: Screen {
 
 	@discardableResult
 	func navigate() -> Self {
-		navigateFromHome(to: TestIdentifiers.Buttons.olafMessenger)
+		open(route: "/Messenger", mountedWhen: viewMenu)
 	}
 
 	/// By Issue leads with the newest issue as the top tile, over older issues as tiles, under the

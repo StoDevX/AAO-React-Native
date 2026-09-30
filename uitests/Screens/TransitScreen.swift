@@ -5,7 +5,7 @@ struct TransitScreen: Screen {
 
 	@discardableResult
 	func navigate() -> Self {
-		navigateFromHome(to: TestIdentifiers.Buttons.transit)
+		open(route: "/Transit", mountedWhen: app.navigationBars["Transit"])
 	}
 
 	/// A line's widget header, which carries the line name and what it is

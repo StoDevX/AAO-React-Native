@@ -15,7 +15,7 @@ struct DirectoryScreen: Screen {
 
 	@discardableResult
 	func navigate() -> Self {
-		navigateFromHome(to: TestIdentifiers.Buttons.directory)
+		open(route: "/Directory", mountedWhen: searchField)
 	}
 
 	@discardableResult

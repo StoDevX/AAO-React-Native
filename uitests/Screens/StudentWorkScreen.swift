@@ -5,7 +5,7 @@ struct StudentWorkScreen: Screen {
 
 	@discardableResult
 	func navigate() -> Self {
-		navigateFromHome(to: TestIdentifiers.Buttons.studentWork)
+		open(route: "/StudentWork", mountedWhen: areaGrid)
 	}
 
 	/// Opens a preset below the tiles, whose row label leads with its title.

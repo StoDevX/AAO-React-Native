@@ -9,7 +9,7 @@ struct StudentOrgsScreen: Screen {
 
 	@discardableResult
 	func navigate() -> Self {
-		navigateFromHome(to: TestIdentifiers.Buttons.studentOrgs)
+		open(route: "/StudentOrgs", mountedWhen: app.navigationBars["Student Orgs"])
 	}
 
 	@discardableResult

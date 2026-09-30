@@ -5,7 +5,7 @@ struct CourseCatalogScreen: Screen {
 
 	@discardableResult
 	func navigate() -> Self {
-		navigateFromHome(to: TestIdentifiers.Buttons.courseCatalog)
+		open(route: "/CourseSearch", mountedWhen: app.navigationBars["Course Catalog"])
 	}
 
 	@discardableResult

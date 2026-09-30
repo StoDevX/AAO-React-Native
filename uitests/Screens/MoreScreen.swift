@@ -5,7 +5,7 @@ struct MoreScreen: Screen {
 
 	@discardableResult
 	func navigate() -> Self {
-		navigateFromHome(to: TestIdentifiers.Buttons.more)
+		open(route: "/More", mountedWhen: app.staticTexts[TestIdentifiers.Buttons.more].firstMatch)
 	}
 
 	@discardableResult
