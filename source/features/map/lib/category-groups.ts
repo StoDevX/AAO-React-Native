@@ -76,6 +76,21 @@ export function groupsFor(
 		}))
 }
 
+/** What a place's row draws beside its name. */
+export type PlaceIcon = {icon: SFSymbol; gradient: Gradient}
+
+/// The icon of the first entry sharing any of `categories`: the lists run
+/// most specific first, so a pond draws a drop rather than the tree every
+/// outdoor place shares. A place no entry names draws a gray pin.
+export function placeIcon(categories: string[] | undefined, entries: MapIconEntry[]): PlaceIcon {
+	let own = new Set(categories)
+	let entry = entries.find((candidate) => candidate.categories.some((c) => own.has(c)))
+	return {
+		icon: entry?.icon ?? FALLBACK_GROUP_ICON,
+		gradient: resolveGradient(entry?.gradient),
+	}
+}
+
 /// A group's color as `rgb(r, g, b)`: its gradient's darker stop,
 /// `color(display-p3 r g b)`, read as sRGB. Neither a SwiftUI image's color
 /// nor MapLibre's paint takes display-p3, so this comes out a little less

@@ -206,7 +206,8 @@ type DisclosureRowProps = {
 	status?: {text: string; color: ColorValue}
 }
 
-function LeadingImage({image}: {image: DisclosureRowImage}): React.ReactNode {
+/** A row's leading image: a tinted symbol, or a thumbnail. */
+export function LeadingImage({image}: {image: DisclosureRowImage}): React.ReactNode {
 	if ('systemName' in image) {
 		return (
 			<Image

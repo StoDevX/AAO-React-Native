@@ -41,7 +41,26 @@ stolaf:
       icon: info.circle.fill
       gradient: purple
 
-  icons: []
+  # The icon a place's row draws: the first entry sharing any of the place's
+  # categories. Most specific first -- a walk before a trail, a field before
+  # the outdoors, anything before a plain building.
+  icons:
+    - {categories: [wellness-walk], icon: figure.walk, gradient: mint}
+    - {categories: [trail], icon: figure.hiking, gradient: green}
+    - {categories: [water], icon: drop.fill, gradient: blue}
+    - {categories: [athletics, field], icon: figure.run, gradient: red}
+    - {categories: [accessible-parking], icon: figure.roll, gradient: light-blue}
+    - {categories: [parking], icon: parkingsign, gradient: light-blue}
+    - {categories: [dining], icon: fork.knife, gradient: orange}
+    - {categories: [residence-hall, housing], icon: bed.double.fill, gradient: indigo}
+    - {categories: [academic], icon: graduationcap.fill, gradient: gold}
+    - {categories: [administrative, admissions], icon: briefcase.fill, gradient: blue}
+    - {categories: [landmark, memorial], icon: building.columns.fill, gradient: tan}
+    - categories: [bookstore, student-center, visitor-center, visitor-information, ev-charging]
+      icon: info.circle.fill
+      gradient: purple
+    - {categories: [outdoors], icon: tree.fill, gradient: green}
+    - {categories: [building], icon: building.2.fill, gradient: gray}
 
 carleton:
   groups:
@@ -73,4 +92,12 @@ carleton:
       categories: [parking]
       icon: parkingsign
       gradient: light-blue
-  icons: []
+  # As St. Olaf's: housing a place is named for before what it houses.
+  icons:
+    - {categories: [athletics], icon: figure.run, gradient: red}
+    - {categories: [parking], icon: parkingsign, gradient: light-blue}
+    - {categories: [student-housing, employee-housing], icon: bed.double.fill, gradient: indigo}
+    - {categories: [academic], icon: graduationcap.fill, gradient: gold}
+    - {categories: [administrative], icon: briefcase.fill, gradient: blue}
+    - {categories: [outdoors], icon: tree.fill, gradient: green}
+    - {categories: [building], icon: building.2.fill, gradient: gray}
