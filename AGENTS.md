@@ -210,6 +210,22 @@ nothing. A new code needs a change to `JobCode` in
 `source/features/sis/student-work/posting.ts` first. Jest and the UI tests
 read `FIXED_WAGES`, not the data file, so a rate change never breaks them.
 
+### Map Fixtures
+
+Under UI tests the map reads copies of each campus's `map/geojson` from
+`source/features/map/__fixtures__/`, not ccc-server, so a data publish cannot
+move what the map tests measure. Refresh them on purpose, when a test needs a
+place or a field the copies lack:
+
+```bash
+mise run update-map-fixtures
+```
+
+It prints the places each campus added and removed, and how many changed, and
+writes nothing when any campus's response has no places. The copies are written
+with sorted keys, so the diff shows only the data that moved. Rerun the map UI
+tests after a refresh: a moved label point can change what a tap hits.
+
 ## Agent Workflow
 
 **Session startup:** Always run `mise run agent:setup` at the start of every session. This installs dependencies and bundles data files.
