@@ -50,7 +50,7 @@ carleton:
     icon: graduationcap.fill
     gradient: gold
   - label: Housing
-    categories: [student-housing, hall, house]
+    categories: [student-housing, hall, house, employee-housing]
     icon: bed.double.fill
     gradient: indigo
   - label: Offices
