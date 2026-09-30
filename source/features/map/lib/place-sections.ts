@@ -1,10 +1,11 @@
 import type {PlaceTile} from './place-tiles'
 
-/// A card's three carousels of places.
+/// A card's four carousels of places.
 export type PlaceSections = {
 	departments: Array<PlaceTile>
 	offices: Array<PlaceTile>
 	alsoHere: Array<PlaceTile>
+	accessibleParking: Array<PlaceTile>
 }
 
 /**
@@ -30,7 +31,8 @@ function byLabel(a: PlaceTile, b: PlaceTile): number {
  * in only one of them. A department or office link that names the same place
  * as one of `candidates` (from `alsoHere`) becomes one tile, in the link's
  * section, that opens the place's card, which then lists the link's page.
- * Offices with no link join Offices; Also at This Location keeps the rest.
+ * Offices with no link join Offices, accessible parking spots get Accessible
+ * Parking, and Also at This Location keeps the rest.
  */
 export function placeSections(
 	links: Array<PlaceTile>,
@@ -56,6 +58,9 @@ export function placeSections(
 			...merged.filter((tile) => tile.kind === 'office'),
 			...unused.filter((tile) => tile.kind === 'office'),
 		].sort(byLabel),
-		alsoHere: unused.filter((tile) => tile.kind !== 'office').sort(byLabel),
+		alsoHere: unused
+			.filter((tile) => tile.kind !== 'office' && tile.kind !== 'accessible-parking')
+			.sort(byLabel),
+		accessibleParking: unused.filter((tile) => tile.kind === 'accessible-parking').sort(byLabel),
 	}
 }

@@ -95,6 +95,21 @@ describe('placeSections', () => {
 	})
 })
 
+describe('placeSections, accessible parking', () => {
+	test('gives accessible spots a section of their own', () => {
+		let spot: PlaceTile = {
+			kind: 'accessible-parking',
+			label: 'Accessible Parking, New Hall',
+			href: null,
+			opens: {kind: 'feature', id: 'accessibleparking-4'},
+		}
+		let cage = candidate('place', 'The Cage')
+		let sections = placeSections([], [spot, cage])
+		expect(sections.accessibleParking).toEqual([spot])
+		expect(sections.alsoHere).toEqual([cage])
+	})
+})
+
 describe('nameKey', () => {
 	test('folds case, accents and punctuation', () => {
 		expect(nameKey('Piper Center')).toBe(nameKey('piper center'))

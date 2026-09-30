@@ -86,4 +86,24 @@ describe('alsoHere', () => {
 
 		expect(alsoHere(sayles, [sayles], [venue('Sayles Café', undefined)])).toEqual([])
 	})
+
+	// A lot's accessible spot, or one beside a building, is its own group: the
+	// card gives it a section of its own rather than Also at This Location.
+	test('marks an accessible spot as accessible parking', () => {
+		let porter = makeBuilding({id: 'lot-porter', name: 'Porter', categories: ['parking']})
+		let spot = makeBuilding({
+			id: 'accessibleparking-20',
+			name: 'Accessible Parking, Porter',
+			categories: ['parking', 'accessible-parking'],
+			parent: 'lot-porter',
+		})
+		expect(alsoHere(porter, [porter, spot], [])).toEqual([
+			{
+				opens: {kind: 'feature', id: 'accessibleparking-20'},
+				label: 'Accessible Parking, Porter',
+				group: 'accessible-parking',
+				venue: undefined,
+			},
+		])
+	})
 })
