@@ -114,6 +114,23 @@ private struct SearchBar: UIViewRepresentable {
 			bar.setShowsCancelButton(bar.searchTextField.isFirstResponder || hasText, animated: animated)
 		}
 
+		/// `UISearchBar` offers no public handle on its Cancel button, so it is
+		/// found as the one control the bar holds outside its text field.
+		private func cancelButton(in bar: UISearchBar) -> UIControl? {
+			func find(in view: UIView) -> UIControl? {
+				for subview in view.subviews where subview !== bar.searchTextField {
+					if let control = subview as? UIControl {
+						return control
+					}
+					if let control = find(in: subview) {
+						return control
+					}
+				}
+				return nil
+			}
+			return find(in: bar)
+		}
+
 		func searchBar(_ bar: UISearchBar, textDidChange text: String) {
 			props.onTextChange(["value": text])
 			updateCancelButton(on: bar, animated: true)
@@ -126,6 +143,14 @@ private struct SearchBar: UIViewRepresentable {
 
 		func searchBarTextDidEndEditing(_ bar: UISearchBar) {
 			updateCancelButton(on: bar, animated: true)
+			// UIKit disables Cancel once this call returns, but leaves it drawn
+			// while the field holds text. A tap on it would then fall through to
+			// the bar and start editing again, so Cancel would take two taps
+			// after Search or a tap elsewhere ended the edit.
+			DispatchQueue.main.async { [weak self, weak bar] in
+				guard let self, let bar, bar.showsCancelButton else { return }
+				self.cancelButton(in: bar)?.isEnabled = true
+			}
 			props.onFocusChange(["value": false, "hasText": !(bar.text ?? "").isEmpty])
 		}
 
