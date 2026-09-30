@@ -10,6 +10,7 @@ import type {MapCategoryTable} from '../lib/category-groups'
 import {groupColor} from '../lib/category-groups'
 import {SEARCH_PIN_COLOR, type MapPins} from '../lib/map-pins'
 import {keys} from '../query'
+import {useRecentPlacesStore} from '../store'
 import {makeBuilding} from './fixtures'
 import {track} from '../../telemetry/track'
 
@@ -554,6 +555,65 @@ describe('BuildingPicker', () => {
 			await rerenderWith({compact: true})
 			await rerenderWith({compact: false})
 			expect(lastPins(onPinsChange)).toMatchObject({names: ['Beta Lot'], frameKey: 1})
+		})
+	})
+
+	describe('recents', () => {
+		beforeEach(() => {
+			useRecentPlacesStore.setState({recent: {stolaf: [], carleton: []}})
+		})
+
+		let remember = (...ids: string[]) =>
+			useRecentPlacesStore.setState({recent: {stolaf: [], carleton: ids}})
+
+		it('lists the places opened most recently under the grid, newest first', async () => {
+			remember('c', 'a')
+			await renderPicker()
+			expect(screen.getByText('Recents')).toBeTruthy()
+			expect(
+				screen
+					.getAllByText(/^(Alpha Hall|Gamma Field)$/u)
+					.map((row) => [row.props.children].flat().join('')),
+			).toEqual(['Gamma Field', 'Alpha Hall'])
+		})
+
+		it('draws no section before anything has been opened', async () => {
+			await renderPicker()
+			expect(screen.queryByText('Recents')).toBeNull()
+		})
+
+		it('skips a place the map no longer has', async () => {
+			remember('gone', 'a')
+			await renderPicker()
+			expect(screen.getByText('Alpha Hall')).toBeTruthy()
+		})
+
+		it('keeps to the root: not inside a group, not while searching', async () => {
+			remember('a')
+			await renderPicker()
+			await fireEvent.press(screen.getByRole('button', {name: 'Parking'}))
+			expect(screen.queryByText('Recents')).toBeNull()
+			await fireEvent.press(screen.getByRole('button', {name: 'Back'}))
+			await fireEvent.changeText(screen.getByLabelText('Search for a place'), 'gamma')
+			await waitFor(() => {
+				expect(screen.getByText('Gamma Field')).toBeTruthy()
+			})
+			expect(screen.queryByText('Recents')).toBeNull()
+		})
+
+		it('clears the campus it shows', async () => {
+			useRecentPlacesStore.setState({recent: {stolaf: ['x'], carleton: ['a']}})
+			await renderPicker()
+			await fireEvent.press(screen.getByRole('button', {name: 'Clear Recents'}))
+			expect(useRecentPlacesStore.getState().recent).toEqual({stolaf: ['x'], carleton: []})
+			expect(screen.queryByText('Recents')).toBeNull()
+		})
+
+		it('opens a remembered place from its row', async () => {
+			remember('a')
+			let {onSelect} = await renderPicker()
+			await fireEvent.press(screen.getByText('Alpha Hall'))
+			expect(onSelect).toHaveBeenCalledWith('a')
 		})
 	})
 })

@@ -60,6 +60,7 @@ import {
 	nameOf,
 } from '../../../source/features/map/lib/sheet-detents'
 import {mapDataOptions} from '../../../source/features/map/query'
+import {useRecentPlacesStore} from '../../../source/features/map/store'
 import type {Building, Coordinate, Feature, Point} from '../../../source/features/map/types'
 import {mapCredits, mapStyleUrl} from '../../../source/features/map/urls'
 
@@ -225,6 +226,17 @@ export default function MapPage(): React.ReactNode {
 		},
 		[openPlaceAt],
 	)
+
+	// The place at the bottom of the stack is the one opened from the map
+	// itself -- a row, a pin, a building or a name -- and so the one Recents
+	// keeps; places stacked over it from its card are not.
+	let rememberPlace = useRecentPlacesStore((state) => state.remember)
+	let openedId = stack[0]?.kind === 'feature' ? stack[0].id : undefined
+	React.useEffect(() => {
+		if (openedId) {
+			rememberPlace(campus, openedId)
+		}
+	}, [openedId, campus, rememberPlace])
 
 	// Opening a group frames its pins above the sheet, which a full sheet
 	// would leave no room for.
