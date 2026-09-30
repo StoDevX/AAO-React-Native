@@ -350,7 +350,8 @@ class ModuleMapTests: UITestCaseUnbooted {
 	/// At the largest text size a group's title wraps or shrinks beside its
 	/// back button rather than drawing under it.
 	func testAGroupTitleClearsItsBackButtonAtTheLargestTextSize() throws {
-		relaunch(atContentSizeCategory: TestIdentifiers.LaunchArguments.accessibilityExtraExtraExtraLarge)
+		app.launchArguments += TestIdentifiers.LaunchArguments.contentSizeCategory(
+			TestIdentifiers.LaunchArguments.accessibilityExtraExtraExtraLarge)
 		MapScreen(app: app)
 			.navigate()
 			.checkSheetPresented()
@@ -363,7 +364,8 @@ class ModuleMapTests: UITestCaseUnbooted {
 	/// At the largest text size the categories are a list: a grid narrow
 	/// enough to fit would leave each label a word or two a line.
 	func testTheCategoriesAreAListAtTheLargestTextSize() throws {
-		relaunch(atContentSizeCategory: TestIdentifiers.LaunchArguments.accessibilityExtraExtraExtraLarge)
+		app.launchArguments += TestIdentifiers.LaunchArguments.contentSizeCategory(
+			TestIdentifiers.LaunchArguments.accessibilityExtraExtraExtraLarge)
 		MapScreen(app: app)
 			.navigate()
 			.checkSheetPresented()
