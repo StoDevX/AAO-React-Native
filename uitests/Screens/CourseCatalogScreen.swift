@@ -3,9 +3,14 @@ import XCTest
 struct CourseCatalogScreen: Screen {
 	let app: XCUIApplication
 
+	/// Drawn by this screen alone, so its presence says the screen has mounted.
+	var mounted: XCUIElement {
+		app.navigationBars["Course Catalog"]
+	}
+
 	@discardableResult
 	func navigate() -> Self {
-		open(route: "/CourseSearch", mountedWhen: app.navigationBars["Course Catalog"])
+		open(route: "/CourseSearch", mountedWhen: mounted)
 	}
 
 	@discardableResult

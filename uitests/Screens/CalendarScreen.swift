@@ -7,13 +7,14 @@ struct CalendarScreen: Screen {
 	/// relaunches the app, and a relaunched app shows no home screen while it
 	/// is still blank, so `open(route:)` alone returns before the Calendar has
 	/// mounted -- on a slow CI runner, long before.
+	/// The toolbar picker: drawn by the Calendar alone.
+	var mounted: XCUIElement {
+		app.buttons[TestIdentifiers.Calendar.picker]
+	}
+
 	@discardableResult
 	func navigate() -> Self {
-		open(route: "/Calendar")
-		XCTAssertTrue(
-			app.buttons[TestIdentifiers.Calendar.picker].waitForExistence(timeout: 30),
-			"The Calendar should open with its picker in the toolbar")
-		return self
+		open(route: "/Calendar", mountedWhen: mounted)
 	}
 
 	@discardableResult

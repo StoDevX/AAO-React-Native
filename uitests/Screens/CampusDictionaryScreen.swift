@@ -63,9 +63,14 @@ struct CampusDictionaryScreen: Screen {
 		app.otherElements["Section index"]
 	}
 
+	/// Drawn by this screen alone, so its presence says the screen has mounted.
+	var mounted: XCUIElement {
+		app.navigationBars["Dictionary"]
+	}
+
 	@discardableResult
 	func navigate() -> Self {
-		open(route: "/Dictionary", mountedWhen: app.navigationBars["Dictionary"])
+		open(route: "/Dictionary", mountedWhen: mounted)
 	}
 
 	/// Taps near the bottom of the section index rail and asserts the list

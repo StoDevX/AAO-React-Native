@@ -3,11 +3,22 @@ import XCTest
 struct HoursScreen: Screen {
 	let app: XCUIApplication
 
-	/// Opens the Hours tile, which defaults to `'stolaf'` with no `?campus=`
-	/// param.
+	/// Drawn by this screen alone, so its presence says the screen has mounted.
+	var mounted: XCUIElement {
+		app.navigationBars["Hours"]
+	}
+
+	/// Carleton's Hours, which the Carleton Campus tile opens with
+	/// `?campus=carleton`. Its search field is St. Olaf's too, so the title is
+	/// what tells the two apart.
+	var carletonMounted: XCUIElement {
+		app.navigationBars[TestIdentifiers.Map.carletonCampusTile]
+	}
+
+	/// Opens Hours, which defaults to `'stolaf'` with no `?campus=` param.
 	@discardableResult
 	func navigate() -> Self {
-		open(route: "/Hours", mountedWhen: searchField)
+		open(route: "/Hours", mountedWhen: mounted)
 	}
 
 	private var searchField: XCUIElement {

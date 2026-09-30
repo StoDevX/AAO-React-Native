@@ -38,7 +38,7 @@ class ModuleStudentWorkTests: UITestCaseUnbooted {
 			.navigateBackToLanding()
 			.navigateBack()
 
-		relaunchKeepingState(adding: TestIdentifiers.LaunchArguments.extraJobPosting)
+		keepStateForNextLaunch(adding: TestIdentifiers.LaunchArguments.extraJobPosting)
 
 		StudentWorkScreen(app: app)
 			.navigate()

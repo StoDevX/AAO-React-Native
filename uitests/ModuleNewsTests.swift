@@ -88,7 +88,7 @@ class ModuleNewsTests: UITestCaseUnbooted {
 		MessFrontPage(app: app)
 			.navigate()
 			.filterLatest(to: TestIdentifiers.News.varietySection)
-		relaunchKeepingState(
+		keepStateForNextLaunch(
 			adding: TestIdentifiers.LaunchArguments.contentSizeCategory(
 				TestIdentifiers.LaunchArguments.accessibilityExtraExtraExtraLarge))
 		MessFrontPage(app: app)

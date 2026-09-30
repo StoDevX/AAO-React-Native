@@ -14,7 +14,7 @@ bundle. To drive the app by hand instead of asserting on it, see
 
 | Path | What it holds |
 | --- | --- |
-| `Module*Tests.swift` | One test class per feature, subclassing `UITestCase` (or `UITestCaseUnbooted` when the first step opens a URL, which relaunches the app) |
+| `Module*Tests.swift` | One test class per feature, subclassing `UITestCaseUnbooted` when the first step opens a route by URL (which launches the app), or `UITestCase` when the test starts on the home screen |
 | `Screens/*.swift` | One screen object per screen, conforming to `Screen` |
 | `Screen.swift` | The `Screen` protocol and the helpers every screen inherits |
 | `UITestCase.swift` | Base class: launch arguments, fresh state, `app` |
@@ -64,14 +64,30 @@ as its host mounts, but its action has to reach JavaScript — a tap synthesized
 in between lands natively and does nothing. Waiting longer never fixes a tap
 that was dropped, so tap again. `navigateFromHome` is the pattern.
 
+**A screen's `navigate()` opens its route by URL,** through
+`open(route:mountedWhen:)`, and waits for the screen's `mounted` element --
+something only that screen draws. The wait is not optional: a relaunched app
+has no home screen while it is still blank, so "Home has gone" is true before
+anything has mounted. `XCUIApplication.open(_:)` relaunches an already running
+app, so a URL always takes the cold-launch path. To relaunch mid-test
+with state kept, call `keepStateForNextLaunch(adding:)` and then `navigate()`;
+set launch arguments on `app` before the first `navigate()` for anything the
+first launch needs, such as a text size.
+
+**The home tiles are tapped by one test,**
+`testEveryTileOpensItsScreen` in `ModuleHomeTests`, which checks each tile against its screen's
+`mounted` element. A new tile goes in its list.
+
 **Assert the precondition before the action.** Read a field's text back after
 typing it; confirm a row exists before tapping. A test that silently did nothing
 otherwise passes exactly like one that worked.
 
 ## What earns a slot
 
-Every test cold-launches the app (`UITestCase.setUpWithError`), which costs
-about 43 seconds — **roughly 1.3% of a shard's entire budget**. Three shards is
+Every test cold-launches the app. On CI, launching and tapping through the
+home screen took a median 23 seconds before the screen under test was up —
+**roughly 1% of a 45-minute shard**. Opening the route by URL skips the home
+screen's share of that. Three shards is
 a ceiling, not a preference: this is a public repo on a free org plan, so
 GitHub allows 5 concurrent macOS jobs and a merge group already needs 4. The
 only lever on the suite's wall-clock is how many tests are in it.
@@ -89,9 +105,9 @@ Four disqualifiers, each of which has removed a test here:
    appearance to dark, the app did not follow, and its assertions passed either
    way — it photographed a light screen, called it dark, and could not fail at
    the one thing it was for.
-2. **Reachability is already asserted elsewhere.** `navigate()` asserts that
-   home is visible, that the tile exists, and that navigation happened. A
-   capture-only test is therefore a second `testIsReachableFromHomescreen` at
+2. **Reachability is already asserted elsewhere.**
+   `testEveryTileOpensItsScreen` taps every tile, and `navigate()` asserts its
+   screen mounted. A capture-only test is therefore a second copy of both at
    the price of a full cold launch.
 3. **The defect would be in iOS or a library, not in us.**
    `testAddToCalendarSurvivesReopeningTheSheet` asserted that

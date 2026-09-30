@@ -3,9 +3,14 @@ import XCTest
 struct MenusScreen: Screen {
 	let app: XCUIApplication
 
+	/// Drawn by this screen alone, so its presence says the screen has mounted.
+	var mounted: XCUIElement {
+		app.navigationBars.buttons[TestIdentifiers.Menus.filtersButton].firstMatch
+	}
+
 	@discardableResult
 	func navigate() -> Self {
-		open(route: "/Menus", mountedWhen: app.navigationBars.buttons[TestIdentifiers.Menus.filtersButton].firstMatch)
+		open(route: "/Menus", mountedWhen: mounted)
 	}
 
 	/// The navigation bar names the cafe and the day and meal it is showing, on

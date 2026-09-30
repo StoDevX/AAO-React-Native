@@ -6,9 +6,14 @@ import XCTest
 struct MessFrontPage: Screen {
 	let app: XCUIApplication
 
+	/// Drawn by this screen alone, so its presence says the screen has mounted.
+	var mounted: XCUIElement {
+		viewMenu
+	}
+
 	@discardableResult
 	func navigate() -> Self {
-		open(route: "/Messenger", mountedWhen: viewMenu)
+		open(route: "/Messenger", mountedWhen: mounted)
 	}
 
 	/// By Issue leads with the newest issue as the top tile, over older issues as tiles, under the

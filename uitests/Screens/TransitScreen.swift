@@ -3,9 +3,14 @@ import XCTest
 struct TransitScreen: Screen {
 	let app: XCUIApplication
 
+	/// Drawn by this screen alone, so its presence says the screen has mounted.
+	var mounted: XCUIElement {
+		app.navigationBars["Transit"]
+	}
+
 	@discardableResult
 	func navigate() -> Self {
-		open(route: "/Transit", mountedWhen: app.navigationBars["Transit"])
+		open(route: "/Transit", mountedWhen: mounted)
 	}
 
 	/// A line's widget header, which carries the line name and what it is

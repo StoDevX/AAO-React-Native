@@ -60,11 +60,16 @@ struct MapScreen: Screen {
 		app.descendants(matching: .any)[TestIdentifiers.Map.cardTitle].firstMatch
 	}
 
+	/// Drawn by this screen alone, so its presence says the screen has mounted.
+	var mounted: XCUIElement {
+		searchField
+	}
+
 	/// St. Olaf's map is a home tile of its own, pushing `/Map?campus=stolaf`.
 	@discardableResult
 	func navigate() -> Self {
 		// The sheet, not the map: MapLibre draws nothing XCUITest can see.
-		open(route: "/Map?campus=stolaf", mountedWhen: searchField, timeout: 60)
+		open(route: "/Map?campus=stolaf", mountedWhen: mounted, timeout: 60)
 	}
 
 	/// The map draws through MapLibre, which XCUITest cannot see into, so the

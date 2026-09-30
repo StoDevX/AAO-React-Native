@@ -7,9 +7,14 @@ struct StudentOrgsScreen: Screen {
 		app.searchFields.firstMatch
 	}
 
+	/// Drawn by this screen alone, so its presence says the screen has mounted.
+	var mounted: XCUIElement {
+		app.navigationBars["Student Orgs"]
+	}
+
 	@discardableResult
 	func navigate() -> Self {
-		open(route: "/StudentOrgs", mountedWhen: app.navigationBars["Student Orgs"])
+		open(route: "/StudentOrgs", mountedWhen: mounted)
 	}
 
 	@discardableResult
