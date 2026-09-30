@@ -1,6 +1,6 @@
 import {describe, expect, test} from '@jest/globals'
 
-import {placeForTap} from '../place-for-tap'
+import {placeForTap, tapCandidates} from '../place-for-tap'
 
 function point(lng: number, lat: number, properties: Record<string, unknown>): GeoJSON.Feature {
 	return {type: 'Feature', geometry: {type: 'Point', coordinates: [lng, lat]}, properties}
@@ -132,5 +132,38 @@ describe('placeForTap', () => {
 			),
 		]
 		expect(placeForTap(pieces, [3, 0], 'bc')).toBe('trail-conifertrail')
+	})
+
+	// A pond's loop hugs its shore: a touch in the water is within a label's
+	// reach of the trail, but not on it, and opens the pond.
+	test('opens the pond under the touch over a trail that only passes near it', () => {
+		let trail = line(
+			[
+				[0, 0],
+				[4, 0],
+			],
+			{buildingId: 'trail-baseballpondloop'},
+		)
+		expect(placeForTap(tapCandidates([trail], []), [2, 0.5], 'pond-baseballpond')).toBe(
+			'pond-baseballpond',
+		)
+	})
+
+	test('opens a trail the touch is on, over the pond beside it', () => {
+		let trail = line(
+			[
+				[0, 0],
+				[4, 0],
+			],
+			{buildingId: 'trail-baseballpondloop'},
+		)
+		expect(placeForTap(tapCandidates([trail], [trail]), [2, 0], 'pond-baseballpond')).toBe(
+			'trail-baseballpondloop',
+		)
+	})
+
+	test('takes names from the wide reach, whatever the close one holds', () => {
+		let name = point(1, 1, {buildingId: 'thecage'})
+		expect(tapCandidates([name], [])).toEqual([name])
 	})
 })

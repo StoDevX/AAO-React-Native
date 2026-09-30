@@ -43,7 +43,7 @@ import {PlaceStackCard} from '../../../source/features/map/place-stack-card'
 import {highlightedFeatureId, placeStack} from '../../../source/features/map/lib/place-stack'
 import {BuildingPicker} from '../../../source/features/map/building-picker'
 import {framingFor, type Framing, type MapPins} from '../../../source/features/map/lib/map-pins'
-import {placeForTap} from '../../../source/features/map/lib/place-for-tap'
+import {placeForTap, tapCandidates} from '../../../source/features/map/lib/place-for-tap'
 import {selectionFor, selectionFraming} from '../../../source/features/map/lib/selection'
 import {MapPinImages, MapPinsLayer} from '../../../source/features/map/map-pins-layer'
 import {MapSelectionLayer} from '../../../source/features/map/map-selection-layer'
@@ -85,6 +85,9 @@ const MIN_TOUCH_TARGET = 44
 /// How far from a touch a place's drawn name still counts as tapped: half
 /// the minimum touch target, so the name's box need not be hit exactly.
 const LABEL_TOUCH_RADIUS = MIN_TOUCH_TARGET / 2
+/// How far from a touch a trail's line still counts as tapped: about the line's
+/// own width at campus zooms, so a tap in the pond a loop circles opens the pond.
+const LINE_TOUCH_RADIUS = 8
 /// Room kept around framed pins, and above them for the floating header.
 const PIN_MARGIN = 40
 const HEADER_CLEARANCE = 44
@@ -179,22 +182,32 @@ export default function MapPage(): React.ReactNode {
 	)
 
 	// A tap opens the place whose name is drawn under it -- The Cage, inside
-	// Buntrock -- before the building it landed in. Any point the style draws
-	// with a `buildingId` counts, whichever layer draws it, so the style can
-	// be restyled from the server without the app knowing its layer names.
+	// Buntrock -- or the trail drawn under it, before the building it landed
+	// in. Anything the style draws with a `buildingId` counts, whichever layer
+	// draws it, so the style can be restyled from the server without the app
+	// knowing its layer names.
 	let openPlaceAt = React.useCallback(
 		async (pressed: PressEvent, building: string | null) => {
 			let [x, y] = pressed.point
-			let near = await mapRef.current
-				?.queryRenderedFeatures(
-					[
-						[x - LABEL_TOUCH_RADIUS, y - LABEL_TOUCH_RADIUS],
-						[x + LABEL_TOUCH_RADIUS, y + LABEL_TOUCH_RADIUS],
-					],
-					{filter: ['has', 'buildingId']},
-				)
-				.catch(() => [])
-			let id = placeForTap(near ?? [], [pressed.lngLat[0], pressed.lngLat[1]], building)
+			let drawnWithin = (radius: number) =>
+				mapRef.current
+					?.queryRenderedFeatures(
+						[
+							[x - radius, y - radius],
+							[x + radius, y + radius],
+						],
+						{filter: ['has', 'buildingId']},
+					)
+					.catch(() => [])
+			let [near, close] = await Promise.all([
+				drawnWithin(LABEL_TOUCH_RADIUS),
+				drawnWithin(LINE_TOUCH_RADIUS),
+			])
+			let id = placeForTap(
+				tapCandidates(near ?? [], close ?? []),
+				[pressed.lngLat[0], pressed.lngLat[1]],
+				building,
+			)
 			if (id) {
 				openPlace(id)
 			}

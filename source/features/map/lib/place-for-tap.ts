@@ -39,12 +39,27 @@ function segmentDistanceSquared(a: GeoJSON.Position, b: GeoJSON.Position, p: Coo
 	return (ax + t * dx - px) ** 2 + (ay + t * dy - py) ** 2
 }
 
+function isLine(feature: GeoJSON.Feature): boolean {
+	return feature.geometry.type === 'LineString' || feature.geometry.type === 'MultiLineString'
+}
+
+/// What a tap weighs: the names drawn within a finger's reach of the touch,
+/// and the trails drawn under it. A line counts only from the close reach,
+/// since trail loops hug the ponds and fields they circle -- from the wide one,
+/// a tap in the water would open the loop around it.
+export function tapCandidates(
+	near: GeoJSON.Feature[],
+	close: GeoJSON.Feature[],
+): GeoJSON.Feature[] {
+	return [...near.filter((feature) => !isLine(feature)), ...close.filter(isLine)]
+}
+
 /// The place a tap on the map opens: the drawn name or trail nearest the
 /// touch, or else the building the touch landed in, or else nothing.
 ///
-/// `features` is whatever the map has drawn around the touch. Only features
-/// carrying a `buildingId` count -- a place's name, or a trail's line, from
-/// whichever layer of the style draws it.
+/// `features` is what the map has drawn at the touch, as `tapCandidates`
+/// gathers it. Only features carrying a `buildingId` count -- a place's name,
+/// or a trail's line, from whichever layer of the style draws it.
 export function placeForTap(
 	features: GeoJSON.Feature[],
 	touch: Coordinate,
