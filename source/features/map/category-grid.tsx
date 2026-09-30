@@ -39,6 +39,11 @@ const ROW_ICON_WIDTH = 28
 /// How far a label may shrink before it breaks a word: at the accessibility
 /// sizes a single word such as "Athletics" is wider than its column.
 const LABEL_MIN_SCALE = 0.6
+/// How far up from its bottom edge the list's card curves into its corners,
+/// measured on an iOS 27 simulator. The list clips the grid's row to that
+/// card even with its background cleared, so the grid stands this far clear
+/// of the bottom or the corner cuts into the last row's first tile.
+const CARD_CORNER_HEIGHT = 24
 
 type Props = {
 	groups: CategoryGroup[]
@@ -75,7 +80,7 @@ export function CategoryGrid({groups, onOpen}: Props): React.ReactNode {
 		<VStack
 			modifiers={[
 				listRowBackground('clear'),
-				listRowInsets({top: 0, leading: 0, bottom: 0, trailing: 0}),
+				listRowInsets({top: 0, leading: 0, bottom: CARD_CORNER_HEIGHT, trailing: 0}),
 			]}
 		>
 			<TileGrid
