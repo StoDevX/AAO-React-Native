@@ -206,6 +206,30 @@ describe('BuildingPicker', () => {
 		expect(screen.queryByRole('button', {name: 'Back'})).toBeNull()
 	})
 
+	// A feed whose values no group names -- a server renaming its categories --
+	// would otherwise leave an empty sheet with nothing to tap.
+	it('lists every place by name when no group has any', async () => {
+		await renderPicker({
+			table: {
+				stolaf: [],
+				carleton: [
+					{label: 'Dining', categories: ['dining'], icon: 'fork.knife', gradient: 'orange'},
+				],
+			},
+		})
+		expect(screen.queryByRole('button', {name: 'Dining'})).toBeNull()
+		expect(
+			screen
+				.getAllByText(/^(Alpha Hall|Beta Lot|Gamma Field)$/u)
+				.map((row) => [row.props.children].flat().join('')),
+		).toEqual(['Alpha Hall', 'Beta Lot', 'Gamma Field'])
+	})
+
+	it('says so when there are no places at all', async () => {
+		await renderPicker({buildings: []})
+		expect(screen.getByText('No buildings to show.')).toBeTruthy()
+	})
+
 	it('closes the open group when the campus changes', async () => {
 		let {rerenderWith} = await renderPicker()
 		await fireEvent.press(screen.getByRole('button', {name: 'Outdoors'}))

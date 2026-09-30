@@ -31,9 +31,11 @@ export type CategoryGroup = {
 	gradient: Gradient
 }
 
-function belongs(group: {categories: string[]}, place: Feature<Building>): boolean {
+/// Whether a place carries any of a group's values. The set is built once per
+/// group, not once per place tested.
+function belongsTo(group: {categories: string[]}): (place: Feature<Building>) => boolean {
 	let wanted = new Set(group.categories)
-	return (place.properties.categories ?? []).some((category) => wanted.has(category))
+	return (place) => (place.properties.categories ?? []).some((category) => wanted.has(category))
 }
 
 /// The campus's groups that hold at least one place, in the file's order. An
@@ -45,7 +47,7 @@ export function groupsFor(
 	places: Array<Feature<Building>>,
 ): CategoryGroup[] {
 	return table[campus]
-		.filter((entry) => places.some((place) => belongs(entry, place)))
+		.filter((entry) => places.some(belongsTo(entry)))
 		.map((entry) => ({
 			// The one place a label becomes a MapGroupLabel: it came from the
 			// published file, never from someone typing.
@@ -62,8 +64,10 @@ export function placesIn(
 	group: CategoryGroup,
 	places: Array<Feature<Building>>,
 ): Array<Feature<Building>> {
-	// `filter` returns a new array, so sorting it leaves the caller's alone.
-	return places
-		.filter((place) => belongs(group, place))
-		.sort((a, b) => a.properties.name.localeCompare(b.properties.name))
+	return byName(places.filter(belongsTo(group)))
+}
+
+/// Places sorted by name, as a new array; the caller's is left alone.
+export function byName(places: Array<Feature<Building>>): Array<Feature<Building>> {
+	return [...places].sort((a, b) => a.properties.name.localeCompare(b.properties.name))
 }

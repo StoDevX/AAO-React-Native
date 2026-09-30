@@ -27,7 +27,7 @@ import {RowAccessory} from '../../components/rows'
 import type {Campus} from '../building-hours/types'
 import {CategoryGrid} from './category-grid'
 import {BUNDLED_MAP_CATEGORIES, mapCategoriesOptions} from './category-groups-query'
-import {groupsFor, placesIn, type CategoryGroup} from './lib/category-groups'
+import {byName, groupsFor, placesIn, type CategoryGroup} from './lib/category-groups'
 import {searchPlaces} from './lib/search-places'
 import {mapDataOptions} from './query'
 import type {Building, Feature} from './types'
@@ -135,9 +135,12 @@ export function BuildingPicker({
 		() => (query ? searchPlaces(buildings, query) : []),
 		[buildings, query],
 	)
-	let groupPlaces = React.useMemo(
-		() => (openGroup ? placesIn(openGroup, buildings) : []),
-		[openGroup, buildings],
+	// With no group to open -- a feed whose values the groups file does not
+	// name -- every place is listed, so the sheet is never empty of rows.
+	let listedPlaces = React.useMemo(
+		() =>
+			openGroup ? placesIn(openGroup, buildings) : groups.length === 0 ? byName(buildings) : [],
+		[openGroup, groups, buildings],
 	)
 
 	let openFromTile = React.useCallback(
@@ -209,8 +212,10 @@ export function BuildingPicker({
 								<BuildingRow key={building.id} building={building} onSelect={onSelect} />
 							))
 						)
-					) : openGroup ? (
-						groupPlaces.map((building) => (
+					) : buildings.length === 0 ? (
+						<Text>No buildings to show.</Text>
+					) : openGroup || groups.length === 0 ? (
+						listedPlaces.map((building) => (
 							<BuildingRow key={building.id} building={building} onSelect={onSelect} />
 						))
 					) : compact ? null : (
