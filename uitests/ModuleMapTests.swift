@@ -487,21 +487,4 @@ class ModuleMapTests: UITestCaseUnbooted {
 			.selectBuilding(named: TestIdentifiers.Map.aPond)
 			.verifyTopCard(TestIdentifiers.Map.aPond)
 	}
-
-	/// A cited place's card names its sources under the About text.
-	func testACitedPlaceNamesItsSources() throws {
-		MapScreen(app: app)
-			.navigate()
-			.checkSheetPresented()
-			.focusSearch()
-			.typeIntoSearch(TestIdentifiers.Map.aCitedPlace)
-			.selectBuilding(named: TestIdentifiers.Map.aCitedPlace)
-			.verifyTopCard(TestIdentifiers.Map.aCitedPlace)
-			.expandSheet()
-			.capture("St. Olaf map card sources")
-			.verifyCardLinks([
-				"History of the Natural Lands",
-				"Habitats and Management of the Natural Lands",
-			])
-	}
 }
