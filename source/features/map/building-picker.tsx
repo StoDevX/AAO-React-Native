@@ -89,6 +89,9 @@ type Props = {
 	onHeaderHeightChange: (height: number) => void
 	/// What the sheet is listing, for the map to pin; see `MapPins`.
 	onPinsChange: (pins: MapPins | null) => void
+	/// A group was opened from its tile, so the screen can make room for the
+	/// pins it is about to frame.
+	onGroupOpen: () => void
 }
 
 /// The picker's contents, as SwiftUI. The sheet that presents them, and the
@@ -106,6 +109,7 @@ export function BuildingPicker({
 	onSearchCancel,
 	onHeaderHeightChange,
 	onPinsChange,
+	onGroupOpen,
 }: Props): React.ReactNode {
 	let [typedQuery, setTypedQuery] = React.useState('')
 	let query = useDebounce(typedQuery.trim(), SEARCH_DEBOUNCE_MS)
@@ -161,9 +165,10 @@ export function BuildingPicker({
 		(group: CategoryGroup) => {
 			setOpened({campus, label: group.label})
 			setFrameKey((key) => key + 1)
+			onGroupOpen()
 			track({name: 'map.group.open', attributes: {group: group.label, campus}})
 		},
-		[campus],
+		[campus, onGroupOpen],
 	)
 
 	// The fallback list of every place is not pinned: it is a list to scroll,

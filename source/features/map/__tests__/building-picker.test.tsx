@@ -72,6 +72,7 @@ async function renderPicker({
 	onSearchFocusChange = jest.fn(),
 	onSearchCancel = jest.fn(),
 	onPinsChange = jest.fn(),
+	onGroupOpen = jest.fn(),
 } = {}) {
 	let client = new QueryClient({defaultOptions: {queries: {retry: false}}})
 	trackedQueryClients.push(client)
@@ -91,6 +92,7 @@ async function renderPicker({
 				onHeaderHeightChange={jest.fn()}
 				onSearchCancel={onSearchCancel}
 				onSearchFocusChange={onSearchFocusChange}
+				onGroupOpen={onGroupOpen}
 				onPinsChange={onPinsChange}
 				onSelect={onSelect}
 			/>
@@ -103,7 +105,15 @@ async function renderPicker({
 		current = {...current, ...overrides}
 		await rerender(tree(current))
 	}
-	return {client, onSelect, onSearchFocusChange, onSearchCancel, onPinsChange, rerenderWith}
+	return {
+		client,
+		onSelect,
+		onSearchFocusChange,
+		onSearchCancel,
+		onPinsChange,
+		onGroupOpen,
+		rerenderWith,
+	}
 }
 
 /// The pins most recently reported, as place names, with their color and
@@ -413,6 +423,13 @@ describe('BuildingPicker', () => {
 			await rerenderWith({compact: false})
 			expect(track).toHaveBeenCalledTimes(1)
 		})
+	})
+
+	it('tells the screen when a group is opened from its tile, and not on Back', async () => {
+		let {onGroupOpen} = await renderPicker()
+		await fireEvent.press(screen.getByRole('button', {name: 'Parking'}))
+		await fireEvent.press(screen.getByRole('button', {name: 'Back'}))
+		expect(onGroupOpen).toHaveBeenCalledTimes(1)
 	})
 
 	describe('pins', () => {

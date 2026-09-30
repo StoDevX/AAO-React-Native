@@ -85,6 +85,19 @@ describe('nextSheetDetent', () => {
 		})
 	})
 
+	describe('opening a group from its tile', () => {
+		// The group's pins are framed above the sheet; at the full stop there
+		// is no map left to frame them in.
+		it('drops a large sheet to medium so its pins show', () => {
+			expect(nextSheetDetent({type: 'group-opened'}, at('large'))).toEqual(at('medium'))
+		})
+
+		it('leaves a medium or collapsed sheet where it is', () => {
+			expect(nextSheetDetent({type: 'group-opened'}, at('medium'))).toEqual(at('medium'))
+			expect(nextSheetDetent({type: 'group-opened'}, at('collapsed'))).toEqual(at('collapsed'))
+		})
+	})
+
 	describe('tapping a row', () => {
 		it('drops a large sheet to medium so the map shows', () => {
 			expect(nextSheetDetent({type: 'row-tapped'}, at('large'))).toEqual(at('medium'))

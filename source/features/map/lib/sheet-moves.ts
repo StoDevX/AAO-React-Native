@@ -7,6 +7,7 @@ export type SheetEvent =
 	| {type: 'search-cancelled'}
 	| {type: 'search-blurred'; hasText: boolean}
 	| {type: 'row-tapped'}
+	| {type: 'group-opened'}
 	| {type: 'footprint-tapped'}
 	| {type: 'dragged'; to: SheetDetent}
 
@@ -48,7 +49,10 @@ export function nextSheetDetent(event: SheetEvent, state: SheetState): SheetStat
 				return {current: state.previous, previous: null}
 			}
 			return state
+		// Both put something on the map -- a card's place, a group's pins --
+		// that a full sheet would hide.
 		case 'row-tapped':
+		case 'group-opened':
 			return {current: state.current === 'large' ? 'medium' : state.current, previous: null}
 		case 'footprint-tapped':
 			return {current: state.current === 'collapsed' ? 'medium' : state.current, previous: null}

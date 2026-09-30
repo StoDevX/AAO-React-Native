@@ -373,6 +373,7 @@ export default function MapPage(): React.ReactNode {
 									campus={campus}
 									compact={sheet.current === 'collapsed'}
 									onHeaderHeightChange={setPickerHeaderHeight}
+									onGroupOpen={() => dispatchSheet({type: 'group-opened'})}
 									onPinsChange={setPins}
 									onSearchCancel={() => dispatchSheet({type: 'search-cancelled'})}
 									onSearchFocusChange={(focused, hasText) =>
