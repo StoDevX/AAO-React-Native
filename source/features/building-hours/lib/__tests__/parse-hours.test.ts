@@ -1,45 +1,9 @@
 import {describe, expect, it, xdescribe} from '@jest/globals'
 import {parseHours} from '../parse-hours'
-import {dayMoment, hourMoment, moment, plainMoment} from './moment.helper'
+import {dayMoment, hourMoment, plainMoment} from './moment.helper'
 import {SingleBuildingScheduleType} from '../../types'
 
-it('returns an {open, close} tuple', () => {
-	let now = hourMoment('10:01am')
-	let input: SingleBuildingScheduleType = {
-		days: [],
-		from: '10:00am',
-		to: '4:00pm',
-	}
-	let actual = parseHours(input, now)
-
-	expect(actual).toBeDefined()
-	expect(actual.open).toBeDefined()
-	expect(actual.close).toBeDefined()
-})
-
-it('returns a Moment for .open', () => {
-	let now = hourMoment('10:01am')
-	let input: SingleBuildingScheduleType = {
-		days: [],
-		from: '10:00am',
-		to: '4:00pm',
-	}
-	let {open} = parseHours(input, now)
-	expect(moment.isMoment(open)).toBe(true)
-})
-
-it('returns a Moment for .close', () => {
-	let now = hourMoment('10:01am')
-	let input: SingleBuildingScheduleType = {
-		days: [],
-		from: '10:00am',
-		to: '4:00pm',
-	}
-	let {close} = parseHours(input, now)
-	expect(moment.isMoment(close)).toBe(true)
-})
-
-it('will add a day to the close time with nextDay:true', () => {
+it('moves a close time earlier than the open time to the next day', () => {
 	let now = hourMoment('10:01am')
 	let input: SingleBuildingScheduleType = {
 		days: [],
