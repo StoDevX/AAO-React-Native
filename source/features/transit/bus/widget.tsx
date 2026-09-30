@@ -4,7 +4,6 @@ import {
 	Circle,
 	HStack,
 	Image,
-	LazyHStack,
 	Rectangle,
 	ScrollView,
 	Section,
@@ -481,8 +480,12 @@ export function BusLineWidget({line, now, onPress}: Props): React.ReactNode {
 					{/* `scrollPosition` above only lands if the content it scrolls says
 					    which of its children are targets, so the stack carries
 					    `scrollTargetLayout`. Without it the anchor is set and
-					    silently ignored, and the strip opens at the first stop. */}
-					<LazyHStack alignment="top" modifiers={[scrollTargetLayout()]} spacing={0}>
+					    silently ignored, and the strip opens at the first stop.
+
+					    Not lazy: a lazy stack is only as tall as the cells it has
+					    built: when every stop on screen fits one line, a two-line
+					    name scrolling into view is cut to one line too. */}
+					<HStack alignment="top" modifiers={[scrollTargetLayout()]} spacing={0}>
 						{cells.map((cell, index) => (
 							<StopCell
 								// oxlint-disable-next-line react/no-array-index-key -- a loop route visits a stop twice
@@ -502,7 +505,7 @@ export function BusLineWidget({line, now, onPress}: Props): React.ReactNode {
 							/>
 						))}
 						<RouteEndCell cellId={String(cells.length)} onPress={onPress} time={nextRoundStart} />
-					</LazyHStack>
+					</HStack>
 				</ScrollView>
 			)}
 		</Section>
