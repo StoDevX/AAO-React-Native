@@ -46,7 +46,8 @@ import {cardDirectoryOptions, cardFeaturesOptions, cardVenuesOptions} from './ca
 import {DirectorySection} from './card/directory-section'
 import {directoryFor} from './directory/directory'
 import type {SheetDetent} from './lib/sheet-moves'
-import type {Building, Coordinate, Feature, LabelLink, Point} from './types'
+import type {Building, Coordinate, Feature, LabelLink} from './types'
+import {anchorOf} from './lib/place-geometry'
 
 /// Apple Maps' place-card header, measured on iOS 27: 16pt of padding round
 /// 44pt buttons -- 76pt in all, the sheet's collapsed stop
@@ -383,6 +384,5 @@ export function CloseButton({onClose}: {onClose: () => void}): React.ReactNode {
 
 /// Where Directions routes: the building's map point, if the feed gives one.
 function pointOf(building: Feature<Building>): Coordinate | null {
-	let point = building.geometry.geometries.find((geo): geo is Point => geo.type === 'Point')
-	return point?.coordinates ?? null
+	return anchorOf(building)?.coordinates ?? null
 }
