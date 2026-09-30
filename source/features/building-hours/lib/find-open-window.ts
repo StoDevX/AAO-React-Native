@@ -24,6 +24,11 @@ function setTimeOnDay(base: Moment, time: string): Moment {
  * The window `schedule` describes for the day `anchor` falls on. A close time
  * at or before the open time means the window runs past midnight, so the close
  * belongs to the following day.
+ *
+ * The close is set on the day it falls on, not set on `anchor` and moved a day
+ * later: on the day the clocks spring forward 2:00am does not exist, so a
+ * 2:00am close set there would become 3:00am, and carry that hour to the next
+ * night.
  */
 export function windowOpeningOn(
 	schedule: SingleBuildingScheduleType,
@@ -32,7 +37,7 @@ export function windowOpeningOn(
 	let open = setTimeOnDay(anchor, schedule.from)
 	let close = setTimeOnDay(anchor, schedule.to)
 	if (close.isBefore(open)) {
-		close.add(1, 'day')
+		close = setTimeOnDay(anchor.clone().add(1, 'day'), schedule.to)
 	}
 	return {open, close}
 }
