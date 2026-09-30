@@ -3,9 +3,17 @@ import XCTest
 struct CalendarScreen: Screen {
 	let app: XCUIApplication
 
+	/// Opens the Calendar and waits for its toolbar picker. Opening a URL
+	/// relaunches the app, and a relaunched app shows no home screen while it
+	/// is still blank, so `open(route:)` alone returns before the Calendar has
+	/// mounted -- on a slow CI runner, long before.
 	@discardableResult
 	func navigate() -> Self {
 		open(route: "/Calendar")
+		XCTAssertTrue(
+			app.buttons[TestIdentifiers.Calendar.picker].waitForExistence(timeout: 30),
+			"The Calendar should open with its picker in the toolbar")
+		return self
 	}
 
 	@discardableResult
@@ -17,7 +25,7 @@ struct CalendarScreen: Screen {
 	@discardableResult
 	func openPicker() -> Self {
 		let picker = app.buttons[TestIdentifiers.Calendar.picker]
-    assert(
+    XCTAssertTrue(
       picker.waitForExistence(timeout: 30),
       "Calendar picker should be in the toolbar")
 		picker.tap()
