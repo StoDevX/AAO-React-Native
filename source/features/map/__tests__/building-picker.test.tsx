@@ -256,7 +256,7 @@ describe('BuildingPicker', () => {
 
 	it('says so when there are no places at all', async () => {
 		await renderPicker({buildings: []})
-		expect(screen.getByText('No buildings to show.')).toBeTruthy()
+		expect(screen.getByText('No places to show.')).toBeTruthy()
 	})
 
 	// A refetch whose values no group names empties every group at once; the
@@ -399,10 +399,11 @@ describe('BuildingPicker', () => {
 
 			await fireEvent.changeText(screen.getByLabelText('Search for a place'), 'zzz')
 			await waitFor(() => {
-				expect(screen.getByText('No buildings to show.')).toBeTruthy()
+				expect(screen.getByText('No places match “zzz”.')).toBeTruthy()
 			})
-
-			expect(track).toHaveBeenCalledWith({name: 'map.search.empty', attributes: {}})
+			await waitFor(() => {
+				expect(track).toHaveBeenCalledWith({name: 'map.search.empty', attributes: {}})
+			})
 		})
 
 		it('counts it once while the search keeps finding nothing', async () => {
@@ -414,8 +415,9 @@ describe('BuildingPicker', () => {
 				expect(track).toHaveBeenCalledTimes(1)
 			})
 			await fireEvent.changeText(field, 'zzzz')
+			// The second search has run once its own text shows.
 			await waitFor(() => {
-				expect(screen.getByText('No buildings to show.')).toBeTruthy()
+				expect(screen.getByText('No places match “zzzz”.')).toBeTruthy()
 			})
 
 			expect(track).toHaveBeenCalledTimes(1)
@@ -544,7 +546,7 @@ describe('BuildingPicker', () => {
 			let {onPinsChange} = await renderPicker()
 			await fireEvent.changeText(screen.getByLabelText('Search for a place'), 'zzz')
 			await waitFor(() => {
-				expect(screen.getByText('No buildings to show.')).toBeTruthy()
+				expect(screen.getByText('No places match “zzz”.')).toBeTruthy()
 			})
 			expect(lastPins(onPinsChange)).toBeNull()
 		})
