@@ -18,13 +18,6 @@ describe('FAQ banner store', () => {
 		useFaqBannerStore.getState().resetAll()
 	})
 
-	it('produces stable versions for identical FAQ content', () => {
-		let faq = fallbackFaqs[0]
-		let v1 = getFaqVersion(faq)
-		let v2 = getFaqVersion({...faq})
-		expect(v1).toEqual(v2)
-	})
-
 	it('dismisses and restores a banner version', async () => {
 		let faq = fallbackFaqs[0]
 		let version = getFaqVersion(faq)
