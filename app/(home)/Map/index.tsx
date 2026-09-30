@@ -35,6 +35,8 @@ import type {Campus} from '../../../source/features/building-hours/types'
 import {PlaceStackCard} from '../../../source/features/map/place-stack-card'
 import {highlightedFeatureId, placeStack} from '../../../source/features/map/lib/place-stack'
 import {BuildingPicker} from '../../../source/features/map/building-picker'
+import {framingFor, type MapPins} from '../../../source/features/map/lib/map-pins'
+import {MapPinsLayer} from '../../../source/features/map/map-pins-layer'
 import {sheetHeightFor} from '../../../source/features/map/lib/sheet-height'
 import {toBuildingFootprints} from '../../../source/features/map/lib/building-footprints'
 import {
@@ -71,6 +73,9 @@ const CAMERA_ANIMATION_MS = 500
 /// pads the tap area out to the 44pt minimum without growing the artwork.
 const MARKER_SIZE = 20
 const MIN_TOUCH_TARGET = 44
+/// Room kept around framed pins, and above them for the floating header.
+const PIN_MARGIN = 40
+const HEADER_CLEARANCE = 44
 const MARKER_HIT_SLOP = (MIN_TOUCH_TARGET - MARKER_SIZE) / 2
 
 /// The footprints are drawn by the tileset now, so this layer paints nothing.
@@ -150,6 +155,16 @@ export default function MapPage(): React.ReactNode {
 
 	let footprints = React.useMemo(() => toBuildingFootprints(buildings), [buildings])
 
+	// One sheet, whose contents swap. Tapping a second place while cards are
+	// up starts afresh from it, as Maps does.
+	let openPlace = React.useCallback(
+		(id: string) => {
+			dispatchStack({type: 'start', id})
+			dispatchSheet({type: 'footprint-tapped'})
+		},
+		[dispatchSheet],
+	)
+
 	// The source hands back whichever footprint was under the touch, so the
 	// tap resolves against exactly the geometry the user can see. MapLibre also
 	// applies a 44pt hitbox to it by default.
@@ -161,13 +176,14 @@ export default function MapPage(): React.ReactNode {
 			if (typeof id !== 'string') {
 				return
 			}
-			// One sheet, whose contents swap. Tapping a second building while
-			// cards are up starts afresh from it, as Maps does.
-			dispatchStack({type: 'start', id})
-			dispatchSheet({type: 'footprint-tapped'})
+			openPlace(id)
 		},
-		[dispatchSheet],
+		[openPlace],
 	)
+
+	// What the sheet is listing, pinned. The picker stays mounted under a
+	// card, so these persist while a card is open.
+	let [pins, setPins] = React.useState<MapPins | null>(null)
 
 	// The map follows the top of the stack.
 	let highlightedId = highlightedFeatureId(stack, venues)
@@ -204,6 +220,38 @@ export default function MapPage(): React.ReactNode {
 			easeToSelection(selectedPoint.point)
 		}
 	}, [selectedPoint])
+
+	// Framed only when the picker asks -- a tile tap or a finished search --
+	// never as results change while typing. Reads the sheet's height at that
+	// moment without depending on it, as `easeToSelection` does.
+	let frameOnPins = React.useEffectEvent(() => {
+		let framing = pins ? framingFor(pins.places) : null
+		if (framing?.kind === 'fit') {
+			cameraRef.current?.fitBounds(framing.bounds, {
+				padding: {
+					top: insets.top + HEADER_CLEARANCE,
+					bottom: sheetHeight + PIN_MARGIN,
+					left: PIN_MARGIN,
+					right: PIN_MARGIN,
+				},
+				duration: CAMERA_ANIMATION_MS,
+			})
+		} else if (framing?.kind === 'ease') {
+			cameraRef.current?.easeTo({
+				center: framing.center,
+				duration: CAMERA_ANIMATION_MS,
+				padding: {bottom: sheetHeight},
+				zoom: SELECTION_ZOOM,
+			})
+		}
+	})
+
+	let frameKey = pins?.frameKey
+	React.useEffect(() => {
+		if (frameKey) {
+			frameOnPins()
+		}
+	}, [frameKey])
 
 	return (
 		<View style={StyleSheet.absoluteFill}>
@@ -250,6 +298,8 @@ export default function MapPage(): React.ReactNode {
 						type="fill"
 					/>
 				</GeoJSONSource>
+
+				<MapPinsLayer cameraRef={cameraRef} onSelect={openPlace} pins={pins} />
 
 				{selectedPoint ? (
 					<Marker
@@ -323,6 +373,7 @@ export default function MapPage(): React.ReactNode {
 									campus={campus}
 									compact={sheet.current === 'collapsed'}
 									onHeaderHeightChange={setPickerHeaderHeight}
+									onPinsChange={setPins}
 									onSearchCancel={() => dispatchSheet({type: 'search-cancelled'})}
 									onSearchFocusChange={(focused, hasText) =>
 										dispatchSheet(

@@ -26,6 +26,7 @@ import type {Campus} from '../building-hours/types'
 import {CategoryGrid} from './category-grid'
 import {mapCategoriesOptions} from './category-groups-query'
 import {byName, groupsFor, placesIn, type CategoryGroup} from './lib/category-groups'
+import {pinColor, SEARCH_PIN_COLOR, type MapPins} from './lib/map-pins'
 import {searchPlaces} from './lib/search-places'
 import {mapDataOptions} from './query'
 import type {Building, Feature} from './types'
@@ -86,6 +87,8 @@ type Props = {
 	/// picker draws at the collapsed stop, so the screen can size that stop to
 	/// hold it.
 	onHeaderHeightChange: (height: number) => void
+	/// What the sheet is listing, for the map to pin; see `MapPins`.
+	onPinsChange: (pins: MapPins | null) => void
 }
 
 /// The picker's contents, as SwiftUI. The sheet that presents them, and the
@@ -102,6 +105,7 @@ export function BuildingPicker({
 	onSearchFocusChange,
 	onSearchCancel,
 	onHeaderHeightChange,
+	onPinsChange,
 }: Props): React.ReactNode {
 	let [typedQuery, setTypedQuery] = React.useState('')
 	let query = useDebounce(typedQuery.trim(), SEARCH_DEBOUNCE_MS)
@@ -134,21 +138,54 @@ export function BuildingPicker({
 		() => (query ? searchPlaces(buildings, query) : []),
 		[buildings, query],
 	)
+	let groupPlaces = React.useMemo(
+		() => (openGroup ? placesIn(openGroup, buildings) : []),
+		[openGroup, buildings],
+	)
+	let allPlaces = React.useMemo(() => byName(buildings), [buildings])
 	// With no group to open -- a feed whose values the groups file does not
 	// name -- every place is listed, so the sheet is never empty of rows.
-	let listedPlaces = React.useMemo(
-		() =>
-			openGroup ? placesIn(openGroup, buildings) : groups.length === 0 ? byName(buildings) : [],
-		[openGroup, groups, buildings],
-	)
+	let listedPlaces = openGroup ? groupPlaces : groups.length === 0 ? allPlaces : []
+
+	// Bumped when the camera should frame the pins: a tile tap, or a search
+	// that ended with text once its results have caught up with the typing,
+	// so pressing Search inside the debounce frames what was typed.
+	let [frameKey, setFrameKey] = React.useState(0)
+	let [searchEnded, setSearchEnded] = React.useState(false)
+	if (searchEnded && query === typedQuery.trim()) {
+		setSearchEnded(false)
+		setFrameKey((key) => key + 1)
+	}
 
 	let openFromTile = React.useCallback(
 		(group: CategoryGroup) => {
 			setOpened({campus, label: group.label})
+			setFrameKey((key) => key + 1)
 			track({name: 'map.group.open', attributes: {group: group.label, campus}})
 		},
 		[campus],
 	)
+
+	// The fallback list of every place is not pinned: it is a list to scroll,
+	// not a set of places someone asked to see.
+	let pins = React.useMemo((): MapPins | null => {
+		if (isLoading || isError) {
+			return null
+		}
+		if (query) {
+			return searchResults.length > 0
+				? {places: searchResults, color: SEARCH_PIN_COLOR, frameKey}
+				: null
+		}
+		if (openGroup) {
+			return {places: groupPlaces, color: pinColor(openGroup.gradient), frameKey}
+		}
+		return null
+	}, [isLoading, isError, query, searchResults, openGroup, groupPlaces, frameKey])
+
+	React.useEffect(() => {
+		onPinsChange(pins)
+	}, [pins, onPinsChange])
 
 	// Counted when a search first comes up empty, not on every keystroke that
 	// keeps it empty. The query itself is never sent.
@@ -176,7 +213,12 @@ export function BuildingPicker({
 			>
 				<CampusSearchBar
 					onCancel={cancelSearch}
-					onFocusChange={(focused, hasText) => onSearchFocusChange(focused, hasText)}
+					onFocusChange={(focused, hasText) => {
+						if (!focused && hasText) {
+							setSearchEnded(true)
+						}
+						onSearchFocusChange(focused, hasText)
+					}}
 					onTextChange={setTypedQuery}
 					placeholder={SEARCH_PLACEHOLDER}
 					testID={SEARCH_PLACEHOLDER}
