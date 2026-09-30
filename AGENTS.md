@@ -227,3 +227,11 @@ skills framework, provided by the `superpowers` agent plugin.
 `brainstorming`, `test-driven-development`, and the rest of the Superpowers
 skills below, the plugin is not installed or not enabled on this machine. Warn
 the user before proceeding.**
+
+Brainstorming's visual companion runs its server with `node` from the skill's
+own folder, where mise sets no version, so it dies within five seconds ("No
+version is set for shim: node"). Start it under this repo's Node instead:
+
+```bash
+mise exec -- bash <skill-dir>/scripts/start-server.sh --project-dir "$PWD" --open
+```
