@@ -39,7 +39,8 @@ export function goodToKnowRows(
 		rows.push({kind: 'nickname', text: first, others})
 	}
 
-	if (building.length > 0) {
+	// A trail's length in metres, not a list's: checked as a number.
+	if (typeof building.length === 'number' && building.length > 0) {
 		rows.push({kind: 'length', text: formatMiles(building.length)})
 	}
 
