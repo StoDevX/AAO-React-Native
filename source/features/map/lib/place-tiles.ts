@@ -6,7 +6,7 @@ import type {Building} from '../types'
 /// One tile in a card's carousels and their More grids. A tile that `opens` a
 /// place stacks its card over this one; one with only an `href` opens the page.
 export type PlaceTile = {
-	kind: 'department' | 'office' | 'place'
+	kind: 'department' | 'office' | 'place' | 'accessible-parking'
 	label: string
 	href: string | null
 	opens?: StackEntry
@@ -40,7 +40,7 @@ export function splitCarousel<T>(tiles: Array<T>): {shown: Array<T>; hidden: Arr
 /// `alsoHere`'s tiles, as the carousels draw them.
 export function toPlaceTiles(tiles: Array<AlsoHereTile>): Array<PlaceTile> {
 	return tiles.map(({opens, label, group, venue}) => ({
-		kind: group === 'office' ? 'office' : 'place',
+		kind: group,
 		label,
 		href: null,
 		opens,

@@ -180,6 +180,12 @@ function BuildingCard({
 			<PhotoStrip name={name} photos={photos} />
 			{hours ? <CardHours venue={hours} /> : null}
 			{onOpen ? <AlsoHereSection onOpen={onOpen} tiles={sections.alsoHere} /> : null}
+			<LinkedPlaces
+				id="accessible-parking"
+				onOpen={onOpen}
+				tiles={sections.accessibleParking}
+				title="Accessible Parking"
+			/>
 			<AboutSection text={description} />
 			<GoodToKnowSection rows={goodToKnowRows(building.properties)} />
 			<LinkListSection items={rules} title="Rules" />
