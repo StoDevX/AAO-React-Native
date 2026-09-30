@@ -29,15 +29,11 @@ const VARIANTS = {
 		displayName: 'All About Olaf',
 		bundleIdentifier: BUNDLE_ID,
 		scheme: 'AllAboutOlaf',
-		icon: './images/icons/app-icon.png',
 	},
 	development: {
 		displayName: 'AAO Dev',
 		bundleIdentifier: `${BUNDLE_ID}.dev`,
 		scheme: 'AllAboutOlafDev',
-		// The shipping icon with a diagonal DEV ribbon across the top-right
-		// corner, which crosses sky rather than the building.
-		icon: './images/icons/app-icon-development.png',
 	},
 }
 
@@ -76,7 +72,6 @@ const config: ExpoConfig = {
 	// value into the Info.plist.
 	runtimeVersion: {policy: 'fingerprint'},
 	platforms: ['ios'],
-	icon: variant.icon,
 	userInterfaceStyle: 'automatic',
 
 	experiments: {
@@ -92,6 +87,8 @@ const config: ExpoConfig = {
 
 	ios: {
 		bundleIdentifier: variant.bundleIdentifier,
+		// An Icon Composer document; plugins/with-alternate-icons adds the others.
+		icon: './assets/windmill.icon',
 		// Xcode Cloud's build number becomes an input to generation rather than
 		// something agvtool edits afterwards.
 		buildNumber: process.env.CI_BUILD_NUMBER ?? '17',

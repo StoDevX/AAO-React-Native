@@ -83,18 +83,9 @@ describe('app.config variants', () => {
 		},
 	)
 
-	// Two apps on one home screen are told apart by their icons long before
-	// anyone reads the labels.
-	it.each([
-		['production', './images/icons/app-icon.png'],
-		['development', './images/icons/app-icon-development.png'],
-	])('gives %s its own icon', (variant, icon) => {
-		expect(loadConfig(variant).icon).toBe(icon)
-	})
-
-	it('gives both variants distinct icons', () => {
-		let icons = ['production', 'development'].map((v) => loadConfig(v).icon)
-		expect(new Set(icons).size).toBe(2)
+	// The home-screen name, not the icon, tells the variants apart.
+	it.each(['production', 'development'])('gives %s the Icon Composer windmill', (variant) => {
+		expect(loadConfig(variant).ios?.icon).toBe('./assets/windmill.icon')
 	})
 
 	it('keeps every variant installable alongside the others', () => {
