@@ -98,4 +98,46 @@ describe('featureBounds', () => {
 
 		expect(featureBounds(feature)).toBeUndefined()
 	})
+
+	test('bounds a LineString to its vertices', () => {
+		let feature = withGeometry({
+			type: 'GeometryCollection',
+			geometries: [
+				{
+					type: 'LineString',
+					coordinates: [
+						[-93.19, 44.46],
+						[-93.18, 44.47],
+						[-93.185, 44.465],
+					],
+				},
+			],
+		})
+
+		expect(featureBounds(feature)).toEqual([-93.19, 44.46, -93.18, 44.47])
+	})
+
+	// Some trails are several parts under one name.
+	test('bounds every part of a MultiLineString', () => {
+		let feature = withGeometry({
+			type: 'GeometryCollection',
+			geometries: [
+				{
+					type: 'MultiLineString',
+					coordinates: [
+						[
+							[-93.19, 44.46],
+							[-93.188, 44.461],
+						],
+						[
+							[-93.17, 44.47],
+							[-93.171, 44.469],
+						],
+					],
+				},
+			],
+		})
+
+		expect(featureBounds(feature)).toEqual([-93.19, 44.46, -93.17, 44.47])
+	})
 })
