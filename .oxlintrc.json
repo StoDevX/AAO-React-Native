@@ -246,11 +246,14 @@
     // prefix there would break the polyfill that exists because Hermes has no
     // global Buffer.
     "unicorn/prefer-node-protocol": "off",
+    // Off: it treats every `.length` as an array's, without reading the type.
+    // A place's `length` is a nullable number of metres, and the rule's
+    // `> 0` rewrite of `if (place.length)` fails tsc.
+    "unicorn/explicit-length-check": "off",
 
     // Cosmetic, but each has one spelling and oxlint fixes them all.
     // `replaceAll` is safe on device -- Hermes 0.17.0 registers it, unlike
     // `toSorted` above.
-    "unicorn/explicit-length-check": "error",
     "unicorn/prefer-string-replace-all": "error",
     "unicorn/prefer-type-error": "error",
     "unicorn/prefer-regexp-test": "error",
