@@ -13,9 +13,14 @@ struct DirectoryScreen: Screen {
 		app.searchFields.firstMatch
 	}
 
+	/// Drawn by this screen alone, so its presence says the screen has mounted.
+	var mounted: XCUIElement {
+		app.navigationBars["Directory"]
+	}
+
 	@discardableResult
 	func navigate() -> Self {
-		navigateFromHome(to: TestIdentifiers.Buttons.directory)
+		open(route: "/Directory", mountedWhen: mounted)
 	}
 
 	@discardableResult

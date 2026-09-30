@@ -1,6 +1,6 @@
 import XCTest
 
-class ModuleMapTests: UITestCase {
+class ModuleMapTests: UITestCaseUnbooted {
 	/// The collapsed sheet, and the two things that raise it.
 	///
 	/// The sheet opens on its smallest stop, at the foot of the screen, holding
@@ -25,7 +25,8 @@ class ModuleMapTests: UITestCase {
 	/// the collapsed stop grows with it, as Apple Maps' does: the whole field
 	/// stays inside the sheet with a margin above and below it.
 	func testTheCollapsedSheetHoldsTheSearchFieldAtTheLargestTextSize() throws {
-		relaunch(atContentSizeCategory: TestIdentifiers.LaunchArguments.accessibilityExtraExtraExtraLarge)
+		app.launchArguments += TestIdentifiers.LaunchArguments.contentSizeCategory(
+			TestIdentifiers.LaunchArguments.accessibilityExtraExtraExtraLarge)
 		MapScreen(app: app)
 			.navigate()
 			.checkSheetPresented()
@@ -131,7 +132,8 @@ class ModuleMapTests: UITestCase {
 	/// A card with a subtitle, because a one-line header still fits the stop
 	/// at this size, and a centred header would pass.
 	func testTheCollapsedCardKeepsItsHeaderTopAtTheLargestTextSize() throws {
-		relaunch(atContentSizeCategory: TestIdentifiers.LaunchArguments.accessibilityExtraExtraExtraLarge)
+		app.launchArguments += TestIdentifiers.LaunchArguments.contentSizeCategory(
+			TestIdentifiers.LaunchArguments.accessibilityExtraExtraExtraLarge)
 		MapScreen(app: app)
 			.navigate()
 			.checkSheetPresented()

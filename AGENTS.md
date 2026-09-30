@@ -115,10 +115,12 @@ A development build can sit alongside the shipping app on one device.
 `APP_VARIANT` selects the build at generation time; unset means production, so
 every default path is unchanged.
 
-| `APP_VARIANT` | Bundle identifier | Home screen | Icon |
-| --- | --- | --- | --- |
-| *(unset)* / `production` | `NFMTHAZVS9.com.drewvolz.stolaf` | All About Olaf | the windmill |
-| `development` | `…stolaf.dev` | AAO Dev | Old Main with a diagonal DEV ribbon across the top-right corner across the top-right corner |
+| `APP_VARIANT` | Bundle identifier | Home screen |
+| --- | --- | --- |
+| *(unset)* / `production` | `NFMTHAZVS9.com.drewvolz.stolaf` | All About Olaf |
+| `development` | `…stolaf.dev` | AAO Dev |
+
+Both variants share the windmill icon, so tell them apart by name.
 
 ```bash
 APP_VARIANT=development mise run prebuild   # then build to your device
@@ -129,27 +131,35 @@ The URL scheme varies too — two apps claiming one scheme is undefined behaviou
 TestFlight and App Store builds both ship the production identity, so a
 TestFlight build replaces the App Store app as it always has.
 
-The dev icon is generated rather than drawn by hand. To regenerate it after an
-app icon change:
-
-```bash
-magick -size 520x170 xc:none -gravity center \
-  -font '/System/Library/Fonts/Supplemental/Arial Bold.ttf' \
-  -pointsize 116 -kerning 10 -fill white -annotate +0+0 'DEV' \
-  -background none -rotate 45 -trim +repage /tmp/devtext.png
-magick images/icons/app-icon.png \
-  -fill '#D0021B' -draw 'polygon 1024,424 600,0 840,0 1024,184' /tmp/base.png
-magick /tmp/base.png /tmp/devtext.png -geometry +753+44 -composite \
-  -alpha off -strip images/icons/app-icon-development.png
-```
-
-Run the result through `oxipng -o max --strip safe --zopfli`; ImageMagick's own
-output is roughly a third larger.
-
 **A build to a local device needs nothing beyond `mise run device "<DEVICE
 NAME>"`.** Sending the dev variant through TestFlight or the App Store is a
 different matter: that bundle identifier would need its own App Store Connect
 record, which this config does not create.
+
+### App Icons
+
+The app icons are Icon Composer documents in `assets/*.icon`. `ios.icon` in
+`app.config.ts` names the primary, `windmill.icon`, and
+`plugins/with-alternate-icons.ts` bundles the rest as alternates. Each
+alternate's file name is the name `react-native-change-icon` switches to.
+
+The Settings picker and the Credits screen show PNG previews of each icon,
+kept in `images/icons/`. Regenerate them after editing an `.icon`:
+
+```bash
+mise run icons
+```
+
+Each icon gets a light and a dark preview, and the screens follow the app's
+appearance. `mise run icons -- --all` also renders the tinted look, to review
+a change by eye; the app cannot tell when the home screen is tinted, so those
+files are gitignored. Add `--table` to write `images/icons/logos.html`, a
+gitignored gallery of every logo, to compare them side by side.
+
+The task needs Xcode, whose Icon Composer renders the previews, and runs them
+through oxipng. A new alternate also needs an entry in `ALTERNATE_ICONS` in
+the plugin, in `appIcons` in `images/icons/index.ts`, and in the picker's list
+in `source/features/settings/screens/change-icon.tsx`.
 
 ### Local Server Discovery
 

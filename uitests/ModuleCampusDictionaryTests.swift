@@ -1,6 +1,6 @@
 import XCTest
 
-class ModuleCampusDictionaryTests: UITestCase {
+class ModuleCampusDictionaryTests: UITestCaseUnbooted {
 	func testSearchingFromFarDownTheListShowsTheFirstResult() throws {
 		try CampusDictionaryScreen(app: app)
 			.navigate()

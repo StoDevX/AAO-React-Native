@@ -1,6 +1,6 @@
 import XCTest
 
-class ModuleStudentOrgsTests: UITestCase {
+class ModuleStudentOrgsTests: UITestCaseUnbooted {
 	/// The landing screen is category tiles, not a flat list -- this is the
 	/// whole point of the feature, so it is asserted before anything taps into
 	/// one.

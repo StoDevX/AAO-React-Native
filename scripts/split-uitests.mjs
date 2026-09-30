@@ -9,30 +9,28 @@
 import fs from 'node:fs'
 import path from 'node:path'
 
-const CLASS_PATTERN = /class\s+(\w+)\s*:\s*(?:XCTestCase|UITestCase)/u
+const CLASS_PATTERN = /class\s+(\w+)\s*:\s*(?:XCTestCase|UITestCase)/gu
 const METHOD_PATTERN = /func\s+(test\w+)\s*\(/gu
 
 /**
  * Find the test classes in a set of Swift sources.
  *
- * Assumes one test class per file: every `func test…` in a file is
- * attributed to the first class matched there. A second class in the same
- * file would have its methods misattributed to the first, producing a
- * `-only-testing` identifier that does not exist.
+ * A file may hold several test classes. Each `func test…` belongs to the
+ * nearest class declared above it, which holds as long as test classes are
+ * not nested inside one another.
  * @param {Array<{name: string, text: string}>} files
  * @returns {Array<{className: string, methods: string[]}>}
  */
 export function discoverTests(files) {
 	const classes = []
 	for (const file of files) {
-		const className = file.text.match(CLASS_PATTERN)?.[1]
-		if (!className) {
-			continue
-		}
-
-		const methods = [...file.text.matchAll(METHOD_PATTERN)].map((m) => m[1])
-		if (methods.length > 0) {
-			classes.push({className, methods})
+		const declarations = [...file.text.matchAll(CLASS_PATTERN)]
+		for (const [index, declaration] of declarations.entries()) {
+			const body = file.text.slice(declaration.index, declarations[index + 1]?.index)
+			const methods = [...body.matchAll(METHOD_PATTERN)].map((m) => m[1])
+			if (methods.length > 0) {
+				classes.push({className: declaration[1], methods})
+			}
 		}
 	}
 	return classes

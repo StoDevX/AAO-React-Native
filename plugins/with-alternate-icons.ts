@@ -1,86 +1,147 @@
-import {copyFileSync, existsSync} from 'node:fs'
+import {cpSync, existsSync, readFileSync} from 'node:fs'
 import {join} from 'node:path'
 
-import {IOSConfig, withInfoPlist, withXcodeProject} from '@expo/config-plugins'
-import type {ConfigPlugin, InfoPlist} from '@expo/config-plugins'
-
-/** The key `react-native-change-icon` asks UIKit for. */
-const ICON_NAME = 'icon_type_old_main'
+import {IOSConfig, withXcodeProject} from '@expo/config-plugins'
+import type {ConfigPlugin} from '@expo/config-plugins'
+import type {XcodeProject} from 'xcode'
 
 /**
- * Loose PNGs rather than an asset catalog, because UIKit only resolves
- * alternate icons by filename. The `~iPad` variants are the idiom for
- * device-specific artwork.
+ * The Icon Composer documents offered besides the primary, which `ios.icon`
+ * names. Each document's name is the key `react-native-change-icon` passes to
+ * `setAlternateIconName`.
  */
-const ALTERNATE_ICON_FILES = [
-	'old-main@2x.png',
-	'old-main@3x.png',
-	'old-main@2x~iPad.png',
-	'old-main@3x~iPad.png',
-]
+export const ALTERNATE_ICONS = ['sunset-behind-main', 'windmill-day']
 
-/** Where the tracked copies live, relative to the repository root. */
-const SOURCE_DIR = join('images', 'icons')
+/** Where the tracked documents live, relative to the repository root. */
+const SOURCE_DIR = 'assets'
 
-interface AlternateIconSet {
-	CFBundleAlternateIcons?: Record<string, {CFBundleIconFiles: string[]; UIPrerenderedIcon: boolean}>
+const APP_TARGET = 'AllAboutOlaf'
+
+/**
+ * Read one record out of a pbxproj section. Sections interleave records with
+ * `<uuid>_comment` strings, so every lookup is `T | string` until narrowed.
+ *
+ * Duplicated rather than shared: Expo compiles each plugin file on its own, so
+ * a relative import of a sibling .ts does not resolve at prebuild time.
+ */
+function entryIn<T>(section: Record<string, T | string>, key: string, what: string): T {
+	let entry = section[key]
+	if (typeof entry === 'string' || entry === undefined) {
+		throw new Error(`${what} is missing from the Xcode project.`)
+	}
+	return entry
 }
 
-export type InfoPlistWithAlternateIcons = InfoPlist & {
-	CFBundleIcons: Required<AlternateIconSet>
-	'CFBundleIcons~ipad': Required<AlternateIconSet>
+/** Every build settings dictionary belonging to a target, Debug and Release. */
+function buildSettingsFor(project: XcodeProject, targetName: string): Record<string, string>[] {
+	let targetKey = project.findTargetKey(targetName)
+	if (!targetKey) {
+		throw new Error(`There is no \`${targetName}\` target in the Xcode project.`)
+	}
+
+	let target = entryIn(project.pbxNativeTargetSection(), targetKey, `the ${targetName} target`)
+	let list = entryIn(
+		project.pbxXCConfigurationList(),
+		target.buildConfigurationList,
+		`the build configuration list for ${targetName}`,
+	)
+	let section = project.pbxXCBuildConfigurationSection()
+
+	return list.buildConfigurations.map(
+		(entry) =>
+			entryIn(section, entry.value, `build configuration ${entry.comment}`).buildSettings as Record<
+				string,
+				string
+			>,
+	)
 }
 
-function registerWindmill(existing: unknown): Required<AlternateIconSet> {
-	let current = (existing ?? {}) as AlternateIconSet
-	return {
-		...current,
-		CFBundleAlternateIcons: {
-			...current.CFBundleAlternateIcons,
-			[ICON_NAME]: {CFBundleIconFiles: ['old-main'], UIPrerenderedIcon: true},
-		},
+/**
+ * Compile every app icon in the target, not only the primary. Without it the
+ * alternates never reach the bundle's Info.plist, and `setAlternateIconName`
+ * fails at runtime.
+ */
+export function includeAllAppIcons(project: XcodeProject, targetName: string): XcodeProject {
+	for (let settings of buildSettingsFor(project, targetName)) {
+		settings.ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = 'YES'
+	}
+	return project
+}
+
+/** Add each alternate's document to the app group and its Resources phase. */
+export function addAlternateIconResources(project: XcodeProject, groupName: string): XcodeProject {
+	for (let name of ALTERNATE_ICONS) {
+		project = IOSConfig.XcodeUtils.addResourceFileToGroup({
+			filepath: join(groupName, `${name}.icon`),
+			groupName,
+			project,
+			isBuildFile: true,
+		})
+	}
+	return project
+}
+
+/** Every value of an `image-name` key, at any depth of an icon.json. */
+function imageNames(value: unknown): string[] {
+	if (Array.isArray(value)) {
+		return value.flatMap(imageNames)
+	}
+	if (typeof value !== 'object' || value === null) {
+		return []
+	}
+	return Object.entries(value).flatMap(([key, child]) =>
+		key === 'image-name' && typeof child === 'string' ? [child] : imageNames(child),
+	)
+}
+
+/**
+ * Check that every layer image an Icon Composer document names is on disk.
+ * actool reports a missing one only as "Icon export exited with status 255".
+ */
+export function assertLayersPresent(projectRoot: string, documentPath: string): void {
+	let manifest: unknown = JSON.parse(
+		readFileSync(join(projectRoot, documentPath, 'icon.json'), 'utf8'),
+	)
+	for (let image of imageNames(manifest)) {
+		let layer = join(documentPath, 'Assets', image)
+		if (!existsSync(join(projectRoot, layer))) {
+			throw new Error(
+				`with-alternate-icons: ${layer} is missing, so Xcode cannot build the icon. Check that it is committed.`,
+			)
+		}
 	}
 }
 
-/** Declare the alternate icon for both idioms, leaving every other key alone. */
-export function addAlternateIcons(infoPlist: InfoPlist): InfoPlistWithAlternateIcons {
-	return {
-		...infoPlist,
-		CFBundleIcons: registerWindmill(infoPlist.CFBundleIcons),
-		'CFBundleIcons~ipad': registerWindmill(infoPlist['CFBundleIcons~ipad']),
+/** Copy each alternate's document from the repository into the native project. */
+export function copyAlternateIcons(projectRoot: string, destination: string): void {
+	for (let name of ALTERNATE_ICONS) {
+		let document = join(SOURCE_DIR, `${name}.icon`)
+		let source = join(projectRoot, document)
+		if (!existsSync(source)) {
+			throw new Error(
+				`with-alternate-icons: ${SOURCE_DIR}/${name}.icon is missing. A missing alternate icon fails silently at runtime, so this is a hard error.`,
+			)
+		}
+		assertLayersPresent(projectRoot, document)
+		cpSync(source, join(destination, `${name}.icon`), {recursive: true})
 	}
 }
 
-const withAlternateIcons: ConfigPlugin = (config) => {
-	let withPlist = withInfoPlist(config, (mod) => {
-		mod.modResults = addAlternateIcons(mod.modResults)
-		return mod
-	})
-
-	return withXcodeProject(withPlist, (mod) => {
+const withAlternateIcons: ConfigPlugin = (config) =>
+	withXcodeProject(config, (mod) => {
 		let {projectRoot, platformProjectRoot} = mod.modRequest
 		let groupName = mod.modRequest.projectName as string
 
-		for (let filename of ALTERNATE_ICON_FILES) {
-			let source = join(projectRoot, SOURCE_DIR, filename)
-			if (!existsSync(source)) {
-				throw new Error(
-					`with-alternate-icons: ${SOURCE_DIR}/${filename} is missing. A missing alternate icon fails silently at runtime, so this is a hard error.`,
-				)
-			}
-
-			copyFileSync(source, join(platformProjectRoot, groupName, filename))
-
-			mod.modResults = IOSConfig.XcodeUtils.addResourceFileToGroup({
-				filepath: join(groupName, filename),
-				groupName,
-				project: mod.modResults,
-				isBuildFile: true,
-			})
+		// The primary is Expo's to copy, but it breaks the build the same way.
+		let primary = config.ios?.icon
+		if (typeof primary === 'string' && primary.endsWith('.icon')) {
+			assertLayersPresent(projectRoot, primary)
 		}
 
+		copyAlternateIcons(projectRoot, join(platformProjectRoot, groupName))
+		mod.modResults = addAlternateIconResources(mod.modResults, groupName)
+		mod.modResults = includeAllAppIcons(mod.modResults, APP_TARGET)
 		return mod
 	})
-}
 
 export default withAlternateIcons

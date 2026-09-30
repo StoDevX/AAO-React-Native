@@ -3,11 +3,22 @@ import XCTest
 struct HoursScreen: Screen {
 	let app: XCUIApplication
 
-	/// Opens the Hours tile, which defaults to `'stolaf'` with no `?campus=`
-	/// param.
+	/// Drawn by this screen alone, so its presence says the screen has mounted.
+	var mounted: XCUIElement {
+		app.navigationBars["Hours"]
+	}
+
+	/// Carleton's Hours, which the Carleton Campus tile opens with
+	/// `?campus=carleton`. Its search field is St. Olaf's too, so the title is
+	/// what tells the two apart.
+	var carletonMounted: XCUIElement {
+		app.navigationBars[TestIdentifiers.Buttons.carletonCampus]
+	}
+
+	/// Opens Hours, which defaults to `'stolaf'` with no `?campus=` param.
 	@discardableResult
 	func navigate() -> Self {
-		navigateFromHome(to: TestIdentifiers.Buttons.hours)
+		open(route: "/Hours", mountedWhen: mounted)
 	}
 
 	private var searchField: XCUIElement {
@@ -153,7 +164,7 @@ struct HoursScreen: Screen {
 		// test outright rather than let this loop retry. The row's centre is
 		// what `selectBuilding` in MapScreen taps for the same reason.
 		//
-		// The loop itself is retried for the reason navigateFromHome retries: a
+		// The loop itself is retried: a
 		// synthesized press on a row whose host has mounted but whose action
 		// still has to reach JavaScript lands natively and does nothing.
 		//

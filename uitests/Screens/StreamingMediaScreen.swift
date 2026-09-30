@@ -3,9 +3,14 @@ import XCTest
 struct StreamingMediaScreen: Screen {
 	let app: XCUIApplication
 
+	/// Drawn by this screen alone, so its presence says the screen has mounted.
+	var mounted: XCUIElement {
+		app.element(matching: TestIdentifiers.Streaming.list)
+	}
+
 	@discardableResult
 	func navigate() -> Self {
-		navigateFromHome(to: TestIdentifiers.Buttons.streamingMedia)
+		open(route: "/Streaming%20Media", mountedWhen: mounted)
 	}
 
 	@discardableResult

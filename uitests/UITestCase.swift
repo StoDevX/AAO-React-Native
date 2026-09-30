@@ -141,26 +141,13 @@ class UITestCaseUnbooted: XCTestCase {
 		}
 	}
 
-	/// Terminate and relaunch the app without `--reset-state`, so what the last
-	/// launch persisted survives, adding `arguments` to the launch.
-	func relaunchKeepingState(adding arguments: [String]) {
-		app.terminate()
+	/// Make the next launch keep what this one persisted, adding `arguments`.
+	///
+	/// Launches nothing: the next `open(route:)` relaunches the app with these
+	/// arguments, so a launch here would only be thrown away.
+	func keepStateForNextLaunch(adding arguments: [String]) {
 		app.launchArguments = [TestIdentifiers.LaunchArguments.uiTesting] + arguments
 		appendJsLocationIfProvided()
-		app.launch()
-	}
-
-	/// Terminate and relaunch the app with fresh state at a given Dynamic Type
-	/// size. Lets a test prove a layout at a size larger than whatever the
-	/// simulator's own Settings happen to be set to.
-	func relaunch(atContentSizeCategory category: String) {
-		app.terminate()
-		app.launchArguments = [
-			TestIdentifiers.LaunchArguments.uiTesting,
-			TestIdentifiers.LaunchArguments.resetState,
-		] + TestIdentifiers.LaunchArguments.contentSizeCategory(category)
-		appendJsLocationIfProvided()
-		app.launch()
 	}
 }
 

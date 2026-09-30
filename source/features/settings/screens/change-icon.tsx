@@ -1,9 +1,9 @@
 import * as React from 'react'
-import {Image as RNImage, ImageSourcePropType, StyleSheet} from 'react-native'
+import {Image as RNImage, StyleSheet, useColorScheme} from 'react-native'
 import {changeIcon, getIcon, resetIcon} from 'react-native-change-icon'
 import {HStack, Picker, RNHostView, Section, Text} from '@expo/ui/swift-ui'
 import {contentShape, frame, pickerStyle, shapes, tag} from '@expo/ui/swift-ui/modifiers'
-import {icons as appIcons} from '../../../../images/icons'
+import {DEFAULT_ICON, type AppIconName, iconFor, previewsFor} from '../../../../images/icons'
 import * as c from '@frogpond/colors'
 
 /// Measured off a Settings.app screenshot on an iPhone 14 Pro (1179x2556,
@@ -24,25 +24,22 @@ const styles = StyleSheet.create({
 	},
 })
 
-type IconTypeEnum = 'icon_type_big_ole' | 'icon_type_old_main'
-
 type Icon = {
-	src: ImageSourcePropType
 	title: string
-	type: IconTypeEnum
+	type: AppIconName
 }
 
 export const icons: Array<Icon> = [
-	{src: appIcons.windmill, title: 'Big Ole', type: 'icon_type_big_ole'},
-	{src: appIcons.oldMain, title: 'Old Main', type: 'icon_type_old_main'},
+	{title: 'Big Ole', type: 'windmill'},
+	{title: 'Old Main', type: 'sunset-behind-main'},
+	{title: 'Windmill (Day)', type: 'windmill-day'},
 ]
 
 export let IconSettingsView = (): React.ReactNode => {
-	let [iconType, setIconType] = React.useState<IconTypeEnum>('icon_type_big_ole')
+	let [iconType, setIconType] = React.useState<AppIconName>(DEFAULT_ICON)
 
 	let loadCurrentIcon = async () => {
-		let name = await getIcon()
-		setIconType((name === 'Default' ? 'icon_type_big_ole' : name) as IconTypeEnum)
+		setIconType(iconFor(await getIcon()))
 	}
 
 	React.useEffect(() => {
@@ -54,8 +51,8 @@ export let IconSettingsView = (): React.ReactNode => {
 		loadCurrentIcon()
 	}, [])
 
-	let setIcon = async (iconName: string) => {
-		if (iconName === 'icon_type_big_ole') {
+	let setIcon = async (iconName: AppIconName) => {
+		if (iconName === DEFAULT_ICON) {
 			await resetIcon()
 		} else {
 			await changeIcon(iconName)
@@ -66,7 +63,7 @@ export let IconSettingsView = (): React.ReactNode => {
 
 	return (
 		<Section title="App Icon">
-			<Picker<IconTypeEnum>
+			<Picker<AppIconName>
 				modifiers={[pickerStyle('inline')]}
 				onSelectionChange={(value) => setIcon(value)}
 				selection={iconType}
@@ -86,12 +83,17 @@ type IconCellProps = {
 
 let IconCell = (props: IconCellProps) => {
 	let {icon} = props
+	let scheme = useColorScheme()
 
 	return (
 		<HStack modifiers={[tag(icon.type), contentShape(shapes.rectangle())]} spacing={ICON_LABEL_GAP}>
 			<HStack modifiers={[frame({width: ICON_SIZE, height: ICON_SIZE})]}>
 				<RNHostView matchContents={false}>
-					<RNImage accessibilityIgnoresInvertColors={true} source={icon.src} style={styles.icon} />
+					<RNImage
+						accessibilityIgnoresInvertColors={true}
+						source={previewsFor(icon.type, scheme).icon}
+						style={styles.icon}
+					/>
 				</RNHostView>
 			</HStack>
 			<Text>{icon.title}</Text>

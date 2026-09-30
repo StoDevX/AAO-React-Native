@@ -60,10 +60,16 @@ struct MapScreen: Screen {
 		app.descendants(matching: .any)[TestIdentifiers.Map.cardTitle].firstMatch
 	}
 
+	/// Drawn by this screen alone, so its presence says the screen has mounted.
+	var mounted: XCUIElement {
+		searchField
+	}
+
 	/// St. Olaf's map is a home tile of its own, pushing `/Map?campus=stolaf`.
 	@discardableResult
 	func navigate() -> Self {
-		navigateFromHome(to: TestIdentifiers.Buttons.map)
+		// The sheet, not the map: MapLibre draws nothing XCUITest can see.
+		open(route: "/Map?campus=stolaf", mountedWhen: mounted, timeout: 60)
 	}
 
 	/// The map draws through MapLibre, which XCUITest cannot see into, so the
@@ -429,7 +435,7 @@ struct MapScreen: Screen {
 	/// Taps a named row rather than the first button on screen, which is the
 	/// navigation bar's rather than the list's.
 	///
-	/// Retried, for the reason `navigateFromHome` retries: a synthesized press
+	/// Retried: a synthesized press
 	/// on a row whose host has mounted but whose action still has to reach
 	/// JavaScript lands natively and does nothing. Waiting longer does not
 	/// help a dropped tap; tapping again does.

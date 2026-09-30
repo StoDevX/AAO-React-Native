@@ -1,6 +1,6 @@
 import XCTest
 
-class ModuleHoursTests: UITestCase {
+class ModuleHoursTests: UITestCaseUnbooted {
 	func testSearchNarrowsTheList() throws {
 		HoursScreen(app: app)
 			.navigate()

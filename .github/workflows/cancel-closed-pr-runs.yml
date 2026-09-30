@@ -1,0 +1,38 @@
+name: Cancel runs for a closed pull request
+
+# A merged or closed pull request's runs report to nobody, yet they keep
+# their runners: on the free plan's five macOS runners, an orphaned UITest
+# shard holds up every other PR. The workflows' own `concurrency` only cancels
+# a run when a newer push starts one, and closing a PR starts nothing.
+on:
+  pull_request:
+    types: [closed]
+
+# actions: write to cancel runs.
+permissions:
+  actions: write
+
+jobs:
+  cancel:
+    runs-on: ubuntu-slim
+    steps:
+      - name: Cancel the branch's unfinished runs
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          HEAD_REF: ${{ github.head_ref }}
+          THIS_RUN: ${{ github.run_id }}
+        # This run is one of the branch's unfinished runs, so it leaves itself
+        # out. The `|| true` keeps pipefail from failing the step when there is
+        # nothing else to cancel.
+        run: |
+          for status in requested waiting pending queued in_progress; do
+            gh run list --branch "$HEAD_REF" --status "$status" --limit 100 \
+              --json databaseId -q '.[].databaseId'
+          done \
+            | sort -u \
+            | { grep -vx "$THIS_RUN" || true; } \
+            | while read -r id; do
+              echo "Cancelling run $id"
+              gh run cancel "$id" || echo "::warning::Could not cancel run $id; it may have finished already"
+            done

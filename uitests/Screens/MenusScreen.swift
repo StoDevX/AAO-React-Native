@@ -3,9 +3,14 @@ import XCTest
 struct MenusScreen: Screen {
 	let app: XCUIApplication
 
+	/// Drawn by this screen alone, so its presence says the screen has mounted.
+	var mounted: XCUIElement {
+		app.navigationBars.buttons[TestIdentifiers.Menus.filtersButton].firstMatch
+	}
+
 	@discardableResult
 	func navigate() -> Self {
-		navigateFromHome(to: TestIdentifiers.Buttons.menus)
+		open(route: "/Menus", mountedWhen: mounted)
 	}
 
 	/// Reveal the filter row, which a menu opens with collapsed behind a
