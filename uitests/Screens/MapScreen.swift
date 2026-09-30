@@ -492,7 +492,7 @@ struct MapScreen: Screen {
 	}
 
 	private var groupBackButton: XCUIElement {
-		app.buttons[TestIdentifiers.Map.groupBack].firstMatch
+		app.buttons.matching(identifier: TestIdentifiers.Map.groupBack).firstMatch
 	}
 
 	/// The open group's header names it.
@@ -512,6 +512,19 @@ struct MapScreen: Screen {
 		XCTAssertTrue(
 			app.otherElements[TestIdentifiers.Map.categoryGrid].waitForExistence(timeout: 10),
 			"Back should return to the category grid")
+		XCTAssertFalse(groupBackButton.exists, "The group's header should be gone after Back")
+		return self
+	}
+
+	/// The open group's title sits clear of its back button, whatever its
+	/// length or the text size.
+	@discardableResult
+	func verifyGroupTitleClearsBackButton(_ label: String) -> Self {
+		let title = app.staticTexts[label].firstMatch
+		XCTAssertTrue(title.waitForExistence(timeout: 10), "The header should read \(label)")
+		XCTAssertFalse(
+			title.frame.intersects(groupBackButton.frame),
+			"\(label) (\(title.frame)) should not run under the back button (\(groupBackButton.frame))")
 		return self
 	}
 

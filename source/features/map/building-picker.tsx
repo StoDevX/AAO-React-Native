@@ -2,15 +2,18 @@ import * as React from 'react'
 import {Button, HStack, Image, List, Section, Spacer, Text, VStack, ZStack} from '@expo/ui/swift-ui'
 import {
 	accessibilityAddTraits,
+	accessibilityIdentifier,
 	accessibilityLabel,
 	background,
 	buttonStyle,
 	contentShape,
+	dynamicTypeSize,
 	font,
 	foregroundStyle,
 	frame,
 	listRowBackground,
 	listRowInsets,
+	multilineTextAlignment,
 	onGeometryChange,
 	padding,
 	shapes,
@@ -47,8 +50,13 @@ const SEARCH_PLACEHOLDER = 'Search for a place'
 
 /// The group header's back button: chevron only, as Maps draws it.
 export const GROUP_BACK_LABEL = 'Back'
+/// Finds the header's back button for a UI test. Its label alone also matches
+/// the navigation bar's own Back button on iOS 27.
+export const GROUP_BACK_ID = 'map-group-back'
 /// The button's disc, at the 44pt minimum touch target.
 const BACK_BUTTON_SIZE = 44
+/// Space between the button and the title beside it.
+const BACK_BUTTON_GAP = 8
 
 /// `UISearchBar` insets its own text field about 8pt from the edges it is
 /// given, on top of whatever padding wraps it -- measured by comparing the
@@ -230,17 +238,33 @@ export function BuildingPicker({
 function GroupHeader({label, onBack}: {label: string; onBack: () => void}): React.ReactNode {
 	return (
 		<ZStack modifiers={[padding({horizontal: SEARCH_MARGIN, bottom: 8})]}>
-			<Text modifiers={[font({textStyle: 'headline'}), accessibilityAddTraits(['isHeader'])]}>
+			{/* Inset by the button on both sides, so a long title wraps beside it
+			    instead of running under it, and stays centered on the sheet. */}
+			<Text
+				modifiers={[
+					font({textStyle: 'headline'}),
+					multilineTextAlignment('center'),
+					padding({horizontal: BACK_BUTTON_SIZE + BACK_BUTTON_GAP}),
+					accessibilityAddTraits(['isHeader']),
+				]}
+			>
 				{label}
 			</Text>
 			<HStack>
 				<Button
-					modifiers={[buttonStyle('plain'), accessibilityLabel(GROUP_BACK_LABEL)]}
+					modifiers={[
+						buttonStyle('plain'),
+						accessibilityLabel(GROUP_BACK_LABEL),
+						accessibilityIdentifier(GROUP_BACK_ID),
+					]}
 					onPress={onBack}
 				>
 					<Image
 						modifiers={[
 							font({textStyle: 'body', weight: 'semibold'}),
+							// The disc keeps its size at every text size, so the chevron
+							// in it has to as well.
+							dynamicTypeSize({max: 'large'}),
 							foregroundStyle(c.secondaryLabel),
 							frame({width: BACK_BUTTON_SIZE, height: BACK_BUTTON_SIZE}),
 							background(c.tertiarySystemFill, shapes.circle()),

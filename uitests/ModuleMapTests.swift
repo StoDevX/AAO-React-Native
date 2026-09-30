@@ -342,6 +342,19 @@ class ModuleMapTests: UITestCase {
 			.verifyListed(TestIdentifiers.Map.aPlaceOutsideDining)
 	}
 
+	/// At the largest text size a group's title wraps or shrinks beside its
+	/// back button rather than drawing under it.
+	func testAGroupTitleClearsItsBackButtonAtTheLargestTextSize() throws {
+		relaunch(atContentSizeCategory: TestIdentifiers.LaunchArguments.accessibilityExtraExtraExtraLarge)
+		MapScreen(app: app)
+			.navigate()
+			.checkSheetPresented()
+			.expandSheet()
+			.openCategory(TestIdentifiers.Map.allBuildingsCategory)
+			.capture("St. Olaf map All Buildings group at the largest text size")
+			.verifyGroupTitleClearsBackButton(TestIdentifiers.Map.allBuildingsCategory)
+	}
+
 	/// The grid at the largest text size, for a person to look at: tiles
 	/// wrap to fewer columns and no label is cut off.
 	func testTheGridAtTheLargestTextSize() throws {

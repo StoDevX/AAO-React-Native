@@ -230,9 +230,10 @@ struct TestIdentifiers {
 		/// St. Olaf can rename the place.
 		static let diningCategory = "Dining"
 		static let aDiningPlace = "Stav Hall"
-		/// The group header's back button. Mirrors GROUP_BACK_LABEL in
-		/// source/features/map/building-picker.tsx.
-		static let groupBack = "Back"
+		/// The group header's back button, by identifier: its "Back" label also
+		/// matches the navigation bar's own Back on iOS 27. Mirrors
+		/// GROUP_BACK_ID in source/features/map/building-picker.tsx.
+		static let groupBack = "map-group-back"
 		/// Mirrors CATEGORY_GRID_ID in source/features/map/category-grid.tsx.
 		static let categoryGrid = "map-category-grid"
 		/// A St. Olaf place in no Dining group, found by search from inside it.
