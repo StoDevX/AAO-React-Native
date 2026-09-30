@@ -238,22 +238,40 @@ struct CalendarScreen: Screen {
 		return selected.identifier
 	}
 
-  /// The currently visible days on the date picker
+  /// The currently visible days on the date picker, leading to trailing.
+  ///
+  /// Read from one snapshot of the app rather than cell by cell: asking each
+  /// cell `isHittable` is a round trip apiece, and took seconds a reading. A
+  /// cell counts when any of its frame is inside the window, which gives the
+  /// same days `isHittable` did, a sliver at either edge included.
   func datePickerDayIdentifiers() -> [String] {
-    return app.buttons.matching(.beginsWith(TestIdentifiers.Calendar.dayCellPrefix))
-      .allElementsBoundByIndex
-      .filter { $0.isHittable }
-      .map { $0.identifier }
+    let root: XCUIElementSnapshot
+    do {
+      root = try app.snapshot()
+    } catch {
+      XCTFail("The app's accessibility tree should be readable: \(error)")
+      return []
+    }
+    let window = app.frame
+    var cells: [XCUIElementSnapshot] = []
+    var pending = [root]
+    while let node = pending.popLast() {
+      if node.elementType == .button,
+        node.identifier.hasPrefix(TestIdentifiers.Calendar.dayCellPrefix),
+        !node.frame.intersection(window).isEmpty
+      {
+        cells.append(node)
+      }
+      pending.append(contentsOf: node.children)
+    }
+    return cells.sorted { $0.frame.minX < $1.frame.minX }.map { $0.identifier }
   }
 
   /// Wait for the strip to show exactly `expected`. A scroll to a week is
-  /// animated, and a cell at the strip's edge is not hittable until it has
+  /// animated, and a cell at the strip's edge is off screen until it has
   /// arrived, so a reading taken as the scroll starts is short a day.
-  ///
-  /// The timeout leaves room for several readings: each asks the app about
-  /// every cell in turn, and takes seconds.
   @discardableResult
-  func verifyStripShows(_ expected: [String], _ message: String, timeout: TimeInterval = 30) -> Self {
+  func verifyStripShows(_ expected: [String], _ message: String, timeout: TimeInterval = 10) -> Self {
     var last: [String] = []
     let arrived = NSPredicate { _, _ in
       last = self.datePickerDayIdentifiers()
