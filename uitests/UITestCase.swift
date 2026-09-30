@@ -1,12 +1,18 @@
 import XCTest
 
-/// Base class for all UI tests. Provides common setup (launch arguments,
-/// `continueAfterFailure = false`) so individual test files stay focused
-/// on assertions.
+/// Base class for UI tests that launch the app themselves. Provides common
+/// setup (launch arguments, `continueAfterFailure = false`) so individual test
+/// files stay focused on assertions. A test whose first step opens a URL
+/// subclasses this rather than `UITestCase`: opening a URL relaunches the app,
+/// so a launch in setUp would be thrown away.
 class UITestCaseUnbooted: XCTestCase {
 	var app: XCUIApplication!
 
-  @MainActor override func setUp() async throws {
+	/// Synchronous on purpose, as every test method here must be. With
+	/// `continueAfterFailure` false, a failure in an async `setUp` or an async
+	/// test ends the test runner process, and `-retry-tests-on-failure` never
+	/// gets to retry the test. Wait on an expectation with `wait(for:timeout:)`.
+	override func setUpWithError() throws {
 		continueAfterFailure = false
 
 		// Before the app launches: a run with no known JS source measures
@@ -21,7 +27,6 @@ class UITestCaseUnbooted: XCTestCase {
 		// inverts if dev mode is already on, and failed only in long runs.
 		app.launchArguments.append(TestIdentifiers.LaunchArguments.resetState)
 		appendJsLocationIfProvided()
-    app.launch()
 	}
 
 	override func tearDownWithError() throws {
@@ -172,9 +177,11 @@ class UITestCaseUnbooted: XCTestCase {
 	}
 }
 
+/// Base class for UI tests that start from the home screen: launches the app
+/// before each test.
 class UITestCase: UITestCaseUnbooted {
-//  override func setUp() async throws {
-//    try super.setUpWithError()
-//    app.launch()
-//  }
+	override func setUpWithError() throws {
+		try super.setUpWithError()
+		app.launch()
+	}
 }
