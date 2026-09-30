@@ -424,4 +424,26 @@ class ModuleMapTests: UITestCase {
 			.capture("St. Olaf map after tapping a place's label")
 			.verifyCardTitled(name)
 	}
+
+	/// A place opened from the map is listed under Recents on the root view,
+	/// and a swipe takes it off again.
+	func testAnOpenedPlaceIsListedUnderRecents() throws {
+		let name = TestIdentifiers.Map.aPointOnlyPlace
+		MapScreen(app: app)
+			.navigate()
+			.checkSheetPresented()
+			.focusSearch()
+			.typeIntoSearch(name)
+			.selectBuilding(named: name)
+			.closeTopCard()
+			// Focused first: on iOS 27 a first tap on Close only resumes editing
+			// once the field has lost focus.
+			.focusSearch()
+			.cancelSearch()
+			.expandSheet()
+			.capture("St. Olaf map Recents")
+			.verifyRecentsList(name)
+			.removeRecent(name)
+			.verifyNoRecents()
+	}
 }

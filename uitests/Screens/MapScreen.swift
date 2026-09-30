@@ -555,6 +555,38 @@ struct MapScreen: Screen {
 		return self
 	}
 
+	/// Recents lists `name` below the categories.
+	@discardableResult
+	func verifyRecentsList(_ name: String) -> Self {
+		XCTAssertTrue(
+			app.staticTexts[TestIdentifiers.Map.recentsTitle].waitForExistence(timeout: 10),
+			"The sheet should show Recents once a place has been opened")
+		XCTAssertTrue(row(named: name).waitForExistence(timeout: 10), "Recents should list \(name)")
+		return self
+	}
+
+	/// Swipes `name`'s row in Recents away.
+	@discardableResult
+	func removeRecent(_ name: String) -> Self {
+		row(named: name).swipeLeft()
+		let remove = app.buttons[TestIdentifiers.Map.recentsRemove].firstMatch
+		// A full swipe removes the row by itself; a shorter one leaves the
+		// button to tap.
+		if remove.waitForExistence(timeout: 3) {
+			remove.tap()
+		}
+		return self
+	}
+
+	/// With nothing left in it, Recents is gone.
+	@discardableResult
+	func verifyNoRecents() -> Self {
+		XCTAssertTrue(
+			app.staticTexts[TestIdentifiers.Map.recentsTitle].waitForNonExistence(timeout: 10),
+			"Recents should go once its last place is removed")
+		return self
+	}
+
 	/// Leaves the open group for the grid.
 	@discardableResult
 	func goBackToCategories() -> Self {
