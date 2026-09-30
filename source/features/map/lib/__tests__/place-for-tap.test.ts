@@ -114,24 +114,33 @@ describe('placeForTap', () => {
 	})
 
 	// A trail crossing a tile edge comes back as one piece per tile.
+	// Every piece counts, not only the first: here the piece under the touch is
+	// the trail's second, and another trail runs nearer than its first.
 	test('opens a trail clipped into several features by the tiles', () => {
-		let pieces = [
+		let features = [
 			line(
 				[
 					[0, 0],
-					[2, 0],
+					[1, 0],
 				],
 				{buildingId: 'trail-conifertrail'},
 			),
 			line(
 				[
-					[2, 0],
+					[0, 1],
+					[4, 1],
+				],
+				{buildingId: 'trail-knollloop'},
+			),
+			line(
+				[
+					[3, 0],
 					[4, 0],
 				],
 				{buildingId: 'trail-conifertrail'},
 			),
 		]
-		expect(placeForTap(pieces, [3, 0], 'bc')).toBe('trail-conifertrail')
+		expect(placeForTap(features, [3.5, 0.3], 'bc')).toBe('trail-conifertrail')
 	})
 
 	// A pond's loop hugs its shore: a touch in the water is within a label's
@@ -165,5 +174,22 @@ describe('placeForTap', () => {
 	test('takes names from the wide reach, whatever the close one holds', () => {
 		let name = point(1, 1, {buildingId: 'thecage'})
 		expect(tapCandidates([name], [])).toEqual([name])
+	})
+
+	// A name is drawn as a box of text around its anchor. A touch on the far
+	// end of the text can be nearer a trail than the anchor; the map reports
+	// the name under the touch, and that name is what was tapped.
+	test('opens the name the touch lands on, over a trail nearer its anchor', () => {
+		let trail = line(
+			[
+				[0, 0],
+				[4, 0],
+			],
+			{buildingId: 'trail-prairieloop'},
+		)
+		let pond = point(2, 1, {buildingId: 'pond-eastcoyotepond'})
+		expect(placeForTap(tapCandidates([trail, pond], [trail], [pond]), [3, 0.4], null)).toBe(
+			'pond-eastcoyotepond',
+		)
 	})
 })

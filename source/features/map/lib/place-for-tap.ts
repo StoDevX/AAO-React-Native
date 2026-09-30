@@ -1,5 +1,5 @@
 import type {Coordinate} from '../types'
-import {distanceSquared} from './map-pins'
+import {distanceSquared, segmentDistanceSquared} from './distance'
 
 /// How far a touch is from a drawn feature, squared: to a point, or to the
 /// nearest stretch of a line. A polygon has no distance -- a building's own
@@ -26,31 +26,32 @@ function reach(feature: GeoJSON.Feature, touch: Coordinate): number | undefined 
 	return nearest
 }
 
-/// The squared distance from `p` to the segment `a`-`b`, measured the way
-/// `distanceSquared` measures: longitude shrunk by the latitude's cosine.
-function segmentDistanceSquared(a: GeoJSON.Position, b: GeoJSON.Position, p: Coordinate): number {
-	let shrink = Math.cos((p[1] * Math.PI) / 180)
-	let [ax, ay] = [a[0] * shrink, a[1]]
-	let [bx, by] = [b[0] * shrink, b[1]]
-	let [px, py] = [p[0] * shrink, p[1]]
-	let [dx, dy] = [bx - ax, by - ay]
-	let length = dx * dx + dy * dy
-	let t = length === 0 ? 0 : Math.max(0, Math.min(1, ((px - ax) * dx + (py - ay) * dy) / length))
-	return (ax + t * dx - px) ** 2 + (ay + t * dy - py) ** 2
-}
-
 function isLine(feature: GeoJSON.Feature): boolean {
 	return feature.geometry.type === 'LineString' || feature.geometry.type === 'MultiLineString'
+}
+
+function isName(feature: GeoJSON.Feature): boolean {
+	return feature.geometry.type === 'Point' && typeof feature.properties?.buildingId === 'string'
 }
 
 /// What a tap weighs: the names drawn within a finger's reach of the touch,
 /// and the trails drawn under it. A line counts only from the close reach,
 /// since trail loops hug the ponds and fields they circle -- from the wide one,
 /// a tap in the water would open the loop around it.
+///
+/// A name drawn under the touch itself settles it. A name is measured by its
+/// anchor but drawn as a box of text around it, so a touch on the far end of
+/// the text can be nearer a trail than the anchor, and the text is still what
+/// was tapped.
 export function tapCandidates(
 	near: GeoJSON.Feature[],
 	close: GeoJSON.Feature[],
+	under: GeoJSON.Feature[] = [],
 ): GeoJSON.Feature[] {
+	let tapped = under.filter(isName)
+	if (tapped.length > 0) {
+		return tapped
+	}
 	return [...near.filter((feature) => !isLine(feature)), ...close.filter(isLine)]
 }
 

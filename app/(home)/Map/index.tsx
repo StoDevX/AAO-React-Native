@@ -199,12 +199,14 @@ export default function MapPage(): React.ReactNode {
 						{filter: ['has', 'buildingId']},
 					)
 					.catch(() => [])
-			let [near, close] = await Promise.all([
+			let [near, close, under] = await Promise.all([
 				drawnWithin(LABEL_TOUCH_RADIUS),
 				drawnWithin(LINE_TOUCH_RADIUS),
+				// A point's worth of box: what is drawn at the touch itself.
+				drawnWithin(1),
 			])
 			let id = placeForTap(
-				tapCandidates(near ?? [], close ?? []),
+				tapCandidates(near ?? [], close ?? [], under ?? []),
 				[pressed.lngLat[0], pressed.lngLat[1]],
 				building,
 			)
