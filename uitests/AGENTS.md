@@ -14,7 +14,7 @@ bundle. To drive the app by hand instead of asserting on it, see
 
 | Path | What it holds |
 | --- | --- |
-| `Module*Tests.swift` | One test class per feature, subclassing `UITestCase` |
+| `Module*Tests.swift` | One test class per feature, subclassing `UITestCase` (or `UITestCaseUnbooted` when the first step opens a URL, which relaunches the app) |
 | `Screens/*.swift` | One screen object per screen, conforming to `Screen` |
 | `Screen.swift` | The `Screen` protocol and the helpers every screen inherits |
 | `UITestCase.swift` | Base class: launch arguments, fresh state, `app` |

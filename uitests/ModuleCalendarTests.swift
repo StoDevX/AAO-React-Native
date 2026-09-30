@@ -1,6 +1,6 @@
 import XCTest
 
-class ModuleCalendarDayModeTests: UITestCase {
+class ModuleCalendarDayModeTests: UITestCaseUnbooted {
 
 	// MARK: - Day picker strip
 
@@ -22,7 +22,6 @@ class ModuleCalendarDayModeTests: UITestCase {
 	/// descending into an axis replaces what is on screen, so the top-level rows
 	/// have to be read while they are still the thing presented.
   func testDayModeAndFilters() throws {
-    app.launch()
 		let screen = CalendarScreen(app: app)
 
     screen.navigate()
@@ -189,7 +188,7 @@ class ModuleCalendarDayModeTests: UITestCase {
   // TODO: assert that the event detail view opens and closes
 }
 
-class ModuleCalendarUpcomingModeTests: UITestCase {
+class ModuleCalendarUpcomingModeTests: UITestCaseUnbooted {
   func testFilteringByOrganizationNarrowsTheUpcomingList() throws {
     let screen = CalendarScreen(app: app)
     screen.navigate()
