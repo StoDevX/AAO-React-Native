@@ -27,6 +27,8 @@ import {
 	Marker,
 	UserLocation,
 	type CameraRef,
+	type MapRef,
+	type PressEvent,
 	type PressEventWithFeatures,
 } from '@maplibre/maplibre-react-native'
 import {useQuery} from '@tanstack/react-query'
@@ -42,6 +44,7 @@ import {PlaceStackCard} from '../../../source/features/map/place-stack-card'
 import {highlightedFeatureId, placeStack} from '../../../source/features/map/lib/place-stack'
 import {BuildingPicker} from '../../../source/features/map/building-picker'
 import {framingFor, type MapPins} from '../../../source/features/map/lib/map-pins'
+import {placeForTap} from '../../../source/features/map/lib/place-for-tap'
 import {MapPinsLayer} from '../../../source/features/map/map-pins-layer'
 import {useFrameRequests} from '../../../source/features/map/use-frame-requests'
 import {sheetHeightFor} from '../../../source/features/map/lib/sheet-height'
@@ -80,6 +83,9 @@ const CAMERA_ANIMATION_MS = 500
 /// pads the tap area out to the 44pt minimum without growing the artwork.
 const MARKER_SIZE = 20
 const MIN_TOUCH_TARGET = 44
+/// How far from a touch a place's drawn name still counts as tapped: half
+/// the minimum touch target, so the name's box need not be hit exactly.
+const LABEL_TOUCH_RADIUS = MIN_TOUCH_TARGET / 2
 /// Room kept around framed pins, and above them for the floating header.
 const PIN_MARGIN = 40
 const HEADER_CLEARANCE = 44
@@ -111,6 +117,7 @@ export default function MapPage(): React.ReactNode {
 
 	let scheme = useColorScheme()
 	let cameraRef = React.useRef<CameraRef>(null)
+	let mapRef = React.useRef<MapRef>(null)
 	// The sheet is the map's, not a route's, so its selection is the map's too.
 	// The places open on the map, bottom to top: the sheet's card, then each
 	// stacked over it.
@@ -173,20 +180,54 @@ export default function MapPage(): React.ReactNode {
 		[dispatchSheet],
 	)
 
+	// A tap opens the place whose name is drawn under it -- The Cage, inside
+	// Buntrock -- before the building it landed in. Any point the style draws
+	// with a `buildingId` counts, whichever layer draws it, so the style can
+	// be restyled from the server without the app knowing its layer names.
+	let openPlaceAt = React.useCallback(
+		async (pressed: PressEvent, building: string | null) => {
+			let [x, y] = pressed.point
+			let near = await mapRef.current
+				?.queryRenderedFeatures(
+					[
+						[x - LABEL_TOUCH_RADIUS, y - LABEL_TOUCH_RADIUS],
+						[x + LABEL_TOUCH_RADIUS, y + LABEL_TOUCH_RADIUS],
+					],
+					{filter: ['has', 'buildingId']},
+				)
+				.catch(() => [])
+			let id = placeForTap(near ?? [], [pressed.lngLat[0], pressed.lngLat[1]], building)
+			if (id) {
+				openPlace(id)
+			}
+		},
+		[openPlace],
+	)
+
 	// The source hands back whichever footprint was under the touch, so the
 	// tap resolves against exactly the geometry the user can see. MapLibre also
-	// applies a 44pt hitbox to it by default.
+	// applies a 44pt hitbox to it by default. Stopped here, so the map's own
+	// handler does not open the place a second time.
 	let handleBuildingPress = React.useCallback(
 		(event: NativeSyntheticEvent<PressEventWithFeatures>) => {
+			event.stopPropagation()
 			// GeoJSON properties are typed as `any` by the spec's types, so this
 			// is the boundary where that gets narrowed back to something real.
 			let id: unknown = event.nativeEvent.features[0]?.properties?.buildingId
-			if (typeof id !== 'string') {
-				return
-			}
-			openPlace(id)
+			let {point, lngLat} = event.nativeEvent
+			void openPlaceAt({point, lngLat}, typeof id === 'string' ? id : null)
 		},
-		[openPlace],
+		[openPlaceAt],
+	)
+
+	// A tap on no building can still land on a place's name: the Windmill and
+	// the Chime Tower stand outside every footprint.
+	let handleMapPress = React.useCallback(
+		(event: NativeSyntheticEvent<PressEvent>) => {
+			let {point, lngLat} = event.nativeEvent
+			void openPlaceAt({point, lngLat}, null)
+		},
+		[openPlaceAt],
 	)
 
 	// Opening a group frames its pins above the sheet, which a full sheet
@@ -291,8 +332,10 @@ export default function MapPage(): React.ReactNode {
 				</Stack.Toolbar.Menu>
 			</Stack.Toolbar>
 			<Map
+				ref={mapRef}
 				attribution={false}
 				logo={false}
+				onPress={handleMapPress}
 				mapStyle={mapStyleUrl(campus, scheme)}
 				style={StyleSheet.absoluteFill}
 			>

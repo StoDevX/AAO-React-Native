@@ -83,7 +83,12 @@ export function MapPinsLayer({pins, onSelect, onCluster}: Props): React.ReactNod
 				cluster={true}
 				data={data}
 				id="map-pins"
-				onPress={(event) => void handlePress(event)}
+				onPress={(event) => {
+					// A pin wins the tap outright: the map's own handler would look
+					// for a place's name under it and open that as well.
+					event.stopPropagation()
+					void handlePress(event)
+				}}
 				ref={sourceRef}
 			>
 				<Layer

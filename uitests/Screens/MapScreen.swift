@@ -483,11 +483,24 @@ struct MapScreen: Screen {
 	/// is eased to.
 	@discardableResult
 	func tapMapCenterAboveSheet() -> Self {
+		mapCenterAboveSheet().tap()
+		return self
+	}
+
+	/// The middle of the map above the sheet as it rests now: where a single
+	/// framed pin is eased to.
+	func mapCenterAboveSheet() -> XCUICoordinate {
 		settle { sheetFrame().minY }
 		let sheet = sheetFrame()
-		app.coordinate(withNormalizedOffset: .zero)
+		return app.coordinate(withNormalizedOffset: .zero)
 			.withOffset(CGVector(dx: app.frame.midX, dy: sheet.minY / 2))
-			.tap()
+	}
+
+	/// Taps a spot on the map found earlier, which stays put while the sheet
+	/// moves, since the camera does not follow the sheet.
+	@discardableResult
+	func tapMap(at spot: XCUICoordinate) -> Self {
+		spot.tap()
 		return self
 	}
 
