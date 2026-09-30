@@ -423,13 +423,19 @@ export default function MapPage(): React.ReactNode {
 						    A ZStack is as tall as its tallest child, and at the largest
 						    text size the picker's header is taller than the collapsed
 						    stop. The sheet would then centre the stack and cut off the
-						    card's header, so a covered picker takes no height. Always
-						    the flexible frame: @expo/ui switches to a fixed one, and a
-						    new identity, once `height` is set. */}
+						    card's header, so a covered picker takes no height -- at the
+						    collapsed stop only. Elsewhere it keeps its height: a list
+						    squeezed to nothing lays its rows out again from estimates
+						    when it returns, and where rows above wrap, the rows in view
+						    jump. Always the flexible frame: @expo/ui switches to a fixed
+						    one, and a new identity, once `height` is set. */}
 						<ZStack alignment="top">
 							<Group
 								modifiers={[
-									frame({maxHeight: covered ? 0 : undefined, alignment: 'top'}),
+									frame({
+										maxHeight: covered && sheet.current === 'collapsed' ? 0 : undefined,
+										alignment: 'top',
+									}),
 									opacity(covered ? 0 : 1),
 									disabled(covered),
 									accessibilityHidden(covered),
