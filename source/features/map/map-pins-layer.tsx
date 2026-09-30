@@ -28,8 +28,14 @@ const CLUSTER_RADIUS = 14
 const PIN_STROKE = 2
 /// Both campuses' styles serve Noto Sans and nothing else. Left unset, a text
 /// layer asks for MapLibre's default font stack, whose glyphs 404 -- and the
-/// source's tiles then never finish, so the circles vanish with the labels.
-const PIN_FONT = ['Noto Sans Regular']
+/// source's tiles then never finish, so the pins vanish with their names.
+const PIN_FONT = ['Noto Sans Medium']
+/// A pin's name in the base map's own label colors -- dark text on a light
+/// halo -- rather than the group's color, which is too light to read on the
+/// map's tan. The dot carries the group's color.
+const PIN_TEXT_COLOR = '#2f2a24'
+const PIN_TEXT_HALO = '#f4f1e9'
+const PIN_TEXT_HALO_WIDTH = 1.2
 
 type Props = {
 	pins: MapPins | null
@@ -129,9 +135,9 @@ export function MapPinsLayer({pins, onSelect, onCluster}: Props): React.ReactNod
 						'icon-color': pins.color,
 						'icon-halo-color': c.white,
 						'icon-halo-width': PIN_RING,
-						'text-color': pins.color,
-						'text-halo-color': c.white,
-						'text-halo-width': 1,
+						'text-color': PIN_TEXT_COLOR,
+						'text-halo-color': PIN_TEXT_HALO,
+						'text-halo-width': PIN_TEXT_HALO_WIDTH,
 					}}
 					type="symbol"
 				/>
