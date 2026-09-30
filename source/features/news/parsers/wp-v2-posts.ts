@@ -1,5 +1,6 @@
 import {fastGetTrimmedText} from '@frogpond/html-lib'
 import {z} from 'zod'
+import {parseEach} from '@frogpond/data-sources/parse-each'
 import {StoryType} from '../types'
 
 // WordPress embeds an error object (e.g. `{code: "rest_user_invalid_id", ...}`,
@@ -93,17 +94,12 @@ function toStory(item: z.infer<typeof WpV2PostSchema>): StoryType {
 export function parseWpV2Posts(body: unknown): StoryType[] {
 	let items = z.array(z.unknown()).parse(body)
 
-	let stories = items.flatMap((raw) => {
-		try {
-			return [toStory(WpV2PostSchema.parse(raw))]
-		} catch {
-			return []
-		}
-	})
-
-	if (items.length > 0 && stories.length === 0) {
-		throw new Error('every WordPress post was malformed')
-	}
-
-	return stories
+	return parseEach(
+		items,
+		(raw) => {
+			let post = WpV2PostSchema.safeParse(raw)
+			return post.success ? toStory(post.data) : undefined
+		},
+		'WordPress post',
+	)
 }

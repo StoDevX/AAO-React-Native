@@ -1,5 +1,6 @@
 import {decode, fastGetTrimmedText} from '@frogpond/html-lib'
 import {z} from 'zod'
+import {parseEach} from '@frogpond/data-sources/parse-each'
 import {parseBlocks} from './blocks'
 import {chooseLayout} from './layout'
 import type {Byline, MessCategory, MessStory} from '../types'
@@ -179,12 +180,6 @@ function toStory(post: Post, byId: Map<number, MessCategory>): MessStory {
 export function parseMessPosts(body: unknown, categories: MessCategory[]): MessStory[] {
 	let items = z.array(z.unknown()).parse(body)
 	let byId = new Map(categories.map((c) => [c.id, c]))
-	let stories = items.flatMap((raw) => {
-		let post = PostSchema.safeParse(raw)
-		return post.success ? [toStory(post.data, byId)] : []
-	})
-	if (items.length > 0 && stories.length === 0) {
-		throw new Error('every Mess post was malformed')
-	}
-	return stories
+	let posts = parseEach(items, (raw) => PostSchema.safeParse(raw).data, 'Mess post')
+	return posts.map((post) => toStory(post, byId))
 }
