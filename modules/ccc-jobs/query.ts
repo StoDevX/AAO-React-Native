@@ -13,7 +13,6 @@ import {
 	UITEST_JOB_CATEGORIES,
 	UITEST_JOB_DETAILS,
 	UITEST_POSTING_UNITS,
-	uitestUnitsUnavailable,
 } from './fixtures/uitest-postings'
 import {parseDetail} from './parsers/description'
 import {parseCategories, parseRequisitions} from './parsers/requisitions'
@@ -108,9 +107,6 @@ export const postingUnitsOptions = queryOptions({
 	staleTime: POSTING_UNITS_STALE_TIME,
 	queryFn: async ({signal}): Promise<PostingUnits> => {
 		if (isUITesting) {
-			if (uitestUnitsUnavailable()) {
-				throw new Error('Student Work units are unavailable in this UI test')
-			}
 			return UITEST_POSTING_UNITS
 		}
 

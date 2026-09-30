@@ -186,11 +186,3 @@ export const UITEST_JOB_CATEGORIES: JobCategory[] = [
 export const UITEST_POSTING_UNITS: Record<string, string | null> = Object.fromEntries(
 	UITEST_JOB_DETAILS.filter((job) => job.id !== EXTRA_JOB.id).map((job) => [job.id, job.unit]),
 )
-
-const UNITS_UNAVAILABLE_SETTING = 'AAOUITestStudentWorkUnitsUnavailable'
-
-/// Whether a UI test launched with the units map failing, and nothing saved.
-/// Read on each call, so a Jest test can set it.
-export function uitestUnitsUnavailable(): boolean {
-	return Boolean(Settings.get(UNITS_UNAVAILABLE_SETTING))
-}
