@@ -464,6 +464,64 @@ struct MapScreen: Screen {
 		return self
 	}
 
+	/// Presses the keyboard's Search key, which ends the search.
+	@discardableResult
+	func submitSearch() -> Self {
+		searchField.typeText("\n")
+		return self
+	}
+
+	/// The sheet rests at its middle stop: the field between the full stop,
+	/// near the top of the screen, and the collapsed one, past 70% of it. The
+	/// middle stop puts it near 60%.
+	@discardableResult
+	func verifyAtMiddleStop() -> Self {
+		settle { searchFieldTop() }
+		let top = searchFieldTop()
+		let windowHeight = app.windows.firstMatch.frame.height
+		XCTAssertTrue(
+			top > windowHeight * 0.4 && top < windowHeight * 0.7,
+			"The sheet should rest at its middle stop; the field's top is at \(top) of \(windowHeight)")
+		return self
+	}
+
+	/// Taps the middle of the map above the sheet, where a single framed pin
+	/// is eased to.
+	@discardableResult
+	func tapMapCenterAboveSheet() -> Self {
+		mapCenterAboveSheet().tap()
+		return self
+	}
+
+	/// The middle of the map above the sheet as it rests now: where a single
+	/// framed pin is eased to.
+	func mapCenterAboveSheet() -> XCUICoordinate {
+		settle { sheetFrame().minY }
+		let sheet = sheetFrame()
+		return app.coordinate(withNormalizedOffset: .zero)
+			.withOffset(CGVector(dx: app.frame.midX, dy: sheet.minY / 2))
+	}
+
+	/// Taps a spot on the map found earlier, which stays put while the sheet
+	/// moves, since the camera does not follow the sheet.
+	@discardableResult
+	func tapMap(at spot: XCUICoordinate) -> Self {
+		spot.tap()
+		return self
+	}
+
+	/// The card on top is `name`'s own, read from its title rather than any
+	/// label beginning with the name: a building's card lists what is inside
+	/// it, so `name` can be on screen in someone else's card.
+	@discardableResult
+	func verifyCardTitled(_ name: String) -> Self {
+		XCTAssertTrue(cardTitle.waitForExistence(timeout: 20), "A card should be up")
+		XCTAssertTrue(
+			cardTitle.label.hasPrefix(name),
+			"The card on top should be \(name)'s, not \(cardTitle.label)")
+		return self
+	}
+
 	/// Opens a group from the sheet's categories: a tile in the grid, or a
 	/// row once the text size turns the grid into a list.
 	@discardableResult
@@ -500,6 +558,38 @@ struct MapScreen: Screen {
 		XCTAssertFalse(
 			app.otherElements[TestIdentifiers.Map.categoryGrid].exists,
 			"At this text size the categories should be a list, not a grid")
+		return self
+	}
+
+	/// Recents lists `name` below the categories.
+	@discardableResult
+	func verifyRecentsList(_ name: String) -> Self {
+		XCTAssertTrue(
+			app.staticTexts[TestIdentifiers.Map.recentsTitle].waitForExistence(timeout: 10),
+			"The sheet should show Recents once a place has been opened")
+		XCTAssertTrue(row(named: name).waitForExistence(timeout: 10), "Recents should list \(name)")
+		return self
+	}
+
+	/// Swipes `name`'s row in Recents away.
+	@discardableResult
+	func removeRecent(_ name: String) -> Self {
+		row(named: name).swipeLeft()
+		let remove = app.buttons[TestIdentifiers.Map.recentsRemove].firstMatch
+		// A full swipe removes the row by itself; a shorter one leaves the
+		// button to tap.
+		if remove.waitForExistence(timeout: 3) {
+			remove.tap()
+		}
+		return self
+	}
+
+	/// With nothing left in it, Recents is gone.
+	@discardableResult
+	func verifyNoRecents() -> Self {
+		XCTAssertTrue(
+			app.staticTexts[TestIdentifiers.Map.recentsTitle].waitForNonExistence(timeout: 10),
+			"Recents should go once its last place is removed")
 		return self
 	}
 

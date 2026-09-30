@@ -1,5 +1,16 @@
 import * as React from 'react'
-import {Button, HStack, Image, List, Section, Spacer, Text, VStack, ZStack} from '@expo/ui/swift-ui'
+import {
+	Button,
+	HStack,
+	Image,
+	List,
+	Section,
+	Spacer,
+	SwipeActions,
+	Text,
+	VStack,
+	ZStack,
+} from '@expo/ui/swift-ui'
 import {
 	accessibilityAddTraits,
 	accessibilityIdentifier,
@@ -25,9 +36,12 @@ import {RowAccessory} from '../../components/rows'
 import type {Campus} from '../building-hours/types'
 import {CategoryGrid} from './category-grid'
 import {mapCategoriesOptions} from './category-groups-query'
-import {byName, groupsFor, placesIn, type CategoryGroup} from './lib/category-groups'
+import {byName, type CategoryGroup, groupColor, groupsFor, placesIn} from './lib/category-groups'
+import {SEARCH_PIN_COLOR, type MapPins} from './lib/map-pins'
+import {recentPlaces} from './lib/recent-places'
 import {searchPlaces} from './lib/search-places'
 import {mapDataOptions} from './query'
+import {useRecentPlacesStore} from './store'
 import type {Building, Feature} from './types'
 import type {MapGroupLabel} from '../telemetry/catalog'
 import {track} from '../telemetry/track'
@@ -55,6 +69,17 @@ export const GROUP_BACK_ID = 'map-group-back'
 const BACK_BUTTON_SIZE = 44
 /// Space between the button and the title beside it.
 const BACK_BUTTON_GAP = 8
+
+/// Recents' header as Maps draws its sections: a grey title and a blue Clear
+/// at headline size, and Clear tall enough to tap.
+const RECENTS_TITLE_MODIFIERS = [font({textStyle: 'headline'}), foregroundStyle(c.secondaryLabel)]
+const RECENTS_CLEAR_MODIFIERS = [
+	buttonStyle('plain'),
+	contentShape(shapes.rectangle()),
+	frame({minHeight: BACK_BUTTON_SIZE}),
+]
+/// Clear's spoken name: "Clear" alone does not say what it empties.
+export const RECENTS_CLEAR_LABEL = 'Clear Recents'
 
 /// `UISearchBar` insets its own text field about 8pt from the edges it is
 /// given, on top of whatever padding wraps it -- measured by comparing the
@@ -86,6 +111,11 @@ type Props = {
 	/// picker draws at the collapsed stop, so the screen can size that stop to
 	/// hold it.
 	onHeaderHeightChange: (height: number) => void
+	/// What the sheet is listing, for the map to pin; see `MapPins`.
+	onPinsChange: (pins: MapPins | null) => void
+	/// A group was opened from its tile, so the screen can make room for the
+	/// pins it is about to frame.
+	onGroupOpen: () => void
 }
 
 /// The picker's contents, as SwiftUI. The sheet that presents them, and the
@@ -102,6 +132,8 @@ export function BuildingPicker({
 	onSearchFocusChange,
 	onSearchCancel,
 	onHeaderHeightChange,
+	onPinsChange,
+	onGroupOpen,
 }: Props): React.ReactNode {
 	let [typedQuery, setTypedQuery] = React.useState('')
 	let query = useDebounce(typedQuery.trim(), SEARCH_DEBOUNCE_MS)
@@ -134,21 +166,70 @@ export function BuildingPicker({
 		() => (query ? searchPlaces(buildings, query) : []),
 		[buildings, query],
 	)
+	let groupPlaces = React.useMemo(
+		() => (openGroup ? placesIn(openGroup, buildings) : []),
+		[openGroup, buildings],
+	)
+	let allPlaces = React.useMemo(() => byName(buildings), [buildings])
 	// With no group to open -- a feed whose values the groups file does not
 	// name -- every place is listed, so the sheet is never empty of rows.
-	let listedPlaces = React.useMemo(
-		() =>
-			openGroup ? placesIn(openGroup, buildings) : groups.length === 0 ? byName(buildings) : [],
-		[openGroup, groups, buildings],
-	)
+	let listedPlaces = openGroup ? groupPlaces : groups.length === 0 ? allPlaces : []
+
+	// Bumped when the camera should frame the pins: a tile tap, or a search
+	// that ended with text once its results have caught up with the typing,
+	// so pressing Search inside the debounce frames what was typed.
+	let [frameKey, setFrameKey] = React.useState(0)
+	let [searchEnded, setSearchEnded] = React.useState(false)
+	if (searchEnded && query === typedQuery.trim()) {
+		setSearchEnded(false)
+		setFrameKey((key) => key + 1)
+	}
 
 	let openFromTile = React.useCallback(
 		(group: CategoryGroup) => {
 			setOpened({campus, label: group.label})
+			setFrameKey((key) => key + 1)
+			onGroupOpen()
 			track({name: 'map.group.open', attributes: {group: group.label, campus}})
 		},
-		[campus],
+		[campus, onGroupOpen],
 	)
+
+	// The fallback list of every place is not pinned: it is a list to scroll,
+	// not a set of places someone asked to see.
+	// The places opened on this campus's map, shown under the grid on the root
+	// view alone -- not inside a group, not while searching.
+	let recentIds = useRecentPlacesStore((state) => state.recent[campus])
+	let forgetRecent = useRecentPlacesStore((state) => state.forget)
+	let clearRecents = useRecentPlacesStore((state) => state.clear)
+	let remembered = React.useMemo(() => recentPlaces(recentIds, buildings), [recentIds, buildings])
+	let showsRecents =
+		!compact &&
+		!query &&
+		!openGroup &&
+		!isLoading &&
+		!isError &&
+		groups.length > 0 &&
+		remembered.length > 0
+
+	let pins = React.useMemo((): MapPins | null => {
+		if (isLoading || isError) {
+			return null
+		}
+		if (query) {
+			return searchResults.length > 0
+				? {places: searchResults, color: SEARCH_PIN_COLOR, frameKey}
+				: null
+		}
+		if (openGroup) {
+			return {places: groupPlaces, color: groupColor(openGroup.gradient), frameKey}
+		}
+		return null
+	}, [isLoading, isError, query, searchResults, openGroup, groupPlaces, frameKey])
+
+	React.useEffect(() => {
+		onPinsChange(pins)
+	}, [pins, onPinsChange])
 
 	// Counted when a search first comes up empty, not on every keystroke that
 	// keeps it empty. The query itself is never sent.
@@ -176,7 +257,15 @@ export function BuildingPicker({
 			>
 				<CampusSearchBar
 					onCancel={cancelSearch}
-					onFocusChange={(focused) => onSearchFocusChange(focused, typedQuery.trim() !== '')}
+					onFocusChange={(focused, fieldHasText) => {
+						// A field of only spaces searches nothing, so ending it is
+						// not a search that ended with text.
+						let hasText = fieldHasText && typedQuery.trim() !== ''
+						if (!focused && hasText) {
+							setSearchEnded(true)
+						}
+						onSearchFocusChange(focused, hasText)
+					}}
 					onTextChange={setTypedQuery}
 					placeholder={SEARCH_PLACEHOLDER}
 					testID={SEARCH_PLACEHOLDER}
@@ -221,8 +310,65 @@ export function BuildingPicker({
 						<CategoryGrid groups={groups} onOpen={openFromTile} />
 					)}
 				</Section>
+				{showsRecents ? (
+					<RecentsSection
+						onClear={() => clearRecents(campus)}
+						onForget={(id) => forgetRecent(campus, id)}
+						onSelect={onSelect}
+						places={remembered}
+					/>
+				) : null}
 			</List>
 		</VStack>
+	)
+}
+
+/// The places opened most recently, under the grid, as Maps lists them. A row
+/// swipes away on its own; Clear empties the section.
+function RecentsSection({
+	places,
+	onSelect,
+	onForget,
+	onClear,
+}: {
+	places: Array<Feature<Building>>
+	onSelect: (id: string) => void
+	onForget: (id: string) => void
+	onClear: () => void
+}): React.ReactNode {
+	return (
+		<Section
+			header={
+				<HStack>
+					<Text modifiers={RECENTS_TITLE_MODIFIERS}>Recents</Text>
+					<Spacer />
+					<Button
+						modifiers={[...RECENTS_CLEAR_MODIFIERS, accessibilityLabel(RECENTS_CLEAR_LABEL)]}
+						onPress={onClear}
+					>
+						<Text modifiers={[font({textStyle: 'headline'}), foregroundStyle(c.systemBlue)]}>
+							Clear
+						</Text>
+					</Button>
+				</HStack>
+			}
+		>
+			{/* Swipe actions per row rather than `List.ForEach`, whose `.onMove`
+			    would offer to reorder a list whose order is when each was opened. */}
+			{places.map((building) => (
+				<SwipeActions key={building.id}>
+					<BuildingRow building={building} onSelect={onSelect} />
+					<SwipeActions.Actions allowsFullSwipe={true} edge="trailing">
+						<Button
+							label="Remove"
+							onPress={() => onForget(building.id)}
+							role="destructive"
+							systemImage="trash"
+						/>
+					</SwipeActions.Actions>
+				</SwipeActions>
+			))}
+		</Section>
 	)
 }
 

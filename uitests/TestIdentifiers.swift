@@ -206,6 +206,15 @@ struct TestIdentifiers {
 		/// matches the navigation bar's own Back on iOS 27. Mirrors
 		/// GROUP_BACK_ID in source/features/map/building-picker.tsx.
 		static let groupBack = "map-group-back"
+		/// A place that is a point inside another building's footprint, and the
+		/// only place its name finds: its pin sits over Buntrock Commons, so a
+		/// tap that reaches the footprint instead opens the wrong card.
+		/// St. Olaf can rename it.
+		static let aPointOnlyPlace = "Stav Hall"
+		/// The Recents section's title, and its rows' swipe action. Mirror
+		/// RecentsSection in source/features/map/building-picker.tsx.
+		static let recentsTitle = "Recents"
+		static let recentsRemove = "Remove"
 		/// Mirrors CATEGORY_GRID_ID in source/features/map/category-grid.tsx.
 		static let categoryGrid = "map-category-grid"
 		/// A St. Olaf place in no Dining group, found by search from inside it.

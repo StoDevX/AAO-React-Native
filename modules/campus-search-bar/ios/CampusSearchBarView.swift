@@ -121,12 +121,12 @@ private struct SearchBar: UIViewRepresentable {
 
 		func searchBarTextDidBeginEditing(_ bar: UISearchBar) {
 			updateCancelButton(on: bar, animated: true)
-			props.onFocusChange(["value": true])
+			props.onFocusChange(["value": true, "hasText": !(bar.text ?? "").isEmpty])
 		}
 
 		func searchBarTextDidEndEditing(_ bar: UISearchBar) {
 			updateCancelButton(on: bar, animated: true)
-			props.onFocusChange(["value": false])
+			props.onFocusChange(["value": false, "hasText": !(bar.text ?? "").isEmpty])
 		}
 
 		func searchBarSearchButtonClicked(_ bar: UISearchBar) {

@@ -7,7 +7,10 @@ import {requireNativeView} from 'expo'
 export type CampusSearchBarProps = {
 	placeholder: string
 	onTextChange: (text: string) => void
-	onFocusChange: (focused: boolean) => void
+	/// `hasText` is read from the native field at the moment focus changes,
+	/// so Cancel -- which clears the field before resigning -- reports false
+	/// even though its empty `onTextChange` arrives afterwards.
+	onFocusChange: (focused: boolean, hasText: boolean) => void
 	onCancel: () => void
 	testID?: string
 }
@@ -16,7 +19,7 @@ type NativeProps = {
 	placeholder: string
 	testID?: string
 	onTextChange: (event: NativeSyntheticEvent<{value: string}>) => void
-	onFocusChange: (event: NativeSyntheticEvent<{value: boolean}>) => void
+	onFocusChange: (event: NativeSyntheticEvent<{value: boolean; hasText: boolean}>) => void
 	onCancel: () => void
 }
 
@@ -37,7 +40,7 @@ export function CampusSearchBar({
 		<CampusSearchBarNativeView
 			{...rest}
 			onCancel={onCancel}
-			onFocusChange={(event) => onFocusChange(event.nativeEvent.value)}
+			onFocusChange={(event) => onFocusChange(event.nativeEvent.value, event.nativeEvent.hasText)}
 			onTextChange={(event) => onTextChange(event.nativeEvent.value)}
 		/>
 	)

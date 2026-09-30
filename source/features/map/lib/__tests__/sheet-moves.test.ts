@@ -61,16 +61,40 @@ describe('nextSheetDetent', () => {
 			).toEqual(at('collapsed'))
 		})
 
-		it('leaves a typed query on screen, and can still be cancelled later', () => {
+		// As Maps does: a search that ends with text drops the sheet so the
+		// pins it framed are on screen.
+		it('drops a finished search to medium so its pins show', () => {
 			expect(
 				nextSheetDetent({type: 'search-blurred', hasText: true}, at('large', 'collapsed')),
-			).toEqual(at('large', 'collapsed'))
+			).toEqual(at('medium'))
+		})
+
+		it('leaves a finished search where the user dragged the sheet', () => {
+			expect(
+				nextSheetDetent({type: 'search-blurred', hasText: true}, at('medium', 'collapsed')),
+			).toEqual(at('medium', 'collapsed'))
+			expect(nextSheetDetent({type: 'search-blurred', hasText: true}, at('collapsed'))).toEqual(
+				at('collapsed'),
+			)
 		})
 
 		it('does not move a sheet the user has since dragged elsewhere', () => {
 			expect(
 				nextSheetDetent({type: 'search-blurred', hasText: false}, at('medium', 'collapsed')),
 			).toEqual(at('medium', 'collapsed'))
+		})
+	})
+
+	describe('opening a group from its tile', () => {
+		// The group's pins are framed above the sheet; at the full stop there
+		// is no map left to frame them in.
+		it('drops a large sheet to medium so its pins show', () => {
+			expect(nextSheetDetent({type: 'group-opened'}, at('large'))).toEqual(at('medium'))
+		})
+
+		it('leaves a medium or collapsed sheet where it is', () => {
+			expect(nextSheetDetent({type: 'group-opened'}, at('medium'))).toEqual(at('medium'))
+			expect(nextSheetDetent({type: 'group-opened'}, at('collapsed'))).toEqual(at('collapsed'))
 		})
 	})
 

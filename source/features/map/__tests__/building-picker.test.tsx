@@ -1,12 +1,16 @@
 import React from 'react'
 import {act, fireEvent, render, screen, waitFor} from '@testing-library/react-native'
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query'
+import {lightBlueGradient} from '@frogpond/colors'
 
 import type {Campus} from '../../building-hours/types'
 import {BuildingPicker} from '../building-picker'
 import {keys as categoryKeys} from '../category-groups-query'
 import type {MapCategoryTable} from '../lib/category-groups'
+import {groupColor} from '../lib/category-groups'
+import {SEARCH_PIN_COLOR, type MapPins} from '../lib/map-pins'
 import {keys} from '../query'
+import {useRecentPlacesStore} from '../store'
 import {makeBuilding} from './fixtures'
 import {track} from '../../telemetry/track'
 
@@ -69,6 +73,8 @@ async function renderPicker({
 	onSelect = jest.fn(),
 	onSearchFocusChange = jest.fn(),
 	onSearchCancel = jest.fn(),
+	onPinsChange = jest.fn(),
+	onGroupOpen = jest.fn(),
 } = {}) {
 	let client = new QueryClient({defaultOptions: {queries: {retry: false}}})
 	trackedQueryClients.push(client)
@@ -88,6 +94,8 @@ async function renderPicker({
 				onHeaderHeightChange={jest.fn()}
 				onSearchCancel={onSearchCancel}
 				onSearchFocusChange={onSearchFocusChange}
+				onGroupOpen={onGroupOpen}
+				onPinsChange={onPinsChange}
 				onSelect={onSelect}
 			/>
 		</QueryClientProvider>
@@ -99,7 +107,28 @@ async function renderPicker({
 		current = {...current, ...overrides}
 		await rerender(tree(current))
 	}
-	return {client, onSelect, onSearchFocusChange, onSearchCancel, rerenderWith}
+	return {
+		client,
+		onSelect,
+		onSearchFocusChange,
+		onSearchCancel,
+		onPinsChange,
+		onGroupOpen,
+		rerenderWith,
+	}
+}
+
+/// The pins most recently reported, as place names, with their color and
+/// frame key; `null` or `undefined` as reported.
+function lastPins(onPinsChange: jest.Mock) {
+	let pins = onPinsChange.mock.calls.at(-1)?.[0] as MapPins | null | undefined
+	return pins
+		? {
+				names: pins.places.map((place) => place.properties.name),
+				color: pins.color,
+				frameKey: pins.frameKey,
+			}
+		: pins
 }
 
 describe('BuildingPicker', () => {
@@ -281,6 +310,45 @@ describe('BuildingPicker', () => {
 		expect(onSearchFocusChange).toHaveBeenLastCalledWith(false, false)
 	})
 
+	// The native bar clears its text before resigning, but JavaScript hears
+	// the resignation first; read there, Cancel would look like a search that
+	// ended with text.
+	it('reports a cancelled field as empty', async () => {
+		let {onSearchFocusChange} = await renderPicker()
+		let field = screen.getByLabelText('Search for a place')
+		await fireEvent(field, 'focus')
+		await fireEvent.changeText(field, 'gamma')
+		await fireEvent.press(screen.getByText('Cancel'))
+		expect(onSearchFocusChange).toHaveBeenLastCalledWith(false, false)
+	})
+
+	// Cancel after tapping away finds a field with nothing to resign, so the
+	// native bar reports no focus change at all.
+	it('reports no focus change for a Cancel after the field lost focus', async () => {
+		let {onSearchFocusChange} = await renderPicker()
+		let field = screen.getByLabelText('Search for a place')
+		await fireEvent(field, 'focus')
+		await fireEvent.changeText(field, 'gamma')
+		await fireEvent(field, 'blur')
+		onSearchFocusChange.mockClear()
+		await fireEvent.press(screen.getByText('Cancel'))
+		expect(onSearchFocusChange).not.toHaveBeenCalled()
+	})
+
+	// A query of only spaces finds nothing, so ending it is not a search with
+	// text: the sheet stays where it is and nothing is framed.
+	it('treats a field of only spaces as empty when it loses focus', async () => {
+		let {onSearchFocusChange, onPinsChange} = await renderPicker()
+		let field = screen.getByLabelText('Search for a place')
+		await fireEvent(field, 'focus')
+		await fireEvent.changeText(field, '   ')
+		await fireEvent(field, 'blur')
+		expect(onSearchFocusChange).toHaveBeenLastCalledWith(false, false)
+		expect(
+			onPinsChange.mock.calls.every(([pins]) => pins === null || (pins as MapPins).frameKey === 0),
+		).toBe(true)
+	})
+
 	it('tells the screen a blurred field still holds a query', async () => {
 		let {onSearchFocusChange} = await renderPicker()
 		let field = screen.getByLabelText('Search for a place')
@@ -385,6 +453,167 @@ describe('BuildingPicker', () => {
 			await rerenderWith({compact: true})
 			await rerenderWith({compact: false})
 			expect(track).toHaveBeenCalledTimes(1)
+		})
+	})
+
+	it('tells the screen when a group is opened from its tile, and not on Back', async () => {
+		let {onGroupOpen} = await renderPicker()
+		await fireEvent.press(screen.getByRole('button', {name: 'Parking'}))
+		await fireEvent.press(screen.getByRole('button', {name: 'Back'}))
+		expect(onGroupOpen).toHaveBeenCalledTimes(1)
+	})
+
+	describe('pins', () => {
+		it("reports a group's places in its color when its tile is tapped", async () => {
+			let {onPinsChange} = await renderPicker()
+			await fireEvent.press(screen.getByRole('button', {name: 'Parking'}))
+			expect(lastPins(onPinsChange)).toEqual({
+				names: ['Beta Lot'],
+				color: groupColor(lightBlueGradient),
+				frameKey: 1,
+			})
+		})
+
+		it('reports nothing for the grid or after Back', async () => {
+			let {onPinsChange} = await renderPicker()
+			expect(lastPins(onPinsChange)).toBeNull()
+			await fireEvent.press(screen.getByRole('button', {name: 'Parking'}))
+			await fireEvent.press(screen.getByRole('button', {name: 'Back'}))
+			expect(lastPins(onPinsChange)).toBeNull()
+		})
+
+		it('reports search results in the search color, without framing while typing', async () => {
+			let {onPinsChange} = await renderPicker()
+			await fireEvent.changeText(screen.getByLabelText('Search for a place'), 'gamma')
+			await waitFor(() => {
+				expect(lastPins(onPinsChange)?.names).toEqual(['Gamma Field'])
+			})
+			expect(lastPins(onPinsChange)).toMatchObject({color: SEARCH_PIN_COLOR, frameKey: 0})
+		})
+
+		it('frames a search when it ends with text', async () => {
+			let {onPinsChange} = await renderPicker()
+			let field = screen.getByLabelText('Search for a place')
+			await fireEvent.changeText(field, 'gamma')
+			await waitFor(() => {
+				expect(lastPins(onPinsChange)?.names).toEqual(['Gamma Field'])
+			})
+			await fireEvent(field, 'blur')
+			expect(lastPins(onPinsChange)).toMatchObject({names: ['Gamma Field'], frameKey: 1})
+		})
+
+		// Pressing Search inside the debounce must frame what was typed, not the
+		// previous query's results.
+		it('frames the search only once its results have caught up', async () => {
+			let {onPinsChange} = await renderPicker()
+			let field = screen.getByLabelText('Search for a place')
+			await fireEvent.changeText(field, 'beta')
+			await waitFor(() => {
+				expect(lastPins(onPinsChange)?.names).toEqual(['Beta Lot'])
+			})
+			// Ended inside the debounce: the results on screen are still Beta's.
+			await fireEvent.changeText(field, 'gamma')
+			await fireEvent(field, 'blur')
+			await waitFor(() => {
+				expect(lastPins(onPinsChange)?.frameKey).toBe(1)
+			})
+			let framed = onPinsChange.mock.calls
+				.map(([pins]) => pins as MapPins | null)
+				.filter((pins) => pins !== null && pins.frameKey === 1)
+			expect(framed.map((pins) => pins?.places.map((place) => place.properties.name))).toEqual([
+				['Gamma Field'],
+			])
+		})
+
+		it('leaves frameKey alone when a search is cancelled', async () => {
+			let {onPinsChange} = await renderPicker()
+			await fireEvent(screen.getByLabelText('Search for a place'), 'focus')
+			await fireEvent.changeText(screen.getByLabelText('Search for a place'), 'gamma')
+			await fireEvent.press(screen.getByText('Cancel'))
+			await waitFor(() => {
+				expect(lastPins(onPinsChange)).toBeNull()
+			})
+			expect(
+				onPinsChange.mock.calls.every(
+					([pins]) => pins === null || (pins as MapPins).frameKey === 0,
+				),
+			).toBe(true)
+		})
+
+		it('reports nothing for a search with no results', async () => {
+			let {onPinsChange} = await renderPicker()
+			await fireEvent.changeText(screen.getByLabelText('Search for a place'), 'zzz')
+			await waitFor(() => {
+				expect(screen.getByText('No buildings to show.')).toBeTruthy()
+			})
+			expect(lastPins(onPinsChange)).toBeNull()
+		})
+
+		it('keeps frameKey across a compact and expand', async () => {
+			let {onPinsChange, rerenderWith} = await renderPicker()
+			await fireEvent.press(screen.getByRole('button', {name: 'Parking'}))
+			await rerenderWith({compact: true})
+			await rerenderWith({compact: false})
+			expect(lastPins(onPinsChange)).toMatchObject({names: ['Beta Lot'], frameKey: 1})
+		})
+	})
+
+	describe('recents', () => {
+		beforeEach(() => {
+			useRecentPlacesStore.setState({recent: {stolaf: [], carleton: []}})
+		})
+
+		let remember = (...ids: string[]) =>
+			useRecentPlacesStore.setState({recent: {stolaf: [], carleton: ids}})
+
+		it('lists the places opened most recently under the grid, newest first', async () => {
+			remember('c', 'a')
+			await renderPicker()
+			expect(screen.getByText('Recents')).toBeTruthy()
+			expect(
+				screen
+					.getAllByText(/^(Alpha Hall|Gamma Field)$/u)
+					.map((row) => [row.props.children].flat().join('')),
+			).toEqual(['Gamma Field', 'Alpha Hall'])
+		})
+
+		it('draws no section before anything has been opened', async () => {
+			await renderPicker()
+			expect(screen.queryByText('Recents')).toBeNull()
+		})
+
+		it('skips a place the map no longer has', async () => {
+			remember('gone', 'a')
+			await renderPicker()
+			expect(screen.getByText('Alpha Hall')).toBeTruthy()
+		})
+
+		it('keeps to the root: not inside a group, not while searching', async () => {
+			remember('a')
+			await renderPicker()
+			await fireEvent.press(screen.getByRole('button', {name: 'Parking'}))
+			expect(screen.queryByText('Recents')).toBeNull()
+			await fireEvent.press(screen.getByRole('button', {name: 'Back'}))
+			await fireEvent.changeText(screen.getByLabelText('Search for a place'), 'gamma')
+			await waitFor(() => {
+				expect(screen.getByText('Gamma Field')).toBeTruthy()
+			})
+			expect(screen.queryByText('Recents')).toBeNull()
+		})
+
+		it('clears the campus it shows', async () => {
+			useRecentPlacesStore.setState({recent: {stolaf: ['x'], carleton: ['a']}})
+			await renderPicker()
+			await fireEvent.press(screen.getByRole('button', {name: 'Clear Recents'}))
+			expect(useRecentPlacesStore.getState().recent).toEqual({stolaf: ['x'], carleton: []})
+			expect(screen.queryByText('Recents')).toBeNull()
+		})
+
+		it('opens a remembered place from its row', async () => {
+			remember('a')
+			let {onSelect} = await renderPicker()
+			await fireEvent.press(screen.getByText('Alpha Hall'))
+			expect(onSelect).toHaveBeenCalledWith('a')
 		})
 	})
 })

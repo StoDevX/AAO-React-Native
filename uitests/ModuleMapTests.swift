@@ -77,6 +77,8 @@ class ModuleMapTests: UITestCaseUnbooted {
 			.expandSheet()
 			.verifySearchFieldHeight()
 			.openCategory(TestIdentifiers.Map.allBuildingsCategory)
+			// Opening a group drops the sheet to make room for its pins.
+			.expandSheet()
 		let largeTop = screen.searchFieldTop()
 
 		screen
@@ -328,6 +330,7 @@ class ModuleMapTests: UITestCaseUnbooted {
 			.openCategory(TestIdentifiers.Map.diningCategory)
 			.capture("St. Olaf map Dining group")
 			.verifyGroupOpen(TestIdentifiers.Map.diningCategory)
+			.capture("St. Olaf map Dining pins")
 			.goBackToCategories()
 	}
 
@@ -347,7 +350,8 @@ class ModuleMapTests: UITestCaseUnbooted {
 	/// At the largest text size a group's title wraps or shrinks beside its
 	/// back button rather than drawing under it.
 	func testAGroupTitleClearsItsBackButtonAtTheLargestTextSize() throws {
-		relaunch(atContentSizeCategory: TestIdentifiers.LaunchArguments.accessibilityExtraExtraExtraLarge)
+		app.launchArguments += TestIdentifiers.LaunchArguments.contentSizeCategory(
+			TestIdentifiers.LaunchArguments.accessibilityExtraExtraExtraLarge)
 		MapScreen(app: app)
 			.navigate()
 			.checkSheetPresented()
@@ -360,7 +364,8 @@ class ModuleMapTests: UITestCaseUnbooted {
 	/// At the largest text size the categories are a list: a grid narrow
 	/// enough to fit would leave each label a word or two a line.
 	func testTheCategoriesAreAListAtTheLargestTextSize() throws {
-		relaunch(atContentSizeCategory: TestIdentifiers.LaunchArguments.accessibilityExtraExtraExtraLarge)
+		app.launchArguments += TestIdentifiers.LaunchArguments.contentSizeCategory(
+			TestIdentifiers.LaunchArguments.accessibilityExtraExtraExtraLarge)
 		MapScreen(app: app)
 			.navigate()
 			.checkSheetPresented()
@@ -369,5 +374,80 @@ class ModuleMapTests: UITestCaseUnbooted {
 			// The first row: at this size the sheet may rest short of its full
 			// stop, and a list builds only the rows it shows.
 			.verifyCategoriesAsList(including: TestIdentifiers.Map.allBuildingsCategory)
+	}
+
+	/// A search that finds one place frames its pin above the sheet, and the
+	/// pin opens that place -- not the building its point sits inside.
+	func testASearchedPinOpensItsOwnCard() throws {
+		let name = TestIdentifiers.Map.aPointOnlyPlace
+		MapScreen(app: app)
+			.navigate()
+			.checkSheetPresented()
+			.focusSearch()
+			.typeIntoSearch(name)
+			.submitSearch()
+			.capture("St. Olaf map with one searched pin")
+			.verifyAtMiddleStop()
+			.tapMapCenterAboveSheet()
+			.capture("St. Olaf map after tapping the searched pin")
+			.verifyCardTitled(name)
+	}
+
+	/// The Parking group's pins, for a person to look at: its many places merge
+	/// into numbered clusters.
+	func testTheParkingGroupClustersItsPins() throws {
+		MapScreen(app: app)
+			.navigate()
+			.checkSheetPresented()
+			.expandSheet()
+			.openCategory(TestIdentifiers.Map.parkingCategory)
+			.capture("St. Olaf map Parking clusters")
+	}
+
+	/// The base map's own name for a place inside a building opens that place,
+	/// not the building around it. Searching frames the place's pin at a known
+	/// spot; cancelling takes the pin away and leaves the camera, so the base
+	/// map's label for the place is what is under that spot.
+	func testATappedPlaceNameOpensItsOwnCard() throws {
+		let name = TestIdentifiers.Map.aPointOnlyPlace
+		let screen = MapScreen(app: app)
+			.navigate()
+			.checkSheetPresented()
+			.focusSearch()
+			.typeIntoSearch(name)
+			.submitSearch()
+			.verifyAtMiddleStop()
+		let spot = screen.mapCenterAboveSheet()
+		// Focused first: on iOS 27 a first tap on Close only resumes editing
+		// once Search has ended it.
+		screen
+			.focusSearch()
+			.cancelSearch()
+			.capture("St. Olaf map with the searched place's own label")
+			.tapMap(at: spot)
+			.capture("St. Olaf map after tapping a place's label")
+			.verifyCardTitled(name)
+	}
+
+	/// A place opened from the map is listed under Recents on the root view,
+	/// and a swipe takes it off again.
+	func testAnOpenedPlaceIsListedUnderRecents() throws {
+		let name = TestIdentifiers.Map.aPointOnlyPlace
+		MapScreen(app: app)
+			.navigate()
+			.checkSheetPresented()
+			.focusSearch()
+			.typeIntoSearch(name)
+			.selectBuilding(named: name)
+			.closeTopCard()
+			// Focused first: on iOS 27 a first tap on Close only resumes editing
+			// once the field has lost focus.
+			.focusSearch()
+			.cancelSearch()
+			.expandSheet()
+			.capture("St. Olaf map Recents")
+			.verifyRecentsList(name)
+			.removeRecent(name)
+			.verifyNoRecents()
 	}
 }

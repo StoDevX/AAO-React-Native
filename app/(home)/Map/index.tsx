@@ -24,9 +24,10 @@ import {
 	GeoJSONSource,
 	Layer,
 	Map,
-	Marker,
 	UserLocation,
 	type CameraRef,
+	type MapRef,
+	type PressEvent,
 	type PressEventWithFeatures,
 } from '@maplibre/maplibre-react-native'
 import {useQuery} from '@tanstack/react-query'
@@ -41,6 +42,11 @@ import type {Campus} from '../../../source/features/building-hours/types'
 import {PlaceStackCard} from '../../../source/features/map/place-stack-card'
 import {highlightedFeatureId, placeStack} from '../../../source/features/map/lib/place-stack'
 import {BuildingPicker} from '../../../source/features/map/building-picker'
+import {framingFor, type MapPins} from '../../../source/features/map/lib/map-pins'
+import {placeForTap} from '../../../source/features/map/lib/place-for-tap'
+import {MapPinImages, MapPinsLayer} from '../../../source/features/map/map-pins-layer'
+import {MapSelectionLayer} from '../../../source/features/map/map-selection-layer'
+import {useFrameRequests} from '../../../source/features/map/use-frame-requests'
 import {sheetHeightFor} from '../../../source/features/map/lib/sheet-height'
 import {toBuildingFootprints} from '../../../source/features/map/lib/building-footprints'
 import {
@@ -54,7 +60,8 @@ import {
 	nameOf,
 } from '../../../source/features/map/lib/sheet-detents'
 import {mapDataOptions} from '../../../source/features/map/query'
-import type {Coordinate, Point} from '../../../source/features/map/types'
+import {useRecentPlacesStore} from '../../../source/features/map/store'
+import type {Building, Coordinate, Feature, Point} from '../../../source/features/map/types'
 import {mapCredits, mapStyleUrl} from '../../../source/features/map/urls'
 
 /** Each campus's starting camera position. Carleton's predates this file
@@ -73,11 +80,13 @@ const CAMPUS_TITLE: Record<Campus, string> = {
 const DEFAULT_ZOOM = 15
 const SELECTION_ZOOM = 17
 const CAMERA_ANIMATION_MS = 500
-/// The dot itself is small enough to read as a pin rather than a blob; hitSlop
-/// pads the tap area out to the 44pt minimum without growing the artwork.
-const MARKER_SIZE = 20
 const MIN_TOUCH_TARGET = 44
-const MARKER_HIT_SLOP = (MIN_TOUCH_TARGET - MARKER_SIZE) / 2
+/// How far from a touch a place's drawn name still counts as tapped: half
+/// the minimum touch target, so the name's box need not be hit exactly.
+const LABEL_TOUCH_RADIUS = MIN_TOUCH_TARGET / 2
+/// Room kept around framed pins, and above them for the floating header.
+const PIN_MARGIN = 40
+const HEADER_CLEARANCE = 44
 
 /// The footprints are drawn by the tileset now, so this layer paints nothing.
 /// It stays because it is the tap target, and now the source's only child:
@@ -105,6 +114,7 @@ export default function MapPage(): React.ReactNode {
 
 	let scheme = useColorScheme()
 	let cameraRef = React.useRef<CameraRef>(null)
+	let mapRef = React.useRef<MapRef>(null)
 	// The sheet is the map's, not a route's, so its selection is the map's too.
 	// The places open on the map, bottom to top: the sheet's card, then each
 	// stacked over it.
@@ -157,24 +167,86 @@ export default function MapPage(): React.ReactNode {
 
 	let footprints = React.useMemo(() => toBuildingFootprints(buildings), [buildings])
 
-	// The source hands back whichever footprint was under the touch, so the
-	// tap resolves against exactly the geometry the user can see. MapLibre also
-	// applies a 44pt hitbox to it by default.
-	let handleBuildingPress = React.useCallback(
-		(event: NativeSyntheticEvent<PressEventWithFeatures>) => {
-			// GeoJSON properties are typed as `any` by the spec's types, so this
-			// is the boundary where that gets narrowed back to something real.
-			let id: unknown = event.nativeEvent.features[0]?.properties?.buildingId
-			if (typeof id !== 'string') {
-				return
-			}
-			// One sheet, whose contents swap. Tapping a second building while
-			// cards are up starts afresh from it, as Maps does.
+	// One sheet, whose contents swap. Tapping a second place while cards are
+	// up starts afresh from it, as Maps does.
+	let openPlace = React.useCallback(
+		(id: string) => {
 			dispatchStack({type: 'start', id})
 			dispatchSheet({type: 'footprint-tapped'})
 		},
 		[dispatchSheet],
 	)
+
+	// A tap opens the place whose name is drawn under it -- The Cage, inside
+	// Buntrock -- before the building it landed in. Any point the style draws
+	// with a `buildingId` counts, whichever layer draws it, so the style can
+	// be restyled from the server without the app knowing its layer names.
+	let openPlaceAt = React.useCallback(
+		async (pressed: PressEvent, building: string | null) => {
+			let [x, y] = pressed.point
+			let near = await mapRef.current
+				?.queryRenderedFeatures(
+					[
+						[x - LABEL_TOUCH_RADIUS, y - LABEL_TOUCH_RADIUS],
+						[x + LABEL_TOUCH_RADIUS, y + LABEL_TOUCH_RADIUS],
+					],
+					{filter: ['has', 'buildingId']},
+				)
+				.catch(() => [])
+			let id = placeForTap(near ?? [], [pressed.lngLat[0], pressed.lngLat[1]], building)
+			if (id) {
+				openPlace(id)
+			}
+		},
+		[openPlace],
+	)
+
+	// The source hands back whichever footprint was under the touch, so the
+	// tap resolves against exactly the geometry the user can see. MapLibre also
+	// applies a 44pt hitbox to it by default. Stopped here, so the map's own
+	// handler does not open the place a second time.
+	let handleBuildingPress = React.useCallback(
+		(event: NativeSyntheticEvent<PressEventWithFeatures>) => {
+			event.stopPropagation()
+			// GeoJSON properties are typed as `any` by the spec's types, so this
+			// is the boundary where that gets narrowed back to something real.
+			let id: unknown = event.nativeEvent.features[0]?.properties?.buildingId
+			let {point, lngLat} = event.nativeEvent
+			void openPlaceAt({point, lngLat}, typeof id === 'string' ? id : null)
+		},
+		[openPlaceAt],
+	)
+
+	// A tap on no building can still land on a place's name: the Windmill and
+	// the Chime Tower stand outside every footprint.
+	let handleMapPress = React.useCallback(
+		(event: NativeSyntheticEvent<PressEvent>) => {
+			let {point, lngLat} = event.nativeEvent
+			void openPlaceAt({point, lngLat}, null)
+		},
+		[openPlaceAt],
+	)
+
+	// The place at the bottom of the stack is the one opened from the map
+	// itself -- a row, a pin, a building or a name -- and so the one Recents
+	// keeps; places stacked over it from its card are not.
+	let rememberPlace = useRecentPlacesStore((state) => state.remember)
+	let openedId = stack[0]?.kind === 'feature' ? stack[0].id : undefined
+	React.useEffect(() => {
+		if (openedId) {
+			rememberPlace(campus, openedId)
+		}
+	}, [openedId, campus, rememberPlace])
+
+	// Opening a group frames its pins above the sheet, which a full sheet
+	// would leave no room for.
+	let makeRoomForGroup = React.useCallback(() => {
+		dispatchSheet({type: 'group-opened'})
+	}, [dispatchSheet])
+
+	// What the sheet is listing, pinned. The picker stays mounted under a
+	// card, so these persist while a card is open.
+	let [pins, setPins] = React.useState<MapPins | null>(null)
 
 	// The map follows the top of the stack.
 	let highlightedId = highlightedFeatureId(stack, venues)
@@ -212,6 +284,42 @@ export default function MapPage(): React.ReactNode {
 		}
 	}, [selectedPoint])
 
+	// Frames places in the map above the sheet and below the header: several
+	// fit, one eased to at the selection zoom.
+	let frameOn = (places: Array<Feature<Building>>) => {
+		let framing = framingFor(places)
+		if (framing?.kind === 'fit') {
+			cameraRef.current?.fitBounds(framing.bounds, {
+				padding: {
+					top: insets.top + HEADER_CLEARANCE,
+					bottom: sheetHeight + PIN_MARGIN,
+					left: PIN_MARGIN,
+					right: PIN_MARGIN,
+				},
+				duration: CAMERA_ANIMATION_MS,
+			})
+		} else if (framing?.kind === 'ease') {
+			cameraRef.current?.easeTo({
+				center: framing.center,
+				duration: CAMERA_ANIMATION_MS,
+				padding: {bottom: sheetHeight},
+				zoom: SELECTION_ZOOM,
+			})
+		}
+	}
+
+	// Framed only when the picker asks -- a tile tap or a finished search --
+	// never as results change while typing.
+	useFrameRequests(pins, (requested) => frameOn(requested.places))
+
+	// A cluster frames the places it holds, so it opens up in the map above
+	// the sheet rather than around the middle of the screen, which at the
+	// middle stop is the sheet's edge.
+	let frameCluster = (ids: string[]) => {
+		let held = new Set(ids)
+		frameOn(buildings.filter((building) => held.has(building.id)))
+	}
+
 	return (
 		<View style={StyleSheet.absoluteFill}>
 			{/* The map runs up under a clear header, as Maps' does: only the Back
@@ -232,8 +340,10 @@ export default function MapPage(): React.ReactNode {
 				</Stack.Toolbar.Menu>
 			</Stack.Toolbar>
 			<Map
+				ref={mapRef}
 				attribution={false}
 				logo={false}
+				onPress={handleMapPress}
 				mapStyle={mapStyleUrl(campus, scheme)}
 				style={StyleSheet.absoluteFill}
 			>
@@ -258,22 +368,14 @@ export default function MapPage(): React.ReactNode {
 					/>
 				</GeoJSONSource>
 
-				{selectedPoint ? (
-					<Marker
-						key={selectedPoint.id}
-						id={selectedPoint.id}
-						lngLat={selectedPoint.point.coordinates}
-					>
-						<View
-							accessibilityLabel={`${selectedPoint.name} marker`}
-							accessibilityRole="image"
-							hitSlop={MARKER_HIT_SLOP}
-							style={styles.markerOuter}
-						>
-							<View style={styles.markerInner} />
-						</View>
-					</Marker>
-				) : null}
+				<MapPinImages />
+				<MapPinsLayer onCluster={frameCluster} onSelect={openPlace} pins={pins} />
+
+				<MapSelectionLayer
+					place={
+						selectedPoint ? {at: selectedPoint.point.coordinates, name: selectedPoint.name} : null
+					}
+				/>
 			</Map>
 			{/* Covers the map, and lets every touch through. The sheet is
 			    presented rather than laid out, so the Host needs no size of its
@@ -330,6 +432,8 @@ export default function MapPage(): React.ReactNode {
 									campus={campus}
 									compact={sheet.current === 'collapsed'}
 									onHeaderHeightChange={setPickerHeaderHeight}
+									onGroupOpen={makeRoomForGroup}
+									onPinsChange={setPins}
 									onSearchCancel={() => dispatchSheet({type: 'search-cancelled'})}
 									onSearchFocusChange={(focused, hasText) =>
 										dispatchSheet(
@@ -366,23 +470,6 @@ export default function MapPage(): React.ReactNode {
 }
 
 const styles = StyleSheet.create({
-	markerOuter: {
-		width: MARKER_SIZE,
-		height: MARKER_SIZE,
-		borderRadius: MARKER_SIZE / 2,
-		alignItems: 'center',
-		justifyContent: 'center',
-		backgroundColor: c.white,
-		shadowOffset: {width: 0, height: 1},
-		shadowColor: c.black,
-		shadowOpacity: 0.2,
-	},
-	markerInner: {
-		width: 12,
-		height: 12,
-		borderRadius: 6,
-		backgroundColor: c.gold,
-	},
 	banner: {
 		position: 'absolute',
 		top: 0,
