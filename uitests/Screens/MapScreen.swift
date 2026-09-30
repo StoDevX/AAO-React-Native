@@ -344,6 +344,17 @@ struct MapScreen: Screen {
 		return self
 	}
 
+	/// Each of `labels` is a link on the card: the Sources line draws each
+	/// source as an inline link, which XCUITest lists as its own element.
+	func verifyCardLinks(_ labels: [String]) -> Self {
+		for label in labels {
+			XCTAssertTrue(
+				app.links[label].firstMatch.waitForExistence(timeout: 10),
+				"The card should link \(label)")
+		}
+		return self
+	}
+
 	/// The top card is `name`'s: only one card's close button can be tapped,
 	/// and `name` can be seen, as the header's title or, at the large stop,
 	/// the big title in its place. A title's label carries its subtitle after

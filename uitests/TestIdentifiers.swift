@@ -222,6 +222,9 @@ struct TestIdentifiers {
 		/// From StoDevX/campus-map-data's `walks:`.
 		static let wellnessWalksCategory = "Wellness Walks"
 		static let aWalk = "Big Pond Loop"
+		/// A place whose About text cites two sources, from
+		/// StoDevX/campus-map-data's overrides.yaml.
+		static let aCitedPlace = "Big Pond"
 		/// The Recents section's title, and its rows' swipe action. Mirror
 		/// RecentsSection in source/features/map/building-picker.tsx.
 		static let recentsTitle = "Recents"
