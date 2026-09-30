@@ -76,6 +76,8 @@ class ModuleMapTests: UITestCase {
 			.expandSheet()
 			.verifySearchFieldHeight()
 			.openCategory(TestIdentifiers.Map.allBuildingsCategory)
+			// Opening a group drops the sheet to make room for its pins.
+			.expandSheet()
 		let largeTop = screen.searchFieldTop()
 
 		screen
@@ -326,6 +328,7 @@ class ModuleMapTests: UITestCase {
 			.openCategory(TestIdentifiers.Map.diningCategory)
 			.capture("St. Olaf map Dining group")
 			.verifyGroupOpen(TestIdentifiers.Map.diningCategory)
+			.capture("St. Olaf map Dining pins")
 			.verifyListed(TestIdentifiers.Map.aDiningPlace)
 			.goBackToCategories()
 	}
@@ -365,5 +368,32 @@ class ModuleMapTests: UITestCase {
 			.expandSheet()
 			.capture("St. Olaf map categories at the largest text size")
 			.verifyCategoriesAsList(including: TestIdentifiers.Map.diningCategory)
+	}
+
+	/// A search that finds one place frames its pin above the sheet, and the
+	/// pin opens that place -- not the building its point sits inside.
+	func testASearchedPinOpensItsOwnCard() throws {
+		let name = TestIdentifiers.Map.aPointOnlyPlace
+		MapScreen(app: app)
+			.navigate()
+			.checkSheetPresented()
+			.focusSearch()
+			.typeIntoSearch(name)
+			.submitSearch()
+			.capture("St. Olaf map with one searched pin")
+			.tapMapCenterAboveSheet()
+			.capture("St. Olaf map after tapping the searched pin")
+			.verifyCardTitled(name)
+	}
+
+	/// The Parking group's pins, for a person to look at: its many places merge
+	/// into numbered clusters.
+	func testTheParkingGroupClustersItsPins() throws {
+		MapScreen(app: app)
+			.navigate()
+			.checkSheetPresented()
+			.expandSheet()
+			.openCategory(TestIdentifiers.Map.parkingCategory)
+			.capture("St. Olaf map Parking clusters")
 	}
 }

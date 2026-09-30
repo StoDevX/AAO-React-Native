@@ -479,6 +479,37 @@ struct MapScreen: Screen {
 		return self
 	}
 
+	/// Presses the keyboard's Search key, which ends the search.
+	@discardableResult
+	func submitSearch() -> Self {
+		searchField.typeText("\n")
+		return self
+	}
+
+	/// Taps the middle of the map above the sheet, where a single framed pin
+	/// is eased to.
+	@discardableResult
+	func tapMapCenterAboveSheet() -> Self {
+		settle { sheetFrame().minY }
+		let sheet = sheetFrame()
+		app.coordinate(withNormalizedOffset: .zero)
+			.withOffset(CGVector(dx: app.frame.midX, dy: sheet.minY / 2))
+			.tap()
+		return self
+	}
+
+	/// The card on top is `name`'s own, read from its title rather than any
+	/// label beginning with the name: a building's card lists what is inside
+	/// it, so `name` can be on screen in someone else's card.
+	@discardableResult
+	func verifyCardTitled(_ name: String) -> Self {
+		XCTAssertTrue(cardTitle.waitForExistence(timeout: 20), "A card should be up")
+		XCTAssertTrue(
+			cardTitle.label.hasPrefix(name),
+			"The card on top should be \(name)'s, not \(cardTitle.label)")
+		return self
+	}
+
 	/// Opens a group from the sheet's categories: a tile in the grid, or a
 	/// row once the text size turns the grid into a list.
 	@discardableResult
