@@ -116,6 +116,12 @@ export function BuildingPicker({
 	}
 	let openGroup =
 		opened?.campus === campus ? groups.find((group) => group.label === opened.label) : undefined
+	// A group a refetch emptied is closed, not just hidden, so its places
+	// coming back later do not reopen it unasked. Only once groups exist:
+	// while the map data loads there are none, and nothing has vanished.
+	if (opened && !openGroup && groups.length > 0) {
+		setOpened(null)
+	}
 
 	let searchResults = React.useMemo(
 		() => (query ? searchPlaces(buildings, query) : []),

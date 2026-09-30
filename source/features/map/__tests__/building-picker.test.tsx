@@ -185,6 +185,27 @@ describe('BuildingPicker', () => {
 		expect(screen.getByRole('button', {name: 'Outdoors'})).toBeTruthy()
 	})
 
+	it('keeps the grid when an emptied group gets its places back', async () => {
+		let {client} = await renderPicker()
+		await fireEvent.press(screen.getByRole('button', {name: 'Parking'}))
+		await act(() => {
+			client.setQueryData(
+				keys.all('carleton'),
+				fixtures.filter((place) => place.id !== 'b'),
+			)
+		})
+		await waitFor(() => {
+			expect(screen.queryByRole('button', {name: 'Back'})).toBeNull()
+		})
+		await act(() => {
+			client.setQueryData(keys.all('carleton'), fixtures)
+		})
+		await waitFor(() => {
+			expect(screen.getByRole('button', {name: 'Parking'})).toBeTruthy()
+		})
+		expect(screen.queryByRole('button', {name: 'Back'})).toBeNull()
+	})
+
 	it('closes the open group when the campus changes', async () => {
 		let {rerenderWith} = await renderPicker()
 		await fireEvent.press(screen.getByRole('button', {name: 'Outdoors'}))
