@@ -68,7 +68,7 @@ export function formatWalkTime([low, high]: [number, number]): string {
 
 /// What the card has to say about a place beyond its name: its short code,
 /// what people call it, how long it is if it is a trail, how long its
-/// Wellness Walk takes and what underfoot, and whether a wheelchair can get
+/// Wellness Walk takes and what is underfoot, and whether a wheelchair can get
 /// in. Nothing for a fact the feed does not know.
 export function goodToKnowRows(
 	building: Pick<Building, 'abbreviation' | 'nickname' | 'accessibility' | 'length' | 'walk'>,
@@ -96,11 +96,14 @@ export function goodToKnowRows(
 		rows.push({kind: 'length', text: formatDistance(building.length, units)})
 	}
 
-	if (building.walk) {
-		rows.push(
-			{kind: 'walk-time', text: formatWalkTime(building.walk.minutes)},
-			{kind: 'walk-access', text: building.walk.accessibility},
-		)
+	// Each half of a walk is checked on its own, as the feed is not validated.
+	let walk = building.walk
+	if (Array.isArray(walk?.minutes) && walk.minutes.length === 2) {
+		rows.push({kind: 'walk-time', text: formatWalkTime(walk.minutes)})
+	}
+	let walkAccess = walk?.accessibility?.trim()
+	if (walkAccess) {
+		rows.push({kind: 'walk-access', text: walkAccess})
 	}
 
 	if (building.accessibility === 'wheelchair') {

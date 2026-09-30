@@ -79,6 +79,15 @@ describe('goodToKnowRows, walks', () => {
 		expect(goodToKnowRows({...base, walk: null}, US)).toEqual([])
 		expect(goodToKnowRows({...base, walk: undefined}, US)).toEqual([])
 	})
+
+	it('skips the half of a walk the feed left out', () => {
+		expect(
+			goodToKnowRows({...base, walk: {minutes: undefined as never, accessibility: 'Flat.'}}, US),
+		).toEqual([{kind: 'walk-access', text: 'Flat.'}])
+		expect(goodToKnowRows({...base, walk: {minutes: [14, 17], accessibility: ' '}}, US)).toEqual([
+			{kind: 'walk-time', text: '14–17 min walk'},
+		])
+	})
 })
 
 describe('formatWalkTime', () => {
