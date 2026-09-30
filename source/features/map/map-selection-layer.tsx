@@ -1,5 +1,10 @@
 import * as React from 'react'
-import {GeoJSONSource, Layer, type FilterSpecification} from '@maplibre/maplibre-react-native'
+import {
+	GeoJSONSource,
+	Layer,
+	type FilterSpecification,
+	type SymbolLayerSpecification,
+} from '@maplibre/maplibre-react-native'
 import * as c from '@frogpond/colors'
 
 import {PIN_IMAGE, PIN_NAME_LAYOUT, PIN_NAME_PAINT} from './map-pins-layer'
@@ -24,13 +29,24 @@ const IS_LINE: FilterSpecification = [
 	false,
 ]
 
+/// A trail's name, set along its course where the course has room, as the base
+/// map sets it. At a single point -- one vertex of a long loop -- it lands
+/// beside whatever pin or cluster happens to be there, and gives way to it.
+const TRAIL_NAME_LAYOUT: SymbolLayerSpecification['layout'] = {
+	'text-field': ['get', 'name'],
+	'text-font': PIN_NAME_LAYOUT?.['text-font'],
+	'text-size': PIN_NAME_LAYOUT?.['text-size'],
+	'symbol-placement': 'line',
+	'text-max-angle': 30,
+}
+
 type Props = {
 	/// The selected place, or nothing while no place is open.
 	selection: Selection | null
 }
 
-/// The open place drawn over the map: a trail as its course in gold, anything
-/// else as a gold dot, and either way its name as a map symbol. As a symbol
+/// The open place drawn over the map: a trail as its course in gold with its
+/// name along it, anything else as a gold dot with its name under it. As a symbol
 /// the name takes part in label placement, placed before the base map's
 /// labels, so the base map's own name for the place gives way to it rather
 /// than drawing through it -- and the name it carries stands in for the one
@@ -40,21 +56,18 @@ export function MapSelectionLayer({selection}: Props): React.ReactNode {
 		if (!selection) {
 			return {type: 'FeatureCollection', features: []}
 		}
-		let features: GeoJSON.Feature[] = [
-			{
-				type: 'Feature',
-				geometry: {type: 'Point', coordinates: selection.at},
-				properties: {name: selection.name, dot: selection.lines === null},
-			},
-		]
-		if (selection.lines) {
-			features.push({
-				type: 'Feature',
-				geometry: {type: 'MultiLineString', coordinates: selection.lines},
-				properties: {},
-			})
-		}
-		return {type: 'FeatureCollection', features}
+		let feature: GeoJSON.Feature = selection.lines
+			? {
+					type: 'Feature',
+					geometry: {type: 'MultiLineString', coordinates: selection.lines},
+					properties: {name: selection.name},
+				}
+			: {
+					type: 'Feature',
+					geometry: {type: 'Point', coordinates: selection.at},
+					properties: {name: selection.name},
+				}
+		return {type: 'FeatureCollection', features: [feature]}
 	}, [selection])
 
 	return (
@@ -74,7 +87,7 @@ export function MapSelectionLayer({selection}: Props): React.ReactNode {
 				type="line"
 			/>
 			<Layer
-				filter={['==', ['get', 'dot'], true]}
+				filter={['==', ['geometry-type'], 'Point']}
 				id="map-selection-dot"
 				layout={{'icon-image': PIN_IMAGE, 'icon-allow-overlap': true, ...PIN_NAME_LAYOUT}}
 				paint={{
@@ -86,9 +99,9 @@ export function MapSelectionLayer({selection}: Props): React.ReactNode {
 				type="symbol"
 			/>
 			<Layer
-				filter={['==', ['get', 'dot'], false]}
+				filter={IS_LINE}
 				id="map-selection-trail-name"
-				layout={PIN_NAME_LAYOUT}
+				layout={TRAIL_NAME_LAYOUT}
 				paint={PIN_NAME_PAINT}
 				type="symbol"
 			/>
