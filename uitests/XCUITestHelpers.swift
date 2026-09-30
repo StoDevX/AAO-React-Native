@@ -15,17 +15,6 @@ extension XCUIApplication {
 		buttons.matching(NSPredicate(format: "label BEGINSWITH %@", label)).firstMatch
 	}
 
-	/// Find every food row currently in the tree whose label does not mention
-	/// the given cor-icon. `foodRowLabel` appends each of an item's cor-icon
-	/// names to its label, so this is how a test asks whether a dietary filter
-	/// actually narrowed the list.
-	func foodRows(withoutDietaryLabel label: String) -> XCUIElementQuery {
-		buttons.matching(
-			NSPredicate(
-				format: "identifier BEGINSWITH %@ AND NOT (label CONTAINS %@)",
-				TestIdentifiers.Menus.foodRowPrefix, label))
-	}
-
 	/// Find a button by the label UIKit gave it, matching on the label alone.
 	///
 	/// The plain subscript is not confined to identifiers: it answers with a
@@ -135,18 +124,6 @@ extension XCUIElementQuery {
   /// Collect just the accessibility identifiers from the query elements
   func identifiers() -> [String] {
     return allElementsBoundByIndex.map { $0.identifier }
-  }
-
-  /// Wait for element count to reach a specified threshold
-  @discardableResult
-  func waitForCount(
-    _ comparison: String = ">=",
-    count targetCount: Int,
-    timeout: TimeInterval = 10.0
-  ) -> Bool {
-    let predicate = NSPredicate(format: "count \(comparison) %d", targetCount)
-    let expectation = XCTNSPredicateExpectation(predicate: predicate, object: self)
-    return XCTWaiter().wait(for: [expectation], timeout: timeout) == .completed
   }
 }
 

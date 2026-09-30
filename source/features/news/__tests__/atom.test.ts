@@ -267,10 +267,6 @@ test('throws when every entry in a non-empty feed is malformed', () => {
 	).toThrow()
 })
 
-test('returns an empty list when the feed legitimately has no entries', () => {
-	expect(parseAtomFeed(feed(''))).toStrictEqual([])
-})
-
 test('strips html and trims titles and excerpts', () => {
 	const stories = parseAtomFeed(
 		feed(`

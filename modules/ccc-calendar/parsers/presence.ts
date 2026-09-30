@@ -1,6 +1,7 @@
 import {deriveDayFlags} from '@frogpond/event-type'
 import {fastGetTrimmedText, htmlToSegments} from '@frogpond/html-lib'
 import {z} from 'zod'
+import {parseEach} from '@frogpond/data-sources/parse-each'
 import type {WireEvent} from './events'
 
 /**
@@ -82,17 +83,12 @@ function toWireEvent(event: z.infer<typeof PresenceEventSchema>, now: Date): Wir
 export function parsePresenceEvents(body: unknown, now = new Date()): WireEvent[] {
 	let items = z.array(z.unknown()).parse(body)
 
-	let events = items.flatMap((raw) => {
-		try {
-			return [toWireEvent(PresenceEventSchema.parse(raw), now)]
-		} catch {
-			return []
-		}
-	})
-
-	if (items.length > 0 && events.length === 0) {
-		throw new Error('every Presence event was malformed')
-	}
-
-	return events
+	return parseEach(
+		items,
+		(raw) => {
+			let event = PresenceEventSchema.safeParse(raw)
+			return event.success ? toWireEvent(event.data, now) : undefined
+		},
+		'Presence event',
+	)
 }

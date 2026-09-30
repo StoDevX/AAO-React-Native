@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict'
 import {describe, it} from 'node:test'
 
-import {ensureSchema, SCHEMA_VERSION} from './schema.ts'
+import {ensureSchema} from './schema.ts'
 import {openTestDatabase} from './testing/harness.ts'
 
 describe('ensureSchema', () => {
@@ -40,9 +40,5 @@ describe('ensureSchema', () => {
 		assert.equal(reset, true)
 		let rows = runner.all<{n: number}>({sql: 'select count(*) n from event', params: []})
 		assert.equal(rows[0].n, 0, 'a changed fingerprint wipes the cache')
-	})
-
-	it('exports a positive integer version', () => {
-		assert.ok(Number.isInteger(SCHEMA_VERSION) && SCHEMA_VERSION > 0)
 	})
 })

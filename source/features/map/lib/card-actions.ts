@@ -7,7 +7,7 @@ import {appleMapsDirectionsUrl} from '../urls'
 export type CardAction = {kind: 'directions'; url: string}
 
 /// Apple Maps' row holds Directions and up to three more.
-export const MAX_CARD_ACTIONS = 4
+const MAX_CARD_ACTIONS = 4
 
 /// Whether the card may offer Directions. It stays hidden until a walking
 /// routing engine is available.
