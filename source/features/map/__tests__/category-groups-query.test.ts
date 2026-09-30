@@ -83,6 +83,25 @@ describe('mapCategoriesOptions', () => {
 		)
 	})
 
+	// A released app can meet a file published for a newer one; a shape it
+	// cannot read must fail the fetch, leaving the bundled copy in place,
+	// rather than reach the grid and throw during render.
+	test('refuses a file missing a campus', async () => {
+		;(fetchManifest as jest.Mock<() => Promise<Jrd>>).mockResolvedValue(MANIFEST)
+		;(fetchSourceBody as jest.Mock<() => Promise<unknown>>).mockResolvedValue({
+			data: {stolaf: PUBLISHED.stolaf},
+		})
+		await expect(run()).rejects.toThrow('map-categories')
+	})
+
+	test('refuses an entry with no list of categories', async () => {
+		;(fetchManifest as jest.Mock<() => Promise<Jrd>>).mockResolvedValue(MANIFEST)
+		;(fetchSourceBody as jest.Mock<() => Promise<unknown>>).mockResolvedValue({
+			data: {stolaf: [{label: 'Dining', categories: 'dining'}], carleton: []},
+		})
+		await expect(run()).rejects.toThrow('map-categories')
+	})
+
 	test('bundles both campuses', () => {
 		expect(BUNDLED_MAP_CATEGORIES.stolaf.length).toBeGreaterThan(0)
 		expect(BUNDLED_MAP_CATEGORIES.carleton.length).toBeGreaterThan(0)

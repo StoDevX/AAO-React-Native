@@ -39,9 +39,30 @@ async function fetchMapCategories({signal}: {signal: AbortSignal}): Promise<MapC
 	}
 
 	let body = await fetchSourceBody(source.href, signal, 'Map categories')
-	// data/_schemas/map-categories.yaml gates what is published, so this is
-	// an assertion rather than a check.
-	return (body as {data: MapCategoryTable}).data
+	let table = (body as {data?: unknown}).data
+	// The schema gates what this repo publishes today, not what an older
+	// install can read. A shape it cannot read fails the fetch, so React
+	// Query keeps what it had and the picker falls back to the bundled copy,
+	// rather than the grid throwing during render.
+	if (!isReadableTable(table)) {
+		throw new Error('map-categories: the published file has a shape this build cannot read')
+	}
+	return table
+}
+
+function isReadableTable(value: unknown): value is MapCategoryTable {
+	if (typeof value !== 'object' || value === null) {
+		return false
+	}
+	let {stolaf, carleton} = value as Record<string, unknown>
+	return [stolaf, carleton].every(
+		(entries) =>
+			Array.isArray(entries) &&
+			entries.every(
+				(entry: {label?: unknown; categories?: unknown}) =>
+					typeof entry?.label === 'string' && Array.isArray(entry.categories),
+			),
+	)
 }
 
 export const mapCategoriesOptions = queryOptions({
