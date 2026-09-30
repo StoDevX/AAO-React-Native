@@ -86,6 +86,11 @@ export type Building = {
 	 * its time range in minutes, and its surface and slope in a sentence.
 	 */
 	walk?: {minutes: [number, number]; accessibility: string} | null
+	/**
+	 * The pages the About text is drawn from, for the card's Sources line.
+	 * Absent from Carleton's feed.
+	 */
+	citations?: Array<LabelLink> | null
 }
 
 export type Longitude = number
