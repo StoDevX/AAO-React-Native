@@ -88,10 +88,9 @@ struct FilterScreen: Screen {
 	/// centre opens it. What proves the trigger works is the `until` element
 	/// appearing.
 	///
-	/// The tap is retried for the reason `Screen.navigateFromHome` documents:
-	/// a press on a SwiftUI control can land natively before the JavaScript
-	/// that answers it is wired, and nothing happens. Waiting longer does not
-	/// help a tap that was never delivered.
+	/// The tap is retried: a press on a SwiftUI control can land natively
+	/// before the JavaScript that answers it is wired, and nothing happens.
+	/// Waiting longer does not help a tap that was never delivered.
 	@discardableResult
 	func openFilter(_ key: String, until element: XCUIElement) -> Self {
 		waitForTrigger(key)

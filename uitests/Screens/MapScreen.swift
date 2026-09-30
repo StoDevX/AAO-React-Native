@@ -435,7 +435,7 @@ struct MapScreen: Screen {
 	/// Taps a named row rather than the first button on screen, which is the
 	/// navigation bar's rather than the list's.
 	///
-	/// Retried, for the reason `navigateFromHome` retries: a synthesized press
+	/// Retried: a synthesized press
 	/// on a row whose host has mounted but whose action still has to reach
 	/// JavaScript lands natively and does nothing. Waiting longer does not
 	/// help a dropped tap; tapping again does.

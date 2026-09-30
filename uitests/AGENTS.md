@@ -62,7 +62,7 @@ than across the whole screen.
 **Retry a dropped tap; do not lengthen the timeout.** A row is hittable as soon
 as its host mounts, but its action has to reach JavaScript — a tap synthesized
 in between lands natively and does nothing. Waiting longer never fixes a tap
-that was dropped, so tap again. `navigateFromHome` is the pattern.
+that was dropped, so tap again.
 
 **A screen's `navigate()` opens its route by URL,** through
 `open(route:mountedWhen:)`, and waits for the screen's `mounted` element --

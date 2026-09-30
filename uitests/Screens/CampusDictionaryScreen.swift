@@ -467,7 +467,7 @@ struct CampusDictionaryScreen: Screen {
 	}
 
 	/// Taps Add Sense, types `text` into the sense it opens if given, and
-	/// returns to the form. Retries the tap the way `navigateFromHome` does:
+	/// returns to the form. Retries the tap:
 	/// a tap can land on an already-hittable button before its action has
 	/// reached JavaScript, and be lost entirely.
 	///

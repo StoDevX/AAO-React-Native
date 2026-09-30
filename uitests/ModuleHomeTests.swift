@@ -48,9 +48,9 @@ class ModuleHomeTests: UITestCase {
 			(buttons.carletonCampus, HoursScreen(app: app).carletonMounted),
 		]
 
-		// One wait per tile, not the handful `navigateFromHome` makes: each
-		// wait polls for a second at least, and seventeen tiles add up. Dev
-		// mode turning on has already shown that taps reach JavaScript.
+		// One wait per tile: each wait polls for a second at least, and
+		// seventeen tiles add up. Dev mode turning on has already shown that
+		// taps reach JavaScript.
 		let backButton = app.navigationBars.buttons[TestIdentifiers.Navigation.systemBackButton].firstMatch
 		for (tile, mounted) in tiles {
 			let button = app.buttons[tile].firstMatch

@@ -26,60 +26,17 @@ private var isCI: Bool {
 
 extension Screen {
 
-	/// Tap a home-screen tile and wait for the home screen to disappear.
-	@discardableResult
-  func navigateFromHome(to button: String) -> Self {
-		let homescreen = app.element(matching: TestIdentifiers.Home.screen)
-		XCTAssertTrue(
-			homescreen.waitForExistence(timeout: 30),
-			"Home screen should be visible before navigating to \(button)")
-
-		let button = app.buttons[button].firstMatch
-		XCTAssertTrue(
-      button.waitForExistence(timeout: 30),
-			"\(button) button should exist on the home screen")
-
-		for attempt in 1...3 {
-      button.tap()
-
-      if homescreen.waitForNonExistence(timeout: 10) {
-        return self
-      }
-      XCTContext.runActivity(
-        named: "Tap \(attempt) on \(button) did not navigate; retrying"
-      ) { _ in }
-		}
-
-		XCTFail("Tapping \(button) never left the home screen")
-		return self
-	}
-
-	/// Open a route by deep link, skipping the home screen's tiles.
-	///
-	/// `route` is an Expo Router path, which drops route groups:
-	/// `app/(home)/Calendar.tsx` is `/Calendar`. `XCUIApplication.open(_:)`
-	/// raises no "Open in…?" sheet, unlike `simctl openurl`.
-	///
-	/// The home screen is waited for first, so the URL reaches an app that has
-	/// finished launching, and then waited out, so the caller starts on the
-	/// route rather than on a Home still animating away.
-	@discardableResult
-	func open(route: String) -> Self {
-		app.open(URL(string: "AllAboutOlaf://\(route)")!)
-
-    let homescreen = app.element(matching: TestIdentifiers.Home.screen)
-		XCTAssertTrue(
-			homescreen.waitForNonExistence(timeout: 10),
-			"Opening \(route) never left the home screen")
-		return self
-	}
-
 	/// Open a route by deep link and wait for `mounted`, an element only that
 	/// route's screen draws.
 	///
-	/// `open(route:)` alone is not enough: the relaunched app has no home
-	/// screen while it is still blank, so its check passes before anything has
-	/// mounted, and a test's first action can land on nothing.
+	/// `route` is an Expo Router path, which drops route groups:
+	/// `app/(home)/Calendar.tsx` is `/Calendar`. `XCUIApplication.open(_:)`
+	/// relaunches the app and raises no "Open in…?" sheet, unlike `simctl
+	/// openurl`.
+	///
+	/// The wait is what makes this safe: the relaunched app has no home screen
+	/// while it is still blank, so "Home has gone" is true before anything has
+	/// mounted, and a test's first action could land on nothing.
 	@discardableResult
 	func open(route: String, mountedWhen mounted: XCUIElement, timeout: TimeInterval = 30) -> Self {
 		// No wait for Home to go: `mounted` belongs to the route alone, and

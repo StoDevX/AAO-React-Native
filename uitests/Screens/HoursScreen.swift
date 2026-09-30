@@ -164,7 +164,7 @@ struct HoursScreen: Screen {
 		// test outright rather than let this loop retry. The row's centre is
 		// what `selectBuilding` in MapScreen taps for the same reason.
 		//
-		// The loop itself is retried for the reason navigateFromHome retries: a
+		// The loop itself is retried: a
 		// synthesized press on a row whose host has mounted but whose action
 		// still has to reach JavaScript lands natively and does nothing.
 		//
