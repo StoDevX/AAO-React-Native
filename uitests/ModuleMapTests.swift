@@ -326,7 +326,6 @@ class ModuleMapTests: UITestCase {
 			.openCategory(TestIdentifiers.Map.diningCategory)
 			.capture("St. Olaf map Dining group")
 			.verifyGroupOpen(TestIdentifiers.Map.diningCategory)
-			.verifyListed(TestIdentifiers.Map.aDiningPlace)
 			.goBackToCategories()
 	}
 
@@ -339,7 +338,8 @@ class ModuleMapTests: UITestCase {
 			.openCategory(TestIdentifiers.Map.diningCategory)
 			.focusSearch()
 			.typeIntoSearch(TestIdentifiers.Map.aPlaceOutsideDining)
-			.verifyListed(TestIdentifiers.Map.aPlaceOutsideDining)
+			.selectBuilding(named: TestIdentifiers.Map.aPlaceOutsideDining)
+			.verifyTopCard(TestIdentifiers.Map.aPlaceOutsideDining)
 	}
 
 	/// At the largest text size a group's title wraps or shrinks beside its

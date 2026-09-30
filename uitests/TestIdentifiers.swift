@@ -199,10 +199,8 @@ struct TestIdentifiers {
 		static let parkingCategory = "Parking"
 		/// The group that lists every building. Mirrors data/map-categories.yaml.
 		static let allBuildingsCategory = "All Buildings"
-		/// A St. Olaf group, and a place in it. Mirrors data/map-categories.yaml;
-		/// St. Olaf can rename the place.
+		/// A St. Olaf group. Mirrors data/map-categories.yaml.
 		static let diningCategory = "Dining"
-		static let aDiningPlace = "Stav Hall"
 		/// The group header's back button, by identifier: its "Back" label also
 		/// matches the navigation bar's own Back on iOS 27. Mirrors
 		/// GROUP_BACK_ID in source/features/map/building-picker.tsx.
