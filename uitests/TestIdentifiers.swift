@@ -216,12 +216,12 @@ struct TestIdentifiers {
 		/// the sheet. St. Olaf can rename them; they come from
 		/// StoDevX/campus-map-data.
 		static let outdoorsCategory = "Outdoors"
+		static let aPond = "Baseball Pond"
+		static let aTrail = "Baseball Pond Loop"
 		/// The Wellness Walks category, and the walk that sorts first in it.
 		/// From StoDevX/campus-map-data's `walks:`.
 		static let wellnessWalksCategory = "Wellness Walks"
 		static let aWalk = "Big Pond Loop"
-		static let aPond = "Baseball Pond"
-		static let aTrail = "Baseball Pond Loop"
 		/// The Recents section's title, and its rows' swipe action. Mirror
 		/// RecentsSection in source/features/map/building-picker.tsx.
 		static let recentsTitle = "Recents"
