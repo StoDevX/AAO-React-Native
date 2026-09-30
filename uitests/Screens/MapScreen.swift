@@ -139,6 +139,26 @@ struct MapScreen: Screen {
 		return self
 	}
 
+	/// No keyboard on screen: the field is not being edited.
+	@discardableResult
+	func verifyKeyboardHidden() -> Self {
+		XCTAssertTrue(
+			app.keyboards.firstMatch.waitForNonExistence(timeout: 5),
+			"The search field should not be editing, but the keyboard is up")
+		return self
+	}
+
+	/// The field shows its placeholder, which XCUITest reports as the value of
+	/// an empty field.
+	@discardableResult
+	func verifySearchFieldEmpty() -> Self {
+		let value = searchField.value as? String ?? ""
+		XCTAssertTrue(
+			value.isEmpty || value == searchField.placeholderValue,
+			"The search field should be empty, but holds \"\(value)\"")
+		return self
+	}
+
 	/// Types into the focused field one character at a time, the way a person
 	/// does, and reads the whole string back. The bar reports each keystroke to
 	/// JavaScript and takes the echo back as a prop, so a character lost to
