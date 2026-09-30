@@ -1,6 +1,6 @@
 import {describe, expect, it} from '@jest/globals'
 import {parseHours} from '../parse-hours'
-import {dayMoment, hourMoment, plainMoment} from './moment.helper'
+import {dayMoment, hourMoment, moment, plainMoment} from './moment.helper'
 import {SingleBuildingScheduleType} from '../../types'
 
 it('moves a close time earlier than the open time to the next day', () => {
