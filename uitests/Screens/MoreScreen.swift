@@ -7,14 +7,4 @@ struct MoreScreen: Screen {
 	var mounted: XCUIElement {
 		app.navigationBars[TestIdentifiers.Buttons.more]
 	}
-
-	@discardableResult
-	func navigate() -> Self {
-		open(route: "/More", mountedWhen: mounted)
-	}
-
-	@discardableResult
-	func verifyMoreTitle() -> Self {
-		verifyTitle(TestIdentifiers.Buttons.more)
-	}
 }

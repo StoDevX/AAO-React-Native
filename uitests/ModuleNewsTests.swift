@@ -21,7 +21,7 @@ class ModuleNewsTests: UITestCaseUnbooted {
 			.filterLatest(to: TestIdentifiers.News.newsSection)
 	}
 
-	func testStOlafNewsIsReachableFromHomescreen() throws {
+	func testStOlafNewsListsItsStories() throws {
 		NewsScreen(app: app, tile: TestIdentifiers.Buttons.stOlafNews, title: "St. Olaf News")
 			.navigate()
 			.verifyTitle()
