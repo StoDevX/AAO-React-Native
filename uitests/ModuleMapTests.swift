@@ -450,4 +450,28 @@ class ModuleMapTests: UITestCaseUnbooted {
 			.removeRecent(name)
 			.verifyNoRecents()
 	}
+
+	/// A trail opens from Outdoors, and the map draws its whole course, for a
+	/// person to look at.
+	func testATrailOpensFromOutdoors() throws {
+		MapScreen(app: app)
+			.navigate()
+			.checkSheetPresented()
+			.expandSheet()
+			.openCategory(TestIdentifiers.Map.outdoorsCategory)
+			.selectBuilding(named: TestIdentifiers.Map.aTrail)
+			.verifyTopCard(TestIdentifiers.Map.aTrail)
+			.capture("St. Olaf map with a trail open")
+	}
+
+	/// Outdoors lists the Natural Lands' ponds as well as its trails.
+	func testOutdoorsListsAPond() throws {
+		MapScreen(app: app)
+			.navigate()
+			.checkSheetPresented()
+			.expandSheet()
+			.openCategory(TestIdentifiers.Map.outdoorsCategory)
+			.selectBuilding(named: TestIdentifiers.Map.aPond)
+			.verifyTopCard(TestIdentifiers.Map.aPond)
+	}
 }

@@ -211,6 +211,14 @@ struct TestIdentifiers {
 		/// tap that reaches the footprint instead opens the wrong card.
 		/// St. Olaf can rename it.
 		static let aPointOnlyPlace = "Stav Hall"
+		/// The Outdoors category, and a pond and a trail in it: rows two and
+		/// three, so both show at the middle stop, where opening a group leaves
+		/// the sheet. The pond sorts first, so a row matched by its name's
+		/// beginning is the pond's own. St. Olaf can rename them; they come from
+		/// StoDevX/campus-map-data.
+		static let outdoorsCategory = "Outdoors"
+		static let aPond = "Baseball Pond"
+		static let aTrail = "Baseball Pond Loop"
 		/// The Recents section's title, and its rows' swipe action. Mirror
 		/// RecentsSection in source/features/map/building-picker.tsx.
 		static let recentsTitle = "Recents"
