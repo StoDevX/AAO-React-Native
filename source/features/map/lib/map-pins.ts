@@ -75,7 +75,7 @@ export type PinPress =
 /// Squared distance between two coordinates, with longitude shrunk by the
 /// latitude so east-west and north-south count alike. Only compared, never
 /// shown, so neither the root nor the units matter.
-function distanceSquared([lngA, latA]: Coordinate, [lngB, latB]: Coordinate): number {
+export function distanceSquared([lngA, latA]: Coordinate, [lngB, latB]: Coordinate): number {
 	let shrink = Math.cos((latA * Math.PI) / 180)
 	return ((lngA - lngB) * shrink) ** 2 + (latA - latB) ** 2
 }

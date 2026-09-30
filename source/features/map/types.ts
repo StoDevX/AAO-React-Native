@@ -96,8 +96,20 @@ export type Point = {
 	type: 'Point'
 }
 
+/** A Natural Lands trail's course. */
+export type LineString = {
+	coordinates: Array<Coordinate>
+	type: 'LineString'
+}
+
+/** A trail in several parts under one name. */
+export type MultiLineString = {
+	coordinates: Array<Array<Coordinate>>
+	type: 'MultiLineString'
+}
+
 export type GeometryCollection = {
-	geometries: Array<Polygon | Point | MultiPolygon>
+	geometries: Array<Polygon | Point | MultiPolygon | LineString | MultiLineString>
 	type: 'GeometryCollection'
 }
 
