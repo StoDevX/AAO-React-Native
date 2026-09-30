@@ -1,3 +1,5 @@
+import type {Campus} from '../building-hours/types'
+
 /**
  * A route's file-system pattern, such as `/(home)/Dictionary/[word]`. Only
  * `routePattern()` makes one. It is text, but text the app ships: route file
@@ -48,7 +50,7 @@ export type TelemetryEvent =
 	| {name: 'screen.view'; attributes: {route: RoutePattern}}
 	| {name: 'calendar.filter.apply'; attributes: {axis: 'category' | 'organization' | 'none'}}
 	| {name: 'map.search.empty'; attributes: Record<string, never>}
-	| {name: 'map.group.open'; attributes: {group: MapGroupLabel; campus: 'stolaf' | 'carleton'}}
+	| {name: 'map.group.open'; attributes: {group: MapGroupLabel; campus: Campus}}
 	| {
 			name: 'calendar.add_to_device'
 			attributes: {result: 'saved' | 'cancelled' | 'error'; source: CalendarSourceId}
