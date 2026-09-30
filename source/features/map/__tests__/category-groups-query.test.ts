@@ -1,4 +1,5 @@
 import {afterEach, describe, expect, jest, test} from '@jest/globals'
+import {QueryClient} from '@tanstack/react-query'
 import {
 	fetchManifest,
 	fetchSourceBody,
@@ -7,7 +8,7 @@ import {
 	type Jrd,
 } from '@frogpond/data-sources'
 
-import {mapCategoriesOptions} from '../category-groups-query'
+import {BUNDLED_MAP_CATEGORIES, mapCategoriesOptions} from '../category-groups-query'
 import type {MapCategoryTable} from '../lib/category-groups'
 
 jest.mock('@react-native-community/netinfo', () =>
@@ -100,5 +101,48 @@ describe('mapCategoriesOptions', () => {
 			data: {stolaf: [{label: 'Dining', categories: 'dining'}], carleton: []},
 		})
 		await expect(run()).rejects.toThrow('map-categories')
+	})
+
+	// A released app can meet a file published for a newer one: an icon that is
+	// no longer a string would reach the grid's SF Symbol and fail there.
+	test('refuses an entry whose icon is not a string', async () => {
+		;(fetchManifest as jest.Mock<() => Promise<Jrd>>).mockResolvedValue(MANIFEST)
+		;(fetchSourceBody as jest.Mock<() => Promise<unknown>>).mockResolvedValue({
+			data: {
+				stolaf: [
+					{label: 'Dining', categories: ['dining'], icon: {name: 'fork.knife'}, gradient: 'orange'},
+				],
+				carleton: [],
+			},
+		})
+		await expect(run()).rejects.toThrow()
+	})
+
+	// A file this build cannot read fails the same way every time, so
+	// fetching it again only repeats the failure.
+	test('does not retry a file it cannot read, but retries a failed fetch', async () => {
+		;(fetchManifest as jest.Mock<() => Promise<Jrd>>).mockResolvedValue(MANIFEST)
+		;(fetchSourceBody as jest.Mock<() => Promise<unknown>>).mockResolvedValue({data: {stolaf: []}})
+		let unreadable = await run().catch((error: unknown) => error)
+		let retry = mapCategoriesOptions.retry as (count: number, error: unknown) => boolean
+		expect(retry(0, unreadable)).toBe(false)
+		expect(retry(0, new Error('offline'))).toBe(true)
+		expect(retry(3, new Error('offline'))).toBe(false)
+	})
+
+	// The bundled copy is there from the start and stays when the live file
+	// cannot be had, rather than a failure leaving the grid with nothing.
+	test('keeps the bundled copy when the fetch fails', async () => {
+		;(fetchManifest as jest.Mock<() => Promise<Jrd>>).mockResolvedValue(MANIFEST)
+		;(fetchSourceBody as jest.Mock<() => Promise<never>>).mockRejectedValue(new Error('offline'))
+		let client = new QueryClient({defaultOptions: {queries: {retry: false}}})
+		try {
+			await client
+				.query({...mapCategoriesOptions, retry: false, networkMode: 'always', staleTime: 0})
+				.catch(() => undefined)
+			expect(client.getQueryData(mapCategoriesOptions.queryKey)).toEqual(BUNDLED_MAP_CATEGORIES)
+		} finally {
+			client.clear()
+		}
 	})
 })

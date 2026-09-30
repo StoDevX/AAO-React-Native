@@ -75,6 +75,27 @@ describe('groupsFor', () => {
 		})
 	})
 
+	// A label is how a group is keyed and found again; two entries sharing one
+	// would collide, so the first is kept.
+	test('keeps only the first of two entries with the same label', () => {
+		let doubled: MapCategoryTable = {
+			stolaf: [
+				{
+					label: 'Housing',
+					categories: ['residence-hall'],
+					icon: 'bed.double.fill',
+					gradient: 'indigo',
+				},
+				{label: 'Housing', categories: ['building'], icon: 'house.fill', gradient: 'gold'},
+			],
+			carleton: [],
+		}
+		let groups = groupsFor(doubled, 'stolaf', PLACES)
+		expect(groups.map((group) => [group.label, group.icon])).toEqual([
+			['Housing', 'bed.double.fill'],
+		])
+	})
+
 	test('has no groups before any place has loaded', () => {
 		expect(groupsFor(TABLE, 'stolaf', [])).toEqual([])
 	})

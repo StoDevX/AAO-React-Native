@@ -46,7 +46,17 @@ export function groupsFor(
 	campus: Campus,
 	places: Array<Feature<Building>>,
 ): CategoryGroup[] {
+	// A label is how a group is keyed and found again, so the first entry
+	// with a label wins and any later one sharing it is dropped.
+	let seen = new Set<string>()
 	return table[campus]
+		.filter((entry) => {
+			if (seen.has(entry.label)) {
+				return false
+			}
+			seen.add(entry.label)
+			return true
+		})
 		.filter((entry) => places.some(belongsTo(entry)))
 		.map((entry) => ({
 			// The one place a label becomes a MapGroupLabel: it came from the

@@ -6,12 +6,30 @@ import {
 } from '@frogpond/data-sources'
 import {isUITesting} from '@frogpond/launch-arguments'
 import {queryOptions} from '@tanstack/react-query'
+import {z} from 'zod'
 
 import {queryClient} from '../../init/tanstack-query'
 import mapCategoriesData from '../../../docs/map-categories.json'
 import type {MapCategoryTable} from './lib/category-groups'
 
 const MAP_CATEGORIES_TYPE = 'application/vnd.frogpond.map-categories+json'
+
+/// What this build can read of the published file. `icon` and `gradient` may
+/// be missing -- `groupsFor` falls back for both -- but never another type:
+/// an icon that is not a string would reach the grid's SF Symbol.
+const MapCategoryEntrySchema = z.object({
+	label: z.string().min(1),
+	categories: z.array(z.string()),
+	icon: z.string().min(1).optional(),
+	gradient: z.string().optional(),
+})
+
+const PublishedMapCategoriesSchema = z.object({
+	data: z.object({
+		stolaf: z.array(MapCategoryEntrySchema),
+		carleton: z.array(MapCategoryEntrySchema),
+	}),
+})
 
 /// The copy this build shipped with: what the grid draws before the first
 /// fetch, offline, and under UI tests.
@@ -39,34 +57,36 @@ async function fetchMapCategories({signal}: {signal: AbortSignal}): Promise<MapC
 	}
 
 	let body = await fetchSourceBody(source.href, signal, 'Map categories')
-	let table = (body as {data?: unknown}).data
-	// The schema gates what this repo publishes today, not what an older
-	// install can read. A shape it cannot read fails the fetch, so React
-	// Query keeps what it had and the picker falls back to the bundled copy,
-	// rather than the grid throwing during render.
-	if (!isReadableTable(table)) {
-		throw new Error('map-categories: the published file has a shape this build cannot read')
+	// The schema in data/_schemas gates what this repo publishes today, not
+	// what an older install can read, so the file is checked again here: a
+	// shape this build cannot read fails the fetch, leaving the table the
+	// query already has, rather than reaching the grid and failing there.
+	let parsed = PublishedMapCategoriesSchema.safeParse(body)
+	if (!parsed.success) {
+		throw new UnreadableMapCategoriesError(parsed.error.message)
 	}
-	return table
+	// An icon is checked as a string; whether it names an SF Symbol cannot be.
+	return parsed.data.data as MapCategoryTable
 }
 
-function isReadableTable(value: unknown): value is MapCategoryTable {
-	if (typeof value !== 'object' || value === null) {
-		return false
+/// A published file of a shape this build cannot read. It fails the same way
+/// on every fetch, so it is never retried.
+class UnreadableMapCategoriesError extends Error {
+	constructor(detail: string) {
+		super(`map-categories: the published file has a shape this build cannot read: ${detail}`)
 	}
-	let {stolaf, carleton} = value as Record<string, unknown>
-	return [stolaf, carleton].every(
-		(entries) =>
-			Array.isArray(entries) &&
-			entries.every(
-				(entry: {label?: unknown; categories?: unknown}) =>
-					typeof entry?.label === 'string' && Array.isArray(entry.categories),
-			),
-	)
 }
+
+const MAX_FETCH_RETRIES = 3
 
 export const mapCategoriesOptions = queryOptions({
 	queryKey: keys.all,
 	queryFn: fetchMapCategories,
 	staleTime,
+	// There from the start, since a query that has never run does not run
+	// offline; marked stale so the live copy replaces it when it can.
+	initialData: BUNDLED_MAP_CATEGORIES,
+	initialDataUpdatedAt: 0,
+	retry: (failures, error) =>
+		!(error instanceof UnreadableMapCategoriesError) && failures < MAX_FETCH_RETRIES,
 })

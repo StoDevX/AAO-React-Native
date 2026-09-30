@@ -230,21 +230,38 @@ describe('BuildingPicker', () => {
 		expect(screen.getByText('No buildings to show.')).toBeTruthy()
 	})
 
+	// A refetch whose values no group names empties every group at once; the
+	// open group has to close then too, or it reopens when they come back.
+	it('does not reopen a group after a refetch empties every group', async () => {
+		let {client} = await renderPicker()
+		await fireEvent.press(screen.getByRole('button', {name: 'Parking'}))
+		await act(() => {
+			client.setQueryData(
+				keys.all('carleton'),
+				fixtures.map((place) => ({
+					...place,
+					properties: {...place.properties, categories: []},
+				})),
+			)
+		})
+		await waitFor(() => {
+			expect(screen.queryByRole('button', {name: 'Back'})).toBeNull()
+		})
+		await act(() => {
+			client.setQueryData(keys.all('carleton'), fixtures)
+		})
+		await waitFor(() => {
+			expect(screen.getByRole('button', {name: 'Parking'})).toBeTruthy()
+		})
+		expect(screen.queryByRole('button', {name: 'Back'})).toBeNull()
+	})
+
 	it('closes the open group when the campus changes', async () => {
 		let {rerenderWith} = await renderPicker()
 		await fireEvent.press(screen.getByRole('button', {name: 'Outdoors'}))
 		await rerenderWith({campus: 'stolaf'})
 		await rerenderWith({campus: 'carleton'})
 		expect(screen.queryByRole('button', {name: 'Back'})).toBeNull()
-	})
-
-	it('draws the grid from the bundled copy while the groups query has failed', async () => {
-		await renderPicker({table: null})
-		// The bundled Carleton table has an All Buildings group, and Alpha Hall
-		// is a building.
-		await waitFor(() => {
-			expect(screen.getByRole('button', {name: 'All Buildings'})).toBeTruthy()
-		})
 	})
 
 	it('still matches when the query carries leading whitespace', async () => {

@@ -26,7 +26,7 @@ import {useDebounce} from '@frogpond/use-debounce'
 import {RowAccessory} from '../../components/rows'
 import type {Campus} from '../building-hours/types'
 import {CategoryGrid} from './category-grid'
-import {BUNDLED_MAP_CATEGORIES, mapCategoriesOptions} from './category-groups-query'
+import {mapCategoriesOptions} from './category-groups-query'
 import {byName, groupsFor, placesIn, type CategoryGroup} from './lib/category-groups'
 import {searchPlaces} from './lib/search-places'
 import {mapDataOptions} from './query'
@@ -109,8 +109,8 @@ export function BuildingPicker({
 	let query = useDebounce(typedQuery.trim(), SEARCH_DEBOUNCE_MS)
 
 	let {data: buildings = [], error, isError, isLoading, refetch} = useQuery(mapDataOptions(campus))
-	// A failed or pending fetch leaves no data; the bundled copy stands in.
-	let {data: table = BUNDLED_MAP_CATEGORIES} = useQuery(mapCategoriesOptions)
+	// Starts as the bundled copy, and keeps it through a failed fetch.
+	let {data: table} = useQuery(mapCategoriesOptions)
 
 	let groups = React.useMemo(() => groupsFor(table, campus, buildings), [table, campus, buildings])
 
@@ -125,9 +125,10 @@ export function BuildingPicker({
 	let openGroup =
 		opened?.campus === campus ? groups.find((group) => group.label === opened.label) : undefined
 	// A group a refetch emptied is closed, not just hidden, so its places
-	// coming back later do not reopen it unasked. Only once groups exist:
-	// while the map data loads there are none, and nothing has vanished.
-	if (opened && !openGroup && groups.length > 0) {
+	// coming back later do not reopen it unasked -- even when the refetch
+	// emptied every group at once. Nothing can be open before the map data
+	// first loads, since the tiles to open it from come from that data.
+	if (opened && !openGroup) {
 		setOpened(null)
 	}
 
