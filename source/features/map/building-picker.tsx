@@ -25,8 +25,8 @@ import {RowAccessory} from '../../components/rows'
 import type {Campus} from '../building-hours/types'
 import {CategoryGrid} from './category-grid'
 import {mapCategoriesOptions} from './category-groups-query'
-import {byName, groupsFor, placesIn, type CategoryGroup} from './lib/category-groups'
-import {pinColor, SEARCH_PIN_COLOR, type MapPins} from './lib/map-pins'
+import {byName, type CategoryGroup, groupColor, groupsFor, placesIn} from './lib/category-groups'
+import {SEARCH_PIN_COLOR, type MapPins} from './lib/map-pins'
 import {searchPlaces} from './lib/search-places'
 import {mapDataOptions} from './query'
 import type {Building, Feature} from './types'
@@ -183,7 +183,7 @@ export function BuildingPicker({
 				: null
 		}
 		if (openGroup) {
-			return {places: groupPlaces, color: pinColor(openGroup.gradient), frameKey}
+			return {places: groupPlaces, color: groupColor(openGroup.gradient), frameKey}
 		}
 		return null
 	}, [isLoading, isError, query, searchResults, openGroup, groupPlaces, frameKey])

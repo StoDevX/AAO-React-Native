@@ -7,7 +7,8 @@ import type {Campus} from '../../building-hours/types'
 import {BuildingPicker} from '../building-picker'
 import {keys as categoryKeys} from '../category-groups-query'
 import type {MapCategoryTable} from '../lib/category-groups'
-import {SEARCH_PIN_COLOR, pinColor, type MapPins} from '../lib/map-pins'
+import {groupColor} from '../lib/category-groups'
+import {SEARCH_PIN_COLOR, type MapPins} from '../lib/map-pins'
 import {keys} from '../query'
 import {makeBuilding} from './fixtures'
 import {track} from '../../telemetry/track'
@@ -438,7 +439,7 @@ describe('BuildingPicker', () => {
 			await fireEvent.press(screen.getByRole('button', {name: 'Parking'}))
 			expect(lastPins(onPinsChange)).toEqual({
 				names: ['Beta Lot'],
-				color: pinColor(lightBlueGradient),
+				color: groupColor(lightBlueGradient),
 				frameKey: 1,
 			})
 		})

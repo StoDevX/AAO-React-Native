@@ -1,9 +1,8 @@
 import {describe, expect, test} from '@jest/globals'
-import {goldGradient} from '@frogpond/colors'
 
 import {makeBuilding} from '../../__tests__/fixtures'
 import type {Building, Feature} from '../../types'
-import {framingFor, pinBounds, pinCollection, pinColor, pinIds, pressedPin} from '../map-pins'
+import {framingFor, pinBounds, pinCollection, pinIds, pressedPin} from '../map-pins'
 
 function at(id: string, lng: number, lat: number): Feature<Building> {
 	let place = makeBuilding({id, name: id})
@@ -47,13 +46,6 @@ describe('pinBounds', () => {
 		expect(pinBounds([at('a', 1, 2)])).toBeUndefined()
 		expect(pinBounds([unpinned])).toBeUndefined()
 		expect(pinBounds([])).toBeUndefined()
-	})
-})
-
-describe('pinColor', () => {
-	test("reads the gradient's darker stop as an rgb color", () => {
-		// goldGradient[1] is color(display-p3 0.9216 0.651 0.3529)
-		expect(pinColor(goldGradient)).toBe('rgb(235, 166, 90)')
 	})
 })
 

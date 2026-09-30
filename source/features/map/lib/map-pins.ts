@@ -1,5 +1,4 @@
 import type {LngLatBounds} from '@maplibre/maplibre-react-native'
-import type {Gradient} from '@frogpond/colors'
 
 import type {Building, Coordinate, Feature, Point} from '../types'
 import {featureBounds} from './feature-bounds'
@@ -66,15 +65,6 @@ export function pinBounds(places: Array<Feature<Building>>): LngLatBounds | unde
 		geometry: {type: 'GeometryCollection', geometries: points},
 		properties: places[0].properties,
 	})
-}
-
-/// A group's pin color: its gradient's darker stop, `color(display-p3 r g b)`,
-/// read as sRGB. MapLibre's paint has no display-p3, so pins come out a
-/// little less saturated than the tiles drawn from the same gradient.
-export function pinColor(gradient: Gradient): string {
-	let channels = gradient[1].match(/[\d.]+/gu)?.slice(-3) ?? ['0', '0', '0']
-	let [r, g, b] = channels.map((channel) => Math.round(Number(channel) * 255))
-	return `rgb(${r}, ${g}, ${b})`
 }
 
 export type PinPress =
