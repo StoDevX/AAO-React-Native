@@ -154,7 +154,7 @@ struct CalendarScreen: Screen {
 	/// trailing.
 	///
 	/// Read from one snapshot of the app rather than a query per cell: each
-	/// query is a round trip, and asking twenty-odd cells took seconds. The
+	/// query is a round trip, and twenty-odd of them take seconds. The
 	/// strip and the list are both made of buttons, and only the identifier
 	/// separates them.
 	private func visibleDayCells() -> [XCUIElementSnapshot] {
@@ -239,8 +239,8 @@ struct CalendarScreen: Screen {
 	}
 
   /// The currently visible days on the date picker, leading to trailing. A
-  /// cell counts when any of its frame is inside the window, which gives the
-  /// same days `isHittable` did, a sliver at either edge included.
+  /// cell counts when any of its frame is inside the window, so a sliver at
+  /// either edge counts, as it does for `isHittable`.
   func datePickerDayIdentifiers() -> [String] {
     visibleDayCells().map { $0.identifier }
   }
