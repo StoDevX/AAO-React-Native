@@ -80,30 +80,30 @@ function distanceSquared([lngA, latA]: Coordinate, [lngB, latB]: Coordinate): nu
 	return ((lngA - lngB) * shrink) ** 2 + (latA - latB) ** 2
 }
 
+/// The point feature nearest a touch, and where it is. A touch's hitbox can
+/// cover more than one, and MapLibre lists them in no useful order.
+export function nearestPoint(
+	features: GeoJSON.Feature[],
+	touch: Coordinate,
+): {feature: GeoJSON.Feature; at: Coordinate} | undefined {
+	let nearest: {feature: GeoJSON.Feature; at: Coordinate} | undefined
+	for (let feature of features) {
+		if (feature.geometry.type !== 'Point') {
+			continue
+		}
+		let [lng, lat] = feature.geometry.coordinates
+		let at: Coordinate = [lng, lat]
+		if (!nearest || distanceSquared(at, touch) < distanceSquared(nearest.at, touch)) {
+			nearest = {feature, at}
+		}
+	}
+	return nearest
+}
+
 /// What a press on the pins' source hit: a place's pin, a cluster of them, or
-/// neither. A touch's hitbox can cover more than one, so the one nearest the
-/// touch wins, not whichever MapLibre lists first.
+/// neither -- the one nearest the touch.
 export function pressedPin(features: GeoJSON.Feature[], touch: Coordinate): PinPress {
-	let points = features.flatMap((candidate) =>
-		candidate.geometry.type === 'Point'
-			? [
-					{
-						feature: candidate,
-						at: [
-							candidate.geometry.coordinates[0],
-							candidate.geometry.coordinates[1],
-						] as Coordinate,
-					},
-				]
-			: [],
-	)
-	let nearest = points.reduce<(typeof points)[number] | undefined>(
-		(best, candidate) =>
-			!best || distanceSquared(candidate.at, touch) < distanceSquared(best.at, touch)
-				? candidate
-				: best,
-		undefined,
-	)
+	let nearest = nearestPoint(features, touch)
 	if (!nearest) {
 		return null
 	}

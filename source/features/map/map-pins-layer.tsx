@@ -6,6 +6,7 @@ import {
 	Layer,
 	type GeoJSONSourceRef,
 	type PressEventWithFeatures,
+	type SymbolLayerSpecification,
 } from '@maplibre/maplibre-react-native'
 import * as c from '@frogpond/colors'
 
@@ -17,7 +18,7 @@ const CLUSTER_LEAF_LIMIT = 1000
 
 /// A white disc drawn as a signed distance field (images/map/pin.png), so it
 /// can be tinted each group's color and ringed with a halo.
-const PIN_IMAGE = 'map-pin'
+export const PIN_IMAGE = 'map-pin'
 /// Drawn at its own size -- a 16pt dot in a 32pt square -- since MapLibre
 /// scales an SDF's halo with the icon, and a shrunk image rings its whole
 /// square white.
@@ -36,6 +37,20 @@ const PIN_FONT = ['Noto Sans Medium']
 const PIN_TEXT_COLOR = '#2f2a24'
 const PIN_TEXT_HALO = '#f4f1e9'
 const PIN_TEXT_HALO_WIDTH = 1.2
+
+/// A place's name under its dot, shared by the pins and the selected place.
+export const PIN_NAME_LAYOUT: SymbolLayerSpecification['layout'] = {
+	'text-field': ['get', 'name'],
+	'text-font': PIN_FONT,
+	'text-size': 12,
+	'text-offset': [0, 0.9],
+	'text-anchor': 'top',
+}
+export const PIN_NAME_PAINT: SymbolLayerSpecification['paint'] = {
+	'text-color': PIN_TEXT_COLOR,
+	'text-halo-color': PIN_TEXT_HALO,
+	'text-halo-width': PIN_TEXT_HALO_WIDTH,
+}
 
 type Props = {
 	pins: MapPins | null
@@ -78,12 +93,16 @@ export function MapPinsLayer({pins, onSelect, onCluster}: Props): React.ReactNod
 
 	return (
 		<>
-			<Images images={{[PIN_IMAGE]: {source: pinImage, sdf: true}}} />
 			<GeoJSONSource
 				cluster={true}
 				data={data}
 				id="map-pins"
-				onPress={(event) => void handlePress(event)}
+				onPress={(event) => {
+					// A pin wins the tap outright: the map's own handler would look
+					// for a place's name under it and open that as well.
+					event.stopPropagation()
+					void handlePress(event)
+				}}
 				ref={sourceRef}
 			>
 				<Layer
@@ -123,11 +142,7 @@ export function MapPinsLayer({pins, onSelect, onCluster}: Props): React.ReactNod
 						// A pin always draws, even over another; it still claims its
 						// space, which is what hides the base map's label there.
 						'icon-allow-overlap': true,
-						'text-field': ['get', 'name'],
-						'text-font': PIN_FONT,
-						'text-size': 12,
-						'text-offset': [0, 0.9],
-						'text-anchor': 'top',
+						...PIN_NAME_LAYOUT,
 						// Where two pins crowd each other, a name drops, not a pin.
 						'text-optional': true,
 					}}
@@ -135,13 +150,17 @@ export function MapPinsLayer({pins, onSelect, onCluster}: Props): React.ReactNod
 						'icon-color': pins.color,
 						'icon-halo-color': c.white,
 						'icon-halo-width': PIN_RING,
-						'text-color': PIN_TEXT_COLOR,
-						'text-halo-color': PIN_TEXT_HALO,
-						'text-halo-width': PIN_TEXT_HALO_WIDTH,
+						...PIN_NAME_PAINT,
 					}}
 					type="symbol"
 				/>
 			</GeoJSONSource>
 		</>
 	)
+}
+
+/// Registers the pin's disc with the map, once for every layer that draws it:
+/// the pins, and the selected place's dot.
+export function MapPinImages(): React.ReactNode {
+	return <Images images={{[PIN_IMAGE]: {source: pinImage, sdf: true}}} />
 }

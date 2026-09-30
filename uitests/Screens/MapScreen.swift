@@ -483,11 +483,24 @@ struct MapScreen: Screen {
 	/// is eased to.
 	@discardableResult
 	func tapMapCenterAboveSheet() -> Self {
+		mapCenterAboveSheet().tap()
+		return self
+	}
+
+	/// The middle of the map above the sheet as it rests now: where a single
+	/// framed pin is eased to.
+	func mapCenterAboveSheet() -> XCUICoordinate {
 		settle { sheetFrame().minY }
 		let sheet = sheetFrame()
-		app.coordinate(withNormalizedOffset: .zero)
+		return app.coordinate(withNormalizedOffset: .zero)
 			.withOffset(CGVector(dx: app.frame.midX, dy: sheet.minY / 2))
-			.tap()
+	}
+
+	/// Taps a spot on the map found earlier, which stays put while the sheet
+	/// moves, since the camera does not follow the sheet.
+	@discardableResult
+	func tapMap(at spot: XCUICoordinate) -> Self {
+		spot.tap()
 		return self
 	}
 
@@ -539,6 +552,38 @@ struct MapScreen: Screen {
 		XCTAssertFalse(
 			app.otherElements[TestIdentifiers.Map.categoryGrid].exists,
 			"At this text size the categories should be a list, not a grid")
+		return self
+	}
+
+	/// Recents lists `name` below the categories.
+	@discardableResult
+	func verifyRecentsList(_ name: String) -> Self {
+		XCTAssertTrue(
+			app.staticTexts[TestIdentifiers.Map.recentsTitle].waitForExistence(timeout: 10),
+			"The sheet should show Recents once a place has been opened")
+		XCTAssertTrue(row(named: name).waitForExistence(timeout: 10), "Recents should list \(name)")
+		return self
+	}
+
+	/// Swipes `name`'s row in Recents away.
+	@discardableResult
+	func removeRecent(_ name: String) -> Self {
+		row(named: name).swipeLeft()
+		let remove = app.buttons[TestIdentifiers.Map.recentsRemove].firstMatch
+		// A full swipe removes the row by itself; a shorter one leaves the
+		// button to tap.
+		if remove.waitForExistence(timeout: 3) {
+			remove.tap()
+		}
+		return self
+	}
+
+	/// With nothing left in it, Recents is gone.
+	@discardableResult
+	func verifyNoRecents() -> Self {
+		XCTAssertTrue(
+			app.staticTexts[TestIdentifiers.Map.recentsTitle].waitForNonExistence(timeout: 10),
+			"Recents should go once its last place is removed")
 		return self
 	}
 

@@ -399,4 +399,51 @@ class ModuleMapTests: UITestCase {
 			.openCategory(TestIdentifiers.Map.parkingCategory)
 			.capture("St. Olaf map Parking clusters")
 	}
+
+	/// The base map's own name for a place inside a building opens that place,
+	/// not the building around it. Searching frames the place's pin at a known
+	/// spot; cancelling takes the pin away and leaves the camera, so the base
+	/// map's label for the place is what is under that spot.
+	func testATappedPlaceNameOpensItsOwnCard() throws {
+		let name = TestIdentifiers.Map.aPointOnlyPlace
+		let screen = MapScreen(app: app)
+			.navigate()
+			.checkSheetPresented()
+			.focusSearch()
+			.typeIntoSearch(name)
+			.submitSearch()
+			.verifyAtMiddleStop()
+		let spot = screen.mapCenterAboveSheet()
+		// Focused first: on iOS 27 a first tap on Close only resumes editing
+		// once Search has ended it.
+		screen
+			.focusSearch()
+			.cancelSearch()
+			.capture("St. Olaf map with the searched place's own label")
+			.tapMap(at: spot)
+			.capture("St. Olaf map after tapping a place's label")
+			.verifyCardTitled(name)
+	}
+
+	/// A place opened from the map is listed under Recents on the root view,
+	/// and a swipe takes it off again.
+	func testAnOpenedPlaceIsListedUnderRecents() throws {
+		let name = TestIdentifiers.Map.aPointOnlyPlace
+		MapScreen(app: app)
+			.navigate()
+			.checkSheetPresented()
+			.focusSearch()
+			.typeIntoSearch(name)
+			.selectBuilding(named: name)
+			.closeTopCard()
+			// Focused first: on iOS 27 a first tap on Close only resumes editing
+			// once the field has lost focus.
+			.focusSearch()
+			.cancelSearch()
+			.expandSheet()
+			.capture("St. Olaf map Recents")
+			.verifyRecentsList(name)
+			.removeRecent(name)
+			.verifyNoRecents()
+	}
 }
