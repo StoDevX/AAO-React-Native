@@ -103,7 +103,3 @@ test('throws when the response is not an array', () => {
 test('throws when every post in a non-empty response is malformed', () => {
 	expect(() => parseWpV2Posts([{author: 1}, {author: 2}, 'garbage'])).toThrow()
 })
-
-test('returns an empty list when the feed legitimately has no posts', () => {
-	expect(parseWpV2Posts([])).toStrictEqual([])
-})

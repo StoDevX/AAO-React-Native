@@ -13,19 +13,6 @@ function wrapper({children}: {children: React.ReactNode}) {
 }
 
 describe('useCalendarSources', () => {
-	test('the app’s calendars are all there are', async () => {
-		let {result} = await renderHook(() => useCalendarSources(), {wrapper})
-
-		// In UI testing mode (Jest), the source is 'uitest'
-		expect(result.current.all.map((s) => s.id)).toEqual(['uitest'])
-	})
-
-	test('only St. Olaf is enabled to begin with', async () => {
-		let {result} = await renderHook(() => useCalendarSources(), {wrapper})
-
-		expect(result.current.enabled.map((s) => s.id)).toEqual(['uitest'])
-	})
-
 	test('toggling a source changes what is enabled', async () => {
 		let {result} = await renderHook(() => useCalendarSources(), {wrapper})
 

@@ -17,11 +17,6 @@ struct CalendarScreen: Screen {
 		open(route: "/Calendar", mountedWhen: mounted)
 	}
 
-	@discardableResult
-	func verifyCalendarTitle() -> Self {
-		verifyTitle(TestIdentifiers.Buttons.calendar)
-	}
-
 	/// Open the toolbar menu that chooses which calendars the list merges.
 	@discardableResult
 	func openPicker() -> Self {
@@ -142,10 +137,6 @@ struct CalendarScreen: Screen {
 		return self
 	}
 
-  func visibleEventRows() -> XCUIElementQuery {
-    return app.buttons.matching(.beginsWith(TestIdentifiers.Calendar.eventRowPrefix))
-  }
-
 	// MARK: - Day picker strip
 
 	/// The leading day cells in the strip, in the order they are laid out.
@@ -195,13 +186,6 @@ struct CalendarScreen: Screen {
 	private func leadingVisibleDayCell(limit: Int = 21) -> (cell: XCUIElement, frame: CGRect)? {
 		let onscreen = dayCellFrames(limit: limit).filter { $0.frame.minX >= 0 }
 		return onscreen.min(by: { $0.frame.minX < $1.frame.minX })
-	}
-
-	/// Where the strip's leading cell sits on screen. A week the strip has
-	/// snapped to puts its Sunday here; a week the strip could only scroll
-	/// partway to leaves it further along.
-	func leadingDayCellEdge() -> CGFloat? {
-		leadingVisibleDayCell()?.frame.minX
 	}
 
 	/// Drags the strip one week toward the leading edge and lets it settle.
@@ -262,46 +246,6 @@ struct CalendarScreen: Screen {
       .map { $0.identifier }
   }
 
-	@discardableResult
-	func verifySelectedDay(_ expected: String, message: String) -> Self {
-		XCTAssertEqual(selectedDay(), expected, message)
-		return self
-	}
-
-	/// Today's section header in the Upcoming list, as the app writes it:
-	/// "Saturday – Sep 5". Built from the frozen clock rather than typed out, and
-	/// matched on both halves, because every later Saturday shares the prefix.
-	func todayHeader() -> XCUIElement {
-		func format(_ pattern: String) -> String {
-			let formatter = DateFormatter()
-			formatter.locale = Locale(identifier: "en_US_POSIX")
-			formatter.timeZone = TimeZone.current
-			formatter.dateFormat = pattern
-			return formatter.string(from: TestIdentifiers.Calendar.frozenNow)
-		}
-		return app.staticTexts.matching(
-			NSPredicate(
-				format: "label BEGINSWITH %@ AND label ENDSWITH %@",
-				"\(format("EEEE")) – ", format("MMM d"))
-		).firstMatch
-	}
-
-	/// Titles of the event rows a reader can see above today's section: below
-	/// the navigation bar, above today's header. Empty when the list sits on
-	/// today; the past sections are then tucked under the bar.
-	///
-	/// Measured against the navigation bar rather than a fixed height so it
-	/// holds on any device, and whether the large title is showing or not.
-	func rowsVisibleAboveToday() -> [String] {
-		let barBottom = app.navigationBars.firstMatch.frame.maxY
-		let todayTop = todayHeader().frame.minY
-		return app.buttons.matching(
-			NSPredicate(format: "identifier BEGINSWITH %@", TestIdentifiers.Calendar.eventRowPrefix)
-		).allElementsBoundByIndex
-			.filter { $0.frame.maxY > barBottom && $0.frame.minY < todayTop }
-			.map(\.label)
-	}
-
 	/// Tap the bottom-bar Today button.
 	@discardableResult
 	func tapToday() -> Self {
@@ -310,18 +254,6 @@ struct CalendarScreen: Screen {
 			button.waitForExistence(timeout: 30),
 			"Today should be in the bottom bar")
 		button.tap()
-		return self
-	}
-
-	/// Switch a calendar on or off in the open menu's CALENDARS section. A
-	/// Toggle inside a Menu is a button, the same as a category is.
-	@discardableResult
-	func toggleCalendar(_ title: String) -> Self {
-		let item = app.buttons[title]
-		XCTAssertTrue(
-			item.waitForExistence(timeout: 30),
-			"\(title) should be offered as a calendar in the picker")
-		item.tap()
 		return self
 	}
 

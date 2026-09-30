@@ -6,6 +6,7 @@ import {
 	textContent,
 } from '@frogpond/html-lib'
 import {z} from 'zod'
+import {parseEach} from '@frogpond/data-sources/parse-each'
 import {EXCERPT_LENGTH, truncate} from '../lib/util'
 import {StoryType} from '../types'
 
@@ -99,17 +100,5 @@ export function parseRssFeed(body: unknown): StoryType[] {
 	let doc = parseXml(xml)
 	let items = getElementsByTagName('item', doc)
 
-	let stories = items.flatMap((item) => {
-		try {
-			return [toStory(item)]
-		} catch {
-			return []
-		}
-	})
-
-	if (items.length > 0 && stories.length === 0) {
-		throw new Error('every RSS item was malformed')
-	}
-
-	return stories
+	return parseEach(items, toStory, 'RSS item')
 }

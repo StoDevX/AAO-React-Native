@@ -1,4 +1,5 @@
 import {z} from 'zod'
+import {parseEach} from '@frogpond/data-sources/parse-each'
 import {LinkGroup, LinkValue} from '../types'
 
 const STOLAF_BASE_URL = 'https://stolaf.edu'
@@ -47,21 +48,13 @@ function normalizeValues(values: {label: string; url: string}[]): LinkValue[] {
 /// same rule applies at the value level: input values present, output values
 /// zero, throw.
 function toGroups(raw: unknown[]): LinkGroup[] {
-	let totalInputValues = 0
+	let rawGroups = parseEach(raw, (item) => RawGroupSchema.safeParse(item).data, 'A–Z group')
+	let groups = rawGroups.map(({letter, values}) => ({
+		title: letter[0] ?? '',
+		data: normalizeValues(values),
+	}))
 
-	let groups = raw.flatMap((item) => {
-		let parsed = RawGroupSchema.safeParse(item)
-		if (!parsed.success) return []
-
-		let {letter, values} = parsed.data
-		totalInputValues += values.length
-		return [{title: letter[0] ?? '', data: normalizeValues(values)}]
-	})
-
-	if (raw.length > 0 && groups.length === 0) {
-		throw new Error('every A–Z group was malformed')
-	}
-
+	let totalInputValues = rawGroups.reduce((sum, group) => sum + group.values.length, 0)
 	let totalOutputValues = groups.reduce((sum, group) => sum + group.data.length, 0)
 	if (totalInputValues > 0 && totalOutputValues === 0) {
 		throw new Error('every A–Z value was malformed')

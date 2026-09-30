@@ -12,7 +12,7 @@ struct HoursScreen: Screen {
 	/// `?campus=carleton`. Its search field is St. Olaf's too, so the title is
 	/// what tells the two apart.
 	var carletonMounted: XCUIElement {
-		app.navigationBars[TestIdentifiers.Map.carletonCampusTile]
+		app.navigationBars[TestIdentifiers.Buttons.carletonCampus]
 	}
 
 	/// Opens Hours, which defaults to `'stolaf'` with no `?campus=` param.
@@ -115,40 +115,6 @@ struct HoursScreen: Screen {
 		return self
 	}
 
-	/// Scrolls to the All spaces row at the end of the list, checking on the
-	/// way that `name` never appears. The list builds only the rows near the
-	/// screen, so an absence is only proven for rows it was scrolled past.
-	@discardableResult
-	func scrollToAllSpaces(checkingAbsenceOf name: String) -> Self {
-		let row = app.buttons[TestIdentifiers.Hours.allSpacesRow].firstMatch
-		let unlisted = app.element(matching: TestIdentifiers.Hours.rowPrefix + name)
-		for _ in 0..<15 where !(row.exists && row.isHittable) {
-			XCTAssertFalse(unlisted.exists, "\(name) should be left out of the Hours list")
-			app.swipeUp()
-		}
-		XCTAssertFalse(unlisted.exists, "\(name) should be left out of the Hours list")
-		XCTAssertTrue(row.exists && row.isHittable, "The Hours list should end in All spaces")
-		return self
-	}
-
-	@discardableResult
-	func openAllSpaces() -> Self {
-		app.buttons[TestIdentifiers.Hours.allSpacesRow].firstMatch.tap()
-		XCTAssertTrue(
-			app.navigationBars["All spaces"].waitForExistence(timeout: 10),
-			"All spaces should open its own screen")
-		return self
-	}
-
-	/// Scrolls until `name`'s row is on screen, for a row further down a list.
-	@discardableResult
-	func scrollToRow(_ name: String) -> Self {
-		let row = app.element(matching: TestIdentifiers.Hours.rowPrefix + name)
-		scrollUntilHittable(row)
-		XCTAssertTrue(row.exists && row.isHittable, "\(name) should be listed")
-		return self
-	}
-
 	/// Tap the revealed action that adds a building to Favorites.
 	@discardableResult
 	func tapAddToFavorites() -> Self {
@@ -173,16 +139,6 @@ struct HoursScreen: Screen {
 		XCTAssertTrue(
 			heading.waitForExistence(timeout: 30),
 			"Favouriting a building should grow a Favorites section at the top of the list")
-		return self
-	}
-
-	/// Checked once the list has loaded, so the toolbar has had its chance to
-	/// draw the button.
-	@discardableResult
-	func verifyNoMapButton() -> Self {
-		XCTAssertFalse(
-			app.buttons[TestIdentifiers.Hours.mapButton].exists,
-			"St. Olaf's Hours screen should offer no map button; the map has its own tile")
 		return self
 	}
 

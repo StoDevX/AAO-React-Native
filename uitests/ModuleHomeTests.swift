@@ -45,7 +45,7 @@ class ModuleHomeTests: UITestCase {
 				NewsScreen(app: app, tile: buttons.stOlafNews, title: "St. Olaf News").mounted
 			),
 			(buttons.athletics, AthleticsScreen(app: app).mounted),
-			(TestIdentifiers.Map.carletonCampusTile, HoursScreen(app: app).carletonMounted),
+			(buttons.carletonCampus, HoursScreen(app: app).carletonMounted),
 		]
 
 		// One wait per tile, not the handful `navigateFromHome` makes: each

@@ -1,5 +1,6 @@
 import {decode} from '@frogpond/html-lib'
 import {z} from 'zod'
+import {parseEach} from '@frogpond/data-sources/parse-each'
 import {MESS_LOGO_MEDIA_IDS, SPECIAL_EDITION, inSpecialEdition, placement} from './posts'
 import {leadStory} from './shelves'
 import type {LightPost, MessCategory, MessIssue} from '../types'
@@ -26,29 +27,22 @@ const LightPostSchema = z.object({
 export function parseLightPosts(body: unknown, categories: MessCategory[]): LightPost[] {
 	let items = z.array(z.unknown()).parse(body)
 	let byId = new Map(categories.map((category) => [category.id, category]))
-	let posts = items.flatMap((raw): LightPost[] => {
-		let post = LightPostSchema.safeParse(raw)
-		if (!post.success) return []
-		let {id, date, title, categories: ids, featured_media: media} = post.data
+	let posts = parseEach(items, (raw) => LightPostSchema.safeParse(raw).data, 'Mess post')
+	return posts.map((post): LightPost => {
+		let {id, date, title, categories: ids, featured_media: media} = post
 		let {section, featured} = placement(ids, byId)
 		let hasPhoto = media !== 0 && !MESS_LOGO_MEDIA_IDS.has(media)
-		return [
-			{
-				id,
-				day: date.slice(0, 10),
-				title: decode(title.rendered),
-				section,
-				special: inSpecialEdition(ids, byId),
-				featured,
-				photo: hasPhoto ? media : null,
-				photoUrl: null,
-			},
-		]
+		return {
+			id,
+			day: date.slice(0, 10),
+			title: decode(title.rendered),
+			section,
+			special: inSpecialEdition(ids, byId),
+			featured,
+			photo: hasPhoto ? media : null,
+			photoUrl: null,
+		}
 	})
-	if (items.length > 0 && posts.length === 0) {
-		throw new Error('every Mess post was malformed')
-	}
-	return posts
 }
 
 /** The day `days` after a YYYY-MM-DD day, worked out in UTC so no time zone moves it. */

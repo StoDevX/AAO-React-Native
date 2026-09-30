@@ -12,7 +12,7 @@ const ICON_NAME = 'icon_type_old_main'
  * alternate icons by filename. The `~iPad` variants are the idiom for
  * device-specific artwork.
  */
-export const ALTERNATE_ICON_FILES = [
+const ALTERNATE_ICON_FILES = [
 	'old-main@2x.png',
 	'old-main@3x.png',
 	'old-main@2x~iPad.png',

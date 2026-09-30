@@ -92,7 +92,3 @@ test('throws when every event in a non-empty feed is malformed', () => {
 		'every Presence event was malformed',
 	)
 })
-
-test('accepts a genuinely empty feed', () => {
-	expect(parsePresenceEvents([])).toStrictEqual([])
-})

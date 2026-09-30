@@ -142,7 +142,7 @@ const groupMenuData = (args: {
  * A bare string may never be passed as a `ReactNode` prop: `@expo/ui` crashes
  * at mount, and neither tsc nor Jest catches it.
  */
-export function sectionHeaderProps(
+function sectionHeaderProps(
 	title: string,
 	note: string | undefined,
 ): {title: string} | {header: React.ReactNode} {

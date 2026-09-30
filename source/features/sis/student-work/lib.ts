@@ -37,7 +37,7 @@ export function formatPostedDate(
 	return isValid(parsed) ? postedDateFormat(locales).format(parsed) : undefined
 }
 
-export function postedOn(postedDate: string, locales?: string): string | undefined {
+function postedOn(postedDate: string, locales?: string): string | undefined {
 	let date = formatPostedDate(postedDate, locales)
 	return date ? `Posted ${date}` : undefined
 }

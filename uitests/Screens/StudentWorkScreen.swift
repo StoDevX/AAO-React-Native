@@ -55,16 +55,6 @@ struct StudentWorkScreen: Screen {
 		return self
 	}
 
-	/// The list says the area's postings could not load, rather than that it
-	/// has none.
-	@discardableResult
-	func verifyAreaUnavailable() -> Self {
-		XCTAssertTrue(
-			app.staticTexts[TestIdentifiers.StudentWork.areaUnavailable].waitForExistence(timeout: 30),
-			"The list should say the area's postings couldn't load")
-		return self
-	}
-
 	@discardableResult
 	func verifyTrigger(_ key: String, isSelected expected: Bool) -> Self {
 		FilterScreen(app: app).verifyTrigger(key, isSelected: expected)
@@ -118,48 +108,6 @@ struct StudentWorkScreen: Screen {
 			.openFilter(key, until: filters.menuItem(option))
 			.tapMenuItem(option)
 			.dismissMenu(waitingFor: option)
-		return self
-	}
-
-	/// Scrolls the postings a few screens down, and asserts they moved.
-	@discardableResult
-	func scrollListDown() -> Self {
-		XCTAssertTrue(postingsList.waitForExistence(timeout: 30), "The postings should appear")
-		let firstRowBefore = postingsList.buttons.firstMatch.label
-		// Swipes, not press-and-drag: a press that lands on a row before the
-		// drag begins opens that posting instead of scrolling.
-		for _ in 0..<2 {
-			postingsList.swipeUp(velocity: .slow)
-		}
-		XCTAssertNotEqual(
-			postingsList.buttons.firstMatch.label, firstRowBefore,
-			"Dragging up should scroll the postings")
-		return self
-	}
-
-	/// Asserts the postings begin at their first row: pulling the list down
-	/// reveals nothing above the row already first. A list that kept its old
-	/// offset when its rows changed leaves earlier rows above the screen.
-	@discardableResult
-	func verifyListStartsAtTheTop() -> Self {
-		// A search applies after a 200ms debounce. Wait for the rows to change
-		// so the reading below is of the new list; one that wrongly kept its
-		// place may leave the same row first, so a timeout is not a failure.
-		let firstRow = postingsList.buttons.firstMatch
-		let stale = firstRow.label
-		_ = XCTWaiter.wait(
-			for: [
-				XCTNSPredicateExpectation(
-					predicate: NSPredicate(format: "label != %@", stale), object: firstRow)
-			],
-			timeout: 5)
-
-		let top = postingsList.buttons.firstMatch.label
-		capture("Student Work after narrowing from far down the list")
-		postingsList.swipeDown()
-		XCTAssertEqual(
-			postingsList.buttons.firstMatch.label, top,
-			"The narrowed postings should start at their first row, not wherever the list was scrolled before")
 		return self
 	}
 
@@ -266,33 +214,6 @@ struct StudentWorkScreen: Screen {
 		XCTAssertTrue(
 			app.navigationBars[title].waitForExistence(timeout: 30),
 			"Tapping \(title) should open its posting")
-		return self
-	}
-
-	@discardableResult
-	func checkJobsSiteLinkIsExternal() -> Self {
-		XCTAssertTrue(
-			jobsSiteLink.images[TestIdentifiers.StudentWork.externalLinkAccessory].exists,
-			"The jobs-site link should carry the up-right arrow of a link that leaves the app")
-		return self
-	}
-
-	/// A slow drag across the fields, so it scrolls them by about its own
-	/// length rather than flinging.
-	@discardableResult
-	func dragJobPostingFieldsUp() -> Self {
-		let start = app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.8))
-		let end = app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.2))
-		start.press(forDuration: 0.1, thenDragTo: end, withVelocity: .slow, thenHoldForDuration: 0.5)
-		return self
-	}
-
-	@discardableResult
-	func checkJobsSiteLinkReachable() -> Self {
-		XCTAssertLessThan(
-			jobsSiteLink.frame.maxY, app.frame.height,
-			"Scrolling the fields should bring the jobs-site link fully on screen")
-		XCTAssertTrue(jobsSiteLink.isHittable, "The jobs-site link should be tappable")
 		return self
 	}
 
