@@ -61,7 +61,7 @@ class ModuleMapTests: UITestCaseUnbooted {
 	}
 
 	/// The full sheet, and a row tapped from it, reached through the grid's
-	/// All Buildings group.
+	/// Buildings group.
 	///
 	/// The module pins the field at 44pt with a constraint UIKit is free to
 	/// overrule silently, so the height is checked before anything else moves
@@ -76,7 +76,7 @@ class ModuleMapTests: UITestCaseUnbooted {
 			.checkSheetPresented()
 			.expandSheet()
 			.verifySearchFieldHeight()
-			.openCategory(TestIdentifiers.Map.allBuildingsCategory)
+			.openCategory(TestIdentifiers.Map.buildingsCategory)
 			// Opening a group drops the sheet to make room for its pins.
 			.expandSheet()
 		let largeTop = screen.searchFieldTop()
@@ -356,9 +356,9 @@ class ModuleMapTests: UITestCaseUnbooted {
 			.navigate()
 			.checkSheetPresented()
 			.expandSheet()
-			.openCategory(TestIdentifiers.Map.allBuildingsCategory)
-			.capture("St. Olaf map All Buildings group at the largest text size")
-			.verifyGroupTitleClearsBackButton(TestIdentifiers.Map.allBuildingsCategory)
+			.openCategory(TestIdentifiers.Map.buildingsCategory)
+			.capture("St. Olaf map Buildings group at the largest text size")
+			.verifyGroupTitleClearsBackButton(TestIdentifiers.Map.buildingsCategory)
 	}
 
 	/// At the largest text size the categories are a list: a grid narrow
@@ -373,7 +373,7 @@ class ModuleMapTests: UITestCaseUnbooted {
 			.capture("St. Olaf map categories at the largest text size")
 			// The first row: at this size the sheet may rest short of its full
 			// stop, and a list builds only the rows it shows.
-			.verifyCategoriesAsList(including: TestIdentifiers.Map.allBuildingsCategory)
+			.verifyCategoriesAsList(including: TestIdentifiers.Map.buildingsCategory)
 	}
 
 	/// A search that finds one place frames its pin above the sheet, and the

@@ -199,7 +199,7 @@ struct TestIdentifiers {
 		/// scroll. Mirrors a label in data/map-categories.yaml.
 		static let parkingCategory = "Parking"
 		/// The group that lists every building. Mirrors data/map-categories.yaml.
-		static let allBuildingsCategory = "All Buildings"
+		static let buildingsCategory = "Buildings"
 		/// A St. Olaf group. Mirrors data/map-categories.yaml.
 		static let diningCategory = "Dining"
 		/// The group header's back button, by identifier: its "Back" label also
