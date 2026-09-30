@@ -1,6 +1,8 @@
 import {carletonClient, client} from '@frogpond/api'
+import {isUITesting} from '@frogpond/launch-arguments'
 import {queryOptions} from '@tanstack/react-query'
 import type {Campus} from '../building-hours/types'
+import {UITEST_MAPS} from './__fixtures__/maps'
 import type {Building, Feature, FeatureCollection} from './types'
 
 export const keys = {
@@ -25,6 +27,9 @@ export const mapDataOptions = (campus: Campus) =>
 	queryOptions({
 		queryKey: keys.all(campus),
 		queryFn: async ({signal}): Promise<Array<Feature<Building>>> => {
+			if (isUITesting) {
+				return UITEST_MAPS[campus].features
+			}
 			let response = await clientFor(campus)
 				.get('map/geojson', {signal})
 				.json<FeatureCollection<Building>>()
