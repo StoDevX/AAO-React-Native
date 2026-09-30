@@ -37,6 +37,7 @@ import {highlightedFeatureId, placeStack} from '../../../source/features/map/lib
 import {BuildingPicker} from '../../../source/features/map/building-picker'
 import {framingFor, type MapPins} from '../../../source/features/map/lib/map-pins'
 import {MapPinsLayer} from '../../../source/features/map/map-pins-layer'
+import {useFrameRequests} from '../../../source/features/map/use-frame-requests'
 import {sheetHeightFor} from '../../../source/features/map/lib/sheet-height'
 import {toBuildingFootprints} from '../../../source/features/map/lib/building-footprints'
 import {
@@ -50,7 +51,7 @@ import {
 	nameOf,
 } from '../../../source/features/map/lib/sheet-detents'
 import {mapDataOptions} from '../../../source/features/map/query'
-import type {Coordinate, Point} from '../../../source/features/map/types'
+import type {Building, Coordinate, Feature, Point} from '../../../source/features/map/types'
 import {mapCredits, mapStyleUrl} from '../../../source/features/map/urls'
 
 /** Each campus's starting camera position. Carleton's predates this file
@@ -221,11 +222,10 @@ export default function MapPage(): React.ReactNode {
 		}
 	}, [selectedPoint])
 
-	// Framed only when the picker asks -- a tile tap or a finished search --
-	// never as results change while typing. Reads the sheet's height at that
-	// moment without depending on it, as `easeToSelection` does.
-	let frameOnPins = React.useEffectEvent(() => {
-		let framing = pins ? framingFor(pins.places) : null
+	// Frames places in the map above the sheet and below the header: several
+	// fit, one eased to at the selection zoom.
+	let frameOn = (places: Array<Feature<Building>>) => {
+		let framing = framingFor(places)
 		if (framing?.kind === 'fit') {
 			cameraRef.current?.fitBounds(framing.bounds, {
 				padding: {
@@ -244,14 +244,19 @@ export default function MapPage(): React.ReactNode {
 				zoom: SELECTION_ZOOM,
 			})
 		}
-	})
+	}
 
-	let frameKey = pins?.frameKey
-	React.useEffect(() => {
-		if (frameKey) {
-			frameOnPins()
-		}
-	}, [frameKey])
+	// Framed only when the picker asks -- a tile tap or a finished search --
+	// never as results change while typing.
+	useFrameRequests(pins, (requested) => frameOn(requested.places))
+
+	// A cluster frames the places it holds, so it opens up in the map above
+	// the sheet rather than around the middle of the screen, which at the
+	// middle stop is the sheet's edge.
+	let frameCluster = (ids: string[]) => {
+		let held = new Set(ids)
+		frameOn(buildings.filter((building) => held.has(building.id)))
+	}
 
 	return (
 		<View style={StyleSheet.absoluteFill}>
@@ -299,7 +304,7 @@ export default function MapPage(): React.ReactNode {
 					/>
 				</GeoJSONSource>
 
-				<MapPinsLayer cameraRef={cameraRef} onSelect={openPlace} pins={pins} />
+				<MapPinsLayer onCluster={frameCluster} onSelect={openPlace} pins={pins} />
 
 				{selectedPoint ? (
 					<Marker

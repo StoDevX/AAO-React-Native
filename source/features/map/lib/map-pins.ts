@@ -82,15 +82,43 @@ export type PinPress =
 	| {kind: 'cluster'; clusterId: number; center: Coordinate}
 	| null
 
+/// Squared distance between two coordinates, with longitude shrunk by the
+/// latitude so east-west and north-south count alike. Only compared, never
+/// shown, so neither the root nor the units matter.
+function distanceSquared([lngA, latA]: Coordinate, [lngB, latB]: Coordinate): number {
+	let shrink = Math.cos((latA * Math.PI) / 180)
+	return ((lngA - lngB) * shrink) ** 2 + (latA - latB) ** 2
+}
+
 /// What a press on the pins' source hit: a place's pin, a cluster of them, or
-/// neither.
-export function pressedPin(features: GeoJSON.Feature[]): PinPress {
-	let feature = features[0]
-	if (feature?.geometry.type !== 'Point') {
+/// neither. A touch's hitbox can cover more than one, so the one nearest the
+/// touch wins, not whichever MapLibre lists first.
+export function pressedPin(features: GeoJSON.Feature[], touch: Coordinate): PinPress {
+	let points = features.flatMap((candidate) =>
+		candidate.geometry.type === 'Point'
+			? [
+					{
+						feature: candidate,
+						at: [
+							candidate.geometry.coordinates[0],
+							candidate.geometry.coordinates[1],
+						] as Coordinate,
+					},
+				]
+			: [],
+	)
+	let nearest = points.reduce<(typeof points)[number] | undefined>(
+		(best, candidate) =>
+			!best || distanceSquared(candidate.at, touch) < distanceSquared(best.at, touch)
+				? candidate
+				: best,
+		undefined,
+	)
+	if (!nearest) {
 		return null
 	}
-	let properties = feature.properties ?? {}
-	let [lng, lat] = feature.geometry.coordinates
+	let properties = nearest.feature.properties ?? {}
+	let [lng, lat] = nearest.at
 	if (properties.cluster === true && typeof properties.cluster_id === 'number') {
 		return {kind: 'cluster', clusterId: properties.cluster_id, center: [lng, lat]}
 	}
@@ -98,6 +126,14 @@ export function pressedPin(features: GeoJSON.Feature[]): PinPress {
 		return {kind: 'pin', buildingId: properties.buildingId}
 	}
 	return null
+}
+
+/// The places a set of pin features stand for, such as a cluster's leaves.
+export function pinIds(features: GeoJSON.Feature[]): string[] {
+	return features.flatMap((feature) => {
+		let id: unknown = feature.properties?.buildingId
+		return typeof id === 'string' ? [id] : []
+	})
 }
 
 export type Framing =

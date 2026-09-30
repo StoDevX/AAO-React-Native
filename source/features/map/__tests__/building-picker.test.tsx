@@ -476,6 +476,11 @@ describe('BuildingPicker', () => {
 		it('frames the search only once its results have caught up', async () => {
 			let {onPinsChange} = await renderPicker()
 			let field = screen.getByLabelText('Search for a place')
+			await fireEvent.changeText(field, 'beta')
+			await waitFor(() => {
+				expect(lastPins(onPinsChange)?.names).toEqual(['Beta Lot'])
+			})
+			// Ended inside the debounce: the results on screen are still Beta's.
 			await fireEvent.changeText(field, 'gamma')
 			await fireEvent(field, 'blur')
 			await waitFor(() => {
