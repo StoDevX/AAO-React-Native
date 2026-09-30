@@ -334,6 +334,18 @@ class ModuleMapTests: UITestCaseUnbooted {
 			.goBackToCategories()
 	}
 
+	/// The grid's bottom-left tile draws its whole name. The grid is a row of
+	/// the sheet's list, and the list clips each row to its card's rounded
+	/// corners, which once cut the foot off that tile's first letter.
+	func testTheGridsCornerTileDrawsItsWholeName() throws {
+		MapScreen(app: app)
+			.navigate()
+			.checkSheetPresented()
+			.expandSheet()
+			.capture("St. Olaf map category grid's corner tile")
+			.verifyTileNameDrawnWhole(TestIdentifiers.Map.cornerCategory)
+	}
+
 	/// Search runs over every place, whichever group is open.
 	func testSearchFromAGroupFindsPlacesOutsideIt() throws {
 		MapScreen(app: app)
