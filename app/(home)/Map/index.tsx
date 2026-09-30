@@ -189,6 +189,12 @@ export default function MapPage(): React.ReactNode {
 		[openPlace],
 	)
 
+	// Opening a group frames its pins above the sheet, which a full sheet
+	// would leave no room for.
+	let makeRoomForGroup = React.useCallback(() => {
+		dispatchSheet({type: 'group-opened'})
+	}, [dispatchSheet])
+
 	// What the sheet is listing, pinned. The picker stays mounted under a
 	// card, so these persist while a card is open.
 	let [pins, setPins] = React.useState<MapPins | null>(null)
@@ -385,7 +391,7 @@ export default function MapPage(): React.ReactNode {
 									campus={campus}
 									compact={sheet.current === 'collapsed'}
 									onHeaderHeightChange={setPickerHeaderHeight}
-									onGroupOpen={() => dispatchSheet({type: 'group-opened'})}
+									onGroupOpen={makeRoomForGroup}
 									onPinsChange={setPins}
 									onSearchCancel={() => dispatchSheet({type: 'search-cancelled'})}
 									onSearchFocusChange={(focused, hasText) =>
