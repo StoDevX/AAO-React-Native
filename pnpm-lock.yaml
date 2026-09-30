@@ -231,7 +231,7 @@ importers:
         version: 3.3.0
       expo:
         specifier: 57.0.19
-        version: 57.0.19(@babel/core@7.29.7)(@expo/dom-webview@57.0.1)(@expo/metro-runtime@57.0.15)(expo-router@57.0.18)(react-native-webview@13.16.1)(react-native-worklets@0.10.1)(react-native@0.86.3)(react@19.2.3)(supports-color@8.1.1)(typescript@7.0.2)
+        version: 57.0.19(@babel/core@7.29.7)(@expo/metro-runtime@57.0.15)(expo-router@57.0.18)(react-native-webview@13.16.1)(react-native-worklets@0.10.1)(react-native@0.86.3)(react@19.2.3)(supports-color@8.1.1)(typescript@7.0.2)
       expo-application:
         specifier: 57.0.2
         version: 57.0.2(expo@57.0.19)
@@ -1609,11 +1609,7 @@ packages:
       '@expo/log-box': ^57.0.4
       expo: '*'
       react: '*'
-      react-dom: '*'
       react-native: '*'
-    peerDependenciesMeta:
-      react-dom:
-        optional: true
 
   '@expo/metro@56.0.2':
     resolution: {integrity: sha512-Ld5AeYMCCDa8bLeWhfuLbZFFjlV3f6ORqyPz2glGh6RltIngMuLf9BTC2yvHFjkKuGxL5SynijmA8xmNNWn5iA==}
@@ -1649,14 +1645,11 @@ packages:
       expo-router: '*'
       expo-server: ^57.0.3
       react: '*'
-      react-dom: '*'
       react-server-dom-webpack: ~19.0.1 || ~19.1.2 || ~19.2.1
     peerDependenciesMeta:
       '@expo/metro-runtime':
         optional: true
       expo-router:
-        optional: true
-      react-dom:
         optional: true
       react-server-dom-webpack:
         optional: true
@@ -1680,13 +1673,10 @@ packages:
       '@babel/core': 7.29.7
       expo: '*'
       react: '*'
-      react-dom: '*'
       react-native: '*'
       react-native-worklets: '*'
     peerDependenciesMeta:
       '@babel/core':
-        optional: true
-      react-dom:
         optional: true
       react-native-worklets:
         optional: true
@@ -3751,7 +3741,6 @@ packages:
       expo-constants: ^57.0.17
       expo-linking: ^57.0.9
       react: '*'
-      react-dom: '*'
       react-native: '*'
       react-native-gesture-handler: '*'
       react-native-reanimated: '*'
@@ -3761,8 +3750,6 @@ packages:
       react-server-dom-webpack: ~19.0.4 || ~19.1.5 || ~19.2.4
     peerDependenciesMeta:
       '@testing-library/react-native':
-        optional: true
-      react-dom:
         optional: true
       react-native-gesture-handler:
         optional: true
@@ -3802,19 +3789,13 @@ packages:
     resolution: {integrity: sha512-oIoAIisim1DwS2Zjp0rcEY9cfcq1wU6KpkBfwwFhJWI5YHV6i/aIzTUMX+uf0Q0CD6AvMls7IZVh34o27NjaJA==}
     hasBin: true
     peerDependencies:
-      '@expo/dom-webview': '*'
       '@expo/metro-runtime': '*'
       react: '*'
-      react-dom: '*'
       react-native: '*'
       react-native-web: '*'
       react-native-webview: '*'
     peerDependenciesMeta:
-      '@expo/dom-webview':
-        optional: true
       '@expo/metro-runtime':
-        optional: true
-      react-dom:
         optional: true
       react-native-web:
         optional: true
@@ -6317,7 +6298,7 @@ snapshots:
       connect: 3.7.0(supports-color@8.1.1)
       debug: 4.4.3(supports-color@8.1.1)
       dnssd-advertise: 1.1.6
-      expo: 57.0.19(@babel/core@7.29.7)(@expo/dom-webview@57.0.1)(@expo/metro-runtime@57.0.15)(expo-router@57.0.18)(react-native-webview@13.16.1)(react-native-worklets@0.10.1)(react-native@0.86.3)(react@19.2.3)(supports-color@8.1.1)(typescript@7.0.2)
+      expo: 57.0.19(@babel/core@7.29.7)(@expo/metro-runtime@57.0.15)(expo-router@57.0.18)(react-native-webview@13.16.1)(react-native-worklets@0.10.1)(react-native@0.86.3)(react@19.2.3)(supports-color@8.1.1)(typescript@7.0.2)
       expo-server: 57.0.3
       fetch-nodeshim: 0.4.10
       getenv: 2.0.0
@@ -6353,7 +6334,6 @@ snapshots:
       - expo-constants
       - expo-font
       - react
-      - react-dom
       - react-server-dom-webpack
       - supports-color
       - typescript
@@ -6416,7 +6396,7 @@ snapshots:
 
   '@expo/dom-webview@57.0.1(expo@57.0.19)(react-native@0.86.3)(react@19.2.3)':
     dependencies:
-      expo: 57.0.19(@babel/core@7.29.7)(@expo/dom-webview@57.0.1)(@expo/metro-runtime@57.0.15)(expo-router@57.0.18)(react-native-webview@13.16.1)(react-native-worklets@0.10.1)(react-native@0.86.3)(react@19.2.3)(supports-color@8.1.1)(typescript@7.0.2)
+      expo: 57.0.19(@babel/core@7.29.7)(@expo/metro-runtime@57.0.15)(expo-router@57.0.18)(react-native-webview@13.16.1)(react-native-worklets@0.10.1)(react-native@0.86.3)(react@19.2.3)(supports-color@8.1.1)(typescript@7.0.2)
       react: 19.2.3
       react-native: 0.86.3(patch_hash=6ca2e1225f38672b073b92b9d13f24feebbe9e37ba67708a3f1569275ce99191)(@babel/core@7.29.7)(@react-native/jest-preset@0.86.3)(@types/react@19.2.18)(react@19.2.3)(supports-color@8.1.1)
 
@@ -6483,7 +6463,7 @@ snapshots:
     dependencies:
       '@expo/dom-webview': 57.0.1(expo@57.0.19)(react-native@0.86.3)(react@19.2.3)
       anser: 1.4.10
-      expo: 57.0.19(@babel/core@7.29.7)(@expo/dom-webview@57.0.1)(@expo/metro-runtime@57.0.15)(expo-router@57.0.18)(react-native-webview@13.16.1)(react-native-worklets@0.10.1)(react-native@0.86.3)(react@19.2.3)(supports-color@8.1.1)(typescript@7.0.2)
+      expo: 57.0.19(@babel/core@7.29.7)(@expo/metro-runtime@57.0.15)(expo-router@57.0.18)(react-native-webview@13.16.1)(react-native-worklets@0.10.1)(react-native@0.86.3)(react@19.2.3)(supports-color@8.1.1)(typescript@7.0.2)
       react: 19.2.3
       react-native: 0.86.3(patch_hash=6ca2e1225f38672b073b92b9d13f24feebbe9e37ba67708a3f1569275ce99191)(@babel/core@7.29.7)(@react-native/jest-preset@0.86.3)(@types/react@19.2.18)(react@19.2.3)(supports-color@8.1.1)
       stacktrace-parser: 0.1.11
@@ -6514,7 +6494,7 @@ snapshots:
       postcss: 8.5.28
       resolve-from: 5.0.0
     optionalDependencies:
-      expo: 57.0.19(@babel/core@7.29.7)(@expo/dom-webview@57.0.1)(@expo/metro-runtime@57.0.15)(expo-router@57.0.18)(react-native-webview@13.16.1)(react-native-worklets@0.10.1)(react-native@0.86.3)(react@19.2.3)(supports-color@8.1.1)(typescript@7.0.2)
+      expo: 57.0.19(@babel/core@7.29.7)(@expo/metro-runtime@57.0.15)(expo-router@57.0.18)(react-native-webview@13.16.1)(react-native-worklets@0.10.1)(react-native@0.86.3)(react@19.2.3)(supports-color@8.1.1)(typescript@7.0.2)
     transitivePeerDependencies:
       - bufferutil
       - supports-color
@@ -6536,7 +6516,7 @@ snapshots:
     dependencies:
       '@expo/log-box': 57.0.4(@expo/dom-webview@57.0.1)(expo@57.0.19)(react-native@0.86.3)(react@19.2.3)
       anser: 1.4.10
-      expo: 57.0.19(@babel/core@7.29.7)(@expo/dom-webview@57.0.1)(@expo/metro-runtime@57.0.15)(expo-router@57.0.18)(react-native-webview@13.16.1)(react-native-worklets@0.10.1)(react-native@0.86.3)(react@19.2.3)(supports-color@8.1.1)(typescript@7.0.2)
+      expo: 57.0.19(@babel/core@7.29.7)(@expo/metro-runtime@57.0.15)(expo-router@57.0.18)(react-native-webview@13.16.1)(react-native-worklets@0.10.1)(react-native@0.86.3)(react@19.2.3)(supports-color@8.1.1)(typescript@7.0.2)
       pretty-format: 30.5.1
       react: 19.2.3
       react-native: 0.86.3(patch_hash=6ca2e1225f38672b073b92b9d13f24feebbe9e37ba67708a3f1569275ce99191)(@babel/core@7.29.7)(@react-native/jest-preset@0.86.3)(@types/react@19.2.18)(react@19.2.3)(supports-color@8.1.1)
@@ -6612,7 +6592,7 @@ snapshots:
   '@expo/router-server@57.0.9(@expo/metro-runtime@57.0.15)(expo-constants@57.0.17)(expo-font@57.0.3)(expo-router@57.0.18)(expo-server@57.0.3)(expo@57.0.19)(react@19.2.3)(supports-color@8.1.1)':
     dependencies:
       debug: 4.4.3(supports-color@8.1.1)
-      expo: 57.0.19(@babel/core@7.29.7)(@expo/dom-webview@57.0.1)(@expo/metro-runtime@57.0.15)(expo-router@57.0.18)(react-native-webview@13.16.1)(react-native-worklets@0.10.1)(react-native@0.86.3)(react@19.2.3)(supports-color@8.1.1)(typescript@7.0.2)
+      expo: 57.0.19(@babel/core@7.29.7)(@expo/metro-runtime@57.0.15)(expo-router@57.0.18)(react-native-webview@13.16.1)(react-native-worklets@0.10.1)(react-native@0.86.3)(react@19.2.3)(supports-color@8.1.1)(typescript@7.0.2)
       expo-constants: 57.0.17(expo@57.0.19)(react-native@0.86.3)(supports-color@8.1.1)
       expo-font: 57.0.3(expo@57.0.19)(react-native@0.86.3)(react@19.2.3)
       expo-server: 57.0.3
@@ -6635,7 +6615,7 @@ snapshots:
 
   '@expo/ui@57.0.14(patch_hash=c6646a6e1ad7d06c702ccd9997a3b4f73fcb01a06efc33b1b6d3e706b88eeea5)(@babel/core@7.29.7)(expo@57.0.19)(react-native-worklets@0.10.1)(react-native@0.86.3)(react@19.2.3)':
     dependencies:
-      expo: 57.0.19(@babel/core@7.29.7)(@expo/dom-webview@57.0.1)(@expo/metro-runtime@57.0.15)(expo-router@57.0.18)(react-native-webview@13.16.1)(react-native-worklets@0.10.1)(react-native@0.86.3)(react@19.2.3)(supports-color@8.1.1)(typescript@7.0.2)
+      expo: 57.0.19(@babel/core@7.29.7)(@expo/metro-runtime@57.0.15)(expo-router@57.0.18)(react-native-webview@13.16.1)(react-native-worklets@0.10.1)(react-native@0.86.3)(react@19.2.3)(supports-color@8.1.1)(typescript@7.0.2)
       react: 19.2.3
       react-native: 0.86.3(patch_hash=6ca2e1225f38672b073b92b9d13f24feebbe9e37ba67708a3f1569275ce99191)(@babel/core@7.29.7)(@react-native/jest-preset@0.86.3)(@types/react@19.2.18)(react@19.2.3)(supports-color@8.1.1)
       sf-symbols-typescript: 2.2.0
@@ -6927,7 +6907,7 @@ snapshots:
     optionalDependencies:
       '@types/geojson': 7946.0.16
       '@types/react': 19.2.18
-      expo: 57.0.19(@babel/core@7.29.7)(@expo/dom-webview@57.0.1)(@expo/metro-runtime@57.0.15)(expo-router@57.0.18)(react-native-webview@13.16.1)(react-native-worklets@0.10.1)(react-native@0.86.3)(react@19.2.3)(supports-color@8.1.1)(typescript@7.0.2)
+      expo: 57.0.19(@babel/core@7.29.7)(@expo/metro-runtime@57.0.15)(expo-router@57.0.18)(react-native-webview@13.16.1)(react-native-worklets@0.10.1)(react-native@0.86.3)(react@19.2.3)(supports-color@8.1.1)(typescript@7.0.2)
 
   '@napi-rs/wasm-runtime@1.2.4(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)':
     dependencies:
@@ -7404,7 +7384,7 @@ snapshots:
       react: 19.2.3
       react-native: 0.86.3(patch_hash=6ca2e1225f38672b073b92b9d13f24feebbe9e37ba67708a3f1569275ce99191)(@babel/core@7.29.7)(@react-native/jest-preset@0.86.3)(@types/react@19.2.18)(react@19.2.3)(supports-color@8.1.1)
     optionalDependencies:
-      expo: 57.0.19(@babel/core@7.29.7)(@expo/dom-webview@57.0.1)(@expo/metro-runtime@57.0.15)(expo-router@57.0.18)(react-native-webview@13.16.1)(react-native-worklets@0.10.1)(react-native@0.86.3)(react@19.2.3)(supports-color@8.1.1)(typescript@7.0.2)
+      expo: 57.0.19(@babel/core@7.29.7)(@expo/metro-runtime@57.0.15)(expo-router@57.0.18)(react-native-webview@13.16.1)(react-native-worklets@0.10.1)(react-native@0.86.3)(react@19.2.3)(supports-color@8.1.1)(typescript@7.0.2)
     transitivePeerDependencies:
       - '@expo/env'
       - dotenv
@@ -8042,7 +8022,7 @@ snapshots:
       react-refresh: 0.14.2
     optionalDependencies:
       '@babel/runtime': 7.29.7
-      expo: 57.0.19(@babel/core@7.29.7)(@expo/dom-webview@57.0.1)(@expo/metro-runtime@57.0.15)(expo-router@57.0.18)(react-native-webview@13.16.1)(react-native-worklets@0.10.1)(react-native@0.86.3)(react@19.2.3)(supports-color@8.1.1)(typescript@7.0.2)
+      expo: 57.0.19(@babel/core@7.29.7)(@expo/metro-runtime@57.0.15)(expo-router@57.0.18)(react-native-webview@13.16.1)(react-native-worklets@0.10.1)(react-native@0.86.3)(react@19.2.3)(supports-color@8.1.1)(typescript@7.0.2)
     transitivePeerDependencies:
       - '@babel/core'
       - supports-color
@@ -8497,12 +8477,12 @@ snapshots:
 
   expo-application@57.0.2(expo@57.0.19):
     dependencies:
-      expo: 57.0.19(@babel/core@7.29.7)(@expo/dom-webview@57.0.1)(@expo/metro-runtime@57.0.15)(expo-router@57.0.18)(react-native-webview@13.16.1)(react-native-worklets@0.10.1)(react-native@0.86.3)(react@19.2.3)(supports-color@8.1.1)(typescript@7.0.2)
+      expo: 57.0.19(@babel/core@7.29.7)(@expo/metro-runtime@57.0.15)(expo-router@57.0.18)(react-native-webview@13.16.1)(react-native-worklets@0.10.1)(react-native@0.86.3)(react@19.2.3)(supports-color@8.1.1)(typescript@7.0.2)
 
   expo-asset@57.0.16(expo@57.0.19)(react-native@0.86.3)(react@19.2.3)(supports-color@8.1.1)(typescript@7.0.2):
     dependencies:
       '@expo/image-utils': 0.11.5(supports-color@8.1.1)(typescript@7.0.2)
-      expo: 57.0.19(@babel/core@7.29.7)(@expo/dom-webview@57.0.1)(@expo/metro-runtime@57.0.15)(expo-router@57.0.18)(react-native-webview@13.16.1)(react-native-worklets@0.10.1)(react-native@0.86.3)(react@19.2.3)(supports-color@8.1.1)(typescript@7.0.2)
+      expo: 57.0.19(@babel/core@7.29.7)(@expo/metro-runtime@57.0.15)(expo-router@57.0.18)(react-native-webview@13.16.1)(react-native-worklets@0.10.1)(react-native@0.86.3)(react@19.2.3)(supports-color@8.1.1)(typescript@7.0.2)
       expo-constants: 57.0.17(expo@57.0.19)(react-native@0.86.3)(supports-color@8.1.1)
       react: 19.2.3
       react-native: 0.86.3(patch_hash=6ca2e1225f38672b073b92b9d13f24feebbe9e37ba67708a3f1569275ce99191)(@babel/core@7.29.7)(@react-native/jest-preset@0.86.3)(@types/react@19.2.18)(react@19.2.3)(supports-color@8.1.1)
@@ -8513,73 +8493,73 @@ snapshots:
   expo-build-properties@57.0.17(expo@57.0.19):
     dependencies:
       '@expo/schema-utils': 57.0.2
-      expo: 57.0.19(@babel/core@7.29.7)(@expo/dom-webview@57.0.1)(@expo/metro-runtime@57.0.15)(expo-router@57.0.18)(react-native-webview@13.16.1)(react-native-worklets@0.10.1)(react-native@0.86.3)(react@19.2.3)(supports-color@8.1.1)(typescript@7.0.2)
+      expo: 57.0.19(@babel/core@7.29.7)(@expo/metro-runtime@57.0.15)(expo-router@57.0.18)(react-native-webview@13.16.1)(react-native-worklets@0.10.1)(react-native@0.86.3)(react@19.2.3)(supports-color@8.1.1)(typescript@7.0.2)
       resolve-from: 5.0.0
       semver: 7.8.5
 
   expo-calendar@57.0.2(expo@57.0.19)(react-native@0.86.3):
     dependencies:
-      expo: 57.0.19(@babel/core@7.29.7)(@expo/dom-webview@57.0.1)(@expo/metro-runtime@57.0.15)(expo-router@57.0.18)(react-native-webview@13.16.1)(react-native-worklets@0.10.1)(react-native@0.86.3)(react@19.2.3)(supports-color@8.1.1)(typescript@7.0.2)
+      expo: 57.0.19(@babel/core@7.29.7)(@expo/metro-runtime@57.0.15)(expo-router@57.0.18)(react-native-webview@13.16.1)(react-native-worklets@0.10.1)(react-native@0.86.3)(react@19.2.3)(supports-color@8.1.1)(typescript@7.0.2)
       react-native: 0.86.3(patch_hash=6ca2e1225f38672b073b92b9d13f24feebbe9e37ba67708a3f1569275ce99191)(@babel/core@7.29.7)(@react-native/jest-preset@0.86.3)(@types/react@19.2.18)(react@19.2.3)(supports-color@8.1.1)
 
   expo-clipboard@57.0.1(expo@57.0.19)(react-native@0.86.3)(react@19.2.3):
     dependencies:
-      expo: 57.0.19(@babel/core@7.29.7)(@expo/dom-webview@57.0.1)(@expo/metro-runtime@57.0.15)(expo-router@57.0.18)(react-native-webview@13.16.1)(react-native-worklets@0.10.1)(react-native@0.86.3)(react@19.2.3)(supports-color@8.1.1)(typescript@7.0.2)
+      expo: 57.0.19(@babel/core@7.29.7)(@expo/metro-runtime@57.0.15)(expo-router@57.0.18)(react-native-webview@13.16.1)(react-native-worklets@0.10.1)(react-native@0.86.3)(react@19.2.3)(supports-color@8.1.1)(typescript@7.0.2)
       react: 19.2.3
       react-native: 0.86.3(patch_hash=6ca2e1225f38672b073b92b9d13f24feebbe9e37ba67708a3f1569275ce99191)(@babel/core@7.29.7)(@react-native/jest-preset@0.86.3)(@types/react@19.2.18)(react@19.2.3)(supports-color@8.1.1)
 
   expo-constants@57.0.17(expo@57.0.19)(react-native@0.86.3)(supports-color@8.1.1):
     dependencies:
       '@expo/env': 2.4.3(supports-color@8.1.1)
-      expo: 57.0.19(@babel/core@7.29.7)(@expo/dom-webview@57.0.1)(@expo/metro-runtime@57.0.15)(expo-router@57.0.18)(react-native-webview@13.16.1)(react-native-worklets@0.10.1)(react-native@0.86.3)(react@19.2.3)(supports-color@8.1.1)(typescript@7.0.2)
+      expo: 57.0.19(@babel/core@7.29.7)(@expo/metro-runtime@57.0.15)(expo-router@57.0.18)(react-native-webview@13.16.1)(react-native-worklets@0.10.1)(react-native@0.86.3)(react@19.2.3)(supports-color@8.1.1)(typescript@7.0.2)
       react-native: 0.86.3(patch_hash=6ca2e1225f38672b073b92b9d13f24feebbe9e37ba67708a3f1569275ce99191)(@babel/core@7.29.7)(@react-native/jest-preset@0.86.3)(@types/react@19.2.18)(react@19.2.3)(supports-color@8.1.1)
     transitivePeerDependencies:
       - supports-color
 
   expo-crypto@57.0.3(expo@57.0.19):
     dependencies:
-      expo: 57.0.19(@babel/core@7.29.7)(@expo/dom-webview@57.0.1)(@expo/metro-runtime@57.0.15)(expo-router@57.0.18)(react-native-webview@13.16.1)(react-native-worklets@0.10.1)(react-native@0.86.3)(react@19.2.3)(supports-color@8.1.1)(typescript@7.0.2)
+      expo: 57.0.19(@babel/core@7.29.7)(@expo/metro-runtime@57.0.15)(expo-router@57.0.18)(react-native-webview@13.16.1)(react-native-worklets@0.10.1)(react-native@0.86.3)(react@19.2.3)(supports-color@8.1.1)(typescript@7.0.2)
 
   expo-device@57.0.1(expo@57.0.19):
     dependencies:
-      expo: 57.0.19(@babel/core@7.29.7)(@expo/dom-webview@57.0.1)(@expo/metro-runtime@57.0.15)(expo-router@57.0.18)(react-native-webview@13.16.1)(react-native-worklets@0.10.1)(react-native@0.86.3)(react@19.2.3)(supports-color@8.1.1)(typescript@7.0.2)
+      expo: 57.0.19(@babel/core@7.29.7)(@expo/metro-runtime@57.0.15)(expo-router@57.0.18)(react-native-webview@13.16.1)(react-native-worklets@0.10.1)(react-native@0.86.3)(react@19.2.3)(supports-color@8.1.1)(typescript@7.0.2)
       ua-parser-js: 0.7.41
 
   expo-file-system@57.0.7(expo@57.0.19)(react-native@0.86.3):
     dependencies:
-      expo: 57.0.19(@babel/core@7.29.7)(@expo/dom-webview@57.0.1)(@expo/metro-runtime@57.0.15)(expo-router@57.0.18)(react-native-webview@13.16.1)(react-native-worklets@0.10.1)(react-native@0.86.3)(react@19.2.3)(supports-color@8.1.1)(typescript@7.0.2)
+      expo: 57.0.19(@babel/core@7.29.7)(@expo/metro-runtime@57.0.15)(expo-router@57.0.18)(react-native-webview@13.16.1)(react-native-worklets@0.10.1)(react-native@0.86.3)(react@19.2.3)(supports-color@8.1.1)(typescript@7.0.2)
       react-native: 0.86.3(patch_hash=6ca2e1225f38672b073b92b9d13f24feebbe9e37ba67708a3f1569275ce99191)(@babel/core@7.29.7)(@react-native/jest-preset@0.86.3)(@types/react@19.2.18)(react@19.2.3)(supports-color@8.1.1)
 
   expo-font@57.0.3(expo@57.0.19)(react-native@0.86.3)(react@19.2.3):
     dependencies:
-      expo: 57.0.19(@babel/core@7.29.7)(@expo/dom-webview@57.0.1)(@expo/metro-runtime@57.0.15)(expo-router@57.0.18)(react-native-webview@13.16.1)(react-native-worklets@0.10.1)(react-native@0.86.3)(react@19.2.3)(supports-color@8.1.1)(typescript@7.0.2)
+      expo: 57.0.19(@babel/core@7.29.7)(@expo/metro-runtime@57.0.15)(expo-router@57.0.18)(react-native-webview@13.16.1)(react-native-worklets@0.10.1)(react-native@0.86.3)(react@19.2.3)(supports-color@8.1.1)(typescript@7.0.2)
       fontfaceobserver: 2.3.0
       react: 19.2.3
       react-native: 0.86.3(patch_hash=6ca2e1225f38672b073b92b9d13f24feebbe9e37ba67708a3f1569275ce99191)(@babel/core@7.29.7)(@react-native/jest-preset@0.86.3)(@types/react@19.2.18)(react@19.2.3)(supports-color@8.1.1)
 
   expo-glass-effect@57.0.3(expo@57.0.19)(react-native@0.86.3)(react@19.2.3):
     dependencies:
-      expo: 57.0.19(@babel/core@7.29.7)(@expo/dom-webview@57.0.1)(@expo/metro-runtime@57.0.15)(expo-router@57.0.18)(react-native-webview@13.16.1)(react-native-worklets@0.10.1)(react-native@0.86.3)(react@19.2.3)(supports-color@8.1.1)(typescript@7.0.2)
+      expo: 57.0.19(@babel/core@7.29.7)(@expo/metro-runtime@57.0.15)(expo-router@57.0.18)(react-native-webview@13.16.1)(react-native-worklets@0.10.1)(react-native@0.86.3)(react@19.2.3)(supports-color@8.1.1)(typescript@7.0.2)
       react: 19.2.3
       react-native: 0.86.3(patch_hash=6ca2e1225f38672b073b92b9d13f24feebbe9e37ba67708a3f1569275ce99191)(@babel/core@7.29.7)(@react-native/jest-preset@0.86.3)(@types/react@19.2.18)(react@19.2.3)(supports-color@8.1.1)
 
   expo-image-loader@57.0.1(expo@57.0.19):
     dependencies:
-      expo: 57.0.19(@babel/core@7.29.7)(@expo/dom-webview@57.0.1)(@expo/metro-runtime@57.0.15)(expo-router@57.0.18)(react-native-webview@13.16.1)(react-native-worklets@0.10.1)(react-native@0.86.3)(react@19.2.3)(supports-color@8.1.1)(typescript@7.0.2)
+      expo: 57.0.19(@babel/core@7.29.7)(@expo/metro-runtime@57.0.15)(expo-router@57.0.18)(react-native-webview@13.16.1)(react-native-worklets@0.10.1)(react-native@0.86.3)(react@19.2.3)(supports-color@8.1.1)(typescript@7.0.2)
 
   expo-image-manipulator@57.0.19(expo@57.0.19):
     dependencies:
-      expo: 57.0.19(@babel/core@7.29.7)(@expo/dom-webview@57.0.1)(@expo/metro-runtime@57.0.15)(expo-router@57.0.18)(react-native-webview@13.16.1)(react-native-worklets@0.10.1)(react-native@0.86.3)(react@19.2.3)(supports-color@8.1.1)(typescript@7.0.2)
+      expo: 57.0.19(@babel/core@7.29.7)(@expo/metro-runtime@57.0.15)(expo-router@57.0.18)(react-native-webview@13.16.1)(react-native-worklets@0.10.1)(react-native@0.86.3)(react@19.2.3)(supports-color@8.1.1)(typescript@7.0.2)
       expo-image-loader: 57.0.1(expo@57.0.19)
 
   expo-image-picker@57.0.19(expo@57.0.19):
     dependencies:
-      expo: 57.0.19(@babel/core@7.29.7)(@expo/dom-webview@57.0.1)(@expo/metro-runtime@57.0.15)(expo-router@57.0.18)(react-native-webview@13.16.1)(react-native-worklets@0.10.1)(react-native@0.86.3)(react@19.2.3)(supports-color@8.1.1)(typescript@7.0.2)
+      expo: 57.0.19(@babel/core@7.29.7)(@expo/metro-runtime@57.0.15)(expo-router@57.0.18)(react-native-webview@13.16.1)(react-native-worklets@0.10.1)(react-native@0.86.3)(react@19.2.3)(supports-color@8.1.1)(typescript@7.0.2)
       expo-image-loader: 57.0.1(expo@57.0.19)
 
   expo-keep-awake@57.0.2(expo@57.0.19)(react@19.2.3):
     dependencies:
-      expo: 57.0.19(@babel/core@7.29.7)(@expo/dom-webview@57.0.1)(@expo/metro-runtime@57.0.15)(expo-router@57.0.18)(react-native-webview@13.16.1)(react-native-worklets@0.10.1)(react-native@0.86.3)(react@19.2.3)(supports-color@8.1.1)(typescript@7.0.2)
+      expo: 57.0.19(@babel/core@7.29.7)(@expo/metro-runtime@57.0.15)(expo-router@57.0.18)(react-native-webview@13.16.1)(react-native-worklets@0.10.1)(react-native@0.86.3)(react@19.2.3)(supports-color@8.1.1)(typescript@7.0.2)
       react: 19.2.3
 
   expo-linking@57.0.9(expo@57.0.19)(react-native@0.86.3)(react@19.2.3)(supports-color@8.1.1):
@@ -8594,13 +8574,13 @@ snapshots:
 
   expo-localization@57.0.2(expo@57.0.19)(react@19.2.3):
     dependencies:
-      expo: 57.0.19(@babel/core@7.29.7)(@expo/dom-webview@57.0.1)(@expo/metro-runtime@57.0.15)(expo-router@57.0.18)(react-native-webview@13.16.1)(react-native-worklets@0.10.1)(react-native@0.86.3)(react@19.2.3)(supports-color@8.1.1)(typescript@7.0.2)
+      expo: 57.0.19(@babel/core@7.29.7)(@expo/metro-runtime@57.0.15)(expo-router@57.0.18)(react-native-webview@13.16.1)(react-native-worklets@0.10.1)(react-native@0.86.3)(react@19.2.3)(supports-color@8.1.1)(typescript@7.0.2)
       react: 19.2.3
       rtl-detect: 1.1.2
 
   expo-mail-composer@57.0.2(expo@57.0.19):
     dependencies:
-      expo: 57.0.19(@babel/core@7.29.7)(@expo/dom-webview@57.0.1)(@expo/metro-runtime@57.0.15)(expo-router@57.0.18)(react-native-webview@13.16.1)(react-native-worklets@0.10.1)(react-native@0.86.3)(react@19.2.3)(supports-color@8.1.1)(typescript@7.0.2)
+      expo: 57.0.19(@babel/core@7.29.7)(@expo/metro-runtime@57.0.15)(expo-router@57.0.18)(react-native-webview@13.16.1)(react-native-worklets@0.10.1)(react-native@0.86.3)(react@19.2.3)(supports-color@8.1.1)(typescript@7.0.2)
 
   expo-modules-autolinking@57.0.13(supports-color@8.1.1)(typescript@7.0.2):
     dependencies:
@@ -8639,7 +8619,7 @@ snapshots:
       color: 4.2.3
       debug: 4.4.3(supports-color@8.1.1)
       escape-string-regexp: 4.0.0
-      expo: 57.0.19(@babel/core@7.29.7)(@expo/dom-webview@57.0.1)(@expo/metro-runtime@57.0.15)(expo-router@57.0.18)(react-native-webview@13.16.1)(react-native-worklets@0.10.1)(react-native@0.86.3)(react@19.2.3)(supports-color@8.1.1)(typescript@7.0.2)
+      expo: 57.0.19(@babel/core@7.29.7)(@expo/metro-runtime@57.0.15)(expo-router@57.0.18)(react-native-webview@13.16.1)(react-native-worklets@0.10.1)(react-native@0.86.3)(react@19.2.3)(supports-color@8.1.1)(typescript@7.0.2)
       expo-constants: 57.0.17(expo@57.0.19)(react-native@0.86.3)(supports-color@8.1.1)
       expo-glass-effect: 57.0.3(expo@57.0.19)(react-native@0.86.3)(react@19.2.3)
       expo-linking: 57.0.9(expo@57.0.19)(react-native@0.86.3)(react@19.2.3)(supports-color@8.1.1)
@@ -8678,14 +8658,14 @@ snapshots:
   expo-sqlite@57.0.2(expo@57.0.19)(react-native@0.86.3)(react@19.2.3):
     dependencies:
       await-lock: 2.2.2
-      expo: 57.0.19(@babel/core@7.29.7)(@expo/dom-webview@57.0.1)(@expo/metro-runtime@57.0.15)(expo-router@57.0.18)(react-native-webview@13.16.1)(react-native-worklets@0.10.1)(react-native@0.86.3)(react@19.2.3)(supports-color@8.1.1)(typescript@7.0.2)
+      expo: 57.0.19(@babel/core@7.29.7)(@expo/metro-runtime@57.0.15)(expo-router@57.0.18)(react-native-webview@13.16.1)(react-native-worklets@0.10.1)(react-native@0.86.3)(react@19.2.3)(supports-color@8.1.1)(typescript@7.0.2)
       react: 19.2.3
       react-native: 0.86.3(patch_hash=6ca2e1225f38672b073b92b9d13f24feebbe9e37ba67708a3f1569275ce99191)(@babel/core@7.29.7)(@react-native/jest-preset@0.86.3)(@types/react@19.2.18)(react@19.2.3)(supports-color@8.1.1)
 
   expo-symbols@57.0.2(expo-font@57.0.3)(expo@57.0.19)(react-native@0.86.3)(react@19.2.3):
     dependencies:
       '@expo-google-fonts/material-symbols': 0.4.48
-      expo: 57.0.19(@babel/core@7.29.7)(@expo/dom-webview@57.0.1)(@expo/metro-runtime@57.0.15)(expo-router@57.0.18)(react-native-webview@13.16.1)(react-native-worklets@0.10.1)(react-native@0.86.3)(react@19.2.3)(supports-color@8.1.1)(typescript@7.0.2)
+      expo: 57.0.19(@babel/core@7.29.7)(@expo/metro-runtime@57.0.15)(expo-router@57.0.18)(react-native-webview@13.16.1)(react-native-worklets@0.10.1)(react-native@0.86.3)(react@19.2.3)(supports-color@8.1.1)(typescript@7.0.2)
       expo-font: 57.0.3(expo@57.0.19)(react-native@0.86.3)(react@19.2.3)
       react: 19.2.3
       react-native: 0.86.3(patch_hash=6ca2e1225f38672b073b92b9d13f24feebbe9e37ba67708a3f1569275ce99191)(@babel/core@7.29.7)(@react-native/jest-preset@0.86.3)(@types/react@19.2.18)(react@19.2.3)(supports-color@8.1.1)
@@ -8693,16 +8673,17 @@ snapshots:
 
   expo-web-browser@57.0.2(expo@57.0.19)(react-native@0.86.3):
     dependencies:
-      expo: 57.0.19(@babel/core@7.29.7)(@expo/dom-webview@57.0.1)(@expo/metro-runtime@57.0.15)(expo-router@57.0.18)(react-native-webview@13.16.1)(react-native-worklets@0.10.1)(react-native@0.86.3)(react@19.2.3)(supports-color@8.1.1)(typescript@7.0.2)
+      expo: 57.0.19(@babel/core@7.29.7)(@expo/metro-runtime@57.0.15)(expo-router@57.0.18)(react-native-webview@13.16.1)(react-native-worklets@0.10.1)(react-native@0.86.3)(react@19.2.3)(supports-color@8.1.1)(typescript@7.0.2)
       react-native: 0.86.3(patch_hash=6ca2e1225f38672b073b92b9d13f24feebbe9e37ba67708a3f1569275ce99191)(@babel/core@7.29.7)(@react-native/jest-preset@0.86.3)(@types/react@19.2.18)(react@19.2.3)(supports-color@8.1.1)
 
-  expo@57.0.19(@babel/core@7.29.7)(@expo/dom-webview@57.0.1)(@expo/metro-runtime@57.0.15)(expo-router@57.0.18)(react-native-webview@13.16.1)(react-native-worklets@0.10.1)(react-native@0.86.3)(react@19.2.3)(supports-color@8.1.1)(typescript@7.0.2):
+  expo@57.0.19(@babel/core@7.29.7)(@expo/metro-runtime@57.0.15)(expo-router@57.0.18)(react-native-webview@13.16.1)(react-native-worklets@0.10.1)(react-native@0.86.3)(react@19.2.3)(supports-color@8.1.1)(typescript@7.0.2):
     dependencies:
       '@babel/runtime': 7.29.7
       '@expo/cli': 57.0.26(@expo/dom-webview@57.0.1)(@expo/metro-runtime@57.0.15)(expo-constants@57.0.17)(expo-font@57.0.3)(expo-router@57.0.18)(expo@57.0.19)(react-native@0.86.3)(react@19.2.3)(supports-color@8.1.1)(typescript@7.0.2)
       '@expo/config': 57.0.9(supports-color@8.1.1)(typescript@7.0.2)
       '@expo/config-plugins': 57.0.9(supports-color@8.1.1)(typescript@7.0.2)
       '@expo/devtools': 57.0.1(react-native@0.86.3)(react@19.2.3)
+      '@expo/dom-webview': 57.0.1(expo@57.0.19)(react-native@0.86.3)(react@19.2.3)
       '@expo/fingerprint': 0.20.13(supports-color@8.1.1)
       '@expo/local-build-cache-provider': 57.0.8(supports-color@8.1.1)(typescript@7.0.2)
       '@expo/log-box': 57.0.4(@expo/dom-webview@57.0.1)(expo@57.0.19)(react-native@0.86.3)(react@19.2.3)
@@ -8723,7 +8704,6 @@ snapshots:
       react-refresh: 0.14.2
       whatwg-url-minimum: 0.1.2
     optionalDependencies:
-      '@expo/dom-webview': 57.0.1(expo@57.0.19)(react-native@0.86.3)(react@19.2.3)
       '@expo/metro-runtime': 57.0.15(@expo/log-box@57.0.4)(expo@57.0.19)(react-native@0.86.3)(react@19.2.3)
       react-native-webview: 13.16.1(react-native@0.86.3)(react@19.2.3)
     transitivePeerDependencies:
