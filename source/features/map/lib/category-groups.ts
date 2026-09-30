@@ -68,6 +68,16 @@ export function groupsFor(
 		}))
 }
 
+/// A group's color as `rgb(r, g, b)`: its gradient's darker stop,
+/// `color(display-p3 r g b)`, read as sRGB. Neither a SwiftUI image's color
+/// nor MapLibre's paint takes display-p3, so this comes out a little less
+/// saturated than the gradient itself.
+export function groupColor(gradient: Gradient): string {
+	let channels = gradient[1].match(/[\d.]+/gu)?.slice(-3) ?? ['0', '0', '0']
+	let [r, g, b] = channels.map((channel) => Math.round(Number(channel) * 255))
+	return `rgb(${r}, ${g}, ${b})`
+}
+
 /// A group's places, sorted by name. A place matching two of the group's
 /// values is still listed once.
 export function placesIn(

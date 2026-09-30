@@ -11,8 +11,6 @@ import {
 	font,
 	foregroundStyle,
 	frame,
-	listRowBackground,
-	listRowInsets,
 	multilineTextAlignment,
 	onGeometryChange,
 	padding,
@@ -220,16 +218,7 @@ export function BuildingPicker({
 							<BuildingRow key={building.id} building={building} onSelect={onSelect} />
 						))
 					) : compact ? null : (
-						// The grid is one row of the list, drawn without the row's
-						// card, so other sections can sit below it in the same list.
-						<VStack
-							modifiers={[
-								listRowBackground('clear'),
-								listRowInsets({top: 0, leading: 0, bottom: 0, trailing: 0}),
-							]}
-						>
-							<CategoryGrid groups={groups} onOpen={openFromTile} />
-						</VStack>
+						<CategoryGrid groups={groups} onOpen={openFromTile} />
 					)}
 				</Section>
 			</List>

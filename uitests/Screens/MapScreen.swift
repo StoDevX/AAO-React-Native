@@ -479,11 +479,12 @@ struct MapScreen: Screen {
 		return self
 	}
 
-	/// Opens a group from the sheet's category grid.
+	/// Opens a group from the sheet's categories: a tile in the grid, or a
+	/// row once the text size turns the grid into a list.
 	@discardableResult
 	func openCategory(_ label: String) -> Self {
-		let tile = app.otherElements[TestIdentifiers.Map.categoryGrid].buttons[label].firstMatch
-		XCTAssertTrue(tile.waitForExistence(timeout: 30), "The grid should offer \(label)")
+		let tile = app.buttons[label].firstMatch
+		XCTAssertTrue(tile.waitForExistence(timeout: 30), "The sheet should offer \(label)")
 		tile.tap()
 		XCTAssertTrue(
 			groupBackButton.waitForExistence(timeout: 10),
@@ -502,6 +503,18 @@ struct MapScreen: Screen {
 			app.staticTexts[label].waitForExistence(timeout: 10),
 			"The header should read \(label)")
 		XCTAssertTrue(groupBackButton.exists, "\(label)'s header should have a back button")
+		return self
+	}
+
+	/// At large text sizes the categories are rows rather than a grid.
+	@discardableResult
+	func verifyCategoriesAsList(including label: String) -> Self {
+		XCTAssertTrue(
+			app.buttons[label].firstMatch.waitForExistence(timeout: 30),
+			"The sheet should list \(label)")
+		XCTAssertFalse(
+			app.otherElements[TestIdentifiers.Map.categoryGrid].exists,
+			"At this text size the categories should be a list, not a grid")
 		return self
 	}
 

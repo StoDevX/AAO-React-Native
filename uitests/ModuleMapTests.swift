@@ -355,14 +355,15 @@ class ModuleMapTests: UITestCase {
 			.verifyGroupTitleClearsBackButton(TestIdentifiers.Map.allBuildingsCategory)
 	}
 
-	/// The grid at the largest text size, for a person to look at: tiles
-	/// wrap to fewer columns and no label is cut off.
-	func testTheGridAtTheLargestTextSize() throws {
+	/// At the largest text size the categories are a list: a grid narrow
+	/// enough to fit would leave each label a word or two a line.
+	func testTheCategoriesAreAListAtTheLargestTextSize() throws {
 		relaunch(atContentSizeCategory: TestIdentifiers.LaunchArguments.accessibilityExtraExtraExtraLarge)
 		MapScreen(app: app)
 			.navigate()
 			.checkSheetPresented()
 			.expandSheet()
-			.capture("St. Olaf map category grid at the largest text size")
+			.capture("St. Olaf map categories at the largest text size")
+			.verifyCategoriesAsList(including: TestIdentifiers.Map.diningCategory)
 	}
 }

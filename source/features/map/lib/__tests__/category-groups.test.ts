@@ -2,7 +2,13 @@ import {describe, expect, test} from '@jest/globals'
 import {goldGradient, grayGradient} from '@frogpond/colors'
 
 import {makeBuilding} from '../../__tests__/fixtures'
-import {FALLBACK_GROUP_ICON, groupsFor, placesIn, type MapCategoryTable} from '../category-groups'
+import {
+	FALLBACK_GROUP_ICON,
+	groupColor,
+	groupsFor,
+	placesIn,
+	type MapCategoryTable,
+} from '../category-groups'
 
 const TABLE: MapCategoryTable = {
 	stolaf: [
@@ -136,5 +142,14 @@ describe('placesIn', () => {
 	test('leaves out a place that lists no categories', () => {
 		let bare = [makeBuilding({id: 'windmill', name: 'Windmill', categories: []})]
 		expect(placesIn(housing(), bare)).toEqual([])
+	})
+})
+
+describe('groupColor', () => {
+	// SwiftUI images and MapLibre paint both take an rgb() string; neither
+	// takes the display-p3 notation the gradients are written in.
+	test("reads the gradient's darker stop as an rgb color", () => {
+		// goldGradient[1] is color(display-p3 0.9216 0.651 0.3529)
+		expect(groupColor(goldGradient)).toBe('rgb(235, 166, 90)')
 	})
 })
