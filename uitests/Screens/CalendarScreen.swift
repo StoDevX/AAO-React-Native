@@ -139,19 +139,6 @@ struct CalendarScreen: Screen {
 
 	// MARK: - Day picker strip
 
-	/// The leading day cells in the strip, in the order they are laid out.
-	///
-	/// Bound by identifier rather than by position: the strip and the list are
-	/// both made of buttons, and only the identifier separates them.
-	///
-	/// Only the first `limit` cells are read. The strip draws a cell for every day
-	/// between today and the last event it knows about, which runs to a hundred or
-	/// more, and every frame a query reads is a round trip to the app -- reading
-	/// them all takes minutes. Nothing asks about a day past the first screenful.
-	private func dayCells(limit: Int = 14) -> [XCUIElement] {
-		dayCellFrames(limit: limit).sorted { $0.frame.minX < $1.frame.minX }.map { $0.cell }
-	}
-
 	@discardableResult
 	func verifyStripIsPresent() -> Self {
 		let cell = app.buttons.matching(
@@ -163,29 +150,43 @@ struct CalendarScreen: Screen {
 		return self
 	}
 
-	/// Every day cell the app is currently exposing, paired with where it sits.
+	/// The day cells with any of their frame inside the window, leading to
+	/// trailing.
 	///
-	/// The frames are read once and carried: a comparator or filter that reached
-	/// for `frame` would ask the app again on every comparison.
-	private func dayCellFrames(limit: Int) -> [(cell: XCUIElement, frame: CGRect)] {
-		let matches = app.buttons.matching(
-			NSPredicate(format: "identifier BEGINSWITH %@", TestIdentifiers.Calendar.dayCellPrefix)
-		)
-
-		return (0..<min(limit, matches.count)).map { index in
-			let cell = matches.element(boundBy: index)
-			return (cell: cell, frame: cell.frame)
+	/// Read from one snapshot of the app rather than a query per cell: each
+	/// query is a round trip, and asking twenty-odd cells took seconds. The
+	/// strip and the list are both made of buttons, and only the identifier
+	/// separates them.
+	private func visibleDayCells() -> [XCUIElementSnapshot] {
+		let root: XCUIElementSnapshot
+		do {
+			root = try app.snapshot()
+		} catch {
+			XCTFail("The app's accessibility tree should be readable: \(error)")
+			return []
 		}
+		let window = app.frame
+		var cells: [XCUIElementSnapshot] = []
+		var pending = [root]
+		while let node = pending.popLast() {
+			if node.elementType == .button,
+				node.identifier.hasPrefix(TestIdentifiers.Calendar.dayCellPrefix),
+				!node.frame.intersection(window).isEmpty
+			{
+				cells.append(node)
+			}
+			pending.append(contentsOf: node.children)
+		}
+		return cells.sorted { $0.frame.minX < $1.frame.minX }
 	}
 
-	/// The leftmost day cell inside the strip's viewport, and its frame.
+	/// The frame of the leftmost day cell that starts inside the strip.
 	///
-	/// Distinct from `dayCells().first`: a cell dragged off the leading edge
-	/// keeps a frame, and its origin goes negative rather than disappearing, so
-	/// after a swipe the leftmost cell by frame is one the user cannot see.
-	private func leadingVisibleDayCell(limit: Int = 21) -> (cell: XCUIElement, frame: CGRect)? {
-		let onscreen = dayCellFrames(limit: limit).filter { $0.frame.minX >= 0 }
-		return onscreen.min(by: { $0.frame.minX < $1.frame.minX })
+	/// A cell dragged off the leading edge keeps a frame, and its origin goes
+	/// negative rather than disappearing, so after a swipe the leftmost visible
+	/// cell can be a sliver the user cannot see.
+	private func leadingVisibleDayCellFrame() -> CGRect? {
+		visibleDayCells().first { $0.frame.minX >= 0 }?.frame
 	}
 
 	/// Drags the strip one week toward the leading edge and lets it settle.
@@ -197,12 +198,11 @@ struct CalendarScreen: Screen {
 	/// it.
 	@discardableResult
 	func swipeStripToNextWeek() -> Self {
-		guard let leading = leadingVisibleDayCell() else {
+		guard let strip = leadingVisibleDayCellFrame() else {
 			XCTFail("The strip should have a day cell to drag from")
 			return self
 		}
 
-		let strip = leading.frame
 		let origin = app.coordinate(withNormalizedOffset: .zero)
 		let start = origin.withOffset(CGVector(dx: strip.midX + 280, dy: strip.midY))
 		let end = origin.withOffset(CGVector(dx: strip.midX + 40, dy: strip.midY))
@@ -238,33 +238,11 @@ struct CalendarScreen: Screen {
 		return selected.identifier
 	}
 
-  /// The currently visible days on the date picker, leading to trailing.
-  ///
-  /// Read from one snapshot of the app rather than cell by cell: asking each
-  /// cell `isHittable` is a round trip apiece, and took seconds a reading. A
+  /// The currently visible days on the date picker, leading to trailing. A
   /// cell counts when any of its frame is inside the window, which gives the
   /// same days `isHittable` did, a sliver at either edge included.
   func datePickerDayIdentifiers() -> [String] {
-    let root: XCUIElementSnapshot
-    do {
-      root = try app.snapshot()
-    } catch {
-      XCTFail("The app's accessibility tree should be readable: \(error)")
-      return []
-    }
-    let window = app.frame
-    var cells: [XCUIElementSnapshot] = []
-    var pending = [root]
-    while let node = pending.popLast() {
-      if node.elementType == .button,
-        node.identifier.hasPrefix(TestIdentifiers.Calendar.dayCellPrefix),
-        !node.frame.intersection(window).isEmpty
-      {
-        cells.append(node)
-      }
-      pending.append(contentsOf: node.children)
-    }
-    return cells.sorted { $0.frame.minX < $1.frame.minX }.map { $0.identifier }
+    visibleDayCells().map { $0.identifier }
   }
 
   /// Wait for the strip to show exactly `expected`. A scroll to a week is
