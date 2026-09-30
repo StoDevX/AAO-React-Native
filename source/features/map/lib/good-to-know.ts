@@ -97,7 +97,10 @@ export function goodToKnowRows(
 	}
 
 	if (building.walk) {
-		rows.push({kind: 'walk-time', text: formatWalkTime(building.walk.minutes)}, {kind: 'walk-access', text: building.walk.accessibility})
+		rows.push(
+			{kind: 'walk-time', text: formatWalkTime(building.walk.minutes)},
+			{kind: 'walk-access', text: building.walk.accessibility},
+		)
 	}
 
 	if (building.accessibility === 'wheelchair') {
