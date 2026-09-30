@@ -42,8 +42,9 @@ import type {Campus} from '../../../source/features/building-hours/types'
 import {PlaceStackCard} from '../../../source/features/map/place-stack-card'
 import {highlightedFeatureId, placeStack} from '../../../source/features/map/lib/place-stack'
 import {BuildingPicker} from '../../../source/features/map/building-picker'
-import {framingFor, type MapPins} from '../../../source/features/map/lib/map-pins'
+import {framingFor, type Framing, type MapPins} from '../../../source/features/map/lib/map-pins'
 import {placeForTap} from '../../../source/features/map/lib/place-for-tap'
+import {selectionFor, selectionFraming} from '../../../source/features/map/lib/selection'
 import {MapPinImages, MapPinsLayer} from '../../../source/features/map/map-pins-layer'
 import {MapSelectionLayer} from '../../../source/features/map/map-selection-layer'
 import {useFrameRequests} from '../../../source/features/map/use-frame-requests'
@@ -61,7 +62,7 @@ import {
 } from '../../../source/features/map/lib/sheet-detents'
 import {mapDataOptions} from '../../../source/features/map/query'
 import {useRecentPlacesStore} from '../../../source/features/map/store'
-import type {Building, Coordinate, Feature, Point} from '../../../source/features/map/types'
+import type {Building, Coordinate, Feature} from '../../../source/features/map/types'
 import {mapCredits, mapStyleUrl} from '../../../source/features/map/urls'
 
 /** Each campus's starting camera position. Carleton's predates this file
@@ -248,46 +249,9 @@ export default function MapPage(): React.ReactNode {
 	// card, so these persist while a card is open.
 	let [pins, setPins] = React.useState<MapPins | null>(null)
 
-	// The map follows the top of the stack.
-	let highlightedId = highlightedFeatureId(stack, venues)
-	let selectedPoint = React.useMemo(() => {
-		if (!highlightedId) {
-			return null
-		}
-		let match = buildings.find((b) => b.id === highlightedId)
-		if (!match) {
-			return null
-		}
-		let point = match.geometry.geometries.find((geo): geo is Point => geo.type === 'Point')
-		return point ? {id: match.id, name: match.properties.name, point} : null
-	}, [highlightedId, buildings])
-
-	// Reads the sheet's height at the moment of selection without depending on
-	// it: Apple Maps leaves the map where it is when its sheet changes stop, so
-	// only a new selection moves the camera.
-	let easeToSelection = React.useEffectEvent((point: Point) => {
-		cameraRef.current?.easeTo({
-			center: point.coordinates,
-			duration: CAMERA_ANIMATION_MS,
-			// The sheet sits over the bottom of the map, so centring on the
-			// building put the thing just selected underneath it. Pad by where
-			// the sheet actually is: a hardcoded half-screen lifted the building
-			// far too high whenever the sheet was resting collapsed.
-			padding: {bottom: sheetHeight},
-			zoom: SELECTION_ZOOM,
-		})
-	})
-
-	React.useEffect(() => {
-		if (selectedPoint) {
-			easeToSelection(selectedPoint.point)
-		}
-	}, [selectedPoint])
-
-	// Frames places in the map above the sheet and below the header: several
-	// fit, one eased to at the selection zoom.
-	let frameOn = (places: Array<Feature<Building>>) => {
-		let framing = framingFor(places)
+	// Frames what a Framing asks for in the map above the sheet and below the
+	// header: a box fitted, one place eased to at the selection zoom.
+	let applyFraming = (framing: Framing) => {
 		if (framing?.kind === 'fit') {
 			cameraRef.current?.fitBounds(framing.bounds, {
 				padding: {
@@ -302,11 +266,43 @@ export default function MapPage(): React.ReactNode {
 			cameraRef.current?.easeTo({
 				center: framing.center,
 				duration: CAMERA_ANIMATION_MS,
+				// The sheet sits over the bottom of the map, so centring on the
+				// place put it underneath. Pad by where the sheet actually is: a
+				// hardcoded half-screen lifted it far too high whenever the sheet
+				// was resting collapsed.
 				padding: {bottom: sheetHeight},
 				zoom: SELECTION_ZOOM,
 			})
 		}
 	}
+
+	// Frames places above the sheet: several fit, one eased to.
+	let frameOn = (places: Array<Feature<Building>>) => applyFraming(framingFor(places))
+
+	// The map follows the top of the stack.
+	let highlightedId = highlightedFeatureId(stack, venues)
+	let selectedPlace = React.useMemo(
+		() => (highlightedId ? buildings.find((b) => b.id === highlightedId) : undefined),
+		[highlightedId, buildings],
+	)
+	let selection = React.useMemo(
+		() => (selectedPlace ? selectionFor(selectedPlace) : null),
+		[selectedPlace],
+	)
+
+	// Reads the sheet's height at the moment of selection without depending on
+	// it: Apple Maps leaves the map where it is when its sheet changes stop, so
+	// only a new selection moves the camera. A trail is framed whole; anything
+	// else is eased to.
+	let frameSelection = React.useEffectEvent((place: Feature<Building>) => {
+		applyFraming(selectionFraming(place))
+	})
+
+	React.useEffect(() => {
+		if (selectedPlace) {
+			frameSelection(selectedPlace)
+		}
+	}, [selectedPlace])
 
 	// Framed only when the picker asks -- a tile tap or a finished search --
 	// never as results change while typing.
@@ -371,11 +367,7 @@ export default function MapPage(): React.ReactNode {
 				<MapPinImages />
 				<MapPinsLayer onCluster={frameCluster} onSelect={openPlace} pins={pins} />
 
-				<MapSelectionLayer
-					place={
-						selectedPoint ? {at: selectedPoint.point.coordinates, name: selectedPoint.name} : null
-					}
-				/>
+				<MapSelectionLayer selection={selection} />
 			</Map>
 			{/* Covers the map, and lets every touch through. The sheet is
 			    presented rather than laid out, so the Host needs no size of its
