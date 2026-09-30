@@ -1,8 +1,8 @@
 amends "package://github.com/jdx/hk/releases/download/v1.41.0/hk@1.41.0#/Config.pkl"
 
-// hk runs steps at once unless one depends on another, so every step that
-// reads the source waits for oxlint's fixes: otherwise oxfmt, tsc and jest
-// pass the code as it was, and the commit takes oxlint's rewrite unchecked.
+// hk runs steps at once unless one depends on another. Under `hk fix`, every
+// step that reads the source waits for oxlint's fixes, so oxfmt formats them
+// and tsc and jest check them.
 local linters = new Mapping<String, Step> {
   ["oxfmt"] {
     check = "mise run format:check"
@@ -11,7 +11,7 @@ local linters = new Mapping<String, Step> {
   }
   ["oxlint"] {
     check = "mise run lint"
-    fix = "oxlint --fix source/ modules/ scripts/ images/"
+    fix = "mise run lint -- --fix"
   }
   ["tsc"] {
     check = "mise run tsc"
@@ -24,8 +24,10 @@ local linters = new Mapping<String, Step> {
 }
 
 hooks {
+  // A commit takes what was staged or nothing: code that is unformatted or
+  // fails a lint rule stops the commit, and `hk fix` is the way to fix it.
   ["pre-commit"] {
-    fix = true
+    fix = false
     stash = "git"
     steps = linters
   }
