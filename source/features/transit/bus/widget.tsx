@@ -1,4 +1,5 @@
 import * as React from 'react'
+import {useWindowDimensions} from 'react-native'
 import {
 	Button,
 	Circle,
@@ -44,7 +45,9 @@ import {BusGlyph} from './components/timetable-row'
 import {
 	buildStopStrip,
 	busPropsForCell,
+	isAccessibilityTextSize,
 	legsBehindTheBus,
+	stopCellWidth,
 	stripAnchorIndex,
 	tripOnTheStrip,
 	type StopStripCell,
@@ -52,10 +55,6 @@ import {
 import type {UnprocessedBusLine} from './types'
 import {useLineState} from './use-line-state'
 
-/// Wide enough for "Buntrock Commons" to wrap to two lines rather than
-/// truncate, narrow enough that four cells are visible at once on a 393pt
-/// screen.
-const CELL_WIDTH = 86
 /// Height of the rail the dots sit on.
 const RAIL_HEIGHT = 3
 /// What the rail, and anything sitting on it, weighs ahead of the bus.
@@ -144,10 +143,13 @@ function StopCell({
 	legOutSolid,
 	busFraction,
 	busAtStop,
+	cellWidth,
 	onPress,
 }: {
 	cell: StopStripCell
 	index: number
+	/** From `stopCellWidth`; every cell on the strip shares it. */
+	cellWidth: number
 	barColor: string
 	dotColor: string
 	isFirst: boolean
@@ -172,7 +174,7 @@ function StopCell({
 	// cells, and never reaches half a cell -- `busPropsForCell` hands the bus to
 	// whichever of the two stops is nearer. Every cell is the same known width,
 	// so the bus sits at its true point on the leg with nothing measured.
-	let busOffset = busFraction == null || busAtStop ? null : CELL_WIDTH * busFraction
+	let busOffset = busFraction == null || busAtStop ? null : cellWidth * busFraction
 
 	return (
 		<Button
@@ -180,7 +182,7 @@ function StopCell({
 				buttonStyle('plain'),
 				accessibilityLabel(`${cell.name}, ${cell.time?.isValid() ? time : NOT_SERVED_SPOKEN}`),
 				id(String(index)),
-				frame({width: CELL_WIDTH}),
+				frame({width: cellWidth}),
 			]}
 			onPress={onPress}
 		>
@@ -194,7 +196,7 @@ function StopCell({
 					{time}
 				</Text>
 
-				<ZStack modifiers={[frame({width: CELL_WIDTH, height: DOT_SIZE})]}>
+				<ZStack modifiers={[frame({width: cellWidth, height: DOT_SIZE})]}>
 					{/* Two halves rather than one bar: the rail has to stop at
 					    the ends of the route, and each half belongs to a
 					    different leg -- the one in from the stop before, and the
@@ -208,14 +210,14 @@ function StopCell({
 					<HStack spacing={0}>
 						<Rectangle
 							modifiers={[
-								frame({width: CELL_WIDTH / 2, height: RAIL_HEIGHT}),
+								frame({width: cellWidth / 2, height: RAIL_HEIGHT}),
 								foregroundStyle(barColor),
 								opacity(isFirst ? 0 : legInSolid ? 1 : RAIL_AHEAD_OPACITY),
 							]}
 						/>
 						<Rectangle
 							modifiers={[
-								frame({width: CELL_WIDTH / 2, height: RAIL_HEIGHT}),
+								frame({width: cellWidth / 2, height: RAIL_HEIGHT}),
 								foregroundStyle(barColor),
 								opacity(isLast ? 0 : legOutSolid ? 1 : RAIL_AHEAD_OPACITY),
 							]}
@@ -243,7 +245,7 @@ function StopCell({
 					modifiers={[
 						font({textStyle: 'caption'}),
 						foregroundStyle(isSkipped ? c.tertiaryLabel : c.secondaryLabel),
-						frame({width: CELL_WIDTH}),
+						frame({width: cellWidth}),
 						multilineTextAlignment('center'),
 					]}
 				>
@@ -265,6 +267,7 @@ function StopCell({
  */
 function RouteEndCell({
 	cellId,
+	cellWidth,
 	time,
 	onPress,
 }: {
@@ -274,6 +277,8 @@ function RouteEndCell({
 	 * lands in the binding `scrollPosition` is reading.
 	 */
 	cellId: string
+	/** From `stopCellWidth`, matching the stops before it. */
+	cellWidth: number
 	time: Moment | null
 	onPress: () => void
 }): React.ReactNode {
@@ -284,7 +289,7 @@ function RouteEndCell({
 			modifiers={[
 				buttonStyle('plain'),
 				id(cellId),
-				frame({width: CELL_WIDTH}),
+				frame({width: cellWidth}),
 				accessibilityElement('combine'),
 				accessibilityLabel(time ? `Next departure, ${label}` : 'Last bus of the day'),
 			]}
@@ -295,18 +300,18 @@ function RouteEndCell({
 					{label}
 				</Text>
 
-				<ZStack modifiers={[frame({width: CELL_WIDTH, height: DOT_SIZE})]}>
+				<ZStack modifiers={[frame({width: cellWidth, height: DOT_SIZE})]}>
 					<HStack spacing={0}>
 						<Rectangle
 							modifiers={[
-								frame({width: CELL_WIDTH / 2, height: RAIL_HEIGHT}),
+								frame({width: cellWidth / 2, height: RAIL_HEIGHT}),
 								foregroundStyle(c.tertiaryLabel),
 								opacity(time ? 0.35 : 0),
 							]}
 						/>
 						<Rectangle
 							modifiers={[
-								frame({width: CELL_WIDTH / 2, height: RAIL_HEIGHT}),
+								frame({width: cellWidth / 2, height: RAIL_HEIGHT}),
 								foregroundStyle(c.tertiaryLabel),
 								opacity(0),
 							]}
@@ -349,7 +354,7 @@ function RouteEndCell({
 					modifiers={[
 						font({textStyle: 'caption'}),
 						foregroundStyle(c.tertiaryLabel),
-						frame({width: CELL_WIDTH}),
+						frame({width: cellWidth}),
 						multilineTextAlignment('center'),
 					]}
 				>
@@ -423,6 +428,28 @@ export function BusLineWidget({line, now, onPress}: Props): React.ReactNode {
 	let barColor = String(line.colors.bar)
 	let dotColor = String(line.colors.dot)
 
+	let {fontScale} = useWindowDimensions()
+	let cellWidth = stopCellWidth(fontScale)
+
+	let lineName = (
+		<HStack spacing={8}>
+			{/* Tinted with the line's own dot color -- the same cue the old
+			    native tab bar gave each bus line before the tabs went away.
+			    The header's accessibility label already names the line, so
+			    this carries no label of its own. */}
+			<Image
+				modifiers={[font({textStyle: 'body'}), foregroundStyle(barColor)]}
+				systemName="bus.fill"
+			/>
+			<Text modifiers={[font({textStyle: 'body', weight: 'semibold'})]}>{line.line}</Text>
+		</HStack>
+	)
+	let lineStatus = (
+		<Text modifiers={[font({textStyle: 'subheadline'}), foregroundStyle(c.secondaryLabel)]}>
+			{subtitle}
+		</Text>
+	)
+
 	return (
 		<Section>
 			<Button
@@ -433,19 +460,24 @@ export function BusLineWidget({line, now, onPress}: Props): React.ReactNode {
 					modifiers={[contentShape(shapes.rectangle()), frame({maxWidth: FILL_WIDTH})]}
 					spacing={8}
 				>
-					{/* Tinted with the line's own dot color -- the same cue the old
-					    native tab bar gave each bus line before the tabs went away.
-					    The header's accessibility label already names the line, so
-					    this carries no label of its own. */}
-					<Image
-						modifiers={[font({textStyle: 'body'}), foregroundStyle(barColor)]}
-						systemName="bus.fill"
-					/>
-					<Text modifiers={[font({weight: 'semibold'})]}>{line.line}</Text>
-					<Spacer />
-					<Text modifiers={[font({textStyle: 'subheadline'}), foregroundStyle(c.secondaryLabel)]}>
-						{subtitle}
-					</Text>
+					{/* At the accessibility sizes the name and the status cannot
+					    share a row without breaking words, so the status drops
+					    below the name. */}
+					{isAccessibilityTextSize(fontScale) ? (
+						<>
+							<VStack alignment="leading" spacing={2}>
+								{lineName}
+								{lineStatus}
+							</VStack>
+							<Spacer />
+						</>
+					) : (
+						<>
+							{lineName}
+							<Spacer />
+							{lineStatus}
+						</>
+					)}
 					<Image
 						modifiers={[font({textStyle: 'footnote'}), foregroundStyle(c.tertiaryLabel)]}
 						systemName="chevron.right"
@@ -492,6 +524,7 @@ export function BusLineWidget({line, now, onPress}: Props): React.ReactNode {
 								key={`${cell.name}-${index}`}
 								barColor={barColor}
 								cell={cell}
+								cellWidth={cellWidth}
 								dotColor={dotColor}
 								index={index}
 								isFirst={index === 0}
@@ -504,7 +537,12 @@ export function BusLineWidget({line, now, onPress}: Props): React.ReactNode {
 								{...busPropsForCell(busTarget, index)}
 							/>
 						))}
-						<RouteEndCell cellId={String(cells.length)} onPress={onPress} time={nextRoundStart} />
+						<RouteEndCell
+							cellId={String(cells.length)}
+							cellWidth={cellWidth}
+							onPress={onPress}
+							time={nextRoundStart}
+						/>
 					</HStack>
 				</ScrollView>
 			)}
