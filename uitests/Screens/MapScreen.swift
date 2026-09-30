@@ -153,11 +153,14 @@ struct MapScreen: Screen {
 		return self
 	}
 
-	/// A building's row in the sheet's list. Matched on the label's prefix, not
-	/// the whole label: a building carrying an abbreviation reads as "Buntrock
-	/// Commons, BC", so an exact match would find only the ones without one.
+	/// A building's row in the sheet's list: the name alone, or the name and
+	/// then its abbreviation -- a building carrying one reads as "Buntrock
+	/// Commons, BC". Not any label beginning with the name, which would take
+	/// Baseball Pond Loop's row for Baseball Pond's.
 	private func row(named name: String) -> XCUIElement {
-		app.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", name)).firstMatch
+		app.buttons.matching(
+			NSPredicate(format: "label == %@ OR label BEGINSWITH %@", name, "\(name), ")
+		).firstMatch
 	}
 
 	/// The collapsed stop rests at the foot of the screen with the field on it,

@@ -2,6 +2,8 @@ import type {LngLatBounds} from '@maplibre/maplibre-react-native'
 
 import type {Building, Coordinate, Feature, Point} from '../types'
 import {featureBounds} from './feature-bounds'
+import {distanceSquared} from './distance'
+import {anchorOf} from './place-geometry'
 
 /// Search results' pins: iOS system red in its light appearance, as a string
 /// MapLibre's paint accepts. A `PlatformColor` is not one.
@@ -18,10 +20,6 @@ export type MapPins = {
 
 export type PinProperties = {buildingId: string; name: string}
 
-function pointOf(place: Feature<Building>): Point | undefined {
-	return place.geometry.geometries.find((geometry): geometry is Point => geometry.type === 'Point')
-}
-
 /// One GeoJSON point per place, at the place's own point. A place with none
 /// is listed in the sheet but has nowhere to go on the map.
 export function pinCollection(
@@ -30,7 +28,7 @@ export function pinCollection(
 	return {
 		type: 'FeatureCollection',
 		features: places.flatMap((place) => {
-			let point = pointOf(place)
+			let point = anchorOf(place)
 			if (!point) {
 				return []
 			}
@@ -47,7 +45,7 @@ export function pinCollection(
 
 function pointsOf(places: Array<Feature<Building>>): Point[] {
 	return places.flatMap((place) => {
-		let point = pointOf(place)
+		let point = anchorOf(place)
 		return point ? [point] : []
 	})
 }
@@ -71,14 +69,6 @@ export type PinPress =
 	| {kind: 'pin'; buildingId: string}
 	| {kind: 'cluster'; clusterId: number; center: Coordinate}
 	| null
-
-/// Squared distance between two coordinates, with longitude shrunk by the
-/// latitude so east-west and north-south count alike. Only compared, never
-/// shown, so neither the root nor the units matter.
-export function distanceSquared([lngA, latA]: Coordinate, [lngB, latB]: Coordinate): number {
-	let shrink = Math.cos((latA * Math.PI) / 180)
-	return ((lngA - lngB) * shrink) ** 2 + (latA - latB) ** 2
-}
 
 /// The point feature nearest a touch, and where it is. A touch's hitbox can
 /// cover more than one, and MapLibre lists them in no useful order.
