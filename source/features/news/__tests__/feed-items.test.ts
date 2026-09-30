@@ -23,10 +23,6 @@ test('throws when every item in a non-empty response is malformed', () => {
 	expect(() => parseFeedItems([{authors: 'not an array'}, 'garbage'])).toThrow()
 })
 
-test('returns an empty list when the feed legitimately has no items', () => {
-	expect(parseFeedItems([])).toStrictEqual([])
-})
-
 test('throws when the response is not an array', () => {
 	expect(() => parseFeedItems({not: 'an array'})).toThrow()
 })

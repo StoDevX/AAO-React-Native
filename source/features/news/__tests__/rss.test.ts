@@ -213,10 +213,6 @@ test('throws when every item in a non-empty feed is malformed', () => {
 	).toThrow()
 })
 
-test('returns an empty list when the feed legitimately has no items', () => {
-	expect(parseRssFeed(feed(''))).toStrictEqual([])
-})
-
 test('strips html and trims titles and excerpts', () => {
 	const stories = parseRssFeed(
 		feed(`

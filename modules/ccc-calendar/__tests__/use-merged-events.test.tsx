@@ -9,10 +9,12 @@ import {useMergedEvents} from '../use-merged-events'
 // `useMergedEvents` reads nothing out of these queries directly: each writes
 // into the database and resolves to a receipt of that write, so the mocks only
 // need to resolve or reject, standing in for the receipt.
+const mockFetchCounts = new Map<string, number>()
 jest.mock('../query', () => ({
 	namedCalendarOptions: (name: string) => ({
 		queryKey: ['calendar', 'named', name],
 		queryFn: () => {
+			mockFetchCounts.set(name, (mockFetchCounts.get(name) ?? 0) + 1)
 			if (name === 'northfield') throw new Error('down')
 			return {writtenAt: Date.now(), count: 1}
 		},
@@ -20,6 +22,7 @@ jest.mock('../query', () => ({
 }))
 
 const STOLAF: CalendarSource = {id: 'stolaf', title: 'St. Olaf', color: 'blue'}
+const PRESENCE: CalendarSource = {id: 'presence', title: 'Presence', color: 'green'}
 const NORTHFIELD: CalendarSource = {
 	id: 'northfield',
 	title: 'Northfield',
@@ -61,9 +64,13 @@ describe('useMergedEvents', () => {
 	})
 
 	test('refetchAll refetches every source', async () => {
-		let {result} = await renderHook(() => useMergedEvents([STOLAF]), {wrapper})
-
+		let {result} = await renderHook(() => useMergedEvents([STOLAF, PRESENCE]), {wrapper})
 		await waitFor(() => expect(result.current.isLoading).toBe(false))
-		await expect(result.current.refetchAll()).resolves.toBeUndefined()
+		let before = new Map(mockFetchCounts)
+
+		await result.current.refetchAll()
+
+		expect(mockFetchCounts.get('stolaf')).toBe((before.get('stolaf') ?? 0) + 1)
+		expect(mockFetchCounts.get('presence')).toBe((before.get('presence') ?? 0) + 1)
 	})
 })

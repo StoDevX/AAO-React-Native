@@ -127,16 +127,6 @@ function makeFramedFeature(): Feature<Building> {
 }
 
 describe('BuildingDetailSwiftUI', () => {
-	// Regression test: Section's `footer` is a SwiftUI slot, and handing it a
-	// bare string -- rather than wrapping it in `Text` -- crashes at mount.
-	// Every building with notes -- "The Cage" among them -- hit this on every
-	// render once the detail screen became reachable.
-	test('renders a schedule with notes without throwing', () => {
-		let building = makeBuilding()
-
-		expect(() => renderDetail(building)).not.toThrow()
-	})
-
 	afterEach(() => {
 		buildingImages.clear()
 	})

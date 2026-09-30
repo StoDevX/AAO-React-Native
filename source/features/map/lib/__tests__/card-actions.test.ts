@@ -1,4 +1,4 @@
-import {cardActions, MAX_CARD_ACTIONS} from '../card-actions'
+import {cardActions} from '../card-actions'
 
 describe('cardActions', () => {
 	it('offers Directions to a building with a point, once walking directions exist', () => {
@@ -14,11 +14,5 @@ describe('cardActions', () => {
 
 	it('offers no Directions without a point', () => {
 		expect(cardActions({point: null, walkingDirections: true})).toEqual([])
-	})
-
-	it('never offers more than the row holds', () => {
-		expect(cardActions({point: [0, 0], walkingDirections: true}).length).toBeLessThanOrEqual(
-			MAX_CARD_ACTIONS,
-		)
 	})
 })

@@ -6,6 +6,7 @@ import {
 	textContent,
 } from '@frogpond/html-lib'
 import {z} from 'zod'
+import {parseEach} from '@frogpond/data-sources/parse-each'
 import {EXCERPT_LENGTH, truncate} from '../lib/util'
 import {StoryType} from '../types'
 
@@ -120,17 +121,5 @@ export function parseAtomFeed(body: unknown): StoryType[] {
 	let doc = parseXml(xml)
 	let entries = getElementsByTagName('entry', doc)
 
-	let stories = entries.flatMap((entry) => {
-		try {
-			return [toStory(entry)]
-		} catch {
-			return []
-		}
-	})
-
-	if (entries.length > 0 && stories.length === 0) {
-		throw new Error('every Atom entry was malformed')
-	}
-
-	return stories
+	return parseEach(entries, toStory, 'Atom entry')
 }
