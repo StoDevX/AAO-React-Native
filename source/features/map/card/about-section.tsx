@@ -24,11 +24,12 @@ const TEXT_ROW = [
 ]
 
 /// The Sources line: fine print under the text, its links opened as every
-/// other card link is, honouring the reader's in-app-browser setting.
+/// other card link is, honoring the reader's in-app-browser setting.
 ///
 /// Each source is an inline link, smaller than AGENTS.md's 44pt touch target.
 /// Wren approved that exception for this line on 2026-09-30, to keep sources
-/// compact; VoiceOver reaches each link through the Links rotor.
+/// compact, on the understanding that VoiceOver reaches each link through the
+/// Links rotor -- which needs checking on a device.
 const SOURCES_ROW = [
 	...TEXT_ROW,
 	font({textStyle: 'footnote'}),

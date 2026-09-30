@@ -346,6 +346,7 @@ struct MapScreen: Screen {
 
 	/// Each of `labels` is a link on the card: the Sources line draws each
 	/// source as an inline link, which XCUITest lists as its own element.
+	@discardableResult
 	func verifyCardLinks(_ labels: [String]) -> Self {
 		for label in labels {
 			XCTAssertTrue(
