@@ -22,16 +22,25 @@ export function CampusSearchBar({
 	// The field's own text, as the native bar holds it: focus events report
 	// whether it is empty at that moment, not what JavaScript last saw.
 	let text = React.useRef('')
+	// Cancel resigns the field, which reports a focus change only when the
+	// field had focus to give up.
+	let focused = React.useRef(false)
 	return (
 		<View>
 			<TextInput
 				accessibilityLabel={testID ?? placeholder}
-				onBlur={() => onFocusChange(false, text.current !== '')}
+				onBlur={() => {
+					focused.current = false
+					onFocusChange(false, text.current !== '')
+				}}
 				onChangeText={(value) => {
 					text.current = value
 					onTextChange(value)
 				}}
-				onFocus={() => onFocusChange(true, text.current !== '')}
+				onFocus={() => {
+					focused.current = true
+					onFocusChange(true, text.current !== '')
+				}}
 				placeholder={placeholder}
 			/>
 			{/* Cancel clears the field before it resigns, so the end-editing
@@ -40,7 +49,10 @@ export function CampusSearchBar({
 				accessibilityRole="button"
 				onPress={() => {
 					text.current = ''
-					onFocusChange(false, false)
+					if (focused.current) {
+						focused.current = false
+						onFocusChange(false, false)
+					}
 					onTextChange('')
 					onCancel()
 				}}

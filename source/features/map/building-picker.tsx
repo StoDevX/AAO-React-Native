@@ -218,7 +218,10 @@ export function BuildingPicker({
 			>
 				<CampusSearchBar
 					onCancel={cancelSearch}
-					onFocusChange={(focused, hasText) => {
+					onFocusChange={(focused, fieldHasText) => {
+						// A field of only spaces searches nothing, so ending it is
+						// not a search that ended with text.
+						let hasText = fieldHasText && typedQuery.trim() !== ''
 						if (!focused && hasText) {
 							setSearchEnded(true)
 						}

@@ -314,9 +314,38 @@ describe('BuildingPicker', () => {
 	// ended with text.
 	it('reports a cancelled field as empty', async () => {
 		let {onSearchFocusChange} = await renderPicker()
-		await fireEvent.changeText(screen.getByLabelText('Search for a place'), 'gamma')
+		let field = screen.getByLabelText('Search for a place')
+		await fireEvent(field, 'focus')
+		await fireEvent.changeText(field, 'gamma')
 		await fireEvent.press(screen.getByText('Cancel'))
 		expect(onSearchFocusChange).toHaveBeenLastCalledWith(false, false)
+	})
+
+	// Cancel after tapping away finds a field with nothing to resign, so the
+	// native bar reports no focus change at all.
+	it('reports no focus change for a Cancel after the field lost focus', async () => {
+		let {onSearchFocusChange} = await renderPicker()
+		let field = screen.getByLabelText('Search for a place')
+		await fireEvent(field, 'focus')
+		await fireEvent.changeText(field, 'gamma')
+		await fireEvent(field, 'blur')
+		onSearchFocusChange.mockClear()
+		await fireEvent.press(screen.getByText('Cancel'))
+		expect(onSearchFocusChange).not.toHaveBeenCalled()
+	})
+
+	// A query of only spaces finds nothing, so ending it is not a search with
+	// text: the sheet stays where it is and nothing is framed.
+	it('treats a field of only spaces as empty when it loses focus', async () => {
+		let {onSearchFocusChange, onPinsChange} = await renderPicker()
+		let field = screen.getByLabelText('Search for a place')
+		await fireEvent(field, 'focus')
+		await fireEvent.changeText(field, '   ')
+		await fireEvent(field, 'blur')
+		expect(onSearchFocusChange).toHaveBeenLastCalledWith(false, false)
+		expect(
+			onPinsChange.mock.calls.every(([pins]) => pins === null || (pins as MapPins).frameKey === 0),
+		).toBe(true)
 	})
 
 	it('tells the screen a blurred field still holds a query', async () => {
@@ -497,6 +526,7 @@ describe('BuildingPicker', () => {
 
 		it('leaves frameKey alone when a search is cancelled', async () => {
 			let {onPinsChange} = await renderPicker()
+			await fireEvent(screen.getByLabelText('Search for a place'), 'focus')
 			await fireEvent.changeText(screen.getByLabelText('Search for a place'), 'gamma')
 			await fireEvent.press(screen.getByText('Cancel'))
 			await waitFor(() => {
