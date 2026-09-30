@@ -2,18 +2,28 @@ import * as React from 'react'
 import type {NativeSyntheticEvent} from 'react-native'
 import {
 	GeoJSONSource,
+	Images,
 	Layer,
 	type GeoJSONSourceRef,
 	type PressEventWithFeatures,
 } from '@maplibre/maplibre-react-native'
 import * as c from '@frogpond/colors'
 
+import pinImage from '../../../images/map/pin.png'
 import {pinCollection, pinIds, pressedPin, type MapPins} from './lib/map-pins'
 
 /// More than any cluster on either campus holds, so one call returns them all.
 const CLUSTER_LEAF_LIMIT = 1000
 
-const PIN_RADIUS = 8
+/// A white disc drawn as a signed distance field (images/map/pin.png), so it
+/// can be tinted each group's color and ringed with a halo.
+const PIN_IMAGE = 'map-pin'
+/// Drawn at its own size -- a 16pt dot in a 32pt square -- since MapLibre
+/// scales an SDF's halo with the icon, and a shrunk image rings its whole
+/// square white.
+const PIN_ICON_SIZE = 1
+/// The white ring around the dot.
+const PIN_RING = 2
 const CLUSTER_RADIUS = 14
 const PIN_STROKE = 2
 /// Both campuses' styles serve Noto Sans and nothing else. Left unset, a text
@@ -61,60 +71,71 @@ export function MapPinsLayer({pins, onSelect, onCluster}: Props): React.ReactNod
 	}
 
 	return (
-		<GeoJSONSource
-			cluster={true}
-			data={data}
-			id="map-pins"
-			onPress={(event) => void handlePress(event)}
-			ref={sourceRef}
-		>
-			<Layer
-				filter={['has', 'point_count']}
-				id="map-pins-clusters"
-				paint={{
-					'circle-color': pins.color,
-					'circle-radius': CLUSTER_RADIUS,
-					'circle-stroke-color': c.white,
-					'circle-stroke-width': PIN_STROKE,
-				}}
-				type="circle"
-			/>
-			<Layer
-				filter={['has', 'point_count']}
-				id="map-pins-cluster-counts"
-				layout={{
-					'text-field': ['get', 'point_count_abbreviated'],
-					'text-font': PIN_FONT,
-					'text-size': 13,
-				}}
-				paint={{'text-color': c.white}}
-				type="symbol"
-			/>
-			<Layer
-				filter={['!', ['has', 'point_count']]}
-				id="map-pins-points"
-				paint={{
-					'circle-color': pins.color,
-					'circle-radius': PIN_RADIUS,
-					'circle-stroke-color': c.white,
-					'circle-stroke-width': PIN_STROKE,
-				}}
-				type="circle"
-			/>
-			<Layer
-				filter={['!', ['has', 'point_count']]}
-				id="map-pins-names"
-				layout={{
-					'text-field': ['get', 'name'],
-					'text-font': PIN_FONT,
-					'text-size': 12,
-					'text-offset': [0, 1.2],
-					'text-anchor': 'top',
-					'text-optional': true,
-				}}
-				paint={{'text-color': pins.color, 'text-halo-color': c.white, 'text-halo-width': 1}}
-				type="symbol"
-			/>
-		</GeoJSONSource>
+		<>
+			<Images images={{[PIN_IMAGE]: {source: pinImage, sdf: true}}} />
+			<GeoJSONSource
+				cluster={true}
+				data={data}
+				id="map-pins"
+				onPress={(event) => void handlePress(event)}
+				ref={sourceRef}
+			>
+				<Layer
+					filter={['has', 'point_count']}
+					id="map-pins-clusters"
+					paint={{
+						'circle-color': pins.color,
+						'circle-radius': CLUSTER_RADIUS,
+						'circle-stroke-color': c.white,
+						'circle-stroke-width': PIN_STROKE,
+					}}
+					type="circle"
+				/>
+				<Layer
+					filter={['has', 'point_count']}
+					id="map-pins-cluster-counts"
+					layout={{
+						'text-field': ['get', 'point_count_abbreviated'],
+						'text-font': PIN_FONT,
+						'text-size': 13,
+					}}
+					paint={{'text-color': c.white}}
+					type="symbol"
+				/>
+				{/* One symbol for a place's dot and its name, rather than a circle and
+			    a separate label, so the two are placed together. As symbols they
+			    take part in label placement, and being above the base map they
+			    are placed first: the base map's own label for a pinned place
+			    yields, rather than drawing underneath the dot beside a second
+			    copy of the name. */}
+				<Layer
+					filter={['!', ['has', 'point_count']]}
+					id="map-pins-points"
+					layout={{
+						'icon-image': PIN_IMAGE,
+						'icon-size': PIN_ICON_SIZE,
+						// A pin always draws, even over another; it still claims its
+						// space, which is what hides the base map's label there.
+						'icon-allow-overlap': true,
+						'text-field': ['get', 'name'],
+						'text-font': PIN_FONT,
+						'text-size': 12,
+						'text-offset': [0, 0.9],
+						'text-anchor': 'top',
+						// Where two pins crowd each other, a name drops, not a pin.
+						'text-optional': true,
+					}}
+					paint={{
+						'icon-color': pins.color,
+						'icon-halo-color': c.white,
+						'icon-halo-width': PIN_RING,
+						'text-color': pins.color,
+						'text-halo-color': c.white,
+						'text-halo-width': 1,
+					}}
+					type="symbol"
+				/>
+			</GeoJSONSource>
+		</>
 	)
 }
