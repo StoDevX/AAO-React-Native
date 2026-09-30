@@ -1,5 +1,16 @@
 import * as React from 'react'
-import {Button, HStack, Image, List, Section, Spacer, Text, VStack, ZStack} from '@expo/ui/swift-ui'
+import {
+	Button,
+	HStack,
+	Image,
+	List,
+	Section,
+	Spacer,
+	SwipeActions,
+	Text,
+	VStack,
+	ZStack,
+} from '@expo/ui/swift-ui'
 import {
 	accessibilityAddTraits,
 	accessibilityIdentifier,
@@ -27,8 +38,10 @@ import {CategoryGrid} from './category-grid'
 import {mapCategoriesOptions} from './category-groups-query'
 import {byName, type CategoryGroup, groupColor, groupsFor, placesIn} from './lib/category-groups'
 import {SEARCH_PIN_COLOR, type MapPins} from './lib/map-pins'
+import {recentPlaces} from './lib/recent-places'
 import {searchPlaces} from './lib/search-places'
 import {mapDataOptions} from './query'
+import {useRecentPlacesStore} from './store'
 import type {Building, Feature} from './types'
 import type {MapGroupLabel} from '../telemetry/catalog'
 import {track} from '../telemetry/track'
@@ -56,6 +69,17 @@ export const GROUP_BACK_ID = 'map-group-back'
 const BACK_BUTTON_SIZE = 44
 /// Space between the button and the title beside it.
 const BACK_BUTTON_GAP = 8
+
+/// Recents' header as Maps draws its sections: a grey title and a blue Clear
+/// at headline size, and Clear tall enough to tap.
+const RECENTS_TITLE_MODIFIERS = [font({textStyle: 'headline'}), foregroundStyle(c.secondaryLabel)]
+const RECENTS_CLEAR_MODIFIERS = [
+	buttonStyle('plain'),
+	contentShape(shapes.rectangle()),
+	frame({minHeight: BACK_BUTTON_SIZE}),
+]
+/// Clear's spoken name: "Clear" alone does not say what it empties.
+export const RECENTS_CLEAR_LABEL = 'Clear Recents'
 
 /// `UISearchBar` insets its own text field about 8pt from the edges it is
 /// given, on top of whatever padding wraps it -- measured by comparing the
@@ -173,6 +197,21 @@ export function BuildingPicker({
 
 	// The fallback list of every place is not pinned: it is a list to scroll,
 	// not a set of places someone asked to see.
+	// The places opened on this campus's map, shown under the grid on the root
+	// view alone -- not inside a group, not while searching.
+	let recentIds = useRecentPlacesStore((state) => state.recent[campus])
+	let forgetRecent = useRecentPlacesStore((state) => state.forget)
+	let clearRecents = useRecentPlacesStore((state) => state.clear)
+	let remembered = React.useMemo(() => recentPlaces(recentIds, buildings), [recentIds, buildings])
+	let showsRecents =
+		!compact &&
+		!query &&
+		!openGroup &&
+		!isLoading &&
+		!isError &&
+		groups.length > 0 &&
+		remembered.length > 0
+
 	let pins = React.useMemo((): MapPins | null => {
 		if (isLoading || isError) {
 			return null
@@ -271,8 +310,65 @@ export function BuildingPicker({
 						<CategoryGrid groups={groups} onOpen={openFromTile} />
 					)}
 				</Section>
+				{showsRecents ? (
+					<RecentsSection
+						onClear={() => clearRecents(campus)}
+						onForget={(id) => forgetRecent(campus, id)}
+						onSelect={onSelect}
+						places={remembered}
+					/>
+				) : null}
 			</List>
 		</VStack>
+	)
+}
+
+/// The places opened most recently, under the grid, as Maps lists them. A row
+/// swipes away on its own; Clear empties the section.
+function RecentsSection({
+	places,
+	onSelect,
+	onForget,
+	onClear,
+}: {
+	places: Array<Feature<Building>>
+	onSelect: (id: string) => void
+	onForget: (id: string) => void
+	onClear: () => void
+}): React.ReactNode {
+	return (
+		<Section
+			header={
+				<HStack>
+					<Text modifiers={RECENTS_TITLE_MODIFIERS}>Recents</Text>
+					<Spacer />
+					<Button
+						modifiers={[...RECENTS_CLEAR_MODIFIERS, accessibilityLabel(RECENTS_CLEAR_LABEL)]}
+						onPress={onClear}
+					>
+						<Text modifiers={[font({textStyle: 'headline'}), foregroundStyle(c.systemBlue)]}>
+							Clear
+						</Text>
+					</Button>
+				</HStack>
+			}
+		>
+			{/* Swipe actions per row rather than `List.ForEach`, whose `.onMove`
+			    would offer to reorder a list whose order is when each was opened. */}
+			{places.map((building) => (
+				<SwipeActions key={building.id}>
+					<BuildingRow building={building} onSelect={onSelect} />
+					<SwipeActions.Actions allowsFullSwipe={true} edge="trailing">
+						<Button
+							label="Remove"
+							onPress={() => onForget(building.id)}
+							role="destructive"
+							systemImage="trash"
+						/>
+					</SwipeActions.Actions>
+				</SwipeActions>
+			))}
+		</Section>
 	)
 }
 
