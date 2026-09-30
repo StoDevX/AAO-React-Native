@@ -291,7 +291,7 @@ export function BuildingPicker({
 						<Text>Loading…</Text>
 					) : query ? (
 						searchResults.length === 0 ? (
-							<Text>No buildings to show.</Text>
+							<Text>{`No places match “${query}”.`}</Text>
 						) : (
 							// Rendered directly, not wrapped in `List.ForEach`: that component
 							// attaches `.onDelete`/`.onMove` unconditionally, which would put
@@ -301,7 +301,7 @@ export function BuildingPicker({
 							))
 						)
 					) : buildings.length === 0 ? (
-						<Text>No buildings to show.</Text>
+						<Text>No places to show.</Text>
 					) : openGroup || groups.length === 0 ? (
 						listedPlaces.map((building) => (
 							<BuildingRow key={building.id} building={building} onSelect={onSelect} />

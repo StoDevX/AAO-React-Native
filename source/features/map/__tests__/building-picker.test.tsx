@@ -256,7 +256,7 @@ describe('BuildingPicker', () => {
 
 	it('says so when there are no places at all', async () => {
 		await renderPicker({buildings: []})
-		expect(screen.getByText('No buildings to show.')).toBeTruthy()
+		expect(screen.getByText('No places to show.')).toBeTruthy()
 	})
 
 	// A refetch whose values no group names empties every group at once; the
@@ -398,9 +398,9 @@ describe('BuildingPicker', () => {
 			await renderPicker()
 
 			await fireEvent.changeText(screen.getByLabelText('Search for a place'), 'zzz')
-			// Waited on directly: "No buildings to show." also stands for a list
-			// with no buildings at all, so it can show before the debounced
-			// search has run.
+			await waitFor(() => {
+				expect(screen.getByText('No places match “zzz”.')).toBeTruthy()
+			})
 			await waitFor(() => {
 				expect(track).toHaveBeenCalledWith({name: 'map.search.empty', attributes: {}})
 			})
@@ -415,8 +415,9 @@ describe('BuildingPicker', () => {
 				expect(track).toHaveBeenCalledTimes(1)
 			})
 			await fireEvent.changeText(field, 'zzzz')
+			// The second search has run once its own text shows.
 			await waitFor(() => {
-				expect(screen.getByText('No buildings to show.')).toBeTruthy()
+				expect(screen.getByText('No places match “zzzz”.')).toBeTruthy()
 			})
 
 			expect(track).toHaveBeenCalledTimes(1)
@@ -545,7 +546,7 @@ describe('BuildingPicker', () => {
 			let {onPinsChange} = await renderPicker()
 			await fireEvent.changeText(screen.getByLabelText('Search for a place'), 'zzz')
 			await waitFor(() => {
-				expect(screen.getByText('No buildings to show.')).toBeTruthy()
+				expect(screen.getByText('No places match “zzz”.')).toBeTruthy()
 			})
 			expect(lastPins(onPinsChange)).toBeNull()
 		})
