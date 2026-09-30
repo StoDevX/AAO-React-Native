@@ -398,11 +398,12 @@ describe('BuildingPicker', () => {
 			await renderPicker()
 
 			await fireEvent.changeText(screen.getByLabelText('Search for a place'), 'zzz')
+			// Waited on directly: "No buildings to show." also stands for a list
+			// with no buildings at all, so it can show before the debounced
+			// search has run.
 			await waitFor(() => {
-				expect(screen.getByText('No buildings to show.')).toBeTruthy()
+				expect(track).toHaveBeenCalledWith({name: 'map.search.empty', attributes: {}})
 			})
-
-			expect(track).toHaveBeenCalledWith({name: 'map.search.empty', attributes: {}})
 		})
 
 		it('counts it once while the search keeps finding nothing', async () => {
