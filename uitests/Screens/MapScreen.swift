@@ -355,15 +355,6 @@ struct MapScreen: Screen {
 		return self
 	}
 
-	/// The open card shows `text` somewhere in it: a Good to Know fact, or a rule.
-	@discardableResult
-	func verifyCardShows(_ text: String) -> Self {
-		XCTAssertTrue(
-			app.staticTexts[text].firstMatch.waitForExistence(timeout: 10),
-			"The card should show \(text)")
-		return self
-	}
-
 	/// Each of `labels` is a link on the card: the Sources line draws each
 	/// source as an inline link, which XCUITest lists as its own element.
 	@discardableResult

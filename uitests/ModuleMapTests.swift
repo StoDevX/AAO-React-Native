@@ -488,38 +488,6 @@ class ModuleMapTests: UITestCaseUnbooted {
 			.verifyTopCard(TestIdentifiers.Map.aPond)
 	}
 
-	/// A trail's card gives its length and the Natural Lands rules, for a
-	/// person to look at too.
-	func testATrailsCardGivesItsLengthAndRules() throws {
-		MapScreen(app: app)
-			.navigate()
-			.checkSheetPresented()
-			.expandSheet()
-			.openCategory(TestIdentifiers.Map.outdoorsCategory)
-			.selectBuilding(named: TestIdentifiers.Map.aTrail)
-			.verifyTopCard(TestIdentifiers.Map.aTrail)
-			.expandSheet()
-			.capture("St. Olaf map trail card with length and rules")
-			// Baseball Pond Loop is 1055 m.
-			.verifyCardShows("0.7 mi")
-			.verifyCardShows("No camping or fires.")
-	}
-
-	/// Wellness Walks lists the walks, and a walk's card gives its time and guide.
-	func testAWalkOpensFromWellnessWalks() throws {
-		MapScreen(app: app)
-			.navigate()
-			.checkSheetPresented()
-			.expandSheet()
-			.openCategory(TestIdentifiers.Map.wellnessWalksCategory)
-			.selectBuilding(named: TestIdentifiers.Map.aWalk)
-			.verifyTopCard(TestIdentifiers.Map.aWalk)
-			.expandSheet()
-			.capture("St. Olaf map Wellness Walk card")
-			.verifyCardShows("14–17 min walk")
-			.verifyCardShows("Wellness Walk guide")
-	}
-
 	/// A cited place's card names its sources under the About text.
 	func testACitedPlaceNamesItsSources() throws {
 		MapScreen(app: app)

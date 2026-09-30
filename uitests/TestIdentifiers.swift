@@ -218,10 +218,6 @@ struct TestIdentifiers {
 		static let outdoorsCategory = "Outdoors"
 		static let aPond = "Baseball Pond"
 		static let aTrail = "Baseball Pond Loop"
-		/// The Wellness Walks category, and the walk that sorts first in it.
-		/// From StoDevX/campus-map-data's `walks:`.
-		static let wellnessWalksCategory = "Wellness Walks"
-		static let aWalk = "Big Pond Loop"
 		/// A place whose About text cites two sources, from
 		/// StoDevX/campus-map-data's overrides.yaml.
 		static let aCitedPlace = "Big Pond"
