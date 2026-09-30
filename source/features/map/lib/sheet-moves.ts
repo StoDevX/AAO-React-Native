@@ -35,9 +35,16 @@ export function nextSheetDetent(event: SheetEvent, state: SheetState): SheetStat
 			}
 			return {current: state.current, previous: null}
 		case 'search-blurred':
-			// Tapping away from a typed query leaves the results readable at
-			// `large`; only an empty field means the search is over.
-			if (!event.hasText && state.current === 'large' && state.previous !== null) {
+			// A search that ends with text drops to medium so the pins it
+			// framed are on screen, as Maps does; an empty field means the
+			// search is over, and the sheet goes back where it came from.
+			if (state.current !== 'large') {
+				return state
+			}
+			if (event.hasText) {
+				return {current: 'medium', previous: null}
+			}
+			if (state.previous !== null) {
 				return {current: state.previous, previous: null}
 			}
 			return state

@@ -61,10 +61,21 @@ describe('nextSheetDetent', () => {
 			).toEqual(at('collapsed'))
 		})
 
-		it('leaves a typed query on screen, and can still be cancelled later', () => {
+		// As Maps does: a search that ends with text drops the sheet so the
+		// pins it framed are on screen.
+		it('drops a finished search to medium so its pins show', () => {
 			expect(
 				nextSheetDetent({type: 'search-blurred', hasText: true}, at('large', 'collapsed')),
-			).toEqual(at('large', 'collapsed'))
+			).toEqual(at('medium'))
+		})
+
+		it('leaves a finished search where the user dragged the sheet', () => {
+			expect(
+				nextSheetDetent({type: 'search-blurred', hasText: true}, at('medium', 'collapsed')),
+			).toEqual(at('medium', 'collapsed'))
+			expect(nextSheetDetent({type: 'search-blurred', hasText: true}, at('collapsed'))).toEqual(
+				at('collapsed'),
+			)
 		})
 
 		it('does not move a sheet the user has since dragged elsewhere', () => {
