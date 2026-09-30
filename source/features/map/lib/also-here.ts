@@ -16,7 +16,8 @@ export type StackEntry =
 export type AlsoHereTile = {
 	opens: StackEntry
 	label: string
-	group: 'place' | 'office'
+	/// An accessible parking spot gets a card section of its own.
+	group: 'place' | 'office' | 'accessible-parking'
 	/// The venue whose status the tile shows, if it has one.
 	venue: BuildingType | undefined
 }
@@ -37,7 +38,9 @@ export function alsoHere(
 		.map((point) => ({
 			opens: {kind: 'feature', id: point.id},
 			label: point.properties.name,
-			group: 'place',
+			group: point.properties.categories.includes('accessible-parking')
+				? ('accessible-parking' as const)
+				: ('place' as const),
 			venue: ownHours(venues, point),
 		}))
 
