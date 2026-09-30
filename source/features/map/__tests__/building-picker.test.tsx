@@ -39,13 +39,16 @@ const fixtures = [
 ]
 
 const TABLE: MapCategoryTable = {
-	stolaf: [],
-	carleton: [
-		{label: 'All Buildings', categories: ['building'], icon: 'building.2.fill', gradient: 'gray'},
-		{label: 'Outdoors', categories: ['outdoors'], icon: 'tree.fill', gradient: 'green'},
-		{label: 'Parking', categories: ['parking'], icon: 'parkingsign', gradient: 'light-blue'},
-		{label: 'Dining', categories: ['dining'], icon: 'fork.knife', gradient: 'orange'},
-	],
+	stolaf: {groups: [], icons: []},
+	carleton: {
+		groups: [
+			{label: 'All Buildings', categories: ['building'], icon: 'building.2.fill', gradient: 'gray'},
+			{label: 'Outdoors', categories: ['outdoors'], icon: 'tree.fill', gradient: 'green'},
+			{label: 'Parking', categories: ['parking'], icon: 'parkingsign', gradient: 'light-blue'},
+			{label: 'Dining', categories: ['dining'], icon: 'fork.knife', gradient: 'orange'},
+		],
+		icons: [],
+	},
 }
 
 // Every query left without observers gets a garbage-collection timeout, and
@@ -240,10 +243,13 @@ describe('BuildingPicker', () => {
 	it('lists every place by name when no group has any', async () => {
 		await renderPicker({
 			table: {
-				stolaf: [],
-				carleton: [
-					{label: 'Dining', categories: ['dining'], icon: 'fork.knife', gradient: 'orange'},
-				],
+				stolaf: {groups: [], icons: []},
+				carleton: {
+					groups: [
+						{label: 'Dining', categories: ['dining'], icon: 'fork.knife', gradient: 'orange'},
+					],
+					icons: [],
+				},
 			},
 		})
 		expect(screen.queryByRole('button', {name: 'Dining'})).toBeNull()

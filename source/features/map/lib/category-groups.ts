@@ -20,8 +20,16 @@ export type MapCategoryEntry = {
 	gradient?: string
 }
 
-/** data/map-categories.yaml, one list of groups per campus. */
-export type MapCategoryTable = Record<Campus, MapCategoryEntry[]>
+/** One entry of a campus's `icons` list: the icon a place gets when it
+ * carries any of `categories`, unless an earlier entry claimed it. */
+export type MapIconEntry = {
+	categories: string[]
+	icon?: SFSymbol
+	gradient?: string
+}
+
+/** data/map-categories.yaml: per campus, its tiles and its places' icons. */
+export type MapCategoryTable = Record<Campus, {groups: MapCategoryEntry[]; icons: MapIconEntry[]}>
 
 /** A group ready to draw as a tile. */
 export type CategoryGroup = {
@@ -49,7 +57,7 @@ export function groupsFor(
 	// A label is how a group is keyed and found again, so the first entry
 	// with a label wins and any later one sharing it is dropped.
 	let seen = new Set<string>()
-	return table[campus]
+	return table[campus].groups
 		.filter((entry) => {
 			if (seen.has(entry.label)) {
 				return false
