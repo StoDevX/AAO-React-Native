@@ -310,16 +310,17 @@ describe('the real suite', () => {
 		assert.equal(new Set(placed).size, placed.length)
 	})
 
-	it('finds every UITestCase subclass and nothing else', () => {
-		const declared = realTestFiles().flatMap((file) =>
-			[...file.text.matchAll(/class\s+(\w+)\s*:\s*UITestCase\b/gu)].map((m) => m[1]),
-		)
+	it('finds every test class and nothing else', () => {
+		// Test classes are the ones declared in Module*Tests.swift, whichever
+		// base class they extend. The base classes and page objects live in
+		// other files and hold no tests, so they are absent from both lists.
+		const declared = realTestFiles()
+			.filter((file) => /^Module\w*Tests\.swift$/u.test(file.name))
+			.flatMap((file) => [...file.text.matchAll(/class\s+(\w+)\s*:/gu)].map((m) => m[1]))
 		const found = discoverTests(realTestFiles()).map((c) => c.className)
 
 		// Every class in a file, not just its first: a method credited to the
-		// wrong class becomes an -only-testing name that matches no test. The
-		// base classes and page objects hold no tests, so they are absent from
-		// both lists.
+		// wrong class becomes an -only-testing name that matches no test.
 		const byName = (a, b) => a.localeCompare(b)
 		assert.deepEqual(found.sort(byName), declared.sort(byName))
 	})
