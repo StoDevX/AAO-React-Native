@@ -464,13 +464,65 @@ struct MapScreen: Screen {
 		return self
 	}
 
-	/// Picks a category segment in the sheet's picker.
+	/// Opens a group from the sheet's categories: a tile in the grid, or a
+	/// row once the text size turns the grid into a list.
 	@discardableResult
-	func chooseCategory(_ label: String) -> Self {
-		let segment = app.buttons[label].firstMatch
-		XCTAssertTrue(segment.waitForExistence(timeout: 30), "The sheet should offer \(label)")
-		segment.tap()
-		XCTAssertTrue(segment.isSelected, "\(label) should be selected once tapped")
+	func openCategory(_ label: String) -> Self {
+		let tile = app.buttons[label].firstMatch
+		XCTAssertTrue(tile.waitForExistence(timeout: 30), "The sheet should offer \(label)")
+		tile.tap()
+		XCTAssertTrue(
+			groupBackButton.waitForExistence(timeout: 10),
+			"Opening \(label) should show its header's back button")
+		return self
+	}
+
+	private var groupBackButton: XCUIElement {
+		app.buttons.matching(identifier: TestIdentifiers.Map.groupBack).firstMatch
+	}
+
+	/// The open group's header names it.
+	@discardableResult
+	func verifyGroupOpen(_ label: String) -> Self {
+		XCTAssertTrue(
+			app.staticTexts[label].waitForExistence(timeout: 10),
+			"The header should read \(label)")
+		XCTAssertTrue(groupBackButton.exists, "\(label)'s header should have a back button")
+		return self
+	}
+
+	/// At large text sizes the categories are rows rather than a grid.
+	@discardableResult
+	func verifyCategoriesAsList(including label: String) -> Self {
+		XCTAssertTrue(
+			app.buttons[label].firstMatch.waitForExistence(timeout: 30),
+			"The sheet should list \(label)")
+		XCTAssertFalse(
+			app.otherElements[TestIdentifiers.Map.categoryGrid].exists,
+			"At this text size the categories should be a list, not a grid")
+		return self
+	}
+
+	/// Leaves the open group for the grid.
+	@discardableResult
+	func goBackToCategories() -> Self {
+		groupBackButton.tap()
+		XCTAssertTrue(
+			app.otherElements[TestIdentifiers.Map.categoryGrid].waitForExistence(timeout: 10),
+			"Back should return to the category grid")
+		XCTAssertFalse(groupBackButton.exists, "The group's header should be gone after Back")
+		return self
+	}
+
+	/// The open group's title sits clear of its back button, whatever its
+	/// length or the text size.
+	@discardableResult
+	func verifyGroupTitleClearsBackButton(_ label: String) -> Self {
+		let title = app.staticTexts[label].firstMatch
+		XCTAssertTrue(title.waitForExistence(timeout: 10), "The header should read \(label)")
+		XCTAssertFalse(
+			title.frame.intersects(groupBackButton.frame),
+			"\(label) (\(title.frame)) should not run under the back button (\(groupBackButton.frame))")
 		return self
 	}
 
@@ -536,8 +588,8 @@ struct MapScreen: Screen {
 		settle { searchField.frame.minY }
 		capture("The list after closing the card")
 		XCTAssertTrue(
-			app.buttons[category].firstMatch.isSelected,
-			"\(category) should still be selected after closing a card")
+			app.staticTexts[category].exists && groupBackButton.exists,
+			"\(category) should still be open after closing a card")
 		let row = self.row(named: name)
 		XCTAssertTrue(row.waitForExistence(timeout: 10), "\(name) should still be listed")
 		let now = row.frame.minY - searchField.frame.minY

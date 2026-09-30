@@ -1,3 +1,5 @@
+import type {Campus} from '../building-hours/types'
+
 /**
  * A route's file-system pattern, such as `/(home)/Dictionary/[word]`. Only
  * `routePattern()` makes one. It is text, but text the app ships: route file
@@ -20,6 +22,13 @@ export type QueryKeyHead = string & {readonly __brand: 'QueryKeyHead'}
  */
 export type PublicEventTitle = string & {readonly __brand: 'PublicEventTitle'}
 
+/**
+ * A map category group's label, such as `'Dining'`. Only `groupsFor()` makes
+ * one. It is text the project publishes in data/map-categories.yaml, never
+ * text someone typed.
+ */
+export type MapGroupLabel = string & {readonly __brand: 'MapGroupLabel'}
+
 /** The calendar feeds an event can come from; `other` for anything unrecognized. */
 export type CalendarSourceId = 'stolaf' | 'presence' | 'ksto-schedule' | 'krlx-schedule' | 'other'
 
@@ -41,6 +50,7 @@ export type TelemetryEvent =
 	| {name: 'screen.view'; attributes: {route: RoutePattern}}
 	| {name: 'calendar.filter.apply'; attributes: {axis: 'category' | 'organization' | 'none'}}
 	| {name: 'map.search.empty'; attributes: Record<string, never>}
+	| {name: 'map.group.open'; attributes: {group: MapGroupLabel; campus: Campus}}
 	| {
 			name: 'calendar.add_to_device'
 			attributes: {result: 'saved' | 'cancelled' | 'error'; source: CalendarSourceId}
@@ -68,6 +78,7 @@ export const DESTINATIONS: {readonly [N in TelemetryEvent['name']]: 'metric' | '
 	'screen.view': 'metric',
 	'calendar.filter.apply': 'metric',
 	'map.search.empty': 'metric',
+	'map.group.open': 'metric',
 	'calendar.add_to_device': 'metric',
 	'calendar.event.added': 'log',
 	'dictionary.edit.submit': 'metric',

@@ -195,9 +195,21 @@ struct TestIdentifiers {
 		static let anOffice = "Registrar"
 		/// A St. Olaf building whose description runs well past five lines.
 		static let aBuildingWithALongAbout = "Holland Hall"
-		/// A category segment in the map sheet's picker, other than the one it
-		/// opens on, with a list long enough to scroll.
+		/// A group in the map sheet's category grid with a list long enough to
+		/// scroll. Mirrors a label in data/map-categories.yaml.
 		static let parkingCategory = "Parking"
+		/// The group that lists every building. Mirrors data/map-categories.yaml.
+		static let allBuildingsCategory = "All Buildings"
+		/// A St. Olaf group. Mirrors data/map-categories.yaml.
+		static let diningCategory = "Dining"
+		/// The group header's back button, by identifier: its "Back" label also
+		/// matches the navigation bar's own Back on iOS 27. Mirrors
+		/// GROUP_BACK_ID in source/features/map/building-picker.tsx.
+		static let groupBack = "map-group-back"
+		/// Mirrors CATEGORY_GRID_ID in source/features/map/category-grid.tsx.
+		static let categoryGrid = "map-category-grid"
+		/// A St. Olaf place in no Dining group, found by search from inside it.
+		static let aPlaceOutsideDining = "Regents Hall of Natural Sciences"
 		/// A row two screens down `parkingCategory`, behind every Accessible
 		/// Parking space. St. Olaf can rename it.
 		static let aRowFarDownParking = "Alumni Hall Road"

@@ -149,9 +149,17 @@ export function ActionRow(props: ActionRowProps): React.ReactNode {
  *
  * `label` is for a symbol that means something, like an unread dot: VoiceOver
  * reads the row as one element, so the label leads the row's own. `size`
- * overrides the usual symbol size, for a mark smaller than an icon.
+ * overrides the usual symbol size, for a mark smaller than an icon. `width`
+ * sets a column for the symbol to center in, so rows whose symbols differ in
+ * width still start their titles at one edge.
  */
-type SymbolImage = {systemName: SFSymbol; tint?: ColorValue; size?: number; label?: string}
+type SymbolImage = {
+	systemName: SFSymbol
+	tint?: ColorValue
+	size?: number
+	label?: string
+	width?: number
+}
 
 /**
  * A leading thumbnail fetched over the network. `@expo/ui`'s own `Image` reads
@@ -203,6 +211,7 @@ function LeadingImage({image}: {image: DisclosureRowImage}): React.ReactNode {
 		return (
 			<Image
 				color={image.tint ?? c.secondaryLabel}
+				modifiers={image.width === undefined ? undefined : [frame({width: image.width})]}
 				size={image.size ?? SYMBOL_SIZE}
 				systemName={image.systemName}
 			/>

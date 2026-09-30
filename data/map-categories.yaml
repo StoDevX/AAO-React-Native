@@ -1,0 +1,71 @@
+stolaf:
+  - label: All Buildings
+    categories: [building]
+    icon: building.2.fill
+    gradient: gray
+  - label: Academic
+    categories: [academic]
+    icon: graduationcap.fill
+    gradient: gold
+  - label: Dining
+    categories: [dining]
+    icon: fork.knife
+    gradient: orange
+  - label: Housing
+    categories: [residence-hall, housing]
+    icon: bed.double.fill
+    gradient: indigo
+  - label: Offices
+    categories: [administrative, admissions]
+    icon: briefcase.fill
+    gradient: blue
+  - label: Athletics
+    categories: [athletics, field]
+    icon: figure.run
+    gradient: red
+  - label: Outdoors
+    categories: [outdoors]
+    icon: tree.fill
+    gradient: green
+  - label: Parking
+    categories: [parking, campus-parking, accessible-parking, visitor-parking, admissions-parking]
+    icon: parkingsign
+    gradient: light-blue
+  - label: Landmarks
+    categories: [landmark, memorial]
+    icon: building.columns.fill
+    gradient: tan
+  - label: Services
+    categories: [bookstore, student-center, visitor-center, visitor-information, ev-charging]
+    icon: info.circle.fill
+    gradient: purple
+
+carleton:
+  - label: All Buildings
+    categories: [building]
+    icon: building.2.fill
+    gradient: gray
+  - label: Academic
+    categories: [academic]
+    icon: graduationcap.fill
+    gradient: gold
+  - label: Housing
+    categories: [student-housing, hall, house, employee-housing]
+    icon: bed.double.fill
+    gradient: indigo
+  - label: Offices
+    categories: [administrative]
+    icon: briefcase.fill
+    gradient: blue
+  - label: Athletics
+    categories: [athletics]
+    icon: figure.run
+    gradient: red
+  - label: Outdoors
+    categories: [outdoors]
+    icon: tree.fill
+    gradient: green
+  - label: Parking
+    categories: [parking]
+    icon: parkingsign
+    gradient: light-blue

@@ -1,25 +1,35 @@
 import * as React from 'react'
-import {Button, HStack, List, Section, Spacer, Text, VStack} from '@expo/ui/swift-ui'
+import {Button, HStack, Image, List, Section, Spacer, Text, VStack, ZStack} from '@expo/ui/swift-ui'
 import {
+	accessibilityAddTraits,
+	accessibilityIdentifier,
+	accessibilityLabel,
+	background,
 	buttonStyle,
 	contentShape,
+	dynamicTypeSize,
 	font,
 	foregroundStyle,
+	frame,
+	multilineTextAlignment,
 	onGeometryChange,
 	padding,
 	shapes,
 } from '@expo/ui/swift-ui/modifiers'
 import {useQuery} from '@tanstack/react-query'
 import {CampusSearchBar} from '@frogpond/campus-search-bar'
+import * as c from '@frogpond/colors'
 import {useDebounce} from '@frogpond/use-debounce'
 
 import {RowAccessory} from '../../components/rows'
 import type {Campus} from '../building-hours/types'
-import {CategoryPicker} from './category-picker'
-import type {CategoryLabel} from './lib/categories'
-import {visibleBuildings} from './lib/visible-buildings'
+import {CategoryGrid} from './category-grid'
+import {mapCategoriesOptions} from './category-groups-query'
+import {byName, groupsFor, placesIn, type CategoryGroup} from './lib/category-groups'
+import {searchPlaces} from './lib/search-places'
 import {mapDataOptions} from './query'
 import type {Building, Feature} from './types'
+import type {MapGroupLabel} from '../telemetry/catalog'
 import {track} from '../telemetry/track'
 
 /// Matches the debounce every other search screen in the app uses.
@@ -36,6 +46,16 @@ const SEARCH_DEBOUNCE_MS = 200
 const SEARCH_MARGIN = 16
 const SEARCH_PLACEHOLDER = 'Search for a place'
 
+/// The group header's back button: chevron only, as Maps draws it.
+export const GROUP_BACK_LABEL = 'Back'
+/// Finds the header's back button for a UI test. Its label alone also matches
+/// the navigation bar's own Back button on iOS 27.
+export const GROUP_BACK_ID = 'map-group-back'
+/// The button's disc, at the 44pt minimum touch target.
+const BACK_BUTTON_SIZE = 44
+/// Space between the button and the title beside it.
+const BACK_BUTTON_GAP = 8
+
 /// `UISearchBar` insets its own text field about 8pt from the edges it is
 /// given, on top of whatever padding wraps it -- measured by comparing the
 /// field's on-screen x to Apple Maps' at the same scale (see "Sizing the
@@ -49,10 +69,10 @@ const SEARCH_BAR_HORIZONTAL_PADDING = SEARCH_MARGIN - 8
 type Props = {
 	campus: Campus
 	/// True when the sheet is at a stop with room for the search field and
-	/// nothing else. Drawing the category segments there would not merely hide
-	/// them: a `VStack` taller than the stop it is presented in is centred in
-	/// it rather than clipped at the bottom, so the segments would take the
-	/// top of the field off with them. The list stays, and compresses to
+	/// nothing else. Drawing the category grid or a group's header there would
+	/// not merely hide them: a `VStack` taller than the stop it is presented in
+	/// is centred in it rather than clipped at the bottom, so they would take
+	/// the top of the field off with them. The list stays, and compresses to
 	/// nothing.
 	compact: boolean
 	onSelect: (id: string) => void
@@ -83,20 +103,56 @@ export function BuildingPicker({
 	onSearchCancel,
 	onHeaderHeightChange,
 }: Props): React.ReactNode {
-	let [category, setCategory] = React.useState<CategoryLabel>('Buildings')
 	let [typedQuery, setTypedQuery] = React.useState('')
 	let query = useDebounce(typedQuery.trim(), SEARCH_DEBOUNCE_MS)
 
 	let {data: buildings = [], error, isError, isLoading, refetch} = useQuery(mapDataOptions(campus))
+	// Starts as the bundled copy, and keeps it through a failed fetch.
+	let {data: table} = useQuery(mapCategoriesOptions)
 
-	let visible = React.useMemo(
-		() => visibleBuildings(buildings, category, query),
-		[buildings, category, query],
+	let groups = React.useMemo(() => groupsFor(table, campus, buildings), [table, campus, buildings])
+
+	// Held with its campus, so a switch closes it; and looked up among the
+	// groups that have places, so a group a refetch emptied closes too.
+	let [opened, setOpened] = React.useState<{campus: Campus; label: MapGroupLabel} | null>(null)
+	// Cleared during render rather than in an effect, as React recommends for
+	// state that follows a prop, so a switch never draws the old group first.
+	if (opened && opened.campus !== campus) {
+		setOpened(null)
+	}
+	let openGroup =
+		opened?.campus === campus ? groups.find((group) => group.label === opened.label) : undefined
+	// A group a refetch emptied is closed, not just hidden, so its places
+	// coming back later do not reopen it unasked -- even when the refetch
+	// emptied every group at once. Nothing can be open before the map data
+	// first loads, since the tiles to open it from come from that data.
+	if (opened && !openGroup) {
+		setOpened(null)
+	}
+
+	let searchResults = React.useMemo(
+		() => (query ? searchPlaces(buildings, query) : []),
+		[buildings, query],
+	)
+	// With no group to open -- a feed whose values the groups file does not
+	// name -- every place is listed, so the sheet is never empty of rows.
+	let listedPlaces = React.useMemo(
+		() =>
+			openGroup ? placesIn(openGroup, buildings) : groups.length === 0 ? byName(buildings) : [],
+		[openGroup, groups, buildings],
+	)
+
+	let openFromTile = React.useCallback(
+		(group: CategoryGroup) => {
+			setOpened({campus, label: group.label})
+			track({name: 'map.group.open', attributes: {group: group.label, campus}})
+		},
+		[campus],
 	)
 
 	// Counted when a search first comes up empty, not on every keystroke that
 	// keeps it empty. The query itself is never sent.
-	let isEmptySearch = query !== '' && !isLoading && !isError && visible.length === 0
+	let isEmptySearch = query !== '' && !isLoading && !isError && searchResults.length === 0
 	React.useEffect(() => {
 		if (isEmptySearch) {
 			track({name: 'map.search.empty', attributes: {}})
@@ -128,11 +184,9 @@ export function BuildingPicker({
 			</VStack>
 
 			{/* Pinned under the field rather than scrolling with the list, so
-			    the header reads as one block: grabber, field, segments. */}
-			{compact || query ? null : (
-				<VStack modifiers={[padding({horizontal: SEARCH_MARGIN, bottom: 8})]}>
-					<CategoryPicker onChange={setCategory} selected={category} />
-				</VStack>
+			    the header reads as one block: grabber, field, group name. */}
+			{compact || query || !openGroup ? null : (
+				<GroupHeader label={openGroup.label} onBack={() => setOpened(null)} />
 			)}
 
 			<List>
@@ -146,19 +200,77 @@ export function BuildingPicker({
 						</Button>
 					) : isLoading ? (
 						<Text>Loading…</Text>
-					) : visible.length === 0 ? (
+					) : query ? (
+						searchResults.length === 0 ? (
+							<Text>No buildings to show.</Text>
+						) : (
+							// Rendered directly, not wrapped in `List.ForEach`: that component
+							// attaches `.onDelete`/`.onMove` unconditionally, which would put
+							// swipe-to-delete and drag-to-reorder on this read-only picker.
+							searchResults.map((building) => (
+								<BuildingRow key={building.id} building={building} onSelect={onSelect} />
+							))
+						)
+					) : buildings.length === 0 ? (
 						<Text>No buildings to show.</Text>
-					) : (
-						// Rendered directly, not wrapped in `List.ForEach`: that component
-						// attaches `.onDelete`/`.onMove` unconditionally, which would put
-						// swipe-to-delete and drag-to-reorder on this read-only picker.
-						visible.map((building) => (
+					) : openGroup || groups.length === 0 ? (
+						listedPlaces.map((building) => (
 							<BuildingRow key={building.id} building={building} onSelect={onSelect} />
 						))
+					) : compact ? null : (
+						<CategoryGrid groups={groups} onOpen={openFromTile} />
 					)}
 				</Section>
 			</List>
 		</VStack>
+	)
+}
+
+/// The open group's name, centered on the sheet's full width with a round
+/// chevron-only back button at its leading edge, as Maps draws a category's
+/// list. A ZStack rather than an HStack keeps the title centered whatever the
+/// button beside it takes.
+function GroupHeader({label, onBack}: {label: string; onBack: () => void}): React.ReactNode {
+	return (
+		<ZStack modifiers={[padding({horizontal: SEARCH_MARGIN, bottom: 8})]}>
+			{/* Inset by the button on both sides, so a long title wraps beside it
+			    instead of running under it, and stays centered on the sheet. */}
+			<Text
+				modifiers={[
+					font({textStyle: 'headline'}),
+					multilineTextAlignment('center'),
+					padding({horizontal: BACK_BUTTON_SIZE + BACK_BUTTON_GAP}),
+					accessibilityAddTraits(['isHeader']),
+				]}
+			>
+				{label}
+			</Text>
+			<HStack>
+				<Button
+					modifiers={[
+						buttonStyle('plain'),
+						accessibilityLabel(GROUP_BACK_LABEL),
+						accessibilityIdentifier(GROUP_BACK_ID),
+					]}
+					onPress={onBack}
+				>
+					<Image
+						modifiers={[
+							font({textStyle: 'body', weight: 'semibold'}),
+							// The disc keeps its size at every text size, so the chevron
+							// in it has to as well.
+							dynamicTypeSize({max: 'large'}),
+							foregroundStyle(c.secondaryLabel),
+							frame({width: BACK_BUTTON_SIZE, height: BACK_BUTTON_SIZE}),
+							background(c.tertiarySystemFill, shapes.circle()),
+							contentShape(shapes.circle()),
+						]}
+						systemName="chevron.left"
+					/>
+				</Button>
+				<Spacer />
+			</HStack>
+		</ZStack>
 	)
 }
 

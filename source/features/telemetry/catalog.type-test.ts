@@ -1,6 +1,7 @@
 import type {
 	Expect,
 	IsClosed,
+	MapGroupLabel,
 	PublicEventTitle,
 	PublicTextIsAnonymous,
 	RoutePattern,
@@ -41,3 +42,6 @@ type TitleBesideDeviceId = {name: 'x'; attributes: {title: PublicEventTitle}}
 /** That event fails: the formatter keeps this on one line, so the directive covers it. */
 // @ts-expect-error -- a title on an event that keeps the device ID
 export type NamedTitleFails = Expect<PublicTextIsAnonymous<TitleBesideDeviceId>>
+
+/** A branded map group label passes. */
+export type MapGroupLabelPasses = Expect<IsClosed<{name: 'x'; attributes: {group: MapGroupLabel}}>>
