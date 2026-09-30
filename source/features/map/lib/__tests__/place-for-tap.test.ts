@@ -6,6 +6,13 @@ function point(lng: number, lat: number, properties: Record<string, unknown>): G
 	return {type: 'Feature', geometry: {type: 'Point', coordinates: [lng, lat]}, properties}
 }
 
+function line(
+	coordinates: Array<[number, number]>,
+	properties: Record<string, unknown>,
+): GeoJSON.Feature {
+	return {type: 'Feature', geometry: {type: 'LineString', coordinates}, properties}
+}
+
 const square: GeoJSON.Feature = {
 	type: 'Feature',
 	geometry: {
@@ -46,5 +53,84 @@ describe('placeForTap', () => {
 	test('falls back to the building, or to nothing off every building', () => {
 		expect(placeForTap([], [1, 1], 'bc')).toBe('bc')
 		expect(placeForTap([], [1, 1], null)).toBeNull()
+	})
+
+	// The tiles draw each named trail with its id; the touch lands on its course,
+	// between two vertices.
+	test('opens the trail whose line is under the touch', () => {
+		let trail = line(
+			[
+				[0, 0],
+				[4, 0],
+			],
+			{buildingId: 'trail-knollloop'},
+		)
+		expect(placeForTap([trail], [2, 0.1], null)).toBe('trail-knollloop')
+	})
+
+	test('opens a trail drawn in several parts', () => {
+		let trail: GeoJSON.Feature = {
+			type: 'Feature',
+			geometry: {
+				type: 'MultiLineString',
+				coordinates: [
+					[
+						[0, 0],
+						[1, 0],
+					],
+					[
+						[3, 3],
+						[4, 3],
+					],
+				],
+			},
+			properties: {buildingId: 'trail-bigwoodstrail'},
+		}
+		expect(placeForTap([trail], [3.5, 3], null)).toBe('trail-bigwoodstrail')
+	})
+
+	test('opens a name nearer the touch than a trail beside it', () => {
+		let trail = line(
+			[
+				[0, 0],
+				[4, 0],
+			],
+			{buildingId: 'trail-prairieloop'},
+		)
+		let pond = point(2, 1, {buildingId: 'pond-bigpond'})
+		expect(placeForTap([trail, pond], [2, 0.9], null)).toBe('pond-bigpond')
+	})
+
+	test('opens a trail nearer the touch than a name beside it', () => {
+		let trail = line(
+			[
+				[0, 0],
+				[4, 0],
+			],
+			{buildingId: 'trail-prairieloop'},
+		)
+		let pond = point(2, 1, {buildingId: 'pond-bigpond'})
+		expect(placeForTap([trail, pond], [2, 0.1], null)).toBe('trail-prairieloop')
+	})
+
+	// A trail crossing a tile edge comes back as one piece per tile.
+	test('opens a trail clipped into several features by the tiles', () => {
+		let pieces = [
+			line(
+				[
+					[0, 0],
+					[2, 0],
+				],
+				{buildingId: 'trail-conifertrail'},
+			),
+			line(
+				[
+					[2, 0],
+					[4, 0],
+				],
+				{buildingId: 'trail-conifertrail'},
+			),
+		]
+		expect(placeForTap(pieces, [3, 0], 'bc')).toBe('trail-conifertrail')
 	})
 })
