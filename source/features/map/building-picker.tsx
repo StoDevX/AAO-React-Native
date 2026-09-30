@@ -176,7 +176,7 @@ export function BuildingPicker({
 			>
 				<CampusSearchBar
 					onCancel={cancelSearch}
-					onFocusChange={(focused) => onSearchFocusChange(focused, typedQuery.trim() !== '')}
+					onFocusChange={(focused, hasText) => onSearchFocusChange(focused, hasText)}
 					onTextChange={setTypedQuery}
 					placeholder={SEARCH_PLACEHOLDER}
 					testID={SEARCH_PLACEHOLDER}

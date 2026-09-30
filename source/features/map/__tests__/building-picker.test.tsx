@@ -281,6 +281,16 @@ describe('BuildingPicker', () => {
 		expect(onSearchFocusChange).toHaveBeenLastCalledWith(false, false)
 	})
 
+	// The native bar clears its text before resigning, but JavaScript hears
+	// the resignation first; read there, Cancel would look like a search that
+	// ended with text.
+	it('reports a cancelled field as empty', async () => {
+		let {onSearchFocusChange} = await renderPicker()
+		await fireEvent.changeText(screen.getByLabelText('Search for a place'), 'gamma')
+		await fireEvent.press(screen.getByText('Cancel'))
+		expect(onSearchFocusChange).toHaveBeenLastCalledWith(false, false)
+	})
+
 	it('tells the screen a blurred field still holds a query', async () => {
 		let {onSearchFocusChange} = await renderPicker()
 		let field = screen.getByLabelText('Search for a place')
