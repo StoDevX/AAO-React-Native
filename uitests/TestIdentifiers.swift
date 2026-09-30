@@ -213,8 +213,7 @@ struct TestIdentifiers {
 		static let aPointOnlyPlace = "Stav Hall"
 		/// The Outdoors category, and a pond and a trail in it: rows two and
 		/// three, so both show at the middle stop, where opening a group leaves
-		/// the sheet. The pond sorts first, so a row matched by its name's
-		/// beginning is the pond's own. St. Olaf can rename them; they come from
+		/// the sheet. St. Olaf can rename them; they come from
 		/// StoDevX/campus-map-data.
 		static let outdoorsCategory = "Outdoors"
 		static let aPond = "Baseball Pond"
