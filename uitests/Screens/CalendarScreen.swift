@@ -246,6 +246,25 @@ struct CalendarScreen: Screen {
       .map { $0.identifier }
   }
 
+  /// Wait for the strip to show exactly `expected`. A scroll to a week is
+  /// animated, and a cell at the strip's edge is not hittable until it has
+  /// arrived, so a reading taken as the scroll starts is short a day.
+  ///
+  /// The timeout leaves room for several readings: each asks the app about
+  /// every cell in turn, and takes seconds.
+  @discardableResult
+  func verifyStripShows(_ expected: [String], _ message: String, timeout: TimeInterval = 30) -> Self {
+    var last: [String] = []
+    let arrived = NSPredicate { _, _ in
+      last = self.datePickerDayIdentifiers()
+      return last == expected
+    }
+    let expectation = XCTNSPredicateExpectation(predicate: arrived, object: nil)
+    _ = XCTWaiter().wait(for: [expectation], timeout: timeout)
+    XCTAssertEqual(last, expected, message)
+    return self
+  }
+
 	/// Tap the bottom-bar Today button.
 	@discardableResult
 	func tapToday() -> Self {
