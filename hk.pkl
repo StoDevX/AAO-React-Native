@@ -1,9 +1,13 @@
 amends "package://github.com/jdx/hk/releases/download/v1.41.0/hk@1.41.0#/Config.pkl"
 
+// hk runs steps at once unless one depends on another, so every step that
+// reads the source waits for oxlint's fixes: otherwise oxfmt, tsc and jest
+// pass the code as it was, and the commit takes oxlint's rewrite unchecked.
 local linters = new Mapping<String, Step> {
   ["oxfmt"] {
     check = "mise run format:check"
     fix = "mise run format"
+    depends = List("oxlint")
   }
   ["oxlint"] {
     check = "mise run lint"
@@ -11,9 +15,11 @@ local linters = new Mapping<String, Step> {
   }
   ["tsc"] {
     check = "mise run tsc"
+    depends = List("oxlint")
   }
   ["jest"] {
     check = "mise run test"
+    depends = List("oxlint")
   }
 }
 
