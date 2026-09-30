@@ -7,9 +7,14 @@ struct NewsScreen: Screen {
 	/// The feed's navigation bar title
 	let title: String
 
+	/// Drawn by this screen alone, so its presence says the screen has mounted.
+	var mounted: XCUIElement {
+		app.navigationBars[title]
+	}
+
 	@discardableResult
 	func navigate() -> Self {
-		navigateFromHome(to: tile)
+		open(route: "/StOlafNews", mountedWhen: mounted)
 	}
 
 	@discardableResult

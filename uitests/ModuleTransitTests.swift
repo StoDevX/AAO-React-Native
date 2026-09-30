@@ -1,6 +1,6 @@
 import XCTest
 
-class ModuleTransitTests: UITestCase {
+class ModuleTransitTests: UITestCaseUnbooted {
 	/// The landing screen, top to bottom, on one cold launch.
 	///
 	/// The strip is a horizontal scroll view inside a list row, which is the

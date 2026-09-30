@@ -59,7 +59,7 @@ describe('uitestsNeeded', () => {
 	})
 
 	it('runs when the UITests themselves changed', () => {
-		assert.equal(uitestsNeeded(['uitests/ModuleMoreTests.swift']), true)
+		assert.equal(uitestsNeeded(['uitests/ModuleHomeTests.swift']), true)
 	})
 
 	it('runs on an empty list, which means we could not work out the diff', () => {

@@ -3,9 +3,14 @@ import XCTest
 struct StudentWorkScreen: Screen {
 	let app: XCUIApplication
 
+	/// Drawn by this screen alone, so its presence says the screen has mounted.
+	var mounted: XCUIElement {
+		areaGrid
+	}
+
 	@discardableResult
 	func navigate() -> Self {
-		navigateFromHome(to: TestIdentifiers.Buttons.studentWork)
+		open(route: "/StudentWork", mountedWhen: mounted)
 	}
 
 	/// Opens a preset below the tiles, whose row label leads with its title.

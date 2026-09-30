@@ -1,6 +1,6 @@
 import XCTest
 
-class ModuleMenusTests: UITestCase {
+class ModuleMenusTests: UITestCaseUnbooted {
 	// MARK: - Navigation and the header
 
 	/// The meal picker is the title itself, drawn as a custom view because a

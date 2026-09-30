@@ -1,7 +1,7 @@
 import XCTest
 
-class ModuleStreamingMediaTests: UITestCase {
-	func testIsReachableFromHomescreen() throws {
+class ModuleStreamingMediaTests: UITestCaseUnbooted {
+	func testKrlxOffersItsStationButtons() throws {
 		StreamingMediaScreen(app: app)
 			.navigate()
 			.checkStreamListExists()

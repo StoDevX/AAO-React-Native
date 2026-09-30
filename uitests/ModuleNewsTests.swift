@@ -1,6 +1,6 @@
 import XCTest
 
-class ModuleNewsTests: UITestCase {
+class ModuleNewsTests: UITestCaseUnbooted {
 	/// Reads live data: the paper has to have published at least two issues.
 	func testOlafMessengerOpensOnTheIssueGrid() throws {
 		MessFrontPage(app: app)
@@ -21,7 +21,7 @@ class ModuleNewsTests: UITestCase {
 			.filterLatest(to: TestIdentifiers.News.newsSection)
 	}
 
-	func testStOlafNewsIsReachableFromHomescreen() throws {
+	func testStOlafNewsListsItsStories() throws {
 		NewsScreen(app: app, tile: TestIdentifiers.Buttons.stOlafNews, title: "St. Olaf News")
 			.navigate()
 			.verifyTitle()
@@ -81,7 +81,7 @@ class ModuleNewsTests: UITestCase {
 		MessFrontPage(app: app)
 			.navigate()
 			.filterLatest(to: TestIdentifiers.News.varietySection)
-		relaunchKeepingState(
+		keepStateForNextLaunch(
 			adding: TestIdentifiers.LaunchArguments.contentSizeCategory(
 				TestIdentifiers.LaunchArguments.accessibilityExtraExtraExtraLarge))
 		MessFrontPage(app: app)

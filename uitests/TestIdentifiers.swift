@@ -75,6 +75,7 @@ struct TestIdentifiers {
 		static let menus = "Menus"
 		static let athletics = "Athletics"
 		static let calendar = "Calendar"
+		static let carletonCampus = "Carleton Campus"
 		static let balances = "Balances"
 		static let hours = "Hours"
 		static let dictionary = "Dictionary"

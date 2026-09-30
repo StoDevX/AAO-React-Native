@@ -1,6 +1,6 @@
 import XCTest
 
-class ModuleBalancesTests: UITestCase {
+class ModuleBalancesTests: UITestCaseUnbooted {
 	/// Accepting the acknowledgement shows the balances, and they are still
 	/// there, with no acknowledgement, when Balances is opened again. setUp
 	/// launches with --reset-state, so the test starts before it has been
