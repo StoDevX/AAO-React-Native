@@ -26,9 +26,12 @@ export type Category =
 	| 'residence-hall'
 	| 'student-center'
 	| 'student-housing'
+	| 'trail'
 	| 'visitor-center'
 	| 'visitor-information'
 	| 'visitor-parking'
+	| 'water'
+	| 'wellness-walk'
 
 // Stored as a string of the form "Label <https://example.com>".
 export type LabelLinkString = string

@@ -27,6 +27,10 @@ stolaf:
     categories: [outdoors]
     icon: tree.fill
     gradient: green
+  - label: Wellness Walks
+    categories: [wellness-walk]
+    icon: figure.walk
+    gradient: mint
   - label: Parking
     categories: [parking, campus-parking, accessible-parking, visitor-parking, admissions-parking]
     icon: parkingsign
