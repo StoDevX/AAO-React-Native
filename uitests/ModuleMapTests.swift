@@ -381,6 +381,7 @@ class ModuleMapTests: UITestCase {
 			.typeIntoSearch(name)
 			.submitSearch()
 			.capture("St. Olaf map with one searched pin")
+			.verifyAtMiddleStop()
 			.tapMapCenterAboveSheet()
 			.capture("St. Olaf map after tapping the searched pin")
 			.verifyCardTitled(name)

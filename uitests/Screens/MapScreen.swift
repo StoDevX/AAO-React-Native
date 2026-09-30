@@ -465,6 +465,20 @@ struct MapScreen: Screen {
 		return self
 	}
 
+	/// The sheet rests at its middle stop: the field between the full stop,
+	/// near the top of the screen, and the collapsed one, past 70% of it. The
+	/// middle stop puts it near 60%.
+	@discardableResult
+	func verifyAtMiddleStop() -> Self {
+		settle { searchFieldTop() }
+		let top = searchFieldTop()
+		let windowHeight = app.windows.firstMatch.frame.height
+		XCTAssertTrue(
+			top > windowHeight * 0.4 && top < windowHeight * 0.7,
+			"The sheet should rest at its middle stop; the field's top is at \(top) of \(windowHeight)")
+		return self
+	}
+
 	/// Taps the middle of the map above the sheet, where a single framed pin
 	/// is eased to.
 	@discardableResult
