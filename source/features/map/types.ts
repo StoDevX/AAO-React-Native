@@ -71,6 +71,13 @@ export type Building = {
 	 * itself, or is in none. Carleton's feed carries no parents at all.
 	 */
 	parent?: string | null
+	/**
+	 * A trail's length in metres, from its geometry. Null or absent for
+	 * anything that is not a line; Carleton's feed has no such field.
+	 */
+	length?: number | null
+	/** The rules that apply here, one sentence each. St. Olaf's Natural Lands only. */
+	rules?: Array<string>
 }
 
 export type Longitude = number

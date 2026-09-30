@@ -1,4 +1,4 @@
-import {goodToKnowRows} from '../good-to-know'
+import {formatMiles, goodToKnowRows} from '../good-to-know'
 
 const base = {abbreviation: null, nickname: '', accessibility: 'unknown' as const}
 
@@ -47,5 +47,27 @@ describe('goodToKnowRows', () => {
 		expect(goodToKnowRows({...base, accessibility: value})).toEqual([
 			{kind: 'accessibility', text, accessible},
 		])
+	})
+
+	it("gives a trail's length in miles", () => {
+		expect(goodToKnowRows({...base, length: 1317})).toEqual([{kind: 'length', text: '0.8 mi'}])
+	})
+
+	it('says nothing of a length it does not have', () => {
+		expect(goodToKnowRows({...base, length: null})).toEqual([])
+		expect(goodToKnowRows({...base, length: undefined})).toEqual([])
+		expect(goodToKnowRows({...base, length: 0})).toEqual([])
+	})
+})
+
+describe('formatMiles', () => {
+	it('rounds to a tenth of a mile', () => {
+		expect(formatMiles(1528.9)).toBe('1.0 mi') // 0.95 mi
+		expect(formatMiles(820)).toBe('0.5 mi')
+	})
+
+	it('never says zero for a trail that exists', () => {
+		expect(formatMiles(50)).toBe('0.1 mi')
+		expect(formatMiles(80.47)).toBe('0.1 mi') // 0.05 mi
 	})
 })

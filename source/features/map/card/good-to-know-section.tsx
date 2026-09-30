@@ -33,6 +33,7 @@ const SYMBOL = {
 	abbreviation: 'tag.fill',
 	nickname: 'quote.bubble.fill',
 	accessibility: 'figure.roll',
+	length: 'figure.walk',
 } as const satisfies Record<GoodToKnowRow['kind'], string>
 
 /// Facts about the building, each after an icon, as Maps lists a place's amenities.

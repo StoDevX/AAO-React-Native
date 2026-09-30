@@ -5,12 +5,22 @@ export type GoodToKnowRow =
 	| {kind: 'abbreviation'; text: string}
 	| {kind: 'nickname'; text: string; others: Array<string>}
 	| {kind: 'accessibility'; text: string; accessible: boolean}
+	| {kind: 'length'; text: string}
 
-/// What the card has to say about a building beyond its name: its short code,
-/// what people call it, and whether a wheelchair can get in. Nothing for a
-/// fact the feed does not know.
+const METRES_PER_MILE = 1609.344
+
+/// A length as a person walking it thinks of it: tenths of a mile, and never
+/// zero for a trail that is there.
+export function formatMiles(metres: number): string {
+	let miles = Math.max(0.1, Math.round((metres / METRES_PER_MILE) * 10) / 10)
+	return `${miles.toFixed(1)} mi`
+}
+
+/// What the card has to say about a place beyond its name: its short code,
+/// what people call it, how long it is if it is a trail, and whether a
+/// wheelchair can get in. Nothing for a fact the feed does not know.
 export function goodToKnowRows(
-	building: Pick<Building, 'abbreviation' | 'nickname' | 'accessibility'>,
+	building: Pick<Building, 'abbreviation' | 'nickname' | 'accessibility' | 'length'>,
 ): Array<GoodToKnowRow> {
 	let rows: Array<GoodToKnowRow> = []
 	let abbreviation = building.abbreviation?.trim() || null
@@ -27,6 +37,10 @@ export function goodToKnowRows(
 	let [first, ...others] = nicknames
 	if (first) {
 		rows.push({kind: 'nickname', text: first, others})
+	}
+
+	if (building.length > 0) {
+		rows.push({kind: 'length', text: formatMiles(building.length)})
 	}
 
 	if (building.accessibility === 'wheelchair') {
