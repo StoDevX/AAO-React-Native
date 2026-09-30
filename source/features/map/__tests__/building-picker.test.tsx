@@ -238,8 +238,7 @@ describe('BuildingPicker', () => {
 		expect(screen.queryByRole('button', {name: 'Back'})).toBeNull()
 	})
 
-	// A feed whose values no group names -- a server renaming its categories --
-	// would otherwise leave an empty sheet with nothing to tap.
+	// Each campus publishes its own icons; a row must not take the other's.
 	it("draws each row's icon from its own campus's list", async () => {
 		await renderPicker({
 			table: {
@@ -259,6 +258,8 @@ describe('BuildingPicker', () => {
 		expect(screen.getAllByTestId('symbol-mappin').length).toBeGreaterThan(0)
 	})
 
+	// A feed whose values no group names -- a server renaming its categories --
+	// would otherwise leave an empty sheet with nothing to tap.
 	it('lists every place by name when no group has any', async () => {
 		await renderPicker({
 			table: {

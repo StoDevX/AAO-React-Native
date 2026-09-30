@@ -92,7 +92,8 @@ carleton:
       categories: [parking]
       icon: parkingsign
       gradient: light-blue
-  # As St. Olaf's: housing a place is named for before what it houses.
+  # As St. Olaf's. `hall` and `house` are left out of housing: Carleton uses
+  # them for its academic and office buildings too.
   icons:
     - {categories: [athletics], icon: figure.run, gradient: red}
     - {categories: [parking], icon: parkingsign, gradient: light-blue}
