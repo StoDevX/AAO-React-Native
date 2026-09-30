@@ -1,26 +1,37 @@
 amends "package://github.com/jdx/hk/releases/download/v1.41.0/hk@1.41.0#/Config.pkl"
 
-// hk runs steps at once unless one depends on another. Under `hk fix`, every
-// step that reads the source waits for oxlint's fixes, so oxfmt formats them
-// and tsc and jest check them.
-local linters = new Mapping<String, Step> {
+// hk runs steps at once unless one depends on another. Each step is its own
+// `mise run`, so tsc and jest skip their own bundle-data and wait for the one
+// step that writes docs/: otherwise one could read a file the other is halfway
+// through writing.
+local checks = new Mapping<String, Step> {
   ["oxfmt"] {
     check = "mise run format:check"
     fix = "mise run format"
-    depends = List("oxlint")
   }
   ["oxlint"] {
     check = "mise run lint"
     fix = "mise run lint -- --fix"
   }
+  ["bundle-data"] {
+    check = "mise run bundle-data"
+  }
   ["tsc"] {
-    check = "mise run tsc"
-    depends = List("oxlint")
+    check = "mise run --skip-deps tsc"
+    depends = List("bundle-data")
   }
   ["jest"] {
-    check = "mise run test"
-    depends = List("oxlint")
+    check = "mise run --skip-deps test:jest ::: test:node"
+    depends = List("bundle-data")
   }
+}
+
+// oxlint's fixes rewrite the source, so under `hk fix` every step that reads
+// it waits for them: oxfmt formats them, and tsc and jest check them.
+local fixes = (checks) {
+  ["oxfmt"] { depends = List("oxlint") }
+  ["tsc"] { depends = List("oxlint", "bundle-data") }
+  ["jest"] { depends = List("oxlint", "bundle-data") }
 }
 
 hooks {
@@ -29,13 +40,13 @@ hooks {
   ["pre-commit"] {
     fix = false
     stash = "git"
-    steps = linters
+    steps = checks
   }
   ["fix"] {
     fix = true
-    steps = linters
+    steps = fixes
   }
   ["check"] {
-    steps = linters
+    steps = checks
   }
 }
