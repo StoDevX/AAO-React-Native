@@ -30,6 +30,17 @@ const baseFaq: Faq = {
 	dismissable: true,
 }
 
+const DAY = 24 * 60 * 60 * 1000
+
+/// Records a dismissal of `version` made `msAgo` milliseconds ago, as the
+/// persisted store would hold it on a later launch.
+const dismissedEarlier = (faqId: string, version: string | undefined, msAgo: number): void => {
+	if (!version) throw new Error('the fixture FAQ needs an updatedAt to version it by')
+	useFaqBannerStore.setState({
+		dismissed: {[faqId]: {version, dismissedAt: Date.now() - msAgo}},
+	})
+}
+
 const buildResponse = (faqs: Faq[]): FaqQueryData => ({
 	faqs,
 	legacyText: undefined,
@@ -99,7 +110,7 @@ const renderWithFaqs = (faqs: Faq[], props?: {onPressOverride?: () => void}) => 
 
 describe('FaqBanner component', () => {
 	beforeEach(() => {
-		useFaqBannerStore.getState().resetAll()
+		useFaqBannerStore.setState({dismissed: {}})
 	})
 
 	it('dismisses the banner when the close button is pressed', async () => {
@@ -109,6 +120,44 @@ describe('FaqBanner component', () => {
 		await fireEvent.press(button)
 
 		expect(queryByText(baseFaq.bannerTitle)).toBeNull()
+	})
+
+	// A dismissal saved on an earlier launch reaches the banner through the
+	// persisted store, not through a press.
+	it('stays hidden when this version of the FAQ was dismissed before', async () => {
+		dismissedEarlier(baseFaq.id, baseFaq.updatedAt, 60_000)
+
+		let {queryByText} = await renderWithFaqs([baseFaq])
+
+		expect(queryByText(baseFaq.bannerTitle)).toBeNull()
+	})
+
+	it('shows again once the FAQ is updated after it was dismissed', async () => {
+		dismissedEarlier(baseFaq.id, baseFaq.updatedAt, 60_000)
+
+		let {getByText} = await renderWithFaqs([{...baseFaq, updatedAt: '2025-01-15T00:00:00Z'}])
+
+		expect(getByText(baseFaq.bannerTitle)).toBeTruthy()
+	})
+
+	describe('with a repeat interval of a day', () => {
+		let repeating: Faq = {...baseFaq, repeatRule: {intervalMs: DAY}}
+
+		it('stays hidden until the interval has passed', async () => {
+			dismissedEarlier(repeating.id, repeating.updatedAt, DAY - 60_000)
+
+			let {queryByText} = await renderWithFaqs([repeating])
+
+			expect(queryByText(repeating.bannerTitle)).toBeNull()
+		})
+
+		it('shows again once it has', async () => {
+			dismissedEarlier(repeating.id, repeating.updatedAt, DAY + 60_000)
+
+			let {getByText} = await renderWithFaqs([repeating])
+
+			expect(getByText(repeating.bannerTitle)).toBeTruthy()
+		})
 	})
 
 	it('calls onPressOverride when the main pressable is tapped', async () => {
@@ -149,7 +198,7 @@ describe('FaqBanner component', () => {
 
 describe('FaqBannerGroup component', () => {
 	beforeEach(() => {
-		useFaqBannerStore.getState().resetAll()
+		useFaqBannerStore.setState({dismissed: {}})
 	})
 
 	it("calls onPressFaq with each banner's own id, not a shared/stale one", async () => {

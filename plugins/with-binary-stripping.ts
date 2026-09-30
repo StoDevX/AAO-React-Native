@@ -51,7 +51,7 @@ const APP_TARGET = 'AllAboutOlaf'
  * `-rSTx` is strip's: keep relocation info, strip Swift symbols, strip
  * debugging entries, strip local symbols.
  */
-export const STRIPPING_SETTINGS = {
+const STRIPPING_SETTINGS = {
 	DEPLOYMENT_POSTPROCESSING: 'YES',
 	STRIPFLAGS: '"-rSTx"',
 }

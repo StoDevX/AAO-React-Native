@@ -9,7 +9,6 @@ import {
 import {upperFirst} from 'lodash'
 
 const ANIMALS = ['bird', 'cat', 'cow', 'dog']
-/// Matches TestIdentifiers.ComponentLibrary in the XCUITest target.
 const ANIMAL_MENU_TEST_ID = 'component-library-context-menu'
 
 const SingleMenu = (): React.ReactNode => {

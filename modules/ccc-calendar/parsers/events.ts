@@ -1,4 +1,5 @@
 import {z} from 'zod'
+import {parseEach} from '@frogpond/data-sources/parse-each'
 
 /// ccc-server emits the wire event shape already, so this is a shape check
 /// rather than a transform — but it still validates, like every other parser
@@ -45,17 +46,5 @@ export type WireEvent = z.infer<typeof WireEventSchema>
 export function parseEvents(body: unknown): WireEvent[] {
 	let items = z.array(z.unknown()).parse(body)
 
-	let events = items.flatMap((raw) => {
-		try {
-			return [WireEventSchema.parse(raw)]
-		} catch {
-			return []
-		}
-	})
-
-	if (items.length > 0 && events.length === 0) {
-		throw new Error('every event was malformed')
-	}
-
-	return events
+	return parseEach(items, (raw) => WireEventSchema.safeParse(raw).data, 'event')
 }

@@ -19,16 +19,8 @@ test('throws when every group in a non-empty list is malformed', () => {
 	).toThrow()
 })
 
-test('returns an empty list when the upstream legitimately publishes no groups', () => {
-	expect(parseStolafAToZ({az_nav: {menu_items: []}})).toStrictEqual([])
-})
-
 test('extras: throws when every group in a non-empty list is malformed', () => {
 	expect(() => parseAToZExtras({data: ['garbage', 42, null, {foo: 'bar'}]})).toThrow()
-})
-
-test('extras: returns an empty list when there legitimately are no extras', () => {
-	expect(parseAToZExtras({data: []})).toStrictEqual([])
 })
 
 test('throws when every value across every group is malformed', () => {

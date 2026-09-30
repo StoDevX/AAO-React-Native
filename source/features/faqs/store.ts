@@ -14,8 +14,6 @@ type DismissedMap = Record<string, DismissedEntry>
 type BannerStore = {
 	dismissed: DismissedMap
 	dismissFaq: (faqId: string, version: string) => void
-	resetFaq: (faqId: string) => void
-	resetAll: () => void
 }
 
 export const getFaqVersion = (faq: Faq): string =>
@@ -32,13 +30,6 @@ export const useFaqBannerStore = create<BannerStore>()(
 						[faqId]: {version, dismissedAt: Date.now()},
 					},
 				})),
-			resetFaq: (faqId) =>
-				set((state) => {
-					let next = {...state.dismissed}
-					delete next[faqId]
-					return {dismissed: next}
-				}),
-			resetAll: () => set({dismissed: {}}),
 		}),
 		{
 			name: 'faq-banner-preferences',

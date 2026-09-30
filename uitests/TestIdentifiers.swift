@@ -16,9 +16,6 @@ struct TestIdentifiers {
 		/// `NSUserDefaults` as EXTRA_POSTING_SETTING in
 		/// modules/ccc-jobs/fixtures/uitest-postings.ts.
 		static let extraJobPosting = ["-AAOUITestExtraJobPosting", "YES"]
-		/// Makes the Student Work units map fail, read through `NSUserDefaults`
-		/// as UNITS_UNAVAILABLE_SETTING in modules/ccc-jobs/fixtures/uitest-postings.ts.
-		static let studentWorkUnitsUnavailable = ["-AAOUITestStudentWorkUnitsUnavailable", "YES"]
 		/// The value half of `-UIPreferredContentSizeCategoryName`, UIKit's
 		/// command-line override for the app's Dynamic Type size. This is AX5,
 		/// the largest accessibility size, so a test launching with it proves a
@@ -44,12 +41,10 @@ struct TestIdentifiers {
 	enum Home {
 		static let screen = "screen-homescreen"
 		static let notice = "home-notice"
-		static let tileGrid = "home-tile-grid"
 	}
 
 	enum Navigation {
 		static let openSettings = "Open Settings"
-		static let closeScreen = "Close Screen"
     static let settingsSheetTitle = "Settings"
 		/// The label every back button carries. UIKit gives its own back
 		/// buttons this label too, so a query using it must be scoped to one
@@ -103,12 +98,6 @@ struct TestIdentifiers {
 		static let definitionSheet = "dictionary-definition-sheet"
 		static let actionsMenu = "More actions"
 		static let suggestAnEdit = "Suggest an Edit"
-		/// The one entry carrying phonetics, and a Norwegian name whose
-		/// diacritic an ASCII query has to get past to find it.
-		static let phoneticEntry = "Rølvaag"
-		static let phoneticEntryQuery = "Rolvaag"
-		static let phoneticEntryIPA = "ˈrø̂ːlvoːɡ"
-		static let phoneticEntryPartOfSpeech = "noun"
 		/// A copy of the iOS dictionary's own "change" entry, present only under
 		/// `--uitesting`, for comparing this sheet against a screenshot of
 		/// Apple's.
@@ -121,14 +110,6 @@ struct TestIdentifiers {
 		/// screens -- 20 entries in `docs/dictionary.json`, AAC through Tomson --
 		/// so they can only be seen from the top if the list scrolls there.
 		static let firstEntrySearchTerm = "academic"
-
-		/// The entry from #7959, whose definition field showed clipped against
-		/// its row's top edge with dead space below it -- 744 characters over
-		/// three paragraphs; a single-paragraph entry of the same length never
-		/// did. Not the longest definition in the bundled dictionary: ASC runs
-		/// to 1189 characters over five paragraphs, for whoever wants the worst
-		/// case.
-		static let longDefinitionEntry = "AmCon"
 
 		/// The edit form's navigation bar, which carries `suggestAnEdit`'s
 		/// wording because that action is what opens it. Queries for the form's
@@ -147,19 +128,11 @@ struct TestIdentifiers {
 		/// The one definition field left in the app, on the sense screen.
 		static let senseDefinitionField = "Definition"
 		static let addSubsense = "Add Sub-sense"
-		/// The row a sub-sense with no definition yet draws in its parent's
-		/// Sub-senses section.
-		static func blankSubsenseRow(_ position: Int) -> String { "Sub-sense \(position)" }
 		/// Each sense's row on the edit form. The row's accessibility *label*
 		/// is the definition itself -- which is what a reorder test reads --
 		/// so the identifier is the only stable way to address a row by
 		/// position.
 		static func senseRow(_ position: Int) -> String { "dictionary-sense-row-\(position)" }
-		/// The reference entry's own first definition, so a reorder test can
-		/// say where that sense ended up. Matches `REFERENCE_ENTRY` in
-		/// `source/features/dictionary/lib/reference-entry.ts`.
-		static let referenceEntryFirstDefinition =
-			"make (someone or something) different; alter or modify"
 		/// The marker `@expo/ui` splices into a sentence under DEBUG when a
 		/// modifier is not in its nested-`Text` whitelist. Our patch adds
 		/// strikethrough and underline to that list; if a version bump ever drops
@@ -241,22 +214,9 @@ struct TestIdentifiers {
 		/// A row two screens down `parkingCategory`, behind every Accessible
 		/// Parking space. St. Olaf can rename it.
 		static let aRowFarDownParking = "Alumni Hall Road"
-		/// Carleton's fullest card: a photo, an address, accessibility, nine
-		/// offices, and floors. Carleton can rename it.
-		static let aCarletonBuildingWithAPhoto = "Sayles-Hill Campus Center"
 		/// A point inside a building with exactly one venue in the Hours data,
 		/// so its card shows that venue's hours as its own.
 		static let aPointWithItsOwnHours = "The Cage"
-		/// The dev-only home tile that opens Carleton's Hours screen, whose
-		/// toolbar carries the button to Carleton's map.
-		static let carletonCampusTile = "Carleton Campus"
-		/// Matches the section identifiers in `source/features/map/card/`.
-		static let cardPhoto = "card-photo"
-		static let cardAbout = "card-about"
-		static let photoViewerImage = "map-photo-viewer-image"
-		static let photoViewerClose = "map-photo-viewer-close"
-		static let departmentsGrid = "departments-grid"
-		static let departmentsMore = "departments-more"
 		/// The About menu in the map's header. It carries the OpenStreetMap
 		/// credit, so it has to stay reachable. Mirrors the accessibilityLabel
 		/// in app/(home)/Map/index.tsx.
@@ -275,12 +235,6 @@ struct TestIdentifiers {
 		/// data, so selecting it is what would fail if the map's campus parameter
 		/// were ignored.
 		static let aBuilding = "Buntrock Commons"
-		/// A second building, high enough in the list to be on screen even with
-		/// the keyboard up, and not a match for `aBuilding` under the picker's
-		/// subsequence search -- so typing that query has to drop it. St. Olaf can
-		/// rename either of these; a failure here is worth checking against the
-		/// list before it is blamed on the filter.
-		static let anotherBuilding = "Alumni Hall"
 	}
 
 	// MARK: - Balances
@@ -304,20 +258,13 @@ struct TestIdentifiers {
 		static let jobDescriptionRow = "Description"
 		/// The start of a paragraph in the fixture postings' description.
 		static let fixtureJobDescriptionParagraph = "Transferable Skills:"
-		/// The SF Symbol `DisclosureRow` draws for an external destination,
-		/// which the image carries as its identifier.
-		static let externalLinkAccessory = "arrow.up.right"
 		/// A fixture posting whose title carries a term and a pay code, shown
 		/// with both dropped. Mirrors UITEST_CODED_JOB_TITLE.
 		static let fixtureCodedJob = "Stav Student Server"
-		/// A word only the coded fixture's title holds, to search for it by.
-		static let fixtureCodedJobSearch = "stav"
 		/// Its wage, from the NST1 tier.
 		static let fixtureCodedJobWage = "$13.50/hr"
 		/// Matches LEVEL_LABELS in source/features/sis/student-work/posting.ts.
 		static let entryLevel = "Entry-level"
-		/// The Level filter's key, from `buildJobFilters`.
-		static let levelFilter = "level"
 		/// The posting only a launch with `LaunchArguments.extraJobPosting`
 		/// has, as its row titles it. Mirrors UITEST_EXTRA_JOB_TITLE.
 		static let fixtureExtraJob = "Planetarium Student Guide"
@@ -344,26 +291,17 @@ struct TestIdentifiers {
 		/// they leave empty. See FIXTURE_UNITS in
 		/// modules/ccc-jobs/fixtures/uitest-postings.ts.
 		static let researchArea = "Research (CURI)"
-		/// Matches the unavailable title in
-		/// source/features/sis/student-work/postings-list.tsx.
-		static let areaUnavailable = "Couldn’t load this area’s postings."
 		static let emptyArea = "Faith & Vocation"
 		/// The list's empty state once a search or filter leaves nothing, from
 		/// source/features/sis/student-work/postings-list.tsx.
 		static let noMatchingJobs = "No matching jobs."
 		/// From PRESETS in source/features/sis/student-work/presets.ts.
 		static let allPostingsPreset = "All job postings"
-		static let entryLevelPreset = "Entry-level jobs"
 		/// The postings screen's title, whatever it was opened with. Matches
 		/// TITLE in app/(home)/StudentWork/postings.tsx.
 		static let postingsTitle = "Job Postings"
 		/// The Area filter's key, from `buildJobFilters`.
 		static let areaFilter = "area"
-		/// The tier every filler posting is at.
-		static let experienced = "Experienced"
-		/// Starts every filler posting's title, as FILLER_TITLE_PREFIX in
-		/// modules/ccc-jobs/fixtures/uitest-postings.ts.
-		static let fixtureFillerPrefix = "Fixture Filler Posting"
 		/// Matches POSTINGS_LIST_ID in source/features/sis/student-work/postings-list.tsx.
 		static let postingsList = "student-work-postings"
 	}
@@ -372,7 +310,6 @@ struct TestIdentifiers {
 
 	enum Menus {
 		static let stOlafCafes = ["Stav Hall", "The Cage", "The Pause"]
-		static let carleton = "Carleton"
 
 		/// Matches FOOD_ROW_PREFIX in modules/food-menu/food-item-row.tsx.
 		static let foodRowPrefix = "food-row-"
@@ -382,16 +319,6 @@ struct TestIdentifiers {
 		/// than whatever Bon Appétit is serving today.
 		static let pause = "The Pause"
 
-		/// The Pause's navigation title, which names the venue publishing its
-		/// hours rather than repeating the tab's shorter label.
-		static let pauseTitle = "The Pause Kitchen"
-
-		/// What the Pause's title reads at the frozen clock, which is before its
-		/// one window of the day opens: the day written out, and when it opens.
-		/// A prefix, because the time that finishes it is printed in the
-		/// device's zone.
-		static let pauseClosedDetail = "Saturday, Opens at "
-
 		/// Two stations from that file, and one item from each. The Stations
 		/// filter asks for a menu outright, so its shape does not depend on how
 		/// many stations a cafe happens to serve.
@@ -399,12 +326,6 @@ struct TestIdentifiers {
 		static let specialtyPizzaStation = "Specialty Pizza"
 		static let pizzaItem = "food-row-Single Slice"
 		static let specialtyPizzaItem = "food-row-BBQ Chicken"
-
-		/// A Bon Appétit cor-icon, and so both an option in Stav Hall's
-		/// Dietary Restrictions filter and a word in the accessibility label
-		/// of every food row that carries it.
-		static let vegan = "Vegan"
-		static let halal = "Halal"
 
 		/// The day the app's frozen clock sits on, as the header writes it under
 		/// the cafe's name -- the weekday alone. `UITEST_FROZEN_DATE` in
@@ -470,7 +391,6 @@ struct TestIdentifiers {
 		enum MenusKeys {
 			static let specials = "specials"
 			static let stations = "stations"
-			static let dietaryRestrictions = "dietary-restrictions"
 		}
 	}
 
@@ -509,38 +429,6 @@ struct TestIdentifiers {
 		/// The same, for the Upcoming list: two days past the frozen one, so it
 		/// sits well inside the rows the list has built either side of today.
 		static let unfilteredUpcomingRow = "First Day of Classes"
-		/// The fixture's last event, thirteen days past the frozen one. The
-		/// Upcoming list mounts only its first fifteen rows up front, so this
-		/// one exists only once scrolling has made the list mount more.
-		static let lastUpcomingRow = "Fall Family Weekend"
-		/// An athletics event on the frozen day. The Calendar hides athletics, so
-		/// this row must never appear, though it sits beside rows that do.
-		static let hiddenAthleticsRow = "Football vs. Carleton College"
-		/// The category the fixture files that event under. The picker draws a
-		/// category as its name then its count, so a test matches the prefix.
-		static let hiddenCategory = "Athletics"
-		/// The one calendar UI test mode enables, from `REMOTE_SOURCES`.
-		static let uitestCalendar = "UI Test Fixtures"
-		/// Every attribution caption opens with this. The list should carry
-		/// none and the event detail exactly one.
-		static let attributionPrefix = "Powered by"
-		/// Only the event detail screen carries this, so it is how a test knows
-		/// the push landed.
-		static let shareEvent = "Share Event"
-		/// The bottom-bar action on the event detail sheet. A bar item's
-		/// identifier is its title, which is what XCUITest matches on.
-		static let addToCalendar = "Add to Calendar"
-		/// The bar item's label once the system editor has saved the event. The
-		/// item is disabled then, and stays so until the event sheet closes.
-		static let addedToCalendar = "Added to Calendar"
-		/// The system new-event editor's title. The editor runs outside the app,
-		/// which is why adding an event needs no calendar access.
-		static let newEventEditor = "New Event"
-		/// The editor's save button: a checkmark, labelled Done on iOS 27.
-		static let saveNewEvent = "Done"
-		/// Dismisses the event detail sheet. A header bar item carrying only an
-		/// SF Symbol, so its accessibility label is the only thing to find it by.
-		static let closeEventDetail = "Close"
 		/// Returns the list to the top. A bar item, so its title is its
 		/// identifier.
 		static let today = "Today"
@@ -553,15 +441,10 @@ struct TestIdentifiers {
 		/// An empty day names itself, so only the opening is fixed.
 		static let emptyDayNotice = "Nothing on "
 
-		/// Day view's empty-state copy when every calendar is switched off.
-		/// Mirrors the literal in `modules/event-list/day-view.tsx`.
-		static let noCalendarsNotice = "No calendars are showing."
-
 		/// The top-right menu that chooses how the calendar draws itself.
 		/// Mirrors `accessibilityLabel('Calendar view')` in
 		/// `modules/ccc-calendar/mode-picker.tsx`.
 		static let modePicker = "Calendar view"
-		static let dayMode = "Day"
 		static let upcomingMode = "Upcoming"
 		/// The mode that is committed commented out, and so must not appear.
 		static let timelineMode = "Timeline"
@@ -626,7 +509,6 @@ struct TestIdentifiers {
 
 		/// The lead story, and every card on a shelf, in source/features/mess/issue-page.tsx.
 		static let leadStory = "mess-lead-story"
-		static let storyCard = "mess-story-card"
 
 		/// A section's column chips, each labelled with its column, in source/features/mess/section-page.tsx.
 		static let columnChip = "mess-column-chip"
@@ -735,16 +617,8 @@ struct TestIdentifiers {
 	// MARK: - Settings
 
 	enum Settings {
-		static let signIn = "Sign in to St. Olaf"
-		/// The Messenger's stain picker, in
-		/// source/features/settings/screens/overview/issue-stains-row.tsx, and choices it offers.
-		static let issueStains = "settings-issue-stains"
-		static let tea = "Tea"
-		static let coffee = "Coffee"
 		static let developer = "Developer"
 		static let enableDevMode = "Enable dev mode"
-		/// Matches the label in source/features/telemetry/consent-toggle.tsx.
-		static let shareTelemetry = "Share anonymous usage and crash data"
 	}
 
 	// MARK: - Directory
@@ -769,11 +643,6 @@ struct TestIdentifiers {
 		/// screen.
 		static let aSecondContactAction = "Call 24-Hour Hotline"
 
-		/// A contact from data/contact-info/ whose action opens a web page
-		/// rather than placing a call.
-		static let aLinkContact = "Anonymous Reports"
-		/// That contact's own action, shown on its detail screen.
-		static let aLinkContactAction = "Open Anonymous Report Form"
 		/// The in-app browser's own close button, which only the browser
 		/// sheet draws.
 		static let inAppBrowserDone = "Done"
@@ -793,10 +662,6 @@ struct TestIdentifiers {
 		/// `source/features/directory/__fixtures__/entries.ts`.
 		static let fixtureEntry = "Kari Testerson"
 		static let fixtureEntryDepartment = "Computer Science"
-		/// Each department on the landing: `directory-department-<name>`.
-		/// Mirrors DEPARTMENT_ROW_PREFIX in
-		/// source/features/directory/departments-list.tsx.
-		static let departmentRowPrefix = "directory-department-"
 	}
 
 	// MARK: - Student Orgs
@@ -843,17 +708,10 @@ struct TestIdentifiers {
 		/// Mirrors BUILDING_ROW_PREFIX in
 		/// source/features/building-hours/list/building-list-row.tsx.
 		static let rowPrefix = "building-row-"
-		/// A venue marked `listed: false` in `data/building-hours/`: left out of
-		/// the Hours list's sections, found by search and on All spaces.
-		static let anUnlistedBuilding = "Tomson Hall"
-		/// Mirrors ALL_SPACES_ROW_ID in
-		/// source/features/building-hours/list/building-list.tsx.
-		static let allSpacesRow = "hours-all-spaces"
 		/// The swipe action's two labels. Mirrors ADD_TO_FAVORITES and
 		/// REMOVE_FROM_FAVORITES in
 		/// source/features/building-hours/list/building-list-row.tsx.
 		static let addToFavorites = "Add to Favorites"
-		static let removeFromFavorites = "Remove from Favorites"
 		/// The section the list grows at its top once anything is favourited.
 		/// Every test launches with `--reset-state`, so it starts absent.
 		static let favoritesSection = "Favorites"
@@ -883,12 +741,6 @@ struct TestIdentifiers {
 		/// The report screen's own submit control, in the navigation bar.
 		static let submitReportAction = "Submit Report"
 
-		/// Carleton's Hours screen carries this top-right toolbar button, which
-		/// pushes to `/Map` for Carleton -- the hand-hosted map screen stays
-		/// where it is, so this is a navigation, not a mode switch. St. Olaf's
-		/// Hours screen has none: its map has a home tile of its own.
-		static let mapButton = "Map"
-
 		/// A St. Olaf venue whose `building` key (`toh`) resolves to a
 		/// differently-named feature -- Tomson Hall, not Registrar -- so a test
 		/// asserting the cutout frames `aBuildingWithCutoutFrames` only passes if
@@ -912,12 +764,6 @@ struct TestIdentifiers {
 		/// `UITEST_COURSE_NAME` in
 		/// `source/lib/course-search/__fixtures__/courses.ts`.
 		static let aCourse = "Hybrid Test Course"
-	}
-
-	// MARK: - StoPrint
-
-	enum StoPrint {
-		static let notLoggedIn = "You are not logged in"
 	}
 
 	// MARK: - Transit

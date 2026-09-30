@@ -1,4 +1,5 @@
 import {z} from 'zod'
+import {parseEach} from '@frogpond/data-sources/parse-each'
 import {StoryType} from '../types'
 
 /// ccc-server emits our normalised shape already, so this is a shape check
@@ -40,17 +41,12 @@ function toStory(item: z.infer<typeof FeedItemSchema>): StoryType {
 export function parseFeedItems(body: unknown): StoryType[] {
 	let items = z.array(z.unknown()).parse(body)
 
-	let stories = items.flatMap((raw) => {
-		try {
-			return [toStory(FeedItemSchema.parse(raw))]
-		} catch {
-			return []
-		}
-	})
-
-	if (items.length > 0 && stories.length === 0) {
-		throw new Error('every feed item was malformed')
-	}
-
-	return stories
+	return parseEach(
+		items,
+		(raw) => {
+			let item = FeedItemSchema.safeParse(raw)
+			return item.success ? toStory(item.data) : undefined
+		},
+		'feed item',
+	)
 }

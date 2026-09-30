@@ -1,6 +1,7 @@
 import {
 	appleMapsDirectionsUrl,
 	appleMapsSearchUrl,
+	basemapScheme,
 	buildingPhotoUrl,
 	mapCredits,
 	mapStyleUrl,
@@ -36,7 +37,33 @@ describe('mapStyleUrl', () => {
 	// Carleton's style does cover St. Olaf, but it draws the campus as an
 	// anonymous cluster of grey footprints.
 	it('gives each campus its own basemap', () => {
-		expect(mapStyleUrl('stolaf')).not.toBe(mapStyleUrl('carleton'))
+		expect(mapStyleUrl('stolaf', 'light')).not.toBe(mapStyleUrl('carleton', 'light'))
+	})
+
+	it("draws St. Olaf's dark basemap in dark mode", () => {
+		expect(mapStyleUrl('stolaf', 'dark')).toBe('https://stolaf.dev/campus-map-data/style-dark.json')
+		expect(mapStyleUrl('stolaf', 'light')).toBe('https://stolaf.dev/campus-map-data/style.json')
+	})
+
+	// Carleton's style has no dark variant.
+	it("keeps Carleton's basemap in dark mode", () => {
+		expect(mapStyleUrl('carleton', 'dark')).toBe(mapStyleUrl('carleton', 'light'))
+	})
+})
+
+describe('basemapScheme', () => {
+	it('is dark only for a campus with a dark style, in dark mode', () => {
+		expect(basemapScheme('stolaf', 'dark')).toBe('dark')
+		expect(basemapScheme('stolaf', 'light')).toBe('light')
+		expect(basemapScheme('carleton', 'dark')).toBe('light')
+		expect(basemapScheme('carleton', 'light')).toBe('light')
+	})
+
+	// Before the system reports an appearance, the light basemap is the one
+	// every campus has.
+	it('falls back to light when the appearance is unknown', () => {
+		expect(basemapScheme('stolaf', 'unspecified')).toBe('light')
+		expect(basemapScheme('stolaf', undefined)).toBe('light')
 	})
 })
 

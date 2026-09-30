@@ -1,12 +1,12 @@
 import * as React from 'react'
-import {StyleSheet, View} from 'react-native'
+import {StyleSheet, useColorScheme, View} from 'react-native'
 import {RNHostView} from '@expo/ui/swift-ui'
 import {Camera, GeoJSONSource, Layer, Map} from '@maplibre/maplibre-react-native'
 import * as c from '@frogpond/colors'
 import {toBuildingFootprints} from '../../map/lib/building-footprints'
 import {cutoutBounds} from '../../map/lib/cutout-bounds'
 import type {Building, Feature} from '../../map/types'
-import {mapStyleUrl} from '../../map/urls'
+import {basemapScheme, mapStyleUrl} from '../../map/urls'
 import type {Campus} from '../types'
 import {PICTURE_CORNER_RADIUS} from '../../../components/place-card/card-style'
 
@@ -22,6 +22,28 @@ const LABEL_FONT = ['Noto Sans Medium']
  * this id.
  */
 const STOLAF_BUILDING_LABELS = 'campus_labels_buildings'
+/**
+ * The framed building's name, drawn to read against each basemap appearance:
+ * dark on a white halo over the light basemap, light on a dark halo over the
+ * dark one.
+ *
+ * Literal colours, not PlatformColor: MapLibre's paint spec takes style-spec
+ * strings and cannot resolve a dynamic system colour. Keyed by the basemap's
+ * appearance rather than the system's, because Carleton's basemap stays light
+ * in dark mode.
+ */
+const LABEL_PAINT = {
+	light: {
+		'text-color': 'rgb(28, 28, 30)',
+		'text-halo-color': 'rgb(255, 255, 255)',
+		'text-halo-width': 1.5,
+	},
+	dark: {
+		'text-color': 'rgb(242, 242, 247)',
+		'text-halo-color': 'rgb(28, 28, 30)',
+		'text-halo-width': 1.5,
+	},
+} as const
 /** Points of breathing room around the framed building, so its footprint
  * doesn't run flush against the cutout's edges. */
 const CUTOUT_PADDING = 32
@@ -45,6 +67,8 @@ type Props = {
  * by returning `undefined`, and until `width` is known.
  */
 export function BuildingCutout({campus, feature, width}: Props): React.ReactNode {
+	let scheme = useColorScheme()
+
 	// Framed on the same geometry the layers below draw, so the two cannot
 	// disagree. Callers are expected to have checked `hasFootprint` already --
 	// this guard is the belt to that braces, and keeps the component honest on
@@ -76,7 +100,7 @@ export function BuildingCutout({campus, feature, width}: Props): React.ReactNode
 					doubleTapZoom={false}
 					dragPan={false}
 					logo={false}
-					mapStyle={mapStyleUrl(campus)}
+					mapStyle={mapStyleUrl(campus, scheme)}
 					scaleBar={false}
 					style={styles.map}
 					touchPitch={false}
@@ -138,15 +162,7 @@ export function BuildingCutout({campus, feature, width}: Props): React.ReactNode
 								'text-ignore-placement': true,
 								'text-size': 13,
 							}}
-							// Literal colours, not PlatformColor: MapLibre's paint spec takes
-							// style-spec strings and cannot resolve a dynamic system colour.
-							// Both campuses' basemaps are light, so dark-on-white reads in
-							// either appearance.
-							paint={{
-								'text-color': 'rgb(28, 28, 30)',
-								'text-halo-color': 'rgb(255, 255, 255)',
-								'text-halo-width': 1.5,
-							}}
+							paint={LABEL_PAINT[basemapScheme(campus, scheme)]}
 							type="symbol"
 						/>
 					</GeoJSONSource>

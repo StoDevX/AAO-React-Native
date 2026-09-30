@@ -1,8 +1,7 @@
 import * as React from 'react'
 import {act, renderHook, waitFor} from '@testing-library/react-native'
-import {Settings} from 'react-native'
 import {QueryClient, QueryClientProvider, useQueryClient} from '@tanstack/react-query'
-import {keys, type PostingUnits} from '@frogpond/ccc-jobs'
+import {keys, postingUnitsOptions, type PostingUnits} from '@frogpond/ccc-jobs'
 import {UITEST_POSTING_UNITS} from '@frogpond/ccc-jobs/fixtures/uitest-postings'
 import {useStudentWorkBoard} from '../use-board'
 
@@ -20,6 +19,7 @@ beforeEach(() => {
 // A client's garbage-collection timers would keep Jest from exiting.
 afterEach(() => {
 	client.clear()
+	jest.restoreAllMocks()
 })
 
 function Wrapper({children}: {children: React.ReactNode}): React.ReactNode {
@@ -78,16 +78,13 @@ describe('useStudentWorkBoard', () => {
 
 	test('with no map and nothing saved, reads no details and knows no areas', async () => {
 		client = new QueryClient({defaultOptions: {queries: {retry: false}}})
-		let get = jest
-			.spyOn(Settings, 'get')
-			.mockImplementation((key: string) => key === 'AAOUITestStudentWorkUnitsUnavailable')
+		jest.spyOn(postingUnitsOptions, 'queryFn').mockRejectedValue(new Error('ccc-server is down'))
 
 		let {result} = await renderHook(() => useStudentWorkBoard(), {wrapper: Wrapper})
 
 		await waitFor(() => expect(result.current.availability).toBe('unavailable'))
 		expect(result.current.context.membership.size).toBe(0)
 		expect(client.getQueryCache().findAll({queryKey: ['jobs', 'detail']})).toEqual([])
-		get.mockRestore()
 	})
 
 	// Opening Student Work checks for new postings -- that is what the New dots

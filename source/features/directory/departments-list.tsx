@@ -12,9 +12,6 @@ import * as c from '@frogpond/colors'
 import {RowAccessory} from '../../components/rows'
 import type {DepartmentListing} from './types'
 
-/// Mirrored by `TestIdentifiers.Directory.departmentRowPrefix`. The roster is
-/// live, so a test addresses the first row by prefix rather than by a name
-/// the college can change.
 const DEPARTMENT_ROW_PREFIX = 'directory-department-'
 
 type Props = {
