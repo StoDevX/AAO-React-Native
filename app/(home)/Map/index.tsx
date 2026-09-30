@@ -1,5 +1,11 @@
 import * as React from 'react'
-import {StyleSheet, useWindowDimensions, View, type NativeSyntheticEvent} from 'react-native'
+import {
+	StyleSheet,
+	useColorScheme,
+	useWindowDimensions,
+	View,
+	type NativeSyntheticEvent,
+} from 'react-native'
 import {useSafeAreaInsets} from 'react-native-safe-area-context'
 import {BottomSheet, Group, Host, ZStack} from '@expo/ui/swift-ui'
 import {
@@ -97,6 +103,7 @@ export default function MapPage(): React.ReactNode {
 		[campusParam],
 	)
 
+	let scheme = useColorScheme()
 	let cameraRef = React.useRef<CameraRef>(null)
 	// The sheet is the map's, not a route's, so its selection is the map's too.
 	// The places open on the map, bottom to top: the sheet's card, then each
@@ -227,7 +234,7 @@ export default function MapPage(): React.ReactNode {
 			<Map
 				attribution={false}
 				logo={false}
-				mapStyle={mapStyleUrl(campus)}
+				mapStyle={mapStyleUrl(campus, scheme)}
 				style={StyleSheet.absoluteFill}
 			>
 				<Camera
