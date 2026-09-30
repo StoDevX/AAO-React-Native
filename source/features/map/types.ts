@@ -78,6 +78,11 @@ export type Building = {
 	length?: number | null
 	/** The rules that apply here, one sentence each. St. Olaf's Natural Lands only. */
 	rules?: Array<string>
+	/**
+	 * The Wellness Walk along this place, if the Natural Lands publishes one:
+	 * its time range in minutes, and its surface and slope in a sentence.
+	 */
+	walk?: {minutes: [number, number]; accessibility: string} | null
 }
 
 export type Longitude = number

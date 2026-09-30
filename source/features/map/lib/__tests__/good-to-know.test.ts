@@ -1,4 +1,4 @@
-import {formatDistance, goodToKnowRows} from '../good-to-know'
+import {formatDistance, formatWalkTime, goodToKnowRows} from '../good-to-know'
 
 const base = {abbreviation: null, nickname: '', accessibility: 'unknown' as const}
 const US = {languageTag: 'en-US', measurementSystem: 'us' as const}
@@ -58,6 +58,36 @@ describe('goodToKnowRows', () => {
 		expect(goodToKnowRows({...base, length: null}, US)).toEqual([])
 		expect(goodToKnowRows({...base, length: undefined}, US)).toEqual([])
 		expect(goodToKnowRows({...base, length: 0}, US)).toEqual([])
+	})
+})
+
+describe('goodToKnowRows, walks', () => {
+	it("gives a walk's time and accessibility after the trail's length", () => {
+		expect(
+			goodToKnowRows(
+				{...base, length: 1317, walk: {minutes: [14, 17], accessibility: 'Flat.'}},
+				US,
+			),
+		).toEqual([
+			{kind: 'length', text: '0.8 mi'},
+			{kind: 'walk-time', text: '14–17 min walk'},
+			{kind: 'walk-access', text: 'Flat.'},
+		])
+	})
+
+	it('says nothing of a walk it does not have', () => {
+		expect(goodToKnowRows({...base, walk: null}, US)).toEqual([])
+		expect(goodToKnowRows({...base, walk: undefined}, US)).toEqual([])
+	})
+})
+
+describe('formatWalkTime', () => {
+	it('gives a range with an en dash', () => {
+		expect(formatWalkTime([14, 17])).toBe('14–17 min walk')
+	})
+
+	it('gives one time when the range is one number', () => {
+		expect(formatWalkTime([15, 15])).toBe('15 min walk')
 	})
 })
 
