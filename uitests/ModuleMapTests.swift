@@ -364,6 +364,8 @@ class ModuleMapTests: UITestCase {
 			.checkSheetPresented()
 			.expandSheet()
 			.capture("St. Olaf map categories at the largest text size")
-			.verifyCategoriesAsList(including: TestIdentifiers.Map.diningCategory)
+			// The first row: at this size the sheet may rest short of its full
+			// stop, and a list builds only the rows it shows.
+			.verifyCategoriesAsList(including: TestIdentifiers.Map.allBuildingsCategory)
 	}
 }
