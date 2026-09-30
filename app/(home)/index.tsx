@@ -127,7 +127,6 @@ function UnofficialAppNotice(): React.ReactNode {
 	)
 }
 
-/// Mirrored by TestIdentifiers.Home.tileGrid.
 const HOME_GRID_ID = 'home-tile-grid'
 
 export default function HomePage(): React.ReactNode {

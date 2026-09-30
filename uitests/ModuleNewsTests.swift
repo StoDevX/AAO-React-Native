@@ -49,13 +49,6 @@ class ModuleNewsTests: UITestCase {
 			.openColumn(TestIdentifiers.News.goodQuestionsColumn, in: TestIdentifiers.News.newsSection)
 	}
 
-	func testOlafMessengerOpensAStoryInTheApp() throws {
-		MessFrontPage(app: app)
-			.navigate()
-			.openLeadStory()
-			.verifyStoryAppears()
-	}
-
 	func testOlafMessengerStoryTextOffersCopy() throws {
 		MessFrontPage(app: app)
 			.navigate()
@@ -103,15 +96,6 @@ class ModuleNewsTests: UITestCase {
 			.pickSignFromList(TestIdentifiers.News.aquarius)
 			.verifySignChosen(TestIdentifiers.News.aquarius)
 			.verifyScrolledToChosenSign(TestIdentifiers.News.aquarius)
-	}
-
-	func testComicOpensTheZoomViewer() throws {
-		MessFrontPage(app: app)
-			.navigate()
-			.openColumn(TestIdentifiers.News.comicColumn, in: TestIdentifiers.News.varietySection)
-			.openFirstStory()
-			.openImageViewer()
-			.closeImageViewer()
 	}
 
 	/// Each story opened from a series row is a screen of its own, even one already

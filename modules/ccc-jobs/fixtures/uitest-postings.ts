@@ -112,7 +112,6 @@ const CODED_JOB: JobDetail = {
 	url: `${SITE}/job/uitest-3`,
 }
 
-/// Mirrored by `TestIdentifiers.StudentWork.fixtureFillerPrefix`.
 const FILLER_TITLE_PREFIX = 'Fixture Filler Posting'
 const FILLER_COUNT = 20
 /// This week, last week, and earlier, against the frozen 2026-09-05.
@@ -187,12 +186,3 @@ export const UITEST_JOB_CATEGORIES: JobCategory[] = [
 export const UITEST_POSTING_UNITS: Record<string, string | null> = Object.fromEntries(
 	UITEST_JOB_DETAILS.filter((job) => job.id !== EXTRA_JOB.id).map((job) => [job.id, job.unit]),
 )
-
-/// Mirrored by `TestIdentifiers.LaunchArguments.studentWorkUnitsUnavailable`.
-const UNITS_UNAVAILABLE_SETTING = 'AAOUITestStudentWorkUnitsUnavailable'
-
-/// Whether a UI test launched with the units map failing, and nothing saved.
-/// Read on each call, so a Jest test can set it.
-export function uitestUnitsUnavailable(): boolean {
-	return Boolean(Settings.get(UNITS_UNAVAILABLE_SETTING))
-}

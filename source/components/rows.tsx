@@ -380,7 +380,6 @@ export function DetailRow(props: DetailRowProps): React.ReactNode {
 	)
 }
 
-/// Mirrored by `TestIdentifiers.Rows.selectableText`.
 const SELECTABLE_TEXT_ID = 'selectable-text'
 
 /**
