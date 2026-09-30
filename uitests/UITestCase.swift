@@ -6,9 +6,10 @@ import XCTest
 class UITestCaseUnbooted: XCTestCase {
 	var app: XCUIApplication!
 
-	/// Synchronous on purpose. With `continueAfterFailure` false, an async
-	/// `setUp` makes every failure end the test runner process, and
-	/// `-retry-tests-on-failure` never gets to retry the test.
+	/// Synchronous on purpose, as every test method here must be. With
+	/// `continueAfterFailure` false, a failure in an async `setUp` or an async
+	/// test ends the test runner process, and `-retry-tests-on-failure` never
+	/// gets to retry the test. Wait on an expectation with `wait(for:timeout:)`.
 	override func setUpWithError() throws {
 		continueAfterFailure = false
 

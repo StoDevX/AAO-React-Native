@@ -21,7 +21,7 @@ class ModuleCalendarDayModeTests: UITestCase {
 	/// actually reach the screen in. The category submenu is opened last:
 	/// descending into an axis replaces what is on screen, so the top-level rows
 	/// have to be read while they are still the thing presented.
-  @MainActor func testDayModeAndFilters() async throws {
+  func testDayModeAndFilters() throws {
     app.launch()
 		let screen = CalendarScreen(app: app)
 
@@ -33,7 +33,7 @@ class ModuleCalendarDayModeTests: UITestCase {
 
     let rows = screen.visibleRows()
     let expectation = expectation(for: rows.count >= 1)
-    await fulfillment(of: [expectation], timeout: 10)
+    wait(for: [expectation], timeout: 10)
     let unfilteredCount = rows.count
 
     XCTContext.runActivity(named: "Verify the picker rows") { _ in
@@ -83,7 +83,7 @@ class ModuleCalendarDayModeTests: UITestCase {
     screen.verifyRowPresent(TestIdentifiers.Calendar.unfilteredDayRow)
 	}
 
-  @MainActor func testDayPickerStrip() async throws {
+  func testDayPickerStrip() throws {
 		let screen = CalendarScreen(app: app)
     screen.navigate()
 
@@ -103,7 +103,7 @@ class ModuleCalendarDayModeTests: UITestCase {
 
     let eventRows = screen.visibleRows()
     let expectation = expectation(for: eventRows.count >= 1)
-    await fulfillment(of: [expectation], timeout: 10)
+    wait(for: [expectation], timeout: 10)
     let initialEventCount = eventRows.count
     let initialEventIdentifiers = eventRows.identifiers()
 
@@ -190,7 +190,7 @@ class ModuleCalendarDayModeTests: UITestCase {
 }
 
 class ModuleCalendarUpcomingModeTests: UITestCase {
-  @MainActor func testFilteringByOrganizationNarrowsTheUpcomingList() async throws {
+  func testFilteringByOrganizationNarrowsTheUpcomingList() throws {
     let screen = CalendarScreen(app: app)
     screen.navigate()
 
@@ -201,7 +201,7 @@ class ModuleCalendarUpcomingModeTests: UITestCase {
 
     let rows = app.buttons.matching(.beginsWith("event-row-"))
     let expectation = expectation(for: rows.count >= 1)
-    await fulfillment(of: [expectation], timeout: 10)
+    wait(for: [expectation], timeout: 10)
     let unfiltered = rows.count
 
     screen
