@@ -355,15 +355,6 @@ struct MapScreen: Screen {
 		return self
 	}
 
-	/// The open card shows `text` somewhere in it: a Good to Know fact, or a rule.
-	@discardableResult
-	func verifyCardShows(_ text: String) -> Self {
-		XCTAssertTrue(
-			app.staticTexts[text].firstMatch.waitForExistence(timeout: 10),
-			"The card should show \(text)")
-		return self
-	}
-
 	/// The top card is `name`'s: only one card's close button can be tapped,
 	/// and `name` can be seen, as the header's title or, at the large stop,
 	/// the big title in its place. A title's label carries its subtitle after
