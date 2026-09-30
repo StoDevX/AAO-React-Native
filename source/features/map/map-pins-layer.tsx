@@ -15,6 +15,10 @@ const PIN_RADIUS = 8
 const CLUSTER_RADIUS = 14
 const PIN_STROKE = 2
 const CAMERA_ANIMATION_MS = 500
+/// Both campuses' styles serve Noto Sans and nothing else. Left unset, a text
+/// layer asks for MapLibre's default font stack, whose glyphs 404 -- and the
+/// source's tiles then never finish, so the circles vanish with the labels.
+const PIN_FONT = ['Noto Sans Regular']
 
 type Props = {
 	pins: MapPins | null
@@ -70,7 +74,11 @@ export function MapPinsLayer({pins, onSelect, cameraRef}: Props): React.ReactNod
 			<Layer
 				filter={['has', 'point_count']}
 				id="map-pins-cluster-counts"
-				layout={{'text-field': ['get', 'point_count_abbreviated'], 'text-size': 13}}
+				layout={{
+					'text-field': ['get', 'point_count_abbreviated'],
+					'text-font': PIN_FONT,
+					'text-size': 13,
+				}}
 				paint={{'text-color': c.white}}
 				type="symbol"
 			/>
@@ -90,6 +98,7 @@ export function MapPinsLayer({pins, onSelect, cameraRef}: Props): React.ReactNod
 				id="map-pins-names"
 				layout={{
 					'text-field': ['get', 'name'],
+					'text-font': PIN_FONT,
 					'text-size': 12,
 					'text-offset': [0, 1.2],
 					'text-anchor': 'top',
