@@ -344,10 +344,10 @@ type DetailRowProps = {
 export function DetailRow(props: DetailRowProps): React.ReactNode {
 	let {label, value, valueLines, onPress, destination = 'push'} = props
 
-	// An action has no accessory, so the tint is its only sign of being
-	// tappable. A push or external value already has its glyph, and a tinted
-	// value would draw prose -- office hours, say -- as though it were a link.
-	let valueTint = onPress && destination === 'action' ? c.systemBlue : c.secondaryLabel
+	// A tappable action or external value is the thing you reach -- a number to
+	// call, a page to open -- so it is drawn as a link. A push leads to more
+	// detail about the row, so its value stays secondary, as in Settings.
+	let valueTint = onPress && destination !== 'push' ? c.systemBlue : c.secondaryLabel
 
 	let content = (
 		<LabeledContent label={label}>
