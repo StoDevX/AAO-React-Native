@@ -35,6 +35,7 @@
     "@frogpond/notice": "workspace:*",
     "@frogpond/open-url": "workspace:*",
     "@frogpond/place-card-header": "workspace:*",
+    "@frogpond/quick-actions": "workspace:*",
     "@frogpond/separator": "workspace:*",
     "@frogpond/silly-card": "workspace:*",
     "@frogpond/storage": "workspace:*",
