@@ -24,10 +24,14 @@ let device = Object.values(booted).flat()[0]
 if (!device) throw new Error('boot a simulator with the app installed first')
 console.log(`recording on ${device.name} (${device.udid})`)
 
-let container = run('xcrun', ['simctl', 'get_app_container', device.udid, BUNDLE, 'data']).trim()
-let recording = join(container, RECORDING)
+/** The recording's path: asked for each time, since the test run reinstalls the app. */
+function recordingPath() {
+	let container = run('xcrun', ['simctl', 'get_app_container', device.udid, BUNDLE, 'data'])
+	return join(container.trim(), RECORDING)
+}
+
 // A recording left by an earlier run would mix two papers.
-rmSync(recording, {force: true})
+rmSync(recordingPath(), {force: true})
 
 let build = [
 	'-workspace',
@@ -67,6 +71,7 @@ run(
 	{stdio: 'inherit', env: {...process.env, TEST_RUNNER_AAO_RECORD_FIXTURES: '1'}},
 )
 
+let recording = recordingPath()
 if (!existsSync(recording)) throw new Error('nothing was recorded; mess.json is left as it was')
 let table = mergeRecordings(readFileSync(recording, 'utf8').split('\n'))
 checkRecording(table)
