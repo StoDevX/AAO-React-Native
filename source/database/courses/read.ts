@@ -12,7 +12,6 @@ import {now} from '@frogpond/timer'
 import type {CourseType} from '../../lib/course-search/types.ts'
 import {reportingFailures} from '../calendar/read.ts'
 import {getRunner} from '../client.ts'
-import {CATALOG_SCHEMA} from './fixture.ts'
 import type {CourseFilters} from './filters.ts'
 import {
 	courseChildrenQueries,
@@ -31,6 +30,7 @@ import {
 	type CourseListRow,
 	type CourseRow,
 } from './rows.ts'
+import {CATALOG_SCHEMA} from './schema.ts'
 
 const ONE_HOUR = 60 * 60 * 1000
 

@@ -5,9 +5,9 @@ import {getRunner} from '../client.ts'
 import type {SqlRunner} from '../sql.ts'
 import {catalogFile, filePath, incomingCatalogFile} from './catalog-file.ts'
 import {checkCatalog} from './check.ts'
-import {CATALOG_SCHEMA} from './fixture.ts'
 import {buildCourseIndex, storedEtag, storeEtag} from './index-build.ts'
 import {bumpCourseRevision} from './revision.ts'
+import {CATALOG_SCHEMA} from './schema.ts'
 
 /** The course catalog course-data-tools publishes nightly: every term from five years back. */
 export const CATALOG_URL = 'https://stolaf.dev/course-data/catalog-recent.db'

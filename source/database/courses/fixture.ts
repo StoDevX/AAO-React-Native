@@ -1,8 +1,6 @@
 import type {RawCourseType} from '../../lib/course-search/types.ts'
 import type {SqlRunner} from '../sql.ts'
-
-/** The schema name the catalog file is attached under. */
-export const CATALOG_SCHEMA = 'catalog'
+import {CATALOG_SCHEMA} from './schema.ts'
 
 /** A course as the term JSON really sends it: ids may be zero-padded strings, and some fields can be missing. */
 export type FixtureCourse = Omit<

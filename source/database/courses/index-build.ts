@@ -1,7 +1,6 @@
 import {deburr} from '../../lib/text.ts'
 import type {SqlRunner} from '../sql.ts'
-import {CATALOG_SCHEMA} from './fixture.ts'
-import {COURSE_SEARCH} from './schema.ts'
+import {CATALOG_SCHEMA, COURSE_SEARCH} from './schema.ts'
 
 /** What the index is built from, in `schema`: one row per section, its lists joined by spaces. */
 function indexSource(schema: string): string {

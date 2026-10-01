@@ -1,8 +1,7 @@
 import {searchTerms} from '../search/index.ts'
 import {placeholders, type BindValue, type Statement} from '../sql.ts'
-import {CATALOG_SCHEMA as C} from './fixture.ts'
 import type {CourseFilters} from './filters.ts'
-import {COURSE_SEARCH} from './schema.ts'
+import {CATALOG_SCHEMA as C, COURSE_SEARCH} from './schema.ts'
 
 /** Separates the values `group_concat` joins: the unit separator, which no catalog text holds. */
 export const LIST_SEPARATOR = '\u001F'
