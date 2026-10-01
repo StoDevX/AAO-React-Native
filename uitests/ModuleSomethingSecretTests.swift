@@ -11,4 +11,15 @@ class ModuleSomethingSecretTests: UITestCaseUnbooted {
 		}
 		secret.launch(at: 250).scrollToButton().capture("Secret slab, open")
 	}
+
+	/// Pushing the red button melts the app down to the dead screen. The clock is frozen under UI
+	/// tests, so the lockout holds for as long as the test looks.
+	func testPushingTheButtonLocksTheApp() throws {
+		SomethingSecretScreen(app: app)
+			.launch(at: 250)
+			.scrollToButton()
+			.pushTheButton()
+			.checkAppIsResting()
+			.capture("The melt, over the dead screen")
+	}
 }

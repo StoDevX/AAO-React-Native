@@ -35,4 +35,18 @@ struct SomethingSecretScreen: Screen {
 		XCTAssertTrue(button.waitForExistence(timeout: 10), "The open slab should show the red button")
 		return self
 	}
+
+	@discardableResult
+	func pushTheButton() -> Self {
+		app.buttons[TestIdentifiers.SomethingSecret.button].tap()
+		return self
+	}
+
+	@discardableResult
+	func checkAppIsResting() -> Self {
+		let resting = app.staticTexts[TestIdentifiers.SomethingSecret.resting]
+		// The melt runs 3.3 seconds before the dead screen shows through.
+		XCTAssertTrue(resting.waitForExistence(timeout: 15), "Pushing the button should lock the app")
+		return self
+	}
 }
