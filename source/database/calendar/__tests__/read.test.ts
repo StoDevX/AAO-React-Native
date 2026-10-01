@@ -9,10 +9,8 @@ jest.mock('expo-sqlite', () => ({
 	openDatabaseSync: jest.fn(),
 	deleteDatabaseSync: jest.fn(),
 }))
-// `@sentry/react-native` ships ESM-only and Jest's transformIgnorePatterns does
-// not let it through, so it is stubbed the same way every other suite here
-// stubs it. `read.ts` and `client.ts` report a failed read or a failed drop
-// through it.
+// `read.ts` and `client.ts` report a failed read or a failed drop through
+// `@sentry/react-native`, stubbed so a report goes nowhere.
 jest.mock('@sentry/react-native', () => ({captureException: jest.fn()}))
 
 import * as Sentry from '@sentry/react-native'

@@ -13,8 +13,7 @@ const mockAll = jest.fn<SqlRunner['all']>()
 jest.mock('../../client', () => ({
 	getRunner: () => ({all: mockAll, exec: jest.fn(), run: jest.fn(), transaction: jest.fn()}),
 }))
-// `read.ts` reports a failed read; `@sentry/react-native` ships ESM-only and
-// Jest has nothing to transform it with.
+// `read.ts` reports a failed read to Sentry, stubbed so a report goes nowhere.
 jest.mock('@sentry/react-native', () => ({captureException: jest.fn()}))
 
 const trackedQueryClients: QueryClient[] = []
