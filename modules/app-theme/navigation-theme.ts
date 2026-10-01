@@ -1,12 +1,9 @@
-import merge from 'deepmerge'
 import * as c from '@frogpond/colors'
 
 import {
 	DarkTheme as NavigationDarkTheme,
 	DefaultTheme as NavigationLightTheme,
 } from 'expo-router/react-navigation'
-
-import {MD3DarkTheme as PaperDarkTheme, MD3LightTheme as PaperLightTheme} from 'react-native-paper'
 
 /**
  * iOS's `systemGroupedBackground`, which the app's screens and sheets paint.
@@ -21,15 +18,12 @@ import {MD3DarkTheme as PaperDarkTheme, MD3LightTheme as PaperLightTheme} from '
  */
 const groupedBackground = c.systemGroupedBackground as unknown as string
 
-const MergedLightTheme = merge(PaperLightTheme, NavigationLightTheme)
-const MergedDarkTheme = merge(PaperDarkTheme, NavigationDarkTheme)
-
-export const CombinedLightTheme = {
-	...MergedLightTheme,
-	colors: {...MergedLightTheme.colors, background: groupedBackground},
+export const LightTheme = {
+	...NavigationLightTheme,
+	colors: {...NavigationLightTheme.colors, background: groupedBackground},
 }
 
-export const CombinedDarkTheme = {
-	...MergedDarkTheme,
-	colors: {...MergedDarkTheme.colors, background: groupedBackground},
+export const DarkTheme = {
+	...NavigationDarkTheme,
+	colors: {...NavigationDarkTheme.colors, background: groupedBackground},
 }
