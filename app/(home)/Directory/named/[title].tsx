@@ -14,10 +14,14 @@ import {Button} from '@frogpond/button'
 import {openUrl} from '@frogpond/open-url'
 import {GH_NEW_ISSUE_URL} from '../../../../source/lib/constants'
 import {LoadingView, NoticeView} from '@frogpond/notice'
+import * as c from '@frogpond/colors'
 
 const paragraphMarkdownStyle: MarkdownStyle = {paragraph: {fontSize: 16}}
 
 const styles = StyleSheet.create({
+	scroll: {
+		backgroundColor: c.systemGroupedBackground,
+	},
 	image: {
 		width: undefined,
 		height: 100,
@@ -99,7 +103,7 @@ export default function ContactsDetailPage(): React.ReactNode {
 	return (
 		<>
 			{screenTitle}
-			<ScrollView contentInsetAdjustmentBehavior="automatic">
+			<ScrollView contentInsetAdjustmentBehavior="automatic" style={styles.scroll}>
 				{headerImage ? (
 					<Image resizeMode="cover" source={headerImage} style={styles.image} />
 				) : null}
