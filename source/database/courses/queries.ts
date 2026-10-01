@@ -74,15 +74,29 @@ export function courseResultsQuery(args: {
 	let from = match
 		? `${C}.${COURSE_SEARCH.name} join ${C}.section s on s.clbid = ${COURSE_SEARCH.name}.rowid`
 		: `${C}.section s`
-	let order = match
-		? COURSE_SEARCH.rankExpression
-		: 's.department, cast(s.number as integer), s.section'
+	// After the newest term first; the unsearched order is the one
+	// `section_listing` indexes, so that listing reads in index order.
+	let keys = match
+		? ['s.term', COURSE_SEARCH.rankExpression, 's.clbid']
+		: ['s.term', 's.department', 'cast(s.number as integer)', 's.section', 's.clbid']
+	let order = (column: (key: string, at: number) => string) =>
+		keys.map((key, at) => `${column(key, at)}${at === 0 ? ' desc' : ''}`).join(', ')
 
-	let sql = `select ${LIST_COLUMNS} from ${from} ${LIST_JOINS} where ${where.join(' and ')} order by s.term desc, ${order}, s.clbid`
-	if (args.page) {
-		sql += ' limit ? offset ?'
-		params.push(args.page.limit, args.page.offset)
-	}
+	// Sorted and paged on the keys alone, then the list columns are read for
+	// just the page's rows: working them out for every match before the sort
+	// cost far more than the sort.
+	let paged = args.page ? ' limit ? offset ?' : ''
+	if (args.page) params.push(args.page.limit, args.page.offset)
+	let sql = `select ${LIST_COLUMNS}
+from (
+  select ${keys.map((key, at) => `${key} as k${at}`).join(', ')}
+  from ${from}
+  where ${where.join(' and ')}
+  order by ${order((key) => key)}${paged}
+) page
+join ${C}.section s on s.clbid = page.k${keys.length - 1}
+${LIST_JOINS}
+order by ${order((_, at) => `page.k${at}`)}`
 	return {sql, params}
 }
 

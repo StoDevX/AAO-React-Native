@@ -29,13 +29,19 @@ type IndexSourceRow = {
 }
 
 /**
- * Creates `course_fts` in the catalog attached as `schema` and fills it, in
- * one transaction. Returns the rows indexed.
+ * Creates `course_fts` in the catalog attached as `schema` and fills it, and
+ * indexes the unsearched listing's order, in one transaction. Returns the rows
+ * indexed.
  */
 export function buildCourseIndex(runner: SqlRunner, schema: string): number {
 	let rows = runner.all<IndexSourceRow>({sql: indexSource(schema), params: []})
 	runner.transaction(() => {
 		runner.exec(COURSE_SEARCH.createSql(schema))
+		// The unsearched listing's order, so paging through it reads the index
+		// rather than sorting every course for each page.
+		runner.exec(
+			`create index ${schema}.section_listing on section (term desc, department, cast(number as integer), section, clbid)`,
+		)
 		for (let row of rows) {
 			runner.run(
 				COURSE_SEARCH.insert(schema, row.clbid, [

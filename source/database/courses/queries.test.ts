@@ -156,6 +156,21 @@ describe('courseResultsQuery: pages', () => {
 	it('has an empty page past the end', () => {
 		assert.deepEqual(page('', 6), [])
 	})
+
+	// Sorting every course to keep one page made deep pages slow; the
+	// unsearched listing walks an index in its own order instead.
+	it('walks an index for the unsearched listing rather than sorting it', () => {
+		let statement = courseResultsQuery({query: '', filters: NONE, page: {offset: 2, limit: 2}})
+		let plan = runner
+			.all<{detail: string}>({sql: `explain query plan ${statement.sql}`, params: statement.params})
+			.map((step) => step.detail)
+			.join('\n')
+		// Each course's own GEs and instructors are sorted in subqueries; only
+		// the steps before those choose and order the page.
+		let paging = plan.split('CORRELATED')[0] ?? ''
+		assert.match(paging, /USING COVERING INDEX section_listing/u)
+		assert.doesNotMatch(paging, /TEMP B-TREE FOR ORDER BY/u)
+	})
 })
 
 describe('courseResultsQuery: filters', () => {
