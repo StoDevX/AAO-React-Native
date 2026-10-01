@@ -1,7 +1,7 @@
 import * as React from 'react'
 import {StyleSheet, type StyleProp, type ViewStyle} from 'react-native'
 import {Button, ContentUnavailableView, Host} from '@expo/ui/swift-ui'
-import {buttonStyle, disabled} from '@expo/ui/swift-ui/modifiers'
+import {buttonStyle, controlSize, disabled} from '@expo/ui/swift-ui/modifiers'
 import * as c from '@frogpond/colors'
 
 const styles = StyleSheet.create({
@@ -49,7 +49,11 @@ export function NoticeView({
 					action ? (
 						<Button
 							label={action.label}
-							modifiers={[buttonStyle('bordered'), disabled(action.disabled ?? false)]}
+							modifiers={[
+								buttonStyle('bordered'),
+								controlSize('large'),
+								disabled(action.disabled ?? false),
+							]}
 							onPress={action.onPress}
 						/>
 					) : undefined
