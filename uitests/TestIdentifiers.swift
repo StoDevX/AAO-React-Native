@@ -504,9 +504,6 @@ struct TestIdentifiers {
 	// MARK: - News
 
 	enum News {
-		/// Matches NEWS_ROW_PREFIX in source/features/news/news-row.tsx.
-		static let rowPrefix = "news-row-"
-
 		/// The views the front page's menu offers, and the start of the menu button's label, which
 		/// names the view shown; in source/features/mess/front-page-screen.tsx.
 		static let byIssue = "By Issue"

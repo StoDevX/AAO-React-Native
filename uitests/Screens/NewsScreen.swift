@@ -11,21 +11,4 @@ struct NewsScreen: Screen {
 	var mounted: XCUIElement {
 		app.navigationBars[title]
 	}
-
-	@discardableResult
-	func navigate() -> Self {
-		open(route: "/StOlafNews", mountedWhen: mounted)
-	}
-
-	@discardableResult
-	func verifyTitle() -> Self {
-		XCTAssertTrue(
-			app.navigationBars[title].waitForExistence(timeout: 10),
-			"the navigation bar should read \(title)")
-		return self
-	}
-
-	private var storyRow: NSPredicate {
-		NSPredicate(format: "identifier BEGINSWITH %@", TestIdentifiers.News.rowPrefix)
-	}
 }
