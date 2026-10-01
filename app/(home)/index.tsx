@@ -1,6 +1,6 @@
 import * as React from 'react'
 import {StyleSheet, useWindowDimensions} from 'react-native'
-import {Stack, useRouter} from 'expo-router'
+import {Stack, useIsFocused, useRouter} from 'expo-router'
 import {Button, ContextMenu, Host, RNHostView, ScrollView, Text, VStack} from '@expo/ui/swift-ui'
 import {
 	accessibilityIdentifier,
@@ -32,6 +32,7 @@ import {selectDevModeOverride, setDevModeOverride} from '../../source/redux/part
 import {useIsDevMode} from '../../source/lib/use-is-dev-mode'
 import {FaqBannerGroup} from '../../source/features/faqs/banner'
 import {FAQ_TARGETS} from '../../source/features/faqs/constants'
+import {SecretSlab} from '../../source/features/something-secret'
 
 const styles = StyleSheet.create({
 	host: {
@@ -134,6 +135,7 @@ export default function HomePage(): React.ReactNode {
 	let isDev = useIsDevMode()
 	let allViews = AllViews().filter((view) => !view.disabled && (isDev || !view.devOnly))
 	let {fontScale} = useWindowDimensions()
+	let isFocused = useIsFocused()
 
 	return (
 		<>
@@ -192,6 +194,9 @@ export default function HomePage(): React.ReactNode {
 						/>
 
 						<UnofficialAppNotice />
+
+						{/* Blank to look at. Tapping it, a lot, is the point. */}
+						<SecretSlab isFocused={isFocused} />
 					</VStack>
 				</ScrollView>
 			</Host>

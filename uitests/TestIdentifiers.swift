@@ -47,6 +47,17 @@ struct TestIdentifiers {
 		static let notice = "home-notice"
 	}
 
+	enum SomethingSecret {
+		static let slab = "something-secret"
+		static let button = "something-secret-button"
+		static let resting = "the app is resting."
+
+		/// Starts the slab at `progress` taps instead of blank.
+		static func launchArgument(progress: Int) -> String {
+			"--secret-progress=\(progress)"
+		}
+	}
+
 	enum Navigation {
 		static let openSettings = "Open Settings"
     static let settingsSheetTitle = "Settings"
