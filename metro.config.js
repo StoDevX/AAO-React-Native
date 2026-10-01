@@ -12,14 +12,31 @@
 const {getDefaultConfig} = require('@expo/metro-config')
 const {getSentryExpoConfig} = require('@sentry/react-native/metro')
 const {mergeConfig} = require('metro-config')
+const {EMPTY_FIXTURE, stubsFixture} = require('./scripts/metro-fixtures.mjs')
 
 // Sentry's wrapper adds a debug ID to the bundle and its source map, so Sentry
 // matches the two by ID rather than by release name. It is handed the same
 // getDefaultConfig as before so the base config does not change.
 const defaultConfig = getSentryExpoConfig(__dirname, {getDefaultConfig})
 
+// Expo's own resolver, which the fixture stub below runs first and then defers to.
+const upstreamResolve = defaultConfig.resolver.resolveRequest
+
 const config = {
 	resolver: {
+		// A release bundle carries an empty object for each UI-test fixture, which
+		// only --uitesting reads; `mise run bundle:ios` keeps them, for the UI tests.
+		resolveRequest: (context, moduleName, platform) => {
+			let resolution = upstreamResolve(context, moduleName, platform)
+			let keep = process.env.KEEP_UITEST_FIXTURES === '1'
+			if (
+				resolution.type === 'sourceFile' &&
+				stubsFixture(resolution.filePath, {dev: context.dev, keep})
+			) {
+				return {type: 'sourceFile', filePath: EMPTY_FIXTURE}
+			}
+			return resolution
+		},
 		sourceExts:
 			process.env.APP_MODE === 'mocked'
 				? ['mock.ts', ...defaultConfig.resolver.sourceExts]
