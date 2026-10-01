@@ -133,26 +133,42 @@ type Props = {
 export function BuildingPicker(props: Props): React.ReactNode {
 	return (
 		<Sentry.ErrorBoundary
-			fallback={(failed) => <PickerFailed onRetry={() => failed.resetError()} />}
+			fallback={(failed) => (
+				<PickerFailed
+					onHeaderHeightChange={props.onHeaderHeightChange}
+					onRetry={() => failed.resetError()}
+				/>
+			)}
 		>
 			<PickerContents {...props} />
 		</Sentry.ErrorBoundary>
 	)
 }
 
-/// Shown in place of a picker that threw while drawing.
-function PickerFailed({onRetry}: {onRetry: () => void}): React.ReactNode {
+/// Shown in place of a picker that threw while drawing. It reports its
+/// height as the search field's stack does, since the collapsed sheet is
+/// sized to that height and would otherwise cut the row off.
+function PickerFailed({
+	onHeaderHeightChange,
+	onRetry,
+}: {
+	onHeaderHeightChange: (height: number) => void
+	onRetry: () => void
+}): React.ReactNode {
 	return (
-		<List>
-			<Section>
-				<Button onPress={onRetry}>
-					<VStack alignment="leading" spacing={2}>
-						<Text>A problem occurred while showing places.</Text>
-						<Text>Tap to try again.</Text>
-					</VStack>
-				</Button>
-			</Section>
-		</List>
+		<VStack
+			modifiers={[
+				padding({all: SEARCH_MARGIN}),
+				onGeometryChange(({height}) => onHeaderHeightChange(height)),
+			]}
+		>
+			<Button onPress={onRetry}>
+				<VStack alignment="leading" spacing={2}>
+					<Text>A problem occurred while showing places.</Text>
+					<Text>Tap to try again.</Text>
+				</VStack>
+			</Button>
+		</VStack>
 	)
 }
 

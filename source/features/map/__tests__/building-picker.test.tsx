@@ -78,6 +78,7 @@ async function renderPicker({
 	onSearchCancel = jest.fn(),
 	onPinsChange = jest.fn(),
 	onGroupOpen = jest.fn(),
+	onHeaderHeightChange = jest.fn(),
 } = {}) {
 	let client = new QueryClient({defaultOptions: {queries: {retry: false}}})
 	trackedQueryClients.push(client)
@@ -94,7 +95,7 @@ async function renderPicker({
 			<BuildingPicker
 				campus={props.campus}
 				compact={props.compact}
-				onHeaderHeightChange={jest.fn()}
+				onHeaderHeightChange={onHeaderHeightChange}
 				onSearchCancel={onSearchCancel}
 				onSearchFocusChange={onSearchFocusChange}
 				onGroupOpen={onGroupOpen}
@@ -117,6 +118,7 @@ async function renderPicker({
 		onSearchCancel,
 		onPinsChange,
 		onGroupOpen,
+		onHeaderHeightChange,
 		rerenderWith,
 	}
 }
@@ -660,6 +662,23 @@ describe('BuildingPicker', () => {
 				expect.objectContaining({message: expect.stringContaining('localeCompare')}),
 				expect.anything(),
 			)
+			error.mockRestore()
+		})
+
+		// The collapsed sheet is sized to what the picker reports, so a row
+		// that reported nothing would be cut off below the grabber.
+		it("reports the row's height for the collapsed sheet", async () => {
+			let error = jest.spyOn(console, 'error').mockImplementation(() => undefined)
+			let {onHeaderHeightChange} = await renderPicker({
+				buildings: [...fixtures, NAMELESS],
+				table: null,
+			})
+			let [measured] = screen.container.queryAll(
+				(node) => typeof node.props.onGeometryChange === 'function',
+			)
+			await act(() => measured.props.onGeometryChange({x: 0, y: 0, width: 402, height: 92}))
+			expect(onHeaderHeightChange).toHaveBeenLastCalledWith(92)
+			expect(error).toHaveBeenCalledTimes(1)
 			error.mockRestore()
 		})
 
