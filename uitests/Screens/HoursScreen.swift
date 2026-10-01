@@ -310,7 +310,7 @@ struct HoursScreen: Screen {
 
 	/// Taps the detail sheet's Report a Problem button.
 	/// `verifyReportScreenPresented` is what proves the push actually worked,
-	/// rather than the action merely existing as a menu item.
+	/// rather than the button merely existing.
 	@discardableResult
 	func tapReportAction() -> Self {
 		let action = app.buttons[TestIdentifiers.Hours.reportAction]
