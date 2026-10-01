@@ -86,7 +86,7 @@ function ByIssuePage(): React.ReactNode {
 	let {issues, query} = useMessIssues()
 	// Kept the same across renders, so the grid's memoized tiles are not all drawn again.
 	let open = React.useCallback(
-		(issue: MessIssue) => router.navigate({pathname: '/Messenger/issue', params: {key: issue.key}}),
+		(issue: MessIssue) => router.navigate({pathname: '/messenger/issue', params: {key: issue.key}}),
 		[router],
 	)
 	if (issues && issues.length > 0) {

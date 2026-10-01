@@ -90,7 +90,7 @@ export function BuildingDetailSwiftUI({building, now, campus}: Props): React.Rea
 	// Every Carleton venue, and any St. Olaf one not yet keyed to a building,
 	// carries no `building` id -- skip the fetch entirely rather than warm a
 	// cache no lookup will ever use. Where a key does exist, this query shares
-	// `mapDataOptions`' cache key with `/Map`, so the sheet usually hits a warm
+	// `mapDataOptions`' cache key with `/map`, so the sheet usually hits a warm
 	// cache instead of a spinner.
 	let {data: mapFeatures} = useQuery({
 		...mapDataOptions(campus),

@@ -193,8 +193,8 @@ describe('IssuePage', () => {
 		)
 
 		expect(mockNavigate.mock.calls).toStrictEqual([
-			[{pathname: '/Messenger/story', params: {id: '4'}}],
-			[{pathname: '/Messenger/story', params: {id: '5'}}],
+			[{pathname: '/messenger/story', params: {id: '4'}}],
+			[{pathname: '/messenger/story', params: {id: '5'}}],
 		])
 	})
 

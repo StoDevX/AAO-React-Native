@@ -65,11 +65,11 @@ struct MapScreen: Screen {
 		searchField
 	}
 
-	/// St. Olaf's map is a home tile of its own, pushing `/Map?campus=stolaf`.
+	/// St. Olaf's map is a home tile of its own, pushing `/map?campus=stolaf`.
 	@discardableResult
 	func navigate() -> Self {
 		// The sheet, not the map: MapLibre draws nothing XCUITest can see.
-		open(route: "/Map?campus=stolaf", mountedWhen: mounted, timeout: 60)
+		open(route: "/map?campus=stolaf", mountedWhen: mounted, timeout: 60)
 	}
 
 	/// The map draws through MapLibre, which XCUITest cannot see into, so the

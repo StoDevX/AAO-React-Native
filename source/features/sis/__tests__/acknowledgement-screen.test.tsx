@@ -3,7 +3,7 @@ import {describe, expect, jest, test, beforeEach} from '@jest/globals'
 import {fireEvent, render, screen} from '@testing-library/react-native'
 import {Text} from 'react-native'
 
-import BalancesPage from '../../../../app/Balances/index'
+import BalancesPage from '../../../../app/balances/index'
 import {acknowledgeAcknowledgement} from '../../../redux/parts/settings'
 
 // The redux barrel configures the real store on import, which wires up

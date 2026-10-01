@@ -33,6 +33,6 @@ describe('Balances', () => {
 	})
 
 	test('keeps the native screen listed, but turned off', () => {
-		expect(balancesScreen).toMatchObject({view: '/Balances', disabled: true})
+		expect(balancesScreen).toMatchObject({view: '/balances', disabled: true})
 	})
 })

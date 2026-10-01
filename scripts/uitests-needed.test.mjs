@@ -19,7 +19,7 @@ describe('uitestsNeeded', () => {
 	})
 
 	it('runs when any app code changed', () => {
-		assert.equal(uitestsNeeded(['README.md', 'app/Dictionary/index.tsx']), true)
+		assert.equal(uitestsNeeded(['README.md', 'app/dictionary/index.tsx']), true)
 	})
 
 	it('runs when a dependency changed', () => {

@@ -58,7 +58,7 @@ const DETAIL_SHEET: React.ComponentProps<typeof Stack.Screen>['options'] = {
 
 /**
  * Keeps the home screen beneath whatever a cold-start deep link opens, so
- * Back from, say, `/Calendar` lands on Home rather than on nothing.
+ * Back from, say, `/calendar` lands on Home rather than on nothing.
  */
 export const unstable_settings = {
 	anchor: 'index',
@@ -90,12 +90,12 @@ function RootLayout(): React.ReactNode {
 						<ThemeProvider value={theme}>
 							<StatusBar barStyle={statusBarStyle} />
 							<Stack screenOptions={{headerBackButtonDisplayMode: 'minimal'}}>
-								<Stack.Screen name="Menus" options={{title: 'Menus'}} />
-								<Stack.Screen name="MenuItemDetail" options={DETAIL_SHEET} />
-								<Stack.Screen name="Streaming Media" options={{title: 'Streaming Media'}} />
+								<Stack.Screen name="menus" options={{title: 'Menus'}} />
+								<Stack.Screen name="menu-item-detail" options={DETAIL_SHEET} />
+								<Stack.Screen name="streaming-media" options={{title: 'Streaming Media'}} />
 								{/* No large title: the front page draws the paper's name in the bar, in its serif,
 								    and a large title would show the plain name until the page scrolled. */}
-								<Stack.Screen name="Messenger/index" options={{title: 'The Olaf Messenger'}} />
+								<Stack.Screen name="messenger/index" options={{title: 'The Olaf Messenger'}} />
 								{/* A series thumbnail opens another story over the one being read.
 								    Keyed by the story and the row that opened it, a tap always opens
 								    a fresh screen: an unkeyed route would swap the params of the
@@ -105,23 +105,23 @@ function RootLayout(): React.ReactNode {
 								    finds the screen the first one opened, so it adds no duplicate. */}
 								<Stack.Screen
 									dangerouslySingular={(_name, params) => `${params.id ?? ''}:${params.from ?? ''}`}
-									name="Messenger/story"
+									name="messenger/story"
 									options={{title: ''}}
 								/>
 								<Stack.Screen
-									name="Messenger/image"
+									name="messenger/image"
 									options={{presentation: 'fullScreenModal', headerShown: false}}
 								/>
 								<Stack.Screen
-									name="StOlafNews"
+									name="st-olaf-news"
 									options={{title: 'St. Olaf News', headerLargeTitleEnabled: true}}
 								/>
-								<Stack.Screen name="Transit" options={{title: 'Transit'}} />
-								<Stack.Screen name="Transit/line" options={DETAIL_SHEET} />
-								<Stack.Screen name="Hours" />
-								<Stack.Screen name="Hours/all-spaces" />
-								<Stack.Screen name="Hours/detail" options={DETAIL_SHEET} />
-								<Stack.Screen name="Dictionary/entry" options={DETAIL_SHEET} />
+								<Stack.Screen name="transit" options={{title: 'Transit'}} />
+								<Stack.Screen name="transit/line" options={DETAIL_SHEET} />
+								<Stack.Screen name="hours" />
+								<Stack.Screen name="hours/all-spaces" />
+								<Stack.Screen name="hours/detail" options={DETAIL_SHEET} />
+								<Stack.Screen name="dictionary/entry" options={DETAIL_SHEET} />
 								{/* A department opens a fresh copy of the Directory over the landing.
 								    Keyed by the search it shows, navigating to a different one pushes
 								    it, where an unkeyed route would only swap the params of the
@@ -131,14 +131,14 @@ function RootLayout(): React.ReactNode {
 									dangerouslySingular={(_name, params) =>
 										`${params.queryType ?? ''}:${params.queryParam ?? ''}`
 									}
-									name="Directory/index"
+									name="directory/index"
 								/>
-								<Stack.Screen name="Directory/named" options={DETAIL_SHEET} />
-								<Stack.Screen name="Map" />
-								<Stack.Screen name="Balances/index" options={{title: 'Balances'}} />
-								<Stack.Screen name="EventDetail" options={DETAIL_SHEET} />
+								<Stack.Screen name="directory/named" options={DETAIL_SHEET} />
+								<Stack.Screen name="map" />
+								<Stack.Screen name="balances/index" options={{title: 'Balances'}} />
+								<Stack.Screen name="calendar/event" options={DETAIL_SHEET} />
 								<Stack.Screen
-									name="Calendar"
+									name="calendar"
 									options={{title: 'Calendar', headerLargeTitleEnabled: true}}
 								/>
 								<Stack.Screen

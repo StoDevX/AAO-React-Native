@@ -2,7 +2,7 @@ import * as React from 'react'
 import {Alert} from 'react-native'
 import {fireEvent, render, screen} from '@testing-library/react-native'
 
-import PreviewScreen from '../../../../app/Dictionary/entry/preview'
+import PreviewScreen from '../../../../app/dictionary/entry/preview'
 import {normalizeEntry} from '../lib/entry'
 import {submitReport} from '../report/submit'
 import {useDictionaryDraftStore} from '../store'

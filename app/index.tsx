@@ -158,7 +158,7 @@ export default function HomePage(): React.ReactNode {
 					>
 						<RNHostView matchContents={true}>
 							<FaqBannerGroup
-								onPressFaq={(faqId) => router.navigate({pathname: '/Faq', params: {faqId}})}
+								onPressFaq={(faqId) => router.navigate({pathname: '/faq', params: {faqId}})}
 								style={styles.banner}
 								target={FAQ_TARGETS.HOME}
 							/>

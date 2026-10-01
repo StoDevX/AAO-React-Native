@@ -29,10 +29,9 @@ extension Screen {
 	/// Open a route by deep link and wait for `mounted`, an element only that
 	/// route's screen draws.
 	///
-	/// `route` is an Expo Router path, which drops route groups:
-	/// `app/Calendar.tsx` is `/Calendar`. `XCUIApplication.open(_:)`
-	/// relaunches the app and raises no "Open in…?" sheet, unlike `simctl
-	/// openurl`.
+	/// `route` is an Expo Router path: `app/calendar/index.tsx` is `/calendar`.
+	/// `XCUIApplication.open(_:)` relaunches the app and raises no "Open in…?"
+	/// sheet, unlike `simctl openurl`.
 	///
 	/// The wait is what makes this safe: the relaunched app has no home screen
 	/// while it is still blank, so "Home has gone" is true before anything has

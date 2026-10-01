@@ -3,7 +3,7 @@ import {afterEach, beforeEach, describe, expect, jest, test} from '@jest/globals
 import {act, render, screen} from '@testing-library/react-native'
 import {QueryClient, QueryClientProvider, onlineManager} from '@tanstack/react-query'
 
-import MenuItemDetailPage from '../../../../app/MenuItemDetail'
+import MenuItemDetailPage from '../../../../app/menu-item-detail'
 import {MenuItemDetailView} from '../../../../modules/food-menu/food-item-detail'
 import {bonAppMenuOptions, pauseMenuOptions} from '../query'
 import {OFFLINE_MESSAGE} from '../lib/menu-view'

@@ -56,7 +56,7 @@ struct CampusDictionaryScreen: Screen {
 
 	@discardableResult
 	func navigate() -> Self {
-		open(route: "/Dictionary", mountedWhen: mounted)
+		open(route: "/dictionary", mountedWhen: mounted)
 	}
 
 	/// Taps near the bottom of the section index rail and asserts the list

@@ -18,7 +18,7 @@ struct HoursScreen: Screen {
 	/// Opens Hours, which defaults to `'stolaf'` with no `?campus=` param.
 	@discardableResult
 	func navigate() -> Self {
-		open(route: "/Hours", mountedWhen: mounted)
+		open(route: "/hours", mountedWhen: mounted)
 	}
 
 	private var searchField: XCUIElement {

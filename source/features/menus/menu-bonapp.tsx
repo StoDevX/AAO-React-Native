@@ -273,7 +273,7 @@ export function BonAppHostedMenu(props: Props): React.ReactNode {
 	let onItemPress = React.useCallback(
 		(item: MenuItemType) => {
 			router.navigate({
-				pathname: '/MenuItemDetail',
+				pathname: '/menu-item-detail',
 				params:
 					typeof props.cafe === 'string'
 						? {source: 'bonapp', cafe: props.cafe, day, itemId: item.id}
