@@ -3,7 +3,7 @@ import {describe, expect, jest, test} from '@jest/globals'
 import {fireEvent, render, screen} from '@testing-library/react-native'
 
 import {FilterMenu} from '../filter-menu'
-import type {ListItemSpecType, ListType, PickerType, ToggleType} from '../types'
+import type {ListFilterOption, ListFilter, PickerFilter, ToggleFilter} from '../types'
 
 jest.mock('@expo/ui/swift-ui', () => {
 	// oxlint-disable-next-line typescript/no-require-imports
@@ -16,7 +16,7 @@ jest.mock('@expo/ui/swift-ui/modifiers', () => {
 
 type Row = {x: string}
 
-function toggleFilter(enabled: boolean): ToggleType<Row> {
+function toggleFilter(enabled: boolean): ToggleFilter<Row> {
 	return {
 		type: 'toggle',
 		key: 'k',
@@ -26,7 +26,7 @@ function toggleFilter(enabled: boolean): ToggleType<Row> {
 	}
 }
 
-function pickerFilter(options: {label: string}[]): PickerType<Row> {
+function pickerFilter(options: {label: string}[]): PickerFilter<Row> {
 	return {
 		type: 'picker',
 		key: 'k',
@@ -38,16 +38,16 @@ function pickerFilter(options: {label: string}[]): PickerType<Row> {
 
 function listFilter(
 	mode: 'AND' | 'OR',
-	options: ListItemSpecType[],
-	selected: ListItemSpecType[],
-): ListType<Row> {
+	options: ListFilterOption[],
+	selected: ListFilterOption[],
+): ListFilter<Row> {
 	return {
 		type: 'list',
 		key: 'k',
 		enabled: false,
 		spec: {title: 'Stations', options, selected, mode, displayTitle: true},
 		apply: {key: 'x'},
-	} as ListType<Row>
+	} as ListFilter<Row>
 }
 
 describe('FilterMenu, toggle', () => {

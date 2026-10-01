@@ -4,7 +4,7 @@ import {fireEvent, render, screen} from '@testing-library/react-native'
 import {Text as RNText} from 'react-native'
 
 import {FilterSheet} from '../filter-sheet'
-import type {ListItemSpecType, ListType} from '../types'
+import type {ListFilterOption, ListFilter} from '../types'
 
 jest.mock('@expo/ui/swift-ui', () => {
 	// oxlint-disable-next-line typescript/no-require-imports
@@ -24,10 +24,10 @@ const TITLE = 'Departments'
 
 function listFilter(
 	mode: 'AND' | 'OR',
-	options: ListItemSpecType[],
-	selected: ListItemSpecType[],
+	options: ListFilterOption[],
+	selected: ListFilterOption[],
 	displayTitle = true,
-): ListType<Row> {
+): ListFilter<Row> {
 	return {
 		type: 'list',
 		key: 'k',

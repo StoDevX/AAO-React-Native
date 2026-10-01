@@ -2,7 +2,7 @@ import moment from 'moment-timezone'
 import {describe, expect, test} from '@jest/globals'
 import {chooseMeal, EMPTY_MEAL} from '../choose-meal'
 import type {MenuItemType, ProcessedMealType, StationMenuType} from '../../types'
-import type {FilterType} from '@frogpond/filter'
+import type {Filter} from '@frogpond/filter'
 
 const TIMEZONE = 'America/Chicago'
 
@@ -28,7 +28,7 @@ const PADDED_MEALS: ProcessedMealType[] = [
 ]
 
 /// The picker the menu's filter bar builds, carrying whichever meal is chosen.
-function mealPicker(selected: string | undefined): FilterType<MenuItemType> {
+function mealPicker(selected: string | undefined): Filter<MenuItemType> {
 	return {
 		type: 'picker',
 		key: 'meals',

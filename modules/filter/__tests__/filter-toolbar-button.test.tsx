@@ -3,7 +3,7 @@ import {fireEvent, render, screen} from '@testing-library/react-native'
 import {describe, expect, jest, test} from '@jest/globals'
 
 import {FilterToolbarButton} from '../filter-toolbar-button'
-import type {FilterType, ListItemSpecType} from '../types'
+import type {Filter, ListFilterOption} from '../types'
 
 jest.mock('@expo/ui/swift-ui', () => {
 	// oxlint-disable-next-line typescript/no-require-imports
@@ -16,7 +16,7 @@ jest.mock('@expo/ui/swift-ui/modifiers', () => {
 
 type Item = {isVegetarian: boolean}
 
-let TOGGLE_FILTER: FilterType<Item> = {
+let TOGGLE_FILTER: Filter<Item> = {
 	type: 'toggle',
 	key: 'vegetarian',
 	enabled: false,
@@ -24,13 +24,13 @@ let TOGGLE_FILTER: FilterType<Item> = {
 	apply: {key: 'isVegetarian'},
 }
 
-function manyOptions(count: number): ListItemSpecType[] {
+function manyOptions(count: number): ListFilterOption[] {
 	return Array.from({length: count}, (_, i) => ({title: `Dept ${i}`}))
 }
 
 // 8 options crosses `filterShape`'s sheet threshold -- the shape whose
 // trigger is a plain button rather than a native `Menu`'s own label.
-function sheetFilter(enabled: boolean): FilterType<Item> {
+function sheetFilter(enabled: boolean): Filter<Item> {
 	return {
 		type: 'list',
 		key: 'departments',

@@ -1,20 +1,20 @@
 import {describe, expect, test} from '@jest/globals'
-import type {FilterType} from '@frogpond/filter'
+import type {Filter} from '@frogpond/filter'
 
 import {offerSpecials} from '../offer-specials'
 import type {MenuItemType} from '../../types'
 
-function specials(enabled: boolean): FilterType<MenuItemType> {
+function specials(enabled: boolean): Filter<MenuItemType> {
 	return {
 		type: 'toggle',
 		key: 'specials',
 		enabled,
 		spec: {title: 'Specials Only', label: 'Only Show Specials'},
 		apply: {key: 'special'},
-	} as FilterType<MenuItemType>
+	} as Filter<MenuItemType>
 }
 
-function stations(): FilterType<MenuItemType> {
+function stations(): Filter<MenuItemType> {
 	return {
 		type: 'list',
 		key: 'stations',
@@ -27,7 +27,7 @@ function stations(): FilterType<MenuItemType> {
 			displayTitle: true,
 		},
 		apply: {key: 'station'},
-	} as FilterType<MenuItemType>
+	} as Filter<MenuItemType>
 }
 
 describe('offerSpecials', () => {

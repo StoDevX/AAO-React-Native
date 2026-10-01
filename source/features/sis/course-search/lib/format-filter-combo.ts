@@ -1,20 +1,20 @@
 import {filterListSpecs} from '@frogpond/filter'
-import type {FilterType} from '@frogpond/filter'
+import type {Filter} from '@frogpond/filter'
 import {formatTerms} from './format-terms'
 import {CourseType} from '../../../../lib/course-search'
 
 export type FilterComboType = {
-	filters: FilterType<CourseType>[]
+	filters: Filter<CourseType>[]
 	description: string
 }
 
-export function formatFilterCombo(filters: FilterType<CourseType>[]): FilterComboType {
+export function formatFilterCombo(filters: Filter<CourseType>[]): FilterComboType {
 	let filterCombo = filters.filter((filter) => filter.enabled)
 	let comboDescription = filterCombo.map((filter) => describeFilter(filter, filters)).join(', ')
 	return {filters: filterCombo, description: comboDescription}
 }
 
-function describeFilter(filter: FilterType<CourseType>, filters: FilterType<CourseType>[]) {
+function describeFilter(filter: Filter<CourseType>, filters: Filter<CourseType>[]) {
 	switch (filter.key) {
 		case 'level': {
 			let levelFilter = filterListSpecs(filters).find((specFilter) => specFilter.key === 'level')

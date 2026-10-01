@@ -28,15 +28,15 @@ import {optionLabel} from './lib/option-label'
 import {clearSelection, selectByTitles} from './lib/select-options'
 import {TriggerLabel} from './lib/trigger-label'
 import {triggerModifiers} from './lib/trigger-modifiers'
-import type {ListType} from './types'
+import type {ListFilter} from './types'
 
 type Props<T extends object> = {
-	filter: ListType<T>
+	filter: ListFilter<T>
 	isActive: boolean
 	/// The trigger `Button`'s own label -- a sheet has no built-in trigger the
 	/// way a `Menu`'s `label` is one, so this component draws its own.
 	title: string
-	onChange: (filter: ListType<T>) => void
+	onChange: (filter: ListFilter<T>) => void
 }
 
 /**

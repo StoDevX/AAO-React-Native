@@ -1,12 +1,12 @@
 import * as React from 'react'
 import {View} from 'react-native'
-import type {FilterType} from '@frogpond/filter'
+import type {Filter} from '@frogpond/filter'
 import {FilterToolbar} from '@frogpond/filter'
 
 type Props<T extends object> = {
 	isOpen: boolean
-	onChange: (filter: FilterType<T>) => void
-	filters: FilterType<T>[]
+	onChange: (filter: Filter<T>) => void
+	filters: Filter<T>[]
 }
 
 export function FilterMenuToolbar<T extends object>({
