@@ -1,4 +1,4 @@
-import type {ListItemSpecType, ListType} from '../types'
+import type {ListFilterOption, ListFilter} from '../types'
 
 import concat from 'lodash/concat'
 import isEqual from 'lodash/isEqual'
@@ -11,7 +11,7 @@ import reject from 'lodash/reject'
  * `applyFilter` returns `true` for every item of a disabled filter, so an empty
  * selection needs no special handling further down. Ticking is what narrows.
  */
-function narrowsAnything(selected: ListItemSpecType[]): boolean {
+function narrowsAnything(selected: ListFilterOption[]): boolean {
 	return selected.length > 0
 }
 
@@ -20,9 +20,9 @@ function narrowsAnything(selected: ListItemSpecType[]): boolean {
  * results.
  */
 export function toggleOption<T extends object>(
-	filter: ListType<T>,
-	tappedValue: ListItemSpecType,
-): ListType<T> {
+	filter: ListFilter<T>,
+	tappedValue: ListFilterOption,
+): ListFilter<T> {
 	let {spec} = filter
 	let {selected} = spec
 
@@ -47,9 +47,9 @@ export function toggleOption<T extends object>(
  * change under a selection.
  */
 export function selectByTitles<T extends object>(
-	filter: ListType<T>,
+	filter: ListFilter<T>,
 	titles: readonly (string | number)[],
-): ListType<T> {
+): ListFilter<T> {
 	let wanted = new Set(titles.map(String))
 	let result = filter.spec.options.filter((option) => wanted.has(option.title))
 
@@ -64,7 +64,7 @@ export function selectByTitles<T extends object>(
  * Clears a list filter's selection, returning the filter that results — which
  * is the resting state, showing everything.
  */
-export function clearSelection<T extends object>(filter: ListType<T>): ListType<T> {
+export function clearSelection<T extends object>(filter: ListFilter<T>): ListFilter<T> {
 	return {
 		...filter,
 		enabled: false,

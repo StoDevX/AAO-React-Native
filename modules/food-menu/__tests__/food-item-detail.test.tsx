@@ -1,18 +1,9 @@
 import * as React from 'react'
-import {describe, expect, jest, test} from '@jest/globals'
+import {describe, expect, test} from '@jest/globals'
 import {render, screen} from '@testing-library/react-native'
 
 import {MenuItemDetailView} from '../food-item-detail'
 import type {MasterCorIconMapType, MenuItemType, NutritionDetailContainer} from '../types'
-
-jest.mock('@expo/ui/swift-ui', () => {
-	// oxlint-disable-next-line typescript/no-require-imports
-	return require('../../../source/testing/expo-ui-mock') as typeof import('../../../source/testing/expo-ui-mock')
-})
-jest.mock('@expo/ui/swift-ui/modifiers', () => {
-	// oxlint-disable-next-line typescript/no-require-imports
-	return require('../../../source/testing/expo-ui-mock') as typeof import('../../../source/testing/expo-ui-mock')
-})
 
 function item(overrides: Partial<MenuItemType>): MenuItemType {
 	return {

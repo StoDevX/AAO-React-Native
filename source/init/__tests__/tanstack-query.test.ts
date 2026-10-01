@@ -10,14 +10,16 @@ jest.mock('@react-native-community/netinfo', () =>
 	// oxlint-disable-next-line typescript/no-require-imports
 	require('@react-native-community/netinfo/jest/netinfo-mock'),
 )
-// `@sentry/react-native` ships ESM-only and Jest's transformIgnorePatterns does
-// not let it through, so it is stubbed the same way every other suite here
-// stubs it. `read.ts` and `client.ts` report a failed read or a failed drop
-// through it.
+// `read.ts` and `client.ts` report a failed read or a failed drop through
+// `@sentry/react-native`, stubbed so a report goes nowhere.
 jest.mock('@sentry/react-native', () => ({captureException: jest.fn()}))
 
-import type {Query} from '@tanstack/react-query'
-import type {PersistedClient} from '@tanstack/react-query-persist-client'
+import {dehydrate, QueryClient, type Query} from '@tanstack/react-query'
+import {
+	persistQueryClientRestore,
+	type PersistedClient,
+	type Persister,
+} from '@tanstack/react-query-persist-client'
 
 import {CALENDAR_READ_KEY} from '../../database/calendar/read'
 import {persistOptions, serializeCache} from '../tanstack-query'
@@ -138,5 +140,41 @@ describe('a query that sets how it persists, in its meta', () => {
 	test('persists no failed list without pages, nor any other failed query', () => {
 		expect(dehydrates(cached(['a-list'], {status: 'error'}, {persistPages: 1}))).toBe(false)
 		expect(dehydrates(cached(['news', 'stolaf'], {status: 'error', data: LIST}))).toBe(false)
+	})
+})
+
+/** A persister holding one saved cache, written with `buster`, in memory. */
+function savedBy(buster: string): Persister {
+	let source = new QueryClient()
+	source.setQueryData(['map-categories'], {stolaf: []})
+	let saved: PersistedClient = {buster, timestamp: Date.now(), clientState: dehydrate(source)}
+	source.clear()
+	return {
+		persistClient: () => undefined,
+		restoreClient: () => saved,
+		removeClient: () => undefined,
+	}
+}
+
+async function restoredData(persister: Persister): Promise<unknown> {
+	let queryClient = new QueryClient()
+	try {
+		await persistQueryClientRestore({queryClient, persister, buster: persistOptions.buster})
+		return queryClient.getQueryData(['map-categories'])
+	} finally {
+		queryClient.clear()
+	}
+}
+
+// A query's data can change shape between builds, and a restored copy never
+// passes through the fetch that checks it. An older build's cache is dropped
+// rather than handed to code written for another shape.
+describe('a cache saved by another build', () => {
+	test('is dropped, including one saved with no buster', async () => {
+		await expect(restoredData(savedBy(''))).resolves.toBeUndefined()
+	})
+
+	test('is restored when this build saved it', async () => {
+		await expect(restoredData(savedBy(persistOptions.buster))).resolves.toEqual({stolaf: []})
 	})
 })

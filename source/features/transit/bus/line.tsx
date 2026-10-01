@@ -12,7 +12,8 @@ import {
 import {useLineState} from './use-line-state'
 import type {Moment} from 'moment-timezone'
 import * as c from '@frogpond/colors'
-import {ContentUnavailableView, Host, List, Section, Text} from '@expo/ui/swift-ui'
+import {ContentUnavailableView, Host, List, Text} from '@expo/ui/swift-ui'
+import {SheetSection} from '@frogpond/sheet-section'
 import {frame, listStyle} from '@expo/ui/swift-ui/modifiers'
 import {BUS_FOOTER_MESSAGE} from './constants'
 import {momentToDayOfWeek, createMomentForDay} from './components/days'
@@ -97,17 +98,17 @@ export function BusLine(props: Props): React.ReactNode {
 		<Host style={styles.host}>
 			<List modifiers={[listStyle('insetGrouped')]}>
 				{line.notice ? (
-					<Section>
+					<SheetSection>
 						{/* The sheet's title already names the line, so the notice
 						    stands alone. Stretched to the card's width, so a short
 						    one sits at the leading edge rather than centring. */}
 						<Text modifiers={[frame({maxWidth: Infinity, alignment: 'leading'})]}>
 							{line.notice}
 						</Text>
-					</Section>
+					</SheetSection>
 				) : null}
 
-				<Section footer={<Text>{BUS_FOOTER_MESSAGE}</Text>} title="Stops">
+				<SheetSection footer={<Text>{BUS_FOOTER_MESSAGE}</Text>} title="Stops">
 					{hiddenCount > 0 ? (
 						<CollapsedStopsRow
 							barColor={barColor}
@@ -169,7 +170,7 @@ export function BusLine(props: Props): React.ReactNode {
 							)
 						})
 					)}
-				</Section>
+				</SheetSection>
 			</List>
 		</Host>
 	)

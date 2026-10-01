@@ -3,7 +3,7 @@ import type {JobCategory, JobSummary} from '@frogpond/ccc-jobs'
 // views Jest cannot load.
 import {applyFiltersToItem} from '@frogpond/filter/apply-filters'
 import {selectedOptions} from '@frogpond/filter/selected-options'
-import type {ListType} from '@frogpond/filter/types'
+import type {ListFilter} from '@frogpond/filter/types'
 import deburr from 'lodash/deburr'
 import words from 'lodash/words'
 import type {AreaStatus, StudentWorkArea} from './areas'
@@ -89,7 +89,7 @@ function listFilter(
 	present: Set<string>,
 	chosen: string[] | null,
 	presentation: 'menu' | 'sheet' = 'menu',
-): ListType<JobFacets> {
+): ListFilter<JobFacets> {
 	// A chosen value stays on offer even when nothing has it: a preset opens
 	// the list with its choice made, and a choice dropped for matching nothing
 	// would show every posting instead of saying none match.
@@ -113,7 +113,7 @@ export function buildJobFilters(
 	jobs: JobSummary[],
 	chosen: ChosenJobFilters,
 	context: FilterContext,
-): ListType<JobFacets>[] {
+): ListFilter<JobFacets>[] {
 	if (jobs.length === 0) return []
 
 	let facets = jobs.map((job) => fullFacetsOf(job, context))
@@ -193,7 +193,7 @@ function matchesSearch(job: JobSummary, queryWords: string[]): boolean {
 /// "Student Work", and the Term filter already sorts out the summer ones.
 export function visibleSections(
 	categories: JobCategory[],
-	filters: ListType<JobFacets>[],
+	filters: ListFilter<JobFacets>[],
 	query: string,
 	context: FilterContext,
 ): JobSection[] {

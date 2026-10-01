@@ -10,7 +10,7 @@ struct StreamingMediaScreen: Screen {
 
 	@discardableResult
 	func navigate() -> Self {
-		open(route: "/Streaming%20Media", mountedWhen: mounted)
+		open(route: "/streaming-media", mountedWhen: mounted)
 	}
 
 	@discardableResult

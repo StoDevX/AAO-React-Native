@@ -19,7 +19,7 @@ describe('the UI test directory entry', () => {
 		expect(entry?.displayTitle).toBeTruthy()
 	})
 
-	/// More than one, so the heading reads DEPARTMENTS and the plural branch is
+	/// More than one, so the heading reads Departments and the plural branch is
 	/// the one being drawn.
 	it('belongs to more than one department', () => {
 		expect(entry?.departments.length).toBeGreaterThan(1)

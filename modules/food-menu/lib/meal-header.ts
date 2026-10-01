@@ -1,4 +1,4 @@
-import type {FilterType, PickerType} from '@frogpond/filter'
+import type {Filter, PickerFilter} from '@frogpond/filter'
 import type {ProcessedMealType} from '../types'
 import {formatMealTimes} from './meal-times'
 
@@ -33,11 +33,11 @@ export type MealHeaderMenu = {
  * label with nothing to match is a meal the menu never carried.
  */
 export function mealHeaderMenu<T extends object>(
-	filters: FilterType<T>[],
+	filters: Filter<T>[],
 	selected: string,
 	meals: ProcessedMealType[],
 ): MealHeaderMenu | null {
-	let mealFilter = filters.find((f) => f.type === 'picker') as PickerType<T> | undefined
+	let mealFilter = filters.find((f) => f.type === 'picker') as PickerFilter<T> | undefined
 
 	if (!mealFilter || mealFilter.spec.options.length <= 1) {
 		return null

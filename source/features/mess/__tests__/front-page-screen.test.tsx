@@ -19,14 +19,6 @@ import {OLAF_MESSENGER} from '../../news/sources'
 import {useNewsFilterStore} from '../../news/store'
 import type {LightPost, MessStory} from '../types'
 
-jest.mock('@expo/ui/swift-ui', () => {
-	// oxlint-disable-next-line typescript/no-require-imports
-	return require('../../../testing/expo-ui-mock') as typeof import('../../../testing/expo-ui-mock')
-})
-jest.mock('@expo/ui/swift-ui/modifiers', () => {
-	// oxlint-disable-next-line typescript/no-require-imports
-	return require('../../../testing/expo-ui-mock') as typeof import('../../../testing/expo-ui-mock')
-})
 jest.mock('@frogpond/mess-issue-tile', () => {
 	// oxlint-disable-next-line typescript/no-require-imports
 	return require('./mess-issue-tile-mock') as typeof import('./mess-issue-tile-mock')
@@ -260,7 +252,7 @@ describe('FrontPageScreen', () => {
 		await fireEvent.press(screen.getByTestId(TOP_TILE_ID))
 
 		expect(mockNavigate).toHaveBeenCalledWith({
-			pathname: '/Messenger/issue',
+			pathname: '/messenger/issue',
 			params: {key: 'week:2026-04-27'},
 		})
 	})

@@ -1,6 +1,6 @@
 import {EventList, type CalendarSource} from '@frogpond/event-list'
 import type {EventType} from '@frogpond/event-type'
-import {NoticeView, listState} from '@frogpond/notice'
+import {listState, LoadErrorView} from '@frogpond/notice'
 import {useMomentTimer} from '@frogpond/timer'
 import {UseQueryResult, onlineManager} from '@tanstack/react-query'
 import * as c from '@frogpond/colors'
@@ -34,13 +34,7 @@ export function ScheduleView(props: Props): React.ReactNode {
 
 	if (state === 'error') {
 		let message = error instanceof Error ? error.message : String(error)
-		return (
-			<NoticeView
-				buttonText="Try Again"
-				onPress={refetch}
-				text={`A problem occurred while loading: ${message}`}
-			/>
-		)
+		return <LoadErrorView error={message} onRetry={refetch} />
 	}
 
 	return (

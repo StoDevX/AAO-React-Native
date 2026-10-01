@@ -26,9 +26,9 @@ autoDedupe: true
 # is stale tooling metadata, not a real incompatibility
 peerDependencyRules:
   allowedVersions:
-    # ts-jest, @typescript-eslint/*, and @tanstack/eslint-plugin-query all
-    # declare narrower typescript ranges than this repo's actual 7.0.2; all
-    # three run fine against it in practice (tsc/oxlint/Jest all pass)
+    # @typescript-eslint/* and @tanstack/eslint-plugin-query both declare
+    # narrower typescript ranges than this repo's actual 7.0.2; both run fine
+    # against it in practice (tsc/oxlint/Jest all pass)
     typescript: '7.0.2'
 
 publicHoistPattern:
@@ -182,7 +182,7 @@ overrides:
   # binary download, on Linux jobs that never upload anything.
   '@sentry/cli': '-'
   # react-native-gesture-handler lists test-only type definitions as a runtime
-  # dependency, which put a second copy beside our own devDependency.
+  # dependency, for a renderer nothing here installs.
   'react-native-gesture-handler>@types/react-test-renderer': '-'
   # Old dependents that pin a transitive dependency to one patch (or, for
   # finalhandler, one minor), so each held a second copy of a package the tree

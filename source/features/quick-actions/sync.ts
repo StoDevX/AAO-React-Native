@@ -6,7 +6,7 @@ import {resolveQuickActions} from './destinations'
 import type {QuickActionDestination} from './destinations'
 import {useQuickActionsStore} from './store'
 
-/** The module's items for `destinations`. Routes are percent-encoded, since a tile title can hold a space. */
+/** The module's items for `destinations`. Routes are percent-encoded, since Swift's URL(string:) rejects a character such as a space. */
 export function toQuickActions(destinations: QuickActionDestination[]): QuickAction[] {
 	return destinations.map((d) => ({
 		id: d.id,

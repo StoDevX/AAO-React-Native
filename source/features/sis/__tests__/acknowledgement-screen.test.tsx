@@ -3,7 +3,7 @@ import {describe, expect, jest, test, beforeEach} from '@jest/globals'
 import {fireEvent, render, screen} from '@testing-library/react-native'
 import {Text} from 'react-native'
 
-import BalancesPage from '../../../../app/(home)/Balances/index'
+import BalancesPage from '../../../../app/balances/index'
 import {acknowledgeAcknowledgement} from '../../../redux/parts/settings'
 
 // The redux barrel configures the real store on import, which wires up
@@ -24,15 +24,6 @@ jest.mock('../balances', () => ({
 		return <MockText>balances</MockText>
 	},
 }))
-
-jest.mock('@expo/ui/swift-ui', () => {
-	// oxlint-disable-next-line typescript/no-require-imports
-	return require('../../../testing/expo-ui-mock') as typeof import('../../../testing/expo-ui-mock')
-})
-jest.mock('@expo/ui/swift-ui/modifiers', () => {
-	// oxlint-disable-next-line typescript/no-require-imports
-	return require('../../../testing/expo-ui-mock') as typeof import('../../../testing/expo-ui-mock')
-})
 
 describe('Balances page', () => {
 	beforeEach(() => {

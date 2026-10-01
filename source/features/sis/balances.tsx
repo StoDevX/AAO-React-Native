@@ -26,7 +26,7 @@ const DISCLAIMER = 'This data may be outdated or otherwise inaccurate.'
 
 export const BalancesView = (): React.ReactNode => {
 	let router = useRouter()
-	let openSettings = () => router.navigate('/SettingsRoot')
+	let openSettings = () => router.navigate('/settings')
 
 	let {data: username = ''} = useQuery({
 		...credentialsOptions,
@@ -54,14 +54,14 @@ export const BalancesView = (): React.ReactNode => {
 				<Section modifiers={[listRowBackground('clear')]}>
 					<RNHostView matchContents={true}>
 						<FaqBannerGroup
-							onPressFaq={(faqId) => router.navigate({pathname: '/Faq', params: {faqId}})}
+							onPressFaq={(faqId) => router.navigate({pathname: '/faq', params: {faqId}})}
 							style={styles.banner}
 							target={FAQ_TARGETS.BALANCES}
 						/>
 					</RNHostView>
 				</Section>
 
-				<Section footer={<Text>{DISCLAIMER}</Text>} title="BALANCES">
+				<Section footer={<Text>{DISCLAIMER}</Text>} title="Balances">
 					<HStack spacing={0}>
 						<BalanceTile isLoading={isLoading} label="Flex" value={data.flex} />
 						<BalanceTile isLoading={isLoading} label="Ole" value={data.ole} />
@@ -69,7 +69,7 @@ export const BalancesView = (): React.ReactNode => {
 					</HStack>
 				</Section>
 
-				<Section footer={<Text>{DISCLAIMER}</Text>} title="MEAL PLAN">
+				<Section footer={<Text>{DISCLAIMER}</Text>} title="Meal Plan">
 					<HStack spacing={0}>
 						<BalanceTile isLoading={isLoading} label="Daily Meals Left" value={data.daily} />
 						<BalanceTile isLoading={isLoading} label="Weekly Meals Left" value={data.weekly} />

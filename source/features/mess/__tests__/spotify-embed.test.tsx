@@ -6,14 +6,6 @@ import type {WebViewProps} from 'react-native-webview'
 
 import {EMBED_ID, SpotifyEmbed} from '../spotify-embed'
 
-jest.mock('@expo/ui/swift-ui', () => {
-	// oxlint-disable-next-line typescript/no-require-imports
-	return require('../../../testing/expo-ui-mock') as typeof import('../../../testing/expo-ui-mock')
-})
-jest.mock('@expo/ui/swift-ui/modifiers', () => {
-	// oxlint-disable-next-line typescript/no-require-imports
-	return require('../../../testing/expo-ui-mock') as typeof import('../../../testing/expo-ui-mock')
-})
 jest.mock('react-native-webview', () => {
 	// oxlint-disable-next-line typescript/no-require-imports
 	return require('./webview-mock') as typeof import('./webview-mock')

@@ -1,4 +1,4 @@
-import type {ListItemSpecType} from './types'
+import type {ListFilterOption} from './types'
 
 /**
  * The options a list filter should show as selected, given the titles the user
@@ -13,9 +13,9 @@ import type {ListItemSpecType} from './types'
  * the source has stopped offering selects nothing and does not come back.
  */
 export function selectedOptions(
-	options: ListItemSpecType[],
+	options: ListFilterOption[],
 	chosenTitles: string[] | null,
-): ListItemSpecType[] {
+): ListFilterOption[] {
 	if (chosenTitles === null) {
 		return []
 	}

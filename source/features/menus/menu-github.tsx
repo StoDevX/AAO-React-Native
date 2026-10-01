@@ -1,6 +1,6 @@
 import * as React from 'react'
 import {timezone} from '@frogpond/constants'
-import {LoadingView, NoticeView} from '@frogpond/notice'
+import {LoadErrorView, LoadingView, NoticeView} from '@frogpond/notice'
 import {FoodMenu} from '@frogpond/food-menu'
 import moment from 'moment-timezone'
 import sample from 'lodash/sample'
@@ -115,7 +115,7 @@ export function GitHubHostedMenu(props: Props): React.ReactNode {
 	let onItemPress = React.useCallback(
 		(item: MenuItemType) =>
 			router.navigate({
-				pathname: '/MenuItemDetail',
+				pathname: '/menu-item-detail',
 				params: {source: 'pause', itemId: item.id},
 			}),
 		[router],
@@ -126,17 +126,11 @@ export function GitHubHostedMenu(props: Props): React.ReactNode {
 	}
 
 	if (menu.kind === 'offline') {
-		return <NoticeView text={OFFLINE_MESSAGE} />
+		return <NoticeView description={OFFLINE_MESSAGE} systemImage="wifi.slash" title="Offline" />
 	}
 
 	if (menu.kind === 'error') {
-		return (
-			<NoticeView
-				buttonText="Try Again"
-				onPress={refetch}
-				text={`A problem occurred while loading: ${menu.error}`}
-			/>
-		)
+		return <LoadErrorView error={menu.error} onRetry={refetch} />
 	}
 
 	return (

@@ -1,6 +1,7 @@
 import * as React from 'react'
 import {StyleSheet} from 'react-native'
-import {Host, HStack, List, Section, Text, VStack} from '@expo/ui/swift-ui'
+import {Host, HStack, List, Text, VStack} from '@expo/ui/swift-ui'
+import {SheetSection} from '@frogpond/sheet-section'
 import {
 	font,
 	foregroundStyle,
@@ -136,23 +137,23 @@ export const MenuItemDetailView = ({item, icons}: Props): React.ReactNode => {
 				]}
 			>
 				{item.description ? (
-					<Section title="Description">
+					<SheetSection title="Description">
 						<Text>{item.description}</Text>
-					</Section>
+					</SheetSection>
 				) : null}
 
 				{dietaryKeys.length > 0 ? (
-					<Section title="Dietary">
+					<SheetSection title="Dietary">
 						{dietaryKeys.map((key) => (
 							<HStack key={key} spacing={8}>
 								<DietaryBadge badge={dietaryBadge(key, icons)} />
 								<Text modifiers={FILL_LEADING}>{icons[key]?.label}</Text>
 							</HStack>
 						))}
-					</Section>
+					</SheetSection>
 				) : null}
 
-				<Section footer={hasNutrition ? NUTRITION_FOOTER : undefined} title="Nutrition">
+				<SheetSection footer={hasNutrition ? NUTRITION_FOOTER : undefined} title="Nutrition">
 					{panel.servingSize ? <PanelRow detail={panel.servingSize} nested={false} /> : null}
 
 					{panel.calories ? <CaloriesRow detail={panel.calories} /> : null}
@@ -162,7 +163,7 @@ export const MenuItemDetailView = ({item, icons}: Props): React.ReactNode => {
 					))}
 
 					{hasNutrition ? null : <Text modifiers={SECONDARY}>No nutritional information</Text>}
-				</Section>
+				</SheetSection>
 			</List>
 		</Host>
 	)

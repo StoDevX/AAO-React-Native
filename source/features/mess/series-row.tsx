@@ -86,7 +86,7 @@ export function SeriesRow({story, asTitles = false}: Props): React.ReactNode {
 
 	let open = (other: MessStory) =>
 		router.navigate({
-			pathname: '/Messenger/story',
+			pathname: '/messenger/story',
 			params: {id: String(other.id), from: opener},
 		})
 

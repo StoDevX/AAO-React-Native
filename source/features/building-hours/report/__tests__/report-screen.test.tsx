@@ -5,7 +5,7 @@ import {Alert} from 'react-native'
 import * as ImagePicker from 'expo-image-picker'
 import {usePreventRemove} from 'expo-router/react-navigation'
 
-import ReportPage from '../../../../../app/(home)/Hours/detail/report'
+import ReportPage from '../../../../../app/hours/detail/report'
 import {BuildingReportProvider} from '../context'
 import {keys} from '../../query'
 import type {BuildingType} from '../../types'
@@ -23,15 +23,6 @@ jest.mock('../../../../redux', () => ({
 	selectFavoriteBuildings: jest.fn(),
 	useAppSelector: jest.fn(),
 }))
-
-jest.mock('@expo/ui/swift-ui', () => {
-	// oxlint-disable-next-line typescript/no-require-imports
-	return require('../../../../testing/expo-ui-mock') as typeof import('../../../../testing/expo-ui-mock')
-})
-jest.mock('@expo/ui/swift-ui/modifiers', () => {
-	// oxlint-disable-next-line typescript/no-require-imports
-	return require('../../../../testing/expo-ui-mock') as typeof import('../../../../testing/expo-ui-mock')
-})
 
 const mockNavigate = jest.fn()
 
@@ -232,7 +223,7 @@ describe('links', () => {
 
 		await fireEvent.press(screen.getByLabelText('Instagram, www.instagram.com'))
 		expect(mockNavigate).toHaveBeenCalledWith({
-			pathname: '/Hours/detail/link-editor',
+			pathname: '/hours/detail/link-editor',
 			params: {linkIndex: '0'},
 		})
 	})

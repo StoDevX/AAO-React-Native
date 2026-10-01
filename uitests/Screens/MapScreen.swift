@@ -65,11 +65,11 @@ struct MapScreen: Screen {
 		searchField
 	}
 
-	/// St. Olaf's map is a home tile of its own, pushing `/Map?campus=stolaf`.
+	/// St. Olaf's map is a home tile of its own, pushing `/map?campus=stolaf`.
 	@discardableResult
 	func navigate() -> Self {
 		// The sheet, not the map: MapLibre draws nothing XCUITest can see.
-		open(route: "/Map?campus=stolaf", mountedWhen: mounted, timeout: 60)
+		open(route: "/map?campus=stolaf", mountedWhen: mounted, timeout: 60)
 	}
 
 	/// The map draws through MapLibre, which XCUITest cannot see into, so the
@@ -1004,6 +1004,40 @@ struct MapScreen: Screen {
 	func verifyHoursStatus() -> Self {
 		let status = app.descendants(matching: .any)[TestIdentifiers.Hours.status].firstMatch
 		XCTAssertTrue(status.waitForExistence(timeout: 30), "The card should show its hours' status row")
+		return self
+	}
+
+	/// The card's About text, scrolled to until it can be tapped.
+	private func aboutText() -> XCUIElement {
+		let about = app.element(matching: TestIdentifiers.Map.cardAbout)
+		scrollCard(toReach: about)
+		XCTAssertTrue(about.waitForExistence(timeout: 10) && about.isHittable, "The card should show its About text")
+		return about
+	}
+
+	/// Taps the About text, which shows the rest of a description cut short.
+	@discardableResult
+	func expandAbout() -> Self {
+		aboutText().tap()
+		return self
+	}
+
+	/// Long-presses the About text and checks whether iOS offers to copy it,
+	/// which it does only for text that can be selected. The press lands near
+	/// the text's top, which stays on screen however far it grows.
+	@discardableResult
+	func verifyAboutOffersCopy(_ expected: Bool) -> Self {
+		aboutText().coordinate(withNormalizedOffset: CGVector(dx: 0.3, dy: 0))
+			.withOffset(CGVector(dx: 0, dy: 30))
+			.press(forDuration: 1.0)
+		let copy = app.descendants(matching: .any).matching(NSPredicate(format: "label == %@", "Copy")).firstMatch
+		let offered = copy.waitForExistence(timeout: 5)
+		capture("Long press on the card's About text")
+		XCTAssertEqual(
+			offered, expected,
+			expected
+				? "A long press on the expanded About text should offer Copy"
+				: "A long press on About text cut short should not offer Copy")
 		return self
 	}
 }

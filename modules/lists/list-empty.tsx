@@ -8,5 +8,5 @@ type Props = {
 export const emptyList: ReadonlyArray<never> = []
 
 export function ListEmpty(_props: Props): React.ReactNode {
-	return <NoticeView text="List is empty" />
+	return <NoticeView systemImage="tray" title="Nothing Here" />
 }

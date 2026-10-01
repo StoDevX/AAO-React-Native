@@ -1,20 +1,11 @@
 import * as React from 'react'
 import {act, fireEvent, render, screen} from '@testing-library/react-native'
 
-import EditScreen from '../../../../app/(home)/Dictionary/entry/edit'
-import SenseScreen from '../../../../app/(home)/Dictionary/entry/sense'
+import EditScreen from '../../../../app/dictionary/entry/edit'
+import SenseScreen from '../../../../app/dictionary/entry/sense'
 import {normalizeEntry} from '../lib/entry'
 import {useDictionaryDraftStore} from '../store'
 import type * as ExpoRouterMock from '../../../testing/expo-router-mock'
-
-jest.mock('@expo/ui/swift-ui', () => {
-	// oxlint-disable-next-line typescript/no-require-imports
-	return require('../../../testing/expo-ui-mock') as typeof import('../../../testing/expo-ui-mock')
-})
-jest.mock('@expo/ui/swift-ui/modifiers', () => {
-	// oxlint-disable-next-line typescript/no-require-imports
-	return require('../../../testing/expo-ui-mock') as typeof import('../../../testing/expo-ui-mock')
-})
 
 // Jest's mock hoisting forbids a `jest.mock()` factory from closing over an
 // out-of-scope variable unless its name starts with "mock" -- the one
@@ -125,7 +116,7 @@ describe('the dictionary edit screen', () => {
 		expect(screen.getByText('Ready to preview')).toBeTruthy()
 
 		await fireEvent.press(screen.getByLabelText('Preview'))
-		expect(mockNavigate).toHaveBeenCalledWith('/Dictionary/entry/preview')
+		expect(mockNavigate).toHaveBeenCalledWith('/dictionary/entry/preview')
 	})
 
 	// A sense added here has nowhere on this screen to be typed into, so the
@@ -139,7 +130,7 @@ describe('the dictionary edit screen', () => {
 		let added = useDictionaryDraftStore.getState().draft?.senses.at(-1)
 		expect(added).toBeTruthy()
 		expect(mockNavigate).toHaveBeenCalledWith({
-			pathname: '/Dictionary/entry/sense',
+			pathname: '/dictionary/entry/sense',
 			params: {senseId: added?.id},
 		})
 	})
@@ -182,7 +173,7 @@ describe('the dictionary edit screen', () => {
 		await fireEvent.press(screen.getByText('The dining hall.'))
 
 		expect(mockNavigate).toHaveBeenCalledWith({
-			pathname: '/Dictionary/entry/sense',
+			pathname: '/dictionary/entry/sense',
 			params: {senseId: '1'},
 		})
 	})
@@ -273,7 +264,7 @@ describe('the dictionary sense screen', () => {
 		let added = useDictionaryDraftStore.getState().draft?.senses[0].subsenses.at(-1)
 		expect(added).toBeTruthy()
 		expect(mockNavigate).toHaveBeenCalledWith({
-			pathname: '/Dictionary/entry/sense',
+			pathname: '/dictionary/entry/sense',
 			params: {senseId: added?.id},
 		})
 	})
@@ -288,7 +279,7 @@ describe('the dictionary sense screen', () => {
 		await fireEvent.press(screen.getByText('Sub-sense 1'))
 
 		expect(mockNavigate).toHaveBeenCalledWith({
-			pathname: '/Dictionary/entry/sense',
+			pathname: '/dictionary/entry/sense',
 			params: {senseId: id},
 		})
 	})

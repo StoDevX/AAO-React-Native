@@ -10,8 +10,8 @@ let ids = () => quickActionDestinations().map((d) => d.id)
 describe('quickActionDestinations', () => {
 	test('offers the Stav and Cage menus', () => {
 		let byId = new Map(quickActionDestinations().map((d) => [d.id, d.href]))
-		expect(byId.get('Stav Menu')).toBe('/Menus')
-		expect(byId.get('Cage Menu')).toBe('/Menus/the-cage')
+		expect(byId.get('Stav Menu')).toBe('/menus')
+		expect(byId.get('Cage Menu')).toBe('/menus/the-cage')
 	})
 
 	test('offers no Pause menu', () => {
@@ -20,7 +20,7 @@ describe('quickActionDestinations', () => {
 
 	test('leaves out the bare Menus tile, which Stav Menu already opens', () => {
 		expect(ids()).not.toContain('Menus')
-		expect(quickActionDestinations().filter((d) => d.href === '/Menus')).toHaveLength(1)
+		expect(quickActionDestinations().filter((d) => d.href === '/menus')).toHaveLength(1)
 	})
 
 	test('offers in-app home tiles', () => {

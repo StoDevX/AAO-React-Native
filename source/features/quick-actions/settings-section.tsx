@@ -11,7 +11,7 @@ export function QuickActionsSection(): React.ReactNode {
 	return (
 		<Section title="Quick Actions">
 			<NavigationRow
-				onPress={() => router.navigate('/QuickActions')}
+				onPress={() => router.navigate('/settings/quick-actions')}
 				title="Home Screen Quick Actions"
 			/>
 		</Section>

@@ -1,4 +1,4 @@
-import type {FilterType} from '../types'
+import type {Filter} from '../types'
 
 export type FilterShape = 'inline' | 'menu' | 'sheet' | 'none'
 
@@ -16,7 +16,7 @@ const SHEET_THRESHOLD = 8
  * its length), asks for a presentation outright, or reaches the sheet
  * threshold.
  */
-export function filterShape<T extends object>(filter: FilterType<T>): FilterShape {
+export function filterShape<T extends object>(filter: Filter<T>): FilterShape {
 	switch (filter.type) {
 		case 'toggle':
 			return 'inline'

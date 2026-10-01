@@ -6,15 +6,6 @@ import {diffEntry} from '../lib/diff'
 import {deleteSense, moveExample, moveSense, startDraft} from '../lib/draft'
 import {normalizeEntry} from '../lib/entry'
 
-jest.mock('@expo/ui/swift-ui', () => {
-	// oxlint-disable-next-line typescript/no-require-imports
-	return require('../../../testing/expo-ui-mock') as typeof import('../../../testing/expo-ui-mock')
-})
-jest.mock('@expo/ui/swift-ui/modifiers', () => {
-	// oxlint-disable-next-line typescript/no-require-imports
-	return require('../../../testing/expo-ui-mock') as typeof import('../../../testing/expo-ui-mock')
-})
-
 const SUBSENSE_MARKER = '•'
 
 const twoSenses = () =>

@@ -6,15 +6,6 @@ import moment from 'moment-timezone'
 import {BusLine} from '../line'
 import type {UnprocessedBusLine} from '../types'
 
-jest.mock('@expo/ui/swift-ui', () => {
-	// oxlint-disable-next-line typescript/no-require-imports
-	return require('../../../../testing/expo-ui-mock') as typeof import('../../../../testing/expo-ui-mock')
-})
-jest.mock('@expo/ui/swift-ui/modifiers', () => {
-	// oxlint-disable-next-line typescript/no-require-imports
-	return require('../../../../testing/expo-ui-mock') as typeof import('../../../../testing/expo-ui-mock')
-})
-
 const CENTRAL_TZ = 'America/Chicago'
 
 // A Monday, so the line below is on its schedule.

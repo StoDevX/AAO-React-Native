@@ -1,17 +1,8 @@
 import * as React from 'react'
-import {beforeEach, expect, jest, test} from '@jest/globals'
+import {beforeEach, expect, test} from '@jest/globals'
 import {fireEvent, render, screen} from '@testing-library/react-native'
 import {useMessStore} from '../../../../mess/store'
 import {IssueStainsRow} from '../issue-stains-row'
-
-jest.mock('@expo/ui/swift-ui', () => {
-	// oxlint-disable-next-line typescript/no-require-imports
-	return require('../../../../../testing/expo-ui-mock') as typeof import('../../../../../testing/expo-ui-mock')
-})
-jest.mock('@expo/ui/swift-ui/modifiers', () => {
-	// oxlint-disable-next-line typescript/no-require-imports
-	return require('../../../../../testing/expo-ui-mock') as typeof import('../../../../../testing/expo-ui-mock')
-})
 
 beforeEach(() => {
 	useMessStore.setState({stainKind: 'coffee'})

@@ -14,6 +14,7 @@ const esmPackages = [
 	'@expo',
 	'@maplibre/maplibre-react-native',
 	'ky',
+	'@sentry',
 	// css-select v7+ and its ESM-only transitive deps
 	'css-select',
 	'boolbase',

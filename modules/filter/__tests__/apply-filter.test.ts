@@ -1,11 +1,11 @@
 import {describe, expect, it} from '@jest/globals'
 import {applyFilter} from '../apply-filters'
 import {filterValue} from './filter-value.helper'
-import type {ListType, ToggleType} from '../types'
+import type {ListFilter, ToggleFilter} from '../types'
 
 type Item = {categories?: unknown}
 
-function listFilter(mode: 'AND' | 'OR', enabled: boolean, ...selected: string[]): ListType<Item> {
+function listFilter(mode: 'AND' | 'OR', enabled: boolean, ...selected: string[]): ListFilter<Item> {
 	return {
 		type: 'list',
 		key: 'key',
@@ -97,7 +97,7 @@ describe('the two list modes', () => {
 describe('a toggle filter', () => {
 	type Course = {status?: string; open?: boolean}
 
-	function toggle(trueEquivalent?: string): ToggleType<Course> {
+	function toggle(trueEquivalent?: string): ToggleFilter<Course> {
 		return {
 			type: 'toggle',
 			key: 'status',

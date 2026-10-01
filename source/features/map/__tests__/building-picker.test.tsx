@@ -14,14 +14,6 @@ import {useRecentPlacesStore} from '../store'
 import {makeBuilding} from './fixtures'
 import {track} from '../../telemetry/track'
 
-jest.mock('@expo/ui/swift-ui', () => {
-	// oxlint-disable-next-line typescript/no-require-imports
-	return require('../../../testing/expo-ui-mock') as typeof import('../../../testing/expo-ui-mock')
-})
-jest.mock('@expo/ui/swift-ui/modifiers', () => {
-	// oxlint-disable-next-line typescript/no-require-imports
-	return require('../../../testing/expo-ui-mock') as typeof import('../../../testing/expo-ui-mock')
-})
 jest.mock('@frogpond/campus-search-bar', () => {
 	// oxlint-disable-next-line typescript/no-require-imports
 	return require('./campus-search-bar-mock') as typeof import('./campus-search-bar-mock')
@@ -78,6 +70,7 @@ async function renderPicker({
 	onSearchCancel = jest.fn(),
 	onPinsChange = jest.fn(),
 	onGroupOpen = jest.fn(),
+	onHeaderHeightChange = jest.fn(),
 } = {}) {
 	let client = new QueryClient({defaultOptions: {queries: {retry: false}}})
 	trackedQueryClients.push(client)
@@ -94,7 +87,7 @@ async function renderPicker({
 			<BuildingPicker
 				campus={props.campus}
 				compact={props.compact}
-				onHeaderHeightChange={jest.fn()}
+				onHeaderHeightChange={onHeaderHeightChange}
 				onSearchCancel={onSearchCancel}
 				onSearchFocusChange={onSearchFocusChange}
 				onGroupOpen={onGroupOpen}
@@ -117,6 +110,7 @@ async function renderPicker({
 		onSearchCancel,
 		onPinsChange,
 		onGroupOpen,
+		onHeaderHeightChange,
 		rerenderWith,
 	}
 }
@@ -642,6 +636,53 @@ describe('BuildingPicker', () => {
 			let {onSelect} = await renderPicker()
 			await fireEvent.press(screen.getByText('Alpha Hall'))
 			expect(onSelect).toHaveBeenCalledWith('a')
+		})
+	})
+
+	// A place the feed sent without a name throws while the list sorts. The
+	// sheet shows a row to try again rather than the map going down with it.
+	describe('when drawing the places throws', () => {
+		const NAMELESS = makeBuilding({id: 'x', name: undefined as unknown as string})
+
+		it('offers to try again in place of the picker', async () => {
+			let error = jest.spyOn(console, 'error').mockImplementation(() => undefined)
+			await renderPicker({buildings: [...fixtures, NAMELESS], table: null})
+			expect(screen.getByText('Tap to try again.')).toBeTruthy()
+			expect(screen.queryByLabelText('Search for a place')).toBeNull()
+			expect(error).toHaveBeenCalledWith(
+				'Caught error:',
+				expect.objectContaining({message: expect.stringContaining('localeCompare')}),
+				expect.anything(),
+			)
+			error.mockRestore()
+		})
+
+		// The collapsed sheet is sized to what the picker reports, so a row
+		// that reported nothing would be cut off below the grabber.
+		it("reports the row's height for the collapsed sheet", async () => {
+			let error = jest.spyOn(console, 'error').mockImplementation(() => undefined)
+			let {onHeaderHeightChange} = await renderPicker({
+				buildings: [...fixtures, NAMELESS],
+				table: null,
+			})
+			let [measured] = screen.container.queryAll(
+				(node) => typeof node.props.onGeometryChange === 'function',
+			)
+			await act(() => measured.props.onGeometryChange({x: 0, y: 0, width: 402, height: 92}))
+			expect(onHeaderHeightChange).toHaveBeenLastCalledWith(92)
+			expect(error).toHaveBeenCalledTimes(1)
+			error.mockRestore()
+		})
+
+		it('draws the picker again once the places can be drawn', async () => {
+			let error = jest.spyOn(console, 'error').mockImplementation(() => undefined)
+			let {client} = await renderPicker({buildings: [...fixtures, NAMELESS], table: null})
+			client.setQueryData(keys.all('carleton'), fixtures)
+			await fireEvent.press(screen.getByText('Tap to try again.'))
+			expect(screen.getByLabelText('Search for a place')).toBeTruthy()
+			expect(screen.queryByText('Tap to try again.')).toBeNull()
+			expect(error).toHaveBeenCalledTimes(1)
+			error.mockRestore()
 		})
 	})
 })

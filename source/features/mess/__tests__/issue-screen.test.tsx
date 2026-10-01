@@ -13,14 +13,6 @@ import {OLAF_MESSENGER} from '../../news/sources'
 import {useNewsFilterStore} from '../../news/store'
 import type {LightPost, MessStory} from '../types'
 
-jest.mock('@expo/ui/swift-ui', () => {
-	// oxlint-disable-next-line typescript/no-require-imports
-	return require('../../../testing/expo-ui-mock') as typeof import('../../../testing/expo-ui-mock')
-})
-jest.mock('@expo/ui/swift-ui/modifiers', () => {
-	// oxlint-disable-next-line typescript/no-require-imports
-	return require('../../../testing/expo-ui-mock') as typeof import('../../../testing/expo-ui-mock')
-})
 jest.mock('@react-native-community/netinfo', () =>
 	// oxlint-disable-next-line typescript/no-require-imports
 	require('@react-native-community/netinfo/jest/netinfo-mock'),
@@ -186,6 +178,6 @@ describe('IssueScreen', () => {
 	test('says an issue the list does not hold is unavailable', async () => {
 		await renderIssue('week:2025-12-29')
 
-		expect(screen.getByText('Issue unavailable')).toBeTruthy()
+		expect(screen.getByText('Issue Unavailable')).toBeTruthy()
 	})
 })

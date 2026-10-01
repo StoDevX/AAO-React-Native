@@ -68,7 +68,7 @@ class ModuleMapTests: UITestCaseUnbooted {
 	/// the sheet.
 	///
 	/// `aBuilding` is absent from Carleton's map, so this also fails if the Map
-	/// tile forwarded the wrong campus, or none at all, to `/Map` -- which falls
+	/// tile forwarded the wrong campus, or none at all, to `/map` -- which falls
 	/// back to Carleton.
 	func testTheFullSheetDropsToMediumForARow() throws {
 		let screen = MapScreen(app: app)
@@ -182,6 +182,22 @@ class ModuleMapTests: UITestCaseUnbooted {
 			.expandCard()
 			.capture("Holland Hall's card at the large stop")
 			.verifySectionOrder(["Hours", "About", "Good to Know", "Links"], among: cardSections)
+	}
+
+	/// Once expanded, a card's About text can be selected and copied. Cut
+	/// short, it cannot: a copy then would hold only the lines on screen.
+	func testAnExpandedAboutCanBeCopied() throws {
+		let name = TestIdentifiers.Map.aBuildingWithALongAbout
+		MapScreen(app: app)
+			.navigate()
+			.checkSheetPresented()
+			.focusSearch()
+			.typeIntoSearch(name)
+			.selectBuilding(named: name)
+			.expandCard()
+			.verifyAboutOffersCopy(false)
+			.expandAbout()
+			.verifyAboutOffersCopy(true)
 	}
 
 	/// Closing a card returns to the list as it was left: the same group,

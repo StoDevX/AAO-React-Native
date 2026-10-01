@@ -25,21 +25,23 @@ describe('toQuickActions', () => {
 				id: 'Cage Menu',
 				title: 'Cage Menu',
 				symbol: 'cup.and.saucer.fill',
-				href: '/Menus/the-cage',
+				href: '/menus/the-cage',
 			},
-			{id: 'Transit', title: 'Transit', symbol: 'bus.fill', href: '/Transit'},
+			{id: 'Transit', title: 'Transit', symbol: 'bus.fill', href: '/transit'},
 		])
 	})
 
 	// Swift's URL(string:) rejects a space.
 	test('encodes the href', () => {
-		let [action] = toQuickActions(resolveQuickActions(['Streaming Media']))
-		expect(action.href).toBe('/Streaming%20Media')
+		let [action] = toQuickActions([
+			{id: 'Spaced', title: 'Spaced', icon: 'map.fill', href: '/a route'},
+		])
+		expect(action.href).toBe('/a%20route')
 	})
 
 	test('keeps a query string intact', () => {
 		let [action] = toQuickActions(resolveQuickActions(['Map']))
-		expect(action.href).toBe('/Map?campus=stolaf')
+		expect(action.href).toBe('/map?campus=stolaf')
 	})
 })
 

@@ -21,7 +21,7 @@ class ModuleStoPrintTests: UITestCaseUnbooted {
 		XCTAssertTrue(job.waitForExistence(timeout: 30), "A sent job should be listed")
 		job.tap()
 
-		let jobInfo = app.staticTexts["JOB INFO"].firstMatch
+		let jobInfo = app.staticTexts["Job Info"].firstMatch
 		XCTAssertTrue(jobInfo.waitForExistence(timeout: 30), "The release screen should be shown")
 
 		screen.capture("Print release")

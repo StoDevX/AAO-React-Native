@@ -3,6 +3,11 @@ import {setTimezone} from '@frogpond/constants'
 
 setTimezone('America/Chicago')
 jest.mock('react-native/Libraries/EventEmitter/NativeEventEmitter')
+// @expo/ui draws SwiftUI, which Jest cannot load; every test gets the
+// stand-in, which renders each view as the React Native elements a test can
+// query.
+jest.mock('@expo/ui/swift-ui', () => require('../source/testing/expo-ui-mock'))
+jest.mock('@expo/ui/swift-ui/modifiers', () => require('../source/testing/expo-ui-mock'))
 jest.mock('expo-web-browser', () => ({
 	openBrowserAsync: jest.fn(() => Promise.resolve({type: 'opened'})),
 	WebBrowserPresentationStyle: {
@@ -23,6 +28,12 @@ jest.mock('expo-image-picker', () => ({
 	UIImagePickerPreferredAssetRepresentationMode: {Compatible: 'compatible'},
 }))
 
+// The app's version is read from a native module Jest does not have; the
+// query cache marks what it saves with it.
+jest.mock('expo-application', () => ({
+	nativeApplicationVersion: '2.8.0',
+	nativeBuildVersion: '17',
+}))
 // Keeping the screen awake goes through a native module Jest does not have.
 jest.mock('expo-keep-awake', () => ({
 	useKeepAwake: jest.fn(),

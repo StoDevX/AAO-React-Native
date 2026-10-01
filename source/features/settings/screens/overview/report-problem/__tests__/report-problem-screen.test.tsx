@@ -2,7 +2,7 @@ import * as React from 'react'
 import {Alert, type AlertButton} from 'react-native'
 import {act, fireEvent, render, screen} from '@testing-library/react-native'
 
-import ReportProblemPage from '../../../../../../../app/(settings)/ReportProblem'
+import ReportProblemPage from '../../../../../../../app/settings/report-problem'
 import type {ImageAttachments} from '../../../../../../components/use-image-attachments'
 import {useImageAttachments} from '../../../../../../components/use-image-attachments'
 import type * as ExpoRouterMock from '../../../../../../testing/expo-router-mock'
@@ -10,15 +10,6 @@ import {readAttachment} from '../attachments'
 import {composeEmail} from '../../../../../../components/send-email'
 import {submitReport} from '../submit'
 import {useTelemetryStore} from '../../../../../telemetry/store'
-
-jest.mock('@expo/ui/swift-ui', () => {
-	// oxlint-disable-next-line typescript/no-require-imports -- jest.mock factories cannot use import
-	return require('../../../../../../testing/expo-ui-mock') as typeof import('../../../../../../testing/expo-ui-mock')
-})
-jest.mock('@expo/ui/swift-ui/modifiers', () => {
-	// oxlint-disable-next-line typescript/no-require-imports -- jest.mock factories cannot use import
-	return require('../../../../../../testing/expo-ui-mock') as typeof import('../../../../../../testing/expo-ui-mock')
-})
 
 const mockGoBack = jest.fn()
 jest.mock('expo-router', () => {

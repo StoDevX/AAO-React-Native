@@ -1,4 +1,5 @@
 import ExpoModulesCore
+import SelectableText
 import SwiftUI
 
 /// Maps clamps a place's About text to its first five lines.
@@ -14,7 +15,8 @@ private let moreGap: CGFloat = 12
 
 /// A place card's About text as Apple Maps sets it: the first five lines, the
 /// last of them cut short with an ellipsis, and MORE at its trailing end when
-/// there is more to read. A tap on the text or on MORE shows the rest in place.
+/// there is more to read. A tap on the text or on MORE shows the rest in place,
+/// where it can be selected.
 ///
 /// Native because only TextKit can say where the fifth line starts, which is
 /// what cutting that line short to make room for MORE needs.
@@ -32,8 +34,7 @@ struct PlaceCardAboutView: ExpoSwiftUI.View {
 	/// The body font at the current text size. The text is drawn in exactly
 	/// the font it is measured in, so TextKit and SwiftUI break its lines alike.
 	private var bodyFont: UIFont {
-		let traits = UITraitCollection(preferredContentSizeCategory: UIContentSizeCategory(dynamicTypeSize))
-		return UIFont.preferredFont(forTextStyle: .body, compatibleWith: traits)
+		.body(at: dynamicTypeSize)
 	}
 
 	private var moreFont: UIFont {
@@ -50,7 +51,15 @@ struct PlaceCardAboutView: ExpoSwiftUI.View {
 
 	var body: some View {
 		let shortened = self.shortened
-		Text(shortened ?? props.text)
+		Group {
+			// Selectable only once expanded: cut short, a copy would hold only
+			// the lines on screen.
+			if expanded {
+				SelectableUITextView(text: props.text, font: bodyFont)
+			} else {
+				Text(shortened ?? props.text)
+			}
+		}
 			.font(Font(bodyFont))
 			// A backstop for the frame before the width is known, and for any
 			// line SwiftUI breaks differently from TextKit.

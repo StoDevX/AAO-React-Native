@@ -23,8 +23,8 @@ export const DEFAULT_QUICK_ACTIONS: string[] = [
 
 /** Cafés get an action each, though the home grid has one Menus tile for all of them. */
 const CAFE_MENUS: QuickActionDestination[] = [
-	{id: 'Stav Menu', title: 'Stav Menu', icon: 'fork.knife', href: '/Menus'},
-	{id: 'Cage Menu', title: 'Cage Menu', icon: 'cup.and.saucer.fill', href: '/Menus/the-cage'},
+	{id: 'Stav Menu', title: 'Stav Menu', icon: 'fork.knife', href: '/menus'},
+	{id: 'Cage Menu', title: 'Cage Menu', icon: 'cup.and.saucer.fill', href: '/menus/the-cage'},
 ]
 
 /**
@@ -37,7 +37,7 @@ export function quickActionDestinations(): QuickActionDestination[] {
 		if (view.type !== 'view' || view.disabled || view.devOnly) {
 			return []
 		}
-		if (typeof view.view !== 'string' || view.view === '/Menus') {
+		if (typeof view.view !== 'string' || view.view === '/menus') {
 			return []
 		}
 		return [{id: view.title, title: view.title, icon: view.icon, href: view.view}]

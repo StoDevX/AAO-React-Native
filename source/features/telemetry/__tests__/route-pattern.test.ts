@@ -2,11 +2,11 @@ import {routePattern} from '../route-pattern'
 
 describe('routePattern', () => {
 	it('joins segments into the route file path', () => {
-		expect(routePattern(['(home)', 'Menus'])).toBe('/(home)/Menus')
+		expect(routePattern(['menus'])).toBe('/menus')
 	})
 
 	it("keeps a dynamic segment's brackets, never a value", () => {
-		expect(routePattern(['(home)', 'Dictionary', '[word]'])).toBe('/(home)/Dictionary/[word]')
+		expect(routePattern(['dictionary', '[word]'])).toBe('/dictionary/[word]')
 	})
 
 	it('keeps a catch-all segment as written', () => {

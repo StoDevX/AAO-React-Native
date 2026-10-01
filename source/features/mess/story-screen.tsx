@@ -60,7 +60,7 @@ export function StoryScreen({id}: Props): React.ReactNode {
 		return (
 			<>
 				<Stack.Screen options={{title: ''}} />
-				<StoryLookupNotice query={query} unavailableText="Story unavailable" />
+				<StoryLookupNotice query={query} unavailableText="Story Unavailable" />
 			</>
 		)
 	}

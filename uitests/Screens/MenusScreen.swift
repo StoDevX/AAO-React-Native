@@ -10,7 +10,7 @@ struct MenusScreen: Screen {
 
 	@discardableResult
 	func navigate() -> Self {
-		open(route: "/Menus", mountedWhen: mounted)
+		open(route: "/menus", mountedWhen: mounted)
 	}
 
 	/// Reveal the filter row, which a menu opens with collapsed behind a

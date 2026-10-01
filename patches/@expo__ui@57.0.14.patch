@@ -1,3 +1,19 @@
+diff --git a/build/swift-ui/ContentUnavailableView/index.d.ts b/build/swift-ui/ContentUnavailableView/index.d.ts
+index efb96284ff2aa26d454d8422c3bd93a238cdcc96..12cd111c508d58c13b5227229c011065980c6a3c 100644
+--- a/build/swift-ui/ContentUnavailableView/index.d.ts
++++ b/build/swift-ui/ContentUnavailableView/index.d.ts
+@@ -13,6 +13,11 @@ export interface ContentUnavailableViewProps extends CommonViewModifierProps {
+      * Description of why the content is not available.
+      */
+     description?: string;
++    /**
++     * Controls the user can act on, drawn under the description -- typically a
++     * single button that retries.
++     */
++    actions?: React.ReactNode;
+ }
+ /**
+  * Displays a native Swift UI ContentUnavailableView.
 diff --git a/build/swift-ui/HangingText/index.d.ts b/build/swift-ui/HangingText/index.d.ts
 new file mode 100644
 index 0000000000000000000000000000000000000000..d08232a073aef5a8f011f7ce4e26ceaada54d8d5
@@ -90,6 +106,33 @@ index 9b6dba1653de433e8848b80f481f71dc8ef097d0..f7f672931780a8ad947d7c58c0bd0ca7
  }) => ModifierConfig;
  /**
   * A standard size for Dynamic Type, from `xSmall` through the five
+diff --git a/ios/ContentUnavailableView.swift b/ios/ContentUnavailableView.swift
+index 3e07eceecb782b3c924ee9e3d5ec20424ef7f491..190d26a536036f9be84322536ce92d80ea3243e1 100644
+--- a/ios/ContentUnavailableView.swift
++++ b/ios/ContentUnavailableView.swift
+@@ -18,7 +18,21 @@ public struct ContentUnavailableView: ExpoSwiftUI.View {
+ 
+   public var body: some View {
+     if #available(iOS 17.0, tvOS 17.0, *) {
+-      SwiftUI.ContentUnavailableView(props.title, systemImage: props.systemImage, description: Text(props.description))
++      SwiftUI.ContentUnavailableView {
++        if props.systemImage.isEmpty {
++          Text(props.title)
++        } else {
++          Label(props.title, systemImage: props.systemImage)
++        }
++      } description: {
++        if !props.description.isEmpty {
++          Text(props.description)
++        }
++      } actions: {
++        if let actions = props.children?.slot("actions") {
++          actions
++        }
++      }
+     }
+   }
+ }
 diff --git a/ios/ExpoUIModule.swift b/ios/ExpoUIModule.swift
 index 4eed0f19fede0f28af6e8b74507805927acf004e..231004c9640e3850be7e7722cd1f47533058f028 100644
 --- a/ios/ExpoUIModule.swift
@@ -609,6 +652,56 @@ index 94eb3eb83d6c19d5ff9ff58057e6e38c862357b9..efcb138bbd5e26b999ea5b1805fe6218
 +    }
 +  }
 +}
+diff --git a/src/swift-ui/ContentUnavailableView/index.tsx b/src/swift-ui/ContentUnavailableView/index.tsx
+index 43ef5c6c6f5c8794d5917276d332d1c9f455298b..f232a240b0c960d073f0fd5a736c4803049cd5f8 100644
+--- a/src/swift-ui/ContentUnavailableView/index.tsx
++++ b/src/swift-ui/ContentUnavailableView/index.tsx
+@@ -1,6 +1,7 @@
+ import { requireNativeView } from 'expo';
+ import { type SFSymbol } from 'sf-symbols-typescript';
+ 
++import { Slot } from '../SlotView';
+ import { createViewModifierEventListener } from '../modifiers/utils';
+ import { type CommonViewModifierProps } from '../types';
+ 
+@@ -19,15 +20,23 @@ export interface ContentUnavailableViewProps extends CommonViewModifierProps {
+    * Description of why the content is not available.
+    */
+   description?: string;
++
++  /**
++   * Controls the user can act on, drawn under the description -- typically a
++   * single button that retries.
++   */
++  actions?: React.ReactNode;
+ }
+ 
+-const ContentUnavailableViewNativeView: React.ComponentType<ContentUnavailableViewProps> =
++const ContentUnavailableViewNativeView: React.ComponentType<
++  Omit<ContentUnavailableViewProps, 'actions'> & { children?: React.ReactNode }
++> =
+   requireNativeView('ExpoUI', 'ContentUnavailableView');
+ 
+ function transformContentUnavailableViewProps(
+   props: ContentUnavailableViewProps
+-): ContentUnavailableViewProps {
+-  const { modifiers, ...restProps } = props;
++): Omit<ContentUnavailableViewProps, 'actions'> {
++  const { modifiers, actions: _actions, ...restProps } = props;
+   return {
+     modifiers,
+     ...(modifiers ? createViewModifierEventListener(modifiers) : undefined),
+@@ -41,5 +50,9 @@ function transformContentUnavailableViewProps(
+  * @platform tvos 17.0+
+  */
+ export function ContentUnavailableView(props: ContentUnavailableViewProps) {
+-  return <ContentUnavailableViewNativeView {...transformContentUnavailableViewProps(props)} />;
++  return (
++    <ContentUnavailableViewNativeView {...transformContentUnavailableViewProps(props)}>
++      {props.actions ? <Slot name="actions">{props.actions}</Slot> : null}
++    </ContentUnavailableViewNativeView>
++  );
+ }
 diff --git a/src/swift-ui/HangingText/index.tsx b/src/swift-ui/HangingText/index.tsx
 new file mode 100644
 index 0000000000000000000000000000000000000000..bfba4b327a1542d05ceabe0c74041e40c4cd3913

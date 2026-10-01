@@ -1,17 +1,17 @@
 import {describe, expect, test} from '@jest/globals'
 import {clearSelection, selectByTitles, toggleOption} from '../select-options'
-import type {ListType} from '../../types'
+import type {ListFilter} from '../../types'
 
 const OPTIONS = [{title: 'A'}, {title: 'B'}, {title: 'C'}]
 
-function listFilter(mode: 'AND' | 'OR', selected: {title: string}[]): ListType<{x: string}> {
+function listFilter(mode: 'AND' | 'OR', selected: {title: string}[]): ListFilter<{x: string}> {
 	return {
 		type: 'list',
 		key: 'k',
 		enabled: false,
 		spec: {title: 'T', options: OPTIONS, selected, mode, displayTitle: true},
 		apply: {key: 'x'},
-	} as ListType<{x: string}>
+	} as ListFilter<{x: string}>
 }
 
 // Both modes share one rule now: an empty selection is the resting state and

@@ -12,14 +12,6 @@ import {messKeys} from '../lib/keys'
 import {parseMessCategories} from '../lib/posts'
 import type {MessStory} from '../types'
 
-jest.mock('@expo/ui/swift-ui', () => {
-	// oxlint-disable-next-line typescript/no-require-imports
-	return require('../../../testing/expo-ui-mock') as typeof import('../../../testing/expo-ui-mock')
-})
-jest.mock('@expo/ui/swift-ui/modifiers', () => {
-	// oxlint-disable-next-line typescript/no-require-imports
-	return require('../../../testing/expo-ui-mock') as typeof import('../../../testing/expo-ui-mock')
-})
 jest.mock('@react-native-community/netinfo', () =>
 	// oxlint-disable-next-line typescript/no-require-imports
 	require('@react-native-community/netinfo/jest/netinfo-mock'),
@@ -90,7 +82,7 @@ describe('ColumnScreen', () => {
 
 		await fireEvent.press(screen.getByRole('button', {name: 'Why is the Cage so loud?, Apr 29'}))
 
-		expect(mockNavigate).toHaveBeenCalledWith({pathname: '/Messenger/story', params: {id: '36800'}})
+		expect(mockNavigate).toHaveBeenCalledWith({pathname: '/messenger/story', params: {id: '36800'}})
 	})
 
 	test('says it loads once back online when offline with its stories not cached', async () => {

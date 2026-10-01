@@ -209,8 +209,8 @@ describe('BonAppHostedMenu', () => {
 			await jest.runOnlyPendingTimersAsync()
 		})
 
-		expect(screen.getByText('Error: HTTP 503')).toBeTruthy()
-		expect(screen.getByText('Again!')).toBeTruthy()
+		expect(screen.getByText('HTTP 503')).toBeTruthy()
+		expect(screen.getByText('Try Again')).toBeTruthy()
 		expect(mockFoodMenu).not.toHaveBeenCalled()
 	})
 
@@ -267,7 +267,7 @@ describe('BonAppHostedMenu', () => {
 				await jest.runOnlyPendingTimersAsync()
 			})
 
-			expect(screen.getByText(/There is no cafe with id/u)).toBeTruthy()
+			expect(screen.getByText(/There is no café with ID/u)).toBeTruthy()
 			expect(lastHeader()?.meals).toBeNull()
 		})
 	})
@@ -327,7 +327,7 @@ describe('BonAppHostedMenu', () => {
 		})
 
 		expect(mockRouter.navigate).toHaveBeenCalledWith({
-			pathname: '/MenuItemDetail',
+			pathname: '/menu-item-detail',
 			params: {source: 'bonapp', cafe: 'the-cage', day: '2026-09-22', itemId: '42'},
 		})
 	})
@@ -403,7 +403,7 @@ describe('BonAppHostedMenu', () => {
 		props.onItemPress({id: '5'})
 
 		expect(mockRouter.navigate).toHaveBeenCalledWith({
-			pathname: '/MenuItemDetail',
+			pathname: '/menu-item-detail',
 			params: {source: 'bonapp', cafeId: '261', day: '2026-09-22', itemId: '5'},
 		})
 	})

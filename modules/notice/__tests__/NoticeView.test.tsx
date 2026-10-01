@@ -2,51 +2,55 @@ import React from 'react'
 import {describe, expect, it, jest} from '@jest/globals'
 
 import {fireEvent, render, screen} from '@testing-library/react-native'
-import {NoticeView} from '../notice'
-
-function spinners() {
-	return screen.container.queryAll((node) => node.type === 'ActivityIndicator')
-}
+import {LoadErrorView, NoticeView, describeError} from '../notice'
 
 describe('NoticeView', () => {
-	it('says "Notice!" when given no text', async () => {
-		await render(<NoticeView />)
+	it('shows its title, and its description when it has one', async () => {
+		await render(<NoticeView description="Try again after lunch." title="No Menu" />)
+		expect(screen.getByText('No Menu')).toBeTruthy()
+		expect(screen.getByText('Try again after lunch.')).toBeTruthy()
 
-		expect(screen.getByText('Notice!')).toBeTruthy()
+		await render(<NoticeView title="No Menu" />)
+		expect(screen.queryByText('Try again after lunch.')).toBeNull()
 	})
 
-	it('shows the text it is given instead', async () => {
-		await render(<NoticeView text="The menu is not available." />)
-
-		expect(screen.getByText('The menu is not available.')).toBeTruthy()
-		expect(screen.queryByText('Notice!')).toBeNull()
-	})
-
-	it('shows a header only when given one', async () => {
-		await render(<NoticeView header="Offline" text="body" />)
-		expect(screen.getByText('Offline')).toBeTruthy()
-
-		await render(<NoticeView text="body" />)
-		expect(screen.queryByText('Offline')).toBeNull()
-	})
-
-	it('shows a spinner only when asked for one', async () => {
-		await render(<NoticeView spinner={true} text="body" />)
-		expect(spinners()).toHaveLength(1)
-
-		await render(<NoticeView text="body" />)
-		expect(spinners()).toHaveLength(0)
-	})
-
-	it('offers a button only when given its title, and reports a press', async () => {
+	it('offers an action only when given one, and reports a press', async () => {
 		let onPress = jest.fn()
-		await render(<NoticeView buttonText="Try Again" onPress={onPress} text="body" />)
+		await render(<NoticeView action={{label: 'Try Again', onPress}} title="Offline" />)
 
-		fireEvent.press(screen.getByRole('button', {name: 'Try Again'}))
+		await fireEvent.press(screen.getByText('Try Again'))
 		expect(onPress).toHaveBeenCalledTimes(1)
 
-		// Button has a title of its own to fall back on, so look for any button.
-		await render(<NoticeView text="body" />)
-		expect(screen.queryAllByRole('button')).toHaveLength(0)
+		await render(<NoticeView title="Offline" />)
+		expect(screen.queryByText('Try Again')).toBeNull()
+	})
+})
+
+describe('LoadErrorView', () => {
+	it('describes the error and retries when asked', async () => {
+		let onRetry = jest.fn()
+		await render(<LoadErrorView error={new Error('Network request failed')} onRetry={onRetry} />)
+
+		expect(screen.getByText('Network request failed')).toBeTruthy()
+		await fireEvent.press(screen.getByText('Try Again'))
+		expect(onRetry).toHaveBeenCalledTimes(1)
+	})
+})
+
+describe('describeError', () => {
+	it("uses an Error's message", () => {
+		expect(describeError(new TypeError('Bad JSON'))).toBe('Bad JSON')
+	})
+
+	it('uses a string as it is', () => {
+		expect(describeError('Timed out')).toBe('Timed out')
+	})
+
+	it('falls back for anything else, or an empty message', () => {
+		expect(describeError(undefined)).toBe('Something went wrong.')
+		expect(describeError({status: 500})).toBe('Something went wrong.')
+		expect(describeError(Object.assign(new Error('placeholder'), {message: ''}))).toBe(
+			'Something went wrong.',
+		)
 	})
 })

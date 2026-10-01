@@ -34,7 +34,7 @@ export function IssueScreen({issueKey}: {issueKey: string}): React.ReactNode {
 						error: query.error,
 						refetch: query.refetch,
 					}}
-					unavailableText="Issue unavailable"
+					unavailableText="Issue Unavailable"
 				/>
 			</>
 		)

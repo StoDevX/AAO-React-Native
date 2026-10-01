@@ -3,20 +3,11 @@ import {render, screen} from '@testing-library/react-native'
 import {describe, expect, jest, test} from '@jest/globals'
 
 import {FilterToolbar} from '../filter-toolbar'
-import type {FilterType, ListItemSpecType} from '../types'
-
-jest.mock('@expo/ui/swift-ui', () => {
-	// oxlint-disable-next-line typescript/no-require-imports
-	return require('../../../source/testing/expo-ui-mock') as typeof import('../../../source/testing/expo-ui-mock')
-})
-jest.mock('@expo/ui/swift-ui/modifiers', () => {
-	// oxlint-disable-next-line typescript/no-require-imports
-	return require('../../../source/testing/expo-ui-mock') as typeof import('../../../source/testing/expo-ui-mock')
-})
+import type {Filter, ListFilterOption} from '../types'
 
 type Item = {isVegetarian: boolean; dietaryTags: string[]}
 
-let TOGGLE_FILTER: FilterType<Item> = {
+let TOGGLE_FILTER: Filter<Item> = {
 	type: 'toggle',
 	key: 'vegetarian',
 	enabled: true,
@@ -24,7 +15,7 @@ let TOGGLE_FILTER: FilterType<Item> = {
 	apply: {key: 'isVegetarian'},
 }
 
-let LIST_FILTER_WITH_SELECTION: FilterType<Item> = {
+let LIST_FILTER_WITH_SELECTION: Filter<Item> = {
 	type: 'list',
 	key: 'dietary',
 	enabled: true,
@@ -41,7 +32,7 @@ let LIST_FILTER_WITH_SELECTION: FilterType<Item> = {
 // Neither `FilterMenu` nor `FilterSheet` renders a summary chip for an empty
 // OR-mode selection -- this fixture is what would catch a regression that
 // added one back.
-let LIST_FILTER_WITH_NO_SELECTION: FilterType<Item> = {
+let LIST_FILTER_WITH_NO_SELECTION: Filter<Item> = {
 	type: 'list',
 	key: 'stations',
 	enabled: true,
@@ -55,13 +46,13 @@ let LIST_FILTER_WITH_NO_SELECTION: FilterType<Item> = {
 	apply: {key: 'dietaryTags'},
 }
 
-function manyOptions(count: number): ListItemSpecType[] {
+function manyOptions(count: number): ListFilterOption[] {
 	return Array.from({length: count}, (_, i) => ({title: `Dept ${i}`}))
 }
 
 // 8 options crosses `filterShape`'s sheet threshold -- the shape whose
 // trigger is still a plain button rather than a `Menu`'s own label.
-let SHEET_FILTER: FilterType<Item> = {
+let SHEET_FILTER: Filter<Item> = {
 	type: 'list',
 	key: 'departments',
 	enabled: true,
@@ -90,8 +81,8 @@ describe('FilterToolbar', () => {
 		)
 
 		expect(screen.getByText('Vegetarian')).toBeTruthy()
-		expect(screen.getByText('Dietary Restrictions')).toBeTruthy()
-		expect(screen.getByText('Stations')).toBeTruthy()
+		expect(screen.getByTestId('menu:Dietary Restrictions')).toBeTruthy()
+		expect(screen.getByTestId('menu:Stations')).toBeTruthy()
 		expect(screen.getByRole('button', {name: 'Departments'})).toBeTruthy()
 
 		// No chip row exists to produce this -- see
