@@ -157,7 +157,7 @@ function BuildingCard({
 	stacked?: React.ReactNode
 	stop: SheetDetent
 }): React.ReactNode {
-	let {address, description, floors, links, name, photos, rules} = building.properties
+	let {address, citations, description, floors, links, name, photos, rules} = building.properties
 
 	let subtitle = building.properties.type || null
 
@@ -186,7 +186,7 @@ function BuildingCard({
 				tiles={sections.accessibleParking}
 				title="Accessible Parking"
 			/>
-			<AboutSection text={description} />
+			<AboutSection citations={citations} text={description} />
 			<GoodToKnowSection rows={goodToKnowRows(building.properties)} />
 			<LinkListSection items={rules} title="Rules" />
 			<LinkedPlaces

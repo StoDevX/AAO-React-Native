@@ -1,18 +1,7 @@
+import {escapeMarkdownHref, escapeMarkdownText} from '../../../lib/markdown-escape'
 import type {Run} from '../types'
 
-/** Characters CommonMark can read as syntax, escaped so a story's own asterisks and brackets stay literal. */
-const SYNTAX = /[\\`*_[\]()#+\-.!~<&]/gu
-
 const LETTER_OR_DIGIT = /[\p{L}\p{N}]/u
-
-function escapeText(text: string): string {
-	return text.replaceAll(SYNTAX, (char) => `\\${char}`)
-}
-
-/** A link target with the characters that would end or break the `(…)` encoded. */
-function escapeHref(href: string): string {
-	return href.replaceAll(' ', '%20').replaceAll('(', '%28').replaceAll(')', '%29')
-}
 
 /**
  * A bare URL as Apple's parser finds one: a scheme not run on from a letter, up to whitespace or `<`.
@@ -55,11 +44,11 @@ function escapeProse(text: string): string {
 	let from = 0
 	for (let match of text.matchAll(BARE_URL)) {
 		let url = trimUrl(match[0])
-		out += escapeText(text.slice(from, match.index))
-		out += `[${escapeText(url)}](${escapeHref(url)})`
+		out += escapeMarkdownText(text.slice(from, match.index))
+		out += `[${escapeMarkdownText(url)}](${escapeMarkdownHref(url)})`
 		from = match.index + url.length
 	}
-	return out + escapeText(text.slice(from))
+	return out + escapeMarkdownText(text.slice(from))
 }
 
 /**
@@ -87,12 +76,12 @@ function runToMarkdown(run: Run, before: string, after: string): string {
 		}
 	}
 	// A link's own text is already inside a link, so only text outside one has bare URLs to link.
-	let escape = run.href ? escapeText : escapeProse
+	let escape = run.href ? escapeMarkdownText : escapeProse
 	if (core === '') return escape(run.text)
 	core = escape(core)
 	if (run.italic) core = `*${core}*`
 	if (run.bold) core = `**${core}**`
-	if (run.href) core = `[${core}](${escapeHref(run.href)})`
+	if (run.href) core = `[${core}](${escapeMarkdownHref(run.href)})`
 	return escape(lead) + core + escape(trail)
 }
 
