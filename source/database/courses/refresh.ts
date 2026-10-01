@@ -84,11 +84,14 @@ async function refresh(signal?: AbortSignal): Promise<{etag: string; changed: bo
 
 		runner.run({sql: 'attach database ? as incoming', params: [filePath(incoming)]})
 		try {
-			checkCatalog(runner, 'incoming')
-			buildCourseIndex(runner, 'incoming')
-		} catch (error) {
-			rejectedEtag = etag
-			throw new CatalogRejectedError(etag, error instanceof Error ? error.message : String(error))
+			try {
+				checkCatalog(runner, 'incoming')
+				buildCourseIndex(runner, 'incoming')
+			} catch (error) {
+				rejectedEtag = etag
+				throw new CatalogRejectedError(etag, error instanceof Error ? error.message : String(error))
+			}
+			storeEtag(runner, 'incoming', etag)
 		} finally {
 			runner.exec('detach database incoming')
 		}
@@ -98,7 +101,6 @@ async function refresh(signal?: AbortSignal): Promise<{etag: string; changed: bo
 		if (isAttached(runner, CATALOG_SCHEMA)) runner.exec(`detach database ${CATALOG_SCHEMA}`)
 		incoming.moveSync(current, {overwrite: true})
 		runner.run({sql: `attach database ? as ${CATALOG_SCHEMA}`, params: [filePath(current)]})
-		storeEtag(runner, etag)
 	} catch (error) {
 		Sentry.captureException(error)
 		// A fresh handle: once moved, `incoming` names the catalog itself.

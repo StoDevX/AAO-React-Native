@@ -18,13 +18,3 @@ export const COURSE_SEARCH = defineSearchIndex({
 		{name: 'instructors', weight: 3},
 	],
 })
-
-/** The ETag of the catalog file on disk, so a refresh downloads only a changed file. */
-export const COURSE_CREATE_SQL = `
-create table course_catalog (
-  id   integer primary key check (id = 1),
-  etag text    not null
-);`
-
-export const COURSE_DROP_SQL = `
-drop table if exists course_catalog;`

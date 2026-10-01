@@ -57,7 +57,7 @@ jest.mock('../check', () => ({checkCatalog: (...args: unknown[]) => mockCheck(..
 jest.mock('../index-build', () => ({
 	buildCourseIndex: (runner: unknown, schema: string) => mockBuild(runner, schema),
 	storedEtag: () => mockStored.etag,
-	storeEtag: (_runner: unknown, etag: string) => {
+	storeEtag: (_runner: unknown, _schema: string, etag: string) => {
 		if (mockStored.failToStore) throw new Error('disk full')
 		mockStored.etag = etag
 		mockSteps.push(`store ${etag}`)
@@ -122,7 +122,7 @@ describe('refreshCatalog', () => {
 	test('checks and indexes the new file before swapping it in', async () => {
 		publishedEtag('new')
 		await expect(refreshCatalog()).resolves.toEqual({etag: 'new', changed: true})
-		let order = ['check', 'index incoming', 'move', 'store new'].map((step) =>
+		let order = ['check', 'index incoming', 'store new', 'move'].map((step) =>
 			mockSteps.indexOf(step),
 		)
 		expect(order.every((at) => at >= 0)).toBe(true)
@@ -196,14 +196,28 @@ describe('refreshCatalog', () => {
 		await expect(refreshCatalog()).resolves.toEqual({etag: 'new', changed: true})
 	})
 
-	// The move repoints the incoming file at the catalog's own path, so a
-	// failure after it must not clean up "incoming" by that object.
-	test('keeps the swapped-in catalog when recording it fails', async () => {
+	test('keeps the old catalog when recording the download fails', async () => {
 		publishedEtag('new')
 		mockStored.failToStore = true
 		await expect(refreshCatalog()).rejects.toThrow('disk full')
+		expect(mockSteps).not.toContain('move')
+		expect(mockDisk.files.has(CURRENT)).toBe(true)
+	})
+
+	// The move repoints the incoming file at the catalog's own path, so a
+	// failure after it must not clean up "incoming" by that object.
+	test('keeps the swapped-in catalog when attaching it fails', async () => {
+		publishedEtag('new')
+		mockRunner.run.mockImplementation((statement: {sql: string}) => {
+			mockSteps.push(statement.sql)
+			if (statement.sql.includes('as catalog')) throw new Error('database is locked')
+		})
+		await expect(refreshCatalog()).rejects.toThrow('database is locked')
 		expect(mockDisk.files.has(CURRENT)).toBe(true)
 		expect(mockDisk.deleted).not.toContain(CURRENT)
+		mockRunner.run.mockImplementation(
+			(statement: {sql: string}) => void mockSteps.push(statement.sql),
+		)
 	})
 
 	// Leaving course search mid-download and coming back starts a second

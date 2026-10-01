@@ -105,23 +105,37 @@ describe('openCatalog', () => {
 
 describe('the stored ETag', () => {
 	it('is null until stored, then the last one stored', () => {
-		let runner = openTestDatabase()
-		ensureSchema(runner, 'test')
+		let runner = withCatalog(makeCourse())
 		assert.equal(storedEtag(runner), null)
-		storeEtag(runner, 'e1')
-		storeEtag(runner, 'e2')
+		storeEtag(runner, 'catalog', 'e1')
+		storeEtag(runner, 'catalog', 'e2')
 		assert.equal(storedEtag(runner), 'e2')
 	})
 
-	it('goes with a reset', () => {
+	it('is null with no catalog attached', () => {
 		let runner = openTestDatabase()
 		ensureSchema(runner, 'test')
-		storeEtag(runner, 'e1')
-		runner.exec(RESET_SQL)
-		let left = runner.all({
-			sql: "select name from sqlite_master where name like 'course%'",
-			params: [],
-		})
-		assert.deepEqual(left, [])
+		assert.equal(storedEtag(runner), null)
+	})
+
+	// The app's own database is wiped by a schema bump or a change of time
+	// zone; the catalog, and the download it came from, is not.
+	it('travels with the catalog file, through a reset of the app database', () => {
+		let path = `/tmp/aao-catalog-etag-${process.pid}.db`
+		try {
+			catalogFileAt(path, true)
+			let writer = openTestDatabase()
+			writer.run({sql: 'attach database ? as incoming', params: [path]})
+			storeEtag(writer, 'incoming', 'e1')
+			writer.exec('detach database incoming')
+
+			let runner = openTestDatabase()
+			ensureSchema(runner, 'test')
+			openCatalog(runner, path)
+			runner.exec(RESET_SQL)
+			assert.equal(storedEtag(runner), 'e1')
+		} finally {
+			rmSync(path, {force: true})
+		}
 	})
 })

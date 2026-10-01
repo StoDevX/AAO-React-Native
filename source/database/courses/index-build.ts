@@ -56,18 +56,31 @@ export function buildCourseIndex(runner: SqlRunner, schema: string): number {
 	return rows.length
 }
 
-/** The ETag the catalog file on disk was downloaded with, or null when none is recorded. */
+/**
+ * The ETag the attached catalog was downloaded with, or null when there is no
+ * catalog or it records none. It lives in the catalog file itself, so the two
+ * can never disagree, and a reset of the app's own database does not lose it.
+ */
 export function storedEtag(runner: SqlRunner): string | null {
+	let [table] = runner.all<{n: number}>({
+		sql: `select count(*) as n from pragma_table_list where schema = ? and name = 'aao_download'`,
+		params: [CATALOG_SCHEMA],
+	})
+	if (!table?.n) return null
 	let [row] = runner.all<{etag: string}>({
-		sql: 'select etag from course_catalog where id = 1',
+		sql: `select etag from ${CATALOG_SCHEMA}.aao_download where id = 1`,
 		params: [],
 	})
 	return row?.etag ?? null
 }
 
-export function storeEtag(runner: SqlRunner, etag: string): void {
+/** Records in the catalog attached as `schema` the ETag it was downloaded with. */
+export function storeEtag(runner: SqlRunner, schema: string, etag: string): void {
+	runner.exec(
+		`create table if not exists ${schema}.aao_download (id integer primary key check (id = 1), etag text not null);`,
+	)
 	runner.run({
-		sql: 'insert into course_catalog (id, etag) values (1, ?) on conflict (id) do update set etag = excluded.etag',
+		sql: `insert into ${schema}.aao_download (id, etag) values (1, ?) on conflict (id) do update set etag = excluded.etag`,
 		params: [etag],
 	})
 }
