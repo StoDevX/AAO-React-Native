@@ -125,6 +125,10 @@ jobs:
             | sed 's/^/fingerprint=/' \
             | tee -a "$GITHUB_OUTPUT"
 
+      # modules/*/ios/** belongs here too: a local module's Swift, Metal and
+      # podspec compile into the app, and without them a change to one alone
+      # restored an app built from master without it.
+      #
       # pnpm-lock.yaml belongs in this hash even though it doesn't live under
       # ios/: patched dependencies (patches/*.patch, applied by pnpm itself)
       # rewrite node_modules sources that CocoaPods copies into ios/Pods at
@@ -139,9 +143,9 @@ jobs:
         uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: ios/build/Build/Products/
-          key: ios-app/e=${{ env.cache_epoch }}/host=macOS@27/target=ios/xcode=${{ env.xcode_version }}/job=${{ steps.build-job.outputs.fingerprint }}/ref=${{ github.head_ref || github.ref_name }}/hash=${{ hashFiles('app.config.ts', 'plugins/**', 'uitests/**', 'images/**', 'pnpm-lock.yaml', 'pnpm-workspace.yaml', 'mise.toml') }}
+          key: ios-app/e=${{ env.cache_epoch }}/host=macOS@27/target=ios/xcode=${{ env.xcode_version }}/job=${{ steps.build-job.outputs.fingerprint }}/ref=${{ github.head_ref || github.ref_name }}/hash=${{ hashFiles('app.config.ts', 'plugins/**', 'uitests/**', 'images/**', 'modules/*/ios/**', 'pnpm-lock.yaml', 'pnpm-workspace.yaml', 'mise.toml') }}
           restore-keys: |
-            ios-app/e=${{ env.cache_epoch }}/host=macOS@27/target=ios/xcode=${{ env.xcode_version }}/job=${{ steps.build-job.outputs.fingerprint }}/ref=master/hash=${{ hashFiles('app.config.ts', 'plugins/**', 'uitests/**', 'images/**', 'pnpm-lock.yaml', 'pnpm-workspace.yaml', 'mise.toml') }}
+            ios-app/e=${{ env.cache_epoch }}/host=macOS@27/target=ios/xcode=${{ env.xcode_version }}/job=${{ steps.build-job.outputs.fingerprint }}/ref=master/hash=${{ hashFiles('app.config.ts', 'plugins/**', 'uitests/**', 'images/**', 'modules/*/ios/**', 'pnpm-lock.yaml', 'pnpm-workspace.yaml', 'mise.toml') }}
 
       # ios-build is skipped on a hit, so nothing else would publish an
       # artifact for the shards and they would be back to restoring a cache
@@ -170,6 +174,14 @@ jobs:
 
       - name: Select ${{ env.xcode_version }}
         run: sudo xcode-select -s /Applications/${{ env.xcode_version }}.app
+
+      # modules/something-secret's shaders compile with Xcode's Metal
+      # toolchain, a separate download since Xcode 26 that the runner image
+      # may not carry. Skipped when it is already installed.
+      - name: Install the Metal toolchain
+        run: |
+          xcodebuild -showComponent MetalToolchain | grep -q 'Status: installed' \
+            || xcodebuild -downloadComponent MetalToolchain
 
       - uses: jdx/mise-action@9149ea85001c7435d5a66bb127d6a1b6227cb0a5 # v5.0.0
         with:
