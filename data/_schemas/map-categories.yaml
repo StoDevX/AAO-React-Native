@@ -1,6 +1,7 @@
-# The category tiles the map sheet draws, per campus. Published separately
-# from the app (see data/sources.yaml) so a group can be added, renamed,
-# reordered or restyled without an App Store release. A group whose
+# The category tiles the map sheet draws, and the icon each place's row
+# draws, per campus. Published separately from the app (see
+# data/sources.yaml) so a group can be added, renamed, reordered or restyled
+# without an App Store release. A group whose
 # `categories` match no place on its campus draws no tile, so an entry can
 # ship ahead of the data it waits for.
 $schema: http://json-schema.org/draft-07/schema#
@@ -26,10 +27,34 @@ definitions:
   groups:
     type: array
     items: {$ref: '#/definitions/group'}
+  # The icon a place's row draws: the first entry sharing any of the place's
+  # categories. Most specific first, so a pond draws a drop, not the tree
+  # every outdoor place shares.
+  icon:
+    type: object
+    additionalProperties: false
+    required: [categories, icon, gradient]
+    properties:
+      categories:
+        type: array
+        minItems: 1
+        uniqueItems: true
+        items: {type: string, minLength: 1}
+      icon: {type: string, minLength: 1}
+      gradient: {$ref: '_defs.json#/definitions/gradient-name'}
+  campus:
+    type: object
+    additionalProperties: false
+    required: [groups, icons]
+    properties:
+      groups: {$ref: '#/definitions/groups'}
+      icons:
+        type: array
+        items: {$ref: '#/definitions/icon'}
 
 type: object
 additionalProperties: false
 required: [stolaf, carleton]
 properties:
-  stolaf: {$ref: '#/definitions/groups'}
-  carleton: {$ref: '#/definitions/groups'}
+  stolaf: {$ref: '#/definitions/campus'}
+  carleton: {$ref: '#/definitions/campus'}
