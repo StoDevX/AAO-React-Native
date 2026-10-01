@@ -16,8 +16,7 @@
     "@frogpond/html-lib": "workspace:*",
     "@frogpond/layout": "workspace:*",
     "@frogpond/sheet-section": "workspace:*",
-    "@frogpond/time-format": "workspace:*",
-    "lodash": "4.18.1"
+    "@frogpond/time-format": "workspace:*"
   },
   "peerDependencies": {
     "moment": "^2.31.0",
