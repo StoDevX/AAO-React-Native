@@ -11,18 +11,24 @@ import {
 } from '../category-groups'
 
 const TABLE: MapCategoryTable = {
-	stolaf: [
-		{label: 'All Buildings', categories: ['building'], icon: 'building.2.fill', gradient: 'gray'},
-		{label: 'Academic', categories: ['academic'], icon: 'graduationcap.fill', gradient: 'gold'},
-		{
-			label: 'Housing',
-			categories: ['residence-hall', 'housing'],
-			icon: 'bed.double.fill',
-			gradient: 'indigo',
-		},
-		{label: 'Outdoors', categories: ['outdoors'], icon: 'tree.fill', gradient: 'green'},
-	],
-	carleton: [{label: 'Outdoors', categories: ['outdoors'], icon: 'tree.fill', gradient: 'green'}],
+	stolaf: {
+		groups: [
+			{label: 'All Buildings', categories: ['building'], icon: 'building.2.fill', gradient: 'gray'},
+			{label: 'Academic', categories: ['academic'], icon: 'graduationcap.fill', gradient: 'gold'},
+			{
+				label: 'Housing',
+				categories: ['residence-hall', 'housing'],
+				icon: 'bed.double.fill',
+				gradient: 'indigo',
+			},
+			{label: 'Outdoors', categories: ['outdoors'], icon: 'tree.fill', gradient: 'green'},
+		],
+		icons: [],
+	},
+	carleton: {
+		groups: [{label: 'Outdoors', categories: ['outdoors'], icon: 'tree.fill', gradient: 'green'}],
+		icons: [],
+	},
 }
 
 const PLACES = [
@@ -72,8 +78,8 @@ describe('groupsFor', () => {
 	// A released app can meet a file written for a newer one.
 	test('falls back when an entry has no icon or gradient', () => {
 		let bare: MapCategoryTable = {
-			stolaf: [{label: 'All Buildings', categories: ['building']}],
-			carleton: [],
+			stolaf: {groups: [{label: 'All Buildings', categories: ['building']}], icons: []},
+			carleton: {groups: [], icons: []},
 		}
 		expect(groupsFor(bare, 'stolaf', PLACES)[0]).toMatchObject({
 			icon: FALLBACK_GROUP_ICON,
@@ -85,16 +91,19 @@ describe('groupsFor', () => {
 	// would collide, so the first is kept.
 	test('keeps only the first of two entries with the same label', () => {
 		let doubled: MapCategoryTable = {
-			stolaf: [
-				{
-					label: 'Housing',
-					categories: ['residence-hall'],
-					icon: 'bed.double.fill',
-					gradient: 'indigo',
-				},
-				{label: 'Housing', categories: ['building'], icon: 'house.fill', gradient: 'gold'},
-			],
-			carleton: [],
+			stolaf: {
+				groups: [
+					{
+						label: 'Housing',
+						categories: ['residence-hall'],
+						icon: 'bed.double.fill',
+						gradient: 'indigo',
+					},
+					{label: 'Housing', categories: ['building'], icon: 'house.fill', gradient: 'gold'},
+				],
+				icons: [],
+			},
+			carleton: {groups: [], icons: []},
 		}
 		let groups = groupsFor(doubled, 'stolaf', PLACES)
 		expect(groups.map((group) => [group.label, group.icon])).toEqual([
