@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// The shaders, from this module's own bundle: SwiftUI's `ShaderLibrary.default` reads the app's
+/// The module's shaders (the melt and the gem), from this module's own bundle: SwiftUI's `ShaderLibrary.default` reads the app's
 /// main bundle, which a pod's Metal file does not compile into.
 enum MeltShaders {
 	static let library: ShaderLibrary = {

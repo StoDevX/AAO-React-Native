@@ -95,21 +95,17 @@ struct SlabView: ExpoSwiftUI.View {
 		Button {
 			props.onButtonPress()
 		} label: {
-			Text(props.buttonLabel)
-				.font(.headline)
-				.foregroundStyle(.white)
-				.padding(.horizontal, 24)
-				.frame(minWidth: 150, minHeight: 64)
-				.background(
-					Capsule().fill(
-						RadialGradient(
-							colors: [Color(red: 0.96, green: 0.16, blue: 0.12), Color(red: 0.55, green: 0.02, blue: 0.02)],
-							center: .center, startRadius: 4, endRadius: 100)))
-				.contentShape(Capsule())
+			VStack(spacing: 6) {
+				GemView()
+				Text(props.buttonLabel)
+					.font(.system(size: 13, weight: .heavy, design: .serif))
+					.foregroundStyle(.secondary)
+			}
+			.contentShape(Rectangle())
 		}
 		.buttonStyle(.plain)
 		.accessibilityIdentifier(props.buttonTestID ?? "")
-		.padding(.bottom, 50)
+		.padding(.bottom, 28)
 	}
 
 	private var debrisColor: Color? {
