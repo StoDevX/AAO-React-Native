@@ -102,21 +102,30 @@ static float room(float3 direction, float3 light) {
 	return 0.22 + window * 0.9 - floorDark * 0.2;
 }
 
-/// A brilliant-cut ruby seen from above. Each facet is tilted its own way, so a facet flashes as it
-/// turns `light` (a direction in screen space, z toward the eye) into the eye. It reflects a small
-/// room, light bounces once inside it to a facet across the stone, the edges between facets split
-/// light into colour, and where the light meets the stone square a starburst glints. The body
-/// colour shifts a little differently in each channel over `time`, for fire. Transparent outside.
-[[ stitchable ]] half4 gem(float2 position, half4 color, float time, float2 size, float3 light) {
-	float radius = min(size.x, size.y) / 2.0;
+/// A wide brilliant-cut ruby seen from above: an octagon's facets at each end, with the table and
+/// rings running straight through a middle stretched to fill `size`. Each facet is tilted its own
+/// way, so a facet flashes as it turns `light` (a direction in screen space, z toward the eye) into
+/// the eye. It reflects a small room, light bounces once inside it to a facet across the stone, the
+/// edges between facets split light into colour, and where the light meets the stone square a
+/// starburst glints. The body colour shifts a little differently in each channel over `time`, for
+/// fire. White in `mask` is engraved into the stone: frosted, pale and matte, its edges catching
+/// the light. Transparent outside.
+[[ stitchable ]] half4 gem(float2 position, SwiftUI::Layer mask, float time, float2 size, float3 light) {
+	float radius = size.y / 2.0;
 	// Scaled so the octagon's corners, a little further out than its flat sides, stay in frame;
 	// the frame's spare margin holds the glint's rays.
-	float2 p = (position - size / 2.0) / radius / cos(M_PI_F / 8.0) * 1.25;
+	float scale = 1.25 / cos(M_PI_F / 8.0);
+	float2 raw = (position - size / 2.0) / radius * scale;
+	// The middle stretch: everything within it is pulled to the octagon's centre line, so the table
+	// and rings run straight across. Never quite to zero, so each side keeps its own facets.
+	float stretch = (size.x / size.y - 1.0) * scale;
+	bool inMiddle = abs(raw.x) < stretch;
+	float2 p = float2(sign(raw.x) * max(abs(raw.x) - stretch, 0.02), raw.y);
 	light = normalize(light);
 
 	// The glint sits where the light would reflect straight back out of the table.
-	float2 glintAt = clamp(-light.xy / max(light.z, 0.3) * 0.45, -0.6, 0.6);
-	float2 g = p - glintAt;
+	float2 glintAt = clamp(-light.xy / max(light.z, 0.3) * 0.45, -0.6, 0.6) * float2(1.0 + stretch, 1.0);
+	float2 g = raw - glintAt;
 	float rays = exp(-abs(g.x) * 60.0) * exp(-abs(g.y) * 4.0) + exp(-abs(g.y) * 60.0) * exp(-abs(g.x) * 4.0);
 	float glint = (rays * 0.7 + exp(-length(g) * 14.0)) * smoothstep(0.6, 1.0, light.z);
 
@@ -152,13 +161,24 @@ static float room(float3 direction, float3 light) {
 	// Dark seams where facets meet, with a thin split of colour along them where light falls.
 	float angle = atan2(p.y, p.x) + M_PI_F;
 	float seam = min(abs(d - 0.48), abs(d - 0.78));
-	if (d >= 0.48) {
+	// Through the stretched middle the facets are long bands, with no seams across them.
+	if (d >= 0.48 && !inMiddle) {
 		float acrossSeam = fract(angle / (M_PI_F / 8.0));
 		seam = min(seam, min(acrossSeam, 1.0 - acrossSeam) * (M_PI_F / 8.0) * length(p));
 	}
 	body *= mix(0.45, 1.0, smoothstep(0.0, 0.025, seam));
 	float3 rainbow = 0.5 + 0.5 * cos(6.2832 * (angle * 1.5 + float3(0.0, 0.33, 0.67)));
 	body += rainbow * (1.0 - smoothstep(0.0, 0.03, seam)) * saturate(dot(normal, light)) * 0.25;
+
+	// The engraving: frosted where cut, so pale and matte, with its walls catching the light.
+	float carve = float(mask.sample(position).r);
+	float carveX = float(mask.sample(position + float2(1.0, 0.0)).r - mask.sample(position - float2(1.0, 0.0)).r);
+	float carveY = float(mask.sample(position + float2(0.0, 1.0)).r - mask.sample(position - float2(0.0, 1.0)).r);
+	float3 frosted = float3(0.98, 0.78, 0.82) * (0.55 + 0.45 * saturate(dot(normal, light)));
+	body = mix(body, frosted, carve * 0.8);
+	float3 wall = normalize(float3(-carveX * 2.0, -carveY * 2.0, 0.6));
+	body += saturate(dot(wall, light)) * length(float2(carveX, carveY)) * 0.5;
+	sparkle *= 1.0 - carve * 0.7;
 
 	float3 rgb = body + sparkle * 0.9 + glint;
 	float alpha = saturate(max(coverage, glint));

@@ -31,13 +31,15 @@ func overheadLight(up: SIMD3<Double>, towardEye: Double = 0.8) -> SIMD3<Double> 
 	up + SIMD3(0, 0, towardEye)
 }
 
-/// The ruby the open slab holds, lit from the phone's tilt. With no motion sensors, the light
-/// circles slowly instead, and holds still under Reduce Motion.
+/// The wide ruby the open slab holds, with `label` engraved into it, lit from the phone's tilt.
+/// With no motion sensors, the light circles slowly instead, and holds still under Reduce Motion.
 struct GemView: View {
 	/// The frame; the stone itself is a little smaller, leaving room for its glint's rays.
-	static let size: CGFloat = 120
+	static let width: CGFloat = 200
+	static let height: CGFloat = 110
 	/// Which way is up from the phone's sensors, or nil without them.
 	let up: SIMD3<Double>?
+	let label: String
 	/// Where the circling light rests when it may not move: over one shoulder, so facets still shine.
 	private static let restingTime = 1.2
 	@Environment(\.accessibilityReduceMotion) private var reduceMotion
@@ -49,15 +51,23 @@ struct GemView: View {
 				reduceMotion
 				? Self.restingTime : context.date.timeIntervalSinceReferenceDate.truncatingRemainder(dividingBy: 1000)
 			let light = light(at: time)
-			GeometryReader { geometry in
-				Rectangle()
-					.fill(.white)
-					.colorEffect(
-						MeltShaders.library.gem(
-							.float(time), .float2(geometry.size), .float3(light.x, light.y, light.z)))
+			// The engraving's mask: the label in white on black, which the shader cuts into the stone.
+			// Opaque, so the layer spans the whole frame; a clear one ends at the text.
+			ZStack {
+				Color.black
+				Text(label)
+					.font(.system(size: 15, weight: .heavy, design: .serif))
+					.foregroundStyle(.white)
+					.blur(radius: 0.5)
 			}
+			.frame(width: Self.width, height: Self.height)
+			.compositingGroup()
+			.layerEffect(
+				MeltShaders.library.gem(
+					.float(time), .float2(Self.width, Self.height), .float3(light.x, light.y, light.z)),
+				maxSampleOffset: CGSize(width: 2, height: 2))
 		}
-		.frame(width: Self.size, height: Self.size)
+		.frame(width: Self.width, height: Self.height)
 	}
 
 	private func light(at time: Double) -> SIMD3<Double> {

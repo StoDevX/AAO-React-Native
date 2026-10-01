@@ -107,17 +107,14 @@ struct SlabView: ExpoSwiftUI.View {
 		Button {
 			props.onButtonPress()
 		} label: {
-			VStack(spacing: 6) {
-				GemView(up: tilt.up)
-				Text(props.buttonLabel)
-					.font(.system(size: 13, weight: .heavy, design: .serif))
-					.foregroundStyle(.secondary)
-			}
-			.contentShape(Rectangle())
+			GemView(up: tilt.up, label: props.buttonLabel)
+				.contentShape(Rectangle())
 		}
 		.buttonStyle(.plain)
+		// The words are drawn into the stone, so the button names itself.
+		.accessibilityLabel(props.buttonLabel)
 		.accessibilityIdentifier(props.buttonTestID ?? "")
-		.padding(.bottom, 14)
+		.padding(.bottom, 30)
 	}
 
 	private var debrisColor: Color? {
