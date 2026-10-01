@@ -251,6 +251,14 @@ description = "Render the in-app icon previews from assets/*.icon"
 run = "node scripts/make-icons.mjs"
 
 # Needs the network, so it stays out of validate-data, as scrape-dining does.
+[tasks."update-map-fixtures"]
+description = "Replace the map fixtures the UI tests read with each campus's live map"
+run = "node scripts/update-map-fixtures.mjs"
+
+[tasks."update-mess-fixtures"]
+description = "Re-record Olaf Messenger's UI-test fixtures from a run of its UI tests"
+run = "node scripts/update-mess-fixtures.mjs"
+
 [tasks."scrape-student-wages"]
 description = "Update data/student-wages.yaml from St. Olaf's compensation page"
 run = "node scripts/scrape-student-wages.mjs"

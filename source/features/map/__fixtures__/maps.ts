@@ -9,9 +9,9 @@ import stolafMap from './stolaf-map.json'
  *
  * The live maps are rebuilt whenever their data publishes, and a republish
  * changes what the map's tests measure -- a list row's position, which card
- * opens, which places exist -- with no change to the app. Replace a copy
- * deliberately, from `https://<campus>.api.frogpond.tech/v1/map/geojson`, when
- * a test needs a place it lacks.
+ * opens, which places exist -- with no change to the app. Replace the copies
+ * deliberately, with `mise run update-map-fixtures`, when a test needs a place
+ * they lack.
  *
  * Cast through `unknown` because TypeScript widens a JSON file's coordinates
  * to plain number arrays, which the geometry's ring and point tuples reject.
