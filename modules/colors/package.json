@@ -8,5 +8,10 @@
   "scripts": {
     "test": "jest"
   },
-  "dependencies": {}
+  "dependencies": {
+    "tinycolor2": "1.6.0"
+  },
+  "devDependencies": {
+    "@types/tinycolor2": "1.4.6"
+  }
 }

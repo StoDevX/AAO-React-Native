@@ -9,7 +9,6 @@
     "test": "jest"
   },
   "dependencies": {
-    "@frogpond/colors": "workspace:*",
-    "deepmerge": "4.3.1"
+    "@frogpond/colors": "workspace:*"
   }
 }
