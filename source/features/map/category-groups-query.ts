@@ -24,11 +24,15 @@ const MapCategoryEntrySchema = z.object({
 	gradient: z.string().optional(),
 })
 
+const MapIconEntrySchema = MapCategoryEntrySchema.omit({label: true})
+
+const CampusSchema = z.object({
+	groups: z.array(MapCategoryEntrySchema),
+	icons: z.array(MapIconEntrySchema),
+})
+
 const PublishedMapCategoriesSchema = z.object({
-	data: z.object({
-		stolaf: z.array(MapCategoryEntrySchema),
-		carleton: z.array(MapCategoryEntrySchema),
-	}),
+	data: z.object({stolaf: CampusSchema, carleton: CampusSchema}),
 })
 
 /// The copy this build shipped with: what the grid draws before the first
