@@ -1,6 +1,7 @@
-import {goodToKnowRows} from '../good-to-know'
+import {formatDistance, goodToKnowRows} from '../good-to-know'
 
 const base = {abbreviation: null, nickname: '', accessibility: 'unknown' as const}
+const US = {languageTag: 'en-US', measurementSystem: 'us' as const}
 
 describe('goodToKnowRows', () => {
 	it('is empty with nothing to say', () => {
@@ -47,5 +48,42 @@ describe('goodToKnowRows', () => {
 		expect(goodToKnowRows({...base, accessibility: value})).toEqual([
 			{kind: 'accessibility', text, accessible},
 		])
+	})
+
+	it("gives a trail's length in the device's units", () => {
+		expect(goodToKnowRows({...base, length: 1317}, US)).toEqual([{kind: 'length', text: '0.8 mi'}])
+	})
+
+	it('says nothing of a length it does not have', () => {
+		expect(goodToKnowRows({...base, length: null}, US)).toEqual([])
+		expect(goodToKnowRows({...base, length: undefined}, US)).toEqual([])
+		expect(goodToKnowRows({...base, length: 0}, US)).toEqual([])
+	})
+})
+
+describe('formatDistance', () => {
+	it('gives miles to a tenth where the device measures in miles', () => {
+		expect(formatDistance(1055, US)).toBe('0.7 mi')
+		expect(formatDistance(1528.9, US)).toBe('1.0 mi') // 0.95 mi
+	})
+
+	// Distances in the UK are miles, though most else is metric.
+	it('gives miles in the UK', () => {
+		expect(formatDistance(1055, {languageTag: 'en-GB', measurementSystem: 'uk'})).toBe('0.7 mi')
+	})
+
+	it("gives kilometres, in the language's own numbers, where the device is metric", () => {
+		expect(formatDistance(1055, {languageTag: 'de-DE', measurementSystem: 'metric'})).toBe('1,1 km')
+	})
+
+	it('never says zero for a trail that exists', () => {
+		expect(formatDistance(50, US)).toBe('0.1 mi')
+		expect(formatDistance(20, {languageTag: 'fr-FR', measurementSystem: 'metric'})).toBe('0,1 km')
+	})
+
+	// A device that does not say goes by its region.
+	it('falls back on the region when the system is unknown', () => {
+		expect(formatDistance(1055, {languageTag: 'en-US', measurementSystem: null})).toBe('0.7 mi')
+		expect(formatDistance(1055, {languageTag: 'fr-FR', measurementSystem: null})).toBe('1,1 km')
 	})
 })
