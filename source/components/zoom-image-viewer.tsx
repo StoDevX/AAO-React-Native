@@ -22,6 +22,7 @@ import {
 } from '@expo/ui/swift-ui/modifiers'
 import {useSafeAreaInsets} from 'react-native-safe-area-context'
 import {DoubleTapView, type DoubleTapPoint} from '@frogpond/double-tap'
+import {DragToDismissView} from '@frogpond/drag-to-dismiss'
 import {doubleTapZoom} from './lib/zoom'
 
 /** Apple's smallest comfortable tap target, in points. */
@@ -45,7 +46,9 @@ type Props = {
 
 /**
  * A picture on its own, on black, to pinch or double-tap to zoom, with a close
- * button that stays whether or not there is a picture.
+ * button that stays whether or not there is a picture. At its fitted size, a drag
+ * up or down carries the picture away and closes the viewer, fading the black to
+ * show the screen beneath, so the viewer must be presented over that screen.
  *
  * The zooming view is a React Native `ScrollView`, because `@expo/ui` has no view that
  * zooms; the close button over it is SwiftUI.
@@ -84,6 +87,9 @@ export function ZoomImageViewer({
 	if (image) {
 		content = (
 			<ScrollView
+				// A fitted picture has nothing to scroll, and the bounce would take the drag
+				// that closes the viewer.
+				alwaysBounceVertical={false}
 				centerContent={true}
 				maximumZoomScale={4}
 				minimumZoomScale={1}
@@ -103,7 +109,7 @@ export function ZoomImageViewer({
 						resizeMode="contain"
 						source={{uri: image.uri}}
 						// Sized to the window, which the image fills at 1×.
-						style={[styles.image, {width, height}]}
+						style={{width, height}}
 						testID={image.testID}
 					/>
 				</DoubleTapView>
@@ -112,9 +118,12 @@ export function ZoomImageViewer({
 	}
 
 	return (
-		// The page takes VoiceOver's escape gesture, a two-finger scrub, as Close.
-		<View onAccessibilityEscape={onClose} style={styles.page}>
-			{content}
+		// The page takes VoiceOver's escape gesture, a two-finger scrub, as Close, and keeps
+		// VoiceOver off the screen beneath.
+		<View accessibilityViewIsModal={true} onAccessibilityEscape={onClose} style={styles.page}>
+			<DragToDismissView onDismiss={onClose} style={styles.backdrop}>
+				{content}
+			</DragToDismissView>
 			<View
 				pointerEvents="box-none"
 				style={[
@@ -142,9 +151,9 @@ export function ZoomImageViewer({
 }
 
 const styles = StyleSheet.create({
-	page: {flex: 1, backgroundColor: 'black'},
+	page: {flex: 1},
+	backdrop: {flex: 1, backgroundColor: 'black'},
 	fill: {flex: 1},
-	image: {backgroundColor: 'black'},
 	overlay: {position: 'absolute', top: 0, right: 0, bottom: 0, left: 0},
 	closeRow: {flexDirection: 'row', justifyContent: 'flex-end', padding: 8},
 	closeHost: {width: TAP_TARGET, height: TAP_TARGET},

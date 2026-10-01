@@ -118,6 +118,9 @@ importers:
       '@frogpond/double-tap':
         specifier: workspace:*
         version: link:modules/double-tap
+      '@frogpond/drag-to-dismiss':
+        specifier: workspace:*
+        version: link:modules/drag-to-dismiss
       '@frogpond/event-list':
         specifier: workspace:*
         version: link:modules/event-list
@@ -623,6 +626,8 @@ importers:
         version: link:../api
 
   modules/double-tap: {}
+
+  modules/drag-to-dismiss: {}
 
   modules/event-list:
     dependencies:

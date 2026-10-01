@@ -1,0 +1,22 @@
+import * as React from 'react'
+import type {ViewProps} from 'react-native'
+import {requireNativeView} from 'expo'
+
+export type DragToDismissViewProps = ViewProps & {
+	/** Called once, when a drag has carried the children far or fast enough to go. */
+	onDismiss: () => void
+}
+
+const DragToDismissNativeView: React.ComponentType<DragToDismissViewProps> = requireNativeView(
+	'DragToDismiss',
+	'DragToDismissView',
+)
+
+/**
+ * A view whose children a vertical drag carries away, fading its background as they go,
+ * as Photos does with a picture. A drag starts only while any scroll view inside is at
+ * its smallest zoom, so a zoomed picture still pans.
+ */
+export function DragToDismissView(props: DragToDismissViewProps): React.ReactNode {
+	return <DragToDismissNativeView {...props} />
+}

@@ -8,6 +8,8 @@ jest.mock('react-native/Libraries/EventEmitter/NativeEventEmitter')
 // query.
 jest.mock('@expo/ui/swift-ui', () => require('../source/testing/expo-ui-mock'))
 jest.mock('@expo/ui/swift-ui/modifiers', () => require('../source/testing/expo-ui-mock'))
+// The viewer's drag-to-close is a native view, which Jest cannot load either.
+jest.mock('@frogpond/drag-to-dismiss', () => require('../source/testing/drag-to-dismiss-mock'))
 jest.mock('expo-web-browser', () => ({
 	openBrowserAsync: jest.fn(() => Promise.resolve({type: 'opened'})),
 	WebBrowserPresentationStyle: {

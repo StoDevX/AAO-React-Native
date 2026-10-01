@@ -105,9 +105,11 @@ function RootLayout(): React.ReactNode {
 								name="messenger/story"
 								options={{title: ''}}
 							/>
+							{/* Over the story, not in place of it, so a drag that closes the viewer
+							    shows the story through its fading black. */}
 							<Stack.Screen
 								name="messenger/image"
-								options={{presentation: 'fullScreenModal', headerShown: false}}
+								options={{presentation: 'transparentModal', headerShown: false}}
 							/>
 							<Stack.Screen
 								name="st-olaf-news"
