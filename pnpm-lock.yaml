@@ -256,6 +256,9 @@ importers:
       expo-device:
         specifier: 57.0.1
         version: 57.0.1(expo@57.0.19)
+      expo-file-system:
+        specifier: 57.0.7
+        version: 57.0.7(expo@57.0.19)(react-native@0.86.3)
       expo-font:
         specifier: 57.0.3
         version: 57.0.3(expo@57.0.19)(react-native@0.86.3)(react@19.2.3)

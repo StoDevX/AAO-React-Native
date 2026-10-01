@@ -38,3 +38,10 @@ it('returns an empty list for an empty list', () => {
 it('returns an empty list when the field is absent', () => {
 	expect(normalizeLinks(undefined)).toEqual([])
 })
+
+// A Natural Lands rule is a sentence, not a link: it renders as its whole text.
+it('keeps a sentence with no link as its label', () => {
+	expect(normalizeLinks(['Dogs on a 6-foot leash.'])).toEqual([
+		{label: 'Dogs on a 6-foot leash.', href: ''},
+	])
+})

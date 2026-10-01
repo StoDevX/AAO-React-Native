@@ -35,7 +35,7 @@ const LABEL_GAP = 6
 const LABEL_LINES = 2
 /// The rows' icon column, as wide as the widest symbol at its size, so every
 /// title starts at one edge whatever the symbol's own width.
-const ROW_ICON_WIDTH = 28
+export const ROW_ICON_WIDTH = 28
 /// How far a label may shrink before it breaks a word: at the accessibility
 /// sizes a single word such as "Athletics" is wider than its column.
 const LABEL_MIN_SCALE = 0.6

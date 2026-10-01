@@ -26,9 +26,12 @@ export type Category =
 	| 'residence-hall'
 	| 'student-center'
 	| 'student-housing'
+	| 'trail'
 	| 'visitor-center'
 	| 'visitor-information'
 	| 'visitor-parking'
+	| 'water'
+	| 'wellness-walk'
 
 // Stored as a string of the form "Label <https://example.com>".
 export type LabelLinkString = string
@@ -71,6 +74,23 @@ export type Building = {
 	 * itself, or is in none. Carleton's feed carries no parents at all.
 	 */
 	parent?: string | null
+	/**
+	 * A trail's length in metres, from its geometry. Null or absent for
+	 * anything that is not a line; Carleton's feed has no such field.
+	 */
+	length?: number | null
+	/** The rules that apply here, one sentence each. St. Olaf's Natural Lands only. */
+	rules?: Array<string>
+	/**
+	 * The Wellness Walk along this place, if the Natural Lands publishes one:
+	 * its time range in minutes, and its surface and slope in a sentence.
+	 */
+	walk?: {minutes: [number, number]; accessibility: string} | null
+	/**
+	 * The pages the About text is drawn from, for the card's Sources line.
+	 * Absent from Carleton's feed.
+	 */
+	citations?: Array<LabelLink> | null
 }
 
 export type Longitude = number

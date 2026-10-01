@@ -12,6 +12,10 @@ struct TestIdentifiers {
 	enum LaunchArguments {
 		static let uiTesting = "--uitesting"
 		static let resetState = "--reset-state"
+		/// Records each fetch a feature with fixtures makes, for
+		/// `mise run update-mess-fixtures`. Added when the runner is started with
+		/// `TEST_RUNNER_AAO_RECORD_FIXTURES=1`.
+		static let recordFixtures = "--record-fixtures"
 		/// Adds one posting to the Student Work fixtures, read through
 		/// `NSUserDefaults` as EXTRA_POSTING_SETTING in
 		/// modules/ccc-jobs/fixtures/uitest-postings.ts.
@@ -504,9 +508,6 @@ struct TestIdentifiers {
 	// MARK: - News
 
 	enum News {
-		/// Matches NEWS_ROW_PREFIX in source/features/news/news-row.tsx.
-		static let rowPrefix = "news-row-"
-
 		/// The views the front page's menu offers, and the start of the menu button's label, which
 		/// names the view shown; in source/features/mess/front-page-screen.tsx.
 		static let byIssue = "By Issue"
@@ -560,7 +561,6 @@ struct TestIdentifiers {
 		static let horoscopesColumn = "Horoscopes"
 		static let comicColumn = "Comic"
 		static let crosswordColumn = "Crossword"
-		static let playlistColumn = "Playlist"
 		static let recipesColumn = "Recipes"
 		static let photoColumn = "Photo"
 
@@ -595,13 +595,6 @@ struct TestIdentifiers {
 		/// source/features/mess/story-screen.tsx.
 		static let crosswordSolve = "mess-crossword-solve"
 		static let crosswordSolveLabel = "Solve the crossword"
-
-		/// A Playlist post's button to Spotify, in source/features/mess/playlist-view.tsx.
-		static let playlistSpotify = "mess-playlist-spotify"
-		static let playlistSpotifyLabel = "Open in Spotify"
-
-		/// Spotify's player on a Playlist post, in source/features/mess/spotify-embed.tsx.
-		static let playlistEmbed = "mess-playlist-embed"
 
 		/// Every ingredient row on a recipe page, in source/features/mess/recipe-view.tsx.
 		static let recipeIngredient = "mess-recipe-ingredient"

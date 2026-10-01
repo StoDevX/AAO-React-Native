@@ -91,6 +91,51 @@ describe('BuildingInfo', () => {
 		expect(mockOpenURL).toHaveBeenCalledWith('https://maps.apple.com/?q=1520%20St%20Olaf%20Ave')
 	})
 
+	it('ends cited About text with its sources', async () => {
+		await renderCard(
+			<BuildingInfo
+				campus="stolaf"
+				building={makeBuilding({
+					id: 'pond-bigpond',
+					name: 'Big Pond',
+					description: 'The largest of the wetlands.',
+					citations: [{label: 'History of the Natural Lands', href: 'https://x/h/'}],
+				})}
+				onClose={jest.fn()}
+				stop="medium"
+			/>,
+		)
+
+		expect(screen.getByText('Source: [History of the Natural Lands](https://x/h/)')).toBeTruthy()
+	})
+
+	it('cites nothing without About text, or without citations', async () => {
+		await renderCard(
+			<BuildingInfo
+				campus="stolaf"
+				building={makeBuilding({
+					id: 'pond-x',
+					name: 'Pond',
+					description: '',
+					citations: [{label: 'History of the Natural Lands', href: 'https://x/h/'}],
+				})}
+				onClose={jest.fn()}
+				stop="medium"
+			/>,
+		)
+		expect(screen.queryByText(/^Sources?:/u)).toBeNull()
+
+		await renderCard(
+			<BuildingInfo
+				campus="carleton"
+				building={makeBuilding({id: 'hall', name: 'Hall', description: 'A hall.'})}
+				onClose={jest.fn()}
+				stop="medium"
+			/>,
+		)
+		expect(screen.queryByText(/^Sources?:/u)).toBeNull()
+	})
+
 	it('shows the address under Details', async () => {
 		await renderCard(
 			<BuildingInfo

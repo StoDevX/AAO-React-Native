@@ -405,6 +405,25 @@ class ModuleMapTests: UITestCaseUnbooted {
 			.verifyCardTitled(name)
 	}
 
+	/// Close ends a search in one tap after the keyboard's Search key has
+	/// already ended editing, as Apple Maps' X does -- rather than putting the
+	/// field back into editing and needing a second tap.
+	func testOneTapOnCloseEndsASubmittedSearch() throws {
+		MapScreen(app: app)
+			.navigate()
+			.checkSheetPresented()
+			.focusSearch()
+			.typeIntoSearch(TestIdentifiers.Map.aPointOnlyPlace)
+			.submitSearch()
+			.verifyAtMiddleStop()
+			.verifyKeyboardHidden()
+			.capture("St. Olaf map after submitting a search")
+			.cancelSearch()
+			.capture("St. Olaf map after one tap on Close")
+			.verifyKeyboardHidden()
+			.verifySearchFieldEmpty()
+	}
+
 	/// The Parking group's pins, for a person to look at: its many places merge
 	/// into numbered clusters.
 	func testTheParkingGroupClustersItsPins() throws {
@@ -430,10 +449,7 @@ class ModuleMapTests: UITestCaseUnbooted {
 			.submitSearch()
 			.verifyAtMiddleStop()
 		let spot = screen.mapCenterAboveSheet()
-		// Focused first: on iOS 27 a first tap on Close only resumes editing
-		// once Search has ended it.
 		screen
-			.focusSearch()
 			.cancelSearch()
 			.capture("St. Olaf map with the searched place's own label")
 			.tapMap(at: spot)
@@ -452,9 +468,6 @@ class ModuleMapTests: UITestCaseUnbooted {
 			.typeIntoSearch(name)
 			.selectBuilding(named: name)
 			.closeTopCard()
-			// Focused first: on iOS 27 a first tap on Close only resumes editing
-			// once the field has lost focus.
-			.focusSearch()
 			.cancelSearch()
 			.expandSheet()
 			.capture("St. Olaf map Recents")

@@ -11,32 +11,4 @@ struct NewsScreen: Screen {
 	var mounted: XCUIElement {
 		app.navigationBars[title]
 	}
-
-	@discardableResult
-	func navigate() -> Self {
-		open(route: "/StOlafNews", mountedWhen: mounted)
-	}
-
-	@discardableResult
-	func verifyTitle() -> Self {
-		XCTAssertTrue(
-			app.navigationBars[title].waitForExistence(timeout: 10),
-			"the navigation bar should read \(title)")
-		return self
-	}
-
-	@discardableResult
-	func verifyNewsRowsAppear() -> Self {
-		// A row that opens the browser reads as a link, and one that opens the
-		// reader reads as a button, so wait on rows of either kind.
-		let row = app.descendants(matching: .any).matching(storyRow).firstMatch
-		XCTAssertTrue(
-			row.waitForExistence(timeout: 30),
-			"at least one news row should be visible")
-		return self
-	}
-
-	private var storyRow: NSPredicate {
-		NSPredicate(format: "identifier BEGINSWITH %@", TestIdentifiers.News.rowPrefix)
-	}
 }

@@ -63,20 +63,6 @@ struct MessFrontPage: Screen {
 		return self
 	}
 
-	/// Latest lists stories, and its menu offers the paper's sections.
-	@discardableResult
-	func verifyLatestListsStoriesWithSections() -> Self {
-		choose(view: TestIdentifiers.News.latest)
-		XCTAssertTrue(storyRows.firstMatch.waitForExistence(timeout: 30), "Latest should list stories")
-		viewMenu.tap()
-		XCTAssertTrue(
-			waitForOnScreen(menuItem(TestIdentifiers.News.newsSection), timeout: 10),
-			"Latest's menu should offer the paper's sections")
-		capture("The Messenger's Latest stories, with its menu open")
-		closeMenu()
-		return self
-	}
-
 	/// Narrow Latest to a section from the view menu, and wait for the dateline to name the section.
 	@discardableResult
 	func filterLatest(to section: String) -> Self {

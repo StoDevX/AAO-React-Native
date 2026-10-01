@@ -38,8 +38,11 @@ const MANIFEST = {
 } as unknown as Jrd
 
 const PUBLISHED: MapCategoryTable = {
-	stolaf: [{label: 'Dining', categories: ['dining'], icon: 'fork.knife', gradient: 'orange'}],
-	carleton: [],
+	stolaf: {
+		groups: [{label: 'Dining', categories: ['dining'], icon: 'fork.knife', gradient: 'orange'}],
+		icons: [],
+	},
+	carleton: {groups: [], icons: []},
 }
 
 function run(): Promise<MapCategoryTable> {
@@ -98,7 +101,10 @@ describe('mapCategoriesOptions', () => {
 	test('refuses an entry with no list of categories', async () => {
 		;(fetchManifest as jest.Mock<() => Promise<Jrd>>).mockResolvedValue(MANIFEST)
 		;(fetchSourceBody as jest.Mock<() => Promise<unknown>>).mockResolvedValue({
-			data: {stolaf: [{label: 'Dining', categories: 'dining'}], carleton: []},
+			data: {
+				stolaf: {groups: [{label: 'Dining', categories: 'dining'}], icons: []},
+				carleton: {groups: [], icons: []},
+			},
 		})
 		await expect(run()).rejects.toThrow('map-categories')
 	})
@@ -109,10 +115,18 @@ describe('mapCategoriesOptions', () => {
 		;(fetchManifest as jest.Mock<() => Promise<Jrd>>).mockResolvedValue(MANIFEST)
 		;(fetchSourceBody as jest.Mock<() => Promise<unknown>>).mockResolvedValue({
 			data: {
-				stolaf: [
-					{label: 'Dining', categories: ['dining'], icon: {name: 'fork.knife'}, gradient: 'orange'},
-				],
-				carleton: [],
+				stolaf: {
+					groups: [
+						{
+							label: 'Dining',
+							categories: ['dining'],
+							icon: {name: 'fork.knife'},
+							gradient: 'orange',
+						},
+					],
+					icons: [],
+				},
+				carleton: {groups: [], icons: []},
 			},
 		})
 		await expect(run()).rejects.toThrow()
@@ -122,7 +136,9 @@ describe('mapCategoriesOptions', () => {
 	// fetching it again only repeats the failure.
 	test('does not retry a file it cannot read, but retries a failed fetch', async () => {
 		;(fetchManifest as jest.Mock<() => Promise<Jrd>>).mockResolvedValue(MANIFEST)
-		;(fetchSourceBody as jest.Mock<() => Promise<unknown>>).mockResolvedValue({data: {stolaf: []}})
+		;(fetchSourceBody as jest.Mock<() => Promise<unknown>>).mockResolvedValue({
+			data: {stolaf: {groups: [], icons: []}},
+		})
 		let unreadable = await run().catch((error: unknown) => error)
 		let retry = mapCategoriesOptions.retry as (count: number, error: unknown) => boolean
 		expect(retry(0, unreadable)).toBe(false)
