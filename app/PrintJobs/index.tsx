@@ -37,7 +37,7 @@ function PrintJobsView(): React.ReactNode {
 	} = useQuery(printJobsOptions(username))
 
 	let router = useRouter()
-	let openSettings = () => router.navigate('/SettingsRoot')
+	let openSettings = () => router.navigate('/settings')
 
 	let handleJobPress = (job: PrintJob) => {
 		let jobId = job.id.toString()

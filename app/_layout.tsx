@@ -142,7 +142,7 @@ function RootLayout(): React.ReactNode {
 									options={{title: 'Calendar', headerLargeTitleEnabled: true}}
 								/>
 								<Stack.Screen
-									name="(settings)"
+									name="settings"
 									options={{headerShown: false, presentation: 'modal'}}
 								/>
 							</Stack>

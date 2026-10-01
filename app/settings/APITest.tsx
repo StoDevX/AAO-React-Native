@@ -33,7 +33,7 @@ export default function APITestPage(): React.ReactNode {
 	const openRoute = React.useCallback(
 		(route: ServerRoute) =>
 			router.navigate({
-				pathname: '/APITestDetail',
+				pathname: '/settings/APITestDetail',
 				params: {displayName: route.displayName},
 			}),
 		[router],
@@ -45,7 +45,7 @@ export default function APITestPage(): React.ReactNode {
 
 			<Stack.Toolbar placement="right">
 				<Stack.Toolbar.Menu icon="ellipsis.circle">
-					<Stack.Toolbar.MenuAction onPress={() => router.navigate('/NetworkLogger')}>
+					<Stack.Toolbar.MenuAction onPress={() => router.navigate('/settings/NetworkLogger')}>
 						Network Logger
 					</Stack.Toolbar.MenuAction>
 				</Stack.Toolbar.Menu>
@@ -60,7 +60,7 @@ export default function APITestPage(): React.ReactNode {
 				onChangeText={setPath}
 				onSearchButtonPress={(ev) => {
 					router.navigate({
-						pathname: '/APITestDetail',
+						pathname: '/settings/APITestDetail',
 						params: {displayName: ev.nativeEvent.text},
 					})
 				}}

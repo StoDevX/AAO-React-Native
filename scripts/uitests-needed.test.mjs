@@ -28,7 +28,7 @@ describe('uitestsNeeded', () => {
 
 	it('runs for a data/ file despite its extension', () => {
 		// data/ is compiled into docs/ by `mise run bundle-data`, and the app
-		// imports the result -- app/(settings)/Privacy.tsx renders
+		// imports the result -- app/settings/Privacy.tsx renders
 		// docs/privacy.json, compiled from this exact file.
 		assert.equal(uitestsNeeded(['data/privacy.md']), true)
 	})

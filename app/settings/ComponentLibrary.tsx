@@ -9,12 +9,12 @@ import {Stack, useRouter} from 'expo-router'
 import {DisclosureRow} from '../../source/components/rows'
 
 const LIBRARIES = [
-	{title: 'Badges', route: '/BadgeLibrary'},
-	{title: 'Buttons', route: '/ButtonLibrary'},
-	{title: 'Colors', route: '/ColorsLibrary'},
-	{title: 'Context Menus', route: '/ContextMenuLibrary'},
-	{title: 'FAQ Banners', route: '/FaqBannerLibrary'},
-	{title: 'Rows', route: '/RowLibrary'},
+	{title: 'Badges', route: '/settings/BadgeLibrary'},
+	{title: 'Buttons', route: '/settings/ButtonLibrary'},
+	{title: 'Colors', route: '/settings/ColorsLibrary'},
+	{title: 'Context Menus', route: '/settings/ContextMenuLibrary'},
+	{title: 'FAQ Banners', route: '/settings/FaqBannerLibrary'},
+	{title: 'Rows', route: '/settings/RowLibrary'},
 ] as const
 
 export default function ComponentLibraryRootPage(): React.ReactNode {

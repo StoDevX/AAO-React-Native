@@ -50,7 +50,7 @@ function isInertWorkflow(file) {
 
 /**
  * `mise run bundle-data` compiles data/ into docs/, and the app imports that
- * output directly -- e.g. app/(settings)/Privacy.tsx renders docs/privacy.json,
+ * output directly -- e.g. app/settings/Privacy.tsx renders docs/privacy.json,
  * compiled from data/privacy.md. So no pattern keyed on extension (`.md$`,
  * among others) may call a file under data/ inert. data/_schemas/ is the one
  * exception: only the validation scripts read it, never the app.

@@ -26,7 +26,7 @@ const DISCLAIMER = 'This data may be outdated or otherwise inaccurate.'
 
 export const BalancesView = (): React.ReactNode => {
 	let router = useRouter()
-	let openSettings = () => router.navigate('/SettingsRoot')
+	let openSettings = () => router.navigate('/settings')
 
 	let {data: username = ''} = useQuery({
 		...credentialsOptions,

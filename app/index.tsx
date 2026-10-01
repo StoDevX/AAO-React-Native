@@ -143,7 +143,7 @@ export default function HomePage(): React.ReactNode {
 				<Stack.Toolbar.Button
 					accessibilityLabel="Open Settings"
 					icon="gear"
-					onPress={() => router.navigate('/SettingsRoot')}
+					onPress={() => router.navigate('/settings')}
 				/>
 			</Stack.Toolbar>
 			<Host
