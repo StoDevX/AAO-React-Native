@@ -44,6 +44,24 @@ index 0000000000000000000000000000000000000000..d08232a073aef5a8f011f7ce4e26ceaa
 + * when tapped.
 + */
 +export declare function HangingText({ children, modifiers, ...props }: HangingTextProps): import("react/jsx-runtime").JSX.Element;
+diff --git a/build/swift-ui/TabView/index.d.ts b/build/swift-ui/TabView/index.d.ts
+index df528df59b730714a2fc10ab1c7c1a0137b22546..1132e408cd8eb305f412a1d3ab22a7ea53647940 100644
+--- a/build/swift-ui/TabView/index.d.ts
++++ b/build/swift-ui/TabView/index.d.ts
+@@ -15,6 +15,13 @@ export interface TabViewProps extends CommonViewModifierProps {
+      * Called when the selected tab changes.
+      */
+     onSelectionChange?: (selection: string) => void;
++    /**
++     * Called when a page-style pager comes to rest on a page, with the selected
++     * tab. A swipe reports its new selection while the page is still snapping
++     * into place; changing the set of pages before this fires can leave the
++     * pager stopped between two of them.
++     */
++    onPageSettle?: (selection: string) => void;
+     /**
+      * `<TabView.Tab>` elements defining the pages.
+      */
 diff --git a/build/swift-ui/index.d.ts b/build/swift-ui/index.d.ts
 index e6cc8665ed24acc90e6b9acaf034a6bbc39afcc0..26ff12ef81061e9b1679d5f9f895a90916783db5 100644
 --- a/build/swift-ui/index.d.ts
@@ -468,6 +486,129 @@ index 8c426dffff1df73809436999f23a6155b0a72ef8..f8a2d52b031afea9f5dfe582b2a3ee71
      register("moveDisabled") { params, appContext, _ in
        return try MoveDisabledModifier(from: params, appContext: appContext)
      }
+diff --git a/ios/TabView/TabView.swift b/ios/TabView/TabView.swift
+index 94eb3eb83d6c19d5ff9ff58057e6e38c862357b9..efcb138bbd5e26b999ea5b1805fe6218e8c7ebf5 100644
+--- a/ios/TabView/TabView.swift
++++ b/ios/TabView/TabView.swift
+@@ -7,6 +7,7 @@ internal final class TabViewProps: UIBaseViewProps {
+   @Field var selection: String?
+   @Field var defaultSelection: String?
+   var onSelectionChange = EventDispatcher()
++  var onPageSettle = EventDispatcher()
+ }
+ 
+ internal struct TabView: ExpoSwiftUI.View {
+@@ -15,6 +16,7 @@ internal struct TabView: ExpoSwiftUI.View {
+   // props are empty at construction time — real values arrive later.
+   @State private var internalSelection = ""
+   @State private var didApplyDefaultSelection = false
++  @StateObject private var settle = PageSettleTracker()
+ 
+   init(props: TabViewProps) {
+     self.props = props
+@@ -34,6 +36,9 @@ internal struct TabView: ExpoSwiftUI.View {
+       }
+     }
+     .onAppear {
++      settle.onSettle = { [props, internalSelection = $internalSelection] in
++        props.onPageSettle(["selection": props.selection ?? internalSelection.wrappedValue])
++      }
+       guard !didApplyDefaultSelection else { return }
+       didApplyDefaultSelection = true
+       if props.selection == nil {
+@@ -57,6 +62,7 @@ internal struct TabView: ExpoSwiftUI.View {
+           value: tab.props.value
+         ) {
+           Self.tabContent(for: tab.props.children ?? [])
++            .background(PagingScrollViewFinder(tracker: settle))
+         }
+ #if !os(tvOS)
+         .badge(Self.badgeText(from: tab.props.modifiers))
+@@ -159,3 +165,84 @@ internal struct TabView: ExpoSwiftUI.View {
+     return nil
+   }
+ }
++
++// MARK: - Settling
++
++/// Says when a page-style pager has come to rest on a page.
++///
++/// SwiftUI writes the selection as soon as a drag passes halfway, while the
++/// page is still snapping into place, and says nothing when the snap ends.
++/// Changing the set of pages during the snap leaves the pager stopped between
++/// two of them, so a caller that changes its pages in response to a swipe
++/// needs to know when it is safe to.
++internal final class PageSettleTracker: ObservableObject {
++  var onSettle: (() -> Void)?
++
++  private weak var scrollView: UIScrollView?
++  private var observation: NSKeyValueObservation?
++  private var restingOffset: CGFloat?
++
++  /// Every page finds the same scroll view, so only the first to arrive is
++  /// taken up.
++  func attach(_ candidate: UIScrollView) {
++    guard candidate !== scrollView else { return }
++    scrollView = candidate
++    restingOffset = candidate.contentOffset.x
++    observation = candidate.observe(\.contentOffset) { [weak self] _, _ in
++      // The last offset of a swipe is written while the scroll view still
++      // calls itself decelerating, so look again once that frame is done.
++      DispatchQueue.main.async { self?.checkForRest() }
++    }
++  }
++
++  private func checkForRest() {
++    guard let scrollView,
++          !scrollView.isTracking,
++          !scrollView.isDragging,
++          !scrollView.isDecelerating else { return }
++    let width = scrollView.bounds.width
++    guard width > 0 else { return }
++    let offset = scrollView.contentOffset.x
++    let page = offset / width
++    guard abs(page - page.rounded()) < 0.001, offset != restingOffset else { return }
++    restingOffset = offset
++    onSettle?()
++  }
++}
++
++/// Hands a page's enclosing paging scroll view to a tracker.
++///
++/// SwiftUI does not expose the scroll view a page-style `TabView` is built
++/// on, so a page looks for it among its own ancestors. A page's own vertical
++/// scroll view is passed over, since it does not page.
++private struct PagingScrollViewFinder: UIViewRepresentable {
++  let tracker: PageSettleTracker
++
++  func makeUIView(context: Context) -> FinderView {
++    let view = FinderView()
++    view.tracker = tracker
++    view.isUserInteractionEnabled = false
++    return view
++  }
++
++  func updateUIView(_ uiView: FinderView, context: Context) {
++    uiView.tracker = tracker
++  }
++
++  final class FinderView: UIView {
++    weak var tracker: PageSettleTracker?
++
++    override func didMoveToWindow() {
++      super.didMoveToWindow()
++      guard window != nil else { return }
++      var ancestor = superview
++      while let view = ancestor {
++        if let scrollView = view as? UIScrollView, scrollView.isPagingEnabled {
++          tracker?.attach(scrollView)
++          return
++        }
++        ancestor = view.superview
++      }
++    }
++  }
++}
 diff --git a/src/swift-ui/HangingText/index.tsx b/src/swift-ui/HangingText/index.tsx
 new file mode 100644
 index 0000000000000000000000000000000000000000..bfba4b327a1542d05ceabe0c74041e40c4cd3913
@@ -535,6 +676,54 @@ index 0000000000000000000000000000000000000000..bfba4b327a1542d05ceabe0c74041e40
 +    />
 +  );
 +}
+diff --git a/src/swift-ui/TabView/index.tsx b/src/swift-ui/TabView/index.tsx
+index 4bcf654e5230d318362658dd3023d0d6b690225e..78d2c1abdd395a302cddc8bf814e84242e3fd5be 100644
+--- a/src/swift-ui/TabView/index.tsx
++++ b/src/swift-ui/TabView/index.tsx
+@@ -20,14 +20,22 @@ export interface TabViewProps extends CommonViewModifierProps {
+    * Called when the selected tab changes.
+    */
+   onSelectionChange?: (selection: string) => void;
++  /**
++   * Called when a page-style pager comes to rest on a page, with the selected
++   * tab. A swipe reports its new selection while the page is still snapping
++   * into place; changing the set of pages before this fires can leave the
++   * pager stopped between two of them.
++   */
++  onPageSettle?: (selection: string) => void;
+   /**
+    * `<TabView.Tab>` elements defining the pages.
+    */
+   children: React.ReactElement | React.ReactElement[];
+ }
+ 
+-type NativeTabViewProps = Omit<TabViewProps, 'onSelectionChange'> &
+-  ViewEvent<'onSelectionChange', { selection: string }>;
++type NativeTabViewProps = Omit<TabViewProps, 'onSelectionChange' | 'onPageSettle'> &
++  ViewEvent<'onSelectionChange', { selection: string }> &
++  ViewEvent<'onPageSettle', { selection: string }>;
+ 
+ const TabViewNativeView: React.ComponentType<NativeTabViewProps> = requireNativeView(
+   'ExpoUI',
+@@ -35,7 +43,7 @@ const TabViewNativeView: React.ComponentType<NativeTabViewProps> = requireNative
+ );
+ 
+ function TabView(props: TabViewProps) {
+-  const { modifiers, onSelectionChange, ...restProps } = props;
++  const { modifiers, onSelectionChange, onPageSettle, ...restProps } = props;
+   return (
+     <TabViewNativeView
+       modifiers={modifiers}
+@@ -46,6 +54,9 @@ function TabView(props: TabViewProps) {
+           ? ({ nativeEvent: { selection } }) => onSelectionChange(selection)
+           : undefined
+       }
++      onPageSettle={
++        onPageSettle ? ({ nativeEvent: { selection } }) => onPageSettle(selection) : undefined
++      }
+     />
+   );
+ }
 diff --git a/src/swift-ui/index.tsx b/src/swift-ui/index.tsx
 index be4b9f732505b9dc8060a8e5ccbbe0f6b7112709..77c0096917bf338b00260147b4aae6a30aabc211 100644
 --- a/src/swift-ui/index.tsx

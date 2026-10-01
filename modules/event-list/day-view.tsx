@@ -25,7 +25,7 @@ import {
 import * as c from '@frogpond/colors'
 import type {Moment} from 'moment-timezone'
 import {DayPickerStrip, type DayPickerStripHandle} from './day-picker-strip'
-import {anchorShouldFollow, dayOnShow, emptyNotice, pageWindow} from './day-state'
+import {anchorShouldFollow, dayOnShow, drawnAround, emptyNotice, pageWindow} from './day-state'
 import {deriveDays, eventsByDay} from './days'
 import {EventListRow} from './event-list-row'
 import {FailureNote} from './failure-note'
@@ -138,11 +138,22 @@ export let DayView = React.forwardRef<CalendarBodyHandle, Props>(function DayVie
 		day: null,
 	})
 
+	// The day the pager last came to rest on. A swipe reports its new day while
+	// the page is still snapping into place, and the pages drawn and mounted
+	// change only once it has come to rest -- changing them during the snap
+	// leaves the pager stopped between two days.
+	let [settledDay, setSettledDay] = React.useState<Moment | null>(null)
+
 	let driveTo = React.useCallback(
 		(day: Moment) => {
 			setPager((previous) => ({generation: previous.generation + 1, day: day.format('YYYY-MM-DD')}))
+			// A rebuilt pager does not animate, so it is at rest on the day it is
+			// built around, and its pages can be centred there without disturbing
+			// a swipe.
+			setSettledDay(day)
+			setAnchor(day)
 		},
-		[setPager],
+		[setPager, setSettledDay, setAnchor],
 	)
 
 	// The pager's own position is not readable from here, so it is tracked: it
@@ -203,10 +214,10 @@ export let DayView = React.forwardRef<CalendarBodyHandle, Props>(function DayVie
 
 	React.useImperativeHandle(ref, () => ({showToday}), [showToday])
 
-	// Where the day being shown sits in the window, which is what says how far
-	// from it a page can be and still be worth drawing. `pages` guarantees this
-	// is found.
-	let showingAt = pages.findIndex((page) => page.isSame(selectedDay, 'day'))
+	// Where the pager last came to rest in the window, which is what says how
+	// far from it a page can be and still be worth drawing. `pages` guarantees
+	// the selected day is found, and this falls back to it.
+	let showingAt = drawnAround(pages, settledDay, selectedDay)
 
 	// A page-style `TabView` lays each page out across the full width with no
 	// side safe area, so in landscape a page's rows would sit under the notch.
@@ -224,7 +235,6 @@ export let DayView = React.forwardRef<CalendarBodyHandle, Props>(function DayVie
 						now={props.now}
 						onSelectDay={(day) => {
 							setChosenDay(day)
-							keepInWindow(day)
 							driveTo(day)
 						}}
 						selectedDay={selectedDay ?? null}
@@ -245,12 +255,18 @@ export let DayView = React.forwardRef<CalendarBodyHandle, Props>(function DayVie
 						let day = days.find((d) => d.format('YYYY-MM-DD') === iso)
 						if (day) {
 							setChosenDay(day)
-							keepInWindow(day)
 							// The pager moved itself, so it is already showing this day.
 							// Recorded rather than driven, or the effect above would
 							// rebuild it and undo the swipe it just made.
 							setPager((previous) => ({...previous, day: iso}))
 							stripRef.current?.scrollToDay(day)
+						}
+					}}
+					onPageSettle={(iso) => {
+						let day = days.find((d) => d.format('YYYY-MM-DD') === iso)
+						if (day) {
+							setSettledDay(day)
+							keepInWindow(day)
 						}
 					}}
 					defaultSelection={pager.day ?? selectedDay?.format('YYYY-MM-DD') ?? ''}
