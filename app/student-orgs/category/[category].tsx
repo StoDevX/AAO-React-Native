@@ -1,6 +1,6 @@
 // app/student-orgs/category/[category].tsx
 import * as React from 'react'
-import {LoadingView, NoticeView} from '@frogpond/notice'
+import {LoadErrorView, LoadingView} from '@frogpond/notice'
 import {Stack, useLocalSearchParams, useRouter} from 'expo-router'
 import {useDebounce} from '@frogpond/use-debounce'
 import {useQuery} from '@tanstack/react-query'
@@ -67,11 +67,7 @@ function CategoryOrgsView(): React.ReactNode {
 		return (
 			<>
 				{searchChrome}
-				<NoticeView
-					buttonText="Try Again"
-					onPress={refresh}
-					text={`A problem occurred while loading: ${message}`}
-				/>
+				<LoadErrorView error={message} onRetry={refresh} />
 			</>
 		)
 	}

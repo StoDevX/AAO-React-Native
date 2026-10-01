@@ -19,7 +19,7 @@ import {sendEmail} from '../../source/components/send-email'
 import {showNameOrEmail} from '../../source/features/student-orgs/util'
 import {decode} from '@frogpond/html-lib'
 import {orgByNameOptions} from '../../source/features/student-orgs/query'
-import {LoadingView, NoticeView} from '@frogpond/notice'
+import {LoadErrorView, LoadingView, NoticeView} from '@frogpond/notice'
 
 /**
  * The org's name, at the top of its own screen.
@@ -75,13 +75,7 @@ export default function StudentOrgsDetailPage(): React.ReactNode {
 		return (
 			<>
 				{screenTitle}
-				<NoticeView
-					buttonText="Try Again"
-					onPress={refetch}
-					text={`A problem occurred while loading: ${
-						error instanceof Error ? error.message : 'Unknown error'
-					}`}
-				/>
+				<LoadErrorView error={error} onRetry={refetch} />
 			</>
 		)
 	}
@@ -90,7 +84,11 @@ export default function StudentOrgsDetailPage(): React.ReactNode {
 		return (
 			<>
 				{screenTitle}
-				<NoticeView text={`Could not find student org "${name}".`} />
+				<NoticeView
+					description={`No student org is called “${name}”.`}
+					systemImage="person.3"
+					title="Organization Not Found"
+				/>
 			</>
 		)
 	}

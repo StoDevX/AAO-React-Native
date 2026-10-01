@@ -12,7 +12,7 @@ import {
 import {accessibilityIdentifier, id, listStyle, refreshable} from '@expo/ui/swift-ui/modifiers'
 import * as c from '@frogpond/colors'
 import {FilterToolbar} from '@frogpond/filter'
-import {LoadingView, NoticeView, listState} from '@frogpond/notice'
+import {listState, LoadErrorView, LoadingView, NoticeView} from '@frogpond/notice'
 import type {JobSummary} from '@frogpond/ccc-jobs'
 import {onlineManager, useQuery} from '@tanstack/react-query'
 import {useRouter} from 'expo-router'
@@ -126,18 +126,20 @@ export function PostingsList({searchQuery, initialChosen}: PostingsListProps): R
 	})
 
 	if (state === 'offline') {
-		return <NoticeView buttonText="Try Again" onPress={refetch} text={OFFLINE_NOTICE} />
+		return (
+			<NoticeView
+				action={{label: 'Try Again', onPress: refetch}}
+				description={OFFLINE_NOTICE}
+				systemImage="wifi.slash"
+				title="Offline"
+			/>
+		)
 	}
 
 	if (state === 'error') {
-		let message = error instanceof Error ? error.message : String(error)
 		return (
 			<>
-				<NoticeView
-					buttonText="Try Again"
-					onPress={refetch}
-					text={`A problem occurred while loading: ${message}`}
-				/>
+				<LoadErrorView error={error} onRetry={refetch} />
 			</>
 		)
 	}

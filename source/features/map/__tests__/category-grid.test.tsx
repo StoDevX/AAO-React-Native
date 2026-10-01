@@ -6,15 +6,6 @@ import {CATEGORY_GRID_ID, CategoryGrid, categoryLayoutFor} from '../category-gri
 import type {CategoryGroup} from '../lib/category-groups'
 import type {MapGroupLabel} from '../../telemetry/catalog'
 
-jest.mock('@expo/ui/swift-ui', () => {
-	// oxlint-disable-next-line typescript/no-require-imports
-	return require('../../../testing/expo-ui-mock') as typeof import('../../../testing/expo-ui-mock')
-})
-jest.mock('@expo/ui/swift-ui/modifiers', () => {
-	// oxlint-disable-next-line typescript/no-require-imports
-	return require('../../../testing/expo-ui-mock') as typeof import('../../../testing/expo-ui-mock')
-})
-
 const mockFontScale = jest.fn(() => 1)
 // `react-native` re-exports this through a getter, which jest.spyOn cannot
 // replace, so the module behind it is mocked instead.

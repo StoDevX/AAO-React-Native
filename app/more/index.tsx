@@ -5,7 +5,7 @@ import {listStyle, refreshable} from '@expo/ui/swift-ui/modifiers'
 
 import * as c from '@frogpond/colors'
 import {useDebounce} from '@frogpond/use-debounce'
-import {LoadingView, NoticeView} from '@frogpond/notice'
+import {LoadErrorView, LoadingView} from '@frogpond/notice'
 import {openUrl} from '@frogpond/open-url'
 
 import {Stack} from 'expo-router'
@@ -25,13 +25,7 @@ function MoreView(): React.ReactNode {
 	let filtered = React.useMemo(() => filterLinkGroups(data, searchQuery), [data, searchQuery])
 
 	if (isError) {
-		return (
-			<NoticeView
-				buttonText="Try Again"
-				onPress={refetch}
-				text={`A problem occurred while loading: ${error}`}
-			/>
-		)
+		return <LoadErrorView error={error} onRetry={refetch} />
 	}
 
 	if (isLoading) {

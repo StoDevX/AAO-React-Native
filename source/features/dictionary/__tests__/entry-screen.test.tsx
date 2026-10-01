@@ -7,15 +7,6 @@ import {keys} from '../query'
 import {useDictionaryDraftStore} from '../store'
 import type {WordType} from '../types'
 
-jest.mock('@expo/ui/swift-ui', () => {
-	// oxlint-disable-next-line typescript/no-require-imports
-	return require('../../../testing/expo-ui-mock') as typeof import('../../../testing/expo-ui-mock')
-})
-jest.mock('@expo/ui/swift-ui/modifiers', () => {
-	// oxlint-disable-next-line typescript/no-require-imports
-	return require('../../../testing/expo-ui-mock') as typeof import('../../../testing/expo-ui-mock')
-})
-
 const mockNavigate = jest.fn()
 
 jest.mock('expo-router', () => ({

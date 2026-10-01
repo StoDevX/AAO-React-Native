@@ -39,7 +39,7 @@ export default function JobDescriptionPage(): React.ReactNode {
 		return (
 			<>
 				<Stack.Title>{JOB_DESCRIPTION_TITLE}</Stack.Title>
-				<NoticeView text="Could not load this job posting's description." />
+				<NoticeView systemImage="doc.text" title="No Description" />
 			</>
 		)
 	}

@@ -7,15 +7,6 @@ import {AlsoHereSection} from '../card/also-here-section'
 import type {PlaceTile} from '../lib/place-tiles'
 import type {BuildingType} from '../../building-hours/types'
 
-jest.mock('@expo/ui/swift-ui', () => {
-	// oxlint-disable-next-line typescript/no-require-imports
-	return require('../../../testing/expo-ui-mock') as typeof import('../../../testing/expo-ui-mock')
-})
-jest.mock('@expo/ui/swift-ui/modifiers', () => {
-	// oxlint-disable-next-line typescript/no-require-imports
-	return require('../../../testing/expo-ui-mock') as typeof import('../../../testing/expo-ui-mock')
-})
-
 const EVERY_DAY = ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'] as const
 
 /// A venue open all day every day, so its status is an open one whenever the

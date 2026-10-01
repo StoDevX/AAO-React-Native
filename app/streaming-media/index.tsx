@@ -3,7 +3,7 @@ import {StyleSheet} from 'react-native'
 import {ContentUnavailableView, Host, List, Section} from '@expo/ui/swift-ui'
 import {listStyle, refreshable} from '@expo/ui/swift-ui/modifiers'
 import * as c from '@frogpond/colors'
-import {NoticeView, LoadingView} from '@frogpond/notice'
+import {LoadErrorView, LoadingView} from '@frogpond/notice'
 import {FilterToolbar, ListFilter, selectedOptions} from '@frogpond/filter'
 import {formatDate} from '@frogpond/time-format'
 import {StreamRow} from '../../source/features/streaming/streams/row'
@@ -106,13 +106,7 @@ export default function StreamingPage(): React.ReactNode {
 	}, [data, chosenCategories])
 
 	if (isError) {
-		return (
-			<NoticeView
-				buttonText="Try Again"
-				onPress={refetch}
-				text={`A problem occurred while loading: ${error}`}
-			/>
-		)
+		return <LoadErrorView error={error} onRetry={refetch} />
 	}
 
 	const header = (

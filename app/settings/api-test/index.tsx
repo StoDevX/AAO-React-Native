@@ -2,7 +2,7 @@ import * as React from 'react'
 import {View, StyleSheet} from 'react-native'
 import {Host, List, Section} from '@expo/ui/swift-ui'
 import {listStyle, refreshable} from '@expo/ui/swift-ui/modifiers'
-import {LoadingView, NoticeView} from '@frogpond/notice'
+import {LoadErrorView, LoadingView, NoticeView} from '@frogpond/notice'
 import * as c from '@frogpond/colors'
 import {useQuery} from '@tanstack/react-query'
 import {Stack, useRouter} from 'expo-router'
@@ -72,13 +72,9 @@ export default function APITestPage(): React.ReactNode {
 				{isRoutesLoading ? (
 					<LoadingView />
 				) : isRoutesError && routesError instanceof Error ? (
-					<NoticeView
-						buttonText="Try Again"
-						onPress={routesRefetch}
-						text={`A problem occurred while loading: ${routesError}`}
-					/>
+					<LoadErrorView error={routesError} onRetry={routesRefetch} />
 				) : !groupedRoutes ? (
-					<NoticeView text="No routes were found." />
+					<NoticeView systemImage="questionmark.circle" title="No Routes" />
 				) : (
 					<Host style={styles.host}>
 						<List

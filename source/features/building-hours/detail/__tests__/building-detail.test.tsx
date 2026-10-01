@@ -11,14 +11,6 @@ import {makeBuilding as makeFeature} from '../../../map/__tests__/fixtures'
 import type {Building, Feature} from '../../../map/types'
 import {images as buildingImages} from '../../../../../images/spaces'
 
-jest.mock('@expo/ui/swift-ui', () => {
-	// oxlint-disable-next-line typescript/no-require-imports
-	return require('../../../../testing/expo-ui-mock') as typeof import('../../../../testing/expo-ui-mock')
-})
-jest.mock('@expo/ui/swift-ui/modifiers', () => {
-	// oxlint-disable-next-line typescript/no-require-imports
-	return require('../../../../testing/expo-ui-mock') as typeof import('../../../../testing/expo-ui-mock')
-})
 jest.mock('@maplibre/maplibre-react-native', () => {
 	// oxlint-disable-next-line typescript/no-require-imports
 	return require('../../../../testing/maplibre-mock') as typeof import('../../../../testing/maplibre-mock')

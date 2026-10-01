@@ -1040,26 +1040,31 @@ export function Picker<T>({
 	)
 }
 
-export function ProgressView(): React.ReactNode {
-	return <View accessibilityLabel="Loading" />
+/** Its label, when it has one, is the only part a branch assertion reads. */
+export function ProgressView({children}: {children?: React.ReactNode}): React.ReactNode {
+	return <View accessibilityLabel="Loading">{children}</View>
 }
 
 /**
- * Renders only what the title and description would say, which is all a branch
- * assertion needs -- the artwork and layout are an XCUITest's job.
+ * Renders only what the title and description would say, and the actions under
+ * them, which is all a branch assertion needs -- the artwork and layout are an
+ * XCUITest's job.
  */
 export function ContentUnavailableView({
+	actions,
 	description,
 	title,
 }: {
 	title?: string
 	systemImage?: string
 	description?: string
+	actions?: React.ReactNode
 }): React.ReactNode {
 	return (
 		<View>
 			{title ? <RNText>{title}</RNText> : null}
 			{description ? <RNText>{description}</RNText> : null}
+			{actions}
 		</View>
 	)
 }

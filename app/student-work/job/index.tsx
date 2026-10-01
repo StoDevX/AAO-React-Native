@@ -4,7 +4,7 @@ import {Stack, useLocalSearchParams, useRouter} from 'expo-router'
 import {useQuery} from '@tanstack/react-query'
 import {Form, Host, Section, Text} from '@expo/ui/swift-ui'
 import {font} from '@expo/ui/swift-ui/modifiers'
-import {LoadingView, NoticeView} from '@frogpond/notice'
+import {LoadErrorView, LoadingView, NoticeView} from '@frogpond/notice'
 import {openUrl} from '@frogpond/open-url'
 import * as c from '@frogpond/colors'
 import {jobDetailOptions, type JobDetail} from '@frogpond/ccc-jobs'
@@ -100,13 +100,7 @@ export default function JobDetailPage(): React.ReactNode {
 		return (
 			<>
 				<Stack.Title>Error</Stack.Title>
-				<NoticeView
-					buttonText="Try Again"
-					onPress={refetch}
-					text={`A problem occurred while loading: ${
-						error instanceof Error ? error.message : 'Unknown error'
-					}`}
-				/>
+				<LoadErrorView error={error} onRetry={refetch} />
 			</>
 		)
 	}
@@ -115,7 +109,7 @@ export default function JobDetailPage(): React.ReactNode {
 		return (
 			<>
 				<Stack.Title>Unknown Job</Stack.Title>
-				<NoticeView text="Could not find this job posting." />
+				<NoticeView systemImage="questionmark.circle" title="Job Posting Not Found" />
 			</>
 		)
 	}

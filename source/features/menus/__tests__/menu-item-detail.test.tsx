@@ -93,7 +93,7 @@ describe('MenuItemDetailPage', () => {
 		mockParams = {source: 'unknown', itemId: '0'}
 		await renderDetail()
 
-		expect(screen.getByText('Could not find this menu item.')).toBeTruthy()
+		expect(screen.getByText('Menu Item Not Found')).toBeTruthy()
 	})
 
 	// Two days' menus can sit in the cache across midnight. The item comes from

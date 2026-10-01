@@ -3,7 +3,7 @@ import {Stack, useLocalSearchParams, useRouter} from 'expo-router'
 import {useQuery} from '@tanstack/react-query'
 import {timezone} from '@frogpond/constants'
 import {useMomentTimer} from '@frogpond/timer'
-import {LoadingView, NoticeView} from '@frogpond/notice'
+import {LoadErrorView, LoadingView, NoticeView} from '@frogpond/notice'
 
 import {SheetCloseButton} from '../../../source/components/sheet-close-button'
 import {BusLine} from '../../../source/features/transit/bus/line'
@@ -66,13 +66,7 @@ export default function BusLinePage(): React.ReactNode {
 		return (
 			<>
 				{chrome}
-				<NoticeView
-					buttonText="Try Again"
-					onPress={refetch}
-					text={`A problem occurred while loading: ${
-						error instanceof Error ? error.message : 'Unknown error'
-					}`}
-				/>
+				<LoadErrorView error={error} onRetry={refetch} />
 			</>
 		)
 	}
@@ -81,7 +75,11 @@ export default function BusLinePage(): React.ReactNode {
 		return (
 			<>
 				{chrome}
-				<NoticeView text={`Could not find the "${lineName}" bus line.`} />
+				<NoticeView
+					description={`No bus line is called “${lineName}”.`}
+					systemImage="bus"
+					title="Line Not Found"
+				/>
 			</>
 		)
 	}

@@ -1,6 +1,6 @@
 import * as React from 'react'
-import type {StyleProp, TextStyle, ViewStyle} from 'react-native'
-import {NoticeView} from '@frogpond/notice'
+import type {StyleProp, ViewStyle} from 'react-native'
+import {LoadErrorView, LoadingView, NoticeView} from '@frogpond/notice'
 import type {MessStoryLookup} from './use-mess-story'
 
 type Props = {
@@ -8,7 +8,8 @@ type Props = {
 	/** What to say when there is no such story, or nothing of it to show */
 	unavailableText: string
 	style?: StyleProp<ViewStyle>
-	textStyle?: StyleProp<TextStyle>
+	/** Set where the notice sits on a fixed backdrop, as the image viewer's black. */
+	colorScheme?: 'light' | 'dark'
 }
 
 /** Stands in for a story that is loading, failed to load, or does not exist. */
@@ -16,21 +17,27 @@ export function StoryLookupNotice({
 	query,
 	unavailableText,
 	style,
-	textStyle,
+	colorScheme,
 }: Props): React.ReactNode {
 	if (query.isPending) {
-		return <NoticeView spinner={true} style={style} text="Loading…" textStyle={textStyle} />
+		return <LoadingView colorScheme={colorScheme} style={style} />
 	}
 	if (query.isLoadingError) {
 		return (
-			<NoticeView
-				buttonText="Try Again"
-				onPress={() => query.refetch()}
+			<LoadErrorView
+				colorScheme={colorScheme}
+				error={query.error}
+				onRetry={() => query.refetch()}
 				style={style}
-				text={`A problem occurred while loading: ${query.error}`}
-				textStyle={textStyle}
 			/>
 		)
 	}
-	return <NoticeView style={style} text={unavailableText} textStyle={textStyle} />
+	return (
+		<NoticeView
+			colorScheme={colorScheme}
+			style={style}
+			systemImage="newspaper"
+			title={unavailableText}
+		/>
+	)
 }

@@ -19,14 +19,6 @@ import {useMessStore} from '../store'
 import {ZODIAC_SIGNS} from '../lib/zodiac'
 import type {MessStory, StaffProfile} from '../types'
 
-jest.mock('@expo/ui/swift-ui', () => {
-	// oxlint-disable-next-line typescript/no-require-imports
-	return require('../../../testing/expo-ui-mock') as typeof import('../../../testing/expo-ui-mock')
-})
-jest.mock('@expo/ui/swift-ui/modifiers', () => {
-	// oxlint-disable-next-line typescript/no-require-imports
-	return require('../../../testing/expo-ui-mock') as typeof import('../../../testing/expo-ui-mock')
-})
 jest.mock('@react-native-community/netinfo', () =>
 	// oxlint-disable-next-line typescript/no-require-imports
 	require('@react-native-community/netinfo/jest/netinfo-mock'),
@@ -424,7 +416,7 @@ describe('StoryScreen', () => {
 			await renderStory(1)
 
 			expect(await screen.findByText('Try Again', {}, {timeout: 20_000})).toBeTruthy()
-			expect(screen.queryByText('Story unavailable')).toBeNull()
+			expect(screen.queryByText('Story Unavailable')).toBeNull()
 		} finally {
 			jest.useRealTimers()
 		}
@@ -438,7 +430,7 @@ describe('StoryScreen', () => {
 		serve(() => [])
 		await renderStory(1)
 
-		expect(await screen.findByText('Story unavailable')).toBeTruthy()
+		expect(await screen.findByText('Story Unavailable')).toBeTruthy()
 		expect(screen.queryByText('Try Again')).toBeNull()
 		expect(fetchedHrefs().filter((href) => href.includes('/posts/1?'))).toHaveLength(1)
 	})
@@ -449,7 +441,7 @@ describe('StoryScreen', () => {
 		await renderStory(36911)
 
 		expect(screen.getByText('Loading…')).toBeTruthy()
-		expect(screen.queryByText('Story unavailable')).toBeNull()
+		expect(screen.queryByText('Story Unavailable')).toBeNull()
 	})
 
 	test('offers Try Again when the feed fails', async () => {
@@ -459,7 +451,7 @@ describe('StoryScreen', () => {
 		await renderStory(36911)
 
 		expect(await screen.findByText('Try Again')).toBeTruthy()
-		expect(screen.queryByText('Story unavailable')).toBeNull()
+		expect(screen.queryByText('Story Unavailable')).toBeNull()
 	})
 
 	test('reads a freshly cached feed without fetching it again', async () => {
@@ -481,7 +473,7 @@ describe('StoryScreen', () => {
 
 	test('says a story is unavailable when the id is not a number', async () => {
 		await renderStory(Number('not-a-number'))
-		expect(screen.getByText('Story unavailable')).toBeTruthy()
+		expect(screen.getByText('Story Unavailable')).toBeTruthy()
 		expect(mockBody).not.toHaveBeenCalled()
 	})
 

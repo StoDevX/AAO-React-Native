@@ -3,7 +3,7 @@ import {StyleSheet} from 'react-native'
 import {Host, List, Section} from '@expo/ui/swift-ui'
 import {listStyle, refreshable} from '@expo/ui/swift-ui/modifiers'
 import * as c from '@frogpond/colors'
-import {LoadingView, NoticeView, listState} from '@frogpond/notice'
+import {listState, LoadErrorView, LoadingView, NoticeView} from '@frogpond/notice'
 import {useDebounce} from '@frogpond/use-debounce'
 import {onlineManager} from '@tanstack/react-query'
 import {Stack, useRouter} from 'expo-router'
@@ -76,21 +76,21 @@ export default function StudentWorkPage(): React.ReactNode {
 		return (
 			<>
 				{chrome}
-				<NoticeView buttonText="Try Again" onPress={board.refetch} text={OFFLINE_NOTICE} />
+				<NoticeView
+					action={{label: 'Try Again', onPress: board.refetch}}
+					description={OFFLINE_NOTICE}
+					systemImage="wifi.slash"
+					title="Offline"
+				/>
 			</>
 		)
 	}
 
 	if (state === 'error') {
-		let message = board.error instanceof Error ? board.error.message : String(board.error)
 		return (
 			<>
 				{chrome}
-				<NoticeView
-					buttonText="Try Again"
-					onPress={board.refetch}
-					text={`A problem occurred while loading: ${message}`}
-				/>
+				<LoadErrorView error={board.error} onRetry={board.refetch} />
 			</>
 		)
 	}

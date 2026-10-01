@@ -13,19 +13,19 @@ describe('EmptyListNotice', () => {
 	it('shows the yesterday/today phrasing for Yesterday', async () => {
 		let {getByText} = await render(<EmptyListNotice selectedSection={Constants.YESTERDAY} />)
 
-		expect(getByText('No games yesterday')).toBeTruthy()
+		expect(getByText('No Games Yesterday')).toBeTruthy()
 	})
 
 	it('shows the yesterday/today phrasing for Today', async () => {
 		let {getByText} = await render(<EmptyListNotice selectedSection={Constants.TODAY} />)
 
-		expect(getByText('No games today')).toBeTruthy()
+		expect(getByText('No Games Today')).toBeTruthy()
 	})
 
 	it('shows the upcoming phrasing for Upcoming', async () => {
 		let {getByText} = await render(<EmptyListNotice selectedSection={Constants.UPCOMING} />)
 
-		expect(getByText('No upcoming games')).toBeTruthy()
+		expect(getByText('No Upcoming Games')).toBeTruthy()
 	})
 
 	it('omits the filter hint when the selector says not to show it', async () => {
@@ -42,6 +42,7 @@ describe('EmptyListNotice', () => {
 
 		let {getByText} = await render(<EmptyListNotice selectedSection={Constants.TODAY} />)
 
-		expect(getByText('No games today. Try changing the filters?')).toBeTruthy()
+		expect(getByText('No Games Today')).toBeTruthy()
+		expect(getByText('Try changing the filters.')).toBeTruthy()
 	})
 })

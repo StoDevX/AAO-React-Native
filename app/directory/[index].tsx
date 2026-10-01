@@ -23,7 +23,7 @@ import type {
 	Department,
 	DirectorySearchTypeEnum,
 } from '../../source/features/directory/types'
-import {LoadingView, NoticeView} from '@frogpond/notice'
+import {LoadErrorView, LoadingView, NoticeView} from '@frogpond/notice'
 
 export default function DirectoryDetailPage(): React.ReactNode {
 	let router = useRouter()
@@ -58,13 +58,7 @@ export default function DirectoryDetailPage(): React.ReactNode {
 		return (
 			<>
 				{screenTitle}
-				<NoticeView
-					buttonText="Try Again"
-					onPress={refetch}
-					text={`A problem occurred while loading: ${
-						error instanceof Error ? error.message : 'Unknown error'
-					}`}
-				/>
+				<LoadErrorView error={error} onRetry={refetch} />
 			</>
 		)
 	}
@@ -73,7 +67,7 @@ export default function DirectoryDetailPage(): React.ReactNode {
 		return (
 			<>
 				{screenTitle}
-				<NoticeView text="Could not find this directory entry." />
+				<NoticeView systemImage="questionmark.circle" title="Entry Not Found" />
 			</>
 		)
 	}

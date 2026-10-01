@@ -1,5 +1,5 @@
 import * as c from '@frogpond/colors'
-import {LoadingView, NoticeView} from '@frogpond/notice'
+import {LoadErrorView, LoadingView} from '@frogpond/notice'
 import {Stack, useRouter} from 'expo-router'
 import * as React from 'react'
 import {useEffect, useMemo} from 'react'
@@ -57,13 +57,7 @@ function CourseSearchView(): React.ReactNode {
 	}
 
 	if (error) {
-		return (
-			<NoticeView
-				buttonText="Try Again"
-				onPress={refetch}
-				text={`A problem occurred while loading: ${error}`}
-			/>
-		)
+		return <LoadErrorView error={error} onRetry={refetch} />
 	}
 
 	return (

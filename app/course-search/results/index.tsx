@@ -169,15 +169,18 @@ function CourseSearchResultsView(): React.ReactNode {
 
 		return (
 			<NoticeView
-				buttonText="Try Again"
-				onPress={() => {
-					for (let r of courseTermsInError) {
-						r.refetch()
-					}
+				action={{
+					label: 'Try Again',
+					onPress: () => {
+						for (let r of courseTermsInError) {
+							r.refetch()
+						}
+					},
 				}}
-				text={
-					(courseTermsInError.length === 1 ? 'A problem' : 'Some problems') +
-					` occurred while loading: ${errors}`
+				description={errors}
+				systemImage="exclamationmark.triangle"
+				title={
+					courseTermsInError.length === 1 ? 'Couldn’t Load a Term' : 'Couldn’t Load Some Terms'
 				}
 			/>
 		)
@@ -210,12 +213,29 @@ function CourseSearchResultsView(): React.ReactNode {
 
 	let hasActiveFilter = filters.some((f) => f.enabled)
 	let message = hasActiveFilter
-		? 'There were no courses that matched your selected filters. Try a different filter combination.'
+		? {
+				title: 'No Matches',
+				description: 'No courses match these filters. Try a different combination.',
+			}
 		: query?.length
-			? 'There were no courses that matched your query. Please try again.'
-			: "You can search by Professor (e.g. 'Jill Dietz'), Course Name (e.g. 'Abstract Algebra'), Department/Number (e.g. MATH 252), or GE (e.g. WRI)"
+			? {
+					title: 'No Results',
+					description: 'No courses match your search. Check the spelling or try a new search.',
+				}
+			: {
+					title: 'Search for a Course',
+					description:
+						"Search by professor (e.g. 'Jill Dietz'), course name (e.g. 'Abstract Algebra'), department and number (e.g. MATH 252), or GE (e.g. WRI).",
+				}
 
-	let messageView = <NoticeView style={styles.message} text={message} />
+	let messageView = (
+		<NoticeView
+			description={message.description}
+			style={styles.message}
+			systemImage="magnifyingglass"
+			title={message.title}
+		/>
+	)
 
 	return (
 		<>

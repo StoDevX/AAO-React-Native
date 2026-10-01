@@ -9,7 +9,7 @@
     "test": "jest"
   },
   "dependencies": {
-    "@frogpond/button": "workspace:*",
+    "@expo/ui": "57.0.14",
     "@frogpond/colors": "workspace:*"
   },
   "devDependencies": {

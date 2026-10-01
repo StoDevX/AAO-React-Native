@@ -5,7 +5,7 @@ import {useQuery} from '@tanstack/react-query'
 import {SheetCloseButton} from '../../source/components/sheet-close-button'
 import {MenuItemDetailView} from '../../modules/food-menu/food-item-detail'
 import {bonAppMenuItemOptions, pauseMenuItemOptions} from '../../source/features/menus/query'
-import {LoadingView, NoticeView} from '@frogpond/notice'
+import {LoadErrorView, LoadingView, NoticeView} from '@frogpond/notice'
 import {OFFLINE_MESSAGE, menuView} from '../../source/features/menus/lib/menu-view'
 
 export default function MenuItemDetailPage(): React.ReactNode {
@@ -47,7 +47,7 @@ export default function MenuItemDetailPage(): React.ReactNode {
 		return (
 			<>
 				{screen}
-				<NoticeView text="Could not find this menu item." />
+				<NoticeView systemImage="fork.knife" title="Menu Item Not Found" />
 			</>
 		)
 	}
@@ -65,7 +65,7 @@ export default function MenuItemDetailPage(): React.ReactNode {
 		return (
 			<>
 				{screen}
-				<NoticeView text={OFFLINE_MESSAGE} />
+				<NoticeView description={OFFLINE_MESSAGE} systemImage="wifi.slash" title="Offline" />
 			</>
 		)
 	}
@@ -74,11 +74,7 @@ export default function MenuItemDetailPage(): React.ReactNode {
 		return (
 			<>
 				{screen}
-				<NoticeView
-					buttonText="Try Again"
-					onPress={refetch}
-					text={`A problem occurred while loading: ${view.error.message}`}
-				/>
+				<LoadErrorView error={view.error} onRetry={refetch} />
 			</>
 		)
 	}
@@ -88,7 +84,7 @@ export default function MenuItemDetailPage(): React.ReactNode {
 		return (
 			<>
 				{screen}
-				<NoticeView text="Could not find this menu item." />
+				<NoticeView systemImage="fork.knife" title="Menu Item Not Found" />
 			</>
 		)
 	}

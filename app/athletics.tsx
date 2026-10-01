@@ -5,7 +5,7 @@ import {listStyle, refreshable} from '@expo/ui/swift-ui/modifiers'
 import {Stack} from 'expo-router'
 import {useQuery} from '@tanstack/react-query'
 
-import {LoadingView, NoticeView} from '@frogpond/notice'
+import {LoadErrorView, LoadingView, NoticeView} from '@frogpond/notice'
 import {now} from '@frogpond/timer'
 import * as c from '@frogpond/colors'
 
@@ -84,11 +84,7 @@ function AthleticsView(): React.ReactNode {
 		return (
 			<>
 				{datePicker}
-				<NoticeView
-					buttonText="Try Again"
-					onPress={refetch}
-					text={`A problem occurred while loading: ${String(error)}`}
-				/>
+				<LoadErrorView error={error} onRetry={refetch} />
 			</>
 		)
 	}
@@ -106,7 +102,7 @@ function AthleticsView(): React.ReactNode {
 		return (
 			<>
 				{datePicker}
-				<NoticeView text="No sports scores found." />
+				<NoticeView systemImage="sportscourt" title="No Scores" />
 			</>
 		)
 	}

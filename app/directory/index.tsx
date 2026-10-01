@@ -114,7 +114,11 @@ function DirectoryView(): React.ReactNode {
 	if (searchQuery.length < 2) {
 		return (
 			<>
-				<NoticeView text="Your search is too short." />
+				<NoticeView
+					description="Type at least two letters to search the directory."
+					systemImage="magnifyingglass"
+					title="Keep Typing"
+				/>
 				{searchChrome}
 			</>
 		)
@@ -134,9 +138,17 @@ function DirectoryView(): React.ReactNode {
 			{isLoading ? (
 				<LoadingView />
 			) : isError && error instanceof Error ? (
-				<NoticeView text={String(error)} />
+				<NoticeView
+					description={error.message}
+					systemImage="exclamationmark.triangle"
+					title="Couldn’t Search"
+				/>
 			) : items.length === 0 ? (
-				<NoticeView text={`No results found for "${searchQuery}".`} />
+				<NoticeView
+					description="Check the spelling or try a new search."
+					systemImage="magnifyingglass"
+					title={`No Results for “${searchQuery}”`}
+				/>
 			) : resultsView === 'tiles' ? (
 				<DirectoryResultsGrid
 					heading={heading}

@@ -209,8 +209,8 @@ describe('BonAppHostedMenu', () => {
 			await jest.runOnlyPendingTimersAsync()
 		})
 
-		expect(screen.getByText('Error: HTTP 503')).toBeTruthy()
-		expect(screen.getByText('Again!')).toBeTruthy()
+		expect(screen.getByText('HTTP 503')).toBeTruthy()
+		expect(screen.getByText('Try Again')).toBeTruthy()
 		expect(mockFoodMenu).not.toHaveBeenCalled()
 	})
 
@@ -267,7 +267,7 @@ describe('BonAppHostedMenu', () => {
 				await jest.runOnlyPendingTimersAsync()
 			})
 
-			expect(screen.getByText(/There is no cafe with id/u)).toBeTruthy()
+			expect(screen.getByText(/There is no café with ID/u)).toBeTruthy()
 			expect(lastHeader()?.meals).toBeNull()
 		})
 	})

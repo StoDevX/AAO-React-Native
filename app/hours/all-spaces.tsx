@@ -11,7 +11,7 @@ import {
 } from '../../source/redux/parts/buildings'
 
 import {timezone} from '@frogpond/constants'
-import {LoadingView, NoticeView} from '@frogpond/notice'
+import {LoadErrorView, LoadingView} from '@frogpond/notice'
 import {Stack, useLocalSearchParams, useRouter} from 'expo-router'
 import {useMomentTimer} from '@frogpond/timer'
 
@@ -53,11 +53,7 @@ export default function AllSpacesPage(): React.ReactNode {
 		return (
 			<>
 				{title}
-				<NoticeView
-					buttonText="Try Again"
-					onPress={refetch}
-					text={`A problem occurred while loading: ${error}`}
-				/>
+				<LoadErrorView error={error} onRetry={refetch} />
 			</>
 		)
 	}

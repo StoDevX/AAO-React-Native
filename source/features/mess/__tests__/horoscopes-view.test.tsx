@@ -8,15 +8,6 @@ import {parseBlocks} from '../lib/blocks'
 import {parseHoroscopes} from '../lib/horoscopes'
 import {useMessStore} from '../store'
 
-jest.mock('@expo/ui/swift-ui', () => {
-	// oxlint-disable-next-line typescript/no-require-imports
-	return require('../../../testing/expo-ui-mock') as typeof import('../../../testing/expo-ui-mock')
-})
-jest.mock('@expo/ui/swift-ui/modifiers', () => {
-	// oxlint-disable-next-line typescript/no-require-imports
-	return require('../../../testing/expo-ui-mock') as typeof import('../../../testing/expo-ui-mock')
-})
-
 const LAYOUT = parseHoroscopes(
 	parseBlocks(variety.find((post) => post.id === 36518)?.content.rendered ?? ''),
 )

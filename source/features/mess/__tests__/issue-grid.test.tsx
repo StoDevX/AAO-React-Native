@@ -16,14 +16,6 @@ import type {LightPost, MessIssue, MessStory} from '../types'
 import {useMessIssues} from '../use-mess-issues'
 import {tileEvents} from './mess-issue-tile-mock'
 
-jest.mock('@expo/ui/swift-ui', () => {
-	// oxlint-disable-next-line typescript/no-require-imports
-	return require('../../../testing/expo-ui-mock') as typeof import('../../../testing/expo-ui-mock')
-})
-jest.mock('@expo/ui/swift-ui/modifiers', () => {
-	// oxlint-disable-next-line typescript/no-require-imports
-	return require('../../../testing/expo-ui-mock') as typeof import('../../../testing/expo-ui-mock')
-})
 jest.mock('@frogpond/mess-issue-tile', () => {
 	// oxlint-disable-next-line typescript/no-require-imports
 	return require('./mess-issue-tile-mock') as typeof import('./mess-issue-tile-mock')

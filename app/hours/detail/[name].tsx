@@ -7,7 +7,7 @@ import {timezone} from '@frogpond/constants'
 import {SheetCloseButton} from '../../../source/components/sheet-close-button'
 import {BuildingDetailSwiftUI} from '../../../source/features/building-hours/detail/building-detail'
 import {buildingByNameOptions, parseCampus} from '../../../source/features/building-hours/query'
-import {LoadingView, NoticeView} from '@frogpond/notice'
+import {LoadErrorView, LoadingView, NoticeView} from '@frogpond/notice'
 import {useAppDispatch, useAppSelector} from '../../../source/redux/hooks'
 import {
 	isFavoriteBuilding,
@@ -75,13 +75,7 @@ export default function HoursDetailPage(): React.ReactNode {
 		return (
 			<>
 				{screen}
-				<NoticeView
-					buttonText="Try Again"
-					onPress={refetch}
-					text={`A problem occurred while loading: ${
-						error instanceof Error ? error.message : 'Unknown error'
-					}`}
-				/>
+				<LoadErrorView error={error} onRetry={refetch} />
 			</>
 		)
 	}
@@ -90,7 +84,11 @@ export default function HoursDetailPage(): React.ReactNode {
 		return (
 			<>
 				{screen}
-				<NoticeView text={`Could not find the "${name}" building.`} />
+				<NoticeView
+					description={`Nothing is called “${name}”.`}
+					systemImage="building.2"
+					title="Building Not Found"
+				/>
 			</>
 		)
 	}

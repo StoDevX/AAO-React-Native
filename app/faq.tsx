@@ -3,7 +3,7 @@ import {RefreshControl, StyleSheet, ScrollView, View, Text} from 'react-native'
 import {SafeAreaView} from 'react-native-safe-area-context'
 import * as c from '@frogpond/colors'
 import {Markdown} from '@frogpond/markdown'
-import {LoadingView, NoticeView} from '@frogpond/notice'
+import {LoadErrorView, LoadingView, NoticeView} from '@frogpond/notice'
 import {accent} from '../source/lib/theme'
 import {Stack, useLocalSearchParams} from 'expo-router'
 import {faqsOptions, emptyFaqData} from '../source/features/faqs/query'
@@ -75,21 +75,16 @@ function FaqView(): React.ReactNode {
 	}
 
 	if (isError) {
-		return (
-			<NoticeView
-				buttonText="Try Again"
-				onPress={refetch}
-				text={`A problem occurred while loading: ${error}`}
-			/>
-		)
+		return <LoadErrorView error={error} onRetry={refetch} />
 	}
 
 	if (!hasLegacy && !hasFaqs) {
 		return (
 			<NoticeView
-				buttonText="Try Again"
-				onPress={refetch}
-				text="There aren't any FAQs to show right now."
+				action={{label: 'Try Again', onPress: refetch}}
+				description="There aren’t any FAQs to show right now."
+				systemImage="questionmark.bubble"
+				title="No FAQs"
 			/>
 		)
 	}
