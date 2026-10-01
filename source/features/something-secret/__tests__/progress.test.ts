@@ -49,6 +49,10 @@ describe('stageFor', () => {
 		expect(stageFor(progress).stage).toBe(stage)
 	})
 
+	it('keeps a value that is not a number buried, rather than open', () => {
+		expect(stageFor(Number.NaN)).toEqual({stage: 'blank', fraction: 0})
+	})
+
 	it('measures how far through its stage a value is', () => {
 		expect(stageFor(0).fraction).toBe(0)
 		expect(stageFor(1).fraction).toBeCloseTo(1 / 30)

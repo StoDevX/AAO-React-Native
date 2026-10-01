@@ -41,7 +41,9 @@ export function decay(progress: number, idleSeconds: number): number {
 
 /** Which stage a tap count is in, and how far through it, from just begun to complete (1). */
 export function stageFor(progress: number): {stage: Stage; fraction: number} {
-	if (progress <= 0) {
+	// Written as "not above zero" so NaN lands here too: a slab that cannot say how far it has
+	// risen stays buried, never open on someone's home screen.
+	if (!(progress > 0)) {
 		return {stage: 'blank', fraction: 0}
 	}
 	for (let span of SPANS) {
