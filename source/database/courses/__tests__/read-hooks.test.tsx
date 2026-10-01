@@ -1,11 +1,11 @@
 import * as React from 'react'
 import {afterEach, describe, expect, jest, test} from '@jest/globals'
-import {renderHook, waitFor} from '@testing-library/react-native'
+import {act, renderHook, waitFor} from '@testing-library/react-native'
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query'
 
 import type {SqlRunner, Statement} from '../../sql'
 import type {CourseFilters} from '../filters'
-import {useCourse, useCourseResults} from '../read'
+import {COURSE_PAGE_SIZE, useCourse, useCourseResults} from '../read'
 
 const mockAll = jest.fn<SqlRunner['all']>()
 jest.mock('../../client', () => ({
@@ -85,6 +85,49 @@ describe('useCourseResults', () => {
 		})
 		let {result} = await renderHook(() => useCourseResults({query: '', filters: NONE}), {wrapper})
 		await waitFor(() => expect(result.current.failed).toBe(true))
+	})
+})
+
+/** A results row for clbid `n`. */
+function row(n: number) {
+	return {
+		clbid: n,
+		term: 20261,
+		department: 'MATH',
+		number: n,
+		section: null,
+		status: 'O',
+		name: `C${n}`,
+		title: null,
+		notes: null,
+		gereqs: null,
+		instructors: null,
+	}
+}
+
+describe('useCourseResults: pages', () => {
+	test('reads a page at a time, and the next one when asked', async () => {
+		mockAll.mockImplementation(((stmt: Statement) => {
+			if (stmt.sql.includes('pragma_database_list')) return [{name: 'main'}, {name: 'catalog'}]
+			if (stmt.sql.includes('limit 1)')) return [{n: 1}]
+			let [limit = 0, offset = 0] = stmt.params.slice(-2) as number[]
+			// One full page, then one more course.
+			let total = COURSE_PAGE_SIZE + 1
+			return Array.from({length: Math.max(0, Math.min(limit, total - offset))}, (_, i) =>
+				row(offset + i + 1),
+			)
+		}) as SqlRunner['all'])
+
+		let {result} = await renderHook(() => useCourseResults({query: '', filters: NONE}), {wrapper})
+		await waitFor(() => expect(result.current.isPending).toBe(false))
+		expect(result.current.sections[0]?.data).toHaveLength(COURSE_PAGE_SIZE)
+		expect(result.current.hasMore).toBe(true)
+
+		await act(() => {
+			result.current.loadMore()
+		})
+		await waitFor(() => expect(result.current.sections[0]?.data).toHaveLength(COURSE_PAGE_SIZE + 1))
+		expect(result.current.hasMore).toBe(false)
 	})
 })
 

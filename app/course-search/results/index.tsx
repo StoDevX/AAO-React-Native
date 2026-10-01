@@ -180,6 +180,7 @@ function CourseSearchResultsView(): React.ReactNode {
 					renderSectionHeader={({section: {title}}) => (
 						<ListSectionHeader title={parseTerm(title)} />
 					)}
+					onEndReached={results.loadMore}
 					sections={results.sections}
 					{...largeListProps}
 				/>

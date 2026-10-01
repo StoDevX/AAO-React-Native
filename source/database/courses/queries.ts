@@ -20,11 +20,19 @@ left join ${C}.name_text n on n.id = s.name_id
 left join ${C}.title_text t on t.id = s.title_id
 left join ${C}.notes_text nt on nt.id = s.notes_id`
 
+/** A slice of results: `limit` rows, after skipping `offset`. */
+export type ResultsPage = {offset: number; limit: number}
+
 /**
  * Course search's rows: newest term first, then best match first, or by
- * department, number and section when nothing is typed.
+ * department, number and section when nothing is typed. Ties fall back to
+ * `clbid`, so the order is the same on every read and pages never overlap.
  */
-export function courseResultsQuery(args: {query: string; filters: CourseFilters}): Statement {
+export function courseResultsQuery(args: {
+	query: string
+	filters: CourseFilters
+	page?: ResultsPage
+}): Statement {
 	let {filters} = args
 	// `term in ()` is a syntax error; no terms finds nothing.
 	if (filters.terms.length === 0) {
@@ -70,10 +78,12 @@ export function courseResultsQuery(args: {query: string; filters: CourseFilters}
 		? COURSE_SEARCH.rankExpression
 		: 's.department, cast(s.number as integer), s.section'
 
-	return {
-		sql: `select ${LIST_COLUMNS} from ${from} ${LIST_JOINS} where ${where.join(' and ')} order by s.term desc, ${order}`,
-		params,
+	let sql = `select ${LIST_COLUMNS} from ${from} ${LIST_JOINS} where ${where.join(' and ')} order by s.term desc, ${order}, s.clbid`
+	if (args.page) {
+		sql += ' limit ? offset ?'
+		params.push(args.page.limit, args.page.offset)
 	}
+	return {sql, params}
 }
 
 /** One course's row, for the detail screen. */

@@ -1,4 +1,11 @@
-import {keepPreviousData, queryOptions, useQuery, type UseQueryResult} from '@tanstack/react-query'
+import * as React from 'react'
+import {
+	keepPreviousData,
+	queryOptions,
+	useInfiniteQuery,
+	useQuery,
+	type UseQueryResult,
+} from '@tanstack/react-query'
 import {isUITesting} from '@frogpond/launch-arguments'
 import {now} from '@frogpond/timer'
 
@@ -60,29 +67,60 @@ function catalogHasSections(): boolean {
 	return (row?.n ?? 0) > 0
 }
 
-/** Course search's results, grouped by term, refreshed whenever a new catalog is swapped in. */
+/**
+ * How many result rows a read fetches. Listing every course at once took
+ * 180 ms on a simulator; a page this size costs what a typical search does.
+ */
+export const COURSE_PAGE_SIZE = 200
+
+type ResultsPageData = {hasCatalog: boolean; items: CourseListItem[]}
+
+/**
+ * Course search's results, grouped by term, a page at a time; `loadMore` reads
+ * the next page. Refreshed whenever a new catalog is swapped in.
+ */
 export function useCourseResults(args: {query: string; filters: CourseFilters}): {
 	sections: Array<{title: string; data: CourseListItem[]}>
 	hasCatalog: boolean
+	hasMore: boolean
+	loadMore: () => void
 	isPending: boolean
 	failed: boolean
 } {
 	let {query, filters} = args
 	let revision = useCourseRevision()
-	let result = useQuery({
+	let result = useInfiniteQuery({
 		queryKey: [COURSE_READ_KEY, 'results', revision, query, filters],
-		queryFn: () =>
+		queryFn: ({pageParam}): ResultsPageData =>
 			reportingFailures(() => {
-				if (!catalogHasSections()) return {hasCatalog: false, sections: []}
-				let rows = getRunner().all<CourseListRow>(courseResultsQuery({query, filters}))
-				return {hasCatalog: true, sections: sectionsByTerm(rows.map(listItem))}
+				if (!catalogHasSections()) return {hasCatalog: false, items: []}
+				let page = {offset: pageParam, limit: COURSE_PAGE_SIZE}
+				let rows = getRunner().all<CourseListRow>(courseResultsQuery({query, filters, page}))
+				return {hasCatalog: true, items: rows.map(listItem)}
 			}),
+		initialPageParam: 0,
+		// A full page may have more after it; a short one is the last.
+		getNextPageParam: (last, pages) =>
+			last.items.length === COURSE_PAGE_SIZE ? pages.length * COURSE_PAGE_SIZE : undefined,
 		placeholderData: keepPreviousData,
 		meta: {persist: false},
 	})
+
+	let pages = result.data?.pages
+	let sections = React.useMemo(
+		() => sectionsByTerm((pages ?? []).flatMap((page) => page.items)),
+		[pages],
+	)
+	let {hasNextPage, isFetchingNextPage, fetchNextPage} = result
+	let loadMore = React.useCallback(() => {
+		if (hasNextPage && !isFetchingNextPage) void fetchNextPage()
+	}, [hasNextPage, isFetchingNextPage, fetchNextPage])
+
 	return {
-		sections: result.data?.sections ?? [],
-		hasCatalog: result.data?.hasCatalog ?? false,
+		sections,
+		hasCatalog: pages?.[0]?.hasCatalog ?? false,
+		hasMore: hasNextPage,
+		loadMore,
 		isPending: result.isPending,
 		failed: result.isError,
 	}

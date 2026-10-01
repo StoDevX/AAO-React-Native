@@ -125,6 +125,39 @@ describe('courseResultsQuery: search', () => {
 	})
 })
 
+describe('courseResultsQuery: pages', () => {
+	let courses = [
+		makeCourse({clbid: 1, department: 'ART', number: 101}),
+		makeCourse({clbid: 2, department: 'ART', number: 101}),
+		makeCourse({clbid: 3, department: 'BIO', number: 150}),
+		makeCourse({clbid: 4, department: 'CHEM', number: 121, term: 20262}),
+		makeCourse({clbid: 5, department: 'MATH', number: 252}),
+	]
+	let runner = catalog(...courses)
+
+	function page(query: string, offset: number): number[] {
+		return runner
+			.all<CourseListRow>(courseResultsQuery({query, filters: NONE, page: {offset, limit: 2}}))
+			.map((row) => row.clbid)
+	}
+
+	it('splits the listing into pages that join back into the whole, in order', () => {
+		assert.deepEqual([...page('', 0), ...page('', 2), ...page('', 4)], find(runner, ''))
+		assert.deepEqual(find(runner, ''), [4, 1, 2, 3, 5])
+	})
+
+	it('pages a search the same way', () => {
+		assert.deepEqual(
+			[...page('algebra', 0), ...page('algebra', 2), ...page('algebra', 4)],
+			find(runner, 'algebra'),
+		)
+	})
+
+	it('has an empty page past the end', () => {
+		assert.deepEqual(page('', 6), [])
+	})
+})
+
 describe('courseResultsQuery: filters', () => {
 	let runner = catalog(
 		makeCourse({
