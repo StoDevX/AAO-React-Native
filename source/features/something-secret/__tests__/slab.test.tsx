@@ -43,6 +43,7 @@ beforeEach(() => {
 	useNowOverride.getState().freeze(START.clone())
 	useSecretStore.setState({buried: false})
 	jest.mocked(roar).mockClear()
+	jest.mocked(melt).mockClear()
 	jest.spyOn(AccessibilityInfo, 'announceForAccessibility').mockImplementation(() => undefined)
 })
 
@@ -57,6 +58,18 @@ describe('SecretSlab', () => {
 		useSecretStore.setState({buried: true})
 		await render(<SecretSlab isFocused={true} />)
 		expect(screen.queryByLabelText('Something secret')).toBeNull()
+	})
+
+	it('comes back blank and pressable after being buried while open', async () => {
+		await render(<SecretSlab isFocused={true} />)
+		await tapTimes(250)
+		await fireEvent.press(screen.getByLabelText('do not push?'))
+		await act(() => useSecretStore.setState({buried: true}))
+		await act(() => useSecretStore.setState({buried: false, lockedUntil: null}))
+		expect(stage()).toBe('blank')
+		await tapTimes(250)
+		await fireEvent.press(screen.getByLabelText('do not push?'))
+		expect(melt).toHaveBeenCalledTimes(2)
 	})
 
 	it('starts blank, with a label and hint for VoiceOver', async () => {

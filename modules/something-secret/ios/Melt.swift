@@ -10,10 +10,13 @@ enum Melt {
 	/// Kept alive while it shows; a window with no owner is removed at once.
 	private static var window: UIWindow?
 
-	private static var scene: UIWindowScene? {
-		UIApplication.shared.connectedScenes
-			.compactMap { $0 as? UIWindowScene }
-			.first { $0.activationState == .foregroundActive }
+	private static var scenes: [UIWindowScene] {
+		UIApplication.shared.connectedScenes.compactMap { $0 as? UIWindowScene }
+	}
+
+	/// The scene in use, for a melt, which only makes sense on screen.
+	private static var activeScene: UIWindowScene? {
+		scenes.first { $0.activationState == .foregroundActive }
 	}
 
 	/// The app's own window, beneath any melt window.
@@ -43,7 +46,7 @@ enum Melt {
 
 	/// Melts the app to black, then fades the melt window out to whatever is beneath.
 	static func run() async {
-		guard window == nil, let scene, let appWindow = appWindow(in: scene) else { return }
+		guard window == nil, let scene = activeScene, let appWindow = appWindow(in: scene) else { return }
 		let image = snapshot(of: appWindow, afterScreenUpdates: false)
 		await withCheckedContinuation { finished in
 			_ = show(
@@ -55,15 +58,21 @@ enum Melt {
 		remove(overlay)
 	}
 
-	/// Covers everything in black, so the app can change beneath before a rewind.
+	/// Covers everything in black, so the app can change beneath before a rewind. Any scene will
+	/// do: the app may be ending a lockout as it comes back to the foreground.
 	static func cover() async {
-		guard window == nil, let scene else { return }
+		guard window == nil, let scene = activeScene ?? scenes.first else { return }
 		_ = show(Color.black.ignoresSafeArea(), in: scene)
 	}
 
-	/// Pours the app as it now is back up out of the black cover, then removes the cover.
+	/// Pours the app as it now is back up out of the black cover, then removes the cover. The
+	/// cover always comes down, rewind or not: one left up would hide the app until it is quit.
 	static func rewind() async {
-		guard let overlay = window, let scene, let appWindow = appWindow(in: scene) else { return }
+		guard let overlay = window else { return }
+		guard let scene = overlay.windowScene, let appWindow = appWindow(in: scene) else {
+			remove(overlay)
+			return
+		}
 		// Time for React Native to draw the app without the dead screen.
 		try? await Task.sleep(for: .milliseconds(300))
 		let image = snapshot(of: appWindow, afterScreenUpdates: true)

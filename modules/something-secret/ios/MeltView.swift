@@ -24,17 +24,22 @@ struct MeltView: View {
 	/// When the first frame drew. Counting from the view's creation instead would skip whatever
 	/// time the snapshot held up the main thread.
 	@State private var start: Date?
+	@Environment(\.accessibilityReduceMotion) private var reduceMotion
 
 	var body: some View {
 		TimelineView(.animation) { context in
 			let elapsed = start.map { min(context.date.timeIntervalSince($0), duration) } ?? 0
 			let time = reversed ? duration - elapsed : elapsed
 			GeometryReader { geometry in
-				Image(uiImage: snapshot)
-					.resizable()
-					.layerEffect(
+				let image = Image(uiImage: snapshot).resizable()
+				if reduceMotion {
+					// The same timing, with nothing moving: the app fades to black, or back.
+					image.opacity(1 - time / duration)
+				} else {
+					image.layerEffect(
 						MeltShaders.library.glassMelt(.float(time), .float2(geometry.size)),
 						maxSampleOffset: CGSize(width: 32, height: geometry.size.height))
+				}
 			}
 		}
 		.background(Color.black)

@@ -50,12 +50,15 @@ export function SecretSlab({isFocused}: Props): React.ReactNode {
 		return () => clearInterval(id)
 	}, [isSettled])
 
-	// Buried as the home screen loses focus; adjusted during render, as React advises for state
-	// that follows a prop, rather than an effect that would draw the old slab once more first.
+	// Back to blank as the home screen loses focus, and as the slab is buried, so it never returns
+	// already open. Adjusted during render, as React advises for state that follows a prop, rather
+	// than in an effect that would draw the old slab once more first.
 	let [wasFocused, setWasFocused] = React.useState(isFocused)
-	if (isFocused !== wasFocused) {
+	let [wasBuried, setWasBuried] = React.useState(buried)
+	if (isFocused !== wasFocused || buried !== wasBuried) {
 		setWasFocused(isFocused)
-		if (!isFocused) {
+		setWasBuried(buried)
+		if (!isFocused || buried) {
 			setAnchor(anchorAt(0))
 			setTapCount(0)
 		}
