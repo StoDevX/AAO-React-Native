@@ -7,7 +7,7 @@ import {useQuery} from '@tanstack/react-query'
 import {SheetCloseButton} from '../../../source/components/sheet-close-button'
 import {contactByTitleOptions} from '../../../source/features/directory/contacts-query'
 import {images as contactImages} from '../../../images/contacts'
-import {Markdown, type MarkdownStyle} from '@frogpond/markdown'
+import {Markdown} from '@frogpond/markdown'
 import {ListFooter} from '@frogpond/lists'
 import {callPhone} from '../../../source/components/call-phone'
 import {Button} from '@frogpond/button'
@@ -15,8 +15,6 @@ import {openUrl} from '@frogpond/open-url'
 import {GH_NEW_ISSUE_URL} from '../../../source/lib/constants'
 import {LoadingView, NoticeView} from '@frogpond/notice'
 import * as c from '@frogpond/colors'
-
-const paragraphMarkdownStyle: MarkdownStyle = {paragraph: {fontSize: 16}}
 
 const styles = StyleSheet.create({
 	scroll: {
@@ -107,7 +105,7 @@ export default function ContactsDetailPage(): React.ReactNode {
 					<Image resizeMode="cover" source={headerImage} style={styles.image} />
 				) : null}
 				<Container>
-					<Markdown markdownStyle={paragraphMarkdownStyle} source={contact.text} />
+					<Markdown source={contact.text} />
 
 					<Button onPress={onPress} title={contact.buttonText} />
 
