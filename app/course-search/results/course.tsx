@@ -33,7 +33,7 @@ const styles = StyleSheet.create({
 
 function Information({course}: {course: CourseType}) {
 	return (
-		<Section title="INFORMATION">
+		<Section title="Information">
 			{course.instructors ? (
 				<DetailRow
 					label={course.instructors.length === 1 ? 'Instructor' : 'Instructors'}
@@ -57,7 +57,7 @@ function Schedule({course}: {course: CourseType}) {
 	}
 
 	return (
-		<Section title="SCHEDULE">
+		<Section title="Schedule">
 			{schedule.map(({day, slots}) => (
 				<LabeledDay key={day} day={day} slots={slots} />
 			))}
@@ -95,7 +95,7 @@ function Notes({course}: {course: CourseType}) {
 	}
 
 	return (
-		<Section title="NOTES">
+		<Section title="Notes">
 			<SelectableText text={formatCourseNotes(course.notes)} />
 		</Section>
 	)
@@ -107,7 +107,7 @@ function Description({course}: {course: CourseType}) {
 	}
 
 	return (
-		<Section title="DESCRIPTION">
+		<Section title="Description">
 			<SelectableText text={course.description[0] ?? ''} />
 		</Section>
 	)

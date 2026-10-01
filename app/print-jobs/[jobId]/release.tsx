@@ -50,7 +50,7 @@ const DOCUMENT_NAME_MODIFIERS = [
 function JobInformation({job}: {job: PrintJob}) {
 	let wasPrintedAlready = job.statusFormatted === 'Sent to Printer'
 	return (
-		<Section title="JOB INFO">
+		<Section title="Job Info">
 			<DetailRow label="Status" value={job.statusFormatted} />
 			<DetailRow label="Time" value={job.usageTimeFormatted} />
 			<DetailRow label="Pages" value={job.totalPages.toString()} />
@@ -64,7 +64,7 @@ function JobInformation({job}: {job: PrintJob}) {
 
 function PrinterInformation({printer}: {printer: Printer}) {
 	return (
-		<Section title="PRINTER INFO">
+		<Section title="Printer Info">
 			<DetailRow label="Name" value={printer.printerName} />
 			{Boolean(printer.location) && <DetailRow label="Location" value={printer.location ?? ''} />}
 		</Section>

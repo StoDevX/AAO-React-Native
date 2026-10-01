@@ -266,8 +266,8 @@ struct TestIdentifiers {
 
 	enum Balances {
 		static let iAgree = "I Agree"
-		static let balancesHeader = "BALANCES"
-		static let mealPlanHeader = "MEAL PLAN"
+		static let balancesHeader = "Balances"
+		static let mealPlanHeader = "Meal Plan"
 	}
 
 	// MARK: - Student Work
@@ -431,9 +431,8 @@ struct TestIdentifiers {
 		/// Convocation ended that morning and still counts toward Academic Year.
 		static let categories = ["Music (10)", "Academic Year (7)"]
 		/// The picker menu's one section header. SwiftUI draws a Menu section
-		/// title as static text, uppercased by the caller rather than by the
-		/// platform.
-		static let calendarsSection = "CALENDARS"
+		/// title as static text, in the case the caller wrote it.
+		static let calendarsSection = "Calendars"
 		/// The rows that open each axis's submenu. A row names its selection
 		/// after a colon once that axis is filtered, so a test matching one has
 		/// to match on the prefix.

@@ -117,10 +117,7 @@ function BusStopDetail(props: Props): React.ReactNode {
 	return (
 		<Host style={styles.host}>
 			<List modifiers={[listStyle('insetGrouped')]}>
-				<Section
-					footer={<Text>{BUS_FOOTER_MESSAGE}</Text>}
-					title={`${stop.name} — ${subtitle}`.toUpperCase()}
-				>
+				<Section footer={<Text>{BUS_FOOTER_MESSAGE}</Text>} title={`${stop.name} — ${subtitle}`}>
 					{rows}
 				</Section>
 			</List>

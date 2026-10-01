@@ -52,7 +52,7 @@ export function FilterMenu<T extends object>({
 			return (
 				<Host matchContents={true}>
 					<Menu label={<TriggerLabel title={filter.spec.title} />} modifiers={modifiers}>
-						<Section title={filter.spec.title.toUpperCase()}>
+						<Section title={filter.spec.title}>
 							<Toggle
 								isOn={filter.enabled}
 								label={filter.spec.label}
@@ -72,7 +72,7 @@ export function FilterMenu<T extends object>({
 			return (
 				<Host matchContents={true}>
 					<Menu label={<TriggerLabel title={filter.spec.title} />} modifiers={modifiers}>
-						<Section title={filter.spec.title.toUpperCase()}>
+						<Section title={filter.spec.title}>
 							{filter.spec.options.map((option) => (
 								<Toggle
 									key={option.label}
@@ -99,7 +99,7 @@ export function FilterMenu<T extends object>({
 			return (
 				<Host matchContents={true}>
 					<Menu label={<TriggerLabel title={spec.title} />} modifiers={modifiers}>
-						<Section modifiers={STAYS_OPEN} title={spec.title.toUpperCase()}>
+						<Section modifiers={STAYS_OPEN} title={spec.title}>
 							{spec.options.map((option) => (
 								<Toggle
 									key={option.title}

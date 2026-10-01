@@ -117,7 +117,7 @@ export default function DirectoryDetailPage(): React.ReactNode {
 					    the entry *has* pronouns is the question -- otherwise ABOUT
 					    drew its header over nothing. */}
 					{pronouns?.length || email || officeHours || profileUrl ? (
-						<Section title="ABOUT">
+						<Section title="About">
 							{pronouns?.length ? <DetailRow label="Pronouns" value={pronouns.join(', ')} /> : null}
 
 							{email ? (
@@ -150,7 +150,7 @@ export default function DirectoryDetailPage(): React.ReactNode {
 					) : null}
 
 					{campusLocations.map((loc: CampusLocation) => (
-						<Section key={`${loc.display ?? ''}-${loc.phone ?? ''}`} title="OFFICE">
+						<Section key={`${loc.display ?? ''}-${loc.phone ?? ''}`} title="Office">
 							{loc.display ? <DetailRow label="Location" value={loc.display} /> : null}
 							{loc.phone ? (
 								<DetailRow
@@ -164,7 +164,7 @@ export default function DirectoryDetailPage(): React.ReactNode {
 					))}
 
 					{departments.length > 0 ? (
-						<Section title={departments.length === 1 ? 'DEPARTMENT' : 'DEPARTMENTS'}>
+						<Section title={departments.length === 1 ? 'Department' : 'Departments'}>
 							{departments.map((dept: Department) => (
 								<DisclosureRow
 									key={dept.name}

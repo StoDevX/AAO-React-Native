@@ -238,7 +238,7 @@ let HoursProblemReportView = ({initialBuilding, campus}: Props): React.ReactNode
 						</VStack>
 					</Section>
 
-					<Section title="ABOUT">
+					<Section title="About">
 						<SyncedTextField
 							autocapitalization="words"
 							onChangeText={(newName) => dispatch({type: 'UPDATE_BUILDING', data: {name: newName}})}
@@ -300,7 +300,7 @@ let HoursProblemReportView = ({initialBuilding, campus}: Props): React.ReactNode
 					</Section>
 
 					{/* Always drawn, even with no links, so Add Link stays reachable. */}
-					<Section title="RESOURCES">
+					<Section title="Resources">
 						{links.map((link, i) => (
 							<DetailRow
 								// oxlint-disable-next-line react/no-array-index-key -- the index is the handle the editor edits by
@@ -316,7 +316,7 @@ let HoursProblemReportView = ({initialBuilding, campus}: Props): React.ReactNode
 
 					<Section
 						footer={<Text>Anything the fields above cannot say.</Text>}
-						title="WHAT'S WRONG?"
+						title="What's Wrong?"
 					>
 						<SyncedTextField
 							autocapitalization="sentences"
@@ -327,7 +327,7 @@ let HoursProblemReportView = ({initialBuilding, campus}: Props): React.ReactNode
 						/>
 					</Section>
 
-					<ImageAttachmentsSection attachments={attachments} title="IMAGES" />
+					<ImageAttachmentsSection attachments={attachments} title="Images" />
 				</List>
 			</Host>
 		</>
@@ -386,7 +386,7 @@ const EditableSchedule = (props: EditableScheduleProps) => {
 			// carries -- say so, or a reader outside Central reads their own
 			// times back and reports an hour that was never wrong.
 			footer={schedule.hours.length > 0 ? <Text>Hours are in Central Time.</Text> : undefined}
-			title="INFORMATION"
+			title="Information"
 		>
 			<SyncedTextField
 				autocapitalization="words"
