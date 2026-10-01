@@ -10,7 +10,7 @@ struct StudentWorkScreen: Screen {
 
 	@discardableResult
 	func navigate() -> Self {
-		open(route: "/StudentWork", mountedWhen: mounted)
+		open(route: "/student-work", mountedWhen: mounted)
 	}
 
 	/// Opens a preset below the tiles, whose row label leads with its title.

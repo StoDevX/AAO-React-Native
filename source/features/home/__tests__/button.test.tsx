@@ -27,7 +27,7 @@ describe('HomeScreenButton', () => {
 	})
 
 	test('gives a native screen no hint', async () => {
-		let view: ViewType = {...common, type: 'view', view: '/Menus'}
+		let view: ViewType = {...common, type: 'view', view: '/menus'}
 		await render(<HomeScreenButton onPress={jest.fn()} view={view} />)
 		expect(screen.getByRole('button', {name: 'Tile'}).props.accessibilityHint).toBeUndefined()
 	})

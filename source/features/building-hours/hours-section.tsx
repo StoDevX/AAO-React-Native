@@ -22,6 +22,7 @@ import {
 	getShortBuildingStatus,
 	groupHoursByDays,
 	hasDisplayableHours,
+	schedulesWithContent,
 	statusWindow,
 } from './lib'
 import type {BuildingStatusType, BuildingType, NamedBuildingScheduleType} from './types'
@@ -86,7 +87,7 @@ type Props = {
 export function HoursSection({venue, now}: Props): React.ReactNode {
 	let blocks = venue.schedule ?? []
 	let scheduled = hasDisplayableHours(blocks)
-	let withContent = blocks.filter((block) => block.hours.length > 0 || block.notes)
+	let withContent = schedulesWithContent(blocks)
 	if (withContent.length === 0) {
 		return null
 	}

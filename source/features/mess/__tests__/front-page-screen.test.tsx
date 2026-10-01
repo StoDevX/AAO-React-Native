@@ -260,7 +260,7 @@ describe('FrontPageScreen', () => {
 		await fireEvent.press(screen.getByTestId(TOP_TILE_ID))
 
 		expect(mockNavigate).toHaveBeenCalledWith({
-			pathname: '/Messenger/issue',
+			pathname: '/messenger/issue',
 			params: {key: 'week:2026-04-27'},
 		})
 	})

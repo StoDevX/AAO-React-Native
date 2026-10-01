@@ -53,7 +53,7 @@ export function ImageView({story, image, columnWidth, index}: Props): React.Reac
 			]}
 			onPress={() =>
 				router.navigate({
-					pathname: '/Messenger/image',
+					pathname: '/messenger/image',
 					params:
 						index === undefined
 							? {id: String(story.id)}

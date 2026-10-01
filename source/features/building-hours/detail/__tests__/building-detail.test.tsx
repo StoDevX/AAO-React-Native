@@ -69,7 +69,7 @@ afterEach(() => {
  * Renders the detail screen behind a `QueryClientProvider`, since it reads
  * the map's geojson through `useQuery` now -- seeding `mapFeatures` puts that
  * query straight into a warm cache rather than a real fetch, matching how the
- * sheet behaves once `/Map` has visited the same campus.
+ * sheet behaves once `/map` has visited the same campus.
  */
 function renderDetail(
 	building: BuildingType,

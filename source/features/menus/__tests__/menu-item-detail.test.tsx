@@ -3,7 +3,7 @@ import {afterEach, beforeEach, describe, expect, jest, test} from '@jest/globals
 import {act, render, screen} from '@testing-library/react-native'
 import {QueryClient, QueryClientProvider, onlineManager} from '@tanstack/react-query'
 
-import MenuItemDetailPage from '../../../../app/(home)/MenuItemDetail'
+import MenuItemDetailPage from '../../../../app/menu-item-detail'
 import {MenuItemDetailView} from '../../../../modules/food-menu/food-item-detail'
 import {bonAppMenuOptions, pauseMenuOptions} from '../query'
 import {OFFLINE_MESSAGE} from '../lib/menu-view'
@@ -28,8 +28,10 @@ const PAUSE_PARAMS = {source: 'pause', itemId: '0'}
 let mockParams: Record<string, string> = PAUSE_PARAMS
 
 jest.mock('expo-router', () => ({
-	Stack: {Screen: () => null, Title: () => null},
+	// oxlint-disable-next-line typescript/no-require-imports
+	Stack: require('../../../testing/expo-router-mock').Stack,
 	useLocalSearchParams: () => mockParams,
+	useNavigation: () => ({goBack: jest.fn()}),
 }))
 
 const mockDetailView = MenuItemDetailView as unknown as jest.Mock<(props: unknown) => null>

@@ -20,7 +20,7 @@ struct DirectoryScreen: Screen {
 
 	@discardableResult
 	func navigate() -> Self {
-		open(route: "/Directory", mountedWhen: mounted)
+		open(route: "/directory", mountedWhen: mounted)
 	}
 
 	@discardableResult

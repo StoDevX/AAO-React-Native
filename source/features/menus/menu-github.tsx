@@ -115,7 +115,7 @@ export function GitHubHostedMenu(props: Props): React.ReactNode {
 	let onItemPress = React.useCallback(
 		(item: MenuItemType) =>
 			router.navigate({
-				pathname: '/MenuItemDetail',
+				pathname: '/menu-item-detail',
 				params: {source: 'pause', itemId: item.id},
 			}),
 		[router],

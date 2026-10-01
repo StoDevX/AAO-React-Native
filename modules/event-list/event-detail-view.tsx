@@ -21,6 +21,7 @@ import type {PoweredBy} from './types'
 const styles = StyleSheet.create({
 	host: {
 		flex: 1,
+		backgroundColor: c.systemGroupedBackground,
 	},
 })
 
