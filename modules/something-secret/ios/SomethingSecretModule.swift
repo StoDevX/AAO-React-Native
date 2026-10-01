@@ -18,6 +18,14 @@ public class SomethingSecretModule: Module {
 			await Melt.run()
 		}
 
+		AsyncFunction("coverForRewind") { () async in
+			await Melt.cover()
+		}
+
+		AsyncFunction("rewind") { () async in
+			await Melt.rewind()
+		}
+
 		Function("startShakeWatch") { [weak self] in
 			DispatchQueue.main.async {
 				self?.shakeWatch.start { self?.sendEvent("onShakeEscape") }

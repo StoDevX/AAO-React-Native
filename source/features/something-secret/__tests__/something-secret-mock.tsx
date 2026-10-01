@@ -33,6 +33,8 @@ export function SlabView(props: SlabViewProps): React.ReactNode {
 
 export const roar = jest.fn()
 export const melt = jest.fn(() => Promise.resolve())
+export const coverForRewind = jest.fn(() => Promise.resolve())
+export const rewind = jest.fn(() => Promise.resolve())
 export const startShakeWatch = jest.fn()
 export const stopShakeWatch = jest.fn()
 

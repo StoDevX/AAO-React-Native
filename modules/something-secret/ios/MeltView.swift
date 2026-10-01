@@ -13,27 +13,37 @@ enum MeltShaders {
 	}()
 }
 
-/// The window's snapshot, melting over black.
+/// A snapshot of the app slumping away like glass over black, or, reversed, pouring back up.
 struct MeltView: View {
 	let snapshot: UIImage
 	let duration: Double
+	let reversed: Bool
+	/// Called once the melt has run its whole duration, counted from its first frame.
+	let onFinish: () -> Void
 
-	@State private var start = Date.now
+	/// When the first frame drew. Counting from the view's creation instead would skip whatever
+	/// time the snapshot held up the main thread.
+	@State private var start: Date?
 
 	var body: some View {
 		TimelineView(.animation) { context in
-			let time = min(context.date.timeIntervalSince(start), duration)
+			let elapsed = start.map { min(context.date.timeIntervalSince($0), duration) } ?? 0
+			let time = reversed ? duration - elapsed : elapsed
 			GeometryReader { geometry in
 				Image(uiImage: snapshot)
 					.resizable()
-					.colorEffect(MeltShaders.library.heat(.float(time)))
-					.distortionEffect(
-						MeltShaders.library.melt(.float(time), .float2(geometry.size)),
-						maxSampleOffset: CGSize(width: 0, height: geometry.size.height))
+					.layerEffect(
+						MeltShaders.library.glassMelt(.float(time), .float2(geometry.size)),
+						maxSampleOffset: CGSize(width: 32, height: geometry.size.height))
 			}
 		}
 		.background(Color.black)
 		.ignoresSafeArea()
 		.accessibilityHidden(true)
+		.task {
+			start = .now
+			try? await Task.sleep(for: .seconds(duration))
+			onFinish()
+		}
 	}
 }

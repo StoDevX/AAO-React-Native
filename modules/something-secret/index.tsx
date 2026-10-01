@@ -48,6 +48,8 @@ type SomethingSecretEvents = {
 declare class SomethingSecretModule extends NativeModule<SomethingSecretEvents> {
 	roar(): void
 	melt(): Promise<void>
+	coverForRewind(): Promise<void>
+	rewind(): Promise<void>
 	startShakeWatch(): void
 	stopShakeWatch(): void
 }
@@ -62,6 +64,16 @@ export function roar(): void {
 /** Melts the whole app away to black, resolving once the melt has gone. */
 export function melt(): Promise<void> {
 	return SomethingSecret.melt()
+}
+
+/** Covers the whole app in black, resolving once the cover shows, ahead of `rewind`. */
+export function coverForRewind(): Promise<void> {
+	return SomethingSecret.coverForRewind()
+}
+
+/** Pours the app as it now is back up out of the black cover, then removes the cover. */
+export function rewind(): Promise<void> {
+	return SomethingSecret.rewind()
 }
 
 /** Starts watching for a hard shake; the accelerometer runs only between start and stop. */
