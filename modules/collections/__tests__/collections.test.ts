@@ -58,9 +58,7 @@ describe('groupBy', () => {
 		})
 	})
 
-	it('files an item with no key under "undefined", as a string key would read it', () => {
-		let modes = [{category: 'Bus'}, {category: undefined}]
-
-		expect(Object.keys(groupBy(modes, (mode) => mode.category))).toEqual(['Bus', 'undefined'])
+	it('files a number key as its string', () => {
+		expect(groupBy([2024, 2025, 2024], (year) => year)).toEqual({2024: [2024, 2024], 2025: [2025]})
 	})
 })

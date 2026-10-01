@@ -22,7 +22,10 @@ const styles = StyleSheet.create({
 	},
 })
 
-const groupStreams = (entries: StreamType[]) => {
+/** Streams with the heading each one is listed under, which every stream here has. */
+type GroupedStream = StreamType & {$groupBy: string}
+
+const groupStreams = (entries: GroupedStream[]) => {
 	let grouped = groupBy(entries, (j) => j.$groupBy)
 	return Object.entries(grouped).map(([title, data]) => ({title, data}))
 }
@@ -49,7 +52,10 @@ const getEnabledCategories = <T extends object>(filters: ListFilter<T>[]) => {
 	})
 }
 
-const filterStreams = <T extends object>(streams: StreamType[], filters: ListFilter<T>[]) => {
+const filterStreams = <S extends StreamType, T extends object>(
+	streams: S[],
+	filters: ListFilter<T>[],
+) => {
 	let enabledCategories = getEnabledCategories(filters)
 
 	if (enabledCategories.length === 0) {

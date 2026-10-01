@@ -52,7 +52,7 @@ export function filterAndGroupOrgs(orgs: StudentOrgType[], searchQuery: string):
 		return [{title: '', data: results}]
 	}
 
-	return Object.entries(groupBy(results, (org: GroupableOrg) => org.$groupableName)).map(
+	return Object.entries(groupBy(results, (org: GroupableOrg) => org.$groupableName ?? '#')).map(
 		([title, data]) => ({
 			title,
 			data,

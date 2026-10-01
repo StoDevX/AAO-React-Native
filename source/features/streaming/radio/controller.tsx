@@ -50,7 +50,7 @@ function PlayButton(props: PlayButtonProps): React.ReactNode {
 			return <ActionButton icon="pause" onPress={onPause} text="Pause" />
 
 		default:
-			return <ActionButton icon="ladybug" onPress={() => undefined} text="Error" />
+			return <ActionButton icon="ladybug" onPress={NOTHING_TO_RETRY} text="Error" />
 	}
 }
 
@@ -68,6 +68,9 @@ type Props = {
 		streamSourceUrl: string
 	}
 }
+
+/** The error button's press: the player has nothing it can retry from here. */
+const NOTHING_TO_RETRY = (): void => undefined
 
 export function RadioControllerView(props: Props): React.ReactNode {
 	let {logos, ...screenProps} = props

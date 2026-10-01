@@ -1,13 +1,13 @@
 /**
- * The items under the key each one gives, in order. A missing key files the
- * item under "undefined", as a property name would spell it. Unlike
- * `Object.groupBy`'s result, every key it has holds a list.
+ * The items under the key each one gives, in order. Unlike `Object.groupBy`'s
+ * result, every key it has holds a list. Every item needs a key: a caller
+ * with items that may lack one names the group they go in.
  */
 export function groupBy<T>(
 	items: Iterable<T>,
-	keyOf: (item: T) => string | number | null | undefined,
+	keyOf: (item: T) => string | number,
 ): Record<string, T[]> {
-	return Object.groupBy(items, (item) => String(keyOf(item))) as Record<string, T[]>
+	return Object.groupBy(items, keyOf) as Record<string, T[]>
 }
 
 /** Orders two keys the way lodash's `sortBy` did: missing values last. */
