@@ -542,6 +542,9 @@ importers:
 
   modules/app-theme:
     dependencies:
+      '@frogpond/colors':
+        specifier: workspace:*
+        version: link:../colors
       deepmerge:
         specifier: 4.3.1
         version: 4.3.1
