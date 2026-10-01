@@ -560,9 +560,6 @@ importers:
 
   modules/button:
     dependencies:
-      '@callstack/react-theme-provider':
-        specifier: 3.0.9
-        version: 3.0.9(react@19.2.3)
       '@frogpond/colors':
         specifier: workspace:*
         version: link:../colors
@@ -659,9 +656,6 @@ importers:
 
   modules/event-list:
     dependencies:
-      '@callstack/react-theme-provider':
-        specifier: 3.0.9
-        version: 3.0.9(react@19.2.3)
       '@frogpond/colors':
         specifier: workspace:*
         version: link:../colors
@@ -725,9 +719,6 @@ importers:
 
   modules/food-menu:
     dependencies:
-      '@callstack/react-theme-provider':
-        specifier: 3.0.9
-        version: 3.0.9(react@19.2.3)
       '@expo/ui':
         specifier: 57.0.14
         version: 57.0.14(patch_hash=3b4a49056139c76e4fc6cee9979973b86da4db85993b93c666014c100c30ba5a)(@babel/core@7.29.7)(expo@57.0.19)(react-native-worklets@0.10.1)(react-native@0.86.3)(react@19.2.3)
@@ -811,9 +802,6 @@ importers:
 
   modules/lists:
     dependencies:
-      '@callstack/react-theme-provider':
-        specifier: 3.0.9
-        version: 3.0.9(react@19.2.3)
       '@frogpond/colors':
         specifier: workspace:*
         version: link:../colors
