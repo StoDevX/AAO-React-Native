@@ -644,4 +644,34 @@ describe('BuildingPicker', () => {
 			expect(onSelect).toHaveBeenCalledWith('a')
 		})
 	})
+
+	// A place the feed sent without a name throws while the list sorts. The
+	// sheet shows a row to try again rather than the map going down with it.
+	describe('when drawing the places throws', () => {
+		const NAMELESS = makeBuilding({id: 'x', name: undefined as unknown as string})
+
+		it('offers to try again in place of the picker', async () => {
+			let error = jest.spyOn(console, 'error').mockImplementation(() => undefined)
+			await renderPicker({buildings: [...fixtures, NAMELESS], table: null})
+			expect(screen.getByText('Tap to try again.')).toBeTruthy()
+			expect(screen.queryByLabelText('Search for a place')).toBeNull()
+			expect(error).toHaveBeenCalledWith(
+				'Caught error:',
+				expect.objectContaining({message: expect.stringContaining('localeCompare')}),
+				expect.anything(),
+			)
+			error.mockRestore()
+		})
+
+		it('draws the picker again once the places can be drawn', async () => {
+			let error = jest.spyOn(console, 'error').mockImplementation(() => undefined)
+			let {client} = await renderPicker({buildings: [...fixtures, NAMELESS], table: null})
+			client.setQueryData(keys.all('carleton'), fixtures)
+			await fireEvent.press(screen.getByText('Tap to try again.'))
+			expect(screen.getByLabelText('Search for a place')).toBeTruthy()
+			expect(screen.queryByText('Tap to try again.')).toBeNull()
+			expect(error).toHaveBeenCalledTimes(1)
+			error.mockRestore()
+		})
+	})
 })

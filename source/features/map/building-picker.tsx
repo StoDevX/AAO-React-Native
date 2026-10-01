@@ -27,6 +27,7 @@ import {
 	padding,
 	shapes,
 } from '@expo/ui/swift-ui/modifiers'
+import * as Sentry from '@sentry/react-native'
 import {useQuery} from '@tanstack/react-query'
 import {CampusSearchBar} from '@frogpond/campus-search-bar'
 import * as c from '@frogpond/colors'
@@ -126,6 +127,35 @@ type Props = {
 	onGroupOpen: () => void
 }
 
+/// The picker, or a row to draw it again if drawing it throws: a place or a
+/// table this build cannot read then costs the sheet its contents rather
+/// than taking the map down with it.
+export function BuildingPicker(props: Props): React.ReactNode {
+	return (
+		<Sentry.ErrorBoundary
+			fallback={(failed) => <PickerFailed onRetry={() => failed.resetError()} />}
+		>
+			<PickerContents {...props} />
+		</Sentry.ErrorBoundary>
+	)
+}
+
+/// Shown in place of a picker that threw while drawing.
+function PickerFailed({onRetry}: {onRetry: () => void}): React.ReactNode {
+	return (
+		<List>
+			<Section>
+				<Button onPress={onRetry}>
+					<VStack alignment="leading" spacing={2}>
+						<Text>A problem occurred while showing places.</Text>
+						<Text>Tap to try again.</Text>
+					</VStack>
+				</Button>
+			</Section>
+		</List>
+	)
+}
+
 /// The picker's contents, as SwiftUI. The sheet that presents them, and the
 /// `Host` they render into, both belong to the map screen.
 ///
@@ -133,7 +163,7 @@ type Props = {
 /// its own section insets around anything it holds, which is what made the
 /// old field's margins uneven and untunable. Out here the field's margins are
 /// the padding modifier and nothing else.
-export function BuildingPicker({
+function PickerContents({
 	campus,
 	compact,
 	onSelect,
