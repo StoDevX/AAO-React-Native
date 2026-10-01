@@ -32,3 +32,20 @@ export function SlabView(props: SlabViewProps): React.ReactNode {
 }
 
 export const roar = jest.fn()
+export const melt = jest.fn(() => Promise.resolve())
+export const startShakeWatch = jest.fn()
+export const stopShakeWatch = jest.fn()
+
+const shakeListeners = new Set<() => void>()
+
+export function addShakeEscapeListener(listener: () => void): {remove: () => void} {
+	shakeListeners.add(listener)
+	return {remove: () => shakeListeners.delete(listener)}
+}
+
+/** Stands in for the native shake watch reporting a shake. */
+export function shakeEscape(): void {
+	for (let listener of shakeListeners) {
+		listener()
+	}
+}
