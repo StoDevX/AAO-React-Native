@@ -9,7 +9,7 @@ import {execFileSync} from 'node:child_process'
 import {existsSync, readFileSync, rmSync, writeFileSync} from 'node:fs'
 import {join} from 'node:path'
 import {renderFixture} from './map-fixtures.mjs'
-import {checkRecording, mergeRecordings, summarizeKeys} from './mess-fixtures.mjs'
+import {checkRecording, mergeRecordings, pickSimulator, summarizeKeys} from './mess-fixtures.mjs'
 
 const BUNDLE = 'NFMTHAZVS9.com.drewvolz.stolaf'
 const FIXTURE = new URL('../source/features/mess/__fixtures__/mess.json', import.meta.url)
@@ -20,8 +20,7 @@ function run(command, args, options = {}) {
 }
 
 let booted = JSON.parse(run('xcrun', ['simctl', 'list', 'devices', 'booted', '-j'])).devices
-let device = Object.values(booted).flat()[0]
-if (!device) throw new Error('boot a simulator with the app installed first')
+let device = pickSimulator(Object.values(booted).flat(), process.env.SIMULATOR_UDID)
 console.log(`recording on ${device.name} (${device.udid})`)
 
 /** The recording's path: asked for each time, since the test run reinstalls the app. */
@@ -44,6 +43,8 @@ let build = [
 	'iphonesimulator',
 	'-derivedDataPath',
 	'ios/build',
+	'-destination',
+	`platform=iOS Simulator,id=${device.udid}`,
 	'-only-testing:AllAboutOlafUITests',
 	'CODE_SIGN_IDENTITY=',
 	'CODE_SIGNING_REQUIRED=NO',

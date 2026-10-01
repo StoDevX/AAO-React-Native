@@ -236,7 +236,8 @@ TEST_RUNNER_AAO_JS_LOCATION=localhost:<port> mise run update-mess-fixtures
 ```
 
 runs the Messenger UI tests against the live paper with `--record-fixtures`
-and writes every fetch they made. It writes nothing if the tests fail.
+and writes every fetch they made. It writes nothing if the tests fail. With
+more than one simulator booted, name one with `SIMULATOR_UDID=<udid>`.
 
 ## Agent Workflow
 

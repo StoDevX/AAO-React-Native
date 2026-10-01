@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import {test} from 'node:test'
-import {checkRecording, mergeRecordings, summarizeKeys} from './mess-fixtures.mjs'
+import {checkRecording, mergeRecordings, pickSimulator, summarizeKeys} from './mess-fixtures.mjs'
 
 let line = (entry) => JSON.stringify(entry)
 
@@ -33,4 +33,22 @@ test('summarizeKeys names the fixtures added and removed', () => {
 test('checkRecording refuses an empty recording', () => {
 	assert.throws(() => checkRecording({}), /nothing was recorded/u)
 	assert.doesNotThrow(() => checkRecording({'json https://x/a': [1]}))
+})
+
+let sim = (udid, name = udid) => ({udid, name})
+
+test('pickSimulator takes the only booted simulator', () => {
+	assert.equal(pickSimulator([sim('A')], undefined).udid, 'A')
+})
+
+test('pickSimulator takes the one named, booted or not among several', () => {
+	assert.equal(pickSimulator([sim('A'), sim('B')], 'B').udid, 'B')
+	assert.throws(() => pickSimulator([sim('A')], 'C'), /C is not booted/u)
+})
+
+// Several worktrees each boot their own; recording on the wrong one reinstalls
+// another session's app.
+test('pickSimulator refuses to guess among several', () => {
+	assert.throws(() => pickSimulator([sim('A'), sim('B')], undefined), /SIMULATOR_UDID/u)
+	assert.throws(() => pickSimulator([], undefined), /boot a simulator/u)
 })
