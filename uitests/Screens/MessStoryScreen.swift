@@ -274,21 +274,6 @@ struct MessStoryScreen: Screen {
 		return self
 	}
 
-	/// Assert a Playlist post offers its playlist in Spotify and draws Spotify's player.
-	@discardableResult
-	func verifyPlaylistOffered() -> Self {
-		let button = app.buttons.matching(
-			NSPredicate(
-				format: "identifier == %@ AND label == %@",
-				TestIdentifiers.News.playlistSpotify, TestIdentifiers.News.playlistSpotifyLabel)
-		).firstMatch
-		XCTAssertTrue(button.waitForExistence(timeout: 30), "a Playlist post should offer Open in Spotify")
-		let player = app.element(matching: TestIdentifiers.News.playlistEmbed)
-		XCTAssertTrue(player.waitForExistence(timeout: 30), "a Playlist post should draw Spotify's player")
-		capture("A Playlist post")
-		return self
-	}
-
 	/// Scroll a recipe page to its first ingredient, tick it, and assert it reads as selected.
 	/// A lazy stack builds a row only near the screen, so the row may not exist until the
 	/// page scrolls to it.

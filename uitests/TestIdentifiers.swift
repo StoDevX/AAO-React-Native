@@ -560,7 +560,6 @@ struct TestIdentifiers {
 		static let horoscopesColumn = "Horoscopes"
 		static let comicColumn = "Comic"
 		static let crosswordColumn = "Crossword"
-		static let playlistColumn = "Playlist"
 		static let recipesColumn = "Recipes"
 		static let photoColumn = "Photo"
 
@@ -595,13 +594,6 @@ struct TestIdentifiers {
 		/// source/features/mess/story-screen.tsx.
 		static let crosswordSolve = "mess-crossword-solve"
 		static let crosswordSolveLabel = "Solve the crossword"
-
-		/// A Playlist post's button to Spotify, in source/features/mess/playlist-view.tsx.
-		static let playlistSpotify = "mess-playlist-spotify"
-		static let playlistSpotifyLabel = "Open in Spotify"
-
-		/// Spotify's player on a Playlist post, in source/features/mess/spotify-embed.tsx.
-		static let playlistEmbed = "mess-playlist-embed"
 
 		/// Every ingredient row on a recipe page, in source/features/mess/recipe-view.tsx.
 		static let recipeIngredient = "mess-recipe-ingredient"
