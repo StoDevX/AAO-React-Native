@@ -1,0 +1,1 @@
+export {SecretSlab} from './slab'
