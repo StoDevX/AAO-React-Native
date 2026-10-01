@@ -9,7 +9,6 @@
     "test": "jest"
   },
   "dependencies": {
-    "@callstack/react-theme-provider": "3.0.9",
     "@frogpond/colors": "workspace:*",
     "@frogpond/event-type": "workspace:*",
     "@frogpond/notice": "workspace:*",
