@@ -9,14 +9,6 @@ import {useDictionaryDraftStore} from '../store'
 import {track} from '../../telemetry/track'
 import type * as ExpoRouterMock from '../../../testing/expo-router-mock'
 
-jest.mock('@expo/ui/swift-ui', () => {
-	// oxlint-disable-next-line typescript/no-require-imports
-	return require('../../../testing/expo-ui-mock') as typeof import('../../../testing/expo-ui-mock')
-})
-jest.mock('@expo/ui/swift-ui/modifiers', () => {
-	// oxlint-disable-next-line typescript/no-require-imports
-	return require('../../../testing/expo-ui-mock') as typeof import('../../../testing/expo-ui-mock')
-})
 jest.mock('../report/submit', () => ({submitReport: jest.fn()}))
 jest.mock('../../telemetry/track', () => ({track: jest.fn()}))
 

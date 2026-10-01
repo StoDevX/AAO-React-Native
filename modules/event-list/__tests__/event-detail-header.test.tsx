@@ -4,15 +4,6 @@ import {render, screen} from '@testing-library/react-native'
 
 import {EventDetailHeader} from '../event-detail-header'
 
-jest.mock('@expo/ui/swift-ui', () => {
-	// oxlint-disable-next-line typescript/no-require-imports
-	return require('../../../source/testing/expo-ui-mock') as typeof import('../../../source/testing/expo-ui-mock')
-})
-jest.mock('@expo/ui/swift-ui/modifiers', () => {
-	// oxlint-disable-next-line typescript/no-require-imports
-	return require('../../../source/testing/expo-ui-mock') as typeof import('../../../source/testing/expo-ui-mock')
-})
-
 describe('EventDetailHeader', () => {
 	test('it shows a line per date, meridiem included in time', async () => {
 		await render(

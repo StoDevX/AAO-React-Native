@@ -26,14 +26,6 @@ import type {Filter, PickerFilter} from '@frogpond/filter'
 // `@frogpond/filter`'s `FilterMenu`/`FilterSheet` render `@expo/ui/swift-ui`
 // directly, which cannot mount under Jest; `applyFiltersToItem` next to them
 // is the real thing this suite uses.
-jest.mock('@expo/ui/swift-ui', () => {
-	// oxlint-disable-next-line typescript/no-require-imports
-	return require('../../../source/testing/expo-ui-mock') as typeof import('../../../source/testing/expo-ui-mock')
-})
-jest.mock('@expo/ui/swift-ui/modifiers', () => {
-	// oxlint-disable-next-line typescript/no-require-imports
-	return require('../../../source/testing/expo-ui-mock') as typeof import('../../../source/testing/expo-ui-mock')
-})
 
 jest.mock('../filter-menu-toolbar', () => {
 	// oxlint-disable-next-line typescript/no-require-imports

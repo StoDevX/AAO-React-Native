@@ -7,15 +7,6 @@ import * as ReactNative from 'react-native'
 import {BuildingListRow} from '../building-list-row'
 import type {BuildingType} from '../../types'
 
-jest.mock('@expo/ui/swift-ui', () => {
-	// oxlint-disable-next-line typescript/no-require-imports
-	return require('../../../../testing/expo-ui-mock') as typeof import('../../../../testing/expo-ui-mock')
-})
-jest.mock('@expo/ui/swift-ui/modifiers', () => {
-	// oxlint-disable-next-line typescript/no-require-imports
-	return require('../../../../testing/expo-ui-mock') as typeof import('../../../../testing/expo-ui-mock')
-})
-
 const now = moment.tz('2026-09-07 14:00', 'America/Chicago') // Monday 2pm
 
 const scheduled: BuildingType = {

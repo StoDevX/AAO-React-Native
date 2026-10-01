@@ -3,15 +3,6 @@ import {fireEvent, render, screen} from '@testing-library/react-native'
 
 import {ActionRow, DetailRow, DisclosureRow} from '../rows'
 
-jest.mock('@expo/ui/swift-ui', () => {
-	// oxlint-disable-next-line typescript/no-require-imports
-	return require('../../testing/expo-ui-mock') as typeof import('../../testing/expo-ui-mock')
-})
-jest.mock('@expo/ui/swift-ui/modifiers', () => {
-	// oxlint-disable-next-line typescript/no-require-imports
-	return require('../../testing/expo-ui-mock') as typeof import('../../testing/expo-ui-mock')
-})
-
 describe('DisclosureRow', () => {
 	it('renders the detail line when there is one', async () => {
 		await render(

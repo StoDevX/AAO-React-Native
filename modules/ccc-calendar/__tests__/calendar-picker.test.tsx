@@ -8,14 +8,6 @@ import type {CalendarSource} from '../sources'
 // choice leaves the filter as are decided in
 // `source/features/calendar/picker-state.ts` and asserted there, without a
 // stand-in for `@expo/ui`.
-jest.mock('@expo/ui/swift-ui', () => {
-	// oxlint-disable-next-line typescript/no-require-imports
-	return require('../../../source/testing/expo-ui-mock') as typeof import('../../../source/testing/expo-ui-mock')
-})
-jest.mock('@expo/ui/swift-ui/modifiers', () => {
-	// oxlint-disable-next-line typescript/no-require-imports
-	return require('../../../source/testing/expo-ui-mock') as typeof import('../../../source/testing/expo-ui-mock')
-})
 
 jest.mock('expo-router', () => {
 	// oxlint-disable-next-line typescript/no-require-imports

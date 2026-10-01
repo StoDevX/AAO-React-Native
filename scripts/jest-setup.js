@@ -3,6 +3,11 @@ import {setTimezone} from '@frogpond/constants'
 
 setTimezone('America/Chicago')
 jest.mock('react-native/Libraries/EventEmitter/NativeEventEmitter')
+// @expo/ui draws SwiftUI, which Jest cannot load; every test gets the
+// stand-in, which renders each view as the React Native elements a test can
+// query.
+jest.mock('@expo/ui/swift-ui', () => require('../source/testing/expo-ui-mock'))
+jest.mock('@expo/ui/swift-ui/modifiers', () => require('../source/testing/expo-ui-mock'))
 jest.mock('expo-web-browser', () => ({
 	openBrowserAsync: jest.fn(() => Promise.resolve({type: 'opened'})),
 	WebBrowserPresentationStyle: {

@@ -11,15 +11,6 @@ import {composeEmail} from '../../../../../../components/send-email'
 import {submitReport} from '../submit'
 import {useTelemetryStore} from '../../../../../telemetry/store'
 
-jest.mock('@expo/ui/swift-ui', () => {
-	// oxlint-disable-next-line typescript/no-require-imports -- jest.mock factories cannot use import
-	return require('../../../../../../testing/expo-ui-mock') as typeof import('../../../../../../testing/expo-ui-mock')
-})
-jest.mock('@expo/ui/swift-ui/modifiers', () => {
-	// oxlint-disable-next-line typescript/no-require-imports -- jest.mock factories cannot use import
-	return require('../../../../../../testing/expo-ui-mock') as typeof import('../../../../../../testing/expo-ui-mock')
-})
-
 const mockGoBack = jest.fn()
 jest.mock('expo-router', () => {
 	// oxlint-disable-next-line typescript/no-require-imports -- jest.mock factories cannot use import

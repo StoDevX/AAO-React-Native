@@ -14,14 +14,6 @@ import {useRecentPlacesStore} from '../store'
 import {makeBuilding} from './fixtures'
 import {track} from '../../telemetry/track'
 
-jest.mock('@expo/ui/swift-ui', () => {
-	// oxlint-disable-next-line typescript/no-require-imports
-	return require('../../../testing/expo-ui-mock') as typeof import('../../../testing/expo-ui-mock')
-})
-jest.mock('@expo/ui/swift-ui/modifiers', () => {
-	// oxlint-disable-next-line typescript/no-require-imports
-	return require('../../../testing/expo-ui-mock') as typeof import('../../../testing/expo-ui-mock')
-})
 jest.mock('@frogpond/campus-search-bar', () => {
 	// oxlint-disable-next-line typescript/no-require-imports
 	return require('./campus-search-bar-mock') as typeof import('./campus-search-bar-mock')

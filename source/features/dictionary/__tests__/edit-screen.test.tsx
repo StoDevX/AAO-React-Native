@@ -7,15 +7,6 @@ import {normalizeEntry} from '../lib/entry'
 import {useDictionaryDraftStore} from '../store'
 import type * as ExpoRouterMock from '../../../testing/expo-router-mock'
 
-jest.mock('@expo/ui/swift-ui', () => {
-	// oxlint-disable-next-line typescript/no-require-imports
-	return require('../../../testing/expo-ui-mock') as typeof import('../../../testing/expo-ui-mock')
-})
-jest.mock('@expo/ui/swift-ui/modifiers', () => {
-	// oxlint-disable-next-line typescript/no-require-imports
-	return require('../../../testing/expo-ui-mock') as typeof import('../../../testing/expo-ui-mock')
-})
-
 // Jest's mock hoisting forbids a `jest.mock()` factory from closing over an
 // out-of-scope variable unless its name starts with "mock" -- the one
 // exemption to the "no uninitialised mock variable" guard.
