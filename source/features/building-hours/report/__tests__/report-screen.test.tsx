@@ -5,7 +5,7 @@ import {Alert} from 'react-native'
 import * as ImagePicker from 'expo-image-picker'
 import {usePreventRemove} from 'expo-router/react-navigation'
 
-import ReportPage from '../../../../../app/(home)/Hours/detail/report'
+import ReportPage from '../../../../../app/Hours/detail/report'
 import {BuildingReportProvider} from '../context'
 import {keys} from '../../query'
 import type {BuildingType} from '../../types'

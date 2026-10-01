@@ -5,4 +5,4 @@
  * Settings presented it as a card of its own, with no Back to return by. This
  * is the same screen under a path of the Settings group's own.
  */
-export {default} from '../(home)/Faq'
+export {default} from '../Faq'

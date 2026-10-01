@@ -1,8 +1,8 @@
 import * as React from 'react'
 import {act, fireEvent, render, screen} from '@testing-library/react-native'
 
-import EditScreen from '../../../../app/(home)/Dictionary/entry/edit'
-import SenseScreen from '../../../../app/(home)/Dictionary/entry/sense'
+import EditScreen from '../../../../app/Dictionary/entry/edit'
+import SenseScreen from '../../../../app/Dictionary/entry/sense'
 import {normalizeEntry} from '../lib/entry'
 import {useDictionaryDraftStore} from '../store'
 import type * as ExpoRouterMock from '../../../testing/expo-router-mock'

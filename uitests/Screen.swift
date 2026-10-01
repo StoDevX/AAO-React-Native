@@ -30,7 +30,7 @@ extension Screen {
 	/// route's screen draws.
 	///
 	/// `route` is an Expo Router path, which drops route groups:
-	/// `app/(home)/Calendar.tsx` is `/Calendar`. `XCUIApplication.open(_:)`
+	/// `app/Calendar.tsx` is `/Calendar`. `XCUIApplication.open(_:)`
 	/// relaunches the app and raises no "Open in…?" sheet, unlike `simctl
 	/// openurl`.
 	///

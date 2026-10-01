@@ -238,7 +238,7 @@ struct TestIdentifiers {
 		static let aPointWithItsOwnHours = "The Cage"
 		/// The About menu in the map's header. It carries the OpenStreetMap
 		/// credit, so it has to stay reachable. Mirrors the accessibilityLabel
-		/// in app/(home)/Map/index.tsx.
+		/// in app/Map/index.tsx.
 		static let attribution = "About this map"
 		/// The credit the tiles' licence requires, one of the About menu's
 		/// items. Mirrors `mapCredits` in source/features/map/urls.ts.
@@ -317,7 +317,7 @@ struct TestIdentifiers {
 		/// From PRESETS in source/features/sis/student-work/presets.ts.
 		static let allPostingsPreset = "All job postings"
 		/// The postings screen's title, whatever it was opened with. Matches
-		/// TITLE in app/(home)/StudentWork/postings.tsx.
+		/// TITLE in app/StudentWork/postings.tsx.
 		static let postingsTitle = "Job Postings"
 		/// The Area filter's key, from `buildJobFilters`.
 		static let areaFilter = "area"
@@ -634,7 +634,7 @@ struct TestIdentifiers {
 	enum Directory {
 		/// The heading below the contact tiles on the Directory screen.
 		static let importantContacts = "Departments"
-		/// Matches CONTACT_GRID_ID in app/(home)/Directory/index.tsx.
+		/// Matches CONTACT_GRID_ID in app/Directory/index.tsx.
 		static let contactGrid = "directory-contact-grid"
 		/// A contact from data/contact-info/, so its tile is in the grid
 		/// whatever the server is serving.
@@ -656,7 +656,7 @@ struct TestIdentifiers {
 		static let inAppBrowserDone = "Done"
 
 		/// Search results in list mode: `directory-row-<index>`. Mirrors
-		/// DIRECTORY_ROW_PREFIX in app/(home)/Directory/index.tsx.
+		/// DIRECTORY_ROW_PREFIX in app/Directory/index.tsx.
 		static let rowPrefix = "directory-row-"
 		/// Search results in the tile gallery: `directory-tile-<index>`. Mirrors
 		/// TILE_PREFIX in source/features/directory/directory-results-grid.tsx.
@@ -675,7 +675,7 @@ struct TestIdentifiers {
 	// MARK: - Student Orgs
 
 	enum StudentOrgs {
-		/// Matches CATEGORY_GRID_ID in app/(home)/StudentOrgs/index.tsx.
+		/// Matches CATEGORY_GRID_ID in app/StudentOrgs/index.tsx.
 		static let categoryGrid = "student-orgs-category-grid"
 		/// Matches RESULTS_LIST_ID in source/features/student-orgs/org-results-list.tsx.
 		static let resultsList = "student-orgs-results-list"

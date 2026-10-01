@@ -2,7 +2,7 @@ import * as React from 'react'
 import {fireEvent, render, screen} from '@testing-library/react-native'
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query'
 
-import EntryScreen from '../../../../app/(home)/Dictionary/entry/[word]'
+import EntryScreen from '../../../../app/Dictionary/entry/[word]'
 import {keys} from '../query'
 import {useDictionaryDraftStore} from '../store'
 import type {WordType} from '../types'

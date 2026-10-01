@@ -160,7 +160,7 @@ export function usePublishMenuHeader(header: MenuHeader, focused: boolean): void
 /**
  * Draws the published header.
  *
- * Must be mounted as a direct child of the stack -- `app/(home)/Menus/_layout.tsx`
+ * Must be mounted as a direct child of the stack -- `app/Menus/_layout.tsx`
  * for the tabs, or a Carleton page for its own screen. Expo Router keys these
  * options by the nearest route, so the same components inside a tab register
  * against the tab's route and are dropped without a word.

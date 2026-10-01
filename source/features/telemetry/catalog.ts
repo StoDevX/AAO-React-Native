@@ -1,7 +1,7 @@
 import type {Campus} from '../building-hours/types'
 
 /**
- * A route's file-system pattern, such as `/(home)/Dictionary/[word]`. Only
+ * A route's file-system pattern, such as `/Dictionary/[word]`. Only
  * `routePattern()` makes one. It is text, but text the app ships: route file
  * names, never a value someone typed or chose.
  */
