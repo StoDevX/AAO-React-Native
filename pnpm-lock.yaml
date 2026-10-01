@@ -103,6 +103,9 @@ importers:
       '@frogpond/ccc-jobs':
         specifier: workspace:*
         version: link:modules/ccc-jobs
+      '@frogpond/collections':
+        specifier: workspace:*
+        version: link:modules/collections
       '@frogpond/colors':
         specifier: workspace:*
         version: link:modules/colors
@@ -301,9 +304,6 @@ importers:
       ky:
         specifier: 2.1.0
         version: 2.1.0
-      lodash:
-        specifier: 4.18.1
-        version: 4.18.1
       moment:
         specifier: 2.31.0
         version: 2.31.0
@@ -407,9 +407,6 @@ importers:
       '@types/jest':
         specifier: 30.0.0
         version: 30.0.0
-      '@types/lodash':
-        specifier: 4.17.25
-        version: 4.17.25
       '@types/react':
         specifier: 19.2.18
         version: 19.2.18
@@ -575,6 +572,8 @@ importers:
         specifier: 4.6.5
         version: 4.6.5
 
+  modules/collections: {}
+
   modules/colors:
     dependencies:
       tinycolor2:
@@ -601,6 +600,9 @@ importers:
 
   modules/event-list:
     dependencies:
+      '@frogpond/collections':
+        specifier: workspace:*
+        version: link:../collections
       '@frogpond/colors':
         specifier: workspace:*
         version: link:../colors
@@ -616,9 +618,6 @@ importers:
       '@frogpond/time-format':
         specifier: workspace:*
         version: link:../time-format
-      lodash:
-        specifier: 4.18.1
-        version: 4.18.1
       moment-timezone:
         specifier: ^0.6.4
         version: 0.6.4
@@ -643,6 +642,9 @@ importers:
       '@expo/ui':
         specifier: 57.0.14
         version: 57.0.14(patch_hash=bcdd8e1eab405affdc5186e746347a1b0d656a6e945dd2ff386d8950fb36cb8f)(@babel/core@7.29.7)(expo@57.0.19)(react-native-worklets@0.10.1)(react-native@0.86.3)(react@19.2.3)
+      '@frogpond/collections':
+        specifier: workspace:*
+        version: link:../collections
       '@frogpond/colors':
         specifier: workspace:*
         version: link:../colors
@@ -652,9 +654,6 @@ importers:
       '@frogpond/toolbar':
         specifier: workspace:*
         version: link:../toolbar
-      lodash:
-        specifier: 4.18.1
-        version: 4.18.1
       react:
         specifier: 'catalog:'
         version: 19.2.3
@@ -904,9 +903,6 @@ importers:
 
   modules/use-debounce:
     dependencies:
-      lodash:
-        specifier: 4.18.1
-        version: 4.18.1
       react:
         specifier: 'catalog:'
         version: 19.2.3
@@ -2526,9 +2522,6 @@ packages:
 
   '@types/json-schema@7.0.15':
     resolution: {integrity: sha512-5+fP8P8MFNC+AyZCDxrB2pkZFPGzqQWUzpSeuuVLvm8VMcorNYavBqoFcxK8bQz4Qsbn4oUEEem4wDLfcysGHA==}
-
-  '@types/lodash@4.17.25':
-    resolution: {integrity: sha512-+K1NIO8I+F9/wNulfVvu23QYd0Pe9/OCqRrim4NoYIf1VoEDL90Ve4ClzpyqBLc7NpGGWRvYNCKZ1BE/Jpf8dQ==}
 
   '@types/node@26.6.2':
     resolution: {integrity: sha512-X1P21scMv4zGKLYqjdGjaKa7COa0RKVYYZZN/NfvLQ1JegxFhdhpZG/Lyn8AXx6CDUavKAd11v6BvfpkDByK8g==}
@@ -4193,9 +4186,6 @@ packages:
 
   lodash.throttle@4.1.1:
     resolution: {integrity: sha512-wIkUCfVKpVsWo3JSZlc+8MB5it+2AN5W8J7YVMST30UrvcQNZ1Okbj+rbVniijTWE6FGYy4XJq/rHkas8qJMLQ==}
-
-  lodash@4.18.1:
-    resolution: {integrity: sha512-dMInicTPVE8d1e5otfwmmjlxkZoUpiVLwyeTdUsi/Caj/gfzzblBcCE5sRHV/AsjuCmxWrte2TNGSYuCeCq+0Q==}
 
   log-symbols@2.2.0:
     resolution: {integrity: sha512-VeIAFslyIerEJLXHziedo2basKbMKtTw3vfn5IzG0XTjhAVEJyNHnL2p7vc+wBDSdQuUpNw3M2u6xb9QsAY5Eg==}
@@ -7256,8 +7246,6 @@ snapshots:
 
   '@types/json-schema@7.0.15': {}
 
-  '@types/lodash@4.17.25': {}
-
   '@types/node@26.6.2':
     dependencies:
       undici-types: 8.9.0
@@ -9015,8 +9003,6 @@ snapshots:
   lodash.debounce@4.0.8: {}
 
   lodash.throttle@4.1.1: {}
-
-  lodash@4.18.1: {}
 
   log-symbols@2.2.0:
     dependencies:

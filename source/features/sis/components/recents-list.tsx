@@ -2,7 +2,6 @@ import * as React from 'react'
 import {StyleSheet, Text, View, Platform, Pressable} from 'react-native'
 import {ListSeparator, ListRow} from '@frogpond/lists'
 import * as c from '@frogpond/colors'
-import {noop} from 'lodash'
 
 type Props = {
 	actionLabel?: string
@@ -42,7 +41,7 @@ function RecentItemsList(props: Props): React.ReactNode {
 					<React.Fragment key={item}>
 						<Pressable
 							// adding long press allows for copy text when selectable is true
-							onLongPress={noop}
+							onLongPress={() => undefined}
 							onPress={() => props.onItemPress(item)}
 						>
 							<ListRow arrowPosition="none">

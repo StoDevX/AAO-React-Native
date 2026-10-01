@@ -2,7 +2,6 @@ import * as React from 'react'
 import {useCallback, useEffect, useState} from 'react'
 import {ScrollView, StyleSheet, Text, View, useWindowDimensions} from 'react-native'
 import {SafeAreaView} from 'react-native-safe-area-context'
-import noop from 'lodash/noop'
 import * as c from '@frogpond/colors'
 import {callPhone} from '../../../components/call-phone'
 import {Row} from '@frogpond/layout'
@@ -51,7 +50,7 @@ function PlayButton(props: PlayButtonProps): React.ReactNode {
 			return <ActionButton icon="pause" onPress={onPause} text="Pause" />
 
 		default:
-			return <ActionButton icon="ladybug" onPress={noop} text="Error" />
+			return <ActionButton icon="ladybug" onPress={() => undefined} text="Error" />
 	}
 }
 

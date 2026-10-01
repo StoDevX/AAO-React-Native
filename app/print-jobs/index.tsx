@@ -10,15 +10,13 @@ import {LoadingView} from '@frogpond/notice'
 import {DisclosureRow} from '../../source/components/rows'
 import {openUrl} from '@frogpond/open-url'
 import {StoPrintErrorView, StoPrintNoticeView} from '../../source/features/stoprint/components'
-import groupBy from 'lodash/groupBy'
-import toPairs from 'lodash/toPairs'
-import sortBy from 'lodash/sortBy'
 import {getTimeRemaining, printJobsGate, stoprintUsername} from '../../source/features/stoprint/lib'
 import {Stack, useRouter} from 'expo-router'
 import {useMomentTimer} from '@frogpond/timer'
 import {printJobsOptions} from '../../source/features/stoprint/query'
 import {credentialsOptions} from '../../source/lib/login'
 import {useQuery} from '@tanstack/react-query'
+import {groupBy, sortBy} from '@frogpond/collections'
 
 function PrintJobsView(): React.ReactNode {
 	let {now} = useMomentTimer({intervalMs: 60000, timezone: timezone()})
@@ -100,13 +98,12 @@ function PrintJobsView(): React.ReactNode {
 	}
 
 	let grouped = groupBy(jobsData.jobs, (j) => j.statusFormatted || 'Other')
-	let groupedJobs = toPairs(grouped).map(([title, data]) => ({
+	let groupedJobs = Object.entries(grouped).map(([title, data]) => ({
 		title,
 		data,
 	}))
-	let sortedGroupedJobs = sortBy(groupedJobs, [
-		(group) => group.title !== 'Pending Release', // puts 'Pending Release' jobs at the top
-	])
+	// puts 'Pending Release' jobs at the top
+	let sortedGroupedJobs = sortBy(groupedJobs, (group) => group.title !== 'Pending Release')
 
 	return (
 		<Host style={styles.host}>

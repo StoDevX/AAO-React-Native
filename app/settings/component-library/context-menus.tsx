@@ -6,7 +6,6 @@ import {
 	Example,
 	LibraryWrapper,
 } from '../../../source/features/settings/screens/overview/component-library/base/library-wrapper'
-import {upperFirst} from 'lodash'
 
 const ANIMALS = ['bird', 'cat', 'cow', 'dog']
 const ANIMAL_MENU_TEST_ID = 'component-library-context-menu'
@@ -19,7 +18,7 @@ const SingleMenu = (): React.ReactNode => {
 			<Example title="Top-level menu">
 				<Host matchContents={true}>
 					<Menu
-						label={upperFirst(value)}
+						label={capitalize(value)}
 						modifiers={[accessibilityIdentifier(ANIMAL_MENU_TEST_ID)]}
 					>
 						<SwiftUISection title="Select an animal.">
@@ -27,7 +26,7 @@ const SingleMenu = (): React.ReactNode => {
 							    drew no checkmark here, and only the trigger's label
 							    reflects the selection. */}
 							{ANIMALS.map((animal) => (
-								<Button key={animal} label={upperFirst(animal)} onPress={() => setValue(animal)} />
+								<Button key={animal} label={capitalize(animal)} onPress={() => setValue(animal)} />
 							))}
 						</SwiftUISection>
 					</Menu>
@@ -36,6 +35,8 @@ const SingleMenu = (): React.ReactNode => {
 		</Section>
 	)
 }
+
+const capitalize = (word: string): string => word.charAt(0).toUpperCase() + word.slice(1)
 
 export default function ContextMenuLibraryPage(): React.ReactNode {
 	return (

@@ -1,5 +1,3 @@
-import find from 'lodash/find'
-import findLast from 'lodash/findLast'
 import type {Moment} from 'moment-timezone'
 
 import type {BusLine, BusSchedule} from '../types'
@@ -57,8 +55,8 @@ export function deriveLineState({line, now}: {line: BusLine; now: Moment}): {
 			if (isLastBus) {
 				subtitle = 'Last Bus'
 			} else {
-				let first = find(times, isTruthy)
-				let last = findLast(times, isTruthy)
+				let first = times?.find(isTruthy)
+				let last = times?.findLast(isTruthy)
 				if (!first || !last) {
 					subtitle = 'Not running today'
 				} else if (now.isBefore(first)) {

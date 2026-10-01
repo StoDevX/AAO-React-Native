@@ -1,9 +1,9 @@
-import isEqual from 'lodash/isEqual'
 import {create} from 'zustand'
 
 import * as draftLib from './lib/draft'
 import type {DraftEntry} from './lib/draft'
 import type {NormalizedEntry} from './types'
+import {isEqual} from '@frogpond/collections'
 
 type DictionaryDraftStore = {
 	/**

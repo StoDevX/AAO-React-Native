@@ -1,9 +1,9 @@
-import deburr from 'lodash/deburr'
-import groupBy from 'lodash/groupBy'
-import memoize from 'lodash/memoize'
-import toPairs from 'lodash/toPairs'
-import words from 'lodash/words'
 import type {StudentOrgType} from './types'
+import {deburr, words} from '../../lib/text'
+import {groupBy, memoize} from '@frogpond/collections'
+
+/** The server adds the letter an org is listed under, which `StudentOrgType` doesn't declare. */
+type GroupableOrg = StudentOrgType & {$groupableName?: string}
 
 const splitToArray = memoize((str: string) => words(deburr(str.toLowerCase())))
 
@@ -52,5 +52,10 @@ export function filterAndGroupOrgs(orgs: StudentOrgType[], searchQuery: string):
 		return [{title: '', data: results}]
 	}
 
-	return toPairs(groupBy(results, '$groupableName')).map(([title, data]) => ({title, data}))
+	return Object.entries(groupBy(results, (org: GroupableOrg) => org.$groupableName)).map(
+		([title, data]) => ({
+			title,
+			data,
+		}),
+	)
 }

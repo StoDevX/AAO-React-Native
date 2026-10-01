@@ -1,6 +1,6 @@
 import {client} from '@frogpond/api'
 import {queryOptions} from '@tanstack/react-query'
-import groupBy from 'lodash/groupBy'
+import {groupBy} from '@frogpond/collections'
 
 export const keys = {
 	all: ['routes'] as const,
