@@ -146,6 +146,20 @@ describe('mapCategoriesOptions', () => {
 		expect(retry(3, new Error('offline'))).toBe(false)
 	})
 
+	// A table restored from the persisted cache never passed through the
+	// fetch, so one an older build saved in an older shape reaches the
+	// picker unchecked unless it is checked again on the way out.
+	test('reads an unreadable cached table as the bundled copy', () => {
+		let select = mapCategoriesOptions.select as (table: unknown) => MapCategoryTable
+		let olderShape = {stolaf: PUBLISHED.stolaf.groups, carleton: []}
+		expect(select(olderShape)).toBe(BUNDLED_MAP_CATEGORIES)
+	})
+
+	test('reads a readable cached table as itself', () => {
+		let select = mapCategoriesOptions.select as (table: unknown) => MapCategoryTable
+		expect(select(PUBLISHED)).toEqual(PUBLISHED)
+	})
+
 	// The bundled copy is there from the start and stays when the live file
 	// cannot be had, rather than a failure leaving the grid with nothing.
 	test('keeps the bundled copy when the fetch fails', async () => {

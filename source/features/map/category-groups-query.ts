@@ -81,12 +81,22 @@ class UnreadableMapCategoriesError extends Error {
 	}
 }
 
+/// The cached table if this build can read it, else the bundled copy. A
+/// table restored from the persisted cache never passed through
+/// `fetchMapCategories`, so one an older build saved in an older shape would
+/// otherwise reach the picker unchecked.
+function readableMapCategories(table: unknown): MapCategoryTable {
+	let parsed = PublishedMapCategoriesSchema.safeParse({data: table})
+	return parsed.success ? (parsed.data.data as MapCategoryTable) : BUNDLED_MAP_CATEGORIES
+}
+
 const MAX_FETCH_RETRIES = 3
 
 export const mapCategoriesOptions = queryOptions({
 	queryKey: keys.all,
 	queryFn: fetchMapCategories,
 	staleTime,
+	select: readableMapCategories,
 	// There from the start, since a query that has never run does not run
 	// offline; marked stale so the live copy replaces it when it can.
 	initialData: BUNDLED_MAP_CATEGORIES,
