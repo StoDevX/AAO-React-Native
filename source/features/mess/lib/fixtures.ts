@@ -2,6 +2,7 @@ import {File, Paths} from 'expo-file-system'
 import {fetchSourceBody, SourceFetchError} from '@frogpond/data-sources'
 import {fixtureMode} from '@frogpond/launch-arguments'
 
+import {uiTestFixture} from '../../../lib/ui-test-fixture'
 import fixtures from '../__fixtures__/mess.json'
 
 type Format = 'json' | 'text'
@@ -28,7 +29,7 @@ const table = fixtures as Record<string, unknown>
 
 function serve(href: string, format: Format): unknown {
 	let key = fixtureKey(format, href)
-	if (!(key in table)) {
+	if (!(key in uiTestFixture('mess.json', table))) {
 		throw new MissingMessFixture(key)
 	}
 	let answer = table[key]

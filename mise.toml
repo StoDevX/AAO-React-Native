@@ -359,6 +359,9 @@ run = "gzip --keep docs/*.json"
 description = "Generate iOS JS bundle"
 depends = ["bundle-data"]
 wait_for = ["prebuild"]
+# Keeps the UI-test fixtures a release bundle drops (metro.config.js): this bundle
+# serves the UI tests, and `mise run device` builds, which carry them unused.
+env = { KEEP_UITEST_FIXTURES = "1" }
 run = """
 expo export:embed \
   --entry-file index.js \
