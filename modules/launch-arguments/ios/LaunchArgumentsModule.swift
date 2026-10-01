@@ -17,6 +17,9 @@ public class LaunchArgumentsModule: Module {
 			"secretProgress": arguments.lazy
 				.compactMap { $0.hasPrefix("--secret-progress=") ? Int($0.dropFirst("--secret-progress=".count)) : nil }
 				.first ?? 0,
+			// Starts with a red-button lockout that has already run out, so a UI test, whose clock is
+			// frozen, can watch one end.
+			"secretLockoutEnded": arguments.contains("--secret-lockout-ended"),
 		])
 	}
 }

@@ -61,6 +61,7 @@ jest.mock('@frogpond/launch-arguments', () => ({
 	// Live, so a test that stubs fetchSourceBody gets its stub, not a fixture.
 	fixtureMode: 'live',
 	secretProgress: 0,
+	secretLockoutEnded: false,
 }))
 // WebView looks up its native module when imported, and Jest has none.
 jest.mock('react-native-webview/lib/NativeRNCWebViewModule', () => ({
