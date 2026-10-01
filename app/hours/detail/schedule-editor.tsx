@@ -3,16 +3,8 @@ import {StyleSheet} from 'react-native'
 import xor from 'lodash/xor'
 import moment from 'moment-timezone'
 import {Stack, useLocalSearchParams} from 'expo-router'
-import {
-	Button,
-	DatePicker,
-	Host,
-	HStack,
-	LabeledContent,
-	List,
-	Section,
-	Text,
-} from '@expo/ui/swift-ui'
+import {Button, DatePicker, Host, HStack, LabeledContent, List, Text} from '@expo/ui/swift-ui'
+import {SheetSection} from '@frogpond/sheet-section'
 import {buttonStyle, datePickerStyle, labelsHidden, listStyle} from '@expo/ui/swift-ui/modifiers'
 import * as c from '@frogpond/colors'
 import {timezone} from '@frogpond/constants'
@@ -66,7 +58,7 @@ export default function BuildingHoursScheduleEditorPage(): React.ReactNode {
 
 			<Host style={styles.host}>
 				<List modifiers={[listStyle('insetGrouped')]}>
-					<Section footer={<Text>{summary}</Text>}>
+					<SheetSection footer={<Text>{summary}</Text>}>
 						<WeekToggles days={set.days} onChangeDays={onChangeDays} />
 
 						<LabeledContent label="Hours (Central Time)">
@@ -84,11 +76,11 @@ export default function BuildingHoursScheduleEditorPage(): React.ReactNode {
 								/>
 							</HStack>
 						</LabeledContent>
-					</Section>
+					</SheetSection>
 
-					<Section>
+					<SheetSection>
 						<ActionRow destructive={true} onPress={deleteSet} title="Remove" />
-					</Section>
+					</SheetSection>
 				</List>
 			</Host>
 		</>

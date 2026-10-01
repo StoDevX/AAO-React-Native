@@ -3,7 +3,8 @@ import {Stack, useFocusEffect, useLocalSearchParams, useNavigation, useRouter} f
 import {usePreventRemove} from 'expo-router/react-navigation'
 import {useQuery} from '@tanstack/react-query'
 import {Alert, StyleSheet} from 'react-native'
-import {Host, List, Picker, Section, Text, Toggle, VStack} from '@expo/ui/swift-ui'
+import {Host, List, Picker, Text, Toggle, VStack} from '@expo/ui/swift-ui'
+import {SheetSection} from '@frogpond/sheet-section'
 import {
 	font,
 	foregroundStyle,
@@ -222,7 +223,7 @@ let HoursProblemReportView = ({initialBuilding, campus}: Props): React.ReactNode
 
 			<Host style={styles.host}>
 				<List modifiers={[listStyle('insetGrouped')]}>
-					<Section>
+					<SheetSection>
 						<VStack alignment="leading" spacing={4}>
 							<Text modifiers={[font({weight: 'semibold'})]}>Thanks for spotting a problem!</Text>
 							<Text
@@ -236,9 +237,9 @@ let HoursProblemReportView = ({initialBuilding, campus}: Props): React.ReactNode
 								it.
 							</Text>
 						</VStack>
-					</Section>
+					</SheetSection>
 
-					<Section title="About">
+					<SheetSection title="About">
 						<SyncedTextField
 							autocapitalization="words"
 							onChangeText={(newName) => dispatch({type: 'UPDATE_BUILDING', data: {name: newName}})}
@@ -279,7 +280,7 @@ let HoursProblemReportView = ({initialBuilding, campus}: Props): React.ReactNode
 								</Text>
 							))}
 						</Picker>
-					</Section>
+					</SheetSection>
 
 					{schedules.map((s: NamedBuildingScheduleType, i: number) => (
 						<EditableSchedule
@@ -292,15 +293,15 @@ let HoursProblemReportView = ({initialBuilding, campus}: Props): React.ReactNode
 						/>
 					))}
 
-					<Section>
+					<SheetSection>
 						<NavigationRow
 							onPress={() => dispatch({type: 'ADD_SCHEDULE'})}
 							title="Add New Schedule"
 						/>
-					</Section>
+					</SheetSection>
 
 					{/* Always drawn, even with no links, so Add Link stays reachable. */}
-					<Section title="Resources">
+					<SheetSection title="Resources">
 						{links.map((link, i) => (
 							<DetailRow
 								// oxlint-disable-next-line react/no-array-index-key -- the index is the handle the editor edits by
@@ -312,9 +313,9 @@ let HoursProblemReportView = ({initialBuilding, campus}: Props): React.ReactNode
 						))}
 
 						<NavigationRow onPress={addLink} title="Add Link" />
-					</Section>
+					</SheetSection>
 
-					<Section
+					<SheetSection
 						footer={<Text>Anything the fields above cannot say.</Text>}
 						title="What's Wrong?"
 					>
@@ -325,7 +326,7 @@ let HoursProblemReportView = ({initialBuilding, campus}: Props): React.ReactNode
 							placeholder="Describe the problem"
 							value={note}
 						/>
-					</Section>
+					</SheetSection>
 
 					<ImageAttachmentsSection attachments={attachments} title="Images" />
 				</List>
@@ -380,7 +381,7 @@ const EditableSchedule = (props: EditableScheduleProps) => {
 	let now = moment.tz(zone)
 
 	return (
-		<Section
+		<SheetSection
 			// The hours below are the campus's own wall clock, the same one the
 			// picker in the schedule editor writes and the YAML the report
 			// carries -- say so, or a reader outside Central reads their own
@@ -422,7 +423,7 @@ const EditableSchedule = (props: EditableScheduleProps) => {
 			<NavigationRow onPress={addHoursRow} title="Add More Hours" />
 
 			<ActionRow destructive={true} onPress={deleteSchedule} title="Delete Schedule" />
-		</Section>
+		</SheetSection>
 	)
 }
 

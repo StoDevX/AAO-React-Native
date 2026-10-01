@@ -1,6 +1,7 @@
 import * as React from 'react'
 import {Alert} from 'react-native'
-import {Button, Section, SwipeActions, Text} from '@expo/ui/swift-ui'
+import {Button, SwipeActions, Text} from '@expo/ui/swift-ui'
+import {SheetSection} from '@frogpond/sheet-section'
 import noop from 'lodash/noop'
 
 import {ActionRow, DisclosureRow} from './rows'
@@ -30,7 +31,7 @@ export function ImageAttachmentsSection({title, attachments}: Props): React.Reac
 	}
 
 	return (
-		<Section
+		<SheetSection
 			footer={
 				<Text>{`Screenshots or photos help show the problem. Up to ${MAX_ATTACHMENTS}.`}</Text>
 			}
@@ -62,6 +63,6 @@ export function ImageAttachmentsSection({title, attachments}: Props): React.Reac
 				onPress={() => void addImages()}
 				title={picking ? 'Adding Images…' : 'Add Image'}
 			/>
-		</Section>
+		</SheetSection>
 	)
 }
