@@ -6,8 +6,6 @@ import {SafeAreaView} from 'react-native-safe-area-context'
 import * as c from '@frogpond/colors'
 import {Stack} from 'expo-router'
 
-import {SheetCloseButton} from '../../source/components/sheet-close-button'
-
 export default function NetworkLoggerPage(): React.ReactNode {
 	const goBack = () => setUnmountNetworkLogger(true)
 	const [unmountNetworkLogger, setUnmountNetworkLogger] = React.useState(false)
@@ -22,9 +20,8 @@ export default function NetworkLoggerPage(): React.ReactNode {
 
 	return (
 		<>
-			<Stack.Screen options={{presentation: 'modal', gestureEnabled: false}} />
+			<Stack.Screen options={{gestureEnabled: false}} />
 			<Stack.Title>Network Logger</Stack.Title>
-			<SheetCloseButton />
 
 			<SafeAreaView edges={['left', 'right']} style={styles.screen}>
 				<View style={styles.header}>

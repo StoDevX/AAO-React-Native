@@ -7,21 +7,14 @@ import * as c from '@frogpond/colors'
 import {Stack, useRouter} from 'expo-router'
 
 import {DisclosureRow} from '../../source/components/rows'
-import {SheetCloseButton} from '../../source/components/sheet-close-button'
 
-// This file is named ComponentLibrary.tsx (not index.tsx) so it doesn't
-// claim the bare `/` route -- (component-library) is a top-level group,
-// a sibling of (home), so an index.tsx here would collide with
-// app/(home)/index.tsx for the unqualified `/` path. This screen is
-// reachable at /ComponentLibrary. PR 8's developer.tsx entry point must
-// push to '/ComponentLibrary', not '/(component-library)' or '/'.
 const LIBRARIES = [
-	{title: 'Badges', route: '/(component-library)/BadgeLibrary'},
-	{title: 'Buttons', route: '/(component-library)/ButtonLibrary'},
-	{title: 'Colors', route: '/(component-library)/ColorsLibrary'},
-	{title: 'Context Menus', route: '/(component-library)/ContextMenuLibrary'},
-	{title: 'FAQ Banners', route: '/(component-library)/FaqBannerLibrary'},
-	{title: 'Rows', route: '/(component-library)/RowLibrary'},
+	{title: 'Badges', route: '/BadgeLibrary'},
+	{title: 'Buttons', route: '/ButtonLibrary'},
+	{title: 'Colors', route: '/ColorsLibrary'},
+	{title: 'Context Menus', route: '/ContextMenuLibrary'},
+	{title: 'FAQ Banners', route: '/FaqBannerLibrary'},
+	{title: 'Rows', route: '/RowLibrary'},
 ] as const
 
 export default function ComponentLibraryRootPage(): React.ReactNode {
@@ -30,7 +23,6 @@ export default function ComponentLibraryRootPage(): React.ReactNode {
 	return (
 		<>
 			<Stack.Title>Component Library</Stack.Title>
-			<SheetCloseButton />
 
 			<Host style={styles.host}>
 				<List modifiers={[listStyle('insetGrouped')]}>
