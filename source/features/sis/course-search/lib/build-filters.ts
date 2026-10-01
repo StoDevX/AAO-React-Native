@@ -11,7 +11,7 @@ export function useFilters(): {
 } {
 	let {terms, gereqs: geReqs, departments} = useCourseFilterOptions()
 	let catalog = useCourseCatalog()
-	let isLoading = catalog.isPending && terms.length === 0
+	let isLoading = catalog.isFetching && terms.length === 0
 	let error = terms.length === 0 ? catalog.error : null
 	let refetch = () => void catalog.refetch()
 
