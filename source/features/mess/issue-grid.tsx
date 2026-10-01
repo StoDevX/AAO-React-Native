@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {HStack, ProgressView, Spacer, Text, VStack} from '@expo/ui/swift-ui'
+import {HStack, Spacer, Text, VStack} from '@expo/ui/swift-ui'
 import {
 	accessibilityAddTraits,
 	accessibilityIdentifier,
@@ -25,7 +25,7 @@ import {
 	yearGroups,
 } from './lib/issue-grid'
 import {issueDate} from './lib/issues'
-import {PageNotice} from './page-notice'
+import {PageLoading, PageNotice} from './page-notice'
 import {faded, ink} from './palette'
 import {messIssueOptions, messLeadTextOptions} from './query'
 import {useMessStore} from './store'
@@ -175,7 +175,7 @@ export function IssueGrid({issues, query, landscape, onOpen}: Props): React.Reac
 		end = (
 			// The id wraps the onAppear, so a new page rebuilds the view the onAppear sits on.
 			<VStack modifiers={[onAppear(fetchMore), id(endId)]}>
-				<ProgressView />
+				<PageLoading />
 			</VStack>
 		)
 	}
