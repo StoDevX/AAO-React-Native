@@ -16,14 +16,6 @@ beforeEach(() => {
 	mockGoBack.mockClear()
 })
 
-test('closes the sheet when pressed', async () => {
-	await render(<SheetCloseButton />)
-
-	await fireEvent.press(screen.getByLabelText('Close'))
-
-	expect(mockGoBack).toHaveBeenCalledTimes(1)
-})
-
 test('closes the sheet only once when pressed twice', async () => {
 	await render(<SheetCloseButton />)
 
