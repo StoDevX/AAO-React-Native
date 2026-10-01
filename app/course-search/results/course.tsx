@@ -11,7 +11,8 @@ import {
 	weekdayLabel,
 	type ScheduleSlot,
 } from '../../../source/features/sis/course-search/lib/course-schedule'
-import {DetailRow, SelectableText} from '../../../source/components/rows'
+import {DetailRow} from '../../../source/components/rows'
+import {SelectableText} from '@frogpond/selectable-text'
 import * as c from '@frogpond/colors'
 import {deptNum} from '../../../source/features/sis/course-search/lib/format-dept-num'
 import {formatCourseNotes} from '../../../source/features/sis/course-search/lib/format-course-notes'

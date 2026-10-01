@@ -34,6 +34,7 @@
     "@frogpond/notice": "workspace:*",
     "@frogpond/open-url": "workspace:*",
     "@frogpond/place-card-header": "workspace:*",
+    "@frogpond/selectable-text": "workspace:*",
     "@frogpond/separator": "workspace:*",
     "@frogpond/storage": "workspace:*",
     "@frogpond/time-format": "workspace:*",

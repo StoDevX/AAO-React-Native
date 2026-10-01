@@ -1,7 +1,7 @@
 import * as React from 'react'
 import {fireEvent, render, screen} from '@testing-library/react-native'
 
-import {ActionRow, DetailRow, DisclosureRow, SelectableText} from '../rows'
+import {ActionRow, DetailRow, DisclosureRow} from '../rows'
 
 jest.mock('@expo/ui/swift-ui', () => {
 	// oxlint-disable-next-line typescript/no-require-imports
@@ -225,23 +225,6 @@ describe('DetailRow', () => {
 		await render(<DetailRow label="Pronouns" value="they/them" />)
 
 		expect(screen.queryByLabelText('Pronouns, they/them')).not.toBeOnTheScreen()
-	})
-})
-
-describe('SelectableText', () => {
-	/// The reason this is a TextInput rather than an @expo/ui Text. Asking for
-	/// them collectively detects nothing under the new architecture, so a
-	/// regression here would read as "selection still works" while quietly
-	/// making every phone number and address unactionable.
-	it('names each data detector rather than asking for all of them', async () => {
-		await render(<SelectableText text="Call 507-786-2222" />)
-
-		expect(screen.getByTestId('selectable-text').props.dataDetectorTypes).toEqual([
-			'calendarEvent',
-			'link',
-			'phoneNumber',
-			'address',
-		])
 	})
 })
 
