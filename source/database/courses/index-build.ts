@@ -15,7 +15,10 @@ select s.clbid,
     join ${schema}.instructor i on i.id = si.instructor_id where si.clbid = s.clbid), '') as instructors
 from ${schema}.section s
 left join ${schema}.name_text n on n.id = s.name_id
-left join ${schema}.title_text t on t.id = s.title_id`
+left join ${schema}.title_text t on t.id = s.title_id
+where s.clbid > ?
+order by s.clbid
+limit ?`
 }
 
 type IndexSourceRow = {
@@ -27,33 +30,59 @@ type IndexSourceRow = {
 	instructors: string
 }
 
+/** How many sections an index batch reads and writes before the app gets a turn. */
+const INDEX_BATCH_SIZE = 1000
+
 /**
- * Creates `course_fts` in the catalog attached as `schema` and fills it, and
- * indexes the unsearched listing's order, in one transaction. Returns the rows
- * indexed.
+ * Creates `course_fts` in the catalog attached as `schema` and fills it, a
+ * batch of sections at a time, yielding the number indexed so far after each;
+ * then indexes the unsearched listing's order. Building takes most of a
+ * second, so the refresh lets the app run between batches. Each batch is its
+ * own transaction, which is safe because nothing reads the catalog being
+ * built until it is swapped in whole.
  */
+export function* courseIndexBatches(
+	runner: SqlRunner,
+	schema: string,
+	batchSize: number = INDEX_BATCH_SIZE,
+): Generator<number, void> {
+	runner.exec(COURSE_SEARCH.createSql(schema))
+	let indexed = 0
+	let after = 0
+	while (true) {
+		let rows = runner.all<IndexSourceRow>({sql: indexSource(schema), params: [after, batchSize]})
+		if (rows.length === 0) break
+		runner.transaction(() => {
+			for (let row of rows) {
+				runner.run(
+					COURSE_SEARCH.insert(schema, row.clbid, [
+						row.dept_num,
+						deburr(row.name),
+						deburr(row.title),
+						row.gereqs,
+						deburr(row.instructors),
+					]),
+				)
+			}
+		})
+		indexed += rows.length
+		after = rows.at(-1)?.clbid ?? after
+		yield indexed
+	}
+	// The unsearched listing's order, so paging through it reads the index
+	// rather than sorting every course for each page.
+	runner.exec(
+		`create index ${schema}.section_listing on section (term desc, department, cast(number as integer), section, clbid)`,
+	)
+}
+
+/** Builds the whole index at once, for a catalog nobody is waiting on. Returns the rows indexed. */
 export function buildCourseIndex(runner: SqlRunner, schema: string): number {
-	let rows = runner.all<IndexSourceRow>({sql: indexSource(schema), params: []})
-	runner.transaction(() => {
-		runner.exec(COURSE_SEARCH.createSql(schema))
-		// The unsearched listing's order, so paging through it reads the index
-		// rather than sorting every course for each page.
-		runner.exec(
-			`create index ${schema}.section_listing on section (term desc, department, cast(number as integer), section, clbid)`,
-		)
-		for (let row of rows) {
-			runner.run(
-				COURSE_SEARCH.insert(schema, row.clbid, [
-					row.dept_num,
-					deburr(row.name),
-					deburr(row.title),
-					row.gereqs,
-					deburr(row.instructors),
-				]),
-			)
-		}
-	})
-	return rows.length
+	let indexed = 0
+	for (indexed of courseIndexBatches(runner, schema)) {
+		// Each batch has already been written.
+	}
+	return indexed
 }
 
 /**

@@ -9,9 +9,11 @@ const mockRunner = {
 	transaction: jest.fn((task: () => void) => task()),
 }
 const mockCheck = jest.fn((..._args: unknown[]) => void mockSteps.push('check'))
-const mockBuild = jest.fn((_runner: unknown, schema: string) => {
+const mockBuild = jest.fn(function* (_runner: unknown, schema: string) {
 	mockSteps.push(`index ${schema}`)
-	return 10
+	yield 1000
+	mockSteps.push('index batch 2')
+	yield 1500
 })
 const mockBump = jest.fn()
 const CURRENT = 'file:///docs/course-catalog.db'
@@ -55,7 +57,7 @@ const mockDownload = jest.fn((_url: unknown, destination: {uri: string}) => {
 jest.mock('../../client', () => ({getRunner: () => mockRunner}))
 jest.mock('../check', () => ({checkCatalog: (...args: unknown[]) => mockCheck(...args)}))
 jest.mock('../index-build', () => ({
-	buildCourseIndex: (runner: unknown, schema: string) => mockBuild(runner, schema),
+	courseIndexBatches: (runner: unknown, schema: string) => mockBuild(runner, schema),
 	storedEtag: () => mockStored.etag,
 	storeEtag: (_runner: unknown, _schema: string, etag: string) => {
 		if (mockStored.failToStore) throw new Error('disk full')
@@ -103,6 +105,9 @@ beforeEach(() => {
 			jest.requireActual<RefreshModule>('../refresh'))
 	})
 	jest.clearAllMocks()
+	mockRunner.run.mockImplementation(
+		(statement: {sql: string}) => void mockSteps.push(statement.sql),
+	)
 	mockSteps.length = 0
 	mockCheck.mockImplementation(() => void mockSteps.push('check'))
 	mockStored.etag = 'old'
@@ -218,6 +223,17 @@ describe('refreshCatalog', () => {
 		mockRunner.run.mockImplementation(
 			(statement: {sql: string}) => void mockSteps.push(statement.sql),
 		)
+	})
+
+	// Building the index takes most of a second; the app keeps running between batches.
+	test('lets the app run between index batches', async () => {
+		publishedEtag('new')
+		let refreshing = refreshCatalog()
+		setTimeout(() => mockSteps.push('app'), 0)
+		await refreshing
+		let at = (step: string) => mockSteps.indexOf(step)
+		expect(at('index incoming')).toBeLessThan(at('app'))
+		expect(at('app')).toBeLessThan(at('index batch 2'))
 	})
 
 	// Leaving course search mid-download and coming back starts a second

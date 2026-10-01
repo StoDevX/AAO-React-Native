@@ -5,7 +5,7 @@ import {getRunner} from '../client.ts'
 import type {SqlRunner} from '../sql.ts'
 import {catalogFile, filePath, incomingCatalogFile} from './catalog-file.ts'
 import {checkCatalog} from './check.ts'
-import {buildCourseIndex, storedEtag, storeEtag} from './index-build.ts'
+import {courseIndexBatches, storedEtag, storeEtag} from './index-build.ts'
 import {bumpCourseRevision} from './revision.ts'
 import {CATALOG_SCHEMA} from './schema.ts'
 
@@ -36,6 +36,11 @@ export class CatalogRejectedError extends Error {
  */
 export function shouldRetryCatalog(failureCount: number, error: Error): boolean {
 	return !(error instanceof CatalogRejectedError) && failureCount < 3
+}
+
+/** Lets the app handle whatever is waiting, such as a gesture, before carrying on. */
+function nextTurn(): Promise<void> {
+	return new Promise((resolve) => setTimeout(resolve, 0))
 }
 
 /** The ETag of the last published file that was rejected, so it is not downloaded again. */
@@ -86,7 +91,11 @@ async function refresh(signal?: AbortSignal): Promise<{etag: string; changed: bo
 		try {
 			try {
 				checkCatalog(runner, 'incoming')
-				buildCourseIndex(runner, 'incoming')
+				for (let _indexed of courseIndexBatches(runner, 'incoming')) {
+					// One batch at a time is the point: the app runs between them.
+					// oxlint-disable-next-line eslint/no-await-in-loop
+					await nextTurn()
+				}
 			} catch (error) {
 				rejectedEtag = etag
 				throw new CatalogRejectedError(etag, error instanceof Error ? error.message : String(error))

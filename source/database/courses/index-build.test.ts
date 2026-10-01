@@ -5,7 +5,13 @@ import {describe, it} from 'node:test'
 import {ensureSchema, RESET_SQL} from '../schema.ts'
 import {openTestDatabase} from '../testing/harness.ts'
 import {writeFixtureCatalog, type FixtureCourse} from './fixture.ts'
-import {buildCourseIndex, openCatalog, storedEtag, storeEtag} from './index-build.ts'
+import {
+	buildCourseIndex,
+	courseIndexBatches,
+	openCatalog,
+	storedEtag,
+	storeEtag,
+} from './index-build.ts'
 import {makeCourse} from './testing-courses.ts'
 
 function withCatalog(...courses: FixtureCourse[]) {
@@ -62,6 +68,23 @@ describe('buildCourseIndex', () => {
 			params: [],
 		})
 		assert.deepEqual(inMain, [])
+	})
+})
+
+describe('courseIndexBatches', () => {
+	// The refresh builds in batches so the app can run between them; the index
+	// must come out the same as one built in a single pass.
+	it('indexes every section a batch at a time', () => {
+		let runner = withCatalog(...[1, 2, 3, 4, 5].map((clbid) => makeCourse({clbid})))
+		let progress = [...courseIndexBatches(runner, 'catalog', 2)]
+		assert.deepEqual(progress, [2, 4, 5])
+		assert.deepEqual(matches(runner, '"algebra"*'), [1, 2, 3, 4, 5])
+	})
+
+	it('still builds an empty index for a catalog with no sections', () => {
+		let runner = withCatalog()
+		assert.deepEqual([...courseIndexBatches(runner, 'catalog', 2)], [])
+		assert.deepEqual(matches(runner, '"algebra"*'), [])
 	})
 })
 
