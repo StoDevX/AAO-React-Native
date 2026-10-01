@@ -12,21 +12,21 @@ import {
 } from '@frogpond/event-list'
 import * as c from '@frogpond/colors'
 
-import {useDismissOnce} from '../../source/lib/use-dismiss-once'
+import {SheetCloseButton} from '../../../source/components/sheet-close-button'
 import {AddToCalendar} from '@frogpond/add-to-device-calendar'
-import {addToCalendarEvents} from '../../source/features/telemetry/calendar-events'
-import {track} from '../../source/features/telemetry/track'
+import {addToCalendarEvents} from '../../../source/features/telemetry/calendar-events'
+import {track} from '../../../source/features/telemetry/track'
 import {scheduleEventOptions, useCalendarSource, useCalendarSources} from '@frogpond/ccc-calendar'
 import {LoadingView, NoticeView} from '@frogpond/notice'
 import {
 	HIDDEN_FROM_CALENDAR,
 	PRESENCE_POWERED_BY,
 	STOLAF_POWERED_BY,
-} from '../../source/features/calendar/constants'
-import {KSTO_POWERED_BY, KRLX_POWERED_BY} from '../../source/features/streaming/radio/constants'
+} from '../../../source/features/calendar/constants'
+import {KSTO_POWERED_BY, KRLX_POWERED_BY} from '../../../source/features/streaming/radio/constants'
 import {Host} from '@expo/ui/swift-ui'
-import {useEvent, useNeighbours} from '../../source/database/calendar/read'
-import type {Window} from '../../source/database/calendar/queries'
+import {useEvent, useNeighbours} from '../../../source/database/calendar/read'
+import type {Window} from '../../../source/database/calendar/queries'
 
 type EventSource = 'stolaf' | 'presence' | 'uitest' | 'ksto-schedule' | 'krlx-schedule'
 
@@ -62,7 +62,6 @@ function occurrenceWindowFor(range: TimelineWindow): Window {
 }
 
 export default function EventDetailPage(): React.ReactNode {
-	let dismiss = useDismissOnce()
 	let {source, eventKey} = useLocalSearchParams<{
 		source: string
 		eventKey: string
@@ -162,6 +161,7 @@ export default function EventDetailPage(): React.ReactNode {
 		return (
 			<>
 				<Stack.Title>Error</Stack.Title>
+				<SheetCloseButton />
 				<NoticeView text="Unknown event source." />
 			</>
 		)
@@ -171,6 +171,7 @@ export default function EventDetailPage(): React.ReactNode {
 		return (
 			<>
 				<Stack.Title>Loading…</Stack.Title>
+				<SheetCloseButton />
 				<LoadingView />
 			</>
 		)
@@ -180,6 +181,7 @@ export default function EventDetailPage(): React.ReactNode {
 		return (
 			<>
 				<Stack.Title>Error</Stack.Title>
+				<SheetCloseButton />
 				<NoticeView
 					buttonText="Try Again"
 					onPress={refetch}
@@ -195,6 +197,7 @@ export default function EventDetailPage(): React.ReactNode {
 		return (
 			<>
 				<Stack.Title>Unknown Event</Stack.Title>
+				<SheetCloseButton />
 				<NoticeView text="Could not find this event." />
 			</>
 		)
@@ -202,14 +205,7 @@ export default function EventDetailPage(): React.ReactNode {
 
 	return (
 		<>
-			<Stack.Toolbar placement="left">
-				<Stack.Toolbar.Button
-					accessibilityLabel="Close"
-					icon="xmark"
-					onPress={dismiss}
-					separateBackground={true}
-				/>
-			</Stack.Toolbar>
+			<SheetCloseButton />
 			<Stack.Toolbar placement="right">
 				<Stack.Toolbar.Button
 					accessibilityLabel="Share Event"

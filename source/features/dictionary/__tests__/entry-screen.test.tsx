@@ -22,6 +22,7 @@ jest.mock('expo-router', () => ({
 	Stack: Object.assign(({children}: {children?: React.ReactNode}) => children ?? null, {
 		Title: () => null,
 		Toolbar: Object.assign(({children}: {children?: React.ReactNode}) => children ?? null, {
+			Button: () => null,
 			Menu: ({children}: {children?: React.ReactNode}) => children ?? null,
 			MenuAction: (props: {onPress: () => void; children?: React.ReactNode}) => {
 				// oxlint-disable-next-line typescript/no-require-imports
@@ -35,6 +36,7 @@ jest.mock('expo-router', () => ({
 		}),
 	}),
 	useLocalSearchParams: () => ({word: 'Caf'}),
+	useNavigation: () => ({goBack: jest.fn()}),
 	useRouter: () => ({navigate: mockNavigate}),
 }))
 

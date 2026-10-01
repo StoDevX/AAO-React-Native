@@ -4,6 +4,7 @@ import {SafeAreaView} from 'react-native-safe-area-context'
 import {Stack, useLocalSearchParams} from 'expo-router'
 import {useQuery} from '@tanstack/react-query'
 
+import {SheetCloseButton} from '../../../../source/components/sheet-close-button'
 import {contactByTitleOptions} from '../../../../source/features/directory/contacts-query'
 import {images as contactImages} from '../../../../images/contacts'
 import {Markdown, type MarkdownStyle} from '@frogpond/markdown'
@@ -46,6 +47,7 @@ export default function ContactsDetailPage(): React.ReactNode {
 		<>
 			<Stack.Screen options={{headerLargeTitleEnabled: true}} />
 			<Stack.Title>{contact?.title ?? title}</Stack.Title>
+			<SheetCloseButton />
 		</>
 	)
 

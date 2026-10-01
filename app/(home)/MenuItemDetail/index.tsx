@@ -2,6 +2,7 @@ import * as React from 'react'
 import {Stack, useLocalSearchParams} from 'expo-router'
 import {useQuery} from '@tanstack/react-query'
 
+import {SheetCloseButton} from '../../../source/components/sheet-close-button'
 import {MenuItemDetailView} from '../../../modules/food-menu/food-item-detail'
 import {bonAppMenuItemOptions, pauseMenuItemOptions} from '../../../source/features/menus/query'
 import {LoadingView, NoticeView} from '@frogpond/notice'
@@ -33,7 +34,12 @@ export default function MenuItemDetailPage(): React.ReactNode {
 	let {refetch} = query
 	let view = menuView(query)
 
-	let screen = <Stack.Title>Nutrition</Stack.Title>
+	let screen = (
+		<>
+			<Stack.Title>Nutrition</Stack.Title>
+			<SheetCloseButton />
+		</>
+	)
 
 	// A source neither query knows leaves both disabled, and a disabled query
 	// with no data stays pending for good, which would read as loading.
@@ -93,6 +99,7 @@ export default function MenuItemDetailPage(): React.ReactNode {
 		<>
 			<Stack.Screen options={{headerLargeTitleEnabled: true}} />
 			<Stack.Title large={false}>{data.item.label}</Stack.Title>
+			<SheetCloseButton />
 			<MenuItemDetailView icons={data.icons} item={data.item} />
 		</>
 	)

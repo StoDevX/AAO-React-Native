@@ -1,17 +1,22 @@
 import * as React from 'react'
 import {StyleSheet} from 'react-native'
 import {Host} from '@expo/ui/swift-ui'
+import * as c from '@frogpond/colors'
 import {useQuery} from '@tanstack/react-query'
 import {Stack, useLocalSearchParams, useRouter} from 'expo-router'
 import {LoadingView, NoticeView} from '@frogpond/notice'
 
+import {SheetCloseButton} from '../../../../source/components/sheet-close-button'
 import {EntryDefinition} from '../../../../source/features/dictionary/entry-definition'
 import {normalizeEntry} from '../../../../source/features/dictionary/lib/entry'
 import {wordByTermOptions} from '../../../../source/features/dictionary/query'
 import {useDictionaryDraftStore} from '../../../../source/features/dictionary/store'
 
 const styles = StyleSheet.create({
-	host: {flex: 1},
+	host: {
+		flex: 1,
+		backgroundColor: c.systemGroupedBackground,
+	},
 })
 
 export default function DictionaryEntryPage(): React.ReactNode {
@@ -45,6 +50,7 @@ export default function DictionaryEntryPage(): React.ReactNode {
 	let screen = (
 		<>
 			<Stack.Title>Dictionary</Stack.Title>
+			<SheetCloseButton />
 			<Stack.Toolbar placement="right">
 				<Stack.Toolbar.Menu accessibilityLabel="More actions" icon="ellipsis.circle">
 					<Stack.Toolbar.MenuAction icon="pencil" onPress={suggestAnEdit}>

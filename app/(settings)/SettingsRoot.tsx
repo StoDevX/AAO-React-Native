@@ -7,8 +7,9 @@ import {
 	listRowInsets,
 	listRowSeparator,
 } from '@expo/ui/swift-ui/modifiers'
-import {Stack, useNavigation} from 'expo-router'
+import {Stack} from 'expo-router'
 
+import {SheetCloseButton} from '../../source/components/sheet-close-button'
 import {useIsDevMode} from '../../source/lib/use-is-dev-mode'
 import {FaqBannerGroup} from '../../source/features/faqs/banner'
 import {FAQ_TARGETS} from '../../source/features/faqs/constants'
@@ -32,18 +33,11 @@ const styles = StyleSheet.create({
 
 export default function SettingsRootPage(): React.ReactNode {
 	const isDev = useIsDevMode()
-	const navigation = useNavigation()
 
 	return (
 		<>
 			<Stack.Title>Settings</Stack.Title>
-			<Stack.Toolbar placement="right">
-				<Stack.Toolbar.Button
-					accessibilityLabel="Close Screen"
-					icon="xmark"
-					onPress={() => navigation.goBack()}
-				/>
-			</Stack.Toolbar>
+			<SheetCloseButton />
 
 			<Host style={styles.host} modifiers={[accessibilityIdentifier('screen-settings')]}>
 				<Form>

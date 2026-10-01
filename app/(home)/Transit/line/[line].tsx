@@ -5,6 +5,7 @@ import {timezone} from '@frogpond/constants'
 import {useMomentTimer} from '@frogpond/timer'
 import {LoadingView, NoticeView} from '@frogpond/notice'
 
+import {SheetCloseButton} from '../../../../source/components/sheet-close-button'
 import {BusLine} from '../../../../source/features/transit/bus/line'
 import {busLineOptions} from '../../../../source/features/transit/bus/query'
 import {DAYS_OF_WEEK} from '../../../../source/features/transit/bus/components/days'
@@ -33,6 +34,7 @@ export default function BusLinePage(): React.ReactNode {
 	let chrome = (
 		<>
 			<Stack.Title>{lineName}</Stack.Title>
+			<SheetCloseButton />
 			<Stack.Toolbar placement="right">
 				<Stack.Toolbar.Menu title="Pick a schedule">
 					<Stack.Toolbar.Icon sf="calendar" />
