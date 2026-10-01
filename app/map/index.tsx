@@ -1,12 +1,13 @@
 import * as React from 'react'
 import {
 	StyleSheet,
+	Text,
 	useColorScheme,
 	useWindowDimensions,
 	View,
 	type NativeSyntheticEvent,
 } from 'react-native'
-import {useSafeAreaInsets} from 'react-native-safe-area-context'
+import {SafeAreaView, useSafeAreaInsets} from 'react-native-safe-area-context'
 import {BottomSheet, Group, Host, ZStack} from '@expo/ui/swift-ui'
 import {
 	accessibilityHidden,
@@ -33,7 +34,6 @@ import {
 import {useQuery} from '@tanstack/react-query'
 import {Stack, useLocalSearchParams} from 'expo-router'
 import * as c from '@frogpond/colors'
-import {NoticeView} from '@frogpond/notice'
 import {openUrl} from '@frogpond/open-url'
 
 import {parseCampus} from '../../source/features/building-hours/query'
@@ -470,13 +470,11 @@ export default function MapPage(): React.ReactNode {
 			</Host>
 
 			{error ? (
-				<View style={styles.banner}>
-					<NoticeView
-						description="Pan around the map; some features won’t work."
-						systemImage="map"
-						title="Couldn’t Load Buildings"
-					/>
-				</View>
+				<SafeAreaView edges={['left', 'right']} style={styles.banner}>
+					<Text style={styles.bannerText}>
+						Couldn’t load building data. Pan around the map; some features won’t work.
+					</Text>
+				</SafeAreaView>
 			) : null}
 		</View>
 	)
@@ -488,5 +486,12 @@ const styles = StyleSheet.create({
 		top: 0,
 		left: 0,
 		right: 0,
+		backgroundColor: c.systemBackground,
+	},
+	bannerText: {
+		color: c.label,
+		paddingHorizontal: 30,
+		paddingVertical: 16,
+		textAlign: 'center',
 	},
 })
