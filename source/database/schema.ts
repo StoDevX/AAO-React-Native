@@ -1,8 +1,9 @@
 import {CALENDAR_CREATE_SQL} from './calendar/schema.ts'
+import {COURSE_CREATE_SQL, COURSE_DROP_SQL} from './courses/schema.ts'
 import type {SqlRunner} from './sql.ts'
 
 /** Bump when any DDL below changes. A mismatch wipes and rebuilds. */
-export const SCHEMA_VERSION = 2
+export const SCHEMA_VERSION = 3
 
 const META_CREATE = `
 create table if not exists meta (
@@ -19,14 +20,14 @@ create table if not exists meta (
  * one outlives every table it names and would collide with any later view
  * taking its name.
  */
-export const RESET_SQL = `
+export const RESET_SQL = `${COURSE_DROP_SQL}
 drop view  if exists visible_event;
 drop table if exists event_tag;
 drop table if exists occurrence;
 drop table if exists event;
 drop table if exists meta;`
 
-export const CREATE_SQL = `${META_CREATE}${CALENDAR_CREATE_SQL}`
+export const CREATE_SQL = `${META_CREATE}${CALENDAR_CREATE_SQL}${COURSE_CREATE_SQL}`
 
 /**
  * Brings `runner` to the current schema, wiping it if it is not already there.

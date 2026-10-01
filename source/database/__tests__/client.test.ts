@@ -12,6 +12,14 @@ jest.mock('expo-sqlite', () => ({
 	deleteDatabaseSync: jest.fn(),
 }))
 jest.mock('@sentry/react-native', () => ({captureException: jest.fn()}))
+// Jest runs every suite as a UI test, which would write the fixture catalog
+// into the stand-in database; this suite is about the downloaded file.
+jest.mock('@frogpond/launch-arguments', () => ({isUITesting: false}))
+const mockCatalog = {exists: false, delete: jest.fn()}
+jest.mock('../courses/catalog-file', () => ({
+	catalogFile: () => mockCatalog,
+	filePath: () => '/docs/course-catalog.db',
+}))
 
 /** A stand-in for the handle `openDatabaseSync` returns, recording its calls. */
 function fakeDatabase(calls: string[]) {
@@ -44,6 +52,27 @@ describe('dropDatabase', () => {
 		getRunner()
 		dropDatabase()
 		expect(calls).toEqual(['close', 'delete'])
+	})
+
+	// "Reset Everything" clears every cache, and the course catalog is one.
+	it('deletes the course catalog file too', () => {
+		getRunner()
+		mockCatalog.exists = true
+		dropDatabase()
+		expect(mockCatalog.delete).toHaveBeenCalledTimes(1)
+		mockCatalog.exists = false
+	})
+
+	// The stand-in database reports no tables, so the file has no index: a
+	// catalog that cannot be searched is discarded for the next refresh to replace.
+	it('discards a catalog file it cannot search', () => {
+		mockCatalog.exists = true
+		getRunner()
+		expect(mockCatalog.delete).toHaveBeenCalledTimes(1)
+		expect(Sentry.captureException).toHaveBeenCalledTimes(1)
+		mockCatalog.exists = false
+		// Leaves the next test a database to open, not this one's cached runner.
+		dropDatabase()
 	})
 
 	it('opens a fresh database afterwards rather than reusing the closed one', () => {
