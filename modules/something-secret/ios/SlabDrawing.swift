@@ -9,11 +9,6 @@ enum Slab {
 	static let height: CGFloat = 150
 	/// How much shows by the end of the edge stage.
 	static let edgeHeight: CGFloat = 40
-	static let face = LinearGradient(
-		colors: [Color(white: 0.6), Color(white: 0.42)], startPoint: .top, endPoint: .bottom)
-	static let carved = Color(white: 0.26)
-	static let carvedHighlight = Color(white: 0.72)
-	static let crack = Color(white: 0.16)
 	static let dirt = Color(red: 0.38, green: 0.29, blue: 0.21)
 	static let chip = Color(white: 0.5)
 
@@ -50,6 +45,8 @@ struct SlabDrawing: View {
 	let fraction: Double
 	let inscription: String
 	let reduceMotion: Bool
+	/// The light the stone is lit from; see `overheadLight`.
+	let light: SIMD3<Double>
 
 	private var isOpen: Bool { stage == .open }
 
@@ -83,25 +80,33 @@ struct SlabDrawing: View {
 			.clipped()
 	}
 
+	/// The face as weathered stone. Drawn first as a mask -- the body black, the inscription and
+	/// the cracks white -- which the stone shader turns into rock with those cut into it.
 	private var face: some View {
 		ZStack {
 			UnevenRoundedRectangle(topLeadingRadius: 70, topTrailingRadius: 70)
-				.fill(Slab.face)
+				.fill(.black)
 			Text(inscription)
 				.font(.system(size: 13, weight: .heavy, design: .serif))
 				.multilineTextAlignment(.center)
 				.minimumScaleFactor(0.5)
-				.foregroundStyle(Slab.carved)
-				// A light edge under each letter reads as cut into the stone.
-				.shadow(color: Slab.carvedHighlight, radius: 0, x: 0, y: 1)
+				.foregroundStyle(.white)
 				.padding(.horizontal, 20)
 				.padding(.top, 30)
+				// Softened, so each cut slopes in rather than dropping sheer.
+				.blur(radius: 0.7)
 				.opacity(Slab.inscriptionOpacity(stage, fraction))
 			Cracks()
 				.trim(from: 0, to: Slab.crackLength(stage, fraction))
-				.stroke(Slab.crack, style: StrokeStyle(lineWidth: 2, lineCap: .round, lineJoin: .round))
+				.stroke(.white, style: StrokeStyle(lineWidth: 2.5, lineCap: .round, lineJoin: .round))
+				.blur(radius: 0.6)
 		}
 		.frame(width: Slab.width, height: Slab.height)
+		.compositingGroup()
+		.layerEffect(
+			MeltShaders.library.stone(
+				.float2(Slab.width, Slab.height), .float3(light.x, light.y, light.z)),
+			maxSampleOffset: CGSize(width: 6, height: 6))
 	}
 }
 

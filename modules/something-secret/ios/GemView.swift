@@ -24,21 +24,26 @@ final class TiltSource: ObservableObject {
 	}
 }
 
-/// The ruby the open slab holds. Its light hangs overhead in the room, so tilting the phone turns
-/// the facets through it; with no motion sensors, the light circles slowly instead, and holds
-/// still under Reduce Motion.
+/// The light both the stone and the gem are lit by: a lamp overhead in the room, seen from the
+/// phone's angle, so tilting the phone turns the surfaces through it. `towardEye` leans it toward
+/// the viewer, so a phone held upright still catches it.
+func overheadLight(up: SIMD3<Double>, towardEye: Double = 0.8) -> SIMD3<Double> {
+	up + SIMD3(0, 0, towardEye)
+}
+
+/// The ruby the open slab holds, lit from the phone's tilt. With no motion sensors, the light
+/// circles slowly instead, and holds still under Reduce Motion.
 struct GemView: View {
-	static let size: CGFloat = 96
+	/// The frame; the stone itself is a little smaller, leaving room for its glint's rays.
+	static let size: CGFloat = 120
+	/// Which way is up from the phone's sensors, or nil without them.
+	let up: SIMD3<Double>?
 	/// Where the circling light rests when it may not move: over one shoulder, so facets still shine.
 	private static let restingTime = 1.2
-	/// How far toward the eye the overhead light leans: held upright, a phone still catches it.
-	private static let towardEye = 0.8
-
 	@Environment(\.accessibilityReduceMotion) private var reduceMotion
-	@StateObject private var tilt = TiltSource()
 
 	var body: some View {
-		TimelineView(.animation(minimumInterval: nil, paused: reduceMotion && tilt.up == nil)) { context in
+		TimelineView(.animation(minimumInterval: nil, paused: reduceMotion && up == nil)) { context in
 			// Wrapped, so a Float in the shader keeps its precision.
 			let time =
 				reduceMotion
@@ -53,13 +58,11 @@ struct GemView: View {
 			}
 		}
 		.frame(width: Self.size, height: Self.size)
-		.onAppear { tilt.start() }
-		.onDisappear { tilt.stop() }
 	}
 
 	private func light(at time: Double) -> SIMD3<Double> {
-		if let up = tilt.up {
-			return up + SIMD3(0, 0, Self.towardEye)
+		if let up {
+			return overheadLight(up: up)
 		}
 		return SIMD3(cos(time * 0.8) * 0.7, sin(time * 0.8) * 0.7, 1)
 	}

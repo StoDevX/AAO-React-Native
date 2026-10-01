@@ -36,6 +36,14 @@ struct SlabView: ExpoSwiftUI.View {
 	}
 
 	@Environment(\.accessibilityReduceMotion) private var reduceMotion
+	/// Read only while the slab is above ground, so a buried one costs no battery.
+	@StateObject private var tilt = TiltSource()
+	/// Where the light sits without motion sensors: over the left shoulder.
+	private static let stillLight = SIMD3<Double>(-0.5, -0.7, 1.0)
+
+	private var light: SIMD3<Double> {
+		tilt.up.map { overheadLight(up: $0) } ?? Self.stillLight
+	}
 
 	private var isOpen: Bool { props.stage == .open }
 
@@ -52,6 +60,10 @@ struct SlabView: ExpoSwiftUI.View {
 		.onChange(of: isOpen) { _, opened in
 			if opened { Rumble.play() }
 		}
+		.onChange(of: props.stage == .blank, initial: true) { _, isBlank in
+			if isBlank { tilt.stop() } else { tilt.start() }
+		}
+		.onDisappear { tilt.stop() }
 	}
 
 	private var slab: some View {
@@ -62,7 +74,7 @@ struct SlabView: ExpoSwiftUI.View {
 				Color.clear
 				SlabDrawing(
 					stage: props.stage, fraction: props.fraction, inscription: props.inscription,
-					reduceMotion: reduceMotion)
+					reduceMotion: reduceMotion, light: light)
 				if !reduceMotion, let color = debrisColor {
 					Debris(trigger: props.tapCount, color: color)
 				}
@@ -96,7 +108,7 @@ struct SlabView: ExpoSwiftUI.View {
 			props.onButtonPress()
 		} label: {
 			VStack(spacing: 6) {
-				GemView()
+				GemView(up: tilt.up)
 				Text(props.buttonLabel)
 					.font(.system(size: 13, weight: .heavy, design: .serif))
 					.foregroundStyle(.secondary)
@@ -105,7 +117,7 @@ struct SlabView: ExpoSwiftUI.View {
 		}
 		.buttonStyle(.plain)
 		.accessibilityIdentifier(props.buttonTestID ?? "")
-		.padding(.bottom, 28)
+		.padding(.bottom, 14)
 	}
 
 	private var debrisColor: Color? {
