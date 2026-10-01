@@ -1,7 +1,7 @@
 // import type {ThemingType} from '@callstack/react-theme-provider'
 // import {createTheming} from '@callstack/react-theme-provider'
 import {useTheme} from 'expo-router/react-navigation'
-export {CombinedLightTheme, CombinedDarkTheme} from './paper'
+export {LightTheme, DarkTheme} from './navigation-theme'
 
 export type AppTheme = {
 	accent: string
