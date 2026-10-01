@@ -8,6 +8,8 @@ export type GoodToKnowRow =
 	| {kind: 'nickname'; text: string; others: Array<string>}
 	| {kind: 'accessibility'; text: string; accessible: boolean}
 	| {kind: 'length'; text: string}
+	| {kind: 'walk-time'; text: string}
+	| {kind: 'walk-access'; text: string}
 
 /// How the device measures distance: its language, for the digits, and its
 /// unit system, as iOS reports it. Null when iOS does not say.
@@ -59,11 +61,17 @@ export function formatDistance(metres: number, units: DistanceUnits): string {
 	return `${number} ${miles ? 'mi' : 'km'}`
 }
 
+/// A walk's time as the guide gives it: a range, or one time.
+export function formatWalkTime([low, high]: [number, number]): string {
+	return low === high ? `${low} min walk` : `${low}–${high} min walk`
+}
+
 /// What the card has to say about a place beyond its name: its short code,
-/// what people call it, how long it is if it is a trail, and whether a
-/// wheelchair can get in. Nothing for a fact the feed does not know.
+/// what people call it, how long it is if it is a trail, how long its
+/// Wellness Walk takes and what is underfoot, and whether a wheelchair can get
+/// in. Nothing for a fact the feed does not know.
 export function goodToKnowRows(
-	building: Pick<Building, 'abbreviation' | 'nickname' | 'accessibility' | 'length'>,
+	building: Pick<Building, 'abbreviation' | 'nickname' | 'accessibility' | 'length' | 'walk'>,
 	units: DistanceUnits = deviceUnits(),
 ): Array<GoodToKnowRow> {
 	let rows: Array<GoodToKnowRow> = []
@@ -86,6 +94,16 @@ export function goodToKnowRows(
 	// A trail's length in metres, not a list's: checked as a number.
 	if (typeof building.length === 'number' && building.length > 0) {
 		rows.push({kind: 'length', text: formatDistance(building.length, units)})
+	}
+
+	// Each half of a walk is checked on its own, as the feed is not validated.
+	let walk = building.walk
+	if (Array.isArray(walk?.minutes) && walk.minutes.length === 2) {
+		rows.push({kind: 'walk-time', text: formatWalkTime(walk.minutes)})
+	}
+	let walkAccess = walk?.accessibility?.trim()
+	if (walkAccess) {
+		rows.push({kind: 'walk-access', text: walkAccess})
 	}
 
 	if (building.accessibility === 'wheelchair') {
