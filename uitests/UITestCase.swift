@@ -27,6 +27,7 @@ class UITestCaseUnbooted: XCTestCase {
 		// inverts if dev mode is already on, and failed only in long runs.
 		app.launchArguments.append(TestIdentifiers.LaunchArguments.resetState)
 		appendJsLocationIfProvided()
+		appendRecordFixturesIfAsked()
 	}
 
 	override func tearDownWithError() throws {
@@ -50,6 +51,14 @@ class UITestCaseUnbooted: XCTestCase {
 		attachment.name = "Failure - \(name)"
 		attachment.lifetime = .keepAlways
 		add(attachment)
+	}
+
+	/// Has the app record what it fetches, when the test runner was started with
+	/// `TEST_RUNNER_AAO_RECORD_FIXTURES=1` -- as `mise run update-mess-fixtures` does.
+	func appendRecordFixturesIfAsked() {
+		if ProcessInfo.processInfo.environment["AAO_RECORD_FIXTURES"] == "1" {
+			app.launchArguments.append(TestIdentifiers.LaunchArguments.recordFixtures)
+		}
 	}
 
 	/// Points the app at a Metro other than the default localhost:8081, when
@@ -148,6 +157,7 @@ class UITestCaseUnbooted: XCTestCase {
 	func keepStateForNextLaunch(adding arguments: [String]) {
 		app.launchArguments = [TestIdentifiers.LaunchArguments.uiTesting] + arguments
 		appendJsLocationIfProvided()
+		appendRecordFixturesIfAsked()
 	}
 }
 

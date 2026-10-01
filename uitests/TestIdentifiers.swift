@@ -12,6 +12,10 @@ struct TestIdentifiers {
 	enum LaunchArguments {
 		static let uiTesting = "--uitesting"
 		static let resetState = "--reset-state"
+		/// Records each fetch a feature with fixtures makes, for
+		/// `mise run update-mess-fixtures`. Added when the runner is started with
+		/// `TEST_RUNNER_AAO_RECORD_FIXTURES=1`.
+		static let recordFixtures = "--record-fixtures"
 		/// Adds one posting to the Student Work fixtures, read through
 		/// `NSUserDefaults` as EXTRA_POSTING_SETTING in
 		/// modules/ccc-jobs/fixtures/uitest-postings.ts.
