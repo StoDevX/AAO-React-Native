@@ -184,6 +184,22 @@ class ModuleMapTests: UITestCaseUnbooted {
 			.verifySectionOrder(["Hours", "About", "Good to Know", "Links"], among: cardSections)
 	}
 
+	/// Once expanded, a card's About text can be selected and copied. Cut
+	/// short, it cannot: a copy then would hold only the lines on screen.
+	func testAnExpandedAboutCanBeCopied() throws {
+		let name = TestIdentifiers.Map.aBuildingWithALongAbout
+		MapScreen(app: app)
+			.navigate()
+			.checkSheetPresented()
+			.focusSearch()
+			.typeIntoSearch(name)
+			.selectBuilding(named: name)
+			.expandCard()
+			.verifyAboutOffersCopy(false)
+			.expandAbout()
+			.verifyAboutOffersCopy(true)
+	}
+
 	/// Closing a card returns to the list as it was left: the same group,
 	/// scrolled to the same place. Checked at the middle stop, where a row tap
 	/// leaves the sheet and so where the list is seen again.

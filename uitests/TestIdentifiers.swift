@@ -178,6 +178,9 @@ struct TestIdentifiers {
 		/// The building card's title block. Matches `CARD_TITLE_ID` in
 		/// `source/features/map/building-info.tsx`.
 		static let cardTitle = "card-title"
+		/// The card's About text. Matches the `testID` in
+		/// `source/features/map/card/about-section.tsx`.
+		static let cardAbout = "card-about"
 		/// A St. Olaf building whose card carries a subtitle
 		/// ("Administrative & Academic") under a long name, so title and subtitle
 		/// together are the tightest fit the collapsed header has to hold. Its row
