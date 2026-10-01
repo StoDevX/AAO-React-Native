@@ -3,9 +3,9 @@ import {Alert, StyleSheet} from 'react-native'
 import {Section} from '@expo/ui/swift-ui'
 import {Stack} from 'expo-router'
 
-import {FaqBannerPresentation} from '../../source/features/faqs/banner'
-import type {Faq} from '../../source/features/faqs/types'
-import {LibraryWrapper} from '../../source/features/settings/screens/overview/component-library/base/library-wrapper'
+import {FaqBannerPresentation} from '../../../source/features/faqs/banner'
+import type {Faq} from '../../../source/features/faqs/types'
+import {LibraryWrapper} from '../../../source/features/settings/screens/overview/component-library/base/library-wrapper'
 
 /**
  * Builds a preview Faq. Only the fields a banner actually reads are worth

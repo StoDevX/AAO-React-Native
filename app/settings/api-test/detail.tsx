@@ -10,9 +10,9 @@ import {useQuery} from '@tanstack/react-query'
 import {client} from '@frogpond/api'
 import {iOSUIKit} from 'react-native-typography'
 import {HtmlContent} from '@frogpond/html-content'
-import {CSS_CODE_STYLES} from '../../source/features/settings/screens/api-test/util/highlight-styles'
-import {syntaxHighlight} from '../../source/features/settings/screens/api-test/util/highlight'
-import {DebugView} from '../../source/features/settings/screens/debug'
+import {CSS_CODE_STYLES} from '../../../source/features/settings/screens/api-test/util/highlight-styles'
+import {syntaxHighlight} from '../../../source/features/settings/screens/api-test/util/highlight'
+import {DebugView} from '../../../source/features/settings/screens/debug'
 
 type DisplayMode = 'raw' | 'parsed'
 
@@ -57,7 +57,7 @@ export default function APITestDetailPage(): React.ReactNode {
 			<Stack.Title>{cleanedName}</Stack.Title>
 			<Stack.Toolbar placement="right">
 				<Stack.Toolbar.Menu icon="ellipsis.circle">
-					<Stack.Toolbar.MenuAction onPress={() => router.navigate('/settings/NetworkLogger')}>
+					<Stack.Toolbar.MenuAction onPress={() => router.navigate('/settings/network-logger')}>
 						Network Logger
 					</Stack.Toolbar.MenuAction>
 					<Stack.Toolbar.MenuAction

@@ -6,15 +6,15 @@ import {listStyle} from '@expo/ui/swift-ui/modifiers'
 import * as c from '@frogpond/colors'
 import {Stack, useRouter} from 'expo-router'
 
-import {DisclosureRow} from '../../source/components/rows'
+import {DisclosureRow} from '../../../source/components/rows'
 
 const LIBRARIES = [
-	{title: 'Badges', route: '/settings/BadgeLibrary'},
-	{title: 'Buttons', route: '/settings/ButtonLibrary'},
-	{title: 'Colors', route: '/settings/ColorsLibrary'},
-	{title: 'Context Menus', route: '/settings/ContextMenuLibrary'},
-	{title: 'FAQ Banners', route: '/settings/FaqBannerLibrary'},
-	{title: 'Rows', route: '/settings/RowLibrary'},
+	{title: 'Badges', route: '/settings/component-library/badges'},
+	{title: 'Buttons', route: '/settings/component-library/buttons'},
+	{title: 'Colors', route: '/settings/component-library/colors'},
+	{title: 'Context Menus', route: '/settings/component-library/context-menus'},
+	{title: 'FAQ Banners', route: '/settings/component-library/faq-banners'},
+	{title: 'Rows', route: '/settings/component-library/rows'},
 ] as const
 
 export default function ComponentLibraryRootPage(): React.ReactNode {

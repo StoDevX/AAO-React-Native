@@ -2,8 +2,8 @@ import * as React from 'react'
 import {Alert} from 'react-native'
 import {Section} from '@expo/ui/swift-ui'
 import {Stack} from 'expo-router'
-import {DetailRow, DisclosureRow} from '../../source/components/rows'
-import {LibraryWrapper} from '../../source/features/settings/screens/overview/component-library/base/library-wrapper'
+import {DetailRow, DisclosureRow} from '../../../source/components/rows'
+import {LibraryWrapper} from '../../../source/features/settings/screens/overview/component-library/base/library-wrapper'
 
 /**
  * `DisclosureRow` and `DetailRow` are themselves list rows, so wrapping each

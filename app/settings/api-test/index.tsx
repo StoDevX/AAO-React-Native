@@ -6,13 +6,13 @@ import {LoadingView, NoticeView} from '@frogpond/notice'
 import * as c from '@frogpond/colors'
 import {useQuery} from '@tanstack/react-query'
 import {Stack, useRouter} from 'expo-router'
-import {DisclosureRow} from '../../source/components/rows'
+import {DisclosureRow} from '../../../source/components/rows'
 
-import {SearchBar} from '../../source/components/search-bar'
+import {SearchBar} from '../../../source/components/search-bar'
 import {
 	ServerRoute,
 	serverRoutesOptions,
-} from '../../source/features/settings/screens/api-test/query'
+} from '../../../source/features/settings/screens/api-test/query'
 
 export default function APITestPage(): React.ReactNode {
 	let router = useRouter()
@@ -33,7 +33,7 @@ export default function APITestPage(): React.ReactNode {
 	const openRoute = React.useCallback(
 		(route: ServerRoute) =>
 			router.navigate({
-				pathname: '/settings/APITestDetail',
+				pathname: '/settings/api-test/detail',
 				params: {displayName: route.displayName},
 			}),
 		[router],
@@ -45,7 +45,7 @@ export default function APITestPage(): React.ReactNode {
 
 			<Stack.Toolbar placement="right">
 				<Stack.Toolbar.Menu icon="ellipsis.circle">
-					<Stack.Toolbar.MenuAction onPress={() => router.navigate('/settings/NetworkLogger')}>
+					<Stack.Toolbar.MenuAction onPress={() => router.navigate('/settings/network-logger')}>
 						Network Logger
 					</Stack.Toolbar.MenuAction>
 				</Stack.Toolbar.Menu>
@@ -60,7 +60,7 @@ export default function APITestPage(): React.ReactNode {
 				onChangeText={setPath}
 				onSearchButtonPress={(ev) => {
 					router.navigate({
-						pathname: '/settings/APITestDetail',
+						pathname: '/settings/api-test/detail',
 						params: {displayName: ev.nativeEvent.text},
 					})
 				}}

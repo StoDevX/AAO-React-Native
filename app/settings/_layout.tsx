@@ -4,11 +4,11 @@ import {Stack} from 'expo-router'
 export default function SettingsLayout(): React.ReactNode {
 	return (
 		<Stack screenOptions={{headerBackButtonDisplayMode: 'minimal'}}>
-			<Stack.Screen name="Credits" />
-			<Stack.Screen name="Privacy" />
-			<Stack.Screen name="Legal" />
-			<Stack.Screen name="ReportProblem" options={{presentation: 'modal'}} />
-			<Stack.Screen name="NetworkLogger" options={{gestureEnabled: false}} />
+			<Stack.Screen name="credits" />
+			<Stack.Screen name="privacy" />
+			<Stack.Screen name="legal" />
+			<Stack.Screen name="report-problem" options={{presentation: 'modal'}} />
+			<Stack.Screen name="network-logger" options={{gestureEnabled: false}} />
 		</Stack>
 	)
 }

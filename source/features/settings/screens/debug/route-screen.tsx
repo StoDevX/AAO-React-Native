@@ -16,7 +16,7 @@ export const DebugKeyPathScreen = ({keyPath}: Props): React.ReactNode => {
 
 	let onDrillDown = (key: string | number) => {
 		router.navigate({
-			pathname: '/settings/Debug/[...keyPath]',
+			pathname: '/settings/debug/[...keyPath]',
 			params: {keyPath: [...keyPath, String(key)]},
 		})
 	}

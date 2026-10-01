@@ -7,7 +7,7 @@ import {Button} from '@frogpond/button'
 import {
 	LibraryWrapper,
 	Example,
-} from '../../source/features/settings/screens/overview/component-library/base/library-wrapper'
+} from '../../../source/features/settings/screens/overview/component-library/base/library-wrapper'
 
 const ButtonExample = (): React.ReactNode => {
 	return (

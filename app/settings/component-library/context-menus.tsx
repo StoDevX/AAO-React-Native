@@ -5,7 +5,7 @@ import {Stack} from 'expo-router'
 import {
 	Example,
 	LibraryWrapper,
-} from '../../source/features/settings/screens/overview/component-library/base/library-wrapper'
+} from '../../../source/features/settings/screens/overview/component-library/base/library-wrapper'
 import {upperFirst} from 'lodash'
 
 const ANIMALS = ['bird', 'cat', 'cow', 'dog']
