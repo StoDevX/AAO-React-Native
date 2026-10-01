@@ -61,7 +61,7 @@ class ModuleMapTests: UITestCaseUnbooted {
 	}
 
 	/// The full sheet, and a row tapped from it, reached through the grid's
-	/// All Buildings group.
+	/// Buildings group.
 	///
 	/// The module pins the field at 44pt with a constraint UIKit is free to
 	/// overrule silently, so the height is checked before anything else moves
@@ -76,7 +76,7 @@ class ModuleMapTests: UITestCaseUnbooted {
 			.checkSheetPresented()
 			.expandSheet()
 			.verifySearchFieldHeight()
-			.openCategory(TestIdentifiers.Map.allBuildingsCategory)
+			.openCategory(TestIdentifiers.Map.buildingsCategory)
 			// Opening a group drops the sheet to make room for its pins.
 			.expandSheet()
 		let largeTop = screen.searchFieldTop()
@@ -334,6 +334,18 @@ class ModuleMapTests: UITestCaseUnbooted {
 			.goBackToCategories()
 	}
 
+	/// The grid's bottom-left tile draws its whole name. The grid is a row of
+	/// the sheet's list, and the list clips each row to its card's rounded
+	/// corners, which once cut the foot off that tile's first letter.
+	func testTheGridsCornerTileDrawsItsWholeName() throws {
+		MapScreen(app: app)
+			.navigate()
+			.checkSheetPresented()
+			.expandSheet()
+			.capture("St. Olaf map category grid's corner tile")
+			.verifyTileNameDrawnWhole(TestIdentifiers.Map.cornerCategory)
+	}
+
 	/// Search runs over every place, whichever group is open.
 	func testSearchFromAGroupFindsPlacesOutsideIt() throws {
 		MapScreen(app: app)
@@ -356,9 +368,9 @@ class ModuleMapTests: UITestCaseUnbooted {
 			.navigate()
 			.checkSheetPresented()
 			.expandSheet()
-			.openCategory(TestIdentifiers.Map.allBuildingsCategory)
-			.capture("St. Olaf map All Buildings group at the largest text size")
-			.verifyGroupTitleClearsBackButton(TestIdentifiers.Map.allBuildingsCategory)
+			.openCategory(TestIdentifiers.Map.buildingsCategory)
+			.capture("St. Olaf map Buildings group at the largest text size")
+			.verifyGroupTitleClearsBackButton(TestIdentifiers.Map.buildingsCategory)
 	}
 
 	/// At the largest text size the categories are a list: a grid narrow
@@ -373,7 +385,7 @@ class ModuleMapTests: UITestCaseUnbooted {
 			.capture("St. Olaf map categories at the largest text size")
 			// The first row: at this size the sheet may rest short of its full
 			// stop, and a list builds only the rows it shows.
-			.verifyCategoriesAsList(including: TestIdentifiers.Map.allBuildingsCategory)
+			.verifyCategoriesAsList(including: TestIdentifiers.Map.buildingsCategory)
 	}
 
 	/// A search that finds one place frames its pin above the sheet, and the

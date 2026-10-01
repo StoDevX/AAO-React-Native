@@ -203,9 +203,13 @@ struct TestIdentifiers {
 		/// scroll. Mirrors a label in data/map-categories.yaml.
 		static let parkingCategory = "Parking"
 		/// The group that lists every building. Mirrors data/map-categories.yaml.
-		static let allBuildingsCategory = "All Buildings"
+		static let buildingsCategory = "Buildings"
 		/// A St. Olaf group. Mirrors data/map-categories.yaml.
 		static let diningCategory = "Dining"
+		/// The group whose tile sits at the grid's bottom-left corner at the
+		/// default text size: the last row's first tile. Mirrors the order of
+		/// data/map-categories.yaml.
+		static let cornerCategory = "Landmarks"
 		/// The group header's back button, by identifier: its "Back" label also
 		/// matches the navigation bar's own Back on iOS 27. Mirrors
 		/// GROUP_BACK_ID in source/features/map/building-picker.tsx.

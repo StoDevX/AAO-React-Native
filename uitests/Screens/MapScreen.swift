@@ -558,6 +558,36 @@ struct MapScreen: Screen {
 		return self
 	}
 
+	/// A tile's name is drawn down to its first letter's lower edge: there is
+	/// ink in the leftmost tenth of the name's lower half. The name's frame
+	/// fits its tile either way, so only the pixels can tell a clipped letter.
+	@discardableResult
+	func verifyTileNameDrawnWhole(_ label: String) -> Self {
+		let name = app.staticTexts[label].firstMatch
+		XCTAssertTrue(name.waitForExistence(timeout: 10), "The grid should show \(label)")
+		settle { name.frame.minY }
+		let frame = name.frame
+		guard let pixels = ScreenPixels(app.screenshot().image) else {
+			XCTFail("The screenshot should be readable as pixels")
+			return self
+		}
+		let corner = CGRect(
+			x: frame.minX, y: frame.midY, width: frame.width / 10, height: frame.height / 2)
+		var inked = 0
+		for y in stride(from: corner.minY, to: corner.maxY, by: 0.5) {
+			for x in stride(from: corner.minX, to: corner.maxX, by: 0.5) {
+				let colour = pixels.colour(at: CGPoint(x: x, y: y))
+				if colour.red + colour.green + colour.blue < 300 {
+					inked += 1
+				}
+			}
+		}
+		XCTAssertGreaterThan(
+			inked, 0,
+			"\(label)'s first letter should be drawn whole, but its lower-left corner is blank")
+		return self
+	}
+
 	private var groupBackButton: XCUIElement {
 		app.buttons.matching(identifier: TestIdentifiers.Map.groupBack).firstMatch
 	}

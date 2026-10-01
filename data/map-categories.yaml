@@ -1,6 +1,6 @@
 stolaf:
   groups:
-    - label: All Buildings
+    - label: Buildings
       categories: [building]
       icon: building.2.fill
       gradient: gray
@@ -68,7 +68,7 @@ stolaf:
 
 carleton:
   groups:
-    - label: All Buildings
+    - label: Buildings
       categories: [building]
       icon: building.2.fill
       gradient: gray
