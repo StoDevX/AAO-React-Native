@@ -6,9 +6,12 @@ export type FixtureMode = 'live' | 'serve' | 'record'
 interface LaunchArgumentsModule extends NativeModule {
 	isUITesting: boolean
 	fixtureMode: FixtureMode
+	secretProgress: number
 }
 
 const LaunchArguments = requireNativeModule<LaunchArgumentsModule>('LaunchArguments')
 
 export const isUITesting: boolean = LaunchArguments.isUITesting
 export const fixtureMode: FixtureMode = LaunchArguments.fixtureMode
+/** Where the home screen's secret slab starts, from --secret-progress=N; 0 otherwise. */
+export const secretProgress: number = LaunchArguments.secretProgress
