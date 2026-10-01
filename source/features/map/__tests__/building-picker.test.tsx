@@ -39,13 +39,16 @@ const fixtures = [
 ]
 
 const TABLE: MapCategoryTable = {
-	stolaf: [],
-	carleton: [
-		{label: 'All Buildings', categories: ['building'], icon: 'building.2.fill', gradient: 'gray'},
-		{label: 'Outdoors', categories: ['outdoors'], icon: 'tree.fill', gradient: 'green'},
-		{label: 'Parking', categories: ['parking'], icon: 'parkingsign', gradient: 'light-blue'},
-		{label: 'Dining', categories: ['dining'], icon: 'fork.knife', gradient: 'orange'},
-	],
+	stolaf: {groups: [], icons: []},
+	carleton: {
+		groups: [
+			{label: 'All Buildings', categories: ['building'], icon: 'building.2.fill', gradient: 'gray'},
+			{label: 'Outdoors', categories: ['outdoors'], icon: 'tree.fill', gradient: 'green'},
+			{label: 'Parking', categories: ['parking'], icon: 'parkingsign', gradient: 'light-blue'},
+			{label: 'Dining', categories: ['dining'], icon: 'fork.knife', gradient: 'orange'},
+		],
+		icons: [],
+	},
 }
 
 // Every query left without observers gets a garbage-collection timeout, and
@@ -235,15 +238,38 @@ describe('BuildingPicker', () => {
 		expect(screen.queryByRole('button', {name: 'Back'})).toBeNull()
 	})
 
+	// Each campus publishes its own icons; a row must not take the other's.
+	it("draws each row's icon from its own campus's list", async () => {
+		await renderPicker({
+			table: {
+				stolaf: {
+					groups: [],
+					icons: [{categories: ['outdoors'], icon: 'leaf.fill', gradient: 'green'}],
+				},
+				carleton: {
+					groups: [],
+					icons: [{categories: ['outdoors'], icon: 'tree.fill', gradient: 'green'}],
+				},
+			},
+		})
+		// Gamma Field is outdoors; Alpha Hall matches no entry and draws the pin.
+		expect(screen.getAllByTestId('symbol-tree.fill')).toHaveLength(1)
+		expect(screen.queryByTestId('symbol-leaf.fill')).toBeNull()
+		expect(screen.getAllByTestId('symbol-mappin').length).toBeGreaterThan(0)
+	})
+
 	// A feed whose values no group names -- a server renaming its categories --
 	// would otherwise leave an empty sheet with nothing to tap.
 	it('lists every place by name when no group has any', async () => {
 		await renderPicker({
 			table: {
-				stolaf: [],
-				carleton: [
-					{label: 'Dining', categories: ['dining'], icon: 'fork.knife', gradient: 'orange'},
-				],
+				stolaf: {groups: [], icons: []},
+				carleton: {
+					groups: [
+						{label: 'Dining', categories: ['dining'], icon: 'fork.knife', gradient: 'orange'},
+					],
+					icons: [],
+				},
 			},
 		})
 		expect(screen.queryByRole('button', {name: 'Dining'})).toBeNull()

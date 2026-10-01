@@ -123,8 +123,8 @@ class ModuleCalendarDayModeTests: UITestCaseUnbooted {
 
     // pushing Today should reset the date picker strip, even if we haven't selected a new date
     screen.tapToday()
-    XCTAssertEqual(
-      screen.datePickerDayIdentifiers(), initialWeekDates,
+    screen.verifyStripShows(
+      initialWeekDates,
       "Today should bring back the day it opened on, with its events drawn")
 
     // swiping on a day's agenda area should change the displayed events
@@ -180,8 +180,8 @@ class ModuleCalendarDayModeTests: UITestCaseUnbooted {
     XCTAssertEqual(
       screen.selectedDay(), todayDayCell,
       "Today should choose the frozen day")
-    XCTAssertEqual(
-      screen.datePickerDayIdentifiers(), initialWeekDates,
+    screen.verifyStripShows(
+      initialWeekDates,
       "Today should bring back the day it opened on, with its events drawn")
 	}
 

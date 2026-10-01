@@ -32,11 +32,19 @@ import {CampusSearchBar} from '@frogpond/campus-search-bar'
 import * as c from '@frogpond/colors'
 import {useDebounce} from '@frogpond/use-debounce'
 
-import {RowAccessory} from '../../components/rows'
+import {LeadingImage, RowAccessory} from '../../components/rows'
 import type {Campus} from '../building-hours/types'
-import {CategoryGrid} from './category-grid'
+import {CategoryGrid, ROW_ICON_WIDTH} from './category-grid'
 import {mapCategoriesOptions} from './category-groups-query'
-import {byName, type CategoryGroup, groupColor, groupsFor, placesIn} from './lib/category-groups'
+import {
+	byName,
+	type CategoryGroup,
+	groupColor,
+	groupsFor,
+	type MapIconEntry,
+	placeIcon,
+	placesIn,
+} from './lib/category-groups'
 import {SEARCH_PIN_COLOR, type MapPins} from './lib/map-pins'
 import {recentPlaces} from './lib/recent-places'
 import {searchPlaces} from './lib/search-places'
@@ -143,6 +151,7 @@ export function BuildingPicker({
 	let {data: table} = useQuery(mapCategoriesOptions)
 
 	let groups = React.useMemo(() => groupsFor(table, campus, buildings), [table, campus, buildings])
+	let icons = table?.[campus]?.icons ?? []
 
 	// Held with its campus, so a switch closes it; and looked up among the
 	// groups that have places, so a group a refetch emptied closes too.
@@ -297,14 +306,24 @@ export function BuildingPicker({
 							// attaches `.onDelete`/`.onMove` unconditionally, which would put
 							// swipe-to-delete and drag-to-reorder on this read-only picker.
 							searchResults.map((building) => (
-								<BuildingRow key={building.id} building={building} onSelect={onSelect} />
+								<BuildingRow
+									key={building.id}
+									building={building}
+									icons={icons}
+									onSelect={onSelect}
+								/>
 							))
 						)
 					) : buildings.length === 0 ? (
 						<Text>No places to show.</Text>
 					) : openGroup || groups.length === 0 ? (
 						listedPlaces.map((building) => (
-							<BuildingRow key={building.id} building={building} onSelect={onSelect} />
+							<BuildingRow
+								key={building.id}
+								building={building}
+								icons={icons}
+								onSelect={onSelect}
+							/>
 						))
 					) : compact ? null : (
 						<CategoryGrid groups={groups} onOpen={openFromTile} />
@@ -312,6 +331,7 @@ export function BuildingPicker({
 				</Section>
 				{showsRecents ? (
 					<RecentsSection
+						icons={icons}
 						onClear={() => clearRecents(campus)}
 						onForget={(id) => forgetRecent(campus, id)}
 						onSelect={onSelect}
@@ -327,11 +347,13 @@ export function BuildingPicker({
 /// swipes away on its own; Clear empties the section.
 function RecentsSection({
 	places,
+	icons,
 	onSelect,
 	onForget,
 	onClear,
 }: {
 	places: Array<Feature<Building>>
+	icons: MapIconEntry[]
 	onSelect: (id: string) => void
 	onForget: (id: string) => void
 	onClear: () => void
@@ -357,7 +379,7 @@ function RecentsSection({
 			    would offer to reorder a list whose order is when each was opened. */}
 			{places.map((building) => (
 				<SwipeActions key={building.id}>
-					<BuildingRow building={building} onSelect={onSelect} />
+					<BuildingRow building={building} icons={icons} onSelect={onSelect} />
 					<SwipeActions.Actions allowsFullSwipe={true} edge="trailing">
 						<Button
 							label="Remove"
@@ -422,12 +444,17 @@ function GroupHeader({label, onBack}: {label: string; onBack: () => void}): Reac
 
 function BuildingRow({
 	building,
+	icons,
 	onSelect,
 }: {
 	building: Feature<Building>
+	icons: MapIconEntry[]
 	onSelect: (id: string) => void
 }): React.ReactNode {
 	let {name} = building.properties
+	// Drawn as the category list draws its groups, so a pond reads as water
+	// and a lot as parking before its name does.
+	let {icon, gradient} = placeIcon(building.properties.categories, icons)
 	// A house renamed each year for its residents carries every name, newest
 	// first; the row shows the current one.
 	let names = building.properties.nickname ?? []
@@ -443,7 +470,10 @@ function BuildingRow({
 			    SwiftUI derives a button's tappable region from its label, so the
 			    Spacer's width -- most of the row -- was dead to taps. The same
 			    note is on Settings' NavigationRow. */}
-			<HStack modifiers={[contentShape(shapes.rectangle())]} spacing={8}>
+			<HStack modifiers={[contentShape(shapes.rectangle())]} spacing={12}>
+				<LeadingImage
+					image={{systemName: icon, tint: groupColor(gradient), width: ROW_ICON_WIDTH}}
+				/>
 				<VStack alignment="leading" spacing={2}>
 					<Text modifiers={[foregroundStyle({type: 'hierarchical', style: 'primary'})]}>
 						{name}
