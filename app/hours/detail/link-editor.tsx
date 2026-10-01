@@ -1,7 +1,8 @@
 import * as React from 'react'
 import {StyleSheet} from 'react-native'
 import {Stack, useLocalSearchParams} from 'expo-router'
-import {Host, List, Section} from '@expo/ui/swift-ui'
+import {Host, List} from '@expo/ui/swift-ui'
+import {SheetSection} from '@frogpond/sheet-section'
 import {listStyle} from '@expo/ui/swift-ui/modifiers'
 import * as c from '@frogpond/colors'
 
@@ -44,7 +45,7 @@ export default function BuildingLinkEditorPage(): React.ReactNode {
 
 			<Host style={styles.host}>
 				<List modifiers={[listStyle('insetGrouped')]}>
-					<Section>
+					<SheetSection>
 						<SyncedTextField
 							autocapitalization="words"
 							onChangeText={editTitle}
@@ -58,11 +59,11 @@ export default function BuildingLinkEditorPage(): React.ReactNode {
 							placeholder="URL"
 							value={link.url}
 						/>
-					</Section>
+					</SheetSection>
 
-					<Section>
+					<SheetSection>
 						<ActionRow destructive={true} onPress={deleteLink} title="Remove" />
-					</Section>
+					</SheetSection>
 				</List>
 			</Host>
 		</>

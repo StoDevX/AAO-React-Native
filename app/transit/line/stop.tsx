@@ -2,7 +2,8 @@ import * as React from 'react'
 import {StyleSheet} from 'react-native'
 import {Stack, useLocalSearchParams} from 'expo-router'
 import {useQuery} from '@tanstack/react-query'
-import {Host, List, Section, Text} from '@expo/ui/swift-ui'
+import {Host, List, Text} from '@expo/ui/swift-ui'
+import {SheetSection} from '@frogpond/sheet-section'
 import {listStyle} from '@expo/ui/swift-ui/modifiers'
 import * as c from '@frogpond/colors'
 import {timezone} from '@frogpond/constants'
@@ -117,9 +118,12 @@ function BusStopDetail(props: Props): React.ReactNode {
 	return (
 		<Host style={styles.host}>
 			<List modifiers={[listStyle('insetGrouped')]}>
-				<Section footer={<Text>{BUS_FOOTER_MESSAGE}</Text>} title={`${stop.name} — ${subtitle}`}>
+				<SheetSection
+					footer={<Text>{BUS_FOOTER_MESSAGE}</Text>}
+					title={`${stop.name} — ${subtitle}`}
+				>
 					{rows}
-				</Section>
+				</SheetSection>
 			</List>
 		</Host>
 	)

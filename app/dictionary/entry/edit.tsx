@@ -1,6 +1,7 @@
 import * as React from 'react'
 import {Alert, StyleSheet} from 'react-native'
-import {Button, Form, Host, List, Section, Text, TextField, useNativeState} from '@expo/ui/swift-ui'
+import {Button, Form, Host, List, Text, TextField, useNativeState} from '@expo/ui/swift-ui'
+import {SheetSection} from '@frogpond/sheet-section'
 import {
 	accessibilityIdentifier,
 	accessibilityLabel,
@@ -11,6 +12,7 @@ import {Stack, useNavigation, useRouter} from 'expo-router'
 import {usePreventRemove} from 'expo-router/react-navigation'
 import noop from 'lodash/noop'
 import {NoticeView} from '@frogpond/notice'
+import * as c from '@frogpond/colors'
 
 import {DisclosureRow} from '../../../source/components/rows'
 import {
@@ -20,7 +22,7 @@ import {
 } from '../../../source/features/dictionary/store'
 
 const styles = StyleSheet.create({
-	host: {flex: 1},
+	host: {flex: 1, backgroundColor: c.systemGroupedBackground},
 })
 
 export default function DictionaryEditPage(): React.ReactNode {
@@ -138,7 +140,7 @@ export default function DictionaryEditPage(): React.ReactNode {
 						environment({key: 'editMode', value: reordering ? 'active' : 'inactive'}),
 					]}
 				>
-					<Section title="Word">
+					<SheetSection title="Word">
 						<TextField
 							modifiers={[accessibilityLabel('Word'), textInputAutocapitalization('words')]}
 							onTextChange={store.setWord}
@@ -157,7 +159,7 @@ export default function DictionaryEditPage(): React.ReactNode {
 							placeholder="Part of Speech"
 							text={partOfSpeechText}
 						/>
-					</Section>
+					</SheetSection>
 
 					{/* The footer says whether there is a suggestion to preview yet, and
 					    stays mounted to say it: swapping a footer in and out on the first
@@ -166,7 +168,7 @@ export default function DictionaryEditPage(): React.ReactNode {
 					    definition arrived as "ind". Every state carries wording for the
 					    same reason: an empty footer is still a view, of a height nobody
 					    has looked at. */}
-					<Section footer={<Text>{footerText}</Text>} title="Senses">
+					<SheetSection footer={<Text>{footerText}</Text>} title="Senses">
 						<List.ForEach
 							onDelete={(indices) =>
 								indices.forEach((index) => store.deleteSense(draft.senses[index].id))
@@ -200,7 +202,7 @@ export default function DictionaryEditPage(): React.ReactNode {
 						{/* Adding a sense and opening it are one action: the row it
 						    appends has nowhere to type a definition. */}
 						<Button label="Add Sense" onPress={openNewSense} systemImage="plus" />
-					</Section>
+					</SheetSection>
 				</Form>
 			</Host>
 		</>

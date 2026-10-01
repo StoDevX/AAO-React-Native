@@ -3,6 +3,7 @@ import {Alert, StyleSheet} from 'react-native'
 import {Host} from '@expo/ui/swift-ui'
 import {Stack} from 'expo-router'
 import {NoticeView} from '@frogpond/notice'
+import * as c from '@frogpond/colors'
 
 import {EntryDiff} from '../../../source/features/dictionary/entry-diff'
 import {diffEntry} from '../../../source/features/dictionary/lib/diff'
@@ -12,7 +13,7 @@ import {useDictionaryDraftStore} from '../../../source/features/dictionary/store
 import {track} from '../../../source/features/telemetry/track'
 
 const styles = StyleSheet.create({
-	host: {flex: 1},
+	host: {flex: 1, backgroundColor: c.systemGroupedBackground},
 })
 
 export default function DictionaryPreviewPage(): React.ReactNode {
