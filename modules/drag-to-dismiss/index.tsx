@@ -15,7 +15,7 @@ const DragToDismissNativeView: React.ComponentType<DragToDismissViewProps> = req
 /**
  * A view whose children a vertical drag carries away, fading its background as they go,
  * as Photos does with a picture. A drag starts only while any scroll view inside is at
- * its smallest zoom, so a zoomed picture still pans.
+ * its smallest zoom, so a zoomed picture pans instead.
  */
 export function DragToDismissView(props: DragToDismissViewProps): React.ReactNode {
 	return <DragToDismissNativeView {...props} />

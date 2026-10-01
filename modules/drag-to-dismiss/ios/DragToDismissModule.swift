@@ -17,8 +17,9 @@ public class DragToDismissModule: Module {
 /// the children slide off and the view reports a dismissal; otherwise they
 /// spring back.
 ///
-/// A drag starts only while any scroll view inside sits at its smallest zoom,
-/// so a zoomed picture still pans. The scale is read here, not from
+/// A zoomed picture pans rather than leaving: a scroll view that can scroll
+/// takes the touch first, and a drag here starts only while any scroll view
+/// inside sits at its smallest zoom besides. The scale is read here, not from
 /// JavaScript, whose copy trails the pinch by a frame or more.
 ///
 /// The children move by the layer's `sublayerTransform`, which React Native
