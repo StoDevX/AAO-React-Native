@@ -1,10 +1,9 @@
 import * as React from 'react'
 import {Stack, useLocalSearchParams} from 'expo-router'
-import {useQuery} from '@tanstack/react-query'
 import {StyleSheet} from 'react-native'
 import {Host, LabeledContent, List, RNHostView, Section, Text, VStack} from '@expo/ui/swift-ui'
 import {font, foregroundStyle, listStyle, multilineTextAlignment} from '@expo/ui/swift-ui/modifiers'
-import type {CourseType, TermType} from '../../../source/lib/course-search'
+import type {CourseType} from '../../../source/lib/course-search'
 import {SolidBadge as Badge} from '@frogpond/badge'
 import {
 	courseSchedule,
@@ -17,13 +16,8 @@ import * as c from '@frogpond/colors'
 import {deptNum} from '../../../source/features/sis/course-search/lib/format-dept-num'
 import {formatCourseNotes} from '../../../source/features/sis/course-search/lib/format-course-notes'
 
-import {
-	courseByIdOptions,
-	termByNumberOptions,
-} from '../../../source/features/sis/course-search/query'
+import {useCourse, useCourseCatalog} from '../../../source/database/courses/read'
 import {LoadErrorView, LoadingView, NoticeView} from '@frogpond/notice'
-
-const PENDING_TERM: TermType = {hash: '', path: '', term: 0, type: '', year: 0}
 
 const styles = StyleSheet.create({
 	host: {
@@ -156,25 +150,35 @@ const SUBTITLE_MODIFIERS = [
 ]
 
 export default function CourseDetailPage(): React.ReactNode {
-	let {clbid, term} = useLocalSearchParams<{clbid: string; term: string}>()
-
-	let {data: resolvedTerm, isLoading: termLoading} = useQuery(termByNumberOptions(Number(term)))
-
-	let {
-		data: course,
-		isLoading: courseLoading,
-		error,
-		refetch,
-	} = useQuery({
-		...courseByIdOptions(resolvedTerm ?? PENDING_TERM, Number(clbid)),
-		enabled: Boolean(resolvedTerm),
-	})
+	let {clbid} = useLocalSearchParams<{clbid: string; term: string}>()
+	let catalog = useCourseCatalog()
+	let {course, failed} = useCourse(Number(clbid))
+	let retry = () => void catalog.refetch()
 
 	// The route param is a course id, meaningless to a user, so the title
 	// stays empty until the course loads rather than falling back to it.
 	let screenTitle = <Stack.Title>{course?.name ?? ''}</Stack.Title>
 
-	if (termLoading || courseLoading) {
+	if (course) {
+		return (
+			<>
+				{screenTitle}
+				<CourseDetailView course={course} />
+			</>
+		)
+	}
+
+	if (failed) {
+		return (
+			<>
+				{screenTitle}
+				<LoadErrorView error={new Error('The course could not be read.')} onRetry={retry} />
+			</>
+		)
+	}
+
+	// Not stored yet: the catalog may still be on its way.
+	if (course === undefined || catalog.isPending) {
 		return (
 			<>
 				{screenTitle}
@@ -183,20 +187,11 @@ export default function CourseDetailPage(): React.ReactNode {
 		)
 	}
 
-	if (error) {
+	if (catalog.isError) {
 		return (
 			<>
 				{screenTitle}
-				<LoadErrorView error={error} onRetry={refetch} />
-			</>
-		)
-	}
-
-	if (!course) {
-		return (
-			<>
-				{screenTitle}
-				<NoticeView systemImage="questionmark.circle" title="Course Not Found" />
+				<LoadErrorView error={catalog.error} onRetry={retry} />
 			</>
 		)
 	}
@@ -204,7 +199,7 @@ export default function CourseDetailPage(): React.ReactNode {
 	return (
 		<>
 			{screenTitle}
-			<CourseDetailView course={course} />
+			<NoticeView systemImage="questionmark.circle" title="Course Not Found" />
 		</>
 	)
 }

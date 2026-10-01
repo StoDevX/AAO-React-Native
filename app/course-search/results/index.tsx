@@ -6,10 +6,10 @@ import {
 	updateRecentFilters,
 	selectRecentFilters,
 } from '../../../source/redux/parts/courses'
-import {LoadingView, NoticeView} from '@frogpond/notice'
+import {LoadErrorView, LoadingView, NoticeView} from '@frogpond/notice'
 import type {CourseType} from '../../../source/lib/course-search'
 import {useAppDispatch, useAppSelector} from '../../../source/redux'
-import {applyFiltersToItem, Filter, FilterToolbar} from '@frogpond/filter'
+import {Filter, FilterToolbar} from '@frogpond/filter'
 import {useFilters} from '../../../source/features/sis/course-search/lib/build-filters'
 import {Stack, useLocalSearchParams, useRouter} from 'expo-router'
 import {useDebounce} from '@frogpond/use-debounce'
@@ -17,75 +17,18 @@ import {ListSeparator, ListSectionHeader, largeListProps} from '@frogpond/lists'
 import * as c from '@frogpond/colors'
 import {CourseRow} from '../../../source/features/sis/course-search/row'
 import {parseTerm} from '../../../source/lib/course-search'
-import {ListFilterSpec} from '@frogpond/filter/types'
-import {
-	applySearch,
-	sortAndGroupResults,
-} from '../../../source/features/sis/course-search/lib/execute-search'
-import {useCourseData} from '../../../source/features/sis/course-search/query'
-import {UseQueryResult} from '@tanstack/react-query'
 import {SearchBar} from '../../../source/components/search-bar'
+import {
+	useCourseCatalog,
+	useCourseFilterOptions,
+	useCourseResults,
+} from '../../../source/database/courses/read'
+import {courseFilters} from '../../../source/database/courses/filters'
+import type {CourseListItem} from '../../../source/database/courses/rows'
+import {courseListState} from '../../../source/features/sis/course-search/lib/list-state'
 
-function doSearch(args: {
-	query: string
-	filters: Array<Filter<CourseType>>
-	courses: Array<CourseType>
-	applyFilters: (filters: Filter<CourseType>[], item: CourseType) => boolean
-}) {
-	let {query, filters, courses, applyFilters} = args
-
-	let results = courses.filter((course) => applyFilters(filters, course))
-	if (query) {
-		results = results.filter((course) => applySearch(query, course))
-	}
-
-	return sortAndGroupResults(results)
-}
-
-function isError(e: unknown): e is Error {
-	return e instanceof Error
-}
-
-function queriesToCourses(queries: UseQueryResult<CourseType[]>[]): CourseType[] {
-	return queries.flatMap((q) => q.data).filter((data) => data !== undefined)
-}
-
-const useSelectedFilter = (filterKey: string, filters: Filter<CourseType>[]) => {
-	return React.useMemo(() => filters.find((f) => f.key === filterKey), [filterKey, filters])
-}
-
-const useSelectedTerm = (filters: Filter<CourseType>[]) => {
-	let termFilter = useSelectedFilter('term', filters)
-
-	if (termFilter?.enabled) {
-		let termFilterSpec = termFilter.spec as ListFilterSpec
-		return termFilterSpec.selected.map((spec) => Number(spec.title))
-	}
-
-	return []
-}
-
-const useSelectedLevel = (filters: Filter<CourseType>[]) => {
-	let levelFilter = useSelectedFilter('level', filters)
-
-	if (levelFilter?.enabled) {
-		let levelFilterSpec = levelFilter.spec as ListFilterSpec
-		return levelFilterSpec.selected.map((spec) => Number(spec.title))
-	}
-
-	return []
-}
-
-const useSelectedGE = (filters: Filter<CourseType>[]) => {
-	let geFilter = useSelectedFilter('gereqs', filters)
-
-	if (geFilter?.enabled) {
-		let geFilterSpec = geFilter.spec as ListFilterSpec
-		return geFilterSpec.selected.map((spec) => spec.title)
-	}
-
-	return []
-}
+const OFFLINE_NOTICE =
+	'Course search needs a connection to download the course catalog the first time.'
 
 function CourseSearchResultsView(): React.ReactNode {
 	let dispatch = useAppDispatch()
@@ -119,16 +62,17 @@ function CourseSearchResultsView(): React.ReactNode {
 	let [searchQuery, setSearchQuery] = React.useState(initialQuery)
 	let delayedQuery = useDebounce(searchQuery, 500)
 
-	let selectedTerms = useSelectedTerm(filters)
-	let selectedLevels = useSelectedLevel(filters)
-	let selectedGEs = useSelectedGE(filters)
-
-	let allCoursesByTerm = useCourseData(selectedTerms, selectedLevels, selectedGEs)
-	let areCoursesLoading = allCoursesByTerm.some((r) => r.isLoading)
-	let areCoursesInError = allCoursesByTerm.some((r) => r.isError)
+	let catalog = useCourseCatalog()
+	let {terms} = useCourseFilterOptions()
+	let results = useCourseResults({
+		query: delayedQuery ?? '',
+		filters: courseFilters(filters, terms),
+	})
+	let state = courseListState(catalog, results)
+	let retry = React.useCallback(() => void catalog.refetch(), [catalog])
 
 	let handlePress = React.useCallback(
-		(data: CourseType) => {
+		(data: CourseListItem) => {
 			if (delayedQuery?.length) {
 				// if there is text in the search bar, add the text to the Recent Searches list
 				dispatch(updateRecentSearches(delayedQuery))
@@ -152,47 +96,29 @@ function CourseSearchResultsView(): React.ReactNode {
 		[filters],
 	)
 
-	if (areCoursesInError) {
-		let courseTermsInError = allCoursesByTerm.filter((r) => r.isError)
-		let errors = courseTermsInError
-			.map((r) => r.error)
-			.filter(isError)
-			.map((e) => e.message)
-			.join('\n')
-
+	if (state === 'offline') {
 		return (
 			<NoticeView
-				action={{
-					label: 'Try Again',
-					onPress: () => {
-						for (let r of courseTermsInError) {
-							r.refetch()
-						}
-					},
-				}}
-				description={errors}
-				systemImage="exclamationmark.triangle"
-				title={
-					courseTermsInError.length === 1 ? 'Couldn’t Load a Term' : 'Couldn’t Load Some Terms'
-				}
+				action={{label: 'Try Again', onPress: retry}}
+				description={OFFLINE_NOTICE}
+				systemImage="wifi.slash"
+				title="Offline"
 			/>
 		)
 	}
 
-	if (areCoursesLoading) {
-		return <LoadingView text="Loading Course Data…" />
+	if (state === 'error') {
+		return (
+			<LoadErrorView
+				error={catalog.error ?? new Error('The course catalog could not be read.')}
+				onRetry={retry}
+			/>
+		)
 	}
 
-	let allCourses = queriesToCourses(allCoursesByTerm)
-
-	// The search compares against lowercased course fields.
-	let query = delayedQuery?.toLowerCase()
-	let results = doSearch({
-		query,
-		filters,
-		courses: allCourses,
-		applyFilters: applyFiltersToItem,
-	})
+	if (state === 'loading') {
+		return <LoadingView text="Loading Course Data…" />
+	}
 
 	let header =
 		filterError instanceof Error ? (
@@ -209,7 +135,7 @@ function CourseSearchResultsView(): React.ReactNode {
 				title: 'No Matches',
 				description: 'No courses match these filters. Try a different combination.',
 			}
-		: query?.length
+		: delayedQuery?.length
 			? {
 					title: 'No Results',
 					description: 'No courses match your search. Check the spelling or try a new search.',
@@ -248,13 +174,13 @@ function CourseSearchResultsView(): React.ReactNode {
 					ListHeaderComponent={header}
 					contentContainerStyle={styles.contentContainer}
 					contentInsetAdjustmentBehavior="automatic"
-					keyExtractor={(item: CourseType) => item.clbid.toString()}
+					keyExtractor={(item: CourseListItem) => String(item.clbid)}
 					keyboardDismissMode="interactive"
 					renderItem={({item}) => <CourseRow course={item} onPress={handlePress} />}
 					renderSectionHeader={({section: {title}}) => (
 						<ListSectionHeader title={parseTerm(title)} />
 					)}
-					sections={results}
+					sections={results.sections}
 					{...largeListProps}
 				/>
 			</SafeAreaView>
