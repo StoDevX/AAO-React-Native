@@ -308,26 +308,7 @@ struct HoursScreen: Screen {
 		return self
 	}
 
-	@discardableResult
-	func openDetailMenu() -> Self {
-		let menu = app.buttons[TestIdentifiers.Hours.detailMenu].firstMatch
-		XCTAssertTrue(
-			menu.waitForExistence(timeout: 30),
-			"The detail sheet should offer an overflow menu")
-		menu.tap()
-		return self
-	}
-
-	@discardableResult
-	func verifyReportActionOffered() -> Self {
-		XCTAssertTrue(
-			app.buttons[TestIdentifiers.Hours.reportAction]
-				.waitForExistence(timeout: 30),
-			"The menu should offer Report a Problem")
-		return self
-	}
-
-	/// Taps Report a Problem in the detail sheet's overflow menu.
+	/// Taps the detail sheet's Report a Problem button.
 	/// `verifyReportScreenPresented` is what proves the push actually worked,
 	/// rather than the action merely existing as a menu item.
 	@discardableResult
@@ -335,14 +316,14 @@ struct HoursScreen: Screen {
 		let action = app.buttons[TestIdentifiers.Hours.reportAction]
 		XCTAssertTrue(
 			action.waitForExistence(timeout: 30),
-			"The menu should offer Report a Problem before it can be tapped")
+			"The detail sheet should offer Report a Problem")
 		action.tap()
 		return self
 	}
 
 	/// Assert the report screen actually came up, by its own prompt
 	/// rather than `reportAction`'s label -- that label belongs to the
-	/// menu button that opens this screen, and would exist whether or not the
+	/// toolbar button that opens this screen, and would exist whether or not the
 	/// screen ever presented.
 	@discardableResult
 	func verifyReportScreenPresented() -> Self {

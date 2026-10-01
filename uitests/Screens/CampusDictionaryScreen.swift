@@ -199,16 +199,10 @@ struct CampusDictionaryScreen: Screen {
 	}
 
 	@discardableResult
-	/// The sheet's actions sit behind the ellipsis in the entry's own
-	/// navigation bar, so reaching the editor takes two taps: open the menu,
-	/// then choose from it.
+	/// Taps Suggest an Edit in the entry's own navigation bar.
 	func openEditor() -> Self {
-		let menu = app.navigationBars.buttons[TestIdentifiers.Dictionary.actionsMenu]
-		XCTAssertTrue(menu.waitForExistence(timeout: 5), "the sheet had no actions menu")
-		menu.tap()
-
-		let button = app.buttons[TestIdentifiers.Dictionary.suggestAnEdit]
-		XCTAssertTrue(button.waitForExistence(timeout: 5), "Suggest an Edit was not in the menu")
+		let button = app.navigationBars.buttons[TestIdentifiers.Dictionary.suggestAnEdit]
+		XCTAssertTrue(button.waitForExistence(timeout: 5), "the sheet had no Suggest an Edit button")
 		button.tap()
 		return self
 	}
