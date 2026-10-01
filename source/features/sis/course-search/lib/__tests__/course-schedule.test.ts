@@ -51,6 +51,21 @@ describe('courseSchedule', () => {
 		expect(schedule[0]?.slots).toHaveLength(2)
 	})
 
+	// A student planning next term from home should see the hours the class
+	// actually meets on campus, not those hours moved into their own zone. No
+	// device runs these tests in Tokyo, so a campus there is always elsewhere.
+	it('shows meeting times in the campus zone, wherever the device is', () => {
+		setTimezone('Asia/Tokyo')
+		try {
+			let schedule = courseSchedule(
+				offerings([{day: 'Mo', start: '9:00', end: '10:30', location: 'RNS 310'}]),
+			)
+			expect(schedule[0]?.slots).toEqual([{time: '9 AM – 10:30 AM', location: 'RNS 310'}])
+		} finally {
+			setTimezone('America/Chicago')
+		}
+	})
+
 	it('has nothing to show for a course with no offerings', () => {
 		expect(courseSchedule(undefined)).toEqual([])
 	})
