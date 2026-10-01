@@ -1,12 +1,12 @@
 import {parseTerm} from '../../../../lib/course-search/parse-term'
-import type {FilterType, ListType, ToggleType} from '@frogpond/filter'
+import type {Filter, ListFilter, ToggleFilter} from '@frogpond/filter'
 import {CourseType} from '../../../../lib/course-search'
 import {availableTermsOptions, departmentsOptions, geReqsOptions} from '../query'
 import {useQuery} from '@tanstack/react-query'
 
 export function useFilters(): {
 	isLoading: boolean
-	data: FilterType<CourseType>[]
+	data: Filter<CourseType>[]
 	error: null | Error
 	refetch: () => void
 } {
@@ -67,7 +67,7 @@ export function useFilters(): {
 			apply: {
 				key: 'spaceAvailable',
 			},
-		} as ToggleType<CourseType>,
+		} as ToggleFilter<CourseType>,
 		{
 			type: 'list',
 			key: 'term',
@@ -82,7 +82,7 @@ export function useFilters(): {
 			apply: {
 				key: 'term',
 			},
-		} as ListType<CourseType>,
+		} as ListFilter<CourseType>,
 		{
 			type: 'list',
 			key: 'gereqs',
@@ -98,7 +98,7 @@ export function useFilters(): {
 			apply: {
 				key: 'gereqs',
 			},
-		} as ListType<CourseType>,
+		} as ListFilter<CourseType>,
 		{
 			type: 'list',
 			key: 'department',
@@ -114,7 +114,7 @@ export function useFilters(): {
 			apply: {
 				key: 'department',
 			},
-		} as ListType<CourseType>,
+		} as ListFilter<CourseType>,
 		{
 			type: 'list',
 			key: 'level',
@@ -130,7 +130,7 @@ export function useFilters(): {
 			apply: {
 				key: 'level',
 			},
-		} as ListType<CourseType>,
+		} as ListFilter<CourseType>,
 		{
 			type: 'toggle',
 			key: 'status',
@@ -143,7 +143,7 @@ export function useFilters(): {
 				key: 'status',
 				trueEquivalent: 'O',
 			},
-		} as ToggleType<CourseType>,
+		} as ToggleFilter<CourseType>,
 		{
 			type: 'toggle',
 			key: 'type',
@@ -156,7 +156,7 @@ export function useFilters(): {
 				key: 'type',
 				trueEquivalent: 'Lab',
 			},
-		} as ToggleType<CourseType>,
+		} as ToggleFilter<CourseType>,
 	]
 
 	return {data: response, error: null, isLoading, refetch}

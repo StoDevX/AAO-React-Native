@@ -9,7 +9,7 @@ import {
 import {LoadingView, NoticeView} from '@frogpond/notice'
 import type {CourseType} from '../../../source/lib/course-search'
 import {useAppDispatch, useAppSelector} from '../../../source/redux'
-import {applyFiltersToItem, FilterType, FilterToolbar} from '@frogpond/filter'
+import {applyFiltersToItem, Filter, FilterToolbar} from '@frogpond/filter'
 import {useFilters} from '../../../source/features/sis/course-search/lib/build-filters'
 import {Stack, useLocalSearchParams, useRouter} from 'expo-router'
 import {fromPairs} from 'lodash'
@@ -19,7 +19,7 @@ import * as c from '@frogpond/colors'
 import {CourseRow} from '../../../source/features/sis/course-search/row'
 import memoize from 'lodash/memoize'
 import {parseTerm} from '../../../source/lib/course-search'
-import {ListSpecType} from '@frogpond/filter/types'
+import {ListFilterSpec} from '@frogpond/filter/types'
 import {
 	applySearch,
 	sortAndGroupResults,
@@ -30,9 +30,9 @@ import {SearchBar} from '../../../source/components/search-bar'
 
 function doSearch(args: {
 	query: string
-	filters: Array<FilterType<CourseType>>
+	filters: Array<Filter<CourseType>>
 	courses: Array<CourseType>
-	applyFilters: (filters: FilterType<CourseType>[], item: CourseType) => boolean
+	applyFilters: (filters: Filter<CourseType>[], item: CourseType) => boolean
 }) {
 	let {query, filters, courses, applyFilters} = args
 
@@ -57,37 +57,37 @@ function queriesToCourses(queries: UseQueryResult<CourseType[]>[]): CourseType[]
 	return queries.flatMap((q) => q.data).filter((data) => data !== undefined)
 }
 
-const useSelectedFilter = (filterKey: string, filters: FilterType<CourseType>[]) => {
+const useSelectedFilter = (filterKey: string, filters: Filter<CourseType>[]) => {
 	return React.useMemo(() => filters.find((f) => f.key === filterKey), [filterKey, filters])
 }
 
-const useSelectedTerm = (filters: FilterType<CourseType>[]) => {
+const useSelectedTerm = (filters: Filter<CourseType>[]) => {
 	let termFilter = useSelectedFilter('term', filters)
 
 	if (termFilter?.enabled) {
-		let termFilterSpec = termFilter.spec as ListSpecType
+		let termFilterSpec = termFilter.spec as ListFilterSpec
 		return termFilterSpec.selected.map((spec) => Number(spec.title))
 	}
 
 	return []
 }
 
-const useSelectedLevel = (filters: FilterType<CourseType>[]) => {
+const useSelectedLevel = (filters: Filter<CourseType>[]) => {
 	let levelFilter = useSelectedFilter('level', filters)
 
 	if (levelFilter?.enabled) {
-		let levelFilterSpec = levelFilter.spec as ListSpecType
+		let levelFilterSpec = levelFilter.spec as ListFilterSpec
 		return levelFilterSpec.selected.map((spec) => Number(spec.title))
 	}
 
 	return []
 }
 
-const useSelectedGE = (filters: FilterType<CourseType>[]) => {
+const useSelectedGE = (filters: Filter<CourseType>[]) => {
 	let geFilter = useSelectedFilter('gereqs', filters)
 
 	if (geFilter?.enabled) {
-		let geFilterSpec = geFilter.spec as ListSpecType
+		let geFilterSpec = geFilter.spec as ListFilterSpec
 		return geFilterSpec.selected.map((spec) => spec.title)
 	}
 
@@ -119,7 +119,7 @@ function CourseSearchResultsView(): React.ReactNode {
 		// oxlint-disable-next-line react/exhaustive-deps
 	}, [filterDescription])
 
-	let [filters, setFilters] = React.useState<FilterType<CourseType>[]>(
+	let [filters, setFilters] = React.useState<Filter<CourseType>[]>(
 		initialFilters.length > 0 ? initialFilters : basicFilters,
 	)
 
@@ -152,7 +152,7 @@ function CourseSearchResultsView(): React.ReactNode {
 	)
 
 	let updateFilter = React.useCallback(
-		(filter: FilterType<CourseType>) => {
+		(filter: Filter<CourseType>) => {
 			let edited = filters.map((f) => (f.key !== filter.key ? f : filter))
 			setFilters(edited)
 		},

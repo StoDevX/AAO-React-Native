@@ -1,4 +1,4 @@
-export type {FilterType, ListType, ToggleType, PickerType, ListItemSpecType} from './types'
+export type {Filter, ListFilter, ToggleFilter, PickerFilter, ListFilterOption} from './types'
 export {applyFiltersToItem} from './apply-filters'
 export {selectedOptions} from './selected-options'
 export {stringifyFilters} from './stringify-filters'

@@ -1,6 +1,6 @@
 import type {Moment} from 'moment'
 import type {MasterCorIconMapType, MenuItemType, ProcessedMealType} from '../types'
-import type {FilterType} from '@frogpond/filter/types'
+import type {Filter} from '@frogpond/filter/types'
 import {decode, fastGetTrimmedText} from '@frogpond/html-lib'
 import * as React from 'react'
 
@@ -12,7 +12,7 @@ export function buildFilters(
 	corIcons: MasterCorIconMapType,
 	meals: ProcessedMealType[],
 	now?: Moment,
-): FilterType<MenuItemType>[] {
+): Filter<MenuItemType>[] {
 	// Format the items for the stations filter
 	const stations = meals.flatMap((meal) => meal.stations)
 	const stationLabels = new Set(stations.map((station) => station.label))

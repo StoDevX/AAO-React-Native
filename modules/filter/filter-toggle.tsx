@@ -2,12 +2,12 @@ import * as React from 'react'
 import {Button, Host} from '@expo/ui/swift-ui'
 
 import {triggerModifiers} from './lib/trigger-modifiers'
-import type {ToggleType} from './types'
+import type {ToggleFilter} from './types'
 
 type Props<T extends object> = {
-	filter: ToggleType<T>
+	filter: ToggleFilter<T>
 	isActive: boolean
-	onChange: (filter: ToggleType<T>) => void
+	onChange: (filter: ToggleFilter<T>) => void
 }
 
 /**

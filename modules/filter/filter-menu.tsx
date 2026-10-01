@@ -7,7 +7,7 @@ import {optionLabel} from './lib/option-label'
 import {toggleOption} from './lib/select-options'
 import {TriggerLabel} from './lib/trigger-label'
 import {triggerModifiers} from './lib/trigger-modifiers'
-import type {FilterType} from './types'
+import type {Filter} from './types'
 
 /**
  * Keeps a list menu open as its options are ticked. A list filter is
@@ -19,9 +19,9 @@ import type {FilterType} from './types'
 const STAYS_OPEN = [menuActionDismissBehavior('disabled')]
 
 type Props<T extends object> = {
-	filter: FilterType<T>
+	filter: Filter<T>
 	isActive: boolean
-	onChange: (filter: FilterType<T>) => void
+	onChange: (filter: Filter<T>) => void
 }
 
 /**

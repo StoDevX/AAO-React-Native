@@ -4,7 +4,7 @@ import {ContentUnavailableView, Host, List, Section} from '@expo/ui/swift-ui'
 import {listStyle, refreshable} from '@expo/ui/swift-ui/modifiers'
 import * as c from '@frogpond/colors'
 import {NoticeView, LoadingView} from '@frogpond/notice'
-import {FilterToolbar, ListType, selectedOptions} from '@frogpond/filter'
+import {FilterToolbar, ListFilter, selectedOptions} from '@frogpond/filter'
 import {formatDate} from '@frogpond/time-format'
 import {StreamRow} from '../../source/features/streaming/streams/row'
 import toPairs from 'lodash/toPairs'
@@ -43,14 +43,14 @@ const groupStreamsByCategoryAndDate = (stream: StreamType) => {
 	}
 }
 
-const getEnabledCategories = <T extends object>(filters: ListType<T>[]) => {
-	return filters.flatMap((filter: ListType<T>) => {
-		let filterSelections: ListType<T>['spec']['selected'] = filter.spec.selected
+const getEnabledCategories = <T extends object>(filters: ListFilter<T>[]) => {
+	return filters.flatMap((filter: ListFilter<T>) => {
+		let filterSelections: ListFilter<T>['spec']['selected'] = filter.spec.selected
 		return filterSelections.flatMap((spec) => spec.title)
 	})
 }
 
-const filterStreams = <T extends object>(streams: StreamType[], filters: ListType<T>[]) => {
+const filterStreams = <T extends object>(streams: StreamType[], filters: ListFilter<T>[]) => {
 	let enabledCategories = getEnabledCategories(filters)
 
 	if (enabledCategories.length === 0) {
@@ -73,7 +73,7 @@ export default function StreamingPage(): React.ReactNode {
 		return data.map((stream) => groupStreamsByCategoryAndDate(stream))
 	}, [data])
 
-	let filters = React.useMemo((): ListType<StreamType>[] => {
+	let filters = React.useMemo((): ListFilter<StreamType>[] => {
 		let allCategories = data.map((stream) => titleCase(stream.category))
 
 		if (allCategories.length === 0) {

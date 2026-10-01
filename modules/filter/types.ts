@@ -1,9 +1,9 @@
-export type ToggleSpecType = {
+export type ToggleFilterSpec = {
 	label: string
 	title: string
 }
 
-export type ListItemSpecType = {
+export type ListFilterOption = {
 	title: string
 	label?: string
 	detail?: string
@@ -11,78 +11,78 @@ export type ListItemSpecType = {
 	id?: string
 }
 
-export type ListSpecType = {
+export type ListFilterSpec = {
 	title: string
 	/**
 	 * Draws a row's leading mark, for a caller whose marks are views rather than
 	 * artwork. Lives on the spec rather than on each option so that it stays out
 	 * of the equality check that decides which options are selected.
 	 */
-	renderMark?: (option: ListItemSpecType) => React.ReactElement | null
+	renderMark?: (option: ListFilterOption) => React.ReactElement | null
 	/// Overrides the presentation `filterShape` would otherwise pick from the
 	/// option count. A filter carrying icons is still always a sheet: a menu
 	/// cannot draw them.
 	presentation?: 'menu' | 'sheet'
-	options: ListItemSpecType[]
-	selected: ListItemSpecType[]
+	options: ListFilterOption[]
+	selected: ListFilterOption[]
 	mode: 'AND' | 'OR'
 	displayTitle: boolean
 }
 
-export type PickerItemSpecType = {
+export type PickerFilterOption = {
 	label: string
 }
 
-export type PickerSpecType = {
+export type PickerFilterSpec = {
 	title: string
-	options: PickerItemSpecType[]
-	selected?: PickerItemSpecType
+	options: PickerFilterOption[]
+	selected?: PickerFilterOption
 }
 
-export type ToggleFilterFunctionType<T extends object> = {
+export type ToggleFilterApply<T extends object> = {
 	key: keyof T
 	trueEquivalent?: string
 }
 
-export type PickerFilterFunctionType<T extends object> = {
+export type PickerFilterApply<T extends object> = {
 	key: keyof T
 }
 
-export type ListFilterFunctionType<T extends object> = {
+export type ListFilterApply<T extends object> = {
 	key: keyof T
 }
 
-export type ToggleType<T extends object> = {
+export type ToggleFilter<T extends object> = {
 	type: 'toggle'
 	key: string
 	enabled: boolean
 	/// Drawn, but not operable -- the filter is offered so the toolbar keeps
 	/// its shape, while this meal or feed gives it nothing to act on.
 	disabled?: boolean
-	spec: ToggleSpecType
-	apply: ToggleFilterFunctionType<T>
+	spec: ToggleFilterSpec
+	apply: ToggleFilterApply<T>
 }
 
-export type PickerType<T extends object> = {
+export type PickerFilter<T extends object> = {
 	type: 'picker'
 	key: string
 	enabled: true
 	/// Drawn, but not operable -- the filter is offered so the toolbar keeps
 	/// its shape, while this meal or feed gives it nothing to act on.
 	disabled?: boolean
-	spec: PickerSpecType
-	apply: PickerFilterFunctionType<T>
+	spec: PickerFilterSpec
+	apply: PickerFilterApply<T>
 }
 
-export type ListType<T extends object> = {
+export type ListFilter<T extends object> = {
 	type: 'list'
 	key: string
 	enabled: boolean
 	/// Drawn, but not operable -- the filter is offered so the toolbar keeps
 	/// its shape, while this meal or feed gives it nothing to act on.
 	disabled?: boolean
-	spec: ListSpecType
-	apply: ListFilterFunctionType<T>
+	spec: ListFilterSpec
+	apply: ListFilterApply<T>
 }
 
-export type FilterType<T extends object> = ToggleType<T> | PickerType<T> | ListType<T>
+export type Filter<T extends object> = ToggleFilter<T> | PickerFilter<T> | ListFilter<T>

@@ -1,7 +1,7 @@
 // Sub-paths, not the barrel: it reaches the filter toolbar and its SwiftUI
 // symbols, which cannot load under Jest.
 import {applyFilter} from '@frogpond/filter/apply-filters'
-import type {FilterType, ListType} from '@frogpond/filter/types'
+import type {Filter, ListFilter} from '@frogpond/filter/types'
 
 import type {ItemCorIconMapType, MenuItemType} from '../types'
 import {isFeatured} from './is-featured'
@@ -26,7 +26,7 @@ const ALSO_SATISFIED_BY: Record<string, readonly string[]> = {
 	Vegetarian: ['Vegan'],
 }
 
-function isDietaryFilter(filter: FilterType<MenuItemType>): filter is ListType<MenuItemType> {
+function isDietaryFilter(filter: Filter<MenuItemType>): filter is ListFilter<MenuItemType> {
 	return filter.type === 'list' && filter.key === DIETARY_FILTER_KEY
 }
 
@@ -47,7 +47,7 @@ export function meetsDietaryMarks(
 	)
 }
 
-function isSpecialsFilter(filter: FilterType<MenuItemType>): boolean {
+function isSpecialsFilter(filter: Filter<MenuItemType>): boolean {
 	return filter.type === 'toggle' && filter.key === SPECIALS_FILTER_KEY
 }
 
@@ -56,7 +56,7 @@ function isSpecialsFilter(filter: FilterType<MenuItemType>): boolean {
  * honours the marks that stand in for one another, and the specials toggle
  * keeps every featured item rather than only those marked special.
  */
-export function applyMenuFilters(filters: FilterType<MenuItemType>[], item: MenuItemType): boolean {
+export function applyMenuFilters(filters: Filter<MenuItemType>[], item: MenuItemType): boolean {
 	return filters.every((filter) => {
 		if (!filter.enabled) {
 			return true

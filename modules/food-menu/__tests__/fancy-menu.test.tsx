@@ -11,7 +11,7 @@ import type {
 	ProcessedMealType,
 	StationMenuType,
 } from '../types'
-import type {FilterType, PickerType} from '@frogpond/filter'
+import type {Filter, PickerFilter} from '@frogpond/filter'
 
 /**
  * The real toolbar renders `@expo/ui/swift-ui` directly, which cannot mount
@@ -44,10 +44,10 @@ jest.mock('../filter-menu-toolbar', () => {
 			filters,
 			onChange,
 		}: {
-			filters: FilterType<MenuItemType>[]
-			onChange: (filter: FilterType<MenuItemType>) => void
+			filters: Filter<MenuItemType>[]
+			onChange: (filter: Filter<MenuItemType>) => void
 		}) => {
-			let mealFilter = filters.find((f) => f.key === 'meals') as PickerType<MenuItemType>
+			let mealFilter = filters.find((f) => f.key === 'meals') as PickerFilter<MenuItemType>
 
 			return (
 				<P
