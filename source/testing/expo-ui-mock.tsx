@@ -798,12 +798,12 @@ export function RoundedRectangle(_props: WithModifiers & {cornerRadius?: number}
 
 /**
  * A `Divider` draws a rule and carries nothing -- no label, no children, no
- * behaviour. The stand-in is an empty view: it exists so a tree containing one
- * mounts, not to be asserted on. What a rule looks like is a screenshot's
- * business.
+ * behaviour. The stand-in is an empty view: what a rule looks like is a
+ * screenshot's business. One carrying an `accessibilityIdentifier` can be
+ * found, so a test can tell whether a screen chose to draw it.
  */
 export function Divider({modifiers}: {modifiers?: Modifier[]}): React.ReactNode {
-	return <ForwardingView modifiers={modifiers} />
+	return <ForwardingView modifiers={modifiers} testID={identifierOf(modifiers)} />
 }
 
 /**
