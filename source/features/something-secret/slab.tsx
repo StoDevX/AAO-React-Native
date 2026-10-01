@@ -35,6 +35,7 @@ export function SecretSlab({isFocused}: Props): React.ReactNode {
 	// means a fresh climb, so it clears this.
 	let pressed = React.useRef(false)
 	let press = useSecretStore((state) => state.press)
+	let buried = useSecretStore((state) => state.buried)
 
 	let progress = decay(anchor.progress, (clock - anchor.at) / 1000)
 	let {stage, fraction} = stageFor(progress)
@@ -95,6 +96,10 @@ export function SecretSlab({isFocused}: Props): React.ReactNode {
 		// Locked before the melt starts, so quitting mid-melt still lands in the lockout.
 		press(now().valueOf())
 		void melt()
+	}
+
+	if (buried) {
+		return null
 	}
 
 	return (

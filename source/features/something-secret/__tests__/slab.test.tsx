@@ -41,6 +41,7 @@ async function idle(seconds: number) {
 beforeEach(() => {
 	jest.useFakeTimers()
 	useNowOverride.getState().freeze(START.clone())
+	useSecretStore.setState({buried: false})
 	jest.mocked(roar).mockClear()
 	jest.spyOn(AccessibilityInfo, 'announceForAccessibility').mockImplementation(() => undefined)
 })
@@ -52,6 +53,12 @@ afterEach(() => {
 })
 
 describe('SecretSlab', () => {
+	it('takes up no space while buried', async () => {
+		useSecretStore.setState({buried: true})
+		await render(<SecretSlab isFocused={true} />)
+		expect(screen.queryByLabelText('Something secret')).toBeNull()
+	})
+
 	it('starts blank, with a label and hint for VoiceOver', async () => {
 		await render(<SecretSlab isFocused={true} />)
 		expect(stage()).toBe('blank')
