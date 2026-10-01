@@ -37,6 +37,7 @@
     "@frogpond/place-card-header": "workspace:*",
     "@frogpond/separator": "workspace:*",
     "@frogpond/silly-card": "workspace:*",
+    "@frogpond/something-secret": "workspace:*",
     "@frogpond/storage": "workspace:*",
     "@frogpond/time-format": "workspace:*",
     "@frogpond/timer": "workspace:*",

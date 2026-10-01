@@ -169,6 +169,9 @@ importers:
       '@frogpond/silly-card':
         specifier: workspace:*
         version: link:modules/silly-card
+      '@frogpond/something-secret':
+        specifier: workspace:*
+        version: link:modules/something-secret
       '@frogpond/storage':
         specifier: workspace:*
         version: link:modules/storage
@@ -945,6 +948,8 @@ importers:
       react-native-typography:
         specifier: 1.4.1
         version: 1.4.1(react-native@0.86.3)(react@19.2.3)
+
+  modules/something-secret: {}
 
   modules/storage:
     dependencies:
