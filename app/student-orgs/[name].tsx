@@ -11,7 +11,8 @@ import {
 } from '@expo/ui/swift-ui/modifiers'
 import {Stack, useLocalSearchParams} from 'expo-router'
 import {useQuery} from '@tanstack/react-query'
-import {DisclosureRow, SelectableText} from '../../source/components/rows'
+import {DisclosureRow} from '../../source/components/rows'
+import {SelectableText} from '@frogpond/selectable-text'
 import * as c from '@frogpond/colors'
 import {openUrl} from '@frogpond/open-url'
 import {sendEmail} from '../../source/components/send-email'
@@ -106,19 +107,19 @@ export default function StudentOrgsDetailPage(): React.ReactNode {
 					</Section>
 
 					{category ? (
-						<Section title="CATEGORY">
+						<Section title="Category">
 							<Text>{category}</Text>
 						</Section>
 					) : null}
 
 					{meetings ? (
-						<Section title="MEETINGS">
+						<Section title="Meetings">
 							<SelectableText text={decode(meetings)} />
 						</Section>
 					) : null}
 
 					{website ? (
-						<Section title="WEBSITE">
+						<Section title="Website">
 							<DisclosureRow
 								destination="external"
 								onPress={() => openUrl(website)}
@@ -128,7 +129,7 @@ export default function StudentOrgsDetailPage(): React.ReactNode {
 					) : null}
 
 					{contacts.length > 0 ? (
-						<Section title="CONTACT">
+						<Section title="Contact">
 							{contacts.map((contact) => (
 								<DisclosureRow
 									key={contact.email}
@@ -142,7 +143,7 @@ export default function StudentOrgsDetailPage(): React.ReactNode {
 					) : null}
 
 					{advisors.length > 0 ? (
-						<Section title={advisors.length === 1 ? 'ADVISOR' : 'ADVISORS'}>
+						<Section title={advisors.length === 1 ? 'Advisor' : 'Advisors'}>
 							{advisors.map((contact) => (
 								<DisclosureRow
 									key={contact.email}
@@ -155,7 +156,7 @@ export default function StudentOrgsDetailPage(): React.ReactNode {
 					) : null}
 
 					{description ? (
-						<Section title="DESCRIPTION">
+						<Section title="Description">
 							<SelectableText text={decode(description)} />
 						</Section>
 					) : null}

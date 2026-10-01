@@ -61,7 +61,7 @@ export const BalancesView = (): React.ReactNode => {
 					</RNHostView>
 				</Section>
 
-				<Section footer={<Text>{DISCLAIMER}</Text>} title="BALANCES">
+				<Section footer={<Text>{DISCLAIMER}</Text>} title="Balances">
 					<HStack spacing={0}>
 						<BalanceTile isLoading={isLoading} label="Flex" value={data.flex} />
 						<BalanceTile isLoading={isLoading} label="Ole" value={data.ole} />
@@ -69,7 +69,7 @@ export const BalancesView = (): React.ReactNode => {
 					</HStack>
 				</Section>
 
-				<Section footer={<Text>{DISCLAIMER}</Text>} title="MEAL PLAN">
+				<Section footer={<Text>{DISCLAIMER}</Text>} title="Meal Plan">
 					<HStack spacing={0}>
 						<BalanceTile isLoading={isLoading} label="Daily Meals Left" value={data.daily} />
 						<BalanceTile isLoading={isLoading} label="Weekly Meals Left" value={data.weekly} />

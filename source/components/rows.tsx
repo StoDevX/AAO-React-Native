@@ -1,10 +1,5 @@
 import * as React from 'react'
-import {
-	Image as RNImage,
-	StyleSheet,
-	TextInput as RNTextInput,
-	useWindowDimensions,
-} from 'react-native'
+import {Image as RNImage, StyleSheet} from 'react-native'
 import type {ColorValue} from 'react-native'
 import type {SFSymbol} from 'sf-symbols-typescript'
 import {
@@ -324,10 +319,6 @@ const styles = StyleSheet.create({
 		// as a deliberately rounded avatar.
 		borderRadius: 4,
 	},
-	selectableText: {
-		color: c.label,
-		paddingVertical: 4,
-	},
 })
 
 type DetailRowProps = {
@@ -387,58 +378,5 @@ export function DetailRow(props: DetailRowProps): React.ReactNode {
 			{/* contentShape on the label, not the Button -- see NavigationRow. */}
 			<HStack modifiers={[contentShape(shapes.rectangle())]}>{content}</HStack>
 		</Button>
-	)
-}
-
-const SELECTABLE_TEXT_ID = 'selectable-text'
-
-/**
- * A block of text a reader can select, and whose phone numbers, addresses,
- * links and dates iOS turns into things they can tap.
- *
- * A React Native `TextInput` rather than an `@expo/ui` `Text`: SwiftUI's
- * `textSelection` gives selection but no data detectors, and losing those would
- * make an org's meeting time or a course's room number unactionable.
- *
- * `dataDetectorTypes="all"` detects nothing under the new architecture --
- * `UIDataDetectorTypeAll` is `NSUIntegerMax`, which React Native reads through
- * `unsignedIntValue` and truncates to 32 bits -- so the types are spelled out.
- * See https://github.com/facebook/react-native/issues/55367.
- */
-const DETECTED_TYPES: React.ComponentProps<typeof RNTextInput>['dataDetectorTypes'] = [
-	'calendarEvent',
-	'link',
-	'phoneNumber',
-	'address',
-]
-
-/**
- * What an inset-grouped row leaves for its content: the list's own margin
- * either side of the card, and the card's padding either side of the row.
- *
- * Stated rather than measured because a hosted view reports its own intrinsic
- * size, and a paragraph's intrinsic width is however long its longest line
- * would be unwrapped -- far wider than the row, so it drew clipped at both
- * edges until given a width to wrap to.
- */
-const LIST_MARGIN = 20
-const ROW_PADDING = 16
-const ROW_CONTENT_INSET = (LIST_MARGIN + ROW_PADDING) * 2
-
-export function SelectableText({text}: {text: string}): React.ReactNode {
-	let {width: screenWidth} = useWindowDimensions()
-
-	return (
-		<RNHostView matchContents={true}>
-			<RNTextInput
-				dataDetectorTypes={DETECTED_TYPES}
-				editable={false}
-				multiline={true}
-				scrollEnabled={false}
-				style={[styles.selectableText, {width: screenWidth - ROW_CONTENT_INSET}]}
-				testID={SELECTABLE_TEXT_ID}
-				value={text}
-			/>
-		</RNHostView>
 	)
 }

@@ -11,7 +11,8 @@ import {
 	weekdayLabel,
 	type ScheduleSlot,
 } from '../../../source/features/sis/course-search/lib/course-schedule'
-import {DetailRow, SelectableText} from '../../../source/components/rows'
+import {DetailRow} from '../../../source/components/rows'
+import {SelectableText} from '@frogpond/selectable-text'
 import * as c from '@frogpond/colors'
 import {deptNum} from '../../../source/features/sis/course-search/lib/format-dept-num'
 import {formatCourseNotes} from '../../../source/features/sis/course-search/lib/format-course-notes'
@@ -33,7 +34,7 @@ const styles = StyleSheet.create({
 
 function Information({course}: {course: CourseType}) {
 	return (
-		<Section title="INFORMATION">
+		<Section title="Information">
 			{course.instructors ? (
 				<DetailRow
 					label={course.instructors.length === 1 ? 'Instructor' : 'Instructors'}
@@ -57,7 +58,7 @@ function Schedule({course}: {course: CourseType}) {
 	}
 
 	return (
-		<Section title="SCHEDULE">
+		<Section title="Schedule">
 			{schedule.map(({day, slots}) => (
 				<LabeledDay key={day} day={day} slots={slots} />
 			))}
@@ -83,11 +84,7 @@ function LabeledDay({day, slots}: {day: string; slots: ScheduleSlot[]}) {
 	)
 }
 
-const SLOT_MODIFIERS = [
-	font({textStyle: 'footnote'}),
-	foregroundStyle(c.secondaryLabel),
-	multilineTextAlignment('trailing'),
-]
+const SLOT_MODIFIERS = [foregroundStyle(c.secondaryLabel), multilineTextAlignment('trailing')]
 
 function Notes({course}: {course: CourseType}) {
 	if (!course.notes) {
@@ -95,7 +92,7 @@ function Notes({course}: {course: CourseType}) {
 	}
 
 	return (
-		<Section title="NOTES">
+		<Section title="Notes">
 			<SelectableText text={formatCourseNotes(course.notes)} />
 		</Section>
 	)
@@ -107,7 +104,7 @@ function Description({course}: {course: CourseType}) {
 	}
 
 	return (
-		<Section title="DESCRIPTION">
+		<Section title="Description">
 			<SelectableText text={course.description[0] ?? ''} />
 		</Section>
 	)

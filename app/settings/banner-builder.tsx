@@ -133,7 +133,7 @@ export default function BannerBuilderPage(): React.ReactNode {
 
 			<Host style={styles.host}>
 				<List modifiers={[listStyle('insetGrouped')]}>
-					<Section title="PREVIEW">
+					<Section title="Preview">
 						{/* The banner is a React Native component, so SwiftUI hosts it
 						    -- and it redraws as the fields below are typed into. */}
 						<RNHostView matchContents={true}>
@@ -141,7 +141,7 @@ export default function BannerBuilderPage(): React.ReactNode {
 						</RNHostView>
 					</Section>
 
-					<Section title="CONTENT">
+					<Section title="Content">
 						<FormField label="Title" onChangeText={setBannerTitle} placeholder="Banner title" />
 						<FormField
 							label="Text"
@@ -159,7 +159,7 @@ export default function BannerBuilderPage(): React.ReactNode {
 						/>
 					</Section>
 
-					<Section title="APPEARANCE">
+					<Section title="Appearance">
 						{/* One of three, so a picker rather than rows carrying their own
 						    checkmarks -- the control says it is a single choice. */}
 						<Picker
@@ -176,7 +176,7 @@ export default function BannerBuilderPage(): React.ReactNode {
 						</Picker>
 					</Section>
 
-					<Section title="COLORS & ICON">
+					<Section title="Colors & Icon">
 						<FormField
 							label="Icon"
 							onChangeText={setIcon}
@@ -186,14 +186,14 @@ export default function BannerBuilderPage(): React.ReactNode {
 						<FormField label="FG Color" onChangeText={setForegroundColor} placeholder="#7f1d1d" />
 					</Section>
 
-					<Section title="BEHAVIOR">
+					<Section title="Behavior">
 						<Toggle isOn={dismissable} label="Dismissable" onIsOnChange={setDismissable} />
 					</Section>
 
 					{/* Toggles rather than rows with checkmarks: any number of these
 					    can be on at once, which a checkmark does not say and a switch
 					    does. */}
-					<Section title="TARGET SCREENS">
+					<Section title="Target Screens">
 						{TARGET_OPTIONS.map((target) => (
 							<Toggle
 								key={target}
@@ -204,7 +204,7 @@ export default function BannerBuilderPage(): React.ReactNode {
 						))}
 					</Section>
 
-					<Section title="ACTIONS">
+					<Section title="Actions">
 						<ActionRow onPress={applyToApp} title="Apply Banner to App" />
 						<ActionRow onPress={exportYaml} title="Export as YAML" />
 					</Section>

@@ -90,8 +90,8 @@ describe('FilterToolbar', () => {
 		)
 
 		expect(screen.getByText('Vegetarian')).toBeTruthy()
-		expect(screen.getByText('Dietary Restrictions')).toBeTruthy()
-		expect(screen.getByText('Stations')).toBeTruthy()
+		expect(screen.getByTestId('menu:Dietary Restrictions')).toBeTruthy()
+		expect(screen.getByTestId('menu:Stations')).toBeTruthy()
 		expect(screen.getByRole('button', {name: 'Departments'})).toBeTruthy()
 
 		// No chip row exists to produce this -- see

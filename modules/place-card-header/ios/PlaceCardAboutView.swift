@@ -1,4 +1,5 @@
 import ExpoModulesCore
+import SelectableText
 import SwiftUI
 
 /// Maps clamps a place's About text to its first five lines.
@@ -33,8 +34,7 @@ struct PlaceCardAboutView: ExpoSwiftUI.View {
 	/// The body font at the current text size. The text is drawn in exactly
 	/// the font it is measured in, so TextKit and SwiftUI break its lines alike.
 	private var bodyFont: UIFont {
-		let traits = UITraitCollection(preferredContentSizeCategory: UIContentSizeCategory(dynamicTypeSize))
-		return UIFont.preferredFont(forTextStyle: .body, compatibleWith: traits)
+		.body(at: dynamicTypeSize)
 	}
 
 	private var moreFont: UIFont {
@@ -55,7 +55,7 @@ struct PlaceCardAboutView: ExpoSwiftUI.View {
 			// Selectable only once expanded: cut short, a copy would hold only
 			// the lines on screen.
 			if expanded {
-				SelectableText(text: props.text, font: bodyFont)
+				SelectableUITextView(text: props.text, font: bodyFont)
 			} else {
 				Text(shortened ?? props.text)
 			}
@@ -91,38 +91,6 @@ struct PlaceCardAboutView: ExpoSwiftUI.View {
 				}
 			}
 			.accessibilityIdentifier(props.testID ?? "")
-	}
-}
-
-/// Text the reader can select and copy. UIKit's, because SwiftUI's own
-/// `textSelection` does nothing in the card's list: the place card scaffold's
-/// `safeAreaBar` switches it off.
-private struct SelectableText: UIViewRepresentable {
-	let text: String
-	let font: UIFont
-
-	func makeUIView(context: Context) -> UITextView {
-		let view = UITextView()
-		view.isEditable = false
-		view.isScrollEnabled = false
-		view.backgroundColor = .clear
-		// Laid out as `shortenedText` measures, so the expanded text breaks
-		// its lines where the shortened text did.
-		view.textContainerInset = .zero
-		view.textContainer.lineFragmentPadding = 0
-		return view
-	}
-
-	func updateUIView(_ view: UITextView, context: Context) {
-		view.text = text
-		view.font = font
-		view.textColor = .label
-	}
-
-	func sizeThatFits(_ proposal: ProposedViewSize, uiView: UITextView, context: Context) -> CGSize? {
-		guard let width = proposal.width else { return nil }
-		let fitted = uiView.sizeThatFits(CGSize(width: width, height: .greatestFiniteMagnitude))
-		return CGSize(width: width, height: fitted.height)
 	}
 }
 

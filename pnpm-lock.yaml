@@ -115,9 +115,6 @@ importers:
       '@frogpond/data-sources':
         specifier: workspace:*
         version: link:modules/data-sources
-      '@frogpond/datepicker':
-        specifier: workspace:*
-        version: link:modules/datepicker
       '@frogpond/double-tap':
         specifier: workspace:*
         version: link:modules/double-tap
@@ -163,12 +160,12 @@ importers:
       '@frogpond/place-card-header':
         specifier: workspace:*
         version: link:modules/place-card-header
+      '@frogpond/selectable-text':
+        specifier: workspace:*
+        version: link:modules/selectable-text
       '@frogpond/separator':
         specifier: workspace:*
         version: link:modules/separator
-      '@frogpond/silly-card':
-        specifier: workspace:*
-        version: link:modules/silly-card
       '@frogpond/storage':
         specifier: workspace:*
         version: link:modules/storage
@@ -355,9 +352,6 @@ importers:
       react-native-screens:
         specifier: 4.26.2
         version: 4.26.2(react-native@0.86.3)(react@19.2.3)
-      react-native-typography:
-        specifier: 1.4.1
-        version: 1.4.1(react-native@0.86.3)(react@19.2.3)
       react-native-url-polyfill:
         specifier: 4.0.0
         version: 4.0.0(react-native@0.86.3)
@@ -584,9 +578,6 @@ importers:
       react-native-button:
         specifier: 3.1.0
         version: 3.1.0(react-native@0.86.3)
-      react-native-typography:
-        specifier: 1.4.1
-        version: 1.4.1(react-native@0.86.3)(react@19.2.3)
 
   modules/campus-search-bar: {}
 
@@ -663,21 +654,6 @@ importers:
       '@frogpond/api':
         specifier: workspace:*
         version: link:../api
-
-  modules/datepicker:
-    dependencies:
-      '@expo/ui':
-        specifier: 57.0.14
-        version: 57.0.14(patch_hash=3b4a49056139c76e4fc6cee9979973b86da4db85993b93c666014c100c30ba5a)(@babel/core@7.29.7)(expo@57.0.19)(react-native-worklets@0.10.1)(react-native@0.86.3)(react@19.2.3)
-      moment-timezone:
-        specifier: ^0.6.4
-        version: 0.6.4
-      react:
-        specifier: 'catalog:'
-        version: 19.2.3
-      react-native:
-        specifier: 'catalog:'
-        version: 0.86.3(patch_hash=6ca2e1225f38672b073b92b9d13f24feebbe9e37ba67708a3f1569275ce99191)(@babel/core@7.29.7)(@react-native/jest-preset@0.86.3)(@types/react@19.2.18)(react@19.2.3)(supports-color@8.1.1)
 
   modules/double-tap: {}
 
@@ -854,21 +830,6 @@ importers:
         specifier: 'catalog:'
         version: 0.86.3(patch_hash=6ca2e1225f38672b073b92b9d13f24feebbe9e37ba67708a3f1569275ce99191)(@babel/core@7.29.7)(@react-native/jest-preset@0.86.3)(@types/react@19.2.18)(react@19.2.3)(supports-color@8.1.1)
 
-  modules/listview:
-    dependencies:
-      '@callstack/react-theme-provider':
-        specifier: 3.0.9
-        version: 3.0.9(react@19.2.3)
-      lodash:
-        specifier: 4.18.1
-        version: 4.18.1
-      react:
-        specifier: 'catalog:'
-        version: 19.2.3
-      react-native:
-        specifier: 'catalog:'
-        version: 0.86.3(patch_hash=6ca2e1225f38672b073b92b9d13f24feebbe9e37ba67708a3f1569275ce99191)(@babel/core@7.29.7)(@react-native/jest-preset@0.86.3)(@types/react@19.2.18)(react@19.2.3)(supports-color@8.1.1)
-
   modules/markdown:
     dependencies:
       '@frogpond/colors':
@@ -919,6 +880,8 @@ importers:
 
   modules/place-card-header: {}
 
+  modules/selectable-text: {}
+
   modules/separator:
     dependencies:
       '@frogpond/colors':
@@ -930,21 +893,6 @@ importers:
       react-native:
         specifier: 'catalog:'
         version: 0.86.3(patch_hash=6ca2e1225f38672b073b92b9d13f24feebbe9e37ba67708a3f1569275ce99191)(@babel/core@7.29.7)(@react-native/jest-preset@0.86.3)(@types/react@19.2.18)(react@19.2.3)(supports-color@8.1.1)
-
-  modules/silly-card:
-    dependencies:
-      '@frogpond/colors':
-        specifier: workspace:*
-        version: link:../colors
-      react:
-        specifier: 'catalog:'
-        version: 19.2.3
-      react-native:
-        specifier: 'catalog:'
-        version: 0.86.3(patch_hash=6ca2e1225f38672b073b92b9d13f24feebbe9e37ba67708a3f1569275ce99191)(@babel/core@7.29.7)(@react-native/jest-preset@0.86.3)(@types/react@19.2.18)(react@19.2.3)(supports-color@8.1.1)
-      react-native-typography:
-        specifier: 1.4.1
-        version: 1.4.1(react-native@0.86.3)(react@19.2.3)
 
   modules/storage:
     dependencies:
@@ -1014,15 +962,6 @@ importers:
       react:
         specifier: 'catalog:'
         version: 19.2.3
-
-  modules/viewport:
-    dependencies:
-      react:
-        specifier: 'catalog:'
-        version: 19.2.3
-      react-native:
-        specifier: 'catalog:'
-        version: 0.86.3(patch_hash=6ca2e1225f38672b073b92b9d13f24feebbe9e37ba67708a3f1569275ce99191)(@babel/core@7.29.7)(@react-native/jest-preset@0.86.3)(@types/react@19.2.18)(react@19.2.3)(supports-color@8.1.1)
 
 packages:
 
@@ -4920,12 +4859,6 @@ packages:
 
   react-native-screens@4.26.2:
     resolution: {integrity: sha512-2XnWsZToKj76trGtEZzx5ELD/qOICFEprEeUntImmitQFVUkea27fiWdUSITArI356Y1qynpXZINW+Unbhky/A==}
-    peerDependencies:
-      react: '*'
-      react-native: '*'
-
-  react-native-typography@1.4.1:
-    resolution: {integrity: sha512-dc9Zfs4jUdq4ygx4/KwO6jKTERBu6cRrfPJGntw/pA+D6BMjlWfMNuhZ/69vf4Zpsnt9s4AGe+Z/V1QFYaCXAA==}
     peerDependencies:
       react: '*'
       react-native: '*'
@@ -10038,11 +9971,6 @@ snapshots:
       react-freeze: 1.0.4(react@19.2.3)
       react-native: 0.86.3(patch_hash=6ca2e1225f38672b073b92b9d13f24feebbe9e37ba67708a3f1569275ce99191)(@babel/core@7.29.7)(@react-native/jest-preset@0.86.3)(@types/react@19.2.18)(react@19.2.3)(supports-color@8.1.1)
       warn-once: 0.1.1
-
-  react-native-typography@1.4.1(react-native@0.86.3)(react@19.2.3):
-    dependencies:
-      react: 19.2.3
-      react-native: 0.86.3(patch_hash=6ca2e1225f38672b073b92b9d13f24feebbe9e37ba67708a3f1569275ce99191)(@babel/core@7.29.7)(@react-native/jest-preset@0.86.3)(@types/react@19.2.18)(react@19.2.3)(supports-color@8.1.1)
 
   react-native-url-polyfill@4.0.0(react-native@0.86.3):
     dependencies:
