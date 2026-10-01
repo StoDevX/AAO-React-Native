@@ -5,7 +5,8 @@ import moment from 'moment-timezone'
 import {useNowOverride} from '@frogpond/timer'
 
 import {SecretSlab} from '../slab'
-import {roar} from './something-secret-mock'
+import {useSecretStore} from '../store'
+import {melt, roar} from './something-secret-mock'
 
 jest.mock('@frogpond/something-secret', () => {
 	// oxlint-disable-next-line typescript/no-require-imports
@@ -40,7 +41,9 @@ async function idle(seconds: number) {
 beforeEach(() => {
 	jest.useFakeTimers()
 	useNowOverride.getState().freeze(START.clone())
+	useSecretStore.setState({buried: false})
 	jest.mocked(roar).mockClear()
+	jest.mocked(melt).mockClear()
 	jest.spyOn(AccessibilityInfo, 'announceForAccessibility').mockImplementation(() => undefined)
 })
 
@@ -51,6 +54,24 @@ afterEach(() => {
 })
 
 describe('SecretSlab', () => {
+	it('takes up no space while buried', async () => {
+		useSecretStore.setState({buried: true})
+		await render(<SecretSlab isFocused={true} />)
+		expect(screen.queryByLabelText('Something secret')).toBeNull()
+	})
+
+	it('comes back blank and pressable after being buried while open', async () => {
+		await render(<SecretSlab isFocused={true} />)
+		await tapTimes(250)
+		await fireEvent.press(screen.getByLabelText('do not push?'))
+		await act(() => useSecretStore.setState({buried: true}))
+		await act(() => useSecretStore.setState({buried: false, lockedUntil: null}))
+		expect(stage()).toBe('blank')
+		await tapTimes(250)
+		await fireEvent.press(screen.getByLabelText('do not push?'))
+		expect(melt).toHaveBeenCalledTimes(2)
+	})
+
 	it('starts blank, with a label and hint for VoiceOver', async () => {
 		await render(<SecretSlab isFocused={true} />)
 		expect(stage()).toBe('blank')
@@ -149,5 +170,38 @@ describe('SecretSlab', () => {
 		// taps then, and so must the component.
 		await tapTimes(5)
 		expect(roar).toHaveBeenCalledTimes(roars)
+	})
+})
+
+describe('the red button', () => {
+	beforeEach(() => {
+		useSecretStore.setState({pressCount: 0, lockedUntil: null})
+		jest
+			.mocked(melt)
+			.mockReset()
+			.mockImplementation(() => Promise.resolve())
+	})
+
+	it('locks the app before the melt starts, so quitting mid-melt still locks', async () => {
+		let lockedWhenMeltStarted: number | null = null
+		jest.mocked(melt).mockImplementation(() => {
+			lockedWhenMeltStarted = useSecretStore.getState().lockedUntil
+			return new Promise(() => undefined)
+		})
+		await render(<SecretSlab isFocused={true} />)
+		await tapTimes(250)
+		await fireEvent.press(screen.getByLabelText('do not push?'))
+		expect(lockedWhenMeltStarted).toBe(START.valueOf() + 60_000)
+		expect(melt).toHaveBeenCalledTimes(1)
+	})
+
+	it('counts a double press once', async () => {
+		await render(<SecretSlab isFocused={true} />)
+		await tapTimes(250)
+		let button = screen.getByLabelText('do not push?')
+		await fireEvent.press(button)
+		await fireEvent.press(button)
+		expect(useSecretStore.getState().pressCount).toBe(1)
+		expect(melt).toHaveBeenCalledTimes(1)
 	})
 })

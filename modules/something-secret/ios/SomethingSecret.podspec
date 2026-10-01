@@ -13,5 +13,5 @@ Pod::Spec.new do |s|
   s.dependency 'ExpoModulesCore'
 
   s.source_files = '**/*.swift'
-  s.resource_bundles = { 'SomethingSecret' => ['assets/*'] }
+  s.resource_bundles = { 'SomethingSecret' => ['assets/*', '*.metal'] }
 end

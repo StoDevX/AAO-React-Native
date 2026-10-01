@@ -1,11 +1,12 @@
 import * as React from 'react'
 import {AccessibilityInfo} from 'react-native'
 import {secretProgress} from '@frogpond/launch-arguments'
-import {roar, SlabView} from '@frogpond/something-secret'
+import {melt, roar, SlabView} from '@frogpond/something-secret'
 import {now} from '@frogpond/timer'
 
 import {announcementFor, BUTTON_LABEL, INSCRIPTION, SLAB_HINT, SLAB_LABEL} from './copy'
 import {decay, OPEN_AT, shouldRoar, STAGE_ORDER, stageFor, tap} from './progress'
+import {useSecretStore} from './store'
 
 export const SLAB_TEST_ID = 'something-secret'
 export const BUTTON_TEST_ID = 'something-secret-button'
@@ -30,6 +31,11 @@ export function SecretSlab({isFocused}: Props): React.ReactNode {
 	let [anchor, setAnchor] = React.useState<Anchor>(() => anchorAt(secretProgress))
 	let [clock, setClock] = React.useState(() => now().valueOf())
 	let [tapCount, setTapCount] = React.useState(0)
+	// One press per opening: a second tap during the melt would lengthen the lockout. A slab tap
+	// means a fresh climb, so it clears this.
+	let pressed = React.useRef(false)
+	let press = useSecretStore((state) => state.press)
+	let buried = useSecretStore((state) => state.buried)
 
 	let progress = decay(anchor.progress, (clock - anchor.at) / 1000)
 	let {stage, fraction} = stageFor(progress)
@@ -44,12 +50,15 @@ export function SecretSlab({isFocused}: Props): React.ReactNode {
 		return () => clearInterval(id)
 	}, [isSettled])
 
-	// Buried as the home screen loses focus; adjusted during render, as React advises for state
-	// that follows a prop, rather than an effect that would draw the old slab once more first.
+	// Back to blank as the home screen loses focus, and as the slab is buried, so it never returns
+	// already open. Adjusted during render, as React advises for state that follows a prop, rather
+	// than in an effect that would draw the old slab once more first.
 	let [wasFocused, setWasFocused] = React.useState(isFocused)
-	if (isFocused !== wasFocused) {
+	let [wasBuried, setWasBuried] = React.useState(buried)
+	if (isFocused !== wasFocused || buried !== wasBuried) {
 		setWasFocused(isFocused)
-		if (!isFocused) {
+		setWasBuried(buried)
+		if (!isFocused || buried) {
 			setAnchor(anchorAt(0))
 			setTapCount(0)
 		}
@@ -72,6 +81,7 @@ export function SecretSlab({isFocused}: Props): React.ReactNode {
 		if (current >= OPEN_AT) {
 			return
 		}
+		pressed.current = false
 		let next = tap(current)
 		setAnchor({progress: next, at})
 		setClock(at)
@@ -79,6 +89,20 @@ export function SecretSlab({isFocused}: Props): React.ReactNode {
 		if (shouldRoar(next, Math.random())) {
 			roar()
 		}
+	}
+
+	let onButtonPress = () => {
+		if (pressed.current) {
+			return
+		}
+		pressed.current = true
+		// Locked before the melt starts, so quitting mid-melt still lands in the lockout.
+		press(now().valueOf())
+		void melt()
+	}
+
+	if (buried) {
+		return null
 	}
 
 	return (
@@ -89,6 +113,7 @@ export function SecretSlab({isFocused}: Props): React.ReactNode {
 			hint={SLAB_HINT}
 			inscription={INSCRIPTION}
 			label={SLAB_LABEL}
+			onButtonPress={onButtonPress}
 			onSlabTap={onSlabTap}
 			stage={stage}
 			tapCount={tapCount}

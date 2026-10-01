@@ -1,6 +1,6 @@
 import * as React from 'react'
 import {requireNativeView} from 'expo'
-import {requireNativeModule, type NativeModule} from 'expo-modules-core'
+import {NativeModule, requireNativeModule} from 'expo-modules-core'
 
 /** Where the slab is, from buried to split open; see stageFor in the something-secret feature. */
 export type SlabStage = 'blank' | 'tremor' | 'edge' | 'risen' | 'cracking' | 'open'
@@ -41,8 +41,17 @@ export function SlabView({onSlabTap, onButtonPress, ...rest}: SlabViewProps): Re
 	)
 }
 
-interface SomethingSecretModule extends NativeModule {
+type SomethingSecretEvents = {
+	onShakeEscape: () => void
+}
+
+declare class SomethingSecretModule extends NativeModule<SomethingSecretEvents> {
 	roar(): void
+	melt(): Promise<void>
+	coverForRewind(): Promise<void>
+	rewind(): Promise<void>
+	startShakeWatch(): void
+	stopShakeWatch(): void
 }
 
 const SomethingSecret = requireNativeModule<SomethingSecretModule>('SomethingSecret')
@@ -50,4 +59,33 @@ const SomethingSecret = requireNativeModule<SomethingSecretModule>('SomethingSec
 /** Plays the roar. Silent with the mute switch on, and leaves other audio playing. */
 export function roar(): void {
 	SomethingSecret.roar()
+}
+
+/** Melts the whole app away to black, resolving once the melt has gone. */
+export function melt(): Promise<void> {
+	return SomethingSecret.melt()
+}
+
+/** Covers the whole app in black, resolving once the cover shows, ahead of `rewind`. */
+export function coverForRewind(): Promise<void> {
+	return SomethingSecret.coverForRewind()
+}
+
+/** Pours the app as it now is back up out of the black cover, then removes the cover. */
+export function rewind(): Promise<void> {
+	return SomethingSecret.rewind()
+}
+
+/** Starts watching for a hard shake; the accelerometer runs only between start and stop. */
+export function startShakeWatch(): void {
+	SomethingSecret.startShakeWatch()
+}
+
+export function stopShakeWatch(): void {
+	SomethingSecret.stopShakeWatch()
+}
+
+/** Calls `listener` once about three seconds of hard shaking have been felt. */
+export function addShakeEscapeListener(listener: () => void): {remove: () => void} {
+	return SomethingSecret.addListener('onShakeEscape', listener)
 }

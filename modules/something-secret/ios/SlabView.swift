@@ -36,6 +36,14 @@ struct SlabView: ExpoSwiftUI.View {
 	}
 
 	@Environment(\.accessibilityReduceMotion) private var reduceMotion
+	/// Read only while the slab is above ground, so a buried one costs no battery.
+	@StateObject private var tilt = TiltSource()
+	/// Where the light sits without motion sensors: over the left shoulder.
+	private static let stillLight = SIMD3<Double>(-0.5, -0.7, 1.0)
+
+	private var light: SIMD3<Double> {
+		tilt.up.map { overheadLight(up: $0) } ?? Self.stillLight
+	}
 
 	private var isOpen: Bool { props.stage == .open }
 
@@ -52,6 +60,10 @@ struct SlabView: ExpoSwiftUI.View {
 		.onChange(of: isOpen) { _, opened in
 			if opened { Rumble.play() }
 		}
+		.onChange(of: props.stage == .blank, initial: true) { _, isBlank in
+			if isBlank { tilt.stop() } else { tilt.start() }
+		}
+		.onDisappear { tilt.stop() }
 	}
 
 	private var slab: some View {
@@ -62,7 +74,7 @@ struct SlabView: ExpoSwiftUI.View {
 				Color.clear
 				SlabDrawing(
 					stage: props.stage, fraction: props.fraction, inscription: props.inscription,
-					reduceMotion: reduceMotion)
+					reduceMotion: reduceMotion, light: light)
 				if !reduceMotion, let color = debrisColor {
 					Debris(trigger: props.tapCount, color: color)
 				}
@@ -95,21 +107,14 @@ struct SlabView: ExpoSwiftUI.View {
 		Button {
 			props.onButtonPress()
 		} label: {
-			Text(props.buttonLabel)
-				.font(.headline)
-				.foregroundStyle(.white)
-				.padding(.horizontal, 24)
-				.frame(minWidth: 150, minHeight: 64)
-				.background(
-					Capsule().fill(
-						RadialGradient(
-							colors: [Color(red: 0.96, green: 0.16, blue: 0.12), Color(red: 0.55, green: 0.02, blue: 0.02)],
-							center: .center, startRadius: 4, endRadius: 100)))
-				.contentShape(Capsule())
+			GemView(up: tilt.up, label: props.buttonLabel)
+				.contentShape(Rectangle())
 		}
 		.buttonStyle(.plain)
+		// The words are drawn into the stone, so the button names itself.
+		.accessibilityLabel(props.buttonLabel)
 		.accessibilityIdentifier(props.buttonTestID ?? "")
-		.padding(.bottom, 50)
+		.padding(.bottom, 30)
 	}
 
 	private var debrisColor: Color? {

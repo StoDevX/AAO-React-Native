@@ -64,6 +64,12 @@ pnpm install --frozen-lockfile
 # build the data files
 mise run bundle-data
 
+# modules/something-secret's shaders compile with Xcode's Metal toolchain, a
+# separate download since Xcode 26 that the Xcode Cloud image may not carry.
+# Skipped when it is already installed.
+xcodebuild -showComponent MetalToolchain | grep -q 'Status: installed' \
+  || xcodebuild -downloadComponent MetalToolchain
+
 # generate ios/ from app.config.ts, which also installs the pods.
 # The prebuild task preserves this directory across the regeneration.
 mise run prebuild
