@@ -26,14 +26,18 @@ function compareKeys(a: unknown, b: unknown): number {
  * items themselves.
  */
 export function sortBy<T>(items: readonly T[], ...keys: Array<(item: T) => unknown>): T[] {
-	let keyed = keys.length > 0 ? keys : [(item: T) => item]
-	return items.toSorted((a, b) => {
-		for (let key of keyed) {
-			let order = compareKeys(key(a), key(b))
+	let keyOf = keys.length > 0 ? keys : [(item: T) => item]
+	// Each item's keys are worked out once, not on every comparison: a key like
+	// a course's department and number costs enough to show across thousands.
+	let keyed = items.map((item) => ({item, keys: keyOf.map((key) => key(item))}))
+	keyed.sort((a, b) => {
+		for (let i = 0; i < a.keys.length; i++) {
+			let order = compareKeys(a.keys[i], b.keys[i])
 			if (order !== 0) return order
 		}
 		return 0
 	})
+	return keyed.map(({item}) => item)
 }
 
 /** One of `items` at random, or undefined when there are none. */
