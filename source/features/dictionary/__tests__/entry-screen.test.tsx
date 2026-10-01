@@ -19,22 +19,8 @@ jest.mock('@expo/ui/swift-ui/modifiers', () => {
 const mockNavigate = jest.fn()
 
 jest.mock('expo-router', () => ({
-	Stack: Object.assign(({children}: {children?: React.ReactNode}) => children ?? null, {
-		Title: () => null,
-		Toolbar: Object.assign(({children}: {children?: React.ReactNode}) => children ?? null, {
-			Button: () => null,
-			Menu: ({children}: {children?: React.ReactNode}) => children ?? null,
-			MenuAction: (props: {onPress: () => void; children?: React.ReactNode}) => {
-				// oxlint-disable-next-line typescript/no-require-imports
-				let {Pressable, Text} = require('react-native')
-				return (
-					<Pressable onPress={props.onPress}>
-						<Text>{props.children}</Text>
-					</Pressable>
-				)
-			},
-		}),
-	}),
+	// oxlint-disable-next-line typescript/no-require-imports
+	Stack: require('../../../testing/expo-router-mock').Stack,
 	useLocalSearchParams: () => ({word: 'Caf'}),
 	useNavigation: () => ({goBack: jest.fn()}),
 	useRouter: () => ({navigate: mockNavigate}),
@@ -86,8 +72,8 @@ describe('the dictionary entry screen', () => {
 		expect(mockNavigate).toHaveBeenCalledWith('/dictionary/entry/edit')
 	})
 
-	it('does nothing if the menu action fires with no entry to start a draft from', async () => {
-		// The toolbar menu renders in the loading and not-found branches too,
+	it('does nothing if the button fires with no entry to start a draft from', async () => {
+		// The toolbar button renders in the loading and not-found branches too,
 		// where there is nothing yet to seed a draft with. An empty word list
 		// reaches the not-found branch, which exercises the same guard.
 		await renderWithQuery([])

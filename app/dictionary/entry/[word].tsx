@@ -31,7 +31,7 @@ export default function DictionaryEntryPage(): React.ReactNode {
 	let entry = raw ? normalizeEntry(raw) : undefined
 
 	let suggestAnEdit = React.useCallback(() => {
-		// The toolbar menu renders through the loading and not-found branches
+		// The toolbar button renders through the loading and not-found branches
 		// too, so this can fire before there is an entry to start a draft from.
 		if (!entry) {
 			return
@@ -52,11 +52,11 @@ export default function DictionaryEntryPage(): React.ReactNode {
 			<Stack.Title>Dictionary</Stack.Title>
 			<SheetCloseButton />
 			<Stack.Toolbar placement="right">
-				<Stack.Toolbar.Menu accessibilityLabel="More actions" icon="ellipsis.circle">
-					<Stack.Toolbar.MenuAction icon="pencil" onPress={suggestAnEdit}>
-						Suggest an Edit
-					</Stack.Toolbar.MenuAction>
-				</Stack.Toolbar.Menu>
+				<Stack.Toolbar.Button
+					accessibilityLabel="Suggest an Edit"
+					icon="exclamationmark.bubble"
+					onPress={suggestAnEdit}
+				/>
 			</Stack.Toolbar>
 		</>
 	)

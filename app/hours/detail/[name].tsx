@@ -53,11 +53,11 @@ export default function HoursDetailPage(): React.ReactNode {
 					icon={favorited ? 'heart.fill' : 'heart'}
 					onPress={onFavorite}
 				/>
-				<Stack.Toolbar.Menu accessibilityLabel="More" icon="ellipsis.circle">
-					<Stack.Toolbar.MenuAction icon="exclamationmark.bubble" onPress={reportProblem}>
-						Report a Problem
-					</Stack.Toolbar.MenuAction>
-				</Stack.Toolbar.Menu>
+				<Stack.Toolbar.Button
+					accessibilityLabel="Report a Problem"
+					icon="exclamationmark.bubble"
+					onPress={reportProblem}
+				/>
 			</Stack.Toolbar>
 		</>
 	)

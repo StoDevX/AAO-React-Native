@@ -44,11 +44,11 @@ export default function APITestPage(): React.ReactNode {
 			<Stack.Title>API Tester</Stack.Title>
 
 			<Stack.Toolbar placement="right">
-				<Stack.Toolbar.Menu icon="ellipsis.circle">
-					<Stack.Toolbar.MenuAction onPress={() => router.navigate('/settings/network-logger')}>
-						Network Logger
-					</Stack.Toolbar.MenuAction>
-				</Stack.Toolbar.Menu>
+				<Stack.Toolbar.Button
+					accessibilityLabel="Network Logger"
+					icon="network"
+					onPress={() => router.navigate('/settings/network-logger')}
+				/>
 			</Stack.Toolbar>
 
 			<Stack.Toolbar placement="bottom">
