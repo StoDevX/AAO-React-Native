@@ -172,6 +172,30 @@ describe('refreshCatalog', () => {
 		expect(mockDownload).toHaveBeenCalledTimes(1)
 	})
 
+	// A download cut short, or a page of HTML from a misconfigured server, is
+	// not a database at all, and SQLite refuses to attach it.
+	test('keeps the old catalog when the download is not a database', async () => {
+		publishedEtag('new')
+		mockRunner.run.mockImplementationOnce((statement: {sql: string}) => {
+			mockSteps.push(statement.sql)
+			if (statement.sql.includes('as incoming')) throw new Error('file is not a database')
+		})
+		await expect(refreshCatalog()).rejects.toThrow('file is not a database')
+		expect(mockDisk.files.has(CURRENT)).toBe(true)
+		expect(mockDisk.files.has(INCOMING)).toBe(false)
+		expect(mockSteps).not.toContain('move')
+	})
+
+	// Unlike a file that fails its check, a broken download may be fine next time.
+	test('tries again after a download that would not open', async () => {
+		publishedEtag('new')
+		mockRunner.run.mockImplementationOnce(() => {
+			throw new Error('file is not a database')
+		})
+		await expect(refreshCatalog()).rejects.toThrow('file is not a database')
+		await expect(refreshCatalog()).resolves.toEqual({etag: 'new', changed: true})
+	})
+
 	// The move repoints the incoming file at the catalog's own path, so a
 	// failure after it must not clean up "incoming" by that object.
 	test('keeps the swapped-in catalog when recording it fails', async () => {
