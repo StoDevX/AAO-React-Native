@@ -53,7 +53,9 @@ export const REQUIRED_COLUMNS: Record<string, string[]> = {
 /**
  * Throws unless the database attached as `schema` has every table and column
  * course search reads, and at least one section. Run on a download before it
- * replaces the catalog, so a truncated or older file is never swapped in.
+ * replaces the catalog, so a file published without a column, or with no
+ * sections, is never swapped in. A file that is not a whole SQLite database
+ * fails earlier, when it is attached.
  */
 export function checkCatalog(runner: SqlRunner, schema: string): void {
 	for (let [table, columns] of Object.entries(REQUIRED_COLUMNS)) {
