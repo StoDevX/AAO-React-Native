@@ -84,11 +84,7 @@ function LabeledDay({day, slots}: {day: string; slots: ScheduleSlot[]}) {
 	)
 }
 
-const SLOT_MODIFIERS = [
-	font({textStyle: 'footnote'}),
-	foregroundStyle(c.secondaryLabel),
-	multilineTextAlignment('trailing'),
-]
+const SLOT_MODIFIERS = [foregroundStyle(c.secondaryLabel), multilineTextAlignment('trailing')]
 
 function Notes({course}: {course: CourseType}) {
 	if (!course.notes) {
