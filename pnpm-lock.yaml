@@ -473,6 +473,9 @@ importers:
       '@frogpond/event-type':
         specifier: workspace:*
         version: link:../event-type
+      '@sentry/react-native':
+        specifier: ^8.24.0
+        version: 8.24.0(@expo/env@2.4.3)(dotenv@17.4.2)(expo@57.0.19)(react-native@0.86.3)(react@19.2.3)(supports-color@8.1.1)
       delay:
         specifier: ^7.0.0
         version: 7.0.0
@@ -485,6 +488,16 @@ importers:
       react-native:
         specifier: 'catalog:'
         version: 0.86.3(patch_hash=6ca2e1225f38672b073b92b9d13f24feebbe9e37ba67708a3f1569275ce99191)(@babel/core@7.29.7)(@react-native/jest-preset@0.86.3)(@types/react@19.2.18)(react@19.2.3)(supports-color@8.1.1)
+    devDependencies:
+      '@jest/globals':
+        specifier: 30.5.2
+        version: 30.5.2(supports-color@8.1.1)
+      '@testing-library/react-native':
+        specifier: 14.0.1
+        version: 14.0.1(jest@30.5.2)(react-native@0.86.3)(react@19.2.3)(test-renderer@1.2.0)
+      moment:
+        specifier: 2.31.0
+        version: 2.31.0
 
   modules/api:
     dependencies:
@@ -497,6 +510,9 @@ importers:
       '@frogpond/colors':
         specifier: workspace:*
         version: link:../colors
+      expo-router:
+        specifier: ~57.0.18
+        version: 57.0.18(@babel/core@7.29.7)(@expo/log-box@57.0.4)(@expo/metro-runtime@57.0.15)(@testing-library/react-native@14.0.1)(@types/react@19.2.18)(expo-constants@57.0.17)(expo-font@57.0.3)(expo-linking@57.0.9)(expo@57.0.19)(react-native-gesture-handler@3.3.0)(react-native-reanimated@4.5.1)(react-native-safe-area-context@5.7.0)(react-native-screens@4.26.2)(react-native-worklets@0.10.1)(react-native@0.86.3)(react@19.2.3)(supports-color@8.1.1)
 
   modules/badge:
     dependencies:
@@ -510,10 +526,23 @@ importers:
         specifier: 'catalog:'
         version: 0.86.3(patch_hash=6ca2e1225f38672b073b92b9d13f24feebbe9e37ba67708a3f1569275ce99191)(@babel/core@7.29.7)(@react-native/jest-preset@0.86.3)(@types/react@19.2.18)(react@19.2.3)(supports-color@8.1.1)
 
-  modules/campus-search-bar: {}
+  modules/campus-search-bar:
+    dependencies:
+      expo:
+        specifier: ~57.0.19
+        version: 57.0.19(@babel/core@7.29.7)(@expo/metro-runtime@57.0.15)(expo-router@57.0.18)(react-native-webview@13.16.1)(react-native-worklets@0.10.1)(react-native@0.86.3)(react@19.2.3)(supports-color@8.1.1)(typescript@7.0.2)
+      react:
+        specifier: 'catalog:'
+        version: 19.2.3
+      react-native:
+        specifier: 'catalog:'
+        version: 0.86.3(patch_hash=6ca2e1225f38672b073b92b9d13f24feebbe9e37ba67708a3f1569275ce99191)(@babel/core@7.29.7)(@react-native/jest-preset@0.86.3)(@types/react@19.2.18)(react@19.2.3)(supports-color@8.1.1)
 
   modules/ccc-calendar:
     dependencies:
+      '@expo/ui':
+        specifier: 57.0.14
+        version: 57.0.14(patch_hash=bcdd8e1eab405affdc5186e746347a1b0d656a6e945dd2ff386d8950fb36cb8f)(@babel/core@7.29.7)(expo@57.0.19)(react-native-worklets@0.10.1)(react-native@0.86.3)(react@19.2.3)
       '@frogpond/colors':
         specifier: workspace:*
         version: link:../colors
@@ -538,18 +567,58 @@ importers:
       '@frogpond/timer':
         specifier: workspace:*
         version: link:../timer
+      '@sentry/react-native':
+        specifier: ^8.24.0
+        version: 8.24.0(@expo/env@2.4.3)(dotenv@17.4.2)(expo@57.0.19)(react-native@0.86.3)(react@19.2.3)(supports-color@8.1.1)
+      '@tanstack/react-query':
+        specifier: ^5.104.0
+        version: 5.104.0(react@19.2.3)
+      date-fns:
+        specifier: 4.4.0
+        version: 4.4.0
       delay:
         specifier: ^7.0.0
         version: 7.0.0
+      expo-router:
+        specifier: ~57.0.18
+        version: 57.0.18(@babel/core@7.29.7)(@expo/log-box@57.0.4)(@expo/metro-runtime@57.0.15)(@testing-library/react-native@14.0.1)(@types/react@19.2.18)(expo-constants@57.0.17)(expo-font@57.0.3)(expo-linking@57.0.9)(expo@57.0.19)(react-native-gesture-handler@3.3.0)(react-native-reanimated@4.5.1)(react-native-safe-area-context@5.7.0)(react-native-screens@4.26.2)(react-native-worklets@0.10.1)(react-native@0.86.3)(react@19.2.3)(supports-color@8.1.1)
       ical.js:
         specifier: 2.2.1
         version: 2.2.1
+      moment:
+        specifier: ^2.31.0
+        version: 2.31.0
       moment-timezone:
         specifier: ^0.6.4
         version: 0.6.4
       react:
         specifier: 'catalog:'
         version: 19.2.3
+      react-redux:
+        specifier: ^9.3.0
+        version: 9.3.0(@types/react@19.2.18)(react@19.2.3)(redux@5.0.1)
+      zod:
+        specifier: 4.6.5
+        version: 4.6.5
+    devDependencies:
+      '@jest/globals':
+        specifier: 30.5.2
+        version: 30.5.2(supports-color@8.1.1)
+      '@react-native-community/netinfo':
+        specifier: 12.0.1
+        version: 12.0.1(react-native@0.86.3)(react@19.2.3)
+      '@reduxjs/toolkit':
+        specifier: 2.12.0
+        version: 2.12.0(react-redux@9.3.0)(react@19.2.3)
+      '@testing-library/react-native':
+        specifier: 14.0.1
+        version: 14.0.1(jest@30.5.2)(react-native@0.86.3)(react@19.2.3)(test-renderer@1.2.0)
+      expo-calendar:
+        specifier: 57.0.2
+        version: 57.0.2(expo@57.0.19)(react-native@0.86.3)
+      react-native:
+        specifier: 'catalog:'
+        version: 0.86.3(patch_hash=6ca2e1225f38672b073b92b9d13f24feebbe9e37ba67708a3f1569275ce99191)(@babel/core@7.29.7)(@react-native/jest-preset@0.86.3)(@types/react@19.2.18)(react@19.2.3)(supports-color@8.1.1)
 
   modules/ccc-jobs:
     dependencies:
@@ -568,18 +637,38 @@ importers:
       react:
         specifier: 'catalog:'
         version: 19.2.3
+      react-native:
+        specifier: 'catalog:'
+        version: 0.86.3(patch_hash=6ca2e1225f38672b073b92b9d13f24feebbe9e37ba67708a3f1569275ce99191)(@babel/core@7.29.7)(@react-native/jest-preset@0.86.3)(@types/react@19.2.18)(react@19.2.3)(supports-color@8.1.1)
       zod:
         specifier: 4.6.5
         version: 4.6.5
+    devDependencies:
+      '@jest/globals':
+        specifier: 30.5.2
+        version: 30.5.2(supports-color@8.1.1)
+      '@react-native-community/netinfo':
+        specifier: 12.0.1
+        version: 12.0.1(react-native@0.86.3)(react@19.2.3)
 
-  modules/collections: {}
+  modules/collections:
+    devDependencies:
+      '@jest/globals':
+        specifier: 30.5.2
+        version: 30.5.2(supports-color@8.1.1)
 
   modules/colors:
     dependencies:
+      react-native:
+        specifier: 'catalog:'
+        version: 0.86.3(patch_hash=6ca2e1225f38672b073b92b9d13f24feebbe9e37ba67708a3f1569275ce99191)(@babel/core@7.29.7)(@react-native/jest-preset@0.86.3)(@types/react@19.2.18)(react@19.2.3)(supports-color@8.1.1)
       tinycolor2:
         specifier: 1.6.0
         version: 1.6.0
     devDependencies:
+      '@jest/globals':
+        specifier: 30.5.2
+        version: 30.5.2(supports-color@8.1.1)
       '@types/tinycolor2':
         specifier: 1.4.6
         version: 1.4.6
@@ -595,11 +684,34 @@ importers:
       '@frogpond/api':
         specifier: workspace:*
         version: link:../api
+      '@tanstack/react-query':
+        specifier: ^5.104.0
+        version: 5.104.0(react@19.2.3)
+      zod:
+        specifier: 4.6.5
+        version: 4.6.5
+    devDependencies:
+      '@jest/globals':
+        specifier: 30.5.2
+        version: 30.5.2(supports-color@8.1.1)
 
-  modules/double-tap: {}
+  modules/double-tap:
+    dependencies:
+      expo:
+        specifier: ~57.0.19
+        version: 57.0.19(@babel/core@7.29.7)(@expo/metro-runtime@57.0.15)(expo-router@57.0.18)(react-native-webview@13.16.1)(react-native-worklets@0.10.1)(react-native@0.86.3)(react@19.2.3)(supports-color@8.1.1)(typescript@7.0.2)
+      react:
+        specifier: 'catalog:'
+        version: 19.2.3
+      react-native:
+        specifier: 'catalog:'
+        version: 0.86.3(patch_hash=6ca2e1225f38672b073b92b9d13f24feebbe9e37ba67708a3f1569275ce99191)(@babel/core@7.29.7)(@react-native/jest-preset@0.86.3)(@types/react@19.2.18)(react@19.2.3)(supports-color@8.1.1)
 
   modules/event-list:
     dependencies:
+      '@expo/ui':
+        specifier: 57.0.14
+        version: 57.0.14(patch_hash=bcdd8e1eab405affdc5186e746347a1b0d656a6e945dd2ff386d8950fb36cb8f)(@babel/core@7.29.7)(expo@57.0.19)(react-native-worklets@0.10.1)(react-native@0.86.3)(react@19.2.3)
       '@frogpond/collections':
         specifier: workspace:*
         version: link:../collections
@@ -627,6 +739,19 @@ importers:
       react-native:
         specifier: 'catalog:'
         version: 0.86.3(patch_hash=6ca2e1225f38672b073b92b9d13f24feebbe9e37ba67708a3f1569275ce99191)(@babel/core@7.29.7)(@react-native/jest-preset@0.86.3)(@types/react@19.2.18)(react@19.2.3)(supports-color@8.1.1)
+      react-native-safe-area-context:
+        specifier: ^5.7.0
+        version: 5.7.0(react-native@0.86.3)(react@19.2.3)
+    devDependencies:
+      '@jest/globals':
+        specifier: 30.5.2
+        version: 30.5.2(supports-color@8.1.1)
+      '@testing-library/react-native':
+        specifier: 14.0.1
+        version: 14.0.1(jest@30.5.2)(react-native@0.86.3)(react@19.2.3)(test-renderer@1.2.0)
+      moment:
+        specifier: 2.31.0
+        version: 2.31.0
 
   modules/event-type:
     dependencies:
@@ -660,6 +785,13 @@ importers:
       react-native:
         specifier: 'catalog:'
         version: 0.86.3(patch_hash=6ca2e1225f38672b073b92b9d13f24feebbe9e37ba67708a3f1569275ce99191)(@babel/core@7.29.7)(@react-native/jest-preset@0.86.3)(@types/react@19.2.18)(react@19.2.3)(supports-color@8.1.1)
+    devDependencies:
+      '@jest/globals':
+        specifier: 30.5.2
+        version: 30.5.2(supports-color@8.1.1)
+      '@testing-library/react-native':
+        specifier: 14.0.1
+        version: 14.0.1(jest@30.5.2)(react-native@0.86.3)(react@19.2.3)(test-renderer@1.2.0)
 
   modules/food-menu:
     dependencies:
@@ -699,6 +831,13 @@ importers:
       react-native:
         specifier: 'catalog:'
         version: 0.86.3(patch_hash=6ca2e1225f38672b073b92b9d13f24feebbe9e37ba67708a3f1569275ce99191)(@babel/core@7.29.7)(@react-native/jest-preset@0.86.3)(@types/react@19.2.18)(react@19.2.3)(supports-color@8.1.1)
+    devDependencies:
+      '@jest/globals':
+        specifier: 30.5.2
+        version: 30.5.2(supports-color@8.1.1)
+      '@testing-library/react-native':
+        specifier: 14.0.1
+        version: 14.0.1(jest@30.5.2)(react-native@0.86.3)(react@19.2.3)(test-renderer@1.2.0)
 
   modules/html-content:
     dependencies:
@@ -711,6 +850,9 @@ importers:
       react-native:
         specifier: 'catalog:'
         version: 0.86.3(patch_hash=6ca2e1225f38672b073b92b9d13f24feebbe9e37ba67708a3f1569275ce99191)(@babel/core@7.29.7)(@react-native/jest-preset@0.86.3)(@types/react@19.2.18)(react@19.2.3)(supports-color@8.1.1)
+      react-native-webview:
+        specifier: ^13.16.1
+        version: 13.16.1(react-native@0.86.3)(react@19.2.3)
 
   modules/html-lib:
     dependencies:
@@ -730,7 +872,11 @@ importers:
         specifier: 12.0.0
         version: 12.0.0
 
-  modules/launch-arguments: {}
+  modules/launch-arguments:
+    dependencies:
+      expo-modules-core:
+        specifier: ~57.0.15
+        version: 57.0.15(react-native-worklets@0.10.1)(react-native@0.86.3)(react@19.2.3)
 
   modules/layout:
     dependencies:
@@ -783,7 +929,14 @@ importers:
         specifier: 1.0.2
         version: 1.0.2(react-native@0.86.3)(react@19.2.3)
 
-  modules/mess-issue-tile: {}
+  modules/mess-issue-tile:
+    dependencies:
+      expo:
+        specifier: ~57.0.19
+        version: 57.0.19(@babel/core@7.29.7)(@expo/metro-runtime@57.0.15)(expo-router@57.0.18)(react-native-webview@13.16.1)(react-native-worklets@0.10.1)(react-native@0.86.3)(react@19.2.3)(supports-color@8.1.1)(typescript@7.0.2)
+      react:
+        specifier: 'catalog:'
+        version: 19.2.3
 
   modules/notice:
     dependencies:
@@ -800,6 +953,9 @@ importers:
         specifier: 'catalog:'
         version: 0.86.3(patch_hash=6ca2e1225f38672b073b92b9d13f24feebbe9e37ba67708a3f1569275ce99191)(@babel/core@7.29.7)(@react-native/jest-preset@0.86.3)(@types/react@19.2.18)(react@19.2.3)(supports-color@8.1.1)
     devDependencies:
+      '@jest/globals':
+        specifier: 30.5.2
+        version: 30.5.2(supports-color@8.1.1)
       '@testing-library/react-native':
         specifier: 14.0.1
         version: 14.0.1(jest@30.5.2)(react-native@0.86.3)(react@19.2.3)(test-renderer@1.2.0)
@@ -812,10 +968,28 @@ importers:
       react-native:
         specifier: 'catalog:'
         version: 0.86.3(patch_hash=6ca2e1225f38672b073b92b9d13f24feebbe9e37ba67708a3f1569275ce99191)(@babel/core@7.29.7)(@react-native/jest-preset@0.86.3)(@types/react@19.2.18)(react@19.2.3)(supports-color@8.1.1)
+    devDependencies:
+      '@jest/globals':
+        specifier: 30.5.2
+        version: 30.5.2(supports-color@8.1.1)
 
-  modules/place-card-header: {}
+  modules/place-card-header:
+    dependencies:
+      expo:
+        specifier: ~57.0.19
+        version: 57.0.19(@babel/core@7.29.7)(@expo/metro-runtime@57.0.15)(expo-router@57.0.18)(react-native-webview@13.16.1)(react-native-worklets@0.10.1)(react-native@0.86.3)(react@19.2.3)(supports-color@8.1.1)(typescript@7.0.2)
+      react:
+        specifier: 'catalog:'
+        version: 19.2.3
 
-  modules/selectable-text: {}
+  modules/selectable-text:
+    dependencies:
+      expo:
+        specifier: ~57.0.19
+        version: 57.0.19(@babel/core@7.29.7)(@expo/metro-runtime@57.0.15)(expo-router@57.0.18)(react-native-webview@13.16.1)(react-native-worklets@0.10.1)(react-native@0.86.3)(react@19.2.3)(supports-color@8.1.1)(typescript@7.0.2)
+      react:
+        specifier: 'catalog:'
+        version: 19.2.3
 
   modules/separator:
     dependencies:
@@ -843,9 +1017,16 @@ importers:
 
   modules/storage:
     dependencies:
+      '@react-native-async-storage/async-storage':
+        specifier: ^3.1.1
+        version: 3.1.1(react-native@0.86.3)(react@19.2.3)
       react-native:
         specifier: 'catalog:'
         version: 0.86.3(patch_hash=6ca2e1225f38672b073b92b9d13f24feebbe9e37ba67708a3f1569275ce99191)(@babel/core@7.29.7)(@react-native/jest-preset@0.86.3)(@types/react@19.2.18)(react@19.2.3)(supports-color@8.1.1)
+    devDependencies:
+      '@jest/globals':
+        specifier: 30.5.2
+        version: 30.5.2(supports-color@8.1.1)
 
   modules/time-format:
     dependencies:
@@ -858,6 +1039,10 @@ importers:
       react-native:
         specifier: 'catalog:'
         version: 0.86.3(patch_hash=6ca2e1225f38672b073b92b9d13f24feebbe9e37ba67708a3f1569275ce99191)(@babel/core@7.29.7)(@react-native/jest-preset@0.86.3)(@types/react@19.2.18)(react@19.2.3)(supports-color@8.1.1)
+    devDependencies:
+      '@jest/globals':
+        specifier: 30.5.2
+        version: 30.5.2(supports-color@8.1.1)
 
   modules/timer:
     dependencies:
@@ -876,6 +1061,13 @@ importers:
       zustand:
         specifier: 5.0.15
         version: 5.0.15(@types/react@19.2.18)(immer@11.1.18)(react@19.2.3)(use-sync-external-store@1.7.0)
+    devDependencies:
+      '@jest/globals':
+        specifier: 30.5.2
+        version: 30.5.2(supports-color@8.1.1)
+      '@testing-library/react-native':
+        specifier: 14.0.1
+        version: 14.0.1(jest@30.5.2)(react-native@0.86.3)(react@19.2.3)(test-renderer@1.2.0)
 
   modules/toolbar:
     dependencies:
@@ -888,6 +1080,9 @@ importers:
       react-native:
         specifier: 'catalog:'
         version: 0.86.3(patch_hash=6ca2e1225f38672b073b92b9d13f24feebbe9e37ba67708a3f1569275ce99191)(@babel/core@7.29.7)(@react-native/jest-preset@0.86.3)(@types/react@19.2.18)(react@19.2.3)(supports-color@8.1.1)
+      react-native-safe-area-context:
+        specifier: ^5.7.0
+        version: 5.7.0(react-native@0.86.3)(react@19.2.3)
 
   modules/touchable:
     dependencies:

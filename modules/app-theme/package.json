@@ -10,5 +10,8 @@
   },
   "dependencies": {
     "@frogpond/colors": "workspace:*"
+  },
+  "peerDependencies": {
+    "expo-router": "~57.0.18"
   }
 }
