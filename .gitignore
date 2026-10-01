@@ -21,6 +21,9 @@ DerivedData
 *.ipa
 *.xcuserstate
 
+# SwiftPM, for the Swift scripts
+scripts/.build/
+
 # Cocoapods
 
 # Android/IntelliJ
