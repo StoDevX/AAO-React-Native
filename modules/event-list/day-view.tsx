@@ -297,7 +297,9 @@ export let DayView = React.forwardRef<CalendarBodyHandle, Props>(function DayVie
 									]}
 								>
 									{!drawn ? (
-										<ProgressView modifiers={[padding({top: 48})]} />
+										// A scroll view is only as wide as what it holds, so the spinner
+										// spans the page or the background would be a strip around it.
+										<ProgressView modifiers={[frame({maxWidth: Infinity}), padding({top: 48})]} />
 									) : (
 										(() => {
 											let notice = emptyNotice(props, {
