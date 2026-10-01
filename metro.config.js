@@ -19,7 +19,8 @@ const {EMPTY_FIXTURE, stubsFixture} = require('./scripts/metro-fixtures.mjs')
 // getDefaultConfig as before so the base config does not change.
 const defaultConfig = getSentryExpoConfig(__dirname, {getDefaultConfig})
 
-// Expo's own resolver, which the fixture stub below runs first and then defers to.
+// The resolver Sentry's config installs; the stub below resolves through it,
+// then swaps a fixture's result.
 const upstreamResolve = defaultConfig.resolver.resolveRequest
 
 const config = {
