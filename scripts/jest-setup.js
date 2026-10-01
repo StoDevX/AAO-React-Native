@@ -50,6 +50,12 @@ jest.mock('expo-localization', () => ({
 	getLocales: () => [{languageTag: 'en-US'}],
 	getCalendars: () => [{uses24hourClock: false}],
 }))
+// expo-file-system wires up a native event emitter when imported, and Jest has
+// none. Only a recording run of the UI tests writes a file (mess/lib/fixtures.ts).
+jest.mock('expo-file-system', () => ({
+	File: jest.fn(),
+	Paths: {document: 'documents'},
+}))
 jest.mock('@frogpond/launch-arguments', () => ({
 	isUITesting: true,
 	// Live, so a test that stubs fetchSourceBody gets its stub, not a fixture.

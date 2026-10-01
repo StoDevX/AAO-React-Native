@@ -1,10 +1,4 @@
-import {
-	fetchManifest,
-	fetchSourceBody,
-	REL_NEWS,
-	resolveSource,
-	SourceFetchError,
-} from '@frogpond/data-sources'
+import {fetchManifest, REL_NEWS, resolveSource, SourceFetchError} from '@frogpond/data-sources'
 import {infiniteQueryOptions, queryOptions} from '@tanstack/react-query'
 import {queryClient} from '../../init/tanstack-query'
 import {parseMessCategories, parseMessPosts} from './lib/posts'
@@ -13,6 +7,7 @@ import {ISSUE_PAGE_SIZE, parseLightPosts, parseMediaUrls, withPhotoUrls} from '.
 import {latestProfile, parseStaffProfiles} from './lib/profiles'
 import {seriesKey, seriesName} from './lib/series'
 import {findSpotifyRef} from './lib/spotify'
+import {messFetch} from './lib/fixtures'
 import {messKeys} from './lib/keys'
 import type {LightPost, MessCategory, MessIssue, MessStory, SpotifyRef, StaffProfile} from './types'
 
@@ -42,7 +37,7 @@ export const messCategoriesOptions = queryOptions({
 	queryFn: async ({signal}): Promise<MessCategory[]> => {
 		// Assumes the resolved feed href is an absolute WordPress URL.
 		let origin = originOf(await feedHref())
-		let body = await fetchSourceBody(
+		let body = await messFetch(
 			`${origin}/wp-json/wp/v2/categories?per_page=100&_fields=id,name,parent`,
 			signal,
 			'Olaf Messenger categories',
@@ -57,7 +52,7 @@ async function storiesAt(path: string, signal: AbortSignal, label: string): Prom
 	let origin = originOf(await feedHref())
 	// A failed categories fetch fails the stories on purpose: sections come from it.
 	let [body, categories] = await Promise.all([
-		fetchSourceBody(`${origin}/wp-json/wp/v2/${path}`, signal, label),
+		messFetch(`${origin}/wp-json/wp/v2/${path}`, signal, label),
 		queryClient.query(messCategoriesOptions),
 	])
 	// A single post comes back as an object rather than a list.
@@ -69,7 +64,7 @@ async function feedStories(signal: AbortSignal): Promise<MessStory[]> {
 	let href = await feedHref()
 	// A failed categories fetch fails the feed on purpose: sections come from it.
 	let [postsBody, categories] = await Promise.all([
-		fetchSourceBody(href, signal, 'Olaf Messenger'),
+		messFetch(href, signal, 'Olaf Messenger'),
 		queryClient.query(messCategoriesOptions),
 	])
 	return parseMessPosts(postsBody, categories)
@@ -132,7 +127,7 @@ export const messLeadTextOptions = (id: number) =>
 		queryFn: async ({signal}): Promise<string[]> => {
 			// Assumes the resolved feed href is an absolute WordPress URL.
 			let origin = originOf(await feedHref())
-			let body = await fetchSourceBody(
+			let body = await messFetch(
 				`${origin}/wp-json/wp/v2/posts/${id}?_fields=content`,
 				signal,
 				'Olaf Messenger story text',
@@ -166,7 +161,7 @@ export const messIssuesOptions = infiniteQueryOptions({
 		let origin = originOf(await feedHref())
 		// A failed categories fetch fails the page on purpose: sections come from it.
 		let [body, categories] = await Promise.all([
-			fetchSourceBody(
+			messFetch(
 				`${origin}/wp-json/wp/v2/posts?per_page=${ISSUE_PAGE_SIZE}&page=${pageParam}&_fields=id,date,title,categories,featured_media`,
 				signal,
 				'Olaf Messenger issues',
@@ -182,7 +177,7 @@ export const messIssuesOptions = infiniteQueryOptions({
 		let photoIds = [...new Set(posts.flatMap((post) => (post.photo === null ? [] : [post.photo])))]
 		if (photoIds.length === 0) return posts
 		// A row without its photo draws a tinted square, so a failed lookup leaves the page whole.
-		let urls = await fetchSourceBody(
+		let urls = await messFetch(
 			`${origin}/wp-json/wp/v2/media?include=${photoIds.join(',')}&per_page=${ISSUE_PAGE_SIZE}&_fields=id,source_url`,
 			signal,
 			'Olaf Messenger photos',
@@ -303,7 +298,7 @@ export const messPlaylistPageOptions = (story: MessStory) =>
 		networkMode: 'always',
 		retry: 1,
 		queryFn: async ({signal}): Promise<SpotifyRef | null> => {
-			let page = await fetchSourceBody(story.link, signal, 'Olaf Messenger page', 'text')
+			let page = await messFetch(story.link, signal, 'Olaf Messenger page', 'text')
 			return typeof page === 'string' ? findSpotifyRef(page) : null
 		},
 	})
@@ -317,7 +312,7 @@ export const staffProfileOptions = (staffId: number) =>
 		queryFn: async ({signal}): Promise<StaffProfile | null> => {
 			// Assumes the resolved feed href is an absolute WordPress URL.
 			let origin = originOf(await feedHref())
-			let body = await fetchSourceBody(
+			let body = await messFetch(
 				`${origin}/wp-json/wp/v2/staff_profile?staff_name=${staffId}&_embed=true`,
 				signal,
 				'Olaf Messenger staff profile',
