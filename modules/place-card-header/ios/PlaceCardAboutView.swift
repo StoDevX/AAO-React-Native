@@ -14,7 +14,8 @@ private let moreGap: CGFloat = 12
 
 /// A place card's About text as Apple Maps sets it: the first five lines, the
 /// last of them cut short with an ellipsis, and MORE at its trailing end when
-/// there is more to read. A tap on the text or on MORE shows the rest in place.
+/// there is more to read. A tap on the text or on MORE shows the rest in place,
+/// where it can be selected.
 ///
 /// Native because only TextKit can say where the fifth line starts, which is
 /// what cutting that line short to make room for MORE needs.
@@ -50,7 +51,15 @@ struct PlaceCardAboutView: ExpoSwiftUI.View {
 
 	var body: some View {
 		let shortened = self.shortened
-		Text(shortened ?? props.text)
+		Group {
+			// Selectable only once expanded: cut short, a copy would hold only
+			// the lines on screen.
+			if expanded {
+				SelectableText(text: props.text, font: bodyFont)
+			} else {
+				Text(shortened ?? props.text)
+			}
+		}
 			.font(Font(bodyFont))
 			// A backstop for the frame before the width is known, and for any
 			// line SwiftUI breaks differently from TextKit.
@@ -82,6 +91,38 @@ struct PlaceCardAboutView: ExpoSwiftUI.View {
 				}
 			}
 			.accessibilityIdentifier(props.testID ?? "")
+	}
+}
+
+/// Text the reader can select and copy. UIKit's, because SwiftUI's own
+/// `textSelection` does nothing in the card's list: the place card scaffold's
+/// `safeAreaBar` switches it off.
+private struct SelectableText: UIViewRepresentable {
+	let text: String
+	let font: UIFont
+
+	func makeUIView(context: Context) -> UITextView {
+		let view = UITextView()
+		view.isEditable = false
+		view.isScrollEnabled = false
+		view.backgroundColor = .clear
+		// Laid out as `shortenedText` measures, so the expanded text breaks
+		// its lines where the shortened text did.
+		view.textContainerInset = .zero
+		view.textContainer.lineFragmentPadding = 0
+		return view
+	}
+
+	func updateUIView(_ view: UITextView, context: Context) {
+		view.text = text
+		view.font = font
+		view.textColor = .label
+	}
+
+	func sizeThatFits(_ proposal: ProposedViewSize, uiView: UITextView, context: Context) -> CGSize? {
+		guard let width = proposal.width else { return nil }
+		let fitted = uiView.sizeThatFits(CGSize(width: width, height: .greatestFiniteMagnitude))
+		return CGSize(width: width, height: fitted.height)
 	}
 }
 
