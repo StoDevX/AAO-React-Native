@@ -56,6 +56,14 @@ extension XCUIElement {
 		return XCTWaiter().wait(for: [expectation], timeout: timeout) == .completed
 	}
 
+	/// Wait for this element to be enabled, or disabled. A control disabled by
+	/// JavaScript state changes a render after the tap that changes the state.
+	func waitForEnabled(_ expected: Bool, timeout: TimeInterval = 30) -> Bool {
+		let predicate = NSPredicate(format: expected ? "isEnabled == true" : "isEnabled == false")
+		let expectation = XCTNSPredicateExpectation(predicate: predicate, object: self)
+		return XCTWaiter().wait(for: [expectation], timeout: timeout) == .completed
+	}
+
 	/// Wait for this element's label to read `expected`. A label drawn by JavaScript changes a
 	/// render after the tap that asks for it.
 	func waitForLabel(_ expected: String, timeout: TimeInterval = 30) -> Bool {
