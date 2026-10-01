@@ -23,6 +23,12 @@ jest.mock('expo-image-picker', () => ({
 	UIImagePickerPreferredAssetRepresentationMode: {Compatible: 'compatible'},
 }))
 
+// The app's version is read from a native module Jest does not have; the
+// query cache marks what it saves with it.
+jest.mock('expo-application', () => ({
+	nativeApplicationVersion: '2.8.0',
+	nativeBuildVersion: '17',
+}))
 // Keeping the screen awake goes through a native module Jest does not have.
 jest.mock('expo-keep-awake', () => ({
 	useKeepAwake: jest.fn(),
