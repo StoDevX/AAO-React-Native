@@ -5,7 +5,8 @@ import moment from 'moment-timezone'
 import {useNowOverride} from '@frogpond/timer'
 
 import {SecretSlab} from '../slab'
-import {roar} from './something-secret-mock'
+import {useSecretStore} from '../store'
+import {melt, roar} from './something-secret-mock'
 
 jest.mock('@frogpond/something-secret', () => {
 	// oxlint-disable-next-line typescript/no-require-imports
@@ -149,5 +150,38 @@ describe('SecretSlab', () => {
 		// taps then, and so must the component.
 		await tapTimes(5)
 		expect(roar).toHaveBeenCalledTimes(roars)
+	})
+})
+
+describe('the red button', () => {
+	beforeEach(() => {
+		useSecretStore.setState({pressCount: 0, lockedUntil: null})
+		jest
+			.mocked(melt)
+			.mockReset()
+			.mockImplementation(() => Promise.resolve())
+	})
+
+	it('locks the app before the melt starts, so quitting mid-melt still locks', async () => {
+		let lockedWhenMeltStarted: number | null = null
+		jest.mocked(melt).mockImplementation(() => {
+			lockedWhenMeltStarted = useSecretStore.getState().lockedUntil
+			return new Promise(() => undefined)
+		})
+		await render(<SecretSlab isFocused={true} />)
+		await tapTimes(250)
+		await fireEvent.press(screen.getByLabelText('do not push?'))
+		expect(lockedWhenMeltStarted).toBe(START.valueOf() + 60_000)
+		expect(melt).toHaveBeenCalledTimes(1)
+	})
+
+	it('counts a double press once', async () => {
+		await render(<SecretSlab isFocused={true} />)
+		await tapTimes(250)
+		let button = screen.getByLabelText('do not push?')
+		await fireEvent.press(button)
+		await fireEvent.press(button)
+		expect(useSecretStore.getState().pressCount).toBe(1)
+		expect(melt).toHaveBeenCalledTimes(1)
 	})
 })

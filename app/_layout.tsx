@@ -22,6 +22,7 @@ import {Stack, useNavigationContainerRef} from 'expo-router'
 import * as Sentry from '@sentry/react-native'
 
 import {LoadingView} from '@frogpond/notice'
+import {LockoutGate} from '../source/features/something-secret'
 import {IS_PRODUCTION} from '@frogpond/constants'
 import {StatusBar, useColorScheme} from 'react-native'
 
@@ -70,6 +71,8 @@ function RootLayout(): React.ReactNode {
 									options={{headerShown: false, presentation: 'modal'}}
 								/>
 							</Stack>
+							{/* Over everything while the red button's lockout lasts. */}
+							<LockoutGate />
 						</ThemeProvider>
 					</PaperProvider>
 				</PersistQueryClientProvider>
