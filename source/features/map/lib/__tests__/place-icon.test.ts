@@ -49,7 +49,7 @@ const STOLAF_COMBINATIONS: Array<[string[], string]> = [
 	[['parking', 'accessible-parking'], 'figure.roll'],
 	[['building', 'administrative', 'academic'], 'graduationcap.fill'],
 	[['building', 'residence-hall', 'housing'], 'bed.double.fill'],
-	[['outdoors', 'water'], 'drop.fill'],
+	[['outdoors', 'water'], 'water.waves'],
 	[['outdoors', 'trail'], 'figure.hiking'],
 	[['outdoors', 'trail', 'wellness-walk'], 'figure.walk'],
 	[['building', 'administrative'], 'briefcase.fill'],

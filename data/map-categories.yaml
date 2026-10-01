@@ -47,7 +47,7 @@ stolaf:
   icons:
     - {categories: [wellness-walk], icon: figure.walk, gradient: mint}
     - {categories: [trail], icon: figure.hiking, gradient: green}
-    - {categories: [water], icon: drop.fill, gradient: blue}
+    - {categories: [water], icon: water.waves, gradient: blue}
     - {categories: [athletics, field], icon: figure.run, gradient: red}
     - {categories: [accessible-parking], icon: figure.roll, gradient: light-blue}
     - {categories: [parking], icon: parkingsign, gradient: light-blue}
