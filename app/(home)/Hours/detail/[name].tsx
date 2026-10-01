@@ -46,7 +46,6 @@ export default function HoursDetailPage(): React.ReactNode {
 	let screen = (
 		<>
 			<Stack.Title>{building?.name ?? name}</Stack.Title>
-			<Stack.Screen options={{headerLargeTitle: true}} />
 			<SheetCloseButton />
 			<Stack.Toolbar placement="right">
 				<Stack.Toolbar.Button

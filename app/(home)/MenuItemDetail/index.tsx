@@ -97,8 +97,7 @@ export default function MenuItemDetailPage(): React.ReactNode {
 	// "Nutrition" above stands in only while there is no dish to name yet.
 	return (
 		<>
-			<Stack.Screen options={{headerLargeTitleEnabled: true}} />
-			<Stack.Title large={false}>{data.item.label}</Stack.Title>
+			<Stack.Title>{data.item.label}</Stack.Title>
 			<SheetCloseButton />
 			<MenuItemDetailView icons={data.icons} item={data.item} />
 		</>

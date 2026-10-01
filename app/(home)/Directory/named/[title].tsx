@@ -45,11 +45,10 @@ export default function ContactsDetailPage(): React.ReactNode {
 	// Set from the route param immediately, then from the resolved contact
 	// once it loads -- so the header never falls back to the raw route name
 	// while loading, erroring, or failing to find the contact. It is the
-	// screen's only copy of the name: a large title that collapses on scroll,
-	// rather than a static heading repeated in the body.
+	// screen's only copy of the name: the header title, rather than a static
+	// heading repeated in the body.
 	let screenTitle = (
 		<>
-			<Stack.Screen options={{headerLargeTitleEnabled: true}} />
 			<Stack.Title>{contact?.title ?? title}</Stack.Title>
 			<SheetCloseButton />
 		</>
