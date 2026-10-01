@@ -326,6 +326,9 @@ const styles = StyleSheet.create({
 	},
 	selectableText: {
 		color: c.label,
+		// The body text style's default size, so a description sits at the
+		// size of the SwiftUI text in the rows around it.
+		fontSize: 17,
 		paddingVertical: 4,
 	},
 })
