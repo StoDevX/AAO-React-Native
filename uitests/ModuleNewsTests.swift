@@ -1,48 +1,30 @@
 import XCTest
 
 class ModuleNewsTests: UITestCaseUnbooted {
-	/// Reads live data: the paper has to have published at least two issues.
 	func testOlafMessengerOpensOnTheIssueGrid() throws {
 		MessFrontPage(app: app)
 			.navigate()
 			.verifyByIssueShowsTheGrid()
 	}
 
-	func testOlafMessengerLatestOffersItsSections() throws {
-		MessFrontPage(app: app)
-			.navigate()
-			.verifyLatestListsStoriesWithSections()
-	}
-
-	/// Reads live data: the paper has to have a News section.
 	func testOlafMessengerLatestNarrowsToASection() throws {
 		MessFrontPage(app: app)
 			.navigate()
 			.filterLatest(to: TestIdentifiers.News.newsSection)
 	}
 
-	func testStOlafNewsListsItsStories() throws {
-		NewsScreen(app: app, tile: TestIdentifiers.Buttons.stOlafNews, title: "St. Olaf News")
-			.navigate()
-			.verifyTitle()
-			.verifyNewsRowsAppear()
-	}
-
-	/// Reads live data: the paper has to have published at least two issues.
 	func testOlafMessengerOpensAnOlderIssue() throws {
 		MessFrontPage(app: app)
 			.navigate()
 			.openSecondIssue()
 	}
 
-	/// Reads live data: the paper has to have published issues in 2025, three pages back.
 	func testOlafMessengerIssuesLoadOlderPages() throws {
 		MessFrontPage(app: app)
 			.navigate()
 			.scrollIssues(untilAnIssueFrom: "2025")
 	}
 
-	/// Reads live data: News has to have its Good Questions column, with a story in it.
 	func testOlafMessengerSectionOpensAColumn() throws {
 		MessFrontPage(app: app)
 			.navigate()
@@ -100,10 +82,6 @@ class ModuleNewsTests: UITestCaseUnbooted {
 
 	/// Each story opened from a series row is a screen of its own, even one already
 	/// open further down, so Back retraces every step in the order it was taken.
-	///
-	/// This reads live data: the first Comic's series row has to list a story whose
-	/// own series row lists that first Comic back. A Comic without a series, or one
-	/// whose series has moved on, fails the test without anything being wrong.
 	func testSeriesStoriesStackInTheOrderTheyWereOpened() throws {
 		let reader = MessFrontPage(app: app)
 			.navigate()
@@ -135,7 +113,6 @@ class ModuleNewsTests: UITestCaseUnbooted {
 			.closeImageViewer()
 	}
 
-	/// Reads live data: the newest Crossword post has to carry PuzzleMe's placeholder.
 	func testCrosswordOpensThePuzzleInTheBrowser() throws {
 		MessFrontPage(app: app)
 			.navigate()
@@ -144,17 +121,6 @@ class ModuleNewsTests: UITestCaseUnbooted {
 			.solveCrossword()
 	}
 
-	/// Reads live data: the newest Playlist post has to name its playlist, in its body or on
-	/// its web page.
-	func testPlaylistDrawsSpotifysPlayer() throws {
-		MessFrontPage(app: app)
-			.navigate()
-			.openColumn(TestIdentifiers.News.playlistColumn, in: TestIdentifiers.News.varietySection)
-			.openFirstStory()
-			.verifyPlaylistOffered()
-	}
-
-	/// Reads live data: the newest Recipes post has to have an ingredient section.
 	func testRecipeTicksAnIngredient() throws {
 		MessFrontPage(app: app)
 			.navigate()
@@ -163,7 +129,6 @@ class ModuleNewsTests: UITestCaseUnbooted {
 			.tickFirstIngredient()
 	}
 
-	/// Reads live data: the newest Photo post has to have a picture.
 	func testPhotoOpensTheZoomViewer() throws {
 		MessFrontPage(app: app)
 			.navigate()

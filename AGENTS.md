@@ -210,7 +210,7 @@ nothing. A new code needs a change to `JobCode` in
 `source/features/sis/student-work/posting.ts` first. Jest and the UI tests
 read `FIXED_WAGES`, not the data file, so a rate change never breaks them.
 
-### Map Fixtures
+### UI Test Fixtures
 
 Under UI tests the map reads copies of each campus's `map/geojson` from
 `source/features/map/__fixtures__/`, not ccc-server, so a data publish cannot
@@ -225,6 +225,19 @@ It prints the places each campus added and removed, and how many changed, and
 writes nothing when any campus's response has no places. The copies are written
 with sorted keys, so the diff shows only the data that moved. Rerun the map UI
 tests after a refresh: a moved label point can change what a tap hits.
+
+Olaf Messenger's fetches are answered from
+`source/features/mess/__fixtures__/mess.json` under UI tests, and a fetch with
+no fixture fails naming its URL. Its URLs depend on what the paper published,
+so they are recorded, not listed: with a simulator booted and Metro running,
+
+```bash
+TEST_RUNNER_AAO_JS_LOCATION=localhost:<port> mise run update-mess-fixtures
+```
+
+runs the Messenger UI tests against the live paper with `--record-fixtures`
+and writes every fetch they made. It writes nothing if the tests fail. With
+more than one simulator booted, name one with `SIMULATOR_UDID=<udid>`.
 
 ## Agent Workflow
 
