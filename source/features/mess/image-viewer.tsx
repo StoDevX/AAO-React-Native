@@ -46,9 +46,9 @@ export function ImageViewer({id, index = 0}: Props): React.ReactNode {
 			placeholder={
 				<StoryLookupNotice
 					query={query}
+					colorScheme="dark"
 					style={styles.notice}
-					textStyle={styles.noticeText}
-					unavailableText="Image unavailable"
+					unavailableText="Image Unavailable"
 				/>
 			}
 		/>
@@ -57,5 +57,4 @@ export function ImageViewer({id, index = 0}: Props): React.ReactNode {
 
 const styles = StyleSheet.create({
 	notice: {backgroundColor: 'black'},
-	noticeText: {color: 'white'},
 })

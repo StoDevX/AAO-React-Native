@@ -74,7 +74,11 @@ export default function DictionaryEntryPage(): React.ReactNode {
 		return (
 			<>
 				{screen}
-				<NoticeView text={`Could not find an entry for “${word}”.`} />
+				<NoticeView
+					description={`Nothing in the dictionary is called “${word}”.`}
+					systemImage="character.book.closed"
+					title="Entry Not Found"
+				/>
 			</>
 		)
 	}

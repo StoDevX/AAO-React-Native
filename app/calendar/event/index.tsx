@@ -17,7 +17,7 @@ import {AddToCalendar} from '@frogpond/add-to-device-calendar'
 import {addToCalendarEvents} from '../../../source/features/telemetry/calendar-events'
 import {track} from '../../../source/features/telemetry/track'
 import {scheduleEventOptions, useCalendarSource, useCalendarSources} from '@frogpond/ccc-calendar'
-import {LoadingView, NoticeView} from '@frogpond/notice'
+import {LoadErrorView, LoadingView, NoticeView} from '@frogpond/notice'
 import {
 	HIDDEN_FROM_CALENDAR,
 	PRESENCE_POWERED_BY,
@@ -162,7 +162,11 @@ export default function EventDetailPage(): React.ReactNode {
 			<>
 				<Stack.Title>Error</Stack.Title>
 				<SheetCloseButton />
-				<NoticeView text="Unknown event source." />
+				<NoticeView
+					description="This event comes from a calendar the app doesn’t know."
+					systemImage="questionmark.circle"
+					title="Unknown Calendar"
+				/>
 			</>
 		)
 	}
@@ -182,13 +186,7 @@ export default function EventDetailPage(): React.ReactNode {
 			<>
 				<Stack.Title>Error</Stack.Title>
 				<SheetCloseButton />
-				<NoticeView
-					buttonText="Try Again"
-					onPress={refetch}
-					text={`A problem occurred while loading: ${
-						error instanceof Error ? error.message : 'Unknown error'
-					}`}
-				/>
+				<LoadErrorView error={error} onRetry={refetch} />
 			</>
 		)
 	}
@@ -198,7 +196,7 @@ export default function EventDetailPage(): React.ReactNode {
 			<>
 				<Stack.Title>Unknown Event</Stack.Title>
 				<SheetCloseButton />
-				<NoticeView text="Could not find this event." />
+				<NoticeView systemImage="questionmark.circle" title="Event Not Found" />
 			</>
 		)
 	}

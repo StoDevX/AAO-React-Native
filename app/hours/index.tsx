@@ -13,7 +13,7 @@ import {
 } from '../../source/redux/parts/buildings'
 
 import {timezone} from '@frogpond/constants'
-import {LoadingView, NoticeView} from '@frogpond/notice'
+import {LoadErrorView, LoadingView} from '@frogpond/notice'
 import {useDebounce} from '@frogpond/use-debounce'
 import {Stack, useLocalSearchParams, useRouter} from 'expo-router'
 import {useMomentTimer, useNowOverride} from '@frogpond/timer'
@@ -115,11 +115,7 @@ function HoursView({campus}: Props): React.ReactNode {
 		return (
 			<>
 				{chrome}
-				<NoticeView
-					buttonText="Try Again"
-					onPress={refetch}
-					text={`A problem occurred while loading: ${error}`}
-				/>
+				<LoadErrorView error={error} onRetry={refetch} />
 			</>
 		)
 	}

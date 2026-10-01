@@ -81,7 +81,7 @@ export default function APITestDetailPage(): React.ReactNode {
 						value={String(error)}
 					/>
 				) : !isLoading && !cleanedName ? (
-					<NoticeView text="No route was found." />
+					<NoticeView systemImage="questionmark.circle" title="Route Not Found" />
 				) : isLoading ? (
 					<LoadingView />
 				) : displayMode === 'raw' ? (

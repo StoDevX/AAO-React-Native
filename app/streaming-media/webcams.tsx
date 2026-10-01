@@ -5,7 +5,7 @@ import {partitionByIndex} from '../../source/lib/partition-by-index'
 import {StreamThumbnail} from '../../source/features/streaming/webcams/thumbnail'
 import {webcamsOptions} from '../../source/features/streaming/webcams/query'
 import {useQuery} from '@tanstack/react-query'
-import {LoadingView, NoticeView} from '@frogpond/notice'
+import {LoadErrorView, LoadingView} from '@frogpond/notice'
 import {SafeAreaView, useSafeAreaInsets} from 'react-native-safe-area-context'
 
 export default function WebcamsPage(): React.ReactNode {
@@ -21,13 +21,7 @@ export default function WebcamsPage(): React.ReactNode {
 	} = useQuery(webcamsOptions)
 
 	if (isError) {
-		return (
-			<NoticeView
-				buttonText="Try Again"
-				onPress={refetch}
-				text={`A problem occurred while loading: ${error}`}
-			/>
-		)
+		return <LoadErrorView error={error} onRetry={refetch} />
 	}
 
 	if (isLoading) {

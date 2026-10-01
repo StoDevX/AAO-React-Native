@@ -18,7 +18,7 @@ import type {Moment} from 'moment-timezone'
 import noop from 'lodash/noop'
 import * as c from '@frogpond/colors'
 import {timezone} from '@frogpond/constants'
-import {LoadingView, NoticeView} from '@frogpond/notice'
+import {LoadErrorView, LoadingView, NoticeView} from '@frogpond/notice'
 
 import {ImageAttachmentsSection} from '../../../source/components/image-attachments-section'
 import {useImageAttachments} from '../../../source/components/use-image-attachments'
@@ -452,19 +452,17 @@ function HoursProblemReportLoader(): React.ReactNode {
 	}
 
 	if (error) {
-		return (
-			<NoticeView
-				buttonText="Try Again"
-				onPress={refetch}
-				text={`A problem occurred while loading: ${
-					error instanceof Error ? error.message : 'Unknown error'
-				}`}
-			/>
-		)
+		return <LoadErrorView error={error} onRetry={refetch} />
 	}
 
 	if (!building) {
-		return <NoticeView text={`Could not find the "${name}" building.`} />
+		return (
+			<NoticeView
+				description={`Nothing is called “${name}”.`}
+				systemImage="building.2"
+				title="Building Not Found"
+			/>
+		)
 	}
 
 	return <HoursProblemReportView campus={campus} initialBuilding={building} />

@@ -41,7 +41,13 @@ export default function DictionarySensePage(): React.ReactNode {
 	let grammarText = useNativeState(sense?.grammar ?? '')
 
 	if (!sense) {
-		return <NoticeView text="That sense is no longer part of this entry." />
+		return (
+			<NoticeView
+				description="That sense is no longer part of this entry."
+				systemImage="character.book.closed"
+				title="Sense Removed"
+			/>
+		)
 	}
 
 	return (

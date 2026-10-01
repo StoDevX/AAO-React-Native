@@ -72,7 +72,7 @@ export default function DictionaryPreviewPage(): React.ReactNode {
 	}, [draft, markSubmitted, original])
 
 	if (!diff) {
-		return <NoticeView text="There is nothing to preview." />
+		return <NoticeView systemImage="character.book.closed" title="Nothing to Preview" />
 	}
 
 	return (

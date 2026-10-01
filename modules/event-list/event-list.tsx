@@ -97,16 +97,24 @@ export function EventList(props: Props): React.ReactNode {
 	// whose events are all over is as empty as one with none.
 	let shown = React.useMemo(() => sections.flatMap((section) => section.data), [sections])
 
-	let {text, retry} = emptyNotice({...props, events: shown}, {text: 'No events.', retry: true})
+	let {text, detail, retry} = emptyNotice(
+		{...props, events: shown},
+		{text: 'No events.', retry: true},
+	)
 
 	// Each notice replaces the list, and the list is what carries
 	// pull-to-refresh -- so one that can be retried has to offer it itself, or a
 	// failed load leaves the screen with no way back but the back button.
 	if (props.message || props.sources.length === 0 || shown.length === 0) {
 		return retry ? (
-			<NoticeView buttonText="Try Again" onPress={props.onRefresh} text={text} />
+			<NoticeView
+				action={{label: 'Try Again', onPress: props.onRefresh}}
+				description={detail}
+				systemImage="calendar"
+				title={text}
+			/>
 		) : (
-			<NoticeView text={text} />
+			<NoticeView description={detail} systemImage="calendar" title={text} />
 		)
 	}
 

@@ -7,7 +7,7 @@ import {SheetSection} from '@frogpond/sheet-section'
 import {listStyle} from '@expo/ui/swift-ui/modifiers'
 import * as c from '@frogpond/colors'
 import {timezone} from '@frogpond/constants'
-import {LoadingView, NoticeView} from '@frogpond/notice'
+import {LoadErrorView, LoadingView, NoticeView} from '@frogpond/notice'
 import {useMomentTimer} from '@frogpond/timer'
 
 import type {Moment} from 'moment-timezone'
@@ -152,7 +152,11 @@ function BusStopForLine({
 		return (
 			<>
 				{screenTitle}
-				<NoticeView text={`Could not find the stop "${stopName}".`} />
+				<NoticeView
+					description={`No stop is called “${stopName}”.`}
+					systemImage="bus"
+					title="Stop Not Found"
+				/>
 			</>
 		)
 	}
@@ -202,13 +206,7 @@ export default function BusStopPage(): React.ReactNode {
 		return (
 			<>
 				{screenTitle}
-				<NoticeView
-					buttonText="Try Again"
-					onPress={refetch}
-					text={`A problem occurred while loading: ${
-						error instanceof Error ? error.message : 'Unknown error'
-					}`}
-				/>
+				<LoadErrorView error={error} onRetry={refetch} />
 			</>
 		)
 	}
@@ -217,7 +215,11 @@ export default function BusStopPage(): React.ReactNode {
 		return (
 			<>
 				{screenTitle}
-				<NoticeView text={`Could not find the "${lineName}" bus line.`} />
+				<NoticeView
+					description={`No bus line is called “${lineName}”.`}
+					systemImage="bus"
+					title="Line Not Found"
+				/>
 			</>
 		)
 	}

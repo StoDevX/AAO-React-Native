@@ -8,7 +8,7 @@ import {listStyle, refreshable} from '@expo/ui/swift-ui/modifiers'
 import {isStoprintMocked, type Printer, type PrintJob} from '../../../source/lib/stoprint'
 import {stoprintUsername} from '../../../source/features/stoprint/lib'
 import {DisclosureRow} from '../../../source/components/rows'
-import {LoadingView, NoticeView} from '@frogpond/notice'
+import {LoadErrorView, LoadingView, NoticeView} from '@frogpond/notice'
 import groupBy from 'lodash/groupBy'
 import {StoPrintErrorView} from '../../../source/features/stoprint/components/error'
 import {
@@ -192,19 +192,11 @@ function PrinterListLoader(): React.ReactNode {
 	}
 
 	if (jobError) {
-		return (
-			<NoticeView
-				buttonText="Try Again"
-				onPress={jobRefetch}
-				text={`A problem occurred while loading: ${
-					jobError instanceof Error ? jobError.message : 'Unknown error'
-				}`}
-			/>
-		)
+		return <LoadErrorView error={jobError} onRetry={jobRefetch} />
 	}
 
 	if (!job) {
-		return <NoticeView text="Could not find this print job." />
+		return <NoticeView systemImage="printer" title="Print Job Not Found" />
 	}
 
 	return <PrinterListView job={job} />

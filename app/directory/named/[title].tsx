@@ -25,7 +25,7 @@ import {images as contactImages} from '../../../images/contacts'
 import {Markdown} from '@frogpond/markdown'
 import {callPhone} from '../../../source/components/call-phone'
 import {openUrl} from '@frogpond/open-url'
-import {LoadingView, NoticeView} from '@frogpond/notice'
+import {LoadErrorView, LoadingView, NoticeView} from '@frogpond/notice'
 import * as c from '@frogpond/colors'
 import {FILL_WIDTH} from '../../../source/components/tile-layout'
 import {
@@ -82,13 +82,7 @@ export default function ContactsDetailPage(): React.ReactNode {
 		return (
 			<>
 				{screenTitle}
-				<NoticeView
-					buttonText="Try Again"
-					onPress={refetch}
-					text={`A problem occurred while loading: ${
-						error instanceof Error ? error.message : 'Unknown error'
-					}`}
-				/>
+				<LoadErrorView error={error} onRetry={refetch} />
 			</>
 		)
 	}
@@ -97,7 +91,7 @@ export default function ContactsDetailPage(): React.ReactNode {
 		return (
 			<>
 				{screenTitle}
-				<NoticeView text={`Could not find contact "${title}".`} />
+				<NoticeView systemImage="questionmark.circle" title="Contact Not Found" />
 			</>
 		)
 	}

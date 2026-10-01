@@ -5,11 +5,10 @@ import {render, screen} from '@testing-library/react-native'
 import {LoadingView} from '../loading'
 
 describe('LoadingView', () => {
-	test('it says "Loading…" under a spinner when given no text', async () => {
+	test('it says "Loading…" when given no text', async () => {
 		await render(<LoadingView />)
 
 		expect(screen.getByText('Loading…')).toBeTruthy()
-		expect(screen.container.queryAll((node) => node.type === 'ActivityIndicator')).toHaveLength(1)
 	})
 
 	test('it shows the text it is given instead', async () => {

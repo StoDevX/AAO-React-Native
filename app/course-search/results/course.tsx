@@ -21,7 +21,7 @@ import {
 	courseByIdOptions,
 	termByNumberOptions,
 } from '../../../source/features/sis/course-search/query'
-import {LoadingView, NoticeView} from '@frogpond/notice'
+import {LoadErrorView, LoadingView, NoticeView} from '@frogpond/notice'
 
 const PENDING_TERM: TermType = {hash: '', path: '', term: 0, type: '', year: 0}
 
@@ -187,13 +187,7 @@ export default function CourseDetailPage(): React.ReactNode {
 		return (
 			<>
 				{screenTitle}
-				<NoticeView
-					buttonText="Try Again"
-					onPress={refetch}
-					text={`A problem occurred while loading: ${
-						error instanceof Error ? error.message : 'Unknown error'
-					}`}
-				/>
+				<LoadErrorView error={error} onRetry={refetch} />
 			</>
 		)
 	}
@@ -202,7 +196,7 @@ export default function CourseDetailPage(): React.ReactNode {
 		return (
 			<>
 				{screenTitle}
-				<NoticeView text="Could not find this course." />
+				<NoticeView systemImage="questionmark.circle" title="Course Not Found" />
 			</>
 		)
 	}

@@ -39,7 +39,11 @@ export default function BonAppPickerPage(): React.ReactNode {
 						name="BonApp"
 					/>
 				) : (
-					<NoticeView text="Please enter a Cafe ID." />
+					<NoticeView
+						description="Enter a café’s ID to see its menu."
+						systemImage="fork.knife"
+						title="No Café ID"
+					/>
 				)}
 			</View>
 		</>

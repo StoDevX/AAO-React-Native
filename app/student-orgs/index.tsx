@@ -3,7 +3,7 @@ import * as React from 'react'
 import {StyleSheet} from 'react-native'
 import {Host, ScrollView, VStack} from '@expo/ui/swift-ui'
 import {frame, padding, refreshable} from '@expo/ui/swift-ui/modifiers'
-import {LoadingView, NoticeView} from '@frogpond/notice'
+import {LoadErrorView, LoadingView} from '@frogpond/notice'
 import * as c from '@frogpond/colors'
 import {Stack, useRouter} from 'expo-router'
 import {useDebounce} from '@frogpond/use-debounce'
@@ -104,11 +104,7 @@ function StudentOrgsView(): React.ReactNode {
 			return (
 				<>
 					{searchChrome}
-					<NoticeView
-						buttonText="Try Again"
-						onPress={refetchMemberships}
-						text={`A problem occurred while loading: ${message}`}
-					/>
+					<LoadErrorView error={message} onRetry={refetchMemberships} />
 				</>
 			)
 		}
@@ -140,11 +136,7 @@ function StudentOrgsView(): React.ReactNode {
 		return (
 			<>
 				{searchChrome}
-				<NoticeView
-					buttonText="Try Again"
-					onPress={refetchOrgs}
-					text={`A problem occurred while loading: ${message}`}
-				/>
+				<LoadErrorView error={message} onRetry={refetchOrgs} />
 			</>
 		)
 	}

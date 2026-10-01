@@ -113,19 +113,19 @@ describe('ImageViewer', () => {
 	test('says the image is unavailable for an index with no picture, and can still close', async () => {
 		await renderViewer(33129, 2)
 
-		expect(screen.getByText('Image unavailable')).toBeTruthy()
+		expect(screen.getByText('Image Unavailable')).toBeTruthy()
 		await fireEvent.press(screen.getByRole('button', {name: 'Close'}))
 		expect(mockGoBack).toHaveBeenCalledTimes(1)
 	})
 
 	test('says the image is unavailable for an index that is not a number', async () => {
 		await renderViewer(33129, Number('first'))
-		expect(screen.getByText('Image unavailable')).toBeTruthy()
+		expect(screen.getByText('Image Unavailable')).toBeTruthy()
 	})
 
 	test('says the image is unavailable for a feature page with no pictures', async () => {
 		await renderViewer(28051)
-		expect(screen.getByText('Image unavailable')).toBeTruthy()
+		expect(screen.getByText('Image Unavailable')).toBeTruthy()
 	})
 
 	test("shows the story's image, named by its title and writer", async () => {
@@ -159,7 +159,7 @@ describe('ImageViewer', () => {
 	test('says the image is unavailable for a story without one, and can still close', async () => {
 		await renderViewer(36911)
 
-		expect(screen.getByText('Image unavailable')).toBeTruthy()
+		expect(screen.getByText('Image Unavailable')).toBeTruthy()
 		expect(screen.queryByRole('image')).toBeNull()
 		expect(screen.getByRole('button', {name: 'Close'})).toBeTruthy()
 	})

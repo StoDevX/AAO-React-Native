@@ -29,7 +29,7 @@ import {
 	printerByNameOptions,
 } from '../../../source/features/stoprint/query'
 import {credentialsOptions} from '../../../source/lib/login'
-import {LoadingView, NoticeView} from '@frogpond/notice'
+import {LoadErrorView, LoadingView, NoticeView} from '@frogpond/notice'
 
 const styles = StyleSheet.create({
 	host: {
@@ -244,35 +244,19 @@ function PrintJobReleaseLoader(): React.ReactNode {
 	}
 
 	if (jobError) {
-		return (
-			<NoticeView
-				buttonText="Try Again"
-				onPress={jobRefetch}
-				text={`A problem occurred while loading: ${
-					jobError instanceof Error ? jobError.message : 'Unknown error'
-				}`}
-			/>
-		)
+		return <LoadErrorView error={jobError} onRetry={jobRefetch} />
 	}
 
 	if (!job) {
-		return <NoticeView text="Could not find this print job." />
+		return <NoticeView systemImage="printer" title="Print Job Not Found" />
 	}
 
 	if (printerName !== undefined && printerError) {
-		return (
-			<NoticeView
-				buttonText="Try Again"
-				onPress={printerRefetch}
-				text={`A problem occurred while loading: ${
-					printerError instanceof Error ? printerError.message : 'Unknown error'
-				}`}
-			/>
-		)
+		return <LoadErrorView error={printerError} onRetry={printerRefetch} />
 	}
 
 	if (printerName !== undefined && !printer) {
-		return <NoticeView text="Could not find this printer." />
+		return <NoticeView systemImage="printer" title="Printer Not Found" />
 	}
 
 	return <PrintJobReleaseView job={job} printer={printer} />

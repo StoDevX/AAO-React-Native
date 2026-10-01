@@ -471,7 +471,11 @@ export default function MapPage(): React.ReactNode {
 
 			{error ? (
 				<View style={styles.banner}>
-					<NoticeView text="Couldn't load building data. Pan around the map; some features won't work." />
+					<NoticeView
+						description="Pan around the map; some features won’t work."
+						systemImage="map"
+						title="Couldn’t Load Buildings"
+					/>
 				</View>
 			) : null}
 		</View>

@@ -1,6 +1,5 @@
 import * as React from 'react'
-import {RefreshControl, ScrollView, StyleSheet, Text} from 'react-native'
-import {SymbolView} from 'expo-symbols'
+import {RefreshControl, ScrollView, StyleSheet} from 'react-native'
 import {NoticeView} from '@frogpond/notice'
 import * as c from '@frogpond/colors'
 
@@ -29,35 +28,21 @@ export const StoPrintNoticeView = (props: Props): React.ReactElement => {
 			showsVerticalScrollIndicator={false}
 			style={styles.container}
 		>
-			<SymbolView name="printer" size={100} tintColor={c.systemFill} />
 			<NoticeView
-				buttonText={buttonText}
-				header={header}
-				onPress={onPress}
-				style={styles.notice}
-				text={text}
+				action={{label: buttonText, onPress}}
+				description={description ? `${text}\n\n${description}` : text}
+				systemImage="printer"
+				title={header}
 			/>
-			{description ? <Text style={styles.description}>{description}</Text> : null}
 		</ScrollView>
 	)
 }
 
 const styles = StyleSheet.create({
 	container: {
-		backgroundColor: c.systemBackground,
+		backgroundColor: c.systemGroupedBackground,
 	},
 	content: {
 		flex: 1,
-		alignItems: 'center',
-		justifyContent: 'center',
-	},
-	description: {
-		color: c.label,
-		marginHorizontal: 30,
-		marginVertical: 20,
-		textAlign: 'center',
-	},
-	notice: {
-		flex: 0,
 	},
 })

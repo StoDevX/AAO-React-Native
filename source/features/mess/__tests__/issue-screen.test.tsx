@@ -178,6 +178,6 @@ describe('IssueScreen', () => {
 	test('says an issue the list does not hold is unavailable', async () => {
 		await renderIssue('week:2025-12-29')
 
-		expect(screen.getByText('Issue unavailable')).toBeTruthy()
+		expect(screen.getByText('Issue Unavailable')).toBeTruthy()
 	})
 })

@@ -71,7 +71,13 @@ export default function DictionaryEditPage(): React.ReactNode {
 	let partOfSpeechText = useNativeState(draft?.partOfSpeech ?? '')
 
 	if (!draft) {
-		return <NoticeView text="There is nothing to edit — open an entry first." />
+		return (
+			<NoticeView
+				description="Open an entry first."
+				systemImage="character.book.closed"
+				title="Nothing to Edit"
+			/>
+		)
 	}
 
 	let manySenses = draft.senses.length > 1
