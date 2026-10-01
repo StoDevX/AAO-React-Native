@@ -93,7 +93,11 @@ function attachCourseCatalog(runner: SqlRunner): void {
 		} catch {
 			// It was never attached, or openCatalog already detached it.
 		}
-		if (file.exists) file.delete()
+		try {
+			if (file.exists) file.delete()
+		} catch (deleteError) {
+			Sentry.captureException(deleteError)
+		}
 	}
 }
 

@@ -75,6 +75,18 @@ describe('dropDatabase', () => {
 		dropDatabase()
 	})
 
+	// The calendar opens the same database, so a catalog that cannot even be
+	// deleted must not stop it opening.
+	it('still opens when an unsearchable catalog cannot be deleted', () => {
+		mockCatalog.exists = true
+		mockCatalog.delete.mockImplementationOnce(() => {
+			throw new Error('permission denied')
+		})
+		expect(() => getRunner()).not.toThrow()
+		mockCatalog.exists = false
+		dropDatabase()
+	})
+
 	it('opens a fresh database afterwards rather than reusing the closed one', () => {
 		getRunner()
 		dropDatabase()
