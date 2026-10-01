@@ -20,7 +20,7 @@ import {
 	courseResultsQuery,
 	filterOptionsQueries,
 } from './queries.ts'
-import {refreshCatalog} from './refresh.ts'
+import {refreshCatalog, shouldRetryCatalog} from './refresh.ts'
 import {useCourseRevision} from './revision.ts'
 import {
 	hydrateCourse,
@@ -43,6 +43,7 @@ export const courseCatalogOptions = queryOptions({
 	queryFn: ({signal}) =>
 		isUITesting ? Promise.resolve({etag: 'uitest', changed: false}) : refreshCatalog(signal),
 	staleTime: ONE_HOUR,
+	retry: shouldRetryCatalog,
 	meta: {persist: false},
 })
 
@@ -68,8 +69,9 @@ function catalogHasSections(): boolean {
 }
 
 /**
- * How many result rows a read fetches. Listing every course at once took
- * 180 ms on a simulator; a page this size costs what a typical search does.
+ * How many result rows a read fetches: several screens' worth, while reading
+ * a page costs about what a typical search does rather than what listing
+ * every course would.
  */
 export const COURSE_PAGE_SIZE = 200
 
@@ -163,7 +165,7 @@ export function useCourseFilterOptions(): {
 			reportingFailures(() => {
 				if (!catalogHasSections()) return {terms: [], gereqs: [], departments: []}
 				let runner = getRunner()
-				// `year >= thisYear - 4` keeps the five years course search has always offered.
+				// `year >= thisYear - 4` offers the five most recent academic years.
 				let queries = filterOptionsQueries(now().year() - 4)
 				return {
 					terms: runner.all<{term: number}>(queries.terms).map((row) => row.term),
