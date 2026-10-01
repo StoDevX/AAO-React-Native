@@ -34,4 +34,19 @@ class ModuleQuickActionsTests: UITestCase {
 		XCTAssertTrue(app.wait(for: .runningForeground, timeout: 30), "the app should launch")
 		MenusScreen(app: app).verifyShowing(TestIdentifiers.QuickActions.cageTab)
 	}
+
+	/// A link that pushes a screen over the map must not leave the map's sheet
+	/// floating over that screen, and the sheet must come back with the map.
+	func testQuickActionFromMapLeavesTheMapSheetBehind() throws {
+		let map = MapScreen(app: app).navigate().checkSheetPresented()
+		let appName = app.label
+
+		SpringBoardScreen(app: app)
+			.chooseQuickAction(TestIdentifiers.QuickActions.cageMenu, appName: appName)
+		MenusScreen(app: app).verifyShowing(TestIdentifiers.QuickActions.cageTab)
+		map.verifySheetDismissed()
+
+		MenusScreen(app: app).goBack()
+		map.checkSheetPresented()
+	}
 }

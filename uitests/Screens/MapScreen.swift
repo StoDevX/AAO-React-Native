@@ -82,6 +82,16 @@ struct MapScreen: Screen {
 		return self
 	}
 
+	/// The sheet is the map's alone: once another screen is pushed over the
+	/// map, it must go with the map rather than float over the new screen.
+	@discardableResult
+	func verifySheetDismissed() -> Self {
+		XCTAssertTrue(
+			searchField.waitForNonExistence(timeout: 10),
+			"The map's sheet should not stay up over another screen")
+		return self
+	}
+
 	/// Where the field's top edge sits on screen. Only a detent change moves
 	/// it: it is pinned above the list, so a scroll never does.
 	func searchFieldTop() -> CGFloat {
