@@ -36,6 +36,7 @@
     "@frogpond/place-card-header": "workspace:*",
     "@frogpond/selectable-text": "workspace:*",
     "@frogpond/separator": "workspace:*",
+    "@frogpond/sheet-section": "workspace:*",
     "@frogpond/storage": "workspace:*",
     "@frogpond/time-format": "workspace:*",
     "@frogpond/timer": "workspace:*",

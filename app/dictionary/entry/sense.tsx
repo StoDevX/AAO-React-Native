@@ -1,6 +1,7 @@
 import * as React from 'react'
 import {StyleSheet} from 'react-native'
-import {Button, Form, Host, List, Section, TextField, useNativeState} from '@expo/ui/swift-ui'
+import {Button, Form, Host, List, TextField, useNativeState} from '@expo/ui/swift-ui'
+import {SheetSection} from '@frogpond/sheet-section'
 import {
 	accessibilityIdentifier,
 	accessibilityLabel,
@@ -19,7 +20,7 @@ import {useDictionaryDraftStore} from '../../../source/features/dictionary/store
 import {useDismissOnce} from '../../../source/lib/use-dismiss-once'
 
 const styles = StyleSheet.create({
-	host: {flex: 1},
+	host: {flex: 1, backgroundColor: c.systemGroupedBackground},
 })
 
 export default function DictionarySensePage(): React.ReactNode {
@@ -48,7 +49,7 @@ export default function DictionarySensePage(): React.ReactNode {
 			<Stack.Title>Sense</Stack.Title>
 			<Host style={styles.host}>
 				<Form modifiers={[accessibilityIdentifier('dictionary-sense-form')]}>
-					<Section title="Definition">
+					<SheetSection title="Definition">
 						<TextField
 							axis="vertical"
 							modifiers={[
@@ -65,20 +66,20 @@ export default function DictionarySensePage(): React.ReactNode {
 							placeholder="Definition"
 							text={definitionText}
 						/>
-					</Section>
+					</SheetSection>
 
 					{/* How the word is used here -- "with object", "no object" -- the
 					    label a dictionary sets in brackets ahead of the definition. */}
-					<Section title="Grammar">
+					<SheetSection title="Grammar">
 						<TextField
 							modifiers={[accessibilityLabel('Grammar')]}
 							onTextChange={(grammar) => store.setSenseField(sense.id, {grammar})}
 							placeholder="with object"
 							text={grammarText}
 						/>
-					</Section>
+					</SheetSection>
 
-					<Section title="Examples">
+					<SheetSection title="Examples">
 						<List.ForEach
 							onDelete={(indices) =>
 								indices.forEach((index) => store.deleteExample(sense.id, sense.examples[index].id))
@@ -103,11 +104,11 @@ export default function DictionarySensePage(): React.ReactNode {
 							onPress={() => store.addExample(sense.id)}
 							systemImage="plus"
 						/>
-					</Section>
+					</SheetSection>
 
 					{/* The same screen edits a sense at any depth, so a sub-sense is a
 					    push back into this route with its own id. */}
-					<Section title="Sub-senses">
+					<SheetSection title="Sub-senses">
 						{sense.subsenses.map((subsense, index) => (
 							<DisclosureRow
 								key={subsense.id}
@@ -131,9 +132,9 @@ export default function DictionarySensePage(): React.ReactNode {
 							}}
 							systemImage="plus"
 						/>
-					</Section>
+					</SheetSection>
 
-					<Section>
+					<SheetSection>
 						<Button
 							label="Delete Sense"
 							modifiers={[tint(c.red)]}
@@ -144,7 +145,7 @@ export default function DictionarySensePage(): React.ReactNode {
 							role="destructive"
 							systemImage="trash"
 						/>
-					</Section>
+					</SheetSection>
 				</Form>
 			</Host>
 		</>
