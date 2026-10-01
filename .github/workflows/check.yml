@@ -79,6 +79,16 @@ jobs:
       - name: Upload coverage
         uses: codecov/codecov-action@303a32d7a59b442fa8d48b6a1cc6825c09c847a5 # v7.1.1
 
+  # The Swift scripts in scripts/, in the official image, which carries the
+  # toolchain.
+  swift:
+    name: Swift
+    runs-on: ubuntu-26.04
+    container: swift:6.2@sha256:9bea530093ffff8cf6c259991715ee843fe4d0f932e612f7f4b79cca6e00db87
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - run: swift test --package-path scripts
+
   tsc:
     name: TypeScript
     runs-on: ubuntu-26.04

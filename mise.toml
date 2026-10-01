@@ -192,7 +192,7 @@ run = "tsc --noEmit"
 
 [tasks.test]
 description = "Run every test"
-depends = ["test:jest", "test:node"]
+depends = ["test:jest", "test:node", "test:swift"]
 
 [tasks."test:jest"]
 description = "Run the Jest tests"
@@ -222,6 +222,10 @@ run = "jest"
 description = "Run the node:test tests beside their subjects"
 env = { TZ = "America/Chicago" }
 run = 'node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test "scripts/*.test.mjs" "plugins/*.test.ts" "source/database/*.test.ts" "source/database/calendar/*.test.ts" "modules/event-list/*.test.ts" "modules/ccc-calendar/*.test.ts"'
+
+[tasks."test:swift"]
+description = "Run the Swift scripts' tests"
+run = "swift test --package-path scripts"
 
 # --- Data ---
 

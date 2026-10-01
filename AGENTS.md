@@ -105,6 +105,7 @@ mise run format       # oxfmt; run `format:check` to validate instead
 mise run test         # every test
 mise run test:jest    # Jest: app, source, modules
 mise run test:node    # node:test: scripts/, plugins/
+mise run test:swift   # Swift Testing: the Swift scripts in scripts/
 mise run tsc          # Type check
 mise run prebuild     # Generate ios/ from app.config.ts, and install pods
 ```
