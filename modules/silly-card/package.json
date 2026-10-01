@@ -9,8 +9,7 @@
     "test": "jest"
   },
   "dependencies": {
-    "@frogpond/colors": "workspace:*",
-    "react-native-typography": "1.4.1"
+    "@frogpond/colors": "workspace:*"
   },
   "peerDependencies": {
     "react": "catalog:",

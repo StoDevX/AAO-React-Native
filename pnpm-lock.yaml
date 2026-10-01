@@ -355,9 +355,6 @@ importers:
       react-native-screens:
         specifier: 4.26.2
         version: 4.26.2(react-native@0.86.3)(react@19.2.3)
-      react-native-typography:
-        specifier: 1.4.1
-        version: 1.4.1(react-native@0.86.3)(react@19.2.3)
       react-native-url-polyfill:
         specifier: 4.0.0
         version: 4.0.0(react-native@0.86.3)
@@ -584,9 +581,6 @@ importers:
       react-native-button:
         specifier: 3.1.0
         version: 3.1.0(react-native@0.86.3)
-      react-native-typography:
-        specifier: 1.4.1
-        version: 1.4.1(react-native@0.86.3)(react@19.2.3)
 
   modules/campus-search-bar: {}
 
@@ -942,9 +936,6 @@ importers:
       react-native:
         specifier: 'catalog:'
         version: 0.86.3(patch_hash=6ca2e1225f38672b073b92b9d13f24feebbe9e37ba67708a3f1569275ce99191)(@babel/core@7.29.7)(@react-native/jest-preset@0.86.3)(@types/react@19.2.18)(react@19.2.3)(supports-color@8.1.1)
-      react-native-typography:
-        specifier: 1.4.1
-        version: 1.4.1(react-native@0.86.3)(react@19.2.3)
 
   modules/storage:
     dependencies:
@@ -4920,12 +4911,6 @@ packages:
 
   react-native-screens@4.26.2:
     resolution: {integrity: sha512-2XnWsZToKj76trGtEZzx5ELD/qOICFEprEeUntImmitQFVUkea27fiWdUSITArI356Y1qynpXZINW+Unbhky/A==}
-    peerDependencies:
-      react: '*'
-      react-native: '*'
-
-  react-native-typography@1.4.1:
-    resolution: {integrity: sha512-dc9Zfs4jUdq4ygx4/KwO6jKTERBu6cRrfPJGntw/pA+D6BMjlWfMNuhZ/69vf4Zpsnt9s4AGe+Z/V1QFYaCXAA==}
     peerDependencies:
       react: '*'
       react-native: '*'
@@ -10038,11 +10023,6 @@ snapshots:
       react-freeze: 1.0.4(react@19.2.3)
       react-native: 0.86.3(patch_hash=6ca2e1225f38672b073b92b9d13f24feebbe9e37ba67708a3f1569275ce99191)(@babel/core@7.29.7)(@react-native/jest-preset@0.86.3)(@types/react@19.2.18)(react@19.2.3)(supports-color@8.1.1)
       warn-once: 0.1.1
-
-  react-native-typography@1.4.1(react-native@0.86.3)(react@19.2.3):
-    dependencies:
-      react: 19.2.3
-      react-native: 0.86.3(patch_hash=6ca2e1225f38672b073b92b9d13f24feebbe9e37ba67708a3f1569275ce99191)(@babel/core@7.29.7)(@react-native/jest-preset@0.86.3)(@types/react@19.2.18)(react@19.2.3)(supports-color@8.1.1)
 
   react-native-url-polyfill@4.0.0(react-native@0.86.3):
     dependencies:

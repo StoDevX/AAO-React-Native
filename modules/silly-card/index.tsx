@@ -1,6 +1,5 @@
 import * as React from 'react'
-import {View, Text, StyleSheet, Platform, StyleProp, ViewStyle} from 'react-native'
-import {material, iOSUIKit} from 'react-native-typography'
+import {View, Text, StyleSheet, StyleProp, ViewStyle} from 'react-native'
 import * as c from '@frogpond/colors'
 
 const cardStyles = StyleSheet.create({
@@ -17,17 +16,13 @@ const cardStyles = StyleSheet.create({
 		paddingBottom: 6,
 	},
 	titleText: {
-		...Platform.select({
-			ios: iOSUIKit.title3Object,
-			android: material.titleObject,
-		}),
+		fontSize: 20,
+		lineHeight: 25,
 		color: c.label,
 	},
 	footerText: {
-		...Platform.select({
-			ios: iOSUIKit.footnoteObject,
-			android: material.captionObject,
-		}),
+		fontSize: 13,
+		lineHeight: 18,
 		color: c.secondaryLabel,
 	},
 	footer: {

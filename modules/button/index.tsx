@@ -2,7 +2,6 @@ import * as React from 'react'
 import {StyleProp, StyleSheet, TextStyle, ViewStyle} from 'react-native'
 import BasicButton from 'react-native-button'
 import noop from 'lodash/noop'
-import {iOSUIKit} from 'react-native-typography'
 import * as c from '@frogpond/colors'
 
 const styles = StyleSheet.create({
@@ -17,14 +16,20 @@ const styles = StyleSheet.create({
 	disabled: {
 		backgroundColor: c.tertiarySystemFill,
 	},
-	text: iOSUIKit.calloutWhiteObject,
+	text: {
+		fontSize: 16,
+		lineHeight: 21,
+	},
 	textDisabled: {
 		color: c.secondaryLabel,
 	},
 })
 
 const inverted = StyleSheet.create({
-	text: iOSUIKit.calloutObject,
+	text: {
+		fontSize: 16,
+		lineHeight: 21,
+	},
 })
 
 type Props = {

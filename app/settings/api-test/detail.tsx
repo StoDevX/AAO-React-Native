@@ -8,7 +8,6 @@ import * as c from '@frogpond/colors'
 import {Stack, useLocalSearchParams, useRouter} from 'expo-router'
 import {useQuery} from '@tanstack/react-query'
 import {client} from '@frogpond/api'
-import {iOSUIKit} from 'react-native-typography'
 import {HtmlContent} from '@frogpond/html-content'
 import {CSS_CODE_STYLES} from '../../../source/features/settings/screens/api-test/util/highlight-styles'
 import {syntaxHighlight} from '../../../source/features/settings/screens/api-test/util/highlight'
@@ -107,6 +106,7 @@ const styles = StyleSheet.create({
 	output: {
 		marginVertical: 3,
 		paddingRight: 4,
-		...iOSUIKit.bodyObject,
+		fontSize: 17,
+		lineHeight: 22,
 	},
 })

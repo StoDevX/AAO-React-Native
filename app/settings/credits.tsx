@@ -1,9 +1,8 @@
 import * as React from 'react'
 import {Stack} from 'expo-router'
 import * as c from '@frogpond/colors'
-import {Platform, ScrollView, StyleSheet, TextProps, Text} from 'react-native'
+import {ScrollView, StyleSheet, TextProps, Text} from 'react-native'
 import {SafeAreaView} from 'react-native-safe-area-context'
-import {iOSUIKit, material} from 'react-native-typography'
 import {AppLogo} from '../../source/features/settings/components/logo'
 
 const styles = StyleSheet.create({
@@ -18,35 +17,30 @@ const styles = StyleSheet.create({
 		textAlign: 'center',
 		marginTop: 15,
 		marginBottom: 20,
-		...Platform.select({
-			ios: iOSUIKit.largeTitleEmphasizedObject,
-			android: material.headlineObject,
-		}),
+		fontSize: 34,
+		lineHeight: 41,
+		fontWeight: '700',
 		color: c.label,
 	},
 	heading: {
 		marginTop: 20,
 		marginBottom: 4,
-		...Platform.select({
-			ios: iOSUIKit.subheadEmphasizedObject,
-			android: material.titleObject,
-		}),
+		fontSize: 15,
+		lineHeight: 20,
+		fontWeight: '600',
 		color: c.label,
 	},
 	about: {
-		...Platform.select({
-			ios: iOSUIKit.bodyObject,
-			android: material.body1Object,
-		}),
+		fontSize: 17,
+		lineHeight: 22,
 		paddingHorizontal: 25,
 		paddingTop: 10,
 		color: c.label,
 	},
 	contributors: {
-		...Platform.select({
-			ios: iOSUIKit.footnoteEmphasizedObject,
-			android: material.body1Object,
-		}),
+		fontSize: 13,
+		lineHeight: 18,
+		fontWeight: '600',
 		textAlign: 'center',
 		color: c.secondaryLabel,
 	},
