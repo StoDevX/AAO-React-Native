@@ -57,7 +57,8 @@ export async function refreshCatalog(
 		}
 
 		if (isAttached(runner, CATALOG_SCHEMA)) runner.exec(`detach database ${CATALOG_SCHEMA}`)
-		incoming.move(current, {overwrite: true})
+		// expo-file-system's move is asynchronous; attaching before it lands opens an empty file.
+		await incoming.move(current, {overwrite: true})
 		runner.run({sql: `attach database ? as ${CATALOG_SCHEMA}`, params: [filePath(current)]})
 		storeEtag(runner, etag)
 	} catch (error) {

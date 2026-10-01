@@ -24,7 +24,11 @@ const mockFiles = {
 		exists: false,
 		uri: 'file:///docs/course-catalog.next.db',
 		delete: jest.fn(),
-		move: jest.fn((..._args: unknown[]) => void mockSteps.push('move')),
+		// The native move finishes on a later tick, as expo-file-system's does.
+		move: jest.fn(async (..._args: unknown[]) => {
+			await Promise.resolve()
+			mockSteps.push('move')
+		}),
 	},
 }
 
@@ -88,6 +92,17 @@ describe('refreshCatalog', () => {
 	})
 
 	// The old file stays in place until the new one replaces it in one move.
+	// Attaching before the move lands opens an empty file at that path, and the
+	// connection keeps it after the move replaces it.
+	test('attaches the new file only once its move has finished', async () => {
+		publishedEtag('new')
+		await refreshCatalog()
+		let moved = mockSteps.indexOf('move')
+		let attached = mockSteps.findIndex((step) => step.includes('attach database ? as catalog'))
+		expect(moved).toBeGreaterThanOrEqual(0)
+		expect(attached).toBeGreaterThan(moved)
+	})
+
 	test('replaces the old file in a single move', async () => {
 		publishedEtag('new')
 		await refreshCatalog()
