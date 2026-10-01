@@ -117,8 +117,8 @@ describe('SectionStories', () => {
 		)
 
 		expect(mockNavigate.mock.calls).toStrictEqual([
-			[{pathname: '/Messenger/column', params: {id: '65'}}],
-			[{pathname: '/Messenger/story', params: {id: '36896'}}],
+			[{pathname: '/messenger/column', params: {id: '65'}}],
+			[{pathname: '/messenger/story', params: {id: '36896'}}],
 		])
 	})
 

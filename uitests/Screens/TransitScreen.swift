@@ -10,7 +10,7 @@ struct TransitScreen: Screen {
 
 	@discardableResult
 	func navigate() -> Self {
-		open(route: "/Transit", mountedWhen: mounted)
+		open(route: "/transit", mountedWhen: mounted)
 	}
 
 	/// A line's widget header, which carries the line name and what it is

@@ -13,6 +13,6 @@ struct AthleticsScreen: Screen {
 	/// `ModuleHomeTests.testEveryTileOpensItsScreen`.
 	@discardableResult
 	func navigate() -> Self {
-		open(route: "/Athletics", mountedWhen: mounted)
+		open(route: "/athletics", mountedWhen: mounted)
 	}
 }

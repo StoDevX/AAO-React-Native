@@ -10,7 +10,7 @@ struct CourseCatalogScreen: Screen {
 
 	@discardableResult
 	func navigate() -> Self {
-		open(route: "/CourseSearch", mountedWhen: mounted)
+		open(route: "/course-search", mountedWhen: mounted)
 	}
 
 	@discardableResult

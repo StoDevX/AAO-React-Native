@@ -26,7 +26,7 @@ const DISCLAIMER = 'This data may be outdated or otherwise inaccurate.'
 
 export const BalancesView = (): React.ReactNode => {
 	let router = useRouter()
-	let openSettings = () => router.navigate('/SettingsRoot')
+	let openSettings = () => router.navigate('/settings')
 
 	let {data: username = ''} = useQuery({
 		...credentialsOptions,
@@ -54,7 +54,7 @@ export const BalancesView = (): React.ReactNode => {
 				<Section modifiers={[listRowBackground('clear')]}>
 					<RNHostView matchContents={true}>
 						<FaqBannerGroup
-							onPressFaq={(faqId) => router.navigate({pathname: '/Faq', params: {faqId}})}
+							onPressFaq={(faqId) => router.navigate({pathname: '/faq', params: {faqId}})}
 							style={styles.banner}
 							target={FAQ_TARGETS.BALANCES}
 						/>

@@ -14,7 +14,7 @@ struct CalendarScreen: Screen {
 
 	@discardableResult
 	func navigate() -> Self {
-		open(route: "/Calendar", mountedWhen: mounted)
+		open(route: "/calendar", mountedWhen: mounted)
 	}
 
 	/// Open the toolbar menu that chooses which calendars the list merges.

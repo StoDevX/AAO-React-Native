@@ -33,7 +33,7 @@ jobs:
         # hashFiles globstars need their own path segment (dir/**/*.ext) to
         # cross directories -- dir/**.ext only matches dir's direct children,
         # so it silently skipped every file under a subdirectory (all of
-        # source/features/**, app/(home)/**, etc.) and this cache almost
+        # source/features/**, app/**, etc.) and this cache almost
         # never invalidated on real JS changes.
         #
         # The JSON fixtures under source/ and the Metro config that decides

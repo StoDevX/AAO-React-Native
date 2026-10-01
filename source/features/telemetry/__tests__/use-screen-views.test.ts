@@ -9,27 +9,27 @@ jest.mock('../track', () => ({track: jest.fn()}))
 
 beforeEach(() => {
 	jest.clearAllMocks()
-	mockSegments = ['(home)']
+	mockSegments = []
 })
 
 describe('useScreenViews', () => {
 	it('counts the first screen', async () => {
 		await renderHook(() => useScreenViews())
 
-		expect(track).toHaveBeenCalledWith({name: 'screen.view', attributes: {route: '/(home)'}})
+		expect(track).toHaveBeenCalledWith({name: 'screen.view', attributes: {route: '/'}})
 	})
 
 	it('counts each new screen once', async () => {
 		let {rerender} = await renderHook(() => useScreenViews())
 
-		mockSegments = ['(home)', 'Menus']
+		mockSegments = ['menus']
 		await rerender({})
 		await rerender({})
 
 		expect(track).toHaveBeenCalledTimes(2)
 		expect(track).toHaveBeenLastCalledWith({
 			name: 'screen.view',
-			attributes: {route: '/(home)/Menus'},
+			attributes: {route: '/menus'},
 		})
 	})
 })

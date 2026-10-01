@@ -97,7 +97,7 @@ describe('ImageView', () => {
 		)
 
 		expect(mockNavigate).toHaveBeenCalledWith({
-			pathname: '/Messenger/image',
+			pathname: '/messenger/image',
 			params: {id: '36819', index: '2'},
 		})
 	})
@@ -108,7 +108,7 @@ describe('ImageView', () => {
 		fireEvent.press(screen.getByRole('button', {name: /^Mouse Friends: sunsets of life, by/u}))
 
 		expect(mockNavigate).toHaveBeenCalledWith({
-			pathname: '/Messenger/image',
+			pathname: '/messenger/image',
 			params: {id: '36819'},
 		})
 	})
@@ -154,9 +154,9 @@ describe('SeriesRow', () => {
 			(call) => call[0] as {pathname: string; params: {id: string; from: string}},
 		)
 		expect(opened.map((href) => href.pathname)).toStrictEqual([
-			'/Messenger/story',
-			'/Messenger/story',
-			'/Messenger/story',
+			'/messenger/story',
+			'/messenger/story',
+			'/messenger/story',
 		])
 		expect(opened.map((href) => href.params.id)).toStrictEqual(['1', '1', '1'])
 		let [a, b, c] = opened.map((href) => href.params.from)

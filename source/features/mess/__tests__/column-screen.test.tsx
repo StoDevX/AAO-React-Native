@@ -90,7 +90,7 @@ describe('ColumnScreen', () => {
 
 		await fireEvent.press(screen.getByRole('button', {name: 'Why is the Cage so loud?, Apr 29'}))
 
-		expect(mockNavigate).toHaveBeenCalledWith({pathname: '/Messenger/story', params: {id: '36800'}})
+		expect(mockNavigate).toHaveBeenCalledWith({pathname: '/messenger/story', params: {id: '36800'}})
 	})
 
 	test('says it loads once back online when offline with its stories not cached', async () => {

@@ -101,7 +101,6 @@ struct TestIdentifiers {
 	enum Dictionary {
 		static let list = "dictionary-list"
 		static let definitionSheet = "dictionary-definition-sheet"
-		static let actionsMenu = "More actions"
 		static let suggestAnEdit = "Suggest an Edit"
 		/// A copy of the iOS dictionary's own "change" entry, present only under
 		/// `--uitesting`, for comparing this sheet against a screenshot of
@@ -245,7 +244,7 @@ struct TestIdentifiers {
 		static let aPointWithItsOwnHours = "The Cage"
 		/// The About menu in the map's header. It carries the OpenStreetMap
 		/// credit, so it has to stay reachable. Mirrors the accessibilityLabel
-		/// in app/(home)/Map/index.tsx.
+		/// in app/map/index.tsx.
 		static let attribution = "About this map"
 		/// The credit the tiles' licence requires, one of the About menu's
 		/// items. Mirrors `mapCredits` in source/features/map/urls.ts.
@@ -324,7 +323,7 @@ struct TestIdentifiers {
 		/// From PRESETS in source/features/sis/student-work/presets.ts.
 		static let allPostingsPreset = "All job postings"
 		/// The postings screen's title, whatever it was opened with. Matches
-		/// TITLE in app/(home)/StudentWork/postings.tsx.
+		/// TITLE in app/student-work/postings.tsx.
 		static let postingsTitle = "Job Postings"
 		/// The Area filter's key, from `buildJobFilters`.
 		static let areaFilter = "area"
@@ -641,7 +640,7 @@ struct TestIdentifiers {
 	enum Directory {
 		/// The heading below the contact tiles on the Directory screen.
 		static let importantContacts = "Departments"
-		/// Matches CONTACT_GRID_ID in app/(home)/Directory/index.tsx.
+		/// Matches CONTACT_GRID_ID in app/directory/index.tsx.
 		static let contactGrid = "directory-contact-grid"
 		/// A contact from data/contact-info/, so its tile is in the grid
 		/// whatever the server is serving.
@@ -663,7 +662,7 @@ struct TestIdentifiers {
 		static let inAppBrowserDone = "Done"
 
 		/// Search results in list mode: `directory-row-<index>`. Mirrors
-		/// DIRECTORY_ROW_PREFIX in app/(home)/Directory/index.tsx.
+		/// DIRECTORY_ROW_PREFIX in app/directory/index.tsx.
 		static let rowPrefix = "directory-row-"
 		/// Search results in the tile gallery: `directory-tile-<index>`. Mirrors
 		/// TILE_PREFIX in source/features/directory/directory-results-grid.tsx.
@@ -682,7 +681,7 @@ struct TestIdentifiers {
 	// MARK: - Student Orgs
 
 	enum StudentOrgs {
-		/// Matches CATEGORY_GRID_ID in app/(home)/StudentOrgs/index.tsx.
+		/// Matches CATEGORY_GRID_ID in app/student-orgs/index.tsx.
 		static let categoryGrid = "student-orgs-category-grid"
 		/// Matches RESULTS_LIST_ID in source/features/student-orgs/org-results-list.tsx.
 		static let resultsList = "student-orgs-results-list"
@@ -734,18 +733,11 @@ struct TestIdentifiers {
 		/// detail sheet and the map card alike. Mirrors HOURS_STATUS_ID in
 		/// source/features/building-hours/hours-section.tsx.
 		static let status = "hours-status"
-		/// The detail sheet's overflow menu button, labelled "More" -- the same
-		/// string as `Buttons.more`, the Home screen's own tile, purely by
-		/// coincidence of wording rather than a shared identifier. The two
-		/// screens are never on screen together, so today's bare-label match in
-		/// `openDetailMenu` cannot collide with the tile, but reusing the
-		/// constant keeps that coincidence from drifting into two truths.
-		static let detailMenu = Buttons.more
-		/// The one action the detail sheet's overflow menu offers.
+		/// The detail sheet's Report a Problem button.
 		static let reportAction = "Report a Problem"
 		/// The report screen's own prompt -- distinct from
-		/// `reportAction`, which labels the menu button that opens it, so a test
-		/// can tell the screen actually came up rather than the menu item merely
+		/// `reportAction`, which labels the button that opens it, so a test
+		/// can tell the screen actually came up rather than the button merely
 		/// existing.
 		static let reportScreenPrompt = "Thanks for spotting a problem!"
 		/// The report screen's navigation bar, which carries `reportAction`'s

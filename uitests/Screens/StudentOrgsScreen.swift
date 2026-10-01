@@ -14,7 +14,7 @@ struct StudentOrgsScreen: Screen {
 
 	@discardableResult
 	func navigate() -> Self {
-		open(route: "/StudentOrgs", mountedWhen: mounted)
+		open(route: "/student-orgs", mountedWhen: mounted)
 	}
 
 	@discardableResult

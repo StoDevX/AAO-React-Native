@@ -24,7 +24,7 @@ function ColumnChips({columns}: {columns: MessCategory[]}): React.ReactNode {
 						key={column.id}
 						label={column.name}
 						onPress={() =>
-							router.navigate({pathname: '/Messenger/column', params: {id: String(column.id)}})
+							router.navigate({pathname: '/messenger/column', params: {id: String(column.id)}})
 						}
 					/>
 				))}

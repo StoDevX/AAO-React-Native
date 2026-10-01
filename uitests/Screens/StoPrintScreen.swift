@@ -10,6 +10,6 @@ struct StoPrintScreen: Screen {
 
 	@discardableResult
 	func navigate() -> Self {
-		open(route: "/PrintJobs", mountedWhen: mounted)
+		open(route: "/print-jobs", mountedWhen: mounted)
 	}
 }

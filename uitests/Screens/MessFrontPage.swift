@@ -13,7 +13,7 @@ struct MessFrontPage: Screen {
 
 	@discardableResult
 	func navigate() -> Self {
-		open(route: "/Messenger", mountedWhen: mounted)
+		open(route: "/messenger", mountedWhen: mounted)
 	}
 
 	/// By Issue leads with the newest issue as the top tile, over older issues as tiles, under the

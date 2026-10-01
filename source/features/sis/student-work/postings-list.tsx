@@ -113,7 +113,7 @@ export function PostingsList({searchQuery, initialChosen}: PostingsListProps): R
 	)
 
 	let openJob = React.useCallback(
-		(jobId: string) => router.navigate({pathname: '/JobDetail', params: {jobId}}),
+		(jobId: string) => router.navigate({pathname: '/student-work/job', params: {jobId}}),
 		[router],
 	)
 

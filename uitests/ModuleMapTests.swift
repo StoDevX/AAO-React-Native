@@ -68,7 +68,7 @@ class ModuleMapTests: UITestCaseUnbooted {
 	/// the sheet.
 	///
 	/// `aBuilding` is absent from Carleton's map, so this also fails if the Map
-	/// tile forwarded the wrong campus, or none at all, to `/Map` -- which falls
+	/// tile forwarded the wrong campus, or none at all, to `/map` -- which falls
 	/// back to Carleton.
 	func testTheFullSheetDropsToMediumForARow() throws {
 		let screen = MapScreen(app: app)

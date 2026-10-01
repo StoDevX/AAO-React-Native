@@ -2,7 +2,7 @@ import * as React from 'react'
 import {Alert, type AlertButton} from 'react-native'
 import {act, fireEvent, render, screen} from '@testing-library/react-native'
 
-import ReportProblemPage from '../../../../../../../app/(settings)/ReportProblem'
+import ReportProblemPage from '../../../../../../../app/settings/report-problem'
 import type {ImageAttachments} from '../../../../../../components/use-image-attachments'
 import {useImageAttachments} from '../../../../../../components/use-image-attachments'
 import type * as ExpoRouterMock from '../../../../../../testing/expo-router-mock'

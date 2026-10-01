@@ -61,7 +61,7 @@ type Props = {
 	playerUrl: string
 	stationNumber: string
 	title: string
-	scheduleHref: '/KSTOSchedule' | '/KRLXSchedule'
+	scheduleHref: '/ksto-schedule' | '/krlx-schedule'
 	stationName: string
 	source: {
 		useEmbeddedPlayer: boolean

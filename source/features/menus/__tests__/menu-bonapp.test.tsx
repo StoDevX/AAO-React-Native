@@ -327,7 +327,7 @@ describe('BonAppHostedMenu', () => {
 		})
 
 		expect(mockRouter.navigate).toHaveBeenCalledWith({
-			pathname: '/MenuItemDetail',
+			pathname: '/menu-item-detail',
 			params: {source: 'bonapp', cafe: 'the-cage', day: '2026-09-22', itemId: '42'},
 		})
 	})
@@ -403,7 +403,7 @@ describe('BonAppHostedMenu', () => {
 		props.onItemPress({id: '5'})
 
 		expect(mockRouter.navigate).toHaveBeenCalledWith({
-			pathname: '/MenuItemDetail',
+			pathname: '/menu-item-detail',
 			params: {source: 'bonapp', cafeId: '261', day: '2026-09-22', itemId: '5'},
 		})
 	})

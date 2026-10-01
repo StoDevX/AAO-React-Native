@@ -545,7 +545,7 @@ describe('StoryScreen', () => {
 		)
 
 		expect(mockNavigate).toHaveBeenCalledWith({
-			pathname: '/Messenger/image',
+			pathname: '/messenger/image',
 			params: {id: '36819'},
 		})
 	})
@@ -805,7 +805,7 @@ describe('StoryScreen', () => {
 		)
 
 		expect(mockNavigate).toHaveBeenCalledWith({
-			pathname: '/Messenger/image',
+			pathname: '/messenger/image',
 			params: {id: '33129', index: '1'},
 		})
 	})

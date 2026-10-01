@@ -10,7 +10,7 @@ struct BalancesScreen: Screen {
 
 	@discardableResult
 	func navigate() -> Self {
-		open(route: "/Balances", mountedWhen: mounted)
+		open(route: "/balances", mountedWhen: mounted)
 	}
 
 	@discardableResult
