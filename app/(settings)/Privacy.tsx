@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {Stack, useNavigation} from 'expo-router'
+import {Stack} from 'expo-router'
 import {ScrollView, StyleSheet} from 'react-native'
 import {SafeAreaView} from 'react-native-safe-area-context'
 import * as c from '@frogpond/colors'
@@ -15,18 +15,9 @@ const styles = StyleSheet.create({
 })
 
 export default function PrivacyPage(): React.ReactNode {
-	const navigation = useNavigation()
-
 	return (
 		<>
 			<Stack.Title>Privacy</Stack.Title>
-			<Stack.Toolbar placement="right">
-				<Stack.Toolbar.Button
-					accessibilityLabel="Close Screen"
-					icon="xmark"
-					onPress={() => navigation.goBack()}
-				/>
-			</Stack.Toolbar>
 
 			<ScrollView contentInsetAdjustmentBehavior="automatic" style={styles.scrollView}>
 				<SafeAreaView edges={['left', 'right']}>

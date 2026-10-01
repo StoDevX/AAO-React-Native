@@ -5,7 +5,7 @@ import * as c from '@frogpond/colors'
 import {Markdown} from '@frogpond/markdown'
 import {LoadingView, NoticeView} from '@frogpond/notice'
 import {accent} from '../../source/lib/theme'
-import {Stack, useLocalSearchParams, useNavigation} from 'expo-router'
+import {Stack, useLocalSearchParams} from 'expo-router'
 import {faqsOptions, emptyFaqData} from '../../source/features/faqs/query'
 import {useQuery} from '@tanstack/react-query'
 import type {Faq, FaqQueryData} from '../../source/features/faqs/types'
@@ -117,18 +117,9 @@ function FaqView(): React.ReactNode {
 }
 
 export default function FaqPage(): React.ReactNode {
-	const navigation = useNavigation()
-
 	return (
 		<>
 			<Stack.Title>FAQs</Stack.Title>
-			<Stack.Toolbar placement="right">
-				<Stack.Toolbar.Button
-					accessibilityLabel="Close Screen"
-					icon="xmark"
-					onPress={() => navigation.goBack()}
-				/>
-			</Stack.Toolbar>
 
 			<FaqView />
 		</>

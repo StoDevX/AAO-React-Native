@@ -1,6 +1,6 @@
 import * as React from 'react'
 import {View, TextInput, StyleSheet} from 'react-native'
-import {Stack, useNavigation} from 'expo-router'
+import {Stack} from 'expo-router'
 import {NoticeView} from '@frogpond/notice'
 import * as c from '@frogpond/colors'
 import {Toolbar} from '@frogpond/toolbar'
@@ -8,8 +8,6 @@ import {Toolbar} from '@frogpond/toolbar'
 import {BonAppHostedMenu} from '../../source/features/menus/menu-bonapp'
 
 export default function BonAppPickerPage(): React.ReactNode {
-	const navigation = useNavigation()
-
 	let [cafeId, setCafeId] = React.useState('')
 
 	let chooseCafe = (selectedCafeId: string) => {
@@ -22,13 +20,6 @@ export default function BonAppPickerPage(): React.ReactNode {
 	return (
 		<>
 			<Stack.Title>Dev BonApp Picker</Stack.Title>
-			<Stack.Toolbar placement="right">
-				<Stack.Toolbar.Button
-					accessibilityLabel="Close Screen"
-					icon="xmark"
-					onPress={() => navigation.goBack()}
-				/>
-			</Stack.Toolbar>
 
 			<View style={styles.container}>
 				<Toolbar>

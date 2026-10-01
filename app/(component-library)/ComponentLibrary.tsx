@@ -4,9 +4,10 @@ import {StyleSheet} from 'react-native'
 import {Host, List, Section} from '@expo/ui/swift-ui'
 import {listStyle} from '@expo/ui/swift-ui/modifiers'
 import * as c from '@frogpond/colors'
-import {Stack, useNavigation, useRouter} from 'expo-router'
+import {Stack, useRouter} from 'expo-router'
 
 import {DisclosureRow} from '../../source/components/rows'
+import {SheetCloseButton} from '../../source/components/sheet-close-button'
 
 // This file is named ComponentLibrary.tsx (not index.tsx) so it doesn't
 // claim the bare `/` route -- (component-library) is a top-level group,
@@ -25,18 +26,11 @@ const LIBRARIES = [
 
 export default function ComponentLibraryRootPage(): React.ReactNode {
 	const router = useRouter()
-	const navigation = useNavigation()
 
 	return (
 		<>
 			<Stack.Title>Component Library</Stack.Title>
-			<Stack.Toolbar placement="right">
-				<Stack.Toolbar.Button
-					accessibilityLabel="Close Screen"
-					icon="xmark"
-					onPress={() => navigation.goBack()}
-				/>
-			</Stack.Toolbar>
+			<SheetCloseButton />
 
 			<Host style={styles.host}>
 				<List modifiers={[listStyle('insetGrouped')]}>

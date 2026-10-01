@@ -45,7 +45,7 @@ export const SupportSection = (): React.ReactNode => {
 
 	return (
 		<Section title="Support">
-			<NavigationRow onPress={() => router.navigate('/Faq')} title="FAQs" />
+			<NavigationRow onPress={() => router.navigate('/SettingsFaq')} title="FAQs" />
 			<ActionRow onPress={openEmail} title="Email Us" />
 			<NavigationRow onPress={() => router.navigate('/ReportProblem')} title="Report a Problem" />
 			<ActionRow onPress={onResetButton} title="Reset Everything" />

@@ -16,7 +16,7 @@ import {lineLimit, listStyle, pickerStyle, tag} from '@expo/ui/swift-ui/modifier
 import * as c from '@frogpond/colors'
 import {ActionRow} from '../../source/components/rows'
 import {dump} from 'js-yaml'
-import {Stack, useNavigation} from 'expo-router'
+import {Stack} from 'expo-router'
 
 import {FaqBannerPresentation} from '../../source/features/faqs/banner'
 import {useDevBannerStore} from '../../source/features/faqs/dev-banner-store'
@@ -59,8 +59,6 @@ function buildYamlEntry(faq: Faq): string {
 }
 
 export default function BannerBuilderPage(): React.ReactNode {
-	const navigation = useNavigation()
-
 	let upsertBanner = useDevBannerStore((state) => state.upsertBanner)
 
 	let [id] = React.useState(generateId)
@@ -132,13 +130,6 @@ export default function BannerBuilderPage(): React.ReactNode {
 	return (
 		<>
 			<Stack.Title>Banner Builder</Stack.Title>
-			<Stack.Toolbar placement="right">
-				<Stack.Toolbar.Button
-					accessibilityLabel="Close Screen"
-					icon="xmark"
-					onPress={() => navigation.goBack()}
-				/>
-			</Stack.Toolbar>
 
 			<Host style={styles.host}>
 				<List modifiers={[listStyle('insetGrouped')]}>

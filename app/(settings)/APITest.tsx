@@ -5,7 +5,7 @@ import {listStyle, refreshable} from '@expo/ui/swift-ui/modifiers'
 import {LoadingView, NoticeView} from '@frogpond/notice'
 import * as c from '@frogpond/colors'
 import {useQuery} from '@tanstack/react-query'
-import {Stack, useNavigation, useRouter} from 'expo-router'
+import {Stack, useRouter} from 'expo-router'
 import {DisclosureRow} from '../../source/components/rows'
 
 import {SearchBar} from '../../source/components/search-bar'
@@ -15,7 +15,6 @@ import {
 } from '../../source/features/settings/screens/api-test/query'
 
 export default function APITestPage(): React.ReactNode {
-	const navigation = useNavigation()
 	let router = useRouter()
 
 	// The path is only read when the reader hits Search, but it has to be held
@@ -43,13 +42,6 @@ export default function APITestPage(): React.ReactNode {
 	return (
 		<>
 			<Stack.Title>API Tester</Stack.Title>
-			<Stack.Toolbar placement="right">
-				<Stack.Toolbar.Button
-					accessibilityLabel="Close Screen"
-					icon="xmark"
-					onPress={() => navigation.goBack()}
-				/>
-			</Stack.Toolbar>
 
 			<Stack.Toolbar placement="left">
 				<Stack.Toolbar.Menu icon="ellipsis.circle">

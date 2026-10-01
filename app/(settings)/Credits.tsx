@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {Stack, useNavigation} from 'expo-router'
+import {Stack} from 'expo-router'
 import * as c from '@frogpond/colors'
 import {Platform, ScrollView, StyleSheet, TextProps, Text} from 'react-native'
 import {SafeAreaView} from 'react-native-safe-area-context'
@@ -94,18 +94,9 @@ const acknowledgements = [
 ]
 
 export default function CreditsPage(): React.ReactNode {
-	const navigation = useNavigation()
-
 	return (
 		<>
 			<Stack.Title>Credits</Stack.Title>
-			<Stack.Toolbar placement="right">
-				<Stack.Toolbar.Button
-					accessibilityLabel="Close Screen"
-					icon="xmark"
-					onPress={() => navigation.goBack()}
-				/>
-			</Stack.Toolbar>
 
 			<ScrollView
 				contentContainerStyle={styles.contentContainer}

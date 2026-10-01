@@ -4,11 +4,11 @@ import {Button} from '@frogpond/button'
 import NetworkLogger, {getBackHandler} from 'react-native-network-logger'
 import {SafeAreaView} from 'react-native-safe-area-context'
 import * as c from '@frogpond/colors'
-import {Stack, useNavigation} from 'expo-router'
+import {Stack} from 'expo-router'
+
+import {SheetCloseButton} from '../../source/components/sheet-close-button'
 
 export default function NetworkLoggerPage(): React.ReactNode {
-	const navigation = useNavigation()
-
 	const goBack = () => setUnmountNetworkLogger(true)
 	const [unmountNetworkLogger, setUnmountNetworkLogger] = React.useState(false)
 	const backHandler = getBackHandler(goBack)
@@ -24,13 +24,7 @@ export default function NetworkLoggerPage(): React.ReactNode {
 		<>
 			<Stack.Screen options={{presentation: 'modal', gestureEnabled: false}} />
 			<Stack.Title>Network Logger</Stack.Title>
-			<Stack.Toolbar placement="right">
-				<Stack.Toolbar.Button
-					accessibilityLabel="Close Screen"
-					icon="xmark"
-					onPress={() => navigation.goBack()}
-				/>
-			</Stack.Toolbar>
+			<SheetCloseButton />
 
 			<SafeAreaView edges={['left', 'right']} style={styles.screen}>
 				<View style={styles.header}>
