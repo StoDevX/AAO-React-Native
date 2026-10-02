@@ -10,14 +10,9 @@ describe('the glyph a status shows', () => {
 		expect(statusGlyph('Closed').symbol).toBe('circle')
 	})
 
-	it('fills half of it when a change is near', () => {
-		expect(statusGlyph('Almost Open').symbol).toBe('circle.lefthalf.filled')
-		expect(statusGlyph('Almost Closed').symbol).toBe('circle.righthalf.filled')
-	})
-
-	it('uses the inverse half-filled circles in dark mode', () => {
-		expect(statusGlyph('Almost Open', 'dark').symbol).toBe('circle.lefthalf.filled.inverse')
-		expect(statusGlyph('Almost Closed', 'dark').symbol).toBe('circle.righthalf.filled.inverse')
+	it('puts a dot inside it when a change is near', () => {
+		expect(statusGlyph('Almost Open').symbol).toBe('record.circle')
+		expect(statusGlyph('Almost Closed').symbol).toBe('record.circle')
 	})
 
 	it('rings a bell for chapel', () => {
