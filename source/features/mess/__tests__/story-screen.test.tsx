@@ -27,10 +27,6 @@ import {useMessStore} from '../store'
 import {ZODIAC_SIGNS} from '../lib/zodiac'
 import type {MessStory, StaffProfile} from '../types'
 
-jest.mock('@react-native-community/netinfo', () =>
-	// oxlint-disable-next-line typescript/no-require-imports
-	require('@react-native-community/netinfo/jest/netinfo-mock'),
-)
 // The library's own stand-in: zero insets, where the real hook needs a native provider.
 jest.mock(
 	'react-native-safe-area-context',

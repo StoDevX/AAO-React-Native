@@ -9,11 +9,6 @@ import {
 import bundled from '../../../../../docs/student-wages.json'
 import {studentWagesOptions} from '../wages-query'
 
-jest.mock('@react-native-community/netinfo', () =>
-	// oxlint-disable-next-line typescript/no-require-imports
-	require('@react-native-community/netinfo/jest/netinfo-mock'),
-)
-
 // The live path is the one under test; the suite-wide setup runs as a UI test.
 jest.mock('@frogpond/launch-arguments', () => ({isUITesting: false}))
 

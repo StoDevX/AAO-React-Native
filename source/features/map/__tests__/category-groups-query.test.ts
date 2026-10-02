@@ -11,11 +11,6 @@ import {
 import {BUNDLED_MAP_CATEGORIES, mapCategoriesOptions} from '../category-groups-query'
 import type {MapCategoryTable} from '../lib/category-groups'
 
-jest.mock('@react-native-community/netinfo', () =>
-	// oxlint-disable-next-line typescript/no-require-imports
-	require('@react-native-community/netinfo/jest/netinfo-mock'),
-)
-
 // The live path is the one under test; the suite-wide setup runs as a UI test.
 jest.mock('@frogpond/launch-arguments', () => ({isUITesting: false}))
 

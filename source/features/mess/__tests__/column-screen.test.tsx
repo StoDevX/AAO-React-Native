@@ -14,10 +14,6 @@ import {onePage} from './one-page'
 import {parseMessCategories} from '../lib/posts'
 import type {MessStory} from '../types'
 
-jest.mock('@react-native-community/netinfo', () =>
-	// oxlint-disable-next-line typescript/no-require-imports
-	require('@react-native-community/netinfo/jest/netinfo-mock'),
-)
 jest.mock(
 	'react-native-safe-area-context',
 	() =>
