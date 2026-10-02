@@ -169,6 +169,12 @@ Symbol: a `.symbolset` in `assets/symbols/`, which
 Name it in `CUSTOM_SYMBOLS` in `source/features/views.ts`, and `iconImage`
 draws it by `assetName` rather than `systemName`.
 
+`mise run trace-symbol -- <image> <name>` traces a logo into one, with
+ImageMagick and potrace (`brew install imagemagick potrace`). The image's dark
+pixels become the symbol, so a white mark on a dark disc comes out as a disc
+with the mark cut out. The Messenger's came from
+`https://olafmessenger.com/wp-content/uploads/2021/02/Logo_white-e1713492149523.png`.
+
 The template holds `Regular-S`, `Regular-M` and `Regular-L`. Other weights
 fall back to Regular, but a missing scale does not: without `Regular-L`, the
 home screen's `imageScale('large')` finds no image and draws nothing, with only
