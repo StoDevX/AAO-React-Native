@@ -15,6 +15,10 @@ final class ChaosMonkey {
 	private var lastSignature = ""
 
 	private var app: XCUIApplication { test.app }
+	private let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
+
+	/// Buttons that dismiss a system alert without granting anything, in order of preference.
+	private static let alertDismissals = ["Don’t Allow", "Don't Allow", "Not Now", "Cancel", "OK"]
 
 	init(test: UITestCaseUnbooted, seed: UInt64, replay: Bool, faultRate: String) {
 		self.test = test
@@ -27,7 +31,6 @@ final class ChaosMonkey {
 	/// Runs until `steps` or `duration` runs out, or an oracle stops it.
 	func run(steps budget: Int, duration: TimeInterval) {
 		let deadline = Date().addingTimeInterval(duration)
-		addMonitorForSystemAlerts()
 		// A teardown block rather than `defer`: a failure stops the test
 		// without unwinding Swift, so a `defer` would lose the logs of exactly
 		// the runs that need them.
@@ -37,6 +40,7 @@ final class ChaosMonkey {
 		if let stop = ChaosOracle(app: app).waitForProbe(timeout: 30) {
 			return fail(stop, step: 0)
 		}
+		lastTargetsSeen = Date()
 
 		for step in 0..<budget where Date() < deadline {
 			let action = ChaosAction.pick(using: &random)
@@ -56,10 +60,13 @@ final class ChaosMonkey {
 
 	// MARK: - Actions
 
+	/// Every action draws the same values from `random` whatever is on screen,
+	/// so a seed's later steps do not shift when a screen has more or fewer
+	/// targets, or the keyboard is slow to appear.
 	private func perform(_ action: ChaosAction, on observation: ChaosObservation) -> ChaosTarget? {
 		switch action {
 		case .tap:
-			guard let target = observation.targets.randomElement(using: &random) else { return nil }
+			guard let target = pick(from: observation.targets) else { return nil }
 			tap(target.frame)
 			return target
 		case .scroll:
@@ -72,12 +79,16 @@ final class ChaosMonkey {
 			app.coordinate(withNormalizedOffset: from).press(forDuration: 0.05, thenDragTo: app.coordinate(withNormalizedOffset: to))
 			return nil
 		case .type:
-			guard let field = observation.textFields.randomElement(using: &random) else { return nil }
-			tap(field.frame)
+			let field = pick(from: observation.textFields)
 			let text = chaosStrings.randomElement(using: &random)!
-			// typeText fails the whole test when nothing has focus.
-			if app.keyboards.firstMatch.waitForExistence(timeout: 2) {
-				app.typeText(text + (Bool.random(using: &random) ? "\n" : ""))
+			let submit = Bool.random(using: &random)
+			guard let field else { return nil }
+			tap(field.frame)
+			pauseHangClock {
+				// typeText fails the whole test when nothing has focus.
+				if app.keyboards.firstMatch.waitForExistence(timeout: 2) {
+					app.typeText(text + (submit ? "\n" : ""))
+				}
 			}
 			return field
 		case .back:
@@ -100,17 +111,32 @@ final class ChaosMonkey {
 			app.open(URL(string: "AllAboutOlaf://\(filled)") ?? URL(string: "AllAboutOlaf://")!)
 			return ChaosTarget(identifier: "route", label: filled, type: .any, frame: .zero)
 		case .background:
-			XCUIDevice.shared.press(.home)
-			app.activate()
-			// activate() can return before the app is frontmost, which the
-			// check after this step would report as escaping the app.
-			_ = app.wait(for: .runningForeground, timeout: 10)
+			pauseHangClock {
+				XCUIDevice.shared.press(.home)
+				app.activate()
+				// activate() can return before the app is frontmost, which the
+				// check after this step would report as escaping the app.
+				_ = app.wait(for: .runningForeground, timeout: 10)
+			}
 			return nil
 		case .rotate:
 			let orientation: UIDeviceOrientation = XCUIDevice.shared.orientation == .portrait ? .landscapeLeft : .portrait
 			XCUIDevice.shared.orientation = orientation
 			return nil
 		}
+	}
+
+	/// One of `items`, drawing from `random` even when there are none.
+	private func pick<Item>(from items: [Item]) -> Item? {
+		let choice = Int.random(in: 0..<Int.max, using: &random)
+		return items.isEmpty ? nil : items[choice % items.count]
+	}
+
+	/// Runs one of the monkey's own waits without counting it towards a hang.
+	private func pauseHangClock(_ wait: () -> Void) {
+		let start = Date()
+		wait()
+		lastTargetsSeen += Date().timeIntervalSince(start)
 	}
 
 	private func tap(_ frame: CGRect) {
@@ -123,9 +149,15 @@ final class ChaosMonkey {
 
 	private func checkAfter(_ action: ChaosAction) -> ChaosStop? {
 		// Opening a route relaunched the app; give its bundle time to run.
-		if action == .openRoute, let stop = ChaosOracle(app: app).waitForProbe(timeout: 30) {
-			return app.state == .runningForeground ? stop : ChaosStop("native crash: the app is not running")
+		if action == .openRoute {
+			if let stop = ChaosOracle(app: app).waitForProbe(timeout: 30) {
+				return app.state == .runningForeground ? stop : ChaosStop("native crash: the app is not running")
+			}
+			// A fresh launch: the time it took to start is not a hang.
+			lastTargetsSeen = Date()
 		}
+
+		dismissSystemAlert()
 
 		switch app.state {
 		case .runningForeground:
@@ -165,13 +197,20 @@ final class ChaosMonkey {
 		return nil
 	}
 
-	private func addMonitorForSystemAlerts() {
-		_ = test.addUIInterruptionMonitor(withDescription: "System alert") { alert in
-			for label in ["Don’t Allow", "Don't Allow", "Not Now", "Cancel", "OK"] where alert.buttons[label].exists {
+	/// Dismisses a system alert, such as a permission prompt, that sits over
+	/// the app. Checked after every step rather than left to an interruption
+	/// monitor, which only runs when the test touches an element, and the
+	/// monkey taps by coordinate.
+	private func dismissSystemAlert() {
+		let alert = springboard.alerts.firstMatch
+		guard alert.exists else { return }
+		warnings.append("system alert: \(alert.label)")
+		pauseHangClock {
+			if let label = Self.alertDismissals.first(where: { alert.buttons[$0].exists }) {
 				alert.buttons[label].tap()
-				return true
+			} else {
+				warnings.append("system alert had no button to dismiss it with: \(alert.label)")
 			}
-			return false
 		}
 	}
 
