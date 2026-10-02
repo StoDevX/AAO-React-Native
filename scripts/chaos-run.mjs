@@ -181,9 +181,17 @@ const PROBE_SILENT = 'probe silent'
  * finding can land in chaos-findings.jsonl without failing the test, when a
  * fatal error under a modal slips past the beacon. A run that took no step
  * did not start, whether its test passed or failed, unless the monkey
- * stopped it on something the app showed.
+ * stopped it on something the app showed. `attachmentsError` is different
+ * from taking no step: the run may have taken plenty, but xcresulttool
+ * couldn't export them, so there is nothing to call "did not start".
  */
-export function runOutcome({testFailed, stepCount, stopReason, stoppingFindings: findings}) {
+export function runOutcome({
+	testFailed,
+	stepCount,
+	stopReason,
+	stoppingFindings: findings,
+	attachmentsError,
+}) {
 	if (findings.length > 0) {
 		let list = findings.map((finding) => `${finding.kind}: ${finding.message}`).join('\n')
 		return {exitCode: 1, message: `chaos found something:\n${list}`}
@@ -191,6 +199,15 @@ export function runOutcome({testFailed, stepCount, stopReason, stoppingFindings:
 	let neverAnswered = stepCount === 0 && stopReason?.startsWith(PROBE_SILENT)
 	if (stopReason && !neverAnswered) {
 		return {exitCode: 1, message: `chaos found something:\n${stopReason}`}
+	}
+	if (attachmentsError) {
+		if (testFailed) {
+			return {exitCode: 1, message: 'chaos found something'}
+		}
+		return {
+			exitCode: 2,
+			message: `the run's attachments could not be read: ${attachmentsError}`,
+		}
 	}
 	if (stepCount === 0) {
 		return {

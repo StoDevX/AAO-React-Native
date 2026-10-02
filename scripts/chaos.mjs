@@ -102,6 +102,7 @@ function main() {
 	}
 	// A run that failed early may leave no result bundle; what it did leave
 	// still decides the outcome below.
+	let attachmentsError = null
 	try {
 		run(
 			'xcrun',
@@ -117,7 +118,8 @@ function main() {
 			{stdio: 'pipe'},
 		)
 	} catch (error) {
-		console.warn(`could not export the run's attachments: ${error.stderr || error.message}`)
+		attachmentsError = error.stderr || error.message
+		console.warn(`could not export the run's attachments: ${attachmentsError}`)
 	}
 
 	let steps = stepLines(join(out, 'attachments')) ?? []
@@ -145,6 +147,7 @@ function main() {
 		stepCount: steps.length,
 		stopReason: stop,
 		stoppingFindings: stoppingFindings(findingLines),
+		attachmentsError,
 	})
 	if (outcome.exitCode === 2 && testError) {
 		console.error(testError.message)

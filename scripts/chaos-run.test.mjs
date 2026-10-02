@@ -305,3 +305,45 @@ test('a passing test with steps and no stopping findings found nothing', () => {
 		{exitCode: 0, message: 'chaos found nothing'},
 	)
 })
+
+test('an attachments export failure with nothing else to show for it never started', () => {
+	assert.deepEqual(
+		runOutcome({
+			testFailed: false,
+			stepCount: 0,
+			stopReason: null,
+			stoppingFindings: [],
+			attachmentsError: 'xcresulttool exited 1',
+		}),
+		{
+			exitCode: 2,
+			message: "the run's attachments could not be read: xcresulttool exited 1",
+		},
+	)
+})
+
+test('an attachments export failure is still a finding when the test failed', () => {
+	assert.deepEqual(
+		runOutcome({
+			testFailed: true,
+			stepCount: 0,
+			stopReason: null,
+			stoppingFindings: [],
+			attachmentsError: 'xcresulttool exited 1',
+		}),
+		{exitCode: 1, message: 'chaos found something'},
+	)
+})
+
+test('an attachments export failure is still a finding when stopping findings exist', () => {
+	assert.deepEqual(
+		runOutcome({
+			testFailed: false,
+			stepCount: 0,
+			stopReason: null,
+			stoppingFindings: [{kind: 'fatal', message: 'boom'}],
+			attachmentsError: 'xcresulttool exited 1',
+		}),
+		{exitCode: 1, message: 'chaos found something:\nfatal: boom'},
+	)
+})
