@@ -72,6 +72,18 @@ struct StreamingMediaScreen: Screen {
 		return self
 	}
 
+	/// Check each station button that leaves the app is a link VoiceOver can
+	/// name, with a touch target of at least 44pt on each side.
+	@discardableResult
+	func checkStationLinks(_ labels: [String]) -> Self {
+		for label in labels {
+			XCTContext.runActivity(named: label) { _ in
+				checkTouchTarget(app.linkLabelled(label), named: "A link labelled \"\(label)\"")
+			}
+		}
+		return self
+	}
+
 	private func checkTouchTarget(_ element: XCUIElement, named name: String) {
 		XCTAssertTrue(element.waitForExistence(timeout: 30), "\(name) should exist")
 		XCTAssertGreaterThanOrEqual(element.frame.height, 44, "\(name) should be at least 44pt tall")

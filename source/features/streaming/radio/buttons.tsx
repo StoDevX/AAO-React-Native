@@ -54,6 +54,17 @@ export function CallButton({stationName, onPress}: StationButtonProps): React.Re
 	)
 }
 
+export function ChatButton({stationName, onPress}: StationButtonProps): React.ReactNode {
+	return (
+		<SmallActionButton
+			accessibilityLabel={`${stationName} chat`}
+			accessibilityRole="link"
+			icon="bubble.left.and.bubble.right.fill"
+			onPress={onPress}
+		/>
+	)
+}
+
 export function ShowCalendarButton({stationName, onPress}: StationButtonProps): React.ReactNode {
 	return (
 		<SmallActionButton
@@ -65,23 +76,20 @@ export function ShowCalendarButton({stationName, onPress}: StationButtonProps): 
 }
 
 /** An icon with no text, so VoiceOver has only the label to go on. */
-type SmallActionButtonProps = Omit<
-	ActionButtonProps,
-	'text' | 'accessibilityLabel' | 'accessibilityRole'
-> & {
+type SmallActionButtonProps = Omit<ActionButtonProps, 'text' | 'accessibilityLabel'> & {
 	accessibilityLabel: string
 }
 
 export function SmallActionButton(props: SmallActionButtonProps): React.ReactNode {
 	let theme = theming.useTheme()
-	let {icon, accessibilityLabel, onPress} = props
+	let {icon, accessibilityLabel, accessibilityRole = 'button', onPress} = props
 	let bg = {backgroundColor: theme.tintColor}
 	let style = [styles.button, styles.smallButton, bg]
 
 	return (
 		<Touchable
 			accessibilityLabel={accessibilityLabel}
-			accessibilityRole="button"
+			accessibilityRole={accessibilityRole}
 			highlight={false}
 			onPress={onPress}
 			style={style}
@@ -105,8 +113,10 @@ const styles = StyleSheet.create({
 		justifyContent: 'center',
 		flexDirection: 'row',
 	},
+	// Gives way on a narrow screen, so a fourth button still fits the row.
 	largeButton: {
 		width: 180,
+		flexShrink: 1,
 	},
 	smallButton: {
 		width: 50,

@@ -8,7 +8,7 @@ import {Row} from '@frogpond/layout'
 import {StreamPlayer} from './player'
 import type {HtmlAudioError, PlayState} from './types'
 import {theming, type RadioLogo} from './theme'
-import {ActionButton, CallButton, ShowCalendarButton} from './buttons'
+import {ActionButton, CallButton, ChatButton, ShowCalendarButton} from './buttons'
 import {openUrl} from '@frogpond/open-url'
 import {ScratchableLogo} from './scratchable-logo'
 import {useSwipeBackHold} from './swipe-back-hold'
@@ -62,6 +62,8 @@ type Props = {
 	title: string
 	scheduleHref: '/ksto-schedule' | '/krlx-schedule'
 	stationName: string
+	/** The station's listener chat room, for a station that has one. */
+	chatUrl?: string
 	source: {
 		useEmbeddedPlayer: boolean
 		embeddedPlayerUrl: string
@@ -95,8 +97,17 @@ type RadioScreenProps = Omit<Props, 'logos'> & {
 
 function RadioScreen(props: RadioScreenProps): React.ReactNode {
 	const theme = theming.useTheme()
-	const {source, title, stationName, logo, onPressLogo, scheduleHref, stationNumber, playerUrl} =
-		props
+	const {
+		source,
+		title,
+		stationName,
+		logo,
+		onPressLogo,
+		scheduleHref,
+		stationNumber,
+		playerUrl,
+		chatUrl,
+	} = props
 
 	let router = useRouter()
 
@@ -167,6 +178,12 @@ function RadioScreen(props: RadioScreenProps): React.ReactNode {
 		openUrl(playerUrl)
 	}, [playerUrl])
 
+	let openChat = useCallback(() => {
+		if (chatUrl) {
+			openUrl(chatUrl)
+		}
+	}, [chatUrl])
+
 	let error = streamError ? (
 		<Text style={styles.status}>
 			Error Code {streamError.code}: {streamError.message}
@@ -199,6 +216,12 @@ function RadioScreen(props: RadioScreenProps): React.ReactNode {
 			<View style={styles.spacer} />
 			<CallButton onPress={callStation} stationName={stationName} />
 			<View style={styles.spacer} />
+			{chatUrl ? (
+				<>
+					<ChatButton onPress={openChat} stationName={stationName} />
+					<View style={styles.spacer} />
+				</>
+			) : null}
 			<ShowCalendarButton onPress={openSchedule} stationName={stationName} />
 		</Row>
 	)

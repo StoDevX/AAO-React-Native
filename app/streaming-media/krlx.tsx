@@ -17,6 +17,7 @@ export default function KrlxPage(): React.ReactNode {
 					labelColor: '#f6f1e4',
 				},
 			]}
+			chatUrl="https://minnit.chat/KRLX"
 			playerUrl="https://live.krlx.org"
 			scheduleHref="/krlx-schedule"
 			source={{
