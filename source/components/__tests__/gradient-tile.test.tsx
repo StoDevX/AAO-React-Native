@@ -87,24 +87,4 @@ describe('GradientTile', () => {
 		fireEvent.press(screen.getByLabelText('Faith'))
 		expect(onPress).toHaveBeenCalledTimes(1)
 	})
-
-	it('passes a hint on to VoiceOver', async () => {
-		await render(
-			<GradientTile
-				gradient={blueGradient}
-				hint="Opens in a browser"
-				icon="star.fill"
-				onPress={jest.fn()}
-				title="Tile"
-			/>,
-		)
-		expect(screen.getByLabelText('Tile').props.accessibilityHint).toBe('Opens in a browser')
-	})
-
-	it('gives a tile no hint unless asked', async () => {
-		await render(
-			<GradientTile gradient={blueGradient} icon="star.fill" onPress={jest.fn()} title="Tile" />,
-		)
-		expect(screen.getByLabelText('Tile').props.accessibilityHint).toBeUndefined()
-	})
 })

@@ -17,17 +17,16 @@ import * as c from '@frogpond/colors'
 import {useDispatch, useSelector} from 'react-redux'
 import {Restart} from 'react-native-restart-newarch'
 
-import {
-	AllViews,
-	homeSections,
-	opensInBrowser,
-	type HomeSection,
-	type ViewType,
-} from '../source/features/views'
+import {AllViews, homeSections, type HomeSection, type ViewType} from '../source/features/views'
 import {HomeGroupHeader} from '../source/features/home/group-header'
-import {FILL_WIDTH, SCREEN_MARGIN, TILE_SPACING} from '../source/components/tile-layout'
-import {TileGrid, useTileColumns} from '../source/components/tile-grid'
-import {GradientTile} from '../source/components/gradient-tile'
+import {
+	FILL_WIDTH,
+	homeColumnsForFontScale,
+	SCREEN_MARGIN,
+	TILE_SPACING,
+} from '../source/components/tile-layout'
+import {TileGrid} from '../source/components/tile-grid'
+import {HomeScreenButton} from '../source/features/home/button'
 import {openUrl} from '@frogpond/open-url'
 import {selectDevModeOverride, setDevModeOverride} from '../source/redux/parts/settings'
 import {selectCollapsedHomeGroups, toggleHomeGroup} from '../source/redux/parts/home'
@@ -152,7 +151,7 @@ function useOpenView(): (view: ViewType) => void {
 	)
 }
 
-/// One group: its header, then its tiles four abreast unless it is collapsed.
+/// One group: its header, then its tiles two abreast unless it is collapsed.
 function HomeGroupView({
 	section,
 	collapsed,
@@ -164,13 +163,7 @@ function HomeGroupView({
 	onToggle: () => void
 	onOpen: (view: ViewType) => void
 }): React.ReactNode {
-	let {width: screenWidth} = useWindowDimensions()
-	let columns = useTileColumns()
-	// Every group's tiles share one width, so a group of two or three is not
-	// stretched to fill the row.
-	let tileWidth = Math.floor(
-		(screenWidth - 2 * SCREEN_MARGIN - (columns - 1) * TILE_SPACING) / columns,
-	)
+	let {fontScale} = useWindowDimensions()
 
 	return (
 		<VStack
@@ -188,20 +181,10 @@ function HomeGroupView({
 			{collapsed ? null : (
 				<TileGrid
 					accessibilityId={groupGridId(section.id)}
+					columns={homeColumnsForFontScale(fontScale)}
 					items={section.views}
 					keyForItem={(view) => view.id}
-					renderItem={(view) => (
-						<GradientTile
-							gradient={view.gradient}
-							hint={opensInBrowser(view) ? 'Opens in a browser' : undefined}
-							icon={view.icon}
-							onPress={() => onOpen(view)}
-							ratio={1}
-							width={tileWidth}
-							spokenTitle={view.title}
-							title={view.label ?? view.title}
-						/>
-					)}
+					renderItem={(view) => <HomeScreenButton onPress={() => onOpen(view)} view={view} />}
 				/>
 			)}
 		</VStack>

@@ -65,8 +65,6 @@ type CommonView = {
 	id: string
 	/** The destination's full name, which VoiceOver reads and the screen is titled with. */
 	title: string
-	/** A shorter name for the tile, when the full one does not fit a quarter of the screen. */
-	label?: string
 	icon: SymbolName
 	/** The title's typeface, for a view whose own screens use another. */
 	titleDesign?: 'serif'
@@ -101,7 +99,6 @@ export const AllViews = (): Array<ViewType> => {
 			view: '/menus',
 			id: 'stav-hall',
 			title: 'Stav Hall',
-			label: 'Stav',
 			icon: 'fork.knife',
 			gradient: c.greenGradient,
 			group: 'eat',
@@ -111,7 +108,6 @@ export const AllViews = (): Array<ViewType> => {
 			view: '/menus/the-cage',
 			id: 'the-cage',
 			title: 'The Cage',
-			label: 'Cage',
 			icon: 'cup.and.saucer.fill',
 			gradient: c.orangeGradient,
 			group: 'eat',
@@ -121,7 +117,6 @@ export const AllViews = (): Array<ViewType> => {
 			view: '/menus/the-pause',
 			id: 'the-pause',
 			title: 'The Pause',
-			label: 'Pause',
 			icon: 'pawprint.fill',
 			gradient: c.redGradient,
 			group: 'eat',
@@ -192,7 +187,6 @@ export const AllViews = (): Array<ViewType> => {
 			view: '/course-search',
 			id: 'course-catalog',
 			title: 'Course Catalog',
-			label: 'Catalog',
 			icon: 'graduationcap.fill',
 			gradient: c.tanGradient,
 			group: 'classes-work',
@@ -211,7 +205,6 @@ export const AllViews = (): Array<ViewType> => {
 			view: '/student-work',
 			id: 'student-work',
 			title: 'Student Work',
-			label: 'Jobs',
 			icon: 'briefcase.fill',
 			gradient: c.orangeGradient,
 			group: 'classes-work',
@@ -241,7 +234,6 @@ export const AllViews = (): Array<ViewType> => {
 			view: '/messenger',
 			id: 'olaf-messenger',
 			title: 'Olaf Messenger',
-			label: 'Messenger',
 			icon: 'olaf-messenger',
 			titleDesign: 'serif',
 			gradient: c.purpleGradient,
@@ -252,7 +244,6 @@ export const AllViews = (): Array<ViewType> => {
 			view: '/student-orgs',
 			id: 'student-orgs',
 			title: 'Student Orgs',
-			label: 'Orgs',
 			icon: 'person.3.fill',
 			gradient: c.sageGradient,
 			group: 'whats-on',
@@ -351,7 +342,6 @@ export const AllViews = (): Array<ViewType> => {
 			view: '/st-olaf-news',
 			id: 'st-olaf-news',
 			title: 'St. Olaf News',
-			label: 'News',
 			icon: 'megaphone.fill',
 			gradient: c.indigoGradient,
 			group: 'campus-communications',

@@ -2,8 +2,6 @@ import * as React from 'react'
 import {useColorScheme} from 'react-native'
 import {Button, Image, RoundedRectangle, Text, VStack, ZStack} from '@expo/ui/swift-ui'
 import {
-	accessibilityHint,
-	accessibilityInputLabels,
 	accessibilityLabel,
 	aspectRatio,
 	background,
@@ -19,13 +17,12 @@ import {
 	multilineTextAlignment,
 	opacity,
 	padding,
-	resizable,
 	shadow,
 	shapes,
 } from '@expo/ui/swift-ui/modifiers'
+import type {SFSymbol} from 'sf-symbols-typescript'
 import * as c from '@frogpond/colors'
 import {displayP3, type Gradient} from '@frogpond/colors'
-import {iconImage, type SymbolName} from '../features/views'
 import {FILL_WIDTH, TILE_ASPECT} from './tile-layout'
 
 /// SwiftUI's own disabled look for a plain button, measured on the simulator:
@@ -43,13 +40,6 @@ const COUNT_MODIFIERS = [
 	padding({top: 8, trailing: 8}),
 ]
 
-/// Every symbol is fitted into a square this fraction of the card's width, so
-/// a wide one (a credit card) and a tall one (a fork and knife) read as the
-/// same weight, and the icons grow with the card at larger text sizes.
-const ICON_FRACTION = 0.44
-/// The square's side on a card whose width the grid decides.
-const DEFAULT_ICON_SIZE = 36
-
 /// Space between the card and the name beneath it.
 const LABEL_GAP = 8
 /// Two lines, with an ellipsis for whatever still doesn't fit, rather than
@@ -61,19 +51,10 @@ const LABEL_LINES = 2
 
 type Props = {
 	title: string
-	/**
-	 * The full name VoiceOver reads, when `title` is a shortened one -- "Jobs"
-	 * on the tile, "Student Work" aloud. Voice Control answers to either.
-	 */
-	spokenTitle?: string
-	icon: SymbolName
+	icon: SFSymbol
 	gradient: Gradient
-	/** Fixes the tile's width in points; without it the tile takes whatever its grid column offers. */
-	width?: number
 	/** Overrides the default portrait ratio (`TILE_ASPECT`) -- pass 1 for a square tile. */
 	ratio?: number
-	/** What VoiceOver says after the name, when the name alone leaves out where the tile goes. */
-	hint?: string
 	/** Opens whatever this tile represents. */
 	onPress: () => void
 	/** How many things the tile holds, drawn at the card's top-right corner. None at zero. */
@@ -119,7 +100,7 @@ export function GradientRoundedRectangle({
 
 /**
  * One card in the shape of a Phone.app favorite: a portrait gradient card
- * carrying a single SF Symbol, with a label beneath it. Shared between home,
+ * carrying a single SF Symbol, with a label beneath it. Shared between
  * Directory's curated contacts and Student Orgs' categories -- same visual
  * language, different data behind it.
  *
@@ -130,38 +111,25 @@ export function GradientRoundedRectangle({
  */
 export function GradientTile({
 	title,
-	spokenTitle = title,
 	icon,
 	gradient,
-	width,
 	ratio = TILE_ASPECT,
-	hint,
 	onPress,
 	count,
 	countLabel = String,
 	dimmed = false,
 }: Props): React.ReactNode {
 	let isDarkScheme = useColorScheme() === 'dark'
-	let iconSize = width === undefined ? DEFAULT_ICON_SIZE : Math.round(width * ICON_FRACTION)
-	let widthModifier = frame(width === undefined ? {maxWidth: FILL_WIDTH} : {width})
-	// A fixed width fixes the card's height too: an aspect ratio alone lets the
-	// card grow taller when its grid row does, as a row beside an empty slot can.
-	let cardModifiers =
-		width === undefined
-			? [widthModifier, aspectRatio({ratio, contentMode: 'fit'})]
-			: [frame({width, height: width / ratio})]
 	let shownCount = count !== undefined && count > 0 ? count : undefined
 	// A known count is spoken even at zero: a dimmed tile is not disabled, so
 	// the label is all that tells VoiceOver an empty area from a loading one.
-	let label = count === undefined ? spokenTitle : `${spokenTitle}, ${countLabel(count)}`
+	let label = count === undefined ? title : `${title}, ${countLabel(count)}`
 
 	return (
 		<Button
 			modifiers={[
 				buttonStyle('plain'),
 				accessibilityLabel(label),
-				...(hint === undefined ? [] : [accessibilityHint(hint)]),
-				...(spokenTitle === title ? [] : [accessibilityInputLabels([title, spokenTitle])]),
 				...(dimmed ? [opacity(DIMMED_OPACITY)] : []),
 			]}
 			onPress={onPress}
@@ -174,13 +142,15 @@ export function GradientTile({
 				modifiers={[
 					contentShape(shapes.rectangle()),
 					fixedSize({horizontal: false, vertical: true}),
-					...(width === undefined ? [] : [frame({width})]),
 				]}
 				spacing={LABEL_GAP}
 			>
 				{/* The count sits in the card's corner, over the centred icon, as
 				    a Home Screen badge sits on an app icon. */}
-				<ZStack alignment="topTrailing" modifiers={cardModifiers}>
+				<ZStack
+					alignment="topTrailing"
+					modifiers={[frame({maxWidth: FILL_WIDTH}), aspectRatio({ratio, contentMode: 'fit'})]}
+				>
 					<ZStack modifiers={[frame({maxWidth: FILL_WIDTH, maxHeight: FILL_WIDTH})]}>
 						<GradientRoundedRectangle gradient={gradient} showShadow={isDarkScheme} />
 
@@ -188,13 +158,11 @@ export function GradientTile({
 							modifiers={[
 								// force the colors of the Image here to be inverted from typical expectations
 								environment({key: 'colorScheme', value: isDarkScheme ? 'light' : 'dark'}),
-								resizable(),
-								aspectRatio({contentMode: 'fit'}),
-								frame({width: iconSize, height: iconSize}),
+								font({textStyle: 'largeTitle'}),
 								foregroundStyle({type: 'hierarchical', style: 'primary'}),
 								opacity(0.8),
 							]}
-							{...iconImage(icon)}
+							systemName={icon}
 						/>
 					</ZStack>
 
