@@ -1,0 +1,45 @@
+import type {Linking} from 'react-native'
+import type {ChaosMode} from '@frogpond/launch-arguments'
+
+import {chaosFetch} from './fetch'
+import {setFindingsFile} from './findings'
+import {guardLinking} from './linking-guard'
+import type {LineFile} from './line-file'
+import {installProbe, type ProbeHost} from './probe'
+import {launchSeed, seededRandom} from './random'
+
+/** One launch's chaos settings, from its launch arguments. */
+export type ChaosSettings = {
+	isChaos: boolean
+	seed: number
+	launch: number
+	mode: ChaosMode
+	faultRate: number
+}
+
+/** What installing chaos changes. */
+export type ChaosHost = {
+	global: {fetch: typeof fetch}
+	probe: ProbeHost
+	linking: Pick<typeof Linking, 'openURL'>
+	tape: LineFile
+	findings: LineFile
+}
+
+/** Wraps fetch, installs the probe, and guards linking, in a chaos run only. Returns whether it did. */
+export function installChaos(settings: ChaosSettings, host: ChaosHost): boolean {
+	if (!settings.isChaos) {
+		return false
+	}
+	setFindingsFile(host.findings)
+	installProbe(host.probe)
+	guardLinking(host.linking)
+	host.global.fetch = chaosFetch(host.global.fetch.bind(globalThis), {
+		mode: settings.mode,
+		launch: settings.launch,
+		random: seededRandom(launchSeed(settings.seed, settings.launch)),
+		faultRate: settings.faultRate,
+		tape: host.tape,
+	})
+	return true
+}

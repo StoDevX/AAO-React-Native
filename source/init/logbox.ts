@@ -1,8 +1,8 @@
 import {LogBox} from 'react-native'
-import {isUITesting} from '@frogpond/launch-arguments'
+import {isChaos, isUITesting} from '@frogpond/launch-arguments'
 
 /**
- * Hides LogBox's toasts from a UI-test launch.
+ * Hides LogBox's toasts from a UI-test or chaos launch.
  *
  * The toast sits over the bottom of the screen -- the Menus tab bar, the
  * Dictionary's search bar -- so a test that taps there taps the toast instead,
@@ -16,4 +16,4 @@ export function hideLogBoxForUITests(uiTesting: boolean): void {
 	}
 }
 
-hideLogBoxForUITests(isUITesting)
+hideLogBoxForUITests(isUITesting || isChaos)

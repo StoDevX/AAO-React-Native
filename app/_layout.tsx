@@ -1,3 +1,5 @@
+import '../source/init/chaos'
+
 // initialization
 import '../source/init/constants'
 import '../source/init/logbox'
@@ -15,6 +17,7 @@ import {PersistGate} from 'redux-persist/integration/react'
 import {Provider as ReduxProvider} from 'react-redux'
 import {PersistQueryClientProvider} from '@tanstack/react-query-persist-client'
 import {store, persistor} from '../source/redux'
+import {ChaosGuard} from '../source/chaos/guard'
 import {LightTheme, DarkTheme} from '@frogpond/app-theme'
 import {ThemeProvider} from 'expo-router/react-navigation'
 import {Stack, useNavigationContainerRef} from 'expo-router'
@@ -88,60 +91,65 @@ function RootLayout(): React.ReactNode {
 				<PersistQueryClientProvider client={queryClient} persistOptions={persistOptions}>
 					<ThemeProvider value={theme}>
 						<StatusBar barStyle={statusBarStyle} />
-						<Stack screenOptions={{headerBackButtonDisplayMode: 'minimal'}}>
-							<Stack.Screen name="menus" options={{title: 'Menus'}} />
-							<Stack.Screen name="menu-item-detail" options={DETAIL_SHEET} />
-							<Stack.Screen name="streaming-media" options={{title: 'Streaming Media'}} />
-							{/* No large title: the front page draws the paper's name in the bar, in its serif,
+						<ChaosGuard>
+							<Stack screenOptions={{headerBackButtonDisplayMode: 'minimal'}}>
+								<Stack.Screen name="menus" options={{title: 'Menus'}} />
+								<Stack.Screen name="menu-item-detail" options={DETAIL_SHEET} />
+								<Stack.Screen name="streaming-media" options={{title: 'Streaming Media'}} />
+								{/* No large title: the front page draws the paper's name in the bar, in its serif,
 								    and a large title would show the plain name until the page scrolled. */}
-							<Stack.Screen name="messenger/index" options={{title: 'The Olaf Messenger'}} />
-							{/* A series thumbnail opens another story over the one being read.
+								<Stack.Screen name="messenger/index" options={{title: 'The Olaf Messenger'}} />
+								{/* A series thumbnail opens another story over the one being read.
 								    Keyed by the story and the row that opened it, a tap always opens
 								    a fresh screen: an unkeyed route would swap the params of the
 								    story on top, and one keyed by story alone would move a story
 								    already open further down to the top, and either way Back would
 								    not retrace the reader's steps. A second tap on the same thumbnail
 								    finds the screen the first one opened, so it adds no duplicate. */}
-							<Stack.Screen
-								dangerouslySingular={(_name, params) => `${params.id ?? ''}:${params.from ?? ''}`}
-								name="messenger/story"
-								options={{title: ''}}
-							/>
-							<Stack.Screen
-								name="messenger/image"
-								options={{presentation: 'fullScreenModal', headerShown: false}}
-							/>
-							<Stack.Screen
-								name="st-olaf-news"
-								options={{title: 'St. Olaf News', headerLargeTitleEnabled: true}}
-							/>
-							<Stack.Screen name="transit" options={{title: 'Transit'}} />
-							<Stack.Screen name="transit/line" options={DETAIL_SHEET} />
-							<Stack.Screen name="hours" />
-							<Stack.Screen name="hours/all-spaces" />
-							<Stack.Screen name="hours/detail" options={DETAIL_SHEET} />
-							<Stack.Screen name="dictionary/entry" options={DETAIL_SHEET} />
-							{/* A department opens a fresh copy of the Directory over the landing.
+								<Stack.Screen
+									dangerouslySingular={(_name, params) => `${params.id ?? ''}:${params.from ?? ''}`}
+									name="messenger/story"
+									options={{title: ''}}
+								/>
+								<Stack.Screen
+									name="messenger/image"
+									options={{presentation: 'fullScreenModal', headerShown: false}}
+								/>
+								<Stack.Screen
+									name="st-olaf-news"
+									options={{title: 'St. Olaf News', headerLargeTitleEnabled: true}}
+								/>
+								<Stack.Screen name="transit" options={{title: 'Transit'}} />
+								<Stack.Screen name="transit/line" options={DETAIL_SHEET} />
+								<Stack.Screen name="hours" />
+								<Stack.Screen name="hours/all-spaces" />
+								<Stack.Screen name="hours/detail" options={DETAIL_SHEET} />
+								<Stack.Screen name="dictionary/entry" options={DETAIL_SHEET} />
+								{/* A department opens a fresh copy of the Directory over the landing.
 								    Keyed by the search it shows, navigating to a different one pushes
 								    it, where an unkeyed route would only swap the params of the
 								    Directory already on top; navigating to the same one still
 								    refuses a duplicate. */}
-							<Stack.Screen
-								dangerouslySingular={(_name, params) =>
-									`${params.queryType ?? ''}:${params.queryParam ?? ''}`
-								}
-								name="directory/index"
-							/>
-							<Stack.Screen name="directory/named" options={DETAIL_SHEET} />
-							<Stack.Screen name="map" />
-							<Stack.Screen name="balances/index" options={{title: 'Balances'}} />
-							<Stack.Screen name="calendar/event" options={DETAIL_SHEET} />
-							<Stack.Screen
-								name="calendar"
-								options={{title: 'Calendar', headerLargeTitleEnabled: true}}
-							/>
-							<Stack.Screen name="settings" options={{headerShown: false, presentation: 'modal'}} />
-						</Stack>
+								<Stack.Screen
+									dangerouslySingular={(_name, params) =>
+										`${params.queryType ?? ''}:${params.queryParam ?? ''}`
+									}
+									name="directory/index"
+								/>
+								<Stack.Screen name="directory/named" options={DETAIL_SHEET} />
+								<Stack.Screen name="map" />
+								<Stack.Screen name="balances/index" options={{title: 'Balances'}} />
+								<Stack.Screen name="calendar/event" options={DETAIL_SHEET} />
+								<Stack.Screen
+									name="calendar"
+									options={{title: 'Calendar', headerLargeTitleEnabled: true}}
+								/>
+								<Stack.Screen
+									name="settings"
+									options={{headerShown: false, presentation: 'modal'}}
+								/>
+							</Stack>
+						</ChaosGuard>
 					</ThemeProvider>
 				</PersistQueryClientProvider>
 			</PersistGate>
