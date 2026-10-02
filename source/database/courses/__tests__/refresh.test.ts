@@ -58,6 +58,8 @@ const mockDownload = jest.fn()
 jest.mock('../../client', () => ({getRunner: () => mockRunner}))
 jest.mock('../check', () => ({checkCatalog: (...args: unknown[]) => mockCheck(...args)}))
 jest.mock('../index-build', () => ({
+	// The real check, read through the stand-in runner.
+	isAttached: jest.requireActual<{isAttached: unknown}>('../index-build').isAttached,
 	courseIndexBatches: (runner: unknown, schema: string) => mockBuild(runner, schema),
 	storedEtag: () => mockStored.etag,
 	storeEtag: (_runner: unknown, _schema: string, etag: string) => {

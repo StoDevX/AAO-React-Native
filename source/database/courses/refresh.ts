@@ -1,22 +1,14 @@
 import * as Sentry from '@sentry/react-native'
 
 import {getRunner} from '../client.ts'
-import type {SqlRunner} from '../sql.ts'
 import {catalogFile, filePath, incomingCatalogFile} from './catalog-file.ts'
 import {checkCatalog} from './check.ts'
-import {courseIndexBatches, storedEtag, storeEtag} from './index-build.ts'
+import {courseIndexBatches, isAttached, storedEtag, storeEtag} from './index-build.ts'
 import {bumpCourseRevision} from './revision.ts'
 import {CATALOG_SCHEMA} from './schema.ts'
 
 /** The course catalog course-data-tools publishes nightly: every term from five years back. */
 export const CATALOG_URL = 'https://stolaf.dev/course-data/catalog-recent.db'
-
-/** Whether `schema` is attached to `runner`'s connection. */
-function isAttached(runner: SqlRunner, schema: string): boolean {
-	return runner
-		.all<{name: string}>({sql: 'select name from pragma_database_list', params: []})
-		.some((row) => row.name === schema)
-}
 
 /** A published catalog that failed its check, and would fail it again. */
 export class CatalogRejectedError extends Error {

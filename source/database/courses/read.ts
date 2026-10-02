@@ -19,6 +19,7 @@ import {
 	courseResultsQuery,
 	filterOptionsQueries,
 } from './queries.ts'
+import {isAttached} from './index-build.ts'
 import {refreshCatalog, shouldRetryCatalog} from './refresh.ts'
 import {useCourseRevision} from './revision.ts'
 import {
@@ -57,10 +58,7 @@ export const COURSE_READ_KEY = 'course-db'
 /** Whether a catalog with at least one section is attached. */
 function catalogHasSections(): boolean {
 	let runner = getRunner()
-	let attached = runner
-		.all<{name: string}>({sql: 'select name from pragma_database_list', params: []})
-		.some((row) => row.name === CATALOG_SCHEMA)
-	if (!attached) return false
+	if (!isAttached(runner, CATALOG_SCHEMA)) return false
 	let [row] = runner.all<{n: number}>({
 		sql: `select count(*) as n from (select 1 from ${CATALOG_SCHEMA}.section limit 1)`,
 		params: [],

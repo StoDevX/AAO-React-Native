@@ -87,6 +87,13 @@ export function buildCourseIndex(runner: SqlRunner, schema: string): number {
 	return indexed
 }
 
+/** Whether a database is attached to `runner`'s connection as `schema`. */
+export function isAttached(runner: SqlRunner, schema: string): boolean {
+	return runner
+		.all<{name: string}>({sql: 'select name from pragma_database_list', params: []})
+		.some((row) => row.name === schema)
+}
+
 /**
  * The ETag the attached catalog was downloaded with, or null when there is no
  * catalog or it records none. It lives in the catalog file itself, so the two

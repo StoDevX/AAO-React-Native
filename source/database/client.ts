@@ -3,7 +3,7 @@ import * as SQLite from 'expo-sqlite'
 import {isUITesting} from '@frogpond/launch-arguments'
 
 import {UITEST_COURSES} from '../lib/course-search/__fixtures__/courses'
-import {catalogFile, filePath} from './courses/catalog-file.ts'
+import {catalogFile, deleteCatalogFile, filePath} from './courses/catalog-file.ts'
 import {writeFixtureCatalog} from './courses/fixture.ts'
 import {CATALOG_SCHEMA} from './courses/schema.ts'
 import {buildCourseIndex, openCatalog} from './courses/index-build.ts'
@@ -94,11 +94,7 @@ function attachCourseCatalog(runner: SqlRunner): void {
 		} catch {
 			// It was never attached, or openCatalog already detached it.
 		}
-		try {
-			if (file.exists) file.delete()
-		} catch (deleteError) {
-			Sentry.captureException(deleteError)
-		}
+		deleteCatalogFile()
 	}
 }
 
@@ -151,10 +147,5 @@ export function dropDatabase(): void {
 	}
 
 	// A reset wipes every cache, and the course catalog is one.
-	try {
-		let file = catalogFile()
-		if (file.exists) file.delete()
-	} catch (error) {
-		Sentry.captureException(error)
-	}
+	deleteCatalogFile()
 }

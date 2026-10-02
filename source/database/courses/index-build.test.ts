@@ -8,6 +8,7 @@ import {writeFixtureCatalog, type FixtureCourse} from './fixture.ts'
 import {
 	buildCourseIndex,
 	courseIndexBatches,
+	isAttached,
 	openCatalog,
 	storedEtag,
 	storeEtag,
@@ -123,6 +124,16 @@ describe('openCatalog', () => {
 		let runner = openTestDatabase()
 		ensureSchema(runner, 'test')
 		assert.doesNotThrow(() => openCatalog(runner, null))
+	})
+})
+
+describe('isAttached', () => {
+	it('says whether a database is attached under a name', () => {
+		let runner = openTestDatabase()
+		assert.equal(isAttached(runner, 'catalog'), false)
+		runner.exec("attach database ':memory:' as catalog")
+		assert.equal(isAttached(runner, 'catalog'), true)
+		assert.equal(isAttached(runner, 'incoming'), false)
 	})
 })
 

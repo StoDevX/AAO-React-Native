@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/react-native'
 import {File, Paths} from 'expo-file-system'
 
 /**
@@ -7,6 +8,20 @@ import {File, Paths} from 'expo-file-system'
  */
 export function catalogFile(): File {
 	return new File(Paths.cache, 'course-catalog.db')
+}
+
+/**
+ * Deletes the downloaded catalog if there is one. Never throws: the catalog
+ * is a cache, and the next refresh replaces it, so a failure is only
+ * reported.
+ */
+export function deleteCatalogFile(): void {
+	try {
+		let file = catalogFile()
+		if (file.exists) file.delete()
+	} catch (error) {
+		Sentry.captureException(error)
+	}
 }
 
 /** Where a new catalog lands while it is checked and indexed, before it is swapped in. */

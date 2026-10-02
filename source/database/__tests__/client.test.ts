@@ -15,10 +15,10 @@ jest.mock('@sentry/react-native', () => ({captureException: jest.fn()}))
 // Jest runs every suite as a UI test, which would write the fixture catalog
 // into the stand-in database; this suite is about the downloaded file.
 jest.mock('@frogpond/launch-arguments', () => ({isUITesting: false}))
-const mockCatalog = {exists: false, delete: jest.fn()}
-jest.mock('../courses/catalog-file', () => ({
-	catalogFile: () => mockCatalog,
-	filePath: () => '/docs/course-catalog.db',
+const mockCatalog = {exists: false, uri: 'file:///cache/course-catalog.db', delete: jest.fn()}
+jest.mock('expo-file-system', () => ({
+	File: jest.fn(() => mockCatalog),
+	Paths: {cache: 'file:///cache'},
 }))
 
 /** A stand-in for the handle `openDatabaseSync` returns, recording its calls. */
