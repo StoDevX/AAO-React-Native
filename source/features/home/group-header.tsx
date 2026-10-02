@@ -14,20 +14,16 @@ import {
 } from '@expo/ui/swift-ui/modifiers'
 import * as c from '@frogpond/colors'
 import {FILL_WIDTH} from '../../components/tile-layout'
-import {collapsedSummary} from './lib'
 
 /// The minimum touch target, and so the header's height even at small text sizes.
 const MIN_HEIGHT = 44
 
 const TITLE_MODIFIERS = [font({textStyle: 'title3', weight: 'bold'}), foregroundStyle(c.label)]
-const SUMMARY_MODIFIERS = [font({textStyle: 'subheadline'}), foregroundStyle(c.secondaryLabel)]
 
 type Props = {
 	title: string
 	/** Names the header for a UI test. */
 	accessibilityId: string
-	/** How many tiles the group holds, said while it is collapsed. */
-	count: number
 	/** Absent for a group that always stays open. */
 	onToggle?: () => void
 	collapsed: boolean
@@ -35,12 +31,11 @@ type Props = {
 
 /**
  * A home group's title. For a group that collapses, the whole row is a button
- * that folds the tiles away, and says how many it is hiding while they are.
+ * that folds the tiles away.
  */
 export function HomeGroupHeader({
 	title,
 	accessibilityId,
-	count,
 	onToggle,
 	collapsed,
 }: Props): React.ReactNode {
@@ -63,7 +58,7 @@ export function HomeGroupHeader({
 		<Button
 			modifiers={[
 				buttonStyle('plain'),
-				accessibilityLabel(collapsed ? `${title}, ${collapsedSummary(count)}` : title),
+				accessibilityLabel(title),
 				accessibilityValue(collapsed ? 'Collapsed' : 'Expanded'),
 				accessibilityAddTraits(['isHeader']),
 				accessibilityIdentifier(accessibilityId),
@@ -80,7 +75,6 @@ export function HomeGroupHeader({
 				spacing={8}
 			>
 				<Text modifiers={TITLE_MODIFIERS}>{title}</Text>
-				{collapsed ? <Text modifiers={SUMMARY_MODIFIERS}>{collapsedSummary(count)}</Text> : null}
 				<Spacer />
 				<Image
 					modifiers={[

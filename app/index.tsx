@@ -174,7 +174,6 @@ function HomeGroupView({
 			<HomeGroupHeader
 				accessibilityId={groupHeaderId(section.id)}
 				collapsed={collapsed}
-				count={section.views.length}
 				onToggle={section.collapsible ? onToggle : undefined}
 				title={section.title}
 			/>
