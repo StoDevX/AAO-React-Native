@@ -444,6 +444,9 @@ export function RNHostView({children}: WithModifiers & {matchContents?: boolean}
  * `markdownEnabled` changes only how SwiftUI draws the string, so the stand-in
  * prints the Markdown source as given: that string is what the component
  * receives.
+ *
+ * A text given the `isHeader` trait takes the `header` role, which is how
+ * VoiceOver's headings rotor finds it on device.
  */
 export function Text({
 	children,
@@ -456,8 +459,13 @@ export function Text({
 			typeof child === 'number' ||
 			(React.isValidElement(child) && child.type === Text),
 	)
+	let isHeader = traitsOf(modifiers, 'accessibilityAddTraits').includes('isHeader')
 	return (
-		<RNText accessibilityLabel={labelOf(modifiers)} testID={identifierOf(modifiers) ?? testID}>
+		<RNText
+			accessibilityLabel={labelOf(modifiers)}
+			accessibilityRole={isHeader ? 'header' : undefined}
+			testID={identifierOf(modifiers) ?? testID}
+		>
 			{kept}
 		</RNText>
 	)
