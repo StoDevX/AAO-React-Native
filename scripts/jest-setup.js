@@ -8,6 +8,10 @@ jest.mock('react-native/Libraries/EventEmitter/NativeEventEmitter')
 // query.
 jest.mock('@expo/ui/swift-ui', () => require('../source/testing/expo-ui-mock'))
 jest.mock('@expo/ui/swift-ui/modifiers', () => require('../source/testing/expo-ui-mock'))
+// expo-router reaches a native module on import, so every test gets the
+// stand-in: a header that renders nothing and hooks that do nothing. A test
+// that checks navigation replaces the hooks in its own jest.mock.
+jest.mock('expo-router', () => require('../source/testing/expo-router-mock'))
 // The viewer's drag-to-close is a native view, which Jest cannot load either.
 jest.mock('@frogpond/drag-to-dismiss', () => require('../source/testing/drag-to-dismiss-mock'))
 jest.mock('expo-web-browser', () => ({

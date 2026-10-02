@@ -23,11 +23,6 @@ jest.mock('@frogpond/data-sources', () => ({
 	fetchManifest: jest.fn(),
 	fetchSourceBody: jest.fn(),
 }))
-jest.mock('expo-router', () => ({
-	// oxlint-disable-next-line typescript/no-require-imports
-	...(require('../../../testing/expo-router-mock') as object),
-	useRouter: () => ({navigate: jest.fn()}),
-}))
 
 const mockManifest = fetchManifest as jest.Mock<() => Promise<Jrd>>
 const mockBody = fetchSourceBody as jest.Mock<(href: string) => Promise<unknown>>
