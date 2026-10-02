@@ -6,7 +6,7 @@ public class DragToDismissModule: Module {
 		Name("DragToDismiss")
 
 		View(DragToDismissView.self) {
-			Events("onDismiss")
+			Events("onDismiss", "onDragStart", "onDragCancel")
 		}
 	}
 }
@@ -30,6 +30,8 @@ public class DragToDismissModule: Module {
 /// change, so setting the view's `backgroundColor` draws nothing.
 final class DragToDismissView: ExpoView {
 	let onDismiss = EventDispatcher()
+	let onDragStart = EventDispatcher()
+	let onDragCancel = EventDispatcher()
 
 	/// How far down or up a slow drag must go to dismiss, as a fraction of the view's height.
 	private static let dismissDistance: CGFloat = 0.15
@@ -64,6 +66,7 @@ final class DragToDismissView: ExpoView {
 		case .began:
 			restingBackground = layer.backgroundColor
 			move(to: offset)
+			onDragStart()
 		case .changed:
 			move(to: offset)
 		case .ended:
@@ -92,6 +95,7 @@ final class DragToDismissView: ExpoView {
 	}
 
 	private func springBack() {
+		onDragCancel()
 		animate(to: CATransform3DIdentity, background: restingBackground, duration: 0.35)
 	}
 

@@ -5,6 +5,10 @@ import {requireNativeView} from 'expo'
 export type DragToDismissViewProps = ViewProps & {
 	/** Called once, when a drag has carried the children far or fast enough to go. */
 	onDismiss: () => void
+	/** Called as a drag picks the children up. */
+	onDragStart?: () => void
+	/** Called when a drag lets go short of dismissing, as the children spring back. */
+	onDragCancel?: () => void
 }
 
 const DragToDismissNativeView: React.ComponentType<DragToDismissViewProps> = requireNativeView(

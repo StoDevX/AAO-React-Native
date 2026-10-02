@@ -156,6 +156,31 @@ describe('ImageViewer', () => {
 		expect(mockGoBack).toHaveBeenCalledTimes(1)
 	})
 
+	test('closes when a drag carries the picture away', async () => {
+		await renderViewer(36819)
+
+		// The drag is the page's, so it closes from anywhere in the viewer.
+		fireEvent(
+			screen.getByRole('image', {name: 'Mouse Friends: sunsets of life, by Juliet Stouffer'}),
+			'dismiss',
+		)
+
+		expect(mockGoBack).toHaveBeenCalledTimes(1)
+	})
+
+	test('hides Close while the picture is dragged, and brings it back if the picture springs back', async () => {
+		await renderViewer(36819)
+		let image = screen.getByRole('image', {
+			name: 'Mouse Friends: sunsets of life, by Juliet Stouffer',
+		})
+
+		await fireEvent(image, 'dragStart')
+		expect(screen.queryByRole('button', {name: 'Close'})).toBeNull()
+
+		await fireEvent(image, 'dragCancel')
+		expect(screen.getByRole('button', {name: 'Close'})).toBeTruthy()
+	})
+
 	test('says the image is unavailable for a story without one, and can still close', async () => {
 		await renderViewer(36911)
 

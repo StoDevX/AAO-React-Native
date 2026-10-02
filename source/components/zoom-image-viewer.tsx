@@ -48,7 +48,8 @@ type Props = {
  * A picture on its own, on black, to pinch or double-tap to zoom, with a close
  * button that stays whether or not there is a picture. At its fitted size, a drag
  * up or down carries the picture away and closes the viewer, fading the black to
- * show the screen beneath, so the viewer must be presented over that screen.
+ * show the screen beneath, so the viewer must be presented over that screen. The
+ * close button steps aside for the drag, as Photos' controls do.
  *
  * The zooming view is a React Native `ScrollView`, because `@expo/ui` has no view that
  * zooms; the close button over it is SwiftUI.
@@ -61,6 +62,8 @@ export function ZoomImageViewer({
 }: Props): React.ReactNode {
 	let {width, height} = useWindowDimensions()
 	let insets = useSafeAreaInsets()
+
+	let [dragging, setDragging] = React.useState(false)
 
 	let scrollView = React.useRef<ScrollView>(null)
 	// The scroll view zooms itself on a pinch, so its scale is read back from its scroll events,
@@ -121,31 +124,38 @@ export function ZoomImageViewer({
 		// The page takes VoiceOver's escape gesture, a two-finger scrub, as Close, and keeps
 		// VoiceOver off the screen beneath.
 		<View accessibilityViewIsModal={true} onAccessibilityEscape={onClose} style={styles.page}>
-			<DragToDismissView onDismiss={onClose} style={styles.backdrop}>
+			<DragToDismissView
+				onDismiss={onClose}
+				onDragCancel={() => setDragging(false)}
+				onDragStart={() => setDragging(true)}
+				style={styles.backdrop}
+			>
 				{content}
 			</DragToDismissView>
-			<View
-				pointerEvents="box-none"
-				style={[
-					styles.overlay,
-					{paddingTop: insets.top, paddingLeft: insets.left, paddingRight: insets.right},
-				]}
-			>
-				<View pointerEvents="box-none" style={styles.closeRow}>
-					<Host style={styles.closeHost}>
-						<Button
-							modifiers={[
-								buttonStyle('plain'),
-								accessibilityLabel('Close'),
-								accessibilityIdentifier(closeTestID),
-							]}
-							onPress={onClose}
-						>
-							<Image modifiers={CLOSE_ICON} systemName="xmark" />
-						</Button>
-					</Host>
+			{dragging ? null : (
+				<View
+					pointerEvents="box-none"
+					style={[
+						styles.overlay,
+						{paddingTop: insets.top, paddingLeft: insets.left, paddingRight: insets.right},
+					]}
+				>
+					<View pointerEvents="box-none" style={styles.closeRow}>
+						<Host style={styles.closeHost}>
+							<Button
+								modifiers={[
+									buttonStyle('plain'),
+									accessibilityLabel('Close'),
+									accessibilityIdentifier(closeTestID),
+								]}
+								onPress={onClose}
+							>
+								<Image modifiers={CLOSE_ICON} systemName="xmark" />
+							</Button>
+						</Host>
+					</View>
 				</View>
-			</View>
+			)}
 		</View>
 	)
 }
