@@ -23,11 +23,8 @@ import {LoadErrorView, LoadingView, NoticeView} from '@frogpond/notice'
 import {ImageAttachmentsSection} from '../../../source/components/image-attachments-section'
 import {useImageAttachments} from '../../../source/components/use-image-attachments'
 import {ActionRow, DetailRow, NavigationRow} from '../../../source/components/rows'
-import {
-	FocusedFieldProvider,
-	SyncedTextField,
-	useBlurFocusedField,
-} from '../../../source/components/synced-text-field'
+import {SyncedTextField} from '../../../source/components/synced-text-field'
+import {FocusedFieldProvider, useBlurFocusedField} from '../../../source/components/focused-field'
 import {
 	buildingByNameOptions,
 	buildingsOptions,
