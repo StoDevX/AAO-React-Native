@@ -130,6 +130,16 @@ describe('parseSchedule', () => {
 		assert.throws(() => parseSchedule(odd), {message: /neither noShow nor/u})
 	})
 
+	test('drops a poster that is not an https image', () => {
+		let [slot] = parseSchedule(
+			script({slots: {'1:8': 'Morning Show'}}).replace(
+				'{ name: "Morning Show" }',
+				'{ name: "Morning Show", poster: "http://example.com/a.jpg" }',
+			),
+		)
+		assert.equal(slot.poster, undefined)
+	})
+
 	test('refuses a script that does not parse', () => {
 		assert.throws(() => parseSchedule('let nowPlaying = {'), {message: /does not parse/u})
 	})

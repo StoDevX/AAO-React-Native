@@ -29,8 +29,11 @@ const HOURS = Array.from({length: 24}, (_, hour) => hour)
 /** A script element, however its tags are cased or spaced, as browsers read them. */
 const SCRIPT = /<script\b[^>]*>(.*?)<\/script\b[^>]*>/gisu
 
-/** A poster the app can draw. Some posters on the post are PDFs, which it cannot. */
-const IMAGE = /\.(?:jpe?g|png|gif|webp)(?:\?.*)?$/iu
+/** A poster the app can draw: an https image. Some posters on the post are PDFs, which it cannot. */
+const IMAGE = /^https:\/\/.+\.(?:jpe?g|png|gif|webp)(?:\?.*)?$/iu
+
+/** A day or hour key: plain digits, so a quoted `""` or `"1e1"` never reads as a number. */
+const INDEX = /^\d+$/u
 
 /** The post's script and its modified time, from the API's response. */
 export function postContent(body) {
@@ -139,9 +142,10 @@ function readDay(node, shows, day) {
 	}
 	let hours = new Map()
 	for (let property of node.properties) {
-		let hour = Number(keyOf(property))
+		let key = keyOf(property)
+		let hour = INDEX.test(key) ? Number(key) : Number.NaN
 		if (!HOURS.includes(hour) || hours.has(hour)) {
-			throw new Error(`ksto-schedule: ${day} has an unexpected or repeated hour ${keyOf(property)}`)
+			throw new Error(`ksto-schedule: ${day} has an unexpected or repeated hour ${key}`)
 		}
 		hours.set(hour, readSlot(property.value, shows, `${day} at ${hour}:00`))
 	}
@@ -180,10 +184,10 @@ export function parseSchedule(script) {
 	}
 	let days = new Map()
 	for (let property of table.properties) {
-		let index = Number(keyOf(property))
-		let day = DAYS[index]
+		let key = keyOf(property)
+		let day = INDEX.test(key) ? DAYS[Number(key)] : undefined
 		if (!day || days.has(day)) {
-			throw new Error(`ksto-schedule: unexpected or repeated day ${keyOf(property)}`)
+			throw new Error(`ksto-schedule: unexpected or repeated day ${key}`)
 		}
 		days.set(day, readDay(property.value, shows, day))
 	}
