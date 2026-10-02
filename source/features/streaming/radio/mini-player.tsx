@@ -8,6 +8,7 @@ import {GlassView} from 'expo-glass-effect'
 import {NativeTabs} from 'expo-router/unstable-native-tabs'
 import {STATIONS} from './stations'
 import {useRadioStore} from './store'
+import {useRadioBarVisible} from './bar-visibility'
 import {describePlayback} from './describe-playback'
 
 /** What the mini-player says, and VoiceOver reads, with no station loaded. */
@@ -145,10 +146,15 @@ function IdleMiniPlayer(): React.ReactNode {
  */
 export function RadioNowPlayingBar(): React.ReactNode {
 	let insets = useSafeAreaInsets()
+	let visible = useRadioBarVisible()
 	let placement = {
 		left: insets.left + BAR_SIDE_MARGIN,
 		right: insets.right + BAR_SIDE_MARGIN,
 		bottom: Math.max(insets.bottom - BAR_SAFE_AREA_OVERLAP, BAR_MINIMUM_BOTTOM),
+	}
+
+	if (!visible) {
+		return null
 	}
 
 	return (

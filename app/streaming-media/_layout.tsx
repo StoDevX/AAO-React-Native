@@ -1,16 +1,24 @@
 import * as React from 'react'
+import {usePathname} from 'expo-router'
 import {NativeTabs} from 'expo-router/unstable-native-tabs'
-import {RadioTabAccessory} from '../../source/features/streaming/radio'
+import {RadioTabAccessory, useRadioBarVisible} from '../../source/features/streaming/radio'
 
 export default function StreamingMediaLayout(): React.ReactNode {
+	// The mini-player shows while a station is loaded or the Home switch asks
+	// for it, but never over the Radio tab, which is the player itself.
+	let barVisible = useRadioBarVisible()
+	let onRadioTab = usePathname() === '/streaming-media/radio'
+	let accessory = barVisible && !onRadioTab
+
 	return (
-		// The radio's home, so the mini-player is always here, saying "Not
-		// Playing" until a station starts. Minimising on a scroll down, as Music
-		// does, moves it inline beside the shrunken tab bar.
-		<NativeTabs minimizeBehavior="onScrollDown">
-			<NativeTabs.BottomAccessory>
-				<RadioTabAccessory showWhenIdle={true} />
-			</NativeTabs.BottomAccessory>
+		// Minimising on a scroll down, as Music does, moves the mini-player
+		// inline beside the shrunken tab bar.
+		<NativeTabs minimizeBehavior={accessory ? 'onScrollDown' : 'never'}>
+			{accessory ? (
+				<NativeTabs.BottomAccessory>
+					<RadioTabAccessory showWhenIdle={true} />
+				</NativeTabs.BottomAccessory>
+			) : null}
 			<NativeTabs.Trigger name="index">
 				<NativeTabs.Trigger.Icon sf="recordingtape" />
 				<NativeTabs.Trigger.Label>Streaming</NativeTabs.Trigger.Label>
