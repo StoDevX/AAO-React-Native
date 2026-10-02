@@ -11,7 +11,6 @@ function Throws(): React.ReactNode {
 
 beforeEach(() => {
 	useChaosFindings.setState({latest: '', file: null})
-	jest.spyOn(console, 'error').mockImplementation(() => undefined)
 })
 
 afterEach(() => {
@@ -38,6 +37,8 @@ test('shows a quiet beacon in a chaos run', async () => {
 })
 
 test('catches a render error, reports it, and keeps the beacon', async () => {
+	// React logs the error it caught; capture that rather than let it through.
+	let logged = jest.spyOn(console, 'error').mockImplementation(() => undefined)
 	await render(
 		<ChaosGuardFor isChaos={true}>
 			<Throws />
@@ -45,4 +46,10 @@ test('catches a render error, reports it, and keeps the beacon', async () => {
 	)
 	expect(screen.getByTestId('chaos.fatal-boundary')).toBeTruthy()
 	expect(screen.getByTestId('chaos.findings').props.accessibilityLabel).toBe('fatal: render failed')
+	expect(logged).toHaveBeenCalledTimes(1)
+	expect(logged).toHaveBeenCalledWith(
+		'Caught error:',
+		expect.objectContaining({message: 'render failed'}),
+		expect.objectContaining({componentStack: expect.any(String)}),
+	)
 })
