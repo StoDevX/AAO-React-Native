@@ -41,6 +41,7 @@ export function PhotoViewerModal({uri, label, visible, onClose}: Props): React.R
 					closeTestID="map-photo-viewer-close"
 					image={{uri, accessibilityLabel: label, testID: 'map-photo-viewer-image'}}
 					onClose={onClose}
+					shareTestID="map-photo-viewer-share"
 				/>
 			</Modal>
 		</RNHostView>
