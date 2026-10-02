@@ -13,7 +13,7 @@ interface HomeLayoutState {
 export const useHomeLayoutStore = create<HomeLayoutState>()(
 	persist(
 		(set) => ({
-			layout: 'grouped',
+			layout: 'tiled',
 			setLayout: (layout) => set({layout}),
 		}),
 		{

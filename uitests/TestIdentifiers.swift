@@ -79,7 +79,7 @@ struct TestIdentifiers {
 	// MARK: - Home screen button labels
 
 	enum Buttons {
-		static let stavHall = "Stav Hall"
+		static let menus = "Menus"
 		static let athletics = "Athletics"
 		static let calendar = "Calendar"
 		static let carletonCampus = "Carleton Campus"
@@ -89,11 +89,11 @@ struct TestIdentifiers {
 		static let courseCatalog = "Course Catalog"
 		static let directory = "Directory"
 		static let map = "Map"
-		static let more = "A–Z"
+		static let more = "More"
 		static let olafMessenger = "Olaf Messenger"
 		static let stOlafNews = "St. Olaf News"
 		static let stoPrint = "stoPrint"
-		static let streams = "Streams"
+		static let streamingMedia = "Streaming Media"
 		static let studentOrgs = "Student Orgs"
 		static let studentWork = "Student Work"
 		static let transit = "Transit"
