@@ -17,7 +17,7 @@ import {RecipeView} from './recipe-view'
 import {PoemView} from './poem-view'
 import {QuietHeader} from './quiet-header'
 import {SeriesRow} from './series-row'
-import {SiteLinkCard, StoryBlocks} from './story-blocks'
+import {BLOCK_SPACING, SiteLinkCard, StoryBlocks} from './story-blocks'
 import {StoryHeader} from './story-header'
 import {StoryLookupNotice} from './story-lookup-notice'
 import {useMessStore} from './store'
@@ -95,7 +95,7 @@ export function StoryScreen({id}: Props): React.ReactNode {
 				<ScrollView
 					modifiers={scrolls ? [...PAGE, scrollPosition(scrollTarget, {anchor: 'top'})] : PAGE}
 				>
-					<Column alignment="leading" modifiers={column} spacing={14}>
+					<Column alignment="leading" modifiers={column} spacing={BLOCK_SPACING}>
 						{isQuiet ? (
 							<QuietHeader story={story} />
 						) : (

@@ -57,6 +57,23 @@ class ModuleNewsTests: UITestCaseUnbooted {
 			.verifyBodyOffersCopy()
 	}
 
+	/// A reader can drag a selection from one paragraph into the next, as each stretch of
+	/// prose between figures is one text view.
+	func testOlafMessengerSelectionCrossesParagraphs() throws {
+		MessStoryScreen(app: app)
+			.navigate(to: TestIdentifiers.News.illustratedStoryRoute)
+			.verifySelectionCrossesParagraphs()
+	}
+
+	/// A link in a story's text opens in the in-app browser when tapped, and offers the
+	/// system's link menu when held.
+	func testOlafMessengerStoryLinkOffersLinkMenu() throws {
+		MessStoryScreen(app: app)
+			.navigate(to: TestIdentifiers.News.linkedStoryRoute)
+			.openLinkInAppBrowser(TestIdentifiers.News.linkedStoryLink)
+			.verifyLinkOffersLinkMenu(TestIdentifiers.News.linkedStoryLink)
+	}
+
 	/// A sign picked from the list scrolls the page up to it; one picked from the glyph grid,
 	/// which is already in view, leaves the page where it is. The post is reopened before the
 	/// grid is tapped, so the grid sits below the intro rather than at the top of the screen.
