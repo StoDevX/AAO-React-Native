@@ -43,8 +43,8 @@ type Props = {
 	placeholder?: React.ReactNode
 	closeTestID: string
 	onClose: () => void
-	/** Gives the viewer a Share button, under this test id, that shares the picture itself. */
-	shareTestID?: string
+	/** The test id of the Share button, which shares the picture itself. */
+	shareTestID: string
 }
 
 /**
@@ -128,7 +128,7 @@ export function ZoomImageViewer({
 				]}
 			>
 				<View pointerEvents="box-none" style={styles.buttonRow}>
-					{image && shareTestID ? (
+					{image ? (
 						<Host style={[styles.buttonHost, styles.shareHost]}>
 							<Button
 								modifiers={[
