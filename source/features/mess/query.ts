@@ -1,4 +1,4 @@
-import {fetchManifest, REL_NEWS, resolveSource, SourceFetchError} from '@frogpond/data-sources'
+import {fetchManifest, REL_NEWS, resolveSource} from '@frogpond/data-sources'
 import {infiniteQueryOptions, queryOptions} from '@tanstack/react-query'
 import {queryClient} from '../../init/tanstack-query'
 import {parseMessCategories, parseMessPosts} from './lib/posts'
@@ -9,6 +9,7 @@ import {seriesKey, seriesName} from './lib/series'
 import {findSpotifyRef} from './lib/spotify'
 import {messFetch} from './lib/fixtures'
 import {messKeys} from './lib/keys'
+import {emptyPastLastPage, nextPage, pageHref} from './lib/paging'
 import type {LightPost, MessCategory, MessIssue, MessStory, SpotifyRef, StaffProfile} from './types'
 
 const WP_V2_POSTS = 'application/vnd.wordpress.v2.posts+json'
@@ -46,47 +47,69 @@ export const messCategoriesOptions = queryOptions({
 	},
 })
 
+/** How many stories a page of a section's or column's list asks for. A shorter page is the last. */
+const CATEGORY_PAGE_SIZE = 30
+
 /** Stories from a WordPress posts path on the Mess's site, parsed like the feed. */
-async function storiesAt(path: string, signal: AbortSignal, label: string): Promise<MessStory[]> {
+async function storiesAt(
+	path: string,
+	signal: AbortSignal,
+	label: string,
+	page = 1,
+): Promise<MessStory[]> {
 	// Assumes the resolved feed href is an absolute WordPress URL.
 	let origin = originOf(await feedHref())
 	// A failed categories fetch fails the stories on purpose: sections come from it.
 	let [body, categories] = await Promise.all([
-		messFetch(`${origin}/wp-json/wp/v2/${path}`, signal, label),
+		messFetch(pageHref(`${origin}/wp-json/wp/v2/${path}`, page), signal, label).catch(
+			emptyPastLastPage(page),
+		),
 		queryClient.query(messCategoriesOptions),
 	])
 	// A single post comes back as an object rather than a list.
 	return parseMessPosts(Array.isArray(body) ? body : [body], categories)
 }
 
-/** The feed's stories, with sections worked out from the category tree. */
-async function feedStories(signal: AbortSignal): Promise<MessStory[]> {
-	let href = await feedHref()
+/** A page of the feed's stories, with sections worked out from the category tree. */
+async function feedStories(page: number, signal: AbortSignal): Promise<MessStory[]> {
+	let href = pageHref(await feedHref(), page)
 	// A failed categories fetch fails the feed on purpose: sections come from it.
 	let [postsBody, categories] = await Promise.all([
-		messFetch(href, signal, 'Olaf Messenger'),
+		messFetch(href, signal, 'Olaf Messenger').catch(emptyPastLastPage(page)),
 		queryClient.query(messCategoriesOptions),
 	])
 	return parseMessPosts(postsBody, categories)
 }
 
-/** A category's 30 newest stories. */
-function categoryStories(categoryId: number, signal: AbortSignal): Promise<MessStory[]> {
+/** A page of a category's stories, newest first. */
+function categoryStories(
+	categoryId: number,
+	page: number,
+	signal: AbortSignal,
+): Promise<MessStory[]> {
 	return storiesAt(
-		`posts?categories=${categoryId}&per_page=30&_embed=true`,
+		`posts?categories=${categoryId}&per_page=${CATEGORY_PAGE_SIZE}&_embed=true`,
 		signal,
 		'Olaf Messenger section',
+		page,
 	)
 }
 
-/** The Mess's newest stories, with sections worked out from its category tree. */
-export const messFeedOptions = queryOptions({
+/** The Mess's newest stories, a page at a time, with sections worked out from its category tree. */
+export const messFeedOptions = infiniteQueryOptions({
 	queryKey: messKeys.feed,
 	// The reader shares this query, so without a stale time every story opened would fetch the
 	// whole feed again. Five minutes spans a sitting of reading; the paper publishes a few times a
 	// week, and pull-to-refresh fetches regardless, since refetch ignores stale time.
 	staleTime: FIVE_MINUTES_IN_MS,
-	queryFn: ({signal}) => feedStories(signal),
+	// Latest needs only the first page at launch, and so does By Issue's offline fallback.
+	meta: {persistPages: 1},
+	initialPageParam: 1,
+	queryFn: ({pageParam, signal}) => feedStories(pageParam, signal),
+	// The manifest's feed address sets the page size, so the first page, full while the paper has
+	// more stories than a page holds, stands for it.
+	getNextPageParam: (lastPage, allPages, lastPageParam) =>
+		nextPage(lastPage, lastPageParam, allPages[0]?.length ?? 0),
 })
 
 /** A post that came back but holds no story the reader can show. */
@@ -136,13 +159,18 @@ export const messLeadTextOptions = (id: number) =>
 		},
 	})
 
-/** A category's newest stories, such as every Variety column's. */
+/** A category's newest stories, such as every Variety column's, a page at a time. */
 // oxlint-disable-next-line typescript/explicit-module-boundary-types
 export const messCategoryOptions = (categoryId: number) =>
-	queryOptions({
+	infiniteQueryOptions({
 		queryKey: messKeys.category(categoryId),
 		staleTime: FIVE_MINUTES_IN_MS,
-		queryFn: ({signal}) => categoryStories(categoryId, signal),
+		// The list needs only its first page at launch; the rest load again as it scrolls to them.
+		meta: {persistPages: 1},
+		initialPageParam: 1,
+		queryFn: ({pageParam, signal}) => categoryStories(categoryId, pageParam, signal),
+		getNextPageParam: (lastPage, _allPages, lastPageParam) =>
+			nextPage(lastPage, lastPageParam, CATEGORY_PAGE_SIZE),
 	})
 /**
  * Every post the paper has published, newest first, a page at a time and in only the fields an
@@ -165,12 +193,7 @@ export const messIssuesOptions = infiniteQueryOptions({
 				`${origin}/wp-json/wp/v2/posts?per_page=${ISSUE_PAGE_SIZE}&page=${pageParam}&_fields=id,date,title,categories,featured_media`,
 				signal,
 				'Olaf Messenger issues',
-			).catch((error: unknown) => {
-				// WordPress answers 400 for a page past the last, which is asked for when the post count
-				// is a multiple of the page size and the last page is full: there is nothing more.
-				if (pageParam > 1 && error instanceof SourceFetchError && error.status === 400) return []
-				throw error
-			}),
+			).catch(emptyPastLastPage(pageParam)),
 			queryClient.query(messCategoriesOptions),
 		])
 		let posts = parseLightPosts(body, categories)
@@ -187,7 +210,7 @@ export const messIssuesOptions = infiniteQueryOptions({
 		return withPhotoUrls(posts, urls)
 	},
 	getNextPageParam: (lastPage, _allPages, lastPageParam) =>
-		lastPage.length < ISSUE_PAGE_SIZE ? undefined : lastPageParam + 1,
+		nextPage(lastPage, lastPageParam, ISSUE_PAGE_SIZE),
 })
 
 /**
@@ -255,8 +278,9 @@ export const messSeriesOptions = (story: MessStory) =>
 			let name = seriesName(story.title)
 			if (name) {
 				let key = name.toLowerCase()
-				// The column's list, cached under the same key the Mess list uses for it.
-				let recent = await queryClient.query(messCategoryOptions(column.id))
+				// The column's list as far as it has loaded, cached under the same key the Mess list
+				// uses for it.
+				let recent = (await queryClient.infiniteQuery(messCategoryOptions(column.id))).pages.flat()
 				let episodes = recent.filter((s) => s.id !== story.id && seriesKey(s.title) === key)
 				// The newest episode spells the series as the paper now does, which an older title may not.
 				let newest = episodes[0]

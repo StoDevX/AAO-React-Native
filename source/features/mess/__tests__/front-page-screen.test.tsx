@@ -6,6 +6,7 @@ import {fetchManifest, fetchSourceBody, type Jrd} from '@frogpond/data-sources'
 
 import categoriesJson from './fixtures/categories.json'
 import springPosts from './fixtures/issue-posts.json'
+import postsJson from './fixtures/posts.json'
 import {queryClient as appQueryClient, persistOptions} from '../../../init/tanstack-query'
 import {flushQueryNotifications, waitForQueriesToSettle} from '../../../testing/query-notifications'
 import {FrontPageScreen} from '../front-page-screen'
@@ -13,6 +14,7 @@ import {TOP_TILE_ID} from '../issue-grid'
 import {messIssueOptions} from '../query'
 import {parseLightPosts} from '../lib/issues'
 import {messKeys} from '../lib/keys'
+import {onePage} from './one-page'
 import {parseMessCategories} from '../lib/posts'
 import {DATELINE_ID} from '../masthead'
 import {OLAF_MESSENGER} from '../../news/sources'
@@ -208,7 +210,7 @@ describe('FrontPageScreen', () => {
 
 	test('offers the sections in Latest only, and remembers the view', async () => {
 		seedTop()
-		queryClient.setQueryData(messKeys.feed, ISSUE_STORIES)
+		queryClient.setQueryData(messKeys.feed, onePage(ISSUE_STORIES))
 		await renderScreen()
 		expect(screen.queryByRole('menuitem', {name: 'Opinions'})).toBeNull()
 
@@ -225,7 +227,7 @@ describe('FrontPageScreen', () => {
 	test("reads the paper's name as the heading, and not Latest's dateline", async () => {
 		seedTop()
 		saveChoice('Latest')
-		queryClient.setQueryData(messKeys.feed, ISSUE_STORIES)
+		queryClient.setQueryData(messKeys.feed, onePage(ISSUE_STORIES))
 		await renderScreen()
 
 		expect(dateline()).toHaveTextContent('Latest stories')
@@ -236,9 +238,9 @@ describe('FrontPageScreen', () => {
 	test('narrows Latest to the section picked, and keeps it across a visit to By Issue', async () => {
 		seedTop()
 		saveChoice('Latest')
-		queryClient.setQueryData(messKeys.feed, ISSUE_STORIES)
+		queryClient.setQueryData(messKeys.feed, onePage(ISSUE_STORIES))
 		queryClient.setQueryData(messKeys.categories, categories)
-		queryClient.setQueryData(messKeys.category(OPINIONS), [WATERS])
+		queryClient.setQueryData(messKeys.category(OPINIONS), onePage([WATERS]))
 		await renderScreen()
 
 		await fireEvent.press(menuItem('Opinions'))
@@ -326,7 +328,7 @@ describe('FrontPageScreen', () => {
 	})
 
 	test('offline with no issues cached, shows the saved latest stories under the notice', async () => {
-		queryClient.setQueryData(messKeys.feed, ISSUE_STORIES)
+		queryClient.setQueryData(messKeys.feed, onePage(ISSUE_STORIES))
 		onlineManager.setOnline(false)
 		await renderScreen()
 
@@ -335,7 +337,7 @@ describe('FrontPageScreen', () => {
 	})
 
 	test('when the issue list fails, offers Try Again over the saved latest stories', async () => {
-		queryClient.setQueryData(messKeys.feed, ISSUE_STORIES)
+		queryClient.setQueryData(messKeys.feed, onePage(ISSUE_STORIES))
 		serve(() => Promise.reject(new Error('offline')))
 		await renderScreen()
 
@@ -445,7 +447,7 @@ describe('FrontPageScreen', () => {
 		saveChoice('Latest:News')
 		seedTop()
 		queryClient.setQueryData(messKeys.categories, categories)
-		queryClient.setQueryData(messKeys.category(NEWS), [GRANT])
+		queryClient.setQueryData(messKeys.category(NEWS), onePage([GRANT]))
 		serve(() => [])
 		await renderScreen()
 
@@ -454,5 +456,31 @@ describe('FrontPageScreen', () => {
 		expect(postHrefs()).toStrictEqual([
 			`https://olafmessenger.com/wp-json/wp/v2/posts?categories=${NEWS}&per_page=30&_embed=true`,
 		])
+	})
+
+	test('pull-to-refresh on Latest fetches only the first page of the feed, however many are loaded', async () => {
+		saveChoice('Latest')
+		queryClient.setQueryData(messKeys.feed, {
+			// The second page is short, so the list's end asks for no third before the refresh.
+			pages: [[PETITION, GRANT], [WATERS]],
+			pageParams: [1, 2],
+		})
+		// A fresh first page as long as the second, so a refetch of every page would go on past it.
+		serve((href) => (href.includes('&page=') ? [] : postsJson.slice(0, 2)))
+		await renderScreen()
+
+		// What the refresh itself fetched; afterwards the list's end row goes on to page 2.
+		let refresh = screen.getByTestId('refreshable').props.onRefresh as () => Promise<void>
+		let fetchedByRefresh: string[] = []
+		await act(async () => {
+			await refresh()
+			fetchedByRefresh = postHrefs()
+			await flushQueryNotifications()
+		})
+
+		expect(fetchedByRefresh).toStrictEqual([
+			'https://olafmessenger.com/wp-json/wp/v2/posts?per_page=50&_embed=true',
+		])
+		await waitForQueriesToSettle(queryClient)
 	})
 })

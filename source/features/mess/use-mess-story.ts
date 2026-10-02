@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {useQuery} from '@tanstack/react-query'
+import {useInfiniteQuery, useQuery, type InfiniteData} from '@tanstack/react-query'
 import {MissingMessStoryError, messFeedOptions, messStoryOptions} from './query'
 import type {MessStory} from './types'
 
@@ -15,16 +15,16 @@ export type MessStoryLookup = {
 }
 
 /**
- * A Mess story by its post id: from the cached feed when it is there, since the feed is
- * already loaded, and otherwise fetched on its own, as a series thumbnail's story may be.
+ * A Mess story by its post id: from the cached feed's loaded pages when it is there, since the
+ * feed is already loaded, and otherwise fetched on its own, as a series thumbnail's story may be.
  */
 export function useMessStory(id: number): MessStoryLookup {
 	// A stable selector, so the story is found again only when the feed or the id changes.
 	let selectStory = React.useCallback(
-		(stories: MessStory[]) => stories.find((s) => s.id === id),
+		(feed: InfiniteData<MessStory[]>) => feed.pages.flat().find((s) => s.id === id),
 		[id],
 	)
-	let feed = useQuery({...messFeedOptions, select: selectStory})
+	let feed = useInfiniteQuery({...messFeedOptions, select: selectStory})
 	// Whether the feed holds stories at all: a failed refetch keeps them, and their time, but turns
 	// `isSuccess` false. An id that is not a number names no post, so there is nothing to fetch.
 	let outsideFeed = feed.dataUpdatedAt > 0 && feed.data === undefined && Number.isInteger(id)

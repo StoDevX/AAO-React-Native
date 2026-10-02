@@ -11,9 +11,14 @@ import {
 	lineLimit,
 	shapes,
 } from '@expo/ui/swift-ui/modifiers'
-import {useQuery} from '@tanstack/react-query'
+import {
+	useInfiniteQuery,
+	type InfiniteData,
+	type UseInfiniteQueryResult,
+} from '@tanstack/react-query'
 import {creditLine} from './lib/byline'
 import {TAP_TARGET} from './lib/glyph-grid'
+import {NextPageRow} from './next-page-row'
 import {PageLoading, PageNotice} from './page-notice'
 import {faded, ink, wash} from './palette'
 import {messCategoryOptions} from './query'
@@ -78,15 +83,28 @@ export function StoryRows({stories}: {stories: MessStory[]}): React.ReactNode {
 	))
 }
 
-/** A section's or column's newest stories, a row each. */
-export function CategoryStories({categoryId}: {categoryId: number}): React.ReactNode {
-	let stories = useQuery(messCategoryOptions(categoryId))
-	if (stories.data === undefined) {
-		return stories.isError ? (
-			<PageNotice error={stories.error} onRetry={() => stories.refetch()} />
+/** A list's stories as rows, a page at a time, with the next page loaded as the end comes into view. */
+export function PagedStoryRows({
+	query,
+}: {
+	query: UseInfiniteQueryResult<InfiniteData<MessStory[]>>
+}): React.ReactNode {
+	if (query.data === undefined) {
+		return query.isError ? (
+			<PageNotice error={query.error} onRetry={() => query.refetch()} />
 		) : (
-			<PageLoading paused={stories.fetchStatus === 'paused'} />
+			<PageLoading paused={query.fetchStatus === 'paused'} />
 		)
 	}
-	return <StoryRows stories={stories.data} />
+	return (
+		<>
+			<StoryRows stories={query.data.pages.flat()} />
+			<NextPageRow query={query} />
+		</>
+	)
+}
+
+/** A section's or column's newest stories, a row each. */
+export function CategoryStories({categoryId}: {categoryId: number}): React.ReactNode {
+	return <PagedStoryRows query={useInfiniteQuery(messCategoryOptions(categoryId))} />
 }
