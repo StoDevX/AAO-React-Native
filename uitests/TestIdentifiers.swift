@@ -586,6 +586,10 @@ struct TestIdentifiers {
 		static let imageViewerClose = "mess-image-viewer-close"
 		static let imageViewerCloseLabel = "Close"
 
+		/// The zoom viewer's share button, in source/features/mess/image-viewer.tsx.
+		static let imageViewerShare = "mess-image-viewer-share"
+		static let imageViewerShareLabel = "Share"
+
 		/// The picture inside the zoom viewer, in source/features/mess/image-viewer.tsx.
 		static let imageViewerImage = "mess-image-viewer-image"
 

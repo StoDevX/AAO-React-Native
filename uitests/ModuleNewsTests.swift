@@ -136,6 +136,7 @@ class ModuleNewsTests: UITestCaseUnbooted {
 			.openFirstStory()
 			.openImageViewer()
 			.verifyViewerShowsImage()
+			.shareViewerImage()
 			.closeImageViewer()
 	}
 }
