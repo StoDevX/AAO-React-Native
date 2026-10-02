@@ -34,9 +34,9 @@ final class MessIssueTileProps: ExpoSwiftUI.ViewProps {
 	var onTilePress = EventDispatcher()
 }
 
-/// One Messenger issue as a small folded broadsheet: nameplate, date, lead photo, headline, and on
-/// the top tile the lead story in columns; then the rings of whatever the reader has read. The
-/// whole sheet is one button, and VoiceOver reads only its label.
+/// One Messenger issue's tile: its sheet, drawn live until the grid comes to rest, and from then on
+/// an image of it drawn once and kept, until anything that changes its look changes. The whole
+/// sheet is one button, and VoiceOver reads only its label.
 struct MessIssueTileView: ExpoSwiftUI.View {
 	@ObservedObject var props: MessIssueTileProps
 
@@ -45,24 +45,37 @@ struct MessIssueTileView: ExpoSwiftUI.View {
 	}
 
 	@Environment(\.colorScheme) private var scheme
+	@Environment(\.displayScale) private var scale
+	@Environment(\.dynamicTypeSize) private var typeSize
 	/// The lead photo, loaded once and drawn in both halves of the folded sheet.
 	@StateObject private var photoLoader = PhotoLoader()
+	/// The sheet's size, which its image is drawn at
+	@State private var size: CGSize = .zero
+	/// The key of the image last drawn for this tile, which draws the tile again to show it
+	@State private var drawn: TileImageKey?
 
-	private var palette: PaperPalette { PaperPalette(scheme) }
 	/// The most pixels a photo needs along its longer side: a grid tile's is about 180 points wide
 	/// and the top tile's up to about 460, at three pixels a point.
-	private var photoPixels: CGFloat { isTop ? 1400 : 600 }
-
-	/// A tile whose lead has a photo keeps the photo's layout while the photo's address is unknown or
-	/// the photo fails to load, drawing the placeholder in its place: the words that fill a photo-less
-	/// tile below its fold are fetched only for a lead with no photo at all.
-	private var hasPhoto: Bool { props.hasPhoto }
+	private var photoPixels: CGFloat { props.layout == .grid ? 600 : 1400 }
 
 	var body: some View {
+		let content = TileContent(props)
+		let key = imageKey(content)
+		// Read so that drawing the image shows it: the cache itself is not observed.
+		let _ = drawn
+		let image = key.flatMap(TileImageCache.image(for:))
 		Button {
 			props.onTilePress()
 		} label: {
-			sheet
+			Group {
+				if let image {
+					CachedTileImage(image: image, layout: content.layout)
+				} else {
+					TileSheet(content: content, photo: photoLoader.image, scheme: scheme)
+				}
+			}
+			.onGeometryChange(for: CGSize.self, of: \.size) { size = $0 }
+			.contentShape(.rect)
 		}
 		.buttonStyle(.plain)
 		.accessibilityElement(children: .ignore)
@@ -70,214 +83,47 @@ struct MessIssueTileView: ExpoSwiftUI.View {
 		.accessibilityAddTraits(.isButton)
 		.accessibilityIdentifier(props.testID ?? "")
 		// Tied to the tile's time on screen: a tile scrolled away stops its load, and one that comes
-		// back without its photo starts again.
-		.task(id: props.photoUrl) {
+		// back without its photo starts again. A tile showing its image needs no photo.
+		.task(id: PhotoRequest(url: props.photoUrl, wanted: image == nil)) {
+			guard image == nil else { return }
 			await photoLoader.load(props.photoUrl, maxPixels: photoPixels)
 		}
-	}
-
-	/// How far along each edge a turned corner reaches: small enough to nick a headline's last
-	/// letter at most, not hide a word.
-	private var earSize: CGFloat { isTop ? 14 : 10 }
-
-	private var outline: PaperOutline {
-		PaperOutline(
-			seed: UInt32(truncatingIfNeeded: Int(props.sheet.edgeSeed)),
-			dogEar: props.sheet.dogEar,
-			earSize: earSize)
-	}
-
-	/// The flat sheet with everything on it: paper, the page, stains, creases, a turned corner,
-	/// and the sheets showing behind it.
-	private var flatSheet: some View {
-		Color.clear
-			.aspectRatio(props.layout.aspect, contentMode: .fit)
-			.frame(maxWidth: .infinity)
-			.overlay(alignment: .topLeading) {
-				content.padding(7)
+		// Asks for the image once the sheet has everything it will show; a tile that goes, or whose
+		// look changes, before the grid rests drops its request.
+		.task(id: image == nil && isComplete(content) ? key : nil) {
+			guard image == nil, let key, isComplete(content) else { return }
+			let id = UUID()
+			let photo = photoLoader.image
+			TileDrawQueue.shared.enqueue(id) {
+				TileImageCache.draw(
+					content, photo: photo, size: size, scheme: scheme, typeSize: typeSize, scale: scale,
+					as: key)
+				drawn = key
 			}
-			.overlay { wordsBelowFold }
-			.background(PaperBackground(palette: palette, scheme: scheme))
-			.overlay(StainLayer(marks: props.stains, kind: props.stainKind, scheme: scheme))
-			.overlay(CreaseLayer(creases: props.sheet.creases, scheme: scheme))
-			.overlay(FoldShade(palette: palette))
-			.clipShape(outline)
-			.overlay(DogEarFlap(dogEar: props.sheet.dogEar, earSize: earSize, palette: palette))
-			.background(SheetEdges(palette: palette, outline: outline))
-	}
-
-	/// The sheet folded: the part below the fold bends back away from the reader, photo, type and
-	/// all, then the whole sheet sits at its slight tilt.
-	private var sheet: some View {
-		ZStack {
-			flatSheet
-				.clipShape(Band(from: 0, to: foldLine))
-			flatSheet
-				.clipShape(Band(from: foldLine, to: 1.2))
-				.rotation3DEffect(
-					.degrees(props.sheet.bend), axis: (x: 1, y: 0, z: 0),
-					anchor: UnitPoint(x: 0.5, y: foldLine), perspective: 0.4)
-				// The bent half is a second drawing of the same sheet; VoiceOver has the tile's label.
-				.accessibilityHidden(true)
-		}
-		.rotationEffect(.degrees(props.sheet.tilt))
-		.padding([.trailing, .bottom], 5)
-		.contentShape(.rect)
-	}
-
-	/// A grid tile with no photo keeps its headline above the fold and sets its lead story in two
-	/// columns below it.
-	@ViewBuilder private var wordsBelowFold: some View {
-		if props.layout == .grid, !hasPhoto, !props.paragraphs.isEmpty {
-			GeometryReader { proxy in
-				let top = proxy.size.height * foldLine + 5
-				ColumnText(
-					paragraphs: props.paragraphs, columns: 2, clearedColumns: 0, clearHeight: 0,
-					ink: palette.ink, rule: palette.columnRule, size: 3.4)
-					.frame(width: proxy.size.width - 14, height: max(proxy.size.height - top - 7, 0))
-					.offset(x: 7, y: top)
-			}
-			.allowsHitTesting(false)
+			await untilCancelled()
+			TileDrawQueue.shared.cancel(id)
 		}
 	}
 
-	@ViewBuilder private var content: some View {
-		switch props.layout {
-		case .grid: gridContent
-		case .topPortrait: topPortraitContent
-		case .topLandscape: topLandscapeContent
-		}
+	/// The image's key, or nil before the sheet is laid out. A landscape top tile is always drawn
+	/// live: its photo's width is set by its container, which an image drawn on its own lacks.
+	private func imageKey(_ content: TileContent) -> TileImageKey? {
+		guard size.width > 0, size.height > 0, content.layout != .topLandscape else { return nil }
+		return TileImageKey(
+			content, photoUrl: props.photoUrl, size: size, scheme: scheme, typeSize: typeSize, scale: scale)
 	}
 
-	private var isTop: Bool { props.layout != .grid }
-
-	private var header: some View {
-		VStack(spacing: 3) {
-			Text("The Olaf Messenger")
-				.font(.system(size: isTop ? 20 : 12, weight: .bold, design: .serif))
-				.lineLimit(1)
-				.minimumScaleFactor(0.7)
-			rule(1)
-			Text(props.date)
-				.font(.system(size: isTop ? 10 : 8))
-				.textCase(.uppercase)
-				.kerning(0.8)
-			if props.special {
-				Text("Special Edition")
-					.font(.system(size: isTop ? 10 : 8, weight: .heavy))
-					.textCase(.uppercase)
-					.kerning(1)
-					.foregroundStyle(palette.special)
-			}
-			rule(0.5)
-		}
-		.foregroundStyle(palette.ink)
-		.frame(maxWidth: .infinity)
+	/// Whether the sheet shows all it will: a photo with an address has loaded. Until then the tile
+	/// stays live, so the photo appears in it as it arrives.
+	private func isComplete(_ content: TileContent) -> Bool {
+		!(content.hasPhoto && props.photoUrl != nil && photoLoader.image == nil)
 	}
+}
 
-	private func rule(_ thickness: CGFloat) -> some View {
-		Rectangle().fill(palette.rule).frame(height: thickness)
-	}
-
-	/// A grid tile: photo and a headline that always has room for three lines, or, with no photo,
-	/// a larger headline of up to six.
-	private var gridContent: some View {
-		VStack(alignment: .leading, spacing: 5) {
-			header
-			if hasPhoto {
-				photo
-				Headline(text: props.title, size: 11, lines: 3, color: palette.ink)
-					.frame(height: 11 * 1.2 * 3, alignment: .top)
-			} else {
-				Headline(text: props.title, size: 16, lines: 6, color: palette.ink)
-					.padding(.top, 5)
-				Spacer(minLength: 0)
-			}
-		}
-	}
-
-	/// Portrait: the headline across the sheet, the photo over two columns, the story flowing
-	/// under it and down the third. With no photo the story takes all three from the top.
-	private var topPortraitContent: some View {
-		VStack(alignment: .leading, spacing: 6) {
-			header
-			Headline(text: props.title, size: hasPhoto ? 18 : 22, lines: 3, color: palette.ink)
-			GeometryReader { proxy in
-				let gutter: CGFloat = 9
-				let column = (proxy.size.width - gutter * 2) / 3
-				let photoHeight = hasPhoto ? min(proxy.size.height * 0.62, (column * 2 + gutter) * 0.75) : 0
-				ZStack(alignment: .topLeading) {
-					ColumnText(
-						paragraphs: props.paragraphs, columns: 3,
-						clearedColumns: hasPhoto ? 2 : 0, clearHeight: photoHeight,
-						ink: palette.ink, rule: palette.columnRule)
-					if hasPhoto {
-						photo.frame(width: column * 2 + gutter, height: photoHeight)
-					}
-				}
-			}
-		}
-	}
-
-	/// Landscape: the photo takes the left two-thirds; the headline and the story run down the right.
-	private var topLandscapeContent: some View {
-		VStack(alignment: .leading, spacing: 6) {
-			header
-			HStack(alignment: .top, spacing: 8) {
-				if hasPhoto {
-					photo.containerRelativeFrame(.horizontal) { width, _ in width * 0.6 }
-				}
-				VStack(alignment: .leading, spacing: 5) {
-					Headline(text: props.title, size: hasPhoto ? 15 : 22, lines: hasPhoto ? 5 : 3, color: palette.ink)
-					ColumnText(
-						paragraphs: props.paragraphs, columns: hasPhoto ? 1 : 3,
-						clearedColumns: 0, clearHeight: 0,
-						ink: palette.ink, rule: palette.columnRule)
-				}
-			}
-		}
-	}
-
-	/// The lead photo as newsprint prints one: faded and grainy, soft at the edges, greyscale in
-	/// Dark Mode, and drifting a little against the page as it scrolls.
-	private var photo: some View {
-		GeometryReader { proxy in
-			if let image = photoLoader.image {
-				Image(uiImage: image)
-					.resizable()
-					.scaledToFill()
-					.grayscale(scheme == .dark ? 1 : 0.3)
-					.contrast(0.88)
-					.brightness(scheme == .dark ? -0.05 : 0.04)
-					// Headroom for the drift, so it never shows the photo's edge.
-					.scaleEffect(1.12)
-					.visualEffect { content, geometry in
-						// Where the photo sits in the visible part of the scroll view, from -0.5 at its top
-						// edge to 0.5 at its bottom, measured in the photo's own coordinates.
-						let height = geometry.size.height
-						let travel: CGFloat
-						if let visible = geometry.bounds(of: .scrollView), visible.height > 0 {
-							travel = min(max((height / 2 - visible.midY) / visible.height, -0.5), 0.5)
-						} else {
-							travel = 0
-						}
-						// The photo is drawn 12% larger, so a drift of 10% of its height never shows an edge.
-						return content.offset(y: -travel * height * 0.1)
-					}
-					.frame(width: proxy.size.width, height: proxy.size.height)
-					.clipped()
-					.overlay(TextureLayer(image: Textures.grain).blendMode(.overlay).opacity(0.55))
-			} else {
-				palette.placeholder
-			}
-		}
-		.blendMode(scheme == .dark ? .normal : .multiply)
-		.mask(
-			RadialGradient(
-				colors: [.black, .black, .black.opacity(0.5)],
-				center: .center, startRadius: 0, endRadius: 140))
-		.accessibilityHidden(true)
-	}
+/// The photo a tile wants, as the identity of the task that loads it.
+private struct PhotoRequest: Equatable {
+	let url: URL?
+	let wanted: Bool
 }
 
 /// Loads a tile's photo once, so the two halves of its folded sheet draw the same picture and
