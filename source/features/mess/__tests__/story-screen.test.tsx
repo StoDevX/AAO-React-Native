@@ -13,6 +13,7 @@ import posts from './fixtures/posts.json'
 
 import {queryClient as appQueryClient} from '../../../init/tanstack-query'
 import {flushQueryNotifications, waitForQueriesToSettle} from '../../../testing/query-notifications'
+import {AUTHOR_RULE_ID} from '../author-card'
 import {StoryScreen} from '../story-screen'
 import {messKeys} from '../lib/keys'
 import {onePage} from './one-page'
@@ -504,6 +505,33 @@ describe('StoryScreen', () => {
 		await renderStory(36911)
 		expect(screen.getByText('Kenzie is a senior.')).toBeTruthy()
 		expect(screen.queryByText('Ashlyn Wuench', {exact: true})).toBeNull()
+	})
+
+	test('rules off the writers’ cards when one of them has a profile', async () => {
+		await renderStory(36911)
+		expect(screen.getByTestId(AUTHOR_RULE_ID)).toBeTruthy()
+	})
+
+	test('draws no rule under the story when no writer has a profile', async () => {
+		queryClient.setQueryData(messKeys.profile(392), null)
+		queryClient.setQueryData(messKeys.series(SHORT_STORY.id), {
+			title: 'More Microfiction Corner',
+			stories: [NEXT_EPISODE],
+		})
+		await renderStory(28702)
+
+		expect(screen.getByText('More Microfiction Corner')).toBeTruthy()
+		expect(screen.queryByTestId(AUTHOR_RULE_ID)).toBeNull()
+	})
+
+	test('holds the rule back until a profile arrives, rather than drawing one that may go', async () => {
+		queryClient.removeQueries({queryKey: messKeys.profile(423)})
+		queryClient.removeQueries({queryKey: messKeys.profile(392)})
+		mockManifest.mockReturnValue(new Promise(() => undefined))
+		await renderStory(36911)
+
+		expect(screen.getByText('Cows, Comments and Confessions')).toBeTruthy()
+		expect(screen.queryByTestId(AUTHOR_RULE_ID)).toBeNull()
 	})
 
 	test('sets the opening words of the first paragraph apart for small caps', async () => {
