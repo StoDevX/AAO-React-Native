@@ -223,10 +223,10 @@ export default function HomePage(): React.ReactNode {
 	let isDev = useIsDevMode()
 	let collapsedGroups = useSelector(selectCollapsedHomeGroups)
 	let openView = useOpenView()
-	let sections = homeSections(AllViews(), {isDev})
 	let {width: screenWidth, fontScale} = useWindowDimensions()
 	let layout = useHomeLayoutStore((state) => state.layout)
 	let setLayout = useHomeLayoutStore((state) => state.setLayout)
+	let sections = homeSections(AllViews(), {isDev, layout})
 
 	return (
 		<>

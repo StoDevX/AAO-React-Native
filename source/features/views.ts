@@ -2,6 +2,7 @@ import * as c from '@frogpond/colors'
 import type {Gradient} from '@frogpond/colors'
 import type {ImageProps} from '@expo/ui/swift-ui'
 import {useRouter} from 'expo-router'
+import type {HomeLayout} from './home/store'
 
 type r = typeof useRouter extends () => infer T ? T : never
 type href = r extends {push: (href: infer H) => void} ? H : never
@@ -70,6 +71,13 @@ type CommonView = {
 	titleDesign?: 'serif'
 	gradient: Gradient
 	group: HomeGroupId
+	/**
+	 * Draws the view only in this layout. The Menus and Streaming Media routes
+	 * tab between their cafes and stations when home is tiled, and the grouped
+	 * layout opens each from a tile of its own, so each layout has the tiles
+	 * that suit it.
+	 */
+	layout?: HomeLayout
 	disabled?: boolean
 	devOnly?: boolean
 }
@@ -97,11 +105,22 @@ export const AllViews = (): Array<ViewType> => {
 		{
 			type: 'view',
 			view: '/menus',
+			id: 'menus',
+			title: 'Menus',
+			icon: 'fork.knife',
+			gradient: c.greenGradient,
+			group: 'eat',
+			layout: 'tiled',
+		},
+		{
+			type: 'view',
+			view: '/menus',
 			id: 'stav-hall',
 			title: 'Stav Hall',
 			icon: 'fork.knife',
 			gradient: c.greenGradient,
 			group: 'eat',
+			layout: 'grouped',
 		},
 		{
 			type: 'view',
@@ -111,6 +130,7 @@ export const AllViews = (): Array<ViewType> => {
 			icon: 'cup.and.saucer.fill',
 			gradient: c.orangeGradient,
 			group: 'eat',
+			layout: 'grouped',
 		},
 		{
 			type: 'view',
@@ -120,6 +140,7 @@ export const AllViews = (): Array<ViewType> => {
 			icon: 'pawprint.fill',
 			gradient: c.redGradient,
 			group: 'eat',
+			layout: 'grouped',
 		},
 		{
 			type: 'url',
@@ -252,12 +273,23 @@ export const AllViews = (): Array<ViewType> => {
 		// Listen & watch
 		{
 			type: 'view',
+			view: '/streaming-media',
+			id: 'streaming-media',
+			title: 'Streaming Media',
+			icon: 'play.rectangle.fill',
+			gradient: c.lightBlueGradient,
+			group: 'listen-watch',
+			layout: 'tiled',
+		},
+		{
+			type: 'view',
 			view: '/streaming-media/ksto',
 			id: 'ksto',
 			title: 'KSTO',
 			icon: 'radio.fill',
 			gradient: c.purpleGradient,
 			group: 'listen-watch',
+			layout: 'grouped',
 		},
 		{
 			type: 'view',
@@ -267,6 +299,7 @@ export const AllViews = (): Array<ViewType> => {
 			icon: 'mic.fill',
 			gradient: c.violetGradient,
 			group: 'listen-watch',
+			layout: 'grouped',
 		},
 		{
 			type: 'view',
@@ -276,6 +309,7 @@ export const AllViews = (): Array<ViewType> => {
 			icon: 'play.rectangle.fill',
 			gradient: c.lightBlueGradient,
 			group: 'listen-watch',
+			layout: 'grouped',
 		},
 		{
 			type: 'view',
@@ -285,6 +319,7 @@ export const AllViews = (): Array<ViewType> => {
 			icon: 'web.camera.fill',
 			gradient: c.blueGradient,
 			group: 'listen-watch',
+			layout: 'grouped',
 		},
 
 		// Just for fun
@@ -387,8 +422,17 @@ export type HomeSection = HomeGroup & {views: ViewType[]}
  * left with nothing to show -- Dev outside dev mode -- is dropped rather than
  * drawn as an empty header.
  */
-export function homeSections(views: ViewType[], {isDev}: {isDev: boolean}): HomeSection[] {
-	let shown = views.filter((view) => !view.disabled && (isDev || !view.devOnly))
+export function homeSections(
+	views: ViewType[],
+	{isDev, layout}: {isDev: boolean; layout: HomeLayout},
+): HomeSection[] {
+	let shown = views.filter(
+		(view) =>
+			!view.disabled &&
+			(isDev || !view.devOnly) &&
+			// A list is grouped like the grouped layout, so it draws the same tiles.
+			(view.layout === undefined || view.layout === (layout === 'tiled' ? 'tiled' : 'grouped')),
+	)
 	return HOME_GROUPS.map((group) => ({
 		...group,
 		views: shown.filter((view) => view.group === group.id),
