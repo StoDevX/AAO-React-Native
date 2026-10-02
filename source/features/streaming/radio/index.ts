@@ -1,4 +1,4 @@
 export {RadioControllerView} from './controller'
 export {RadioHost} from './host'
-export {RadioMiniPlayerOverlay, RadioTabAccessory} from './mini-player'
+export {NOW_PLAYING_BAR_CLEARANCE, RadioNowPlayingBar, RadioTabAccessory} from './mini-player'
 export {useRadioStore} from './store'

@@ -32,6 +32,7 @@ import {useIsDevMode} from '../source/lib/use-is-dev-mode'
 import {FaqBannerGroup} from '../source/features/faqs/banner'
 import {FAQ_TARGETS} from '../source/features/faqs/constants'
 import {sample} from '@frogpond/collections'
+import {NOW_PLAYING_BAR_CLEARANCE, RadioNowPlayingBar} from '../source/features/streaming/radio'
 
 const styles = StyleSheet.create({
 	host: {
@@ -153,7 +154,12 @@ export default function HomePage(): React.ReactNode {
 			>
 				<ScrollView>
 					<VStack
-						modifiers={[padding({all: SCREEN_MARGIN}), frame({maxWidth: FILL_WIDTH})]}
+						modifiers={[
+							padding({all: SCREEN_MARGIN}),
+							// Room to scroll the last tiles clear of the Now Playing bar.
+							padding({bottom: NOW_PLAYING_BAR_CLEARANCE}),
+							frame({maxWidth: FILL_WIDTH}),
+						]}
 						spacing={TILE_SPACING}
 					>
 						<RNHostView matchContents={true}>
@@ -195,6 +201,7 @@ export default function HomePage(): React.ReactNode {
 					</VStack>
 				</ScrollView>
 			</Host>
+			<RadioNowPlayingBar />
 		</>
 	)
 }

@@ -1,25 +1,39 @@
 import * as React from 'react'
-import {StyleSheet, Text, View} from 'react-native'
+import {Image, StyleSheet, Text, View} from 'react-native'
 import {useSafeAreaInsets} from 'react-native-safe-area-context'
 import * as c from '@frogpond/colors'
 import {Touchable} from '@frogpond/touchable'
 import {SymbolView} from 'expo-symbols'
-import {GlassView, isLiquidGlassAvailable} from 'expo-glass-effect'
-import {usePathname, useRouter} from 'expo-router'
+import {GlassView} from 'expo-glass-effect'
+import {useRouter} from 'expo-router'
 import {NativeTabs} from 'expo-router/unstable-native-tabs'
 import {STATIONS} from './stations'
 import {useRadioStore} from './store'
 import {describePlayback} from './describe-playback'
 
-/**
- * Sections whose screens sit in native tabs. Their tab bar shows the
- * mini-player as its bottom accessory, above the bar or inline beside it once
- * a scroll minimises it, so the floating one stays out of the way there.
- */
-const TABBED_SECTIONS = ['/streaming-media', '/menus']
-
 /** What the mini-player says, and VoiceOver reads, with no station loaded. */
 const IDLE_LABEL = 'Not Playing'
+
+/** The height of the Now Playing bar, as Music draws its accessory. */
+export const NOW_PLAYING_BAR_HEIGHT = 48
+
+/** Music's accessory insets from each side of the screen. */
+const BAR_SIDE_MARGIN = 21
+
+/**
+ * Music's minimised accessory sits this far into the bottom safe area,
+ * level with the home indicator's band rather than above it.
+ */
+const BAR_SAFE_AREA_OVERLAP = 6
+
+/** Where the bar stands with no bottom safe area to sit in. */
+const BAR_MINIMUM_BOTTOM = 8
+
+/**
+ * How far content must keep clear of the bottom safe area for the bar not to
+ * cover it.
+ */
+export const NOW_PLAYING_BAR_CLEARANCE = NOW_PLAYING_BAR_HEIGHT - BAR_SAFE_AREA_OVERLAP + 8
 
 type MiniPlayerProps = {
 	/** A compact player drops the status line and the stop button. */
@@ -29,9 +43,10 @@ type MiniPlayerProps = {
 }
 
 /**
- * The loaded station, with play/pause and stop, from anywhere in the app.
- * Tapping the station opens its screen. With no station loaded it renders
- * nothing, or the idle player when `showWhenIdle` asks for it.
+ * The loaded station, with play/pause and stop, laid out as Music's Now
+ * Playing accessory. Tapping the station opens its screen. With no station
+ * loaded it renders nothing, or the idle player when `showWhenIdle` asks for
+ * it.
  */
 export function RadioMiniPlayer({
 	compact = false,
@@ -64,7 +79,7 @@ export function RadioMiniPlayer({
 				onPress={() => router.navigate(station.href)}
 				style={styles.station}
 			>
-				<SymbolView name="radio.fill" size={24} tintColor={c.label} />
+				<Image source={station.logos[0].image} style={styles.artwork} />
 				<View style={styles.titles}>
 					<Text numberOfLines={1} style={styles.name}>
 						{station.stationName}
@@ -84,7 +99,7 @@ export function RadioMiniPlayer({
 				onPress={running ? pause : () => play(station.id)}
 				style={styles.control}
 			>
-				<SymbolView name={running ? 'pause.fill' : 'play.fill'} size={22} tintColor={c.label} />
+				<SymbolView name={running ? 'pause.fill' : 'play.fill'} size={20} tintColor={c.label} />
 			</Touchable>
 
 			{compact ? null : (
@@ -95,7 +110,7 @@ export function RadioMiniPlayer({
 					onPress={stop}
 					style={styles.control}
 				>
-					<SymbolView name="xmark" size={18} tintColor={c.secondaryLabel} />
+					<SymbolView name="stop.fill" size={20} tintColor={c.label} />
 				</Touchable>
 			)}
 		</View>
@@ -103,14 +118,17 @@ export function RadioMiniPlayer({
 }
 
 /**
- * The mini-player with no station loaded. Nothing in it does anything, so
- * VoiceOver reads it as one piece of text rather than offering a dead button.
+ * The mini-player with no station loaded, as Music shows it: a blank
+ * artwork tile and dimmed controls. Nothing in it does anything, so VoiceOver
+ * reads it as one piece of text rather than offering a dead button.
  */
 function IdleMiniPlayer(): React.ReactNode {
 	return (
 		<View accessible={true} accessibilityLabel={IDLE_LABEL} style={styles.row}>
 			<View style={styles.station}>
-				<SymbolView name="radio" size={24} tintColor={c.tertiaryLabel} />
+				<View style={[styles.artwork, styles.blankArtwork]}>
+					<SymbolView name="radio" size={16} tintColor={c.tertiaryLabel} />
+				</View>
 				<View style={styles.titles}>
 					<Text numberOfLines={1} style={styles.name}>
 						{IDLE_LABEL}
@@ -118,43 +136,34 @@ function IdleMiniPlayer(): React.ReactNode {
 				</View>
 			</View>
 			<View style={styles.control}>
-				<SymbolView name="play.fill" size={22} tintColor={c.tertiaryLabel} />
+				<SymbolView name="play.fill" size={20} tintColor={c.tertiaryLabel} />
+			</View>
+			<View style={styles.control}>
+				<SymbolView name="stop.fill" size={20} tintColor={c.tertiaryLabel} />
 			</View>
 		</View>
 	)
 }
 
 /**
- * The mini-player floating above the bottom of every screen outside the tabbed
- * sections, which show it in their tab bar instead. A capsule of liquid glass
- * where iOS has it, matching the tab bar's own accessory, and a plain card
- * elsewhere.
+ * The Now Playing bar along the bottom of a screen with no tab bar to carry
+ * it: Music's accessory, a capsule of liquid glass, stretched the full width.
+ * The screen keeps its content `NOW_PLAYING_BAR_CLEARANCE` clear of the
+ * bottom safe area so the bar never covers the last of it.
  */
-const GLASS = isLiquidGlassAvailable()
-
-export function RadioMiniPlayerOverlay(): React.ReactNode {
+export function RadioNowPlayingBar(): React.ReactNode {
 	let insets = useSafeAreaInsets()
-	let pathname = usePathname()
-	let loaded = useRadioStore((state) => state.stationId !== null)
-
-	let inTabs = TABBED_SECTIONS.some(
-		(section) => pathname === section || pathname.startsWith(`${section}/`),
-	)
-	if (!loaded || inTabs) {
-		return null
+	let placement = {
+		left: insets.left + BAR_SIDE_MARGIN,
+		right: insets.right + BAR_SIDE_MARGIN,
+		bottom: Math.max(insets.bottom - BAR_SAFE_AREA_OVERLAP, BAR_MINIMUM_BOTTOM),
 	}
 
 	return (
-		<View pointerEvents="box-none" style={[styles.overlay, {bottom: insets.bottom + 8}]}>
-			{GLASS ? (
-				<GlassView isInteractive={true} style={styles.capsule}>
-					<RadioMiniPlayer />
-				</GlassView>
-			) : (
-				<View style={[styles.capsule, styles.card]}>
-					<RadioMiniPlayer />
-				</View>
-			)}
+		<View pointerEvents="box-none" style={[styles.bar, placement]}>
+			<GlassView isInteractive={true} style={styles.capsule}>
+				<RadioMiniPlayer showWhenIdle={true} />
+			</GlassView>
 		</View>
 	)
 }
@@ -171,44 +180,44 @@ export function RadioTabAccessory({
 }
 
 const styles = StyleSheet.create({
-	overlay: {
+	bar: {
 		position: 'absolute',
-		left: 16,
-		right: 16,
 	},
 	capsule: {
-		borderRadius: 30,
-		paddingVertical: 6,
-		paddingHorizontal: 4,
-	},
-	card: {
-		backgroundColor: c.secondarySystemGroupedBackground,
-		borderWidth: StyleSheet.hairlineWidth,
-		borderColor: c.separator,
-		shadowColor: c.black,
-		shadowOpacity: 0.15,
-		shadowRadius: 12,
-		shadowOffset: {width: 0, height: 4},
+		height: NOW_PLAYING_BAR_HEIGHT,
+		borderRadius: NOW_PLAYING_BAR_HEIGHT / 2,
+		justifyContent: 'center',
 	},
 	row: {
 		flexDirection: 'row',
 		alignItems: 'center',
-		paddingHorizontal: 8,
+		paddingLeft: 9,
+		paddingRight: 7,
 	},
 	// The Pressable, not the view inside it, has to take the spare width, or
-	// only the drawn icon and text would answer a tap.
+	// only the drawn artwork and text would answer a tap.
 	stationContainer: {
 		flex: 1,
 	},
 	station: {
+		flex: 1,
 		flexDirection: 'row',
 		alignItems: 'center',
 		minHeight: 44,
-		paddingHorizontal: 8,
+	},
+	artwork: {
+		width: 30,
+		height: 30,
+		borderRadius: 6,
+	},
+	blankArtwork: {
+		backgroundColor: c.tertiarySystemFill,
+		alignItems: 'center',
+		justifyContent: 'center',
 	},
 	titles: {
 		flex: 1,
-		marginLeft: 12,
+		marginLeft: 9,
 	},
 	name: {
 		color: c.label,
@@ -216,8 +225,8 @@ const styles = StyleSheet.create({
 		fontWeight: '600',
 	},
 	status: {
-		color: c.secondaryLabel,
-		fontSize: 13,
+		color: c.label,
+		fontSize: 15,
 	},
 	control: {
 		width: 44,

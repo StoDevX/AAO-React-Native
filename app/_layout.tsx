@@ -25,7 +25,7 @@ import {IS_PRODUCTION} from '@frogpond/constants'
 import {StatusBar, useColorScheme} from 'react-native'
 
 import {SHEET_RESTING_FRACTION} from '../source/lib/constants'
-import {RadioHost, RadioMiniPlayerOverlay} from '../source/features/streaming/radio'
+import {RadioHost} from '../source/features/streaming/radio'
 
 /**
  * How every detail sheet in the app presents: a building's hours, a dictionary
@@ -147,7 +147,6 @@ function RootLayout(): React.ReactNode {
 							/>
 							<Stack.Screen name="settings" options={{headerShown: false, presentation: 'modal'}} />
 						</Stack>
-						<RadioMiniPlayerOverlay />
 					</ThemeProvider>
 				</PersistQueryClientProvider>
 			</PersistGate>
