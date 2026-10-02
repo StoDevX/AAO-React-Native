@@ -1,0 +1,181 @@
+import * as React from 'react'
+import {StyleSheet, Text, View} from 'react-native'
+import {useSafeAreaInsets} from 'react-native-safe-area-context'
+import * as c from '@frogpond/colors'
+import {Touchable} from '@frogpond/touchable'
+import {SymbolView} from 'expo-symbols'
+import {usePathname, useRouter} from 'expo-router'
+import {NativeTabs} from 'expo-router/unstable-native-tabs'
+import {STATIONS} from './stations'
+import {useRadioStore} from './store'
+import {describePlayback} from './describe-playback'
+
+/**
+ * Sections whose screens sit in native tabs. Their tab bar shows the
+ * mini-player as its bottom accessory, so the floating one stays out of the
+ * tab bar's way there.
+ */
+const TABBED_SECTIONS = ['/streaming-media', '/menus']
+
+type MiniPlayerProps = {
+	/** A compact player drops the status line and the stop button. */
+	compact?: boolean
+}
+
+/**
+ * The loaded station, with play/pause and stop, from anywhere in the app.
+ * Tapping the station opens its screen. Renders nothing when no station is
+ * loaded.
+ */
+export function RadioMiniPlayer({compact = false}: MiniPlayerProps): React.ReactNode {
+	let router = useRouter()
+	let stationId = useRadioStore((state) => state.stationId)
+	let playState = useRadioStore((state) => state.playState)
+	let error = useRadioStore((state) => state.error)
+	let play = useRadioStore((state) => state.play)
+	let pause = useRadioStore((state) => state.pause)
+	let stop = useRadioStore((state) => state.stop)
+
+	if (!stationId) {
+		return null
+	}
+
+	let station = STATIONS[stationId]
+	let status = describePlayback(playState, error)
+	let running = playState !== 'paused'
+
+	return (
+		<View style={styles.row}>
+			<Touchable
+				accessibilityHint="Opens the station"
+				accessibilityLabel={`${station.stationName}, ${status}`}
+				accessibilityRole="button"
+				highlight={false}
+				containerStyle={styles.stationContainer}
+				onPress={() => router.navigate(station.href)}
+				style={styles.station}
+			>
+				<SymbolView name="radio.fill" size={24} tintColor={c.label} />
+				<View style={styles.titles}>
+					<Text numberOfLines={1} style={styles.name}>
+						{station.stationName}
+					</Text>
+					{compact ? null : (
+						<Text numberOfLines={1} style={styles.status}>
+							{status}
+						</Text>
+					)}
+				</View>
+			</Touchable>
+
+			<Touchable
+				accessibilityLabel={`${running ? 'Pause' : 'Play'} ${station.stationName}`}
+				accessibilityRole="button"
+				highlight={false}
+				onPress={running ? pause : () => play(station.id)}
+				style={styles.control}
+			>
+				<SymbolView name={running ? 'pause.fill' : 'play.fill'} size={22} tintColor={c.label} />
+			</Touchable>
+
+			{compact ? null : (
+				<Touchable
+					accessibilityLabel={`Stop ${station.stationName}`}
+					accessibilityRole="button"
+					highlight={false}
+					onPress={stop}
+					style={styles.control}
+				>
+					<SymbolView name="xmark" size={18} tintColor={c.secondaryLabel} />
+				</Touchable>
+			)}
+		</View>
+	)
+}
+
+/**
+ * The mini-player floating above the bottom of every screen outside the tabbed
+ * sections, which show it in their tab bar instead.
+ */
+export function RadioMiniPlayerOverlay(): React.ReactNode {
+	let insets = useSafeAreaInsets()
+	let pathname = usePathname()
+	let loaded = useRadioStore((state) => state.stationId !== null)
+
+	let inTabs = TABBED_SECTIONS.some(
+		(section) => pathname === section || pathname.startsWith(`${section}/`),
+	)
+	if (!loaded || inTabs) {
+		return null
+	}
+
+	return (
+		<View pointerEvents="box-none" style={[styles.overlay, {bottom: insets.bottom + 8}]}>
+			<View style={styles.card}>
+				<RadioMiniPlayer />
+			</View>
+		</View>
+	)
+}
+
+/**
+ * The mini-player for a tab bar's bottom accessory. iOS draws the accessory's
+ * glass itself, and narrows it inline beside a minimised tab bar.
+ */
+export function RadioTabAccessory(): React.ReactNode {
+	let placement = NativeTabs.BottomAccessory.usePlacement()
+	return <RadioMiniPlayer compact={placement === 'inline'} />
+}
+
+const styles = StyleSheet.create({
+	overlay: {
+		position: 'absolute',
+		left: 16,
+		right: 16,
+	},
+	card: {
+		borderRadius: 16,
+		backgroundColor: c.secondarySystemGroupedBackground,
+		borderWidth: StyleSheet.hairlineWidth,
+		borderColor: c.separator,
+		shadowColor: c.black,
+		shadowOpacity: 0.15,
+		shadowRadius: 12,
+		shadowOffset: {width: 0, height: 4},
+	},
+	row: {
+		flexDirection: 'row',
+		alignItems: 'center',
+		paddingHorizontal: 8,
+	},
+	// The Pressable, not the view inside it, has to take the spare width, or
+	// only the drawn icon and text would answer a tap.
+	stationContainer: {
+		flex: 1,
+	},
+	station: {
+		flexDirection: 'row',
+		alignItems: 'center',
+		minHeight: 44,
+		paddingHorizontal: 8,
+	},
+	titles: {
+		flex: 1,
+		marginLeft: 12,
+	},
+	name: {
+		color: c.label,
+		fontSize: 15,
+		fontWeight: '600',
+	},
+	status: {
+		color: c.secondaryLabel,
+		fontSize: 13,
+	},
+	control: {
+		width: 44,
+		height: 44,
+		alignItems: 'center',
+		justifyContent: 'center',
+	},
+})

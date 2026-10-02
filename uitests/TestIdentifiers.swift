@@ -646,6 +646,10 @@ struct TestIdentifiers {
 		]
 		/// KRLX has one logo, so nothing labelled with this may be a button.
 		static let krlxLogoPrefix = "88.1 KRLX-FM logo"
+		/// The mini-player's stop button for KRLX, in source/features/streaming/radio/mini-player.tsx.
+		/// It shows wherever KRLX is loaded: in the Streaming Media tab bar, and
+		/// floating over every screen outside the tabbed sections.
+		static let krlxMiniPlayerStop = "Stop 88.1 KRLX-FM"
 		static let kstoTab = "KSTO"
 		static let kstoLogoPrefix = "KSTO 93.1 FM logo"
 		/// KSTO's logos in the order a tap cycles through them.

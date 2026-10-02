@@ -1,9 +1,13 @@
 import * as React from 'react'
 import {NativeTabs} from 'expo-router/unstable-native-tabs'
+import {RadioTabAccessory, useRadioStore} from '../../source/features/streaming/radio'
 
 import {MenuHeaderHost, MenuHeaderProvider} from '../../source/features/menus/menu-header'
 
 export default function MenusLayout(): React.ReactNode {
+	// While a station is loaded, the tab bar shows the mini-player.
+	let radioLoaded = useRadioStore((state) => state.stationId !== null)
+
 	return (
 		// The host sits here rather than in each tab: Expo Router keys a
 		// screen's header options by the nearest route, and inside a tab that
@@ -11,6 +15,11 @@ export default function MenusLayout(): React.ReactNode {
 		<MenuHeaderProvider>
 			<MenuHeaderHost />
 			<NativeTabs>
+				{radioLoaded ? (
+					<NativeTabs.BottomAccessory>
+						<RadioTabAccessory />
+					</NativeTabs.BottomAccessory>
+				) : null}
 				<NativeTabs.Trigger name="index">
 					<NativeTabs.Trigger.Icon sf="fork.knife" />
 					<NativeTabs.Trigger.Label>Stav Hall</NativeTabs.Trigger.Label>

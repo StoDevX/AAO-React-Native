@@ -72,6 +72,44 @@ struct StreamingMediaScreen: Screen {
 		return self
 	}
 
+	/// Tap a station button, retrying a tap that never reached JavaScript,
+	/// until `expecting` appears.
+	@discardableResult
+	func tapStationButton(_ label: String, expecting marker: String) -> Self {
+		let button = app.buttonLabelled(label)
+		XCTAssertTrue(button.waitForExistence(timeout: 30), "A button labelled \"\(label)\" should exist")
+		let appeared = app.buttonLabelled(marker)
+		for attempt in 1...3 {
+			button.tap()
+			if appeared.waitForExistence(timeout: 10) {
+				return self
+			}
+			XCTContext.runActivity(named: "Tap \(attempt) on \(label) showed no \(marker); retrying") { _ in }
+		}
+		XCTFail("Tapping \"\(label)\" never showed a button labelled \"\(marker)\"")
+		return self
+	}
+
+	/// Check the mini-player's stop button is on screen and big enough to tap.
+	@discardableResult
+	func checkMiniPlayer(stopLabelled label: String) -> Self {
+		checkTouchTarget(app.buttonLabelled(label), named: "The mini-player's \"\(label)\" button")
+		return self
+	}
+
+	/// Stop the station from the mini-player, and check the mini-player goes.
+	@discardableResult
+	func stopFromMiniPlayer(labelled label: String) -> Self {
+		let stop = app.buttonLabelled(label)
+		XCTAssertTrue(stop.waitForExistence(timeout: 10), "The mini-player should offer \"\(label)\"")
+		stop.tap()
+		let gone = XCTWaiter().wait(
+			for: [XCTNSPredicateExpectation(predicate: NSPredicate(format: "exists == false"), object: stop)],
+			timeout: 10)
+		XCTAssertEqual(gone, .completed, "The mini-player should go once the station stops")
+		return self
+	}
+
 	private func checkTouchTarget(_ element: XCUIElement, named name: String) {
 		XCTAssertTrue(element.waitForExistence(timeout: 30), "\(name) should exist")
 		XCTAssertGreaterThanOrEqual(element.frame.height, 44, "\(name) should be at least 44pt tall")

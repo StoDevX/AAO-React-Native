@@ -5,9 +5,10 @@ import {SafeAreaView} from 'react-native-safe-area-context'
 import * as c from '@frogpond/colors'
 import {callPhone} from '../../../components/call-phone'
 import {Row} from '@frogpond/layout'
-import {StreamPlayer} from './player'
-import type {HtmlAudioError, PlayState} from './types'
+import type {PlayState} from './types'
 import {theming, type RadioLogo} from './theme'
+import type {Station} from './stations'
+import {useRadioStore, useStationPlayback} from './store'
 import {ActionButton, CallButton, ShowCalendarButton} from './buttons'
 import {openUrl} from '@frogpond/open-url'
 import {ScratchableLogo} from './scratchable-logo'
@@ -55,25 +56,19 @@ function PlayButton(props: PlayButtonProps): React.ReactNode {
 }
 
 type Props = {
-	/** The station's logos. With more than one, tapping the logo shows the next. */
-	logos: [RadioLogo, ...RadioLogo[]]
-	playerUrl: string
-	stationNumber: string
-	title: string
-	scheduleHref: '/ksto-schedule' | '/krlx-schedule'
-	stationName: string
-	source: {
-		useEmbeddedPlayer: boolean
-		embeddedPlayerUrl: string
-		streamSourceUrl: string
-	}
+	station: Station
 }
 
 /** The error button's press: the player has nothing it can retry from here. */
 const NOTHING_TO_RETRY = (): void => undefined
 
-export function RadioControllerView(props: Props): React.ReactNode {
-	let {logos, ...screenProps} = props
+/**
+ * A station's screen. It controls the app-wide player in `RadioHost` rather
+ * than holding one of its own, so the station plays on after the screen
+ * closes.
+ */
+export function RadioControllerView({station}: Props): React.ReactNode {
+	let {logos} = station
 	// Always the first logo on arrival; a tap's choice lasts only while the
 	// screen is open.
 	let [logoIndex, setLogoIndex] = useState(0)
@@ -83,25 +78,26 @@ export function RadioControllerView(props: Props): React.ReactNode {
 
 	return (
 		<theming.ThemeProvider theme={logo.theme}>
-			<RadioScreen {...screenProps} logo={logo} onPressLogo={showNextLogo} />
+			<RadioScreen logo={logo} onPressLogo={showNextLogo} station={station} />
 		</theming.ThemeProvider>
 	)
 }
 
-type RadioScreenProps = Omit<Props, 'logos'> & {
+type RadioScreenProps = Props & {
 	logo: RadioLogo
 	onPressLogo?: () => void
 }
 
 function RadioScreen(props: RadioScreenProps): React.ReactNode {
 	const theme = theming.useTheme()
-	const {source, title, stationName, logo, onPressLogo, scheduleHref, stationNumber, playerUrl} =
-		props
+	const {station, logo, onPressLogo} = props
+	const {id, title, stationName, scheduleHref, stationNumber, playerUrl} = station
 
 	let router = useRouter()
 
-	let [playState, setPlayState] = useState<PlayState>('paused')
-	let [streamError, setStreamError] = useState<HtmlAudioError | null>(null)
+	let {playState, error: streamError} = useStationPlayback(id)
+	let startStation = useRadioStore((state) => state.play)
+	let pause = useRadioStore((state) => state.pause)
 	let [logoHeld, setLogoHeld] = useState(false)
 
 	// iOS 26 and later go back on a swipe from anywhere on the screen, which a
@@ -130,30 +126,9 @@ function RadioScreen(props: RadioScreenProps): React.ReactNode {
 		[holdSwipeBack],
 	)
 
-	let play = () => {
-		setPlayState('checking')
-	}
-
-	let pause = () => {
-		setPlayState('paused')
-	}
-
-	let handleStreamPlay = () => {
-		setPlayState('playing')
-	}
-
-	let handleStreamPause = () => {
-		setPlayState('paused')
-	}
-
-	let handleStreamEnd = () => {
-		setPlayState('paused')
-	}
-
-	let handleStreamError = (e: {code: number; message: string}) => {
-		setStreamError(e)
-		setPlayState('paused')
-	}
+	let play = useCallback(() => {
+		startStation(id)
+	}, [startStation, id])
 
 	let openSchedule = useCallback(() => {
 		router.navigate(scheduleHref)
@@ -203,22 +178,6 @@ function RadioScreen(props: RadioScreenProps): React.ReactNode {
 		</Row>
 	)
 
-	let playerBlock = ALLOW_INLINE_PLAYER ? (
-		<StreamPlayer
-			embeddedPlayerUrl={source.embeddedPlayerUrl}
-			onEnded={handleStreamEnd}
-			// onWaiting={this.handleStreamWait}
-			onError={handleStreamError}
-			// onStalled={this.handleStreamStall}
-			onPause={handleStreamPause}
-			onPlay={handleStreamPlay}
-			playState={playState}
-			streamSourceUrl={source.streamSourceUrl}
-			style={styles.webview}
-			useEmbeddedPlayer={source.useEmbeddedPlayer}
-		/>
-	) : null
-
 	let {width, height} = useWindowDimensions()
 
 	let sideways = width > height
@@ -253,7 +212,6 @@ function RadioScreen(props: RadioScreenProps): React.ReactNode {
 				<View style={styles.container}>
 					{titleBlock}
 					{controlsBlock}
-					{playerBlock}
 				</View>
 			</ScrollView>
 		</SafeAreaView>
@@ -305,14 +263,6 @@ const styles = StyleSheet.create({
 		color: c.orange,
 		marginTop: 15,
 		marginBottom: 5,
-	},
-	// Out of sight but still mounted: a view with display "none" is never
-	// created, so its page would never load.
-	webview: {
-		position: 'absolute',
-		width: 1,
-		height: 1,
-		opacity: 0,
 	},
 	spacer: {
 		width: 8,
