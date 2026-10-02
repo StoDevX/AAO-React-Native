@@ -638,11 +638,17 @@ struct TestIdentifiers {
 		static let krlxTab = "KRLX"
 		/// The station screen's buttons, as VoiceOver names them. Call and
 		/// schedule are icons alone, so their labels are all a listener has
-		/// to go on.
+		/// to go on. Chat is an icon too, but leaves the app, so it is in
+		/// `krlxLinks` instead.
 		static let krlxButtons = [
 			"Listen",
 			"Call 88.1 KRLX-FM",
 			"88.1 KRLX-FM schedule",
+		]
+		/// The station screen's buttons that leave the app, which VoiceOver
+		/// reads as links.
+		static let krlxLinks = [
+			"88.1 KRLX-FM chat",
 		]
 		/// KRLX has one logo, so nothing labelled with this may be a button.
 		static let krlxLogoPrefix = "88.1 KRLX-FM logo"
