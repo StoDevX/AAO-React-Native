@@ -6,10 +6,7 @@ const prefixTitle = (prefix: OfficeHours['prefix']): string => {
 }
 
 const officeHoursTitle = (officeHours: OfficeHours): string => {
-	const content = officeHours.content || ''
-	const label = officeHours.hrefLabel || ''
-
-	return `${content} ${label}`
+	return [officeHours.content, officeHours.hrefLabel].filter(Boolean).join(' ')
 }
 
 const descriptionText = (
