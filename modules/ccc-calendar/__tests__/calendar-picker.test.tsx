@@ -9,11 +9,6 @@ import type {CalendarSource} from '../sources'
 // `source/features/calendar/picker-state.ts` and asserted there, without a
 // stand-in for `@expo/ui`.
 
-jest.mock('expo-router', () => {
-	// oxlint-disable-next-line typescript/no-require-imports
-	return require('./expo-router-mock') as typeof import('./expo-router-mock')
-})
-
 const SOURCES: CalendarSource[] = [
 	{id: 'stolaf', title: 'St. Olaf', color: '#007aff'},
 	{id: 'presence', title: 'Presence', color: '#5856d6'},
