@@ -148,15 +148,21 @@ describe('IssueScreen', () => {
 		expect(screen.getByRole('button', {name: 'March story 0, News'})).toBeTruthy()
 	})
 
-	test('"All ›" goes back to the front page, showing that section in Latest', async () => {
+	test('"All ›" opens the list of this issue\'s stories in that section, leaving the front page be', async () => {
 		await renderIssue('week:2026-03-23')
 
 		await fireEvent.press(screen.getByRole('button', {name: 'All Opinions'}))
 
-		expect(useNewsFilterStore.getState().selectedCategories[OLAF_MESSENGER.id]).toBe(
-			'Latest:Opinions',
-		)
-		expect(mockBack).toHaveBeenCalledTimes(1)
+		expect(mockNavigate.mock.calls).toStrictEqual([
+			[
+				{
+					pathname: '/messenger/issue-section',
+					params: {key: 'week:2026-03-23', section: 'Opinions'},
+				},
+			],
+		])
+		expect(mockBack).not.toHaveBeenCalled()
+		expect(useNewsFilterStore.getState().selectedCategories[OLAF_MESSENGER.id]).toBeUndefined()
 	})
 
 	// The newest issue is the front page's top tile, whose query is saved for the next launch.

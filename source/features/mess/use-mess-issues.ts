@@ -24,3 +24,18 @@ export function useMessIssues(): {issues: MessIssue[] | undefined; query: MessIs
 	)
 	return {issues, query}
 }
+
+/**
+ * One issue by its key, undefined until the list loads or when it holds no such issue, and
+ * whether its stories are saved for the next launch: only the newest issue's are, as the front
+ * page's top tile, whose query every page of that issue shares.
+ */
+export function useMessIssue(issueKey: string): {
+	issue: MessIssue | undefined
+	persist: boolean
+	query: MessIssuesQuery
+} {
+	let {issues, query} = useMessIssues()
+	let issue = issues?.find((candidate) => candidate.key === issueKey)
+	return {issue, persist: issue !== undefined && issues?.[0]?.key === issue.key, query}
+}

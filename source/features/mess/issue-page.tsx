@@ -23,6 +23,7 @@ import {
 	shapes,
 } from '@expo/ui/swift-ui/modifiers'
 import {useQuery} from '@tanstack/react-query'
+import {splitCarousel} from '../../lib/split-carousel'
 import {cardKicker, sectionCredit} from './lib/byline'
 import {TAP_TARGET} from './lib/glyph-grid'
 import {datelineText} from './lib/issues'
@@ -36,10 +37,11 @@ import {SECTION_HEADING} from './story-blocks'
 import type {MessIssue, MessStory} from './types'
 import {useOpenStory} from './use-open-story'
 
-/** Names the lead story, every card, and every shelf's "All ›", for a UI test. */
+/** Names the lead story, every card, every shelf's "All ›", and every More tile, for a UI test. */
 export const LEAD_STORY_ID = 'mess-lead-story'
 export const STORY_CARD_ID = 'mess-story-card'
 export const SHELF_ALL_ID = 'mess-shelf-all'
+export const SHELF_MORE_ID = 'mess-shelf-more'
 
 /** The heading of the shelf of stories from no section the front page names. */
 const MORE_SHELF = 'More'
@@ -48,6 +50,8 @@ const CARD_WIDTH = 160
 const CARD_PHOTO_HEIGHT = 107
 /** A text-only card is about as tall as a card with a photo and three lines, so a shelf's cards line up. */
 const TEXT_CARD_HEIGHT = 180
+/** How many of the hidden headlines a shelf's More tile shows. */
+const MORE_PREVIEW = 3
 
 const PLAIN = buttonStyle('plain')
 /** The whole label takes a tap, blank space and all. */
@@ -84,11 +88,17 @@ const TEXT_CARD_HEADLINE = [
 	foregroundStyle(ink),
 	lineLimit(6),
 ]
+const MORE_HEADLINE = [
+	font({textStyle: 'subheadline', design: 'serif'}),
+	foregroundStyle(faded),
+	lineLimit(2),
+]
+const MORE_COUNT = [font({textStyle: 'headline'}), foregroundStyle(messRed)]
 
 type IssuePageProps = {
 	issue: MessIssue
 	columnWidth: number
-	/** Shows a section in Latest on the front page, for a shelf's "All ›" */
+	/** Opens the list of the issue's stories in a section, for a shelf's "All ›" and More tile */
 	onShowSection: (section: string) => void
 	/** Whether its stories are saved for the next launch, as the front page's top tile's are */
 	persist?: boolean
@@ -191,9 +201,14 @@ type ShelfRowProps = {
 	onShowSection: (section: string) => void
 }
 
-/** A section's heading, with "All ›" for a section that has a chip, over a sideways row of cards. */
+/**
+ * A section's heading, with "All ›" for a section that has a chip, over a sideways row of cards.
+ * A section's long row stops after six cards and ends with a More tile.
+ */
 function ShelfRow({shelf, onOpen, onShowSection}: ShelfRowProps): React.ReactNode {
 	let {section} = shelf
+	let {shown, hidden} =
+		section === null ? {shown: shelf.stories, hidden: []} : splitCarousel(shelf.stories)
 	return (
 		<VStack alignment="leading" spacing={8}>
 			<Divider />
@@ -215,12 +230,50 @@ function ShelfRow({shelf, onOpen, onShowSection}: ShelfRowProps): React.ReactNod
 			</HStack>
 			<ScrollView axes="horizontal" showsIndicators={false}>
 				<LazyHStack alignment="top" spacing={12}>
-					{shelf.stories.map((story) => (
+					{shown.map((story) => (
 						<StoryCard key={story.id} onPress={() => onOpen(story)} story={story} />
 					))}
+					{section !== null && hidden.length > 0 ? (
+						<MoreTile hidden={hidden} onPress={() => onShowSection(section)} section={section} />
+					) : null}
 				</LazyHStack>
 			</ScrollView>
 		</VStack>
+	)
+}
+
+type MoreTileProps = {
+	/** The stories the shelf left out, in order */
+	hidden: MessStory[]
+	section: string
+	onPress: () => void
+}
+
+/**
+ * The tile that ends a shelf with more than it shows, as Maps ends a place card's carousel: the
+ * next few headlines it left out, then a count that opens the same list as the heading's "All ›".
+ * Drawn as a text card, so it lines up with the shelf's other cards.
+ */
+function MoreTile({hidden, section, onPress}: MoreTileProps): React.ReactNode {
+	return (
+		<Button
+			modifiers={[
+				PLAIN,
+				accessibilityLabel(`${hidden.length} more ${section} stories`),
+				accessibilityIdentifier(SHELF_MORE_ID),
+			]}
+			onPress={onPress}
+		>
+			<VStack alignment="leading" modifiers={TEXT_CARD} spacing={6}>
+				{hidden.slice(0, MORE_PREVIEW).map((story) => (
+					<Text key={story.id} modifiers={MORE_HEADLINE}>
+						{story.title}
+					</Text>
+				))}
+				<Spacer />
+				<Text modifiers={MORE_COUNT}>{`${hidden.length} more ›`}</Text>
+			</VStack>
+		</Button>
 	)
 }
 

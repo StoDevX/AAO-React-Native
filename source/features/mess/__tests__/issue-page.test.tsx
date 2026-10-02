@@ -186,6 +186,37 @@ describe('IssuePage', () => {
 		expect(screen.queryByRole('button', {name: 'All More'})).toBeNull()
 	})
 
+	test('shows a shelf of seven whole, with no More tile', async () => {
+		let opinions = [7, 6, 5, 4, 3, 2, 1].map((id) => story(id, `Opinion ${id}`, 'Opinions'))
+		let issue = {...ISSUE, storyIds: [8, 7, 6, 5, 4, 3, 2, 1], leadId: 8}
+		queryClient.setQueryData(messKeys.issue(issue), [story(8, 'Lead', 'News'), ...opinions])
+		await renderIssue(issue)
+
+		expect(screen.getAllByRole('button', {name: /^Opinion \d/u})).toHaveLength(7)
+		expect(screen.queryByRole('button', {name: /more Opinions stories$/u})).toBeNull()
+	})
+
+	test('ends a longer shelf after six with a More tile naming the next headlines', async () => {
+		// The lead is a News story too, and on no shelf, so the News shelf holds eight.
+		let lead = story(9, 'Lead story', 'News')
+		let news = [8, 7, 6, 5, 4, 3, 2, 1].map((id) => story(id, `News ${id}`, 'News'))
+		let issue = {...ISSUE, storyIds: [9, ...news.map((s) => s.id)], leadId: 9}
+		queryClient.setQueryData(messKeys.issue(issue), [lead, ...news])
+		await renderIssue(issue)
+
+		let cards = screen.getAllByRole('button', {name: /^News \d, News$/u})
+		expect(cards.map((card) => card.props.accessibilityLabel)).toStrictEqual(
+			[8, 7, 6, 5, 4, 3].map((id) => `News ${id}, News`),
+		)
+		let more = screen.getByRole('button', {name: '2 more News stories'})
+		expect(within(more).getByText('News 2')).toBeTruthy()
+		expect(within(more).getByText('News 1')).toBeTruthy()
+		expect(within(more).getByText('2 more ›')).toBeTruthy()
+
+		await fireEvent.press(more)
+		expect(onShowSection).toHaveBeenCalledWith('News')
+	})
+
 	test("opens a card's story, and the lead's, in the reader", async () => {
 		queryClient.setQueryData(messKeys.issue(ISSUE), STORIES)
 		await renderIssue()
