@@ -140,6 +140,15 @@ struct MessFrontPage: Screen {
 		return self
 	}
 
+	/// Open the newest issue from its tile, and wait for its page to lead with a story.
+	@discardableResult
+	func openNewestIssue() -> MessIssueScreen {
+		XCTAssertTrue(topTile.waitForHittable(), "the newest issue's tile should be ready to tap")
+		topTile.tap()
+		XCTAssertTrue(lead.waitForExistence(timeout: 30), "the newest issue should lead with a story")
+		return MessIssueScreen(app: app)
+	}
+
 	/// Open the newest issue from its tile, then its lead story in the reader.
 	@discardableResult
 	func openLeadStory() -> MessStoryScreen {

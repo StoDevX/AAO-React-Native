@@ -530,6 +530,11 @@ struct TestIdentifiers {
 
 		/// The lead story, and every card on a shelf, in source/features/mess/issue-page.tsx.
 		static let leadStory = "mess-lead-story"
+		static let storyCard = "mess-story-card"
+
+		/// Each row of the More grid, the stories from no print section, in
+		/// source/features/mess/issue-page.tsx.
+		static let moreGridRow = "mess-more-grid-row"
 
 		/// A section's column chips, each labelled with its column, in source/features/mess/section-page.tsx.
 		static let columnChip = "mess-column-chip"

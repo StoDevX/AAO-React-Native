@@ -1,6 +1,6 @@
 import {describe, expect, it} from '@jest/globals'
 import type {MessStory} from '../../types'
-import {leadStory, shelvesOf} from '../shelves'
+import {leadStory, sectionStories, shelvesOf} from '../shelves'
 
 const PHOTO = {url: 'https://olafmessenger.com/photo.jpg', width: 1200, height: 800, caption: ''}
 
@@ -100,5 +100,17 @@ describe('shelvesOf', () => {
 		expect(shelvesOf([story(1, 'News')], undefined).map((shelf) => shelf.section)).toStrictEqual([
 			'News',
 		])
+	})
+})
+
+describe('sectionStories', () => {
+	it("holds every story in the section, newest first, the issue's lead among them", () => {
+		let stories = [story(4, 'News'), story(3, 'Opinions'), story(2, 'News'), story(1, 'News')]
+		// The lead is whichever story the page leads with; the list is not told which, and keeps it.
+		expect(ids(sectionStories(stories, 'News'))).toStrictEqual([4, 2, 1])
+	})
+
+	it('holds nothing for a section the issue has no stories in', () => {
+		expect(sectionStories([story(1, 'News')], 'Sports')).toStrictEqual([])
 	})
 })
