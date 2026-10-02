@@ -4,6 +4,7 @@ import {describe, expect, test} from '@jest/globals'
 
 import {
 	AllViews,
+	TiledViews,
 	CUSTOM_SYMBOLS,
 	HOME_GROUPS,
 	iconImage,
@@ -34,11 +35,46 @@ describe('the views registry', () => {
 	})
 })
 
+describe('TiledViews', () => {
+	// The tiled home is today's: one Menus tile and one Streaming Media tile,
+	// which tab between their cafes and stations, and none of the tiles the
+	// grouped home adds.
+	test('are the tiles the home screen has always had, in their order', () => {
+		expect(TiledViews().map((view) => view.title)).toEqual([
+			'Menus',
+			'Balances',
+			'Balances',
+			'Hours',
+			'Calendar',
+			'Directory',
+			'Streaming Media',
+			'Olaf Messenger',
+			'Map',
+			'Transit',
+			'Dictionary',
+			'Student Orgs',
+			'More',
+			'stoPrint',
+			'Course Catalog',
+			'Student Work',
+			'St. Olaf News',
+			'Athletics',
+			'Carleton Campus',
+		])
+	})
+
+	test('keep Athletics and Carleton Campus to dev mode', () => {
+		let devOnly = TiledViews()
+			.filter((view) => view.devOnly)
+			.map((view) => view.title)
+
+		expect(devOnly).toEqual(['Athletics', 'Carleton Campus'])
+	})
+})
+
 describe('homeSections', () => {
 	test('draws the groups in their fixed order', () => {
-		let order = homeSections(AllViews(), {isDev: false, layout: 'grouped'}).map(
-			(section) => section.id,
-		)
+		let order = homeSections(AllViews(), {isDev: false}).map((section) => section.id)
 
 		expect(order).toEqual([
 			'eat',
@@ -53,7 +89,7 @@ describe('homeSections', () => {
 	})
 
 	test('leaves out the Dev group outside dev mode', () => {
-		let ids = homeSections(AllViews(), {isDev: false, layout: 'grouped'}).flatMap((section) =>
+		let ids = homeSections(AllViews(), {isDev: false}).flatMap((section) =>
 			section.views.map((view) => view.id),
 		)
 
@@ -62,46 +98,17 @@ describe('homeSections', () => {
 	})
 
 	test('adds the Dev group, last, in dev mode', () => {
-		let sections = homeSections(AllViews(), {isDev: true, layout: 'grouped'})
+		let sections = homeSections(AllViews(), {isDev: true})
 
 		expect(sections.at(-1)?.id).toBe('dev')
 	})
 
 	test('shows Athletics outside dev mode', () => {
-		let whatsOn = homeSections(AllViews(), {isDev: false, layout: 'grouped'}).find(
+		let whatsOn = homeSections(AllViews(), {isDev: false}).find(
 			(section) => section.id === 'whats-on',
 		)
 
 		expect(whatsOn?.views.map((view) => view.id)).toContain('athletics')
-	})
-
-	test('grouped opens each cafe and station from its own tile', () => {
-		let ids = homeSections(AllViews(), {isDev: false, layout: 'grouped'}).flatMap((section) =>
-			section.views.map((view) => view.id),
-		)
-
-		expect(ids).toEqual(expect.arrayContaining(['stav-hall', 'the-cage', 'ksto', 'krlx']))
-		expect(ids).not.toContain('menus')
-		expect(ids).not.toContain('streaming-media')
-	})
-
-	test('tiled opens the cafes and the stations from one tile each, which tab between them', () => {
-		let ids = homeSections(AllViews(), {isDev: false, layout: 'tiled'}).flatMap((section) =>
-			section.views.map((view) => view.id),
-		)
-
-		expect(ids).toEqual(expect.arrayContaining(['menus', 'streaming-media']))
-		for (let split of [
-			'stav-hall',
-			'the-cage',
-			'the-pause',
-			'ksto',
-			'krlx',
-			'streams',
-			'webcams',
-		]) {
-			expect(ids).not.toContain(split)
-		}
 	})
 
 	test('drops a disabled view, and a group it leaves empty', () => {
@@ -109,7 +116,7 @@ describe('homeSections', () => {
 			view.group === 'just-for-fun' ? {...view, disabled: true} : view,
 		)
 
-		let ids = homeSections(views, {isDev: false, layout: 'grouped'}).map((section) => section.id)
+		let ids = homeSections(views, {isDev: false}).map((section) => section.id)
 
 		expect(ids).not.toContain('just-for-fun')
 	})

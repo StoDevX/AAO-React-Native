@@ -15,6 +15,7 @@ import {SearchBar} from '../../source/components/search-bar'
 import {filterLinkGroups} from '../../source/features/more/helpers'
 import {searchLinksOptions} from '../../source/features/more/query'
 import {sectionIndexLabel} from '../../source/lib/section-index-label'
+import {useHomeLayoutStore} from '../../source/features/home/store'
 
 function MoreView(): React.ReactNode {
 	let [query, setQuery] = React.useState('')
@@ -80,9 +81,12 @@ function MoreView(): React.ReactNode {
 }
 
 export default function MorePage(): React.ReactNode {
+	// Titled by its tile: the tiled home calls it More, the others A–Z.
+	let layout = useHomeLayoutStore((state) => state.layout)
+
 	return (
 		<>
-			<Stack.Title>A–Z</Stack.Title>
+			<Stack.Title>{layout === 'tiled' ? 'More' : 'A–Z'}</Stack.Title>
 			<MoreView />
 		</>
 	)

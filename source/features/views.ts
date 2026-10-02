@@ -2,7 +2,6 @@ import * as c from '@frogpond/colors'
 import type {Gradient} from '@frogpond/colors'
 import type {ImageProps} from '@expo/ui/swift-ui'
 import {useRouter} from 'expo-router'
-import type {HomeLayout} from './home/store'
 
 type r = typeof useRouter extends () => infer T ? T : never
 type href = r extends {push: (href: infer H) => void} ? H : never
@@ -62,22 +61,12 @@ export function iconImage(
 }
 
 type CommonView = {
-	/** Stable across renames: pins, recents and collapsed groups are stored by it. */
-	id: string
 	/** The destination's full name, which VoiceOver reads and the screen is titled with. */
 	title: string
 	icon: SymbolName
 	/** The title's typeface, for a view whose own screens use another. */
 	titleDesign?: 'serif'
 	gradient: Gradient
-	group: HomeGroupId
-	/**
-	 * Draws the view only in this layout. The Menus and Streaming Media routes
-	 * tab between their cafes and stations when home is tiled, and the grouped
-	 * layout opens each from a tile of its own, so each layout has the tiles
-	 * that suit it.
-	 */
-	layout?: HomeLayout
 	disabled?: boolean
 	devOnly?: boolean
 }
@@ -94,24 +83,21 @@ type WebLinkView = {
 
 export type ViewType = CommonView & (NativeView | WebLinkView)
 
+/** A view the grouped home draws: it belongs to a group and has a stable name of its own. */
+export type HomeView = ViewType & {
+	/** Stable across renames: pins, recents and collapsed groups are stored by it. */
+	id: string
+	group: HomeGroupId
+}
+
 /** Whether tapping `view` leaves the app's own screens for a web page. */
 export function opensInBrowser(view: ViewType): boolean {
 	return view.type !== 'view'
 }
 
-export const AllViews = (): Array<ViewType> => {
+export const AllViews = (): Array<HomeView> => {
 	return [
 		// Eat
-		{
-			type: 'view',
-			view: '/menus',
-			id: 'menus',
-			title: 'Menus',
-			icon: 'fork.knife',
-			gradient: c.greenGradient,
-			group: 'eat',
-			layout: 'tiled',
-		},
 		{
 			type: 'view',
 			view: '/menus',
@@ -120,7 +106,6 @@ export const AllViews = (): Array<ViewType> => {
 			icon: 'fork.knife',
 			gradient: c.greenGradient,
 			group: 'eat',
-			layout: 'grouped',
 		},
 		{
 			type: 'view',
@@ -130,7 +115,6 @@ export const AllViews = (): Array<ViewType> => {
 			icon: 'cup.and.saucer.fill',
 			gradient: c.orangeGradient,
 			group: 'eat',
-			layout: 'grouped',
 		},
 		{
 			type: 'view',
@@ -140,7 +124,6 @@ export const AllViews = (): Array<ViewType> => {
 			icon: 'pawprint.fill',
 			gradient: c.redGradient,
 			group: 'eat',
-			layout: 'grouped',
 		},
 		{
 			type: 'url',
@@ -273,23 +256,12 @@ export const AllViews = (): Array<ViewType> => {
 		// Listen & watch
 		{
 			type: 'view',
-			view: '/streaming-media',
-			id: 'streaming-media',
-			title: 'Streaming Media',
-			icon: 'play.rectangle.fill',
-			gradient: c.lightBlueGradient,
-			group: 'listen-watch',
-			layout: 'tiled',
-		},
-		{
-			type: 'view',
 			view: '/streaming-media/ksto',
 			id: 'ksto',
 			title: 'KSTO',
 			icon: 'radio.fill',
 			gradient: c.purpleGradient,
 			group: 'listen-watch',
-			layout: 'grouped',
 		},
 		{
 			type: 'view',
@@ -299,7 +271,6 @@ export const AllViews = (): Array<ViewType> => {
 			icon: 'mic.fill',
 			gradient: c.violetGradient,
 			group: 'listen-watch',
-			layout: 'grouped',
 		},
 		{
 			type: 'view',
@@ -309,7 +280,6 @@ export const AllViews = (): Array<ViewType> => {
 			icon: 'play.rectangle.fill',
 			gradient: c.lightBlueGradient,
 			group: 'listen-watch',
-			layout: 'grouped',
 		},
 		{
 			type: 'view',
@@ -319,7 +289,6 @@ export const AllViews = (): Array<ViewType> => {
 			icon: 'web.camera.fill',
 			gradient: c.blueGradient,
 			group: 'listen-watch',
-			layout: 'grouped',
 		},
 
 		// Just for fun
@@ -415,26 +384,167 @@ export const AllViews = (): Array<ViewType> => {
 	]
 }
 
-export type HomeSection = HomeGroup & {views: ViewType[]}
+export type HomeSection = HomeGroup & {views: HomeView[]}
 
 /**
  * The groups home draws, each holding its views in registry order. A group
  * left with nothing to show -- Dev outside dev mode -- is dropped rather than
  * drawn as an empty header.
  */
-export function homeSections(
-	views: ViewType[],
-	{isDev, layout}: {isDev: boolean; layout: HomeLayout},
-): HomeSection[] {
-	let shown = views.filter(
-		(view) =>
-			!view.disabled &&
-			(isDev || !view.devOnly) &&
-			// A list is grouped like the grouped layout, so it draws the same tiles.
-			(view.layout === undefined || view.layout === (layout === 'tiled' ? 'tiled' : 'grouped')),
-	)
+export function homeSections(views: HomeView[], {isDev}: {isDev: boolean}): HomeSection[] {
+	let shown = views.filter((view) => !view.disabled && (isDev || !view.devOnly))
 	return HOME_GROUPS.map((group) => ({
 		...group,
 		views: shown.filter((view) => view.group === group.id),
 	})).filter((section) => section.views.length > 0)
+}
+
+/**
+ * The tiles of the tiled home: today's one flat grid, in its order. Menus and
+ * Streaming Media are one tile each there, opening screens that tab between
+ * their cafes and stations; the grouped home gives each its own tile.
+ */
+export const TiledViews = (): Array<ViewType> => {
+	return [
+		{
+			type: 'view',
+			view: '/menus',
+			title: 'Menus',
+			icon: 'fork.knife',
+			gradient: c.greenGradient,
+		},
+		{
+			type: 'url',
+			url: 'https://sis.stolaf.edu/sis/index.cfm',
+			title: 'Balances',
+			icon: 'arrow.up.right',
+			gradient: c.goldGradient,
+		},
+		// Balances opens SIS on the web instead. To bring the native screen
+		// back, move `disabled` to the entry above: the home grid keys tiles by
+		// title, so only one Balances can be on at a time.
+		{
+			type: 'view',
+			view: '/balances',
+			title: 'Balances',
+			icon: 'person.text.rectangle.fill',
+			gradient: c.goldGradient,
+			disabled: true,
+		},
+		{
+			type: 'view',
+			view: '/hours',
+			title: 'Hours',
+			icon: 'clock.fill',
+			gradient: c.blueGradient,
+		},
+		{
+			type: 'view',
+			view: '/calendar',
+			title: 'Calendar',
+			icon: 'calendar',
+			gradient: c.violetGradient,
+		},
+		{
+			type: 'view',
+			view: '/directory',
+			title: 'Directory',
+			icon: 'person.crop.rectangle.fill',
+			gradient: c.redGradient,
+		},
+		{
+			type: 'view',
+			view: '/streaming-media',
+			title: 'Streaming Media',
+			icon: 'play.rectangle.fill',
+			gradient: c.lightBlueGradient,
+		},
+		{
+			type: 'view',
+			view: '/messenger',
+			title: 'Olaf Messenger',
+			icon: 'olaf-messenger',
+			titleDesign: 'serif',
+			gradient: c.purpleGradient,
+		},
+		{
+			type: 'view',
+			view: '/map?campus=stolaf',
+			title: 'Map',
+			icon: 'map.fill',
+			gradient: c.greenGradient,
+		},
+		{
+			type: 'view',
+			view: '/transit',
+			title: 'Transit',
+			icon: 'bus.fill',
+			gradient: c.grayGradient,
+		},
+		{
+			type: 'view',
+			view: '/dictionary',
+			title: 'Dictionary',
+			icon: 'character.book.closed.fill',
+			gradient: c.pinkGradient,
+		},
+		{
+			type: 'view',
+			view: '/student-orgs',
+			title: 'Student Orgs',
+			icon: 'person.3.fill',
+			gradient: c.sageGradient,
+		},
+		{
+			type: 'view',
+			view: '/more',
+			title: 'More',
+			icon: 'ellipsis.circle.fill',
+			gradient: c.mintGradient,
+		},
+		{
+			type: 'view',
+			view: '/print-jobs',
+			title: 'stoPrint',
+			icon: 'printer.fill',
+			gradient: c.yellowGradient,
+		},
+		{
+			type: 'view',
+			view: '/course-search',
+			title: 'Course Catalog',
+			icon: 'graduationcap.fill',
+			gradient: c.tanGradient,
+		},
+		{
+			type: 'view',
+			view: '/student-work',
+			title: 'Student Work',
+			icon: 'briefcase.fill',
+			gradient: c.orangeGradient,
+		},
+		{
+			type: 'view',
+			view: '/st-olaf-news',
+			title: 'St. Olaf News',
+			icon: 'megaphone.fill',
+			gradient: c.indigoGradient,
+		},
+		{
+			type: 'view',
+			view: '/athletics',
+			title: 'Athletics',
+			icon: 'trophy.fill',
+			gradient: c.paleGoldGradient,
+			devOnly: true,
+		},
+		{
+			type: 'view',
+			view: '/hours?campus=carleton',
+			title: 'Carleton Campus',
+			icon: 'building.2.fill',
+			gradient: c.blueGradient,
+			devOnly: true,
+		},
+	]
 }

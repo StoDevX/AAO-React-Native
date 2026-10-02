@@ -1,4 +1,4 @@
-import {AllViews} from '../views'
+import {TiledViews} from '../views'
 import type {ViewType} from '../views'
 
 /** A screen a Home Screen quick action can open. */
@@ -29,16 +29,15 @@ const CAFE_MENUS: QuickActionDestination[] = [
 
 /**
  * Every screen the quick-action picker offers: the café menus, then each home
- * tile that opens a screen in the app. The tiles for a café's menu are left
- * out, since the café menus above already open them. So are the tiles only a
- * tiled home draws, which open the same screens as their grouped ones.
+ * tile that opens a screen in the app. The bare Menus tile is left out, since
+ * it opens the same screen as Stav Menu.
  */
 export function quickActionDestinations(): QuickActionDestination[] {
-	let tiles = AllViews().flatMap((view): QuickActionDestination[] => {
-		if (view.type !== 'view' || view.disabled || view.devOnly || view.layout === 'tiled') {
+	let tiles = TiledViews().flatMap((view): QuickActionDestination[] => {
+		if (view.type !== 'view' || view.disabled || view.devOnly) {
 			return []
 		}
-		if (typeof view.view !== 'string' || view.view.startsWith('/menus')) {
+		if (typeof view.view !== 'string' || view.view === '/menus') {
 			return []
 		}
 		return [{id: view.title, title: view.title, icon: view.icon, href: view.view}]

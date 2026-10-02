@@ -30,7 +30,13 @@ import * as c from '@frogpond/colors'
 import {useDispatch, useSelector} from 'react-redux'
 import {Restart} from 'react-native-restart-newarch'
 
-import {AllViews, homeSections, type HomeSection, type ViewType} from '../source/features/views'
+import {
+	AllViews,
+	homeSections,
+	TiledViews,
+	type HomeSection,
+	type ViewType,
+} from '../source/features/views'
 import {HomeGroupHeader} from '../source/features/home/group-header'
 import {
 	FILL_WIDTH,
@@ -226,7 +232,8 @@ export default function HomePage(): React.ReactNode {
 	let {width: screenWidth, fontScale} = useWindowDimensions()
 	let layout = useHomeLayoutStore((state) => state.layout)
 	let setLayout = useHomeLayoutStore((state) => state.setLayout)
-	let sections = homeSections(AllViews(), {isDev, layout})
+	let sections = homeSections(AllViews(), {isDev})
+	let tiledViews = TiledViews().filter((view) => !view.disabled && (isDev || !view.devOnly))
 
 	return (
 		<>
@@ -304,13 +311,13 @@ export default function HomePage(): React.ReactNode {
 								/>
 							</RNHostView>
 
-							<VStack spacing={TILE_SPACING * 2}>
+							<VStack spacing={layout === 'tiled' ? TILE_SPACING : TILE_SPACING * 2}>
 								{layout === 'tiled' ? (
 									<TileGrid
 										accessibilityId={HOME_GRID_ID}
 										columns={homeColumnsForFontScale(fontScale)}
-										items={sections.flatMap((section) => section.views)}
-										keyForItem={(view) => view.id}
+										items={tiledViews}
+										keyForItem={(view) => view.title}
 										renderItem={(view) => (
 											<HomeScreenButton onPress={() => openView(view)} view={view} />
 										)}

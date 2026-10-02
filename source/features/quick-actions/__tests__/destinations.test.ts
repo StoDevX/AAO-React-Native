@@ -18,21 +18,21 @@ describe('quickActionDestinations', () => {
 		expect(quickActionDestinations().some((d) => d.href.includes('the-pause'))).toBe(false)
 	})
 
-	test('leaves out the Menus tiles, which the café menus already open', () => {
+	test('leaves out the bare Menus tile, which Stav Menu already opens', () => {
 		expect(ids()).not.toContain('Menus')
-		expect(ids()).not.toContain('The Cage')
 		expect(quickActionDestinations().filter((d) => d.href === '/menus')).toHaveLength(1)
 	})
 
 	test('offers in-app home tiles', () => {
 		expect(ids()).toEqual(
-			expect.arrayContaining(['Olaf Messenger', 'Transit', 'Calendar', 'Streams']),
+			expect.arrayContaining(['Olaf Messenger', 'Transit', 'Calendar', 'Streaming Media']),
 		)
 	})
 
 	test('leaves out tiles that open a web page, and disabled or dev-only tiles', () => {
 		// Balances opens SIS on the web; its native screen is disabled.
 		expect(ids()).not.toContain('Balances')
+		expect(ids()).not.toContain('Athletics')
 		expect(ids()).not.toContain('Carleton Campus')
 	})
 
