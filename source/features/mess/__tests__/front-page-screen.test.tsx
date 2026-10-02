@@ -202,6 +202,8 @@ describe('FrontPageScreen', () => {
 
 		await fireEvent.press(menuItem('Latest'))
 		expect(screen.getByLabelText('View: Latest')).toBeTruthy()
+		// Latest has no feed cached, so it fetches one.
+		await waitForQueriesToSettle(queryClient)
 	})
 
 	test('offers the sections in Latest only, and remembers the view', async () => {
