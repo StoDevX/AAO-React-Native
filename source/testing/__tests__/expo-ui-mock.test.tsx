@@ -1,9 +1,10 @@
 import React from 'react'
 import {describe, expect, jest, test} from '@jest/globals'
-import {fireEvent, render, screen} from '@testing-library/react-native'
+import {fireEvent, isHiddenFromAccessibility, render, screen} from '@testing-library/react-native'
 import {Text as RNText} from 'react-native'
 
 import {
+	accessibilityHidden,
 	accessibilityIdentifier,
 	accessibilityLabel,
 	BottomSheet,
@@ -92,6 +93,19 @@ describe('expo-ui-mock', () => {
 
 			expect(screen.getByText('kept 7 nested')).toBeTruthy()
 			expect(screen.queryByText('dropped')).toBeNull()
+		})
+	})
+
+	describe('Text and accessibilityHidden', () => {
+		test('hides a text from VoiceOver when the modifier is on it', async () => {
+			await render(<Text modifiers={[accessibilityHidden(true)]}>A caption</Text>)
+			let text = screen.getByText('A caption', {includeHiddenElements: true})
+			expect(isHiddenFromAccessibility(text)).toBe(true)
+		})
+
+		test('leaves a text readable without it', async () => {
+			await render(<Text>A caption</Text>)
+			expect(isHiddenFromAccessibility(screen.getByText('A caption'))).toBe(false)
 		})
 	})
 

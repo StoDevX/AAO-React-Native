@@ -3,7 +3,13 @@ import {join} from 'node:path'
 import * as React from 'react'
 import {Linking} from 'react-native'
 import {afterEach, beforeEach, describe, expect, jest, test} from '@jest/globals'
-import {act, fireEvent, render, screen} from '@testing-library/react-native'
+import {
+	act,
+	fireEvent,
+	isHiddenFromAccessibility,
+	render,
+	screen,
+} from '@testing-library/react-native'
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query'
 import {openUrl} from '@frogpond/open-url'
 import {fetchManifest, fetchSourceBody, type Jrd} from '@frogpond/data-sources'
@@ -628,6 +634,21 @@ describe('StoryScreen', () => {
 		})
 	})
 
+	// The photo's button reads the caption already, so the text under it would read it twice.
+	test("hides a caption from VoiceOver where its photo's button reads it", async () => {
+		await renderStory(36948)
+
+		for (let caption of ['Students deliver the petition.', 'The petition, signed.']) {
+			let text = screen.getByText(caption, {includeHiddenElements: true})
+			expect(isHiddenFromAccessibility(text)).toBe(true)
+		}
+	})
+
+	test("keeps a Photo post's caption readable, as its picture's button reads the title", async () => {
+		await renderStory(33129)
+		expect(isHiddenFromAccessibility(screen.getByText('At the cup'))).toBe(false)
+	})
+
 	test('draws an article as an article even with a sign remembered', async () => {
 		useMessStore.setState({lastSign: 'taurus'})
 		await renderStory(36911)
@@ -705,7 +726,8 @@ describe('StoryScreen', () => {
 
 	test("credits a Playlist post's picture under it", async () => {
 		await renderStory(30713)
-		expect(screen.getAllByText('Anna Weimholt ’22')).toHaveLength(1)
+		// Drawn once, and read once, as the label of the picture's button.
+		expect(screen.getAllByText('Anna Weimholt ’22', {includeHiddenElements: true})).toHaveLength(1)
 	})
 
 	test('reads a Playlist post with nothing in its body from its web page', async () => {

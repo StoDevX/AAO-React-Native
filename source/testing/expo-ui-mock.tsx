@@ -326,6 +326,11 @@ function identifierOf(modifiers?: Modifier[]): string | undefined {
 	return typeof found?.identifier === 'string' ? found.identifier : undefined
 }
 
+/** Whether an `accessibilityHidden(…)` modifier hides the view from VoiceOver. */
+function isAccessibilityHidden(modifiers?: Modifier[]): boolean {
+	return modifierOf(modifiers, 'accessibilityHidden')?.hidden === true
+}
+
 /** The traits an `accessibilityAddTraits(…)` or `accessibilityRemoveTraits(…)` names. */
 function traitsOf(modifiers: Modifier[] | undefined, type: string): unknown[] {
 	let traits = modifierOf(modifiers, type)?.traits
@@ -446,7 +451,8 @@ export function RNHostView({children}: WithModifiers & {matchContents?: boolean}
  * receives.
  *
  * A text given the `isHeader` trait takes the `header` role, which is how
- * VoiceOver's headings rotor finds it on device.
+ * VoiceOver's headings rotor finds it on device. One given
+ * `accessibilityHidden(true)` is hidden from accessibility, as VoiceOver skips it.
  */
 export function Text({
 	children,
@@ -463,6 +469,7 @@ export function Text({
 	return (
 		<RNText
 			accessibilityLabel={labelOf(modifiers)}
+			accessibilityElementsHidden={isAccessibilityHidden(modifiers)}
 			accessibilityRole={isHeader ? 'header' : undefined}
 			testID={identifierOf(modifiers) ?? testID}
 		>

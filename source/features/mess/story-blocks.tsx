@@ -2,6 +2,7 @@ import * as React from 'react'
 import {Button, HStack, Image, Text, VStack} from '@expo/ui/swift-ui'
 import {
 	accessibilityAddTraits,
+	accessibilityHidden,
 	accessibilityIdentifier,
 	accessibilityLabel,
 	buttonStyle,
@@ -42,6 +43,8 @@ export const CAPTION = [
 	foregroundStyle(faded),
 	textSelection(true),
 ]
+/** A caption its photo's button already reads as its label, so VoiceOver skips it here. */
+const CAPTION_READ_BY_PHOTO = [...CAPTION, accessibilityHidden(true)]
 /** A story's opening words, in the font's own small capitals. */
 const OPENING = [font({textStyle: 'body', design: 'serif', smallCaps: true})]
 const SITE_LINK = [font({textStyle: 'callout', weight: 'semibold'}), foregroundStyle(messRed)]
@@ -238,9 +241,19 @@ export function StoryBlocks({
 	))
 }
 
-/** A photo's caption or credit, under it; nothing when it has none. */
-export function PhotoCaption({caption}: {caption: string}): React.ReactNode {
-	return caption ? <Text modifiers={CAPTION}>{caption}</Text> : null
+/**
+ * A photo's caption or credit, under it; nothing when it has none. `readByPhoto` hides it
+ * from VoiceOver where the photo's button carries the caption as its label, so it reads once.
+ */
+export function PhotoCaption({
+	caption,
+	readByPhoto = false,
+}: {
+	caption: string
+	readByPhoto?: boolean
+}): React.ReactNode {
+	if (!caption) return null
+	return <Text modifiers={readByPhoto ? CAPTION_READ_BY_PHOTO : CAPTION}>{caption}</Text>
 }
 
 type PhotoFigureProps = {
@@ -271,7 +284,8 @@ export function PhotoFigure({
 			>
 				<Photo height={height} url={photo.url} width={columnWidth} />
 			</ViewerButton>
-			<PhotoCaption caption={photo.caption} />
+			{/* The button is labelled by this caption whenever there is one. */}
+			<PhotoCaption caption={photo.caption} readByPhoto={true} />
 		</VStack>
 	)
 }
