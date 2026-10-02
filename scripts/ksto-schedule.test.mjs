@@ -36,6 +36,14 @@ describe('postContent', () => {
 		assert.equal(updated, '2026-03-22T16:24:01Z')
 	})
 
+	test('finds the script however its tags are cased or spaced', () => {
+		let {script: found} = postContent({
+			modified_gmt: '2026-03-22T16:24:01',
+			content: {rendered: '<SCRIPT type="text/javascript">let nowPlaying = {}</script >'},
+		})
+		assert.equal(found, 'let nowPlaying = {}')
+	})
+
 	test('refuses a response without the modified time', () => {
 		assert.throws(
 			() => postContent({content: {rendered: '<script>let nowPlaying = {}</script>'}}),

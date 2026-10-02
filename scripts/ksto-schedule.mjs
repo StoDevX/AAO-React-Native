@@ -26,7 +26,8 @@ const DAY_ORDER = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'satu
 
 const HOURS = Array.from({length: 24}, (_, hour) => hour)
 
-const SCRIPT = /<script\b[^>]*>(.*?)<\/script>/gsu
+/** A script element, however its tags are cased or spaced, as browsers read them. */
+const SCRIPT = /<script\b[^>]*>(.*?)<\/script\b[^>]*>/gisu
 
 /** A poster the app can draw. Some posters on the post are PDFs, which it cannot. */
 const IMAGE = /\.(?:jpe?g|png|gif|webp)(?:\?.*)?$/iu
