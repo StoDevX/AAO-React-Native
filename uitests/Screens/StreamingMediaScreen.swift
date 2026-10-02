@@ -84,6 +84,28 @@ struct StreamingMediaScreen: Screen {
 		return self
 	}
 
+	/// Check the row of station buttons, from the button labelled `first` to
+	/// the one labelled `last`, keeps the screen's 20pt margin on each side.
+	/// A row too wide for the screen stays centred but eats into both margins,
+	/// and on a narrow enough screen runs off both edges.
+	@discardableResult
+	func checkStationButtonsKeepTheMargins(first: String, last: String) -> Self {
+		let firstButton = app.buttonLabelled(first)
+		let lastButton = app.buttonLabelled(last)
+		XCTAssertTrue(firstButton.waitForExistence(timeout: 30), "\"\(first)\" should exist")
+		XCTAssertTrue(lastButton.waitForExistence(timeout: 30), "\"\(last)\" should exist")
+		capture("Station buttons")
+
+		let window = app.windows.firstMatch.frame
+		let leftMargin = firstButton.frame.minX - window.minX
+		let rightMargin = window.maxX - lastButton.frame.maxX
+		XCTAssertGreaterThanOrEqual(
+			leftMargin, 19.5, "The station buttons should start at least 20pt from the left edge, not \(leftMargin)pt")
+		XCTAssertGreaterThanOrEqual(
+			rightMargin, 19.5, "The station buttons should end at least 20pt from the right edge, not \(rightMargin)pt")
+		return self
+	}
+
 	private func checkTouchTarget(_ element: XCUIElement, named name: String) {
 		XCTAssertTrue(element.waitForExistence(timeout: 30), "\(name) should exist")
 		XCTAssertGreaterThanOrEqual(element.frame.height, 44, "\(name) should be at least 44pt tall")

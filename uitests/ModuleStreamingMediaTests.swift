@@ -12,6 +12,10 @@ class ModuleStreamingMediaTests: UITestCaseUnbooted {
 			)
 			.checkStationButtons(TestIdentifiers.StreamingMedia.krlxButtons)
 			.checkStationLinks(TestIdentifiers.StreamingMedia.krlxLinks)
+			.checkStationButtonsKeepTheMargins(
+				first: TestIdentifiers.StreamingMedia.krlxButtons[0],
+				last: TestIdentifiers.StreamingMedia.krlxButtons[2]
+			)
 			.checkLogoIsNotAButton(TestIdentifiers.StreamingMedia.krlxLogoPrefix)
 	}
 

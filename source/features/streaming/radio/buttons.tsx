@@ -21,12 +21,13 @@ export function ActionButton(props: ActionButtonProps): React.ReactNode {
 	let {icon, text, accessibilityLabel = text, accessibilityRole = 'button', onPress} = props
 	let bg = {backgroundColor: theme.tintColor}
 	let fg = {color: theme.buttonTextColor}
-	let style = [styles.button, styles.largeButton, bg]
+	let style = [styles.button, bg]
 
 	return (
 		<Touchable
 			accessibilityLabel={accessibilityLabel}
 			accessibilityRole={accessibilityRole}
+			containerStyle={styles.largeButton}
 			highlight={false}
 			onPress={onPress}
 			style={style}
@@ -113,7 +114,9 @@ const styles = StyleSheet.create({
 		justifyContent: 'center',
 		flexDirection: 'row',
 	},
-	// Gives way on a narrow screen, so a fourth button still fits the row.
+	// Gives way on a narrow screen, so a fourth button still fits the row. It
+	// is the Touchable's `containerStyle` because that lands on the row's own
+	// child; `style` lands on a View inside it, where a shrink acts on height.
 	largeButton: {
 		width: 180,
 		flexShrink: 1,
