@@ -6,9 +6,7 @@ import {
 	font,
 	foregroundStyle,
 	frame,
-	id,
 	kerning,
-	onAppear,
 	padding,
 	textCase,
 } from '@expo/ui/swift-ui/modifiers'
@@ -25,7 +23,7 @@ import {
 	yearGroups,
 } from './lib/issue-grid'
 import {issueDate} from './lib/issues'
-import {PageLoading, PageNotice} from './page-notice'
+import {NextPageRow} from './next-page-row'
 import {faded, ink} from './palette'
 import {messIssueOptions, messLeadTextOptions} from './query'
 import {useMessStore} from './store'
@@ -152,33 +150,13 @@ type Props = {
 /**
  * Every issue the loaded pages hold: the newest as the top tile, then the rest in rows under
  * their year, returned side by side to land in the page's lazy column so rows are built as they
- * scroll in. The row at the end fetches the next page as it comes into view; it takes a new
- * identity with each page, so it fetches again when a page adds too few issues to push it off the
- * screen; a failed page leaves the loaded issues and offers Try Again in its place.
+ * scroll in. The row at the end fetches the next page as it comes into view.
  */
 export function IssueGrid({issues, query, landscape, onOpen}: Props): React.ReactNode {
 	let top = issues[0]
 	let opened = useMessStore((state) => state.openedStories)
 	let openedIds = React.useMemo(() => new Set(opened), [opened])
 	let perRow = landscape ? PER_ROW.landscape : PER_ROW.portrait
-	let pageCount = query.data?.pages.length ?? 0
-	// Any fetch in flight, a refresh too, is left to finish: asking for the next page would
-	// cancel it. The end row's id carries whether a fetch is in flight, so it appears again,
-	// and asks, once that fetch settles.
-	let fetchMore = () => (query.isFetching ? undefined : query.fetchNextPage())
-	let endId = `issues-page-${pageCount}-${query.isFetching ? 'fetching' : 'settled'}`
-
-	let end: React.ReactNode = null
-	if (query.isFetchNextPageError) {
-		end = <PageNotice error={query.error} onRetry={() => query.fetchNextPage()} />
-	} else if (query.hasNextPage) {
-		end = (
-			// The id wraps the onAppear, so a new page rebuilds the view the onAppear sits on.
-			<VStack modifiers={[onAppear(fetchMore), id(endId)]}>
-				<PageLoading />
-			</VStack>
-		)
-	}
 
 	return (
 		<>
@@ -216,7 +194,7 @@ export function IssueGrid({issues, query, landscape, onOpen}: Props): React.Reac
 					</HStack>
 				)),
 			])}
-			{end}
+			<NextPageRow query={query} />
 		</>
 	)
 }

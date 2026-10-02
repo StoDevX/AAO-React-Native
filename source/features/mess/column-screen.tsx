@@ -1,6 +1,7 @@
 import * as React from 'react'
 import {Stack} from 'expo-router'
 import {useQuery, useQueryClient} from '@tanstack/react-query'
+import {refetchFromFirstPage} from '../../lib/infinite-data'
 import {messKeys} from './lib/keys'
 import {MessPage} from './mess-page'
 import {messCategoriesOptions} from './query'
@@ -14,7 +15,7 @@ export function ColumnScreen({id}: {id: number}): React.ReactNode {
 	return (
 		<>
 			<Stack.Screen options={{title: name}} />
-			<MessPage onRefresh={() => queryClient.refetchQueries({queryKey: messKeys.category(id)})}>
+			<MessPage onRefresh={() => refetchFromFirstPage(queryClient, messKeys.category(id))}>
 				<CategoryStories categoryId={id} />
 			</MessPage>
 		</>
