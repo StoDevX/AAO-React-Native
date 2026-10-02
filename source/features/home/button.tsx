@@ -1,6 +1,6 @@
 import * as React from 'react'
 import {useColorScheme, useWindowDimensions} from 'react-native'
-import {Button, Image, Text, VStack, ZStack, type ImageProps} from '@expo/ui/swift-ui'
+import {Button, Image, Text, VStack, ZStack} from '@expo/ui/swift-ui'
 import {
 	accessibilityHint,
 	accessibilityLabel,
@@ -13,7 +13,7 @@ import {
 	opacity,
 	padding,
 } from '@expo/ui/swift-ui/modifiers'
-import {opensInBrowser, type ViewType} from '../views'
+import {iconImage, opensInBrowser, type SymbolName, type ViewType} from '../views'
 import {GradientRoundedRectangle} from '../../components/gradient-tile'
 import {FILL_WIDTH} from '../../components/tile-layout'
 
@@ -28,7 +28,7 @@ function HomeScreenButtonLabel({
 	isDarkScheme,
 }: {
 	title: string
-	icon: NonNullable<ImageProps['systemName']>
+	icon: SymbolName
 	isDarkScheme: boolean
 }) {
 	let {fontScale} = useWindowDimensions()
@@ -55,7 +55,7 @@ function HomeScreenButtonLabel({
 					foregroundStyle({type: 'hierarchical', style: 'primary'}),
 					opacity(0.8),
 				]}
-				systemName={icon}
+				{...iconImage(icon)}
 			/>
 
 			<Text

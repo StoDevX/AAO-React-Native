@@ -6,9 +6,32 @@ import {useRouter} from 'expo-router'
 type r = typeof useRouter extends () => infer T ? T : never
 type href = r extends {push: (href: infer H) => void} ? H : never
 
+/**
+ * Symbols drawn for the app rather than shipped with iOS. Each name is a
+ * `.symbolset` in `assets/symbols/`, which `plugins/with-custom-symbols` copies
+ * into the asset catalog.
+ */
+export const CUSTOM_SYMBOLS = ['olaf-messenger'] as const
+
+type CustomSymbol = (typeof CUSTOM_SYMBOLS)[number]
+
+/** An SF Symbol's name, or a custom symbol's. */
+export type SymbolName = NonNullable<ImageProps['systemName']> | CustomSymbol
+
+function isCustomSymbol(name: SymbolName): name is CustomSymbol {
+	return (CUSTOM_SYMBOLS as readonly string[]).includes(name)
+}
+
+/** The `Image` props that draw `name`, wherever its artwork lives. */
+export function iconImage(
+	name: SymbolName,
+): Pick<ImageProps, 'systemName'> | Pick<ImageProps, 'assetName'> {
+	return isCustomSymbol(name) ? {assetName: name} : {systemName: name}
+}
+
 type CommonView = {
 	title: string
-	icon: NonNullable<ImageProps['systemName']>
+	icon: SymbolName
 	gradient: Gradient
 	disabled?: boolean
 	devOnly?: boolean
@@ -90,7 +113,7 @@ export const AllViews = (): Array<ViewType> => {
 			type: 'view',
 			view: '/messenger',
 			title: 'Olaf Messenger',
-			icon: 'newspaper.fill',
+			icon: 'olaf-messenger',
 			gradient: c.purpleGradient,
 		},
 		{
