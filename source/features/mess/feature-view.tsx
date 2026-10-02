@@ -1,17 +1,16 @@
 import * as React from 'react'
 import {VStack} from '@expo/ui/swift-ui'
-import {accessibilityIdentifier, lineSpacing, tint} from '@expo/ui/swift-ui/modifiers'
 import {ImageView} from './image-view'
-import {messRed} from './palette'
+import {faded} from './palette'
 import {LINE_SPACING} from './poem-view'
 import {SeriesRow} from './series-row'
-import {BODY_ID, CAPTION, PhotoCaption, PROSE, SiteLinkCard, StoryBlocks} from './story-blocks'
+import {BODY_PROSE, PhotoCaption, type ProseStyle, SiteLinkCard, StoryBlocks} from './story-blocks'
 import type {MessStory, StoryLayout} from './types'
 
-/** A Photo post's words, set small and italic like a caption, so the pictures lead. */
-const PHOTO_WORDS = [...CAPTION, tint(messRed), accessibilityIdentifier(BODY_ID)]
+/** A Photo post's words, set small and italic like a photo's caption, so the pictures lead. */
+const PHOTO_WORDS: ProseStyle = {textStyle: 'footnote', italic: true, color: faded}
 /** A short story's prose, with the poem page's line spacing. */
-const STORY_PROSE = [...PROSE, lineSpacing(LINE_SPACING)]
+const STORY_PROSE: ProseStyle = {...BODY_PROSE, lineSpacing: LINE_SPACING}
 
 type Props = {
 	story: MessStory
@@ -43,7 +42,7 @@ export function FeatureView({story, layout, columnWidth}: Props): React.ReactNod
 			<StoryBlocks
 				columnWidth={columnWidth}
 				opens={isShortStory}
-				paragraph={isShortStory ? STORY_PROSE : PHOTO_WORDS}
+				prose={isShortStory ? STORY_PROSE : PHOTO_WORDS}
 				story={story}
 			/>
 			{isEmpty ? (

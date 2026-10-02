@@ -6,6 +6,7 @@ import {fetchManifest, fetchSourceBody, type Jrd} from '@frogpond/data-sources'
 
 import categoriesJson from './fixtures/categories.json'
 import springPosts from './fixtures/issue-posts.json'
+import postsJson from './fixtures/posts.json'
 import {queryClient as appQueryClient, persistOptions} from '../../../init/tanstack-query'
 import {flushQueryNotifications, waitForQueriesToSettle} from '../../../testing/query-notifications'
 import {FrontPageScreen} from '../front-page-screen'
@@ -13,28 +14,17 @@ import {TOP_TILE_ID} from '../issue-grid'
 import {messIssueOptions} from '../query'
 import {parseLightPosts} from '../lib/issues'
 import {messKeys} from '../lib/keys'
+import {onePage} from './one-page'
 import {parseMessCategories} from '../lib/posts'
 import {DATELINE_ID} from '../masthead'
 import {OLAF_MESSENGER} from '../../news/sources'
 import {useNewsFilterStore} from '../../news/store'
 import type {LightPost, MessStory} from '../types'
 
-jest.mock('@expo/ui/swift-ui', () => {
-	// oxlint-disable-next-line typescript/no-require-imports
-	return require('../../../testing/expo-ui-mock') as typeof import('../../../testing/expo-ui-mock')
-})
-jest.mock('@expo/ui/swift-ui/modifiers', () => {
-	// oxlint-disable-next-line typescript/no-require-imports
-	return require('../../../testing/expo-ui-mock') as typeof import('../../../testing/expo-ui-mock')
-})
 jest.mock('@frogpond/mess-issue-tile', () => {
 	// oxlint-disable-next-line typescript/no-require-imports
 	return require('./mess-issue-tile-mock') as typeof import('./mess-issue-tile-mock')
 })
-jest.mock('@react-native-community/netinfo', () =>
-	// oxlint-disable-next-line typescript/no-require-imports
-	require('@react-native-community/netinfo/jest/netinfo-mock'),
-)
 jest.mock(
 	'react-native-safe-area-context',
 	() =>
@@ -178,13 +168,13 @@ function renderScreen() {
 }
 
 describe('FrontPageScreen', () => {
-	test("opens on By Issue, under the paper's nameplate and no dateline, with the newest issue as the top tile", async () => {
+	test("opens on By Issue, under the paper's castle rather than its nameplate and no dateline, with the newest issue as the top tile", async () => {
 		seedTop()
 		await renderScreen()
 
 		expect(isChecked('By Issue')).toBe(true)
 		expect(isChecked('Latest')).toBe(false)
-		expect(screen.getByText('The Olaf Messenger')).toBeTruthy()
+		expect(screen.queryByText('The Olaf Messenger')).toBeNull()
 		expect(screen.queryByTestId(DATELINE_ID)).toBeNull()
 		expect(screen.getByTestId(TOP_TILE_ID).props.accessibilityLabel).toBe(
 			'April 29, 2026, Student workers deliver petition',
@@ -210,11 +200,13 @@ describe('FrontPageScreen', () => {
 
 		await fireEvent.press(menuItem('Latest'))
 		expect(screen.getByLabelText('View: Latest')).toBeTruthy()
+		// Latest has no feed cached, so it fetches one.
+		await waitForQueriesToSettle(queryClient)
 	})
 
 	test('offers the sections in Latest only, and remembers the view', async () => {
 		seedTop()
-		queryClient.setQueryData(messKeys.feed, ISSUE_STORIES)
+		queryClient.setQueryData(messKeys.feed, onePage(ISSUE_STORIES))
 		await renderScreen()
 		expect(screen.queryByRole('menuitem', {name: 'Opinions'})).toBeNull()
 
@@ -227,12 +219,24 @@ describe('FrontPageScreen', () => {
 		expect(dateline()).toHaveTextContent('Latest stories')
 	})
 
+	// The nameplate is the front page's heading; the dateline under it is not a second one.
+	test("reads the paper's name as the heading, and not Latest's dateline", async () => {
+		seedTop()
+		saveChoice('Latest')
+		queryClient.setQueryData(messKeys.feed, onePage(ISSUE_STORIES))
+		await renderScreen()
+
+		expect(dateline()).toHaveTextContent('Latest stories')
+		expect(screen.getByRole('header', {name: 'The Olaf Messenger'})).toBeTruthy()
+		expect(screen.queryByRole('header', {name: /Latest stories/u})).toBeNull()
+	})
+
 	test('narrows Latest to the section picked, and keeps it across a visit to By Issue', async () => {
 		seedTop()
 		saveChoice('Latest')
-		queryClient.setQueryData(messKeys.feed, ISSUE_STORIES)
+		queryClient.setQueryData(messKeys.feed, onePage(ISSUE_STORIES))
 		queryClient.setQueryData(messKeys.categories, categories)
-		queryClient.setQueryData(messKeys.category(OPINIONS), [WATERS])
+		queryClient.setQueryData(messKeys.category(OPINIONS), onePage([WATERS]))
 		await renderScreen()
 
 		await fireEvent.press(menuItem('Opinions'))
@@ -260,7 +264,7 @@ describe('FrontPageScreen', () => {
 		await fireEvent.press(screen.getByTestId(TOP_TILE_ID))
 
 		expect(mockNavigate).toHaveBeenCalledWith({
-			pathname: '/Messenger/issue',
+			pathname: '/messenger/issue',
 			params: {key: 'week:2026-04-27'},
 		})
 	})
@@ -320,7 +324,7 @@ describe('FrontPageScreen', () => {
 	})
 
 	test('offline with no issues cached, shows the saved latest stories under the notice', async () => {
-		queryClient.setQueryData(messKeys.feed, ISSUE_STORIES)
+		queryClient.setQueryData(messKeys.feed, onePage(ISSUE_STORIES))
 		onlineManager.setOnline(false)
 		await renderScreen()
 
@@ -329,7 +333,7 @@ describe('FrontPageScreen', () => {
 	})
 
 	test('when the issue list fails, offers Try Again over the saved latest stories', async () => {
-		queryClient.setQueryData(messKeys.feed, ISSUE_STORIES)
+		queryClient.setQueryData(messKeys.feed, onePage(ISSUE_STORIES))
 		serve(() => Promise.reject(new Error('offline')))
 		await renderScreen()
 
@@ -439,7 +443,7 @@ describe('FrontPageScreen', () => {
 		saveChoice('Latest:News')
 		seedTop()
 		queryClient.setQueryData(messKeys.categories, categories)
-		queryClient.setQueryData(messKeys.category(NEWS), [GRANT])
+		queryClient.setQueryData(messKeys.category(NEWS), onePage([GRANT]))
 		serve(() => [])
 		await renderScreen()
 
@@ -448,5 +452,31 @@ describe('FrontPageScreen', () => {
 		expect(postHrefs()).toStrictEqual([
 			`https://olafmessenger.com/wp-json/wp/v2/posts?categories=${NEWS}&per_page=30&_embed=true`,
 		])
+	})
+
+	test('pull-to-refresh on Latest fetches only the first page of the feed, however many are loaded', async () => {
+		saveChoice('Latest')
+		queryClient.setQueryData(messKeys.feed, {
+			// The second page is short, so the list's end asks for no third before the refresh.
+			pages: [[PETITION, GRANT], [WATERS]],
+			pageParams: [1, 2],
+		})
+		// A fresh first page as long as the second, so a refetch of every page would go on past it.
+		serve((href) => (href.includes('&page=') ? [] : postsJson.slice(0, 2)))
+		await renderScreen()
+
+		// What the refresh itself fetched; afterwards the list's end row goes on to page 2.
+		let refresh = screen.getByTestId('refreshable').props.onRefresh as () => Promise<void>
+		let fetchedByRefresh: string[] = []
+		await act(async () => {
+			await refresh()
+			fetchedByRefresh = postHrefs()
+			await flushQueryNotifications()
+		})
+
+		expect(fetchedByRefresh).toStrictEqual([
+			'https://olafmessenger.com/wp-json/wp/v2/posts?per_page=50&_embed=true',
+		])
+		await waitForQueriesToSettle(queryClient)
 	})
 })

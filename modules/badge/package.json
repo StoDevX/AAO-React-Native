@@ -11,7 +11,6 @@
   "peerDependencies": {
     "@frogpond/colors": "workspace:*",
     "react": "catalog:",
-    "react-native": "catalog:",
-    "tinycolor2": "^1.6.0"
+    "react-native": "catalog:"
   }
 }

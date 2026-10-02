@@ -5,14 +5,13 @@ import {render, screen} from '@testing-library/react-native'
 import {PoemView} from '../poem-view'
 import type {StoryLayout} from '../types'
 
-jest.mock('@expo/ui/swift-ui', () => {
-	// oxlint-disable-next-line typescript/no-require-imports
-	return require('../../../testing/expo-ui-mock') as typeof import('../../../testing/expo-ui-mock')
-})
-jest.mock('@expo/ui/swift-ui/modifiers', () => {
-	// oxlint-disable-next-line typescript/no-require-imports
-	return require('../../../testing/expo-ui-mock') as typeof import('../../../testing/expo-ui-mock')
-})
+// The body's figures open the zoom viewer through the router, which cannot load under Jest.
+jest.mock(
+	'expo-router',
+	() =>
+		// oxlint-disable-next-line typescript/no-require-imports
+		require('../../../testing/expo-router-mock') as object,
+)
 
 const LAYOUT: Extract<StoryLayout, {kind: 'poem'}> = {
 	kind: 'poem',

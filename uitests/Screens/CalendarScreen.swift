@@ -3,21 +3,25 @@ import XCTest
 struct CalendarScreen: Screen {
 	let app: XCUIApplication
 
-	@discardableResult
-	func navigate() -> Self {
-		open(route: "/Calendar")
+	/// Opens the Calendar and waits for its toolbar picker. Opening a URL
+	/// relaunches the app, and a relaunched app shows no home screen while it
+	/// is still blank, so `open(route:)` alone returns before the Calendar has
+	/// mounted -- on a slow CI runner, long before.
+	/// The toolbar picker: drawn by the Calendar alone.
+	var mounted: XCUIElement {
+		app.buttons[TestIdentifiers.Calendar.picker]
 	}
 
 	@discardableResult
-	func verifyCalendarTitle() -> Self {
-		verifyTitle(TestIdentifiers.Buttons.calendar)
+	func navigate() -> Self {
+		open(route: "/calendar", mountedWhen: mounted)
 	}
 
 	/// Open the toolbar menu that chooses which calendars the list merges.
 	@discardableResult
 	func openPicker() -> Self {
 		let picker = app.buttons[TestIdentifiers.Calendar.picker]
-    assert(
+    XCTAssertTrue(
       picker.waitForExistence(timeout: 30),
       "Calendar picker should be in the toolbar")
 		picker.tap()
@@ -133,24 +137,7 @@ struct CalendarScreen: Screen {
 		return self
 	}
 
-  func visibleEventRows() -> XCUIElementQuery {
-    return app.buttons.matching(.beginsWith(TestIdentifiers.Calendar.eventRowPrefix))
-  }
-
 	// MARK: - Day picker strip
-
-	/// The leading day cells in the strip, in the order they are laid out.
-	///
-	/// Bound by identifier rather than by position: the strip and the list are
-	/// both made of buttons, and only the identifier separates them.
-	///
-	/// Only the first `limit` cells are read. The strip draws a cell for every day
-	/// between today and the last event it knows about, which runs to a hundred or
-	/// more, and every frame a query reads is a round trip to the app -- reading
-	/// them all takes minutes. Nothing asks about a day past the first screenful.
-	private func dayCells(limit: Int = 14) -> [XCUIElement] {
-		dayCellFrames(limit: limit).sorted { $0.frame.minX < $1.frame.minX }.map { $0.cell }
-	}
 
 	@discardableResult
 	func verifyStripIsPresent() -> Self {
@@ -163,36 +150,43 @@ struct CalendarScreen: Screen {
 		return self
 	}
 
-	/// Every day cell the app is currently exposing, paired with where it sits.
+	/// The day cells with any of their frame inside the window, leading to
+	/// trailing.
 	///
-	/// The frames are read once and carried: a comparator or filter that reached
-	/// for `frame` would ask the app again on every comparison.
-	private func dayCellFrames(limit: Int) -> [(cell: XCUIElement, frame: CGRect)] {
-		let matches = app.buttons.matching(
-			NSPredicate(format: "identifier BEGINSWITH %@", TestIdentifiers.Calendar.dayCellPrefix)
-		)
-
-		return (0..<min(limit, matches.count)).map { index in
-			let cell = matches.element(boundBy: index)
-			return (cell: cell, frame: cell.frame)
+	/// Read from one snapshot of the app rather than a query per cell: each
+	/// query is a round trip, and twenty-odd of them take seconds. The
+	/// strip and the list are both made of buttons, and only the identifier
+	/// separates them.
+	private func visibleDayCells() -> [XCUIElementSnapshot] {
+		let root: XCUIElementSnapshot
+		do {
+			root = try app.snapshot()
+		} catch {
+			XCTFail("The app's accessibility tree should be readable: \(error)")
+			return []
 		}
+		let window = app.frame
+		var cells: [XCUIElementSnapshot] = []
+		var pending = [root]
+		while let node = pending.popLast() {
+			if node.elementType == .button,
+				node.identifier.hasPrefix(TestIdentifiers.Calendar.dayCellPrefix),
+				!node.frame.intersection(window).isEmpty
+			{
+				cells.append(node)
+			}
+			pending.append(contentsOf: node.children)
+		}
+		return cells.sorted { $0.frame.minX < $1.frame.minX }
 	}
 
-	/// The leftmost day cell inside the strip's viewport, and its frame.
+	/// The frame of the leftmost day cell that starts inside the strip.
 	///
-	/// Distinct from `dayCells().first`: a cell dragged off the leading edge
-	/// keeps a frame, and its origin goes negative rather than disappearing, so
-	/// after a swipe the leftmost cell by frame is one the user cannot see.
-	private func leadingVisibleDayCell(limit: Int = 21) -> (cell: XCUIElement, frame: CGRect)? {
-		let onscreen = dayCellFrames(limit: limit).filter { $0.frame.minX >= 0 }
-		return onscreen.min(by: { $0.frame.minX < $1.frame.minX })
-	}
-
-	/// Where the strip's leading cell sits on screen. A week the strip has
-	/// snapped to puts its Sunday here; a week the strip could only scroll
-	/// partway to leaves it further along.
-	func leadingDayCellEdge() -> CGFloat? {
-		leadingVisibleDayCell()?.frame.minX
+	/// A cell dragged off the leading edge keeps a frame, and its origin goes
+	/// negative rather than disappearing, so after a swipe the leftmost visible
+	/// cell can be a sliver the user cannot see.
+	private func leadingVisibleDayCellFrame() -> CGRect? {
+		visibleDayCells().first { $0.frame.minX >= 0 }?.frame
 	}
 
 	/// Drags the strip one week toward the leading edge and lets it settle.
@@ -204,12 +198,11 @@ struct CalendarScreen: Screen {
 	/// it.
 	@discardableResult
 	func swipeStripToNextWeek() -> Self {
-		guard let leading = leadingVisibleDayCell() else {
+		guard let strip = leadingVisibleDayCellFrame() else {
 			XCTFail("The strip should have a day cell to drag from")
 			return self
 		}
 
-		let strip = leading.frame
 		let origin = app.coordinate(withNormalizedOffset: .zero)
 		let start = origin.withOffset(CGVector(dx: strip.midX + 280, dy: strip.midY))
 		let end = origin.withOffset(CGVector(dx: strip.midX + 40, dy: strip.midY))
@@ -245,53 +238,28 @@ struct CalendarScreen: Screen {
 		return selected.identifier
 	}
 
-  /// The currently visible days on the date picker
+  /// The currently visible days on the date picker, leading to trailing. A
+  /// cell counts when any of its frame is inside the window, so a sliver at
+  /// either edge counts, as it does for `isHittable`.
   func datePickerDayIdentifiers() -> [String] {
-    return app.buttons.matching(.beginsWith(TestIdentifiers.Calendar.dayCellPrefix))
-      .allElementsBoundByIndex
-      .filter { $0.isHittable }
-      .map { $0.identifier }
+    visibleDayCells().map { $0.identifier }
   }
 
-	@discardableResult
-	func verifySelectedDay(_ expected: String, message: String) -> Self {
-		XCTAssertEqual(selectedDay(), expected, message)
-		return self
-	}
-
-	/// Today's section header in the Upcoming list, as the app writes it:
-	/// "Saturday – Sep 5". Built from the frozen clock rather than typed out, and
-	/// matched on both halves, because every later Saturday shares the prefix.
-	func todayHeader() -> XCUIElement {
-		func format(_ pattern: String) -> String {
-			let formatter = DateFormatter()
-			formatter.locale = Locale(identifier: "en_US_POSIX")
-			formatter.timeZone = TimeZone.current
-			formatter.dateFormat = pattern
-			return formatter.string(from: TestIdentifiers.Calendar.frozenNow)
-		}
-		return app.staticTexts.matching(
-			NSPredicate(
-				format: "label BEGINSWITH %@ AND label ENDSWITH %@",
-				"\(format("EEEE")) – ", format("MMM d"))
-		).firstMatch
-	}
-
-	/// Titles of the event rows a reader can see above today's section: below
-	/// the navigation bar, above today's header. Empty when the list sits on
-	/// today; the past sections are then tucked under the bar.
-	///
-	/// Measured against the navigation bar rather than a fixed height so it
-	/// holds on any device, and whether the large title is showing or not.
-	func rowsVisibleAboveToday() -> [String] {
-		let barBottom = app.navigationBars.firstMatch.frame.maxY
-		let todayTop = todayHeader().frame.minY
-		return app.buttons.matching(
-			NSPredicate(format: "identifier BEGINSWITH %@", TestIdentifiers.Calendar.eventRowPrefix)
-		).allElementsBoundByIndex
-			.filter { $0.frame.maxY > barBottom && $0.frame.minY < todayTop }
-			.map(\.label)
-	}
+  /// Wait for the strip to show exactly `expected`. A scroll to a week is
+  /// animated, and a cell at the strip's edge is off screen until it has
+  /// arrived, so a reading taken as the scroll starts is short a day.
+  @discardableResult
+  func verifyStripShows(_ expected: [String], _ message: String, timeout: TimeInterval = 10) -> Self {
+    var last: [String] = []
+    let arrived = NSPredicate { _, _ in
+      last = self.datePickerDayIdentifiers()
+      return last == expected
+    }
+    let expectation = XCTNSPredicateExpectation(predicate: arrived, object: nil)
+    _ = XCTWaiter().wait(for: [expectation], timeout: timeout)
+    XCTAssertEqual(last, expected, message)
+    return self
+  }
 
 	/// Tap the bottom-bar Today button.
 	@discardableResult
@@ -301,18 +269,6 @@ struct CalendarScreen: Screen {
 			button.waitForExistence(timeout: 30),
 			"Today should be in the bottom bar")
 		button.tap()
-		return self
-	}
-
-	/// Switch a calendar on or off in the open menu's CALENDARS section. A
-	/// Toggle inside a Menu is a button, the same as a category is.
-	@discardableResult
-	func toggleCalendar(_ title: String) -> Self {
-		let item = app.buttons[title]
-		XCTAssertTrue(
-			item.waitForExistence(timeout: 30),
-			"\(title) should be offered as a calendar in the picker")
-		item.tap()
 		return self
 	}
 

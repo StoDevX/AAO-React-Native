@@ -3,20 +3,6 @@ import {fireEvent, render, screen} from '@testing-library/react-native'
 
 import {CalendarModePicker} from '../mode-picker'
 
-jest.mock('@expo/ui/swift-ui', () => {
-	// oxlint-disable-next-line typescript/no-require-imports
-	return require('../../../source/testing/expo-ui-mock') as typeof import('../../../source/testing/expo-ui-mock')
-})
-jest.mock('@expo/ui/swift-ui/modifiers', () => {
-	// oxlint-disable-next-line typescript/no-require-imports
-	return require('../../../source/testing/expo-ui-mock') as typeof import('../../../source/testing/expo-ui-mock')
-})
-
-jest.mock('expo-router', () => {
-	// oxlint-disable-next-line typescript/no-require-imports
-	return require('./expo-router-mock') as typeof import('./expo-router-mock')
-})
-
 test('offers both modes', async () => {
 	await render(<CalendarModePicker mode="day" onSelectMode={jest.fn()} />)
 	expect(screen.getByText('Day')).toBeTruthy()

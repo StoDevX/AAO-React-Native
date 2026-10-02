@@ -11,7 +11,15 @@ export type Block =
 	| {type: 'paragraph'; runs: Run[]}
 	| {type: 'list'; ordered: boolean; items: Run[][]}
 	| {type: 'quote'; runs: Run[]}
-	| {type: 'figure'; url: string; width: number; height: number; caption: string}
+	| {
+			type: 'figure'
+			url: string
+			/** The largest copy the image's srcset offers, for the zoom viewer; none when it offers no larger one */
+			largeUrl?: string
+			width: number
+			height: number
+			caption: string
+	  }
 	| {type: 'embed'; url: string}
 
 /** A Mess category; `parent` is 0 for a top-level one. */
@@ -20,7 +28,11 @@ export type MessCategory = {id: number; name: string; parent: number}
 export type Photo = {url: string; width: number; height: number}
 
 /** A photo with the caption or credit printed under it. */
-export type CaptionedPhoto = Photo & {caption: string}
+export type CaptionedPhoto = Photo & {
+	caption: string
+	/** The largest copy a body picture's srcset offers, for the zoom viewer; none when it offers no larger one */
+	largeUrl?: string
+}
 
 /** One `staff_name` term on a story. */
 export type Byline = {id: number; name: string}

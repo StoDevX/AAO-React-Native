@@ -1,0 +1,14 @@
+{
+  "name": "@frogpond/collections",
+  "version": "1.0.0",
+  "description": "",
+  "license": "ISC",
+  "author": "",
+  "main": "index.ts",
+  "scripts": {
+    "test": "jest"
+  },
+  "devDependencies": {
+    "@jest/globals": "30.5.2"
+  }
+}

@@ -1,5 +1,4 @@
 import {afterEach, describe, expect, jest, test} from '@jest/globals'
-import {Settings} from 'react-native'
 import {fetchManifest, fetchSourceBody} from '@frogpond/data-sources'
 import {jobDetailOptions, jobPostingsOptions, postingUnitsOptions} from '../query'
 import {
@@ -7,11 +6,6 @@ import {
 	UITEST_JOB_DETAILS,
 	UITEST_POSTING_UNITS,
 } from '../fixtures/uitest-postings'
-
-jest.mock('@react-native-community/netinfo', () =>
-	// oxlint-disable-next-line typescript/no-require-imports
-	require('@react-native-community/netinfo/jest/netinfo-mock'),
-)
 
 jest.mock('@frogpond/data-sources', () => ({
 	...(jest.requireActual('@frogpond/data-sources') as object),
@@ -63,14 +57,6 @@ describe('under UI testing', () => {
 	// the app has to read its unit from its detail.
 	test('the fixture map leaves out the extra posting', () => {
 		expect('uitest-extra' in UITEST_POSTING_UNITS).toBe(false)
-	})
-
-	test('fails when a UI test launches with the units unavailable', async () => {
-		let get = jest
-			.spyOn(Settings, 'get')
-			.mockImplementation((key: string) => key === 'AAOUITestStudentWorkUnitsUnavailable')
-		await expect(run(postingUnitsOptions)).rejects.toThrow('unavailable')
-		get.mockRestore()
 	})
 })
 

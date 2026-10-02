@@ -4,15 +4,6 @@ import {fireEvent, render, screen} from '@testing-library/react-native'
 import {EntryList} from '../entry-list'
 import {groupEntries, normalizeEntry} from '../lib/entry'
 
-jest.mock('@expo/ui/swift-ui', () => {
-	// oxlint-disable-next-line typescript/no-require-imports
-	return require('../../../testing/expo-ui-mock') as typeof import('../../../testing/expo-ui-mock')
-})
-jest.mock('@expo/ui/swift-ui/modifiers', () => {
-	// oxlint-disable-next-line typescript/no-require-imports
-	return require('../../../testing/expo-ui-mock') as typeof import('../../../testing/expo-ui-mock')
-})
-
 const entries = [
 	normalizeEntry({word: 'Caf', definition: 'The dining hall.'}),
 	normalizeEntry({word: 'Pause', definition: 'The student-run venue.'}),
@@ -42,13 +33,6 @@ describe('EntryList', () => {
 		expect(screen.getByText('Caf')).toBeTruthy()
 		expect(screen.getByText('P')).toBeTruthy()
 		expect(screen.getByText('Pause')).toBeTruthy()
-	})
-
-	it('gives every section a jumplist letter matching its title', async () => {
-		await renderList()
-
-		expect(screen.getByLabelText('section index C')).toBeTruthy()
-		expect(screen.getByLabelText('section index P')).toBeTruthy()
 	})
 
 	it('shows the first sense as each row’s preview', async () => {

@@ -7,15 +7,6 @@ import * as ReactNative from 'react-native'
 import {BuildingListRow} from '../building-list-row'
 import type {BuildingType} from '../../types'
 
-jest.mock('@expo/ui/swift-ui', () => {
-	// oxlint-disable-next-line typescript/no-require-imports
-	return require('../../../../testing/expo-ui-mock') as typeof import('../../../../testing/expo-ui-mock')
-})
-jest.mock('@expo/ui/swift-ui/modifiers', () => {
-	// oxlint-disable-next-line typescript/no-require-imports
-	return require('../../../../testing/expo-ui-mock') as typeof import('../../../../testing/expo-ui-mock')
-})
-
 const now = moment.tz('2026-09-07 14:00', 'America/Chicago') // Monday 2pm
 
 const scheduled: BuildingType = {
@@ -97,14 +88,14 @@ describe('the accessibility label', () => {
 })
 
 describe('the status glyph', () => {
-	test('uses the inverse half-filled symbols in dark mode', async () => {
+	test('keeps the dot-in-a-ring symbol in dark mode', async () => {
 		jest.spyOn(ReactNative, 'useColorScheme').mockReturnValue('dark')
 
 		let almostOpenRow = await renderRow(almostOpen)
 		let almostClosedRow = await renderRow(almostClosed)
 
-		expect(almostOpenRow.queryByTestId('symbol-circle.lefthalf.filled.inverse')).not.toBeNull()
-		expect(almostClosedRow.queryByTestId('symbol-circle.righthalf.filled.inverse')).not.toBeNull()
+		expect(almostOpenRow.queryByTestId('symbol-record.circle')).not.toBeNull()
+		expect(almostClosedRow.queryByTestId('symbol-record.circle')).not.toBeNull()
 	})
 })
 

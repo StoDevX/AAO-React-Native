@@ -4,15 +4,6 @@ import {fireEvent, render, screen} from '@testing-library/react-native'
 
 import {SyncedTextField} from '../synced-text-field'
 
-jest.mock('@expo/ui/swift-ui', () => {
-	// oxlint-disable-next-line typescript/no-require-imports
-	return require('../../testing/expo-ui-mock') as typeof import('../../testing/expo-ui-mock')
-})
-jest.mock('@expo/ui/swift-ui/modifiers', () => {
-	// oxlint-disable-next-line typescript/no-require-imports
-	return require('../../testing/expo-ui-mock') as typeof import('../../testing/expo-ui-mock')
-})
-
 /**
  * Stands in for the screen around the field: a store the typing writes to and
  * the field reads back from, plus a way to change that store from somewhere

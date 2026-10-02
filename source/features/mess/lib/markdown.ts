@@ -1,18 +1,7 @@
+import {escapeMarkdownHref, escapeMarkdownText} from '../../../lib/markdown-escape'
 import type {Run} from '../types'
 
-/** Characters CommonMark can read as syntax, escaped so a story's own asterisks and brackets stay literal. */
-const SYNTAX = /[\\`*_[\]()#+\-.!~<&]/gu
-
 const LETTER_OR_DIGIT = /[\p{L}\p{N}]/u
-
-function escapeText(text: string): string {
-	return text.replaceAll(SYNTAX, (char) => `\\${char}`)
-}
-
-/** A link target with the characters that would end or break the `(…)` encoded. */
-function escapeHref(href: string): string {
-	return href.replaceAll(' ', '%20').replaceAll('(', '%28').replaceAll(')', '%29')
-}
 
 /**
  * A bare URL as Apple's parser finds one: a scheme not run on from a letter, up to whitespace or `<`.
@@ -44,22 +33,48 @@ function hasUnmatchedCloser(url: string): boolean {
 }
 
 /**
- * Text outside any link, escaped, with each bare URL made an explicit link: a link's text is
- * read with its escapes, where a bare URL's is not.
+ * Text cut at each bare URL it holds, in order: the words between them, and each URL as a piece
+ * of its own that names its address. Empty pieces are left out.
+ */
+function splitAtBareUrls(text: string): Array<{text: string; url?: string}> {
+	let pieces: Array<{text: string; url?: string}> = []
+	let from = 0
+	for (let match of text.matchAll(BARE_URL)) {
+		let url = trimUrl(match[0])
+		if (match.index > from) pieces.push({text: text.slice(from, match.index)})
+		pieces.push({text: url, url})
+		from = match.index + url.length
+	}
+	if (from < text.length) pieces.push({text: text.slice(from)})
+	return pieces
+}
+
+/**
+ * Runs with each bare URL outside a link made a link of its own, keeping its run's style.
  *
  * This sees one run at a time, so a URL split across styled runs, such as one whose path is in
  * italics, links only as far as the first run goes, and the rest shows unlinked.
  */
+export function linkBareUrls(runs: Run[]): Run[] {
+	return runs.flatMap((run) =>
+		run.href
+			? [run]
+			: splitAtBareUrls(run.text).map(({text, url}) =>
+					url ? {...run, text, href: url} : {...run, text},
+				),
+	)
+}
+
+/**
+ * Text outside any link, escaped, with each bare URL made an explicit link: a link's text is
+ * read with its escapes, where a bare URL's is not. Like `linkBareUrls`, it sees one run at a time.
+ */
 function escapeProse(text: string): string {
-	let out = ''
-	let from = 0
-	for (let match of text.matchAll(BARE_URL)) {
-		let url = trimUrl(match[0])
-		out += escapeText(text.slice(from, match.index))
-		out += `[${escapeText(url)}](${escapeHref(url)})`
-		from = match.index + url.length
-	}
-	return out + escapeText(text.slice(from))
+	return splitAtBareUrls(text)
+		.map(({text: piece, url}) =>
+			url ? `[${escapeMarkdownText(url)}](${escapeMarkdownHref(url)})` : escapeMarkdownText(piece),
+		)
+		.join('')
 }
 
 /**
@@ -87,12 +102,12 @@ function runToMarkdown(run: Run, before: string, after: string): string {
 		}
 	}
 	// A link's own text is already inside a link, so only text outside one has bare URLs to link.
-	let escape = run.href ? escapeText : escapeProse
+	let escape = run.href ? escapeMarkdownText : escapeProse
 	if (core === '') return escape(run.text)
 	core = escape(core)
 	if (run.italic) core = `*${core}*`
 	if (run.bold) core = `**${core}**`
-	if (run.href) core = `[${core}](${escapeHref(run.href)})`
+	if (run.href) core = `[${core}](${escapeMarkdownHref(run.href)})`
 	return escape(lead) + core + escape(trail)
 }
 

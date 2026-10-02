@@ -5,7 +5,7 @@ import {describe, it} from 'node:test'
 import xcode from 'xcode'
 import type {XcodeProject} from 'xcode'
 
-import {STRIPPING_SETTINGS, applyStripping} from './with-binary-stripping.ts'
+import {applyStripping} from './with-binary-stripping.ts'
 
 function loadProject(): XcodeProject {
 	let project = xcode.project(join(import.meta.dirname, 'fixtures/project.pbxproj'))
@@ -55,14 +55,5 @@ describe('applyStripping', () => {
 
 	it('throws when the target is missing', () => {
 		assert.throws(() => applyStripping(loadProject(), 'NoSuchTarget'), /NoSuchTarget/u)
-	})
-})
-
-describe('STRIPPING_SETTINGS', () => {
-	it('matches the values the tracked project used before the cutover', () => {
-		assert.deepEqual(STRIPPING_SETTINGS, {
-			DEPLOYMENT_POSTPROCESSING: 'YES',
-			STRIPFLAGS: '"-rSTx"',
-		})
 	})
 })

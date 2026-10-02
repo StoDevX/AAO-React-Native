@@ -6,7 +6,7 @@ All About Olaf is a React Native mobile app for the St. Olaf College community. 
 
 - **React Native 0.86.2** with **TypeScript**
 - **Expo Router 57** for navigation — file-based, with `experiments.typedRoutes` set in `app.config.ts`
-- **Redux Toolkit** for global state, **React Query 5** for server state
+- **Zustand 5** for feature state, **Redux Toolkit** for the older shared slices, **React Query 5** for server state
 - **Jest** + **React Native Testing Library** for testing
 - **Xcode Cloud** for builds and TestFlight submissions
 - Monorepo with internal packages in `modules/`
@@ -37,7 +37,7 @@ change was needed rather than restating the diff.
 
 - `source/features/` holds each feature's non-route code (e.g., `dining/`, `directory/`, `calendar/`); `app/` route files are the screens themselves
 - Barrel exports (`index.ts`) for clean imports
-- State: React Query for server state, Redux Toolkit for global app state, `useState` for component-local
+- State: React Query for server state; a Zustand store in the feature's own `store.ts` for state that feature owns, persisted to AsyncStorage through `persist` when it must survive a relaunch; `useState` for component-local. Redux Toolkit holds the older shared slices in `source/redux/parts/` — don't add new state there
 - iOS is the only supported platform
 - Email via `sendEmail`, phone via `callPhone` components
 - Error logging via Sentry integration
@@ -115,10 +115,12 @@ A development build can sit alongside the shipping app on one device.
 `APP_VARIANT` selects the build at generation time; unset means production, so
 every default path is unchanged.
 
-| `APP_VARIANT` | Bundle identifier | Home screen | Icon |
-| --- | --- | --- | --- |
-| *(unset)* / `production` | `NFMTHAZVS9.com.drewvolz.stolaf` | All About Olaf | the windmill |
-| `development` | `…stolaf.dev` | AAO Dev | Old Main with a diagonal DEV ribbon across the top-right corner across the top-right corner |
+| `APP_VARIANT` | Bundle identifier | Home screen |
+| --- | --- | --- |
+| *(unset)* / `production` | `NFMTHAZVS9.com.drewvolz.stolaf` | All About Olaf |
+| `development` | `…stolaf.dev` | AAO Dev |
+
+Both variants share the windmill icon, so tell them apart by name.
 
 ```bash
 APP_VARIANT=development mise run prebuild   # then build to your device
@@ -129,27 +131,56 @@ The URL scheme varies too — two apps claiming one scheme is undefined behaviou
 TestFlight and App Store builds both ship the production identity, so a
 TestFlight build replaces the App Store app as it always has.
 
-The dev icon is generated rather than drawn by hand. To regenerate it after an
-app icon change:
-
-```bash
-magick -size 520x170 xc:none -gravity center \
-  -font '/System/Library/Fonts/Supplemental/Arial Bold.ttf' \
-  -pointsize 116 -kerning 10 -fill white -annotate +0+0 'DEV' \
-  -background none -rotate 45 -trim +repage /tmp/devtext.png
-magick images/icons/app-icon.png \
-  -fill '#D0021B' -draw 'polygon 1024,424 600,0 840,0 1024,184' /tmp/base.png
-magick /tmp/base.png /tmp/devtext.png -geometry +753+44 -composite \
-  -alpha off -strip images/icons/app-icon-development.png
-```
-
-Run the result through `oxipng -o max --strip safe --zopfli`; ImageMagick's own
-output is roughly a third larger.
-
 **A build to a local device needs nothing beyond `mise run device "<DEVICE
 NAME>"`.** Sending the dev variant through TestFlight or the App Store is a
 different matter: that bundle identifier would need its own App Store Connect
 record, which this config does not create.
+
+### App Icons
+
+The app icons are Icon Composer documents in `assets/*.icon`. `ios.icon` in
+`app.config.ts` names the primary, `windmill.icon`, and
+`plugins/with-alternate-icons.ts` bundles the rest as alternates. Each
+alternate's file name is the name `react-native-change-icon` switches to.
+
+The Settings picker and the Credits screen show PNG previews of each icon,
+kept in `images/icons/`. Regenerate them after editing an `.icon`:
+
+```bash
+mise run icons
+```
+
+Each icon gets a light and a dark preview, and the screens follow the app's
+appearance. `mise run icons -- --all` also renders the tinted look, to review
+a change by eye; the app cannot tell when the home screen is tinted, so those
+files are gitignored. Add `--table` to write `images/icons/logos.html`, a
+gitignored gallery of every logo, to compare them side by side.
+
+The task needs Xcode, whose Icon Composer renders the previews, and runs them
+through oxipng. A new alternate also needs an entry in `ALTERNATE_ICONS` in
+the plugin, in `appIcons` in `images/icons/index.ts`, and in the picker's list
+in `source/features/settings/screens/change-icon.tsx`.
+
+### Custom Symbols
+
+A glyph iOS does not ship, like the Olaf Messenger's castle, is a custom SF
+Symbol: a `.symbolset` in `assets/symbols/`, which
+`plugins/with-custom-symbols.ts` copies into the asset catalog at prebuild.
+Name it in `CUSTOM_SYMBOLS` in `source/features/views.ts`, and `iconImage`
+draws it by `assetName` rather than `systemName`.
+
+`mise run trace-symbol -- <image> <name>` traces a logo into one, with
+ImageMagick and potrace (`brew install imagemagick potrace`). The image's dark
+pixels become the symbol, so a white mark on a dark disc comes out as a disc
+with the mark cut out. The Messenger's came from
+`https://olafmessenger.com/wp-content/uploads/2021/02/Logo_white-e1713492149523.png`.
+
+The template holds `Regular-S`, `Regular-M` and `Regular-L`. Other weights
+fall back to Regular, but a missing scale does not: without `Regular-L`, the
+home screen's `imageScale('large')` finds no image and draws nothing, with only
+a SwiftUI fault in the log to say so. Xcode's asset compiler also accepts a
+malformed template without a word, so check a new or edited symbol on the
+simulator, or validate it in the SF Symbols app.
 
 ### Local Server Discovery
 
@@ -200,6 +231,35 @@ nothing. A new code needs a change to `JobCode` in
 `source/features/sis/student-work/posting.ts` first. Jest and the UI tests
 read `FIXED_WAGES`, not the data file, so a rate change never breaks them.
 
+### UI Test Fixtures
+
+Under UI tests the map reads copies of each campus's `map/geojson` from
+`source/features/map/__fixtures__/`, not ccc-server, so a data publish cannot
+move what the map tests measure. Refresh them on purpose, when a test needs a
+place or a field the copies lack:
+
+```bash
+mise run update-map-fixtures
+```
+
+It prints the places each campus added and removed, and how many changed, and
+writes nothing when any campus's response has no places. The copies are written
+with sorted keys, so the diff shows only the data that moved. Rerun the map UI
+tests after a refresh: a moved label point can change what a tap hits.
+
+Olaf Messenger's fetches are answered from
+`source/features/mess/__fixtures__/mess.json` under UI tests, and a fetch with
+no fixture fails naming its URL. Its URLs depend on what the paper published,
+so they are recorded, not listed: with a simulator booted and Metro running,
+
+```bash
+TEST_RUNNER_AAO_JS_LOCATION=localhost:<port> mise run update-mess-fixtures
+```
+
+runs the Messenger UI tests against the live paper with `--record-fixtures`
+and writes every fetch they made. It writes nothing if the tests fail. With
+more than one simulator booted, name one with `SIMULATOR_UDID=<udid>`.
+
 ## Agent Workflow
 
 **Session startup:** Always run `mise run agent:setup` at the start of every session. This installs dependencies and bundles data files.
@@ -217,3 +277,11 @@ skills framework, provided by the `superpowers` agent plugin.
 `brainstorming`, `test-driven-development`, and the rest of the Superpowers
 skills below, the plugin is not installed or not enabled on this machine. Warn
 the user before proceeding.**
+
+Brainstorming's visual companion runs its server with `node` from the skill's
+own folder, where mise sets no version, so it dies within five seconds ("No
+version is set for shim: node"). Start it under this repo's Node instead:
+
+```bash
+mise exec -- bash <skill-dir>/scripts/start-server.sh --project-dir "$PWD" --open
+```

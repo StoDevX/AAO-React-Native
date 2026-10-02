@@ -4,15 +4,6 @@ import {render, screen, within} from '@testing-library/react-native'
 
 import {TileGrid} from '../tile-grid'
 
-jest.mock('@expo/ui/swift-ui', () => {
-	// oxlint-disable-next-line typescript/no-require-imports
-	return require('../../testing/expo-ui-mock') as typeof import('../../testing/expo-ui-mock')
-})
-jest.mock('@expo/ui/swift-ui/modifiers', () => {
-	// oxlint-disable-next-line typescript/no-require-imports
-	return require('../../testing/expo-ui-mock') as typeof import('../../testing/expo-ui-mock')
-})
-
 const mockFontScale = jest.fn(() => 1)
 // `react-native` re-exports this through a getter, which jest.spyOn cannot
 // replace, so the module behind it is mocked instead.

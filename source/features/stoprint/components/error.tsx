@@ -1,6 +1,5 @@
 import * as React from 'react'
 import {RefreshControl, ScrollView, StyleSheet} from 'react-native'
-import {SymbolView} from 'expo-symbols'
 import {NoticeView} from '@frogpond/notice'
 import * as c from '@frogpond/colors'
 import {openEmail} from '../../../features/settings/screens/overview/support'
@@ -23,13 +22,11 @@ export function StoPrintErrorView(props: Props): React.ReactNode {
 			showsVerticalScrollIndicator={false}
 			style={styles.container}
 		>
-			<SymbolView name="ladybug" size={100} tintColor={c.systemFill} />
 			<NoticeView
-				buttonText="Report"
-				header="Connection Issue"
-				onPress={openEmail}
-				style={styles.notice}
-				text={`${props.statusMessage} ${ERROR_MESSAGE}`}
+				action={{label: 'Report', onPress: openEmail}}
+				description={`${props.statusMessage} ${ERROR_MESSAGE}`}
+				systemImage="exclamationmark.triangle"
+				title="Connection Issue"
 			/>
 		</ScrollView>
 	)
@@ -37,14 +34,9 @@ export function StoPrintErrorView(props: Props): React.ReactNode {
 
 const styles = StyleSheet.create({
 	container: {
-		backgroundColor: c.systemBackground,
+		backgroundColor: c.systemGroupedBackground,
 	},
 	content: {
 		flex: 1,
-		alignItems: 'center',
-		justifyContent: 'center',
-	},
-	notice: {
-		flex: 0,
 	},
 })

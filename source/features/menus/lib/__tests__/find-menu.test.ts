@@ -2,9 +2,10 @@ import {expect, it} from '@jest/globals'
 import {findMenu} from '../../../../../modules/food-menu/lib/find-menu'
 import moment from 'moment-timezone'
 import type {DayPartsCollectionType} from '../../types'
-import uniqueId from 'lodash/uniqueId'
 
 const CENTRAL_TZ = 'America/Chicago'
+
+let daypartCount = 0
 
 const generateDayparts: (...parts: {start: string; end: string}[]) => DayPartsCollectionType = (
 	...times
@@ -12,7 +13,7 @@ const generateDayparts: (...parts: {start: string; end: string}[]) => DayPartsCo
 	let dayparts = times.map(({start, end}) => ({
 		starttime: start,
 		endtime: end,
-		id: String(uniqueId()),
+		id: String(++daypartCount),
 		label: '',
 		abbreviation: '',
 		stations: [],

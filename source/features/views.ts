@@ -37,6 +37,29 @@ export const HOME_GROUPS: ReadonlyArray<HomeGroup> = [
 	{id: 'dev', title: 'Dev', collapsible: true},
 ]
 
+/**
+ * Symbols drawn for the app rather than shipped with iOS. Each name is a
+ * `.symbolset` in `assets/symbols/`, which `plugins/with-custom-symbols` copies
+ * into the asset catalog.
+ */
+export const CUSTOM_SYMBOLS = ['olaf-messenger'] as const
+
+type CustomSymbol = (typeof CUSTOM_SYMBOLS)[number]
+
+/** An SF Symbol's name, or a custom symbol's. */
+export type SymbolName = NonNullable<ImageProps['systemName']> | CustomSymbol
+
+function isCustomSymbol(name: SymbolName): name is CustomSymbol {
+	return (CUSTOM_SYMBOLS as readonly string[]).includes(name)
+}
+
+/** The `Image` props that draw `name`, wherever its artwork lives. */
+export function iconImage(
+	name: SymbolName,
+): {systemName: NonNullable<ImageProps['systemName']>} | {assetName: CustomSymbol} {
+	return isCustomSymbol(name) ? {assetName: name} : {systemName: name}
+}
+
 type CommonView = {
 	/** Stable across renames: pins, recents and collapsed groups are stored by it. */
 	id: string
@@ -44,7 +67,9 @@ type CommonView = {
 	title: string
 	/** A shorter name for the tile, when the full one does not fit a quarter of the screen. */
 	label?: string
-	icon: NonNullable<ImageProps['systemName']>
+	icon: SymbolName
+	/** The title's typeface, for a view whose own screens use another. */
+	titleDesign?: 'serif'
 	gradient: Gradient
 	group: HomeGroupId
 	disabled?: boolean
@@ -73,7 +98,7 @@ export const AllViews = (): Array<ViewType> => {
 		// Eat
 		{
 			type: 'view',
-			view: '/Menus',
+			view: '/menus',
 			id: 'stav-hall',
 			title: 'Stav Hall',
 			label: 'Stav',
@@ -83,7 +108,7 @@ export const AllViews = (): Array<ViewType> => {
 		},
 		{
 			type: 'view',
-			view: '/Menus/the-cage',
+			view: '/menus/the-cage',
 			id: 'the-cage',
 			title: 'The Cage',
 			label: 'Cage',
@@ -93,7 +118,7 @@ export const AllViews = (): Array<ViewType> => {
 		},
 		{
 			type: 'view',
-			view: '/Menus/the-pause',
+			view: '/menus/the-pause',
 			id: 'the-pause',
 			title: 'The Pause',
 			label: 'Pause',
@@ -114,7 +139,7 @@ export const AllViews = (): Array<ViewType> => {
 		// back, move `disabled` to the entry above.
 		{
 			type: 'view',
-			view: '/Balances',
+			view: '/balances',
 			id: 'balances-screen',
 			title: 'Balances',
 			icon: 'creditcard.fill',
@@ -126,7 +151,7 @@ export const AllViews = (): Array<ViewType> => {
 		// Get around
 		{
 			type: 'view',
-			view: '/Map?campus=stolaf',
+			view: '/map?campus=stolaf',
 			id: 'map',
 			title: 'Map',
 			icon: 'map.fill',
@@ -135,7 +160,7 @@ export const AllViews = (): Array<ViewType> => {
 		},
 		{
 			type: 'view',
-			view: '/Hours',
+			view: '/hours',
 			id: 'hours',
 			title: 'Hours',
 			icon: 'clock.fill',
@@ -144,7 +169,7 @@ export const AllViews = (): Array<ViewType> => {
 		},
 		{
 			type: 'view',
-			view: '/Transit',
+			view: '/transit',
 			id: 'transit',
 			title: 'Transit',
 			icon: 'bus.fill',
@@ -153,7 +178,7 @@ export const AllViews = (): Array<ViewType> => {
 		},
 		{
 			type: 'view',
-			view: '/Directory',
+			view: '/directory',
 			id: 'directory',
 			title: 'Directory',
 			icon: 'person.crop.rectangle.fill',
@@ -164,7 +189,7 @@ export const AllViews = (): Array<ViewType> => {
 		// Classes & work
 		{
 			type: 'view',
-			view: '/CourseSearch',
+			view: '/course-search',
 			id: 'course-catalog',
 			title: 'Course Catalog',
 			label: 'Catalog',
@@ -174,7 +199,7 @@ export const AllViews = (): Array<ViewType> => {
 		},
 		{
 			type: 'view',
-			view: '/PrintJobs',
+			view: '/print-jobs',
 			id: 'stoprint',
 			title: 'stoPrint',
 			icon: 'printer.fill',
@@ -183,7 +208,7 @@ export const AllViews = (): Array<ViewType> => {
 		},
 		{
 			type: 'view',
-			view: '/StudentWork',
+			view: '/student-work',
 			id: 'student-work',
 			title: 'Student Work',
 			label: 'Jobs',
@@ -195,7 +220,7 @@ export const AllViews = (): Array<ViewType> => {
 		// What's on
 		{
 			type: 'view',
-			view: '/Calendar',
+			view: '/calendar',
 			id: 'calendar',
 			title: 'Calendar',
 			icon: 'calendar',
@@ -204,7 +229,7 @@ export const AllViews = (): Array<ViewType> => {
 		},
 		{
 			type: 'view',
-			view: '/Athletics',
+			view: '/athletics',
 			id: 'athletics',
 			title: 'Athletics',
 			icon: 'trophy.fill',
@@ -213,17 +238,18 @@ export const AllViews = (): Array<ViewType> => {
 		},
 		{
 			type: 'view',
-			view: '/Messenger',
+			view: '/messenger',
 			id: 'olaf-messenger',
 			title: 'Olaf Messenger',
 			label: 'Messenger',
-			icon: 'newspaper.fill',
+			icon: 'olaf-messenger',
+			titleDesign: 'serif',
 			gradient: c.purpleGradient,
 			group: 'whats-on',
 		},
 		{
 			type: 'view',
-			view: '/StudentOrgs',
+			view: '/student-orgs',
 			id: 'student-orgs',
 			title: 'Student Orgs',
 			label: 'Orgs',
@@ -235,7 +261,7 @@ export const AllViews = (): Array<ViewType> => {
 		// Listen & watch
 		{
 			type: 'view',
-			view: '/Streaming Media/ksto',
+			view: '/streaming-media/ksto',
 			id: 'ksto',
 			title: 'KSTO',
 			icon: 'radio.fill',
@@ -244,7 +270,7 @@ export const AllViews = (): Array<ViewType> => {
 		},
 		{
 			type: 'view',
-			view: '/Streaming Media/krlx',
+			view: '/streaming-media/krlx',
 			id: 'krlx',
 			title: 'KRLX',
 			icon: 'mic.fill',
@@ -253,7 +279,7 @@ export const AllViews = (): Array<ViewType> => {
 		},
 		{
 			type: 'view',
-			view: '/Streaming Media',
+			view: '/streaming-media',
 			id: 'streams',
 			title: 'Streams',
 			icon: 'play.rectangle.fill',
@@ -262,7 +288,7 @@ export const AllViews = (): Array<ViewType> => {
 		},
 		{
 			type: 'view',
-			view: '/Streaming Media/webcams',
+			view: '/streaming-media/webcams',
 			id: 'webcams',
 			title: 'Webcams',
 			icon: 'web.camera.fill',
@@ -273,7 +299,7 @@ export const AllViews = (): Array<ViewType> => {
 		// Just for fun
 		{
 			type: 'view',
-			view: '/Dictionary',
+			view: '/dictionary',
 			id: 'dictionary',
 			title: 'Dictionary',
 			icon: 'character.book.closed.fill',
@@ -282,7 +308,7 @@ export const AllViews = (): Array<ViewType> => {
 		},
 		{
 			type: 'view',
-			view: '/Messenger/crosswords',
+			view: '/messenger/crosswords',
 			id: 'crossword',
 			title: 'Crossword',
 			icon: 'puzzlepiece.fill',
@@ -293,7 +319,7 @@ export const AllViews = (): Array<ViewType> => {
 		// Help
 		{
 			type: 'view',
-			view: '/Directory/named/PubSafe',
+			view: '/directory/named/PubSafe',
 			id: 'pubsafe',
 			title: 'PubSafe',
 			icon: 'shield.lefthalf.filled',
@@ -302,7 +328,7 @@ export const AllViews = (): Array<ViewType> => {
 		},
 		{
 			type: 'view',
-			view: '/Contacts',
+			view: '/contacts',
 			id: 'contacts',
 			title: 'Contacts',
 			icon: 'phone.fill',
@@ -311,7 +337,7 @@ export const AllViews = (): Array<ViewType> => {
 		},
 		{
 			type: 'view',
-			view: '/Faq',
+			view: '/faq',
 			id: 'faq',
 			title: 'FAQ',
 			icon: 'questionmark.circle.fill',
@@ -322,7 +348,7 @@ export const AllViews = (): Array<ViewType> => {
 		// Campus communications
 		{
 			type: 'view',
-			view: '/StOlafNews',
+			view: '/st-olaf-news',
 			id: 'st-olaf-news',
 			title: 'St. Olaf News',
 			label: 'News',
@@ -332,7 +358,7 @@ export const AllViews = (): Array<ViewType> => {
 		},
 		{
 			type: 'view',
-			view: '/More',
+			view: '/more',
 			id: 'a-to-z',
 			title: 'A–Z',
 			icon: 'list.bullet.rectangle.fill',
@@ -343,7 +369,7 @@ export const AllViews = (): Array<ViewType> => {
 		// Dev
 		{
 			type: 'view',
-			view: '/Hours?campus=carleton',
+			view: '/hours?campus=carleton',
 			id: 'carleton-campus',
 			title: 'Carleton Campus',
 			icon: 'building.2.fill',
@@ -353,7 +379,7 @@ export const AllViews = (): Array<ViewType> => {
 		},
 		{
 			type: 'view',
-			view: '/Menus/carleton',
+			view: '/menus/carleton',
 			id: 'carleton-menus',
 			title: 'Carleton Menus',
 			icon: 'list.bullet',

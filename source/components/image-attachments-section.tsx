@@ -1,7 +1,7 @@
 import * as React from 'react'
 import {Alert} from 'react-native'
-import {Button, Section, SwipeActions, Text} from '@expo/ui/swift-ui'
-import noop from 'lodash/noop'
+import {Button, SwipeActions, Text} from '@expo/ui/swift-ui'
+import {SheetSection} from '@frogpond/sheet-section'
 
 import {ActionRow, DisclosureRow} from './rows'
 import {MAX_ATTACHMENTS, type ImageAttachments} from './use-image-attachments'
@@ -24,13 +24,13 @@ export function ImageAttachmentsSection({title, attachments}: Props): React.Reac
 
 	let confirmRemoveImage = (uri: string) => {
 		Alert.alert('Remove this image?', undefined, [
-			{text: 'Cancel', style: 'cancel', onPress: noop},
+			{text: 'Cancel', style: 'cancel'},
 			{text: 'Remove', style: 'destructive', onPress: () => removeImage(uri)},
 		])
 	}
 
 	return (
-		<Section
+		<SheetSection
 			footer={
 				<Text>{`Screenshots or photos help show the problem. Up to ${MAX_ATTACHMENTS}.`}</Text>
 			}
@@ -62,6 +62,6 @@ export function ImageAttachmentsSection({title, attachments}: Props): React.Reac
 				onPress={() => void addImages()}
 				title={picking ? 'Adding Images…' : 'Add Image'}
 			/>
-		</Section>
+		</SheetSection>
 	)
 }

@@ -3,15 +3,13 @@ import XCTest
 struct StoPrintScreen: Screen {
 	let app: XCUIApplication
 
-	@discardableResult
-	func navigate() -> Self {
-		navigateFromHome(to: TestIdentifiers.Buttons.stoPrint)
+	/// Drawn by this screen alone, so its presence says the screen has mounted.
+	var mounted: XCUIElement {
+		app.navigationBars["Print Jobs"]
 	}
 
 	@discardableResult
-	func checkNotLoggedIn() -> Self {
-		let notLoggedIn = app.staticTexts[TestIdentifiers.StoPrint.notLoggedIn].firstMatch
-		XCTAssertTrue(notLoggedIn.waitForExistence(timeout: 30))
-		return self
+	func navigate() -> Self {
+		open(route: "/print-jobs", mountedWhen: mounted)
 	}
 }

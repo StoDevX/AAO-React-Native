@@ -2,7 +2,6 @@ import * as React from 'react'
 import {useCallback, useEffect, useState} from 'react'
 import {ScrollView, StyleSheet, Text, View, useWindowDimensions} from 'react-native'
 import {SafeAreaView} from 'react-native-safe-area-context'
-import noop from 'lodash/noop'
 import * as c from '@frogpond/colors'
 import {callPhone} from '../../../components/call-phone'
 import {Row} from '@frogpond/layout'
@@ -51,7 +50,7 @@ function PlayButton(props: PlayButtonProps): React.ReactNode {
 			return <ActionButton icon="pause" onPress={onPause} text="Pause" />
 
 		default:
-			return <ActionButton icon="ladybug" onPress={noop} text="Error" />
+			return <ActionButton icon="ladybug" onPress={NOTHING_TO_RETRY} text="Error" />
 	}
 }
 
@@ -61,7 +60,7 @@ type Props = {
 	playerUrl: string
 	stationNumber: string
 	title: string
-	scheduleHref: '/KSTOSchedule' | '/KRLXSchedule'
+	scheduleHref: '/ksto-schedule' | '/krlx-schedule'
 	stationName: string
 	source: {
 		useEmbeddedPlayer: boolean
@@ -69,6 +68,9 @@ type Props = {
 		streamSourceUrl: string
 	}
 }
+
+/** The error button's press: the player has nothing it can retry from here. */
+const NOTHING_TO_RETRY = (): void => undefined
 
 export function RadioControllerView(props: Props): React.ReactNode {
 	let {logos, ...screenProps} = props

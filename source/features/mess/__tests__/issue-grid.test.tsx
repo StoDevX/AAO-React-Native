@@ -16,22 +16,10 @@ import type {LightPost, MessIssue, MessStory} from '../types'
 import {useMessIssues} from '../use-mess-issues'
 import {tileEvents} from './mess-issue-tile-mock'
 
-jest.mock('@expo/ui/swift-ui', () => {
-	// oxlint-disable-next-line typescript/no-require-imports
-	return require('../../../testing/expo-ui-mock') as typeof import('../../../testing/expo-ui-mock')
-})
-jest.mock('@expo/ui/swift-ui/modifiers', () => {
-	// oxlint-disable-next-line typescript/no-require-imports
-	return require('../../../testing/expo-ui-mock') as typeof import('../../../testing/expo-ui-mock')
-})
 jest.mock('@frogpond/mess-issue-tile', () => {
 	// oxlint-disable-next-line typescript/no-require-imports
 	return require('./mess-issue-tile-mock') as typeof import('./mess-issue-tile-mock')
 })
-jest.mock('@react-native-community/netinfo', () =>
-	// oxlint-disable-next-line typescript/no-require-imports
-	require('@react-native-community/netinfo/jest/netinfo-mock'),
-)
 jest.mock('@frogpond/data-sources', () => ({
 	...(jest.requireActual('@frogpond/data-sources') as object),
 	fetchManifest: jest.fn(),
@@ -178,6 +166,8 @@ describe('IssueGrid', () => {
 		// down to a row of its own, so it is built again.
 		expect(tileEvents.mounts).not.toContainEqual(expect.stringMatching(/^April 29, 2026/u))
 		expect(tileEvents.mounts).toContainEqual(expect.stringMatching(/^March 25, 2026/u))
+		// The old top, photo-less, now asks for its lead's words, and the new top for its stories.
+		await waitForQueriesToSettle(queryClient)
 	})
 
 	test('draws again only the tile of the issue a story was opened from', async () => {

@@ -1,4 +1,3 @@
-import find from 'lodash/find'
 import type {Moment} from 'moment-timezone'
 
 import type {BusSchedule} from '../types'
@@ -59,7 +58,7 @@ export function buildStopStrip(args: Args): {
 	let nextRoundStart =
 		busStatus === 'after-end' || !nextRound
 			? null
-			: (find(nextRound, (time) => Boolean(time)) ?? null)
+			: (nextRound?.find((time) => Boolean(time)) ?? null)
 
 	return {cells, currentIndex, nextRoundStart}
 }

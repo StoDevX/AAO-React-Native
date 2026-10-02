@@ -14,9 +14,6 @@ import type {FilterSelection} from '../queries'
 import {dayWindow, useEvent, useFacets, useNeighbours, useOccurrences} from '../read'
 import {retentionFor, writeSource} from '../write'
 
-// `read.ts` reports a failed read to Sentry, which ships ESM-only and cannot
-// load under Jest.
-jest.mock('@sentry/react-native', () => ({captureException: jest.fn()}))
 // `client.ts` opens `expo-sqlite`, a native module with nothing to bind to
 // here. The hooks read from a real in-memory SQLite database instead.
 jest.mock('../../client', () => ({getRunner: jest.fn()}))

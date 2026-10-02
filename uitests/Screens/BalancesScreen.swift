@@ -3,9 +3,14 @@ import XCTest
 struct BalancesScreen: Screen {
 	let app: XCUIApplication
 
+	/// Drawn by this screen alone, so its presence says the screen has mounted.
+	var mounted: XCUIElement {
+		app.buttons[TestIdentifiers.Balances.iAgree].firstMatch
+	}
+
 	@discardableResult
 	func navigate() -> Self {
-		navigateFromHome(to: TestIdentifiers.Buttons.balances)
+		open(route: "/balances", mountedWhen: mounted)
 	}
 
 	@discardableResult

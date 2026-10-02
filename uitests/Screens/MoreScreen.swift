@@ -3,13 +3,8 @@ import XCTest
 struct MoreScreen: Screen {
 	let app: XCUIApplication
 
-	@discardableResult
-	func navigate() -> Self {
-		navigateFromHome(to: TestIdentifiers.Buttons.more)
-	}
-
-	@discardableResult
-	func verifyMoreTitle() -> Self {
-		verifyTitle(TestIdentifiers.Buttons.more)
+	/// Drawn by this screen alone, so its presence says the screen has mounted.
+	var mounted: XCUIElement {
+		app.navigationBars[TestIdentifiers.Buttons.more]
 	}
 }

@@ -1,12 +1,18 @@
 import XCTest
 
-/// Base class for all UI tests. Provides common setup (launch arguments,
-/// `continueAfterFailure = false`) so individual test files stay focused
-/// on assertions.
+/// Base class for UI tests that launch the app themselves. Provides common
+/// setup (launch arguments, `continueAfterFailure = false`) so individual test
+/// files stay focused on assertions. A test whose first step opens a URL
+/// subclasses this rather than `UITestCase`: opening a URL relaunches the app,
+/// so a launch in setUp would be thrown away.
 class UITestCaseUnbooted: XCTestCase {
 	var app: XCUIApplication!
 
-  @MainActor override func setUp() async throws {
+	/// Synchronous on purpose, as every test method here must be. With
+	/// `continueAfterFailure` false, a failure in an async `setUp` or an async
+	/// test ends the test runner process, and `-retry-tests-on-failure` never
+	/// gets to retry the test. Wait on an expectation with `wait(for:timeout:)`.
+	override func setUpWithError() throws {
 		continueAfterFailure = false
 
 		// Before the app launches: a run with no known JS source measures
@@ -21,7 +27,7 @@ class UITestCaseUnbooted: XCTestCase {
 		// inverts if dev mode is already on, and failed only in long runs.
 		app.launchArguments.append(TestIdentifiers.LaunchArguments.resetState)
 		appendJsLocationIfProvided()
-    app.launch()
+		appendRecordFixturesIfAsked()
 	}
 
 	override func tearDownWithError() throws {
@@ -45,6 +51,14 @@ class UITestCaseUnbooted: XCTestCase {
 		attachment.name = "Failure - \(name)"
 		attachment.lifetime = .keepAlways
 		add(attachment)
+	}
+
+	/// Has the app record what it fetches, when the test runner was started with
+	/// `TEST_RUNNER_AAO_RECORD_FIXTURES=1` -- as `mise run update-mess-fixtures` does.
+	func appendRecordFixturesIfAsked() {
+		if ProcessInfo.processInfo.environment["AAO_RECORD_FIXTURES"] == "1" {
+			app.launchArguments.append(TestIdentifiers.LaunchArguments.recordFixtures)
+		}
 	}
 
 	/// Points the app at a Metro other than the default localhost:8081, when
@@ -136,45 +150,22 @@ class UITestCaseUnbooted: XCTestCase {
 		}
 	}
 
-	/// Terminate and relaunch the app without `--reset-state`, so what the last
-	/// launch persisted survives, adding `arguments` to the launch.
-	func relaunchKeepingState(adding arguments: [String]) {
-		app.terminate()
+	/// Make the next launch keep what this one persisted, adding `arguments`.
+	///
+	/// Launches nothing: the next `open(route:)` relaunches the app with these
+	/// arguments, so a launch here would only be thrown away.
+	func keepStateForNextLaunch(adding arguments: [String]) {
 		app.launchArguments = [TestIdentifiers.LaunchArguments.uiTesting] + arguments
 		appendJsLocationIfProvided()
-		app.launch()
-	}
-
-	/// Terminate and relaunch the app with fresh state, adding `arguments` to
-	/// the launch, so nothing an earlier launch saved can stand in for what the
-	/// arguments change.
-	func relaunchWithFreshState(adding arguments: [String]) {
-		app.terminate()
-		app.launchArguments = [
-			TestIdentifiers.LaunchArguments.uiTesting,
-			TestIdentifiers.LaunchArguments.resetState,
-		] + arguments
-		appendJsLocationIfProvided()
-		app.launch()
-	}
-
-	/// Terminate and relaunch the app with fresh state at a given Dynamic Type
-	/// size. Lets a test prove a layout at a size larger than whatever the
-	/// simulator's own Settings happen to be set to.
-	func relaunch(atContentSizeCategory category: String) {
-		app.terminate()
-		app.launchArguments = [
-			TestIdentifiers.LaunchArguments.uiTesting,
-			TestIdentifiers.LaunchArguments.resetState,
-		] + TestIdentifiers.LaunchArguments.contentSizeCategory(category)
-		appendJsLocationIfProvided()
-		app.launch()
+		appendRecordFixturesIfAsked()
 	}
 }
 
+/// Base class for UI tests that start from the home screen: launches the app
+/// before each test.
 class UITestCase: UITestCaseUnbooted {
-//  override func setUp() async throws {
-//    try super.setUpWithError()
-//    app.launch()
-//  }
+	override func setUpWithError() throws {
+		try super.setUpWithError()
+		app.launch()
+	}
 }

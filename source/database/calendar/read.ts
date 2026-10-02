@@ -76,7 +76,7 @@ function useDropSupersededReads(revision: number): void {
  * forward, floored to today's local midnight.
  *
  * Floored to the day, not the instant, and this is load-bearing:
- * `app/(home)/Calendar.tsx` gets `now` from `useMomentTimer({intervalMs: 60000})`,
+ * `app/calendar/index.tsx` gets `now` from `useMomentTimer({intervalMs: 60000})`,
  * so an unfloored window would mint a new query key -- and force a requery and a
  * full rehydrate -- once a minute. Flooring means every call within the same
  * local day returns a window that is `toEqual` the last one: a fresh object

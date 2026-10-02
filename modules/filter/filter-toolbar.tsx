@@ -1,12 +1,12 @@
 import * as React from 'react'
-import type {FilterType} from './types'
+import type {Filter} from './types'
 import {ScrollView, StyleSheet} from 'react-native'
 import {Toolbar} from '@frogpond/toolbar'
 import {FilterToolbarButton} from './filter-toolbar-button'
 
 type Props<T extends object> = {
-	filters: Array<FilterType<T>>
-	onChange: (filter: FilterType<T>) => unknown
+	filters: Array<Filter<T>>
+	onChange: (filter: Filter<T>) => unknown
 }
 
 export function FilterToolbar<T extends object>({filters, onChange}: Props<T>): React.ReactNode {

@@ -3,11 +3,22 @@ import XCTest
 struct HoursScreen: Screen {
 	let app: XCUIApplication
 
-	/// Opens the Hours tile, which defaults to `'stolaf'` with no `?campus=`
-	/// param.
+	/// Drawn by this screen alone, so its presence says the screen has mounted.
+	var mounted: XCUIElement {
+		app.navigationBars["Hours"]
+	}
+
+	/// Carleton's Hours, which the Carleton Campus tile opens with
+	/// `?campus=carleton`. Its search field is St. Olaf's too, so the title is
+	/// what tells the two apart.
+	var carletonMounted: XCUIElement {
+		app.navigationBars[TestIdentifiers.Buttons.carletonCampus]
+	}
+
+	/// Opens Hours, which defaults to `'stolaf'` with no `?campus=` param.
 	@discardableResult
 	func navigate() -> Self {
-		navigateFromHome(to: TestIdentifiers.Buttons.hours)
+		open(route: "/hours", mountedWhen: mounted)
 	}
 
 	private var searchField: XCUIElement {
@@ -104,40 +115,6 @@ struct HoursScreen: Screen {
 		return self
 	}
 
-	/// Scrolls to the All spaces row at the end of the list, checking on the
-	/// way that `name` never appears. The list builds only the rows near the
-	/// screen, so an absence is only proven for rows it was scrolled past.
-	@discardableResult
-	func scrollToAllSpaces(checkingAbsenceOf name: String) -> Self {
-		let row = app.buttons[TestIdentifiers.Hours.allSpacesRow].firstMatch
-		let unlisted = app.element(matching: TestIdentifiers.Hours.rowPrefix + name)
-		for _ in 0..<15 where !(row.exists && row.isHittable) {
-			XCTAssertFalse(unlisted.exists, "\(name) should be left out of the Hours list")
-			app.swipeUp()
-		}
-		XCTAssertFalse(unlisted.exists, "\(name) should be left out of the Hours list")
-		XCTAssertTrue(row.exists && row.isHittable, "The Hours list should end in All spaces")
-		return self
-	}
-
-	@discardableResult
-	func openAllSpaces() -> Self {
-		app.buttons[TestIdentifiers.Hours.allSpacesRow].firstMatch.tap()
-		XCTAssertTrue(
-			app.navigationBars["All spaces"].waitForExistence(timeout: 10),
-			"All spaces should open its own screen")
-		return self
-	}
-
-	/// Scrolls until `name`'s row is on screen, for a row further down a list.
-	@discardableResult
-	func scrollToRow(_ name: String) -> Self {
-		let row = app.element(matching: TestIdentifiers.Hours.rowPrefix + name)
-		scrollUntilHittable(row)
-		XCTAssertTrue(row.exists && row.isHittable, "\(name) should be listed")
-		return self
-	}
-
 	/// Tap the revealed action that adds a building to Favorites.
 	@discardableResult
 	func tapAddToFavorites() -> Self {
@@ -165,16 +142,6 @@ struct HoursScreen: Screen {
 		return self
 	}
 
-	/// Checked once the list has loaded, so the toolbar has had its chance to
-	/// draw the button.
-	@discardableResult
-	func verifyNoMapButton() -> Self {
-		XCTAssertFalse(
-			app.buttons[TestIdentifiers.Hours.mapButton].exists,
-			"St. Olaf's Hours screen should offer no map button; the map has its own tile")
-		return self
-	}
-
 	@discardableResult
 	func verifyFavoritesSectionAbsent() -> Self {
 		let heading = app.staticTexts[TestIdentifiers.Hours.favoritesSection].firstMatch
@@ -197,7 +164,7 @@ struct HoursScreen: Screen {
 		// test outright rather than let this loop retry. The row's centre is
 		// what `selectBuilding` in MapScreen taps for the same reason.
 		//
-		// The loop itself is retried for the reason navigateFromHome retries: a
+		// The loop itself is retried: a
 		// synthesized press on a row whose host has mounted but whose action
 		// still has to reach JavaScript lands natively and does nothing.
 		//
@@ -341,41 +308,22 @@ struct HoursScreen: Screen {
 		return self
 	}
 
-	@discardableResult
-	func openDetailMenu() -> Self {
-		let menu = app.buttons[TestIdentifiers.Hours.detailMenu].firstMatch
-		XCTAssertTrue(
-			menu.waitForExistence(timeout: 30),
-			"The detail sheet should offer an overflow menu")
-		menu.tap()
-		return self
-	}
-
-	@discardableResult
-	func verifyReportActionOffered() -> Self {
-		XCTAssertTrue(
-			app.buttons[TestIdentifiers.Hours.reportAction]
-				.waitForExistence(timeout: 30),
-			"The menu should offer Report a Problem")
-		return self
-	}
-
-	/// Taps Report a Problem in the detail sheet's overflow menu.
+	/// Taps the detail sheet's Report a Problem button.
 	/// `verifyReportScreenPresented` is what proves the push actually worked,
-	/// rather than the action merely existing as a menu item.
+	/// rather than the button merely existing.
 	@discardableResult
 	func tapReportAction() -> Self {
 		let action = app.buttons[TestIdentifiers.Hours.reportAction]
 		XCTAssertTrue(
 			action.waitForExistence(timeout: 30),
-			"The menu should offer Report a Problem before it can be tapped")
+			"The detail sheet should offer Report a Problem")
 		action.tap()
 		return self
 	}
 
 	/// Assert the report screen actually came up, by its own prompt
 	/// rather than `reportAction`'s label -- that label belongs to the
-	/// menu button that opens this screen, and would exist whether or not the
+	/// toolbar button that opens this screen, and would exist whether or not the
 	/// screen ever presented.
 	@discardableResult
 	func verifyReportScreenPresented() -> Self {

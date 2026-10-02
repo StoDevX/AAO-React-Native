@@ -105,7 +105,7 @@ export function CalendarPicker({
 								/>
 							))}
 						</Menu>
-						<Section modifiers={STAYS_OPEN} title="CALENDARS">
+						<Section modifiers={STAYS_OPEN} title="Calendars">
 							{sources.map((source) => (
 								<Toggle
 									isOn={enabledIds.includes(source.id)}

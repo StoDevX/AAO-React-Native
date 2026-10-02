@@ -12,7 +12,7 @@ import {
 } from '@expo/ui/swift-ui'
 import {font, foregroundStyle, listStyle, padding, refreshable} from '@expo/ui/swift-ui/modifiers'
 import * as c from '@frogpond/colors'
-import type {FilterType} from '@frogpond/filter'
+import type {Filter} from '@frogpond/filter'
 import type {Moment} from 'moment'
 
 import {FilterMenuToolbar as FilterToolbar} from './filter-menu-toolbar'
@@ -35,7 +35,7 @@ import type {
 	StationMenuType,
 } from './types'
 
-type FilterFunc = (filters: Array<FilterType<MenuItemType>>, item: MenuItemType) => boolean
+type FilterFunc = (filters: Array<Filter<MenuItemType>>, item: MenuItemType) => boolean
 
 /** The meal picker, together with the way to act on it. */
 export type MealMenuSelection = MealHeaderMenu & {
@@ -89,20 +89,20 @@ type Props = {
 	applyFilters?: FilterFunc
 }
 
-const areSpecialsFiltered = (filters: Array<FilterType<MenuItemType>>): boolean =>
+const areSpecialsFiltered = (filters: Array<Filter<MenuItemType>>): boolean =>
 	Boolean(filters.find(isSpecialsFilter))
 
-const isSpecialsFilter = (f: FilterType<MenuItemType>): boolean =>
+const isSpecialsFilter = (f: Filter<MenuItemType>): boolean =>
 	f.enabled && f.type === 'toggle' && f.spec.label === 'Only Show Specials'
 
-const areDietsFiltered = (filters: Array<FilterType<MenuItemType>>): boolean =>
+const areDietsFiltered = (filters: Array<Filter<MenuItemType>>): boolean =>
 	Boolean(filters.find(isDietsFilter))
 
-const isDietsFilter = (f: FilterType<MenuItemType>): boolean =>
+const isDietsFilter = (f: Filter<MenuItemType>): boolean =>
 	f.enabled && f.type === 'list' && f.spec.title === 'Dietary Restrictions'
 
 const groupMenuData = (args: {
-	filters: Array<FilterType<MenuItemType>>
+	filters: Array<Filter<MenuItemType>>
 	stations: Array<StationMenuType>
 	foodItems: MenuItemContainerType
 	applyFilters: FilterFunc
@@ -142,7 +142,7 @@ const groupMenuData = (args: {
  * A bare string may never be passed as a `ReactNode` prop: `@expo/ui` crashes
  * at mount, and neither tsc nor Jest catches it.
  */
-export function sectionHeaderProps(
+function sectionHeaderProps(
 	title: string,
 	note: string | undefined,
 ): {title: string} | {header: React.ReactNode} {
@@ -170,7 +170,7 @@ export function FancyMenu(props: Props): React.ReactNode {
 	// selected to begin with and nothing after: tracking it would move the
 	// reader off a meal they chose, and take their filters with it, whenever the
 	// clock moved on.
-	const [filters, setFilters] = useState<FilterType<MenuItemType>[]>(() =>
+	const [filters, setFilters] = useState<Filter<MenuItemType>[]>(() =>
 		buildFilters(menuCorIcons, meals, now),
 	)
 

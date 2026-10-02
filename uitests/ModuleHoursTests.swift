@@ -1,6 +1,6 @@
 import XCTest
 
-class ModuleHoursTests: UITestCase {
+class ModuleHoursTests: UITestCaseUnbooted {
 	func testSearchNarrowsTheList() throws {
 		HoursScreen(app: app)
 			.navigate()
@@ -36,15 +36,14 @@ class ModuleHoursTests: UITestCase {
 	}
 
 	/// A detail sheet's whole life with no edits: it opens over the list, its
-	/// menu pushes Report a Problem into the sheet's own stack, and the sheet
-	/// still closes afterwards.
+	/// Report a Problem button pushes the report into the sheet's own stack, and
+	/// the sheet still closes afterwards.
 	///
 	/// Dismissing the report back to the detail sheet, rather than straight to
 	/// the list, is what proves the report pushed into the sheet's own stack
 	/// instead of replacing it.
 	///
-	/// The detail sheet offers no close control of its own -- only an overflow
-	/// menu and a favourite button -- so drag and backdrop are its only exits.
+	/// Besides its Close button, the sheet closes by drag and backdrop.
 	/// `preventNativeDismiss` on the report route makes the drag worth proving
 	/// directly: a `preventedRoutes` entry that outlived the report screen
 	/// would trap the user in a sheet nothing could close.
@@ -63,8 +62,6 @@ class ModuleHoursTests: UITestCase {
 			.verifyDetailSheetPresented(for: TestIdentifiers.Hours.anExcludedBuilding)
 			.verifyListStillBehind()
 			.capture("Hours detail sheet at the smaller detent")
-			.openDetailMenu()
-			.verifyReportActionOffered()
 			.tapReportAction()
 			.verifyReportScreenPresented()
 			.verifyReportPushedIntoSheet()
@@ -132,7 +129,6 @@ class ModuleHoursTests: UITestCase {
 			.navigate()
 			.tapRow(TestIdentifiers.Hours.anExcludedBuilding)
 			.verifyDetailSheetPresented(for: TestIdentifiers.Hours.anExcludedBuilding)
-			.openDetailMenu()
 			.tapReportAction()
 			.verifyReportScreenPresented()
 			.makeUnsavedEditOnReportScreen()
@@ -175,7 +171,6 @@ class ModuleHoursTests: UITestCase {
 			.navigate()
 			.tapRow(TestIdentifiers.Hours.anExcludedBuilding)
 			.verifyDetailSheetPresented(for: TestIdentifiers.Hours.anExcludedBuilding)
-			.openDetailMenu()
 			.tapReportAction()
 			.verifyReportScreenPresented()
 			.openScheduleEditorFromReportScreen()

@@ -1,6 +1,7 @@
 import {AppState, Platform} from 'react-native'
 import {addEventListener} from '@react-native-community/netinfo'
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import * as Application from 'expo-application'
 import {createAsyncStoragePersister} from '@tanstack/query-async-storage-persister'
 import type {PersistedClient} from '@tanstack/react-query-persist-client'
 import {firstPagesOf, isInfiniteData} from '../lib/infinite-data'
@@ -90,6 +91,11 @@ export function isCalendarQueryKey(queryKey: readonly unknown[]): boolean {
 
 export const persistOptions = {
 	persister,
+	// A query's data can change shape between builds, and a restored copy
+	// never passes through the fetch that checks it, so a cache saved by any
+	// other build is dropped on launch rather than handed to this one. A cache
+	// saved with no buster never matches either.
+	buster: `${Application.nativeApplicationVersion}+${Application.nativeBuildVersion}`,
 	dehydrateOptions: {
 		// The calendar's data lives in SQLite: the ingest query returns only a
 		// receipt saying a write happened, and the read hooks return a window

@@ -6,7 +6,7 @@ import XCTest
 /// the mocked launch never asks for an account. That branch is covered by
 /// `printJobsGate` in source/features/stoprint/__tests__/print-jobs-gate.test.ts,
 /// which can state the mocked and unmocked cases alike.
-class ModuleStoPrintTests: UITestCase {
+class ModuleStoPrintTests: UITestCaseUnbooted {
 
 	/// A job that is not pending release goes to the release screen rather than
 	/// the printer picker, which is the screen this reaches.
@@ -21,7 +21,7 @@ class ModuleStoPrintTests: UITestCase {
 		XCTAssertTrue(job.waitForExistence(timeout: 30), "A sent job should be listed")
 		job.tap()
 
-		let jobInfo = app.staticTexts["JOB INFO"].firstMatch
+		let jobInfo = app.staticTexts["Job Info"].firstMatch
 		XCTAssertTrue(jobInfo.waitForExistence(timeout: 30), "The release screen should be shown")
 
 		screen.capture("Print release")

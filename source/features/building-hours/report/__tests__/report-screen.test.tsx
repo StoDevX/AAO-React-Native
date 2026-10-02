@@ -5,13 +5,14 @@ import {Alert} from 'react-native'
 import * as ImagePicker from 'expo-image-picker'
 import {usePreventRemove} from 'expo-router/react-navigation'
 
-import ReportPage from '../../../../../app/(home)/Hours/detail/report'
+import ReportPage from '../../../../../app/hours/detail/report'
 import {BuildingReportProvider} from '../context'
 import {keys} from '../../query'
 import type {BuildingType} from '../../types'
 import {simulateFocus} from '../../../../testing/expo-router-mock'
 import type * as ExpoRouterMock from '../../../../testing/expo-router-mock'
 import {flushQueryNotifications} from '../../../../testing/query-notifications'
+import {textFieldBlur} from '../../../../testing/expo-ui-mock'
 
 // report.tsx pulls in the redux barrel through query.ts, for
 // useGroupedBuildings' favorites selector elsewhere in that module. That
@@ -23,15 +24,6 @@ jest.mock('../../../../redux', () => ({
 	selectFavoriteBuildings: jest.fn(),
 	useAppSelector: jest.fn(),
 }))
-
-jest.mock('@expo/ui/swift-ui', () => {
-	// oxlint-disable-next-line typescript/no-require-imports
-	return require('../../../../testing/expo-ui-mock') as typeof import('../../../../testing/expo-ui-mock')
-})
-jest.mock('@expo/ui/swift-ui/modifiers', () => {
-	// oxlint-disable-next-line typescript/no-require-imports
-	return require('../../../../testing/expo-ui-mock') as typeof import('../../../../testing/expo-ui-mock')
-})
 
 const mockNavigate = jest.fn()
 
@@ -47,10 +39,12 @@ jest.mock('expo-router', () => {
 		useLocalSearchParams: () => ({name: 'The Cage', campus: 'stolaf'}),
 	}
 })
-jest.mock('expo-router/react-navigation', () => ({usePreventRemove: jest.fn()}))
 jest.mock('../../../../components/send-email')
 
 import {composeEmail} from '../../../../components/send-email'
+import {loadBeforeTests} from '../../../../testing/load-before-tests'
+
+loadBeforeTests('TextInput')
 
 const mockComposeEmail = composeEmail as jest.MockedFunction<typeof composeEmail>
 
@@ -137,6 +131,50 @@ describe('the report form', () => {
 
 		let [args] = mockComposeEmail.mock.calls.at(-1) as [{body: string}]
 		expect(args.body).toContain('category: Libraries')
+	})
+})
+
+describe('the unsaved-changes guard', () => {
+	/// Raises the guard the way leaving the screen would.
+	async function tryToLeave() {
+		let guard = usePreventRemove as jest.MockedFunction<typeof usePreventRemove>
+		let onPreventRemove = guard.mock.calls.at(-1)?.[1]
+		await act(() => {
+			onPreventRemove?.({data: {action: {type: 'GO_BACK'}}})
+		})
+	}
+
+	/// UIKit hands focus back, on Discard, to whatever field held it when the
+	/// alert went up -- and a field still focused as the form is torn down
+	/// takes the app with it.
+	it('lets go of the focused field before asking to discard', async () => {
+		await renderReport()
+		let alert = jest.spyOn(Alert, 'alert').mockImplementation(() => undefined)
+		let note = screen.getByLabelText('Describe the problem')
+
+		await fireEvent(note, 'focus')
+		await fireEvent.changeText(note, 'Closed early on Fridays')
+		await tryToLeave()
+
+		expect(textFieldBlur).toHaveBeenCalledWith('Describe the problem')
+		expect(alert).toHaveBeenCalled()
+		expect(textFieldBlur.mock.invocationCallOrder[0]).toBeLessThan(
+			alert.mock.invocationCallOrder[0],
+		)
+	})
+
+	it('asks to discard when no field is focused', async () => {
+		await renderReport()
+		let alert = jest.spyOn(Alert, 'alert').mockImplementation(() => undefined)
+		let note = screen.getByLabelText('Describe the problem')
+
+		await fireEvent(note, 'focus')
+		await fireEvent.changeText(note, 'Closed early on Fridays')
+		await fireEvent(note, 'blur')
+		await tryToLeave()
+
+		expect(textFieldBlur).not.toHaveBeenCalled()
+		expect(alert).toHaveBeenCalled()
 	})
 })
 
@@ -232,7 +270,7 @@ describe('links', () => {
 
 		await fireEvent.press(screen.getByLabelText('Instagram, www.instagram.com'))
 		expect(mockNavigate).toHaveBeenCalledWith({
-			pathname: '/Hours/detail/link-editor',
+			pathname: '/hours/detail/link-editor',
 			params: {linkIndex: '0'},
 		})
 	})

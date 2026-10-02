@@ -3,8 +3,8 @@ import {queryOptions} from '@tanstack/react-query'
 import {DepartmentListing} from './types'
 
 /// `directory`-prefixed to stand apart from `keys` in query.ts (the directory
-/// search) and from course-search's `departmentsOptions`, which fetches catalog
-/// subject codes -- a different list for a different screen.
+/// search). Course search's department filter lists catalog subject codes, a
+/// different list for a different screen.
 export const directoryDepartmentKeys = {
 	all: ['directory', 'departments'] as const,
 }

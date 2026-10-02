@@ -3,7 +3,7 @@ import moment from 'moment-timezone'
 import {describe, expect, jest, test} from '@jest/globals'
 import {act, fireEvent, render, screen, within} from '@testing-library/react-native'
 
-import {FancyMenu, sectionHeaderProps} from '../fancy-menu'
+import {FancyMenu} from '../fancy-menu'
 import type {
 	MasterCorIconMapType,
 	MenuItemContainerType,
@@ -11,7 +11,7 @@ import type {
 	ProcessedMealType,
 	StationMenuType,
 } from '../types'
-import type {FilterType, PickerType} from '@frogpond/filter'
+import type {Filter, PickerFilter} from '@frogpond/filter'
 
 /**
  * The real toolbar renders `@expo/ui/swift-ui` directly, which cannot mount
@@ -26,14 +26,6 @@ import type {FilterType, PickerType} from '@frogpond/filter'
 // `@frogpond/filter`'s `FilterMenu`/`FilterSheet` render `@expo/ui/swift-ui`
 // directly, which cannot mount under Jest; `applyFiltersToItem` next to them
 // is the real thing this suite uses.
-jest.mock('@expo/ui/swift-ui', () => {
-	// oxlint-disable-next-line typescript/no-require-imports
-	return require('../../../source/testing/expo-ui-mock') as typeof import('../../../source/testing/expo-ui-mock')
-})
-jest.mock('@expo/ui/swift-ui/modifiers', () => {
-	// oxlint-disable-next-line typescript/no-require-imports
-	return require('../../../source/testing/expo-ui-mock') as typeof import('../../../source/testing/expo-ui-mock')
-})
 
 jest.mock('../filter-menu-toolbar', () => {
 	// oxlint-disable-next-line typescript/no-require-imports
@@ -44,10 +36,10 @@ jest.mock('../filter-menu-toolbar', () => {
 			filters,
 			onChange,
 		}: {
-			filters: FilterType<MenuItemType>[]
-			onChange: (filter: FilterType<MenuItemType>) => void
+			filters: Filter<MenuItemType>[]
+			onChange: (filter: Filter<MenuItemType>) => void
 		}) => {
-			let mealFilter = filters.find((f) => f.key === 'meals') as PickerType<MenuItemType>
+			let mealFilter = filters.find((f) => f.key === 'meals') as PickerFilter<MenuItemType>
 
 			return (
 				<P
@@ -74,9 +66,8 @@ function station(label: string, items: string[], note = ''): StationMenuType {
 const MEALS: ProcessedMealType[] = [
 	{label: 'Breakfast', starttime: '7:00', endtime: '11:00', stations: [station('Grill', ['1'])]},
 	{label: 'Lunch', starttime: '11:00', endtime: '14:00', stations: [station('Deli', ['2'])]},
-	// A note here means `sectionHeaderProps` takes its `header` arm for a real
-	// render, not just in the unit tests below -- otherwise nothing in this
-	// suite ever renders a `Section` with a `header`.
+	// The one station with a note, so the suite renders a `Section` with a
+	// custom `header` as well as ones with a plain `title`.
 	{
 		label: 'Dinner',
 		starttime: '17:00',
@@ -635,19 +626,5 @@ describe('FancyMenu', () => {
 
 		expect(screen.getByText('No items to show. Try changing the filters.')).toBeTruthy()
 		expect(screen.queryByText('Pancakes')).toBeNull()
-	})
-})
-
-describe('sectionHeaderProps', () => {
-	// A note-less station -- every fixture above -- takes `Section`'s own
-	// `title`, which renders in the system's section-header style.
-	test('a station with no note takes the title prop', () => {
-		expect(sectionHeaderProps('Grill', undefined)).toEqual({title: 'Grill'})
-	})
-
-	// A station with a note gets a custom header node instead, carrying both
-	// the name and the note.
-	test('a station with a note takes a custom header', () => {
-		expect('header' in sectionHeaderProps('Grill', 'closes at 2')).toBe(true)
 	})
 })

@@ -2,29 +2,14 @@ import * as React from 'react'
 import {Alert} from 'react-native'
 import {fireEvent, render, screen} from '@testing-library/react-native'
 
-import PreviewScreen from '../../../../app/(home)/Dictionary/entry/preview'
+import PreviewScreen from '../../../../app/dictionary/entry/preview'
 import {normalizeEntry} from '../lib/entry'
 import {submitReport} from '../report/submit'
 import {useDictionaryDraftStore} from '../store'
 import {track} from '../../telemetry/track'
-import type * as ExpoRouterMock from '../../../testing/expo-router-mock'
 
-jest.mock('@expo/ui/swift-ui', () => {
-	// oxlint-disable-next-line typescript/no-require-imports
-	return require('../../../testing/expo-ui-mock') as typeof import('../../../testing/expo-ui-mock')
-})
-jest.mock('@expo/ui/swift-ui/modifiers', () => {
-	// oxlint-disable-next-line typescript/no-require-imports
-	return require('../../../testing/expo-ui-mock') as typeof import('../../../testing/expo-ui-mock')
-})
 jest.mock('../report/submit', () => ({submitReport: jest.fn()}))
 jest.mock('../../telemetry/track', () => ({track: jest.fn()}))
-
-jest.mock('expo-router', () => {
-	// oxlint-disable-next-line typescript/no-require-imports
-	let {Stack}: typeof ExpoRouterMock = require('../../../testing/expo-router-mock')
-	return {Stack}
-})
 
 const mockSubmit = jest.mocked(submitReport)
 let alertSpy = jest.spyOn(Alert, 'alert').mockReturnValue(undefined)

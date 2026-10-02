@@ -1,6 +1,6 @@
 import XCTest
 
-class ModuleAthleticsTests: UITestCase {
+class ModuleAthleticsTests: UITestCaseUnbooted {
 	func testAthleticsFilterList() throws {
 		let screen = AthleticsScreen(app: app).navigate()
 

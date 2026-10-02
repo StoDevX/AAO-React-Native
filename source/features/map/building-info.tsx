@@ -1,5 +1,15 @@
 import * as React from 'react'
-import {Button, Image, List, Section, Spacer, Text, VStack, ZStack} from '@expo/ui/swift-ui'
+import {
+	Button,
+	ContentUnavailableView,
+	Image,
+	List,
+	Section,
+	Spacer,
+	Text,
+	VStack,
+	ZStack,
+} from '@expo/ui/swift-ui'
 import {
 	accessibilityLabel,
 	buttonBorderShape,
@@ -36,6 +46,7 @@ import {LinkListSection} from './card/link-list-section'
 import {PhotoStrip} from './card/photo-strip'
 import {PlacesSection} from './card/places-section'
 import {cardActions, WALKING_DIRECTIONS} from './lib/card-actions'
+import {cardHasNoDetails} from './lib/card-details'
 import {nameUnderHeader, titleMayMove} from './lib/card-title'
 import {goodToKnowRows} from './lib/good-to-know'
 import {placeTiles, toPlaceTiles, type PlaceTile} from './lib/place-tiles'
@@ -46,7 +57,8 @@ import {cardDirectoryOptions, cardFeaturesOptions, cardVenuesOptions} from './ca
 import {DirectorySection} from './card/directory-section'
 import {directoryFor} from './directory/directory'
 import type {SheetDetent} from './lib/sheet-moves'
-import type {Building, Coordinate, Feature, LabelLink, Point} from './types'
+import type {Building, Coordinate, Feature, LabelLink} from './types'
+import {anchorOf} from './lib/place-geometry'
 
 /// Apple Maps' place-card header, measured on iOS 27: 16pt of padding round
 /// 44pt buttons -- 76pt in all, the sheet's collapsed stop
@@ -156,31 +168,48 @@ function BuildingCard({
 	stacked?: React.ReactNode
 	stop: SheetDetent
 }): React.ReactNode {
-	let {address, description, floors, links, name, photos} = building.properties
+	let {address, citations, description, floors, links, name, photos, rules} = building.properties
 
 	let subtitle = building.properties.type || null
 
-	let {data: venues = []} = useQuery(cardVenuesOptions(campus))
+	let venuesQuery = useQuery(cardVenuesOptions(campus))
+	let featuresQuery = useQuery(cardFeaturesOptions(campus))
+	let directoriesQuery = useQuery(cardDirectoryOptions(campus))
+	let {data: venues = []} = venuesQuery
 	let hours = ownHours(venues, building)
-	let {data: features = []} = useQuery(cardFeaturesOptions(campus))
-	let {data: directories = []} = useQuery(cardDirectoryOptions(campus))
+	let {data: features = []} = featuresQuery
+	let {data: directories = []} = directoriesQuery
 	// Each place appears once: a department or office link that names a place
 	// here opens that place's card, and Also at This Location keeps the rest.
 	let sections = placeSections(
 		placeTiles(building.properties),
 		onOpen ? toPlaceTiles(alsoHere(building, features, venues)) : [],
 	)
+	let directory = onOpen ? directoryFor(directories, building.id) : undefined
+	// Said only once the feeds have answered, or every card would flash it.
+	let feedsLoading = venuesQuery.isLoading || featuresQuery.isLoading || directoriesQuery.isLoading
+	let noDetails =
+		!feedsLoading &&
+		cardHasNoDetails({place: building.properties, hours, sections, directory, extraLinks})
 
 	return (
 		<PlaceCard name={name} onClose={onClose} stacked={stacked} stop={stop} subtitle={subtitle}>
 			<ActionsRow
 				actions={cardActions({point: pointOf(building), walkingDirections: WALKING_DIRECTIONS})}
 			/>
+			{noDetails ? <NoDetails /> : null}
 			<PhotoStrip name={name} photos={photos} />
 			{hours ? <CardHours venue={hours} /> : null}
 			{onOpen ? <AlsoHereSection onOpen={onOpen} tiles={sections.alsoHere} /> : null}
-			<AboutSection text={description} />
+			<LinkedPlaces
+				id="accessible-parking"
+				onOpen={onOpen}
+				tiles={sections.accessibleParking}
+				title="Accessible Parking"
+			/>
+			<AboutSection citations={citations} text={description} />
 			<GoodToKnowSection rows={goodToKnowRows(building.properties)} />
+			<LinkListSection items={rules} title="Rules" />
 			<LinkedPlaces
 				id="departments"
 				onOpen={onOpen}
@@ -188,13 +217,30 @@ function BuildingCard({
 				title="Departments"
 			/>
 			<LinkedPlaces id="offices" onOpen={onOpen} tiles={sections.offices} title="Offices" />
-			{onOpen ? (
-				<DirectorySection directory={directoryFor(directories, building.id)} onOpen={onOpen} />
-			) : null}
+			{onOpen ? <DirectorySection directory={directory} onOpen={onOpen} /> : null}
 			<LinkListSection items={floors} title="Floors" />
 			<LinkListSection items={[...(links ?? []), ...(extraLinks ?? [])]} title="Links" />
 			<DetailsSection address={address} />
 		</PlaceCard>
+	)
+}
+
+/// Stands in for a card's sections when none has anything to show.
+function NoDetails(): React.ReactNode {
+	return (
+		<Section
+			modifiers={[
+				// Straight on the sheet, as the sections it stands in for are.
+				listRowBackground('clear'),
+				listRowSeparator('hidden'),
+			]}
+		>
+			<ContentUnavailableView
+				description="There's no more information about this place yet."
+				systemImage="info.circle"
+				title="No Details"
+			/>
+		</Section>
 	)
 }
 
@@ -383,6 +429,5 @@ export function CloseButton({onClose}: {onClose: () => void}): React.ReactNode {
 
 /// Where Directions routes: the building's map point, if the feed gives one.
 function pointOf(building: Feature<Building>): Coordinate | null {
-	let point = building.geometry.geometries.find((geo): geo is Point => geo.type === 'Point')
-	return point?.coordinates ?? null
+	return anchorOf(building)?.coordinates ?? null
 }

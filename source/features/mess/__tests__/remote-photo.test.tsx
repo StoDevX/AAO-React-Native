@@ -1,17 +1,11 @@
 import * as React from 'react'
-import {describe, expect, jest, test} from '@jest/globals'
+import {describe, expect, test} from '@jest/globals'
 import {render} from '@testing-library/react-native'
 
 import {RemotePhoto} from '../remote-photo'
+import {loadBeforeTests} from '../../../testing/load-before-tests'
 
-jest.mock('@expo/ui/swift-ui', () => {
-	// oxlint-disable-next-line typescript/no-require-imports
-	return require('../../../testing/expo-ui-mock') as typeof import('../../../testing/expo-ui-mock')
-})
-jest.mock('@expo/ui/swift-ui/modifiers', () => {
-	// oxlint-disable-next-line typescript/no-require-imports
-	return require('../../../testing/expo-ui-mock') as typeof import('../../../testing/expo-ui-mock')
-})
+loadBeforeTests('Image')
 
 type Node = {type: string; props: Record<string, unknown>; children: Array<Node | string> | null}
 

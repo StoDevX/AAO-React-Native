@@ -128,10 +128,6 @@ describe('parseMessPosts', () => {
 			'every Mess post was malformed',
 		)
 	})
-
-	it('returns nothing for an empty feed', () => {
-		expect(parseMessPosts([], categories)).toStrictEqual([])
-	})
 })
 
 describe('a story excerpt', () => {

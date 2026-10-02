@@ -1,10 +1,5 @@
 import * as React from 'react'
-import {
-	Image as RNImage,
-	StyleSheet,
-	TextInput as RNTextInput,
-	useWindowDimensions,
-} from 'react-native'
+import {Image as RNImage, StyleSheet} from 'react-native'
 import type {ColorValue} from 'react-native'
 import type {SFSymbol} from 'sf-symbols-typescript'
 import {
@@ -145,13 +140,21 @@ export function ActionRow(props: ActionRowProps): React.ReactNode {
 }
 
 /**
- * A leading symbol, drawn by SwiftUI itself.
+ * A leading symbol, drawn by SwiftUI itself: one iOS ships, named by
+ * `systemName`, or a custom one in the asset catalog, named by `assetName`.
  *
  * `label` is for a symbol that means something, like an unread dot: VoiceOver
  * reads the row as one element, so the label leads the row's own. `size`
- * overrides the usual symbol size, for a mark smaller than an icon.
+ * overrides the usual symbol size, for a mark smaller than an icon. `width`
+ * sets a column for the symbol to center in, so rows whose symbols differ in
+ * width still start their titles at one edge.
  */
-type SymbolImage = {systemName: SFSymbol; tint?: ColorValue; size?: number; label?: string}
+type SymbolImage = ({systemName: SFSymbol} | {assetName: string}) & {
+	tint?: ColorValue
+	size?: number
+	label?: string
+	width?: number
+}
 
 /**
  * A leading thumbnail fetched over the network. `@expo/ui`'s own `Image` reads
@@ -198,13 +201,15 @@ type DisclosureRowProps = {
 	status?: {text: string; color: ColorValue}
 }
 
-function LeadingImage({image}: {image: DisclosureRowImage}): React.ReactNode {
-	if ('systemName' in image) {
+/** A row's leading image: a tinted symbol, or a thumbnail. */
+export function LeadingImage({image}: {image: DisclosureRowImage}): React.ReactNode {
+	if (!('uri' in image)) {
 		return (
 			<Image
+				{...('assetName' in image ? {assetName: image.assetName} : {systemName: image.systemName})}
 				color={image.tint ?? c.secondaryLabel}
+				modifiers={image.width === undefined ? undefined : [frame({width: image.width})]}
 				size={image.size ?? SYMBOL_SIZE}
-				systemName={image.systemName}
 			/>
 		)
 	}
@@ -314,10 +319,6 @@ const styles = StyleSheet.create({
 		// as a deliberately rounded avatar.
 		borderRadius: 4,
 	},
-	selectableText: {
-		color: c.label,
-		paddingVertical: 4,
-	},
 })
 
 type DetailRowProps = {
@@ -343,10 +344,10 @@ type DetailRowProps = {
 export function DetailRow(props: DetailRowProps): React.ReactNode {
 	let {label, value, valueLines, onPress, destination = 'push'} = props
 
-	// An action has no accessory, so the tint is its only sign of being
-	// tappable. A push or external value already has its glyph, and a tinted
-	// value would draw prose -- office hours, say -- as though it were a link.
-	let valueTint = onPress && destination === 'action' ? c.systemBlue : c.secondaryLabel
+	// A tappable action or external value is the thing you reach -- a number to
+	// call, a page to open -- so it is drawn as a link. A push leads to more
+	// detail about the row, so its value stays secondary, as in Settings.
+	let valueTint = onPress && destination !== 'push' ? c.systemBlue : c.secondaryLabel
 
 	let content = (
 		<LabeledContent label={label}>
@@ -377,59 +378,5 @@ export function DetailRow(props: DetailRowProps): React.ReactNode {
 			{/* contentShape on the label, not the Button -- see NavigationRow. */}
 			<HStack modifiers={[contentShape(shapes.rectangle())]}>{content}</HStack>
 		</Button>
-	)
-}
-
-/// Mirrored by `TestIdentifiers.Rows.selectableText`.
-const SELECTABLE_TEXT_ID = 'selectable-text'
-
-/**
- * A block of text a reader can select, and whose phone numbers, addresses,
- * links and dates iOS turns into things they can tap.
- *
- * A React Native `TextInput` rather than an `@expo/ui` `Text`: SwiftUI's
- * `textSelection` gives selection but no data detectors, and losing those would
- * make an org's meeting time or a course's room number unactionable.
- *
- * `dataDetectorTypes="all"` detects nothing under the new architecture --
- * `UIDataDetectorTypeAll` is `NSUIntegerMax`, which React Native reads through
- * `unsignedIntValue` and truncates to 32 bits -- so the types are spelled out.
- * See https://github.com/facebook/react-native/issues/55367.
- */
-const DETECTED_TYPES: React.ComponentProps<typeof RNTextInput>['dataDetectorTypes'] = [
-	'calendarEvent',
-	'link',
-	'phoneNumber',
-	'address',
-]
-
-/**
- * What an inset-grouped row leaves for its content: the list's own margin
- * either side of the card, and the card's padding either side of the row.
- *
- * Stated rather than measured because a hosted view reports its own intrinsic
- * size, and a paragraph's intrinsic width is however long its longest line
- * would be unwrapped -- far wider than the row, so it drew clipped at both
- * edges until given a width to wrap to.
- */
-const LIST_MARGIN = 20
-const ROW_PADDING = 16
-const ROW_CONTENT_INSET = (LIST_MARGIN + ROW_PADDING) * 2
-
-export function SelectableText({text}: {text: string}): React.ReactNode {
-	let {width: screenWidth} = useWindowDimensions()
-
-	return (
-		<RNHostView matchContents={true}>
-			<RNTextInput
-				dataDetectorTypes={DETECTED_TYPES}
-				editable={false}
-				multiline={true}
-				scrollEnabled={false}
-				style={[styles.selectableText, {width: screenWidth - ROW_CONTENT_INSET}]}
-				testID={SELECTABLE_TEXT_ID}
-				value={text}
-			/>
-		</RNHostView>
 	)
 }

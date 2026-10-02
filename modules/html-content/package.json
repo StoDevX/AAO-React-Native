@@ -13,6 +13,7 @@
   },
   "peerDependencies": {
     "react": "catalog:",
-    "react-native": "catalog:"
+    "react-native": "catalog:",
+    "react-native-webview": "^13.16.1"
   }
 }

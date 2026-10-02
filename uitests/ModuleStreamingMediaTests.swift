@@ -1,13 +1,13 @@
 import XCTest
 
-class ModuleStreamingMediaTests: UITestCase {
-	func testStreamsAndAStationAreReachableFromHomescreen() throws {
+class ModuleStreamingMediaTests: UITestCaseUnbooted {
+	func testKrlxOffersItsStationButtons() throws {
 		StreamingMediaScreen(app: app)
 			.navigate()
 			.checkStreamListExists()
-			.returnHome()
+			.checkTabs()
 			.openStation(
-				TestIdentifiers.Buttons.krlx,
+				TestIdentifiers.StreamingMedia.krlxTab,
 				expecting: TestIdentifiers.StreamingMedia.krlxButtons[0]
 			)
 			.checkStationButtons(TestIdentifiers.StreamingMedia.krlxButtons)
@@ -16,8 +16,9 @@ class ModuleStreamingMediaTests: UITestCase {
 
 	func testKstoLogoCyclesOnTap() throws {
 		StreamingMediaScreen(app: app)
+			.navigate()
 			.openStation(
-				TestIdentifiers.Buttons.ksto,
+				TestIdentifiers.StreamingMedia.kstoTab,
 				expecting: TestIdentifiers.StreamingMedia.kstoLogos[0]
 			)
 			.checkLogoCycles(TestIdentifiers.StreamingMedia.kstoLogos)
@@ -26,7 +27,8 @@ class ModuleStreamingMediaTests: UITestCase {
 	func testKstoScratchKeepsTheLogo() throws {
 		let logos = TestIdentifiers.StreamingMedia.kstoLogos
 		StreamingMediaScreen(app: app)
-			.openStation(TestIdentifiers.Buttons.ksto, expecting: logos[0])
+			.navigate()
+			.openStation(TestIdentifiers.StreamingMedia.kstoTab, expecting: logos[0])
 			.tapLogo(labelled: TestIdentifiers.StreamingMedia.kstoLogoPrefix, until: logos[3])
 			.checkScrubKeepsLogo(logos[3])
 	}

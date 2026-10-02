@@ -8,14 +8,13 @@ import {parseBlocks} from '../lib/blocks'
 import {parseHoroscopes} from '../lib/horoscopes'
 import {useMessStore} from '../store'
 
-jest.mock('@expo/ui/swift-ui', () => {
-	// oxlint-disable-next-line typescript/no-require-imports
-	return require('../../../testing/expo-ui-mock') as typeof import('../../../testing/expo-ui-mock')
-})
-jest.mock('@expo/ui/swift-ui/modifiers', () => {
-	// oxlint-disable-next-line typescript/no-require-imports
-	return require('../../../testing/expo-ui-mock') as typeof import('../../../testing/expo-ui-mock')
-})
+// The body's figures open the zoom viewer through the router, which cannot load under Jest.
+jest.mock(
+	'expo-router',
+	() =>
+		// oxlint-disable-next-line typescript/no-require-imports
+		require('../../../testing/expo-router-mock') as object,
+)
 
 const LAYOUT = parseHoroscopes(
 	parseBlocks(variety.find((post) => post.id === 36518)?.content.rendered ?? ''),
@@ -156,14 +155,14 @@ describe('HoroscopesView', () => {
 			expect(scrollTo).not.toHaveBeenCalled()
 		})
 
-		test('shows, remembers and scrolls to the sign whose glyph is pressed', async () => {
+		test('shows and remembers the sign whose glyph is pressed, without scrolling', async () => {
 			await renderView()
 
 			await fireEvent.press(screen.getByRole('button', {name: 'Pisces'}))
 
 			expect(useMessStore.getState().lastSign).toBe('pisces')
 			expect(screen.getByRole('button', {name: 'Pisces', selected: true})).toBeTruthy()
-			expect(scrollTo).toHaveBeenCalledWith('pisces')
+			expect(scrollTo).not.toHaveBeenCalled()
 		})
 	})
 })

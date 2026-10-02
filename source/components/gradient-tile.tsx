@@ -23,9 +23,9 @@ import {
 	shadow,
 	shapes,
 } from '@expo/ui/swift-ui/modifiers'
-import type {SFSymbol} from 'sf-symbols-typescript'
 import * as c from '@frogpond/colors'
 import {displayP3, type Gradient} from '@frogpond/colors'
+import {iconImage, type SymbolName} from '../features/views'
 import {FILL_WIDTH, TILE_ASPECT} from './tile-layout'
 
 /// SwiftUI's own disabled look for a plain button, measured on the simulator:
@@ -66,7 +66,7 @@ type Props = {
 	 * on the tile, "Student Work" aloud. Voice Control answers to either.
 	 */
 	spokenTitle?: string
-	icon: SFSymbol
+	icon: SymbolName
 	gradient: Gradient
 	/** Fixes the tile's width in points; without it the tile takes whatever its grid column offers. */
 	width?: number
@@ -194,7 +194,7 @@ export function GradientTile({
 								foregroundStyle({type: 'hierarchical', style: 'primary'}),
 								opacity(0.8),
 							]}
-							systemName={icon}
+							{...iconImage(icon)}
 						/>
 					</ZStack>
 

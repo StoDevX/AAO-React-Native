@@ -13,14 +13,14 @@ type Props = {
 export function EmptyListNotice({selectedSection}: Props): React.ReactNode {
 	const showChangeFiltersMessage = useFilterStore(selectShowChangeFiltersMessage)
 
-	let message: string
+	let title: string
 	switch (selectedSection) {
 		case Constants.YESTERDAY:
 		case Constants.TODAY:
-			message = `No games ${selectedSection.toLowerCase()}`
+			title = `No Games ${selectedSection}`
 			break
 		case Constants.UPCOMING:
-			message = `No ${selectedSection.toLowerCase()} games`
+			title = `No ${selectedSection} Games`
 			break
 		default: {
 			const exhaustive: never = selectedSection
@@ -28,11 +28,14 @@ export function EmptyListNotice({selectedSection}: Props): React.ReactNode {
 		}
 	}
 
-	if (showChangeFiltersMessage) {
-		message = `${message}. Try changing the filters?`
-	}
-
-	return <NoticeView style={styles.notice} text={message} />
+	return (
+		<NoticeView
+			description={showChangeFiltersMessage ? 'Try changing the filters.' : undefined}
+			style={styles.notice}
+			systemImage="sportscourt"
+			title={title}
+		/>
+	)
 }
 
 const styles = StyleSheet.create({

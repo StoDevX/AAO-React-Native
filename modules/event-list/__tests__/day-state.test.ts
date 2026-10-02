@@ -1,7 +1,14 @@
 import moment from 'moment-timezone'
 import {describe, expect, test} from '@jest/globals'
 
-import {anchorShouldFollow, dayOnShow, emptyNotice, failureNote, pageWindow} from '../day-state'
+import {
+	anchorShouldFollow,
+	dayOnShow,
+	drawnAround,
+	emptyNotice,
+	failureNote,
+	pageWindow,
+} from '../day-state'
 import type {CalendarSource, SourcedEvent} from '../types'
 
 const CAMPUS: CalendarSource = {id: 'stolaf', title: 'St. Olaf', color: 'blue'}
@@ -144,6 +151,22 @@ describe('anchorShouldFollow', () => {
 
 	test('moves on for a day the window does not hold at all', () => {
 		expect(anchorShouldFollow(pages, day('2026-10-01'), 1)).toBe(true)
+	})
+})
+
+describe('drawnAround', () => {
+	let pages = run('2026-09-05', 7)
+
+	test('stays on the settled day while a swipe to the next is still snapping', () => {
+		expect(drawnAround(pages, day('2026-09-07'), day('2026-09-08'))).toBe(2)
+	})
+
+	test('centres on the selected day before any swipe has settled', () => {
+		expect(drawnAround(pages, null, day('2026-09-08'))).toBe(3)
+	})
+
+	test('centres on the selected day once the settled one has left the window', () => {
+		expect(drawnAround(pages, day('2026-09-01'), day('2026-09-08'))).toBe(3)
 	})
 })
 

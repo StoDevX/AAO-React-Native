@@ -63,6 +63,8 @@ const SYMBOL = {
 	department: 'building.2.fill',
 	office: 'person.2.fill',
 	place: 'mappin',
+	// The wheelchair the card's Good to Know row uses for accessibility.
+	'accessible-parking': 'figure.roll',
 } as const
 
 /// A place's live status on its tile: "Open until 9 PM", in its colour.

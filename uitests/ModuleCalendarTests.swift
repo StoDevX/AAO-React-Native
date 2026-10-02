@@ -1,6 +1,6 @@
 import XCTest
 
-class ModuleCalendarDayModeTests: UITestCase {
+class ModuleCalendarDayModeTests: UITestCaseUnbooted {
 
 	// MARK: - Day picker strip
 
@@ -21,8 +21,7 @@ class ModuleCalendarDayModeTests: UITestCase {
 	/// actually reach the screen in. The category submenu is opened last:
 	/// descending into an axis replaces what is on screen, so the top-level rows
 	/// have to be read while they are still the thing presented.
-  @MainActor func testDayModeAndFilters() async throws {
-    app.launch()
+  func testDayModeAndFilters() throws {
 		let screen = CalendarScreen(app: app)
 
     screen.navigate()
@@ -33,7 +32,7 @@ class ModuleCalendarDayModeTests: UITestCase {
 
     let rows = screen.visibleRows()
     let expectation = expectation(for: rows.count >= 1)
-    await fulfillment(of: [expectation], timeout: 10)
+    wait(for: [expectation], timeout: 10)
     let unfilteredCount = rows.count
 
     XCTContext.runActivity(named: "Verify the picker rows") { _ in
@@ -83,7 +82,7 @@ class ModuleCalendarDayModeTests: UITestCase {
     screen.verifyRowPresent(TestIdentifiers.Calendar.unfilteredDayRow)
 	}
 
-  @MainActor func testDayPickerStrip() async throws {
+  func testDayPickerStrip() throws {
 		let screen = CalendarScreen(app: app)
     screen.navigate()
 
@@ -103,7 +102,7 @@ class ModuleCalendarDayModeTests: UITestCase {
 
     let eventRows = screen.visibleRows()
     let expectation = expectation(for: eventRows.count >= 1)
-    await fulfillment(of: [expectation], timeout: 10)
+    wait(for: [expectation], timeout: 10)
     let initialEventCount = eventRows.count
     let initialEventIdentifiers = eventRows.identifiers()
 
@@ -124,8 +123,8 @@ class ModuleCalendarDayModeTests: UITestCase {
 
     // pushing Today should reset the date picker strip, even if we haven't selected a new date
     screen.tapToday()
-    XCTAssertEqual(
-      screen.datePickerDayIdentifiers(), initialWeekDates,
+    screen.verifyStripShows(
+      initialWeekDates,
       "Today should bring back the day it opened on, with its events drawn")
 
     // swiping on a day's agenda area should change the displayed events
@@ -181,16 +180,16 @@ class ModuleCalendarDayModeTests: UITestCase {
     XCTAssertEqual(
       screen.selectedDay(), todayDayCell,
       "Today should choose the frozen day")
-    XCTAssertEqual(
-      screen.datePickerDayIdentifiers(), initialWeekDates,
+    screen.verifyStripShows(
+      initialWeekDates,
       "Today should bring back the day it opened on, with its events drawn")
 	}
 
   // TODO: assert that the event detail view opens and closes
 }
 
-class ModuleCalendarUpcomingModeTests: UITestCase {
-  @MainActor func testFilteringByOrganizationNarrowsTheUpcomingList() async throws {
+class ModuleCalendarUpcomingModeTests: UITestCaseUnbooted {
+  func testFilteringByOrganizationNarrowsTheUpcomingList() throws {
     let screen = CalendarScreen(app: app)
     screen.navigate()
 
@@ -201,7 +200,7 @@ class ModuleCalendarUpcomingModeTests: UITestCase {
 
     let rows = app.buttons.matching(.beginsWith("event-row-"))
     let expectation = expectation(for: rows.count >= 1)
-    await fulfillment(of: [expectation], timeout: 10)
+    wait(for: [expectation], timeout: 10)
     let unfiltered = rows.count
 
     screen

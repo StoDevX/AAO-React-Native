@@ -36,6 +36,10 @@ export function featureBounds(feature: Feature<Building>): LngLatBounds | undefi
 			geometry.coordinates.forEach((ring) => ring.forEach(visit))
 		} else if (geometry.type === 'MultiPolygon') {
 			geometry.coordinates.forEach((polygon) => polygon.forEach((ring) => ring.forEach(visit)))
+		} else if (geometry.type === 'LineString') {
+			geometry.coordinates.forEach(visit)
+		} else if (geometry.type === 'MultiLineString') {
+			geometry.coordinates.forEach((line) => line.forEach(visit))
 		}
 	}
 

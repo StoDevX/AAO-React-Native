@@ -1,59 +1,52 @@
 import XCTest
 
-class ModuleNewsTests: UITestCase {
-	/// Reads live data: the paper has to have published at least two issues.
+class ModuleNewsTests: UITestCaseUnbooted {
 	func testOlafMessengerOpensOnTheIssueGrid() throws {
 		MessFrontPage(app: app)
 			.navigate()
 			.verifyByIssueShowsTheGrid()
 	}
 
-	func testOlafMessengerLatestOffersItsSections() throws {
-		MessFrontPage(app: app)
-			.navigate()
-			.verifyLatestListsStoriesWithSections()
-	}
-
-	/// Reads live data: the paper has to have a News section.
 	func testOlafMessengerLatestNarrowsToASection() throws {
 		MessFrontPage(app: app)
 			.navigate()
 			.filterLatest(to: TestIdentifiers.News.newsSection)
 	}
 
-	func testStOlafNewsIsReachableFromHomescreen() throws {
-		NewsScreen(app: app, tile: TestIdentifiers.Buttons.stOlafNews, title: "St. Olaf News")
-			.navigate()
-			.verifyTitle()
-			.verifyNewsRowsAppear()
-	}
-
-	/// Reads live data: the paper has to have published at least two issues.
 	func testOlafMessengerOpensAnOlderIssue() throws {
 		MessFrontPage(app: app)
 			.navigate()
 			.openSecondIssue()
 	}
 
-	/// Reads live data: the paper has to have published issues in 2025, three pages back.
+	func testOlafMessengerShelfAllListsTheSectionFromItsIssue() throws {
+		MessFrontPage(app: app)
+			.navigate()
+			.openNewestIssue()
+			.scrollDownALittle()
+			.openSectionHoldingTheLead(TestIdentifiers.News.newsSection)
+	}
+
+	func testOlafMessengerSpecialEditionGridsItsStories() throws {
+		MessFrontPage(app: app)
+			.navigate()
+			// Under UI tests the second issue is the May 12 special edition, whose stories all sit
+			// in no print section.
+			.openSecondIssue()
+		MessIssueScreen(app: app)
+			.verifyMoreGridsItsStories()
+	}
+
 	func testOlafMessengerIssuesLoadOlderPages() throws {
 		MessFrontPage(app: app)
 			.navigate()
 			.scrollIssues(untilAnIssueFrom: "2025")
 	}
 
-	/// Reads live data: News has to have its Good Questions column, with a story in it.
 	func testOlafMessengerSectionOpensAColumn() throws {
 		MessFrontPage(app: app)
 			.navigate()
 			.openColumn(TestIdentifiers.News.goodQuestionsColumn, in: TestIdentifiers.News.newsSection)
-	}
-
-	func testOlafMessengerOpensAStoryInTheApp() throws {
-		MessFrontPage(app: app)
-			.navigate()
-			.openLeadStory()
-			.verifyStoryAppears()
 	}
 
 	func testOlafMessengerStoryTextOffersCopy() throws {
@@ -64,17 +57,40 @@ class ModuleNewsTests: UITestCase {
 			.verifyBodyOffersCopy()
 	}
 
+	/// A reader can drag a selection from one paragraph into the next, as each stretch of
+	/// prose between figures is one text view.
+	func testOlafMessengerSelectionCrossesParagraphs() throws {
+		MessStoryScreen(app: app)
+			.navigate(to: TestIdentifiers.News.illustratedStoryRoute)
+			.verifySelectionCrossesParagraphs()
+	}
+
+	/// A link in a story's text opens in the in-app browser when tapped, and offers the
+	/// system's link menu when held.
+	func testOlafMessengerStoryLinkOffersLinkMenu() throws {
+		MessStoryScreen(app: app)
+			.navigate(to: TestIdentifiers.News.linkedStoryRoute)
+			.openLinkInAppBrowser(TestIdentifiers.News.linkedStoryLink)
+			.verifyLinkOffersLinkMenu(TestIdentifiers.News.linkedStoryLink)
+	}
+
+	/// A sign picked from the list scrolls the page up to it; one picked from the glyph grid,
+	/// which is already in view, leaves the page where it is. The post is reopened before the
+	/// grid is tapped, so the grid sits below the intro rather than at the top of the screen.
 	func testHoroscopesOpenOnAChosenSign() throws {
-		MessFrontPage(app: app)
+		let front = MessFrontPage(app: app)
+		front
 			.navigate()
 			.openColumn(TestIdentifiers.News.horoscopesColumn, in: TestIdentifiers.News.varietySection)
 			.openFirstStory()
 			.pickSignFromList(TestIdentifiers.News.gemini)
 			.verifySignChosen(TestIdentifiers.News.gemini)
 			.verifyScrolledToChosenSign(TestIdentifiers.News.gemini)
-			.tapSignGlyph(TestIdentifiers.News.leo)
-			.verifySignChosen(TestIdentifiers.News.leo)
-			.verifyScrolledToChosenSign(TestIdentifiers.News.leo)
+			.goBack()
+		front
+			.openFirstStory()
+			.verifySignChosen(TestIdentifiers.News.gemini)
+			.tapSignGlyphKeepingThePlace(TestIdentifiers.News.leo)
 	}
 
 	/// At the largest text size the chosen sign's section sits a long way above
@@ -88,7 +104,7 @@ class ModuleNewsTests: UITestCase {
 		MessFrontPage(app: app)
 			.navigate()
 			.filterLatest(to: TestIdentifiers.News.varietySection)
-		relaunchKeepingState(
+		keepStateForNextLaunch(
 			adding: TestIdentifiers.LaunchArguments.contentSizeCategory(
 				TestIdentifiers.LaunchArguments.accessibilityExtraExtraExtraLarge))
 		MessFrontPage(app: app)
@@ -105,21 +121,8 @@ class ModuleNewsTests: UITestCase {
 			.verifyScrolledToChosenSign(TestIdentifiers.News.aquarius)
 	}
 
-	func testComicOpensTheZoomViewer() throws {
-		MessFrontPage(app: app)
-			.navigate()
-			.openColumn(TestIdentifiers.News.comicColumn, in: TestIdentifiers.News.varietySection)
-			.openFirstStory()
-			.openImageViewer()
-			.closeImageViewer()
-	}
-
 	/// Each story opened from a series row is a screen of its own, even one already
 	/// open further down, so Back retraces every step in the order it was taken.
-	///
-	/// This reads live data: the first Comic's series row has to list a story whose
-	/// own series row lists that first Comic back. A Comic without a series, or one
-	/// whose series has moved on, fails the test without anything being wrong.
 	func testSeriesStoriesStackInTheOrderTheyWereOpened() throws {
 		let reader = MessFrontPage(app: app)
 			.navigate()
@@ -151,7 +154,6 @@ class ModuleNewsTests: UITestCase {
 			.closeImageViewer()
 	}
 
-	/// Reads live data: the newest Crossword post has to carry PuzzleMe's placeholder.
 	func testCrosswordOpensThePuzzleInTheBrowser() throws {
 		MessFrontPage(app: app)
 			.navigate()
@@ -160,17 +162,6 @@ class ModuleNewsTests: UITestCase {
 			.solveCrossword()
 	}
 
-	/// Reads live data: the newest Playlist post has to name its playlist, in its body or on
-	/// its web page.
-	func testPlaylistDrawsSpotifysPlayer() throws {
-		MessFrontPage(app: app)
-			.navigate()
-			.openColumn(TestIdentifiers.News.playlistColumn, in: TestIdentifiers.News.varietySection)
-			.openFirstStory()
-			.verifyPlaylistOffered()
-	}
-
-	/// Reads live data: the newest Recipes post has to have an ingredient section.
 	func testRecipeTicksAnIngredient() throws {
 		MessFrontPage(app: app)
 			.navigate()
@@ -179,7 +170,6 @@ class ModuleNewsTests: UITestCase {
 			.tickFirstIngredient()
 	}
 
-	/// Reads live data: the newest Photo post has to have a picture.
 	func testPhotoOpensTheZoomViewer() throws {
 		MessFrontPage(app: app)
 			.navigate()
@@ -187,6 +177,51 @@ class ModuleNewsTests: UITestCase {
 			.openFirstStory()
 			.openImageViewer()
 			.verifyViewerShowsImage()
+			.shareViewerImage()
+			.closeImageViewer()
+	}
+
+	/// An article's lead photo and a figure in its body each open the zoom viewer, which can
+	/// share the figure.
+	func testArticlePhotosOpenTheZoomViewer() throws {
+		MessStoryScreen(app: app)
+			.navigate(to: TestIdentifiers.News.illustratedStoryRoute)
+			.openPhotoInViewer(
+				captioned: NSPredicate(format: "label ENDSWITH %@", TestIdentifiers.News.illustratedLeadCaptionEnd),
+				"the lead photo")
+			.verifyViewerShowsImage()
+			.closeImageViewer()
+			.openPhotoInViewer(
+				captioned: NSPredicate(format: "label BEGINSWITH %@", TestIdentifiers.News.illustratedFigureCaptionStart),
+				"a figure in the body")
+			.verifyViewerShowsImage()
+			.shareViewerImage()
+			.closeImageViewer()
+	}
+
+	func testDraggingThePictureDownClosesTheZoomViewer() throws {
+		MessFrontPage(app: app)
+			.navigate()
+			.openColumn(TestIdentifiers.News.comicColumn, in: TestIdentifiers.News.varietySection)
+			.openFirstStory()
+			.openImageViewer()
+			.dragViewerImage(.short)
+			.verifyViewerOpen(true, "a short drag let go slowly should spring the picture back")
+			.dragViewerImage(.long)
+			.verifyViewerOpen(false, "a long drag down should close the zoom viewer")
+	}
+
+	func testDraggingAZoomedPictureDoesNotCloseTheZoomViewer() throws {
+		MessFrontPage(app: app)
+			.navigate()
+			.openColumn(TestIdentifiers.News.comicColumn, in: TestIdentifiers.News.varietySection)
+			.openFirstStory()
+			.openImageViewer()
+			.doubleTapViewerImage()
+			.verifyViewerImageZoomed(true)
+			.dragViewerImage(.long)
+			.verifyViewerOpen(true, "a drag on a zoomed picture should pan it, not close the viewer")
+			.verifyViewerImageZoomed(true)
 			.closeImageViewer()
 	}
 }

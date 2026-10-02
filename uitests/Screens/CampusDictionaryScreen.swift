@@ -33,20 +33,6 @@ struct CampusDictionaryScreen: Screen {
 		app.navigationBars.buttons[TestIdentifiers.Dictionary.preview]
 	}
 
-	private var reorderButton: XCUIElement {
-		app.navigationBars.buttons[TestIdentifiers.Dictionary.reorder]
-	}
-
-	/// The drag handles SwiftUI draws inside the form once `editMode` goes
-	/// active. Scoped to the form itself, not `app` at large -- an unscoped
-	/// query for a "Reorder"-labelled element also matches the toolbar's own
-	/// toggle, which sits in the navigation bar rather than in the List, and
-	/// would answer for it whether or not the List drew a single handle.
-	private var reorderHandles: XCUIElementQuery {
-		editForm.descendants(matching: .any).matching(
-			NSPredicate(format: "label CONTAINS[c] %@", "Reorder"))
-	}
-
 	private var discardChangesAlert: XCUIElement {
 		app.alerts["Discard changes?"]
 	}
@@ -63,9 +49,14 @@ struct CampusDictionaryScreen: Screen {
 		app.otherElements["Section index"]
 	}
 
+	/// Drawn by this screen alone, so its presence says the screen has mounted.
+	var mounted: XCUIElement {
+		app.navigationBars["Dictionary"]
+	}
+
 	@discardableResult
 	func navigate() -> Self {
-		navigateFromHome(to: TestIdentifiers.Buttons.dictionary)
+		open(route: "/dictionary", mountedWhen: mounted)
 	}
 
 	/// Taps near the bottom of the section index rail and asserts the list
@@ -148,29 +139,6 @@ struct CampusDictionaryScreen: Screen {
 		return self
 	}
 
-	/// The phonetics a dictionary sets between pipes, next to the headword.
-	@discardableResult
-	func verifyPronunciation(_ ipa: String) -> Self {
-		let phonetics = app.staticTexts["| \(ipa) |"]
-		XCTAssertTrue(
-			phonetics.waitForExistence(timeout: 5),
-			"the sheet showed no phonetics for \(ipa)")
-		return self
-	}
-
-	@discardableResult
-	func verifyPartOfSpeech(_ part: String) -> Self {
-		XCTAssertTrue(
-			app.staticTexts[part].waitForExistence(timeout: 5),
-			"the sheet showed no part of speech")
-		return self
-	}
-
-	@discardableResult
-	func verifyCampusDictionaryTitle() -> Self {
-		verifyTitle(TestIdentifiers.Buttons.dictionary)
-	}
-
 	@discardableResult
 	func openFirstWord() -> Self {
 		// A SwiftUI List backs onto a UICollectionView on current iOS, but that
@@ -231,16 +199,10 @@ struct CampusDictionaryScreen: Screen {
 	}
 
 	@discardableResult
-	/// The sheet's actions sit behind the ellipsis in the entry's own
-	/// navigation bar, so reaching the editor takes two taps: open the menu,
-	/// then choose from it.
+	/// Taps Suggest an Edit in the entry's own navigation bar.
 	func openEditor() -> Self {
-		let menu = app.navigationBars.buttons[TestIdentifiers.Dictionary.actionsMenu]
-		XCTAssertTrue(menu.waitForExistence(timeout: 5), "the sheet had no actions menu")
-		menu.tap()
-
-		let button = app.buttons[TestIdentifiers.Dictionary.suggestAnEdit]
-		XCTAssertTrue(button.waitForExistence(timeout: 5), "Suggest an Edit was not in the menu")
+		let button = app.navigationBars.buttons[TestIdentifiers.Dictionary.suggestAnEdit]
+		XCTAssertTrue(button.waitForExistence(timeout: 5), "the sheet had no Suggest an Edit button")
 		button.tap()
 		return self
 	}
@@ -309,40 +271,6 @@ struct CampusDictionaryScreen: Screen {
 		button.tap()
 		XCTAssertTrue(
 			senseForm.waitForExistence(timeout: 15), "adding a sub-sense should show a sense form")
-		return self
-	}
-
-	/// The sense on screen has no definition yet -- a sub-sense just added.
-	@discardableResult
-	func verifyDefinitionIsBlank() -> Self {
-		let field = app.textFields[TestIdentifiers.Dictionary.senseDefinitionField]
-		XCTAssertTrue(
-			field.waitForExistence(timeout: 15), "the sense's definition field never appeared")
-		// An empty field reads its placeholder back as its value, and this
-		// field's placeholder is its own label -- see `typeDefinition`.
-		let value = (field.value as? String) ?? ""
-		XCTAssertTrue(
-			value.isEmpty || value == TestIdentifiers.Dictionary.senseDefinitionField,
-			"Add Sub-sense should open the new, blank sub-sense, but the definition field holds "
-				+ "\"\(value)\" -- the parent sense is still on screen")
-		return self
-	}
-
-	/// Goes back from a sub-sense, which should land on the sense it belongs
-	/// to, now listing it.
-	@discardableResult
-	func leaveSubsenseForParent(listing row: String) -> Self {
-		let back = app.navigationBars[TestIdentifiers.Dictionary.senseFormTitle]
-			.buttons[TestIdentifiers.Navigation.backButton]
-		XCTAssertTrue(back.waitForExistence(timeout: 15), "the sub-sense had no back button")
-		back.tap()
-		XCTAssertTrue(
-			senseForm.waitForExistence(timeout: 15),
-			"Back from a sub-sense should return to its parent sense, not past it to the edit form")
-		let subsense = app.buttons[row]
-		scrollUntilExists(subsense)
-		XCTAssertTrue(
-			subsense.waitForExistence(timeout: 15), "the parent sense should list \"\(row)\"")
 		return self
 	}
 
@@ -483,45 +411,6 @@ struct CampusDictionaryScreen: Screen {
 		return self
 	}
 
-	/// Drags the sheet from its resting detent up to the full-height one the
-	/// route also allows. The resting detent leaves about a third of the
-	/// screen for the preview, which is not enough to show a washed sense and
-	/// an unwashed one together in a single still image.
-	@discardableResult
-	func expandSheetToFullHeight() -> Self {
-		let grabber = app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.30))
-		grabber.press(
-			forDuration: 0.2,
-			thenDragTo: app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.02)))
-		return self
-	}
-
-	/// Scrolls the preview until the run carrying `text` sits wholly inside
-	/// the window. A sense the edit added comes after every sense the entry
-	/// already had, so on this reference entry it starts below the fold --
-	/// and an element only half on screen still reports as existing and
-	/// hittable, which is why this measures the frame instead.
-	@discardableResult
-	func scrollPreviewInto(view text: String) -> Self {
-		let element = app.descendants(matching: .any).matching(
-			NSPredicate(
-				format: "identifier == %@ AND label CONTAINS %@",
-				TestIdentifiers.Dictionary.previewSheet, text)
-		).firstMatch
-		XCTAssertTrue(element.waitForExistence(timeout: 15), "the preview never showed \"\(text)\"")
-
-		let window = app.windows.firstMatch.frame
-		for _ in 1...8 {
-			let frame = element.frame
-			if frame.minY >= window.minY && frame.maxY <= window.maxY {
-				return self
-			}
-			app.swipeUp()
-		}
-		XCTFail("scrolling the preview never brought \"\(text)\" wholly into view")
-		return self
-	}
-
 	/// Asserts some element inside the preview carries `text` in its label.
 	/// This is the one check that words actually survived `@expo/ui`'s `Text`
 	/// concatenation: its whitelist keeps only strings and literal `Text`
@@ -571,19 +460,8 @@ struct CampusDictionaryScreen: Screen {
 		return self
 	}
 
-	/// Asserts the Reorder toggle is absent before there are two senses --
-	/// the "change" reference entry has exactly one top-level sense, so this
-	/// is meaningful the moment the form is up, before `addSense()` runs.
-	@discardableResult
-	func verifyReorderToggleHidden() -> Self {
-		XCTAssertFalse(
-			reorderButton.exists,
-			"the Reorder toggle should stay hidden for a single-sense entry")
-		return self
-	}
-
 	/// Taps Add Sense, types `text` into the sense it opens if given, and
-	/// returns to the form. Retries the tap the way `navigateFromHome` does:
+	/// returns to the form. Retries the tap:
 	/// a tap can land on an already-hittable button before its action has
 	/// reached JavaScript, and be lost entirely.
 	///
@@ -615,143 +493,6 @@ struct CampusDictionaryScreen: Screen {
 			return self
 		}
 		XCTFail("tapping Add Sense never opened the sense it added")
-		return self
-	}
-
-	/// Swipes the sense row at `position` (counting from 1) part-way from its
-	/// trailing edge to reveal `List.ForEach(onDelete:)`'s Delete button, then
-	/// taps it.
-	///
-	/// Swiped by coordinate rather than `row.swipeLeft()`, and only about a
-	/// third of the row's width, for the same reason
-	/// `HoursScreen.revealSwipeAction` is: a full swipe performs the delete
-	/// outright and the button never lingers to be found, so a test asserting
-	/// on it would be asserting on an element the gesture had already
-	/// consumed.
-	@discardableResult
-	func deleteSense(at position: Int) -> Self {
-		let row = app.element(matching: TestIdentifiers.Dictionary.senseRow(position))
-		XCTAssertTrue(row.waitForExistence(timeout: 15), "sense row \(position) never appeared")
-
-		let start = row.coordinate(withNormalizedOffset: CGVector(dx: 0.95, dy: 0.5))
-		let end = row.coordinate(withNormalizedOffset: CGVector(dx: 0.6, dy: 0.5))
-		start.press(forDuration: 0.1, thenDragTo: end, withVelocity: .slow, thenHoldForDuration: 0.5)
-
-		let delete = app.buttons["Delete"]
-		XCTAssertTrue(
-			delete.waitForExistence(timeout: 5),
-			"swiping sense row \(position) should reveal a Delete button -- if it did not, the "
-				+ "swipe never engaged the row")
-		delete.tap()
-		return self
-	}
-
-	@discardableResult
-	func verifyReorderToggleVisible() -> Self {
-		XCTAssertTrue(
-			reorderButton.waitForExistence(timeout: 15),
-			"the Reorder toggle should appear once the entry has two or more senses")
-		return self
-	}
-
-	/// Asserts no drag handle exists yet, scoped the same way
-	/// `verifyReorderHandlesAppear` is -- called after `addSense()` but
-	/// before `toggleReorderMode()`, so a build that hard-coded `editMode`
-	/// active (the same bug this suite already found once, in the other
-	/// direction) would fail this rather than pass unnoticed.
-	@discardableResult
-	func verifyNoReorderHandlesYet() -> Self {
-		let handles = reorderHandles
-		XCTAssertEqual(
-			handles.count, 0,
-			"no drag handle should exist before Reorder is toggled on -- found \(handles.count)")
-		return self
-	}
-
-	@discardableResult
-	func toggleReorderMode() -> Self {
-		XCTAssertTrue(
-			reorderButton.waitForExistence(timeout: 15),
-			"Reorder should exist before it can be toggled")
-		reorderButton.tap()
-		return self
-	}
-
-	/// Drags one sense's handle down onto the row below it, and lets go.
-	///
-	/// SwiftUI reports the drop as a destination counted against the list as
-	/// it stood *before* the row was lifted out, so dropping the first row
-	/// onto the second arrives as `2` even though the sense lands second.
-	/// Nothing but a real drag exercises that: `onMove` never fires under
-	/// Jest, and a mocked call there is only ever the number the test chose
-	/// to pass.
-	///
-	/// Slow, with a hold at each end: a reorder drag has to press long enough
-	/// for the List to pick the row up, and a flick released the moment it
-	/// arrives is dropped back where it started.
-	@discardableResult
-	func dragSenseDownOneRow(from position: Int) -> Self {
-		let source = reorderHandles.element(boundBy: position)
-		let target = reorderHandles.element(boundBy: position + 1)
-		XCTAssertTrue(
-			source.waitForExistence(timeout: 15),
-			"the form should draw a drag handle for sense \(position + 1)")
-		XCTAssertTrue(
-			target.waitForExistence(timeout: 15),
-			"the form should draw a drag handle for sense \(position + 2)")
-
-		source.press(
-			forDuration: 0.8, thenDragTo: target, withVelocity: .slow, thenHoldForDuration: 1.0)
-		return self
-	}
-
-	/// Reads each sense's definition back off the form, in form order.
-	///
-	/// The rows are identified by position and labelled by definition, so
-	/// which row holds which text is precisely what a reorder changes -- and
-	/// reading them back is the only way to see on screen where a drag
-	/// actually put a sense.
-	@discardableResult
-	func verifyDefinitionOrder(_ expected: [String]) -> Self {
-		capture("Dictionary edit form after a reorder drag")
-
-		var actual: [String] = []
-		for position in 1...expected.count {
-			let row = app.element(matching: TestIdentifiers.Dictionary.senseRow(position))
-			XCTAssertTrue(
-				row.waitForExistence(timeout: 15),
-				"the form should still show a row at position \(position)")
-			actual.append(row.label)
-		}
-
-		XCTAssertEqual(
-			actual, expected,
-			"the senses should read in the order the drag left them")
-		return self
-	}
-
-	/// Asserts SwiftUI actually drew a reorder handle for each sense once
-	/// `editMode` went active -- `ForEach`'s `onMove` inside a `Form` is the
-	/// one piece of this flow the plan has no fallback for, so this is a real
-	/// check of the drawn hierarchy, not a proxy for the toggle having been
-	/// tapped. Captures a screenshot and the accessibility tree so a failure
-	/// here can be read from the result bundle rather than re-run to find out
-	/// what happened.
-	@discardableResult
-	func verifyReorderHandlesAppear(senseCount expectedCount: Int) -> Self {
-		capture("Dictionary form in reorder mode")
-		captureAccessibilityTree("Reorder mode accessibility tree")
-
-		// Asserting an exact count, not merely `> 0`, closes the loophole
-		// `reorderHandles` scopes away a second time: a query that happened to
-		// still catch the toolbar's own toggle alongside zero real handles
-		// would read as "greater than zero" too.
-		let handles = reorderHandles
-		XCTAssertEqual(
-			handles.count, expectedCount,
-			"toggling Reorder should draw one drag handle per sense inside the form itself (the "
-				+ "toolbar's own Reorder toggle does not count) -- found \(handles.count), wanted "
-				+ "\(expectedCount)")
 		return self
 	}
 

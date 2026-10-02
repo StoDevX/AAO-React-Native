@@ -122,6 +122,28 @@ export function anchorShouldFollow(pages: readonly Moment[], day: Moment, margin
 }
 
 /**
+ * Where in `pages` the drawn pages centre: the day the pager last came to rest
+ * on, or the selected day when that is unknown or no longer mounted.
+ *
+ * A swipe reports its new day while the page is still snapping into place, and
+ * changing which pages are drawn during the snap leaves the pager stopped
+ * between two of them. Centring on the settled day holds the drawn set still
+ * until the snap is over. The new day is a neighbour of the settled one, so it
+ * is drawn already.
+ */
+export function drawnAround(
+	pages: readonly Moment[],
+	settled: Moment | null,
+	selected: Moment | null,
+): number {
+	let atSettled = settled ? pages.findIndex((page) => page.isSame(settled, 'day')) : -1
+	if (atSettled >= 0) {
+		return atSettled
+	}
+	return pages.findIndex((page) => page.isSame(selected, 'day'))
+}
+
+/**
  * The day a view of `days` should be showing, given what was chosen.
  *
  * A chosen day the range no longer offers is ignored rather than cleared, so

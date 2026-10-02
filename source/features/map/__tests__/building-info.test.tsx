@@ -10,19 +10,10 @@ import {directoryKeys} from '../card-queries'
 import type {BuildingType} from '../../building-hours/types'
 import {BuildingInfo} from '../building-info'
 import {makeBuilding} from './fixtures'
+import {loadBeforeTests} from '../../../testing/load-before-tests'
 
-jest.mock('@expo/ui/swift-ui', () => {
-	// oxlint-disable-next-line typescript/no-require-imports
-	return require('../../../testing/expo-ui-mock') as typeof import('../../../testing/expo-ui-mock')
-})
-jest.mock('@expo/ui/swift-ui/modifiers', () => {
-	// oxlint-disable-next-line typescript/no-require-imports
-	return require('../../../testing/expo-ui-mock') as typeof import('../../../testing/expo-ui-mock')
-})
-jest.mock('@frogpond/double-tap', () => {
-	// oxlint-disable-next-line typescript/no-require-imports
-	return require('../../mess/__tests__/double-tap-mock') as typeof import('../../mess/__tests__/double-tap-mock')
-})
+loadBeforeTests('Image', 'Modal')
+
 jest.mock('@frogpond/open-url', () => ({openUrl: jest.fn()}))
 jest.mock('@frogpond/place-card-header', () => {
 	// oxlint-disable-next-line typescript/no-require-imports
@@ -89,6 +80,51 @@ describe('BuildingInfo', () => {
 		await fireEvent.press(screen.getByText('1520 St Olaf Ave'))
 
 		expect(mockOpenURL).toHaveBeenCalledWith('https://maps.apple.com/?q=1520%20St%20Olaf%20Ave')
+	})
+
+	it('ends cited About text with its sources', async () => {
+		await renderCard(
+			<BuildingInfo
+				campus="stolaf"
+				building={makeBuilding({
+					id: 'pond-bigpond',
+					name: 'Big Pond',
+					description: 'The largest of the wetlands.',
+					citations: [{label: 'History of the Natural Lands', href: 'https://x/h/'}],
+				})}
+				onClose={jest.fn()}
+				stop="medium"
+			/>,
+		)
+
+		expect(screen.getByText('Source: [History of the Natural Lands](https://x/h/)')).toBeTruthy()
+	})
+
+	it('cites nothing without About text, or without citations', async () => {
+		await renderCard(
+			<BuildingInfo
+				campus="stolaf"
+				building={makeBuilding({
+					id: 'pond-x',
+					name: 'Pond',
+					description: '',
+					citations: [{label: 'History of the Natural Lands', href: 'https://x/h/'}],
+				})}
+				onClose={jest.fn()}
+				stop="medium"
+			/>,
+		)
+		expect(screen.queryByText(/^Sources?:/u)).toBeNull()
+
+		await renderCard(
+			<BuildingInfo
+				campus="carleton"
+				building={makeBuilding({id: 'hall', name: 'Hall', description: 'A hall.'})}
+				onClose={jest.fn()}
+				stop="medium"
+			/>,
+		)
+		expect(screen.queryByText(/^Sources?:/u)).toBeNull()
 	})
 
 	it('shows the address under Details', async () => {
@@ -580,5 +616,75 @@ describe('BuildingInfo while the Hours feed loads', () => {
 		// The venue has merged with its department: the tile now opens it.
 		expect(screen.getAllByRole('button', {name: /^Dept 0/u}).length).toBeGreaterThan(0)
 		expect(screen.getAllByText('Departments')).toHaveLength(2)
+	})
+})
+
+describe('BuildingInfo with nothing to say', () => {
+	it('says there are no details for a place with only a name', async () => {
+		await renderCard(
+			<BuildingInfo
+				campus="stolaf"
+				building={makeBuilding({id: 'swing-set', name: 'Swing Set'})}
+				onClose={jest.fn()}
+				onOpen={jest.fn()}
+				stop="medium"
+			/>,
+		)
+
+		expect(screen.getByText('No Details')).toBeTruthy()
+	})
+
+	it('says nothing of the kind once a place has a section to show', async () => {
+		await renderCard(
+			<BuildingInfo
+				campus="stolaf"
+				building={makeBuilding({id: 'swing-set', name: 'Swing Set', description: 'Two swings.'})}
+				onClose={jest.fn()}
+				onOpen={jest.fn()}
+				stop="medium"
+			/>,
+		)
+
+		expect(screen.queryByText('No Details')).toBeNull()
+	})
+
+	// Hours, Also at This Location and Directory all wait on feeds; saying
+	// there is nothing before they arrive would flash on every card.
+	it('waits for the Hours feed before saying so', async () => {
+		let client = new QueryClient({defaultOptions: {queries: {retry: false, staleTime: Infinity}}})
+		trackedQueryClients.push(client)
+		client.setQueryData(mapKeys.all('stolaf'), [])
+		client.setQueryData(directoryKeys.all('stolaf'), [])
+		// The Hours feed is held in flight until the test answers it, so the card
+		// mounts while it loads. Left to the card, the fetch would answer at once
+		// from the bundled copy, as it does under UI testing, and whether the card
+		// heard of it before the first assertion would come down to timing.
+		let answerHours: (venues: BuildingType[]) => void = () => undefined
+		let hoursArrival = client.query({
+			queryKey: keys.all('stolaf'),
+			queryFn: () =>
+				new Promise<BuildingType[]>((resolve) => {
+					answerHours = resolve
+				}),
+		})
+		await render(
+			<QueryClientProvider client={client}>
+				<BuildingInfo
+					building={makeBuilding({id: 'swing-set', name: 'Swing Set'})}
+					campus="stolaf"
+					onClose={jest.fn()}
+					onOpen={jest.fn()}
+					stop="medium"
+				/>
+			</QueryClientProvider>,
+		)
+		expect(screen.queryByText('No Details')).toBeNull()
+
+		await act(async () => {
+			answerHours([])
+			await hoursArrival
+			await new Promise((resolve) => setTimeout(resolve, 0))
+		})
+		expect(screen.getByText('No Details')).toBeTruthy()
 	})
 })

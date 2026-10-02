@@ -8,7 +8,11 @@
   "scripts": {
     "test": "jest"
   },
+  "devDependencies": {
+    "@jest/globals": "30.5.2"
+  },
   "peerDependencies": {
+    "@react-native-async-storage/async-storage": "^3.1.1",
     "react-native": "catalog:"
   }
 }

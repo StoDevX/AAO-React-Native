@@ -33,18 +33,22 @@ jobs:
         # hashFiles globstars need their own path segment (dir/**/*.ext) to
         # cross directories -- dir/**.ext only matches dir's direct children,
         # so it silently skipped every file under a subdirectory (all of
-        # source/features/**, app/(home)/**, etc.) and this cache almost
+        # source/features/**, app/**, etc.) and this cache almost
         # never invalidated on real JS changes.
+        #
+        # The JSON fixtures under source/ and the Metro config that decides
+        # whether a bundle keeps them are in the hash too: a fixture refresh
+        # that restored the old bundle would test against the old data.
         with:
           path: |
             ios/AllAboutOlaf/main.jsbundle
             ios/AllAboutOlaf/main.jsbundle.map
             ios/assets/
-          key: jsbundle/e=${{ env.cache_epoch }}/host=ubuntu@24.04/target=ios/ref=${{ github.head_ref || github.ref_name }}/hash=${{ hashFiles('mise.toml', 'package.json', 'pnpm-lock.yaml', 'pnpm-workspace.yaml', 'tsconfig.json', 'babel.config.js', 'index.js', 'data/**', 'images/**', 'modules/**/*.ts', 'modules/**/*.tsx', 'source/**/*.ts', 'source/**/*.tsx', 'app/**/*.ts', 'app/**/*.tsx') }}
+          key: jsbundle/e=${{ env.cache_epoch }}/host=ubuntu@24.04/target=ios/ref=${{ github.head_ref || github.ref_name }}/hash=${{ hashFiles('mise.toml', 'package.json', 'pnpm-lock.yaml', 'pnpm-workspace.yaml', 'tsconfig.json', 'babel.config.js', 'index.js', 'data/**', 'images/**', 'modules/**/*.ts', 'modules/**/*.tsx', 'source/**/*.ts', 'source/**/*.tsx', 'app/**/*.ts', 'app/**/*.tsx', 'source/**/*.json', 'metro.config.js', 'scripts/metro-fixtures.mjs', 'scripts/empty-fixture.json') }}
           restore-keys: |
-            jsbundle/e=${{ env.cache_epoch }}/host=ubuntu@24.04/target=ios/ref=master/hash=${{ hashFiles('mise.toml', 'package.json', 'pnpm-lock.yaml', 'pnpm-workspace.yaml', 'tsconfig.json', 'babel.config.js', 'index.js', 'data/**', 'images/**', 'modules/**/*.ts', 'modules/**/*.tsx', 'source/**/*.ts', 'source/**/*.tsx', 'app/**/*.ts', 'app/**/*.tsx') }}
+            jsbundle/e=${{ env.cache_epoch }}/host=ubuntu@24.04/target=ios/ref=master/hash=${{ hashFiles('mise.toml', 'package.json', 'pnpm-lock.yaml', 'pnpm-workspace.yaml', 'tsconfig.json', 'babel.config.js', 'index.js', 'data/**', 'images/**', 'modules/**/*.ts', 'modules/**/*.tsx', 'source/**/*.ts', 'source/**/*.tsx', 'app/**/*.ts', 'app/**/*.tsx', 'source/**/*.json', 'metro.config.js', 'scripts/metro-fixtures.mjs', 'scripts/empty-fixture.json') }}
 
-      - uses: jdx/mise-action@c2a87611a18de5b3828c5652fe268e992400cb5c # v4.3.0
+      - uses: jdx/mise-action@9149ea85001c7435d5a66bb127d6a1b6227cb0a5 # v5.0.0
         with:
           cache_key: mise-v2-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('mise.lock') }}
         if: steps.jsbundle-cache.outputs.cache-matched-key == ''
@@ -167,7 +171,7 @@ jobs:
       - name: Select ${{ env.xcode_version }}
         run: sudo xcode-select -s /Applications/${{ env.xcode_version }}.app
 
-      - uses: jdx/mise-action@c2a87611a18de5b3828c5652fe268e992400cb5c # v4.3.0
+      - uses: jdx/mise-action@9149ea85001c7435d5a66bb127d6a1b6227cb0a5 # v5.0.0
         with:
           cache_key: mise-v2-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('mise.lock') }}
 
@@ -332,7 +336,7 @@ jobs:
 
   uitest-gate:
     name: Decide whether UITests must run
-    runs-on: ubuntu-26.04
+    runs-on: ubuntu-slim
     # uitest-plan and ios-uitest key off needs.uitest-gate.outputs.needed, not
     # this job's own result -- their job-level `if:` replaces GitHub's implicit
     # success() gate, so a failure here does not skip them. The Decide step
@@ -392,7 +396,7 @@ jobs:
 
   uitest-plan:
     name: Plan UITest shards
-    runs-on: ubuntu-26.04
+    runs-on: ubuntu-slim
     needs: [uitest-gate]
     # Anything other than an explicit "false" from the gate means run it --
     # empty (the gate died before it could answer) defaults to needed, same
@@ -646,7 +650,7 @@ jobs:
   uitest-durations:
     name: Publish UITest durations
     needs: [ios-uitest]
-    runs-on: ubuntu-26.04
+    runs-on: ubuntu-slim
     # Master alone writes. A branch reads master's table through the planner's
     # restore-key; letting every branch save one would crowd the repository's
     # shared cache and evict what the shards restore with fail-on-cache-miss.

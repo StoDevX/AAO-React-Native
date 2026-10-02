@@ -1,8 +1,6 @@
-import deburr from 'lodash/deburr'
-import groupBy from 'lodash/groupBy'
-import words from 'lodash/words'
-
 import type {DictionaryGroup, NormalizedEntry, Sense, WordType} from '../types'
+import {deburr, words} from '../../../lib/text'
+import {groupBy} from '@frogpond/collections'
 
 /**
  * Collapses an entry into the one shape every screen reads: a `senses` array

@@ -2,7 +2,7 @@ import {describe, expect, test} from '@jest/globals'
 
 import {applyMenuFilters, meetsDietaryMarks} from '../apply-menu-filters'
 import type {MenuItemType} from '../../types'
-import type {FilterType, ListType} from '@frogpond/filter/types'
+import type {Filter, ListFilter} from '@frogpond/filter/types'
 
 function item(
 	corIcon: Record<string, string>,
@@ -30,7 +30,7 @@ function item(
 	}
 }
 
-function dietaryFilter(titles: string[], enabled = true): ListType<MenuItemType> {
+function dietaryFilter(titles: string[], enabled = true): ListFilter<MenuItemType> {
 	return {
 		type: 'list',
 		key: 'dietary-restrictions',
@@ -94,7 +94,7 @@ describe('applyMenuFilters', () => {
 	})
 
 	test('still applies the other filters', () => {
-		let stations: FilterType<MenuItemType> = {
+		let stations: Filter<MenuItemType> = {
 			type: 'list',
 			key: 'stations',
 			enabled: true,
@@ -114,7 +114,7 @@ describe('applyMenuFilters', () => {
 })
 
 describe('applyMenuFilters with the specials toggle', () => {
-	let specials: FilterType<MenuItemType> = {
+	let specials: Filter<MenuItemType> = {
 		type: 'toggle',
 		key: 'specials',
 		enabled: true,

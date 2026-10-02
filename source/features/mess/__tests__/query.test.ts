@@ -26,11 +26,6 @@ import {
 import {messKeys} from '../lib/keys'
 import type {LightPost, MessStory, SpotifyRef} from '../types'
 
-jest.mock('@react-native-community/netinfo', () =>
-	// oxlint-disable-next-line typescript/no-require-imports
-	require('@react-native-community/netinfo/jest/netinfo-mock'),
-)
-
 jest.mock('@frogpond/data-sources', () => ({
 	...(jest.requireActual('@frogpond/data-sources') as object),
 	fetchManifest: jest.fn(),
@@ -118,7 +113,7 @@ describe('messFeedOptions', () => {
 			Promise.resolve(href.includes('/categories') ? categories : posts),
 		)
 
-		let stories = await run<Array<{id: number}>>(messFeedOptions)
+		let stories = await runPage<Array<{id: number}>>(messFeedOptions, 1)
 
 		expect(stories.map((s) => s.id)).toStrictEqual([36859, 36911, 36885, 36904, 36843])
 		let hrefs = mockBody.mock.calls.map((call) => call[0])
@@ -131,7 +126,39 @@ describe('messFeedOptions', () => {
 	test('fails when the feed cannot be fetched', async () => {
 		mockManifest.mockResolvedValue({links: []} as unknown as Jrd)
 		mockBody.mockRejectedValue(new Error('offline'))
-		await expect(run(messFeedOptions)).rejects.toThrow('offline')
+		await expect(runPage(messFeedOptions, 1)).rejects.toThrow('offline')
+	})
+
+	test('asks for a later page by number', async () => {
+		serve(() => posts)
+
+		await runPage(messFeedOptions, 3)
+
+		expect(fetchedHrefs()).toContain(
+			'https://olafmessenger.com/wp-json/wp/v2/posts?per_page=50&_embed=true&page=3',
+		)
+	})
+
+	test("reads WordPress's answer for a page past the last as an empty last page", async () => {
+		serve(() => Promise.reject(new SourceFetchError('Olaf Messenger fetch failed: 400', 400)))
+
+		let page = await runPage<MessStory[]>(messFeedOptions, 7)
+
+		expect(page).toStrictEqual([])
+		expect(messFeedOptions.getNextPageParam(page, [page], 7, [7])).toBeUndefined()
+	})
+
+	// The manifest sets the feed's page size, so the first page stands for it.
+	test('asks for another page after one as long as the first, and none after a shorter one', () => {
+		let stories = parseMessPosts(posts, parseMessCategories(categories))
+		let short = stories.slice(0, 2)
+		expect(messFeedOptions.getNextPageParam(stories, [stories], 1, [1])).toBe(2)
+		expect(messFeedOptions.getNextPageParam(stories, [stories, stories], 2, [1, 2])).toBe(3)
+		expect(messFeedOptions.getNextPageParam(short, [stories, short], 2, [1, 2])).toBeUndefined()
+	})
+
+	test('saves only its first page for the next launch', () => {
+		expect(messFeedOptions.meta).toStrictEqual({persistPages: 1})
 	})
 })
 
@@ -185,7 +212,7 @@ describe('messCategoryOptions', () => {
 	test("fetches the section's newest posts", async () => {
 		serve(() => varietyPosts)
 
-		let stories = await run<MessStory[]>(messCategoryOptions(23))
+		let stories = await runPage<MessStory[]>(messCategoryOptions(23), 1)
 
 		expect(stories.map((s) => s.id)).toStrictEqual(varietyPosts.map((p) => p.id))
 		expect(fetchedHrefs()).toContain(
@@ -196,10 +223,38 @@ describe('messCategoryOptions', () => {
 	test('shares one category tree with the feed', async () => {
 		serve((href) => (href.includes('categories=23') ? varietyPosts : posts))
 
-		await run(messFeedOptions)
-		await run(messCategoryOptions(23))
+		await runPage(messFeedOptions, 1)
+		await runPage(messCategoryOptions(23), 1)
 
 		expect(fetchedHrefs().filter((href) => href.includes('/categories'))).toHaveLength(1)
+	})
+
+	test("asks for a later page of the section's posts by number", async () => {
+		serve(() => varietyPosts)
+
+		await runPage(messCategoryOptions(23), 2)
+
+		expect(fetchedHrefs()).toContain(
+			'https://olafmessenger.com/wp-json/wp/v2/posts?categories=23&per_page=30&_embed=true&page=2',
+		)
+	})
+
+	test("reads WordPress's answer for a page past the last as an empty last page", async () => {
+		serve(() => Promise.reject(new SourceFetchError('Olaf Messenger fetch failed: 400', 400)))
+
+		expect(await runPage(messCategoryOptions(23), 4)).toStrictEqual([])
+	})
+
+	test('asks for another page after a full one of 30, and none after a short one', () => {
+		let options = messCategoryOptions(23)
+		let full = Array.from({length: 30}, () => story(36819))
+		let short = full.slice(0, 11)
+		expect(options.getNextPageParam(full, [full], 1, [1])).toBe(2)
+		expect(options.getNextPageParam(short, [full, short], 2, [1, 2])).toBeUndefined()
+	})
+
+	test('saves only its first page for the next launch', () => {
+		expect(messCategoryOptions(23).meta).toStrictEqual({persistPages: 1})
 	})
 })
 
@@ -228,7 +283,7 @@ describe('messSeriesOptions', () => {
 			[retitled(1, 36819, 'Mouse friends episode 2: Mary! Gold!')],
 			parseMessCategories(categories),
 		)
-		queryClient.setQueryData(messKeys.category(63), episode)
+		queryClient.setQueryData(messKeys.category(63), {pages: [episode], pageParams: [1]})
 
 		let series = await run<{title: string; stories: MessStory[]}>(messSeriesOptions(story(36819)))
 

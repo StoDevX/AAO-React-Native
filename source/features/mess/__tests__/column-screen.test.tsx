@@ -5,25 +5,15 @@ import {onlineManager, QueryClient, QueryClientProvider} from '@tanstack/react-q
 import {fetchManifest, fetchSourceBody, type Jrd} from '@frogpond/data-sources'
 
 import categoriesJson from './fixtures/categories.json'
+import postsJson from './fixtures/posts.json'
 import {queryClient as appQueryClient} from '../../../init/tanstack-query'
-import {flushQueryNotifications} from '../../../testing/query-notifications'
+import {flushQueryNotifications, waitForQueriesToSettle} from '../../../testing/query-notifications'
 import {ColumnScreen} from '../column-screen'
 import {messKeys} from '../lib/keys'
+import {onePage} from './one-page'
 import {parseMessCategories} from '../lib/posts'
 import type {MessStory} from '../types'
 
-jest.mock('@expo/ui/swift-ui', () => {
-	// oxlint-disable-next-line typescript/no-require-imports
-	return require('../../../testing/expo-ui-mock') as typeof import('../../../testing/expo-ui-mock')
-})
-jest.mock('@expo/ui/swift-ui/modifiers', () => {
-	// oxlint-disable-next-line typescript/no-require-imports
-	return require('../../../testing/expo-ui-mock') as typeof import('../../../testing/expo-ui-mock')
-})
-jest.mock('@react-native-community/netinfo', () =>
-	// oxlint-disable-next-line typescript/no-require-imports
-	require('@react-native-community/netinfo/jest/netinfo-mock'),
-)
 jest.mock(
 	'react-native-safe-area-context',
 	() =>
@@ -66,7 +56,7 @@ let queryClient: QueryClient
 beforeEach(() => {
 	queryClient = new QueryClient({defaultOptions: {queries: {staleTime: Infinity, retry: false}}})
 	queryClient.setQueryData(messKeys.categories, parseMessCategories(categoriesJson))
-	queryClient.setQueryData(messKeys.category(GOOD_QUESTIONS), [QUESTION])
+	queryClient.setQueryData(messKeys.category(GOOD_QUESTIONS), onePage([QUESTION]))
 })
 
 afterEach(() => {
@@ -90,7 +80,7 @@ describe('ColumnScreen', () => {
 
 		await fireEvent.press(screen.getByRole('button', {name: 'Why is the Cage so loud?, Apr 29'}))
 
-		expect(mockNavigate).toHaveBeenCalledWith({pathname: '/Messenger/story', params: {id: '36800'}})
+		expect(mockNavigate).toHaveBeenCalledWith({pathname: '/messenger/story', params: {id: '36800'}})
 	})
 
 	test('says it loads once back online when offline with its stories not cached', async () => {
@@ -101,25 +91,37 @@ describe('ColumnScreen', () => {
 		expect(screen.getByText('No connection. This page loads when you’re back online.')).toBeTruthy()
 	})
 
-	test('pull-to-refresh fetches the column, and nothing else', async () => {
+	// An infinite query refetches every page it holds, one after another.
+	test("pull-to-refresh fetches the column's first page, and nothing else", async () => {
+		queryClient.setQueryData(messKeys.category(GOOD_QUESTIONS), {
+			pages: [[QUESTION], []],
+			pageParams: [1, 2],
+		})
+		// A full first page, as a busy column's is, so a refetch of every page would go on past it.
+		let fullPage = Array.from({length: 30}, (_, index) => ({...postsJson[0], id: index + 1}))
 		mockManifest.mockResolvedValue({links: []} as unknown as Jrd)
 		mockBody.mockImplementation((href) =>
-			Promise.resolve(href.includes('/categories') ? categoriesJson : []),
+			Promise.resolve(
+				href.includes('/categories') ? categoriesJson : href.includes('&page=') ? [] : fullPage,
+			),
 		)
 		await renderColumn()
 
+		// The stories fetch reads the category tree through the app's own client, which is empty here.
+		let postHrefs = () =>
+			mockBody.mock.calls.map((call) => call[0]).filter((href) => !href.includes('/categories'))
+		// What the refresh itself fetched; afterwards the list's end row goes on to page 2.
 		let refresh = screen.getByTestId('refreshable').props.onRefresh as () => Promise<void>
+		let fetchedByRefresh: string[] = []
 		await act(async () => {
 			await refresh()
+			fetchedByRefresh = postHrefs()
 			await flushQueryNotifications()
 		})
 
-		// The stories fetch reads the category tree through the app's own client, which is empty here.
-		let postHrefs = mockBody.mock.calls
-			.map((call) => call[0])
-			.filter((href) => !href.includes('/categories'))
-		expect(postHrefs).toStrictEqual([
+		expect(fetchedByRefresh).toStrictEqual([
 			`https://olafmessenger.com/wp-json/wp/v2/posts?categories=${GOOD_QUESTIONS}&per_page=30&_embed=true`,
 		])
+		await waitForQueriesToSettle(queryClient)
 	})
 })

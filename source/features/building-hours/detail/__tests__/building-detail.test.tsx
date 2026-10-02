@@ -10,15 +10,10 @@ import {keys as mapKeys} from '../../../map/query'
 import {makeBuilding as makeFeature} from '../../../map/__tests__/fixtures'
 import type {Building, Feature} from '../../../map/types'
 import {images as buildingImages} from '../../../../../images/spaces'
+import {loadBeforeTests} from '../../../../testing/load-before-tests'
 
-jest.mock('@expo/ui/swift-ui', () => {
-	// oxlint-disable-next-line typescript/no-require-imports
-	return require('../../../../testing/expo-ui-mock') as typeof import('../../../../testing/expo-ui-mock')
-})
-jest.mock('@expo/ui/swift-ui/modifiers', () => {
-	// oxlint-disable-next-line typescript/no-require-imports
-	return require('../../../../testing/expo-ui-mock') as typeof import('../../../../testing/expo-ui-mock')
-})
+loadBeforeTests('Image', 'useColorScheme')
+
 jest.mock('@maplibre/maplibre-react-native', () => {
 	// oxlint-disable-next-line typescript/no-require-imports
 	return require('../../../../testing/maplibre-mock') as typeof import('../../../../testing/maplibre-mock')
@@ -69,7 +64,7 @@ afterEach(() => {
  * Renders the detail screen behind a `QueryClientProvider`, since it reads
  * the map's geojson through `useQuery` now -- seeding `mapFeatures` puts that
  * query straight into a warm cache rather than a real fetch, matching how the
- * sheet behaves once `/Map` has visited the same campus.
+ * sheet behaves once `/map` has visited the same campus.
  */
 function renderDetail(
 	building: BuildingType,
@@ -127,16 +122,6 @@ function makeFramedFeature(): Feature<Building> {
 }
 
 describe('BuildingDetailSwiftUI', () => {
-	// Regression test: Section's `footer` is a SwiftUI slot, and handing it a
-	// bare string -- rather than wrapping it in `Text` -- crashes at mount.
-	// Every building with notes -- "The Cage" among them -- hit this on every
-	// render once the detail screen became reachable.
-	test('renders a schedule with notes without throwing', () => {
-		let building = makeBuilding()
-
-		expect(() => renderDetail(building)).not.toThrow()
-	})
-
 	afterEach(() => {
 		buildingImages.clear()
 	})

@@ -1,8 +1,8 @@
 import * as React from 'react'
 import {useWindowDimensions} from 'react-native'
 import {Stack, useRouter} from 'expo-router'
-import {useQuery, useQueryClient, type InfiniteData} from '@tanstack/react-query'
-import {firstPagesOf} from '../../lib/infinite-data'
+import {useInfiniteQuery, useQueryClient} from '@tanstack/react-query'
+import {refetchFromFirstPage} from '../../lib/infinite-data'
 import {OLAF_MESSENGER} from '../news/sources'
 import {useNewsFilterStore} from '../news/store'
 import {IssueGrid} from './issue-grid'
@@ -15,7 +15,7 @@ import {MessPage} from './mess-page'
 import {PageLoading, PageMessage, PageNotice} from './page-notice'
 import {messFeedOptions} from './query'
 import {StoryRows} from './story-list'
-import type {LightPost, MessIssue} from './types'
+import type {MessIssue} from './types'
 import {useMessIssues} from './use-mess-issues'
 
 /** The name each view goes by in the menu, and in the menu button's label. */
@@ -86,7 +86,7 @@ function ByIssuePage(): React.ReactNode {
 	let {issues, query} = useMessIssues()
 	// Kept the same across renders, so the grid's memoized tiles are not all drawn again.
 	let open = React.useCallback(
-		(issue: MessIssue) => router.navigate({pathname: '/Messenger/issue', params: {key: issue.key}}),
+		(issue: MessIssue) => router.navigate({pathname: '/messenger/issue', params: {key: issue.key}}),
 		[router],
 	)
 	if (issues && issues.length > 0) {
@@ -115,8 +115,8 @@ function ByIssuePage(): React.ReactNode {
  * cannot load, so an offline reader still has something to read. Nothing is fetched for them.
  */
 function SavedLatestStories(): React.ReactNode {
-	let feed = useQuery({...messFeedOptions, enabled: false})
-	return feed.data ? <StoryRows stories={feed.data} /> : null
+	let feed = useInfiniteQuery({...messFeedOptions, enabled: false})
+	return feed.data ? <StoryRows stories={feed.data.pages.flat()} /> : null
 }
 
 /**
@@ -140,16 +140,11 @@ export function FrontPageScreen(): React.ReactNode {
 			<ViewMenu onChoose={choose} view={view} />
 			<MessPage
 				// Only the view showing has queries mounted, so refetching the active Mess queries
-				// refreshes that view alone. The issue list is cut to its first page first, since an
-				// infinite query refetches every page it holds, one after another.
-				onRefresh={() => {
-					queryClient.setQueryData<InfiniteData<LightPost[]>>(messKeys.issues, (data) =>
-						data ? firstPagesOf(data, 1) : data,
-					)
-					return queryClient.refetchQueries({queryKey: messKeys.all, type: 'active'})
-				}}
+				// refreshes that view alone.
+				onRefresh={() => refetchFromFirstPage(queryClient, messKeys.all)}
 			>
-				<Masthead dateline={datelineOf(view)} />
+				{/* By Issue's tiles each print the paper's name, so its masthead is the castle */}
+				<Masthead castle={view.mode === 'issues'} dateline={datelineOf(view)} />
 				{view.mode === 'issues' ? <ByIssuePage /> : <LatestPage section={view.section} />}
 			</MessPage>
 		</>

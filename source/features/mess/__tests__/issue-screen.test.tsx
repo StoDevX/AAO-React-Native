@@ -13,18 +13,6 @@ import {OLAF_MESSENGER} from '../../news/sources'
 import {useNewsFilterStore} from '../../news/store'
 import type {LightPost, MessStory} from '../types'
 
-jest.mock('@expo/ui/swift-ui', () => {
-	// oxlint-disable-next-line typescript/no-require-imports
-	return require('../../../testing/expo-ui-mock') as typeof import('../../../testing/expo-ui-mock')
-})
-jest.mock('@expo/ui/swift-ui/modifiers', () => {
-	// oxlint-disable-next-line typescript/no-require-imports
-	return require('../../../testing/expo-ui-mock') as typeof import('../../../testing/expo-ui-mock')
-})
-jest.mock('@react-native-community/netinfo', () =>
-	// oxlint-disable-next-line typescript/no-require-imports
-	require('@react-native-community/netinfo/jest/netinfo-mock'),
-)
 jest.mock(
 	'react-native-safe-area-context',
 	() =>
@@ -156,15 +144,21 @@ describe('IssueScreen', () => {
 		expect(screen.getByRole('button', {name: 'March story 0, News'})).toBeTruthy()
 	})
 
-	test('"All ›" goes back to the front page, showing that section in Latest', async () => {
+	test('"All ›" opens the list of this issue\'s stories in that section, leaving the front page be', async () => {
 		await renderIssue('week:2026-03-23')
 
 		await fireEvent.press(screen.getByRole('button', {name: 'All Opinions'}))
 
-		expect(useNewsFilterStore.getState().selectedCategories[OLAF_MESSENGER.id]).toBe(
-			'Latest:Opinions',
-		)
-		expect(mockBack).toHaveBeenCalledTimes(1)
+		expect(mockNavigate.mock.calls).toStrictEqual([
+			[
+				{
+					pathname: '/messenger/issue-section',
+					params: {key: 'week:2026-03-23', section: 'Opinions'},
+				},
+			],
+		])
+		expect(mockBack).not.toHaveBeenCalled()
+		expect(useNewsFilterStore.getState().selectedCategories[OLAF_MESSENGER.id]).toBeUndefined()
 	})
 
 	// The newest issue is the front page's top tile, whose query is saved for the next launch.
@@ -186,6 +180,6 @@ describe('IssueScreen', () => {
 	test('says an issue the list does not hold is unavailable', async () => {
 		await renderIssue('week:2025-12-29')
 
-		expect(screen.getByText('Issue unavailable')).toBeTruthy()
+		expect(screen.getByText('Issue Unavailable')).toBeTruthy()
 	})
 })
