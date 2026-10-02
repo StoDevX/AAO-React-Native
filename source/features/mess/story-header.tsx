@@ -7,10 +7,9 @@ import {
 	foregroundStyle,
 	textSelection,
 } from '@expo/ui/swift-ui/modifiers'
-import {useQuery} from '@tanstack/react-query'
+import {BylineAvatar} from './byline-avatar'
 import {bylineDate, bylineText, kickerText} from './lib/byline'
 import {ink, faded, messRed} from './palette'
-import {staffProfileOptions} from './query'
 import {RemotePhoto} from './remote-photo'
 import {PhotoCaption} from './story-blocks'
 import type {MessStory} from './types'
@@ -35,8 +34,6 @@ const BYLINE = [
 ]
 const DATE = [font({textStyle: 'caption'}), foregroundStyle(faded), textSelection(true)]
 
-const AVATAR = 30
-
 type Props = {
 	story: MessStory
 	columnWidth: number
@@ -53,11 +50,6 @@ export function Kicker({story}: {story: MessStory}): React.ReactNode {
 /** The top of a story: kicker, headline, byline and date, and the lead photo. */
 export function StoryHeader({story, columnWidth, showPhoto = true}: Props): React.ReactNode {
 	let byline = bylineText(story.bylines)
-	let firstWriter = story.bylines[0]
-	let profile = useQuery({
-		...staffProfileOptions(firstWriter?.id ?? 0),
-		enabled: firstWriter !== undefined,
-	})
 	let date = bylineDate(story.published)
 
 	return (
@@ -66,9 +58,7 @@ export function StoryHeader({story, columnWidth, showPhoto = true}: Props): Reac
 			<Text modifiers={HEADLINE}>{story.title}</Text>
 			<Divider />
 			<HStack spacing={8}>
-				{profile.data?.photo ? (
-					<RemotePhoto height={AVATAR} round={true} url={profile.data.photo.url} width={AVATAR} />
-				) : null}
+				<BylineAvatar writer={story.bylines[0]} />
 				<VStack alignment="leading" spacing={2}>
 					{byline ? <Text modifiers={BYLINE}>{byline}</Text> : null}
 					<Text modifiers={DATE}>{date}</Text>
