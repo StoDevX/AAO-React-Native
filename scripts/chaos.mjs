@@ -6,7 +6,13 @@
 import {copyFileSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync} from 'node:fs'
 import {join} from 'node:path'
 
-import {firstDivergence, parseChaosArgs, testEnv} from './chaos-run.mjs'
+import {
+	firstDivergence,
+	parseChaosArgs,
+	runOutcome,
+	stoppingFindings,
+	testEnv,
+} from './chaos-run.mjs'
 import {
 	appDataPath,
 	bootedSimulator,
@@ -53,7 +59,7 @@ for (let name of FILES) {
 rmSync(out, {recursive: true, force: true})
 mkdirSync(out, {recursive: true})
 let resultBundle = join(out, 'result.xcresult')
-let failed = false
+let testError = null
 try {
 	testWithoutBuilding({
 		udid: device.udid,
@@ -62,8 +68,8 @@ try {
 		env: testEnv(options),
 		resultBundle,
 	})
-} catch {
-	failed = true
+} catch (error) {
+	testError = error
 }
 
 for (let name of FILES) {
@@ -85,22 +91,46 @@ run('xcrun', [
 	join(out, 'attachments'),
 ])
 
+let newSteps = stepLines(join(out, 'attachments'))
 if (previousSteps) {
-	let step = firstDivergence(previousSteps, stepLines(join(out, 'attachments')))
-	console.log(
-		step === null ? 'replay followed the recorded steps' : `replay diverged at step ${step}`,
-	)
+	if (newSteps) {
+		let step = firstDivergence(previousSteps, newSteps)
+		console.log(
+			step === null ? 'replay followed the recorded steps' : `replay diverged at step ${step}`,
+		)
+	} else {
+		console.log('replay recorded no steps to compare')
+	}
+}
+
+// A stopping finding (fatal, an unhandled rejection, or a replay divergence)
+// can land here without failing the test itself: a fatal error raised under
+// a modal can slip past the beacon, so the findings file is the one place
+// that is checked no matter how the test exited.
+let findingsPath = join(out, 'chaos-findings.jsonl')
+let findingLines = existsSync(findingsPath) ? readFileSync(findingsPath, 'utf8').split('\n') : []
+let outcome = runOutcome({
+	testFailed: testError !== null,
+	stepsLogged: newSteps !== null,
+	stoppingFindings: stoppingFindings(findingLines),
+})
+if (outcome.exitCode === 2) {
+	console.error(testError.message)
 }
 console.log(
-	failed ? `chaos found something: see ${out}` : `chaos seed ${options.seed} found nothing`,
+	outcome.exitCode === 0
+		? `${outcome.message}: seed ${options.seed}`
+		: `${outcome.message}: see ${out}`,
 )
-process.exitCode = failed ? 1 : 0
+process.exitCode = outcome.exitCode
 
-/** The step log among a run's exported attachments. */
+/** The step log among a run's exported attachments, or null if it has none. */
 function stepLines(dir) {
-	let manifest = JSON.parse(readFileSync(join(dir, 'manifest.json'), 'utf8'))
+	let manifestPath = join(dir, 'manifest.json')
+	if (!existsSync(manifestPath)) return null
+	let manifest = JSON.parse(readFileSync(manifestPath, 'utf8'))
 	let file = manifest
 		.flatMap((test) => test.attachments)
 		.find((attachment) => attachment.suggestedHumanReadableName.startsWith('chaos-steps'))
-	return file ? readFileSync(join(dir, file.exportedFileName), 'utf8').trim().split('\n') : []
+	return file ? readFileSync(join(dir, file.exportedFileName), 'utf8').trim().split('\n') : null
 }

@@ -1,7 +1,15 @@
 import assert from 'node:assert/strict'
 import {test} from 'node:test'
 
-import {firstDivergence, parseChaosArgs, parseDuration, testEnv} from './chaos-run.mjs'
+import {
+	firstDivergence,
+	parseChaosArgs,
+	parseDuration,
+	parseFindingLines,
+	runOutcome,
+	stoppingFindings,
+	testEnv,
+} from './chaos-run.mjs'
 
 test('reads durations in seconds, minutes and hours', () => {
 	assert.equal(parseDuration('90'), 90)
@@ -68,4 +76,53 @@ test('finds the first step a replay did differently', () => {
 	assert.equal(firstDivergence(a, b), 1)
 	assert.equal(firstDivergence(a, a), null)
 	assert.equal(firstDivergence(a, a.slice(0, 1)), null)
+})
+
+test('parses every finding, skipping a line torn by a crash mid-write', () => {
+	assert.deepEqual(
+		parseFindingLines(['{"kind":"fatal","message":"boom"}', '', '{"kind":"console-e']),
+		[{kind: 'fatal', message: 'boom'}],
+	)
+})
+
+test('picks out only the findings severe enough to stop a run', () => {
+	let lines = [
+		'{"kind":"console-error","message":"noisy"}',
+		'{"kind":"divergence","message":"no recorded answer"}',
+		'{"kind":"out-of-app","message":"left via Linking"}',
+		'{"kind":"fatal","message":"boom"}',
+	]
+	assert.deepEqual(stoppingFindings(lines), [
+		{kind: 'divergence', message: 'no recorded answer'},
+		{kind: 'fatal', message: 'boom'},
+	])
+})
+
+test('a stopping finding fails the run even when the test itself passed', () => {
+	let findings = [{kind: 'fatal', message: 'boom'}]
+	assert.deepEqual(runOutcome({testFailed: false, stepsLogged: true, stoppingFindings: findings}), {
+		exitCode: 1,
+		message: 'chaos found something:\nfatal: boom',
+	})
+})
+
+test('a failed test with a step log is a finding', () => {
+	assert.deepEqual(runOutcome({testFailed: true, stepsLogged: true, stoppingFindings: []}), {
+		exitCode: 1,
+		message: 'chaos found something',
+	})
+})
+
+test('a failed test with no step log means the run never started', () => {
+	assert.deepEqual(runOutcome({testFailed: true, stepsLogged: false, stoppingFindings: []}), {
+		exitCode: 2,
+		message: 'the chaos run did not start',
+	})
+})
+
+test('a passing test with no stopping findings found nothing', () => {
+	assert.deepEqual(runOutcome({testFailed: false, stepsLogged: true, stoppingFindings: []}), {
+		exitCode: 0,
+		message: 'chaos found nothing',
+	})
 })

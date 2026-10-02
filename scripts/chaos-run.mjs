@@ -79,3 +79,48 @@ export function firstDivergence(before, after) {
 	}
 	return null
 }
+
+/**
+ * The kinds of finding severe enough to fail a run on their own, mirroring
+ * source/chaos/findings.ts's STOPPING -- duplicated here since that module is
+ * TypeScript and this script is not.
+ */
+const STOPPING_FINDING_KINDS = new Set(['fatal', 'unhandled-rejection', 'divergence'])
+
+/** Every parseable finding in `lines`; a line torn by a crash is skipped. */
+export function parseFindingLines(lines) {
+	let findings = []
+	for (let line of lines) {
+		if (!line.trim()) continue
+		try {
+			findings.push(JSON.parse(line))
+		} catch {
+			// A process killed mid-write leaves a partial last line.
+		}
+	}
+	return findings
+}
+
+/** The findings among `lines` severe enough to fail a run even if the test itself passed. */
+export function stoppingFindings(lines) {
+	return parseFindingLines(lines).filter((finding) => STOPPING_FINDING_KINDS.has(finding.kind))
+}
+
+/**
+ * What a chaos run found, settled after the fact: a bare XCTest failure
+ * alone can't tell a finding from the run never having started, and a
+ * stopping finding can land in chaos-findings.jsonl without failing the
+ * test, when a fatal error under a modal slips past the beacon.
+ */
+export function runOutcome({testFailed, stepsLogged, stoppingFindings: findings}) {
+	if (findings.length > 0) {
+		let list = findings.map((finding) => `${finding.kind}: ${finding.message}`).join('\n')
+		return {exitCode: 1, message: `chaos found something:\n${list}`}
+	}
+	if (testFailed) {
+		return stepsLogged
+			? {exitCode: 1, message: 'chaos found something'}
+			: {exitCode: 2, message: 'the chaos run did not start'}
+	}
+	return {exitCode: 0, message: 'chaos found nothing'}
+}
