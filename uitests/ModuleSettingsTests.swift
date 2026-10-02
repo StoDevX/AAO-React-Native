@@ -11,8 +11,7 @@ class ModuleSettingsTests: UITestCase {
 		let settings = SettingsScreen(app: app)
 
     // open Settings sheet
-    XCTAssertTrue(app.element(matching: TestIdentifiers.Home.screen).waitForExistence(timeout: 10))
-    app.buttons[TestIdentifiers.Navigation.openSettings].firstMatch.tap()
+    HomeScreen(app: app).checkHomescreenExists().openSettings()
     settings.verifyTitle(TestIdentifiers.Navigation.settingsSheetTitle)
 
 		settings.scrollUntilExists(app.staticTexts["App Icon"])

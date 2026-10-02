@@ -1,7 +1,16 @@
 import * as React from 'react'
 import {StyleSheet, useWindowDimensions} from 'react-native'
 import {Stack, useRouter} from 'expo-router'
-import {Button, ContextMenu, Host, RNHostView, ScrollView, Text, VStack} from '@expo/ui/swift-ui'
+import {
+	Button,
+	ContextMenu,
+	Host,
+	List,
+	RNHostView,
+	ScrollView,
+	Text,
+	VStack,
+} from '@expo/ui/swift-ui'
 import {
 	accessibilityIdentifier,
 	background,
@@ -9,6 +18,10 @@ import {
 	font,
 	foregroundStyle,
 	frame,
+	listRowBackground,
+	listRowInsets,
+	listRowSeparator,
+	listStyle,
 	multilineTextAlignment,
 	padding,
 	shapes,
@@ -27,6 +40,8 @@ import {
 } from '../source/components/tile-layout'
 import {TileGrid} from '../source/components/tile-grid'
 import {HomeScreenButton} from '../source/features/home/button'
+import {HomeListSections} from '../source/features/home/list-sections'
+import {useHomeLayoutStore} from '../source/features/home/store'
 import {openUrl} from '@frogpond/open-url'
 import {selectDevModeOverride, setDevModeOverride} from '../source/redux/parts/settings'
 import {selectCollapsedHomeGroups, toggleHomeGroup} from '../source/redux/parts/home'
@@ -131,6 +146,18 @@ function UnofficialAppNotice(): React.ReactNode {
 
 /// Mirrored by TestIdentifiers.Home.groupGrid.
 const groupGridId = (group: string): string => `home-group-grid-${group}`
+/// A list row with nothing of a row's own: no fill, margins or divider, so the
+/// banner and the notice sit on the list's background rather than in a cell.
+const BARE_ROW_MODIFIERS = [
+	listRowBackground('clear'),
+	listRowInsets({top: 0, leading: 0, bottom: 0, trailing: 0}),
+	listRowSeparator('hidden'),
+]
+
+/// Mirrored by TestIdentifiers.Home.tileGrid.
+const HOME_GRID_ID = 'home-tile-grid'
+/// The menu in the navigation bar's corner, mirrored by TestIdentifiers.Navigation.homeMenu.
+const HOME_MENU_LABEL = 'Home menu'
 /// Names a group's header, for a UI test.
 const groupHeaderId = (group: string): string => `home-group-header-${group}`
 
@@ -197,33 +224,53 @@ export default function HomePage(): React.ReactNode {
 	let collapsedGroups = useSelector(selectCollapsedHomeGroups)
 	let openView = useOpenView()
 	let sections = homeSections(AllViews(), {isDev})
-	let {width: screenWidth} = useWindowDimensions()
+	let {width: screenWidth, fontScale} = useWindowDimensions()
+	let layout = useHomeLayoutStore((state) => state.layout)
+	let setLayout = useHomeLayoutStore((state) => state.setLayout)
 
 	return (
 		<>
 			<Stack.Title>All About Olaf</Stack.Title>
 			<Stack.Toolbar placement="right">
-				<Stack.Toolbar.Button
-					accessibilityLabel="Open Settings"
-					icon="gear"
-					onPress={() => router.navigate('/settings')}
-				/>
+				<Stack.Toolbar.Menu accessibilityLabel={HOME_MENU_LABEL} icon="gear">
+					<Stack.Toolbar.Menu inline={true} palette={true} title="Layout">
+						<Stack.Toolbar.MenuAction
+							icon="square.grid.2x2"
+							isOn={layout === 'tiled'}
+							onPress={() => setLayout('tiled')}
+						>
+							Tiled
+						</Stack.Toolbar.MenuAction>
+						<Stack.Toolbar.MenuAction
+							icon="rectangle.grid.1x2"
+							isOn={layout === 'grouped'}
+							onPress={() => setLayout('grouped')}
+						>
+							Grouped
+						</Stack.Toolbar.MenuAction>
+						<Stack.Toolbar.MenuAction
+							icon="list.bullet"
+							isOn={layout === 'list'}
+							onPress={() => setLayout('list')}
+						>
+							List
+						</Stack.Toolbar.MenuAction>
+					</Stack.Toolbar.Menu>
+					<Stack.Toolbar.MenuAction icon="gear" onPress={() => router.navigate('/settings')}>
+						Settings
+					</Stack.Toolbar.MenuAction>
+				</Stack.Toolbar.Menu>
 			</Stack.Toolbar>
 			<Host
 				matchContents={false}
 				modifiers={[accessibilityIdentifier('screen-homescreen')]}
 				style={styles.host}
 			>
-				<ScrollView>
-					<VStack
-						modifiers={[
-							frame({width: screenWidth - 2 * SCREEN_MARGIN}),
-							padding({all: SCREEN_MARGIN}),
-						]}
-					>
-						{/* The banner is its own child, not one of the spaced groups
-						    below: when there is no banner its slot is empty, and
-						    spacing around an empty slot is a gap above the first group. */}
+				{layout === 'list' ? (
+					<VStack spacing={0}>
+						{/* Above the list rather than a row in it: a row with nothing
+						    in it, as when there is no banner, still takes a row's
+						    minimum height. */}
 						<RNHostView matchContents={true}>
 							<FaqBannerGroup
 								onPressFaq={(faqId) => router.navigate({pathname: '/faq', params: {faqId}})}
@@ -231,22 +278,60 @@ export default function HomePage(): React.ReactNode {
 								target={FAQ_TARGETS.HOME}
 							/>
 						</RNHostView>
-
-						<VStack spacing={TILE_SPACING * 2}>
-							{sections.map((section) => (
-								<HomeGroupView
-									collapsed={section.collapsible && collapsedGroups.includes(section.id)}
-									key={section.id}
-									onOpen={openView}
-									onToggle={() => dispatch(toggleHomeGroup(section.id))}
-									section={section}
-								/>
-							))}
-
-							<UnofficialAppNotice />
-						</VStack>
+						<List modifiers={[listStyle('insetGrouped')]}>
+							<HomeListSections onOpen={openView} sections={sections} />
+							<VStack modifiers={BARE_ROW_MODIFIERS}>
+								<UnofficialAppNotice />
+							</VStack>
+						</List>
 					</VStack>
-				</ScrollView>
+				) : (
+					<ScrollView>
+						<VStack
+							modifiers={[
+								frame({width: screenWidth - 2 * SCREEN_MARGIN}),
+								padding({all: SCREEN_MARGIN}),
+							]}
+						>
+							{/* The banner is its own child, not one of the spaced groups
+						    below: when there is no banner its slot is empty, and
+						    spacing around an empty slot is a gap above the first group. */}
+							<RNHostView matchContents={true}>
+								<FaqBannerGroup
+									onPressFaq={(faqId) => router.navigate({pathname: '/faq', params: {faqId}})}
+									style={styles.banner}
+									target={FAQ_TARGETS.HOME}
+								/>
+							</RNHostView>
+
+							<VStack spacing={TILE_SPACING * 2}>
+								{layout === 'tiled' ? (
+									<TileGrid
+										accessibilityId={HOME_GRID_ID}
+										columns={homeColumnsForFontScale(fontScale)}
+										items={sections.flatMap((section) => section.views)}
+										keyForItem={(view) => view.id}
+										renderItem={(view) => (
+											<HomeScreenButton onPress={() => openView(view)} view={view} />
+										)}
+									/>
+								) : (
+									sections.map((section) => (
+										<HomeGroupView
+											collapsed={section.collapsible && collapsedGroups.includes(section.id)}
+											key={section.id}
+											onOpen={openView}
+											onToggle={() => dispatch(toggleHomeGroup(section.id))}
+											section={section}
+										/>
+									))
+								)}
+
+								<UnofficialAppNotice />
+							</VStack>
+						</VStack>
+					</ScrollView>
+				)}
 			</Host>
 		</>
 	)

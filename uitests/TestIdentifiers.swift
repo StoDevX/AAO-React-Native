@@ -48,7 +48,10 @@ struct TestIdentifiers {
 	}
 
 	enum Navigation {
-		static let openSettings = "Open Settings"
+		/// The menu at the home screen's top-right corner, which holds the layout
+		/// choice and Settings. Mirrors HOME_MENU_LABEL in app/index.tsx.
+		static let homeMenu = "Home menu"
+		static let settingsMenuItem = "Settings"
     static let settingsSheetTitle = "Settings"
 		/// The label every back button carries. UIKit gives its own back
 		/// buttons this label too, so a query using it must be scoped to one
@@ -76,7 +79,7 @@ struct TestIdentifiers {
 	// MARK: - Home screen button labels
 
 	enum Buttons {
-		static let menus = "Menus"
+		static let stavHall = "Stav Hall"
 		static let athletics = "Athletics"
 		static let calendar = "Calendar"
 		static let carletonCampus = "Carleton Campus"
@@ -86,11 +89,11 @@ struct TestIdentifiers {
 		static let courseCatalog = "Course Catalog"
 		static let directory = "Directory"
 		static let map = "Map"
-		static let more = "More"
+		static let more = "A–Z"
 		static let olafMessenger = "Olaf Messenger"
 		static let stOlafNews = "St. Olaf News"
 		static let stoPrint = "stoPrint"
-		static let streamingMedia = "Streaming Media"
+		static let streams = "Streams"
 		static let studentOrgs = "Student Orgs"
 		static let studentWork = "Student Work"
 		static let transit = "Transit"

@@ -8,9 +8,11 @@ import {
 	Image,
 	LabeledContent,
 	RNHostView,
+	RoundedRectangle,
 	Spacer,
 	Text,
 	VStack,
+	ZStack,
 } from '@expo/ui/swift-ui'
 import {
 	accessibilityAddTraits,
@@ -30,6 +32,7 @@ import {
 } from '@expo/ui/swift-ui/modifiers'
 import type {ModifierConfig} from '@expo/ui/swift-ui/modifiers'
 import * as c from '@frogpond/colors'
+import {displayP3, type Gradient} from '@frogpond/colors'
 
 import {detailLinesOf, rowLabel, type RowDetail} from './lib/row-text'
 
@@ -151,6 +154,8 @@ export function ActionRow(props: ActionRowProps): React.ReactNode {
  */
 type SymbolImage = ({systemName: SFSymbol} | {assetName: string}) & {
 	tint?: ColorValue
+	/** Draws the symbol in white on a rounded square of this gradient, as Settings does. */
+	badge?: Gradient
 	size?: number
 	label?: string
 	width?: number
@@ -170,6 +175,11 @@ export type DisclosureRowImage = SymbolImage | ThumbnailImage
 const THUMBNAIL_ID = 'disclosure-row-thumbnail'
 
 const SYMBOL_SIZE = 20
+
+/// Settings' own badge: a 29pt square at iOS's app-icon corner ratio.
+const BADGE_SIZE = 30
+const BADGE_RADIUS = 7
+const BADGE_SYMBOL_SIZE = 17
 
 type DisclosureRowProps = {
 	title: string
@@ -203,6 +213,33 @@ type DisclosureRowProps = {
 
 /** A row's leading image: a tinted symbol, or a thumbnail. */
 export function LeadingImage({image}: {image: DisclosureRowImage}): React.ReactNode {
+	if (!('uri' in image) && image.badge) {
+		let [start, end] = image.badge
+
+		return (
+			<ZStack modifiers={[frame({width: BADGE_SIZE, height: BADGE_SIZE})]}>
+				<RoundedRectangle
+					cornerRadius={BADGE_RADIUS}
+					modifiers={[
+						foregroundStyle({
+							type: 'linearGradient',
+							colors: [displayP3(start), displayP3(end)],
+							startPoint: {x: 0.5, y: 0},
+							endPoint: {x: 0.5, y: 1},
+						}),
+					]}
+				/>
+				<Image
+					{...('assetName' in image
+						? {assetName: image.assetName}
+						: {systemName: image.systemName})}
+					color="white"
+					size={BADGE_SYMBOL_SIZE}
+				/>
+			</ZStack>
+		)
+	}
+
 	if (!('uri' in image)) {
 		return (
 			<Image

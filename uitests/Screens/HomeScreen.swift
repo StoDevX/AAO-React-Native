@@ -34,11 +34,17 @@ struct HomeScreen: Screen {
 
 	@discardableResult
 	func openSettings() -> Self {
-		let settingsButton = app.buttons[TestIdentifiers.Navigation.openSettings]
+		let menu = app.buttons[TestIdentifiers.Navigation.homeMenu]
 		XCTAssertTrue(
-			settingsButton.waitForExistence(timeout: 10),
-			"Settings button should appear on home screen")
-		settingsButton.tap()
+			menu.waitForExistence(timeout: 10),
+			"Home menu should appear on home screen")
+		menu.tap()
+
+		let settings = app.buttons[TestIdentifiers.Navigation.settingsMenuItem].firstMatch
+		XCTAssertTrue(
+			settings.waitForExistence(timeout: 10),
+			"Home menu should offer Settings")
+		settings.tap()
 		return self
 	}
 
