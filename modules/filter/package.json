@@ -15,6 +15,10 @@
     "@frogpond/sheet-section": "workspace:*",
     "@frogpond/toolbar": "workspace:*"
   },
+  "devDependencies": {
+    "@jest/globals": "30.5.2",
+    "@testing-library/react-native": "14.0.1"
+  },
   "peerDependencies": {
     "react": "catalog:",
     "react-native": "catalog:"

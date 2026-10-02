@@ -18,6 +18,10 @@
     "@frogpond/sheet-section": "workspace:*",
     "@frogpond/time-format": "workspace:*"
   },
+  "devDependencies": {
+    "@jest/globals": "30.5.2",
+    "@testing-library/react-native": "14.0.1"
+  },
   "peerDependencies": {
     "moment": "^2.31.0",
     "moment-timezone": "^0.6.4",
