@@ -201,7 +201,6 @@ export default function HomePage(): React.ReactNode {
 
 	return (
 		<>
-			<Stack.Screen options={{headerLargeTitleEnabled: true}} />
 			<Stack.Title>All About Olaf</Stack.Title>
 			<Stack.Toolbar placement="right">
 				<Stack.Toolbar.Button
