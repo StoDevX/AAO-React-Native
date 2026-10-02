@@ -10,6 +10,7 @@ import {
 	VStack,
 } from '@expo/ui/swift-ui'
 import {
+	accessibilityElement,
 	accessibilityIdentifier,
 	accessibilityLabel,
 	background,
@@ -26,8 +27,9 @@ import {useQuery} from '@tanstack/react-query'
 import {splitCarousel} from '../../lib/split-carousel'
 import {cardKicker, sectionCredit} from './lib/byline'
 import {TAP_TARGET} from './lib/glyph-grid'
+import {rowsOf} from './lib/issue-grid'
 import {datelineText} from './lib/issues'
-import {leadStory, shelvesOf, type Shelf} from './lib/shelves'
+import {leadStory, shelvesOf} from './lib/shelves'
 import {Masthead} from './masthead'
 import {PageLoading, PageNotice} from './page-notice'
 import {faded, ink, messRed, wash} from './palette'
@@ -37,21 +39,36 @@ import {SECTION_HEADING} from './story-blocks'
 import type {MessIssue, MessStory} from './types'
 import {useOpenStory} from './use-open-story'
 
-/** Names the lead story, every card, every shelf's "All ›", and every More tile, for a UI test. */
+/**
+ * Names the lead story, every card, every shelf's "All ›", every More tile, and every row of the
+ * More grid, for a UI test.
+ */
 export const LEAD_STORY_ID = 'mess-lead-story'
 export const STORY_CARD_ID = 'mess-story-card'
 export const SHELF_ALL_ID = 'mess-shelf-all'
 export const SHELF_MORE_ID = 'mess-shelf-more'
+export const MORE_GRID_ROW_ID = 'mess-more-grid-row'
 
-/** The heading of the shelf of stories from no section the front page names. */
+/** The heading of the stories from no section the front page names. */
 const MORE_SHELF = 'More'
+/** A shelf card's width. */
 const CARD_WIDTH = 160
-/** A card's photo, cropped to 3:2. */
-const CARD_PHOTO_HEIGHT = 107
-/** A text-only card is about as tall as a card with a photo and three lines, so a shelf's cards line up. */
-const TEXT_CARD_HEIGHT = 180
+/** The room under a card's photo for its headline's three lines. */
+const HEADLINE_ROOM = 73
 /** How many of the hidden headlines a shelf's More tile shows. */
 const MORE_PREVIEW = 3
+/** The More grid's cards to a row, and the gap between them, as the shelves space theirs. */
+const GRID_COLUMNS = 2
+const CARD_SPACING = 12
+
+/**
+ * A card's photo height, cropped to 3:2, and a text-only card's height: about as tall as a card
+ * with a photo and three lines, so the cards in a row line up.
+ */
+function cardHeights(width: number): {photo: number; text: number} {
+	let photo = Math.round((width * 2) / 3)
+	return {photo, text: photo + HEADLINE_ROOM}
+}
 
 const PLAIN = buttonStyle('plain')
 /** The whole label takes a tap, blank space and all. */
@@ -67,18 +84,27 @@ const ALL_LINK = [
 	frame({minWidth: TAP_TARGET, minHeight: TAP_TARGET}),
 	contentShape(shapes.rectangle()),
 ]
-const CARD = [frame({width: CARD_WIDTH, alignment: 'leading'}), contentShape(shapes.rectangle())]
 const CARD_HEADLINE = [
 	font({textStyle: 'subheadline', design: 'serif', weight: 'semibold'}),
 	foregroundStyle(ink),
 	lineLimit(3),
 ]
-const TEXT_CARD = [
-	padding({all: 10}),
-	frame({width: CARD_WIDTH, height: TEXT_CARD_HEIGHT, alignment: 'topLeading'}),
-	background(wash),
-	contentShape(shapes.rectangle()),
-]
+/** A card with a photo, `width` wide. */
+function photoCard(width: number) {
+	return [frame({width, alignment: 'leading'}), contentShape(shapes.rectangle())]
+}
+/** A tinted card with no photo, `width` wide. */
+function textCard(width: number) {
+	return [
+		padding({all: 10}),
+		frame({width, height: cardHeights(width).text, alignment: 'topLeading'}),
+		background(wash),
+		contentShape(shapes.rectangle()),
+	]
+}
+const SHELF_TEXT_CARD = textCard(CARD_WIDTH)
+/** A row of the More grid: a container, so its identifier leaves its cards' own alone. */
+const GRID_ROW = [accessibilityElement('contain'), accessibilityIdentifier(MORE_GRID_ROW_ID)]
 const CARD_KICKER = [
 	font({textStyle: 'caption', weight: 'bold', smallCaps: true}),
 	foregroundStyle(messRed),
@@ -141,7 +167,10 @@ type IssueStoriesProps = {
 	onShowSection: (section: string) => void
 }
 
-/** Stories laid out as a front page: the lead, then a shelf of cards per section, in print order. */
+/**
+ * Stories laid out as a front page: the lead, then a shelf of cards per section, in print order,
+ * then the stories from no print section as a grid.
+ */
 export function IssueStories({
 	stories,
 	leadId,
@@ -155,14 +184,19 @@ export function IssueStories({
 			{lead ? (
 				<LeadStory columnWidth={columnWidth} onPress={() => open(lead)} story={lead} />
 			) : null}
-			{shelvesOf(stories, lead?.id).map((shelf) => (
-				<ShelfRow
-					key={shelf.section ?? MORE_SHELF}
-					onOpen={open}
-					onShowSection={onShowSection}
-					shelf={shelf}
-				/>
-			))}
+			{shelvesOf(stories, lead?.id).map(({section, stories: shelved}) =>
+				section === null ? (
+					<MoreGrid columnWidth={columnWidth} key={MORE_SHELF} onOpen={open} stories={shelved} />
+				) : (
+					<ShelfRow
+						key={section}
+						onOpen={open}
+						onShowSection={onShowSection}
+						section={section}
+						stories={shelved}
+					/>
+				),
+			)}
 		</>
 	)
 }
@@ -195,50 +229,99 @@ function LeadStory({story, columnWidth, onPress}: LeadStoryProps): React.ReactNo
 	)
 }
 
+type ShelfHeadingProps = {
+	title: string
+	/** Opens the section's list, for a section with "All ›" */
+	onShowAll?: () => void
+}
+
+/** A shelf's or the More grid's heading, under a rule, with "All ›" at its end when it has one. */
+function ShelfHeading({title, onShowAll}: ShelfHeadingProps): React.ReactNode {
+	return (
+		<>
+			<Divider />
+			<HStack>
+				<Text modifiers={SECTION_HEADING}>{title}</Text>
+				<Spacer />
+				{onShowAll ? (
+					<Button
+						modifiers={[
+							PLAIN,
+							accessibilityLabel(`All ${title}`),
+							accessibilityIdentifier(SHELF_ALL_ID),
+						]}
+						onPress={onShowAll}
+					>
+						<Text modifiers={ALL_LINK}>All ›</Text>
+					</Button>
+				) : null}
+			</HStack>
+		</>
+	)
+}
+
 type ShelfRowProps = {
-	shelf: Shelf
+	section: string
+	stories: MessStory[]
 	onOpen: (story: MessStory) => void
 	onShowSection: (section: string) => void
 }
 
 /**
- * A section's heading, with "All ›" for a section that has a chip, over a sideways row of cards.
- * A section's long row stops after six cards and ends with a More tile.
+ * A section's heading, with "All ›", over a sideways row of cards. A long row stops after six
+ * cards and ends with a More tile.
  */
-function ShelfRow({shelf, onOpen, onShowSection}: ShelfRowProps): React.ReactNode {
-	let {section} = shelf
-	let {shown, hidden} =
-		section === null ? {shown: shelf.stories, hidden: []} : splitCarousel(shelf.stories)
+function ShelfRow({section, stories, onOpen, onShowSection}: ShelfRowProps): React.ReactNode {
+	let {shown, hidden} = splitCarousel(stories)
 	return (
 		<VStack alignment="leading" spacing={8}>
-			<Divider />
-			<HStack>
-				<Text modifiers={SECTION_HEADING}>{section ?? MORE_SHELF}</Text>
-				<Spacer />
-				{section === null ? null : (
-					<Button
-						modifiers={[
-							PLAIN,
-							accessibilityLabel(`All ${section}`),
-							accessibilityIdentifier(SHELF_ALL_ID),
-						]}
-						onPress={() => onShowSection(section)}
-					>
-						<Text modifiers={ALL_LINK}>All ›</Text>
-					</Button>
-				)}
-			</HStack>
+			<ShelfHeading onShowAll={() => onShowSection(section)} title={section} />
 			<ScrollView axes="horizontal" showsIndicators={false}>
-				<LazyHStack alignment="top" spacing={12}>
+				<LazyHStack alignment="top" spacing={CARD_SPACING}>
 					{shown.map((story) => (
 						<StoryCard key={story.id} onPress={() => onOpen(story)} story={story} />
 					))}
-					{section !== null && hidden.length > 0 ? (
+					{hidden.length > 0 ? (
 						<MoreTile hidden={hidden} onPress={() => onShowSection(section)} section={section} />
 					) : null}
 				</LazyHStack>
 			</ScrollView>
 		</VStack>
+	)
+}
+
+type MoreGridProps = {
+	stories: MessStory[]
+	columnWidth: number
+	onOpen: (story: MessStory) => void
+}
+
+/**
+ * The stories from no print section, every one, as a grid of cards two to a row under the More
+ * heading. It comes last, so nothing waits below it, and a special edition, whose stories are all
+ * here, shows its whole issue. Returned side by side to land in the page's lazy column, so rows
+ * are built as they scroll in.
+ */
+function MoreGrid({stories, columnWidth, onOpen}: MoreGridProps): React.ReactNode {
+	let width = Math.floor((columnWidth - CARD_SPACING * (GRID_COLUMNS - 1)) / GRID_COLUMNS)
+	return (
+		<>
+			<VStack alignment="leading" spacing={8}>
+				<ShelfHeading title={MORE_SHELF} />
+			</VStack>
+			{rowsOf(stories, GRID_COLUMNS).map((row) => (
+				<HStack
+					alignment="top"
+					key={row.map((story) => story.id).join('-')}
+					modifiers={GRID_ROW}
+					spacing={CARD_SPACING}
+				>
+					{row.map((story) => (
+						<StoryCard key={story.id} onPress={() => onOpen(story)} story={story} width={width} />
+					))}
+				</HStack>
+			))}
+		</>
 	)
 }
 
@@ -264,7 +347,7 @@ function MoreTile({hidden, section, onPress}: MoreTileProps): React.ReactNode {
 			]}
 			onPress={onPress}
 		>
-			<VStack alignment="leading" modifiers={TEXT_CARD} spacing={6}>
+			<VStack alignment="leading" modifiers={SHELF_TEXT_CARD} spacing={6}>
 				{hidden.slice(0, MORE_PREVIEW).map((story) => (
 					<Text key={story.id} modifiers={MORE_HEADLINE}>
 						{story.title}
@@ -277,11 +360,19 @@ function MoreTile({hidden, section, onPress}: MoreTileProps): React.ReactNode {
 	)
 }
 
+type StoryCardProps = {
+	story: MessStory
+	/** A shelf's cards are all one width; the More grid's share the column */
+	width?: number
+	onPress: () => void
+}
+
 /**
- * A story on a shelf: its photo, then its headline. A story with no photo of its own, or only
- * the Mess logo, gets a tinted card headed by its column or section instead of the logo again.
+ * A story on a shelf or in the More grid: its photo, then its headline. A story with no photo of
+ * its own, or only the Mess logo, gets a tinted card headed by its column or section instead of
+ * the logo again.
  */
-function StoryCard({story, onPress}: {story: MessStory; onPress: () => void}): React.ReactNode {
+function StoryCard({story, width = CARD_WIDTH, onPress}: StoryCardProps): React.ReactNode {
 	let kicker = cardKicker(story)
 	// A text card draws its column or section; a photo card draws its headline alone.
 	let label = !story.photo && kicker ? `${story.title}, ${kicker}` : story.title
@@ -291,12 +382,12 @@ function StoryCard({story, onPress}: {story: MessStory; onPress: () => void}): R
 			onPress={onPress}
 		>
 			{story.photo ? (
-				<VStack alignment="leading" modifiers={CARD} spacing={6}>
-					<RemotePhoto height={CARD_PHOTO_HEIGHT} url={story.photo.url} width={CARD_WIDTH} />
+				<VStack alignment="leading" modifiers={photoCard(width)} spacing={6}>
+					<RemotePhoto height={cardHeights(width).photo} url={story.photo.url} width={width} />
 					<Text modifiers={CARD_HEADLINE}>{story.title}</Text>
 				</VStack>
 			) : (
-				<VStack alignment="leading" modifiers={TEXT_CARD} spacing={6}>
+				<VStack alignment="leading" modifiers={textCard(width)} spacing={6}>
 					{kicker ? <Text modifiers={CARD_KICKER}>{kicker}</Text> : null}
 					<Text modifiers={TEXT_CARD_HEADLINE}>{story.title}</Text>
 				</VStack>
