@@ -616,7 +616,7 @@ describe('StoryScreen', () => {
 				{type: 'paragraph', runs: [{text: 'After.'}]},
 			],
 		}
-		queryClient.setQueryData(messKeys.feed, [story])
+		queryClient.setQueryData(messKeys.feed, onePage([story]))
 		await renderStory(36948)
 		expect(bodyParagraphs().map((paragraphs) => paragraphs.map((p) => p.runs[0]?.text))).toEqual([
 			['Before.'],
