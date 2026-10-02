@@ -55,8 +55,11 @@ const COMIC: MessStory = {
 const ARTICLE: MessStory = {...COMIC, id: 36911, title: 'An article', layout: {kind: 'article'}}
 
 const BEES = {url: 'https://olafmessenger.com/bees-1.jpg', width: 300, height: 200, caption: ''}
+/** The cup picture's largest copy, from its srcset. */
+const LARGE_CUP = 'https://olafmessenger.com/bees-2-1536x1024.jpg'
 const CUP = {
 	url: 'https://olafmessenger.com/bees-2.jpg',
+	largeUrl: LARGE_CUP,
 	width: 300,
 	height: 200,
 	caption: 'At the cup',
@@ -80,11 +83,45 @@ const NO_PICTURE: MessStory = {
 	layout: {kind: 'feature', images: []},
 }
 
+const LEAD = {
+	url: 'https://olafmessenger.com/lead.jpg',
+	width: 600,
+	height: 400,
+	caption: 'Students deliver the petition.',
+}
+const FIGURE = {url: 'https://olafmessenger.com/figure.jpg', width: 600, height: 400}
+/** The figure's largest copy, from its srcset. */
+const LARGE_FIGURE = 'https://olafmessenger.com/figure-1536x1024.jpg'
+
+/** An article with a captioned lead photo, a captioned figure and one with no caption. */
+const ILLUSTRATED: MessStory = {
+	...COMIC,
+	id: 36859,
+	title: 'Student workers deliver petition',
+	column: null,
+	photo: LEAD,
+	blocks: [
+		{type: 'paragraph', runs: [{text: 'On Tuesday.'}]},
+		{type: 'figure', ...FIGURE, caption: 'The petition, signed.', largeUrl: LARGE_FIGURE},
+		{
+			type: 'figure',
+			url: 'https://olafmessenger.com/bare.jpg',
+			width: 300,
+			height: 200,
+			caption: '',
+		},
+	],
+	layout: {kind: 'article'},
+}
+
 let queryClient: QueryClient
 
 beforeEach(() => {
 	queryClient = new QueryClient({defaultOptions: {queries: {staleTime: Infinity, retry: false}}})
-	queryClient.setQueryData(messKeys.feed, onePage([COMIC, ARTICLE, PHOTO_SET, NO_PICTURE]))
+	queryClient.setQueryData(
+		messKeys.feed,
+		onePage([COMIC, ARTICLE, PHOTO_SET, NO_PICTURE, ILLUSTRATED]),
+	)
 })
 
 afterEach(() => {
@@ -95,18 +132,20 @@ afterEach(() => {
 	jest.clearAllMocks()
 })
 
-function renderViewer(id: number, index?: number) {
+function renderViewer(id: number, index?: number, url?: string) {
 	return render(
 		<QueryClientProvider client={queryClient}>
-			<ImageViewer id={id} index={index} />
+			<ImageViewer id={id} index={index} url={url} />
 		</QueryClientProvider>,
 	)
 }
 
 describe('ImageViewer', () => {
-	test('shows the picture of a feature page that was tapped', async () => {
+	test('shows the largest copy of the picture of a feature page that was tapped', async () => {
 		await renderViewer(33129, 1)
-		expect(screen.getByTestId('mess-image-viewer-image').props.source).toStrictEqual({uri: CUP.url})
+		expect(screen.getByTestId('mess-image-viewer-image').props.source).toStrictEqual({
+			uri: LARGE_CUP,
+		})
 	})
 
 	test("shows a feature page's first picture when given no index", async () => {
@@ -203,11 +242,54 @@ describe('ImageViewer', () => {
 
 		fireEvent.press(screen.getByRole('button', {name: 'Share'}))
 
-		expect(mockShareImage).toHaveBeenCalledWith(CUP.url)
+		expect(mockShareImage).toHaveBeenCalledWith(LARGE_CUP)
 	})
 
 	test('offers no Share when there is no picture', async () => {
 		await renderViewer(36911)
 		expect(screen.queryByRole('button', {name: 'Share'})).toBeNull()
+	})
+
+	test("shows a story's lead photo by its address, named by its caption", async () => {
+		await renderViewer(36859, undefined, LEAD.url)
+		expect(
+			screen.getByRole('image', {name: 'Students deliver the petition.'}).props.source,
+		).toStrictEqual({uri: LEAD.url})
+	})
+
+	test("shows the largest copy of a figure in a story's body, found by its address", async () => {
+		await renderViewer(36859, undefined, FIGURE.url)
+		expect(screen.getByRole('image', {name: 'The petition, signed.'}).props.source).toStrictEqual({
+			uri: LARGE_FIGURE,
+		})
+	})
+
+	test('shows a figure with no larger copy as the article does', async () => {
+		await renderViewer(36859, undefined, 'https://olafmessenger.com/bare.jpg')
+		expect(screen.getByTestId('mess-image-viewer-image').props.source).toStrictEqual({
+			uri: 'https://olafmessenger.com/bare.jpg',
+		})
+	})
+
+	test('names a figure with no caption by its story', async () => {
+		await renderViewer(36859, undefined, 'https://olafmessenger.com/bare.jpg')
+		expect(
+			screen.getByRole('image', {name: 'Student workers deliver petition, by Juliet Stouffer'}),
+		).toBeTruthy()
+	})
+
+	test('says the image is unavailable for an address that is not one of the story’s', async () => {
+		await renderViewer(36859, undefined, 'https://example.com/elsewhere.jpg')
+		expect(screen.getByText('Image Unavailable')).toBeTruthy()
+		expect(screen.queryByRole('image')).toBeNull()
+	})
+
+	test('shares the largest copy of a figure it was given by its address', async () => {
+		mockShareImage.mockResolvedValue(undefined)
+		await renderViewer(36859, undefined, FIGURE.url)
+
+		fireEvent.press(screen.getByRole('button', {name: 'Share'}))
+
+		expect(mockShareImage).toHaveBeenCalledWith(LARGE_FIGURE)
 	})
 })

@@ -2,6 +2,7 @@ import * as React from 'react'
 import {useRouter} from 'expo-router'
 import {Button, VStack} from '@expo/ui/swift-ui'
 import {
+	accessibilityAddTraits,
 	accessibilityIdentifier,
 	accessibilityLabel,
 	border,
@@ -29,6 +30,40 @@ export function FramedPhoto({url, width, height}: FramedPhotoProps): React.React
 	)
 }
 
+type ViewerButtonProps = {
+	/** What VoiceOver reads for the picture */
+	label: string
+	/** Names the button for a UI test */
+	identifier: string
+	/** The viewer's route params, which say which picture it shows */
+	params: {id: string; index?: string; url?: string}
+	children: React.ReactElement
+}
+
+/** A picture as a button, read as an image, that opens it in the zoom viewer. */
+export function ViewerButton({
+	label,
+	identifier,
+	params,
+	children,
+}: ViewerButtonProps): React.ReactNode {
+	let router = useRouter()
+	return (
+		<Button
+			modifiers={[
+				buttonStyle('plain'),
+				accessibilityLabel(label),
+				accessibilityAddTraits(['isImage']),
+				accessibilityIdentifier(identifier),
+				contentShape(shapes.rectangle()),
+			]}
+			onPress={() => router.navigate({pathname: '/messenger/image', params})}
+		>
+			{children}
+		</Button>
+	)
+}
+
 type Props = {
 	story: MessStory
 	image: Photo
@@ -39,29 +74,18 @@ type Props = {
 
 /** A comic, a piece of artwork or a feature page's picture, framed at the column's width; tapping it opens the zoom viewer. */
 export function ImageView({story, image, columnWidth, index}: Props): React.ReactNode {
-	let router = useRouter()
 	let height = Math.round((columnWidth * image.height) / image.width)
 
 	return (
-		<Button
-			modifiers={[
-				buttonStyle('plain'),
-				// The images carry no alt text, so the title and writers stand in for it.
-				accessibilityLabel(imageLabel(story, picturePlace(story, index))),
-				accessibilityIdentifier('mess-story-image'),
-				contentShape(shapes.rectangle()),
-			]}
-			onPress={() =>
-				router.navigate({
-					pathname: '/messenger/image',
-					params:
-						index === undefined
-							? {id: String(story.id)}
-							: {id: String(story.id), index: String(index)},
-				})
+		<ViewerButton
+			identifier="mess-story-image"
+			// The images carry no alt text, so the title and writers stand in for it.
+			label={imageLabel(story, picturePlace(story, index))}
+			params={
+				index === undefined ? {id: String(story.id)} : {id: String(story.id), index: String(index)}
 			}
 		>
 			<FramedPhoto height={height} url={image.url} width={columnWidth} />
-		</Button>
+		</ViewerButton>
 	)
 }

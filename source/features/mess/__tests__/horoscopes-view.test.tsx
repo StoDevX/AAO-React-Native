@@ -8,6 +8,14 @@ import {parseBlocks} from '../lib/blocks'
 import {parseHoroscopes} from '../lib/horoscopes'
 import {useMessStore} from '../store'
 
+// The body's figures open the zoom viewer through the router, which cannot load under Jest.
+jest.mock(
+	'expo-router',
+	() =>
+		// oxlint-disable-next-line typescript/no-require-imports
+		require('../../../testing/expo-router-mock') as object,
+)
+
 const LAYOUT = parseHoroscopes(
 	parseBlocks(variety.find((post) => post.id === 36518)?.content.rendered ?? ''),
 )

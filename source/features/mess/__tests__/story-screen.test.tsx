@@ -3,7 +3,13 @@ import {join} from 'node:path'
 import * as React from 'react'
 import {Linking} from 'react-native'
 import {afterEach, beforeEach, describe, expect, jest, test} from '@jest/globals'
-import {act, fireEvent, render, screen} from '@testing-library/react-native'
+import {
+	act,
+	fireEvent,
+	isHiddenFromAccessibility,
+	render,
+	screen,
+} from '@testing-library/react-native'
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query'
 import {openUrl} from '@frogpond/open-url'
 import {fetchManifest, fetchSourceBody, type Jrd} from '@frogpond/data-sources'
@@ -272,6 +278,29 @@ const NEXT_EPISODE: MessStory = {
 	title: 'Microfiction corner: Quarters for Flowers',
 }
 
+const LEAD_PHOTO = {
+	url: 'https://olafmessenger.com/lead.jpg',
+	width: 600,
+	height: 400,
+	caption: 'Students deliver the petition.',
+}
+const FIGURE_URL = 'https://olafmessenger.com/figure.jpg'
+const BARE_FIGURE_URL = 'https://olafmessenger.com/bare.jpg'
+
+/** An article with a captioned lead photo, a captioned figure and a figure with no caption. */
+const ILLUSTRATED: MessStory = {
+	...STORY,
+	id: 36948,
+	title: 'Finding peace on campus',
+	link: 'https://olafmessenger.com/36948/',
+	photo: LEAD_PHOTO,
+	blocks: [
+		{type: 'paragraph', runs: [{text: 'On Tuesday.'}]},
+		{type: 'figure', url: FIGURE_URL, width: 600, height: 400, caption: 'The petition, signed.'},
+		{type: 'figure', url: BARE_FIGURE_URL, width: 300, height: 200, caption: ''},
+	],
+}
+
 const PLAYLIST_PAGE = readFileSync(join(__dirname, 'fixtures/playlist-page-36532.html'), 'utf8')
 
 const PROFILE: StaffProfile = {
@@ -303,6 +332,7 @@ beforeEach(() => {
 			PHOTO_SET,
 			EMPTY_PHOTO,
 			SHORT_STORY,
+			ILLUSTRATED,
 		]),
 	)
 	openInIOS = jest.spyOn(Linking, 'openURL').mockResolvedValue(true)
@@ -609,6 +639,58 @@ describe('StoryScreen', () => {
 		expect(screen.queryByText('Read on olafmessenger.com')).toBeNull()
 	})
 
+	test("opens an article's lead photo in the viewer, named by its caption", async () => {
+		await renderStory(36948)
+
+		await fireEvent.press(screen.getByRole('button', {name: 'Students deliver the petition.'}))
+
+		expect(mockNavigate).toHaveBeenCalledWith({
+			pathname: '/messenger/image',
+			params: {id: '36948', url: LEAD_PHOTO.url},
+		})
+	})
+
+	test("opens a figure in an article's body in the viewer, named by its caption", async () => {
+		await renderStory(36948)
+
+		await fireEvent.press(screen.getByRole('button', {name: 'The petition, signed.'}))
+
+		expect(mockNavigate).toHaveBeenCalledWith({
+			pathname: '/messenger/image',
+			params: {id: '36948', url: FIGURE_URL},
+		})
+	})
+
+	test('opens a figure with no caption in the viewer, named by its story', async () => {
+		await renderStory(36948)
+
+		await fireEvent.press(
+			screen.getByRole('button', {
+				name: 'Finding peace on campus, by Ashlyn Wuench and Kenzie Nguyen',
+			}),
+		)
+
+		expect(mockNavigate).toHaveBeenCalledWith({
+			pathname: '/messenger/image',
+			params: {id: '36948', url: BARE_FIGURE_URL},
+		})
+	})
+
+	// The photo's button reads the caption already, so the text under it would read it twice.
+	test("hides a caption from VoiceOver where its photo's button reads it", async () => {
+		await renderStory(36948)
+
+		for (let caption of ['Students deliver the petition.', 'The petition, signed.']) {
+			let text = screen.getByText(caption, {includeHiddenElements: true})
+			expect(isHiddenFromAccessibility(text)).toBe(true)
+		}
+	})
+
+	test("keeps a Photo post's caption readable, as its picture's button reads the title", async () => {
+		await renderStory(33129)
+		expect(isHiddenFromAccessibility(screen.getByText('At the cup'))).toBe(false)
+	})
+
 	test('draws an article as an article even with a sign remembered', async () => {
 		useMessStore.setState({lastSign: 'taurus'})
 		await renderStory(36911)
@@ -673,9 +755,21 @@ describe('StoryScreen', () => {
 		expect(uris.filter((uri) => uri === PLAYLIST_PHOTO.url)).toHaveLength(1)
 	})
 
+	test("opens a Playlist post's picture in the viewer", async () => {
+		await renderStory(30713)
+
+		await fireEvent.press(screen.getByRole('button', {name: 'Anna Weimholt ’22'}))
+
+		expect(mockNavigate).toHaveBeenCalledWith({
+			pathname: '/messenger/image',
+			params: {id: '30713', url: PLAYLIST_PHOTO.url},
+		})
+	})
+
 	test("credits a Playlist post's picture under it", async () => {
 		await renderStory(30713)
-		expect(screen.getAllByText('Anna Weimholt ’22')).toHaveLength(1)
+		// Drawn once, and read once, as the label of the picture's button.
+		expect(screen.getAllByText('Anna Weimholt ’22', {includeHiddenElements: true})).toHaveLength(1)
 	})
 
 	test('reads a Playlist post with nothing in its body from its web page', async () => {

@@ -202,6 +202,32 @@ struct MessStoryScreen: Screen {
 		return self
 	}
 
+	/// Open a story straight from its route, and wait for its headline.
+	@discardableResult
+	func navigate(to route: String) -> Self {
+		open(route: route, mountedWhen: app.staticTexts[TestIdentifiers.News.storyHeadline])
+	}
+
+	/// Scroll to the story's photo whose label, its caption, matches `caption`, tap it, and wait
+	/// for the zoom viewer.
+	@discardableResult
+	func openPhotoInViewer(captioned caption: NSPredicate, _ description: String) -> Self {
+		let photo = app.buttons
+			.matching(identifier: TestIdentifiers.News.storyPhoto)
+			.matching(caption)
+			.firstMatch
+		for _ in 0..<20 {
+			if photo.exists && photo.isHittable { break }
+			app.swipeUp()
+		}
+		XCTAssertTrue(photo.waitForHittable(timeout: 10), "the story should draw \(description) to tap")
+		capture("\(description) in the reader")
+		photo.tap()
+		XCTAssertTrue(closeButton.waitForExistence(timeout: 30), "tapping \(description) should open the zoom viewer")
+		capture("The zoom viewer on \(description)")
+		return self
+	}
+
 	/// Assert the zoom viewer drew a picture, not its "Image unavailable" notice.
 	@discardableResult
 	func verifyViewerShowsImage() -> Self {

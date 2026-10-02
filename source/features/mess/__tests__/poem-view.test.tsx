@@ -1,9 +1,17 @@
 import * as React from 'react'
-import {describe, expect, test} from '@jest/globals'
+import {describe, expect, jest, test} from '@jest/globals'
 import {render, screen} from '@testing-library/react-native'
 
 import {PoemView} from '../poem-view'
 import type {StoryLayout} from '../types'
+
+// The body's figures open the zoom viewer through the router, which cannot load under Jest.
+jest.mock(
+	'expo-router',
+	() =>
+		// oxlint-disable-next-line typescript/no-require-imports
+		require('../../../testing/expo-router-mock') as object,
+)
 
 const LAYOUT: Extract<StoryLayout, {kind: 'poem'}> = {
 	kind: 'poem',
