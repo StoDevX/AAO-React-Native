@@ -152,8 +152,11 @@ const SUBTITLE_MODIFIERS = [
 export default function CourseDetailPage(): React.ReactNode {
 	let {clbid} = useLocalSearchParams<{clbid: string; term: string}>()
 	let catalog = useCourseCatalog()
-	let {course, failed} = useCourse(Number(clbid))
-	let retry = () => void catalog.refetch()
+	let {course, failed, retry: retryRead} = useCourse(Number(clbid))
+	let retry = () => {
+		void catalog.refetch()
+		retryRead()
+	}
 
 	// The route param is a course id, meaningless to a user, so the title
 	// stays empty until the course loads rather than falling back to it.

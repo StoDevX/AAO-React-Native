@@ -88,6 +88,8 @@ export function useCourseResults(args: {query: string; filters: CourseFilters}):
 	loadMore: () => void
 	isPending: boolean
 	failed: boolean
+	/** Runs the read again; a failed one keeps its key until the catalog changes. */
+	retry: () => void
 } {
 	let {query, filters} = args
 	let revision = useCourseRevision()
@@ -113,7 +115,7 @@ export function useCourseResults(args: {query: string; filters: CourseFilters}):
 		() => sectionsByTerm((pages ?? []).flatMap((page) => page.items)),
 		[pages],
 	)
-	let {hasNextPage, isFetchingNextPage, fetchNextPage} = result
+	let {hasNextPage, isFetchingNextPage, fetchNextPage, refetch} = result
 	let loadMore = React.useCallback(() => {
 		if (hasNextPage && !isFetchingNextPage) void fetchNextPage()
 	}, [hasNextPage, isFetchingNextPage, fetchNextPage])
@@ -125,11 +127,17 @@ export function useCourseResults(args: {query: string; filters: CourseFilters}):
 		loadMore,
 		isPending: result.isPending,
 		failed: result.isError,
+		retry: React.useCallback(() => void refetch(), [refetch]),
 	}
 }
 
 /** One course, whole, or null when the catalog has no such course. */
-export function useCourse(clbid: number): {course: CourseType | null | undefined; failed: boolean} {
+export function useCourse(clbid: number): {
+	course: CourseType | null | undefined
+	failed: boolean
+	/** Runs the read again; a failed one keeps its key until the catalog changes. */
+	retry: () => void
+} {
 	let revision = useCourseRevision()
 	let result = useQuery({
 		queryKey: [COURSE_READ_KEY, 'course', revision, clbid],
@@ -149,7 +157,12 @@ export function useCourse(clbid: number): {course: CourseType | null | undefined
 			}),
 		meta: {persist: false},
 	})
-	return {course: result.data, failed: result.isError}
+	let {refetch} = result
+	return {
+		course: result.data,
+		failed: result.isError,
+		retry: React.useCallback(() => void refetch(), [refetch]),
+	}
 }
 
 /** The filter toolbar's options, from the terms of the last five years. */

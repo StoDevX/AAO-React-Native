@@ -105,6 +105,40 @@ function row(n: number) {
 	}
 }
 
+// A read that failed against an unchanged catalog keeps its query key, so
+// refreshing the catalog alone would never run it again.
+describe('retrying a failed read', () => {
+	test('runs the results read again', async () => {
+		mockAll.mockImplementationOnce(() => {
+			throw new Error('disk I/O error')
+		})
+		let {result} = await renderHook(() => useCourseResults({query: '', filters: NONE}), {wrapper})
+		await waitFor(() => expect(result.current.failed).toBe(true))
+
+		catalogWith([row(1)])
+		await act(() => {
+			result.current.retry()
+		})
+		await waitFor(() => expect(result.current.failed).toBe(false))
+		expect(result.current.sections[0]?.data).toHaveLength(1)
+	})
+
+	test('runs the course read again', async () => {
+		mockAll.mockImplementationOnce(() => {
+			throw new Error('disk I/O error')
+		})
+		let {result} = await renderHook(() => useCourse(7), {wrapper})
+		await waitFor(() => expect(result.current.failed).toBe(true))
+
+		catalogWith([])
+		await act(() => {
+			result.current.retry()
+		})
+		await waitFor(() => expect(result.current.course).toBeNull())
+		expect(result.current.failed).toBe(false)
+	})
+})
+
 describe('useCourseResults: pages', () => {
 	test('reads a page at a time, and the next one when asked', async () => {
 		mockAll.mockImplementation(((stmt: Statement) => {

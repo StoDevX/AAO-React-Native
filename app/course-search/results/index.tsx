@@ -69,7 +69,11 @@ function CourseSearchResultsView(): React.ReactNode {
 		filters: courseFilters(filters, terms),
 	})
 	let state = courseListState(catalog, results)
-	let retry = React.useCallback(() => void catalog.refetch(), [catalog])
+	let {retry: retryRead} = results
+	let retry = React.useCallback(() => {
+		void catalog.refetch()
+		retryRead()
+	}, [catalog, retryRead])
 
 	let handlePress = React.useCallback(
 		(data: CourseListItem) => {
