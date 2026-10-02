@@ -23,6 +23,8 @@ export function FullLayout({
 	showNextLogo,
 	showingSchedule,
 	onToggleSchedule,
+	onLogoHeldChange,
+	onLogoSettle,
 }: {
 	station: Station
 	logo: RadioLogo
@@ -30,6 +32,10 @@ export function FullLayout({
 	/** Whether today's schedule takes the record's place, as Music's queue does the art's. */
 	showingSchedule: boolean
 	onToggleSchedule: () => void
+	/** A finger has come down on the record, or lifted, so a scratch can hold off the screen's swipe-back. */
+	onLogoHeldChange?: (held: boolean) => void
+	/** The record has stopped moving under a scratch. */
+	onLogoSettle?: () => void
 }): React.ReactNode {
 	let {playState} = useStationPlayback(station.id)
 	let {width} = useWindowDimensions()
@@ -48,6 +54,8 @@ export function FullLayout({
 						image={logo.image}
 						labelColor={logo.labelColor}
 						labelScale={logo.labelScale ?? 0.8}
+						onHeldChange={onLogoHeldChange}
+						onSettle={onLogoSettle}
 						onTap={showNextLogo}
 						playing={playState === 'playing'}
 						size={artwork}

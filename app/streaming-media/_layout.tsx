@@ -19,13 +19,9 @@ export default function StreamingMediaLayout(): React.ReactNode {
 				<NativeTabs.Trigger.Icon sf="web.camera.fill" />
 				<NativeTabs.Trigger.Label>Webcams</NativeTabs.Trigger.Label>
 			</NativeTabs.Trigger>
-			<NativeTabs.Trigger name="ksto">
+			<NativeTabs.Trigger name="radio">
 				<NativeTabs.Trigger.Icon sf="radio.fill" />
-				<NativeTabs.Trigger.Label>KSTO</NativeTabs.Trigger.Label>
-			</NativeTabs.Trigger>
-			<NativeTabs.Trigger name="krlx">
-				<NativeTabs.Trigger.Icon sf="mic.fill" />
-				<NativeTabs.Trigger.Label>KRLX</NativeTabs.Trigger.Label>
+				<NativeTabs.Trigger.Label>Radio</NativeTabs.Trigger.Label>
 			</NativeTabs.Trigger>
 		</NativeTabs>
 	)

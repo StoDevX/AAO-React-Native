@@ -6,8 +6,6 @@ export type StationId = 'ksto' | 'krlx'
 /** Everything the app knows about a radio station: its screen, and how to play it. */
 export type Station = {
 	id: StationId
-	/** The station's screen, which the mini-player opens. */
-	href: '/streaming-media/ksto' | '/streaming-media/krlx'
 	/** The station's logos. With more than one, tapping the logo shows the next. */
 	logos: [RadioLogo, ...RadioLogo[]]
 	playerUrl: string
@@ -46,7 +44,6 @@ const KRLX_TINT = '#8a529e'
 export const STATIONS: Record<StationId, Station> = {
 	ksto: {
 		id: 'ksto',
-		href: '/streaming-media/ksto',
 		logos: [
 			{
 				name: 'cow badge',
@@ -99,7 +96,6 @@ export const STATIONS: Record<StationId, Station> = {
 	},
 	krlx: {
 		id: 'krlx',
-		href: '/streaming-media/krlx',
 		logos: [
 			{
 				name: 'krlx 88.1',
