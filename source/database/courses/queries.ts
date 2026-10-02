@@ -1,5 +1,5 @@
 import {searchTerms} from '../search/index.ts'
-import {placeholders, type BindValue, type Statement} from '../sql.ts'
+import {placeholders, type BindValue, type SqlRunner, type Statement} from '../sql.ts'
 import type {CourseFilters} from './filters.ts'
 import {CATALOG_SCHEMA as C, COURSE_SEARCH} from './schema.ts'
 
@@ -19,6 +19,53 @@ left join ${C}.name_text n on n.id = s.name_id
 left join ${C}.title_text t on t.id = s.title_id
 left join ${C}.notes_text nt on nt.id = s.notes_id`
 
+/** A course named by its department and number, and perhaps its section. */
+export type CourseCode = {department: string; number: string; section: string | null}
+
+// A department of two to five letters, or two joined for a cross-listed course
+// ("AS/RE"); a number; then perhaps a one-letter section. Spaces between the
+// parts are optional, so "math252a" reads as well as "MATH 252 A".
+const COURSE_CODE = /^\s*([a-z]{2,5}(?:\/[a-z]{2,5})?)\s*(\d{1,3})\s*([a-z])?\s*$/iu
+
+/** `query` as a course code, or null when it does not read as one. */
+export function parseCourseCode(query: string): CourseCode | null {
+	let found = COURSE_CODE.exec(query)
+	if (!found) return null
+	let [, department = '', number = '', section] = found
+	return {department: department.toUpperCase(), number, section: section?.toUpperCase() ?? null}
+}
+
+function codeClause(code: CourseCode): {sql: string; params: BindValue[]} {
+	return code.section
+		? {
+				sql: 's.department = ? and s.number = ? and s.section = ?',
+				params: [code.department, code.number, code.section],
+			}
+		: {sql: 's.department = ? and s.number = ?', params: [code.department, code.number]}
+}
+
+/**
+ * The results statement for what was typed. A query that reads as the code of
+ * a course in the catalog finds that course alone -- every term's sections of
+ * it, or just the section named -- since searching its words would also find
+ * every course that mentions it. Anything else is searched.
+ */
+export function resultsStatement(
+	runner: SqlRunner,
+	args: {query: string; filters: CourseFilters; page?: ResultsPage},
+): Statement {
+	let code = parseCourseCode(args.query)
+	if (code) {
+		let clause = codeClause(code)
+		let [found] = runner.all<{n: number}>({
+			sql: `select count(*) as n from (select 1 from ${C}.section s where ${clause.sql} limit 1)`,
+			params: clause.params,
+		})
+		if (found?.n) return courseResultsQuery({...args, code})
+	}
+	return courseResultsQuery(args)
+}
+
 /** A slice of results: `limit` rows, after skipping `offset`. */
 export type ResultsPage = {offset: number; limit: number}
 
@@ -31,6 +78,8 @@ export function courseResultsQuery(args: {
 	query: string
 	filters: CourseFilters
 	page?: ResultsPage
+	/** Finds this course alone, in listing order, rather than searching for `query`. */
+	code?: CourseCode
 }): Statement {
 	let {filters} = args
 	// `term in ()` is a syntax error; no terms finds nothing.
@@ -38,9 +87,16 @@ export function courseResultsQuery(args: {
 		return {sql: `select ${LIST_COLUMNS} from ${C}.section s ${LIST_JOINS} where 0`, params: []}
 	}
 
-	let match = COURSE_SEARCH.matchClause(searchTerms(args.query))
+	let {code} = args
+	let match = code ? null : COURSE_SEARCH.matchClause(searchTerms(args.query))
 	let where: string[] = [`s.term in (${placeholders(filters.terms.length)})`]
 	let params: BindValue[] = [...filters.terms]
+
+	if (code) {
+		let clause = codeClause(code)
+		where.push(clause.sql)
+		params.push(...clause.params)
+	}
 
 	if (match) {
 		where.push(match.sql)

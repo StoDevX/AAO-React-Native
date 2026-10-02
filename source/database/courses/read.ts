@@ -16,7 +16,7 @@ import type {CourseFilters} from './filters.ts'
 import {
 	courseChildrenQueries,
 	courseQuery,
-	courseResultsQuery,
+	resultsStatement,
 	filterOptionsQueries,
 } from './queries.ts'
 import {isAttached} from './index-build.ts'
@@ -103,7 +103,8 @@ export function useCourseResults(args: {
 			reportingFailures(() => {
 				if (!catalogHasSections()) return {hasCatalog: false, items: []}
 				let page = {offset: pageParam, limit: COURSE_PAGE_SIZE}
-				let rows = getRunner().all<CourseListRow>(courseResultsQuery({query, filters, page}))
+				let runner = getRunner()
+				let rows = runner.all<CourseListRow>(resultsStatement(runner, {query, filters, page}))
 				return {hasCatalog: true, items: rows.map(listItem)}
 			}),
 		initialPageParam: 0,

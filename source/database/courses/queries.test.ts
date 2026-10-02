@@ -11,6 +11,8 @@ import {
 	courseQuery,
 	courseResultsQuery,
 	filterOptionsQueries,
+	parseCourseCode,
+	resultsStatement,
 } from './queries.ts'
 import {
 	hydrateCourse,
@@ -135,6 +137,75 @@ describe('courseResultsQuery: search', () => {
 	it('puts the newest term first', () => {
 		let runner = catalog(makeCourse({clbid: 1, term: 20261}), makeCourse({clbid: 2, term: 20262}))
 		assert.deepEqual(find(runner, 'algebra'), [2, 1])
+	})
+})
+
+describe('parseCourseCode', () => {
+	it('reads a department and number, with or without a section', () => {
+		assert.deepEqual(parseCourseCode('MATH 252'), {
+			department: 'MATH',
+			number: '252',
+			section: null,
+		})
+		assert.deepEqual(parseCourseCode(' math252a '), {
+			department: 'MATH',
+			number: '252',
+			section: 'A',
+		})
+		assert.deepEqual(parseCourseCode('phys 386 a'), {
+			department: 'PHYS',
+			number: '386',
+			section: 'A',
+		})
+		assert.deepEqual(parseCourseCode('as/re 250'), {
+			department: 'AS/RE',
+			number: '250',
+			section: null,
+		})
+	})
+
+	it('reads nothing else as a code', () => {
+		for (let query of [
+			'math',
+			'252',
+			'jill dietz',
+			'math 2525',
+			'abstract algebra 1',
+			'math 252 ab',
+		]) {
+			assert.equal(parseCourseCode(query), null, query)
+		}
+	})
+})
+
+describe('resultsStatement', () => {
+	let runner = catalog(
+		makeCourse({clbid: 1, department: 'MATH', number: 252, section: 'A'}),
+		makeCourse({clbid: 2, department: 'MATH', number: 252, section: 'B'}),
+		makeCourse({clbid: 3, department: 'MATH', number: 252, section: 'A', term: 20262}),
+		// Its name would match a search for "math 252" word by word.
+		makeCourse({clbid: 4, department: 'MATH', number: 399, name: 'Seminar after Math 252'}),
+	)
+	let run = (query: string, filters: Partial<CourseFilters> = {}) =>
+		runner
+			.all<CourseListRow>(resultsStatement(runner, {query, filters: {...NONE, ...filters}}))
+			.map((row) => row.clbid)
+
+	it('shows only the course a course code names, in every term', () => {
+		assert.deepEqual(ascending(run('math 252')), [1, 2, 3])
+	})
+
+	it('shows only the section a code with a section names', () => {
+		assert.deepEqual(ascending(run('MATH 252A')), [1, 3])
+	})
+
+	it('still applies the toolbar filters', () => {
+		assert.deepEqual(run('math 252a', {terms: [20261]}), [1])
+	})
+
+	it('searches as usual when the code names no course', () => {
+		assert.deepEqual(run('math 999'), [])
+		assert.deepEqual(run('seminar'), [4])
 	})
 })
 
