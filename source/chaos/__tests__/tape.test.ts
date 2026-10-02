@@ -1,5 +1,5 @@
 import {memoryLineFile} from '../line-file'
-import {parseLines, readTape, RequestCounter, requestKey, type TapeEntry} from '../tape'
+import {parseLines, readTape, RequestCounter, requestKey, stableUrl, type TapeEntry} from '../tape'
 
 let entry = (key: string): TapeEntry => ({
 	key,
@@ -11,9 +11,35 @@ let entry = (key: string): TapeEntry => ({
 	fault: 'none',
 })
 
+describe('stableUrl', () => {
+	test('drops a numeric cache-busting _ parameter', () => {
+		expect(stableUrl('https://clients3.google.com/generate_204?_=1759400000000')).toBe(
+			'https://clients3.google.com/generate_204',
+		)
+	})
+
+	test('drops only the _ parameter, keeping every other one in order', () => {
+		expect(stableUrl('https://a.test/x?q=1&_=123')).toBe('https://a.test/x?q=1')
+	})
+
+	test('leaves a non-numeric _ parameter alone', () => {
+		expect(stableUrl('https://a.test/x?_=abc')).toBe('https://a.test/x?_=abc')
+	})
+
+	test('returns a malformed URL unchanged', () => {
+		expect(stableUrl('not a url')).toBe('not a url')
+	})
+})
+
 describe('requestKey', () => {
 	test('names the launch, method, URL and occurrence', () => {
 		expect(requestKey(2, 'GET', 'https://a.test/x', 0)).toBe('2 GET https://a.test/x #0')
+	})
+
+	test('keys a cache-busted URL the same as its stable form', () => {
+		expect(requestKey(0, 'HEAD', 'https://a.test/ping?_=111', 0)).toBe(
+			requestKey(0, 'HEAD', 'https://a.test/ping?_=222', 0),
+		)
 	})
 })
 
@@ -24,6 +50,12 @@ describe('RequestCounter', () => {
 		expect(counter.next('GET', 'https://a.test/y')).toBe(0)
 		expect(counter.next('GET', 'https://a.test/x')).toBe(1)
 		expect(counter.next('POST', 'https://a.test/x')).toBe(0)
+	})
+
+	test('counts repeated cache-busted calls to one endpoint as its occurrences', () => {
+		let counter = new RequestCounter()
+		expect(counter.next('HEAD', 'https://a.test/ping?_=111')).toBe(0)
+		expect(counter.next('HEAD', 'https://a.test/ping?_=222')).toBe(1)
 	})
 })
 

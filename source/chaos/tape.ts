@@ -17,6 +17,26 @@ export type TapeEntry = {
 }
 
 /**
+ * `url` with its cache-busting `_` query parameter removed, if it has one and
+ * its value is all digits, so a request stamped with a fresh timestamp below
+ * us still keys the same as the one we recorded it against. Every other
+ * parameter, and its order, is kept; a URL this can't parse comes back as is.
+ */
+export function stableUrl(url: string): string {
+	let parsed
+	try {
+		parsed = new URL(url)
+	} catch {
+		return url
+	}
+	if (/^\d+$/u.test(parsed.searchParams.get('_') ?? '')) {
+		parsed.searchParams.delete('_')
+	}
+	let query = parsed.searchParams.toString()
+	return `${parsed.origin}${parsed.pathname}${query ? `?${query}` : ''}${parsed.hash}`
+}
+
+/**
  * A request's place on the tape. Keyed by occurrence of its method and URL
  * rather than by global order, so requests that start in a different order on
  * replay still find their answers.
@@ -27,7 +47,7 @@ export function requestKey(
 	url: string,
 	occurrence: number,
 ): string {
-	return `${launch} ${method} ${url} #${occurrence}`
+	return `${launch} ${method} ${stableUrl(url)} #${occurrence}`
 }
 
 /** Counts the requests made to each method and URL in one launch. */
@@ -35,7 +55,7 @@ export class RequestCounter {
 	private seen = new Map<string, number>()
 
 	next(method: string, url: string): number {
-		let id = `${method} ${url}`
+		let id = `${method} ${stableUrl(url)}`
 		let count = this.seen.get(id) ?? 0
 		this.seen.set(id, count + 1)
 		return count
