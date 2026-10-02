@@ -33,6 +33,11 @@ export const icons: Array<Icon> = [
 	{title: 'Big Ole', type: 'windmill'},
 	{title: 'Old Main', type: 'sunset-behind-main'},
 	{title: 'Windmill (Day)', type: 'windmill-day'},
+	{title: 'Windmill (Night)', type: 'windmill-night'},
+	{title: 'Windmill (Dawn)', type: 'windmill-dawn'},
+	{title: 'Windmill (Overcast)', type: 'windmill-overcast'},
+	{title: 'Windmill (Storm)', type: 'windmill-storm'},
+	{title: 'Windmill (Golden Hour)', type: 'windmill-golden-hour'},
 ]
 
 export let IconSettingsView = (): React.ReactNode => {

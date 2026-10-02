@@ -7,6 +7,26 @@ import windmillDayIconDark from './windmill-day-icon-dark.png'
 import windmillDayIcon from './windmill-day-icon.png'
 import windmillDayLogoDark from './windmill-day-logo-dark.png'
 import windmillDayLogo from './windmill-day-logo.png'
+import windmillNightIconDark from './windmill-night-icon-dark.png'
+import windmillNightIcon from './windmill-night-icon.png'
+import windmillNightLogoDark from './windmill-night-logo-dark.png'
+import windmillNightLogo from './windmill-night-logo.png'
+import windmillDawnIconDark from './windmill-dawn-icon-dark.png'
+import windmillDawnIcon from './windmill-dawn-icon.png'
+import windmillDawnLogoDark from './windmill-dawn-logo-dark.png'
+import windmillDawnLogo from './windmill-dawn-logo.png'
+import windmillOvercastIconDark from './windmill-overcast-icon-dark.png'
+import windmillOvercastIcon from './windmill-overcast-icon.png'
+import windmillOvercastLogoDark from './windmill-overcast-logo-dark.png'
+import windmillOvercastLogo from './windmill-overcast-logo.png'
+import windmillStormIconDark from './windmill-storm-icon-dark.png'
+import windmillStormIcon from './windmill-storm-icon.png'
+import windmillStormLogoDark from './windmill-storm-logo-dark.png'
+import windmillStormLogo from './windmill-storm-logo.png'
+import windmillGoldenHourIconDark from './windmill-golden-hour-icon-dark.png'
+import windmillGoldenHourIcon from './windmill-golden-hour-icon.png'
+import windmillGoldenHourLogoDark from './windmill-golden-hour-logo-dark.png'
+import windmillGoldenHourLogo from './windmill-golden-hour-logo.png'
 import windmillIconDark from './windmill-icon-dark.png'
 import windmillIcon from './windmill-icon.png'
 import windmillLogoDark from './windmill-logo-dark.png'
@@ -36,6 +56,26 @@ export const appIcons = {
 	'windmill-day': {
 		light: {icon: windmillDayIcon, logo: windmillDayLogo},
 		dark: {icon: windmillDayIconDark, logo: windmillDayLogoDark},
+	},
+	'windmill-night': {
+		light: {icon: windmillNightIcon, logo: windmillNightLogo},
+		dark: {icon: windmillNightIconDark, logo: windmillNightLogoDark},
+	},
+	'windmill-dawn': {
+		light: {icon: windmillDawnIcon, logo: windmillDawnLogo},
+		dark: {icon: windmillDawnIconDark, logo: windmillDawnLogoDark},
+	},
+	'windmill-overcast': {
+		light: {icon: windmillOvercastIcon, logo: windmillOvercastLogo},
+		dark: {icon: windmillOvercastIconDark, logo: windmillOvercastLogoDark},
+	},
+	'windmill-storm': {
+		light: {icon: windmillStormIcon, logo: windmillStormLogo},
+		dark: {icon: windmillStormIconDark, logo: windmillStormLogoDark},
+	},
+	'windmill-golden-hour': {
+		light: {icon: windmillGoldenHourIcon, logo: windmillGoldenHourLogo},
+		dark: {icon: windmillGoldenHourIconDark, logo: windmillGoldenHourLogoDark},
 	},
 } satisfies Record<string, {light: Previews; dark: Previews}>
 

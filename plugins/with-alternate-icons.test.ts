@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict'
-import {mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync} from 'node:fs'
+import {mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync} from 'node:fs'
 import {tmpdir} from 'node:os'
 import {join} from 'node:path'
 import {describe, it} from 'node:test'
@@ -141,5 +141,15 @@ describe('assertLayersPresent', () => {
 			() => assertLayersPresent(root, 'assets/windmill.icon'),
 			/assets\/windmill\.icon\/Assets\/Layer 3\.png is missing/u,
 		)
+	})
+})
+
+describe('ALTERNATE_ICONS', () => {
+	it('lists every Icon Composer document but the primary', () => {
+		// The primary is `ios.icon` in app.config.ts.
+		let documents = readdirSync(join(import.meta.dirname, '../assets'))
+			.filter((entry) => entry.endsWith('.icon') && entry !== 'windmill.icon')
+			.map((entry) => entry.slice(0, -'.icon'.length))
+		assert.deepEqual(ALTERNATE_ICONS.toSorted(), documents.toSorted())
 	})
 })
