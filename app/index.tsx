@@ -232,8 +232,8 @@ export default function HomePage(): React.ReactNode {
 		<>
 			<Stack.Title>All About Olaf</Stack.Title>
 			<Stack.Toolbar placement="right">
-				<Stack.Toolbar.Menu accessibilityLabel={HOME_MENU_LABEL} icon="gear">
-					<Stack.Toolbar.Menu inline={true} palette={true} title="Layout">
+				<Stack.Toolbar.Menu accessibilityLabel={HOME_MENU_LABEL} icon="ellipsis">
+					<Stack.Toolbar.Menu inline={true} title="Layout">
 						<Stack.Toolbar.MenuAction
 							icon="square.grid.2x2"
 							isOn={layout === 'tiled'}
