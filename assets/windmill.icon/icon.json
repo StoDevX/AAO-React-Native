@@ -34,7 +34,7 @@
           "position" : {
             "scale" : 0.9,
             "translation-in-points" : [
-              -0.6399999999999864,
+              0,
               40
             ]
           }
@@ -64,7 +64,7 @@
           "fill-specializations" : [
             {
               "value" : {
-                "automatic-gradient" : "srgb:0.05882,0.16471,0.10196,1.00000"
+                "automatic-gradient" : "srgb:0.01961,0.27843,0.16471,1.00000"
               }
             },
             {
@@ -90,10 +90,10 @@
           "image-name" : "forest.png",
           "name" : "forest",
           "position" : {
-            "scale" : 0.89,
+            "scale" : 0.9,
             "translation-in-points" : [
-              -0.6399999999999864,
-              359
+              0,
+              414
             ]
           }
         }
@@ -148,7 +148,7 @@
         {
           "value" : {
             "enabled" : false,
-            "value" : 0.5
+            "value" : 0
           }
         },
         {

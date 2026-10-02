@@ -13,6 +13,8 @@ const WORDMARK_TINT = '#5a52b0'
 const DUMPSTER_TINT = '#2a7d68'
 /** The narwhal's slate, #494e73, lightened just enough to clear 3:1 against black. */
 const NARWHAL_TINT = '#525881'
+/** The sketched cow's navy ink, #17203d, lightened just enough to clear 3:1 against black. */
+const SKETCH_TINT = '#3d55a3'
 
 export default function KstoPage(): React.ReactNode {
 	return (
@@ -45,6 +47,13 @@ export default function KstoPage(): React.ReactNode {
 					theme: tintedTheme(NARWHAL_TINT),
 					labelColor: '#494e73',
 					labelScale: 1,
+				},
+				{
+					name: 'cow sketch',
+					image: logos.kstoSketch,
+					theme: tintedTheme(SKETCH_TINT),
+					// A sheet of cream paper, for the ink drawing.
+					labelColor: '#f3ead6',
 				},
 			]}
 			playerUrl="https://www.stolaf.edu/multimedia/play/embed/ksto.html"
