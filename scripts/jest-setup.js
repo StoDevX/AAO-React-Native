@@ -12,6 +12,13 @@ jest.mock('@expo/ui/swift-ui/modifiers', () => require('../source/testing/expo-u
 // stand-in: a header that renders nothing and hooks that do nothing. A test
 // that checks navigation replaces the hooks in its own jest.mock.
 jest.mock('expo-router', () => require('../source/testing/expo-router-mock'))
+// A screen that guards unsaved changes asks the navigator to hold its removal;
+// there is no navigator here, and a test reads what the guard was given. The
+// rest of the module, the navigation themes among it, is the real one.
+jest.mock('expo-router/react-navigation', () => ({
+	...jest.requireActual('expo-router/react-navigation'),
+	usePreventRemove: jest.fn(),
+}))
 // The viewer's drag-to-close is a native view, which Jest cannot load either.
 jest.mock('@frogpond/drag-to-dismiss', () => require('../source/testing/drag-to-dismiss-mock'))
 // So is its double-tap recognizer.
@@ -88,6 +95,12 @@ jest.mock('@frogpond/launch-arguments', () => ({
 // Quick actions are set through a native module Jest does not have.
 jest.mock('@frogpond/quick-actions', () => ({
 	setQuickActions: jest.fn(() => Promise.resolve()),
+}))
+// The database client opens SQLite when it loads, and Jest has no SQLite; a
+// test of the client itself replaces these to drive them.
+jest.mock('expo-sqlite', () => ({
+	openDatabaseSync: jest.fn(),
+	deleteDatabaseSync: jest.fn(),
 }))
 // WebView looks up its native module when imported, and Jest has none.
 jest.mock('react-native-webview/lib/NativeRNCWebViewModule', () => ({

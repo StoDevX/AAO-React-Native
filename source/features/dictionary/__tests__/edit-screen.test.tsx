@@ -25,7 +25,6 @@ jest.mock('expo-router', () => {
 		useLocalSearchParams: () => ({senseId: '1'}),
 	}
 })
-jest.mock('expo-router/react-navigation', () => ({usePreventRemove: jest.fn()}))
 
 const entry = normalizeEntry({word: 'Caf', definition: 'The dining hall.'})
 

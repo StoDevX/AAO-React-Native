@@ -44,10 +44,6 @@ jest.mock('expo-router', () => ({
 	useIsFocused: () => mockIsFocused,
 }))
 jest.mock('@frogpond/open-url', () => ({openUrl: jest.fn()}))
-jest.mock('react-native-webview', () => {
-	// oxlint-disable-next-line typescript/no-require-imports
-	return require('./webview-mock') as typeof import('./webview-mock')
-})
 
 // The feed's fetches, so an uncached feed never reaches a network Jest does not have.
 jest.mock('@frogpond/data-sources', () => ({

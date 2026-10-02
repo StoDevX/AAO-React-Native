@@ -7,7 +7,6 @@ import {lastAlertTitle, pressAlertButton} from '../../testing/alert'
 import {settle} from '../../testing/settle'
 
 jest.mock('@frogpond/open-url', () => ({openUrl: jest.fn(), hasAppFor: jest.fn()}))
-jest.mock('expo-clipboard', () => ({setStringAsync: jest.fn()}))
 
 describe('sendEmail', () => {
 	beforeEach(() => {
