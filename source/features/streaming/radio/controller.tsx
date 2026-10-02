@@ -178,12 +178,6 @@ function RadioScreen(props: RadioScreenProps): React.ReactNode {
 		openUrl(playerUrl)
 	}, [playerUrl])
 
-	let openChat = useCallback(() => {
-		if (chatUrl) {
-			openUrl(chatUrl)
-		}
-	}, [chatUrl])
-
 	let error = streamError ? (
 		<Text style={styles.status}>
 			Error Code {streamError.code}: {streamError.message}
@@ -218,7 +212,7 @@ function RadioScreen(props: RadioScreenProps): React.ReactNode {
 			<View style={styles.spacer} />
 			{chatUrl ? (
 				<>
-					<ChatButton onPress={openChat} stationName={stationName} />
+					<ChatButton onPress={() => openUrl(chatUrl)} stationName={stationName} />
 					<View style={styles.spacer} />
 				</>
 			) : null}
