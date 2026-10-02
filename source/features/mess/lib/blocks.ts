@@ -7,6 +7,7 @@ import {
 	type Element,
 } from '@frogpond/html-lib'
 import type {Block, Run} from '../types'
+import {largestSource} from './srcset'
 
 /** The formatting a run carries, without its text. */
 export type Style = Omit<Run, 'text'>
@@ -149,7 +150,11 @@ function figureFrom(img: Element, caption: string): Block | null {
 	// An image with no size cannot be given its frame before it loads, and a
 	// zero size gives no aspect ratio.
 	if (!url || !(width > 0 && height > 0)) return null
-	return {type: 'figure', url, width, height, caption}
+	// The article draws the size the HTML asks for; the viewer, where a reader zooms, the largest.
+	let largeUrl = largestSource(img.attribs.srcset, url)
+	return largeUrl && largeUrl !== url
+		? {type: 'figure', url, largeUrl, width, height, caption}
+		: {type: 'figure', url, width, height, caption}
 }
 
 function pushParagraph(blocks: Block[], nodes: ChildNode[]): void {

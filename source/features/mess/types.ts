@@ -11,7 +11,15 @@ export type Block =
 	| {type: 'paragraph'; runs: Run[]}
 	| {type: 'list'; ordered: boolean; items: Run[][]}
 	| {type: 'quote'; runs: Run[]}
-	| {type: 'figure'; url: string; width: number; height: number; caption: string}
+	| {
+			type: 'figure'
+			url: string
+			/** The largest copy the image's srcset offers, for the zoom viewer; none when it offers no larger one */
+			largeUrl?: string
+			width: number
+			height: number
+			caption: string
+	  }
 	| {type: 'embed'; url: string}
 
 /** A Mess category; `parent` is 0 for a top-level one. */

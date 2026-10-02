@@ -86,6 +86,8 @@ const LEAD = {
 	caption: 'Students deliver the petition.',
 }
 const FIGURE = {url: 'https://olafmessenger.com/figure.jpg', width: 600, height: 400}
+/** The figure's largest copy, from its srcset. */
+const LARGE_FIGURE = 'https://olafmessenger.com/figure-1536x1024.jpg'
 
 /** An article with a captioned lead photo, a captioned figure and one with no caption. */
 const ILLUSTRATED: MessStory = {
@@ -96,7 +98,7 @@ const ILLUSTRATED: MessStory = {
 	photo: LEAD,
 	blocks: [
 		{type: 'paragraph', runs: [{text: 'On Tuesday.'}]},
-		{type: 'figure', ...FIGURE, caption: 'The petition, signed.'},
+		{type: 'figure', ...FIGURE, caption: 'The petition, signed.', largeUrl: LARGE_FIGURE},
 		{
 			type: 'figure',
 			url: 'https://olafmessenger.com/bare.jpg',
@@ -219,10 +221,17 @@ describe('ImageViewer', () => {
 		).toStrictEqual({uri: LEAD.url})
 	})
 
-	test("shows a figure in a story's body by its address, named by its caption", async () => {
+	test("shows the largest copy of a figure in a story's body, found by its address", async () => {
 		await renderViewer(36859, undefined, FIGURE.url)
 		expect(screen.getByRole('image', {name: 'The petition, signed.'}).props.source).toStrictEqual({
-			uri: FIGURE.url,
+			uri: LARGE_FIGURE,
+		})
+	})
+
+	test('shows a figure with no larger copy as the article does', async () => {
+		await renderViewer(36859, undefined, 'https://olafmessenger.com/bare.jpg')
+		expect(screen.getByTestId('mess-image-viewer-image').props.source).toStrictEqual({
+			uri: 'https://olafmessenger.com/bare.jpg',
 		})
 	})
 
@@ -239,12 +248,12 @@ describe('ImageViewer', () => {
 		expect(screen.queryByRole('image')).toBeNull()
 	})
 
-	test('shares a figure it was given by its address', async () => {
+	test('shares the largest copy of a figure it was given by its address', async () => {
 		mockShareImage.mockResolvedValue(undefined)
 		await renderViewer(36859, undefined, FIGURE.url)
 
 		fireEvent.press(screen.getByRole('button', {name: 'Share'}))
 
-		expect(mockShareImage).toHaveBeenCalledWith(FIGURE.url)
+		expect(mockShareImage).toHaveBeenCalledWith(LARGE_FIGURE)
 	})
 })

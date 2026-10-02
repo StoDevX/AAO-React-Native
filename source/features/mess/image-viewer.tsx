@@ -5,16 +5,17 @@ import {useDismissOnce} from '../../lib/use-dismiss-once'
 import {imageLabel, photoLabel, picturePlace} from './lib/byline'
 import {StoryLookupNotice} from './story-lookup-notice'
 import {useMessStory} from './use-mess-story'
-import type {MessStory} from './types'
+import type {CaptionedPhoto, MessStory} from './types'
 
 /** A picture to show, and what VoiceOver reads for it. */
 type Picture = {url: string; label: string}
 
 /**
- * The picture the viewer shows. Given an address, the story's lead photo or the figure in its
- * body at that address; an address that is not one of the story's shows nothing, so a link
- * cannot put any image on the web in the viewer. Otherwise a comic's or artwork's one picture,
- * or the feature page's picture at `index`. Null when the story has no picture there.
+ * The picture the viewer shows. Given an address, the story's lead photo or the figure in
+ * its body that the article draws at that address, shown at the largest copy its srcset
+ * offers; an address that is not one of the story's shows nothing, so a link cannot put any
+ * image on the web in the viewer. Otherwise a comic's or artwork's one picture, or the
+ * feature page's picture at `index`. Null when the story has no picture there.
  */
 function pictureOf(
 	story: MessStory | undefined,
@@ -23,12 +24,11 @@ function pictureOf(
 ): Picture | null {
 	if (!story) return null
 	if (url !== undefined) {
-		let photos = [
-			story.photo,
-			...story.blocks.map((block) => (block.type === 'figure' ? block : null)),
-		]
+		let figures = story.blocks.flatMap((block) => (block.type === 'figure' ? [block] : []))
+		let photos: Array<(CaptionedPhoto & {largeUrl?: string}) | null> = [story.photo, ...figures]
 		let photo = photos.find((candidate) => candidate?.url === url)
-		return photo ? {url: photo.url, label: photoLabel(story, photo.caption)} : null
+		if (!photo) return null
+		return {url: photo.largeUrl ?? photo.url, label: photoLabel(story, photo.caption)}
 	}
 	let label = imageLabel(story, picturePlace(story, index))
 	if (story.layout.kind === 'image') return {url: story.layout.image.url, label}

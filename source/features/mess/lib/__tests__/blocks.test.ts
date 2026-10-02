@@ -90,6 +90,31 @@ describe('parseBlocks', () => {
 		])
 	})
 
+	it("keeps the srcset's largest copy beside the image it shows, for the zoom viewer", () => {
+		let html =
+			'<figure><img src="https://x.test/a-600x400.jpg" width="600" height="400" ' +
+			'srcset="https://x.test/a-600x400.jpg 600w, https://x.test/a-1536x1024.jpg 1536w, https://x.test/a-768x512.jpg 768w">' +
+			'</figure>'
+		expect(parseBlocks(html)).toStrictEqual([
+			{
+				type: 'figure',
+				url: 'https://x.test/a-600x400.jpg',
+				largeUrl: 'https://x.test/a-1536x1024.jpg',
+				width: 600,
+				height: 400,
+				caption: '',
+			},
+		])
+	})
+
+	it('keeps no larger copy when the srcset offers only the image it shows', () => {
+		let html =
+			'<img src="https://x.test/a.jpg" width="600" height="400" srcset="https://x.test/a.jpg 600w">'
+		expect(parseBlocks(html)).toStrictEqual([
+			{type: 'figure', url: 'https://x.test/a.jpg', width: 600, height: 400, caption: ''},
+		])
+	})
+
 	it('reads a bare image as a figure with no caption', () => {
 		expect(
 			parseBlocks('<p><img src="https://x.test/b.jpg" width="10" height="20"></p>'),
