@@ -17,6 +17,10 @@ import {deptNum} from '../../../source/features/sis/course-search/lib/format-dep
 import {formatCourseNotes} from '../../../source/features/sis/course-search/lib/format-course-notes'
 
 import {useCourse, useCourseCatalog} from '../../../source/database/courses/read'
+import {
+	COURSE_OFFLINE_NOTICE,
+	courseDetailState,
+} from '../../../source/features/sis/course-search/lib/list-state'
 import {LoadErrorView, LoadingView, NoticeView} from '@frogpond/notice'
 
 const styles = StyleSheet.create({
@@ -162,47 +166,53 @@ export default function CourseDetailPage(): React.ReactNode {
 	// stays empty until the course loads rather than falling back to it.
 	let screenTitle = <Stack.Title>{course?.name ?? ''}</Stack.Title>
 
-	if (course) {
-		return (
-			<>
-				{screenTitle}
-				<CourseDetailView course={course} />
-			</>
-		)
+	switch (courseDetailState(course, failed, catalog)) {
+		case 'course':
+			return (
+				<>
+					{screenTitle}
+					{course ? <CourseDetailView course={course} /> : null}
+				</>
+			)
+		case 'read-error':
+			return (
+				<>
+					{screenTitle}
+					<LoadErrorView error={new Error('The course could not be read.')} onRetry={retry} />
+				</>
+			)
+		case 'loading':
+			return (
+				<>
+					{screenTitle}
+					<LoadingView />
+				</>
+			)
+		case 'offline':
+			return (
+				<>
+					{screenTitle}
+					<NoticeView
+						action={{label: 'Try Again', onPress: retry}}
+						description={COURSE_OFFLINE_NOTICE}
+						systemImage="wifi.slash"
+						title="Offline"
+					/>
+				</>
+			)
+		case 'catalog-error':
+			return (
+				<>
+					{screenTitle}
+					<LoadErrorView error={catalog.error} onRetry={retry} />
+				</>
+			)
+		default:
+			return (
+				<>
+					{screenTitle}
+					<NoticeView systemImage="questionmark.circle" title="Course Not Found" />
+				</>
+			)
 	}
-
-	if (failed) {
-		return (
-			<>
-				{screenTitle}
-				<LoadErrorView error={new Error('The course could not be read.')} onRetry={retry} />
-			</>
-		)
-	}
-
-	// Not stored yet: the catalog may still be on its way.
-	if (course === undefined || catalog.isPending) {
-		return (
-			<>
-				{screenTitle}
-				<LoadingView />
-			</>
-		)
-	}
-
-	if (catalog.isError) {
-		return (
-			<>
-				{screenTitle}
-				<LoadErrorView error={catalog.error} onRetry={retry} />
-			</>
-		)
-	}
-
-	return (
-		<>
-			{screenTitle}
-			<NoticeView systemImage="questionmark.circle" title="Course Not Found" />
-		</>
-	)
 }

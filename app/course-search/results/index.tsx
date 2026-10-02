@@ -25,10 +25,10 @@ import {
 } from '../../../source/database/courses/read'
 import {courseFilters} from '../../../source/database/courses/filters'
 import type {CourseListItem} from '../../../source/database/courses/rows'
-import {courseListState} from '../../../source/features/sis/course-search/lib/list-state'
-
-const OFFLINE_NOTICE =
-	'Course search needs a connection to download the course catalog the first time.'
+import {
+	COURSE_OFFLINE_NOTICE,
+	courseListState,
+} from '../../../source/features/sis/course-search/lib/list-state'
 
 function CourseSearchResultsView(): React.ReactNode {
 	let dispatch = useAppDispatch()
@@ -105,7 +105,7 @@ function CourseSearchResultsView(): React.ReactNode {
 		return (
 			<NoticeView
 				action={{label: 'Try Again', onPress: retry}}
-				description={OFFLINE_NOTICE}
+				description={COURSE_OFFLINE_NOTICE}
 				systemImage="wifi.slash"
 				title="Offline"
 			/>
