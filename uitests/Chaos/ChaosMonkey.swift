@@ -9,6 +9,8 @@ final class ChaosMonkey {
 	private var random: ChaosRandom
 	private var launch = 0
 	private var steps: [String] = []
+	/// Why an oracle stopped the run; nil while it is within its budget.
+	private var stopReason: String?
 	private var warnings: [String] = []
 	private var lastTargetsSeen = Date()
 	private var backsWithoutChange = 0
@@ -33,8 +35,12 @@ final class ChaosMonkey {
 		let deadline = Date().addingTimeInterval(duration)
 		// A teardown block rather than `defer`: a failure stops the test
 		// without unwinding Swift, so a `defer` would lose the logs of exactly
-		// the runs that need them.
-		test.addTeardownBlock { self.attachLogs() }
+		// the runs that need them. `.rotate` can leave the simulator in
+		// landscape, which the next UI test on it would inherit.
+		test.addTeardownBlock {
+			self.attachLogs()
+			XCUIDevice.shared.orientation = .portrait
+		}
 		test.configureForChaos(seed: seed, launch: launch, replay: replay, faultRate: faultRate, resetState: true)
 		app.launch()
 		if let stop = ChaosOracle(app: app).waitForProbe(timeout: 30) {
@@ -232,6 +238,7 @@ final class ChaosMonkey {
 	}
 
 	private func fail(_ stop: ChaosStop, step: Int) {
+		stopReason = stop.reason
 		XCTFail("chaos seed \(seed) stopped at step \(step): \(stop.reason)")
 	}
 
@@ -245,5 +252,14 @@ final class ChaosMonkey {
 		warningLog.name = "chaos-warnings.txt"
 		warningLog.lifetime = .keepAlways
 		test.add(warningLog)
+
+		// Absent when the run used up its budget: mise run chaos reads its
+		// presence as the monkey having stopped on something.
+		if let stopReason {
+			let stopLog = XCTAttachment(string: stopReason)
+			stopLog.name = "chaos-stop.txt"
+			stopLog.lifetime = .keepAlways
+			test.add(stopLog)
+		}
 	}
 }

@@ -2,13 +2,17 @@ import assert from 'node:assert/strict'
 import {test} from 'node:test'
 
 import {
+	chaosOutputDir,
 	firstDivergence,
 	parseChaosArgs,
 	parseDuration,
 	parseFindingLines,
+	REPLAY_DURATION,
+	replayVerdict,
 	runOutcome,
 	stoppingFindings,
 	testEnv,
+	withReplayBudget,
 } from './chaos-run.mjs'
 
 test('reads durations in seconds, minutes and hours', () => {
@@ -50,6 +54,43 @@ test('takes the seed from the run being replayed', () => {
 	assert.equal(options.replay, 'logs/chaos/1234')
 })
 
+test('takes the seed from the leading digits of a replay directory', () => {
+	assert.equal(parseChaosArgs(['--replay', 'logs/chaos/1234-replay/']).seed, 1234)
+	assert.throws(() => parseChaosArgs(['--replay', 'logs/chaos/latest']), /seed/u)
+})
+
+test('refuses a seed alongside a replay, which takes its own', () => {
+	assert.throws(
+		() => parseChaosArgs(['--seed', '5', '--replay', 'logs/chaos/1234']),
+		/--seed and --replay/u,
+	)
+})
+
+test('leaves a replay budget unset unless given, to follow the recording', () => {
+	let options = parseChaosArgs(['--replay', 'logs/chaos/1234'])
+	assert.equal(options.steps, null)
+	assert.equal(options.duration, REPLAY_DURATION)
+	let bounded = parseChaosArgs(['--replay', 'logs/chaos/1234', '--steps', '9', '--duration', '1m'])
+	assert.equal(bounded.steps, 9)
+	assert.equal(bounded.duration, 60)
+})
+
+test('a replay runs as many steps as the run it replays', () => {
+	let options = parseChaosArgs(['--replay', 'logs/chaos/1234'])
+	assert.equal(withReplayBudget(options, ['a', 'b', 'c']).steps, 3)
+	assert.equal(withReplayBudget({...options, steps: 2}, ['a', 'b', 'c']).steps, 2)
+	assert.equal(withReplayBudget(options, null).steps, 0)
+})
+
+test('writes a run under its seed and a replay beside the run it replays', () => {
+	assert.equal(chaosOutputDir({seed: 42, replay: null}), 'logs/chaos/42')
+	assert.equal(chaosOutputDir({seed: 1234, replay: 'logs/chaos/1234'}), 'logs/chaos/1234-replay')
+	assert.throws(
+		() => chaosOutputDir({seed: 1234, replay: 'logs/chaos/1234-replay/'}),
+		/logs\/chaos\/1234/u,
+	)
+})
+
 test('refuses an unknown flag', () => {
 	assert.throws(() => parseChaosArgs(['--sed', '1']), /--sed/u)
 })
@@ -78,6 +119,89 @@ test('finds the first step a replay did differently', () => {
 	assert.equal(firstDivergence(a, a.slice(0, 1)), null)
 })
 
+let steps = (count) => Array.from({length: count}, (_, step) => `{"step":${step}}`)
+
+test('a replay that stops as the recording did reproduced it', () => {
+	assert.deepEqual(
+		replayVerdict({
+			recordedSteps: steps(3),
+			recordedStop: 'js: fatal: boom',
+			replaySteps: steps(3),
+			replayStop: 'js: fatal: boom',
+		}),
+		{reproduced: true, message: 'reproduced: js: fatal: boom'},
+	)
+})
+
+test('a replay that runs past the recorded stop did not reproduce it', () => {
+	assert.deepEqual(
+		replayVerdict({
+			recordedSteps: steps(3),
+			recordedStop: 'js: fatal: boom',
+			replaySteps: steps(3),
+			replayStop: null,
+		}),
+		{
+			reproduced: false,
+			message:
+				'not reproduced: took all 3 recorded steps without stopping (recorded js: fatal: boom)',
+		},
+	)
+})
+
+test('a replay cut short before the recorded stop did not reach it', () => {
+	assert.deepEqual(
+		replayVerdict({
+			recordedSteps: steps(3),
+			recordedStop: 'js: fatal: boom',
+			replaySteps: steps(2),
+			replayStop: null,
+		}),
+		{reproduced: null, message: 'not reached: the replay ended after 2 of 3 recorded steps'},
+	)
+})
+
+test('a replay that stops for another reason did not reproduce the recording', () => {
+	assert.deepEqual(
+		replayVerdict({
+			recordedSteps: steps(3),
+			recordedStop: 'js: fatal: boom',
+			replaySteps: steps(2),
+			replayStop: 'hang: nothing to press for 15 seconds',
+		}),
+		{
+			reproduced: false,
+			message:
+				'not reproduced: stopped at step 2 with hang: nothing to press for 15 seconds (recorded js: fatal: boom)',
+		},
+	)
+})
+
+test('a replay that takes another step diverged, whatever it found', () => {
+	let replaySteps = [...steps(1), '{"step":1,"other":true}']
+	assert.deepEqual(
+		replayVerdict({
+			recordedSteps: steps(3),
+			recordedStop: 'js: fatal: boom',
+			replaySteps,
+			replayStop: null,
+		}),
+		{reproduced: false, message: 'diverged at step 1'},
+	)
+})
+
+test('a replay of a run that never stopped only follows its steps', () => {
+	assert.deepEqual(
+		replayVerdict({
+			recordedSteps: steps(3),
+			recordedStop: null,
+			replaySteps: steps(3),
+			replayStop: null,
+		}),
+		{reproduced: null, message: 'followed the recorded steps'},
+	)
+})
+
 test('parses every finding, skipping a line torn by a crash mid-write', () => {
 	assert.deepEqual(
 		parseFindingLines(['{"kind":"fatal","message":"boom"}', '', '{"kind":"console-e']),
@@ -100,29 +224,84 @@ test('picks out only the findings severe enough to stop a run', () => {
 
 test('a stopping finding fails the run even when the test itself passed', () => {
 	let findings = [{kind: 'fatal', message: 'boom'}]
-	assert.deepEqual(runOutcome({testFailed: false, stepsLogged: true, stoppingFindings: findings}), {
-		exitCode: 1,
-		message: 'chaos found something:\nfatal: boom',
-	})
+	assert.deepEqual(
+		runOutcome({testFailed: false, stepCount: 4, stopReason: null, stoppingFindings: findings}),
+		{exitCode: 1, message: 'chaos found something:\nfatal: boom'},
+	)
 })
 
-test('a failed test with a step log is a finding', () => {
-	assert.deepEqual(runOutcome({testFailed: true, stepsLogged: true, stoppingFindings: []}), {
-		exitCode: 1,
-		message: 'chaos found something',
-	})
+test('a stop after the probe answered is a finding', () => {
+	assert.deepEqual(
+		runOutcome({
+			testFailed: true,
+			stepCount: 4,
+			stopReason: 'hang: nothing to press for 15 seconds',
+			stoppingFindings: [],
+		}),
+		{exitCode: 1, message: 'chaos found something:\nhang: nothing to press for 15 seconds'},
+	)
+	assert.deepEqual(
+		runOutcome({
+			testFailed: true,
+			stepCount: 0,
+			stopReason: 'error screen: router_error_message',
+			stoppingFindings: [],
+		}),
+		{exitCode: 1, message: 'chaos found something:\nerror screen: router_error_message'},
+	)
 })
 
-test('a failed test with no step log means the run never started', () => {
-	assert.deepEqual(runOutcome({testFailed: true, stepsLogged: false, stoppingFindings: []}), {
-		exitCode: 2,
-		message: 'the chaos run did not start',
-	})
+test('a silent probe after a relaunch is a finding', () => {
+	assert.equal(
+		runOutcome({
+			testFailed: true,
+			stepCount: 7,
+			stopReason: 'probe silent: no chaos.findings element',
+			stoppingFindings: [],
+		}).exitCode,
+		1,
+	)
 })
 
-test('a passing test with no stopping findings found nothing', () => {
-	assert.deepEqual(runOutcome({testFailed: false, stepsLogged: true, stoppingFindings: []}), {
-		exitCode: 0,
-		message: 'chaos found nothing',
-	})
+test('a silent probe at the first launch means the run never started', () => {
+	assert.deepEqual(
+		runOutcome({
+			testFailed: true,
+			stepCount: 0,
+			stopReason: 'probe silent: no chaos.findings element',
+			stoppingFindings: [],
+		}),
+		{
+			exitCode: 2,
+			message: 'the chaos run did not start: probe silent: no chaos.findings element',
+		},
+	)
+})
+
+test('a failed test with no steps means the run never started', () => {
+	assert.deepEqual(
+		runOutcome({testFailed: true, stepCount: 0, stopReason: null, stoppingFindings: []}),
+		{exitCode: 2, message: 'the chaos run did not start'},
+	)
+})
+
+test('a passing test with no steps was blind, not clean', () => {
+	assert.deepEqual(
+		runOutcome({testFailed: false, stepCount: 0, stopReason: null, stoppingFindings: []}),
+		{exitCode: 2, message: 'the chaos run did not start'},
+	)
+})
+
+test('a failed test with steps and no stop reason is a finding', () => {
+	assert.deepEqual(
+		runOutcome({testFailed: true, stepCount: 4, stopReason: null, stoppingFindings: []}),
+		{exitCode: 1, message: 'chaos found something'},
+	)
+})
+
+test('a passing test with steps and no stopping findings found nothing', () => {
+	assert.deepEqual(
+		runOutcome({testFailed: false, stepCount: 4, stopReason: null, stoppingFindings: []}),
+		{exitCode: 0, message: 'chaos found nothing'},
+	)
 })
