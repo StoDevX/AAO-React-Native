@@ -3,7 +3,7 @@ import {readFileSync} from 'node:fs'
 import {join} from 'node:path'
 import {describe, it} from 'node:test'
 
-import {patchAppDelegate} from './with-app-delegate-customizations.ts'
+import {appendSceneDelegate, patchAppDelegate} from './with-app-delegate-customizations.ts'
 
 // The stock file expo prebuild writes, taken verbatim from
 // expo-template-bare-minimum. Regenerate it after an SDK bump: the transform
@@ -82,5 +82,46 @@ describe('patchAppDelegate', () => {
 	it('throws when the bundleURL anchor is missing', () => {
 		let withoutBundleRoot = STOCK.replace('forBundleRoot: ".expo/.virtual-metro-entry"', '')
 		assert.throws(() => patchAppDelegate(withoutBundleRoot), /forBundleRoot/u)
+	})
+})
+
+describe('appendSceneDelegate', () => {
+	let result = appendSceneDelegate(patchAppDelegate(STOCK))
+
+	// A quick action that launches the app arrives in the connection options,
+	// not in AppDelegate's launch options, once the app has a scene manifest.
+	it('opens the quick action a cold launch carries', () => {
+		assert.match(result, /connectionOptions\.shortcutItem/u)
+	})
+
+	it('opens a quick action tapped while the app runs', () => {
+		assert.match(
+			result,
+			/func windowScene\([\s\S]*performActionFor shortcutItem: UIApplicationShortcutItem/u,
+		)
+	})
+
+	it('reads the route from the item the QuickActions module wrote', () => {
+		assert.match(result, /userInfo\?\["href"\]/u)
+	})
+
+	// The dev variant has its own scheme; a hard-coded one would open the
+	// production app instead.
+	it('reads the scheme from CFBundleURLTypes', () => {
+		assert.match(result, /CFBundleURLTypes[\s\S]*CFBundleURLSchemes/u)
+	})
+
+	// The Swift lives in a template literal, where a lone `\(` loses its
+	// backslash and Swift's interpolation becomes literal text.
+	it('interpolates the scheme and route into the URL', () => {
+		assert.ok(result.includes('"\\(scheme)://\\(href.'))
+	})
+
+	it('hard-codes no scheme', () => {
+		assert.doesNotMatch(result, /AllAboutOlaf(Dev)?:\/\//u)
+	})
+
+	it('is idempotent', () => {
+		assert.equal(appendSceneDelegate(result), result)
 	})
 })

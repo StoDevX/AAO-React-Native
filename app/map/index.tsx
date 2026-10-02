@@ -32,7 +32,7 @@ import {
 	type PressEventWithFeatures,
 } from '@maplibre/maplibre-react-native'
 import {useQuery} from '@tanstack/react-query'
-import {Stack, useLocalSearchParams} from 'expo-router'
+import {Stack, useIsFocused, useLocalSearchParams} from 'expo-router'
 import * as c from '@frogpond/colors'
 import {openUrl} from '@frogpond/open-url'
 
@@ -127,6 +127,11 @@ export default function MapPage(): React.ReactNode {
 	// A card covers the picker while any place is open.
 	let covered = stack.length > 0
 	let [sheetPresented, setSheetPresented] = React.useState(true)
+	// The sheet is presented in a window of its own, above the whole
+	// navigation stack, so a screen pushed over the map -- by a deep link or a
+	// Home Screen quick action -- would sit under it. It is presented only
+	// while the map is the screen showing.
+	let isFocused = useIsFocused()
 	// Where the sheet rests, and where a search focus lifted it from. Every
 	// move goes through `nextSheetDetent`, including the user's own drags.
 	let [sheet, setSheet] = React.useState<SheetState>({current: 'collapsed', previous: null})
@@ -389,7 +394,10 @@ export default function MapPage(): React.ReactNode {
 			    the taps that select a building still reach the map. The sheet is
 			    presented in its own window, so it stays interactive. */}
 			<Host pointerEvents="none" style={StyleSheet.absoluteFill}>
-				<BottomSheet isPresented={sheetPresented} onIsPresentedChange={setSheetPresented}>
+				<BottomSheet
+					isPresented={sheetPresented && isFocused}
+					onIsPresentedChange={setSheetPresented}
+				>
 					<Group
 						modifiers={[
 							// The sheet's own chrome is a translucent material, and the

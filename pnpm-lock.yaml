@@ -160,6 +160,9 @@ importers:
       '@frogpond/place-card-header':
         specifier: workspace:*
         version: link:modules/place-card-header
+      '@frogpond/quick-actions':
+        specifier: workspace:*
+        version: link:modules/quick-actions
       '@frogpond/selectable-text':
         specifier: workspace:*
         version: link:modules/selectable-text
@@ -840,6 +843,8 @@ importers:
         version: 0.86.3(patch_hash=6ca2e1225f38672b073b92b9d13f24feebbe9e37ba67708a3f1569275ce99191)(@babel/core@7.29.7)(@react-native/jest-preset@0.86.3)(@types/react@19.2.18)(react@19.2.3)(supports-color@8.1.1)
 
   modules/place-card-header: {}
+
+  modules/quick-actions: {}
 
   modules/selectable-text: {}
 
