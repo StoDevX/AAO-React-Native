@@ -35,35 +35,67 @@ struct StreamingMediaScreen: Screen {
 		return self
 	}
 
-	/// Switch to a station's tab and wait for its buttons.
+	/// Tap `element` until `marker` appears, up to three times.
 	///
-	/// The tap is retried: a native tab switch can be dropped the same way a
-	/// home-screen tile's can, and waiting longer on a dropped one achieves
-	/// nothing.
-	@discardableResult
-	func openStation(_ tab: String, expecting label: String) -> Self {
-		let tabButton = app.tabButton(tab)
-		XCTAssertTrue(
-			tabButton.waitForExistence(timeout: 30),
-			"\(tab) tab button should be visible before switching to it")
-
-		let marker = app.buttonLabelled(label)
+	/// A native tab switch or a first tap after launch can be dropped, and
+	/// waiting longer on a dropped one achieves nothing. Each attempt looks the
+	/// element up again and stops if it has gone: a tap that did land may have
+	/// changed it.
+	private func tap(_ element: XCUIElement, until marker: XCUIElement, named name: String) {
+		XCTAssertTrue(element.waitForExistence(timeout: 30), "\(name) should exist before it is tapped")
 		for attempt in 1...3 {
-			tabButton.tap()
-			if marker.waitForExistence(timeout: 10) {
-				return self
+			if element.exists {
+				element.tap()
 			}
-			XCTContext.runActivity(named: "Tap \(attempt) on \(tab) showed no station; retrying") { _ in }
+			if marker.waitForExistence(timeout: 10) {
+				return
+			}
+			XCTContext.runActivity(named: "Tap \(attempt) on \(name) changed nothing; retrying") { _ in }
 		}
+		XCTFail("Tapping \(name) never brought up what it should")
+	}
 
-		XCTFail("Switching to \(tab) never showed a button labelled \"\(label)\"")
+	/// Open Streaming Media from its Home tile rather than by URL. Opening a URL
+	/// relaunches the app, which resets state a test has just set up.
+	@discardableResult
+	func openFromHome() -> Self {
+		tap(app.buttons["Streaming Media"], until: mounted, named: "the Streaming Media tile")
 		return self
 	}
 
-	/// Check each station button is a button VoiceOver can name, with a
-	/// touch target of at least 44pt on each side.
+	/// Switch to the Radio tab and wait for `label` on its player.
 	@discardableResult
-	func checkStationButtons(_ labels: [String]) -> Self {
+	func openRadioTab(expecting label: String) -> Self {
+		tap(app.tabButton(TestIdentifiers.StreamingMedia.radioTab),
+			until: app.elementWithLabel(startingWith: label), named: "the Radio tab")
+		return self
+	}
+
+	/// Switch to the tab labelled `tab`, and wait for a button labelled `label`.
+	@discardableResult
+	func openTab(_ tab: String, expectingButton label: String) -> Self {
+		tap(app.tabButton(tab), until: app.buttonLabelled(label), named: "the \(tab) tab")
+		return self
+	}
+
+	/// Pick a station in the player's segmented control, and wait for its Play.
+	@discardableResult
+	func pick(_ segment: String, expecting play: String) -> Self {
+		tap(app.buttons[segment], until: app.buttonLabelled(play), named: "the \(segment) segment")
+		return self
+	}
+
+	/// Tap a button labelled `label`, and wait for one labelled `marker`.
+	@discardableResult
+	func press(_ label: String, expecting marker: String) -> Self {
+		tap(app.buttonLabelled(label), until: app.buttonLabelled(marker), named: "\"\(label)\"")
+		return self
+	}
+
+	/// Check each button is one VoiceOver can name, with a target of at least
+	/// 44pt on each side.
+	@discardableResult
+	func checkButtons(_ labels: [String]) -> Self {
 		for label in labels {
 			XCTContext.runActivity(named: label) { _ in
 				checkTouchTarget(app.buttonLabelled(label), named: "A button labelled \"\(label)\"")
@@ -72,49 +104,69 @@ struct StreamingMediaScreen: Screen {
 		return self
 	}
 
-	/// Tap a station button, retrying a tap that never reached JavaScript,
-	/// until `expecting` appears.
+	/// Open the Now Playing sheet from the bar, and wait for `play` in it.
 	@discardableResult
-	func tapStationButton(_ label: String, expecting marker: String) -> Self {
+	func openSheetFromBar(expecting play: String) -> Self {
+		tap(app.buttonLabelled(TestIdentifiers.StreamingMedia.idleBar),
+			until: app.buttonLabelled(play), named: "the Now Playing bar")
+		return self
+	}
+
+	/// Drag the sheet from medium to full height, slowly enough not to fling,
+	/// and wait for the full player's LIVE bar.
+	@discardableResult
+	func dragSheetToFullHeight() -> Self {
+		let grabber = app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.49))
+		let top = app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.1))
+		grabber.press(forDuration: 0.2, thenDragTo: top, withVelocity: .slow, thenHoldForDuration: 0.3)
+		XCTAssertTrue(
+			app.elementWithLabel(startingWith: TestIdentifiers.StreamingMedia.live).waitForExistence(timeout: 10),
+			"The sheet at full height should show the LIVE bar")
+		return self
+	}
+
+	/// Swipe the sheet away, and check the bar beneath shows `label`.
+	@discardableResult
+	func closeSheet(expectingBar label: String) -> Self {
+		// From the LIVE bar, which takes no touches of its own: the picker
+		// above and the record would each answer a drag that started on them.
+		let live = app.elementWithLabel(startingWith: TestIdentifiers.StreamingMedia.live)
+		XCTAssertTrue(live.waitForExistence(timeout: 10), "The sheet should be at full height before it is closed")
+		let bottom = app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.98))
+		live.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5))
+			.press(forDuration: 0.1, thenDragTo: bottom, withVelocity: .fast, thenHoldForDuration: 0)
+		checkGone(TestIdentifiers.StreamingMedia.live)
+		checkTouchTarget(app.buttonLabelled(label), named: "The bar's \"\(label)\"")
+		return self
+	}
+
+	/// Tap the button labelled `label`, once it shows.
+	@discardableResult
+	func tapButton(_ label: String) -> Self {
 		let button = app.buttonLabelled(label)
-		XCTAssertTrue(button.waitForExistence(timeout: 30), "A button labelled \"\(label)\" should exist")
-		let appeared = app.buttonLabelled(marker)
-		for attempt in 1...3 {
-			button.tap()
-			if appeared.waitForExistence(timeout: 10) {
-				return self
-			}
-			XCTContext.runActivity(named: "Tap \(attempt) on \(label) showed no \(marker); retrying") { _ in }
-		}
-		XCTFail("Tapping \"\(label)\" never showed a button labelled \"\(marker)\"")
+		XCTAssertTrue(button.waitForExistence(timeout: 10), "A button labelled \"\(label)\" should exist")
+		button.tap()
 		return self
 	}
 
-	/// Check the mini-player's stop button is on screen and big enough to tap.
+	/// Check nothing labelled `label` is on screen, waiting for it to go.
 	@discardableResult
-	func checkMiniPlayer(stopLabelled label: String) -> Self {
-		checkTouchTarget(app.buttonLabelled(label), named: "The mini-player's \"\(label)\" button")
-		return self
-	}
-
-	/// Check the mini-player says nothing is playing.
-	@discardableResult
-	func checkIdleMiniPlayer(labelled label: String) -> Self {
-		let idle = app.elementWithLabel(startingWith: label)
-		XCTAssertTrue(idle.waitForExistence(timeout: 10), "The mini-player should say \"\(label)\"")
-		return self
-	}
-
-	/// Stop the station from the mini-player, and check the mini-player goes.
-	@discardableResult
-	func stopFromMiniPlayer(labelled label: String) -> Self {
-		let stop = app.buttonLabelled(label)
-		XCTAssertTrue(stop.waitForExistence(timeout: 10), "The mini-player should offer \"\(label)\"")
-		stop.tap()
+	func checkGone(_ label: String) -> Self {
+		let element = app.elementWithLabel(startingWith: label)
 		let gone = XCTWaiter().wait(
-			for: [XCTNSPredicateExpectation(predicate: NSPredicate(format: "exists == false"), object: stop)],
+			for: [XCTNSPredicateExpectation(predicate: NSPredicate(format: "exists == false"), object: element)],
 			timeout: 10)
-		XCTAssertEqual(gone, .completed, "The mini-player should go once the station stops")
+		XCTAssertEqual(gone, .completed, "Nothing labelled \"\(label)\" should be showing")
+		return self
+	}
+
+	/// Turn Home's "Show Radio Player" switch, scrolling down to it first.
+	@discardableResult
+	func toggleShowRadioPlayer() -> Self {
+		let toggle = app.switches[TestIdentifiers.StreamingMedia.showRadioPlayer]
+		scrollUntilExists(toggle)
+		XCTAssertTrue(toggle.waitForExistence(timeout: 10), "Home should offer the Show Radio Player switch")
+		toggle.tap()
 		return self
 	}
 

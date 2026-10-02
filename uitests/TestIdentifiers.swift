@@ -634,26 +634,31 @@ struct TestIdentifiers {
 	// MARK: - Streaming Media
 
 	enum StreamingMedia {
-		static let tabs = ["Webcams", "KSTO", "KRLX"]
-		static let krlxTab = "KRLX"
-		/// The station screen's buttons, as VoiceOver names them. Call and
-		/// schedule are icons alone, so their labels are all a listener has
-		/// to go on.
-		static let krlxButtons = [
-			"Listen",
+		static let tabs = ["Webcams", "Radio"]
+		static let radioTab = "Radio"
+		/// The station picker's segments, at the top of the Radio tab and the sheet.
+		static let kstoSegment = "KSTO"
+		static let krlxSegment = "KRLX"
+		/// Play and Stop, in source/features/streaming/radio/player-view and the
+		/// mini-player; each names its station.
+		static let playKsto = "Play KSTO 93.1 FM"
+		static let stopKsto = "Stop KSTO 93.1 FM"
+		static let playKrlx = "Play 88.1 KRLX-FM"
+		static let stopKrlx = "Stop 88.1 KRLX-FM"
+		/// The player's bottom row, as VoiceOver names it.
+		static let krlxActions = [
 			"Call 88.1 KRLX-FM",
-			"88.1 KRLX-FM schedule",
+			"Today's schedule",
 		]
+		/// The full player's stand-in for a scrubber, which shows only at full size.
+		static let live = "Live"
+		/// The Now Playing bar with no station loaded, on Home and in Streaming
+		/// Media's tab bar.
+		static let idleBar = "Not Playing"
+		/// Home's "Show Radio Player" switch.
+		static let showRadioPlayer = "show-radio-player"
 		/// KRLX has one logo, so nothing labelled with this may be a button.
 		static let krlxLogoPrefix = "88.1 KRLX-FM logo"
-		/// The mini-player's stop button for KRLX, in source/features/streaming/radio/mini-player.tsx.
-		/// It shows wherever KRLX is loaded: in the Streaming Media tab bar, and
-		/// floating over every screen outside the tabbed sections.
-		static let krlxMiniPlayerStop = "Stop 88.1 KRLX-FM"
-		/// The mini-player with no station loaded, which Streaming Media's tab bar
-		/// always shows.
-		static let idleMiniPlayer = "Not Playing"
-		static let kstoTab = "KSTO"
 		static let kstoLogoPrefix = "KSTO 93.1 FM logo"
 		/// KSTO's logos in the order a tap cycles through them.
 		static let kstoLogos = [

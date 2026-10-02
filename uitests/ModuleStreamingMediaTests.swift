@@ -1,54 +1,74 @@
 import XCTest
 
 class ModuleStreamingMediaTests: UITestCaseUnbooted {
-	func testKrlxOffersItsStationButtons() throws {
+	/// The Radio tab carries both stations: the picker moves between them,
+	/// and the player's controls are buttons VoiceOver can name.
+	func testRadioTabOffersBothStations() throws {
+		let ids = TestIdentifiers.StreamingMedia.self
 		StreamingMediaScreen(app: app)
 			.navigate()
 			.checkStreamListExists()
 			.checkTabs()
-			.openStation(
-				TestIdentifiers.StreamingMedia.krlxTab,
-				expecting: TestIdentifiers.StreamingMedia.krlxButtons[0]
-			)
-			.checkStationButtons(TestIdentifiers.StreamingMedia.krlxButtons)
-			.checkLogoIsNotAButton(TestIdentifiers.StreamingMedia.krlxLogoPrefix)
+			.openRadioTab(expecting: ids.kstoLogos[0])
+			.pick(ids.krlxSegment, expecting: ids.playKrlx)
+			.capture("Radio tab, KRLX")
+			.checkButtons([ids.playKrlx] + ids.krlxActions)
+			.checkLogoIsNotAButton(ids.krlxLogoPrefix)
 	}
 
-	/// Streaming Media's mini-player waits, idle, for a station. Once one
-	/// starts it keeps playing after its screen closes, and the mini-player
-	/// over the rest of the app can stop it, which leaves Streaming Media's
-	/// idle again. Whether the stream itself arrives does not matter here: the
-	/// mini-player shows from the tap on Listen.
-	func testStationPlaysOnFromTheMiniPlayer() throws {
+	/// The bar on Home opens the sheet on the last station viewed. Picking
+	/// another station there only browses: nothing plays until Play, and the
+	/// bar says what is loaded, not what the sheet shows.
+	func testTheBarOpensTheSheet() throws {
 		let ids = TestIdentifiers.StreamingMedia.self
+		app.launch()
 		StreamingMediaScreen(app: app)
-			.navigate()
-			.checkIdleMiniPlayer(labelled: ids.idleMiniPlayer)
-			.openStation(ids.krlxTab, expecting: ids.krlxButtons[0])
-			.tapStationButton(ids.krlxButtons[0], expecting: ids.krlxMiniPlayerStop)
-			.checkMiniPlayer(stopLabelled: ids.krlxMiniPlayerStop)
-			.capture("KRLX loaded, mini-player in the tab bar")
-			.goBack()
-			.checkMiniPlayer(stopLabelled: ids.krlxMiniPlayerStop)
-			.capture("KRLX loaded, mini-player floating over Home")
-			.stopFromMiniPlayer(labelled: ids.krlxMiniPlayerStop)
+			.openSheetFromBar(expecting: ids.playKsto)
+			.pick(ids.krlxSegment, expecting: ids.playKrlx)
+			.capture("Sheet, medium, KRLX")
+			.dragSheetToFullHeight()
+			.capture("Sheet, full height, KRLX")
+			.press(ids.playKrlx, expecting: ids.stopKrlx)
+			.closeSheet(expectingBar: ids.stopKrlx)
+			.capture("Home, KRLX loaded")
+			.press(ids.stopKrlx, expecting: ids.idleBar)
+	}
+
+	/// With "Show Radio Player" off, neither bar shows until a station is
+	/// started from the Radio tab. While it plays, the bar is back on the
+	/// other tabs, and goes with the station when Stop is pressed there.
+	func testSwitchOffHidesTheBars() throws {
+		let ids = TestIdentifiers.StreamingMedia.self
+		app.launch()
+		let screen = StreamingMediaScreen(app: app)
+			.toggleShowRadioPlayer()
+			.checkGone(ids.idleBar)
+			.capture("Home, radio player off")
+		screen
+			.openFromHome()
+			.checkGone(ids.idleBar)
+			.openRadioTab(expecting: ids.kstoLogos[0])
+			.press(ids.playKsto, expecting: ids.stopKsto)
+			// The Radio tab is the player, so the bar shows on the others.
+			.openTab("Webcams", expectingButton: ids.stopKsto)
+			.capture("Webcams, KSTO playing with the switch off")
+			.tapButton(ids.stopKsto)
+			.checkGone(ids.stopKsto)
 	}
 
 	func testKstoLogoCyclesOnTap() throws {
+		let ids = TestIdentifiers.StreamingMedia.self
 		StreamingMediaScreen(app: app)
 			.navigate()
-			.openStation(
-				TestIdentifiers.StreamingMedia.kstoTab,
-				expecting: TestIdentifiers.StreamingMedia.kstoLogos[0]
-			)
-			.checkLogoCycles(TestIdentifiers.StreamingMedia.kstoLogos)
+			.openRadioTab(expecting: ids.kstoLogos[0])
+			.checkLogoCycles(ids.kstoLogos)
 	}
 
 	func testKstoScratchKeepsTheLogo() throws {
 		let logos = TestIdentifiers.StreamingMedia.kstoLogos
 		StreamingMediaScreen(app: app)
 			.navigate()
-			.openStation(TestIdentifiers.StreamingMedia.kstoTab, expecting: logos[0])
+			.openRadioTab(expecting: logos[0])
 			.tapLogo(labelled: TestIdentifiers.StreamingMedia.kstoLogoPrefix, until: logos[3])
 			.checkScrubKeepsLogo(logos[3])
 	}
