@@ -1,7 +1,3 @@
-// `read.ts` and `client.ts` report a failed read or a failed drop through
-// `@sentry/react-native`, stubbed so a report goes nowhere.
-jest.mock('@sentry/react-native', () => ({captureException: jest.fn()}))
-
 import {dehydrate, QueryClient, type Query} from '@tanstack/react-query'
 import {
 	persistQueryClientRestore,
