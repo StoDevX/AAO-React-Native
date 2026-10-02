@@ -44,6 +44,13 @@ Pipe step 4 through `grep -E "^Test Case|error:|XCTAssert|Executed|\*\*"`.
 Unfiltered xcodebuild output is thousands of lines, most of it exported build
 settings, and it will bury the one assertion message you ran the test for.
 
+**Diagnostics are off unless you ask.** Left to its defaults, xcodebuild
+spends about ten minutes gathering simulator diagnostics after a failed run
+and prints nothing while it does, which reads as a hung test. The scheme's test
+plan, written by `plugins/with-xcuitest-target.ts`, turns that off. To get
+them for a failure you are chasing, pass `-collect-test-diagnostics on-failure`
+and expect the wait.
+
 ## Sharing a machine with other checkouts
 
 A Debug build with no bundle inside asks `localhost:8081` for its JavaScript,
@@ -135,7 +142,7 @@ Three things that bite on the second run:
 - **`find` picks an arbitrary bundle if there is more than one.** There is
   normally one, but pass the path explicitly if `find` returns several.
 
-Steps 1 and 4 are the commands CI runs (`.github/workflows/check.yml`, jobs
+Steps 1 and 4 are the commands CI runs (`.github/workflows/ios.yml`, jobs
 `ios-build` and `ios-uitest`), so a local failure and a CI failure mean the same
 thing. The *destination* is not the same: CI resolves an `iPhone 17e` on a
 pinned runtime, which a local machine usually does not have.

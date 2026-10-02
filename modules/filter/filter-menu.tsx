@@ -1,13 +1,13 @@
 import * as React from 'react'
 import {Host, Menu, Section, Toggle} from '@expo/ui/swift-ui'
 import {menuActionDismissBehavior} from '@expo/ui/swift-ui/modifiers'
-import isEqual from 'lodash/isEqual'
 
 import {optionLabel} from './lib/option-label'
 import {toggleOption} from './lib/select-options'
 import {TriggerLabel} from './lib/trigger-label'
 import {triggerModifiers} from './lib/trigger-modifiers'
-import type {FilterType} from './types'
+import type {Filter} from './types'
+import {isEqual} from '@frogpond/collections'
 
 /**
  * Keeps a list menu open as its options are ticked. A list filter is
@@ -19,9 +19,9 @@ import type {FilterType} from './types'
 const STAYS_OPEN = [menuActionDismissBehavior('disabled')]
 
 type Props<T extends object> = {
-	filter: FilterType<T>
+	filter: Filter<T>
 	isActive: boolean
-	onChange: (filter: FilterType<T>) => void
+	onChange: (filter: Filter<T>) => void
 }
 
 /**
@@ -52,7 +52,7 @@ export function FilterMenu<T extends object>({
 			return (
 				<Host matchContents={true}>
 					<Menu label={<TriggerLabel title={filter.spec.title} />} modifiers={modifiers}>
-						<Section title={filter.spec.title.toUpperCase()}>
+						<Section title={filter.spec.title}>
 							<Toggle
 								isOn={filter.enabled}
 								label={filter.spec.label}
@@ -72,7 +72,7 @@ export function FilterMenu<T extends object>({
 			return (
 				<Host matchContents={true}>
 					<Menu label={<TriggerLabel title={filter.spec.title} />} modifiers={modifiers}>
-						<Section title={filter.spec.title.toUpperCase()}>
+						<Section title={filter.spec.title}>
 							{filter.spec.options.map((option) => (
 								<Toggle
 									key={option.label}
@@ -99,7 +99,7 @@ export function FilterMenu<T extends object>({
 			return (
 				<Host matchContents={true}>
 					<Menu label={<TriggerLabel title={spec.title} />} modifiers={modifiers}>
-						<Section modifiers={STAYS_OPEN} title={spec.title.toUpperCase()}>
+						<Section modifiers={STAYS_OPEN} title={spec.title}>
 							{spec.options.map((option) => (
 								<Toggle
 									key={option.title}

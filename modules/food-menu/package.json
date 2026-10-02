@@ -9,15 +9,18 @@
     "test": "jest"
   },
   "dependencies": {
-    "@callstack/react-theme-provider": "3.0.9",
     "@expo/ui": "57.0.14",
     "@frogpond/colors": "workspace:*",
     "@frogpond/constants": "workspace:*",
     "@frogpond/filter": "workspace:*",
     "@frogpond/html-lib": "workspace:*",
     "@frogpond/layout": "workspace:*",
-    "@frogpond/time-format": "workspace:*",
-    "lodash": "4.18.1"
+    "@frogpond/sheet-section": "workspace:*",
+    "@frogpond/time-format": "workspace:*"
+  },
+  "devDependencies": {
+    "@jest/globals": "30.5.2",
+    "@testing-library/react-native": "14.0.1"
   },
   "peerDependencies": {
     "moment": "^2.31.0",

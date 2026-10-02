@@ -22,7 +22,12 @@ export type MenuItemType = {
 	sub_station: string
 	sub_station_id: NumericStringType
 	sub_station_order: NumericStringType
-	tier3: boolean
+	/**
+	 * The tab Bon Appétit files the item under: 1 for its Specials, 2 for its
+	 * Additional Favorites, 3 for its Condiments and Extras. Absent from menus
+	 * that are not Bon Appétit's, and from servers that do not pass it along.
+	 */
+	tier?: number
 	zero_entree: NumericStringType
 }
 

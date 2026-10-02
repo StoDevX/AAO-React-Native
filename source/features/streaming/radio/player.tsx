@@ -20,7 +20,10 @@ type Props = {
 
 type HtmlAudioState = 'waiting' | 'ended' | 'stalled' | 'playing' | 'play' | 'pause'
 
-type HtmlAudioEvent = {type: HtmlAudioState} | {type: 'error'; error: HtmlAudioError}
+type HtmlAudioEvent =
+	| {type: HtmlAudioState}
+	| {type: 'error'; error: HtmlAudioError}
+	| {type: 'ready'}
 
 function playerHtml(url: string): string {
 	return `
@@ -44,12 +47,29 @@ function playerJs(selector: string): string {
 		}
 
 		ready(function () {
-			var player = document.querySelector('${selector}');
+			/* An embedded page may build its <audio> after this script runs, so
+			 * the element is looked up when it is first needed. */
+			var player = null;
+
+			function findPlayer() {
+				if (!player) {
+					player = document.querySelector('${selector}');
+					if (player) {
+						listen(player);
+					}
+				}
+				return player;
+			}
 
 			/*******
 			 *******/
 
 			window.addEventListener('message', function (event) {
+				/* Before the <audio> exists there is nothing to act on; the app
+				 * sends its state again once "ready" reports it. */
+				if (!findPlayer()) {
+					return;
+				}
 				switch (event.data) {
 					case 'play':
 						player.muted = false;
@@ -61,6 +81,24 @@ function playerJs(selector: string): string {
 						break;
 				}
 			});
+
+			/* Tells the app it can control the <audio>. A message sent before
+			 * this is lost, so the app waits for it before relying on one. */
+			function announceReady() {
+				message({type: 'ready'});
+			}
+
+			if (findPlayer()) {
+				announceReady();
+			} else {
+				var observer = new MutationObserver(function () {
+					if (findPlayer()) {
+						observer.disconnect();
+						announceReady();
+					}
+				});
+				observer.observe(document.documentElement, {childList: true, subtree: true});
+			}
 
 			/*******
 			 *******/
@@ -93,31 +131,33 @@ function playerJs(selector: string): string {
 			/*******
 			 *******/
 
-			/* "waiting" is fired when playback has stopped because of a temporary
-			 * lack of data. */
-			player.addEventListener('waiting', send);
+			function listen(audio) {
+				/* "waiting" is fired when playback has stopped because of a temporary
+				 * lack of data. */
+				audio.addEventListener('waiting', send);
 
-			/* "ended" is fired when playback or streaming has stopped because the
-			 * end of the media was reached or because no further data is
-			 * available. */
-			player.addEventListener('ended', send);
+				/* "ended" is fired when playback or streaming has stopped because the
+				 * end of the media was reached or because no further data is
+				 * available. */
+				audio.addEventListener('ended', send);
 
-			/* "stalled" is fired when the user agent is trying to fetch media data,
-			 * but data is unexpectedly not forthcoming. */
-			player.addEventListener('stalled', send);
+				/* "stalled" is fired when the user agent is trying to fetch media data,
+				 * but data is unexpectedly not forthcoming. */
+				audio.addEventListener('stalled', send);
 
-			/* "playing" is fired when playback is ready to start after having been
-			 * paused or delayed due to lack of data. */
-			player.addEventListener('playing', send);
+				/* "playing" is fired when playback is ready to start after having been
+				 * paused or delayed due to lack of data. */
+				audio.addEventListener('playing', send);
 
-			/* "pause" is fired when playback has been paused. */
-			player.addEventListener('pause', send);
+				/* "pause" is fired when playback has been paused. */
+				audio.addEventListener('pause', send);
 
-			/* "play" is fired when playback has begun. */
-			player.addEventListener('play', send);
+				/* "play" is fired when playback has begun. */
+				audio.addEventListener('play', send);
 
-			/* "error" is fired when an error occurs. */
-			player.addEventListener('error', error);
+				/* "error" is fired when an error occurs. */
+				audio.addEventListener('error', error);
+			}
 		});
 	`
 }
@@ -143,9 +183,7 @@ export function StreamPlayer(props: Props): React.ReactNode {
 		}
 	}, [pausePlayback])
 
-	useEffect(() => {
-		// console.log('<StreamPlayer> state changed to', playState)
-
+	let sendPlayState = useCallback((): void => {
 		switch (playState) {
 			case 'paused':
 				return pausePlayback()
@@ -159,6 +197,10 @@ export function StreamPlayer(props: Props): React.ReactNode {
 				return
 		}
 	}, [pausePlayback, beginPlayback, playState])
+
+	useEffect(() => {
+		sendPlayState()
+	}, [sendPlayState])
 
 	let handleMessage = useCallback(
 		(event: WebViewMessageEvent): unknown => {
@@ -178,6 +220,11 @@ export function StreamPlayer(props: Props): React.ReactNode {
 			// console.log('<audio> dispatched event', data.type)
 
 			switch (data.type) {
+				// A cold WebView can take seconds to load its page, and anything
+				// sent before then is lost, so send the state again.
+				case 'ready':
+					return sendPlayState()
+
 				case 'waiting':
 					return onWaiting?.()
 
@@ -190,8 +237,9 @@ export function StreamPlayer(props: Props): React.ReactNode {
 				case 'pause':
 					return onPause?.()
 
+				// "play" only means play() was called; the stream may never
+				// arrive, so wait for "playing".
 				case 'playing':
-				case 'play':
 					return onPlay?.()
 
 				case 'error':
@@ -201,7 +249,7 @@ export function StreamPlayer(props: Props): React.ReactNode {
 					return
 			}
 		},
-		[onWaiting, onEnded, onStalled, onPause, onPlay, onError],
+		[sendPlayState, onWaiting, onEnded, onStalled, onPause, onPlay, onError],
 	)
 
 	return (

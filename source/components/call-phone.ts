@@ -1,5 +1,4 @@
 import {Alert} from 'react-native'
-import {noop} from 'lodash'
 import {openOrOfferCopy} from './open-or-offer-copy'
 
 type Options = {
@@ -44,7 +43,7 @@ export const formatNumber = (phoneNumber: string): string => {
 
 const promptCall = (buttonText: string, phoneNumberAsUrl: string, phoneNumber: string) => {
 	Alert.alert(buttonText, formatNumber(phoneNumber), [
-		{text: 'Cancel', onPress: noop},
+		{text: 'Cancel'},
 		{text: 'Call', onPress: () => void placeCall(phoneNumberAsUrl, phoneNumber)},
 	])
 }

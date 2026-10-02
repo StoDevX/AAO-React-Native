@@ -15,6 +15,7 @@ on:
     paths:
       - scripts/bonapp-overrides.yaml
       - scripts/bonapp-schedule.mjs
+      - scripts/html-text.mjs
       - scripts/scrape-bonapp.mjs
       - .github/workflows/scrape-dining.yml
 
@@ -42,7 +43,7 @@ jobs:
       - name: Check out the code
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
-      - uses: jdx/mise-action@c2a87611a18de5b3828c5652fe268e992400cb5c # v4.3.0
+      - uses: jdx/mise-action@9149ea85001c7435d5a66bb127d6a1b6227cb0a5 # v5.0.0
         # Keyed on mise.lock rather than mise.toml -- see the note in check.yml.
         with:
           cache_key: mise-v2-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('mise.lock') }}
@@ -71,6 +72,16 @@ jobs:
       - name: Check formatting
         if: github.event_name != 'pull_request'
         run: pnpm exec oxfmt --check data/building-hours
+
+      # A PR opened by GITHUB_TOKEN does not trigger other workflows, so
+      # check.yml will not run on it. These are the only tests the new hours
+      # get before a person reads them: test:node covers the scrape itself, and
+      # test:jest reads the bundled building hours the way the app does.
+      - name: Test
+        if: github.event_name != 'pull_request'
+        run: |
+          mise run test:node
+          mise run test:jest
 
       - name: Open or update the pull request
         if: github.event_name != 'pull_request'
@@ -111,5 +122,9 @@ jobs:
           - https://stolaf.cafebonappetit.com/cafe/the-cage/
 
           The run summary lists the cafés this watches but does not write.
+
+          `validate-data`, `test:node` and `test:jest` passed in the run that
+          opened this. Nothing else did — a PR opened by `GITHUB_TOKEN` does not
+          trigger `check.yml`, so push an empty commit to run the required checks.
           BODY
           )"

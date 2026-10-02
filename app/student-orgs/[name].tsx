@@ -1,0 +1,169 @@
+import * as React from 'react'
+import {StyleSheet} from 'react-native'
+import {Host, List, Section, Text} from '@expo/ui/swift-ui'
+import {
+	font,
+	foregroundStyle,
+	frame,
+	listRowBackground,
+	listStyle,
+	multilineTextAlignment,
+} from '@expo/ui/swift-ui/modifiers'
+import {Stack, useLocalSearchParams} from 'expo-router'
+import {useQuery} from '@tanstack/react-query'
+import {DisclosureRow} from '../../source/components/rows'
+import {SelectableText} from '@frogpond/selectable-text'
+import * as c from '@frogpond/colors'
+import {openUrl} from '@frogpond/open-url'
+import {sendEmail} from '../../source/components/send-email'
+import {showNameOrEmail} from '../../source/features/student-orgs/util'
+import {decode} from '@frogpond/html-lib'
+import {orgByNameOptions} from '../../source/features/student-orgs/query'
+import {LoadErrorView, LoadingView, NoticeView} from '@frogpond/notice'
+
+/**
+ * The org's name, at the top of its own screen.
+ *
+ * A large title would be the platform idiom, but UIKit draws one on a single
+ * line -- and these names run long enough that it truncated more often than
+ * not. In the body it wraps.
+ *
+ * `frame(maxWidth: Infinity)` before the alignment: a Text is only as wide as
+ * its content, so centring inside that says nothing about the row it sits in,
+ * and the name drew left of centre until it filled the row.
+ */
+const ORG_NAME_MODIFIERS = [
+	font({textStyle: 'title', weight: 'semibold'}),
+	foregroundStyle(c.label),
+	frame({maxWidth: Infinity}),
+	multilineTextAlignment('center'),
+]
+
+/// No card behind the credit: it is a footnote about where the data came
+/// from, not a row of it.
+const CREDIT_MODIFIERS = [
+	font({textStyle: 'caption2'}),
+	foregroundStyle(c.secondaryLabel),
+	multilineTextAlignment('center'),
+	frame({maxWidth: Infinity}),
+	listRowBackground('clear'),
+]
+
+const styles = StyleSheet.create({
+	host: {
+		flex: 1,
+		backgroundColor: c.systemGroupedBackground,
+	},
+})
+
+export default function StudentOrgsDetailPage(): React.ReactNode {
+	let {name} = useLocalSearchParams<{name: string}>()
+	let {data: org, isLoading, error, refetch} = useQuery(orgByNameOptions(name))
+
+	let screenTitle = <Stack.Title>{org?.name ?? name}</Stack.Title>
+
+	if (isLoading) {
+		return (
+			<>
+				{screenTitle}
+				<LoadingView />
+			</>
+		)
+	}
+
+	if (error) {
+		return (
+			<>
+				{screenTitle}
+				<LoadErrorView error={error} onRetry={refetch} />
+			</>
+		)
+	}
+
+	if (!org) {
+		return (
+			<>
+				{screenTitle}
+				<NoticeView
+					description={`No student org is called “${name}”.`}
+					systemImage="person.3"
+					title="Organization Not Found"
+				/>
+			</>
+		)
+	}
+
+	let {name: orgName, category, meetings, website, contacts, advisors, description} = org
+
+	return (
+		<>
+			{screenTitle}
+			<Host style={styles.host}>
+				<List modifiers={[listStyle('insetGrouped')]}>
+					<Section>
+						<Text modifiers={ORG_NAME_MODIFIERS}>{orgName}</Text>
+					</Section>
+
+					{category ? (
+						<Section title="Category">
+							<Text>{category}</Text>
+						</Section>
+					) : null}
+
+					{meetings ? (
+						<Section title="Meetings">
+							<SelectableText text={decode(meetings)} />
+						</Section>
+					) : null}
+
+					{website ? (
+						<Section title="Website">
+							<DisclosureRow
+								destination="external"
+								onPress={() => openUrl(website)}
+								title={website}
+							/>
+						</Section>
+					) : null}
+
+					{contacts.length > 0 ? (
+						<Section title="Contact">
+							{contacts.map((contact) => (
+								<DisclosureRow
+									key={contact.email}
+									destination="action"
+									detail={contact.title}
+									onPress={() => sendEmail({to: [contact.email], subject: orgName})}
+									title={showNameOrEmail(contact)}
+								/>
+							))}
+						</Section>
+					) : null}
+
+					{advisors.length > 0 ? (
+						<Section title={advisors.length === 1 ? 'Advisor' : 'Advisors'}>
+							{advisors.map((contact) => (
+								<DisclosureRow
+									key={contact.email}
+									destination="action"
+									onPress={() => sendEmail({to: [contact.email], subject: orgName})}
+									title={contact.name}
+								/>
+							))}
+						</Section>
+					) : null}
+
+					{description ? (
+						<Section title="Description">
+							<SelectableText text={decode(description)} />
+						</Section>
+					) : null}
+
+					<Section>
+						<Text modifiers={CREDIT_MODIFIERS}>Powered by Presence</Text>
+					</Section>
+				</List>
+			</Host>
+		</>
+	)
+}

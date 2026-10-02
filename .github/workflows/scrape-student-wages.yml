@@ -1,0 +1,122 @@
+name: Scrape student wages
+
+on:
+  # Monthly, on the 1st at 07:00 UTC. St. Olaf sets the rates once a year, so
+  # nearly every run is a no-op costing one HTTP request; monthly means a new
+  # year's rates wait weeks at most rather than until someone notices.
+  schedule:
+    - cron: '0 7 1 * *'
+
+  # For when the new year's rates are announced.
+  workflow_dispatch:
+
+  # Dry run on every PR that touches the scrape: fetch, compare, write nothing.
+  pull_request:
+    paths:
+      - scripts/html-text.mjs
+      - scripts/student-wages.mjs
+      - scripts/scrape-student-wages.mjs
+      - .github/workflows/scrape-student-wages.yml
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: >-
+    ${{ github.event_name == 'pull_request'
+        && format('scrape-student-wages-dryrun-{0}', github.ref)
+        || 'scrape-student-wages' }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+env:
+  MISE_RUBY_COMPILE: 'false'
+
+jobs:
+  scrape:
+    name: Scrape and open a pull request
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Check out the code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: jdx/mise-action@9149ea85001c7435d5a66bb127d6a1b6227cb0a5 # v5.0.0
+        # Keyed on mise.lock rather than mise.toml -- see the note in check.yml.
+        with:
+          cache_key: mise-v2-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('mise.lock') }}
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # --check writes nothing and exits non-zero when the file would change.
+      - name: Scrape (dry run)
+        if: github.event_name == 'pull_request'
+        run: node scripts/scrape-student-wages.mjs --check
+
+      # A page whose tables changed shape fails here, before anything is
+      # written; GitHub reports the failed scheduled run.
+      - name: Scrape
+        if: github.event_name != 'pull_request'
+        run: mise run scrape-student-wages
+
+      - name: Validate
+        if: github.event_name != 'pull_request'
+        run: mise run validate-data
+
+      - name: Check formatting
+        if: github.event_name != 'pull_request'
+        run: pnpm exec oxfmt --check data/student-wages.yaml
+
+      # A PR opened by GITHUB_TOKEN does not trigger other workflows, so
+      # check.yml will not run on it. These are the only tests the new rates
+      # get before a person reads them: test:node holds the check that the
+      # file is laid out as the scrape writes it, and test:jest checks the
+      # bundled copy against the schema the app applies at runtime.
+      - name: Test
+        if: github.event_name != 'pull_request'
+        run: |
+          mise run test:node
+          mise run test:jest
+
+      - name: Open or update the pull request
+        if: github.event_name != 'pull_request'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if git diff --quiet; then
+            echo "Nothing changed."
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -B bot/student-wages
+          git add data/student-wages.yaml
+          git commit -m "Update the student wages from St. Olaf"
+          git push --force origin bot/student-wages
+
+          # Reuse the open pull request rather than open one a month.
+          open=$(gh pr list --head bot/student-wages --state open --json number --jq '.[].number')
+          if [ -n "$open" ]; then
+            echo "Updated existing pull request #${open}."
+            exit 0
+          fi
+
+          gh pr create --base master --head bot/student-wages \
+            --title "Update the student wages from St. Olaf" \
+            --body "$(cat <<'BODY'
+          St. Olaf's published student wage table no longer matches what we ship.
+
+          Compare the diff against the page before merging:
+          https://wp.stolaf.edu/studentemployment/student-employment-compensation-philosophy/
+
+          Merging publishes the new rates, and the app picks them up without a
+          release. The run summary lists each rate that changed.
+
+          `validate-data`, `test:node` and `test:jest` passed in the run that
+          opened this. Nothing else did — a PR opened by `GITHUB_TOKEN` does not
+          trigger `check.yml`, so push an empty commit to run the required checks.
+          BODY
+          )"

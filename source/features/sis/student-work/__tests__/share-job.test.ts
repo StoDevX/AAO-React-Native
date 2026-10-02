@@ -10,6 +10,7 @@ const JOB: JobDetail = {
 	location: 'Northfield, MN, United States',
 	postedDate: '2026-08-14T16:43:34+00:00',
 	fields: [{label: 'Wage', value: '$12.00-13.00/hour'}],
+	unit: null,
 	body: '**Duties and Responsibilities:** Tasks include playing music.',
 	url: 'https://example.test/sites/CX_1/job/2841',
 }

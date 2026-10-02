@@ -1,6 +1,8 @@
 name: Alumni Hall
 image: alumni-hall
 category: Academia
+kind: building
+listed: false
 building: ahl
 
 schedule:

@@ -1,10 +1,9 @@
-import groupBy from 'lodash/groupBy'
-import toPairs from 'lodash/toPairs'
 import type {Moment} from 'moment-timezone'
 import type {ScrollGeometry} from '@expo/ui/swift-ui'
 
 import {formatSectionHeader} from './times'
 import type {SourcedEvent} from './types'
+import {groupBy} from '@frogpond/collections'
 
 export interface EventSection {
 	readonly key: string
@@ -50,7 +49,7 @@ export function groupEvents(events: readonly SourcedEvent[], now: Moment): Event
 		return entry.event.startTime.format('YYYY-MM-DD') // google returns events in CST
 	})
 
-	return toPairs(grouped).map(([key, data]) => {
+	return Object.entries(grouped).map(([key, data]) => {
 		if (key === 'Ongoing') {
 			return {key, title: 'Ongoing', isToday: false, data}
 		}

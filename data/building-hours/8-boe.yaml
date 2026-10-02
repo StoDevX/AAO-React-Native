@@ -1,6 +1,8 @@
 name: Boe Chapel
 image: boe
 category: Academia
+kind: building
+listed: false
 building: bmc
 
 schedule:

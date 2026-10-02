@@ -1,5 +1,4 @@
 import {Alert} from 'react-native'
-import noop from 'lodash/noop'
 import {afterEach, beforeEach, describe, expect, jest, test} from '@jest/globals'
 import * as Clipboard from 'expo-clipboard'
 import {hasAppFor, openUrl} from '@frogpond/open-url'
@@ -9,14 +8,13 @@ import {lastAlertTitle, pressAlertButton} from '../../testing/alert'
 import {settle} from '../../testing/settle'
 
 jest.mock('@frogpond/open-url', () => ({openUrl: jest.fn(), hasAppFor: jest.fn()}))
-jest.mock('expo-clipboard', () => ({setStringAsync: jest.fn()}))
 
 const NUMBER = '+15072224127'
 const CANNOT_CALL = "Apologies, we couldn't call that number"
 
 describe('callPhone', () => {
 	beforeEach(() => {
-		jest.spyOn(Alert, 'alert').mockImplementation(noop)
+		jest.spyOn(Alert, 'alert').mockImplementation(() => undefined)
 	})
 
 	afterEach(() => {

@@ -3,13 +3,12 @@ import type {JobCategory, JobSummary} from '@frogpond/ccc-jobs'
 // views Jest cannot load.
 import {applyFiltersToItem} from '@frogpond/filter/apply-filters'
 import {selectedOptions} from '@frogpond/filter/selected-options'
-import type {ListType} from '@frogpond/filter/types'
-import deburr from 'lodash/deburr'
-import words from 'lodash/words'
+import type {ListFilter} from '@frogpond/filter/types'
 import type {AreaStatus, StudentWorkArea} from './areas'
 import {displayTitle, jobCode, jobTerm, LEVEL_LABELS, type JobTerm} from './posting'
 import {POSTED_NEW, POSTED_RECENT, postedTags} from './presets'
 import {recencyOf, RECENCY_ORDER} from './recency'
+import {deburr, words} from '../../../lib/text'
 
 /// What the filters match a posting on.
 export type JobFacets = {area: string[]; posted: string[]; level: string; term: string}
@@ -70,8 +69,8 @@ function facetsOf(job: JobSummary): TitleFacets {
 	return facets
 }
 
-/// A posting's areas and Posted values depend on the unit searches and the
-/// seen set, which change without the posting changing, so they are not cached.
+/// A posting's areas and Posted values depend on the units and the seen set,
+/// which change without the posting changing, so they are not cached.
 function fullFacetsOf(job: JobSummary, context: FilterContext): JobFacets {
 	return {
 		...facetsOf(job),
@@ -89,7 +88,7 @@ function listFilter(
 	present: Set<string>,
 	chosen: string[] | null,
 	presentation: 'menu' | 'sheet' = 'menu',
-): ListType<JobFacets> {
+): ListFilter<JobFacets> {
 	// A chosen value stays on offer even when nothing has it: a preset opens
 	// the list with its choice made, and a choice dropped for matching nothing
 	// would show every posting instead of saying none match.
@@ -113,7 +112,7 @@ export function buildJobFilters(
 	jobs: JobSummary[],
 	chosen: ChosenJobFilters,
 	context: FilterContext,
-): ListType<JobFacets>[] {
+): ListFilter<JobFacets>[] {
 	if (jobs.length === 0) return []
 
 	let facets = jobs.map((job) => fullFacetsOf(job, context))
@@ -122,8 +121,8 @@ export function buildJobFilters(
 		chosen.area === null
 			? null
 			: context.areas.filter((area) => chosen.area?.includes(area.slug)).map((area) => area.name)
-	// Every area whose searches have answered, empty ones too: an empty
-	// area's tile still opens, to a list filtered to it that says so.
+	// Every area, once the units have loaded, empty ones too: an empty area's
+	// tile still opens, to a list filtered to it that says so.
 	let knownAreas = new Set(
 		context.areas
 			.filter((area) => context.membership.get(area.slug)?.count !== undefined)
@@ -159,15 +158,10 @@ export function choosePosted(previous: string[] | null, next: string[]): string[
 	return added.length > 0 ? added.slice(-1) : next.slice(-1)
 }
 
-const COMBINING_MARKS = /\p{M}/gu
-
 /// Lowercased words with accents and apostrophes gone, so "lions" finds
-/// "Lion’s" and "minagi kin" finds "Mináǧi Kiŋ". Dropping the marks after
-/// decomposing reaches accented letters `deburr` leaves alone, like ǧ, and
-/// `deburr` maps the letters that have no decomposition, like ŋ.
+/// "Lion’s" and "minagi kin" finds "Mináǧi Kiŋ".
 function searchWords(text: string): string[] {
-	let unmarked = text.toLowerCase().normalize('NFD').replaceAll(COMBINING_MARKS, '')
-	return words(deburr(unmarked.replaceAll(/['’]/gu, '')))
+	return words(deburr(text.toLowerCase().replaceAll(/['’]/gu, '')))
 }
 
 function titleWordsOf(job: JobSummary): string[] {
@@ -193,7 +187,7 @@ function matchesSearch(job: JobSummary, queryWords: string[]): boolean {
 /// "Student Work", and the Term filter already sorts out the summer ones.
 export function visibleSections(
 	categories: JobCategory[],
-	filters: ListType<JobFacets>[],
+	filters: ListFilter<JobFacets>[],
 	query: string,
 	context: FilterContext,
 ): JobSection[] {

@@ -12,16 +12,18 @@ The St. Olaf community, now in pocket size… rewritten in React Native.
 
 ## Getting Started
 
-- If you're on a system with the `brew` command, run `brew bundle install` to install the system dependencies. (Node, Ruby, Watchman, etc.)
-- [Install React Native](http://facebook.github.io/react-native/docs/getting-started.html#content)
+- [Install Xcode](https://developer.apple.com/xcode/)
+- [Install Mise](https://mise.jdx.dev)
 - Clone the repository
 - `cd` into your clone
-- Run `pnpm install --frozen-lockfile`
-- For iOS: `mise run ios`
+- Run `mise install` to install the required tools
+- Run `pnpm install --frozen-lockfile` to install the required dependencies
+- For iOS, run `mise run ios` to launch the app in a simulator, or `mise run device "Phone"` to build and launch the app on a connected iPhone named "Phone"
 
 ## Contributing
 
 Welcome!
+
 Thank you for your interest in contributing to `AAO-React-Native`.
 First, whenever interacting with the team or in general, please adhere to our [Code of Conduct](/CODE_OF_CONDUCT.md).
 Next, see [CONTRIBUTING.md](CONTRIBUTING.md).

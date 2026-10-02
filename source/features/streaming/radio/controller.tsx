@@ -2,7 +2,6 @@ import * as React from 'react'
 import {useCallback, useEffect, useState} from 'react'
 import {ScrollView, StyleSheet, Text, View, useWindowDimensions} from 'react-native'
 import {SafeAreaView} from 'react-native-safe-area-context'
-import noop from 'lodash/noop'
 import * as c from '@frogpond/colors'
 import {callPhone} from '../../../components/call-phone'
 import {Row} from '@frogpond/layout'
@@ -15,8 +14,7 @@ import {ScratchableLogo} from './scratchable-logo'
 import {useSwipeBackHold} from './swipe-back-hold'
 import {useNavigation, useRouter} from 'expo-router'
 
-// If you want to fix the inline player, switch to `true`
-const ALLOW_INLINE_PLAYER = false
+const ALLOW_INLINE_PLAYER = true
 
 type PlayButtonProps = {
 	state: PlayState
@@ -52,7 +50,7 @@ function PlayButton(props: PlayButtonProps): React.ReactNode {
 			return <ActionButton icon="pause" onPress={onPause} text="Pause" />
 
 		default:
-			return <ActionButton icon="ladybug" onPress={noop} text="Error" />
+			return <ActionButton icon="ladybug" onPress={NOTHING_TO_RETRY} text="Error" />
 	}
 }
 
@@ -62,7 +60,7 @@ type Props = {
 	playerUrl: string
 	stationNumber: string
 	title: string
-	scheduleHref: '/KSTOSchedule' | '/KRLXSchedule'
+	scheduleHref: '/ksto-schedule' | '/krlx-schedule'
 	stationName: string
 	source: {
 		useEmbeddedPlayer: boolean
@@ -70,6 +68,9 @@ type Props = {
 		streamSourceUrl: string
 	}
 }
+
+/** The error button's press: the player has nothing it can retry from here. */
+const NOTHING_TO_RETRY = (): void => undefined
 
 export function RadioControllerView(props: Props): React.ReactNode {
 	let {logos, ...screenProps} = props
@@ -305,8 +306,13 @@ const styles = StyleSheet.create({
 		marginTop: 15,
 		marginBottom: 5,
 	},
+	// Out of sight but still mounted: a view with display "none" is never
+	// created, so its page would never load.
 	webview: {
-		display: 'none',
+		position: 'absolute',
+		width: 1,
+		height: 1,
+		opacity: 0,
 	},
 	spacer: {
 		width: 8,

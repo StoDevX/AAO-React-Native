@@ -1,19 +1,10 @@
 import React from 'react'
 import moment from 'moment-timezone'
 import {describe, expect, test} from '@jest/globals'
-import {render} from '@testing-library/react-native'
+import {fireEvent, render} from '@testing-library/react-native'
 
 import {BuildingList} from '../building-list'
 import type {BuildingType} from '../../types'
-
-jest.mock('@expo/ui/swift-ui', () => {
-	// oxlint-disable-next-line typescript/no-require-imports
-	return require('../../../../testing/expo-ui-mock') as typeof import('../../../../testing/expo-ui-mock')
-})
-jest.mock('@expo/ui/swift-ui/modifiers', () => {
-	// oxlint-disable-next-line typescript/no-require-imports
-	return require('../../../../testing/expo-ui-mock') as typeof import('../../../../testing/expo-ui-mock')
-})
 
 const now = moment.tz('2026-09-07 14:00', 'America/Chicago') // Monday 2pm
 
@@ -21,6 +12,7 @@ function building(name: string): BuildingType {
 	return {
 		name,
 		category: 'Academia',
+		kind: 'building',
 		schedule: [
 			{
 				title: 'Hours',
@@ -98,5 +90,21 @@ describe('which state the list shows', () => {
 
 		expect(queryByText('Academia')).not.toBeNull()
 		expect(queryByText('Athletics')).toBeNull()
+	})
+})
+
+describe('the All spaces row', () => {
+	test('ends the list, and opens All spaces', async () => {
+		let onShowAllSpaces = jest.fn()
+		let {getByRole} = await renderList({onShowAllSpaces})
+
+		await fireEvent.press(getByRole('button', {name: 'All spaces'}))
+		expect(onShowAllSpaces).toHaveBeenCalledTimes(1)
+	})
+
+	test('is left off when there is nowhere else to go', async () => {
+		let {queryByText} = await renderList()
+
+		expect(queryByText('All spaces')).toBeNull()
 	})
 })

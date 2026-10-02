@@ -3,6 +3,8 @@ name: HOM
 subtitle: Tweet Hall of Music
 image: hall-of-music
 category: Academia
+kind: building
+listed: false
 building: hom
 
 schedule:

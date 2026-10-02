@@ -14,7 +14,7 @@ bundle. To drive the app by hand instead of asserting on it, see
 
 | Path | What it holds |
 | --- | --- |
-| `Module*Tests.swift` | One test class per feature, subclassing `UITestCase` |
+| `Module*Tests.swift` | One test class per feature, subclassing `UITestCaseUnbooted` when the first step opens a route by URL (which launches the app), or `UITestCase` when the test starts on the home screen |
 | `Screens/*.swift` | One screen object per screen, conforming to `Screen` |
 | `Screen.swift` | The `Screen` protocol and the helpers every screen inherits |
 | `UITestCase.swift` | Base class: launch arguments, fresh state, `app` |
@@ -53,7 +53,7 @@ earlier one will match both.
 **A `Stack.SearchBar` is `app.searchFields.firstMatch`**, wherever the screen
 puts it — the bottom-toolbar placement most screens use here is reached the same
 way as a header one. `searchField.value as? String` returns the placeholder, not
-`nil`, when the field is empty. The Carleton map's field is a `UISearchBar`
+`nil`, when the field is empty. The map's field is a `UISearchBar`
 inside an `@expo/ui` sheet, so it is `app.searchFields[...]` too. Its cancel
 button carries no identifier and, on iOS 26, the label `Close` — which the
 building card's own dismiss button also has — so query it inside the bar rather
@@ -62,7 +62,21 @@ than across the whole screen.
 **Retry a dropped tap; do not lengthen the timeout.** A row is hittable as soon
 as its host mounts, but its action has to reach JavaScript — a tap synthesized
 in between lands natively and does nothing. Waiting longer never fixes a tap
-that was dropped, so tap again. `navigateFromHome` is the pattern.
+that was dropped, so tap again.
+
+**A screen's `navigate()` opens its route by URL,** through
+`open(route:mountedWhen:)`, and waits for the screen's `mounted` element --
+something only that screen draws. The wait is not optional: a relaunched app
+has no home screen while it is still blank, so "Home has gone" is true before
+anything has mounted. `XCUIApplication.open(_:)` relaunches an already running
+app, so a URL always takes the cold-launch path. To relaunch mid-test
+with state kept, call `keepStateForNextLaunch(adding:)` and then `navigate()`;
+set launch arguments on `app` before the first `navigate()` for anything the
+first launch needs, such as a text size.
+
+**The home tiles are tapped by one test,**
+`testEveryTileOpensItsScreen` in `ModuleHomeTests`, which checks each tile against its screen's
+`mounted` element. A new tile goes in its list.
 
 **Assert the precondition before the action.** Read a field's text back after
 typing it; confirm a row exists before tapping. A test that silently did nothing
@@ -70,8 +84,10 @@ otherwise passes exactly like one that worked.
 
 ## What earns a slot
 
-Every test cold-launches the app (`UITestCase.setUpWithError`), which costs
-about 43 seconds — **roughly 1.3% of a shard's entire budget**. Three shards is
+Every test cold-launches the app. On CI, launching and tapping through the
+home screen took a median 23 seconds before the screen under test was up —
+**roughly 1% of a 45-minute shard**. Opening the route by URL skips the home
+screen's share of that. Three shards is
 a ceiling, not a preference: this is a public repo on a free org plan, so
 GitHub allows 5 concurrent macOS jobs and a merge group already needs 4. The
 only lever on the suite's wall-clock is how many tests are in it.
@@ -89,9 +105,9 @@ Four disqualifiers, each of which has removed a test here:
    appearance to dark, the app did not follow, and its assertions passed either
    way — it photographed a light screen, called it dark, and could not fail at
    the one thing it was for.
-2. **Reachability is already asserted elsewhere.** `navigate()` asserts that
-   home is visible, that the tile exists, and that navigation happened. A
-   capture-only test is therefore a second `testIsReachableFromHomescreen` at
+2. **Reachability is already asserted elsewhere.**
+   `testEveryTileOpensItsScreen` taps every tile, and `navigate()` asserts its
+   screen mounted. A capture-only test is therefore a second copy of both at
    the price of a full cold launch.
 3. **The defect would be in iOS or a library, not in us.**
    `testAddToCalendarSurvivesReopeningTheSheet` asserted that
@@ -121,3 +137,25 @@ to the build and nothing warns you. Editing an existing file is fine.
 **Every test cold-launches the app** with `--uitesting` and `--reset-state`, so
 UserDefaults and AsyncStorage start empty each time. Anything a test needs
 turned on — dev mode, a persisted setting — it has to turn on itself.
+
+## Checking VoiceOver
+
+`XCUIDevice.shared.voiceOverService` (iOS 27) runs real VoiceOver inside an
+XCUITest on the simulator, and reports what it says. Use it to check a change
+that alters what VoiceOver reads — a merged text view, a hidden caption, a new
+heading — **as a local check, not a committed test.** Turning VoiceOver on and
+off costs about 7.5 seconds and each step about half a second, which no test
+here earns; write the test, run it, report what it heard, and leave it out of
+the branch.
+
+- `enable()` and `disable()` throw. `currentSpeech()`, `moveForward()`,
+  `moveBackward()`, `moveIn()` and `moveOut()` each return an `Output` whose
+  `utterance` is what VoiceOver said, traits and hints included:
+  `"SEPTEMBER 30, 2026 · 25 STORIES Heading"`, `"All News Button"`.
+- The class is `@MainActor` and iOS 27 only, so the test method needs
+  `@MainActor @available(iOS 27.0, *)`.
+- **An utterance stops at 64 characters.** Compare the start of a long label,
+  not the whole of it.
+- **VoiceOver stays on if `disable()` never runs**, and every tap in the tests
+  after it then does nothing. Call it from `tearDownWithError`.
+- There is no rotor: to reach a heading or a link, step to it.

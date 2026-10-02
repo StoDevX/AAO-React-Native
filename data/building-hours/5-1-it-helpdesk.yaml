@@ -1,11 +1,15 @@
 name: IT Helpdesk
 category: Help and Support
+kind: office
 building: rml
+links:
+  - {title: 'IT Helpdesk', url: 'https://wp.stolaf.edu/lits/helpdesk/'}
 
 schedule:
   - title: Hours
     hours:
-      - {days: [Mo, Tu, We, Th], from: '7:45am', to: '11:00pm'}
+      - {days: [Mo], from: '7:45am', to: '10:00pm'}
+      - {days: [Tu, We, Th], from: '7:45am', to: '11:00pm'}
       - {days: [Fr], from: '7:45am', to: '5:00pm'}
       - {days: [Su], from: '1:30pm', to: '11:00pm'}
 

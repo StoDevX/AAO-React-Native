@@ -1,18 +1,5 @@
-// `read.ts` also exports hooks that call `getRunner()`, which imports
-// `expo-sqlite` -- a native module with nothing to bind to under Jest.
-// `dayWindow` never touches it, but importing the module to reach `dayWindow`
-// still runs `client.ts`'s top-level `import * as SQLite from 'expo-sqlite'`,
-// which crashes before any test body runs. Mocked here for that reason alone,
-// same as `expo-router` and `@expo/ui` are mocked in the dictionary screen
-// tests -- this stands in for a native binding, not for logic under test.
-jest.mock('expo-sqlite', () => ({
-	openDatabaseSync: jest.fn(),
-	deleteDatabaseSync: jest.fn(),
-}))
-// `@sentry/react-native` ships ESM-only and Jest's transformIgnorePatterns does
-// not let it through, so it is stubbed the same way every other suite here
-// stubs it. `read.ts` and `client.ts` report a failed read or a failed drop
-// through it.
+// `read.ts` and `client.ts` report a failed read or a failed drop through
+// `@sentry/react-native`, stubbed so a report goes nowhere.
 jest.mock('@sentry/react-native', () => ({captureException: jest.fn()}))
 
 import * as Sentry from '@sentry/react-native'

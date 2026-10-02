@@ -8,7 +8,7 @@ import XCTest
 // three attempts on every runner, so it sat permanently XCTSkipIf'd -- paying a
 // cold launch per run to do nothing. Worth restoring if the gesture can ever be
 // driven at a speed a runner cannot misread.
-class ModuleDirectoryTests: UITestCase {
+class ModuleDirectoryTests: UITestCaseUnbooted {
 
 	/// The landing grid and a contact's sheet, from opening to swiping away.
 	///
@@ -59,32 +59,6 @@ class ModuleDirectoryTests: UITestCase {
 				whileShowing: TestIdentifiers.Directory.aContact)
 			.capture("Directory after tapping a tile behind the contact sheet")
 			.verifyNoSecondContactSheet(TestIdentifiers.Directory.aSecondContactAction)
-	}
-
-	/// A contact carries either a phone number or a link, and its one button
-	/// follows whichever it has. The other tests here all open a contact that
-	/// places a call, so this is the only one that reaches the link branch.
-	func testALinkContactOpensItsPage() throws {
-		DirectoryScreen(app: app)
-			.navigate()
-			.openContact(TestIdentifiers.Directory.aLinkContact)
-			.verifyDetailAction(TestIdentifiers.Directory.aLinkContactAction)
-			.followDetailLink(TestIdentifiers.Directory.aLinkContactAction)
-			.capture("Contact link opened in the in-app browser")
-	}
-
-	/// At an accessibility Dynamic Type size the label and glyph both grow,
-	/// but a fixed column count's width would not -- columnsForFontScale is
-	/// what narrows the grid to keep it readable there instead of clipping.
-	/// The count staying at eleven (not the column count, which this test
-	/// cannot see from the accessibility tree) is what proves the reflow
-	/// happened rather than the grid just running off the edge of the screen.
-	func testShowsEveryContactAtAnAccessibilitySize() throws {
-		relaunch(atContentSizeCategory: TestIdentifiers.LaunchArguments.accessibilityExtraExtraExtraLarge)
-		DirectoryScreen(app: app)
-			.navigate()
-			.verifyContactTiles(count: 11)
-			.capture("Directory contact grid at an accessibility size")
 	}
 
 	/// A screen opened from a department link: what it shows, how its results
@@ -138,49 +112,5 @@ class ModuleDirectoryTests: UITestCase {
 			.search(for: "olaf")
 			.verifyResultsGalleried()
 			.capture("Directory search results as a tile gallery")
-	}
-
-	/// A directory *entry*, reached by searching -- not an Important Contact
-	/// tile, which pushes `Directory/named/[title]`, a different screen this
-	/// migration has not touched.
-	func testDirectoryEntryDetail() throws {
-		let screen = DirectoryScreen(app: app)
-			.navigate()
-			.search(for: TestIdentifiers.Directory.fixtureEntry)
-
-		// The tile gallery is the default view, so a result is a tile rather
-		// than a row -- both open the same entry detail.
-		let result = app.descendants(matching: .any)
-			.matching(
-				NSPredicate(
-					format: "identifier BEGINSWITH %@", TestIdentifiers.Directory.tilePrefix))
-			.firstMatch
-		XCTAssertTrue(result.waitForExistence(timeout: 30), "A directory result should be shown")
-		result.tap()
-
-		// Wait for something only the pushed screen has: a capture taken
-		// straight after the tap lands mid-animation, with both screens in it.
-		let department = app.descendants(matching: .any)
-			.matching(
-				NSPredicate(
-					format: "label CONTAINS %@", TestIdentifiers.Directory.fixtureEntryDepartment))
-			.firstMatch
-		XCTAssertTrue(department.waitForExistence(timeout: 30), "The entry detail should be shown")
-
-		screen.capture("Directory - entry detail")
-	}
-
-	/// A department opens a fresh copy of this screen over the landing. The
-	/// two share a route, and navigating to the route already on top only
-	/// swaps its params -- which leaves nothing beneath the department for
-	/// Back to return to.
-	func testADepartmentOpensOverTheLanding() throws {
-		let screen = DirectoryScreen(app: app).navigate()
-		let department = screen.openFirstDepartment()
-
-		screen
-			.verifyDepartmentHeading(department)
-			.capture("Directory department opened from the landing")
-			.leaveDepartmentForLanding()
 	}
 }

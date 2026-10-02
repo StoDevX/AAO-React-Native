@@ -1,7 +1,10 @@
 name: Lion's Pause Pizza Delivery
 image: pause-kitchen
 category: Food
+kind: space
 building: thelionspause
+links:
+  - {title: 'Eat at Buntrock', url: 'https://wp.stolaf.edu/buntrock/eat/'}
 
 schedule:
   - title: Hours

@@ -1,5 +1,7 @@
 name: Holland Hall
 category: Academia
+kind: building
+listed: false
 building: hh
 
 schedule:

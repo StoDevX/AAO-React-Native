@@ -1,11 +1,13 @@
 // Sub-paths, not the barrel: it reaches the filter toolbar and its SwiftUI
 // symbols, which cannot load under Jest.
 import {applyFilter} from '@frogpond/filter/apply-filters'
-import type {FilterType, ListType} from '@frogpond/filter/types'
+import type {Filter, ListFilter} from '@frogpond/filter/types'
 
 import type {ItemCorIconMapType, MenuItemType} from '../types'
+import {isFeatured} from './is-featured'
 
 const DIETARY_FILTER_KEY = 'dietary-restrictions'
+const SPECIALS_FILTER_KEY = 'specials'
 
 /**
  * Marks that another mark stands in for. All vegan food is vegetarian, but the
@@ -24,7 +26,7 @@ const ALSO_SATISFIED_BY: Record<string, readonly string[]> = {
 	Vegetarian: ['Vegan'],
 }
 
-function isDietaryFilter(filter: FilterType<MenuItemType>): filter is ListType<MenuItemType> {
+function isDietaryFilter(filter: Filter<MenuItemType>): filter is ListFilter<MenuItemType> {
 	return filter.type === 'list' && filter.key === DIETARY_FILTER_KEY
 }
 
@@ -45,11 +47,16 @@ export function meetsDietaryMarks(
 	)
 }
 
+function isSpecialsFilter(filter: Filter<MenuItemType>): boolean {
+	return filter.type === 'toggle' && filter.key === SPECIALS_FILTER_KEY
+}
+
 /**
  * The menu's own filtering: `applyFiltersToItem`, except that the dietary list
- * honours the marks that stand in for one another.
+ * honours the marks that stand in for one another, and the specials toggle
+ * keeps every featured item rather than only those marked special.
  */
-export function applyMenuFilters(filters: FilterType<MenuItemType>[], item: MenuItemType): boolean {
+export function applyMenuFilters(filters: Filter<MenuItemType>[], item: MenuItemType): boolean {
 	return filters.every((filter) => {
 		if (!filter.enabled) {
 			return true
@@ -57,6 +64,10 @@ export function applyMenuFilters(filters: FilterType<MenuItemType>[], item: Menu
 
 		if (isDietaryFilter(filter)) {
 			return meetsDietaryMarks(filter.spec.selected, item.cor_icon)
+		}
+
+		if (isSpecialsFilter(filter)) {
+			return isFeatured(item)
 		}
 
 		return applyFilter(filter, item)

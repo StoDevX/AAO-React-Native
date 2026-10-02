@@ -1,6 +1,9 @@
 name: SARN Hotline
 subtitle: Sexual Assault Resource Network
 category: Health and Wellness
+kind: service
+links:
+  - {title: 'SARN in The Book', url: 'https://wp.stolaf.edu/thebook/organizations/peer/'}
 
 schedule:
   - title: Hours

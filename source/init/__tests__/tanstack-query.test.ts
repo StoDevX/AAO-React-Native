@@ -1,25 +1,12 @@
-// `read.ts` is imported here for its query-key head alone, but reaching it runs
-// `client.ts`'s top-level `import * as SQLite from 'expo-sqlite'` -- a native
-// module with nothing to bind to under Jest. Mocked for that reason only, the
-// same way `source/database/calendar/__tests__/read.test.ts` does it.
-jest.mock('expo-sqlite', () => ({
-	openDatabaseSync: jest.fn(),
-	deleteDatabaseSync: jest.fn(),
-}))
-jest.mock('@react-native-community/netinfo', () =>
-	// oxlint-disable-next-line typescript/no-require-imports
-	require('@react-native-community/netinfo/jest/netinfo-mock'),
-)
-// `@sentry/react-native` ships ESM-only and Jest's transformIgnorePatterns does
-// not let it through, so it is stubbed the same way every other suite here
-// stubs it. `read.ts` and `client.ts` report a failed read or a failed drop
-// through it.
-jest.mock('@sentry/react-native', () => ({captureException: jest.fn()}))
-
-import type {Query} from '@tanstack/react-query'
+import {dehydrate, QueryClient, type Query} from '@tanstack/react-query'
+import {
+	persistQueryClientRestore,
+	type PersistedClient,
+	type Persister,
+} from '@tanstack/react-query-persist-client'
 
 import {CALENDAR_READ_KEY} from '../../database/calendar/read'
-import {persistOptions} from '../tanstack-query'
+import {persistOptions, serializeCache} from '../tanstack-query'
 
 const WINDOW = {fromUtc: 0, toUtc: 1, fromDate: '2026-08-16', toDate: '2027-03-14'}
 
@@ -76,5 +63,102 @@ describe('shouldDehydrateQuery', () => {
 	test('still refuses a query that has not succeeded', () => {
 		let pending = {queryKey: ['news'], state: {status: 'pending'}} as unknown as Query
 		expect(persistOptions.dehydrateOptions.shouldDehydrateQuery(pending)).toBe(false)
+	})
+})
+
+describe('a query that sets how it persists, in its meta', () => {
+	/** A query as the persister is handed it, with the meta it was made with. */
+	const cached = (queryKey: readonly unknown[], state: object, meta?: object) => ({
+		queryKey,
+		queryHash: JSON.stringify(queryKey),
+		state,
+		...(meta ? {meta} : {}),
+	})
+	const LIST = {pages: [['first'], ['second'], ['third']], pageParams: [1, 2, 3]}
+
+	/** What the persister writes for these queries, read back. */
+	function written(queries: Array<ReturnType<typeof cached>>): PersistedClient {
+		let client = {timestamp: 1, buster: '', clientState: {mutations: [], queries}}
+		return JSON.parse(serializeCache(client as unknown as PersistedClient)) as PersistedClient
+	}
+	const dehydrates = (query: ReturnType<typeof cached>) =>
+		persistOptions.dehydrateOptions.shouldDehydrateQuery(query as unknown as Query)
+
+	test('stays out of storage with `persist: false`, even when it succeeded', () => {
+		expect(
+			dehydrates(cached(['mess', 'issue'], {status: 'success', data: []}, {persist: false})),
+		).toBe(false)
+		expect(
+			dehydrates(cached(['mess', 'issue'], {status: 'success', data: []}, {persist: true})),
+		).toBe(true)
+	})
+
+	test('is written with only its first pages, as loaded, with `persistPages`', () => {
+		let cache = written([
+			cached(['a-list'], {status: 'success', data: LIST}, {persistPages: 1}),
+			// Shaped like a list of pages too, to show only a query that asks is cut.
+			cached(['news', 'stolaf'], {status: 'success', data: LIST}),
+		])
+		expect(cache.clientState.queries.map((query) => query.state.data)).toStrictEqual([
+			{pages: [['first']], pageParams: [1]},
+			LIST,
+		])
+	})
+
+	// A further page that fails leaves a list in an error state, but the pages it loaded stand.
+	test('persists its pages after a further page fails, written as loaded', () => {
+		let failed = cached(
+			['a-list'],
+			{status: 'error', data: LIST, error: {}, fetchFailureCount: 1},
+			{persistPages: 1},
+		)
+		expect(dehydrates(failed)).toBe(true)
+		expect(written([failed]).clientState.queries[0]?.state).toMatchObject({
+			status: 'success',
+			error: null,
+			fetchFailureCount: 0,
+			data: {pages: [['first']], pageParams: [1]},
+		})
+	})
+
+	test('persists no failed list without pages, nor any other failed query', () => {
+		expect(dehydrates(cached(['a-list'], {status: 'error'}, {persistPages: 1}))).toBe(false)
+		expect(dehydrates(cached(['news', 'stolaf'], {status: 'error', data: LIST}))).toBe(false)
+	})
+})
+
+/** A persister holding one saved cache, written with `buster`, in memory. */
+function savedBy(buster: string): Persister {
+	let source = new QueryClient()
+	source.setQueryData(['map-categories'], {stolaf: []})
+	let saved: PersistedClient = {buster, timestamp: Date.now(), clientState: dehydrate(source)}
+	source.clear()
+	return {
+		persistClient: () => undefined,
+		restoreClient: () => saved,
+		removeClient: () => undefined,
+	}
+}
+
+async function restoredData(persister: Persister): Promise<unknown> {
+	let queryClient = new QueryClient()
+	try {
+		await persistQueryClientRestore({queryClient, persister, buster: persistOptions.buster})
+		return queryClient.getQueryData(['map-categories'])
+	} finally {
+		queryClient.clear()
+	}
+}
+
+// A query's data can change shape between builds, and a restored copy never
+// passes through the fetch that checks it. An older build's cache is dropped
+// rather than handed to code written for another shape.
+describe('a cache saved by another build', () => {
+	test('is dropped, including one saved with no buster', async () => {
+		await expect(restoredData(savedBy(''))).resolves.toBeUndefined()
+	})
+
+	test('is restored when this build saved it', async () => {
+		await expect(restoredData(savedBy(persistOptions.buster))).resolves.toEqual({stolaf: []})
 	})
 })

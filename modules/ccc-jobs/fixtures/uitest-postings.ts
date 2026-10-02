@@ -46,6 +46,18 @@ const BODY = [
 	'**This job description is for general information purposes. It is not intended to list all duties and responsibilities of the position, and it may change at any time without notice.**',
 ].join('\n\n')
 
+/// Each fixture posting's unit number, as its description would carry it.
+/// The fillers share one unit, so one area has enough postings to scroll.
+/// Every area these leave out -- Faith & Vocation among them -- has no
+/// postings, so a UI test can open an empty area.
+const FIXTURE_UNITS: Record<string, string> = {
+	'uitest-1': '16118', // Research (CURI)
+	'uitest-2': '14001', // Library & Technology
+	'uitest-3': '22005', // Dining & BonApp
+	'uitest-extra': '11280', // Sciences & Nursing
+}
+const FILLER_UNIT = '15141' // Residence Life
+
 const WRAPPING_JOB: JobDetail = {
 	id: 'uitest-1',
 	title: UITEST_WRAPPING_JOB_TITLE,
@@ -53,6 +65,7 @@ const WRAPPING_JOB: JobDetail = {
 	schedule: 'Part time',
 	location: 'Northfield, MN, United States',
 	postedDate: '2026-09-10T17:20:22+00:00',
+	unit: FIXTURE_UNITS['uitest-1'] ?? null,
 	fields: [
 		{label: 'Classification', value: 'Student Employee (non-exempt)'},
 		{label: 'Department', value: 'Research'},
@@ -73,6 +86,7 @@ const SHORT_JOB: JobDetail = {
 	schedule: 'Part time',
 	location: 'Northfield, MN, United States',
 	postedDate: '2026-09-08T15:00:00+00:00',
+	unit: FIXTURE_UNITS['uitest-2'] ?? null,
 	fields: [
 		{label: 'Classification', value: 'Student Employee (non-exempt)'},
 		{label: 'Department', value: 'Libraries'},
@@ -89,6 +103,7 @@ const CODED_JOB: JobDetail = {
 	schedule: 'Part time',
 	location: 'Northfield, MN, United States',
 	postedDate: '2026-09-05T15:00:00+00:00',
+	unit: FIXTURE_UNITS['uitest-3'] ?? null,
 	fields: [
 		{label: 'Classification', value: 'Student Employee (non-exempt)'},
 		{label: 'Department', value: 'Stav Hall'},
@@ -97,7 +112,6 @@ const CODED_JOB: JobDetail = {
 	url: `${SITE}/job/uitest-3`,
 }
 
-/// Mirrored by `TestIdentifiers.StudentWork.fixtureFillerPrefix`.
 const FILLER_TITLE_PREFIX = 'Fixture Filler Posting'
 const FILLER_COUNT = 20
 /// This week, last week, and earlier, against the frozen 2026-09-05.
@@ -117,6 +131,7 @@ const FILLER_JOBS: JobDetail[] = Array.from({length: FILLER_COUNT}, (_, index) =
 		location: 'Northfield, MN, United States',
 		postedDate: FILLER_DATES[index % FILLER_DATES.length],
 		fields: [],
+		unit: FILLER_UNIT,
 		body: BODY,
 		url: `${SITE}/job/uitest-filler-${number}`,
 	}
@@ -136,6 +151,7 @@ const EXTRA_JOB: JobDetail = {
 	location: 'Northfield, MN, United States',
 	postedDate: '2026-09-04T15:00:00+00:00',
 	fields: [],
+	unit: FIXTURE_UNITS['uitest-extra'] ?? null,
 	body: BODY,
 	url: `${SITE}/job/uitest-extra`,
 }
@@ -164,21 +180,9 @@ export const UITEST_JOB_CATEGORIES: JobCategory[] = [
 	},
 ]
 
-/// Each fixture posting's unit number, as its description would carry it.
-/// The fillers share one unit, so one area has enough postings to scroll.
-const FIXTURE_UNITS: Record<string, string> = {
-	'uitest-1': '16118', // Research (CURI)
-	'uitest-2': '14001', // Library & Technology
-	'uitest-3': '22005', // Dining & BonApp
-	'uitest-extra': '11280', // Sciences & Nursing
-}
-const FILLER_UNIT = '15141' // Residence Life
-
-/// What a keyword search for each unit finds on the fixture board. Every area
-/// the fixtures leave out -- Faith & Vocation among them -- has no postings, so
-/// a UI test can open an empty area.
-export const UITEST_UNIT_POSTINGS: Record<string, string[]> = {}
-for (let job of UITEST_JOB_DETAILS) {
-	let unit = FIXTURE_UNITS[job.id] ?? FILLER_UNIT
-	UITEST_UNIT_POSTINGS[unit] = [...(UITEST_UNIT_POSTINGS[unit] ?? []), job.id]
-}
+/// What ccc-server's `/student-work/units` would publish for the fixture
+/// board. The extra posting is left out, as one newer than the server's last
+/// hour would be, so a UI test covers the app reading a unit from a detail.
+export const UITEST_POSTING_UNITS: Record<string, string | null> = Object.fromEntries(
+	UITEST_JOB_DETAILS.filter((job) => job.id !== EXTRA_JOB.id).map((job) => [job.id, job.unit]),
+)

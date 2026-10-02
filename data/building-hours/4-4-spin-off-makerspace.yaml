@@ -1,10 +1,14 @@
 name: The Spin-Off Makerspace
 subtitle: 3D printing, textiles and electronics, next to DiSCO
 category: Libraries
+kind: space
 building: rml
 links:
-  - title: 'DiSCO Resource Request'
-    url: 'https://stolafcarleton.teamdynamix.com/TDClient/1893/StOlaf/Requests/Service/40473/DiSCO-Resource-Request'
+  - {
+      title: 'DiSCO Resource Request',
+      url: 'https://stolafcarleton.teamdynamix.com/TDClient/1893/StOlaf/Requests/Service/40473/DiSCO-Resource-Request',
+    }
+  - {title: 'The Spin-Off Makerspace', url: 'https://wp.stolaf.edu/lits/the-spin-off-makerspace/'}
 
 schedule:
   - title: Hours

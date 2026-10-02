@@ -12,7 +12,7 @@ import {
 } from '@expo/ui/swift-ui'
 import {font, foregroundStyle, listStyle, padding, refreshable} from '@expo/ui/swift-ui/modifiers'
 import * as c from '@frogpond/colors'
-import type {FilterType} from '@frogpond/filter'
+import type {Filter} from '@frogpond/filter'
 import type {Moment} from 'moment'
 
 import {FilterMenuToolbar as FilterToolbar} from './filter-menu-toolbar'
@@ -24,7 +24,9 @@ import {isClosedLabel} from './lib/closed'
 import {emptyMessage} from './lib/empty-message'
 import {mealHeaderMenu, type MealHeaderMenu} from './lib/meal-header'
 import {formatMealTimes} from './lib/meal-times'
+import {isFeatured} from './lib/is-featured'
 import {offerSpecials} from './lib/offer-specials'
+import {stationSections, type MenuSection} from './lib/station-sections'
 import type {
 	MasterCorIconMapType,
 	MenuItemContainerType,
@@ -33,7 +35,7 @@ import type {
 	StationMenuType,
 } from './types'
 
-type FilterFunc = (filters: Array<FilterType<MenuItemType>>, item: MenuItemType) => boolean
+type FilterFunc = (filters: Array<Filter<MenuItemType>>, item: MenuItemType) => boolean
 
 /** The meal picker, together with the way to act on it. */
 export type MealMenuSelection = MealHeaderMenu & {
@@ -87,24 +89,24 @@ type Props = {
 	applyFilters?: FilterFunc
 }
 
-const areSpecialsFiltered = (filters: Array<FilterType<MenuItemType>>): boolean =>
+const areSpecialsFiltered = (filters: Array<Filter<MenuItemType>>): boolean =>
 	Boolean(filters.find(isSpecialsFilter))
 
-const isSpecialsFilter = (f: FilterType<MenuItemType>): boolean =>
+const isSpecialsFilter = (f: Filter<MenuItemType>): boolean =>
 	f.enabled && f.type === 'toggle' && f.spec.label === 'Only Show Specials'
 
-const areDietsFiltered = (filters: Array<FilterType<MenuItemType>>): boolean =>
+const areDietsFiltered = (filters: Array<Filter<MenuItemType>>): boolean =>
 	Boolean(filters.find(isDietsFilter))
 
-const isDietsFilter = (f: FilterType<MenuItemType>): boolean =>
+const isDietsFilter = (f: Filter<MenuItemType>): boolean =>
 	f.enabled && f.type === 'list' && f.spec.title === 'Dietary Restrictions'
 
 const groupMenuData = (args: {
-	filters: Array<FilterType<MenuItemType>>
+	filters: Array<Filter<MenuItemType>>
 	stations: Array<StationMenuType>
 	foodItems: MenuItemContainerType
 	applyFilters: FilterFunc
-}): {title: string; data: Array<MenuItemType>}[] => {
+}): MenuSection[] => {
 	const {applyFilters, foodItems, stations, filters} = args
 
 	const dietsFilterEnabled = areDietsFiltered(filters)
@@ -125,14 +127,9 @@ const groupMenuData = (args: {
 				return item && applyFilters(filters, item)
 			})
 
-	const stationMenusByLabel: [string, MenuItemType[]][] = stations.map((menu: StationMenuType) => [
-		menu.label,
-		dereferenceMenuItems(menu),
-	])
-
-	return stationMenusByLabel
-		.filter(([_, items]) => items.length)
-		.map(([title, data]) => ({title, data}))
+	return stations.flatMap((menu: StationMenuType) =>
+		stationSections(menu.label, dereferenceMenuItems(menu)),
+	)
 }
 
 /**
@@ -145,7 +142,7 @@ const groupMenuData = (args: {
  * A bare string may never be passed as a `ReactNode` prop: `@expo/ui` crashes
  * at mount, and neither tsc nor Jest catches it.
  */
-export function sectionHeaderProps(
+function sectionHeaderProps(
 	title: string,
 	note: string | undefined,
 ): {title: string} | {header: React.ReactNode} {
@@ -173,7 +170,7 @@ export function FancyMenu(props: Props): React.ReactNode {
 	// selected to begin with and nothing after: tracking it would move the
 	// reader off a meal they chose, and take their filters with it, whenever the
 	// clock moved on.
-	const [filters, setFilters] = useState<FilterType<MenuItemType>[]>(() =>
+	const [filters, setFilters] = useState<Filter<MenuItemType>[]>(() =>
 		buildFilters(menuCorIcons, meals, now),
 	)
 
@@ -196,7 +193,13 @@ export function FancyMenu(props: Props): React.ReactNode {
 	// the user toggles something unrelated. What the answer is used for is
 	// `offerSpecials`' business.
 	const mealHasSpecials = useMemo(
-		() => stations.some((station) => station.items.some((id) => foodItems[id]?.special)),
+		() =>
+			stations.some((station) =>
+				station.items.some((id) => {
+					let item = foodItems[id]
+					return item !== undefined && isFeatured(item)
+				}),
+			),
 		[stations, foodItems],
 	)
 
@@ -214,11 +217,16 @@ export function FancyMenu(props: Props): React.ReactNode {
 	// builds the JSX: a `Map.get()` read from within that map reads as a
 	// possible mutation of `stations` to the compiler, and it responds by
 	// giving up on `groupedMenuData`'s memoization above.
+	//
+	// A station split into sub-stations says its note once, at its head.
 	const sectionsWithNotes = useMemo(() => {
 		const stationsByLabel = new Map(stations.map((station) => [station.label, station]))
-		return groupedMenuData.map((section) => ({
+		return groupedMenuData.map((section, index) => ({
 			...section,
-			note: stationsByLabel.get(section.title)?.note,
+			note:
+				groupedMenuData[index - 1]?.station === section.station
+					? undefined
+					: stationsByLabel.get(section.station)?.note,
 		}))
 	}, [groupedMenuData, stations])
 
@@ -309,7 +317,7 @@ export function FancyMenu(props: Props): React.ReactNode {
 						sectionsWithNotes.map((section) =>
 							section.data.length === 1 && isClosedLabel(section.data[0].label) ? (
 								<Section key={section.title} {...sectionHeaderProps('', section.note)}>
-									<ContentUnavailableView systemImage="clock" title={section.title} />
+									<ContentUnavailableView systemImage="clock" title={section.station} />
 								</Section>
 							) : (
 								<Section key={section.title} {...sectionHeaderProps(section.title, section.note)}>

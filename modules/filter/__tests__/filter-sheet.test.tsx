@@ -4,16 +4,7 @@ import {fireEvent, render, screen} from '@testing-library/react-native'
 import {Text as RNText} from 'react-native'
 
 import {FilterSheet} from '../filter-sheet'
-import type {ListItemSpecType, ListType} from '../types'
-
-jest.mock('@expo/ui/swift-ui', () => {
-	// oxlint-disable-next-line typescript/no-require-imports
-	return require('../../../source/testing/expo-ui-mock') as typeof import('../../../source/testing/expo-ui-mock')
-})
-jest.mock('@expo/ui/swift-ui/modifiers', () => {
-	// oxlint-disable-next-line typescript/no-require-imports
-	return require('../../../source/testing/expo-ui-mock') as typeof import('../../../source/testing/expo-ui-mock')
-})
+import type {ListFilterOption, ListFilter} from '../types'
 
 type Row = {x: string}
 
@@ -24,10 +15,10 @@ const TITLE = 'Departments'
 
 function listFilter(
 	mode: 'AND' | 'OR',
-	options: ListItemSpecType[],
-	selected: ListItemSpecType[],
+	options: ListFilterOption[],
+	selected: ListFilterOption[],
 	displayTitle = true,
-): ListType<Row> {
+): ListFilter<Row> {
 	return {
 		type: 'list',
 		key: 'k',

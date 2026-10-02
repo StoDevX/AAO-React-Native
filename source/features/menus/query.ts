@@ -1,7 +1,6 @@
 import {client} from '@frogpond/api'
 import {isUITesting} from '@frogpond/launch-arguments'
 import {queryOptions} from '@tanstack/react-query'
-import {groupBy, mapValues} from 'lodash'
 import {decode, innerTextWithSpaces, parseHtml} from '@frogpond/html-lib'
 import {toLaxTitleCase} from '@frogpond/titlecase'
 import bundledPauseMenu from '../../../docs/pause-menu.json'
@@ -19,6 +18,7 @@ import type {
 	MenuItemType,
 	StationMenuType,
 } from './types'
+import {groupBy} from '@frogpond/collections'
 
 /**
  * A BonApp menu and a cafe's details are each for the day they were fetched,
@@ -68,14 +68,20 @@ function buildCafePath(cafeParam: string | {id: string}) {
 // tapped item's detail page renders identically to how it appeared in the
 // list it was tapped from.
 export function prepareFood(cafeMenu: EditedBonAppMenuInfoType): MenuItemContainerType {
-	return mapValues(cafeMenu.items, (item) => ({
-		...item,
-		// Decoded before title-casing, which would otherwise turn `&amp;` into
-		// `&Amp;`, which is no longer an entity.
-		station: toLaxTitleCase(decode(trimStationName(item.station))),
-		label: trimItemLabel(decode(item.label)),
-		description: innerTextWithSpaces(parseHtml(item.description || '')),
-	}))
+	return Object.fromEntries(
+		Object.entries(cafeMenu.items).map(([id, item]) => [
+			id,
+			{
+				...item,
+				// Decoded before title-casing, which would otherwise turn `&amp;` into
+				// `&Amp;`, which is no longer an entity.
+				station: toLaxTitleCase(decode(trimStationName(item.station))),
+				sub_station: toLaxTitleCase(decode(item.sub_station || '')),
+				label: trimItemLabel(decode(item.label)),
+				description: innerTextWithSpaces(parseHtml(item.description || '')),
+			},
+		]),
+	)
 }
 
 /**

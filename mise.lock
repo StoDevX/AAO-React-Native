@@ -48,38 +48,38 @@ url = "https://github.com/cameroncooke/AXe/releases/download/v1.8.0/AXe-macOS-ho
 url_api = "https://api.github.com/repos/cameroncooke/AXe/releases/assets/483428550"
 
 [[tools.hk]]
-version = "2.1.0"
+version = "2.4.0"
 backend = "packslip:github.com/jdx/hk"
-specifiers = ["2.1.0"]
+specifiers = ["2.4.0"]
 
 [tools.hk."platforms.linux-arm64"]
-checksum = "sha256:7ffb155147a8a9dae1b571fb31a5d19a35d0175afb5fe3e5b2c652ebf67feb9f"
-url = "https://github.com/jdx/hk/releases/download/v2.1.0/hk-aarch64-unknown-linux-gnu.tar.gz"
+checksum = "sha256:836235bd8aa06f25e7ff28591b32efb5297abe55366e912095636a49ffe4d363"
+url = "https://github.com/jdx/hk/releases/download/v2.4.0/hk-aarch64-unknown-linux-gnu.tar.gz"
 signer = "sigstore-oidc:https://github.com/jdx/hk/.github/workflows/release.yml"
 
 [tools.hk."platforms.linux-arm64-musl"]
-checksum = "sha256:8417655fd02f8311bcad9efab7594d4b6d7cca1c4d00cd1576f12ad5e40dac06"
-url = "https://github.com/jdx/hk/releases/download/v2.1.0/hk-aarch64-unknown-linux-musl.tar.gz"
+checksum = "sha256:ad5c5a556e0a505d9a3441868217976bd4ae610e1364e93516993b9717d9ef28"
+url = "https://github.com/jdx/hk/releases/download/v2.4.0/hk-aarch64-unknown-linux-musl.tar.gz"
 signer = "sigstore-oidc:https://github.com/jdx/hk/.github/workflows/release.yml"
 
 [tools.hk."platforms.linux-x64"]
-checksum = "sha256:7a7b28741d16f777d8be90fbcd8523996ee95c2d5222d5b173652d9b37e31969"
-url = "https://github.com/jdx/hk/releases/download/v2.1.0/hk-x86_64-unknown-linux-gnu.tar.gz"
+checksum = "sha256:6efabe30aeabc4611a42ce6cf0fd46b9a19478e2cfd9acfd1bd93998736f3153"
+url = "https://github.com/jdx/hk/releases/download/v2.4.0/hk-x86_64-unknown-linux-gnu.tar.gz"
 signer = "sigstore-oidc:https://github.com/jdx/hk/.github/workflows/release.yml"
 
 [tools.hk."platforms.linux-x64-musl"]
-checksum = "sha256:ab5a8fa2819fe3a1762576ac557b9797e1fe587b41a1f93c50e4dfa9f5b89e76"
-url = "https://github.com/jdx/hk/releases/download/v2.1.0/hk-x86_64-unknown-linux-musl.tar.gz"
+checksum = "sha256:f34598671ca40be5c308324a60ef30b736dbbbf4259dfb511abd79009ee4de2a"
+url = "https://github.com/jdx/hk/releases/download/v2.4.0/hk-x86_64-unknown-linux-musl.tar.gz"
 signer = "sigstore-oidc:https://github.com/jdx/hk/.github/workflows/release.yml"
 
 [tools.hk."platforms.macos-arm64"]
-checksum = "sha256:b30c6fb4447b5a9c24f9f80d165dca2d2e682907b8acb8222391e0527fea1ebe"
-url = "https://github.com/jdx/hk/releases/download/v2.1.0/hk-aarch64-apple-darwin.tar.gz"
+checksum = "sha256:6e1c970b9de7ab4ee52c85869b2ea9cfe8769d25a0fe9536062e0ba62366ec59"
+url = "https://github.com/jdx/hk/releases/download/v2.4.0/hk-aarch64-apple-darwin.tar.gz"
 signer = "sigstore-oidc:https://github.com/jdx/hk/.github/workflows/release.yml"
 
 [tools.hk."platforms.windows-x64"]
-checksum = "sha256:c0344c09c76f7e25985c4770148130881b19313393d238949e5512ec3691fac3"
-url = "https://github.com/jdx/hk/releases/download/v2.1.0/hk-x86_64-pc-windows-msvc.zip"
+checksum = "sha256:028931e00fd670ad891a428bf44e14ac8e2726a8f72b7fae80b27b6502af2be3"
+url = "https://github.com/jdx/hk/releases/download/v2.4.0/hk-x86_64-pc-windows-msvc.zip"
 signer = "sigstore-oidc:https://github.com/jdx/hk/.github/workflows/release.yml"
 
 [[tools.node]]
@@ -115,66 +115,106 @@ url = "https://nodejs.org/dist/v24.21.0/node-v24.21.0-darwin-x64.tar.gz"
 checksum = "sha256:158f7685b44de51f6c0df1d153526cbcd3e1bc739a8dfc607721cef75de9e541"
 url = "https://nodejs.org/dist/v24.21.0/node-v24.21.0-win-x64.zip"
 
+[[tools.oxipng]]
+version = "10.2.1"
+backend = "aqua:oxipng/oxipng"
+specifiers = ["10.2.1"]
+
+[tools.oxipng."platforms.linux-arm64"]
+checksum = "sha256:f51bb7c9836202da52a8181549641940662aa87ec2e3ae68115d822d893015b3"
+url = "https://github.com/oxipng/oxipng/releases/download/v10.2.1/oxipng-10.2.1-aarch64-unknown-linux-gnu.tar.gz"
+url_api = "https://api.github.com/repos/oxipng/oxipng/releases/assets/541677736"
+
+[tools.oxipng."platforms.linux-arm64-musl"]
+checksum = "sha256:ff21aa2a005b324c8dfbdf13cd2f469fb6728b27dacded82635824ecd12e3b35"
+url = "https://github.com/oxipng/oxipng/releases/download/v10.2.1/oxipng-10.2.1-aarch64-unknown-linux-musl.tar.gz"
+url_api = "https://api.github.com/repos/oxipng/oxipng/releases/assets/541678486"
+
+[tools.oxipng."platforms.linux-x64"]
+checksum = "sha256:46e3c4beb9aae57290ad809dd3374b07153579d3322a3778c53900633618b7c6"
+url = "https://github.com/oxipng/oxipng/releases/download/v10.2.1/oxipng-10.2.1-x86_64-unknown-linux-gnu.tar.gz"
+url_api = "https://api.github.com/repos/oxipng/oxipng/releases/assets/541676037"
+
+[tools.oxipng."platforms.linux-x64-musl"]
+checksum = "sha256:1813750ef592c5350ca79c88f98b2c0876d05c826dc7156245256d4255c1ad17"
+url = "https://github.com/oxipng/oxipng/releases/download/v10.2.1/oxipng-10.2.1-x86_64-unknown-linux-musl.tar.gz"
+url_api = "https://api.github.com/repos/oxipng/oxipng/releases/assets/541676949"
+
+[tools.oxipng."platforms.macos-arm64"]
+checksum = "sha256:7039fcfc78e8aa1ed2b57d848057a0296f082e92b3e1807ac65402d10d926764"
+url = "https://github.com/oxipng/oxipng/releases/download/v10.2.1/oxipng-10.2.1-aarch64-apple-darwin.tar.gz"
+url_api = "https://api.github.com/repos/oxipng/oxipng/releases/assets/541682884"
+
+[tools.oxipng."platforms.macos-x64"]
+checksum = "sha256:111883bbe42b25e01cb1ca41f39f8094e4830b173f0e42be342ecc4ca48f3131"
+url = "https://github.com/oxipng/oxipng/releases/download/v10.2.1/oxipng-10.2.1-x86_64-apple-darwin.tar.gz"
+url_api = "https://api.github.com/repos/oxipng/oxipng/releases/assets/541682093"
+
+[tools.oxipng."platforms.windows-x64"]
+checksum = "sha256:7e940f83ee46874b73f53031f96a15834cb70b220af27391fb06fe7b4dd798e1"
+url = "https://github.com/oxipng/oxipng/releases/download/v10.2.1/oxipng-10.2.1-x86_64-pc-windows-msvc.zip"
+url_api = "https://api.github.com/repos/oxipng/oxipng/releases/assets/541679560"
+
 [[tools.pnpm]]
-version = "12.5.0"
+version = "12.8.0"
 backend = "aqua:pnpm/pnpm"
-specifiers = ["12.5.0"]
+specifiers = ["12.8.0"]
 
 [tools.pnpm."platforms.linux-arm64"]
-checksum = "sha256:60f0b186348a4f740e41269c79351b4d957c28af57b010a336fc7458e4e33134"
-url = "https://github.com/pnpm/pnpm/releases/download/v12.5.0/pnpm-linux-arm64.tar.gz"
-url_api = "https://api.github.com/repos/pnpm/pnpm/releases/assets/573036746"
+checksum = "sha256:14e7f2904c07008d14bc91aff83a7221c4ec72aff5309465f59dbc9aaa112e57"
+url = "https://github.com/pnpm/pnpm/releases/download/v12.8.0/pnpm-linux-arm64.tar.gz"
+url_api = "https://api.github.com/repos/pnpm/pnpm/releases/assets/594795585"
 provenance = "github-attestations"
 
 [tools.pnpm."platforms.linux-arm64-musl"]
-checksum = "sha256:c5b789e833cf25fe8094df577dc01e9e30a16e0ef8e379c035949dd05589bcb5"
-url = "https://github.com/pnpm/pnpm/releases/download/v12.5.0/pnpm-linux-arm64-musl.tar.gz"
-url_api = "https://api.github.com/repos/pnpm/pnpm/releases/assets/573036739"
+checksum = "sha256:8344ea698a382806b784dce095247be7e075011fede280ca04e4c73d9e90b8f6"
+url = "https://github.com/pnpm/pnpm/releases/download/v12.8.0/pnpm-linux-arm64-musl.tar.gz"
+url_api = "https://api.github.com/repos/pnpm/pnpm/releases/assets/594795582"
 provenance = "github-attestations"
 
 [tools.pnpm."platforms.linux-x64"]
-checksum = "sha256:746979ad910f6eba9187c47080e1edfb73129ce2b8d39cc44cb1f6bc72cd571e"
-url = "https://github.com/pnpm/pnpm/releases/download/v12.5.0/pnpm-linux-x64.tar.gz"
-url_api = "https://api.github.com/repos/pnpm/pnpm/releases/assets/573036750"
+checksum = "sha256:412de0471da505fbc45415c44ae6b206454e1ab567ce7883b4a5f8dbea68b05e"
+url = "https://github.com/pnpm/pnpm/releases/download/v12.8.0/pnpm-linux-x64.tar.gz"
+url_api = "https://api.github.com/repos/pnpm/pnpm/releases/assets/594795590"
 provenance = "github-attestations"
 
 [tools.pnpm."platforms.linux-x64-musl"]
-checksum = "sha256:5640dc8be0656395592c47fafa223184afc7ea2d06e32872678dcf660daf1fc6"
-url = "https://github.com/pnpm/pnpm/releases/download/v12.5.0/pnpm-linux-x64-musl.tar.gz"
-url_api = "https://api.github.com/repos/pnpm/pnpm/releases/assets/573036740"
+checksum = "sha256:d2090cdb7b176a17f5a43007fd9ca699af708b693e153efb66a7c6fa12b9fde3"
+url = "https://github.com/pnpm/pnpm/releases/download/v12.8.0/pnpm-linux-x64-musl.tar.gz"
+url_api = "https://api.github.com/repos/pnpm/pnpm/releases/assets/594795584"
 provenance = "github-attestations"
 
 [tools.pnpm."platforms.macos-arm64"]
-checksum = "sha256:6ca140325ce11b1a6cb841455529e74d12a675067ff1abcefb9367144a29bcc7"
-url = "https://github.com/pnpm/pnpm/releases/download/v12.5.0/pnpm-darwin-arm64.tar.gz"
-url_api = "https://api.github.com/repos/pnpm/pnpm/releases/assets/573036751"
+checksum = "sha256:1bd250cffe5ab95eb2469d6a35b2db87041df2b57b49d2b9c13e251644387add"
+url = "https://github.com/pnpm/pnpm/releases/download/v12.8.0/pnpm-darwin-arm64.tar.gz"
+url_api = "https://api.github.com/repos/pnpm/pnpm/releases/assets/594795580"
 provenance = "github-attestations"
 
 [tools.pnpm."platforms.macos-x64"]
-checksum = "sha256:3c2999719936e4c10eeeeb5ed5d537ab95f19d95ba41562e05afed571f1f040e"
-url = "https://github.com/pnpm/pnpm/releases/download/v12.5.0/pnpm-darwin-x64.tar.gz"
-url_api = "https://api.github.com/repos/pnpm/pnpm/releases/assets/573036748"
+checksum = "sha256:b870341c47d1416bf3f3245b7a2b17d4e7b203c943dda42cc19a4a9fdf658b19"
+url = "https://github.com/pnpm/pnpm/releases/download/v12.8.0/pnpm-darwin-x64.tar.gz"
+url_api = "https://api.github.com/repos/pnpm/pnpm/releases/assets/594795593"
 provenance = "github-attestations"
 
 [tools.pnpm."platforms.windows-x64"]
-checksum = "sha256:6ab249e84afdd5efb0eee0c6b6a9a8f8612fcfd9d0a58ff74ed5b5e9d5e55c8b"
-url = "https://github.com/pnpm/pnpm/releases/download/v12.5.0/pnpm-win32-x64.zip"
-url_api = "https://api.github.com/repos/pnpm/pnpm/releases/assets/573036747"
+checksum = "sha256:ddd81596ed37a2e404d61a1019f01042d901dd1109162a72378742591f02af2c"
+url = "https://github.com/pnpm/pnpm/releases/download/v12.8.0/pnpm-win32-x64.zip"
+url_api = "https://api.github.com/repos/pnpm/pnpm/releases/assets/594795583"
 provenance = "github-attestations"
 
 [[tools.ruby]]
-version = "3.4.10"
+version = "3.4.11"
 backend = "core:ruby"
-specifiers = ["3.4.10"]
+specifiers = ["3.4.11"]
 
 [tools.ruby."platforms.windows-x64"]
-checksum = "sha256:89e3c5e235ac88b9b7e8daaf639eaaab74d7c470667354f6bf0f7432f3191ebb"
-url = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-3.4.10-1/rubyinstaller-3.4.10-1-x64.7z"
+checksum = "sha256:a9aca84326a90422c0905bcb47be629b687a881dcad96149604c2cb074d03154"
+url = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-3.4.11-1/rubyinstaller-3.4.11-1-x64.7z"
 
 [[tools.ruby]]
-version = "3.4.10"
+version = "3.4.11"
 backend = "core:ruby"
-specifiers = ["3.4.10"]
+specifiers = ["3.4.11"]
 
 [tools.ruby.options]
 compile = "false"
@@ -183,28 +223,68 @@ ruby_build_repo = "https://github.com/rbenv/ruby-build.git"
 ruby_install = "false"
 
 [tools.ruby."platforms.linux-arm64"]
-checksum = "sha256:c0a3e9f1d7847e66b044aeeab394ba5d41f63c3da7ad99017c4b2578e31b205a"
-url = "https://github.com/jdx/ruby/releases/download/3.4.10-2/ruby-3.4.10.arm64_linux.tar.gz"
+checksum = "sha256:6e4483d9b1c5cd8d6e94529324774eb9bd26aa81d3bed236298c189750e227db"
+url = "https://github.com/jdx/ruby/releases/download/3.4.11-1/ruby-3.4.11.arm64_linux.tar.gz"
 provenance = "github-attestations"
 
 [tools.ruby."platforms.linux-arm64-musl"]
-checksum = "sha256:ecee2d072a14f2d14347dd56dfd8fe5c3130abf5117bfaacbda0f4ef9cc429ec"
-url = "https://cache.ruby-lang.org/pub/ruby/3.4/ruby-3.4.10.tar.gz"
+checksum = "sha256:5c22be44524312b3d433d68739bcc530633b1da5ef8ba0afa0a37680da17d3de"
+url = "https://cache.ruby-lang.org/pub/ruby/3.4/ruby-3.4.11.tar.gz"
 
 [tools.ruby."platforms.linux-x64"]
-checksum = "sha256:81ce58b056ee2765e46785b4c6befb9852d9c3e50ff9385e7eb1cf3e0314d0bd"
-url = "https://github.com/jdx/ruby/releases/download/3.4.10-2/ruby-3.4.10.x86_64_linux.tar.gz"
+checksum = "sha256:b25a69eb4004852bc57877047f23fc8b1300aab6d2245f37ea6563f19305070b"
+url = "https://github.com/jdx/ruby/releases/download/3.4.11-1/ruby-3.4.11.x86_64_linux.tar.gz"
 provenance = "github-attestations"
 
 [tools.ruby."platforms.linux-x64-musl"]
-checksum = "sha256:ecee2d072a14f2d14347dd56dfd8fe5c3130abf5117bfaacbda0f4ef9cc429ec"
-url = "https://cache.ruby-lang.org/pub/ruby/3.4/ruby-3.4.10.tar.gz"
+checksum = "sha256:5c22be44524312b3d433d68739bcc530633b1da5ef8ba0afa0a37680da17d3de"
+url = "https://cache.ruby-lang.org/pub/ruby/3.4/ruby-3.4.11.tar.gz"
 
 [tools.ruby."platforms.macos-arm64"]
-checksum = "sha256:5aac8b6e16b0938a14f6d23346b5487020d1fea6b5856a33392e5eb37fa1ef62"
-url = "https://github.com/jdx/ruby/releases/download/3.4.10-2/ruby-3.4.10.macos.tar.gz"
+checksum = "sha256:4daac1266bd302c1a20fff0d65b25919ef3d64740ace1afd9f8bff69fd63db42"
+url = "https://github.com/jdx/ruby/releases/download/3.4.11-1/ruby-3.4.11.macos.tar.gz"
 provenance = "github-attestations"
 
 [tools.ruby."platforms.macos-x64"]
-checksum = "sha256:ecee2d072a14f2d14347dd56dfd8fe5c3130abf5117bfaacbda0f4ef9cc429ec"
-url = "https://cache.ruby-lang.org/pub/ruby/3.4/ruby-3.4.10.tar.gz"
+checksum = "sha256:5c22be44524312b3d433d68739bcc530633b1da5ef8ba0afa0a37680da17d3de"
+url = "https://cache.ruby-lang.org/pub/ruby/3.4/ruby-3.4.11.tar.gz"
+
+[[tools.sentry]]
+version = "3.8.0"
+backend = "aqua:getsentry/sentry-cli"
+specifiers = ["3.8.0"]
+
+[tools.sentry."platforms.linux-arm64"]
+checksum = "sha256:eaea24b5b47b61a96d9a2e353268ea41fd9a8c5b7979694330df614d4af672bf"
+url = "https://github.com/getsentry/sentry-cli/releases/download/3.8.0/sentry-cli-Linux-aarch64"
+url_api = "https://api.github.com/repos/getsentry/sentry-cli/releases/assets/568158248"
+
+[tools.sentry."platforms.linux-arm64-musl"]
+checksum = "sha256:eaea24b5b47b61a96d9a2e353268ea41fd9a8c5b7979694330df614d4af672bf"
+url = "https://github.com/getsentry/sentry-cli/releases/download/3.8.0/sentry-cli-Linux-aarch64"
+url_api = "https://api.github.com/repos/getsentry/sentry-cli/releases/assets/568158248"
+
+[tools.sentry."platforms.linux-x64"]
+checksum = "sha256:13f8cb34ae01a6a272d7d7c22e277a105286615b4020de900ea95a8de47cdbb6"
+url = "https://github.com/getsentry/sentry-cli/releases/download/3.8.0/sentry-cli-Linux-x86_64"
+url_api = "https://api.github.com/repos/getsentry/sentry-cli/releases/assets/568158243"
+
+[tools.sentry."platforms.linux-x64-musl"]
+checksum = "sha256:13f8cb34ae01a6a272d7d7c22e277a105286615b4020de900ea95a8de47cdbb6"
+url = "https://github.com/getsentry/sentry-cli/releases/download/3.8.0/sentry-cli-Linux-x86_64"
+url_api = "https://api.github.com/repos/getsentry/sentry-cli/releases/assets/568158243"
+
+[tools.sentry."platforms.macos-arm64"]
+checksum = "sha256:1dda212b0e168b9c4dc48d7d3aa24c1c37de9c6edf786e6ae661236e529969cd"
+url = "https://github.com/getsentry/sentry-cli/releases/download/3.8.0/sentry-cli-Darwin-arm64"
+url_api = "https://api.github.com/repos/getsentry/sentry-cli/releases/assets/568158233"
+
+[tools.sentry."platforms.macos-x64"]
+checksum = "sha256:279c795b15de7a76106d30b6611b7942b1a97323307327bafc18335f10384c4d"
+url = "https://github.com/getsentry/sentry-cli/releases/download/3.8.0/sentry-cli-Darwin-x86_64"
+url_api = "https://api.github.com/repos/getsentry/sentry-cli/releases/assets/568158237"
+
+[tools.sentry."platforms.windows-x64"]
+checksum = "sha256:2257cf6805a616f5c3ee291a549ebbba021190048b646adc006beb4e8cdef7fd"
+url = "https://github.com/getsentry/sentry-cli/releases/download/3.8.0/sentry-cli-Windows-x86_64.exe"
+url_api = "https://api.github.com/repos/getsentry/sentry-cli/releases/assets/568158249"

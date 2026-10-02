@@ -7,21 +7,14 @@ import {
 	ProgressView,
 	RNHostView,
 	Section,
-	Text,
 	VStack,
 } from '@expo/ui/swift-ui'
-import {
-	accessibilityIdentifier,
-	foregroundStyle,
-	id,
-	listStyle,
-	refreshable,
-} from '@expo/ui/swift-ui/modifiers'
+import {accessibilityIdentifier, id, listStyle, refreshable} from '@expo/ui/swift-ui/modifiers'
 import * as c from '@frogpond/colors'
 import {FilterToolbar} from '@frogpond/filter'
-import {LoadingView, NoticeView, listState} from '@frogpond/notice'
+import {listState, LoadErrorView, LoadingView, NoticeView} from '@frogpond/notice'
 import type {JobSummary} from '@frogpond/ccc-jobs'
-import {onlineManager} from '@tanstack/react-query'
+import {onlineManager, useQuery} from '@tanstack/react-query'
 import {useRouter} from 'expo-router'
 import {DisclosureRow, type DisclosureRowImage} from '../../../components/rows'
 import {chosenAreaState} from './areas'
@@ -35,6 +28,8 @@ import {
 import {jobRowDetail} from './lib'
 import {displayTitle} from './posting'
 import {useStudentWorkBoard} from './use-board'
+import type {HourlyWages} from './wages'
+import {studentWagesOptions} from './wages-query'
 
 /// Mirrored by TestIdentifiers.StudentWork.postingsList.
 const POSTINGS_LIST_ID = 'student-work-postings'
@@ -61,14 +56,16 @@ const JobRow = React.memo(function JobRow({
 	job,
 	isNew,
 	onOpen,
+	wages,
 }: {
 	job: JobSummary
 	isNew: boolean
 	onOpen: (jobId: string) => void
+	wages: HourlyWages
 }): React.ReactNode {
 	return (
 		<DisclosureRow
-			detail={jobRowDetail(job)}
+			detail={jobRowDetail(job, wages)}
 			image={isNew ? NEW_DOT : NO_DOT}
 			onPress={() => onOpen(job.id)}
 			title={displayTitle(job.title)}
@@ -76,9 +73,6 @@ const JobRow = React.memo(function JobRow({
 		/>
 	)
 })
-
-/// Some of a chosen area's searches failed, so the list may be short.
-const PARTIAL_NOTICE = 'Some of this area’s postings couldn’t load. Pull down to try again.'
 
 /// Offline, with no board saved to show.
 const OFFLINE_NOTICE = 'Student Work needs a connection to load the job board the first time.'
@@ -94,8 +88,9 @@ type PostingsListProps = {
 /// shared by the landing screen's search and the postings screen.
 export function PostingsList({searchQuery, initialChosen}: PostingsListProps): React.ReactNode {
 	let router = useRouter()
-	let {board, jobs, context, refresh} = useStudentWorkBoard()
+	let {board, jobs, availability, context, refresh} = useStudentWorkBoard()
 	let {data = [], error, isError, refetch, isPending, isPaused} = board
+	let {data: wages} = useQuery(studentWagesOptions)
 
 	// Only the narrowing the student asked for is state; the options on offer
 	// come from the postings, so a refetch can add or drop them.
@@ -118,7 +113,7 @@ export function PostingsList({searchQuery, initialChosen}: PostingsListProps): R
 	)
 
 	let openJob = React.useCallback(
-		(jobId: string) => router.navigate({pathname: '/JobDetail', params: {jobId}}),
+		(jobId: string) => router.navigate({pathname: '/student-work/job', params: {jobId}}),
 		[router],
 	)
 
@@ -131,18 +126,20 @@ export function PostingsList({searchQuery, initialChosen}: PostingsListProps): R
 	})
 
 	if (state === 'offline') {
-		return <NoticeView buttonText="Try Again" onPress={refetch} text={OFFLINE_NOTICE} />
+		return (
+			<NoticeView
+				action={{label: 'Try Again', onPress: refetch}}
+				description={OFFLINE_NOTICE}
+				systemImage="wifi.slash"
+				title="Offline"
+			/>
+		)
 	}
 
 	if (state === 'error') {
-		let message = error instanceof Error ? error.message : String(error)
 		return (
 			<>
-				<NoticeView
-					buttonText="Try Again"
-					onPress={refetch}
-					text={`A problem occurred while loading: ${message}`}
-				/>
+				<LoadErrorView error={error} onRetry={refetch} />
 			</>
 		)
 	}
@@ -157,7 +154,7 @@ export function PostingsList({searchQuery, initialChosen}: PostingsListProps): R
 
 	// The filter bar stays up while a chosen area loads or fails, so the
 	// student can change or clear the choice rather than only go back.
-	let areaState = chosenAreaState(chosen.area, context.areas, context.membership)
+	let areaState = chosenAreaState(chosen.area, availability)
 
 	return (
 		<>
@@ -199,35 +196,34 @@ export function PostingsList({searchQuery, initialChosen}: PostingsListProps): R
 					>
 						{areaState === 'loading' ? (
 							<ProgressView />
-						) : areaState === 'failed' ? (
-							// Pull-to-refresh retries the area's searches, with the list's own
+						) : areaState === 'unavailable' ? (
+							// Pull-to-refresh retries the units map, with the list's own
 							// spinner as the sign that it is trying.
 							<ContentUnavailableView
 								description="Pull down to try again."
 								systemImage="wifi.exclamationmark"
 								title="Couldn’t load this area’s postings."
 							/>
-						) : sections.length === 0 && areaState !== 'partial' ? (
+						) : sections.length === 0 ? (
 							<ContentUnavailableView
 								description={isNarrowed ? 'Try a different search or filter.' : undefined}
 								systemImage="briefcase"
 								title={isNarrowed ? 'No matching jobs.' : 'There are no open job postings.'}
 							/>
 						) : (
-							<>
-								{areaState === 'partial' ? (
-									<Section>
-										<Text modifiers={[foregroundStyle(c.secondaryLabel)]}>{PARTIAL_NOTICE}</Text>
-									</Section>
-								) : null}
-								{sections.map((section) => (
-									<Section key={section.title} title={section.title}>
-										{section.data.map((job) => (
-											<JobRow key={job.id} isNew={newIds.has(job.id)} job={job} onOpen={openJob} />
-										))}
-									</Section>
-								))}
-							</>
+							sections.map((section) => (
+								<Section key={section.title} title={section.title}>
+									{section.data.map((job) => (
+										<JobRow
+											key={job.id}
+											isNew={newIds.has(job.id)}
+											job={job}
+											onOpen={openJob}
+											wages={wages}
+										/>
+									))}
+								</Section>
+							))
 						)}
 					</List>
 				</VStack>

@@ -1,4 +1,4 @@
-export {fetchSourceBody, isAbsoluteHref} from './fetch-source'
+export {fetchSourceBody, isAbsoluteHref, SourceFetchError} from './fetch-source'
 export {fetchManifest, manifestOptions, resolveSource, resolveSources} from './resolve'
 export {
 	ID_PROPERTY,
@@ -6,9 +6,12 @@ export {
 	REL_A_TO_Z,
 	REL_CALENDAR,
 	REL_JOBS,
+	REL_MAP_CATEGORIES,
 	REL_NEWS,
 	REL_ORG_CATEGORIES,
+	REL_STUDENT_WAGES,
 	REL_STUDENT_WORK_AREAS,
+	REL_STUDENT_WORK_UNITS,
 	type Jrd,
 	type ResolvedSource,
 } from './types'

@@ -18,7 +18,24 @@
  *    process.env.APP_MODE='mocked'
  */
 
+import {useTelemetryStore} from '../features/telemetry/store'
+
 export const install = (): void => {}
+
+/**
+ * Records the choice without touching Sentry, which never starts in a mocked
+ * build. The store still has to change, or the Settings switch would spring
+ * back in the UI tests.
+ */
+export const setTelemetryConsent = (shared: boolean): Promise<void> => {
+	let {optIn, optOut} = useTelemetryStore.getState()
+	if (shared) {
+		optIn()
+	} else {
+		optOut()
+	}
+	return Promise.resolve()
+}
 
 export const navigationIntegration = {
 	registerNavigationContainer: (navigationRef: React.RefObject<undefined>) => {},

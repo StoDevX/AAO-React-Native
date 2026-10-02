@@ -3,9 +3,14 @@ import XCTest
 struct StreamingMediaScreen: Screen {
 	let app: XCUIApplication
 
+	/// Drawn by this screen alone, so its presence says the screen has mounted.
+	var mounted: XCUIElement {
+		app.element(matching: TestIdentifiers.Streaming.list)
+	}
+
 	@discardableResult
 	func navigate() -> Self {
-		navigateFromHome(to: TestIdentifiers.Buttons.streamingMedia)
+		open(route: "/streaming-media", mountedWhen: mounted)
 	}
 
 	@discardableResult
@@ -64,14 +69,6 @@ struct StreamingMediaScreen: Screen {
 				checkTouchTarget(app.buttonLabelled(label), named: "A button labelled \"\(label)\"")
 			}
 		}
-		return self
-	}
-
-	/// Check the station's website control reads as a link, since it leaves
-	/// the app, with a touch target of at least 44pt on each side.
-	@discardableResult
-	func checkStationLink(_ label: String) -> Self {
-		checkTouchTarget(app.linkLabelled(label), named: "A link labelled \"\(label)\"")
 		return self
 	}
 

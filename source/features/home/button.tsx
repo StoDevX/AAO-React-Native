@@ -1,7 +1,8 @@
 import * as React from 'react'
 import {useColorScheme, useWindowDimensions} from 'react-native'
-import {Button, Image, Text, VStack, ZStack, type ImageProps} from '@expo/ui/swift-ui'
+import {Button, Image, Text, VStack, ZStack} from '@expo/ui/swift-ui'
 import {
+	accessibilityHint,
 	accessibilityLabel,
 	buttonStyle,
 	environment,
@@ -12,7 +13,7 @@ import {
 	opacity,
 	padding,
 } from '@expo/ui/swift-ui/modifiers'
-import type {ViewType} from '../views'
+import {iconImage, opensInBrowser, type SymbolName, type ViewType} from '../views'
 import {GradientRoundedRectangle} from '../../components/gradient-tile'
 import {FILL_WIDTH} from '../../components/tile-layout'
 
@@ -24,10 +25,12 @@ type Props = {
 function HomeScreenButtonLabel({
 	title,
 	icon,
+	titleDesign,
 	isDarkScheme,
 }: {
 	title: string
-	icon: NonNullable<ImageProps['systemName']>
+	icon: SymbolName
+	titleDesign?: 'serif'
 	isDarkScheme: boolean
 }) {
 	let {fontScale} = useWindowDimensions()
@@ -54,12 +57,12 @@ function HomeScreenButtonLabel({
 					foregroundStyle({type: 'hierarchical', style: 'primary'}),
 					opacity(0.8),
 				]}
-				systemName={icon}
+				{...iconImage(icon)}
 			/>
 
 			<Text
 				modifiers={[
-					font({textStyle: 'headline', weight: 'semibold'}),
+					font({textStyle: 'headline', weight: 'semibold', design: titleDesign}),
 					foregroundStyle({type: 'hierarchical', style: 'primary'}),
 				]}
 			>
@@ -79,12 +82,18 @@ export function HomeScreenButton({view, onPress}: Props): React.ReactNode {
 				// make a card grow to match a taller one beside it
 				frame({maxWidth: FILL_WIDTH, maxHeight: FILL_WIDTH}),
 				accessibilityLabel(view.title),
+				...(opensInBrowser(view) ? [accessibilityHint('Opens in a browser')] : []),
 			]}
 			onPress={onPress}
 		>
 			<ZStack alignment="topLeading">
 				<GradientRoundedRectangle gradient={view.gradient} showShadow={isDarkScheme} />
-				<HomeScreenButtonLabel title={view.title} icon={view.icon} isDarkScheme={isDarkScheme} />
+				<HomeScreenButtonLabel
+					title={view.title}
+					icon={view.icon}
+					titleDesign={view.titleDesign}
+					isDarkScheme={isDarkScheme}
+				/>
 			</ZStack>
 		</Button>
 	)

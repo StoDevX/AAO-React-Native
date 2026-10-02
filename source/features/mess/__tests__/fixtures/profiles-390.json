@@ -1,0 +1,80 @@
+[
+  {
+    "id": 35305,
+    "title": {
+      "rendered": "Maya Betti"
+    },
+    "content": {
+      "rendered": "<div class=\"profile-teaser\">\n<div class=\"et_pb_column et_pb_column_1_3 et_pb_column_8 et_pb_css_mix_blend_mode_passthrough\">\n<div class=\"et_pb_with_border et_pb_module et_pb_team_member et_pb_team_member_7 clearfix et_pb_text_align_center et_pb_bg_layout_light\">\n<div class=\"et_pb_team_member_description\">\n<div>\n<div class=\"RH5hzf RLS9Fe\">\n<div class=\"lrKTG\">\n<div class=\"o3Dpx\" role=\"list\">\n<div class=\"Qr7Oae\" role=\"listitem\">\n<div class=\"OxAavc NVbRL\" data-required=\"true\" data-item-id=\"1205896930\">\n<div class=\"Ih4Dzb\">\n<div class=\"q4tvle JqSWld yqQS1\" tabindex=\"0\" role=\"textbox\" aria-label=\"Staff Bio for Website! Tell us about yourself! Find examples here. (If you want to use your same bio as last year, please copy and paste it into the answer field)\" aria-disabled=\"true\">Maya Betti is a junior from Shoreview, Minn., majoring in English and political science. In her free time, Maya can be found reading memoirs of former NYT journalists, figuring out how to crochet, watching West Wing, and running long distances at unimaginably slow paces. After graduation, she hopes to attend law school or become a political journalist.</div>\n</div>\n</div>\n</div>\n</div>\n</div>\n</div>\n<div class=\"RH5hzf RLS9Fe\">\n<div class=\"lrKTG\">\n<div class=\"o3Dpx\" role=\"list\">\n<div class=\"Qr7Oae pQK2A\" role=\"listitem\">\n<div class=\"KkG9vf mBzBBe\" role=\"heading\">\n<div class=\"SajZGc RVEQke hN5qnf\"></div>\n</div>\n</div>\n</div>\n</div>\n</div>\n</div>\n</div>\n</div>\n</div>\n</div>\n",
+      "protected": false
+    },
+    "staff_year": [998],
+    "_embedded": {
+      "wp:featuredmedia": [
+        {
+          "id": 35306,
+          "source_url": "https://olafmessenger.com/wp-content/uploads/2025/09/DSC01482-2.jpg",
+          "media_details": {
+            "width": 1333,
+            "height": 2001
+          }
+        }
+      ],
+      "wp:term": [
+        [
+          {
+            "id": 390,
+            "name": "Maya Betti",
+            "taxonomy": "staff_name"
+          }
+        ],
+        [
+          {
+            "id": 998,
+            "name": "2025-2026",
+            "taxonomy": "staff_year"
+          }
+        ]
+      ]
+    }
+  },
+  {
+    "id": 34184,
+    "title": {
+      "rendered": "Maya Betti"
+    },
+    "content": {
+      "rendered": "<div class=\"et_pb_column et_pb_column_1_3 et_pb_column_8  et_pb_css_mix_blend_mode_passthrough\">\n<div class=\"et_pb_with_border et_pb_module et_pb_team_member et_pb_team_member_7 clearfix  et_pb_text_align_center et_pb_bg_layout_light\">\n<div class=\"et_pb_team_member_description\">\n<div>\n<div class=\"RH5hzf RLS9Fe\">\n<div class=\"lrKTG\">\n<div class=\"o3Dpx\" role=\"list\">\n<div class=\"Qr7Oae\" role=\"listitem\">\n<div class=\"OxAavc NVbRL\" data-required=\"true\" data-item-id=\"1205896930\">\n<div class=\"Ih4Dzb\">\n<div class=\"q4tvle JqSWld yqQS1\" tabindex=\"0\" role=\"textbox\" aria-label=\"Staff Bio for Website! Tell us about yourself! Find examples here. (If you want to use your same bio as last year, please copy and paste it into the answer field)\" aria-disabled=\"true\">Maya Betti is a sophomore from Shoreview, Minn. double majoring in English and political science. In her free time, Maya can be found reading memoirs of former NYT journalists, figuring out how to crochet, and watching West Wing. After graduation, she hopes to attend law school or become a political journalist.</div>\n</div>\n</div>\n</div>\n</div>\n</div>\n</div>\n<div class=\"RH5hzf RLS9Fe\">\n<div class=\"lrKTG\">\n<div class=\"o3Dpx\" role=\"list\">\n<div class=\"Qr7Oae pQK2A\" role=\"listitem\">\n<div class=\"KkG9vf mBzBBe\" role=\"heading\">\n<div class=\"SajZGc RVEQke hN5qnf\"></div>\n</div>\n</div>\n</div>\n</div>\n</div>\n</div>\n</div>\n</div>\n</div>\n<div class=\"et_pb_column et_pb_column_1_3 et_pb_column_9  et_pb_css_mix_blend_mode_passthrough et-last-child\">\n<div class=\"et_pb_with_border et_pb_module et_pb_team_member et_pb_team_member_8 clearfix  et_pb_text_align_center et_pb_bg_layout_light\"></div>\n</div>\n",
+      "protected": false
+    },
+    "staff_year": [41],
+    "_embedded": {
+      "wp:featuredmedia": [
+        {
+          "id": 34185,
+          "source_url": "https://olafmessenger.com/wp-content/uploads/2024/10/IMG_8445.jpg",
+          "media_details": {
+            "width": 2001,
+            "height": 1334
+          }
+        }
+      ],
+      "wp:term": [
+        [
+          {
+            "id": 390,
+            "name": "Maya Betti",
+            "taxonomy": "staff_name"
+          }
+        ],
+        [
+          {
+            "id": 41,
+            "name": "2024-2025",
+            "taxonomy": "staff_year"
+          }
+        ]
+      ]
+    }
+  }
+]

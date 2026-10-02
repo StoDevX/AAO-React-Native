@@ -18,8 +18,14 @@ const link = c.link as unknown as string
 const secondarySystemBackground = c.secondarySystemBackground as unknown as string
 const separator = c.separator as unknown as string
 
+/**
+ * The body text style's default size, where the library's own is 16, so running
+ * text in markdown matches the SwiftUI text elsewhere in the app.
+ */
+const BODY_SIZE = 17
+
 const baseMarkdownStyle: MarkdownStyle = {
-	paragraph: {color: label},
+	paragraph: {color: label, fontSize: BODY_SIZE},
 	h1: {color: label},
 	h2: {color: label},
 	h3: {color: label},
@@ -30,10 +36,11 @@ const baseMarkdownStyle: MarkdownStyle = {
 	em: {color: label},
 	blockquote: {
 		color: label,
+		fontSize: BODY_SIZE,
 		backgroundColor: secondarySystemBackground,
 		borderColor: separator,
 	},
-	list: {color: label},
+	list: {color: label, fontSize: BODY_SIZE},
 	code: {
 		color: label,
 		backgroundColor: secondarySystemBackground,

@@ -1,9 +1,14 @@
 import React from 'react'
+import {ScrollView} from 'react-native'
 import {render, screen, fireEvent} from '@testing-library/react-native'
 import moment from 'moment-timezone'
 import {describe, expect, jest, test} from '@jest/globals'
 
 import {DayPickerStrip} from '../day-picker-strip'
+
+// Loaded now rather than in the first test to render one: Jest's stand-in for
+// a ScrollView is slow enough to load to time a test out on a busy machine.
+void ScrollView
 
 // A Sunday, so "this week" runs 2026-08-23 (Sun) through 2026-08-29 (Sat).
 const NOW = moment('2026-08-23T12:00:00Z')

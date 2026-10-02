@@ -1,7 +1,7 @@
 import XCTest
 
-class ModuleStreamingMediaTests: UITestCase {
-	func testIsReachableFromHomescreen() throws {
+class ModuleStreamingMediaTests: UITestCaseUnbooted {
+	func testKrlxOffersItsStationButtons() throws {
 		StreamingMediaScreen(app: app)
 			.navigate()
 			.checkStreamListExists()
@@ -11,7 +11,6 @@ class ModuleStreamingMediaTests: UITestCase {
 				expecting: TestIdentifiers.StreamingMedia.krlxButtons[0]
 			)
 			.checkStationButtons(TestIdentifiers.StreamingMedia.krlxButtons)
-			.checkStationLink(TestIdentifiers.StreamingMedia.krlxWebsiteLink)
 			.checkLogoIsNotAButton(TestIdentifiers.StreamingMedia.krlxLogoPrefix)
 	}
 

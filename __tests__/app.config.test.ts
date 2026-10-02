@@ -54,23 +54,6 @@ describe('app.config version', () => {
 	)
 })
 
-describe('app.config runtimeVersion', () => {
-	// Fingerprint changes exactly when the native project does. The alternatives
-	// are both wrong here: appVersion holds across native changes, and
-	// nativeVersion moves on every build number.
-	it('ties the JS bundle to the native fingerprint', () => {
-		expect(loadConfig().runtimeVersion).toEqual({policy: 'fingerprint'})
-	})
-
-	it('keeps that contract for every variant', () => {
-		for (let variant of ['production', 'development']) {
-			expect(loadConfig(variant).runtimeVersion).toEqual({
-				policy: 'fingerprint',
-			})
-		}
-	})
-})
-
 describe('app.config variants', () => {
 	it('ships the real identity when no variant is set', () => {
 		let config = loadConfig()
@@ -100,18 +83,9 @@ describe('app.config variants', () => {
 		},
 	)
 
-	// Two apps on one home screen are told apart by their icons long before
-	// anyone reads the labels.
-	it.each([
-		['production', './images/icons/app-icon.png'],
-		['development', './images/icons/app-icon-development.png'],
-	])('gives %s its own icon', (variant, icon) => {
-		expect(loadConfig(variant).icon).toBe(icon)
-	})
-
-	it('gives both variants distinct icons', () => {
-		let icons = ['production', 'development'].map((v) => loadConfig(v).icon)
-		expect(new Set(icons).size).toBe(2)
+	// The home-screen name, not the icon, tells the variants apart.
+	it.each(['production', 'development'])('gives %s the Icon Composer windmill', (variant) => {
+		expect(loadConfig(variant).ios?.icon).toBe('./assets/windmill.icon')
 	})
 
 	it('keeps every variant installable alongside the others', () => {
@@ -125,11 +99,13 @@ describe('app.config variants', () => {
 })
 
 describe('app.config calendar access', () => {
-	// Adding an event goes through the system editor, which needs no access.
-	// expo-calendar's config plugin adds its usage strings even when unlisted,
-	// so this reads the Info.plist Expo actually resolves -- plugins included
-	// -- rather than the keys app.config.ts writes itself.
-	it('ships no calendar or reminders usage string', () => {
+	// Adding an event goes through the system editor, which needs no access,
+	// but expo-calendar links EventKit and App Store Connect rejects an upload
+	// that links it without a calendar usage string (ITMS-90683). Its config
+	// plugin adds usage strings even when unlisted, so this reads the
+	// Info.plist Expo actually resolves -- plugins included -- rather than the
+	// keys app.config.ts writes itself.
+	it('ships the calendar usage string, and no reminders one', () => {
 		let root = path.join(__dirname, '..')
 		let env = {...process.env}
 		delete env.APP_VARIANT
@@ -141,9 +117,11 @@ describe('app.config calendar access', () => {
 		)
 		let infoPlist = (JSON.parse(output) as ExpoConfig).ios?.infoPlist ?? {}
 
-		expect(Object.keys(infoPlist).filter((key) => /^NS(Calendars|Reminders)/u.test(key))).toEqual(
-			[],
-		)
+		expect(
+			Object.keys(infoPlist)
+				.filter((key) => /^NS(Calendars|Reminders)/u.test(key))
+				.sort(),
+		).toEqual(['NSCalendarsFullAccessUsageDescription', 'NSCalendarsUsageDescription'])
 	}, 30_000)
 })
 

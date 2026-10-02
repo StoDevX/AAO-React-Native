@@ -3,13 +3,13 @@ import {StyleSheet, type ImageResolvedAssetSource} from 'react-native'
 import {ContentUnavailableView, Host, List, VStack} from '@expo/ui/swift-ui'
 import {listStyle, refreshable} from '@expo/ui/swift-ui/modifiers'
 import * as c from '@frogpond/colors'
-import {LoadingView, NoticeView} from '@frogpond/notice'
+import {LoadErrorView, LoadingView} from '@frogpond/notice'
 import {openUrl} from '@frogpond/open-url'
 import type {StoryType} from './types'
 import {NewsRow} from './news-row'
 import {filterByCategory} from './lib/util'
 import {emptyStateProps} from './lib/empty-state'
-import type {NewsFeedQuery} from './lib/combine'
+import type {NewsFeedQuery} from './lib/feed'
 
 type Props = {
 	query: NewsFeedQuery
@@ -17,6 +17,8 @@ type Props = {
 	entries: StoryType[]
 	thumbnail: false | ImageResolvedAssetSource
 	selectedCategory: string | null
+	/** Opens a story in the app. Without it, a story opens its link in the browser. */
+	onPressStory?: (story: StoryType) => void
 }
 
 export const NewsList = (props: Props): React.ReactNode => {
@@ -35,13 +37,7 @@ export const NewsList = (props: Props): React.ReactNode => {
 	}
 
 	if (isError) {
-		return (
-			<NoticeView
-				buttonText="Try Again"
-				onPress={refetch}
-				text={`A problem occured while loading: ${error}`}
-			/>
-		)
+		return <LoadErrorView error={error} onRetry={refetch} />
 	}
 
 	return (
@@ -60,9 +56,13 @@ export const NewsList = (props: Props): React.ReactNode => {
 					) : (
 						filteredEntries.map((story, index) => (
 							<NewsRow
-								key={story.title}
+								// A title can repeat, as a weekly column's does; a story's link is its own.
+								key={story.link ?? story.title}
+								destination={props.onPressStory ? 'push' : 'external'}
 								isLast={index === filteredEntries.length - 1}
-								onPress={(url: string) => openUrl(url)}
+								onPress={() =>
+									props.onPressStory ? props.onPressStory(story) : story.link && openUrl(story.link)
+								}
 								story={story}
 								thumbnail={props.thumbnail}
 							/>

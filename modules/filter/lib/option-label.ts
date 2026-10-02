@@ -1,4 +1,4 @@
-import type {ListItemSpecType} from '../types'
+import type {ListFilterOption} from '../types'
 
 /**
  * The text a list filter's option row draws.
@@ -12,7 +12,7 @@ import type {ListItemSpecType} from '../types'
  * row drawing `BIO` is worse than one drawing Biology, but a row drawing
  * nothing cannot be chosen at all.
  */
-export function optionLabel(option: ListItemSpecType, displayTitle: boolean): string {
+export function optionLabel(option: ListFilterOption, displayTitle: boolean): string {
 	if (displayTitle) {
 		return option.title
 	}

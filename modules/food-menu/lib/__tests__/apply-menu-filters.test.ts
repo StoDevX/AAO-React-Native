@@ -2,7 +2,7 @@ import {describe, expect, test} from '@jest/globals'
 
 import {applyMenuFilters, meetsDietaryMarks} from '../apply-menu-filters'
 import type {MenuItemType} from '../../types'
-import type {FilterType, ListType} from '@frogpond/filter/types'
+import type {Filter, ListFilter} from '@frogpond/filter/types'
 
 function item(
 	corIcon: Record<string, string>,
@@ -25,13 +25,12 @@ function item(
 		sub_station: '',
 		sub_station_id: '',
 		sub_station_order: '',
-		tier3: false,
 		zero_entree: '',
 		...overrides,
 	}
 }
 
-function dietaryFilter(titles: string[], enabled = true): ListType<MenuItemType> {
+function dietaryFilter(titles: string[], enabled = true): ListFilter<MenuItemType> {
 	return {
 		type: 'list',
 		key: 'dietary-restrictions',
@@ -94,16 +93,48 @@ describe('applyMenuFilters', () => {
 		expect(applyMenuFilters([off], item(VEGETARIAN))).toBe(true)
 	})
 
-	// Everything that is not the dietary list keeps the shared behaviour.
 	test('still applies the other filters', () => {
-		let specials: FilterType<MenuItemType> = {
-			type: 'toggle',
-			key: 'specials',
+		let stations: Filter<MenuItemType> = {
+			type: 'list',
+			key: 'stations',
 			enabled: true,
-			spec: {title: 'Specials Only', label: 'Only Show Specials'},
-			apply: {key: 'special'},
+			spec: {
+				title: 'Stations',
+				options: [],
+				selected: [{title: 'Grill'}],
+				mode: 'OR',
+				displayTitle: true,
+			},
+			apply: {key: 'station'},
 		}
 
+		expect(applyMenuFilters([stations], item(VEGAN, {station: 'Grill'}))).toBe(true)
+		expect(applyMenuFilters([stations], item(VEGAN, {station: 'Home'}))).toBe(false)
+	})
+})
+
+describe('applyMenuFilters with the specials toggle', () => {
+	let specials: Filter<MenuItemType> = {
+		type: 'toggle',
+		key: 'specials',
+		enabled: true,
+		spec: {title: 'Specials Only', label: 'Only Show Specials'},
+		apply: {key: 'special'},
+	}
+
+	test('keeps the specials', () => {
+		expect(applyMenuFilters([specials], item(VEGAN, {special: true, tier: 1}))).toBe(true)
+	})
+
+	test('keeps the additional favorites', () => {
+		expect(applyMenuFilters([specials], item(VEGAN, {special: false, tier: 2}))).toBe(true)
+	})
+
+	test('drops the condiments and extras', () => {
+		expect(applyMenuFilters([specials], item(VEGAN, {special: false, tier: 3}))).toBe(false)
+	})
+
+	test('goes by the special mark on an item without a tier', () => {
 		expect(applyMenuFilters([specials], item(VEGAN, {special: true}))).toBe(true)
 		expect(applyMenuFilters([specials], item(VEGAN, {special: false}))).toBe(false)
 	})

@@ -1,12 +1,13 @@
 import {carletonClient, client} from '@frogpond/api'
 import {isUITesting} from '@frogpond/launch-arguments'
 import {queryOptions, useQuery, UseQueryResult} from '@tanstack/react-query'
-import {groupBy} from 'lodash'
 import {useAppSelector} from '../../redux/hooks'
 import {favoriteNamesForCampus, selectFavoriteBuildings} from '../../redux/parts/buildings'
 import bundledBuildings from '../../../docs/building-hours.json'
 import {BuildingType, Campus} from './types'
+import {FAVORITES_TITLE} from './lib/listed-sections'
 import {useForceBundledData} from './dev/data-source-store'
+import {groupBy} from '@frogpond/collections'
 
 /**
  * Narrows a route's `?campus=` param to a known `Campus`, falling back to
@@ -79,7 +80,7 @@ export function useGroupedBuildings(
 		select: (buildings) => {
 			let favoriteNames = new Set(favoriteNamesForCampus(favoriteBuildings, campus))
 			let favoritesGroup = {
-				title: 'Favorites',
+				title: FAVORITES_TITLE,
 				data: buildings.filter((b) => favoriteNames.has(b.name)),
 			}
 

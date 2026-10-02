@@ -8,9 +8,11 @@ import xcode from 'xcode'
 import type {PBXNativeTarget, XcodeProject} from 'xcode'
 
 import {
+	addTestPlanToScheme,
 	addTestableToScheme,
 	ensureUITestTarget,
 	patchPodfileForUITests,
+	testPlanFor,
 } from './with-xcuitest-target.ts'
 
 const TARGET = 'AllAboutOlafUITests'
@@ -230,5 +232,59 @@ describe('addTestableToScheme', () => {
 
 	it('throws when there is no Testables element', () => {
 		assert.throws(() => addTestableToScheme('<Scheme/>', options), /Testables/u)
+	})
+})
+
+describe('testPlanFor', () => {
+	const options = {
+		name: TARGET,
+		identifier: 'ABC123',
+		container: 'AllAboutOlaf.xcodeproj',
+	}
+
+	it('runs the UITests bundle', () => {
+		let plan = JSON.parse(testPlanFor(options))
+		assert.deepEqual(plan.testTargets, [
+			{
+				target: {
+					containerPath: 'container:AllAboutOlaf.xcodeproj',
+					identifier: 'ABC123',
+					name: TARGET,
+				},
+			},
+		])
+	})
+
+	it('writes the same plan on every prebuild', () => {
+		assert.equal(testPlanFor(options), testPlanFor(options))
+	})
+})
+
+describe('addTestPlanToScheme', () => {
+	const SCHEME = `<?xml version="1.0" encoding="UTF-8"?>
+<Scheme LastUpgradeVersion = "1330" version = "1.3">
+   <TestAction
+      buildConfiguration = "Debug">
+      <Testables>
+      </Testables>
+   </TestAction>
+</Scheme>
+`
+
+	it('makes the plan the scheme default', () => {
+		let result = addTestPlanToScheme(SCHEME, 'AllAboutOlaf.xctestplan')
+		assert.match(
+			result,
+			/<TestPlans>\s*<TestPlanReference\s+reference = "container:AllAboutOlaf.xctestplan"\s+default = "YES">/u,
+		)
+	})
+
+	it('is idempotent', () => {
+		let once = addTestPlanToScheme(SCHEME, 'AllAboutOlaf.xctestplan')
+		assert.equal(addTestPlanToScheme(once, 'AllAboutOlaf.xctestplan'), once)
+	})
+
+	it('throws when there is no Testables element', () => {
+		assert.throws(() => addTestPlanToScheme('<Scheme/>', 'AllAboutOlaf.xctestplan'), /Testables/u)
 	})
 })

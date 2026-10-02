@@ -1,7 +1,10 @@
 name: Print Center
 image: print
 category: Mail and Packages
+kind: office
 building: bc
+links:
+  - {title: 'Print Center', url: 'https://wp.stolaf.edu/printcenter/'}
 
 schedule:
   - title: Hours

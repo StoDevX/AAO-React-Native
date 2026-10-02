@@ -11,8 +11,6 @@ import type {
 	ProcessedMealType,
 	StationMenuType,
 } from './types'
-import sample from 'lodash/sample'
-import {reduce} from 'lodash'
 import {useMomentTimer} from '@frogpond/timer'
 import {bonAppCafeOptions, bonAppMenuOptions, prepareFood} from './query'
 import {findCafeMessage} from './lib/cafe-message'
@@ -25,6 +23,7 @@ import {formatDate, formatWeekday} from '@frogpond/time-format'
 import type {MealHeaderState} from '@frogpond/food-menu'
 import {usePublishMenuHeader} from './menu-header'
 import {OFFLINE_MESSAGE, menuView} from './lib/menu-view'
+import {sample} from '@frogpond/collections'
 
 const BONAPP_HTML_ERROR_CODE = 'bonapp-html'
 
@@ -65,7 +64,7 @@ const groupByStation = (
 function buildCustomStationMenu(foodItems: MenuItemContainerType): Array<StationMenuType> {
 	// go over the list of all food items, turning it into a mapping
 	// of {StationName: Array<FoodItemId>}
-	let idsGroupedByStation = reduce(foodItems, groupByStation, {})
+	let idsGroupedByStation = Object.values(foodItems).reduce(groupByStation, {})
 
 	// then we make our own StationMenus list
 	let paired: Array<[string, Array<string>]> = Object.entries(idsGroupedByStation)
@@ -273,7 +272,7 @@ export function BonAppHostedMenu(props: Props): React.ReactNode {
 	let onItemPress = React.useCallback(
 		(item: MenuItemType) => {
 			router.navigate({
-				pathname: '/MenuItemDetail',
+				pathname: '/menu-item-detail',
 				params:
 					typeof props.cafe === 'string'
 						? {source: 'bonapp', cafe: props.cafe, day, itemId: item.id}
@@ -293,16 +292,23 @@ export function BonAppHostedMenu(props: Props): React.ReactNode {
 	}
 
 	if (menu.kind === 'offline') {
-		return <NoticeView text={OFFLINE_MESSAGE} />
+		return <NoticeView description={OFFLINE_MESSAGE} systemImage="wifi.slash" title="Offline" />
 	}
 
 	if (menu.kind === 'error') {
 		let errorMessage = getErrorMessage(menu.error)
-		let msg = `Error: ${errorMessage}`
-		if (errorMessage === BONAPP_HTML_ERROR_CODE) {
-			msg = 'Something between you and BonApp is having problems. Try again in a minute or two?'
-		}
-		return <NoticeView buttonText="Again!" onPress={menuReload} text={msg} />
+		let description =
+			errorMessage === BONAPP_HTML_ERROR_CODE
+				? 'Something between you and BonApp is having problems. Try again in a minute or two?'
+				: errorMessage
+		return (
+			<NoticeView
+				action={{label: 'Try Again', onPress: menuReload}}
+				description={description}
+				systemImage="exclamationmark.triangle"
+				title="Couldn’t Load the Menu"
+			/>
+		)
 	}
 
 	if (isCafeLoading) {
@@ -312,15 +318,21 @@ export function BonAppHostedMenu(props: Props): React.ReactNode {
 	if (isUnknownCafe) {
 		return (
 			<NoticeView
-				text={`There is no cafe with id #${
-					typeof props.cafe === 'string' ? props.cafe : props.cafe.id
-				}`}
+				description={`There is no café with ID #${typeof props.cafe === 'string' ? props.cafe : props.cafe.id}.`}
+				systemImage="fork.knife"
+				title="Café Not Found"
 			/>
 		)
 	}
 
 	if (hasNoDays) {
-		return <NoticeView text={`${props.name} has not posted a menu for today.`} />
+		return (
+			<NoticeView
+				description={`${props.name} has not posted a menu for today.`}
+				systemImage="fork.knife"
+				title="No Menu Today"
+			/>
+		)
 	}
 
 	// We grab the "today" info from here because BonApp returns special

@@ -10,6 +10,7 @@ it('checks a list of schedules to see if any are open', () => {
 	let building: BuildingType = {
 		name: 'building',
 		category: '???',
+		kind: 'building',
 		breakSchedule: undefined,
 		schedule: [
 			{
@@ -31,6 +32,7 @@ it('handles multiple internal schedules for the same timeframe', () => {
 	let building: BuildingType = {
 		name: 'building',
 		category: '???',
+		kind: 'building',
 		breakSchedule: undefined,
 		schedule: [
 			{
@@ -51,6 +53,7 @@ it('handles multiple named schedules for the same timeframe', () => {
 	let building: BuildingType = {
 		name: 'building',
 		category: '???',
+		kind: 'building',
 		breakSchedule: undefined,
 		schedule: [
 			{
@@ -75,6 +78,7 @@ it('returns false if none are available for this day', () => {
 	let building: BuildingType = {
 		name: 'building',
 		category: '???',
+		kind: 'building',
 		breakSchedule: undefined,
 		schedule: [
 			{
@@ -95,6 +99,7 @@ it('returns false if none are open', () => {
 	let building: BuildingType = {
 		name: 'building',
 		category: '???',
+		kind: 'building',
 		breakSchedule: undefined,
 		schedule: [
 			{
@@ -115,6 +120,7 @@ describe('a schedule running past midnight', () => {
 	let building: BuildingType = {
 		name: 'building',
 		category: '???',
+		kind: 'building',
 		breakSchedule: undefined,
 		schedule: [
 			{
@@ -142,6 +148,7 @@ describe('the chapel badge', () => {
 	let postOffice: BuildingType = {
 		name: 'Post Office',
 		category: '???',
+		kind: 'building',
 		breakSchedule: undefined,
 		schedule: [
 			{
@@ -156,6 +163,7 @@ describe('the chapel badge', () => {
 	let healthServices: BuildingType = {
 		name: 'Health Services',
 		category: '???',
+		kind: 'building',
 		breakSchedule: undefined,
 		schedule: [
 			{
@@ -197,6 +205,7 @@ describe('a set that is not physically open', () => {
 	const office: BuildingType = {
 		name: 'Office',
 		category: 'Health and Wellness',
+		kind: 'building',
 		breakSchedule: undefined,
 		schedule: [
 			{title: 'Office', hours: [{days: ['Tu'], from: '7:00pm', to: '8:00pm'}]},

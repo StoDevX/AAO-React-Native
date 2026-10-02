@@ -9,10 +9,11 @@
     "test": "jest"
   },
   "dependencies": {
-    "@frogpond/button": "workspace:*",
+    "@expo/ui": "57.0.14",
     "@frogpond/colors": "workspace:*"
   },
   "devDependencies": {
+    "@jest/globals": "30.5.2",
     "@testing-library/react-native": "14.0.1"
   },
   "peerDependencies": {

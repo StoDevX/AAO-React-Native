@@ -3,7 +3,7 @@ import {categoriesFrom} from '../categories-from'
 import type {BuildingType} from '../../types'
 
 function building(category: string): BuildingType {
-	return {name: category, category, schedule: []}
+	return {name: category, category, kind: 'building', schedule: []}
 }
 
 describe('categoriesFrom', () => {

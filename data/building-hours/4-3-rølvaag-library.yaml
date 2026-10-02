@@ -1,13 +1,16 @@
 name: Rølvaag Library
 image: rolvaag-library
 category: Libraries
+kind: building
 building: rml
+links:
+  - {title: 'Library & IT Services hours', url: 'https://wp.stolaf.edu/lits/about/building-hours/'}
 
 schedule:
   - title: Hours
     hours:
       - {days: [Mo, Tu, We, Th], from: '7:45am', to: '12:00am'}
-      - {days: [Fr], from: '7:45am', to: '9:00pm'}
+      - {days: [Fr], from: '7:45am', to: '7:00pm'}
       - {days: [Sa], from: '9:00am', to: '9:00pm'}
       - {days: [Su], from: '12:00pm', to: '12:00am'}
 

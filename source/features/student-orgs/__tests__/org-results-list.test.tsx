@@ -6,15 +6,6 @@ import {OrgResultsList} from '../org-results-list'
 import type {OrgSection} from '../search'
 import type {StudentOrgType} from '../types'
 
-jest.mock('@expo/ui/swift-ui', () => {
-	// oxlint-disable-next-line typescript/no-require-imports
-	return require('../../../testing/expo-ui-mock') as typeof import('../../../testing/expo-ui-mock')
-})
-jest.mock('@expo/ui/swift-ui/modifiers', () => {
-	// oxlint-disable-next-line typescript/no-require-imports
-	return require('../../../testing/expo-ui-mock') as typeof import('../../../testing/expo-ui-mock')
-})
-
 function makeOrg(overrides: Partial<StudentOrgType> = {}): StudentOrgType {
 	return {
 		meetings: '',

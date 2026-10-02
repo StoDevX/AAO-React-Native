@@ -1,9 +1,7 @@
 import * as React from 'react'
 import {StyleSheet, Text, View, Platform, Pressable} from 'react-native'
 import {ListSeparator, ListRow} from '@frogpond/lists'
-import {NoticeView} from '@frogpond/notice'
 import * as c from '@frogpond/colors'
-import {noop} from 'lodash'
 
 type Props = {
 	actionLabel?: string
@@ -14,6 +12,12 @@ type Props = {
 	items: string[]
 	title: string
 }
+
+/**
+ * A long press that does nothing, which a Pressable needs before its selectable
+ * text can be long-pressed to copy.
+ */
+const ALLOW_TEXT_SELECTION = (): void => undefined
 
 function RecentItemsList(props: Props): React.ReactNode {
 	let {items, actionLabel, onAction, title, emptyHeader, emptyText} = props
@@ -32,22 +36,16 @@ function RecentItemsList(props: Props): React.ReactNode {
 			</View>
 
 			{items.length === 0 ? (
-				<NoticeView
-					header={emptyHeader}
-					style={styles.notice}
-					text={emptyText}
-					textStyle={styles.noticeText}
-				/>
+				<View style={styles.notice}>
+					<Text style={styles.noticeHeader}>{emptyHeader}</Text>
+					<Text style={styles.noticeText}>{emptyText}</Text>
+				</View>
 			) : (
 				items.map((item, i) => (
 					// The key belongs on what `map` returns -- on the Pressable
 					// inside, React never saw it, and every recent search warned.
 					<React.Fragment key={item}>
-						<Pressable
-							// adding long press allows for copy text when selectable is true
-							onLongPress={noop}
-							onPress={() => props.onItemPress(item)}
-						>
+						<Pressable onLongPress={ALLOW_TEXT_SELECTION} onPress={() => props.onItemPress(item)}>
 							<ListRow arrowPosition="none">
 								<Text numberOfLines={1} selectable={true} style={[foreground, styles.listItem]}>
 									{item}
@@ -72,11 +70,22 @@ const styles = StyleSheet.create({
 		fontSize: 16,
 	},
 	notice: {
+		alignItems: 'center',
 		paddingTop: 30,
 		paddingBottom: 35,
+		paddingHorizontal: 30,
+	},
+	noticeHeader: {
+		marginTop: 8,
+		marginBottom: 4,
+		fontSize: 20,
+		fontWeight: '600',
+		color: c.label,
+		textAlign: 'center',
 	},
 	noticeText: {
 		color: c.secondaryLabel,
+		textAlign: 'center',
 	},
 	rowFlex: {
 		flexDirection: 'row',

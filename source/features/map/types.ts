@@ -26,9 +26,12 @@ export type Category =
 	| 'residence-hall'
 	| 'student-center'
 	| 'student-housing'
+	| 'trail'
 	| 'visitor-center'
 	| 'visitor-information'
 	| 'visitor-parking'
+	| 'water'
+	| 'wellness-walk'
 
 // Stored as a string of the form "Label <https://example.com>".
 export type LabelLinkString = string
@@ -50,7 +53,9 @@ export type Building = {
 	description: string
 	floors: Array<LabelLinkString>
 	name: string
-	nickname: string
+	/** St. Olaf: usually equal to `abbreviation`. An honor house renamed each
+	 * year for its residents carries a list of names. */
+	nickname: string | Array<string>
 	offices: Array<LabelLinkString>
 	photos?: Array<string>
 	/** St. Olaf-only: the building's short code, e.g. "AB" for Flaten Art Barn. */
@@ -69,6 +74,23 @@ export type Building = {
 	 * itself, or is in none. Carleton's feed carries no parents at all.
 	 */
 	parent?: string | null
+	/**
+	 * A trail's length in metres, from its geometry. Null or absent for
+	 * anything that is not a line; Carleton's feed has no such field.
+	 */
+	length?: number | null
+	/** The rules that apply here, one sentence each. St. Olaf's Natural Lands only. */
+	rules?: Array<string>
+	/**
+	 * The Wellness Walk along this place, if the Natural Lands publishes one:
+	 * its time range in minutes, and its surface and slope in a sentence.
+	 */
+	walk?: {minutes: [number, number]; accessibility: string} | null
+	/**
+	 * The pages the About text is drawn from, for the card's Sources line.
+	 * Absent from Carleton's feed.
+	 */
+	citations?: Array<LabelLink> | null
 }
 
 export type Longitude = number
@@ -94,8 +116,20 @@ export type Point = {
 	type: 'Point'
 }
 
+/** A Natural Lands trail's course. */
+export type LineString = {
+	coordinates: Array<Coordinate>
+	type: 'LineString'
+}
+
+/** A trail in several parts under one name. */
+export type MultiLineString = {
+	coordinates: Array<Array<Coordinate>>
+	type: 'MultiLineString'
+}
+
 export type GeometryCollection = {
-	geometries: Array<Polygon | Point | MultiPolygon>
+	geometries: Array<Polygon | Point | MultiPolygon | LineString | MultiLineString>
 	type: 'GeometryCollection'
 }
 

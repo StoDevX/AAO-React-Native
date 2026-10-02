@@ -1,0 +1,592 @@
+import {readFileSync} from 'node:fs'
+import {join} from 'node:path'
+import {afterEach, describe, expect, jest, test} from '@jest/globals'
+import {fetchManifest, fetchSourceBody, SourceFetchError, type Jrd} from '@frogpond/data-sources'
+import posts from './fixtures/posts.json'
+import categories from './fixtures/categories.json'
+import profiles from './fixtures/profiles-390.json'
+import varietyPosts from './fixtures/variety-posts.json'
+import crosswordPlaylist from './fixtures/crossword-playlist-posts.json'
+import springPosts from './fixtures/issue-posts.json'
+import {parseLightPosts} from '../lib/issues'
+import {parseMessCategories, parseMessPosts} from '../lib/posts'
+import {QueryClient, onlineManager} from '@tanstack/react-query'
+import {queryClient} from '../../../init/tanstack-query'
+import {
+	MissingMessStoryError,
+	messCategoryOptions,
+	messFeedOptions,
+	messPlaylistPageOptions,
+	messSeriesOptions,
+	messStoryOptions,
+	staffProfileOptions,
+	messIssueOptions,
+	messIssuesOptions,
+} from '../query'
+import {messKeys} from '../lib/keys'
+import type {LightPost, MessStory, SpotifyRef} from '../types'
+
+jest.mock('@frogpond/data-sources', () => ({
+	...(jest.requireActual('@frogpond/data-sources') as object),
+	fetchManifest: jest.fn(),
+	fetchSourceBody: jest.fn(),
+}))
+
+const mockManifest = fetchManifest as jest.Mock<() => Promise<Jrd>>
+const mockBody = fetchSourceBody as jest.Mock<typeof fetchSourceBody>
+
+function run<T>(options: {queryFn?: unknown}): Promise<T> {
+	let queryFn = options.queryFn as (context: {
+		signal: AbortSignal
+		queryKey: unknown
+		client: QueryClient
+	}) => Promise<T>
+	return queryFn({signal: new AbortController().signal, queryKey: [], client: new QueryClient()})
+}
+
+/** Runs an infinite query's page fetch for one page. */
+function runPage<T>(options: {queryFn?: unknown}, pageParam: number): Promise<T> {
+	let queryFn = options.queryFn as (context: {signal: AbortSignal; pageParam: number}) => Promise<T>
+	return queryFn({signal: new AbortController().signal, pageParam})
+}
+
+/** This spring's posts as the issue list parses them. */
+const spring = parseLightPosts(springPosts, parseMessCategories(categories))
+
+afterEach(() => {
+	jest.clearAllMocks()
+	// The queries share the app's client, so a cached category tree would leak into the next test.
+	queryClient.clear()
+})
+
+/** The hrefs `fetchSourceBody` was asked for, in order. */
+function fetchedHrefs(): string[] {
+	return mockBody.mock.calls.map((call) => call[0])
+}
+
+/** Answers the categories URL with the fixture tree, and any other URL with `answer(href)`. */
+function serve(answer: (href: string) => unknown): void {
+	mockManifest.mockResolvedValue({links: []} as unknown as Jrd)
+	mockBody.mockImplementation((href) =>
+		Promise.resolve(href.includes('/categories') ? categories : answer(href)),
+	)
+}
+
+type RawPost = (typeof varietyPosts)[number]
+
+/** A fixture Variety post, found by id. */
+function rawPost(id: number): RawPost {
+	let post = varietyPosts.find((p) => p.id === id)
+	if (!post) throw new Error(`no fixture post ${id}`)
+	return post
+}
+
+/** A copy of a fixture post under another id and title. */
+function retitled(id: number, from: number, title: string): RawPost {
+	let post = rawPost(from)
+	return {...post, id, title: {...post.title, rendered: title}}
+}
+
+/** A fixture Variety post as the app parses it. */
+function story(id: number): MessStory {
+	let [parsed] = parseMessPosts([rawPost(id)], parseMessCategories(categories))
+	if (!parsed) throw new Error(`fixture post ${id} did not parse`)
+	return parsed
+}
+
+describe('messFeedOptions', () => {
+	// The server's manifest still lists the Mess as ccc-server feed-items. The
+	// Mess screen accepts only WordPress, so it falls back to the bundled entry.
+	test('reads the WordPress feed even when the live manifest lists feed-items', async () => {
+		mockManifest.mockResolvedValue({
+			links: [
+				{
+					rel: 'https://frogpond.tech/rel/news',
+					href: 'news/named/mess',
+					type: 'application/vnd.frogpond.feed-items+json',
+					titles: {und: 'The Olaf Messenger'},
+					properties: {'https://frogpond.tech/ns/id': 'mess'},
+				},
+			],
+		} as unknown as Jrd)
+		mockBody.mockImplementation((href) =>
+			Promise.resolve(href.includes('/categories') ? categories : posts),
+		)
+
+		let stories = await runPage<Array<{id: number}>>(messFeedOptions, 1)
+
+		expect(stories.map((s) => s.id)).toStrictEqual([36859, 36911, 36885, 36904, 36843])
+		let hrefs = mockBody.mock.calls.map((call) => call[0])
+		expect(hrefs).toContain('https://olafmessenger.com/wp-json/wp/v2/posts?per_page=50&_embed=true')
+		expect(hrefs).toContain(
+			'https://olafmessenger.com/wp-json/wp/v2/categories?per_page=100&_fields=id,name,parent',
+		)
+	})
+
+	test('fails when the feed cannot be fetched', async () => {
+		mockManifest.mockResolvedValue({links: []} as unknown as Jrd)
+		mockBody.mockRejectedValue(new Error('offline'))
+		await expect(runPage(messFeedOptions, 1)).rejects.toThrow('offline')
+	})
+
+	test('asks for a later page by number', async () => {
+		serve(() => posts)
+
+		await runPage(messFeedOptions, 3)
+
+		expect(fetchedHrefs()).toContain(
+			'https://olafmessenger.com/wp-json/wp/v2/posts?per_page=50&_embed=true&page=3',
+		)
+	})
+
+	test("reads WordPress's answer for a page past the last as an empty last page", async () => {
+		serve(() => Promise.reject(new SourceFetchError('Olaf Messenger fetch failed: 400', 400)))
+
+		let page = await runPage<MessStory[]>(messFeedOptions, 7)
+
+		expect(page).toStrictEqual([])
+		expect(messFeedOptions.getNextPageParam(page, [page], 7, [7])).toBeUndefined()
+	})
+
+	// The manifest sets the feed's page size, so the first page stands for it.
+	test('asks for another page after one as long as the first, and none after a shorter one', () => {
+		let stories = parseMessPosts(posts, parseMessCategories(categories))
+		let short = stories.slice(0, 2)
+		expect(messFeedOptions.getNextPageParam(stories, [stories], 1, [1])).toBe(2)
+		expect(messFeedOptions.getNextPageParam(stories, [stories, stories], 2, [1, 2])).toBe(3)
+		expect(messFeedOptions.getNextPageParam(short, [stories, short], 2, [1, 2])).toBeUndefined()
+	})
+
+	test('saves only its first page for the next launch', () => {
+		expect(messFeedOptions.meta).toStrictEqual({persistPages: 1})
+	})
+})
+
+describe('staffProfileOptions', () => {
+	test('asks for that writer and keeps the newest year', async () => {
+		mockManifest.mockResolvedValue({links: []} as unknown as Jrd)
+		mockBody.mockResolvedValue(profiles)
+
+		let profile = await run<{year: string} | null>(staffProfileOptions(390))
+
+		expect(profile?.year).toBe('2025-2026')
+		expect(mockBody.mock.calls[0]?.[0]).toBe(
+			'https://olafmessenger.com/wp-json/wp/v2/staff_profile?staff_name=390&_embed=true',
+		)
+	})
+
+	test('gives null for a writer with no profile', async () => {
+		mockManifest.mockResolvedValue({links: []} as unknown as Jrd)
+		mockBody.mockResolvedValue([])
+		expect(await run(staffProfileOptions(1))).toBeNull()
+	})
+})
+
+describe('messStoryOptions', () => {
+	test('fetches the one post and parses it', async () => {
+		serve(() => posts[0])
+
+		let fetched = await run<MessStory>(messStoryOptions(36859))
+
+		expect(fetched.id).toBe(36859)
+		expect(fetched.section).toBe('News')
+		expect(fetchedHrefs()).toContain(
+			'https://olafmessenger.com/wp-json/wp/v2/posts/36859?_embed=true',
+		)
+	})
+
+	test('retries a failed fetch, but not a post that holds no story', () => {
+		let retry = messStoryOptions(1).retry as (count: number, error: Error) => boolean
+		expect(retry(0, new Error('offline'))).toBe(true)
+		expect(retry(3, new Error('offline'))).toBe(false)
+		expect(retry(0, new MissingMessStoryError(1))).toBe(false)
+	})
+
+	test('fails when the post parses to no story', async () => {
+		serve(() => [])
+		await expect(run(messStoryOptions(1))).rejects.toThrow('no Mess story 1')
+	})
+})
+
+describe('messCategoryOptions', () => {
+	test("fetches the section's newest posts", async () => {
+		serve(() => varietyPosts)
+
+		let stories = await runPage<MessStory[]>(messCategoryOptions(23), 1)
+
+		expect(stories.map((s) => s.id)).toStrictEqual(varietyPosts.map((p) => p.id))
+		expect(fetchedHrefs()).toContain(
+			'https://olafmessenger.com/wp-json/wp/v2/posts?categories=23&per_page=30&_embed=true',
+		)
+	})
+
+	test('shares one category tree with the feed', async () => {
+		serve((href) => (href.includes('categories=23') ? varietyPosts : posts))
+
+		await runPage(messFeedOptions, 1)
+		await runPage(messCategoryOptions(23), 1)
+
+		expect(fetchedHrefs().filter((href) => href.includes('/categories'))).toHaveLength(1)
+	})
+
+	test("asks for a later page of the section's posts by number", async () => {
+		serve(() => varietyPosts)
+
+		await runPage(messCategoryOptions(23), 2)
+
+		expect(fetchedHrefs()).toContain(
+			'https://olafmessenger.com/wp-json/wp/v2/posts?categories=23&per_page=30&_embed=true&page=2',
+		)
+	})
+
+	test("reads WordPress's answer for a page past the last as an empty last page", async () => {
+		serve(() => Promise.reject(new SourceFetchError('Olaf Messenger fetch failed: 400', 400)))
+
+		expect(await runPage(messCategoryOptions(23), 4)).toStrictEqual([])
+	})
+
+	test('asks for another page after a full one of 30, and none after a short one', () => {
+		let options = messCategoryOptions(23)
+		let full = Array.from({length: 30}, () => story(36819))
+		let short = full.slice(0, 11)
+		expect(options.getNextPageParam(full, [full], 1, [1])).toBe(2)
+		expect(options.getNextPageParam(short, [full, short], 2, [1, 2])).toBeUndefined()
+	})
+
+	test('saves only its first page for the next launch', () => {
+		expect(messCategoryOptions(23).meta).toStrictEqual({persistPages: 1})
+	})
+})
+
+describe('messSeriesOptions', () => {
+	test('gathers the other episodes of a titled series', async () => {
+		serve(() => [
+			rawPost(36819),
+			retitled(1, 36819, 'Mouse friends episode 2: Mary! Gold!'),
+			rawPost(34645),
+			retitled(2, 34645, 'Mouse Friends Episode One: “I’m Lucky to Bicker With You”'),
+		])
+
+		let series = await run<{title: string; stories: MessStory[]}>(messSeriesOptions(story(36819)))
+
+		// Spelled as the newest other episode spells it.
+		expect(series.title).toBe('More Mouse friends')
+		expect(series.stories.map((s) => s.id)).toStrictEqual([1, 2])
+		expect(fetchedHrefs()).toContain(
+			'https://olafmessenger.com/wp-json/wp/v2/posts?categories=63&per_page=30&_embed=true',
+		)
+	})
+
+	test('reads the episodes from the column list’s cache', async () => {
+		serve(() => [])
+		let episode = parseMessPosts(
+			[retitled(1, 36819, 'Mouse friends episode 2: Mary! Gold!')],
+			parseMessCategories(categories),
+		)
+		queryClient.setQueryData(messKeys.category(63), {pages: [episode], pageParams: [1]})
+
+		let series = await run<{title: string; stories: MessStory[]}>(messSeriesOptions(story(36819)))
+
+		expect(series.stories.map((s) => s.id)).toStrictEqual([1])
+		expect(fetchedHrefs().some((href) => href.includes('/posts'))).toBe(false)
+	})
+
+	test('heads the row with the newest episode’s spelling of the series', async () => {
+		serve(() => [
+			retitled(1, 36819, 'Mouse Friends episode 3: cheese'),
+			retitled(2, 36819, 'Mouse friends episode 2: Mary! Gold!'),
+		])
+
+		let series = await run<{title: string; stories: MessStory[]}>(
+			messSeriesOptions({...story(36819), title: 'mouse friends episode 1: hello'}),
+		)
+
+		expect(series.title).toBe('More Mouse Friends')
+	})
+
+	test('shows at most six other episodes', async () => {
+		serve(() =>
+			Array.from({length: 8}, (_, index) =>
+				retitled(index + 1, 36819, `Mouse Friends episode ${index + 1}: more`),
+			),
+		)
+
+		let series = await run<{title: string; stories: MessStory[]}>(messSeriesOptions(story(36819)))
+
+		expect(series.stories.map((s) => s.id)).toStrictEqual([1, 2, 3, 4, 5, 6])
+	})
+
+	test('fails when the column cannot be fetched', async () => {
+		mockManifest.mockResolvedValue({links: []} as unknown as Jrd)
+		mockBody.mockImplementation((href) =>
+			href.includes('/categories')
+				? Promise.resolve(categories)
+				: Promise.reject(new Error('offline')),
+		)
+
+		await expect(run(messSeriesOptions(story(36819)))).rejects.toThrow('offline')
+	})
+
+	test("falls back to the writer's other work when a series has no other episodes", async () => {
+		serve((href) => (href.includes('staff_name=') ? [rawPost(34645)] : [rawPost(36819)]))
+
+		let series = await run<{title: string; stories: MessStory[]}>(messSeriesOptions(story(36819)))
+
+		expect(series.title).toBe('More by Juliet Stouffer')
+		expect(series.stories.map((s) => s.id)).toStrictEqual([34645])
+	})
+
+	test("gives a story without a series its writer's other work in that column", async () => {
+		serve(() => [rawPost(34645), rawPost(36819)])
+
+		let series = await run<{title: string; stories: MessStory[]}>(messSeriesOptions(story(34645)))
+
+		expect(series.title).toBe('More by Juliet Stouffer')
+		expect(series.stories.map((s) => s.id)).toStrictEqual([36819])
+		expect(fetchedHrefs()).toContain(
+			'https://olafmessenger.com/wp-json/wp/v2/posts?categories=63&staff_name=381&per_page=7&_embed=true',
+		)
+		expect(fetchedHrefs().some((href) => href.includes('per_page=30'))).toBe(false)
+	})
+
+	test('gives an empty list when the writer has nothing else in the column', async () => {
+		serve(() => [rawPost(34645)])
+
+		let series = await run<{title: string; stories: MessStory[]}>(messSeriesOptions(story(34645)))
+
+		expect(series.stories).toStrictEqual([])
+	})
+
+	test('gives nothing for a story with neither a series nor a writer', async () => {
+		serve(() => [])
+
+		let series = await run<{title: string; stories: MessStory[]}>(
+			messSeriesOptions({...story(34645), bylines: []}),
+		)
+
+		expect(series).toStrictEqual({title: '', stories: []})
+		expect(fetchedHrefs().some((href) => href.includes('/posts'))).toBe(false)
+	})
+
+	test('gives nothing for a story with no column', async () => {
+		serve(() => [])
+
+		let series = await run<{title: string; stories: MessStory[]}>(
+			messSeriesOptions({...story(34645), column: null}),
+		)
+
+		expect(series).toStrictEqual({title: '', stories: []})
+		expect(fetchedHrefs().some((href) => href.includes('/posts'))).toBe(false)
+	})
+})
+
+const PLAYLIST_PAGE = readFileSync(join(__dirname, 'fixtures/playlist-page-36532.html'), 'utf8')
+
+/** A fixture Crossword or Playlist post as the app parses it. */
+function playlistStory(id: number): MessStory {
+	let [parsed] = parseMessPosts(
+		crosswordPlaylist.filter((p) => p.id === id),
+		parseMessCategories(categories),
+	)
+	if (!parsed) throw new Error(`fixture post ${id} did not parse`)
+	return parsed
+}
+
+describe('messPlaylistPageOptions', () => {
+	test("reads the playlist from the post's web page, fetched as text", async () => {
+		mockBody.mockResolvedValue(PLAYLIST_PAGE)
+
+		let spotify = await run<SpotifyRef | null>(messPlaylistPageOptions(playlistStory(36532)))
+
+		expect(spotify).toStrictEqual({kind: 'playlist', id: '5dJFJNxZlxoRbwIgqCTxWk'})
+		expect(mockBody).toHaveBeenCalledWith(
+			'https://olafmessenger.com/36532/variety/spotify-playlist-summer-kind-of/',
+			expect.any(AbortSignal),
+			'Olaf Messenger page',
+			'text',
+		)
+	})
+
+	test('gives null for a page with no playlist', async () => {
+		mockBody.mockResolvedValue('<html><body><p>No player here.</p></body></html>')
+		expect(await run(messPlaylistPageOptions(playlistStory(36532)))).toBeNull()
+	})
+
+	test('fails when the page cannot be fetched', async () => {
+		mockBody.mockRejectedValue(new Error('offline'))
+		await expect(run(messPlaylistPageOptions(playlistStory(36532)))).rejects.toThrow('offline')
+	})
+
+	test('fails at once when offline, so the page can fall back, rather than waiting for the network', async () => {
+		mockBody.mockRejectedValue(new Error('offline'))
+		let client = new QueryClient()
+		onlineManager.setOnline(false)
+		try {
+			await expect(client.query(messPlaylistPageOptions(playlistStory(36532)))).rejects.toThrow(
+				'offline',
+			)
+		} finally {
+			onlineManager.setOnline(true)
+			client.clear()
+		}
+	})
+
+	test('is cached per story', () => {
+		expect(messPlaylistPageOptions(playlistStory(36532)).queryKey).toStrictEqual(
+			messKeys.playlistPage(36532),
+		)
+	})
+})
+
+describe('messIssuesOptions', () => {
+	test('asks for a page of light posts, and reads them against the category tree', async () => {
+		serve((href) => (href.includes('/media') ? [] : springPosts.slice(0, 100)))
+
+		let page = await runPage<LightPost[]>(messIssuesOptions, 2)
+
+		expect(page).toStrictEqual(spring.slice(0, 100))
+		expect(fetchedHrefs()).toContain(
+			'https://olafmessenger.com/wp-json/wp/v2/posts?per_page=100&page=2&_fields=id,date,title,categories,featured_media',
+		)
+	})
+
+	test('saves only its first page for the next launch, which is all Top needs', () => {
+		expect(messIssuesOptions.meta).toStrictEqual({persistPages: 1})
+	})
+
+	test("looks up the page's photos in one request", async () => {
+		serve((href) =>
+			href.includes('/media')
+				? [{id: 36902, source_url: 'https://olafmessenger.com/grant.png'}]
+				: springPosts.slice(0, 100),
+		)
+
+		let page = await runPage<LightPost[]>(messIssuesOptions, 1)
+
+		let media = fetchedHrefs().filter((href) => href.includes('/media'))
+		expect(media).toHaveLength(1)
+		expect(media[0]).toMatch(
+			/\/wp-json\/wp\/v2\/media\?include=(\d+,)*36902(,\d+)*&per_page=100&_fields=id,source_url$/u,
+		)
+		expect(page.find((post) => post.id === 36896)?.photoUrl).toBe(
+			'https://olafmessenger.com/grant.png',
+		)
+	})
+
+	test.each([
+		['cannot be reached', () => Promise.reject(new Error('offline'))],
+		['answer in a shape it cannot read', () => ({code: 'rest_forbidden'})],
+	])('still gives the page when its photos %s', async (_name, answer) => {
+		serve((href) => (href.includes('/media') ? answer() : springPosts.slice(0, 100)))
+
+		let page = await runPage<LightPost[]>(messIssuesOptions, 1)
+
+		expect(page).toHaveLength(100)
+		expect(page.every((post) => post.photoUrl === null)).toBe(true)
+	})
+
+	// WordPress answers 400 for a page past the last, which it asks for when the post count is a
+	// multiple of a hundred, since the last page is then full.
+	test("reads WordPress's answer for a page past the last as an empty last page", async () => {
+		serve(() =>
+			Promise.reject(new SourceFetchError('Olaf Messenger issues fetch failed: 400', 400)),
+		)
+
+		let page = await runPage<LightPost[]>(messIssuesOptions, 54)
+
+		expect(page).toStrictEqual([])
+		expect(messIssuesOptions.getNextPageParam(page, [page], 54, [54])).toBeUndefined()
+	})
+
+	test('still fails a page on any other error', async () => {
+		serve(() =>
+			Promise.reject(new SourceFetchError('Olaf Messenger issues fetch failed: 500', 500)),
+		)
+
+		await expect(runPage<LightPost[]>(messIssuesOptions, 2)).rejects.toThrow('failed: 500')
+	})
+
+	test('asks for another page after a full one, and none after a short one', () => {
+		let full = spring.slice(0, 100)
+		let short = spring.slice(200)
+		expect(messIssuesOptions.getNextPageParam(full, [full], 1, [1])).toBe(2)
+		expect(
+			messIssuesOptions.getNextPageParam(short, [full, full, short], 3, [1, 2, 3]),
+		).toBeUndefined()
+	})
+})
+
+describe('messIssueOptions', () => {
+	// Asked for by id, not by date: an issue's range can run over a quiet summer and past a
+	// special edition, which is an issue of its own.
+	test("fetches an issue's stories by their ids", async () => {
+		serve(() => posts)
+
+		let stories = await run<MessStory[]>(
+			messIssueOptions({key: 'week:2026-03-23', storyIds: [36859, 36911, 36885, 36904, 36843]}),
+		)
+
+		expect(stories.map((s) => s.id)).toStrictEqual([36859, 36911, 36885, 36904, 36843])
+		expect(fetchedHrefs()).toContain(
+			'https://olafmessenger.com/wp-json/wp/v2/posts?include=36859,36911,36885,36904,36843&per_page=100&_embed=true',
+		)
+	})
+
+	test('asks for an issue of more than 100 stories 100 at a time, keeping every one', async () => {
+		let storyIds = Array.from({length: 150}, (_, i) => 1000 - i)
+		serve(() => posts)
+
+		let stories = await run<MessStory[]>(messIssueOptions({key: 'week:2025-06-02', storyIds}))
+
+		let issueHrefs = fetchedHrefs().filter((href) => href.includes('posts?include='))
+		expect(issueHrefs).toStrictEqual([
+			`https://olafmessenger.com/wp-json/wp/v2/posts?include=${storyIds.slice(0, 100).join(',')}&per_page=100&_embed=true`,
+			`https://olafmessenger.com/wp-json/wp/v2/posts?include=${storyIds.slice(100).join(',')}&per_page=100&_embed=true`,
+		])
+		// Each batch is answered with the same five fixture posts here, so both batches' arrive.
+		expect(stories).toHaveLength(10)
+	})
+
+	// The newest issue's ids change as its paper goes up, and each set is a query saved for the next
+	// launch with every story's body.
+	test("drops an issue's older sets of stories once its current set loads, and no other issue's", async () => {
+		serve(() => posts)
+		let client = new QueryClient()
+		let older = messKeys.issue({key: 'week:2026-03-23', storyIds: [36911, 36885]})
+		let other = messKeys.issue({key: 'week:2026-03-16', storyIds: [1, 2]})
+		client.setQueryData(older, [])
+		client.setQueryData(other, [])
+
+		await client.query(
+			messIssueOptions({key: 'week:2026-03-23', storyIds: [36859, 36911, 36885, 36904, 36843]}),
+		)
+
+		expect(client.getQueryData(older)).toBeUndefined()
+		expect(client.getQueryData(other)).toStrictEqual([])
+		client.clear()
+	})
+
+	test("saves an issue's stories for the next launch only when asked, as Top's are", () => {
+		let issue = {key: 'week:2026-04-27', storyIds: [5, 4, 3, 2, 1]}
+		expect(messIssueOptions(issue).meta).toStrictEqual({persist: false})
+		expect(messIssueOptions(issue, {persist: true}).meta).toStrictEqual({persist: true})
+	})
+
+	test('keys an issue by its name and its stories, and keeps it for a day', () => {
+		let options = messIssueOptions({key: 'week:2026-05-11', storyIds: [11, 10, 9]})
+		expect(options.queryKey).toStrictEqual(['mess', 'issue', 'week:2026-05-11', [11, 10, 9]])
+		expect(options.staleTime).toBe(24 * 60 * 60 * 1000)
+	})
+
+	test("shows an issue's stories while its changed set loads, and never another issue's", () => {
+		let placeholder = messIssueOptions({key: 'week:2026-05-11', storyIds: [12, 11, 10]})
+			.placeholderData as unknown as (previous: unknown, query: {queryKey: unknown[]}) => unknown
+		let shown = ['stories']
+		expect(placeholder(shown, {queryKey: ['mess', 'issue', 'week:2026-05-11', [11, 10]]})).toBe(
+			shown,
+		)
+		expect(
+			placeholder(shown, {queryKey: ['mess', 'issue', 'week:2026-05-04', [9, 8]]}),
+		).toBeUndefined()
+	})
+})

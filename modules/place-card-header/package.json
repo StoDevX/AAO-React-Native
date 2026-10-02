@@ -1,0 +1,10 @@
+{
+  "name": "@frogpond/place-card-header",
+  "version": "1.0.0",
+  "main": "index.tsx",
+  "types": "index.tsx",
+  "peerDependencies": {
+    "expo": "~57.0.19",
+    "react": "catalog:"
+  }
+}

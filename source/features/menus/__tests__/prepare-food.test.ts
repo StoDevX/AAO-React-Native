@@ -5,7 +5,7 @@ import type {EditedBonAppMenuInfoType} from '../types'
 
 jest.mock('@frogpond/launch-arguments', () => ({isUITesting: false}))
 
-function menuWith(item: {label: string; station: string}) {
+function menuWith(item: {label: string; station: string; sub_station?: string}) {
 	return {
 		items: {'1': {id: '1', description: '', ...item}},
 		cor_icons: {},
@@ -27,6 +27,20 @@ describe('prepareFood', () => {
 		)
 
 		expect(items['1'].station).toBe('Bread & Pickles')
+	})
+
+	test('decodes entities in a sub-station before title-casing it', () => {
+		let items = prepareFood(
+			menuWith({label: 'poutine', station: 'grill', sub_station: 'fries &amp; baskets'}),
+		)
+
+		expect(items['1'].sub_station).toBe('Fries & Baskets')
+	})
+
+	test('leaves an item filed under no sub-station without one', () => {
+		let items = prepareFood(menuWith({label: 'poutine', station: 'grill', sub_station: ''}))
+
+		expect(items['1'].sub_station).toBe('')
 	})
 
 	test('decodes quotes in a label', () => {

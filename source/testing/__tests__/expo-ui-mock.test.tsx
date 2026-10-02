@@ -1,17 +1,20 @@
 import React from 'react'
 import {describe, expect, jest, test} from '@jest/globals'
-import {fireEvent, render, screen} from '@testing-library/react-native'
+import {fireEvent, isHiddenFromAccessibility, render, screen} from '@testing-library/react-native'
 import {Text as RNText} from 'react-native'
 
 import {
+	accessibilityHidden,
 	accessibilityIdentifier,
 	accessibilityLabel,
 	BottomSheet,
 	Button,
 	disabled,
 	HStack,
+	id,
 	List,
 	Menu,
+	onAppear,
 	Picker,
 	refreshable,
 	Section,
@@ -19,6 +22,7 @@ import {
 	tag,
 	Text,
 	Toggle,
+	VStack,
 } from '../expo-ui-mock'
 
 /**
@@ -92,6 +96,19 @@ describe('expo-ui-mock', () => {
 		})
 	})
 
+	describe('Text and accessibilityHidden', () => {
+		test('hides a text from VoiceOver when the modifier is on it', async () => {
+			await render(<Text modifiers={[accessibilityHidden(true)]}>A caption</Text>)
+			let text = screen.getByText('A caption', {includeHiddenElements: true})
+			expect(isHiddenFromAccessibility(text)).toBe(true)
+		})
+
+		test('leaves a text readable without it', async () => {
+			await render(<Text>A caption</Text>)
+			expect(isHiddenFromAccessibility(screen.getByText('A caption'))).toBe(false)
+		})
+	})
+
 	// Each modifier's payload carries the parameter names the real one uses.
 	// Renaming a key here would let the mock agree with itself while the
 	// component reading it on device found nothing. Listed here are the ones
@@ -112,6 +129,42 @@ describe('expo-ui-mock', () => {
 			['disabled', disabled(), {$type: 'disabled', disabled: true}],
 		])('%s', (_name, built, expected) => {
 			expect(built).toEqual(expected)
+		})
+	})
+
+	describe('VStack onAppear', () => {
+		test('fires once when the stack mounts', async () => {
+			let appeared = jest.fn()
+			await render(<VStack modifiers={[onAppear(appeared)]}>{null}</VStack>)
+			expect(appeared).toHaveBeenCalledTimes(1)
+		})
+
+		test('fires again when an id after it changes, since SwiftUI builds a new view for a new id', async () => {
+			let appeared = jest.fn()
+			let view = await render(
+				<VStack modifiers={[onAppear(appeared), id('gemini')]}>{null}</VStack>,
+			)
+			await view.rerender(<VStack modifiers={[onAppear(appeared), id('leo')]}>{null}</VStack>)
+			expect(appeared).toHaveBeenCalledTimes(2)
+		})
+
+		// On a simulator, the Mess issue list's end row never appeared again with its id first.
+		test('does not fire again when an id before it changes, which rebuilds only the view inside', async () => {
+			let appeared = jest.fn()
+			let view = await render(
+				<VStack modifiers={[id('gemini'), onAppear(appeared)]}>{null}</VStack>,
+			)
+			await view.rerender(<VStack modifiers={[id('leo'), onAppear(appeared)]}>{null}</VStack>)
+			expect(appeared).toHaveBeenCalledTimes(1)
+		})
+
+		test('does not fire again when it re-renders with the same id', async () => {
+			let appeared = jest.fn()
+			let view = await render(
+				<VStack modifiers={[onAppear(appeared), id('gemini')]}>{null}</VStack>,
+			)
+			await view.rerender(<VStack modifiers={[onAppear(appeared), id('gemini')]}>{null}</VStack>)
+			expect(appeared).toHaveBeenCalledTimes(1)
 		})
 	})
 
@@ -220,7 +273,7 @@ describe('expo-ui-mock', () => {
 				</List>,
 			)
 
-			expect(screen.queryByTestId('row:art')).toBeNull()
+			expect(screen.queryByRole('button')).toBeNull()
 			expect(screen.getByText('Art')).toBeTruthy()
 		})
 	})

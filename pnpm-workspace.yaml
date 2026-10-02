@@ -17,15 +17,18 @@ autoInstallPeers: true
 strictPeerDependencies: true
 # set peer dependency suffixes to use version-only identifiers (name@version) instead of full dep paths
 dedupePeers: true
+# collapse compatible duplicate versions on every install, rather than only
+# when someone remembers to run `pnpm dedupe`
+autoDedupe: true
 
 # pre-existing, individually-reviewed peer mismatches that strictPeerDependencies
 # would otherwise fail the install on -- each is a case where the declared range
 # is stale tooling metadata, not a real incompatibility
 peerDependencyRules:
   allowedVersions:
-    # ts-jest, @typescript-eslint/*, and @tanstack/eslint-plugin-query all
-    # declare narrower typescript ranges than this repo's actual 7.0.2; all
-    # three run fine against it in practice (tsc/oxlint/Jest all pass)
+    # @typescript-eslint/* and @tanstack/eslint-plugin-query both declare
+    # narrower typescript ranges than this repo's actual 7.0.2; both run fine
+    # against it in practice (tsc/oxlint/Jest all pass)
     typescript: '7.0.2'
 
 publicHoistPattern:
@@ -145,11 +148,11 @@ overrides:
   # shell-quote@1.8.3 (via react-devtools-core, a react-native dependency):
   # critical newline-escaping bug (GHSA-w7jw-789q-3m8p) and a ReDoS in
   # parse() (GHSA-395f-4hp3-45gv). No fix within 1.8.x; next fixed release is 1.10.0.
-  'shell-quote@': '1.10.0'
+  'shell-quote@': '1.11.0'
   # fast-uri@3.1.0 (via ajv, used by our own eslint/ajv-formats devDeps):
   # path-traversal and host-confusion advisories (GHSA-q3j6-qgpj-74h6,
   # GHSA-v39h-62p7-jpjc); fixed within the same 3.1.x line.
-  'fast-uri@3.1': '4.2.0'
+  'fast-uri@3.1': '4.2.1'
   # js-yaml@3.14.2 (via @istanbuljs/load-nyc-config, Jest's coverage
   # instrumentation): quadratic-CPU merge-key bug (GHSA-52cp-r559-cp3m) and
   # a prototype-adjacent parsing issue (GHSA-h67p-54hq-rp68). No fix within
@@ -171,13 +174,26 @@ overrides:
   # Pinned to the major version so an @expo/ui SDK bump forces a re-check
   # that vaul is still unused before silently dropping it again.
   '@expo/ui@57>vaul': '-'
-  # @sentry/cli is a dependency of both @sentry/react-native and
-  # @sentry/expo-upload-sourcemaps, but neither is wired into a build phase
-  # here: the Xcode "Bundle React Native code and images" step runs plain
-  # react-native-xcode.sh, not Sentry's wrapper, and nothing uploads
-  # sourcemaps at all. Drop it -- it's dead weight that costs every install a
-  # platform-specific CLI binary download for nothing.
+  # @sentry/cli is a dependency of @sentry/react-native,
+  # @sentry/expo-upload-sourcemaps and @sentry/bundler-plugins. Sentry's Xcode
+  # build phases do run it, but take it from mise (see [tools.sentry] in
+  # mise.toml) through SENTRY_CLI_EXECUTABLE, which ci_post_clone.sh sets.
+  # Drop the npm copies -- they cost every install a platform-specific CLI
+  # binary download, on Linux jobs that never upload anything.
   '@sentry/cli': '-'
+  # react-native-gesture-handler lists test-only type definitions as a runtime
+  # dependency, for a renderer nothing here installs.
+  'react-native-gesture-handler>@types/react-test-renderer': '-'
+  # Old dependents that pin a transitive dependency to one patch (or, for
+  # finalhandler, one minor), so each held a second copy of a package the tree
+  # already has a newer compatible release of. Widening the pin to a caret
+  # range lets autoDedupe collapse the pair onto that newer release.
+  'debug@2>ms': '2.1.3'
+  'finalhandler@1>on-finished': '2.4.1'
+  'accepts@1>negotiator': '0.6.4'
+  'mime-types@2>mime-db': '1.54.0'
+  'color-convert@1>color-name': '1.1.4'
+  'simple-plist@1>bplist-parser': '0.3.2'
 
 # bind top-level dependencies to exact versions, so lockfile-maintenance MRs
 # can't bump them without us noticing

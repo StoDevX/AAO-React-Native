@@ -1,10 +1,10 @@
 import {describe, expect, test} from '@jest/globals'
-import type {FilterType} from '@frogpond/filter'
+import type {Filter} from '@frogpond/filter'
 
 import {mealHeaderMenu} from '../meal-header'
 import type {MenuItemType, ProcessedMealType} from '../../types'
 
-function mealPicker(labels: string[]): FilterType<MenuItemType> {
+function mealPicker(labels: string[]): Filter<MenuItemType> {
 	return {
 		type: 'picker',
 		key: 'meals',
@@ -28,7 +28,7 @@ const STAV = [
 	meal('Dinner', '16:30', '20:00'),
 ]
 
-const specialsToggle: FilterType<MenuItemType> = {
+const specialsToggle: Filter<MenuItemType> = {
 	type: 'toggle',
 	key: 'specials',
 	enabled: true,

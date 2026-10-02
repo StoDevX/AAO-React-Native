@@ -1,12 +1,15 @@
 name: Taylor Center
 category: Offices
-building: toh
+kind: office
+building: bc
+links:
+  - {title: 'Taylor Center services', url: 'https://wp.stolaf.edu/taylorcenter/services/'}
 
 schedule:
   - title: Hours
     hours:
-      - {days: [Mo, Tu, We, Th], from: '8:00am', to: '8:00pm'}
-      - {days: [Fr], from: '9:00am', to: '5:00pm'}
+      - {days: [Mo, Tu, We, Th], from: '8:00am', to: '7:00pm'}
+      - {days: [Fr], from: '8:00am', to: '5:00pm'}
 
 breakSchedule:
   fall: []

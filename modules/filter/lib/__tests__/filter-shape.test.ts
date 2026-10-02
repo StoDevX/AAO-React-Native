@@ -1,10 +1,10 @@
 import {describe, expect, test} from '@jest/globals'
 import {filterShape} from '../filter-shape'
-import type {ListItemSpecType, ListType, PickerType, ToggleType} from '../../types'
+import type {ListFilterOption, ListFilter, PickerFilter, ToggleFilter} from '../../types'
 
 type Item = {x: string}
 
-function toggleFilter(): ToggleType<Item> {
+function toggleFilter(): ToggleFilter<Item> {
 	return {
 		type: 'toggle',
 		key: 'k',
@@ -14,7 +14,7 @@ function toggleFilter(): ToggleType<Item> {
 	}
 }
 
-function pickerFilter(optionCount: number): PickerType<Item> {
+function pickerFilter(optionCount: number): PickerFilter<Item> {
 	return {
 		type: 'picker',
 		key: 'k',
@@ -27,8 +27,8 @@ function pickerFilter(optionCount: number): PickerType<Item> {
 	}
 }
 
-function listFilter(optionCount: number, renderMark?: () => null): ListType<Item> {
-	let options: ListItemSpecType[] = Array.from({length: optionCount}, (_, i) => ({
+function listFilter(optionCount: number, renderMark?: () => null): ListFilter<Item> {
+	let options: ListFilterOption[] = Array.from({length: optionCount}, (_, i) => ({
 		title: `Option ${i}`,
 	}))
 

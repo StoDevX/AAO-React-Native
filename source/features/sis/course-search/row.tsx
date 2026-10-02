@@ -1,14 +1,14 @@
 import * as React from 'react'
 import {StyleSheet} from 'react-native'
-import type {CourseType} from '../../../lib/course-search/types'
+import type {CourseListItem} from '../../../database/courses/rows'
 import {ListRow, Title, Detail} from '@frogpond/lists'
 import {deptNum} from './lib/format-dept-num'
 import {formatCourseNotes} from './lib/format-course-notes'
 import {Row} from '@frogpond/layout'
 
 type Props = {
-	course: CourseType
-	onPress: (course: CourseType) => void
+	course: CourseListItem
+	onPress: (course: CourseListItem) => void
 }
 
 export const CourseRow = (props: Props): React.ReactNode => {

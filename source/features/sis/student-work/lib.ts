@@ -2,6 +2,7 @@ import {Platform, Share} from 'react-native'
 import type {JobDetail, JobField, JobSummary} from '@frogpond/ccc-jobs'
 import {isValid, parseISO} from 'date-fns'
 import {jobCode, jobTerm, LEVEL_LABELS, type JobCode} from './posting'
+import type {HourlyWages} from './wages'
 
 /// The title of a posting's description, both the row that opens it and the
 /// screen it opens. Mirrored by `TestIdentifiers.StudentWork.jobDescriptionRow`.
@@ -36,26 +37,17 @@ export function formatPostedDate(
 	return isValid(parsed) ? postedDateFormat(locales).format(parsed) : undefined
 }
 
-export function postedOn(postedDate: string, locales?: string): string | undefined {
+function postedOn(postedDate: string, locales?: string): string | undefined {
 	let date = formatPostedDate(postedDate, locales)
 	return date ? `Posted ${date}` : undefined
 }
 
-/// Dollars an hour, by structure and tier, for the 2026–27 academic year.
-/// St. Olaf revises these each year; the source is
-/// https://wp.stolaf.edu/studentemployment/student-employment-compensation-philosophy/
-const HOURLY_WAGES: Record<JobCode['structure'], Record<JobCode['tier'], number>> = {
-	ST: {1: 12.0, 2: 12.5, 3: 13.0},
-	NST: {1: 13.5, 2: 14.5, 3: 15.5},
-	OSA: {1: 12.5, 2: 13.25, 3: 14.0},
+export function hourlyWage(code: JobCode, wages: HourlyWages): number {
+	return wages[code.structure][code.tier]
 }
 
-export function hourlyWage(code: JobCode): number {
-	return HOURLY_WAGES[code.structure][code.tier]
-}
-
-function formatWage(code: JobCode): string {
-	return `$${hourlyWage(code).toFixed(2)}/hr`
+function formatWage(code: JobCode, wages: HourlyWages): string {
+	return `$${hourlyWage(code, wages).toFixed(2)}/hr`
 }
 
 /// The line under a posting's title in the list: its term, unless it is the
@@ -63,10 +55,11 @@ function formatWage(code: JobCode): string {
 /// carries a pay code; and when it went up.
 export function jobRowDetail(
 	job: Pick<JobSummary, 'title' | 'postedDate'>,
+	wages: HourlyWages,
 	locales?: string,
 ): string | undefined {
 	let code = jobCode(job.title)
-	let wage = code ? formatWage(code) : undefined
+	let wage = code ? formatWage(code, wages) : undefined
 
 	let term = jobTerm(job.title)
 	let unusualTerm = term === 'Academic Year' ? undefined : term
@@ -96,12 +89,12 @@ const WAGE_LABEL = 'Wage'
 ///
 /// The listing's own Wage is what the employer wrote, so it wins. The wage the
 /// title's pay code implies fills in only when the listing states none.
-export function jobDetailFields(job: JobDetail): JobField[] {
+export function jobDetailFields(job: JobDetail, wages: HourlyWages): JobField[] {
 	let code = jobCode(job.title)
 	let term = jobTerm(job.title)
 
 	let statedWage = job.fields.find((field) => field.label === WAGE_LABEL)
-	let wage = statedWage ?? (code ? {label: WAGE_LABEL, value: formatWage(code)} : undefined)
+	let wage = statedWage ?? (code ? {label: WAGE_LABEL, value: formatWage(code, wages)} : undefined)
 
 	let fromTitle: JobField[] = []
 	if (code) {

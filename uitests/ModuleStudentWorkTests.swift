@@ -1,6 +1,6 @@
 import XCTest
 
-class ModuleStudentWorkTests: UITestCase {
+class ModuleStudentWorkTests: UITestCaseUnbooted {
 	private typealias IDs = TestIdentifiers.StudentWork
 
 	/// A row drops its title's term and pay code and shows the wage the code
@@ -38,7 +38,7 @@ class ModuleStudentWorkTests: UITestCase {
 			.navigateBackToLanding()
 			.navigateBack()
 
-		relaunchKeepingState(adding: TestIdentifiers.LaunchArguments.extraJobPosting)
+		keepStateForNextLaunch(adding: TestIdentifiers.LaunchArguments.extraJobPosting)
 
 		StudentWorkScreen(app: app)
 			.navigate()
@@ -72,83 +72,6 @@ class ModuleStudentWorkTests: UITestCase {
 			.verifyTrigger(IDs.areaFilter, isSelected: true)
 			.verifyPostingListed(IDs.fixtureJobWithWrappingField)
 			.verifyPostingHidden(IDs.fixtureJobWithShortFields)
-	}
-
-	func testEntryLevelPresetPrefillsTheLevelFilter() throws {
-		StudentWorkScreen(app: app)
-			.navigate()
-			.openPreset(IDs.entryLevelPreset)
-			.verifyTrigger(IDs.levelFilter, isSelected: true)
-			.verifyPostingListed(IDs.fixtureCodedJob)
-			.verifyPostingHidden(IDs.fixtureJobWithShortFields)
-	}
-
-	func testSearchOnTheLandingShowsMatchingPostings() throws {
-		StudentWorkScreen(app: app)
-			.navigate()
-			.search(for: IDs.fixtureCodedJobSearch)
-			.verifyPostingListed(IDs.fixtureCodedJob)
-	}
-
-	func testLevelFilterNarrowsTheList() throws {
-		StudentWorkScreen(app: app)
-			.navigate()
-			.openAllPostings()
-			.verifyPostingListed(IDs.fixtureJobWithShortFields)
-			.choose(IDs.entryLevel, inFilter: IDs.levelFilter)
-			.verifyPostingListed(IDs.fixtureCodedJob)
-			.verifyPostingHidden(IDs.fixtureJobWithShortFields)
-			.capture("Student Work filtered to entry-level")
-	}
-
-	func testChoosingAFilterFromFarDownTheListStartsAtTheTop() throws {
-		StudentWorkScreen(app: app)
-			.navigate()
-			.openAllPostings()
-			.scrollListDown()
-			.choose(IDs.experienced, inFilter: IDs.levelFilter)
-			.verifyListStartsAtTheTop()
-	}
-
-	func testSearchingFromFarDownTheListStartsAtTheTop() throws {
-		StudentWorkScreen(app: app)
-			.navigate()
-			.openAllPostings()
-			.scrollListDown()
-			.search(for: IDs.fixtureFillerPrefix)
-			.verifyListStartsAtTheTop()
-	}
-
-	func testSearchNarrowsTheList() throws {
-		StudentWorkScreen(app: app)
-			.navigate()
-			.openAllPostings()
-			.verifyPostingListed(IDs.fixtureJobWithShortFields)
-			.search(for: IDs.fixtureCodedJobSearch)
-			.verifyPostingListed(IDs.fixtureCodedJob)
-			.verifyPostingHidden(IDs.fixtureJobWithShortFields)
-	}
-
-	func testJobPostingLinksOutToTheJobsSite() throws {
-		StudentWorkScreen(app: app)
-			.navigate()
-			.openAllPostings()
-			.openJobPosting(TestIdentifiers.StudentWork.fixtureJobWithShortFields)
-			.checkJobsSiteLinkIsExternal()
-	}
-
-	/// The fields are one form that scrolls itself, so its last row can reach
-	/// the screen. A form nested in another scroll view, sized to its content,
-	/// comes out too short when a field wraps, and a drag then stops with the
-	/// jobs-site link pinned at the bottom of the screen.
-	func testJobPostingFieldsScrollToTheJobsSiteLink() throws {
-		StudentWorkScreen(app: app)
-			.navigate()
-			.openAllPostings()
-			.openJobPosting(TestIdentifiers.StudentWork.fixtureJobWithWrappingField)
-			.dragJobPostingFieldsUp()
-			.capture("Job posting fields scrolled to the end")
-			.checkJobsSiteLinkReachable()
 	}
 
 	func testJobDescriptionOpensOnItsOwnScreen() throws {

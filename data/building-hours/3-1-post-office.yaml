@@ -1,7 +1,10 @@
 name: Post Office
 image: post-office
 category: Mail and Packages
+kind: office
 building: bc
+links:
+  - {title: 'Post Office', url: 'https://wp.stolaf.edu/postoffice/'}
 
 schedule:
   - title: Hours

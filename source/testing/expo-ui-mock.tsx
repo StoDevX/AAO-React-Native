@@ -58,6 +58,8 @@ export const accessibilityAddTraits = named('accessibilityAddTraits', 'traits')
 /** Defaults to 'ignore', as the real one does. */
 export const accessibilityElement = (children = 'ignore'): Modifier =>
 	createModifier('accessibilityElement', {children})
+export const accessibilityHidden = flag('accessibilityHidden', 'hidden')
+export const accessibilityHint = named('accessibilityHint', 'hint')
 export const accessibilityIdentifier = named('accessibilityIdentifier', 'identifier')
 export const accessibilityLabel = named('accessibilityLabel', 'label')
 export const accessibilityRemoveTraits = named('accessibilityRemoveTraits', 'traits')
@@ -107,7 +109,11 @@ export const Animation: AnimationPresets = {
 export const aspectRatio = spreading('aspectRatio')
 export const autocorrectionDisabled = flag('autocorrectionDisabled', 'disabled')
 export const bold = bare('bold')
+export const border = spreading('border')
 export const buttonStyle = named('buttonStyle', 'style')
+export const buttonBorderShape = (shape: string, cornerRadius?: number): Modifier =>
+	createModifier('buttonBorderShape', {shape, cornerRadius})
+export const controlSize = named('controlSize', 'size')
 export const disabled = flag('disabled', 'disabled')
 export const font = spreading('font')
 export const foregroundStyle = named('foregroundStyle', 'style')
@@ -121,6 +127,7 @@ export const kerning = named('kerning', 'value')
 export const lineSpacing = named('lineSpacing', 'value')
 export const listRowBackground = named('listRowBackground', 'color')
 export const listRowInsets = spreading('listRowInsets')
+export const imageScale = named('imageScale', 'scale')
 export const listStyle = named('listStyle', 'style')
 export const menuActionDismissBehavior = named('menuActionDismissBehavior', 'behavior')
 export const menuIndicator = named('menuIndicator', 'visibility')
@@ -136,6 +143,10 @@ export const scrollTargetBehavior = named('scrollTargetBehavior', 'behavior')
 export const pickerStyle = named('pickerStyle', 'style')
 export const presentationBackground = named('presentationBackground', 'color')
 export const presentationDragIndicator = named('presentationDragIndicator', 'visibility')
+export const presentationBackgroundInteraction = named(
+	'presentationBackgroundInteraction',
+	'interaction',
+)
 export const scrollContentBackground = named('scrollContentBackground', 'visible')
 export const scrollTargetLayout = bare('scrollTargetLayout')
 export const shadow = spreading('shadow')
@@ -143,6 +154,7 @@ export const strikethrough = spreading('strikethrough')
 export const submitLabel = named('submitLabel', 'submitLabel')
 export const tabViewStyle = spreading('tabViewStyle')
 export const tag = named('tag', 'tag')
+export const textCase = named('textCase', 'value')
 export const textInputAutocapitalization = named(
 	'textInputAutocapitalization',
 	'autocapitalization',
@@ -162,6 +174,14 @@ export const tint = named('tint', 'color')
 export const truncationMode = named('truncationMode', 'mode')
 export const underline = spreading('underline')
 export const fixedSize = spreading('fixedSize')
+
+/** Mirrors the real overloads: one fixed size, or a `{min, max}` range. */
+export function dynamicTypeSize(sizeOrRange: string | {min?: string; max?: string}): Modifier {
+	if (typeof sizeOrRange === 'object' && sizeOrRange !== null) {
+		return createModifier('dynamicTypeSize', {min: sizeOrRange.min, max: sizeOrRange.max})
+	}
+	return createModifier('dynamicTypeSize', {size: sizeOrRange})
+}
 
 export const background = (color: unknown, shape?: Record<string, unknown>): Modifier =>
 	createModifier('background', {color, ...shape})
@@ -294,10 +314,21 @@ function labelOf(modifiers?: Modifier[]): string | undefined {
 	return typeof found?.label === 'string' ? found.label : undefined
 }
 
+/** The hint an `accessibilityHint(…)` modifier gives. */
+function hintOf(modifiers?: Modifier[]): string | undefined {
+	let found = modifierOf(modifiers, 'accessibilityHint')
+	return typeof found?.hint === 'string' ? found.hint : undefined
+}
+
 /** The identifier an `accessibilityIdentifier(…)` modifier asks for. */
 function identifierOf(modifiers?: Modifier[]): string | undefined {
 	let found = modifierOf(modifiers, 'accessibilityIdentifier')
 	return typeof found?.identifier === 'string' ? found.identifier : undefined
+}
+
+/** Whether an `accessibilityHidden(…)` modifier hides the view from VoiceOver. */
+function isAccessibilityHidden(modifiers?: Modifier[]): boolean {
+	return modifierOf(modifiers, 'accessibilityHidden')?.hidden === true
 }
 
 /** The traits an `accessibilityAddTraits(…)` or `accessibilityRemoveTraits(…)` names. */
@@ -371,6 +402,7 @@ const ForwardingView = View as unknown as React.ComponentType<
 		accessibilityLabel?: string
 		testID?: string
 		onRefresh?: () => Promise<void>
+		onGeometryChange?: unknown
 		onDelete?: unknown
 		onMove?: unknown
 	}
@@ -383,6 +415,7 @@ const ForwardingView = View as unknown as React.ComponentType<
  */
 const PressableWithModifiers = Pressable as unknown as React.ComponentType<
 	WithModifiers & {
+		accessibilityHint?: string
 		accessibilityLabel?: string
 		accessibilityRole?: string
 		accessibilityState?: {checked?: boolean; selected?: boolean}
@@ -391,6 +424,11 @@ const PressableWithModifiers = Pressable as unknown as React.ComponentType<
 		onPress?: () => void
 		testID?: string
 	}
+>
+
+/** `Text` forwards unknown props onto its host node too, as `View` and `Pressable` do. */
+const ForwardingText = RNText as unknown as React.ComponentType<
+	WithModifiers & {accessibilityLabel?: string}
 >
 
 export function Host({children}: WithModifiers & {matchContents?: boolean}): React.ReactNode {
@@ -407,22 +445,63 @@ export function RNHostView({children}: WithModifiers & {matchContents?: boolean}
  * anything else -- a custom component, a `Fragment` -- with no warning on
  * device. Filtering here the same way turns that into a Jest failure instead
  * of a blank sentence discovered on a phone.
+ *
+ * `markdownEnabled` changes only how SwiftUI draws the string, so the stand-in
+ * prints the Markdown source as given: that string is what the component
+ * receives.
+ *
+ * A text given the `isHeader` trait takes the `header` role, which is how
+ * VoiceOver's headings rotor finds it on device. One given
+ * `accessibilityHidden(true)` is hidden from accessibility, as VoiceOver skips it.
  */
 export function Text({
 	children,
 	modifiers,
 	testID,
-}: WithModifiers & {testID?: string}): React.ReactNode {
+}: WithModifiers & {markdownEnabled?: boolean; testID?: string}): React.ReactNode {
 	let kept = React.Children.toArray(children).filter(
 		(child) =>
 			typeof child === 'string' ||
 			typeof child === 'number' ||
 			(React.isValidElement(child) && child.type === Text),
 	)
+	let isHeader = traitsOf(modifiers, 'accessibilityAddTraits').includes('isHeader')
 	return (
-		<RNText accessibilityLabel={labelOf(modifiers)} testID={testID}>
+		<RNText
+			accessibilityLabel={labelOf(modifiers)}
+			accessibilityElementsHidden={isAccessibilityHidden(modifiers)}
+			accessibilityRole={isHeader ? 'header' : undefined}
+			testID={identifierOf(modifiers) ?? testID}
+		>
 			{kept}
 		</RNText>
+	)
+}
+
+/**
+ * The patch's `HangingText` draws one Markdown string through a `UITextView`, and
+ * takes that string as its only child -- anything else is a type error on the
+ * real component, so the stand-in rejects it too. Like `Text`, it prints the
+ * Markdown source, and its host text carries the `modifiers` it was given.
+ */
+export function HangingText({
+	children,
+	modifiers,
+}: WithModifiers & {
+	children: string
+	hangingIndent: number
+	lineSpacing?: number
+	color?: unknown
+	linkColor?: unknown
+	serif?: boolean
+}): React.ReactNode {
+	if (typeof children !== 'string') {
+		throw new TypeError('HangingText takes one string of Markdown as its child')
+	}
+	return (
+		<ForwardingText accessibilityLabel={labelOf(modifiers)} modifiers={modifiers}>
+			{children}
+		</ForwardingText>
 	)
 }
 
@@ -559,7 +638,7 @@ export function HStack({
 	let rowTag = tagOf(modifiers)
 
 	if (!list || rowTag === undefined) {
-		return <View testID={testID}>{children}</View>
+		return <View testID={identifierOf(modifiers) ?? testID}>{children}</View>
 	}
 
 	let isSelected = list.selection.includes(rowTag)
@@ -585,9 +664,44 @@ export function HStack({
 
 export function VStack({
 	children,
+	modifiers,
 	testID,
 }: WithModifiers & {alignment?: string; spacing?: number; testID?: string}): React.ReactNode {
-	return <View testID={testID}>{children}</View>
+	let handler = modifierOf(modifiers, 'onAppear')?.handler as (() => void) | undefined
+	// SwiftUI builds a new view for a new id, so `.onAppear{}.id(x)` appears again when x changes.
+	// Modifiers apply in order, so an id before the onAppear rebuilds only the view inside it, and
+	// the onAppear outside does not fire again.
+	let appearIndex = modifiers?.findIndex((modifier) => modifier.$type === 'onAppear') ?? -1
+	let idIndex = modifiers?.findIndex((modifier) => modifier.$type === 'id') ?? -1
+	let identity = idIndex > appearIndex ? modifiers?.[idIndex]?.id : undefined
+	// Carried onto the host node so a test can report a frame the way a layout
+	// pass would; `onGeometryChange` itself never fires here.
+	let onGeometryChange = modifierOf(modifiers, 'onGeometryChange')?.onGeometryChange
+	return (
+		<Appearing key={String(identity)} onAppear={handler}>
+			<ForwardingView onGeometryChange={onGeometryChange} testID={testID}>
+				{children}
+			</ForwardingView>
+		</Appearing>
+	)
+}
+
+/**
+ * Calls `onAppear` once, when it mounts, as SwiftUI's modifier does when the
+ * view it is on is first built. The latest handler is the one called.
+ */
+function Appearing({
+	children,
+	onAppear,
+}: {
+	children: React.ReactNode
+	onAppear?: () => void
+}): React.ReactNode {
+	let appear = React.useEffectEvent(() => onAppear?.())
+	React.useEffect(() => {
+		appear()
+	}, [])
+	return children
 }
 
 /**
@@ -691,12 +805,12 @@ export function RoundedRectangle(_props: WithModifiers & {cornerRadius?: number}
 
 /**
  * A `Divider` draws a rule and carries nothing -- no label, no children, no
- * behaviour. The stand-in is an empty view: it exists so a tree containing one
- * mounts, not to be asserted on. What a rule looks like is a screenshot's
- * business.
+ * behaviour. The stand-in is an empty view: what a rule looks like is a
+ * screenshot's business. One carrying an `accessibilityIdentifier` can be
+ * found, so a test can tell whether a screen chose to draw it.
  */
 export function Divider({modifiers}: {modifiers?: Modifier[]}): React.ReactNode {
-	return <ForwardingView modifiers={modifiers} />
+	return <ForwardingView modifiers={modifiers} testID={identifierOf(modifiers)} />
 }
 
 /**
@@ -793,8 +907,14 @@ export function Button({
 
 	return (
 		<PressableWithModifiers
+			accessibilityHint={hintOf(modifiers)}
 			accessibilityLabel={name}
 			accessibilityRole={buttonRoleOf(modifiers)}
+			// `isSelected` is how SwiftUI marks the chosen one of a set of buttons,
+			// and VoiceOver reads it as "selected".
+			accessibilityState={{
+				selected: traitsOf(modifiers, 'accessibilityAddTraits').includes('isSelected'),
+			}}
 			// `RNTL`'s `getByRole` only considers an element an accessibility
 			// element -- and so a candidate at all -- once `accessible` is
 			// explicitly set.
@@ -839,16 +959,36 @@ export function Image({
 	)
 }
 
+/**
+ * Every imperative `blur()` on a stand-in `TextField`, called with the field's
+ * placeholder, so a test can see which field was let go of and when.
+ */
+export const textFieldBlur = jest.fn<void, [string | undefined]>()
+
 export function TextField({
 	modifiers,
+	onFocusChange,
 	onTextChange,
 	placeholder,
+	ref,
 	text,
 }: WithModifiers & {
 	placeholder?: string
 	text?: {value: string}
 	onTextChange?: (text: string) => void
+	onFocusChange?: (focused: boolean) => void
+	ref?: React.Ref<{blur: () => Promise<void>}>
 }): React.ReactNode {
+	// The real field's `blur()` resolves once the native side has the request;
+	// SwiftUI then reports the lost focus through `onFocusChange`, as here.
+	React.useImperativeHandle(ref, () => ({
+		blur: () => {
+			textFieldBlur(placeholder)
+			onFocusChange?.(false)
+			return Promise.resolve()
+		},
+	}))
+
 	// A SwiftUI TextField reports its placeholder as its accessibility label
 	// when it has no separate one, which is how a search field is found both on
 	// device and here.
@@ -859,7 +999,9 @@ export function TextField({
 	return (
 		<TextInput
 			accessibilityLabel={labelOf(modifiers) ?? placeholder}
+			onBlur={() => onFocusChange?.(false)}
 			onChangeText={onTextChange}
+			onFocus={() => onFocusChange?.(true)}
 			placeholder={placeholder}
 			value={text?.value}
 		/>
@@ -873,11 +1015,29 @@ export function TextField({
 export function LabeledContent({
 	children,
 	label,
+	modifiers,
 }: WithModifiers & {label?: React.ReactNode}): React.ReactNode {
 	return (
-		<View>
+		<View testID={identifierOf(modifiers)}>
 			{typeof label === 'string' ? <RNText>{label}</RNText> : label}
 			{children}
+		</View>
+	)
+}
+
+/**
+ * A title beside its icon. A custom title view in `children` takes precedence
+ * over `title`, as it does natively.
+ */
+export function Label({
+	children,
+	systemImage,
+	title,
+}: WithModifiers & {title?: string; systemImage?: string}): React.ReactNode {
+	return (
+		<View>
+			{systemImage ? <Image systemName={systemImage} /> : null}
+			{children ?? (title ? <RNText>{title}</RNText> : null)}
 		</View>
 	)
 }
@@ -902,8 +1062,10 @@ export function Picker<T>({
 						? tagOf(child.props.modifiers)
 						: undefined
 				) as T
+				// Each option is a button, as UIKit exposes a segmented control's segments.
 				return (
 					<Pressable
+						accessibilityRole="button"
 						accessibilityState={{selected: value === selection}}
 						onPress={() => onSelectionChange?.(value)}
 					>
@@ -915,26 +1077,31 @@ export function Picker<T>({
 	)
 }
 
-export function ProgressView(): React.ReactNode {
-	return <View accessibilityLabel="Loading" />
+/** Its label, when it has one, is the only part a branch assertion reads. */
+export function ProgressView({children}: {children?: React.ReactNode}): React.ReactNode {
+	return <View accessibilityLabel="Loading">{children}</View>
 }
 
 /**
- * Renders only what the title and description would say, which is all a branch
- * assertion needs -- the artwork and layout are an XCUITest's job.
+ * Renders only what the title and description would say, and the actions under
+ * them, which is all a branch assertion needs -- the artwork and layout are an
+ * XCUITest's job.
  */
 export function ContentUnavailableView({
+	actions,
 	description,
 	title,
 }: {
 	title?: string
 	systemImage?: string
 	description?: string
+	actions?: React.ReactNode
 }): React.ReactNode {
 	return (
 		<View>
 			{title ? <RNText>{title}</RNText> : null}
 			{description ? <RNText>{description}</RNText> : null}
+			{actions}
 		</View>
 	)
 }

@@ -1,11 +1,15 @@
 name: Ice Arena
 category: Gym
+kind: space
 building: tostrudcenter
+links:
+  - {title: 'Recreation hours', url: 'https://wp.stolaf.edu/recreation/'}
 
 schedule:
   - title: Open Skate
+    notes: Also open 7–9pm on some Fridays; Recreation lists the dates.
     hours:
-      - {days: [Su], from: '3:00pm', to: '6:00pm'}
+      - {days: [Su], from: '4:00pm', to: '6:00pm'}
 
 breakSchedule:
   fall: []

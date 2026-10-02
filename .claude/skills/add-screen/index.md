@@ -29,10 +29,12 @@ Before using this skill, ensure you have:
 - Icon and gradient for the home screen tile (if applicable)
 - Any sub-screens or related components
 
-**Determine which route group it belongs in:**
-- `app/(home)/` for the main navigator's screens
-- `app/(settings)/` for the settings navigator's screens
-- `app/(component-library)/` for the dev-only component library
+**Determine where its route file goes.** There is one stack, declared in
+`app/_layout.tsx`, and no route groups:
+- `app/` for a screen of its own, e.g. one opened from a Home tile
+- under another screen's folder when only that screen opens it
+  (`app/student-work/job/description.tsx` is opened only from the job)
+- `app/settings/` for a Settings screen, which pushes inside the Settings modal
 
 ### Step 2: Create the Route File
 
@@ -40,17 +42,17 @@ The app uses expo-router 57's file-based routing. **The route file IS the
 screen** — there is no separate view directory and no wrapper component to
 register elsewhere.
 
-**A screen with no parameters** is a single file directly under the group:
+**A screen with no parameters** is a single kebab-case file:
 
 ```
-app/(home)/ScreenName.tsx
+app/screen-name.tsx
 ```
 
 **A screen with sub-screens or a dynamic parameter** is a directory:
 
 ```
-app/(home)/ScreenName/index.tsx     # list / entry screen
-app/(home)/ScreenName/[param].tsx   # detail screen, one dynamic segment
+app/screen-name/index.tsx     # list / entry screen
+app/screen-name/[param].tsx   # detail screen, one dynamic segment
 ```
 
 **Router chrome goes in an outer component; screen logic goes in an inner
@@ -98,8 +100,8 @@ is required, not stylistic, when flattening the loader into the screen would
 change behaviour: a `useState` initialiser seeded from loaded data (React
 only evaluates it on first mount), or the screen's own ungated `useQuery`
 calls that must not fire until the loader's data resolves. See
-`app/(home)/Campus/detail/report.tsx` for the reference three-component
-shape, and `app/(settings)/Credits.tsx` for the simple chrome-plus-body shape.
+`app/hours/detail/report.tsx` for the reference three-component
+shape, and `app/settings/credits.tsx` for the simple chrome-plus-body shape.
 
 **Nothing may be added to `app/` that is not a route.** Every `.ts`/`.tsx`
 file under `app/` becomes a route in expo-router 57 — no test files, no
@@ -116,14 +118,12 @@ the file that defines what they need.
 **Example:**
 
 ```tsx
-import {groupedContactsOptions} from '../../../source/features/contacts/query'
-import {ContactRow} from '../../../source/features/contacts/row'
-import type {ContactType} from '../../../source/features/contacts/types'
+import {contactByTitleOptions} from '../../../source/features/directory/contacts-query'
 ```
 
 ### Step 4: Wire Up Route Parameters (if applicable)
 
-A dynamic segment file, e.g. `app/(home)/Contacts/[title].tsx`, receives its
+A dynamic segment file, e.g. `app/directory/named/[title].tsx`, receives its
 parameter via `useLocalSearchParams`:
 
 ```tsx
@@ -138,7 +138,7 @@ Navigate to it with `useRouter`:
 import {useRouter} from 'expo-router'
 
 let router = useRouter()
-router.navigate({pathname: '/Contacts/[title]', params: {title: contactTitle}})
+router.navigate({pathname: '/directory/named/[title]', params: {title: contactTitle}})
 ```
 
 Any `.navigate(literal)` call site needs
@@ -149,14 +149,14 @@ Any `.navigate(literal)` call site needs
 
 **Update `source/features/views.ts`:**
 - Add an entry to the `AllViews()` array whose `view` is the route's path
-  (e.g. `'/ScreenName'`), matching the file/folder name under `app/(home)/`.
+  (e.g. `'/screen-name'`), matching the file/folder name under `app/`.
 
 **Example view addition:**
 
 ```tsx
 {
 	type: 'view',
-	view: '/ScreenName',
+	view: '/screen-name',
 	title: 'Screen Name',
 	icon: 'star', // an SF Symbol name
 	gradient: c.blueGradient,
@@ -180,11 +180,9 @@ Any `.navigate(literal)` call site needs
 ## Common Patterns and Best Practices
 
 ### Screen Naming Conventions
-- A standalone route file is PascalCase, matching the screen title
-  (`Credits.tsx`). A route nested inside a feature's own directory takes the
-  file-system name of its segment instead — lowercase for a fixed segment
-  (`detail/report.tsx`), bracketed for a dynamic one (`detail/[name].tsx`) —
-  the same convention expo-router itself uses for the segment.
+- Route files and folders are kebab-case (`credits.tsx`,
+  `course-search/results/index.tsx`), and so are their URLs (`/settings/credits`).
+  A dynamic segment is bracketed (`detail/[name].tsx`).
 - Support files under `source/features/` are kebab-case
 - Component names inside a route file follow the `ScreenNamePage` /
   `ScreenNameView` / `ScreenNameLoader` convention from Step 2
@@ -192,7 +190,7 @@ Any `.navigate(literal)` call site needs
 ### Router Chrome
 - Always set a meaningful `<Stack.Title>`
 - Use `<Stack.Toolbar>` / `<Stack.Toolbar.Button>` for header actions (a
-  close button, a menu) — see `app/(settings)/Credits.tsx`
+  button, a menu) — see `app/hours/detail/[name].tsx`
 - Where the chrome's title depends on loaded data, compute it once (e.g.
   `let screen = <Stack.Screen options={{title: …}} />`) and splice it into
   every branch, so no branch can omit it
@@ -218,7 +216,7 @@ Any `.navigate(literal)` call site needs
 **Screen not appearing in the home menu:**
 - Check that the `view` path in `source/features/views.ts` matches the route
   file's path exactly
-- Verify the route file is directly under the correct group
+- Verify the route file is at the path the `view` names
 
 **A stray file broke the build:**
 - Any `.ts`/`.tsx` file added under `app/` becomes a route. A test file, a
@@ -241,9 +239,9 @@ If you encounter issues:
 ## Examples
 
 See existing routes for reference implementations:
-- `app/(settings)/Credits.tsx` — simple chrome-plus-body screen, no data loading
-- `app/(home)/Contacts/index.tsx` — chrome plus an inner `…View` with a query
-- `app/(home)/Campus/detail/report.tsx` — the full three-component shape (chrome, loader, view)
+- `app/settings/credits.tsx` — simple chrome-plus-body screen, no data loading
+- `app/directory/named/[title].tsx` — chrome spliced into each branch of a query
+- `app/hours/detail/report.tsx` — the full three-component shape (chrome, loader, view)
 - `source/features/home/` — the home screen's support components
 - `source/features/menus/` — a feature with several routes sharing support code
 - `source/features/settings/` — a feature with many sub-screens
@@ -257,7 +255,7 @@ Each example demonstrates a different chrome/data pattern.
 Use this checklist to ensure you've completed all necessary steps when adding a new screen.
 
 ## Route Creation
-- [ ] Created the route file directly under `app/(home)/`, `app/(settings)/`, or `app/(component-library)/`
+- [ ] Created a kebab-case route file under `app/`, nested under its only opener or under `app/settings/` where that fits
 - [ ] The route file's default export is the only exported component
 - [ ] Chrome (`Stack.Title` / `Stack.Screen` / `Stack.Toolbar`) is in an outer component if the screen has early returns
 - [ ] A third (`…Loader`) component is used if a `useState` initialiser is seeded from loaded data, or the screen has ungated queries
@@ -297,7 +295,7 @@ Use this checklist to ensure you've completed all necessary steps when adding a 
 ### Routing Issues
 - The route's `view` path in `source/features/views.ts` matches the file path under `app/`
 - Dynamic segments (`[param].tsx`) match the params used in `useLocalSearchParams` and `router.navigate`
-- Screen is in the correct group (`(home)` vs `(settings)` vs `(component-library)`)
+- Screen is nested under the screen that opens it, or under `app/settings/` for Settings
 
 ### TypeScript Issues
 - All imports are correct and exist
@@ -368,7 +366,7 @@ If your screen needs a dynamic segment, name the file accordingly and read
 the parameter with `useLocalSearchParams`:
 
 ```tsx
-// app/(home)/ScreenName/[itemId].tsx
+// app/screen-name/[itemId].tsx
 import * as React from 'react'
 import {Stack, useLocalSearchParams} from 'expo-router'
 import {Text} from 'react-native'

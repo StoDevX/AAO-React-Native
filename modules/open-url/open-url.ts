@@ -40,22 +40,18 @@ async function launchBrowser(url: string): Promise<boolean> {
 	return true
 }
 
+/** A web page's scheme, in any case, as iOS matches schemes. */
+const WEB_SCHEME = /^https?:/iu
+
+/**
+ * Opens `url` in the in-app browser when it is a web page and the reader's setting asks for that,
+ * and otherwise hands it to iOS. The in-app browser refuses any other scheme, and a web scheme not
+ * in lowercase, so it gets the scheme lowercased.
+ */
 export async function openUrl(url: string): Promise<boolean> {
-	let protocol = /^(.*?):/u.exec(url)
-
-	if (protocol && protocol.length > 0) {
-		switch (protocol[1]) {
-			case 'tel':
-				return genericOpen(url)
-			case 'mailto':
-				return genericOpen(url)
-			default:
-				break
-		}
-	}
-
-	if (await storage.getInAppLinkPreference()) {
-		return launchBrowser(url)
+	let webScheme = WEB_SCHEME.exec(url)?.[0]
+	if (webScheme && (await storage.getInAppLinkPreference())) {
+		return launchBrowser(webScheme.toLowerCase() + url.slice(webScheme.length))
 	}
 
 	return genericOpen(url)

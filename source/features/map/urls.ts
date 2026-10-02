@@ -1,4 +1,6 @@
+import type {ColorSchemeName} from 'react-native'
 import type {Campus} from '../building-hours/types'
+import type {Coordinate} from './types'
 /**
  * The MapLibre style JSON the campus map renders, self-hosted from
  * carls-app/map-tiles: OSM-derived vector tiles covering Northfield, plus the
@@ -20,9 +22,45 @@ export const MAP_STYLE_URL = 'https://carls-app.github.io/map-tiles/style.json'
  */
 export const STOLAF_MAP_STYLE_URL = 'https://stolaf.dev/campus-map-data/style.json'
 
-/** The basemap each campus draws. */
-export function mapStyleUrl(campus: Campus): string {
-	return campus === 'stolaf' ? STOLAF_MAP_STYLE_URL : MAP_STYLE_URL
+/**
+ * St. Olaf's basemap for a device in dark mode: the same layers over the same
+ * tiles, recoloured for dark ground.
+ */
+export const STOLAF_MAP_STYLE_URL_DARK = 'https://stolaf.dev/campus-map-data/style-dark.json'
+
+/**
+ * The appearance a campus's basemap draws in. Dark only where the system is
+ * dark and the campus has a dark style: Carleton's has none, so its map stays
+ * light either way.
+ */
+export function basemapScheme(
+	campus: Campus,
+	scheme: ColorSchemeName | undefined,
+): 'light' | 'dark' {
+	return campus === 'stolaf' && scheme === 'dark' ? 'dark' : 'light'
+}
+
+/** The basemap each campus draws, in the system's appearance where it can. */
+export function mapStyleUrl(campus: Campus, scheme: ColorSchemeName | undefined): string {
+	if (campus !== 'stolaf') {
+		return MAP_STYLE_URL
+	}
+	return basemapScheme(campus, scheme) === 'dark' ? STOLAF_MAP_STYLE_URL_DARK : STOLAF_MAP_STYLE_URL
+}
+
+/// A credit the map shows, and where it leads.
+export type MapCredit = {label: string; url: string}
+
+/**
+ * The credits a campus's map carries, as its style's sources state them: the
+ * OpenStreetMap credit the tiles' licence requires, then the college's.
+ * Shown by the map screen's own About menu, since MapLibre's button is hidden.
+ */
+export function mapCredits(campus: Campus): Array<MapCredit> {
+	let osm = {label: '© OpenStreetMap contributors', url: 'https://www.openstreetmap.org/copyright'}
+	return campus === 'stolaf'
+		? [osm, {label: 'St. Olaf College', url: 'https://wp.stolaf.edu/'}]
+		: [osm, {label: 'Carleton College', url: 'https://www.carleton.edu/'}]
 }
 
 /**
@@ -60,4 +98,13 @@ export function buildingPhotoUrl(filename: string): string {
  */
 export function appleMapsSearchUrl(address: string): string {
 	return `https://maps.apple.com/?q=${encodeURIComponent(address)}`
+}
+
+/**
+ * Walking directions to a point in Maps: campus is walked, and `dirflg=w`
+ * asks for walking rather than driving. `daddr` takes "latitude,longitude";
+ * GeoJSON stores the pair the other way round.
+ */
+export function appleMapsDirectionsUrl([longitude, latitude]: Coordinate): string {
+	return `https://maps.apple.com/?daddr=${latitude},${longitude}&dirflg=w`
 }

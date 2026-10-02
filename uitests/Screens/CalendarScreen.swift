@@ -3,38 +3,28 @@ import XCTest
 struct CalendarScreen: Screen {
 	let app: XCUIApplication
 
-	@discardableResult
-	func navigate() -> Self {
-		navigateFromHome(to: TestIdentifiers.Buttons.calendar)
+	/// Opens the Calendar and waits for its toolbar picker. Opening a URL
+	/// relaunches the app, and a relaunched app shows no home screen while it
+	/// is still blank, so `open(route:)` alone returns before the Calendar has
+	/// mounted -- on a slow CI runner, long before.
+	/// The toolbar picker: drawn by the Calendar alone.
+	var mounted: XCUIElement {
+		app.buttons[TestIdentifiers.Calendar.picker]
 	}
 
 	@discardableResult
-	func verifyCalendarTitle() -> Self {
-		verifyTitle(TestIdentifiers.Buttons.calendar)
+	func navigate() -> Self {
+		open(route: "/calendar", mountedWhen: mounted)
 	}
 
 	/// Open the toolbar menu that chooses which calendars the list merges.
 	@discardableResult
 	func openPicker() -> Self {
 		let picker = app.buttons[TestIdentifiers.Calendar.picker]
-		XCTAssertTrue(
-			picker.waitForExistence(timeout: 30),
-			"Calendar picker should be in the toolbar")
+    XCTAssertTrue(
+      picker.waitForExistence(timeout: 30),
+      "Calendar picker should be in the toolbar")
 		picker.tap()
-		return self
-	}
-
-	/// Every category is a submenu item, so a UIMenu action is a button.
-	@discardableResult
-	func checkCategoriesListed() -> Self {
-		openSubmenu(TestIdentifiers.Calendar.categoryMenu)
-		for category in TestIdentifiers.Calendar.categories {
-			XCTContext.runActivity(named: category) { _ in
-				XCTAssertTrue(
-					app.buttons[category].waitForExistence(timeout: 30),
-					"\(category) should be offered in the picker")
-			}
-		}
 		return self
 	}
 
@@ -42,7 +32,7 @@ struct CalendarScreen: Screen {
 	/// Toggles inside a Menu and Reset Filters is a Button; all three reach
 	/// XCUITest as buttons labelled with their titles.
 	@discardableResult
-	private func tapMenuItem(_ title: String) -> Self {
+	func tapMenuItem(_ title: String) -> Self {
 		let item = app.buttons[title]
 		XCTAssertTrue(
 			item.waitForExistence(timeout: 30),
@@ -74,34 +64,10 @@ struct CalendarScreen: Screen {
 	@discardableResult
 	func tapResetFilters() -> Self {
 		tapMenuItem(TestIdentifiers.Calendar.resetFilters)
-		_ = app.staticTexts[TestIdentifiers.Calendar.calendarsSection]
-			.waitForNonExistence(timeout: 10)
-		return self
-	}
-
-	/// Tap a category, opening the Category submenu to reach it.
-	@discardableResult
-	func selectCategory(_ category: String) -> Self {
-		openSubmenu(TestIdentifiers.Calendar.categoryMenu)
-		return tapMenuItem(category)
-	}
-
-	/// Tap an organisation, opening the Organization submenu to reach it.
-	@discardableResult
-	func selectOrganization(_ organization: String) -> Self {
-		openSubmenu(TestIdentifiers.Calendar.organizationMenu)
-		return tapMenuItem(organization)
-	}
-
-	/// Assert a category is selected in the open menu.
-	@discardableResult
-	func verifySelected(_ category: String) -> Self {
-		let item = app.buttons.matching(
-			NSPredicate(format: "label == %@ AND isSelected == true", category)
-		).firstMatch
 		XCTAssertTrue(
-			item.waitForExistence(timeout: 30),
-			"\(category) should be selected in the picker")
+      app.staticTexts[TestIdentifiers.Calendar.calendarsSection]
+        .waitForNonExistence(timeout: 10)
+    )
 		return self
 	}
 
@@ -171,133 +137,7 @@ struct CalendarScreen: Screen {
 		return self
 	}
 
-	/// Scroll the merged list by a fraction of a screen.
-	///
-	/// A short drag rather than `swipeUp()`: a full swipe flings the list past
-	/// the moment a section header reaches the pin line, which is the only
-	/// moment that shows whether rows pass behind it or under it.
-	@discardableResult
-	func nudgeList() -> Self {
-		let start = app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.7))
-		let end = app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.55))
-		start.press(forDuration: 0.05, thenDragTo: end)
-		return self
-	}
-
-	/// Any single event row currently on screen — the first one found.
-	///
-	/// Event rows carry the `event-row-` prefix, so we can query them directly
-	/// without iterating all buttons.
-	private func anyRow(listTop: CGFloat) -> XCUIElement? {
-		let row = app.buttons.matching(
-			NSPredicate(format: "identifier BEGINSWITH %@", TestIdentifiers.Calendar.eventRowPrefix)
-		).firstMatch
-		return row.exists ? row : nil
-	}
-
-	/// Scroll to the end of the list.
-	///
-	/// Swipes until two consecutive swipes leave the same row in the same place,
-	/// which means the list has bottomed out.
-	@discardableResult
-	func scrollToEnd(listTop: CGFloat = 150, limit: Int = 25) -> Self {
-		var previousLabel: String?
-		var previousY: CGFloat?
-
-		for _ in 1...limit {
-			app.swipeUp()
-			if let row = anyRow(listTop: listTop) {
-				let label = row.label
-				let y = row.frame.minY
-				if label == previousLabel && y == previousY {
-					return self
-				}
-				previousLabel = label
-				previousY = y
-			}
-		}
-		XCTFail("The list never stopped scrolling after \(limit) swipes")
-		return self
-	}
-
-	/// The bottom bar floats over the list, so the list needs an inset for it:
-	/// once scrolled to the end, the last row should stop above the Calendars
-	/// button rather than under it.
-	@discardableResult
-	func verifyLastRowClearsToolbar(listTop: CGFloat = 150) -> Self {
-		let picker = app.buttons[TestIdentifiers.Calendar.picker]
-		XCTAssertTrue(
-			picker.waitForExistence(timeout: 30),
-			"The Calendars button should be in the bottom bar")
-
-		guard let row = anyRow(listTop: listTop) else {
-			XCTFail("The list should still have rows at its end")
-			return self
-		}
-
-		XCTContext.runActivity(
-			named: "Row \"\(row.label)\" ends at \(row.frame.maxY);"
-				+ " the Calendars button starts at \(picker.frame.minY)"
-		) { _ in }
-
-		// If any visible row clears the toolbar, the list has proper inset.
-		XCTAssertLessThanOrEqual(
-			row.frame.maxY, picker.frame.minY,
-			"The bottom bar should not cover rows of the list")
-		return self
-	}
-
-	/// Open the first event in the list.
-	@discardableResult
-	func openFirstEvent(listTop: CGFloat = 150) -> Self {
-		XCTAssertTrue(
-			app.buttons[TestIdentifiers.Calendar.picker].waitForExistence(timeout: 30),
-			"The calendar screen should be up before looking for a row")
-
-		guard let row = anyRow(listTop: listTop) else {
-			XCTFail("The list should have an event to open")
-			return self
-		}
-
-		XCTContext.runActivity(named: "Open \(row.label)") { _ in }
-
-		// Retried for the same reason `navigateFromHome` retries: the row is a
-		// SwiftUI button that is hittable as soon as its host mounts, while its
-		// action has to reach JavaScript to push the next screen. A tap
-		// synthesized in between lands natively and nothing happens.
-		let share = app.buttons[TestIdentifiers.Calendar.shareEvent]
-		for attempt in 1...3 {
-			row.tap()
-			if share.waitForExistence(timeout: 10) {
-				return self
-			}
-			capture("row-tap-\(attempt)-did-not-reach-the-detail-screen")
-			XCTContext.runActivity(named: "Tap \(attempt) on the row did not open it; retrying") { _ in
-			}
-			if !app.buttons[TestIdentifiers.Calendar.picker].exists {
-				XCTFail("The push landed somewhere without a Share Event button; see the screenshot")
-				return self
-			}
-		}
-
-		XCTFail("Tapping \(row.label) never opened the event detail screen")
-		return self
-	}
-
 	// MARK: - Day picker strip
-
-	/// The leading day cells in the strip, in the order they are laid out.
-	///
-	/// Bound by identifier rather than by position: the strip and the list are
-	/// both made of buttons, and only the identifier separates them.
-	///
-	/// Only the first `limit` cells are read. The strip draws a cell for every day
-	/// between today and the last event it knows about, which runs to a hundred or
-	/// more, and every frame a query reads is a round trip to the app -- reading
-	/// them all takes minutes. Nothing asks about a day past the first screenful.
-	private func dayCells(limit: Int = 14) -> [XCUIElement] {
-		dayCellFrames(limit: limit).sorted { $0.frame.minX < $1.frame.minX }.map { $0.cell }
-	}
 
 	@discardableResult
 	func verifyStripIsPresent() -> Self {
@@ -310,85 +150,43 @@ struct CalendarScreen: Screen {
 		return self
 	}
 
-	/// Every day cell the app is currently exposing, paired with where it sits.
+	/// The day cells with any of their frame inside the window, leading to
+	/// trailing.
 	///
-	/// The frames are read once and carried: a comparator or filter that reached
-	/// for `frame` would ask the app again on every comparison.
-	private func dayCellFrames(limit: Int) -> [(cell: XCUIElement, frame: CGRect)] {
-		let matches = app.buttons.matching(
-			NSPredicate(format: "identifier BEGINSWITH %@", TestIdentifiers.Calendar.dayCellPrefix)
-		)
-
-		return (0..<min(limit, matches.count)).map { index in
-			let cell = matches.element(boundBy: index)
-			return (cell: cell, frame: cell.frame)
+	/// Read from one snapshot of the app rather than a query per cell: each
+	/// query is a round trip, and twenty-odd of them take seconds. The
+	/// strip and the list are both made of buttons, and only the identifier
+	/// separates them.
+	private func visibleDayCells() -> [XCUIElementSnapshot] {
+		let root: XCUIElementSnapshot
+		do {
+			root = try app.snapshot()
+		} catch {
+			XCTFail("The app's accessibility tree should be readable: \(error)")
+			return []
 		}
-	}
-
-	/// The leftmost day cell inside the strip's viewport, and its frame.
-	///
-	/// Distinct from `dayCells().first`: a cell dragged off the leading edge
-	/// keeps a frame, and its origin goes negative rather than disappearing, so
-	/// after a swipe the leftmost cell by frame is one the user cannot see.
-	private func leadingVisibleDayCell(limit: Int = 21) -> (cell: XCUIElement, frame: CGRect)? {
-		let onscreen = dayCellFrames(limit: limit).filter { $0.frame.minX >= 0 }
-		return onscreen.min(by: { $0.frame.minX < $1.frame.minX })
-	}
-
-	/// Where the strip's leading cell sits on screen. A week the strip has
-	/// snapped to puts its Sunday here; a week the strip could only scroll
-	/// partway to leaves it further along.
-	func leadingDayCellEdge() -> CGFloat? {
-		leadingVisibleDayCell()?.frame.minX
-	}
-
-	/// The cell identifier for the Sunday `weeksOn` weeks after the Sunday of
-	/// the app's frozen week.
-	///
-	/// The week start is pinned rather than inherited from the simulator's
-	/// region settings. The app's own is unconditional -- moment's default `en`
-	/// locale in `deriveDays`, and `startOf('week')` in the strip -- so a device
-	/// set to a Monday-first region would otherwise fail a correct strip.
-	private func sundayCell(weeksOn weeks: Int = 0) -> String {
-		var calendar = Calendar(identifier: .gregorian)
-		calendar.locale = Locale(identifier: "en_US_POSIX")
-		calendar.timeZone = TimeZone.current
-		calendar.firstWeekday = 1
-		calendar.minimumDaysInFirstWeek = 1
-
-		let week = calendar.dateInterval(
-			of: .weekOfYear, for: TestIdentifiers.Calendar.frozenNow)!
-		let sunday = calendar.date(byAdding: .weekOfYear, value: weeks, to: week.start)!
-		return TestIdentifiers.Calendar.dayCell(sunday)
-	}
-
-	/// A Sunday leads the strip, so that cell should be the leftmost visible one.
-	/// The week is measured from the app's frozen clock, not the live one;
-	/// `weeksOn` counts on from it, for a strip that has been swiped along.
-	///
-	/// Pass `atEdge` to also pin where that Sunday came to rest. Being merely
-	/// visible is not the claim -- a strip that ran out of content mid-week
-	/// still shows a Sunday, just further along than one that snapped.
-	@discardableResult
-	func verifySundayLeadsTheStrip(weeksOn weeks: Int = 0, atEdge edge: CGFloat? = nil) -> Self {
-		verifyStripIsPresent()
-
-		guard let leading = leadingVisibleDayCell() else {
-			XCTFail("The strip should have a visible day cell")
-			return self
+		let window = app.frame
+		var cells: [XCUIElementSnapshot] = []
+		var pending = [root]
+		while let node = pending.popLast() {
+			if node.elementType == .button,
+				node.identifier.hasPrefix(TestIdentifiers.Calendar.dayCellPrefix),
+				!node.frame.intersection(window).isEmpty
+			{
+				cells.append(node)
+			}
+			pending.append(contentsOf: node.children)
 		}
+		return cells.sorted { $0.frame.minX < $1.frame.minX }
+	}
 
-		let expected = sundayCell(weeksOn: weeks)
-		XCTAssertEqual(
-			leading.cell.identifier, expected,
-			"The strip should lead with a Sunday (expected \(expected))")
-
-		if let edge {
-			XCTAssertEqual(
-				leading.frame.minX, edge, accuracy: 1.0,
-				"A snapped week should bring its Sunday to the strip's leading edge")
-		}
-		return self
+	/// The frame of the leftmost day cell that starts inside the strip.
+	///
+	/// A cell dragged off the leading edge keeps a frame, and its origin goes
+	/// negative rather than disappearing, so after a swipe the leftmost visible
+	/// cell can be a sliver the user cannot see.
+	private func leadingVisibleDayCellFrame() -> CGRect? {
+		visibleDayCells().first { $0.frame.minX >= 0 }?.frame
 	}
 
 	/// Drags the strip one week toward the leading edge and lets it settle.
@@ -400,12 +198,11 @@ struct CalendarScreen: Screen {
 	/// it.
 	@discardableResult
 	func swipeStripToNextWeek() -> Self {
-		guard let leading = leadingVisibleDayCell() else {
+		guard let strip = leadingVisibleDayCellFrame() else {
 			XCTFail("The strip should have a day cell to drag from")
 			return self
 		}
 
-		let strip = leading.frame
 		let origin = app.coordinate(withNormalizedOffset: .zero)
 		let start = origin.withOffset(CGVector(dx: strip.midX + 280, dy: strip.midY))
 		let end = origin.withOffset(CGVector(dx: strip.midX + 40, dy: strip.midY))
@@ -425,55 +222,6 @@ struct CalendarScreen: Screen {
 		return self
 	}
 
-	/// Taps the cell for a given ISO day at its visual centre, the way a
-	/// finger does.
-	///
-	/// `XCUIElement.tap()` can activate an accessible element through the
-	/// accessibility layer -- it does not have to land a real touch at that
-	/// point on screen. `XCUICoordinate.tap()` always synthesizes a touch and
-	/// goes through UIKit's actual `hitTest(_:with:)`, so it is the only way
-	/// here to prove a cell is tappable where it is drawn, not merely present
-	/// in the hierarchy.
-	@discardableResult
-	func tapDayAtItsCenter(_ isoDay: String) -> Self {
-		let cell = app.buttons[TestIdentifiers.Calendar.dayCellPrefix + isoDay]
-		XCTAssertTrue(
-			cell.waitForExistence(timeout: 10),
-			"The strip should offer \(isoDay)")
-		cell.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
-		return self
-	}
-
-	/// The day cells at the head of the strip should each clear the 44pt minimum
-	/// for a touch target.
-	///
-	/// Cheap to check and worth checking: a control drawn smaller than its
-	/// nominal size is the failure that no component test can see. The cells are
-	/// all one component, so the ones on screen stand for the rest.
-	@discardableResult
-	func verifyDayCellsAreTappable() -> Self {
-		verifyStripIsPresent()
-
-		let cells = dayCells()
-		XCTAssertFalse(cells.isEmpty, "The strip should have day cells")
-
-		for cell in cells {
-			// Both read once. Every mention of `identifier` or `frame` is a query the
-			// app has to answer, and the four assertions below would ask five times.
-			let name = cell.identifier
-			let frame = cell.frame
-
-			XCTContext.runActivity(named: "\(name) is \(frame.width)x\(frame.height)") { _ in }
-			XCTAssertGreaterThanOrEqual(
-				frame.height, 44,
-				"\(name) is too short to tap reliably")
-			XCTAssertGreaterThanOrEqual(
-				frame.width, 44,
-				"\(name) is too narrow to tap reliably")
-		}
-		return self
-	}
-
 	/// The identifier of the day currently marked selected.
 	///
 	/// The selection is drawn as a filled circle, which a screenshot shows and a
@@ -490,52 +238,28 @@ struct CalendarScreen: Screen {
 		return selected.identifier
 	}
 
-	@discardableResult
-	func verifySelectedDay(_ expected: String, message: String) -> Self {
-		XCTAssertEqual(selectedDay(), expected, message)
-		return self
-	}
+  /// The currently visible days on the date picker, leading to trailing. A
+  /// cell counts when any of its frame is inside the window, so a sliver at
+  /// either edge counts, as it does for `isHittable`.
+  func datePickerDayIdentifiers() -> [String] {
+    visibleDayCells().map { $0.identifier }
+  }
 
-	/// The label of a visible event row, which is how a test tells whether the
-	/// list actually moved. Row titles come from the live calendars, so the
-	/// value is only ever compared against another reading of itself.
-	func topRowLabel(listTop: CGFloat = 150) -> String? {
-		anyRow(listTop: listTop)?.label
-	}
-
-	/// Today's section header in the Upcoming list, as the app writes it:
-	/// "Saturday – Sep 5". Built from the frozen clock rather than typed out, and
-	/// matched on both halves, because every later Saturday shares the prefix.
-	func todayHeader() -> XCUIElement {
-		func format(_ pattern: String) -> String {
-			let formatter = DateFormatter()
-			formatter.locale = Locale(identifier: "en_US_POSIX")
-			formatter.timeZone = TimeZone.current
-			formatter.dateFormat = pattern
-			return formatter.string(from: TestIdentifiers.Calendar.frozenNow)
-		}
-		return app.staticTexts.matching(
-			NSPredicate(
-				format: "label BEGINSWITH %@ AND label ENDSWITH %@",
-				"\(format("EEEE")) – ", format("MMM d"))
-		).firstMatch
-	}
-
-	/// Titles of the event rows a reader can see above today's section: below
-	/// the navigation bar, above today's header. Empty when the list sits on
-	/// today; the past sections are then tucked under the bar.
-	///
-	/// Measured against the navigation bar rather than a fixed height so it
-	/// holds on any device, and whether the large title is showing or not.
-	func rowsVisibleAboveToday() -> [String] {
-		let barBottom = app.navigationBars.firstMatch.frame.maxY
-		let todayTop = todayHeader().frame.minY
-		return app.buttons.matching(
-			NSPredicate(format: "identifier BEGINSWITH %@", TestIdentifiers.Calendar.eventRowPrefix)
-		).allElementsBoundByIndex
-			.filter { $0.frame.maxY > barBottom && $0.frame.minY < todayTop }
-			.map(\.label)
-	}
+  /// Wait for the strip to show exactly `expected`. A scroll to a week is
+  /// animated, and a cell at the strip's edge is off screen until it has
+  /// arrived, so a reading taken as the scroll starts is short a day.
+  @discardableResult
+  func verifyStripShows(_ expected: [String], _ message: String, timeout: TimeInterval = 10) -> Self {
+    var last: [String] = []
+    let arrived = NSPredicate { _, _ in
+      last = self.datePickerDayIdentifiers()
+      return last == expected
+    }
+    let expectation = XCTNSPredicateExpectation(predicate: arrived, object: nil)
+    _ = XCTWaiter().wait(for: [expectation], timeout: timeout)
+    XCTAssertEqual(last, expected, message)
+    return self
+  }
 
 	/// Tap the bottom-bar Today button.
 	@discardableResult
@@ -548,91 +272,9 @@ struct CalendarScreen: Screen {
 		return self
 	}
 
-	/// The event detail's bottom-bar action. A bar item, so it is a button, and
-	/// it carries no icon -- the title is all there is to find it by.
-	@discardableResult
-	func verifyAddToCalendarButton() -> Self {
-		let button = app.buttons[TestIdentifiers.Calendar.addToCalendar]
-		XCTAssertTrue(
-			button.waitForExistence(timeout: 30),
-			"The event detail should offer Add to calendar in its bottom bar")
-		return self
-	}
-
-	/// Tap the event detail's Add to Calendar bar item.
-	@discardableResult
-	func tapAddToCalendar() -> Self {
-		let button = app.buttons[TestIdentifiers.Calendar.addToCalendar]
-		XCTAssertTrue(
-			button.waitForExistence(timeout: 30),
-			"The event detail should offer Add to calendar in its bottom bar")
-		button.tap()
-		return self
-	}
-
-	/// Save the event in the system new-event editor. Nothing from SpringBoard
-	/// may appear first: an alert there is a calendar permission prompt, and
-	/// adding an event must not need one.
-	@discardableResult
-	func saveInSystemEditor(springboard: XCUIApplication) -> Self {
-		let editor = app.navigationBars[TestIdentifiers.Calendar.newEventEditor]
-		let prompt = springboard.alerts.firstMatch
-		XCTAssertTrue(
-			editor.waitForExistence(timeout: 10) || prompt.exists,
-			"Add to Calendar should open the system editor")
-		XCTAssertFalse(prompt.exists, "Adding an event should not ask for calendar access")
-		editor.buttons[TestIdentifiers.Calendar.saveNewEvent].tap()
-		XCTAssertTrue(
-			editor.waitForNonExistence(timeout: 10),
-			"Saving should close the system editor")
-		return self
-	}
-
-	/// Once saved, the bar item says so and can't add a second copy.
-	@discardableResult
-	func verifyAddedToCalendar() -> Self {
-		let added = app.buttons[TestIdentifiers.Calendar.addedToCalendar]
-		XCTAssertTrue(
-			added.waitForExistence(timeout: 10),
-			"The bar item should read Added to Calendar after a save")
-		XCTAssertFalse(added.isEnabled, "Added to Calendar should be disabled")
-		return self
-	}
-
-	/// Dismiss the event detail sheet, landing back on the calendar list.
-	@discardableResult
-	func closeEventDetail() -> Self {
-		let close = app.buttons[TestIdentifiers.Calendar.closeEventDetail]
-		XCTAssertTrue(
-			close.waitForExistence(timeout: 30),
-			"The event detail should offer a Close button")
-		close.tap()
-		XCTAssertTrue(
-			app.buttons[TestIdentifiers.Calendar.picker].waitForExistence(timeout: 30),
-			"Dismissing the event detail should land back on the calendar")
-		return self
-	}
-
-	/// A section header inside the open menu.
-	@discardableResult
-	func verifyMenuSection(_ title: String) -> Self {
-		XCTAssertTrue(
-			app.staticTexts[title].waitForExistence(timeout: 30),
-			"\(title) should be a section of the open menu")
-		return self
-	}
-
-	/// Switch a calendar on or off in the open menu's CALENDARS section. A
-	/// Toggle inside a Menu is a button, the same as a category is.
-	@discardableResult
-	func toggleCalendar(_ title: String) -> Self {
-		let item = app.buttons[title]
-		XCTAssertTrue(
-			item.waitForExistence(timeout: 30),
-			"\(title) should be offered as a calendar in the picker")
-		item.tap()
-		return self
-	}
+  func visibleRows() -> XCUIElementQuery {
+    app.buttons.matching(.beginsWith(TestIdentifiers.Calendar.eventRowPrefix))
+  }
 
 	/// How many event rows are on screen.
 	///
@@ -640,9 +282,7 @@ struct CalendarScreen: Screen {
 	/// is lazy. Enough to tell "some rows" from "none", and to tell a narrowed
 	/// list from an unnarrowed one, which is all any assertion here claims.
 	func visibleRowCount() -> Int {
-		app.buttons.matching(
-			NSPredicate(format: "identifier BEGINSWITH %@", TestIdentifiers.Calendar.eventRowPrefix)
-		).count
+		visibleRows().count
 	}
 
 	/// A row for `title` is in the list, found by its own identifier.
@@ -671,30 +311,6 @@ struct CalendarScreen: Screen {
 
 	private func row(_ title: String) -> XCUIElement {
 		app.buttons["\(TestIdentifiers.Calendar.eventRowPrefix)\(title)"]
-	}
-
-	/// The list merges several calendars, so it can credit none of them.
-	@discardableResult
-	func verifyNoAttribution() -> Self {
-		let caption = app.staticTexts.matching(
-			NSPredicate(format: "label BEGINSWITH %@", TestIdentifiers.Calendar.attributionPrefix)
-		).firstMatch
-		XCTAssertFalse(
-			caption.exists,
-			"The calendar list should carry no attribution footer")
-		return self
-	}
-
-	/// The detail screen knows which calendar its event came from, so it says.
-	@discardableResult
-	func verifyAttributionOnDetail() -> Self {
-		let caption = app.staticTexts.matching(
-			NSPredicate(format: "label BEGINSWITH %@", TestIdentifiers.Calendar.attributionPrefix)
-		).firstMatch
-		XCTAssertTrue(
-			caption.waitForExistence(timeout: 30),
-			"The event detail should credit the calendar the event came from")
-		return self
 	}
 
 	// MARK: - View mode

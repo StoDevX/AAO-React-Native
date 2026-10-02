@@ -45,8 +45,6 @@ const DINING_STATUS: AreaStatus = {
 	ids: new Set(['1', '3']),
 	count: 2,
 	empty: false,
-	settled: true,
-	partial: false,
 }
 
 const FAITH: StudentWorkArea = {
@@ -61,8 +59,6 @@ const FAITH_STATUS: AreaStatus = {
 	ids: new Set(),
 	count: 0,
 	empty: true,
-	settled: true,
-	partial: false,
 }
 
 const CONTEXT: FilterContext = {
@@ -230,8 +226,7 @@ describe('visibleSections', () => {
 		expect(ids(visibleSections(CATEGORIES, filters, 'LIONS pause', CONTEXT))).toEqual(['4'])
 	})
 
-	// lodash's `deburr` leaves letters like ǧ and ŋ alone; a live CURI title
-	// has both.
+	// A live CURI title has both ǧ, which decomposes, and ŋ, which does not.
 	test('ignores accents beyond Latin-1 in the search', () => {
 		let filters = buildJobFilters(ALL_JOBS, NOTHING_CHOSEN, CONTEXT)
 		expect(ids(visibleSections(CATEGORIES, filters, 'minagi kin', CONTEXT))).toEqual(['8'])
@@ -289,7 +284,7 @@ describe('the Area and Posted filters', () => {
 	})
 
 	// An empty area's tile still opens, to a list filtered to that area.
-	test('offer every area whose searches have answered, empty ones too', () => {
+	test('offer every area once the units have loaded, empty ones too', () => {
 		let area = filterNamed(buildJobFilters(ALL_JOBS, NOTHING_CHOSEN, CONTEXT), 'Area')
 		expect(optionTitles(area)).toEqual(['Dining', 'Faith'])
 	})
@@ -299,7 +294,7 @@ describe('the Area and Posted filters', () => {
 		expect(ids(visibleSections(CATEGORIES, filters, '', CONTEXT))).toEqual([])
 	})
 
-	test('offer no areas before the unit searches answer', () => {
+	test('offer no areas before the units load', () => {
 		let area = filterNamed(
 			buildJobFilters(ALL_JOBS, NOTHING_CHOSEN, {...CONTEXT, membership: new Map()}),
 			'Area',

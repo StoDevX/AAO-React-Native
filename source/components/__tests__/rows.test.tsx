@@ -1,16 +1,10 @@
 import * as React from 'react'
 import {fireEvent, render, screen} from '@testing-library/react-native'
 
-import {ActionRow, DetailRow, DisclosureRow, SelectableText} from '../rows'
+import {ActionRow, DetailRow, DisclosureRow} from '../rows'
+import {loadBeforeTests} from '../../testing/load-before-tests'
 
-jest.mock('@expo/ui/swift-ui', () => {
-	// oxlint-disable-next-line typescript/no-require-imports
-	return require('../../testing/expo-ui-mock') as typeof import('../../testing/expo-ui-mock')
-})
-jest.mock('@expo/ui/swift-ui/modifiers', () => {
-	// oxlint-disable-next-line typescript/no-require-imports
-	return require('../../testing/expo-ui-mock') as typeof import('../../testing/expo-ui-mock')
-})
+loadBeforeTests('Image')
 
 describe('DisclosureRow', () => {
 	it('renders the detail line when there is one', async () => {
@@ -228,23 +222,6 @@ describe('DetailRow', () => {
 	})
 })
 
-describe('SelectableText', () => {
-	/// The reason this is a TextInput rather than an @expo/ui Text. Asking for
-	/// them collectively detects nothing under the new architecture, so a
-	/// regression here would read as "selection still works" while quietly
-	/// making every phone number and address unactionable.
-	it('names each data detector rather than asking for all of them', async () => {
-		await render(<SelectableText text="Call 507-786-2222" />)
-
-		expect(screen.getByTestId('selectable-text').props.dataDetectorTypes).toEqual([
-			'calendarEvent',
-			'link',
-			'phoneNumber',
-			'address',
-		])
-	})
-})
-
 describe('ActionRow', () => {
 	it('calls onPress when tapped', async () => {
 		let onPress = jest.fn()
@@ -262,5 +239,22 @@ describe('ActionRow', () => {
 		fireEvent.press(screen.getByLabelText('Print'))
 
 		expect(onPress).not.toHaveBeenCalled()
+	})
+})
+
+describe('DisclosureRow status', () => {
+	it('shows the status and reads it with the row', async () => {
+		await render(
+			<DisclosureRow
+				detail="TOH 120"
+				onPress={jest.fn()}
+				status={{text: 'Open until 4:30 PM', color: 'green'}}
+				title="Financial Aid"
+			/>,
+		)
+		expect(screen.getByText('Open until 4:30 PM')).toBeTruthy()
+		expect(
+			screen.getByRole('button', {name: 'Financial Aid, TOH 120, Open until 4:30 PM'}),
+		).toBeTruthy()
 	})
 })

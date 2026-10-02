@@ -1,0 +1,36 @@
+$schema: http://json-schema.org/draft-07/schema#
+
+# What is on each floor of one building, bottom to top. Hand-kept until the
+# data can come from OpenStreetMap (#8244).
+type: object
+additionalProperties: false
+required: [building, floors]
+properties:
+  # The map feature id; the file is named for it.
+  building: {type: string, pattern: '^[a-z0-9-]+$'}
+  floors:
+    type: array
+    minItems: 1
+    items:
+      type: object
+      additionalProperties: false
+      required: [name, entries]
+      properties:
+        # Free text: buildings disagree on what a 0xx room is.
+        name: {type: string}
+        entries:
+          type: array
+          items: {$ref: '#/definitions/entry'}
+definitions:
+  entry:
+    type: object
+    additionalProperties: false
+    required: [name]
+    properties:
+      name: {type: string}
+      room: {type: string}
+      # An Hours venue's name, or a map feature id, for an entry whose name
+      # differs from what it opens. At most one.
+      venue: {type: string}
+      point: {type: string, pattern: '^[a-z0-9-]+$'}
+    not: {required: [venue, point]}

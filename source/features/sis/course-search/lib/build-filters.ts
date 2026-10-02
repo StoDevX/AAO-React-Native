@@ -1,55 +1,28 @@
 import {parseTerm} from '../../../../lib/course-search/parse-term'
-import type {FilterType, ListType, ToggleType} from '@frogpond/filter'
+import type {Filter, ListFilter, ToggleFilter} from '@frogpond/filter'
 import {CourseType} from '../../../../lib/course-search'
-import {availableTermsOptions, departmentsOptions, geReqsOptions} from '../query'
-import {useQuery} from '@tanstack/react-query'
+import {useCourseCatalog, useCourseFilterOptions} from '../../../../database/courses/read'
 
 export function useFilters(): {
 	isLoading: boolean
-	data: FilterType<CourseType>[]
+	data: Filter<CourseType>[]
 	error: null | Error
 	refetch: () => void
 } {
-	let {
-		data: terms = [],
-		error: termError,
-		isLoading: termsLoading,
-		refetch: refetchTerms,
-	} = useQuery(availableTermsOptions)
-
-	let {
-		data: geReqs = [],
-		error: geReqError,
-		isLoading: geReqsLoading,
-		refetch: refetchGeReqs,
-	} = useQuery(geReqsOptions)
-
-	let {
-		data: departments = [],
-		error: departmentsError,
-		isLoading: deptsLoading,
-		refetch: refetchDepts,
-	} = useQuery(departmentsOptions)
-
-	let refetch = () => {
-		void refetchTerms()
-		void refetchGeReqs()
-		void refetchDepts()
-	}
-
-	let isLoading = termsLoading || geReqsLoading || deptsLoading
-	let error = termError || geReqError || departmentsError
+	let {terms, gereqs: geReqs, departments} = useCourseFilterOptions()
+	let catalog = useCourseCatalog()
+	let isLoading = catalog.isFetching && terms.length === 0
+	let error = terms.length === 0 ? catalog.error : null
+	let refetch = () => void catalog.refetch()
 
 	if (error) {
 		return {data: [], error, isLoading, refetch}
 	}
 
-	let allTerms = terms
-		.map((term) => ({
-			title: String(term.term),
-			label: parseTerm(term.term.toString()),
-		}))
-		.reverse()
+	let allTerms = terms.map((term) => ({
+		title: String(term),
+		label: parseTerm(String(term)),
+	}))
 
 	let allGEs = geReqs.map((ge) => ({title: ge}))
 	let allDepartments = departments.map((dep) => ({title: dep}))
@@ -67,7 +40,7 @@ export function useFilters(): {
 			apply: {
 				key: 'spaceAvailable',
 			},
-		} as ToggleType<CourseType>,
+		} as ToggleFilter<CourseType>,
 		{
 			type: 'list',
 			key: 'term',
@@ -82,7 +55,7 @@ export function useFilters(): {
 			apply: {
 				key: 'term',
 			},
-		} as ListType<CourseType>,
+		} as ListFilter<CourseType>,
 		{
 			type: 'list',
 			key: 'gereqs',
@@ -98,7 +71,7 @@ export function useFilters(): {
 			apply: {
 				key: 'gereqs',
 			},
-		} as ListType<CourseType>,
+		} as ListFilter<CourseType>,
 		{
 			type: 'list',
 			key: 'department',
@@ -114,7 +87,7 @@ export function useFilters(): {
 			apply: {
 				key: 'department',
 			},
-		} as ListType<CourseType>,
+		} as ListFilter<CourseType>,
 		{
 			type: 'list',
 			key: 'level',
@@ -130,7 +103,7 @@ export function useFilters(): {
 			apply: {
 				key: 'level',
 			},
-		} as ListType<CourseType>,
+		} as ListFilter<CourseType>,
 		{
 			type: 'toggle',
 			key: 'status',
@@ -143,7 +116,7 @@ export function useFilters(): {
 				key: 'status',
 				trueEquivalent: 'O',
 			},
-		} as ToggleType<CourseType>,
+		} as ToggleFilter<CourseType>,
 		{
 			type: 'toggle',
 			key: 'type',
@@ -156,7 +129,7 @@ export function useFilters(): {
 				key: 'type',
 				trueEquivalent: 'Lab',
 			},
-		} as ToggleType<CourseType>,
+		} as ToggleFilter<CourseType>,
 	]
 
 	return {data: response, error: null, isLoading, refetch}

@@ -5,9 +5,9 @@ import {
 	ContentUnavailableView,
 	Host,
 	LazyVStack,
+	ProgressView,
 	RNHostView,
 	ScrollView as SwiftUIScrollView,
-	Spacer,
 	TabView,
 	Text,
 	VStack,
@@ -25,7 +25,7 @@ import {
 import * as c from '@frogpond/colors'
 import type {Moment} from 'moment-timezone'
 import {DayPickerStrip, type DayPickerStripHandle} from './day-picker-strip'
-import {anchorShouldFollow, dayOnShow, emptyNotice, pageWindow} from './day-state'
+import {anchorShouldFollow, dayOnShow, drawnAround, emptyNotice, pageWindow} from './day-state'
 import {deriveDays, eventsByDay} from './days'
 import {EventListRow} from './event-list-row'
 import {FailureNote} from './failure-note'
@@ -35,12 +35,15 @@ import type {CalendarBodyHandle, CalendarSource, SourcedEvent} from './types'
 /**
  * How many days either side of the anchor are mounted as pages.
  *
- * Every page in the window is built when the pager is, and the pager is built
- * again whenever a day is chosen from the strip -- so this is what a tap on
- * the strip costs. Seven pages is a swipe or two of road in each direction and
- * a tap that lands promptly; fifteen took well over a second.
+ * The window moves only once the pager comes to rest, so this is how far a run
+ * of quick swipes can go before it stops at the last mounted day. Every page in
+ * the window is built when the pager is, and the pager is built again whenever
+ * a day is chosen from the strip -- so this is also what a tap on the strip
+ * costs. Most pages are only a spinner (see `PAGES_DRAWN`), but each still
+ * counts: on a Debug simulator fifteen pages took about 0.8s longer to land a
+ * tap than seven.
  */
-const PAGE_WINDOW = 3
+const PAGE_WINDOW = 5
 
 /**
  * How close to the window's edge the selected day gets before the window
@@ -54,12 +57,13 @@ const PAGE_MARGIN = 1
 /**
  * How far either side of the day on screen a page is built in full.
  *
- * A page beyond this is mounted but empty, so it costs nothing until it is
- * swiped to. Only a rebuild of the pager -- which is what choosing a day from
- * the strip does, since an uncontrolled pager cannot be told to move -- pays
- * for what is in the window, and a tap on tomorrow should not cost more than a
- * swipe to it. One either side is enough that a swipe lands on something
- * already drawn.
+ * A page beyond this is mounted with only a spinner, so it costs next to
+ * nothing until it is swiped to. Only a rebuild of the pager -- which is what
+ * choosing a day from the strip does, since an uncontrolled pager cannot be
+ * told to move -- pays for what is in the window, and a tap on tomorrow should
+ * not cost more than a swipe to it. One either side is enough that a single
+ * swipe lands on something already drawn; a run of quick swipes outruns it
+ * and lands on a spinner, which is drawn in full once the pager comes to rest.
  */
 const PAGES_DRAWN = 1
 
@@ -138,11 +142,22 @@ export let DayView = React.forwardRef<CalendarBodyHandle, Props>(function DayVie
 		day: null,
 	})
 
+	// The day the pager last came to rest on. A swipe reports its new day while
+	// the page is still snapping into place, and the pages drawn and mounted
+	// change only once it has come to rest -- changing them during the snap
+	// leaves the pager stopped between two days.
+	let [settledDay, setSettledDay] = React.useState<Moment | null>(null)
+
 	let driveTo = React.useCallback(
 		(day: Moment) => {
 			setPager((previous) => ({generation: previous.generation + 1, day: day.format('YYYY-MM-DD')}))
+			// A rebuilt pager does not animate, so it is at rest on the day it is
+			// built around, and its pages can be centred there without disturbing
+			// a swipe.
+			setSettledDay(day)
+			setAnchor(day)
 		},
-		[setPager],
+		[setPager, setSettledDay, setAnchor],
 	)
 
 	// The pager's own position is not readable from here, so it is tracked: it
@@ -203,10 +218,10 @@ export let DayView = React.forwardRef<CalendarBodyHandle, Props>(function DayVie
 
 	React.useImperativeHandle(ref, () => ({showToday}), [showToday])
 
-	// Where the day being shown sits in the window, which is what says how far
-	// from it a page can be and still be worth drawing. `pages` guarantees this
-	// is found.
-	let showingAt = pages.findIndex((page) => page.isSame(selectedDay, 'day'))
+	// Where the pager last came to rest in the window, which is what says how
+	// far from it a page can be and still be worth drawing. `pages` guarantees
+	// the selected day is found, and this falls back to it.
+	let showingAt = drawnAround(pages, settledDay, selectedDay)
 
 	// A page-style `TabView` lays each page out across the full width with no
 	// side safe area, so in landscape a page's rows would sit under the notch.
@@ -224,7 +239,6 @@ export let DayView = React.forwardRef<CalendarBodyHandle, Props>(function DayVie
 						now={props.now}
 						onSelectDay={(day) => {
 							setChosenDay(day)
-							keepInWindow(day)
 							driveTo(day)
 						}}
 						selectedDay={selectedDay ?? null}
@@ -245,12 +259,18 @@ export let DayView = React.forwardRef<CalendarBodyHandle, Props>(function DayVie
 						let day = days.find((d) => d.format('YYYY-MM-DD') === iso)
 						if (day) {
 							setChosenDay(day)
-							keepInWindow(day)
 							// The pager moved itself, so it is already showing this day.
 							// Recorded rather than driven, or the effect above would
 							// rebuild it and undo the swipe it just made.
 							setPager((previous) => ({...previous, day: iso}))
 							stripRef.current?.scrollToDay(day)
+						}
+					}}
+					onPageSettle={(iso) => {
+						let day = days.find((d) => d.format('YYYY-MM-DD') === iso)
+						if (day) {
+							setSettledDay(day)
+							keepInWindow(day)
 						}
 					}}
 					defaultSelection={pager.day ?? selectedDay?.format('YYYY-MM-DD') ?? ''}
@@ -261,18 +281,10 @@ export let DayView = React.forwardRef<CalendarBodyHandle, Props>(function DayVie
 						let dayRows = byDay.get(iso) ?? []
 						let drawn = Math.abs(index - showingAt) <= PAGES_DRAWN
 
-						if (!drawn) {
-							// Mounted so the pager can reach it, empty until it is worth
-							// drawing. A swipe lands on a neighbour, which is drawn.
-							return (
-								<TabView.Tab key={iso} value={iso}>
-									<VStack>
-										<Spacer />
-									</VStack>
-								</TabView.Tab>
-							)
-						}
-
+						// A page not yet drawn keeps the same scroll view and swaps only
+						// what is inside it. The pager does not redraw a page on screen
+						// whose outermost view changes kind, so a spinner standing in
+						// for the scroll view would stay up after the page was drawn.
 						return (
 							<TabView.Tab key={iso} value={iso}>
 								<SwiftUIScrollView
@@ -284,53 +296,61 @@ export let DayView = React.forwardRef<CalendarBodyHandle, Props>(function DayVie
 										frame({maxWidth: Infinity, maxHeight: Infinity}),
 									]}
 								>
-									{(() => {
-										let notice = emptyNotice(props, {
-											text: `Nothing on ${formatSectionHeader(day)}.`,
-											retry: false,
-										})
-										return dayRows.length === 0 ? (
-											<ContentUnavailableView
-												title={notice.text}
-												description={notice.detail}
-												systemImage="calendar"
-											/>
-										) : (
-											<LazyVStack alignment="leading">
-												<VStack
-													alignment="leading"
-													modifiers={[
-														padding({
-															leading: 16 + insets.left,
-															trailing: 16 + insets.right,
-															top: 12,
-															bottom: 8,
-														}),
-													]}
-												>
-													<FailureNote failed={props.failed} />
-													<Text
+									{!drawn ? (
+										// A scroll view is only as wide as what it holds, so the spinner
+										// spans the page or the background would be a strip around it.
+										<ProgressView modifiers={[frame({maxWidth: Infinity}), padding({top: 48})]} />
+									) : (
+										(() => {
+											let notice = emptyNotice(props, {
+												text: `Nothing on ${formatSectionHeader(day)}.`,
+												retry: false,
+											})
+											return dayRows.length === 0 ? (
+												<ContentUnavailableView
+													title={notice.text}
+													description={notice.detail}
+													systemImage="calendar"
+												/>
+											) : (
+												<LazyVStack alignment="leading">
+													<VStack
+														alignment="leading"
 														modifiers={[
-															font({textStyle: 'headline'}),
-															foregroundStyle(day.isSame(props.now, 'day') ? c.systemRed : c.label),
+															padding({
+																leading: 16 + insets.left,
+																trailing: 16 + insets.right,
+																top: 12,
+																bottom: 8,
+															}),
 														]}
 													>
-														{formatSectionHeader(day)}
-													</Text>
-													{dayRows.map((entry, index) => (
-														<EventListRow
-															color={colorFor(entry.sourceId)}
-															event={entry.event}
-															isLastInSection={index === dayRows.length - 1}
-															key={`${entry.sourceId}|${entry.key}`}
-															onPress={() => props.onPressEvent(entry)}
-															shownOn={day}
-														/>
-													))}
-												</VStack>
-											</LazyVStack>
-										)
-									})()}
+														<FailureNote failed={props.failed} />
+														<Text
+															modifiers={[
+																font({textStyle: 'headline'}),
+																foregroundStyle(
+																	day.isSame(props.now, 'day') ? c.systemRed : c.label,
+																),
+															]}
+														>
+															{formatSectionHeader(day)}
+														</Text>
+														{dayRows.map((entry, index) => (
+															<EventListRow
+																color={colorFor(entry.sourceId)}
+																event={entry.event}
+																isLastInSection={index === dayRows.length - 1}
+																key={`${entry.sourceId}|${entry.key}`}
+																onPress={() => props.onPressEvent(entry)}
+																shownOn={day}
+															/>
+														))}
+													</VStack>
+												</LazyVStack>
+											)
+										})()
+									)}
 								</SwiftUIScrollView>
 							</TabView.Tab>
 						)

@@ -1,6 +1,9 @@
 name: Counseling Center
 category: Health and Wellness
-building: bc
+kind: office
+building: newhall
+links:
+  - {title: 'Counseling Center', url: 'https://wp.stolaf.edu/counseling-center/'}
 
 schedule:
   - title: Hours

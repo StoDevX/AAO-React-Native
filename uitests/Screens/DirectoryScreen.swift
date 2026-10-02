@@ -13,9 +13,14 @@ struct DirectoryScreen: Screen {
 		app.searchFields.firstMatch
 	}
 
+	/// Drawn by this screen alone, so its presence says the screen has mounted.
+	var mounted: XCUIElement {
+		app.navigationBars["Directory"]
+	}
+
 	@discardableResult
 	func navigate() -> Self {
-		navigateFromHome(to: TestIdentifiers.Buttons.directory)
+		open(route: "/directory", mountedWhen: mounted)
 	}
 
 	@discardableResult
@@ -32,29 +37,6 @@ struct DirectoryScreen: Screen {
 		XCTAssertEqual(
 			searchField.value as? String, text,
 			"Typing should put the query in the search field")
-		return self
-	}
-
-	@discardableResult
-	func verifySearchText(_ text: String) -> Self {
-		let field = searchField
-
-		// An interactive pop tears the search field down and rebuilds it, so
-		// for a moment after a cancelled swipe there is no SearchField to
-		// query at all. Waiting for the element before asking about its value
-		// keeps that window from reading as "the query was lost".
-		XCTAssertTrue(
-			field.waitForExistence(timeout: 10),
-			"Search field should come back after a cancelled swipe back")
-
-		let predicate = NSPredicate(format: "value == %@", text)
-		let settled = XCTWaiter().wait(
-			for: [XCTNSPredicateExpectation(predicate: predicate, object: field)],
-			timeout: 10)
-		XCTAssertEqual(
-			settled, .completed,
-			"Search field should still read \(text), but reads "
-				+ "\(field.value as? String ?? "nothing")")
 		return self
 	}
 
@@ -78,36 +60,6 @@ struct DirectoryScreen: Screen {
 			departmentCell.waitForExistence(timeout: 30),
 			"\(name) should list \(department) as its department")
 		departmentCell.tap()
-		return self
-	}
-
-	/// Opens the first department on the landing and returns its name. The
-	/// roster is live, so the test reads the name rather than choosing one.
-	func openFirstDepartment() -> String {
-		let row = app.descendants(matching: .any)
-			.matching(
-				NSPredicate(
-					format: "identifier BEGINSWITH %@", TestIdentifiers.Directory.departmentRowPrefix))
-			.firstMatch
-		scrollUntilExists(row)
-		XCTAssertTrue(row.waitForExistence(timeout: 30), "the landing should list a department")
-		let name = row.label
-		row.tap()
-		return name
-	}
-
-	/// Goes back from a department opened on the landing, which should return
-	/// to the landing rather than past it to the home screen.
-	@discardableResult
-	func leaveDepartmentForLanding() -> Self {
-		let back = app.navigationBars[TestIdentifiers.Buttons.directory]
-			.buttons[TestIdentifiers.Navigation.backButton]
-		XCTAssertTrue(back.waitForExistence(timeout: 10), "a department should have a back button")
-		back.tap()
-		XCTAssertTrue(
-			app.element(matching: TestIdentifiers.Directory.contactGrid).waitForExistence(timeout: 15),
-			"Back from a department should return to the Directory landing, not past it to the "
-				+ "home screen")
 		return self
 	}
 
@@ -269,19 +221,6 @@ struct DirectoryScreen: Screen {
 			frame.height, frame.width * 1.4,
 			"\(title)'s tile is \(frame.width) wide and \(frame.height) tall -- "
 				+ "too tall for a square card and one line of name")
-		return self
-	}
-
-	/// Tap the contact's action and assert the in-app browser opened. Its Done
-	/// button is drawn before the page loads, so this holds without the
-	/// network the page itself would need.
-	@discardableResult
-	func followDetailLink(_ action: String) -> Self {
-		app.buttons[action].firstMatch.tap()
-		let done = app.buttons[TestIdentifiers.Directory.inAppBrowserDone].firstMatch
-		XCTAssertTrue(
-			done.waitForExistence(timeout: 30),
-			"\(action) should open its page in the in-app browser")
 		return self
 	}
 

@@ -2,27 +2,14 @@ import * as React from 'react'
 import {Alert} from 'react-native'
 import {fireEvent, render, screen} from '@testing-library/react-native'
 
-import PreviewScreen from '../../../../app/(home)/Dictionary/entry/preview'
+import PreviewScreen from '../../../../app/dictionary/entry/preview'
 import {normalizeEntry} from '../lib/entry'
 import {submitReport} from '../report/submit'
 import {useDictionaryDraftStore} from '../store'
-import type * as ExpoRouterMock from '../../../testing/expo-router-mock'
+import {track} from '../../telemetry/track'
 
-jest.mock('@expo/ui/swift-ui', () => {
-	// oxlint-disable-next-line typescript/no-require-imports
-	return require('../../../testing/expo-ui-mock') as typeof import('../../../testing/expo-ui-mock')
-})
-jest.mock('@expo/ui/swift-ui/modifiers', () => {
-	// oxlint-disable-next-line typescript/no-require-imports
-	return require('../../../testing/expo-ui-mock') as typeof import('../../../testing/expo-ui-mock')
-})
 jest.mock('../report/submit', () => ({submitReport: jest.fn()}))
-
-jest.mock('expo-router', () => {
-	// oxlint-disable-next-line typescript/no-require-imports
-	let {Stack}: typeof ExpoRouterMock = require('../../../testing/expo-router-mock')
-	return {Stack}
-})
+jest.mock('../../telemetry/track', () => ({track: jest.fn()}))
 
 const mockSubmit = jest.mocked(submitReport)
 let alertSpy = jest.spyOn(Alert, 'alert').mockReturnValue(undefined)
@@ -31,6 +18,7 @@ const entry = normalizeEntry({word: 'Caf', definition: 'The dining hall.'})
 
 beforeEach(() => {
 	mockSubmit.mockReset()
+	jest.mocked(track).mockClear()
 	alertSpy.mockClear()
 	useDictionaryDraftStore.getState().clearDraft()
 })
@@ -97,5 +85,28 @@ describe('the dictionary preview screen', () => {
 		)
 		expect(useDictionaryDraftStore.getState().submitted).toBe(false)
 		expect(useDictionaryDraftStore.getState().draft?.senses[0].definition).toBe('The caf.')
+	})
+
+	it('counts a report once it is sent, without its contents', async () => {
+		useDictionaryDraftStore.getState().startDraft(entry)
+		useDictionaryDraftStore.getState().setSenseField('1', {definition: 'The caf.'})
+		await render(<PreviewScreen />)
+
+		await fireEvent.press(screen.getByLabelText('Submit Report'))
+
+		expect(track).toHaveBeenCalledWith({name: 'dictionary.edit.submit', attributes: {}})
+	})
+
+	it('does not count a report that failed to send', async () => {
+		useDictionaryDraftStore.getState().startDraft(entry)
+		useDictionaryDraftStore.getState().setSenseField('1', {definition: 'The caf.'})
+		mockSubmit.mockImplementationOnce(() => {
+			throw new Error('mail composer unavailable')
+		})
+		await render(<PreviewScreen />)
+
+		await fireEvent.press(screen.getByLabelText('Submit Report'))
+
+		expect(track).not.toHaveBeenCalled()
 	})
 })

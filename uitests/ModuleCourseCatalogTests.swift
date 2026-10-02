@@ -1,6 +1,6 @@
 import XCTest
 
-class ModuleCourseCatalogTests: UITestCase {
+class ModuleCourseCatalogTests: UITestCaseUnbooted {
 	/// Opens on its Recent section, then searches the catalogue, which under UI
 	/// testing holds one course, and opens it. That course carries something
 	/// for every section the detail screen draws.

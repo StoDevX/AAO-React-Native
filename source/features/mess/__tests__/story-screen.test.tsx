@@ -1,0 +1,1070 @@
+import {readFileSync} from 'node:fs'
+import {join} from 'node:path'
+import * as React from 'react'
+import {Linking} from 'react-native'
+import {afterEach, beforeEach, describe, expect, jest, test} from '@jest/globals'
+import {
+	act,
+	fireEvent,
+	isHiddenFromAccessibility,
+	render,
+	screen,
+} from '@testing-library/react-native'
+import {QueryClient, QueryClientProvider} from '@tanstack/react-query'
+import {openUrl} from '@frogpond/open-url'
+import {fetchManifest, fetchSourceBody, type Jrd} from '@frogpond/data-sources'
+import type {SelectableTextParagraph} from '@frogpond/selectable-text'
+import {useKeepAwake} from 'expo-keep-awake'
+import categories from './fixtures/categories.json'
+import posts from './fixtures/posts.json'
+
+import {queryClient as appQueryClient} from '../../../init/tanstack-query'
+import {flushQueryNotifications, waitForQueriesToSettle} from '../../../testing/query-notifications'
+import {AUTHOR_RULE_ID} from '../author-card'
+import {StoryScreen} from '../story-screen'
+import {messKeys} from '../lib/keys'
+import {onePage} from './one-page'
+import {useMessStore} from '../store'
+import {ZODIAC_SIGNS} from '../lib/zodiac'
+import {faded, ink, messRed} from '../palette'
+import {LINE_SPACING} from '../poem-view'
+import {BLOCK_SPACING, BODY_ID} from '../story-blocks'
+import type {MessStory, StaffProfile} from '../types'
+import {loadBeforeTests} from '../../../testing/load-before-tests'
+
+loadBeforeTests('Image')
+
+// The library's own stand-in: zero insets, where the real hook needs a native provider.
+jest.mock(
+	'react-native-safe-area-context',
+	() =>
+		// oxlint-disable-next-line typescript/no-require-imports
+		require('react-native-safe-area-context/jest/mock').default,
+)
+const mockNavigate = jest.fn()
+/** Whether the story's screen is the one in front; a page pushed over it, or another tab, hides it. */
+let mockIsFocused = true
+jest.mock('expo-router', () => ({
+	// oxlint-disable-next-line typescript/no-require-imports
+	...(require('../../../testing/expo-router-mock') as object),
+	useRouter: () => ({navigate: mockNavigate}),
+	useIsFocused: () => mockIsFocused,
+}))
+jest.mock('@frogpond/open-url', () => ({openUrl: jest.fn()}))
+
+// The feed's fetches, so an uncached feed never reaches a network Jest does not have.
+jest.mock('@frogpond/data-sources', () => ({
+	...(jest.requireActual('@frogpond/data-sources') as object),
+	fetchManifest: jest.fn(),
+	fetchSourceBody: jest.fn(),
+}))
+
+const mockManifest = fetchManifest as jest.Mock<() => Promise<Jrd>>
+const mockBody = fetchSourceBody as jest.Mock<(href: string) => Promise<unknown>>
+
+const STORY: MessStory = {
+	id: 36911,
+	title: 'Cows, Comments and Confessions',
+	excerpt: 'E',
+	link: 'https://olafmessenger.com/36911/',
+	published: '2026-04-29T22:24:19.000Z',
+	section: 'Opinions',
+	column: null,
+	featured: false,
+	bylines: [
+		{id: 423, name: 'Ashlyn Wuench'},
+		{id: 392, name: 'Kenzie Nguyen'},
+	],
+	photo: null,
+	blocks: [
+		{type: 'paragraph', runs: [{text: 'The petition was delivered on Tuesday.'}]},
+		{type: 'paragraph', runs: [{text: 'Body text.'}]},
+	],
+	layout: {kind: 'article'},
+}
+
+/** An Artwork post: the REST API gives it no body at all. */
+const ARTWORK: MessStory = {
+	...STORY,
+	id: 36950,
+	title: 'Spring Sketches',
+	link: 'https://olafmessenger.com/36950/',
+	blocks: [],
+}
+
+/** A Horoscopes post; its readings live in its layout, and it has no blocks to draw. */
+const HOROSCOPES: MessStory = {
+	...STORY,
+	id: 36518,
+	title: 'Horoscopes',
+	link: 'https://olafmessenger.com/36518/',
+	blocks: [],
+	layout: {
+		kind: 'horoscopes',
+		intro: [],
+		signs: ZODIAC_SIGNS.map((sign) => ({sign, reading: [[{text: `${sign} reading`}]]})),
+	},
+}
+
+const COMIC_IMAGE = {url: 'https://olafmessenger.com/comic.png', width: 1000, height: 1400}
+
+/** A Comic post: its image is the body, and a line of text follows it. */
+const COMIC: MessStory = {
+	...STORY,
+	id: 36819,
+	title: 'Mouse Friends: sunsets of life',
+	link: 'https://olafmessenger.com/36819/',
+	section: 'Variety',
+	column: 'Comic',
+	photo: {...COMIC_IMAGE, caption: ''},
+	blocks: [{type: 'paragraph', runs: [{text: 'The mice watch the sun go down.'}]}],
+	layout: {kind: 'image', image: COMIC_IMAGE},
+}
+
+/** A Poetry post: its lines live in its layout. */
+const POEM: MessStory = {
+	...STORY,
+	id: 36280,
+	title: 'A room in Oklahoma',
+	link: 'https://olafmessenger.com/36280/',
+	section: 'Variety',
+	column: 'Poetry',
+	blocks: [{type: 'paragraph', runs: [{text: 'My bitter yellow comes with me on walks.'}]}],
+	layout: {
+		kind: 'poem',
+		stanzas: [
+			[
+				{indent: 0, runs: [{text: 'My bitter yellow comes with me on walks.'}]},
+				{indent: 1, runs: [{text: 'It hums at the gate.'}]},
+			],
+		],
+	},
+}
+
+const PUZZLE = {
+	id: 'af644d78',
+	set: 'c2b247b419ae1dc89954424eb39235cd774839006bb020ce26abcf072f7ecaf4',
+}
+
+/** A Crossword post: its puzzle lives in its layout, and a line of text follows the button. */
+const CROSSWORD: MessStory = {
+	...STORY,
+	id: 36814,
+	title: 'Crossword: Sunrise & Sunset',
+	link: 'https://olafmessenger.com/36814/variety/crossword/crossword-sunrise-sunset/',
+	section: 'Variety',
+	column: 'Crossword',
+	blocks: [{type: 'paragraph', runs: [{text: 'Answers in next week’s issue.'}]}],
+	layout: {kind: 'crossword', puzzle: PUZZLE},
+}
+
+const PLAYLIST_PHOTO = {
+	url: 'https://olafmessenger.com/wp-content/uploads/2020/05/AE_Quarentunes_Anna_Weimholt_04_30-1.png',
+	width: 386,
+	height: 386,
+}
+
+/** A Playlist post whose body names its playlist, with a writer's note and a featured image. */
+const PLAYLIST: MessStory = {
+	...STORY,
+	id: 30713,
+	title: 'Spotify Playlist: best of grammy noms 2022',
+	link: 'https://olafmessenger.com/30713/variety/spotify-playlist-best-of-grammy-noms-2022/',
+	section: 'Variety',
+	column: 'Playlist',
+	photo: {...PLAYLIST_PHOTO, caption: 'Anna Weimholt ’22'},
+	blocks: [{type: 'paragraph', runs: [{text: 'While you listen, check out my picks.'}]}],
+	layout: {kind: 'playlist', spotify: {kind: 'playlist', id: '6bscojNnnO6nZcAnnXI1Cs'}},
+}
+
+/** A Playlist post with an empty body, whose playlist is on its web page. */
+const PAGE_PLAYLIST: MessStory = {
+	...STORY,
+	id: 36532,
+	title: 'Spotify playlist: summer (kind of)',
+	link: 'https://olafmessenger.com/36532/variety/spotify-playlist-summer-kind-of/',
+	section: 'Variety',
+	column: 'Playlist',
+	blocks: [],
+	layout: {kind: 'playlist', spotify: null},
+}
+
+/** A Recipes post: an introduction, two ingredients, two steps sections that each count from one, and a closing line. */
+const RECIPE: MessStory = {
+	...STORY,
+	id: 36493,
+	title: 'Recipe: Lemon bars',
+	link: 'https://olafmessenger.com/36493/',
+	section: 'Variety',
+	column: 'Recipes',
+	layout: {
+		kind: 'recipe',
+		intro: [{type: 'paragraph', runs: [{text: 'We can all use a little sunshine.'}]}],
+		sections: [
+			{
+				label: 'Shortbread ingredients',
+				kind: 'ingredients',
+				items: [[{text: '½ tsp table salt'}], [{text: '4 large eggs'}]],
+			},
+			{
+				label: 'Instructions',
+				kind: 'steps',
+				items: [[{text: 'Preheat the oven.'}], [{text: 'Bake for 20 minutes.'}]],
+			},
+			{label: 'Icing instructions', kind: 'steps', items: [[{text: 'Whisk the sugar.'}]]},
+		],
+		after: [{type: 'paragraph', runs: [{text: 'Store in the fridge.'}]}],
+	},
+}
+
+const BEES = {url: 'https://olafmessenger.com/bees-1.jpg', width: 300, height: 200, caption: ''}
+const CUP = {
+	url: 'https://olafmessenger.com/bees-2.jpg',
+	width: 300,
+	height: 200,
+	caption: 'At the cup',
+}
+
+/** A Photo post: a set of two pictures and a line of words. */
+const PHOTO_SET: MessStory = {
+	...STORY,
+	id: 33129,
+	title: 'Bees drinking lemonade',
+	link: 'https://olafmessenger.com/33129/',
+	section: 'Variety',
+	column: 'Photo',
+	blocks: [{type: 'paragraph', runs: [{text: 'By Megan Lu on the Hill'}]}],
+	layout: {kind: 'feature', images: [BEES, CUP]},
+}
+
+/** A Photo post that lost its picture and has no words. */
+const EMPTY_PHOTO: MessStory = {
+	...STORY,
+	id: 28051,
+	title: 'Untitled',
+	link: 'https://olafmessenger.com/28051/',
+	section: 'Variety',
+	column: 'Photo',
+	blocks: [],
+	layout: {kind: 'feature', images: []},
+}
+
+const MICROFICTION_ART = {
+	url: 'https://olafmessenger.com/wp-content/uploads/2020/10/microfiction.jpg',
+	width: 2048,
+	height: 2048,
+}
+
+/** A Short Story in a series, with its featured picture. */
+const SHORT_STORY: MessStory = {
+	...STORY,
+	id: 28702,
+	title: 'Microfiction Corner: The Dummy',
+	link: 'https://olafmessenger.com/28702/',
+	section: 'Variety',
+	column: 'Short Story',
+	photo: {...MICROFICTION_ART, caption: 'Illustration by Kenzie Todd'},
+	blocks: [{type: 'paragraph', runs: [{text: 'She sat and watched as the leaves grew back.'}]}],
+	layout: {
+		kind: 'feature',
+		images: [{...MICROFICTION_ART, caption: 'Illustration by Kenzie Todd'}],
+	},
+}
+
+const NEXT_EPISODE: MessStory = {
+	...SHORT_STORY,
+	id: 28117,
+	title: 'Microfiction corner: Quarters for Flowers',
+}
+
+const LEAD_PHOTO = {
+	url: 'https://olafmessenger.com/lead.jpg',
+	width: 600,
+	height: 400,
+	caption: 'Students deliver the petition.',
+}
+const FIGURE_URL = 'https://olafmessenger.com/figure.jpg'
+const BARE_FIGURE_URL = 'https://olafmessenger.com/bare.jpg'
+
+/** An article with a captioned lead photo, a captioned figure and a figure with no caption. */
+const ILLUSTRATED: MessStory = {
+	...STORY,
+	id: 36948,
+	title: 'Finding peace on campus',
+	link: 'https://olafmessenger.com/36948/',
+	photo: LEAD_PHOTO,
+	blocks: [
+		{type: 'paragraph', runs: [{text: 'On Tuesday.'}]},
+		{type: 'figure', url: FIGURE_URL, width: 600, height: 400, caption: 'The petition, signed.'},
+		{type: 'figure', url: BARE_FIGURE_URL, width: 300, height: 200, caption: ''},
+	],
+}
+
+const PLAYLIST_PAGE = readFileSync(join(__dirname, 'fixtures/playlist-page-36532.html'), 'utf8')
+
+const PROFILE: StaffProfile = {
+	name: 'Kenzie Nguyen',
+	bio: 'Kenzie is a senior.',
+	photo: null,
+	year: '2025-2026',
+}
+
+let queryClient: QueryClient
+/** iOS's own link opener, which "Open in Spotify" hands its link to. */
+let openInIOS: jest.Spied<typeof Linking.openURL>
+
+beforeEach(() => {
+	mockIsFocused = true
+	queryClient = new QueryClient({defaultOptions: {queries: {staleTime: Infinity, retry: false}}})
+	queryClient.setQueryData(
+		messKeys.feed,
+		onePage([
+			STORY,
+			ARTWORK,
+			HOROSCOPES,
+			COMIC,
+			POEM,
+			CROSSWORD,
+			PLAYLIST,
+			PAGE_PLAYLIST,
+			RECIPE,
+			PHOTO_SET,
+			EMPTY_PHOTO,
+			SHORT_STORY,
+			ILLUSTRATED,
+		]),
+	)
+	openInIOS = jest.spyOn(Linking, 'openURL').mockResolvedValue(true)
+	useMessStore.setState({lastSign: null})
+	// Ashlyn has no profile; Kenzie has one.
+	queryClient.setQueryData(messKeys.profile(423), null)
+	queryClient.setQueryData(messKeys.profile(392), PROFILE)
+})
+
+afterEach(() => {
+	queryClient.clear()
+	// The feed fetches its categories through the app's own client, whose cached queries
+	// hold a day-long gc timer that would keep Jest running.
+	appQueryClient.clear()
+	jest.clearAllMocks()
+	jest.restoreAllMocks()
+})
+
+type Node = {type: string; props: Record<string, unknown>; children: Array<Node | string> | null}
+
+/** The props of every rendered host element of `type`, depth first. */
+function hostProps(node: Node | Node[] | null, type: string): Array<Record<string, unknown>> {
+	if (node === null) return []
+	if (Array.isArray(node)) return node.flatMap((n) => hostProps(n, type))
+	let children = (node.children ?? []).filter((child): child is Node => typeof child !== 'string')
+	return [...(node.type === type ? [node.props] : []), ...hostProps(children, type)]
+}
+
+/** The paragraphs of each stretch of the story's prose, in order. */
+function bodyParagraphs(): SelectableTextParagraph[][] {
+	return screen
+		.queryAllByTestId(BODY_ID)
+		.map((body) => body.props.paragraphs as SelectableTextParagraph[])
+}
+
+/** The hrefs `fetchSourceBody` was asked for, in order. */
+function fetchedHrefs(): string[] {
+	return mockBody.mock.calls.map((call) => call[0])
+}
+
+/** Answers the categories URL with the fixture tree, and any other URL with `answer(href)`. */
+function serve(answer: (href: string) => unknown): void {
+	mockManifest.mockResolvedValue({links: []} as unknown as Jrd)
+	mockBody.mockImplementation((href) =>
+		href.includes('/categories') ? Promise.resolve(categories) : Promise.resolve(answer(href)),
+	)
+}
+
+function renderStory(id: number) {
+	return render(
+		<QueryClientProvider client={queryClient}>
+			<StoryScreen id={id} />
+		</QueryClientProvider>,
+	)
+}
+
+describe('StoryScreen', () => {
+	test('reads a story in the cached feed without fetching the single post', async () => {
+		await renderStory(36911)
+		await act(flushQueryNotifications)
+
+		expect(screen.getByText('Cows, Comments and Confessions')).toBeTruthy()
+		expect(mockManifest).not.toHaveBeenCalled()
+		expect(mockBody).not.toHaveBeenCalled()
+	})
+
+	test('counts a story as read once it opens', async () => {
+		useMessStore.setState({openedStories: [5]})
+		await renderStory(36911)
+		await act(flushQueryNotifications)
+
+		expect(useMessStore.getState().openedStories).toStrictEqual([5, 36911])
+	})
+
+	test('counts a story as read while it is still loading', async () => {
+		useMessStore.setState({openedStories: []})
+		serve(() => new Promise(() => undefined))
+		await renderStory(4242)
+
+		expect(useMessStore.getState().openedStories).toStrictEqual([4242])
+	})
+
+	test('fetches a story that is not in the feed on its own', async () => {
+		serve((href) => (href.includes('/posts/36859') ? posts[0] : []))
+		await renderStory(36859)
+
+		expect(
+			await screen.findByText(
+				'Student workers deliver petition urging St. Olaf to reverse work award cap policy',
+			),
+		).toBeTruthy()
+		expect(fetchedHrefs()).toContain(
+			'https://olafmessenger.com/wp-json/wp/v2/posts/36859?_embed=true',
+		)
+		// The story's writer has no cached profile, so its header and card fetch one.
+		await waitForQueriesToSettle(queryClient)
+	})
+
+	test('keeps a story from outside the feed when a refetch of the feed fails', async () => {
+		serve((href) => (href.includes('/posts/36859') ? posts[0] : []))
+		await renderStory(36859)
+		let headline =
+			'Student workers deliver petition urging St. Olaf to reverse work award cap policy'
+		expect(await screen.findByText(headline)).toBeTruthy()
+
+		// The feed still holds its earlier stories, but its next fetch fails.
+		mockBody.mockImplementation((href) =>
+			href.includes('/posts/36859')
+				? Promise.resolve(posts[0])
+				: Promise.reject(new Error('offline')),
+		)
+		await act(() => queryClient.refetchQueries({queryKey: messKeys.feed}))
+		await act(flushQueryNotifications)
+
+		expect(queryClient.getQueryState(messKeys.feed)?.status).toBe('error')
+		expect(screen.getByText(headline)).toBeTruthy()
+	})
+
+	test('offers Try Again when a story outside the feed fails to load', async () => {
+		// A failed fetch is retried with a growing delay, which fake timers skip.
+		jest.useFakeTimers()
+		try {
+			mockManifest.mockResolvedValue({links: []} as unknown as Jrd)
+			mockBody.mockRejectedValue(new Error('offline'))
+			await renderStory(1)
+
+			expect(await screen.findByText('Try Again', {}, {timeout: 20_000})).toBeTruthy()
+			expect(screen.queryByText('Story Unavailable')).toBeNull()
+		} finally {
+			jest.useRealTimers()
+		}
+	})
+
+	test('says a story is unavailable when its post comes back empty, without retrying', async () => {
+		// The app's own retry default, which the query must override for a missing story.
+		queryClient.clear()
+		queryClient = new QueryClient({defaultOptions: {queries: {staleTime: Infinity}}})
+		queryClient.setQueryData(messKeys.feed, onePage([STORY]))
+		serve(() => [])
+		await renderStory(1)
+
+		expect(await screen.findByText('Story Unavailable')).toBeTruthy()
+		expect(screen.queryByText('Try Again')).toBeNull()
+		expect(fetchedHrefs().filter((href) => href.includes('/posts/1?'))).toHaveLength(1)
+	})
+
+	test('shows the loading view while the feed is on its way', async () => {
+		queryClient.removeQueries({queryKey: messKeys.feed})
+		mockManifest.mockReturnValue(new Promise(() => undefined))
+		await renderStory(36911)
+
+		expect(screen.getByText('Loading…')).toBeTruthy()
+		expect(screen.queryByText('Story Unavailable')).toBeNull()
+	})
+
+	test('offers Try Again when the feed fails', async () => {
+		queryClient.removeQueries({queryKey: messKeys.feed})
+		mockManifest.mockResolvedValue({links: []} as unknown as Jrd)
+		mockBody.mockRejectedValue(new Error('offline'))
+		await renderStory(36911)
+
+		expect(await screen.findByText('Try Again')).toBeTruthy()
+		expect(screen.queryByText('Story Unavailable')).toBeNull()
+	})
+
+	test('reads a freshly cached feed without fetching it again', async () => {
+		// The app's own default: data goes stale at once unless a query says otherwise.
+		// The client from beforeEach is cleared first; its cache timers would keep Jest running.
+		queryClient.clear()
+		queryClient = new QueryClient({defaultOptions: {queries: {retry: false}}})
+		queryClient.setQueryData(messKeys.feed, onePage([STORY, ARTWORK]))
+		queryClient.setQueryData(messKeys.profile(423), null)
+		queryClient.setQueryData(messKeys.profile(392), PROFILE)
+		mockManifest.mockReturnValue(new Promise(() => undefined))
+		await renderStory(36911)
+		await act(flushQueryNotifications)
+
+		expect(screen.getByText('Cows, Comments and Confessions')).toBeTruthy()
+		expect(mockManifest).not.toHaveBeenCalled()
+		expect(mockBody).not.toHaveBeenCalled()
+	})
+
+	test('reads a story from a later page of the feed without fetching it on its own', async () => {
+		queryClient.setQueryData(messKeys.feed, {pages: [[STORY], [ARTWORK]], pageParams: [1, 2]})
+		mockManifest.mockReturnValue(new Promise(() => undefined))
+		await renderStory(36911)
+		await act(flushQueryNotifications)
+
+		expect(screen.getByText('Cows, Comments and Confessions')).toBeTruthy()
+		expect(mockBody).not.toHaveBeenCalled()
+	})
+
+	test('says a story is unavailable when the id is not a number', async () => {
+		await renderStory(Number('not-a-number'))
+		expect(screen.getByText('Story Unavailable')).toBeTruthy()
+		expect(mockBody).not.toHaveBeenCalled()
+	})
+
+	test('shows the headline, kicker and byline', async () => {
+		await renderStory(36911)
+		expect(screen.getByText('Cows, Comments and Confessions')).toBeTruthy()
+		expect(screen.getByText('Opinions')).toBeTruthy()
+		expect(screen.getByText('By Ashlyn Wuench and Kenzie Nguyen')).toBeTruthy()
+	})
+
+	test('shows a card only for a writer with a profile', async () => {
+		await renderStory(36911)
+		expect(screen.getByText('Kenzie is a senior.')).toBeTruthy()
+		expect(screen.queryByText('Ashlyn Wuench', {exact: true})).toBeNull()
+	})
+
+	test('rules off the writers’ cards when one of them has a profile', async () => {
+		await renderStory(36911)
+		expect(screen.getByTestId(AUTHOR_RULE_ID)).toBeTruthy()
+	})
+
+	test('draws no rule under the story when no writer has a profile', async () => {
+		queryClient.setQueryData(messKeys.profile(392), null)
+		queryClient.setQueryData(messKeys.series(SHORT_STORY.id), {
+			title: 'More Microfiction Corner',
+			stories: [NEXT_EPISODE],
+		})
+		await renderStory(28702)
+
+		expect(screen.getByText('More Microfiction Corner')).toBeTruthy()
+		expect(screen.queryByTestId(AUTHOR_RULE_ID)).toBeNull()
+	})
+
+	test('holds the rule back until a profile arrives, rather than drawing one that may go', async () => {
+		queryClient.removeQueries({queryKey: messKeys.profile(423)})
+		queryClient.removeQueries({queryKey: messKeys.profile(392)})
+		mockManifest.mockReturnValue(new Promise(() => undefined))
+		await renderStory(36911)
+
+		expect(screen.getByText('Cows, Comments and Confessions')).toBeTruthy()
+		expect(screen.queryByTestId(AUTHOR_RULE_ID)).toBeNull()
+	})
+
+	test('sets the opening words of the first paragraph apart for small caps', async () => {
+		await renderStory(36911)
+		expect(bodyParagraphs()[0]?.[0]).toEqual({
+			runs: [{text: 'The petition was delivered', smallCaps: true}, {text: ' on Tuesday.'}],
+		})
+	})
+
+	test('draws the paragraphs of a story with no figures as one text, so a selection can cross them', async () => {
+		await renderStory(36911)
+		expect(bodyParagraphs()).toHaveLength(1)
+		expect(bodyParagraphs()[0]?.[1]).toEqual({runs: [{text: 'Body text.'}]})
+		expect(screen.queryByText('Read on olafmessenger.com')).toBeNull()
+	})
+
+	test('sets prose as serif body text, its links in the Mess red, its paragraphs a column gap apart', async () => {
+		await renderStory(36911)
+		let [body] = screen.getAllByTestId(BODY_ID)
+		expect(body?.props).toMatchObject({
+			textStyle: 'body',
+			serif: true,
+			color: ink,
+			linkColor: messRed,
+			paragraphSpacing: BLOCK_SPACING,
+		})
+	})
+
+	test('ends a stretch of prose at a figure', async () => {
+		let story: MessStory = {
+			...ILLUSTRATED,
+			blocks: [
+				{type: 'paragraph', runs: [{text: 'Before.'}]},
+				{
+					type: 'figure',
+					url: FIGURE_URL,
+					width: 600,
+					height: 400,
+					caption: 'The petition, signed.',
+				},
+				{type: 'paragraph', runs: [{text: 'After.'}]},
+			],
+		}
+		queryClient.setQueryData(messKeys.feed, onePage([story]))
+		await renderStory(36948)
+		expect(bodyParagraphs().map((paragraphs) => paragraphs.map((p) => p.runs[0]?.text))).toEqual([
+			['Before.'],
+			['After.'],
+		])
+	})
+
+	test('sends a story with no body to olafmessenger.com', async () => {
+		await renderStory(36950)
+		expect(screen.getByText('Spring Sketches')).toBeTruthy()
+
+		fireEvent.press(screen.getByText('Read on olafmessenger.com'))
+
+		expect(openUrl).toHaveBeenCalledWith('https://olafmessenger.com/36950/')
+	})
+	test('draws a Horoscopes post with its own template and no site link', async () => {
+		await renderStory(36518)
+
+		expect(screen.getByText('Pick your sign')).toBeTruthy()
+		expect(screen.getByRole('button', {name: 'Aries, March 21 to April 19'})).toBeTruthy()
+		expect(screen.queryByText('Read on olafmessenger.com')).toBeNull()
+	})
+
+	test('opens a Horoscopes post on the remembered sign', async () => {
+		useMessStore.setState({lastSign: 'leo'})
+		await renderStory(36518)
+
+		expect(screen.getByText('leo reading')).toBeTruthy()
+		expect(screen.getByRole('button', {name: 'Leo', selected: true})).toBeTruthy()
+	})
+
+	test('draws a comic as a framed image that opens the viewer', async () => {
+		queryClient.setQueryData(messKeys.series(COMIC.id), {title: '', stories: []})
+		await renderStory(36819)
+
+		fireEvent.press(
+			screen.getByRole('button', {
+				name: 'Mouse Friends: sunsets of life, by Ashlyn Wuench and Kenzie Nguyen',
+			}),
+		)
+
+		expect(mockNavigate).toHaveBeenCalledWith({
+			pathname: '/messenger/image',
+			params: {id: '36819'},
+		})
+	})
+
+	test('draws a comic once, as its body rather than as a lead photo too', async () => {
+		queryClient.setQueryData(messKeys.series(COMIC.id), {title: '', stories: []})
+		await renderStory(36819)
+
+		let uris = hostProps(screen.toJSON() as Node | Node[] | null, 'Image').map(
+			(props) => (props.source as {uri?: string} | undefined)?.uri,
+		)
+		expect(uris.filter((uri) => uri === COMIC_IMAGE.url)).toHaveLength(1)
+	})
+
+	test("follows a comic's image with its remaining text and its series, and no site link", async () => {
+		queryClient.setQueryData(messKeys.series(COMIC.id), {
+			title: 'More Mouse Friends',
+			stories: [{...COMIC, id: 2, title: 'Mouse Friends episode 2: Mary! Gold!'}],
+		})
+		await renderStory(36819)
+
+		expect(screen.getByText(/^The mice watch/u)).toBeTruthy()
+		expect(screen.getByText('More Mouse Friends')).toBeTruthy()
+		expect(screen.getByRole('button', {name: 'Mouse Friends episode 2: Mary! Gold!'})).toBeTruthy()
+		expect(screen.queryByText('Read on olafmessenger.com')).toBeNull()
+	})
+
+	test("opens an article's lead photo in the viewer, named by its caption", async () => {
+		await renderStory(36948)
+
+		await fireEvent.press(screen.getByRole('button', {name: 'Students deliver the petition.'}))
+
+		expect(mockNavigate).toHaveBeenCalledWith({
+			pathname: '/messenger/image',
+			params: {id: '36948', url: LEAD_PHOTO.url},
+		})
+	})
+
+	test("opens a figure in an article's body in the viewer, named by its caption", async () => {
+		await renderStory(36948)
+
+		await fireEvent.press(screen.getByRole('button', {name: 'The petition, signed.'}))
+
+		expect(mockNavigate).toHaveBeenCalledWith({
+			pathname: '/messenger/image',
+			params: {id: '36948', url: FIGURE_URL},
+		})
+	})
+
+	test('opens a figure with no caption in the viewer, named by its story', async () => {
+		await renderStory(36948)
+
+		await fireEvent.press(
+			screen.getByRole('button', {
+				name: 'Finding peace on campus, by Ashlyn Wuench and Kenzie Nguyen',
+			}),
+		)
+
+		expect(mockNavigate).toHaveBeenCalledWith({
+			pathname: '/messenger/image',
+			params: {id: '36948', url: BARE_FIGURE_URL},
+		})
+	})
+
+	// The photo's button reads the caption already, so the text under it would read it twice.
+	test("hides a caption from VoiceOver where its photo's button reads it", async () => {
+		await renderStory(36948)
+
+		for (let caption of ['Students deliver the petition.', 'The petition, signed.']) {
+			let text = screen.getByText(caption, {includeHiddenElements: true})
+			expect(isHiddenFromAccessibility(text)).toBe(true)
+		}
+	})
+
+	test("keeps a Photo post's caption readable, as its picture's button reads the title", async () => {
+		await renderStory(33129)
+		expect(isHiddenFromAccessibility(screen.getByText('At the cup'))).toBe(false)
+	})
+
+	test('draws an article as an article even with a sign remembered', async () => {
+		useMessStore.setState({lastSign: 'taurus'})
+		await renderStory(36911)
+
+		expect(screen.getByText('Body text.')).toBeTruthy()
+		expect(screen.queryByRole('button', {name: 'Taurus'})).toBeNull()
+		expect(screen.queryByText('Pick your sign')).toBeNull()
+	})
+	test('sets a poem under a quieter header: the title, then its writers and date on one line', async () => {
+		await renderStory(36280)
+
+		expect(screen.getByText('A room in Oklahoma')).toBeTruthy()
+		expect(screen.getByText('Variety · Poetry')).toBeTruthy()
+		expect(screen.getByText('Ashlyn Wuench and Kenzie Nguyen · April 29, 2026')).toBeTruthy()
+		expect(screen.queryByText(/^By Ashlyn/u)).toBeNull()
+	})
+
+	test("draws a poem's lines, each once, rather than its paragraphs", async () => {
+		await renderStory(36280)
+
+		expect(screen.getAllByText('My bitter yellow comes with me on walks\\.')).toHaveLength(1)
+		expect(screen.getByText('It hums at the gate\\.')).toBeTruthy()
+	})
+
+	test('draws a Crossword post with a button that opens its puzzle, then its text', async () => {
+		await renderStory(36814)
+
+		fireEvent.press(screen.getByRole('button', {name: 'Solve the crossword'}))
+
+		expect(openUrl).toHaveBeenCalledWith(
+			'https://puzzleme.amuselabs.com/pmm/crossword?id=af644d78&set=c2b247b419ae1dc89954424eb39235cd774839006bb020ce26abcf072f7ecaf4&embed=1',
+		)
+		expect(screen.getByText(/^Answers/u)).toBeTruthy()
+		expect(screen.queryByText('Read on olafmessenger.com')).toBeNull()
+	})
+
+	test("draws a Playlist post as a button to Spotify and Spotify's player, then its text", async () => {
+		await renderStory(30713)
+
+		fireEvent.press(screen.getByRole('button', {name: 'Open in Spotify'}))
+
+		// Handed to iOS, never the in-app sheet, which cannot pass a link on to the Spotify app.
+		expect(openInIOS).toHaveBeenCalledWith(
+			'https://open.spotify.com/playlist/6bscojNnnO6nZcAnnXI1Cs',
+		)
+		expect(openUrl).not.toHaveBeenCalled()
+		expect(screen.getByTestId('mess-playlist-embed').props.source).toStrictEqual({
+			uri: 'https://open.spotify.com/embed/playlist/6bscojNnnO6nZcAnnXI1Cs',
+		})
+		expect(screen.getByText(/^While you listen/u)).toBeTruthy()
+		expect(screen.queryByText('Open on the Mess')).toBeNull()
+		// Its body named the playlist, so its web page is never read.
+		expect(mockBody).not.toHaveBeenCalled()
+	})
+
+	test("draws a Playlist post's picture once, in its card rather than as a lead photo too", async () => {
+		await renderStory(30713)
+
+		let uris = hostProps(screen.toJSON() as Node | Node[] | null, 'Image').map(
+			(props) => (props.source as {uri?: string} | undefined)?.uri,
+		)
+		expect(uris.filter((uri) => uri === PLAYLIST_PHOTO.url)).toHaveLength(1)
+	})
+
+	test("opens a Playlist post's picture in the viewer", async () => {
+		await renderStory(30713)
+
+		await fireEvent.press(screen.getByRole('button', {name: 'Anna Weimholt ’22'}))
+
+		expect(mockNavigate).toHaveBeenCalledWith({
+			pathname: '/messenger/image',
+			params: {id: '30713', url: PLAYLIST_PHOTO.url},
+		})
+	})
+
+	test("credits a Playlist post's picture under it", async () => {
+		await renderStory(30713)
+		// Drawn once, and read once, as the label of the picture's button.
+		expect(screen.getAllByText('Anna Weimholt ’22', {includeHiddenElements: true})).toHaveLength(1)
+	})
+
+	test('reads a Playlist post with nothing in its body from its web page', async () => {
+		serve((href) => (href === PAGE_PLAYLIST.link ? PLAYLIST_PAGE : []))
+		await renderStory(36532)
+
+		let embed = await screen.findByTestId('mess-playlist-embed')
+
+		expect(embed.props.source).toStrictEqual({
+			uri: 'https://open.spotify.com/embed/playlist/5dJFJNxZlxoRbwIgqCTxWk',
+		})
+		expect(screen.getByRole('button', {name: 'Open in Spotify'})).toBeTruthy()
+		expect(fetchedHrefs()).toStrictEqual([PAGE_PLAYLIST.link])
+	})
+
+	test('holds one loading place for the button and player while the web page is read', async () => {
+		mockBody.mockReturnValue(new Promise(() => undefined))
+		await renderStory(36532)
+
+		expect(screen.getByLabelText('Loading')).toBeTruthy()
+		expect(screen.queryByRole('button', {name: 'Open in Spotify'})).toBeNull()
+		expect(screen.queryByTestId('mess-playlist-embed')).toBeNull()
+		expect(screen.queryByText('Open on the Mess')).toBeNull()
+	})
+
+	test('falls back to the article with a link to the page when the page names no playlist', async () => {
+		serve(() => '<html><body><p>No player here.</p></body></html>')
+		await renderStory(36532)
+
+		fireEvent.press(await screen.findByRole('button', {name: 'Open on the Mess'}))
+
+		expect(openUrl).toHaveBeenCalledWith(PAGE_PLAYLIST.link)
+		expect(screen.queryByRole('button', {name: 'Open in Spotify'})).toBeNull()
+		expect(screen.queryByTestId('mess-playlist-embed')).toBeNull()
+		expect(screen.queryByLabelText('Loading')).toBeNull()
+		expect(screen.queryByText('Read on olafmessenger.com')).toBeNull()
+	})
+
+	// An embed the reader cannot play, such as an artist, stays in the body as a link card.
+	test('offers one link, not two, when the body keeps an embed it cannot play', async () => {
+		let artist: MessStory = {
+			...PAGE_PLAYLIST,
+			blocks: [
+				{type: 'embed', url: 'https://open.spotify.com/embed/artist/4Z8W4fKeB5YxbusRsdQVPb'},
+			],
+		}
+		queryClient.setQueryData(messKeys.feed, onePage([artist]))
+		serve(() => '<html><body><p>No player here.</p></body></html>')
+		await renderStory(artist.id)
+
+		let link = await screen.findByRole('button', {name: 'Open the playlist or video on the web'})
+		await act(flushQueryNotifications)
+
+		expect(link).toBeTruthy()
+		expect(screen.queryByRole('button', {name: 'Open on the Mess'})).toBeNull()
+	})
+
+	test('falls back the same way when the web page cannot be read', async () => {
+		mockBody.mockRejectedValue(new Error('offline'))
+		await renderStory(36532)
+
+		// The page read retries once, a second later, before it gives up.
+		expect(
+			await screen.findByRole('button', {name: 'Open on the Mess'}, {timeout: 3000}),
+		).toBeTruthy()
+		expect(screen.queryByLabelText('Loading')).toBeNull()
+	})
+
+	test('draws a recipe as its introduction, labelled sections of rows, and what follows', async () => {
+		await renderStory(36493)
+
+		expect(bodyParagraphs()[0]?.[0]?.runs[0]).toEqual({text: 'We can all use', smallCaps: true})
+		expect(screen.getByText('Shortbread ingredients')).toBeTruthy()
+		expect(screen.getByRole('button', {name: '½ tsp table salt', selected: false})).toBeTruthy()
+		expect(
+			screen.getByRole('button', {name: 'Step 1, Preheat the oven.', selected: false}),
+		).toBeTruthy()
+		// VoiceOver reads a step's number before its text; an ingredient has none.
+		expect(screen.getByRole('button', {name: 'Step 2, Bake for 20 minutes.'})).toBeTruthy()
+		expect(screen.getByText('Store in the fridge.')).toBeTruthy()
+		// Each steps section counts from one.
+		expect(screen.getAllByText('1')).toHaveLength(2)
+		expect(screen.getAllByText('2')).toHaveLength(1)
+	})
+
+	test('ticks an ingredient and a step, and unticks one tapped again', async () => {
+		await renderStory(36493)
+
+		await fireEvent.press(screen.getByRole('button', {name: '½ tsp table salt'}))
+		await fireEvent.press(screen.getByRole('button', {name: 'Step 1, Preheat the oven.'}))
+
+		expect(screen.getByRole('button', {name: '½ tsp table salt', selected: true})).toBeTruthy()
+		expect(
+			screen.getByRole('button', {name: 'Step 1, Preheat the oven.', selected: true}),
+		).toBeTruthy()
+		expect(screen.getByRole('button', {name: '4 large eggs', selected: false})).toBeTruthy()
+		// A ticked step's number gives way to a check.
+		expect(screen.getAllByText('1')).toHaveLength(1)
+
+		await fireEvent.press(screen.getByRole('button', {name: '½ tsp table salt'}))
+		expect(screen.getByRole('button', {name: '½ tsp table salt', selected: false})).toBeTruthy()
+	})
+
+	test('ticks a step without ticking the row in the same place in another section', async () => {
+		await renderStory(36493)
+
+		await fireEvent.press(screen.getByRole('button', {name: 'Step 1, Preheat the oven.'}))
+
+		expect(
+			screen.getByRole('button', {name: 'Step 1, Whisk the sugar.', selected: false}),
+		).toBeTruthy()
+		expect(screen.getByRole('button', {name: '½ tsp table salt', selected: false})).toBeTruthy()
+	})
+
+	test('forgets the ticks when the page is left', async () => {
+		let first = await renderStory(36493)
+		await fireEvent.press(screen.getByRole('button', {name: '½ tsp table salt'}))
+		await first.unmount()
+
+		await renderStory(36493)
+
+		expect(screen.getByRole('button', {name: '½ tsp table salt', selected: false})).toBeTruthy()
+	})
+
+	test('keeps the screen awake on a recipe page, and not on an article', async () => {
+		let article = await renderStory(36911)
+		expect(useKeepAwake).not.toHaveBeenCalled()
+		await article.unmount()
+
+		await renderStory(36493)
+
+		expect(useKeepAwake).toHaveBeenCalled()
+	})
+
+	test('lets the screen sleep while a recipe page is covered by another', async () => {
+		mockIsFocused = false
+		await renderStory(36493)
+
+		expect(screen.getByText('Shortbread ingredients')).toBeTruthy()
+		expect(useKeepAwake).not.toHaveBeenCalled()
+	})
+
+	test('sets a feature page under the quiet header: title, then writers and date on one line', async () => {
+		await renderStory(33129)
+
+		expect(screen.getByText('Ashlyn Wuench and Kenzie Nguyen · April 29, 2026')).toBeTruthy()
+		expect(screen.queryByText(/^By Ashlyn/u)).toBeNull()
+	})
+
+	test("draws a Photo post's pictures, captioned, each opening the viewer at itself", async () => {
+		await renderStory(33129)
+
+		expect(screen.getByText('At the cup')).toBeTruthy()
+		expect(
+			screen.getByRole('button', {
+				name: 'Bees drinking lemonade, by Ashlyn Wuench and Kenzie Nguyen, picture 1 of 2',
+			}),
+		).toBeTruthy()
+		await fireEvent.press(
+			screen.getByRole('button', {
+				name: 'Bees drinking lemonade, by Ashlyn Wuench and Kenzie Nguyen, picture 2 of 2',
+			}),
+		)
+
+		expect(mockNavigate).toHaveBeenCalledWith({
+			pathname: '/messenger/image',
+			params: {id: '33129', index: '1'},
+		})
+	})
+
+	// The type itself is checked by eye; Jest sees which branch set the words.
+	test("sets a Photo post's words as a caption, with no small-caps opening", async () => {
+		await renderStory(33129)
+
+		expect(bodyParagraphs()).toEqual([[{runs: [{text: 'By Megan Lu on the Hill'}]}]])
+		expect(screen.getByTestId(BODY_ID).props).toMatchObject({
+			textStyle: 'footnote',
+			italic: true,
+			color: faded,
+		})
+	})
+
+	test('sets a Short Story as prose opening in small caps, then its series', async () => {
+		queryClient.setQueryData(messKeys.series(SHORT_STORY.id), {
+			title: 'More Microfiction Corner',
+			stories: [NEXT_EPISODE],
+		})
+		await renderStory(28702)
+
+		expect(screen.getByText('Illustration by Kenzie Todd')).toBeTruthy()
+		expect(bodyParagraphs()).toEqual([
+			[
+				{
+					runs: [
+						{text: 'She sat and watched', smallCaps: true},
+						{text: ' as the leaves grew back.'},
+					],
+				},
+			],
+		])
+		expect(screen.getByTestId(BODY_ID).props).toMatchObject({
+			textStyle: 'body',
+			lineSpacing: LINE_SPACING,
+		})
+		expect(screen.getByText('More Microfiction Corner')).toBeTruthy()
+		expect(
+			screen.getByRole('button', {name: 'Microfiction corner: Quarters for Flowers'}),
+		).toBeTruthy()
+	})
+
+	test('leaves the series row off a Photo post', async () => {
+		queryClient.setQueryData(messKeys.series(PHOTO_SET.id), {
+			title: 'More by Ashlyn Wuench',
+			stories: [{...PHOTO_SET, id: 5, title: 'Another photo'}],
+		})
+		await renderStory(33129)
+
+		expect(screen.queryByText('More by Ashlyn Wuench')).toBeNull()
+	})
+
+	test('does not keep the screen awake on a feature page', async () => {
+		await renderStory(33129)
+		expect(useKeepAwake).not.toHaveBeenCalled()
+	})
+
+	test('sends a Photo post with neither picture nor words to olafmessenger.com', async () => {
+		await renderStory(28051)
+
+		await fireEvent.press(screen.getByText('Read on olafmessenger.com'))
+
+		expect(openUrl).toHaveBeenCalledWith('https://olafmessenger.com/28051/')
+	})
+
+	test('offers no site link on a Photo post that has its pictures', async () => {
+		await renderStory(33129)
+		expect(screen.queryByText('Read on olafmessenger.com')).toBeNull()
+	})
+
+	test("lists a short story's series as titles, with no thumbnails", async () => {
+		queryClient.setQueryData(messKeys.series(SHORT_STORY.id), {
+			title: 'More Microfiction Corner',
+			stories: [NEXT_EPISODE],
+		})
+		await renderStory(28702)
+
+		expect(
+			screen.getByRole('button', {name: 'Microfiction corner: Quarters for Flowers'}),
+		).toBeTruthy()
+		// The page draws its own picture; the next episode's copy of the same banner is not drawn.
+		let uris = hostProps(screen.toJSON() as Node | Node[] | null, 'Image').map(
+			(props) => (props.source as {uri?: string} | undefined)?.uri,
+		)
+		expect(uris.filter((uri) => uri === MICROFICTION_ART.url)).toHaveLength(1)
+	})
+})

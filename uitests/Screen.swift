@@ -25,49 +25,25 @@ private var isCI: Bool {
 }
 
 extension Screen {
-	/// Assert that the home screen is visible.
-	@discardableResult
-	func waitForHomescreen() -> Self {
-		let homescreen = app.element(matching: TestIdentifiers.Home.screen)
-		XCTAssertTrue(
-			homescreen.waitForExistence(timeout: 30),
-			"Home screen should be visible")
-		return self
-	}
 
-	/// Tap a home-screen tile and wait for the home screen to disappear.
+	/// Open a route by deep link and wait for `mounted`, an element only that
+	/// route's screen draws.
 	///
-	/// The tap is retried, because it can be dropped. A home-screen tile is a
-	/// SwiftUI button that becomes hittable as soon as its host mounts, while
-	/// its action has to reach JavaScript to push the next screen. A press
-	/// synthesized in between lands natively and nothing happens: the element
-	/// is found, the event is delivered, and the app stays put.
+	/// `route` is an Expo Router path: `app/calendar/index.tsx` is `/calendar`.
+	/// `XCUIApplication.open(_:)` relaunches the app and raises no "Open in…?"
+	/// sheet, unlike `simctl openurl`.
 	///
-	/// Retrying is the fix rather than a longer timeout, since a dropped tap is
-	/// not a slow one -- waiting on it achieves nothing.
+	/// The wait is what makes this safe: the relaunched app has no home screen
+	/// while it is still blank, so "Home has gone" is true before anything has
+	/// mounted, and a test's first action could land on nothing.
 	@discardableResult
-	func navigateFromHome(to button: String) -> Self {
-		let homescreen = app.element(matching: TestIdentifiers.Home.screen)
+	func open(route: String, mountedWhen mounted: XCUIElement, timeout: TimeInterval = 30) -> Self {
+		// No wait for Home to go: `mounted` belongs to the route alone, and
+		// each wait costs a second of polling.
+		app.open(URL(string: "AllAboutOlaf://\(route)")!)
 		XCTAssertTrue(
-			homescreen.waitForExistence(timeout: 30),
-			"Home screen should be visible before navigating to \(button)")
-
-		let tile = app.buttons[button].firstMatch
-		XCTAssertTrue(
-			tile.waitForExistence(timeout: 30),
-			"\(button) button should exist on the home screen")
-
-		for attempt in 1...3 {
-			tile.tap()
-			if homescreen.waitForNonExistence(timeout: 10) {
-				return self
-			}
-			XCTContext.runActivity(
-				named: "Tap \(attempt) on \(button) did not navigate; retrying"
-			) { _ in }
-		}
-
-		XCTFail("Tapping \(button) never left the home screen")
+			mounted.waitForExistence(timeout: timeout),
+			"\(route) should mount \(mounted)")
 		return self
 	}
 
@@ -109,6 +85,22 @@ extension Screen {
 		return self
 	}
 
+	/// Go back one screen with the navigation bar's back button. iOS 27 can keep
+	/// more than one navigation bar in the tree, and a bar need not have a title to
+	/// pick it out by, so this takes the back button a tap can reach: the covered
+	/// bars' buttons are not hittable.
+	@discardableResult
+	func goBack() -> Self {
+		let backs = app.navigationBars.buttons.matching(identifier: TestIdentifiers.Navigation.systemBackButton)
+		let reachable = { backs.allElementsBoundByIndex.first { $0.isHittable } }
+		let offered = XCTWaiter().wait(
+			for: [XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in reachable() != nil }, object: nil)],
+			timeout: 10)
+		XCTAssertEqual(offered, .completed, "the screen should offer a way back")
+		reachable()?.tap()
+		return self
+	}
+
 	/// Attach a screenshot of the whole screen to the test report, for as long
 	/// as `captureLifetime` says.
 	@discardableResult
@@ -133,26 +125,6 @@ extension Screen {
 		treeDump.name = name
 		treeDump.lifetime = captureLifetime
 		XCTContext.runActivity(named: name) { $0.add(treeDump) }
-		return self
-	}
-
-	/// Pull the screen most of the way off with the back gesture, then let go
-	/// without completing it, so the stack settles back where it started.
-	///
-	/// The drag stops short of half the width and moves slowly: UIKit decides an
-	/// interactive pop on how far the finger travelled and how fast it was going
-	/// when it lifted, so a slow release at a third of the way across is read as
-	/// "put it back". Holding before the release is what drains the velocity --
-	/// a fast flick from the same place would complete the pop instead.
-	@discardableResult
-	func cancelSwipeBack() -> Self {
-		let edge = app.coordinate(withNormalizedOffset: CGVector(dx: 0.0, dy: 0.5))
-		let partway = app.coordinate(withNormalizedOffset: CGVector(dx: 0.35, dy: 0.5))
-		edge.press(
-			forDuration: 0.2,
-			thenDragTo: partway,
-			withVelocity: .slow,
-			thenHoldForDuration: 1.0)
 		return self
 	}
 

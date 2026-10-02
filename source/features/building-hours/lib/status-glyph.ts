@@ -1,5 +1,5 @@
 import type {ComponentProps} from 'react'
-import type {ColorSchemeName, ColorValue} from 'react-native'
+import type {ColorValue} from 'react-native'
 import type {Image} from '@expo/ui/swift-ui'
 import type {BuildingStatusType} from '../types'
 
@@ -11,8 +11,8 @@ type SymbolName = NonNullable<ComponentProps<typeof Image>['systemName']>
 
 const SYMBOLS: Record<BuildingStatusType, SymbolName> = {
 	Open: 'circle.fill',
-	'Almost Open': 'circle.lefthalf.filled',
-	'Almost Closed': 'circle.righthalf.filled',
+	'Almost Open': 'record.circle',
+	'Almost Closed': 'record.circle',
 	Chapel: 'bell.circle',
 	Closed: 'circle',
 }
@@ -20,26 +20,15 @@ const SYMBOLS: Record<BuildingStatusType, SymbolName> = {
 /**
  * The SF Symbol and colour a status shows on a row.
  *
- * Every symbol shares the circle silhouette, so the column stays aligned and
- * shape carries what colour could not: yellow alone means three different
- * things, and means nothing at all to a colourblind reader.
+ * Every symbol shares the circle silhouette, so the column stays aligned, and
+ * each status has its own shape as well as its own colour, so neither has to
+ * carry the meaning alone for a colourblind reader. Almost Open and Almost
+ * Closed share a dot in a ring, between the full and empty circles; the row's
+ * text says which way the change goes.
  */
-export function statusGlyph(
-	status: BuildingStatusType,
-	scheme?: ColorSchemeName,
-): {symbol: SymbolName; color: ColorValue} {
-	let symbol = SYMBOLS[status]
-
-	if (scheme === 'dark' && status === 'Almost Open') {
-		symbol = 'circle.lefthalf.filled.inverse'
-	}
-
-	if (scheme === 'dark' && status === 'Almost Closed') {
-		symbol = 'circle.righthalf.filled.inverse'
-	}
-
+export function statusGlyph(status: BuildingStatusType): {symbol: SymbolName; color: ColorValue} {
 	return {
-		symbol,
+		symbol: SYMBOLS[status],
 		color: getAccentBackgroundColor(status),
 	}
 }

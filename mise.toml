@@ -1,8 +1,8 @@
 [tools]
 node = "24.21.0"
-pnpm = "12.5.0"
-hk = "2.1.0"
-ruby = "3.4.10"
+pnpm = "12.8.0"
+hk = "2.4.0"
+ruby = "3.4.11"
 "gem:bundler" = "4.0.21"
 "aqua:mgdm/htmlq" = "0.4.0"
 
@@ -23,6 +23,19 @@ for framework in "$MISE_TOOL_INSTALL_PATH"/Frameworks/*.framework; do
 done
 codesign --force --sign - --timestamp=none "$MISE_TOOL_INSTALL_PATH/axe"
 """
+
+# Sentry's Xcode build phases upload source maps and dSYMs with this, found
+# through SENTRY_CLI_EXECUTABLE, rather than the npm @sentry/cli that
+# pnpm-workspace.yaml drops. Pinned to the version @sentry/react-native pins.
+# macOS only: only an Xcode archive uploads, so the Linux jobs never need it.
+[tools.sentry]
+version = "3.8.0"
+os = ["macos"]
+
+# Shrinks the icon previews `mise run icons` renders. macOS only, as ictool is.
+[tools.oxipng]
+version = "10.2.1"
+os = ["macos"]
 
 [env]
 _.path = ["node_modules/.bin"]
@@ -209,7 +222,7 @@ run = "jest"
 [tasks."test:node"]
 description = "Run the node:test tests beside their subjects"
 env = { TZ = "America/Chicago" }
-run = 'node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test "scripts/*.test.mjs" "plugins/*.test.ts" "source/database/*.test.ts" "source/database/calendar/*.test.ts" "modules/event-list/*.test.ts" "modules/ccc-calendar/*.test.ts"'
+run = 'node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test "scripts/*.test.mjs" "plugins/*.test.ts" "source/database/*.test.ts" "source/database/calendar/*.test.ts" "source/database/search/*.test.ts" "source/database/courses/*.test.ts" "modules/event-list/*.test.ts" "modules/ccc-calendar/*.test.ts"'
 
 # --- Data ---
 
@@ -230,8 +243,6 @@ run = "node scripts/validate-bus-schedules.mjs"
 description = "Validate data files"
 run = "node scripts/validate-data.mjs"
 
-# Needs the network -- it fetches the live campus geojson -- so it stays out
-# of validate-data, which gates three workflows including deploy-data. A
 [tasks."scrape-dining"]
 description = "Update data/building-hours/ from Bon Appétit's café pages"
 run = "node scripts/scrape-bonapp.mjs"
@@ -241,17 +252,45 @@ run = "node scripts/scrape-bonapp.mjs"
 description = "Report when the Lion's Pantry hours line on the Taylor Center page changes or goes missing"
 run = "scripts/watch-lions-pantry.sh"
 
+[tasks.icons]
+description = "Render the in-app icon previews from assets/*.icon"
+run = "node scripts/make-icons.mjs"
+
+[tasks."trace-symbol"]
+description = "Trace a logo into a custom SF Symbol in assets/symbols/"
+run = "node scripts/trace-symbol.mjs"
+
+# Needs the network, so it stays out of validate-data, as scrape-dining does.
+[tasks."update-map-fixtures"]
+description = "Replace the map fixtures the UI tests read with each campus's live map"
+run = "node scripts/update-map-fixtures.mjs"
+
+[tasks."update-mess-fixtures"]
+description = "Re-record Olaf Messenger's UI-test fixtures from a run of its UI tests"
+run = "node scripts/update-mess-fixtures.mjs"
+
+[tasks."scrape-student-wages"]
+description = "Update data/student-wages.yaml from St. Olaf's compensation page"
+run = "node scripts/scrape-student-wages.mjs"
+
+# Needs the network -- it fetches the live campus geojson -- so it stays out
+# of validate-data, which gates three workflows including deploy-data. A
 # ccc-server blip should not block an unrelated pull request from merging.
 [tasks."validate-building-keys"]
 description = "Check that every building: key resolves to a real map feature"
 run = "node scripts/validate-building-keys.mjs"
 
-# An undeclared -- or orphaned -- @frogpond dependency resolves fine locally
-# through the root node_modules hoist, so format, lint, tsc and test all pass
-# and CI is the first thing to say otherwise. Same reasoning as
+# Needs the network too: it runs every area's search against the live board.
+[tasks."check-student-work-areas"]
+description = "Report Student Work postings that no area tile holds"
+run = "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/check-student-work-areas.mjs"
+
+# An undeclared dependency -- or an orphaned @frogpond one -- resolves fine
+# locally through the root node_modules, so format, lint, tsc and test all
+# pass and CI is the first thing to say otherwise. Same reasoning as
 # validate-lockfile below: cheap here, a red pipeline anywhere else.
 [tasks."validate-deps"]
-description = "Check that modules declare the @frogpond packages they import"
+description = "Check that modules declare the packages they import"
 run = "node scripts/validate-workspace-deps.mjs"
 
 # A package.json edited without regenerating the lockfile passes format, lint,
@@ -259,8 +298,10 @@ run = "node scripts/validate-workspace-deps.mjs"
 # every CI job at install.
 #
 # `--lockfile-only` resolves without touching node_modules, and
-# `--trust-lockfile` skips pnpm's supply-chain re-verification, which reaches
-# the registry and takes over a minute on a cold cache. That check belongs in
+# `trust-lockfile` skips pnpm's supply-chain re-verification, which reaches
+# the registry and takes over a minute on a cold cache. It is set through
+# `--config.` because pnpm 12.6's install rejects the `--trust-lockfile` flag
+# its own help lists. That check belongs in
 # CI, where the network is a given; here the question is only whether the
 # lockfile still describes the package.json files.
 # metro-config is a direct dependency pinned exactly while metro itself is
@@ -307,7 +348,7 @@ run = "node scripts/validate-expo-versions.mjs"
 
 [tasks."validate-lockfile"]
 description = "Check that pnpm-lock.yaml matches the package.json files"
-run = "pnpm install --frozen-lockfile --lockfile-only --trust-lockfile"
+run = "pnpm install --frozen-lockfile --lockfile-only --config.trust-lockfile=true"
 
 # CI keys its toolchain cache on mise.lock alone, so a lock that has drifted
 # from mise.toml would otherwise restore a cache that satisfies neither. The
@@ -328,6 +369,9 @@ run = "gzip --keep docs/*.json"
 description = "Generate iOS JS bundle"
 depends = ["bundle-data"]
 wait_for = ["prebuild"]
+# Keeps the UI-test fixtures a release bundle drops (metro.config.js): this bundle
+# serves the UI tests, and `mise run device` builds, which carry them unused.
+env = { KEEP_UITEST_FIXTURES = "1" }
 run = """
 expo export:embed \
   --entry-file index.js \

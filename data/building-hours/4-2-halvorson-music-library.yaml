@@ -1,15 +1,18 @@
 name: Halvorson Music Library
 image: halvorson
 category: Libraries
+kind: space
 building: chm
+links:
+  - {title: 'Library & IT Services hours', url: 'https://wp.stolaf.edu/lits/about/building-hours/'}
 
 schedule:
   - title: Hours
     hours:
-      - {days: [Mo, Tu, We, Th], from: '7:45am', to: '11:00pm'}
-      - {days: [Fr], from: '7:45am', to: '8:00pm'}
-      - {days: [Sa], from: '9:00am', to: '6:00pm'}
-      - {days: [Su], from: '12:00pm', to: '11:00pm'}
+      - {days: [Mo, Tu, We, Th], from: '8:00am', to: '10:00pm'}
+      - {days: [Fr], from: '8:00am', to: '8:00pm'}
+      - {days: [Sa], from: '12:00pm', to: '6:00pm'}
+      - {days: [Su], from: '12:00pm', to: '10:00pm'}
 
 breakSchedule:
   fall: []

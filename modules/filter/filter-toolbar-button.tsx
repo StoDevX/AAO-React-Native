@@ -1,15 +1,15 @@
 import * as React from 'react'
 
-import type {FilterType} from './types'
+import type {Filter} from './types'
 import {FilterMenu} from './filter-menu'
 import {FilterSheet} from './filter-sheet'
 import {FilterToggle} from './filter-toggle'
 import {filterShape} from './lib/filter-shape'
 
 type Props<T extends object> = {
-	filter: FilterType<T>
+	filter: Filter<T>
 	isActive: boolean
-	onChange: (filter: FilterType<T>) => unknown
+	onChange: (filter: Filter<T>) => unknown
 	title: string
 }
 

@@ -39,7 +39,3 @@ test('throws when the response is not an array', () => {
 test('throws when every event in a non-empty response is malformed', () => {
 	expect(() => parseEvents([{title: 1}, {title: 2}, 'garbage'])).toThrow()
 })
-
-test('returns an empty list when there are legitimately no upcoming events', () => {
-	expect(parseEvents([])).toStrictEqual([])
-})

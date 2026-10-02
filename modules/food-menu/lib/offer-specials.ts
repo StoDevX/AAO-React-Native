@@ -1,4 +1,4 @@
-import type {FilterType} from '@frogpond/filter'
+import type {Filter} from '@frogpond/filter'
 
 import type {MenuItemType} from '../types'
 
@@ -21,17 +21,17 @@ import type {MenuItemType} from '../types'
  * reader last chose: on unless they turned it off themselves.
  */
 export function offerSpecials(
-	filters: FilterType<MenuItemType>[],
+	filters: Filter<MenuItemType>[],
 	mealHasSpecials: boolean,
-): FilterType<MenuItemType>[] {
+): Filter<MenuItemType>[] {
 	if (mealHasSpecials) {
 		return filters
 	}
 
-	return filters.map((filter): FilterType<MenuItemType> =>
+	return filters.map((filter): Filter<MenuItemType> =>
 		// Narrowed on `type` as well as `key`: a picker's `enabled` is typed
 		// `true`, so spreading `false` over the bare union widens it out of
-		// `FilterType`.
+		// `Filter`.
 		filter.type === 'toggle' && filter.key === 'specials'
 			? {...filter, enabled: false, disabled: true}
 			: filter,

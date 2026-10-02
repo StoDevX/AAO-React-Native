@@ -48,6 +48,7 @@ const mockFoodMenu = FoodMenu as unknown as jest.Mock<
 const PAUSE: BuildingType = {
 	name: PAUSE_VENUE,
 	category: 'Food',
+	kind: 'space',
 	schedule: [
 		{
 			title: 'Hours',

@@ -1,6 +1,9 @@
 name: C-Store
 category: Food
+kind: space
 building: thelionspause
+links:
+  - {title: 'Eat at Buntrock', url: 'https://wp.stolaf.edu/buntrock/eat/'}
 
 schedule:
   - title: Hours

@@ -5,12 +5,12 @@ import {
 	Host,
 	HStack,
 	List,
-	Section,
 	Spacer,
 	Text,
 	VStack,
 	ZStack,
 } from '@expo/ui/swift-ui'
+import {SheetSection} from '@frogpond/sheet-section'
 import {
 	accessibilityIdentifier,
 	buttonStyle,
@@ -28,15 +28,15 @@ import {optionLabel} from './lib/option-label'
 import {clearSelection, selectByTitles} from './lib/select-options'
 import {TriggerLabel} from './lib/trigger-label'
 import {triggerModifiers} from './lib/trigger-modifiers'
-import type {ListType} from './types'
+import type {ListFilter} from './types'
 
 type Props<T extends object> = {
-	filter: ListType<T>
+	filter: ListFilter<T>
 	isActive: boolean
 	/// The trigger `Button`'s own label -- a sheet has no built-in trigger the
 	/// way a `Menu`'s `label` is one, so this component draws its own.
 	title: string
-	onChange: (filter: ListType<T>) => void
+	onChange: (filter: ListFilter<T>) => void
 }
 
 /**
@@ -222,7 +222,7 @@ export function FilterSheet<T extends object>({
 						}}
 						selection={selectedTitles}
 					>
-						<Section>
+						<SheetSection>
 							{/* Plain children rather than `List.ForEach`: under an active
 							    edit mode a `ForEach` also draws the delete badge and the
 							    reorder grip that go with `onDelete`/`onMove`, and a filter
@@ -236,7 +236,7 @@ export function FilterSheet<T extends object>({
 									title={option.title}
 								/>
 							))}
-						</Section>
+						</SheetSection>
 					</List>
 				</VStack>
 			</BottomSheet>
