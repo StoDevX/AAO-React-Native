@@ -283,6 +283,46 @@ struct MessStoryScreen: Screen {
 		return self
 	}
 
+	/// How far a drag on the zoom viewer's picture goes, as a fraction of the window's height.
+	enum ViewerDrag: Double {
+		/// Well short of the distance that closes the viewer.
+		case short = 0.08
+		/// Well past the distance that closes the viewer.
+		case long = 0.4
+	}
+
+	/// Drag the picture in the zoom viewer straight down from its middle, slowly, holding
+	/// at the end so the release carries no speed: only the distance can close the viewer.
+	@discardableResult
+	func dragViewerImage(_ drag: ViewerDrag) -> Self {
+		let image = viewerImage
+		XCTAssertTrue(image.waitForExistence(timeout: 30), "the zoom viewer should show the picture")
+		let window = app.windows.firstMatch
+		let start = window.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5))
+		let end = window.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5 + drag.rawValue))
+		start.press(forDuration: 0.1, thenDragTo: end, withVelocity: .slow, thenHoldForDuration: 0.3)
+		return self
+	}
+
+	/// Assert the zoom viewer is still up, or has gone and left the story.
+	@discardableResult
+	func verifyViewerOpen(_ open: Bool, _ message: String) -> Self {
+		if open {
+			// A dismissal takes a moment to animate, so Close is given time to go before this
+			// counts the viewer as staying.
+			XCTAssertFalse(closeButton.waitForNonExistence(timeout: 3), message)
+			XCTAssertTrue(closeButton.waitForHittable(), message)
+			capture("The zoom viewer after a drag")
+		} else {
+			XCTAssertTrue(closeButton.waitForNonExistence(timeout: 30), message)
+			XCTAssertTrue(
+				app.staticTexts[TestIdentifiers.News.storyHeadline].waitForExistence(timeout: 10),
+				"closing the viewer should return to the story")
+			capture("The story after the viewer closed")
+		}
+		return self
+	}
+
 	/// Spread two fingers on the picture in the zoom viewer.
 	@discardableResult
 	func pinchOutViewerImage() -> Self {

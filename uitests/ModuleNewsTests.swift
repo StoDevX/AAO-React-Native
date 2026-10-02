@@ -181,4 +181,30 @@ class ModuleNewsTests: UITestCaseUnbooted {
 			.shareViewerImage()
 			.closeImageViewer()
 	}
+
+	func testDraggingThePictureDownClosesTheZoomViewer() throws {
+		MessFrontPage(app: app)
+			.navigate()
+			.openColumn(TestIdentifiers.News.comicColumn, in: TestIdentifiers.News.varietySection)
+			.openFirstStory()
+			.openImageViewer()
+			.dragViewerImage(.short)
+			.verifyViewerOpen(true, "a short drag let go slowly should spring the picture back")
+			.dragViewerImage(.long)
+			.verifyViewerOpen(false, "a long drag down should close the zoom viewer")
+	}
+
+	func testDraggingAZoomedPictureDoesNotCloseTheZoomViewer() throws {
+		MessFrontPage(app: app)
+			.navigate()
+			.openColumn(TestIdentifiers.News.comicColumn, in: TestIdentifiers.News.varietySection)
+			.openFirstStory()
+			.openImageViewer()
+			.doubleTapViewerImage()
+			.verifyViewerImageZoomed(true)
+			.dragViewerImage(.long)
+			.verifyViewerOpen(true, "a drag on a zoomed picture should pan it, not close the viewer")
+			.verifyViewerImageZoomed(true)
+			.closeImageViewer()
+	}
 }
