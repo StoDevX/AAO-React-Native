@@ -14,13 +14,16 @@ class ModuleStreamingMediaTests: UITestCaseUnbooted {
 			.checkLogoIsNotAButton(TestIdentifiers.StreamingMedia.krlxLogoPrefix)
 	}
 
-	/// A station keeps playing after its screen closes, and the mini-player
-	/// over the rest of the app can stop it. Whether the stream itself arrives
-	/// does not matter here: the mini-player shows from the tap on Listen.
+	/// Streaming Media's mini-player waits, idle, for a station. Once one
+	/// starts it keeps playing after its screen closes, and the mini-player
+	/// over the rest of the app can stop it, which leaves Streaming Media's
+	/// idle again. Whether the stream itself arrives does not matter here: the
+	/// mini-player shows from the tap on Listen.
 	func testStationPlaysOnFromTheMiniPlayer() throws {
 		let ids = TestIdentifiers.StreamingMedia.self
 		StreamingMediaScreen(app: app)
 			.navigate()
+			.checkIdleMiniPlayer(labelled: ids.idleMiniPlayer)
 			.openStation(ids.krlxTab, expecting: ids.krlxButtons[0])
 			.tapStationButton(ids.krlxButtons[0], expecting: ids.krlxMiniPlayerStop)
 			.checkMiniPlayer(stopLabelled: ids.krlxMiniPlayerStop)

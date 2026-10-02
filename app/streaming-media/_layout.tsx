@@ -1,20 +1,16 @@
 import * as React from 'react'
 import {NativeTabs} from 'expo-router/unstable-native-tabs'
-import {RadioTabAccessory, useRadioStore} from '../../source/features/streaming/radio'
+import {RadioTabAccessory} from '../../source/features/streaming/radio'
 
 export default function StreamingMediaLayout(): React.ReactNode {
-	// While a station is loaded, the tab bar shows the mini-player.
-	let radioLoaded = useRadioStore((state) => state.stationId !== null)
-
 	return (
-		// Minimising on a scroll down, as Music does, moves the mini-player
-		// inline beside the shrunken tab bar.
+		// The radio's home, so the mini-player is always here, saying "Not
+		// Playing" until a station starts. Minimising on a scroll down, as Music
+		// does, moves it inline beside the shrunken tab bar.
 		<NativeTabs minimizeBehavior="onScrollDown">
-			{radioLoaded ? (
-				<NativeTabs.BottomAccessory>
-					<RadioTabAccessory />
-				</NativeTabs.BottomAccessory>
-			) : null}
+			<NativeTabs.BottomAccessory>
+				<RadioTabAccessory showWhenIdle={true} />
+			</NativeTabs.BottomAccessory>
 			<NativeTabs.Trigger name="index">
 				<NativeTabs.Trigger.Icon sf="recordingtape" />
 				<NativeTabs.Trigger.Label>Streaming</NativeTabs.Trigger.Label>

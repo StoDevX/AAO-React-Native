@@ -650,6 +650,9 @@ struct TestIdentifiers {
 		/// It shows wherever KRLX is loaded: in the Streaming Media tab bar, and
 		/// floating over every screen outside the tabbed sections.
 		static let krlxMiniPlayerStop = "Stop 88.1 KRLX-FM"
+		/// The mini-player with no station loaded, which Streaming Media's tab bar
+		/// always shows.
+		static let idleMiniPlayer = "Not Playing"
 		static let kstoTab = "KSTO"
 		static let kstoLogoPrefix = "KSTO 93.1 FM logo"
 		/// KSTO's logos in the order a tap cycles through them.

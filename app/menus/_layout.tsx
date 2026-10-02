@@ -14,9 +14,10 @@ export default function MenusLayout(): React.ReactNode {
 		// is the tab's own -- the stack above never sees them.
 		<MenuHeaderProvider>
 			<MenuHeaderHost />
-			{/* Minimising on a scroll down, as Music does, moves the mini-player
-			    inline beside the shrunken tab bar. */}
-			<NativeTabs minimizeBehavior="onScrollDown">
+			{/* Only a playing radio's mini-player is worth the room a shrinking
+			    tab bar makes; with none, the bar stays put. Minimising moves the
+			    mini-player inline beside the shrunken bar. */}
+			<NativeTabs minimizeBehavior={radioLoaded ? 'onScrollDown' : 'never'}>
 				{radioLoaded ? (
 					<NativeTabs.BottomAccessory>
 						<RadioTabAccessory />

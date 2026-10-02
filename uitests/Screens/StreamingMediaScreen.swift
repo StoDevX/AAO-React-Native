@@ -97,6 +97,14 @@ struct StreamingMediaScreen: Screen {
 		return self
 	}
 
+	/// Check the mini-player says nothing is playing.
+	@discardableResult
+	func checkIdleMiniPlayer(labelled label: String) -> Self {
+		let idle = app.elementWithLabel(startingWith: label)
+		XCTAssertTrue(idle.waitForExistence(timeout: 10), "The mini-player should say \"\(label)\"")
+		return self
+	}
+
 	/// Stop the station from the mini-player, and check the mini-player goes.
 	@discardableResult
 	func stopFromMiniPlayer(labelled label: String) -> Self {

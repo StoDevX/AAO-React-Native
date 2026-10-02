@@ -18,17 +18,25 @@ import {describePlayback} from './describe-playback'
  */
 const TABBED_SECTIONS = ['/streaming-media', '/menus']
 
+/** What the mini-player says, and VoiceOver reads, with no station loaded. */
+const IDLE_LABEL = 'Not Playing'
+
 type MiniPlayerProps = {
 	/** A compact player drops the status line and the stop button. */
 	compact?: boolean
+	/** With no station loaded, says "Not Playing" rather than rendering nothing. */
+	showWhenIdle?: boolean
 }
 
 /**
  * The loaded station, with play/pause and stop, from anywhere in the app.
- * Tapping the station opens its screen. Renders nothing when no station is
- * loaded.
+ * Tapping the station opens its screen. With no station loaded it renders
+ * nothing, or the idle player when `showWhenIdle` asks for it.
  */
-export function RadioMiniPlayer({compact = false}: MiniPlayerProps): React.ReactNode {
+export function RadioMiniPlayer({
+	compact = false,
+	showWhenIdle = false,
+}: MiniPlayerProps): React.ReactNode {
 	let router = useRouter()
 	let stationId = useRadioStore((state) => state.stationId)
 	let playState = useRadioStore((state) => state.playState)
@@ -38,7 +46,7 @@ export function RadioMiniPlayer({compact = false}: MiniPlayerProps): React.React
 	let stop = useRadioStore((state) => state.stop)
 
 	if (!stationId) {
-		return null
+		return showWhenIdle ? <IdleMiniPlayer /> : null
 	}
 
 	let station = STATIONS[stationId]
@@ -95,6 +103,28 @@ export function RadioMiniPlayer({compact = false}: MiniPlayerProps): React.React
 }
 
 /**
+ * The mini-player with no station loaded. Nothing in it does anything, so
+ * VoiceOver reads it as one piece of text rather than offering a dead button.
+ */
+function IdleMiniPlayer(): React.ReactNode {
+	return (
+		<View accessible={true} accessibilityLabel={IDLE_LABEL} style={styles.row}>
+			<View style={styles.station}>
+				<SymbolView name="radio" size={24} tintColor={c.tertiaryLabel} />
+				<View style={styles.titles}>
+					<Text numberOfLines={1} style={styles.name}>
+						{IDLE_LABEL}
+					</Text>
+				</View>
+			</View>
+			<View style={styles.control}>
+				<SymbolView name="play.fill" size={22} tintColor={c.tertiaryLabel} />
+			</View>
+		</View>
+	)
+}
+
+/**
  * The mini-player floating above the bottom of every screen outside the tabbed
  * sections, which show it in their tab bar instead. A capsule of liquid glass
  * where iOS has it, matching the tab bar's own accessory, and a plain card
@@ -133,9 +163,11 @@ export function RadioMiniPlayerOverlay(): React.ReactNode {
  * The mini-player for a tab bar's bottom accessory. iOS draws the accessory's
  * glass itself, and narrows it inline beside a minimised tab bar.
  */
-export function RadioTabAccessory(): React.ReactNode {
+export function RadioTabAccessory({
+	showWhenIdle = false,
+}: Pick<MiniPlayerProps, 'showWhenIdle'>): React.ReactNode {
 	let placement = NativeTabs.BottomAccessory.usePlacement()
-	return <RadioMiniPlayer compact={placement === 'inline'} />
+	return <RadioMiniPlayer compact={placement === 'inline'} showWhenIdle={showWhenIdle} />
 }
 
 const styles = StyleSheet.create({
