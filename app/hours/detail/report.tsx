@@ -15,7 +15,6 @@ import {
 } from '@expo/ui/swift-ui/modifiers'
 import moment from 'moment-timezone'
 import type {Moment} from 'moment-timezone'
-import noop from 'lodash/noop'
 import * as c from '@frogpond/colors'
 import {timezone} from '@frogpond/constants'
 import {LoadErrorView, LoadingView, NoticeView} from '@frogpond/notice'
@@ -82,7 +81,7 @@ function useBuildingEditor(initialBuilding: BuildingType, campus: Campus) {
 				'Discard changes?',
 				'You have made unsaved changes. Are you sure you want to discard them?',
 				[
-					{text: 'Edit', style: 'cancel', onPress: noop},
+					{text: 'Edit', style: 'cancel'},
 					{
 						text: 'Discard',
 						style: 'destructive',

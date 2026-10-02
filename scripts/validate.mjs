@@ -5,17 +5,23 @@ import AJV from 'ajv'
 import addFormats from 'ajv-formats'
 import addKeywords from 'ajv-keywords'
 import {load} from 'js-yaml'
-import lodash from 'lodash'
 import {SCHEMA_BASE} from './paths.mjs'
-const {get, memoize} = lodash
+
+/** The value at an Ajv error's JSON pointer, such as `/hours/0/days`. */
+function valueAt(data, pointer) {
+	return pointer
+		.split('/')
+		.filter(Boolean)
+		.reduce((value, key) => value?.[key.replaceAll('~1', '/').replaceAll('~0', '~')], data)
+}
 
 function formatError(err, data) {
 	// format some of the errors from ajv
 	let contents = ''
-	let dataPath = (err.dataPath || err.instancePath || '').replace(/^\./u, '')
+	let dataPath = err.instancePath || ''
 	switch (err.keyword) {
 		case 'enum': {
-			let value = get(data, dataPath)
+			let value = valueAt(data, dataPath)
 			let params = err.params
 			let allowed = (params.allowedValues || []).map((v) => JSON.stringify(v)).join(', ')
 			contents = `Given value "${JSON.stringify(value)}" ${
@@ -24,7 +30,7 @@ function formatError(err, data) {
 			break
 		}
 		case 'type': {
-			contents = `${get(data, dataPath)} ${err.message || 'has incorrect type'}`
+			contents = `${valueAt(data, dataPath)} ${err.message || 'has incorrect type'}`
 			break
 		}
 		default: {
@@ -34,24 +40,26 @@ function formatError(err, data) {
 	return `Error at ${err.dataPath || err.instancePath || '(unknown)'}:\n${contents}`
 }
 
-const init = memoize(() => {
+let validator = null
+
+function init() {
+	if (validator) return validator
+
 	// load the common definitions
 	let defsPath = path.join(SCHEMA_BASE, '_defs.yaml')
 	let defs = load(fs.readFileSync(defsPath, 'utf-8'))
 
 	// set up the validator
-	let validator = new AJV()
+	validator = new AJV()
 	addFormats(validator)
 	addKeywords(validator)
 	validator.addSchema(defs)
 
 	return validator
-})
+}
 
 export function validate(schema, data) {
-	let validator = init()
-
-	let validate = validator.compile(schema)
+	let validate = init().compile(schema)
 	let isValid = validate(data)
 
 	if (!isValid) {

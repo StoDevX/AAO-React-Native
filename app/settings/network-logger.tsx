@@ -1,6 +1,6 @@
 import * as React from 'react'
 import {StyleSheet, View, Text, TouchableOpacity, useColorScheme} from 'react-native'
-import {Button} from '@frogpond/button'
+import {NoticeView} from '@frogpond/notice'
 import NetworkLogger, {getBackHandler} from 'react-native-network-logger'
 import {SafeAreaView} from 'react-native-safe-area-context'
 import * as c from '@frogpond/colors'
@@ -15,7 +15,11 @@ export default function NetworkLoggerPage(): React.ReactNode {
 	const themeMode = scheme === 'dark' ? 'dark' : 'light'
 
 	const remountButton = (
-		<Button onPress={() => setUnmountNetworkLogger(false)} title="Re-open the network logger" />
+		<NoticeView
+			action={{label: 'Re-open', onPress: () => setUnmountNetworkLogger(false)}}
+			systemImage="network"
+			title="Network Logger Closed"
+		/>
 	)
 
 	return (

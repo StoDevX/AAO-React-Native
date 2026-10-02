@@ -6,7 +6,7 @@ All About Olaf is a React Native mobile app for the St. Olaf College community. 
 
 - **React Native 0.86.2** with **TypeScript**
 - **Expo Router 57** for navigation — file-based, with `experiments.typedRoutes` set in `app.config.ts`
-- **Redux Toolkit** for global state, **React Query 5** for server state
+- **Zustand 5** for feature state, **Redux Toolkit** for the older shared slices, **React Query 5** for server state
 - **Jest** + **React Native Testing Library** for testing
 - **Xcode Cloud** for builds and TestFlight submissions
 - Monorepo with internal packages in `modules/`
@@ -37,7 +37,7 @@ change was needed rather than restating the diff.
 
 - `source/features/` holds each feature's non-route code (e.g., `dining/`, `directory/`, `calendar/`); `app/` route files are the screens themselves
 - Barrel exports (`index.ts`) for clean imports
-- State: React Query for server state, Redux Toolkit for global app state, `useState` for component-local
+- State: React Query for server state; a Zustand store in the feature's own `store.ts` for state that feature owns, persisted to AsyncStorage through `persist` when it must survive a relaunch; `useState` for component-local. Redux Toolkit holds the older shared slices in `source/redux/parts/` — don't add new state there
 - iOS is the only supported platform
 - Email via `sendEmail`, phone via `callPhone` components
 - Error logging via Sentry integration

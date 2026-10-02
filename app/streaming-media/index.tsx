@@ -7,14 +7,13 @@ import {LoadErrorView, LoadingView} from '@frogpond/notice'
 import {FilterToolbar, ListFilter, selectedOptions} from '@frogpond/filter'
 import {formatDate} from '@frogpond/time-format'
 import {StreamRow} from '../../source/features/streaming/streams/row'
-import toPairs from 'lodash/toPairs'
-import groupBy from 'lodash/groupBy'
 import moment from 'moment-timezone'
 import type {Moment} from 'moment-timezone'
 import {toLaxTitleCase as titleCase} from '@frogpond/titlecase'
 import type {StreamType} from '../../source/features/streaming/streams/types'
 import {streamsOptionsFor} from '../../source/features/streaming/streams/query'
 import {useQuery} from '@tanstack/react-query'
+import {groupBy} from '@frogpond/collections'
 
 const styles = StyleSheet.create({
 	host: {
@@ -23,9 +22,12 @@ const styles = StyleSheet.create({
 	},
 })
 
-const groupStreams = (entries: StreamType[]) => {
+/** Streams with the heading each one is listed under, which every stream here has. */
+type GroupedStream = StreamType & {$groupBy: string}
+
+const groupStreams = (entries: GroupedStream[]) => {
 	let grouped = groupBy(entries, (j) => j.$groupBy)
-	return toPairs(grouped).map(([title, data]) => ({title, data}))
+	return Object.entries(grouped).map(([title, data]) => ({title, data}))
 }
 
 const groupStreamsByCategoryAndDate = (stream: StreamType) => {
@@ -50,7 +52,10 @@ const getEnabledCategories = <T extends object>(filters: ListFilter<T>[]) => {
 	})
 }
 
-const filterStreams = <T extends object>(streams: StreamType[], filters: ListFilter<T>[]) => {
+const filterStreams = <S extends StreamType, T extends object>(
+	streams: S[],
+	filters: ListFilter<T>[],
+) => {
 	let enabledCategories = getEnabledCategories(filters)
 
 	if (enabledCategories.length === 0) {

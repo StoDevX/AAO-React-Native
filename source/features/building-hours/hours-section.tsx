@@ -28,8 +28,8 @@ import {
 import type {BuildingStatusType, BuildingType, NamedBuildingScheduleType} from './types'
 
 /// The status's colour as text, as Maps writes a place's Open or Closed. The
-/// Hours list's yellow is for its dots and too faint as text, so the in-between
-/// statuses take orange.
+/// Hours list's yellow chapel bell is too faint as text, so chapel takes orange
+/// like the other in-between statuses.
 export const STATUS_TEXT: Record<BuildingStatusType, ColorValue> = {
 	Open: c.systemGreen,
 	'Almost Open': c.systemOrange,

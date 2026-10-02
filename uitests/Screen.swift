@@ -85,6 +85,22 @@ extension Screen {
 		return self
 	}
 
+	/// Go back one screen with the navigation bar's back button. iOS 27 can keep
+	/// more than one navigation bar in the tree, and a bar need not have a title to
+	/// pick it out by, so this takes the back button a tap can reach: the covered
+	/// bars' buttons are not hittable.
+	@discardableResult
+	func goBack() -> Self {
+		let backs = app.navigationBars.buttons.matching(identifier: TestIdentifiers.Navigation.systemBackButton)
+		let reachable = { backs.allElementsBoundByIndex.first { $0.isHittable } }
+		let offered = XCTWaiter().wait(
+			for: [XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in reachable() != nil }, object: nil)],
+			timeout: 10)
+		XCTAssertEqual(offered, .completed, "the screen should offer a way back")
+		reachable()?.tap()
+		return self
+	}
+
 	/// Attach a screenshot of the whole screen to the test report, for as long
 	/// as `captureLifetime` says.
 	@discardableResult

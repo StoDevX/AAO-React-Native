@@ -1,6 +1,5 @@
 import * as React from 'react'
 import {StyleSheet} from 'react-native'
-import xor from 'lodash/xor'
 import moment from 'moment-timezone'
 import {Stack, useLocalSearchParams} from 'expo-router'
 import {Button, DatePicker, Host, HStack, LabeledContent, List, Text} from '@expo/ui/swift-ui'
@@ -106,7 +105,7 @@ function WeekToggles({days, onChangeDays}: WeekTogglesProps): React.ReactNode {
 					key={day}
 					modifiers={[buttonStyle(days.includes(day) ? 'borderedProminent' : 'bordered')]}
 					onPress={() => {
-						onChangeDays(xor(days, [day]))
+						onChangeDays(days.includes(day) ? days.filter((d) => d !== day) : [...days, day])
 					}}
 				>
 					<Text>{day}</Text>

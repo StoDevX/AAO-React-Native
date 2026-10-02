@@ -48,7 +48,13 @@ export function IssueScreen({issueKey}: {issueKey: string}): React.ReactNode {
 
 	return (
 		<>
-			<Stack.Screen options={{title: issueDate(issue.day)}} />
+			{/* As on the front page, the paper runs behind a clear bar and the SwiftUI scroll view
+			    still starts the issue below it. The bar keeps no title, since a titled bar draws
+			    a hard edge once the page scrolls; the dateline names the issue, and the screen's
+			    title is still what the Back button reads. */}
+			<Stack.Screen
+				options={{title: issueDate(issue.day), headerTitle: '', headerTransparent: true}}
+			/>
 			<MessPage
 				// The issue's stories are fetched by the ids the list gives it, so the list comes first: a
 				// story added to the issue since it loaded gives the issue a new key, which fetches it.

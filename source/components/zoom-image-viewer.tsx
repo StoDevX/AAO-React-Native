@@ -22,12 +22,14 @@ import {
 } from '@expo/ui/swift-ui/modifiers'
 import {useSafeAreaInsets} from 'react-native-safe-area-context'
 import {DoubleTapView, type DoubleTapPoint} from '@frogpond/double-tap'
+import {shareImage} from './lib/share-image'
 import {doubleTapZoom} from './lib/zoom'
 
 /** Apple's smallest comfortable tap target, in points. */
 const TAP_TARGET = 44
 
-const CLOSE_ICON = [
+/** A button's symbol over the picture: white on a dark circle, filling the tap target. */
+const BUTTON_ICON = [
 	font({textStyle: 'headline', weight: 'semibold'}),
 	foregroundStyle('white'),
 	frame({width: TAP_TARGET, height: TAP_TARGET}),
@@ -41,20 +43,23 @@ type Props = {
 	placeholder?: React.ReactNode
 	closeTestID: string
 	onClose: () => void
+	/** The test id of the Share button, which shares the picture itself. */
+	shareTestID: string
 }
 
 /**
  * A picture on its own, on black, to pinch or double-tap to zoom, with a close
- * button that stays whether or not there is a picture.
+ * button that stays whether or not there is a picture, and a share button when there is one.
  *
  * The zooming view is a React Native `ScrollView`, because `@expo/ui` has no view that
- * zooms; the close button over it is SwiftUI.
+ * zooms; the buttons over it are SwiftUI.
  */
 export function ZoomImageViewer({
 	image,
 	placeholder,
 	closeTestID,
 	onClose,
+	shareTestID,
 }: Props): React.ReactNode {
 	let {width, height} = useWindowDimensions()
 	let insets = useSafeAreaInsets()
@@ -122,8 +127,22 @@ export function ZoomImageViewer({
 					{paddingTop: insets.top, paddingLeft: insets.left, paddingRight: insets.right},
 				]}
 			>
-				<View pointerEvents="box-none" style={styles.closeRow}>
-					<Host style={styles.closeHost}>
+				<View pointerEvents="box-none" style={styles.buttonRow}>
+					{image ? (
+						<Host style={[styles.buttonHost, styles.shareHost]}>
+							<Button
+								modifiers={[
+									buttonStyle('plain'),
+									accessibilityLabel('Share'),
+									accessibilityIdentifier(shareTestID),
+								]}
+								onPress={() => shareImage(image.uri).catch(() => undefined)}
+							>
+								<Image modifiers={BUTTON_ICON} systemName="square.and.arrow.up" />
+							</Button>
+						</Host>
+					) : null}
+					<Host style={styles.buttonHost}>
 						<Button
 							modifiers={[
 								buttonStyle('plain'),
@@ -132,7 +151,7 @@ export function ZoomImageViewer({
 							]}
 							onPress={onClose}
 						>
-							<Image modifiers={CLOSE_ICON} systemName="xmark" />
+							<Image modifiers={BUTTON_ICON} systemName="xmark" />
 						</Button>
 					</Host>
 				</View>
@@ -146,6 +165,8 @@ const styles = StyleSheet.create({
 	fill: {flex: 1},
 	image: {backgroundColor: 'black'},
 	overlay: {position: 'absolute', top: 0, right: 0, bottom: 0, left: 0},
-	closeRow: {flexDirection: 'row', justifyContent: 'flex-end', padding: 8},
-	closeHost: {width: TAP_TARGET, height: TAP_TARGET},
+	buttonRow: {flexDirection: 'row', justifyContent: 'flex-end', padding: 8},
+	buttonHost: {width: TAP_TARGET, height: TAP_TARGET},
+	// Share sits in the corner opposite Close, so a tap meant for one never lands on the other.
+	shareHost: {marginRight: 'auto'},
 })

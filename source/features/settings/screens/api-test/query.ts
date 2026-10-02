@@ -1,6 +1,6 @@
 import {client} from '@frogpond/api'
 import {queryOptions} from '@tanstack/react-query'
-import groupBy from 'lodash/groupBy'
+import {groupBy} from '@frogpond/collections'
 
 export const keys = {
 	all: ['routes'] as const,
@@ -19,7 +19,7 @@ export const serverRoutesOptions = queryOptions({
 		return response as ServerRoute[]
 	},
 	select: (routes) => {
-		let grouped = groupBy(routes, (r) => r.path.split('/').find((v) => v))
+		let grouped = groupBy(routes, (r) => r.path.split('/').find((v) => v) ?? '/')
 		let groupedRoutes = Object.entries(grouped).map(([key, value]) => ({
 			title: key,
 			data: value,

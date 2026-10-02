@@ -43,6 +43,7 @@ export function ImageViewer({id, index = 0}: Props): React.ReactNode {
 					: null
 			}
 			onClose={close}
+			shareTestID="mess-image-viewer-share"
 			placeholder={
 				<StoryLookupNotice
 					query={query}

@@ -9,7 +9,6 @@ import {isStoprintMocked, type Printer, type PrintJob} from '../../../source/lib
 import {stoprintUsername} from '../../../source/features/stoprint/lib'
 import {DisclosureRow} from '../../../source/components/rows'
 import {LoadErrorView, LoadingView, NoticeView} from '@frogpond/notice'
-import groupBy from 'lodash/groupBy'
 import {StoPrintErrorView} from '../../../source/features/stoprint/components/error'
 import {
 	allPrintersOptions,
@@ -19,6 +18,7 @@ import {
 } from '../../../source/features/stoprint/query'
 import {credentialsOptions} from '../../../source/lib/login'
 import {RecentPopularPrintersResponse} from '../../../source/lib/stoprint/types'
+import {groupBy} from '@frogpond/collections'
 
 const styles = StyleSheet.create({
 	host: {

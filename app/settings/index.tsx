@@ -19,6 +19,7 @@ import {MiscellanySection} from '../../source/features/settings/screens/overview
 import {SupportSection} from '../../source/features/settings/screens/overview/support'
 import {DeveloperSection} from '../../source/features/settings/screens/overview/developer'
 import {IconSettingsView} from '../../source/features/settings/screens/change-icon'
+import {QuickActionsSection} from '../../source/features/quick-actions/settings-section'
 
 const styles = StyleSheet.create({
 	host: {
@@ -58,6 +59,8 @@ export default function SettingsRootPage(): React.ReactNode {
 					<SupportSection />
 
 					<IconSettingsView />
+
+					<QuickActionsSection />
 
 					<MiscellanySection />
 

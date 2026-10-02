@@ -2,7 +2,6 @@ import * as React from 'react'
 import {StyleSheet, Text, View, Platform, Pressable} from 'react-native'
 import {ListSeparator, ListRow} from '@frogpond/lists'
 import * as c from '@frogpond/colors'
-import {noop} from 'lodash'
 
 type Props = {
 	actionLabel?: string
@@ -13,6 +12,12 @@ type Props = {
 	items: string[]
 	title: string
 }
+
+/**
+ * A long press that does nothing, which a Pressable needs before its selectable
+ * text can be long-pressed to copy.
+ */
+const ALLOW_TEXT_SELECTION = (): void => undefined
 
 function RecentItemsList(props: Props): React.ReactNode {
 	let {items, actionLabel, onAction, title, emptyHeader, emptyText} = props
@@ -40,11 +45,7 @@ function RecentItemsList(props: Props): React.ReactNode {
 					// The key belongs on what `map` returns -- on the Pressable
 					// inside, React never saw it, and every recent search warned.
 					<React.Fragment key={item}>
-						<Pressable
-							// adding long press allows for copy text when selectable is true
-							onLongPress={noop}
-							onPress={() => props.onItemPress(item)}
-						>
+						<Pressable onLongPress={ALLOW_TEXT_SELECTION} onPress={() => props.onItemPress(item)}>
 							<ListRow arrowPosition="none">
 								<Text numberOfLines={1} selectable={true} style={[foreground, styles.listItem]}>
 									{item}

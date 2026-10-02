@@ -1,13 +1,13 @@
 import * as React from 'react'
 import {Host, Menu, Section, Toggle} from '@expo/ui/swift-ui'
 import {menuActionDismissBehavior} from '@expo/ui/swift-ui/modifiers'
-import isEqual from 'lodash/isEqual'
 
 import {optionLabel} from './lib/option-label'
 import {toggleOption} from './lib/select-options'
 import {TriggerLabel} from './lib/trigger-label'
 import {triggerModifiers} from './lib/trigger-modifiers'
 import type {Filter} from './types'
+import {isEqual} from '@frogpond/collections'
 
 /**
  * Keeps a list menu open as its options are ticked. A list filter is
