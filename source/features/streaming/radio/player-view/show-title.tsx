@@ -1,25 +1,10 @@
 import * as React from 'react'
 import {StyleSheet, Text, View} from 'react-native'
 import * as c from '@frogpond/colors'
-import type {EventType} from '@frogpond/event-type'
-import {formatCompactTimeRange} from '@frogpond/time-format'
 
 import type {Station} from '../stations'
 import {useStationSchedule} from '../use-station-schedule'
-
-/** The title block's two lines: the show on air, else the station off air. */
-export function showTitleText(
-	station: Station,
-	current: EventType | null,
-): {title: string; subtitle: string} {
-	if (!current) {
-		return {title: station.stationName, subtitle: 'Off Air'}
-	}
-	return {
-		title: current.title,
-		subtitle: `${station.stationName} · ${formatCompactTimeRange(current.startTime, current.endTime)}`,
-	}
-}
+import {showTitleText} from './show-title-text'
 
 export function ShowTitle({station}: {station: Station}): React.ReactNode {
 	let {current} = useStationSchedule(station.id)

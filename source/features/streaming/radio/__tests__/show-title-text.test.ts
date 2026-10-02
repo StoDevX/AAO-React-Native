@@ -4,7 +4,7 @@ import type {EventType} from '@frogpond/event-type'
 
 import {formatCompactTimeRange} from '@frogpond/time-format'
 
-import {showTitleText} from '../player-view/show-title'
+import {showTitleText} from '../player-view/show-title-text'
 import {STATIONS} from '../stations'
 
 const SHOW: EventType = {
