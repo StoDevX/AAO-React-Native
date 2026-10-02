@@ -34,9 +34,9 @@ final class MessIssueTileProps: ExpoSwiftUI.ViewProps {
 	var onTilePress = EventDispatcher()
 }
 
-/// One Messenger issue's tile: its sheet, drawn live until the grid comes to rest, and from then on
-/// an image of it drawn once and kept, until anything that changes its look changes. The whole
-/// sheet is one button, and VoiceOver reads only its label.
+/// One Messenger issue's tile: its sheet, drawn live until it has everything it will show, and from
+/// then on an image of its flat sheet, drawn once, kept until anything that changes its look changes,
+/// and folded. The whole sheet is one button, and VoiceOver reads only its label.
 struct MessIssueTileView: ExpoSwiftUI.View {
 	@ObservedObject var props: MessIssueTileProps
 
@@ -69,7 +69,7 @@ struct MessIssueTileView: ExpoSwiftUI.View {
 		} label: {
 			Group {
 				if let image {
-					CachedTileImage(image: image, layout: content.layout)
+					FoldedSheet(shape: content.sheet) { SheetImage(image: image, layout: content.layout) }
 				} else {
 					TileSheet(content: content, photo: photoLoader.image, scheme: scheme)
 				}
@@ -88,20 +88,15 @@ struct MessIssueTileView: ExpoSwiftUI.View {
 			guard image == nil else { return }
 			await photoLoader.load(props.photoUrl, maxPixels: photoPixels)
 		}
-		// Asks for the image once the sheet has everything it will show; a tile that goes, or whose
-		// look changes, before the grid rests drops its request.
+		// Draws the image once the sheet has everything it will show. A flat sheet takes about 2 ms
+		// to draw, so it is drawn at once, mid-scroll or not: the live sheet it replaces costs the
+		// render server more than that on every frame it is on screen.
 		.task(id: image == nil && isComplete(content) ? key : nil) {
 			guard image == nil, let key, isComplete(content) else { return }
-			let id = UUID()
-			let photo = photoLoader.image
-			TileDrawQueue.shared.enqueue(id) {
-				TileImageCache.draw(
-					content, photo: photo, size: size, scheme: scheme, typeSize: typeSize, scale: scale,
-					as: key)
-				drawn = key
-			}
-			await untilCancelled()
-			TileDrawQueue.shared.cancel(id)
+			TileImageCache.draw(
+				content, photo: photoLoader.image, size: size, scheme: scheme, typeSize: typeSize,
+				scale: scale, as: key)
+			drawn = key
 		}
 	}
 

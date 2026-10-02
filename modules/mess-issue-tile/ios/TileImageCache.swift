@@ -47,12 +47,12 @@ struct TileImageKey: Hashable {
 	}
 }
 
-/// Tiles drawn once into images and kept, so a grid tile scrolled away and back is one bitmap to
-/// composite rather than its dozens of layers of paper, type, photo, stains and fold, which made
-/// the render server miss frames while the grid scrolled.
+/// Each tile's flat sheet drawn once into an image and kept. The tile folds the image, two clipped
+/// copies of one bitmap, rather than drawing its dozens of layers of paper, type, photo, stains and
+/// creases twice over, which made the render server miss frames while the grid scrolled.
 @MainActor
 enum TileImageCache {
-	/// How far past the sheet's frame its image reaches, for the tilt and the shadow behind it
+	/// How far past the sheet's frame its image reaches, for the sheets behind it and their shadow
 	static let margin: CGFloat = 12
 
 	/// About ninety grid tiles at three pixels a point; the system also empties it under memory
@@ -67,13 +67,15 @@ enum TileImageCache {
 		images.object(forKey: KeyBox(key))
 	}
 
-	/// Draws a sheet of `size` points into an image, with `margin` to spare on every side, and keeps it.
+	/// Draws the flat sheet of a tile `size` points across into an image, with `margin` to spare on
+	/// every side, and keeps it.
 	static func draw(
 		_ content: TileContent, photo: UIImage?, size: CGSize, scheme: ColorScheme,
 		typeSize: DynamicTypeSize, scale: CGFloat, as key: TileImageKey
 	) {
-		let sheet = TileSheet(content: content, photo: photo, scheme: scheme)
-			.frame(width: size.width, height: size.height)
+		// The fold's padding is outside the flat sheet.
+		let sheet = FlatSheet(content: content, photo: photo, scheme: scheme)
+			.frame(width: size.width - 5, height: size.height - 5)
 			.padding(margin)
 			.environment(\.colorScheme, scheme)
 			.environment(\.dynamicTypeSize, typeSize)
@@ -100,44 +102,9 @@ enum TileImageCache {
 	}
 }
 
-/// Runs tile drawing on a timer in the main run loop's default mode, which the run loop leaves
-/// while a scroll view tracks a finger or decelerates: a grid being flung draws no tiles, and once
-/// it rests they are drawn one a frame, so the main thread is never held for more than one tile.
-@MainActor
-final class TileDrawQueue {
-	static let shared = TileDrawQueue()
-
-	private var jobs: [(id: UUID, work: () -> Void)] = []
-	private var timer: Timer?
-
-	func enqueue(_ id: UUID, _ work: @escaping () -> Void) {
-		jobs.append((id, work))
-		schedule()
-	}
-
-	func cancel(_ id: UUID) {
-		jobs.removeAll { $0.id == id }
-	}
-
-	private func schedule() {
-		guard timer == nil, !jobs.isEmpty else { return }
-		let next = Timer(timeInterval: 1.0 / 60, repeats: false) { _ in
-			MainActor.assumeIsolated {
-				self.timer = nil
-				if !self.jobs.isEmpty {
-					self.jobs.removeFirst().work()
-				}
-				self.schedule()
-			}
-		}
-		timer = next
-		RunLoop.main.add(next, forMode: .default)
-	}
-}
-
-/// A tile's cached image, laid out exactly as the sheet it stands in for, so swapping one for the
-/// other moves nothing.
-struct CachedTileImage: View {
+/// An image of a flat sheet, laid out exactly as the sheet it stands in for, so swapping one for the
+/// other moves nothing. It reaches `margin` past its frame on every side.
+struct SheetImage: View {
 	let image: UIImage
 	let layout: TileLayout
 
@@ -145,21 +112,10 @@ struct CachedTileImage: View {
 		Color.clear
 			.aspectRatio(layout.aspect, contentMode: .fit)
 			.frame(maxWidth: .infinity)
-			.padding([.trailing, .bottom], 5)
 			.overlay {
 				Image(uiImage: image)
 					.resizable()
 					.padding(-TileImageCache.margin)
 			}
-	}
-}
-
-/// Suspends until the calling task is cancelled.
-func untilCancelled() async {
-	let (stream, continuation) = AsyncStream<Never>.makeStream()
-	await withTaskCancellationHandler {
-		for await _ in stream {}
-	} onCancel: {
-		continuation.finish()
 	}
 }

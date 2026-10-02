@@ -35,6 +35,45 @@ struct TileSheet: View {
 	let photo: UIImage?
 	let scheme: ColorScheme
 
+	var body: some View {
+		FoldedSheet(shape: content.sheet) {
+			FlatSheet(content: content, photo: photo, scheme: scheme)
+		}
+	}
+}
+
+/// A sheet folded: the part below the fold bends back away from the reader, photo, type and all,
+/// then the whole sheet sits at its slight tilt. The flat sheet is drawn twice, once for each half,
+/// so it should be cheap to draw: an image of it, once there is one.
+struct FoldedSheet<Flat: View>: View {
+	let shape: SheetShape
+	@ViewBuilder let flat: Flat
+
+	var body: some View {
+		ZStack {
+			flat
+				.clipShape(Band(from: 0, to: foldLine))
+			flat
+				.clipShape(Band(from: foldLine, to: 1.2))
+				.rotation3DEffect(
+					.degrees(shape.bend), axis: (x: 1, y: 0, z: 0),
+					anchor: UnitPoint(x: 0.5, y: foldLine), perspective: 0.4)
+				// The bent half is a second drawing of the same sheet; VoiceOver has the tile's label.
+				.accessibilityHidden(true)
+		}
+		.rotationEffect(.degrees(shape.tilt))
+		.padding([.trailing, .bottom], 5)
+	}
+}
+
+/// The flat sheet with everything on it: paper, the page, stains, creases, the shade the fold will
+/// cast, a turned corner, and the sheets showing behind it.
+struct FlatSheet: View {
+	let content: TileContent
+	/// The lead photo, or nil to draw the placeholder in its place
+	let photo: UIImage?
+	let scheme: ColorScheme
+
 	private var palette: PaperPalette { PaperPalette(scheme) }
 
 	/// A tile whose lead has a photo keeps the photo's layout while the photo's address is unknown or
@@ -43,24 +82,6 @@ struct TileSheet: View {
 	private var hasPhoto: Bool { content.hasPhoto }
 
 	private var isTop: Bool { content.layout != .grid }
-
-	/// The sheet folded: the part below the fold bends back away from the reader, photo, type and
-	/// all, then the whole sheet sits at its slight tilt.
-	var body: some View {
-		ZStack {
-			flatSheet
-				.clipShape(Band(from: 0, to: foldLine))
-			flatSheet
-				.clipShape(Band(from: foldLine, to: 1.2))
-				.rotation3DEffect(
-					.degrees(content.sheet.bend), axis: (x: 1, y: 0, z: 0),
-					anchor: UnitPoint(x: 0.5, y: foldLine), perspective: 0.4)
-				// The bent half is a second drawing of the same sheet; VoiceOver has the tile's label.
-				.accessibilityHidden(true)
-		}
-		.rotationEffect(.degrees(content.sheet.tilt))
-		.padding([.trailing, .bottom], 5)
-	}
 
 	/// How far along each edge a turned corner reaches: small enough to nick a headline's last
 	/// letter at most, not hide a word.
@@ -73,9 +94,7 @@ struct TileSheet: View {
 			earSize: earSize)
 	}
 
-	/// The flat sheet with everything on it: paper, the page, stains, creases, a turned corner,
-	/// and the sheets showing behind it.
-	private var flatSheet: some View {
+	var body: some View {
 		Color.clear
 			.aspectRatio(content.layout.aspect, contentMode: .fit)
 			.frame(maxWidth: .infinity)
