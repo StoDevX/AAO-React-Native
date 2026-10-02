@@ -53,6 +53,8 @@ export const MORE_GRID_ROW_ID = 'mess-more-grid-row'
 const MORE_SHELF = 'More'
 /** A shelf card's width. */
 const CARD_WIDTH = 160
+/** A tinted card's inset, from its edge to its words. */
+const CARD_PADDING = 10
 /** The room under a card's photo for its headline's three lines. */
 const HEADLINE_ROOM = 73
 /** How many of the hidden headlines a shelf's More tile shows. */
@@ -96,7 +98,7 @@ function photoCard(width: number) {
 /** A tinted card with no photo, `width` wide. */
 function textCard(width: number) {
 	return [
-		padding({all: 10}),
+		padding({all: CARD_PADDING}),
 		frame({width, height: cardHeights(width).text, alignment: 'topLeading'}),
 		background(wash),
 		contentShape(shapes.rectangle()),
@@ -119,7 +121,15 @@ const MORE_HEADLINE = [
 	foregroundStyle(faded),
 	lineLimit(2),
 ]
-const MORE_COUNT = [font({textStyle: 'headline'}), foregroundStyle(messRed)]
+/**
+ * A second inset under the count, so it sits as far above the tile's foot as a text card's kicker
+ * sits below its top; with the card's inset alone, it sat almost on the edge.
+ */
+const MORE_COUNT = [
+	font({textStyle: 'headline'}),
+	foregroundStyle(messRed),
+	padding({bottom: CARD_PADDING}),
+]
 
 type IssuePageProps = {
 	issue: MessIssue
