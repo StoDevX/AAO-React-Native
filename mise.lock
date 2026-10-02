@@ -182,6 +182,15 @@ version = "3.4.11"
 backend = "core:ruby"
 specifiers = ["3.4.11"]
 
+[tools.ruby."platforms.windows-x64"]
+checksum = "sha256:a9aca84326a90422c0905bcb47be629b687a881dcad96149604c2cb074d03154"
+url = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-3.4.11-1/rubyinstaller-3.4.11-1-x64.7z"
+
+[[tools.ruby]]
+version = "3.4.11"
+backend = "core:ruby"
+specifiers = ["3.4.11"]
+
 [tools.ruby.options]
 compile = "false"
 precompiled_url = "jdx/ruby"
@@ -214,15 +223,6 @@ provenance = "github-attestations"
 [tools.ruby."platforms.macos-x64"]
 checksum = "sha256:5c22be44524312b3d433d68739bcc530633b1da5ef8ba0afa0a37680da17d3de"
 url = "https://cache.ruby-lang.org/pub/ruby/3.4/ruby-3.4.11.tar.gz"
-
-[[tools.ruby]]
-version = "3.4.11"
-backend = "core:ruby"
-specifiers = ["3.4.11"]
-
-[tools.ruby."platforms.windows-x64"]
-checksum = "sha256:a9aca84326a90422c0905bcb47be629b687a881dcad96149604c2cb074d03154"
-url = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-3.4.11-1/rubyinstaller-3.4.11-1-x64.7z"
 
 [[tools.sentry]]
 version = "3.8.0"

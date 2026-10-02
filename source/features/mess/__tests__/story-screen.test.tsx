@@ -13,6 +13,7 @@ import {
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query'
 import {openUrl} from '@frogpond/open-url'
 import {fetchManifest, fetchSourceBody, type Jrd} from '@frogpond/data-sources'
+import type {SelectableTextParagraph} from '@frogpond/selectable-text'
 import {useKeepAwake} from 'expo-keep-awake'
 import categories from './fixtures/categories.json'
 import posts from './fixtures/posts.json'
@@ -25,6 +26,9 @@ import {messKeys} from '../lib/keys'
 import {onePage} from './one-page'
 import {useMessStore} from '../store'
 import {ZODIAC_SIGNS} from '../lib/zodiac'
+import {faded, ink, messRed} from '../palette'
+import {LINE_SPACING} from '../poem-view'
+import {BLOCK_SPACING, BODY_ID} from '../story-blocks'
 import type {MessStory, StaffProfile} from '../types'
 import {loadBeforeTests} from '../../../testing/load-before-tests'
 
@@ -356,6 +360,13 @@ function hostProps(node: Node | Node[] | null, type: string): Array<Record<strin
 	return [...(node.type === type ? [node.props] : []), ...hostProps(children, type)]
 }
 
+/** The paragraphs of each stretch of the story's prose, in order. */
+function bodyParagraphs(): SelectableTextParagraph[][] {
+	return screen
+		.queryAllByTestId(BODY_ID)
+		.map((body) => body.props.paragraphs as SelectableTextParagraph[])
+}
+
 /** The hrefs `fetchSourceBody` was asked for, in order. */
 function fetchedHrefs(): string[] {
 	return mockBody.mock.calls.map((call) => call[0])
@@ -561,14 +572,51 @@ describe('StoryScreen', () => {
 
 	test('sets the opening words of the first paragraph apart for small caps', async () => {
 		await renderStory(36911)
-		expect(screen.getByText('The petition was delivered')).toBeTruthy()
-		expect(screen.getByText(' on Tuesday\\.')).toBeTruthy()
+		expect(bodyParagraphs()[0]?.[0]).toEqual({
+			runs: [{text: 'The petition was delivered', smallCaps: true}, {text: ' on Tuesday.'}],
+		})
 	})
 
-	test('draws a later paragraph as Markdown', async () => {
+	test('draws the paragraphs of a story with no figures as one text, so a selection can cross them', async () => {
 		await renderStory(36911)
-		expect(screen.getByText('Body text\\.')).toBeTruthy()
+		expect(bodyParagraphs()).toHaveLength(1)
+		expect(bodyParagraphs()[0]?.[1]).toEqual({runs: [{text: 'Body text.'}]})
 		expect(screen.queryByText('Read on olafmessenger.com')).toBeNull()
+	})
+
+	test('sets prose as serif body text, its links in the Mess red, its paragraphs a column gap apart', async () => {
+		await renderStory(36911)
+		let [body] = screen.getAllByTestId(BODY_ID)
+		expect(body?.props).toMatchObject({
+			textStyle: 'body',
+			serif: true,
+			color: ink,
+			linkColor: messRed,
+			paragraphSpacing: BLOCK_SPACING,
+		})
+	})
+
+	test('ends a stretch of prose at a figure', async () => {
+		let story: MessStory = {
+			...ILLUSTRATED,
+			blocks: [
+				{type: 'paragraph', runs: [{text: 'Before.'}]},
+				{
+					type: 'figure',
+					url: FIGURE_URL,
+					width: 600,
+					height: 400,
+					caption: 'The petition, signed.',
+				},
+				{type: 'paragraph', runs: [{text: 'After.'}]},
+			],
+		}
+		queryClient.setQueryData(messKeys.feed, onePage([story]))
+		await renderStory(36948)
+		expect(bodyParagraphs().map((paragraphs) => paragraphs.map((p) => p.runs[0]?.text))).toEqual([
+			['Before.'],
+			['After.'],
+		])
 	})
 
 	test('sends a story with no body to olafmessenger.com', async () => {
@@ -690,7 +738,7 @@ describe('StoryScreen', () => {
 		useMessStore.setState({lastSign: 'taurus'})
 		await renderStory(36911)
 
-		expect(screen.getByText('Body text\\.')).toBeTruthy()
+		expect(screen.getByText('Body text.')).toBeTruthy()
 		expect(screen.queryByRole('button', {name: 'Taurus'})).toBeNull()
 		expect(screen.queryByText('Pick your sign')).toBeNull()
 	})
@@ -836,7 +884,7 @@ describe('StoryScreen', () => {
 	test('draws a recipe as its introduction, labelled sections of rows, and what follows', async () => {
 		await renderStory(36493)
 
-		expect(screen.getByText('We can all use')).toBeTruthy()
+		expect(bodyParagraphs()[0]?.[0]?.runs[0]).toEqual({text: 'We can all use', smallCaps: true})
 		expect(screen.getByText('Shortbread ingredients')).toBeTruthy()
 		expect(screen.getByRole('button', {name: '½ tsp table salt', selected: false})).toBeTruthy()
 		expect(
@@ -844,7 +892,7 @@ describe('StoryScreen', () => {
 		).toBeTruthy()
 		// VoiceOver reads a step's number before its text; an ingredient has none.
 		expect(screen.getByRole('button', {name: 'Step 2, Bake for 20 minutes.'})).toBeTruthy()
-		expect(screen.getByText('Store in the fridge\\.')).toBeTruthy()
+		expect(screen.getByText('Store in the fridge.')).toBeTruthy()
 		// Each steps section counts from one.
 		expect(screen.getAllByText('1')).toHaveLength(2)
 		expect(screen.getAllByText('2')).toHaveLength(1)
@@ -939,8 +987,12 @@ describe('StoryScreen', () => {
 	test("sets a Photo post's words as a caption, with no small-caps opening", async () => {
 		await renderStory(33129)
 
-		expect(screen.getByText('By Megan Lu on the Hill')).toBeTruthy()
-		expect(screen.queryByText('By Megan Lu on')).toBeNull()
+		expect(bodyParagraphs()).toEqual([[{runs: [{text: 'By Megan Lu on the Hill'}]}]])
+		expect(screen.getByTestId(BODY_ID).props).toMatchObject({
+			textStyle: 'footnote',
+			italic: true,
+			color: faded,
+		})
 	})
 
 	test('sets a Short Story as prose opening in small caps, then its series', async () => {
@@ -951,8 +1003,20 @@ describe('StoryScreen', () => {
 		await renderStory(28702)
 
 		expect(screen.getByText('Illustration by Kenzie Todd')).toBeTruthy()
-		expect(screen.getByText('She sat and watched')).toBeTruthy()
-		expect(screen.getByText(' as the leaves grew back\\.')).toBeTruthy()
+		expect(bodyParagraphs()).toEqual([
+			[
+				{
+					runs: [
+						{text: 'She sat and watched', smallCaps: true},
+						{text: ' as the leaves grew back.'},
+					],
+				},
+			],
+		])
+		expect(screen.getByTestId(BODY_ID).props).toMatchObject({
+			textStyle: 'body',
+			lineSpacing: LINE_SPACING,
+		})
 		expect(screen.getByText('More Microfiction Corner')).toBeTruthy()
 		expect(
 			screen.getByRole('button', {name: 'Microfiction corner: Quarters for Flowers'}),

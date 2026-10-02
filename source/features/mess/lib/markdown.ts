@@ -33,22 +33,48 @@ function hasUnmatchedCloser(url: string): boolean {
 }
 
 /**
- * Text outside any link, escaped, with each bare URL made an explicit link: a link's text is
- * read with its escapes, where a bare URL's is not.
+ * Text cut at each bare URL it holds, in order: the words between them, and each URL as a piece
+ * of its own that names its address. Empty pieces are left out.
+ */
+function splitAtBareUrls(text: string): Array<{text: string; url?: string}> {
+	let pieces: Array<{text: string; url?: string}> = []
+	let from = 0
+	for (let match of text.matchAll(BARE_URL)) {
+		let url = trimUrl(match[0])
+		if (match.index > from) pieces.push({text: text.slice(from, match.index)})
+		pieces.push({text: url, url})
+		from = match.index + url.length
+	}
+	if (from < text.length) pieces.push({text: text.slice(from)})
+	return pieces
+}
+
+/**
+ * Runs with each bare URL outside a link made a link of its own, keeping its run's style.
  *
  * This sees one run at a time, so a URL split across styled runs, such as one whose path is in
  * italics, links only as far as the first run goes, and the rest shows unlinked.
  */
+export function linkBareUrls(runs: Run[]): Run[] {
+	return runs.flatMap((run) =>
+		run.href
+			? [run]
+			: splitAtBareUrls(run.text).map(({text, url}) =>
+					url ? {...run, text, href: url} : {...run, text},
+				),
+	)
+}
+
+/**
+ * Text outside any link, escaped, with each bare URL made an explicit link: a link's text is
+ * read with its escapes, where a bare URL's is not. Like `linkBareUrls`, it sees one run at a time.
+ */
 function escapeProse(text: string): string {
-	let out = ''
-	let from = 0
-	for (let match of text.matchAll(BARE_URL)) {
-		let url = trimUrl(match[0])
-		out += escapeMarkdownText(text.slice(from, match.index))
-		out += `[${escapeMarkdownText(url)}](${escapeMarkdownHref(url)})`
-		from = match.index + url.length
-	}
-	return out + escapeMarkdownText(text.slice(from))
+	return splitAtBareUrls(text)
+		.map(({text: piece, url}) =>
+			url ? `[${escapeMarkdownText(url)}](${escapeMarkdownHref(url)})` : escapeMarkdownText(piece),
+		)
+		.join('')
 }
 
 /**

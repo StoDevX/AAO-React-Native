@@ -21,6 +21,8 @@ jest.mock('expo-router/react-navigation', () => ({
 }))
 // The viewer's drag-to-close is a native view, which Jest cannot load either.
 jest.mock('@frogpond/drag-to-dismiss', () => require('../source/testing/drag-to-dismiss-mock'))
+// The selectable text view is native too, and loads through the same bindings.
+jest.mock('@frogpond/selectable-text', () => require('../source/testing/selectable-text-mock'))
 // So is its double-tap recognizer.
 jest.mock('@frogpond/double-tap', () => require('../source/testing/double-tap-mock'))
 // The app's query client subscribes to network reachability when it loads,

@@ -549,8 +549,8 @@ struct TestIdentifiers {
 		/// The reader's headline, in source/features/mess/story-header.tsx.
 		static let storyHeadline = "mess-story-headline"
 
-		/// Each paragraph, quote and list item of a story's body, in
-		/// source/features/mess/story-blocks.tsx.
+		/// Each stretch of a story's body between its figures, one text view holding its
+		/// paragraphs, quotes and lists, in source/features/mess/story-blocks.tsx.
 		static let storyBody = "mess-story-body"
 
 		/// The card that sends a story with no body, or an embed the reader
@@ -591,14 +591,22 @@ struct TestIdentifiers {
 		/// source/features/mess/story-blocks.tsx. Each is labelled by its caption.
 		static let storyPhoto = "mess-story-photo"
 
-		/// An article with a captioned lead photo and captioned figures in its body: "Finding
-		/// peace on campus", from the recorded Mess fixtures. Recording them again can drop it
-		/// from the feed, which this test reads it from.
+		/// An article with a captioned lead photo, three short paragraphs, then captioned figures
+		/// in its body: "Finding peace on campus", from the recorded Mess fixtures. Recording them
+		/// again can drop it from the feed, which these tests read it from.
 		static let illustratedStoryRoute = "/messenger/story?id=36948"
 		/// How its lead photo's caption ends; the first figure's caption repeats its opening.
 		static let illustratedLeadCaptionEnd = "Rolvaag Memorial Library"
 		/// How the caption of its second figure, below the fold, begins.
 		static let illustratedFigureCaptionStart = "Statue (1984)"
+
+		/// An article whose first paragraph holds a link: "The true cost of convenience: AI in
+		/// the classroom", from the same recorded issue as the illustrated story.
+		static let linkedStoryRoute = "/messenger/story?id=36959"
+		/// That link's words.
+		static let linkedStoryLink = "According to the college library website"
+		/// What the system's menu for a held link offers, and its menu for selected text does not.
+		static let copyLink = "Copy Link"
 
 		/// The zoom viewer's close button, in source/features/mess/image-viewer.tsx.
 		static let imageViewerClose = "mess-image-viewer-close"
