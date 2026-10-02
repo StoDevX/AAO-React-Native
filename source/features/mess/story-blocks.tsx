@@ -15,11 +15,13 @@ import {
 } from '@expo/ui/swift-ui/modifiers'
 import {openUrl} from '@frogpond/open-url'
 import type {SFSymbol} from 'sf-symbols-typescript'
+import {FramedPhoto, ViewerButton} from './image-view'
+import {photoLabel} from './lib/byline'
 import {runsToMarkdown} from './lib/markdown'
 import {splitOpening} from './lib/opening'
 import {faded, ink, messRed, onMessRed} from './palette'
 import {RemotePhoto} from './remote-photo'
-import type {Block, MessStory, Run} from './types'
+import type {Block, CaptionedPhoto, MessStory, Run} from './types'
 
 export const BODY_ID = 'mess-story-body'
 const BODY = [font({textStyle: 'body', design: 'serif'}), foregroundStyle(ink)]
@@ -89,6 +91,9 @@ function OpeningParagraph({
 	)
 }
 
+/** Names a story's lead photo or a figure in its body, each a button to the zoom viewer, for a UI test. */
+export const PHOTO_ID = 'mess-story-photo'
+
 /** Names the card that sends a story to olafmessenger.com, for a UI test. */
 export const SITE_LINK_ID = 'mess-story-site-link'
 
@@ -145,7 +150,7 @@ export function SiteLinkCard({
 type Props = {
 	block: Block
 	columnWidth: number
-	storyLink: string
+	story: MessStory
 	/** Whether this block opens the story, and so sets its first words in small caps */
 	isOpening?: boolean
 	/** How a paragraph is set; by default as body text */
@@ -156,7 +161,7 @@ type Props = {
 export function StoryBlock({
 	block,
 	columnWidth,
-	storyLink,
+	story,
 	isOpening = false,
 	paragraph = PROSE,
 }: Props): React.ReactNode {
@@ -182,22 +187,13 @@ export function StoryBlock({
 				</VStack>
 			)
 		case 'figure':
-			return (
-				<VStack alignment="leading" spacing={4}>
-					<RemotePhoto
-						height={Math.round((columnWidth * block.height) / block.width)}
-						url={block.url}
-						width={columnWidth}
-					/>
-					<PhotoCaption caption={block.caption} />
-				</VStack>
-			)
+			return <PhotoFigure columnWidth={columnWidth} photo={block} story={story} />
 		case 'embed':
 			return (
 				<SiteLinkCard
 					icon="play.rectangle"
 					label="Open the playlist or video on the web"
-					url={storyLink}
+					url={story.link}
 				/>
 			)
 		default: {
@@ -237,7 +233,7 @@ export function StoryBlocks({
 			paragraph={paragraph}
 			// oxlint-disable-next-line react/no-array-index-key -- blocks have no id; a story's body is fixed, so its order is its identity
 			key={index}
-			storyLink={story.link}
+			story={story}
 		/>
 	))
 }
@@ -245,4 +241,37 @@ export function StoryBlocks({
 /** A photo's caption or credit, under it; nothing when it has none. */
 export function PhotoCaption({caption}: {caption: string}): React.ReactNode {
 	return caption ? <Text modifiers={CAPTION}>{caption}</Text> : null
+}
+
+type PhotoFigureProps = {
+	story: MessStory
+	/** The story's lead photo, or a figure in its body */
+	photo: CaptionedPhoto
+	columnWidth: number
+	/** Mounts the photo in a hairline frame, as a playlist's picture is */
+	framed?: boolean
+}
+
+/** A story's photo at the column's width, with its caption under it; tapping it opens the zoom viewer. */
+export function PhotoFigure({
+	story,
+	photo,
+	columnWidth,
+	framed = false,
+}: PhotoFigureProps): React.ReactNode {
+	let height = Math.round((columnWidth * photo.height) / photo.width)
+	let Photo = framed ? FramedPhoto : RemotePhoto
+	return (
+		<VStack alignment="leading" spacing={4}>
+			<ViewerButton
+				identifier={PHOTO_ID}
+				label={photoLabel(story, photo.caption)}
+				// The viewer finds the photo by its address, which names it wherever in the story it sits.
+				params={{id: String(story.id), url: photo.url}}
+			>
+				<Photo height={height} url={photo.url} width={columnWidth} />
+			</ViewerButton>
+			<PhotoCaption caption={photo.caption} />
+		</VStack>
+	)
 }

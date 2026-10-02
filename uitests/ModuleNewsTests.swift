@@ -145,4 +145,22 @@ class ModuleNewsTests: UITestCaseUnbooted {
 			.shareViewerImage()
 			.closeImageViewer()
 	}
+
+	/// An article's lead photo and a figure in its body each open the zoom viewer, which can
+	/// share the figure.
+	func testArticlePhotosOpenTheZoomViewer() throws {
+		MessStoryScreen(app: app)
+			.navigate(to: TestIdentifiers.News.illustratedStoryRoute)
+			.openPhotoInViewer(
+				captioned: NSPredicate(format: "label ENDSWITH %@", TestIdentifiers.News.illustratedLeadCaptionEnd),
+				"the lead photo")
+			.verifyViewerShowsImage()
+			.closeImageViewer()
+			.openPhotoInViewer(
+				captioned: NSPredicate(format: "label BEGINSWITH %@", TestIdentifiers.News.illustratedFigureCaptionStart),
+				"a figure in the body")
+			.verifyViewerShowsImage()
+			.shareViewerImage()
+			.closeImageViewer()
+	}
 }

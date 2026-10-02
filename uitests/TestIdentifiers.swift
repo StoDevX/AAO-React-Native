@@ -582,6 +582,19 @@ struct TestIdentifiers {
 		/// source/features/mess/image-view.tsx.
 		static let storyImage = "mess-story-image"
 
+		/// A story's lead photo or a figure in its body, which opens the zoom viewer, in
+		/// source/features/mess/story-blocks.tsx. Each is labelled by its caption.
+		static let storyPhoto = "mess-story-photo"
+
+		/// An article with a captioned lead photo and captioned figures in its body: "Finding
+		/// peace on campus", from the recorded Mess fixtures. Recording them again can drop it
+		/// from the feed, which this test reads it from.
+		static let illustratedStoryRoute = "/messenger/story?id=36948"
+		/// How its lead photo's caption ends; the first figure's caption repeats its opening.
+		static let illustratedLeadCaptionEnd = "Rolvaag Memorial Library"
+		/// How the caption of its second figure, below the fold, begins.
+		static let illustratedFigureCaptionStart = "Statue (1984)"
+
 		/// The zoom viewer's close button, in source/features/mess/image-viewer.tsx.
 		static let imageViewerClose = "mess-image-viewer-close"
 		static let imageViewerCloseLabel = "Close"

@@ -10,8 +10,7 @@ import {
 import {BylineAvatar} from './byline-avatar'
 import {bylineDate, bylineText, kickerText} from './lib/byline'
 import {ink, faded, messRed} from './palette'
-import {RemotePhoto} from './remote-photo'
-import {PhotoCaption} from './story-blocks'
+import {PhotoFigure} from './story-blocks'
 import type {MessStory} from './types'
 
 /** The section over a headline, in small caps as a newspaper sets it. */
@@ -66,14 +65,7 @@ export function StoryHeader({story, columnWidth, showPhoto = true}: Props): Reac
 			</HStack>
 			<Divider />
 			{showPhoto && story.photo ? (
-				<VStack alignment="leading" spacing={4}>
-					<RemotePhoto
-						height={Math.round((columnWidth * story.photo.height) / story.photo.width)}
-						url={story.photo.url}
-						width={columnWidth}
-					/>
-					<PhotoCaption caption={story.photo.caption} />
-				</VStack>
+				<PhotoFigure columnWidth={columnWidth} photo={story.photo} story={story} />
 			) : null}
 		</VStack>
 	)

@@ -3,11 +3,10 @@ import {Linking} from 'react-native'
 import {ProgressView, VStack} from '@expo/ui/swift-ui'
 import {frame} from '@expo/ui/swift-ui/modifiers'
 import {useQuery} from '@tanstack/react-query'
-import {FramedPhoto} from './image-view'
 import {spotifyUrl} from './lib/spotify'
 import {messPlaylistPageOptions} from './query'
 import {EMBED_HEIGHT, SpotifyEmbed} from './spotify-embed'
-import {PhotoCaption, SiteLinkCard, StoryBlocks} from './story-blocks'
+import {PhotoFigure, SiteLinkCard, StoryBlocks} from './story-blocks'
 import type {MessStory, StoryLayout} from './types'
 
 /** Names a Playlist post's button to Spotify, for a UI test. */
@@ -47,14 +46,7 @@ export function PlaylistView({story, layout, columnWidth}: Props): React.ReactNo
 	return (
 		<>
 			{photo ? (
-				<VStack alignment="leading" spacing={4}>
-					<FramedPhoto
-						height={Math.round((columnWidth * photo.height) / photo.width)}
-						url={photo.url}
-						width={columnWidth}
-					/>
-					<PhotoCaption caption={photo.caption} />
-				</VStack>
+				<PhotoFigure columnWidth={columnWidth} framed={true} photo={photo} story={story} />
 			) : null}
 			{spotify ? (
 				<>

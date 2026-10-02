@@ -79,11 +79,40 @@ const NO_PICTURE: MessStory = {
 	layout: {kind: 'feature', images: []},
 }
 
+const LEAD = {
+	url: 'https://olafmessenger.com/lead.jpg',
+	width: 600,
+	height: 400,
+	caption: 'Students deliver the petition.',
+}
+const FIGURE = {url: 'https://olafmessenger.com/figure.jpg', width: 600, height: 400}
+
+/** An article with a captioned lead photo, a captioned figure and one with no caption. */
+const ILLUSTRATED: MessStory = {
+	...COMIC,
+	id: 36859,
+	title: 'Student workers deliver petition',
+	column: null,
+	photo: LEAD,
+	blocks: [
+		{type: 'paragraph', runs: [{text: 'On Tuesday.'}]},
+		{type: 'figure', ...FIGURE, caption: 'The petition, signed.'},
+		{
+			type: 'figure',
+			url: 'https://olafmessenger.com/bare.jpg',
+			width: 300,
+			height: 200,
+			caption: '',
+		},
+	],
+	layout: {kind: 'article'},
+}
+
 let queryClient: QueryClient
 
 beforeEach(() => {
 	queryClient = new QueryClient({defaultOptions: {queries: {staleTime: Infinity, retry: false}}})
-	queryClient.setQueryData(messKeys.feed, [COMIC, ARTICLE, PHOTO_SET, NO_PICTURE])
+	queryClient.setQueryData(messKeys.feed, [COMIC, ARTICLE, PHOTO_SET, NO_PICTURE, ILLUSTRATED])
 })
 
 afterEach(() => {
@@ -94,10 +123,10 @@ afterEach(() => {
 	jest.clearAllMocks()
 })
 
-function renderViewer(id: number, index?: number) {
+function renderViewer(id: number, index?: number, url?: string) {
 	return render(
 		<QueryClientProvider client={queryClient}>
-			<ImageViewer id={id} index={index} />
+			<ImageViewer id={id} index={index} url={url} />
 		</QueryClientProvider>,
 	)
 }
@@ -181,5 +210,41 @@ describe('ImageViewer', () => {
 	test('offers no Share when there is no picture', async () => {
 		await renderViewer(36911)
 		expect(screen.queryByRole('button', {name: 'Share'})).toBeNull()
+	})
+
+	test("shows a story's lead photo by its address, named by its caption", async () => {
+		await renderViewer(36859, undefined, LEAD.url)
+		expect(
+			screen.getByRole('image', {name: 'Students deliver the petition.'}).props.source,
+		).toStrictEqual({uri: LEAD.url})
+	})
+
+	test("shows a figure in a story's body by its address, named by its caption", async () => {
+		await renderViewer(36859, undefined, FIGURE.url)
+		expect(screen.getByRole('image', {name: 'The petition, signed.'}).props.source).toStrictEqual({
+			uri: FIGURE.url,
+		})
+	})
+
+	test('names a figure with no caption by its story', async () => {
+		await renderViewer(36859, undefined, 'https://olafmessenger.com/bare.jpg')
+		expect(
+			screen.getByRole('image', {name: 'Student workers deliver petition, by Juliet Stouffer'}),
+		).toBeTruthy()
+	})
+
+	test('says the image is unavailable for an address that is not one of the story’s', async () => {
+		await renderViewer(36859, undefined, 'https://example.com/elsewhere.jpg')
+		expect(screen.getByText('Image Unavailable')).toBeTruthy()
+		expect(screen.queryByRole('image')).toBeNull()
+	})
+
+	test('shares a figure it was given by its address', async () => {
+		mockShareImage.mockResolvedValue(undefined)
+		await renderViewer(36859, undefined, FIGURE.url)
+
+		fireEvent.press(screen.getByRole('button', {name: 'Share'}))
+
+		expect(mockShareImage).toHaveBeenCalledWith(FIGURE.url)
 	})
 })
