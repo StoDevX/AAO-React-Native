@@ -10,6 +10,8 @@ jest.mock('@expo/ui/swift-ui', () => require('../source/testing/expo-ui-mock'))
 jest.mock('@expo/ui/swift-ui/modifiers', () => require('../source/testing/expo-ui-mock'))
 // The viewer's drag-to-close is a native view, which Jest cannot load either.
 jest.mock('@frogpond/drag-to-dismiss', () => require('../source/testing/drag-to-dismiss-mock'))
+// The selectable text view is native too, and loads through the same bindings.
+jest.mock('@frogpond/selectable-text', () => require('../source/testing/selectable-text-mock'))
 jest.mock('expo-web-browser', () => ({
 	openBrowserAsync: jest.fn(() => Promise.resolve({type: 'opened'})),
 	WebBrowserPresentationStyle: {
