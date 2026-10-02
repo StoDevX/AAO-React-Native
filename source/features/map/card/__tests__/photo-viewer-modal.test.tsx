@@ -3,6 +3,9 @@ import {afterEach, describe, expect, jest, test} from '@jest/globals'
 import {fireEvent, render, screen} from '@testing-library/react-native'
 
 import {PhotoViewerModal} from '../photo-viewer-modal'
+import {loadBeforeTests} from '../../../../testing/load-before-tests'
+
+loadBeforeTests('Modal')
 
 jest.mock('@frogpond/double-tap', () => {
 	// oxlint-disable-next-line typescript/no-require-imports

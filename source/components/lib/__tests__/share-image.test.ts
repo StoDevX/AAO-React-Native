@@ -12,6 +12,9 @@ jest.mock('expo-file-system', () => ({
 }))
 
 import {shareImage} from '../share-image'
+import {loadBeforeTests} from '../../../testing/load-before-tests'
+
+loadBeforeTests('Share')
 
 afterEach(() => {
 	jest.restoreAllMocks()

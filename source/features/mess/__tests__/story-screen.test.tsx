@@ -26,6 +26,9 @@ import {onePage} from './one-page'
 import {useMessStore} from '../store'
 import {ZODIAC_SIGNS} from '../lib/zodiac'
 import type {MessStory, StaffProfile} from '../types'
+import {loadBeforeTests} from '../../../testing/load-before-tests'
+
+loadBeforeTests('Image')
 
 jest.mock('@react-native-community/netinfo', () =>
 	// oxlint-disable-next-line typescript/no-require-imports
