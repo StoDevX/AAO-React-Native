@@ -32,6 +32,8 @@ export function iconImage(
 type CommonView = {
 	title: string
 	icon: SymbolName
+	/** The title's typeface, for a view whose own screens use another. */
+	titleDesign?: 'serif'
 	gradient: Gradient
 	disabled?: boolean
 	devOnly?: boolean
@@ -114,6 +116,7 @@ export const AllViews = (): Array<ViewType> => {
 			view: '/messenger',
 			title: 'Olaf Messenger',
 			icon: 'olaf-messenger',
+			titleDesign: 'serif',
 			gradient: c.purpleGradient,
 		},
 		{

@@ -25,10 +25,12 @@ type Props = {
 function HomeScreenButtonLabel({
 	title,
 	icon,
+	titleDesign,
 	isDarkScheme,
 }: {
 	title: string
 	icon: SymbolName
+	titleDesign?: 'serif'
 	isDarkScheme: boolean
 }) {
 	let {fontScale} = useWindowDimensions()
@@ -60,7 +62,7 @@ function HomeScreenButtonLabel({
 
 			<Text
 				modifiers={[
-					font({textStyle: 'headline', weight: 'semibold'}),
+					font({textStyle: 'headline', weight: 'semibold', design: titleDesign}),
 					foregroundStyle({type: 'hierarchical', style: 'primary'}),
 				]}
 			>
@@ -86,7 +88,12 @@ export function HomeScreenButton({view, onPress}: Props): React.ReactNode {
 		>
 			<ZStack alignment="topLeading">
 				<GradientRoundedRectangle gradient={view.gradient} showShadow={isDarkScheme} />
-				<HomeScreenButtonLabel title={view.title} icon={view.icon} isDarkScheme={isDarkScheme} />
+				<HomeScreenButtonLabel
+					title={view.title}
+					icon={view.icon}
+					titleDesign={view.titleDesign}
+					isDarkScheme={isDarkScheme}
+				/>
 			</ZStack>
 		</Button>
 	)
