@@ -1,5 +1,3 @@
-import findLastIndex from 'lodash/findLastIndex'
-
 import type {BusStopStatusEnum} from './find-bus-stop-status'
 import type {BusTarget} from './find-bus-target'
 
@@ -28,5 +26,5 @@ export function legsBehindTheBus(
 		return busTarget.targetIndex
 	}
 
-	return findLastIndex(cells, (cell) => cell.stopStatus === 'after') + 1
+	return cells.findLastIndex((cell) => cell.stopStatus === 'after') + 1
 }

@@ -226,8 +226,7 @@ describe('visibleSections', () => {
 		expect(ids(visibleSections(CATEGORIES, filters, 'LIONS pause', CONTEXT))).toEqual(['4'])
 	})
 
-	// lodash's `deburr` leaves letters like ǧ and ŋ alone; a live CURI title
-	// has both.
+	// A live CURI title has both ǧ, which decomposes, and ŋ, which does not.
 	test('ignores accents beyond Latin-1 in the search', () => {
 		let filters = buildJobFilters(ALL_JOBS, NOTHING_CHOSEN, CONTEXT)
 		expect(ids(visibleSections(CATEGORIES, filters, 'minagi kin', CONTEXT))).toEqual(['8'])

@@ -76,7 +76,7 @@ type Props = {
 export function HoroscopesView({layout, columnWidth, scrollTo}: Props): React.ReactNode {
 	let lastSign = useMessStore((state) => state.lastSign)
 	let setSign = useMessStore((state) => state.setSign)
-	// A sign the reader has just picked. SwiftUI ignores a scroll to an id it has not yet
+	// A sign the reader has just picked from the list. SwiftUI ignores a scroll to an id it has not yet
 	// built, and a React effect can run before the native view carrying the new sign's id
 	// exists, so the scroll waits for that view's own onAppear.
 	let [pendingScroll, setPendingScroll] = React.useState<ZodiacSign | null>(null)
@@ -90,6 +90,12 @@ export function HoroscopesView({layout, columnWidth, scrollTo}: Props): React.Re
 	let choose = (sign: ZodiacSign) => {
 		if (sign === lastSign) return
 		setPendingScroll(sign)
+		setSign(sign)
+	}
+
+	// The glyph grid is already on screen, so a sign picked there leaves the page where it is.
+	let chooseInPlace = (sign: ZodiacSign) => {
+		if (sign === lastSign) return
 		setSign(sign)
 	}
 
@@ -119,7 +125,7 @@ export function HoroscopesView({layout, columnWidth, scrollTo}: Props): React.Re
 				modifiers={[onAppear(scrollToPicked), id(chosen.sign)]}
 				spacing={10}
 			>
-				<GlyphGrid chosen={chosen.sign} columnWidth={columnWidth} onChoose={choose} />
+				<GlyphGrid chosen={chosen.sign} columnWidth={columnWidth} onChoose={chooseInPlace} />
 				<Text modifiers={LARGE_GLYPH}>{SIGN_GLYPHS[chosen.sign]}</Text>
 				<VStack alignment="leading" spacing={2}>
 					<Text modifiers={NAME}>{SIGN_NAMES[chosen.sign]}</Text>

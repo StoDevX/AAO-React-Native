@@ -1,6 +1,5 @@
-import {deburr, words} from 'lodash'
-
 import type {LinkGroup, LinkValue} from './types'
+import {deburr, words} from '../../lib/text'
 
 const labelWords = (link: LinkValue): string[] => {
 	return Array.from(new Set(words(deburr(link.label.toLowerCase()))))

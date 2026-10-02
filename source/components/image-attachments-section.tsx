@@ -2,7 +2,6 @@ import * as React from 'react'
 import {Alert} from 'react-native'
 import {Button, SwipeActions, Text} from '@expo/ui/swift-ui'
 import {SheetSection} from '@frogpond/sheet-section'
-import noop from 'lodash/noop'
 
 import {ActionRow, DisclosureRow} from './rows'
 import {MAX_ATTACHMENTS, type ImageAttachments} from './use-image-attachments'
@@ -25,7 +24,7 @@ export function ImageAttachmentsSection({title, attachments}: Props): React.Reac
 
 	let confirmRemoveImage = (uri: string) => {
 		Alert.alert('Remove this image?', undefined, [
-			{text: 'Cancel', style: 'cancel', onPress: noop},
+			{text: 'Cancel', style: 'cancel'},
 			{text: 'Remove', style: 'destructive', onPress: () => removeImage(uri)},
 		])
 	}

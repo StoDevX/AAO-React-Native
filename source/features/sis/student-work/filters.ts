@@ -4,12 +4,11 @@ import type {JobCategory, JobSummary} from '@frogpond/ccc-jobs'
 import {applyFiltersToItem} from '@frogpond/filter/apply-filters'
 import {selectedOptions} from '@frogpond/filter/selected-options'
 import type {ListFilter} from '@frogpond/filter/types'
-import deburr from 'lodash/deburr'
-import words from 'lodash/words'
 import type {AreaStatus, StudentWorkArea} from './areas'
 import {displayTitle, jobCode, jobTerm, LEVEL_LABELS, type JobTerm} from './posting'
 import {POSTED_NEW, POSTED_RECENT, postedTags} from './presets'
 import {recencyOf, RECENCY_ORDER} from './recency'
+import {deburr, words} from '../../../lib/text'
 
 /// What the filters match a posting on.
 export type JobFacets = {area: string[]; posted: string[]; level: string; term: string}
@@ -159,15 +158,10 @@ export function choosePosted(previous: string[] | null, next: string[]): string[
 	return added.length > 0 ? added.slice(-1) : next.slice(-1)
 }
 
-const COMBINING_MARKS = /\p{M}/gu
-
 /// Lowercased words with accents and apostrophes gone, so "lions" finds
-/// "Lion’s" and "minagi kin" finds "Mináǧi Kiŋ". Dropping the marks after
-/// decomposing reaches accented letters `deburr` leaves alone, like ǧ, and
-/// `deburr` maps the letters that have no decomposition, like ŋ.
+/// "Lion’s" and "minagi kin" finds "Mináǧi Kiŋ".
 function searchWords(text: string): string[] {
-	let unmarked = text.toLowerCase().normalize('NFD').replaceAll(COMBINING_MARKS, '')
-	return words(deburr(unmarked.replaceAll(/['’]/gu, '')))
+	return words(deburr(text.toLowerCase().replaceAll(/['’]/gu, '')))
 }
 
 function titleWordsOf(job: JobSummary): string[] {

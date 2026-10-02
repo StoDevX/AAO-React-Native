@@ -586,6 +586,10 @@ struct TestIdentifiers {
 		static let imageViewerClose = "mess-image-viewer-close"
 		static let imageViewerCloseLabel = "Close"
 
+		/// The zoom viewer's share button, in source/features/mess/image-viewer.tsx.
+		static let imageViewerShare = "mess-image-viewer-share"
+		static let imageViewerShareLabel = "Share"
+
 		/// The picture inside the zoom viewer, in source/features/mess/image-viewer.tsx.
 		static let imageViewerImage = "mess-image-viewer-image"
 
@@ -625,6 +629,20 @@ struct TestIdentifiers {
 			"KSTO 93.1 FM logo, dumpster fire",
 			"KSTO 93.1 FM logo, narwhal",
 		]
+	}
+
+	// MARK: - Quick Actions
+
+	enum QuickActions {
+		/// The picker's accessibility identifier, set in app/settings/quick-actions.tsx.
+		static let screen = "screen-quick-actions"
+		static let settingsRow = "Home Screen Quick Actions"
+		static let reset = "Reset to Defaults"
+		/// DEFAULT_QUICK_ACTIONS in source/features/quick-actions/destinations.ts.
+		static let defaults = ["Stav Menu", "Cage Menu", "Olaf Messenger", "Transit"]
+		static let cageMenu = "Cage Menu"
+		/// The tab Cage Menu opens, as Menus labels it.
+		static let cageTab = "The Cage"
 	}
 
 	// MARK: - Settings

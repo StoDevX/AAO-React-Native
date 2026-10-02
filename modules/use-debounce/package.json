@@ -8,9 +8,6 @@
   "scripts": {
     "test": "jest"
   },
-  "dependencies": {
-    "lodash": "4.18.1"
-  },
   "peerDependencies": {
     "react": "catalog:"
   }

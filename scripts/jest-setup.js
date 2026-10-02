@@ -74,6 +74,10 @@ jest.mock('@frogpond/launch-arguments', () => ({
 	// Live, so a test that stubs fetchSourceBody gets its stub, not a fixture.
 	fixtureMode: 'live',
 }))
+// Quick actions are set through a native module Jest does not have.
+jest.mock('@frogpond/quick-actions', () => ({
+	setQuickActions: jest.fn(() => Promise.resolve()),
+}))
 // WebView looks up its native module when imported, and Jest has none.
 jest.mock('react-native-webview/lib/NativeRNCWebViewModule', () => ({
 	__esModule: true,

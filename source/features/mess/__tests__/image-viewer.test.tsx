@@ -31,6 +31,11 @@ jest.mock('expo-router', () => ({
 	useNavigation: () => ({goBack: mockGoBack}),
 }))
 
+const mockShareImage = jest.fn<(uri: string) => Promise<void>>()
+jest.mock('../../../components/lib/share-image', () => ({
+	shareImage: (uri: string) => mockShareImage(uri),
+}))
+
 const COMIC: MessStory = {
 	id: 36819,
 	title: 'Mouse Friends: sunsets of life',
@@ -168,7 +173,7 @@ describe('ImageViewer', () => {
 		expect(mockGoBack).toHaveBeenCalledTimes(1)
 	})
 
-	test('hides Close while the picture is dragged, and brings it back if the picture springs back', async () => {
+	test('hides its buttons while the picture is dragged, and brings them back if the picture springs back', async () => {
 		await renderViewer(36819)
 		let image = screen.getByRole('image', {
 			name: 'Mouse Friends: sunsets of life, by Juliet Stouffer',
@@ -176,9 +181,11 @@ describe('ImageViewer', () => {
 
 		await fireEvent(image, 'dragStart')
 		expect(screen.queryByRole('button', {name: 'Close'})).toBeNull()
+		expect(screen.queryByRole('button', {name: 'Share'})).toBeNull()
 
 		await fireEvent(image, 'dragCancel')
 		expect(screen.getByRole('button', {name: 'Close'})).toBeTruthy()
+		expect(screen.getByRole('button', {name: 'Share'})).toBeTruthy()
 	})
 
 	test('says the image is unavailable for a story without one, and can still close', async () => {
@@ -187,5 +194,19 @@ describe('ImageViewer', () => {
 		expect(screen.getByText('Image Unavailable')).toBeTruthy()
 		expect(screen.queryByRole('image')).toBeNull()
 		expect(screen.getByRole('button', {name: 'Close'})).toBeTruthy()
+	})
+
+	test('shares the picture it shows on Share', async () => {
+		mockShareImage.mockResolvedValue(undefined)
+		await renderViewer(33129, 1)
+
+		fireEvent.press(screen.getByRole('button', {name: 'Share'}))
+
+		expect(mockShareImage).toHaveBeenCalledWith(CUP.url)
+	})
+
+	test('offers no Share when there is no picture', async () => {
+		await renderViewer(36911)
+		expect(screen.queryByRole('button', {name: 'Share'})).toBeNull()
 	})
 })

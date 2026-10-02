@@ -39,17 +39,23 @@ class ModuleNewsTests: UITestCaseUnbooted {
 			.verifyBodyOffersCopy()
 	}
 
+	/// A sign picked from the list scrolls the page up to it; one picked from the glyph grid,
+	/// which is already in view, leaves the page where it is. The post is reopened before the
+	/// grid is tapped, so the grid sits below the intro rather than at the top of the screen.
 	func testHoroscopesOpenOnAChosenSign() throws {
-		MessFrontPage(app: app)
+		let front = MessFrontPage(app: app)
+		front
 			.navigate()
 			.openColumn(TestIdentifiers.News.horoscopesColumn, in: TestIdentifiers.News.varietySection)
 			.openFirstStory()
 			.pickSignFromList(TestIdentifiers.News.gemini)
 			.verifySignChosen(TestIdentifiers.News.gemini)
 			.verifyScrolledToChosenSign(TestIdentifiers.News.gemini)
-			.tapSignGlyph(TestIdentifiers.News.leo)
-			.verifySignChosen(TestIdentifiers.News.leo)
-			.verifyScrolledToChosenSign(TestIdentifiers.News.leo)
+			.goBack()
+		front
+			.openFirstStory()
+			.verifySignChosen(TestIdentifiers.News.gemini)
+			.tapSignGlyphKeepingThePlace(TestIdentifiers.News.leo)
 	}
 
 	/// At the largest text size the chosen sign's section sits a long way above
@@ -136,6 +142,7 @@ class ModuleNewsTests: UITestCaseUnbooted {
 			.openFirstStory()
 			.openImageViewer()
 			.verifyViewerShowsImage()
+			.shareViewerImage()
 			.closeImageViewer()
 	}
 

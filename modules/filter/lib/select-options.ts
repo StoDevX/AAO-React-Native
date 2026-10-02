@@ -1,8 +1,5 @@
 import type {ListFilterOption, ListFilter} from '../types'
-
-import concat from 'lodash/concat'
-import isEqual from 'lodash/isEqual'
-import reject from 'lodash/reject'
+import {isEqual} from '@frogpond/collections'
 
 /**
  * Whether a list filter narrows anything.
@@ -27,8 +24,8 @@ export function toggleOption<T extends object>(
 	let {selected} = spec
 
 	let result = selected.some((val) => isEqual(val, tappedValue))
-		? reject(selected, (val) => isEqual(val, tappedValue))
-		: concat(selected, tappedValue)
+		? selected.filter((val) => !isEqual(val, tappedValue))
+		: [...selected, tappedValue]
 
 	return {
 		...filter,

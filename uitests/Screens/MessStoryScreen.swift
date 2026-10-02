@@ -75,22 +75,6 @@ struct MessStoryScreen: Screen {
 		return self
 	}
 
-	/// Go back one screen with the navigation bar's back button. iOS 27 can keep
-	/// more than one navigation bar in the tree, and a story's bar has no title to
-	/// pick it out by, so this takes the back button a tap can reach: the covered
-	/// bars' buttons are not hittable.
-	@discardableResult
-	func goBack() -> Self {
-		let backs = app.navigationBars.buttons.matching(identifier: TestIdentifiers.Navigation.systemBackButton)
-		let reachable = { backs.allElementsBoundByIndex.first { $0.isHittable } }
-		let offered = XCTWaiter().wait(
-			for: [XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in reachable() != nil }, object: nil)],
-			timeout: 10)
-		XCTAssertEqual(offered, .completed, "the story should offer a way back")
-		reachable()?.tap()
-		return self
-	}
-
 	/// Long-press the story's first paragraph and assert iOS offers to copy it,
 	/// which it does only for text that can be selected.
 	@discardableResult
@@ -136,6 +120,33 @@ struct MessStoryScreen: Screen {
 		let glyph = app.buttons.matching(NSPredicate(format: "label == %@", sign)).firstMatch
 		XCTAssertTrue(glyph.waitForExistence(timeout: 30), "the glyph grid should offer \(sign)")
 		glyph.tap()
+		return self
+	}
+
+	/// Tap a sign's glyph in the grid, which sits below the navigation bar, and assert the
+	/// sign is chosen and the page did not scroll: the grid's first row stays where it was.
+	@discardableResult
+	func tapSignGlyphKeepingThePlace(_ sign: String) -> Self {
+		let firstGlyph = app.buttons.matching(
+			NSPredicate(format: "label == %@", TestIdentifiers.News.signs[0])
+		).firstMatch
+		let bar = app.navigationBars.firstMatch
+		XCTAssertTrue(firstGlyph.waitForExistence(timeout: 30), "the glyph grid should be drawn")
+		XCTAssertTrue(bar.waitForExistence(timeout: 10), "the reader should have a navigation bar")
+		let before = firstGlyph.frame.minY
+		// A grid already at the bar's edge would stay put whether the page scrolled or not.
+		XCTAssertGreaterThan(
+			before, bar.frame.maxY + 1,
+			"the grid should open below the navigation bar, at \(before), so a scroll would show")
+		tapSignGlyph(sign)
+		verifySignChosen(sign)
+		let moved = NSPredicate { _, _ in abs(firstGlyph.frame.minY - before) > 1 }
+		let result = XCTWaiter().wait(
+			for: [XCTNSPredicateExpectation(predicate: moved, object: nil)], timeout: 3)
+		capture("Horoscopes after \(sign) was picked from the grid")
+		XCTAssertEqual(
+			result, .timedOut,
+			"picking \(sign) from the grid should leave the grid at \(before), not move it to \(firstGlyph.frame.minY)")
 		return self
 	}
 
@@ -200,6 +211,30 @@ struct MessStoryScreen: Screen {
 		return self
 	}
 
+	/// Tap Share and assert the share sheet holds the picture itself: Save Image and Print are
+	/// offered for an image file, never for a link to one. Then dismiss the sheet.
+	@discardableResult
+	func shareViewerImage() -> Self {
+		XCTAssertTrue(shareButton.waitForHittable(), "Share should be ready to tap")
+		shareButton.tap()
+		// The share sheet's actions are cells, drawn by the system's share service.
+		let saveImage = app.cells["Save Image"]
+		let opened = saveImage.waitForExistence(timeout: 30)
+		capture("The share sheet for the zoom viewer's picture")
+		XCTAssertTrue(opened, "Share should offer Save Image, which it does only for the picture itself")
+		// Print sits below the first row of actions.
+		app.cells["View More"].tap()
+		let print = app.cells["Print"]
+		let expanded = print.waitForExistence(timeout: 10)
+		capture("The share sheet's every action for the zoom viewer's picture")
+		XCTAssertTrue(expanded, "Share should offer Print for the picture")
+		// The expanded sheet's own close button.
+		let close = app.buttons["header.closeButton"]
+		XCTAssertTrue(close.waitForHittable(), "the expanded share sheet should have a close button")
+		close.tap()
+		XCTAssertTrue(saveImage.waitForNonExistence(timeout: 10), "Close should dismiss the share sheet")
+		return self
+	}
 
 	/// Close the zoom viewer and wait to be back on the story.
 	@discardableResult
@@ -350,6 +385,15 @@ struct MessStoryScreen: Screen {
 			NSPredicate(
 				format: "identifier == %@ AND label == %@",
 				TestIdentifiers.News.imageViewerClose, TestIdentifiers.News.imageViewerCloseLabel)
+		).firstMatch
+	}
+
+	/// The viewer's share button, by its identifier and the label VoiceOver reads.
+	private var shareButton: XCUIElement {
+		app.buttons.matching(
+			NSPredicate(
+				format: "identifier == %@ AND label == %@",
+				TestIdentifiers.News.imageViewerShare, TestIdentifiers.News.imageViewerShareLabel)
 		).firstMatch
 	}
 }

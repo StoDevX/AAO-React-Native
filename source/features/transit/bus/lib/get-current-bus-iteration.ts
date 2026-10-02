@@ -1,6 +1,3 @@
-import find from 'lodash/find'
-import findLast from 'lodash/findLast'
-import findLastIndex from 'lodash/findLastIndex'
 import type {Moment} from 'moment-timezone'
 import type {BusSchedule, DepartureTimeList} from '../types'
 
@@ -26,8 +23,8 @@ export function getCurrentBusIteration(schedule: BusSchedule, now: Moment): Retu
 	}
 
 	// Handle "now" being before or after the bus runs for the day
-	let veryFirst = find(schedule.times.at(0), isTruthy)
-	let veryLast = findLast(schedule.times.at(-1), isTruthy)
+	let veryFirst = schedule.times.at(0)?.find(isTruthy)
+	let veryLast = schedule.times.at(-1)?.findLast(isTruthy)
 
 	// Start off by handling another empty-schedule case
 	if (!veryFirst || !veryLast) {
@@ -47,9 +44,9 @@ export function getCurrentBusIteration(schedule: BusSchedule, now: Moment): Retu
 	// The meat of this function: find the furthest timeset that now is part of.
 	// Because we operate on sets, instead of on one giant list of stops, we
 	// use isSameOrAfter to account for the gaps between iterations.
-	let index = findLastIndex(schedule.times, (stopTimes) => {
-		let first = find(stopTimes, isTruthy)
-		let last = findLast(stopTimes, isTruthy)
+	let index = schedule.times.findLastIndex((stopTimes) => {
+		let first = stopTimes?.find(isTruthy)
+		let last = stopTimes?.findLast(isTruthy)
 
 		// Handle the case where stopTimes is empty
 		if (!first || !last) {
@@ -70,8 +67,8 @@ export function getCurrentBusIteration(schedule: BusSchedule, now: Moment): Retu
 		let times = schedule.times[index]
 		let nextTimes = schedule.times[index + 1] || []
 
-		let lastStopTime = findLast(times, isTruthy)
-		let nextStart = find(nextTimes, isTruthy)
+		let lastStopTime = times?.findLast(isTruthy)
+		let nextStart = nextTimes?.find(isTruthy)
 
 		// Check if we're between two iterations
 		if (lastStopTime && nextStart && now.isBetween(lastStopTime, nextStart)) {
@@ -80,7 +77,7 @@ export function getCurrentBusIteration(schedule: BusSchedule, now: Moment): Retu
 				times: nextTimes,
 				index: index + 1,
 				nextStart,
-				parkedStopIndex: findLastIndex(times, isTruthy),
+				parkedStopIndex: times?.findLastIndex(isTruthy) ?? -1,
 			}
 		}
 

@@ -14,7 +14,6 @@ import {
 	shapes,
 } from '@expo/ui/swift-ui/modifiers'
 import * as c from '@frogpond/colors'
-import sample from 'lodash/sample'
 import {useDispatch, useSelector} from 'react-redux'
 import {Restart} from 'react-native-restart-newarch'
 
@@ -32,6 +31,7 @@ import {selectDevModeOverride, setDevModeOverride} from '../source/redux/parts/s
 import {useIsDevMode} from '../source/lib/use-is-dev-mode'
 import {FaqBannerGroup} from '../source/features/faqs/banner'
 import {FAQ_TARGETS} from '../source/features/faqs/constants'
+import {sample} from '@frogpond/collections'
 
 const styles = StyleSheet.create({
 	host: {

@@ -1,0 +1,39 @@
+import XCTest
+
+/// The Home Screen, where the app's icon and its quick actions live.
+struct SpringBoardScreen: Screen {
+	let app: XCUIApplication
+
+	private let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
+
+	/// Go to the Home Screen, long-press the app's icon, and choose `action`
+	/// from its menu. `appName` is the icon's label, read from `app.label`
+	/// while the app runs.
+	@discardableResult
+	func chooseQuickAction(_ action: String, appName: String) -> Self {
+		XCUIDevice.shared.press(.home)
+
+		// A freshly installed app lands past the first page, so page through
+		// until its icon is on screen. Each page is given a moment to settle:
+		// mid-slide the icon is not yet hittable, and swiping again then
+		// carries straight past it.
+		let icon = springboard.icons[appName].firstMatch
+		var pages = 0
+		while !icon.waitForHittable(timeout: 2) && pages < 3 {
+			springboard.swipeLeft()
+			pages += 1
+		}
+		XCTAssertTrue(icon.isHittable, "\(appName)'s icon should be on the Home Screen")
+
+		icon.press(forDuration: 1.0)
+
+		// SpringBoard does not go idle while this menu is up, so the press and
+		// the tap each sit through XCUITest's full quiescence timeout, about a
+		// minute apiece. Sending them through `app` instead never reaches
+		// SpringBoard, so the wait is the price of driving it at all.
+		let item = springboard.buttons[action]
+		XCTAssertTrue(item.waitForExistence(timeout: 5), "\(action) should be in the icon's menu")
+		item.tap()
+		return self
+	}
+}
