@@ -19,7 +19,7 @@ import type {RadioLogo} from '../theme'
 /** The size of the record at the medium detent. */
 const RECORD = 96
 
-/** The medium detent: the picker, then a row like an enlarged mini-player, then the actions. */
+/** The medium detent: the picker, the record beside what's on, a large Play or Stop, then the actions. */
 export function CompactLayout({
 	station,
 	logo,
@@ -45,9 +45,11 @@ export function CompactLayout({
 					size={RECORD}
 				/>
 				<ShowTitle station={station} />
-				<PlayStopButton size="small" station={station} />
 			</View>
-			<PlaybackError station={station} />
+			<View style={styles.centre}>
+				<PlayStopButton size="large" station={station} />
+				<PlaybackError station={station} />
+			</View>
 			<View style={styles.actions}>
 				<ActionButton
 					accessibilityLabel={`Call ${station.stationName}`}
@@ -117,6 +119,9 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		alignItems: 'center',
 		gap: 12,
+	},
+	centre: {
+		alignItems: 'center',
 	},
 	actions: {
 		flexDirection: 'row',
