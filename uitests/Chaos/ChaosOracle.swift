@@ -91,6 +91,14 @@ struct ChaosOracle {
 		if let beacon = observation.beaconLabel, beacon != TestIdentifiers.Chaos.beaconQuiet {
 			return ChaosStop("js: \(beacon)")
 		}
+		// The chaos boundary draws its fallback a render before the beacon
+		// carries the error's message, so a quiet beacon over it means "not
+		// yet", and the next observation reports the error itself.
+		if observation.errorScreen == TestIdentifiers.Chaos.fatalBoundary,
+			observation.beaconLabel == TestIdentifiers.Chaos.beaconQuiet
+		{
+			return nil
+		}
 		if let screen = observation.errorScreen {
 			return ChaosStop("error screen: \(screen)")
 		}

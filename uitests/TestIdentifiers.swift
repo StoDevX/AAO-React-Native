@@ -57,8 +57,10 @@ struct TestIdentifiers {
 		static let beaconQuiet = "none"
 		/// A route that throws on render, for the canary.
 		static let crashRoute = "chaos-crash"
+		/// What the chaos error boundary draws in place of the tree that threw.
+		static let fatalBoundary = "chaos.fatal-boundary"
 		/// Elements only an error screen draws.
-		static let errorScreenIdentifiers = ["router_error_message", "chaos.fatal-boundary"]
+		static let errorScreenIdentifiers = ["router_error_message", fatalBoundary]
 		/// Texts only an error fallback draws, for fallbacks with no identifier.
 		static let errorScreenLabels = ["A problem occurred while showing places."]
 	}
