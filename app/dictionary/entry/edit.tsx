@@ -15,6 +15,11 @@ import * as c from '@frogpond/colors'
 
 import {DisclosureRow} from '../../../source/components/rows'
 import {
+	FocusedFieldProvider,
+	useBlurFocusedField,
+	useTrackedField,
+} from '../../../source/components/focused-field'
+import {
 	hasChanges,
 	hasDefinition,
 	useDictionaryDraftStore,
@@ -24,9 +29,10 @@ const styles = StyleSheet.create({
 	host: {flex: 1, backgroundColor: c.systemGroupedBackground},
 })
 
-export default function DictionaryEditPage(): React.ReactNode {
+function DictionaryEditForm(): React.ReactNode {
 	let router = useRouter()
 	let navigation = useNavigation()
+	let blurFocusedField = useBlurFocusedField()
 	let store = useDictionaryDraftStore()
 	let {draft, submitted} = store
 
@@ -47,13 +53,16 @@ export default function DictionaryEditPage(): React.ReactNode {
 	 * a sense screen sits on top.
 	 */
 	usePreventRemove(changed && !submitted, ({data}) => {
-		Alert.alert(
-			'Discard changes?',
-			'You have made unsaved changes. Are you sure you want to discard them?',
-			[
-				{text: 'Edit', style: 'cancel'},
-				{text: 'Discard', style: 'destructive', onPress: () => navigation.dispatch(data.action)},
-			],
+		// Before the alert, so it has no field to hand focus back to on Discard.
+		void blurFocusedField().then(() =>
+			Alert.alert(
+				'Discard changes?',
+				'You have made unsaved changes. Are you sure you want to discard them?',
+				[
+					{text: 'Edit', style: 'cancel'},
+					{text: 'Discard', style: 'destructive', onPress: () => navigation.dispatch(data.action)},
+				],
+			),
 		)
 	})
 
@@ -68,6 +77,9 @@ export default function DictionaryEditPage(): React.ReactNode {
 	let wordText = useNativeState(draft?.word ?? '')
 	let pronunciationText = useNativeState(draft?.pronunciation ?? '')
 	let partOfSpeechText = useNativeState(draft?.partOfSpeech ?? '')
+	let wordField = useTrackedField()
+	let pronunciationField = useTrackedField()
+	let partOfSpeechField = useTrackedField()
 
 	if (!draft) {
 		return (
@@ -150,18 +162,21 @@ export default function DictionaryEditPage(): React.ReactNode {
 							modifiers={[accessibilityLabel('Word'), textInputAutocapitalization('words')]}
 							onTextChange={store.setWord}
 							placeholder="Word"
+							{...wordField}
 							text={wordText}
 						/>
 						<TextField
 							modifiers={[accessibilityLabel('Pronunciation')]}
 							onTextChange={store.setPronunciation}
 							placeholder="Pronunciation"
+							{...pronunciationField}
 							text={pronunciationText}
 						/>
 						<TextField
 							modifiers={[accessibilityLabel('Part of Speech')]}
 							onTextChange={store.setPartOfSpeech}
 							placeholder="Part of Speech"
+							{...partOfSpeechField}
 							text={partOfSpeechText}
 						/>
 					</SheetSection>
@@ -211,5 +226,13 @@ export default function DictionaryEditPage(): React.ReactNode {
 				</Form>
 			</Host>
 		</>
+	)
+}
+
+export default function DictionaryEditPage(): React.ReactNode {
+	return (
+		<FocusedFieldProvider>
+			<DictionaryEditForm />
+		</FocusedFieldProvider>
 	)
 }

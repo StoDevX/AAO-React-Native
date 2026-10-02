@@ -952,16 +952,36 @@ export function Image({
 	)
 }
 
+/**
+ * Every imperative `blur()` on a stand-in `TextField`, called with the field's
+ * placeholder, so a test can see which field was let go of and when.
+ */
+export const textFieldBlur = jest.fn<void, [string | undefined]>()
+
 export function TextField({
 	modifiers,
+	onFocusChange,
 	onTextChange,
 	placeholder,
+	ref,
 	text,
 }: WithModifiers & {
 	placeholder?: string
 	text?: {value: string}
 	onTextChange?: (text: string) => void
+	onFocusChange?: (focused: boolean) => void
+	ref?: React.Ref<{blur: () => Promise<void>}>
 }): React.ReactNode {
+	// The real field's `blur()` resolves once the native side has the request;
+	// SwiftUI then reports the lost focus through `onFocusChange`, as here.
+	React.useImperativeHandle(ref, () => ({
+		blur: () => {
+			textFieldBlur(placeholder)
+			onFocusChange?.(false)
+			return Promise.resolve()
+		},
+	}))
+
 	// A SwiftUI TextField reports its placeholder as its accessibility label
 	// when it has no separate one, which is how a search field is found both on
 	// device and here.
@@ -972,7 +992,9 @@ export function TextField({
 	return (
 		<TextInput
 			accessibilityLabel={labelOf(modifiers) ?? placeholder}
+			onBlur={() => onFocusChange?.(false)}
 			onChangeText={onTextChange}
+			onFocus={() => onFocusChange?.(true)}
 			placeholder={placeholder}
 			value={text?.value}
 		/>
