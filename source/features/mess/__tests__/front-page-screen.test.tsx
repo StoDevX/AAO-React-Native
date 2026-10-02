@@ -219,6 +219,18 @@ describe('FrontPageScreen', () => {
 		expect(dateline()).toHaveTextContent('Latest stories')
 	})
 
+	// The nameplate is the front page's heading; the dateline under it is not a second one.
+	test("reads the paper's name as the heading, and not Latest's dateline", async () => {
+		seedTop()
+		saveChoice('Latest')
+		queryClient.setQueryData(messKeys.feed, ISSUE_STORIES)
+		await renderScreen()
+
+		expect(dateline()).toHaveTextContent('Latest stories')
+		expect(screen.getByRole('header', {name: 'The Olaf Messenger'})).toBeTruthy()
+		expect(screen.queryByRole('header', {name: /Latest stories/u})).toBeNull()
+	})
+
 	test('narrows Latest to the section picked, and keeps it across a visit to By Issue', async () => {
 		seedTop()
 		saveChoice('Latest')

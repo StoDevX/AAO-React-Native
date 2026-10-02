@@ -131,6 +131,14 @@ describe('IssuePage', () => {
 		expect(more).toBeGreaterThan(opinions)
 	})
 
+	// The issue view's bar has no title, so the dateline is the heading that names the issue.
+	test('reads its dateline to VoiceOver as a heading', async () => {
+		queryClient.setQueryData(messKeys.issue(ISSUE), STORIES)
+		await renderIssue()
+
+		expect(screen.getByRole('header', {name: 'April 29, 2026 · 5 stories'})).toBeTruthy()
+	})
+
 	// The issue's tile names the lead from the light fields; the page must agree
 	// even when the full stories would pick another, as when a lead's photo fails to embed.
 	test('leads with the story the issue list named, and leaves it off its shelf', async () => {

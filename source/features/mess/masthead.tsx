@@ -36,10 +36,21 @@ const DATELINE = [
 	frame({maxWidth: Infinity}),
 	accessibilityIdentifier(DATELINE_ID),
 ]
+const HEADING_DATELINE = [...DATELINE, accessibilityAddTraits(['isHeader'])]
 
-/** The line that says what a page holds, across the column: "April 29, 2026 · 35 stories". */
-export function Dateline({text}: {text: string}): React.ReactNode {
-	return <Text modifiers={DATELINE}>{text}</Text>
+/**
+ * The line that says what a page holds, across the column: "April 29, 2026 · 35 stories". Set
+ * `isHeading` where it names the page, as on an issue's page, whose bar has no title; under the
+ * front page's nameplate it is not a second heading.
+ */
+export function Dateline({
+	text,
+	isHeading = false,
+}: {
+	text: string
+	isHeading?: boolean
+}): React.ReactNode {
+	return <Text modifiers={isHeading ? HEADING_DATELINE : DATELINE}>{text}</Text>
 }
 
 /**

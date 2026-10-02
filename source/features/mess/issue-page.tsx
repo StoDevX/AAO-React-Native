@@ -105,7 +105,7 @@ export function IssuePage({
 	let dateline = datelineText(issue)
 	return (
 		<>
-			<Dateline text={dateline} />
+			<Dateline isHeading={true} text={dateline} />
 			{stories.data ? (
 				<IssueStories
 					columnWidth={columnWidth}
