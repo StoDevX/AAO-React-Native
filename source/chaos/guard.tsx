@@ -67,8 +67,8 @@ export function ChaosGuard(props: {children: React.ReactNode}): React.ReactNode 
 }
 
 const styles = StyleSheet.create({
-	// Present in the accessibility tree but never drawn or touched. If
-	// XCUITest cannot see a fully transparent view, the canary in
-	// uitests/Chaos fails; raise opacity to 0.02 then.
-	beacon: {position: 'absolute', top: 0, left: 0, width: 1, height: 1, opacity: 0},
+	// Present in the accessibility tree but never touched, and too faint to
+	// notice. Not fully transparent: iOS leaves a view with opacity 0 out of
+	// the accessibility tree, so XCUITest could not read it.
+	beacon: {position: 'absolute', top: 0, left: 0, width: 1, height: 1, opacity: 0.02},
 })
