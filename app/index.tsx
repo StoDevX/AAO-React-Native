@@ -42,7 +42,7 @@ const styles = StyleSheet.create({
 	banner: {
 		marginHorizontal: SCREEN_MARGIN,
 		marginTop: TILE_SPACING,
-		marginBottom: TILE_SPACING / 2,
+		marginBottom: TILE_SPACING * 2,
 	},
 })
 
@@ -220,8 +220,10 @@ export default function HomePage(): React.ReactNode {
 							frame({width: screenWidth - 2 * SCREEN_MARGIN}),
 							padding({all: SCREEN_MARGIN}),
 						]}
-						spacing={TILE_SPACING * 2}
 					>
+						{/* The banner is its own child, not one of the spaced groups
+						    below: when there is no banner its slot is empty, and
+						    spacing around an empty slot is a gap above the first group. */}
 						<RNHostView matchContents={true}>
 							<FaqBannerGroup
 								onPressFaq={(faqId) => router.navigate({pathname: '/faq', params: {faqId}})}
@@ -230,17 +232,19 @@ export default function HomePage(): React.ReactNode {
 							/>
 						</RNHostView>
 
-						{sections.map((section) => (
-							<HomeGroupView
-								collapsed={section.collapsible && collapsedGroups.includes(section.id)}
-								key={section.id}
-								onOpen={openView}
-								onToggle={() => dispatch(toggleHomeGroup(section.id))}
-								section={section}
-							/>
-						))}
+						<VStack spacing={TILE_SPACING * 2}>
+							{sections.map((section) => (
+								<HomeGroupView
+									collapsed={section.collapsible && collapsedGroups.includes(section.id)}
+									key={section.id}
+									onOpen={openView}
+									onToggle={() => dispatch(toggleHomeGroup(section.id))}
+									section={section}
+								/>
+							))}
 
-						<UnofficialAppNotice />
+							<UnofficialAppNotice />
+						</VStack>
 					</VStack>
 				</ScrollView>
 			</Host>
