@@ -250,6 +250,10 @@ run = "node scripts/scrape-bonapp.mjs"
 description = "Render the in-app icon previews from assets/*.icon"
 run = "node scripts/make-icons.mjs"
 
+[tasks."trace-symbol"]
+description = "Trace a logo into a custom SF Symbol in assets/symbols/"
+run = "node scripts/trace-symbol.mjs"
+
 # Needs the network, so it stays out of validate-data, as scrape-dining does.
 [tasks."update-map-fixtures"]
 description = "Replace the map fixtures the UI tests read with each campus's live map"

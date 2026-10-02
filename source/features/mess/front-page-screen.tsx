@@ -143,7 +143,8 @@ export function FrontPageScreen(): React.ReactNode {
 				// refreshes that view alone.
 				onRefresh={() => refetchFromFirstPage(queryClient, messKeys.all)}
 			>
-				<Masthead dateline={datelineOf(view)} />
+				{/* By Issue's tiles each print the paper's name, so its masthead is the castle */}
+				<Masthead castle={view.mode === 'issues'} dateline={datelineOf(view)} />
 				{view.mode === 'issues' ? <ByIssuePage /> : <LatestPage section={view.section} />}
 			</MessPage>
 		</>

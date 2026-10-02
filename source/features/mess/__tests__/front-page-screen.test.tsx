@@ -172,13 +172,13 @@ function renderScreen() {
 }
 
 describe('FrontPageScreen', () => {
-	test("opens on By Issue, under the paper's nameplate and no dateline, with the newest issue as the top tile", async () => {
+	test("opens on By Issue, under the paper's castle rather than its nameplate and no dateline, with the newest issue as the top tile", async () => {
 		seedTop()
 		await renderScreen()
 
 		expect(isChecked('By Issue')).toBe(true)
 		expect(isChecked('Latest')).toBe(false)
-		expect(screen.getByText('The Olaf Messenger')).toBeTruthy()
+		expect(screen.queryByText('The Olaf Messenger')).toBeNull()
 		expect(screen.queryByTestId(DATELINE_ID)).toBeNull()
 		expect(screen.getByTestId(TOP_TILE_ID).props.accessibilityLabel).toBe(
 			'April 29, 2026, Student workers deliver petition',

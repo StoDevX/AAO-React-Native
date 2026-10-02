@@ -22,6 +22,7 @@ import {
 import type {QuickActionDestination} from '../../source/features/quick-actions/destinations'
 import {isPickable} from '../../source/features/quick-actions/picker'
 import {useQuickActionsStore} from '../../source/features/quick-actions/store'
+import {iconImage} from '../../source/features/views'
 
 const styles = StyleSheet.create({
 	host: {
@@ -92,7 +93,7 @@ const DestinationRow = React.memo(function DestinationRow(
 			{/* contentShape on the label, not the Button, so the whole row is
 			    tappable -- see NavigationRow. */}
 			<HStack modifiers={[contentShape(shapes.rectangle())]}>
-				<LeadingImage image={{systemName: destination.icon, width: SYMBOL_COLUMN}} />
+				<LeadingImage image={{...iconImage(destination.icon), width: SYMBOL_COLUMN}} />
 				<Text modifiers={[foregroundStyle(canToggle ? c.label : c.secondaryLabel)]}>
 					{destination.title}
 				</Text>

@@ -30,14 +30,14 @@ struct MessFrontPage: Screen {
 		return self
 	}
 
-	/// The navigation bar has no title, and the paper's name heads the page as its masthead, once
-	/// outside the issues' own nameplates.
+	/// The navigation bar has no title, and the paper's castle heads the page as its masthead,
+	/// read as the paper's name; the name is printed only on the issues' own nameplates.
 	@discardableResult
 	func verifyPaperNamedOnce() -> Self {
 		let name = NSPredicate(format: "label == %@", TestIdentifiers.News.paperName)
 		XCTAssertTrue(
-			app.staticTexts.matching(name).firstMatch.waitForExistence(timeout: 10),
-			"the page should carry the paper's masthead")
+			app.images.matching(name).firstMatch.waitForExistence(timeout: 10),
+			"the page should carry the paper's castle as its masthead")
 		XCTAssertEqual(
 			app.navigationBars.staticTexts.count, 0,
 			"the navigation bar should have no title; the masthead names the paper")
@@ -46,7 +46,7 @@ struct MessFrontPage: Screen {
 		let nameplates = (tiles.allElementsBoundByIndex + [topTile]).map(\.frame)
 		let outsideTiles = app.staticTexts.matching(name).allElementsBoundByIndex
 			.filter { element in !nameplates.contains(where: { $0.contains(element.frame) }) }
-		XCTAssertEqual(outsideTiles.count, 1, "the page should name the paper once, in its masthead")
+		XCTAssertEqual(outsideTiles.count, 0, "the page should print the paper's name only on its tiles")
 		return self
 	}
 

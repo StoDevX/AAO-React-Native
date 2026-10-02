@@ -24,11 +24,21 @@ describe('toQuickActions', () => {
 			{
 				id: 'Cage Menu',
 				title: 'Cage Menu',
-				symbol: 'cup.and.saucer.fill',
+				systemName: 'cup.and.saucer.fill',
 				href: '/menus/the-cage',
 			},
-			{id: 'Transit', title: 'Transit', symbol: 'bus.fill', href: '/transit'},
+			{id: 'Transit', title: 'Transit', systemName: 'bus.fill', href: '/transit'},
 		])
+	})
+
+	test("names a custom symbol by its asset name, which iOS finds in the app's catalog", () => {
+		let [action] = toQuickActions(resolveQuickActions(['Olaf Messenger']))
+		expect(action).toStrictEqual({
+			id: 'Olaf Messenger',
+			title: 'Olaf Messenger',
+			assetName: 'olaf-messenger',
+			href: '/messenger',
+		})
 	})
 
 	// Swift's URL(string:) rejects a space.
