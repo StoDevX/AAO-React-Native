@@ -9,7 +9,8 @@
     "test": "jest"
   },
   "dependencies": {
-    "@frogpond/event-type": "workspace:*"
+    "@frogpond/event-type": "workspace:*",
+    "@frogpond/launch-arguments": "workspace:*"
   },
   "peerDependencies": {
     "delay": "^7.0.0",

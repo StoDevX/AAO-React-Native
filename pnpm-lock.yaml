@@ -476,6 +476,9 @@ importers:
       '@frogpond/event-type':
         specifier: workspace:*
         version: link:../event-type
+      '@frogpond/launch-arguments':
+        specifier: workspace:*
+        version: link:../launch-arguments
       delay:
         specifier: ^7.0.0
         version: 7.0.0
@@ -809,6 +812,9 @@ importers:
 
   modules/open-url:
     dependencies:
+      '@frogpond/launch-arguments':
+        specifier: workspace:*
+        version: link:../launch-arguments
       expo-web-browser:
         specifier: ~57.0.2
         version: 57.0.2(expo@57.0.19)(react-native@0.86.3)

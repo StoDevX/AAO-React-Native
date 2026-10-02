@@ -8,7 +8,9 @@
   "scripts": {
     "test": "jest"
   },
-  "dependencies": {},
+  "dependencies": {
+    "@frogpond/launch-arguments": "workspace:*"
+  },
   "peerDependencies": {
     "expo-web-browser": "~57.0.2",
     "react-native": "catalog:"

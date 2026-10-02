@@ -1,6 +1,8 @@
 import {Linking} from 'react-native'
 import * as WebBrowser from 'expo-web-browser'
+import {isChaos} from '@frogpond/launch-arguments'
 import * as storage from '../../source/lib/storage'
+import {reportOutOfApp} from '../../source/chaos/findings'
 
 /** Hands `url` to iOS, resolving to whether anything opened it. */
 async function genericOpen(url: string): Promise<boolean> {
@@ -49,6 +51,12 @@ const WEB_SCHEME = /^https?:/iu
  * in lowercase, so it gets the scheme lowercased.
  */
 export async function openUrl(url: string): Promise<boolean> {
+	// A chaos run taps at random; it must not dial, email or browse for real.
+	if (isChaos) {
+		reportOutOfApp(url)
+		return false
+	}
+
 	let webScheme = WEB_SCHEME.exec(url)?.[0]
 	if (webScheme && (await storage.getInAppLinkPreference())) {
 		return launchBrowser(webScheme.toLowerCase() + url.slice(webScheme.length))
