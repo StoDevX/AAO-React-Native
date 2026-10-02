@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 // Runs the chaos monkey against a booted simulator and collects what it found
-// into logs/chaos/<seed>/. See the Chaos section of AGENTS.md.
+// into logs/chaos/<seed>/. See the Chaos Runs section of AGENTS.md.
 
 import {copyFileSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync} from 'node:fs'
 import {join} from 'node:path'

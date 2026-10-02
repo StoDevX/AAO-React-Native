@@ -239,6 +239,49 @@ runs the Messenger UI tests against the live paper with `--record-fixtures`
 and writes every fetch they made. It writes nothing if the tests fail. With
 more than one simulator booted, name one with `SIMULATOR_UDID=<udid>`.
 
+### Chaos Runs
+
+`mise run chaos` drives the app at random on a booted simulator while every
+network request may be slowed, failed, emptied or corrupted, and stops at the
+first native crash, JS fatal, unhandled rejection, error screen, or hang.
+
+```bash
+TEST_RUNNER_AAO_JS_LOCATION=localhost:<port> mise run chaos -- --seed 1234 --duration 10m
+mise run chaos -- --replay logs/chaos/1234     # same seed, recorded responses
+```
+
+It needs `TEST_RUNNER_AAO_JS_LOCATION` (a running Metro) or
+`TEST_RUNNER_AAO_JS_EMBEDDED`, and `SIMULATOR_UDID` when more than one
+simulator is booted. `--steps`, `--duration` (`90s`, `10m`, `1h`), and
+`--fault-rate` bound and tune a run; `--prebuilt` skips the build; a replay
+takes its seed from its directory's own name, so `--seed` only matters for a
+fresh run. The run exits 0 when it found nothing, 1 when it found
+something — the test failed after starting, or the app recorded a fatal, an
+unhandled rejection, or a replay divergence in `chaos-findings.jsonl` — and 2
+when it never started.
+
+Each run writes `logs/chaos/<seed>/`: the step log, and a screenshot on
+failure, among the `attachments/`; every response the app received in
+`chaos-tape.jsonl`; and what the probe saw in `chaos-findings.jsonl`. A replay
+answers requests from the tape — ignoring whatwg-fetch's `_=<timestamp>`
+cache-buster when matching a request to one it recorded — so it reproduces
+most findings, but timing and anything outside JS `fetch` (images, WebViews,
+map tiles) can still differ; the run says at which step it diverged.
+
+A chaos launch passes `--chaos`, not `--uitesting`, so features fetch live.
+Under it the app never opens a URL, composes an email, or adds a calendar
+event — `openUrl`, `composeEmail`, `addToCalendar`, and every direct
+`Linking.openURL` call are each guarded — and it never reaches the OleCard
+sign-in or PaperCut; Sentry is off. The monkey dismisses any system alert
+after each step, so a permission prompt can't stall it. The oracle's beacon
+view sits at opacity 0.02, not 0, because iOS drops a fully transparent view
+from the accessibility tree XCUITest reads.
+
+`.github/workflows/chaos.yml` runs three seeds nightly and lists each
+distinct finding in its job summary. It never gates a pull request. The
+`ChaosCanaryTests` in the ordinary UI test shards prove the oracles can still
+see. Run `mise run chaos-routes` after adding a route.
+
 ## Agent Workflow
 
 **Session startup:** Always run `mise run agent:setup` at the start of every session. This installs dependencies and bundles data files.

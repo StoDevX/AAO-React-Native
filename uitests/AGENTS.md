@@ -20,6 +20,7 @@ bundle. To drive the app by hand instead of asserting on it, see
 | `UITestCase.swift` | Base class: launch arguments, fresh state, `app` |
 | `TestIdentifiers.swift` | Every identifier and label string, shared with the app |
 | `XCUITestHelpers.swift` | `XCUIApplication`/`XCUIElement` query extensions |
+| `Chaos/*.swift` | The chaos monkey (`mise run chaos`), its oracles, its canaries, and the generated route list |
 
 ## Conventions
 
