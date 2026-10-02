@@ -170,6 +170,8 @@ describe('IssueGrid', () => {
 		// down to a row of its own, so it is built again.
 		expect(tileEvents.mounts).not.toContainEqual(expect.stringMatching(/^April 29, 2026/u))
 		expect(tileEvents.mounts).toContainEqual(expect.stringMatching(/^March 25, 2026/u))
+		// The old top, photo-less, now asks for its lead's words, and the new top for its stories.
+		await waitForQueriesToSettle(queryClient)
 	})
 
 	test('draws again only the tile of the issue a story was opened from', async () => {

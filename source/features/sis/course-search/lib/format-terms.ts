@@ -1,7 +1,4 @@
-import groupBy from 'lodash/groupBy'
-import sortBy from 'lodash/sortBy'
-import mapValues from 'lodash/mapValues'
-import toPairs from 'lodash/toPairs'
+import {groupBy, sortBy} from '@frogpond/collections'
 
 //example: [20171,20173,20154,20153] -> "17/18: Fall/Spr, "15/16: Spr/Sum1""
 
@@ -9,12 +6,11 @@ export function formatTerms(terms: Array<number>): string {
 	let sortedTerms = sortBy(terms)
 	let formattedTerms = sortedTerms.map((term) => parseTermAbbrev(term.toString()))
 	let groupedTerms = groupBy(formattedTerms, (term) => term.year)
-	let groupedDescriptions = mapValues(groupedTerms, (abbreviatedTerms) => {
-		let semesters = abbreviatedTerms.map((term) => term.semester)
-		return semesters.join('/')
-	})
-	let finalDescription = toPairs(groupedDescriptions)
-		.map((year) => year.join(': '))
+	let finalDescription = Object.entries(groupedTerms)
+		.map(
+			([year, abbreviatedTerms]) =>
+				`${year}: ${abbreviatedTerms.map((term) => term.semester).join('/')}`,
+		)
 		.join(', ')
 	return finalDescription
 }

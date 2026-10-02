@@ -94,9 +94,6 @@ importers:
       '@frogpond/badge':
         specifier: workspace:*
         version: link:modules/badge
-      '@frogpond/button':
-        specifier: workspace:*
-        version: link:modules/button
       '@frogpond/campus-search-bar':
         specifier: workspace:*
         version: link:modules/campus-search-bar
@@ -106,6 +103,9 @@ importers:
       '@frogpond/ccc-jobs':
         specifier: workspace:*
         version: link:modules/ccc-jobs
+      '@frogpond/collections':
+        specifier: workspace:*
+        version: link:modules/collections
       '@frogpond/colors':
         specifier: workspace:*
         version: link:modules/colors
@@ -160,6 +160,9 @@ importers:
       '@frogpond/place-card-header':
         specifier: workspace:*
         version: link:modules/place-card-header
+      '@frogpond/quick-actions':
+        specifier: workspace:*
+        version: link:modules/quick-actions
       '@frogpond/selectable-text':
         specifier: workspace:*
         version: link:modules/selectable-text
@@ -304,9 +307,6 @@ importers:
       ky:
         specifier: 2.1.0
         version: 2.1.0
-      lodash:
-        specifier: 4.18.1
-        version: 4.18.1
       moment:
         specifier: 2.31.0
         version: 2.31.0
@@ -410,9 +410,6 @@ importers:
       '@types/jest':
         specifier: 30.0.0
         version: 30.0.0
-      '@types/lodash':
-        specifier: 4.17.25
-        version: 4.17.25
       '@types/react':
         specifier: 19.2.18
         version: 19.2.18
@@ -516,28 +513,6 @@ importers:
         specifier: 'catalog:'
         version: 0.86.3(patch_hash=6ca2e1225f38672b073b92b9d13f24feebbe9e37ba67708a3f1569275ce99191)(@babel/core@7.29.7)(@react-native/jest-preset@0.86.3)(@types/react@19.2.18)(react@19.2.3)(supports-color@8.1.1)
 
-  modules/button:
-    dependencies:
-      '@frogpond/colors':
-        specifier: workspace:*
-        version: link:../colors
-      lodash:
-        specifier: 4.18.1
-        version: 4.18.1
-      react:
-        specifier: 'catalog:'
-        version: 19.2.3
-      react-native:
-        specifier: 'catalog:'
-        version: 0.86.3(patch_hash=6ca2e1225f38672b073b92b9d13f24feebbe9e37ba67708a3f1569275ce99191)(@babel/core@7.29.7)(@react-native/jest-preset@0.86.3)(@types/react@19.2.18)(react@19.2.3)(supports-color@8.1.1)
-      react-native-button:
-        specifier: 3.1.0
-        version: 3.1.0(react-native@0.86.3)
-    devDependencies:
-      '@types/react-native-button':
-        specifier: 3.0.5
-        version: 3.0.5(@babel/core@7.29.7)(@react-native/jest-preset@0.86.3)(react@19.2.3)(supports-color@8.1.1)
-
   modules/campus-search-bar: {}
 
   modules/ccc-calendar:
@@ -600,6 +575,8 @@ importers:
         specifier: 4.6.5
         version: 4.6.5
 
+  modules/collections: {}
+
   modules/colors:
     dependencies:
       tinycolor2:
@@ -626,6 +603,9 @@ importers:
 
   modules/event-list:
     dependencies:
+      '@frogpond/collections':
+        specifier: workspace:*
+        version: link:../collections
       '@frogpond/colors':
         specifier: workspace:*
         version: link:../colors
@@ -641,9 +621,6 @@ importers:
       '@frogpond/time-format':
         specifier: workspace:*
         version: link:../time-format
-      lodash:
-        specifier: 4.18.1
-        version: 4.18.1
       moment-timezone:
         specifier: ^0.6.4
         version: 0.6.4
@@ -668,6 +645,9 @@ importers:
       '@expo/ui':
         specifier: 57.0.14
         version: 57.0.14(patch_hash=bcdd8e1eab405affdc5186e746347a1b0d656a6e945dd2ff386d8950fb36cb8f)(@babel/core@7.29.7)(expo@57.0.19)(react-native-worklets@0.10.1)(react-native@0.86.3)(react@19.2.3)
+      '@frogpond/collections':
+        specifier: workspace:*
+        version: link:../collections
       '@frogpond/colors':
         specifier: workspace:*
         version: link:../colors
@@ -677,9 +657,6 @@ importers:
       '@frogpond/toolbar':
         specifier: workspace:*
         version: link:../toolbar
-      lodash:
-        specifier: 4.18.1
-        version: 4.18.1
       react:
         specifier: 'catalog:'
         version: 19.2.3
@@ -841,6 +818,8 @@ importers:
 
   modules/place-card-header: {}
 
+  modules/quick-actions: {}
+
   modules/selectable-text: {}
 
   modules/separator:
@@ -929,9 +908,6 @@ importers:
 
   modules/use-debounce:
     dependencies:
-      lodash:
-        specifier: 4.18.1
-        version: 4.18.1
       react:
         specifier: 'catalog:'
         version: 19.2.3
@@ -2338,9 +2314,6 @@ packages:
     resolution: {integrity: sha512-eYIJ0es967+tePBFQDnl/gidVFxLns3fnbiK6rxscQrGodvuUO6hwxpQnfNynJ8MjbbndImXihXjcnJdc7SzJg==}
     engines: {node: ^20.19.4 || ^22.13.0 || ^24.3.0 || >= 25.0.0}
 
-  '@react-native/normalize-color@2.1.0':
-    resolution: {integrity: sha512-Z1jQI2NpdFJCVgpY+8Dq/Bt3d+YUi1928Q+/CZm/oh66fzM0RUl54vvuXlPJKybH4pdCZey1eDTPaLHkMPNgWA==}
-
   '@react-native/normalize-colors@0.86.3':
     resolution: {integrity: sha512-Cv3CDkprb67GrzuaS9BGbBJC/6G4lIw3nyKOHRKTqTTum4bn37y5+R0Z04L8mcbQN85eEohNrRwb7IOM4j6uvg==}
 
@@ -2555,14 +2528,8 @@ packages:
   '@types/json-schema@7.0.15':
     resolution: {integrity: sha512-5+fP8P8MFNC+AyZCDxrB2pkZFPGzqQWUzpSeuuVLvm8VMcorNYavBqoFcxK8bQz4Qsbn4oUEEem4wDLfcysGHA==}
 
-  '@types/lodash@4.17.25':
-    resolution: {integrity: sha512-+K1NIO8I+F9/wNulfVvu23QYd0Pe9/OCqRrim4NoYIf1VoEDL90Ve4ClzpyqBLc7NpGGWRvYNCKZ1BE/Jpf8dQ==}
-
   '@types/node@26.6.2':
     resolution: {integrity: sha512-X1P21scMv4zGKLYqjdGjaKa7COa0RKVYYZZN/NfvLQ1JegxFhdhpZG/Lyn8AXx6CDUavKAd11v6BvfpkDByK8g==}
-
-  '@types/react-native-button@3.0.5':
-    resolution: {integrity: sha512-yZjWVBgNVRb93b/UEAfcHRWliYnfjUedoU76OwLsoy5msTacniPEhXLGu5zg9FGqzaa4VfsqCO7vOfiigRFzBQ==}
 
   '@types/react-reconciler@0.33.0':
     resolution: {integrity: sha512-HZOXsKT0tGI9LlUw2LuedXsVeB88wFa536vVL0M6vE8zN63nI+sSr1ByxmPToP5K5bukaVscyeCJcF9guVNJ1g==}
@@ -3312,9 +3279,6 @@ packages:
   depd@2.0.0:
     resolution: {integrity: sha512-g7nH6P6dyDioJogAAGprGpCtVImJhpPk/roCzdb3fIh61/s/nPsfR6onyMwkCAR/OlC3yBC0lESvUoQEAssIrw==}
     engines: {node: '>= 0.8'}
-
-  deprecated-react-native-prop-types@3.0.2:
-    resolution: {integrity: sha512-JoZY5iNM+oJlN2Ldpq0KSi0h3Nig4hlNJj5nWzWp8eL3uikMCvHwjSGPitwkEw0arL5JFra5nuGJQpXRbEjApg==}
 
   destroy@1.2.0:
     resolution: {integrity: sha512-2sJGJTaXIIaR1w4iJSNoN0hnMY7Gpc/n8D4qSCJw8QqFWXf7cuAgnEHxBpweaVcPevC2l3KpjYCx3NypQQgaJg==}
@@ -4228,9 +4192,6 @@ packages:
   lodash.throttle@4.1.1:
     resolution: {integrity: sha512-wIkUCfVKpVsWo3JSZlc+8MB5it+2AN5W8J7YVMST30UrvcQNZ1Okbj+rbVniijTWE6FGYy4XJq/rHkas8qJMLQ==}
 
-  lodash@4.18.1:
-    resolution: {integrity: sha512-dMInicTPVE8d1e5otfwmmjlxkZoUpiVLwyeTdUsi/Caj/gfzzblBcCE5sRHV/AsjuCmxWrte2TNGSYuCeCq+0Q==}
-
   log-symbols@2.2.0:
     resolution: {integrity: sha512-VeIAFslyIerEJLXHziedo2basKbMKtTw3vfn5IzG0XTjhAVEJyNHnL2p7vc+wBDSdQuUpNw3M2u6xb9QsAY5Eg==}
     engines: {node: '>=4'}
@@ -4442,10 +4403,6 @@ packages:
     resolution: {integrity: sha512-aH9RkoZc7w/90HBamFxTw8ZLFr05wXS+iOnvmrgo53Ep8Pyrm5FieQSaPIVROkfFVQISeD/zo92fes26TOwe+A==}
     engines: {node: ^20.19.4 || ^22.13.0 || ^24.3.0 || >= 25.0.0}
 
-  object-assign@4.1.1:
-    resolution: {integrity: sha512-rJgTQnkUnH1sFw8yT6VSU3zD3sWmu6sZhIseY8VX+GRu3P6F7Fu+JNDoXfklElbLJSnc3FUQHVe4cU5hj+BcUg==}
-    engines: {node: '>=0.10.0'}
-
   on-finished@2.4.1:
     resolution: {integrity: sha512-oVlzkg3ENAhCk2zdv7IJwd/QUD4z2RxRwpkcGY8psCVcCYZNq4wYnVWALHM+brtuJjePWiYF/ClmuDr8Ch5+kg==}
     engines: {node: '>= 0.8'}
@@ -4609,9 +4566,6 @@ packages:
     resolution: {integrity: sha512-NxNv/kLguCA7p3jE8oL2aEBsrJWgAakBpgmgK6lpPWV+WuOmY6r2/zbAVnP+T8bQlA0nzHXSJSJW0Hq7ylaD2Q==}
     engines: {node: '>= 6'}
 
-  prop-types@15.8.1:
-    resolution: {integrity: sha512-oj87CgZICdulUohogVAR7AjlC0327U4el4L6eAvOqCeudMDVU0NThNaV+b9Df4dXgSP1gXMTnPdhfe/2qDH5cg==}
-
   punycode@2.3.1:
     resolution: {integrity: sha512-vYt7UD1U9Wg6138shLtLOvdAu+8DsC/ilFtEVHcH+wydcSpNE20AfSOduf6MkRFahL5FY7X1oU7nKVZFtfq8Fg==}
     engines: {node: '>=6'}
@@ -4658,11 +4612,6 @@ packages:
 
   react-is@19.3.0:
     resolution: {integrity: sha512-UpMYezM4v5/18F28aC66AEsjXIgE02kyEMH6yLdgLXu/UTfa1Ntwck/nNLrbqJsEXW7gPb0coNO9FQse9WTovA==}
-
-  react-native-button@3.1.0:
-    resolution: {integrity: sha512-z/KUH1zXHTYoGfldGRm8DKTdYO/5DgNYJDdi/kRdDesb7rx9PiM1ZMq1PUjT+/B0uy/BltJnSLhLCvs4pTL7uQ==}
-    peerDependencies:
-      react-native: '*'
 
   react-native-change-icon@5.0.0:
     resolution: {integrity: sha512-pq2SlMeaRlgEDDlJQL2dAa2P6YpgXpKMmZ4CsXHRnmXBVjpG7SBSI9tbP85grxqZSj6b6EBuP9u1oyfZm2b+JA==}
@@ -7053,8 +7002,6 @@ snapshots:
 
   '@react-native/js-polyfills@0.86.3': {}
 
-  '@react-native/normalize-color@2.1.0': {}
-
   '@react-native/normalize-colors@0.86.3': {}
 
   '@react-native/virtualized-lists@0.86.3(@types/react@19.2.18)(react-native@0.86.3)(react@19.2.3)':
@@ -7304,23 +7251,9 @@ snapshots:
 
   '@types/json-schema@7.0.15': {}
 
-  '@types/lodash@4.17.25': {}
-
   '@types/node@26.6.2':
     dependencies:
       undici-types: 8.9.0
-
-  '@types/react-native-button@3.0.5(@babel/core@7.29.7)(@react-native/jest-preset@0.86.3)(react@19.2.3)(supports-color@8.1.1)':
-    dependencies:
-      '@types/react': 19.2.18
-      react-native: 0.86.3(patch_hash=6ca2e1225f38672b073b92b9d13f24feebbe9e37ba67708a3f1569275ce99191)(@babel/core@7.29.7)(@react-native/jest-preset@0.86.3)(@types/react@19.2.18)(react@19.2.3)(supports-color@8.1.1)
-    transitivePeerDependencies:
-      - '@babel/core'
-      - '@react-native/jest-preset'
-      - bufferutil
-      - react
-      - supports-color
-      - utf-8-validate
 
   '@types/react-reconciler@0.33.0(@types/react@19.2.18)':
     dependencies:
@@ -8008,12 +7941,6 @@ snapshots:
       unlimited-timeout: 0.1.0
 
   depd@2.0.0: {}
-
-  deprecated-react-native-prop-types@3.0.2:
-    dependencies:
-      '@react-native/normalize-color': 2.1.0
-      invariant: 2.2.4
-      prop-types: 15.8.1
 
   destroy@1.2.0: {}
 
@@ -9082,8 +9009,6 @@ snapshots:
 
   lodash.throttle@4.1.1: {}
 
-  lodash@4.18.1: {}
-
   log-symbols@2.2.0:
     dependencies:
       chalk: 2.4.2
@@ -9373,8 +9298,6 @@ snapshots:
     dependencies:
       flow-enums-runtime: 0.0.6
 
-  object-assign@4.1.1: {}
-
   on-finished@2.4.1:
     dependencies:
       ee-first: 1.1.1
@@ -9564,12 +9487,6 @@ snapshots:
       kleur: 3.0.3
       sisteransi: 1.0.5
 
-  prop-types@15.8.1:
-    dependencies:
-      loose-envify: 1.4.0
-      object-assign: 4.1.1
-      react-is: 16.13.1
-
   punycode@2.3.1: {}
 
   pure-rand@7.0.1: {}
@@ -9610,12 +9527,6 @@ snapshots:
   react-is@18.3.1: {}
 
   react-is@19.3.0: {}
-
-  react-native-button@3.1.0(react-native@0.86.3):
-    dependencies:
-      deprecated-react-native-prop-types: 3.0.2
-      prop-types: 15.8.1
-      react-native: 0.86.3(patch_hash=6ca2e1225f38672b073b92b9d13f24feebbe9e37ba67708a3f1569275ce99191)(@babel/core@7.29.7)(@react-native/jest-preset@0.86.3)(@types/react@19.2.18)(react@19.2.3)(supports-color@8.1.1)
 
   react-native-change-icon@5.0.0(patch_hash=7576d2a458dd256e90b703b84345bf87a19dfa2e3dea523e4691e395dfddfcff)(react-native@0.86.3):
     dependencies:

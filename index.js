@@ -1,4 +1,6 @@
 import './source/polyfills/buffer'
+import './source/polyfills/group-by'
+import './source/polyfills/to-sorted'
 import 'text-encoding-polyfill'
 import 'react-native-url-polyfill/auto'
 import 'expo-router/entry'

@@ -4,8 +4,8 @@ import type {BuildingStatusType} from '../types'
 
 const BG_COLORS: Record<BuildingStatusType, ColorValue> = {
 	Open: c.systemGreen,
-	'Almost Open': c.systemYellow,
-	'Almost Closed': c.systemYellow,
+	'Almost Open': c.systemOrange,
+	'Almost Closed': c.systemOrange,
 	Chapel: c.systemYellow,
 	Closed: c.systemRed,
 }

@@ -10,10 +10,10 @@
   },
   "dependencies": {
     "@expo/ui": "57.0.14",
+    "@frogpond/collections": "workspace:*",
     "@frogpond/colors": "workspace:*",
     "@frogpond/sheet-section": "workspace:*",
-    "@frogpond/toolbar": "workspace:*",
-    "lodash": "4.18.1"
+    "@frogpond/toolbar": "workspace:*"
   },
   "peerDependencies": {
     "react": "catalog:",

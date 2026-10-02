@@ -25,7 +25,7 @@ function isCustomSymbol(name: SymbolName): name is CustomSymbol {
 /** The `Image` props that draw `name`, wherever its artwork lives. */
 export function iconImage(
 	name: SymbolName,
-): Pick<ImageProps, 'systemName'> | Pick<ImageProps, 'assetName'> {
+): {systemName: NonNullable<ImageProps['systemName']>} | {assetName: CustomSymbol} {
 	return isCustomSymbol(name) ? {assetName: name} : {systemName: name}
 }
 

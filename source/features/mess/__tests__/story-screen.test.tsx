@@ -12,7 +12,7 @@ import categories from './fixtures/categories.json'
 import posts from './fixtures/posts.json'
 
 import {queryClient as appQueryClient} from '../../../init/tanstack-query'
-import {flushQueryNotifications} from '../../../testing/query-notifications'
+import {flushQueryNotifications, waitForQueriesToSettle} from '../../../testing/query-notifications'
 import {StoryScreen} from '../story-screen'
 import {messKeys} from '../lib/keys'
 import {useMessStore} from '../store'
@@ -385,6 +385,8 @@ describe('StoryScreen', () => {
 		expect(fetchedHrefs()).toContain(
 			'https://olafmessenger.com/wp-json/wp/v2/posts/36859?_embed=true',
 		)
+		// The story's writer has no cached profile, so its header and card fetch one.
+		await waitForQueriesToSettle(queryClient)
 	})
 
 	test('keeps a story from outside the feed when a refetch of the feed fails', async () => {

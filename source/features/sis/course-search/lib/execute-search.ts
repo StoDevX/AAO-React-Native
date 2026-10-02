@@ -1,9 +1,7 @@
 import type {CourseType as Course} from '../../../../lib/course-search'
 import keywordSearch from 'keyword-search'
 import {deptNum} from './format-dept-num'
-import groupBy from 'lodash/groupBy'
-import sortBy from 'lodash/sortBy'
-import toPairs from 'lodash/toPairs'
+import {groupBy, sortBy} from '@frogpond/collections'
 
 export function applySearch(query: string, course: Course): boolean {
 	let {name} = course
@@ -43,7 +41,7 @@ export function sortAndGroupResults(results: Array<Course>): SortedAgainType[] {
 	let sorted: Array<Course> = sortBy(results, (course) => deptNum(course))
 	let byTerm = groupBy(sorted, (r) => r.term)
 
-	let forSectionList = toPairs(byTerm).map(([key, value]) => ({
+	let forSectionList = Object.entries(byTerm).map(([key, value]) => ({
 		title: key,
 		data: value,
 	}))

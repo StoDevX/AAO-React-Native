@@ -27,7 +27,7 @@ import {cardKicker, sectionCredit} from './lib/byline'
 import {TAP_TARGET} from './lib/glyph-grid'
 import {datelineText} from './lib/issues'
 import {leadStory, shelvesOf, type Shelf} from './lib/shelves'
-import {Dateline} from './masthead'
+import {Masthead} from './masthead'
 import {PageLoading, PageNotice} from './page-notice'
 import {faded, ink, messRed, wash} from './palette'
 import {messIssueOptions} from './query'
@@ -105,7 +105,7 @@ export function IssuePage({
 	let dateline = datelineText(issue)
 	return (
 		<>
-			<Dateline text={dateline} />
+			<Masthead dateline={dateline} heading="dateline" />
 			{stories.data ? (
 				<IssueStories
 					columnWidth={columnWidth}

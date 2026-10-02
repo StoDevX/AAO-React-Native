@@ -131,6 +131,17 @@ describe('IssuePage', () => {
 		expect(more).toBeGreaterThan(opinions)
 	})
 
+	// The issue view's bar has no title, so the dateline is the heading that names the issue; the
+	// nameplate above it is not a heading too, or the page would open on two in a row.
+	test("opens under the paper's nameplate, with its dateline as the page's first heading", async () => {
+		queryClient.setQueryData(messKeys.issue(ISSUE), STORIES)
+		await renderIssue()
+
+		expect(screen.getByText('The Olaf Messenger')).toBeTruthy()
+		expect(screen.queryByRole('header', {name: 'The Olaf Messenger'})).toBeNull()
+		expect(screen.getAllByRole('header')[0]).toHaveTextContent('April 29, 2026 · 5 stories')
+	})
+
 	// The issue's tile names the lead from the light fields; the page must agree
 	// even when the full stories would pick another, as when a lead's photo fails to embed.
 	test('leads with the story the issue list named, and leaves it off its shelf', async () => {

@@ -18,17 +18,16 @@ import {faded, ink} from './palette'
 export const DATELINE_ID = 'mess-dateline'
 
 /**
- * The paper's name across the top of the front page, where a printed paper sets its nameplate. It
- * wraps at a large text size rather than shrinking, since the page scrolls. VoiceOver reads it as
- * the page's heading, the navigation bar having no title of its own.
+ * The paper's name across the top of a page, where a printed paper sets its nameplate. It wraps at
+ * a large text size rather than shrinking, since the page scrolls.
  */
 const PAPER_NAME = [
 	font({textStyle: 'largeTitle', design: 'serif', weight: 'bold'}),
 	foregroundStyle(ink),
 	multilineTextAlignment('center'),
 	frame({maxWidth: Infinity}),
-	accessibilityAddTraits(['isHeader']),
 ]
+const HEADING_PAPER_NAME = [...PAPER_NAME, accessibilityAddTraits(['isHeader'])]
 /** The paper's castle in the nameplate's place, read by VoiceOver as the paper's name. */
 const PAPER_CASTLE = [
 	font({textStyle: 'largeTitle'}),
@@ -38,8 +37,8 @@ const PAPER_CASTLE = [
 	// and still scrolls away with the page.
 	padding({top: -68}),
 	accessibilityLabel(OLAF_MESSENGER.title),
-	accessibilityAddTraits(['isHeader']),
 ]
+const HEADING_PAPER_CASTLE = [...PAPER_CASTLE, accessibilityAddTraits(['isHeader'])]
 /** The rule under the castle, drawn up toward it from where the stack would put it. */
 const RULE_UNDER_CASTLE = [padding({top: -6})]
 /** Set in capitals by SwiftUI, so VoiceOver reads the words rather than spelling them. */
@@ -51,32 +50,43 @@ const DATELINE = [
 	frame({maxWidth: Infinity}),
 	accessibilityIdentifier(DATELINE_ID),
 ]
+const HEADING_DATELINE = [...DATELINE, accessibilityAddTraits(['isHeader'])]
 
 /** The line that says what a page holds, across the column: "April 29, 2026 · 35 stories". */
-export function Dateline({text}: {text: string}): React.ReactNode {
-	return <Text modifiers={DATELINE}>{text}</Text>
+function Dateline({text, isHeading = false}: {text: string; isHeading?: boolean}): React.ReactNode {
+	return <Text modifiers={isHeading ? HEADING_DATELINE : DATELINE}>{text}</Text>
 }
 
 /**
- * The paper's nameplate, or its castle, and a rule under it, then the front page's dateline when
- * the page has one; they scroll with the page.
+ * The paper's nameplate, or its castle, and a rule under it, then the page's dateline when it has
+ * one; they scroll with the page. The navigation bar has no title, so `heading` names the line
+ * VoiceOver reads as the page's heading: the nameplate on the front page, and on an issue's page the
+ * dateline, which names the issue. Only one of them is a heading, so the page does not open on two
+ * in a row.
  */
 export function Masthead({
-	castle,
+	castle = false,
 	dateline,
+	heading = 'nameplate',
 }: {
-	castle: boolean
+	castle?: boolean
 	dateline: string | null
+	heading?: 'nameplate' | 'dateline'
 }): React.ReactNode {
 	return (
 		<VStack spacing={6}>
 			{castle ? (
-				<Image assetName="olaf-messenger-castle" modifiers={PAPER_CASTLE} />
+				<Image
+					assetName="olaf-messenger-castle"
+					modifiers={heading === 'nameplate' ? HEADING_PAPER_CASTLE : PAPER_CASTLE}
+				/>
 			) : (
-				<Text modifiers={PAPER_NAME}>{OLAF_MESSENGER.title}</Text>
+				<Text modifiers={heading === 'nameplate' ? HEADING_PAPER_NAME : PAPER_NAME}>
+					{OLAF_MESSENGER.title}
+				</Text>
 			)}
 			<Divider modifiers={castle ? RULE_UNDER_CASTLE : undefined} />
-			{dateline ? <Dateline text={dateline} /> : null}
+			{dateline ? <Dateline isHeading={heading === 'dateline'} text={dateline} /> : null}
 		</VStack>
 	)
 }

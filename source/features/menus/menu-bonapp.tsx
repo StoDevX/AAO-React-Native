@@ -11,8 +11,6 @@ import type {
 	ProcessedMealType,
 	StationMenuType,
 } from './types'
-import sample from 'lodash/sample'
-import {reduce} from 'lodash'
 import {useMomentTimer} from '@frogpond/timer'
 import {bonAppCafeOptions, bonAppMenuOptions, prepareFood} from './query'
 import {findCafeMessage} from './lib/cafe-message'
@@ -25,6 +23,7 @@ import {formatDate, formatWeekday} from '@frogpond/time-format'
 import type {MealHeaderState} from '@frogpond/food-menu'
 import {usePublishMenuHeader} from './menu-header'
 import {OFFLINE_MESSAGE, menuView} from './lib/menu-view'
+import {sample} from '@frogpond/collections'
 
 const BONAPP_HTML_ERROR_CODE = 'bonapp-html'
 
@@ -65,7 +64,7 @@ const groupByStation = (
 function buildCustomStationMenu(foodItems: MenuItemContainerType): Array<StationMenuType> {
 	// go over the list of all food items, turning it into a mapping
 	// of {StationName: Array<FoodItemId>}
-	let idsGroupedByStation = reduce(foodItems, groupByStation, {})
+	let idsGroupedByStation = Object.values(foodItems).reduce(groupByStation, {})
 
 	// then we make our own StationMenus list
 	let paired: Array<[string, Array<string>]> = Object.entries(idsGroupedByStation)

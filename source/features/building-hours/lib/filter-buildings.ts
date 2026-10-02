@@ -1,5 +1,5 @@
-import deburr from 'lodash/deburr'
 import type {BuildingType} from '../types'
+import {deburr} from '../../../lib/text'
 
 /** Buildings grouped under a heading, as `useGroupedBuildings` returns them. */
 export type BuildingSection = {title: string; data: BuildingType[]}

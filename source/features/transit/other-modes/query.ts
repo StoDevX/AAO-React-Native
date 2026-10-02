@@ -1,10 +1,10 @@
 import {client} from '@frogpond/api'
 import {isUITesting} from '@frogpond/launch-arguments'
 import {queryOptions} from '@tanstack/react-query'
-import {groupBy, toPairs} from 'lodash'
 
 import bundledModes from '../../../../docs/transportation.json'
 import {OtherModeType} from '../types'
+import {groupBy} from '@frogpond/collections'
 
 export const keys = {
 	all: ['transit', 'modes'] as const,
@@ -42,7 +42,7 @@ export function groupOtherModes(
 	modes: OtherModeType[],
 ): Array<{title: string | undefined; data: OtherModeType[]}> {
 	let grouped = groupBy(modes, (m) => m.category)
-	return toPairs(grouped).map(([key, value]) => ({title: key || undefined, data: value}))
+	return Object.entries(grouped).map(([key, value]) => ({title: key || undefined, data: value}))
 }
 
 export const otherModesGroupedOptions = queryOptions({

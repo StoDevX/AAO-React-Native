@@ -10,7 +10,6 @@ import {
 } from '@expo/ui/swift-ui/modifiers'
 import {Stack, useNavigation, useRouter} from 'expo-router'
 import {usePreventRemove} from 'expo-router/react-navigation'
-import noop from 'lodash/noop'
 import {NoticeView} from '@frogpond/notice'
 import * as c from '@frogpond/colors'
 
@@ -52,7 +51,7 @@ export default function DictionaryEditPage(): React.ReactNode {
 			'Discard changes?',
 			'You have made unsaved changes. Are you sure you want to discard them?',
 			[
-				{text: 'Edit', style: 'cancel', onPress: noop},
+				{text: 'Edit', style: 'cancel'},
 				{text: 'Discard', style: 'destructive', onPress: () => navigation.dispatch(data.action)},
 			],
 		)
