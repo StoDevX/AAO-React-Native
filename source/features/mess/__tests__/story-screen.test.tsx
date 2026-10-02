@@ -12,9 +12,11 @@ import categories from './fixtures/categories.json'
 import posts from './fixtures/posts.json'
 
 import {queryClient as appQueryClient} from '../../../init/tanstack-query'
-import {flushQueryNotifications} from '../../../testing/query-notifications'
+import {flushQueryNotifications, waitForQueriesToSettle} from '../../../testing/query-notifications'
+import {AUTHOR_RULE_ID} from '../author-card'
 import {StoryScreen} from '../story-screen'
 import {messKeys} from '../lib/keys'
+import {onePage} from './one-page'
 import {useMessStore} from '../store'
 import {ZODIAC_SIGNS} from '../lib/zodiac'
 import type {MessStory, StaffProfile} from '../types'
@@ -286,20 +288,23 @@ let openInIOS: jest.Spied<typeof Linking.openURL>
 beforeEach(() => {
 	mockIsFocused = true
 	queryClient = new QueryClient({defaultOptions: {queries: {staleTime: Infinity, retry: false}}})
-	queryClient.setQueryData(messKeys.feed, [
-		STORY,
-		ARTWORK,
-		HOROSCOPES,
-		COMIC,
-		POEM,
-		CROSSWORD,
-		PLAYLIST,
-		PAGE_PLAYLIST,
-		RECIPE,
-		PHOTO_SET,
-		EMPTY_PHOTO,
-		SHORT_STORY,
-	])
+	queryClient.setQueryData(
+		messKeys.feed,
+		onePage([
+			STORY,
+			ARTWORK,
+			HOROSCOPES,
+			COMIC,
+			POEM,
+			CROSSWORD,
+			PLAYLIST,
+			PAGE_PLAYLIST,
+			RECIPE,
+			PHOTO_SET,
+			EMPTY_PHOTO,
+			SHORT_STORY,
+		]),
+	)
 	openInIOS = jest.spyOn(Linking, 'openURL').mockResolvedValue(true)
 	useMessStore.setState({lastSign: null})
 	// Ashlyn has no profile; Kenzie has one.
@@ -385,6 +390,8 @@ describe('StoryScreen', () => {
 		expect(fetchedHrefs()).toContain(
 			'https://olafmessenger.com/wp-json/wp/v2/posts/36859?_embed=true',
 		)
+		// The story's writer has no cached profile, so its header and card fetch one.
+		await waitForQueriesToSettle(queryClient)
 	})
 
 	test('keeps a story from outside the feed when a refetch of the feed fails', async () => {
@@ -426,7 +433,7 @@ describe('StoryScreen', () => {
 		// The app's own retry default, which the query must override for a missing story.
 		queryClient.clear()
 		queryClient = new QueryClient({defaultOptions: {queries: {staleTime: Infinity}}})
-		queryClient.setQueryData(messKeys.feed, [STORY])
+		queryClient.setQueryData(messKeys.feed, onePage([STORY]))
 		serve(() => [])
 		await renderStory(1)
 
@@ -459,7 +466,7 @@ describe('StoryScreen', () => {
 		// The client from beforeEach is cleared first; its cache timers would keep Jest running.
 		queryClient.clear()
 		queryClient = new QueryClient({defaultOptions: {queries: {retry: false}}})
-		queryClient.setQueryData(messKeys.feed, [STORY, ARTWORK])
+		queryClient.setQueryData(messKeys.feed, onePage([STORY, ARTWORK]))
 		queryClient.setQueryData(messKeys.profile(423), null)
 		queryClient.setQueryData(messKeys.profile(392), PROFILE)
 		mockManifest.mockReturnValue(new Promise(() => undefined))
@@ -468,6 +475,16 @@ describe('StoryScreen', () => {
 
 		expect(screen.getByText('Cows, Comments and Confessions')).toBeTruthy()
 		expect(mockManifest).not.toHaveBeenCalled()
+		expect(mockBody).not.toHaveBeenCalled()
+	})
+
+	test('reads a story from a later page of the feed without fetching it on its own', async () => {
+		queryClient.setQueryData(messKeys.feed, {pages: [[STORY], [ARTWORK]], pageParams: [1, 2]})
+		mockManifest.mockReturnValue(new Promise(() => undefined))
+		await renderStory(36911)
+		await act(flushQueryNotifications)
+
+		expect(screen.getByText('Cows, Comments and Confessions')).toBeTruthy()
 		expect(mockBody).not.toHaveBeenCalled()
 	})
 
@@ -488,6 +505,33 @@ describe('StoryScreen', () => {
 		await renderStory(36911)
 		expect(screen.getByText('Kenzie is a senior.')).toBeTruthy()
 		expect(screen.queryByText('Ashlyn Wuench', {exact: true})).toBeNull()
+	})
+
+	test('rules off the writers’ cards when one of them has a profile', async () => {
+		await renderStory(36911)
+		expect(screen.getByTestId(AUTHOR_RULE_ID)).toBeTruthy()
+	})
+
+	test('draws no rule under the story when no writer has a profile', async () => {
+		queryClient.setQueryData(messKeys.profile(392), null)
+		queryClient.setQueryData(messKeys.series(SHORT_STORY.id), {
+			title: 'More Microfiction Corner',
+			stories: [NEXT_EPISODE],
+		})
+		await renderStory(28702)
+
+		expect(screen.getByText('More Microfiction Corner')).toBeTruthy()
+		expect(screen.queryByTestId(AUTHOR_RULE_ID)).toBeNull()
+	})
+
+	test('holds the rule back until a profile arrives, rather than drawing one that may go', async () => {
+		queryClient.removeQueries({queryKey: messKeys.profile(423)})
+		queryClient.removeQueries({queryKey: messKeys.profile(392)})
+		mockManifest.mockReturnValue(new Promise(() => undefined))
+		await renderStory(36911)
+
+		expect(screen.getByText('Cows, Comments and Confessions')).toBeTruthy()
+		expect(screen.queryByTestId(AUTHOR_RULE_ID)).toBeNull()
 	})
 
 	test('sets the opening words of the first paragraph apart for small caps', async () => {
@@ -678,7 +722,7 @@ describe('StoryScreen', () => {
 				{type: 'embed', url: 'https://open.spotify.com/embed/artist/4Z8W4fKeB5YxbusRsdQVPb'},
 			],
 		}
-		queryClient.setQueryData(messKeys.feed, [artist])
+		queryClient.setQueryData(messKeys.feed, onePage([artist]))
 		serve(() => '<html><body><p>No player here.</p></body></html>')
 		await renderStory(artist.id)
 

@@ -89,3 +89,33 @@ export function simulateFocus(): void {
 		focusEffects.set(effect, effect())
 	}
 }
+
+/// What every stand-in hook's actions do: nothing.
+const noop = (): void => undefined
+
+/// The hooks a screen reads, answering as a screen focused at the top of a
+/// stack with no params would. They do nothing, so every test can render a
+/// screen without a navigator; a test that checks where a screen goes, or what
+/// it was given, replaces the hook in its own `jest.mock('expo-router')`.
+export function useRouter(): Record<
+	'navigate' | 'push' | 'replace' | 'back' | 'dismiss',
+	() => void
+> {
+	return {navigate: noop, push: noop, replace: noop, back: noop, dismiss: noop}
+}
+
+export function useNavigation(): Record<'goBack' | 'dispatch' | 'setOptions', () => void> {
+	return {goBack: noop, dispatch: noop, setOptions: noop}
+}
+
+export function useLocalSearchParams(): Record<string, string> {
+	return {}
+}
+
+export function useIsFocused(): boolean {
+	return true
+}
+
+export function useSegments(): string[] {
+	return []
+}

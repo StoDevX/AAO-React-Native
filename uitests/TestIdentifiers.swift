@@ -522,7 +522,7 @@ struct TestIdentifiers {
 		/// A section the view menu offers, as source/features/mess/lib/posts.ts names it.
 		static let newsSection = "News"
 
-		/// The paper's name, set as the front page's masthead by source/features/mess/masthead.tsx.
+		/// The paper's name: Latest's masthead, and By Issue's castle's label, in source/features/mess/masthead.tsx.
 		static let paperName = "The Olaf Messenger"
 
 		/// A page's dateline, in source/features/mess/masthead.tsx.
@@ -530,6 +530,11 @@ struct TestIdentifiers {
 
 		/// The lead story, and every card on a shelf, in source/features/mess/issue-page.tsx.
 		static let leadStory = "mess-lead-story"
+		static let storyCard = "mess-story-card"
+
+		/// Each row of the More grid, the stories from no print section, in
+		/// source/features/mess/issue-page.tsx.
+		static let moreGridRow = "mess-more-grid-row"
 
 		/// A section's column chips, each labelled with its column, in source/features/mess/section-page.tsx.
 		static let columnChip = "mess-column-chip"
@@ -586,6 +591,10 @@ struct TestIdentifiers {
 		static let imageViewerClose = "mess-image-viewer-close"
 		static let imageViewerCloseLabel = "Close"
 
+		/// The zoom viewer's share button, in source/features/mess/image-viewer.tsx.
+		static let imageViewerShare = "mess-image-viewer-share"
+		static let imageViewerShareLabel = "Share"
+
 		/// The picture inside the zoom viewer, in source/features/mess/image-viewer.tsx.
 		static let imageViewerImage = "mess-image-viewer-image"
 
@@ -625,6 +634,20 @@ struct TestIdentifiers {
 			"KSTO 93.1 FM logo, dumpster fire",
 			"KSTO 93.1 FM logo, narwhal",
 		]
+	}
+
+	// MARK: - Quick Actions
+
+	enum QuickActions {
+		/// The picker's accessibility identifier, set in app/settings/quick-actions.tsx.
+		static let screen = "screen-quick-actions"
+		static let settingsRow = "Home Screen Quick Actions"
+		static let reset = "Reset to Defaults"
+		/// DEFAULT_QUICK_ACTIONS in source/features/quick-actions/destinations.ts.
+		static let defaults = ["Stav Menu", "Cage Menu", "Olaf Messenger", "Transit"]
+		static let cageMenu = "Cage Menu"
+		/// The tab Cage Menu opens, as Menus labels it.
+		static let cageTab = "The Cage"
 	}
 
 	// MARK: - Settings

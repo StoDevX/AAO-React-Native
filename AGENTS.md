@@ -6,7 +6,7 @@ All About Olaf is a React Native mobile app for the St. Olaf College community. 
 
 - **React Native 0.86.2** with **TypeScript**
 - **Expo Router 57** for navigation — file-based, with `experiments.typedRoutes` set in `app.config.ts`
-- **Redux Toolkit** for global state, **React Query 5** for server state
+- **Zustand 5** for feature state, **Redux Toolkit** for the older shared slices, **React Query 5** for server state
 - **Jest** + **React Native Testing Library** for testing
 - **Xcode Cloud** for builds and TestFlight submissions
 - Monorepo with internal packages in `modules/`
@@ -37,7 +37,7 @@ change was needed rather than restating the diff.
 
 - `source/features/` holds each feature's non-route code (e.g., `dining/`, `directory/`, `calendar/`); `app/` route files are the screens themselves
 - Barrel exports (`index.ts`) for clean imports
-- State: React Query for server state, Redux Toolkit for global app state, `useState` for component-local
+- State: React Query for server state; a Zustand store in the feature's own `store.ts` for state that feature owns, persisted to AsyncStorage through `persist` when it must survive a relaunch; `useState` for component-local. Redux Toolkit holds the older shared slices in `source/redux/parts/` — don't add new state there
 - iOS is the only supported platform
 - Email via `sendEmail`, phone via `callPhone` components
 - Error logging via Sentry integration
@@ -160,6 +160,27 @@ The task needs Xcode, whose Icon Composer renders the previews, and runs them
 through oxipng. A new alternate also needs an entry in `ALTERNATE_ICONS` in
 the plugin, in `appIcons` in `images/icons/index.ts`, and in the picker's list
 in `source/features/settings/screens/change-icon.tsx`.
+
+### Custom Symbols
+
+A glyph iOS does not ship, like the Olaf Messenger's castle, is a custom SF
+Symbol: a `.symbolset` in `assets/symbols/`, which
+`plugins/with-custom-symbols.ts` copies into the asset catalog at prebuild.
+Name it in `CUSTOM_SYMBOLS` in `source/features/views.ts`, and `iconImage`
+draws it by `assetName` rather than `systemName`.
+
+`mise run trace-symbol -- <image> <name>` traces a logo into one, with
+ImageMagick and potrace (`brew install imagemagick potrace`). The image's dark
+pixels become the symbol, so a white mark on a dark disc comes out as a disc
+with the mark cut out. The Messenger's came from
+`https://olafmessenger.com/wp-content/uploads/2021/02/Logo_white-e1713492149523.png`.
+
+The template holds `Regular-S`, `Regular-M` and `Regular-L`. Other weights
+fall back to Regular, but a missing scale does not: without `Regular-L`, the
+home screen's `imageScale('large')` finds no image and draws nothing, with only
+a SwiftUI fault in the log to say so. Xcode's asset compiler also accepts a
+malformed template without a word, so check a new or edited symbol on the
+simulator, or validate it in the SF Symbols app.
 
 ### Local Server Discovery
 

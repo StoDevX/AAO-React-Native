@@ -221,7 +221,7 @@ run = "jest"
 [tasks."test:node"]
 description = "Run the node:test tests beside their subjects"
 env = { TZ = "America/Chicago" }
-run = 'node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test "scripts/*.test.mjs" "plugins/*.test.ts" "source/database/*.test.ts" "source/database/calendar/*.test.ts" "modules/event-list/*.test.ts" "modules/ccc-calendar/*.test.ts"'
+run = 'node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test "scripts/*.test.mjs" "plugins/*.test.ts" "source/database/*.test.ts" "source/database/calendar/*.test.ts" "source/database/search/*.test.ts" "source/database/courses/*.test.ts" "modules/event-list/*.test.ts" "modules/ccc-calendar/*.test.ts"'
 
 # --- Data ---
 
@@ -249,6 +249,10 @@ run = "node scripts/scrape-bonapp.mjs"
 [tasks.icons]
 description = "Render the in-app icon previews from assets/*.icon"
 run = "node scripts/make-icons.mjs"
+
+[tasks."trace-symbol"]
+description = "Trace a logo into a custom SF Symbol in assets/symbols/"
+run = "node scripts/trace-symbol.mjs"
 
 # Needs the network, so it stays out of validate-data, as scrape-dining does.
 [tasks."update-map-fixtures"]

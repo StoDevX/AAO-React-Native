@@ -34,13 +34,16 @@ export function PhotoViewerModal({uri, label, visible, onClose}: Props): React.R
 			<Modal
 				animationType="fade"
 				onRequestClose={onClose}
-				presentationStyle="fullScreen"
+				// Over the map, not in place of it, so a drag that closes the viewer
+				// shows the card through its fading black.
+				transparent={true}
 				visible={visible}
 			>
 				<ZoomImageViewer
 					closeTestID="map-photo-viewer-close"
 					image={{uri, accessibilityLabel: label, testID: 'map-photo-viewer-image'}}
 					onClose={onClose}
+					shareTestID="map-photo-viewer-share"
 				/>
 			</Modal>
 		</RNHostView>

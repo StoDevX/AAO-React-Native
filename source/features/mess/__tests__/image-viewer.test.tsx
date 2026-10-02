@@ -6,6 +6,7 @@ import {QueryClient, QueryClientProvider} from '@tanstack/react-query'
 import {queryClient as appQueryClient} from '../../../init/tanstack-query'
 import {ImageViewer} from '../image-viewer'
 import {messKeys} from '../lib/keys'
+import {onePage} from './one-page'
 import type {MessStory} from '../types'
 
 jest.mock('@frogpond/double-tap', () => {
@@ -29,6 +30,11 @@ jest.mock('expo-router', () => ({
 	// oxlint-disable-next-line typescript/no-require-imports
 	...(require('../../../testing/expo-router-mock') as object),
 	useNavigation: () => ({goBack: mockGoBack}),
+}))
+
+const mockShareImage = jest.fn<(uri: string) => Promise<void>>()
+jest.mock('../../../components/lib/share-image', () => ({
+	shareImage: (uri: string) => mockShareImage(uri),
 }))
 
 const COMIC: MessStory = {
@@ -78,7 +84,7 @@ let queryClient: QueryClient
 
 beforeEach(() => {
 	queryClient = new QueryClient({defaultOptions: {queries: {staleTime: Infinity, retry: false}}})
-	queryClient.setQueryData(messKeys.feed, [COMIC, ARTICLE, PHOTO_SET, NO_PICTURE])
+	queryClient.setQueryData(messKeys.feed, onePage([COMIC, ARTICLE, PHOTO_SET, NO_PICTURE]))
 })
 
 afterEach(() => {
@@ -156,11 +162,52 @@ describe('ImageViewer', () => {
 		expect(mockGoBack).toHaveBeenCalledTimes(1)
 	})
 
+	test('closes when a drag carries the picture away', async () => {
+		await renderViewer(36819)
+
+		// The drag is the page's, so it closes from anywhere in the viewer.
+		fireEvent(
+			screen.getByRole('image', {name: 'Mouse Friends: sunsets of life, by Juliet Stouffer'}),
+			'dismiss',
+		)
+
+		expect(mockGoBack).toHaveBeenCalledTimes(1)
+	})
+
+	test('hides its buttons while the picture is dragged, and brings them back if the picture springs back', async () => {
+		await renderViewer(36819)
+		let image = screen.getByRole('image', {
+			name: 'Mouse Friends: sunsets of life, by Juliet Stouffer',
+		})
+
+		await fireEvent(image, 'dragStart')
+		expect(screen.queryByRole('button', {name: 'Close'})).toBeNull()
+		expect(screen.queryByRole('button', {name: 'Share'})).toBeNull()
+
+		await fireEvent(image, 'dragCancel')
+		expect(screen.getByRole('button', {name: 'Close'})).toBeTruthy()
+		expect(screen.getByRole('button', {name: 'Share'})).toBeTruthy()
+	})
+
 	test('says the image is unavailable for a story without one, and can still close', async () => {
 		await renderViewer(36911)
 
 		expect(screen.getByText('Image Unavailable')).toBeTruthy()
 		expect(screen.queryByRole('image')).toBeNull()
 		expect(screen.getByRole('button', {name: 'Close'})).toBeTruthy()
+	})
+
+	test('shares the picture it shows on Share', async () => {
+		mockShareImage.mockResolvedValue(undefined)
+		await renderViewer(33129, 1)
+
+		fireEvent.press(screen.getByRole('button', {name: 'Share'}))
+
+		expect(mockShareImage).toHaveBeenCalledWith(CUP.url)
+	})
+
+	test('offers no Share when there is no picture', async () => {
+		await renderViewer(36911)
+		expect(screen.queryByRole('button', {name: 'Share'})).toBeNull()
 	})
 })

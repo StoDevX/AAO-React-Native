@@ -1,10 +1,9 @@
 import * as React from 'react'
 import {Stack, useLocalSearchParams} from 'expo-router'
-import {useQuery} from '@tanstack/react-query'
 import {StyleSheet} from 'react-native'
 import {Host, LabeledContent, List, RNHostView, Section, Text, VStack} from '@expo/ui/swift-ui'
 import {font, foregroundStyle, listStyle, multilineTextAlignment} from '@expo/ui/swift-ui/modifiers'
-import type {CourseType, TermType} from '../../../source/lib/course-search'
+import type {CourseType} from '../../../source/lib/course-search'
 import {SolidBadge as Badge} from '@frogpond/badge'
 import {
 	courseSchedule,
@@ -17,13 +16,12 @@ import * as c from '@frogpond/colors'
 import {deptNum} from '../../../source/features/sis/course-search/lib/format-dept-num'
 import {formatCourseNotes} from '../../../source/features/sis/course-search/lib/format-course-notes'
 
+import {useCourse, useCourseCatalog} from '../../../source/database/courses/read'
 import {
-	courseByIdOptions,
-	termByNumberOptions,
-} from '../../../source/features/sis/course-search/query'
+	COURSE_OFFLINE_NOTICE,
+	courseDetailState,
+} from '../../../source/features/sis/course-search/lib/list-state'
 import {LoadErrorView, LoadingView, NoticeView} from '@frogpond/notice'
-
-const PENDING_TERM: TermType = {hash: '', path: '', term: 0, type: '', year: 0}
 
 const styles = StyleSheet.create({
 	host: {
@@ -156,55 +154,65 @@ const SUBTITLE_MODIFIERS = [
 ]
 
 export default function CourseDetailPage(): React.ReactNode {
-	let {clbid, term} = useLocalSearchParams<{clbid: string; term: string}>()
-
-	let {data: resolvedTerm, isLoading: termLoading} = useQuery(termByNumberOptions(Number(term)))
-
-	let {
-		data: course,
-		isLoading: courseLoading,
-		error,
-		refetch,
-	} = useQuery({
-		...courseByIdOptions(resolvedTerm ?? PENDING_TERM, Number(clbid)),
-		enabled: Boolean(resolvedTerm),
-	})
+	let {clbid} = useLocalSearchParams<{clbid: string; term: string}>()
+	let catalog = useCourseCatalog()
+	let {course, failed, retry: retryRead} = useCourse(Number(clbid))
+	let retry = () => {
+		void catalog.refetch()
+		retryRead()
+	}
 
 	// The route param is a course id, meaningless to a user, so the title
 	// stays empty until the course loads rather than falling back to it.
 	let screenTitle = <Stack.Title>{course?.name ?? ''}</Stack.Title>
 
-	if (termLoading || courseLoading) {
-		return (
-			<>
-				{screenTitle}
-				<LoadingView />
-			</>
-		)
+	switch (courseDetailState(course, failed, catalog)) {
+		case 'course':
+			return (
+				<>
+					{screenTitle}
+					{course ? <CourseDetailView course={course} /> : null}
+				</>
+			)
+		case 'read-error':
+			return (
+				<>
+					{screenTitle}
+					<LoadErrorView error={new Error('The course could not be read.')} onRetry={retry} />
+				</>
+			)
+		case 'loading':
+			return (
+				<>
+					{screenTitle}
+					<LoadingView />
+				</>
+			)
+		case 'offline':
+			return (
+				<>
+					{screenTitle}
+					<NoticeView
+						action={{label: 'Try Again', onPress: retry}}
+						description={COURSE_OFFLINE_NOTICE}
+						systemImage="wifi.slash"
+						title="Offline"
+					/>
+				</>
+			)
+		case 'catalog-error':
+			return (
+				<>
+					{screenTitle}
+					<LoadErrorView error={catalog.error} onRetry={retry} />
+				</>
+			)
+		default:
+			return (
+				<>
+					{screenTitle}
+					<NoticeView systemImage="questionmark.circle" title="Course Not Found" />
+				</>
+			)
 	}
-
-	if (error) {
-		return (
-			<>
-				{screenTitle}
-				<LoadErrorView error={error} onRetry={refetch} />
-			</>
-		)
-	}
-
-	if (!course) {
-		return (
-			<>
-				{screenTitle}
-				<NoticeView systemImage="questionmark.circle" title="Course Not Found" />
-			</>
-		)
-	}
-
-	return (
-		<>
-			{screenTitle}
-			<CourseDetailView course={course} />
-		</>
-	)
 }

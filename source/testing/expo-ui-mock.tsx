@@ -444,6 +444,9 @@ export function RNHostView({children}: WithModifiers & {matchContents?: boolean}
  * `markdownEnabled` changes only how SwiftUI draws the string, so the stand-in
  * prints the Markdown source as given: that string is what the component
  * receives.
+ *
+ * A text given the `isHeader` trait takes the `header` role, which is how
+ * VoiceOver's headings rotor finds it on device.
  */
 export function Text({
 	children,
@@ -456,8 +459,13 @@ export function Text({
 			typeof child === 'number' ||
 			(React.isValidElement(child) && child.type === Text),
 	)
+	let isHeader = traitsOf(modifiers, 'accessibilityAddTraits').includes('isHeader')
 	return (
-		<RNText accessibilityLabel={labelOf(modifiers)} testID={identifierOf(modifiers) ?? testID}>
+		<RNText
+			accessibilityLabel={labelOf(modifiers)}
+			accessibilityRole={isHeader ? 'header' : undefined}
+			testID={identifierOf(modifiers) ?? testID}
+		>
 			{kept}
 		</RNText>
 	)
@@ -790,12 +798,12 @@ export function RoundedRectangle(_props: WithModifiers & {cornerRadius?: number}
 
 /**
  * A `Divider` draws a rule and carries nothing -- no label, no children, no
- * behaviour. The stand-in is an empty view: it exists so a tree containing one
- * mounts, not to be asserted on. What a rule looks like is a screenshot's
- * business.
+ * behaviour. The stand-in is an empty view: what a rule looks like is a
+ * screenshot's business. One carrying an `accessibilityIdentifier` can be
+ * found, so a test can tell whether a screen chose to draw it.
  */
 export function Divider({modifiers}: {modifiers?: Modifier[]}): React.ReactNode {
-	return <ForwardingView modifiers={modifiers} />
+	return <ForwardingView modifiers={modifiers} testID={identifierOf(modifiers)} />
 }
 
 /**
@@ -944,16 +952,36 @@ export function Image({
 	)
 }
 
+/**
+ * Every imperative `blur()` on a stand-in `TextField`, called with the field's
+ * placeholder, so a test can see which field was let go of and when.
+ */
+export const textFieldBlur = jest.fn<void, [string | undefined]>()
+
 export function TextField({
 	modifiers,
+	onFocusChange,
 	onTextChange,
 	placeholder,
+	ref,
 	text,
 }: WithModifiers & {
 	placeholder?: string
 	text?: {value: string}
 	onTextChange?: (text: string) => void
+	onFocusChange?: (focused: boolean) => void
+	ref?: React.Ref<{blur: () => Promise<void>}>
 }): React.ReactNode {
+	// The real field's `blur()` resolves once the native side has the request;
+	// SwiftUI then reports the lost focus through `onFocusChange`, as here.
+	React.useImperativeHandle(ref, () => ({
+		blur: () => {
+			textFieldBlur(placeholder)
+			onFocusChange?.(false)
+			return Promise.resolve()
+		},
+	}))
+
 	// A SwiftUI TextField reports its placeholder as its accessibility label
 	// when it has no separate one, which is how a search field is found both on
 	// device and here.
@@ -964,7 +992,9 @@ export function TextField({
 	return (
 		<TextInput
 			accessibilityLabel={labelOf(modifiers) ?? placeholder}
+			onBlur={() => onFocusChange?.(false)}
 			onChangeText={onTextChange}
+			onFocus={() => onFocusChange?.(true)}
 			placeholder={placeholder}
 			value={text?.value}
 		/>

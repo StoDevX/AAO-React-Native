@@ -8,6 +8,7 @@ import {queryClient, persistOptions} from '../source/init/tanstack-query'
 import {useScreenViews} from '../source/features/telemetry/use-screen-views'
 import {watchQueryFailures} from '../source/features/telemetry/query-failures'
 import {track} from '../source/features/telemetry/track'
+import {startQuickActionSync} from '../source/features/quick-actions/sync'
 
 import * as React from 'react'
 import {PersistGate} from 'redux-persist/integration/react'
@@ -69,6 +70,7 @@ function RootLayout(): React.ReactNode {
 	const navigationContainerRef = useNavigationContainerRef()
 	useScreenViews()
 	React.useEffect(() => watchQueryFailures(queryClient.getQueryCache(), track), [])
+	React.useEffect(() => startQuickActionSync(), [])
 
 	React.useEffect(() => {
 		if (!IS_PRODUCTION) {
@@ -105,9 +107,11 @@ function RootLayout(): React.ReactNode {
 								name="messenger/story"
 								options={{title: ''}}
 							/>
+							{/* Over the story, not in place of it, so a drag that closes the viewer
+							    shows the story through its fading black. */}
 							<Stack.Screen
 								name="messenger/image"
-								options={{presentation: 'fullScreenModal', headerShown: false}}
+								options={{presentation: 'transparentModal', headerShown: false}}
 							/>
 							<Stack.Screen
 								name="st-olaf-news"

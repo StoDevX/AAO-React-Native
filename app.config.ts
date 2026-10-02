@@ -297,6 +297,7 @@ const config: ExpoConfig = {
 		// its options now live in the `enriched-markdown` block of package.json.
 		'./plugins/with-app-delegate-customizations',
 		'./plugins/with-alternate-icons',
+		'./plugins/with-custom-symbols',
 		'./plugins/with-xcuitest-target',
 		'./plugins/with-binary-stripping',
 		'./plugins/with-inhibit-pod-warnings',

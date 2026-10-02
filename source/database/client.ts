@@ -1,10 +1,25 @@
 import * as Sentry from '@sentry/react-native'
 import * as SQLite from 'expo-sqlite'
+import {isUITesting} from '@frogpond/launch-arguments'
 
+import {UITEST_COURSES} from '../lib/course-search/__fixtures__/courses'
+import {catalogFile, deleteCatalogFile, filePath} from './courses/catalog-file.ts'
+import {writeFixtureCatalog} from './courses/fixture.ts'
+import {CATALOG_SCHEMA} from './courses/schema.ts'
+import {buildCourseIndex, openCatalog} from './courses/index-build.ts'
 import {ensureSchema, SCHEMA_VERSION} from './schema.ts'
 import type {SqlRunner, Statement} from './sql.ts'
 
 const DATABASE_NAME = 'aao.db'
+
+/**
+ * expo-sqlite's default is to finalize every statement on the connection
+ * before closing it, FTS5's own included; SQLite then finalizes those again
+ * as it disconnects the FTS table, and the app crashes. Every statement here
+ * is finalized by the call that made it, so there is nothing for that pass
+ * to do.
+ */
+const OPEN_OPTIONS: SQLite.SQLiteOpenOptions = {finalizeUnusedStatementsBeforeClosing: false}
 
 let runner: SqlRunner | undefined
 
@@ -41,18 +56,46 @@ export function getRunner(): SqlRunner {
 
 	let db: SQLite.SQLiteDatabase
 	try {
-		db = SQLite.openDatabaseSync(DATABASE_NAME)
+		db = SQLite.openDatabaseSync(DATABASE_NAME, OPEN_OPTIONS)
 	} catch {
 		SQLite.deleteDatabaseSync(DATABASE_NAME)
-		db = SQLite.openDatabaseSync(DATABASE_NAME)
+		db = SQLite.openDatabaseSync(DATABASE_NAME, OPEN_OPTIONS)
 	}
 
 	db.execSync('pragma foreign_keys = on')
 	let next = wrap(db)
 	ensureSchema(next, fingerprint())
+	attachCourseCatalog(next)
 	database = db
 	runner = next
 	return next
+}
+
+/**
+ * Puts the course catalog in reach of `runner`: under UI testing a fixture
+ * written into memory, otherwise the downloaded file once there is one. A
+ * file that will not open or has no index is a cache that cannot be read,
+ * so it is deleted and the next refresh downloads it again.
+ */
+function attachCourseCatalog(runner: SqlRunner): void {
+	if (isUITesting) {
+		runner.exec(`attach database ':memory:' as ${CATALOG_SCHEMA}`)
+		writeFixtureCatalog(runner, UITEST_COURSES)
+		buildCourseIndex(runner, CATALOG_SCHEMA)
+		return
+	}
+	let file = catalogFile()
+	try {
+		openCatalog(runner, file.exists ? filePath(file) : null)
+	} catch (error) {
+		Sentry.captureException(error)
+		try {
+			runner.exec(`detach database ${CATALOG_SCHEMA}`)
+		} catch {
+			// It was never attached, or openCatalog already detached it.
+		}
+		deleteCatalogFile()
+	}
 }
 
 /**
@@ -102,4 +145,7 @@ export function dropDatabase(): void {
 			Sentry.captureException(error)
 		}
 	}
+
+	// A reset wipes every cache, and the course catalog is one.
+	deleteCatalogFile()
 }
