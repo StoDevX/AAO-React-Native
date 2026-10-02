@@ -69,15 +69,20 @@ struct SelectableTextView: ExpoSwiftUI.View {
 				)
 			} else {
 				SelectableUITextView(attributedText: attributedParagraphs(), linkColor: props.linkColor)
-					// TextKit sets a line's leading under every line, the last too, where SwiftUI sets
-					// it only between lines; without this the text would sit a leading further from
-					// whatever follows it than a SwiftUI `Text` does. The leading is blank, so nothing
-					// drawn is lost.
-					.padding(.bottom, -font().leading)
+					// TextKit leaves the gap under the last line too, where SwiftUI leaves it only
+					// between lines; without this the text would sit that much further from whatever
+					// follows it than a SwiftUI `Text` does. The gap is blank, so nothing drawn is lost.
+					.padding(.bottom, -gapUnderLine)
 			}
 		}
 			.frame(maxWidth: .infinity, alignment: .leading)
 			.accessibilityIdentifier(props.testID ?? "")
+	}
+
+	/// The space between one line and the next, as a SwiftUI `Text` sets it: the font's
+	/// leading, or the `lineSpacing` asked for in its place when that is larger.
+	private var gapUnderLine: CGFloat {
+		max(font().leading, props.lineSpacing)
 	}
 
 	private func font(bold: Bool = false, italic: Bool = false, smallCaps: Bool = false) -> UIFont {
@@ -99,12 +104,13 @@ struct SelectableTextView: ExpoSwiftUI.View {
 		for (index, paragraph) in props.paragraphs.enumerated() {
 			let isLast = index == props.paragraphs.count - 1
 			let style = NSMutableParagraphStyle()
-			style.lineSpacing = props.lineSpacing
+			// TextKit adds its line spacing to the font's leading; SwiftUI's replaces it.
+			style.lineSpacing = gapUnderLine - font().leading
 			// The last paragraph's spacing would only pad the view's bottom edge. TextKit already
-			// leaves a line's leading under a paragraph, which SwiftUI's spacing between `Text`s
+			// leaves the gap under a paragraph's last line, which SwiftUI's spacing between `Text`s
 			// does not count, so it comes off the spacing asked for.
 			let spacing = paragraph.spacingAfter ?? props.paragraphSpacing
-			style.paragraphSpacing = isLast ? 0 : max(0, spacing - font().leading)
+			style.paragraphSpacing = isLast ? 0 : max(0, spacing - gapUnderLine)
 			style.firstLineHeadIndent = paragraph.indent
 			style.headIndent = paragraph.indent
 
