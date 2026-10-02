@@ -54,8 +54,11 @@ const COMIC: MessStory = {
 const ARTICLE: MessStory = {...COMIC, id: 36911, title: 'An article', layout: {kind: 'article'}}
 
 const BEES = {url: 'https://olafmessenger.com/bees-1.jpg', width: 300, height: 200, caption: ''}
+/** The cup picture's largest copy, from its srcset. */
+const LARGE_CUP = 'https://olafmessenger.com/bees-2-1536x1024.jpg'
 const CUP = {
 	url: 'https://olafmessenger.com/bees-2.jpg',
+	largeUrl: LARGE_CUP,
 	width: 300,
 	height: 200,
 	caption: 'At the cup',
@@ -134,9 +137,11 @@ function renderViewer(id: number, index?: number, url?: string) {
 }
 
 describe('ImageViewer', () => {
-	test('shows the picture of a feature page that was tapped', async () => {
+	test('shows the largest copy of the picture of a feature page that was tapped', async () => {
 		await renderViewer(33129, 1)
-		expect(screen.getByTestId('mess-image-viewer-image').props.source).toStrictEqual({uri: CUP.url})
+		expect(screen.getByTestId('mess-image-viewer-image').props.source).toStrictEqual({
+			uri: LARGE_CUP,
+		})
 	})
 
 	test("shows a feature page's first picture when given no index", async () => {
@@ -206,7 +211,7 @@ describe('ImageViewer', () => {
 
 		fireEvent.press(screen.getByRole('button', {name: 'Share'}))
 
-		expect(mockShareImage).toHaveBeenCalledWith(CUP.url)
+		expect(mockShareImage).toHaveBeenCalledWith(LARGE_CUP)
 	})
 
 	test('offers no Share when there is no picture', async () => {

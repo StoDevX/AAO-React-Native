@@ -15,7 +15,8 @@ type Picture = {url: string; label: string}
  * its body that the article draws at that address, shown at the largest copy its srcset
  * offers; an address that is not one of the story's shows nothing, so a link cannot put any
  * image on the web in the viewer. Otherwise a comic's or artwork's one picture, or the
- * feature page's picture at `index`. Null when the story has no picture there.
+ * feature page's picture at `index`, also at its largest copy. Null when the story has no
+ * picture there.
  */
 function pictureOf(
 	story: MessStory | undefined,
@@ -25,7 +26,7 @@ function pictureOf(
 	if (!story) return null
 	if (url !== undefined) {
 		let figures = story.blocks.flatMap((block) => (block.type === 'figure' ? [block] : []))
-		let photos: Array<(CaptionedPhoto & {largeUrl?: string}) | null> = [story.photo, ...figures]
+		let photos: Array<CaptionedPhoto | null> = [story.photo, ...figures]
 		let photo = photos.find((candidate) => candidate?.url === url)
 		if (!photo) return null
 		return {url: photo.largeUrl ?? photo.url, label: photoLabel(story, photo.caption)}
@@ -34,7 +35,7 @@ function pictureOf(
 	if (story.layout.kind === 'image') return {url: story.layout.image.url, label}
 	if (story.layout.kind === 'feature') {
 		let image = story.layout.images[index]
-		return image ? {url: image.url, label} : null
+		return image ? {url: image.largeUrl ?? image.url, label} : null
 	}
 	return null
 }
