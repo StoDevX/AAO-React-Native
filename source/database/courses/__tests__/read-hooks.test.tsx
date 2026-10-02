@@ -105,6 +105,21 @@ function row(n: number) {
 	}
 }
 
+// Until the filter options load there are no terms to search, and reading
+// then would report no results for a catalog that has plenty.
+describe('waiting for the filter options', () => {
+	test('does not read results while told to wait', async () => {
+		catalogWith([row(1)])
+		let {result} = await renderHook(
+			() => useCourseResults({query: '', filters: {...NONE, terms: []}, enabled: false}),
+			{wrapper},
+		)
+		expect(result.current.isPending).toBe(true)
+		expect(result.current.sections).toEqual([])
+		expect(mockAll).not.toHaveBeenCalled()
+	})
+})
+
 // A read that failed against an unchanged catalog keeps its query key, so
 // refreshing the catalog alone would never run it again.
 describe('retrying a failed read', () => {

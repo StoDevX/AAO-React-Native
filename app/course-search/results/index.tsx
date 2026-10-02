@@ -63,10 +63,11 @@ function CourseSearchResultsView(): React.ReactNode {
 	let delayedQuery = useDebounce(searchQuery, 500)
 
 	let catalog = useCourseCatalog()
-	let {terms} = useCourseFilterOptions()
+	let options = useCourseFilterOptions()
 	let results = useCourseResults({
 		query: delayedQuery ?? '',
-		filters: courseFilters(filters, terms),
+		filters: courseFilters(filters, options.terms),
+		enabled: !options.isPending,
 	})
 	let state = courseListState(catalog, results)
 	let {retry: retryRead} = results

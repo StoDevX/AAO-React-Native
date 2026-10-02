@@ -81,7 +81,12 @@ type ResultsPageData = {hasCatalog: boolean; items: CourseListItem[]}
  * Course search's results, grouped by term, a page at a time; `loadMore` reads
  * the next page. Refreshed whenever a new catalog is swapped in.
  */
-export function useCourseResults(args: {query: string; filters: CourseFilters}): {
+export function useCourseResults(args: {
+	query: string
+	filters: CourseFilters
+	/** False until the filters are known: before then there are no terms to search. */
+	enabled?: boolean
+}): {
 	sections: Array<{title: string; data: CourseListItem[]}>
 	hasCatalog: boolean
 	hasMore: boolean
@@ -91,9 +96,10 @@ export function useCourseResults(args: {query: string; filters: CourseFilters}):
 	/** Runs the read again; a failed one keeps its key until the catalog changes. */
 	retry: () => void
 } {
-	let {query, filters} = args
+	let {query, filters, enabled = true} = args
 	let revision = useCourseRevision()
 	let result = useInfiniteQuery({
+		enabled,
 		queryKey: [COURSE_READ_KEY, 'results', revision, query, filters],
 		queryFn: ({pageParam}): ResultsPageData =>
 			reportingFailures(() => {
@@ -170,6 +176,7 @@ export function useCourseFilterOptions(): {
 	terms: number[]
 	gereqs: string[]
 	departments: string[]
+	isPending: boolean
 } {
 	let revision = useCourseRevision()
 	let result = useQuery({
@@ -188,7 +195,9 @@ export function useCourseFilterOptions(): {
 						.map((row) => row.department),
 				}
 			}),
+		// A new catalog re-keys this read; the old options stand in until it lands.
+		placeholderData: keepPreviousData,
 		meta: {persist: false},
 	})
-	return result.data ?? {terms: [], gereqs: [], departments: []}
+	return {...(result.data ?? {terms: [], gereqs: [], departments: []}), isPending: result.isPending}
 }
