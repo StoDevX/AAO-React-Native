@@ -6,7 +6,9 @@ import {CATALOG_SCHEMA, COURSE_SEARCH} from './schema.ts'
 function indexSource(schema: string): string {
 	return `
 select s.clbid,
-  s.department || ' ' || s.number || coalesce(s.section, '') as dept_num,
+  -- The section apart from the number: the tokenizer would read "386A" as
+  -- one word, while a search for it looks for "386" and "a".
+  s.department || ' ' || s.number || coalesce(' ' || s.section, '') as dept_num,
   coalesce(n.text, '') as name,
   coalesce(t.text, '') as title,
   coalesce((select group_concat(g.code, ' ') from ${schema}.section_gereq sg

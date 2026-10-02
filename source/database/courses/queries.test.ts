@@ -119,6 +119,19 @@ describe('courseResultsQuery: search', () => {
 		assert.deepEqual(find(runner, ' -- 🙂 '), [3, 2, 1])
 	})
 
+	// The tokenizer reads "386A" as one word, but a search splits it into
+	// "386" and "a", so the section has to be indexed as a word of its own.
+	it('finds a course by its number and section, however the section is typed', () => {
+		let runner = catalog(
+			makeCourse({clbid: 1, department: 'PHYS', number: 386, section: 'A', name: 'Quantum'}),
+			makeCourse({clbid: 2, department: 'PHYS', number: 386, section: 'B', name: 'Quantum'}),
+		)
+		assert.deepEqual(find(runner, 'phys 386a'), [1])
+		assert.deepEqual(find(runner, 'PHYS 386A'), [1])
+		assert.deepEqual(find(runner, 'phys 386 a'), [1])
+		assert.deepEqual(ascending(find(runner, 'phys 386')), [1, 2])
+	})
+
 	it('puts the newest term first', () => {
 		let runner = catalog(makeCourse({clbid: 1, term: 20261}), makeCourse({clbid: 2, term: 20262}))
 		assert.deepEqual(find(runner, 'algebra'), [2, 1])
