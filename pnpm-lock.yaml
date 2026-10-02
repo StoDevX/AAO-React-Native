@@ -353,8 +353,8 @@ importers:
         specifier: 0.10.1
         version: 0.10.1(@babel/core@7.29.7)(react-native@0.86.3)(react@19.2.3)(supports-color@8.1.1)
       react-native-zeroconf:
-        specifier: 0.14.0
-        version: 0.14.0(react-native@0.86.3)
+        specifier: 0.15.0
+        version: 0.15.0(react-native@0.86.3)
       react-redux:
         specifier: 9.3.0
         version: 9.3.0(@types/react@19.2.18)(react@19.2.3)(redux@5.0.1)
@@ -4907,8 +4907,8 @@ packages:
       react: '*'
       react-native: 0.83 - 0.86
 
-  react-native-zeroconf@0.14.0:
-    resolution: {integrity: sha512-TqjORroaVZrBYLzk3YtviQy8lUl/iiMacknxixRYlmGaqgsv4LJXIYafpnvPa3y2SC4/qu2mvF8D1/VTTxylgQ==}
+  react-native-zeroconf@0.15.0:
+    resolution: {integrity: sha512-LMStF/H2cVmm4DoAkrbtDKh7MC1nFtZwQC1cMcVnBUCEoeyElvf+UPBonMyUPVb7GE7RY2Qs+v/pTxrDFOuqkQ==}
     peerDependencies:
       react-native: '>=0.60'
 
@@ -9820,7 +9820,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  react-native-zeroconf@0.14.0(react-native@0.86.3):
+  react-native-zeroconf@0.15.0(react-native@0.86.3):
     dependencies:
       events: 3.3.0
       react-native: 0.86.3(patch_hash=6ca2e1225f38672b073b92b9d13f24feebbe9e37ba67708a3f1569275ce99191)(@babel/core@7.29.7)(@react-native/jest-preset@0.86.3)(@types/react@19.2.18)(react@19.2.3)(supports-color@8.1.1)
