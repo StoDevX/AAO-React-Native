@@ -293,7 +293,13 @@ Under it the app never opens a URL, composes an email, or adds a calendar
 event — `openUrl`, `composeEmail`, `addToCalendar`, and every direct
 `Linking.openURL` call are each guarded — and it never reaches the OleCard
 sign-in or PaperCut; Sentry is off. The monkey dismisses any system alert
-after each step, so a permission prompt can't stall it. The oracle's beacon
+after each step, so a permission prompt can't stall it. Before it calls a
+screen with nothing to press a hang, it tries to leave: it rotates to portrait,
+drags the topmost sheet down by its grabber or top edge, taps Back, and swipes
+from the left edge. When one works it carries on, logging `no escape hatch` in
+`chaos-warnings.txt`: a screen a person can't visibly leave. An iPhone form
+sheet in landscape fills the screen, draws no grabber and ignores a drag down,
+so only rotating frees it. The oracle's beacon
 view sits at opacity 0.02, not 0, because iOS drops a fully transparent view
 from the accessibility tree XCUITest reads. `app/_layout.tsx` imports the
 chaos modules statically, first: the import order is what wraps `fetch`

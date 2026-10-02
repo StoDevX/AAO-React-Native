@@ -59,4 +59,45 @@ final class ChaosCanaryTests: UITestCaseUnbooted {
 		let silence = ChaosOracle(app: app).waitForProbe(timeout: 5)
 		XCTAssertEqual(silence?.reason, "probe silent: no \(TestIdentifiers.Chaos.beacon) element")
 	}
+
+	func testEscapesASheetInPortrait() {
+		assertEscapesTheSheetTrap(in: .portrait)
+	}
+
+	/// An iPhone form sheet fills the screen in landscape and draws no
+	/// grabber, so the monkey has to rotate before it can leave.
+	func testEscapesASheetInLandscape() {
+		assertEscapesTheSheetTrap(in: .landscapeLeft)
+	}
+
+	private func assertEscapesTheSheetTrap(in orientation: UIDeviceOrientation) {
+		addTeardownBlock { XCUIDevice.shared.orientation = .portrait }
+		configureForChaos(seed: 1, launch: 0, replay: false, faultRate: "0", resetState: true)
+		app.open(URL(string: "AllAboutOlaf://\(TestIdentifiers.Chaos.sheetTrapRoute)")!)
+		let trap = app.staticTexts[TestIdentifiers.Dictionary.emptyPreview]
+		XCTAssertTrue(trap.waitForExistence(timeout: 30), "the empty preview sheet never appeared")
+		XCUIDevice.shared.orientation = orientation
+		// The app's frame follows the device a moment after it turns.
+		let rotated = Date().addingTimeInterval(5)
+		while (app.frame.width > app.frame.height) != orientation.isLandscape && Date() < rotated {
+			Thread.sleep(forTimeInterval: 0.25)
+		}
+		let frame = app.frame
+		XCTAssertEqual(
+			frame.width > frame.height, orientation.isLandscape,
+			"the app should have rotated to \(orientation.rawValue), but its frame is \(frame)")
+
+		let monkey = ChaosMonkey(test: self, seed: 1, replay: false, faultRate: "0")
+		let escaped = monkey.escapeTrap()
+
+		XCTAssertTrue(trap.waitForNonExistence(timeout: 5), "the monkey's escapes left the sheet up")
+		XCTAssertTrue(
+			app.descendants(matching: .any)[TestIdentifiers.Home.screen].exists,
+			"Home should be under the sheet the monkey left")
+		XCTAssertTrue(escaped, "the escape routine should report the screen it changed")
+		let orientationName = orientation.isLandscape ? "landscape" : "portrait"
+		XCTAssertTrue(
+			monkey.warnings.contains { $0.hasPrefix("no escape hatch: ") && $0.hasSuffix("(\(orientationName))") },
+			"the monkey should report the sheet as having no escape hatch, got \(monkey.warnings)")
+	}
 }

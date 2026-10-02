@@ -63,6 +63,10 @@ struct TestIdentifiers {
 		static let errorScreenIdentifiers = ["router_error_message", fatalBoundary]
 		/// Texts only an error fallback draws, for fallbacks with no identifier.
 		static let errorScreenLabels = ["A problem occurred while showing places."]
+		/// A route that opens a form sheet with no Back or Close button, for
+		/// the canary that proves the monkey can leave one: the Dictionary's
+		/// preview, which has nothing to show without a draft.
+		static let sheetTrapRoute = "dictionary/entry/preview"
 	}
 
 	// MARK: - testID-based identifiers
@@ -84,6 +88,9 @@ struct TestIdentifiers {
 		/// whatever the label. Both a system back button and an app-provided
 		/// one read `Back`, so the identifier is what separates them.
 		static let systemBackButton = "BackButton"
+		/// The label UIKit gives a sheet's grabber, which it exposes as a button.
+		/// A form sheet on an iPhone in landscape fills the screen and has none.
+		static let sheetGrabber = "Sheet Grabber"
 	}
 
 	/// Labels UIKit gives a `Stack.SearchBar`'s own controls. In the bottom
@@ -147,6 +154,8 @@ struct TestIdentifiers {
 		static let editFormTitle = suggestAnEdit
 		static let editForm = "dictionary-edit-form"
 		static let previewSheet = "dictionary-preview-sheet"
+		/// What the preview shows when it is opened with no draft to compare.
+		static let emptyPreview = "Nothing to Preview"
 		static let preview = "Preview"
 		static let reorder = "Reorder"
 		static let addSense = "Add Sense"

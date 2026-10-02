@@ -16,6 +16,11 @@ struct ChaosObservation {
 	let textFields: [ChaosTarget]
 	/// Enough of the screen to tell whether Back changed anything.
 	let signature: String
+	/// The frame of the topmost sheet or other modal, if one is presented.
+	let sheet: CGRect?
+	/// The topmost sheet's grabber, which UIKit draws only on a sheet that
+	/// does not fill the screen.
+	let grabber: CGRect?
 }
 
 /// Reads one snapshot of the app and decides whether the run should stop.
@@ -40,6 +45,7 @@ struct ChaosOracle {
 		var targets: [ChaosTarget] = []
 		var fields: [ChaosTarget] = []
 		var signatureParts: [String] = []
+		var grabber: CGRect?
 
 		func visit(_ node: XCUIElementSnapshot) {
 			let id = node.identifier
@@ -56,6 +62,10 @@ struct ChaosOracle {
 				signatureParts.append(node.label)
 			}
 			let frame = node.frame
+			// The last in tree order belongs to the topmost of stacked sheets.
+			if node.elementType == .button && node.label == TestIdentifiers.Navigation.sheetGrabber {
+				grabber = frame
+			}
 			let onScreen = frame.width >= 2 && frame.height >= 2 && screen.intersects(frame)
 			// An `.other` with no identifier is layout, not something to press.
 			let pressable = Self.actionable.contains(node.elementType)
@@ -81,7 +91,27 @@ struct ChaosOracle {
 				errorScreen: errorScreen,
 				targets: targets.sorted(by: byPosition),
 				textFields: fields.sorted(by: byPosition),
-				signature: signatureParts.joined(separator: "|")))
+				signature: signatureParts.joined(separator: "|"),
+				sheet: Self.topmostModal(in: snapshot),
+				grabber: grabber))
+	}
+
+	/// The frame of the topmost presented modal. UIKit gives each sheet or
+	/// modal it presents a container among the window's children, holding a
+	/// dimming region that overhangs the screen and then the sheet itself. A
+	/// snapshot leaves out the screens beneath an accessibility-modal sheet,
+	/// so the container may be the window's only child.
+	private static func topmostModal(in snapshot: XCUIElementSnapshot) -> CGRect? {
+		let screen = snapshot.frame
+		let fits = screen.insetBy(dx: -1, dy: -1)
+		guard let window = snapshot.children.first(where: { $0.elementType == .window }) else { return nil }
+		for container in window.children.reversed() {
+			guard let dimming = container.children.first,
+				dimming.frame.contains(screen), dimming.frame != screen
+			else { continue }
+			return container.children.dropFirst().map(\.frame).first { fits.contains($0) && $0.width >= 2 && $0.height >= 2 }
+		}
+		return nil
 	}
 
 	/// Why the run must stop now, if it must. A missing beacon is not a reason:

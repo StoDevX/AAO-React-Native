@@ -11,7 +11,8 @@ final class ChaosMonkey {
 	private var steps: [String] = []
 	/// Why an oracle stopped the run; nil while it is within its budget.
 	private var stopReason: String?
-	private var warnings: [String] = []
+	/// Things worth knowing that did not stop the run.
+	private(set) var warnings: [String] = []
 	private var lastTargetsSeen = Date()
 	private var backsWithoutChange = 0
 	private var lastSignature = ""
@@ -98,12 +99,8 @@ final class ChaosMonkey {
 			}
 			return field
 		case .back:
-			let back = app.navigationBars.buttons[TestIdentifiers.Navigation.backButton].firstMatch
-			if back.exists && back.isHittable {
-				back.tap()
-			} else {
-				app.coordinate(withNormalizedOffset: CGVector(dx: 0.01, dy: 0.5))
-					.press(forDuration: 0.05, thenDragTo: app.coordinate(withNormalizedOffset: CGVector(dx: 0.8, dy: 0.5)))
+			if !tapBackButton() && !dismissSheet(on: observation) {
+				swipeFromLeftEdge()
 			}
 			return nil
 		case .openRoute:
@@ -130,6 +127,79 @@ final class ChaosMonkey {
 			XCUIDevice.shared.orientation = orientation
 			return nil
 		}
+	}
+
+	/// Taps the navigation bar's Back button, if one can be tapped.
+	private func tapBackButton() -> Bool {
+		let back = app.navigationBars.buttons[TestIdentifiers.Navigation.backButton].firstMatch
+		guard back.exists && back.isHittable else { return false }
+		back.tap()
+		return true
+	}
+
+	/// Drags the topmost sheet down by its grabber, or by its top edge when it
+	/// has none, as a person dismisses a sheet with no Close button.
+	private func dismissSheet(on observation: ChaosObservation) -> Bool {
+		let start: CGPoint
+		if let grabber = observation.grabber {
+			start = CGPoint(x: grabber.midX, y: grabber.midY)
+		} else if let sheet = observation.sheet {
+			start = CGPoint(x: sheet.midX, y: sheet.minY + 10)
+		} else {
+			return false
+		}
+		let origin = app.coordinate(withNormalizedOffset: .zero)
+		origin.withOffset(CGVector(dx: start.x, dy: start.y))
+			.press(forDuration: 0.05, thenDragTo: origin.withOffset(CGVector(dx: start.x, dy: app.frame.maxY - 2)))
+		return true
+	}
+
+	private func swipeFromLeftEdge() {
+		app.coordinate(withNormalizedOffset: CGVector(dx: 0.01, dy: 0.5))
+			.press(forDuration: 0.05, thenDragTo: app.coordinate(withNormalizedOffset: CGVector(dx: 0.8, dy: 0.5)))
+	}
+
+	// MARK: - Escapes
+
+	/// Tries each way a person might leave the screen, stopping at the first
+	/// that changes it, and warns that the screen offered no visible way out.
+	/// Draws nothing from `random`, so a run's later steps do not shift.
+	///
+	/// Rotating to portrait comes first but is not judged alone: an iPhone
+	/// form sheet in landscape fills the screen with no grabber and ignores a
+	/// drag down, and rotating only gives it back the grabber to drag.
+	@discardableResult
+	func escapeTrap() -> Bool {
+		guard case .success(let trapped) = ChaosOracle(app: app).observe() else { return false }
+		let orientation = app.frame.width > app.frame.height ? "landscape" : "portrait"
+		let escapes: [(ChaosObservation) -> Void] = [
+			{ _ = self.dismissSheet(on: $0) },
+			{ _ in _ = self.tapBackButton() },
+			{ _ in self.swipeFromLeftEdge() },
+		]
+		var escaped = false
+		pauseHangClock {
+			if XCUIDevice.shared.orientation != .portrait {
+				XCUIDevice.shared.orientation = .portrait
+				Thread.sleep(forTimeInterval: 1)
+			}
+			for escape in escapes {
+				guard case .success(let before) = ChaosOracle(app: app).observe() else { continue }
+				escape(before)
+				Thread.sleep(forTimeInterval: 1)
+				guard case .success(let after) = ChaosOracle(app: app).observe() else { continue }
+				if after.signature != trapped.signature || !after.targets.isEmpty
+					|| (trapped.sheet != nil && after.sheet == nil)
+				{
+					escaped = true
+					return
+				}
+			}
+		}
+		if escaped {
+			warnings.append("no escape hatch: \(trapped.signature) (\(orientation))")
+		}
+		return escaped
 	}
 
 	/// One of `items`, drawing from `random` even when there are none.
@@ -187,7 +257,12 @@ final class ChaosMonkey {
 
 		if observation.targets.isEmpty {
 			if Date().timeIntervalSince(lastTargetsSeen) > 15 {
-				return ChaosStop("hang: nothing to press for 15 seconds")
+				guard escapeTrap() else { return ChaosStop("hang: nothing to press for 15 seconds") }
+				// The escape changed the screen, so this observation is stale.
+				lastTargetsSeen = Date()
+				backsWithoutChange = 0
+				lastSignature = ""
+				return nil
 			}
 		} else {
 			lastTargetsSeen = Date()
@@ -196,7 +271,8 @@ final class ChaosMonkey {
 		if action == .back {
 			backsWithoutChange = observation.signature == lastSignature ? backsWithoutChange + 1 : 0
 			if backsWithoutChange == 3 {
-				warnings.append("dead end: Back changed nothing three times on \(observation.signature)")
+				let screen = observation.sheet == nil ? "" : "a sheet: "
+				warnings.append("dead end: Back changed nothing three times on \(screen)\(observation.signature)")
 			}
 		}
 		lastSignature = observation.signature
