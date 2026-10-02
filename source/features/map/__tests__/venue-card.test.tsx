@@ -5,10 +5,6 @@ import {fireEvent, render, screen} from '@testing-library/react-native'
 import {VenueCard} from '../venue-card'
 import type {BuildingType} from '../../building-hours/types'
 
-jest.mock('@frogpond/double-tap', () => {
-	// oxlint-disable-next-line typescript/no-require-imports
-	return require('../../mess/__tests__/double-tap-mock') as typeof import('../../mess/__tests__/double-tap-mock')
-})
 jest.mock('@frogpond/open-url', () => ({openUrl: jest.fn()}))
 jest.mock('@frogpond/place-card-header', () => {
 	// oxlint-disable-next-line typescript/no-require-imports

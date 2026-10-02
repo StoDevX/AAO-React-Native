@@ -39,10 +39,12 @@ jest.mock('expo-router', () => {
 		useLocalSearchParams: () => ({name: 'The Cage', campus: 'stolaf'}),
 	}
 })
-jest.mock('expo-router/react-navigation', () => ({usePreventRemove: jest.fn()}))
 jest.mock('../../../../components/send-email')
 
 import {composeEmail} from '../../../../components/send-email'
+import {loadBeforeTests} from '../../../../testing/load-before-tests'
+
+loadBeforeTests('TextInput')
 
 const mockComposeEmail = composeEmail as jest.MockedFunction<typeof composeEmail>
 

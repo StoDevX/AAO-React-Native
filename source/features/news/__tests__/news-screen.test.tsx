@@ -16,14 +16,6 @@ import type {StoryType} from '../types'
 jest.mock('../news-list', () => ({NewsList: jest.fn(() => null)}))
 jest.mock('../news-picker', () => ({NewsPicker: jest.fn(() => null)}))
 
-jest.mock('expo-router', () => ({Stack: {Screen: () => null}}))
-
-// The feed query imports the app's query client, which subscribes to NetInfo.
-jest.mock('@react-native-community/netinfo', () =>
-	// oxlint-disable-next-line typescript/no-require-imports
-	require('@react-native-community/netinfo/jest/netinfo-mock'),
-)
-
 const mockNewsList = NewsList as unknown as jest.Mock<
 	(props: {entries: StoryType[]; selectedCategory: string | null}) => null
 >

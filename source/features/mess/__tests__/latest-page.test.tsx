@@ -13,20 +13,14 @@ import {messKeys} from '../lib/keys'
 import {onePage} from './one-page'
 import {parseMessCategories} from '../lib/posts'
 import type {MessStory} from '../types'
+import {loadBeforeTests} from '../../../testing/load-before-tests'
 
-jest.mock('@react-native-community/netinfo', () =>
-	// oxlint-disable-next-line typescript/no-require-imports
-	require('@react-native-community/netinfo/jest/netinfo-mock'),
-)
+loadBeforeTests('Image')
+
 jest.mock('@frogpond/data-sources', () => ({
 	...(jest.requireActual('@frogpond/data-sources') as object),
 	fetchManifest: jest.fn(),
 	fetchSourceBody: jest.fn(),
-}))
-jest.mock('expo-router', () => ({
-	// oxlint-disable-next-line typescript/no-require-imports
-	...(require('../../../testing/expo-router-mock') as object),
-	useRouter: () => ({navigate: jest.fn()}),
 }))
 
 const mockManifest = fetchManifest as jest.Mock<() => Promise<Jrd>>

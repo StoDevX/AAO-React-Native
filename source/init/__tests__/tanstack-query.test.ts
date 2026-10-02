@@ -1,19 +1,3 @@
-// `read.ts` is imported here for its query-key head alone, but reaching it runs
-// `client.ts`'s top-level `import * as SQLite from 'expo-sqlite'` -- a native
-// module with nothing to bind to under Jest. Mocked for that reason only, the
-// same way `source/database/calendar/__tests__/read.test.ts` does it.
-jest.mock('expo-sqlite', () => ({
-	openDatabaseSync: jest.fn(),
-	deleteDatabaseSync: jest.fn(),
-}))
-jest.mock('@react-native-community/netinfo', () =>
-	// oxlint-disable-next-line typescript/no-require-imports
-	require('@react-native-community/netinfo/jest/netinfo-mock'),
-)
-// `read.ts` and `client.ts` report a failed read or a failed drop through
-// `@sentry/react-native`, stubbed so a report goes nowhere.
-jest.mock('@sentry/react-native', () => ({captureException: jest.fn()}))
-
 import {dehydrate, QueryClient, type Query} from '@tanstack/react-query'
 import {
 	persistQueryClientRestore,

@@ -2,11 +2,6 @@ import {afterEach, describe, expect, jest, test} from '@jest/globals'
 import {fetchManifest, fetchSourceBody, type Jrd} from '@frogpond/data-sources'
 import {studentWorkAreasOptions} from '../areas-query'
 
-jest.mock('@react-native-community/netinfo', () =>
-	// oxlint-disable-next-line typescript/no-require-imports
-	require('@react-native-community/netinfo/jest/netinfo-mock'),
-)
-
 // The live path is the one under test; the suite-wide setup runs as a UI test.
 jest.mock('@frogpond/launch-arguments', () => ({isUITesting: false}))
 

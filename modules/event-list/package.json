@@ -9,6 +9,7 @@
     "test": "jest"
   },
   "dependencies": {
+    "@expo/ui": "57.0.14",
     "@frogpond/collections": "workspace:*",
     "@frogpond/colors": "workspace:*",
     "@frogpond/event-type": "workspace:*",
@@ -16,9 +17,15 @@
     "@frogpond/sheet-section": "workspace:*",
     "@frogpond/time-format": "workspace:*"
   },
+  "devDependencies": {
+    "@jest/globals": "30.5.2",
+    "@testing-library/react-native": "14.0.1",
+    "moment": "2.31.0"
+  },
   "peerDependencies": {
     "moment-timezone": "^0.6.4",
     "react": "catalog:",
-    "react-native": "catalog:"
+    "react-native": "catalog:",
+    "react-native-safe-area-context": "^5.7.0"
   }
 }

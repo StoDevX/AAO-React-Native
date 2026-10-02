@@ -12,6 +12,10 @@
     "@frogpond/launch-arguments": "workspace:*",
     "zustand": "5.0.15"
   },
+  "devDependencies": {
+    "@jest/globals": "30.5.2",
+    "@testing-library/react-native": "14.0.1"
+  },
   "peerDependencies": {
     "moment-timezone": "^0.6.4",
     "react": "catalog:",

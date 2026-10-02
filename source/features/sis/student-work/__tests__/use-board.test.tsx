@@ -5,11 +5,6 @@ import {keys, postingUnitsOptions, type PostingUnits} from '@frogpond/ccc-jobs'
 import {UITEST_POSTING_UNITS} from '@frogpond/ccc-jobs/fixtures/uitest-postings'
 import {useStudentWorkBoard} from '../use-board'
 
-jest.mock('@react-native-community/netinfo', () =>
-	// oxlint-disable-next-line typescript/no-require-imports
-	require('@react-native-community/netinfo/jest/netinfo-mock'),
-)
-
 let client = new QueryClient()
 
 beforeEach(() => {

@@ -11,7 +11,13 @@
   "dependencies": {
     "@frogpond/event-type": "workspace:*"
   },
+  "devDependencies": {
+    "@jest/globals": "30.5.2",
+    "@testing-library/react-native": "14.0.1",
+    "moment": "2.31.0"
+  },
   "peerDependencies": {
+    "@sentry/react-native": "^8.24.0",
     "delay": "^7.0.0",
     "expo-calendar": "~57.0.2",
     "react": "catalog:",

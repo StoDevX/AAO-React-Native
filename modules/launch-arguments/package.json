@@ -2,5 +2,8 @@
   "name": "@frogpond/launch-arguments",
   "version": "1.0.0",
   "main": "index.ts",
-  "types": "index.ts"
+  "types": "index.ts",
+  "peerDependencies": {
+    "expo-modules-core": "~57.0.15"
+  }
 }

@@ -9,6 +9,9 @@ import {normalizeEntry} from '../lib/entry'
 import {useDictionaryDraftStore} from '../store'
 import type * as ExpoRouterMock from '../../../testing/expo-router-mock'
 import {textFieldBlur} from '../../../testing/expo-ui-mock'
+import {loadBeforeTests} from '../../../testing/load-before-tests'
+
+loadBeforeTests('TextInput', 'Alert')
 
 // Jest's mock hoisting forbids a `jest.mock()` factory from closing over an
 // out-of-scope variable unless its name starts with "mock" -- the one
@@ -25,7 +28,6 @@ jest.mock('expo-router', () => {
 		useLocalSearchParams: () => ({senseId: '1'}),
 	}
 })
-jest.mock('expo-router/react-navigation', () => ({usePreventRemove: jest.fn()}))
 
 const entry = normalizeEntry({word: 'Caf', definition: 'The dining hall.'})
 

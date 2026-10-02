@@ -18,14 +18,6 @@ import * as Sentry from '@sentry/react-native'
 import {fetchSourceBody} from '@frogpond/data-sources'
 import tecFixture from './fixtures/tec-events.json'
 
-// The shared query client `query.ts` imports subscribes to network
-// reachability at module load. That does not run here: every test below calls
-// a `select` (or, for the ingest query, a `queryFn`) by hand, against fixture
-// data rather than the network.
-jest.mock('@react-native-community/netinfo', () =>
-	// oxlint-disable-next-line typescript/no-require-imports
-	require('@react-native-community/netinfo/jest/netinfo-mock'),
-)
 // Wraps the real clock so a single test can stand `now` on a fixed date --
 // every other test falls through to the real implementation untouched.
 jest.mock('@frogpond/timer', () => {

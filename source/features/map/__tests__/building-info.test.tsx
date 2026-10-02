@@ -10,11 +10,10 @@ import {directoryKeys} from '../card-queries'
 import type {BuildingType} from '../../building-hours/types'
 import {BuildingInfo} from '../building-info'
 import {makeBuilding} from './fixtures'
+import {loadBeforeTests} from '../../../testing/load-before-tests'
 
-jest.mock('@frogpond/double-tap', () => {
-	// oxlint-disable-next-line typescript/no-require-imports
-	return require('../../mess/__tests__/double-tap-mock') as typeof import('../../mess/__tests__/double-tap-mock')
-})
+loadBeforeTests('Image', 'Modal')
+
 jest.mock('@frogpond/open-url', () => ({openUrl: jest.fn()}))
 jest.mock('@frogpond/place-card-header', () => {
 	// oxlint-disable-next-line typescript/no-require-imports
@@ -656,7 +655,18 @@ describe('BuildingInfo with nothing to say', () => {
 		trackedQueryClients.push(client)
 		client.setQueryData(mapKeys.all('stolaf'), [])
 		client.setQueryData(directoryKeys.all('stolaf'), [])
-		// The Hours feed is left unseeded, so the card mounts while it loads.
+		// The Hours feed is held in flight until the test answers it, so the card
+		// mounts while it loads. Left to the card, the fetch would answer at once
+		// from the bundled copy, as it does under UI testing, and whether the card
+		// heard of it before the first assertion would come down to timing.
+		let answerHours: (venues: BuildingType[]) => void = () => undefined
+		let hoursArrival = client.query({
+			queryKey: keys.all('stolaf'),
+			queryFn: () =>
+				new Promise<BuildingType[]>((resolve) => {
+					answerHours = resolve
+				}),
+		})
 		await render(
 			<QueryClientProvider client={client}>
 				<BuildingInfo
@@ -671,7 +681,8 @@ describe('BuildingInfo with nothing to say', () => {
 		expect(screen.queryByText('No Details')).toBeNull()
 
 		await act(async () => {
-			client.setQueryData(keys.all('stolaf'), [])
+			answerHours([])
+			await hoursArrival
 			await new Promise((resolve) => setTimeout(resolve, 0))
 		})
 		expect(screen.getByText('No Details')).toBeTruthy()
