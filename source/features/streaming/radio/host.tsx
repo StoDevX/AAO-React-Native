@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {StyleSheet} from 'react-native'
+import {StyleSheet, View} from 'react-native'
 import {StreamPlayer} from './player'
 import {STATIONS} from './stations'
 import {useRadioStore} from './store'
@@ -23,19 +23,24 @@ export function RadioHost(): React.ReactNode {
 
 	let {source} = STATIONS[stationId]
 
+	// The WebView's own container takes flex: 1 whatever its style says, so
+	// beside the root stack it would claim half the screen. This view holds
+	// it to a point instead.
 	return (
-		<StreamPlayer
-			key={stationId}
-			embeddedPlayerUrl={source.embeddedPlayerUrl}
-			onEnded={reportPaused}
-			onError={reportError}
-			onPause={reportPaused}
-			onPlay={reportPlaying}
-			playState={playState}
-			streamSourceUrl={source.streamSourceUrl}
-			style={styles.hidden}
-			useEmbeddedPlayer={source.useEmbeddedPlayer}
-		/>
+		<View pointerEvents="none" style={styles.hidden}>
+			<StreamPlayer
+				key={stationId}
+				embeddedPlayerUrl={source.embeddedPlayerUrl}
+				onEnded={reportPaused}
+				onError={reportError}
+				onPause={reportPaused}
+				onPlay={reportPlaying}
+				playState={playState}
+				streamSourceUrl={source.streamSourceUrl}
+				style={styles.fill}
+				useEmbeddedPlayer={source.useEmbeddedPlayer}
+			/>
+		</View>
 	)
 }
 
@@ -47,5 +52,8 @@ const styles = StyleSheet.create({
 		width: 1,
 		height: 1,
 		opacity: 0,
+	},
+	fill: {
+		flex: 1,
 	},
 })
