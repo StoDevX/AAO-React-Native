@@ -1,3 +1,4 @@
+// First, so a chaos run wraps fetch before anything can fetch.
 import '../source/init/chaos'
 
 // initialization
