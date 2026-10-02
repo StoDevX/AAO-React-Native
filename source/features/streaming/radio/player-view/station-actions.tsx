@@ -1,6 +1,5 @@
 import * as React from 'react'
 import {StyleSheet, View} from 'react-native'
-import * as c from '@frogpond/colors'
 import {Touchable} from '@frogpond/touchable'
 import {SymbolView} from 'expo-symbols'
 import {Button, Host, Image, Menu} from '@expo/ui/swift-ui'
@@ -11,15 +10,17 @@ import {openUrl} from '@frogpond/open-url'
 import {callPhone} from '../../../../components/call-phone'
 import type {Station} from '../stations'
 import {AirPlayButtonStub} from './stubs'
+import {usePalette} from './palette'
 
 /** Call, Chat, Full Schedule and Open Website, behind the title's ••• button. */
 export function StationMenu({station}: {station: Station}): React.ReactNode {
 	let router = useRouter()
 	let chatUrl = station.chatUrl
+	let palette = usePalette()
 	return (
 		<Host matchContents={true}>
 			<Menu
-				label={<Image systemName="ellipsis" />}
+				label={<Image color={palette.primary} systemName="ellipsis" />}
 				modifiers={[
 					accessibilityLabel(`More for ${station.stationName}`),
 					frame({width: 44, height: 44}),
@@ -57,6 +58,7 @@ export function StationActionRow({
 	onShowSchedule: () => void
 }): React.ReactNode {
 	let chatUrl = station.chatUrl
+	let palette = usePalette()
 	return (
 		<View style={styles.row}>
 			<Touchable
@@ -67,7 +69,11 @@ export function StationActionRow({
 				onPress={chatUrl ? () => openUrl(chatUrl) : undefined}
 				style={styles.action}
 			>
-				<SymbolView name="quote.bubble" size={24} tintColor={chatUrl ? c.label : c.tertiaryLabel} />
+				<SymbolView
+					name="quote.bubble"
+					size={24}
+					tintColor={chatUrl ? palette.primary : palette.tertiary}
+				/>
 			</Touchable>
 			<AirPlayButtonStub />
 			<Touchable
@@ -77,7 +83,7 @@ export function StationActionRow({
 				onPress={onShowSchedule}
 				style={styles.action}
 			>
-				<SymbolView name="list.bullet" size={24} tintColor={c.label} />
+				<SymbolView name="list.bullet" size={24} tintColor={palette.primary} />
 			</Touchable>
 		</View>
 	)

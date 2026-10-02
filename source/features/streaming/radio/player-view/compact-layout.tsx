@@ -1,8 +1,5 @@
 import * as React from 'react'
 import {StyleSheet, Text, View} from 'react-native'
-import {Host, RNHostView, VStack} from '@expo/ui/swift-ui'
-import {padding} from '@expo/ui/swift-ui/modifiers'
-import * as c from '@frogpond/colors'
 import {openUrl} from '@frogpond/open-url'
 import {Touchable} from '@frogpond/touchable'
 import {useRouter} from 'expo-router'
@@ -16,64 +13,62 @@ import {SIDE} from './full-layout'
 import {PlaybackError, PlayStopButton} from './play-stop-button'
 import {ShowTitle} from './show-title'
 import {StationPicker} from './station-picker'
-import {useLogoCycle} from './use-logo-cycle'
+import {usePalette} from './palette'
+import type {RadioLogo} from '../theme'
 
 /** The size of the record at the medium detent. */
 const RECORD = 96
 
 /** The medium detent: the picker, then a row like an enlarged mini-player, then the actions. */
-export function CompactLayout({station}: {station: Station}): React.ReactNode {
-	let {logo} = useLogoCycle(station)
+export function CompactLayout({
+	station,
+	logo,
+}: {
+	station: Station
+	logo: RadioLogo
+}): React.ReactNode {
 	let {playState} = useStationPlayback(station.id)
 	let router = useRouter()
 	let chatUrl = station.chatUrl
 
 	return (
-		<Host style={styles.fill}>
-			<VStack modifiers={[padding({horizontal: SIDE, top: 12})]} spacing={20}>
-				<StationPicker />
-				<RNHostView matchContents={true}>
-					<View style={styles.stack}>
-						<View style={styles.row}>
-							{/* No tap here: at this size a scratch would fight the sheet's drag. */}
-							<ScratchableLogo
-								accessibilityLabel={`${station.stationName} logo, ${logo.name}`}
-								image={logo.image}
-								labelColor={logo.labelColor}
-								labelScale={logo.labelScale ?? 0.8}
-								playing={playState === 'playing'}
-								size={RECORD}
-							/>
-							<ShowTitle station={station} />
-							<PlayStopButton size="small" station={station} />
-						</View>
-						<PlaybackError station={station} />
-						<View style={styles.actions}>
-							<ActionButton
-								icon="phone"
-								label="Call"
-								accessibilityLabel={`Call ${station.stationName}`}
-								onPress={() => callPhone(station.stationNumber, {title: station.stationName})}
-							/>
-							<ActionButton
-								icon="quote.bubble"
-								label="Chat"
-								accessibilityLabel={
-									chatUrl ? `Chat with ${station.stationName}` : 'Chat unavailable'
-								}
-								onPress={chatUrl ? () => openUrl(chatUrl) : undefined}
-							/>
-							<ActionButton
-								icon="calendar"
-								label="Schedule"
-								accessibilityLabel={`${station.stationName} schedule`}
-								onPress={() => router.navigate(station.scheduleHref)}
-							/>
-						</View>
-					</View>
-				</RNHostView>
-			</VStack>
-		</Host>
+		<View style={styles.screen}>
+			<StationPicker />
+			<View style={styles.row}>
+				{/* No tap here: at this size a scratch would fight the sheet's drag. */}
+				<ScratchableLogo
+					accessibilityLabel={`${station.stationName} logo, ${logo.name}`}
+					image={logo.image}
+					labelColor={logo.labelColor}
+					labelScale={logo.labelScale ?? 0.8}
+					playing={playState === 'playing'}
+					size={RECORD}
+				/>
+				<ShowTitle station={station} />
+				<PlayStopButton size="small" station={station} />
+			</View>
+			<PlaybackError station={station} />
+			<View style={styles.actions}>
+				<ActionButton
+					accessibilityLabel={`Call ${station.stationName}`}
+					icon="phone"
+					label="Call"
+					onPress={() => callPhone(station.stationNumber, {title: station.stationName})}
+				/>
+				<ActionButton
+					accessibilityLabel={chatUrl ? `Chat with ${station.stationName}` : 'Chat unavailable'}
+					icon="quote.bubble"
+					label="Chat"
+					onPress={chatUrl ? () => openUrl(chatUrl) : undefined}
+				/>
+				<ActionButton
+					accessibilityLabel={`${station.stationName} schedule`}
+					icon="calendar"
+					label="Schedule"
+					onPress={() => router.navigate(station.scheduleHref)}
+				/>
+			</View>
+		</View>
 	)
 }
 
@@ -89,7 +84,8 @@ function ActionButton({
 	accessibilityLabel: string
 	onPress?: () => void
 }): React.ReactNode {
-	let tint = onPress ? c.label : c.tertiaryLabel
+	let palette = usePalette()
+	let tint = onPress ? palette.primary : palette.tertiary
 	return (
 		<Touchable
 			accessibilityLabel={accessibilityLabel}
@@ -101,17 +97,21 @@ function ActionButton({
 			style={styles.action}
 		>
 			<SymbolView name={icon} size={24} tintColor={tint} />
-			<Text style={onPress ? styles.actionLabel : styles.actionLabelDimmed}>{label}</Text>
+			<Text
+				style={[styles.actionLabel, onPress ? palette.styles.primary : palette.styles.tertiary]}
+			>
+				{label}
+			</Text>
 		</Touchable>
 	)
 }
 
 const styles = StyleSheet.create({
-	fill: {
+	screen: {
 		flex: 1,
-	},
-	stack: {
 		gap: 20,
+		paddingHorizontal: SIDE,
+		paddingTop: 20,
 	},
 	row: {
 		flexDirection: 'row',
@@ -131,10 +131,5 @@ const styles = StyleSheet.create({
 	},
 	actionLabel: {
 		fontSize: 13,
-		color: c.label,
-	},
-	actionLabelDimmed: {
-		fontSize: 13,
-		color: c.tertiaryLabel,
 	},
 })

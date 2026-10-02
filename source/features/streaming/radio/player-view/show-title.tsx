@@ -1,20 +1,21 @@
 import * as React from 'react'
 import {StyleSheet, Text, View} from 'react-native'
-import * as c from '@frogpond/colors'
 
 import type {Station} from '../stations'
 import {useStationSchedule} from '../use-station-schedule'
 import {showTitleText} from './show-title-text'
+import {usePalette} from './palette'
 
 export function ShowTitle({station}: {station: Station}): React.ReactNode {
 	let {current} = useStationSchedule(station.id)
 	let {title, subtitle} = showTitleText(station, current)
+	let palette = usePalette()
 	return (
 		<View style={styles.block}>
-			<Text numberOfLines={1} style={styles.title}>
+			<Text numberOfLines={1} style={[styles.title, palette.styles.primary]}>
 				{title}
 			</Text>
-			<Text numberOfLines={1} style={styles.subtitle}>
+			<Text numberOfLines={1} style={[styles.subtitle, palette.styles.secondary]}>
 				{subtitle}
 			</Text>
 		</View>
@@ -23,6 +24,6 @@ export function ShowTitle({station}: {station: Station}): React.ReactNode {
 
 const styles = StyleSheet.create({
 	block: {flex: 1},
-	title: {color: c.label, fontSize: 22, fontWeight: '600'},
-	subtitle: {color: c.secondaryLabel, fontSize: 20},
+	title: {fontSize: 22, fontWeight: '600'},
+	subtitle: {fontSize: 20},
 })

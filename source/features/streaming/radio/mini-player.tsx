@@ -5,7 +5,6 @@ import * as c from '@frogpond/colors'
 import {Touchable} from '@frogpond/touchable'
 import {SymbolView} from 'expo-symbols'
 import {GlassView} from 'expo-glass-effect'
-import {useRouter} from 'expo-router'
 import {NativeTabs} from 'expo-router/unstable-native-tabs'
 import {STATIONS} from './stations'
 import {useRadioStore} from './store'
@@ -44,7 +43,7 @@ type MiniPlayerProps = {
 
 /**
  * The loaded station, with Play or Stop, laid out as Music's Now
- * Playing accessory. Tapping the station opens its screen. With no station
+ * Playing accessory. Tapping the station opens the radio's sheet. With no station
  * loaded it renders nothing, or the idle player when `showWhenIdle` asks for
  * it.
  */
@@ -52,7 +51,7 @@ export function RadioMiniPlayer({
 	compact = false,
 	showWhenIdle = false,
 }: MiniPlayerProps): React.ReactNode {
-	let router = useRouter()
+	let openSheet = useRadioStore((state) => state.openSheet)
 	let stationId = useRadioStore((state) => state.stationId)
 	let playState = useRadioStore((state) => state.playState)
 	let error = useRadioStore((state) => state.error)
@@ -70,12 +69,12 @@ export function RadioMiniPlayer({
 	return (
 		<View style={styles.row}>
 			<Touchable
-				accessibilityHint="Opens the station"
+				accessibilityHint="Opens the radio"
 				accessibilityLabel={`${station.stationName}, ${status}`}
 				accessibilityRole="button"
 				highlight={false}
 				containerStyle={styles.stationContainer}
-				onPress={() => router.navigate(station.href)}
+				onPress={() => openSheet()}
 				style={styles.station}
 			>
 				<Image source={station.logos[0].image} style={styles.artwork} />
@@ -106,13 +105,21 @@ export function RadioMiniPlayer({
 }
 
 /**
- * The mini-player with no station loaded, as Music shows it: a blank
- * artwork tile and dimmed controls. Nothing in it does anything, so VoiceOver
- * reads it as one piece of text rather than offering a dead button.
+ * The mini-player with no station loaded, as Music shows it: a blank artwork
+ * tile and a dimmed Play. The whole of it is one button, opening the sheet on
+ * the station last viewed.
  */
 function IdleMiniPlayer(): React.ReactNode {
+	let openSheet = useRadioStore((state) => state.openSheet)
 	return (
-		<View accessible={true} accessibilityLabel={IDLE_LABEL} style={styles.row}>
+		<Touchable
+			accessibilityHint="Opens the radio"
+			accessibilityLabel={IDLE_LABEL}
+			accessibilityRole="button"
+			highlight={false}
+			onPress={() => openSheet()}
+			style={styles.row}
+		>
 			<View style={styles.station}>
 				<View style={[styles.artwork, styles.blankArtwork]}>
 					<SymbolView name="radio" size={16} tintColor={c.tertiaryLabel} />
@@ -126,7 +133,7 @@ function IdleMiniPlayer(): React.ReactNode {
 			<View style={styles.control}>
 				<SymbolView name="play.fill" size={20} tintColor={c.tertiaryLabel} />
 			</View>
-		</View>
+		</Touchable>
 	)
 }
 

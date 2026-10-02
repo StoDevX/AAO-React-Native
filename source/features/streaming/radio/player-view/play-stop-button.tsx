@@ -6,6 +6,7 @@ import {SymbolView} from 'expo-symbols'
 
 import type {Station} from '../stations'
 import {useRadioStore, useStationPlayback} from '../store'
+import {usePalette} from './palette'
 
 /** Play, or Stop while the station is starting or playing. */
 export function PlayStopButton({
@@ -20,6 +21,7 @@ export function PlayStopButton({
 	let stop = useRadioStore((state) => state.stop)
 	let running = playState !== 'stopped'
 	let large = size === 'large'
+	let palette = usePalette()
 	return (
 		<Touchable
 			accessibilityLabel={`${running ? 'Stop' : 'Play'} ${station.stationName}`}
@@ -31,7 +33,7 @@ export function PlayStopButton({
 			<SymbolView
 				name={running ? 'stop.fill' : 'play.fill'}
 				size={large ? 44 : 24}
-				tintColor={c.label}
+				tintColor={palette.primary}
 			/>
 		</Touchable>
 	)
