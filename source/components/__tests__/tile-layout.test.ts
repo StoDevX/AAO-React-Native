@@ -1,6 +1,11 @@
 import {describe, expect, test} from '@jest/globals'
 
-import {columnsForFontScale, homeColumnsForFontScale, inRows} from '../tile-layout'
+import {
+	columnsForFontScale,
+	homeColumnsForFontScale,
+	inRows,
+	orgCategoryColumnsForFontScale,
+} from '../tile-layout'
 
 describe('columnsForFontScale', () => {
 	test('the default scale gives four columns', () => {
@@ -53,6 +58,31 @@ describe('homeColumnsForFontScale', () => {
 	test('the AX5 scale still gives one', () => {
 		expect(homeColumnsForFontScale(3.571)).toBe(1)
 	})
+})
+
+describe('orgCategoryColumnsForFontScale', () => {
+	test('the default scale gives three columns', () => {
+		expect(orgCategoryColumnsForFontScale(1.0)).toBe(3)
+	})
+
+	test('stays at three just below the accessibility sizes', () => {
+		expect(orgCategoryColumnsForFontScale(1.59)).toBe(3)
+	})
+
+	test('drops to two at the first accessibility size', () => {
+		expect(orgCategoryColumnsForFontScale(1.6)).toBe(2)
+	})
+
+	test('the AX5 scale still gives two', () => {
+		expect(orgCategoryColumnsForFontScale(3.571)).toBe(2)
+	})
+
+	test.each([0, 0.5, 1.0, 1.19, 1.2, 1.59, 1.6, 2, 3.571, 5, 10])(
+		'never gives more columns than the default grid for scale %d',
+		(scale) => {
+			expect(orgCategoryColumnsForFontScale(scale)).toBeLessThanOrEqual(columnsForFontScale(scale))
+		},
+	)
 })
 
 /// Only `title` matters to `inRows` -- it slices and groups, it never reads

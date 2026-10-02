@@ -44,6 +44,14 @@ export function homeColumnsForFontScale(fontScale: number): number {
 	return fontScale < 1.6 ? 2 : 1
 }
 
+/// Student Orgs' category names are longer than the other grids' labels
+/// ("Performance", "Club Sports - Competitive"), and at four columns a tile is
+/// too narrow for a whole word, so the label breaks mid-word. Capped at three;
+/// larger text still drops to two as `columnsForFontScale` does.
+export function orgCategoryColumnsForFontScale(fontScale: number): number {
+	return Math.min(3, columnsForFontScale(fontScale))
+}
+
 /// Groups a flat list into the rows a SwiftUI Grid wants: its API takes
 /// children pre-split into `Grid.Row`s rather than a flat list. `columns`
 /// varies with Dynamic Type (see `columnsForFontScale`), so it is a parameter

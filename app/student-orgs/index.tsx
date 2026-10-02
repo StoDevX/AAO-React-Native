@@ -1,6 +1,6 @@
 // app/student-orgs/index.tsx
 import * as React from 'react'
-import {StyleSheet} from 'react-native'
+import {StyleSheet, useWindowDimensions} from 'react-native'
 import {Host, ScrollView, VStack} from '@expo/ui/swift-ui'
 import {frame, padding, refreshable} from '@expo/ui/swift-ui/modifiers'
 import {LoadErrorView, LoadingView} from '@frogpond/notice'
@@ -19,7 +19,12 @@ import {OrgResultsList} from '../../source/features/student-orgs/org-results-lis
 import {studentOrgsOptions} from '../../source/features/student-orgs/query'
 import {filterAndGroupOrgs} from '../../source/features/student-orgs/search'
 import type {StudentOrgType} from '../../source/features/student-orgs/types'
-import {FILL_WIDTH, SCREEN_MARGIN, TILE_SPACING} from '../../source/components/tile-layout'
+import {
+	FILL_WIDTH,
+	orgCategoryColumnsForFontScale,
+	SCREEN_MARGIN,
+	TILE_SPACING,
+} from '../../source/components/tile-layout'
 import {TileGrid} from '../../source/components/tile-grid'
 import {SearchBar} from '../../source/components/search-bar'
 
@@ -183,6 +188,8 @@ type LandingProps = {
  * from.
  */
 function StudentOrgsLanding({tiles, onSelectCategory, onRefresh}: LandingProps): React.ReactNode {
+	let {fontScale} = useWindowDimensions()
+
 	return (
 		<Host matchContents={false} style={styles.host}>
 			<ScrollView
@@ -202,6 +209,7 @@ function StudentOrgsLanding({tiles, onSelectCategory, onRefresh}: LandingProps):
 				>
 					<TileGrid
 						accessibilityId={CATEGORY_GRID_ID}
+						columns={orgCategoryColumnsForFontScale(fontScale)}
 						items={tiles}
 						keyForItem={(tile) => tile.name}
 						renderItem={(tile) => (
