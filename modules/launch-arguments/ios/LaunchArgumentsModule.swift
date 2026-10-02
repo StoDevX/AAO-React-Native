@@ -5,13 +5,6 @@ public class LaunchArgumentsModule: Module {
 		Name("LaunchArguments")
 
 		let arguments = ProcessInfo.processInfo.arguments
-		/// The argument following `flag`, as `--chaos-seed 42` passes 42.
-		func value(after flag: String) -> String? {
-			guard let index = arguments.firstIndex(of: flag), index + 1 < arguments.count else {
-				return nil
-			}
-			return arguments[index + 1]
-		}
 
 		Constants([
 			"isUITesting": arguments.contains("--uitesting"),
@@ -23,10 +16,20 @@ public class LaunchArgumentsModule: Module {
 			// A chaos run: uitests/Chaos drives the app while source/chaos
 			// injects faults. See source/chaos/install.ts.
 			"isChaos": arguments.contains("--chaos"),
-			"chaosSeed": Int(value(after: "--chaos-seed") ?? "") ?? 0,
-			"chaosLaunch": Int(value(after: "--chaos-launch") ?? "") ?? 0,
+			"chaosSeed": Int(Self.value(after: "--chaos-seed") ?? "") ?? 0,
+			"chaosLaunch": Int(Self.value(after: "--chaos-launch") ?? "") ?? 0,
 			"chaosMode": arguments.contains("--chaos-replay") ? "replay" : "record",
-			"chaosFaultRate": Double(value(after: "--chaos-fault-rate") ?? "") ?? 0.25,
+			"chaosFaultRate": Double(Self.value(after: "--chaos-fault-rate") ?? "") ?? 0.25,
 		])
+	}
+
+	/// The argument following `flag`, as `--chaos-seed 42` passes 42. Outside
+	/// `definition()` because its result builder accepts no local functions.
+	private static func value(after flag: String) -> String? {
+		let arguments = ProcessInfo.processInfo.arguments
+		guard let index = arguments.firstIndex(of: flag), index + 1 < arguments.count else {
+			return nil
+		}
+		return arguments[index + 1]
 	}
 }
