@@ -39,8 +39,8 @@ const PLAYING_SCALE = 1.06
 /** The centre label's share of the record's width, near a 7-inch single's. */
 const LABEL_SIZE = 0.55
 
-/** One turn every 2.4 seconds, the speed of the record in KSTO's own 2017 app. */
-const MS_PER_TURN = 2400
+/** 33⅓ rpm, an LP's speed: one turn every 1.8 seconds. */
+const MS_PER_TURN = 60_000 / (100 / 3)
 const DEGREES_PER_SECOND = 360 / (MS_PER_TURN / 1000)
 
 type Props = {

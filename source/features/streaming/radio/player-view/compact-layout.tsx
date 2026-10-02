@@ -10,13 +10,14 @@ import {PlaybackError, PlayStopButton} from './play-stop-button'
 import {ShowTitle} from './show-title'
 import {StationActionRow, StationMenu} from './station-actions'
 import {StationPicker} from './station-picker'
+import {VolumeSliderStub} from './stubs'
 
 /** The size of the record at the medium detent. */
 const RECORD = 96
 
 /**
  * The medium detent: the picker, the record beside what's on, a large Play or
- * Stop, and the full player's own bottom row, pinned to the bottom.
+ * Stop, the volume, and the full player's own bottom row, pinned to the bottom.
  * `onShowSchedule` is the bottom row's schedule button, which has no artwork
  * area to swap here.
  */
@@ -51,6 +52,7 @@ export function CompactLayout({
 				<PlayStopButton size="large" station={station} />
 				<PlaybackError station={station} />
 			</View>
+			<VolumeSliderStub />
 			<View style={styles.spacer} />
 			<StationActionRow onShowSchedule={onShowSchedule} station={station} />
 		</View>
