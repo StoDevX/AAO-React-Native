@@ -27,6 +27,10 @@ import windmillDawnIconDark from './windmill-dawn-icon-dark.png'
 import windmillDawnIcon from './windmill-dawn-icon.png'
 import windmillDawnLogoDark from './windmill-dawn-logo-dark.png'
 import windmillDawnLogo from './windmill-dawn-logo.png'
+import windmillStarsIconDark from './windmill-stars-icon-dark.png'
+import windmillStarsIcon from './windmill-stars-icon.png'
+import windmillStarsLogoDark from './windmill-stars-logo-dark.png'
+import windmillStarsLogo from './windmill-stars-logo.png'
 import windmillStormIconDark from './windmill-storm-icon-dark.png'
 import windmillStormIcon from './windmill-storm-icon.png'
 import windmillStormLogoDark from './windmill-storm-logo-dark.png'
@@ -92,6 +96,10 @@ export const appIcons = {
 	'windmill-snow': {
 		light: {icon: windmillSnowIcon, logo: windmillSnowLogo},
 		dark: {icon: windmillSnowIconDark, logo: windmillSnowLogoDark},
+	},
+	'windmill-stars': {
+		light: {icon: windmillStarsIcon, logo: windmillStarsLogo},
+		dark: {icon: windmillStarsIconDark, logo: windmillStarsLogoDark},
 	},
 } satisfies Record<string, {light: Previews; dark: Previews}>
 

@@ -20,6 +20,7 @@ export const ALTERNATE_ICONS = [
 	'windmill-aurora',
 	'windmill-fog',
 	'windmill-snow',
+	'windmill-stars',
 ]
 
 /** Where the tracked documents live, relative to the repository root. */
