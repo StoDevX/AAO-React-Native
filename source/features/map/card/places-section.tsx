@@ -31,8 +31,9 @@ import {
 import * as c from '@frogpond/colors'
 import type {Moment} from 'moment-timezone'
 
-import {splitCarousel, type PlaceTile} from '../lib/place-tiles'
+import type {PlaceTile} from '../lib/place-tiles'
 import {CARD_INSET} from '../../../components/place-card/card-style'
+import {splitCarousel} from '../../../lib/split-carousel'
 import {MoreTileView, PlaceTileView, type TileStatus} from './place-tile'
 import {venueStatus} from './venue-status'
 import type {StackEntry} from '../lib/also-here'

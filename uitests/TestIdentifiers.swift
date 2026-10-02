@@ -522,7 +522,7 @@ struct TestIdentifiers {
 		/// A section the view menu offers, as source/features/mess/lib/posts.ts names it.
 		static let newsSection = "News"
 
-		/// The paper's name, set as the front page's masthead by source/features/mess/masthead.tsx.
+		/// The paper's name: Latest's masthead, and By Issue's castle's label, in source/features/mess/masthead.tsx.
 		static let paperName = "The Olaf Messenger"
 
 		/// A page's dateline, in source/features/mess/masthead.tsx.
@@ -530,6 +530,11 @@ struct TestIdentifiers {
 
 		/// The lead story, and every card on a shelf, in source/features/mess/issue-page.tsx.
 		static let leadStory = "mess-lead-story"
+		static let storyCard = "mess-story-card"
+
+		/// Each row of the More grid, the stories from no print section, in
+		/// source/features/mess/issue-page.tsx.
+		static let moreGridRow = "mess-more-grid-row"
 
 		/// A section's column chips, each labelled with its column, in source/features/mess/section-page.tsx.
 		static let columnChip = "mess-column-chip"

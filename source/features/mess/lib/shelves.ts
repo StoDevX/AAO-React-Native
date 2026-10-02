@@ -44,3 +44,11 @@ export function shelvesOf(stories: MessStory[], leadId: number | undefined): She
 	}
 	return [...sections, others].filter((shelf) => shelf.stories.length > 0)
 }
+
+/**
+ * Every story an issue holds in one section, newest first, for the section's own list. Unlike its
+ * shelf, the list keeps the lead: on the list, it is one more story of the section.
+ */
+export function sectionStories(stories: MessStory[], section: string): MessStory[] {
+	return stories.filter((story) => story.section === section)
+}

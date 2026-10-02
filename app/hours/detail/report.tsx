@@ -23,6 +23,7 @@ import {ImageAttachmentsSection} from '../../../source/components/image-attachme
 import {useImageAttachments} from '../../../source/components/use-image-attachments'
 import {ActionRow, DetailRow, NavigationRow} from '../../../source/components/rows'
 import {SyncedTextField} from '../../../source/components/synced-text-field'
+import {FocusedFieldProvider, useBlurFocusedField} from '../../../source/components/focused-field'
 import {
 	buildingByNameOptions,
 	buildingsOptions,
@@ -52,6 +53,7 @@ function useBuildingEditor(initialBuilding: BuildingType, campus: Campus) {
 	let building = draft ?? initialBuilding
 
 	let attachments = useImageAttachments()
+	let blurFocusedField = useBlurFocusedField()
 	let [submitted, setSubmitted] = React.useState(false)
 
 	// A ref, not state: a second tap can land before the render that would
@@ -73,17 +75,20 @@ function useBuildingEditor(initialBuilding: BuildingType, campus: Campus) {
 	 * https://reactnavigation.org/docs/preventing-going-back
 	 */
 	usePreventRemove((hasUnsavedChanges || attachments.images.length > 0) && !submitted, ({data}) => {
-		Alert.alert(
-			'Discard changes?',
-			'You have made unsaved changes. Are you sure you want to discard them?',
-			[
-				{text: 'Edit', style: 'cancel'},
-				{
-					text: 'Discard',
-					style: 'destructive',
-					onPress: () => navigation.dispatch(data.action),
-				},
-			],
+		// Before the alert, so it has no field to hand focus back to on Discard.
+		void blurFocusedField().then(() =>
+			Alert.alert(
+				'Discard changes?',
+				'You have made unsaved changes. Are you sure you want to discard them?',
+				[
+					{text: 'Edit', style: 'cancel'},
+					{
+						text: 'Discard',
+						style: 'destructive',
+						onPress: () => navigation.dispatch(data.action),
+					},
+				],
+			),
 		)
 	})
 
@@ -464,7 +469,11 @@ function HoursProblemReportLoader(): React.ReactNode {
 		)
 	}
 
-	return <HoursProblemReportView campus={campus} initialBuilding={building} />
+	return (
+		<FocusedFieldProvider>
+			<HoursProblemReportView campus={campus} initialBuilding={building} />
+		</FocusedFieldProvider>
+	)
 }
 
 export default function HoursProblemReportPage(): React.ReactNode {

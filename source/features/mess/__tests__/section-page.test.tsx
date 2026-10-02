@@ -7,6 +7,7 @@ import {fetchManifest, fetchSourceBody, type Jrd} from '@frogpond/data-sources'
 import categoriesJson from './fixtures/categories.json'
 import {queryClient as appQueryClient} from '../../../init/tanstack-query'
 import {messKeys} from '../lib/keys'
+import {onePage} from './one-page'
 import {parseMessCategories} from '../lib/posts'
 import {SectionStories} from '../section-page'
 import type {MessStory} from '../types'
@@ -70,7 +71,7 @@ function renderSection(name = 'News') {
 
 describe('SectionStories', () => {
 	test("offers a section's columns A–Z as chips, above its newest stories", async () => {
-		queryClient.setQueryData(messKeys.category(NEWS), [GRANT])
+		queryClient.setQueryData(messKeys.category(NEWS), onePage([GRANT]))
 		await renderSection()
 
 		expect(
@@ -91,7 +92,7 @@ describe('SectionStories', () => {
 			messKeys.categories,
 			parseMessCategories(categoriesJson).filter((category) => category.parent !== OPINIONS),
 		)
-		queryClient.setQueryData(messKeys.category(OPINIONS), [GRANT])
+		queryClient.setQueryData(messKeys.category(OPINIONS), onePage([GRANT]))
 		await renderSection('Opinions')
 
 		expect(
@@ -100,7 +101,7 @@ describe('SectionStories', () => {
 	})
 
 	test('opens a column on a page of its own, and a story in the reader', async () => {
-		queryClient.setQueryData(messKeys.category(NEWS), [GRANT])
+		queryClient.setQueryData(messKeys.category(NEWS), onePage([GRANT]))
 		await renderSection()
 
 		await fireEvent.press(screen.getByRole('button', {name: 'Good Questions'}))

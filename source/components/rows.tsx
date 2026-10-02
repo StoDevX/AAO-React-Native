@@ -140,7 +140,8 @@ export function ActionRow(props: ActionRowProps): React.ReactNode {
 }
 
 /**
- * A leading symbol, drawn by SwiftUI itself.
+ * A leading symbol, drawn by SwiftUI itself: one iOS ships, named by
+ * `systemName`, or a custom one in the asset catalog, named by `assetName`.
  *
  * `label` is for a symbol that means something, like an unread dot: VoiceOver
  * reads the row as one element, so the label leads the row's own. `size`
@@ -148,8 +149,7 @@ export function ActionRow(props: ActionRowProps): React.ReactNode {
  * sets a column for the symbol to center in, so rows whose symbols differ in
  * width still start their titles at one edge.
  */
-type SymbolImage = {
-	systemName: SFSymbol
+type SymbolImage = ({systemName: SFSymbol} | {assetName: string}) & {
 	tint?: ColorValue
 	size?: number
 	label?: string
@@ -203,13 +203,13 @@ type DisclosureRowProps = {
 
 /** A row's leading image: a tinted symbol, or a thumbnail. */
 export function LeadingImage({image}: {image: DisclosureRowImage}): React.ReactNode {
-	if ('systemName' in image) {
+	if (!('uri' in image)) {
 		return (
 			<Image
+				{...('assetName' in image ? {assetName: image.assetName} : {systemName: image.systemName})}
 				color={image.tint ?? c.secondaryLabel}
 				modifiers={image.width === undefined ? undefined : [frame({width: image.width})]}
 				size={image.size ?? SYMBOL_SIZE}
-				systemName={image.systemName}
 			/>
 		)
 	}

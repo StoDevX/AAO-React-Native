@@ -1,8 +1,7 @@
 import {parseTerm} from '../../../../lib/course-search/parse-term'
 import type {Filter, ListFilter, ToggleFilter} from '@frogpond/filter'
 import {CourseType} from '../../../../lib/course-search'
-import {availableTermsOptions, departmentsOptions, geReqsOptions} from '../query'
-import {useQuery} from '@tanstack/react-query'
+import {useCourseCatalog, useCourseFilterOptions} from '../../../../database/courses/read'
 
 export function useFilters(): {
 	isLoading: boolean
@@ -10,46 +9,20 @@ export function useFilters(): {
 	error: null | Error
 	refetch: () => void
 } {
-	let {
-		data: terms = [],
-		error: termError,
-		isLoading: termsLoading,
-		refetch: refetchTerms,
-	} = useQuery(availableTermsOptions)
-
-	let {
-		data: geReqs = [],
-		error: geReqError,
-		isLoading: geReqsLoading,
-		refetch: refetchGeReqs,
-	} = useQuery(geReqsOptions)
-
-	let {
-		data: departments = [],
-		error: departmentsError,
-		isLoading: deptsLoading,
-		refetch: refetchDepts,
-	} = useQuery(departmentsOptions)
-
-	let refetch = () => {
-		void refetchTerms()
-		void refetchGeReqs()
-		void refetchDepts()
-	}
-
-	let isLoading = termsLoading || geReqsLoading || deptsLoading
-	let error = termError || geReqError || departmentsError
+	let {terms, gereqs: geReqs, departments} = useCourseFilterOptions()
+	let catalog = useCourseCatalog()
+	let isLoading = catalog.isFetching && terms.length === 0
+	let error = terms.length === 0 ? catalog.error : null
+	let refetch = () => void catalog.refetch()
 
 	if (error) {
 		return {data: [], error, isLoading, refetch}
 	}
 
-	let allTerms = terms
-		.map((term) => ({
-			title: String(term.term),
-			label: parseTerm(term.term.toString()),
-		}))
-		.reverse()
+	let allTerms = terms.map((term) => ({
+		title: String(term),
+		label: parseTerm(String(term)),
+	}))
 
 	let allGEs = geReqs.map((ge) => ({title: ge}))
 	let allDepartments = departments.map((dep) => ({title: dep}))

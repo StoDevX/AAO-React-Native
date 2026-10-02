@@ -1,34 +1,21 @@
-import type {RawCourseType, TermInfoType} from '../types'
+import type {RawCourseType} from '../types'
+
+/// Mirrored by `TestIdentifiers.CourseCatalog.aCourse`.
+export const UITEST_COURSE_NAME = 'Hybrid Test Course'
 
 /**
- * One term and one course, for UI testing.
+ * One course, for UI testing, written into the catalog UI tests search.
  *
  * The catalogue is several megabytes of live data that changes every
  * registration cycle, so a test searching it cannot say what it will find. This
- * is the smallest set that still reaches the detail screen: a term to search,
- * and a course in it to open.
+ * is the smallest set that still reaches the detail screen: a course to search
+ * for and open.
  *
  * The course is built to exercise the detail screen's every section rather than
  * to be typical -- it has instructors, GEs, prerequisites, notes, a
  * description, and a lab that meets twice on one day so the schedule has a
  * grouped row to draw.
  */
-export const UITEST_TERM = {
-	hash: 'uitest',
-	path: '2026-1.json',
-	term: 20261,
-	type: 'json',
-	year: 2026,
-} as const
-
-export const UITEST_TERM_INFO: TermInfoType = {
-	files: [UITEST_TERM],
-	type: 'json',
-}
-
-/// Mirrored by `TestIdentifiers.CourseCatalog.aCourse`.
-export const UITEST_COURSE_NAME = 'Hybrid Test Course'
-
 export const UITEST_COURSES: RawCourseType[] = [
 	{
 		clbid: 170131,

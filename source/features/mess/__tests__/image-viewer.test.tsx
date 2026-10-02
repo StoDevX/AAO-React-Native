@@ -6,6 +6,7 @@ import {QueryClient, QueryClientProvider} from '@tanstack/react-query'
 import {queryClient as appQueryClient} from '../../../init/tanstack-query'
 import {ImageViewer} from '../image-viewer'
 import {messKeys} from '../lib/keys'
+import {onePage} from './one-page'
 import type {MessStory} from '../types'
 
 jest.mock('@frogpond/double-tap', () => {
@@ -117,7 +118,10 @@ let queryClient: QueryClient
 
 beforeEach(() => {
 	queryClient = new QueryClient({defaultOptions: {queries: {staleTime: Infinity, retry: false}}})
-	queryClient.setQueryData(messKeys.feed, [COMIC, ARTICLE, PHOTO_SET, NO_PICTURE, ILLUSTRATED])
+	queryClient.setQueryData(
+		messKeys.feed,
+		onePage([COMIC, ARTICLE, PHOTO_SET, NO_PICTURE, ILLUSTRATED]),
+	)
 })
 
 afterEach(() => {

@@ -12,6 +12,7 @@ import type {BuildingType} from '../../types'
 import {simulateFocus} from '../../../../testing/expo-router-mock'
 import type * as ExpoRouterMock from '../../../../testing/expo-router-mock'
 import {flushQueryNotifications} from '../../../../testing/query-notifications'
+import {textFieldBlur} from '../../../../testing/expo-ui-mock'
 
 // report.tsx pulls in the redux barrel through query.ts, for
 // useGroupedBuildings' favorites selector elsewhere in that module. That
@@ -128,6 +129,50 @@ describe('the report form', () => {
 
 		let [args] = mockComposeEmail.mock.calls.at(-1) as [{body: string}]
 		expect(args.body).toContain('category: Libraries')
+	})
+})
+
+describe('the unsaved-changes guard', () => {
+	/// Raises the guard the way leaving the screen would.
+	async function tryToLeave() {
+		let guard = usePreventRemove as jest.MockedFunction<typeof usePreventRemove>
+		let onPreventRemove = guard.mock.calls.at(-1)?.[1]
+		await act(() => {
+			onPreventRemove?.({data: {action: {type: 'GO_BACK'}}})
+		})
+	}
+
+	/// UIKit hands focus back, on Discard, to whatever field held it when the
+	/// alert went up -- and a field still focused as the form is torn down
+	/// takes the app with it.
+	it('lets go of the focused field before asking to discard', async () => {
+		await renderReport()
+		let alert = jest.spyOn(Alert, 'alert').mockImplementation(() => undefined)
+		let note = screen.getByLabelText('Describe the problem')
+
+		await fireEvent(note, 'focus')
+		await fireEvent.changeText(note, 'Closed early on Fridays')
+		await tryToLeave()
+
+		expect(textFieldBlur).toHaveBeenCalledWith('Describe the problem')
+		expect(alert).toHaveBeenCalled()
+		expect(textFieldBlur.mock.invocationCallOrder[0]).toBeLessThan(
+			alert.mock.invocationCallOrder[0],
+		)
+	})
+
+	it('asks to discard when no field is focused', async () => {
+		await renderReport()
+		let alert = jest.spyOn(Alert, 'alert').mockImplementation(() => undefined)
+		let note = screen.getByLabelText('Describe the problem')
+
+		await fireEvent(note, 'focus')
+		await fireEvent.changeText(note, 'Closed early on Fridays')
+		await fireEvent(note, 'blur')
+		await tryToLeave()
+
+		expect(textFieldBlur).not.toHaveBeenCalled()
+		expect(alert).toHaveBeenCalled()
 	})
 })
 

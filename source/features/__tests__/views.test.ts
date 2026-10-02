@@ -1,6 +1,8 @@
+import {existsSync} from 'node:fs'
+import {join} from 'node:path'
 import {describe, expect, test} from '@jest/globals'
 
-import {AllViews, opensInBrowser, type ViewType} from '../views'
+import {AllViews, CUSTOM_SYMBOLS, iconImage, opensInBrowser, type ViewType} from '../views'
 
 function onlyView(matches: (view: ViewType) => boolean): ViewType {
 	let found = AllViews().filter(matches)
@@ -34,5 +36,28 @@ describe('Balances', () => {
 
 	test('keeps the native screen listed, but turned off', () => {
 		expect(balancesScreen).toMatchObject({view: '/balances', disabled: true})
+	})
+})
+
+describe('iconImage', () => {
+	test('names an SF Symbol by its system name', () => {
+		expect(iconImage('fork.knife')).toEqual({systemName: 'fork.knife'})
+	})
+
+	test('names a custom symbol by its asset name', () => {
+		expect(iconImage('olaf-messenger')).toEqual({assetName: 'olaf-messenger'})
+	})
+})
+
+describe('custom symbols', () => {
+	test.each(CUSTOM_SYMBOLS)('%s has a symbol set for the asset catalog', (name) => {
+		let symbolSet = join(__dirname, '../../../assets/symbols', `${name}.symbolset`, `${name}.svg`)
+		expect(existsSync(symbolSet)).toBe(true)
+	})
+})
+
+describe('Olaf Messenger', () => {
+	test("shows the paper's castle", () => {
+		expect(onlyView((v) => v.title === 'Olaf Messenger').icon).toBe('olaf-messenger')
 	})
 })

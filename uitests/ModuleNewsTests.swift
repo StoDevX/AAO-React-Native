@@ -19,6 +19,24 @@ class ModuleNewsTests: UITestCaseUnbooted {
 			.openSecondIssue()
 	}
 
+	func testOlafMessengerShelfAllListsTheSectionFromItsIssue() throws {
+		MessFrontPage(app: app)
+			.navigate()
+			.openNewestIssue()
+			.scrollDownALittle()
+			.openSectionHoldingTheLead(TestIdentifiers.News.newsSection)
+	}
+
+	func testOlafMessengerSpecialEditionGridsItsStories() throws {
+		MessFrontPage(app: app)
+			.navigate()
+			// Under UI tests the second issue is the May 12 special edition, whose stories all sit
+			// in no print section.
+			.openSecondIssue()
+		MessIssueScreen(app: app)
+			.verifyMoreGridsItsStories()
+	}
+
 	func testOlafMessengerIssuesLoadOlderPages() throws {
 		MessFrontPage(app: app)
 			.navigate()

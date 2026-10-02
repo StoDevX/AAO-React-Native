@@ -301,9 +301,6 @@ importers:
       fuzzyfind:
         specifier: 2.1.0
         version: 2.1.0
-      keyword-search:
-        specifier: 0.1.2
-        version: 0.1.2
       ky:
         specifier: 2.1.0
         version: 2.1.0
@@ -3750,10 +3747,6 @@ packages:
   graceful-fs@4.2.11:
     resolution: {integrity: sha512-RbJ5/jmFcNNCcDV5o9eTnBLJ/HszWV0P73bc+Ff4nS/rJj+YaS6IGyiOL0VoBYX+l1Wrl3k63h/KrH+nhJ0XvQ==}
 
-  hamming@0.0.2:
-    resolution: {integrity: sha512-uN0rRAAfMANpG+z/nKsMAuv1kZxery2KO73bbKYfxbU7BQNlHEL+4aZnjaPPlDgvTpdIb1jpxgJ6kh4YWDuazA==}
-    engines: {node: '>=0.10.0'}
-
   has-flag@3.0.0:
     resolution: {integrity: sha512-sKJf1+ceQBr4SMkvQnBDNDtf4TXpVhVGateu0t918bl30FnbE2m4vNLX+VWe/dpjlb+HugGYzW7uQXH98HPEYw==}
     engines: {node: '>=4'}
@@ -4074,9 +4067,6 @@ packages:
 
   keyv@5.6.0:
     resolution: {integrity: sha512-CYDD3SOtsHtyXeEORYRx2qBtpDJFjRTGXUtmNEMGyzYOKj1TE3tycdlho7kA1Ufx9OYWZzg52QFBGALTirzDSw==}
-
-  keyword-search@0.1.2:
-    resolution: {integrity: sha512-WzkGHe6v/SFS7fszr88f5CVHSNGH2vmtVEs7aV9zZb9fFaV5BqJ4hVfsEeFZNHg19QSsjJ6gjXmpj4ibMUBx2g==}
 
   kleur@3.0.3:
     resolution: {integrity: sha512-eTIzlVOSUR+JxdDFepEYcBMtZ9Qqdef+rnzWdRZuMbOywu5tO2w2N7rqjoANZ5k9vywhL6Br1VRjUIgTQx4E8w==}
@@ -8439,8 +8429,6 @@ snapshots:
 
   graceful-fs@4.2.11: {}
 
-  hamming@0.0.2: {}
-
   has-flag@3.0.0: {}
 
   has-flag@4.0.0: {}
@@ -8921,10 +8909,6 @@ snapshots:
   keyv@5.6.0:
     dependencies:
       '@keyv/serialize': 1.1.1
-
-  keyword-search@0.1.2:
-    dependencies:
-      hamming: 0.0.2
 
   kleur@3.0.3: {}
 
