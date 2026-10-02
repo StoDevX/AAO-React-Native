@@ -37,6 +37,9 @@ export const icons: Array<Icon> = [
 	{title: 'Windmill (Dawn)', type: 'windmill-dawn'},
 	{title: 'Windmill (Storm)', type: 'windmill-storm'},
 	{title: 'Windmill (Golden Hour)', type: 'windmill-golden-hour'},
+	{title: 'Windmill (Aurora)', type: 'windmill-aurora'},
+	{title: 'Windmill (Fog)', type: 'windmill-fog'},
+	{title: 'Windmill (Snow)', type: 'windmill-snow'},
 ]
 
 export let IconSettingsView = (): React.ReactNode => {

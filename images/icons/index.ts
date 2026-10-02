@@ -11,6 +11,18 @@ import windmillNightIconDark from './windmill-night-icon-dark.png'
 import windmillNightIcon from './windmill-night-icon.png'
 import windmillNightLogoDark from './windmill-night-logo-dark.png'
 import windmillNightLogo from './windmill-night-logo.png'
+import windmillAuroraIconDark from './windmill-aurora-icon-dark.png'
+import windmillAuroraIcon from './windmill-aurora-icon.png'
+import windmillAuroraLogoDark from './windmill-aurora-logo-dark.png'
+import windmillAuroraLogo from './windmill-aurora-logo.png'
+import windmillFogIconDark from './windmill-fog-icon-dark.png'
+import windmillFogIcon from './windmill-fog-icon.png'
+import windmillFogLogoDark from './windmill-fog-logo-dark.png'
+import windmillFogLogo from './windmill-fog-logo.png'
+import windmillSnowIconDark from './windmill-snow-icon-dark.png'
+import windmillSnowIcon from './windmill-snow-icon.png'
+import windmillSnowLogoDark from './windmill-snow-logo-dark.png'
+import windmillSnowLogo from './windmill-snow-logo.png'
 import windmillDawnIconDark from './windmill-dawn-icon-dark.png'
 import windmillDawnIcon from './windmill-dawn-icon.png'
 import windmillDawnLogoDark from './windmill-dawn-logo-dark.png'
@@ -68,6 +80,18 @@ export const appIcons = {
 	'windmill-golden-hour': {
 		light: {icon: windmillGoldenHourIcon, logo: windmillGoldenHourLogo},
 		dark: {icon: windmillGoldenHourIconDark, logo: windmillGoldenHourLogoDark},
+	},
+	'windmill-aurora': {
+		light: {icon: windmillAuroraIcon, logo: windmillAuroraLogo},
+		dark: {icon: windmillAuroraIconDark, logo: windmillAuroraLogoDark},
+	},
+	'windmill-fog': {
+		light: {icon: windmillFogIcon, logo: windmillFogLogo},
+		dark: {icon: windmillFogIconDark, logo: windmillFogLogoDark},
+	},
+	'windmill-snow': {
+		light: {icon: windmillSnowIcon, logo: windmillSnowLogo},
+		dark: {icon: windmillSnowIconDark, logo: windmillSnowLogoDark},
 	},
 } satisfies Record<string, {light: Previews; dark: Previews}>
 
