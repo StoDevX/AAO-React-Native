@@ -20,10 +20,28 @@ export function topFrame(stack) {
 	)
 }
 
+/** A JS stop reason, as the monkey records a beacon reading of `kind: message`. */
+const JS_STOP = /^js: ([\w-]+): (.*)$/u
+
+/**
+ * Whether `stopReason` just repeats a finding the app already wrote to its
+ * own findings file -- the monkey's `js: <kind>: <message>` reading of the
+ * beacon names the very finding `findings` lists, so counting it again would
+ * list the same bug twice under two kinds.
+ */
+function restatesAFinding(stopReason, findings) {
+	let match = JS_STOP.exec(stopReason ?? '')
+	if (!match) return false
+	let [, kind, message] = match
+	return findings.some((finding) => finding.kind === kind && finding.message === message)
+}
+
 /**
  * Each distinct stopping finding across runs, with the seeds that found it.
  * A run's `stopReason` -- a native crash, a hang, an error screen -- is
- * one of its own kind, since the app never saw it to write it down.
+ * one of its own kind, since the app never saw it to write it down. A JS
+ * stop reason is different: it is the monkey's own reading of the beacon,
+ * which already names a finding the app wrote to chaos-findings.jsonl.
  */
 export function dedupeFindings(runs) {
 	let byKey = new Map()
@@ -34,10 +52,11 @@ export function dedupeFindings(runs) {
 		byKey.set(key, entry)
 	}
 	for (let {seed, lines, stopReason} of runs) {
-		for (let finding of stoppingFindings(lines)) {
+		let findings = stoppingFindings(lines)
+		for (let finding of findings) {
 			add(seed, finding.kind, finding.message, topFrame(finding.stack))
 		}
-		if (stopReason) add(seed, 'stop', stopReason, '')
+		if (stopReason && !restatesAFinding(stopReason, findings)) add(seed, 'stop', stopReason, '')
 	}
 	return [...byKey.values()]
 }

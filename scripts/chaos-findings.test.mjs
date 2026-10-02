@@ -55,6 +55,23 @@ test("counts the monkey's stop reason as a finding of its own kind", () => {
 	])
 })
 
+test('drops a JS stop reason that only restates a finding already read from the findings file', () => {
+	let found = dedupeFindings([
+		{seed: 1, lines: [line('fatal', 'boom')], stopReason: 'js: fatal: boom'},
+	])
+	assert.deepEqual(found, [{kind: 'fatal', message: 'boom', frame: '', seeds: [1]}])
+})
+
+test('keeps a monkey-only stop reason, which the app never saw to write down', () => {
+	let found = dedupeFindings([
+		{seed: 1, lines: [line('fatal', 'boom')], stopReason: 'native crash: the app is not running'},
+	])
+	assert.deepEqual(found, [
+		{kind: 'fatal', message: 'boom', frame: '', seeds: [1]},
+		{kind: 'stop', message: 'native crash: the app is not running', frame: '', seeds: [1]},
+	])
+})
+
 /** A directory of chaos runs, each given as {name: {file: contents}}. */
 function runsRoot(runs) {
 	let root = mkdtempSync(join(tmpdir(), 'chaos-findings-'))
