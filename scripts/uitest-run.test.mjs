@@ -1,7 +1,17 @@
 import assert from 'node:assert/strict'
 import {test} from 'node:test'
 
-import {buildArgs, testArgs} from './uitest-run.mjs'
+import {buildArgs, isNotInstalled, testArgs} from './uitest-run.mjs'
+
+test('detects when the app is not installed from simctl stderr', () => {
+	let stderr = `An error was encountered processing the command (domain=NSPOSIXErrorDomain, code=2):
+	The operation couldn't be completed. No such file or directory`
+	assert.strictEqual(isNotInstalled(stderr), true)
+})
+
+test('treats other simctl errors as real failures, not missing app', () => {
+	assert.strictEqual(isNotInstalled('Invalid device: ABC'), false)
+})
 
 test('builds for the named simulator without signing', () => {
 	let args = buildArgs('ABC')

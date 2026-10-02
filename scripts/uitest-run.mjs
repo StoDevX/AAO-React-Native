@@ -8,6 +8,11 @@ import {pickSimulator} from './mess-fixtures.mjs'
 
 export const BUNDLE = 'NFMTHAZVS9.com.drewvolz.stolaf'
 
+/** Whether stderr from simctl indicates the app is not installed. */
+export function isNotInstalled(stderr) {
+	return stderr.includes('No such file or directory')
+}
+
 export function run(command, args, options = {}) {
 	return execFileSync(command, args, {encoding: 'utf8', ...options})
 }
@@ -28,8 +33,11 @@ export function appDataPath(udid, relative) {
 			stdio: 'pipe',
 		})
 		return join(container.trim(), relative)
-	} catch {
-		return null
+	} catch (error) {
+		if (isNotInstalled(error.stderr)) {
+			return null
+		}
+		throw new Error(`Could not find app container: ${error.stderr}`)
 	}
 }
 
