@@ -21,13 +21,17 @@ export function FullLayout({
 	station,
 	logo,
 	showNextLogo,
+	showingSchedule,
+	onToggleSchedule,
 }: {
 	station: Station
 	logo: RadioLogo
 	showNextLogo?: () => void
+	/** Whether today's schedule takes the record's place, as Music's queue does the art's. */
+	showingSchedule: boolean
+	onToggleSchedule: () => void
 }): React.ReactNode {
 	let {playState} = useStationPlayback(station.id)
-	let [showingSchedule, setShowingSchedule] = React.useState(false)
 	let {width} = useWindowDimensions()
 	let artwork = width - 2 * SIDE
 
@@ -60,7 +64,7 @@ export function FullLayout({
 				<PlaybackError station={station} />
 			</View>
 			<VolumeSliderStub />
-			<StationActionRow onShowSchedule={() => setShowingSchedule((on) => !on)} station={station} />
+			<StationActionRow onShowSchedule={onToggleSchedule} station={station} />
 		</View>
 	)
 }

@@ -33,6 +33,9 @@ import {
 /** How far a pressed logo shrinks: about 4pt across a 268pt logo. */
 const PRESSED_SCALE = 0.985
 
+/** How much larger the record grows while it plays, as Music's artwork does. */
+const PLAYING_SCALE = 1.06
+
 /** The centre label's share of the record's width, near a 7-inch single's. */
 const LABEL_SIZE = 0.55
 
@@ -79,6 +82,8 @@ export function ScratchableLogo(props: Props): React.ReactNode {
 	let scratched = useSharedValue(0)
 	// Shrinks under a finger, until the touch becomes a scratch.
 	let scale = useSharedValue(1)
+	// Grows while the station plays; set outright when motion is reduced.
+	let playScale = useSharedValue(playing ? PLAYING_SCALE : 1)
 	let view = useRef<View>(null)
 	let centre = useRef({x: 0, y: 0})
 	let start = useRef({x: 0, y: 0, time: 0})
@@ -94,6 +99,11 @@ export function ScratchableLogo(props: Props): React.ReactNode {
 			withRepeat(withTiming(spin.get() + 360, {duration: MS_PER_TURN, easing: Easing.linear}), -1),
 		)
 	}, [spin, spins])
+
+	useEffect(() => {
+		let target = playing ? PLAYING_SCALE : 1
+		playScale.set(reduceMotion ? target : withSpring(target, {duration: 400}))
+	}, [playScale, playing, reduceMotion])
 
 	useEffect(() => {
 		startSpinning()
@@ -171,7 +181,10 @@ export function ScratchableLogo(props: Props): React.ReactNode {
 	}
 
 	let turned = useAnimatedStyle(() => ({
-		transform: [{scale: scale.get()}, {rotate: `${spin.get() + scratched.get()}deg`}],
+		transform: [
+			{scale: scale.get() * playScale.get()},
+			{rotate: `${spin.get() + scratched.get()}deg`},
+		],
 	}))
 
 	return (

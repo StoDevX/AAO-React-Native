@@ -34,6 +34,7 @@ export function RadioNowPlayingSheet(): React.ReactNode {
 	let viewed = useRadioStore((state) => state.viewedStationId)
 	let closeSheet = useRadioStore((state) => state.closeSheet)
 	let [detent, setDetent] = React.useState<PresentationDetent>('medium')
+	let [showingSchedule, setShowingSchedule] = React.useState(false)
 	let station = STATIONS[viewed]
 	let {logo, showNextLogo} = useLogoCycle(station)
 	let large = detent === 'large'
@@ -48,6 +49,7 @@ export function RadioNowPlayingSheet(): React.ReactNode {
 					if (!presented) {
 						closeSheet()
 						setDetent('medium')
+						setShowingSchedule(false)
 					}
 				}}
 			>
@@ -76,9 +78,23 @@ export function RadioNowPlayingSheet(): React.ReactNode {
 							<View style={styles.content}>
 								<PaletteContext.Provider value={large ? ON_FILL_PALETTE : SYSTEM_PALETTE}>
 									{large ? (
-										<FullLayout logo={logo} showNextLogo={showNextLogo} station={station} />
+										<FullLayout
+											logo={logo}
+											onToggleSchedule={() => setShowingSchedule((on) => !on)}
+											showNextLogo={showNextLogo}
+											showingSchedule={showingSchedule}
+											station={station}
+										/>
 									) : (
-										<CompactLayout logo={logo} station={station} />
+										<CompactLayout
+											logo={logo}
+											onShowSchedule={() => {
+												// The medium detent has no room for the list, so it opens full height.
+												setShowingSchedule(true)
+												setDetent('large')
+											}}
+											station={station}
+										/>
 									)}
 								</PaletteContext.Provider>
 							</View>

@@ -1,35 +1,35 @@
 import * as React from 'react'
-import {StyleSheet, Text, View} from 'react-native'
-import {openUrl} from '@frogpond/open-url'
-import {Touchable} from '@frogpond/touchable'
-import {useRouter} from 'expo-router'
-import {SymbolView, type SFSymbol} from 'expo-symbols'
+import {StyleSheet, View} from 'react-native'
 
-import {callPhone} from '../../../../components/call-phone'
 import {ScratchableLogo} from '../scratchable-logo'
 import type {Station} from '../stations'
 import {useStationPlayback} from '../store'
+import type {RadioLogo} from '../theme'
 import {SIDE} from './full-layout'
 import {PlaybackError, PlayStopButton} from './play-stop-button'
 import {ShowTitle} from './show-title'
+import {StationActionRow, StationMenu} from './station-actions'
 import {StationPicker} from './station-picker'
-import {usePalette} from './palette'
-import type {RadioLogo} from '../theme'
 
 /** The size of the record at the medium detent. */
 const RECORD = 96
 
-/** The medium detent: the picker, the record beside what's on, a large Play or Stop, then the actions. */
+/**
+ * The medium detent: the picker, the record beside what's on, a large Play or
+ * Stop, and the full player's own bottom row, pinned to the bottom.
+ * `onShowSchedule` is the bottom row's schedule button, which has no artwork
+ * area to swap here.
+ */
 export function CompactLayout({
 	station,
 	logo,
+	onShowSchedule,
 }: {
 	station: Station
 	logo: RadioLogo
+	onShowSchedule: () => void
 }): React.ReactNode {
 	let {playState} = useStationPlayback(station.id)
-	let router = useRouter()
-	let chatUrl = station.chatUrl
 
 	return (
 		<View style={styles.screen}>
@@ -45,66 +45,15 @@ export function CompactLayout({
 					size={RECORD}
 				/>
 				<ShowTitle station={station} />
+				<StationMenu station={station} />
 			</View>
 			<View style={styles.centre}>
 				<PlayStopButton size="large" station={station} />
 				<PlaybackError station={station} />
 			</View>
-			<View style={styles.actions}>
-				<ActionButton
-					accessibilityLabel={`Call ${station.stationName}`}
-					icon="phone"
-					label="Call"
-					onPress={() => callPhone(station.stationNumber, {title: station.stationName})}
-				/>
-				<ActionButton
-					accessibilityLabel={chatUrl ? `Chat with ${station.stationName}` : 'Chat unavailable'}
-					icon="quote.bubble"
-					label="Chat"
-					onPress={chatUrl ? () => openUrl(chatUrl) : undefined}
-				/>
-				<ActionButton
-					accessibilityLabel={`${station.stationName} schedule`}
-					icon="calendar"
-					label="Schedule"
-					onPress={() => router.navigate(station.scheduleHref)}
-				/>
-			</View>
+			<View style={styles.spacer} />
+			<StationActionRow onShowSchedule={onShowSchedule} station={station} />
 		</View>
-	)
-}
-
-/** One of the three actions under the medium detent's row. With no `onPress` it shows, dimmed, as unavailable. */
-function ActionButton({
-	icon,
-	label,
-	accessibilityLabel,
-	onPress,
-}: {
-	icon: SFSymbol
-	label: string
-	accessibilityLabel: string
-	onPress?: () => void
-}): React.ReactNode {
-	let palette = usePalette()
-	let tint = onPress ? palette.primary : palette.tertiary
-	return (
-		<Touchable
-			accessibilityLabel={accessibilityLabel}
-			accessibilityRole="button"
-			accessibilityState={{disabled: !onPress}}
-			disabled={!onPress}
-			highlight={false}
-			onPress={onPress}
-			style={styles.action}
-		>
-			<SymbolView name={icon} size={24} tintColor={tint} />
-			<Text
-				style={[styles.actionLabel, onPress ? palette.styles.primary : palette.styles.tertiary]}
-			>
-				{label}
-			</Text>
-		</Touchable>
 	)
 }
 
@@ -114,6 +63,7 @@ const styles = StyleSheet.create({
 		gap: 20,
 		paddingHorizontal: SIDE,
 		paddingTop: 20,
+		paddingBottom: 28,
 	},
 	row: {
 		flexDirection: 'row',
@@ -123,18 +73,7 @@ const styles = StyleSheet.create({
 	centre: {
 		alignItems: 'center',
 	},
-	actions: {
-		flexDirection: 'row',
-		justifyContent: 'space-around',
-	},
-	action: {
-		minWidth: 64,
-		minHeight: 44,
-		alignItems: 'center',
-		justifyContent: 'center',
-		gap: 4,
-	},
-	actionLabel: {
-		fontSize: 13,
+	spacer: {
+		flex: 1,
 	},
 })

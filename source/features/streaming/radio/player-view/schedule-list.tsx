@@ -33,7 +33,7 @@ export function ScheduleList({station}: {station: Station}): React.ReactNode {
 }
 
 const styles = StyleSheet.create({
-	list: {gap: 12},
+	list: {alignSelf: 'stretch', gap: 12},
 	row: {flexDirection: 'row', gap: 12},
 	time: {fontSize: 17, width: 80},
 	title: {fontSize: 17, flex: 1},
