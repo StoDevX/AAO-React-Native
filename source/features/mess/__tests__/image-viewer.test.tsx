@@ -31,6 +31,11 @@ jest.mock('expo-router', () => ({
 	useNavigation: () => ({goBack: mockGoBack}),
 }))
 
+const mockShareImage = jest.fn<(uri: string) => Promise<void>>()
+jest.mock('../../../components/lib/share-image', () => ({
+	shareImage: (uri: string) => mockShareImage(uri),
+}))
+
 const COMIC: MessStory = {
 	id: 36819,
 	title: 'Mouse Friends: sunsets of life',
@@ -162,5 +167,19 @@ describe('ImageViewer', () => {
 		expect(screen.getByText('Image Unavailable')).toBeTruthy()
 		expect(screen.queryByRole('image')).toBeNull()
 		expect(screen.getByRole('button', {name: 'Close'})).toBeTruthy()
+	})
+
+	test('shares the picture it shows on Share', async () => {
+		mockShareImage.mockResolvedValue(undefined)
+		await renderViewer(33129, 1)
+
+		fireEvent.press(screen.getByRole('button', {name: 'Share'}))
+
+		expect(mockShareImage).toHaveBeenCalledWith(CUP.url)
+	})
+
+	test('offers no Share when there is no picture', async () => {
+		await renderViewer(36911)
+		expect(screen.queryByRole('button', {name: 'Share'})).toBeNull()
 	})
 })
