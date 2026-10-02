@@ -263,6 +263,10 @@ run = "node scripts/update-mess-fixtures.mjs"
 description = "Regenerate the list of routes the chaos monkey opens"
 run = "node scripts/chaos-routes.mjs"
 
+[tasks.chaos]
+description = "Drive the app at random with network faults on a booted simulator"
+run = "node scripts/chaos.mjs"
+
 [tasks."scrape-student-wages"]
 description = "Update data/student-wages.yaml from St. Olaf's compensation page"
 run = "node scripts/scrape-student-wages.mjs"
