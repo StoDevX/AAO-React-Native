@@ -8,6 +8,9 @@ import {ImageViewer} from '../image-viewer'
 import {messKeys} from '../lib/keys'
 import {onePage} from './one-page'
 import type {MessStory} from '../types'
+import {loadBeforeTests} from '../../../testing/load-before-tests'
+
+loadBeforeTests('ScrollView', 'Image')
 
 jest.mock('@frogpond/double-tap', () => {
 	// oxlint-disable-next-line typescript/no-require-imports

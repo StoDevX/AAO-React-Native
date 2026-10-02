@@ -1,13 +1,7 @@
 import {jest} from '@jest/globals'
-import {Image, Modal, ScrollView, TextInput} from 'react-native'
 import {setTimezone} from '@frogpond/constants'
 
 setTimezone('America/Chicago')
-// React Native loads each component on first use, and its Jest preset builds
-// the stand-ins for these from the real modules: over a second to load with a
-// cold transform cache, and several on a busy machine. Loaded here, before any
-// test starts, that cost cannot count against a test's five-second timeout.
-void [Image, Modal, ScrollView, TextInput]
 jest.mock('react-native/Libraries/EventEmitter/NativeEventEmitter')
 // @expo/ui draws SwiftUI, which Jest cannot load; every test gets the
 // stand-in, which renders each view as the React Native elements a test can

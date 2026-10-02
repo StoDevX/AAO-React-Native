@@ -10,6 +10,9 @@ import {readAttachment} from '../attachments'
 import {composeEmail} from '../../../../../../components/send-email'
 import {submitReport} from '../submit'
 import {useTelemetryStore} from '../../../../../telemetry/store'
+import {loadBeforeTests} from '../../../../../../testing/load-before-tests'
+
+loadBeforeTests('Image', 'TextInput')
 
 const mockGoBack = jest.fn()
 jest.mock('expo-router', () => {

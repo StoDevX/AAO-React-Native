@@ -13,6 +13,9 @@ import {messKeys} from '../lib/keys'
 import {onePage} from './one-page'
 import {parseMessCategories} from '../lib/posts'
 import type {MessStory} from '../types'
+import {loadBeforeTests} from '../../../testing/load-before-tests'
+
+loadBeforeTests('Image')
 
 jest.mock('@react-native-community/netinfo', () =>
 	// oxlint-disable-next-line typescript/no-require-imports

@@ -10,6 +10,9 @@ import {directoryKeys} from '../card-queries'
 import type {BuildingType} from '../../building-hours/types'
 import {BuildingInfo} from '../building-info'
 import {makeBuilding} from './fixtures'
+import {loadBeforeTests} from '../../../testing/load-before-tests'
+
+loadBeforeTests('Image', 'Modal')
 
 jest.mock('@frogpond/double-tap', () => {
 	// oxlint-disable-next-line typescript/no-require-imports

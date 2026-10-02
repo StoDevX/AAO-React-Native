@@ -13,6 +13,9 @@ import {keys} from '../query'
 import {useRecentPlacesStore} from '../store'
 import {makeBuilding} from './fixtures'
 import {track} from '../../telemetry/track'
+import {loadBeforeTests} from '../../../testing/load-before-tests'
+
+loadBeforeTests('TextInput')
 
 jest.mock('@frogpond/campus-search-bar', () => {
 	// oxlint-disable-next-line typescript/no-require-imports
