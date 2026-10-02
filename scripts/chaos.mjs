@@ -4,14 +4,24 @@
 // into logs/chaos/<seed>/, or logs/chaos/<seed>-replay/ for a replay. See
 // the Chaos Runs section of AGENTS.md.
 
-import {copyFileSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync} from 'node:fs'
+import {
+	copyFileSync,
+	existsSync,
+	mkdirSync,
+	readdirSync,
+	readFileSync,
+	rmSync,
+	writeFileSync,
+} from 'node:fs'
 import {join} from 'node:path'
 
 import {
 	chaosOutputDir,
 	parseChaosArgs,
 	replayVerdict,
+	jsSourceProblem,
 	runOutcome,
+	testFailureMessages,
 	stoppingFindings,
 	testEnv,
 	withReplayBudget,
@@ -52,14 +62,13 @@ function main() {
 		options = withReplayBudget(options, recorded.steps)
 	}
 
+	let problem = jsSourceProblem({env: process.env, hasEmbeddedBundle: builtAppHasBundle()})
+	if (problem) {
+		throw new Error(problem)
+	}
+
 	let device = bootedSimulator()
 	console.log(`chaos seed ${options.seed} on ${device.name} (${device.udid}) -> ${out}`)
-
-	if (!process.env.TEST_RUNNER_AAO_JS_LOCATION && !process.env.TEST_RUNNER_AAO_JS_EMBEDDED) {
-		console.warn(
-			'neither TEST_RUNNER_AAO_JS_LOCATION nor TEST_RUNNER_AAO_JS_EMBEDDED is set; the test will refuse to run',
-		)
-	}
 
 	if (!options.prebuilt) {
 		buildForTesting(device.udid)
@@ -151,6 +160,9 @@ function main() {
 	})
 	if (outcome.exitCode === 2 && testError) {
 		console.error(testError.message)
+		for (let message of resultFailures(resultBundle)) {
+			console.error(message)
+		}
 	}
 	writeFileSync(
 		join(out, 'outcome.json'),
@@ -162,6 +174,38 @@ function main() {
 			: `${outcome.message}: see ${out}`,
 	)
 	process.exitCode = outcome.exitCode
+}
+
+/**
+ * Whether a simulator build of the app carries its JavaScript inside it, as a
+ * CI build does. A local Debug build skips bundling and asks Metro instead.
+ */
+function builtAppHasBundle() {
+	let products = 'ios/build/Build/Products'
+	if (!existsSync(products)) return false
+	return readdirSync(products)
+		.filter((dir) => dir.endsWith('-iphonesimulator'))
+		.some((dir) =>
+			readdirSync(join(products, dir))
+				.filter((name) => name.endsWith('.app'))
+				.some((app) => existsSync(join(products, dir, app, 'main.jsbundle'))),
+		)
+}
+
+/** Why the test itself failed, from its result bundle; empty when that can't be read. */
+function resultFailures(resultBundle) {
+	try {
+		let json = run(
+			'xcrun',
+			['xcresulttool', 'get', 'test-results', 'tests', '--path', resultBundle],
+			{
+				stdio: 'pipe',
+			},
+		)
+		return testFailureMessages(JSON.parse(json))
+	} catch {
+		return []
+	}
 }
 
 /** The text of the first exported attachment whose name starts with `prefix`, or null. */

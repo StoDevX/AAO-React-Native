@@ -4,6 +4,7 @@ import {test} from 'node:test'
 import {
 	chaosOutputDir,
 	firstDivergence,
+	jsSourceProblem,
 	parseChaosArgs,
 	parseDuration,
 	parseFindingLines,
@@ -12,6 +13,7 @@ import {
 	runOutcome,
 	stoppingFindings,
 	testEnv,
+	testFailureMessages,
 	withReplayBudget,
 } from './chaos-run.mjs'
 
@@ -353,4 +355,51 @@ test('an attachments export failure is still a finding when stopping findings ex
 		}),
 		{exitCode: 1, message: 'chaos found something:\nfatal: boom'},
 	)
+})
+
+test('accepts a named Metro or an embedded bundle as the JavaScript source', () => {
+	assert.equal(
+		jsSourceProblem({
+			env: {TEST_RUNNER_AAO_JS_LOCATION: 'localhost:8081'},
+			hasEmbeddedBundle: false,
+		}),
+		null,
+	)
+	assert.equal(jsSourceProblem({env: {}, hasEmbeddedBundle: true}), null)
+})
+
+test('refuses a run with no JavaScript source, naming the variable to set', () => {
+	let problem = jsSourceProblem({env: {}, hasEmbeddedBundle: false})
+	assert.match(problem, /TEST_RUNNER_AAO_JS_LOCATION=localhost:8081 mise run chaos/u)
+})
+
+test('points out an AAO_JS_LOCATION missing its TEST_RUNNER_ prefix', () => {
+	let problem = jsSourceProblem({
+		env: {AAO_JS_LOCATION: 'localhost:8081'},
+		hasEmbeddedBundle: false,
+	})
+	assert.match(problem, /AAO_JS_LOCATION is set without the TEST_RUNNER_ prefix/u)
+})
+
+test('collects the failure messages from xcresulttool test results', () => {
+	let results = {
+		testNodes: [
+			{
+				name: 'AllAboutOlaf',
+				nodeType: 'Test Plan',
+				children: [
+					{
+						name: 'testChaos()',
+						nodeType: 'Test Case',
+						children: [
+							{name: 'failed: caught error: "No Metro was named"', nodeType: 'Failure Message'},
+							{name: 'Test skipped: threw error', nodeType: 'Skip Message'},
+						],
+					},
+				],
+			},
+		],
+	}
+	assert.deepEqual(testFailureMessages(results), ['failed: caught error: "No Metro was named"'])
+	assert.deepEqual(testFailureMessages({}), [])
 })

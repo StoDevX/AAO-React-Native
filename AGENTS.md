@@ -250,9 +250,12 @@ TEST_RUNNER_AAO_JS_LOCATION=localhost:<port> mise run chaos -- --seed 1234 --dur
 mise run chaos -- --replay logs/chaos/1234     # same seed, recorded responses
 ```
 
-It needs `TEST_RUNNER_AAO_JS_LOCATION` (a running Metro) or
-`TEST_RUNNER_AAO_JS_EMBEDDED`, and `SIMULATOR_UDID` when more than one
-simulator is booted. `--steps`, `--duration` (`90s`, `10m`, `1h`), and
+It needs `TEST_RUNNER_AAO_JS_LOCATION` naming the Metro serving this
+checkout, or a built `.app` with a `main.jsbundle` inside, as CI has, and it
+stops before building when it has neither. The prefix matters: `xcodebuild`
+passes the test only `TEST_RUNNER_`-prefixed variables, so a bare
+`AAO_JS_LOCATION` never arrives. It also needs `SIMULATOR_UDID` when more
+than one simulator is booted. `--steps`, `--duration` (`90s`, `10m`, `1h`), and
 `--fault-rate` bound and tune a run; `--prebuilt` skips the build. A replay
 takes its seed from the leading digits of its directory's name, so `--seed`
 and `--replay` can't be combined.

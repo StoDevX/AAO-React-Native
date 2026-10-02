@@ -226,3 +226,46 @@ export function runOutcome({
 	}
 	return {exitCode: 0, message: 'chaos found nothing'}
 }
+
+/**
+ * Why a run has no JavaScript to test, or null when it has some.
+ *
+ * The test refuses to start without a Metro named through
+ * TEST_RUNNER_AAO_JS_LOCATION or a bundle embedded in the built .app, so this
+ * says so before a build rather than after one. xcodebuild hands the test
+ * runner only TEST_RUNNER_-prefixed variables, so a bare AAO_JS_LOCATION in
+ * the shell never arrives.
+ */
+export function jsSourceProblem({env, hasEmbeddedBundle}) {
+	if (env.TEST_RUNNER_AAO_JS_LOCATION || hasEmbeddedBundle) {
+		return null
+	}
+	let lines = [
+		'No JavaScript source for the run: name the Metro serving this checkout, e.g.',
+		'  TEST_RUNNER_AAO_JS_LOCATION=localhost:8081 mise run chaos',
+	]
+	if (env.AAO_JS_LOCATION) {
+		lines.push(
+			'AAO_JS_LOCATION is set without the TEST_RUNNER_ prefix; xcodebuild passes only',
+			'TEST_RUNNER_-prefixed variables to the test, so it never arrives.',
+		)
+	}
+	return lines.join('\n')
+}
+
+/** The failure messages in `xcresulttool get test-results tests` output, in order. */
+export function testFailureMessages(results) {
+	let messages = []
+	let visit = (node) => {
+		if (node.nodeType === 'Failure Message') {
+			messages.push(node.name)
+		}
+		for (let child of node.children ?? []) {
+			visit(child)
+		}
+	}
+	for (let node of results.testNodes ?? []) {
+		visit(node)
+	}
+	return messages
+}
