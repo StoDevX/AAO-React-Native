@@ -9,7 +9,8 @@ links:
 schedule:
   - title: Hours
     notes: Ytterboe 044. Free for all students; please take what you need for 2–3 days and fill out the post-visit survey.
-    hours: []
+    hours:
+      - {days: [Sa], from: '12:00pm', to: '1:00pm'}
 
 breakSchedule:
   fall: []
