@@ -7,7 +7,7 @@ import {existsSync, readdirSync, readFileSync} from 'node:fs'
 import {join} from 'node:path'
 import {fileURLToPath} from 'node:url'
 
-import {parseFindingLines, STOPPING_FINDING_KINDS} from './chaos-run.mjs'
+import {stoppingFindings} from './chaos-run.mjs'
 
 /** A stack's first frame, which with the message identifies a bug. */
 export function topFrame(stack) {
@@ -23,8 +23,7 @@ export function topFrame(stack) {
 export function dedupeFindings(runs) {
 	let byKey = new Map()
 	for (let {seed, lines} of runs) {
-		for (let finding of parseFindingLines(lines)) {
-			if (!STOPPING_FINDING_KINDS.has(finding.kind)) continue
+		for (let finding of stoppingFindings(lines)) {
 			let frame = topFrame(finding.stack)
 			let key = `${finding.kind}\n${finding.message}\n${frame}`
 			let entry = byKey.get(key) ?? {kind: finding.kind, message: finding.message, frame, seeds: []}
