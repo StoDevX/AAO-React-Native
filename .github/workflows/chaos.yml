@@ -1,0 +1,156 @@
+name: Chaos
+
+on:
+  schedule:
+    - cron: '17 8 * * *'
+  workflow_dispatch:
+    inputs:
+      minutes:
+        description: Minutes per seed
+        default: '20'
+
+permissions:
+  contents: read
+  actions: read
+
+env:
+  xcode_version: 'Xcode_27.0'
+
+jobs:
+  chaos:
+    name: Chaos (seed ${{ matrix.seed }})
+    runs-on: xcode-27
+    # Never a required check: chaos findings are reports, not gates.
+    strategy:
+      fail-fast: false
+      matrix:
+        seed: [1, 2, 3]
+    steps:
+      - run: sudo xcode-select -s /Applications/${{ env.xcode_version }}.app
+
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Find the latest successful iOS run on master
+        id: source
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          echo "run-id=$(gh run list --workflow iOS --branch master --status success --limit 1 --json databaseId --jq '.[0].databaseId')" | tee -a "$GITHUB_OUTPUT"
+
+      - name: Download the iOS app and UITest bundle
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: ios-app
+          run-id: ${{ steps.source.outputs.run-id }}
+          github-token: ${{ github.token }}
+
+      - name: Unpack the app and UITest bundle
+        run: |
+          mkdir -p ios/build/Build/Products
+          tar -C ios/build/Build/Products -xf ios-app.tar
+
+      - name: Download the iOS jsbundle
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: ios-jsbundle
+          path: ios/
+          run-id: ${{ steps.source.outputs.run-id }}
+          github-token: ${{ github.token }}
+
+      - name: Move cached jsbundle into place
+        run: |
+          mkdir -p ios/build/Build/Products/Debug-iphonesimulator/AllAboutOlaf.app/
+          mv ios/AllAboutOlaf/main.jsbundle ios/build/Build/Products/Debug-iphonesimulator/AllAboutOlaf.app/
+          mv ios/AllAboutOlaf/main.jsbundle.map ios/build/Build/Products/Debug-iphonesimulator/AllAboutOlaf.app/
+          rm -rf ios/build/Build/Products/Debug-iphonesimulator/AllAboutOlaf.app/assets || true
+          mv ios/assets ios/build/Build/Products/Debug-iphonesimulator/AllAboutOlaf.app/
+
+      - name: Discover target simulator device
+        id: simulator-device
+        run: |
+          set -o pipefail
+          # Pick the latest installed iOS runtime on the runner. IPHONEOS_DEPLOYMENT_TARGET
+          # is the minimum we support, not what's actually installed, and the two have
+          # never matched — so resolve the destination from the runner rather than
+          # hardcoding a version the image may not ship.
+          # `simctl list runtimes` reports the full version (e.g. 27.0.1), but `simctl list
+          # devices` keys runtimes as iOS-<major>-<minor> only, so strip the patch component.
+          OS_VERSION=$(xcrun simctl list runtimes iOS -j | jq -r '.runtimes | map(select(.isAvailable != false)) | sort_by(.version) | last | .version | split(".") | .[0:2] | join(".")')
+          echo "type=iPhone 17e" | tee -a "$GITHUB_OUTPUT"
+          echo "os=${OS_VERSION//./-}" | tee -a "$GITHUB_OUTPUT"
+
+      - name: List available simulators
+        id: devices
+        run: |
+          set -o pipefail
+          xcrun simctl list devices iOS -j \
+            | jq '.devices | map_values([.[] | del(.dataPath, .dataPathSize, .logPath, .isAvailable)])' \
+            | jq -r '"devices=\(.)"' \
+            | tee "$GITHUB_OUTPUT"
+          xcrun simctl list devices iOS
+
+      - name: Filter simulators by OS
+        id: devices-by-os
+        env:
+          DEVICES: '${{ steps.devices.outputs.devices }}'
+          SIMULATOR_OS: '${{ steps.simulator-device.outputs.os }}'
+        run: |
+          set -o pipefail
+          # -e makes jq exit non-zero if no runtime key matches, instead of silently
+          # producing empty output and surfacing as an opaque JSON error downstream.
+          jq -ern --argjson devices "$DEVICES" '$devices | to_entries[] | select(.key | endswith("iOS-\(env.SIMULATOR_OS)")) | .value | "devices=\(.)"' | tee "$GITHUB_OUTPUT"
+
+      - name: Filter simulators by device type
+        id: devices-by-os-and-type
+        env:
+          DEVICES: '${{ steps.devices-by-os.outputs.devices }}'
+          SIMULATOR_TYPE: '${{ steps.simulator-device.outputs.type }}'
+        run: |
+          set -o pipefail
+          jq -rn --argjson devices "$DEVICES" '$devices | .[] | select(.name == env.SIMULATOR_TYPE) | "devices=\(.)"' | tee "$GITHUB_OUTPUT"
+
+      - name: Resolve simulator UDID
+        id: udid
+        env:
+          DEVICES: '${{ steps.devices-by-os-and-type.outputs.devices }}'
+        run: |
+          set -o pipefail
+          jq -rn --argjson devices "$DEVICES" '$devices | "udid=\(.udid)"' | tee "$GITHUB_OUTPUT"
+
+      - name: Boot the simulator
+        run: xcrun simctl boot "${{ steps.udid.outputs.udid }}"
+
+      - name: Wait for the simulator to be ready
+        run: xcrun simctl bootstatus "${{ steps.udid.outputs.udid }}" -b
+
+      - name: Install the app
+        run: xcrun simctl install "${{ steps.udid.outputs.udid }}" ios/build/Build/Products/Debug-iphonesimulator/AllAboutOlaf.app
+
+      - name: Run chaos
+        timeout-minutes: 45
+        env:
+          SIMULATOR_UDID: ${{ steps.udid.outputs.udid }}
+          TEST_RUNNER_AAO_JS_EMBEDDED: '1'
+        run: node scripts/chaos.mjs --prebuilt --seed "${{ github.run_number }}${{ matrix.seed }}" --duration "${{ inputs.minutes || '20' }}m"
+
+      - name: Upload what chaos found
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: chaos-${{ matrix.seed }}
+          path: logs/chaos/
+          retention-days: 14
+
+  summary:
+    name: Chaos summary
+    needs: chaos
+    if: always()
+    runs-on: ubuntu-26.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          pattern: chaos-*
+          path: logs/chaos/
+          merge-multiple: true
+      - run: node scripts/chaos-findings.mjs logs/chaos >> "$GITHUB_STEP_SUMMARY"

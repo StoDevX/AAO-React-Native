@@ -85,7 +85,7 @@ export function firstDivergence(before, after) {
  * source/chaos/findings.ts's STOPPING -- duplicated here since that module is
  * TypeScript and this script is not.
  */
-const STOPPING_FINDING_KINDS = new Set(['fatal', 'unhandled-rejection', 'divergence'])
+export const STOPPING_FINDING_KINDS = new Set(['fatal', 'unhandled-rejection', 'divergence'])
 
 /** Every parseable finding in `lines`; a line torn by a crash is skipped. */
 export function parseFindingLines(lines) {
