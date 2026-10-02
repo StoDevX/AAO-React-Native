@@ -1,5 +1,4 @@
 import * as Sentry from '@sentry/react-native'
-import {File} from 'expo-file-system'
 
 import {getRunner} from '../client.ts'
 import type {SqlRunner} from '../sql.ts'
@@ -65,27 +64,37 @@ export function refreshCatalog(signal?: AbortSignal): Promise<{etag: string; cha
 
 async function refresh(signal?: AbortSignal): Promise<{etag: string; changed: boolean}> {
 	let runner = getRunner()
-	let head = await fetch(CATALOG_URL, {method: 'HEAD', signal})
-	if (!head.ok) throw new Error(`The course catalog could not be checked (HTTP ${head.status})`)
-	let etag = head.headers.get('etag') ?? ''
-
 	let current = catalogFile()
-	if (
-		etag !== '' &&
-		storedEtag(runner) === etag &&
-		current.exists &&
-		isAttached(runner, CATALOG_SCHEMA)
-	) {
-		return {etag, changed: false}
-	}
+	let stored = current.exists && isAttached(runner, CATALOG_SCHEMA) ? storedEtag(runner) : null
+
+	// One request: the file and the ETag it was published with arrive together,
+	// so a republish between two requests cannot pair a new ETag with the old
+	// file. Naming both the file in use and one already rejected means the
+	// server sends nothing when either is still current: React Native's fetch
+	// reads a whole body before it resolves, so asking is the only way to skip
+	// a download.
+	let known = [stored, rejectedEtag].filter((tag): tag is string => Boolean(tag))
+	let response = await fetch(CATALOG_URL, {
+		headers: known.length > 0 ? {'If-None-Match': known.join(', ')} : {},
+		signal,
+	})
+	let etag = response.headers.get('etag') ?? ''
+
 	if (etag !== '' && etag === rejectedEtag) {
 		throw new CatalogRejectedError(etag, 'The published course catalog was already rejected')
+	}
+	if (response.status === 304 && stored) return {etag: stored, changed: false}
+	if (!response.ok) {
+		throw new Error(`The course catalog could not be downloaded (HTTP ${response.status})`)
+	}
+	if (etag !== '' && etag === stored) {
+		return {etag, changed: false}
 	}
 
 	let incoming = incomingCatalogFile()
 	try {
 		if (incoming.exists) incoming.delete()
-		await File.downloadFileAsync(CATALOG_URL, incoming, {idempotent: true})
+		incoming.write(new Uint8Array(await response.arrayBuffer()))
 
 		runner.run({sql: 'attach database ? as incoming', params: [filePath(incoming)]})
 		try {

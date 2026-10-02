@@ -35,6 +35,9 @@ function mockFile(start: string) {
 			mockDisk.files.delete(file.uri)
 			mockDisk.deleted.push(file.uri)
 		}),
+		write: jest.fn((_bytes: Uint8Array) => {
+			mockDisk.files.add(file.uri)
+		}),
 		moveSync: jest.fn((destination: {uri: string}, _options?: unknown) => {
 			mockDisk.files.delete(file.uri)
 			mockDisk.files.add(destination.uri)
@@ -49,10 +52,8 @@ function mockFile(start: string) {
 	return file
 }
 const mockMoves: Array<ReturnType<typeof mockFile>> = []
-const mockDownload = jest.fn((_url: unknown, destination: {uri: string}) => {
-	mockDisk.files.add(destination.uri)
-	return Promise.resolve()
-})
+/** Each catalog body read from the network: a whole download. */
+const mockDownload = jest.fn()
 
 jest.mock('../../client', () => ({getRunner: () => mockRunner}))
 jest.mock('../check', () => ({checkCatalog: (...args: unknown[]) => mockCheck(...args)}))
@@ -75,11 +76,6 @@ jest.mock('../catalog-file', () => ({
 	},
 	filePath: (file: {uri: string}) => file.uri.replace('file://', ''),
 }))
-jest.mock('expo-file-system', () => ({
-	File: {
-		downloadFileAsync: (url: unknown, destination: {uri: string}) => mockDownload(url, destination),
-	},
-}))
 jest.mock('@sentry/react-native', () => ({captureException: jest.fn()}))
 
 type RefreshModule = typeof import('../refresh')
@@ -89,14 +85,31 @@ let refreshCatalog: RefreshModule['refreshCatalog']
 let shouldRetryCatalog: RefreshModule['shouldRetryCatalog']
 let CatalogRejectedError: RefreshModule['CatalogRejectedError']
 
-function publishedEtag(etag: string) {
-	global.fetch = jest.fn(() =>
-		Promise.resolve({
+/** Every request the refresh made, by its headers. */
+let mockRequests: Array<Record<string, string>> = []
+
+/**
+ * The server publishes a file with `etag`, and answers a request for the copy
+ * it already has with 304 unless `ignoresIfNoneMatch`.
+ */
+function publishedEtag(etag: string, {ignoresIfNoneMatch = false} = {}) {
+	global.fetch = jest.fn((_url: unknown, init?: {headers?: Record<string, string>}) => {
+		let headers = init?.headers ?? {}
+		mockRequests.push(headers)
+		let known = (headers['If-None-Match'] ?? '').split(', ')
+		if (!ignoresIfNoneMatch && known.includes(etag)) {
+			return Promise.resolve({ok: false, status: 304, headers: new Headers({etag})})
+		}
+		return Promise.resolve({
 			ok: true,
 			status: 200,
 			headers: new Headers({etag}),
-		}),
-	) as unknown as typeof fetch
+			arrayBuffer: () => {
+				mockDownload()
+				return Promise.resolve(new ArrayBuffer(8))
+			},
+		})
+	}) as unknown as typeof fetch
 }
 
 beforeEach(() => {
@@ -115,6 +128,7 @@ beforeEach(() => {
 	mockDisk.files = new Set([CURRENT])
 	mockDisk.deleted = []
 	mockMoves.length = 0
+	mockRequests = []
 })
 
 describe('refreshCatalog', () => {
@@ -122,6 +136,28 @@ describe('refreshCatalog', () => {
 		publishedEtag('old')
 		await expect(refreshCatalog()).resolves.toEqual({etag: 'old', changed: false})
 		expect(mockDownload).not.toHaveBeenCalled()
+	})
+
+	test('asks the server only for a file newer than the one it has', async () => {
+		publishedEtag('old')
+		await expect(refreshCatalog()).resolves.toEqual({etag: 'old', changed: false})
+		expect(mockRequests).toEqual([{'If-None-Match': 'old'}])
+		expect(mockDownload).not.toHaveBeenCalled()
+	})
+
+	test('downloads nothing new from a server that ignores If-None-Match', async () => {
+		publishedEtag('old', {ignoresIfNoneMatch: true})
+		await expect(refreshCatalog()).resolves.toEqual({etag: 'old', changed: false})
+		expect(mockDownload).not.toHaveBeenCalled()
+	})
+
+	// One response carries both the file and its ETag, so a republish between
+	// two requests cannot pair the new ETag with the old file.
+	test('makes one request for a changed file', async () => {
+		publishedEtag('new')
+		await refreshCatalog()
+		expect(mockRequests).toHaveLength(1)
+		expect(mockDownload).toHaveBeenCalledTimes(1)
 	})
 
 	test('checks and indexes the new file before swapping it in', async () => {
@@ -253,6 +289,9 @@ describe('refreshCatalog', () => {
 		})
 		await expect(refreshCatalog()).rejects.toThrow(CatalogRejectedError)
 		await expect(refreshCatalog()).rejects.toThrow(CatalogRejectedError)
+		// React Native's fetch reads a whole response before resolving, so only
+		// asking for something else spares the second download.
+		expect(mockRequests[1]?.['If-None-Match']?.split(', ')).toContain('bad')
 		expect(mockDownload).toHaveBeenCalledTimes(1)
 	})
 
