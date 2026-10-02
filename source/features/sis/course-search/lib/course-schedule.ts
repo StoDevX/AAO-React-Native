@@ -29,7 +29,8 @@ export interface ScheduleDay {
 
 /**
  * A course's offerings gathered by day, with each slot's meeting times
- * formatted in the reader's own device zone.
+ * shown in the campus zone: someone planning a schedule from home needs the
+ * hours the class meets, not those hours moved into their own zone.
  *
  * The feed sends one record per meeting, so a course meeting twice on a Tuesday
  * arrives as two records that belong under one heading.
@@ -48,8 +49,9 @@ export function courseSchedule(
 	let byDay = new Map<string, ScheduleSlot[]>()
 
 	for (let offering of offerings) {
-		let start = formatTime(moment.tz(offering.start, 'H:mm', timezone()), locale)
-		let end = formatTime(moment.tz(offering.end, 'H:mm', timezone()), locale)
+		let zone = timezone()
+		let start = formatTime(moment.tz(offering.start, 'H:mm', zone), locale, zone)
+		let end = formatTime(moment.tz(offering.end, 'H:mm', zone), locale, zone)
 
 		let slots = byDay.get(offering.day) ?? []
 		slots.push({time: `${start} – ${end}`, location: offering.location})
