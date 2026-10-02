@@ -123,6 +123,33 @@ struct MessStoryScreen: Screen {
 		return self
 	}
 
+	/// Tap a sign's glyph in the grid, which sits below the navigation bar, and assert the
+	/// sign is chosen and the page did not scroll: the grid's first row stays where it was.
+	@discardableResult
+	func tapSignGlyphKeepingThePlace(_ sign: String) -> Self {
+		let firstGlyph = app.buttons.matching(
+			NSPredicate(format: "label == %@", TestIdentifiers.News.signs[0])
+		).firstMatch
+		let bar = app.navigationBars.firstMatch
+		XCTAssertTrue(firstGlyph.waitForExistence(timeout: 30), "the glyph grid should be drawn")
+		XCTAssertTrue(bar.waitForExistence(timeout: 10), "the reader should have a navigation bar")
+		let before = firstGlyph.frame.minY
+		// A grid already at the bar's edge would stay put whether the page scrolled or not.
+		XCTAssertGreaterThan(
+			before, bar.frame.maxY + 1,
+			"the grid should open below the navigation bar, at \(before), so a scroll would show")
+		tapSignGlyph(sign)
+		verifySignChosen(sign)
+		let moved = NSPredicate { _, _ in abs(firstGlyph.frame.minY - before) > 1 }
+		let result = XCTWaiter().wait(
+			for: [XCTNSPredicateExpectation(predicate: moved, object: nil)], timeout: 3)
+		capture("Horoscopes after \(sign) was picked from the grid")
+		XCTAssertEqual(
+			result, .timedOut,
+			"picking \(sign) from the grid should leave the grid at \(before), not move it to \(firstGlyph.frame.minY)")
+		return self
+	}
+
 	/// Assert the glyph grid marks this sign, and no other, as the chosen one.
 	@discardableResult
 	func verifySignChosen(_ sign: String) -> Self {

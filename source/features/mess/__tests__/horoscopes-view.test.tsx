@@ -147,14 +147,14 @@ describe('HoroscopesView', () => {
 			expect(scrollTo).not.toHaveBeenCalled()
 		})
 
-		test('shows, remembers and scrolls to the sign whose glyph is pressed', async () => {
+		test('shows and remembers the sign whose glyph is pressed, without scrolling', async () => {
 			await renderView()
 
 			await fireEvent.press(screen.getByRole('button', {name: 'Pisces'}))
 
 			expect(useMessStore.getState().lastSign).toBe('pisces')
 			expect(screen.getByRole('button', {name: 'Pisces', selected: true})).toBeTruthy()
-			expect(scrollTo).toHaveBeenCalledWith('pisces')
+			expect(scrollTo).not.toHaveBeenCalled()
 		})
 	})
 })
