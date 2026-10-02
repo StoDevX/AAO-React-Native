@@ -11,12 +11,6 @@ jest.mock('@react-native-community/netinfo', () =>
 	// oxlint-disable-next-line typescript/no-require-imports
 	require('@react-native-community/netinfo/jest/netinfo-mock'),
 )
-// The header's kicker shares a module with the story's pictures, which open the viewer
-// through expo-router.
-jest.mock('expo-router', () =>
-	// oxlint-disable-next-line typescript/no-require-imports
-	require('../../../testing/expo-router-mock'),
-)
 
 const POEM: MessStory = {
 	id: 37010,
