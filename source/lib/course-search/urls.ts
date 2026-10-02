@@ -2,7 +2,6 @@ import ky, {Options} from 'ky'
 import {isUITesting} from '@frogpond/launch-arguments'
 import {CourseType, RawCourseType, TermInfoType, TermType} from './types'
 import {UITEST_COURSES, UITEST_TERM_INFO} from './__fixtures__/courses'
-import intersection from 'lodash/intersection'
 
 const BASE_URL = 'https://stolaf.dev'
 export const COURSE_DATA_PAGE = `${BASE_URL}/course-data/`
@@ -69,5 +68,5 @@ const matchesLevels = (item: number, levels: Array<CourseType['level']>) => {
 }
 
 const matchesGEs = (items: string[] | undefined, gereqs: string[]) => {
-	return items ? intersection(gereqs, items).length > 0 : false
+	return items ? gereqs.some((gereq) => items.includes(gereq)) : false
 }

@@ -12,12 +12,10 @@ import {useAppDispatch, useAppSelector} from '../../../source/redux'
 import {applyFiltersToItem, Filter, FilterToolbar} from '@frogpond/filter'
 import {useFilters} from '../../../source/features/sis/course-search/lib/build-filters'
 import {Stack, useLocalSearchParams, useRouter} from 'expo-router'
-import {fromPairs} from 'lodash'
 import {useDebounce} from '@frogpond/use-debounce'
 import {ListSeparator, ListSectionHeader, largeListProps} from '@frogpond/lists'
 import * as c from '@frogpond/colors'
 import {CourseRow} from '../../../source/features/sis/course-search/row'
-import memoize from 'lodash/memoize'
 import {parseTerm} from '../../../source/lib/course-search'
 import {ListFilterSpec} from '@frogpond/filter/types'
 import {
@@ -43,11 +41,6 @@ function doSearch(args: {
 
 	return sortAndGroupResults(results)
 }
-
-let memoizedDoSearch = memoize(doSearch)
-
-// lodash supports this; the types do not.
-memoizedDoSearch.cache = new WeakMap()
 
 function isError(e: unknown): e is Error {
 	return e instanceof Error
@@ -114,7 +107,7 @@ function CourseSearchResultsView(): React.ReactNode {
 		if (!selectedFilterCombo) {
 			return []
 		}
-		let filterLookup = fromPairs(selectedFilterCombo.filters.map((f) => [f.key, f]))
+		let filterLookup = Object.fromEntries(selectedFilterCombo.filters.map((f) => [f.key, f]))
 		return basicFilters.map((f) => filterLookup[f.key] || f)
 		// oxlint-disable-next-line react/exhaustive-deps
 	}, [filterDescription])
@@ -192,10 +185,9 @@ function CourseSearchResultsView(): React.ReactNode {
 
 	let allCourses = queriesToCourses(allCoursesByTerm)
 
-	// be sure to lowercase the query before calling doSearch, so that the memoization
-	// doesn't break when nothing's changed except case.
+	// The search compares against lowercased course fields.
 	let query = delayedQuery?.toLowerCase()
-	let results = memoizedDoSearch({
+	let results = doSearch({
 		query,
 		filters,
 		courses: allCourses,

@@ -1,9 +1,9 @@
 import moment from 'moment-timezone'
-import sortBy from 'lodash/sortBy'
 import type {DayOfWeekEnumType, SingleBuildingScheduleType} from '../types'
 import {formatWeekday} from '@frogpond/time-format'
 
 import {daysOfTheWeek} from './constants'
+import {sortBy} from '@frogpond/collections'
 
 export function summarizeDays(
 	days: DayOfWeekEnumType[],

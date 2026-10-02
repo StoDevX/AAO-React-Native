@@ -1,7 +1,6 @@
 import {Alert} from 'react-native'
 import * as Clipboard from 'expo-clipboard'
 import {hasAppFor, openUrl} from '@frogpond/open-url'
-import noop from 'lodash/noop'
 
 type Fallback = {
 	/** The alert's title, said when the device has no app for the link. */
@@ -26,7 +25,7 @@ export async function openOrOfferCopy(url: string, fallback: Fallback): Promise<
 	}
 
 	Alert.alert(fallback.title, fallback.message, [
-		{text: 'Darn', onPress: noop},
+		{text: 'Darn'},
 		{text: fallback.copyLabel, onPress: () => void Clipboard.setStringAsync(fallback.copyText)},
 	])
 }

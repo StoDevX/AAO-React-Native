@@ -1,5 +1,4 @@
 import {Alert} from 'react-native'
-import noop from 'lodash/noop'
 import {afterEach, beforeEach, describe, expect, it, jest} from '@jest/globals'
 import * as Clipboard from 'expo-clipboard'
 import {hasAppFor, openUrl} from '@frogpond/open-url'
@@ -12,7 +11,7 @@ jest.mock('expo-clipboard', () => ({setStringAsync: jest.fn()}))
 
 describe('sendEmail', () => {
 	beforeEach(() => {
-		jest.spyOn(Alert, 'alert').mockImplementation(noop)
+		jest.spyOn(Alert, 'alert').mockImplementation(() => undefined)
 	})
 
 	afterEach(() => {

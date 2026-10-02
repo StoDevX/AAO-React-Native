@@ -8,10 +8,11 @@ import {jest} from '@jest/globals'
 export function pressAlertButton(text: string): void {
 	let buttons = jest.mocked(Alert.alert).mock.lastCall?.[2] as AlertButton[] | undefined
 	let button = buttons?.find((candidate) => candidate.text === text)
-	if (!button?.onPress) {
+	if (!button) {
 		throw new Error(`No "${text}" button on the last alert`)
 	}
-	button.onPress()
+	// A button with no handler only closes the alert, as the real one does.
+	button.onPress?.()
 }
 
 /** The title of the alert most recently shown. */
