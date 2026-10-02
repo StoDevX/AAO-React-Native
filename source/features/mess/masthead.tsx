@@ -1,12 +1,14 @@
 import * as React from 'react'
-import {Divider, Text, VStack} from '@expo/ui/swift-ui'
+import {Divider, Image, Text, VStack} from '@expo/ui/swift-ui'
 import {
 	accessibilityAddTraits,
 	accessibilityIdentifier,
+	accessibilityLabel,
 	font,
 	foregroundStyle,
 	frame,
 	multilineTextAlignment,
+	padding,
 	textCase,
 } from '@expo/ui/swift-ui/modifiers'
 import {OLAF_MESSENGER} from '../news/sources'
@@ -27,6 +29,19 @@ const PAPER_NAME = [
 	frame({maxWidth: Infinity}),
 	accessibilityAddTraits(['isHeader']),
 ]
+/** The paper's castle in the nameplate's place, read by VoiceOver as the paper's name. */
+const PAPER_CASTLE = [
+	font({textStyle: 'largeTitle'}),
+	foregroundStyle(ink),
+	frame({maxWidth: Infinity}),
+	// Up into the transparent navigation bar, level with its buttons, so it starts in the header
+	// and still scrolls away with the page.
+	padding({top: -68}),
+	accessibilityLabel(OLAF_MESSENGER.title),
+	accessibilityAddTraits(['isHeader']),
+]
+/** The rule under the castle, drawn up toward it from where the stack would put it. */
+const RULE_UNDER_CASTLE = [padding({top: -6})]
 /** Set in capitals by SwiftUI, so VoiceOver reads the words rather than spelling them. */
 const DATELINE = [
 	font({textStyle: 'caption', weight: 'semibold'}),
@@ -43,14 +58,24 @@ export function Dateline({text}: {text: string}): React.ReactNode {
 }
 
 /**
- * The paper's nameplate and a rule under it, then the front page's dateline when the page has one;
- * they scroll with the page.
+ * The paper's nameplate, or its castle, and a rule under it, then the front page's dateline when
+ * the page has one; they scroll with the page.
  */
-export function Masthead({dateline}: {dateline: string | null}): React.ReactNode {
+export function Masthead({
+	castle,
+	dateline,
+}: {
+	castle: boolean
+	dateline: string | null
+}): React.ReactNode {
 	return (
 		<VStack spacing={6}>
-			<Text modifiers={PAPER_NAME}>{OLAF_MESSENGER.title}</Text>
-			<Divider />
+			{castle ? (
+				<Image assetName="olaf-messenger-castle" modifiers={PAPER_CASTLE} />
+			) : (
+				<Text modifiers={PAPER_NAME}>{OLAF_MESSENGER.title}</Text>
+			)}
+			<Divider modifiers={castle ? RULE_UNDER_CASTLE : undefined} />
 			{dateline ? <Dateline text={dateline} /> : null}
 		</VStack>
 	)
