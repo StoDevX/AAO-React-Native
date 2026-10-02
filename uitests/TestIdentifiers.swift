@@ -40,6 +40,29 @@ struct TestIdentifiers {
 		}
 	}
 
+	// MARK: - Chaos
+
+	/// Launch arguments and identifiers shared with source/chaos.
+	enum Chaos {
+		static let flag = "--chaos"
+		static let seed = "--chaos-seed"
+		/// Which launch of the run this is; the app keys its tape and seeds its
+		/// faults by it, because `XCUIApplication.open` relaunches the app.
+		static let launch = "--chaos-launch"
+		static let replay = "--chaos-replay"
+		static let faultRate = "--chaos-fault-rate"
+		/// The hidden element whose label is the latest stopping finding.
+		static let beacon = "chaos.findings"
+		/// The beacon's label while there is nothing to report.
+		static let beaconQuiet = "none"
+		/// A route that throws on render, for the canary.
+		static let crashRoute = "chaos-crash"
+		/// Elements only an error screen draws.
+		static let errorScreenIdentifiers = ["router_error_message", "chaos.fatal-boundary"]
+		/// Texts only an error fallback draws, for fallbacks with no identifier.
+		static let errorScreenLabels = ["A problem occurred while showing places."]
+	}
+
 	// MARK: - testID-based identifiers
 
 	enum Home {
