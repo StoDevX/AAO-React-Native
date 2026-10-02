@@ -425,6 +425,9 @@ importers:
       '@types/xcode':
         specifier: 3.0.0
         version: 3.0.0
+      acorn:
+        specifier: 8.18.0
+        version: 8.18.0
       ajv:
         specifier: 8.20.0
         version: 8.20.0

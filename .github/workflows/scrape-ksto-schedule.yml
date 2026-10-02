@@ -1,0 +1,119 @@
+name: Scrape the KSTO schedule
+
+on:
+  # Weekly, on Mondays at 08:00 UTC. KSTO rebuilds its schedule each term and
+  # patches it as shows come and go, so nearly every run is a no-op costing one
+  # HTTP request; weekly means a change waits days at most.
+  schedule:
+    - cron: '0 8 * * 1'
+
+  # For when KSTO announces a new term's schedule.
+  workflow_dispatch:
+
+  # Dry run on every PR that touches the scrape: fetch, compare, write nothing.
+  pull_request:
+    paths:
+      - scripts/ksto-schedule.mjs
+      - scripts/scrape-ksto-schedule.mjs
+      - .github/workflows/scrape-ksto-schedule.yml
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: >-
+    ${{ github.event_name == 'pull_request'
+        && format('scrape-ksto-schedule-dryrun-{0}', github.ref)
+        || 'scrape-ksto-schedule' }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+env:
+  MISE_RUBY_COMPILE: 'false'
+
+jobs:
+  scrape:
+    name: Scrape and open a pull request
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Check out the code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: jdx/mise-action@9149ea85001c7435d5a66bb127d6a1b6227cb0a5 # v5.0.0
+        # Keyed on mise.lock rather than mise.toml -- see the note in check.yml.
+        with:
+          cache_key: mise-v2-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('mise.lock') }}
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # --check writes nothing and exits non-zero when the file would change.
+      - name: Scrape (dry run)
+        if: github.event_name == 'pull_request'
+        run: node scripts/scrape-ksto-schedule.mjs --check
+
+      # A post whose schedule changed shape fails here, before anything is
+      # written; GitHub reports the failed scheduled run.
+      - name: Scrape
+        if: github.event_name != 'pull_request'
+        run: mise run scrape-ksto-schedule
+
+      - name: Validate
+        if: github.event_name != 'pull_request'
+        run: mise run validate-data
+
+      - name: Check formatting
+        if: github.event_name != 'pull_request'
+        run: pnpm exec oxfmt --check data/ksto-schedule.yaml
+
+      # A PR opened by GITHUB_TOKEN does not trigger other workflows, so
+      # check.yml will not run on it. test:node holds the check that the file
+      # is laid out as the scrape writes it; nothing in the app reads this file.
+      - name: Test
+        if: github.event_name != 'pull_request'
+        run: mise run test:node
+
+      - name: Open or update the pull request
+        if: github.event_name != 'pull_request'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if git diff --quiet; then
+            echo "Nothing changed."
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -B bot/ksto-schedule
+          git add data/ksto-schedule.yaml
+          git commit -m "Update the KSTO schedule from kstoradio.org"
+          git push --force origin bot/ksto-schedule
+
+          # Reuse the open pull request rather than open one a week.
+          open=$(gh pr list --head bot/ksto-schedule --state open --json number --jq '.[].number')
+          if [ -n "$open" ]; then
+            echo "Updated existing pull request #${open}."
+            exit 0
+          fi
+
+          gh pr create --base master --head bot/ksto-schedule \
+            --title "Update the KSTO schedule from kstoradio.org" \
+            --body "$(cat <<'BODY'
+          KSTO's Now Playing post no longer matches the schedule we publish.
+
+          Compare the diff against the post before merging:
+          https://www.kstoradio.org/2023/03/17/4243/
+
+          Merging publishes the new schedule to
+          https://stolaf.dev/AAO-React-Native/ksto-schedule.json, which
+          ccc-server serves as the KSTO Schedule calendar; the app picks it up
+          without a release. The run summary lists each slot that changed.
+
+          `validate-data` and `test:node` passed in the run that opened this.
+          Nothing else did — a PR opened by `GITHUB_TOKEN` does not trigger
+          `check.yml`, so push an empty commit to run the required checks.
+          BODY
+          )"

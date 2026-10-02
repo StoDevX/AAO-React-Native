@@ -231,6 +231,26 @@ nothing. A new code needs a change to `JobCode` in
 `source/features/sis/student-work/posting.ts` first. Jest and the UI tests
 read `FIXED_WAGES`, not the data file, so a rate change never breaks them.
 
+### KSTO Schedule
+
+`data/ksto-schedule.yaml` holds KSTO's weekly shows, scraped from the station's
+Now Playing post (`https://www.kstoradio.org/2023/03/17/4243/`). That post is
+the only schedule KSTO publishes as data: its schedule page is an image, and
+the Google Calendar ccc-server used to read stopped at spring 2019. A weekly
+scrape opens a pull request when the file falls behind; merging publishes
+`ksto-schedule.json`, which ccc-server serves as the `ksto-schedule` calendar.
+
+```bash
+mise run scrape-ksto-schedule                   # update the file now
+node scripts/scrape-ksto-schedule.mjs --check   # report without writing; exits 1 on drift
+```
+
+The post keeps its schedule in a script, which the scrape parses but never
+runs. A post the parser does not recognise fails the run and writes nothing.
+Times are Central: the post's own script reads the visitor's clock, so it
+shows the wrong hour outside Minnesota. `updated` is when KSTO last edited the
+post, which tells a schedule left over from an earlier term apart.
+
 ### UI Test Fixtures
 
 Under UI tests the map reads copies of each campus's `map/geojson` from
