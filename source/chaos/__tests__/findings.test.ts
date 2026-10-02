@@ -65,4 +65,37 @@ describe('describe', () => {
 	test('joins several console arguments', () => {
 		expect(describeError(['Warning: %s', 'key']).message).toBe('Warning: %s key')
 	})
+
+	test('survives an object whose toString throws', () => {
+		let evil = {
+			toString() {
+				throw new Error('x')
+			},
+		}
+		expect(describeError(evil).message).toBe('[unprintable]')
+	})
+})
+
+describe('reportFinding robustness', () => {
+	test('does not throw when describing an unprintable object', () => {
+		let evil = {
+			toString() {
+				throw new Error('x')
+			},
+		}
+		expect(() => reportFinding('fatal', evil)).not.toThrow()
+		expect(useChaosFindings.getState().latest).toBe('fatal: [unprintable]')
+	})
+
+	test('still updates beacon when file append throws', () => {
+		let file = {
+			append: jest.fn(() => {
+				throw new Error('disk full')
+			}),
+			readLines: jest.fn(() => []),
+		}
+		setFindingsFile(file)
+		expect(() => reportFinding('fatal', new Error('boom'))).not.toThrow()
+		expect(useChaosFindings.getState().latest).toBe('fatal: boom')
+	})
 })

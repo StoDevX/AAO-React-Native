@@ -73,4 +73,16 @@ describe('installProbe', () => {
 		looped.self = looped
 		expect(() => h.consoleLike.error(looped)).not.toThrow()
 	})
+
+	test('does not throw on console.error with an object whose toString throws', () => {
+		let h = host()
+		installProbe(h.host)
+		let evil = {
+			toString() {
+				throw new Error('x')
+			},
+		}
+		expect(() => h.consoleLike.error(evil)).not.toThrow()
+		expect(h.originalError).toHaveBeenCalledWith(evil)
+	})
 })

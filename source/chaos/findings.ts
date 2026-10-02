@@ -43,9 +43,24 @@ export function describe(error: unknown): {message: string; stack: string | null
 		return {message: error.message, stack: error.stack ?? null}
 	}
 	if (Array.isArray(error)) {
-		return {message: error.map((part) => describe(part).message).join(' '), stack: null}
+		return {
+			message: error
+				.map((part) => {
+					try {
+						return describe(part).message
+					} catch {
+						return '[unprintable]'
+					}
+				})
+				.join(' '),
+			stack: null,
+		}
 	}
-	return {message: String(error), stack: null}
+	try {
+		return {message: String(error), stack: null}
+	} catch {
+		return {message: '[unprintable]', stack: null}
+	}
 }
 
 /** Records a finding, and shows it on the beacon when it ends the run. */
@@ -53,7 +68,11 @@ export function reportFinding(kind: FindingKind, error: unknown): void {
 	let {message, stack} = describe(error)
 	let finding: Finding = {kind, message, stack, at: new Date().toISOString()}
 	let {file, latest} = useChaosFindings.getState()
-	file?.append(JSON.stringify(finding))
+	try {
+		file?.append(JSON.stringify(finding))
+	} catch {
+		// Silently skip file write failures (disk full, permissions, etc)
+	}
 	if (isStopping(kind) && !latest) {
 		useChaosFindings.setState({latest: `${kind}: ${message}`})
 	}
