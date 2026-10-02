@@ -35,27 +35,43 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          echo "run-id=$(gh run list --workflow iOS --branch master --status success --limit 1 --json databaseId --jq '.[0].databaseId')" | tee -a "$GITHUB_OUTPUT"
+          run_id=$(gh run list --workflow iOS --branch master --status success --limit 1 --json databaseId --jq '.[0].databaseId // empty')
+          if [ -z "$run_id" ]; then
+            echo "::error::No successful iOS run on master to take the app from. Push to master or re-run the iOS workflow on master, then re-run chaos."
+            exit 1
+          fi
+          echo "run-id=$run_id" | tee -a "$GITHUB_OUTPUT"
 
       - name: Download the iOS app and UITest bundle
+        id: app
+        continue-on-error: true
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
           name: ios-app
           run-id: ${{ steps.source.outputs.run-id }}
           github-token: ${{ github.token }}
 
-      - name: Unpack the app and UITest bundle
-        run: |
-          mkdir -p ios/build/Build/Products
-          tar -C ios/build/Build/Products -xf ios-app.tar
-
       - name: Download the iOS jsbundle
+        id: jsbundle
+        continue-on-error: true
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
           name: ios-jsbundle
           path: ios/
           run-id: ${{ steps.source.outputs.run-id }}
           github-token: ${{ github.token }}
+
+      # Artifacts expire, so the latest successful run can still have none.
+      - name: Check the iOS artifacts arrived
+        if: steps.app.outcome != 'success' || steps.jsbundle.outcome != 'success'
+        run: |
+          echo "::error::iOS run ${{ steps.source.outputs.run-id }} on master has no unexpired ios-app and ios-jsbundle artifacts. Push to master or re-run the iOS workflow on master, then re-run chaos."
+          exit 1
+
+      - name: Unpack the app and UITest bundle
+        run: |
+          mkdir -p ios/build/Build/Products
+          tar -C ios/build/Build/Products -xf ios-app.tar
 
       - name: Move cached jsbundle into place
         run: |

@@ -1,7 +1,10 @@
 import assert from 'node:assert/strict'
-import {test} from 'node:test'
+import {mkdirSync, mkdtempSync, rmSync, writeFileSync} from 'node:fs'
+import {tmpdir} from 'node:os'
+import {join} from 'node:path'
+import {after, test} from 'node:test'
 
-import {dedupeFindings, renderSummary, topFrame} from './chaos-findings.mjs'
+import {dedupeFindings, renderSummary, summarise, topFrame} from './chaos-findings.mjs'
 
 let line = (kind, message, stack = null) =>
 	JSON.stringify({kind, message, stack, at: '2026-10-01T00:00:00Z'})
@@ -39,4 +42,52 @@ test('lists each finding with its seeds', () => {
 	let summary = renderSummary([{kind: 'fatal', message: 'boom', frame: 'at x', seeds: [1, 2]}])
 	assert.match(summary, /boom/u)
 	assert.match(summary, /mise run chaos -- --replay logs\/chaos\/1/u)
+})
+
+test("counts the monkey's stop reason as a finding of its own kind", () => {
+	let found = dedupeFindings([
+		{seed: 1, lines: [], stopReason: 'hang: nothing to press for 15 seconds'},
+		{seed: 2, lines: [], stopReason: 'hang: nothing to press for 15 seconds'},
+		{seed: 3, lines: [], stopReason: null},
+	])
+	assert.deepEqual(found, [
+		{kind: 'stop', message: 'hang: nothing to press for 15 seconds', frame: '', seeds: [1, 2]},
+	])
+})
+
+/** A directory of chaos runs, each given as {name: {file: contents}}. */
+function runsRoot(runs) {
+	let root = mkdtempSync(join(tmpdir(), 'chaos-findings-'))
+	after(() => rmSync(root, {recursive: true}))
+	for (let [name, files] of Object.entries(runs)) {
+		mkdirSync(join(root, name))
+		for (let [file, contents] of Object.entries(files)) {
+			writeFileSync(join(root, name, file), contents)
+		}
+	}
+	return root
+}
+
+test('summarises the stops in outcome.json alongside the findings files', () => {
+	let root = runsRoot({
+		11: {'chaos-findings.jsonl': line('fatal', 'boom') + '\n'},
+		12: {
+			'outcome.json': JSON.stringify({
+				exitCode: 1,
+				message: 'chaos found something',
+				stopReason: 'native crash: the app is not running',
+			}),
+		},
+	})
+	let summary = summarise(root)
+	assert.match(summary, /\*\*fatal\*\*: boom .*seeds 11/u)
+	assert.match(summary, /\*\*stop\*\*: native crash: the app is not running .*seeds 12/u)
+})
+
+test('says no run produced results when there is no runs directory', () => {
+	assert.match(summarise(join(tmpdir(), 'no-such-chaos-runs')), /no chaos run produced results/iu)
+})
+
+test('says no run produced results when the runs directory is empty', () => {
+	assert.match(summarise(runsRoot({})), /no chaos run produced results/iu)
 })

@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 
 // Summarises the stopping findings of every chaos run under a directory, one
-// entry per distinct bug, for the nightly job's summary.
+// entry per distinct bug, for the nightly job's summary: what the app wrote
+// to chaos-findings.jsonl, and what stopped the monkey, from outcome.json.
 
 import {existsSync, readdirSync, readFileSync} from 'node:fs'
 import {join} from 'node:path'
@@ -19,17 +20,24 @@ export function topFrame(stack) {
 	)
 }
 
-/** Each distinct stopping finding across runs, with the seeds that found it. */
+/**
+ * Each distinct stopping finding across runs, with the seeds that found it.
+ * A run's `stopReason` -- a native crash, a hang, an error screen -- is
+ * one of its own kind, since the app never saw it to write it down.
+ */
 export function dedupeFindings(runs) {
 	let byKey = new Map()
-	for (let {seed, lines} of runs) {
+	let add = (seed, kind, message, frame) => {
+		let key = `${kind}\n${message}\n${frame}`
+		let entry = byKey.get(key) ?? {kind, message, frame, seeds: []}
+		if (!entry.seeds.includes(seed)) entry.seeds.push(seed)
+		byKey.set(key, entry)
+	}
+	for (let {seed, lines, stopReason} of runs) {
 		for (let finding of stoppingFindings(lines)) {
-			let frame = topFrame(finding.stack)
-			let key = `${finding.kind}\n${finding.message}\n${frame}`
-			let entry = byKey.get(key) ?? {kind: finding.kind, message: finding.message, frame, seeds: []}
-			if (!entry.seeds.includes(seed)) entry.seeds.push(seed)
-			byKey.set(key, entry)
+			add(seed, finding.kind, finding.message, topFrame(finding.stack))
 		}
+		if (stopReason) add(seed, 'stop', stopReason, '')
 	}
 	return [...byKey.values()]
 }
@@ -46,13 +54,36 @@ export function renderSummary(findings) {
 	return `## Chaos\n\n${rows.join('\n')}\n`
 }
 
+/** Each run under `root`, named by its directory; none when `root` is missing. */
+function readRuns(root) {
+	if (!existsSync(root)) return []
+	let read = (dir, file) =>
+		existsSync(join(root, dir, file)) ? readFileSync(join(root, dir, file), 'utf8') : null
+	return readdirSync(root)
+		.filter(
+			(dir) =>
+				existsSync(join(root, dir, 'chaos-findings.jsonl')) ||
+				existsSync(join(root, dir, 'outcome.json')),
+		)
+		.map((dir) => {
+			let outcome = read(dir, 'outcome.json')
+			return {
+				seed: dir,
+				lines: (read(dir, 'chaos-findings.jsonl') ?? '').split('\n'),
+				stopReason: outcome ? JSON.parse(outcome).stopReason : null,
+			}
+		})
+}
+
+/** The job summary for every chaos run under `root`. */
+export function summarise(root) {
+	let runs = readRuns(root)
+	if (runs.length === 0) {
+		return '## Chaos\n\nNo chaos run produced results.\n'
+	}
+	return renderSummary(dedupeFindings(runs))
+}
+
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
-	let root = process.argv[2] ?? 'logs/chaos'
-	let runs = readdirSync(root)
-		.filter((seed) => existsSync(join(root, seed, 'chaos-findings.jsonl')))
-		.map((seed) => ({
-			seed: Number(seed),
-			lines: readFileSync(join(root, seed, 'chaos-findings.jsonl'), 'utf8').split('\n'),
-		}))
-	process.stdout.write(renderSummary(dedupeFindings(runs)))
+	process.stdout.write(summarise(process.argv[2] ?? 'logs/chaos'))
 }
