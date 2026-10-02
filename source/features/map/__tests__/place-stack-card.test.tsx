@@ -11,10 +11,6 @@ import {keys as hoursKeys} from '../../building-hours/query'
 import type {BuildingType} from '../../building-hours/types'
 import {makeBuilding} from './fixtures'
 
-jest.mock('@frogpond/double-tap', () => {
-	// oxlint-disable-next-line typescript/no-require-imports
-	return require('../../mess/__tests__/double-tap-mock') as typeof import('../../mess/__tests__/double-tap-mock')
-})
 jest.mock('@frogpond/open-url', () => ({openUrl: jest.fn()}))
 jest.mock('@frogpond/place-card-header', () => {
 	// oxlint-disable-next-line typescript/no-require-imports

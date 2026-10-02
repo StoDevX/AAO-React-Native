@@ -14,6 +14,8 @@ jest.mock('@expo/ui/swift-ui/modifiers', () => require('../source/testing/expo-u
 jest.mock('expo-router', () => require('../source/testing/expo-router-mock'))
 // The viewer's drag-to-close is a native view, which Jest cannot load either.
 jest.mock('@frogpond/drag-to-dismiss', () => require('../source/testing/drag-to-dismiss-mock'))
+// So is its double-tap recognizer.
+jest.mock('@frogpond/double-tap', () => require('../source/testing/double-tap-mock'))
 // The app's query client subscribes to network reachability when it loads,
 // through a native module Jest does not have; the library ships a stand-in.
 jest.mock('@react-native-community/netinfo', () =>

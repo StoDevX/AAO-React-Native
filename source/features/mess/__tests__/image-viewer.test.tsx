@@ -9,10 +9,6 @@ import {messKeys} from '../lib/keys'
 import {onePage} from './one-page'
 import type {MessStory} from '../types'
 
-jest.mock('@frogpond/double-tap', () => {
-	// oxlint-disable-next-line typescript/no-require-imports
-	return require('./double-tap-mock') as typeof import('./double-tap-mock')
-})
 // The library's own stand-in: zero insets, where the real hook needs a native provider.
 jest.mock(
 	'react-native-safe-area-context',
