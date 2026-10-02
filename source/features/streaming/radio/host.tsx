@@ -3,19 +3,37 @@ import {StyleSheet, View} from 'react-native'
 import {StreamPlayer} from './player'
 import {STATIONS} from './stations'
 import {useRadioStore} from './store'
+import type {HtmlAudioError, PlayState, RadioPlayState} from './types'
+
+/** The `<audio>` command each radio state needs. */
+const PLAYER_STATE: Record<RadioPlayState, PlayState> = {
+	stopped: 'paused',
+	starting: 'checking',
+	playing: 'playing',
+}
 
 /**
  * The app's one radio player, mounted once at the root so a station keeps
  * playing while the listener moves around the app. It renders nothing until a
- * station is loaded, and a new station gets a new player, so only one ever
- * plays.
+ * station is loaded, and each play gets a new player, so only one ever plays
+ * and a retry never reuses a failed one.
  */
 export function RadioHost(): React.ReactNode {
 	let stationId = useRadioStore((state) => state.stationId)
 	let playState = useRadioStore((state) => state.playState)
+	let playerKey = useRadioStore((state) => state.playerKey)
 	let reportPlaying = useRadioStore((state) => state.reportPlaying)
-	let reportPaused = useRadioStore((state) => state.reportPaused)
+	let reportStopped = useRadioStore((state) => state.reportStopped)
 	let reportError = useRadioStore((state) => state.reportError)
+
+	// Each report names the player it came from, so one being replaced cannot
+	// change the state of the one replacing it.
+	let onPlay = React.useCallback(() => reportPlaying(playerKey), [reportPlaying, playerKey])
+	let onStopped = React.useCallback(() => reportStopped(playerKey), [reportStopped, playerKey])
+	let onError = React.useCallback(
+		(error: HtmlAudioError) => reportError(playerKey, error),
+		[reportError, playerKey],
+	)
 
 	if (!stationId) {
 		return null
@@ -29,13 +47,13 @@ export function RadioHost(): React.ReactNode {
 	return (
 		<View pointerEvents="none" style={styles.hidden}>
 			<StreamPlayer
-				key={stationId}
+				key={playerKey}
 				embeddedPlayerUrl={source.embeddedPlayerUrl}
-				onEnded={reportPaused}
-				onError={reportError}
-				onPause={reportPaused}
-				onPlay={reportPlaying}
-				playState={playState}
+				onEnded={onStopped}
+				onError={onError}
+				onPause={onStopped}
+				onPlay={onPlay}
+				playState={PLAYER_STATE[playState]}
 				streamSourceUrl={source.streamSourceUrl}
 				style={styles.fill}
 				useEmbeddedPlayer={source.useEmbeddedPlayer}

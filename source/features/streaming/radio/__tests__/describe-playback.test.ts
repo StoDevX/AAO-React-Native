@@ -5,12 +5,11 @@ import {describePlayback} from '../describe-playback'
 describe('describePlayback', () => {
 	test('names each state', () => {
 		expect(describePlayback('playing', null)).toBe('Playing')
-		expect(describePlayback('checking', null)).toBe('Starting…')
-		expect(describePlayback('loading', null)).toBe('Starting…')
-		expect(describePlayback('paused', null)).toBe('Paused')
+		expect(describePlayback('starting', null)).toBe('Starting…')
+		expect(describePlayback('stopped', null)).toBe('Stopped')
 	})
 
 	test('says when the station could not play', () => {
-		expect(describePlayback('paused', {code: 4, message: 'gone'})).toBe('Couldn’t play')
+		expect(describePlayback('stopped', {code: 4, message: 'gone'})).toBe('Couldn’t play')
 	})
 })

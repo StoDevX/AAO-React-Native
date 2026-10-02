@@ -5,7 +5,7 @@ import {SafeAreaView} from 'react-native-safe-area-context'
 import * as c from '@frogpond/colors'
 import {callPhone} from '../../../components/call-phone'
 import {Row} from '@frogpond/layout'
-import type {PlayState} from './types'
+import type {RadioPlayState} from './types'
 import {theming, type RadioLogo} from './theme'
 import type {Station} from './stations'
 import {useRadioStore, useStationPlayback} from './store'
@@ -18,15 +18,15 @@ import {useNavigation, useRouter} from 'expo-router'
 const ALLOW_INLINE_PLAYER = true
 
 type PlayButtonProps = {
-	state: PlayState
+	state: RadioPlayState
 	onPlay: () => unknown
-	onPause: () => unknown
+	onStop: () => unknown
 	onLink: () => unknown
 	stationName: string
 }
 
 function PlayButton(props: PlayButtonProps): React.ReactNode {
-	const {state, onPlay, onPause, onLink, stationName} = props
+	const {state, onPlay, onStop, onLink, stationName} = props
 
 	if (!ALLOW_INLINE_PLAYER) {
 		return (
@@ -41,26 +41,20 @@ function PlayButton(props: PlayButtonProps): React.ReactNode {
 	}
 
 	switch (state) {
-		case 'paused':
-			return <ActionButton icon="play" onPress={onPlay} text="Listen" />
-
-		case 'checking':
-			return <ActionButton icon="ellipsis" onPress={onPause} text="Starting" />
+		case 'starting':
+			return <ActionButton icon="ellipsis" onPress={onStop} text="Starting" />
 
 		case 'playing':
-			return <ActionButton icon="pause" onPress={onPause} text="Pause" />
+			return <ActionButton icon="stop" onPress={onStop} text="Stop" />
 
 		default:
-			return <ActionButton icon="ladybug" onPress={NOTHING_TO_RETRY} text="Error" />
+			return <ActionButton icon="play" onPress={onPlay} text="Listen" />
 	}
 }
 
 type Props = {
 	station: Station
 }
-
-/** The error button's press: the player has nothing it can retry from here. */
-const NOTHING_TO_RETRY = (): void => undefined
 
 /**
  * A station's screen. It controls the app-wide player in `RadioHost` rather
@@ -97,7 +91,7 @@ function RadioScreen(props: RadioScreenProps): React.ReactNode {
 
 	let {playState, error: streamError} = useStationPlayback(id)
 	let startStation = useRadioStore((state) => state.play)
-	let pause = useRadioStore((state) => state.pause)
+	let stop = useRadioStore((state) => state.stop)
 	let [logoHeld, setLogoHeld] = useState(false)
 
 	// iOS 26 and later go back on a swipe from anywhere on the screen, which a
@@ -166,7 +160,7 @@ function RadioScreen(props: RadioScreenProps): React.ReactNode {
 		<Row>
 			<PlayButton
 				onLink={openStreamWebsite}
-				onPause={pause}
+				onStop={stop}
 				onPlay={play}
 				state={playState}
 				stationName={stationName}

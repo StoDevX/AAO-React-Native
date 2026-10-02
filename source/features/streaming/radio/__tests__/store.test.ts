@@ -5,77 +5,163 @@ import {useRadioStore, useStationPlayback} from '../store'
 
 const ERROR = {code: 4, message: 'The stream could not be played.'}
 
-describe('useRadioStore', () => {
-	beforeEach(() => {
-		useRadioStore.getState().stop()
+function reset() {
+	useRadioStore.setState({
+		stationId: null,
+		playState: 'stopped',
+		error: null,
+		playerKey: 0,
+		viewedStationId: 'ksto',
+		sheetOpen: false,
+		showOnHome: true,
 	})
+}
+
+describe('playback', () => {
+	beforeEach(reset)
 
 	test('loads nothing until a station is played', () => {
-		expect(useRadioStore.getState().stationId).toBeNull()
-		expect(useRadioStore.getState().playState).toBe('paused')
+		expect(useRadioStore.getState()).toMatchObject({stationId: null, playState: 'stopped'})
 	})
 
-	test('starting a station loads it and waits for the player', () => {
+	test('playing loads the station, waits for the player, and gives it a new key', () => {
 		useRadioStore.getState().play('krlx')
-		expect(useRadioStore.getState().stationId).toBe('krlx')
-		expect(useRadioStore.getState().playState).toBe('checking')
-	})
-
-	test('starting a second station replaces the first', () => {
-		useRadioStore.getState().play('krlx')
-		useRadioStore.getState().reportPlaying()
-		useRadioStore.getState().play('ksto')
-		expect(useRadioStore.getState().stationId).toBe('ksto')
-		expect(useRadioStore.getState().playState).toBe('checking')
-	})
-
-	test('pausing keeps the station loaded', () => {
-		useRadioStore.getState().play('ksto')
-		useRadioStore.getState().reportPlaying()
-		useRadioStore.getState().pause()
-		expect(useRadioStore.getState().stationId).toBe('ksto')
-		expect(useRadioStore.getState().playState).toBe('paused')
-	})
-
-	test('stopping unloads the station', () => {
-		useRadioStore.getState().play('ksto')
-		useRadioStore.getState().stop()
-		expect(useRadioStore.getState().stationId).toBeNull()
-	})
-
-	test('an error pauses the station but keeps it loaded, until it is played again', () => {
-		useRadioStore.getState().play('krlx')
-		useRadioStore.getState().reportError(ERROR)
 		expect(useRadioStore.getState()).toMatchObject({
 			stationId: 'krlx',
-			playState: 'paused',
+			playState: 'starting',
+			playerKey: 1,
+		})
+	})
+
+	test('playing the same station again mounts a fresh player', () => {
+		useRadioStore.getState().play('krlx')
+		useRadioStore.getState().reportError(1, ERROR)
+		useRadioStore.getState().play('krlx')
+		expect(useRadioStore.getState()).toMatchObject({playerKey: 2, error: null})
+	})
+
+	test('stop unloads the station', () => {
+		useRadioStore.getState().play('ksto')
+		useRadioStore.getState().stop()
+		expect(useRadioStore.getState()).toMatchObject({stationId: null, playState: 'stopped'})
+	})
+
+	test('the current player reporting playing marks it playing', () => {
+		useRadioStore.getState().play('ksto')
+		useRadioStore.getState().reportPlaying(1)
+		expect(useRadioStore.getState().playState).toBe('playing')
+	})
+
+	test('the current player stopping on its own unloads the station', () => {
+		useRadioStore.getState().play('ksto')
+		useRadioStore.getState().reportPlaying(1)
+		useRadioStore.getState().reportStopped(1)
+		expect(useRadioStore.getState().stationId).toBeNull()
+	})
+
+	test('a replaced player stopping does not unload the station that replaced it', () => {
+		useRadioStore.getState().play('krlx')
+		useRadioStore.getState().play('ksto')
+		useRadioStore.getState().reportStopped(1)
+		expect(useRadioStore.getState()).toMatchObject({stationId: 'ksto', playState: 'starting'})
+	})
+
+	test('a replaced player cannot mark the new station playing or failed', () => {
+		useRadioStore.getState().play('krlx')
+		useRadioStore.getState().play('ksto')
+		useRadioStore.getState().reportPlaying(1)
+		useRadioStore.getState().reportError(1, ERROR)
+		expect(useRadioStore.getState()).toMatchObject({playState: 'starting', error: null})
+	})
+
+	test('an error stops the station but keeps it loaded, to retry', () => {
+		useRadioStore.getState().play('krlx')
+		useRadioStore.getState().reportError(1, ERROR)
+		expect(useRadioStore.getState()).toMatchObject({
+			stationId: 'krlx',
+			playState: 'stopped',
 			error: ERROR,
 		})
+	})
+})
 
+describe('viewing', () => {
+	beforeEach(reset)
+
+	test('browsing changes the viewed station and never playback', () => {
 		useRadioStore.getState().play('krlx')
-		expect(useRadioStore.getState().error).toBeNull()
+		useRadioStore.getState().browse('ksto')
+		expect(useRadioStore.getState()).toMatchObject({
+			viewedStationId: 'ksto',
+			stationId: 'krlx',
+			playState: 'starting',
+		})
+	})
+
+	test('opening the sheet with no station named shows the loaded one', () => {
+		useRadioStore.getState().play('krlx')
+		useRadioStore.getState().openSheet()
+		expect(useRadioStore.getState()).toMatchObject({sheetOpen: true, viewedStationId: 'krlx'})
+	})
+
+	test('opening the sheet with nothing loaded shows the last station viewed', () => {
+		useRadioStore.getState().browse('krlx')
+		useRadioStore.getState().openSheet()
+		expect(useRadioStore.getState()).toMatchObject({sheetOpen: true, viewedStationId: 'krlx'})
+	})
+
+	test('opening the sheet on a named station shows that one', () => {
+		useRadioStore.getState().play('krlx')
+		useRadioStore.getState().openSheet('ksto')
+		expect(useRadioStore.getState().viewedStationId).toBe('ksto')
+	})
+
+	test('closing the sheet leaves playback alone', () => {
+		useRadioStore.getState().play('krlx')
+		useRadioStore.getState().openSheet()
+		useRadioStore.getState().closeSheet()
+		expect(useRadioStore.getState()).toMatchObject({sheetOpen: false, stationId: 'krlx'})
+	})
+})
+
+describe('showOnHome', () => {
+	beforeEach(reset)
+
+	test('is on by default', () => {
+		expect(useRadioStore.getState().showOnHome).toBe(true)
+	})
+
+	test('turning it off stops a loaded station', () => {
+		useRadioStore.getState().play('krlx')
+		useRadioStore.getState().setShowOnHome(false)
+		expect(useRadioStore.getState()).toMatchObject({showOnHome: false, stationId: null})
+	})
+
+	test('is the only state that reaches storage', () => {
+		useRadioStore.getState().play('krlx')
+		let {partialize} = useRadioStore.persist.getOptions()
+		expect(partialize?.(useRadioStore.getState())).toStrictEqual({showOnHome: true})
 	})
 })
 
 describe('useStationPlayback', () => {
-	beforeEach(() => {
-		useRadioStore.getState().stop()
-	})
+	beforeEach(reset)
 
 	test('shows the loaded station as it is', async () => {
 		let {result} = await renderHook(() => useStationPlayback('krlx'))
 		await act(() => {
 			useRadioStore.getState().play('krlx')
-			useRadioStore.getState().reportError(ERROR)
+			useRadioStore.getState().reportError(1, ERROR)
 		})
-		expect(result.current).toEqual({playState: 'paused', error: ERROR})
+		expect(result.current).toEqual({playState: 'stopped', error: ERROR})
 	})
 
-	test('shows any other station as paused, without the loaded one’s error', async () => {
+	test('shows any other station as stopped, without the loaded one’s error', async () => {
 		let {result} = await renderHook(() => useStationPlayback('ksto'))
 		await act(() => {
 			useRadioStore.getState().play('krlx')
+			useRadioStore.getState().reportError(1, ERROR)
 		})
-		expect(result.current).toEqual({playState: 'paused', error: null})
+		expect(result.current).toEqual({playState: 'stopped', error: null})
 	})
 })

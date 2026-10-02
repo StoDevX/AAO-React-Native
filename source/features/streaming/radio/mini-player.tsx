@@ -36,14 +36,14 @@ const BAR_MINIMUM_BOTTOM = 8
 export const NOW_PLAYING_BAR_CLEARANCE = NOW_PLAYING_BAR_HEIGHT - BAR_SAFE_AREA_OVERLAP + 8
 
 type MiniPlayerProps = {
-	/** A compact player drops the status line and the stop button. */
+	/** A compact player drops the status line. */
 	compact?: boolean
 	/** With no station loaded, says "Not Playing" rather than rendering nothing. */
 	showWhenIdle?: boolean
 }
 
 /**
- * The loaded station, with play/pause and stop, laid out as Music's Now
+ * The loaded station, with Play or Stop, laid out as Music's Now
  * Playing accessory. Tapping the station opens its screen. With no station
  * loaded it renders nothing, or the idle player when `showWhenIdle` asks for
  * it.
@@ -57,7 +57,6 @@ export function RadioMiniPlayer({
 	let playState = useRadioStore((state) => state.playState)
 	let error = useRadioStore((state) => state.error)
 	let play = useRadioStore((state) => state.play)
-	let pause = useRadioStore((state) => state.pause)
 	let stop = useRadioStore((state) => state.stop)
 
 	if (!stationId) {
@@ -66,7 +65,7 @@ export function RadioMiniPlayer({
 
 	let station = STATIONS[stationId]
 	let status = describePlayback(playState, error)
-	let running = playState !== 'paused'
+	let running = playState !== 'stopped'
 
 	return (
 		<View style={styles.row}>
@@ -92,27 +91,16 @@ export function RadioMiniPlayer({
 				</View>
 			</Touchable>
 
+			{/* A live stream has no pause: Stop unloads it, and Play starts afresh. */}
 			<Touchable
-				accessibilityLabel={`${running ? 'Pause' : 'Play'} ${station.stationName}`}
+				accessibilityLabel={`${running ? 'Stop' : 'Play'} ${station.stationName}`}
 				accessibilityRole="button"
 				highlight={false}
-				onPress={running ? pause : () => play(station.id)}
+				onPress={running ? stop : () => play(station.id)}
 				style={styles.control}
 			>
-				<SymbolView name={running ? 'pause.fill' : 'play.fill'} size={20} tintColor={c.label} />
+				<SymbolView name={running ? 'stop.fill' : 'play.fill'} size={20} tintColor={c.label} />
 			</Touchable>
-
-			{compact ? null : (
-				<Touchable
-					accessibilityLabel={`Stop ${station.stationName}`}
-					accessibilityRole="button"
-					highlight={false}
-					onPress={stop}
-					style={styles.control}
-				>
-					<SymbolView name="stop.fill" size={20} tintColor={c.label} />
-				</Touchable>
-			)}
 		</View>
 	)
 }
@@ -137,9 +125,6 @@ function IdleMiniPlayer(): React.ReactNode {
 			</View>
 			<View style={styles.control}>
 				<SymbolView name="play.fill" size={20} tintColor={c.tertiaryLabel} />
-			</View>
-			<View style={styles.control}>
-				<SymbolView name="stop.fill" size={20} tintColor={c.tertiaryLabel} />
 			</View>
 		</View>
 	)

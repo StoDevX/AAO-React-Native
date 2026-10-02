@@ -1,55 +1,118 @@
+import AsyncStorage from '@react-native-async-storage/async-storage'
 import {create} from 'zustand'
+import {createJSONStorage, persist} from 'zustand/middleware'
 import type {StationId} from './stations'
-import type {HtmlAudioError, PlayState} from './types'
+import type {HtmlAudioError, RadioPlayState} from './types'
 
 type RadioStore = {
-	/** The station the player has loaded, playing or paused; null when nothing is loaded. */
+	/** The station the player has loaded; null when nothing is loaded. */
 	stationId: StationId | null
 	/** What the player is doing, or has been asked to do, with that station. */
-	playState: PlayState
+	playState: RadioPlayState
 	/** Why that station last failed to play, until it is asked to play again. */
 	error: HtmlAudioError | null
+	/** Identifies the current player. Each play gets a new one, so a retry never reuses a failed player. */
+	playerKey: number
 
-	/** Starts `stationId`, stopping any other station first. */
+	/** The station the sheet and the Radio tab show. Browsing it never changes playback. */
+	viewedStationId: StationId
+	/** Whether the Now Playing sheet is presented. */
+	sheetOpen: boolean
+
+	/** Whether the Now Playing bars show while nothing is loaded. Persisted. */
+	showOnHome: boolean
+
+	/** Starts `stationId` in a fresh player, replacing any other station. */
 	play: (stationId: StationId) => void
-	/** Pauses, keeping the station loaded so it resumes quickly. */
-	pause: () => void
-	/** Unloads the station, which ends its audio and hides the mini-player. */
+	/** Unloads the station, which ends its audio. */
 	stop: () => void
 
-	/** The player reports that audio has started arriving. */
-	reportPlaying: () => void
-	/** The player reports that audio has paused or ended. */
-	reportPaused: () => void
-	/** The player reports that the station could not be played. */
-	reportError: (error: HtmlAudioError) => void
+	/** Player `key` reports that audio has started arriving. */
+	reportPlaying: (key: number) => void
+	/** Player `key` reports that its audio paused or ended by itself. */
+	reportStopped: (key: number) => void
+	/** Player `key` reports that the station could not be played. */
+	reportError: (key: number, error: HtmlAudioError) => void
+
+	/** Presents the sheet on `stationId`, else the loaded station, else the last one viewed. */
+	openSheet: (stationId?: StationId) => void
+	closeSheet: () => void
+	/** Shows `stationId` in the sheet and the Radio tab without touching playback. */
+	browse: (stationId: StationId) => void
+
+	/** Turning it off also stops the radio. */
+	setShowOnHome: (on: boolean) => void
 }
 
 /**
- * The radio that plays across the whole app. Not persisted: a relaunch should
- * never start audio by itself.
+ * The radio that plays across the whole app. Only `showOnHome` is persisted:
+ * a relaunch should never start audio by itself.
  */
-export const useRadioStore = create<RadioStore>()((set) => ({
-	stationId: null,
-	playState: 'paused',
-	error: null,
+export const useRadioStore = create<RadioStore>()(
+	persist(
+		(set, get) => {
+			// A player that has been replaced still posts its last events as it
+			// unmounts; only the current one may change the station's state.
+			let fromCurrentPlayer = (key: number) => key === get().playerKey
 
-	play: (stationId) => set({stationId, playState: 'checking', error: null}),
-	pause: () => set({playState: 'paused'}),
-	stop: () => set({stationId: null, playState: 'paused', error: null}),
+			return {
+				stationId: null,
+				playState: 'stopped',
+				error: null,
+				playerKey: 0,
+				viewedStationId: 'ksto',
+				sheetOpen: false,
+				showOnHome: true,
 
-	reportPlaying: () => set({playState: 'playing'}),
-	reportPaused: () => set({playState: 'paused'}),
-	reportError: (error) => set({error, playState: 'paused'}),
-}))
+				play: (stationId) =>
+					set((state) => ({
+						stationId,
+						playState: 'starting',
+						error: null,
+						playerKey: state.playerKey + 1,
+					})),
+				stop: () => set({stationId: null, playState: 'stopped', error: null}),
 
-/** What `stationId`'s own controls show: its state when it is loaded, and paused otherwise. */
+				reportPlaying: (key) => {
+					if (fromCurrentPlayer(key)) set({playState: 'playing'})
+				},
+				reportStopped: (key) => {
+					if (fromCurrentPlayer(key)) get().stop()
+				},
+				reportError: (key, error) => {
+					if (fromCurrentPlayer(key)) set({error, playState: 'stopped'})
+				},
+
+				openSheet: (stationId) =>
+					set((state) => ({
+						sheetOpen: true,
+						viewedStationId: stationId ?? state.stationId ?? state.viewedStationId,
+					})),
+				closeSheet: () => set({sheetOpen: false}),
+				browse: (stationId) => set({viewedStationId: stationId}),
+
+				setShowOnHome: (on) => {
+					set({showOnHome: on})
+					if (!on) get().stop()
+				},
+			}
+		},
+		{
+			name: 'radio-preferences',
+			storage: createJSONStorage(() => AsyncStorage),
+			version: 1,
+			partialize: (state) => ({showOnHome: state.showOnHome}),
+		},
+	),
+)
+
+/** What `stationId`'s own controls show: its state when it is loaded, and stopped otherwise. */
 export function useStationPlayback(stationId: StationId): {
-	playState: PlayState
+	playState: RadioPlayState
 	error: HtmlAudioError | null
 } {
 	let loaded = useRadioStore((state) => state.stationId === stationId)
-	let playState = useRadioStore((state) => state.playState)
-	let error = useRadioStore((state) => state.error)
-	return loaded ? {playState, error} : {playState: 'paused', error: null}
+	let playState = useRadioStore((state) => (loaded ? state.playState : 'stopped'))
+	let error = useRadioStore((state) => (loaded ? state.error : null))
+	return {playState, error}
 }

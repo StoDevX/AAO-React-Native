@@ -1,17 +1,16 @@
-import type {HtmlAudioError, PlayState} from './types'
+import type {HtmlAudioError, RadioPlayState} from './types'
 
-/** What the mini-player says the station is doing. */
-export function describePlayback(playState: PlayState, error: HtmlAudioError | null): string {
+/** What the mini-player and the sheet say the station is doing. */
+export function describePlayback(playState: RadioPlayState, error: HtmlAudioError | null): string {
 	if (error) {
 		return 'Couldn’t play'
 	}
 	switch (playState) {
 		case 'playing':
 			return 'Playing'
-		case 'checking':
-		case 'loading':
+		case 'starting':
 			return 'Starting…'
 		default:
-			return 'Paused'
+			return 'Stopped'
 	}
 }
