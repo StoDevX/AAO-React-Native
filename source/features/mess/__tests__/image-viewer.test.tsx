@@ -12,14 +12,6 @@ import {loadBeforeTests} from '../../../testing/load-before-tests'
 
 loadBeforeTests('ScrollView', 'Image')
 
-jest.mock('@frogpond/double-tap', () => {
-	// oxlint-disable-next-line typescript/no-require-imports
-	return require('./double-tap-mock') as typeof import('./double-tap-mock')
-})
-jest.mock('@react-native-community/netinfo', () =>
-	// oxlint-disable-next-line typescript/no-require-imports
-	require('@react-native-community/netinfo/jest/netinfo-mock'),
-)
 // The library's own stand-in: zero insets, where the real hook needs a native provider.
 jest.mock(
 	'react-native-safe-area-context',

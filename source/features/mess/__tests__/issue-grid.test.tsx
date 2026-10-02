@@ -20,10 +20,6 @@ jest.mock('@frogpond/mess-issue-tile', () => {
 	// oxlint-disable-next-line typescript/no-require-imports
 	return require('./mess-issue-tile-mock') as typeof import('./mess-issue-tile-mock')
 })
-jest.mock('@react-native-community/netinfo', () =>
-	// oxlint-disable-next-line typescript/no-require-imports
-	require('@react-native-community/netinfo/jest/netinfo-mock'),
-)
 jest.mock('@frogpond/data-sources', () => ({
 	...(jest.requireActual('@frogpond/data-sources') as object),
 	fetchManifest: jest.fn(),

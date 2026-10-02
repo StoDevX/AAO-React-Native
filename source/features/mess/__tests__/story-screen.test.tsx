@@ -30,10 +30,6 @@ import {loadBeforeTests} from '../../../testing/load-before-tests'
 
 loadBeforeTests('Image')
 
-jest.mock('@react-native-community/netinfo', () =>
-	// oxlint-disable-next-line typescript/no-require-imports
-	require('@react-native-community/netinfo/jest/netinfo-mock'),
-)
 // The library's own stand-in: zero insets, where the real hook needs a native provider.
 jest.mock(
 	'react-native-safe-area-context',
@@ -51,10 +47,6 @@ jest.mock('expo-router', () => ({
 	useIsFocused: () => mockIsFocused,
 }))
 jest.mock('@frogpond/open-url', () => ({openUrl: jest.fn()}))
-jest.mock('react-native-webview', () => {
-	// oxlint-disable-next-line typescript/no-require-imports
-	return require('./webview-mock') as typeof import('./webview-mock')
-})
 
 // The feed's fetches, so an uncached feed never reaches a network Jest does not have.
 jest.mock('@frogpond/data-sources', () => ({

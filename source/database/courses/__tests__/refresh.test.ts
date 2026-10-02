@@ -78,7 +78,6 @@ jest.mock('../catalog-file', () => ({
 	},
 	filePath: (file: {uri: string}) => file.uri.replace('file://', ''),
 }))
-jest.mock('@sentry/react-native', () => ({captureException: jest.fn()}))
 
 type RefreshModule = typeof import('../refresh')
 // Loaded fresh for each test: the module remembers rejected files and the

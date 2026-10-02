@@ -4,18 +4,11 @@ import bundled from '@frogpond/data-sources/bundled.json'
 import {REL_CALENDAR} from '@frogpond/data-sources'
 import {CALENDAR_TYPES} from '../query'
 
-// `query.ts` reaches EventKit, and the shared query client it imports
-// subscribes to network reachability at module load. Neither is needed to read
-// the list of media types it can parse. `@sentry/react-native` is stubbed so
-// a report goes nowhere.
+// `query.ts` reaches EventKit, which is not needed to read the list of media
+// types it can parse.
 // `source/database/client.ts` reaches `expo-sqlite`, a native module Jest
 // cannot load at all.
 jest.mock('expo-calendar', () => ({EntityTypes: {EVENT: 'event'}}))
-jest.mock('@react-native-community/netinfo', () =>
-	// oxlint-disable-next-line typescript/no-require-imports
-	require('@react-native-community/netinfo/jest/netinfo-mock'),
-)
-jest.mock('@sentry/react-native', () => ({captureException: jest.fn()}))
 jest.mock('../../../source/database/client', () => ({getRunner: jest.fn()}))
 
 // The media type each calendar is published under lives in `data/sources.yaml`,

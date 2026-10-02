@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {afterEach, beforeEach, describe, expect, jest, test} from '@jest/globals'
+import {afterEach, beforeEach, describe, expect, test} from '@jest/globals'
 import {act, render, screen} from '@testing-library/react-native'
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query'
 
@@ -7,11 +7,6 @@ import {flushQueryNotifications} from '../../../testing/query-notifications'
 import {BylineAvatar} from '../byline-avatar'
 import {messKeys} from '../lib/keys'
 import type {Byline, StaffProfile} from '../types'
-
-jest.mock('@react-native-community/netinfo', () =>
-	// oxlint-disable-next-line typescript/no-require-imports
-	require('@react-native-community/netinfo/jest/netinfo-mock'),
-)
 
 const WRITER: Byline = {id: 392, name: 'Kenzie Nguyen'}
 

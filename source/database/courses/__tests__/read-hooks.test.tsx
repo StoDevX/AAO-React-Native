@@ -14,7 +14,6 @@ jest.mock('../../client', () => ({
 jest.mock('../refresh', () => ({
 	refreshCatalog: jest.fn(() => Promise.resolve({etag: 'e', changed: false})),
 }))
-jest.mock('@sentry/react-native', () => ({captureException: jest.fn()}))
 
 const NONE: CourseFilters = {
 	terms: [20261],
