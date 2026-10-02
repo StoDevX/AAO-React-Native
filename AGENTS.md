@@ -253,20 +253,37 @@ mise run chaos -- --replay logs/chaos/1234     # same seed, recorded responses
 It needs `TEST_RUNNER_AAO_JS_LOCATION` (a running Metro) or
 `TEST_RUNNER_AAO_JS_EMBEDDED`, and `SIMULATOR_UDID` when more than one
 simulator is booted. `--steps`, `--duration` (`90s`, `10m`, `1h`), and
-`--fault-rate` bound and tune a run; `--prebuilt` skips the build; a replay
-takes its seed from its directory's own name, so `--seed` only matters for a
-fresh run. The run exits 0 when it found nothing, 1 when it found
-something — the test failed after starting, or the app recorded a fatal, an
-unhandled rejection, or a replay divergence in `chaos-findings.jsonl` — and 2
-when it never started.
+`--fault-rate` bound and tune a run; `--prebuilt` skips the build. A replay
+takes its seed from the leading digits of its directory's name, so `--seed`
+and `--replay` can't be combined.
 
-Each run writes `logs/chaos/<seed>/`: the step log, and a screenshot on
-failure, among the `attachments/`; every response the app received in
-`chaos-tape.jsonl`; and what the probe saw in `chaos-findings.jsonl`. A replay
-answers requests from the tape — ignoring whatwg-fetch's `_=<timestamp>`
-cache-buster when matching a request to one it recorded — so it reproduces
-most findings, but timing and anything outside JS `fetch` (images, WebViews,
-map tiles) can still differ; the run says at which step it diverged.
+The run exits with:
+
+| Code | Meaning |
+| --- | --- |
+| 0 | It took steps and found nothing |
+| 1 | It found something: the monkey stopped on a crash, hang, error screen or JS error after the app answered, the test failed after taking steps, or the app recorded a fatal, an unhandled rejection, or a replay divergence in `chaos-findings.jsonl` |
+| 2 | It never started: a bad flag, no booted simulator, a replay with no tape, the probe silent at the first launch (Metro not answering), or no step taken at all — even by a test that passed |
+
+Each run writes `logs/chaos/<seed>/`: the step log, a screenshot on failure,
+and `chaos-stop.txt` — why the monkey stopped, absent when it used up its
+budget — among the `attachments/`; every response the app received in
+`chaos-tape.jsonl`; what the probe saw in `chaos-findings.jsonl`; and the exit
+code, message and stop reason in `outcome.json`. A fatal raised under a modal
+can slip past the beacon, so the findings file is read at the end of every run
+and decides the outcome even when the test passed; its screenshot may not
+show the error.
+
+A replay only reads the run it replays and writes its own results to
+`logs/chaos/<seed>-replay/`. It answers requests from the tape — ignoring
+whatwg-fetch's `_=<timestamp>` cache-buster when matching a request to one it
+recorded — and, unless given `--steps` or `--duration`, takes as many steps as
+the recording with no time limit. It reports `reproduced` when it stops for
+the recorded reason, `not reproduced` when it takes every recorded step
+without stopping or stops for another reason, `not reached` when its budget
+ends first, and `diverged at step K` when it does something the recording did
+not. Timing and anything outside JS `fetch` (images, WebViews, map tiles) can
+still differ.
 
 A chaos launch passes `--chaos`, not `--uitesting`, so features fetch live.
 Under it the app never opens a URL, composes an email, or adds a calendar
@@ -275,12 +292,18 @@ event — `openUrl`, `composeEmail`, `addToCalendar`, and every direct
 sign-in or PaperCut; Sentry is off. The monkey dismisses any system alert
 after each step, so a permission prompt can't stall it. The oracle's beacon
 view sits at opacity 0.02, not 0, because iOS drops a fully transparent view
-from the accessibility tree XCUITest reads.
+from the accessibility tree XCUITest reads. `app/_layout.tsx` imports the
+chaos modules statically, first: the import order is what wraps `fetch`
+before anything fetches, so a normal launch evaluates them too, and they do
+nothing without `--chaos`.
 
-`.github/workflows/chaos.yml` runs three seeds nightly and lists each
-distinct finding in its job summary. It never gates a pull request. The
-`ChaosCanaryTests` in the ordinary UI test shards prove the oracles can still
-see. Run `mise run chaos-routes` after adding a route.
+`.github/workflows/chaos.yml` runs three seeds nightly, on the app and
+bundle from the latest successful iOS run on master, and lists each distinct
+finding and stop reason in its job summary. It never gates a pull request.
+When that iOS run's artifacts have expired, each seed fails saying so: push to
+master or re-run the iOS workflow there. The `ChaosCanaryTests` in the
+ordinary UI test shards prove the oracles can still see. Run
+`mise run chaos-routes` after adding a route.
 
 ## Agent Workflow
 
