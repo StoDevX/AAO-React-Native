@@ -1,6 +1,6 @@
 // The decisions behind mise run chaos, kept apart from the commands it runs.
 
-import {basename, join, resolve} from 'node:path'
+import {basename, join} from 'node:path'
 import {randomInt} from 'node:crypto'
 
 /** Seconds in `text`: a bare number, or one ending s, m or h. */
@@ -87,11 +87,15 @@ export function withReplayBudget(options, recordedSteps) {
 /**
  * Where a run writes what it found: a replay beside the run it replays,
  * which it only reads, so the evidence it was asked to reproduce survives.
+ * Replaying a `-replay` directory would read and then delete it, so that's
+ * refused by name -- checked case-insensitively, since macOS's default APFS
+ * volume is case-insensitive and would otherwise let `--replay 1234-REPLAY`
+ * through to `rmSync`.
  */
 export function chaosOutputDir(options) {
 	let seed = String(options.seed)
 	let out = join('logs', 'chaos', options.replay ? `${seed}-replay` : seed)
-	if (options.replay && resolve(options.replay) === resolve(out)) {
+	if (options.replay && basename(options.replay).toLowerCase().endsWith('-replay')) {
 		throw new Error(`replay the original run, ${join('logs', 'chaos', seed)}, not its replay`)
 	}
 	return out

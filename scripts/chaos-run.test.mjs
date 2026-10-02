@@ -91,6 +91,13 @@ test('writes a run under its seed and a replay beside the run it replays', () =>
 	)
 })
 
+test('refuses a replay directory ending -replay in any case, on a case-insensitive filesystem', () => {
+	assert.throws(
+		() => chaosOutputDir({seed: 1234, replay: 'logs/chaos/1234-REPLAY'}),
+		/logs\/chaos\/1234/u,
+	)
+})
+
 test('refuses an unknown flag', () => {
 	assert.throws(() => parseChaosArgs(['--sed', '1']), /--sed/u)
 })
