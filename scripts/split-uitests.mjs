@@ -143,13 +143,20 @@ export function formatMatrix(shards, target) {
 	}
 }
 
-/** Read every Swift file in a directory, in the order the planner packs them. */
-function readTestDir(dir) {
-	return fs
-		.readdirSync(dir)
-		.filter((name) => name.endsWith('.swift'))
-		.sort()
-		.map((name) => ({name, text: fs.readFileSync(path.join(dir, name), 'utf8')}))
+/**
+ * Read every Swift file under a directory, subfolders included, in the order
+ * the planner packs them. Each file's name is its path relative to `dir`.
+ */
+export function readTestDir(dir) {
+	return (
+		fs
+			.readdirSync(dir, {recursive: true})
+			.filter((name) => name.endsWith('.swift'))
+			// By code unit, as a bare sort() would, so the packing order is the
+			// same on every machine whatever its locale.
+			.sort((a, b) => (a < b ? -1 : a > b ? 1 : 0))
+			.map((name) => ({name, text: fs.readFileSync(path.join(dir, name), 'utf8')}))
+	)
 }
 
 function main() {
