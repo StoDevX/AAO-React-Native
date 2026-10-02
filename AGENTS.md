@@ -262,8 +262,8 @@ The run exits with:
 | Code | Meaning |
 | --- | --- |
 | 0 | It took steps and found nothing |
-| 1 | It found something: the monkey stopped on a crash, hang, error screen or JS error after the app answered, the test failed after taking steps, or the app recorded a fatal, an unhandled rejection, or a replay divergence in `chaos-findings.jsonl` |
-| 2 | It never started: a bad flag, no booted simulator, a replay with no tape, the probe silent at the first launch (Metro not answering), or no step taken at all — even by a test that passed |
+| 1 | It found something: the monkey stopped on a crash, hang, error screen or JS error — even at 0 steps, unless that stop was the probe never answering — the test failed after taking steps, or the app recorded a fatal, an unhandled rejection, or a replay divergence in `chaos-findings.jsonl` |
+| 2 | It never started, or its outcome couldn't be judged: a bad flag, no booted simulator, a replay with no tape, a build failure or other error thrown before the test ran, the probe silent at the first launch (Metro not answering), no step taken at all — even by a test that passed — or the run's attachments failed to export with no stopping finding and no failed test to call a finding instead |
 
 Each run writes `logs/chaos/<seed>/`: the step log, a screenshot on failure,
 and `chaos-stop.txt` — why the monkey stopped, absent when it used up its
