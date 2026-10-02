@@ -19,7 +19,7 @@ function isAttached(runner: SqlRunner, schema: string): boolean {
 		.some((row) => row.name === schema)
 }
 
-/** A published catalog that failed its check or its index build, and would fail again. */
+/** A published catalog that failed its check, and would fail it again. */
 export class CatalogRejectedError extends Error {
 	etag: string
 
@@ -32,7 +32,7 @@ export class CatalogRejectedError extends Error {
 
 /**
  * Whether a failed refresh is worth trying again: a download can fail for a
- * moment, but a file that was rejected is the same file next time.
+ * moment, but a file that failed its check is the same file next time.
  */
 export function shouldRetryCatalog(failureCount: number, error: Error): boolean {
 	return !(error instanceof CatalogRejectedError) && failureCount < 3
@@ -89,16 +89,18 @@ async function refresh(signal?: AbortSignal): Promise<{etag: string; changed: bo
 
 		runner.run({sql: 'attach database ? as incoming', params: [filePath(incoming)]})
 		try {
+			// Only the check says the file itself is bad; a failure building its
+			// index, such as a full disk, may not happen next time.
 			try {
 				checkCatalog(runner, 'incoming')
-				for (let _indexed of courseIndexBatches(runner, 'incoming')) {
-					// One batch at a time is the point: the app runs between them.
-					// oxlint-disable-next-line eslint/no-await-in-loop
-					await nextTurn()
-				}
 			} catch (error) {
 				rejectedEtag = etag
 				throw new CatalogRejectedError(etag, error instanceof Error ? error.message : String(error))
+			}
+			for (let _indexed of courseIndexBatches(runner, 'incoming')) {
+				// One batch at a time is the point: the app runs between them.
+				// oxlint-disable-next-line eslint/no-await-in-loop
+				await nextTurn()
 			}
 			storeEtag(runner, 'incoming', etag)
 		} finally {

@@ -256,6 +256,18 @@ describe('refreshCatalog', () => {
 		expect(mockDownload).toHaveBeenCalledTimes(1)
 	})
 
+	// A full disk or an I/O error says nothing about the file, which may index
+	// fine next time.
+	test('tries the same file again after its index build fails', async () => {
+		publishedEtag('new')
+		mockBuild.mockImplementationOnce(() => {
+			throw new Error('database or disk is full')
+		})
+		await expect(refreshCatalog()).rejects.toThrow('database or disk is full')
+		await expect(refreshCatalog()).resolves.toEqual({etag: 'new', changed: true})
+		expect(mockDownload).toHaveBeenCalledTimes(2)
+	})
+
 	test('tries a newly published file after rejecting the last', async () => {
 		publishedEtag('bad')
 		mockCheck.mockImplementationOnce(() => {
