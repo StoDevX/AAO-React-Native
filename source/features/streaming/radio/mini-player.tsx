@@ -4,6 +4,7 @@ import {useSafeAreaInsets} from 'react-native-safe-area-context'
 import * as c from '@frogpond/colors'
 import {Touchable} from '@frogpond/touchable'
 import {SymbolView} from 'expo-symbols'
+import {GlassView, isLiquidGlassAvailable} from 'expo-glass-effect'
 import {usePathname, useRouter} from 'expo-router'
 import {NativeTabs} from 'expo-router/unstable-native-tabs'
 import {STATIONS} from './stations'
@@ -12,8 +13,8 @@ import {describePlayback} from './describe-playback'
 
 /**
  * Sections whose screens sit in native tabs. Their tab bar shows the
- * mini-player as its bottom accessory, so the floating one stays out of the
- * tab bar's way there.
+ * mini-player as its bottom accessory, above the bar or inline beside it once
+ * a scroll minimises it, so the floating one stays out of the way there.
  */
 const TABBED_SECTIONS = ['/streaming-media', '/menus']
 
@@ -95,8 +96,12 @@ export function RadioMiniPlayer({compact = false}: MiniPlayerProps): React.React
 
 /**
  * The mini-player floating above the bottom of every screen outside the tabbed
- * sections, which show it in their tab bar instead.
+ * sections, which show it in their tab bar instead. A capsule of liquid glass
+ * where iOS has it, matching the tab bar's own accessory, and a plain card
+ * elsewhere.
  */
+const GLASS = isLiquidGlassAvailable()
+
 export function RadioMiniPlayerOverlay(): React.ReactNode {
 	let insets = useSafeAreaInsets()
 	let pathname = usePathname()
@@ -111,9 +116,15 @@ export function RadioMiniPlayerOverlay(): React.ReactNode {
 
 	return (
 		<View pointerEvents="box-none" style={[styles.overlay, {bottom: insets.bottom + 8}]}>
-			<View style={styles.card}>
-				<RadioMiniPlayer />
-			</View>
+			{GLASS ? (
+				<GlassView isInteractive={true} style={styles.capsule}>
+					<RadioMiniPlayer />
+				</GlassView>
+			) : (
+				<View style={[styles.capsule, styles.card]}>
+					<RadioMiniPlayer />
+				</View>
+			)}
 		</View>
 	)
 }
@@ -133,8 +144,12 @@ const styles = StyleSheet.create({
 		left: 16,
 		right: 16,
 	},
+	capsule: {
+		borderRadius: 30,
+		paddingVertical: 6,
+		paddingHorizontal: 4,
+	},
 	card: {
-		borderRadius: 16,
 		backgroundColor: c.secondarySystemGroupedBackground,
 		borderWidth: StyleSheet.hairlineWidth,
 		borderColor: c.separator,

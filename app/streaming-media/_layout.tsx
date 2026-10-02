@@ -7,7 +7,9 @@ export default function StreamingMediaLayout(): React.ReactNode {
 	let radioLoaded = useRadioStore((state) => state.stationId !== null)
 
 	return (
-		<NativeTabs>
+		// Minimising on a scroll down, as Music does, moves the mini-player
+		// inline beside the shrunken tab bar.
+		<NativeTabs minimizeBehavior="onScrollDown">
 			{radioLoaded ? (
 				<NativeTabs.BottomAccessory>
 					<RadioTabAccessory />
