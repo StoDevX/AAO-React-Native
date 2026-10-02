@@ -4,6 +4,7 @@ pnpm = "12.5.0"
 hk = "2.1.0"
 ruby = "3.4.10"
 "gem:bundler" = "4.0.21"
+"aqua:mgdm/htmlq" = "0.4.0"
 
 # Taps and types on a simulator, which simctl cannot do -- see the
 # run-on-simulator skill. macOS only: it drives CoreSimulator, so it has
@@ -234,6 +235,11 @@ run = "node scripts/validate-data.mjs"
 [tasks."scrape-dining"]
 description = "Update data/building-hours/ from Bon Appétit's café pages"
 run = "node scripts/scrape-bonapp.mjs"
+
+# Needs the network, so it stays out of validate-data, as scrape-dining does.
+[tasks."watch-lions-pantry"]
+description = "Report when the Lion's Pantry hours line on the Taylor Center page changes or goes missing"
+run = "scripts/watch-lions-pantry.sh"
 
 # ccc-server blip should not block an unrelated pull request from merging.
 [tasks."validate-building-keys"]
