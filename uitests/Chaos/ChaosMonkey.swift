@@ -16,6 +16,11 @@ final class ChaosMonkey {
 	private var lastTargetsSeen = Date()
 	private var backsWithoutChange = 0
 	private var lastSignature = ""
+	/// The orientation the monkey last turned the device to. `.rotate`
+	/// alternates from this rather than reading `XCUIDevice`, which does not
+	/// reliably report it after a relaunch or a trip to the home screen, so a
+	/// seed turns the same way on every run.
+	private var orientation: UIDeviceOrientation = .portrait
 
 	private var app: XCUIApplication { test.app }
 	private let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
@@ -47,6 +52,7 @@ final class ChaosMonkey {
 		if let stop = ChaosOracle(app: app).waitForProbe(timeout: 30) {
 			return fail(stop, step: 0)
 		}
+		applyOrientation()
 		lastTargetsSeen = Date()
 
 		for step in 0..<budget where Date() < deadline {
@@ -120,11 +126,12 @@ final class ChaosMonkey {
 				// activate() can return before the app is frontmost, which the
 				// check after this step would report as escaping the app.
 				_ = app.wait(for: .runningForeground, timeout: 10)
+				applyOrientation()
 			}
 			return nil
 		case .rotate:
-			let orientation: UIDeviceOrientation = XCUIDevice.shared.orientation == .portrait ? .landscapeLeft : .portrait
-			XCUIDevice.shared.orientation = orientation
+			orientation = orientation == .portrait ? .landscapeLeft : .portrait
+			pauseHangClock { applyOrientation() }
 			return nil
 		}
 	}
@@ -171,7 +178,7 @@ final class ChaosMonkey {
 	@discardableResult
 	func escapeTrap() -> Bool {
 		guard case .success(let trapped) = ChaosOracle(app: app).observe() else { return false }
-		let orientation = app.frame.width > app.frame.height ? "landscape" : "portrait"
+		let trappedIn = Self.name(appIsLandscape)
 		let escapes: [(ChaosObservation) -> Void] = [
 			{ _ = self.dismissSheet(on: $0) },
 			{ _ in _ = self.tapBackButton() },
@@ -179,10 +186,10 @@ final class ChaosMonkey {
 		]
 		var escaped = false
 		pauseHangClock {
-			if XCUIDevice.shared.orientation != .portrait {
-				XCUIDevice.shared.orientation = .portrait
-				Thread.sleep(forTimeInterval: 1)
-			}
+			// Set whatever the monkey believes: a caller may have turned the
+			// device without it.
+			orientation = .portrait
+			applyOrientation()
 			for escape in escapes {
 				guard case .success(let before) = ChaosOracle(app: app).observe() else { continue }
 				escape(before)
@@ -197,10 +204,30 @@ final class ChaosMonkey {
 			}
 		}
 		if escaped {
-			warnings.append("no escape hatch: \(trapped.signature) (\(orientation))")
+			warnings.append("no escape hatch: \(trapped.signature) (\(trappedIn))")
 		}
 		return escaped
 	}
+
+	/// Turns the device to `orientation` and waits for the app to follow, so
+	/// the device matches what the monkey believes and logs. Its caller keeps
+	/// the wait off the hang clock.
+	private func applyOrientation() {
+		XCUIDevice.shared.orientation = orientation
+		// A frame read from an app that is not frontmost fails the test.
+		guard app.state == .runningForeground else { return }
+		let deadline = Date().addingTimeInterval(3)
+		while appIsLandscape != orientation.isLandscape && Date() < deadline {
+			Thread.sleep(forTimeInterval: 0.25)
+		}
+		if appIsLandscape != orientation.isLandscape {
+			warnings.append("orientation: the app stayed \(Self.name(appIsLandscape)) after the monkey turned it \(Self.name(orientation.isLandscape))")
+		}
+	}
+
+	private var appIsLandscape: Bool { app.frame.width > app.frame.height }
+
+	private static func name(_ landscape: Bool) -> String { landscape ? "landscape" : "portrait" }
 
 	/// One of `items`, drawing from `random` even when there are none.
 	private func pick<Item>(from items: [Item]) -> Item? {
@@ -229,6 +256,9 @@ final class ChaosMonkey {
 			if let stop = ChaosOracle(app: app).waitForProbe(timeout: 30) {
 				return app.state == .runningForeground ? stop : ChaosStop("native crash: the app is not running")
 			}
+			// A relaunched app takes the device's orientation, which may not be
+			// the one the monkey last chose.
+			applyOrientation()
 			// A fresh launch: the time it took to start is not a hang.
 			lastTargetsSeen = Date()
 		}
@@ -303,6 +333,7 @@ final class ChaosMonkey {
 			"step": step,
 			"launch": launch,
 			"action": action.rawValue,
+			"orientation": Self.name(orientation.isLandscape),
 			"identifier": target?.identifier ?? "",
 			"label": target?.label ?? "",
 		]
@@ -313,9 +344,17 @@ final class ChaosMonkey {
 		}
 	}
 
+	/// Records the stop with a screenshot taken now: the teardown block turns
+	/// the device back to portrait before XCTest photographs a failure, so
+	/// that picture would not show a landscape stop as it was.
 	private func fail(_ stop: ChaosStop, step: Int) {
 		stopReason = stop.reason
-		XCTFail("chaos seed \(seed) stopped at step \(step): \(stop.reason)")
+		let shown = Self.name(app.state == .runningForeground ? appIsLandscape : orientation.isLandscape)
+		let screen = XCTAttachment(screenshot: XCUIScreen.main.screenshot())
+		screen.name = "chaos stop screen (\(shown))"
+		screen.lifetime = .keepAlways
+		test.add(screen)
+		XCTFail("chaos seed \(seed) stopped at step \(step) in \(shown): \(stop.reason)")
 	}
 
 	private func attachLogs() {

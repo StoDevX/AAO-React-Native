@@ -268,8 +268,10 @@ The run exits with:
 | 1 | It found something: the monkey stopped on a crash, hang, error screen or JS error — even at 0 steps, unless that stop was the probe never answering — the test failed after taking steps, or the app recorded a fatal, an unhandled rejection, or a replay divergence in `chaos-findings.jsonl` |
 | 2 | It never started, or its outcome couldn't be judged: a bad flag, no booted simulator, a replay with no tape, a build failure or other error thrown before the test ran, the probe silent at the first launch (Metro not answering), no step taken at all — even by a test that passed — or the run's attachments failed to export with no stopping finding and no failed test to call a finding instead |
 
-Each run writes `logs/chaos/<seed>/`: the step log, a screenshot on failure,
-and `chaos-stop.txt` — why the monkey stopped, absent when it used up its
+Each run writes `logs/chaos/<seed>/`: the step log, with the orientation the
+monkey set at each step; `chaos stop screen`, a screenshot taken as it stopped
+and named for its orientation — XCTest's own failure screenshot comes after the
+device is turned back to portrait; and `chaos-stop.txt` — why the monkey stopped, absent when it used up its
 budget — among the `attachments/`; every response the app received in
 `chaos-tape.jsonl`; what the probe saw in `chaos-findings.jsonl`; and the exit
 code, message and stop reason in `outcome.json`. A fatal raised under a modal
