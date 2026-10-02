@@ -55,11 +55,11 @@ enum TileImageCache {
 	/// How far past the sheet's frame its image reaches, for the sheets behind it and their shadow
 	static let margin: CGFloat = 12
 
-	/// About ninety grid tiles at three pixels a point; the system also empties it under memory
-	/// pressure.
+	/// About thirty grid tiles at three pixels a point, 1.9 MB each; the system also empties it under
+	/// memory pressure.
 	private static let images: NSCache<KeyBox, UIImage> = {
 		let cache = NSCache<KeyBox, UIImage>()
-		cache.totalCostLimit = 192 * 1024 * 1024
+		cache.totalCostLimit = 64 * 1024 * 1024
 		return cache
 	}()
 
