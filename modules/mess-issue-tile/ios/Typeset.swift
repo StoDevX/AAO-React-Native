@@ -19,24 +19,40 @@ func paperStyle(justified: Bool, indent: CGFloat = 0, after: CGFloat = 0) -> NSP
 	return style
 }
 
+/// UIKit drawing in a canvas: the canvas's context made the current UIKit one, so string and
+/// TextKit drawing land in it. The tile draws its type this way rather than hosting UIKit views,
+/// which `ImageRenderer` cannot draw into the tile's cached image.
+private func drawWithUIKit(_ context: inout GraphicsContext, _ draw: () -> Void) {
+	context.withCGContext { cg in
+		UIGraphicsPushContext(cg)
+		draw()
+		UIGraphicsPopContext()
+	}
+}
+
 /// A headline in the serif, hyphenated, cut off with "…" at its last line. SwiftUI's `Text`
-/// takes no hyphenation setting, so the headline is a UIKit label.
-struct Headline: UIViewRepresentable {
+/// takes no hyphenation setting, so a UIKit label sets it, sized and drawn here.
+struct Headline: View {
 	let text: String
 	let size: CGFloat
 	let lines: Int
 	let color: Color
 
-	func makeUIView(context: Context) -> UILabel {
-		let label = UILabel()
-		label.numberOfLines = lines
-		label.lineBreakMode = .byTruncatingTail
-		label.isAccessibilityElement = false
-		label.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
-		return label
+	var body: some View {
+		let label = makeLabel()
+		FittedHeight(height: { width in
+			label.sizeThatFits(CGSize(width: width, height: .greatestFiniteMagnitude)).height
+		}) {
+			Canvas { context, size in
+				drawWithUIKit(&context) {
+					label.drawText(in: CGRect(origin: .zero, size: size))
+				}
+			}
+		}
 	}
 
-	func updateUIView(_ label: UILabel, context: Context) {
+	private func makeLabel() -> UILabel {
+		let label = UILabel()
 		label.numberOfLines = lines
 		label.attributedText = NSAttributedString(string: text, attributes: [
 			.font: serifFont(size: size, weight: .semibold),
@@ -45,12 +61,23 @@ struct Headline: UIViewRepresentable {
 		])
 		// A label truncates only with its own line break mode; the paragraph style's is for wrapping.
 		label.lineBreakMode = .byTruncatingTail
+		return label
+	}
+}
+
+/// Takes the width it is offered and the height `height` gives for that width, as a label does.
+private struct FittedHeight: Layout {
+	let height: (CGFloat) -> CGFloat
+
+	func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
+		let width = proposal.width ?? 200
+		return CGSize(width: width, height: height(width))
 	}
 
-	func sizeThatFits(_ proposal: ProposedViewSize, uiView label: UILabel, context: Context) -> CGSize? {
-		let width = proposal.width ?? 200
-		let fitted = label.sizeThatFits(CGSize(width: width, height: .greatestFiniteMagnitude))
-		return CGSize(width: width, height: fitted.height)
+	func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
+		for subview in subviews {
+			subview.place(at: bounds.origin, proposal: ProposedViewSize(bounds.size))
+		}
 	}
 }
 
@@ -58,7 +85,7 @@ struct Headline: UIViewRepresentable {
 /// optional block at the top of the first columns kept clear for a photo. Decoration: too small to
 /// read, and hidden from VoiceOver. It uses TextKit 1, whose layout manager flows one text through
 /// several containers, which is what columns are.
-struct ColumnText: UIViewRepresentable {
+struct ColumnText: View, Equatable {
 	let paragraphs: [String]
 	let columns: Int
 	/// How many columns, from the left, start below `clearHeight`
@@ -69,56 +96,25 @@ struct ColumnText: UIViewRepresentable {
 	/// Points: the top tile's type, or the smaller type under a grid tile's fold
 	var size: CGFloat = 4.6
 
-	func makeUIView(context: Context) -> ColumnTextView {
-		let view = ColumnTextView()
-		view.isOpaque = false
-		view.backgroundColor = .clear
-		view.contentMode = .redraw
-		view.isAccessibilityElement = false
-		view.accessibilityElementsHidden = true
-		return view
-	}
-
-	func updateUIView(_ view: ColumnTextView, context: Context) {
-		let ink = UIColor(ink)
-		let rule = UIColor(rule)
-		// SwiftUI updates the view whenever anything above it changes, such as a story being
-		// opened elsewhere; laying out the columns again is only worth it when what they show
-		// has changed. A change of size redraws on its own, through `contentMode = .redraw`.
-		let changed = view.paragraphs != paragraphs || view.columns != columns
-			|| view.clearedColumns != clearedColumns || view.clearHeight != clearHeight
-			|| view.ink != ink || view.rule != rule || view.size != size
-		guard changed else { return }
-		view.paragraphs = paragraphs
-		view.columns = columns
-		view.clearedColumns = clearedColumns
-		view.clearHeight = clearHeight
-		view.ink = ink
-		view.rule = rule
-		view.size = size
-		view.setNeedsDisplay()
-	}
-}
-
-final class ColumnTextView: UIView {
-	var paragraphs: [String] = []
-	var columns = 3
-	var clearedColumns = 0
-	var clearHeight: CGFloat = 0
-	var ink: UIColor = .label
-	var rule: UIColor = .separator
-
-	var size: CGFloat = 4.6
 	private var gutter: CGFloat { size * 2 }
 
-	override func draw(_ rect: CGRect) {
+	var body: some View {
+		Canvas { context, canvasSize in
+			drawWithUIKit(&context) {
+				draw(in: CGRect(origin: .zero, size: canvasSize))
+			}
+		}
+		.accessibilityHidden(true)
+	}
+
+	private func draw(in bounds: CGRect) {
 		guard !paragraphs.isEmpty, columns > 0 else { return }
 		let width = (bounds.width - gutter * CGFloat(columns - 1)) / CGFloat(columns)
 		guard width > 0 else { return }
 
 		let storage = NSTextStorage(string: paragraphs.joined(separator: "\n"), attributes: [
 			.font: UIFont(descriptor: UIFontDescriptor(name: "Georgia", size: size), size: size),
-			.foregroundColor: ink.withAlphaComponent(0.8),
+			.foregroundColor: UIColor(ink).withAlphaComponent(0.8),
 			.paragraphStyle: paperStyle(justified: true, indent: size, after: size * 0.4),
 		])
 		let layout = NSLayoutManager()
@@ -138,7 +134,7 @@ final class ColumnTextView: UIView {
 				let line = UIBezierPath()
 				line.move(to: CGPoint(x: x, y: top))
 				line.addLine(to: CGPoint(x: x, y: bounds.height))
-				rule.setStroke()
+				UIColor(rule).setStroke()
 				line.lineWidth = 0.5
 				line.stroke()
 			}
