@@ -326,7 +326,12 @@ export function FancyMenu(props: Props): React.ReactNode {
 						sectionsWithNotes.map((section) =>
 							section.data.length === 1 && isClosedLabel(section.data[0].label) ? (
 								<Section key={section.title} {...sectionHeaderProps('', section.note)}>
-									<ContentUnavailableView systemImage="clock" title={section.station} />
+									<ContentUnavailableView
+										// A cafe BonApp has shut is named `Closed` already.
+										description={isClosedLabel(section.station) ? undefined : 'Closed'}
+										systemImage="clock"
+										title={section.station}
+									/>
 								</Section>
 							) : (
 								<Section key={section.title} {...sectionHeaderProps(section.title, section.note)}>
