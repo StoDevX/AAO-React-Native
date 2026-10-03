@@ -110,6 +110,20 @@ describe('presentNowPlaying', () => {
 		})
 	})
 
+	test('shows the show on air, under the station, with no song', () => {
+		expect(presentNowPlaying(null, station, logo, {title: 'Pitch Perfect'})).toStrictEqual({
+			title: 'Pitch Perfect',
+			artist: '88.1 KRLX-FM',
+			artworkUri: logo.image.uri,
+			isSong: false,
+		})
+	})
+
+	test('shows the song, not the show, when both are on air', () => {
+		let shown = presentNowPlaying(song, station, logo, {title: 'Pitch Perfect'})
+		expect(shown).toMatchObject({title: 'River Run: Lvl 1', artist: 'The Beths'})
+	})
+
 	test('shows the station and its logo with no song', () => {
 		expect(presentNowPlaying(null, station, logo)).toStrictEqual({
 			title: '88.1 KRLX-FM',

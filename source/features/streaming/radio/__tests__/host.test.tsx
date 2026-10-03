@@ -1,7 +1,6 @@
 import * as React from 'react'
 import {afterEach, beforeEach, describe, expect, jest, test} from '@jest/globals'
-import {QueryClient, QueryClientProvider} from '@tanstack/react-query'
-import {act, fireEvent, render, waitFor} from '@testing-library/react-native'
+import {act, fireEvent, render} from '@testing-library/react-native'
 
 import {RadioHost} from '../host'
 import {STATIONS} from '../stations'
@@ -29,24 +28,28 @@ jest.mock('expo-audio', () => ({
 	setAudioModeAsync: () => Promise.resolve(),
 }))
 
-// The song on air is asked for over the network; the station says none is on.
-let client: QueryClient
-function withQueries(children: React.ReactNode): React.ReactElement {
-	return <QueryClientProvider client={client}>{children}</QueryClientProvider>
-}
+// The schedule is asked for over the network; a test says which show it has on.
+let mockShow: {title: string} | null = null
+jest.mock('../use-station-schedule', () => ({
+	useStationSchedule: () => ({current: mockShow, upcoming: [], status: 'ready'}),
+}))
 
-/** Waits for the song on air to be asked for and answered, so its answer does not arrive after the test. */
-async function untilSongAsked(): Promise<void> {
-	await waitFor(() => {
-		let queries = client.getQueryCache().getAll()
-		expect(queries.length).toBeGreaterThan(0)
-		expect(queries.every((query) => query.state.status === 'success')).toBe(true)
-	})
-}
+// The song on air is asked for over the network, which these tests are not about:
+// the feed is read and presented in the tests of `now-playing`. Here the station
+// has no song on, and the host passes on the show the schedule has.
+jest.mock('../use-now-playing', () => ({
+	useNowPlaying: (
+		station: (typeof STATIONS)[keyof typeof STATIONS],
+		show: {title: string} | null,
+	) => {
+		let {presentNowPlaying} = jest.requireActual<typeof import('../now-playing')>('../now-playing')
+		return presentNowPlaying(null, station, station.logos[0], show)
+	},
+}))
 
 /** Renders the host and returns a way to post a message from the station's page. */
 async function renderHost() {
-	let screen = await render(withQueries(<RadioHost />))
+	let screen = await render(<RadioHost />)
 	// The page is the one WebView in the host's hidden view, so find its native
 	// element by what it is sent: React Native gives it the `message` handler.
 	let hidden = screen.root?.children.find((child) => typeof child === 'object')
@@ -65,18 +68,13 @@ async function renderHost() {
 
 describe('RadioHost', () => {
 	beforeEach(() => {
-		// Never collected, as the collection's timer would hold Jest open.
-		client = new QueryClient({defaultOptions: {queries: {retry: false, gcTime: Infinity}}})
-		jest
-			.spyOn(globalThis, 'fetch')
-			.mockResolvedValue(new Response(JSON.stringify({now: null, refreshSecs: 60})))
 		useRadioStore.setState({stationId: null, playState: 'stopped', error: null, playerKey: 0})
 		useRadioStore.getState().play('ksto')
 		useRadioStore.getState().reportPlaying(1)
 	})
 
 	afterEach(() => {
-		client.clear()
+		mockShow = null
 	})
 
 	test('plays KSTO natively from its stream, and loads its player page beside it', async () => {
@@ -107,8 +105,7 @@ describe('RadioHost', () => {
 		useRadioStore.getState().stop()
 		useRadioStore.getState().play('krlx')
 
-		let screen = await render(withQueries(<RadioHost />))
-		await untilSongAsked()
+		let screen = await render(<RadioHost />)
 
 		expect(mockUseAudioPlayer).toHaveBeenCalledWith('https://s3.voscast.com:10803/stream')
 		expect(mockPlayer.setActiveForLockScreen).toHaveBeenCalledWith(
@@ -123,16 +120,15 @@ describe('RadioHost', () => {
 		mockStatus = {playing: true, isBuffering: false, didJustFinish: false, error: null}
 		useRadioStore.getState().stop()
 		useRadioStore.getState().play('krlx')
-		let screen = await render(withQueries(<RadioHost />))
-		await untilSongAsked()
+		let screen = await render(<RadioHost />)
 
 		mockStatus = {...mockStatus, playing: false}
 		await act(() => useRadioStore.getState().pause())
-		await screen.rerender(withQueries(<RadioHost />))
+		await screen.rerender(<RadioHost />)
 		let key = useRadioStore.getState().playerKey
 
 		mockStatus = {...mockStatus, playing: true}
-		await screen.rerender(withQueries(<RadioHost />))
+		await screen.rerender(<RadioHost />)
 
 		expect(useRadioStore.getState()).toMatchObject({
 			stationId: 'krlx',
@@ -140,5 +136,18 @@ describe('RadioHost', () => {
 			playerKey: key,
 		})
 		mockStatus = {playing: false, isBuffering: false, didJustFinish: false, error: null}
+	})
+
+	test('names the show on air in Control Center when no song is on', async () => {
+		mockShow = {title: 'Pitch Perfect'}
+		useRadioStore.getState().stop()
+		useRadioStore.getState().play('krlx')
+		await render(<RadioHost />)
+
+		expect(mockPlayer.setActiveForLockScreen).toHaveBeenCalledWith(
+			true,
+			expect.objectContaining({title: 'Pitch Perfect', artist: '88.1 KRLX-FM'}),
+			{isLiveStream: true},
+		)
 	})
 })

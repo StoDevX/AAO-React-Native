@@ -4,6 +4,7 @@ import {track} from '../../telemetry/track'
 import {MutedStationPage} from './muted-station-page'
 import {NativeStreamPlayer} from './native-player'
 import {useNowPlaying} from './use-now-playing'
+import {useStationSchedule} from './use-station-schedule'
 import {STATIONS, type Station} from './stations'
 import {useRadioStore} from './store'
 import type {HtmlAudioError, PlayState, RadioPlayState} from './types'
@@ -27,7 +28,9 @@ function NativeStation({
 	React.ComponentProps<typeof NativeStreamPlayer>,
 	'nowPlaying' | 'streamSourceUrl'
 >): React.ReactNode {
-	let nowPlaying = useNowPlaying(station)
+	// With no song on air, Control Center names the show the schedule has on.
+	let {current} = useStationSchedule(station.id)
+	let nowPlaying = useNowPlaying(station, current)
 	return (
 		<NativeStreamPlayer
 			{...player}

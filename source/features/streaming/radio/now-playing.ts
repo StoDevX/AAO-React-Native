@@ -95,16 +95,24 @@ export type NowPlayingPresentation = {
 
 /**
  * The song when there is one, with its own cover where it has one and the
- * station's logo where it does not; the station's name and logo when there is
- * no song to show.
+ * station's logo where it does not. With no song, the show on air under the
+ * station's name if the schedule has one; otherwise the station's name and logo.
  */
 export function presentNowPlaying(
 	song: Song | null,
 	station: Station,
 	logo: RadioLogo,
+	show: {title: string} | null = null,
 ): NowPlayingPresentation {
 	if (song === null) {
-		return {title: station.stationName, artworkUri: logo.image.uri, isSong: false}
+		return show === null
+			? {title: station.stationName, artworkUri: logo.image.uri, isSong: false}
+			: {
+					title: show.title,
+					artist: station.stationName,
+					artworkUri: logo.image.uri,
+					isSong: false,
+				}
 	}
 	return {
 		title: song.title,
