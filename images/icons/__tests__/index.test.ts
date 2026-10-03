@@ -19,7 +19,7 @@ describe('iconFor', () => {
 		expect(iconFor('Default')).toBe('windmill')
 	})
 
-	it.each(['sunset-behind-main', 'windmill-day'])('names the %s alternate', (name) => {
+	it.each(['sunset-behind-main', 'windmill-sky'])('names the %s alternate', (name) => {
 		expect(iconFor(name)).toBe(name)
 	})
 
@@ -36,13 +36,13 @@ describe('iconFor', () => {
 
 describe('previewsFor', () => {
 	it('shows the dark previews in dark mode', () => {
-		expect(previewsFor('windmill-day', 'dark')).toBe(appIcons['windmill-day'].dark)
+		expect(previewsFor('windmill-sky', 'dark')).toBe(appIcons['windmill-sky'].dark)
 	})
 
 	it.each(['light', 'unspecified', null, undefined])(
 		'shows the light previews when the scheme is %s',
 		(scheme) => {
-			expect(previewsFor('windmill-day', scheme)).toBe(appIcons['windmill-day'].light)
+			expect(previewsFor('windmill-sky', scheme)).toBe(appIcons['windmill-sky'].light)
 		},
 	)
 })

@@ -9,6 +9,7 @@ import {
 	presentationDragIndicator,
 } from '@expo/ui/swift-ui/modifiers'
 
+import {FullScheduleSheet} from './full-schedule-sheet'
 import {FullLayout, tintGradient, useFitOrScroll, useLogoCycle} from './player-view'
 import {STATIONS} from './stations'
 import {useRadioStore} from './store'
@@ -78,6 +79,7 @@ export function RadioNowPlayingSheet(): React.ReactNode {
 									showingSchedule={showingSchedule}
 									station={station}
 								/>
+								<FullScheduleSheet />
 							</ScrollView>
 						</RNHostView>
 					</ZStack>
