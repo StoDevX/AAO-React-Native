@@ -2,7 +2,8 @@
 // because they expect npm's @sentry/cli, whose bin/sentry-cli is a JavaScript
 // wrapper. That package is dropped in pnpm-workspace.yaml and the CLI comes
 // from mise instead, as a native binary node cannot run. So this stands in for
-// the wrapper: ci_post_clone.sh points SENTRY_CLI_EXECUTABLE here and
+// the wrapper: ios/.xcode.env points SENTRY_CLI_EXECUTABLE here (see
+// plugins/with-sentry-cli-executable.ts), ci_post_clone.sh points
 // SENTRY_CLI_BINARY at mise's sentry-cli, and this runs it with the same
 // arguments, environment and exit status.
 const {spawnSync} = require('node:child_process')
@@ -10,7 +11,7 @@ const {spawnSync} = require('node:child_process')
 const binary = process.env.SENTRY_CLI_BINARY
 if (!binary) {
 	console.error(
-		'error: SENTRY_CLI_BINARY is not set; ci_post_clone.sh writes it to .xcode.env.local.',
+		'error: SENTRY_CLI_BINARY is not set; ci_post_clone.sh writes it to .xcode.env.local. For a Release build that uploads nothing to Sentry, set SENTRY_DISABLE_AUTO_UPLOAD=true.',
 	)
 	process.exit(1)
 }
