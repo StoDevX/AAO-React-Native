@@ -52,9 +52,12 @@ export function renderSwift(routes) {
 	].join('\n')
 }
 
-/** Sort strings lexicographically. */
+/**
+ * Orders strings by UTF-16 code unit, so the table comes out the same on every
+ * machine whatever its locale.
+ */
 function compareStrings(a, b) {
-	return a.localeCompare(b)
+	return a < b ? -1 : a > b ? 1 : 0
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {

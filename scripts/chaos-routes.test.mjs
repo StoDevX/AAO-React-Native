@@ -32,6 +32,16 @@ test('turns route files into routes', () => {
 	)
 })
 
+test('sorts routes by code unit, whatever the locale', () => {
+	assert.deepEqual(routesIn(['b.tsx', 'a-b.tsx', 'B.tsx', 'a.tsx', 'ab.tsx']), [
+		'B',
+		'a',
+		'a-b',
+		'ab',
+		'b',
+	])
+})
+
 test('renders a Swift table', () => {
 	assert.equal(
 		renderSwift(['', 'athletics']),
