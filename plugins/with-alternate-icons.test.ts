@@ -101,7 +101,7 @@ describe('copyAlternateIcons', () => {
 	})
 
 	it('fails loudly when a document is missing', () => {
-		let root = makeProjectRoot(['sunset-behind-main'])
+		let root = makeProjectRoot(['old-main'])
 		let destination = join(root, 'ios', 'AllAboutOlaf')
 		mkdirSync(destination, {recursive: true})
 

@@ -13,8 +13,7 @@ export type IconEntry = {
 /** Every shipped icon, in the order the gallery shows them. */
 export const ICONS: ReadonlyArray<IconEntry> = [
 	{title: 'Big Ole', type: 'windmill', group: 'Classic'},
-	{title: 'Old Main', type: 'sunset-behind-main', group: 'Old Main'},
-	{title: 'Old Main (Hill)', type: 'old-main-hill', group: 'Old Main'},
+	{title: 'Old Main', type: 'old-main', group: 'Old Main'},
 	{title: 'Old Main (Retro)', type: 'old-main-retro', group: 'Old Main'},
 	{title: 'Windmill (Sky)', type: 'windmill-sky', group: 'Windmill'},
 	{title: 'Windmill (Dawn)', type: 'windmill-dawn', group: 'Windmill'},

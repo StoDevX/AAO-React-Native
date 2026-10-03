@@ -23,12 +23,8 @@ describe('iconsByGroup', () => {
 		expect(iconsByGroup()[0].icons.map((i) => i.type)).toEqual(['windmill'])
 	})
 
-	it('gathers the three Old Main icons', () => {
-		expect(iconsByGroup()[1].icons.map((i) => i.type)).toEqual([
-			'sunset-behind-main',
-			'old-main-hill',
-			'old-main-retro',
-		])
+	it('gathers the two Old Main icons', () => {
+		expect(iconsByGroup()[1].icons.map((i) => i.type)).toEqual(['old-main', 'old-main-retro'])
 	})
 
 	it('gathers the windmill variants', () => {

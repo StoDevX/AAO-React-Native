@@ -19,7 +19,7 @@ describe('iconFor', () => {
 		expect(iconFor('Default')).toBe('windmill')
 	})
 
-	it.each(['sunset-behind-main', 'windmill-sky'])('names the %s alternate', (name) => {
+	it.each(['old-main', 'windmill-sky'])('names the %s alternate', (name) => {
 		expect(iconFor(name)).toBe(name)
 	})
 

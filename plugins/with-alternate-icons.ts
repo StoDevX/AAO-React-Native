@@ -11,12 +11,11 @@ import type {XcodeProject} from 'xcode'
  * `setAlternateIconName`.
  */
 export const ALTERNATE_ICONS = [
-	'sunset-behind-main',
+	'old-main',
 	'windmill-sky',
 	'windmill-dawn',
 	'windmill-golden-hour',
 	'windmill-stars',
-	'old-main-hill',
 	'old-main-retro',
 ]
 

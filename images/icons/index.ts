@@ -1,10 +1,8 @@
 import type {ImageSourcePropType} from 'react-native'
 import oldMainRetroDark from './old-main-retro-dark.png'
 import oldMainRetro from './old-main-retro.png'
-import oldMainHillDark from './old-main-hill-dark.png'
-import oldMainHill from './old-main-hill.png'
-import sunsetBehindMainDark from './sunset-behind-main-dark.png'
-import sunsetBehindMain from './sunset-behind-main.png'
+import oldMainDark from './old-main-dark.png'
+import oldMain from './old-main.png'
 import windmillSkyDark from './windmill-sky-dark.png'
 import windmillSky from './windmill-sky.png'
 import windmillDawnDark from './windmill-dawn-dark.png'
@@ -26,13 +24,9 @@ export const appIcons = {
 		light: windmill,
 		dark: windmillDark,
 	},
-	'sunset-behind-main': {
-		light: sunsetBehindMain,
-		dark: sunsetBehindMainDark,
-	},
-	'old-main-hill': {
-		light: oldMainHill,
-		dark: oldMainHillDark,
+	'old-main': {
+		light: oldMain,
+		dark: oldMainDark,
 	},
 	'old-main-retro': {
 		light: oldMainRetro,
