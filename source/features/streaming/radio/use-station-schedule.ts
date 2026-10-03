@@ -5,7 +5,7 @@ import {useMomentTimer} from '@frogpond/timer'
 
 import {eventMapper} from './constants'
 import {currentAndUpcomingShows} from './current-shows'
-import type {ScheduleStatus} from './player-view/schedule-note'
+import {scheduleStatus, type ScheduleStatus} from './player-view/schedule-note'
 import type {StationId} from './stations'
 
 /** How often the current show is re-checked against the clock. */
@@ -22,6 +22,10 @@ export function useStationSchedule(stationId: StationId): {
 	let events = (query.data ?? []).map((sourced) => sourced.event)
 	let shows = currentAndUpcomingShows(events, now)
 	// Cached data from an earlier fetch still shows when a refetch fails.
-	let status: ScheduleStatus = query.data ? 'ready' : query.isError ? 'error' : 'loading'
+	let status = scheduleStatus({
+		hasData: query.data !== undefined,
+		isError: query.isError,
+		fetchStatus: query.fetchStatus,
+	})
 	return {...shows, status}
 }
