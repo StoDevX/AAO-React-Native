@@ -115,17 +115,14 @@ struct StreamingMediaScreen: Screen {
 	/// Swipe the sheet away, and check the bar beneath shows `label`.
 	@discardableResult
 	func closeSheet(expectingBar label: String) -> Self {
-		let airStatus = app.descendants(matching: .any)[TestIdentifiers.StreamingMedia.airStatus]
+		let airStatus = app.element(matching: TestIdentifiers.StreamingMedia.airStatus)
 		XCTAssertTrue(airStatus.waitForExistence(timeout: 10), "The sheet should be open before it is closed")
 		// By the grabber, above the station picker: a drag that starts on the
 		// picker or the record goes to them instead.
 		let grabber = app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.075))
 		let bottom = app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 1.0))
 		grabber.press(forDuration: 0.05, thenDragTo: bottom, withVelocity: .fast, thenHoldForDuration: 0)
-		let gone = XCTWaiter().wait(
-			for: [XCTNSPredicateExpectation(predicate: NSPredicate(format: "exists == false"), object: airStatus)],
-			timeout: 10)
-		XCTAssertEqual(gone, .completed, "The sheet should be closed")
+		checkGone(airStatus, named: "The sheet")
 		checkTouchTarget(app.buttonLabelled(label), named: "The bar's \"\(label)\"")
 		return self
 	}
@@ -152,11 +149,16 @@ struct StreamingMediaScreen: Screen {
 	/// Check nothing labelled `label` is on screen, waiting for it to go.
 	@discardableResult
 	func checkGone(_ label: String) -> Self {
-		let element = app.elementWithLabel(startingWith: label)
+		checkGone(app.elementWithLabel(startingWith: label), named: "Anything labelled \"\(label)\"")
+	}
+
+	/// Check `element` is not on screen, waiting for it to go.
+	@discardableResult
+	func checkGone(_ element: XCUIElement, named name: String) -> Self {
 		let gone = XCTWaiter().wait(
 			for: [XCTNSPredicateExpectation(predicate: NSPredicate(format: "exists == false"), object: element)],
 			timeout: 10)
-		XCTAssertEqual(gone, .completed, "Nothing labelled \"\(label)\" should be showing")
+		XCTAssertEqual(gone, .completed, "\(name) should be gone")
 		return self
 	}
 

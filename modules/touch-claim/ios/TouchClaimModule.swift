@@ -17,8 +17,14 @@ public class TouchClaimModule: Module {
 /// cancels React Native's own responder, so a gesture that turns the children
 /// loses its touch. This view adds a recognizer that begins the moment a finger
 /// lands, so the pans, which have not yet begun, are prevented. It does not
-/// cancel the touch, and React Native's touch handler is never prevented by
-/// another recognizer, so the children keep receiving it.
+/// cancel the touch. React Native's touch handler is prevented only by a
+/// recognizer whose view lies outside its own, so this view has to sit inside
+/// the view that handler is attached to, as it does under `RNHostView`. Put it
+/// anywhere else and it would cancel React Native's touches along with the
+/// pans.
+///
+/// Only a touch on the disc inscribed in the view claims: the corners of its
+/// square leave the sheet and the scroll view their drag.
 final class TouchClaimView: ExpoView {
 	private let recognizer = TouchDownRecognizer()
 
@@ -34,9 +40,18 @@ final class TouchClaimView: ExpoView {
 /// Begins at touch-down and ends at touch-up, with no distance to cover first.
 private final class TouchDownRecognizer: UIGestureRecognizer {
 	override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent) {
-		if state == .possible {
-			state = .began
+		guard state == .possible else { return }
+		guard let view, let touch = touches.first, isOnDisc(touch.location(in: view), of: view.bounds) else {
+			state = .failed
+			return
 		}
+		state = .began
+	}
+
+	/// Whether `point` falls inside the circle that fits `bounds`.
+	private func isOnDisc(_ point: CGPoint, of bounds: CGRect) -> Bool {
+		let radius = min(bounds.width, bounds.height) / 2
+		return hypot(point.x - bounds.midX, point.y - bounds.midY) <= radius
 	}
 
 	override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent) {
