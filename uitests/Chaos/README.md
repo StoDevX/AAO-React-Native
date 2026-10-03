@@ -60,7 +60,8 @@ A run that exits 1 found something. In `logs/chaos/<seed>/`:
    - `chaos-warnings.txt`, things worth a look that didn't stop the run.
 3. **`chaos-findings.jsonl`** is what the app's probe saw: fatal errors,
    unhandled rejections, `console.error` calls, and attempts to leave the app.
-4. **`chaos-tape.jsonl`** is every response the app received, faults included.
+4. **`chaos-tape-<launch>.jsonl`** is every response the app received, faults
+   included: one file per launch, since opening a route relaunches the app.
 
 Then decide whose bug it is:
 
@@ -89,9 +90,12 @@ TEST_RUNNER_AAO_JS_LOCATION=localhost:8081 mise run chaos -- --replay logs/chaos
 ```
 
 A replay takes the seed from the directory's name and answers every request
-from the recorded tape, so the app sees the same data and the same faults. It
-writes to `logs/chaos/1234-replay/` and never touches the original. It reports
-one of:
+from the recorded tapes, so the app sees the same data and the same faults.
+Each launch reads only its own tape. The runner installs the built app first,
+so a simulator that has never run the app can replay too. It writes to
+`logs/chaos/1234-replay/` and never touches the original. A recording from
+before per-launch tapes, with a single `chaos-tape.jsonl`, can't be replayed;
+record the seed again. A replay reports one of:
 
 - `reproduced`: it stopped for the recorded reason.
 - `not reproduced`: it took every recorded step without stopping, or stopped
@@ -137,7 +141,7 @@ Two halves talk through one hidden view.
 | `install.ts` | Wires everything up at launch; imported first in `app/_layout.tsx` |
 | `fetch.ts` | Wraps `fetch`: breaks some requests, and records or replays each answer |
 | `faults.ts` | Picks a fault per request: latency, a 404 or 500, a network failure, or an empty, malformed or truncated body |
-| `tape.ts` | Records and matches responses per launch, method and URL |
+| `tape.ts` | Names each launch's tape, and keys responses by launch, method and URL |
 | `probe.ts` | Catches fatal errors, unhandled rejections and `console.error` |
 | `findings.ts` | Writes findings to `chaos-findings.jsonl` and feeds the beacon |
 | `guard.tsx` | An error boundary around the app, and the beacon: a 1×1 view labelled with the first stopping finding |

@@ -10,7 +10,7 @@ import {
 import {FINDINGS_FILE} from '../chaos/findings'
 import {installChaos} from '../chaos/install'
 import {documentLineFile} from '../chaos/line-file'
-import {TAPE_FILE} from '../chaos/tape'
+import {tapeFile} from '../chaos/tape'
 
 /** Hermes's rejection tracker, which React Native only enables in development. */
 type HermesGlobal = {
@@ -33,7 +33,7 @@ if (isChaos) {
 			},
 			linking: Linking,
 			share: Share,
-			tape: documentLineFile(TAPE_FILE),
+			tape: documentLineFile(tapeFile(chaosLaunch)),
 			findings: documentLineFile(FINDINGS_FILE),
 		},
 	)

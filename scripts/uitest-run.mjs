@@ -63,6 +63,18 @@ export function buildArgs(udid) {
 	]
 }
 
+/** Where `buildForTesting` leaves the app. */
+export const BUILT_APP = 'ios/build/Build/Products/Debug-iphonesimulator/AllAboutOlaf.app'
+
+/**
+ * Installs the built app on `udid`. `build-for-testing` builds it without
+ * installing it, so a simulator that has never run the tests has no data
+ * container until this does; installing over an installed app keeps its data.
+ */
+export function installBuiltApp(udid) {
+	run('xcrun', ['simctl', 'install', udid, BUILT_APP], {stdio: 'inherit'})
+}
+
 export function buildForTesting(udid) {
 	run('xcodebuild', ['build-for-testing', ...buildArgs(udid)], {stdio: 'inherit'})
 }

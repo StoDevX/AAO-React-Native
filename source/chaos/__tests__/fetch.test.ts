@@ -81,6 +81,14 @@ describe('record mode', () => {
 		expect(network).not.toHaveBeenCalled()
 	})
 
+	test('never reads the tape, which only a replay needs', async () => {
+		let tape = memoryLineFile()
+		let readLines = jest.spyOn(tape, 'readLines')
+		let wrapped = chaosFetch(server(), options({tape}))
+		await wrapped(URL_A)
+		expect(readLines).not.toHaveBeenCalled()
+	})
+
 	test('records an aborted request as an abort', async () => {
 		let tape = memoryLineFile()
 		let aborting = jest.fn(() => {

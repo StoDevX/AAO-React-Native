@@ -3,7 +3,11 @@ import {test} from 'node:test'
 
 import {
 	chaosOutputDir,
+	checkAppContainer,
 	checkOutputDir,
+	isRunFile,
+	recordedTapes,
+	tapeFiles,
 	firstDivergence,
 	jsSourceProblem,
 	parseChaosArgs,
@@ -142,6 +146,68 @@ test('replays over an earlier replay without --overwrite', () => {
 		out: 'logs/chaos/42-replay',
 		exists: true,
 	})
+})
+
+test("finds every launch's tape, in launch order", () => {
+	assert.deepEqual(
+		tapeFiles([
+			'chaos-tape-10.jsonl',
+			'chaos-findings.jsonl',
+			'chaos-tape-2.jsonl',
+			'chaos-tape-0.jsonl',
+			'chaos-tape.jsonl',
+			'chaos-tape-x.jsonl',
+			'outcome.json',
+		]),
+		['chaos-tape-0.jsonl', 'chaos-tape-2.jsonl', 'chaos-tape-10.jsonl'],
+	)
+})
+
+test("a replay reads the recording's per-launch tapes", () => {
+	assert.deepEqual(recordedTapes('logs/chaos/7', ['chaos-tape-1.jsonl', 'chaos-tape-0.jsonl']), [
+		'chaos-tape-0.jsonl',
+		'chaos-tape-1.jsonl',
+	])
+})
+
+test('refuses to replay a recording made before per-launch tapes', () => {
+	assert.throws(
+		() => recordedTapes('logs/chaos/7', ['chaos-tape.jsonl', 'chaos-findings.jsonl']),
+		/logs\/chaos\/7 was recorded before per-launch tapes/u,
+	)
+})
+
+test('refuses to replay a recording with no tape', () => {
+	assert.throws(
+		() => recordedTapes('logs/chaos/7', ['outcome.json']),
+		/logs\/chaos\/7 has no tape/u,
+	)
+})
+
+test('clears every file a run leaves in the app, a tape from before per-launch tapes included', () => {
+	for (let name of [
+		'chaos-findings.jsonl',
+		'chaos-tape-0.jsonl',
+		'chaos-tape-12.jsonl',
+		'chaos-tape.jsonl',
+	]) {
+		assert.equal(isRunFile(name), true, name)
+	}
+	for (let name of ['notes.txt', 'chaos-steps.jsonl', 'chaos-tape-a.jsonl']) {
+		assert.equal(isRunFile(name), false, name)
+	}
+})
+
+test('refuses a replay when the app has no data container to stage its tape in', () => {
+	assert.throws(
+		() => checkAppContainer({documents: null, replaying: true, udid: 'ABC'}),
+		/no data container on ABC.*replay/su,
+	)
+})
+
+test("stages into the app's container when it has one, and records without one", () => {
+	checkAppContainer({documents: '/x/Documents', replaying: true, udid: 'ABC'})
+	checkAppContainer({documents: null, replaying: false, udid: 'ABC'})
 })
 
 test('refuses an unknown flag', () => {

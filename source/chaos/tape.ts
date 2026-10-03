@@ -1,8 +1,14 @@
 import type {Fault} from './faults'
 import type {LineFile} from './line-file'
 
-/** Where a run records every response it delivered. */
-export const TAPE_FILE = 'chaos-tape.jsonl'
+/**
+ * Where one launch records every response it delivered. Each launch has its
+ * own, so a replay launch parses only its own answers rather than the whole
+ * run's, which grows past a hundred megabytes in a long one.
+ */
+export function tapeFile(launch: number): string {
+	return `chaos-tape-${launch}.jsonl`
+}
 
 /** One response as the app received it, after any fault. */
 export type TapeEntry = {

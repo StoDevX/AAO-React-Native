@@ -139,6 +139,63 @@ export function checkOutputDir({options, out, exists}) {
 	}
 }
 
+/** Where the app writes what its probe saw; source/chaos/findings.ts's FINDINGS_FILE. */
+export const FINDINGS_FILE = 'chaos-findings.jsonl'
+
+/**
+ * One launch's tape, as source/chaos/tape.ts's `tapeFile` names it. Each
+ * launch writes its own, so a replay launch parses only its own answers.
+ */
+export const TAPE_FILE_PATTERN = /^chaos-tape-(\d+)\.jsonl$/u
+
+/** The single tape every launch shared before each launch had its own. */
+const SHARED_TAPE_FILE = 'chaos-tape.jsonl'
+
+/** The launch a tape's file name is for. */
+function tapeLaunch(name) {
+	return Number(TAPE_FILE_PATTERN.exec(name)[1])
+}
+
+/** The tapes among `names`, in launch order. */
+export function tapeFiles(names) {
+	return names
+		.filter((name) => TAPE_FILE_PATTERN.test(name))
+		.sort((a, b) => tapeLaunch(a) - tapeLaunch(b))
+}
+
+/** The tapes a replay of the recording in `dir`, holding `names`, stages for the app. */
+export function recordedTapes(dir, names) {
+	let tapes = tapeFiles(names)
+	if (tapes.length > 0) {
+		return tapes
+	}
+	if (names.includes(SHARED_TAPE_FILE)) {
+		throw new Error(
+			`${dir} was recorded before per-launch tapes, and can't be replayed; record the seed again`,
+		)
+	}
+	throw new Error(`${dir} has no tape to replay`)
+}
+
+/** Whether `name` is a file a run leaves in the app's Documents, which the next run clears. */
+export function isRunFile(name) {
+	return name === FINDINGS_FILE || name === SHARED_TAPE_FILE || TAPE_FILE_PATTERN.test(name)
+}
+
+/**
+ * Refuses a replay when the app, though just installed, has no data container
+ * on the simulator: its tapes would have nowhere to go, and a replay with no
+ * tapes answers every request as a divergence. A recording has nothing to
+ * stage, so it goes ahead.
+ */
+export function checkAppContainer({documents, replaying, udid}) {
+	if (!documents && replaying) {
+		throw new Error(
+			`the app has no data container on ${udid} after installing it, so the replay's tapes cannot be staged`,
+		)
+	}
+}
+
 /** The run's settings, as the variables xcodebuild hands the test runner. */
 export function testEnv(options) {
 	let env = {

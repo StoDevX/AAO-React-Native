@@ -1,5 +1,13 @@
 import {memoryLineFile} from '../line-file'
-import {parseLines, readTape, RequestCounter, requestKey, stableUrl, type TapeEntry} from '../tape'
+import {
+	parseLines,
+	readTape,
+	RequestCounter,
+	requestKey,
+	stableUrl,
+	tapeFile,
+	type TapeEntry,
+} from '../tape'
 
 let entry = (key: string): TapeEntry => ({
 	key,
@@ -9,6 +17,13 @@ let entry = (key: string): TapeEntry => ({
 	delayMs: 0,
 	error: null,
 	fault: 'none',
+})
+
+describe('tapeFile', () => {
+	test('names a file for each launch, so a replay launch reads only its own answers', () => {
+		expect(tapeFile(0)).toBe('chaos-tape-0.jsonl')
+		expect(tapeFile(12)).toBe('chaos-tape-12.jsonl')
+	})
 })
 
 describe('stableUrl', () => {

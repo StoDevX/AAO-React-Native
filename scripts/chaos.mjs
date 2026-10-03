@@ -17,7 +17,12 @@ import {join} from 'node:path'
 
 import {
 	chaosOutputDir,
+	checkAppContainer,
 	checkOutputDir,
+	FINDINGS_FILE,
+	isRunFile,
+	recordedTapes,
+	tapeFiles,
 	parseChaosArgs,
 	replayVerdict,
 	jsSourceProblem,
@@ -32,11 +37,10 @@ import {
 	bootedSimulator,
 	buildForTesting,
 	findXctestrun,
+	installBuiltApp,
 	run,
 	testWithoutBuilding,
 } from './uitest-run.mjs'
-
-const FILES = ['chaos-tape.jsonl', 'chaos-findings.jsonl']
 
 // Anything thrown before the run could judge itself -- a bad flag, no booted
 // simulator, a replay with no tape -- means the run did not start.
@@ -57,7 +61,7 @@ function main() {
 		? {
 				steps: stepLines(join(options.replay, 'attachments')),
 				stop: stopReason(join(options.replay, 'attachments')),
-				tape: readFileSync(join(options.replay, 'chaos-tape.jsonl')),
+				tapes: recordedTapes(options.replay, readdirSync(options.replay)),
 			}
 		: null
 	if (recorded) {
@@ -76,13 +80,18 @@ function main() {
 		buildForTesting(device.udid)
 	}
 
-	// A replay reads the recorded tape from the app's Documents; a recording starts clean.
-	for (let name of FILES) {
-		let inApp = appDataPath(device.udid, `Documents/${name}`)
-		if (!inApp) continue
-		rmSync(inApp, {force: true})
-		if (recorded && name === 'chaos-tape.jsonl') {
-			writeFileSync(inApp, recorded.tape)
+	installBuiltApp(device.udid)
+
+	// A replay reads the recorded tapes from the app's Documents; a recording starts clean.
+	let documents = appDataPath(device.udid, 'Documents')
+	checkAppContainer({documents, replaying: recorded !== null, udid: device.udid})
+	if (documents) {
+		mkdirSync(documents, {recursive: true})
+		for (let name of readdirSync(documents).filter(isRunFile)) {
+			rmSync(join(documents, name), {force: true})
+		}
+		for (let name of recorded?.tapes ?? []) {
+			copyFileSync(join(options.replay, name), join(documents, name))
 		}
 	}
 
@@ -102,14 +111,21 @@ function main() {
 		testError = error
 	}
 
-	for (let name of FILES) {
-		let inApp = appDataPath(device.udid, `Documents/${name}`)
-		if (inApp && existsSync(inApp) && !(recorded && name === 'chaos-tape.jsonl')) {
-			copyFileSync(inApp, join(out, name))
-		}
+	// A replay's tapes are the ones it was given, copied from the recording
+	// rather than the app, which reads them but never writes to them.
+	let documentsAfter = appDataPath(device.udid, 'Documents')
+	let [tapeDir, tapes] = recorded
+		? [options.replay, recorded.tapes]
+		: [
+				documentsAfter,
+				tapeFiles(documentsAfter && existsSync(documentsAfter) ? readdirSync(documentsAfter) : []),
+			]
+	for (let name of tapes) {
+		copyFileSync(join(tapeDir, name), join(out, name))
 	}
-	if (recorded) {
-		writeFileSync(join(out, 'chaos-tape.jsonl'), recorded.tape)
+	let findingsInApp = documentsAfter && join(documentsAfter, FINDINGS_FILE)
+	if (findingsInApp && existsSync(findingsInApp)) {
+		copyFileSync(findingsInApp, join(out, FINDINGS_FILE))
 	}
 	// A run that failed early may leave no result bundle; what it did leave
 	// still decides the outcome below.
@@ -151,7 +167,7 @@ function main() {
 	// can land here without failing the test itself: a fatal error raised under
 	// a modal can slip past the beacon, so the findings file is the one place
 	// that is checked no matter how the test exited.
-	let findingsPath = join(out, 'chaos-findings.jsonl')
+	let findingsPath = join(out, FINDINGS_FILE)
 	let findingLines = existsSync(findingsPath) ? readFileSync(findingsPath, 'utf8').split('\n') : []
 	let outcome = runOutcome({
 		testFailed: testError !== null,
