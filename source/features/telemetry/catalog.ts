@@ -1,3 +1,4 @@
+import type {AppIconName} from '../../../images/icons'
 import type {Campus} from '../building-hours/types'
 
 /**
@@ -61,6 +62,8 @@ export type TelemetryEvent =
 			attributes: {source: CalendarSourceId; title: PublicEventTitle}
 	  }
 	| {name: 'dictionary.edit.submit'; attributes: Record<string, never>}
+	| {name: 'app.launch'; attributes: {icon: AppIconName}}
+	| {name: 'app_icon.change'; attributes: {icon: AppIconName}}
 	| {
 			name: 'api.failure'
 			attributes: {
@@ -82,6 +85,8 @@ export const DESTINATIONS: {readonly [N in TelemetryEvent['name']]: 'metric' | '
 	'calendar.add_to_device': 'metric',
 	'calendar.event.added': 'log',
 	'dictionary.edit.submit': 'metric',
+	'app.launch': 'metric',
+	'app_icon.change': 'metric',
 	'api.failure': 'log',
 }
 

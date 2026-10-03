@@ -1,6 +1,7 @@
 import * as React from 'react'
 import {changeIcon, getIcon, resetIcon} from 'react-native-change-icon'
 import {type AppIconName, DEFAULT_ICON} from '../../../images/icons'
+import {reportIconChange} from './icon-telemetry'
 import {type IconEntry, currentIconEntry} from './icons'
 
 /**
@@ -36,6 +37,7 @@ export function useAppIcon(): {
 			} else {
 				await changeIcon(type)
 			}
+			reportIconChange(type)
 			await reload()
 		},
 		[current.type, reload],

@@ -12,6 +12,7 @@ import {useScreenViews} from '../source/features/telemetry/use-screen-views'
 import {watchQueryFailures} from '../source/features/telemetry/query-failures'
 import {track} from '../source/features/telemetry/track'
 import {startQuickActionSync} from '../source/features/quick-actions/sync'
+import {reportIconAtLaunch} from '../source/features/customize/icon-telemetry'
 
 import * as React from 'react'
 import {PersistGate} from 'redux-persist/integration/react'
@@ -81,6 +82,9 @@ function RootLayout(): React.ReactNode {
 	)
 	React.useEffect(() => watchQueryFailures(queryClient.getQueryCache(), track), [])
 	React.useEffect(() => startQuickActionSync(), [])
+	React.useEffect(() => {
+		reportIconAtLaunch()
+	}, [])
 
 	React.useEffect(() => {
 		if (!IS_PRODUCTION) {
