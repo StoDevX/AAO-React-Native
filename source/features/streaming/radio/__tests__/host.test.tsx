@@ -10,8 +10,8 @@ async function renderHost(): Promise<(type: string) => Promise<void>> {
 	let screen = await render(<RadioHost />)
 	// The host's view wraps the player, whose WebView wraps the native web view.
 	let webview = screen.root?.children[0]
-	if (typeof webview !== 'object' || webview === undefined) {
-		throw new Error('The host rendered no native web view')
+	if (typeof webview !== 'object') {
+		throw new TypeError('The host rendered no native web view')
 	}
 	return async (type) => {
 		await fireEvent(webview, 'message', {nativeEvent: {data: JSON.stringify({type})}})
