@@ -62,6 +62,7 @@
     "expo": "57.0.19",
     "expo-application": "57.0.2",
     "expo-asset": "57.0.16",
+    "expo-audio": "57.0.5",
     "expo-build-properties": "57.0.17",
     "expo-calendar": "57.0.2",
     "expo-clipboard": "57.0.1",
