@@ -58,7 +58,7 @@ export default function CustomizePage(): React.ReactNode {
 					</Section>
 					<Section title="Browsing">
 						<Picker<LinkTarget>
-							label="Open Links In"
+							label="Open Links"
 							modifiers={[pickerStyle('menu'), accessibilityIdentifier('open-links-in')]}
 							onSelectionChange={setLinkTarget}
 							selection={linkTarget}

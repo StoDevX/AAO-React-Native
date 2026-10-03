@@ -1,6 +1,6 @@
 import XCTest
 
-/// Home's paintbrush sheet: App Icon, Open Links In, Radio Player, Quick Actions.
+/// Home's paintbrush sheet: App Icon, Open Links, Radio Player, Quick Actions.
 struct CustomizeScreen: Screen {
 	let app: XCUIApplication
 

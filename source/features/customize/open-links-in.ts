@@ -5,7 +5,7 @@ import * as storage from '../../lib/storage'
 export type LinkTarget = 'app' | 'safari'
 
 /**
- * The Open Links In choice, kept in the boolean `@frogpond/open-url` reads:
+ * The Open Links choice, kept in the boolean `@frogpond/open-url` reads:
  * true is In App. Shows In App until the saved value loads, matching the
  * storage default.
  */
