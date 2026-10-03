@@ -147,7 +147,7 @@ function outermost(node: Element, name: string): Element[] {
  * An image's address over HTTPS. Older posts link uploads over plain HTTP, which iOS loads only
  * in a web view; the site serves each of them over HTTPS too.
  */
-function secureUrl(url: string): string {
+export function secureUrl(url: string): string {
 	return url.replace(/^http:\/\//iu, 'https://')
 }
 

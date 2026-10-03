@@ -2,6 +2,7 @@ import {fetchManifest, REL_NEWS, resolveSource} from '@frogpond/data-sources'
 import {infiniteQueryOptions, queryOptions} from '@tanstack/react-query'
 import {queryClient} from '../../init/tanstack-query'
 import {parseMessCategories, parseMessPosts} from './lib/posts'
+import {parseGalleryPhotos} from './lib/gallery'
 import {bodyParagraphs} from './lib/issue-grid'
 import {ISSUE_PAGE_SIZE, parseLightPosts, parseMediaUrls, withPhotoUrls} from './lib/issues'
 import {latestProfile, parseStaffProfiles} from './lib/profiles'
@@ -10,7 +11,15 @@ import {findSpotifyRef} from './lib/spotify'
 import {messFetch} from './lib/fixtures'
 import {messKeys} from './lib/keys'
 import {emptyPastLastPage, nextPage, pageHref} from './lib/paging'
-import type {LightPost, MessCategory, MessIssue, MessStory, SpotifyRef, StaffProfile} from './types'
+import type {
+	CaptionedPhoto,
+	LightPost,
+	MessCategory,
+	MessIssue,
+	MessStory,
+	SpotifyRef,
+	StaffProfile,
+} from './types'
 
 const WP_V2_POSTS = 'application/vnd.wordpress.v2.posts+json'
 const ONE_DAY_IN_MS = 24 * 60 * 60 * 1000
@@ -324,6 +333,28 @@ export const messPlaylistPageOptions = (story: MessStory) =>
 		queryFn: async ({signal}): Promise<SpotifyRef | null> => {
 			let page = await messFetch(story.link, signal, 'Olaf Messenger page', 'text')
 			return typeof page === 'string' ? findSpotifyRef(page) : null
+		},
+	})
+
+/**
+ * A gallery's photos, which its slideshow names by media id but carries only the first of, in
+ * the slideshow's order. WordPress answers at most 100 ids at once, more than any gallery holds.
+ */
+// oxlint-disable-next-line typescript/explicit-module-boundary-types
+export const messGalleryOptions = (photoIds: number[]) =>
+	queryOptions({
+		queryKey: messKeys.gallery(photoIds),
+		// A published gallery's photos do not change.
+		staleTime: ONE_DAY_IN_MS,
+		queryFn: async ({signal}): Promise<CaptionedPhoto[]> => {
+			// Assumes the resolved feed href is an absolute WordPress URL.
+			let origin = originOf(await feedHref())
+			let body = await messFetch(
+				`${origin}/wp-json/wp/v2/media?include=${photoIds.join(',')}&per_page=100&_fields=id,source_url,media_details,caption`,
+				signal,
+				'Olaf Messenger gallery',
+			)
+			return parseGalleryPhotos(body, photoIds)
 		},
 	})
 
