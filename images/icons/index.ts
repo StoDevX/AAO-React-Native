@@ -1,4 +1,8 @@
 import type {ImageSourcePropType} from 'react-native'
+import constellationIconDark from './constellation-icon-dark.png'
+import constellationIcon from './constellation-icon.png'
+import constellationLogoDark from './constellation-logo-dark.png'
+import constellationLogo from './constellation-logo.png'
 import sunsetBehindMainIconDark from './sunset-behind-main-icon-dark.png'
 import sunsetBehindMainIcon from './sunset-behind-main-icon.png'
 import sunsetBehindMainLogoDark from './sunset-behind-main-logo-dark.png'
@@ -100,6 +104,10 @@ export const appIcons = {
 	'windmill-stars': {
 		light: {icon: windmillStarsIcon, logo: windmillStarsLogo},
 		dark: {icon: windmillStarsIconDark, logo: windmillStarsLogoDark},
+	},
+	constellation: {
+		light: {icon: constellationIcon, logo: constellationLogo},
+		dark: {icon: constellationIconDark, logo: constellationLogoDark},
 	},
 } satisfies Record<string, {light: Previews; dark: Previews}>
 
