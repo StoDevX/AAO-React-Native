@@ -16,10 +16,19 @@ export type RejectionTrackerOptions = {
 	onHandled: (id: number) => void
 }
 
+/** The part of React Native's `ExceptionsManager` the probe replaces. */
+export type ExceptionsManagerLike = {
+	handleException(error: unknown, isFatal: boolean): void
+}
+
+/** The part of `console` the probe uses; React Native reads `reportErrorsAsExceptions` from it. */
+export type ProbeConsole = Pick<Console, 'error'> & {reportErrorsAsExceptions?: boolean}
+
 /** What the probe hooks into. */
 export type ProbeHost = {
 	errorUtils: ErrorUtilsLike
-	console: Pick<Console, 'error'>
+	exceptionsManager: ExceptionsManagerLike
+	console: ProbeConsole
 	enableRejectionTracker?: (options: RejectionTrackerOptions) => void
 }
 
@@ -47,9 +56,24 @@ export function installProbe(host: ProbeHost): void {
 		onHandled: () => {},
 	})
 
+	// React Native sends each console.error to native in a production bundle,
+	// whose red box in a debug build covers the beacon. The console still prints.
+	host.console.reportErrorsAsExceptions = false
+
 	let originalError = host.console.error.bind(host.console)
 	host.console.error = (...args: unknown[]) => {
 		reportFinding('console-error', args)
 		originalError(...args)
+	}
+
+	// React reports a render error straight to `ExceptionsManager`, past
+	// `ErrorUtils`. A production bundle then sends it to native, whose red box in
+	// a debug build covers the beacon. The probe takes it instead.
+	host.exceptionsManager.handleException = (error, isFatal) => {
+		if (isFatal) {
+			reportFinding('fatal', error)
+			return
+		}
+		host.console.error(error)
 	}
 }
