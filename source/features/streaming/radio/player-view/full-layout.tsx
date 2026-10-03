@@ -12,6 +12,7 @@ import {StationMenu} from './station-menu'
 import {StationPicker} from './station-picker'
 import {VolumeSliderStub} from './stubs'
 import {artworkSize} from './artwork-size'
+import {LockButton} from './lock-button'
 import {palette} from './palette'
 import type {RadioLogo} from '../theme'
 
@@ -25,10 +26,9 @@ export function FullLayout({
 	showNextLogo,
 	showingSchedule,
 	onToggleSchedule,
-	scratchable,
+	locked,
+	onToggleLock,
 	viewportHeight,
-	onLogoHeldChange,
-	onLogoSettle,
 }: {
 	station: Station
 	logo: RadioLogo
@@ -36,14 +36,11 @@ export function FullLayout({
 	/** Whether today's schedule takes the record's place, as Music's queue does the art's. */
 	showingSchedule: boolean
 	onToggleSchedule: () => void
-	/** Whether a drag turns the record. Off in the sheet, where a drag closes it. */
-	scratchable: boolean
+	/** Whether the sheet is held open, which is when a drag turns the record rather than closing the sheet. */
+	locked: boolean
+	onToggleLock: () => void
 	/** The height the player has to fit in: the sheet's, or the tab's between its bars. */
 	viewportHeight: number
-	/** A finger has come down on the record, or lifted, so a scratch can hold off the screen's swipe-back. */
-	onLogoHeldChange?: (held: boolean) => void
-	/** The record has stopped moving under a scratch. */
-	onLogoSettle?: () => void
 }): React.ReactNode {
 	let {playState} = useStationPlayback(station.id)
 	// The record takes whatever room the rest of the player leaves, so the
@@ -75,14 +72,15 @@ export function FullLayout({
 						image={logo.image}
 						labelColor={logo.labelColor}
 						labelScale={logo.labelScale ?? 0.8}
-						onHeldChange={onLogoHeldChange}
-						onSettle={onLogoSettle}
 						onTap={showNextLogo}
 						playing={playState === 'playing'}
-						scratchable={scratchable}
+						scratchable={locked}
 						size={artwork}
 					/>
 				)}
+				<View style={styles.lock}>
+					<LockButton locked={locked} onToggle={onToggleLock} />
+				</View>
 			</View>
 			<View style={styles.titleRow}>
 				<ShowTitle station={station} />
@@ -119,6 +117,12 @@ const styles = StyleSheet.create({
 	artwork: {
 		alignItems: 'center',
 		justifyContent: 'center',
+	},
+	// In the record's top-right corner, clear of its label.
+	lock: {
+		position: 'absolute',
+		top: 0,
+		right: -12,
 	},
 	titleRow: {
 		flexDirection: 'row',

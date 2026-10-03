@@ -1,7 +1,3 @@
-import * as React from 'react'
-import {StyleSheet} from 'react-native'
-import {Host, Rectangle} from '@expo/ui/swift-ui'
-import {foregroundStyle, ignoreSafeArea} from '@expo/ui/swift-ui/modifiers'
 import tinycolor from 'tinycolor2'
 
 import type {RadioLogo} from '../theme'
@@ -22,15 +18,4 @@ export function tintGradient(logo: RadioLogo): {
 		startPoint: {x: 0.5, y: 0},
 		endPoint: {x: 0.5, y: 1},
 	}
-}
-
-/** The tint fill behind a React Native screen, filling it edge to edge. */
-export function TintFill({logo}: {logo: RadioLogo}): React.ReactNode {
-	return (
-		<Host pointerEvents="none" style={StyleSheet.absoluteFill}>
-			{/* SwiftUI keeps to the safe area, which on a tab screen ends at the
-			    tab bar; the fill runs under it. */}
-			<Rectangle modifiers={[foregroundStyle(tintGradient(logo)), ignoreSafeArea()]} />
-		</Host>
-	)
 }

@@ -63,20 +63,7 @@ struct StreamingMediaScreen: Screen {
 		return self
 	}
 
-	/// Switch to the Radio tab and wait for `label` on its player.
-	@discardableResult
-	func openRadioTab(expecting label: String) -> Self {
-		tap(app.tabButton(TestIdentifiers.StreamingMedia.radioTab),
-			until: app.elementWithLabel(startingWith: label), named: "the Radio tab")
-		return self
-	}
 
-	/// Switch to the tab labelled `tab`, and wait for a button labelled `label`.
-	@discardableResult
-	func openTab(_ tab: String, expectingButton label: String) -> Self {
-		tap(app.tabButton(tab), until: app.buttonLabelled(label), named: "the \(tab) tab")
-		return self
-	}
 
 	/// Pick a station in the player's segmented control, and wait for its Play.
 	@discardableResult
@@ -116,21 +103,6 @@ struct StreamingMediaScreen: Screen {
 		return self
 	}
 
-	/// Check each control labelled in `labels` sits wholly above the tab bar,
-	/// where it can be seen and tapped.
-	@discardableResult
-	func checkAboveTabBar(_ labels: [String]) -> Self {
-		let tabBar = app.tabBars.firstMatch
-		XCTAssertTrue(tabBar.waitForExistence(timeout: 10), "The tab bar should be showing")
-		for label in labels {
-			let control = app.descendants(matching: .any).matching(NSPredicate(format: "label == %@", label)).firstMatch
-			XCTAssertTrue(control.waitForExistence(timeout: 10), "\"\(label)\" should exist")
-			XCTAssertLessThanOrEqual(
-				control.frame.maxY, tabBar.frame.minY,
-				"\"\(label)\" should end above the tab bar, at \(tabBar.frame.minY), not \(control.frame.maxY)")
-		}
-		return self
-	}
 
 	/// Open the Now Playing sheet from the bar, and wait for `play` in it.
 	@discardableResult
@@ -152,6 +124,19 @@ struct StreamingMediaScreen: Screen {
 		grabber.press(forDuration: 0.05, thenDragTo: bottom, withVelocity: .fast, thenHoldForDuration: 0)
 		checkGone(TestIdentifiers.StreamingMedia.live)
 		checkTouchTarget(app.buttonLabelled(label), named: "The bar's \"\(label)\"")
+		return self
+	}
+
+	/// Drag the sheet down by its grabber, and check it stays open: a locked
+	/// sheet cannot be swiped away.
+	@discardableResult
+	func checkSheetStaysOpenWhenDragged() -> Self {
+		let grabber = app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.075))
+		let bottom = app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 1.0))
+		grabber.press(forDuration: 0.05, thenDragTo: bottom, withVelocity: .fast, thenHoldForDuration: 0)
+		XCTAssertTrue(
+			app.elementWithLabel(startingWith: TestIdentifiers.StreamingMedia.live).waitForExistence(timeout: 3),
+			"A locked sheet should stay open when dragged")
 		return self
 	}
 

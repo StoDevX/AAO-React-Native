@@ -634,9 +634,8 @@ struct TestIdentifiers {
 	// MARK: - Streaming Media
 
 	enum StreamingMedia {
-		static let tabs = ["Webcams", "Radio"]
-		static let radioTab = "Radio"
-		/// The station picker's segments, at the top of the Radio tab and the sheet.
+		static let tabs = ["Webcams"]
+		/// The station picker's segments, at the top of the sheet.
 		static let kstoSegment = "KSTO"
 		static let krlxSegment = "KRLX"
 		/// Play and Stop, in source/features/streaming/radio/player-view and the
@@ -660,7 +659,10 @@ struct TestIdentifiers {
 		/// The Now Playing bar with no station loaded, on Home and in Streaming
 		/// Media's tab bar.
 		static let idleBar = "Not Playing"
-		/// Home's "Show Radio Player" switch.
+		/// The sheet's lock, which holds it open and lets the record be scratched.
+		static let lockSheet = "Lock the player open"
+		static let unlockSheet = "Unlock the player"
+		/// Home's "Show Radio Player on Home" switch.
 		static let showRadioPlayer = "show-radio-player"
 		/// KRLX has one logo, so nothing labelled with this may be a button.
 		static let krlxLogoPrefix = "88.1 KRLX-FM logo"

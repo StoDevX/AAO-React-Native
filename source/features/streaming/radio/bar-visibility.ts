@@ -4,8 +4,8 @@ import type {StationId} from './stations'
 import {useRadioStore} from './store'
 
 /**
- * Each Now Playing bar shows while a station is loaded, or while the switch
- * asks for it. Until the saved switch has loaded it is unknown, so the idle bar
+ * Home's Now Playing bar shows while a station is loaded, or while the switch
+ * asks for it. (Streaming Media's always shows: it is the radio's home.) Until the saved switch has loaded it is unknown, so the idle bar
  * waits rather than showing and then vanishing.
  */
 export function radioBarVisible(state: {

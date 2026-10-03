@@ -4,6 +4,7 @@ import {BottomSheet, Group, Host, Rectangle, RNHostView, ZStack} from '@expo/ui/
 import {
 	foregroundStyle,
 	ignoreSafeArea,
+	interactiveDismissDisabled,
 	presentationDetents,
 	presentationDragIndicator,
 } from '@expo/ui/swift-ui/modifiers'
@@ -21,6 +22,8 @@ export function RadioNowPlayingSheet(): React.ReactNode {
 	let viewed = useRadioStore((state) => state.viewedStationId)
 	let closeSheet = useRadioStore((state) => state.closeSheet)
 	let [showingSchedule, setShowingSchedule] = React.useState(false)
+	// Locked, the sheet holds open and the record can be scratched.
+	let [locked, setLocked] = React.useState(false)
 	let station = STATIONS[viewed]
 	let {logo, showNextLogo} = useLogoCycle(station)
 	let fit = useFitOrScroll()
@@ -38,9 +41,18 @@ export function RadioNowPlayingSheet(): React.ReactNode {
 				}}
 				// After the slide, not before it, so the record does not replace the
 				// schedule while the sheet is still on screen.
-				onDismiss={() => setShowingSchedule(false)}
+				onDismiss={() => {
+					setShowingSchedule(false)
+					setLocked(false)
+				}}
 			>
-				<Group modifiers={[presentationDetents(['large']), presentationDragIndicator('visible')]}>
+				<Group
+					modifiers={[
+						presentationDetents(['large']),
+						presentationDragIndicator(locked ? 'hidden' : 'visible'),
+						interactiveDismissDisabled(locked),
+					]}
+				>
 					<ZStack>
 						{/* The tint fills the sheet, safe area and all. */}
 						<Rectangle modifiers={[foregroundStyle(tintGradient(logo)), ignoreSafeArea()]} />
@@ -55,7 +67,8 @@ export function RadioNowPlayingSheet(): React.ReactNode {
 								<FullLayout
 									logo={logo}
 									onToggleSchedule={() => setShowingSchedule((on) => !on)}
-									scratchable={false}
+									locked={locked}
+									onToggleLock={() => setLocked((on) => !on)}
 									viewportHeight={fit.viewport}
 									showNextLogo={showNextLogo}
 									showingSchedule={showingSchedule}

@@ -25,7 +25,7 @@ export function StationMenu({station}: {station: Station}): React.ReactNode {
 					label="Full Schedule"
 					onPress={() => {
 						// The sheet sits above every screen, so it has to go before the
-						// schedule can be seen. On the Radio tab it is already closed.
+						// schedule can be seen.
 						closeSheet()
 						router.navigate(station.scheduleHref)
 					}}

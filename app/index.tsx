@@ -151,9 +151,10 @@ const switchRowShape = shapes.roundedRectangle({
 })
 
 /**
- * Lets someone who never listens take the radio's bars off Home and Streaming
- * Media. Turning it off also stops the radio; a station started from the
- * Radio tab brings the bars back while it plays.
+ * Lets someone who never listens take the radio's bar off Home. Turning it
+ * off also stops the radio. Streaming Media keeps its bar, so the radio is
+ * still a tap away there, and a station started from it brings Home's bar
+ * back while it plays.
  */
 function RadioPlayerSwitch(): React.ReactNode {
 	let on = useRadioStore((state) => state.showOnHome)
@@ -161,7 +162,7 @@ function RadioPlayerSwitch(): React.ReactNode {
 	return (
 		<Toggle
 			isOn={on}
-			label="Show Radio Player"
+			label="Show Radio Player on Home"
 			modifiers={[
 				padding({horizontal: 16, vertical: 11}),
 				background(c.secondarySystemGroupedBackground, switchRowShape),

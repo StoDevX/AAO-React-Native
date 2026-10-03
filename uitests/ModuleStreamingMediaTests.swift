@@ -1,20 +1,19 @@
 import XCTest
 
 class ModuleStreamingMediaTests: UITestCaseUnbooted {
-	/// The Radio tab carries both stations: the picker moves between them,
-	/// and the player's controls are buttons VoiceOver can name.
-	func testRadioTabOffersBothStations() throws {
+	/// The sheet carries both stations: the picker moves between them, and the
+	/// player's controls are buttons and links VoiceOver can name.
+	func testTheSheetOffersBothStations() throws {
 		let ids = TestIdentifiers.StreamingMedia.self
 		StreamingMediaScreen(app: app)
 			.navigate()
 			.checkStreamListExists()
 			.checkTabs()
-			.openRadioTab(expecting: ids.kstoLogos[0])
+			.openSheetFromBar(expecting: ids.playKsto)
 			.pick(ids.krlxSegment, expecting: ids.playKrlx)
-			.capture("Radio tab, KRLX")
+			.capture("Sheet from Streaming Media, KRLX")
 			.checkButtons([ids.playKrlx] + ids.krlxActions)
 			.checkLinks(ids.krlxLinks)
-			.checkAboveTabBar(ids.krlxActions + ids.krlxLinks)
 			.checkLogoIsNotAButton(ids.krlxLogoPrefix)
 	}
 
@@ -34,31 +33,23 @@ class ModuleStreamingMediaTests: UITestCaseUnbooted {
 			.press(ids.stopKrlx, expecting: ids.idleBar)
 	}
 
-	/// With "Show Radio Player" off, neither bar shows until a station is
-	/// started from the Radio tab. While it plays, the bar is back on the
-	/// other tabs, and goes with the station when Stop is pressed there.
-	func testSwitchOffHidesTheBars() throws {
+	/// "Show Radio Player on Home" off takes the idle bar off Home, but
+	/// Streaming Media keeps its own, so the radio is still a tap away.
+	func testSwitchOffHidesOnlyHomesBar() throws {
 		let ids = TestIdentifiers.StreamingMedia.self
 		app.launch()
-		let screen = StreamingMediaScreen(app: app)
+		StreamingMediaScreen(app: app)
 			.checkShows(ids.idleBar)
 			.toggleShowRadioPlayer()
 			.checkGone(ids.idleBar)
 			.capture("Home, radio player off")
-		screen
 			.openFromHome()
-			.checkGone(ids.idleBar)
-			.openRadioTab(expecting: ids.kstoLogos[0])
-			.press(ids.playKsto, expecting: ids.stopKsto)
-			// The Radio tab is the player, so the bar shows on the others.
-			.openTab("Webcams", expectingButton: ids.stopKsto)
-			.capture("Webcams, KSTO playing with the switch off")
-			.tapButton(ids.stopKsto)
-			.checkGone(ids.stopKsto)
+			.checkShows(ids.idleBar)
+			.openSheetFromBar(expecting: ids.playKsto)
 	}
 
-	/// Turning "Show Radio Player" off while a station plays stops it and
-	/// takes the bar away; turning it on again brings back the idle bar.
+	/// Turning the switch off while a station plays stops it and takes the bar
+	/// away; turning it on again brings back the idle bar.
 	func testSwitchOffStopsThePlayingStation() throws {
 		let ids = TestIdentifiers.StreamingMedia.self
 		app.launch()
@@ -76,18 +67,26 @@ class ModuleStreamingMediaTests: UITestCaseUnbooted {
 
 	func testKstoLogoCyclesOnTap() throws {
 		let ids = TestIdentifiers.StreamingMedia.self
+		app.launch()
 		StreamingMediaScreen(app: app)
-			.navigate()
-			.openRadioTab(expecting: ids.kstoLogos[0])
+			.openSheetFromBar(expecting: ids.playKsto)
 			.checkLogoCycles(ids.kstoLogos)
 	}
 
-	func testKstoScratchKeepsTheLogo() throws {
-		let logos = TestIdentifiers.StreamingMedia.kstoLogos
+	/// Locked, the sheet holds open and the record can be scratched; unlocked,
+	/// a drag closes the sheet again.
+	func testTheLockedSheetLetsTheRecordBeScratched() throws {
+		let ids = TestIdentifiers.StreamingMedia.self
+		let logos = ids.kstoLogos
+		app.launch()
 		StreamingMediaScreen(app: app)
-			.navigate()
-			.openRadioTab(expecting: logos[0])
-			.tapLogo(labelled: TestIdentifiers.StreamingMedia.kstoLogoPrefix, until: logos[3])
+			.openSheetFromBar(expecting: ids.playKsto)
+			.press(ids.lockSheet, expecting: ids.unlockSheet)
+			.capture("Sheet, locked")
+			.tapLogo(labelled: ids.kstoLogoPrefix, until: logos[3])
 			.checkScrubKeepsLogo(logos[3])
+			.checkSheetStaysOpenWhenDragged()
+			.press(ids.unlockSheet, expecting: ids.lockSheet)
+			.closeSheet(expectingBar: ids.idleBar)
 	}
 }

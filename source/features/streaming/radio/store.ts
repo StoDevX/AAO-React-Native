@@ -14,12 +14,12 @@ type RadioStore = {
 	/** Identifies the current player. Each play gets a new one, so a retry never reuses a failed player. */
 	playerKey: number
 
-	/** The station the sheet and the Radio tab show. Browsing it never changes playback. */
+	/** The station the sheet shows. Browsing it never changes playback. */
 	viewedStationId: StationId
 	/** Whether the Now Playing sheet is presented. */
 	sheetOpen: boolean
 
-	/** Whether the Now Playing bars show while nothing is loaded. Persisted. */
+	/** Whether Home's Now Playing bar shows while nothing is loaded. Persisted. */
 	showOnHome: boolean
 
 	/** Starts `stationId` in a fresh player, replacing any other station. */
@@ -39,7 +39,7 @@ type RadioStore = {
 	/** Presents the sheet on `stationId`, else the loaded station, else the last one viewed. */
 	openSheet: (stationId?: StationId) => void
 	closeSheet: () => void
-	/** Shows `stationId` in the sheet and the Radio tab without touching playback. */
+	/** Shows `stationId` in the sheet without touching playback. */
 	browse: (stationId: StationId) => void
 
 	/** Turning it off also stops the radio. */
