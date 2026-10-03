@@ -1,4 +1,4 @@
-import {Linking} from 'react-native'
+import {Linking, Share} from 'react-native'
 import {
 	chaosFaultRate,
 	chaosLaunch,
@@ -32,6 +32,7 @@ if (isChaos) {
 				enableRejectionTracker: hermes?.enablePromiseRejectionTracker,
 			},
 			linking: Linking,
+			share: Share,
 			tape: documentLineFile(TAPE_FILE),
 			findings: documentLineFile(FINDINGS_FILE),
 		},

@@ -118,8 +118,9 @@ Replay is best-effort. Timing, and anything that doesn't go through JS `fetch`
 A chaos launch passes `--chaos`, not `--uitesting`, so features fetch live.
 Under it, the app:
 
-- never opens a URL, dials a number, composes an email, or adds a calendar
-  event: each is recorded as an `out-of-app` finding instead;
+- never opens a URL, dials a number, composes an email, adds a calendar
+  event, or opens the share sheet: each is recorded as an `out-of-app`
+  finding instead;
 - never reaches the OleCard sign-in or PaperCut;
 - sends nothing to Sentry;
 - has no LogBox, whose red screen would cover the app and hide a render
@@ -142,6 +143,7 @@ Two halves talk through one hidden view.
 | `guard.tsx` | An error boundary around the app, and the beacon: a 1×1 view labelled with the first stopping finding |
 | `blocked.ts` | URLs a run must never reach |
 | `linking-guard.ts` | Stops every `Linking.openURL` call |
+| `share-guard.ts` | Stops every `Share.share` call |
 
 The beacon is drawn at opacity 0.02, not 0, because iOS drops a fully
 transparent view from the accessibility tree XCUITest reads.
