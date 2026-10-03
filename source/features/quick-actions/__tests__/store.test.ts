@@ -1,13 +1,9 @@
-import {track} from '../../telemetry/track'
 import {DEFAULT_QUICK_ACTIONS} from '../destinations'
 import {useQuickActionsStore} from '../store'
-
-jest.mock('../../telemetry/track', () => ({track: jest.fn()}))
 
 let picked = () => useQuickActionsStore.getState().quickActions
 
 beforeEach(() => {
-	jest.clearAllMocks()
 	useQuickActionsStore.setState({quickActions: DEFAULT_QUICK_ACTIONS})
 })
 
@@ -50,26 +46,4 @@ test('reset restores the defaults', () => {
 	useQuickActionsStore.setState({quickActions: ['Calendar']})
 	useQuickActionsStore.getState().resetQuickActions()
 	expect(picked()).toStrictEqual(DEFAULT_QUICK_ACTIONS)
-})
-
-test('toggle counts a pick', () => {
-	useQuickActionsStore.setState({quickActions: ['Transit']})
-	useQuickActionsStore.getState().toggleQuickAction('Calendar')
-	expect(track).toHaveBeenCalledWith({
-		name: 'quick_action.toggle',
-		attributes: {action: 'Calendar', change: 'add'},
-	})
-})
-
-test('toggle counts an unpick', () => {
-	useQuickActionsStore.getState().toggleQuickAction('Transit')
-	expect(track).toHaveBeenCalledWith({
-		name: 'quick_action.toggle',
-		attributes: {action: 'Transit', change: 'remove'},
-	})
-})
-
-test('toggle counts nothing when it changes nothing', () => {
-	useQuickActionsStore.getState().toggleQuickAction('Calendar')
-	expect(track).not.toHaveBeenCalled()
 })

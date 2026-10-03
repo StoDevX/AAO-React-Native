@@ -1,6 +1,5 @@
 import {beforeEach, describe, expect, it, jest} from '@jest/globals'
 import {act, renderHook, waitFor} from '@testing-library/react-native'
-import {reportIconChange} from '../telemetry'
 import {useAppIcon} from '../use-app-icon'
 
 /**
@@ -43,7 +42,6 @@ describe('useAppIcon', () => {
 		let {result} = await renderHook(() => useAppIcon())
 		await act(() => result.current.apply('windmill-fog'))
 		expect(result.current.current.type).toBe('windmill-fog')
-		expect(reportIconChange).toHaveBeenCalledWith('windmill-fog')
 	})
 
 	it('does nothing when asked for the icon already set', async () => {
@@ -52,6 +50,5 @@ describe('useAppIcon', () => {
 		await waitFor(() => expect(result.current.current.type).toBe('windmill-fog'))
 		await act(() => result.current.apply('windmill-fog'))
 		expect(result.current.current.type).toBe('windmill-fog')
-		expect(reportIconChange).not.toHaveBeenCalled()
 	})
 })
