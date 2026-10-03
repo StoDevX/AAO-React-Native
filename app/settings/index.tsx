@@ -17,7 +17,6 @@ import {FAQ_TARGETS} from '../../source/features/faqs/constants'
 import {MiscellanySection} from '../../source/features/settings/screens/overview/miscellany'
 import {SupportSection} from '../../source/features/settings/screens/overview/support'
 import {DeveloperSection} from '../../source/features/settings/screens/overview/developer'
-import {IconSettingsView} from '../../source/features/settings/screens/change-icon'
 
 const styles = StyleSheet.create({
 	host: {
@@ -53,8 +52,6 @@ export default function SettingsRootPage(): React.ReactNode {
 					</VStack>
 
 					<SupportSection />
-
-					<IconSettingsView />
 
 					<MiscellanySection />
 

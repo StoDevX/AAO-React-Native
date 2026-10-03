@@ -734,6 +734,10 @@ struct TestIdentifiers {
 		static let screen = "screen-customize"
 		static let openLinksIn = "open-links-in"
 		static let quickActionsRow = "Quick Actions"
+		/// The App Icon row's identifier; its label also carries the current icon's name.
+		static let appIconRow = "app-icon-row"
+		/// The gallery's host, set in app/customize/app-icon.tsx.
+		static let appIconScreen = "screen-app-icon"
 		/// SheetCloseButton's label, in source/components/sheet-close-button.tsx.
 		static let close = "Close"
 	}

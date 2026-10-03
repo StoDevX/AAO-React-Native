@@ -1,14 +1,19 @@
 import * as React from 'react'
-import {StyleSheet} from 'react-native'
+import {StyleSheet, useColorScheme} from 'react-native'
 import {Form, Host, Picker, Section, Text, Toggle} from '@expo/ui/swift-ui'
 import {accessibilityIdentifier, pickerStyle, tag} from '@expo/ui/swift-ui/modifiers'
-import {Stack, useRouter} from 'expo-router'
+import {Stack, useFocusEffect, useRouter} from 'expo-router'
 import * as c from '@frogpond/colors'
 
-import {NavigationRow} from '../../source/components/rows'
+import {previewsFor} from '../../images/icons'
+import {DisclosureRow, NavigationRow} from '../../source/components/rows'
 import {SheetCloseButton} from '../../source/components/sheet-close-button'
 import {type LinkTarget, useOpenLinksIn} from '../../source/features/customize/open-links-in'
+import {useAppIcon} from '../../source/features/customize/use-app-icon'
 import {useRadioStore} from '../../source/features/streaming/radio'
+
+/// Settings' own row-icon size, as `rows.tsx` draws a gradient icon.
+const ROW_ICON_SIZE = 30
 
 const styles = StyleSheet.create({
 	// A sheet paints its own background; a Form left to the default shows glass.
@@ -20,6 +25,14 @@ const styles = StyleSheet.create({
 
 export default function CustomizePage(): React.ReactNode {
 	let router = useRouter()
+	let scheme = useColorScheme()
+	let {current, reload} = useAppIcon()
+	// The gallery pushed from here changes the icon, so read it again on return.
+	useFocusEffect(
+		React.useCallback(() => {
+			reload()
+		}, [reload]),
+	)
 	let [linkTarget, setLinkTarget] = useOpenLinksIn()
 	let showRadio = useRadioStore((state) => state.showOnHome)
 	let setShowRadio = useRadioStore((state) => state.setShowOnHome)
@@ -30,6 +43,19 @@ export default function CustomizePage(): React.ReactNode {
 			<SheetCloseButton />
 			<Host style={styles.host} modifiers={[accessibilityIdentifier('screen-customize')]}>
 				<Form>
+					<Section>
+						<DisclosureRow
+							detail={[current.title]}
+							identifier="app-icon-row"
+							image={{
+								source: previewsFor(current.type, scheme).icon,
+								width: ROW_ICON_SIZE,
+								height: ROW_ICON_SIZE,
+							}}
+							onPress={() => router.navigate('/customize/app-icon')}
+							title="App Icon"
+						/>
+					</Section>
 					<Section title="Browsing">
 						<Picker<LinkTarget>
 							label="Open Links In"

@@ -1,6 +1,6 @@
 import * as React from 'react'
 import {Image as RNImage, StyleSheet, useWindowDimensions} from 'react-native'
-import type {ColorValue} from 'react-native'
+import type {ColorValue, ImageSourcePropType} from 'react-native'
 import type {SFSymbol} from 'sf-symbols-typescript'
 import {
 	Button,
@@ -163,12 +163,16 @@ type SymbolImage = ({systemName: SFSymbol} | {assetName: string}) & {
 }
 
 /**
- * A leading thumbnail fetched over the network. `@expo/ui`'s own `Image` reads
- * only SF Symbols, asset-catalog names and local files, so this is a React
- * Native image hosted inside the SwiftUI row -- which needs its size stated
- * up front, since `RNHostView` gives a hosted view no bounds of its own.
+ * A leading thumbnail: fetched over the network by `uri`, or bundled with the
+ * app by `source`. `@expo/ui`'s own `Image` reads only SF Symbols,
+ * asset-catalog names and local files, so this is a React Native image hosted
+ * inside the SwiftUI row -- which needs its size stated up front, since
+ * `RNHostView` gives a hosted view no bounds of its own.
  */
-type ThumbnailImage = {uri: string; width: number; height: number}
+type ThumbnailImage = ({uri: string} | {source: ImageSourcePropType}) & {
+	width: number
+	height: number
+}
 
 /**
  * A white symbol on a small gradient square, as Settings draws its rows'
@@ -248,7 +252,7 @@ export function LeadingImage({image}: {image: DisclosureRowImage}): React.ReactN
 		)
 	}
 
-	if (!('uri' in image)) {
+	if (!('uri' in image) && !('source' in image)) {
 		return (
 			<Image
 				{...('assetName' in image ? {assetName: image.assetName} : {systemName: image.systemName})}
@@ -264,7 +268,7 @@ export function LeadingImage({image}: {image: DisclosureRowImage}): React.ReactN
 			<RNHostView matchContents={false}>
 				<RNImage
 					accessibilityIgnoresInvertColors={true}
-					source={{uri: image.uri}}
+					source={'uri' in image ? {uri: image.uri} : image.source}
 					style={[styles.thumbnail, {width: image.width, height: image.height}]}
 					testID={THUMBNAIL_ID}
 				/>

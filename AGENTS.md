@@ -158,8 +158,8 @@ gitignored gallery of every logo, to compare them side by side.
 
 The task needs Xcode, whose Icon Composer renders the previews, and runs them
 through oxipng. A new alternate also needs an entry in `ALTERNATE_ICONS` in
-the plugin, in `appIcons` in `images/icons/index.ts`, and in the picker's list
-in `source/features/settings/screens/change-icon.tsx`.
+the plugin, in `appIcons` in `images/icons/index.ts`, and in the gallery's
+`ICONS` in `source/features/customize/icons.ts`.
 
 ### Custom Symbols
 

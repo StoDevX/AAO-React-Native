@@ -21,6 +21,7 @@ enum ChaosRoutes {
 		"course-search/results",
 		"course-search/results/course",
 		"customize",
+		"customize/app-icon",
 		"customize/quick-actions",
 		"dictionary",
 		"dictionary/entry/[word]",

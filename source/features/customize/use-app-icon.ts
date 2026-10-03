@@ -1,0 +1,41 @@
+import * as React from 'react'
+import {changeIcon, getIcon, resetIcon} from 'react-native-change-icon'
+import {type AppIconName, DEFAULT_ICON} from '../../../images/icons'
+import {type IconEntry, iconPosition} from './icons'
+
+/**
+ * The icon iOS has set, and a way to change it. Re-reads iOS after a change
+ * rather than trusting the request, since the user can refuse it.
+ */
+export function useAppIcon(): {
+	current: IconEntry
+	apply: (type: AppIconName) => Promise<void>
+	reload: () => Promise<void>
+} {
+	let [current, setCurrent] = React.useState<IconEntry>(() => iconPosition('Default').entry)
+
+	let reload = React.useCallback(async () => {
+		setCurrent(iconPosition(await getIcon()).entry)
+	}, [])
+
+	React.useEffect(() => {
+		// `reload` awaits getIcon() before setting state, so nothing is set
+		// synchronously in the effect.
+		// oxlint-disable-next-line react/set-state-in-effect
+		reload()
+	}, [reload])
+
+	let apply = React.useCallback(
+		async (type: AppIconName) => {
+			if (type === DEFAULT_ICON) {
+				await resetIcon()
+			} else {
+				await changeIcon(type)
+			}
+			await reload()
+		},
+		[reload],
+	)
+
+	return {current, apply, reload}
+}
