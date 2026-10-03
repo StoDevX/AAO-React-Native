@@ -15,7 +15,7 @@ import {airStatusText} from './show-title-text'
 import {StationActionRow} from './station-actions'
 import {StationMenu} from './station-menu'
 import {StationPicker} from './station-picker'
-import {VolumeSliderStub} from './stubs'
+import {VolumeSlider} from './volume-slider'
 import {useFittedArtwork} from './use-fitted-artwork'
 import {palette} from './palette'
 import type {RadioLogo} from '../theme'
@@ -84,7 +84,7 @@ export function FullLayout({
 				<PlayStopButton station={station} />
 				<PlaybackError station={station} />
 			</View>
-			<VolumeSliderStub />
+			<VolumeSlider />
 			<StationActionRow onShowSchedule={onToggleSchedule} station={station} />
 		</View>
 	)

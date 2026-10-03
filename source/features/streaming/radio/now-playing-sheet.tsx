@@ -4,6 +4,7 @@ import {BottomSheet, Group, Host, Rectangle, RNHostView, ZStack} from '@expo/ui/
 import {
 	foregroundStyle,
 	ignoreSafeArea,
+	presentationCornerRadius,
 	presentationDetents,
 	presentationDragIndicator,
 } from '@expo/ui/swift-ui/modifiers'
@@ -11,6 +12,15 @@ import {
 import {FullLayout, tintGradient, useFitOrScroll, useLogoCycle} from './player-view'
 import {STATIONS} from './stations'
 import {useRadioStore} from './store'
+
+/**
+ * The sheet's corner radius, which is one value for all four corners. The
+ * system's is larger than an iPhone's own display corner, so the sheet's
+ * bottom corners showed the screen behind them in the gap. A radius under
+ * the display's, which runs from about 41pt on an iPhone 11 up, puts that gap
+ * outside the display, so the bottom looks flush with the phone.
+ */
+const SHEET_CORNER_RADIUS = 38
 
 /**
  * The radio's sheet, opened from either Now Playing bar: Music's full player,
@@ -42,7 +52,13 @@ export function RadioNowPlayingSheet(): React.ReactNode {
 					setShowingSchedule(false)
 				}}
 			>
-				<Group modifiers={[presentationDetents(['large']), presentationDragIndicator('visible')]}>
+				<Group
+					modifiers={[
+						presentationDetents(['large']),
+						presentationCornerRadius(SHEET_CORNER_RADIUS),
+						presentationDragIndicator('visible'),
+					]}
+				>
 					<ZStack>
 						{/* The tint fills the sheet, safe area and all. */}
 						<Rectangle modifiers={[foregroundStyle(tintGradient(logo)), ignoreSafeArea()]} />
