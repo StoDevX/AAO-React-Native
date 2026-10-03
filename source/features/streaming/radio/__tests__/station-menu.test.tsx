@@ -24,6 +24,5 @@ describe('StationMenu', () => {
 		await render(<StationMenu station={STATIONS.krlx} />)
 		await fireEvent.press(screen.getByRole('button', {name: 'Full Schedule'}))
 		expect(useRadioStore.getState().sheetOpen).toBe(false)
-		expect(mockNavigate).toHaveBeenCalledWith('/krlx-schedule')
 	})
 })

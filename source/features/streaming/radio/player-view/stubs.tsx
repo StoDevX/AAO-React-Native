@@ -6,8 +6,8 @@ import {usePalette} from './palette'
 import {ActionButton} from './action-button'
 
 /**
- * Placeholders until the app can host MPVolumeView and AVRoutePickerView, which
- * need native views. See the radio-sheet-volume-airplay follow-up.
+ * Placeholders for the system volume slider and AirPlay picker, MPVolumeView
+ * and AVRoutePickerView, which need native views the app does not host yet.
  */
 export function VolumeSliderStub(): React.ReactNode {
 	let palette = usePalette()
