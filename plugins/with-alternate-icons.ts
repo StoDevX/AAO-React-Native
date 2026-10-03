@@ -10,7 +10,21 @@ import type {XcodeProject} from 'xcode'
  * names. Each document's name is the key `react-native-change-icon` passes to
  * `setAlternateIconName`.
  */
-export const ALTERNATE_ICONS = ['sunset-behind-main', 'windmill-day']
+export const ALTERNATE_ICONS = [
+	'sunset-behind-main',
+	'windmill-day',
+	'windmill-night',
+	'windmill-dawn',
+	'windmill-storm',
+	'windmill-golden-hour',
+	'windmill-aurora',
+	'windmill-fog',
+	'windmill-snow',
+	'windmill-stars',
+	'constellation',
+	'old-main-hill',
+	'old-main-crt',
+]
 
 /** Where the tracked documents live, relative to the repository root. */
 const SOURCE_DIR = 'assets'
