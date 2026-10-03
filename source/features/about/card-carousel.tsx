@@ -18,6 +18,8 @@ import {
 import * as c from '@frogpond/colors'
 import {SheetSection} from '@frogpond/sheet-section'
 
+import {HyphenatedText} from '@frogpond/hyphenated-text'
+
 import {cardIndex} from './card-index'
 
 /** The space between a page's text and the row's edges, as a list row has. */
@@ -91,9 +93,7 @@ export function PagedSection({title, cards}: {title: string; cards: Array<Card>}
 							<Text modifiers={[font({textStyle: 'headline'}), foregroundStyle(c.label)]}>
 								{card.heading}
 							</Text>
-							<Text modifiers={[font({textStyle: 'body'}), foregroundStyle(c.secondaryLabel)]}>
-								{card.body}
-							</Text>
+							<HyphenatedText text={card.body} />
 						</VStack>
 					))}
 				</HStack>

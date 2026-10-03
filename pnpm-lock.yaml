@@ -139,6 +139,9 @@ importers:
       '@frogpond/html-lib':
         specifier: workspace:*
         version: link:modules/html-lib
+      '@frogpond/hyphenated-text':
+        specifier: workspace:*
+        version: link:modules/hyphenated-text
       '@frogpond/launch-arguments':
         specifier: workspace:*
         version: link:modules/launch-arguments
@@ -913,6 +916,15 @@ importers:
       htmlparser2:
         specifier: 12.0.0
         version: 12.0.0
+
+  modules/hyphenated-text:
+    dependencies:
+      expo:
+        specifier: ~57.0.19
+        version: 57.0.19(@babel/core@7.29.7)(@expo/metro-runtime@57.0.15)(expo-router@57.0.18)(react-native-webview@13.16.1)(react-native-worklets@0.10.1)(react-native@0.86.3)(react@19.2.3)(supports-color@8.1.1)(typescript@7.0.2)
+      react:
+        specifier: 'catalog:'
+        version: 19.2.3
 
   modules/launch-arguments:
     dependencies:
