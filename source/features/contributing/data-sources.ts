@@ -35,9 +35,9 @@ export const dataSources: Array<DataSource> = [
 		url: 'https://www.kstoradio.org/',
 	},
 	{
-		name: 'Three Rivers transit',
+		name: 'Three Rivers Community Action',
 		provides: 'Bus schedules',
-		url: 'https://data.trilliumtransit.com/gtfs/threerivers-mn-us/',
+		url: 'https://www.threeriverscap.org/',
 	},
 	{
 		name: 'StoDevX',
