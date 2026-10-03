@@ -6,13 +6,6 @@
 			<stop offset="0.92" stop-color="rgb(255 148 0)"/>
 			<stop offset="1" stop-color="rgb(255 137 0)"/>
 		</linearGradient>
-		<filter id="glow" color-interpolation-filters="sRGB" x="-30%" y="-30%" width="160%" height="160%">
-			<feGaussianBlur in="SourceGraphic" stdDeviation="4" result="blur0"/>
-			<feColorMatrix in="blur0" values="0 0 0 0 0.9216  0 0 0 0 0.4353  0 0 0 0 0  0 0 0 0.95 0" result="halo0"/>
-			<feGaussianBlur in="SourceGraphic" stdDeviation="20" result="blur1"/>
-			<feColorMatrix in="blur1" values="0 0 0 0 0.9216  0 0 0 0 0.4353  0 0 0 0 0  0 0 0 0.7 0" result="halo1"/>
-			<feMerge><feMergeNode in="halo1"/><feMergeNode in="halo0"/></feMerge>
-		</filter>
 		<rect id="cell" x="1" y="1" width="20" height="20" rx="3" stroke-width="2"/>
 		<g id="screen">
 		<use href="#cell" x="461.13" y="193.59"/>
@@ -351,6 +344,5 @@
 		<use href="#cell" x="756.26" y="918"/>
 		</g>
 	</defs>
-	<use href="#screen" filter="url(#glow)"/>
 	<use href="#screen" fill="url(#phosphor)" stroke="rgb(250 122 0)"/>
 </svg>

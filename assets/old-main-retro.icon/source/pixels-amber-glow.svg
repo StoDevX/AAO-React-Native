@@ -1,16 +1,10 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
 	<defs>
-		<linearGradient id="phosphor" gradientUnits="userSpaceOnUse" x1="192.83" x2="836.75" y1="0" y2="0">
-			<stop offset="0" stop-color="rgb(186 255 49)"/>
-			<stop offset="0.08" stop-color="rgb(202 255 53)"/>
-			<stop offset="0.92" stop-color="rgb(202 255 53)"/>
-			<stop offset="1" stop-color="rgb(186 255 49)"/>
-		</linearGradient>
 		<filter id="glow" color-interpolation-filters="sRGB" x="-30%" y="-30%" width="160%" height="160%">
 			<feGaussianBlur in="SourceGraphic" stdDeviation="4" result="blur0"/>
-			<feColorMatrix in="blur0" values="0 0 0 0 0.5882  0 0 0 0 1  0 0 0 0 0.1569  0 0 0 0.95 0" result="halo0"/>
+			<feColorMatrix in="blur0" values="0 0 0 0 0.9216  0 0 0 0 0.4353  0 0 0 0 0  0 0 0 0.95 0" result="halo0"/>
 			<feGaussianBlur in="SourceGraphic" stdDeviation="20" result="blur1"/>
-			<feColorMatrix in="blur1" values="0 0 0 0 0.5882  0 0 0 0 1  0 0 0 0 0.1569  0 0 0 0.7 0" result="halo1"/>
+			<feColorMatrix in="blur1" values="0 0 0 0 0.9216  0 0 0 0 0.4353  0 0 0 0 0  0 0 0 0.7 0" result="halo1"/>
 			<feMerge><feMergeNode in="halo1"/><feMergeNode in="halo0"/></feMerge>
 		</filter>
 		<rect id="cell" x="1" y="1" width="20" height="20" rx="3" stroke-width="2"/>
@@ -352,5 +346,4 @@
 		</g>
 	</defs>
 	<use href="#screen" filter="url(#glow)"/>
-	<use href="#screen" fill="url(#phosphor)" stroke="rgb(160 255 42)"/>
 </svg>
