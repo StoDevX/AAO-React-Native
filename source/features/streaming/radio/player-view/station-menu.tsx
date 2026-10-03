@@ -37,7 +37,7 @@ export function StationMenu({station}: {station: Station}): React.ReactNode {
 					label="Open Website"
 					onPress={() => {
 						track({name: 'radio.action', attributes: {action: 'website', station: station.id}})
-						openUrl(station.playerUrl)
+						openUrl(station.websiteUrl)
 					}}
 					systemImage="safari"
 				/>

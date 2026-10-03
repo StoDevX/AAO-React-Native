@@ -345,7 +345,12 @@ export default function MapPage(): React.ReactNode {
 			<Stack.Toolbar placement="right">
 				<Stack.Toolbar.Menu accessibilityLabel="About this map" icon="info.circle">
 					{mapCredits(campus).map((credit) => (
-						<Stack.Toolbar.MenuAction key={credit.url} onPress={() => openUrl(credit.url)}>
+						// The compass says the item opens a site, as Safari's own icon does.
+						<Stack.Toolbar.MenuAction
+							key={credit.url}
+							icon="safari"
+							onPress={() => openUrl(credit.url)}
+						>
 							{credit.label}
 						</Stack.Toolbar.MenuAction>
 					))}

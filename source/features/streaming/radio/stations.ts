@@ -9,6 +9,8 @@ export type Station = {
 	/** The station's logos. With more than one, tapping the logo shows the next. */
 	logos: [RadioLogo, ...RadioLogo[]]
 	playerUrl: string
+	/** The station's own home page, which the ••• menu's Open Website opens. */
+	websiteUrl: string
 	stationNumber: string
 	title: string
 	scheduleHref: '/ksto-schedule' | '/krlx-schedule'
@@ -90,6 +92,7 @@ export const STATIONS: Record<StationId, Station> = {
 			},
 		],
 		playerUrl: 'https://www.stolaf.edu/multimedia/play/embed/ksto.html',
+		websiteUrl: 'https://www.kstoradio.org/',
 		scheduleHref: '/ksto-schedule',
 		// DECISION (St. Olaf / KSTO): KSTO counts its listeners through the analytics
 		// in its own web player, and asked that the app keep loading that page. So
@@ -121,6 +124,7 @@ export const STATIONS: Record<StationId, Station> = {
 			},
 		],
 		playerUrl: 'https://live.krlx.org',
+		websiteUrl: 'https://www.krlx.org/',
 		scheduleHref: '/krlx-schedule',
 		chatUrl: 'https://minnit.chat/KRLX',
 		// The metaradio plugin krlx.org's own player reads; station 1 is KRLX.
