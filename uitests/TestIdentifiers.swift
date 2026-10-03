@@ -554,7 +554,7 @@ struct TestIdentifiers {
 		/// A section the view menu offers, as source/features/mess/lib/posts.ts names it.
 		static let newsSection = "News"
 
-		/// The paper's name, set as the front page's masthead by source/features/mess/masthead.tsx.
+		/// The paper's name: Latest's masthead, and By Issue's castle's label, in source/features/mess/masthead.tsx.
 		static let paperName = "The Olaf Messenger"
 
 		/// A page's dateline, in source/features/mess/masthead.tsx.
@@ -562,6 +562,11 @@ struct TestIdentifiers {
 
 		/// The lead story, and every card on a shelf, in source/features/mess/issue-page.tsx.
 		static let leadStory = "mess-lead-story"
+		static let storyCard = "mess-story-card"
+
+		/// Each row of the More grid, the stories from no print section, in
+		/// source/features/mess/issue-page.tsx.
+		static let moreGridRow = "mess-more-grid-row"
 
 		/// A section's column chips, each labelled with its column, in source/features/mess/section-page.tsx.
 		static let columnChip = "mess-column-chip"
@@ -576,8 +581,8 @@ struct TestIdentifiers {
 		/// The reader's headline, in source/features/mess/story-header.tsx.
 		static let storyHeadline = "mess-story-headline"
 
-		/// Each paragraph, quote and list item of a story's body, in
-		/// source/features/mess/story-blocks.tsx.
+		/// Each stretch of a story's body between its figures, one text view holding its
+		/// paragraphs, quotes and lists, in source/features/mess/story-blocks.tsx.
 		static let storyBody = "mess-story-body"
 
 		/// The card that sends a story with no body, or an embed the reader
@@ -614,6 +619,27 @@ struct TestIdentifiers {
 		/// source/features/mess/image-view.tsx.
 		static let storyImage = "mess-story-image"
 
+		/// A story's lead photo or a figure in its body, which opens the zoom viewer, in
+		/// source/features/mess/story-blocks.tsx. Each is labelled by its caption.
+		static let storyPhoto = "mess-story-photo"
+
+		/// An article with a captioned lead photo, three short paragraphs, then captioned figures
+		/// in its body: "Finding peace on campus", from the recorded Mess fixtures. Recording them
+		/// again can drop it from the feed, which these tests read it from.
+		static let illustratedStoryRoute = "/messenger/story?id=36948"
+		/// How its lead photo's caption ends; the first figure's caption repeats its opening.
+		static let illustratedLeadCaptionEnd = "Rolvaag Memorial Library"
+		/// How the caption of its second figure, below the fold, begins.
+		static let illustratedFigureCaptionStart = "Statue (1984)"
+
+		/// An article whose first paragraph holds a link: "The true cost of convenience: AI in
+		/// the classroom", from the same recorded issue as the illustrated story.
+		static let linkedStoryRoute = "/messenger/story?id=36959"
+		/// That link's words.
+		static let linkedStoryLink = "According to the college library website"
+		/// What the system's menu for a held link offers, and its menu for selected text does not.
+		static let copyLink = "Copy Link"
+
 		/// The zoom viewer's close button, in source/features/mess/image-viewer.tsx.
 		static let imageViewerClose = "mess-image-viewer-close"
 		static let imageViewerCloseLabel = "Close"
@@ -644,11 +670,17 @@ struct TestIdentifiers {
 		static let krlxTab = "KRLX"
 		/// The station screen's buttons, as VoiceOver names them. Call and
 		/// schedule are icons alone, so their labels are all a listener has
-		/// to go on.
+		/// to go on. Chat is an icon too, but leaves the app, so it is in
+		/// `krlxLinks` instead.
 		static let krlxButtons = [
 			"Listen",
 			"Call 88.1 KRLX-FM",
 			"88.1 KRLX-FM schedule",
+		]
+		/// The station screen's buttons that leave the app, which VoiceOver
+		/// reads as links.
+		static let krlxLinks = [
+			"88.1 KRLX-FM chat",
 		]
 		/// KRLX has one logo, so nothing labelled with this may be a button.
 		static let krlxLogoPrefix = "88.1 KRLX-FM logo"
@@ -660,6 +692,7 @@ struct TestIdentifiers {
 			"KSTO 93.1 FM logo, wordmark",
 			"KSTO 93.1 FM logo, dumpster fire",
 			"KSTO 93.1 FM logo, narwhal",
+			"KSTO 93.1 FM logo, cow sketch",
 		]
 	}
 

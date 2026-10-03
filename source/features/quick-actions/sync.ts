@@ -2,6 +2,7 @@ import * as Sentry from '@sentry/react-native'
 import {setQuickActions} from '@frogpond/quick-actions'
 import type {QuickAction} from '@frogpond/quick-actions'
 
+import {iconImage} from '../views'
 import {resolveQuickActions} from './destinations'
 import type {QuickActionDestination} from './destinations'
 import {useQuickActionsStore} from './store'
@@ -11,7 +12,7 @@ export function toQuickActions(destinations: QuickActionDestination[]): QuickAct
 	return destinations.map((d) => ({
 		id: d.id,
 		title: d.title,
-		symbol: d.icon,
+		...iconImage(d.icon),
 		href: encodeURI(d.href),
 	}))
 }

@@ -30,13 +30,14 @@ export function parseFeature(
 			rest.push(block)
 			continue
 		}
-		let {url, width, height, caption} = block
+		let {url, largeUrl, width, height, caption} = block
 		if (photo !== null && pictureKey(url) === pictureKey(photo.url)) {
 			let [featured] = images
 			if (featured && featured.caption === '') images[0] = {...featured, caption}
 			continue
 		}
-		images.push({url, width, height, caption})
+		// The page draws `url`; the viewer, where a reader zooms, the larger copy.
+		images.push(largeUrl ? {url, largeUrl, width, height, caption} : {url, width, height, caption})
 	}
 	return {images, blocks: rest}
 }

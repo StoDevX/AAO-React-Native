@@ -9,6 +9,9 @@
     "test": "jest"
   },
   "dependencies": {},
+  "devDependencies": {
+    "@jest/globals": "30.5.2"
+  },
   "peerDependencies": {
     "expo-localization": "~57.0.2",
     "moment-timezone": "^0.6.4",

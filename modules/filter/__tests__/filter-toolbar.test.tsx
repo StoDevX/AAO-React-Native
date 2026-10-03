@@ -1,9 +1,14 @@
 import * as React from 'react'
+import {ScrollView} from 'react-native'
 import {render, screen} from '@testing-library/react-native'
 import {describe, expect, jest, test} from '@jest/globals'
 
 import {FilterToolbar} from '../filter-toolbar'
 import type {Filter, ListFilterOption} from '../types'
+
+// Loaded now rather than in the first test to render one: Jest's stand-in for
+// a ScrollView is slow enough to load to time a test out on a busy machine.
+void ScrollView
 
 type Item = {isVegetarian: boolean; dietaryTags: string[]}
 

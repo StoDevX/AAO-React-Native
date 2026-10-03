@@ -1,11 +1,17 @@
 import * as React from 'react'
 import {act, fireEvent, render, screen} from '@testing-library/react-native'
+import {Alert} from 'react-native'
+import {usePreventRemove} from 'expo-router/react-navigation'
 
 import EditScreen from '../../../../app/dictionary/entry/edit'
 import SenseScreen from '../../../../app/dictionary/entry/sense'
 import {normalizeEntry} from '../lib/entry'
 import {useDictionaryDraftStore} from '../store'
 import type * as ExpoRouterMock from '../../../testing/expo-router-mock'
+import {textFieldBlur} from '../../../testing/expo-ui-mock'
+import {loadBeforeTests} from '../../../testing/load-before-tests'
+
+loadBeforeTests('TextInput', 'Alert')
 
 // Jest's mock hoisting forbids a `jest.mock()` factory from closing over an
 // out-of-scope variable unless its name starts with "mock" -- the one
@@ -22,12 +28,12 @@ jest.mock('expo-router', () => {
 		useLocalSearchParams: () => ({senseId: '1'}),
 	}
 })
-jest.mock('expo-router/react-navigation', () => ({usePreventRemove: jest.fn()}))
 
 const entry = normalizeEntry({word: 'Caf', definition: 'The dining hall.'})
 
 beforeEach(() => {
 	mockNavigate.mockClear()
+	textFieldBlur.mockClear()
 	useDictionaryDraftStore.getState().clearDraft()
 })
 
@@ -220,6 +226,38 @@ describe('the dictionary edit screen', () => {
 
 		let idsAfter = useDictionaryDraftStore.getState().draft?.senses.map((sense) => sense.id)
 		expect(idsAfter).toEqual([idsBefore?.[1], idsBefore?.[0], idsBefore?.[2]])
+	})
+})
+
+describe("the dictionary edit screen's unsaved-changes guard", () => {
+	/// Raises the guard the way leaving the screen would.
+	async function tryToLeave() {
+		let guard = usePreventRemove as jest.MockedFunction<typeof usePreventRemove>
+		let onPreventRemove = guard.mock.calls.at(-1)?.[1]
+		await act(() => {
+			onPreventRemove?.({data: {action: {type: 'GO_BACK'}}})
+		})
+	}
+
+	/// UIKit hands focus back, on Discard, to whatever field held it when the
+	/// alert went up -- and a field still focused as the form is torn down
+	/// takes the app with it.
+	it('lets go of the focused field before asking to discard', async () => {
+		useDictionaryDraftStore.getState().startDraft(entry)
+		await render(<EditScreen />)
+		let alert = jest.spyOn(Alert, 'alert').mockImplementation(() => undefined)
+		let word = screen.getByLabelText('Word')
+
+		await fireEvent(word, 'focus')
+		await fireEvent.changeText(word, 'Caff')
+		await tryToLeave()
+
+		expect(textFieldBlur).toHaveBeenCalledWith('Word')
+		expect(alert).toHaveBeenCalled()
+		expect(textFieldBlur.mock.invocationCallOrder[0]).toBeLessThan(
+			alert.mock.invocationCallOrder[0],
+		)
+		alert.mockRestore()
 	})
 })
 

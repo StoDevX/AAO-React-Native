@@ -161,6 +161,27 @@ through oxipng. A new alternate also needs an entry in `ALTERNATE_ICONS` in
 the plugin, in `appIcons` in `images/icons/index.ts`, and in the picker's list
 in `source/features/settings/screens/change-icon.tsx`.
 
+### Custom Symbols
+
+A glyph iOS does not ship, like the Olaf Messenger's castle, is a custom SF
+Symbol: a `.symbolset` in `assets/symbols/`, which
+`plugins/with-custom-symbols.ts` copies into the asset catalog at prebuild.
+Name it in `CUSTOM_SYMBOLS` in `source/features/views.ts`, and `iconImage`
+draws it by `assetName` rather than `systemName`.
+
+`mise run trace-symbol -- <image> <name>` traces a logo into one, with
+ImageMagick and potrace (`brew install imagemagick potrace`). The image's dark
+pixels become the symbol, so a white mark on a dark disc comes out as a disc
+with the mark cut out. The Messenger's came from
+`https://olafmessenger.com/wp-content/uploads/2021/02/Logo_white-e1713492149523.png`.
+
+The template holds `Regular-S`, `Regular-M` and `Regular-L`. Other weights
+fall back to Regular, but a missing scale does not: without `Regular-L`, the
+home screen's `imageScale('large')` finds no image and draws nothing, with only
+a SwiftUI fault in the log to say so. Xcode's asset compiler also accepts a
+malformed template without a word, so check a new or edited symbol on the
+simulator, or validate it in the SF Symbols app.
+
 ### Local Server Discovery
 
 In dev mode (debug builds, or with the dev-mode override enabled in Settings), the Settings → Server URL screen will automatically discover a `ccc-server` instance running on the same network via mDNS. Discovered servers appear as tappable cells; tapping one fills the URL field.
@@ -209,6 +230,26 @@ A page that drops, repeats or adds a pay code fails the run and writes
 nothing. A new code needs a change to `JobCode` in
 `source/features/sis/student-work/posting.ts` first. Jest and the UI tests
 read `FIXED_WAGES`, not the data file, so a rate change never breaks them.
+
+### KSTO Schedule
+
+`data/ksto-schedule.yaml` holds KSTO's weekly shows, scraped from the station's
+Now Playing post (`https://www.kstoradio.org/2023/03/17/4243/`). That post is
+the only schedule KSTO publishes as data: its schedule page is an image, and
+the Google Calendar ccc-server used to read stopped at spring 2019. A weekly
+scrape opens a pull request when the file falls behind; merging publishes
+`ksto-schedule.json`, which ccc-server serves as the `ksto-schedule` calendar.
+
+```bash
+mise run scrape-ksto-schedule                   # update the file now
+node scripts/scrape-ksto-schedule.mjs --check   # report without writing; exits 1 on drift
+```
+
+The post keeps its schedule in a script, which the scrape parses but never
+runs. A post the parser does not recognise fails the run and writes nothing.
+Times are Central: the post's own script reads the visitor's clock, so it
+shows the wrong hour outside Minnesota. `updated` is when KSTO last edited the
+post, which tells a schedule left over from an earlier term apart.
 
 ### UI Test Fixtures
 

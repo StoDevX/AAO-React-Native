@@ -6,6 +6,7 @@ import {
 	creditLine,
 	imageLabel,
 	kickerText,
+	photoLabel,
 	sectionCredit,
 	shortSection,
 } from '../byline'
@@ -43,6 +44,17 @@ describe('imageLabel', () => {
 		expect(imageLabel({title: 'Spring', bylines: [b('A')]}, {index: 0, count: 1})).toBe(
 			'Spring, by A',
 		)
+	})
+})
+
+describe('photoLabel', () => {
+	it('names a photo by its caption', () => {
+		expect(photoLabel({title: 'Spring', bylines: [b('A')]}, 'Holland Hall at dusk.')).toBe(
+			'Holland Hall at dusk.',
+		)
+	})
+	it('names a photo with no caption by its story, as an image is', () => {
+		expect(photoLabel({title: 'Spring', bylines: [b('A')]}, '')).toBe('Spring, by A')
 	})
 })
 

@@ -9,6 +9,13 @@
     "test": "jest"
   },
   "dependencies": {
-    "@frogpond/api": "workspace:*"
+    "@frogpond/api": "workspace:*",
+    "zod": "4.6.5"
+  },
+  "devDependencies": {
+    "@jest/globals": "30.5.2"
+  },
+  "peerDependencies": {
+    "@tanstack/react-query": "^5.104.0"
   }
 }

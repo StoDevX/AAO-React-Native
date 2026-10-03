@@ -138,3 +138,25 @@ to the build and nothing warns you. Editing an existing file is fine.
 **Every test cold-launches the app** with `--uitesting` and `--reset-state`, so
 UserDefaults and AsyncStorage start empty each time. Anything a test needs
 turned on — dev mode, a persisted setting — it has to turn on itself.
+
+## Checking VoiceOver
+
+`XCUIDevice.shared.voiceOverService` (iOS 27) runs real VoiceOver inside an
+XCUITest on the simulator, and reports what it says. Use it to check a change
+that alters what VoiceOver reads — a merged text view, a hidden caption, a new
+heading — **as a local check, not a committed test.** Turning VoiceOver on and
+off costs about 7.5 seconds and each step about half a second, which no test
+here earns; write the test, run it, report what it heard, and leave it out of
+the branch.
+
+- `enable()` and `disable()` throw. `currentSpeech()`, `moveForward()`,
+  `moveBackward()`, `moveIn()` and `moveOut()` each return an `Output` whose
+  `utterance` is what VoiceOver said, traits and hints included:
+  `"SEPTEMBER 30, 2026 · 25 STORIES Heading"`, `"All News Button"`.
+- The class is `@MainActor` and iOS 27 only, so the test method needs
+  `@MainActor @available(iOS 27.0, *)`.
+- **An utterance stops at 64 characters.** Compare the start of a long label,
+  not the whole of it.
+- **VoiceOver stays on if `disable()` never runs**, and every tap in the tests
+  after it then does nothing. Call it from `tearDownWithError`.
+- There is no rotor: to reach a heading or a link, step to it.

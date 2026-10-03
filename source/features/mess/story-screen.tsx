@@ -1,11 +1,11 @@
 import * as React from 'react'
 import {Linking, Share, StyleSheet} from 'react-native'
 import {Stack} from 'expo-router'
-import {Divider, Host, LazyVStack, ScrollView, useNativeState, VStack} from '@expo/ui/swift-ui'
+import {Host, LazyVStack, ScrollView, useNativeState, VStack} from '@expo/ui/swift-ui'
 import {background, padding, scrollPosition, scrollTargetLayout} from '@expo/ui/swift-ui/modifiers'
 import {openUrl} from '@frogpond/open-url'
 import {openURLAction} from '../../lib/open-url-action'
-import {AuthorCard} from './author-card'
+import {AuthorCards} from './author-card'
 import {HoroscopesView} from './horoscopes-view'
 import {FeatureView} from './feature-view'
 import {ImageView} from './image-view'
@@ -17,7 +17,7 @@ import {RecipeView} from './recipe-view'
 import {PoemView} from './poem-view'
 import {QuietHeader} from './quiet-header'
 import {SeriesRow} from './series-row'
-import {SiteLinkCard, StoryBlocks} from './story-blocks'
+import {BLOCK_SPACING, SiteLinkCard, StoryBlocks} from './story-blocks'
 import {StoryHeader} from './story-header'
 import {StoryLookupNotice} from './story-lookup-notice'
 import {useMessStore} from './store'
@@ -95,7 +95,7 @@ export function StoryScreen({id}: Props): React.ReactNode {
 				<ScrollView
 					modifiers={scrolls ? [...PAGE, scrollPosition(scrollTarget, {anchor: 'top'})] : PAGE}
 				>
-					<Column alignment="leading" modifiers={column} spacing={14}>
+					<Column alignment="leading" modifiers={column} spacing={BLOCK_SPACING}>
 						{isQuiet ? (
 							<QuietHeader story={story} />
 						) : (
@@ -107,10 +107,7 @@ export function StoryScreen({id}: Props): React.ReactNode {
 							/>
 						)}
 						<StoryBody columnWidth={columnWidth} scrollTo={scrollTo} story={story} />
-						<Divider />
-						{story.bylines.map((byline) => (
-							<AuthorCard byline={byline} key={byline.id} />
-						))}
+						<AuthorCards bylines={story.bylines} />
 					</Column>
 				</ScrollView>
 			</Host>

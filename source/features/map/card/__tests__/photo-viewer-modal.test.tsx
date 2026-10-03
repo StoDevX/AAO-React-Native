@@ -3,11 +3,10 @@ import {afterEach, describe, expect, jest, test} from '@jest/globals'
 import {fireEvent, render, screen} from '@testing-library/react-native'
 
 import {PhotoViewerModal} from '../photo-viewer-modal'
+import {loadBeforeTests} from '../../../../testing/load-before-tests'
 
-jest.mock('@frogpond/double-tap', () => {
-	// oxlint-disable-next-line typescript/no-require-imports
-	return require('../../../mess/__tests__/double-tap-mock') as typeof import('../../../mess/__tests__/double-tap-mock')
-})
+loadBeforeTests('Modal')
+
 // The library's own stand-in: zero insets, where the real hook needs a native provider.
 jest.mock(
 	'react-native-safe-area-context',

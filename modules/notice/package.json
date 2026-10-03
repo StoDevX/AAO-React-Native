@@ -13,6 +13,7 @@
     "@frogpond/colors": "workspace:*"
   },
   "devDependencies": {
+    "@jest/globals": "30.5.2",
     "@testing-library/react-native": "14.0.1"
   },
   "peerDependencies": {

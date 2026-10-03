@@ -89,6 +89,110 @@ struct MessStoryScreen: Screen {
 		return self
 	}
 
+	/// Hold the first line of the story's body and drag down into its second paragraph, then
+	/// assert the selection's highlight runs unbroken down the column's trailing edge from the
+	/// first paragraph's second line, past the gap between the paragraphs, into the second's
+	/// first line. On an iPhone 17e at the default text size the illustrated story's first
+	/// paragraph ends about 120 points below its first line and its second begins about 138
+	/// points below; a selection ends about a line above the finger, so the drag goes 200
+	/// points down. The highlight is read from the screen because the test runner, in the
+	/// background, may not read the pasteboard.
+	@discardableResult
+	func verifySelectionCrossesParagraphs() -> Self {
+		let body = app.element(matching: TestIdentifiers.News.storyBody)
+		XCTAssertTrue(body.waitForExistence(timeout: 30), "the story should have a body to select")
+		scrollIntoUpperHalf(body)
+		let start = body.coordinate(withNormalizedOffset: .zero).withOffset(CGVector(dx: 40, dy: 10))
+		let end = start.withOffset(CGVector(dx: 120, dy: 200))
+		start.press(forDuration: 1.0, thenDragTo: end, withVelocity: .slow, thenHoldForDuration: 0.5)
+		let copy = app.descendants(matching: .any).matching(NSPredicate(format: "label == %@", "Copy")).firstMatch
+		let offered = copy.waitForExistence(timeout: 5)
+		capture("A selection dragged from a story's first paragraph into its second")
+		XCTAssertTrue(offered, "a drag across the story's text should select some of it, and offer Copy")
+
+		guard let pixels = ScreenPixels(app.screenshot().image) else {
+			XCTFail("the screenshot should be readable")
+			return self
+		}
+		// The trailing edge, where ragged lines leave the highlight mostly clear of glyphs.
+		let trailingEdge = CGRect(
+			x: body.frame.maxX - 6, y: start.screenPoint.y + 20, width: 4, height: 130)
+		let highlighted = fractionHighlighted(pixels, in: trailingEdge)
+		XCTAssertGreaterThan(
+			highlighted, 0.9,
+			"the selection should run from the first paragraph into the second, but it covers only \(Int(highlighted * 100))% of the column's edge between them")
+		return self
+	}
+
+	/// The share of `region` drawn in the selection's highlight, a pale blue no paper or ink
+	/// colour comes near, sampled every two points.
+	private func fractionHighlighted(_ pixels: ScreenPixels, in region: CGRect) -> Double {
+		var sampled = 0
+		var highlighted = 0
+		for y in stride(from: region.minY, to: region.maxY, by: 2) {
+			for x in stride(from: region.minX, to: region.maxX, by: 2) {
+				let colour = pixels.colour(at: CGPoint(x: x, y: y))
+				sampled += 1
+				if colour.blue - colour.red > 25 { highlighted += 1 }
+			}
+		}
+		return sampled == 0 ? 0 : Double(highlighted) / Double(sampled)
+	}
+
+	/// Tap a link in the story's text and assert it opens in the in-app browser, then close it.
+	@discardableResult
+	func openLinkInAppBrowser(_ label: String) -> Self {
+		let link = storyLink(label)
+		XCTAssertTrue(link.waitForHittable(timeout: 10), "the link \"\(label)\" should be ready to tap")
+		link.tap()
+		let done = app.buttons[TestIdentifiers.Directory.inAppBrowserDone].firstMatch
+		XCTAssertTrue(done.waitForExistence(timeout: 30), "tapping a story's link should open the in-app browser")
+		capture("A story's link in the in-app browser")
+		done.tap()
+		XCTAssertTrue(done.waitForNonExistence(timeout: 10), "Done should close the in-app browser")
+		return self
+	}
+
+	/// Hold a link in the story's text and assert iOS offers its link menu, not the menu for
+	/// selected text.
+	@discardableResult
+	func verifyLinkOffersLinkMenu(_ label: String) -> Self {
+		let link = storyLink(label)
+		XCTAssertTrue(link.waitForHittable(timeout: 10), "the link \"\(label)\" should be ready to hold")
+		link.press(forDuration: 1.5)
+		let copyLink = app.descendants(matching: .any)
+			.matching(NSPredicate(format: "label == %@", TestIdentifiers.News.copyLink)).firstMatch
+		let offered = copyLink.waitForExistence(timeout: 5)
+		capture("A long press on a story's link")
+		XCTAssertTrue(offered, "holding a link in a story should offer \(TestIdentifiers.News.copyLink)")
+		return self
+	}
+
+	/// The link in the story's text with these words, scrolled into view.
+	private func storyLink(_ label: String) -> XCUIElement {
+		let link = app.links.matching(NSPredicate(format: "label == %@", label)).firstMatch
+		XCTAssertTrue(link.waitForExistence(timeout: 30), "the story should hold the link \"\(label)\"")
+		scrollIntoUpperHalf(link)
+		return link
+	}
+
+	/// Drag the page slowly until `element` begins in the upper half of the screen, below the
+	/// navigation bar. A slow, held drag moves the page by about its own length, where a
+	/// swipe flings it past.
+	private func scrollIntoUpperHalf(_ element: XCUIElement) {
+		let window = app.windows.firstMatch.frame
+		let top = app.navigationBars.firstMatch.frame.maxY
+		for _ in 0..<10 {
+			if element.frame.minY > top && element.frame.minY < window.midY { return }
+			let from = app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.75))
+			let to = app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5))
+			from.press(forDuration: 0.05, thenDragTo: to, withVelocity: .slow, thenHoldForDuration: 0.3)
+		}
+		XCTAssertTrue(
+			element.frame.minY > top && element.frame.minY < window.midY,
+			"scrolling should bring \(element) into the top half of the screen, but it begins at \(element.frame.minY)")
+	}
+
 	/// Pick a sign from a Horoscopes post's list of all twelve, which is what a
 	/// reader who has never picked one sees. A row's label is the sign's name
 	/// followed by its dates.
@@ -202,6 +306,32 @@ struct MessStoryScreen: Screen {
 		return self
 	}
 
+	/// Open a story straight from its route, and wait for its headline.
+	@discardableResult
+	func navigate(to route: String) -> Self {
+		open(route: route, mountedWhen: app.staticTexts[TestIdentifiers.News.storyHeadline])
+	}
+
+	/// Scroll to the story's photo whose label, its caption, matches `caption`, tap it, and wait
+	/// for the zoom viewer.
+	@discardableResult
+	func openPhotoInViewer(captioned caption: NSPredicate, _ description: String) -> Self {
+		let photo = app.buttons
+			.matching(identifier: TestIdentifiers.News.storyPhoto)
+			.matching(caption)
+			.firstMatch
+		for _ in 0..<20 {
+			if photo.exists && photo.isHittable { break }
+			app.swipeUp()
+		}
+		XCTAssertTrue(photo.waitForHittable(timeout: 10), "the story should draw \(description) to tap")
+		capture("\(description) in the reader")
+		photo.tap()
+		XCTAssertTrue(closeButton.waitForExistence(timeout: 30), "tapping \(description) should open the zoom viewer")
+		capture("The zoom viewer on \(description)")
+		return self
+	}
+
 	/// Assert the zoom viewer drew a picture, not its "Image unavailable" notice.
 	@discardableResult
 	func verifyViewerShowsImage() -> Self {
@@ -254,6 +384,46 @@ struct MessStoryScreen: Screen {
 		let image = viewerImage
 		XCTAssertTrue(image.waitForExistence(timeout: 30), "the zoom viewer should show the picture")
 		image.doubleTap()
+		return self
+	}
+
+	/// How far a drag on the zoom viewer's picture goes, as a fraction of the window's height.
+	enum ViewerDrag: Double {
+		/// Well short of the distance that closes the viewer.
+		case short = 0.08
+		/// Well past the distance that closes the viewer.
+		case long = 0.4
+	}
+
+	/// Drag the picture in the zoom viewer straight down from its middle, slowly, holding
+	/// at the end so the release carries no speed: only the distance can close the viewer.
+	@discardableResult
+	func dragViewerImage(_ drag: ViewerDrag) -> Self {
+		let image = viewerImage
+		XCTAssertTrue(image.waitForExistence(timeout: 30), "the zoom viewer should show the picture")
+		let window = app.windows.firstMatch
+		let start = window.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5))
+		let end = window.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5 + drag.rawValue))
+		start.press(forDuration: 0.1, thenDragTo: end, withVelocity: .slow, thenHoldForDuration: 0.3)
+		return self
+	}
+
+	/// Assert the zoom viewer is still up, or has gone and left the story.
+	@discardableResult
+	func verifyViewerOpen(_ open: Bool, _ message: String) -> Self {
+		if open {
+			// A dismissal takes a moment to animate, so Close is given time to go before this
+			// counts the viewer as staying.
+			XCTAssertFalse(closeButton.waitForNonExistence(timeout: 3), message)
+			XCTAssertTrue(closeButton.waitForHittable(), message)
+			capture("The zoom viewer after a drag")
+		} else {
+			XCTAssertTrue(closeButton.waitForNonExistence(timeout: 30), message)
+			XCTAssertTrue(
+				app.staticTexts[TestIdentifiers.News.storyHeadline].waitForExistence(timeout: 10),
+				"closing the viewer should return to the story")
+			capture("The story after the viewer closed")
+		}
 		return self
 	}
 

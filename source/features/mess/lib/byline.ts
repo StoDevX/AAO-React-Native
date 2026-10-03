@@ -58,6 +58,15 @@ export function imageLabel(
 	return `${label}, picture ${place.index + 1} of ${place.count}`
 }
 
+/**
+ * What VoiceOver reads for a story's lead photo or a figure in its body: its caption, or, with
+ * none, the story's title and writers, as for an image. Alt text is not used: the paper leaves
+ * it empty, or fills it with a file name.
+ */
+export function photoLabel(story: Pick<MessStory, 'title' | 'bylines'>, caption: string): string {
+	return caption || imageLabel(story)
+}
+
 /** A picture's place in a feature page's set, or none for a comic's or artwork's one picture. */
 export function picturePlace(
 	story: Pick<MessStory, 'layout'>,

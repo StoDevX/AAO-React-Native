@@ -2,6 +2,9 @@ import * as React from 'react'
 import {fireEvent, render, screen} from '@testing-library/react-native'
 
 import {ActionRow, DetailRow, DisclosureRow} from '../rows'
+import {loadBeforeTests} from '../../testing/load-before-tests'
+
+loadBeforeTests('Image')
 
 describe('DisclosureRow', () => {
 	it('renders the detail line when there is one', async () => {

@@ -5,11 +5,18 @@ export type QuickAction = {
 	/** Unique among the actions; iOS calls it the item's type. */
 	id: string
 	title: string
-	/** An SF Symbol name. */
-	symbol: string
 	/** The in-app route a tap opens, percent-encoded. */
 	href: string
-}
+} & (
+	| {
+			/** An SF Symbol's name. */
+			systemName: string
+	  }
+	| {
+			/** A custom symbol's name in the app's asset catalog. */
+			assetName: string
+	  }
+)
 
 interface QuickActionsModule extends NativeModule {
 	setQuickActions(actions: QuickAction[]): Promise<void>

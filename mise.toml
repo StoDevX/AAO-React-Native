@@ -221,7 +221,7 @@ run = "jest"
 [tasks."test:node"]
 description = "Run the node:test tests beside their subjects"
 env = { TZ = "America/Chicago" }
-run = 'node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test "scripts/*.test.mjs" "plugins/*.test.ts" "source/database/*.test.ts" "source/database/calendar/*.test.ts" "modules/event-list/*.test.ts" "modules/ccc-calendar/*.test.ts"'
+run = 'node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test "scripts/*.test.mjs" "plugins/*.test.ts" "source/database/*.test.ts" "source/database/calendar/*.test.ts" "source/database/search/*.test.ts" "source/database/courses/*.test.ts" "modules/event-list/*.test.ts" "modules/ccc-calendar/*.test.ts"'
 
 # --- Data ---
 
@@ -250,6 +250,10 @@ run = "node scripts/scrape-bonapp.mjs"
 description = "Render the in-app icon previews from assets/*.icon"
 run = "node scripts/make-icons.mjs"
 
+[tasks."trace-symbol"]
+description = "Trace a logo into a custom SF Symbol in assets/symbols/"
+run = "node scripts/trace-symbol.mjs"
+
 # Needs the network, so it stays out of validate-data, as scrape-dining does.
 [tasks."update-map-fixtures"]
 description = "Replace the map fixtures the UI tests read with each campus's live map"
@@ -271,6 +275,10 @@ run = "node scripts/chaos.mjs"
 description = "Update data/student-wages.yaml from St. Olaf's compensation page"
 run = "node scripts/scrape-student-wages.mjs"
 
+[tasks."scrape-ksto-schedule"]
+description = "Update data/ksto-schedule.yaml from KSTO's Now Playing post"
+run = "node scripts/scrape-ksto-schedule.mjs"
+
 # Needs the network -- it fetches the live campus geojson -- so it stays out
 # of validate-data, which gates three workflows including deploy-data. A
 # ccc-server blip should not block an unrelated pull request from merging.
@@ -283,12 +291,12 @@ run = "node scripts/validate-building-keys.mjs"
 description = "Report Student Work postings that no area tile holds"
 run = "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/check-student-work-areas.mjs"
 
-# An undeclared -- or orphaned -- @frogpond dependency resolves fine locally
-# through the root node_modules hoist, so format, lint, tsc and test all pass
-# and CI is the first thing to say otherwise. Same reasoning as
+# An undeclared dependency -- or an orphaned @frogpond one -- resolves fine
+# locally through the root node_modules, so format, lint, tsc and test all
+# pass and CI is the first thing to say otherwise. Same reasoning as
 # validate-lockfile below: cheap here, a red pipeline anywhere else.
 [tasks."validate-deps"]
-description = "Check that modules declare the @frogpond packages they import"
+description = "Check that modules declare the packages they import"
 run = "node scripts/validate-workspace-deps.mjs"
 
 # A package.json edited without regenerating the lockfile passes format, lint,

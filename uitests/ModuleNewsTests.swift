@@ -19,6 +19,24 @@ class ModuleNewsTests: UITestCaseUnbooted {
 			.openSecondIssue()
 	}
 
+	func testOlafMessengerShelfAllListsTheSectionFromItsIssue() throws {
+		MessFrontPage(app: app)
+			.navigate()
+			.openNewestIssue()
+			.scrollDownALittle()
+			.openSectionHoldingTheLead(TestIdentifiers.News.newsSection)
+	}
+
+	func testOlafMessengerSpecialEditionGridsItsStories() throws {
+		MessFrontPage(app: app)
+			.navigate()
+			// Under UI tests the second issue is the May 12 special edition, whose stories all sit
+			// in no print section.
+			.openSecondIssue()
+		MessIssueScreen(app: app)
+			.verifyMoreGridsItsStories()
+	}
+
 	func testOlafMessengerIssuesLoadOlderPages() throws {
 		MessFrontPage(app: app)
 			.navigate()
@@ -37,6 +55,23 @@ class ModuleNewsTests: UITestCaseUnbooted {
 			.openLeadStory()
 			.verifyStoryAppears()
 			.verifyBodyOffersCopy()
+	}
+
+	/// A reader can drag a selection from one paragraph into the next, as each stretch of
+	/// prose between figures is one text view.
+	func testOlafMessengerSelectionCrossesParagraphs() throws {
+		MessStoryScreen(app: app)
+			.navigate(to: TestIdentifiers.News.illustratedStoryRoute)
+			.verifySelectionCrossesParagraphs()
+	}
+
+	/// A link in a story's text opens in the in-app browser when tapped, and offers the
+	/// system's link menu when held.
+	func testOlafMessengerStoryLinkOffersLinkMenu() throws {
+		MessStoryScreen(app: app)
+			.navigate(to: TestIdentifiers.News.linkedStoryRoute)
+			.openLinkInAppBrowser(TestIdentifiers.News.linkedStoryLink)
+			.verifyLinkOffersLinkMenu(TestIdentifiers.News.linkedStoryLink)
 	}
 
 	/// A sign picked from the list scrolls the page up to it; one picked from the glyph grid,
@@ -143,6 +178,50 @@ class ModuleNewsTests: UITestCaseUnbooted {
 			.openImageViewer()
 			.verifyViewerShowsImage()
 			.shareViewerImage()
+			.closeImageViewer()
+	}
+
+	/// An article's lead photo and a figure in its body each open the zoom viewer, which can
+	/// share the figure.
+	func testArticlePhotosOpenTheZoomViewer() throws {
+		MessStoryScreen(app: app)
+			.navigate(to: TestIdentifiers.News.illustratedStoryRoute)
+			.openPhotoInViewer(
+				captioned: NSPredicate(format: "label ENDSWITH %@", TestIdentifiers.News.illustratedLeadCaptionEnd),
+				"the lead photo")
+			.verifyViewerShowsImage()
+			.closeImageViewer()
+			.openPhotoInViewer(
+				captioned: NSPredicate(format: "label BEGINSWITH %@", TestIdentifiers.News.illustratedFigureCaptionStart),
+				"a figure in the body")
+			.verifyViewerShowsImage()
+			.shareViewerImage()
+			.closeImageViewer()
+	}
+
+	func testDraggingThePictureDownClosesTheZoomViewer() throws {
+		MessFrontPage(app: app)
+			.navigate()
+			.openColumn(TestIdentifiers.News.comicColumn, in: TestIdentifiers.News.varietySection)
+			.openFirstStory()
+			.openImageViewer()
+			.dragViewerImage(.short)
+			.verifyViewerOpen(true, "a short drag let go slowly should spring the picture back")
+			.dragViewerImage(.long)
+			.verifyViewerOpen(false, "a long drag down should close the zoom viewer")
+	}
+
+	func testDraggingAZoomedPictureDoesNotCloseTheZoomViewer() throws {
+		MessFrontPage(app: app)
+			.navigate()
+			.openColumn(TestIdentifiers.News.comicColumn, in: TestIdentifiers.News.varietySection)
+			.openFirstStory()
+			.openImageViewer()
+			.doubleTapViewerImage()
+			.verifyViewerImageZoomed(true)
+			.dragViewerImage(.long)
+			.verifyViewerOpen(true, "a drag on a zoomed picture should pan it, not close the viewer")
+			.verifyViewerImageZoomed(true)
 			.closeImageViewer()
 	}
 }

@@ -66,6 +66,26 @@ describe('parseFeature', () => {
 		])
 	})
 
+	it("keeps a body picture's largest copy for the viewer, beside the one the page draws", () => {
+		let figure: Block = {
+			type: 'figure',
+			url: 'https://olafmessenger.com/wp-content/uploads/2024/05/bees-600x400.jpg',
+			largeUrl: 'https://olafmessenger.com/wp-content/uploads/2024/05/bees.jpg',
+			width: 600,
+			height: 400,
+			caption: '',
+		}
+		expect(parseFeature(null, [figure]).images).toStrictEqual([
+			{
+				url: 'https://olafmessenger.com/wp-content/uploads/2024/05/bees-600x400.jpg',
+				largeUrl: 'https://olafmessenger.com/wp-content/uploads/2024/05/bees.jpg',
+				width: 600,
+				height: 400,
+				caption: '',
+			},
+		])
+	})
+
 	it('takes every picture of a set, in order (33129)', () => {
 		expect(parseFeature(...post(33129))).toStrictEqual({
 			images: [

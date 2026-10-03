@@ -7,6 +7,8 @@ import {
 	textInputAutocapitalization,
 } from '@expo/ui/swift-ui/modifiers'
 
+import {useTrackedField} from './focused-field'
+
 type Props = {
 	/** The value the field should be showing, from wherever it is kept. */
 	value: string
@@ -61,6 +63,8 @@ export function SyncedTextField(props: Props): React.ReactNode {
 	let state = useNativeState(value)
 	let lastEmitted = React.useRef(value)
 
+	let field = useTrackedField()
+
 	React.useEffect(() => {
 		if (value !== lastEmitted.current) {
 			lastEmitted.current = value
@@ -92,6 +96,7 @@ export function SyncedTextField(props: Props): React.ReactNode {
 			}}
 			placeholder={placeholder}
 			text={state}
+			{...field}
 		/>
 	)
 }
