@@ -676,9 +676,8 @@ struct TestIdentifiers {
 		/// Play and Stop, in source/features/streaming/radio/player-view and the
 		/// mini-player; each names its station.
 		static let playKsto = "Play KSTO 93.1 FM"
-		static let stopKsto = "Stop KSTO 93.1 FM"
+		static let pauseKsto = "Pause KSTO 93.1 FM"
 		static let playKrlx = "Play 88.1 KRLX-FM"
-		static let stopKrlx = "Stop 88.1 KRLX-FM"
 		/// The player's bottom row, as VoiceOver names it.
 		static let krlxActions = [
 			"Call 88.1 KRLX-FM",
