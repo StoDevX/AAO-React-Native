@@ -5,6 +5,8 @@ import {requireNativeView} from 'expo'
 export type VolumeSliderViewProps = ViewProps & {
 	/** The colour of the slider's filled part. */
 	tint?: string
+	/** The colour of the slider's empty part. */
+	trackTint?: string
 }
 
 export type AirPlayButtonViewProps = ViewProps & {

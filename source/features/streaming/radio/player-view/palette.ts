@@ -12,6 +12,7 @@ export const palette = {
 	primary: colors.primary,
 	secondary: colors.secondary,
 	tertiary: colors.tertiary,
+	track: colors.track,
 	styles: StyleSheet.create({
 		primary: {color: colors.primary},
 		secondary: {color: colors.secondary},

@@ -11,6 +11,9 @@ public class AudioRouteModule: Module {
 			Prop("tint") { (view: VolumeSliderView, color: UIColor?) in
 				view.volumeView.tintColor = color
 			}
+			Prop("trackTint") { (view: VolumeSliderView, color: UIColor?) in
+				view.volumeView.trackTint = color
+			}
 		}
 
 		View(AirPlayButtonView.self) {
@@ -56,10 +59,17 @@ final class VolumeSliderView: ExpoView {
 final class CenteredVolumeView: MPVolumeView {
 	private var watching: NSKeyValueObservation?
 
+	/// The colour of the slider's empty part, which the system draws darker than
+	/// the sheet it sits on.
+	var trackTint: UIColor? {
+		didSet { slider?.maximumTrackTintColor = trackTint }
+	}
+
 	override func layoutSubviews() {
 		super.layoutSubviews()
 		watchSlider()
 		centreSlider()
+		slider?.maximumTrackTintColor = trackTint
 	}
 
 	private var slider: UISlider? {
