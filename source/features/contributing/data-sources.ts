@@ -35,6 +35,11 @@ export const dataSources: Array<DataSource> = [
 		url: 'https://www.kstoradio.org/',
 	},
 	{
+		name: 'KRLX',
+		provides: 'Carleton’s radio station: its stream, schedule and what’s playing',
+		url: 'https://www.krlx.org/',
+	},
+	{
 		name: 'Three Rivers Community Action',
 		provides: 'Bus schedules',
 		url: 'https://www.threeriverscap.org/',

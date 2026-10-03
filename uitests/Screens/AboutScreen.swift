@@ -1,7 +1,7 @@
 import XCTest
 
-/// Home's ⋯ menu → About: the version, the app's story and its credits as
-/// cards that scroll sideways, and the Privacy and Legal pages.
+/// Home's ⋯ menu → About: the version, the app's story as cards that scroll
+/// sideways, its credits, and the Privacy and Legal pages.
 struct AboutScreen: Screen {
 	let app: XCUIApplication
 
@@ -19,6 +19,13 @@ struct AboutScreen: Screen {
 		host.staticTexts[label].firstMatch
 	}
 
+	/// The dots under the story, which say which era it shows, as a page
+	/// control does.
+	var pageDots: XCUIElement {
+		app.descendants(matching: .any)
+			.matching(NSPredicate(format: "label == %@", TestIdentifiers.About.pageDots)).firstMatch
+	}
+
 	/// A row, found by its label.
 	func row(_ title: String) -> XCUIElement {
 		host.buttons[title].firstMatch
@@ -27,11 +34,15 @@ struct AboutScreen: Screen {
 	/// Scroll the screen until `element` is on it.
 	@discardableResult
 	func reveal(_ element: XCUIElement) -> Self {
-		for _ in 0..<8 {
+		// The screen draws a moment after it opens; swiping before then scrolls
+		// past rows that are about to appear.
+		_ = element.waitForExistence(timeout: 10)
+		// Enough swipes for the whole page at the largest text sizes.
+		for _ in 0..<20 {
 			if element.exists && element.isHittable { break }
 			host.swipeUp()
 		}
-		XCTAssertTrue(element.exists, "About should offer \(element.label)")
+		XCTAssertTrue(element.exists, "About should offer what was asked for: \(element)")
 		return self
 	}
 

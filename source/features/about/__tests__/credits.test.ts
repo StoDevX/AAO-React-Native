@@ -1,13 +1,30 @@
-import {acknowledgements, contributors, formatPeopleList} from '../credits'
+import {acknowledgements, contributors, creditRows, inTwoColumns} from '../credits'
 import {timeline} from '../timeline'
 
-describe('formatPeopleList', () => {
-	it('separates names with a bullet', () => {
-		expect(formatPeopleList(['Anna Linden', 'Drew Volz'])).toBe('Anna Linden • Drew Volz')
+describe('inTwoColumns', () => {
+	it('reads down the left column, then down the right', () => {
+		expect(inTwoColumns(['A', 'B', 'C', 'D'])).toEqual([
+			['A', 'C'],
+			['B', 'D'],
+		])
 	})
 
-	it('shows a lone name as it is', () => {
-		expect(formatPeopleList(['Hawken Rives'])).toBe('Hawken Rives')
+	it('puts the odd name out at the foot of the left column', () => {
+		expect(inTwoColumns(['A', 'B', 'C'])).toEqual([['A', 'C'], ['B']])
+	})
+
+	it('shows a lone name on a row of its own', () => {
+		expect(inTwoColumns(['Hawken Rives'])).toEqual([['Hawken Rives']])
+	})
+})
+
+describe('creditRows', () => {
+	it('sets names in two columns at ordinary text sizes', () => {
+		expect(creditRows(['A', 'B'], 1)).toEqual([['A', 'B']])
+	})
+
+	it('gives each name its own row at the accessibility sizes', () => {
+		expect(creditRows(['A', 'B'], 1.65)).toEqual([['A'], ['B']])
 	})
 })
 

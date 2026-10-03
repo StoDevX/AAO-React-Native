@@ -1,10 +1,12 @@
 import * as React from 'react'
-import {StyleSheet} from 'react-native'
-import {Form, Host, LabeledContent, RNHostView, Section, Text, VStack} from '@expo/ui/swift-ui'
+import {StyleSheet, useWindowDimensions} from 'react-native'
+import {Form, Grid, Host, LabeledContent, RNHostView, Text, VStack} from '@expo/ui/swift-ui'
 import {
 	accessibilityIdentifier,
+	fixedSize,
 	font,
 	foregroundStyle,
+	frame,
 	listRowBackground,
 	listRowInsets,
 	listRowSeparator,
@@ -12,11 +14,12 @@ import {
 } from '@expo/ui/swift-ui/modifiers'
 import * as Application from 'expo-application'
 import * as c from '@frogpond/colors'
+import {SheetSection} from '@frogpond/sheet-section'
 import {Stack, useRouter} from 'expo-router'
 
 import {NavigationRow} from '../../source/components/rows'
-import {CardCarousel, type Card} from '../../source/features/about/card-carousel'
-import {acknowledgements, contributors, formatPeopleList} from '../../source/features/about/credits'
+import {PagedSection, type Card} from '../../source/features/about/card-carousel'
+import {acknowledgements, contributors, creditRows} from '../../source/features/about/credits'
 import {AppLogo} from '../../source/features/about/logo'
 import {INTRO, timeline} from '../../source/features/about/timeline'
 import {formatVersion} from '../../source/features/about/version'
@@ -39,9 +42,10 @@ const timelineCards: Array<Card> = timeline.map((era) => ({
 	body: era.story,
 }))
 
-const creditCards: Array<Card> = [
-	{id: 'contributors', heading: 'Contributors', body: formatPeopleList(contributors)},
-	{id: 'acknowledgements', heading: 'Acknowledgements', body: formatPeopleList(acknowledgements)},
+/** Each credit and its names. */
+const credits = [
+	{id: 'contributors', heading: 'Contributors', names: contributors},
+	{id: 'acknowledgements', heading: 'Acknowledgements', names: acknowledgements},
 ]
 
 const version = formatVersion(Application.nativeApplicationVersion, Application.nativeBuildVersion)
@@ -49,6 +53,7 @@ const version = formatVersion(Application.nativeApplicationVersion, Application.
 /// Who we are: what the app is and where it came from, who made it, and the policies that govern it.
 export default function AboutPage(): React.ReactNode {
 	let router = useRouter()
+	let {fontScale} = useWindowDimensions()
 
 	return (
 		<>
@@ -76,24 +81,43 @@ export default function AboutPage(): React.ReactNode {
 						</Text>
 					</VStack>
 
-					<Section>
-						<LabeledContent label="Version">
+					<SheetSection>
+						<LabeledContent label="App Version">
 							<Text>{version}</Text>
 						</LabeledContent>
-					</Section>
+					</SheetSection>
 
-					<Section title="Our story">
-						<CardCarousel cards={timelineCards} />
-					</Section>
+					<PagedSection cards={timelineCards} title="Our story" />
 
-					<Section title="Credits">
-						<CardCarousel cards={creditCards} />
-					</Section>
+					{credits.map((credit) => (
+						<SheetSection key={credit.id} title={credit.heading}>
+							<Grid alignment="topLeading" horizontalSpacing={12} verticalSpacing={4}>
+								{creditRows(credit.names, fontScale).map((row) => (
+									<Grid.Row key={row[0]}>
+										{row.map((name) => (
+											<Text
+												key={name}
+												modifiers={[
+													font({textStyle: 'body'}),
+													foregroundStyle(c.secondaryLabel),
+													frame({maxWidth: Infinity, alignment: 'leading'}),
+													// Wrap a long name rather than cut it short.
+													fixedSize({horizontal: false, vertical: true}),
+												]}
+											>
+												{name}
+											</Text>
+										))}
+									</Grid.Row>
+								))}
+							</Grid>
+						</SheetSection>
+					))}
 
-					<Section>
+					<SheetSection>
 						<NavigationRow onPress={() => router.navigate('/about/privacy')} title="Privacy" />
 						<NavigationRow onPress={() => router.navigate('/about/legal')} title="Legal" />
-					</Section>
+					</SheetSection>
 				</Form>
 			</Host>
 		</>

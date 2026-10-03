@@ -13,7 +13,7 @@ export const timeline: Array<TimelineEra> = [
 	{
 		period: '🏡 October 2017 — Today',
 		story:
-			'Alumni of St. Olaf — Hawken Rives, Kris Rye, and Drew Volz — develop and support the app in its current form. Rewritten from top to bottom in Typescript, this is the version you see today in the iOS App Store. It remains self-published, open-source, and free of trackers and data collection.',
+			'Alumni of St. Olaf — Hawken Rives, Kris Rye, and Drew Volz — develop and support the app in its current form. Rewritten from top to bottom in Typescript, this is the version you see today in the iOS App Store. It remains self-published and open-source, shows no ads, and the anonymous usage and crash data it sends can be turned off.',
 	},
 	{
 		period: '🧱 July 2016 — September 2017',
