@@ -32,6 +32,7 @@ export function StationActionRow({
 				icon="quote.bubble"
 				label="Chat"
 				onPress={chatUrl ? () => openUrl(chatUrl) : undefined}
+				role="link"
 			/>
 			<AirPlayButtonStub />
 			<ActionButton

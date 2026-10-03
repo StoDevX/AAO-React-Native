@@ -13,6 +13,7 @@ class ModuleStreamingMediaTests: UITestCaseUnbooted {
 			.pick(ids.krlxSegment, expecting: ids.playKrlx)
 			.capture("Radio tab, KRLX")
 			.checkButtons([ids.playKrlx] + ids.krlxActions)
+			.checkLinks(ids.krlxLinks)
 			.checkLogoIsNotAButton(ids.krlxLogoPrefix)
 	}
 

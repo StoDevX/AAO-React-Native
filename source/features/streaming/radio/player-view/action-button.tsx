@@ -11,16 +11,19 @@ export function ActionButton({
 	label,
 	accessibilityLabel,
 	onPress,
+	role = 'button',
 }: {
 	icon: SFSymbol
 	label: string
 	accessibilityLabel: string
 	onPress?: () => void
+	/** `link` for one that leaves the app for the web, so VoiceOver says so. */
+	role?: 'button' | 'link'
 }): React.ReactNode {
 	return (
 		<Touchable
 			accessibilityLabel={accessibilityLabel}
-			accessibilityRole="button"
+			accessibilityRole={role}
 			accessibilityState={{disabled: !onPress}}
 			disabled={!onPress}
 			containerStyle={styles.slot}
