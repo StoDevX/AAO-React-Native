@@ -90,10 +90,9 @@ echo "Writing ios/.xcode.env.local with NODE_BINARY=${NODE_PATH}"
 {
   printf 'export NODE_BINARY=%s\n' "${NODE_PATH}"
 
-  # Sentry's build phase scripts run SENTRY_CLI_EXECUTABLE with node instead
-  # of looking for npm's @sentry/cli, which is not installed. sentry-cli.cjs
-  # hands their arguments to the mise binary; see that file for why.
-  printf 'export SENTRY_CLI_EXECUTABLE=%s\n' "${PWD}/ios_scripts/sentry-cli.cjs"
+  # Sentry's build phases run ios_scripts/sentry-cli.cjs, which .xcode.env
+  # names, and it hands their arguments to the mise binary; see that file for
+  # why.
   printf 'export SENTRY_CLI_BINARY=%s\n' "${SENTRY_CLI_PATH}"
 
   # A failed Sentry upload warns rather than failing the archive, so a Sentry
