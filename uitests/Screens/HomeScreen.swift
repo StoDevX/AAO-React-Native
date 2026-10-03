@@ -40,31 +40,55 @@ struct HomeScreen: Screen {
 		return CustomizeScreen(app: app).checkOpen()
 	}
 
+	/// Open the ⋯ menu and leave it open.
 	@discardableResult
-	func openSettings() -> Self {
+	func openHomeMenu() -> Self {
 		let menu = app.buttons[TestIdentifiers.Navigation.homeMenu]
 		XCTAssertTrue(
 			menu.waitForExistence(timeout: 10),
 			"Home menu should appear on home screen")
 		menu.tap()
+		return self
+	}
 
-		let settings = app.buttons[TestIdentifiers.Navigation.settingsMenuItem].firstMatch
+	/// Open the ⋯ menu and choose `item`.
+	@discardableResult
+	func chooseFromHomeMenu(_ item: String) -> Self {
+		openHomeMenu()
+		let entry = app.buttons[item].firstMatch
 		XCTAssertTrue(
-			settings.waitForExistence(timeout: 10),
-			"Home menu should offer Settings")
-		settings.tap()
+			entry.waitForExistence(timeout: 10),
+			"Home menu should offer \(item)")
+		entry.tap()
 		return self
 	}
 
 	@discardableResult
-	func checkDeveloperSectionVisible() -> Self {
-		let developerSection = app.staticTexts[TestIdentifiers.Settings.developer]
-		// DEVELOPER is the last section in the Settings form, so it starts out
-		// unbuilt rather than merely offscreen.
-		scrollUntilExists(developerSection)
+	func openSupport() -> SupportScreen {
+		chooseFromHomeMenu(TestIdentifiers.Navigation.supportMenuItem)
+		return SupportScreen(app: app).checkOpen()
+	}
+
+	/// About opens Settings until the About screen lands.
+	@discardableResult
+	func openAbout() -> Self {
+		chooseFromHomeMenu(TestIdentifiers.Navigation.aboutMenuItem)
+		let settings = app.element(matching: TestIdentifiers.Settings.screen)
+		XCTAssertTrue(settings.waitForExistence(timeout: 10), "About should open Settings")
+		return self
+	}
+
+	/// Scroll to the Developer tile and open what it holds. Dev mode must be on.
+	@discardableResult
+	func openDeveloper() -> Self {
+		let tile = app.buttons[TestIdentifiers.Buttons.developer].firstMatch
+		scrollUntilExists(tile)
 		XCTAssertTrue(
-			developerSection.waitForExistence(timeout: 30),
-			"DEVELOPER section should be visible after enabling dev mode")
+			tile.waitForExistence(timeout: 30),
+			"Home should show a Developer tile after enabling dev mode")
+		tile.tap()
+		let screen = app.element(matching: TestIdentifiers.Developer.screen)
+		XCTAssertTrue(screen.waitForExistence(timeout: 30), "The Developer tile should open Developer")
 		return self
 	}
 }

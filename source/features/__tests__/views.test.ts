@@ -159,6 +159,13 @@ describe('TiledViews', () => {
 				devOnly: true,
 				disabled: false,
 			},
+			{
+				title: 'Developer',
+				icon: 'hammer.fill',
+				target: '/developer',
+				devOnly: true,
+				disabled: false,
+			},
 		])
 	})
 })

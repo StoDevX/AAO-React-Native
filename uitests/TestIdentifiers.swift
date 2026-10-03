@@ -78,12 +78,14 @@ struct TestIdentifiers {
 
 	enum Navigation {
 		/// The menu at the home screen's top-right corner, which holds the layout
-		/// choice and Settings. Mirrors HOME_MENU_LABEL in app/index.tsx.
+		/// choice, Support, About, Contributing and Feedback. Mirrors
+		/// HOME_MENU_LABEL in app/index.tsx.
 		static let homeMenu = "Home menu"
-		static let settingsMenuItem = "Settings"
+		static let supportMenuItem = "Support"
+		static let aboutMenuItem = "About"
+		static let feedbackMenuItem = "Feedback"
 		/// The paintbrush at Home's top-left corner. Mirrors CUSTOMIZE_LABEL in app/index.tsx.
 		static let customizeButton = "Customize"
-    static let settingsSheetTitle = "Settings"
 		/// The label every back button carries. UIKit gives its own back
 		/// buttons this label too, so a query using it must be scoped to one
 		/// navigation bar -- `app.navigationBars.buttons[backButton]` matches
@@ -119,6 +121,7 @@ struct TestIdentifiers {
 		static let athletics = "Athletics"
 		static let calendar = "Calendar"
 		static let carletonCampus = "Carleton Campus"
+		static let developer = "Developer"
 		static let balances = "Balances"
 		static let hours = "Hours"
 		static let dictionary = "Dictionary"
@@ -744,8 +747,32 @@ struct TestIdentifiers {
 	// MARK: - Settings
 
 	enum Settings {
-		static let developer = "Developer"
 		static let enableDevMode = "Enable dev mode"
+		/// The slim Settings form's host, set in app/settings/index.tsx.
+		static let screen = "screen-settings"
+	}
+
+	// MARK: - Support
+
+	enum Support {
+		/// The Support screen's host, set in app/support/index.tsx.
+		static let screen = "screen-support"
+		static let faqs = "FAQs"
+		static let notices = "Notices"
+		static let emergencyContacts = "PubSafe • SARN • 911"
+		static let sendFeedback = "Send Feedback"
+		/// ShareTelemetryToggle's label, in source/features/telemetry/consent-toggle.tsx.
+		static let telemetryToggle = "Share anonymous usage and crash data"
+		/// The title of the Report a Problem form, in app/settings/report-problem.tsx.
+		static let reportProblemTitle = "Report a Problem"
+	}
+
+	// MARK: - Developer
+
+	enum Developer {
+		/// The Developer screen's host, set in app/developer/index.tsx.
+		static let screen = "screen-developer"
+		static let components = "Components"
 	}
 
 	// MARK: - Directory

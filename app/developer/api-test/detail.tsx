@@ -58,7 +58,7 @@ export default function APITestDetailPage(): React.ReactNode {
 			<Stack.Title>{cleanedName}</Stack.Title>
 			<Stack.Toolbar placement="right">
 				<Stack.Toolbar.Menu icon="ellipsis.circle">
-					<Stack.Toolbar.MenuAction onPress={() => router.navigate('/settings/network-logger')}>
+					<Stack.Toolbar.MenuAction onPress={() => router.navigate('/developer/network-logger')}>
 						Network Logger
 					</Stack.Toolbar.MenuAction>
 					<Stack.Toolbar.MenuAction
