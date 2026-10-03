@@ -3,6 +3,7 @@ import {StyleSheet, View} from 'react-native'
 import {openUrl} from '@frogpond/open-url'
 
 import {callPhone} from '../../../../components/call-phone'
+import {track} from '../../../telemetry/track'
 import type {Station} from '../stations'
 import {ActionButton} from './action-button'
 import {AirPlayButton} from './airplay-button'
@@ -25,13 +26,23 @@ export function StationActionRow({
 				accessibilityLabel={`Call ${station.stationName}`}
 				icon="phone"
 				label="Call"
-				onPress={() => callPhone(station.stationNumber, {title: station.stationName})}
+				onPress={() => {
+					track({name: 'radio.action', attributes: {action: 'call', station: station.id}})
+					callPhone(station.stationNumber, {title: station.stationName})
+				}}
 			/>
 			<ActionButton
 				accessibilityLabel={chatUrl ? `Chat with ${station.stationName}` : 'Chat unavailable'}
 				icon="bubble.left.and.text.bubble.right"
 				label="Chat"
-				onPress={chatUrl ? () => openUrl(chatUrl) : undefined}
+				onPress={
+					chatUrl
+						? () => {
+								track({name: 'radio.action', attributes: {action: 'chat', station: station.id}})
+								openUrl(chatUrl)
+							}
+						: undefined
+				}
 				role="link"
 			/>
 			<AirPlayButton />
@@ -39,7 +50,10 @@ export function StationActionRow({
 				accessibilityLabel="Today's schedule"
 				icon="calendar.day.timeline.trailing"
 				label="Schedule"
-				onPress={onShowSchedule}
+				onPress={() => {
+					track({name: 'radio.action', attributes: {action: 'schedule', station: station.id}})
+					onShowSchedule()
+				}}
 			/>
 		</View>
 	)

@@ -4,6 +4,7 @@ import {accessibilityLabel, frame} from '@expo/ui/swift-ui/modifiers'
 import {useRouter} from 'expo-router'
 import {openUrl} from '@frogpond/open-url'
 
+import {track} from '../../../telemetry/track'
 import type {Station} from '../stations'
 import {useRadioStore} from '../store'
 import {palette} from './palette'
@@ -26,6 +27,10 @@ export function StationMenu({station}: {station: Station}): React.ReactNode {
 					onPress={() => {
 						// The sheet sits above every screen, so it has to go before the
 						// schedule can be seen.
+						track({
+							name: 'radio.action',
+							attributes: {action: 'full_schedule', station: station.id},
+						})
 						closeSheet()
 						router.navigate(station.scheduleHref)
 					}}
@@ -33,7 +38,10 @@ export function StationMenu({station}: {station: Station}): React.ReactNode {
 				/>
 				<Button
 					label="Open Website"
-					onPress={() => openUrl(station.playerUrl)}
+					onPress={() => {
+						track({name: 'radio.action', attributes: {action: 'website', station: station.id}})
+						openUrl(station.playerUrl)
+					}}
 					systemImage="safari"
 				/>
 			</Menu>

@@ -3,6 +3,7 @@ import {StyleSheet} from 'react-native'
 import {Host, Picker, Text} from '@expo/ui/swift-ui'
 import {pickerStyle, tag} from '@expo/ui/swift-ui/modifiers'
 
+import {track} from '../../../telemetry/track'
 import {STATIONS, type StationId} from '../stations'
 import {useRadioStore} from '../store'
 
@@ -18,7 +19,10 @@ export function StationPicker(): React.ReactNode {
 			<Picker
 				label="Station"
 				modifiers={[pickerStyle('segmented')]}
-				onSelectionChange={(selection) => browse(selection as StationId)}
+				onSelectionChange={(selection) => {
+					track({name: 'radio.station.browse', attributes: {station: selection as StationId}})
+					browse(selection as StationId)
+				}}
 				selection={viewed}
 			>
 				{ORDER.map((id) => (
