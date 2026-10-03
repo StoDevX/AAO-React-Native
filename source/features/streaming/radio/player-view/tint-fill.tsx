@@ -6,9 +6,6 @@ import tinycolor from 'tinycolor2'
 
 import type {RadioLogo} from '../theme'
 
-/** The fill for a logo without a tint of its own. Every station's logos have one today. */
-const UNTINTED = '#48484a'
-
 /** How much darker the bottom of the fill is than the logo's tint. */
 const FILL_DARKENING = 25
 
@@ -19,10 +16,9 @@ export function tintGradient(logo: RadioLogo): {
 	startPoint: {x: number; y: number}
 	endPoint: {x: number; y: number}
 } {
-	let tint = logo.theme.tintColor ?? UNTINTED
 	return {
 		type: 'linearGradient',
-		colors: [tint, tinycolor(tint).darken(FILL_DARKENING).toHexString()],
+		colors: [logo.tint, tinycolor(logo.tint).darken(FILL_DARKENING).toHexString()],
 		startPoint: {x: 0.5, y: 0},
 		endPoint: {x: 0.5, y: 1},
 	}

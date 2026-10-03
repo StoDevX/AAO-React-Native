@@ -73,7 +73,7 @@ export function FullLayout({
 			</View>
 			<LiveBar />
 			<View style={styles.centre}>
-				<PlayStopButton size="large" station={station} />
+				<PlayStopButton station={station} />
 				<PlaybackError station={station} />
 			</View>
 			<VolumeSliderStub />

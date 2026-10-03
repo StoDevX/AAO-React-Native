@@ -1,6 +1,5 @@
 import * as React from 'react'
-import {StyleSheet, Text} from 'react-native'
-import * as c from '@frogpond/colors'
+import {AccessibilityInfo, StyleSheet, Text, View} from 'react-native'
 import {Touchable} from '@frogpond/touchable'
 import {SymbolView} from 'expo-symbols'
 
@@ -8,44 +7,60 @@ import type {Station} from '../stations'
 import {useRadioStore, useStationPlayback} from '../store'
 import {palette} from './palette'
 
+/** What the player says when the station's last play failed. */
+const PLAYBACK_ERROR = 'Couldn’t play'
+
 /** Play, or Stop while the station is starting or playing. */
-export function PlayStopButton({
-	station,
-	size,
-}: {
-	station: Station
-	size: 'large' | 'small'
-}): React.ReactNode {
+export function PlayStopButton({station}: {station: Station}): React.ReactNode {
 	let {playState} = useStationPlayback(station.id)
 	let play = useRadioStore((state) => state.play)
 	let stop = useRadioStore((state) => state.stop)
 	let running = playState !== 'stopped'
-	let large = size === 'large'
 	return (
 		<Touchable
 			accessibilityLabel={`${running ? 'Stop' : 'Play'} ${station.stationName}`}
 			accessibilityRole="button"
 			highlight={false}
 			onPress={running ? stop : () => play(station.id)}
-			style={large ? styles.large : styles.small}
+			style={styles.button}
 		>
 			<SymbolView
 				name={running ? 'stop.fill' : 'play.fill'}
-				size={large ? 44 : 24}
+				size={44}
 				tintColor={palette.primary}
 			/>
 		</Touchable>
 	)
 }
 
-/** "Couldn’t play" under the controls, only while this station's last play failed. */
+/**
+ * "Couldn’t play" under the controls, only while this station's last play
+ * failed. White, as the rest of the player is over the tint, and announced, as
+ * VoiceOver would otherwise not know the tap on Play came to nothing.
+ */
 export function PlaybackError({station}: {station: Station}): React.ReactNode {
 	let {error} = useStationPlayback(station.id)
-	return error ? <Text style={styles.error}>Couldn’t play</Text> : null
+	let failed = error !== null
+
+	React.useEffect(() => {
+		if (failed) {
+			AccessibilityInfo.announceForAccessibility(PLAYBACK_ERROR)
+		}
+	}, [failed])
+
+	if (!failed) {
+		return null
+	}
+	return (
+		<View style={styles.error}>
+			<SymbolView name="exclamationmark.triangle.fill" size={15} tintColor={palette.primary} />
+			<Text style={[styles.errorText, palette.styles.primary]}>{PLAYBACK_ERROR}</Text>
+		</View>
+	)
 }
 
 const styles = StyleSheet.create({
-	large: {width: 88, height: 88, alignItems: 'center', justifyContent: 'center'},
-	small: {width: 44, height: 44, alignItems: 'center', justifyContent: 'center'},
-	error: {color: c.orange, fontSize: 15, textAlign: 'center'},
+	button: {width: 88, height: 88, alignItems: 'center', justifyContent: 'center'},
+	error: {flexDirection: 'row', alignItems: 'center', gap: 6},
+	errorText: {fontSize: 15, fontWeight: '600'},
 })

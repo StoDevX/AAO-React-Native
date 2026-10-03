@@ -1,5 +1,5 @@
 import * as logos from '../../../../images/streaming'
-import {tintedTheme, type RadioLogo} from './theme'
+import type {RadioLogo} from './theme'
 
 export type StationId = 'ksto' | 'krlx'
 
@@ -23,21 +23,20 @@ export type Station = {
 }
 
 /**
- * Each KSTO tint passes the same checks: white button text on it is at least
- * 4.5:1, and it is at least 3:1 against both the light background, enough for
- * the 28pt title, and Dark Mode's black, so the buttons stand out there too.
+ * Each KSTO tint holds white text at 4.5:1 or better, and the player's fill
+ * only darkens from it downward.
  */
 const COW_TINT = '#685393'
 const WORDMARK_TINT = '#5a52b0'
 const DUMPSTER_TINT = '#2a7d68'
-/** The narwhal's slate, #494e73, lightened just enough to clear 3:1 against black. */
+/** The narwhal's slate, lightened from the logo's #494e73. */
 const NARWHAL_TINT = '#525881'
-/** The sketched cow's navy ink, #17203d, lightened just enough to clear 3:1 against black. */
+/** The sketched cow's navy ink, lightened from the logo's #17203d. */
 const SKETCH_TINT = '#3d55a3'
 
 /**
- * The purple of the logo's "krlx". White text on it is 5.5:1, and it is 3.8:1
- * against Dark Mode's black, so the buttons stand out in both modes.
+ * The purple of the logo's "krlx". White text on it is 5.5:1, and the player's
+ * fill only darkens from it downward.
  */
 const KRLX_TINT = '#8a529e'
 
@@ -48,35 +47,35 @@ export const STATIONS: Record<StationId, Station> = {
 			{
 				name: 'cow badge',
 				image: logos.ksto,
-				theme: tintedTheme(COW_TINT),
+				tint: COW_TINT,
 				labelColor: '#e4d7f2',
 				labelScale: 0.86,
 			},
 			{
 				name: 'wordmark',
 				image: logos.kstoWordmark,
-				theme: tintedTheme(WORDMARK_TINT),
+				tint: WORDMARK_TINT,
 				labelColor: '#e8e0ef',
 				labelScale: 1,
 			},
 			{
 				name: 'dumpster fire',
 				image: logos.kstoDumpster,
-				theme: tintedTheme(DUMPSTER_TINT),
+				tint: DUMPSTER_TINT,
 				labelColor: '#e5d4d9',
 				labelScale: 0.72,
 			},
 			{
 				name: 'narwhal',
 				image: logos.kstoNarwhal,
-				theme: tintedTheme(NARWHAL_TINT),
+				tint: NARWHAL_TINT,
 				labelColor: '#494e73',
 				labelScale: 1,
 			},
 			{
 				name: 'cow sketch',
 				image: logos.kstoSketch,
-				theme: tintedTheme(SKETCH_TINT),
+				tint: SKETCH_TINT,
 				// A sheet of cream paper, for the ink drawing.
 				labelColor: '#f3ead6',
 			},
@@ -100,7 +99,7 @@ export const STATIONS: Record<StationId, Station> = {
 			{
 				name: 'krlx 88.1',
 				image: logos.krlx,
-				theme: tintedTheme(KRLX_TINT),
+				tint: KRLX_TINT,
 				labelColor: '#f6f1e4',
 			},
 		],
