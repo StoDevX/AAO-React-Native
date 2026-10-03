@@ -3,9 +3,13 @@ import XCTest
 struct SettingsScreen: Screen {
 	let app: XCUIApplication
 
+	func appIcon(named iconName: String) -> XCUIElement {
+		app.buttonLabelled(iconName)
+	}
+
 	@discardableResult
 	func selectAppIcon(iconName: String, springboard: XCUIApplication) -> Self {
-		let row = app.buttons[iconName]
+		let row = appIcon(named: iconName)
 		XCTAssertTrue(
 			row.waitForExistence(timeout: 10),
 			"\(iconName) row should be on screen before tapping it")
