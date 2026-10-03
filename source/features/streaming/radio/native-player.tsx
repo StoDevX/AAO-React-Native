@@ -2,6 +2,7 @@ import * as React from 'react'
 import {setAudioModeAsync, useAudioPlayer, useAudioPlayerStatus} from 'expo-audio'
 
 import {audioActivity, type AudioActivity} from './audio-activity'
+import type {NowPlayingPresentation} from './now-playing'
 import type {HtmlAudioError, PlayState} from './types'
 
 type Props = {
@@ -13,10 +14,8 @@ type Props = {
 	/** Control Center played the paused station, which has reloaded the stream to start again. */
 	onResume?: () => unknown
 	onError?: (error: HtmlAudioError) => unknown
-	/** What the lock screen and Control Center call the station. */
-	stationName: string
-	/** The picture Control Center shows with the station. */
-	artworkUri: string
+	/** What the lock screen and Control Center show: the song on air, else the station. */
+	nowPlaying: NowPlayingPresentation
 	streamSourceUrl: string
 }
 
@@ -43,7 +42,8 @@ function configureAudioMode(): Promise<void> {
  * as when a call interrupts it, `onPause`.
  */
 export function NativeStreamPlayer(props: Props): React.ReactNode {
-	let {playState, stationName, artworkUri, streamSourceUrl} = props
+	let {playState, nowPlaying, streamSourceUrl} = props
+	let {title, artist, albumTitle, artworkUri} = nowPlaying
 	let player = useAudioPlayer(streamSourceUrl)
 	let status = useAudioPlayerStatus(player)
 	let activity = audioActivity(status)
@@ -77,13 +77,16 @@ export function NativeStreamPlayer(props: Props): React.ReactNode {
 	// same way an interruption does.
 	// Releasing the player, which unmounting does first, takes it off the lock
 	// screen; asking it to as well would fail, as it is already gone.
+	let activated = React.useRef(false)
 	React.useEffect(() => {
-		player.setActiveForLockScreen(
-			true,
-			{title: stationName, artworkUrl: artworkUri},
-			{isLiveStream: true},
-		)
-	}, [player, stationName, artworkUri])
+		let metadata = {title, artist, albumTitle, artworkUrl: artworkUri}
+		if (activated.current) {
+			player.updateLockScreenMetadata(metadata)
+			return
+		}
+		activated.current = true
+		player.setActiveForLockScreen(true, metadata, {isLiveStream: true})
+	}, [player, title, artist, albumTitle, artworkUri])
 
 	// A paused station keeps its player, and with it the lock screen's entry, but
 	// a live stream has nowhere to resume from. So when Control Center plays the

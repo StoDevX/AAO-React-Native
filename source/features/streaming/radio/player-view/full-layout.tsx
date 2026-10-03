@@ -6,6 +6,7 @@ import {TouchClaimView} from '@frogpond/touch-claim'
 import {ScratchableLogo} from '../scratchable-logo'
 import type {Station} from '../stations'
 import {useStationPlayback} from '../store'
+import {useNowPlaying} from '../use-now-playing'
 import {useStationSchedule} from '../use-station-schedule'
 import {PlaybackError, PlayStopButton} from './play-stop-button'
 import {ScheduleList} from './schedule-list'
@@ -19,6 +20,9 @@ import {VolumeSlider} from './volume-slider'
 import {useFittedArtwork} from './use-fitted-artwork'
 import {palette} from './palette'
 import type {RadioLogo} from '../theme'
+
+/** A cover from the feed as the record's label takes it: the feed sends 600-point squares. */
+const SONG_ARTWORK = (uri: string) => ({uri, width: 600, height: 600, scale: 1})
 
 /** The player's inset from each side, as Music's full player. */
 export const SIDE = 28
@@ -53,6 +57,10 @@ export function FullLayout({
 	// One schedule for the title, the status line and the list, so they
 	// share a clock and never disagree on a minute boundary.
 	let schedule = useStationSchedule(station.id)
+	// The song's own cover fills the record's label, where it has one; a song
+	// without a cover, or none on air, leaves the station's logo.
+	let nowPlaying = useNowPlaying(station)
+	let songArtwork = nowPlaying.isSong && nowPlaying.artworkUri !== logo.image.uri
 
 	return (
 		<View onLayout={onLayout} style={styles.screen}>
@@ -64,10 +72,14 @@ export function FullLayout({
 					<TouchClaimView>
 						<ScratchableLogo
 							key={logo.name}
-							accessibilityLabel={`${station.stationName} logo, ${logo.name}`}
-							image={logo.image}
+							accessibilityLabel={
+								songArtwork
+									? `${nowPlaying.title}, ${station.stationName}`
+									: `${station.stationName} logo, ${logo.name}`
+							}
+							image={songArtwork ? SONG_ARTWORK(nowPlaying.artworkUri) : logo.image}
 							labelColor={logo.labelColor}
-							labelScale={logo.labelScale ?? 0.8}
+							labelScale={songArtwork ? 1 : (logo.labelScale ?? 0.8)}
 							onTap={showNextLogo}
 							playing={playState === 'playing'}
 							size={artwork}

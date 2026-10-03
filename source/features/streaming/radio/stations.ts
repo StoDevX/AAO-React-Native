@@ -14,6 +14,8 @@ export type Station = {
 	scheduleHref: '/ksto-schedule' | '/krlx-schedule'
 	/** The station's listener chat, where it has one. */
 	chatUrl?: string
+	/** Where the song now on air is published, for a station that does. */
+	nowPlayingUrl?: string
 	stationName: string
 	source: {
 		useEmbeddedPlayer: boolean
@@ -106,6 +108,8 @@ export const STATIONS: Record<StationId, Station> = {
 		playerUrl: 'https://live.krlx.org',
 		scheduleHref: '/krlx-schedule',
 		chatUrl: 'https://minnit.chat/KRLX',
+		// The metaradio plugin krlx.org's own player reads; station 1 is KRLX.
+		nowPlayingUrl: 'https://content.krlx.org/wp-json/metaradio/v1/stationnow/?station=1',
 		source: {
 			useEmbeddedPlayer: false,
 			embeddedPlayerUrl: 'https://live.krlx.org',
