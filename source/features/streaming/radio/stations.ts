@@ -109,7 +109,7 @@ export const STATIONS: Record<StationId, Station> = {
 		source: {
 			useEmbeddedPlayer: false,
 			embeddedPlayerUrl: 'https://live.krlx.org',
-			streamSourceUrl: 'http://stream.krlx.org:8000/_a',
+			streamSourceUrl: 'https://s3.voscast.com:10803/stream',
 		},
 		stationName: '88.1 KRLX-FM',
 		stationNumber: '+15072224127',

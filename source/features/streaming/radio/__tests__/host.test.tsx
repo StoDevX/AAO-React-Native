@@ -63,7 +63,7 @@ describe('RadioHost', () => {
 
 		let screen = await render(<RadioHost />)
 
-		expect(mockUseAudioPlayer).toHaveBeenCalledWith('http://stream.krlx.org:8000/_a')
+		expect(mockUseAudioPlayer).toHaveBeenCalledWith('https://s3.voscast.com:10803/stream')
 		expect(screen.toJSON()).toBeNull()
 	})
 

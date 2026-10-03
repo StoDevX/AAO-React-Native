@@ -26,7 +26,7 @@ function player(playState: PlayState, callbacks: Record<string, jest.Mock>) {
 	return (
 		<NativeStreamPlayer
 			playState={playState}
-			streamSourceUrl="http://stream.krlx.org:8000/_a"
+			streamSourceUrl="https://s3.voscast.com:10803/stream"
 			{...callbacks}
 		/>
 	)
