@@ -1,0 +1,23 @@
+name: Lion's Pantry
+category: Health and Wellness
+kind: space
+building: ytt
+
+links:
+  - title: Lion's Pantry Program
+    url: https://wp.stolaf.edu/taylorcenter/lions-pantry-program/
+
+schedule:
+  - title: Hours
+    notes: Ytterboe 044. Free for all students; please take what you need for 2–3 days and fill out the post-visit survey.
+    hours:
+      - {days: [Sa], from: '12:00pm', to: '1:00pm'}
+
+breakSchedule:
+  fall: []
+  thanksgiving: []
+  winter: []
+  interim: []
+  spring: []
+  easter: []
+  summer: []
