@@ -2,7 +2,7 @@ import {describe, expect, it} from '@jest/globals'
 import staff from '../../__tests__/fixtures/staff-2026-2027.json'
 import years from '../../__tests__/fixtures/staff-years.json'
 import {parseStaffProfiles} from '../profiles'
-import {groupStaff, newestStaffYear} from '../staff'
+import {groupStaff, newestStaffYear, photoSubjectOf} from '../staff'
 import type {StaffProfile} from '../../types'
 
 /** A profile holding only what grouping reads. */
@@ -113,5 +113,28 @@ describe('newestStaffYear', () => {
 
 	it('fails when the paper has no staff years, so the screen shows an error rather than nothing', () => {
 		expect(() => newestStaffYear([])).toThrow('The Olaf Messenger lists no staff years')
+	})
+})
+
+describe('photoSubjectOf', () => {
+	it('names a tile by its first and last names, for its initials', () => {
+		expect(photoSubjectOf(person('Julia Sikorski Roehsner', 'Executive Editor'))).toStrictEqual({
+			displayName: 'Julia Sikorski Roehsner',
+			firstName: 'Julia',
+			lastName: 'Roehsner',
+			thumbnail: '',
+		})
+	})
+
+	it('carries the photo as the thumbnail', () => {
+		let photo = {url: 'https://olafmessenger.com/a.jpg', width: 900, height: 1200}
+		expect(photoSubjectOf({...person('Ada Lin', 'Photographer'), photo}).thumbnail).toBe(photo.url)
+	})
+
+	it('leaves a single name without a last name, so its initials come from the name alone', () => {
+		expect(photoSubjectOf(person('Cher', 'Staff Writer'))).toMatchObject({
+			firstName: 'Cher',
+			lastName: '',
+		})
 	})
 })

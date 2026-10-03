@@ -11,6 +11,12 @@ import {StaffMemberScreen, StaffScreen} from '../staff-screen'
 import {messKeys} from '../lib/keys'
 import {parseStaffProfiles} from '../lib/profiles'
 
+jest.mock(
+	'react-native-safe-area-context',
+	() =>
+		// oxlint-disable-next-line typescript/no-require-imports
+		require('react-native-safe-area-context/jest/mock').default,
+)
 jest.mock('@frogpond/data-sources', () => ({
 	...(jest.requireActual('@frogpond/data-sources') as object),
 	fetchManifest: jest.fn(),
@@ -52,20 +58,21 @@ function serveNoYears(): void {
 }
 
 describe('StaffScreen', () => {
-	test('lists the staff in groups, each person by name and role', async () => {
+	test('lists the staff as tiles in groups, each by name, keeping roles for their pages', async () => {
 		queryClient.setQueryData(messKeys.staff, people)
 		await renderWithClient(<StaffScreen />)
 
 		expect(screen.getByText('Leadership')).toBeTruthy()
 		expect(screen.getByText('Copy Desk')).toBeTruthy()
-		expect(screen.getByRole('button', {name: /Soren Gjesfjeld, Senior Reporter/u})).toBeTruthy()
+		expect(screen.getByRole('button', {name: 'Soren Gjesfjeld'})).toBeTruthy()
+		expect(screen.queryByText('Senior Reporter')).toBeNull()
 	})
 
 	test("opens a person's page by their profile's id", async () => {
 		queryClient.setQueryData(messKeys.staff, people)
 		await renderWithClient(<StaffScreen />)
 
-		await fireEvent.press(screen.getByRole('button', {name: /Soren Gjesfjeld/u}))
+		await fireEvent.press(screen.getByRole('button', {name: 'Soren Gjesfjeld'}))
 
 		expect(mockNavigate).toHaveBeenCalledWith({
 			pathname: '/messenger/staff/[id]',

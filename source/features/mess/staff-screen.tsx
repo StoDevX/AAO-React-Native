@@ -1,86 +1,101 @@
 import * as React from 'react'
-import {StyleSheet} from 'react-native'
+import {StyleSheet, useWindowDimensions} from 'react-native'
+import {useSafeAreaInsets} from 'react-native-safe-area-context'
 import {Stack, useRouter} from 'expo-router'
-import {Host, HStack, List, Section, Text, VStack} from '@expo/ui/swift-ui'
+import {Host, HStack, List, ScrollView, Section, Text, VStack} from '@expo/ui/swift-ui'
 import {
 	font,
 	foregroundStyle,
 	frame,
 	listStyle,
+	padding,
 	refreshable,
 	textSelection,
 } from '@expo/ui/swift-ui/modifiers'
 import {useQuery} from '@tanstack/react-query'
 import * as c from '@frogpond/colors'
 import {NoticeView} from '@frogpond/notice'
-import {DisclosureRow, type DisclosureRowImage} from '../../components/rows'
-import {groupStaff} from './lib/staff'
+import {TileGrid, useTileColumns} from '../../components/tile-grid'
+import {FILL_WIDTH, SCREEN_MARGIN, TILE_SPACING} from '../../components/tile-layout'
+import {PersonPhoto} from '../directory/person-photo'
+import {PersonTile} from '../directory/person-tile'
+import {groupStaff, photoSubjectOf} from './lib/staff'
 import {UnloadedPage} from './mess-page'
 import {messStaffOptions} from './query'
-import {RemotePhoto} from './remote-photo'
-import type {StaffProfile} from './types'
 
-/** Names every row of the staff directory, for a UI test. */
-export const STAFF_ROW_ID = 'mess-staff-row'
+/** Names every tile of the staff directory, for a UI test. */
+export const STAFF_TILE_ID = 'mess-staff-tile'
 
-/** The face beside each name, at the college directory's size. */
-const THUMBNAIL_SIZE = 35
 /** The photo on a person's page, at the college directory's width. */
 const PHOTO_WIDTH = 80
 
+const HEADING = [font({textStyle: 'headline'})]
 const NAME = [font({textStyle: 'title2', weight: 'semibold'}), foregroundStyle(c.label)]
 const ROLE = [font({textStyle: 'subheadline'}), foregroundStyle(c.secondaryLabel)]
 const BIO = [textSelection(true)]
 const NAME_COLUMN = [frame({maxWidth: Infinity, alignment: 'leading'})]
-
-/** A person's photo as a row's thumbnail, or a symbol in its place so every name lines up. */
-function thumbnailOf(person: StaffProfile): DisclosureRowImage {
-	return person.photo
-		? {uri: person.photo.url, width: THUMBNAIL_SIZE, height: THUMBNAIL_SIZE}
-		: {systemName: 'person.crop.circle', size: THUMBNAIL_SIZE * 0.8, width: THUMBNAIL_SIZE}
-}
+const COLUMN = [
+	padding({leading: SCREEN_MARGIN, trailing: SCREEN_MARGIN, top: SCREEN_MARGIN}),
+	frame({maxWidth: FILL_WIDTH}),
+]
 
 /**
- * The paper's staff for its newest year, grouped as a masthead lists them, each person a row to
- * their own page.
+ * The paper's staff for its newest year as the college directory's tiles, grouped as a masthead
+ * lists them under a heading each. A tile shows a face and a name; the role waits for the
+ * person's own page.
  */
 export function StaffScreen(): React.ReactNode {
 	let router = useRouter()
 	let staff = useQuery(messStaffOptions)
+	let {width: screenWidth} = useWindowDimensions()
+	// The scroll view keeps its content inside the safe area, so in landscape the columns share
+	// the width left once the notch's side insets are taken, as the directory's grid does.
+	let insets = useSafeAreaInsets()
+	let columns = useTileColumns()
+	let contentWidth = screenWidth - insets.left - insets.right
+	// A Grid sizes a cell to its content, so a lone tile in a short row would fill the screen;
+	// every tile is pinned to a column's width instead.
+	let tileWidth = (contentWidth - 2 * SCREEN_MARGIN - (columns - 1) * TILE_SPACING) / columns
 
 	return (
 		<>
 			<Stack.Screen options={{title: 'Staff'}} />
 			{staff.data ? (
-				<Host style={styles.list}>
-					<List
+				<Host matchContents={false} style={styles.grid}>
+					<ScrollView
 						modifiers={[
-							listStyle('insetGrouped'),
 							refreshable(async () => {
 								await staff.refetch()
 							}),
 						]}
 					>
-						{groupStaff(staff.data).map((group) => (
-							<Section key={group.title} title={group.title}>
-								{group.people.map((person) => (
-									<DisclosureRow
-										key={person.id}
-										detail={[person.role]}
-										identifier={STAFF_ROW_ID}
-										image={thumbnailOf(person)}
-										onPress={() =>
-											router.navigate({
-												pathname: '/messenger/staff/[id]',
-												params: {id: String(person.id)},
-											})
-										}
-										title={person.name}
+						<VStack alignment="leading" modifiers={COLUMN} spacing={TILE_SPACING * 2}>
+							{groupStaff(staff.data).map((group) => (
+								<VStack key={group.title} alignment="leading" spacing={TILE_SPACING}>
+									<Text modifiers={HEADING}>{group.title}</Text>
+									<TileGrid
+										accessibilityId={`mess-staff-${group.title}`}
+										columns={columns}
+										items={group.people}
+										keyForItem={(person) => person.id}
+										renderItem={(person) => (
+											<PersonTile
+												onPress={() =>
+													router.navigate({
+														pathname: '/messenger/staff/[id]',
+														params: {id: String(person.id)},
+													})
+												}
+												person={photoSubjectOf(person)}
+												testID={STAFF_TILE_ID}
+												width={tileWidth}
+											/>
+										)}
 									/>
-								))}
-							</Section>
-						))}
-					</List>
+								</VStack>
+							))}
+						</VStack>
+					</ScrollView>
 				</Host>
 			) : (
 				<UnloadedPage query={staff} />
@@ -90,8 +105,9 @@ export function StaffScreen(): React.ReactNode {
 }
 
 /**
- * One person on the staff: their name and role beside their photo, then their bio. Read from the
- * directory's list, so a page opened from it needs no fetch of its own.
+ * One person on the staff: their name and role beside their photo, as the college directory's
+ * page sets them, then their bio. Read from the directory's list, so a page opened from it needs
+ * no fetch of its own.
  */
 export function StaffMemberScreen({id}: {id: string}): React.ReactNode {
 	let staff = useQuery(messStaffOptions)
@@ -115,22 +131,20 @@ export function StaffMemberScreen({id}: {id: string}): React.ReactNode {
 		)
 	}
 
-	let photoHeight = person.photo ? (PHOTO_WIDTH * person.photo.height) / person.photo.width : 0
 	return (
 		<>
 			<Stack.Screen options={{title: person.name}} />
-			<Host style={styles.list}>
+			<Host style={styles.page}>
 				<List modifiers={[listStyle('insetGrouped')]}>
 					<Section>
-						{/* Name leading, photo trailing, both hung from the top, as the college directory's page */}
+						{/* Name leading, photo trailing, both hung from the top, so a long name wraps
+						    down the left of the photo rather than pushing it about */}
 						<HStack alignment="top" spacing={12}>
 							<VStack alignment="leading" modifiers={NAME_COLUMN} spacing={2}>
 								<Text modifiers={NAME}>{person.name}</Text>
 								{person.role ? <Text modifiers={ROLE}>{person.role}</Text> : null}
 							</VStack>
-							{person.photo ? (
-								<RemotePhoto height={photoHeight} url={person.photo.url} width={PHOTO_WIDTH} />
-							) : null}
+							<PersonPhoto person={photoSubjectOf(person)} width={PHOTO_WIDTH} />
 						</HStack>
 					</Section>
 					{person.bio ? (
@@ -145,5 +159,6 @@ export function StaffMemberScreen({id}: {id: string}): React.ReactNode {
 }
 
 const styles = StyleSheet.create({
-	list: {flex: 1, backgroundColor: c.systemGroupedBackground},
+	grid: {flex: 1, backgroundColor: c.systemBackground},
+	page: {flex: 1, backgroundColor: c.systemGroupedBackground},
 })

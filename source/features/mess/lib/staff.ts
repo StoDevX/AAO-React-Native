@@ -1,4 +1,5 @@
 import {z} from 'zod'
+import type {PersonPhotoSubject} from '../../directory/person-photo'
 import type {StaffProfile} from '../types'
 
 /** A group of the staff directory, such as `Writers`, and the people in it. */
@@ -62,4 +63,18 @@ export function newestStaffYear(body: unknown): {id: number; name: string} {
 	let [newest] = YearsSchema.parse(body).sort((a, b) => b.name.localeCompare(a.name))
 	if (!newest) throw new Error('The Olaf Messenger lists no staff years')
 	return newest
+}
+
+/**
+ * A staff member as the college directory's tile and photo draw a person: their picture, or their
+ * initials, from the first and last words of their name, when the paper has none.
+ */
+export function photoSubjectOf(person: StaffProfile): PersonPhotoSubject {
+	let words = person.name.split(/\s+/u)
+	return {
+		displayName: person.name,
+		firstName: words[0] ?? '',
+		lastName: words.length > 1 ? (words.at(-1) ?? '') : '',
+		thumbnail: person.photo?.url ?? '',
+	}
 }
