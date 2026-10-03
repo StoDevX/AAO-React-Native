@@ -30,6 +30,11 @@ type RadioStore = {
 	play: (stationId: StationId) => void
 	/** Pauses the loaded station, which stays loaded, as Control Center's does. */
 	pause: () => void
+	/**
+	 * Starts a paused station again in the player it has, which has reloaded the
+	 * stream. Playing it instead mounts a fresh player.
+	 */
+	resume: () => void
 	/** Unloads the station, which ends its audio. */
 	stop: () => void
 
@@ -92,6 +97,9 @@ export const useRadioStore = create<RadioStore>()(
 					})),
 				pause: () => {
 					if (isRunning(get().playState)) set({playState: 'paused'})
+				},
+				resume: () => {
+					if (get().playState === 'paused') set({playState: 'starting'})
 				},
 				stop: () => set({stationId: null, playState: 'stopped', error: null}),
 

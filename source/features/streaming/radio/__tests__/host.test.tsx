@@ -8,7 +8,13 @@ import {useRadioStore} from '../store'
 
 // The native module needs a device; its player is a stand-in that records the
 // source it was given.
-const mockPlayer = {play: jest.fn(), pause: jest.fn(), setActiveForLockScreen: jest.fn()}
+const mockPlayer = {
+	muted: false,
+	play: jest.fn(),
+	pause: jest.fn(),
+	replace: jest.fn(),
+	setActiveForLockScreen: jest.fn(),
+}
 let mockStatus = {
 	playing: false,
 	isBuffering: false,
@@ -83,7 +89,7 @@ describe('RadioHost', () => {
 		expect(mockUseAudioPlayer).not.toHaveBeenCalled()
 	})
 
-	test('starts the stream afresh when Control Center plays the paused native station', async () => {
+	test('starts the paused native station again in its own player when Control Center plays it', async () => {
 		mockStatus = {playing: true, isBuffering: false, didJustFinish: false, error: null}
 		useRadioStore.getState().stop()
 		useRadioStore.getState().play('krlx')
@@ -97,9 +103,11 @@ describe('RadioHost', () => {
 		mockStatus = {...mockStatus, playing: true}
 		await screen.rerender(<RadioHost />)
 
-		// A fresh player was asked for; the stand-in then plays at once, as every
-		// one of its players does.
-		expect(useRadioStore.getState()).toMatchObject({stationId: 'krlx', playerKey: key + 1})
+		expect(useRadioStore.getState()).toMatchObject({
+			stationId: 'krlx',
+			playState: 'starting',
+			playerKey: key,
+		})
 		mockStatus = {playing: false, isBuffering: false, didJustFinish: false, error: null}
 	})
 })

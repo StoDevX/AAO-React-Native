@@ -89,6 +89,27 @@ describe('playback', () => {
 		expect(useRadioStore.getState()).toMatchObject({playState: 'starting', playerKey: 2})
 	})
 
+	test('resuming a paused station starts it again in the same player', () => {
+		useRadioStore.getState().play('krlx')
+		useRadioStore.getState().pause()
+		useRadioStore.getState().resume()
+		expect(useRadioStore.getState()).toMatchObject({
+			stationId: 'krlx',
+			playState: 'starting',
+			playerKey: 1,
+		})
+	})
+
+	test('resuming does nothing unless the station is paused', () => {
+		useRadioStore.getState().resume()
+		expect(useRadioStore.getState()).toMatchObject({stationId: null, playState: 'stopped'})
+
+		useRadioStore.getState().play('krlx')
+		useRadioStore.getState().reportPlaying(1)
+		useRadioStore.getState().resume()
+		expect(useRadioStore.getState().playState).toBe('playing')
+	})
+
 	test('a paused station stays paused when its player reports stopping again', () => {
 		useRadioStore.getState().play('krlx')
 		useRadioStore.getState().pause()

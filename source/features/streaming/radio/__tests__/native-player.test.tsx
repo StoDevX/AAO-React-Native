@@ -20,6 +20,7 @@ function command(name: string): jest.Mock {
 const mockPlayer = {
 	muted: false,
 	play: command('play'),
+	replace: command('replace'),
 	pause: command('pause'),
 	setActiveForLockScreen: command('setActiveForLockScreen'),
 }
@@ -74,6 +75,7 @@ describe('NativeStreamPlayer', () => {
 	beforeEach(() => {
 		mockPlayer.play.mockClear()
 		mockPlayer.pause.mockClear()
+		mockPlayer.replace.mockClear()
 		mockPlayer.setActiveForLockScreen.mockClear()
 		mockPlayer.muted = false
 		mockSetAudioMode.mockClear()
@@ -176,21 +178,27 @@ describe('NativeStreamPlayer', () => {
 		expect(cb.onResume).not.toHaveBeenCalled()
 	})
 
-	test('asks for a fresh start when Control Center plays a paused station, rather than resuming stale audio', async () => {
+	test('reloads the stream in the same player when Control Center plays a paused station, rather than resuming stale audio', async () => {
 		let cb = callbacks()
 		mockStatus = {...mockStatus, playing: true}
 		let view = await render(player('playing', cb))
 		mockStatus = {...mockStatus, playing: false}
 		await view.rerender(player('paused', cb))
+		expect(mockPlayer.muted).toBe(true)
 		mockPlayer.pause.mockClear()
+		mockPlayer.play.mockClear()
 		cb.onPlay.mockClear()
 
 		// Control Center's Play starts the paused player by itself.
 		mockStatus = {...mockStatus, playing: true}
 		await view.rerender(player('paused', cb))
 
+		expect(mockPlayer.replace).toHaveBeenCalledWith('https://s3.voscast.com:10803/stream')
+		expect(mockPlayer.muted).toBe(false)
+		expect(mockPlayer.play).toHaveBeenCalled()
 		expect(cb.onResume).toHaveBeenCalledTimes(1)
-		expect(mockPlayer.pause).toHaveBeenCalled()
+		// Pausing it again would flash Paused on the lock screen between two Playings.
+		expect(mockPlayer.pause).not.toHaveBeenCalled()
 		expect(cb.onPlay).not.toHaveBeenCalled()
 	})
 

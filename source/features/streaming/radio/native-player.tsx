@@ -10,7 +10,7 @@ type Props = {
 	onEnded?: () => unknown
 	onPlay?: () => unknown
 	onPause?: () => unknown
-	/** Control Center played the paused station: it needs a fresh player. */
+	/** Control Center played the paused station, which has reloaded the stream to start again. */
 	onResume?: () => unknown
 	onError?: (error: HtmlAudioError) => unknown
 	/** What the lock screen and Control Center call the station. */
@@ -79,8 +79,10 @@ export function NativeStreamPlayer(props: Props): React.ReactNode {
 
 	// A paused station keeps its player, and with it the lock screen's entry, but
 	// a live stream has nowhere to resume from. So when Control Center plays the
-	// paused player, which starts by itself, it is stopped before stale audio is
-	// heard and a fresh player is asked for. Only the player starting counts:
+	// paused player, which starts by itself, the stream is loaded again in it,
+	// at the live edge. The player is muted while paused, so its old audio is
+	// not heard in the meantime, and it is not paused again, which the lock
+	// screen would show between two Playings. Only the player starting counts:
 	// its status still says playing for a moment after the app pauses it.
 	let wasPlaying = React.useRef(false)
 	let isPlaying = status.playing
@@ -88,10 +90,13 @@ export function NativeStreamPlayer(props: Props): React.ReactNode {
 		let started = isPlaying && !wasPlaying.current
 		wasPlaying.current = isPlaying
 		if (started && playState === 'paused') {
-			player.pause()
+			player.replace(streamSourceUrl)
+			// oxlint-disable-next-line react/immutability
+			player.muted = false
+			player.play()
 			callbacks.current.onResume?.()
 		}
-	}, [isPlaying, playState, player])
+	}, [isPlaying, playState, player, streamSourceUrl])
 
 	let previous = React.useRef<AudioActivity>('idle')
 	let error = status.error
