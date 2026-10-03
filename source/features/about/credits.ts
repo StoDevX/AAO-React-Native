@@ -1,5 +1,14 @@
-/** Joins names for a line of credits. */
-export const formatPeopleList = (names: Array<string>): string => names.join(' • ')
+/**
+ * Lays names out in two columns that read down the left, then down the right,
+ * as a printed index does. Each row holds a left name and, if there is one,
+ * a right. An odd name out sits at the foot of the left column.
+ */
+export function inTwoColumns(names: ReadonlyArray<string>): Array<Array<string>> {
+	let height = Math.ceil(names.length / 2)
+	return names
+		.slice(0, height)
+		.map((left, row) => (row + height < names.length ? [left, names[row + height]] : [left]))
+}
 
 /** People who wrote the app. */
 export const contributors = [
