@@ -1,11 +1,11 @@
 import XCTest
 
-/// Settings → Home Screen Quick Actions: the picker for the app icon's menu.
+/// Customize → Quick Actions: the picker for the app icon's menu.
 struct QuickActionsScreen: Screen {
 	let app: XCUIApplication
 
 	/// The picker itself. Home's tiles share titles with its rows and stay in
-	/// the tree behind the Settings sheet, so a row is only ever queried inside
+	/// the tree behind the Customize sheet, so a row is only ever queried inside
 	/// this.
 	private var picker: XCUIElement {
 		app.element(matching: TestIdentifiers.QuickActions.screen)
@@ -38,16 +38,10 @@ struct QuickActionsScreen: Screen {
 		picker.buttons.allElementsBoundByIndex.map(\.label)
 	}
 
-	/// Open the picker the way a user does, from the Settings sheet.
+	/// Open the picker the way a user does, from the Customize sheet.
 	@discardableResult
 	func navigate() -> Self {
-		HomeScreen(app: app).checkHomescreenExists().openSettings()
-		let settingsRow = app.buttons[TestIdentifiers.QuickActions.settingsRow].firstMatch
-		scrollUntilExists(settingsRow)
-		XCTAssertTrue(
-			settingsRow.waitForExistence(timeout: 10),
-			"Settings should offer \(TestIdentifiers.QuickActions.settingsRow)")
-		settingsRow.tap()
+		HomeScreen(app: app).checkHomescreenExists().openCustomize().openQuickActions()
 		XCTAssertTrue(picker.waitForExistence(timeout: 10), "the quick-action picker should open")
 		return self
 	}

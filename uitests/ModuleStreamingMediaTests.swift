@@ -33,7 +33,7 @@ class ModuleStreamingMediaTests: UITestCaseUnbooted {
 			.press(ids.stopKrlx, expecting: ids.idleBar)
 	}
 
-	/// "Show Radio Player on Home" off takes the idle bar off Home, but
+	/// Customize's Radio Player off takes the idle bar off Home, but
 	/// Streaming Media keeps its own, so the radio is still a tap away.
 	func testSwitchOffHidesOnlyHomesBar() throws {
 		let ids = TestIdentifiers.StreamingMedia.self

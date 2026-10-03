@@ -25,8 +25,10 @@ import {useQuickActionsStore} from '../../source/features/quick-actions/store'
 import {iconImage} from '../../source/features/views'
 
 const styles = StyleSheet.create({
+	// Pushed inside the Customize sheet, which paints no background of its own.
 	host: {
 		flex: 1,
+		backgroundColor: c.systemGroupedBackground,
 	},
 })
 

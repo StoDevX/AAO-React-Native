@@ -62,6 +62,16 @@ const DETAIL_SHEET: React.ComponentProps<typeof Stack.Screen>['options'] = {
 }
 
 /**
+ * Customize opens at half height: its rows fit there, and Home stays in view
+ * above it. Otherwise it is a detail sheet: a stack of its own, a grabber, and
+ * a dimmed Home that takes no taps.
+ */
+const CUSTOMIZE_SHEET: React.ComponentProps<typeof Stack.Screen>['options'] = {
+	...DETAIL_SHEET,
+	sheetAllowedDetents: [0.5, 0.999],
+}
+
+/**
  * Keeps the home screen beneath whatever a cold-start deep link opens, so
  * Back from, say, `/calendar` lands on Home rather than on nothing.
  */
@@ -163,6 +173,7 @@ function RootLayout(): React.ReactNode {
 									name="calendar"
 									options={{title: 'Calendar', headerLargeTitleEnabled: true}}
 								/>
+								<Stack.Screen name="customize" options={CUSTOMIZE_SHEET} />
 								<Stack.Screen
 									name="settings"
 									options={{headerShown: false, presentation: 'modal'}}
