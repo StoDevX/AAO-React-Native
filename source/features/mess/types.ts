@@ -34,6 +34,12 @@ export type Block =
 /** A Mess category; `parent` is 0 for a top-level one. */
 export type MessCategory = {id: number; name: string; parent: number}
 
+/** Someone on the paper's About page to write to, such as `News Editors`. */
+export type AboutContact = {role: string; email: string}
+
+/** A heading on the paper's About page, with the contacts and paragraphs under it. */
+export type AboutSection = {title: string; contacts: AboutContact[]; paragraphs: string[]}
+
 export type Photo = {url: string; width: number; height: number}
 
 /** A photo with the caption or credit printed under it. */

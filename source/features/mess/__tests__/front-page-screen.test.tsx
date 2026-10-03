@@ -204,6 +204,22 @@ describe('FrontPageScreen', () => {
 		await waitForQueriesToSettle(queryClient)
 	})
 
+	test.each(['By Issue', 'Latest'])(
+		"opens the paper's About page from the menu in %s",
+		async (view) => {
+			seedTop()
+			queryClient.setQueryData(messKeys.feed, onePage(ISSUE_STORIES))
+			saveChoice(view)
+			await renderScreen()
+
+			await fireEvent.press(menuItem('About'))
+
+			expect(mockNavigate).toHaveBeenCalledWith('/messenger/about')
+			// The About page is not a view, so choosing it leaves the view as it was.
+			expect(savedChoice()).toBe(view)
+		},
+	)
+
 	test('offers the sections in Latest only, and remembers the view', async () => {
 		seedTop()
 		queryClient.setQueryData(messKeys.feed, onePage(ISSUE_STORIES))

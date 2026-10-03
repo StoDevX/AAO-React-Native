@@ -44,6 +44,7 @@ enum ChaosRoutes {
 		"menus/the-cage",
 		"menus/the-pause",
 		"messenger",
+		"messenger/about",
 		"messenger/column",
 		"messenger/crosswords",
 		"messenger/image",
