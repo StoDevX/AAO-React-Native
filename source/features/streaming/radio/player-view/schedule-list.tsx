@@ -5,18 +5,17 @@ import {formatCompactTime} from '@frogpond/time-format'
 import type {Station} from '../stations'
 import {useStationSchedule} from '../use-station-schedule'
 import {palette} from './palette'
+import {scheduleNote} from './schedule-note'
 
 /** The rest of today's shows, or why there are none. Few enough rows not to need a list. */
 export function ScheduleList({station}: {station: Station}): React.ReactNode {
 	let {upcoming, status} = useStationSchedule(station.id)
-	if (status === 'error') {
-		return <Text style={[styles.note, palette.styles.secondary]}>Couldn’t load the schedule</Text>
-	}
-	if (status === 'ready' && upcoming.length === 0) {
-		return <Text style={[styles.note, palette.styles.secondary]}>Nothing else today</Text>
+	let note = scheduleNote(status, upcoming.length)
+	if (note) {
+		return <Text style={[styles.note, palette.styles.secondary]}>{note}</Text>
 	}
 	return (
-		<View accessibilityLabel="Today's schedule" style={styles.list}>
+		<View style={styles.list}>
 			{upcoming.map((show) => (
 				<View key={`${show.startTime.valueOf()}|${show.title}`} style={styles.row}>
 					<Text style={[styles.time, palette.styles.secondary]}>

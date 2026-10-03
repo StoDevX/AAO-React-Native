@@ -7,8 +7,8 @@ import {showTitleText} from './show-title-text'
 import {palette} from './palette'
 
 export function ShowTitle({station}: {station: Station}): React.ReactNode {
-	let {current} = useStationSchedule(station.id)
-	let {title, subtitle} = showTitleText(station, current)
+	let {current, status} = useStationSchedule(station.id)
+	let {title, subtitle} = showTitleText(station, current, status)
 	return (
 		<View style={styles.block}>
 			<Text numberOfLines={1} style={[styles.title, palette.styles.primary]}>
