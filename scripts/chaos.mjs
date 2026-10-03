@@ -2,7 +2,7 @@
 
 // Runs the chaos monkey against a booted simulator and collects what it found
 // into logs/chaos/<seed>/, or logs/chaos/<seed>-replay/ for a replay. See
-// the Chaos Runs section of AGENTS.md.
+// uitests/Chaos/README.md.
 
 import {
 	copyFileSync,

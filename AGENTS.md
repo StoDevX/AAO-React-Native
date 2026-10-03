@@ -241,83 +241,28 @@ more than one simulator booted, name one with `SIMULATOR_UDID=<udid>`.
 
 ### Chaos Runs
 
-`mise run chaos` drives the app at random on a booted simulator while every
-network request may be slowed, failed, emptied or corrupted, and stops at the
-first native crash, JS fatal, unhandled rejection, error screen, or hang.
+`mise run chaos` drives the app at random on a booted simulator while it breaks
+network requests, and stops at the first crash, fatal error, unhandled
+rejection, error screen or hang. [`uitests/Chaos/README.md`](uitests/Chaos/README.md)
+covers reading a finding, replaying a run, what the engine can't do, how it
+works, and how to extend it.
 
 ```bash
-TEST_RUNNER_AAO_JS_LOCATION=localhost:<port> mise run chaos -- --seed 1234 --duration 10m
-mise run chaos -- --replay logs/chaos/1234     # same seed, recorded responses
+TEST_RUNNER_AAO_JS_LOCATION=localhost:8081 mise run chaos -- --seed 1234 --duration 10m
+TEST_RUNNER_AAO_JS_LOCATION=localhost:8081 mise run chaos -- --replay logs/chaos/1234
 ```
 
-It needs `TEST_RUNNER_AAO_JS_LOCATION` naming the Metro serving this
-checkout, or a built `.app` with a `main.jsbundle` inside, as CI has, and it
-stops before building when it has neither. The prefix matters: `xcodebuild`
-passes the test only `TEST_RUNNER_`-prefixed variables, so a bare
-`AAO_JS_LOCATION` never arrives. It also needs `SIMULATOR_UDID` when more
-than one simulator is booted. `--steps`, `--duration` (`90s`, `10m`, `1h`), and
-`--fault-rate` bound and tune a run; `--prebuilt` skips the build. A replay
-takes its seed from the leading digits of its directory's name, so `--seed`
-and `--replay` can't be combined.
+Name the Metro serving this checkout with the `TEST_RUNNER_` prefix:
+`xcodebuild` passes the test only prefixed variables, so a bare
+`AAO_JS_LOCATION` never arrives. The run exits 0 when it found nothing, 1 when
+it found something, and 2 when it never started. Its evidence lands in
+`logs/chaos/<seed>/`.
 
-The run exits with:
-
-| Code | Meaning |
-| --- | --- |
-| 0 | It took steps and found nothing |
-| 1 | It found something: the monkey stopped on a crash, hang, error screen or JS error — even at 0 steps, unless that stop was the probe never answering — the test failed after taking steps, or the app recorded a fatal, an unhandled rejection, or a replay divergence in `chaos-findings.jsonl` |
-| 2 | It never started, or its outcome couldn't be judged: a bad flag, no booted simulator, a replay with no tape, a build failure or other error thrown before the test ran, the probe silent at the first launch (Metro not answering), no step taken at all — even by a test that passed — or the run's attachments failed to export with no stopping finding and no failed test to call a finding instead |
-
-Each run writes `logs/chaos/<seed>/`: the step log, with the orientation the
-monkey set at each step; `chaos stop screen`, a screenshot taken as it stopped
-and named for its orientation — XCTest's own failure screenshot comes after the
-device is turned back to portrait; `chaos trapped screen`, the screen it
-photographed before trying to leave one with nothing to press; and
-`chaos-stop.txt` — why the monkey stopped, absent when it used up its budget —
-among the `attachments/`; every response the app received in
-`chaos-tape.jsonl`; what the probe saw in `chaos-findings.jsonl`; and the exit
-code, message and stop reason in `outcome.json`. A fatal raised under a modal
-can slip past the beacon, so the findings file is read at the end of every run
-and decides the outcome even when the test passed; its screenshot may not
-show the error.
-
-A replay only reads the run it replays and writes its own results to
-`logs/chaos/<seed>-replay/`. It answers requests from the tape — ignoring
-whatwg-fetch's `_=<timestamp>` cache-buster when matching a request to one it
-recorded — and, unless given `--steps` or `--duration`, takes as many steps as
-the recording with no time limit. It reports `reproduced` when it stops for
-the recorded reason, `not reproduced` when it takes every recorded step
-without stopping or stops for another reason, `not reached` when its budget
-ends first, and `diverged at step K` when it does something the recording did
-not. Timing and anything outside JS `fetch` (images, WebViews, map tiles) can
-still differ. A recording made before steps logged their `orientation` reports
-`diverged at step 0`.
-
-A chaos launch passes `--chaos`, not `--uitesting`, so features fetch live.
-Under it the app never opens a URL, composes an email, or adds a calendar
-event — `openUrl`, `composeEmail`, `addToCalendar`, and every direct
-`Linking.openURL` call are each guarded — and it never reaches the OleCard
-sign-in or PaperCut; Sentry is off. The monkey dismisses any system alert
-after each step, so a permission prompt can't stall it. Before it calls a
-screen with nothing to press a hang, it tries to leave: it rotates to portrait,
-drags the topmost sheet down by its grabber or top edge, taps Back, and swipes
-from the left edge. When one works it carries on, logging `no escape hatch` in
-`chaos-warnings.txt`: a screen a person can't visibly leave. An iPhone form
-sheet in landscape fills the screen, draws no grabber and ignores a drag down,
-so only rotating frees it. The oracle's beacon view sits at opacity 0.02, not
-0, because iOS drops a fully transparent view from the accessibility tree
-XCUITest reads. `app/_layout.tsx` imports the
-chaos modules statically, first: the import order is what wraps `fetch`
-before anything fetches, so a normal launch evaluates them too, and they do
-nothing without `--chaos`.
-
-`.github/workflows/chaos.yml` runs three seeds nightly, on the app and
-bundle from the latest successful iOS run on master, and lists each distinct
-finding and stop reason in its job summary. It never gates a pull request.
-When that iOS run's artifacts have expired, each seed fails saying so: push to
-master or re-run the iOS workflow there. The `ChaosCanaryTests` in the
-ordinary UI test shards prove the oracles can still see. Run
-`mise run chaos-routes` after adding a route.
+A chaos launch passes `--chaos`, not `--uitesting`. Under it the app never
+leaves itself, never signs in, and sends nothing to Sentry. Its modules are
+imported first in `app/_layout.tsx`, so `fetch` is wrapped before anything
+fetches, and they do nothing without the flag. Run `mise run chaos-routes`
+after adding a route.
 
 ## Agent Workflow
 
