@@ -30,6 +30,14 @@ struct MessFrontPage: Screen {
 		return self
 	}
 
+	/// Wait for the thumbnails to show, then attach a screenshot of them.
+	func captureGrid(_ name: String) {
+		XCTAssertTrue(topTile.waitForExistence(timeout: 30), "the grid should show its top tile")
+		// Tiles redraw their cached image after a setting changes.
+		Thread.sleep(forTimeInterval: 1.5)
+		capture(name)
+	}
+
 	/// Tap the paintbrush at the top right and wait for the Customize sheet.
 	@discardableResult
 	func openCustomize() -> MessCustomizeScreen {

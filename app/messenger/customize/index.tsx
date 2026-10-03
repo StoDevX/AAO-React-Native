@@ -8,6 +8,7 @@ import {SheetSection} from '@frogpond/sheet-section'
 
 import {SheetCloseButton} from '../../../source/components/sheet-close-button'
 import {IssueStainsRow} from '../../../source/features/mess/issue-stains-row'
+import {PhotoToneRow} from '../../../source/features/mess/photo-tone-row'
 
 const styles = StyleSheet.create({
 	// A sheet paints its own background; a Form left to the default shows glass.
@@ -26,6 +27,9 @@ export default function MessengerCustomizePage(): React.ReactNode {
 				<Form>
 					<SheetSection title="Issues">
 						<IssueStainsRow />
+					</SheetSection>
+					<SheetSection title="Thumbnails">
+						<PhotoToneRow />
 					</SheetSection>
 				</Form>
 			</Host>

@@ -75,6 +75,7 @@ const Tile = React.memo(function Tile({
 	paragraphs?: string[]
 }): React.ReactNode {
 	let kind = useMessStore((state) => state.stainKind)
+	let photoTone = useMessStore((state) => state.photoTone)
 	let count = stainCount(read, issue.storyIds.length)
 	let stains = React.useMemo(() => stainMarks(issue.key, count), [issue.key, count])
 	let isTop = layout !== 'grid'
@@ -86,6 +87,7 @@ const Tile = React.memo(function Tile({
 			layout={layout}
 			onPress={() => onOpen(issue)}
 			paragraphs={paragraphs}
+			photoTone={photoTone}
 			sheet={sheet}
 			hasPhoto={issue.leadHasPhoto}
 			photoUrl={issue.leadPhoto}

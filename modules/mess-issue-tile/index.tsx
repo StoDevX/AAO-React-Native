@@ -43,6 +43,9 @@ export type SheetShape = {
 /** What an issue's tile shows for the stories read: coffee rings, tea rings, or nothing. */
 export type StainKind = 'coffee' | 'tea' | 'none'
 
+/** How a tile tints its lead photo: by the appearance, in full colour, or in sepia. */
+export type PhotoTone = 'auto' | 'color' | 'sepia'
+
 /** A grid tile, or the top tile laid out for a tall or a wide window. */
 export type TileLayout = 'grid' | 'topPortrait' | 'topLandscape'
 
@@ -59,6 +62,7 @@ export type MessIssueTileProps = {
 	photoUrl: string | null
 	stains: StainMark[]
 	stainKind: StainKind
+	photoTone: PhotoTone
 	layout: TileLayout
 	/** The lead story's words, for the top tile's columns; none draws blank paper there */
 	paragraphs: string[]

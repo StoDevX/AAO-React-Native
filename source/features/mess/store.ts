@@ -1,11 +1,11 @@
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import {create} from 'zustand'
 import {createJSONStorage, persist} from 'zustand/middleware'
-import type {StainKind} from '@frogpond/mess-issue-tile'
+import type {PhotoTone, StainKind} from '@frogpond/mess-issue-tile'
 import {ZODIAC_SIGNS} from './lib/zodiac'
 import type {ZodiacSign} from './types'
 
-export type {StainKind}
+export type {PhotoTone, StainKind}
 
 type MessStore = {
 	/** The sign the reader last read; Horoscopes posts open on it */
@@ -16,9 +16,12 @@ type MessStore = {
 	recordOpened: (id: number) => void
 	stainKind: StainKind
 	setStainKind: (kind: StainKind) => void
+	/** How the issue thumbnails tint their lead photo */
+	photoTone: PhotoTone
+	setPhotoTone: (tone: PhotoTone) => void
 }
 
-type Saved = Pick<MessStore, 'lastSign' | 'openedStories' | 'stainKind'>
+type Saved = Pick<MessStore, 'lastSign' | 'openedStories' | 'stainKind' | 'photoTone'>
 
 /** Version 1 held the sign alone; it keeps the sign and starts with nothing read. */
 export function migrate(state: unknown, _version: number): Saved {
@@ -28,6 +31,7 @@ export function migrate(state: unknown, _version: number): Saved {
 		lastSign: ZODIAC_SIGNS.find((known) => known === sign) ?? null,
 		openedStories: [],
 		stainKind: 'coffee',
+		photoTone: 'auto',
 	}
 }
 
@@ -43,6 +47,8 @@ export const useMessStore = create<MessStore>()(
 				),
 			stainKind: 'coffee',
 			setStainKind: (kind) => set({stainKind: kind}),
+			photoTone: 'auto',
+			setPhotoTone: (tone) => set({photoTone: tone}),
 		}),
 		{
 			name: 'mess-preferences',

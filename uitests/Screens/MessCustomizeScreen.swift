@@ -19,20 +19,35 @@ struct MessCustomizeScreen: Screen {
 		return self
 	}
 
+	/// The menu picker for the photo tone.
+	private var photoTone: XCUIElement {
+		sheet.buttons[TestIdentifiers.MessCustomize.photoTone].firstMatch
+	}
+
 	/// Choose a stain kind from the picker's menu and wait for the picker to show it.
 	@discardableResult
 	func chooseStain(_ name: String) -> Self {
-		issueStains.tap()
+		choose(name, from: issueStains)
+	}
+
+	/// Choose a photo tone from the picker's menu and wait for the picker to show it.
+	@discardableResult
+	func choosePhotoTone(_ name: String) -> Self {
+		choose(name, from: photoTone)
+	}
+
+	private func choose(_ name: String, from picker: XCUIElement) -> Self {
+		XCTAssertTrue(picker.waitForExistence(timeout: 10), "Customize should offer the picker for \(name)")
+		picker.tap()
 		let item = app.buttons[name].firstMatch
-		XCTAssertTrue(item.waitForExistence(timeout: 10), "the stain menu should offer \(name)")
-		capture("Issue Stains menu open")
+		XCTAssertTrue(item.waitForExistence(timeout: 10), "the menu should offer \(name)")
 		item.tap()
 		let chosen = XCTNSPredicateExpectation(
 			predicate: NSPredicate(format: "value == %@ OR label CONTAINS %@", name, name),
-			object: issueStains)
+			object: picker)
 		XCTAssertEqual(
 			XCTWaiter().wait(for: [chosen], timeout: 10), .completed,
-			"Issue Stains should show \(name) (it reads \(issueStains.label), \(String(describing: issueStains.value)))")
+			"the picker should show \(name) (it reads \(picker.label), \(String(describing: picker.value)))")
 		return self
 	}
 

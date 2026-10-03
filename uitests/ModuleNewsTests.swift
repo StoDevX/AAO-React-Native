@@ -14,6 +14,15 @@ class ModuleNewsTests: UITestCaseUnbooted {
 		customize.capture("Messenger Customize, Tea chosen").close()
 	}
 
+	/// Captures the issue grid under each photo tone, to compare them by eye.
+	func testOlafMessengerPhotoTonesTintTheThumbnails() throws {
+		let front = MessFrontPage(app: app).navigate().verifyByIssueShowsTheGrid()
+		for tone in ["Automatic", "Color", "Sepia"] {
+			front.openCustomize().choosePhotoTone(tone).close()
+			front.captureGrid("Issue thumbnails, \(tone)")
+		}
+	}
+
 	func testOlafMessengerLatestNarrowsToASection() throws {
 		MessFrontPage(app: app)
 			.navigate()

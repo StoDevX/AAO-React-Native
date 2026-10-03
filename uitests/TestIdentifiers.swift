@@ -753,6 +753,8 @@ struct TestIdentifiers {
 		static let screen = "screen-mess-customize"
 		/// The Issue Stains picker, in source/features/mess/issue-stains-row.tsx.
 		static let issueStains = "issue-stains"
+		/// The photo tone picker, in source/features/mess/photo-tone-row.tsx.
+		static let photoTone = "photo-tone"
 		/// The paintbrush's label, in source/features/mess/front-page-screen.tsx.
 		static let paintbrush = "Customize"
 	}

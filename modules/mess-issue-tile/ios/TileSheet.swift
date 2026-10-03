@@ -9,6 +9,7 @@ struct TileContent {
 	var hasPhoto: Bool
 	var stains: [StainMark]
 	var stainKind: StainKind
+	var photoTone: PhotoTone
 	var layout: TileLayout
 	var paragraphs: [String]
 	var sheet: SheetShape
@@ -20,6 +21,7 @@ struct TileContent {
 		hasPhoto = props.hasPhoto
 		stains = props.stains
 		stainKind = props.stainKind
+		photoTone = props.photoTone
 		layout = props.layout
 		paragraphs = props.paragraphs
 		sheet = props.sheet
@@ -222,17 +224,15 @@ struct FlatSheet: View {
 		}
 	}
 
-	/// The lead photo as newsprint prints one: faded and grainy, soft at the edges, and greyscale in
-	/// Dark Mode. It sits still in its frame, as a photo drawn into the tile's cached image must.
+	/// The lead photo as newsprint prints one: faded and grainy, soft at the edges, and toned as the
+	/// reader chose; by default greyscale in Dark Mode. It sits still in its frame, as a photo drawn into the tile's cached image must.
 	private var photoView: some View {
 		GeometryReader { proxy in
 			if let photo {
 				Image(uiImage: photo)
 					.resizable()
 					.scaledToFill()
-					.grayscale(scheme == .dark ? 1 : 0.3)
-					.contrast(0.88)
-					.brightness(scheme == .dark ? -0.05 : 0.04)
+					.modifier(PhotoTint(tone: content.photoTone, scheme: scheme))
 					// Cropped a little inside the frame, as the photo has always been.
 					.scaleEffect(1.12)
 					.frame(width: proxy.size.width, height: proxy.size.height)
@@ -248,5 +248,38 @@ struct FlatSheet: View {
 				colors: [.black, .black, .black.opacity(0.5)],
 				center: .center, startRadius: 0, endRadius: 140))
 		.accessibilityHidden(true)
+	}
+}
+
+/// The tone of a tile's lead photo. Automatic follows the appearance, near full color in Light
+/// Mode and greyscale in Dark; Color keeps Light Mode's tone in both; Sepia is greyscale under a warm
+/// multiply, as an old newspaper's photo, in both.
+private struct PhotoTint: ViewModifier {
+	let tone: PhotoTone
+	let scheme: ColorScheme
+
+	/// The warm paper tone a greyscale photo is multiplied by for sepia.
+	private static let sepia = Color(red: 0.96, green: 0.80, blue: 0.58)
+
+	@ViewBuilder
+	func body(content: Content) -> some View {
+		switch tone {
+		case .auto:
+			content
+				.grayscale(scheme == .dark ? 1 : 0.3)
+				.contrast(0.88)
+				.brightness(scheme == .dark ? -0.05 : 0.04)
+		case .color:
+			content
+				.grayscale(0.3)
+				.contrast(0.88)
+				.brightness(0.04)
+		case .sepia:
+			content
+				.grayscale(1)
+				.colorMultiply(Self.sepia)
+				.contrast(0.88)
+				.brightness(scheme == .dark ? -0.02 : 0.04)
+		}
 	}
 }

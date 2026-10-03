@@ -26,6 +26,7 @@ final class MessIssueTileProps: ExpoSwiftUI.ViewProps {
 	@Field var photoUrl: URL?
 	@Field var stains: [StainMark] = []
 	@Field var stainKind: StainKind = .coffee
+	@Field var photoTone: PhotoTone = .auto
 	@Field var layout: TileLayout = .grid
 	@Field var paragraphs: [String] = []
 	@Field var sheet: SheetShape = SheetShape()
