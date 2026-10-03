@@ -21,6 +21,8 @@ type RadioStore = {
 
 	/** Whether Home's Now Playing bar shows while nothing is loaded. Persisted. */
 	showOnHome: boolean
+	/** Whether the saved preferences have been read, or could not be. */
+	hydrated: boolean
 
 	/** Starts `stationId` in a fresh player, replacing any other station. */
 	play: (stationId: StationId) => void
@@ -65,6 +67,7 @@ export const useRadioStore = create<RadioStore>()(
 				viewedStationId: 'ksto',
 				sheetOpen: false,
 				showOnHome: true,
+				hydrated: false,
 
 				play: (stationId) =>
 					set((state) => ({
@@ -111,6 +114,9 @@ export const useRadioStore = create<RadioStore>()(
 			storage: createJSONStorage(() => AsyncStorage),
 			version: 1,
 			partialize: (state) => ({showOnHome: state.showOnHome}),
+			// Persist reports a failed read only here, never through its own
+			// `hasHydrated`, so a corrupt value would otherwise leave the app waiting.
+			onRehydrateStorage: () => () => useRadioStore.setState({hydrated: true}),
 		},
 	),
 )
