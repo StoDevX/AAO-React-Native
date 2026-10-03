@@ -7,6 +7,7 @@ import {parseGalleryPhotos} from './lib/gallery'
 import {bodyParagraphs} from './lib/issue-grid'
 import {ISSUE_PAGE_SIZE, parseLightPosts, parseMediaUrls, withPhotoUrls} from './lib/issues'
 import {latestProfile, parseStaffProfiles} from './lib/profiles'
+import {newestStaffYear} from './lib/staff'
 import {seriesKey, seriesName} from './lib/series'
 import {findSpotifyRef} from './lib/spotify'
 import {messFetch} from './lib/fixtures'
@@ -392,5 +393,29 @@ export const messAboutOptions = queryOptions({
 			'Olaf Messenger About page',
 		)
 		return parseAboutPage(body)
+	},
+})
+
+/** Everyone on the newest staff year, for the staff directory. */
+export const messStaffOptions = queryOptions({
+	queryKey: messKeys.staff,
+	// The paper adds its staff at the start of a year, and a new hire or two after.
+	staleTime: ONE_DAY_IN_MS,
+	queryFn: async ({signal}): Promise<StaffProfile[]> => {
+		// Assumes the resolved feed href is an absolute WordPress URL.
+		let origin = originOf(await feedHref())
+		let years = await messFetch(
+			`${origin}/wp-json/wp/v2/staff_year?per_page=100&_fields=id,name`,
+			signal,
+			'Olaf Messenger staff years',
+		)
+		let year = newestStaffYear(years)
+		// _fields must name featured_media, _links and _embedded, or WordPress embeds no photo.
+		let body = await messFetch(
+			`${origin}/wp-json/wp/v2/staff_profile?staff_year=${year.id}&per_page=100&_embed=wp:featuredmedia,wp:term&_fields=id,title,content,excerpt,featured_media,_links,_embedded`,
+			signal,
+			'Olaf Messenger staff',
+		)
+		return parseStaffProfiles(body)
 	},
 })

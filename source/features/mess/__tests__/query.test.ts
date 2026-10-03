@@ -10,6 +10,8 @@ import crosswordPlaylist from './fixtures/crossword-playlist-posts.json'
 import springPosts from './fixtures/issue-posts.json'
 import galleryMedia from './fixtures/gallery-media-36238.json'
 import aboutPage from './fixtures/about-page.json'
+import staff from './fixtures/staff-2026-2027.json'
+import staffYears from './fixtures/staff-years.json'
 import {parseLightPosts} from '../lib/issues'
 import {parseMessCategories, parseMessPosts} from '../lib/posts'
 import {QueryClient, onlineManager} from '@tanstack/react-query'
@@ -17,6 +19,7 @@ import {queryClient} from '../../../init/tanstack-query'
 import {
 	MissingMessStoryError,
 	messAboutOptions,
+	messStaffOptions,
 	messCategoryOptions,
 	messFeedOptions,
 	messGalleryOptions,
@@ -176,6 +179,23 @@ describe('messAboutOptions', () => {
 		expect(sections.map((section) => section.title)).toContain('Submission Policy')
 		expect(fetchedHrefs()).toStrictEqual([
 			'https://olafmessenger.com/wp-json/wp/v2/pages?slug=about&_fields=content',
+		])
+	})
+})
+
+describe('messStaffOptions', () => {
+	test('asks for the newest staff year, then everyone on it', async () => {
+		mockManifest.mockResolvedValue({links: []} as unknown as Jrd)
+		mockBody.mockImplementation((href) =>
+			Promise.resolve(href.includes('/staff_year') ? staffYears : staff),
+		)
+
+		let people = await run<{year: string}[]>(messStaffOptions)
+
+		expect(people).toHaveLength(27)
+		expect(fetchedHrefs()).toStrictEqual([
+			'https://olafmessenger.com/wp-json/wp/v2/staff_year?per_page=100&_fields=id,name',
+			'https://olafmessenger.com/wp-json/wp/v2/staff_profile?staff_year=1147&per_page=100&_embed=wp:featuredmedia,wp:term&_fields=id,title,content,excerpt,featured_media,_links,_embedded',
 		])
 	})
 })
