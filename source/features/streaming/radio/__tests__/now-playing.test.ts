@@ -46,8 +46,9 @@ describe('parseStationNow', () => {
 		expect(song).toStrictEqual({title: 'River Run: Lvl 1', artist: 'The Beths', artworkUri: null})
 	})
 
-	test('waits no less than the plugin’s own 15 seconds, and a minute without a say', () => {
+	test('waits as long as the feed says, no less than 15 seconds, and a minute without a say', () => {
 		expect(parseStationNow({now: null, refreshSecs: 3}).refreshMs).toBe(15_000)
+		expect(parseStationNow({now: null, refreshSecs: 144}).refreshMs).toBe(144_000)
 		expect(parseStationNow({now: null}).refreshMs).toBe(60_000)
 		expect(parseStationNow({now: null, refreshSecs: 'soon'}).refreshMs).toBe(60_000)
 	})

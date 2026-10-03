@@ -18,8 +18,15 @@ export type Station = {
 	nowPlayingUrl?: string
 	stationName: string
 	source: {
-		useEmbeddedPlayer: boolean
-		embeddedPlayerUrl: string
+		/**
+		 * The station's own player page, for a station whose owner wants it loaded
+		 * so that its analytics keep counting listens. The app loads it with its
+		 * sound off, beside the stream it plays itself. A station that sets this
+		 * must keep it set: dropping the page drops the owner's count, which
+		 * they asked us to keep. See `MutedStationPage` and `RadioHost`.
+		 */
+		embeddedPlayerUrl?: string
+		/** The stream the app plays itself, so that Control Center and AirPlay see it. */
 		streamSourceUrl: string
 	}
 }
@@ -84,12 +91,20 @@ export const STATIONS: Record<StationId, Station> = {
 		],
 		playerUrl: 'https://www.stolaf.edu/multimedia/play/embed/ksto.html',
 		scheduleHref: '/ksto-schedule',
-		// KSTO counts its listeners through its own web player, so the app plays
-		// that page rather than the stream behind it.
+		// DECISION (St. Olaf / KSTO): KSTO counts its listeners through the analytics
+		// in its own web player, and asked that the app keep loading that page. So
+		// the app loads the page, muted, AND plays the stream the page plays, itself.
+		// Keep both: without the page KSTO's count drops, and without our own stream
+		// there is no Control Center, lock screen or AirPlay. Two copies of the stream
+		// play at once; that is accepted.
+		//
+		// `streamSourceUrl` is the HLS URL that page passes to its player (read from
+		// its source, 2026-10-03). If KSTO changes the page, or the stream stops,
+		// read the page again and update it. The page's commented-out
+		// `.../radio/ksto1.stream/master.m3u8` answers 403; do not use it.
 		source: {
-			useEmbeddedPlayer: true,
 			embeddedPlayerUrl: 'https://www.stolaf.edu/multimedia/play/embed/ksto.html',
-			streamSourceUrl: '',
+			streamSourceUrl: 'https://cdn.stobcm.com/ksto/live.m3u8',
 		},
 		stationName: 'KSTO 93.1 FM',
 		stationNumber: '+15077863602',
@@ -111,8 +126,6 @@ export const STATIONS: Record<StationId, Station> = {
 		// The metaradio plugin krlx.org's own player reads; station 1 is KRLX.
 		nowPlayingUrl: 'https://content.krlx.org/wp-json/metaradio/v1/stationnow/?station=1',
 		source: {
-			useEmbeddedPlayer: false,
-			embeddedPlayerUrl: 'https://live.krlx.org',
 			streamSourceUrl: 'https://s3.voscast.com:10803/stream',
 		},
 		stationName: '88.1 KRLX-FM',

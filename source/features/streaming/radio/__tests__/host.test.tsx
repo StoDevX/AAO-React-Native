@@ -40,17 +40,23 @@ async function untilSongAsked(): Promise<void> {
 	await waitFor(() => expect(client.isFetching()).toBe(0))
 }
 
-/** Renders the host and returns a way to post a message from its player's page. */
-async function renderHost(): Promise<(type: string) => Promise<void>> {
+/** Renders the host and returns a way to post a message from the station's page. */
+async function renderHost() {
 	let screen = await render(withQueries(<RadioHost />))
-	// The host's view wraps the player, whose WebView wraps the native web view.
-	let webview = screen.root?.children[0]
+	// The page is the one WebView in the host's hidden view, so find its native
+	// element by what it is sent: React Native gives it the `message` handler.
+	let hidden = screen.root?.children.find((child) => typeof child === 'object')
+	if (typeof hidden !== 'object') {
+		throw new TypeError('The host rendered no page')
+	}
+	let webview = hidden.children[0]
 	if (typeof webview !== 'object') {
 		throw new TypeError('The host rendered no native web view')
 	}
-	return async (type) => {
-		await fireEvent(webview, 'message', {nativeEvent: {data: JSON.stringify({type})}})
+	let post = async (data: unknown) => {
+		await fireEvent(webview, 'message', {nativeEvent: {data: JSON.stringify(data)}})
 	}
+	return {screen, post}
 }
 
 describe('RadioHost', () => {
@@ -64,22 +70,30 @@ describe('RadioHost', () => {
 		useRadioStore.getState().reportPlaying(1)
 	})
 
-	test('a stalled fetch leaves a station that is still playing from its buffer playing', async () => {
-		let post = await renderHost()
+	test('plays KSTO natively from its stream, and loads its player page beside it', async () => {
+		let {screen} = await renderHost()
+		await untilSongAsked()
 
-		await post('stalled')
-
-		expect(useRadioStore.getState().playState).toBe('playing')
+		expect(mockUseAudioPlayer).toHaveBeenCalledWith('https://cdn.stobcm.com/ksto/live.m3u8')
+		// KSTO's owner counts listens through its page, so the page is loaded too.
+		expect(screen.root?.children.length).toBeGreaterThan(0)
 	})
 
-	test('a dry buffer reads as starting until audio arrives', async () => {
-		let post = await renderHost()
+	test("takes nothing the station's page reports for the state of the station", async () => {
+		let {post} = await renderHost()
+		await untilSongAsked()
 
-		await post('waiting')
-		expect(useRadioStore.getState().playState).toBe('starting')
+		// The page is silent and only there to be counted. Only the native player
+		// says what the station is doing.
+		await post({type: 'error', error: {code: 4, message: 'gone'}})
+		await post({type: 'pause'})
+		await post({type: 'ended'})
 
-		await post('playing')
-		expect(useRadioStore.getState().playState).toBe('playing')
+		expect(useRadioStore.getState()).toMatchObject({
+			stationId: 'ksto',
+			playState: 'playing',
+			error: null,
+		})
 	})
 
 	test('plays a station with a stream of its own natively, with no web view', async () => {
@@ -96,14 +110,6 @@ describe('RadioHost', () => {
 			{isLiveStream: true},
 		)
 		expect(screen.toJSON()).toBeNull()
-	})
-
-	test('plays a station that only has a page through the web view', async () => {
-		mockUseAudioPlayer.mockClear()
-
-		await renderHost()
-
-		expect(mockUseAudioPlayer).not.toHaveBeenCalled()
 	})
 
 	test('starts the paused native station again in its own player when Control Center plays it', async () => {
