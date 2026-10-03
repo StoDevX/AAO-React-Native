@@ -755,6 +755,8 @@ struct TestIdentifiers {
 		static let issueStains = "issue-stains"
 		/// The photo tone picker, in source/features/mess/photo-tone-row.tsx.
 		static let photoTone = "photo-tone"
+		/// The Keep Photo stories in Dark mode switch, in app/messenger/customize/index.tsx.
+		static let keepPhotoStoriesDark = "keep-photo-stories-dark"
 		/// The paintbrush's label, in source/features/mess/front-page-screen.tsx.
 		static let paintbrush = "Customize"
 	}

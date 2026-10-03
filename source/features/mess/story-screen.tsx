@@ -1,6 +1,6 @@
 import * as React from 'react'
-import {Linking, Share, StyleSheet} from 'react-native'
-import {Stack} from 'expo-router'
+import {Appearance, Linking, Share, StyleSheet} from 'react-native'
+import {Stack, useFocusEffect} from 'expo-router'
 import {Host, LazyVStack, ScrollView, useNativeState, VStack} from '@expo/ui/swift-ui'
 import {background, padding, scrollPosition, scrollTargetLayout} from '@expo/ui/swift-ui/modifiers'
 import {openUrl} from '@frogpond/open-url'
@@ -10,6 +10,7 @@ import {HoroscopesView} from './horoscopes-view'
 import {FeatureView} from './feature-view'
 import {ImageView} from './image-view'
 import {crosswordUrl} from './lib/crossword'
+import {keepsDarkMode} from './lib/photo-story'
 import {PAGE_MARGIN} from './mess-page'
 import {paper} from './palette'
 import {PlaylistView} from './playlist-view'
@@ -48,6 +49,20 @@ export function StoryScreen({id}: Props): React.ReactNode {
 		recordOpened(id)
 	}, [id, recordOpened])
 	let story = query.data
+	let keepPhotoStoriesDark = useMessStore((state) => state.keepPhotoStoriesDark)
+	let darkMode = story ? keepsDarkMode(story, keepPhotoStoriesDark) : false
+	// The whole app goes dark while this story is on screen, so the bars, the page and anything
+	// drawn by React Native all turn together, and hands the choice back to the system when the
+	// reader leaves it.
+	useFocusEffect(
+		React.useCallback(() => {
+			if (!darkMode) {
+				return
+			}
+			Appearance.setColorScheme('dark')
+			return () => Appearance.setColorScheme('unspecified')
+		}, [darkMode]),
+	)
 	// A poem, photo or short story is set quietly: a lighter header and wider margins.
 	let isQuiet = story?.layout.kind === 'poem' || story?.layout.kind === 'feature'
 	let margin = isQuiet ? QUIET_MARGIN : PAGE_MARGIN

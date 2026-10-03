@@ -19,9 +19,15 @@ type MessStore = {
 	/** How the issue thumbnails tint their lead photo */
 	photoTone: PhotoTone
 	setPhotoTone: (tone: PhotoTone) => void
+	/** Whether a Variety › Photo story opens in Dark Mode whatever the system's appearance */
+	keepPhotoStoriesDark: boolean
+	setKeepPhotoStoriesDark: (keep: boolean) => void
 }
 
-type Saved = Pick<MessStore, 'lastSign' | 'openedStories' | 'stainKind' | 'photoTone'>
+type Saved = Pick<
+	MessStore,
+	'lastSign' | 'openedStories' | 'stainKind' | 'photoTone' | 'keepPhotoStoriesDark'
+>
 
 /** Version 1 held the sign alone; it keeps the sign and starts with nothing read. */
 export function migrate(state: unknown, _version: number): Saved {
@@ -32,6 +38,7 @@ export function migrate(state: unknown, _version: number): Saved {
 		openedStories: [],
 		stainKind: 'coffee',
 		photoTone: 'auto',
+		keepPhotoStoriesDark: true,
 	}
 }
 
@@ -49,6 +56,8 @@ export const useMessStore = create<MessStore>()(
 			setStainKind: (kind) => set({stainKind: kind}),
 			photoTone: 'auto',
 			setPhotoTone: (tone) => set({photoTone: tone}),
+			keepPhotoStoriesDark: true,
+			setKeepPhotoStoriesDark: (keep) => set({keepPhotoStoriesDark: keep}),
 		}),
 		{
 			name: 'mess-preferences',

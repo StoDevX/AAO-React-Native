@@ -267,7 +267,7 @@ struct MessFrontPage: Screen {
 		app.buttons.matching(identifier: TestIdentifiers.News.leadStory).firstMatch
 	}
 
-	private var storyRows: XCUIElementQuery {
+	var storyRows: XCUIElementQuery {
 		app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH %@", TestIdentifiers.News.storyRowPrefix))
 	}
 }
