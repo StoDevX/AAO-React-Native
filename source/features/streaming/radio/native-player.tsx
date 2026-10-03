@@ -11,6 +11,8 @@ type Props = {
 	onPlay?: () => unknown
 	onPause?: () => unknown
 	onError?: (error: HtmlAudioError) => unknown
+	/** What the lock screen and Control Center call the station. */
+	stationName: string
 	streamSourceUrl: string
 }
 
@@ -34,7 +36,7 @@ function configureAudioMode(): Promise<void> {
  * as when a call interrupts it, `onPause`.
  */
 export function NativeStreamPlayer(props: Props): React.ReactNode {
-	let {playState, streamSourceUrl} = props
+	let {playState, stationName, streamSourceUrl} = props
 	let player = useAudioPlayer(streamSourceUrl)
 	let status = useAudioPlayerStatus(player)
 	let activity = audioActivity(status)
@@ -52,6 +54,14 @@ export function NativeStreamPlayer(props: Props): React.ReactNode {
 		}
 		void configureAudioMode().then(() => player.play())
 	}, [player, playState])
+
+	// The lock screen and Control Center show the station and its play and
+	// pause, which come back as the player going quiet, so reach the store the
+	// same way an interruption does.
+	React.useEffect(() => {
+		player.setActiveForLockScreen(true, {title: stationName}, {isLiveStream: true})
+		return () => player.setActiveForLockScreen(false)
+	}, [player, stationName])
 
 	let previous = React.useRef<AudioActivity>('idle')
 	let error = status.error

@@ -59,6 +59,7 @@ export function RadioHost(): React.ReactNode {
 				onPlay={onPlay}
 				onWaiting={onWaiting}
 				playState={PLAYER_STATE[playState]}
+				stationName={STATIONS[stationId].stationName}
 				streamSourceUrl={source.streamSourceUrl}
 			/>
 		)

@@ -7,7 +7,7 @@ import type {PlayState} from '../types'
 
 // The native module needs a device. Its player is a stand-in that records the
 // commands it is sent, and its status is set by each test.
-const mockPlayer = {play: jest.fn(), pause: jest.fn()}
+const mockPlayer = {play: jest.fn(), pause: jest.fn(), setActiveForLockScreen: jest.fn()}
 let mockStatus = {
 	playing: false,
 	isBuffering: false,
@@ -26,6 +26,7 @@ function player(playState: PlayState, callbacks: Record<string, jest.Mock>) {
 	return (
 		<NativeStreamPlayer
 			playState={playState}
+			stationName="88.1 KRLX-FM"
 			streamSourceUrl="https://s3.voscast.com:10803/stream"
 			{...callbacks}
 		/>
@@ -46,6 +47,7 @@ describe('NativeStreamPlayer', () => {
 	beforeEach(() => {
 		mockPlayer.play.mockClear()
 		mockPlayer.pause.mockClear()
+		mockPlayer.setActiveForLockScreen.mockClear()
 		mockSetAudioMode.mockClear()
 		mockStatus = {playing: false, isBuffering: false, didJustFinish: false, error: null}
 	})
@@ -57,6 +59,19 @@ describe('NativeStreamPlayer', () => {
 
 		await view.rerender(player('paused', cb))
 		expect(mockPlayer.pause).toHaveBeenCalled()
+	})
+
+	test('names the station on the lock screen and in Control Center, as a live stream', async () => {
+		let view = await render(player('checking', callbacks()))
+		expect(mockPlayer.setActiveForLockScreen).toHaveBeenCalledWith(
+			true,
+			{title: '88.1 KRLX-FM'},
+			{isLiveStream: true},
+		)
+
+		await view.unmount()
+
+		expect(mockPlayer.setActiveForLockScreen).toHaveBeenLastCalledWith(false)
 	})
 
 	test('keeps playing in the background and in silent mode', async () => {

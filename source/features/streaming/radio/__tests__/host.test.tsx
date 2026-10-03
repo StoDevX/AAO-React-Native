@@ -7,7 +7,11 @@ import {useRadioStore} from '../store'
 
 // The native module needs a device; its player is a stand-in that records the
 // source it was given.
-const mockUseAudioPlayer = jest.fn((_source: string) => ({play: jest.fn(), pause: jest.fn()}))
+const mockUseAudioPlayer = jest.fn((_source: string) => ({
+	play: jest.fn(),
+	pause: jest.fn(),
+	setActiveForLockScreen: jest.fn(),
+}))
 jest.mock('expo-audio', () => ({
 	useAudioPlayer: (source: string) => mockUseAudioPlayer(source),
 	useAudioPlayerStatus: () => ({
