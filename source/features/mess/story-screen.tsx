@@ -9,11 +9,11 @@ import {AuthorCards} from './author-card'
 import {HoroscopesView} from './horoscopes-view'
 import {FeatureView} from './feature-view'
 import {ImageView} from './image-view'
-import {crosswordUrl} from './lib/crossword'
 import {keepsDarkMode} from './lib/photo-story'
 import {PAGE_MARGIN} from './mess-page'
 import {paper} from './palette'
 import {PlaylistView} from './playlist-view'
+import {puzzleIcon, puzzleLabel, puzzleUrl} from './lib/puzzle'
 import {RecipeView} from './recipe-view'
 import {PoemView} from './poem-view'
 import {QuietHeader} from './quiet-header'
@@ -35,8 +35,8 @@ const QUIET_COLUMN = [padding({horizontal: QUIET_MARGIN, vertical: 16})]
 /** A column whose children can be scrolled to by their `id`. */
 const TARGET_COLUMN = [...COLUMN, scrollTargetLayout()]
 
-/** Names a Crossword post's Solve button, for a UI test. */
-export const CROSSWORD_SOLVE_ID = 'mess-crossword-solve'
+/** Names a Crossword or Puzzle post's Solve button, for a UI test. */
+export const PUZZLE_SOLVE_ID = 'mess-puzzle-solve'
 
 type Props = {id: number}
 
@@ -156,17 +156,17 @@ function StoryBody({story, columnWidth, scrollTo}: StoryBodyProps): React.ReactN
 			</>
 		)
 	}
-	if (layout.kind === 'crossword') {
+	if (layout.kind === 'puzzle') {
 		return (
 			<>
 				{/* PuzzleMe's player opens in the browser sheet, which keeps a half-solved puzzle's
 				    progress between visits. */}
 				<SiteLinkCard
-					icon="square.grid.3x3"
-					identifier={CROSSWORD_SOLVE_ID}
-					label="Solve the crossword"
+					icon={puzzleIcon(layout.puzzle)}
+					identifier={PUZZLE_SOLVE_ID}
+					label={puzzleLabel(layout.puzzle)}
 					prominent={true}
-					url={crosswordUrl(layout.puzzle)}
+					url={puzzleUrl(layout.puzzle, story.link)}
 				/>
 				<StoryBlocks columnWidth={columnWidth} story={story} />
 			</>

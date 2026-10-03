@@ -18,6 +18,10 @@ export const messKeys = {
 	category: (categoryId: number) => ['mess', 'category', categoryId] as const,
 	series: (storyId: number) => ['mess', 'series', storyId] as const,
 	playlistPage: (storyId: number) => ['mess', 'playlist-page', storyId] as const,
+	/** A gallery's photos, by the media ids its slideshow names */
+	gallery: (photoIds: number[]) => ['mess', 'gallery', photoIds] as const,
+	/** The paper's About page, as sections of contacts and prose */
+	about: ['mess', 'about'] as const,
 	issues: ['mess', 'issues'] as const,
 	anyIssue: ANY_ISSUE,
 	/**

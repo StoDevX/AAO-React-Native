@@ -8,14 +8,18 @@ import profiles from './fixtures/profiles-390.json'
 import varietyPosts from './fixtures/variety-posts.json'
 import crosswordPlaylist from './fixtures/crossword-playlist-posts.json'
 import springPosts from './fixtures/issue-posts.json'
+import galleryMedia from './fixtures/gallery-media-36238.json'
+import aboutPage from './fixtures/about-page.json'
 import {parseLightPosts} from '../lib/issues'
 import {parseMessCategories, parseMessPosts} from '../lib/posts'
 import {QueryClient, onlineManager} from '@tanstack/react-query'
 import {queryClient} from '../../../init/tanstack-query'
 import {
 	MissingMessStoryError,
+	messAboutOptions,
 	messCategoryOptions,
 	messFeedOptions,
+	messGalleryOptions,
 	messPlaylistPageOptions,
 	messSeriesOptions,
 	messStoryOptions,
@@ -24,7 +28,7 @@ import {
 	messIssuesOptions,
 } from '../query'
 import {messKeys} from '../lib/keys'
-import type {LightPost, MessStory, SpotifyRef} from '../types'
+import type {CaptionedPhoto, LightPost, MessStory, SpotifyRef} from '../types'
 
 jest.mock('@frogpond/data-sources', () => ({
 	...(jest.requireActual('@frogpond/data-sources') as object),
@@ -159,6 +163,20 @@ describe('messFeedOptions', () => {
 
 	test('saves only its first page for the next launch', () => {
 		expect(messFeedOptions.meta).toStrictEqual({persistPages: 1})
+	})
+})
+
+describe('messAboutOptions', () => {
+	test('asks for the page with the about slug and reads its sections', async () => {
+		mockManifest.mockResolvedValue({links: []} as unknown as Jrd)
+		mockBody.mockResolvedValue(aboutPage)
+
+		let sections = await run<{title: string}[]>(messAboutOptions)
+
+		expect(sections.map((section) => section.title)).toContain('Submission Policy')
+		expect(fetchedHrefs()).toStrictEqual([
+			'https://olafmessenger.com/wp-json/wp/v2/pages?slug=about&_fields=content',
+		])
 	})
 })
 
@@ -391,6 +409,41 @@ function playlistStory(id: number): MessStory {
 	if (!parsed) throw new Error(`fixture post ${id} did not parse`)
 	return parsed
 }
+
+describe('messGalleryOptions', () => {
+	const IDS = [36255, 36256, 36257, 36258, 36259]
+
+	test("fetches a gallery's photos by their media ids, in the slideshow's order", async () => {
+		mockManifest.mockResolvedValue({links: []} as unknown as Jrd)
+		mockBody.mockResolvedValue(galleryMedia)
+
+		let photos = await run<CaptionedPhoto[]>(messGalleryOptions(IDS))
+
+		expect(photos.map((photo) => photo.url.split('/').at(-1))).toStrictEqual([
+			'OliviaAmschler_1-895x1200.png',
+			'OliviaAmschler_2-896x1200.png',
+			'OliviaAmschler_3-903x1200.png',
+			'OliviaAmschler_4-903x1200.png',
+			'OliviaAmschler_5-905x1200.png',
+		])
+		expect(mockBody).toHaveBeenCalledWith(
+			'https://olafmessenger.com/wp-json/wp/v2/media?include=36255,36256,36257,36258,36259&per_page=100&_fields=id,source_url,media_details,caption',
+			expect.any(AbortSignal),
+			'Olaf Messenger gallery',
+			'json',
+		)
+	})
+
+	test('fails when the photos cannot be fetched, so the gallery keeps its first photo', async () => {
+		mockManifest.mockResolvedValue({links: []} as unknown as Jrd)
+		mockBody.mockRejectedValue(new Error('offline'))
+		await expect(run(messGalleryOptions(IDS))).rejects.toThrow('offline')
+	})
+
+	test('is cached per gallery', () => {
+		expect(messGalleryOptions(IDS).queryKey).toStrictEqual(['mess', 'gallery', IDS])
+	})
+})
 
 describe('messPlaylistPageOptions', () => {
 	test("reads the playlist from the post's web page, fetched as text", async () => {

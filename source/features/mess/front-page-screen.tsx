@@ -32,18 +32,20 @@ const CUSTOMIZE_LABEL = 'Customize'
 
 /**
  * The glass buttons at the top right: the paintbrush, which opens the Messenger's Customize
- * sheet, and a menu to pick By Issue or Latest and, in Latest, the section to narrow it to. The
- * menu's label names the view showing, since the icon alone does not. Both sit at the right
- * because a button at the left would replace the Back button.
+ * sheet, and a menu to pick By Issue or Latest and, in Latest, the section to narrow it to, then a
+ * way to the paper's About page. The menu's label names the view showing, since the icon alone does
+ * not. Both sit at the right because a button at the left would replace the Back button.
  */
 function ViewMenu({
 	view,
 	onChoose,
 	onCustomize,
+	onOpenAbout,
 }: {
 	view: MessView
 	onChoose: (view: MessView) => void
 	onCustomize: () => void
+	onOpenAbout: () => void
 }): React.ReactNode {
 	return (
 		<Stack.Toolbar placement="right">
@@ -86,6 +88,10 @@ function ViewMenu({
 						))}
 					</Stack.Toolbar.Menu>
 				) : null}
+				{/* Its own inline group, so the menu draws a divider between the views and it */}
+				<Stack.Toolbar.Menu inline={true}>
+					<Stack.Toolbar.MenuAction onPress={onOpenAbout}>About</Stack.Toolbar.MenuAction>
+				</Stack.Toolbar.Menu>
 			</Stack.Toolbar.Menu>
 		</Stack.Toolbar>
 	)
@@ -138,8 +144,8 @@ function SavedLatestStories(): React.ReactNode {
  * the news filter store.
  */
 export function FrontPageScreen(): React.ReactNode {
-	let queryClient = useQueryClient()
 	let router = useRouter()
+	let queryClient = useQueryClient()
 	let saved = useNewsFilterStore((state) => state.selectedCategories[OLAF_MESSENGER.id] ?? null)
 	let select = useNewsFilterStore((state) => state.select)
 	let view = viewOf(saved)
@@ -153,6 +159,7 @@ export function FrontPageScreen(): React.ReactNode {
 			<ViewMenu
 				onChoose={choose}
 				onCustomize={() => router.navigate('/messenger/customize')}
+				onOpenAbout={() => router.navigate('/messenger/about')}
 				view={view}
 			/>
 			<MessPage

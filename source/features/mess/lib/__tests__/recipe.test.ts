@@ -37,6 +37,7 @@ function textOf(block: Block): string {
 	if (block.type === 'list') return block.items.map(plain).join(' ')
 	if (block.type === 'figure') return `${block.url} ${block.caption}`
 	if (block.type === 'embed') return block.url
+	if (block.type === 'gallery') return block.credit
 	return plain(block.runs)
 }
 
