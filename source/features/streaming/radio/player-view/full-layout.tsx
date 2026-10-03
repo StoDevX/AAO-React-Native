@@ -5,9 +5,11 @@ import {TouchClaimView} from '@frogpond/touch-claim'
 import {ScratchableLogo} from '../scratchable-logo'
 import type {Station} from '../stations'
 import {useStationPlayback} from '../store'
+import {useStationSchedule} from '../use-station-schedule'
 import {PlaybackError, PlayStopButton} from './play-stop-button'
 import {ScheduleList} from './schedule-list'
 import {ShowTitle} from './show-title'
+import {airStatusText} from './show-title-text'
 import {StationActionRow} from './station-actions'
 import {StationMenu} from './station-menu'
 import {StationPicker} from './station-picker'
@@ -71,7 +73,7 @@ export function FullLayout({
 				<ShowTitle station={station} />
 				<StationMenu station={station} />
 			</View>
-			<LiveBar />
+			<LiveBar station={station} />
 			<View style={styles.centre}>
 				<PlayStopButton station={station} />
 				<PlaybackError station={station} />
@@ -82,12 +84,14 @@ export function FullLayout({
 	)
 }
 
-/** Music's "LIVE" in place of a scrubber: a stream has no position to show. */
-function LiveBar(): React.ReactNode {
+/** Music's scrubber's place: a stream has no position to show, so the schedule says if it is on air. */
+function LiveBar({station}: {station: Station}): React.ReactNode {
+	let {current, status} = useStationSchedule(station.id)
+	let {text, spoken} = airStatusText(current, status)
 	return (
-		<View accessibilityLabel="Live" accessible={true} style={styles.live}>
+		<View accessibilityLabel={spoken} accessible={true} style={styles.live}>
 			<View style={[styles.track, palette.styles.track]} />
-			<Text style={[styles.liveText, palette.styles.secondary]}>LIVE</Text>
+			<Text style={[styles.liveText, palette.styles.secondary]}>{text}</Text>
 			<View style={[styles.track, palette.styles.track]} />
 		</View>
 	)

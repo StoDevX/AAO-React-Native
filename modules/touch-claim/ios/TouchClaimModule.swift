@@ -5,7 +5,7 @@ public class TouchClaimModule: Module {
 	public func definition() -> ModuleDefinition {
 		Name("TouchClaim")
 
-		View(TouchClaimView.self)
+		View(TouchClaimView.self) {}
 	}
 }
 

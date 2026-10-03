@@ -22,3 +22,21 @@ export function showTitleText(
 		subtitle: `${station.stationName} · ${formatCompactTimeRange(current.startTime, current.endTime)}`,
 	}
 }
+
+/**
+ * The line under the title where Music has a scrubber, which a stream has no
+ * use for: ON AIR or OFF AIR by the schedule, and only LIVE, which the stream
+ * is whatever the schedule says, until the schedule has loaded. `spoken` always
+ * starts with "Live".
+ */
+export function airStatusText(
+	current: EventType | null,
+	status: ScheduleStatus,
+): {text: string; spoken: string} {
+	if (status !== 'ready') {
+		return {text: 'LIVE', spoken: 'Live'}
+	}
+	return current
+		? {text: 'ON AIR', spoken: 'Live, on air'}
+		: {text: 'OFF AIR', spoken: 'Live, off air'}
+}

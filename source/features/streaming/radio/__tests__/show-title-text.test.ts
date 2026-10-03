@@ -4,7 +4,7 @@ import type {EventType} from '@frogpond/event-type'
 
 import {formatCompactTimeRange} from '@frogpond/time-format'
 
-import {showTitleText} from '../player-view/show-title-text'
+import {airStatusText, showTitleText} from '../player-view/show-title-text'
 import {STATIONS} from '../stations'
 
 const SHOW: EventType = {
@@ -49,5 +49,20 @@ describe('showTitleText', () => {
 			title: '88.1 KRLX-FM',
 			subtitle: '',
 		})
+	})
+})
+
+describe('airStatusText', () => {
+	test('says ON AIR while a show is on', () => {
+		expect(airStatusText(SHOW, 'ready')).toStrictEqual({text: 'ON AIR', spoken: 'Live, on air'})
+	})
+
+	test('says OFF AIR when the schedule has no show on', () => {
+		expect(airStatusText(null, 'ready')).toStrictEqual({text: 'OFF AIR', spoken: 'Live, off air'})
+	})
+
+	test('says only that the stream is live while the schedule loads or fails', () => {
+		expect(airStatusText(null, 'loading')).toStrictEqual({text: 'LIVE', spoken: 'Live'})
+		expect(airStatusText(null, 'error')).toStrictEqual({text: 'LIVE', spoken: 'Live'})
 	})
 })
