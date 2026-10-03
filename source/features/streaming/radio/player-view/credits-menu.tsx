@@ -14,8 +14,14 @@ export function CreditsMenu(): React.ReactNode {
 	return (
 		<Host matchContents={true}>
 			<Menu
-				label={<Image color={palette.primary} systemName="info.circle" />}
-				modifiers={[accessibilityLabel('About these stations'), frame({width: 44, height: 44})]}
+				label={
+					<Image
+						color={palette.primary}
+						modifiers={[frame({width: 44, height: 44})]}
+						systemName="info.circle"
+					/>
+				}
+				modifiers={[accessibilityLabel('About these stations')]}
 			>
 				{radioCredits().map((credit) => (
 					<Button key={credit.url} label={credit.label} onPress={() => openUrl(credit.url)} />

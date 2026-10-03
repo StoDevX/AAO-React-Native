@@ -122,7 +122,7 @@ struct StreamingMediaScreen: Screen {
 		button.tap()
 		for credit in credits {
 			XCTAssertTrue(
-				app.menuItems[credit].waitForExistence(timeout: 10),
+				app.buttonLabelled(credit).waitForExistence(timeout: 10),
 				"The menu should list \"\(credit)\"")
 		}
 		return self
