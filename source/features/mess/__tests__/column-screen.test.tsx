@@ -89,18 +89,22 @@ describe('ColumnScreen', () => {
 	test("lists the column's stories, and opens one in the reader", async () => {
 		await renderColumn()
 
+		// A story's row leads into the reader, so it points nowhere.
+		expect(screen.queryByTestId('symbol-arrow.up.right')).not.toBeOnTheScreen()
 		await fireEvent.press(screen.getByRole('button', {name: 'Why is the Cage so loud?, Apr 29'}))
 
 		expect(mockNavigate).toHaveBeenCalledWith({pathname: '/messenger/story', params: {id: '36800'}})
 	})
 
-	test("opens a crossword's puzzle straight from its row when the list holds only crosswords", async () => {
+	test("opens a crossword's puzzle straight from its row", async () => {
 		useMessStore.setState({openedStories: []})
 		queryClient.setQueryData(messKeys.category(GOOD_QUESTIONS), onePage([CROSSWORD]))
 		await renderColumn()
 
-		// The row points out of the app, as any row that opens a page elsewhere does.
+		// The row points out of the app, as any row that opens a page elsewhere does, and with no
+		// photo of its own it shows the puzzle's kind.
 		expect(screen.getByTestId('symbol-arrow.up.right')).toBeOnTheScreen()
+		expect(screen.getByTestId('symbol-square.grid.3x3')).toBeOnTheScreen()
 		await fireEvent.press(screen.getByRole('link', {name: 'Crossword: Finals Week, Apr 29'}))
 
 		expect(openUrl).toHaveBeenCalledWith(
@@ -111,15 +115,25 @@ describe('ColumnScreen', () => {
 		expect(useMessStore.getState().openedStories).toStrictEqual([36900])
 	})
 
-	test('opens a crossword in the reader when the list holds other stories too', async () => {
-		queryClient.setQueryData(messKeys.category(GOOD_QUESTIONS), onePage([QUESTION, CROSSWORD]))
+	test('opens a puzzle from its row among other stories too', async () => {
+		let wordGame: MessStory = {
+			...CROSSWORD,
+			id: 37114,
+			title: 'Guess the hidden word',
+			column: 'Puzzle',
+			layout: {kind: 'puzzle', puzzle: {type: 'wordrow', id: '9d6dbf85', set: '1977'}},
+		}
+		queryClient.setQueryData(messKeys.category(GOOD_QUESTIONS), onePage([QUESTION, wordGame]))
 		await renderColumn()
 
-		expect(screen.queryByTestId('symbol-arrow.up.right')).not.toBeOnTheScreen()
-		await fireEvent.press(screen.getByRole('button', {name: 'Crossword: Finals Week, Apr 29'}))
+		expect(screen.getAllByTestId('symbol-arrow.up.right')).toHaveLength(1)
+		expect(screen.getByTestId('symbol-puzzlepiece')).toBeOnTheScreen()
+		await fireEvent.press(screen.getByRole('link', {name: 'Guess the hidden word, Apr 29'}))
 
-		expect(mockNavigate).toHaveBeenCalledWith({pathname: '/messenger/story', params: {id: '36900'}})
-		expect(openUrl).not.toHaveBeenCalled()
+		expect(openUrl).toHaveBeenCalledWith(
+			'https://puzzleme.amuselabs.com/pmm/wordrow?id=9d6dbf85&set=1977&embed=1',
+		)
+		expect(mockNavigate).not.toHaveBeenCalled()
 	})
 
 	test('says it loads once back online when offline with its stories not cached', async () => {

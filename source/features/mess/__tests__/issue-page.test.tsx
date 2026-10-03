@@ -3,6 +3,7 @@ import {afterEach, beforeEach, describe, expect, jest, test} from '@jest/globals
 import {act, fireEvent, render, screen, within} from '@testing-library/react-native'
 import {onlineManager, QueryClient, QueryClientProvider} from '@tanstack/react-query'
 import {fetchManifest, fetchSourceBody, type Jrd} from '@frogpond/data-sources'
+import {openUrl} from '@frogpond/open-url'
 
 import categoriesJson from './fixtures/categories.json'
 import posts from './fixtures/posts.json'
@@ -17,6 +18,7 @@ jest.mock('@frogpond/data-sources', () => ({
 	fetchManifest: jest.fn(),
 	fetchSourceBody: jest.fn(),
 }))
+jest.mock('@frogpond/open-url', () => ({openUrl: jest.fn()}))
 const mockNavigate = jest.fn()
 jest.mock('expo-router', () => ({
 	// oxlint-disable-next-line typescript/no-require-imports
@@ -264,6 +266,22 @@ describe('IssuePage', () => {
 			[{pathname: '/messenger/story', params: {id: '4'}}],
 			[{pathname: '/messenger/story', params: {id: '5'}}],
 		])
+	})
+
+	test("opens a crossword's card straight to its puzzle", async () => {
+		let crossword = story(6, 'Crossword: Finals Week', 'Variety', {
+			column: 'Crossword',
+			layout: {kind: 'puzzle', puzzle: {type: 'crossword', id: 'finals', set: 'olafmessenger'}},
+		})
+		queryClient.setQueryData(messKeys.issue(ISSUE), [...STORIES, crossword])
+		await renderIssue()
+
+		await fireEvent.press(screen.getByRole('button', {name: 'Crossword: Finals Week, Crossword'}))
+
+		expect(openUrl).toHaveBeenCalledWith(
+			'https://puzzleme.amuselabs.com/pmm/crossword?id=finals&set=olafmessenger&embed=1',
+		)
+		expect(mockNavigate).not.toHaveBeenCalled()
 	})
 
 	test("offers Try Again when the issue's stories fail, and lays them out once they load", async () => {

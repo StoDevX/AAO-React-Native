@@ -1,3 +1,4 @@
+import type {SFSymbol} from 'sf-symbols-typescript'
 import {cssSelect, parseHtml, removeElement, type AnyNode, type Element} from '@frogpond/html-lib'
 import type {Block, MessCategory, Puzzle} from '../types'
 import {blocksFromNodes} from './blocks'
@@ -51,6 +52,11 @@ export function puzzleUrl(puzzle: Puzzle, postUrl: string): string {
 	let id = encodeURIComponent(puzzle.id)
 	let set = encodeURIComponent(puzzle.set)
 	return `https://puzzleme.amuselabs.com/pmm/${puzzle.type}?id=${id}&set=${set}&embed=1`
+}
+
+/** The glyph for a puzzle's kind: a crossword's grid, or a puzzle piece for any other game. */
+export function puzzleIcon(puzzle: Puzzle): SFSymbol {
+	return puzzle.type === 'crossword' ? 'square.grid.3x3' : 'puzzlepiece'
 }
 
 /** What the button that opens a puzzle says. */

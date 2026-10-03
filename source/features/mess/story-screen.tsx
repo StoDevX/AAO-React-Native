@@ -12,7 +12,7 @@ import {ImageView} from './image-view'
 import {PAGE_MARGIN} from './mess-page'
 import {paper} from './palette'
 import {PlaylistView} from './playlist-view'
-import {puzzleLabel, puzzleUrl} from './lib/puzzle'
+import {puzzleIcon, puzzleLabel, puzzleUrl} from './lib/puzzle'
 import {RecipeView} from './recipe-view'
 import {PoemView} from './poem-view'
 import {QuietHeader} from './quiet-header'
@@ -147,7 +147,7 @@ function StoryBody({story, columnWidth, scrollTo}: StoryBodyProps): React.ReactN
 				{/* PuzzleMe's player opens in the browser sheet, which keeps a half-solved puzzle's
 				    progress between visits. */}
 				<SiteLinkCard
-					icon="square.grid.3x3"
+					icon={puzzleIcon(layout.puzzle)}
 					identifier={PUZZLE_SOLVE_ID}
 					label={puzzleLabel(layout.puzzle)}
 					prominent={true}

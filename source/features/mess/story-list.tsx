@@ -1,8 +1,9 @@
 import * as React from 'react'
-import {Button, Divider, HStack, Rectangle, Spacer, Text, VStack} from '@expo/ui/swift-ui'
+import {Button, Divider, HStack, Image, Rectangle, Spacer, Text, VStack} from '@expo/ui/swift-ui'
 import {
 	accessibilityIdentifier,
 	accessibilityLabel,
+	background,
 	buttonStyle,
 	contentShape,
 	font,
@@ -16,17 +17,15 @@ import {
 	type InfiniteData,
 	type UseInfiniteQueryResult,
 } from '@tanstack/react-query'
-import {openUrl} from '@frogpond/open-url'
 import {destinationTraits, RowAccessory} from '../../components/rows'
 import {creditLine} from './lib/byline'
-import {puzzleUrl} from './lib/puzzle'
+import {puzzleIcon} from './lib/puzzle'
 import {TAP_TARGET} from './lib/glyph-grid'
 import {NextPageRow} from './next-page-row'
 import {PageLoading, PageNotice} from './page-notice'
 import {faded, ink, wash} from './palette'
 import {messCategoryOptions} from './query'
 import {RemotePhoto} from './remote-photo'
-import {useMessStore} from './store'
 import type {MessStory} from './types'
 import {useOpenStory} from './use-open-story'
 
@@ -38,6 +37,13 @@ const THUMBNAIL = 56
 const ROW = [frame({minHeight: TAP_TARGET}), contentShape(shapes.rectangle())]
 /** Where a story has no photo, a tinted square keeps the rows even. */
 const BLANK = [foregroundStyle(wash), frame({width: THUMBNAIL, height: THUMBNAIL})]
+/** A puzzle's tinted square carries a glyph for its kind, since puzzles have no photo. */
+const PUZZLE_GLYPH = [
+	font({textStyle: 'title2'}),
+	foregroundStyle(faded),
+	frame({width: THUMBNAIL, height: THUMBNAIL}),
+	background(wash),
+]
 const HEADLINE = [
 	font({textStyle: 'headline', design: 'serif'}),
 	foregroundStyle(ink),
@@ -46,16 +52,13 @@ const HEADLINE = [
 const CREDIT = [font({textStyle: 'caption'}), foregroundStyle(faded)]
 const EMPTY = [font({textStyle: 'callout'}), foregroundStyle(faded)]
 
-type StoryRowProps = {
-	story: MessStory
-	onPress: () => void
-	/** Whether the tap opens a page outside the app, which the row then points to as a row does */
-	external: boolean
-}
-
-/** A story in a list: its photo or a tinted square, its headline, then its writers and date. */
-function StoryRow({story, onPress, external}: StoryRowProps): React.ReactNode {
+/**
+ * A story in a list: its photo or a tinted square, its headline, then its writers and date. A
+ * puzzle, which opens its game rather than the reader, points out of the app as a row does.
+ */
+function StoryRow({story, onPress}: {story: MessStory; onPress: () => void}): React.ReactNode {
 	let credit = creditLine(story, 'short')
+	let external = story.layout.kind === 'puzzle'
 	return (
 		<Button
 			modifiers={[
@@ -71,6 +74,8 @@ function StoryRow({story, onPress, external}: StoryRowProps): React.ReactNode {
 				<HStack alignment="top" spacing={12}>
 					{story.photo ? (
 						<RemotePhoto height={THUMBNAIL} url={story.photo.url} width={THUMBNAIL} />
+					) : story.layout.kind === 'puzzle' ? (
+						<Image modifiers={PUZZLE_GLYPH} systemName={puzzleIcon(story.layout.puzzle)} />
 					) : (
 						<Rectangle modifiers={BLANK} />
 					)}
@@ -87,28 +92,13 @@ function StoryRow({story, onPress, external}: StoryRowProps): React.ReactNode {
 	)
 }
 
-/**
- * Stories as rows, each opening in the reader; returned side by side to land in the page's column.
- * A list of nothing but puzzles, as the Crossword and Puzzle columns are, opens each puzzle from
- * its row, since solving it is all a puzzle's page is for.
- */
+/** Stories as rows, each opening in the reader; returned side by side to land in the page's column. */
 export function StoryRows({stories}: {stories: MessStory[]}): React.ReactNode {
 	let open = useOpenStory()
-	let recordOpened = useMessStore((state) => state.recordOpened)
 	if (stories.length === 0) return <Text modifiers={EMPTY}>No stories yet</Text>
-	let onlyPuzzles = stories.every((story) => story.layout.kind === 'puzzle')
-	let press = (story: MessStory) => {
-		if (onlyPuzzles && story.layout.kind === 'puzzle') {
-			// The reader's page would have counted it towards its issue's stains.
-			recordOpened(story.id)
-			openUrl(puzzleUrl(story.layout.puzzle, story.link))
-		} else {
-			open(story)
-		}
-	}
 	return stories.map((story) => (
 		<VStack alignment="leading" key={story.id} spacing={10}>
-			<StoryRow external={onlyPuzzles} onPress={() => press(story)} story={story} />
+			<StoryRow onPress={() => open(story)} story={story} />
 			<Divider />
 		</VStack>
 	))

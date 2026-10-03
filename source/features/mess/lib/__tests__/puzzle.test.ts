@@ -1,6 +1,6 @@
 import {describe, expect, it} from '@jest/globals'
 import fixtures from '../../__tests__/fixtures/crossword-playlist-posts.json'
-import {crosswordColumnId, parsePuzzle, puzzleLabel, puzzleUrl} from '../puzzle'
+import {crosswordColumnId, parsePuzzle, puzzleIcon, puzzleLabel, puzzleUrl} from '../puzzle'
 
 const html = (id: number) => fixtures.find((p) => p.id === id)?.content.rendered ?? ''
 
@@ -107,6 +107,16 @@ describe('puzzleUrl', () => {
 	// Amuse Labs adds games; one whose player we have not found opens where the site's script draws it.
 	it("opens the post's own page for a kind of puzzle with no known player", () => {
 		expect(puzzleUrl({type: 'spiral', id: 'a1', set: 'b2'}, POST)).toBe(POST)
+	})
+})
+
+describe('puzzleIcon', () => {
+	it('draws a crossword as its grid', () => {
+		expect(puzzleIcon({type: 'crossword', id: 'a1', set: 'b2'})).toBe('square.grid.3x3')
+	})
+
+	it('draws any other kind as a puzzle piece', () => {
+		expect(puzzleIcon({type: 'wordrow', id: 'a1', set: 'b2'})).toBe('puzzlepiece')
 	})
 })
 

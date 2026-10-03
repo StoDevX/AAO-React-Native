@@ -161,7 +161,7 @@ class ModuleNewsTests: UITestCaseUnbooted {
 			.solveFirstCrossword()
 	}
 
-	/// A crossword's own page, reached from a list of other stories too, still offers its puzzle.
+	/// A crossword's own page, reached by a link to the post, still offers its puzzle.
 	func testCrosswordPageOpensThePuzzleInTheBrowser() throws {
 		MessStoryScreen(app: app)
 			.navigate(to: TestIdentifiers.News.crosswordStoryRoute)
