@@ -1,6 +1,7 @@
 import * as React from 'react'
-import {StyleSheet, Text, View} from 'react-native'
+import {StyleSheet, View} from 'react-native'
 import {isChaos} from '@frogpond/launch-arguments'
+import {describeError, NoticeView} from '@frogpond/notice'
 
 import {reportFinding, useChaosFindings} from './findings'
 import {BEACON_ID, BEACON_QUIET, FATAL_BOUNDARY_ID} from './identifiers'
@@ -19,7 +20,7 @@ function ChaosBeacon(): React.ReactNode {
 	)
 }
 
-type BoundaryState = {failed: boolean}
+type BoundaryState = {error: unknown; failed: boolean}
 
 /**
  * Catches a render error under chaos and reports it. Without this a render
@@ -27,10 +28,10 @@ type BoundaryState = {failed: boolean}
  * it into a crash with no message.
  */
 class FatalBoundary extends React.Component<{children: React.ReactNode}, BoundaryState> {
-	state: BoundaryState = {failed: false}
+	state: BoundaryState = {error: null, failed: false}
 
-	static getDerivedStateFromError(): BoundaryState {
-		return {failed: true}
+	static getDerivedStateFromError(error: unknown): BoundaryState {
+		return {error, failed: true}
 	}
 
 	componentDidCatch(error: unknown): void {
@@ -38,8 +39,17 @@ class FatalBoundary extends React.Component<{children: React.ReactNode}, Boundar
 	}
 
 	render(): React.ReactNode {
+		// The error's own message, so a chaos run's screenshot says what broke.
 		if (this.state.failed) {
-			return <Text testID={FATAL_BOUNDARY_ID}>A chaos run hit a render error.</Text>
+			return (
+				<View style={styles.fallback} testID={FATAL_BOUNDARY_ID}>
+					<NoticeView
+						description={describeError(this.state.error)}
+						systemImage="exclamationmark.triangle"
+						title="Render Error"
+					/>
+				</View>
+			)
 		}
 		return this.props.children
 	}
@@ -71,4 +81,5 @@ const styles = StyleSheet.create({
 	// notice. Not fully transparent: iOS leaves a view with opacity 0 out of
 	// the accessibility tree, so XCUITest could not read it.
 	beacon: {position: 'absolute', top: 0, left: 0, width: 1, height: 1, opacity: 0.02},
+	fallback: {flex: 1},
 })

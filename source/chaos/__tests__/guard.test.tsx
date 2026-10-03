@@ -45,6 +45,8 @@ test('catches a render error, reports it, and keeps the beacon', async () => {
 		</ChaosGuardFor>,
 	)
 	expect(screen.getByTestId('chaos.fatal-boundary')).toBeTruthy()
+	expect(screen.getByText('Render Error')).toBeTruthy()
+	expect(screen.getByText('render failed')).toBeTruthy()
 	expect(screen.getByTestId('chaos.findings').props.accessibilityLabel).toBe('fatal: render failed')
 	expect(logged).toHaveBeenCalledTimes(1)
 	expect(logged).toHaveBeenCalledWith(
