@@ -21,13 +21,12 @@ import {
 	presentationDetents,
 	presentationDragIndicator,
 } from '@expo/ui/swift-ui/modifiers'
-import {useRouter} from 'expo-router'
 import {scheduleCalendarOptions, ScheduleView} from '@frogpond/ccc-calendar'
-import {eventKey} from '@frogpond/event-list'
 import type {EventType} from '@frogpond/event-type'
 import {useQuery} from '@tanstack/react-query'
 
 import {eventMapper} from './constants'
+import {ScheduleEventSheet} from './schedule-event-sheet'
 import {STATIONS} from './stations'
 import {useRadioStore} from './store'
 
@@ -42,24 +41,16 @@ const TITLE_INSET = 20
 export function FullScheduleSheet(): React.ReactNode {
 	let open = useRadioStore((state) => state.fullScheduleOpen)
 	let closeFullSchedule = useRadioStore((state) => state.closeFullSchedule)
-	let closeSheet = useRadioStore((state) => state.closeSheet)
 	let station = STATIONS[useRadioStore((state) => state.viewedStationId)]
 	let calendar = station.scheduleHref === '/ksto-schedule' ? 'ksto-schedule' : 'krlx-schedule'
 	let query = useQuery({...scheduleCalendarOptions(calendar, {eventMapper}), enabled: open})
-	let router = useRouter()
-
-	// An event's page is a screen, which opens beneath both sheets, so they
-	// go to let it be seen.
-	let onPressEvent = React.useCallback(
-		(event: EventType) => {
-			closeSheet()
-			router.navigate({
-				pathname: '/calendar/event',
-				params: {source: calendar, eventKey: eventKey(event)},
-			})
-		},
-		[calendar, closeSheet, router],
-	)
+	// The event is kept past its sheet's closing, so it does not empty while sliding away.
+	let [event, setEvent] = React.useState<EventType | null>(null)
+	let [eventOpen, setEventOpen] = React.useState(false)
+	let showEvent = React.useCallback((shown: EventType) => {
+		setEvent(shown)
+		setEventOpen(true)
+	}, [])
 
 	return (
 		<Host pointerEvents="none" style={styles.host}>
@@ -69,6 +60,10 @@ export function FullScheduleSheet(): React.ReactNode {
 					if (!presented) {
 						closeFullSchedule()
 					}
+				}}
+				onDismiss={() => {
+					setEvent(null)
+					setEventOpen(false)
 				}}
 			>
 				<Group modifiers={[presentationDetents(['large']), presentationDragIndicator('visible')]}>
@@ -91,9 +86,15 @@ export function FullScheduleSheet(): React.ReactNode {
 						</HStack>
 						<RNHostView>
 							<View style={styles.list}>
-								<ScheduleView onPressEvent={onPressEvent} query={query} />
+								<ScheduleView onPressEvent={showEvent} query={query} />
 							</View>
 						</RNHostView>
+						<ScheduleEventSheet
+							event={event}
+							isPresented={eventOpen}
+							onClose={() => setEventOpen(false)}
+							station={station}
+						/>
 					</VStack>
 				</Group>
 			</BottomSheet>
