@@ -9,7 +9,7 @@ import {
 	presentationDragIndicator,
 } from '@expo/ui/swift-ui/modifiers'
 
-import {FullLayout, tintGradient, useFitOrScroll, useLogoCycle} from './player-view'
+import {FullLayout, tintGradient, useFitOrScroll, useLogoCycle, useScratchHold} from './player-view'
 import {STATIONS} from './stations'
 import {useRadioStore} from './store'
 
@@ -24,9 +24,9 @@ export function RadioNowPlayingSheet(): React.ReactNode {
 	let [showingSchedule, setShowingSchedule] = React.useState(false)
 	// Locked, the sheet holds open and the record can be scratched.
 	let [locked, setLocked] = React.useState(false)
-	// A finger on the record: the scroll view must not take a scratch that
-	// drifts vertically.
-	let [held, setHeld] = React.useState(false)
+	// Scroll and swipe-to-close stay off around a scratch, which they would
+	// otherwise take.
+	let {held, onHeldChange} = useScratchHold(open)
 	let station = STATIONS[viewed]
 	let {logo, showNextLogo} = useLogoCycle(station)
 	let fit = useFitOrScroll()
@@ -47,14 +47,13 @@ export function RadioNowPlayingSheet(): React.ReactNode {
 				onDismiss={() => {
 					setShowingSchedule(false)
 					setLocked(false)
-					setHeld(false)
 				}}
 			>
 				<Group
 					modifiers={[
 						presentationDetents(['large']),
 						presentationDragIndicator(locked ? 'hidden' : 'visible'),
-						interactiveDismissDisabled(locked),
+						interactiveDismissDisabled(locked || held),
 					]}
 				>
 					<ZStack>
@@ -72,7 +71,7 @@ export function RadioNowPlayingSheet(): React.ReactNode {
 									logo={logo}
 									onToggleSchedule={() => setShowingSchedule((on) => !on)}
 									locked={locked}
-									onHeldChange={setHeld}
+									onHeldChange={onHeldChange}
 									onToggleLock={() => setLocked((on) => !on)}
 									viewportHeight={fit.viewport}
 									showNextLogo={showNextLogo}
