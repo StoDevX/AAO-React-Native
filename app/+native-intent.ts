@@ -8,6 +8,8 @@ import {router} from 'expo-router'
  */
 export function redirectSystemPath({path, initial}: {path: string; initial: boolean}): string {
 	if (!initial && router.canDismiss()) {
+		// Guarded by canDismiss, and closing every sheet at once is the point; goBack() would close one.
+		// oxlint-disable-next-line no-restricted-properties
 		router.dismissAll()
 	}
 	return path
