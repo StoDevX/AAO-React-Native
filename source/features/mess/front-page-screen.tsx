@@ -52,7 +52,7 @@ function ViewMenu({
 				icon="paintbrush"
 				onPress={onCustomize}
 			/>
-			<Stack.Toolbar.Menu accessibilityLabel={`View: ${VIEW_NAMES[view.mode]}`} icon="newspaper">
+			<Stack.Toolbar.Menu accessibilityLabel={`View: ${VIEW_NAMES[view.mode]}`} icon="ellipsis">
 				<Stack.Toolbar.Menu inline={true} title="View">
 					<Stack.Toolbar.MenuAction
 						isOn={view.mode === 'issues'}
