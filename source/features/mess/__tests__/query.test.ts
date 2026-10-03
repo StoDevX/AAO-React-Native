@@ -9,12 +9,14 @@ import varietyPosts from './fixtures/variety-posts.json'
 import crosswordPlaylist from './fixtures/crossword-playlist-posts.json'
 import springPosts from './fixtures/issue-posts.json'
 import galleryMedia from './fixtures/gallery-media-36238.json'
+import aboutPage from './fixtures/about-page.json'
 import {parseLightPosts} from '../lib/issues'
 import {parseMessCategories, parseMessPosts} from '../lib/posts'
 import {QueryClient, onlineManager} from '@tanstack/react-query'
 import {queryClient} from '../../../init/tanstack-query'
 import {
 	MissingMessStoryError,
+	messAboutOptions,
 	messCategoryOptions,
 	messFeedOptions,
 	messGalleryOptions,
@@ -161,6 +163,20 @@ describe('messFeedOptions', () => {
 
 	test('saves only its first page for the next launch', () => {
 		expect(messFeedOptions.meta).toStrictEqual({persistPages: 1})
+	})
+})
+
+describe('messAboutOptions', () => {
+	test('asks for the page with the about slug and reads its sections', async () => {
+		mockManifest.mockResolvedValue({links: []} as unknown as Jrd)
+		mockBody.mockResolvedValue(aboutPage)
+
+		let sections = await run<{title: string}[]>(messAboutOptions)
+
+		expect(sections.map((section) => section.title)).toContain('Submission Policy')
+		expect(fetchedHrefs()).toStrictEqual([
+			'https://olafmessenger.com/wp-json/wp/v2/pages?slug=about&_fields=content',
+		])
 	})
 })
 
