@@ -35,7 +35,8 @@ struct TileImageKey: Hashable {
 		self.photoUrl = photoUrl
 		stains = content.stains.map { [$0.x, $0.y, $0.radius, $0.rotation, $0.arcStart, $0.arcLength] }
 		stainKind = content.stainKind.rawValue
-		photoTone = content.photoTone.rawValue
+		// A tile with no photo draws the same under every tone, so the tone only keys a photo.
+		photoTone = content.hasPhoto && photoUrl != nil ? content.photoTone.rawValue : ""
 		layout = content.layout.rawValue
 		paragraphs = content.paragraphs
 		handling = [content.sheet.tilt, content.sheet.edgeSeed, content.sheet.bend]

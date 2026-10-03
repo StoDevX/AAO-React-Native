@@ -43,7 +43,7 @@ export type SheetShape = {
 /** What an issue's tile shows for the stories read: coffee rings, tea rings, or nothing. */
 export type StainKind = 'coffee' | 'tea' | 'none'
 
-/** How a tile tints its lead photo: by the appearance, in full colour, or in sepia. */
+/** How a tile tints its lead photo: by the appearance, in Light Mode's tone in both appearances, or in sepia. */
 export type PhotoTone = 'auto' | 'color' | 'sepia'
 
 /** A grid tile, or the top tile laid out for a tall or a wide window. */
