@@ -41,7 +41,11 @@ export function StoPrintLoginForm(): React.ReactNode {
 	let signIn = useMutation({
 		mutationFn: async () => {
 			await logIn({username, password}, {})
-			await storeCredentials({username, password})
+			try {
+				await storeCredentials({username, password})
+			} catch {
+				throw new Error('Signed in, but could not save your login to the keychain. Try again.')
+			}
 		},
 		onSuccess: () => invalidateCredentials(),
 	})
