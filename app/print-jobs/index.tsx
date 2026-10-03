@@ -9,12 +9,16 @@ import {STOPRINT_HELP_PAGE, isStoprintMocked} from '../../source/lib/stoprint'
 import {LoadingView} from '@frogpond/notice'
 import {DisclosureRow} from '../../source/components/rows'
 import {openUrl} from '@frogpond/open-url'
-import {StoPrintErrorView, StoPrintNoticeView} from '../../source/features/stoprint/components'
+import {
+	StoPrintErrorView,
+	StoPrintLoginForm,
+	StoPrintNoticeView,
+} from '../../source/features/stoprint/components'
 import {getTimeRemaining, printJobsGate, stoprintUsername} from '../../source/features/stoprint/lib'
 import {Stack, useRouter} from 'expo-router'
 import {useMomentTimer} from '@frogpond/timer'
 import {printJobsOptions} from '../../source/features/stoprint/query'
-import {credentialsOptions} from '../../source/lib/login'
+import {credentialsOptions, invalidateCredentials, resetCredentials} from '../../source/lib/login'
 import {useQuery} from '@tanstack/react-query'
 import {groupBy, sortBy} from '@frogpond/collections'
 
@@ -35,7 +39,6 @@ function PrintJobsView(): React.ReactNode {
 	} = useQuery(printJobsOptions(username))
 
 	let router = useRouter()
-	let openSettings = () => router.navigate('/settings')
 
 	let handleJobPress = (job: PrintJob) => {
 		let jobId = job.id.toString()
@@ -57,14 +60,7 @@ function PrintJobsView(): React.ReactNode {
 	}
 
 	if (gate === 'signed-out') {
-		return (
-			<StoPrintNoticeView
-				buttonText="Open Settings"
-				header="You are not logged in"
-				onPress={openSettings}
-				text="You must be logged in to your St. Olaf account to access this feature"
-			/>
-		)
+		return <StoPrintLoginForm />
 	}
 
 	if (jobsIsError && jobsError instanceof Error) {
@@ -139,10 +135,26 @@ const styles = StyleSheet.create({
 	},
 })
 
+async function signOut(): Promise<void> {
+	await resetCredentials()
+	await invalidateCredentials()
+}
+
 export default function PrintJobsPage(): React.ReactNode {
+	let {data: credentials} = useQuery(credentialsOptions)
+
 	return (
 		<>
 			<Stack.Title>Print Jobs</Stack.Title>
+			{credentials ? (
+				<Stack.Toolbar placement="right">
+					<Stack.Toolbar.Button
+						accessibilityLabel="Sign out of St. Olaf"
+						icon="rectangle.portrait.and.arrow.right"
+						onPress={() => void signOut()}
+					/>
+				</Stack.Toolbar>
+			) : null}
 			<PrintJobsView />
 		</>
 	)

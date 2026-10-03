@@ -33,8 +33,6 @@ faqs:
       - Balances
       # the same screen, under its name in app versions already installed
       - SIS
-      - Settings
-      - SettingsRoot
     severity: alert
     icon: exclamationmark.circle
     backgroundColor: '#fef3f2'
