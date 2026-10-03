@@ -212,7 +212,7 @@ describe('FrontPageScreen', () => {
 			saveChoice(view)
 			await renderScreen()
 
-			await fireEvent.press(menuItem('About the Messenger'))
+			await fireEvent.press(menuItem('About'))
 
 			expect(mockNavigate).toHaveBeenCalledWith('/messenger/about')
 			// The About page is not a view, so choosing it leaves the view as it was.

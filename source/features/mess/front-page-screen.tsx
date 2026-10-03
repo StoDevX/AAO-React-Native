@@ -79,9 +79,7 @@ function ViewMenu({
 				) : null}
 				{/* Its own inline group, so the menu draws a divider between the views and it */}
 				<Stack.Toolbar.Menu inline={true}>
-					<Stack.Toolbar.MenuAction icon="info.circle" onPress={onOpenAbout}>
-						About the Messenger
-					</Stack.Toolbar.MenuAction>
+					<Stack.Toolbar.MenuAction onPress={onOpenAbout}>About</Stack.Toolbar.MenuAction>
 				</Stack.Toolbar.Menu>
 			</Stack.Toolbar.Menu>
 		</Stack.Toolbar>
