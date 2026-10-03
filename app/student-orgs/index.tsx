@@ -171,6 +171,11 @@ const CATEGORY_LIST_ID = 'student-orgs-category-list'
 /// spoken label, which ends in the org count.
 const CATEGORY_ROW_ID_PREFIX = 'student-orgs-category:'
 
+/// Enough that no category name is cut off at any text size: the longest,
+/// "Student-Led Campus Organizations", wraps to five lines at AX5. The names
+/// are a short curated set, so a long one cannot crowd the list.
+const CATEGORY_NAME_LINES = 5
+
 type LandingProps = {
 	categories: CategoryRowData[]
 	onSelectCategory: (category: string) => void
@@ -206,7 +211,7 @@ function StudentOrgsLanding({
 							image={{systemName: category.icon, gradient: category.gradient}}
 							onPress={() => onSelectCategory(category.name)}
 							title={category.name}
-							titleLines={2}
+							titleLines={CATEGORY_NAME_LINES}
 						/>
 					))}
 				</Section>
