@@ -1,6 +1,5 @@
 import * as React from 'react'
 import {StyleSheet, ScrollView, useWindowDimensions, RefreshControl} from 'react-native'
-import {Stack} from 'expo-router'
 import {Column} from '@frogpond/layout'
 import {partitionByIndex} from '../../source/lib/partition-by-index'
 import {StreamThumbnail} from '../../source/features/streaming/webcams/thumbnail'
@@ -9,7 +8,7 @@ import {useQuery} from '@tanstack/react-query'
 import {LoadErrorView, LoadingView} from '@frogpond/notice'
 import {SafeAreaView, useSafeAreaInsets} from 'react-native-safe-area-context'
 
-function WebcamsView(): React.ReactNode {
+export default function WebcamsPage(): React.ReactNode {
 	let viewport = useWindowDimensions()
 	let insets = useSafeAreaInsets()
 	let {
@@ -67,12 +66,3 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 	},
 })
-
-export default function WebcamsPage(): React.ReactNode {
-	return (
-		<>
-			<Stack.Title>Webcams</Stack.Title>
-			<WebcamsView />
-		</>
-	)
-}

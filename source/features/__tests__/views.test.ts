@@ -38,37 +38,128 @@ describe('the views registry', () => {
 describe('TiledViews', () => {
 	// The tiled home is today's: one Menus tile and one Streaming Media tile,
 	// which tab between their cafes and stations, and none of the tiles the
-	// grouped home adds.
+	// grouped home adds. Written out in full so a change to a grouped tile that
+	// the tiled home inherits shows up here.
 	test('are the tiles the home screen has always had, in their order', () => {
-		expect(TiledViews().map((view) => view.title)).toEqual([
-			'Menus',
-			'Balances',
-			'Balances',
-			'Hours',
-			'Calendar',
-			'Directory',
-			'Streaming Media',
-			'Olaf Messenger',
-			'Map',
-			'Transit',
-			'Dictionary',
-			'Student Orgs',
-			'More',
-			'stoPrint',
-			'Course Catalog',
-			'Student Work',
-			'St. Olaf News',
-			'Athletics',
-			'Carleton Campus',
+		let tiles = TiledViews().map((view) => ({
+			title: view.title,
+			icon: view.icon,
+			target: view.type === 'view' ? view.view : view.url,
+			devOnly: view.devOnly ?? false,
+			disabled: view.disabled ?? false,
+		}))
+
+		expect(tiles).toEqual([
+			{title: 'Menus', icon: 'fork.knife', target: '/menus', devOnly: false, disabled: false},
+			{
+				title: 'Balances',
+				icon: 'arrow.up.right',
+				target: 'https://sis.stolaf.edu/sis/index.cfm',
+				devOnly: false,
+				disabled: false,
+			},
+			{
+				title: 'Balances',
+				icon: 'person.text.rectangle.fill',
+				target: '/balances',
+				devOnly: false,
+				disabled: true,
+			},
+			{title: 'Hours', icon: 'clock.fill', target: '/hours', devOnly: false, disabled: false},
+			{title: 'Calendar', icon: 'calendar', target: '/calendar', devOnly: false, disabled: false},
+			{
+				title: 'Directory',
+				icon: 'person.crop.rectangle.fill',
+				target: '/directory',
+				devOnly: false,
+				disabled: false,
+			},
+			{
+				title: 'Streaming Media',
+				icon: 'play.rectangle.fill',
+				target: '/streaming-media',
+				devOnly: false,
+				disabled: false,
+			},
+			{
+				title: 'Olaf Messenger',
+				icon: 'olaf-messenger',
+				target: '/messenger',
+				devOnly: false,
+				disabled: false,
+			},
+			{
+				title: 'Map',
+				icon: 'map.fill',
+				target: '/map?campus=stolaf',
+				devOnly: false,
+				disabled: false,
+			},
+			{title: 'Transit', icon: 'bus.fill', target: '/transit', devOnly: false, disabled: false},
+			{
+				title: 'Dictionary',
+				icon: 'character.book.closed.fill',
+				target: '/dictionary',
+				devOnly: false,
+				disabled: false,
+			},
+			{
+				title: 'Student Orgs',
+				icon: 'person.3.fill',
+				target: '/student-orgs',
+				devOnly: false,
+				disabled: false,
+			},
+			{
+				title: 'More',
+				icon: 'ellipsis.circle.fill',
+				target: '/more',
+				devOnly: false,
+				disabled: false,
+			},
+			{
+				title: 'stoPrint',
+				icon: 'printer.fill',
+				target: '/print-jobs',
+				devOnly: false,
+				disabled: false,
+			},
+			{
+				title: 'Course Catalog',
+				icon: 'graduationcap.fill',
+				target: '/course-search',
+				devOnly: false,
+				disabled: false,
+			},
+			{
+				title: 'Student Work',
+				icon: 'briefcase.fill',
+				target: '/student-work',
+				devOnly: false,
+				disabled: false,
+			},
+			{
+				title: 'St. Olaf News',
+				icon: 'megaphone.fill',
+				target: '/st-olaf-news',
+				devOnly: false,
+				disabled: false,
+			},
+			{
+				title: 'Athletics',
+				icon: 'trophy.fill',
+				target: '/athletics',
+				devOnly: true,
+				disabled: false,
+			},
+			{
+				title: 'Carleton Campus',
+				icon: 'building.2.fill',
+				target: '/hours?campus=carleton',
+				devOnly: true,
+				disabled: false,
+			},
 		])
-	})
-
-	test('keep Athletics and Carleton Campus to dev mode', () => {
-		let devOnly = TiledViews()
-			.filter((view) => view.devOnly)
-			.map((view) => view.title)
-
-		expect(devOnly).toEqual(['Athletics', 'Carleton Campus'])
 	})
 })
 

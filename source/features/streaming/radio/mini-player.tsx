@@ -150,8 +150,15 @@ function IdleMiniPlayer(): React.ReactNode {
  * it: Music's accessory, a capsule of liquid glass, stretched the full width.
  * The screen keeps its content `NOW_PLAYING_BAR_CLEARANCE` clear of the
  * bottom safe area so the bar never covers the last of it.
+ *
+ * Shown only while Home's rule says so, unless `alwaysVisible`: the radio's own
+ * screen shows it whether or not Home does.
  */
-export function RadioNowPlayingBar(): React.ReactNode {
+export function RadioNowPlayingBar({
+	alwaysVisible = false,
+}: {
+	alwaysVisible?: boolean
+}): React.ReactNode {
 	let insets = useSafeAreaInsets()
 	let visible = useRadioBarVisible()
 	let placement = {
@@ -160,7 +167,7 @@ export function RadioNowPlayingBar(): React.ReactNode {
 		bottom: Math.max(insets.bottom - BAR_SAFE_AREA_OVERLAP, BAR_MINIMUM_BOTTOM),
 	}
 
-	if (!visible) {
+	if (!visible && !alwaysVisible) {
 		return null
 	}
 

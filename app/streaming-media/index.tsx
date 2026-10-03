@@ -1,6 +1,5 @@
 import * as React from 'react'
 import {StyleSheet} from 'react-native'
-import {Stack} from 'expo-router'
 import {ContentUnavailableView, Host, List, Section} from '@expo/ui/swift-ui'
 import {listStyle, refreshable} from '@expo/ui/swift-ui/modifiers'
 import * as c from '@frogpond/colors'
@@ -66,7 +65,7 @@ const filterStreams = <S extends StreamType, T extends object>(
 	return streams.filter((stream) => enabledCategories.includes(stream.category))
 }
 
-function StreamsView(): React.ReactNode {
+export default function StreamingPage(): React.ReactNode {
 	let {data = [], error, refetch, isLoading, isError} = useQuery(streamsOptionsFor())
 
 	// Only the narrowing the user asked for is state; the categories on offer
@@ -170,15 +169,6 @@ function StreamsView(): React.ReactNode {
 					)}
 				</List>
 			</Host>
-		</>
-	)
-}
-
-export default function StreamingPage(): React.ReactNode {
-	return (
-		<>
-			<Stack.Title>Streams</Stack.Title>
-			<StreamsView />
 		</>
 	)
 }

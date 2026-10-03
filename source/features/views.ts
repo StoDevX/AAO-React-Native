@@ -100,7 +100,7 @@ export const AllViews = (): Array<HomeView> => {
 		// Eat
 		{
 			type: 'view',
-			view: '/menus',
+			view: '/cafes/stav-hall',
 			id: 'stav-hall',
 			title: 'Stav Hall',
 			icon: 'fork.knife',
@@ -109,7 +109,7 @@ export const AllViews = (): Array<HomeView> => {
 		},
 		{
 			type: 'view',
-			view: '/menus/the-cage',
+			view: '/cafes/the-cage',
 			id: 'the-cage',
 			title: 'The Cage',
 			icon: 'cup.and.saucer.fill',
@@ -118,7 +118,7 @@ export const AllViews = (): Array<HomeView> => {
 		},
 		{
 			type: 'view',
-			view: '/menus/the-pause',
+			view: '/cafes/the-pause',
 			id: 'the-pause',
 			title: 'The Pause',
 			icon: 'pawprint.fill',
@@ -141,7 +141,7 @@ export const AllViews = (): Array<HomeView> => {
 			view: '/balances',
 			id: 'balances-screen',
 			title: 'Balances',
-			icon: 'creditcard.fill',
+			icon: 'person.text.rectangle.fill',
 			gradient: c.goldGradient,
 			group: 'eat',
 			disabled: true,
@@ -256,7 +256,7 @@ export const AllViews = (): Array<HomeView> => {
 		// Listen & watch
 		{
 			type: 'view',
-			view: '/streaming-media',
+			view: '/streams',
 			id: 'streams',
 			title: 'Streams',
 			icon: 'play.rectangle.fill',
@@ -265,7 +265,7 @@ export const AllViews = (): Array<HomeView> => {
 		},
 		{
 			type: 'view',
-			view: '/streaming-media/webcams',
+			view: '/webcams',
 			id: 'webcams',
 			title: 'Webcams',
 			icon: 'web.camera.fill',
@@ -335,9 +335,9 @@ export const AllViews = (): Array<HomeView> => {
 		{
 			type: 'view',
 			view: '/more',
-			id: 'a-to-z',
-			title: 'A–Z',
-			icon: 'list.bullet.rectangle.fill',
+			id: 'more',
+			title: 'More',
+			icon: 'ellipsis.circle.fill',
 			gradient: c.mintGradient,
 			group: 'campus-communications',
 		},
@@ -373,8 +373,13 @@ export type HomeSection = HomeGroup & {views: HomeView[]}
  * left with nothing to show -- Dev outside dev mode -- is dropped rather than
  * drawn as an empty header.
  */
+/** The views to draw: not disabled, and not for dev mode alone unless it is on. */
+export function visibleViews<V extends ViewType>(views: V[], {isDev}: {isDev: boolean}): V[] {
+	return views.filter((view) => !view.disabled && (isDev || !view.devOnly))
+}
+
 export function homeSections(views: HomeView[], {isDev}: {isDev: boolean}): HomeSection[] {
-	let shown = views.filter((view) => !view.disabled && (isDev || !view.devOnly))
+	let shown = visibleViews(views, {isDev})
 	return HOME_GROUPS.map((group) => ({
 		...group,
 		views: shown.filter((view) => view.group === group.id),
@@ -382,11 +387,22 @@ export function homeSections(views: HomeView[], {isDev}: {isDev: boolean}): Home
 }
 
 /**
- * The tiles of the tiled home: today's one flat grid, in its order. Menus and
- * Streaming Media are one tile each there, opening screens that tab between
- * their cafes and stations; the grouped home gives each its own tile.
+ * The tiles of the tiled home: today's one flat grid, in its order. It is the
+ * grouped home's own tiles, less the ones that split a screen -- Menus and
+ * Streaming Media are one tile each here, opening screens that tab between
+ * their cafes and stations -- and with Athletics held back for dev mode, as it
+ * always was.
  */
 export const TiledViews = (): Array<ViewType> => {
+	let grouped = AllViews()
+	let tile = (id: string): ViewType => {
+		let view = grouped.find((candidate) => candidate.id === id)
+		if (!view) {
+			throw new Error(`no home view with id ${id}`)
+		}
+		return view
+	}
+
 	return [
 		{
 			type: 'view',
@@ -395,45 +411,11 @@ export const TiledViews = (): Array<ViewType> => {
 			icon: 'fork.knife',
 			gradient: c.greenGradient,
 		},
-		{
-			type: 'url',
-			url: 'https://sis.stolaf.edu/sis/index.cfm',
-			title: 'Balances',
-			icon: 'arrow.up.right',
-			gradient: c.goldGradient,
-		},
-		// Balances opens SIS on the web instead. To bring the native screen
-		// back, move `disabled` to the entry above: the home grid keys tiles by
-		// title, so only one Balances can be on at a time.
-		{
-			type: 'view',
-			view: '/balances',
-			title: 'Balances',
-			icon: 'person.text.rectangle.fill',
-			gradient: c.goldGradient,
-			disabled: true,
-		},
-		{
-			type: 'view',
-			view: '/hours',
-			title: 'Hours',
-			icon: 'clock.fill',
-			gradient: c.blueGradient,
-		},
-		{
-			type: 'view',
-			view: '/calendar',
-			title: 'Calendar',
-			icon: 'calendar',
-			gradient: c.violetGradient,
-		},
-		{
-			type: 'view',
-			view: '/directory',
-			title: 'Directory',
-			icon: 'person.crop.rectangle.fill',
-			gradient: c.redGradient,
-		},
+		tile('balances'),
+		tile('balances-screen'),
+		tile('hours'),
+		tile('calendar'),
+		tile('directory'),
 		{
 			type: 'view',
 			view: '/streaming-media',
@@ -441,92 +423,17 @@ export const TiledViews = (): Array<ViewType> => {
 			icon: 'play.rectangle.fill',
 			gradient: c.lightBlueGradient,
 		},
-		{
-			type: 'view',
-			view: '/messenger',
-			title: 'Olaf Messenger',
-			icon: 'olaf-messenger',
-			titleDesign: 'serif',
-			gradient: c.purpleGradient,
-		},
-		{
-			type: 'view',
-			view: '/map?campus=stolaf',
-			title: 'Map',
-			icon: 'map.fill',
-			gradient: c.greenGradient,
-		},
-		{
-			type: 'view',
-			view: '/transit',
-			title: 'Transit',
-			icon: 'bus.fill',
-			gradient: c.grayGradient,
-		},
-		{
-			type: 'view',
-			view: '/dictionary',
-			title: 'Dictionary',
-			icon: 'character.book.closed.fill',
-			gradient: c.pinkGradient,
-		},
-		{
-			type: 'view',
-			view: '/student-orgs',
-			title: 'Student Orgs',
-			icon: 'person.3.fill',
-			gradient: c.sageGradient,
-		},
-		{
-			type: 'view',
-			view: '/more',
-			title: 'More',
-			icon: 'ellipsis.circle.fill',
-			gradient: c.mintGradient,
-		},
-		{
-			type: 'view',
-			view: '/print-jobs',
-			title: 'stoPrint',
-			icon: 'printer.fill',
-			gradient: c.yellowGradient,
-		},
-		{
-			type: 'view',
-			view: '/course-search',
-			title: 'Course Catalog',
-			icon: 'graduationcap.fill',
-			gradient: c.tanGradient,
-		},
-		{
-			type: 'view',
-			view: '/student-work',
-			title: 'Student Work',
-			icon: 'briefcase.fill',
-			gradient: c.orangeGradient,
-		},
-		{
-			type: 'view',
-			view: '/st-olaf-news',
-			title: 'St. Olaf News',
-			icon: 'megaphone.fill',
-			gradient: c.indigoGradient,
-		},
-		{
-			type: 'view',
-			view: '/athletics',
-			title: 'Athletics',
-			icon: 'trophy.fill',
-			gradient: c.paleGoldGradient,
-			devOnly: true,
-		},
-		{
-			type: 'view',
-			view: '/hours?campus=carleton',
-			title: 'Carleton Campus',
-			icon: 'building.2.fill',
-			gradient: c.blueGradient,
-			devOnly: true,
-		},
+		tile('olaf-messenger'),
+		tile('map'),
+		tile('transit'),
+		tile('dictionary'),
+		tile('student-orgs'),
+		tile('more'),
+		tile('stoprint'),
+		tile('course-catalog'),
+		tile('student-work'),
+		tile('st-olaf-news'),
+		{...tile('athletics'), devOnly: true},
+		tile('carleton-campus'),
 	]
 }

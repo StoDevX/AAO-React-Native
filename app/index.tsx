@@ -37,6 +37,7 @@ import {
 	AllViews,
 	homeSections,
 	TiledViews,
+	visibleViews,
 	type HomeSection,
 	type ViewType,
 } from '../source/features/views'
@@ -50,10 +51,9 @@ import {
 import {TileGrid} from '../source/components/tile-grid'
 import {HomeScreenButton} from '../source/features/home/button'
 import {HomeListSections} from '../source/features/home/list-sections'
-import {useHomeLayoutStore} from '../source/features/home/store'
+import {useCollapsedGroupsStore, useHomeLayoutStore} from '../source/features/home/store'
 import {openUrl} from '@frogpond/open-url'
 import {selectDevModeOverride, setDevModeOverride} from '../source/redux/parts/settings'
-import {selectCollapsedHomeGroups, toggleHomeGroup} from '../source/redux/parts/home'
 import {useIsDevMode} from '../source/lib/use-is-dev-mode'
 import {FaqBannerGroup} from '../source/features/faqs/banner'
 import {FAQ_TARGETS} from '../source/features/faqs/constants'
@@ -72,7 +72,7 @@ const styles = StyleSheet.create({
 	banner: {
 		marginHorizontal: SCREEN_MARGIN,
 		marginTop: TILE_SPACING,
-		marginBottom: TILE_SPACING * 2,
+		marginBottom: TILE_SPACING * 1.5,
 	},
 })
 
@@ -159,7 +159,7 @@ function UnofficialAppNotice(): React.ReactNode {
 	)
 }
 
-/// Mirrored by TestIdentifiers.Home.groupGrid.
+/// Names a group's tile grid.
 const groupGridId = (group: string): string => `home-group-grid-${group}`
 /// A list row with nothing of a row's own: no fill, margins or divider, so the
 /// banner and the notice sit on the list's background rather than in a cell.
@@ -207,9 +207,9 @@ function RadioPlayerSwitch({inList = false}: {inList?: boolean}): React.ReactNod
 	)
 }
 
-/// Mirrored by TestIdentifiers.Home.tileGrid.
+/// Names the tiled home's tile grid.
 const HOME_GRID_ID = 'home-tile-grid'
-/// The menu in the navigation bar's corner, mirrored by TestIdentifiers.Navigation.homeMenu.
+/// The menu in the navigation bar's corner, which `TestIdentifiers.Navigation.homeMenu` finds by name.
 const HOME_MENU_LABEL = 'Home menu'
 /// Names a group's header, for a UI test.
 const groupHeaderId = (group: string): string => `home-group-header-${group}`
@@ -272,16 +272,20 @@ function HomeGroupView({
 
 export default function HomePage(): React.ReactNode {
 	let router = useRouter()
-	let dispatch = useDispatch()
 	let isDev = useIsDevMode()
-	let collapsedGroups = useSelector(selectCollapsedHomeGroups)
+	let collapsedGroups = useCollapsedGroupsStore((state) => state.collapsedGroups)
+	let toggleGroup = useCollapsedGroupsStore((state) => state.toggleGroup)
 	let openView = useOpenView()
-	let {width: screenWidth, fontScale} = useWindowDimensions()
+	let {fontScale} = useWindowDimensions()
 	let layout = useHomeLayoutStore((state) => state.layout)
+	// The saved layout and collapsed groups load after the first render. Drawing
+	// before then would draw the defaults and jump.
+	let hydrated = useHomeLayoutStore((state) => state.hydrated)
+	let groupsHydrated = useCollapsedGroupsStore((state) => state.hydrated)
 	let setLayout = useHomeLayoutStore((state) => state.setLayout)
 	let barVisible = useRadioBarVisible()
 	let sections = homeSections(AllViews(), {isDev})
-	let tiledViews = TiledViews().filter((view) => !view.disabled && (isDev || !view.devOnly))
+	let tiledViews = visibleViews(TiledViews(), {isDev})
 
 	return (
 		<>
@@ -321,7 +325,7 @@ export default function HomePage(): React.ReactNode {
 				modifiers={[accessibilityIdentifier('screen-homescreen')]}
 				style={styles.host}
 			>
-				{layout === 'list' ? (
+				{!hydrated || !groupsHydrated ? null : layout === 'list' ? (
 					<VStack spacing={0}>
 						{/* Above the list rather than a row in it: a row with nothing
 						    in it, as when there is no banner, still takes a row's
@@ -353,11 +357,12 @@ export default function HomePage(): React.ReactNode {
 					<ScrollView>
 						<VStack
 							modifiers={[
-								frame({width: screenWidth - 2 * SCREEN_MARGIN}),
 								padding({all: SCREEN_MARGIN}),
 								// Room to scroll the last of Home clear of the Now Playing bar.
 								padding({bottom: barVisible ? NOW_PLAYING_BAR_CLEARANCE : 0}),
+								frame({maxWidth: FILL_WIDTH}),
 							]}
+							spacing={0}
 						>
 							{/* The banner is its own child, not one of the spaced groups
 						    below: when there is no banner its slot is empty, and
@@ -387,7 +392,7 @@ export default function HomePage(): React.ReactNode {
 											collapsed={section.collapsible && collapsedGroups.includes(section.id)}
 											key={section.id}
 											onOpen={openView}
-											onToggle={() => dispatch(toggleHomeGroup(section.id))}
+											onToggle={() => toggleGroup(section.id)}
 											section={section}
 										/>
 									))

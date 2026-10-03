@@ -3,7 +3,6 @@ import {configureStore, combineReducers} from '@reduxjs/toolkit'
 import {reducer as settings} from './parts/settings'
 import {reducer as buildings} from './parts/buildings'
 import {reducer as courses} from './parts/courses'
-import {reducer as home} from './parts/home'
 import {sentryReduxEnhancer} from './sentry-enhancer'
 import {migrations} from './migrations'
 
@@ -32,7 +31,6 @@ const rootReducer = combineReducers({
 	settings,
 	buildings,
 	courses,
-	home,
 })
 
 const persistedReducer = persistReducer(persistConfig, rootReducer)

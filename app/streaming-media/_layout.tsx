@@ -1,13 +1,8 @@
 import * as React from 'react'
-import {Slot} from 'expo-router'
 import {NativeTabs} from 'expo-router/unstable-native-tabs'
 import {RadioTabAccessory} from '../../source/features/streaming/radio'
 
-import {useHomeLayoutStore} from '../../source/features/home/store'
-
-/// Streams and webcams as tabs, for the tiled home, where Streaming Media is
-/// one tile.
-function StreamingTabs(): React.ReactNode {
+export default function StreamingMediaLayout(): React.ReactNode {
 	return (
 		// The radio's home, so the mini-player is always here, saying "Not
 		// Playing" until a station starts; Home's switch hides only Home's.
@@ -27,14 +22,4 @@ function StreamingTabs(): React.ReactNode {
 			</NativeTabs.Trigger>
 		</NativeTabs>
 	)
-}
-
-/// A tiled home has one Streaming Media tile, so its screens tab between them;
-/// the others open each from a tile of its own, and this route shows one at a
-/// time, each titling the screen itself. The radio's mini-player is a tab
-/// accessory, so only the tabs carry it.
-export default function StreamingMediaLayout(): React.ReactNode {
-	let layout = useHomeLayoutStore((state) => state.layout)
-
-	return layout === 'tiled' ? <StreamingTabs /> : <Slot />
 }
