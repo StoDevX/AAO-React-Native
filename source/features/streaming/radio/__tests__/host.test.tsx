@@ -3,15 +3,13 @@ import {beforeEach, describe, expect, jest, test} from '@jest/globals'
 import {fireEvent, render} from '@testing-library/react-native'
 
 import {RadioHost} from '../host'
+import {STATIONS} from '../stations'
 import {useRadioStore} from '../store'
 
 // The native module needs a device; its player is a stand-in that records the
 // source it was given.
-const mockUseAudioPlayer = jest.fn((_source: string) => ({
-	play: jest.fn(),
-	pause: jest.fn(),
-	setActiveForLockScreen: jest.fn(),
-}))
+const mockPlayer = {play: jest.fn(), pause: jest.fn(), setActiveForLockScreen: jest.fn()}
+const mockUseAudioPlayer = jest.fn((_source: string) => mockPlayer)
 jest.mock('expo-audio', () => ({
 	useAudioPlayer: (source: string) => mockUseAudioPlayer(source),
 	useAudioPlayerStatus: () => ({
@@ -68,6 +66,11 @@ describe('RadioHost', () => {
 		let screen = await render(<RadioHost />)
 
 		expect(mockUseAudioPlayer).toHaveBeenCalledWith('https://s3.voscast.com:10803/stream')
+		expect(mockPlayer.setActiveForLockScreen).toHaveBeenCalledWith(
+			true,
+			{title: '88.1 KRLX-FM', artworkUrl: STATIONS.krlx.logos[0].image.uri},
+			{isLiveStream: true},
+		)
 		expect(screen.toJSON()).toBeNull()
 	})
 

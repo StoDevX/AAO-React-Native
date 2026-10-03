@@ -27,6 +27,7 @@ function player(playState: PlayState, callbacks: Record<string, jest.Mock>) {
 		<NativeStreamPlayer
 			playState={playState}
 			stationName="88.1 KRLX-FM"
+			artworkUri="https://example.com/krlx.png"
 			streamSourceUrl="https://s3.voscast.com:10803/stream"
 			{...callbacks}
 		/>
@@ -65,7 +66,7 @@ describe('NativeStreamPlayer', () => {
 		let view = await render(player('checking', callbacks()))
 		expect(mockPlayer.setActiveForLockScreen).toHaveBeenCalledWith(
 			true,
-			{title: '88.1 KRLX-FM'},
+			{title: '88.1 KRLX-FM', artworkUrl: 'https://example.com/krlx.png'},
 			{isLiveStream: true},
 		)
 
