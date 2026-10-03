@@ -1,4 +1,5 @@
 import * as React from 'react'
+import {DynamicColorIOS} from 'react-native'
 import {useRouter} from 'expo-router'
 import {Button, VStack} from '@expo/ui/swift-ui'
 import {
@@ -16,8 +17,14 @@ import {faded} from './palette'
 import {RemotePhoto} from './remote-photo'
 import type {MessStory, Photo} from './types'
 
+/**
+ * The mounted print's shadow. @expo/ui's shadow is white unless given a color, which glows on
+ * dark paper, so it is named: darker on dark paper, where a light shadow would not show.
+ */
+const PRINT_SHADOW = DynamicColorIOS({light: '#0000004D', dark: '#000000B3'})
+
 /** A hairline rule and a soft shadow, as a print is mounted on a page. */
-const FRAMED = [border({color: faded, width: 1}), shadow({radius: 4, y: 2})]
+const FRAMED = [border({color: faded, width: 1}), shadow({color: PRINT_SHADOW, radius: 4, y: 2})]
 
 type FramedPhotoProps = {url: string; width: number; height: number}
 
