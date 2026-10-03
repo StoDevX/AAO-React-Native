@@ -169,6 +169,28 @@ depends = [
 ]
 run = [{ task = 'device:deploy', args = ["{{usage.device}}"] }]
 
+[tasks."device:metro"]
+description = "Build and deploy a Debug app that loads its JavaScript from Metro, not from the app"
+usage = '''
+  arg "<device>" help="The device to build for" default="simulator" env="DEVICE"
+'''
+env.APP = "ios/build/Build/Products/Debug-iphoneos/AllAboutOlaf.app"
+depends = [
+	{ task = "pnpm:install:frozen" },
+	{ task = "prebuild", env.APP_VARIANT = "development" },
+	{ task = 'build:ios', args = [
+		"{{usage.device}}",
+	] },
+]
+# A bundle left in the app by `mise run device` would win over Metro, which
+# `AppDelegate.bundleURL()` only asks when the app holds none.
+run = [
+	'''rm -f "$APP/main.jsbundle" && rm -rf "$APP/assets"''',
+	{ task = 'device:deploy', args = [
+		"{{usage.device}}",
+	] },
+]
+
 # --- Code quality ---
 
 [tasks.lint]
