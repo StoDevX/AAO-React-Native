@@ -19,8 +19,8 @@ import {
 } from '@tanstack/react-query'
 import {destinationTraits, RowAccessory} from '../../components/rows'
 import {creditLine} from './lib/byline'
-import {puzzleIcon} from './lib/puzzle'
 import {TAP_TARGET} from './lib/glyph-grid'
+import {rowGlyph} from './lib/row-glyph'
 import {NextPageRow} from './next-page-row'
 import {PageLoading, PageNotice} from './page-notice'
 import {faded, ink, wash} from './palette'
@@ -37,8 +37,8 @@ const THUMBNAIL = 56
 const ROW = [frame({minHeight: TAP_TARGET}), contentShape(shapes.rectangle())]
 /** Where a story has no photo, a tinted square keeps the rows even. */
 const BLANK = [foregroundStyle(wash), frame({width: THUMBNAIL, height: THUMBNAIL})]
-/** A puzzle's tinted square carries a glyph for its kind, since puzzles have no photo. */
-const PUZZLE_GLYPH = [
+/** A tinted square carrying a glyph for the story's kind, where the story has no photo. */
+const GLYPH = [
 	font({textStyle: 'title2'}),
 	foregroundStyle(faded),
 	frame({width: THUMBNAIL, height: THUMBNAIL}),
@@ -59,6 +59,7 @@ const EMPTY = [font({textStyle: 'callout'}), foregroundStyle(faded)]
 function StoryRow({story, onPress}: {story: MessStory; onPress: () => void}): React.ReactNode {
 	let credit = creditLine(story, 'short')
 	let external = story.layout.kind === 'puzzle'
+	let glyph = rowGlyph(story)
 	return (
 		<Button
 			modifiers={[
@@ -74,8 +75,8 @@ function StoryRow({story, onPress}: {story: MessStory; onPress: () => void}): Re
 				<HStack alignment="top" spacing={12}>
 					{story.photo ? (
 						<RemotePhoto height={THUMBNAIL} url={story.photo.url} width={THUMBNAIL} />
-					) : story.layout.kind === 'puzzle' ? (
-						<Image modifiers={PUZZLE_GLYPH} systemName={puzzleIcon(story.layout.puzzle)} />
+					) : glyph ? (
+						<Image modifiers={GLYPH} systemName={glyph} />
 					) : (
 						<Rectangle modifiers={BLANK} />
 					)}
