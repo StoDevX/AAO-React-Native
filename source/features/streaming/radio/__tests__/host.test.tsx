@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {beforeEach, describe, expect, jest, test} from '@jest/globals'
+import {afterEach, beforeEach, describe, expect, jest, test} from '@jest/globals'
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query'
 import {act, fireEvent, render, waitFor} from '@testing-library/react-native'
 
@@ -35,9 +35,13 @@ function withQueries(children: React.ReactNode): React.ReactElement {
 	return <QueryClientProvider client={client}>{children}</QueryClientProvider>
 }
 
-/** Waits for the song on air to be asked for, so its answer does not arrive after the test. */
+/** Waits for the song on air to be asked for and answered, so its answer does not arrive after the test. */
 async function untilSongAsked(): Promise<void> {
-	await waitFor(() => expect(client.isFetching()).toBe(0))
+	await waitFor(() => {
+		let queries = client.getQueryCache().getAll()
+		expect(queries.length).toBeGreaterThan(0)
+		expect(queries.every((query) => query.state.status === 'success')).toBe(true)
+	})
 }
 
 /** Renders the host and returns a way to post a message from the station's page. */
@@ -61,7 +65,8 @@ async function renderHost() {
 
 describe('RadioHost', () => {
 	beforeEach(() => {
-		client = new QueryClient({defaultOptions: {queries: {retry: false}}})
+		// Never collected, as the collection's timer would hold Jest open.
+		client = new QueryClient({defaultOptions: {queries: {retry: false, gcTime: Infinity}}})
 		jest
 			.spyOn(globalThis, 'fetch')
 			.mockResolvedValue(new Response(JSON.stringify({now: null, refreshSecs: 60})))
@@ -70,9 +75,12 @@ describe('RadioHost', () => {
 		useRadioStore.getState().reportPlaying(1)
 	})
 
+	afterEach(() => {
+		client.clear()
+	})
+
 	test('plays KSTO natively from its stream, and loads its player page beside it', async () => {
 		let {screen} = await renderHost()
-		await untilSongAsked()
 
 		expect(mockUseAudioPlayer).toHaveBeenCalledWith('https://cdn.stobcm.com/ksto/live.m3u8')
 		// KSTO's owner counts listens through its page, so the page is loaded too.
@@ -81,7 +89,6 @@ describe('RadioHost', () => {
 
 	test("takes nothing the station's page reports for the state of the station", async () => {
 		let {post} = await renderHost()
-		await untilSongAsked()
 
 		// The page is silent and only there to be counted. Only the native player
 		// says what the station is doing.
