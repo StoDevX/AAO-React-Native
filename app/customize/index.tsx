@@ -10,7 +10,7 @@ import {DisclosureRow, NavigationRow} from '../../source/components/rows'
 import {SheetCloseButton} from '../../source/components/sheet-close-button'
 import {type LinkTarget, useOpenLinksIn} from '../../source/features/customize/open-links-in'
 import {useAppIcon} from '../../source/features/customize/use-app-icon'
-import {useRadioStore} from '../../source/features/streaming/radio'
+import {useRadioPlayerSetting} from '../../source/features/customize/radio-player-setting'
 
 /// Settings' own row-icon size, as `rows.tsx` draws a gradient icon.
 const ROW_ICON_SIZE = 30
@@ -34,8 +34,7 @@ export default function CustomizePage(): React.ReactNode {
 		}, [reload]),
 	)
 	let [linkTarget, setLinkTarget] = useOpenLinksIn()
-	let showRadio = useRadioStore((state) => state.showOnHome)
-	let setShowRadio = useRadioStore((state) => state.setShowOnHome)
+	let [showRadio, setShowRadio] = useRadioPlayerSetting()
 
 	return (
 		<>
@@ -68,7 +67,6 @@ export default function CustomizePage(): React.ReactNode {
 						</Picker>
 					</Section>
 					<Section title="Home Screen">
-						{/* Turning it off also stops the radio; see useRadioStore.setShowOnHome. */}
 						<Toggle
 							isOn={showRadio}
 							label="Radio Player"

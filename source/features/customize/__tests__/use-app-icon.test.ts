@@ -1,6 +1,6 @@
 import {beforeEach, describe, expect, it, jest} from '@jest/globals'
 import {act, renderHook, waitFor} from '@testing-library/react-native'
-import {reportIconChange} from '../icon-telemetry'
+import {reportIconChange} from '../telemetry'
 import {useAppIcon} from '../use-app-icon'
 
 /**
@@ -25,7 +25,7 @@ jest.mock('react-native-change-icon', () => ({
 	},
 }))
 
-jest.mock('../icon-telemetry', () => ({reportIconChange: jest.fn()}))
+jest.mock('../telemetry', () => ({reportIconChange: jest.fn()}))
 
 beforeEach(() => {
 	mockAlternateIconName = null

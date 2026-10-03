@@ -1,7 +1,7 @@
 import * as React from 'react'
 import {changeIcon, getIcon, resetIcon} from 'react-native-change-icon'
 import {type AppIconName, DEFAULT_ICON} from '../../../images/icons'
-import {reportIconChange} from './icon-telemetry'
+import {reportIconChange} from './telemetry'
 import {type IconEntry, currentIconEntry} from './icons'
 
 /**

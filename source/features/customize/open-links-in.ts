@@ -1,5 +1,6 @@
 import * as React from 'react'
 import * as storage from '../../lib/storage'
+import {reportLinkTargetChange} from './telemetry'
 
 /** Where a tapped link opens. */
 export type LinkTarget = 'app' | 'safari'
@@ -27,6 +28,7 @@ export function useOpenLinksIn(): [LinkTarget, (target: LinkTarget) => Promise<v
 	let choose = React.useCallback(async (next: LinkTarget) => {
 		await storage.setLinkPreference(next === 'app')
 		setTarget(next)
+		reportLinkTargetChange(next)
 	}, [])
 
 	return [target, choose]

@@ -1,11 +1,15 @@
-import {afterEach, describe, expect, it} from '@jest/globals'
+import {afterEach, describe, expect, it, jest} from '@jest/globals'
 import {act, renderHook, waitFor} from '@testing-library/react-native'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import * as storage from '../../../lib/storage'
 import {useOpenLinksIn} from '../open-links-in'
+import {reportLinkTargetChange} from '../telemetry'
+
+jest.mock('../telemetry', () => ({reportLinkTargetChange: jest.fn()}))
 
 afterEach(async () => {
 	await AsyncStorage.clear()
+	jest.clearAllMocks()
 })
 
 describe('useOpenLinksIn', () => {
@@ -25,6 +29,13 @@ describe('useOpenLinksIn', () => {
 		await act(() => result.current[1]('safari'))
 		expect(result.current[0]).toBe('safari')
 		expect(await storage.getInAppLinkPreference()).toBe(false)
+		expect(reportLinkTargetChange).toHaveBeenCalledWith('safari')
+	})
+
+	it('reports nothing until someone chooses', async () => {
+		let {result} = await renderHook(() => useOpenLinksIn())
+		await waitFor(() => expect(result.current[0]).toBe('app'))
+		expect(reportLinkTargetChange).not.toHaveBeenCalled()
 	})
 
 	it('saves In App as true', async () => {
