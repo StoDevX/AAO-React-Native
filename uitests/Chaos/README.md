@@ -170,14 +170,9 @@ Run `mise run chaos-routes` after adding a route; a test fails until you do.
 Keep every action's random draws fixed whatever is on screen, or a seed stops
 repeating. Each action draws its values before it touches the UI.
 
-## Nightly CI
+## Canaries
 
-`.github/workflows/chaos.yml` runs three seeds every night, on the app and
-bundle from the latest successful iOS run on `master`. Its job summary lists
-each distinct finding with the command to replay it. It never gates a pull
-request. CI keeps those builds for three days, so after a quiet stretch with
-no push to `master` the seeds fail saying so.
-
-The `ChaosCanaryTests` run in the ordinary UI test shards on every pull
+Chaos runs happen on your own machine; nothing runs them in CI. The
+`ChaosCanaryTests` do run in the ordinary UI test shards on every pull
 request. They plant a crash and a missing probe and check that the oracles
 notice, so a change can't quietly blind the engine.
