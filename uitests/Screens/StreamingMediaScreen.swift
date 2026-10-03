@@ -116,6 +116,22 @@ struct StreamingMediaScreen: Screen {
 		return self
 	}
 
+	/// Check each control labelled in `labels` sits wholly above the tab bar,
+	/// where it can be seen and tapped.
+	@discardableResult
+	func checkAboveTabBar(_ labels: [String]) -> Self {
+		let tabBar = app.tabBars.firstMatch
+		XCTAssertTrue(tabBar.waitForExistence(timeout: 10), "The tab bar should be showing")
+		for label in labels {
+			let control = app.descendants(matching: .any).matching(NSPredicate(format: "label == %@", label)).firstMatch
+			XCTAssertTrue(control.waitForExistence(timeout: 10), "\"\(label)\" should exist")
+			XCTAssertLessThanOrEqual(
+				control.frame.maxY, tabBar.frame.minY,
+				"\"\(label)\" should end above the tab bar, at \(tabBar.frame.minY), not \(control.frame.maxY)")
+		}
+		return self
+	}
+
 	/// Open the Now Playing sheet from the bar, and wait for `play` in it.
 	@discardableResult
 	func openSheetFromBar(expecting play: String) -> Self {

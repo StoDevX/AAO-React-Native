@@ -1,8 +1,14 @@
 import * as React from 'react'
 import {ScrollView, StyleSheet, View} from 'react-native'
+import {SafeAreaView} from 'react-native-screens/experimental'
 import {useNavigation} from 'expo-router'
 
-import {FullLayout, TintFill, useLogoCycle} from '../../source/features/streaming/radio/player-view'
+import {
+	FullLayout,
+	TintFill,
+	useFitOrScroll,
+	useLogoCycle,
+} from '../../source/features/streaming/radio/player-view'
 import {STATIONS} from '../../source/features/streaming/radio/stations'
 import {useRadioStore} from '../../source/features/streaming/radio/store'
 import {useSwipeBackHold} from '../../source/features/streaming/radio/swipe-back-hold'
@@ -14,6 +20,7 @@ export default function RadioTab(): React.ReactNode {
 	let {logo, showNextLogo} = useLogoCycle(station)
 	let [showingSchedule, setShowingSchedule] = React.useState(false)
 	let [logoHeld, setLogoHeld] = React.useState(false)
+	let fit = useFitOrScroll()
 
 	// iOS 26 and later go back on a swipe from anywhere on the screen, which a
 	// scratch would set off. The stack holding these tabs owns that gesture;
@@ -43,22 +50,29 @@ export default function RadioTab(): React.ReactNode {
 	return (
 		<View style={styles.screen}>
 			<TintFill logo={logo} />
-			<ScrollView
-				contentContainerStyle={styles.content}
-				contentInsetAdjustmentBehavior="automatic"
-				scrollEnabled={!logoHeld}
-			>
-				<FullLayout
-					logo={logo}
-					onLogoHeldChange={handleLogoHeld}
-					onLogoSettle={settleSwipeBack}
-					onToggleSchedule={() => setShowingSchedule((on) => !on)}
-					scratchable={true}
-					showNextLogo={showNextLogo}
-					showingSchedule={showingSchedule}
-					station={station}
-				/>
-			</ScrollView>
+			{/* Between the navigation bar and the tab bar, so the player is sized
+			    to the room it can be seen in. */}
+			<SafeAreaView edges={{top: true, bottom: true}} style={styles.screen}>
+				<ScrollView
+					contentContainerStyle={styles.content}
+					contentInsetAdjustmentBehavior="never"
+					onContentSizeChange={fit.onContentSizeChange}
+					onLayout={fit.onLayout}
+					scrollEnabled={fit.scrollEnabled && !logoHeld}
+				>
+					<FullLayout
+						logo={logo}
+						onLogoHeldChange={handleLogoHeld}
+						onLogoSettle={settleSwipeBack}
+						onToggleSchedule={() => setShowingSchedule((on) => !on)}
+						scratchable={true}
+						viewportHeight={fit.viewport}
+						showNextLogo={showNextLogo}
+						showingSchedule={showingSchedule}
+						station={station}
+					/>
+				</ScrollView>
+			</SafeAreaView>
 		</View>
 	)
 }
@@ -69,6 +83,5 @@ const styles = StyleSheet.create({
 	},
 	content: {
 		flexGrow: 1,
-		paddingBottom: 20,
 	},
 })

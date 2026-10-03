@@ -29,7 +29,7 @@ export function StationActionRow({
 			/>
 			<ActionButton
 				accessibilityLabel={chatUrl ? `Chat with ${station.stationName}` : 'Chat unavailable'}
-				icon="quote.bubble"
+				icon="bubble.left.and.text.bubble.right"
 				label="Chat"
 				onPress={chatUrl ? () => openUrl(chatUrl) : undefined}
 				role="link"
@@ -37,7 +37,7 @@ export function StationActionRow({
 			<AirPlayButtonStub />
 			<ActionButton
 				accessibilityLabel="Today's schedule"
-				icon="list.bullet"
+				icon="calendar.day.timeline.trailing"
 				label="Schedule"
 				onPress={onShowSchedule}
 			/>

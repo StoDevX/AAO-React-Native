@@ -27,7 +27,8 @@ export default function StreamingMediaLayout(): React.ReactNode {
 				<NativeTabs.Trigger.Icon sf="web.camera.fill" />
 				<NativeTabs.Trigger.Label>Webcams</NativeTabs.Trigger.Label>
 			</NativeTabs.Trigger>
-			<NativeTabs.Trigger name="radio">
+			{/* The tab sizes its player to the room between the bars itself. */}
+			<NativeTabs.Trigger disableAutomaticContentInsets={true} name="radio">
 				<NativeTabs.Trigger.Icon sf="radio.fill" />
 				<NativeTabs.Trigger.Label>Radio</NativeTabs.Trigger.Label>
 			</NativeTabs.Trigger>

@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {StyleSheet, Text, View, useWindowDimensions} from 'react-native'
+import {StyleSheet, Text, View, useWindowDimensions, type LayoutChangeEvent} from 'react-native'
 
 import {ScratchableLogo} from '../scratchable-logo'
 import type {Station} from '../stations'
@@ -11,6 +11,7 @@ import {StationActionRow} from './station-actions'
 import {StationMenu} from './station-menu'
 import {StationPicker} from './station-picker'
 import {VolumeSliderStub} from './stubs'
+import {artworkSize} from './artwork-size'
 import {palette} from './palette'
 import type {RadioLogo} from '../theme'
 
@@ -25,6 +26,7 @@ export function FullLayout({
 	showingSchedule,
 	onToggleSchedule,
 	scratchable,
+	viewportHeight,
 	onLogoHeldChange,
 	onLogoSettle,
 }: {
@@ -36,17 +38,32 @@ export function FullLayout({
 	onToggleSchedule: () => void
 	/** Whether a drag turns the record. Off in the sheet, where a drag closes it. */
 	scratchable: boolean
+	/** The height the player has to fit in: the sheet's, or the tab's between its bars. */
+	viewportHeight: number
 	/** A finger has come down on the record, or lifted, so a scratch can hold off the screen's swipe-back. */
 	onLogoHeldChange?: (held: boolean) => void
 	/** The record has stopped moving under a scratch. */
 	onLogoSettle?: () => void
 }): React.ReactNode {
 	let {playState} = useStationPlayback(station.id)
+	// The record takes whatever room the rest of the player leaves, so the
+	// whole of it fits above a tab bar or a sheet's bottom edge.
 	let {width} = useWindowDimensions()
-	let artwork = width - 2 * SIDE
+	let fullWidth = width - 2 * SIDE
+	let [artwork, setArtwork] = React.useState(fullWidth)
+	let fitArtwork = (event: LayoutChangeEvent) => {
+		setArtwork(
+			artworkSize({
+				width: fullWidth,
+				viewportHeight,
+				layoutHeight: event.nativeEvent.layout.height,
+				currentArtwork: artwork,
+			}),
+		)
+	}
 
 	return (
-		<View style={styles.screen}>
+		<View onLayout={fitArtwork} style={styles.screen}>
 			<StationPicker />
 			<View style={[styles.artwork, {height: artwork}]}>
 				{showingSchedule ? (
@@ -95,10 +112,9 @@ function LiveBar(): React.ReactNode {
 
 const styles = StyleSheet.create({
 	screen: {
-		flex: 1,
 		gap: 20,
 		paddingHorizontal: SIDE,
-		paddingTop: 20,
+		paddingVertical: 20,
 	},
 	artwork: {
 		alignItems: 'center',

@@ -8,7 +8,7 @@ import {
 	presentationDragIndicator,
 } from '@expo/ui/swift-ui/modifiers'
 
-import {FullLayout, tintGradient, useLogoCycle} from './player-view'
+import {FullLayout, tintGradient, useFitOrScroll, useLogoCycle} from './player-view'
 import {STATIONS} from './stations'
 import {useRadioStore} from './store'
 
@@ -23,12 +23,7 @@ export function RadioNowPlayingSheet(): React.ReactNode {
 	let [showingSchedule, setShowingSchedule] = React.useState(false)
 	let station = STATIONS[viewed]
 	let {logo, showNextLogo} = useLogoCycle(station)
-	// A scroll view takes every drag on it, so one that scrolled always would
-	// stop the sheet being swiped away. It scrolls only when the player is
-	// taller than the sheet, at large text sizes or on a small phone.
-	let [viewport, setViewport] = React.useState(0)
-	let [contentHeight, setContentHeight] = React.useState(0)
-	let overflows = contentHeight > viewport
+	let fit = useFitOrScroll()
 
 	return (
 		// Presented in its own window, so the Host needs no size and lets every
@@ -53,14 +48,15 @@ export function RadioNowPlayingSheet(): React.ReactNode {
 						<RNHostView>
 							<ScrollView
 								contentContainerStyle={styles.content}
-								onContentSizeChange={(_width, height) => setContentHeight(height)}
-								onLayout={(event) => setViewport(event.nativeEvent.layout.height)}
-								scrollEnabled={overflows}
+								onContentSizeChange={fit.onContentSizeChange}
+								onLayout={fit.onLayout}
+								scrollEnabled={fit.scrollEnabled}
 							>
 								<FullLayout
 									logo={logo}
 									onToggleSchedule={() => setShowingSchedule((on) => !on)}
 									scratchable={false}
+									viewportHeight={fit.viewport}
 									showNextLogo={showNextLogo}
 									showingSchedule={showingSchedule}
 									station={station}
