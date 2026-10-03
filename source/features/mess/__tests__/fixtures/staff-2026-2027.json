@@ -1,0 +1,1082 @@
+[
+  {
+    "id": 37124,
+    "title": {
+      "rendered": "Soren Gjesfjeld"
+    },
+    "content": {
+      "rendered": "<p>Soren Gjesfjeld is a political science and philosophy double major originally from Bloomington, Illinois. As Senior Reporter, he will be covering the local Northfield area. In his free time, Soren enjoys running, woodworking and reading way too many political news articles.</p>\n",
+      "protected": false
+    },
+    "excerpt": {
+      "rendered": "<p>Senior Reporter</p>\n",
+      "protected": false
+    },
+    "featured_media": 0,
+    "staff_year": [1147],
+    "_embedded": {
+      "wp:term": [
+        [
+          {
+            "id": 944,
+            "name": "Soren Gjesfjeld",
+            "taxonomy": "staff_name"
+          }
+        ],
+        [
+          {
+            "id": 1147,
+            "name": "2026-2027",
+            "taxonomy": "staff_year"
+          }
+        ]
+      ]
+    }
+  },
+  {
+    "id": 37046,
+    "title": {
+      "rendered": "Lydia Simon"
+    },
+    "content": {
+      "rendered": "<div class=\"Qr7Oae\" role=\"listitem\">\n<div class=\"OxAavc NVbRL\" data-required=\"true\" data-item-id=\"581040469\">\n<div class=\"Ih4Dzb\">\n<div class=\"q4tvle JqSWld yqQS1\" tabindex=\"0\" role=\"textbox\" aria-label=\"Staff Bio for Website! Tell us about yourself! Find examples here. (If you want to use your same bio as last year, please copy and paste it into the answer field)\" aria-disabled=\"true\">Lydia Simon is a sophomore Spanish and English major from St. Paul, Minn. Outside of writing for The Olaf Messenger, she enjoys singing in Chapel Choir and her a capella group, Ole Avenue Vocal Jazz. She is deeply passionate about writing and music (separately), her family and friends (mutually), brewing tea, and getting lost in the natural lands. After her time at St. Olaf, she hopes to be able to do a real push-up.</div>\n</div>\n</div>\n</div>\n<div class=\"Qr7Oae\" role=\"listitem\">\n<div class=\"OxAavc NVbRL\" data-required=\"true\" data-item-id=\"439036168\">\n<div class=\"pYfr3c\">\n<div class=\"prOLdf\">\n<div class=\"g53bl\">\n<div class=\"cTDvob D1wxyf RjsPE\" role=\"heading\" aria-level=\"3\" aria-describedby=\"i.desc.439036168 c86\"></div>\n</div>\n</div>\n</div>\n</div>\n</div>\n",
+      "protected": false
+    },
+    "excerpt": {
+      "rendered": "<p>Opinions Editor</p>\n",
+      "protected": false
+    },
+    "featured_media": 37047,
+    "staff_year": [1147],
+    "_embedded": {
+      "wp:featuredmedia": [
+        {
+          "media_details": {
+            "width": 1501,
+            "height": 2001
+          },
+          "source_url": "https://olafmessenger.com/wp-content/uploads/2026/09/LydiaSimonJPG-e1790812318346.jpg"
+        }
+      ],
+      "wp:term": [
+        [
+          {
+            "id": 1025,
+            "name": "Lydia Simon",
+            "taxonomy": "staff_name"
+          }
+        ],
+        [
+          {
+            "id": 1147,
+            "name": "2026-2027",
+            "taxonomy": "staff_year"
+          }
+        ]
+      ]
+    }
+  },
+  {
+    "id": 37039,
+    "title": {
+      "rendered": "Mathea Petersin"
+    },
+    "content": {
+      "rendered": "<div class=\"Qr7Oae\" role=\"listitem\">\n<div class=\"OxAavc NVbRL\" data-required=\"true\" data-item-id=\"581040469\">\n<div class=\"Ih4Dzb\">\n<div class=\"q4tvle JqSWld yqQS1\" tabindex=\"0\" role=\"textbox\" aria-label=\"Staff Bio for Website! Tell us about yourself! Find examples here. (If you want to use your same bio as last year, please copy and paste it into the answer field)\" aria-disabled=\"true\">Mathea Petersin is a junior from Eau Claire, Wis., majoring in sociology/anthropology, English, and music for social impact. When she&#8217;s not doing homework, she can be found frolicking in the woods, listening to music and gabbing with friends. After graduation, she plans on attending grad school to study sociology.</div>\n</div>\n</div>\n</div>\n<div class=\"Qr7Oae\" role=\"listitem\">\n<div class=\"OxAavc NVbRL\" data-required=\"true\" data-item-id=\"439036168\">\n<div class=\"pYfr3c\">\n<div class=\"prOLdf\">\n<div class=\"g53bl\">\n<div class=\"cTDvob D1wxyf RjsPE\" role=\"heading\" aria-level=\"3\" aria-describedby=\"i.desc.439036168 c354\"></div>\n</div>\n</div>\n</div>\n</div>\n</div>\n",
+      "protected": false
+    },
+    "excerpt": {
+      "rendered": "<p>A&#038;E Correspondent</p>\n",
+      "protected": false
+    },
+    "featured_media": 37041,
+    "staff_year": [1147],
+    "_embedded": {
+      "wp:featuredmedia": [
+        {
+          "media_details": {
+            "width": 1501,
+            "height": 2001
+          },
+          "source_url": "https://olafmessenger.com/wp-content/uploads/2026/09/MatheaPetersin-e1790812064147.jpg"
+        }
+      ],
+      "wp:term": [
+        [
+          {
+            "id": 1157,
+            "name": "Mathea Petersin",
+            "taxonomy": "staff_name"
+          }
+        ],
+        [
+          {
+            "id": 1147,
+            "name": "2026-2027",
+            "taxonomy": "staff_year"
+          }
+        ]
+      ]
+    }
+  },
+  {
+    "id": 37036,
+    "title": {
+      "rendered": "Edy Tonko"
+    },
+    "content": {
+      "rendered": "<p>Edy Tonko is a junior from Minneapolis, Minn., majoring in English and creative writing. Outside of class, she can be found scribbling down stories in her journal or with her head in a book. After graduation, she wants to work in the publicity or editorial sectors of the publishing industry. One day she hopes to be a published author and find her name nestled amongst her favorites at her local indie bookstore.</p>\n",
+      "protected": false
+    },
+    "excerpt": {
+      "rendered": "<p>Variety Editor</p>\n",
+      "protected": false
+    },
+    "featured_media": 37037,
+    "staff_year": [1147],
+    "_embedded": {
+      "wp:featuredmedia": [
+        {
+          "media_details": {
+            "width": 1501,
+            "height": 2001
+          },
+          "source_url": "https://olafmessenger.com/wp-content/uploads/2026/09/IMG_5871-e1790811977811.jpg"
+        }
+      ],
+      "wp:term": [
+        [
+          {
+            "id": 1155,
+            "name": "Edy Tonko",
+            "taxonomy": "staff_name"
+          }
+        ],
+        [
+          {
+            "id": 1147,
+            "name": "2026-2027",
+            "taxonomy": "staff_year"
+          }
+        ]
+      ]
+    }
+  },
+  {
+    "id": 37034,
+    "title": {
+      "rendered": "Helen Dosedel"
+    },
+    "content": {
+      "rendered": "<div class=\"BFocEf\">\n<div class=\"vnb4ld\">\n<div class=\"x8O7Bb\">Helen Dosedel is a junior from St. Bonifacius, Minn. She is an economics and English major hoping to go into finance or wealth management. When she’s not studying, you can find her reading a good book or writing poetry.</div>\n</div>\n</div>\n",
+      "protected": false
+    },
+    "excerpt": {
+      "rendered": "<p>News Editor</p>\n",
+      "protected": false
+    },
+    "featured_media": 37035,
+    "staff_year": [1147],
+    "_embedded": {
+      "wp:featuredmedia": [
+        {
+          "media_details": {
+            "width": 1501,
+            "height": 2001
+          },
+          "source_url": "https://olafmessenger.com/wp-content/uploads/2026/09/IMG_5867-e1790811882391.jpg"
+        }
+      ],
+      "wp:term": [
+        [
+          {
+            "id": 1052,
+            "name": "Helen Dosedel",
+            "taxonomy": "staff_name"
+          }
+        ],
+        [
+          {
+            "id": 1147,
+            "name": "2026-2027",
+            "taxonomy": "staff_year"
+          }
+        ]
+      ]
+    }
+  },
+  {
+    "id": 37031,
+    "title": {
+      "rendered": "Isaac Hillesland"
+    },
+    "content": {
+      "rendered": "",
+      "protected": false
+    },
+    "excerpt": {
+      "rendered": "<p>Copy Editor</p>\n",
+      "protected": false
+    },
+    "featured_media": 37032,
+    "staff_year": [1147],
+    "_embedded": {
+      "wp:featuredmedia": [
+        {
+          "media_details": {
+            "width": 1501,
+            "height": 2001
+          },
+          "source_url": "https://olafmessenger.com/wp-content/uploads/2026/09/IsaacHillesland-e1790811783680.jpg"
+        }
+      ],
+      "wp:term": [
+        [
+          {
+            "id": 1154,
+            "name": "Isaac Hillesland",
+            "taxonomy": "staff_name"
+          }
+        ],
+        [
+          {
+            "id": 1147,
+            "name": "2026-2027",
+            "taxonomy": "staff_year"
+          }
+        ]
+      ]
+    }
+  },
+  {
+    "id": 37029,
+    "title": {
+      "rendered": "Katherine Stoneman"
+    },
+    "content": {
+      "rendered": "<p>Katherine Stoneman is a senior from Fitchburg, Wis., with a double major in philosophy and quantitative economics. When she’s not in the Mess office, Katherine is the President of the Mock Trial team and is co-founder and President of the Philosophia club on campus. In her free time, she enjoys being outside, listening to music, drawing and hanging out with friends. After graduation, she hopes to work in sports journalism or business, or to continue in school and become a professor.</p>\n",
+      "protected": false
+    },
+    "excerpt": {
+      "rendered": "<p>Executive Editor</p>\n",
+      "protected": false
+    },
+    "featured_media": 37030,
+    "staff_year": [1147],
+    "_embedded": {
+      "wp:featuredmedia": [
+        {
+          "media_details": {
+            "width": 1501,
+            "height": 2001
+          },
+          "source_url": "https://olafmessenger.com/wp-content/uploads/2026/09/KatherineStoneman-e1790811730833.jpg"
+        }
+      ],
+      "wp:term": [
+        [
+          {
+            "id": 980,
+            "name": "Katherine Stoneman",
+            "taxonomy": "staff_name"
+          }
+        ],
+        [
+          {
+            "id": 1147,
+            "name": "2026-2027",
+            "taxonomy": "staff_year"
+          }
+        ]
+      ]
+    }
+  },
+  {
+    "id": 37027,
+    "title": {
+      "rendered": "Jade Jiménez"
+    },
+    "content": {
+      "rendered": "<p>Jade Jimenez is a junior from Houston, Texas! In her spare time, Jade loves going to art galleries, creating art and writing letters. After college, she hopes to become a Visual Arts teacher, become trilingual and possibly go to grad school or get a PhD. One day, she hopes to sell her artworks and create her own comic.</p>\n",
+      "protected": false
+    },
+    "excerpt": {
+      "rendered": "<p>Illustrator </p>\n",
+      "protected": false
+    },
+    "featured_media": 37028,
+    "staff_year": [1147],
+    "_embedded": {
+      "wp:featuredmedia": [
+        {
+          "media_details": {
+            "width": 2001,
+            "height": 2001
+          },
+          "source_url": "https://olafmessenger.com/wp-content/uploads/2026/09/JadeJimenez.jpg"
+        }
+      ],
+      "wp:term": [
+        [
+          {
+            "id": 930,
+            "name": "Jade Jiménez",
+            "taxonomy": "staff_name"
+          }
+        ],
+        [
+          {
+            "id": 1147,
+            "name": "2026-2027",
+            "taxonomy": "staff_year"
+          }
+        ]
+      ]
+    }
+  },
+  {
+    "id": 37026,
+    "title": {
+      "rendered": "Daniel Lin"
+    },
+    "content": {
+      "rendered": "<p>Daniel Lin is currently a freshman from New York (not the city, though everyone keeps asking). He is from Long Island, New York. He enjoys driving, sightseeing and listening to music. Outside of classes, he usually enjoys the peace at the library or can be seen strolling throughout campus at extreme hours of the night.</p>\n",
+      "protected": false
+    },
+    "excerpt": {
+      "rendered": "<p>Illustrator </p>\n",
+      "protected": false
+    },
+    "featured_media": 0,
+    "staff_year": [1147],
+    "_embedded": {
+      "wp:term": [
+        [
+          {
+            "id": 1153,
+            "name": "Daniel Lin",
+            "taxonomy": "staff_name"
+          }
+        ],
+        [
+          {
+            "id": 1147,
+            "name": "2026-2027",
+            "taxonomy": "staff_year"
+          }
+        ]
+      ]
+    }
+  },
+  {
+    "id": 37025,
+    "title": {
+      "rendered": "Emily James"
+    },
+    "content": {
+      "rendered": "<p>Hi! Emily is a first-year from Janesville, Minn., planning to major in English. When she&#8217;s not focused on newspaper-related activities (reading, writing and photography), she drags herself to yoga at 7 a.m. sharp on Wednesdays, politics and pastries at 8:30 a.m. on Fridays and learns ASL on Thursdays (at the very normal time of 6 p.m.). Chai lattes from the Cage are her absolute favorite morning boost on those early days!</p>\n",
+      "protected": false
+    },
+    "excerpt": {
+      "rendered": "<p>Staff Writer</p>\n",
+      "protected": false
+    },
+    "featured_media": 0,
+    "staff_year": [1147],
+    "_embedded": {
+      "wp:term": [
+        [
+          {
+            "id": 1152,
+            "name": "Emily James",
+            "taxonomy": "staff_name"
+          }
+        ],
+        [
+          {
+            "id": 1147,
+            "name": "2026-2027",
+            "taxonomy": "staff_year"
+          }
+        ]
+      ]
+    }
+  },
+  {
+    "id": 37024,
+    "title": {
+      "rendered": "Jenn Lin"
+    },
+    "content": {
+      "rendered": "<p>Jenn Lin is a film and media studies &amp; Asian studies major from Woodbury, Minn. In her spare time, you&#8217;ll see her journaling, exploring many local art and vintage markets, thrifting, sewing, upcycling clothing and embroidering. After graduation, she hopes to pursue being a producer for a TV station or a multimedia journalist, with an upcycled clothing business on the side!</p>\n",
+      "protected": false
+    },
+    "excerpt": {
+      "rendered": "<p>Photographer</p>\n",
+      "protected": false
+    },
+    "featured_media": 0,
+    "staff_year": [1147],
+    "_embedded": {
+      "wp:term": [
+        [
+          {
+            "id": 1151,
+            "name": "Jenn Lin",
+            "taxonomy": "staff_name"
+          }
+        ],
+        [
+          {
+            "id": 1147,
+            "name": "2026-2027",
+            "taxonomy": "staff_year"
+          }
+        ]
+      ]
+    }
+  },
+  {
+    "id": 37022,
+    "title": {
+      "rendered": "Eliana Idzikowski"
+    },
+    "content": {
+      "rendered": "<p>Eliana Idzikowski is a junior film and media Studies and environmental studies double major from Milwaukee, WI. She loves crafting and reading. When she isn&#8217;t being creative, you can catch her with a frisbee in hand! They love playing for St.Olaf Vortex and spend lots of time watching frisbee.</p>\n",
+      "protected": false
+    },
+    "excerpt": {
+      "rendered": "<p>Photographer</p>\n",
+      "protected": false
+    },
+    "featured_media": 37023,
+    "staff_year": [1147],
+    "_embedded": {
+      "wp:featuredmedia": [
+        {
+          "media_details": {
+            "width": 1501,
+            "height": 2001
+          },
+          "source_url": "https://olafmessenger.com/wp-content/uploads/2026/09/ElianaIdzikowski-e1790811002530.jpg"
+        }
+      ],
+      "wp:term": [
+        [
+          {
+            "id": 1128,
+            "name": "Eliana Idzikowski",
+            "taxonomy": "staff_name"
+          }
+        ],
+        [
+          {
+            "id": 1147,
+            "name": "2026-2027",
+            "taxonomy": "staff_year"
+          }
+        ]
+      ]
+    }
+  },
+  {
+    "id": 37020,
+    "title": {
+      "rendered": "Avary Bartholomay"
+    },
+    "content": {
+      "rendered": "<p>Avary is a sophomore psychology and political science major from Fergus Falls, Minn. In her free time, you can find her playing tennis, doing yoga/Pilates, reading novels, studying tarot cards and astrology charts, chit-chatting with friends and watching TV (probably Twin Peaks or something scary).</p>\n",
+      "protected": false
+    },
+    "excerpt": {
+      "rendered": "<p>News Editor</p>\n",
+      "protected": false
+    },
+    "featured_media": 37021,
+    "staff_year": [1147],
+    "_embedded": {
+      "wp:featuredmedia": [
+        {
+          "media_details": {
+            "width": 1501,
+            "height": 2001
+          },
+          "source_url": "https://olafmessenger.com/wp-content/uploads/2026/09/IMG_5888-e1790810878119.jpg"
+        }
+      ],
+      "wp:term": [
+        [
+          {
+            "id": 1018,
+            "name": "Avary Bartholomay",
+            "taxonomy": "staff_name"
+          }
+        ],
+        [
+          {
+            "id": 1147,
+            "name": "2026-2027",
+            "taxonomy": "staff_year"
+          }
+        ]
+      ]
+    }
+  },
+  {
+    "id": 37019,
+    "title": {
+      "rendered": "Tony Smith"
+    },
+    "content": {
+      "rendered": "<p>Tony is a senior from Chicago, Ill. In his free time, Tony enjoys sipping piña coladas and getting caught in the rain. After graduation, he hopes to move to the big city.</p>\n",
+      "protected": false
+    },
+    "excerpt": {
+      "rendered": "<p>Illustrator</p>\n",
+      "protected": false
+    },
+    "featured_media": 0,
+    "staff_year": [1147],
+    "_embedded": {
+      "wp:term": [
+        [
+          {
+            "id": 1150,
+            "name": "Tony Smith",
+            "taxonomy": "staff_name"
+          }
+        ],
+        [
+          {
+            "id": 1147,
+            "name": "2026-2027",
+            "taxonomy": "staff_year"
+          }
+        ]
+      ]
+    }
+  },
+  {
+    "id": 37016,
+    "title": {
+      "rendered": "Kyla Pay"
+    },
+    "content": {
+      "rendered": "<p>Kyla is a senior from North Dakota majoring in English, creative writing and Japanese. When not studying or writing, she enjoys reading, drawing, watching shows with friends and planning new cosplay projects. After graduation, her primary goal is to publish her own stories and poems.</p>\n",
+      "protected": false
+    },
+    "excerpt": {
+      "rendered": "<p>Copy Editor</p>\n",
+      "protected": false
+    },
+    "featured_media": 37018,
+    "staff_year": [1147],
+    "_embedded": {
+      "wp:featuredmedia": [
+        {
+          "media_details": {
+            "width": 1501,
+            "height": 2001
+          },
+          "source_url": "https://olafmessenger.com/wp-content/uploads/2026/09/KylaPay-e1790810688390.jpg"
+        }
+      ],
+      "wp:term": [
+        [
+          {
+            "id": 1149,
+            "name": "Kyla Pay",
+            "taxonomy": "staff_name"
+          }
+        ],
+        [
+          {
+            "id": 1147,
+            "name": "2026-2027",
+            "taxonomy": "staff_year"
+          }
+        ]
+      ]
+    }
+  },
+  {
+    "id": 37012,
+    "title": {
+      "rendered": "Louise Skokan"
+    },
+    "content": {
+      "rendered": "<p>Louise Skokan (they/he) is a senior studio art major with a concentration in environmental studies from Columbia Heights, Minn. His main passions are photography — both film and digital — drawing/illustration, collecting cards, thrifting and playing videos games. After college, they want to become a full-time artist/photographer and work in the conservation of pollinators and flowering plants.</p>\n",
+      "protected": false
+    },
+    "excerpt": {
+      "rendered": "<p>Staff Writer</p>\n",
+      "protected": false
+    },
+    "featured_media": 37013,
+    "staff_year": [1147],
+    "_embedded": {
+      "wp:featuredmedia": [
+        {
+          "media_details": {
+            "width": 1501,
+            "height": 2001
+          },
+          "source_url": "https://olafmessenger.com/wp-content/uploads/2026/09/LouiseSkokan-e1790810438598.jpg"
+        }
+      ],
+      "wp:term": [
+        [
+          {
+            "id": 384,
+            "name": "Louise Skokan",
+            "taxonomy": "staff_name"
+          }
+        ],
+        [
+          {
+            "id": 1147,
+            "name": "2026-2027",
+            "taxonomy": "staff_year"
+          }
+        ]
+      ]
+    }
+  },
+  {
+    "id": 37011,
+    "title": {
+      "rendered": "Sofia Hamilton"
+    },
+    "content": {
+      "rendered": "<p>Sofia is a senior from Ankeny, Iowa, and is studying environmental studies and statistics/data science. Outside of class, she spends her time attempting different types of art projects, backpacking and running with her friends. She can normally be spotted at the climbing wall and is always excited to start up a conversation about the outdoors.</p>\n",
+      "protected": false
+    },
+    "excerpt": {
+      "rendered": "<p>Illustrator </p>\n",
+      "protected": false
+    },
+    "featured_media": 0,
+    "staff_year": [1147],
+    "_embedded": {
+      "wp:term": [
+        [
+          {
+            "id": 1078,
+            "name": "Sofia Hamilton",
+            "taxonomy": "staff_name"
+          }
+        ],
+        [
+          {
+            "id": 1147,
+            "name": "2026-2027",
+            "taxonomy": "staff_year"
+          }
+        ]
+      ]
+    }
+  },
+  {
+    "id": 37009,
+    "title": {
+      "rendered": "Julia Sikorski Roehsner"
+    },
+    "content": {
+      "rendered": "<p>Julia Sikorski Roehsner is a junior from Minneapolis, Minn., majoring in English and creative writing with a concentration in gender and sexuality studies. She has been writing and drawing since she was little and hopes to publish a novel someday. In her spare time, she also enjoys reading, baking and ballroom dance.</p>\n",
+      "protected": false
+    },
+    "excerpt": {
+      "rendered": "<p>Executive Editor</p>\n",
+      "protected": false
+    },
+    "featured_media": 37010,
+    "staff_year": [1147],
+    "_embedded": {
+      "wp:featuredmedia": [
+        {
+          "media_details": {
+            "width": 1501,
+            "height": 2001
+          },
+          "source_url": "https://olafmessenger.com/wp-content/uploads/2026/09/JuliaSikorskiRoe-e1790810078646.jpg"
+        }
+      ],
+      "wp:term": [
+        [
+          {
+            "id": 947,
+            "name": "Julia Sikorski Roehsner",
+            "taxonomy": "staff_name"
+          }
+        ],
+        [
+          {
+            "id": 1147,
+            "name": "2026-2027",
+            "taxonomy": "staff_year"
+          }
+        ]
+      ]
+    }
+  },
+  {
+    "id": 37007,
+    "title": {
+      "rendered": "Annie McMullen"
+    },
+    "content": {
+      "rendered": "<p>Annie McMullen is a senior environmental studies, Norwegian and Nordic studies major from St. Paul, Minn. On the off chance that she’s not writing something for the Mess or otherwise, she can generally be found walking through the Natural Lands or seeking out new music to obsess over. After St. Olaf, she hopes to continue her studies at graduate or law school.</p>\n",
+      "protected": false
+    },
+    "excerpt": {
+      "rendered": "<p>Copy Editor</p>\n",
+      "protected": false
+    },
+    "featured_media": 37008,
+    "staff_year": [1147],
+    "_embedded": {
+      "wp:featuredmedia": [
+        {
+          "media_details": {
+            "width": 1501,
+            "height": 2001
+          },
+          "source_url": "https://olafmessenger.com/wp-content/uploads/2026/09/AnnieMcMullen-e1790809871846.jpg"
+        }
+      ],
+      "wp:term": [
+        [
+          {
+            "id": 376,
+            "name": "Annie McMullen",
+            "taxonomy": "staff_name"
+          }
+        ],
+        [
+          {
+            "id": 1147,
+            "name": "2026-2027",
+            "taxonomy": "staff_year"
+          }
+        ]
+      ]
+    }
+  },
+  {
+    "id": 37006,
+    "title": {
+      "rendered": "Lizzie Elsenpeter"
+    },
+    "content": {
+      "rendered": "<p>Lizzie Elsenpeter is a senior from Blaine, Minn., majoring in English with a concentration in environmental studies. In her free time, Lizzie enjoys climbing, hiking and exploring nature. After graduation, she plans to combine both her majors and pursue environmental communications or journalism.</p>\n",
+      "protected": false
+    },
+    "excerpt": {
+      "rendered": "<p>A&#038;E Editor</p>\n",
+      "protected": false
+    },
+    "featured_media": 0,
+    "staff_year": [1147],
+    "_embedded": {
+      "wp:term": [
+        [
+          {
+            "id": 932,
+            "name": "Lizzie Elsenpeter",
+            "taxonomy": "staff_name"
+          }
+        ],
+        [
+          {
+            "id": 1147,
+            "name": "2026-2027",
+            "taxonomy": "staff_year"
+          }
+        ]
+      ]
+    }
+  },
+  {
+    "id": 37004,
+    "title": {
+      "rendered": "Kim Tran"
+    },
+    "content": {
+      "rendered": "<p>Kim Tran is a junior from Lakeville, Minn., majoring in English. In her spare time, she can be found reading, seeing live music or a sporting event, taking a hike or exploring someplace new with friends.</p>\n",
+      "protected": false
+    },
+    "excerpt": {
+      "rendered": "<p>Sports Editor</p>\n",
+      "protected": false
+    },
+    "featured_media": 37005,
+    "staff_year": [1147],
+    "_embedded": {
+      "wp:featuredmedia": [
+        {
+          "media_details": {
+            "width": 1501,
+            "height": 2001
+          },
+          "source_url": "https://olafmessenger.com/wp-content/uploads/2026/09/KimTran-e1790809740267.jpg"
+        }
+      ],
+      "wp:term": [
+        [
+          {
+            "id": 397,
+            "name": "Kim Tran",
+            "taxonomy": "staff_name"
+          }
+        ],
+        [
+          {
+            "id": 1147,
+            "name": "2026-2027",
+            "taxonomy": "staff_year"
+          }
+        ]
+      ]
+    }
+  },
+  {
+    "id": 37002,
+    "title": {
+      "rendered": "Hannah Freeman"
+    },
+    "content": {
+      "rendered": "<p>Hannah Freeman is a senior Classics and English major from Ramsey, Minnesota. In addition to her work with The Olaf Messenger, Hannah is also the president of St. Olaf Taiko. She has always had an interest in all things creative, be it drawing or writing. She can frequently be found in the library working on an essay or translation, and for fun she likes to read and play video games.</p>\n",
+      "protected": false
+    },
+    "excerpt": {
+      "rendered": "<p>Copy Editor</p>\n",
+      "protected": false
+    },
+    "featured_media": 37003,
+    "staff_year": [1147],
+    "_embedded": {
+      "wp:featuredmedia": [
+        {
+          "media_details": {
+            "width": 1501,
+            "height": 2001
+          },
+          "source_url": "https://olafmessenger.com/wp-content/uploads/2026/09/IMG_5935-e1790809400645.jpg"
+        }
+      ],
+      "wp:term": [
+        [
+          {
+            "id": 1013,
+            "name": "Hannah Freeman",
+            "taxonomy": "staff_name"
+          }
+        ],
+        [
+          {
+            "id": 1147,
+            "name": "2026-2027",
+            "taxonomy": "staff_year"
+          }
+        ]
+      ]
+    }
+  },
+  {
+    "id": 37000,
+    "title": {
+      "rendered": "Juliet Stouffer"
+    },
+    "content": {
+      "rendered": "<p>Juliet Stouffer is a senior triple majoring in creative writing, English and film and media studies. She has been writing since age 5, creating short stories and picture books. In fifth grade, she wrote her first full-length chapter book. She is currently working on a book series and several film scripts she hopes to direct. In her free time, she serves as president of the Writers Guild and the Film Production Society.</p>\n",
+      "protected": false
+    },
+    "excerpt": {
+      "rendered": "<p>Marketing Director</p>\n",
+      "protected": false
+    },
+    "featured_media": 37001,
+    "staff_year": [1147],
+    "_embedded": {
+      "wp:featuredmedia": [
+        {
+          "media_details": {
+            "width": 1501,
+            "height": 2001
+          },
+          "source_url": "https://olafmessenger.com/wp-content/uploads/2026/09/JulietStouffer-e1790809291606.jpg"
+        }
+      ],
+      "wp:term": [
+        [
+          {
+            "id": 381,
+            "name": "Juliet Stouffer",
+            "taxonomy": "staff_name"
+          }
+        ],
+        [
+          {
+            "id": 1147,
+            "name": "2026-2027",
+            "taxonomy": "staff_year"
+          }
+        ]
+      ]
+    }
+  },
+  {
+    "id": 36998,
+    "title": {
+      "rendered": "Ashley Kaszubowski"
+    },
+    "content": {
+      "rendered": "<p>Ashley Kaszubowski is a senior Quantitative Economics and political science double major from Altoona, Wis. In her free time, she enjoys going on coffee runs, completing crossword puzzles and spending time outdoors with friends. After graduation, she plans to attend law school and pursue a career in tax law.</p>\n",
+      "protected": false
+    },
+    "excerpt": {
+      "rendered": "<p>Business Manager</p>\n",
+      "protected": false
+    },
+    "featured_media": 0,
+    "staff_year": [1147],
+    "_embedded": {
+      "wp:term": [
+        [
+          {
+            "id": 1118,
+            "name": "Ashley Kaszubowski",
+            "taxonomy": "staff_name"
+          }
+        ],
+        [
+          {
+            "id": 1147,
+            "name": "2026-2027",
+            "taxonomy": "staff_year"
+          }
+        ]
+      ]
+    }
+  },
+  {
+    "id": 36997,
+    "title": {
+      "rendered": "Jacob Rozell"
+    },
+    "content": {
+      "rendered": "<p>Jacob Rozell is a senior finishing an Individual major in Arctic Studies. As the visual director, he loves art on campus, working with the Mess team, drawing comics and taking photos! You can find him in the DISCO with a house-music playlist or fly-fishing in the rivers and streams of southeast Minnesota.</p>\n",
+      "protected": false
+    },
+    "excerpt": {
+      "rendered": "<p>Visual Director</p>\n",
+      "protected": false
+    },
+    "featured_media": 0,
+    "staff_year": [1147],
+    "_embedded": {
+      "wp:term": [
+        [
+          {
+            "id": 393,
+            "name": "Jacob Rozell",
+            "taxonomy": "staff_name"
+          }
+        ],
+        [
+          {
+            "id": 1147,
+            "name": "2026-2027",
+            "taxonomy": "staff_year"
+          }
+        ]
+      ]
+    }
+  },
+  {
+    "id": 36995,
+    "title": {
+      "rendered": "Kathryn Looney"
+    },
+    "content": {
+      "rendered": "<p>Kathryn is a senior double major in history and English. Outside the newsroom, she can be found meandering through the natural lands, dialing in on the 5th floor of Rolvaag, reading biographies of saints, or enjoying a little treat (a twist ice cream cone) from the Pause. After graduation, Kathryn plans to join a community of religious sisters, and she is currently discerning with the Sisters of Life in New York.</p>\n",
+      "protected": false
+    },
+    "excerpt": {
+      "rendered": "<p>Staff Writer</p>\n",
+      "protected": false
+    },
+    "featured_media": 36996,
+    "staff_year": [1147],
+    "_embedded": {
+      "wp:featuredmedia": [
+        {
+          "media_details": {
+            "width": 1501,
+            "height": 2001
+          },
+          "source_url": "https://olafmessenger.com/wp-content/uploads/2026/09/KathrynLooney-e1790808663101.jpg"
+        }
+      ],
+      "wp:term": [
+        [
+          {
+            "id": 387,
+            "name": "Kathryn Looney",
+            "taxonomy": "staff_name"
+          }
+        ],
+        [
+          {
+            "id": 1147,
+            "name": "2026-2027",
+            "taxonomy": "staff_year"
+          }
+        ]
+      ]
+    }
+  },
+  {
+    "id": 36993,
+    "title": {
+      "rendered": "Maya Betti"
+    },
+    "content": {
+      "rendered": "<p>Maya Betti is a senior from Shoreview, Minn., majoring in English and political science. In her free time, Maya can be found reading memoirs of former NYT journalists, figuring out how to play the acoustic guitar, rewatching The West Wing and running long distances at unimaginably slow paces. After graduation, she hopes to attend law school or become a journalist.</p>\n",
+      "protected": false
+    },
+    "excerpt": {
+      "rendered": "<p>Executive Editor</p>\n",
+      "protected": false
+    },
+    "featured_media": 36994,
+    "staff_year": [1147],
+    "_embedded": {
+      "wp:featuredmedia": [
+        {
+          "media_details": {
+            "width": 1635,
+            "height": 2001
+          },
+          "source_url": "https://olafmessenger.com/wp-content/uploads/2026/09/MayaBetti.jpg"
+        }
+      ],
+      "wp:term": [
+        [
+          {
+            "id": 390,
+            "name": "Maya Betti",
+            "taxonomy": "staff_name"
+          }
+        ],
+        [
+          {
+            "id": 1147,
+            "name": "2026-2027",
+            "taxonomy": "staff_year"
+          }
+        ]
+      ]
+    }
+  }
+]

@@ -9,8 +9,11 @@ const MediaSchema = z.object({
 })
 
 const ProfileSchema = z.object({
+	id: z.number(),
 	title: z.object({rendered: z.string()}),
 	content: z.object({rendered: z.string()}),
+	/** The writer's role on the paper, such as `News Editor` */
+	excerpt: z.object({rendered: z.string()}).optional(),
 	_embedded: z
 		.object({
 			'wp:featuredmedia': z.array(z.unknown()).optional(),
@@ -39,7 +42,9 @@ export function parseStaffProfiles(body: unknown): StaffProfile[] {
 			let media = MediaSchema.safeParse(profile.data._embedded?.['wp:featuredmedia']?.[0])
 			return [
 				{
+					id: profile.data.id,
 					name: decode(profile.data.title.rendered),
+					role: fastGetTrimmedText(profile.data.excerpt?.rendered ?? ''),
 					bio: fastGetTrimmedText(profile.data.content.rendered),
 					photo: media.success
 						? {

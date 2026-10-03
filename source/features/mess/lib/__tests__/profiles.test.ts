@@ -1,9 +1,11 @@
 import {describe, expect, it} from '@jest/globals'
 import profiles from '../../__tests__/fixtures/profiles-390.json'
+import staff from '../../__tests__/fixtures/staff-2026-2027.json'
 import {latestProfile, parseStaffProfiles} from '../profiles'
 
 /** Builds a minimal profile in the shape the WordPress API returns. */
 const profile = (content: string) => ({
+	id: 1,
 	title: {rendered: 'A Writer'},
 	content: {rendered: content},
 })
@@ -33,9 +35,29 @@ describe('parseStaffProfiles', () => {
 		expect(parsed?.bio).toBe('Tom &amp; Jerry')
 	})
 
-	it('gives no photo or year when the profile has none', () => {
+	it('gives no photo, year or role when the profile has none', () => {
 		let [parsed] = parseStaffProfiles([profile('<p>Bio</p>')])
-		expect(parsed).toStrictEqual({name: 'A Writer', bio: 'Bio', photo: null, year: ''})
+		expect(parsed).toStrictEqual({
+			id: 1,
+			name: 'A Writer',
+			role: '',
+			bio: 'Bio',
+			photo: null,
+			year: '',
+		})
+	})
+
+	it('reads the role from the excerpt, decoded', () => {
+		let parsed = parseStaffProfiles(staff)
+		let mathea = parsed.find((p) => p.name === 'Mathea Petersin')
+		expect(mathea?.role).toBe('A&E Correspondent')
+		expect(mathea?.id).toBe(staff.find((p) => p.title.rendered === 'Mathea Petersin')?.id)
+	})
+
+	it('reads every profile of a year, with its role and year', () => {
+		let parsed = parseStaffProfiles(staff)
+		expect(parsed).toHaveLength(27)
+		expect(parsed.every((p) => p.role !== '' && p.year === '2026-2027')).toBe(true)
 	})
 
 	it('skips a malformed profile', () => {

@@ -26,7 +26,7 @@ const POEM: MessStory = {
 }
 
 function profile(name: string, url: string): StaffProfile {
-	return {name, bio: '', photo: {url, width: 300, height: 300}, year: '2025-2026'}
+	return {id: 1, name, role: '', bio: '', photo: {url, width: 300, height: 300}, year: '2025-2026'}
 }
 
 const PLACEHOLDER = 'mess-byline-avatar-placeholder'
