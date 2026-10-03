@@ -63,6 +63,11 @@ type Props = {
 	countLabel?: (count: number) => string
 	/** Drawn as SwiftUI draws a disabled button, but still tappable, as for an area with nothing in it. */
 	dimmed?: boolean
+	/**
+	 * Holds room for a two-line label even under a one-line name, so every row
+	 * of a grid is one height rather than each row as tall as its longest name.
+	 */
+	reservesLabelLines?: boolean
 }
 
 export function GradientRoundedRectangle({
@@ -124,6 +129,7 @@ export function GradientTile({
 	count,
 	countLabel = String,
 	dimmed = false,
+	reservesLabelLines = false,
 }: Props): React.ReactNode {
 	let isDarkScheme = useColorScheme() === 'dark'
 	let shownCount = count !== undefined && count > 0 ? count : undefined
@@ -182,7 +188,7 @@ export function GradientTile({
 						font({textStyle: 'subheadline'}),
 						foregroundStyle({type: 'hierarchical', style: 'secondary'}),
 						multilineTextAlignment('center'),
-						lineLimit(LABEL_LINES),
+						lineLimit(LABEL_LINES, {reservesSpace: reservesLabelLines}),
 						frame({maxWidth: FILL_WIDTH}),
 					]}
 				>

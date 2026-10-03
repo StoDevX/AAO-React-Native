@@ -22,10 +22,10 @@ struct StudentOrgsScreen: Screen {
 		verifyTitle(TestIdentifiers.Buttons.studentOrgs)
 	}
 
-	/// Search across every category. The landing screen shows category tiles
-	/// until a query is typed, so this is also how a test reaches an org row
+	/// Search across every category. The landing screen shows categories until
+	/// a query is typed, so this is also how a test reaches an org row
 	/// unambiguously -- a category can share an org's name (e.g. "Academic"),
-	/// but only the search results render `DisclosureRow`s rather than tiles.
+	/// but only the search results list orgs.
 	@discardableResult
 	func search(for text: String) -> Self {
 		XCTAssertTrue(
@@ -113,6 +113,14 @@ struct StudentOrgsScreen: Screen {
 		XCTAssertTrue(
 			firstCategoryRow.waitForExistence(timeout: 30),
 			"The category list should hold at least one category before a search")
+		return self
+	}
+
+	@discardableResult
+	func verifyCategoryGridShown() -> Self {
+		let grid = app.element(matching: TestIdentifiers.StudentOrgs.categoryGrid)
+		XCTAssertTrue(grid.waitForExistence(timeout: 30), "The categories should be drawn as tiles")
+		XCTAssertFalse(firstCategoryRow.exists, "No category should still be drawn as a row")
 		return self
 	}
 
