@@ -119,6 +119,39 @@ describe('parseBlocks', () => {
 		])
 	})
 
+	// "Untitled" (33168), as olafmessenger.com served it on 2026-10-03. iOS loads no plain-HTTP
+	// image outside a web view, and the site serves every upload over HTTPS too.
+	it('reads an image the post links over plain HTTP at its HTTPS address', () => {
+		let html =
+			'<p><img loading="lazy" decoding="async" class="wp-image-33169 aligncenter" src="http://olafmessenger.com/wp-content/uploads/2023/12/IMG_8933-225x300.jpeg" alt="" width="320" height="427" srcset="https://olafmessenger.com/wp-content/uploads/2023/12/IMG_8933-225x300.jpeg 225w, https://olafmessenger.com/wp-content/uploads/2023/12/IMG_8933-450x600.jpeg 450w, https://olafmessenger.com/wp-content/uploads/2023/12/IMG_8933-900x1200.jpeg 900w, https://olafmessenger.com/wp-content/uploads/2023/12/IMG_8933-768x1024.jpeg 768w, https://olafmessenger.com/wp-content/uploads/2023/12/IMG_8933-1152x1536.jpeg 1152w, https://olafmessenger.com/wp-content/uploads/2023/12/IMG_8933-1536x2048.jpeg 1536w, https://olafmessenger.com/wp-content/uploads/2023/12/IMG_8933.jpeg 1920w" sizes="auto, (max-width: 320px) 100vw, 320px" /></p>'
+		expect(parseBlocks(html)).toStrictEqual([
+			{
+				type: 'figure',
+				url: 'https://olafmessenger.com/wp-content/uploads/2023/12/IMG_8933-225x300.jpeg',
+				largeUrl: 'https://olafmessenger.com/wp-content/uploads/2023/12/IMG_8933.jpeg',
+				width: 320,
+				height: 427,
+				caption: '',
+			},
+		])
+	})
+
+	it('reads a srcset copy listed over plain HTTP at its HTTPS address', () => {
+		let html =
+			'<img src="https://olafmessenger.com/a-300x200.jpg" width="300" height="200" ' +
+			'srcset="http://olafmessenger.com/a-300x200.jpg 300w, http://olafmessenger.com/a.jpg 1200w" />'
+		expect(parseBlocks(html)).toStrictEqual([
+			{
+				type: 'figure',
+				url: 'https://olafmessenger.com/a-300x200.jpg',
+				largeUrl: 'https://olafmessenger.com/a.jpg',
+				width: 300,
+				height: 200,
+				caption: '',
+			},
+		])
+	})
+
 	it('reads a bare image as a figure with no caption', () => {
 		expect(
 			parseBlocks('<p><img src="https://x.test/b.jpg" width="10" height="20"></p>'),

@@ -143,15 +143,24 @@ function outermost(node: Element, name: string): Element[] {
 	return found
 }
 
+/**
+ * An image's address over HTTPS. Older posts link uploads over plain HTTP, which iOS loads only
+ * in a web view; the site serves each of them over HTTPS too.
+ */
+function secureUrl(url: string): string {
+	return url.replace(/^http:\/\//iu, 'https://')
+}
+
 function figureFrom(img: Element, caption: string): Block | null {
-	let url = img.attribs.src
+	let url = img.attribs.src && secureUrl(img.attribs.src)
 	let width = Number.parseInt(img.attribs.width ?? '', 10)
 	let height = Number.parseInt(img.attribs.height ?? '', 10)
 	// An image with no size cannot be given its frame before it loads, and a
 	// zero size gives no aspect ratio.
 	if (!url || !(width > 0 && height > 0)) return null
 	// The article draws the size the HTML asks for; the viewer, where a reader zooms, the largest.
-	let largeUrl = largestSource(img.attribs.srcset, url)
+	let largest = largestSource(img.attribs.srcset, url)
+	let largeUrl = largest && secureUrl(largest)
 	return largeUrl && largeUrl !== url
 		? {type: 'figure', url, largeUrl, width, height, caption}
 		: {type: 'figure', url, width, height, caption}
@@ -175,7 +184,7 @@ function galleryFrom(node: Element): Block | null {
 		.filter((id) => id > 0)
 	if (photoIds.length === 0) return null
 	let img = descendants(slideshow, 'img')[0]
-	let url = img?.attribs.src
+	let url = img?.attribs.src && secureUrl(img.attribs.src)
 	let width = Number.parseInt(img?.attribs['data-width'] ?? '', 10)
 	let height = Number.parseInt(img?.attribs['data-height'] ?? '', 10)
 	let cover = url && width > 0 && height > 0 ? {url, width, height} : null
