@@ -1,14 +1,15 @@
 import * as React from 'react'
 import {StyleSheet, View} from 'react-native'
 import {track} from '../../telemetry/track'
+import {MutedStationPage} from './muted-station-page'
 import {NativeStreamPlayer} from './native-player'
 import {useNowPlaying} from './use-now-playing'
-import {StreamPlayer} from './player'
+import {useStationSchedule} from './use-station-schedule'
 import {STATIONS, type Station} from './stations'
 import {useRadioStore} from './store'
 import type {HtmlAudioError, PlayState, RadioPlayState} from './types'
 
-/** The `<audio>` command each radio state needs. */
+/** What each radio state asks of a player. */
 const PLAYER_STATE: Record<RadioPlayState, PlayState> = {
 	stopped: 'paused',
 	starting: 'checking',
@@ -27,7 +28,9 @@ function NativeStation({
 	React.ComponentProps<typeof NativeStreamPlayer>,
 	'nowPlaying' | 'streamSourceUrl'
 >): React.ReactNode {
-	let nowPlaying = useNowPlaying(station)
+	// With no song on air, Control Center names the show the schedule has on.
+	let {current} = useStationSchedule(station.id)
+	let nowPlaying = useNowPlaying(station, current)
 	return (
 		<NativeStreamPlayer
 			{...player}
@@ -87,10 +90,10 @@ export function RadioHost(): React.ReactNode {
 
 	let {source} = STATIONS[stationId]
 
-	// A station with a stream of its own plays natively, which iOS can put in
-	// Control Center; one that only has a page to play from needs the WebView.
-	if (!source.useEmbeddedPlayer) {
-		return (
+	// Every station plays natively, which iOS can put in Control Center. A station
+	// that also has a player page of its own gets it loaded beside, silent.
+	return (
+		<>
 			<NativeStation
 				key={playerKey}
 				station={STATIONS[stationId]}
@@ -102,28 +105,23 @@ export function RadioHost(): React.ReactNode {
 				onWaiting={onWaiting}
 				playState={PLAYER_STATE[playState]}
 			/>
-		)
-	}
-
-	// The WebView's own container takes flex: 1 whatever its style says, so
-	// beside the root stack it would claim half the screen. This view holds
-	// it to a point instead.
-	return (
-		<View pointerEvents="none" style={styles.hidden}>
-			<StreamPlayer
-				key={playerKey}
-				embeddedPlayerUrl={source.embeddedPlayerUrl}
-				onEnded={onStopped}
-				onError={onError}
-				onPause={onStopped}
-				onPlay={onPlay}
-				onWaiting={onWaiting}
-				playState={PLAYER_STATE[playState]}
-				streamSourceUrl={source.streamSourceUrl}
-				style={styles.fill}
-				useEmbeddedPlayer={source.useEmbeddedPlayer}
-			/>
-		</View>
+			{source.embeddedPlayerUrl ? (
+				// DECISION (St. Olaf / KSTO): their player page's analytics count listens,
+				// and they asked that the app keep loading it. It plays with its sound
+				// off, beside the native player that is heard, and nothing it reports is
+				// used. See `MutedStationPage` and the station's `source`. The WebView's
+				// own container takes flex: 1 whatever its style says, so beside the root
+				// stack it would claim half the screen; this view holds it to a point.
+				<View pointerEvents="none" style={styles.hidden}>
+					<MutedStationPage
+						key={playerKey}
+						embeddedPlayerUrl={source.embeddedPlayerUrl}
+						playState={PLAYER_STATE[playState]}
+						style={styles.fill}
+					/>
+				</View>
+			) : null}
+		</>
 	)
 }
 

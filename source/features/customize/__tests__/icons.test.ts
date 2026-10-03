@@ -33,7 +33,7 @@ describe('iconsByGroup', () => {
 
 	it('gathers the windmill variants', () => {
 		let windmills = iconsByGroup()[2].icons
-		expect(windmills).toHaveLength(9)
+		expect(windmills).toHaveLength(7)
 		expect(windmills.every((i) => i.type.startsWith('windmill-'))).toBe(true)
 	})
 })

@@ -20,7 +20,7 @@ class ModuleCustomizeTests: UITestCase {
 		gallery.capture("app-icon-gallery")
 
 		let bigOle = gallery.icon(named: "Big Ole")
-		let alternates = ["Old Main", "Windmill (Day)"]
+		let alternates = ["Old Main", "Windmill (Sky)"]
 
 		for name in ["Big Ole"] + alternates {
 			let tile = gallery.icon(named: name)
