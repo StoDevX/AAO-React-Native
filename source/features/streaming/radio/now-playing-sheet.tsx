@@ -24,6 +24,9 @@ export function RadioNowPlayingSheet(): React.ReactNode {
 	let [showingSchedule, setShowingSchedule] = React.useState(false)
 	// Locked, the sheet holds open and the record can be scratched.
 	let [locked, setLocked] = React.useState(false)
+	// A finger on the record: the scroll view must not take a scratch that
+	// drifts vertically.
+	let [held, setHeld] = React.useState(false)
 	let station = STATIONS[viewed]
 	let {logo, showNextLogo} = useLogoCycle(station)
 	let fit = useFitOrScroll()
@@ -44,6 +47,7 @@ export function RadioNowPlayingSheet(): React.ReactNode {
 				onDismiss={() => {
 					setShowingSchedule(false)
 					setLocked(false)
+					setHeld(false)
 				}}
 			>
 				<Group
@@ -62,12 +66,13 @@ export function RadioNowPlayingSheet(): React.ReactNode {
 								contentContainerStyle={styles.content}
 								onContentSizeChange={fit.onContentSizeChange}
 								onLayout={fit.onLayout}
-								scrollEnabled={fit.scrollEnabled}
+								scrollEnabled={fit.scrollEnabled && !held}
 							>
 								<FullLayout
 									logo={logo}
 									onToggleSchedule={() => setShowingSchedule((on) => !on)}
 									locked={locked}
+									onHeldChange={setHeld}
 									onToggleLock={() => setLocked((on) => !on)}
 									viewportHeight={fit.viewport}
 									showNextLogo={showNextLogo}

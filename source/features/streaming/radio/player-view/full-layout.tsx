@@ -28,6 +28,7 @@ export function FullLayout({
 	onToggleSchedule,
 	locked,
 	onToggleLock,
+	onHeldChange,
 	viewportHeight,
 }: {
 	station: Station
@@ -39,6 +40,8 @@ export function FullLayout({
 	/** Whether the sheet is held open, which is when a drag turns the record rather than closing the sheet. */
 	locked: boolean
 	onToggleLock: () => void
+	/** Told when a finger lands on the record and when it lifts, so the scroll around it can hold still. */
+	onHeldChange: (held: boolean) => void
 	/** The height the player has to fit in: the sheet's, or the tab's between its bars. */
 	viewportHeight: number
 }): React.ReactNode {
@@ -62,6 +65,7 @@ export function FullLayout({
 						image={logo.image}
 						labelColor={logo.labelColor}
 						labelScale={logo.labelScale ?? 0.8}
+						onHeldChange={onHeldChange}
 						onTap={showNextLogo}
 						playing={playState === 'playing'}
 						scratchable={locked}

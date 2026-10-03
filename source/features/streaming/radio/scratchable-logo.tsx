@@ -18,7 +18,6 @@ import Animated, {
 	withSpring,
 	withTiming,
 } from 'react-native-reanimated'
-import {scheduleOnRN} from 'react-native-worklets'
 import * as c from '@frogpond/colors'
 import * as logos from '../../../../images/streaming'
 
@@ -65,8 +64,6 @@ type Props = {
 	 * around it can hold still while the logo is scratched.
 	 */
 	onHeldChange?: (held: boolean) => void
-	/** Told when a scratch is over and the logo has stopped coasting. */
-	onSettle?: () => void
 }
 
 /**
@@ -77,7 +74,7 @@ type Props = {
  */
 export function ScratchableLogo(props: Props): React.ReactNode {
 	let {image, labelColor, labelScale, size, accessibilityLabel, playing} = props
-	let {onTap, onHeldChange, onSettle, scratchable = true} = props
+	let {onTap, onHeldChange, scratchable = true} = props
 	let reduceMotion = useReducedMotion()
 	let spins = playing && !reduceMotion
 
@@ -169,18 +166,15 @@ export function ScratchableLogo(props: Props): React.ReactNode {
 		onHeldChange?.(false)
 		scale.set(withSpring(1, {duration: 250}))
 		if (ignored.current) {
-			onSettle?.()
 			return
 		}
 		if (lastAngle.current === null) {
 			onTap?.()
-			onSettle?.()
 			return
 		}
 
 		startSpinning()
 		if (reduceMotion) {
-			onSettle?.()
 			return
 		}
 		// Where the finger lifted counts too: touches can arrive sparsely, and
@@ -192,13 +186,7 @@ export function ScratchableLogo(props: Props): React.ReactNode {
 		// The spin supplies its own speed, so the scratch coasts on only what
 		// the fling adds beyond it.
 		let velocity = releaseVelocity(samples.current, event.nativeEvent.timestamp)
-		scratched.set(
-			withDecay({velocity: spins ? velocity - DEGREES_PER_SECOND : velocity}, (finished) => {
-				if (finished && onSettle) {
-					scheduleOnRN(onSettle)
-				}
-			}),
-		)
+		scratched.set(withDecay({velocity: spins ? velocity - DEGREES_PER_SECOND : velocity}))
 	}
 
 	let turned = useAnimatedStyle(() => ({
@@ -223,7 +211,6 @@ export function ScratchableLogo(props: Props): React.ReactNode {
 				onHeldChange?.(false)
 				scale.set(withSpring(1, {duration: 250}))
 				startSpinning()
-				onSettle?.()
 			}}
 			// A scroll view would otherwise take over a scratch that drifts
 			// vertically. A record that cannot be scratched lets it.
