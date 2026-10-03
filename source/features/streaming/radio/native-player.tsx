@@ -20,6 +20,9 @@ type Props = {
 	streamSourceUrl: string
 }
 
+/** How long a reloading stream may go without buffering before quiet counts as a pause again. */
+const RELOAD_TIMEOUT_MS = 10_000
+
 /// Radio plays over the lock screen and the silent switch, and takes the audio
 /// session from other apps, as a call to a station would. Setting it again is
 /// harmless, so each player sets it.
@@ -61,7 +64,12 @@ export function NativeStreamPlayer(props: Props): React.ReactNode {
 			player.pause()
 			return
 		}
-		void configureAudioMode().then(() => player.play())
+		// The radio may have paused again by the time the session is readied.
+		void configureAudioMode().then(() => {
+			if (callbacks.current.playState !== 'paused') {
+				player.play()
+			}
+		})
 	}, [player, playState])
 
 	// The lock screen and Control Center show the station and its play and
@@ -84,29 +92,36 @@ export function NativeStreamPlayer(props: Props): React.ReactNode {
 	// not heard in the meantime, and it is not paused again, which the lock
 	// screen would show between two Playings. Only the player starting counts:
 	// its status still says playing for a moment after the app pauses it.
-	// True from loading the stream again until it plays, or fails. The reloading
-	// player is idle for a moment, which is not a pause, and taking it for one
-	// pauses the station, whose own restart then reads as another resume.
-	let reloading = React.useRef(false)
+	// Where the stream is in loading again. The reloading player flashes playing,
+	// goes idle, then buffers before it plays steadily, and the idle moment is
+	// not a pause: taking it for one pauses the station, whose own restart then
+	// reads as another resume. So until it has buffered and then played, quiet
+	// is ignored; a timeout ends that should it never buffer.
+	let reload = React.useRef<'none' | 'reloading' | 'buffered'>('none')
+	let reloadTimer = React.useRef<ReturnType<typeof setTimeout> | null>(null)
+	let endReload = React.useCallback(() => {
+		reload.current = 'none'
+		if (reloadTimer.current) {
+			clearTimeout(reloadTimer.current)
+			reloadTimer.current = null
+		}
+	}, [])
+	React.useEffect(() => endReload, [endReload])
 	let wasPlaying = React.useRef(false)
 	let isPlaying = status.playing
 	React.useEffect(() => {
 		let started = isPlaying && !wasPlaying.current
 		wasPlaying.current = isPlaying
-		// Playing once the store has acknowledged the resume means the stream has
-		// loaded again; the player's own start, which asked for it, does not.
-		if (isPlaying && playState !== 'paused') {
-			reloading.current = false
-		}
-		if (started && playState === 'paused' && !reloading.current) {
-			reloading.current = true
+		if (started && playState === 'paused' && reload.current === 'none') {
+			reload.current = 'reloading'
+			reloadTimer.current = setTimeout(endReload, RELOAD_TIMEOUT_MS)
 			player.replace(streamSourceUrl)
 			// oxlint-disable-next-line react/immutability
 			player.muted = false
 			player.play()
 			callbacks.current.onResume?.()
 		}
-	}, [isPlaying, playState, player, streamSourceUrl])
+	}, [isPlaying, playState, player, streamSourceUrl, endReload])
 
 	let previous = React.useRef<AudioActivity>('idle')
 	let error = status.error
@@ -121,30 +136,36 @@ export function NativeStreamPlayer(props: Props): React.ReactNode {
 			case 'playing':
 				// Audio under a paused station is Control Center playing it, which the
 				// effect above answers.
+				if (reload.current === 'buffered') {
+					endReload()
+				}
 				if (callbacks.current.playState !== 'paused') {
 					onPlay?.()
 				}
 				break
 			case 'waiting':
+				if (reload.current === 'reloading') {
+					reload.current = 'buffered'
+				}
 				onWaiting?.()
 				break
 			case 'ended':
 				onEnded?.()
 				break
 			case 'error':
-				reloading.current = false
+				endReload()
 				onError?.({code: 0, message: error ?? 'The stream could not be played.'})
 				break
 			case 'idle':
 				// Quiet after playing is a pause the app did not ask for.
-				if ((was === 'playing' || was === 'waiting') && !reloading.current) {
+				if ((was === 'playing' || was === 'waiting') && reload.current === 'none') {
 					onPause?.()
 				}
 				break
 			default:
 				break
 		}
-	}, [activity, error])
+	}, [activity, error, endReload])
 
 	return null
 }

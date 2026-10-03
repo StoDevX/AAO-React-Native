@@ -242,7 +242,10 @@ describe('NativeStreamPlayer', () => {
 		await view.rerender(player('checking', cb))
 		expect(cb.onPause).not.toHaveBeenCalled()
 
-		mockStatus = {...mockStatus, playing: true}
+		// The reloaded stream buffers, then plays.
+		mockStatus = {...mockStatus, isBuffering: true}
+		await view.rerender(player('checking', cb))
+		mockStatus = {...mockStatus, playing: true, isBuffering: false}
 		await view.rerender(player('checking', cb))
 		expect(cb.onPlay).toHaveBeenCalledTimes(1)
 		expect(cb.onResume).toHaveBeenCalledTimes(1)
@@ -251,5 +254,45 @@ describe('NativeStreamPlayer', () => {
 		mockStatus = {...mockStatus, playing: false}
 		await view.rerender(player('playing', cb))
 		expect(cb.onPause).toHaveBeenCalledTimes(1)
+	})
+
+	test('keeps ignoring quiet through the flash of playing at the start of its own reload', async () => {
+		let cb = callbacks()
+		mockStatus = {...mockStatus, playing: true}
+		let view = await render(player('playing', cb))
+		mockStatus = {...mockStatus, playing: false}
+		await view.rerender(player('paused', cb))
+		mockStatus = {...mockStatus, playing: true}
+		await view.rerender(player('paused', cb))
+		expect(cb.onResume).toHaveBeenCalledTimes(1)
+		cb.onPause.mockClear()
+
+		// As seen on a phone: the reloaded player flashes playing, goes idle, then
+		// buffers, and only then plays steadily.
+		await view.rerender(player('checking', cb))
+		mockStatus = {...mockStatus, playing: false}
+		await view.rerender(player('checking', cb))
+		expect(cb.onPause).not.toHaveBeenCalled()
+
+		mockStatus = {...mockStatus, isBuffering: true}
+		await view.rerender(player('checking', cb))
+		mockStatus = {...mockStatus, playing: true, isBuffering: false}
+		await view.rerender(player('checking', cb))
+		expect(cb.onPause).not.toHaveBeenCalled()
+		expect(cb.onResume).toHaveBeenCalledTimes(1)
+	})
+
+	test('does not start a player the radio has paused since the audio session was readied', async () => {
+		let cb = callbacks()
+		let ready: () => void = () => undefined
+		mockSetAudioMode.mockImplementationOnce(() => new Promise<void>((resolve) => (ready = resolve)))
+		let view = await render(player('checking', cb))
+		mockPlayer.play.mockClear()
+
+		await view.rerender(player('paused', cb))
+		ready()
+		await Promise.resolve()
+
+		expect(mockPlayer.play).not.toHaveBeenCalled()
 	})
 })
