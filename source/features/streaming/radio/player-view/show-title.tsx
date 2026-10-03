@@ -33,5 +33,5 @@ export function ShowTitle({
 const styles = StyleSheet.create({
 	block: {flex: 1},
 	title: {fontSize: 22, fontWeight: '600'},
-	subtitle: {fontSize: 20},
+	subtitle: {fontSize: 20, fontVariant: ['tabular-nums']},
 })

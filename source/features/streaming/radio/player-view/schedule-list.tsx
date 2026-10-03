@@ -60,7 +60,7 @@ const styles = StyleSheet.create({
 	list: {alignSelf: 'stretch', flex: 1},
 	content: {gap: 12},
 	row: {flexDirection: 'row', gap: 12},
-	time: {fontSize: 17, width: 80},
+	time: {fontSize: 17, width: 80, fontVariant: ['tabular-nums']},
 	title: {fontSize: 17, flex: 1},
 	note: {fontSize: 17, textAlign: 'center'},
 })
