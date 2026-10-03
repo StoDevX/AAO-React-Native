@@ -3,6 +3,12 @@ import XCTest
 struct SettingsScreen: Screen {
 	let app: XCUIApplication
 
+	/// An icon's row, found by its title: every row shares the `app-icon-picker`
+	/// identifier, so the title is only its label.
+	func appIcon(named iconName: String) -> XCUIElement {
+		app.buttonLabelled(iconName)
+	}
+
 	/// The icon list is longer than the screen and its rows are realised lazily,
 	/// so a row selected earlier can sit off the screen -- and out of the tree --
 	/// by the time the next one is wanted. Looks down the list, then back up it.
@@ -14,7 +20,7 @@ struct SettingsScreen: Screen {
 
 	@discardableResult
 	func selectAppIcon(iconName: String, springboard: XCUIApplication) -> Self {
-		let row = app.buttons[iconName]
+		let row = appIcon(named: iconName)
 		scrollIntoView(row)
 		XCTAssertTrue(
 			row.waitForExistence(timeout: 10),
