@@ -115,6 +115,15 @@ export const useRadioStore = create<RadioStore>()(
 	),
 )
 
+/**
+ * Whether a station's control offers Stop rather than Play: while it is
+ * starting or playing, and after it fails, when Stop is the only way to unload
+ * it.
+ */
+export function offersStop(playState: RadioPlayState, error: HtmlAudioError | null): boolean {
+	return playState !== 'stopped' || error !== null
+}
+
 /** What `stationId`'s own controls show: its state when it is loaded, and stopped otherwise. */
 export function useStationPlayback(stationId: StationId): {
 	playState: RadioPlayState

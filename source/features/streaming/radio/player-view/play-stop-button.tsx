@@ -4,18 +4,18 @@ import {Touchable} from '@frogpond/touchable'
 import {SymbolView} from 'expo-symbols'
 
 import type {Station} from '../stations'
-import {useRadioStore, useStationPlayback} from '../store'
+import {offersStop, useRadioStore, useStationPlayback} from '../store'
 import {palette} from './palette'
 
 /** What the player says when the station's last play failed. */
 const PLAYBACK_ERROR = 'Couldn’t play'
 
-/** Play, or Stop while the station is starting or playing. */
+/** Play, or Stop while the station is starting, playing, or has failed. */
 export function PlayStopButton({station}: {station: Station}): React.ReactNode {
-	let {playState} = useStationPlayback(station.id)
+	let {playState, error} = useStationPlayback(station.id)
 	let play = useRadioStore((state) => state.play)
 	let stop = useRadioStore((state) => state.stop)
-	let running = playState !== 'stopped'
+	let running = offersStop(playState, error)
 	return (
 		<Touchable
 			accessibilityLabel={`${running ? 'Stop' : 'Play'} ${station.stationName}`}

@@ -7,7 +7,7 @@ import {SymbolView} from 'expo-symbols'
 import {GlassView} from 'expo-glass-effect'
 import {NativeTabs} from 'expo-router/unstable-native-tabs'
 import {STATIONS} from './stations'
-import {useRadioStore} from './store'
+import {offersStop, useRadioStore} from './store'
 import {useRadioBarVisible} from './bar-visibility'
 import {describePlayback} from './describe-playback'
 
@@ -65,7 +65,7 @@ export function RadioMiniPlayer({
 
 	let station = STATIONS[stationId]
 	let status = describePlayback(playState, error)
-	let running = playState !== 'stopped'
+	let running = offersStop(playState, error)
 
 	return (
 		<View style={styles.row}>
