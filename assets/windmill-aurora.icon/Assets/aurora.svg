@@ -1,4 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
-<defs><filter id="blur" x="-1" y="-1" width="3" height="3"><feGaussianBlur stdDeviation="28"/></filter></defs>
-<path d="M -60 300 C 220 180, 420 420, 620 240.0 S 960 420, 1100 260.0" fill="none" stroke="#3DFFA0" stroke-width="90" opacity="0.75" filter="url(#blur)"/><path d="M -60 400 C 220 310, 420 490, 620 355.0 S 960 490, 1100 370.0" fill="none" stroke="#2EE6C8" stroke-width="60" opacity="0.6" filter="url(#blur)"/><path d="M -60 220 C 220 80, 420 360, 620 150.0 S 960 360, 1100 173.33333333333334" fill="none" stroke="#9B6BFF" stroke-width="70" opacity="0.55" filter="url(#blur)"/>
-</svg>

@@ -33,22 +33,22 @@ beforeEach(() => {
 
 describe('useAppIcon', () => {
 	it('reads the icon iOS has set', async () => {
-		mockAlternateIconName = 'windmill-fog'
+		mockAlternateIconName = 'windmill-dawn'
 		let {result} = await renderHook(() => useAppIcon())
-		await waitFor(() => expect(result.current.current.type).toBe('windmill-fog'))
+		await waitFor(() => expect(result.current.current.type).toBe('windmill-dawn'))
 	})
 
 	it('applies another icon', async () => {
 		let {result} = await renderHook(() => useAppIcon())
-		await act(() => result.current.apply('windmill-fog'))
-		expect(result.current.current.type).toBe('windmill-fog')
+		await act(() => result.current.apply('windmill-dawn'))
+		expect(result.current.current.type).toBe('windmill-dawn')
 	})
 
 	it('does nothing when asked for the icon already set', async () => {
-		mockAlternateIconName = 'windmill-fog'
+		mockAlternateIconName = 'windmill-dawn'
 		let {result} = await renderHook(() => useAppIcon())
-		await waitFor(() => expect(result.current.current.type).toBe('windmill-fog'))
-		await act(() => result.current.apply('windmill-fog'))
-		expect(result.current.current.type).toBe('windmill-fog')
+		await waitFor(() => expect(result.current.current.type).toBe('windmill-dawn'))
+		await act(() => result.current.apply('windmill-dawn'))
+		expect(result.current.current.type).toBe('windmill-dawn')
 	})
 })

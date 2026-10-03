@@ -161,12 +161,24 @@ through oxipng. A new alternate also needs an entry in `ALTERNATE_ICONS` in
 the plugin, in `appIcons` in `images/icons/index.ts`, and in the gallery's
 `ICONS` in `source/features/customize/icons.ts`.
 
-The Old Main (Retro) icon's pixel layers, `pixels.png` and `pixels-amber.png`, are
-drawn by `scripts/make-crt-pixels.mjs` from the screen grid in that file, with
-the SVGs kept in `assets/old-main-retro.icon/source/`. Edit the grid, run
+The Old Main (Retro) icon's pixel layers are drawn by `scripts/make-crt-pixels.mjs`
+from the screen grid in that file: the cells as `pixels.svg` and
+`pixels-amber.svg`, and their glow as quarter-size PNGs rendered from the SVGs
+in `assets/old-main-retro.icon/source/`. Edit the grid, run
 `mise run crt-pixels`, then `mise run icons`. The pipeline is Display P3
-throughout: the palette holds P3 components, and the PNG is tagged with the
-profile, not converted to it.
+throughout: the palette holds P3 components, icon.json reads untagged SVG
+colors as P3, and the PNGs are tagged with the profile, not converted to it.
+
+Every icon costs about 2.3 MiB of each iPhone's download, as actool stores a
+flat 1024px render per appearance without loss, and a layer's own images come
+on top. Keep both down:
+
+- Grain and noise make every render bigger; the Retro icon's backgrounds were
+  1.8 MB each until a blur took the grain out.
+- A soft layer can be a quarter-size PNG scaled up 4x in icon.json's
+  `position`, at no visible cost.
+- Icon Composer ignores SVG filters without a word, so a blur or glow stays a
+  raster layer.
 
 ### Custom Symbols
 

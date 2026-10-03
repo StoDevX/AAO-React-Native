@@ -11,16 +11,11 @@ import type {XcodeProject} from 'xcode'
  * `setAlternateIconName`.
  */
 export const ALTERNATE_ICONS = [
-	'sunset-behind-main',
+	'old-main',
 	'windmill-sky',
-	'windmill-night',
 	'windmill-dawn',
 	'windmill-golden-hour',
-	'windmill-aurora',
-	'windmill-fog',
 	'windmill-stars',
-	'constellation',
-	'old-main-hill',
 	'old-main-retro',
 ]
 
@@ -76,6 +71,18 @@ function buildSettingsFor(project: XcodeProject, targetName: string): Record<str
 export function includeAllAppIcons(project: XcodeProject, targetName: string): XcodeProject {
 	for (let settings of buildSettingsFor(project, targetName)) {
 		settings.ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = 'YES'
+	}
+	return project
+}
+
+/**
+ * Store the asset catalog zipped rather than in lzfse. actool keeps a flat
+ * 1024px render of every icon in each appearance, without loss, and zip makes
+ * those about a tenth smaller.
+ */
+export function compressAppIcons(project: XcodeProject, targetName: string): XcodeProject {
+	for (let settings of buildSettingsFor(project, targetName)) {
+		settings.ASSETCATALOG_COMPILER_OPTIMIZATION = 'space'
 	}
 	return project
 }
@@ -153,6 +160,7 @@ const withAlternateIcons: ConfigPlugin = (config) =>
 		copyAlternateIcons(projectRoot, join(platformProjectRoot, groupName))
 		mod.modResults = addAlternateIconResources(mod.modResults, groupName)
 		mod.modResults = includeAllAppIcons(mod.modResults, APP_TARGET)
+		mod.modResults = compressAppIcons(mod.modResults, APP_TARGET)
 		return mod
 	})
 
