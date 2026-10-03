@@ -71,6 +71,6 @@ struct MessIssueScreen: Screen {
 	}
 
 	private var storyRows: XCUIElementQuery {
-		app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH %@", TestIdentifiers.News.storyRowPrefix))
+		app.messStoryRows
 	}
 }

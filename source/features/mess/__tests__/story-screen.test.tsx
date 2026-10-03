@@ -142,6 +142,7 @@ const POEM: MessStory = {
 }
 
 const PUZZLE = {
+	type: 'crossword',
 	id: 'af644d78',
 	set: 'c2b247b419ae1dc89954424eb39235cd774839006bb020ce26abcf072f7ecaf4',
 }
@@ -155,7 +156,7 @@ const CROSSWORD: MessStory = {
 	section: 'Variety',
 	column: 'Crossword',
 	blocks: [{type: 'paragraph', runs: [{text: 'Answers in next week’s issue.'}]}],
-	layout: {kind: 'crossword', puzzle: PUZZLE},
+	layout: {kind: 'puzzle', puzzle: PUZZLE},
 }
 
 const PLAYLIST_PHOTO = {
@@ -300,6 +301,42 @@ const ILLUSTRATED: MessStory = {
 	],
 }
 
+const GALLERY_COVER = {
+	url: 'https://olafmessenger.com/wp-content/uploads/2026/02/OliviaAmschler_1-895x1200.png',
+	width: 895,
+	height: 1200,
+}
+
+const GALLERY_IDS = [36255, 36256, 36257, 36258, 36259]
+/** The gallery's photos as fetched; three, so the count is what was loaded, not what was named. */
+const GALLERY_PHOTOS = [1, 2, 3].map((n) => ({
+	url: `https://olafmessenger.com/wp-content/uploads/2026/02/OliviaAmschler_${n}-895x1200.png`,
+	largeUrl: `https://olafmessenger.com/wp-content/uploads/2026/02/OliviaAmschler_${n}.png`,
+	width: 895,
+	height: 1200,
+	caption: '',
+}))
+
+/** A Photo post that is one SNO slideshow, as "Between places" is. */
+const GALLERY: MessStory = {
+	...STORY,
+	id: 36238,
+	title: 'Between places',
+	link: 'https://olafmessenger.com/36238/variety/between-places/',
+	section: 'Variety',
+	column: 'Photo',
+	photo: null,
+	blocks: [
+		{
+			type: 'gallery',
+			photoIds: GALLERY_IDS,
+			cover: GALLERY_COVER,
+			credit: 'Olivia Amschler',
+		},
+	],
+	layout: {kind: 'feature', images: []},
+}
+
 const PLAYLIST_PAGE = readFileSync(join(__dirname, 'fixtures/playlist-page-36532.html'), 'utf8')
 
 const PROFILE: StaffProfile = {
@@ -332,6 +369,7 @@ beforeEach(() => {
 			EMPTY_PHOTO,
 			SHORT_STORY,
 			ILLUSTRATED,
+			GALLERY,
 		]),
 	)
 	openInIOS = jest.spyOn(Linking, 'openURL').mockResolvedValue(true)
@@ -701,6 +739,43 @@ describe('StoryScreen', () => {
 		expect(mockNavigate).toHaveBeenCalledWith({
 			pathname: '/messenger/image',
 			params: {id: '36948', url: FIGURE_URL},
+		})
+	})
+
+	// Before its photos load, or when they cannot, a gallery has only the one its HTML carries.
+	test("draws a gallery's first photo with its credit, and opens it in the viewer", async () => {
+		await renderStory(36238)
+
+		expect(screen.queryByText(/ of \d+$/u, {includeHiddenElements: true})).toBeNull()
+
+		// Hidden from VoiceOver, which hears the credit in the photo's own label.
+		expect(screen.getByText('Olivia Amschler', {includeHiddenElements: true})).toBeTruthy()
+		await fireEvent.press(
+			screen.getByRole('button', {
+				name: 'Between places, photo by Olivia Amschler',
+			}),
+		)
+
+		expect(mockNavigate).toHaveBeenCalledWith({
+			pathname: '/messenger/image',
+			params: {id: '36238', url: GALLERY_COVER.url},
+		})
+	})
+
+	test("pages through a gallery's photos once they load, counting them", async () => {
+		queryClient.setQueryData(messKeys.gallery(GALLERY_IDS), GALLERY_PHOTOS)
+		await renderStory(36238)
+
+		// Hidden from VoiceOver, which hears the place in the photo's own label.
+		expect(screen.getByText('1 of 3', {includeHiddenElements: true})).toBeTruthy()
+		await fireEvent.press(
+			screen.getByRole('button', {
+				name: 'Between places, photo by Olivia Amschler, picture 1 of 3',
+			}),
+		)
+		expect(mockNavigate).toHaveBeenCalledWith({
+			pathname: '/messenger/image',
+			params: {id: '36238', url: GALLERY_PHOTOS[0]?.url},
 		})
 	})
 

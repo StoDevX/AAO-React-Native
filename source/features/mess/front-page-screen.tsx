@@ -29,14 +29,17 @@ function datelineOf(view: MessView): string | null {
 
 /**
  * The glass button at the top right: a menu to pick By Issue or Latest, and, in Latest, the
- * section to narrow it to. Its label names the view showing, since the icon alone does not.
+ * section to narrow it to, then a way to the paper's About page. Its label names the view
+ * showing, since the icon alone does not.
  */
 function ViewMenu({
 	view,
 	onChoose,
+	onOpenAbout,
 }: {
 	view: MessView
 	onChoose: (view: MessView) => void
+	onOpenAbout: () => void
 }): React.ReactNode {
 	return (
 		<Stack.Toolbar placement="right">
@@ -74,6 +77,10 @@ function ViewMenu({
 						))}
 					</Stack.Toolbar.Menu>
 				) : null}
+				{/* Its own inline group, so the menu draws a divider between the views and it */}
+				<Stack.Toolbar.Menu inline={true}>
+					<Stack.Toolbar.MenuAction onPress={onOpenAbout}>About</Stack.Toolbar.MenuAction>
+				</Stack.Toolbar.Menu>
 			</Stack.Toolbar.Menu>
 		</Stack.Toolbar>
 	)
@@ -126,6 +133,7 @@ function SavedLatestStories(): React.ReactNode {
  * the news filter store.
  */
 export function FrontPageScreen(): React.ReactNode {
+	let router = useRouter()
 	let queryClient = useQueryClient()
 	let saved = useNewsFilterStore((state) => state.selectedCategories[OLAF_MESSENGER.id] ?? null)
 	let select = useNewsFilterStore((state) => state.select)
@@ -137,7 +145,11 @@ export function FrontPageScreen(): React.ReactNode {
 			<Stack.Screen
 				options={{title: OLAF_MESSENGER.title, headerTitle: '', headerTransparent: true}}
 			/>
-			<ViewMenu onChoose={choose} view={view} />
+			<ViewMenu
+				onChoose={choose}
+				onOpenAbout={() => router.navigate('/messenger/about')}
+				view={view}
+			/>
 			<MessPage
 				// Only the view showing has queries mounted, so refetching the active Mess queries
 				// refreshes that view alone.

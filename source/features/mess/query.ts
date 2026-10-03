@@ -2,6 +2,8 @@ import {fetchManifest, REL_NEWS, resolveSource} from '@frogpond/data-sources'
 import {infiniteQueryOptions, queryOptions} from '@tanstack/react-query'
 import {queryClient} from '../../init/tanstack-query'
 import {parseMessCategories, parseMessPosts} from './lib/posts'
+import {parseAboutPage} from './lib/about'
+import {parseGalleryPhotos} from './lib/gallery'
 import {bodyParagraphs} from './lib/issue-grid'
 import {ISSUE_PAGE_SIZE, parseLightPosts, parseMediaUrls, withPhotoUrls} from './lib/issues'
 import {latestProfile, parseStaffProfiles} from './lib/profiles'
@@ -10,7 +12,16 @@ import {findSpotifyRef} from './lib/spotify'
 import {messFetch} from './lib/fixtures'
 import {messKeys} from './lib/keys'
 import {emptyPastLastPage, nextPage, pageHref} from './lib/paging'
-import type {LightPost, MessCategory, MessIssue, MessStory, SpotifyRef, StaffProfile} from './types'
+import type {
+	AboutSection,
+	CaptionedPhoto,
+	LightPost,
+	MessCategory,
+	MessIssue,
+	MessStory,
+	SpotifyRef,
+	StaffProfile,
+} from './types'
 
 const WP_V2_POSTS = 'application/vnd.wordpress.v2.posts+json'
 const ONE_DAY_IN_MS = 24 * 60 * 60 * 1000
@@ -327,6 +338,28 @@ export const messPlaylistPageOptions = (story: MessStory) =>
 		},
 	})
 
+/**
+ * A gallery's photos, which its slideshow names by media id but carries only the first of, in
+ * the slideshow's order. WordPress answers at most 100 ids at once, more than any gallery holds.
+ */
+// oxlint-disable-next-line typescript/explicit-module-boundary-types
+export const messGalleryOptions = (photoIds: number[]) =>
+	queryOptions({
+		queryKey: messKeys.gallery(photoIds),
+		// A published gallery's photos do not change.
+		staleTime: ONE_DAY_IN_MS,
+		queryFn: async ({signal}): Promise<CaptionedPhoto[]> => {
+			// Assumes the resolved feed href is an absolute WordPress URL.
+			let origin = originOf(await feedHref())
+			let body = await messFetch(
+				`${origin}/wp-json/wp/v2/media?include=${photoIds.join(',')}&per_page=100&_fields=id,source_url,media_details,caption`,
+				signal,
+				'Olaf Messenger gallery',
+			)
+			return parseGalleryPhotos(body, photoIds)
+		},
+	})
+
 /** One writer's newest staff profile, or null when they have none. */
 // oxlint-disable-next-line typescript/explicit-module-boundary-types
 export const staffProfileOptions = (staffId: number) =>
@@ -344,3 +377,20 @@ export const staffProfileOptions = (staffId: number) =>
 			return latestProfile(parseStaffProfiles(body))
 		},
 	})
+
+/** The paper's About page: whom to write to, and its submission policy. */
+export const messAboutOptions = queryOptions({
+	queryKey: messKeys.about,
+	// The paper edits the page when its staff changes, about once a year.
+	staleTime: ONE_DAY_IN_MS,
+	queryFn: async ({signal}): Promise<AboutSection[]> => {
+		// Assumes the resolved feed href is an absolute WordPress URL.
+		let origin = originOf(await feedHref())
+		let body = await messFetch(
+			`${origin}/wp-json/wp/v2/pages?slug=about&_fields=content`,
+			signal,
+			'Olaf Messenger About page',
+		)
+		return parseAboutPage(body)
+	},
+})

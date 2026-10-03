@@ -13,6 +13,12 @@ class ModuleNewsTests: UITestCaseUnbooted {
 			.filterLatest(to: TestIdentifiers.News.newsSection)
 	}
 
+	func testOlafMessengerMenuOpensTheAboutPage() throws {
+		MessFrontPage(app: app)
+			.navigate()
+			.openAbout()
+	}
+
 	func testOlafMessengerOpensAnOlderIssue() throws {
 		MessFrontPage(app: app)
 			.navigate()
@@ -154,11 +160,17 @@ class ModuleNewsTests: UITestCaseUnbooted {
 			.closeImageViewer()
 	}
 
-	func testCrosswordOpensThePuzzleInTheBrowser() throws {
+	func testCrosswordRowOpensThePuzzleInTheBrowser() throws {
 		MessFrontPage(app: app)
 			.navigate()
 			.openColumn(TestIdentifiers.News.crosswordColumn, in: TestIdentifiers.News.varietySection)
-			.openFirstStory()
+			.solveFirstCrossword()
+	}
+
+	/// A crossword's own page, reached by a link to the post, still offers its puzzle.
+	func testCrosswordPageOpensThePuzzleInTheBrowser() throws {
+		MessStoryScreen(app: app)
+			.navigate(to: TestIdentifiers.News.crosswordStoryRoute)
 			.solveCrossword()
 	}
 

@@ -109,13 +109,36 @@ const ILLUSTRATED: MessStory = {
 	layout: {kind: 'article'},
 }
 
+const GALLERY_COVER = {
+	url: 'https://olafmessenger.com/wp-content/uploads/2026/02/OliviaAmschler_1-895x1200.png',
+	width: 895,
+	height: 1200,
+}
+
+/** A Photo post that is one SNO slideshow. */
+const GALLERY: MessStory = {
+	...COMIC,
+	id: 36238,
+	title: 'Between places',
+	column: 'Photo',
+	blocks: [
+		{
+			type: 'gallery',
+			photoIds: [36255, 36256],
+			cover: GALLERY_COVER,
+			credit: 'Olivia Amschler',
+		},
+	],
+	layout: {kind: 'feature', images: []},
+}
+
 let queryClient: QueryClient
 
 beforeEach(() => {
 	queryClient = new QueryClient({defaultOptions: {queries: {staleTime: Infinity, retry: false}}})
 	queryClient.setQueryData(
 		messKeys.feed,
-		onePage([COMIC, ARTICLE, PHOTO_SET, NO_PICTURE, ILLUSTRATED]),
+		onePage([COMIC, ARTICLE, PHOTO_SET, NO_PICTURE, ILLUSTRATED, GALLERY]),
 	)
 })
 
@@ -271,6 +294,32 @@ describe('ImageViewer', () => {
 		expect(
 			screen.getByRole('image', {name: 'Student workers deliver petition, by Juliet Stouffer'}),
 		).toBeTruthy()
+	})
+
+	test("shows a gallery's first photo by its address, named by its credit", async () => {
+		await renderViewer(36238, undefined, GALLERY_COVER.url)
+		expect(
+			screen.getByRole('image', {name: 'Between places, photo by Olivia Amschler'}).props.source,
+		).toStrictEqual({uri: GALLERY_COVER.url})
+	})
+
+	test("shows the largest copy of a gallery's later photo by its address, and its place", async () => {
+		let second = {
+			url: 'https://olafmessenger.com/wp-content/uploads/2026/02/OliviaAmschler_2-896x1200.png',
+			largeUrl: 'https://olafmessenger.com/wp-content/uploads/2026/02/OliviaAmschler_2.png',
+			width: 896,
+			height: 1200,
+			caption: '',
+		}
+		queryClient.setQueryData(messKeys.gallery([36255, 36256]), [
+			{...GALLERY_COVER, caption: ''},
+			second,
+		])
+		await renderViewer(36238, undefined, second.url)
+		expect(
+			screen.getByRole('image', {name: 'Between places, photo by Olivia Amschler, picture 2 of 2'})
+				.props.source,
+		).toStrictEqual({uri: second.largeUrl})
 	})
 
 	test('says the image is unavailable for an address that is not one of the story’s', async () => {

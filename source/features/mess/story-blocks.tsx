@@ -16,6 +16,7 @@ import {
 import {openUrl} from '@frogpond/open-url'
 import {SelectableText, type SelectableTextProps} from '@frogpond/selectable-text'
 import type {SFSymbol} from 'sf-symbols-typescript'
+import {GalleryView} from './gallery-view'
 import {FramedPhoto, ViewerButton} from './image-view'
 import {photoLabel} from './lib/byline'
 import {runsToMarkdown} from './lib/markdown'
@@ -84,7 +85,7 @@ type SiteLinkProps = {
 	icon: SFSymbol
 	label: string
 	url: string
-	/** Fills the card in the Mess red, for the one thing its page is for, such as solving a crossword */
+	/** Fills the card in the Mess red, for the one thing its page is for, such as solving a puzzle */
 	prominent?: boolean
 	/** The card's name for a UI test */
 	identifier?: string
@@ -161,6 +162,9 @@ export function StoryBlocks({
 		) : part.block.type === 'figure' ? (
 			// oxlint-disable-next-line react/no-array-index-key -- as above
 			<PhotoFigure columnWidth={columnWidth} key={index} photo={part.block} story={story} />
+		) : part.block.type === 'gallery' ? (
+			// oxlint-disable-next-line react/no-array-index-key -- as above
+			<GalleryView columnWidth={columnWidth} gallery={part.block} key={index} story={story} />
 		) : (
 			<SiteLinkCard
 				icon="play.rectangle"
