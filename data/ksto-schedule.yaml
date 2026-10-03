@@ -1,0 +1,219 @@
+# KSTO's weekly show schedule, from the Now Playing post on kstoradio.org:
+# https://www.kstoradio.org/2023/03/17/4243/
+# scripts/scrape-ksto-schedule.mjs rewrites this file from that post; see AGENTS.md.
+# Times are the station's (timezone below). `updated` is when KSTO last edited
+# the post, so a reader can tell a schedule left over from an earlier term.
+updated: '2026-03-22T16:24:01Z'
+timezone: America/Chicago
+shows:
+  - day: monday
+    start: '15:00'
+    end: '16:00'
+    title: 'The Stolaf Variety Hour'
+  - day: monday
+    start: '16:00'
+    end: '17:00'
+    title: 'LIGHTS OUT with Ella'
+    poster: 'https://www.kstoradio.org/wp-content/uploads/sites/1178/2025/10/image-1.jpg'
+  - day: monday
+    start: '17:00'
+    end: '18:00'
+    title: 'Me and Nobody!'
+  - day: monday
+    start: '19:00'
+    end: '20:00'
+    title: 'Schadenfreudeschau'
+  - day: monday
+    start: '20:00'
+    end: '21:00'
+    title: 'This is Your Captain Speaking'
+  - day: tuesday
+    start: '09:00'
+    end: '10:00'
+    title: 'Radio Free Northfield'
+  - day: tuesday
+    start: '15:00'
+    end: '16:00'
+    title: 'On the Luce'
+  - day: tuesday
+    start: '16:00'
+    end: '17:00'
+    title: '¡Buenas Tardes!'
+  - day: tuesday
+    start: '17:00'
+    end: '18:00'
+    title: 'Ur Mom Roulette'
+  - day: tuesday
+    start: '18:00'
+    end: '19:00'
+    title: 'Coping without Cope'
+  - day: tuesday
+    start: '19:00'
+    end: '20:00'
+    title: 'Ragebait'
+  - day: tuesday
+    start: '20:00'
+    end: '21:00'
+    title: 'Boats Etc.'
+  - day: tuesday
+    start: '21:00'
+    end: '22:00'
+    title: 'You Like Music'
+  - day: wednesday
+    start: '13:00'
+    end: '14:00'
+    title: 'suplicity'
+  - day: wednesday
+    start: '14:00'
+    end: '15:00'
+    title: 'Oopy Goopy Hour'
+  - day: wednesday
+    start: '15:00'
+    end: '16:00'
+    title: 'To Be Determined'
+  - day: wednesday
+    start: '17:00'
+    end: '18:00'
+    title: 'Roomie Recs'
+  - day: wednesday
+    start: '19:00'
+    end: '20:00'
+    title: 'Pork Slapper'
+  - day: wednesday
+    start: '20:00'
+    end: '21:00'
+    title: 'The Spotlight'
+  - day: wednesday
+    start: '21:00'
+    end: '22:00'
+    title: 'The Habibi Show'
+  - day: thursday
+    start: '13:00'
+    end: '14:00'
+    title: 'Top TEN'
+  - day: thursday
+    start: '15:00'
+    end: '16:00'
+    title: 'toast'
+  - day: thursday
+    start: '17:00'
+    end: '18:00'
+    title: 'Uneducated Sports Talk'
+  - day: thursday
+    start: '18:00'
+    end: '19:00'
+    title: 'The Quirky Sad Girl Society of Everythingology'
+  - day: thursday
+    start: '19:00'
+    end: '20:00'
+    title: 'Nightcap'
+  - day: thursday
+    start: '20:00'
+    end: '21:00'
+    title: 'No Soap Bingo'
+  - day: thursday
+    start: '21:00'
+    end: '22:00'
+    title: 'The FPS Radio Hour'
+  - day: friday
+    start: '14:00'
+    end: '15:00'
+    title: 'Guys in Golf Carts Doing Gags'
+    poster: 'https://www.kstoradio.org/wp-content/uploads/sites/1178/2025/10/3-GUYS-1-GOLF-CART-MANY-GAGS-6.jpg'
+  - day: friday
+    start: '15:00'
+    end: '16:00'
+    title: 'From Friends to Haters'
+  - day: friday
+    start: '16:00'
+    end: '17:00'
+    title: 'Snipp Snapp Snute'
+  - day: friday
+    start: '17:00'
+    end: '18:00'
+    title: 'Starchild Radio'
+  - day: friday
+    start: '18:00'
+    end: '19:00'
+    title: 'Sapphic Soundwaves'
+  - day: friday
+    start: '19:00'
+    end: '20:00'
+    title: 'TEA Time'
+    poster: 'https://www.kstoradio.org/wp-content/uploads/sites/1178/2025/10/image0.jpg'
+  - day: friday
+    start: '20:00'
+    end: '21:00'
+    title: 'Blocked'
+  - day: friday
+    start: '21:00'
+    end: '22:00'
+    title: 'Tripple A'
+  - day: saturday
+    start: '09:00'
+    end: '10:00'
+    title: 'Two People in a House'
+  - day: saturday
+    start: '10:00'
+    end: '11:00'
+    title: 'filler and fodder'
+  - day: saturday
+    start: '11:00'
+    end: '12:00'
+    title: 'Music picks with hicks'
+  - day: saturday
+    start: '12:00'
+    end: '13:00'
+    title: 'Study Break'
+  - day: saturday
+    start: '13:00'
+    end: '14:00'
+    title: 'Track By Track'
+  - day: saturday
+    start: '14:00'
+    end: '15:00'
+    title: 'Mid coast'
+  - day: saturday
+    start: '15:00'
+    end: '16:00'
+    title: 'blah blah blah'
+  - day: saturday
+    start: '16:00'
+    end: '17:00'
+    title: "Ale's hour"
+  - day: sunday
+    start: '09:00'
+    end: '10:00'
+    title: 'Regnskogen'
+  - day: sunday
+    start: '10:00'
+    end: '11:00'
+    title: 'accidental djs'
+  - day: sunday
+    start: '14:00'
+    end: '15:00'
+    title: 'the babbling Brooke'
+  - day: sunday
+    start: '16:00'
+    end: '17:00'
+    title: 'Sketchy and Loser Clientele'
+  - day: sunday
+    start: '17:00'
+    end: '18:00'
+    title: 'The Porch'
+  - day: sunday
+    start: '18:00'
+    end: '19:00'
+    title: 'Playing in the Shower'
+  - day: sunday
+    start: '19:00'
+    end: '20:00'
+    title: 'On Our Minds'
+  - day: sunday
+    start: '20:00'
+    end: '21:00'
+    title: 'Bob Dylan Blast'
+  - day: sunday
+    start: '21:00'
+    end: '22:00'
+    title: 'Run to Earth'

@@ -1,0 +1,41 @@
+# KSTO's weekly show schedule, published separately from the app (as
+# https://stolaf.dev/AAO-React-Native/ksto-schedule.json) for ccc-server to
+# serve as the `ksto-schedule` calendar. scripts/scrape-ksto-schedule.mjs
+# writes the data file from the station's Now Playing post.
+$schema: http://json-schema.org/draft-07/schema#
+
+definitions:
+  clock:
+    type: string
+    pattern: ^([01]\d|2[0-3]):00$
+
+type: object
+additionalProperties: false
+required: [updated, timezone, shows]
+properties:
+  # When KSTO last edited the post, in UTC, so a reader can tell a schedule
+  # left over from an earlier term.
+  updated:
+    type: string
+    pattern: ^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\dZ$
+  timezone:
+    const: America/Chicago
+  shows:
+    type: array
+    minItems: 1
+    items:
+      type: object
+      additionalProperties: false
+      required: [day, start, end, title]
+      properties:
+        day:
+          enum: [monday, tuesday, wednesday, thursday, friday, saturday, sunday]
+        start: {$ref: '#/definitions/clock'}
+        # A slot ends by midnight: 24:00 is the end of its own day.
+        end:
+          anyOf:
+            - {$ref: '#/definitions/clock'}
+            - const: '24:00'
+        title: {type: string, minLength: 1}
+        genre: {type: string, minLength: 1}
+        poster: {type: string, format: uri}
