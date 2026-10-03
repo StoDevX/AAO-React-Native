@@ -13,6 +13,12 @@ class ModuleNewsTests: UITestCaseUnbooted {
 			.filterLatest(to: TestIdentifiers.News.newsSection)
 	}
 
+	func testOlafMessengerMenuOpensTheAboutPage() throws {
+		MessFrontPage(app: app)
+			.navigate()
+			.openAbout()
+	}
+
 	func testOlafMessengerOpensAnOlderIssue() throws {
 		MessFrontPage(app: app)
 			.navigate()
