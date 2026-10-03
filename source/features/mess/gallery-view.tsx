@@ -12,9 +12,9 @@ import {ViewerButton} from './image-view'
 import {galleryPhotoLabel} from './lib/byline'
 import {galleryPageHeight, photoFit, shownPhotos} from './lib/gallery'
 import {faded} from './palette'
+import {PHOTO_ID, PhotoCaption} from './photo-caption'
 import {messGalleryOptions} from './query'
 import {RemotePhoto} from './remote-photo'
-import {PHOTO_ID, PhotoCaption} from './story-blocks'
 import type {Block, MessStory} from './types'
 
 /** The count VoiceOver hears in the photo's own label. */

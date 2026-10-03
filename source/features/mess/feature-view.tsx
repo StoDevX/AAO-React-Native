@@ -4,7 +4,8 @@ import {ImageView} from './image-view'
 import {faded} from './palette'
 import {LINE_SPACING} from './poem-view'
 import {SeriesRow} from './series-row'
-import {BODY_PROSE, PhotoCaption, type ProseStyle, SiteLinkCard, StoryBlocks} from './story-blocks'
+import {PhotoCaption} from './photo-caption'
+import {BODY_PROSE, type ProseStyle, SiteLinkCard, StoryBlocks} from './story-blocks'
 import type {MessStory, StoryLayout} from './types'
 
 /** A Photo post's words, set small and italic like a photo's caption, so the pictures lead. */
