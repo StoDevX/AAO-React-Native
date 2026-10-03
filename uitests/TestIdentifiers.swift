@@ -765,6 +765,8 @@ struct TestIdentifiers {
 		static let telemetryToggle = "Share anonymous usage and crash data"
 		/// The title of the Report a Problem form, in app/settings/report-problem.tsx.
 		static let reportProblemTitle = "Report a Problem"
+		/// The form's close button, labelled in app/settings/report-problem.tsx.
+		static let closeProblemForm = "Close Screen"
 	}
 
 	// MARK: - Developer

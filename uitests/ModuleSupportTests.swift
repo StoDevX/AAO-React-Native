@@ -35,6 +35,10 @@ class ModuleSupportTests: UITestCase {
 		support.open(
 			TestIdentifiers.Support.sendFeedback,
 			mountedWhen: app.navigationBars[TestIdentifiers.Support.reportProblemTitle])
+		closeProblemForm()
+		XCTAssertTrue(
+			app.element(matching: TestIdentifiers.Support.screen).waitForExistence(timeout: 10),
+			"Closing the form should return to Support")
 	}
 
 	func testHomeMenuFeedbackOpensTheProblemForm() throws {
@@ -43,6 +47,18 @@ class ModuleSupportTests: UITestCase {
 		XCTAssertTrue(
 			app.navigationBars[TestIdentifiers.Support.reportProblemTitle].waitForExistence(timeout: 30),
 			"Feedback should open the Report a Problem form")
+		closeProblemForm()
+		HomeScreen(app: app).checkHomescreenExists()
+	}
+
+	/// Close Report a Problem with its own close button, and wait for it to go.
+	private func closeProblemForm() {
+		let close = app.buttons[TestIdentifiers.Support.closeProblemForm].firstMatch
+		XCTAssertTrue(close.waitForExistence(timeout: 10), "Report a Problem should have a close button")
+		close.tap()
+		XCTAssertTrue(
+			app.navigationBars[TestIdentifiers.Support.reportProblemTitle].waitForNonExistence(timeout: 10),
+			"Report a Problem should close")
 	}
 
 	func testHomeMenuAboutOpensSettings() throws {
