@@ -8,15 +8,13 @@ describe('exportPlan', () => {
 		assert.deepEqual(exportPlan(['windmill.icon']), [
 			{
 				input,
-				preview: 'logo',
-				output: 'images/icons/windmill-logo.png',
+				output: 'images/icons/windmill.png',
 				points: 100,
 				rendition: 'Default',
 			},
 			{
 				input,
-				preview: 'logo',
-				output: 'images/icons/windmill-logo-dark.png',
+				output: 'images/icons/windmill-dark.png',
 				points: 100,
 				rendition: 'Dark',
 			},
@@ -30,8 +28,8 @@ describe('exportPlan', () => {
 		assert.deepEqual(
 			tinted.map((p) => [p.output, p.rendition]),
 			[
-				['images/icons/windmill-logo-tinted-light.png', 'TintedLight'],
-				['images/icons/windmill-logo-tinted-dark.png', 'TintedDark'],
+				['images/icons/windmill-tinted-light.png', 'TintedLight'],
+				['images/icons/windmill-tinted-dark.png', 'TintedDark'],
 			],
 		)
 	})

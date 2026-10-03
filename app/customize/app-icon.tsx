@@ -17,7 +17,7 @@ import {Stack} from 'expo-router'
 import * as c from '@frogpond/colors'
 import {SheetSection} from '@frogpond/sheet-section'
 
-import {type AppIconName, previewsFor} from '../../images/icons'
+import {type AppIconName, previewFor} from '../../images/icons'
 import {type IconEntry, galleryColumns, iconsByGroup} from '../../source/features/customize/icons'
 import {useAppIcon} from '../../source/features/customize/use-app-icon'
 
@@ -151,7 +151,7 @@ function IconTile({icon, isCurrent, onChoose}: IconTileProps): React.ReactNode {
 						<View style={[styles.ring, isCurrent && styles.ringCurrent]}>
 							<RNImage
 								accessibilityIgnoresInvertColors={true}
-								source={previewsFor(icon.type, scheme).logo}
+								source={previewFor(icon.type, scheme)}
 								style={styles.icon}
 							/>
 						</View>

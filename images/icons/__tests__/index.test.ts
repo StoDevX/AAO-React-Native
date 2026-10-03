@@ -1,7 +1,7 @@
 import {readdirSync} from 'node:fs'
 import {join} from 'node:path'
 import {describe, expect, it} from '@jest/globals'
-import {appIcons, iconFor, previewsFor} from '../index'
+import {appIcons, iconFor, previewFor} from '../index'
 
 /** The names of the Icon Composer documents in assets/. */
 const DOCUMENTS = readdirSync(join(__dirname, '../../../assets'))
@@ -34,15 +34,15 @@ describe('iconFor', () => {
 	})
 })
 
-describe('previewsFor', () => {
-	it('shows the dark previews in dark mode', () => {
-		expect(previewsFor('windmill-sky', 'dark')).toBe(appIcons['windmill-sky'].dark)
+describe('previewFor', () => {
+	it('shows the dark preview in dark mode', () => {
+		expect(previewFor('windmill-sky', 'dark')).toBe(appIcons['windmill-sky'].dark)
 	})
 
 	it.each(['light', 'unspecified', null, undefined])(
-		'shows the light previews when the scheme is %s',
+		'shows the light preview when the scheme is %s',
 		(scheme) => {
-			expect(previewsFor('windmill-sky', scheme)).toBe(appIcons['windmill-sky'].light)
+			expect(previewFor('windmill-sky', scheme)).toBe(appIcons['windmill-sky'].light)
 		},
 	)
 })

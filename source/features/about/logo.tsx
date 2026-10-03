@@ -1,7 +1,7 @@
 import React from 'react'
 import {StyleProp, ImageStyle, Image, StyleSheet, ImageProps, useColorScheme} from 'react-native'
 import {getIcon} from 'react-native-change-icon'
-import {DEFAULT_ICON, iconFor, previewsFor} from '../../../images/icons'
+import {DEFAULT_ICON, iconFor, previewFor} from '../../../images/icons'
 
 const styles = StyleSheet.create({
 	logoImage: {
@@ -32,7 +32,7 @@ export let AppLogo = (props: Props): React.ReactNode => {
 	return (
 		<LogoImage
 			accessibilityIgnoresInvertColors={true}
-			source={previewsFor(icon, scheme).logo}
+			source={previewFor(icon, scheme)}
 			style={props.style}
 		/>
 	)
