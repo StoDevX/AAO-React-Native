@@ -20,18 +20,6 @@ stolaf:
       categories: [administrative, admissions]
       icon: briefcase.fill
       gradient: blue
-    - label: Athletics
-      categories: [athletics, field]
-      icon: figure.run
-      gradient: red
-    - label: Outdoors
-      categories: [outdoors]
-      icon: tree.fill
-      gradient: green
-    - label: Wellness Walks
-      categories: [wellness-walk]
-      icon: figure.walk
-      gradient: mint
     - label: Parking
       categories: [parking, campus-parking, accessible-parking, visitor-parking, admissions-parking]
       icon: parkingsign
@@ -44,6 +32,18 @@ stolaf:
       categories: [bookstore, student-center, visitor-center, visitor-information, ev-charging]
       icon: info.circle.fill
       gradient: purple
+    - label: Athletics
+      categories: [athletics, field]
+      icon: figure.run
+      gradient: red
+    - label: Outdoors
+      categories: [outdoors]
+      icon: tree.fill
+      gradient: green
+    - label: Wellness Walks
+      categories: [wellness-walk]
+      icon: figure.walk
+      gradient: mint
 
   # The icon a place's row draws: the first entry sharing any of the place's
   # categories. Most specific first -- a walk before a trail, a field before
