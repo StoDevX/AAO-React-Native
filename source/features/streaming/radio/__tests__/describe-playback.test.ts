@@ -6,6 +6,7 @@ describe('describePlayback', () => {
 	test('names each state', () => {
 		expect(describePlayback('playing', null)).toBe('Playing')
 		expect(describePlayback('starting', null)).toBe('Starting…')
+		expect(describePlayback('paused', null)).toBe('Paused')
 		expect(describePlayback('stopped', null)).toBe('Stopped')
 	})
 

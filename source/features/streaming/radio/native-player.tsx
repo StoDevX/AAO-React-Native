@@ -10,6 +10,8 @@ type Props = {
 	onEnded?: () => unknown
 	onPlay?: () => unknown
 	onPause?: () => unknown
+	/** Control Center played the paused station: it needs a fresh player. */
+	onResume?: () => unknown
 	onError?: (error: HtmlAudioError) => unknown
 	/** What the lock screen and Control Center call the station. */
 	stationName: string
@@ -70,6 +72,22 @@ export function NativeStreamPlayer(props: Props): React.ReactNode {
 		)
 	}, [player, stationName, artworkUri])
 
+	// A paused station keeps its player, and with it the lock screen's entry, but
+	// a live stream has nowhere to resume from. So when Control Center plays the
+	// paused player, which starts by itself, it is stopped before stale audio is
+	// heard and a fresh player is asked for. Only the player starting counts:
+	// its status still says playing for a moment after the app pauses it.
+	let wasPlaying = React.useRef(false)
+	let isPlaying = status.playing
+	React.useEffect(() => {
+		let started = isPlaying && !wasPlaying.current
+		wasPlaying.current = isPlaying
+		if (started && playState === 'paused') {
+			player.pause()
+			callbacks.current.onResume?.()
+		}
+	}, [isPlaying, playState, player])
+
 	let previous = React.useRef<AudioActivity>('idle')
 	let error = status.error
 	React.useEffect(() => {
@@ -81,7 +99,11 @@ export function NativeStreamPlayer(props: Props): React.ReactNode {
 		let {onPlay, onWaiting, onEnded, onPause, onError} = callbacks.current
 		switch (activity) {
 			case 'playing':
-				onPlay?.()
+				// Audio under a paused station is Control Center playing it, which the
+				// effect above answers.
+				if (callbacks.current.playState !== 'paused') {
+					onPlay?.()
+				}
 				break
 			case 'waiting':
 				onWaiting?.()

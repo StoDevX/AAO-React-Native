@@ -64,6 +64,7 @@ function callbacks() {
 		onWaiting: jest.fn(),
 		onEnded: jest.fn(),
 		onPause: jest.fn(),
+		onResume: jest.fn(),
 		onError: jest.fn(),
 	}
 }
@@ -157,5 +158,48 @@ describe('NativeStreamPlayer', () => {
 			code: 0,
 			message: 'The operation could not be completed.',
 		})
+	})
+
+	test('keeps the lock screen, pausing when asked, for Control Center to resume', async () => {
+		let cb = callbacks()
+		mockStatus = {...mockStatus, playing: true}
+		let view = await render(player('playing', cb))
+		mockPlayer.setActiveForLockScreen.mockClear()
+
+		mockStatus = {...mockStatus, playing: false}
+		await view.rerender(player('paused', cb))
+
+		expect(mockPlayer.pause).toHaveBeenCalled()
+		expect(mockPlayer.setActiveForLockScreen).not.toHaveBeenCalledWith(false)
+		expect(cb.onResume).not.toHaveBeenCalled()
+	})
+
+	test('asks for a fresh start when Control Center plays a paused station, rather than resuming stale audio', async () => {
+		let cb = callbacks()
+		mockStatus = {...mockStatus, playing: true}
+		let view = await render(player('playing', cb))
+		mockStatus = {...mockStatus, playing: false}
+		await view.rerender(player('paused', cb))
+		mockPlayer.pause.mockClear()
+		cb.onPlay.mockClear()
+
+		// Control Center's Play starts the paused player by itself.
+		mockStatus = {...mockStatus, playing: true}
+		await view.rerender(player('paused', cb))
+
+		expect(cb.onResume).toHaveBeenCalledTimes(1)
+		expect(mockPlayer.pause).toHaveBeenCalled()
+		expect(cb.onPlay).not.toHaveBeenCalled()
+	})
+
+	test('does not take its own pause for a resume while the status catches up', async () => {
+		let cb = callbacks()
+		mockStatus = {...mockStatus, playing: true}
+		let view = await render(player('playing', cb))
+
+		// The store pauses; the player's status still says playing for a moment.
+		await view.rerender(player('paused', cb))
+
+		expect(cb.onResume).not.toHaveBeenCalled()
 	})
 })
