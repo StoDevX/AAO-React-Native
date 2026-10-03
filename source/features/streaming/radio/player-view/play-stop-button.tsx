@@ -11,7 +11,7 @@ import {palette} from './palette'
 
 /** Play, or Pause while the station starts or plays, or Stop after it has failed. */
 export function PlayStopButton({station}: {station: Station}): React.ReactNode {
-	let {label, icon, press} = useRadioControl(station)
+	let {label, icon, press} = useRadioControl(station, 'sheet')
 	return (
 		<Touchable
 			accessibilityLabel={label}

@@ -97,7 +97,7 @@ export function RadioMiniPlayer({
 
 /** The bar's Play or Pause, drawn as Music's is. */
 function MiniControl({station}: {station: Station}): React.ReactNode {
-	let {label, icon, press} = useRadioControl(station)
+	let {label, icon, press} = useRadioControl(station, 'bar')
 	return (
 		<Touchable
 			accessibilityLabel={label}

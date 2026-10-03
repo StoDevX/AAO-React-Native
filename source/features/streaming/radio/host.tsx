@@ -1,5 +1,6 @@
 import * as React from 'react'
 import {StyleSheet, View} from 'react-native'
+import {track} from '../../telemetry/track'
 import {NativeStreamPlayer} from './native-player'
 import {logoAt} from './player-view/use-logo-cycle'
 import {StreamPlayer} from './player'
@@ -44,9 +45,24 @@ export function RadioHost(): React.ReactNode {
 	let onStopped = React.useCallback(() => reportStopped(playerKey), [reportStopped, playerKey])
 	let onWaiting = React.useCallback(() => reportWaiting(playerKey), [reportWaiting, playerKey])
 	let onError = React.useCallback(
-		(error: HtmlAudioError) => reportError(playerKey, error),
-		[reportError, playerKey],
+		(error: HtmlAudioError) => {
+			if (stationId) {
+				track({name: 'radio.play.error', attributes: {station: stationId}})
+			}
+			reportError(playerKey, error)
+		},
+		[reportError, playerKey, stationId],
 	)
+	// Control Center, or the lock screen, played the paused station.
+	let onResume = React.useCallback(() => {
+		if (stationId) {
+			track({
+				name: 'radio.control',
+				attributes: {action: 'play', station: stationId, surface: 'system'},
+			})
+		}
+		resume()
+	}, [resume, stationId])
 
 	if (!stationId) {
 		return null
@@ -64,7 +80,7 @@ export function RadioHost(): React.ReactNode {
 				onError={onError}
 				onPause={onStopped}
 				onPlay={onPlay}
-				onResume={resume}
+				onResume={onResume}
 				onWaiting={onWaiting}
 				playState={PLAYER_STATE[playState]}
 				artworkUri={logoAt(STATIONS[stationId], savedLogo).image.uri}

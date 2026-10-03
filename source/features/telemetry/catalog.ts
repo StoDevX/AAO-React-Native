@@ -1,4 +1,5 @@
 import type {Campus} from '../building-hours/types'
+import type {StationId} from '../streaming/radio/stations'
 
 /**
  * A route's file-system pattern, such as `/dictionary/[word]`. Only
@@ -62,6 +63,24 @@ export type TelemetryEvent =
 	  }
 	| {name: 'dictionary.edit.submit'; attributes: Record<string, never>}
 	| {
+			name: 'radio.control'
+			attributes: {
+				action: 'play' | 'pause' | 'stop'
+				station: StationId
+				// `system` is Control Center or the lock screen playing a paused station.
+				surface: 'bar' | 'sheet' | 'system'
+			}
+	  }
+	| {name: 'radio.station.browse'; attributes: {station: StationId}}
+	| {
+			name: 'radio.action'
+			attributes: {
+				action: 'call' | 'chat' | 'schedule' | 'full_schedule' | 'website'
+				station: StationId
+			}
+	  }
+	| {name: 'radio.play.error'; attributes: {station: StationId}}
+	| {
 			name: 'api.failure'
 			attributes: {
 				source: QueryKeyHead
@@ -82,6 +101,10 @@ export const DESTINATIONS: {readonly [N in TelemetryEvent['name']]: 'metric' | '
 	'calendar.add_to_device': 'metric',
 	'calendar.event.added': 'log',
 	'dictionary.edit.submit': 'metric',
+	'radio.control': 'metric',
+	'radio.station.browse': 'metric',
+	'radio.action': 'metric',
+	'radio.play.error': 'metric',
 	'api.failure': 'log',
 }
 
