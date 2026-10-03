@@ -1,6 +1,6 @@
 import {describe, expect, it} from '@jest/globals'
 import media from '../../__tests__/fixtures/gallery-media-36238.json'
-import {parseGalleryPhotos} from '../gallery'
+import {galleryPageHeight, parseGalleryPhotos, photoFit} from '../gallery'
 
 const IDS = [36255, 36256, 36257, 36258, 36259]
 const UPLOADS = 'https://olafmessenger.com/wp-content/uploads/2026/02'
@@ -62,5 +62,29 @@ describe('parseGalleryPhotos', () => {
 
 	it('reads a body that is not a list as no photos', () => {
 		expect(parseGalleryPhotos({code: 'rest_no_route'}, IDS)).toStrictEqual([])
+	})
+})
+
+describe('galleryPageHeight', () => {
+	it("fits its tallest photo at the column's width, so no page grows the gallery as it turns", () => {
+		let photos = [
+			{width: 1200, height: 800},
+			{width: 900, height: 1200},
+		]
+		expect(galleryPageHeight(photos, 300)).toBe(400)
+	})
+
+	it("stops at one and a half times the column's width, so a tall photo leaves the page room", () => {
+		expect(galleryPageHeight([{width: 500, height: 2000}], 300)).toBe(450)
+	})
+})
+
+describe('photoFit', () => {
+	it("draws a photo at the column's width when it fits the page", () => {
+		expect(photoFit({width: 1200, height: 800}, 300, 400)).toStrictEqual({width: 300, height: 200})
+	})
+
+	it("narrows a photo taller than the page to the page's height", () => {
+		expect(photoFit({width: 500, height: 2000}, 300, 450)).toStrictEqual({width: 113, height: 450})
 	})
 })

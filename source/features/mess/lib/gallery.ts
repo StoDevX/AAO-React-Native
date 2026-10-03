@@ -1,6 +1,6 @@
 import {parseHtml, textContent} from '@frogpond/html-lib'
 import {z} from 'zod'
-import type {CaptionedPhoto} from '../types'
+import type {Block, CaptionedPhoto} from '../types'
 import {secureUrl} from './blocks'
 
 const SizeSchema = z.object({source_url: z.string(), width: z.number(), height: z.number()})
@@ -49,4 +49,34 @@ export function parseGalleryPhotos(body: unknown, photoIds: number[]): Captioned
 		let {width, height} = large.data
 		return [{url: secureUrl(large.data.source_url), largeUrl: full, width, height, caption}]
 	})
+}
+
+/** The photos a gallery shows: those fetched, or until they load, the one its HTML carries. */
+export function shownPhotos(
+	gallery: Extract<Block, {type: 'gallery'}>,
+	fetched: CaptionedPhoto[] | undefined,
+): CaptionedPhoto[] {
+	if (fetched?.length) return fetched
+	return gallery.cover ? [{...gallery.cover, caption: ''}] : []
+}
+
+type Size = {width: number; height: number}
+
+/** How much taller than wide a gallery's page may be, so a tall photo leaves the page room. */
+const TALLEST_PAGE = 1.5
+
+/**
+ * The height of a gallery's pages: its tallest photo at the column's width, so no page grows
+ * the gallery as it turns, up to one and a half times the width.
+ */
+export function galleryPageHeight(photos: Size[], columnWidth: number): number {
+	let tallest = Math.max(...photos.map((photo) => (columnWidth * photo.height) / photo.width))
+	return Math.round(Math.min(tallest, columnWidth * TALLEST_PAGE))
+}
+
+/** A photo's size on a gallery's page: the column's width, or narrower to fit the page's height. */
+export function photoFit(photo: Size, columnWidth: number, pageHeight: number): Size {
+	let height = (columnWidth * photo.height) / photo.width
+	if (height <= pageHeight) return {width: columnWidth, height: Math.round(height)}
+	return {width: Math.round((pageHeight * photo.width) / photo.height), height: pageHeight}
 }

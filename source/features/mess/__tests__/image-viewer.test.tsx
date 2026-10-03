@@ -299,9 +299,27 @@ describe('ImageViewer', () => {
 	test("shows a gallery's first photo by its address, named by its credit", async () => {
 		await renderViewer(36238, undefined, GALLERY_COVER.url)
 		expect(
-			screen.getByRole('image', {name: 'Between places, photo by Olivia Amschler, picture 1 of 2'})
-				.props.source,
+			screen.getByRole('image', {name: 'Between places, photo by Olivia Amschler'}).props.source,
 		).toStrictEqual({uri: GALLERY_COVER.url})
+	})
+
+	test("shows the largest copy of a gallery's later photo by its address, and its place", async () => {
+		let second = {
+			url: 'https://olafmessenger.com/wp-content/uploads/2026/02/OliviaAmschler_2-896x1200.png',
+			largeUrl: 'https://olafmessenger.com/wp-content/uploads/2026/02/OliviaAmschler_2.png',
+			width: 896,
+			height: 1200,
+			caption: '',
+		}
+		queryClient.setQueryData(messKeys.gallery([36255, 36256]), [
+			{...GALLERY_COVER, caption: ''},
+			second,
+		])
+		await renderViewer(36238, undefined, second.url)
+		expect(
+			screen.getByRole('image', {name: 'Between places, photo by Olivia Amschler, picture 2 of 2'})
+				.props.source,
+		).toStrictEqual({uri: second.largeUrl})
 	})
 
 	test('says the image is unavailable for an address that is not one of the story’s', async () => {

@@ -1,8 +1,11 @@
 import * as React from 'react'
 import {StyleSheet} from 'react-native'
+import {useQueries} from '@tanstack/react-query'
 import {ZoomImageViewer} from '../../components/zoom-image-viewer'
 import {useDismissOnce} from '../../lib/use-dismiss-once'
 import {galleryPhotoLabel, imageLabel, photoLabel, picturePlace} from './lib/byline'
+import {shownPhotos} from './lib/gallery'
+import {messGalleryOptions} from './query'
 import {StoryLookupNotice} from './story-lookup-notice'
 import {useMessStory} from './use-mess-story'
 import type {Block, CaptionedPhoto, MessStory} from './types'
@@ -10,10 +13,28 @@ import type {Block, CaptionedPhoto, MessStory} from './types'
 /** A picture to show, and what VoiceOver reads for it. */
 type Picture = {url: string; label: string}
 
+type Gallery = Extract<Block, {type: 'gallery'}>
+
+/** The gallery photo the story's page draws at `url`, named as its page names it; null when none. */
+function galleryPictureAt(
+	story: MessStory,
+	galleries: Array<{gallery: Gallery; photos: CaptionedPhoto[]}>,
+	url: string,
+): Picture | null {
+	for (let {gallery, photos} of galleries) {
+		let index = photos.findIndex((photo) => photo.url === url)
+		let photo = photos[index]
+		if (!photo) continue
+		let label = galleryPhotoLabel(story, gallery.credit, {index, count: photos.length})
+		return {url: photo.largeUrl ?? photo.url, label}
+	}
+	return null
+}
+
 /**
- * The picture the viewer shows. Given an address, the story's lead photo or the figure in
- * its body that the article draws at that address, shown at the largest copy its srcset
- * offers; an address that is not one of the story's shows nothing, so a link cannot put any
+ * The picture the viewer shows. Given an address, the story's lead photo, the figure in its
+ * body or the gallery photo that the article draws at that address, shown at the largest
+ * copy it has; an address that is not one of the story's shows nothing, so a link cannot put any
  * image on the web in the viewer. Otherwise a comic's or artwork's one picture, or the
  * feature page's picture at `index`, also at its largest copy. Null when the story has no
  * picture there.
@@ -22,6 +43,7 @@ function pictureOf(
 	story: MessStory | undefined,
 	index: number,
 	url: string | undefined,
+	galleries: Array<{gallery: Gallery; photos: CaptionedPhoto[]}>,
 ): Picture | null {
 	if (!story) return null
 	if (url !== undefined) {
@@ -29,13 +51,7 @@ function pictureOf(
 		let photos: Array<CaptionedPhoto | null> = [story.photo, ...figures]
 		let photo = photos.find((candidate) => candidate?.url === url)
 		if (photo) return {url: photo.largeUrl ?? photo.url, label: photoLabel(story, photo.caption)}
-		let gallery = story.blocks.find(
-			(block): block is Extract<Block, {type: 'gallery'}> =>
-				block.type === 'gallery' && block.cover?.url === url,
-		)
-		if (!gallery) return null
-		let place = {index: 0, count: gallery.photoIds.length}
-		return {url, label: galleryPhotoLabel(story, gallery.credit, place)}
+		return galleryPictureAt(story, galleries, url)
 	}
 	let label = imageLabel(story, picturePlace(story, index))
 	if (story.layout.kind === 'image') return {url: story.layout.image.url, label}
@@ -58,7 +74,18 @@ type Props = {
 export function ImageViewer({id, index = 0, url}: Props): React.ReactNode {
 	let close = useDismissOnce()
 	let query = useMessStory(id)
-	let image = pictureOf(query.data, index, url)
+	let galleries = (query.data?.blocks ?? []).filter(
+		(block): block is Gallery => block.type === 'gallery',
+	)
+	// The page fetched these to draw them, so the viewer finds them already in the cache.
+	let fetched = useQueries({
+		queries: galleries.map((gallery) => messGalleryOptions(gallery.photoIds)),
+	})
+	let shown = galleries.map((gallery, n) => ({
+		gallery,
+		photos: shownPhotos(gallery, fetched[n]?.data),
+	}))
+	let image = pictureOf(query.data, index, url, shown)
 
 	return (
 		<ZoomImageViewer

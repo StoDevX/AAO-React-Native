@@ -307,6 +307,16 @@ const GALLERY_COVER = {
 	height: 1200,
 }
 
+const GALLERY_IDS = [36255, 36256, 36257, 36258, 36259]
+/** The gallery's photos as fetched; three, so the count is what was loaded, not what was named. */
+const GALLERY_PHOTOS = [1, 2, 3].map((n) => ({
+	url: `https://olafmessenger.com/wp-content/uploads/2026/02/OliviaAmschler_${n}-895x1200.png`,
+	largeUrl: `https://olafmessenger.com/wp-content/uploads/2026/02/OliviaAmschler_${n}.png`,
+	width: 895,
+	height: 1200,
+	caption: '',
+}))
+
 /** A Photo post that is one SNO slideshow, as "Between places" is. */
 const GALLERY: MessStory = {
 	...STORY,
@@ -319,7 +329,7 @@ const GALLERY: MessStory = {
 	blocks: [
 		{
 			type: 'gallery',
-			photoIds: [36255, 36256, 36257, 36258, 36259],
+			photoIds: GALLERY_IDS,
 			cover: GALLERY_COVER,
 			credit: 'Olivia Amschler',
 		},
@@ -732,20 +742,40 @@ describe('StoryScreen', () => {
 		})
 	})
 
+	// Before its photos load, or when they cannot, a gallery has only the one its HTML carries.
 	test("draws a gallery's first photo with its credit, and opens it in the viewer", async () => {
 		await renderStory(36238)
+
+		expect(screen.queryByText(/ of \d+$/u, {includeHiddenElements: true})).toBeNull()
 
 		// Hidden from VoiceOver, which hears the credit in the photo's own label.
 		expect(screen.getByText('Olivia Amschler', {includeHiddenElements: true})).toBeTruthy()
 		await fireEvent.press(
 			screen.getByRole('button', {
-				name: 'Between places, photo by Olivia Amschler, picture 1 of 5',
+				name: 'Between places, photo by Olivia Amschler',
 			}),
 		)
 
 		expect(mockNavigate).toHaveBeenCalledWith({
 			pathname: '/messenger/image',
 			params: {id: '36238', url: GALLERY_COVER.url},
+		})
+	})
+
+	test("pages through a gallery's photos once they load, counting them", async () => {
+		queryClient.setQueryData(messKeys.gallery(GALLERY_IDS), GALLERY_PHOTOS)
+		await renderStory(36238)
+
+		// Hidden from VoiceOver, which hears the place in the photo's own label.
+		expect(screen.getByText('1 of 3', {includeHiddenElements: true})).toBeTruthy()
+		await fireEvent.press(
+			screen.getByRole('button', {
+				name: 'Between places, photo by Olivia Amschler, picture 1 of 3',
+			}),
+		)
+		expect(mockNavigate).toHaveBeenCalledWith({
+			pathname: '/messenger/image',
+			params: {id: '36238', url: GALLERY_PHOTOS[0]?.url},
 		})
 	})
 
