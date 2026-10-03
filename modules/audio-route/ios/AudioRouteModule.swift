@@ -73,9 +73,16 @@ final class CenteredVolumeView: MPVolumeView {
 		}
 	}
 
+	/// The system moves the slider with an animation, and resetting it inside
+	/// that animation would animate the reset, so the slider would be seen to
+	/// leave the middle and come back. The reset is made without animation, and
+	/// the animation already under way is dropped.
 	private func centreSlider() {
 		guard let slider, abs(slider.center.y - bounds.midY) > 0.5 else { return }
-		slider.center.y = bounds.midY
+		UIView.performWithoutAnimation {
+			slider.center.y = bounds.midY
+		}
+		slider.layer.removeAllAnimations()
 	}
 }
 
