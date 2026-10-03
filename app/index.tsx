@@ -1,17 +1,7 @@
 import * as React from 'react'
 import {StyleSheet, useWindowDimensions} from 'react-native'
 import {Stack, useRouter} from 'expo-router'
-import {
-	Button,
-	ContextMenu,
-	Host,
-	List,
-	RNHostView,
-	ScrollView,
-	Spacer,
-	Text,
-	VStack,
-} from '@expo/ui/swift-ui'
+import {Button, ContextMenu, Host, List, ScrollView, Spacer, Text, VStack} from '@expo/ui/swift-ui'
 import {
 	accessibilityIdentifier,
 	background,
@@ -53,7 +43,7 @@ import {useCollapsedGroupsStore, useHomeLayoutStore} from '../source/features/ho
 import {openUrl} from '@frogpond/open-url'
 import {selectDevModeOverride, setDevModeOverride} from '../source/redux/parts/settings'
 import {useIsDevMode} from '../source/lib/use-is-dev-mode'
-import {FaqBannerGroup} from '../source/features/faqs/banner'
+import {FaqBannerSlot} from '../source/features/faqs/banner'
 import {CUSTOMIZE_LABEL} from '../source/features/customize/labels'
 import {FAQ_TARGETS} from '../source/features/faqs/constants'
 import {sample} from '@frogpond/collections'
@@ -319,13 +309,11 @@ export default function HomePage(): React.ReactNode {
 						{/* Above the list rather than a row in it: a row with nothing
 						    in it, as when there is no banner, still takes a row's
 						    minimum height. */}
-						<RNHostView matchContents={true}>
-							<FaqBannerGroup
-								onPressFaq={(faqId) => router.navigate({pathname: '/faq', params: {faqId}})}
-								style={styles.banner}
-								target={FAQ_TARGETS.HOME}
-							/>
-						</RNHostView>
+						<FaqBannerSlot
+							onPressFaq={(faqId) => router.navigate({pathname: '/faq', params: {faqId}})}
+							style={styles.banner}
+							target={FAQ_TARGETS.HOME}
+						/>
 						<List modifiers={[listStyle('insetGrouped')]}>
 							<HomeListSections onOpen={openView} sections={sections} />
 							<VStack modifiers={BARE_ROW_MODIFIERS}>
@@ -353,13 +341,11 @@ export default function HomePage(): React.ReactNode {
 							{/* The banner is its own child, not one of the spaced groups
 						    below: when there is no banner its slot is empty, and
 						    spacing around an empty slot is a gap above the first group. */}
-							<RNHostView matchContents={true}>
-								<FaqBannerGroup
-									onPressFaq={(faqId) => router.navigate({pathname: '/faq', params: {faqId}})}
-									style={styles.banner}
-									target={FAQ_TARGETS.HOME}
-								/>
-							</RNHostView>
+							<FaqBannerSlot
+								onPressFaq={(faqId) => router.navigate({pathname: '/faq', params: {faqId}})}
+								style={styles.banner}
+								target={FAQ_TARGETS.HOME}
+							/>
 
 							<VStack spacing={layout === 'tiled' ? TILE_SPACING : TILE_SPACING * 2}>
 								{layout === 'tiled' ? (

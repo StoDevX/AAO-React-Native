@@ -1,6 +1,6 @@
 import * as React from 'react'
 import {StyleSheet} from 'react-native'
-import {Form, Host, RNHostView, Section, VStack} from '@expo/ui/swift-ui'
+import {Form, Host, Section, VStack} from '@expo/ui/swift-ui'
 import {
 	accessibilityIdentifier,
 	listRowBackground,
@@ -10,7 +10,7 @@ import {
 import {Stack, useRouter} from 'expo-router'
 
 import {NavigationRow} from '../../source/components/rows'
-import {FaqBannerGroup} from '../../source/features/faqs/banner'
+import {FaqBannerSlot} from '../../source/features/faqs/banner'
 import {FAQ_TARGETS} from '../../source/features/faqs/constants'
 import {ShareTelemetryToggle} from '../../source/features/telemetry/consent-toggle'
 
@@ -42,9 +42,7 @@ export default function SupportPage(): React.ReactNode {
 							listRowSeparator('hidden'),
 						]}
 					>
-						<RNHostView matchContents={true}>
-							<FaqBannerGroup style={styles.banner} target={FAQ_TARGETS.SETTINGS_ROOT} />
-						</RNHostView>
+						<FaqBannerSlot style={styles.banner} target={FAQ_TARGETS.SETTINGS_ROOT} />
 					</VStack>
 
 					<Section>
