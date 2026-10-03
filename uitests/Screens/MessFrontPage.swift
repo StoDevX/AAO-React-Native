@@ -292,6 +292,19 @@ struct MessFrontPage: Screen {
 	}
 
 	private var storyRows: XCUIElementQuery {
-		app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH %@", TestIdentifiers.News.storyRowPrefix))
+		app.messStoryRows
+	}
+}
+
+extension XCUIApplication {
+	/// The Mess's story rows. A row into the reader is a button, but one that leaves the app -- a
+	/// puzzle's -- reads as a link, so XCUITest lists it under `links`, not `buttons`.
+	var messStoryRows: XCUIElementQuery {
+		descendants(matching: .any).matching(
+			NSPredicate(
+				format: "identifier BEGINSWITH %@ AND (elementType == %d OR elementType == %d)",
+				TestIdentifiers.News.storyRowPrefix,
+				XCUIElement.ElementType.button.rawValue,
+				XCUIElement.ElementType.link.rawValue))
 	}
 }
