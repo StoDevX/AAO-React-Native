@@ -19,24 +19,19 @@ type GroupTitle = (typeof GROUPS)[number]
 
 /**
  * Which group a role belongs to, by the first rule it matches. The paper sets its own titles, so
- * each rule reads a word in one rather than a whole title. A rule's place also orders the people
- * of its group: an executive editor comes before a manager or director. Copy Editor is read before
- * any other Editor, since copy editors are not section editors.
+ * each rule reads a word in one rather than a whole title, and a new title of a known kind still
+ * finds its group. A rule's place also orders the people of its group: an executive editor comes
+ * before a manager or director. Copy titles are read before any other Editor, since copy editors
+ * are not section editors, and the paper's top editors before both.
  */
 const RULES: Array<{pattern: RegExp; group: GroupTitle}> = [
-	{pattern: /\bExecutive Editor\b/iu, group: 'Leadership'},
-	{pattern: /\bCopy Editor\b/iu, group: 'Copy Desk'},
+	{pattern: /\b(?:Executive|Managing) Editor\b|\bEditor-in-Chief\b/iu, group: 'Leadership'},
+	{pattern: /\bCopy\b/iu, group: 'Copy Desk'},
 	{pattern: /\b(?:Manager|Director)\b/iu, group: 'Leadership'},
 	{pattern: /\bEditor\b/iu, group: 'Section Editors'},
 	{pattern: /\b(?:Writer|Reporter|Correspondent)\b/iu, group: 'Writers'},
 	{pattern: /\b(?:Photographer|Illustrator)\b/iu, group: 'Visuals'},
 ]
-
-/** The index of the rule a role matches; a role matching none ranks after every rule. */
-function ruleOf(role: string): number {
-	let index = RULES.findIndex((rule) => rule.pattern.test(role))
-	return index === -1 ? RULES.length : index
-}
 
 /**
  * A year's staff in groups, as a masthead lists them: leadership, section editors, writers,
@@ -44,15 +39,22 @@ function ruleOf(role: string): number {
  * are ordered by their rule, then their role, then their name. An empty group is left out.
  */
 export function groupStaff(profiles: StaffProfile[]): StaffGroup[] {
-	let sorted = [...profiles].sort(
+	// Each role is matched once; a role matching no rule ranks after every rule.
+	let ranked = profiles.map((person) => {
+		let rule = RULES.findIndex((r) => r.pattern.test(person.role))
+		return {person, rule: rule === -1 ? RULES.length : rule}
+	})
+	ranked.sort(
 		(a, b) =>
-			ruleOf(a.role) - ruleOf(b.role) ||
-			a.role.localeCompare(b.role) ||
-			a.name.localeCompare(b.name),
+			a.rule - b.rule ||
+			a.person.role.localeCompare(b.person.role) ||
+			a.person.name.localeCompare(b.person.name),
 	)
 	return GROUPS.map((title) => ({
 		title,
-		people: sorted.filter((p) => (RULES[ruleOf(p.role)]?.group ?? 'Other Staff') === title),
+		people: ranked
+			.filter(({rule}) => (RULES[rule]?.group ?? 'Other Staff') === title)
+			.map(({person}) => person),
 	})).filter((group) => group.people.length > 0)
 }
 
@@ -65,16 +67,21 @@ export function newestStaffYear(body: unknown): {id: number; name: string} {
 	return newest
 }
 
+/** A suffix after a name, such as `Jr.` or `III`. */
+const NAME_SUFFIX = /^(?:Jr|Sr)\.?$|^(?:II|III|IV)$/u
+
 /**
  * A staff member as the college directory's tile and photo draw a person: their picture, or their
  * initials, from the first and last words of their name, when the paper has none.
  */
 export function photoSubjectOf(person: StaffProfile): PersonPhotoSubject {
-	let words = person.name.split(/\s+/u)
+	let words = person.name.split(/\s+/u).filter((word) => word !== '')
+	// A suffix is no last name: Sam Ruiz Jr. is SR.
+	let named = words.length > 2 && NAME_SUFFIX.test(words.at(-1) ?? '') ? words.slice(0, -1) : words
 	return {
 		displayName: person.name,
-		firstName: words[0] ?? '',
-		lastName: words.length > 1 ? (words.at(-1) ?? '') : '',
+		firstName: named[0] ?? '',
+		lastName: named.length > 1 ? (named.at(-1) ?? '') : '',
 		thumbnail: person.photo?.url ?? '',
 	}
 }

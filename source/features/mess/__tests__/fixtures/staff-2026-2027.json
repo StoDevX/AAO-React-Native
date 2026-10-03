@@ -13,7 +13,6 @@
       "protected": false
     },
     "featured_media": 0,
-    "staff_year": [1147],
     "_embedded": {
       "wp:term": [
         [
@@ -47,13 +46,19 @@
       "protected": false
     },
     "featured_media": 37047,
-    "staff_year": [1147],
     "_embedded": {
       "wp:featuredmedia": [
         {
           "media_details": {
             "width": 1501,
-            "height": 2001
+            "height": 2001,
+            "sizes": {
+              "medium": {
+                "source_url": "https://olafmessenger.com/wp-content/uploads/2026/09/LydiaSimonJPG-e1790812318346-450x600.jpg",
+                "width": 450,
+                "height": 600
+              }
+            }
           },
           "source_url": "https://olafmessenger.com/wp-content/uploads/2026/09/LydiaSimonJPG-e1790812318346.jpg"
         }
@@ -90,13 +95,19 @@
       "protected": false
     },
     "featured_media": 37041,
-    "staff_year": [1147],
     "_embedded": {
       "wp:featuredmedia": [
         {
           "media_details": {
             "width": 1501,
-            "height": 2001
+            "height": 2001,
+            "sizes": {
+              "medium": {
+                "source_url": "https://olafmessenger.com/wp-content/uploads/2026/09/MatheaPetersin-e1790812064147-450x600.jpg",
+                "width": 450,
+                "height": 600
+              }
+            }
           },
           "source_url": "https://olafmessenger.com/wp-content/uploads/2026/09/MatheaPetersin-e1790812064147.jpg"
         }
@@ -133,13 +144,19 @@
       "protected": false
     },
     "featured_media": 37037,
-    "staff_year": [1147],
     "_embedded": {
       "wp:featuredmedia": [
         {
           "media_details": {
             "width": 1501,
-            "height": 2001
+            "height": 2001,
+            "sizes": {
+              "medium": {
+                "source_url": "https://olafmessenger.com/wp-content/uploads/2026/09/IMG_5871-e1790811977811-450x600.jpg",
+                "width": 450,
+                "height": 600
+              }
+            }
           },
           "source_url": "https://olafmessenger.com/wp-content/uploads/2026/09/IMG_5871-e1790811977811.jpg"
         }
@@ -176,13 +193,19 @@
       "protected": false
     },
     "featured_media": 37035,
-    "staff_year": [1147],
     "_embedded": {
       "wp:featuredmedia": [
         {
           "media_details": {
             "width": 1501,
-            "height": 2001
+            "height": 2001,
+            "sizes": {
+              "medium": {
+                "source_url": "https://olafmessenger.com/wp-content/uploads/2026/09/IMG_5867-e1790811882391-450x600.jpg",
+                "width": 450,
+                "height": 600
+              }
+            }
           },
           "source_url": "https://olafmessenger.com/wp-content/uploads/2026/09/IMG_5867-e1790811882391.jpg"
         }
@@ -219,13 +242,19 @@
       "protected": false
     },
     "featured_media": 37032,
-    "staff_year": [1147],
     "_embedded": {
       "wp:featuredmedia": [
         {
           "media_details": {
             "width": 1501,
-            "height": 2001
+            "height": 2001,
+            "sizes": {
+              "medium": {
+                "source_url": "https://olafmessenger.com/wp-content/uploads/2026/09/IsaacHillesland-e1790811783680-450x600.jpg",
+                "width": 450,
+                "height": 600
+              }
+            }
           },
           "source_url": "https://olafmessenger.com/wp-content/uploads/2026/09/IsaacHillesland-e1790811783680.jpg"
         }
@@ -262,13 +291,19 @@
       "protected": false
     },
     "featured_media": 37030,
-    "staff_year": [1147],
     "_embedded": {
       "wp:featuredmedia": [
         {
           "media_details": {
             "width": 1501,
-            "height": 2001
+            "height": 2001,
+            "sizes": {
+              "medium": {
+                "source_url": "https://olafmessenger.com/wp-content/uploads/2026/09/KatherineStoneman-e1790811730833-450x600.jpg",
+                "width": 450,
+                "height": 600
+              }
+            }
           },
           "source_url": "https://olafmessenger.com/wp-content/uploads/2026/09/KatherineStoneman-e1790811730833.jpg"
         }
@@ -305,13 +340,19 @@
       "protected": false
     },
     "featured_media": 37028,
-    "staff_year": [1147],
     "_embedded": {
       "wp:featuredmedia": [
         {
           "media_details": {
             "width": 2001,
-            "height": 2001
+            "height": 2001,
+            "sizes": {
+              "medium": {
+                "source_url": "https://olafmessenger.com/wp-content/uploads/2026/09/JadeJimenez-600x600.jpg",
+                "width": 600,
+                "height": 600
+              }
+            }
           },
           "source_url": "https://olafmessenger.com/wp-content/uploads/2026/09/JadeJimenez.jpg"
         }
@@ -348,7 +389,6 @@
       "protected": false
     },
     "featured_media": 0,
-    "staff_year": [1147],
     "_embedded": {
       "wp:term": [
         [
@@ -382,7 +422,6 @@
       "protected": false
     },
     "featured_media": 0,
-    "staff_year": [1147],
     "_embedded": {
       "wp:term": [
         [
@@ -416,7 +455,6 @@
       "protected": false
     },
     "featured_media": 0,
-    "staff_year": [1147],
     "_embedded": {
       "wp:term": [
         [
@@ -450,13 +488,19 @@
       "protected": false
     },
     "featured_media": 37023,
-    "staff_year": [1147],
     "_embedded": {
       "wp:featuredmedia": [
         {
           "media_details": {
             "width": 1501,
-            "height": 2001
+            "height": 2001,
+            "sizes": {
+              "medium": {
+                "source_url": "https://olafmessenger.com/wp-content/uploads/2026/09/ElianaIdzikowski-e1790811002530-450x600.jpg",
+                "width": 450,
+                "height": 600
+              }
+            }
           },
           "source_url": "https://olafmessenger.com/wp-content/uploads/2026/09/ElianaIdzikowski-e1790811002530.jpg"
         }
@@ -493,13 +537,19 @@
       "protected": false
     },
     "featured_media": 37021,
-    "staff_year": [1147],
     "_embedded": {
       "wp:featuredmedia": [
         {
           "media_details": {
             "width": 1501,
-            "height": 2001
+            "height": 2001,
+            "sizes": {
+              "medium": {
+                "source_url": "https://olafmessenger.com/wp-content/uploads/2026/09/IMG_5888-e1790810878119-450x600.jpg",
+                "width": 450,
+                "height": 600
+              }
+            }
           },
           "source_url": "https://olafmessenger.com/wp-content/uploads/2026/09/IMG_5888-e1790810878119.jpg"
         }
@@ -536,7 +586,6 @@
       "protected": false
     },
     "featured_media": 0,
-    "staff_year": [1147],
     "_embedded": {
       "wp:term": [
         [
@@ -570,13 +619,19 @@
       "protected": false
     },
     "featured_media": 37018,
-    "staff_year": [1147],
     "_embedded": {
       "wp:featuredmedia": [
         {
           "media_details": {
             "width": 1501,
-            "height": 2001
+            "height": 2001,
+            "sizes": {
+              "medium": {
+                "source_url": "https://olafmessenger.com/wp-content/uploads/2026/09/KylaPay-e1790810688390-450x600.jpg",
+                "width": 450,
+                "height": 600
+              }
+            }
           },
           "source_url": "https://olafmessenger.com/wp-content/uploads/2026/09/KylaPay-e1790810688390.jpg"
         }
@@ -613,13 +668,19 @@
       "protected": false
     },
     "featured_media": 37013,
-    "staff_year": [1147],
     "_embedded": {
       "wp:featuredmedia": [
         {
           "media_details": {
             "width": 1501,
-            "height": 2001
+            "height": 2001,
+            "sizes": {
+              "medium": {
+                "source_url": "https://olafmessenger.com/wp-content/uploads/2026/09/LouiseSkokan-e1790810438598-450x600.jpg",
+                "width": 450,
+                "height": 600
+              }
+            }
           },
           "source_url": "https://olafmessenger.com/wp-content/uploads/2026/09/LouiseSkokan-e1790810438598.jpg"
         }
@@ -656,7 +717,6 @@
       "protected": false
     },
     "featured_media": 0,
-    "staff_year": [1147],
     "_embedded": {
       "wp:term": [
         [
@@ -690,13 +750,19 @@
       "protected": false
     },
     "featured_media": 37010,
-    "staff_year": [1147],
     "_embedded": {
       "wp:featuredmedia": [
         {
           "media_details": {
             "width": 1501,
-            "height": 2001
+            "height": 2001,
+            "sizes": {
+              "medium": {
+                "source_url": "https://olafmessenger.com/wp-content/uploads/2026/09/JuliaSikorskiRoe-e1790810078646-450x600.jpg",
+                "width": 450,
+                "height": 600
+              }
+            }
           },
           "source_url": "https://olafmessenger.com/wp-content/uploads/2026/09/JuliaSikorskiRoe-e1790810078646.jpg"
         }
@@ -733,13 +799,19 @@
       "protected": false
     },
     "featured_media": 37008,
-    "staff_year": [1147],
     "_embedded": {
       "wp:featuredmedia": [
         {
           "media_details": {
             "width": 1501,
-            "height": 2001
+            "height": 2001,
+            "sizes": {
+              "medium": {
+                "source_url": "https://olafmessenger.com/wp-content/uploads/2026/09/AnnieMcMullen-e1790809871846-450x600.jpg",
+                "width": 450,
+                "height": 600
+              }
+            }
           },
           "source_url": "https://olafmessenger.com/wp-content/uploads/2026/09/AnnieMcMullen-e1790809871846.jpg"
         }
@@ -776,7 +848,6 @@
       "protected": false
     },
     "featured_media": 0,
-    "staff_year": [1147],
     "_embedded": {
       "wp:term": [
         [
@@ -810,13 +881,19 @@
       "protected": false
     },
     "featured_media": 37005,
-    "staff_year": [1147],
     "_embedded": {
       "wp:featuredmedia": [
         {
           "media_details": {
             "width": 1501,
-            "height": 2001
+            "height": 2001,
+            "sizes": {
+              "medium": {
+                "source_url": "https://olafmessenger.com/wp-content/uploads/2026/09/KimTran-e1790809740267-450x600.jpg",
+                "width": 450,
+                "height": 600
+              }
+            }
           },
           "source_url": "https://olafmessenger.com/wp-content/uploads/2026/09/KimTran-e1790809740267.jpg"
         }
@@ -853,13 +930,19 @@
       "protected": false
     },
     "featured_media": 37003,
-    "staff_year": [1147],
     "_embedded": {
       "wp:featuredmedia": [
         {
           "media_details": {
             "width": 1501,
-            "height": 2001
+            "height": 2001,
+            "sizes": {
+              "medium": {
+                "source_url": "https://olafmessenger.com/wp-content/uploads/2026/09/IMG_5935-e1790809400645-450x600.jpg",
+                "width": 450,
+                "height": 600
+              }
+            }
           },
           "source_url": "https://olafmessenger.com/wp-content/uploads/2026/09/IMG_5935-e1790809400645.jpg"
         }
@@ -896,13 +979,19 @@
       "protected": false
     },
     "featured_media": 37001,
-    "staff_year": [1147],
     "_embedded": {
       "wp:featuredmedia": [
         {
           "media_details": {
             "width": 1501,
-            "height": 2001
+            "height": 2001,
+            "sizes": {
+              "medium": {
+                "source_url": "https://olafmessenger.com/wp-content/uploads/2026/09/JulietStouffer-e1790809291606-450x600.jpg",
+                "width": 450,
+                "height": 600
+              }
+            }
           },
           "source_url": "https://olafmessenger.com/wp-content/uploads/2026/09/JulietStouffer-e1790809291606.jpg"
         }
@@ -939,7 +1028,6 @@
       "protected": false
     },
     "featured_media": 0,
-    "staff_year": [1147],
     "_embedded": {
       "wp:term": [
         [
@@ -973,7 +1061,6 @@
       "protected": false
     },
     "featured_media": 0,
-    "staff_year": [1147],
     "_embedded": {
       "wp:term": [
         [
@@ -1007,13 +1094,19 @@
       "protected": false
     },
     "featured_media": 36996,
-    "staff_year": [1147],
     "_embedded": {
       "wp:featuredmedia": [
         {
           "media_details": {
             "width": 1501,
-            "height": 2001
+            "height": 2001,
+            "sizes": {
+              "medium": {
+                "source_url": "https://olafmessenger.com/wp-content/uploads/2026/09/KathrynLooney-e1790808663101-450x600.jpg",
+                "width": 450,
+                "height": 600
+              }
+            }
           },
           "source_url": "https://olafmessenger.com/wp-content/uploads/2026/09/KathrynLooney-e1790808663101.jpg"
         }
@@ -1050,13 +1143,19 @@
       "protected": false
     },
     "featured_media": 36994,
-    "staff_year": [1147],
     "_embedded": {
       "wp:featuredmedia": [
         {
           "media_details": {
             "width": 1635,
-            "height": 2001
+            "height": 2001,
+            "sizes": {
+              "medium": {
+                "source_url": "https://olafmessenger.com/wp-content/uploads/2026/09/MayaBetti-490x600.jpg",
+                "width": 490,
+                "height": 600
+              }
+            }
           },
           "source_url": "https://olafmessenger.com/wp-content/uploads/2026/09/MayaBetti.jpg"
         }

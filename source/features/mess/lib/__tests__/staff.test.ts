@@ -1,6 +1,5 @@
 import {describe, expect, it} from '@jest/globals'
 import staff from '../../__tests__/fixtures/staff-2026-2027.json'
-import years from '../../__tests__/fixtures/staff-years.json'
 import {parseStaffProfiles} from '../profiles'
 import {groupStaff, newestStaffYear, photoSubjectOf} from '../staff'
 import type {StaffProfile} from '../../types'
@@ -39,6 +38,25 @@ describe('groupStaff', () => {
 			['Writers', ['Wes (Staff Writer)']],
 			['Visuals', ['Ina (Illustrator)']],
 			['Copy Desk', ['Cal (Copy Editor)']],
+		])
+	})
+
+	it('reads a managing editor or editor-in-chief as leadership, before any other editor', () => {
+		expect(
+			shape([
+				person('Nia', 'News Editor'),
+				person('Max', 'Managing Editor'),
+				person('Cy', 'Editor-in-Chief'),
+			]),
+		).toStrictEqual([
+			['Leadership', ['Cy (Editor-in-Chief)', 'Max (Managing Editor)']],
+			['Section Editors', ['Nia (News Editor)']],
+		])
+	})
+
+	it('reads any copy title as the copy desk, not a section editor', () => {
+		expect(shape([person('Lu', 'Copy/Layout Editor'), person('Ry', 'Copy Chief')])).toStrictEqual([
+			['Copy Desk', ['Ry (Copy Chief)', 'Lu (Copy/Layout Editor)']],
 		])
 	})
 
@@ -102,6 +120,13 @@ describe('groupStaff', () => {
 	})
 })
 
+/** The paper's staff years, as the staff_year terms list them. */
+const years = [
+	{id: 41, name: '2024-2025'},
+	{id: 1147, name: '2026-2027'},
+	{id: 998, name: '2025-2026'},
+]
+
 describe('newestStaffYear', () => {
 	it('picks the latest staff year by its name', () => {
 		expect(newestStaffYear(years)).toStrictEqual({id: 1147, name: '2026-2027'})
@@ -129,6 +154,18 @@ describe('photoSubjectOf', () => {
 	it('carries the photo as the thumbnail', () => {
 		let photo = {url: 'https://olafmessenger.com/a.jpg', width: 900, height: 1200}
 		expect(photoSubjectOf({...person('Ada Lin', 'Photographer'), photo}).thumbnail).toBe(photo.url)
+	})
+
+	it('ignores stray spaces around and inside a name', () => {
+		expect(photoSubjectOf(person(' Ada  Lin ', 'Photographer'))).toMatchObject({
+			firstName: 'Ada',
+			lastName: 'Lin',
+		})
+	})
+
+	it('reads a last name before a suffix such as Jr. or III', () => {
+		expect(photoSubjectOf(person('Sam Ruiz Jr.', 'Staff Writer')).lastName).toBe('Ruiz')
+		expect(photoSubjectOf(person('Lee Park III', 'Staff Writer')).lastName).toBe('Park')
 	})
 
 	it('leaves a single name without a last name, so its initials come from the name alone', () => {

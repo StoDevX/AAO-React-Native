@@ -3,10 +3,29 @@ import {z} from 'zod'
 import type {StaffProfile} from '../types'
 
 const TermSchema = z.object({name: z.string(), taxonomy: z.string()})
+const SizeSchema = z.object({source_url: z.string(), width: z.number(), height: z.number()})
 const MediaSchema = z.object({
 	source_url: z.string(),
-	media_details: z.object({width: z.number(), height: z.number()}),
+	media_details: z.object({
+		width: z.number(),
+		height: z.number(),
+		/** Smaller copies WordPress made of the upload; `medium` is 450 by 600 for a portrait */
+		sizes: z.object({medium: SizeSchema.optional()}).optional(),
+	}),
 })
+
+/** A trailing ellipsis, as WordPress ends an excerpt it made: ` […]`, `…` or `...`. */
+const TRAILING_ELLIPSIS = /\s*\[?(?:…|\.\.\.)\]?$/u
+
+/**
+ * A profile's role, from its excerpt. WordPress fills a blank excerpt with the start of the bio,
+ * which is no role, so an excerpt that only repeats the bio's opening words gives none.
+ */
+function roleOf(excerptHtml: string, bio: string): string {
+	let excerpt = fastGetTrimmedText(excerptHtml)
+	let opening = excerpt.replace(TRAILING_ELLIPSIS, '')
+	return opening && bio.startsWith(opening) ? '' : excerpt
+}
 
 const ProfileSchema = z.object({
 	id: z.number(),
@@ -40,19 +59,24 @@ export function parseStaffProfiles(body: unknown): StaffProfile[] {
 			let profile = ProfileSchema.safeParse(raw)
 			if (!profile.success) return []
 			let media = MediaSchema.safeParse(profile.data._embedded?.['wp:featuredmedia']?.[0])
+			// The full upload is about 1500 by 2000; a tile or a byline needs no more than medium.
+			let medium = media.success ? media.data.media_details.sizes?.medium : undefined
+			let bio = fastGetTrimmedText(profile.data.content.rendered)
 			return [
 				{
 					id: profile.data.id,
 					name: decode(profile.data.title.rendered),
-					role: fastGetTrimmedText(profile.data.excerpt?.rendered ?? ''),
-					bio: fastGetTrimmedText(profile.data.content.rendered),
-					photo: media.success
-						? {
-								url: media.data.source_url,
-								width: media.data.media_details.width,
-								height: media.data.media_details.height,
-							}
-						: null,
+					role: roleOf(profile.data.excerpt?.rendered ?? '', bio),
+					bio,
+					photo: medium
+						? {url: medium.source_url, width: medium.width, height: medium.height}
+						: media.success
+							? {
+									url: media.data.source_url,
+									width: media.data.media_details.width,
+									height: media.data.media_details.height,
+								}
+							: null,
 					year: yearOf((profile.data._embedded?.['wp:term'] ?? []).flat()),
 				},
 			]

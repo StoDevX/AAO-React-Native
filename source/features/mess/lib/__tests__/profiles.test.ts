@@ -54,6 +54,49 @@ describe('parseStaffProfiles', () => {
 		expect(mathea?.id).toBe(staff.find((p) => p.title.rendered === 'Mathea Petersin')?.id)
 	})
 
+	it('reads no role from an excerpt WordPress made from the bio', () => {
+		let bio = 'Ada Lin is a junior from Northfield who writes about the arts and edits the paper.'
+		let [parsed] = parseStaffProfiles([
+			{
+				...profile(`<p>${bio}</p>`),
+				excerpt: {rendered: '<p>Ada Lin is a junior from Northfield who writes [&hellip;]</p>\n'},
+			},
+		])
+		expect(parsed?.role).toBe('')
+		expect(parsed?.bio).toBe(bio)
+	})
+
+	it('draws the medium copy of a photo, not the full upload', () => {
+		let [parsed] = parseStaffProfiles([
+			{
+				...profile('<p>Bio</p>'),
+				_embedded: {
+					'wp:featuredmedia': [
+						{
+							source_url: 'https://olafmessenger.com/full.jpg',
+							media_details: {
+								width: 1501,
+								height: 2001,
+								sizes: {
+									medium: {
+										source_url: 'https://olafmessenger.com/medium.jpg',
+										width: 450,
+										height: 600,
+									},
+								},
+							},
+						},
+					],
+				},
+			},
+		])
+		expect(parsed?.photo).toStrictEqual({
+			url: 'https://olafmessenger.com/medium.jpg',
+			width: 450,
+			height: 600,
+		})
+	})
+
 	it('reads every profile of a year, with its role and year', () => {
 		let parsed = parseStaffProfiles(staff)
 		expect(parsed).toHaveLength(27)
