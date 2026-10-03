@@ -1,7 +1,7 @@
 import XCTest
 
-/// Home's ⋯ menu → About: the version, the app's story and its credits as
-/// cards that scroll sideways, and the Privacy and Legal pages.
+/// Home's ⋯ menu → About: the version, the app's story as cards that scroll
+/// sideways, its credits, and the Privacy and Legal pages.
 struct AboutScreen: Screen {
 	let app: XCUIApplication
 
@@ -17,6 +17,13 @@ struct AboutScreen: Screen {
 	/// every element in it.
 	func text(_ label: String) -> XCUIElement {
 		host.staticTexts[label].firstMatch
+	}
+
+	/// The dots under the story, which say which era it shows, as a page
+	/// control does.
+	var pageDots: XCUIElement {
+		app.descendants(matching: .any)
+			.matching(NSPredicate(format: "label == %@", TestIdentifiers.About.pageDots)).firstMatch
 	}
 
 	/// A row, found by its label.
