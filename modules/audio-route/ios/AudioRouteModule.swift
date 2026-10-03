@@ -49,15 +49,33 @@ final class VolumeSliderView: ExpoView {
 }
 
 /// A volume view that keeps its slider vertically centred. It puts the slider
-/// at the top of its frame, and lays it out there again whenever the audio
-/// route or session changes, as playing starting does, so centring it once
-/// from outside does not last.
+/// at the top of its frame, and moves it there again at times of its own
+/// choosing: when it first lays out, when playback starts, when the audio route
+/// changes. Centring after each layout it is known to do does not last, so the
+/// slider's position is watched, and put back whenever it is moved.
 final class CenteredVolumeView: MPVolumeView {
+	private var watching: NSKeyValueObservation?
+
 	override func layoutSubviews() {
 		super.layoutSubviews()
-		if let slider = subviews.compactMap({ $0 as? UISlider }).first {
-			slider.center.y = bounds.midY
+		watchSlider()
+		centreSlider()
+	}
+
+	private var slider: UISlider? {
+		subviews.compactMap { $0 as? UISlider }.first
+	}
+
+	private func watchSlider() {
+		guard watching == nil, let slider else { return }
+		watching = slider.layer.observe(\.position, options: []) { [weak self] _, _ in
+			self?.centreSlider()
 		}
+	}
+
+	private func centreSlider() {
+		guard let slider, abs(slider.center.y - bounds.midY) > 0.5 else { return }
+		slider.center.y = bounds.midY
 	}
 }
 
