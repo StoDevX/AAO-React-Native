@@ -2,7 +2,7 @@ import SwiftUI
 import UIKit
 
 /// Everything that changes how a tile looks. A tile's image is drawn again when any of it changes:
-/// its words, stains or handling, its size, the appearance, the text size or the screen's scale.
+/// its words, stains, photo tone or handling, its size, the appearance, the text size or the screen's scale.
 /// A photo is named by its address; an image is only made once the photo it shows has loaded.
 struct TileImageKey: Hashable {
 	let title: String
@@ -12,6 +12,7 @@ struct TileImageKey: Hashable {
 	let photoUrl: URL?
 	let stains: [[Double]]
 	let stainKind: String
+	let photoTone: String
 	let layout: String
 	let paragraphs: [String]
 	let handling: [Double]
@@ -34,6 +35,8 @@ struct TileImageKey: Hashable {
 		self.photoUrl = photoUrl
 		stains = content.stains.map { [$0.x, $0.y, $0.radius, $0.rotation, $0.arcStart, $0.arcLength] }
 		stainKind = content.stainKind.rawValue
+		// A tile with no photo draws the same under every tone, so the tone only keys a photo.
+		photoTone = content.hasPhoto && photoUrl != nil ? content.photoTone.rawValue : ""
 		layout = content.layout.rawValue
 		paragraphs = content.paragraphs
 		handling = [content.sheet.tilt, content.sheet.edgeSeed, content.sheet.bend]

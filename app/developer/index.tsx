@@ -4,7 +4,7 @@ import {Form, Host} from '@expo/ui/swift-ui'
 import {accessibilityIdentifier} from '@expo/ui/swift-ui/modifiers'
 import {Stack} from 'expo-router'
 
-import {DeveloperSection} from '../../source/features/settings/screens/overview/developer'
+import {DeveloperSection} from '../../source/features/developer/developer'
 
 const styles = StyleSheet.create({
 	host: {

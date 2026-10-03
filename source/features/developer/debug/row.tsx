@@ -2,7 +2,7 @@ import * as React from 'react'
 import {LabeledContent, Text} from '@expo/ui/swift-ui'
 import {foregroundStyle} from '@expo/ui/swift-ui/modifiers'
 import * as c from '@frogpond/colors'
-import {DisclosureRow} from '../../../../components/rows'
+import {DisclosureRow} from '../../../components/rows'
 import {describeValue} from './lib'
 
 type Props = {

@@ -13,7 +13,7 @@ import * as React from 'react'
 import {DynamicColorIOS, PlatformColor, StyleSheet, Text, View} from 'react-native'
 import {Section} from '@expo/ui/swift-ui'
 import {Stack} from 'expo-router'
-import {LibraryWrapper} from '../../../source/features/settings/screens/overview/component-library/base/library-wrapper'
+import {LibraryWrapper} from '../../../source/features/developer/component-library/base/library-wrapper'
 
 function createTable(): Array<{
 	color: ReturnType<typeof PlatformColor>

@@ -1,6 +1,6 @@
 import * as Sentry from '@sentry/react-native'
 
-import {useTelemetryStore} from '../../../../../telemetry/store'
+import {useTelemetryStore} from '../../../telemetry/store'
 import {reportEmail, submitReport} from '../submit'
 
 jest.mock('@sentry/react-native', () => ({

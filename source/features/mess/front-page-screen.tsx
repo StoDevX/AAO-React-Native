@@ -14,6 +14,7 @@ import {Masthead} from './masthead'
 import {MessPage} from './mess-page'
 import {PageLoading, PageMessage, PageNotice} from './page-notice'
 import {messFeedOptions} from './query'
+import {CUSTOMIZE_LABEL} from '../customize/labels'
 import {StoryRows} from './story-list'
 import type {MessIssue} from './types'
 import {useMessIssues} from './use-mess-issues'
@@ -28,22 +29,30 @@ function datelineOf(view: MessView): string | null {
 }
 
 /**
- * The glass button at the top right: a menu to pick By Issue or Latest, and, in Latest, the
- * section to narrow it to, then a way to the paper's About page. Its label names the view
- * showing, since the icon alone does not.
+ * The glass buttons at the top right: the paintbrush, which opens the Messenger's Customize
+ * sheet, and a menu to pick By Issue or Latest and, in Latest, the section to narrow it to, then a
+ * way to the paper's About page. The menu's label names the view showing, since the icon alone does
+ * not. Both sit at the right because a button at the left would replace the Back button.
  */
 function ViewMenu({
 	view,
 	onChoose,
+	onCustomize,
 	onOpenAbout,
 }: {
 	view: MessView
 	onChoose: (view: MessView) => void
+	onCustomize: () => void
 	onOpenAbout: () => void
 }): React.ReactNode {
 	return (
 		<Stack.Toolbar placement="right">
-			<Stack.Toolbar.Menu accessibilityLabel={`View: ${VIEW_NAMES[view.mode]}`} icon="newspaper">
+			<Stack.Toolbar.Button
+				accessibilityLabel={CUSTOMIZE_LABEL}
+				icon="paintbrush"
+				onPress={onCustomize}
+			/>
+			<Stack.Toolbar.Menu accessibilityLabel={`View: ${VIEW_NAMES[view.mode]}`} icon="ellipsis">
 				<Stack.Toolbar.Menu inline={true} title="View">
 					<Stack.Toolbar.MenuAction
 						isOn={view.mode === 'issues'}
@@ -147,6 +156,7 @@ export function FrontPageScreen(): React.ReactNode {
 			/>
 			<ViewMenu
 				onChoose={choose}
+				onCustomize={() => router.navigate('/messenger/customize')}
 				onOpenAbout={() => router.navigate('/messenger/about')}
 				view={view}
 			/>

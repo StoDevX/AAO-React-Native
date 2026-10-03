@@ -7,6 +7,22 @@ class ModuleNewsTests: UITestCaseUnbooted {
 			.verifyByIssueShowsTheGrid()
 	}
 
+	func testOlafMessengerPaintbrushChangesTheIssueStain() throws {
+		let customize = MessFrontPage(app: app).navigate().openCustomize()
+		customize.capture("Messenger Customize, before")
+		customize.chooseStain("Tea")
+		customize.capture("Messenger Customize, Tea chosen").close()
+	}
+
+	/// Captures the issue grid under each photo tone, to compare them by eye.
+	func testOlafMessengerPhotoTonesTintTheThumbnails() throws {
+		let front = MessFrontPage(app: app).navigate().verifyByIssueShowsTheGrid()
+		for tone in ["Automatic", "Color", "Sepia"] {
+			front.openCustomize().choosePhotoTone(tone).close()
+			front.captureGrid("Issue thumbnails, \(tone)")
+		}
+	}
+
 	func testOlafMessengerLatestNarrowsToASection() throws {
 		MessFrontPage(app: app)
 			.navigate()
@@ -180,6 +196,37 @@ class ModuleNewsTests: UITestCaseUnbooted {
 			.openColumn(TestIdentifiers.News.recipesColumn, in: TestIdentifiers.News.varietySection)
 			.openFirstStory()
 			.tickFirstIngredient()
+	}
+
+	/// A Photo story opens dark while the setting is on, and the page it was opened from is light
+	/// again after Back. The suite runs in Light Mode.
+	func testPhotoStoriesOpenInDarkMode() throws {
+		let front = MessFrontPage(app: app)
+			.navigate()
+			.openColumn(TestIdentifiers.News.photoColumn, in: TestIdentifiers.News.varietySection)
+		let story = front.openFirstStory().verifyHeadlineAppears()
+		story.verifyPage(dark: true, "a Photo story should open in Dark Mode")
+		// An error screen is dark too, so the story must still be the page on show.
+		story.verifyHeadlineAppears()
+		story.capture("Photo story, kept dark")
+
+		story.goBack()
+		XCTAssertTrue(
+			front.storyRows.firstMatch.waitForExistence(timeout: 10), "Back should return to the Photo list")
+		story.verifyPage(dark: false, "the Photo list should be light again after Back")
+		front.capture("Photo list after Back")
+	}
+
+	/// With the setting off, a Photo story follows the system's appearance.
+	func testPhotoStoriesFollowTheSystemWhenTheSettingIsOff() throws {
+		let front = MessFrontPage(app: app).navigate()
+		front.openCustomize().keepPhotoStoriesDark(false).close()
+		let story = front
+			.openColumn(TestIdentifiers.News.photoColumn, in: TestIdentifiers.News.varietySection)
+			.openFirstStory()
+			.verifyHeadlineAppears()
+		story.verifyPage(dark: false, "with the setting off, a Photo story should stay light")
+		story.capture("Photo story, setting off")
 	}
 
 	func testPhotoOpensTheZoomViewer() throws {

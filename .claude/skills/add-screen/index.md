@@ -34,7 +34,6 @@ Before using this skill, ensure you have:
 - `app/` for a screen of its own, e.g. one opened from a Home tile
 - under another screen's folder when only that screen opens it
   (`app/student-work/job/description.tsx` is opened only from the job)
-- `app/settings/` for a Settings screen, which pushes inside the Settings modal
 
 ### Step 2: Create the Route File
 
@@ -244,7 +243,7 @@ See existing routes for reference implementations:
 - `app/hours/detail/report.tsx` — the full three-component shape (chrome, loader, view)
 - `source/features/home/` — the home screen's support components
 - `source/features/menus/` — a feature with several routes sharing support code
-- `source/features/settings/` — a feature with many sub-screens
+- `source/features/developer/` — a feature with many sub-screens
 
 Each example demonstrates a different chrome/data pattern.
 
@@ -255,7 +254,7 @@ Each example demonstrates a different chrome/data pattern.
 Use this checklist to ensure you've completed all necessary steps when adding a new screen.
 
 ## Route Creation
-- [ ] Created a kebab-case route file under `app/`, nested under its only opener or under `app/settings/` where that fits
+- [ ] Created a kebab-case route file under `app/`, nested under its only opener where that fits
 - [ ] The route file's default export is the only exported component
 - [ ] Chrome (`Stack.Title` / `Stack.Screen` / `Stack.Toolbar`) is in an outer component if the screen has early returns
 - [ ] A third (`…Loader`) component is used if a `useState` initialiser is seeded from loaded data, or the screen has ungated queries
@@ -295,7 +294,7 @@ Use this checklist to ensure you've completed all necessary steps when adding a 
 ### Routing Issues
 - The route's `view` path in `source/features/views.ts` matches the file path under `app/`
 - Dynamic segments (`[param].tsx`) match the params used in `useLocalSearchParams` and `router.navigate`
-- Screen is nested under the screen that opens it, or under `app/settings/` for Settings
+- Screen is nested under the screen that opens it
 
 ### TypeScript Issues
 - All imports are correct and exist

@@ -30,6 +30,33 @@ struct MessFrontPage: Screen {
 		return self
 	}
 
+	/// Wait for the thumbnails to show and stop changing, then attach a screenshot of them.
+	func captureGrid(_ name: String) {
+		XCTAssertTrue(topTile.waitForExistence(timeout: 30), "the grid should show its top tile")
+		// Tiles redraw their cached image after a setting changes, so the grid has settled once
+		// two screenshots of it in a row match.
+		var previous: Data?
+		let settled = NSPredicate { _, _ in
+			let current = topTile.screenshot().pngRepresentation
+			defer { previous = current }
+			return current == previous
+		}
+		let result = XCTWaiter().wait(
+			for: [XCTNSPredicateExpectation(predicate: settled, object: nil)], timeout: 15)
+		XCTAssertEqual(result, .completed, "the grid should stop redrawing after the setting changes")
+		capture(name)
+	}
+
+	/// Tap the paintbrush at the top right and wait for the Customize sheet.
+	@discardableResult
+	func openCustomize() -> MessCustomizeScreen {
+		let button = app.buttons[TestIdentifiers.Navigation.customizeButton]
+		XCTAssertTrue(button.waitForHittable(timeout: 30), "the front page should have a Customize button")
+		capture("The Messenger's front page, with its paintbrush")
+		button.tap()
+		return MessCustomizeScreen(app: app).checkOpen()
+	}
+
 	/// The navigation bar has no title, and the paper's castle heads the page as its masthead,
 	/// read as the paper's name; the name is printed only on the issues' own nameplates.
 	@discardableResult
@@ -291,7 +318,7 @@ struct MessFrontPage: Screen {
 		app.buttons.matching(identifier: TestIdentifiers.News.leadStory).firstMatch
 	}
 
-	private var storyRows: XCUIElementQuery {
+	var storyRows: XCUIElementQuery {
 		app.messStoryRows
 	}
 }

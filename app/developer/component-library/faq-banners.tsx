@@ -5,7 +5,7 @@ import {Stack} from 'expo-router'
 
 import {FaqBannerPresentation} from '../../../source/features/faqs/banner'
 import type {Faq} from '../../../source/features/faqs/types'
-import {LibraryWrapper} from '../../../source/features/settings/screens/overview/component-library/base/library-wrapper'
+import {LibraryWrapper} from '../../../source/features/developer/component-library/base/library-wrapper'
 
 /**
  * Builds a preview Faq. Only the fields a banner actually reads are worth

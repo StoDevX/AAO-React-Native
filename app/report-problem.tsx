@@ -10,15 +10,12 @@ import {
 } from '@expo/ui/swift-ui/modifiers'
 import {Stack, useNavigation} from 'expo-router'
 
-import {ImageAttachmentsSection} from '../../source/components/image-attachments-section'
-import {useImageAttachments} from '../../source/components/use-image-attachments'
-import {readAttachment} from '../../source/features/settings/screens/overview/report-problem/attachments'
-import {composeEmail} from '../../source/components/send-email'
-import {
-	reportEmail,
-	submitReport,
-} from '../../source/features/settings/screens/overview/report-problem/submit'
-import {useTelemetryStore} from '../../source/features/telemetry/store'
+import {ImageAttachmentsSection} from '../source/components/image-attachments-section'
+import {useImageAttachments} from '../source/components/use-image-attachments'
+import {readAttachment} from '../source/features/support/report-problem/attachments'
+import {composeEmail} from '../source/components/send-email'
+import {reportEmail, submitReport} from '../source/features/support/report-problem/submit'
+import {useTelemetryStore} from '../source/features/telemetry/store'
 
 const styles = StyleSheet.create({
 	host: {

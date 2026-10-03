@@ -9,6 +9,7 @@ import {AuthorCards} from './author-card'
 import {HoroscopesView} from './horoscopes-view'
 import {FeatureView} from './feature-view'
 import {ImageView} from './image-view'
+import {keepsDarkMode} from './lib/photo-story'
 import {PAGE_MARGIN} from './mess-page'
 import {paper} from './palette'
 import {PlaylistView} from './playlist-view'
@@ -34,6 +35,14 @@ const QUIET_COLUMN = [padding({horizontal: QUIET_MARGIN, vertical: 16})]
 /** A column whose children can be scrolled to by their `id`. */
 const TARGET_COLUMN = [...COLUMN, scrollTargetLayout()]
 
+/**
+ * A Photo story's navigation bar, dark over its dark page. The page's own Host carries the dark
+ * scheme, so only this screen turns dark, and a viewer or story opened over it leaves it as it is.
+ */
+const DARK_SCREEN = {
+	unstable_nativeProps: {headerConfig: {experimental_userInterfaceStyle: 'dark'}},
+} as const
+
 /** Names a Crossword or Puzzle post's Solve button, for a UI test. */
 export const PUZZLE_SOLVE_ID = 'mess-puzzle-solve'
 
@@ -48,6 +57,8 @@ export function StoryScreen({id}: Props): React.ReactNode {
 		recordOpened(id)
 	}, [id, recordOpened])
 	let story = query.data
+	let keepPhotoStoriesDark = useMessStore((state) => state.keepPhotoStoriesDark)
+	let darkMode = story ? keepsDarkMode(story, keepPhotoStoriesDark) : false
 	// A poem, photo or short story is set quietly: a lighter header and wider margins.
 	let isQuiet = story?.layout.kind === 'poem' || story?.layout.kind === 'feature'
 	let margin = isQuiet ? QUIET_MARGIN : PAGE_MARGIN
@@ -78,7 +89,13 @@ export function StoryScreen({id}: Props): React.ReactNode {
 			{/* A transparent header lays the page out from the top of the screen, so the paper
 			    runs behind the bars and the story scrolls under them; the SwiftUI scroll view
 			    still starts its content below the bar, inside the safe area. */}
-			<Stack.Screen options={{title: '', headerTransparent: true}} />
+			<Stack.Screen
+				options={{
+					title: '',
+					headerTransparent: true,
+					...(darkMode ? DARK_SCREEN : null),
+				}}
+			/>
 			<Stack.Toolbar placement="right">
 				<Stack.Toolbar.Button
 					accessibilityLabel="Share Story"
@@ -91,7 +108,7 @@ export function StoryScreen({id}: Props): React.ReactNode {
 					onPress={() => Linking.openURL(story.link).catch(() => undefined)}
 				/>
 			</Stack.Toolbar>
-			<Host style={styles.page}>
+			<Host colorScheme={darkMode ? 'dark' : undefined} style={styles.page}>
 				<ScrollView
 					modifiers={scrolls ? [...PAGE, scrollPosition(scrollTarget, {anchor: 'top'})] : PAGE}
 				>

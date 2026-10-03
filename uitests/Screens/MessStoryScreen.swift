@@ -21,6 +21,34 @@ struct MessStoryScreen: Screen {
 		return self
 	}
 
+	/// Wait for a story's headline, for a story with no body text to check, as a Photo story is.
+	@discardableResult
+	func verifyHeadlineAppears() -> Self {
+		XCTAssertTrue(
+			app.staticTexts[TestIdentifiers.News.storyHeadline].waitForExistence(timeout: 30),
+			"the story's headline should be visible")
+		return self
+	}
+
+	/// Wait until the paper beside the column, below the bars, reads as dark or as light. A
+	/// screenshot that can't be read fails the check rather than counting as light.
+	@discardableResult
+	func verifyPage(dark: Bool, _ message: String) -> Self {
+		var brightness: Int?
+		let settled = NSPredicate { _, _ in
+			guard let pixels = ScreenPixels(app.screenshot().image) else { return false }
+			let paper = pixels.colour(at: CGPoint(x: 6, y: app.windows.firstMatch.frame.midY))
+			brightness = (paper.red + paper.green + paper.blue) / 3
+			return (brightness! < 80) == dark
+		}
+		let result = XCTWaiter().wait(
+			for: [XCTNSPredicateExpectation(predicate: settled, object: nil)], timeout: 10)
+		XCTAssertEqual(
+			result, .completed,
+			"\(message) (the paper's brightness read \(brightness.map(String.init) ?? "nothing"))")
+		return self
+	}
+
 	/// The headline of the story on top, once one other than `previous` is drawn.
 	/// Mid-push or mid-pop both screens' headlines are in the tree, and reading a
 	/// label then fails on the ambiguous match, so this waits until only one is.

@@ -3,8 +3,8 @@ import * as Application from 'expo-application'
 import * as Device from 'expo-device'
 import {IS_PRODUCTION} from '@frogpond/constants'
 
-import {SUPPORT_EMAIL} from '../../../../../lib/constants'
-import {useTelemetryStore} from '../../../../telemetry/store'
+import {SUPPORT_EMAIL} from '../../../lib/constants'
+import {useTelemetryStore} from '../../telemetry/store'
 
 /** An image to send alongside a report, already read into memory. */
 export type ReportAttachment = {

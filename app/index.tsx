@@ -54,6 +54,7 @@ import {openUrl} from '@frogpond/open-url'
 import {selectDevModeOverride, setDevModeOverride} from '../source/redux/parts/settings'
 import {useIsDevMode} from '../source/lib/use-is-dev-mode'
 import {FaqBannerGroup} from '../source/features/faqs/banner'
+import {CUSTOMIZE_LABEL} from '../source/features/customize/labels'
 import {FAQ_TARGETS} from '../source/features/faqs/constants'
 import {sample} from '@frogpond/collections'
 import {
@@ -170,8 +171,6 @@ const BARE_ROW_MODIFIERS = [
 const HOME_GRID_ID = 'home-tile-grid'
 /// The menu in the navigation bar's corner, which `TestIdentifiers.Navigation.homeMenu` finds by name.
 const HOME_MENU_LABEL = 'Home menu'
-/// The paintbrush's label, which `TestIdentifiers.Navigation.customizeButton` finds it by.
-const CUSTOMIZE_LABEL = 'Customize'
 /// Names a group's header, for a UI test.
 const groupHeaderId = (group: string): string => `home-group-header-${group}`
 
@@ -303,7 +302,7 @@ export default function HomePage(): React.ReactNode {
 					<Stack.Toolbar.Menu inline={true}>
 						<Stack.Toolbar.MenuAction
 							icon="exclamationmark.bubble"
-							onPress={() => router.navigate('/settings/report-problem')}
+							onPress={() => router.navigate('/report-problem')}
 						>
 							Feedback
 						</Stack.Toolbar.MenuAction>

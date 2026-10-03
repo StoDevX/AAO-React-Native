@@ -18,6 +18,13 @@ enum StainKind: String, Enumerable {
 	case none
 }
 
+/// How a tile tints its lead photo: by the appearance, in full color, or in sepia.
+enum PhotoTone: String, Enumerable {
+	case auto
+	case color
+	case sepia
+}
+
 /// A ring's three inks: the faint wash inside it, the soft halo along its edge, and the edge.
 private struct StainInks {
 	let fill: Color

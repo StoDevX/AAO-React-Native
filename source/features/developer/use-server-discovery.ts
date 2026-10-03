@@ -1,7 +1,7 @@
 import * as React from 'react'
 import Zeroconf from 'react-native-zeroconf'
 import {NativeModules} from 'react-native'
-import {useIsDevMode} from '../../../../lib/use-is-dev-mode'
+import {useIsDevMode} from '../../lib/use-is-dev-mode'
 
 type DiscoveredServer = {
 	name: string

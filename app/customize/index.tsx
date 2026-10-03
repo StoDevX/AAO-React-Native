@@ -1,17 +1,24 @@
 import * as React from 'react'
 import {StyleSheet, useColorScheme} from 'react-native'
-import {Form, Host, Picker, Text, Toggle} from '@expo/ui/swift-ui'
-import {accessibilityIdentifier, pickerStyle, tag} from '@expo/ui/swift-ui/modifiers'
+import {Form, Host, Toggle} from '@expo/ui/swift-ui'
+import {accessibilityIdentifier} from '@expo/ui/swift-ui/modifiers'
 import {Stack, useFocusEffect, useRouter} from 'expo-router'
 import * as c from '@frogpond/colors'
 import {SheetSection} from '@frogpond/sheet-section'
 
 import {previewFor} from '../../images/icons'
+import {MenuPickerRow} from '../../source/components/menu-picker-row'
 import {DisclosureRow, NavigationRow} from '../../source/components/rows'
 import {SheetCloseButton} from '../../source/components/sheet-close-button'
 import {type LinkTarget, useOpenLinksIn} from '../../source/features/customize/open-links-in'
 import {useAppIcon} from '../../source/features/customize/use-app-icon'
 import {useRadioPlayerSetting} from '../../source/features/customize/radio-player-setting'
+
+/// Where links open, and what the menu calls each.
+const LINK_TARGETS = [
+	['app', 'In App'],
+	['safari', 'Safari'],
+] as const satisfies ReadonlyArray<readonly [LinkTarget, string]>
 
 /// Settings' own row-icon size, as `rows.tsx` draws a gradient icon.
 const ROW_ICON_SIZE = 30
@@ -57,15 +64,13 @@ export default function CustomizePage(): React.ReactNode {
 						/>
 					</SheetSection>
 					<SheetSection title="Browsing">
-						<Picker<LinkTarget>
+						<MenuPickerRow
+							id="open-links-in"
 							label="Open Links"
-							modifiers={[pickerStyle('menu'), accessibilityIdentifier('open-links-in')]}
 							onSelectionChange={setLinkTarget}
+							options={LINK_TARGETS}
 							selection={linkTarget}
-						>
-							<Text modifiers={[tag('app')]}>In App</Text>
-							<Text modifiers={[tag('safari')]}>Safari</Text>
-						</Picker>
+						/>
 					</SheetSection>
 					<SheetSection title="Home Screen">
 						<Toggle

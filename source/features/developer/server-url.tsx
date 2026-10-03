@@ -2,12 +2,12 @@ import * as React from 'react'
 import {Section, Text, TextField, useNativeState} from '@expo/ui/swift-ui'
 import {disabled, onSubmit, submitLabel} from '@expo/ui/swift-ui/modifiers'
 import {Restart} from 'react-native-restart-newarch'
-import * as storage from '../../../../lib/storage'
-import {DEFAULT_URL} from '../../../../lib/constants'
+import * as storage from '../../lib/storage'
+import {DEFAULT_URL} from '../../lib/constants'
 import {useMutation, useQuery} from '@tanstack/react-query'
 import {serverUrlOptions} from './query'
 import {useServerDiscovery} from './use-server-discovery'
-import {ActionRow, NavigationRow} from '../../../../components/rows'
+import {ActionRow, NavigationRow} from '../../components/rows'
 
 const isHttpUrl = (value: string): boolean => {
 	try {

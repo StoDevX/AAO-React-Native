@@ -9,10 +9,7 @@ import {Stack, useRouter} from 'expo-router'
 import {DisclosureRow} from '../../../source/components/rows'
 
 import {SearchBar} from '../../../source/components/search-bar'
-import {
-	ServerRoute,
-	serverRoutesOptions,
-} from '../../../source/features/settings/screens/api-test/query'
+import {ServerRoute, serverRoutesOptions} from '../../../source/features/developer/api-test/query'
 
 export default function APITestPage(): React.ReactNode {
 	let router = useRouter()
