@@ -25,18 +25,32 @@ public class AudioRouteModule: Module {
 /// The system's volume slider, which sets the device's volume and follows the
 /// hardware buttons. It is the system's own control, so it draws and behaves
 /// as it does in Music.
+///
+/// Music draws no thumb, so none is drawn here. The thumb image is clear and
+/// the size of a finger, not nothing, since a slider can be grabbed only where
+/// its thumb is.
 final class VolumeSliderView: ExpoView {
 	let volumeView = MPVolumeView(frame: .zero)
 
+	private static let thumbSize = CGSize(width: 28, height: 28)
+
 	required init(appContext: AppContext? = nil) {
 		super.init(appContext: appContext)
-		volumeView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+		let clearThumb = UIGraphicsImageRenderer(size: Self.thumbSize).image { _ in }
+		volumeView.setVolumeThumbImage(clearThumb, for: .normal)
+		volumeView.setVolumeThumbImage(clearThumb, for: .highlighted)
 		addSubview(volumeView)
 	}
 
+	/// The volume view puts its slider at the top of its frame, so the slider
+	/// is centred by hand, to line up with the speakers beside it.
 	override func layoutSubviews() {
 		super.layoutSubviews()
 		volumeView.frame = bounds
+		volumeView.layoutIfNeeded()
+		if let slider = volumeView.subviews.compactMap({ $0 as? UISlider }).first {
+			slider.center.y = bounds.midY
+		}
 	}
 }
 
