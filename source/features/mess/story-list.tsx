@@ -16,13 +16,16 @@ import {
 	type InfiniteData,
 	type UseInfiniteQueryResult,
 } from '@tanstack/react-query'
+import {openUrl} from '@frogpond/open-url'
 import {creditLine} from './lib/byline'
+import {crosswordUrl} from './lib/crossword'
 import {TAP_TARGET} from './lib/glyph-grid'
 import {NextPageRow} from './next-page-row'
 import {PageLoading, PageNotice} from './page-notice'
 import {faded, ink, wash} from './palette'
 import {messCategoryOptions} from './query'
 import {RemotePhoto} from './remote-photo'
+import {useMessStore} from './store'
 import type {MessStory} from './types'
 import {useOpenStory} from './use-open-story'
 
@@ -71,13 +74,28 @@ function StoryRow({story, onPress}: {story: MessStory; onPress: () => void}): Re
 	)
 }
 
-/** Stories as rows, each opening in the reader; returned side by side to land in the page's column. */
+/**
+ * Stories as rows, each opening in the reader; returned side by side to land in the page's column.
+ * A list of nothing but crosswords, as the Crossword column is, opens each puzzle from its row,
+ * since solving it is all a crossword's page is for.
+ */
 export function StoryRows({stories}: {stories: MessStory[]}): React.ReactNode {
 	let open = useOpenStory()
+	let recordOpened = useMessStore((state) => state.recordOpened)
 	if (stories.length === 0) return <Text modifiers={EMPTY}>No stories yet</Text>
+	let onlyCrosswords = stories.every((story) => story.layout.kind === 'crossword')
+	let press = (story: MessStory) => {
+		if (onlyCrosswords && story.layout.kind === 'crossword') {
+			// The reader's page would have counted it towards its issue's stains.
+			recordOpened(story.id)
+			openUrl(crosswordUrl(story.layout.puzzle))
+		} else {
+			open(story)
+		}
+	}
 	return stories.map((story) => (
 		<VStack alignment="leading" key={story.id} spacing={10}>
-			<StoryRow onPress={() => open(story)} story={story} />
+			<StoryRow onPress={() => press(story)} story={story} />
 			<Divider />
 		</VStack>
 	))

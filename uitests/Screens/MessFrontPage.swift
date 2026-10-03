@@ -168,6 +168,21 @@ struct MessFrontPage: Screen {
 		return MessStoryScreen(app: app)
 	}
 
+	/// Tap the first row of the Crossword column's list and assert it opens the puzzle in the
+	/// in-app browser, with no story page between.
+	@discardableResult
+	func solveFirstCrossword() -> Self {
+		let row = storyRows.firstMatch
+		XCTAssertTrue(row.waitForHittable(), "a crossword row should be ready to tap")
+		row.tap()
+		let done = app.buttons[TestIdentifiers.Directory.inAppBrowserDone].firstMatch
+		XCTAssertTrue(
+			done.waitForExistence(timeout: 30),
+			"a crossword's row should open its puzzle in the in-app browser")
+		capture("A crossword from its row, in the in-app browser")
+		return self
+	}
+
 	/// Open the view menu and tap its item named `label`.
 	private func pickFromViewMenu(_ label: String) {
 		XCTAssertTrue(viewMenu.waitForHittable(timeout: 30), "the view menu should be ready to tap")

@@ -664,6 +664,9 @@ struct TestIdentifiers {
 		/// source/features/mess/story-screen.tsx.
 		static let crosswordSolve = "mess-crossword-solve"
 		static let crosswordSolveLabel = "Solve the crossword"
+		/// A Crossword post, from the recorded Mess fixtures, opened by route: its row in the
+		/// Crossword column opens the puzzle without the page.
+		static let crosswordStoryRoute = "/messenger/story?id=36814"
 
 		/// Every ingredient row on a recipe page, in source/features/mess/recipe-view.tsx.
 		static let recipeIngredient = "mess-recipe-ingredient"

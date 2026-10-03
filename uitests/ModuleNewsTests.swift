@@ -154,11 +154,17 @@ class ModuleNewsTests: UITestCaseUnbooted {
 			.closeImageViewer()
 	}
 
-	func testCrosswordOpensThePuzzleInTheBrowser() throws {
+	func testCrosswordRowOpensThePuzzleInTheBrowser() throws {
 		MessFrontPage(app: app)
 			.navigate()
 			.openColumn(TestIdentifiers.News.crosswordColumn, in: TestIdentifiers.News.varietySection)
-			.openFirstStory()
+			.solveFirstCrossword()
+	}
+
+	/// A crossword's own page, reached from a list of other stories too, still offers its puzzle.
+	func testCrosswordPageOpensThePuzzleInTheBrowser() throws {
+		MessStoryScreen(app: app)
+			.navigate(to: TestIdentifiers.News.crosswordStoryRoute)
 			.solveCrossword()
 	}
 

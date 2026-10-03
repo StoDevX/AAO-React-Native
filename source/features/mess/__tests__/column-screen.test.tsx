@@ -3,6 +3,7 @@ import {afterEach, beforeEach, describe, expect, jest, test} from '@jest/globals
 import {act, fireEvent, render, screen} from '@testing-library/react-native'
 import {onlineManager, QueryClient, QueryClientProvider} from '@tanstack/react-query'
 import {fetchManifest, fetchSourceBody, type Jrd} from '@frogpond/data-sources'
+import {openUrl} from '@frogpond/open-url'
 
 import categoriesJson from './fixtures/categories.json'
 import postsJson from './fixtures/posts.json'
@@ -12,6 +13,7 @@ import {ColumnScreen} from '../column-screen'
 import {messKeys} from '../lib/keys'
 import {onePage} from './one-page'
 import {parseMessCategories} from '../lib/posts'
+import {useMessStore} from '../store'
 import type {MessStory} from '../types'
 
 jest.mock(
@@ -25,6 +27,7 @@ jest.mock('@frogpond/data-sources', () => ({
 	fetchManifest: jest.fn(),
 	fetchSourceBody: jest.fn(),
 }))
+jest.mock('@frogpond/open-url', () => ({openUrl: jest.fn()}))
 const mockNavigate = jest.fn()
 jest.mock('expo-router', () => ({
 	// oxlint-disable-next-line typescript/no-require-imports
@@ -49,6 +52,14 @@ const QUESTION: MessStory = {
 	photo: null,
 	blocks: [],
 	layout: {kind: 'article'},
+}
+
+const CROSSWORD: MessStory = {
+	...QUESTION,
+	id: 36900,
+	title: 'Crossword: Finals Week',
+	column: 'Crossword',
+	layout: {kind: 'crossword', puzzle: {id: 'finals', set: 'olafmessenger'}},
 }
 
 let queryClient: QueryClient
@@ -81,6 +92,31 @@ describe('ColumnScreen', () => {
 		await fireEvent.press(screen.getByRole('button', {name: 'Why is the Cage so loud?, Apr 29'}))
 
 		expect(mockNavigate).toHaveBeenCalledWith({pathname: '/messenger/story', params: {id: '36800'}})
+	})
+
+	test("opens a crossword's puzzle straight from its row when the list holds only crosswords", async () => {
+		useMessStore.setState({openedStories: []})
+		queryClient.setQueryData(messKeys.category(GOOD_QUESTIONS), onePage([CROSSWORD]))
+		await renderColumn()
+
+		await fireEvent.press(screen.getByRole('button', {name: 'Crossword: Finals Week, Apr 29'}))
+
+		expect(openUrl).toHaveBeenCalledWith(
+			'https://puzzleme.amuselabs.com/pmm/crossword?id=finals&set=olafmessenger&embed=1',
+		)
+		expect(mockNavigate).not.toHaveBeenCalled()
+		// Solved from its row, it still counts as read towards its issue's stains.
+		expect(useMessStore.getState().openedStories).toStrictEqual([36900])
+	})
+
+	test('opens a crossword in the reader when the list holds other stories too', async () => {
+		queryClient.setQueryData(messKeys.category(GOOD_QUESTIONS), onePage([QUESTION, CROSSWORD]))
+		await renderColumn()
+
+		await fireEvent.press(screen.getByRole('button', {name: 'Crossword: Finals Week, Apr 29'}))
+
+		expect(mockNavigate).toHaveBeenCalledWith({pathname: '/messenger/story', params: {id: '36900'}})
+		expect(openUrl).not.toHaveBeenCalled()
 	})
 
 	test('says it loads once back online when offline with its stories not cached', async () => {
