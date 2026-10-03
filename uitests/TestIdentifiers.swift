@@ -691,6 +691,9 @@ struct TestIdentifiers {
 		static let krlxLinks = [
 			"Chat with 88.1 KRLX-FM",
 		]
+		/// The info button beside the station picker, and the credits it lists.
+		static let creditsMenu = "About these stations"
+		static let credits = ["KSTO 93.1 FM", "88.1 KRLX-FM"]
 		/// The full player's stand-in for a scrubber, which shows only at full size.
 		static let airStatus = "radio-air-status"
 		/// The Now Playing bar with no station loaded, on Home and in Streaming
