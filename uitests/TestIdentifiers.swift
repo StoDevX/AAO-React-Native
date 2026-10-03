@@ -738,10 +738,6 @@ struct TestIdentifiers {
 		static let appIconRow = "app-icon-row"
 		/// The gallery's host, set in app/customize/app-icon.tsx.
 		static let appIconScreen = "screen-app-icon"
-		/// The first icon in source/features/customize/icons.ts, which the carousel always holds.
-		static let primaryIcon = "Big Ole"
-		/// The carousel's apply button's two labels, in source/features/customize/icon-carousel.tsx.
-		static let useIconLabels = ["Use This Icon", "Current Icon"]
 		/// SheetCloseButton's label, in source/components/sheet-close-button.tsx.
 		static let close = "Close"
 	}
