@@ -23,7 +23,7 @@ export function PlayStopButton({station}: {station: Station}): React.ReactNode {
 			style={styles.button}
 		>
 			<SymbolView
-				name={running ? 'stop.fill' : 'play.fill'}
+				name={running ? 'pause.fill' : 'play.fill'}
 				size={44}
 				tintColor={palette.primary}
 			/>

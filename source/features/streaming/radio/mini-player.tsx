@@ -92,7 +92,7 @@ export function RadioMiniPlayer({
 				</View>
 			</Touchable>
 
-			{/* A live stream has no pause: Stop unloads it, and Play starts afresh. */}
+			{/* A live stream has no pause: this unloads it, and Play starts afresh. It draws Pause, as Control Center does for the same press. */}
 			<Touchable
 				accessibilityLabel={`${running ? 'Stop' : 'Play'} ${station.stationName}`}
 				accessibilityRole="button"
@@ -100,7 +100,7 @@ export function RadioMiniPlayer({
 				onPress={running ? stop : () => play(station.id)}
 				style={styles.control}
 			>
-				<SymbolView name={running ? 'stop.fill' : 'play.fill'} size={20} tintColor={c.label} />
+				<SymbolView name={running ? 'pause.fill' : 'play.fill'} size={20} tintColor={c.label} />
 			</Touchable>
 		</View>
 	)
