@@ -13,7 +13,6 @@ export type IconEntry = {
 /** Every shipped icon, in the order the gallery shows them. */
 export const ICONS: ReadonlyArray<IconEntry> = [
 	{title: 'Big Ole', type: 'windmill', group: 'Classic'},
-	{title: 'Constellation', type: 'constellation', group: 'Classic'},
 	{title: 'Old Main', type: 'sunset-behind-main', group: 'Old Main'},
 	{title: 'Old Main (Hill)', type: 'old-main-hill', group: 'Old Main'},
 	{title: 'Old Main (Retro)', type: 'old-main-retro', group: 'Old Main'},
@@ -21,8 +20,6 @@ export const ICONS: ReadonlyArray<IconEntry> = [
 	{title: 'Windmill (Dawn)', type: 'windmill-dawn', group: 'Windmill'},
 	{title: 'Windmill (Golden Hour)', type: 'windmill-golden-hour', group: 'Windmill'},
 	{title: 'Windmill (Stars)', type: 'windmill-stars', group: 'Windmill'},
-	{title: 'Windmill (Aurora)', type: 'windmill-aurora', group: 'Windmill'},
-	{title: 'Windmill (Fog)', type: 'windmill-fog', group: 'Windmill'},
 ]
 
 const GROUP_ORDER: ReadonlyArray<IconGroup> = ['Classic', 'Old Main', 'Windmill']
@@ -51,7 +48,7 @@ export function currentIconEntry(systemName: string): IconEntry {
 /**
  * How many icons the gallery fits across at a font scale: three normally, two
  * at the first accessibility sizes and one beyond, so a long caption such as
- * "Constellation" breaks between words rather than inside one.
+ * "Windmill (Golden Hour)" breaks between words rather than inside one.
  */
 export function galleryColumns(fontScale: number): number {
 	if (fontScale > 2) {

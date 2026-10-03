@@ -1,6 +1,4 @@
 import type {ImageSourcePropType} from 'react-native'
-import constellationDark from './constellation-dark.png'
-import constellation from './constellation.png'
 import oldMainRetroDark from './old-main-retro-dark.png'
 import oldMainRetro from './old-main-retro.png'
 import oldMainHillDark from './old-main-hill-dark.png'
@@ -9,10 +7,6 @@ import sunsetBehindMainDark from './sunset-behind-main-dark.png'
 import sunsetBehindMain from './sunset-behind-main.png'
 import windmillSkyDark from './windmill-sky-dark.png'
 import windmillSky from './windmill-sky.png'
-import windmillAuroraDark from './windmill-aurora-dark.png'
-import windmillAurora from './windmill-aurora.png'
-import windmillFogDark from './windmill-fog-dark.png'
-import windmillFog from './windmill-fog.png'
 import windmillDawnDark from './windmill-dawn-dark.png'
 import windmillDawn from './windmill-dawn.png'
 import windmillStarsDark from './windmill-stars-dark.png'
@@ -56,21 +50,9 @@ export const appIcons = {
 		light: windmillGoldenHour,
 		dark: windmillGoldenHourDark,
 	},
-	'windmill-aurora': {
-		light: windmillAurora,
-		dark: windmillAuroraDark,
-	},
-	'windmill-fog': {
-		light: windmillFog,
-		dark: windmillFogDark,
-	},
 	'windmill-stars': {
 		light: windmillStars,
 		dark: windmillStarsDark,
-	},
-	constellation: {
-		light: constellation,
-		dark: constellationDark,
 	},
 } satisfies Record<string, {light: ImageSourcePropType; dark: ImageSourcePropType}>
 

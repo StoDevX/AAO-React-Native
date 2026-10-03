@@ -19,8 +19,8 @@ describe('iconsByGroup', () => {
 		expect(iconsByGroup().map((g) => g.group)).toEqual(['Classic', 'Old Main', 'Windmill'])
 	})
 
-	it('keeps Classic to Big Ole and Constellation', () => {
-		expect(iconsByGroup()[0].icons.map((i) => i.type)).toEqual(['windmill', 'constellation'])
+	it('keeps Classic to Big Ole', () => {
+		expect(iconsByGroup()[0].icons.map((i) => i.type)).toEqual(['windmill'])
 	})
 
 	it('gathers the three Old Main icons', () => {
@@ -33,14 +33,14 @@ describe('iconsByGroup', () => {
 
 	it('gathers the windmill variants', () => {
 		let windmills = iconsByGroup()[2].icons
-		expect(windmills).toHaveLength(6)
+		expect(windmills).toHaveLength(4)
 		expect(windmills.every((i) => i.type.startsWith('windmill-'))).toBe(true)
 	})
 })
 
 describe('iconEntry', () => {
 	it('finds an icon by its type', () => {
-		expect(iconEntry('windmill-fog').title).toBe('Windmill (Fog)')
+		expect(iconEntry('windmill-dawn').title).toBe('Windmill (Dawn)')
 	})
 })
 
