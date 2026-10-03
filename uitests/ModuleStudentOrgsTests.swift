@@ -1,23 +1,32 @@
 import XCTest
 
 class ModuleStudentOrgsTests: UITestCaseUnbooted {
-	/// The landing screen is category tiles, not a flat list -- this is the
-	/// whole point of the feature, so it is asserted before anything taps into
-	/// one.
+	/// The landing screen is a list of categories, not of every org -- this is
+	/// the whole point of the feature, so it is asserted before anything taps
+	/// into one.
 	///
-	/// Tapping a tile has to land on a screen scoped to that category, not
+	/// Tapping a category has to land on a screen scoped to that category, not
 	/// the flat list -- the title naming the tapped category is the proof,
 	/// since which orgs happen to be in it is Presence.io's business, not
 	/// this test's.
-	func testTheLandingTilesOpenTheirOwnCategories() throws {
+	func testTheLandingCategoriesOpenThemselves() throws {
 		let screen = StudentOrgsScreen(app: app)
 			.navigate()
 			.verifyStudentOrgsTitle()
-			.verifyCategoryTilesShown()
-			.capture("Student Orgs category grid")
+			.verifyCategoriesShown()
+			.capture("Student Orgs categories")
 		let category = screen.openFirstCategory()
 
 		screen.verifyTitle(category)
+	}
+
+	func testTheLayoutMenuSwitchesTheCategoriesToTiles() throws {
+		StudentOrgsScreen(app: app)
+			.navigate()
+			.verifyCategoriesShown()
+			.chooseLayout(TestIdentifiers.Layout.grid)
+			.verifyCategoryGridShown()
+			.capture("Student Orgs category grid")
 	}
 
 	/// The landing search bar searches every org, so it has to be able to
@@ -37,9 +46,9 @@ class ModuleStudentOrgsTests: UITestCaseUnbooted {
 	func testStudentOrgDetail() throws {
 		// Searching first, rather than tapping straight from the landing
 		// screen, is what disambiguates: the landing screen shows category
-		// tiles before any query is typed, and "Academic" now names a real
+		// rows before any query is typed, and "Academic" now names a real
 		// curated category as well as an org, so a bare label match there
-		// could resolve to the tile instead of a row. Only the search
+		// could resolve to the category instead of an org. Only the search
 		// results render org rows.
 		let screen = StudentOrgsScreen(app: app).navigate().search(for: "academic")
 

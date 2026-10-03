@@ -128,6 +128,19 @@ extension Screen {
 		return self
 	}
 
+	/// Picks "Grid" or "List" from the ⋯ layout menu at the top right of a
+	/// screen that offers one.
+	@discardableResult
+	func chooseLayout(_ layout: String) -> Self {
+		let menu = app.buttons[TestIdentifiers.Layout.menu].firstMatch
+		XCTAssertTrue(menu.waitForExistence(timeout: 30), "The screen should offer a layout menu")
+		menu.tap()
+		let item = app.buttons[layout].firstMatch
+		XCTAssertTrue(item.waitForExistence(timeout: 10), "The layout menu should offer \(layout)")
+		item.tap()
+		return self
+	}
+
 	/// Assert that a navigation-bar or section title is visible.
 	@discardableResult
 	func verifyTitle(_ title: String) -> Self {

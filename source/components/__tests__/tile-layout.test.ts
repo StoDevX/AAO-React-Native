@@ -1,6 +1,12 @@
 import {describe, expect, test} from '@jest/globals'
 
-import {columnsForFontScale, homeColumnsForFontScale, inRows} from '../tile-layout'
+import {
+	columnsForFontScale,
+	homeColumnsForFontScale,
+	inRows,
+	TILE_SPACING,
+	wideGridShape,
+} from '../tile-layout'
 
 describe('columnsForFontScale', () => {
 	test('the default scale gives four columns', () => {
@@ -52,6 +58,32 @@ describe('homeColumnsForFontScale', () => {
 
 	test('the AX5 scale still gives one', () => {
 		expect(homeColumnsForFontScale(3.571)).toBe(1)
+	})
+})
+
+describe('wideGridShape', () => {
+	/// An iPhone 17e's 390pt, less a 16pt margin each side.
+	const ROW_WIDTH = 358
+
+	test('three columns at the default text size', () => {
+		expect(wideGridShape(ROW_WIDTH, 1.0).columns).toBe(3)
+	})
+
+	test('each card is as tall as a square in a four-column grid', () => {
+		let {ratio} = wideGridShape(ROW_WIDTH, 1.0)
+		let cardWidth = (ROW_WIDTH - 2 * TILE_SPACING) / 3
+		let squareSide = (ROW_WIDTH - 3 * TILE_SPACING) / 4
+		expect(cardWidth / ratio).toBeCloseTo(squareSide)
+	})
+
+	test('follows the shared grid down to two columns at an accessibility size', () => {
+		expect(wideGridShape(ROW_WIDTH, 3.571).columns).toBe(2)
+	})
+
+	/// Two cards a row at a four-column height would leave a card too short for
+	/// its own accessibility-sized icon.
+	test('squares its cards once there are only two a row', () => {
+		expect(wideGridShape(ROW_WIDTH, 3.571).ratio).toBe(1)
 	})
 })
 

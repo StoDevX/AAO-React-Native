@@ -46,6 +46,16 @@ struct StudentWorkScreen: Screen {
 		return self
 	}
 
+	@discardableResult
+	func verifyAreaRowsShown() -> Self {
+		let row = app.buttons
+			.matching(NSPredicate(format: "identifier BEGINSWITH %@", TestIdentifiers.StudentWork.areaRowPrefix))
+			.firstMatch
+		XCTAssertTrue(row.waitForExistence(timeout: 30), "The areas should be drawn as rows")
+		XCTAssertFalse(areaGrid.exists, "The area tiles should be gone")
+		return self
+	}
+
 	/// The list says it has nothing, rather than showing an empty screen.
 	@discardableResult
 	func verifyNoMatchingJobs() -> Self {
