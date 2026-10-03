@@ -13,17 +13,41 @@ export type Song = {
 export type StationNow = {song: Song | null; refreshMs: number}
 
 /**
- * How long to wait before asking again is the feed's own `refreshSecs`. It
- * counts down to about the end of the song on air: sampled every 20 seconds over
- * 143 seconds, it fell from 233 to 101 while the song had 243 and then 100
- * seconds left, always within about 10 seconds of that and mostly a few under.
- * So the next song is there to be had when it says, or just before, and the
- * floor below covers the few seconds early. The plugin's own script never asks
- * more often than every 15 seconds, so neither does the app; and with no say, it
- * asks in a minute. If a song change ever shows late, check this still holds.
+ * When to ask again follows the feed's `refreshSecs`, which counts down to about
+ * the end of the song on air. Measured on krlx.org, 2026-10-03:
+ *
+ * - Sampled over 143 seconds it fell from 233 to 101 while the song had 243 and
+ *   then 100 left: within about 10 seconds of the time left, mostly a few under.
+ * - It does not fall smoothly. It steps about every 10 seconds, as the server
+ *   caches the answer for 10, so asking more often than every 5 seconds gains
+ *   nothing; and near the end it holds at 8 or 9 rather than reaching 0.
+ * - The feed named the next song about 3 seconds after it began, and the next
+ *   song began about 7 seconds after the last one's start plus duration.
+ *
+ * So while a song has a way to go, the next ask is 15 seconds before it should
+ * end; and from the last 30 seconds, with a song on air, it asks every 5 until
+ * the song changes. That keeps the song on the lock screen within a few seconds
+ * of the feed's, at about seven asks per song change. With no song on air it
+ * asks no more often than the plugin's own script does, every 15 seconds. With
+ * no say from the feed, it asks in a minute. If a song change ever shows late,
+ * measure the feed again.
  */
+const APPROACH_SECS = 15
+const NEAR_END_SECS = 30
+const NEAR_END_MS = 5_000
 const MIN_REFRESH_MS = 15_000
 const DEFAULT_REFRESH_MS = 60_000
+
+/** How long to wait before asking again, given the feed's `refreshSecs`. */
+function nextAskMs(refreshSecs: unknown, songOnAir: boolean): number {
+	if (typeof refreshSecs !== 'number' || !Number.isFinite(refreshSecs)) {
+		return DEFAULT_REFRESH_MS
+	}
+	if (refreshSecs > NEAR_END_SECS) {
+		return (refreshSecs - APPROACH_SECS) * 1000
+	}
+	return songOnAir ? NEAR_END_MS : MIN_REFRESH_MS
+}
 
 function isRecord(value: unknown): value is Record<string, unknown> {
 	return typeof value === 'object' && value !== null && !Array.isArray(value)
@@ -47,21 +71,15 @@ export function parseStationNow(json: unknown): StationNow {
 	if (!isRecord(json)) {
 		return {song: null, refreshMs: DEFAULT_REFRESH_MS}
 	}
-	let refreshSecs = json.refreshSecs
-	let refreshMs =
-		typeof refreshSecs === 'number' && Number.isFinite(refreshSecs)
-			? Math.max(refreshSecs * 1000, MIN_REFRESH_MS)
-			: DEFAULT_REFRESH_MS
-
 	let now = json.now
 	let title = isRecord(now) ? text(now.title) : null
 	if (!isRecord(now) || title === null) {
-		return {song: null, refreshMs}
+		return {song: null, refreshMs: nextAskMs(json.refreshSecs, false)}
 	}
 	let links = isRecord(now.links) ? now.links : {}
 	return {
 		song: {title, artist: text(now.artist), artworkUri: text(links.artwork_600)},
-		refreshMs,
+		refreshMs: nextAskMs(json.refreshSecs, true),
 	}
 }
 
