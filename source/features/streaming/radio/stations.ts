@@ -9,7 +9,7 @@ export type Station = {
 	/** The station's logos. With more than one, tapping the logo shows the next. */
 	logos: [RadioLogo, ...RadioLogo[]]
 	playerUrl: string
-	/** The station's own site, which the credits menu links to. */
+	/** The station's own home page, which the ••• menu's Open Website opens. */
 	websiteUrl: string
 	stationNumber: string
 	title: string

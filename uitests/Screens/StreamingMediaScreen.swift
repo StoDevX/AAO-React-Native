@@ -112,23 +112,6 @@ struct StreamingMediaScreen: Screen {
 		return self
 	}
 
-	/// Open the About menu beside the picker, and check it lists each of `credits`.
-	/// Nothing is tapped: a credit opens the station's site in Safari.
-	@discardableResult
-	func openCreditsMenu(_ menu: String, listing credits: [String]) -> Self {
-		let button = app.buttonLabelled(menu)
-		XCTAssertTrue(button.waitForExistence(timeout: 10), "A button labelled \"\(menu)\" should exist")
-		checkTouchTarget(button, named: "The \"\(menu)\" button")
-		capture("Now Playing, before \(menu)")
-		button.tap()
-		for credit in credits {
-			XCTAssertTrue(
-				app.buttonLabelled(credit).waitForExistence(timeout: 10),
-				"The menu should list \"\(credit)\"")
-		}
-		return self
-	}
-
 	/// Swipe the sheet away, and check the bar beneath shows `label`.
 	@discardableResult
 	func closeSheet(expectingBar label: String) -> Self {

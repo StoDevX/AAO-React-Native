@@ -17,18 +17,6 @@ class ModuleStreamingMediaTests: UITestCaseUnbooted {
 			.checkLogoIsNotAButton(ids.krlxLogoPrefix)
 	}
 
-	/// The info button beside the picker credits both stations, each a link to
-	/// its site. The test stops at the menu: a credit leaves the app.
-	func testTheSheetCreditsBothStations() throws {
-		let ids = TestIdentifiers.StreamingMedia.self
-		StreamingMediaScreen(app: app)
-			.navigate()
-			.checkStreamListExists()
-			.openSheetFromBar(expecting: ids.playKsto)
-			.openCreditsMenu(ids.creditsMenu, listing: ids.credits)
-			.capture("Sheet with the stations' credits menu open")
-	}
-
 	/// The bar on Home opens the sheet on the last station viewed. Picking
 	/// another station there only browses: the bar says what is loaded, not
 	/// what the sheet shows. Pausing leaves the station loaded, with Play to

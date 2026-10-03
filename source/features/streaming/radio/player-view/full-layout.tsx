@@ -8,7 +8,6 @@ import type {Station} from '../stations'
 import {useStationPlayback} from '../store'
 import {useNowPlaying} from '../use-now-playing'
 import {useStationSchedule} from '../use-station-schedule'
-import {CreditsMenu} from './credits-menu'
 import {PlaybackError, PlayStopButton} from './play-stop-button'
 import {ScheduleList} from './schedule-list'
 import type {ScheduleStatus} from './schedule-note'
@@ -65,12 +64,7 @@ export function FullLayout({
 
 	return (
 		<View onLayout={onLayout} style={styles.screen}>
-			<View style={styles.pickerRow}>
-				<View style={styles.picker}>
-					<StationPicker />
-				</View>
-				<CreditsMenu />
-			</View>
+			<StationPicker />
 			<View style={[styles.artwork, {height: artwork}]}>
 				{showingSchedule ? (
 					<ScheduleList status={schedule.status} upcoming={schedule.upcoming} />
@@ -145,13 +139,6 @@ const styles = StyleSheet.create({
 	artwork: {
 		alignItems: 'center',
 		justifyContent: 'center',
-	},
-	pickerRow: {
-		flexDirection: 'row',
-		alignItems: 'center',
-	},
-	picker: {
-		flex: 1,
 	},
 	titleRow: {
 		flexDirection: 'row',
