@@ -48,7 +48,7 @@ export default function CustomizePage(): React.ReactNode {
 							detail={[current.title]}
 							identifier="app-icon-row"
 							image={{
-								source: previewsFor(current.type, scheme).icon,
+								source: previewsFor(current.type, scheme).logo,
 								width: ROW_ICON_SIZE,
 								height: ROW_ICON_SIZE,
 							}}

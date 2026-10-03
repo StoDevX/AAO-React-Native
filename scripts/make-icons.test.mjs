@@ -3,23 +3,9 @@ import {describe, it} from 'node:test'
 import {exportPlan} from './make-icons.mjs'
 
 describe('exportPlan', () => {
-	it('exports a light and dark picker tile and Credits logo for each Icon Composer document', () => {
+	it('exports a light and dark preview for each Icon Composer document', () => {
 		let input = 'assets/windmill.icon'
 		assert.deepEqual(exportPlan(['windmill.icon']), [
-			{
-				input,
-				preview: 'icon',
-				output: 'images/icons/windmill-icon.png',
-				points: 28,
-				rendition: 'Default',
-			},
-			{
-				input,
-				preview: 'icon',
-				output: 'images/icons/windmill-icon-dark.png',
-				points: 28,
-				rendition: 'Dark',
-			},
 			{
 				input,
 				preview: 'logo',
@@ -44,8 +30,6 @@ describe('exportPlan', () => {
 		assert.deepEqual(
 			tinted.map((p) => [p.output, p.rendition]),
 			[
-				['images/icons/windmill-icon-tinted-light.png', 'TintedLight'],
-				['images/icons/windmill-icon-tinted-dark.png', 'TintedDark'],
 				['images/icons/windmill-logo-tinted-light.png', 'TintedLight'],
 				['images/icons/windmill-logo-tinted-dark.png', 'TintedDark'],
 			],

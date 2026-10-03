@@ -23,13 +23,12 @@ const OUTPUT_DIR = join('images', 'icons')
 /** Every iPhone the app supports is @3x; an iPad scales the preview down. */
 const SCALE = 3
 
-/** The size in points each preview is drawn at. */
-const PREVIEWS = [
-	// The Customize sheet's App Icon row.
-	{suffix: 'icon', points: 28},
-	// AppLogo on the Credits screen, and the App Icon gallery's 76pt tile.
-	{suffix: 'logo', points: 100},
-]
+/**
+ * The size in points each preview is drawn at. AppLogo on the Credits screen
+ * shows it at full size, the App Icon gallery at 76pt, and the Customize
+ * sheet's App Icon row scales it down to 30pt.
+ */
+const PREVIEWS = [{suffix: 'logo', points: 100}]
 
 /** ictool's renditions, one per app appearance the previews follow. */
 const APPEARANCES = [
@@ -50,7 +49,7 @@ const TINTED_APPEARANCES = [
 /**
  * @typedef {object} Export
  * @property {string} input the Icon Composer document
- * @property {string} preview which preview this is, `icon` or `logo`
+ * @property {string} preview which preview this is, `logo`
  * @property {string} output the PNG to write
  * @property {number} points the preview's size on screen
  * @property {string} rendition the ictool rendition
