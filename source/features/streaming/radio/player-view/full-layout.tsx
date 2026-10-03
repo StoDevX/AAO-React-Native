@@ -55,7 +55,9 @@ export function FullLayout({
 	return (
 		<View onLayout={onLayout} style={styles.screen}>
 			<StationPicker />
-			<View style={[styles.artwork, {height: artwork}]}>
+			<View
+				style={[styles.artwork, {height: artwork, width: showingSchedule ? fullWidth : artwork}]}
+			>
 				{showingSchedule ? (
 					<ScheduleList station={station} />
 				) : (
@@ -108,7 +110,10 @@ const styles = StyleSheet.create({
 		paddingHorizontal: SIDE,
 		paddingVertical: 20,
 	},
+	// As wide as the record, so the lock stays at its corner as it shrinks; the
+	// schedule, which takes its place, keeps the player's width.
 	artwork: {
+		alignSelf: 'center',
 		alignItems: 'center',
 		justifyContent: 'center',
 	},
