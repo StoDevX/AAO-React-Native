@@ -192,11 +192,14 @@ const config: ExpoConfig = {
 			ITSAppUsesNonExemptEncryption: false,
 
 			// The server is plain HTTP in places, and mDNS discovery talks to
-			// whatever ccc-server instance is on the local network.
+			// whatever ccc-server instance is on the local network. KRLX
+			// streams over plain HTTP from an Icecast server with no HTTPS port,
+			// and its native player, unlike the WebView, needs the exception.
 			NSAppTransportSecurity: {
 				NSAllowsArbitraryLoadsInWebContent: true,
 				NSExceptionDomains: {
 					localhost: {NSTemporaryExceptionAllowsInsecureHTTPLoads: true},
+					'stream.krlx.org': {NSExceptionAllowsInsecureHTTPLoads: true},
 				},
 			},
 			NSBonjourServices: ['_ccc-server._tcp.'],

@@ -1,5 +1,6 @@
 import * as React from 'react'
 import {StyleSheet, View} from 'react-native'
+import {NativeStreamPlayer} from './native-player'
 import {StreamPlayer} from './player'
 import {STATIONS} from './stations'
 import {useRadioStore} from './store'
@@ -45,6 +46,23 @@ export function RadioHost(): React.ReactNode {
 	}
 
 	let {source} = STATIONS[stationId]
+
+	// A station with a stream of its own plays natively, which iOS can put in
+	// Control Center; one that only has a page to play from needs the WebView.
+	if (!source.useEmbeddedPlayer) {
+		return (
+			<NativeStreamPlayer
+				key={playerKey}
+				onEnded={onStopped}
+				onError={onError}
+				onPause={onStopped}
+				onPlay={onPlay}
+				onWaiting={onWaiting}
+				playState={PLAYER_STATE[playState]}
+				streamSourceUrl={source.streamSourceUrl}
+			/>
+		)
+	}
 
 	// The WebView's own container takes flex: 1 whatever its style says, so
 	// beside the root stack it would claim half the screen. This view holds

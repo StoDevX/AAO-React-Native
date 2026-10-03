@@ -1,9 +1,23 @@
 import * as React from 'react'
-import {beforeEach, describe, expect, test} from '@jest/globals'
+import {beforeEach, describe, expect, jest, test} from '@jest/globals'
 import {fireEvent, render} from '@testing-library/react-native'
 
 import {RadioHost} from '../host'
 import {useRadioStore} from '../store'
+
+// The native module needs a device; its player is a stand-in that records the
+// source it was given.
+const mockUseAudioPlayer = jest.fn((_source: string) => ({play: jest.fn(), pause: jest.fn()}))
+jest.mock('expo-audio', () => ({
+	useAudioPlayer: (source: string) => mockUseAudioPlayer(source),
+	useAudioPlayerStatus: () => ({
+		playing: false,
+		isBuffering: false,
+		didJustFinish: false,
+		error: null,
+	}),
+	setAudioModeAsync: () => Promise.resolve(),
+}))
 
 /** Renders the host and returns a way to post a message from its player's page. */
 async function renderHost(): Promise<(type: string) => Promise<void>> {
@@ -41,5 +55,23 @@ describe('RadioHost', () => {
 
 		await post('playing')
 		expect(useRadioStore.getState().playState).toBe('playing')
+	})
+
+	test('plays a station with a stream of its own natively, with no web view', async () => {
+		useRadioStore.getState().stop()
+		useRadioStore.getState().play('krlx')
+
+		let screen = await render(<RadioHost />)
+
+		expect(mockUseAudioPlayer).toHaveBeenCalledWith('http://stream.krlx.org:8000/_a')
+		expect(screen.toJSON()).toBeNull()
+	})
+
+	test('plays a station that only has a page through the web view', async () => {
+		mockUseAudioPlayer.mockClear()
+
+		await renderHost()
+
+		expect(mockUseAudioPlayer).not.toHaveBeenCalled()
 	})
 })
