@@ -109,33 +109,32 @@ struct StudentOrgsScreen: Screen {
 	}
 
 	@discardableResult
-	func verifyCategoryTilesShown() -> Self {
-		let grid = app.element(matching: TestIdentifiers.StudentOrgs.categoryGrid)
+	func verifyCategoriesShown() -> Self {
 		XCTAssertTrue(
-			grid.waitForExistence(timeout: 30),
-			"The category grid should be visible before a search")
-		XCTAssertGreaterThan(
-			grid.buttons.count, 0,
-			"The category grid should hold at least one category tile")
+			firstCategoryRow.waitForExistence(timeout: 30),
+			"The category list should hold at least one category before a search")
 		return self
 	}
 
-	/// Taps whichever category tile is first in the grid and returns its label,
+	/// Taps whichever category row is first in the list and returns its name,
 	/// so the caller can assert the next screen is titled for it without this
-	/// test naming a category that Presence.io could rename or remove.
+	/// test naming a category that Presence.io could rename or remove. The
+	/// name comes from the row's identifier, not its label, which ends in the
+	/// org count.
 	func openFirstCategory() -> String {
-		let grid = app.element(matching: TestIdentifiers.StudentOrgs.categoryGrid)
+		let row = firstCategoryRow
 		XCTAssertTrue(
-			grid.waitForExistence(timeout: 30),
-			"The category grid should be visible before a search")
+			row.waitForExistence(timeout: 30),
+			"The category list should hold at least one category before a search")
 
-		let tile = grid.buttons.firstMatch
-		XCTAssertTrue(
-			tile.waitForExistence(timeout: 30),
-			"The category grid should hold at least one tile")
+		let name = String(row.identifier.dropFirst(TestIdentifiers.StudentOrgs.categoryRowPrefix.count))
+		row.tap()
+		return name
+	}
 
-		let label = tile.label
-		tile.tap()
-		return label
+	private var firstCategoryRow: XCUIElement {
+		app.collectionViews[TestIdentifiers.StudentOrgs.categoryList].buttons
+			.matching(NSPredicate(format: "identifier BEGINSWITH %@", TestIdentifiers.StudentOrgs.categoryRowPrefix))
+			.firstMatch
 	}
 }

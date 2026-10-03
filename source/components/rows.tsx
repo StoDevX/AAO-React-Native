@@ -11,6 +11,7 @@ import {
 	Spacer,
 	Text,
 	VStack,
+	ZStack,
 } from '@expo/ui/swift-ui'
 import {
 	accessibilityAddTraits,
@@ -30,7 +31,9 @@ import {
 } from '@expo/ui/swift-ui/modifiers'
 import type {ModifierConfig} from '@expo/ui/swift-ui/modifiers'
 import * as c from '@frogpond/colors'
+import type {Gradient} from '@frogpond/colors'
 
+import {GradientRoundedRectangle} from './gradient-tile'
 import {detailLinesOf, rowLabel, type RowDetail} from './lib/row-text'
 
 type RowProps = {
@@ -164,12 +167,23 @@ type SymbolImage = ({systemName: SFSymbol} | {assetName: string}) & {
  */
 type ThumbnailImage = {uri: string; width: number; height: number}
 
-export type DisclosureRowImage = SymbolImage | ThumbnailImage
+/**
+ * A white symbol on a small gradient square, as Settings draws its rows'
+ * icons -- the row-sized cousin of a `GradientTile`, sharing its gradients.
+ */
+type GradientSymbolImage = {systemName: SFSymbol; gradient: Gradient}
+
+export type DisclosureRowImage = SymbolImage | ThumbnailImage | GradientSymbolImage
 
 /// Mirrored by `TestIdentifiers.Rows.thumbnail`.
 const THUMBNAIL_ID = 'disclosure-row-thumbnail'
 
 const SYMBOL_SIZE = 20
+
+/// Settings' own icon size, and the corner that goes with it.
+const ICON_SIZE = 30
+const ICON_RADIUS = 7
+const ICON_SYMBOL_SIZE = 17
 
 type DisclosureRowProps = {
 	title: string
@@ -201,8 +215,24 @@ type DisclosureRowProps = {
 	status?: {text: string; color: ColorValue}
 }
 
-/** A row's leading image: a tinted symbol, or a thumbnail. */
+/** A row's leading image: a tinted symbol, a gradient icon, or a thumbnail. */
 export function LeadingImage({image}: {image: DisclosureRowImage}): React.ReactNode {
+	if ('gradient' in image) {
+		return (
+			<ZStack modifiers={[frame({width: ICON_SIZE, height: ICON_SIZE})]}>
+				{/* endRadius at the icon's height carries the gradient from its
+				    start color at the top edge to its end color at the bottom. */}
+				<GradientRoundedRectangle
+					cornerRadius={ICON_RADIUS}
+					endRadius={ICON_SIZE}
+					gradient={image.gradient}
+					showShadow={false}
+				/>
+				<Image color="white" size={ICON_SYMBOL_SIZE} systemName={image.systemName} />
+			</ZStack>
+		)
+	}
+
 	if (!('uri' in image)) {
 		return (
 			<Image

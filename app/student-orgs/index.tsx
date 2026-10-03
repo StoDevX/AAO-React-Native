@@ -1,8 +1,8 @@
 // app/student-orgs/index.tsx
 import * as React from 'react'
 import {StyleSheet} from 'react-native'
-import {Host, ScrollView, VStack} from '@expo/ui/swift-ui'
-import {frame, padding, refreshable} from '@expo/ui/swift-ui/modifiers'
+import {Host, List, Section} from '@expo/ui/swift-ui'
+import {accessibilityIdentifier, listStyle, refreshable} from '@expo/ui/swift-ui/modifiers'
 import {LoadErrorView, LoadingView} from '@frogpond/notice'
 import * as c from '@frogpond/colors'
 import {Stack, useRouter} from 'expo-router'
@@ -11,16 +11,14 @@ import {useQuery} from '@tanstack/react-query'
 import {categoryMembershipsOptions} from '../../source/features/student-orgs/category-memberships-query'
 import {orgCategoryIconsOptions} from '../../source/features/student-orgs/category-icons-query'
 import {
-	buildCategoryTiles,
-	type CategoryTileData,
+	buildCategoryRows,
+	type CategoryRowData,
 } from '../../source/features/student-orgs/categories'
-import {CategoryTile} from '../../source/features/student-orgs/category-tile'
 import {OrgResultsList} from '../../source/features/student-orgs/org-results-list'
 import {studentOrgsOptions} from '../../source/features/student-orgs/query'
 import {filterAndGroupOrgs} from '../../source/features/student-orgs/search'
 import type {StudentOrgType} from '../../source/features/student-orgs/types'
-import {FILL_WIDTH, SCREEN_MARGIN, TILE_SPACING} from '../../source/components/tile-layout'
-import {TileGrid} from '../../source/components/tile-grid'
+import {DisclosureRow} from '../../source/components/rows'
 import {SearchBar} from '../../source/components/search-bar'
 
 const styles = StyleSheet.create({
@@ -52,13 +50,13 @@ function StudentOrgsView(): React.ReactNode {
 		isLoading: isOrgsLoading,
 	} = useQuery(studentOrgsOptions)
 
-	let tiles = React.useMemo(
-		() => buildCategoryTiles(categoryIcons, memberships),
+	let categories = React.useMemo(
+		() => buildCategoryRows(categoryIcons, memberships),
 		[categoryIcons, memberships],
 	)
 	let sections = React.useMemo(() => filterAndGroupOrgs(orgs, searchQuery), [orgs, searchQuery])
 
-	let refreshTiles = React.useCallback(async () => {
+	let refreshCategories = React.useCallback(async () => {
 		await Promise.all([refetchMemberships(), refetchCategoryIcons()])
 	}, [refetchMemberships, refetchCategoryIcons])
 
@@ -95,9 +93,9 @@ function StudentOrgsView(): React.ReactNode {
 	)
 
 	if (!searchQuery) {
-		// The tile grid only depends on the lightweight memberships + curated
+		// The category list only depends on the lightweight memberships + curated
 		// icon queries -- the full org list loads in parallel for whenever a
-		// search actually happens, but never blocks the tiles from showing.
+		// search actually happens, but never blocks the categories from showing.
 		if (isMembershipsError) {
 			let message =
 				membershipsError instanceof Error ? membershipsError.message : String(membershipsError)
@@ -122,9 +120,9 @@ function StudentOrgsView(): React.ReactNode {
 			<>
 				{searchChrome}
 				<StudentOrgsLanding
-					onRefresh={refreshTiles}
+					categories={categories}
+					onRefresh={refreshCategories}
 					onSelectCategory={onSelectCategory}
-					tiles={tiles}
 				/>
 			</>
 		)
@@ -164,52 +162,55 @@ function StudentOrgsView(): React.ReactNode {
 	)
 }
 
-/// Mirrored by TestIdentifiers.StudentOrgs.categoryGrid.
-const CATEGORY_GRID_ID = 'student-orgs-category-grid'
+/// Mirrored by TestIdentifiers.StudentOrgs.categoryList.
+const CATEGORY_LIST_ID = 'student-orgs-category-list'
+
+/// Prefixes each category row's identifier; mirrored by
+/// TestIdentifiers.StudentOrgs.categoryRowPrefix. The name follows it, so a
+/// UI test can tell which category it tapped without parsing the row's
+/// spoken label, which ends in the org count.
+const CATEGORY_ROW_ID_PREFIX = 'student-orgs-category:'
 
 type LandingProps = {
-	tiles: CategoryTileData[]
+	categories: CategoryRowData[]
 	onSelectCategory: (category: string) => void
 	onRefresh: () => Promise<unknown>
 }
 
 /**
- * The Student Orgs landing screen before a search: category tiles in a
- * scrolling grid. Structured like directory-results-grid.tsx -- `Grid`
- * itself does not scroll, so this needs its own `ScrollView`, unlike
- * Directory's *other* landing (`DirectoryLanding`), which gets scrolling for
- * free by sitting inside a `List` alongside the departments below it. This
- * screen has nothing below the tiles, so there is no `List` to borrow one
- * from.
+ * The Student Orgs landing screen before a search: one row per category,
+ * with its icon and how many orgs it holds.
  */
-function StudentOrgsLanding({tiles, onSelectCategory, onRefresh}: LandingProps): React.ReactNode {
+function StudentOrgsLanding({
+	categories,
+	onSelectCategory,
+	onRefresh,
+}: LandingProps): React.ReactNode {
 	return (
-		<Host matchContents={false} style={styles.host}>
-			<ScrollView
+		<Host style={styles.host}>
+			<List
 				modifiers={[
+					listStyle('insetGrouped'),
 					refreshable(async () => {
 						await onRefresh()
 					}),
+					accessibilityIdentifier(CATEGORY_LIST_ID),
 				]}
 			>
-				<VStack
-					alignment="leading"
-					modifiers={[
-						padding({leading: SCREEN_MARGIN, trailing: SCREEN_MARGIN, top: SCREEN_MARGIN}),
-						frame({maxWidth: FILL_WIDTH}),
-					]}
-					spacing={TILE_SPACING}
-				>
-					<TileGrid
-						accessibilityId={CATEGORY_GRID_ID}
-						items={tiles}
-						keyForItem={(tile) => tile.name}
-						renderItem={(tile) => (
-							<CategoryTile onPress={() => onSelectCategory(tile.name)} tile={tile} />
-						)}
-					/>
-				</VStack>
-			</ScrollView>
+				<Section>
+					{categories.map((category) => (
+						<DisclosureRow
+							key={category.name}
+							badge={category.count}
+							identifier={`${CATEGORY_ROW_ID_PREFIX}${category.name}`}
+							image={{systemName: category.icon, gradient: category.gradient}}
+							onPress={() => onSelectCategory(category.name)}
+							title={category.name}
+							titleLines={2}
+						/>
+					))}
+				</Section>
+			</List>
 		</Host>
 	)
 }

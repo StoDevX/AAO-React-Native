@@ -6,7 +6,7 @@ export const SCREEN_MARGIN = 16
 export const FILL_WIDTH = 10_000
 
 /// Gap between tiles, both within a column and between columns. Every tile grid
-/// shares it -- home, Directory and Student Orgs -- so they sit at one rhythm.
+/// shares it -- home, Directory, Maps and Student Work -- so they sit at one rhythm.
 export const TILE_SPACING = 10
 
 /// Phone.app draws a favourite a little taller than 3:2 -- 109 x 167pt,
@@ -49,7 +49,7 @@ export function homeColumnsForFontScale(fontScale: number): number {
 /// varies with Dynamic Type (see `columnsForFontScale`), so it is a parameter
 /// rather than a closed-over constant. Generic over the row type -- each
 /// caller supplies its own item shape (`ContactType`, `DirectoryItem`,
-/// `CategoryTileData`, ...).
+/// ...).
 export function inRows<T>(items: T[], columns: number): T[][] {
 	let rows: T[][] = []
 	for (let i = 0; i < items.length; i += columns) {

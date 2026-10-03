@@ -731,8 +731,11 @@ struct TestIdentifiers {
 	// MARK: - Student Orgs
 
 	enum StudentOrgs {
-		/// Matches CATEGORY_GRID_ID in app/student-orgs/index.tsx.
-		static let categoryGrid = "student-orgs-category-grid"
+		/// Matches CATEGORY_LIST_ID in app/student-orgs/index.tsx.
+		static let categoryList = "student-orgs-category-list"
+		/// Matches CATEGORY_ROW_ID_PREFIX in app/student-orgs/index.tsx. Each
+		/// category row's identifier is this followed by the category's name.
+		static let categoryRowPrefix = "student-orgs-category:"
 		/// Matches RESULTS_LIST_ID in source/features/student-orgs/org-results-list.tsx.
 		static let resultsList = "student-orgs-results-list"
 	}

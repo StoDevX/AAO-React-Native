@@ -68,15 +68,21 @@ type Props = {
 export function GradientRoundedRectangle({
 	gradient,
 	showShadow,
+	cornerRadius = 27,
+	endRadius = 129,
 }: {
 	gradient: Gradient
 	showShadow: boolean
+	/** Overrides the tile's corner, for a smaller shape like a row's icon. */
+	cornerRadius?: number
+	/** How far from the top edge the gradient reaches its end color. */
+	endRadius?: number
 }): React.ReactNode {
 	let [start, end] = gradient
 
 	return (
 		<RoundedRectangle
-			cornerRadius={27}
+			cornerRadius={cornerRadius}
 			modifiers={[
 				showShadow
 					? shadow({
@@ -91,7 +97,7 @@ export function GradientRoundedRectangle({
 					center: {x: 0.5, y: 0},
 					startRadius: 0,
 					// TODO: eventually, we want to compute this radius size to match Health/Shortcuts
-					endRadius: 129,
+					endRadius,
 				}),
 			]}
 		/>
@@ -101,7 +107,7 @@ export function GradientRoundedRectangle({
 /**
  * One card in the shape of a Phone.app favorite: a portrait gradient card
  * carrying a single SF Symbol, with a label beneath it. Shared between
- * Directory's curated contacts and Student Orgs' categories -- same visual
+ * Directory's curated contacts and Student Work's areas -- same visual
  * language, different data behind it.
  *
  * There is no long-press menu: SwiftUI hoists a `.contextMenu` from a
