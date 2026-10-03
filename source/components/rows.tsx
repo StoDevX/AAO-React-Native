@@ -18,6 +18,7 @@ import {
 	accessibilityRemoveTraits,
 	accessibilityIdentifier,
 	accessibilityLabel,
+	aspectRatio,
 	buttonStyle,
 	contentShape,
 	disabled as disabledModifier,
@@ -26,6 +27,7 @@ import {
 	frame,
 	lineLimit,
 	monospacedDigit,
+	resizable,
 	shapes,
 	truncationMode,
 } from '@expo/ui/swift-ui/modifiers'
@@ -234,7 +236,13 @@ export function LeadingImage({image}: {image: DisclosureRowImage}): React.ReactN
 						? {assetName: image.assetName}
 						: {systemName: image.systemName})}
 					color="white"
-					size={ICON_SYMBOL_SIZE}
+					// Fitted into a square rather than sized by font: a wide symbol
+					// (three people) would otherwise stretch the icon past its siblings.
+					modifiers={[
+						resizable(),
+						aspectRatio({contentMode: 'fit'}),
+						frame({width: ICON_SYMBOL_SIZE, height: ICON_SYMBOL_SIZE}),
+					]}
 				/>
 			</ZStack>
 		)
