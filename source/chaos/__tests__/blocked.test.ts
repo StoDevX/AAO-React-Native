@@ -7,6 +7,16 @@ describe('isBlockedUrl', () => {
 		expect(isBlockedUrl(OLECARD_AUTH_URL)).toBe(true)
 	})
 
+	test('blocks the OleCard sign-in with a query string, a fragment or an uppercase host', () => {
+		expect(isBlockedUrl(`${OLECARD_AUTH_URL}?user=x`)).toBe(true)
+		expect(isBlockedUrl(`${OLECARD_AUTH_URL}#top`)).toBe(true)
+		expect(isBlockedUrl(OLECARD_AUTH_URL.replace('www.stolaf.edu', 'WWW.STOLAF.EDU'))).toBe(true)
+	})
+
+	test('lets another page on the OleCard sign-in host through', () => {
+		expect(isBlockedUrl('https://www.stolaf.edu/apps/olecard/')).toBe(false)
+	})
+
 	test('blocks all of PaperCut', () => {
 		expect(isBlockedUrl(`${PAPERCUT_API}webclient/users/x/jobs`)).toBe(true)
 		expect(isBlockedUrl('https://PAPERCUT.stolaf.edu/')).toBe(true)
