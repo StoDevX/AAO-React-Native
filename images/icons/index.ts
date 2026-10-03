@@ -9,8 +9,6 @@ import sunsetBehindMainDark from './sunset-behind-main-dark.png'
 import sunsetBehindMain from './sunset-behind-main.png'
 import windmillSkyDark from './windmill-sky-dark.png'
 import windmillSky from './windmill-sky.png'
-import windmillNightDark from './windmill-night-dark.png'
-import windmillNight from './windmill-night.png'
 import windmillAuroraDark from './windmill-aurora-dark.png'
 import windmillAurora from './windmill-aurora.png'
 import windmillFogDark from './windmill-fog-dark.png'
@@ -49,10 +47,6 @@ export const appIcons = {
 	'windmill-sky': {
 		light: windmillSky,
 		dark: windmillSkyDark,
-	},
-	'windmill-night': {
-		light: windmillNight,
-		dark: windmillNightDark,
 	},
 	'windmill-dawn': {
 		light: windmillDawn,

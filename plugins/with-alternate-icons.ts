@@ -13,7 +13,6 @@ import type {XcodeProject} from 'xcode'
 export const ALTERNATE_ICONS = [
 	'sunset-behind-main',
 	'windmill-sky',
-	'windmill-night',
 	'windmill-dawn',
 	'windmill-golden-hour',
 	'windmill-aurora',
