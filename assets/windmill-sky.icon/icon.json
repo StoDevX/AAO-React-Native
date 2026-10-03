@@ -1,11 +1,5 @@
 {
   "color-space-for-untagged-svg-colors" : "display-p3",
-  "fill" : {
-    "linear-gradient" : [
-      "srgb:0.12157,0.16078,0.20000,1.00000",
-      "srgb:0.30980,0.41961,0.38824,1.00000"
-    ]
-  },
   "groups" : [
     {
       "layers" : [
@@ -16,12 +10,7 @@
             },
             {
               "appearance" : "dark",
-              "value" : {
-                "linear-gradient" : [
-                  "srgb:0.62353,0.74902,0.71373,1.00000",
-                  "srgb:0.37255,0.50196,0.46667,1.00000"
-                ]
-              }
+              "value" : "system-light"
             },
             {
               "appearance" : "tinted",
@@ -63,13 +52,13 @@
           "fill-specializations" : [
             {
               "value" : {
-                "automatic-gradient" : "srgb:0.04314,0.16471,0.10980,1.00000"
+                "automatic-gradient" : "srgb:0.01961,0.27843,0.16471,1.00000"
               }
             },
             {
               "appearance" : "dark",
               "value" : {
-                "automatic-gradient" : "srgb:0.02353,0.09412,0.05882,1.00000"
+                "automatic-gradient" : "srgb:0.00784,0.10196,0.06275,1.00000"
               }
             },
             {
@@ -144,5 +133,24 @@
   ],
   "supported-platforms" : {
     "squares" : "shared"
-  }
+  },
+  "fill-specializations" : [
+    {
+      "value" : {
+        "linear-gradient" : [
+          "extended-srgb:0.00000,0.53333,1.00000,1.00000",
+          "extended-srgb:0.00000,0.75294,0.90980,1.00000"
+        ]
+      }
+    },
+    {
+      "appearance" : "dark",
+      "value" : {
+        "linear-gradient" : [
+          "srgb:0.02745,0.04314,0.14118,1.00000",
+          "srgb:0.16863,0.15294,0.40000,1.00000"
+        ]
+      }
+    }
+  ]
 }

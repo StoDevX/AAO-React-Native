@@ -15,10 +15,10 @@ import sunsetBehindMainIconDark from './sunset-behind-main-icon-dark.png'
 import sunsetBehindMainIcon from './sunset-behind-main-icon.png'
 import sunsetBehindMainLogoDark from './sunset-behind-main-logo-dark.png'
 import sunsetBehindMainLogo from './sunset-behind-main-logo.png'
-import windmillDayIconDark from './windmill-day-icon-dark.png'
-import windmillDayIcon from './windmill-day-icon.png'
-import windmillDayLogoDark from './windmill-day-logo-dark.png'
-import windmillDayLogo from './windmill-day-logo.png'
+import windmillSkyIconDark from './windmill-sky-icon-dark.png'
+import windmillSkyIcon from './windmill-sky-icon.png'
+import windmillSkyLogoDark from './windmill-sky-logo-dark.png'
+import windmillSkyLogo from './windmill-sky-logo.png'
 import windmillNightIconDark from './windmill-night-icon-dark.png'
 import windmillNightIcon from './windmill-night-icon.png'
 import windmillNightLogoDark from './windmill-night-logo-dark.png'
@@ -31,10 +31,6 @@ import windmillFogIconDark from './windmill-fog-icon-dark.png'
 import windmillFogIcon from './windmill-fog-icon.png'
 import windmillFogLogoDark from './windmill-fog-logo-dark.png'
 import windmillFogLogo from './windmill-fog-logo.png'
-import windmillSnowIconDark from './windmill-snow-icon-dark.png'
-import windmillSnowIcon from './windmill-snow-icon.png'
-import windmillSnowLogoDark from './windmill-snow-logo-dark.png'
-import windmillSnowLogo from './windmill-snow-logo.png'
 import windmillDawnIconDark from './windmill-dawn-icon-dark.png'
 import windmillDawnIcon from './windmill-dawn-icon.png'
 import windmillDawnLogoDark from './windmill-dawn-logo-dark.png'
@@ -43,10 +39,6 @@ import windmillStarsIconDark from './windmill-stars-icon-dark.png'
 import windmillStarsIcon from './windmill-stars-icon.png'
 import windmillStarsLogoDark from './windmill-stars-logo-dark.png'
 import windmillStarsLogo from './windmill-stars-logo.png'
-import windmillStormIconDark from './windmill-storm-icon-dark.png'
-import windmillStormIcon from './windmill-storm-icon.png'
-import windmillStormLogoDark from './windmill-storm-logo-dark.png'
-import windmillStormLogo from './windmill-storm-logo.png'
 import windmillGoldenHourIconDark from './windmill-golden-hour-icon-dark.png'
 import windmillGoldenHourIcon from './windmill-golden-hour-icon.png'
 import windmillGoldenHourLogoDark from './windmill-golden-hour-logo-dark.png'
@@ -85,9 +77,9 @@ export const appIcons = {
 		light: {icon: oldMainCrtIcon, logo: oldMainCrtLogo},
 		dark: {icon: oldMainCrtIconDark, logo: oldMainCrtLogoDark},
 	},
-	'windmill-day': {
-		light: {icon: windmillDayIcon, logo: windmillDayLogo},
-		dark: {icon: windmillDayIconDark, logo: windmillDayLogoDark},
+	'windmill-sky': {
+		light: {icon: windmillSkyIcon, logo: windmillSkyLogo},
+		dark: {icon: windmillSkyIconDark, logo: windmillSkyLogoDark},
 	},
 	'windmill-night': {
 		light: {icon: windmillNightIcon, logo: windmillNightLogo},
@@ -96,10 +88,6 @@ export const appIcons = {
 	'windmill-dawn': {
 		light: {icon: windmillDawnIcon, logo: windmillDawnLogo},
 		dark: {icon: windmillDawnIconDark, logo: windmillDawnLogoDark},
-	},
-	'windmill-storm': {
-		light: {icon: windmillStormIcon, logo: windmillStormLogo},
-		dark: {icon: windmillStormIconDark, logo: windmillStormLogoDark},
 	},
 	'windmill-golden-hour': {
 		light: {icon: windmillGoldenHourIcon, logo: windmillGoldenHourLogo},
@@ -112,10 +100,6 @@ export const appIcons = {
 	'windmill-fog': {
 		light: {icon: windmillFogIcon, logo: windmillFogLogo},
 		dark: {icon: windmillFogIconDark, logo: windmillFogLogoDark},
-	},
-	'windmill-snow': {
-		light: {icon: windmillSnowIcon, logo: windmillSnowLogo},
-		dark: {icon: windmillSnowIconDark, logo: windmillSnowLogoDark},
 	},
 	'windmill-stars': {
 		light: {icon: windmillStarsIcon, logo: windmillStarsLogo},
