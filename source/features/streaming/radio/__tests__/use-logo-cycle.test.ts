@@ -1,7 +1,7 @@
 import {beforeEach, describe, expect, test} from '@jest/globals'
 import {act, renderHook} from '@testing-library/react-native'
 
-import {useLogoCycle} from '../player-view/use-logo-cycle'
+import {useLogoCycle, useSelectedLogo} from '../player-view/use-logo-cycle'
 import {STATIONS, type StationId} from '../stations'
 import {useRadioStore} from '../store'
 
@@ -49,5 +49,21 @@ describe('useLogoCycle', () => {
 		useRadioStore.setState({logoIndexes: {krlx: 5}})
 		let {result} = await renderHook(() => useLogoCycle(STATIONS.krlx))
 		expect(result.current.logo.name).toBe('krlx 88.1')
+	})
+})
+
+describe('useSelectedLogo', () => {
+	beforeEach(() => {
+		useRadioStore.setState({logoIndexes: {}})
+	})
+
+	test('follows the logo the cycle leaves a station on', async () => {
+		let cycle = await renderHook(() => useLogoCycle(STATIONS.ksto))
+		let selected = await renderHook(() => useSelectedLogo(STATIONS.ksto))
+		expect(selected.result.current.name).toBe('cow badge')
+
+		await act(() => cycle.result.current.showNextLogo?.())
+
+		expect(selected.result.current.name).toBe('wordmark')
 	})
 })
