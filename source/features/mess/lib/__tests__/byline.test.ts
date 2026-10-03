@@ -4,6 +4,7 @@ import {
 	bylineText,
 	cardKicker,
 	creditLine,
+	galleryPhotoLabel,
 	imageLabel,
 	kickerText,
 	photoLabel,
@@ -55,6 +56,22 @@ describe('photoLabel', () => {
 	})
 	it('names a photo with no caption by its story, as an image is', () => {
 		expect(photoLabel({title: 'Spring', bylines: [b('A')]}, '')).toBe('Spring, by A')
+	})
+})
+
+describe('galleryPhotoLabel', () => {
+	it("names a gallery's photo by its story and photographer, and its place in the set", () => {
+		expect(
+			galleryPhotoLabel({title: 'Between places', bylines: [b('A')]}, 'Olivia Amschler', {
+				index: 1,
+				count: 5,
+			}),
+		).toBe('Between places, photo by Olivia Amschler, picture 2 of 5')
+	})
+	it('names a photo from a gallery with no credit by its story, as an image is', () => {
+		expect(
+			galleryPhotoLabel({title: 'Between places', bylines: [b('A')]}, '', {index: 0, count: 5}),
+		).toBe('Between places, by A, picture 1 of 5')
 	})
 })
 

@@ -301,6 +301,32 @@ const ILLUSTRATED: MessStory = {
 	],
 }
 
+const GALLERY_COVER = {
+	url: 'https://olafmessenger.com/wp-content/uploads/2026/02/OliviaAmschler_1-895x1200.png',
+	width: 895,
+	height: 1200,
+}
+
+/** A Photo post that is one SNO slideshow, as "Between places" is. */
+const GALLERY: MessStory = {
+	...STORY,
+	id: 36238,
+	title: 'Between places',
+	link: 'https://olafmessenger.com/36238/variety/between-places/',
+	section: 'Variety',
+	column: 'Photo',
+	photo: null,
+	blocks: [
+		{
+			type: 'gallery',
+			photoIds: [36255, 36256, 36257, 36258, 36259],
+			cover: GALLERY_COVER,
+			credit: 'Olivia Amschler',
+		},
+	],
+	layout: {kind: 'feature', images: []},
+}
+
 const PLAYLIST_PAGE = readFileSync(join(__dirname, 'fixtures/playlist-page-36532.html'), 'utf8')
 
 const PROFILE: StaffProfile = {
@@ -333,6 +359,7 @@ beforeEach(() => {
 			EMPTY_PHOTO,
 			SHORT_STORY,
 			ILLUSTRATED,
+			GALLERY,
 		]),
 	)
 	openInIOS = jest.spyOn(Linking, 'openURL').mockResolvedValue(true)
@@ -702,6 +729,23 @@ describe('StoryScreen', () => {
 		expect(mockNavigate).toHaveBeenCalledWith({
 			pathname: '/messenger/image',
 			params: {id: '36948', url: FIGURE_URL},
+		})
+	})
+
+	test("draws a gallery's first photo with its credit, and opens it in the viewer", async () => {
+		await renderStory(36238)
+
+		// Hidden from VoiceOver, which hears the credit in the photo's own label.
+		expect(screen.getByText('Olivia Amschler', {includeHiddenElements: true})).toBeTruthy()
+		await fireEvent.press(
+			screen.getByRole('button', {
+				name: 'Between places, photo by Olivia Amschler, picture 1 of 5',
+			}),
+		)
+
+		expect(mockNavigate).toHaveBeenCalledWith({
+			pathname: '/messenger/image',
+			params: {id: '36238', url: GALLERY_COVER.url},
 		})
 	})
 

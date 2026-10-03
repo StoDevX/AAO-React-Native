@@ -12,6 +12,15 @@ export type Block =
 	| {type: 'list'; ordered: boolean; items: Run[][]}
 	| {type: 'quote'; runs: Run[]}
 	| {
+			type: 'gallery'
+			/** Its photos' WordPress media ids, in the slideshow's order */
+			photoIds: number[]
+			/** The first photo, the one the HTML carries, to show before the rest have loaded */
+			cover: Photo | null
+			/** Whose photos they are, as the slideshow credits them; empty when it names no one */
+			credit: string
+	  }
+	| {
 			type: 'figure'
 			url: string
 			/** The largest copy the image's srcset offers, for the zoom viewer; none when it offers no larger one */

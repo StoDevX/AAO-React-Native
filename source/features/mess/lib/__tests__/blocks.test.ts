@@ -1,6 +1,10 @@
 import {describe, expect, it} from '@jest/globals'
 import {parseBlocks} from '../blocks'
 
+/** SNO's slideshow embed, from "Between places" (36238). */
+const SNO_SLIDESHOW =
+	'<div class="photowrap">\n\t<div class=\'sfiphotowrap sfiphotowrap modal-photo\' data-photo-ids=\'36255,36256,36257,36258,36259\' data-story-id=\'36238\'>\n\t\t<div id=\'storypageslideshow\' style=\'max-width: 400px; margin: 0 auto;\'>\n\t\t\t<div class="slideshowwrap" data-ratio="0.74583333333333">\n\t\t\t\t<img decoding="async" src="https://olafmessenger.com/wp-content/uploads/2026/02/OliviaAmschler_1-895x1200.png" class="slideshow-photo" alt="OliviaAmschler_1" data-width="895" data-height="1200" />\n                <a class=\'modal-photo\' href=\'#slideshow\' aria-haspopup=\'dialog\' aria-expanded=\'false\' aria-label=\'Gallery - 5 Photos.\'>\n                                            <div class=\'slideshow-enlarge\'>\n                            <div class="fa fa-clone slideshow-icon"></div>\n                            <div class=\'slideshow-title\'>Gallery<span class=\'v-divider\'> &bull; </span>5 Photos</div>\n                        </div>\n                                    </a>\n\t\t\t</div>\n\t\t\t\t\t\t\t<div class="captionboxmittop">\n\t\t\t\t\t<div class="photocredit"><a href="https://olafmessenger.com/staff_name/olivia-amschler/">Olivia Amschler</a></div>\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\n\t\t</div>\n\t</div>\n</div>\n<div class="photobottom"></div>\n<div class="clear"></div>\n<div class="newssourcephotos" data-photoids="36255,36256,36257,36258,36259"></div>\n\n'
+
 describe('parseBlocks', () => {
 	it('keeps a paragraph as one plain run', () => {
 		expect(parseBlocks('<p>Hello there.</p>')).toStrictEqual([
@@ -149,6 +153,45 @@ describe('parseBlocks', () => {
 			{type: 'figure', url: 'https://x.test/b.jpg', width: 3, height: 4, caption: 'B'},
 			{type: 'paragraph', runs: [{text: 'Both.'}]},
 		])
+	})
+
+	// "Between places" (36238), as olafmessenger.com served it on 2026-10-03: SNO's slideshow carries
+	// only its first photo, and names the rest by their WordPress media ids.
+	it("reads SNO's slideshow as one gallery, leaving out its overlay and credit link", () => {
+		expect(parseBlocks(SNO_SLIDESHOW)).toStrictEqual([
+			{
+				type: 'gallery',
+				photoIds: [36255, 36256, 36257, 36258, 36259],
+				cover: {
+					url: 'https://olafmessenger.com/wp-content/uploads/2026/02/OliviaAmschler_1-895x1200.png',
+					width: 895,
+					height: 1200,
+				},
+				credit: 'Olivia Amschler',
+			},
+		])
+	})
+
+	it('reads a slideshow whose first photo has no size as a gallery with no cover', () => {
+		let html = SNO_SLIDESHOW.replace(' data-width="895" data-height="1200"', '')
+		expect(parseBlocks(html)).toStrictEqual([
+			{
+				type: 'gallery',
+				photoIds: [36255, 36256, 36257, 36258, 36259],
+				cover: null,
+				credit: 'Olivia Amschler',
+			},
+		])
+	})
+
+	it('keeps the words around a slideshow', () => {
+		let blocks = parseBlocks(`<p>Before.</p>${SNO_SLIDESHOW}<p>After.</p>`)
+		expect(blocks.map((block) => block.type)).toStrictEqual(['paragraph', 'gallery', 'paragraph'])
+	})
+
+	it('reads a slideshow that names no photos as the words it holds', () => {
+		let html = SNO_SLIDESHOW.replaceAll(/data-photo-?ids='[^']*'/gu, "data-photo-ids=''")
+		expect(parseBlocks(html).some((block) => block.type === 'gallery')).toBe(false)
 	})
 
 	it('reads a figure nested three deep once', () => {

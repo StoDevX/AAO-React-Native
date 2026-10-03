@@ -2,10 +2,10 @@ import * as React from 'react'
 import {StyleSheet} from 'react-native'
 import {ZoomImageViewer} from '../../components/zoom-image-viewer'
 import {useDismissOnce} from '../../lib/use-dismiss-once'
-import {imageLabel, photoLabel, picturePlace} from './lib/byline'
+import {galleryPhotoLabel, imageLabel, photoLabel, picturePlace} from './lib/byline'
 import {StoryLookupNotice} from './story-lookup-notice'
 import {useMessStory} from './use-mess-story'
-import type {CaptionedPhoto, MessStory} from './types'
+import type {Block, CaptionedPhoto, MessStory} from './types'
 
 /** A picture to show, and what VoiceOver reads for it. */
 type Picture = {url: string; label: string}
@@ -28,8 +28,14 @@ function pictureOf(
 		let figures = story.blocks.flatMap((block) => (block.type === 'figure' ? [block] : []))
 		let photos: Array<CaptionedPhoto | null> = [story.photo, ...figures]
 		let photo = photos.find((candidate) => candidate?.url === url)
-		if (!photo) return null
-		return {url: photo.largeUrl ?? photo.url, label: photoLabel(story, photo.caption)}
+		if (photo) return {url: photo.largeUrl ?? photo.url, label: photoLabel(story, photo.caption)}
+		let gallery = story.blocks.find(
+			(block): block is Extract<Block, {type: 'gallery'}> =>
+				block.type === 'gallery' && block.cover?.url === url,
+		)
+		if (!gallery) return null
+		let place = {index: 0, count: gallery.photoIds.length}
+		return {url, label: galleryPhotoLabel(story, gallery.credit, place)}
 	}
 	let label = imageLabel(story, picturePlace(story, index))
 	if (story.layout.kind === 'image') return {url: story.layout.image.url, label}
