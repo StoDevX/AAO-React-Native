@@ -1,16 +1,16 @@
 import * as React from 'react'
 
 /** How long the sheet and its scroll stay held after a finger lifts or the sheet opens. */
-const HOLD_MS = 2000
+const HOLD_MS = 1000
 
 /**
  * Whether the sheet's scroll and swipe-to-close are held off, so a scratch on
- * the record is not taken by them: for 2s after the sheet opens, for as long
- * as a finger is on the record, and for 2s after it lifts.
+ * the record is not taken by them: for 1s after the sheet opens, for as long
+ * as a finger is on the record, and for 1s after it lifts.
  *
  * Switching them off at touch-down would be too late: iOS decides a drag is a
  * scroll or a swipe to close before the setting reaches it. So they are off
- * ahead of time, and a first scratch after 2s idle can still move the sheet.
+ * ahead of time, and a first scratch after 1s idle can still move the sheet.
  */
 export function useScratchHold(open: boolean): {
 	held: boolean

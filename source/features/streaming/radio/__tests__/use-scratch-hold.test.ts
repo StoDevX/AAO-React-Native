@@ -16,23 +16,23 @@ describe('useScratchHold', () => {
 		expect(result.current.held).toBe(false)
 	})
 
-	test('holds for 2s after the sheet opens', async () => {
+	test('holds for 1s after the sheet opens', async () => {
 		let {result, rerender} = await renderHook(({open}: {open: boolean}) => useScratchHold(open), {
 			initialProps: {open: false},
 		})
 		await act(() => rerender({open: true}))
 		expect(result.current.held).toBe(true)
 
-		await act(() => jest.advanceTimersByTime(1999))
+		await act(() => jest.advanceTimersByTime(999))
 		expect(result.current.held).toBe(true)
 
 		await act(() => jest.advanceTimersByTime(1))
 		expect(result.current.held).toBe(false)
 	})
 
-	test('holds while a finger is down, and for 2s after it lifts', async () => {
+	test('holds while a finger is down, and for 1s after it lifts', async () => {
 		let {result} = await renderHook(() => useScratchHold(true))
-		await act(() => jest.advanceTimersByTime(2000))
+		await act(() => jest.advanceTimersByTime(1000))
 		expect(result.current.held).toBe(false)
 
 		await act(() => result.current.onHeldChange(true))
@@ -40,18 +40,18 @@ describe('useScratchHold', () => {
 		expect(result.current.held).toBe(true)
 
 		await act(() => result.current.onHeldChange(false))
-		await act(() => jest.advanceTimersByTime(1999))
+		await act(() => jest.advanceTimersByTime(999))
 		expect(result.current.held).toBe(true)
 
 		await act(() => jest.advanceTimersByTime(1))
 		expect(result.current.held).toBe(false)
 	})
 
-	test('a new touch within the 2s cancels the countdown', async () => {
+	test('a new touch within the 1s cancels the countdown', async () => {
 		let {result} = await renderHook(() => useScratchHold(true))
 		await act(() => result.current.onHeldChange(true))
 		await act(() => result.current.onHeldChange(false))
-		await act(() => jest.advanceTimersByTime(1500))
+		await act(() => jest.advanceTimersByTime(500))
 		await act(() => result.current.onHeldChange(true))
 		await act(() => jest.advanceTimersByTime(5000))
 		expect(result.current.held).toBe(true)
