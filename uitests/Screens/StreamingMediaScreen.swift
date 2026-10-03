@@ -115,14 +115,17 @@ struct StreamingMediaScreen: Screen {
 	/// Swipe the sheet away, and check the bar beneath shows `label`.
 	@discardableResult
 	func closeSheet(expectingBar label: String) -> Self {
-		let live = app.elementWithLabel(startingWith: TestIdentifiers.StreamingMedia.live)
-		XCTAssertTrue(live.waitForExistence(timeout: 10), "The sheet should be open before it is closed")
+		let airStatus = app.descendants(matching: .any)[TestIdentifiers.StreamingMedia.airStatus]
+		XCTAssertTrue(airStatus.waitForExistence(timeout: 10), "The sheet should be open before it is closed")
 		// By the grabber, above the station picker: a drag that starts on the
 		// picker or the record goes to them instead.
 		let grabber = app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.075))
 		let bottom = app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 1.0))
 		grabber.press(forDuration: 0.05, thenDragTo: bottom, withVelocity: .fast, thenHoldForDuration: 0)
-		checkGone(TestIdentifiers.StreamingMedia.live)
+		let gone = XCTWaiter().wait(
+			for: [XCTNSPredicateExpectation(predicate: NSPredicate(format: "exists == false"), object: airStatus)],
+			timeout: 10)
+		XCTAssertEqual(gone, .completed, "The sheet should be closed")
 		checkTouchTarget(app.buttonLabelled(label), named: "The bar's \"\(label)\"")
 		return self
 	}

@@ -54,15 +54,21 @@ describe('showTitleText', () => {
 
 describe('airStatusText', () => {
 	test('says ON AIR while a show is on', () => {
-		expect(airStatusText(SHOW, 'ready')).toStrictEqual({text: 'ON AIR', spoken: 'Live, on air'})
+		expect(airStatusText(SHOW, 'ready')).toStrictEqual({text: 'ON AIR', spoken: 'On air'})
 	})
 
 	test('says OFF AIR when the schedule has no show on', () => {
-		expect(airStatusText(null, 'ready')).toStrictEqual({text: 'OFF AIR', spoken: 'Live, off air'})
+		expect(airStatusText(null, 'ready')).toStrictEqual({text: 'OFF AIR', spoken: 'Off air'})
 	})
 
-	test('says only that the stream is live while the schedule loads or fails', () => {
-		expect(airStatusText(null, 'loading')).toStrictEqual({text: 'LIVE', spoken: 'Live'})
-		expect(airStatusText(null, 'error')).toStrictEqual({text: 'LIVE', spoken: 'Live'})
+	test('says LOADING while the schedule loads', () => {
+		expect(airStatusText(null, 'loading')).toStrictEqual({text: 'LOADING', spoken: 'Loading'})
+	})
+
+	test('claims nothing when the schedule could not load', () => {
+		expect(airStatusText(null, 'error')).toStrictEqual({
+			text: '',
+			spoken: 'Air status unavailable',
+		})
 	})
 })

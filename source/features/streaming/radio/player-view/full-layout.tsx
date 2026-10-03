@@ -21,6 +21,9 @@ import type {RadioLogo} from '../theme'
 /** The player's inset from each side, as Music's full player. */
 export const SIDE = 28
 
+/** What UI tests find the status line by, since its words change with the schedule. */
+const AIR_STATUS_ID = 'radio-air-status'
+
 /** Music's full player for a live station, with the record where the album art goes. */
 export function FullLayout({
 	station,
@@ -73,7 +76,7 @@ export function FullLayout({
 				<ShowTitle station={station} />
 				<StationMenu station={station} />
 			</View>
-			<LiveBar station={station} />
+			<AirStatusBar station={station} />
 			<View style={styles.centre}>
 				<PlayStopButton station={station} />
 				<PlaybackError station={station} />
@@ -85,13 +88,18 @@ export function FullLayout({
 }
 
 /** Music's scrubber's place: a stream has no position to show, so the schedule says if it is on air. */
-function LiveBar({station}: {station: Station}): React.ReactNode {
+function AirStatusBar({station}: {station: Station}): React.ReactNode {
 	let {current, status} = useStationSchedule(station.id)
 	let {text, spoken} = airStatusText(current, status)
 	return (
-		<View accessibilityLabel={spoken} accessible={true} style={styles.live}>
+		<View
+			accessibilityLabel={spoken}
+			accessible={true}
+			testID={AIR_STATUS_ID}
+			style={styles.airStatus}
+		>
 			<View style={[styles.track, palette.styles.track]} />
-			<Text style={[styles.liveText, palette.styles.secondary]}>{text}</Text>
+			<Text style={[styles.airStatusText, palette.styles.secondary]}>{text}</Text>
 			<View style={[styles.track, palette.styles.track]} />
 		</View>
 	)
@@ -117,7 +125,7 @@ const styles = StyleSheet.create({
 	centre: {
 		alignItems: 'center',
 	},
-	live: {
+	airStatus: {
 		flexDirection: 'row',
 		alignItems: 'center',
 		gap: 12,
@@ -127,7 +135,7 @@ const styles = StyleSheet.create({
 		height: 6,
 		borderRadius: 3,
 	},
-	liveText: {
+	airStatusText: {
 		fontSize: 13,
 		fontWeight: '600',
 	},
