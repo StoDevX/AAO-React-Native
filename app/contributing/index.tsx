@@ -1,8 +1,9 @@
 import * as React from 'react'
 import {StyleSheet} from 'react-native'
-import {Form, Host, Section, Text} from '@expo/ui/swift-ui'
+import {Form, Host, Text} from '@expo/ui/swift-ui'
 import {accessibilityIdentifier, font, foregroundStyle} from '@expo/ui/swift-ui/modifiers'
 import * as c from '@frogpond/colors'
+import {SheetSection} from '@frogpond/sheet-section'
 import {trackedOpenUrl} from '@frogpond/open-url'
 import {Stack, useRouter} from 'expo-router'
 
@@ -38,7 +39,18 @@ export default function ContributingPage(): React.ReactNode {
 
 			<Host modifiers={[accessibilityIdentifier('screen-contributing')]} style={styles.host}>
 				<Form>
-					<Section title="We have source code">
+					<SheetSection title="Send feedback">
+						<NavigationRow
+							onPress={() => router.navigate('/settings/report-problem')}
+							title="Report a Problem"
+						/>
+					</SheetSection>
+
+					<SheetSection title="Other questions?">
+						<DisclosureRow destination="action" onPress={openEmail} title="Email us" />
+					</SheetSection>
+
+					<SheetSection title="We have source code">
 						<Blurb>
 							All About Olaf is open source. Read the code, report a bug, or send a change.
 						</Blurb>
@@ -47,16 +59,9 @@ export default function ContributingPage(): React.ReactNode {
 							onPress={() => trackedOpenUrl({url: GH_BASE_URL, id: 'ContributingView'})}
 							title="GitHub"
 						/>
-					</Section>
+					</SheetSection>
 
-					<Section title="Send feedback">
-						<NavigationRow
-							onPress={() => router.navigate('/settings/report-problem')}
-							title="Report a Problem"
-						/>
-					</Section>
-
-					<Section title="OpenStreetMap">
+					<SheetSection title="OpenStreetMap">
 						<Blurb>
 							The campus map is drawn from OpenStreetMap, a map anyone can edit. If something on
 							campus is missing or wrong, you can fix it there.
@@ -66,9 +71,9 @@ export default function ContributingPage(): React.ReactNode {
 							onPress={() => trackedOpenUrl({url: OSM_URL})}
 							title="OpenStreetMap"
 						/>
-					</Section>
+					</SheetSection>
 
-					<Section title="Data sources">
+					<SheetSection title="Data sources">
 						{dataSources.map((source) => (
 							<DisclosureRow
 								destination="external"
@@ -78,11 +83,7 @@ export default function ContributingPage(): React.ReactNode {
 								title={source.name}
 							/>
 						))}
-					</Section>
-
-					<Section title="Other questions?">
-						<DisclosureRow destination="action" onPress={openEmail} title="Email us" />
-					</Section>
+					</SheetSection>
 				</Form>
 			</Host>
 		</>

@@ -18,6 +18,20 @@ class ModuleContributingTests: UITestCase {
 		contributing.capture("contributing-bottom")
 	}
 
+	/// The ways to reach us come first, above the source code.
+	func testFeedbackAndEmailComeBeforeGitHub() throws {
+		let contributing = HomeScreen(app: app).checkHomescreenExists().openContributing()
+		let ids = TestIdentifiers.Contributing.self
+
+		let github = contributing.row(ids.github)
+		XCTAssertTrue(github.waitForExistence(timeout: 10), "Contributing should offer GitHub")
+		for title in [ids.reportProblem, ids.email] {
+			let row = contributing.row(title)
+			XCTAssertTrue(row.exists, "\(title) should be on screen when Contributing opens")
+			XCTAssertLessThan(row.frame.minY, github.frame.minY, "\(title) should sit above GitHub")
+		}
+	}
+
 	func testReportAProblemOpensTheForm() throws {
 		let contributing = HomeScreen(app: app).checkHomescreenExists().openContributing()
 		let ids = TestIdentifiers.Contributing.self
