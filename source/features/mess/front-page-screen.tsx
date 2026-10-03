@@ -14,6 +14,7 @@ import {Masthead} from './masthead'
 import {MessPage} from './mess-page'
 import {PageLoading, PageMessage, PageNotice} from './page-notice'
 import {messFeedOptions} from './query'
+import {CUSTOMIZE_LABEL} from '../customize/labels'
 import {StoryRows} from './story-list'
 import type {MessIssue} from './types'
 import {useMessIssues} from './use-mess-issues'
@@ -26,9 +27,6 @@ function datelineOf(view: MessView): string | null {
 	if (view.mode === 'issues') return null
 	return view.section ?? 'Latest stories'
 }
-
-/** The paintbrush's label, which a UI test finds it by. */
-const CUSTOMIZE_LABEL = 'Customize'
 
 /**
  * The glass buttons at the top right: the paintbrush, which opens the Messenger's Customize

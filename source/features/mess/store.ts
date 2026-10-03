@@ -29,34 +29,33 @@ type Saved = Pick<
 	'lastSign' | 'openedStories' | 'stainKind' | 'photoTone' | 'keepPhotoStoriesDark'
 >
 
+/** What a new install starts with, and what a migrated install gets for anything it lacks. */
+const DEFAULTS: Saved = {
+	lastSign: null,
+	openedStories: [],
+	stainKind: 'coffee',
+	photoTone: 'auto',
+	keepPhotoStoriesDark: true,
+}
+
 /** Version 1 held the sign alone; it keeps the sign and starts with nothing read. */
 export function migrate(state: unknown, _version: number): Saved {
 	let sign =
 		typeof state === 'object' && state !== null && 'lastSign' in state ? state.lastSign : null
-	return {
-		lastSign: ZODIAC_SIGNS.find((known) => known === sign) ?? null,
-		openedStories: [],
-		stainKind: 'coffee',
-		photoTone: 'auto',
-		keepPhotoStoriesDark: true,
-	}
+	return {...DEFAULTS, lastSign: ZODIAC_SIGNS.find((known) => known === sign) ?? null}
 }
 
 export const useMessStore = create<MessStore>()(
 	persist(
 		(set) => ({
-			lastSign: null,
+			...DEFAULTS,
 			setSign: (sign) => set({lastSign: sign}),
-			openedStories: [],
 			recordOpened: (id) =>
 				set((state) =>
 					state.openedStories.includes(id) ? state : {openedStories: [...state.openedStories, id]},
 				),
-			stainKind: 'coffee',
 			setStainKind: (kind) => set({stainKind: kind}),
-			photoTone: 'auto',
 			setPhotoTone: (tone) => set({photoTone: tone}),
-			keepPhotoStoriesDark: true,
 			setKeepPhotoStoriesDark: (keep) => set({keepPhotoStoriesDark: keep}),
 		}),
 		{

@@ -86,7 +86,8 @@ struct TestIdentifiers {
 		static let aboutMenuItem = "About"
 		static let contributingMenuItem = "Contributing"
 		static let feedbackMenuItem = "Feedback"
-		/// The paintbrush at Home's top-left corner. Mirrors CUSTOMIZE_LABEL in app/index.tsx.
+		/// The paintbrush on Home and the Messenger's front page. Mirrors CUSTOMIZE_LABEL in
+		/// source/features/customize/labels.ts.
 		static let customizeButton = "Customize"
 		/// The label every back button carries. UIKit gives its own back
 		/// buttons this label too, so a query using it must be scoped to one
@@ -767,8 +768,6 @@ struct TestIdentifiers {
 		static let photoTone = "photo-tone"
 		/// The Dark page for Photo stories switch, in app/messenger/customize/index.tsx.
 		static let keepPhotoStoriesDark = "keep-photo-stories-dark"
-		/// The paintbrush's label, in source/features/mess/front-page-screen.tsx.
-		static let paintbrush = "Customize"
 	}
 
 	// MARK: - Contributing
