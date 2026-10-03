@@ -1,4 +1,4 @@
-import {acknowledgements, contributors, inTwoColumns} from '../credits'
+import {acknowledgements, contributors, creditRows, inTwoColumns} from '../credits'
 import {timeline} from '../timeline'
 
 describe('inTwoColumns', () => {
@@ -15,6 +15,16 @@ describe('inTwoColumns', () => {
 
 	it('shows a lone name on a row of its own', () => {
 		expect(inTwoColumns(['Hawken Rives'])).toEqual([['Hawken Rives']])
+	})
+})
+
+describe('creditRows', () => {
+	it('sets names in two columns at ordinary text sizes', () => {
+		expect(creditRows(['A', 'B'], 1)).toEqual([['A', 'B']])
+	})
+
+	it('gives each name its own row at the accessibility sizes', () => {
+		expect(creditRows(['A', 'B'], 1.65)).toEqual([['A'], ['B']])
 	})
 })
 

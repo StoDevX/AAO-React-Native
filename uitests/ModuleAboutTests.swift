@@ -5,9 +5,14 @@ class ModuleAboutTests: UITestCase {
 		let about = HomeScreen(app: app).checkHomescreenExists().openAbout()
 		let ids = TestIdentifiers.About.self
 
-		XCTAssertTrue(about.text(ids.version).waitForExistence(timeout: 10), "About should show the version")
-		XCTAssertTrue(about.text(ids.storyHeading).exists, "About should have an Our story section")
+		// At the largest text sizes the header fills the first screen, so each
+		// section is scrolled to before it is checked.
+		// LabeledContent reads its label and value as one element, so match its start.
+		about.reveal(
+			app.descendants(matching: .any)
+				.matching(NSPredicate(format: "label BEGINSWITH %@", ids.version)).firstMatch)
 		about.capture("about")
+		about.reveal(about.text(ids.storyHeading))
 
 		about.reveal(about.row(ids.privacy))
 		XCTAssertTrue(about.row(ids.legal).exists, "About should offer Legal")
@@ -20,10 +25,11 @@ class ModuleAboutTests: UITestCase {
 
 		let first = about.text(ids.firstEra)
 		let second = about.text(ids.secondEra)
-		XCTAssertTrue(first.waitForExistence(timeout: 10), "The timeline should open on its newest era")
-		XCTAssertTrue(about.isOnScreen(first), "The newest era should be on screen")
+		about.reveal(first)
+		XCTAssertTrue(about.isOnScreen(first), "The timeline should open on its newest era")
 		about.capture("about-timeline-first")
 
+		about.reveal(about.pageDots)
 		XCTAssertEqual(about.pageDots.value as? String, "1 of 3", "The dots should mark the first era")
 
 		about.swipeToNextCard(from: first, toShow: second)

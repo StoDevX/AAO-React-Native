@@ -34,11 +34,15 @@ struct AboutScreen: Screen {
 	/// Scroll the screen until `element` is on it.
 	@discardableResult
 	func reveal(_ element: XCUIElement) -> Self {
-		for _ in 0..<8 {
+		// The screen draws a moment after it opens; swiping before then scrolls
+		// past rows that are about to appear.
+		_ = element.waitForExistence(timeout: 10)
+		// Enough swipes for the whole page at the largest text sizes.
+		for _ in 0..<20 {
 			if element.exists && element.isHittable { break }
 			host.swipeUp()
 		}
-		XCTAssertTrue(element.exists, "About should offer \(element.label)")
+		XCTAssertTrue(element.exists, "About should offer what was asked for: \(element)")
 		return self
 	}
 
