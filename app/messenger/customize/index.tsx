@@ -36,7 +36,7 @@ export default function MessengerCustomizePage(): React.ReactNode {
 					<SheetSection title="Stories">
 						<Toggle
 							isOn={keepPhotoStoriesDark}
-							label="Keep Photo stories in Dark mode"
+							label="Dark page for Photo stories"
 							modifiers={[accessibilityIdentifier('keep-photo-stories-dark')]}
 							onIsOnChange={setKeepPhotoStoriesDark}
 						/>

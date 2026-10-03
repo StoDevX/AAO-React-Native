@@ -51,12 +51,12 @@ struct MessCustomizeScreen: Screen {
 		return self
 	}
 
-	/// Turn Keep Photo stories in Dark mode on or off, tapping the switch itself: a tap at the
+	/// Turn Dark page for Photo stories on or off, tapping the switch itself: a tap at the
 	/// row's centre lands on the label, which flips nothing in a Form.
 	@discardableResult
 	func keepPhotoStoriesDark(_ on: Bool) -> Self {
 		let toggle = sheet.switches[TestIdentifiers.MessCustomize.keepPhotoStoriesDark]
-		XCTAssertTrue(toggle.waitForExistence(timeout: 10), "Customize should offer Keep Photo stories in Dark mode")
+		XCTAssertTrue(toggle.waitForExistence(timeout: 10), "Customize should offer Dark page for Photo stories")
 		let wanted = on ? "1" : "0"
 		if toggle.value as? String != wanted {
 			toggle.coordinate(withNormalizedOffset: CGVector(dx: 0.92, dy: 0.5)).tap()
