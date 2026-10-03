@@ -14,6 +14,7 @@ function reset() {
 		viewedStationId: 'ksto',
 		sheetOpen: false,
 		showOnHome: true,
+		logoIndexes: {},
 	})
 }
 
@@ -159,10 +160,14 @@ describe('showOnHome', () => {
 		expect(useRadioStore.getState()).toMatchObject({showOnHome: false, stationId: null})
 	})
 
-	test('is the only state that reaches storage', () => {
+	test('and the logo each station shows are the only state that reaches storage', () => {
 		useRadioStore.getState().play('krlx')
+		useRadioStore.getState().setLogoIndex('ksto', 1)
 		let {partialize} = useRadioStore.persist.getOptions()
-		expect(partialize?.(useRadioStore.getState())).toStrictEqual({showOnHome: true})
+		expect(partialize?.(useRadioStore.getState())).toStrictEqual({
+			showOnHome: true,
+			logoIndexes: {ksto: 1},
+		})
 	})
 })
 

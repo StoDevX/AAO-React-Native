@@ -1,23 +1,18 @@
-import {useState} from 'react'
-
-import type {Station, StationId} from '../stations'
+import type {Station} from '../stations'
+import {useRadioStore} from '../store'
 import type {RadioLogo} from '../theme'
 
 /**
- * The station's logo on show, and how to move to the next. Always the first
- * logo on arrival, and again whenever the station changes: an index from one
- * station's logos means nothing among another's.
+ * The station's logo on show, and how to move to the next. Each station keeps
+ * the logo it was left on, across sheet opens and app launches. A saved logo
+ * the station no longer has reads as the first.
  */
 export function useLogoCycle(station: Station): {logo: RadioLogo; showNextLogo?: () => void} {
 	let {logos} = station
-	let [shown, setShown] = useState<{stationId: StationId; index: number}>({
-		stationId: station.id,
-		index: 0,
-	})
-	let index = shown.stationId === station.id ? shown.index : 0
+	let saved = useRadioStore((state) => state.logoIndexes[station.id]) ?? 0
+	let setLogoIndex = useRadioStore((state) => state.setLogoIndex)
+	let index = saved < logos.length ? saved : 0
 	let showNextLogo =
-		logos.length > 1
-			? () => setShown({stationId: station.id, index: (index + 1) % logos.length})
-			: undefined
+		logos.length > 1 ? () => setLogoIndex(station.id, (index + 1) % logos.length) : undefined
 	return {logo: logos[index], showNextLogo}
 }

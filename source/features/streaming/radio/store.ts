@@ -21,6 +21,8 @@ type RadioStore = {
 
 	/** Whether Home's Now Playing bar shows while nothing is loaded. Persisted. */
 	showOnHome: boolean
+	/** The logo each station last showed, by its place in the station's logos. Persisted. */
+	logoIndexes: Partial<Record<StationId, number>>
 	/** Whether the saved preferences have been read, or could not be. */
 	hydrated: boolean
 
@@ -44,13 +46,16 @@ type RadioStore = {
 	/** Shows `stationId` in the sheet without touching playback. */
 	browse: (stationId: StationId) => void
 
+	/** Remembers which of `stationId`'s logos the record shows. */
+	setLogoIndex: (stationId: StationId, index: number) => void
+
 	/** Turning it off also stops the radio. */
 	setShowOnHome: (on: boolean) => void
 }
 
 /**
- * The radio that plays across the whole app. Only `showOnHome` is persisted:
- * a relaunch should never start audio by itself.
+ * The radio that plays across the whole app. Only the Home switch and each
+ * station's logo are persisted: a relaunch should never start audio by itself.
  */
 export const useRadioStore = create<RadioStore>()(
 	persist(
@@ -67,6 +72,7 @@ export const useRadioStore = create<RadioStore>()(
 				viewedStationId: 'ksto',
 				sheetOpen: false,
 				showOnHome: true,
+				logoIndexes: {},
 				hydrated: false,
 
 				play: (stationId) =>
@@ -103,6 +109,9 @@ export const useRadioStore = create<RadioStore>()(
 				closeSheet: () => set({sheetOpen: false}),
 				browse: (stationId) => set({viewedStationId: stationId}),
 
+				setLogoIndex: (stationId, index) =>
+					set((state) => ({logoIndexes: {...state.logoIndexes, [stationId]: index}})),
+
 				setShowOnHome: (on) => {
 					set({showOnHome: on})
 					if (!on) get().stop()
@@ -113,7 +122,7 @@ export const useRadioStore = create<RadioStore>()(
 			name: 'radio-preferences',
 			storage: createJSONStorage(() => AsyncStorage),
 			version: 1,
-			partialize: (state) => ({showOnHome: state.showOnHome}),
+			partialize: (state) => ({showOnHome: state.showOnHome, logoIndexes: state.logoIndexes}),
 			// Persist reports a failed read only here, never through its own
 			// `hasHydrated`, so a corrupt value would otherwise leave the app waiting.
 			onRehydrateStorage: () => () => useRadioStore.setState({hydrated: true}),
