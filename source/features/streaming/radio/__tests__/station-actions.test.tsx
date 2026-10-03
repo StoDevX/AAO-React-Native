@@ -31,4 +31,11 @@ describe('StationActionRow', () => {
 		expect(openUrl).not.toHaveBeenCalled()
 		expect(screen.queryByLabelText(`Chat with ${STATIONS.ksto.stationName}`)).toBeNull()
 	})
+
+	test('offers AirPlay for every station, through the system route picker', async () => {
+		await render(<StationActionRow onShowSchedule={jest.fn()} station={STATIONS.ksto} />)
+
+		expect(screen.getByText('AirPlay')).toBeTruthy()
+		expect(screen.getByTestId('airplay-route-picker')).toBeTruthy()
+	})
 })

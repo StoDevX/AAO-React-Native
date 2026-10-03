@@ -5,7 +5,7 @@ import {openUrl} from '@frogpond/open-url'
 import {callPhone} from '../../../../components/call-phone'
 import type {Station} from '../stations'
 import {ActionButton} from './action-button'
-import {AirPlayButtonStub} from './stubs'
+import {AirPlayButton} from './airplay-button'
 
 /**
  * The bottom row, after Music's: Call, Chat, AirPlay, and the schedule where
@@ -34,7 +34,7 @@ export function StationActionRow({
 				onPress={chatUrl ? () => openUrl(chatUrl) : undefined}
 				role="link"
 			/>
-			<AirPlayButtonStub />
+			<AirPlayButton />
 			<ActionButton
 				accessibilityLabel="Today's schedule"
 				icon="calendar.day.timeline.trailing"

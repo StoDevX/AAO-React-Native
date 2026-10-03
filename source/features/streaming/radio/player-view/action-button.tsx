@@ -9,7 +9,7 @@ import {palette} from './palette'
  * How far large text may grow the labels: every label stops at the same size,
  * the most at which "Schedule" still fits a quarter of the narrowest phone.
  */
-const LABEL_MAX_SCALE = 1.4
+export const LABEL_MAX_SCALE = 1.4
 
 /** An icon over its label. With no `onPress` it shows, dimmed, as unavailable. */
 export function ActionButton({
