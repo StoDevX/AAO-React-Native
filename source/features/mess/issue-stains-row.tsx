@@ -18,7 +18,7 @@ export function IssueStainsRow(): React.ReactNode {
 	let setKind = useMessStore((state) => state.setStainKind)
 	return (
 		<Picker<StainKind>
-			label="Issue Stains"
+			label="Paper Stains"
 			modifiers={[pickerStyle('menu'), accessibilityIdentifier(ISSUE_STAINS_ID)]}
 			onSelectionChange={setKind}
 			selection={kind}

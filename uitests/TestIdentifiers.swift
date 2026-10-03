@@ -751,7 +751,7 @@ struct TestIdentifiers {
 	enum MessCustomize {
 		/// The sheet's host, set in app/messenger/customize/index.tsx.
 		static let screen = "screen-mess-customize"
-		/// The Issue Stains picker, in source/features/mess/issue-stains-row.tsx.
+		/// The Paper Stains picker, in source/features/mess/issue-stains-row.tsx.
 		static let issueStains = "issue-stains"
 		/// The photo tone picker, in source/features/mess/photo-tone-row.tsx.
 		static let photoTone = "photo-tone"

@@ -31,8 +31,6 @@ export default function MessengerCustomizePage(): React.ReactNode {
 				<Form>
 					<SheetSection title="Issues">
 						<IssueStainsRow />
-					</SheetSection>
-					<SheetSection title="Thumbnails">
 						<PhotoToneRow />
 					</SheetSection>
 					<SheetSection title="Stories">
