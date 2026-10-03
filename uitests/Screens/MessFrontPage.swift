@@ -30,6 +30,16 @@ struct MessFrontPage: Screen {
 		return self
 	}
 
+	/// Tap the paintbrush at the top right and wait for the Customize sheet.
+	@discardableResult
+	func openCustomize() -> MessCustomizeScreen {
+		let button = app.buttons[TestIdentifiers.MessCustomize.paintbrush]
+		XCTAssertTrue(button.waitForHittable(timeout: 30), "the front page should have a Customize button")
+		capture("The Messenger's front page, with its paintbrush")
+		button.tap()
+		return MessCustomizeScreen(app: app).checkOpen()
+	}
+
 	/// The navigation bar has no title, and the paper's castle heads the page as its masthead,
 	/// read as the paper's name; the name is printed only on the issues' own nameplates.
 	@discardableResult

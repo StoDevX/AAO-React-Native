@@ -9,7 +9,7 @@ import {
 } from '@expo/ui/swift-ui/modifiers'
 import type {SFSymbol} from 'sf-symbols-typescript'
 import * as c from '@frogpond/colors'
-import {sto} from '../../../../../../lib/colors'
+import {sto} from '../../../../lib/colors'
 
 /** The styles SwiftUI offers a button, in the order the sheet lists them. */
 export const BUTTON_STYLES = [

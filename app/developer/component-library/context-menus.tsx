@@ -5,7 +5,7 @@ import {Stack} from 'expo-router'
 import {
 	Example,
 	LibraryWrapper,
-} from '../../../source/features/settings/screens/overview/component-library/base/library-wrapper'
+} from '../../../source/features/developer/component-library/base/library-wrapper'
 
 const ANIMALS = ['bird', 'cat', 'cow', 'dog']
 const ANIMAL_MENU_TEST_ID = 'component-library-context-menu'

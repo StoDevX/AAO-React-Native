@@ -4,7 +4,7 @@ import {ContentUnavailableView, Host, List, Section, Text} from '@expo/ui/swift-
 import {listStyle, textSelection} from '@expo/ui/swift-ui/modifiers'
 import * as c from '@frogpond/colors'
 import {DebugRow} from './row'
-import {useAppSelector} from '../../../../redux'
+import {useAppSelector} from '../../../redux'
 
 export const NavigationKey = 'DebugView' as const
 

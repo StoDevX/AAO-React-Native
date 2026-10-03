@@ -7,7 +7,7 @@ import {Stack} from 'expo-router'
 import {
 	LibraryWrapper,
 	Example,
-} from '../../../source/features/settings/screens/overview/component-library/base/library-wrapper'
+} from '../../../source/features/developer/component-library/base/library-wrapper'
 
 const OutlineBadgeExamples = (): React.ReactNode => (
 	<Section title="Outline badge">

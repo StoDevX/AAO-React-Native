@@ -24,7 +24,7 @@ struct HomeScreen: Screen {
 
 	@discardableResult
 	func tapEnableDevMode() -> Self {
-		let enableDevMode = app.buttons[TestIdentifiers.Settings.enableDevMode]
+		let enableDevMode = app.buttons[TestIdentifiers.Home.enableDevMode]
 		XCTAssertTrue(
 			enableDevMode.waitForExistence(timeout: 10),
 			"Context menu should show 'Enable dev mode' option")

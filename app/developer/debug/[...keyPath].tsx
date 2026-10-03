@@ -1,7 +1,7 @@
 import * as React from 'react'
 import {Stack, useLocalSearchParams} from 'expo-router'
 
-import {DebugKeyPathScreen} from '../../../source/features/settings/screens/debug/route-screen'
+import {DebugKeyPathScreen} from '../../../source/features/developer/debug/route-screen'
 
 export default function DebugKeyPathPage(): React.ReactNode {
 	let {keyPath = []} = useLocalSearchParams<{keyPath?: string[]}>()

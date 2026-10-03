@@ -1,10 +1,10 @@
 import * as React from 'react'
 import {Picker, Text} from '@expo/ui/swift-ui'
 import {accessibilityIdentifier, pickerStyle, tag} from '@expo/ui/swift-ui/modifiers'
-import {useMessStore, type StainKind} from '../../../mess/store'
+import {useMessStore, type StainKind} from './store'
 
 /** Names the picker, for a UI test. */
-export const ISSUE_STAINS_ID = 'settings-issue-stains'
+export const ISSUE_STAINS_ID = 'issue-stains'
 
 const KINDS: Array<[StainKind, string]> = [
 	['coffee', 'Coffee'],

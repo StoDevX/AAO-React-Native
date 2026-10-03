@@ -74,6 +74,7 @@ struct TestIdentifiers {
 	enum Home {
 		static let screen = "screen-homescreen"
 		static let notice = "home-notice"
+		static let enableDevMode = "Enable dev mode"
 	}
 
 	enum Navigation {
@@ -745,10 +746,15 @@ struct TestIdentifiers {
 		static let close = "Close"
 	}
 
-	// MARK: - Settings
+	// MARK: - Messenger Customize
 
-	enum Settings {
-		static let enableDevMode = "Enable dev mode"
+	enum MessCustomize {
+		/// The sheet's host, set in app/messenger/customize/index.tsx.
+		static let screen = "screen-mess-customize"
+		/// The Issue Stains picker, in source/features/mess/issue-stains-row.tsx.
+		static let issueStains = "issue-stains"
+		/// The paintbrush's label, in source/features/mess/front-page-screen.tsx.
+		static let paintbrush = "Customize"
 	}
 
 	// MARK: - Contributing
@@ -793,9 +799,9 @@ struct TestIdentifiers {
 		static let sendFeedback = "Send Feedback"
 		/// ShareTelemetryToggle's label, in source/features/telemetry/consent-toggle.tsx.
 		static let telemetryToggle = "Share anonymous usage and crash data"
-		/// The title of the Report a Problem form, in app/settings/report-problem.tsx.
+		/// The title of the Report a Problem form, in app/report-problem.tsx.
 		static let reportProblemTitle = "Report a Problem"
-		/// The form's close button, labelled in app/settings/report-problem.tsx.
+		/// The form's close button, labelled in app/report-problem.tsx.
 		static let closeProblemForm = "Close Screen"
 	}
 

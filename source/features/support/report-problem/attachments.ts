@@ -1,5 +1,5 @@
 import * as Sentry from '@sentry/react-native'
-import type {PickedImage} from '../../../../../components/use-image-attachments'
+import type {PickedImage} from '../../../components/use-image-attachments'
 import type {ReportAttachment} from './submit'
 
 /**

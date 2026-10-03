@@ -303,7 +303,7 @@ export default function HomePage(): React.ReactNode {
 					<Stack.Toolbar.Menu inline={true}>
 						<Stack.Toolbar.MenuAction
 							icon="exclamationmark.bubble"
-							onPress={() => router.navigate('/settings/report-problem')}
+							onPress={() => router.navigate('/report-problem')}
 						>
 							Feedback
 						</Stack.Toolbar.MenuAction>

@@ -27,19 +27,31 @@ function datelineOf(view: MessView): string | null {
 	return view.section ?? 'Latest stories'
 }
 
+/** The paintbrush's label, which a UI test finds it by. */
+const CUSTOMIZE_LABEL = 'Customize'
+
 /**
- * The glass button at the top right: a menu to pick By Issue or Latest, and, in Latest, the
- * section to narrow it to. Its label names the view showing, since the icon alone does not.
+ * The glass buttons at the top right: the paintbrush, which opens the Messenger's Customize
+ * sheet, and a menu to pick By Issue or Latest and, in Latest, the section to narrow it to. The
+ * menu's label names the view showing, since the icon alone does not. Both sit at the right
+ * because a button at the left would replace the Back button.
  */
 function ViewMenu({
 	view,
 	onChoose,
+	onCustomize,
 }: {
 	view: MessView
 	onChoose: (view: MessView) => void
+	onCustomize: () => void
 }): React.ReactNode {
 	return (
 		<Stack.Toolbar placement="right">
+			<Stack.Toolbar.Button
+				accessibilityLabel={CUSTOMIZE_LABEL}
+				icon="paintbrush"
+				onPress={onCustomize}
+			/>
 			<Stack.Toolbar.Menu accessibilityLabel={`View: ${VIEW_NAMES[view.mode]}`} icon="newspaper">
 				<Stack.Toolbar.Menu inline={true} title="View">
 					<Stack.Toolbar.MenuAction
@@ -127,6 +139,7 @@ function SavedLatestStories(): React.ReactNode {
  */
 export function FrontPageScreen(): React.ReactNode {
 	let queryClient = useQueryClient()
+	let router = useRouter()
 	let saved = useNewsFilterStore((state) => state.selectedCategories[OLAF_MESSENGER.id] ?? null)
 	let select = useNewsFilterStore((state) => state.select)
 	let view = viewOf(saved)
@@ -137,7 +150,11 @@ export function FrontPageScreen(): React.ReactNode {
 			<Stack.Screen
 				options={{title: OLAF_MESSENGER.title, headerTitle: '', headerTransparent: true}}
 			/>
-			<ViewMenu onChoose={choose} view={view} />
+			<ViewMenu
+				onChoose={choose}
+				onCustomize={() => router.navigate('/messenger/customize')}
+				view={view}
+			/>
 			<MessPage
 				// Only the view showing has queries mounted, so refetching the active Mess queries
 				// refreshes that view alone.

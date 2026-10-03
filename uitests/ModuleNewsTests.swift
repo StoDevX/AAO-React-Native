@@ -7,6 +7,13 @@ class ModuleNewsTests: UITestCaseUnbooted {
 			.verifyByIssueShowsTheGrid()
 	}
 
+	func testOlafMessengerPaintbrushChangesTheIssueStain() throws {
+		let customize = MessFrontPage(app: app).navigate().openCustomize()
+		customize.capture("Messenger Customize, before")
+		customize.chooseStain("Tea")
+		customize.capture("Messenger Customize, Tea chosen").close()
+	}
+
 	func testOlafMessengerLatestNarrowsToASection() throws {
 		MessFrontPage(app: app)
 			.navigate()

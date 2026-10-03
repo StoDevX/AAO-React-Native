@@ -29,7 +29,7 @@ import * as c from '@frogpond/colors'
 import {SheetSection} from '@frogpond/sheet-section'
 import {sto} from '../../../source/lib/colors'
 import {SyncedTextField} from '../../../source/components/synced-text-field'
-import {LibraryWrapper} from '../../../source/features/settings/screens/overview/component-library/base/library-wrapper'
+import {LibraryWrapper} from '../../../source/features/developer/component-library/base/library-wrapper'
 import {
 	BORDER_SHAPES,
 	BUTTON_ROLES,
@@ -40,7 +40,7 @@ import {
 	TINTS,
 	playgroundModifiers,
 	type ButtonPlayground,
-} from '../../../source/features/settings/screens/overview/component-library/lib/button-playground'
+} from '../../../source/features/developer/component-library/lib/button-playground'
 
 const tapped = (what: string) => () => Alert.alert('Tapped', what)
 

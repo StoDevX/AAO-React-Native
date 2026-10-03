@@ -4,7 +4,7 @@ import {useServerDiscovery} from '../use-server-discovery'
 
 const mockUseIsDevMode = jest.fn(() => true)
 
-jest.mock('../../../../../lib/use-is-dev-mode', () => ({
+jest.mock('../../../lib/use-is-dev-mode', () => ({
 	useIsDevMode: () => mockUseIsDevMode(),
 }))
 

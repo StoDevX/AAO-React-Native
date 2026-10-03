@@ -51,7 +51,7 @@ export default function ContributingPage(): React.ReactNode {
 
 					<Section title="Send feedback">
 						<NavigationRow
-							onPress={() => router.navigate('/settings/report-problem')}
+							onPress={() => router.navigate('/report-problem')}
 							title="Report a Problem"
 						/>
 					</Section>

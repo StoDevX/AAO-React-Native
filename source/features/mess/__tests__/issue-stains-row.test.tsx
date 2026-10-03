@@ -1,7 +1,7 @@
 import * as React from 'react'
 import {beforeEach, expect, test} from '@jest/globals'
 import {fireEvent, render, screen} from '@testing-library/react-native'
-import {useMessStore} from '../../../../mess/store'
+import {useMessStore} from '../store'
 import {IssueStainsRow} from '../issue-stains-row'
 
 beforeEach(() => {

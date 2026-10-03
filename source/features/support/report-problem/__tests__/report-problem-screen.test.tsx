@@ -2,25 +2,25 @@ import * as React from 'react'
 import {Alert, type AlertButton} from 'react-native'
 import {act, fireEvent, render, screen} from '@testing-library/react-native'
 
-import ReportProblemPage from '../../../../../../../app/settings/report-problem'
-import type {ImageAttachments} from '../../../../../../components/use-image-attachments'
-import {useImageAttachments} from '../../../../../../components/use-image-attachments'
-import type * as ExpoRouterMock from '../../../../../../testing/expo-router-mock'
+import ReportProblemPage from '../../../../../app/report-problem'
+import type {ImageAttachments} from '../../../../components/use-image-attachments'
+import {useImageAttachments} from '../../../../components/use-image-attachments'
+import type * as ExpoRouterMock from '../../../../testing/expo-router-mock'
 import {readAttachment} from '../attachments'
-import {composeEmail} from '../../../../../../components/send-email'
+import {composeEmail} from '../../../../components/send-email'
 import {submitReport} from '../submit'
-import {useTelemetryStore} from '../../../../../telemetry/store'
-import {loadBeforeTests} from '../../../../../../testing/load-before-tests'
+import {useTelemetryStore} from '../../../telemetry/store'
+import {loadBeforeTests} from '../../../../testing/load-before-tests'
 
 loadBeforeTests('Image', 'TextInput')
 
 const mockGoBack = jest.fn()
 jest.mock('expo-router', () => {
 	// oxlint-disable-next-line typescript/no-require-imports -- jest.mock factories cannot use import
-	let {Stack} = require('../../../../../../testing/expo-router-mock') as typeof ExpoRouterMock
+	let {Stack} = require('../../../../testing/expo-router-mock') as typeof ExpoRouterMock
 	return {Stack, useNavigation: () => ({goBack: mockGoBack})}
 })
-jest.mock('../../../../../../components/use-image-attachments', () => ({
+jest.mock('../../../../components/use-image-attachments', () => ({
 	MAX_ATTACHMENTS: 3,
 	useImageAttachments: jest.fn(),
 }))
@@ -38,7 +38,7 @@ jest.mock('../submit', () => ({
 		body: 'the map is blank',
 	})),
 }))
-jest.mock('../../../../../../components/send-email', () => ({
+jest.mock('../../../../components/send-email', () => ({
 	composeEmail: jest.fn(() => Promise.resolve(true)),
 }))
 

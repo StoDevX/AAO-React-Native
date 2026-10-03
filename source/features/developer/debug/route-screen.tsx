@@ -3,7 +3,7 @@ import {useRouter} from 'expo-router'
 
 import {DebugView} from './list'
 import {getAtKeyPath} from './get-at-key-path'
-import {useAppSelector} from '../../../../redux'
+import {useAppSelector} from '../../../redux'
 
 type Props = {
 	keyPath: string[]

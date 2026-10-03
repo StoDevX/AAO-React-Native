@@ -55,7 +55,7 @@ export default function SupportPage(): React.ReactNode {
 							title="PubSafe • SARN • 911"
 						/>
 						<NavigationRow
-							onPress={() => router.navigate('/settings/report-problem')}
+							onPress={() => router.navigate('/report-problem')}
 							title="Send Feedback"
 						/>
 					</Section>
