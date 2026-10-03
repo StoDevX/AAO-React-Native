@@ -2,6 +2,7 @@
 // that need a UI test run's side effects: update-mess-fixtures and chaos.
 
 import {execFileSync} from 'node:child_process'
+import {existsSync} from 'node:fs'
 import {join} from 'node:path'
 
 import {pickSimulator} from './mess-fixtures.mjs'
@@ -71,8 +72,11 @@ export const BUILT_APP = 'ios/build/Build/Products/Debug-iphonesimulator/AllAbou
  * installing it, so a simulator that has never run the tests has no data
  * container until this does; installing over an installed app keeps its data.
  */
-export function installBuiltApp(udid) {
-	run('xcrun', ['simctl', 'install', udid, BUILT_APP], {stdio: 'inherit'})
+export function installBuiltApp(udid, app = BUILT_APP) {
+	if (!existsSync(app)) {
+		throw new Error(`no built app at ${app}; run without --prebuilt to build it`)
+	}
+	run('xcrun', ['simctl', 'install', udid, app], {stdio: 'inherit'})
 }
 
 export function buildForTesting(udid) {

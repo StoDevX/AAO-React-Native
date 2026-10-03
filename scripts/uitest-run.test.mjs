@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict'
 import {test} from 'node:test'
 
-import {buildArgs, isNotInstalled, testArgs} from './uitest-run.mjs'
+import {buildArgs, installBuiltApp, isNotInstalled, testArgs} from './uitest-run.mjs'
 
 test('detects when the app is not installed from simctl stderr', () => {
 	let stderr = `An error was encountered processing the command (domain=NSPOSIXErrorDomain, code=2):
@@ -38,5 +38,12 @@ test('runs only the named tests, into a result bundle when asked', () => {
 			'-resultBundlePath',
 			'out',
 		],
+	)
+})
+
+test('refuses to install an app that was never built, saying how to build it', () => {
+	assert.throws(
+		() => installBuiltApp('ABC', '/nonexistent/AllAboutOlaf.app'),
+		/no built app at \/nonexistent\/AllAboutOlaf\.app; run without --prebuilt/u,
 	)
 })

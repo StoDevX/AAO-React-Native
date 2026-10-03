@@ -297,7 +297,8 @@ Name the Metro serving this checkout with the `TEST_RUNNER_` prefix:
 `xcodebuild` passes the test only prefixed variables, so a bare
 `AAO_JS_LOCATION` never arrives. The run exits 0 when it found nothing, 1 when
 it found something, and 2 when it never started. Its evidence lands in
-`logs/chaos/<seed>/`.
+`logs/chaos/<seed>/`, which a second run of the same seed won't replace
+without `--overwrite`.
 
 A chaos launch passes `--chaos`, not `--uitesting`. Under it the app never
 leaves itself, never signs in, and sends nothing to Sentry. Its modules are
