@@ -35,6 +35,7 @@ class ModuleSettingsTests: UITestCase {
 		if strayAlert.waitForExistence(timeout: 2) {
 			strayAlert.tap()
 		}
+		settings.scrollIntoView(bigOle)
 		if !bigOle.isSelected {
 			settings.selectAppIcon(iconName: "Big Ole", springboard: springboard)
 		}

@@ -3,9 +3,19 @@ import XCTest
 struct SettingsScreen: Screen {
 	let app: XCUIApplication
 
+	/// The icon list is longer than the screen and its rows are realised lazily,
+	/// so a row selected earlier can sit off the screen -- and out of the tree --
+	/// by the time the next one is wanted. Looks down the list, then back up it.
+	func scrollIntoView(_ row: XCUIElement) {
+		let isReachable = { row.exists && row.isHittable }
+		for _ in 0..<8 where !isReachable() { app.swipeUp() }
+		for _ in 0..<16 where !isReachable() { app.swipeDown() }
+	}
+
 	@discardableResult
 	func selectAppIcon(iconName: String, springboard: XCUIApplication) -> Self {
 		let row = app.buttons[iconName]
+		scrollIntoView(row)
 		XCTAssertTrue(
 			row.waitForExistence(timeout: 10),
 			"\(iconName) row should be on screen before tapping it")
