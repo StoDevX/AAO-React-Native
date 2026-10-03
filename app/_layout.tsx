@@ -139,7 +139,14 @@ function RootLayout(): React.ReactNode {
 								}
 								name="directory/index"
 							/>
-							<Stack.Screen name="directory/named" options={DETAIL_SHEET} />
+							{/* Keyed by the contact, so a tap on another contact's tile opens a sheet of
+							    its own. Unkeyed, the tap reuses a sheet still on its way out, and the
+							    new contact leaves with it. */}
+							<Stack.Screen
+								dangerouslySingular={(_name, params) => String(params.title ?? '')}
+								name="directory/named"
+								options={DETAIL_SHEET}
+							/>
 							<Stack.Screen name="map" />
 							<Stack.Screen name="balances/index" options={{title: 'Balances'}} />
 							<Stack.Screen name="calendar/event" options={DETAIL_SHEET} />
