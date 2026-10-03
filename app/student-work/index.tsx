@@ -133,6 +133,7 @@ export default function StudentWorkPage(): React.ReactNode {
 									router.navigate({pathname: '/student-work/postings', params: preset.params})
 								}
 								title={preset.title}
+								titleLines={PRESET_TITLE_LINES}
 							/>
 						))}
 					</Section>
@@ -141,6 +142,11 @@ export default function StudentWorkPage(): React.ReactNode {
 		</>
 	)
 }
+
+/// Enough that no preset's title is cut off at any text size: the longest,
+/// "New since your last visit", wraps to three lines at AX5 on a 390pt-wide
+/// phone, so four leaves room for a narrower one.
+const PRESET_TITLE_LINES = 4
 
 const styles = StyleSheet.create({
 	host: {
