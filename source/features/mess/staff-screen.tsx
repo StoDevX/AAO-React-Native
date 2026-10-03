@@ -4,6 +4,7 @@ import {useSafeAreaInsets} from 'react-native-safe-area-context'
 import {Stack, useRouter} from 'expo-router'
 import {Host, HStack, List, ScrollView, Section, Text, VStack} from '@expo/ui/swift-ui'
 import {
+	accessibilityAddTraits,
 	font,
 	foregroundStyle,
 	frame,
@@ -20,16 +21,17 @@ import {FILL_WIDTH, SCREEN_MARGIN, TILE_SPACING} from '../../components/tile-lay
 import {PersonPhoto} from '../directory/person-photo'
 import {PersonTile} from '../directory/person-tile'
 import {groupStaff, photoSubjectOf} from './lib/staff'
-import {UnloadedPage} from './mess-page'
+import {MessPage, UnloadedPage} from './mess-page'
+import {PageMessage} from './page-notice'
 import {messStaffOptions} from './query'
 
-/** Names every tile of the staff directory, for a UI test. */
-export const STAFF_TILE_ID = 'mess-staff-tile'
+/** Begins the name of each tile of the staff directory, which ends in its profile's id, for a UI test. */
+export const STAFF_TILE_PREFIX = 'mess-staff-tile-'
 
 /** The photo on a person's page, at the college directory's width. */
 const PHOTO_WIDTH = 80
 
-const HEADING = [font({textStyle: 'headline'})]
+const HEADING = [font({textStyle: 'headline'}), accessibilityAddTraits(['isHeader'])]
 const NAME = [font({textStyle: 'title2', weight: 'semibold'}), foregroundStyle(c.label)]
 const ROLE = [font({textStyle: 'subheadline'}), foregroundStyle(c.secondaryLabel)]
 const BIO = [textSelection(true)]
@@ -60,7 +62,11 @@ export function StaffScreen(): React.ReactNode {
 	return (
 		<>
 			<Stack.Screen options={{title: 'Staff'}} />
-			{staff.data ? (
+			{staff.data?.length === 0 ? (
+				<MessPage onRefresh={() => staff.refetch()}>
+					<PageMessage text="The Messenger has listed no staff yet." />
+				</MessPage>
+			) : staff.data ? (
 				<Host matchContents={false} style={styles.grid}>
 					<ScrollView
 						modifiers={[
@@ -87,7 +93,7 @@ export function StaffScreen(): React.ReactNode {
 													})
 												}
 												person={photoSubjectOf(person)}
-												testID={STAFF_TILE_ID}
+												testID={`${STAFF_TILE_PREFIX}${person.id}`}
 												width={tileWidth}
 											/>
 										)}

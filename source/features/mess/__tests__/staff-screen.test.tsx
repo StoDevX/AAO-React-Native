@@ -62,8 +62,9 @@ describe('StaffScreen', () => {
 		queryClient.setQueryData(messKeys.staff, people)
 		await renderWithClient(<StaffScreen />)
 
-		expect(screen.getByText('Leadership')).toBeTruthy()
-		expect(screen.getByText('Copy Desk')).toBeTruthy()
+		// Headings, so VoiceOver's rotor can move between the groups.
+		expect(screen.getByRole('header', {name: 'Leadership'})).toBeTruthy()
+		expect(screen.getByRole('header', {name: 'Copy Desk'})).toBeTruthy()
 		expect(screen.getByRole('button', {name: 'Soren Gjesfjeld'})).toBeTruthy()
 		expect(screen.queryByText('Senior Reporter')).toBeNull()
 	})
@@ -78,6 +79,13 @@ describe('StaffScreen', () => {
 			pathname: '/messenger/staff/[id]',
 			params: {id: String(SOREN?.id)},
 		})
+	})
+
+	test('says so when the year lists nobody, rather than drawing an empty page', async () => {
+		queryClient.setQueryData(messKeys.staff, [])
+		await renderWithClient(<StaffScreen />)
+
+		expect(screen.getByText('The Messenger has listed no staff yet.')).toBeTruthy()
 	})
 
 	test('says the staff failed to load, and offers to try again', async () => {

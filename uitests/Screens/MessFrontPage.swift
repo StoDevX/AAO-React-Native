@@ -223,14 +223,16 @@ struct MessFrontPage: Screen {
 	}
 
 	/// Open the staff directory from the view menu, then the first person in it, and wait for
-	/// their page: titled with the name their tile showed, over their bio.
+	/// their page: titled with the name their tile showed, with their bio under About.
 	@discardableResult
 	func openFirstStaffMember() -> Self {
 		pickFromViewMenu(TestIdentifiers.News.staffMenuItem)
 		XCTAssertTrue(
 			viewMenu.waitForNonExistence(timeout: 30),
 			"Staff should open the directory on a page of its own")
-		let tile = app.buttons.matching(identifier: TestIdentifiers.News.staffTile).firstMatch
+		let tile = app.buttons
+			.matching(NSPredicate(format: "identifier BEGINSWITH %@", TestIdentifiers.News.staffTilePrefix))
+			.firstMatch
 		XCTAssertTrue(tile.waitForExistence(timeout: 30), "the directory should show the staff as tiles")
 		capture("The Messenger's staff directory")
 		XCTAssertTrue(tile.waitForHittable(), "a person's tile should be ready to tap")
@@ -240,12 +242,11 @@ struct MessFrontPage: Screen {
 		tile.tap()
 		let title = app.navigationBars.staticTexts[name].firstMatch
 		XCTAssertTrue(title.waitForExistence(timeout: 30), "tapping \(name) should open their page")
-		// A bio opens with the writer's name; the page's title and heading are the name alone.
-		let bio = app.staticTexts
-			.matching(NSPredicate(format: "label BEGINSWITH %@ AND label != %@", name, name))
-			.firstMatch
+		// The page decides to draw its About section when the person has a bio, as the fixture's
+		// first person does.
+		let bio = app.staticTexts[TestIdentifiers.News.staffBioHeading].firstMatch
 		capture("A staff member's page")
-		XCTAssertTrue(bio.waitForExistence(timeout: 10), "\(name)'s page should show a bio that names them")
+		XCTAssertTrue(bio.waitForExistence(timeout: 10), "\(name)'s page should show their bio under About")
 		return self
 	}
 

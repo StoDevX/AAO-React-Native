@@ -184,7 +184,7 @@ describe('messAboutOptions', () => {
 })
 
 describe('messStaffOptions', () => {
-	test('asks for the newest staff year, then everyone on it', async () => {
+	test('asks for the newest staff year with anyone on it, then everyone on it', async () => {
 		mockManifest.mockResolvedValue({links: []} as unknown as Jrd)
 		mockBody.mockImplementation((href) =>
 			Promise.resolve(href.includes('/staff_year') ? staffYears : staff),
@@ -194,7 +194,7 @@ describe('messStaffOptions', () => {
 
 		expect(people).toHaveLength(27)
 		expect(fetchedHrefs()).toStrictEqual([
-			'https://olafmessenger.com/wp-json/wp/v2/staff_year?per_page=100&_fields=id,name',
+			'https://olafmessenger.com/wp-json/wp/v2/staff_year?hide_empty=true&orderby=name&order=desc&per_page=1&_fields=id,name',
 			'https://olafmessenger.com/wp-json/wp/v2/staff_profile?staff_year=1147&per_page=100&_embed=wp:featuredmedia,wp:term&_fields=id,title,content,excerpt,featured_media,_links,_embedded',
 		])
 	})

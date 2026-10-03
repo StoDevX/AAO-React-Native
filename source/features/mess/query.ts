@@ -404,8 +404,10 @@ export const messStaffOptions = queryOptions({
 	queryFn: async ({signal}): Promise<StaffProfile[]> => {
 		// Assumes the resolved feed href is an absolute WordPress URL.
 		let origin = originOf(await feedHref())
+		// The newest year with anyone on it: a year the paper has made but not yet filled would
+		// otherwise hide last year's staff behind an empty page.
 		let years = await messFetch(
-			`${origin}/wp-json/wp/v2/staff_year?per_page=100&_fields=id,name`,
+			`${origin}/wp-json/wp/v2/staff_year?hide_empty=true&orderby=name&order=desc&per_page=1&_fields=id,name`,
 			signal,
 			'Olaf Messenger staff years',
 		)
