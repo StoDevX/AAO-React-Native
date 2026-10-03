@@ -17,18 +17,38 @@ struct AppIconScreen: Screen {
 		return self
 	}
 
-	/// An icon's tile, found by its title.
-	func icon(named iconName: String) -> XCUIElement {
-		gallery.buttons[iconName].firstMatch
+	/// The carousel's scroll view. The screen's identifier passes down to every
+	/// element inside it, so the carousel is found by what it holds.
+	var carousel: XCUIElement {
+		app.scrollViews
+			.containing(NSPredicate(format: "label == %@", TestIdentifiers.Customize.primaryIcon))
+			.firstMatch
 	}
 
-	/// The gallery is longer than the sheet and builds lazily, so a tile chosen
-	/// earlier can be off screen by the time the next one is wanted. Looks down
-	/// the gallery, then back up it.
+	/// An icon's preview in the carousel, found by its title.
+	func icon(named iconName: String) -> XCUIElement {
+		carousel.buttons[iconName].firstMatch
+	}
+
+	/// The button under the carousel, which reads Use This Icon or, for the
+	/// icon already applied, Current Icon.
+	var useButton: XCUIElement {
+		app.buttons
+			.matching(NSPredicate(format: "label IN %@", TestIdentifiers.Customize.useIconLabels))
+			.firstMatch
+	}
+
+	/// Whether `tile` sits in the middle of the carousel.
+	private func isCentred(_ tile: XCUIElement) -> Bool {
+		tile.exists && abs(tile.frame.midX - app.windows.firstMatch.frame.midX) < 20
+	}
+
+	/// Swipe the carousel until `tile` is in the middle: left first, since the
+	/// gallery opens on the current icon and most are after it, then back.
 	func scrollIntoView(_ tile: XCUIElement) {
-		let isReachable = { tile.exists && tile.isHittable }
-		for _ in 0..<8 where !isReachable() { gallery.swipeUp() }
-		for _ in 0..<16 where !isReachable() { gallery.swipeDown() }
+		let row = carousel
+		for _ in 0..<14 where !isCentred(tile) { row.swipeLeft(velocity: .slow) }
+		for _ in 0..<28 where !isCentred(tile) { row.swipeRight(velocity: .slow) }
 	}
 
 	@discardableResult
@@ -41,10 +61,11 @@ struct AppIconScreen: Screen {
 		// A coordinate tap goes to a screen point and asks no questions, so it
 		// would happily land on whatever covers a tile that is present in the
 		// tree but not actually reachable. Checking hittability first stops that.
-		XCTAssertTrue(tile.isHittable, "\(iconName) should be hittable")
+		XCTAssertTrue(isCentred(tile), "\(iconName) should be in the middle of the carousel")
+		XCTAssertTrue(useButton.isHittable, "Use This Icon should be hittable")
 
-		// Tap the tile's screen point through SpringBoard rather than tapping the
-		// tile itself. A tap on our own app does not return until that app
+		// Tap Use This Icon's screen point through SpringBoard rather than
+		// tapping the button itself. A tap on our own app does not return until that app
 		// signals it has gone quiet, and the icon-change alert this tap raises
 		// stops it doing so -- so the tap costs a full 60s quiescence timeout
 		// after having already landed. SpringBoard is quiet, and the point is
@@ -52,7 +73,7 @@ struct AppIconScreen: Screen {
 		//
 		// Read the frame first, while the app is still quiet and the query is
 		// cheap.
-		let target = tile.frame
+		let target = useButton.frame
 		springboard.coordinate(withNormalizedOffset: .zero)
 			.withOffset(CGVector(dx: target.midX, dy: target.midY))
 			.tap()
@@ -66,7 +87,7 @@ struct AppIconScreen: Screen {
 		// Wait rather than read once: the gallery learns the new icon back from
 		// the system asynchronously, so the trait lands a moment after the alert
 		// is gone.
-		let selected = gallery.buttons
+		let selected = carousel.buttons
 			.matching(NSPredicate(format: "label == %@ AND isSelected == true", iconName))
 			.firstMatch
 		XCTAssertTrue(

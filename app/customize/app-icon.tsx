@@ -8,6 +8,7 @@ import {
 	Host,
 	RNHostView,
 	Section,
+	Spacer,
 	Text,
 	VStack,
 } from '@expo/ui/swift-ui'
@@ -18,17 +19,21 @@ import {
 	buttonStyle,
 	font,
 	frame,
+	padding,
 } from '@expo/ui/swift-ui/modifiers'
 import {Stack} from 'expo-router'
 import * as c from '@frogpond/colors'
 
 import {type AppIconName, previewsFor} from '../../images/icons'
 import {type IconEntry, iconsByGroup} from '../../source/features/customize/icons'
+import {IconCarousel} from '../../source/features/customize/icon-carousel'
 import {useAppIcon} from '../../source/features/customize/use-app-icon'
 
 /// Three tiles fit across an iPhone 17e's inset section with room for captions.
 const TILE = 76
 const COLUMNS = 3
+/// Which gallery to show while the carousel is on trial; see the plan's Task 5 gate.
+const GALLERY: 'carousel' | 'grid' = 'carousel'
 /// The ring around the current icon, and the gap between it and the artwork.
 const RING_WIDTH = 2.5
 const RING_GAP = 2
@@ -69,13 +74,20 @@ export default function AppIconPage(): React.ReactNode {
 		<>
 			<Stack.Title>App Icon</Stack.Title>
 			<Host style={styles.host} modifiers={[accessibilityIdentifier('screen-app-icon')]}>
-				<Form>
-					{iconsByGroup().map(({group, icons}) => (
-						<Section key={group} title={group}>
-							<IconGrid current={current.type} icons={icons} onChoose={apply} />
-						</Section>
-					))}
-				</Form>
+				{GALLERY === 'carousel' ? (
+					<VStack modifiers={[padding({vertical: 24})]}>
+						<IconCarousel current={current} onApply={apply} />
+						<Spacer />
+					</VStack>
+				) : (
+					<Form>
+						{iconsByGroup().map(({group, icons}) => (
+							<Section key={group} title={group}>
+								<IconGrid current={current.type} icons={icons} onChoose={apply} />
+							</Section>
+						))}
+					</Form>
+				)}
 			</Host>
 		</>
 	)
