@@ -77,7 +77,9 @@ export const useRadioStore = create<RadioStore>()(
 					if (fromCurrentPlayer(key)) set({playState: 'playing'})
 				},
 				reportStopped: (key) => {
-					if (fromCurrentPlayer(key)) get().stop()
+					// A player that has failed pauses once the store asks it to stop;
+					// that pause must not unload the station and hide why it failed.
+					if (fromCurrentPlayer(key) && get().error === null) get().stop()
 				},
 				reportError: (key, error) => {
 					if (fromCurrentPlayer(key)) set({error, playState: 'stopped'})

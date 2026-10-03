@@ -648,6 +648,7 @@ struct TestIdentifiers {
 		/// The player's bottom row, as VoiceOver names it.
 		static let krlxActions = [
 			"Call 88.1 KRLX-FM",
+			"Chat with 88.1 KRLX-FM",
 			"Today's schedule",
 		]
 		/// The full player's stand-in for a scrubber, which shows only at full size.

@@ -106,6 +106,7 @@ export const STATIONS: Record<StationId, Station> = {
 		],
 		playerUrl: 'https://live.krlx.org',
 		scheduleHref: '/krlx-schedule',
+		chatUrl: 'https://minnit.chat/KRLX',
 		source: {
 			useEmbeddedPlayer: false,
 			embeddedPlayerUrl: 'https://live.krlx.org',

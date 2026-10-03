@@ -74,6 +74,13 @@ describe('playback', () => {
 		expect(useRadioStore.getState()).toMatchObject({playState: 'starting', error: null})
 	})
 
+	test('the failed player pausing itself afterwards keeps the error on show', () => {
+		useRadioStore.getState().play('krlx')
+		useRadioStore.getState().reportError(1, ERROR)
+		useRadioStore.getState().reportStopped(1)
+		expect(useRadioStore.getState()).toMatchObject({stationId: 'krlx', error: ERROR})
+	})
+
 	test('an error stops the station but keeps it loaded, to retry', () => {
 		useRadioStore.getState().play('krlx')
 		useRadioStore.getState().reportError(1, ERROR)

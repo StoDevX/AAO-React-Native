@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {StyleSheet, View} from 'react-native'
+import {ScrollView, StyleSheet} from 'react-native'
 import {BottomSheet, Group, Host, Rectangle, RNHostView, ZStack} from '@expo/ui/swift-ui'
 import {
 	Animation,
@@ -75,7 +75,9 @@ export function RadioNowPlayingSheet(): React.ReactNode {
 						/>
 						{/* React Native lays the player out, at the sheet's own size. */}
 						<RNHostView>
-							<View style={styles.content}>
+							{/* Scrolls when large text or a small phone needs more room than
+							    the detent gives; otherwise it fits and stays put. */}
+							<ScrollView contentContainerStyle={styles.content}>
 								<PaletteContext.Provider value={large ? ON_FILL_PALETTE : SYSTEM_PALETTE}>
 									{large ? (
 										<FullLayout
@@ -97,7 +99,7 @@ export function RadioNowPlayingSheet(): React.ReactNode {
 										/>
 									)}
 								</PaletteContext.Provider>
-							</View>
+							</ScrollView>
 						</RNHostView>
 					</ZStack>
 				</Group>
@@ -108,6 +110,6 @@ export function RadioNowPlayingSheet(): React.ReactNode {
 
 const styles = StyleSheet.create({
 	content: {
-		flex: 1,
+		flexGrow: 1,
 	},
 })
