@@ -1,5 +1,18 @@
 import XCTest
 
+/// What came of trying to leave a screen with nothing to press.
+enum ChaosEscape: Equatable {
+	/// The screen had something to press after all, so nothing was tried.
+	case notTrapped
+	/// An escape changed the screen.
+	case escaped
+	/// Every escape left the screen as it was; it was trapped in this
+	/// orientation.
+	case stuck(trappedIn: String)
+	/// The app crashed or stopped answering while the monkey tried to leave.
+	case stopped(ChaosStop)
+}
+
 /// Drives the app at random from a seed, checking the oracles after each step.
 final class ChaosMonkey {
 	private unowned let test: UITestCaseUnbooted
@@ -21,6 +34,9 @@ final class ChaosMonkey {
 	/// reliably report it after a relaunch or a trip to the home screen, so a
 	/// seed turns the same way on every run.
 	private var orientation: UIDeviceOrientation = .portrait
+	/// The orientation a hang was trapped in, before the escapes turned the
+	/// device to portrait; nil unless every escape failed.
+	private var hangOrientation: String?
 
 	private var app: XCUIApplication { test.app }
 	private let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
@@ -105,9 +121,7 @@ final class ChaosMonkey {
 			}
 			return field
 		case .back:
-			if !tapBackButton() && !dismissSheet(on: observation) {
-				swipeFromLeftEdge()
-			}
+			goBack(on: observation)
 			return nil
 		case .openRoute:
 			let route = ChaosRoutes.all.randomElement(using: &random)!
@@ -133,6 +147,14 @@ final class ChaosMonkey {
 			orientation = orientation == .portrait ? .landscapeLeft : .portrait
 			pauseHangClock { applyOrientation() }
 			return nil
+		}
+	}
+
+	/// Leaves the screen as a person would: the bar's Back button, else the
+	/// topmost sheet dragged down, else a swipe in from the left edge.
+	func goBack(on observation: ChaosObservation) {
+		if !tapBackButton() && !dismissSheet(on: observation) {
+			swipeFromLeftEdge()
 		}
 	}
 
@@ -168,45 +190,92 @@ final class ChaosMonkey {
 
 	// MARK: - Escapes
 
-	/// Tries each way a person might leave the screen, stopping at the first
-	/// that changes it, and warns that the screen offered no visible way out.
-	/// Draws nothing from `random`, so a run's later steps do not shift.
+	/// Tries each way a person might leave a screen with nothing to press,
+	/// stopping at the first that changes it, and warns that the screen
+	/// offered no visible way out. Draws nothing from `random`, so a run's
+	/// later steps do not shift.
 	///
-	/// Rotating to portrait comes first but is not judged alone: an iPhone
-	/// form sheet in landscape fills the screen with no grabber and ignores a
-	/// drag down, and rotating only gives it back the grabber to drag.
-	@discardableResult
-	func escapeTrap() -> Bool {
-		guard case .success(let trapped) = ChaosOracle(app: app).observe() else { return false }
+	/// It first photographs the trapped screen, then turns the device to
+	/// portrait: an iPhone form sheet in landscape fills the screen with no
+	/// grabber and ignores a drag down, and rotating gives it back the
+	/// grabber to drag. Each escape is judged against the screen just before
+	/// it, so rotating is never credited to the escape that follows. When the
+	/// trap is a sheet, an escape works only if the sheet goes or the screen's
+	/// signature changes; otherwise a changed signature, or something to
+	/// press where there was nothing, will do.
+	func escapeTrap() -> ChaosEscape {
+		let trapped: ChaosObservation
+		switch ChaosOracle(app: app).observe() {
+		case .failure(let stop): return .stopped(stop)
+		case .success(let observed): trapped = observed
+		}
+		// The screen finished loading after the hang check looked.
+		guard trapped.targets.isEmpty else { return .notTrapped }
+
 		let trappedIn = Self.name(appIsLandscape)
+		let screen = XCTAttachment(screenshot: XCUIScreen.main.screenshot())
+		screen.name = "chaos trapped screen (\(trappedIn))"
+		screen.lifetime = .keepAlways
+		test.add(screen)
+
 		let escapes: [(ChaosObservation) -> Void] = [
 			{ _ = self.dismissSheet(on: $0) },
 			{ _ in _ = self.tapBackButton() },
 			{ _ in self.swipeFromLeftEdge() },
 		]
-		var escaped = false
+		var outcome = ChaosEscape.stuck(trappedIn: trappedIn)
 		pauseHangClock {
 			// Set whatever the monkey believes: a caller may have turned the
 			// device without it.
 			orientation = .portrait
 			applyOrientation()
 			for escape in escapes {
-				guard case .success(let before) = ChaosOracle(app: app).observe() else { continue }
+				if let crash = crashStop() {
+					outcome = .stopped(crash)
+					return
+				}
+				let before: ChaosObservation
+				switch ChaosOracle(app: app).observe() {
+				case .failure(let stop):
+					outcome = .stopped(stop)
+					return
+				case .success(let observed): before = observed
+				}
 				escape(before)
 				Thread.sleep(forTimeInterval: 1)
-				guard case .success(let after) = ChaosOracle(app: app).observe() else { continue }
-				if after.signature != trapped.signature || !after.targets.isEmpty
-					|| (trapped.sheet != nil && after.sheet == nil)
-				{
-					escaped = true
+				if let crash = crashStop() {
+					outcome = .stopped(crash)
+					return
+				}
+				let after: ChaosObservation
+				switch ChaosOracle(app: app).observe() {
+				case .failure(let stop):
+					outcome = .stopped(stop)
+					return
+				case .success(let observed): after = observed
+				}
+				let changed = after.signature != before.signature
+				let left = trapped.sheet != nil
+					? changed || after.sheet == nil
+					: changed || (before.targets.isEmpty && !after.targets.isEmpty)
+				if left {
+					outcome = .escaped
 					return
 				}
 			}
 		}
-		if escaped {
+		if outcome == .escaped {
 			warnings.append("no escape hatch: \(trapped.signature) (\(trappedIn))")
 		}
-		return escaped
+		return outcome
+	}
+
+	/// A stop if the app is no longer running.
+	private func crashStop() -> ChaosStop? {
+		switch app.state {
+		case .notRunning, .unknown: ChaosStop("native crash: the app is not running")
+		default: nil
+		}
 	}
 
 	/// Turns the device to `orientation` and waits for the app to follow, so
@@ -287,12 +356,19 @@ final class ChaosMonkey {
 
 		if observation.targets.isEmpty {
 			if Date().timeIntervalSince(lastTargetsSeen) > 15 {
-				guard escapeTrap() else { return ChaosStop("hang: nothing to press for 15 seconds") }
-				// The escape changed the screen, so this observation is stale.
-				lastTargetsSeen = Date()
-				backsWithoutChange = 0
-				lastSignature = ""
-				return nil
+				switch escapeTrap() {
+				case .stopped(let stop):
+					return stop
+				case .stuck(let trappedIn):
+					hangOrientation = trappedIn
+					return ChaosStop("hang: nothing to press for 15 seconds")
+				case .escaped, .notTrapped:
+					// The screen changed, so this observation is stale.
+					lastTargetsSeen = Date()
+					backsWithoutChange = 0
+					lastSignature = ""
+					return nil
+				}
 			}
 		} else {
 			lastTargetsSeen = Date()
@@ -346,7 +422,8 @@ final class ChaosMonkey {
 
 	/// Records the stop with a screenshot taken now: the teardown block turns
 	/// the device back to portrait before XCTest photographs a failure, so
-	/// that picture would not show a landscape stop as it was.
+	/// that picture would not show a landscape stop as it was. A hang names
+	/// the orientation it was trapped in, which its escapes have since undone.
 	private func fail(_ stop: ChaosStop, step: Int) {
 		stopReason = stop.reason
 		let shown = Self.name(app.state == .runningForeground ? appIsLandscape : orientation.isLandscape)
@@ -354,7 +431,7 @@ final class ChaosMonkey {
 		screen.name = "chaos stop screen (\(shown))"
 		screen.lifetime = .keepAlways
 		test.add(screen)
-		XCTFail("chaos seed \(seed) stopped at step \(step) in \(shown): \(stop.reason)")
+		XCTFail("chaos seed \(seed) stopped at step \(step) in \(hangOrientation ?? shown): \(stop.reason)")
 	}
 
 	private func attachLogs() {

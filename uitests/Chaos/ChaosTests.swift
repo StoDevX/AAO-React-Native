@@ -60,17 +60,48 @@ final class ChaosCanaryTests: UITestCaseUnbooted {
 		XCTAssertEqual(silence?.reason, "probe silent: no \(TestIdentifiers.Chaos.beacon) element")
 	}
 
-	func testEscapesASheetInPortrait() {
-		assertEscapesTheSheetTrap(in: .portrait)
+	/// In portrait the sheet's grabber is something to press, so it is no
+	/// trap; Back drags the sheet away by it.
+	func testBackLeavesASheetInPortrait() {
+		let trap = openSheetTrap(in: .portrait)
+		let monkey = ChaosMonkey(test: self, seed: 1, replay: false, faultRate: "0")
+		XCTAssertEqual(monkey.escapeTrap(), .notTrapped, "a sheet with a grabber is not a trap")
+		XCTAssertEqual(monkey.warnings, [], "nothing was escaped, so nothing should be reported")
+
+		// The empty preview's text is there while the sheet is still rising,
+		// and a drag from where the grabber was misses it.
+		var observation: ChaosObservation?
+		let settled = Date().addingTimeInterval(5)
+		while Date() < settled {
+			guard case .success(let observed) = ChaosOracle(app: app).observe() else { break }
+			if let grabber = observed.grabber, grabber == observation?.grabber { break }
+			observation = observed
+			Thread.sleep(forTimeInterval: 0.5)
+		}
+		guard let observation, observation.grabber != nil else {
+			return XCTFail("the oracle should see the sheet's grabber")
+		}
+		monkey.goBack(on: observation)
+
+		assertSheetIsGone(trap)
 	}
 
 	/// An iPhone form sheet fills the screen in landscape and draws no
 	/// grabber, so the monkey has to rotate before it can leave.
 	func testEscapesASheetInLandscape() {
-		assertEscapesTheSheetTrap(in: .landscapeLeft)
+		let trap = openSheetTrap(in: .landscapeLeft)
+		let monkey = ChaosMonkey(test: self, seed: 1, replay: false, faultRate: "0")
+		XCTAssertEqual(monkey.escapeTrap(), .escaped, "an escape should have changed the screen")
+
+		assertSheetIsGone(trap)
+		XCTAssertTrue(
+			monkey.warnings.contains { $0.hasPrefix("no escape hatch: ") && $0.hasSuffix("(landscape)") },
+			"the monkey should report the sheet as having no escape hatch, got \(monkey.warnings)")
 	}
 
-	private func assertEscapesTheSheetTrap(in orientation: UIDeviceOrientation) {
+	/// Opens the Dictionary's empty preview, a sheet with no Back or Close
+	/// button, in `orientation`, and returns its text.
+	private func openSheetTrap(in orientation: UIDeviceOrientation) -> XCUIElement {
 		addTeardownBlock { XCUIDevice.shared.orientation = .portrait }
 		configureForChaos(seed: 1, launch: 0, replay: false, faultRate: "0", resetState: true)
 		app.open(URL(string: "AllAboutOlaf://\(TestIdentifiers.Chaos.sheetTrapRoute)")!)
@@ -86,18 +117,14 @@ final class ChaosCanaryTests: UITestCaseUnbooted {
 		XCTAssertEqual(
 			frame.width > frame.height, orientation.isLandscape,
 			"the app should have rotated to \(orientation.rawValue), but its frame is \(frame)")
+		return trap
+	}
 
-		let monkey = ChaosMonkey(test: self, seed: 1, replay: false, faultRate: "0")
-		let escaped = monkey.escapeTrap()
-
-		XCTAssertTrue(trap.waitForNonExistence(timeout: 5), "the monkey's escapes left the sheet up")
-		XCTAssertTrue(
-			app.descendants(matching: .any)[TestIdentifiers.Home.screen].exists,
-			"Home should be under the sheet the monkey left")
-		XCTAssertTrue(escaped, "the escape routine should report the screen it changed")
-		let orientationName = orientation.isLandscape ? "landscape" : "portrait"
-		XCTAssertTrue(
-			monkey.warnings.contains { $0.hasPrefix("no escape hatch: ") && $0.hasSuffix("(\(orientationName))") },
-			"the monkey should report the sheet as having no escape hatch, got \(monkey.warnings)")
+	private func assertSheetIsGone(_ trap: XCUIElement) {
+		XCTAssertTrue(trap.waitForNonExistence(timeout: 5), "the monkey left the sheet up")
+		guard case .success(let observation) = ChaosOracle(app: app).observe() else {
+			return XCTFail("the screen under the sheet should give a snapshot")
+		}
+		XCTAssertNil(observation.sheet, "no sheet should be presented once the monkey has left it")
 	}
 }

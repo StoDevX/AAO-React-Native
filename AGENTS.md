@@ -271,8 +271,10 @@ The run exits with:
 Each run writes `logs/chaos/<seed>/`: the step log, with the orientation the
 monkey set at each step; `chaos stop screen`, a screenshot taken as it stopped
 and named for its orientation — XCTest's own failure screenshot comes after the
-device is turned back to portrait; and `chaos-stop.txt` — why the monkey stopped, absent when it used up its
-budget — among the `attachments/`; every response the app received in
+device is turned back to portrait; `chaos trapped screen`, the screen it
+photographed before trying to leave one with nothing to press; and
+`chaos-stop.txt` — why the monkey stopped, absent when it used up its budget —
+among the `attachments/`; every response the app received in
 `chaos-tape.jsonl`; what the probe saw in `chaos-findings.jsonl`; and the exit
 code, message and stop reason in `outcome.json`. A fatal raised under a modal
 can slip past the beacon, so the findings file is read at the end of every run
@@ -288,7 +290,8 @@ the recorded reason, `not reproduced` when it takes every recorded step
 without stopping or stops for another reason, `not reached` when its budget
 ends first, and `diverged at step K` when it does something the recording did
 not. Timing and anything outside JS `fetch` (images, WebViews, map tiles) can
-still differ.
+still differ. A recording made before steps logged their `orientation` reports
+`diverged at step 0`.
 
 A chaos launch passes `--chaos`, not `--uitesting`, so features fetch live.
 Under it the app never opens a URL, composes an email, or adds a calendar
@@ -301,9 +304,9 @@ drags the topmost sheet down by its grabber or top edge, taps Back, and swipes
 from the left edge. When one works it carries on, logging `no escape hatch` in
 `chaos-warnings.txt`: a screen a person can't visibly leave. An iPhone form
 sheet in landscape fills the screen, draws no grabber and ignores a drag down,
-so only rotating frees it. The oracle's beacon
-view sits at opacity 0.02, not 0, because iOS drops a fully transparent view
-from the accessibility tree XCUITest reads. `app/_layout.tsx` imports the
+so only rotating frees it. The oracle's beacon view sits at opacity 0.02, not
+0, because iOS drops a fully transparent view from the accessibility tree
+XCUITest reads. `app/_layout.tsx` imports the
 chaos modules statically, first: the import order is what wraps `fetch`
 before anything fetches, so a normal launch evaluates them too, and they do
 nothing without `--chaos`.

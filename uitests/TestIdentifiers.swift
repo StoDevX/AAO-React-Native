@@ -88,8 +88,10 @@ struct TestIdentifiers {
 		/// whatever the label. Both a system back button and an app-provided
 		/// one read `Back`, so the identifier is what separates them.
 		static let systemBackButton = "BackButton"
-		/// The label UIKit gives a sheet's grabber, which it exposes as a button.
-		/// A form sheet on an iPhone in landscape fills the screen and has none.
+		/// The label UIKit gives a sheet's grabber, which it exposes as a button
+		/// with no identifier. Its element is the sheet's child, which is how a
+		/// sheet's own box is found. A form sheet on an iPhone in landscape
+		/// fills the screen and has none.
 		static let sheetGrabber = "Sheet Grabber"
 	}
 
@@ -285,10 +287,6 @@ struct TestIdentifiers {
 		static let osmCredit = "© OpenStreetMap contributors"
 		/// The map screen's title, which its header no longer draws.
 		static let stolafTitle = "St. Olaf Map"
-		/// UIKit's own drag indicator on the presented sheet, found by label --
-		/// it carries no identifier. Its element is the sheet's child, which is
-		/// how the sheet's own box is found.
-		static let sheetGrabber = "Sheet Grabber"
 		/// A St. Olaf-only building near the top of the list, so the expanded
 		/// sheet shows it without scrolling -- and absent from Carleton's map
 		/// data, so selecting it is what would fail if the map's campus parameter
