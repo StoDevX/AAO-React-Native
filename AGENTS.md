@@ -143,7 +143,7 @@ The app icons are Icon Composer documents in `assets/*.icon`. `ios.icon` in
 `plugins/with-alternate-icons.ts` bundles the rest as alternates. Each
 alternate's file name is the name `react-native-change-icon` switches to.
 
-The Settings picker and the Credits screen show PNG previews of each icon,
+Customize's App Icon gallery and the About screen show PNG previews of each icon,
 kept in `images/icons/`. Regenerate them after editing an `.icon`:
 
 ```bash

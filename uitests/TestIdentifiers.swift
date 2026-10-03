@@ -758,8 +758,26 @@ struct TestIdentifiers {
 
 	enum Settings {
 		static let enableDevMode = "Enable dev mode"
-		/// The slim Settings form's host, set in app/settings/index.tsx.
-		static let screen = "screen-settings"
+	}
+
+	// MARK: - About
+
+	enum About {
+		/// The story's page dots, labelled in source/features/about/card-carousel.tsx.
+		static let pageDots = "Page"
+		/// The About screen's host, set in app/about/index.tsx.
+		static let screen = "screen-about"
+		static let version = "App Version"
+		/// A section header in app/about/index.tsx.
+		static let storyHeading = "Our story"
+		/// The headings of the first two timeline cards, from source/features/about/timeline.ts.
+		static let firstEra = "🏡 October 2017 — Today"
+		static let secondEra = "🧱 July 2016 — September 2017"
+		/// The credits cards' headings, from app/about/index.tsx.
+		static let contributors = "Contributors"
+		static let acknowledgements = "Acknowledgements"
+		static let privacy = "Privacy"
+		static let legal = "Legal"
 	}
 
 	// MARK: - Support

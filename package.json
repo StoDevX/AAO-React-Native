@@ -27,6 +27,7 @@
     "@frogpond/food-menu": "workspace:*",
     "@frogpond/html-content": "workspace:*",
     "@frogpond/html-lib": "workspace:*",
+    "@frogpond/hyphenated-text": "workspace:*",
     "@frogpond/launch-arguments": "workspace:*",
     "@frogpond/layout": "workspace:*",
     "@frogpond/lists": "workspace:*",

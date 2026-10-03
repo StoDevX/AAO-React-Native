@@ -4,6 +4,9 @@
 enum ChaosRoutes {
 	static let all = [
 		"",
+		"about",
+		"about/legal",
+		"about/privacy",
 		"athletics",
 		"balances",
 		"cafes/stav-hall",
@@ -74,9 +77,6 @@ enum ChaosRoutes {
 		"print-jobs/[jobId]/printers",
 		"print-jobs/[jobId]/release",
 		"settings",
-		"settings/credits",
-		"settings/legal",
-		"settings/privacy",
 		"settings/report-problem",
 		"st-olaf-news",
 		"streaming-media",

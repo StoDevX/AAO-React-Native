@@ -101,7 +101,7 @@ change behaviour: a `useState` initialiser seeded from loaded data (React
 only evaluates it on first mount), or the screen's own ungated `useQuery`
 calls that must not fire until the loader's data resolves. See
 `app/hours/detail/report.tsx` for the reference three-component
-shape, and `app/settings/credits.tsx` for the simple chrome-plus-body shape.
+shape, and `app/about/privacy.tsx` for the simple chrome-plus-body shape.
 
 **Nothing may be added to `app/` that is not a route.** Every `.ts`/`.tsx`
 file under `app/` becomes a route in expo-router 57 — no test files, no
@@ -180,8 +180,8 @@ Any `.navigate(literal)` call site needs
 ## Common Patterns and Best Practices
 
 ### Screen Naming Conventions
-- Route files and folders are kebab-case (`credits.tsx`,
-  `course-search/results/index.tsx`), and so are their URLs (`/settings/credits`).
+- Route files and folders are kebab-case (`privacy.tsx`,
+  `course-search/results/index.tsx`), and so are their URLs (`/about/privacy`).
   A dynamic segment is bracketed (`detail/[name].tsx`).
 - Support files under `source/features/` are kebab-case
 - Component names inside a route file follow the `ScreenNamePage` /
@@ -239,7 +239,7 @@ If you encounter issues:
 ## Examples
 
 See existing routes for reference implementations:
-- `app/settings/credits.tsx` — simple chrome-plus-body screen, no data loading
+- `app/about/privacy.tsx` — simple chrome-plus-body screen, no data loading
 - `app/directory/named/[title].tsx` — chrome spliced into each branch of a query
 - `app/hours/detail/report.tsx` — the full three-component shape (chrome, loader, view)
 - `source/features/home/` — the home screen's support components
