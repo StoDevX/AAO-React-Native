@@ -46,6 +46,7 @@ export function parseChaosArgs(argv) {
 		faultRate: '0.25',
 		replay: null,
 		prebuilt: false,
+		overwrite: false,
 	}
 	for (let i = 0; i < argv.length; i++) {
 		let flag = argv[i]
@@ -71,6 +72,9 @@ export function parseChaosArgs(argv) {
 				break
 			case '--prebuilt':
 				options.prebuilt = true
+				break
+			case '--overwrite':
+				options.overwrite = true
 				break
 			default:
 				throw new Error(`unknown flag ${flag}`)
@@ -119,6 +123,20 @@ export function chaosOutputDir(options) {
 		throw new Error(`replay the original run, ${join('logs', 'chaos', seed)}, not its replay`)
 	}
 	return out
+}
+
+/**
+ * Refuses to record into `out` when an earlier run of the seed left evidence
+ * there, since a run starts by clearing its directory. `--overwrite` allows
+ * it. A replay's directory is always safe to clear: the run it replays is
+ * kept elsewhere and can be replayed again.
+ */
+export function checkOutputDir({options, out, exists}) {
+	if (exists && !options.replay && !options.overwrite) {
+		throw new Error(
+			`${out} already holds a run of seed ${options.seed}; pass --overwrite to replace it, or replay it with --replay ${out}`,
+		)
+	}
 }
 
 /** The run's settings, as the variables xcodebuild hands the test runner. */

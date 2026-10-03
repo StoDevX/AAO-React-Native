@@ -3,6 +3,7 @@ import {test} from 'node:test'
 
 import {
 	chaosOutputDir,
+	checkOutputDir,
 	firstDivergence,
 	jsSourceProblem,
 	parseChaosArgs,
@@ -31,6 +32,7 @@ test('defaults to a random seed, 10 minutes and 0.25', () => {
 	assert.equal(options.duration, 600)
 	assert.equal(options.faultRate, '0.25')
 	assert.equal(options.replay, null)
+	assert.equal(options.overwrite, false)
 })
 
 test('reads every flag', () => {
@@ -45,8 +47,17 @@ test('reads every flag', () => {
 			'--fault-rate',
 			'0.5',
 			'--prebuilt',
+			'--overwrite',
 		]),
-		{seed: 42, steps: 100, duration: 1200, faultRate: '0.5', replay: null, prebuilt: true},
+		{
+			seed: 42,
+			steps: 100,
+			duration: 1200,
+			faultRate: '0.5',
+			replay: null,
+			prebuilt: true,
+			overwrite: true,
+		},
 	)
 })
 
@@ -98,6 +109,39 @@ test('refuses a replay directory ending -replay in any case, on a case-insensiti
 		() => chaosOutputDir({seed: 1234, replay: 'logs/chaos/1234-REPLAY'}),
 		/logs\/chaos\/1234/u,
 	)
+})
+
+test('refuses to record over an earlier run of the seed, naming it and --overwrite', () => {
+	assert.throws(
+		() =>
+			checkOutputDir({
+				options: {seed: 42, replay: null, overwrite: false},
+				out: 'logs/chaos/42',
+				exists: true,
+			}),
+		(error) => error.message.includes('logs/chaos/42') && error.message.includes('--overwrite'),
+	)
+})
+
+test('records into a new directory, or over an old one with --overwrite', () => {
+	checkOutputDir({
+		options: {seed: 42, replay: null, overwrite: false},
+		out: 'logs/chaos/42',
+		exists: false,
+	})
+	checkOutputDir({
+		options: {seed: 42, replay: null, overwrite: true},
+		out: 'logs/chaos/42',
+		exists: true,
+	})
+})
+
+test('replays over an earlier replay without --overwrite', () => {
+	checkOutputDir({
+		options: {seed: 42, replay: 'logs/chaos/42', overwrite: false},
+		out: 'logs/chaos/42-replay',
+		exists: true,
+	})
 })
 
 test('refuses an unknown flag', () => {

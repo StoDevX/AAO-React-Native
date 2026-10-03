@@ -23,6 +23,11 @@ That runs a random seed for ten minutes and writes everything it saw to
 | `--fault-rate <0–1>` | Share of requests to break (default `0.25`) |
 | `--replay logs/chaos/<seed>` | Replay a run against its recorded responses |
 | `--prebuilt` | Skip the build when nothing native changed |
+| `--overwrite` | Record over an earlier run of the same seed |
+
+A run refuses to record into a `logs/chaos/<seed>/` that already exists, so
+re-running a seed never deletes the evidence of the last one; pass
+`--overwrite` to replace it. A replay's `<seed>-replay/` is replaced freely.
 
 **The `TEST_RUNNER_` prefix is required.** `xcodebuild` passes the test only
 variables with that prefix, and strips it on the way in, so a bare

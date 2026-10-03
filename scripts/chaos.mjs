@@ -17,6 +17,7 @@ import {join} from 'node:path'
 
 import {
 	chaosOutputDir,
+	checkOutputDir,
 	parseChaosArgs,
 	replayVerdict,
 	jsSourceProblem,
@@ -49,6 +50,7 @@ try {
 function main() {
 	let options = parseChaosArgs(process.argv.slice(2))
 	let out = chaosOutputDir(options)
+	checkOutputDir({options, out, exists: existsSync(out)})
 
 	// A replay only reads the run it replays, so read all of it up front.
 	let recorded = options.replay
