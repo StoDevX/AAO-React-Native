@@ -162,13 +162,10 @@ struct StreamingMediaScreen: Screen {
 		return self
 	}
 
-	/// Turn Home's "Show Radio Player" switch, scrolling down to it first.
+	/// Turn Customize's Radio Player switch, then close the sheet.
 	@discardableResult
 	func toggleShowRadioPlayer() -> Self {
-		let toggle = app.switches[TestIdentifiers.StreamingMedia.showRadioPlayer]
-		scrollUntilExists(toggle)
-		XCTAssertTrue(toggle.waitForExistence(timeout: 10), "Home should offer the Show Radio Player switch")
-		toggle.tap()
+		HomeScreen(app: app).openCustomize().toggleRadioPlayer().close()
 		return self
 	}
 

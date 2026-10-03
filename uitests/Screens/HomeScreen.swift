@@ -33,6 +33,14 @@ struct HomeScreen: Screen {
 	}
 
 	@discardableResult
+	func openCustomize() -> CustomizeScreen {
+		let button = app.buttons[TestIdentifiers.Navigation.customizeButton]
+		XCTAssertTrue(button.waitForExistence(timeout: 10), "Home should have a Customize button")
+		button.tap()
+		return CustomizeScreen(app: app).checkOpen()
+	}
+
+	@discardableResult
 	func openSettings() -> Self {
 		let menu = app.buttons[TestIdentifiers.Navigation.homeMenu]
 		XCTAssertTrue(

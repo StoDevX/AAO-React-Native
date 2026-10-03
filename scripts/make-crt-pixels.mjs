@@ -1,6 +1,6 @@
 /**
  * Draw the pixel layer of the CRT Old Main icon: `pixels.png` (green) and
- * `pixels-amber.png` (amber, the dark appearance) in assets/old-main-crt.icon/.
+ * `pixels-amber.png` (amber, the dark appearance) in assets/old-main-retro.icon/.
  * Each is rendered from an SVG kept beside it in `source/`, so edit the screen
  * below, or the SVG in a design tool, and run this to redraw the PNGs.
  *
@@ -145,8 +145,8 @@ function round(n, places = 2) {
 }
 
 const P3_PROFILE = '/System/Library/ColorSync/Profiles/Display P3.icc'
-const ASSETS = join('assets', 'old-main-crt.icon', 'Assets')
-const SOURCE = join('assets', 'old-main-crt.icon', 'source')
+const ASSETS = join('assets', 'old-main-retro.icon', 'Assets')
+const SOURCE = join('assets', 'old-main-retro.icon', 'source')
 
 function main() {
 	mkdirSync(SOURCE, {recursive: true})

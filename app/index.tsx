@@ -8,10 +8,8 @@ import {
 	List,
 	RNHostView,
 	ScrollView,
-	Section,
 	Spacer,
 	Text,
-	Toggle,
 	VStack,
 } from '@expo/ui/swift-ui'
 import {
@@ -62,7 +60,6 @@ import {
 	NOW_PLAYING_BAR_CLEARANCE,
 	RadioNowPlayingBar,
 	useRadioBarVisible,
-	useRadioStore,
 } from '../source/features/streaming/radio'
 
 const styles = StyleSheet.create({
@@ -169,48 +166,12 @@ const BARE_ROW_MODIFIERS = [
 	listRowSeparator('hidden'),
 ]
 
-/** The inset-grouped row's corner radius, as a Settings section's. */
-const SWITCH_ROW_RADIUS = 26
-
-const switchRowShape = shapes.roundedRectangle({
-	cornerRadius: SWITCH_ROW_RADIUS,
-	roundedCornerStyle: 'continuous',
-})
-
-/**
- * Lets someone who never listens take the radio's bar off Home. Turning it
- * off also stops the radio. Streaming Media keeps its bar, so the radio is
- * still a tap away there, and a station started from it brings Home's bar
- * back while it plays.
- *
- * A row of a list is already a row, so there it draws as a bare switch rather
- * than inside a rounded row of its own.
- */
-function RadioPlayerSwitch({inList = false}: {inList?: boolean}): React.ReactNode {
-	let on = useRadioStore((state) => state.showOnHome)
-	let setOn = useRadioStore((state) => state.setShowOnHome)
-	return (
-		<Toggle
-			isOn={on}
-			label="Show Radio Player on Home"
-			modifiers={[
-				...(inList
-					? []
-					: [
-							padding({horizontal: 16, vertical: 11}),
-							background(c.secondarySystemGroupedBackground, switchRowShape),
-						]),
-				accessibilityIdentifier('show-radio-player'),
-			]}
-			onIsOnChange={setOn}
-		/>
-	)
-}
-
 /// Names the tiled home's tile grid.
 const HOME_GRID_ID = 'home-tile-grid'
 /// The menu in the navigation bar's corner, which `TestIdentifiers.Navigation.homeMenu` finds by name.
 const HOME_MENU_LABEL = 'Home menu'
+/// The paintbrush's label, which `TestIdentifiers.Navigation.customizeButton` finds it by.
+const CUSTOMIZE_LABEL = 'Customize'
 /// Names a group's header, for a UI test.
 const groupHeaderId = (group: string): string => `home-group-header-${group}`
 
@@ -290,6 +251,13 @@ export default function HomePage(): React.ReactNode {
 	return (
 		<>
 			<Stack.Title>All About Olaf</Stack.Title>
+			<Stack.Toolbar placement="left">
+				<Stack.Toolbar.Button
+					accessibilityLabel={CUSTOMIZE_LABEL}
+					icon="paintbrush"
+					onPress={() => router.navigate('/customize')}
+				/>
+			</Stack.Toolbar>
 			<Stack.Toolbar placement="right">
 				<Stack.Toolbar.Menu accessibilityLabel={HOME_MENU_LABEL} icon="ellipsis">
 					<Stack.Toolbar.Menu inline={true} palette={true} title="Layout">
@@ -342,9 +310,6 @@ export default function HomePage(): React.ReactNode {
 							<VStack modifiers={BARE_ROW_MODIFIERS}>
 								<UnofficialAppNotice />
 							</VStack>
-							<Section>
-								<RadioPlayerSwitch inList={true} />
-							</Section>
 							{/* Room to scroll the last of the list clear of the Now Playing bar. */}
 							{barVisible ? (
 								<Spacer
@@ -399,8 +364,6 @@ export default function HomePage(): React.ReactNode {
 								)}
 
 								<UnofficialAppNotice />
-
-								<RadioPlayerSwitch />
 							</VStack>
 						</VStack>
 					</ScrollView>

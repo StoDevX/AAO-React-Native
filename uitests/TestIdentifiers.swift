@@ -81,6 +81,8 @@ struct TestIdentifiers {
 		/// choice and Settings. Mirrors HOME_MENU_LABEL in app/index.tsx.
 		static let homeMenu = "Home menu"
 		static let settingsMenuItem = "Settings"
+		/// The paintbrush at Home's top-left corner. Mirrors CUSTOMIZE_LABEL in app/index.tsx.
+		static let customizeButton = "Customize"
     static let settingsSheetTitle = "Settings"
 		/// The label every back button carries. UIKit gives its own back
 		/// buttons this label too, so a query using it must be scoped to one
@@ -706,7 +708,7 @@ struct TestIdentifiers {
 		/// The Now Playing bar with no station loaded, on Home and in Streaming
 		/// Media's tab bar.
 		static let idleBar = "Not Playing"
-		/// Home's "Show Radio Player on Home" switch.
+		/// Customize's Radio Player switch.
 		static let showRadioPlayer = "show-radio-player"
 		/// KRLX has one logo, so nothing labelled with this may be a button.
 		static let krlxLogoPrefix = "88.1 KRLX-FM logo"
@@ -724,15 +726,29 @@ struct TestIdentifiers {
 	// MARK: - Quick Actions
 
 	enum QuickActions {
-		/// The picker's accessibility identifier, set in app/settings/quick-actions.tsx.
+		/// The picker's accessibility identifier, set in app/customize/quick-actions.tsx.
 		static let screen = "screen-quick-actions"
-		static let settingsRow = "Home Screen Quick Actions"
 		static let reset = "Reset to Defaults"
 		/// DEFAULT_QUICK_ACTIONS in source/features/quick-actions/destinations.ts.
 		static let defaults = ["Stav Menu", "Cage Menu", "Olaf Messenger", "Transit"]
 		static let cageMenu = "Cage Menu"
 		/// The tab Cage Menu opens, as Menus labels it.
 		static let cageTab = "The Cage"
+	}
+
+	// MARK: - Customize
+
+	enum Customize {
+		/// The sheet's host, set in app/customize/index.tsx.
+		static let screen = "screen-customize"
+		static let openLinksIn = "open-links-in"
+		static let quickActionsRow = "Quick Actions"
+		/// The App Icon row's identifier; its label also carries the current icon's name.
+		static let appIconRow = "app-icon-row"
+		/// The gallery's host, set in app/customize/app-icon.tsx.
+		static let appIconScreen = "screen-app-icon"
+		/// SheetCloseButton's label, in source/components/sheet-close-button.tsx.
+		static let close = "Close"
 	}
 
 	// MARK: - Settings

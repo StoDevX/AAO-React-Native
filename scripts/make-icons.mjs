@@ -25,9 +25,9 @@ const SCALE = 3
 
 /** The size in points each preview is drawn at. */
 const PREVIEWS = [
-	// The picker row's tile; ICON_SIZE in change-icon.tsx.
+	// The Customize sheet's App Icon row.
 	{suffix: 'icon', points: 28},
-	// AppLogo on the Credits screen.
+	// AppLogo on the Credits screen, and the App Icon gallery's 76pt tile.
 	{suffix: 'logo', points: 100},
 ]
 

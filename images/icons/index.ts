@@ -3,10 +3,10 @@ import constellationIconDark from './constellation-icon-dark.png'
 import constellationIcon from './constellation-icon.png'
 import constellationLogoDark from './constellation-logo-dark.png'
 import constellationLogo from './constellation-logo.png'
-import oldMainCrtIconDark from './old-main-crt-icon-dark.png'
-import oldMainCrtIcon from './old-main-crt-icon.png'
-import oldMainCrtLogoDark from './old-main-crt-logo-dark.png'
-import oldMainCrtLogo from './old-main-crt-logo.png'
+import oldMainRetroIconDark from './old-main-retro-icon-dark.png'
+import oldMainRetroIcon from './old-main-retro-icon.png'
+import oldMainRetroLogoDark from './old-main-retro-logo-dark.png'
+import oldMainRetroLogo from './old-main-retro-logo.png'
 import oldMainHillIconDark from './old-main-hill-icon-dark.png'
 import oldMainHillIcon from './old-main-hill-icon.png'
 import oldMainHillLogoDark from './old-main-hill-logo-dark.png'
@@ -49,9 +49,9 @@ import windmillLogoDark from './windmill-logo-dark.png'
 import windmillLogo from './windmill-logo.png'
 
 type Previews = {
-	/** The Settings picker's tile. */
+	/** The Customize sheet's App Icon row. */
 	icon: ImageSourcePropType
-	/** The Credits screen's logo. */
+	/** The Credits screen's logo, and the App Icon gallery's tile. */
 	logo: ImageSourcePropType
 }
 
@@ -73,9 +73,9 @@ export const appIcons = {
 		light: {icon: oldMainHillIcon, logo: oldMainHillLogo},
 		dark: {icon: oldMainHillIconDark, logo: oldMainHillLogoDark},
 	},
-	'old-main-crt': {
-		light: {icon: oldMainCrtIcon, logo: oldMainCrtLogo},
-		dark: {icon: oldMainCrtIconDark, logo: oldMainCrtLogoDark},
+	'old-main-retro': {
+		light: {icon: oldMainRetroIcon, logo: oldMainRetroLogo},
+		dark: {icon: oldMainRetroIconDark, logo: oldMainRetroLogoDark},
 	},
 	'windmill-sky': {
 		light: {icon: windmillSkyIcon, logo: windmillSkyLogo},

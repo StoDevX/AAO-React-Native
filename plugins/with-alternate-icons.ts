@@ -21,7 +21,7 @@ export const ALTERNATE_ICONS = [
 	'windmill-stars',
 	'constellation',
 	'old-main-hill',
-	'old-main-crt',
+	'old-main-retro',
 ]
 
 /** Where the tracked documents live, relative to the repository root. */

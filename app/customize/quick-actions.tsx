@@ -1,6 +1,6 @@
 import * as React from 'react'
 import {StyleSheet} from 'react-native'
-import {Button, Form, HStack, Host, Image, Section, Spacer, Text} from '@expo/ui/swift-ui'
+import {Button, Form, HStack, Host, Image, Spacer, Text} from '@expo/ui/swift-ui'
 import {
 	accessibilityAddTraits,
 	accessibilityIdentifier,
@@ -13,6 +13,7 @@ import {
 } from '@expo/ui/swift-ui/modifiers'
 import {Stack} from 'expo-router'
 import * as c from '@frogpond/colors'
+import {SheetSection} from '@frogpond/sheet-section'
 
 import {ActionRow, LeadingImage} from '../../source/components/rows'
 import {
@@ -25,8 +26,10 @@ import {useQuickActionsStore} from '../../source/features/quick-actions/store'
 import {iconImage} from '../../source/features/views'
 
 const styles = StyleSheet.create({
+	// Pushed inside the Customize sheet, which paints no background of its own.
 	host: {
 		flex: 1,
+		backgroundColor: c.systemGroupedBackground,
 	},
 })
 
@@ -48,7 +51,9 @@ export default function QuickActionsPage(): React.ReactNode {
 			<Stack.Title>Quick Actions</Stack.Title>
 			<Host style={styles.host} modifiers={[accessibilityIdentifier('screen-quick-actions')]}>
 				<Form>
-					<Section footer={<Text>Long-press the app icon to open these. Choose up to 4.</Text>}>
+					<SheetSection
+						footer={<Text>Long-press the app icon to open these. Choose up to 4.</Text>}
+					>
 						{destinations.map((destination) => (
 							<DestinationRow
 								key={destination.id}
@@ -58,10 +63,10 @@ export default function QuickActionsPage(): React.ReactNode {
 								onToggle={toggle}
 							/>
 						))}
-					</Section>
-					<Section>
+					</SheetSection>
+					<SheetSection>
 						<ActionRow onPress={reset} title="Reset to Defaults" />
-					</Section>
+					</SheetSection>
 				</Form>
 			</Host>
 		</>

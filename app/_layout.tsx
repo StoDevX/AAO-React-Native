@@ -12,6 +12,7 @@ import {useScreenViews} from '../source/features/telemetry/use-screen-views'
 import {watchQueryFailures} from '../source/features/telemetry/query-failures'
 import {track} from '../source/features/telemetry/track'
 import {startQuickActionSync} from '../source/features/quick-actions/sync'
+import {reportLaunch} from '../source/features/customize/telemetry'
 
 import * as React from 'react'
 import {PersistGate} from 'redux-persist/integration/react'
@@ -82,6 +83,9 @@ function RootLayout(): React.ReactNode {
 	)
 	React.useEffect(() => watchQueryFailures(queryClient.getQueryCache(), track), [])
 	React.useEffect(() => startQuickActionSync(), [])
+	React.useEffect(() => {
+		reportLaunch()
+	}, [])
 
 	React.useEffect(() => {
 		if (!IS_PRODUCTION) {
@@ -164,6 +168,7 @@ function RootLayout(): React.ReactNode {
 									name="calendar"
 									options={{title: 'Calendar', headerLargeTitleEnabled: true}}
 								/>
+								<Stack.Screen name="customize" options={DETAIL_SHEET} />
 								<Stack.Screen
 									name="settings"
 									options={{headerShown: false, presentation: 'modal'}}
