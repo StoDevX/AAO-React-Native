@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {Image as RNImage, StyleSheet} from 'react-native'
+import {Image as RNImage, StyleSheet, useWindowDimensions} from 'react-native'
 import type {ColorValue} from 'react-native'
 import type {SFSymbol} from 'sf-symbols-typescript'
 import {
@@ -33,6 +33,7 @@ import type {ModifierConfig} from '@expo/ui/swift-ui/modifiers'
 import * as c from '@frogpond/colors'
 import type {Gradient} from '@frogpond/colors'
 
+import {isAccessibilityTextSize} from '../lib/is-accessibility-text-size'
 import {GradientRoundedRectangle} from './gradient-tile'
 import {detailLinesOf, rowLabel, type RowDetail} from './lib/row-text'
 
@@ -279,7 +280,15 @@ export function DisclosureRow(props: DisclosureRowProps): React.ReactNode {
 		status,
 	} = props
 
+	let {fontScale} = useWindowDimensions()
 	let hasBadge = badge !== undefined && badge > 0
+	// At an accessibility size a trailing count takes a third of the row and
+	// the title breaks mid-word in what is left, so the count drops under the
+	// title instead, as Settings does.
+	let stacksBadge = hasBadge && isAccessibilityTextSize(fontScale)
+	let badgeText = (
+		<Text modifiers={[foregroundStyle(c.secondaryLabel), monospacedDigit()]}>{String(badge)}</Text>
+	)
 	let spokenDetail = status ? [...detailLinesOf(detail), status.text] : detail
 	let spokenLabel =
 		image && 'label' in image && image.label
@@ -326,16 +335,13 @@ export function DisclosureRow(props: DisclosureRowProps): React.ReactNode {
 							{status.text}
 						</Text>
 					) : null}
+					{stacksBadge ? badgeText : null}
 				</VStack>
 				<Spacer />
 				{/* Drawn here rather than with SwiftUI's .badge, which puts the
 				    count at the row's trailing edge -- past this row's own
 				    chevron, where Settings never has it. */}
-				{hasBadge ? (
-					<Text modifiers={[foregroundStyle(c.secondaryLabel), monospacedDigit()]}>
-						{String(badge)}
-					</Text>
-				) : null}
+				{hasBadge && !stacksBadge ? badgeText : null}
 				<RowAccessory destination={destination} />
 			</HStack>
 		</Button>
