@@ -1,7 +1,7 @@
 import {afterEach, describe, expect, jest, test} from '@jest/globals'
 import {LogBox} from 'react-native'
 
-import {hideLogBoxForUITests} from '../logbox'
+import {hideLogBoxForUITests, removeLogBoxForChaos} from '../logbox'
 
 afterEach(() => {
 	jest.restoreAllMocks()
@@ -25,5 +25,25 @@ describe('hideLogBoxForUITests', () => {
 		hideLogBoxForUITests(false)
 
 		expect(ignoreAllLogs).not.toHaveBeenCalled()
+	})
+})
+
+describe('removeLogBoxForChaos', () => {
+	// LogBox's red screen covers the app, and with it the beacon a chaos run
+	// reads, so a render error looked like a hang instead of a fatal.
+	test('uninstalls LogBox for a chaos launch', () => {
+		let uninstall = jest.spyOn(LogBox, 'uninstall').mockReturnValue(undefined)
+
+		removeLogBoxForChaos(true)
+
+		expect(uninstall).toHaveBeenCalled()
+	})
+
+	test('leaves LogBox installed for any other launch', () => {
+		let uninstall = jest.spyOn(LogBox, 'uninstall').mockReturnValue(undefined)
+
+		removeLogBoxForChaos(false)
+
+		expect(uninstall).not.toHaveBeenCalled()
 	})
 })

@@ -116,7 +116,9 @@ Under it, the app:
 - never opens a URL, dials a number, composes an email, or adds a calendar
   event: each is recorded as an `out-of-app` finding instead;
 - never reaches the OleCard sign-in or PaperCut;
-- sends nothing to Sentry.
+- sends nothing to Sentry;
+- has no LogBox, whose red screen would cover the app and hide a render
+  error from the monkey; the chaos error boundary shows it instead.
 
 ## How It Works
 
