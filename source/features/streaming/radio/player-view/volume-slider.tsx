@@ -13,13 +13,21 @@ import {palette} from './palette'
 const QUIET_SIZE = 15
 const LOUD_SIZE = 22
 
+/** How far the loud speaker is moved right, in points, to line up by eye. */
+const LOUD_OPTICAL_SHIFT = 8
+
 /** Music's volume row: the system slider between a quiet and a loud speaker. */
 export function VolumeSlider(): React.ReactNode {
 	return (
 		<View style={styles.row}>
 			<SymbolView name="speaker.fill" size={QUIET_SIZE} tintColor={palette.secondary} />
 			<VolumeSliderView style={styles.slider} tint={palette.primary} trackTint={palette.track} />
-			<SymbolView name="speaker.wave.3.fill" size={LOUD_SIZE} tintColor={palette.secondary} />
+			<SymbolView
+				name="speaker.wave.3.fill"
+				size={LOUD_SIZE}
+				style={styles.loud}
+				tintColor={palette.secondary}
+			/>
 		</View>
 	)
 }
@@ -36,4 +44,7 @@ const styles = StyleSheet.create({
 		marginRight: 5,
 	},
 	slider: {flex: 1, height: 44},
+	// The symbol's waves leave room on its right, so its edge looks further in
+	// than the slider's end does. Moved without moving the slider.
+	loud: {transform: [{translateX: LOUD_OPTICAL_SHIFT}]},
 })
