@@ -1,15 +1,19 @@
 import * as React from 'react'
 import {StyleSheet, Text, View} from 'react-native'
+import type {EventType} from '@frogpond/event-type'
 import {formatCompactTime} from '@frogpond/time-format'
 
-import type {Station} from '../stations'
-import {useStationSchedule} from '../use-station-schedule'
 import {palette} from './palette'
-import {scheduleNote} from './schedule-note'
+import {scheduleNote, type ScheduleStatus} from './schedule-note'
 
 /** The rest of today's shows, or why there are none. Few enough rows not to need a list. */
-export function ScheduleList({station}: {station: Station}): React.ReactNode {
-	let {upcoming, status} = useStationSchedule(station.id)
+export function ScheduleList({
+	upcoming,
+	status,
+}: {
+	upcoming: readonly EventType[]
+	status: ScheduleStatus
+}): React.ReactNode {
 	let note = scheduleNote(status, upcoming.length)
 	if (note) {
 		return <Text style={[styles.note, palette.styles.secondary]}>{note}</Text>

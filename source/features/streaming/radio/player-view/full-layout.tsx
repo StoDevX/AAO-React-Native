@@ -1,5 +1,6 @@
 import * as React from 'react'
 import {StyleSheet, Text, View, useWindowDimensions} from 'react-native'
+import type {EventType} from '@frogpond/event-type'
 import {TouchClaimView} from '@frogpond/touch-claim'
 
 import {ScratchableLogo} from '../scratchable-logo'
@@ -8,6 +9,7 @@ import {useStationPlayback} from '../store'
 import {useStationSchedule} from '../use-station-schedule'
 import {PlaybackError, PlayStopButton} from './play-stop-button'
 import {ScheduleList} from './schedule-list'
+import type {ScheduleStatus} from './schedule-note'
 import {ShowTitle} from './show-title'
 import {airStatusText} from './show-title-text'
 import {StationActionRow} from './station-actions'
@@ -48,17 +50,18 @@ export function FullLayout({
 	let {width} = useWindowDimensions()
 	let fullWidth = width - 2 * SIDE
 	let {artwork, onLayout} = useFittedArtwork({width: fullWidth, viewportHeight})
+	// One schedule for the title, the status line and the list, so they
+	// share a clock and never disagree on a minute boundary.
+	let schedule = useStationSchedule(station.id)
 
 	return (
 		<View onLayout={onLayout} style={styles.screen}>
 			<StationPicker />
-			<View
-				style={[styles.artwork, {height: artwork, width: showingSchedule ? fullWidth : artwork}]}
-			>
+			<View style={[styles.artwork, {height: artwork}]}>
 				{showingSchedule ? (
-					<ScheduleList station={station} />
+					<ScheduleList status={schedule.status} upcoming={schedule.upcoming} />
 				) : (
-					<TouchClaimView style={{width: artwork, height: artwork}}>
+					<TouchClaimView>
 						<ScratchableLogo
 							key={logo.name}
 							accessibilityLabel={`${station.stationName} logo, ${logo.name}`}
@@ -73,10 +76,10 @@ export function FullLayout({
 				)}
 			</View>
 			<View style={styles.titleRow}>
-				<ShowTitle station={station} />
+				<ShowTitle current={schedule.current} station={station} status={schedule.status} />
 				<StationMenu station={station} />
 			</View>
-			<AirStatusBar station={station} />
+			<AirStatusBar current={schedule.current} status={schedule.status} />
 			<View style={styles.centre}>
 				<PlayStopButton station={station} />
 				<PlaybackError station={station} />
@@ -88,8 +91,13 @@ export function FullLayout({
 }
 
 /** Music's scrubber's place: a stream has no position to show, so the schedule says if it is on air. */
-function AirStatusBar({station}: {station: Station}): React.ReactNode {
-	let {current, status} = useStationSchedule(station.id)
+function AirStatusBar({
+	current,
+	status,
+}: {
+	current: EventType | null
+	status: ScheduleStatus
+}): React.ReactNode {
 	let {text, spoken} = airStatusText(current, status)
 	return (
 		<View
@@ -99,8 +107,13 @@ function AirStatusBar({station}: {station: Station}): React.ReactNode {
 			style={styles.airStatus}
 		>
 			<View style={[styles.track, palette.styles.track]} />
-			<Text style={[styles.airStatusText, palette.styles.secondary]}>{text}</Text>
-			<View style={[styles.track, palette.styles.track]} />
+			{/* With nothing to say, one unbroken track rather than two with a gap. */}
+			{text ? (
+				<>
+					<Text style={[styles.airStatusText, palette.styles.secondary]}>{text}</Text>
+					<View style={[styles.track, palette.styles.track]} />
+				</>
+			) : null}
 		</View>
 	)
 }
@@ -111,10 +124,7 @@ const styles = StyleSheet.create({
 		paddingHorizontal: SIDE,
 		paddingVertical: 20,
 	},
-	// As wide as the record; the schedule, which takes its place, keeps the
-	// player's width.
 	artwork: {
-		alignSelf: 'center',
 		alignItems: 'center',
 		justifyContent: 'center',
 	},
