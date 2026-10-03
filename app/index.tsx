@@ -50,8 +50,7 @@ import {TileGrid} from '../source/components/tile-grid'
 import {HomeScreenButton} from '../source/features/home/button'
 import {HomeListSections} from '../source/features/home/list-sections'
 import {useCollapsedGroupsStore, useHomeLayoutStore} from '../source/features/home/store'
-import {openUrl, trackedOpenUrl} from '@frogpond/open-url'
-import {GH_BASE_URL} from '../source/lib/constants'
+import {openUrl} from '@frogpond/open-url'
 import {selectDevModeOverride, setDevModeOverride} from '../source/redux/parts/settings'
 import {useIsDevMode} from '../source/lib/use-is-dev-mode'
 import {FaqBannerGroup} from '../source/features/faqs/banner'
@@ -296,7 +295,7 @@ export default function HomePage(): React.ReactNode {
 						</Stack.Toolbar.MenuAction>
 						<Stack.Toolbar.MenuAction
 							icon="curlybraces"
-							onPress={() => trackedOpenUrl({url: GH_BASE_URL, id: 'ContributingView'})}
+							onPress={() => router.navigate('/contributing')}
 						>
 							Contributing
 						</Stack.Toolbar.MenuAction>

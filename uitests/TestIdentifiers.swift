@@ -83,6 +83,7 @@ struct TestIdentifiers {
 		static let homeMenu = "Home menu"
 		static let supportMenuItem = "Support"
 		static let aboutMenuItem = "About"
+		static let contributingMenuItem = "Contributing"
 		static let feedbackMenuItem = "Feedback"
 		/// The paintbrush at Home's top-left corner. Mirrors CUSTOMIZE_LABEL in app/index.tsx.
 		static let customizeButton = "Customize"
@@ -758,6 +759,19 @@ struct TestIdentifiers {
 
 	enum Settings {
 		static let enableDevMode = "Enable dev mode"
+	}
+
+	// MARK: - Contributing
+
+	enum Contributing {
+		/// The Contributing screen's host, set in app/contributing/index.tsx.
+		static let screen = "screen-contributing"
+		static let github = "GitHub"
+		static let reportProblem = "Report a Problem"
+		static let openStreetMap = "OpenStreetMap"
+		/// The first entry of `dataSources` in source/features/contributing/data-sources.ts.
+		static let firstDataSource = "St. Olaf College"
+		static let email = "Email us"
 	}
 
 	// MARK: - About

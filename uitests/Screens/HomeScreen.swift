@@ -70,6 +70,12 @@ struct HomeScreen: Screen {
 	}
 
 	@discardableResult
+	func openContributing() -> ContributingScreen {
+		chooseFromHomeMenu(TestIdentifiers.Navigation.contributingMenuItem)
+		return ContributingScreen(app: app).checkOpen()
+	}
+
+	@discardableResult
 	func openAbout() -> AboutScreen {
 		chooseFromHomeMenu(TestIdentifiers.Navigation.aboutMenuItem)
 		return AboutScreen(app: app).checkOpen()
