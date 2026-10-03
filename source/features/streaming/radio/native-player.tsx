@@ -53,6 +53,11 @@ export function NativeStreamPlayer(props: Props): React.ReactNode {
 
 	React.useEffect(() => {
 		if (playState === 'paused') {
+			// Silent as well, so that Control Center playing the paused player, which
+			// starts it with its old buffer before a fresh one replaces it, is not heard.
+			// expo-audio's way to mute is this property of the native player.
+			// oxlint-disable-next-line react/immutability
+			player.muted = true
 			player.pause()
 			return
 		}

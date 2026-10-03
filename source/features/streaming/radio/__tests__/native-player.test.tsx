@@ -18,6 +18,7 @@ function command(name: string): jest.Mock {
 	})
 }
 const mockPlayer = {
+	muted: false,
 	play: command('play'),
 	pause: command('pause'),
 	setActiveForLockScreen: command('setActiveForLockScreen'),
@@ -74,6 +75,7 @@ describe('NativeStreamPlayer', () => {
 		mockPlayer.play.mockClear()
 		mockPlayer.pause.mockClear()
 		mockPlayer.setActiveForLockScreen.mockClear()
+		mockPlayer.muted = false
 		mockSetAudioMode.mockClear()
 		mockStatus = {playing: false, isBuffering: false, didJustFinish: false, error: null}
 	})
@@ -201,5 +203,16 @@ describe('NativeStreamPlayer', () => {
 		await view.rerender(player('paused', cb))
 
 		expect(cb.onResume).not.toHaveBeenCalled()
+	})
+
+	test('silences a paused player, so Control Center starting it plays no stale audio', async () => {
+		let cb = callbacks()
+		mockStatus = {...mockStatus, playing: true}
+		let view = await render(player('playing', cb))
+		expect(mockPlayer.muted).toBe(false)
+
+		await view.rerender(player('paused', cb))
+
+		expect(mockPlayer.muted).toBe(true)
 	})
 })
