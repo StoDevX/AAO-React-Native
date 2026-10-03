@@ -222,6 +222,33 @@ struct MessFrontPage: Screen {
 		return self
 	}
 
+	/// Open the staff directory from the view menu, then the first person in it, and wait for
+	/// their page: titled with the name their tile showed, over their bio.
+	@discardableResult
+	func openFirstStaffMember() -> Self {
+		pickFromViewMenu(TestIdentifiers.News.staffMenuItem)
+		XCTAssertTrue(
+			viewMenu.waitForNonExistence(timeout: 30),
+			"Staff should open the directory on a page of its own")
+		let tile = app.buttons.matching(identifier: TestIdentifiers.News.staffTile).firstMatch
+		XCTAssertTrue(tile.waitForExistence(timeout: 30), "the directory should show the staff as tiles")
+		capture("The Messenger's staff directory")
+		XCTAssertTrue(tile.waitForHittable(), "a person's tile should be ready to tap")
+		// A tile reads its person's name alone; their role waits for their page.
+		let name = tile.label
+		XCTAssertFalse(name.isEmpty, "a person's tile should name them")
+		tile.tap()
+		let title = app.navigationBars.staticTexts[name].firstMatch
+		XCTAssertTrue(title.waitForExistence(timeout: 30), "tapping \(name) should open their page")
+		// A bio opens with the writer's name; the page's title and heading are the name alone.
+		let bio = app.staticTexts
+			.matching(NSPredicate(format: "label BEGINSWITH %@ AND label != %@", name, name))
+			.firstMatch
+		capture("A staff member's page")
+		XCTAssertTrue(bio.waitForExistence(timeout: 10), "\(name)'s page should show a bio that names them")
+		return self
+	}
+
 	/// Tap the first row of the Crossword column's list and assert it opens the puzzle in the
 	/// in-app browser, with no story page between.
 	@discardableResult

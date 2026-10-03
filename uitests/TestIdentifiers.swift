@@ -564,6 +564,10 @@ struct TestIdentifiers {
 		static let aboutMenuItem = "About"
 		/// The About page's title, in source/features/mess/about-screen.tsx.
 		static let aboutTitle = "About The Olaf Messenger"
+		/// The view menu's way to the staff directory, in source/features/mess/front-page-screen.tsx.
+		static let staffMenuItem = "Staff"
+		/// Every tile of the staff directory, in source/features/mess/staff-screen.tsx.
+		static let staffTile = "mess-staff-tile"
 		/// The About page's last heading, as the paper writes it; the UI tests read the page from
 		/// source/features/mess/__fixtures__/mess.json, so a rename on the paper's site moves nothing.
 		static let submissionPolicy = "Submission Policy"
