@@ -81,6 +81,21 @@ describe('playback', () => {
 		expect(useRadioStore.getState()).toMatchObject({stationId: 'krlx', error: ERROR})
 	})
 
+	test('a stall while playing waits on the stream again', () => {
+		useRadioStore.getState().play('krlx')
+		useRadioStore.getState().reportPlaying(1)
+		useRadioStore.getState().reportWaiting(1)
+		expect(useRadioStore.getState().playState).toBe('starting')
+	})
+
+	test('a stall from a replaced player changes nothing', () => {
+		useRadioStore.getState().play('krlx')
+		useRadioStore.getState().play('ksto')
+		useRadioStore.getState().reportPlaying(2)
+		useRadioStore.getState().reportWaiting(1)
+		expect(useRadioStore.getState().playState).toBe('playing')
+	})
+
 	test('an error stops the station but keeps it loaded, to retry', () => {
 		useRadioStore.getState().play('krlx')
 		useRadioStore.getState().reportError(1, ERROR)

@@ -24,12 +24,14 @@ export function RadioHost(): React.ReactNode {
 	let playerKey = useRadioStore((state) => state.playerKey)
 	let reportPlaying = useRadioStore((state) => state.reportPlaying)
 	let reportStopped = useRadioStore((state) => state.reportStopped)
+	let reportWaiting = useRadioStore((state) => state.reportWaiting)
 	let reportError = useRadioStore((state) => state.reportError)
 
 	// Each report names the player it came from, so one being replaced cannot
 	// change the state of the one replacing it.
 	let onPlay = React.useCallback(() => reportPlaying(playerKey), [reportPlaying, playerKey])
 	let onStopped = React.useCallback(() => reportStopped(playerKey), [reportStopped, playerKey])
+	let onWaiting = React.useCallback(() => reportWaiting(playerKey), [reportWaiting, playerKey])
 	let onError = React.useCallback(
 		(error: HtmlAudioError) => reportError(playerKey, error),
 		[reportError, playerKey],
@@ -53,6 +55,8 @@ export function RadioHost(): React.ReactNode {
 				onError={onError}
 				onPause={onStopped}
 				onPlay={onPlay}
+				onStalled={onWaiting}
+				onWaiting={onWaiting}
 				playState={PLAYER_STATE[playState]}
 				streamSourceUrl={source.streamSourceUrl}
 				style={styles.fill}
