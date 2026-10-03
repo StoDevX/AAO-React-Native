@@ -10,8 +10,8 @@ import {palette} from './palette'
  */
 export const LABEL_MAX_SCALE = 1.4
 
-/** How far an icon dims under a finger. */
-const PRESSED_OPACITY = 0.65
+/** How far an icon dims under a finger: as far as the system's AirPlay button dims its own. */
+const PRESSED_OPACITY = 0.3
 
 /** An icon over its label. With no `onPress` it shows, dimmed, as unavailable. Only the icon dims when pressed. */
 export function ActionButton({
