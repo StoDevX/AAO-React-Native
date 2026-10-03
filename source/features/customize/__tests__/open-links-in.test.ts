@@ -1,0 +1,36 @@
+import {afterEach, describe, expect, it} from '@jest/globals'
+import {act, renderHook, waitFor} from '@testing-library/react-native'
+import AsyncStorage from '@react-native-async-storage/async-storage'
+import * as storage from '../../../lib/storage'
+import {useOpenLinksIn} from '../open-links-in'
+
+afterEach(async () => {
+	await AsyncStorage.clear()
+})
+
+describe('useOpenLinksIn', () => {
+	it('reads In App when nothing is saved', async () => {
+		let {result} = await renderHook(() => useOpenLinksIn())
+		await waitFor(() => expect(result.current[0]).toBe('app'))
+	})
+
+	it('reads Safari when the saved preference is off', async () => {
+		await storage.setLinkPreference(false)
+		let {result} = await renderHook(() => useOpenLinksIn())
+		await waitFor(() => expect(result.current[0]).toBe('safari'))
+	})
+
+	it('saves Safari as the existing boolean, false', async () => {
+		let {result} = await renderHook(() => useOpenLinksIn())
+		await act(() => result.current[1]('safari'))
+		expect(result.current[0]).toBe('safari')
+		expect(await storage.getInAppLinkPreference()).toBe(false)
+	})
+
+	it('saves In App as true', async () => {
+		await storage.setLinkPreference(false)
+		let {result} = await renderHook(() => useOpenLinksIn())
+		await act(() => result.current[1]('app'))
+		expect(await storage.getInAppLinkPreference()).toBe(true)
+	})
+})
