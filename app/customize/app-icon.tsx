@@ -1,6 +1,6 @@
 import * as React from 'react'
 import {Image as RNImage, StyleSheet, View, useColorScheme, useWindowDimensions} from 'react-native'
-import {Button, Form, Grid, HStack, Host, RNHostView, Text, VStack} from '@expo/ui/swift-ui'
+import {Button, Form, Grid, HStack, Host, RNHostView, Spacer, Text, VStack} from '@expo/ui/swift-ui'
 import {
 	accessibilityAddTraits,
 	accessibilityIdentifier,
@@ -96,10 +96,11 @@ const IconGrid = React.memo(function IconGrid({
 	onChoose,
 }: IconGridProps): React.ReactNode {
 	let {fontScale} = useWindowDimensions()
+	let columns = galleryColumns(fontScale)
 
 	return (
 		<Grid alignment="top" horizontalSpacing={12} verticalSpacing={16}>
-			{rowsOf(icons, galleryColumns(fontScale)).map((row) => (
+			{rowsOf(icons, columns).map((row) => (
 				<Grid.Row key={row[0].type}>
 					{row.map((icon) => (
 						<IconTile
@@ -108,6 +109,11 @@ const IconGrid = React.memo(function IconGrid({
 							isCurrent={icon.type === current}
 							onChoose={onChoose}
 						/>
+					))}
+					{/* A short row keeps every column's room, so a section with two
+					    icons lines its columns up with a section of three. */}
+					{Array.from({length: columns - row.length}, (_, index) => (
+						<Spacer key={`empty-${index}`} modifiers={[frame({maxWidth: Infinity, height: 1})]} />
 					))}
 				</Grid.Row>
 			))}
