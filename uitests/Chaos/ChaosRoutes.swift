@@ -20,6 +20,7 @@ enum ChaosRoutes {
 		"carleton-schulze-menu",
 		"carleton-weitz-menu",
 		"contacts",
+		"contributing",
 		"course-search",
 		"course-search/results",
 		"course-search/results/course",

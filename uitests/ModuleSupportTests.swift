@@ -4,7 +4,7 @@ class ModuleSupportTests: UITestCase {
 	func testHomeMenuOffersHelpAndFeedback() throws {
 		let home = HomeScreen(app: app).checkHomescreenExists().openHomeMenu()
 		let nav = TestIdentifiers.Navigation.self
-		for item in [nav.supportMenuItem, nav.aboutMenuItem, "Contributing", nav.feedbackMenuItem] {
+		for item in [nav.supportMenuItem, nav.aboutMenuItem, nav.contributingMenuItem, nav.feedbackMenuItem] {
 			XCTAssertTrue(
 				app.buttons[item].firstMatch.waitForExistence(timeout: 10),
 				"Home menu should offer \(item)")
