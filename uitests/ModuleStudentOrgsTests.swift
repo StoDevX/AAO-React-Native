@@ -20,6 +20,15 @@ class ModuleStudentOrgsTests: UITestCaseUnbooted {
 		screen.verifyTitle(category)
 	}
 
+	func testTheLayoutMenuSwitchesTheCategoriesToTiles() throws {
+		StudentOrgsScreen(app: app)
+			.navigate()
+			.verifyCategoriesShown()
+			.chooseLayout(TestIdentifiers.Layout.grid)
+			.verifyCategoryGridShown()
+			.capture("Student Orgs category grid")
+	}
+
 	/// The landing search bar searches every org, so it has to be able to
 	/// find something outside whatever category a reader happened to look
 	/// at last. Scrolling the results proves some appeared, not which ones,
