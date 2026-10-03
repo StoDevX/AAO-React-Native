@@ -12,7 +12,14 @@ export type Song = {
 /** The song now on air, if any, and how long to wait before asking again. */
 export type StationNow = {song: Song | null; refreshMs: number}
 
-/** The plugin's own script never asks more often than this, nor will the app. */
+/**
+ * How long to wait before asking again is the feed's own `refreshSecs`. It
+ * counts down to the end of the song on air: read at 13:29:47 GMT, with a
+ * 247-second song begun at 13:28:01, it said 144, which is the 141 seconds left
+ * and a few more. So the next song is there to be had when it says. The plugin's
+ * own script never asks more often than every 15 seconds, so neither does the
+ * app; and with no say, it asks in a minute.
+ */
 const MIN_REFRESH_MS = 15_000
 const DEFAULT_REFRESH_MS = 60_000
 

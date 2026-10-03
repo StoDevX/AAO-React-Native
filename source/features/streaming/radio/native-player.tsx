@@ -34,8 +34,9 @@ function configureAudioMode(): Promise<void> {
 }
 
 /**
- * Plays a station that has a plain stream URL natively, with the same props
- * as `StreamPlayer`, so the radio's host can use either. It renders nothing.
+ * Plays a station's stream natively, the audio the listener hears. It renders
+ * nothing. It is the only thing that says what a station is doing; the silent
+ * page some stations also load (`MutedStationPage`) reports nothing that counts.
  *
  * It reports what the player does, not what it was asked: audio arriving is
  * `onPlay`, a dry buffer `onWaiting`, and a player that goes quiet on its own,

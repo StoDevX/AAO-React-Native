@@ -20,7 +20,7 @@ async function fetchStationNow(url: string): Promise<StationNow> {
 
 /**
  * What to show for `station`: the song on air while the station is playing,
- * asked for as often as the feed says to; otherwise, the station. Only a
+ * asked for when the feed says the song ends; otherwise, the station. Only a
  * station that publishes its songs, and is loaded and playing, is asked.
  */
 export function useNowPlaying(station: Station): NowPlayingPresentation {
