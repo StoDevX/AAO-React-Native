@@ -2,9 +2,9 @@ import * as React from 'react'
 import {StyleSheet, View} from 'react-native'
 import {track} from '../../telemetry/track'
 import {NativeStreamPlayer} from './native-player'
-import {logoAt} from './player-view/use-logo-cycle'
+import {useNowPlaying} from './use-now-playing'
 import {StreamPlayer} from './player'
-import {STATIONS} from './stations'
+import {STATIONS, type Station} from './stations'
 import {useRadioStore} from './store'
 import type {HtmlAudioError, PlayState, RadioPlayState} from './types'
 
@@ -14,6 +14,27 @@ const PLAYER_STATE: Record<RadioPlayState, PlayState> = {
 	starting: 'checking',
 	playing: 'playing',
 	paused: 'paused',
+}
+
+/**
+ * A natively played station, showing the song on air in Control Center when
+ * its station publishes one. A component of its own because the song is a hook.
+ */
+function NativeStation({
+	station,
+	...player
+}: {station: Station} & Omit<
+	React.ComponentProps<typeof NativeStreamPlayer>,
+	'nowPlaying' | 'streamSourceUrl'
+>): React.ReactNode {
+	let nowPlaying = useNowPlaying(station)
+	return (
+		<NativeStreamPlayer
+			{...player}
+			nowPlaying={nowPlaying}
+			streamSourceUrl={station.source.streamSourceUrl}
+		/>
+	)
 }
 
 /**
@@ -31,10 +52,6 @@ export function RadioHost(): React.ReactNode {
 	let resume = useRadioStore((state) => state.resume)
 	let reportWaiting = useRadioStore((state) => state.reportWaiting)
 	let reportError = useRadioStore((state) => state.reportError)
-	// The logo the listener left the station on, which Control Center shows too.
-	let savedLogo = useRadioStore((state) =>
-		state.stationId ? state.logoIndexes[state.stationId] : undefined,
-	)
 
 	// Only `waiting` marks a dry buffer: `stalled` is the fetch going quiet while
 	// the element plays on from its buffer, and nothing follows it to say audio
@@ -74,8 +91,9 @@ export function RadioHost(): React.ReactNode {
 	// Control Center; one that only has a page to play from needs the WebView.
 	if (!source.useEmbeddedPlayer) {
 		return (
-			<NativeStreamPlayer
+			<NativeStation
 				key={playerKey}
+				station={STATIONS[stationId]}
 				onEnded={onStopped}
 				onError={onError}
 				onPause={onStopped}
@@ -83,9 +101,6 @@ export function RadioHost(): React.ReactNode {
 				onResume={onResume}
 				onWaiting={onWaiting}
 				playState={PLAYER_STATE[playState]}
-				artworkUri={logoAt(STATIONS[stationId], savedLogo).image.uri}
-				stationName={STATIONS[stationId].stationName}
-				streamSourceUrl={source.streamSourceUrl}
 			/>
 		)
 	}

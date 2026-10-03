@@ -11,7 +11,7 @@ import {useRadioStore} from './store'
 import {useRadioControl} from './use-radio-control'
 import {useRadioBarVisible} from './bar-visibility'
 import {describePlayback} from './describe-playback'
-import {useSelectedLogo} from './player-view'
+import {useNowPlaying} from './use-now-playing'
 
 /** What the mini-player says, and VoiceOver reads, with no station loaded. */
 const IDLE_LABEL = 'Not Playing'
@@ -111,10 +111,10 @@ function MiniControl({station}: {station: Station}): React.ReactNode {
 	)
 }
 
-/** The station's logo, the one the sheet opens on. */
+/** The station's logo, or the cover of the song on air. */
 function StationArtwork({station}: {station: Station}): React.ReactNode {
-	let logo = useSelectedLogo(station)
-	return <Image source={logo.image} style={styles.artwork} />
+	let {artworkUri} = useNowPlaying(station)
+	return <Image source={{uri: artworkUri}} style={styles.artwork} />
 }
 
 /**

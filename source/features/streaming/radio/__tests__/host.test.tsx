@@ -1,6 +1,7 @@
 import * as React from 'react'
 import {beforeEach, describe, expect, jest, test} from '@jest/globals'
-import {act, fireEvent, render} from '@testing-library/react-native'
+import {QueryClient, QueryClientProvider} from '@tanstack/react-query'
+import {act, fireEvent, render, waitFor} from '@testing-library/react-native'
 
 import {RadioHost} from '../host'
 import {STATIONS} from '../stations'
@@ -28,9 +29,20 @@ jest.mock('expo-audio', () => ({
 	setAudioModeAsync: () => Promise.resolve(),
 }))
 
+// The song on air is asked for over the network; the station says none is on.
+let client: QueryClient
+function withQueries(children: React.ReactNode): React.ReactElement {
+	return <QueryClientProvider client={client}>{children}</QueryClientProvider>
+}
+
+/** Waits for the song on air to be asked for, so its answer does not arrive after the test. */
+async function untilSongAsked(): Promise<void> {
+	await waitFor(() => expect(client.isFetching()).toBe(0))
+}
+
 /** Renders the host and returns a way to post a message from its player's page. */
 async function renderHost(): Promise<(type: string) => Promise<void>> {
-	let screen = await render(<RadioHost />)
+	let screen = await render(withQueries(<RadioHost />))
 	// The host's view wraps the player, whose WebView wraps the native web view.
 	let webview = screen.root?.children[0]
 	if (typeof webview !== 'object') {
@@ -43,6 +55,10 @@ async function renderHost(): Promise<(type: string) => Promise<void>> {
 
 describe('RadioHost', () => {
 	beforeEach(() => {
+		client = new QueryClient({defaultOptions: {queries: {retry: false}}})
+		jest
+			.spyOn(globalThis, 'fetch')
+			.mockResolvedValue(new Response(JSON.stringify({now: null, refreshSecs: 60})))
 		useRadioStore.setState({stationId: null, playState: 'stopped', error: null, playerKey: 0})
 		useRadioStore.getState().play('ksto')
 		useRadioStore.getState().reportPlaying(1)
@@ -70,7 +86,8 @@ describe('RadioHost', () => {
 		useRadioStore.getState().stop()
 		useRadioStore.getState().play('krlx')
 
-		let screen = await render(<RadioHost />)
+		let screen = await render(withQueries(<RadioHost />))
+		await untilSongAsked()
 
 		expect(mockUseAudioPlayer).toHaveBeenCalledWith('https://s3.voscast.com:10803/stream')
 		expect(mockPlayer.setActiveForLockScreen).toHaveBeenCalledWith(
@@ -93,15 +110,16 @@ describe('RadioHost', () => {
 		mockStatus = {playing: true, isBuffering: false, didJustFinish: false, error: null}
 		useRadioStore.getState().stop()
 		useRadioStore.getState().play('krlx')
-		let screen = await render(<RadioHost />)
+		let screen = await render(withQueries(<RadioHost />))
+		await untilSongAsked()
 
 		mockStatus = {...mockStatus, playing: false}
 		await act(() => useRadioStore.getState().pause())
-		await screen.rerender(<RadioHost />)
+		await screen.rerender(withQueries(<RadioHost />))
 		let key = useRadioStore.getState().playerKey
 
 		mockStatus = {...mockStatus, playing: true}
-		await screen.rerender(<RadioHost />)
+		await screen.rerender(withQueries(<RadioHost />))
 
 		expect(useRadioStore.getState()).toMatchObject({
 			stationId: 'krlx',

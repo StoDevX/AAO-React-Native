@@ -3,6 +3,7 @@ import {beforeEach, describe, expect, jest, test} from '@jest/globals'
 import {render} from '@testing-library/react-native'
 
 import {NativeStreamPlayer} from '../native-player'
+import type {NowPlayingPresentation} from '../now-playing'
 import type {PlayState} from '../types'
 
 // The native module needs a device. Its player is a stand-in that records the
@@ -23,6 +24,7 @@ const mockPlayer = {
 	replace: command('replace'),
 	pause: command('pause'),
 	setActiveForLockScreen: command('setActiveForLockScreen'),
+	updateLockScreenMetadata: command('updateLockScreenMetadata'),
 }
 let mockStatus = {
 	playing: false,
@@ -48,12 +50,21 @@ jest.mock('expo-audio', () => ({
 	setAudioModeAsync: () => mockSetAudioMode(),
 }))
 
-function player(playState: PlayState, callbacks: Record<string, jest.Mock>) {
+const STATION_NOW_PLAYING = {
+	title: '88.1 KRLX-FM',
+	artworkUri: 'https://example.com/krlx.png',
+	isSong: false,
+}
+
+function player(
+	playState: PlayState,
+	callbacks: Record<string, jest.Mock>,
+	nowPlaying: NowPlayingPresentation = STATION_NOW_PLAYING,
+) {
 	return (
 		<NativeStreamPlayer
 			playState={playState}
-			stationName="88.1 KRLX-FM"
-			artworkUri="https://example.com/krlx.png"
+			nowPlaying={nowPlaying}
 			streamSourceUrl="https://s3.voscast.com:10803/stream"
 			{...callbacks}
 		/>
@@ -77,6 +88,7 @@ describe('NativeStreamPlayer', () => {
 		mockPlayer.pause.mockClear()
 		mockPlayer.replace.mockClear()
 		mockPlayer.setActiveForLockScreen.mockClear()
+		mockPlayer.updateLockScreenMetadata.mockClear()
 		mockPlayer.muted = false
 		mockSetAudioMode.mockClear()
 		mockStatus = {playing: false, isBuffering: false, didJustFinish: false, error: null}
@@ -294,5 +306,35 @@ describe('NativeStreamPlayer', () => {
 		await Promise.resolve()
 
 		expect(mockPlayer.play).not.toHaveBeenCalled()
+	})
+
+	test('puts the song on the lock screen when one comes on air, and the station back when it ends', async () => {
+		let cb = callbacks()
+		let view = await render(player('playing', cb))
+		mockPlayer.setActiveForLockScreen.mockClear()
+
+		await view.rerender(
+			player('playing', cb, {
+				title: 'River Run: Lvl 1',
+				artist: 'The Beths',
+				albumTitle: '88.1 KRLX-FM',
+				artworkUri: 'https://example.com/cover.jpg',
+				isSong: true,
+			}),
+		)
+		expect(mockPlayer.updateLockScreenMetadata).toHaveBeenLastCalledWith({
+			title: 'River Run: Lvl 1',
+			artist: 'The Beths',
+			albumTitle: '88.1 KRLX-FM',
+			artworkUrl: 'https://example.com/cover.jpg',
+		})
+
+		await view.rerender(player('playing', cb))
+		expect(mockPlayer.updateLockScreenMetadata).toHaveBeenLastCalledWith({
+			title: '88.1 KRLX-FM',
+			artworkUrl: 'https://example.com/krlx.png',
+		})
+		// The player is made the lock screen's once, not again with each song.
+		expect(mockPlayer.setActiveForLockScreen).not.toHaveBeenCalled()
 	})
 })
