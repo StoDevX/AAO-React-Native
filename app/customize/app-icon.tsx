@@ -1,22 +1,13 @@
 import * as React from 'react'
 import {Image as RNImage, StyleSheet, View, useColorScheme, useWindowDimensions} from 'react-native'
-import {
-	Button,
-	Form,
-	Grid,
-	HStack,
-	Host,
-	RNHostView,
-	Section,
-	Text,
-	VStack,
-} from '@expo/ui/swift-ui'
+import {Button, Form, Grid, HStack, Host, RNHostView, Text, VStack} from '@expo/ui/swift-ui'
 import {
 	accessibilityAddTraits,
 	accessibilityIdentifier,
 	accessibilityLabel,
 	buttonStyle,
 	contentShape,
+	fixedSize,
 	font,
 	frame,
 	multilineTextAlignment,
@@ -24,6 +15,7 @@ import {
 } from '@expo/ui/swift-ui/modifiers'
 import {Stack} from 'expo-router'
 import * as c from '@frogpond/colors'
+import {SheetSection} from '@frogpond/sheet-section'
 
 import {type AppIconName, previewsFor} from '../../images/icons'
 import {type IconEntry, galleryColumns, iconsByGroup} from '../../source/features/customize/icons'
@@ -73,9 +65,9 @@ export default function AppIconPage(): React.ReactNode {
 			<Host style={styles.host} modifiers={[accessibilityIdentifier('screen-app-icon')]}>
 				<Form>
 					{iconsByGroup().map(({group, icons}) => (
-						<Section key={group} title={group}>
+						<SheetSection key={group} title={group}>
 							<IconGrid current={current.type} icons={icons} onChoose={apply} />
-						</Section>
+						</SheetSection>
 					))}
 				</Form>
 			</Host>
@@ -159,7 +151,14 @@ function IconTile({icon, isCurrent, onChoose}: IconTileProps): React.ReactNode {
 						</View>
 					</RNHostView>
 				</HStack>
-				<Text modifiers={[font({textStyle: 'caption'}), multilineTextAlignment('center')]}>
+				<Text
+					modifiers={[
+						font({textStyle: 'caption'}),
+						multilineTextAlignment('center'),
+						// Wrap onto a second line rather than truncate in a narrow column.
+						fixedSize({horizontal: false, vertical: true}),
+					]}
+				>
 					{icon.title}
 				</Text>
 			</VStack>

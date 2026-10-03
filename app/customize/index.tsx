@@ -1,9 +1,10 @@
 import * as React from 'react'
 import {StyleSheet, useColorScheme} from 'react-native'
-import {Form, Host, Picker, Section, Text, Toggle} from '@expo/ui/swift-ui'
+import {Form, Host, Picker, Text, Toggle} from '@expo/ui/swift-ui'
 import {accessibilityIdentifier, pickerStyle, tag} from '@expo/ui/swift-ui/modifiers'
 import {Stack, useFocusEffect, useRouter} from 'expo-router'
 import * as c from '@frogpond/colors'
+import {SheetSection} from '@frogpond/sheet-section'
 
 import {previewsFor} from '../../images/icons'
 import {DisclosureRow, NavigationRow} from '../../source/components/rows'
@@ -42,7 +43,7 @@ export default function CustomizePage(): React.ReactNode {
 			<SheetCloseButton />
 			<Host style={styles.host} modifiers={[accessibilityIdentifier('screen-customize')]}>
 				<Form>
-					<Section>
+					<SheetSection>
 						<DisclosureRow
 							detail={[current.title]}
 							identifier="app-icon-row"
@@ -54,8 +55,8 @@ export default function CustomizePage(): React.ReactNode {
 							onPress={() => router.navigate('/customize/app-icon')}
 							title="App Icon"
 						/>
-					</Section>
-					<Section title="Browsing">
+					</SheetSection>
+					<SheetSection title="Browsing">
 						<Picker<LinkTarget>
 							label="Open Links"
 							modifiers={[pickerStyle('menu'), accessibilityIdentifier('open-links-in')]}
@@ -65,8 +66,8 @@ export default function CustomizePage(): React.ReactNode {
 							<Text modifiers={[tag('app')]}>In App</Text>
 							<Text modifiers={[tag('safari')]}>Safari</Text>
 						</Picker>
-					</Section>
-					<Section title="Home Screen">
+					</SheetSection>
+					<SheetSection title="Home Screen">
 						<Toggle
 							isOn={showRadio}
 							label="Radio Player"
@@ -77,7 +78,7 @@ export default function CustomizePage(): React.ReactNode {
 							onPress={() => router.navigate('/customize/quick-actions')}
 							title="Quick Actions"
 						/>
-					</Section>
+					</SheetSection>
 				</Form>
 			</Host>
 		</>
