@@ -15,6 +15,7 @@ import {PersistGate} from 'redux-persist/integration/react'
 import {Provider as ReduxProvider} from 'react-redux'
 import {PersistQueryClientProvider} from '@tanstack/react-query-persist-client'
 import {store, persistor} from '../source/redux'
+import {navigationGuard} from '../source/lib/navigation-guard-install'
 import {LightTheme, DarkTheme} from '@frogpond/app-theme'
 import {ThemeProvider} from 'expo-router/react-navigation'
 import {Stack, useNavigationContainerRef} from 'expo-router'
@@ -69,6 +70,10 @@ function RootLayout(): React.ReactNode {
 	const statusBarStyle = scheme === 'dark' ? 'light-content' : 'dark-content'
 	const navigationContainerRef = useNavigationContainerRef()
 	useScreenViews()
+	React.useEffect(
+		() => navigationContainerRef.addListener('state', navigationGuard.stateChanged),
+		[navigationContainerRef],
+	)
 	React.useEffect(() => watchQueryFailures(queryClient.getQueryCache(), track), [])
 	React.useEffect(() => startQuickActionSync(), [])
 
