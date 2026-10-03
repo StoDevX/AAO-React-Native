@@ -6,7 +6,13 @@ import * as c from '@frogpond/colors'
 import {HomeScreenButton} from '../button'
 import type {ViewType} from '../../views'
 
-const common = {title: 'Tile', icon: 'star.fill', gradient: c.blueGradient} as const
+const common = {
+	id: 'tile',
+	title: 'Tile',
+	icon: 'star.fill',
+	gradient: c.blueGradient,
+	group: 'eat',
+} as const
 
 describe('HomeScreenButton', () => {
 	test('tells VoiceOver a web link opens in a browser', async () => {

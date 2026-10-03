@@ -5,8 +5,11 @@ import {
 	Button,
 	ContextMenu,
 	Host,
+	List,
 	RNHostView,
 	ScrollView,
+	Section,
+	Spacer,
 	Text,
 	Toggle,
 	VStack,
@@ -18,6 +21,10 @@ import {
 	font,
 	foregroundStyle,
 	frame,
+	listRowBackground,
+	listRowInsets,
+	listRowSeparator,
+	listStyle,
 	multilineTextAlignment,
 	padding,
 	shapes,
@@ -26,8 +33,15 @@ import * as c from '@frogpond/colors'
 import {useDispatch, useSelector} from 'react-redux'
 import {Restart} from 'react-native-restart-newarch'
 
-import {AllViews} from '../source/features/views'
-import {HomeScreenButton} from '../source/features/home/button'
+import {
+	AllViews,
+	homeSections,
+	TiledViews,
+	visibleViews,
+	type HomeSection,
+	type ViewType,
+} from '../source/features/views'
+import {HomeGroupHeader} from '../source/features/home/group-header'
 import {
 	FILL_WIDTH,
 	homeColumnsForFontScale,
@@ -35,6 +49,9 @@ import {
 	TILE_SPACING,
 } from '../source/components/tile-layout'
 import {TileGrid} from '../source/components/tile-grid'
+import {HomeScreenButton} from '../source/features/home/button'
+import {HomeListSections} from '../source/features/home/list-sections'
+import {useCollapsedGroupsStore, useHomeLayoutStore} from '../source/features/home/store'
 import {openUrl} from '@frogpond/open-url'
 import {selectDevModeOverride, setDevModeOverride} from '../source/redux/parts/settings'
 import {useIsDevMode} from '../source/lib/use-is-dev-mode'
@@ -55,7 +72,7 @@ const styles = StyleSheet.create({
 	banner: {
 		marginHorizontal: SCREEN_MARGIN,
 		marginTop: TILE_SPACING,
-		marginBottom: TILE_SPACING / 2,
+		marginBottom: TILE_SPACING * 1.5,
 	},
 })
 
@@ -142,6 +159,16 @@ function UnofficialAppNotice(): React.ReactNode {
 	)
 }
 
+/// Names a group's tile grid.
+const groupGridId = (group: string): string => `home-group-grid-${group}`
+/// A list row with nothing of a row's own: no fill, margins or divider, so the
+/// banner and the notice sit on the list's background rather than in a cell.
+const BARE_ROW_MODIFIERS = [
+	listRowBackground('clear'),
+	listRowInsets({top: 0, leading: 0, bottom: 0, trailing: 0}),
+	listRowSeparator('hidden'),
+]
+
 /** The inset-grouped row's corner radius, as a Settings section's. */
 const SWITCH_ROW_RADIUS = 26
 
@@ -155,8 +182,11 @@ const switchRowShape = shapes.roundedRectangle({
  * off also stops the radio. Streaming Media keeps its bar, so the radio is
  * still a tap away there, and a station started from it brings Home's bar
  * back while it plays.
+ *
+ * A row of a list is already a row, so there it draws as a bare switch rather
+ * than inside a rounded row of its own.
  */
-function RadioPlayerSwitch(): React.ReactNode {
+function RadioPlayerSwitch({inList = false}: {inList?: boolean}): React.ReactNode {
 	let on = useRadioStore((state) => state.showOnHome)
 	let setOn = useRadioStore((state) => state.setShowOnHome)
 	return (
@@ -164,8 +194,12 @@ function RadioPlayerSwitch(): React.ReactNode {
 			isOn={on}
 			label="Show Radio Player on Home"
 			modifiers={[
-				padding({horizontal: 16, vertical: 11}),
-				background(c.secondarySystemGroupedBackground, switchRowShape),
+				...(inList
+					? []
+					: [
+							padding({horizontal: 16, vertical: 11}),
+							background(c.secondarySystemGroupedBackground, switchRowShape),
+						]),
 				accessibilityIdentifier('show-radio-player'),
 			]}
 			onIsOnChange={setOn}
@@ -173,41 +207,129 @@ function RadioPlayerSwitch(): React.ReactNode {
 	)
 }
 
+/// Names the tiled home's tile grid.
 const HOME_GRID_ID = 'home-tile-grid'
+/// The menu in the navigation bar's corner, which `TestIdentifiers.Navigation.homeMenu` finds by name.
+const HOME_MENU_LABEL = 'Home menu'
+/// Names a group's header, for a UI test.
+const groupHeaderId = (group: string): string => `home-group-header-${group}`
+
+/** A tile's destination: a screen in the app, or a page opened outside it. */
+function useOpenView(): (view: ViewType) => void {
+	let router = useRouter()
+	return React.useCallback(
+		(view: ViewType) => {
+			if (view.type === 'url') {
+				openUrl(view.url)
+			} else if (view.type === 'view') {
+				router.navigate(view.view)
+			} else {
+				throw new Error(`unexpected view type ${view.type}`)
+			}
+		},
+		[router],
+	)
+}
+
+/// One group: its header, then its tiles two abreast unless it is collapsed.
+function HomeGroupView({
+	section,
+	collapsed,
+	onToggle,
+	onOpen,
+}: {
+	section: HomeSection
+	collapsed: boolean
+	onToggle: () => void
+	onOpen: (view: ViewType) => void
+}): React.ReactNode {
+	let {fontScale} = useWindowDimensions()
+
+	return (
+		<VStack
+			alignment="leading"
+			modifiers={[frame({maxWidth: FILL_WIDTH})]}
+			spacing={TILE_SPACING / 2}
+		>
+			<HomeGroupHeader
+				accessibilityId={groupHeaderId(section.id)}
+				collapsed={collapsed}
+				onToggle={section.collapsible ? onToggle : undefined}
+				title={section.title}
+			/>
+			{collapsed ? null : (
+				<TileGrid
+					accessibilityId={groupGridId(section.id)}
+					columns={homeColumnsForFontScale(fontScale)}
+					items={section.views}
+					keyForItem={(view) => view.id}
+					renderItem={(view) => <HomeScreenButton onPress={() => onOpen(view)} view={view} />}
+				/>
+			)}
+		</VStack>
+	)
+}
 
 export default function HomePage(): React.ReactNode {
 	let router = useRouter()
 	let isDev = useIsDevMode()
-	let allViews = AllViews().filter((view) => !view.disabled && (isDev || !view.devOnly))
+	let collapsedGroups = useCollapsedGroupsStore((state) => state.collapsedGroups)
+	let toggleGroup = useCollapsedGroupsStore((state) => state.toggleGroup)
+	let openView = useOpenView()
 	let {fontScale} = useWindowDimensions()
+	let layout = useHomeLayoutStore((state) => state.layout)
+	// The saved layout and collapsed groups load after the first render. Drawing
+	// before then would draw the defaults and jump.
+	let hydrated = useHomeLayoutStore((state) => state.hydrated)
+	let groupsHydrated = useCollapsedGroupsStore((state) => state.hydrated)
+	let setLayout = useHomeLayoutStore((state) => state.setLayout)
 	let barVisible = useRadioBarVisible()
+	let sections = homeSections(AllViews(), {isDev})
+	let tiledViews = visibleViews(TiledViews(), {isDev})
 
 	return (
 		<>
-			<Stack.Screen options={{headerLargeTitleEnabled: true}} />
 			<Stack.Title>All About Olaf</Stack.Title>
 			<Stack.Toolbar placement="right">
-				<Stack.Toolbar.Button
-					accessibilityLabel="Open Settings"
-					icon="gear"
-					onPress={() => router.navigate('/settings')}
-				/>
+				<Stack.Toolbar.Menu accessibilityLabel={HOME_MENU_LABEL} icon="ellipsis">
+					<Stack.Toolbar.Menu inline={true} palette={true} title="Layout">
+						<Stack.Toolbar.MenuAction
+							icon="square.grid.2x2"
+							isOn={layout === 'tiled'}
+							onPress={() => setLayout('tiled')}
+						>
+							Tiled
+						</Stack.Toolbar.MenuAction>
+						<Stack.Toolbar.MenuAction
+							icon="rectangle.grid.1x2"
+							isOn={layout === 'grouped'}
+							onPress={() => setLayout('grouped')}
+						>
+							Grouped
+						</Stack.Toolbar.MenuAction>
+						<Stack.Toolbar.MenuAction
+							icon="list.bullet"
+							isOn={layout === 'list'}
+							onPress={() => setLayout('list')}
+						>
+							List
+						</Stack.Toolbar.MenuAction>
+					</Stack.Toolbar.Menu>
+					<Stack.Toolbar.MenuAction icon="gear" onPress={() => router.navigate('/settings')}>
+						Settings
+					</Stack.Toolbar.MenuAction>
+				</Stack.Toolbar.Menu>
 			</Stack.Toolbar>
 			<Host
 				matchContents={false}
 				modifiers={[accessibilityIdentifier('screen-homescreen')]}
 				style={styles.host}
 			>
-				<ScrollView>
-					<VStack
-						modifiers={[
-							padding({all: SCREEN_MARGIN}),
-							// Room to scroll the last of Home clear of the Now Playing bar.
-							padding({bottom: barVisible ? NOW_PLAYING_BAR_CLEARANCE : 0}),
-							frame({maxWidth: FILL_WIDTH}),
-						]}
-						spacing={TILE_SPACING}
-					>
+				{!hydrated || !groupsHydrated ? null : layout === 'list' ? (
+					<VStack spacing={0}>
+						{/* Above the list rather than a row in it: a row with nothing
+						    in it, as when there is no banner, still takes a row's
+						    minimum height. */}
 						<RNHostView matchContents={true}>
 							<FaqBannerGroup
 								onPressFaq={(faqId) => router.navigate({pathname: '/faq', params: {faqId}})}
@@ -215,39 +337,74 @@ export default function HomePage(): React.ReactNode {
 								target={FAQ_TARGETS.HOME}
 							/>
 						</RNHostView>
-
-						{/* Health lays its cards out as a grid, not as independent
-						    columns: the cards in a row share a height, so a two-line
-						    title on one lifts the card beside it too. Independent
-						    columns cannot express that -- each card sizes to its own
-						    content, and they drift out of step as the taller ones
-						    accumulate. */}
-						<TileGrid
-							accessibilityId={HOME_GRID_ID}
-							columns={homeColumnsForFontScale(fontScale)}
-							items={allViews}
-							keyForItem={(view) => view.title}
-							renderItem={(view) => (
-								<HomeScreenButton
-									onPress={() => {
-										if (view.type === 'url') {
-											return openUrl(view.url)
-										} else if (view.type === 'view') {
-											return router.navigate(view.view)
-										} else {
-											throw new Error(`unexpected view type ${view.type}`)
-										}
-									}}
-									view={view}
+						<List modifiers={[listStyle('insetGrouped')]}>
+							<HomeListSections onOpen={openView} sections={sections} />
+							<VStack modifiers={BARE_ROW_MODIFIERS}>
+								<UnofficialAppNotice />
+							</VStack>
+							<Section>
+								<RadioPlayerSwitch inList={true} />
+							</Section>
+							{/* Room to scroll the last of the list clear of the Now Playing bar. */}
+							{barVisible ? (
+								<Spacer
+									modifiers={[...BARE_ROW_MODIFIERS, frame({height: NOW_PLAYING_BAR_CLEARANCE})]}
 								/>
-							)}
-						/>
-
-						<UnofficialAppNotice />
-
-						<RadioPlayerSwitch />
+							) : null}
+						</List>
 					</VStack>
-				</ScrollView>
+				) : (
+					<ScrollView>
+						<VStack
+							modifiers={[
+								padding({all: SCREEN_MARGIN}),
+								// Room to scroll the last of Home clear of the Now Playing bar.
+								padding({bottom: barVisible ? NOW_PLAYING_BAR_CLEARANCE : 0}),
+								frame({maxWidth: FILL_WIDTH}),
+							]}
+							spacing={0}
+						>
+							{/* The banner is its own child, not one of the spaced groups
+						    below: when there is no banner its slot is empty, and
+						    spacing around an empty slot is a gap above the first group. */}
+							<RNHostView matchContents={true}>
+								<FaqBannerGroup
+									onPressFaq={(faqId) => router.navigate({pathname: '/faq', params: {faqId}})}
+									style={styles.banner}
+									target={FAQ_TARGETS.HOME}
+								/>
+							</RNHostView>
+
+							<VStack spacing={layout === 'tiled' ? TILE_SPACING : TILE_SPACING * 2}>
+								{layout === 'tiled' ? (
+									<TileGrid
+										accessibilityId={HOME_GRID_ID}
+										columns={homeColumnsForFontScale(fontScale)}
+										items={tiledViews}
+										keyForItem={(view) => view.title}
+										renderItem={(view) => (
+											<HomeScreenButton onPress={() => openView(view)} view={view} />
+										)}
+									/>
+								) : (
+									sections.map((section) => (
+										<HomeGroupView
+											collapsed={section.collapsible && collapsedGroups.includes(section.id)}
+											key={section.id}
+											onOpen={openView}
+											onToggle={() => toggleGroup(section.id)}
+											section={section}
+										/>
+									))
+								)}
+
+								<UnofficialAppNotice />
+
+								<RadioPlayerSwitch />
+							</VStack>
+						</VStack>
+					</ScrollView>
+				)}
 			</Host>
 			<RadioNowPlayingBar />
 		</>

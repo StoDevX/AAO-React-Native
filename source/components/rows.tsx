@@ -18,6 +18,7 @@ import {
 	accessibilityRemoveTraits,
 	accessibilityIdentifier,
 	accessibilityLabel,
+	aspectRatio,
 	buttonStyle,
 	contentShape,
 	disabled as disabledModifier,
@@ -26,6 +27,7 @@ import {
 	frame,
 	lineLimit,
 	monospacedDigit,
+	resizable,
 	shapes,
 	truncationMode,
 } from '@expo/ui/swift-ui/modifiers'
@@ -172,7 +174,7 @@ type ThumbnailImage = {uri: string; width: number; height: number}
  * A white symbol on a small gradient square, as Settings draws its rows'
  * icons -- the row-sized cousin of a `GradientTile`, sharing its gradients.
  */
-type GradientSymbolImage = {systemName: SFSymbol; gradient: Gradient}
+type GradientSymbolImage = ({systemName: SFSymbol} | {assetName: string}) & {gradient: Gradient}
 
 export type DisclosureRowImage = SymbolImage | ThumbnailImage | GradientSymbolImage
 
@@ -229,7 +231,19 @@ export function LeadingImage({image}: {image: DisclosureRowImage}): React.ReactN
 					gradient={image.gradient}
 					showShadow={false}
 				/>
-				<Image color="white" size={ICON_SYMBOL_SIZE} systemName={image.systemName} />
+				<Image
+					{...('assetName' in image
+						? {assetName: image.assetName}
+						: {systemName: image.systemName})}
+					color="white"
+					// Fitted into a square rather than sized by font: a wide symbol
+					// (three people) would otherwise stretch the icon past its siblings.
+					modifiers={[
+						resizable(),
+						aspectRatio({contentMode: 'fit'}),
+						frame({width: ICON_SYMBOL_SIZE, height: ICON_SYMBOL_SIZE}),
+					]}
+				/>
 			</ZStack>
 		)
 	}

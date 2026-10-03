@@ -1,5 +1,5 @@
 import {cssSelect, parseHtml, removeElement, type AnyNode, type Element} from '@frogpond/html-lib'
-import type {Block, CrosswordPuzzle} from '../types'
+import type {Block, CrosswordPuzzle, MessCategory} from '../types'
 import {blocksFromNodes} from './blocks'
 
 /** The placeholder PuzzleMe's WordPress plugin writes, which its script turns into the player. */
@@ -27,4 +27,12 @@ export function crosswordUrl(puzzle: CrosswordPuzzle): string {
 	let id = encodeURIComponent(puzzle.id)
 	let set = encodeURIComponent(puzzle.set)
 	return `https://puzzleme.amuselabs.com/pmm/crossword?id=${id}&set=${set}&embed=1`
+}
+
+/** The Variety column whose posts are the paper's crosswords. */
+export const CROSSWORD_COLUMN = 'Crossword'
+
+/** The id WordPress gave the crossword column, which the paper's feed does not promise to keep. */
+export function crosswordColumnId(categories: MessCategory[]): number | undefined {
+	return categories.find((category) => category.name === CROSSWORD_COLUMN)?.id
 }

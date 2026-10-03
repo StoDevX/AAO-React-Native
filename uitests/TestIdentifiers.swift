@@ -77,7 +77,10 @@ struct TestIdentifiers {
 	}
 
 	enum Navigation {
-		static let openSettings = "Open Settings"
+		/// The menu at the home screen's top-right corner, which holds the layout
+		/// choice and Settings. Mirrors HOME_MENU_LABEL in app/index.tsx.
+		static let homeMenu = "Home menu"
+		static let settingsMenuItem = "Settings"
     static let settingsSheetTitle = "Settings"
 		/// The label every back button carries. UIKit gives its own back
 		/// buttons this label too, so a query using it must be scoped to one

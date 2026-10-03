@@ -1,4 +1,4 @@
-import {AllViews} from '../views'
+import {TiledViews} from '../views'
 import type {ViewType} from '../views'
 
 /** A screen a Home Screen quick action can open. */
@@ -33,7 +33,7 @@ const CAFE_MENUS: QuickActionDestination[] = [
  * it opens the same screen as Stav Menu.
  */
 export function quickActionDestinations(): QuickActionDestination[] {
-	let tiles = AllViews().flatMap((view): QuickActionDestination[] => {
+	let tiles = TiledViews().flatMap((view): QuickActionDestination[] => {
 		if (view.type !== 'view' || view.disabled || view.devOnly) {
 			return []
 		}
