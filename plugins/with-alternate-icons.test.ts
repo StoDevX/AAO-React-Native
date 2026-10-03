@@ -11,6 +11,7 @@ import {
 	ALTERNATE_ICONS,
 	addAlternateIconResources,
 	assertLayersPresent,
+	compressAppIcons,
 	copyAlternateIcons,
 	includeAllAppIcons,
 } from './with-alternate-icons.ts'
@@ -100,7 +101,7 @@ describe('copyAlternateIcons', () => {
 	})
 
 	it('fails loudly when a document is missing', () => {
-		let root = makeProjectRoot(['sunset-behind-main'])
+		let root = makeProjectRoot(['old-main'])
 		let destination = join(root, 'ios', 'AllAboutOlaf')
 		mkdirSync(destination, {recursive: true})
 
@@ -151,5 +152,20 @@ describe('ALTERNATE_ICONS', () => {
 			.filter((entry) => entry.endsWith('.icon') && entry !== 'windmill.icon')
 			.map((entry) => entry.slice(0, -'.icon'.length))
 		assert.deepEqual(ALTERNATE_ICONS.toSorted(), documents.toSorted())
+	})
+})
+
+describe('compressAppIcons', () => {
+	it('compiles the asset catalog for size in every build configuration of the app target', () => {
+		let project = compressAppIcons(loadProject(), 'AllAboutOlaf')
+		let configurations = settingsFor(project, 'AllAboutOlaf')
+		assert.ok(configurations.length > 0)
+		for (let settings of configurations) {
+			assert.equal(settings.ASSETCATALOG_COMPILER_OPTIMIZATION, 'space')
+		}
+	})
+
+	it('throws when the target is missing', () => {
+		assert.throws(() => compressAppIcons(loadProject(), 'NoSuchTarget'), /NoSuchTarget/u)
 	})
 })

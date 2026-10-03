@@ -6,7 +6,7 @@ import {Stack, useFocusEffect, useRouter} from 'expo-router'
 import * as c from '@frogpond/colors'
 import {SheetSection} from '@frogpond/sheet-section'
 
-import {previewsFor} from '../../images/icons'
+import {previewFor} from '../../images/icons'
 import {MenuPickerRow} from '../../source/components/menu-picker-row'
 import {DisclosureRow, NavigationRow} from '../../source/components/rows'
 import {SheetCloseButton} from '../../source/components/sheet-close-button'
@@ -55,7 +55,7 @@ export default function CustomizePage(): React.ReactNode {
 							detail={[current.title]}
 							identifier="app-icon-row"
 							image={{
-								source: previewsFor(current.type, scheme).icon,
+								source: previewFor(current.type, scheme),
 								width: ROW_ICON_SIZE,
 								height: ROW_ICON_SIZE,
 							}}

@@ -1,13 +1,17 @@
 /**
- * Draw the pixel layer of the CRT Old Main icon: `pixels.png` (green) and
- * `pixels-amber.png` (amber, the dark appearance) in assets/old-main-retro.icon/.
- * Each is rendered from an SVG kept beside it in `source/`, so edit the screen
- * below, or the SVG in a design tool, and run this to redraw the PNGs.
+ * Draw the pixel layers of the Old Main (Retro) icon in assets/old-main-retro.icon/:
+ * green for the light appearance, amber for the dark. Each color gets two
+ * layers, so edit the screen below and run this to redraw both:
+ *
+ * - `pixels.svg`, the lit cells, which Icon Composer draws as a vector.
+ * - `pixels-glow.png`, the glow under them, rendered from `source/pixels-glow.svg`
+ *   at quarter size, since Icon Composer ignores SVG filters.
  *
  * The icon is Display P3 throughout. The palette holds P3 components, written
- * into the SVG as plain `rgb()`: librsvg would clip `color(display-p3 …)` to
- * sRGB. The render keeps those numbers as they are, and the PNG is then tagged
- * with the Display P3 profile rather than converted to it.
+ * into the SVGs as plain `rgb()`. icon.json reads untagged SVG colors as P3,
+ * and librsvg would clip `color(display-p3 …)` to sRGB. The glow's render keeps
+ * those numbers as they are, and the PNG is then tagged with the Display P3
+ * profile rather than converted to it.
  */
 import {execFileSync} from 'node:child_process'
 import {mkdirSync, writeFileSync} from 'node:fs'
@@ -101,41 +105,71 @@ export function cellPositions(screen) {
 /** @param {number[]} c */
 const rgb = (c) => `rgb(${c.join(' ')})`
 
-/** @param {typeof GREEN} palette */
-export function pixelsSvg(palette) {
-	let [r, g, b] = palette.glow.map((c) => round(c / 255, 4))
-	let glow = GLOW.map(
-		({blur, opacity}, i) =>
-			`<feGaussianBlur in="SourceGraphic" stdDeviation="${blur}" result="blur${i}"/>
-			<feColorMatrix in="blur${i}" values="0 0 0 0 ${r}  0 0 0 0 ${g}  0 0 0 0 ${b}  0 0 0 ${opacity} 0" result="halo${i}"/>`,
-	).join('\n\t\t\t')
+/**
+ * An SVG of the screen: every lit cell as a `<use>` of `#cell`, inside `#screen`.
+ *
+ * @param {string} defs the gradient or filter the body draws with
+ * @param {string} body what to draw, as uses of `#screen`
+ */
+function screenSvg(defs, body) {
 	let cells = cellPositions(SCREEN)
 		.map(({x, y}) => `<use href="#cell" x="${x}" y="${y}"/>`)
 		.join('\n\t\t')
-	let first = round(LEFT + PITCH)
-	let last = round(LEFT + PITCH * (SCREEN[0].length - 1))
 
 	return `<svg xmlns="http://www.w3.org/2000/svg" width="${CANVAS}" height="${CANVAS}" viewBox="0 0 ${CANVAS} ${CANVAS}">
 	<defs>
-		<linearGradient id="phosphor" gradientUnits="userSpaceOnUse" x1="${first}" x2="${last}" y1="0" y2="0">
-			<stop offset="0" stop-color="${rgb(palette.ends)}"/>
-			<stop offset="0.08" stop-color="${rgb(palette.fill)}"/>
-			<stop offset="0.92" stop-color="${rgb(palette.fill)}"/>
-			<stop offset="1" stop-color="${rgb(palette.ends)}"/>
-		</linearGradient>
-		<filter id="glow" color-interpolation-filters="sRGB" x="-30%" y="-30%" width="160%" height="160%">
-			${glow}
-			<feMerge>${GLOW.map((_, i) => `<feMergeNode in="halo${GLOW.length - 1 - i}"/>`).join('')}</feMerge>
-		</filter>
+		${defs}
 		<rect id="cell" x="${RIM / 2}" y="${RIM / 2}" width="${CELL - RIM}" height="${CELL - RIM}" rx="3" stroke-width="${RIM}"/>
 		<g id="screen">
 		${cells}
 		</g>
 	</defs>
-	<use href="#screen" filter="url(#glow)"/>
-	<use href="#screen" fill="url(#phosphor)" stroke="${rgb(palette.rim)}"/>
+	${body}
 </svg>
 `
+}
+
+/**
+ * The lit cells, without their glow. Icon Composer reads this SVG itself, and
+ * it drops filters without a word, so the glow is a separate raster layer.
+ *
+ * @param {typeof GREEN} palette
+ */
+export function cellsSvg(palette) {
+	let first = round(LEFT + PITCH)
+	let last = round(LEFT + PITCH * (SCREEN[0].length - 1))
+
+	return screenSvg(
+		`<linearGradient id="phosphor" gradientUnits="userSpaceOnUse" x1="${first}" x2="${last}" y1="0" y2="0">
+			<stop offset="0" stop-color="${rgb(palette.ends)}"/>
+			<stop offset="0.08" stop-color="${rgb(palette.fill)}"/>
+			<stop offset="0.92" stop-color="${rgb(palette.fill)}"/>
+			<stop offset="1" stop-color="${rgb(palette.ends)}"/>
+		</linearGradient>`,
+		`<use href="#screen" fill="url(#phosphor)" stroke="${rgb(palette.rim)}"/>`,
+	)
+}
+
+/**
+ * The glow under the cells alone, for librsvg to render into the glow layer.
+ *
+ * @param {typeof GREEN} palette
+ */
+export function glowSvg(palette) {
+	let [r, g, b] = palette.glow.map((c) => round(c / 255, 4))
+	let halos = GLOW.map(
+		({blur, opacity}, i) =>
+			`<feGaussianBlur in="SourceGraphic" stdDeviation="${blur}" result="blur${i}"/>
+			<feColorMatrix in="blur${i}" values="0 0 0 0 ${r}  0 0 0 0 ${g}  0 0 0 0 ${b}  0 0 0 ${opacity} 0" result="halo${i}"/>`,
+	).join('\n\t\t\t')
+
+	return screenSvg(
+		`<filter id="glow" color-interpolation-filters="sRGB" x="-30%" y="-30%" width="160%" height="160%">
+			${halos}
+			<feMerge>${GLOW.map((_, i) => `<feMergeNode in="halo${GLOW.length - 1 - i}"/>`).join('')}</feMerge>
+		</filter>`,
+		`<use href="#screen" filter="url(#glow)"/>`,
+	)
 }
 
 /** @param {number} n @param {number} [places] */
@@ -147,15 +181,35 @@ function round(n, places = 2) {
 const P3_PROFILE = '/System/Library/ColorSync/Profiles/Display P3.icc'
 const ASSETS = join('assets', 'old-main-retro.icon', 'Assets')
 const SOURCE = join('assets', 'old-main-retro.icon', 'source')
+/**
+ * The glow layer's width in pixels. The blur leaves nothing a full-size layer
+ * would show, and icon.json scales the layer up by `CANVAS / GLOW_SIZE`.
+ */
+const GLOW_SIZE = 256
 
 function main() {
 	mkdirSync(SOURCE, {recursive: true})
 	for (let palette of [GREEN, AMBER]) {
-		let svg = join(SOURCE, `${palette.name}.svg`)
-		let png = join(ASSETS, `${palette.name}.png`)
-		writeFileSync(svg, pixelsSvg(palette))
+		let cells = join(ASSETS, `${palette.name}.svg`)
+		writeFileSync(cells, cellsSvg(palette))
+		console.log(`make-crt-pixels: ${cells}`)
+
+		let svg = join(SOURCE, `${palette.name}-glow.svg`)
+		let png = join(ASSETS, `${palette.name}-glow.png`)
+		writeFileSync(svg, glowSvg(palette))
 		// The render is untagged, so -profile assigns P3 and leaves the pixels alone.
-		execFileSync('magick', ['-background', 'none', svg, '-profile', P3_PROFILE, png])
+		execFileSync('magick', [
+			'-background',
+			'none',
+			svg,
+			'-resize',
+			`${GLOW_SIZE}x${GLOW_SIZE}`,
+			'-depth',
+			'8',
+			'-profile',
+			P3_PROFILE,
+			png,
+		])
 		execFileSync('oxipng', ['--quiet', '--strip', 'safe', png])
 		console.log(`make-crt-pixels: ${svg} -> ${png}`)
 	}
