@@ -17,14 +17,14 @@ class ModuleSettingsTests: UITestCase {
 
 		settings.scrollUntilExists(app.staticTexts["App Icon"])
 
-		let bigOle = app.buttons["Big Ole"]
+		let bigOle = settings.appIcon(named: "Big Ole")
 		let alternates = ["Old Main", "Windmill (Day)"]
 
 		// there should be three icon settings available
 		settings.scrollUntilExists(bigOle)
 		XCTAssertTrue(bigOle.exists, "Big Ole should be offered as an icon")
 		for name in alternates {
-			let row = app.buttons[name]
+			let row = settings.appIcon(named: name)
 			settings.scrollUntilExists(row)
 			XCTAssertTrue(row.exists, "\(name) should be offered as an icon")
 		}
@@ -35,6 +35,7 @@ class ModuleSettingsTests: UITestCase {
 		if strayAlert.waitForExistence(timeout: 2) {
 			strayAlert.tap()
 		}
+		settings.scrollIntoView(bigOle)
 		if !bigOle.isSelected {
 			settings.selectAppIcon(iconName: "Big Ole", springboard: springboard)
 		}

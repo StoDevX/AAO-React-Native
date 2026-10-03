@@ -14,7 +14,6 @@ import {useIsDevMode} from '../../source/lib/use-is-dev-mode'
 import {FaqBannerGroup} from '../../source/features/faqs/banner'
 import {FAQ_TARGETS} from '../../source/features/faqs/constants'
 
-import {CredentialsLoginSection} from '../../source/features/settings/screens/overview/login-credentials'
 import {MiscellanySection} from '../../source/features/settings/screens/overview/miscellany'
 import {SupportSection} from '../../source/features/settings/screens/overview/support'
 import {DeveloperSection} from '../../source/features/settings/screens/overview/developer'
@@ -53,8 +52,6 @@ export default function SettingsRootPage(): React.ReactNode {
 							<FaqBannerGroup style={styles.banner} target={FAQ_TARGETS.SETTINGS_ROOT} />
 						</RNHostView>
 					</VStack>
-
-					<CredentialsLoginSection />
 
 					<SupportSection />
 
