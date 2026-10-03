@@ -30,7 +30,7 @@ public class AudioRouteModule: Module {
 /// the size of a finger, not nothing, since a slider can be grabbed only where
 /// its thumb is.
 final class VolumeSliderView: ExpoView {
-	let volumeView = MPVolumeView(frame: .zero)
+	let volumeView = CenteredVolumeView(frame: .zero)
 
 	private static let thumbSize = CGSize(width: 28, height: 28)
 
@@ -42,13 +42,20 @@ final class VolumeSliderView: ExpoView {
 		addSubview(volumeView)
 	}
 
-	/// The volume view puts its slider at the top of its frame, so the slider
-	/// is centred by hand, to line up with the speakers beside it.
 	override func layoutSubviews() {
 		super.layoutSubviews()
 		volumeView.frame = bounds
-		volumeView.layoutIfNeeded()
-		if let slider = volumeView.subviews.compactMap({ $0 as? UISlider }).first {
+	}
+}
+
+/// A volume view that keeps its slider vertically centred. It puts the slider
+/// at the top of its frame, and lays it out there again whenever the audio
+/// route or session changes, as playing starting does, so centring it once
+/// from outside does not last.
+final class CenteredVolumeView: MPVolumeView {
+	override func layoutSubviews() {
+		super.layoutSubviews()
+		if let slider = subviews.compactMap({ $0 as? UISlider }).first {
 			slider.center.y = bounds.midY
 		}
 	}
