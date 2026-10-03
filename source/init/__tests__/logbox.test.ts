@@ -47,3 +47,34 @@ describe('removeLogBoxForChaos', () => {
 		expect(uninstall).not.toHaveBeenCalled()
 	})
 })
+
+describe('at launch', () => {
+	/** Loads the module as a launch with these flags would, returning LogBox's spies. */
+	function launch(flags: {isUITesting: boolean; isChaos: boolean}) {
+		jest.resetModules()
+		jest.doMock('@frogpond/launch-arguments', () => flags)
+		// The module loads a fresh copy of react-native now, so the spies go on that one.
+		// oxlint-disable-next-line typescript/no-require-imports
+		let {LogBox: fresh} = require('react-native') as typeof import('react-native')
+		let ignoreAllLogs = jest.spyOn(fresh, 'ignoreAllLogs').mockReturnValue(undefined)
+		let uninstall = jest.spyOn(fresh, 'uninstall').mockReturnValue(undefined)
+		// oxlint-disable-next-line typescript/no-require-imports
+		require('../logbox')
+		return {ignoreAllLogs, uninstall}
+	}
+
+	// Uninstalling LogBox already removes its toasts along with its red screen.
+	test('a chaos launch uninstalls LogBox rather than hiding its toasts', () => {
+		let {ignoreAllLogs, uninstall} = launch({isUITesting: false, isChaos: true})
+
+		expect(uninstall).toHaveBeenCalled()
+		expect(ignoreAllLogs).not.toHaveBeenCalled()
+	})
+
+	test('a UI-test launch hides the toasts and keeps LogBox', () => {
+		let {ignoreAllLogs, uninstall} = launch({isUITesting: true, isChaos: false})
+
+		expect(ignoreAllLogs).toHaveBeenCalledWith(true)
+		expect(uninstall).not.toHaveBeenCalled()
+	})
+})
