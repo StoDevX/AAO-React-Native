@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {StyleSheet, Text, View, useWindowDimensions, type LayoutChangeEvent} from 'react-native'
+import {StyleSheet, Text, View, useWindowDimensions} from 'react-native'
 
 import {ScratchableLogo} from '../scratchable-logo'
 import type {Station} from '../stations'
@@ -11,7 +11,7 @@ import {StationActionRow} from './station-actions'
 import {StationMenu} from './station-menu'
 import {StationPicker} from './station-picker'
 import {VolumeSliderStub} from './stubs'
-import {artworkSize} from './artwork-size'
+import {useFittedArtwork} from './use-fitted-artwork'
 import {LockButton} from './lock-button'
 import {palette} from './palette'
 import type {RadioLogo} from '../theme'
@@ -47,20 +47,10 @@ export function FullLayout({
 	// whole of it fits above a tab bar or a sheet's bottom edge.
 	let {width} = useWindowDimensions()
 	let fullWidth = width - 2 * SIDE
-	let [artwork, setArtwork] = React.useState(fullWidth)
-	let fitArtwork = (event: LayoutChangeEvent) => {
-		setArtwork(
-			artworkSize({
-				width: fullWidth,
-				viewportHeight,
-				layoutHeight: event.nativeEvent.layout.height,
-				currentArtwork: artwork,
-			}),
-		)
-	}
+	let {artwork, onLayout} = useFittedArtwork({width: fullWidth, viewportHeight})
 
 	return (
-		<View onLayout={fitArtwork} style={styles.screen}>
+		<View onLayout={onLayout} style={styles.screen}>
 			<StationPicker />
 			<View style={[styles.artwork, {height: artwork}]}>
 				{showingSchedule ? (
