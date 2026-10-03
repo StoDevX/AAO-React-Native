@@ -205,13 +205,15 @@ class ModuleNewsTests: UITestCaseUnbooted {
 			.navigate()
 			.openColumn(TestIdentifiers.News.photoColumn, in: TestIdentifiers.News.varietySection)
 		let story = front.openFirstStory().verifyHeadlineAppears()
-		XCTAssertTrue(story.pageIsDark(), "a Photo story should open in Dark Mode")
+		story.verifyPage(dark: true, "a Photo story should open in Dark Mode")
+		// An error screen is dark too, so the story must still be the page on show.
+		story.verifyHeadlineAppears()
 		story.capture("Photo story, kept dark")
 
 		story.goBack()
 		XCTAssertTrue(
 			front.storyRows.firstMatch.waitForExistence(timeout: 10), "Back should return to the Photo list")
-		XCTAssertFalse(story.pageIsDark(), "the Photo list should be light again after Back")
+		story.verifyPage(dark: false, "the Photo list should be light again after Back")
 		front.capture("Photo list after Back")
 	}
 
@@ -223,7 +225,7 @@ class ModuleNewsTests: UITestCaseUnbooted {
 			.openColumn(TestIdentifiers.News.photoColumn, in: TestIdentifiers.News.varietySection)
 			.openFirstStory()
 			.verifyHeadlineAppears()
-		XCTAssertFalse(story.pageIsDark(), "with the setting off, a Photo story should stay light")
+		story.verifyPage(dark: false, "with the setting off, a Photo story should stay light")
 		story.capture("Photo story, setting off")
 	}
 

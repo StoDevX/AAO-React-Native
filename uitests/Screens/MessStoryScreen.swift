@@ -30,11 +30,23 @@ struct MessStoryScreen: Screen {
 		return self
 	}
 
-	/// Whether the page is dark, read from the paper beside the column, below the bars.
-	func pageIsDark() -> Bool {
-		guard let pixels = ScreenPixels(app.screenshot().image) else { return false }
-		let paper = pixels.colour(at: CGPoint(x: 6, y: app.windows.firstMatch.frame.midY))
-		return (paper.red + paper.green + paper.blue) / 3 < 80
+	/// Wait until the paper beside the column, below the bars, reads as dark or as light. A
+	/// screenshot that can't be read fails the check rather than counting as light.
+	@discardableResult
+	func verifyPage(dark: Bool, _ message: String) -> Self {
+		var brightness: Int?
+		let settled = NSPredicate { _, _ in
+			guard let pixels = ScreenPixels(app.screenshot().image) else { return false }
+			let paper = pixels.colour(at: CGPoint(x: 6, y: app.windows.firstMatch.frame.midY))
+			brightness = (paper.red + paper.green + paper.blue) / 3
+			return (brightness! < 80) == dark
+		}
+		let result = XCTWaiter().wait(
+			for: [XCTNSPredicateExpectation(predicate: settled, object: nil)], timeout: 10)
+		XCTAssertEqual(
+			result, .completed,
+			"\(message) (the paper's brightness read \(brightness.map(String.init) ?? "nothing"))")
+		return self
 	}
 
 	/// The headline of the story on top, once one other than `previous` is drawn.
