@@ -6,8 +6,22 @@ import {NativeStreamPlayer} from '../native-player'
 import type {PlayState} from '../types'
 
 // The native module needs a device. Its player is a stand-in that records the
-// commands it is sent, and its status is set by each test.
-const mockPlayer = {play: jest.fn(), pause: jest.fn(), setActiveForLockScreen: jest.fn()}
+// commands it is sent, and its status is set by each test. As the real one is,
+// it is released when its component unmounts, before the component's own
+// cleanups run, and a released player refuses every command.
+let mockReleased = false
+function command(name: string): jest.Mock {
+	return jest.fn(() => {
+		if (mockReleased) {
+			throw new Error(`Calling the '${name}' function has failed: the player was released`)
+		}
+	})
+}
+const mockPlayer = {
+	play: command('play'),
+	pause: command('pause'),
+	setActiveForLockScreen: command('setActiveForLockScreen'),
+}
 let mockStatus = {
 	playing: false,
 	isBuffering: false,
@@ -17,7 +31,17 @@ let mockStatus = {
 const mockSetAudioMode = jest.fn(() => Promise.resolve())
 
 jest.mock('expo-audio', () => ({
-	useAudioPlayer: () => mockPlayer,
+	useAudioPlayer: () => {
+		// oxlint-disable-next-line typescript/no-require-imports
+		const {useEffect} = require('react') as typeof import('react')
+		useEffect(() => {
+			mockReleased = false
+			return () => {
+				mockReleased = true
+			}
+		}, [])
+		return mockPlayer
+	},
 	useAudioPlayerStatus: () => mockStatus,
 	setAudioModeAsync: () => mockSetAudioMode(),
 }))
@@ -62,7 +86,7 @@ describe('NativeStreamPlayer', () => {
 		expect(mockPlayer.pause).toHaveBeenCalled()
 	})
 
-	test('names the station on the lock screen and in Control Center, as a live stream', async () => {
+	test('names the station on the lock screen and in Control Center, and unmounts without error', async () => {
 		let view = await render(player('checking', callbacks()))
 		expect(mockPlayer.setActiveForLockScreen).toHaveBeenCalledWith(
 			true,
@@ -70,9 +94,9 @@ describe('NativeStreamPlayer', () => {
 			{isLiveStream: true},
 		)
 
+		// Releasing the player takes it off the lock screen; asking it to as well
+		// would fail, as it is already gone.
 		await view.unmount()
-
-		expect(mockPlayer.setActiveForLockScreen).toHaveBeenLastCalledWith(false)
 	})
 
 	test('keeps playing in the background and in silent mode', async () => {

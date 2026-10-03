@@ -60,13 +60,14 @@ export function NativeStreamPlayer(props: Props): React.ReactNode {
 	// The lock screen and Control Center show the station and its play and
 	// pause, which come back as the player going quiet, so reach the store the
 	// same way an interruption does.
+	// Releasing the player, which unmounting does first, takes it off the lock
+	// screen; asking it to as well would fail, as it is already gone.
 	React.useEffect(() => {
 		player.setActiveForLockScreen(
 			true,
 			{title: stationName, artworkUrl: artworkUri},
 			{isLiveStream: true},
 		)
-		return () => player.setActiveForLockScreen(false)
 	}, [player, stationName, artworkUri])
 
 	let previous = React.useRef<AudioActivity>('idle')
