@@ -223,4 +223,33 @@ describe('NativeStreamPlayer', () => {
 
 		expect(mockPlayer.muted).toBe(true)
 	})
+
+	test('does not take the idle moment of its own reload for a pause, which would loop', async () => {
+		let cb = callbacks()
+		mockStatus = {...mockStatus, playing: true}
+		let view = await render(player('playing', cb))
+		mockStatus = {...mockStatus, playing: false}
+		await view.rerender(player('paused', cb))
+		mockStatus = {...mockStatus, playing: true}
+		await view.rerender(player('paused', cb))
+		expect(cb.onResume).toHaveBeenCalledTimes(1)
+		cb.onPause.mockClear()
+		cb.onPlay.mockClear()
+
+		// The store has started the station again; the reloading player is idle for
+		// a moment, then plays.
+		mockStatus = {...mockStatus, playing: false, isBuffering: false}
+		await view.rerender(player('checking', cb))
+		expect(cb.onPause).not.toHaveBeenCalled()
+
+		mockStatus = {...mockStatus, playing: true}
+		await view.rerender(player('checking', cb))
+		expect(cb.onPlay).toHaveBeenCalledTimes(1)
+		expect(cb.onResume).toHaveBeenCalledTimes(1)
+
+		// Once it plays again, quiet is a pause once more.
+		mockStatus = {...mockStatus, playing: false}
+		await view.rerender(player('playing', cb))
+		expect(cb.onPause).toHaveBeenCalledTimes(1)
+	})
 })

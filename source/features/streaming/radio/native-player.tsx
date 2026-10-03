@@ -84,12 +84,22 @@ export function NativeStreamPlayer(props: Props): React.ReactNode {
 	// not heard in the meantime, and it is not paused again, which the lock
 	// screen would show between two Playings. Only the player starting counts:
 	// its status still says playing for a moment after the app pauses it.
+	// True from loading the stream again until it plays, or fails. The reloading
+	// player is idle for a moment, which is not a pause, and taking it for one
+	// pauses the station, whose own restart then reads as another resume.
+	let reloading = React.useRef(false)
 	let wasPlaying = React.useRef(false)
 	let isPlaying = status.playing
 	React.useEffect(() => {
 		let started = isPlaying && !wasPlaying.current
 		wasPlaying.current = isPlaying
-		if (started && playState === 'paused') {
+		// Playing once the store has acknowledged the resume means the stream has
+		// loaded again; the player's own start, which asked for it, does not.
+		if (isPlaying && playState !== 'paused') {
+			reloading.current = false
+		}
+		if (started && playState === 'paused' && !reloading.current) {
+			reloading.current = true
 			player.replace(streamSourceUrl)
 			// oxlint-disable-next-line react/immutability
 			player.muted = false
@@ -122,11 +132,12 @@ export function NativeStreamPlayer(props: Props): React.ReactNode {
 				onEnded?.()
 				break
 			case 'error':
+				reloading.current = false
 				onError?.({code: 0, message: error ?? 'The stream could not be played.'})
 				break
 			case 'idle':
 				// Quiet after playing is a pause the app did not ask for.
-				if (was === 'playing' || was === 'waiting') {
+				if ((was === 'playing' || was === 'waiting') && !reloading.current) {
 					onPause?.()
 				}
 				break
