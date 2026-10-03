@@ -267,6 +267,10 @@ run = "node scripts/update-mess-fixtures.mjs"
 description = "Update data/student-wages.yaml from St. Olaf's compensation page"
 run = "node scripts/scrape-student-wages.mjs"
 
+[tasks."scrape-ksto-schedule"]
+description = "Update data/ksto-schedule.yaml from KSTO's Now Playing post"
+run = "node scripts/scrape-ksto-schedule.mjs"
+
 # Needs the network -- it fetches the live campus geojson -- so it stays out
 # of validate-data, which gates three workflows including deploy-data. A
 # ccc-server blip should not block an unrelated pull request from merging.

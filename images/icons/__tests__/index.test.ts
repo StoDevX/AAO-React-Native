@@ -1,5 +1,18 @@
+import {readdirSync} from 'node:fs'
+import {join} from 'node:path'
 import {describe, expect, it} from '@jest/globals'
 import {appIcons, iconFor, previewsFor} from '../index'
+
+/** The names of the Icon Composer documents in assets/. */
+const DOCUMENTS = readdirSync(join(__dirname, '../../../assets'))
+	.filter((entry) => entry.endsWith('.icon'))
+	.map((entry) => entry.slice(0, -'.icon'.length))
+
+describe('appIcons', () => {
+	it('has previews for every Icon Composer document', () => {
+		expect(Object.keys(appIcons).toSorted()).toEqual(DOCUMENTS.toSorted())
+	})
+})
 
 describe('iconFor', () => {
 	it('reads the system default as the windmill', () => {

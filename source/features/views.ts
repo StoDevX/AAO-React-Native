@@ -256,24 +256,6 @@ export const AllViews = (): Array<HomeView> => {
 		// Listen & watch
 		{
 			type: 'view',
-			view: '/streaming-media/ksto',
-			id: 'ksto',
-			title: 'KSTO',
-			icon: 'radio.fill',
-			gradient: c.purpleGradient,
-			group: 'listen-watch',
-		},
-		{
-			type: 'view',
-			view: '/streaming-media/krlx',
-			id: 'krlx',
-			title: 'KRLX',
-			icon: 'mic.fill',
-			gradient: c.violetGradient,
-			group: 'listen-watch',
-		},
-		{
-			type: 'view',
 			view: '/streaming-media',
 			id: 'streams',
 			title: 'Streams',

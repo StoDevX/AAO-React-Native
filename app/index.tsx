@@ -8,7 +8,10 @@ import {
 	List,
 	RNHostView,
 	ScrollView,
+	Section,
+	Spacer,
 	Text,
+	Toggle,
 	VStack,
 } from '@expo/ui/swift-ui'
 import {
@@ -55,6 +58,12 @@ import {useIsDevMode} from '../source/lib/use-is-dev-mode'
 import {FaqBannerGroup} from '../source/features/faqs/banner'
 import {FAQ_TARGETS} from '../source/features/faqs/constants'
 import {sample} from '@frogpond/collections'
+import {
+	NOW_PLAYING_BAR_CLEARANCE,
+	RadioNowPlayingBar,
+	useRadioBarVisible,
+	useRadioStore,
+} from '../source/features/streaming/radio'
 
 const styles = StyleSheet.create({
 	host: {
@@ -160,6 +169,44 @@ const BARE_ROW_MODIFIERS = [
 	listRowSeparator('hidden'),
 ]
 
+/** The inset-grouped row's corner radius, as a Settings section's. */
+const SWITCH_ROW_RADIUS = 26
+
+const switchRowShape = shapes.roundedRectangle({
+	cornerRadius: SWITCH_ROW_RADIUS,
+	roundedCornerStyle: 'continuous',
+})
+
+/**
+ * Lets someone who never listens take the radio's bar off Home. Turning it
+ * off also stops the radio. Streaming Media keeps its bar, so the radio is
+ * still a tap away there, and a station started from it brings Home's bar
+ * back while it plays.
+ *
+ * A row of a list is already a row, so there it draws as a bare switch rather
+ * than inside a rounded row of its own.
+ */
+function RadioPlayerSwitch({inList = false}: {inList?: boolean}): React.ReactNode {
+	let on = useRadioStore((state) => state.showOnHome)
+	let setOn = useRadioStore((state) => state.setShowOnHome)
+	return (
+		<Toggle
+			isOn={on}
+			label="Show Radio Player on Home"
+			modifiers={[
+				...(inList
+					? []
+					: [
+							padding({horizontal: 16, vertical: 11}),
+							background(c.secondarySystemGroupedBackground, switchRowShape),
+						]),
+				accessibilityIdentifier('show-radio-player'),
+			]}
+			onIsOnChange={setOn}
+		/>
+	)
+}
+
 /// Mirrored by TestIdentifiers.Home.tileGrid.
 const HOME_GRID_ID = 'home-tile-grid'
 /// The menu in the navigation bar's corner, mirrored by TestIdentifiers.Navigation.homeMenu.
@@ -232,6 +279,7 @@ export default function HomePage(): React.ReactNode {
 	let {width: screenWidth, fontScale} = useWindowDimensions()
 	let layout = useHomeLayoutStore((state) => state.layout)
 	let setLayout = useHomeLayoutStore((state) => state.setLayout)
+	let barVisible = useRadioBarVisible()
 	let sections = homeSections(AllViews(), {isDev})
 	let tiledViews = TiledViews().filter((view) => !view.disabled && (isDev || !view.devOnly))
 
@@ -290,6 +338,15 @@ export default function HomePage(): React.ReactNode {
 							<VStack modifiers={BARE_ROW_MODIFIERS}>
 								<UnofficialAppNotice />
 							</VStack>
+							<Section>
+								<RadioPlayerSwitch inList={true} />
+							</Section>
+							{/* Room to scroll the last of the list clear of the Now Playing bar. */}
+							{barVisible ? (
+								<Spacer
+									modifiers={[...BARE_ROW_MODIFIERS, frame({height: NOW_PLAYING_BAR_CLEARANCE})]}
+								/>
+							) : null}
 						</List>
 					</VStack>
 				) : (
@@ -298,6 +355,8 @@ export default function HomePage(): React.ReactNode {
 							modifiers={[
 								frame({width: screenWidth - 2 * SCREEN_MARGIN}),
 								padding({all: SCREEN_MARGIN}),
+								// Room to scroll the last of Home clear of the Now Playing bar.
+								padding({bottom: barVisible ? NOW_PLAYING_BAR_CLEARANCE : 0}),
 							]}
 						>
 							{/* The banner is its own child, not one of the spaced groups
@@ -335,11 +394,14 @@ export default function HomePage(): React.ReactNode {
 								)}
 
 								<UnofficialAppNotice />
+
+								<RadioPlayerSwitch />
 							</VStack>
 						</VStack>
 					</ScrollView>
 				)}
 			</Host>
+			<RadioNowPlayingBar />
 		</>
 	)
 }
