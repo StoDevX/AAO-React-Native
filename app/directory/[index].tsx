@@ -26,20 +26,43 @@ import type {
 import {LoadErrorView, LoadingView, NoticeView} from '@frogpond/notice'
 
 export default function DirectoryDetailPage(): React.ReactNode {
-	let router = useRouter()
-
 	let {index, query, type} = useLocalSearchParams<{
 		index: string
-		query: string
-		type: string
+		query?: string
+		type?: string
 	}>()
+
+	// An entry is an index into a search's results, so a link that names no
+	// search -- `AllAboutOlaf://directory/0` -- has nothing to look up.
+	if (!query || !type) {
+		return (
+			<>
+				<Stack.Screen options={{title: ''}} />
+				<NoticeView systemImage="questionmark.circle" title="Entry Not Found" />
+			</>
+		)
+	}
+
+	return (
+		<DirectoryDetail index={Number(index)} query={query} type={type as DirectorySearchTypeEnum} />
+	)
+}
+
+type DirectoryDetailProps = {
+	index: number
+	query: string
+	type: DirectorySearchTypeEnum
+}
+
+function DirectoryDetail({index, query, type}: DirectoryDetailProps): React.ReactNode {
+	let router = useRouter()
 
 	let {
 		data: contact,
 		isLoading,
 		error,
 		refetch,
-	} = useQuery(directoryContactOptions(query, type as DirectorySearchTypeEnum, Number(index)))
+	} = useQuery(directoryContactOptions(query, type, index))
 
 	// No title in the bar: the heading below carries the name, and the bar
 	// repeating it said the same thing twice.
