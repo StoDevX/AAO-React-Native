@@ -284,7 +284,7 @@ export default function HomePage(): React.ReactNode {
 							List
 						</Stack.Toolbar.MenuAction>
 					</Stack.Toolbar.Menu>
-					<Stack.Toolbar.Menu inline={true} title="Help">
+					<Stack.Toolbar.Menu inline={true}>
 						<Stack.Toolbar.MenuAction
 							icon="lifepreserver"
 							onPress={() => router.navigate('/support')}
@@ -304,7 +304,7 @@ export default function HomePage(): React.ReactNode {
 							Contributing
 						</Stack.Toolbar.MenuAction>
 					</Stack.Toolbar.Menu>
-					<Stack.Toolbar.Menu inline={true} title="Feedback">
+					<Stack.Toolbar.Menu inline={true}>
 						<Stack.Toolbar.MenuAction
 							icon="exclamationmark.bubble"
 							onPress={() => router.navigate('/settings/report-problem')}
