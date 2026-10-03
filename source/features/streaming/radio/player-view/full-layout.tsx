@@ -1,5 +1,6 @@
 import * as React from 'react'
 import {StyleSheet, Text, View, useWindowDimensions} from 'react-native'
+import {TouchClaimView} from '@frogpond/touch-claim'
 
 import {ScratchableLogo} from '../scratchable-logo'
 import type {Station} from '../stations'
@@ -61,18 +62,20 @@ export function FullLayout({
 				{showingSchedule ? (
 					<ScheduleList station={station} />
 				) : (
-					<ScratchableLogo
-						key={logo.name}
-						accessibilityLabel={`${station.stationName} logo, ${logo.name}`}
-						image={logo.image}
-						labelColor={logo.labelColor}
-						labelScale={logo.labelScale ?? 0.8}
-						onHeldChange={onHeldChange}
-						onTap={showNextLogo}
-						playing={playState === 'playing'}
-						scratchable={locked}
-						size={artwork}
-					/>
+					<TouchClaimView claims={locked} style={{width: artwork, height: artwork}}>
+						<ScratchableLogo
+							key={logo.name}
+							accessibilityLabel={`${station.stationName} logo, ${logo.name}`}
+							image={logo.image}
+							labelColor={logo.labelColor}
+							labelScale={logo.labelScale ?? 0.8}
+							onHeldChange={onHeldChange}
+							onTap={showNextLogo}
+							playing={playState === 'playing'}
+							scratchable={locked}
+							size={artwork}
+						/>
+					</TouchClaimView>
 				)}
 				<View style={styles.lock}>
 					<LockButton locked={locked} onToggle={onToggleLock} />

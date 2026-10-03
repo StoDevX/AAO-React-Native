@@ -43,6 +43,7 @@
     "@frogpond/timer": "workspace:*",
     "@frogpond/titlecase": "2.0.4",
     "@frogpond/toolbar": "workspace:*",
+    "@frogpond/touch-claim": "workspace:*",
     "@frogpond/touchable": "workspace:*",
     "@frogpond/use-debounce": "workspace:*",
     "@maplibre/maplibre-react-native": "11.4.0",
