@@ -753,6 +753,8 @@ struct TestIdentifiers {
 	// MARK: - About
 
 	enum About {
+		/// The story's page dots, labelled in source/features/about/card-carousel.tsx.
+		static let pageDots = "Page"
 		/// The About screen's host, set in app/about/index.tsx.
 		static let screen = "screen-about"
 		static let version = "Version"

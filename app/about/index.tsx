@@ -1,6 +1,6 @@
 import * as React from 'react'
 import {StyleSheet} from 'react-native'
-import {Form, Host, LabeledContent, RNHostView, Section, Text, VStack} from '@expo/ui/swift-ui'
+import {Form, Host, LabeledContent, RNHostView, Text, VStack} from '@expo/ui/swift-ui'
 import {
 	accessibilityIdentifier,
 	font,
@@ -12,6 +12,7 @@ import {
 } from '@expo/ui/swift-ui/modifiers'
 import * as Application from 'expo-application'
 import * as c from '@frogpond/colors'
+import {SheetSection} from '@frogpond/sheet-section'
 import {Stack, useRouter} from 'expo-router'
 
 import {NavigationRow} from '../../source/components/rows'
@@ -39,7 +40,7 @@ const timelineCards: Array<Card> = timeline.map((era) => ({
 	body: era.story,
 }))
 
-const creditCards: Array<Card> = [
+const credits: Array<Card> = [
 	{id: 'contributors', heading: 'Contributors', body: formatPeopleList(contributors)},
 	{id: 'acknowledgements', heading: 'Acknowledgements', body: formatPeopleList(acknowledgements)},
 ]
@@ -76,24 +77,33 @@ export default function AboutPage(): React.ReactNode {
 						</Text>
 					</VStack>
 
-					<Section>
+					<SheetSection>
 						<LabeledContent label="Version">
 							<Text>{version}</Text>
 						</LabeledContent>
-					</Section>
+					</SheetSection>
 
-					<Section title="Our story">
+					<SheetSection title="Our story">
 						<CardCarousel cards={timelineCards} />
-					</Section>
+					</SheetSection>
 
-					<Section title="Credits">
-						<CardCarousel cards={creditCards} />
-					</Section>
+					<SheetSection title="Credits">
+						{credits.map((credit) => (
+							<VStack alignment="leading" key={credit.id} spacing={4}>
+								<Text modifiers={[font({textStyle: 'headline'}), foregroundStyle(c.label)]}>
+									{credit.heading}
+								</Text>
+								<Text modifiers={[font({textStyle: 'body'}), foregroundStyle(c.secondaryLabel)]}>
+									{credit.body}
+								</Text>
+							</VStack>
+						))}
+					</SheetSection>
 
-					<Section>
+					<SheetSection>
 						<NavigationRow onPress={() => router.navigate('/about/privacy')} title="Privacy" />
 						<NavigationRow onPress={() => router.navigate('/about/legal')} title="Legal" />
-					</Section>
+					</SheetSection>
 				</Form>
 			</Host>
 		</>

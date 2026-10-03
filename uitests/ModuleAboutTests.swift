@@ -24,23 +24,31 @@ class ModuleAboutTests: UITestCase {
 		XCTAssertTrue(about.isOnScreen(first), "The newest era should be on screen")
 		about.capture("about-timeline-first")
 
+		XCTAssertEqual(about.pageDots.value as? String, "1 of 3", "The dots should mark the first era")
+
 		about.swipeToNextCard(from: first, toShow: second)
 		XCTAssertFalse(about.isOnScreen(first), "The newest era should scroll off to the side")
+		let onSecond = XCTNSPredicateExpectation(
+			predicate: NSPredicate(format: "value == %@", "2 of 3"), object: about.pageDots)
+		XCTAssertEqual(
+			XCTWaiter().wait(for: [onSecond], timeout: 5), .completed,
+			"The dots should follow the swipe to the second era")
 		about.capture("about-timeline-second")
 	}
 
-	func testCreditsPageToAcknowledgements() throws {
+	func testCreditsStackTheirRows() throws {
 		let about = HomeScreen(app: app).checkHomescreenExists().openAbout()
 		let ids = TestIdentifiers.About.self
 
 		let contributors = about.text(ids.contributors)
 		let acknowledgements = about.text(ids.acknowledgements)
-		about.reveal(contributors)
-		XCTAssertTrue(about.isOnScreen(contributors), "Credits should open on the contributors")
-		about.capture("about-credits-first")
-
-		about.swipeToNextCard(from: contributors, toShow: acknowledgements)
-		about.capture("about-credits-second")
+		about.reveal(contributors).reveal(acknowledgements)
+		XCTAssertTrue(about.isOnScreen(contributors), "Contributors should sit within the screen")
+		XCTAssertTrue(about.isOnScreen(acknowledgements), "Acknowledgements should sit within the screen")
+		XCTAssertGreaterThan(
+			acknowledgements.frame.minY, contributors.frame.maxY,
+			"Acknowledgements should sit below Contributors")
+		about.capture("about-credits")
 	}
 
 	func testAboutOpensPrivacyAndLegal() throws {
