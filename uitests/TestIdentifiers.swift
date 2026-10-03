@@ -40,6 +40,35 @@ struct TestIdentifiers {
 		}
 	}
 
+	// MARK: - Chaos
+
+	/// Launch arguments and identifiers shared with source/chaos.
+	enum Chaos {
+		static let flag = "--chaos"
+		static let seed = "--chaos-seed"
+		/// Which launch of the run this is; the app keys its tape and seeds its
+		/// faults by it, because `XCUIApplication.open` relaunches the app.
+		static let launch = "--chaos-launch"
+		static let replay = "--chaos-replay"
+		static let faultRate = "--chaos-fault-rate"
+		/// The hidden element whose label is the latest stopping finding.
+		static let beacon = "chaos.findings"
+		/// The beacon's label while there is nothing to report.
+		static let beaconQuiet = "none"
+		/// A route that throws on render, for the canary.
+		static let crashRoute = "chaos-crash"
+		/// What the chaos error boundary draws in place of the tree that threw.
+		static let fatalBoundary = "chaos.fatal-boundary"
+		/// Elements only an error screen draws.
+		static let errorScreenIdentifiers = ["router_error_message", fatalBoundary]
+		/// Texts only an error fallback draws, for fallbacks with no identifier.
+		static let errorScreenLabels = ["A problem occurred while showing places."]
+		/// A route that opens a form sheet with no Back or Close button, for
+		/// the canary that proves the monkey can leave one: the Dictionary's
+		/// preview, which has nothing to show without a draft.
+		static let sheetTrapRoute = "dictionary/entry/preview"
+	}
+
 	// MARK: - testID-based identifiers
 
 	enum Home {
@@ -62,6 +91,11 @@ struct TestIdentifiers {
 		/// whatever the label. Both a system back button and an app-provided
 		/// one read `Back`, so the identifier is what separates them.
 		static let systemBackButton = "BackButton"
+		/// The label UIKit gives a sheet's grabber, which it exposes as a button
+		/// with no identifier. Its element is the sheet's child, which is how a
+		/// sheet's own box is found. A form sheet on an iPhone in landscape
+		/// fills the screen and has none.
+		static let sheetGrabber = "Sheet Grabber"
 	}
 
 	/// Labels UIKit gives a `Stack.SearchBar`'s own controls. In the bottom
@@ -125,6 +159,8 @@ struct TestIdentifiers {
 		static let editFormTitle = suggestAnEdit
 		static let editForm = "dictionary-edit-form"
 		static let previewSheet = "dictionary-preview-sheet"
+		/// What the preview shows when it is opened with no draft to compare.
+		static let emptyPreview = "Nothing to Preview"
 		static let preview = "Preview"
 		static let reorder = "Reorder"
 		static let addSense = "Add Sense"
@@ -254,10 +290,6 @@ struct TestIdentifiers {
 		static let osmCredit = "© OpenStreetMap contributors"
 		/// The map screen's title, which its header no longer draws.
 		static let stolafTitle = "St. Olaf Map"
-		/// UIKit's own drag indicator on the presented sheet, found by label --
-		/// it carries no identifier. Its element is the sheet's child, which is
-		/// how the sheet's own box is found.
-		static let sheetGrabber = "Sheet Grabber"
 		/// A St. Olaf-only building near the top of the list, so the expanded
 		/// sheet shows it without scrolling -- and absent from Carleton's map
 		/// data, so selecting it is what would fail if the map's campus parameter

@@ -5,72 +5,41 @@
 // becomes source/features/mess/__fixtures__/mess.json. Needs a booted simulator
 // with the app installed, and Metro or an embedded bundle, as any UI test run.
 
-import {execFileSync} from 'node:child_process'
 import {existsSync, readFileSync, rmSync, writeFileSync} from 'node:fs'
-import {join} from 'node:path'
 import {renderFixture} from './map-fixtures.mjs'
-import {checkRecording, mergeRecordings, pickSimulator, summarizeKeys} from './mess-fixtures.mjs'
+import {checkRecording, mergeRecordings, summarizeKeys} from './mess-fixtures.mjs'
+import {
+	appDataPath,
+	bootedSimulator,
+	buildForTesting,
+	findXctestrun,
+	testWithoutBuilding,
+} from './uitest-run.mjs'
 
-const BUNDLE = 'NFMTHAZVS9.com.drewvolz.stolaf'
 const FIXTURE = new URL('../source/features/mess/__fixtures__/mess.json', import.meta.url)
 const RECORDING = 'Documents/fixture-recording.jsonl'
 
-function run(command, args, options = {}) {
-	return execFileSync(command, args, {encoding: 'utf8', ...options})
-}
-
-let booted = JSON.parse(run('xcrun', ['simctl', 'list', 'devices', 'booted', '-j'])).devices
-let device = pickSimulator(Object.values(booted).flat(), process.env.SIMULATOR_UDID)
+let device = bootedSimulator()
 console.log(`recording on ${device.name} (${device.udid})`)
 
 /** The recording's path: asked for each time, since the test run reinstalls the app. */
 function recordingPath() {
-	let container = run('xcrun', ['simctl', 'get_app_container', device.udid, BUNDLE, 'data'])
-	return join(container.trim(), RECORDING)
+	let path = appDataPath(device.udid, RECORDING)
+	if (!path) throw new Error('the app is not installed on this simulator')
+	return path
 }
 
 // A recording left by an earlier run would mix two papers.
 rmSync(recordingPath(), {force: true})
 
-let build = [
-	'-workspace',
-	'ios/AllAboutOlaf.xcworkspace',
-	'-scheme',
-	'AllAboutOlaf',
-	'-configuration',
-	'Debug',
-	'-sdk',
-	'iphonesimulator',
-	'-derivedDataPath',
-	'ios/build',
-	'-destination',
-	`platform=iOS Simulator,id=${device.udid}`,
-	'-only-testing:AllAboutOlafUITests',
-	'CODE_SIGN_IDENTITY=',
-	'CODE_SIGNING_REQUIRED=NO',
-	'CODE_SIGNING_ALLOWED=NO',
-]
-run('xcodebuild', ['build-for-testing', ...build], {stdio: 'inherit'})
-let xctestrun = run('find', [
-	'ios/build/Build/Products',
-	'-name',
-	'*.xctestrun',
-	'-print',
-	'-quit',
-]).trim()
+buildForTesting(device.udid)
 // A failed run throws here, before mess.json is touched.
-run(
-	'xcodebuild',
-	[
-		'test-without-building',
-		'-xctestrun',
-		xctestrun,
-		'-destination',
-		`platform=iOS Simulator,id=${device.udid}`,
-		'-only-testing:AllAboutOlafUITests/ModuleNewsTests',
-	],
-	{stdio: 'inherit', env: {...process.env, TEST_RUNNER_AAO_RECORD_FIXTURES: '1'}},
-)
+testWithoutBuilding({
+	udid: device.udid,
+	xctestrun: findXctestrun(),
+	only: ['AllAboutOlafUITests/ModuleNewsTests'],
+	env: {TEST_RUNNER_AAO_RECORD_FIXTURES: '1'},
+})
 
 let recording = recordingPath()
 if (!existsSync(recording)) throw new Error('nothing was recorded; mess.json is left as it was')

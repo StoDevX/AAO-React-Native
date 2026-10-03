@@ -25,14 +25,14 @@ struct MapScreen: Screen {
 	private func sheetFrame() -> CGRect {
 		let window = app.windows.firstMatch.frame
 		let candidates = app.otherElements
-			.containing(NSPredicate(format: "label == %@", TestIdentifiers.Map.sheetGrabber))
+			.containing(NSPredicate(format: "label == %@", TestIdentifiers.Navigation.sheetGrabber))
 			.allElementsBoundByIndex
 			.map(\.frame)
 			.filter { $0.height < window.height }
 		guard let sheet = candidates.min(by: { $0.height < $1.height }) else {
 			XCTFail(
 				"The presented sheet's own box should be findable as the shortest element "
-					+ "holding the \(TestIdentifiers.Map.sheetGrabber)")
+					+ "holding the \(TestIdentifiers.Navigation.sheetGrabber)")
 			return .null
 		}
 		return sheet
@@ -828,7 +828,7 @@ struct MapScreen: Screen {
 	/// Drags the card from wherever it rests down to the collapsed stop.
 	@discardableResult
 	func collapseCard() -> Self {
-		let grabber = app.buttons[TestIdentifiers.Map.sheetGrabber].firstMatch
+		let grabber = app.buttons[TestIdentifiers.Navigation.sheetGrabber].firstMatch
 		grabber.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5))
 			.press(
 				forDuration: 0.1,
@@ -957,7 +957,7 @@ struct MapScreen: Screen {
 	/// Drags the card from wherever it rests up to the large stop.
 	@discardableResult
 	func expandCard() -> Self {
-		let grabber = app.buttons[TestIdentifiers.Map.sheetGrabber].firstMatch
+		let grabber = app.buttons[TestIdentifiers.Navigation.sheetGrabber].firstMatch
 		grabber.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5))
 			.press(
 				forDuration: 0.1,

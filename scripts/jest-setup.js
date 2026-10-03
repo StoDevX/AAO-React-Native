@@ -94,6 +94,11 @@ jest.mock('@frogpond/launch-arguments', () => ({
 	isUITesting: true,
 	// Live, so a test that stubs fetchSourceBody gets its stub, not a fixture.
 	fixtureMode: 'live',
+	isChaos: false,
+	chaosSeed: 0,
+	chaosLaunch: 0,
+	chaosMode: 'record',
+	chaosFaultRate: 0,
 }))
 // Quick actions are set through a native module Jest does not have.
 jest.mock('@frogpond/quick-actions', () => ({

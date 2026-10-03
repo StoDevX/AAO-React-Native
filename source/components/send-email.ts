@@ -1,5 +1,7 @@
 import {Alert} from 'react-native'
 import * as MailComposer from 'expo-mail-composer'
+import {isChaos} from '@frogpond/launch-arguments'
+import {reportOutOfApp} from '../chaos/findings'
 import {openOrOfferCopy} from './open-or-offer-copy'
 
 type Args = {
@@ -38,6 +40,12 @@ const HANDED_OFF: Array<string> = ['sent', 'saved']
  * out. Rejects when the sheet could not be opened.
  */
 export async function composeEmail(args: Args & {attachments?: Array<string>}): Promise<boolean> {
+	// A chaos run taps at random; it must not open a real compose sheet.
+	if (isChaos) {
+		reportOutOfApp(`email to ${(args.to ?? []).join(', ')}`)
+		return false
+	}
+
 	const {attachments = [], ...email} = args
 
 	if (attachments.length === 0) {

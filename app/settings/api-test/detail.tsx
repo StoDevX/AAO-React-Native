@@ -12,6 +12,7 @@ import {HtmlContent} from '@frogpond/html-content'
 import {CSS_CODE_STYLES} from '../../../source/features/settings/screens/api-test/util/highlight-styles'
 import {syntaxHighlight} from '../../../source/features/settings/screens/api-test/util/highlight'
 import {DebugView} from '../../../source/features/settings/screens/debug'
+import {parseBody} from '../../../source/features/settings/screens/api-test/util/parse-body'
 
 type DisplayMode = 'raw' | 'parsed'
 
@@ -34,13 +35,14 @@ export default function APITestDetailPage(): React.ReactNode {
 		gcTime: 0,
 	})
 
+	const body = React.useMemo(() => parseBody(data ?? ''), [data])
+
 	const jsonViewContent = React.useMemo((): React.ReactNode => {
-		if (data === undefined) {
-			return <></>
+		if (body.kind !== 'json') {
+			return null
 		}
 
-		const parsed = JSON.parse(data ?? '') as unknown
-		const formatted = JSON.stringify(parsed, null, 2)
+		const formatted = JSON.stringify(body.value, null, 2)
 		const highlighted = syntaxHighlight(formatted)
 
 		const HTML_CONTENT = `
@@ -49,7 +51,7 @@ export default function APITestDetailPage(): React.ReactNode {
 		`
 
 		return <HtmlContent html={HTML_CONTENT} style={{backgroundColor: c.systemBackground}} />
-	}, [data])
+	}, [body])
 
 	return (
 		<>
@@ -84,10 +86,21 @@ export default function APITestDetailPage(): React.ReactNode {
 					<NoticeView systemImage="questionmark.circle" title="Route Not Found" />
 				) : isLoading ? (
 					<LoadingView />
+				) : body.kind === 'empty' ? (
+					<NoticeView systemImage="tray" title="Empty Response" />
+				) : body.kind === 'text' ? (
+					<TextInput
+						editable={false}
+						multiline={true}
+						scrollEnabled={true}
+						style={styles.output}
+						textAlignVertical="top"
+						value={body.text}
+					/>
 				) : displayMode === 'raw' ? (
 					jsonViewContent
 				) : (
-					<DebugView state={JSON.parse(data || '{}') as unknown} />
+					<DebugView state={body.value} />
 				)}
 			</SafeAreaView>
 		</>
