@@ -13,7 +13,6 @@ import {StationMenu} from './station-menu'
 import {StationPicker} from './station-picker'
 import {VolumeSliderStub} from './stubs'
 import {useFittedArtwork} from './use-fitted-artwork'
-import {LockButton} from './lock-button'
 import {palette} from './palette'
 import type {RadioLogo} from '../theme'
 
@@ -27,9 +26,6 @@ export function FullLayout({
 	showNextLogo,
 	showingSchedule,
 	onToggleSchedule,
-	locked,
-	onToggleLock,
-	onHeldChange,
 	viewportHeight,
 }: {
 	station: Station
@@ -38,11 +34,6 @@ export function FullLayout({
 	/** Whether today's schedule takes the record's place, as Music's queue does the art's. */
 	showingSchedule: boolean
 	onToggleSchedule: () => void
-	/** Whether the sheet is held open, which is when a drag turns the record rather than closing the sheet. */
-	locked: boolean
-	onToggleLock: () => void
-	/** Told when a finger lands on the record and when it lifts, so the scroll around it can hold still. */
-	onHeldChange: (held: boolean) => void
 	/** The height the player has to fit in: the sheet's, or the tab's between its bars. */
 	viewportHeight: number
 }): React.ReactNode {
@@ -62,24 +53,19 @@ export function FullLayout({
 				{showingSchedule ? (
 					<ScheduleList station={station} />
 				) : (
-					<TouchClaimView claims={locked} style={{width: artwork, height: artwork}}>
+					<TouchClaimView style={{width: artwork, height: artwork}}>
 						<ScratchableLogo
 							key={logo.name}
 							accessibilityLabel={`${station.stationName} logo, ${logo.name}`}
 							image={logo.image}
 							labelColor={logo.labelColor}
 							labelScale={logo.labelScale ?? 0.8}
-							onHeldChange={onHeldChange}
 							onTap={showNextLogo}
 							playing={playState === 'playing'}
-							scratchable={locked}
 							size={artwork}
 						/>
 					</TouchClaimView>
 				)}
-				<View style={styles.lock}>
-					<LockButton locked={locked} onToggle={onToggleLock} />
-				</View>
 			</View>
 			<View style={styles.titleRow}>
 				<ShowTitle station={station} />
@@ -113,18 +99,12 @@ const styles = StyleSheet.create({
 		paddingHorizontal: SIDE,
 		paddingVertical: 20,
 	},
-	// As wide as the record, so the lock stays at its corner as it shrinks; the
-	// schedule, which takes its place, keeps the player's width.
+	// As wide as the record; the schedule, which takes its place, keeps the
+	// player's width.
 	artwork: {
 		alignSelf: 'center',
 		alignItems: 'center',
 		justifyContent: 'center',
-	},
-	// In the record's top-right corner, clear of its label.
-	lock: {
-		position: 'absolute',
-		top: 0,
-		right: -12,
 	},
 	titleRow: {
 		flexDirection: 'row',

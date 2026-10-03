@@ -127,19 +127,6 @@ struct StreamingMediaScreen: Screen {
 		return self
 	}
 
-	/// Drag the sheet down by its grabber, and check it stays open: a locked
-	/// sheet cannot be swiped away.
-	@discardableResult
-	func checkSheetStaysOpenWhenDragged() -> Self {
-		let grabber = app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.075))
-		let bottom = app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 1.0))
-		grabber.press(forDuration: 0.05, thenDragTo: bottom, withVelocity: .fast, thenHoldForDuration: 0)
-		XCTAssertTrue(
-			app.elementWithLabel(startingWith: TestIdentifiers.StreamingMedia.live).waitForExistence(timeout: 3),
-			"A locked sheet should stay open when dragged")
-		return self
-	}
-
 	/// Tap the button labelled `label`, once it shows.
 	@discardableResult
 	func tapButton(_ label: String) -> Self {

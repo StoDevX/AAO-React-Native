@@ -659,9 +659,6 @@ struct TestIdentifiers {
 		/// The Now Playing bar with no station loaded, on Home and in Streaming
 		/// Media's tab bar.
 		static let idleBar = "Not Playing"
-		/// The sheet's lock, which holds it open and lets the record be scratched.
-		static let lockSheet = "Lock the player open"
-		static let unlockSheet = "Unlock the player"
 		/// Home's "Show Radio Player on Home" switch.
 		static let showRadioPlayer = "show-radio-player"
 		/// KRLX has one logo, so nothing labelled with this may be a button.

@@ -73,20 +73,17 @@ class ModuleStreamingMediaTests: UITestCaseUnbooted {
 			.checkLogoCycles(ids.kstoLogos)
 	}
 
-	/// Locked, the sheet holds open and the record can be scratched; unlocked,
-	/// a drag closes the sheet again.
-	func testTheLockedSheetLetsTheRecordBeScratched() throws {
+	/// A drag across the record turns it, leaving the logo as it was. Whether
+	/// the sheet also moves is UIKit's, and only a device shows it: a
+	/// synthetic drag never closes this sheet over React Native content.
+	func testTheRecordCanBeScratched() throws {
 		let ids = TestIdentifiers.StreamingMedia.self
 		let logos = ids.kstoLogos
 		app.launch()
 		StreamingMediaScreen(app: app)
 			.openSheetFromBar(expecting: ids.playKsto)
-			.press(ids.lockSheet, expecting: ids.unlockSheet)
-			.capture("Sheet, locked")
 			.tapLogo(labelled: ids.kstoLogoPrefix, until: logos[3])
 			.checkScrubKeepsLogo(logos[3])
-			.checkSheetStaysOpenWhenDragged()
-			.press(ids.unlockSheet, expecting: ids.lockSheet)
 			.closeSheet(expectingBar: ids.idleBar)
 	}
 }

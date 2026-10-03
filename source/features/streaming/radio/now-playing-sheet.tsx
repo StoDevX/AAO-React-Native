@@ -4,12 +4,11 @@ import {BottomSheet, Group, Host, Rectangle, RNHostView, ZStack} from '@expo/ui/
 import {
 	foregroundStyle,
 	ignoreSafeArea,
-	interactiveDismissDisabled,
 	presentationDetents,
 	presentationDragIndicator,
 } from '@expo/ui/swift-ui/modifiers'
 
-import {FullLayout, tintGradient, useFitOrScroll, useLogoCycle, useScratchHold} from './player-view'
+import {FullLayout, tintGradient, useFitOrScroll, useLogoCycle} from './player-view'
 import {STATIONS} from './stations'
 import {useRadioStore} from './store'
 
@@ -22,11 +21,6 @@ export function RadioNowPlayingSheet(): React.ReactNode {
 	let viewed = useRadioStore((state) => state.viewedStationId)
 	let closeSheet = useRadioStore((state) => state.closeSheet)
 	let [showingSchedule, setShowingSchedule] = React.useState(false)
-	// Locked, the sheet holds open and the record can be scratched.
-	let [locked, setLocked] = React.useState(false)
-	// Scroll and swipe-to-close stay off around a scratch, which they would
-	// otherwise take.
-	let {held, onHeldChange} = useScratchHold(open)
 	let station = STATIONS[viewed]
 	let {logo, showNextLogo} = useLogoCycle(station)
 	let fit = useFitOrScroll()
@@ -46,16 +40,9 @@ export function RadioNowPlayingSheet(): React.ReactNode {
 				// schedule while the sheet is still on screen.
 				onDismiss={() => {
 					setShowingSchedule(false)
-					setLocked(false)
 				}}
 			>
-				<Group
-					modifiers={[
-						presentationDetents(['large']),
-						presentationDragIndicator(locked ? 'hidden' : 'visible'),
-						interactiveDismissDisabled(locked || held),
-					]}
-				>
+				<Group modifiers={[presentationDetents(['large']), presentationDragIndicator('visible')]}>
 					<ZStack>
 						{/* The tint fills the sheet, safe area and all. */}
 						<Rectangle modifiers={[foregroundStyle(tintGradient(logo)), ignoreSafeArea()]} />
@@ -65,14 +52,11 @@ export function RadioNowPlayingSheet(): React.ReactNode {
 								contentContainerStyle={styles.content}
 								onContentSizeChange={fit.onContentSizeChange}
 								onLayout={fit.onLayout}
-								scrollEnabled={fit.scrollEnabled && !held}
+								scrollEnabled={fit.scrollEnabled}
 							>
 								<FullLayout
 									logo={logo}
 									onToggleSchedule={() => setShowingSchedule((on) => !on)}
-									locked={locked}
-									onHeldChange={onHeldChange}
-									onToggleLock={() => setLocked((on) => !on)}
 									viewportHeight={fit.viewport}
 									showNextLogo={showNextLogo}
 									showingSchedule={showingSchedule}

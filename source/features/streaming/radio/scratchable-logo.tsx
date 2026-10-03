@@ -23,7 +23,7 @@ import * as logos from '../../../../images/streaming'
 
 import {
 	angleAround,
-	moveOutcome,
+	isTap,
 	releaseVelocity,
 	turnBetween,
 	type ScratchSample,
@@ -54,16 +54,6 @@ type Props = {
 	/** Turns the record on its own, unless Reduce Motion is on. */
 	playing: boolean
 	onTap?: () => void
-	/**
-	 * Whether a drag turns the record. Off, a drag does nothing to it and is
-	 * not a tap, so it falls to whatever holds the record. On by default.
-	 */
-	scratchable?: boolean
-	/**
-	 * Told when a finger lands on the logo and when it lifts, so a scroll view
-	 * around it can hold still while the logo is scratched.
-	 */
-	onHeldChange?: (held: boolean) => void
 }
 
 /**
@@ -74,7 +64,7 @@ type Props = {
  */
 export function ScratchableLogo(props: Props): React.ReactNode {
 	let {image, labelColor, labelScale, size, accessibilityLabel, playing} = props
-	let {onTap, onHeldChange, scratchable = true} = props
+	let {onTap} = props
 	let reduceMotion = useReducedMotion()
 	let spins = playing && !reduceMotion
 
@@ -91,8 +81,6 @@ export function ScratchableLogo(props: Props): React.ReactNode {
 	let start = useRef({x: 0, y: 0, time: 0})
 	// Null until the touch has moved far enough to be a scratch.
 	let lastAngle = useRef<number | null>(null)
-	// A drag on a record that cannot be scratched: the touch is no tap.
-	let ignored = useRef(false)
 	let samples = useRef<ScratchSample[]>([])
 
 	let startSpinning = useCallback(() => {
@@ -118,7 +106,6 @@ export function ScratchableLogo(props: Props): React.ReactNode {
 	}, [scratched, spin, startSpinning])
 
 	let handleGrant = (event: GestureResponderEvent) => {
-		onHeldChange?.(true)
 		scale.set(withSpring(PRESSED_SCALE, {duration: 150}))
 		// A finger on a coasting logo stops it, as it would a real record.
 		cancelAnimation(scratched)
@@ -128,7 +115,6 @@ export function ScratchableLogo(props: Props): React.ReactNode {
 			time: event.nativeEvent.timestamp,
 		}
 		lastAngle.current = null
-		ignored.current = false
 		samples.current = []
 		view.current?.measureInWindow((x, y, width, height) => {
 			centre.current = {x: x + width / 2, y: y + height / 2}
@@ -137,17 +123,8 @@ export function ScratchableLogo(props: Props): React.ReactNode {
 
 	let handleMove = (event: GestureResponderEvent) => {
 		let point = {x: event.nativeEvent.pageX, y: event.nativeEvent.pageY}
-		if (ignored.current) {
-			return
-		}
 		if (lastAngle.current === null) {
-			let outcome = moveOutcome(scratchable, point.x - start.current.x, point.y - start.current.y)
-			if (outcome === 'tap') {
-				return
-			}
-			if (outcome === 'ignore') {
-				ignored.current = true
-				scale.set(withSpring(1, {duration: 250}))
+			if (isTap(point.x - start.current.x, point.y - start.current.y)) {
 				return
 			}
 			cancelAnimation(spin)
@@ -163,11 +140,7 @@ export function ScratchableLogo(props: Props): React.ReactNode {
 	}
 
 	let handleRelease = (event: GestureResponderEvent) => {
-		onHeldChange?.(false)
 		scale.set(withSpring(1, {duration: 250}))
-		if (ignored.current) {
-			return
-		}
 		if (lastAngle.current === null) {
 			onTap?.()
 			return
@@ -208,13 +181,12 @@ export function ScratchableLogo(props: Props): React.ReactNode {
 			onResponderMove={handleMove}
 			onResponderRelease={handleRelease}
 			onResponderTerminate={() => {
-				onHeldChange?.(false)
 				scale.set(withSpring(1, {duration: 250}))
 				startSpinning()
 			}}
-			// A scroll view would otherwise take over a scratch that drifts
-			// vertically. A record that cannot be scratched lets it.
-			onResponderTerminationRequest={() => !scratchable}
+			// The record's own view, TouchClaimView, keeps the sheet and scroll
+			// from taking a scratch, so nothing here may take it either.
+			onResponderTerminationRequest={() => false}
 			onStartShouldSetResponder={() => true}
 		>
 			<Animated.View style={[{width: size, height: size}, turned]}>
