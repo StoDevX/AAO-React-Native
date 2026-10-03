@@ -1,7 +1,7 @@
 import React from 'react'
 import {StyleProp, ImageStyle, Image, StyleSheet, ImageProps, useColorScheme} from 'react-native'
 import {getIcon} from 'react-native-change-icon'
-import {DEFAULT_ICON, iconFor, previewsFor} from '../../../../images/icons'
+import {DEFAULT_ICON, iconFor, previewsFor} from '../../../images/icons'
 
 const styles = StyleSheet.create({
 	logoImage: {

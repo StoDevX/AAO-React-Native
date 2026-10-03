@@ -60,8 +60,4 @@ class ModuleSupportTests: UITestCase {
 			app.navigationBars[TestIdentifiers.Support.reportProblemTitle].waitForNonExistence(timeout: 10),
 			"Report a Problem should close")
 	}
-
-	func testHomeMenuAboutOpensSettings() throws {
-		HomeScreen(app: app).checkHomescreenExists().openAbout()
-	}
 }

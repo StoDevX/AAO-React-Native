@@ -69,13 +69,10 @@ struct HomeScreen: Screen {
 		return SupportScreen(app: app).checkOpen()
 	}
 
-	/// About opens Settings until the About screen lands.
 	@discardableResult
-	func openAbout() -> Self {
+	func openAbout() -> AboutScreen {
 		chooseFromHomeMenu(TestIdentifiers.Navigation.aboutMenuItem)
-		let settings = app.element(matching: TestIdentifiers.Settings.screen)
-		XCTAssertTrue(settings.waitForExistence(timeout: 10), "About should open Settings")
-		return self
+		return AboutScreen(app: app).checkOpen()
 	}
 
 	/// Scroll to the Developer tile and open what it holds. Dev mode must be on.

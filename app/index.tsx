@@ -291,10 +291,7 @@ export default function HomePage(): React.ReactNode {
 						>
 							Support
 						</Stack.Toolbar.MenuAction>
-						<Stack.Toolbar.MenuAction
-							icon="info.circle"
-							onPress={() => router.navigate('/settings')}
-						>
+						<Stack.Toolbar.MenuAction icon="info.circle" onPress={() => router.navigate('/about')}>
 							About
 						</Stack.Toolbar.MenuAction>
 						<Stack.Toolbar.MenuAction
