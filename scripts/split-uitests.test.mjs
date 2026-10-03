@@ -1,12 +1,14 @@
 import assert from 'node:assert/strict'
-import {readdirSync, readFileSync} from 'node:fs'
-import {join} from 'node:path'
+import {mkdirSync, mkdtempSync, writeFileSync} from 'node:fs'
+import {tmpdir} from 'node:os'
+import {basename, join} from 'node:path'
 import {describe, it} from 'node:test'
 
 import {
 	discoverTests,
 	packShards,
 	formatMatrix,
+	readTestDir,
 	sanitizeDurations,
 	weigh,
 	weighMethods,
@@ -16,13 +18,9 @@ function swiftFile(name, text) {
 	return {name, text}
 }
 
-/** Every `uitests/Module*Tests.swift`, in the order the planner reads them. */
+/** Every Swift file under `uitests/`, in the order the planner reads them. */
 function realTestFiles() {
-	const dir = join(import.meta.dirname, '..', 'uitests')
-	return readdirSync(dir)
-		.filter((name) => name.endsWith('.swift'))
-		.sort()
-		.map((name) => swiftFile(name, readFileSync(join(dir, name), 'utf8')))
+	return readTestDir(join(import.meta.dirname, '..', 'uitests'))
 }
 
 describe('discoverTests', () => {
@@ -283,6 +281,21 @@ describe('formatMatrix', () => {
 	})
 })
 
+describe('readTestDir', () => {
+	it('reads Swift files in subfolders too', () => {
+		const dir = mkdtempSync(join(tmpdir(), 'split-uitests-'))
+		mkdirSync(join(dir, 'Chaos'))
+		writeFileSync(join(dir, 'ModuleATests.swift'), 'class ModuleATests: UITestCase {}')
+		writeFileSync(join(dir, 'Chaos', 'ChaosTests.swift'), 'class ChaosTests: UITestCase {}')
+		writeFileSync(join(dir, 'Chaos', 'notes.txt'), 'not Swift')
+
+		assert.deepEqual(
+			readTestDir(dir).map((file) => file.name),
+			[join('Chaos', 'ChaosTests.swift'), 'ModuleATests.swift'],
+		)
+	})
+})
+
 describe('the real suite', () => {
 	// Invariants rather than a snapshot of today's packing: a snapshot would go
 	// red every time someone adds a test, which is not a bug.
@@ -311,11 +324,12 @@ describe('the real suite', () => {
 	})
 
 	it('finds every test class and nothing else', () => {
-		// Test classes are the ones declared in Module*Tests.swift, whichever
-		// base class they extend. The base classes and page objects live in
-		// other files and hold no tests, so they are absent from both lists.
+		// Test classes are the ones declared in a *Tests.swift file, in any
+		// folder, whichever base class they extend. The base classes and page
+		// objects live in other files and hold no tests, so they are absent
+		// from both lists.
 		const declared = realTestFiles()
-			.filter((file) => /^Module\w*Tests\.swift$/u.test(file.name))
+			.filter((file) => /^\w*Tests\.swift$/u.test(basename(file.name)))
 			.flatMap((file) => [...file.text.matchAll(/class\s+(\w+)\s*:/gu)].map((m) => m[1]))
 		const found = discoverTests(realTestFiles()).map((c) => c.className)
 
@@ -323,6 +337,13 @@ describe('the real suite', () => {
 		// wrong class becomes an -only-testing name that matches no test.
 		const byName = (a, b) => a.localeCompare(b)
 		assert.deepEqual(found.sort(byName), declared.sort(byName))
+	})
+
+	it('finds the chaos canaries, which live in a subfolder', () => {
+		const found = discoverTests(realTestFiles()).map((c) => c.className)
+
+		assert.ok(found.includes('ChaosCanaryTests'))
+		assert.ok(found.includes('ChaosTests'))
 	})
 
 	it('balances the shards to within one class of each other', () => {

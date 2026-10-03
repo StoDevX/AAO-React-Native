@@ -8,7 +8,9 @@
   "scripts": {
     "test": "jest"
   },
-  "dependencies": {},
+  "dependencies": {
+    "@frogpond/launch-arguments": "workspace:*"
+  },
   "devDependencies": {
     "@jest/globals": "30.5.2"
   },

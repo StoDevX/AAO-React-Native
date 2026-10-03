@@ -1,6 +1,8 @@
 import * as Sentry from '@sentry/react-native'
 import {createEventInCalendarAsync} from 'expo-calendar/legacy'
+import {isChaos} from '@frogpond/launch-arguments'
 import type {EventType} from '@frogpond/event-type'
+import {reportOutOfApp} from '../../source/chaos/findings'
 
 export type AddToCalendarResult = 'saved' | 'cancelled' | 'error'
 
@@ -15,6 +17,12 @@ export type AddToCalendarResult = 'saved' | 'cancelled' | 'error'
  * one needs full access.
  */
 export async function addToCalendar(event: EventType): Promise<AddToCalendarResult> {
+	// A chaos run taps at random; it must not write a real calendar event.
+	if (isChaos) {
+		reportOutOfApp(`calendar event ${event.title}`)
+		return 'cancelled'
+	}
+
 	try {
 		let result = await createEventInCalendarAsync({
 			title: event.title,

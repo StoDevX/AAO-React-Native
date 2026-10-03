@@ -1,5 +1,6 @@
 import * as Sentry from '@sentry/react-native'
 import {IS_PRODUCTION, isDebugBuild} from '@frogpond/constants'
+import {isChaos} from '@frogpond/launch-arguments'
 
 import {SENTRY_DSN} from './constants'
 import {privacyOptions} from './sentry-options'
@@ -21,7 +22,8 @@ function start(): void {
 	Sentry.init({
 		dsn: SENTRY_DSN,
 		...privacyOptions({
-			isProduction: IS_PRODUCTION,
+			// A chaos run's failures are injected; none of them belong in Sentry.
+			isProduction: IS_PRODUCTION && !isChaos,
 			consented: isConsented(),
 			isPrerelease: isDebugBuild(),
 			isConsented,

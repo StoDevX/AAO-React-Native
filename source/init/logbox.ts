@@ -1,5 +1,5 @@
 import {LogBox} from 'react-native'
-import {isUITesting} from '@frogpond/launch-arguments'
+import {isChaos, isUITesting} from '@frogpond/launch-arguments'
 
 /**
  * Hides LogBox's toasts from a UI-test launch.
@@ -16,4 +16,19 @@ export function hideLogBoxForUITests(uiTesting: boolean): void {
 	}
 }
 
+/**
+ * Removes LogBox from a chaos launch.
+ *
+ * Its red screen covers the whole app, and with it the beacon a chaos run
+ * reads after every step, so a render error looked like a screen with nothing
+ * to press. Without LogBox the error reaches the chaos error boundary alone,
+ * and the run stops on it at once.
+ */
+export function removeLogBoxForChaos(chaos: boolean): void {
+	if (chaos) {
+		LogBox.uninstall()
+	}
+}
+
 hideLogBoxForUITests(isUITesting)
+removeLogBoxForChaos(isChaos)

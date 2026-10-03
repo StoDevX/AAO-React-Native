@@ -482,6 +482,9 @@ importers:
       '@frogpond/event-type':
         specifier: workspace:*
         version: link:../event-type
+      '@frogpond/launch-arguments':
+        specifier: workspace:*
+        version: link:../launch-arguments
       '@sentry/react-native':
         specifier: ^8.24.0
         version: 8.24.0(@expo/env@2.4.3)(dotenv@17.4.2)(expo@57.0.19)(react-native@0.86.3)(react@19.2.3)(supports-color@8.1.1)
@@ -983,6 +986,9 @@ importers:
 
   modules/open-url:
     dependencies:
+      '@frogpond/launch-arguments':
+        specifier: workspace:*
+        version: link:../launch-arguments
       expo-web-browser:
         specifier: ~57.0.2
         version: 57.0.2(expo@57.0.19)(react-native@0.86.3)

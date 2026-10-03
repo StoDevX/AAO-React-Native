@@ -280,6 +280,32 @@ runs the Messenger UI tests against the live paper with `--record-fixtures`
 and writes every fetch they made. It writes nothing if the tests fail. With
 more than one simulator booted, name one with `SIMULATOR_UDID=<udid>`.
 
+### Chaos Runs
+
+`mise run chaos` drives the app at random on a booted simulator while it breaks
+network requests, and stops at the first crash, fatal error, unhandled
+rejection, error screen or hang. [`uitests/Chaos/README.md`](uitests/Chaos/README.md)
+covers reading a finding, replaying a run, what the engine can't do, how it
+works, and how to extend it.
+
+```bash
+TEST_RUNNER_AAO_JS_LOCATION=localhost:8081 mise run chaos -- --seed 1234 --duration 10m
+TEST_RUNNER_AAO_JS_LOCATION=localhost:8081 mise run chaos -- --replay logs/chaos/1234
+```
+
+Name the Metro serving this checkout with the `TEST_RUNNER_` prefix:
+`xcodebuild` passes the test only prefixed variables, so a bare
+`AAO_JS_LOCATION` never arrives. The run exits 0 when it found nothing, 1 when
+it found something, and 2 when it never started. Its evidence lands in
+`logs/chaos/<seed>/`, which a second run of the same seed won't replace
+without `--overwrite`.
+
+A chaos launch passes `--chaos`, not `--uitesting`. Under it the app never
+leaves itself, never signs in, and sends nothing to Sentry. Its modules are
+imported first in `app/_layout.tsx`, so `fetch` is wrapped before anything
+fetches, and they do nothing without the flag. Run `mise run chaos-routes`
+after adding a route.
+
 ## Agent Workflow
 
 **Session startup:** Always run `mise run agent:setup` at the start of every session. This installs dependencies and bundles data files.
