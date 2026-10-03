@@ -22,7 +22,7 @@ describe('iconsByGroup', () => {
 			'windmill',
 			'sunset-behind-main',
 			'old-main-hill',
-			'old-main-crt',
+			'old-main-retro',
 			'constellation',
 		])
 		expect(groups[1].icons).toHaveLength(9)
