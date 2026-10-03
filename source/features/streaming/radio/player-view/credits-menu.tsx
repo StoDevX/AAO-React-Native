@@ -24,7 +24,13 @@ export function CreditsMenu(): React.ReactNode {
 				modifiers={[accessibilityLabel('About these stations')]}
 			>
 				{radioCredits().map((credit) => (
-					<Button key={credit.url} label={credit.label} onPress={() => openUrl(credit.url)} />
+					// The compass says the item opens a site, as Safari's own icon does.
+					<Button
+						key={credit.url}
+						label={credit.label}
+						onPress={() => openUrl(credit.url)}
+						systemImage="safari"
+					/>
 				))}
 			</Menu>
 		</Host>

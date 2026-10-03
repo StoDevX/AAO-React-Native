@@ -119,6 +119,7 @@ struct StreamingMediaScreen: Screen {
 		let button = app.buttonLabelled(menu)
 		XCTAssertTrue(button.waitForExistence(timeout: 10), "A button labelled \"\(menu)\" should exist")
 		checkTouchTarget(button, named: "The \"\(menu)\" button")
+		capture("Now Playing, before \(menu)")
 		button.tap()
 		for credit in credits {
 			XCTAssertTrue(
