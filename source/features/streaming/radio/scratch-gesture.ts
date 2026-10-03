@@ -9,6 +9,23 @@ export function isTap(dx: number, dy: number): boolean {
 }
 
 /**
+ * What a finger that has moved `dx`, `dy` since it landed is doing: still a
+ * possible tap, turning the record, or -- on a record that cannot be
+ * scratched -- nothing at all, so the drag is left to whatever holds the
+ * record, such as a sheet being swiped away.
+ */
+export function moveOutcome(
+	scratchable: boolean,
+	dx: number,
+	dy: number,
+): 'tap' | 'turn' | 'ignore' {
+	if (isTap(dx, dy)) {
+		return 'tap'
+	}
+	return scratchable ? 'turn' : 'ignore'
+}
+
+/**
  * The angle of `point` around `centre`, in degrees, from three o'clock. Screen
  * y grows downward, so positive angles run clockwise.
  */

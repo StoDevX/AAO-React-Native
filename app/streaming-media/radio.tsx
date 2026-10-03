@@ -53,6 +53,7 @@ export default function RadioTab(): React.ReactNode {
 					onLogoHeldChange={handleLogoHeld}
 					onLogoSettle={settleSwipeBack}
 					onToggleSchedule={() => setShowingSchedule((on) => !on)}
+					scratchable={true}
 					showNextLogo={showNextLogo}
 					showingSchedule={showingSchedule}
 					station={station}

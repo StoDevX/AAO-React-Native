@@ -24,6 +24,7 @@ export function FullLayout({
 	showNextLogo,
 	showingSchedule,
 	onToggleSchedule,
+	scratchable,
 	onLogoHeldChange,
 	onLogoSettle,
 }: {
@@ -33,6 +34,8 @@ export function FullLayout({
 	/** Whether today's schedule takes the record's place, as Music's queue does the art's. */
 	showingSchedule: boolean
 	onToggleSchedule: () => void
+	/** Whether a drag turns the record. Off in the sheet, where a drag closes it. */
+	scratchable: boolean
 	/** A finger has come down on the record, or lifted, so a scratch can hold off the screen's swipe-back. */
 	onLogoHeldChange?: (held: boolean) => void
 	/** The record has stopped moving under a scratch. */
@@ -59,6 +62,7 @@ export function FullLayout({
 						onSettle={onLogoSettle}
 						onTap={showNextLogo}
 						playing={playState === 'playing'}
+						scratchable={scratchable}
 						size={artwork}
 					/>
 				)}

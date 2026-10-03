@@ -60,6 +60,7 @@ export function RadioNowPlayingSheet(): React.ReactNode {
 								<FullLayout
 									logo={logo}
 									onToggleSchedule={() => setShowingSchedule((on) => !on)}
+									scratchable={false}
 									showNextLogo={showNextLogo}
 									showingSchedule={showingSchedule}
 									station={station}

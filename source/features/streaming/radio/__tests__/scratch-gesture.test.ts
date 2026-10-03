@@ -1,6 +1,6 @@
 import {describe, expect, test} from '@jest/globals'
 
-import {angleAround, isTap, releaseVelocity, turnBetween} from '../scratch-gesture'
+import {angleAround, isTap, moveOutcome, releaseVelocity, turnBetween} from '../scratch-gesture'
 
 describe('isTap', () => {
 	test('a finger that barely moved is a tap', () => {
@@ -79,5 +79,20 @@ describe('releaseVelocity', () => {
 	test('is zero with too little to measure', () => {
 		expect(releaseVelocity([], 0)).toBe(0)
 		expect(releaseVelocity([{angle: 10, time: 0}], 0)).toBe(0)
+	})
+})
+
+describe('moveOutcome', () => {
+	test('a finger still within the slop is still a tap', () => {
+		expect(moveOutcome(true, 3, 4)).toBe('tap')
+		expect(moveOutcome(false, 3, 4)).toBe('tap')
+	})
+
+	test('a finger past the slop turns a record that can be scratched', () => {
+		expect(moveOutcome(true, 0, 80)).toBe('turn')
+	})
+
+	test('a finger past the slop leaves a record that cannot be scratched alone, and is no tap', () => {
+		expect(moveOutcome(false, 0, 80)).toBe('ignore')
 	})
 })
