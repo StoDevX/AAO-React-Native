@@ -32,6 +32,8 @@ type Icon = {
 export const icons: Array<Icon> = [
 	{title: 'Big Ole', type: 'windmill'},
 	{title: 'Old Main', type: 'sunset-behind-main'},
+	{title: 'Old Main (Hill)', type: 'old-main-hill'},
+	{title: 'Old Main (CRT)', type: 'old-main-crt'},
 	{title: 'Windmill (Day)', type: 'windmill-day'},
 	{title: 'Windmill (Night)', type: 'windmill-night'},
 	{title: 'Windmill (Dawn)', type: 'windmill-dawn'},
