@@ -1,10 +1,12 @@
 import * as React from 'react'
 import {StyleSheet} from 'react-native'
-import {Form, Host, LabeledContent, RNHostView, Text, VStack} from '@expo/ui/swift-ui'
+import {Form, Grid, Host, LabeledContent, RNHostView, Text, VStack} from '@expo/ui/swift-ui'
 import {
 	accessibilityIdentifier,
+	fixedSize,
 	font,
 	foregroundStyle,
+	frame,
 	listRowBackground,
 	listRowInsets,
 	listRowSeparator,
@@ -16,8 +18,8 @@ import {SheetSection} from '@frogpond/sheet-section'
 import {Stack, useRouter} from 'expo-router'
 
 import {NavigationRow} from '../../source/components/rows'
-import {CardCarousel, type Card} from '../../source/features/about/card-carousel'
-import {acknowledgements, contributors, formatPeopleList} from '../../source/features/about/credits'
+import {PagedSection, type Card} from '../../source/features/about/card-carousel'
+import {acknowledgements, contributors, inTwoColumns} from '../../source/features/about/credits'
 import {AppLogo} from '../../source/features/about/logo'
 import {INTRO, timeline} from '../../source/features/about/timeline'
 import {formatVersion} from '../../source/features/about/version'
@@ -40,9 +42,10 @@ const timelineCards: Array<Card> = timeline.map((era) => ({
 	body: era.story,
 }))
 
-const credits: Array<Card> = [
-	{id: 'contributors', heading: 'Contributors', body: formatPeopleList(contributors)},
-	{id: 'acknowledgements', heading: 'Acknowledgements', body: formatPeopleList(acknowledgements)},
+/** Each credit's names, laid out two to a row. */
+const credits = [
+	{id: 'contributors', heading: 'Contributors', rows: inTwoColumns(contributors)},
+	{id: 'acknowledgements', heading: 'Acknowledgements', rows: inTwoColumns(acknowledgements)},
 ]
 
 const version = formatVersion(Application.nativeApplicationVersion, Application.nativeBuildVersion)
@@ -78,27 +81,37 @@ export default function AboutPage(): React.ReactNode {
 					</VStack>
 
 					<SheetSection>
-						<LabeledContent label="Version">
+						<LabeledContent label="App Version">
 							<Text>{version}</Text>
 						</LabeledContent>
 					</SheetSection>
 
-					<SheetSection title="Our story">
-						<CardCarousel cards={timelineCards} />
-					</SheetSection>
+					<PagedSection cards={timelineCards} title="Our story" />
 
-					<SheetSection title="Credits">
-						{credits.map((credit) => (
-							<VStack alignment="leading" key={credit.id} spacing={4}>
-								<Text modifiers={[font({textStyle: 'headline'}), foregroundStyle(c.label)]}>
-									{credit.heading}
-								</Text>
-								<Text modifiers={[font({textStyle: 'body'}), foregroundStyle(c.secondaryLabel)]}>
-									{credit.body}
-								</Text>
-							</VStack>
-						))}
-					</SheetSection>
+					{credits.map((credit) => (
+						<SheetSection key={credit.id} title={credit.heading}>
+							<Grid alignment="topLeading" horizontalSpacing={12} verticalSpacing={4}>
+								{credit.rows.map((row) => (
+									<Grid.Row key={row[0]}>
+										{row.map((name) => (
+											<Text
+												key={name}
+												modifiers={[
+													font({textStyle: 'body'}),
+													foregroundStyle(c.secondaryLabel),
+													frame({maxWidth: Infinity, alignment: 'leading'}),
+													// Wrap a long name rather than cut it short.
+													fixedSize({horizontal: false, vertical: true}),
+												]}
+											>
+												{name}
+											</Text>
+										))}
+									</Grid.Row>
+								))}
+							</Grid>
+						</SheetSection>
+					))}
 
 					<SheetSection>
 						<NavigationRow onPress={() => router.navigate('/about/privacy')} title="Privacy" />
