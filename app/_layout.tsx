@@ -26,6 +26,7 @@ import {IS_PRODUCTION} from '@frogpond/constants'
 import {StatusBar, useColorScheme} from 'react-native'
 
 import {SHEET_RESTING_FRACTION} from '../source/lib/constants'
+import {RadioHost, RadioNowPlayingSheet} from '../source/features/streaming/radio'
 
 /**
  * How every detail sheet in the app presents: a building's hours, a dictionary
@@ -93,6 +94,9 @@ function RootLayout(): React.ReactNode {
 				<PersistQueryClientProvider client={queryClient} persistOptions={persistOptions}>
 					<ThemeProvider value={theme}>
 						<StatusBar barStyle={statusBarStyle} />
+						{/* Before the stack, so its hidden player sits beneath every screen. */}
+						<RadioHost />
+						<RadioNowPlayingSheet />
 						<Stack screenOptions={{headerBackButtonDisplayMode: 'minimal'}}>
 							<Stack.Screen name="menus" options={{title: 'Menus'}} />
 							<Stack.Screen name="menu-item-detail" options={DETAIL_SHEET} />
