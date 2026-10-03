@@ -126,7 +126,7 @@ function ContactBody({
 	headerImage,
 	onPress,
 }: {
-	contact: {text: string; buttonText: string}
+	contact: {text: string; buttonText: string; buttonLink?: string}
 	headerImage: React.ComponentProps<typeof Image>['source'] | null | undefined
 	onPress: () => void
 }): React.ReactNode {
@@ -177,6 +177,8 @@ function ContactBody({
 							modifiers={[buttonStyle('bordered'), controlSize('large')]}
 							onPress={onPress}
 							label={contact.buttonText}
+							// A link opens in the browser; otherwise the button places a call.
+							systemImage={contact.buttonLink ? 'safari' : 'phone.fill'}
 						/>
 					</VStack>
 

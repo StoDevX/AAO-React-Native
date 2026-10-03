@@ -1,40 +1,89 @@
 import XCTest
 
 class ModuleStreamingMediaTests: UITestCaseUnbooted {
-	func testKrlxOffersItsStationButtons() throws {
+	/// The sheet carries both stations: the picker moves between them, and the
+	/// player's controls are buttons and links VoiceOver can name.
+	func testTheSheetOffersBothStations() throws {
+		let ids = TestIdentifiers.StreamingMedia.self
 		StreamingMediaScreen(app: app)
 			.navigate()
 			.checkStreamListExists()
 			.checkTabs()
-			.openStation(
-				TestIdentifiers.StreamingMedia.krlxTab,
-				expecting: TestIdentifiers.StreamingMedia.krlxButtons[0]
-			)
-			.checkStationButtons(TestIdentifiers.StreamingMedia.krlxButtons)
-			.checkStationLinks(TestIdentifiers.StreamingMedia.krlxLinks)
-			.checkStationButtonsKeepTheMargins(
-				first: TestIdentifiers.StreamingMedia.krlxButtons[0],
-				last: TestIdentifiers.StreamingMedia.krlxButtons[2]
-			)
-			.checkLogoIsNotAButton(TestIdentifiers.StreamingMedia.krlxLogoPrefix)
+			.openSheetFromBar(expecting: ids.playKsto)
+			.pick(ids.krlxSegment, expecting: ids.playKrlx)
+			.capture("Sheet from Streaming Media, KRLX")
+			.checkButtons([ids.playKrlx] + ids.krlxActions)
+			.checkLinks(ids.krlxLinks)
+			.checkLogoIsNotAButton(ids.krlxLogoPrefix)
+	}
+
+	/// The bar on Home opens the sheet on the last station viewed. Picking
+	/// another station there only browses: nothing plays until Play, and the
+	/// bar says what is loaded, not what the sheet shows.
+	func testTheBarOpensTheSheet() throws {
+		let ids = TestIdentifiers.StreamingMedia.self
+		app.launch()
+		StreamingMediaScreen(app: app)
+			.openSheetFromBar(expecting: ids.playKsto)
+			.pick(ids.krlxSegment, expecting: ids.playKrlx)
+			.capture("Sheet, KRLX")
+			.press(ids.playKrlx, expecting: ids.stopKrlx)
+			.closeSheet(expectingBar: ids.stopKrlx)
+			.capture("Home, KRLX loaded")
+			.press(ids.stopKrlx, expecting: ids.idleBar)
+	}
+
+	/// "Show Radio Player on Home" off takes the idle bar off Home, but
+	/// Streaming Media keeps its own, so the radio is still a tap away.
+	func testSwitchOffHidesOnlyHomesBar() throws {
+		let ids = TestIdentifiers.StreamingMedia.self
+		app.launch()
+		StreamingMediaScreen(app: app)
+			.checkShows(ids.idleBar)
+			.toggleShowRadioPlayer()
+			.checkGone(ids.idleBar)
+			.capture("Home, radio player off")
+			.openFromHome()
+			.checkShows(ids.idleBar)
+			.openSheetFromBar(expecting: ids.playKsto)
+	}
+
+	/// Turning the switch off while a station plays stops it and takes the bar
+	/// away; turning it on again brings back the idle bar.
+	func testSwitchOffStopsThePlayingStation() throws {
+		let ids = TestIdentifiers.StreamingMedia.self
+		app.launch()
+		StreamingMediaScreen(app: app)
+			.openSheetFromBar(expecting: ids.playKsto)
+			.press(ids.playKsto, expecting: ids.stopKsto)
+			.closeSheet(expectingBar: ids.stopKsto)
+			.toggleShowRadioPlayer()
+			.checkGone(ids.stopKsto)
+			.checkGone(ids.idleBar)
+			.capture("Home, switch turned off while KSTO played")
+			.toggleShowRadioPlayer()
+			.checkShows(ids.idleBar)
 	}
 
 	func testKstoLogoCyclesOnTap() throws {
+		let ids = TestIdentifiers.StreamingMedia.self
+		app.launch()
 		StreamingMediaScreen(app: app)
-			.navigate()
-			.openStation(
-				TestIdentifiers.StreamingMedia.kstoTab,
-				expecting: TestIdentifiers.StreamingMedia.kstoLogos[0]
-			)
-			.checkLogoCycles(TestIdentifiers.StreamingMedia.kstoLogos)
+			.openSheetFromBar(expecting: ids.playKsto)
+			.checkLogoCycles(ids.kstoLogos)
 	}
 
-	func testKstoScratchKeepsTheLogo() throws {
-		let logos = TestIdentifiers.StreamingMedia.kstoLogos
+	/// A drag across the record turns it, leaving the logo as it was. Whether
+	/// the sheet also moves is UIKit's, and only a device shows it: a
+	/// synthetic drag never closes this sheet over React Native content.
+	func testTheRecordCanBeScratched() throws {
+		let ids = TestIdentifiers.StreamingMedia.self
+		let logos = ids.kstoLogos
+		app.launch()
 		StreamingMediaScreen(app: app)
-			.navigate()
-			.openStation(TestIdentifiers.StreamingMedia.kstoTab, expecting: logos[0])
-			.tapLogo(labelled: TestIdentifiers.StreamingMedia.kstoLogoPrefix, until: logos[3])
+			.openSheetFromBar(expecting: ids.playKsto)
+			.tapLogo(labelled: ids.kstoLogoPrefix, until: logos[3])
 			.checkScrubKeepsLogo(logos[3])
+			.closeSheet(expectingBar: ids.idleBar)
 	}
 }

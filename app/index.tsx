@@ -1,7 +1,16 @@
 import * as React from 'react'
 import {StyleSheet, useWindowDimensions} from 'react-native'
 import {Stack, useRouter} from 'expo-router'
-import {Button, ContextMenu, Host, RNHostView, ScrollView, Text, VStack} from '@expo/ui/swift-ui'
+import {
+	Button,
+	ContextMenu,
+	Host,
+	RNHostView,
+	ScrollView,
+	Text,
+	Toggle,
+	VStack,
+} from '@expo/ui/swift-ui'
 import {
 	accessibilityIdentifier,
 	background,
@@ -32,6 +41,12 @@ import {useIsDevMode} from '../source/lib/use-is-dev-mode'
 import {FaqBannerGroup} from '../source/features/faqs/banner'
 import {FAQ_TARGETS} from '../source/features/faqs/constants'
 import {sample} from '@frogpond/collections'
+import {
+	NOW_PLAYING_BAR_CLEARANCE,
+	RadioNowPlayingBar,
+	useRadioBarVisible,
+	useRadioStore,
+} from '../source/features/streaming/radio'
 
 const styles = StyleSheet.create({
 	host: {
@@ -127,6 +142,37 @@ function UnofficialAppNotice(): React.ReactNode {
 	)
 }
 
+/** The inset-grouped row's corner radius, as a Settings section's. */
+const SWITCH_ROW_RADIUS = 26
+
+const switchRowShape = shapes.roundedRectangle({
+	cornerRadius: SWITCH_ROW_RADIUS,
+	roundedCornerStyle: 'continuous',
+})
+
+/**
+ * Lets someone who never listens take the radio's bar off Home. Turning it
+ * off also stops the radio. Streaming Media keeps its bar, so the radio is
+ * still a tap away there, and a station started from it brings Home's bar
+ * back while it plays.
+ */
+function RadioPlayerSwitch(): React.ReactNode {
+	let on = useRadioStore((state) => state.showOnHome)
+	let setOn = useRadioStore((state) => state.setShowOnHome)
+	return (
+		<Toggle
+			isOn={on}
+			label="Show Radio Player on Home"
+			modifiers={[
+				padding({horizontal: 16, vertical: 11}),
+				background(c.secondarySystemGroupedBackground, switchRowShape),
+				accessibilityIdentifier('show-radio-player'),
+			]}
+			onIsOnChange={setOn}
+		/>
+	)
+}
+
 const HOME_GRID_ID = 'home-tile-grid'
 
 export default function HomePage(): React.ReactNode {
@@ -134,6 +180,7 @@ export default function HomePage(): React.ReactNode {
 	let isDev = useIsDevMode()
 	let allViews = AllViews().filter((view) => !view.disabled && (isDev || !view.devOnly))
 	let {fontScale} = useWindowDimensions()
+	let barVisible = useRadioBarVisible()
 
 	return (
 		<>
@@ -153,7 +200,12 @@ export default function HomePage(): React.ReactNode {
 			>
 				<ScrollView>
 					<VStack
-						modifiers={[padding({all: SCREEN_MARGIN}), frame({maxWidth: FILL_WIDTH})]}
+						modifiers={[
+							padding({all: SCREEN_MARGIN}),
+							// Room to scroll the last of Home clear of the Now Playing bar.
+							padding({bottom: barVisible ? NOW_PLAYING_BAR_CLEARANCE : 0}),
+							frame({maxWidth: FILL_WIDTH}),
+						]}
 						spacing={TILE_SPACING}
 					>
 						<RNHostView matchContents={true}>
@@ -192,9 +244,12 @@ export default function HomePage(): React.ReactNode {
 						/>
 
 						<UnofficialAppNotice />
+
+						<RadioPlayerSwitch />
 					</VStack>
 				</ScrollView>
 			</Host>
+			<RadioNowPlayingBar />
 		</>
 	)
 }

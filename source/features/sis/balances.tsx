@@ -19,14 +19,13 @@ import {NoCredentialsError, credentialsOptions} from '../../lib/login'
 import {useQuery} from '@tanstack/react-query'
 import {FaqBannerGroup} from '../../features/faqs/banner'
 import {FAQ_TARGETS} from '../../features/faqs/constants'
-import {DetailRow, DisclosureRow} from '../../components/rows'
+import {DetailRow} from '../../components/rows'
 import {balanceValue} from './lib'
 
 const DISCLAIMER = 'This data may be outdated or otherwise inaccurate.'
 
 export const BalancesView = (): React.ReactNode => {
 	let router = useRouter()
-	let openSettings = () => router.navigate('/settings')
 
 	let {data: username = ''} = useQuery({
 		...credentialsOptions,
@@ -77,13 +76,10 @@ export const BalancesView = (): React.ReactNode => {
 					{data.plan ? <DetailRow label="Meal Plan" value={data.plan} /> : null}
 				</Section>
 
-				{isError && error instanceof Error ? (
-					<Section footer={<Text>You&apos;ll need to log in in order to see this data.</Text>}>
-						{error instanceof NoCredentialsError ? (
-							<DisclosureRow onPress={openSettings} title="Log in with St. Olaf" />
-						) : (
-							<Text modifiers={[foregroundStyle(sto.red)]}>{error.message}</Text>
-						)}
+				{/* A missing login is explained by the FAQ banner above; nowhere in the app signs in to Balances. */}
+				{isError && error instanceof Error && !(error instanceof NoCredentialsError) ? (
+					<Section>
+						<Text modifiers={[foregroundStyle(sto.red)]}>{error.message}</Text>
 					</Section>
 				) : null}
 			</List>

@@ -72,8 +72,6 @@ enum ChaosRoutes {
 		"settings/report-problem",
 		"st-olaf-news",
 		"streaming-media",
-		"streaming-media/krlx",
-		"streaming-media/ksto",
 		"streaming-media/webcams",
 		"student-orgs",
 		"student-orgs/[name]",

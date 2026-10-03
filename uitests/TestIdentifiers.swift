@@ -666,25 +666,35 @@ struct TestIdentifiers {
 	// MARK: - Streaming Media
 
 	enum StreamingMedia {
-		static let tabs = ["Webcams", "KSTO", "KRLX"]
-		static let krlxTab = "KRLX"
-		/// The station screen's buttons, as VoiceOver names them. Call and
-		/// schedule are icons alone, so their labels are all a listener has
-		/// to go on. Chat is an icon too, but leaves the app, so it is in
-		/// `krlxLinks` instead.
-		static let krlxButtons = [
-			"Listen",
+		static let tabs = ["Webcams"]
+		/// The station picker's segments, at the top of the sheet.
+		static let kstoSegment = "KSTO"
+		static let krlxSegment = "KRLX"
+		/// Play and Stop, in source/features/streaming/radio/player-view and the
+		/// mini-player; each names its station.
+		static let playKsto = "Play KSTO 93.1 FM"
+		static let stopKsto = "Stop KSTO 93.1 FM"
+		static let playKrlx = "Play 88.1 KRLX-FM"
+		static let stopKrlx = "Stop 88.1 KRLX-FM"
+		/// The player's bottom row, as VoiceOver names it.
+		static let krlxActions = [
 			"Call 88.1 KRLX-FM",
-			"88.1 KRLX-FM schedule",
+			"Today's schedule",
 		]
-		/// The station screen's buttons that leave the app, which VoiceOver
-		/// reads as links.
+		/// The bottom row's buttons that leave the app, which VoiceOver reads as
+		/// links.
 		static let krlxLinks = [
-			"88.1 KRLX-FM chat",
+			"Chat with 88.1 KRLX-FM",
 		]
+		/// The full player's stand-in for a scrubber, which shows only at full size.
+		static let airStatus = "radio-air-status"
+		/// The Now Playing bar with no station loaded, on Home and in Streaming
+		/// Media's tab bar.
+		static let idleBar = "Not Playing"
+		/// Home's "Show Radio Player on Home" switch.
+		static let showRadioPlayer = "show-radio-player"
 		/// KRLX has one logo, so nothing labelled with this may be a button.
 		static let krlxLogoPrefix = "88.1 KRLX-FM logo"
-		static let kstoTab = "KSTO"
 		static let kstoLogoPrefix = "KSTO 93.1 FM logo"
 		/// KSTO's logos in the order a tap cycles through them.
 		static let kstoLogos = [

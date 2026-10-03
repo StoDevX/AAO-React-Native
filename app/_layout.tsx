@@ -19,6 +19,7 @@ import {Provider as ReduxProvider} from 'react-redux'
 import {PersistQueryClientProvider} from '@tanstack/react-query-persist-client'
 import {store, persistor} from '../source/redux'
 import {ChaosGuard} from '../source/chaos/guard'
+import {navigationGuard} from '../source/lib/navigation-guard-install'
 import {LightTheme, DarkTheme} from '@frogpond/app-theme'
 import {ThemeProvider} from 'expo-router/react-navigation'
 import {Stack, useNavigationContainerRef} from 'expo-router'
@@ -29,6 +30,7 @@ import {IS_PRODUCTION} from '@frogpond/constants'
 import {StatusBar, useColorScheme} from 'react-native'
 
 import {SHEET_RESTING_FRACTION} from '../source/lib/constants'
+import {RadioHost, RadioNowPlayingSheet} from '../source/features/streaming/radio'
 
 /**
  * How every detail sheet in the app presents: a building's hours, a dictionary
@@ -73,6 +75,10 @@ function RootLayout(): React.ReactNode {
 	const statusBarStyle = scheme === 'dark' ? 'light-content' : 'dark-content'
 	const navigationContainerRef = useNavigationContainerRef()
 	useScreenViews()
+	React.useEffect(
+		() => navigationContainerRef.addListener('state', navigationGuard.stateChanged),
+		[navigationContainerRef],
+	)
 	React.useEffect(() => watchQueryFailures(queryClient.getQueryCache(), track), [])
 	React.useEffect(() => startQuickActionSync(), [])
 
@@ -93,6 +99,9 @@ function RootLayout(): React.ReactNode {
 					<ThemeProvider value={theme}>
 						<StatusBar barStyle={statusBarStyle} />
 						<ChaosGuard>
+							{/* Before the stack, so its hidden player sits beneath every screen. */}
+							<RadioHost />
+							<RadioNowPlayingSheet />
 							<Stack screenOptions={{headerBackButtonDisplayMode: 'minimal'}}>
 								<Stack.Screen name="menus" options={{title: 'Menus'}} />
 								<Stack.Screen name="menu-item-detail" options={DETAIL_SHEET} />
@@ -139,7 +148,14 @@ function RootLayout(): React.ReactNode {
 									}
 									name="directory/index"
 								/>
-								<Stack.Screen name="directory/named" options={DETAIL_SHEET} />
+								{/* Keyed by the contact, so a tap on another contact's tile opens a sheet of
+								    its own. Unkeyed, the tap reuses a sheet still on its way out, and the
+								    new contact leaves with it. */}
+								<Stack.Screen
+									dangerouslySingular={(_name, params) => String(params.title ?? '')}
+									name="directory/named"
+									options={DETAIL_SHEET}
+								/>
 								<Stack.Screen name="map" />
 								<Stack.Screen name="balances/index" options={{title: 'Balances'}} />
 								<Stack.Screen name="calendar/event" options={DETAIL_SHEET} />
