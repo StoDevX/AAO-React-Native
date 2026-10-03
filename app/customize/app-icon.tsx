@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {Image as RNImage, StyleSheet, View, useColorScheme} from 'react-native'
+import {Image as RNImage, StyleSheet, View, useColorScheme, useWindowDimensions} from 'react-native'
 import {
 	Button,
 	Form,
@@ -16,20 +16,21 @@ import {
 	accessibilityIdentifier,
 	accessibilityLabel,
 	buttonStyle,
+	contentShape,
 	font,
 	frame,
 	multilineTextAlignment,
+	shapes,
 } from '@expo/ui/swift-ui/modifiers'
 import {Stack} from 'expo-router'
 import * as c from '@frogpond/colors'
 
 import {type AppIconName, previewsFor} from '../../images/icons'
-import {type IconEntry, iconsByGroup} from '../../source/features/customize/icons'
+import {type IconEntry, galleryColumns, iconsByGroup} from '../../source/features/customize/icons'
 import {useAppIcon} from '../../source/features/customize/use-app-icon'
 
 /// Three tiles fit across an iPhone 17e's inset section with room for captions.
 const TILE = 76
-const COLUMNS = 3
 /// The ring around the current icon, and the gap between it and the artwork.
 const RING_WIDTH = 2.5
 const RING_GAP = 2
@@ -102,9 +103,11 @@ const IconGrid = React.memo(function IconGrid({
 	icons,
 	onChoose,
 }: IconGridProps): React.ReactNode {
+	let {fontScale} = useWindowDimensions()
+
 	return (
 		<Grid alignment="top" horizontalSpacing={12} verticalSpacing={16}>
-			{rowsOf(icons, COLUMNS).map((row) => (
+			{rowsOf(icons, galleryColumns(fontScale)).map((row) => (
 				<Grid.Row key={row[0].type}>
 					{row.map((icon) => (
 						<IconTile
@@ -138,7 +141,13 @@ function IconTile({icon, isCurrent, onChoose}: IconTileProps): React.ReactNode {
 			]}
 			onPress={() => onChoose(icon.type)}
 		>
-			<VStack spacing={6}>
+			{/* Each tile takes an equal share of the row, so the columns span the
+			    section; contentShape makes the whole share tappable, not only the
+			    icon and caption. */}
+			<VStack
+				modifiers={[frame({maxWidth: Infinity}), contentShape(shapes.rectangle())]}
+				spacing={6}
+			>
 				<HStack modifiers={[frame({width: FRAMED, height: FRAMED})]}>
 					<RNHostView matchContents={false}>
 						<View style={[styles.ring, isCurrent && styles.ringCurrent]}>

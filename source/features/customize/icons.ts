@@ -50,3 +50,18 @@ export function iconEntry(type: AppIconName): IconEntry {
 export function currentIconEntry(systemName: string): IconEntry {
 	return iconEntry(iconFor(systemName))
 }
+
+/**
+ * How many icons the gallery fits across at a font scale: three normally, two
+ * at the first accessibility sizes and one beyond, so a long caption such as
+ * "Constellation" breaks between words rather than inside one.
+ */
+export function galleryColumns(fontScale: number): number {
+	if (fontScale > 2) {
+		return 1
+	}
+	if (fontScale > 1.5) {
+		return 2
+	}
+	return 3
+}

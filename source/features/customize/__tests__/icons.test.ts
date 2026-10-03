@@ -1,6 +1,6 @@
 import {describe, expect, it} from '@jest/globals'
 import {appIcons} from '../../../../images/icons'
-import {ICONS, currentIconEntry, iconEntry, iconsByGroup} from '../icons'
+import {ICONS, currentIconEntry, galleryColumns, iconEntry, iconsByGroup} from '../icons'
 
 describe('ICONS', () => {
 	it('lists every shipped icon exactly once', () => {
@@ -47,5 +47,21 @@ describe('currentIconEntry', () => {
 
 	it('reads a name this build does not ship as the primary', () => {
 		expect(currentIconEntry('icon_type_old_main')).toBe(ICONS[0])
+	})
+})
+
+describe('galleryColumns', () => {
+	// UIKit's font scales: Large is 1, xxxLarge about 1.35, AX1 1.65, AX2 1.94,
+	// AX3 2.35, AX5 3.12.
+	it.each([1, 1.35])('fits three icons across at a scale of %s', (scale) => {
+		expect(galleryColumns(scale)).toBe(3)
+	})
+
+	it.each([1.65, 1.94])('drops to two at the first accessibility sizes (%s)', (scale) => {
+		expect(galleryColumns(scale)).toBe(2)
+	})
+
+	it.each([2.35, 3.12])('drops to one at the largest sizes (%s)', (scale) => {
+		expect(galleryColumns(scale)).toBe(1)
 	})
 })
