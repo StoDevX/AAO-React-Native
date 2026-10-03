@@ -41,9 +41,9 @@ function tileWidth(rowWidth: number, columns: number): number {
 }
 
 /// The grid a screen draws when someone picks Grid from its layout menu:
-/// three cards a row, each as tall as a square in the four-column grid, so a
-/// row costs no more height than the four-column one did and the extra width
-/// goes to the label. At an accessibility size it follows `columnsForFontScale`
+/// three cards a row, each as tall as a square in a four-column grid, so a
+/// row is no taller than a row of four squares and the extra width goes to
+/// the label. At an accessibility size it follows `columnsForFontScale`
 /// down to two, and the cards go back to squares -- a card two abreast at a
 /// four-column height is too short for an icon at that size.
 export function wideGridShape(
