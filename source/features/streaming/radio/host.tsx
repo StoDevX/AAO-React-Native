@@ -1,5 +1,7 @@
 import * as React from 'react'
 import {StyleSheet, View} from 'react-native'
+import {NativeStreamPlayer} from './native-player'
+import {logoAt} from './player-view/use-logo-cycle'
 import {StreamPlayer} from './player'
 import {STATIONS} from './stations'
 import {useRadioStore} from './store'
@@ -26,6 +28,10 @@ export function RadioHost(): React.ReactNode {
 	let reportStopped = useRadioStore((state) => state.reportStopped)
 	let reportWaiting = useRadioStore((state) => state.reportWaiting)
 	let reportError = useRadioStore((state) => state.reportError)
+	// The logo the listener left the station on, which Control Center shows too.
+	let savedLogo = useRadioStore((state) =>
+		state.stationId ? state.logoIndexes[state.stationId] : undefined,
+	)
 
 	// Only `waiting` marks a dry buffer: `stalled` is the fetch going quiet while
 	// the element plays on from its buffer, and nothing follows it to say audio
@@ -45,6 +51,25 @@ export function RadioHost(): React.ReactNode {
 	}
 
 	let {source} = STATIONS[stationId]
+
+	// A station with a stream of its own plays natively, which iOS can put in
+	// Control Center; one that only has a page to play from needs the WebView.
+	if (!source.useEmbeddedPlayer) {
+		return (
+			<NativeStreamPlayer
+				key={playerKey}
+				onEnded={onStopped}
+				onError={onError}
+				onPause={onStopped}
+				onPlay={onPlay}
+				onWaiting={onWaiting}
+				playState={PLAYER_STATE[playState]}
+				artworkUri={logoAt(STATIONS[stationId], savedLogo).image.uri}
+				stationName={STATIONS[stationId].stationName}
+				streamSourceUrl={source.streamSourceUrl}
+			/>
+		)
+	}
 
 	// The WebView's own container takes flex: 1 whatever its style says, so
 	// beside the root stack it would claim half the screen. This view holds

@@ -1,7 +1,7 @@
 import {beforeEach, describe, expect, test} from '@jest/globals'
 import {act, renderHook} from '@testing-library/react-native'
 
-import {useLogoCycle, useSelectedLogo} from '../player-view/use-logo-cycle'
+import {logoAt, useLogoCycle, useSelectedLogo} from '../player-view/use-logo-cycle'
 import {STATIONS, type StationId} from '../stations'
 import {useRadioStore} from '../store'
 
@@ -65,5 +65,16 @@ describe('useSelectedLogo', () => {
 		await act(() => cycle.result.current.showNextLogo?.())
 
 		expect(selected.result.current.name).toBe('wordmark')
+	})
+})
+
+describe('logoAt', () => {
+	test('is the saved logo, else the first', () => {
+		expect(logoAt(STATIONS.ksto, 1).name).toBe('wordmark')
+		expect(logoAt(STATIONS.ksto, undefined).name).toBe('cow badge')
+	})
+
+	test('is the first when the saved logo is one the station no longer has', () => {
+		expect(logoAt(STATIONS.krlx, 5).name).toBe('krlx 88.1')
 	})
 })

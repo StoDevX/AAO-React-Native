@@ -14,7 +14,7 @@ type RadioStore = {
 	/** Identifies the current player. Each play gets a new one, so a retry never reuses a failed player. */
 	playerKey: number
 
-	/** The station the sheet shows. Browsing it never changes playback. */
+	/** The station the sheet shows. Browsing it never changes playback. Persisted. */
 	viewedStationId: StationId
 	/** Whether the Now Playing sheet is presented. */
 	sheetOpen: boolean
@@ -54,8 +54,9 @@ type RadioStore = {
 }
 
 /**
- * The radio that plays across the whole app. Only the Home switch and each
- * station's logo are persisted: a relaunch should never start audio by itself.
+ * The radio that plays across the whole app. Only the Home switch, each
+ * station's logo and the station last viewed are persisted: a relaunch should
+ * never start audio by itself.
  */
 export const useRadioStore = create<RadioStore>()(
 	persist(
@@ -122,7 +123,11 @@ export const useRadioStore = create<RadioStore>()(
 			name: 'radio-preferences',
 			storage: createJSONStorage(() => AsyncStorage),
 			version: 1,
-			partialize: (state) => ({showOnHome: state.showOnHome, logoIndexes: state.logoIndexes}),
+			partialize: (state) => ({
+				showOnHome: state.showOnHome,
+				logoIndexes: state.logoIndexes,
+				viewedStationId: state.viewedStationId,
+			}),
 			// Persist reports a failed read only here, never through its own
 			// `hasHydrated`, so a corrupt value would otherwise leave the app waiting.
 			onRehydrateStorage: () => () => useRadioStore.setState({hydrated: true}),
