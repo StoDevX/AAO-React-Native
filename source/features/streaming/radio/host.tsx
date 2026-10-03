@@ -27,6 +27,9 @@ export function RadioHost(): React.ReactNode {
 	let reportWaiting = useRadioStore((state) => state.reportWaiting)
 	let reportError = useRadioStore((state) => state.reportError)
 
+	// Only `waiting` marks a dry buffer: `stalled` is the fetch going quiet while
+	// the element plays on from its buffer, and nothing follows it to say audio
+	// is back.
 	// Each report names the player it came from, so one being replaced cannot
 	// change the state of the one replacing it.
 	let onPlay = React.useCallback(() => reportPlaying(playerKey), [reportPlaying, playerKey])
@@ -55,7 +58,6 @@ export function RadioHost(): React.ReactNode {
 				onError={onError}
 				onPause={onStopped}
 				onPlay={onPlay}
-				onStalled={onWaiting}
 				onWaiting={onWaiting}
 				playState={PLAYER_STATE[playState]}
 				streamSourceUrl={source.streamSourceUrl}

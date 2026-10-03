@@ -29,7 +29,7 @@ type RadioStore = {
 
 	/** Player `key` reports that audio has started arriving. */
 	reportPlaying: (key: number) => void
-	/** Player `key` reports that the stream stalled, waiting on data. */
+	/** Player `key` reports that its buffer ran dry, waiting on data. */
 	reportWaiting: (key: number) => void
 	/** Player `key` reports that its audio paused or ended by itself. */
 	reportStopped: (key: number) => void
@@ -78,8 +78,8 @@ export const useRadioStore = create<RadioStore>()(
 				reportPlaying: (key) => {
 					if (fromCurrentPlayer(key)) set({playState: 'playing'})
 				},
-				// A stalled stream is no longer heard, so it reads as starting again
-				// until audio arrives.
+				// A stream whose buffer has run dry is no longer heard, so it reads as
+				// starting again until audio arrives.
 				reportWaiting: (key) => {
 					if (fromCurrentPlayer(key) && get().playState === 'playing') set({playState: 'starting'})
 				},
