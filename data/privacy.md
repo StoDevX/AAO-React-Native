@@ -61,7 +61,7 @@ sends Sentry:
 6. _How you've set up the app_: which app icon, where links open, and whether
   Home shows the radio player. Crash reports carry the app icon too.
 
-You can turn all of this off, crash reports included, under Settings, "Share
+You can turn all of this off, crash reports included, under Support, "Share
 anonymous usage and crash data". If you send us a problem report, it goes
 without the random ID and without the record of what you did in the app
 beforehand; with sharing off, the app offers to send it by email instead.

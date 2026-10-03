@@ -6,9 +6,14 @@ class ModuleHomeTests: UITestCase {
 			.checkHomescreenExists()
 			.longPressNotice()
 			.tapEnableDevMode()
-			.openSettings()
-			.checkDeveloperSectionVisible()
+			.openDeveloper()
+		let components = app.buttons[TestIdentifiers.Developer.components].firstMatch
+		XCTAssertTrue(
+			components.waitForExistence(timeout: 10),
+			"Developer should hold the tools Settings' Developer section held")
+		HomeScreen(app: app).capture("developer")
 	}
+
 
 	/// Every tile that opens a screen in the app opens its own screen.
 	///

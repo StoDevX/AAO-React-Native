@@ -1,37 +1,20 @@
 import * as React from 'react'
 import {StyleSheet} from 'react-native'
-import {Form, Host, RNHostView, VStack} from '@expo/ui/swift-ui'
-import {
-	accessibilityIdentifier,
-	listRowBackground,
-	listRowInsets,
-	listRowSeparator,
-} from '@expo/ui/swift-ui/modifiers'
+import {Form, Host} from '@expo/ui/swift-ui'
+import {accessibilityIdentifier} from '@expo/ui/swift-ui/modifiers'
 import {Stack} from 'expo-router'
 
 import {SheetCloseButton} from '../../source/components/sheet-close-button'
-import {useIsDevMode} from '../../source/lib/use-is-dev-mode'
-import {FaqBannerGroup} from '../../source/features/faqs/banner'
-import {FAQ_TARGETS} from '../../source/features/faqs/constants'
 
 import {MiscellanySection} from '../../source/features/settings/screens/overview/miscellany'
-import {SupportSection} from '../../source/features/settings/screens/overview/support'
-import {DeveloperSection} from '../../source/features/settings/screens/overview/developer'
 
 const styles = StyleSheet.create({
 	host: {
 		flex: 1,
 	},
-	banner: {
-		marginHorizontal: 20,
-		marginTop: 20,
-		marginBottom: 10,
-	},
 })
 
 export default function SettingsRootPage(): React.ReactNode {
-	const isDev = useIsDevMode()
-
 	return (
 		<>
 			<Stack.Title>Settings</Stack.Title>
@@ -39,23 +22,7 @@ export default function SettingsRootPage(): React.ReactNode {
 
 			<Host style={styles.host} modifiers={[accessibilityIdentifier('screen-settings')]}>
 				<Form>
-					<VStack
-						modifiers={[
-							listRowBackground('clear'),
-							listRowInsets({top: 0, leading: 0, bottom: 0, trailing: 0}),
-							listRowSeparator('hidden'),
-						]}
-					>
-						<RNHostView matchContents={true}>
-							<FaqBannerGroup style={styles.banner} target={FAQ_TARGETS.SETTINGS_ROOT} />
-						</RNHostView>
-					</VStack>
-
-					<SupportSection />
-
 					<MiscellanySection />
-
-					{isDev && <DeveloperSection />}
 				</Form>
 			</Host>
 		</>

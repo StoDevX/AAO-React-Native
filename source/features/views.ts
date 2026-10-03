@@ -345,6 +345,16 @@ export const AllViews = (): Array<HomeView> => {
 		// Dev
 		{
 			type: 'view',
+			view: '/developer',
+			id: 'developer',
+			title: 'Developer',
+			icon: 'hammer.fill',
+			gradient: c.grayGradient,
+			group: 'dev',
+			devOnly: true,
+		},
+		{
+			type: 'view',
 			view: '/hours?campus=carleton',
 			id: 'carleton-campus',
 			title: 'Carleton Campus',
@@ -435,5 +445,6 @@ export const TiledViews = (): Array<ViewType> => {
 		tile('st-olaf-news'),
 		{...tile('athletics'), devOnly: true},
 		tile('carleton-campus'),
+		tile('developer'),
 	]
 }

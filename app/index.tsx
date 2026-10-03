@@ -50,7 +50,8 @@ import {TileGrid} from '../source/components/tile-grid'
 import {HomeScreenButton} from '../source/features/home/button'
 import {HomeListSections} from '../source/features/home/list-sections'
 import {useCollapsedGroupsStore, useHomeLayoutStore} from '../source/features/home/store'
-import {openUrl} from '@frogpond/open-url'
+import {openUrl, trackedOpenUrl} from '@frogpond/open-url'
+import {GH_BASE_URL} from '../source/lib/constants'
 import {selectDevModeOverride, setDevModeOverride} from '../source/redux/parts/settings'
 import {useIsDevMode} from '../source/lib/use-is-dev-mode'
 import {FaqBannerGroup} from '../source/features/faqs/banner'
@@ -283,9 +284,34 @@ export default function HomePage(): React.ReactNode {
 							List
 						</Stack.Toolbar.MenuAction>
 					</Stack.Toolbar.Menu>
-					<Stack.Toolbar.MenuAction icon="gear" onPress={() => router.navigate('/settings')}>
-						Settings
-					</Stack.Toolbar.MenuAction>
+					<Stack.Toolbar.Menu inline={true}>
+						<Stack.Toolbar.MenuAction
+							icon="lifepreserver"
+							onPress={() => router.navigate('/support')}
+						>
+							Support
+						</Stack.Toolbar.MenuAction>
+						<Stack.Toolbar.MenuAction
+							icon="info.circle"
+							onPress={() => router.navigate('/settings')}
+						>
+							About
+						</Stack.Toolbar.MenuAction>
+						<Stack.Toolbar.MenuAction
+							icon="curlybraces"
+							onPress={() => trackedOpenUrl({url: GH_BASE_URL, id: 'ContributingView'})}
+						>
+							Contributing
+						</Stack.Toolbar.MenuAction>
+					</Stack.Toolbar.Menu>
+					<Stack.Toolbar.Menu inline={true}>
+						<Stack.Toolbar.MenuAction
+							icon="exclamationmark.bubble"
+							onPress={() => router.navigate('/settings/report-problem')}
+						>
+							Feedback
+						</Stack.Toolbar.MenuAction>
+					</Stack.Toolbar.Menu>
 				</Stack.Toolbar.Menu>
 			</Stack.Toolbar>
 			<Host
