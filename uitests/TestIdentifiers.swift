@@ -660,9 +660,9 @@ struct TestIdentifiers {
 		/// Every thumbnail in a comic's series row, in source/features/mess/series-row.tsx.
 		static let seriesStory = "mess-series-story"
 
-		/// A Crossword post's button that opens its puzzle, in
+		/// A Crossword or Puzzle post's button that opens its puzzle, in
 		/// source/features/mess/story-screen.tsx.
-		static let crosswordSolve = "mess-crossword-solve"
+		static let puzzleSolve = "mess-puzzle-solve"
 		static let crosswordSolveLabel = "Solve the crossword"
 		/// A Crossword post, from the recorded Mess fixtures, opened by route: its row in the
 		/// Crossword column opens the puzzle without the page.

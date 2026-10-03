@@ -142,6 +142,7 @@ const POEM: MessStory = {
 }
 
 const PUZZLE = {
+	type: 'crossword',
 	id: 'af644d78',
 	set: 'c2b247b419ae1dc89954424eb39235cd774839006bb020ce26abcf072f7ecaf4',
 }
@@ -155,7 +156,7 @@ const CROSSWORD: MessStory = {
 	section: 'Variety',
 	column: 'Crossword',
 	blocks: [{type: 'paragraph', runs: [{text: 'Answers in next week’s issue.'}]}],
-	layout: {kind: 'crossword', puzzle: PUZZLE},
+	layout: {kind: 'puzzle', puzzle: PUZZLE},
 }
 
 const PLAYLIST_PHOTO = {

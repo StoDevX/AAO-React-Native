@@ -5,7 +5,7 @@ import {ColumnScreen} from './column-screen'
 import {MessPage} from './mess-page'
 import {PageLoading, PageMessage, PageNotice} from './page-notice'
 import {messCategoriesOptions} from './query'
-import {CROSSWORD_COLUMN, crosswordColumnId} from './lib/crossword'
+import {CROSSWORD_COLUMN, crosswordColumnId} from './lib/puzzle'
 
 /**
  * The paper's crosswords, newest first, as the Crossword column's own page. The column is found

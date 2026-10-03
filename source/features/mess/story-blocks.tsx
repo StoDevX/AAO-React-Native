@@ -84,7 +84,7 @@ type SiteLinkProps = {
 	icon: SFSymbol
 	label: string
 	url: string
-	/** Fills the card in the Mess red, for the one thing its page is for, such as solving a crossword */
+	/** Fills the card in the Mess red, for the one thing its page is for, such as solving a puzzle */
 	prominent?: boolean
 	/** The card's name for a UI test */
 	identifier?: string

@@ -59,7 +59,7 @@ const CROSSWORD: MessStory = {
 	id: 36900,
 	title: 'Crossword: Finals Week',
 	column: 'Crossword',
-	layout: {kind: 'crossword', puzzle: {id: 'finals', set: 'olafmessenger'}},
+	layout: {kind: 'puzzle', puzzle: {type: 'crossword', id: 'finals', set: 'olafmessenger'}},
 }
 
 let queryClient: QueryClient

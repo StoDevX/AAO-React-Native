@@ -465,7 +465,7 @@ struct MessStoryScreen: Screen {
 		let solve = app.buttons.matching(
 			NSPredicate(
 				format: "identifier == %@ AND label == %@",
-				TestIdentifiers.News.crosswordSolve, TestIdentifiers.News.crosswordSolveLabel)
+				TestIdentifiers.News.puzzleSolve, TestIdentifiers.News.crosswordSolveLabel)
 		).firstMatch
 		XCTAssertTrue(solve.waitForExistence(timeout: 30), "a Crossword post should offer to solve its puzzle")
 		capture("A Crossword post")

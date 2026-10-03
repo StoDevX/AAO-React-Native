@@ -133,8 +133,13 @@ export type RecipeSection = {label: string; kind: 'ingredients' | 'steps'; items
 /** A Spotify playlist, album or track, by Spotify's base-62 id. */
 export type SpotifyRef = {kind: 'playlist' | 'album' | 'track'; id: string}
 
-/** An Amuse Labs PuzzleMe puzzle, as the placeholder in a Crossword post names it. */
-export type CrosswordPuzzle = {id: string; set: string}
+/** An Amuse Labs PuzzleMe puzzle, as the placeholder in a Crossword or Puzzle post names it. */
+export type Puzzle = {
+	/** PuzzleMe's name for the game, such as `crossword` or `wordrow` */
+	type: string
+	id: string
+	set: string
+}
 
 /** How the reader lays a story out; every template falls back to `article`. */
 export type StoryLayout =
@@ -142,7 +147,7 @@ export type StoryLayout =
 	| {kind: 'horoscopes'; intro: Run[][]; signs: Array<{sign: ZodiacSign; reading: Run[][]}>}
 	| {kind: 'image'; image: Photo}
 	| {kind: 'poem'; stanzas: PoemLine[][]}
-	| {kind: 'crossword'; puzzle: CrosswordPuzzle}
+	| {kind: 'puzzle'; puzzle: Puzzle}
 	| {kind: 'playlist'; spotify: SpotifyRef | null}
 	| {kind: 'recipe'; intro: Block[]; sections: RecipeSection[]; after: Block[]}
 	| {kind: 'feature'; images: CaptionedPhoto[]}
