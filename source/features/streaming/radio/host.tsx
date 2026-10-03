@@ -12,6 +12,7 @@ const PLAYER_STATE: Record<RadioPlayState, PlayState> = {
 	stopped: 'paused',
 	starting: 'checking',
 	playing: 'playing',
+	paused: 'paused',
 }
 
 /**
@@ -26,6 +27,7 @@ export function RadioHost(): React.ReactNode {
 	let playerKey = useRadioStore((state) => state.playerKey)
 	let reportPlaying = useRadioStore((state) => state.reportPlaying)
 	let reportStopped = useRadioStore((state) => state.reportStopped)
+	let resume = useRadioStore((state) => state.resume)
 	let reportWaiting = useRadioStore((state) => state.reportWaiting)
 	let reportError = useRadioStore((state) => state.reportError)
 	// The logo the listener left the station on, which Control Center shows too.
@@ -62,6 +64,7 @@ export function RadioHost(): React.ReactNode {
 				onError={onError}
 				onPause={onStopped}
 				onPlay={onPlay}
+				onResume={resume}
 				onWaiting={onWaiting}
 				playState={PLAYER_STATE[playState]}
 				artworkUri={logoAt(STATIONS[stationId], savedLogo).image.uri}

@@ -5,28 +5,22 @@ import {SymbolView} from 'expo-symbols'
 
 import {PLAYBACK_ERROR} from '../describe-playback'
 import type {Station} from '../stations'
-import {offersStop, useRadioStore, useStationPlayback} from '../store'
+import {useStationPlayback} from '../store'
+import {useRadioControl} from '../use-radio-control'
 import {palette} from './palette'
 
-/** Play, or Stop while the station is starting, playing, or has failed. */
+/** Play, or Pause while the station starts or plays, or Stop after it has failed. */
 export function PlayStopButton({station}: {station: Station}): React.ReactNode {
-	let {playState, error} = useStationPlayback(station.id)
-	let play = useRadioStore((state) => state.play)
-	let stop = useRadioStore((state) => state.stop)
-	let running = offersStop(playState, error)
+	let {label, icon, press} = useRadioControl(station)
 	return (
 		<Touchable
-			accessibilityLabel={`${running ? 'Stop' : 'Play'} ${station.stationName}`}
+			accessibilityLabel={label}
 			accessibilityRole="button"
 			highlight={false}
-			onPress={running ? stop : () => play(station.id)}
+			onPress={press}
 			style={styles.button}
 		>
-			<SymbolView
-				name={running ? 'pause.fill' : 'play.fill'}
-				size={44}
-				tintColor={palette.primary}
-			/>
+			<SymbolView name={icon} size={44} tintColor={palette.primary} />
 		</Touchable>
 	)
 }

@@ -13,6 +13,8 @@ export function describePlayback(playState: RadioPlayState, error: HtmlAudioErro
 			return 'Playing'
 		case 'starting':
 			return 'Starting…'
+		case 'paused':
+			return 'Paused'
 		default:
 			return 'Stopped'
 	}

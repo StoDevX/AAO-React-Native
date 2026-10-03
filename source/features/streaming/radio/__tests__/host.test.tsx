@@ -1,6 +1,6 @@
 import * as React from 'react'
 import {beforeEach, describe, expect, jest, test} from '@jest/globals'
-import {fireEvent, render} from '@testing-library/react-native'
+import {act, fireEvent, render} from '@testing-library/react-native'
 
 import {RadioHost} from '../host'
 import {STATIONS} from '../stations'
@@ -8,16 +8,23 @@ import {useRadioStore} from '../store'
 
 // The native module needs a device; its player is a stand-in that records the
 // source it was given.
-const mockPlayer = {play: jest.fn(), pause: jest.fn(), setActiveForLockScreen: jest.fn()}
+const mockPlayer = {
+	muted: false,
+	play: jest.fn(),
+	pause: jest.fn(),
+	replace: jest.fn(),
+	setActiveForLockScreen: jest.fn(),
+}
+let mockStatus = {
+	playing: false,
+	isBuffering: false,
+	didJustFinish: false,
+	error: null as string | null,
+}
 const mockUseAudioPlayer = jest.fn((_source: string) => mockPlayer)
 jest.mock('expo-audio', () => ({
 	useAudioPlayer: (source: string) => mockUseAudioPlayer(source),
-	useAudioPlayerStatus: () => ({
-		playing: false,
-		isBuffering: false,
-		didJustFinish: false,
-		error: null,
-	}),
+	useAudioPlayerStatus: () => mockStatus,
 	setAudioModeAsync: () => Promise.resolve(),
 }))
 
@@ -80,5 +87,27 @@ describe('RadioHost', () => {
 		await renderHost()
 
 		expect(mockUseAudioPlayer).not.toHaveBeenCalled()
+	})
+
+	test('starts the paused native station again in its own player when Control Center plays it', async () => {
+		mockStatus = {playing: true, isBuffering: false, didJustFinish: false, error: null}
+		useRadioStore.getState().stop()
+		useRadioStore.getState().play('krlx')
+		let screen = await render(<RadioHost />)
+
+		mockStatus = {...mockStatus, playing: false}
+		await act(() => useRadioStore.getState().pause())
+		await screen.rerender(<RadioHost />)
+		let key = useRadioStore.getState().playerKey
+
+		mockStatus = {...mockStatus, playing: true}
+		await screen.rerender(<RadioHost />)
+
+		expect(useRadioStore.getState()).toMatchObject({
+			stationId: 'krlx',
+			playState: 'starting',
+			playerKey: key,
+		})
+		mockStatus = {playing: false, isBuffering: false, didJustFinish: false, error: null}
 	})
 })

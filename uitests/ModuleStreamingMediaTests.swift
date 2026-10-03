@@ -18,19 +18,21 @@ class ModuleStreamingMediaTests: UITestCaseUnbooted {
 	}
 
 	/// The bar on Home opens the sheet on the last station viewed. Picking
-	/// another station there only browses: nothing plays until Play, and the
-	/// bar says what is loaded, not what the sheet shows.
+	/// another station there only browses: the bar says what is loaded, not
+	/// what the sheet shows. Pausing leaves the station loaded, with Play to
+	/// start it again. KSTO plays here, as KRLX's native stream needs a
+	/// network the simulator's TLS does not always have.
 	func testTheBarOpensTheSheet() throws {
 		let ids = TestIdentifiers.StreamingMedia.self
 		app.launch()
 		StreamingMediaScreen(app: app)
 			.openSheetFromBar(expecting: ids.playKsto)
+			.press(ids.playKsto, expecting: ids.pauseKsto)
 			.pick(ids.krlxSegment, expecting: ids.playKrlx)
-			.capture("Sheet, KRLX")
-			.press(ids.playKrlx, expecting: ids.stopKrlx)
-			.closeSheet(expectingBar: ids.stopKrlx)
-			.capture("Home, KRLX loaded")
-			.press(ids.stopKrlx, expecting: ids.idleBar)
+			.capture("Sheet, KRLX, with KSTO playing")
+			.closeSheet(expectingBar: ids.pauseKsto)
+			.capture("Home, KSTO loaded")
+			.press(ids.pauseKsto, expecting: ids.playKsto)
 	}
 
 	/// "Show Radio Player on Home" off takes the idle bar off Home, but
@@ -55,10 +57,10 @@ class ModuleStreamingMediaTests: UITestCaseUnbooted {
 		app.launch()
 		StreamingMediaScreen(app: app)
 			.openSheetFromBar(expecting: ids.playKsto)
-			.press(ids.playKsto, expecting: ids.stopKsto)
-			.closeSheet(expectingBar: ids.stopKsto)
+			.press(ids.playKsto, expecting: ids.pauseKsto)
+			.closeSheet(expectingBar: ids.pauseKsto)
 			.toggleShowRadioPlayer()
-			.checkGone(ids.stopKsto)
+			.checkGone(ids.pauseKsto)
 			.checkGone(ids.idleBar)
 			.capture("Home, switch turned off while KSTO played")
 			.toggleShowRadioPlayer()
