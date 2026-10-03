@@ -26,7 +26,14 @@ struct AppIconScreen: Screen {
 	/// earlier can be off screen by the time the next one is wanted. Looks down
 	/// the gallery, then back up it.
 	func scrollIntoView(_ tile: XCUIElement) {
-		let isReachable = { tile.exists && tile.isHittable }
+		// Hittable is not enough: XCUITest calls a tile hittable while part of it
+		// is still under the screen's bottom edge, where a tap at its middle
+		// misses. Wait for the whole tile, clear of the home indicator.
+		let screen = app.windows.firstMatch.frame
+		let isReachable = {
+			tile.exists && tile.isHittable && tile.frame.maxY <= screen.maxY - 40
+				&& tile.frame.minY >= screen.minY
+		}
 		for _ in 0..<8 where !isReachable() { gallery.swipeUp() }
 		for _ in 0..<16 where !isReachable() { gallery.swipeDown() }
 	}
