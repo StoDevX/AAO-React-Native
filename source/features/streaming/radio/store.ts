@@ -14,7 +14,7 @@ type RadioStore = {
 	/** Identifies the current player. Each play gets a new one, so a retry never reuses a failed player. */
 	playerKey: number
 
-	/** The station the sheet shows. Browsing it never changes playback. */
+	/** The station the sheet shows. Browsing it never changes playback. Persisted. */
 	viewedStationId: StationId
 	/** Whether the Now Playing sheet is presented. */
 	sheetOpen: boolean
@@ -28,6 +28,13 @@ type RadioStore = {
 
 	/** Starts `stationId` in a fresh player, replacing any other station. */
 	play: (stationId: StationId) => void
+	/** Pauses the loaded station, which stays loaded, as Control Center's does. */
+	pause: () => void
+	/**
+	 * Starts a paused station again in the player it has, which has reloaded the
+	 * stream. Playing it instead mounts a fresh player.
+	 */
+	resume: () => void
 	/** Unloads the station, which ends its audio. */
 	stop: () => void
 
@@ -53,9 +60,15 @@ type RadioStore = {
 	setShowOnHome: (on: boolean) => void
 }
 
+/** Whether the station is starting or playing, which is when Pause has something to do. */
+function isRunning(playState: RadioPlayState): boolean {
+	return playState === 'starting' || playState === 'playing'
+}
+
 /**
- * The radio that plays across the whole app. Only the Home switch and each
- * station's logo are persisted: a relaunch should never start audio by itself.
+ * The radio that plays across the whole app. Only the Home switch, each
+ * station's logo and the station last viewed are persisted: a relaunch should
+ * never start audio by itself.
  */
 export const useRadioStore = create<RadioStore>()(
 	persist(
@@ -82,6 +95,12 @@ export const useRadioStore = create<RadioStore>()(
 						error: null,
 						playerKey: state.playerKey + 1,
 					})),
+				pause: () => {
+					if (isRunning(get().playState)) set({playState: 'paused'})
+				},
+				resume: () => {
+					if (get().playState === 'paused') set({playState: 'starting'})
+				},
 				stop: () => set({stationId: null, playState: 'stopped', error: null}),
 
 				reportPlaying: (key) => {
@@ -93,9 +112,9 @@ export const useRadioStore = create<RadioStore>()(
 					if (fromCurrentPlayer(key) && get().playState === 'playing') set({playState: 'starting'})
 				},
 				reportStopped: (key) => {
-					// A player that has failed pauses once the store asks it to stop;
-					// that pause must not unload the station and hide why it failed.
-					if (fromCurrentPlayer(key) && get().error === null) get().stop()
+					// A player that has failed goes quiet once the store has stopped it;
+					// that must not hide why it failed, and a paused one already is.
+					if (fromCurrentPlayer(key) && get().error === null) get().pause()
 				},
 				reportError: (key, error) => {
 					if (fromCurrentPlayer(key)) set({error, playState: 'stopped'})
@@ -122,7 +141,11 @@ export const useRadioStore = create<RadioStore>()(
 			name: 'radio-preferences',
 			storage: createJSONStorage(() => AsyncStorage),
 			version: 1,
-			partialize: (state) => ({showOnHome: state.showOnHome, logoIndexes: state.logoIndexes}),
+			partialize: (state) => ({
+				showOnHome: state.showOnHome,
+				logoIndexes: state.logoIndexes,
+				viewedStationId: state.viewedStationId,
+			}),
 			// Persist reports a failed read only here, never through its own
 			// `hasHydrated`, so a corrupt value would otherwise leave the app waiting.
 			onRehydrateStorage: () => () => useRadioStore.setState({hydrated: true}),
@@ -131,12 +154,18 @@ export const useRadioStore = create<RadioStore>()(
 )
 
 /**
- * Whether a station's control offers Stop rather than Play: while it is
- * starting or playing, and after it fails, when Stop is the only way to unload
- * it.
+ * What a station's control does when pressed: Pause while it starts or plays,
+ * Play when it is paused or not loaded, and Stop after it fails, when
+ * unloading it is the only way to clear the error.
  */
-export function offersStop(playState: RadioPlayState, error: HtmlAudioError | null): boolean {
-	return playState !== 'stopped' || error !== null
+export function radioControl(
+	playState: RadioPlayState,
+	error: HtmlAudioError | null,
+): 'play' | 'pause' | 'stop' {
+	if (error !== null) {
+		return 'stop'
+	}
+	return isRunning(playState) ? 'pause' : 'play'
 }
 
 /** What `stationId`'s own controls show: its state when it is loaded, and stopped otherwise. */

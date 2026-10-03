@@ -1,5 +1,11 @@
 import {useChaosFindings} from '../findings'
-import {installProbe, type ErrorHandler, type RejectionTrackerOptions} from '../probe'
+import {
+	installProbe,
+	type ErrorHandler,
+	type ExceptionsManagerLike,
+	type ProbeConsole,
+	type RejectionTrackerOptions,
+} from '../probe'
 
 function host() {
 	let handler: ErrorHandler = jest.fn()
@@ -12,10 +18,13 @@ function host() {
 			handler = next
 		},
 	}
-	let consoleLike = {error: originalError}
+	let consoleLike: ProbeConsole = {error: originalError}
+	let originalHandleException = jest.fn()
+	let exceptionsManager: ExceptionsManagerLike = {handleException: originalHandleException}
 	return {
 		host: {
 			errorUtils,
+			exceptionsManager,
 			console: consoleLike,
 			enableRejectionTracker: (options: RejectionTrackerOptions) => {
 				tracker = options
@@ -23,6 +32,8 @@ function host() {
 		},
 		previous,
 		originalError,
+		exceptionsManager,
+		originalHandleException,
 		current: () => handler,
 		consoleLike,
 		tracker: () => tracker,
@@ -63,6 +74,30 @@ describe('installProbe', () => {
 		let error = new Error('printed')
 		h.consoleLike.error('Warning:', error)
 		expect(h.originalError).toHaveBeenCalledWith('Warning:', error)
+		expect(useChaosFindings.getState().latest).toBe('')
+	})
+
+	test('stops React Native sending console.error to native', () => {
+		let h = host()
+		installProbe(h.host)
+		expect(h.consoleLike.reportErrorsAsExceptions).toBe(false)
+	})
+
+	test('reports a fatal React Native would send to native, without sending it', () => {
+		let h = host()
+		installProbe(h.host)
+		h.exceptionsManager.handleException(new Error('render blew up'), true)
+		expect(useChaosFindings.getState().latest).toBe('fatal: render blew up')
+		expect(h.originalHandleException).not.toHaveBeenCalled()
+	})
+
+	test('logs a non-fatal React Native would send to native, without sending it', () => {
+		let h = host()
+		installProbe(h.host)
+		let error = new Error('caught by a boundary')
+		h.exceptionsManager.handleException(error, false)
+		expect(h.originalError).toHaveBeenCalledWith(error)
+		expect(h.originalHandleException).not.toHaveBeenCalled()
 		expect(useChaosFindings.getState().latest).toBe('')
 	})
 

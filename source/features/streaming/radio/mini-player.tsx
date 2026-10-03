@@ -7,10 +7,11 @@ import {SymbolView} from 'expo-symbols'
 import {GlassView} from 'expo-glass-effect'
 import {NativeTabs} from 'expo-router/unstable-native-tabs'
 import {STATIONS, type Station} from './stations'
-import {offersStop, useRadioStore} from './store'
+import {useRadioStore} from './store'
+import {useRadioControl} from './use-radio-control'
 import {useRadioBarVisible} from './bar-visibility'
 import {describePlayback} from './describe-playback'
-import {useSelectedLogo} from './player-view'
+import {useNowPlaying} from './use-now-playing'
 
 /** What the mini-player says, and VoiceOver reads, with no station loaded. */
 const IDLE_LABEL = 'Not Playing'
@@ -44,7 +45,7 @@ type MiniPlayerProps = {
 }
 
 /**
- * The loaded station, with Play or Stop, laid out as Music's Now
+ * The loaded station, with Play or Pause, laid out as Music's Now
  * Playing accessory. Tapping the station opens the radio's sheet. With no station
  * loaded it renders nothing, or the idle player when `showWhenIdle` asks for
  * it.
@@ -57,8 +58,6 @@ export function RadioMiniPlayer({
 	let stationId = useRadioStore((state) => state.stationId)
 	let playState = useRadioStore((state) => state.playState)
 	let error = useRadioStore((state) => state.error)
-	let play = useRadioStore((state) => state.play)
-	let stop = useRadioStore((state) => state.stop)
 
 	if (!stationId) {
 		return showWhenIdle ? <IdleMiniPlayer /> : null
@@ -66,7 +65,6 @@ export function RadioMiniPlayer({
 
 	let station = STATIONS[stationId]
 	let status = describePlayback(playState, error)
-	let running = offersStop(playState, error)
 
 	return (
 		<View style={styles.row}>
@@ -92,24 +90,31 @@ export function RadioMiniPlayer({
 				</View>
 			</Touchable>
 
-			{/* A live stream has no pause: Stop unloads it, and Play starts afresh. */}
-			<Touchable
-				accessibilityLabel={`${running ? 'Stop' : 'Play'} ${station.stationName}`}
-				accessibilityRole="button"
-				highlight={false}
-				onPress={running ? stop : () => play(station.id)}
-				style={styles.control}
-			>
-				<SymbolView name={running ? 'stop.fill' : 'play.fill'} size={20} tintColor={c.label} />
-			</Touchable>
+			<MiniControl station={station} />
 		</View>
 	)
 }
 
-/** The station's logo, the one the sheet opens on. */
+/** The bar's Play or Pause, drawn as Music's is. */
+function MiniControl({station}: {station: Station}): React.ReactNode {
+	let {label, icon, press} = useRadioControl(station, 'bar')
+	return (
+		<Touchable
+			accessibilityLabel={label}
+			accessibilityRole="button"
+			highlight={false}
+			onPress={press}
+			style={styles.control}
+		>
+			<SymbolView name={icon} size={20} tintColor={c.label} />
+		</Touchable>
+	)
+}
+
+/** The station's logo, or the cover of the song on air. */
 function StationArtwork({station}: {station: Station}): React.ReactNode {
-	let logo = useSelectedLogo(station)
-	return <Image source={logo.image} style={styles.artwork} />
+	let {artworkUri} = useNowPlaying(station)
+	return <Image source={{uri: artworkUri}} style={styles.artwork} />
 }
 
 /**

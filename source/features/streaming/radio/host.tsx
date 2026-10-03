@@ -1,7 +1,10 @@
 import * as React from 'react'
 import {StyleSheet, View} from 'react-native'
+import {track} from '../../telemetry/track'
+import {NativeStreamPlayer} from './native-player'
+import {useNowPlaying} from './use-now-playing'
 import {StreamPlayer} from './player'
-import {STATIONS} from './stations'
+import {STATIONS, type Station} from './stations'
 import {useRadioStore} from './store'
 import type {HtmlAudioError, PlayState, RadioPlayState} from './types'
 
@@ -10,6 +13,28 @@ const PLAYER_STATE: Record<RadioPlayState, PlayState> = {
 	stopped: 'paused',
 	starting: 'checking',
 	playing: 'playing',
+	paused: 'paused',
+}
+
+/**
+ * A natively played station, showing the song on air in Control Center when
+ * its station publishes one. A component of its own because the song is a hook.
+ */
+function NativeStation({
+	station,
+	...player
+}: {station: Station} & Omit<
+	React.ComponentProps<typeof NativeStreamPlayer>,
+	'nowPlaying' | 'streamSourceUrl'
+>): React.ReactNode {
+	let nowPlaying = useNowPlaying(station)
+	return (
+		<NativeStreamPlayer
+			{...player}
+			nowPlaying={nowPlaying}
+			streamSourceUrl={station.source.streamSourceUrl}
+		/>
+	)
 }
 
 /**
@@ -24,6 +49,7 @@ export function RadioHost(): React.ReactNode {
 	let playerKey = useRadioStore((state) => state.playerKey)
 	let reportPlaying = useRadioStore((state) => state.reportPlaying)
 	let reportStopped = useRadioStore((state) => state.reportStopped)
+	let resume = useRadioStore((state) => state.resume)
 	let reportWaiting = useRadioStore((state) => state.reportWaiting)
 	let reportError = useRadioStore((state) => state.reportError)
 
@@ -36,15 +62,48 @@ export function RadioHost(): React.ReactNode {
 	let onStopped = React.useCallback(() => reportStopped(playerKey), [reportStopped, playerKey])
 	let onWaiting = React.useCallback(() => reportWaiting(playerKey), [reportWaiting, playerKey])
 	let onError = React.useCallback(
-		(error: HtmlAudioError) => reportError(playerKey, error),
-		[reportError, playerKey],
+		(error: HtmlAudioError) => {
+			if (stationId) {
+				track({name: 'radio.play.error', attributes: {station: stationId}})
+			}
+			reportError(playerKey, error)
+		},
+		[reportError, playerKey, stationId],
 	)
+	// Control Center, or the lock screen, played the paused station.
+	let onResume = React.useCallback(() => {
+		if (stationId) {
+			track({
+				name: 'radio.control',
+				attributes: {action: 'play', station: stationId, surface: 'system'},
+			})
+		}
+		resume()
+	}, [resume, stationId])
 
 	if (!stationId) {
 		return null
 	}
 
 	let {source} = STATIONS[stationId]
+
+	// A station with a stream of its own plays natively, which iOS can put in
+	// Control Center; one that only has a page to play from needs the WebView.
+	if (!source.useEmbeddedPlayer) {
+		return (
+			<NativeStation
+				key={playerKey}
+				station={STATIONS[stationId]}
+				onEnded={onStopped}
+				onError={onError}
+				onPause={onStopped}
+				onPlay={onPlay}
+				onResume={onResume}
+				onWaiting={onWaiting}
+				playState={PLAYER_STATE[playState]}
+			/>
+		)
+	}
 
 	// The WebView's own container takes flex: 1 whatever its style says, so
 	// beside the root stack it would claim half the screen. This view holds

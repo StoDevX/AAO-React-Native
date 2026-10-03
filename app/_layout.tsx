@@ -30,6 +30,7 @@ import {LoadingView} from '@frogpond/notice'
 import {IS_PRODUCTION} from '@frogpond/constants'
 import {StatusBar, useColorScheme} from 'react-native'
 
+import {RootErrorBoundary} from '../source/components/root-error-boundary'
 import {SHEET_RESTING_FRACTION} from '../source/lib/constants'
 import {RadioHost, RadioNowPlayingSheet} from '../source/features/streaming/radio'
 
@@ -181,4 +182,17 @@ function RootLayout(): React.ReactNode {
 	)
 }
 
-export default Sentry.wrap(RootLayout)
+/**
+ * Outside `RootLayout` so that a failure anywhere in it, in its own hooks or
+ * in the radio's player beside the screens, ends at the error screen and not
+ * at a blank one.
+ */
+function GuardedRootLayout(): React.ReactNode {
+	return (
+		<RootErrorBoundary>
+			<RootLayout />
+		</RootErrorBoundary>
+	)
+}
+
+export default Sentry.wrap(GuardedRootLayout)

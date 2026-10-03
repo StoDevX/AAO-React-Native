@@ -16,6 +16,7 @@ function host(): ChaosHost & {
 		global: {fetch: fetchBefore},
 		probe: {
 			errorUtils: {getGlobalHandler: () => jest.fn(), setGlobalHandler: jest.fn()},
+			exceptionsManager: {handleException: jest.fn()},
 			console: {error: jest.fn()},
 		},
 		linking: {openURL: openURLBefore},

@@ -22,7 +22,14 @@ export function useLogoCycle(station: Station): {logo: RadioLogo; showNextLogo?:
  * sheet, such as the Now Playing bar, so the two never show different ones.
  */
 export function useSelectedLogo(station: Station): RadioLogo {
+	return logoAt(
+		station,
+		useRadioStore((state) => state.logoIndexes[station.id]),
+	)
+}
+
+/** The station's logo at its saved place, or its first if there is none or the station has fewer. */
+export function logoAt(station: Station, saved: number | undefined): RadioLogo {
 	let {logos} = station
-	let saved = useRadioStore((state) => state.logoIndexes[station.id]) ?? 0
-	return logos[saved < logos.length ? saved : 0]
+	return logos[saved !== undefined && saved < logos.length ? saved : 0]
 }

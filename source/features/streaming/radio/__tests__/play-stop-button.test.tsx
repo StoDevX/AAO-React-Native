@@ -22,6 +22,26 @@ describe('PlayStopButton', () => {
 		expect(screen.getByRole('button', {name: 'Play ' + STATIONS.ksto.stationName})).toBeTruthy()
 	})
 
+	test('offers Pause while the station plays, and Pause keeps it loaded', async () => {
+		useRadioStore.getState().play('ksto')
+		useRadioStore.getState().reportPlaying(1)
+		await render(<PlayStopButton station={STATIONS.ksto} />)
+
+		await fireEvent.press(screen.getByRole('button', {name: 'Pause ' + STATIONS.ksto.stationName}))
+
+		expect(useRadioStore.getState()).toMatchObject({stationId: 'ksto', playState: 'paused'})
+	})
+
+	test('offers Play to a paused station, and Play starts it afresh', async () => {
+		useRadioStore.getState().play('ksto')
+		useRadioStore.getState().pause()
+		await render(<PlayStopButton station={STATIONS.ksto} />)
+
+		await fireEvent.press(screen.getByRole('button', {name: 'Play ' + STATIONS.ksto.stationName}))
+
+		expect(useRadioStore.getState()).toMatchObject({playState: 'starting', playerKey: 2})
+	})
+
 	test('offers Stop after the station fails, and Stop unloads it', async () => {
 		useRadioStore.getState().play('ksto')
 		useRadioStore.getState().reportError(1, ERROR)

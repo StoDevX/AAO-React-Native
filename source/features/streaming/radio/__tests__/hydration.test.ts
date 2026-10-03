@@ -20,6 +20,17 @@ describe('hydration', () => {
 		expect(useRadioStore.getState()).toMatchObject({hydrated: true, showOnHome: false})
 	})
 
+	test('brings back the station last viewed', async () => {
+		await AsyncStorage.setItem(
+			'radio-preferences',
+			JSON.stringify({state: {viewedStationId: 'krlx'}, version: 1}),
+		)
+
+		await useRadioStore.persist.rehydrate()
+
+		expect(useRadioStore.getState().viewedStationId).toBe('krlx')
+	})
+
 	test('is done when the saved switch is corrupt, keeping the default', async () => {
 		await AsyncStorage.setItem('radio-preferences', '{not json')
 
