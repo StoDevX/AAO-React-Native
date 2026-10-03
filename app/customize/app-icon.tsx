@@ -144,7 +144,7 @@ function IconTile({icon, isCurrent, onChoose}: IconTileProps): React.ReactNode {
 						<View style={[styles.ring, isCurrent && styles.ringCurrent]}>
 							<RNImage
 								accessibilityIgnoresInvertColors={true}
-								source={previewsFor(icon.type, scheme).icon}
+								source={previewsFor(icon.type, scheme).logo}
 								style={styles.icon}
 							/>
 						</View>

@@ -57,9 +57,9 @@ import windmillLogoDark from './windmill-logo-dark.png'
 import windmillLogo from './windmill-logo.png'
 
 type Previews = {
-	/** The Settings picker's tile. */
+	/** The Customize sheet's App Icon row. */
 	icon: ImageSourcePropType
-	/** The Credits screen's logo. */
+	/** The Credits screen's logo, and the App Icon gallery's tile. */
 	logo: ImageSourcePropType
 }
 
