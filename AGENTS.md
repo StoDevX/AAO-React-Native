@@ -161,9 +161,9 @@ through oxipng. A new alternate also needs an entry in `ALTERNATE_ICONS` in
 the plugin, in `appIcons` in `images/icons/index.ts`, and in the gallery's
 `ICONS` in `source/features/customize/icons.ts`.
 
-The Old Main CRT icon's pixel layers, `pixels.png` and `pixels-amber.png`, are
+The Old Main (Retro) icon's pixel layers, `pixels.png` and `pixels-amber.png`, are
 drawn by `scripts/make-crt-pixels.mjs` from the screen grid in that file, with
-the SVGs kept in `assets/old-main-crt.icon/source/`. Edit the grid, run
+the SVGs kept in `assets/old-main-retro.icon/source/`. Edit the grid, run
 `mise run crt-pixels`, then `mise run icons`. The pipeline is Display P3
 throughout: the palette holds P3 components, and the PNG is tagged with the
 profile, not converted to it.
