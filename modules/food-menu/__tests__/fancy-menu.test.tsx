@@ -512,6 +512,32 @@ describe('FancyMenu', () => {
 		expect(screen.queryByText('Closed • Closed')).toBeNull()
 	})
 
+	// Stav closes Near & Far for a meal by filing one `CLOSED` item under it. The
+	// card has the station's name for a title and nothing else, so it does not
+	// say that the station is closed.
+	test('says a closed station among open ones is closed', async () => {
+		let meal: ProcessedMealType = {
+			label: 'Dinner',
+			starttime: '00:00',
+			endtime: '24:00',
+			stations: [station('Near & Far', ['1']), station('Grill', ['2'])],
+		}
+
+		await render(
+			<FancyMenu
+				foodItems={{'1': item('1', 'CLOSED', 'Near & Far'), '2': item('2', 'Burger', 'Grill')}}
+				meals={[meal]}
+				menuCorIcons={COR_ICONS}
+				name="Stav Hall"
+				now={moment.tz(BREAKFAST_TIME, TIMEZONE)}
+				onItemPress={jest.fn()}
+			/>,
+		)
+
+		expect(screen.getByText('Near & Far')).toBeTruthy()
+		expect(screen.getByText('Closed')).toBeTruthy()
+	})
+
 	// The callback the screen above uses to move between meals, which nothing
 	// else in the tree can reach -- the filters live in here.
 	test('switches meals through the picker it reported', async () => {
