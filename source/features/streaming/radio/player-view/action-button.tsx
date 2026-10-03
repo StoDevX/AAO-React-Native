@@ -3,7 +3,7 @@ import {StyleSheet, Text} from 'react-native'
 import {Touchable} from '@frogpond/touchable'
 import {SymbolView, type SFSymbol} from 'expo-symbols'
 
-import {usePalette} from './palette'
+import {palette} from './palette'
 
 /** An icon over its label. With no `onPress` it shows, dimmed, as unavailable. */
 export function ActionButton({
@@ -17,7 +17,6 @@ export function ActionButton({
 	accessibilityLabel: string
 	onPress?: () => void
 }): React.ReactNode {
-	let palette = usePalette()
 	return (
 		<Touchable
 			accessibilityLabel={accessibilityLabel}

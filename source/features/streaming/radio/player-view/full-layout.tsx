@@ -11,7 +11,7 @@ import {StationActionRow} from './station-actions'
 import {StationMenu} from './station-menu'
 import {StationPicker} from './station-picker'
 import {VolumeSliderStub} from './stubs'
-import {usePalette} from './palette'
+import {palette} from './palette'
 import type {RadioLogo} from '../theme'
 
 /** The player's inset from each side, as Music's full player. */
@@ -80,7 +80,6 @@ export function FullLayout({
 
 /** Music's "LIVE" in place of a scrubber: a stream has no position to show. */
 function LiveBar(): React.ReactNode {
-	let palette = usePalette()
 	return (
 		<View accessibilityLabel="Live" accessible={true} style={styles.live}>
 			<View style={[styles.track, palette.styles.track]} />

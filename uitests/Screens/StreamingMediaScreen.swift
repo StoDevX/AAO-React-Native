@@ -112,29 +112,16 @@ struct StreamingMediaScreen: Screen {
 		return self
 	}
 
-	/// Drag the sheet from medium to full height, slowly enough not to fling,
-	/// and wait for the full player's LIVE bar.
-	@discardableResult
-	func dragSheetToFullHeight() -> Self {
-		let grabber = app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.49))
-		let top = app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.1))
-		grabber.press(forDuration: 0.2, thenDragTo: top, withVelocity: .slow, thenHoldForDuration: 0.3)
-		XCTAssertTrue(
-			app.elementWithLabel(startingWith: TestIdentifiers.StreamingMedia.live).waitForExistence(timeout: 10),
-			"The sheet at full height should show the LIVE bar")
-		return self
-	}
-
 	/// Swipe the sheet away, and check the bar beneath shows `label`.
 	@discardableResult
 	func closeSheet(expectingBar label: String) -> Self {
-		// From the LIVE bar, which takes no touches of its own: the picker
-		// above and the record would each answer a drag that started on them.
 		let live = app.elementWithLabel(startingWith: TestIdentifiers.StreamingMedia.live)
-		XCTAssertTrue(live.waitForExistence(timeout: 10), "The sheet should be at full height before it is closed")
-		let bottom = app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.98))
-		live.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5))
-			.press(forDuration: 0.1, thenDragTo: bottom, withVelocity: .fast, thenHoldForDuration: 0)
+		XCTAssertTrue(live.waitForExistence(timeout: 10), "The sheet should be open before it is closed")
+		// By the grabber, above the station picker: a drag that starts on the
+		// picker or the record goes to them instead.
+		let grabber = app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.075))
+		let bottom = app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 1.0))
+		grabber.press(forDuration: 0.05, thenDragTo: bottom, withVelocity: .fast, thenHoldForDuration: 0)
 		checkGone(TestIdentifiers.StreamingMedia.live)
 		checkTouchTarget(app.buttonLabelled(label), named: "The bar's \"\(label)\"")
 		return self

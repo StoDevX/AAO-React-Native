@@ -2,7 +2,7 @@ import * as React from 'react'
 import {StyleSheet, View} from 'react-native'
 import {SymbolView} from 'expo-symbols'
 
-import {usePalette} from './palette'
+import {palette} from './palette'
 import {ActionButton} from './action-button'
 
 /**
@@ -10,7 +10,6 @@ import {ActionButton} from './action-button'
  * and AVRoutePickerView, which need native views the app does not host yet.
  */
 export function VolumeSliderStub(): React.ReactNode {
-	let palette = usePalette()
 	return (
 		<View accessibilityLabel="Volume, unavailable" accessible={true} style={styles.volume}>
 			<SymbolView name="speaker.fill" size={14} tintColor={palette.tertiary} />

@@ -6,12 +6,11 @@ import {openUrl} from '@frogpond/open-url'
 
 import type {Station} from '../stations'
 import {useRadioStore} from '../store'
-import {usePalette} from './palette'
+import {palette} from './palette'
 
 /** Full Schedule and Open Website, behind the title's ••• button. */
 export function StationMenu({station}: {station: Station}): React.ReactNode {
 	let router = useRouter()
-	let palette = usePalette()
 	let closeSheet = useRadioStore((state) => state.closeSheet)
 	return (
 		<Host matchContents={true}>

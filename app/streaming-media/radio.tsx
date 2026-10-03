@@ -2,13 +2,7 @@ import * as React from 'react'
 import {ScrollView, StyleSheet, View} from 'react-native'
 import {useNavigation} from 'expo-router'
 
-import {
-	FullLayout,
-	ON_FILL_PALETTE,
-	PaletteContext,
-	TintFill,
-	useLogoCycle,
-} from '../../source/features/streaming/radio/player-view'
+import {FullLayout, TintFill, useLogoCycle} from '../../source/features/streaming/radio/player-view'
 import {STATIONS} from '../../source/features/streaming/radio/stations'
 import {useRadioStore} from '../../source/features/streaming/radio/store'
 import {useSwipeBackHold} from '../../source/features/streaming/radio/swipe-back-hold'
@@ -54,17 +48,15 @@ export default function RadioTab(): React.ReactNode {
 				contentInsetAdjustmentBehavior="automatic"
 				scrollEnabled={!logoHeld}
 			>
-				<PaletteContext.Provider value={ON_FILL_PALETTE}>
-					<FullLayout
-						logo={logo}
-						onLogoHeldChange={handleLogoHeld}
-						onLogoSettle={settleSwipeBack}
-						onToggleSchedule={() => setShowingSchedule((on) => !on)}
-						showNextLogo={showNextLogo}
-						showingSchedule={showingSchedule}
-						station={station}
-					/>
-				</PaletteContext.Provider>
+				<FullLayout
+					logo={logo}
+					onLogoHeldChange={handleLogoHeld}
+					onLogoSettle={settleSwipeBack}
+					onToggleSchedule={() => setShowingSchedule((on) => !on)}
+					showNextLogo={showNextLogo}
+					showingSchedule={showingSchedule}
+					station={station}
+				/>
 			</ScrollView>
 		</View>
 	)

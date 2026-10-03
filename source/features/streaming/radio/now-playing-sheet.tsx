@@ -2,42 +2,33 @@ import * as React from 'react'
 import {ScrollView, StyleSheet} from 'react-native'
 import {BottomSheet, Group, Host, Rectangle, RNHostView, ZStack} from '@expo/ui/swift-ui'
 import {
-	Animation,
-	animation,
 	foregroundStyle,
 	ignoreSafeArea,
-	opacity,
 	presentationDetents,
 	presentationDragIndicator,
-	type PresentationDetent,
 } from '@expo/ui/swift-ui/modifiers'
 
-import {
-	CompactLayout,
-	FullLayout,
-	ON_FILL_PALETTE,
-	PaletteContext,
-	SYSTEM_PALETTE,
-	tintGradient,
-	useLogoCycle,
-} from './player-view'
+import {FullLayout, tintGradient, useLogoCycle} from './player-view'
 import {STATIONS} from './stations'
 import {useRadioStore} from './store'
 
 /**
- * The radio's sheet, opened from either Now Playing bar. Glass at the medium
- * detent -- the one sheet in the app that is, because the station's record and
- * colour give it something to show -- and filled with the logo's tint at large.
+ * The radio's sheet, opened from either Now Playing bar: Music's full player,
+ * full height, on the current logo's tint.
  */
 export function RadioNowPlayingSheet(): React.ReactNode {
 	let open = useRadioStore((state) => state.sheetOpen)
 	let viewed = useRadioStore((state) => state.viewedStationId)
 	let closeSheet = useRadioStore((state) => state.closeSheet)
-	let [detent, setDetent] = React.useState<PresentationDetent>('medium')
 	let [showingSchedule, setShowingSchedule] = React.useState(false)
 	let station = STATIONS[viewed]
 	let {logo, showNextLogo} = useLogoCycle(station)
-	let large = detent === 'large'
+	// A scroll view takes every drag on it, so one that scrolled always would
+	// stop the sheet being swiped away. It scrolls only when the player is
+	// taller than the sheet, at large text sizes or on a small phone.
+	let [viewport, setViewport] = React.useState(0)
+	let [contentHeight, setContentHeight] = React.useState(0)
+	let overflows = contentHeight > viewport
 
 	return (
 		// Presented in its own window, so the Host needs no size and lets every
@@ -48,57 +39,31 @@ export function RadioNowPlayingSheet(): React.ReactNode {
 				onIsPresentedChange={(presented) => {
 					if (!presented) {
 						closeSheet()
-						setDetent('medium')
-						setShowingSchedule(false)
 					}
 				}}
+				// After the slide, not before it, so the record does not replace the
+				// schedule while the sheet is still on screen.
+				onDismiss={() => setShowingSchedule(false)}
 			>
-				<Group
-					modifiers={[
-						presentationDetents(['medium', 'large'], {
-							selection: detent,
-							onSelectionChange: setDetent,
-						}),
-						presentationDragIndicator('visible'),
-					]}
-				>
+				<Group modifiers={[presentationDetents(['large']), presentationDragIndicator('visible')]}>
 					<ZStack>
-						{/* The tint fills the sheet, safe area and all, once it is full
-						    height; at medium the glass shows through. */}
-						<Rectangle
-							modifiers={[
-								foregroundStyle(tintGradient(logo)),
-								ignoreSafeArea(),
-								opacity(large ? 1 : 0),
-								animation(Animation.easeInOut({duration: 0.3}), large),
-							]}
-						/>
+						{/* The tint fills the sheet, safe area and all. */}
+						<Rectangle modifiers={[foregroundStyle(tintGradient(logo)), ignoreSafeArea()]} />
 						{/* React Native lays the player out, at the sheet's own size. */}
 						<RNHostView>
-							{/* Scrolls when large text or a small phone needs more room than
-							    the detent gives; otherwise it fits and stays put. */}
-							<ScrollView contentContainerStyle={styles.content}>
-								<PaletteContext.Provider value={large ? ON_FILL_PALETTE : SYSTEM_PALETTE}>
-									{large ? (
-										<FullLayout
-											logo={logo}
-											onToggleSchedule={() => setShowingSchedule((on) => !on)}
-											showNextLogo={showNextLogo}
-											showingSchedule={showingSchedule}
-											station={station}
-										/>
-									) : (
-										<CompactLayout
-											logo={logo}
-											onShowSchedule={() => {
-												// The medium detent has no room for the list, so it opens full height.
-												setShowingSchedule(true)
-												setDetent('large')
-											}}
-											station={station}
-										/>
-									)}
-								</PaletteContext.Provider>
+							<ScrollView
+								contentContainerStyle={styles.content}
+								onContentSizeChange={(_width, height) => setContentHeight(height)}
+								onLayout={(event) => setViewport(event.nativeEvent.layout.height)}
+								scrollEnabled={overflows}
+							>
+								<FullLayout
+									logo={logo}
+									onToggleSchedule={() => setShowingSchedule((on) => !on)}
+									showNextLogo={showNextLogo}
+									showingSchedule={showingSchedule}
+									station={station}
+								/>
 							</ScrollView>
 						</RNHostView>
 					</ZStack>
