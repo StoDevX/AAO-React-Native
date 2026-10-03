@@ -17,7 +17,7 @@ class ModuleSettingsTests: UITestCase {
 		settings.scrollUntilExists(app.staticTexts["App Icon"])
 
 		let bigOle = settings.appIcon(named: "Big Ole")
-		let alternates = ["Old Main", "Windmill (Day)"]
+		let alternates = ["Old Main", "Windmill (Sky)"]
 
 		// there should be three icon settings available
 		settings.scrollUntilExists(bigOle)
