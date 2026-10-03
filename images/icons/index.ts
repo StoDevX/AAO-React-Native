@@ -15,10 +15,6 @@ import windmillDawnIconDark from './windmill-dawn-icon-dark.png'
 import windmillDawnIcon from './windmill-dawn-icon.png'
 import windmillDawnLogoDark from './windmill-dawn-logo-dark.png'
 import windmillDawnLogo from './windmill-dawn-logo.png'
-import windmillOvercastIconDark from './windmill-overcast-icon-dark.png'
-import windmillOvercastIcon from './windmill-overcast-icon.png'
-import windmillOvercastLogoDark from './windmill-overcast-logo-dark.png'
-import windmillOvercastLogo from './windmill-overcast-logo.png'
 import windmillStormIconDark from './windmill-storm-icon-dark.png'
 import windmillStormIcon from './windmill-storm-icon.png'
 import windmillStormLogoDark from './windmill-storm-logo-dark.png'
@@ -64,10 +60,6 @@ export const appIcons = {
 	'windmill-dawn': {
 		light: {icon: windmillDawnIcon, logo: windmillDawnLogo},
 		dark: {icon: windmillDawnIconDark, logo: windmillDawnLogoDark},
-	},
-	'windmill-overcast': {
-		light: {icon: windmillOvercastIcon, logo: windmillOvercastLogo},
-		dark: {icon: windmillOvercastIconDark, logo: windmillOvercastLogoDark},
 	},
 	'windmill-storm': {
 		light: {icon: windmillStormIcon, logo: windmillStormLogo},

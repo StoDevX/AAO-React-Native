@@ -15,7 +15,6 @@ export const ALTERNATE_ICONS = [
 	'windmill-day',
 	'windmill-night',
 	'windmill-dawn',
-	'windmill-overcast',
 	'windmill-storm',
 	'windmill-golden-hour',
 ]
