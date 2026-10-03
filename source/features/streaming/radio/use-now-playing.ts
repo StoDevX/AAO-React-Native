@@ -20,10 +20,14 @@ async function fetchStationNow(url: string): Promise<StationNow> {
 
 /**
  * What to show for `station`: the song on air while the station is playing,
- * asked for as often as the feed says to; otherwise, the station. Only a
- * station that publishes its songs, and is loaded and playing, is asked.
+ * asked for when the feed says the song ends; otherwise `show`, the show on air
+ * if the caller has one, or the station. Only a station that publishes its
+ * songs, and is loaded and playing, is asked.
  */
-export function useNowPlaying(station: Station): NowPlayingPresentation {
+export function useNowPlaying(
+	station: Station,
+	show: {title: string} | null = null,
+): NowPlayingPresentation {
 	let logo = useSelectedLogo(station)
 	let playing = useRadioStore(
 		(state) =>
@@ -39,5 +43,5 @@ export function useNowPlaying(station: Station): NowPlayingPresentation {
 		// A song that was on air before a relaunch says nothing now.
 		meta: {persist: false},
 	})
-	return presentNowPlaying(playing ? (query.data?.song ?? null) : null, station, logo)
+	return presentNowPlaying(playing ? (query.data?.song ?? null) : null, station, logo, show)
 }

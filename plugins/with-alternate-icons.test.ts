@@ -106,7 +106,7 @@ describe('copyAlternateIcons', () => {
 
 		assert.throws(
 			() => copyAlternateIcons(root, destination),
-			/assets\/windmill-day\.icon is missing/u,
+			/assets\/windmill-sky\.icon is missing/u,
 		)
 	})
 
@@ -114,13 +114,13 @@ describe('copyAlternateIcons', () => {
 	// 255", naming neither the layer nor the fact that one is missing.
 	it('fails loudly when a layer image is missing', () => {
 		let root = makeProjectRoot(ALTERNATE_ICONS)
-		rmSync(join(root, 'assets', 'windmill-day.icon', 'Assets', 'Layer.png'))
+		rmSync(join(root, 'assets', 'windmill-sky.icon', 'Assets', 'Layer.png'))
 		let destination = join(root, 'ios', 'AllAboutOlaf')
 		mkdirSync(destination, {recursive: true})
 
 		assert.throws(
 			() => copyAlternateIcons(root, destination),
-			/assets\/windmill-day\.icon\/Assets\/Layer\.png is missing/u,
+			/assets\/windmill-sky\.icon\/Assets\/Layer\.png is missing/u,
 		)
 	})
 })
