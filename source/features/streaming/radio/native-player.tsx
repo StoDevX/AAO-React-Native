@@ -113,6 +113,11 @@ export function NativeStreamPlayer(props: Props): React.ReactNode {
 		let started = isPlaying && !wasPlaying.current
 		wasPlaying.current = isPlaying
 		if (started && playState === 'paused' && reload.current === 'none') {
+			// Now Playing follows the player, which is idle and then buffering for
+			// about a second while the stream loads again, so the lock screen shows
+			// Paused for that second between two Playings. Leaving the stream in
+			// place would avoid it but resume audio as old as the pause was long; the
+			// other way is a second player, handed the lock screen once it plays.
 			reload.current = 'reloading'
 			reloadTimer.current = setTimeout(endReload, RELOAD_TIMEOUT_MS)
 			player.replace(streamSourceUrl)
