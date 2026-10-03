@@ -19,6 +19,15 @@ class ModuleStudentWorkTests: UITestCaseUnbooted {
 			.verifyDetailRow(IDs.termRow, IDs.academicYear)
 	}
 
+	func testTheLayoutMenuSwitchesTheAreasToRows() throws {
+		StudentWorkScreen(app: app)
+			.navigate()
+			.verifyAreaTileCount(IDs.areaCount)
+			.chooseLayout(TestIdentifiers.Layout.list)
+			.verifyAreaRowsShown()
+			.capture("Student Work area rows")
+	}
+
 	func testPostingsAreSectionedByHowRecentlyTheyWentUp() throws {
 		StudentWorkScreen(app: app)
 			.navigate()

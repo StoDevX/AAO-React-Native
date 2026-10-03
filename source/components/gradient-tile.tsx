@@ -63,20 +63,31 @@ type Props = {
 	countLabel?: (count: number) => string
 	/** Drawn as SwiftUI draws a disabled button, but still tappable, as for an area with nothing in it. */
 	dimmed?: boolean
+	/**
+	 * Holds room for a two-line label even under a one-line name, so every row
+	 * of a grid is one height rather than each row as tall as its longest name.
+	 */
+	reservesLabelLines?: boolean
 }
 
 export function GradientRoundedRectangle({
 	gradient,
 	showShadow,
+	cornerRadius = 27,
+	endRadius = 129,
 }: {
 	gradient: Gradient
 	showShadow: boolean
+	/** Overrides the tile's corner, for a smaller shape like a row's icon. */
+	cornerRadius?: number
+	/** How far from the top edge the gradient reaches its end color. */
+	endRadius?: number
 }): React.ReactNode {
 	let [start, end] = gradient
 
 	return (
 		<RoundedRectangle
-			cornerRadius={27}
+			cornerRadius={cornerRadius}
 			modifiers={[
 				showShadow
 					? shadow({
@@ -91,7 +102,7 @@ export function GradientRoundedRectangle({
 					center: {x: 0.5, y: 0},
 					startRadius: 0,
 					// TODO: eventually, we want to compute this radius size to match Health/Shortcuts
-					endRadius: 129,
+					endRadius,
 				}),
 			]}
 		/>
@@ -101,7 +112,7 @@ export function GradientRoundedRectangle({
 /**
  * One card in the shape of a Phone.app favorite: a portrait gradient card
  * carrying a single SF Symbol, with a label beneath it. Shared between
- * Directory's curated contacts and Student Orgs' categories -- same visual
+ * Directory's curated contacts and Student Work's areas -- same visual
  * language, different data behind it.
  *
  * There is no long-press menu: SwiftUI hoists a `.contextMenu` from a
@@ -118,6 +129,7 @@ export function GradientTile({
 	count,
 	countLabel = String,
 	dimmed = false,
+	reservesLabelLines = false,
 }: Props): React.ReactNode {
 	let isDarkScheme = useColorScheme() === 'dark'
 	let shownCount = count !== undefined && count > 0 ? count : undefined
@@ -176,7 +188,7 @@ export function GradientTile({
 						font({textStyle: 'subheadline'}),
 						foregroundStyle({type: 'hierarchical', style: 'secondary'}),
 						multilineTextAlignment('center'),
-						lineLimit(LABEL_LINES),
+						lineLimit(LABEL_LINES, {reservesSpace: reservesLabelLines}),
 						frame({maxWidth: FILL_WIDTH}),
 					]}
 				>

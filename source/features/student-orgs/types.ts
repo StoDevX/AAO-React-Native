@@ -35,7 +35,7 @@ export type StudentOrgType = {
 export type OrgCategoryType = {
 	name: string
 	/**
-	 * The tile's SF Symbol. Optional in TypeScript though the schema requires
+	 * The category's SF Symbol. Optional in TypeScript though the schema requires
 	 * it: a released app can meet data deployed before this field existed.
 	 */
 	icon?: SFSymbol

@@ -6,7 +6,7 @@ export const SCREEN_MARGIN = 16
 export const FILL_WIDTH = 10_000
 
 /// Gap between tiles, both within a column and between columns. Every tile grid
-/// shares it -- home, Directory and Student Orgs -- so they sit at one rhythm.
+/// shares it -- home, Directory, Maps and Student Work -- so they sit at one rhythm.
 export const TILE_SPACING = 10
 
 /// Phone.app draws a favourite a little taller than 3:2 -- 109 x 167pt,
@@ -35,6 +35,26 @@ export function columnsForFontScale(fontScale: number): number {
 	return 2
 }
 
+/// The width of one tile in a row of `columns`, with `TILE_SPACING` between.
+function tileWidth(rowWidth: number, columns: number): number {
+	return (rowWidth - (columns - 1) * TILE_SPACING) / columns
+}
+
+/// The grid a screen draws when someone picks Grid from its layout menu:
+/// three cards a row, each as tall as a square in a four-column grid, so a
+/// row is no taller than a row of four squares and the extra width goes to
+/// the label. At an accessibility size it follows `columnsForFontScale`
+/// down to two, and the cards go back to squares -- a card two abreast at a
+/// four-column height is too short for an icon at that size.
+export function wideGridShape(
+	rowWidth: number,
+	fontScale: number,
+): {columns: number; ratio: number} {
+	let columns = Math.min(3, columnsForFontScale(fontScale))
+	if (columns < 3) return {columns, ratio: 1}
+	return {columns, ratio: tileWidth(rowWidth, 3) / tileWidth(rowWidth, 4)}
+}
+
 /// Home's cards carry a headline-sized title, longer than the other grids'
 /// labels, so they start at two abreast rather than four and hold there up to
 /// xxxLarge, where a long title wraps onto a second line. From AX1 (the same
@@ -49,7 +69,7 @@ export function homeColumnsForFontScale(fontScale: number): number {
 /// varies with Dynamic Type (see `columnsForFontScale`), so it is a parameter
 /// rather than a closed-over constant. Generic over the row type -- each
 /// caller supplies its own item shape (`ContactType`, `DirectoryItem`,
-/// `CategoryTileData`, ...).
+/// ...).
 export function inRows<T>(items: T[], columns: number): T[][] {
 	let rows: T[][] = []
 	for (let i = 0; i < items.length; i += columns) {

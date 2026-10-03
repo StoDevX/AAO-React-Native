@@ -311,8 +311,11 @@ struct TestIdentifiers {
 		static let termRow = "Term"
 		/// The coded fixture's term, as `jobTerm` names it.
 		static let academicYear = "Academic Year"
-		/// Matches AREA_GRID_ID in source/features/sis/student-work/area-grid.tsx.
+		/// Matches AREA_GRID_ID in source/features/sis/student-work/area-section.tsx.
 		static let areaGrid = "student-work-area-grid"
+		/// Matches AREA_ROW_ID_PREFIX in source/features/sis/student-work/area-section.tsx.
+		/// Each area row's identifier is this followed by the area's slug.
+		static let areaRowPrefix = "student-work-area:"
 		/// How many areas data/student-work-areas.yaml lists.
 		static let areaCount = 16
 		/// From data/student-work-areas.yaml: one area the fixtures fill, one
@@ -741,11 +744,25 @@ struct TestIdentifiers {
 		static let fixtureEntryDepartment = "Computer Science"
 	}
 
+	// MARK: - Layout menu
+
+	enum Layout {
+		/// The ⋯ menu's label, from source/components/layout-menu.tsx.
+		static let menu = "Layout"
+		static let grid = "Grid"
+		static let list = "List"
+	}
+
 	// MARK: - Student Orgs
 
 	enum StudentOrgs {
-		/// Matches CATEGORY_GRID_ID in app/student-orgs/index.tsx.
+		/// Matches CATEGORY_GRID_ID in source/features/student-orgs/category-landing.tsx.
 		static let categoryGrid = "student-orgs-category-grid"
+		/// Matches CATEGORY_LIST_ID in source/features/student-orgs/category-landing.tsx.
+		static let categoryList = "student-orgs-category-list"
+		/// Matches CATEGORY_ROW_ID_PREFIX in source/features/student-orgs/category-landing.tsx. Each
+		/// category row's identifier is this followed by the category's name.
+		static let categoryRowPrefix = "student-orgs-category:"
 		/// Matches RESULTS_LIST_ID in source/features/student-orgs/org-results-list.tsx.
 		static let resultsList = "student-orgs-results-list"
 	}

@@ -23,7 +23,7 @@ export function HomeListSections({
 				<DisclosureRow
 					key={view.id}
 					destination={opensInBrowser(view) ? 'external' : 'push'}
-					image={{...iconImage(view.icon), badge: view.gradient}}
+					image={{...iconImage(view.icon), gradient: view.gradient}}
 					onPress={() => onOpen(view)}
 					title={view.title}
 				/>

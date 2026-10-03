@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {Image as RNImage, StyleSheet} from 'react-native'
+import {Image as RNImage, StyleSheet, useWindowDimensions} from 'react-native'
 import type {ColorValue} from 'react-native'
 import type {SFSymbol} from 'sf-symbols-typescript'
 import {
@@ -8,7 +8,6 @@ import {
 	Image,
 	LabeledContent,
 	RNHostView,
-	RoundedRectangle,
 	Spacer,
 	Text,
 	VStack,
@@ -32,8 +31,10 @@ import {
 } from '@expo/ui/swift-ui/modifiers'
 import type {ModifierConfig} from '@expo/ui/swift-ui/modifiers'
 import * as c from '@frogpond/colors'
-import {displayP3, type Gradient} from '@frogpond/colors'
+import type {Gradient} from '@frogpond/colors'
 
+import {isAccessibilityTextSize} from '../lib/is-accessibility-text-size'
+import {GradientRoundedRectangle} from './gradient-tile'
 import {detailLinesOf, rowLabel, type RowDetail} from './lib/row-text'
 
 type RowProps = {
@@ -154,8 +155,6 @@ export function ActionRow(props: ActionRowProps): React.ReactNode {
  */
 type SymbolImage = ({systemName: SFSymbol} | {assetName: string}) & {
 	tint?: ColorValue
-	/** Draws the symbol in white on a rounded square of this gradient, as Settings does. */
-	badge?: Gradient
 	size?: number
 	label?: string
 	width?: number
@@ -169,17 +168,23 @@ type SymbolImage = ({systemName: SFSymbol} | {assetName: string}) & {
  */
 type ThumbnailImage = {uri: string; width: number; height: number}
 
-export type DisclosureRowImage = SymbolImage | ThumbnailImage
+/**
+ * A white symbol on a small gradient square, as Settings draws its rows'
+ * icons -- the row-sized cousin of a `GradientTile`, sharing its gradients.
+ */
+type GradientSymbolImage = ({systemName: SFSymbol} | {assetName: string}) & {gradient: Gradient}
+
+export type DisclosureRowImage = SymbolImage | ThumbnailImage | GradientSymbolImage
 
 /// Mirrored by `TestIdentifiers.Rows.thumbnail`.
 const THUMBNAIL_ID = 'disclosure-row-thumbnail'
 
 const SYMBOL_SIZE = 20
 
-/// Settings' own badge: a 29pt square at iOS's app-icon corner ratio.
-const BADGE_SIZE = 30
-const BADGE_RADIUS = 7
-const BADGE_SYMBOL_SIZE = 17
+/// Settings' own icon size, and the corner that goes with it.
+const ICON_SIZE = 30
+const ICON_RADIUS = 7
+const ICON_SYMBOL_SIZE = 17
 
 type DisclosureRowProps = {
 	title: string
@@ -211,30 +216,25 @@ type DisclosureRowProps = {
 	status?: {text: string; color: ColorValue}
 }
 
-/** A row's leading image: a tinted symbol, or a thumbnail. */
+/** A row's leading image: a tinted symbol, a gradient icon, or a thumbnail. */
 export function LeadingImage({image}: {image: DisclosureRowImage}): React.ReactNode {
-	if (!('uri' in image) && image.badge) {
-		let [start, end] = image.badge
-
+	if ('gradient' in image) {
 		return (
-			<ZStack modifiers={[frame({width: BADGE_SIZE, height: BADGE_SIZE})]}>
-				<RoundedRectangle
-					cornerRadius={BADGE_RADIUS}
-					modifiers={[
-						foregroundStyle({
-							type: 'linearGradient',
-							colors: [displayP3(start), displayP3(end)],
-							startPoint: {x: 0.5, y: 0},
-							endPoint: {x: 0.5, y: 1},
-						}),
-					]}
+			<ZStack modifiers={[frame({width: ICON_SIZE, height: ICON_SIZE})]}>
+				{/* endRadius at the icon's height carries the gradient from its
+				    start color at the top edge to its end color at the bottom. */}
+				<GradientRoundedRectangle
+					cornerRadius={ICON_RADIUS}
+					endRadius={ICON_SIZE}
+					gradient={image.gradient}
+					showShadow={false}
 				/>
 				<Image
 					{...('assetName' in image
 						? {assetName: image.assetName}
 						: {systemName: image.systemName})}
 					color="white"
-					size={BADGE_SYMBOL_SIZE}
+					size={ICON_SYMBOL_SIZE}
 				/>
 			</ZStack>
 		)
@@ -286,7 +286,15 @@ export function DisclosureRow(props: DisclosureRowProps): React.ReactNode {
 		status,
 	} = props
 
+	let {fontScale} = useWindowDimensions()
 	let hasBadge = badge !== undefined && badge > 0
+	// At an accessibility size a trailing count takes a third of the row and
+	// the title breaks mid-word in what is left, so the count drops under the
+	// title instead, as Settings does.
+	let stacksBadge = hasBadge && isAccessibilityTextSize(fontScale)
+	let badgeText = (
+		<Text modifiers={[foregroundStyle(c.secondaryLabel), monospacedDigit()]}>{String(badge)}</Text>
+	)
 	let spokenDetail = status ? [...detailLinesOf(detail), status.text] : detail
 	let spokenLabel =
 		image && 'label' in image && image.label
@@ -333,16 +341,13 @@ export function DisclosureRow(props: DisclosureRowProps): React.ReactNode {
 							{status.text}
 						</Text>
 					) : null}
+					{stacksBadge ? badgeText : null}
 				</VStack>
 				<Spacer />
 				{/* Drawn here rather than with SwiftUI's .badge, which puts the
 				    count at the row's trailing edge -- past this row's own
 				    chevron, where Settings never has it. */}
-				{hasBadge ? (
-					<Text modifiers={[foregroundStyle(c.secondaryLabel), monospacedDigit()]}>
-						{String(badge)}
-					</Text>
-				) : null}
+				{hasBadge && !stacksBadge ? badgeText : null}
 				<RowAccessory destination={destination} />
 			</HStack>
 		</Button>

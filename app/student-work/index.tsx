@@ -7,12 +7,16 @@ import {listState, LoadErrorView, LoadingView, NoticeView} from '@frogpond/notic
 import {useDebounce} from '@frogpond/use-debounce'
 import {onlineManager} from '@tanstack/react-query'
 import {Stack, useRouter} from 'expo-router'
+import {LayoutMenu} from '../../source/components/layout-menu'
 import {DisclosureRow} from '../../source/components/rows'
 import {SearchBar} from '../../source/components/search-bar'
-import {AreaGrid} from '../../source/features/sis/student-work/area-grid'
+import {AreaSection} from '../../source/features/sis/student-work/area-section'
 import {NOTHING_CHOSEN, PostingsList} from '../../source/features/sis/student-work/postings-list'
 import {PRESETS, presetCounts} from '../../source/features/sis/student-work/presets'
-import {useSeenPostingsStore} from '../../source/features/sis/student-work/store'
+import {
+	useAreaLayoutStore,
+	useSeenPostingsStore,
+} from '../../source/features/sis/student-work/store'
 import {useStudentWorkBoard} from '../../source/features/sis/student-work/use-board'
 
 /// Offline, with no board saved to show.
@@ -27,6 +31,9 @@ export default function StudentWorkPage(): React.ReactNode {
 
 	let [query, setQuery] = React.useState('')
 	let searchQuery = useDebounce(query, 200)
+
+	let layout = useAreaLayoutStore((state) => state.layout)
+	let setLayout = useAreaLayoutStore((state) => state.setLayout)
 
 	// Remembered on leaving Student Work for the home screen, not on leaving a
 	// list: the landing stays mounted under everything Student Work pushes, so
@@ -52,6 +59,8 @@ export default function StudentWorkPage(): React.ReactNode {
 				<Stack.Toolbar.SearchBarSlot />
 			</Stack.Toolbar>
 			<SearchBar onChangeText={setQuery} value={query} />
+			{/* Search results are always rows, so the menu goes while they show. */}
+			{searchQuery === '' ? <LayoutMenu layout={layout} onChange={setLayout} /> : null}
 		</>
 	)
 
@@ -116,8 +125,9 @@ export default function StudentWorkPage(): React.ReactNode {
 						}),
 					]}
 				>
-					<AreaGrid
+					<AreaSection
 						areas={areas}
+						layout={layout}
 						membership={context.membership}
 						onSelectArea={(area) =>
 							router.navigate({pathname: '/student-work/postings', params: {area: area.slug}})
@@ -133,6 +143,7 @@ export default function StudentWorkPage(): React.ReactNode {
 									router.navigate({pathname: '/student-work/postings', params: preset.params})
 								}
 								title={preset.title}
+								titleLines={PRESET_TITLE_LINES}
 							/>
 						))}
 					</Section>
@@ -141,6 +152,11 @@ export default function StudentWorkPage(): React.ReactNode {
 		</>
 	)
 }
+
+/// Enough that no preset's title is cut off at any text size: the longest,
+/// "New since your last visit", wraps to three lines at AX5 on a 390pt-wide
+/// phone, so four leaves room for a narrower one.
+const PRESET_TITLE_LINES = 4
 
 const styles = StyleSheet.create({
 	host: {
