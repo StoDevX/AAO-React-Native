@@ -3,6 +3,10 @@ import constellationIconDark from './constellation-icon-dark.png'
 import constellationIcon from './constellation-icon.png'
 import constellationLogoDark from './constellation-logo-dark.png'
 import constellationLogo from './constellation-logo.png'
+import oldMainHillIconDark from './old-main-hill-icon-dark.png'
+import oldMainHillIcon from './old-main-hill-icon.png'
+import oldMainHillLogoDark from './old-main-hill-logo-dark.png'
+import oldMainHillLogo from './old-main-hill-logo.png'
 import sunsetBehindMainIconDark from './sunset-behind-main-icon-dark.png'
 import sunsetBehindMainIcon from './sunset-behind-main-icon.png'
 import sunsetBehindMainLogoDark from './sunset-behind-main-logo-dark.png'
@@ -68,6 +72,10 @@ export const appIcons = {
 	'sunset-behind-main': {
 		light: {icon: sunsetBehindMainIcon, logo: sunsetBehindMainLogo},
 		dark: {icon: sunsetBehindMainIconDark, logo: sunsetBehindMainLogoDark},
+	},
+	'old-main-hill': {
+		light: {icon: oldMainHillIcon, logo: oldMainHillLogo},
+		dark: {icon: oldMainHillIconDark, logo: oldMainHillLogoDark},
 	},
 	'windmill-day': {
 		light: {icon: windmillDayIcon, logo: windmillDayLogo},
