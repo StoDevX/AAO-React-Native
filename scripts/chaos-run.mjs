@@ -11,6 +11,26 @@ export function parseDuration(text) {
 	return Number(amount) * {'': 1, s: 1, m: 60, h: 3600}[unit]
 }
 
+/** A step budget: a positive whole number. */
+function parseSteps(text) {
+	if (!/^\d+$/u.test(text) || Number(text) === 0) {
+		throw new Error(`--steps must be a positive whole number, not ${JSON.stringify(text)}`)
+	}
+	return Number(text)
+}
+
+/**
+ * The share of requests to break, from 0 to 1, written out the way the app's
+ * Swift parser reads it, so `.5` arrives as `0.5`.
+ */
+function parseFaultRate(text) {
+	let rate = /^(?:\d+(?:\.\d*)?|\.\d+)$/u.test(text) ? Number(text) : Number.NaN
+	if (!(rate >= 0 && rate <= 1)) {
+		throw new Error(`--fault-rate must be a number from 0 to 1, not ${JSON.stringify(text)}`)
+	}
+	return String(rate)
+}
+
 /** How long a replay may run unless told otherwise: its step count is its bound. */
 export const REPLAY_DURATION = 24 * 3600
 
@@ -38,13 +58,13 @@ export function parseChaosArgs(argv) {
 				options.seed = Number(value())
 				break
 			case '--steps':
-				options.steps = Number(value())
+				options.steps = parseSteps(value())
 				break
 			case '--duration':
 				options.duration = parseDuration(value())
 				break
 			case '--fault-rate':
-				options.faultRate = value()
+				options.faultRate = parseFaultRate(value())
 				break
 			case '--replay':
 				options.replay = value()

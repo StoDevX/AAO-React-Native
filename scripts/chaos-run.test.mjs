@@ -104,6 +104,30 @@ test('refuses an unknown flag', () => {
 	assert.throws(() => parseChaosArgs(['--sed', '1']), /--sed/u)
 })
 
+test('refuses a step count that is not a positive whole number', () => {
+	for (let steps of ['0', '-3', '2.5', 'many', '']) {
+		assert.throws(
+			() => parseChaosArgs(['--steps', steps]),
+			/--steps must be a positive whole number/u,
+			steps,
+		)
+	}
+	assert.equal(parseChaosArgs(['--steps', '1']).steps, 1)
+})
+
+test('refuses a fault rate outside 0 to 1', () => {
+	for (let rate of ['-0.1', '1.5', 'half', '', '0x1']) {
+		assert.throws(
+			() => parseChaosArgs(['--fault-rate', rate]),
+			/--fault-rate must be a number from 0 to 1/u,
+			rate,
+		)
+	}
+	assert.equal(parseChaosArgs(['--fault-rate', '0']).faultRate, '0')
+	assert.equal(parseChaosArgs(['--fault-rate', '1']).faultRate, '1')
+	assert.equal(parseChaosArgs(['--fault-rate', '.5']).faultRate, '0.5')
+})
+
 test('hands the run its settings through TEST_RUNNER_ variables', () => {
 	assert.deepEqual(testEnv({seed: 7, steps: 10, duration: 60, faultRate: '0.1', replay: 'x'}), {
 		TEST_RUNNER_AAO_CHAOS_SEED: '7',
