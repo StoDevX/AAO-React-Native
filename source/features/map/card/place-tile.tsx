@@ -19,6 +19,7 @@ import {
 import * as c from '@frogpond/colors'
 import {openUrl} from '@frogpond/open-url'
 
+import {destinationTraits, RowAccessory} from '../../../components/rows'
 import {FILL_WIDTH} from '../../../components/tile-layout'
 import type {StackEntry} from '../lib/also-here'
 import type {PlaceTile} from '../lib/place-tiles'
@@ -85,6 +86,8 @@ export function PlaceTileView({
 	onOpen?: (entry: StackEntry) => void
 }): React.ReactNode {
 	let symbol = SYMBOL[tile.kind]
+	let opens = tile.opens && onOpen ? tile.opens : undefined
+	let href = opens ? undefined : (tile.href ?? undefined)
 	let card = (
 		<VStack
 			alignment="leading"
@@ -95,20 +98,25 @@ export function PlaceTileView({
 			]}
 			spacing={6}
 		>
-			<Image
-				modifiers={[
-					font({textStyle: 'footnote'}),
-					// The circle keeps its size at every text size, so the glyph
-					// in it has to as well.
-					dynamicTypeSize({max: 'large'}),
-					foregroundStyle('white'),
-					frame({width: ICON_SIZE, height: ICON_SIZE}),
-					background(c.systemGray, shapes.circle()),
-					// The section's heading already says which kind this is.
-					accessibilityHidden(true),
-				]}
-				systemName={symbol}
-			/>
+			<HStack>
+				<Image
+					modifiers={[
+						font({textStyle: 'footnote'}),
+						// The circle keeps its size at every text size, so the glyph
+						// in it has to as well.
+						dynamicTypeSize({max: 'large'}),
+						foregroundStyle('white'),
+						frame({width: ICON_SIZE, height: ICON_SIZE}),
+						background(c.systemGray, shapes.circle()),
+						// The section's heading already says which kind this is.
+						accessibilityHidden(true),
+					]}
+					systemName={symbol}
+				/>
+				<Spacer />
+				{/* A tile that leaves the app says so, as a row does. */}
+				{href ? <RowAccessory destination="external" /> : null}
+			</HStack>
 			<Text
 				modifiers={[font({textStyle: 'headline'}), lineLimit(3), multilineTextAlignment('leading')]}
 			>
@@ -122,27 +130,29 @@ export function PlaceTileView({
 			<Spacer />
 		</VStack>
 	)
-	let opens = tile.opens
-	if (opens && onOpen) {
+	if (opens) {
 		return (
 			<Button
 				modifiers={[
 					buttonStyle('plain'),
 					accessibilityLabel(status ? `${tile.label}, ${status.text}` : tile.label),
 				]}
-				onPress={() => onOpen(opens)}
+				onPress={() => onOpen?.(opens)}
 			>
 				{card}
 			</Button>
 		)
 	}
-	let href = tile.href
 	if (!href) {
 		return card
 	}
 	return (
 		<Button
-			modifiers={[buttonStyle('plain'), accessibilityLabel(`Open ${tile.label}`)]}
+			modifiers={[
+				buttonStyle('plain'),
+				accessibilityLabel(`Open ${tile.label}`),
+				...destinationTraits('external'),
+			]}
 			onPress={() => openUrl(href)}
 		>
 			{card}
