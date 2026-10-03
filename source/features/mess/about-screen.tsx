@@ -39,7 +39,7 @@ export function AboutScreen(): React.ReactNode {
 
 	return (
 		<>
-			<Stack.Screen options={{title: 'About The Olaf Messenger'}} />
+			<Stack.Screen options={{title: 'Contact The Olaf Messenger'}} />
 			{about.data ? (
 				<Host style={styles.list}>
 					<List

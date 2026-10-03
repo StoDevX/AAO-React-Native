@@ -202,7 +202,7 @@ struct MessFrontPage: Screen {
 		pickFromViewMenu(TestIdentifiers.News.aboutMenuItem)
 		XCTAssertTrue(
 			viewMenu.waitForNonExistence(timeout: 30),
-			"About should open the About page on a page of its own")
+			"Contact should open the paper's About page on a page of its own")
 		let title = app.navigationBars.staticTexts[TestIdentifiers.News.aboutTitle].firstMatch
 		XCTAssertTrue(
 			title.waitForExistence(timeout: 30),

@@ -34,7 +34,7 @@ type MessPagePath = '/messenger/about' | '/messenger/staff'
 /**
  * The glass buttons at the top right: the paintbrush, which opens the Messenger's Customize
  * sheet, and a menu to pick By Issue or Latest and, in Latest, the section to narrow it to, then
- * ways to the paper's About and Staff pages. The menu's label names the view showing, since the
+ * ways to the paper's Contact and Staff pages. The menu's label names the view showing, since the
  * icon alone does not. Both sit at the right because a button at the left would replace the Back
  * button.
  */
@@ -93,7 +93,7 @@ function ViewMenu({
 				{/* Their own inline group, so the menu draws a divider between the views and them */}
 				<Stack.Toolbar.Menu inline={true}>
 					<Stack.Toolbar.MenuAction onPress={() => onOpen('/messenger/about')}>
-						About
+						Contact
 					</Stack.Toolbar.MenuAction>
 					<Stack.Toolbar.MenuAction onPress={() => onOpen('/messenger/staff')}>
 						Staff

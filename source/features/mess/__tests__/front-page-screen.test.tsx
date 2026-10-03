@@ -205,8 +205,8 @@ describe('FrontPageScreen', () => {
 	})
 
 	test.each([
-		['About', '/messenger/about', 'By Issue'],
-		['About', '/messenger/about', 'Latest'],
+		['Contact', '/messenger/about', 'By Issue'],
+		['Contact', '/messenger/about', 'Latest'],
 		['Staff', '/messenger/staff', 'By Issue'],
 		['Staff', '/messenger/staff', 'Latest'],
 	])("opens the paper's %s page, %s, from the menu in %s", async (item, route, view) => {
