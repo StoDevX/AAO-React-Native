@@ -16,10 +16,13 @@ export type RejectionTrackerOptions = {
 	onHandled: (id: number) => void
 }
 
+/** The part of `console` the probe uses; React Native reads `reportErrorsAsExceptions` from it. */
+export type ProbeConsole = Pick<Console, 'error'> & {reportErrorsAsExceptions?: boolean}
+
 /** What the probe hooks into. */
 export type ProbeHost = {
 	errorUtils: ErrorUtilsLike
-	console: Pick<Console, 'error'>
+	console: ProbeConsole
 	enableRejectionTracker?: (options: RejectionTrackerOptions) => void
 }
 
@@ -46,6 +49,11 @@ export function installProbe(host: ProbeHost): void {
 		// oxlint-disable-next-line no-empty-function
 		onHandled: () => {},
 	})
+
+	// A production bundle in a debug native build reports each console.error to
+	// native, whose red box covers the beacon the run reads. The probe records
+	// the error as a finding instead, and the console still prints it.
+	host.console.reportErrorsAsExceptions = false
 
 	let originalError = host.console.error.bind(host.console)
 	host.console.error = (...args: unknown[]) => {

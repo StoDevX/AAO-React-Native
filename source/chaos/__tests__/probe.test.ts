@@ -1,5 +1,10 @@
 import {useChaosFindings} from '../findings'
-import {installProbe, type ErrorHandler, type RejectionTrackerOptions} from '../probe'
+import {
+	installProbe,
+	type ErrorHandler,
+	type ProbeConsole,
+	type RejectionTrackerOptions,
+} from '../probe'
 
 function host() {
 	let handler: ErrorHandler = jest.fn()
@@ -12,7 +17,7 @@ function host() {
 			handler = next
 		},
 	}
-	let consoleLike = {error: originalError}
+	let consoleLike: ProbeConsole = {error: originalError}
 	return {
 		host: {
 			errorUtils,
@@ -64,6 +69,12 @@ describe('installProbe', () => {
 		h.consoleLike.error('Warning:', error)
 		expect(h.originalError).toHaveBeenCalledWith('Warning:', error)
 		expect(useChaosFindings.getState().latest).toBe('')
+	})
+
+	test('stops React Native reporting console.error to native as a red box', () => {
+		let h = host()
+		installProbe(h.host)
+		expect(h.consoleLike.reportErrorsAsExceptions).toBe(false)
 	})
 
 	test('does not throw on a console.error argument with a cycle', () => {
