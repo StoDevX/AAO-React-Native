@@ -136,6 +136,16 @@ struct StreamingMediaScreen: Screen {
 		return self
 	}
 
+	/// Check something labelled `label` is on screen. A check that a thing has
+	/// gone proves nothing unless it was there first.
+	@discardableResult
+	func checkShows(_ label: String) -> Self {
+		XCTAssertTrue(
+			app.elementWithLabel(startingWith: label).waitForExistence(timeout: 10),
+			"Something labelled \"\(label)\" should be showing")
+		return self
+	}
+
 	/// Check nothing labelled `label` is on screen, waiting for it to go.
 	@discardableResult
 	func checkGone(_ label: String) -> Self {

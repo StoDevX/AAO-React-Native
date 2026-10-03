@@ -39,6 +39,7 @@ class ModuleStreamingMediaTests: UITestCaseUnbooted {
 		let ids = TestIdentifiers.StreamingMedia.self
 		app.launch()
 		let screen = StreamingMediaScreen(app: app)
+			.checkShows(ids.idleBar)
 			.toggleShowRadioPlayer()
 			.checkGone(ids.idleBar)
 			.capture("Home, radio player off")
@@ -52,6 +53,23 @@ class ModuleStreamingMediaTests: UITestCaseUnbooted {
 			.capture("Webcams, KSTO playing with the switch off")
 			.tapButton(ids.stopKsto)
 			.checkGone(ids.stopKsto)
+	}
+
+	/// Turning "Show Radio Player" off while a station plays stops it and
+	/// takes the bar away; turning it on again brings back the idle bar.
+	func testSwitchOffStopsThePlayingStation() throws {
+		let ids = TestIdentifiers.StreamingMedia.self
+		app.launch()
+		StreamingMediaScreen(app: app)
+			.openSheetFromBar(expecting: ids.playKsto)
+			.press(ids.playKsto, expecting: ids.stopKsto)
+			.closeSheet(expectingBar: ids.stopKsto)
+			.toggleShowRadioPlayer()
+			.checkGone(ids.stopKsto)
+			.checkGone(ids.idleBar)
+			.capture("Home, switch turned off while KSTO played")
+			.toggleShowRadioPlayer()
+			.checkShows(ids.idleBar)
 	}
 
 	func testKstoLogoCyclesOnTap() throws {
