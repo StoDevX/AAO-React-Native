@@ -27,15 +27,25 @@ struct AppIconScreen: Screen {
 	/// the gallery, then back up it.
 	func scrollIntoView(_ tile: XCUIElement) {
 		// Hittable is not enough: XCUITest calls a tile hittable while part of it
-		// is still under the screen's bottom edge, where a tap at its middle
-		// misses. Wait for the whole tile, clear of the home indicator.
+		// is under the sheet's navigation bar or the screen's bottom edge, where a
+		// tap at its middle misses. Wait for the whole tile, between the bar and
+		// the home indicator.
 		let screen = app.windows.firstMatch.frame
 		let isReachable = {
-			tile.exists && tile.isHittable && tile.frame.maxY <= screen.maxY - 40
-				&& tile.frame.minY >= screen.minY
+			return tile.exists && tile.isHittable && tile.frame.minY >= barBottom()
+				&& tile.frame.maxY <= screen.maxY - 40
 		}
 		for _ in 0..<8 where !isReachable() { gallery.swipeUp() }
 		for _ in 0..<16 where !isReachable() { gallery.swipeDown() }
+	}
+
+	/// Where the sheet's navigation bar ends. The bar is not always in the
+	/// accessibility tree, so this takes the lowest bar there is, and never less
+	/// than where a full-height sheet's bar ends on a 390x844 iPhone.
+	private func barBottom() -> CGFloat {
+		let fullHeightSheetBar: CGFloat = 150
+		let bars = app.navigationBars.allElementsBoundByIndex.map(\.frame.maxY)
+		return max(bars.max() ?? 0, fullHeightSheetBar)
 	}
 
 	@discardableResult
