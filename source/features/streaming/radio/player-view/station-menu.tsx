@@ -1,7 +1,6 @@
 import * as React from 'react'
 import {Button, Host, Image, Menu} from '@expo/ui/swift-ui'
 import {accessibilityLabel, frame} from '@expo/ui/swift-ui/modifiers'
-import {useRouter} from 'expo-router'
 import {openUrl} from '@frogpond/open-url'
 
 import {track} from '../../../telemetry/track'
@@ -11,8 +10,7 @@ import {palette} from './palette'
 
 /** Full Schedule and Open Website, behind the title's ••• button. */
 export function StationMenu({station}: {station: Station}): React.ReactNode {
-	let router = useRouter()
-	let closeSheet = useRadioStore((state) => state.closeSheet)
+	let openFullSchedule = useRadioStore((state) => state.openFullSchedule)
 	return (
 		<Host matchContents={true}>
 			<Menu
@@ -25,14 +23,13 @@ export function StationMenu({station}: {station: Station}): React.ReactNode {
 				<Button
 					label="Full Schedule"
 					onPress={() => {
-						// The sheet sits above every screen, so it has to go before the
-						// schedule can be seen.
+						// Stacked over the sheet, as the website is: a screen opened
+						// beneath the sheet could not be seen without closing it.
 						track({
 							name: 'radio.action',
 							attributes: {action: 'full_schedule', station: station.id},
 						})
-						closeSheet()
-						router.navigate(station.scheduleHref)
+						openFullSchedule()
 					}}
 					systemImage="calendar"
 				/>
