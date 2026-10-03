@@ -3,12 +3,10 @@ import {AccessibilityInfo, StyleSheet, Text, View} from 'react-native'
 import {Touchable} from '@frogpond/touchable'
 import {SymbolView} from 'expo-symbols'
 
+import {PLAYBACK_ERROR} from '../describe-playback'
 import type {Station} from '../stations'
 import {offersStop, useRadioStore, useStationPlayback} from '../store'
 import {palette} from './palette'
-
-/** What the player says when the station's last play failed. */
-const PLAYBACK_ERROR = 'Couldn’t play'
 
 /** Play, or Stop while the station is starting, playing, or has failed. */
 export function PlayStopButton({station}: {station: Station}): React.ReactNode {
