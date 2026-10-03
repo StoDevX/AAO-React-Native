@@ -43,8 +43,10 @@ const styles = StyleSheet.create({
 		marginLeft: 3,
 		marginRight: 5,
 	},
-	slider: {flex: 1, height: 44},
+	// Reaches as far as the loud speaker was moved, so the gap between them is
+	// the same as it was before.
+	slider: {flex: 1, height: 44, marginRight: -LOUD_OPTICAL_SHIFT},
 	// The symbol's waves leave room on its right, so its edge looks further in
-	// than the slider's end does. Moved without moving the slider.
+	// than the slider's end does.
 	loud: {transform: [{translateX: LOUD_OPTICAL_SHIFT}]},
 })
