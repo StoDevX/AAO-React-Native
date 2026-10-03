@@ -13,7 +13,7 @@ export function useOpenStory(): (story: MessStory) => void {
 	let recordOpened = useMessStore((state) => state.recordOpened)
 	return (story) => {
 		if (story.layout.kind === 'puzzle') {
-			// The reader's page would have counted it towards its issue's stains.
+			// Opening a story counts towards its issue's stains, however it is opened.
 			recordOpened(story.id)
 			openUrl(puzzleUrl(story.layout.puzzle, story.link))
 			return
