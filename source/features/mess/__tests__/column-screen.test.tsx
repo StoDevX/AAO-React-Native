@@ -99,7 +99,9 @@ describe('ColumnScreen', () => {
 		queryClient.setQueryData(messKeys.category(GOOD_QUESTIONS), onePage([CROSSWORD]))
 		await renderColumn()
 
-		await fireEvent.press(screen.getByRole('button', {name: 'Crossword: Finals Week, Apr 29'}))
+		// The row points out of the app, as any row that opens a page elsewhere does.
+		expect(screen.getByTestId('symbol-arrow.up.right')).toBeOnTheScreen()
+		await fireEvent.press(screen.getByRole('link', {name: 'Crossword: Finals Week, Apr 29'}))
 
 		expect(openUrl).toHaveBeenCalledWith(
 			'https://puzzleme.amuselabs.com/pmm/crossword?id=finals&set=olafmessenger&embed=1',
@@ -113,6 +115,7 @@ describe('ColumnScreen', () => {
 		queryClient.setQueryData(messKeys.category(GOOD_QUESTIONS), onePage([QUESTION, CROSSWORD]))
 		await renderColumn()
 
+		expect(screen.queryByTestId('symbol-arrow.up.right')).not.toBeOnTheScreen()
 		await fireEvent.press(screen.getByRole('button', {name: 'Crossword: Finals Week, Apr 29'}))
 
 		expect(mockNavigate).toHaveBeenCalledWith({pathname: '/messenger/story', params: {id: '36900'}})

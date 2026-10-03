@@ -17,6 +17,7 @@ import {
 	type UseInfiniteQueryResult,
 } from '@tanstack/react-query'
 import {openUrl} from '@frogpond/open-url'
+import {destinationTraits, RowAccessory} from '../../components/rows'
 import {creditLine} from './lib/byline'
 import {crosswordUrl} from './lib/crossword'
 import {TAP_TARGET} from './lib/glyph-grid'
@@ -45,8 +46,15 @@ const HEADLINE = [
 const CREDIT = [font({textStyle: 'caption'}), foregroundStyle(faded)]
 const EMPTY = [font({textStyle: 'callout'}), foregroundStyle(faded)]
 
+type StoryRowProps = {
+	story: MessStory
+	onPress: () => void
+	/** Whether the tap opens a page outside the app, which the row then points to as a row does */
+	external: boolean
+}
+
 /** A story in a list: its photo or a tinted square, its headline, then its writers and date. */
-function StoryRow({story, onPress}: {story: MessStory; onPress: () => void}): React.ReactNode {
+function StoryRow({story, onPress, external}: StoryRowProps): React.ReactNode {
 	let credit = creditLine(story, 'short')
 	return (
 		<Button
@@ -54,21 +62,26 @@ function StoryRow({story, onPress}: {story: MessStory; onPress: () => void}): Re
 				buttonStyle('plain'),
 				accessibilityLabel(`${story.title}, ${credit}`),
 				accessibilityIdentifier(`${STORY_ROW_PREFIX}${story.id}`),
+				...destinationTraits(external ? 'external' : 'push'),
 			]}
 			onPress={onPress}
 		>
 			{/* contentShape on the label, not the Button -- see NavigationRow in components/rows.tsx. */}
-			<HStack alignment="top" modifiers={ROW} spacing={12}>
-				{story.photo ? (
-					<RemotePhoto height={THUMBNAIL} url={story.photo.url} width={THUMBNAIL} />
-				) : (
-					<Rectangle modifiers={BLANK} />
-				)}
-				<VStack alignment="leading" spacing={2}>
-					<Text modifiers={HEADLINE}>{story.title}</Text>
-					<Text modifiers={CREDIT}>{credit}</Text>
-				</VStack>
+			<HStack modifiers={ROW} spacing={12}>
+				<HStack alignment="top" spacing={12}>
+					{story.photo ? (
+						<RemotePhoto height={THUMBNAIL} url={story.photo.url} width={THUMBNAIL} />
+					) : (
+						<Rectangle modifiers={BLANK} />
+					)}
+					<VStack alignment="leading" spacing={2}>
+						<Text modifiers={HEADLINE}>{story.title}</Text>
+						<Text modifiers={CREDIT}>{credit}</Text>
+					</VStack>
+				</HStack>
 				<Spacer />
+				{/* A row into the reader draws no chevron; only one that leaves the app says so. */}
+				{external ? <RowAccessory destination="external" /> : null}
 			</HStack>
 		</Button>
 	)
@@ -95,7 +108,7 @@ export function StoryRows({stories}: {stories: MessStory[]}): React.ReactNode {
 	}
 	return stories.map((story) => (
 		<VStack alignment="leading" key={story.id} spacing={10}>
-			<StoryRow onPress={() => press(story)} story={story} />
+			<StoryRow external={onlyCrosswords} onPress={() => press(story)} story={story} />
 			<Divider />
 		</VStack>
 	))
