@@ -1,7 +1,7 @@
 import * as React from 'react'
 import {changeIcon, getIcon, resetIcon} from 'react-native-change-icon'
 import {type AppIconName, DEFAULT_ICON} from '../../../images/icons'
-import {type IconEntry, iconPosition} from './icons'
+import {type IconEntry, currentIconEntry} from './icons'
 
 /**
  * The icon iOS has set, and a way to change it. Re-reads iOS after a change
@@ -12,10 +12,10 @@ export function useAppIcon(): {
 	apply: (type: AppIconName) => Promise<void>
 	reload: () => Promise<void>
 } {
-	let [current, setCurrent] = React.useState<IconEntry>(() => iconPosition('Default').entry)
+	let [current, setCurrent] = React.useState<IconEntry>(() => currentIconEntry('Default'))
 
 	let reload = React.useCallback(async () => {
-		setCurrent(iconPosition(await getIcon()).entry)
+		setCurrent(currentIconEntry(await getIcon()))
 	}, [])
 
 	React.useEffect(() => {

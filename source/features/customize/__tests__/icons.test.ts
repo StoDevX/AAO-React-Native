@@ -1,6 +1,6 @@
 import {describe, expect, it} from '@jest/globals'
 import {appIcons} from '../../../../images/icons'
-import {ICONS, iconEntry, iconPosition, iconsByGroup} from '../icons'
+import {ICONS, currentIconEntry, iconEntry, iconsByGroup} from '../icons'
 
 describe('ICONS', () => {
 	it('lists every shipped icon exactly once', () => {
@@ -36,19 +36,16 @@ describe('iconEntry', () => {
 	})
 })
 
-describe('iconPosition', () => {
-	it('places the system default first', () => {
-		expect(iconPosition('Default')).toMatchObject({index: 0, total: 14})
-		expect(iconPosition('Default').entry.type).toBe('windmill')
+describe('currentIconEntry', () => {
+	it('reads the system default as the primary', () => {
+		expect(currentIconEntry('Default')).toBe(ICONS[0])
 	})
 
-	it('places an alternate by its gallery order', () => {
-		let position = iconPosition('windmill-golden-hour')
-		expect(position.entry.group).toBe('Windmill')
-		expect(ICONS[position.index].type).toBe('windmill-golden-hour')
+	it('finds an alternate by its name', () => {
+		expect(currentIconEntry('windmill-golden-hour').title).toBe('Windmill (Golden Hour)')
 	})
 
 	it('reads a name this build does not ship as the primary', () => {
-		expect(iconPosition('icon_type_old_main').entry.type).toBe('windmill')
+		expect(currentIconEntry('icon_type_old_main')).toBe(ICONS[0])
 	})
 })

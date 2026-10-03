@@ -44,15 +44,9 @@ export function iconEntry(type: AppIconName): IconEntry {
 }
 
 /**
- * Where the icon iOS reports as current sits in the gallery, for the row's
- * label and the carousel's starting page. A name this build does not ship
- * reads as the primary, as `iconFor` does.
+ * The gallery's entry for the icon iOS reports as current. A name this build
+ * does not ship reads as the primary, as `iconFor` does.
  */
-export function iconPosition(systemName: string): {
-	entry: IconEntry
-	index: number
-	total: number
-} {
-	let entry = iconEntry(iconFor(systemName))
-	return {entry, index: ICONS.indexOf(entry), total: ICONS.length}
+export function currentIconEntry(systemName: string): IconEntry {
+	return iconEntry(iconFor(systemName))
 }
