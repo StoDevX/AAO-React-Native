@@ -27,6 +27,10 @@ export function useAppIcon(): {
 
 	let apply = React.useCallback(
 		async (type: AppIconName) => {
+			// iOS rejects a change to the icon already set, so choosing it again does nothing.
+			if (type === current.type) {
+				return
+			}
 			if (type === DEFAULT_ICON) {
 				await resetIcon()
 			} else {
@@ -34,7 +38,7 @@ export function useAppIcon(): {
 			}
 			await reload()
 		},
-		[reload],
+		[current.type, reload],
 	)
 
 	return {current, apply, reload}
