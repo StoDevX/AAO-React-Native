@@ -148,7 +148,7 @@ function DirectoryDetail({index, query, type}: DirectoryDetailProps): React.Reac
 							{loc.display ? <DetailRow label="Location" value={loc.display} /> : null}
 							{loc.phone ? (
 								<DetailRow
-									destination="action"
+									destination="external"
 									label="Phone"
 									onPress={() => callPhone(loc.phone, {prompt: false})}
 									value={loc.phone}
