@@ -14,7 +14,8 @@ cd ../../
 
 # Bootstrap mise via Homebrew, which is officially available on Xcode Cloud.
 brew install mise
-export PATH="$(brew --prefix)/bin:$PATH"
+brew_prefix="$(brew --prefix)"
+export PATH="${brew_prefix}/bin:$PATH"
 
 echo "mise version: $(mise --version)"
 
@@ -52,7 +53,8 @@ echo "sentry-cli path: ${SENTRY_CLI_PATH}"
 "${SENTRY_CLI_PATH}" --version
 
 # Put node on PATH for the rest of this script
-export PATH="$(dirname "${NODE_PATH}"):$PATH"
+node_dir="$(dirname "${NODE_PATH}")"
+export PATH="${node_dir}:$PATH"
 
 # Activate mise shims for the pnpm and ruby tools used in task runs
 eval "$(mise activate bash --shims)"
