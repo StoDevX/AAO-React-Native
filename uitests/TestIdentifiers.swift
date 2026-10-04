@@ -125,7 +125,6 @@ struct TestIdentifiers {
 		static let calendar = "Calendar"
 		static let carletonCampus = "Carleton Campus"
 		static let developer = "Developer"
-		static let balances = "Balances"
 		static let hours = "Hours"
 		static let dictionary = "Dictionary"
 		static let courseCatalog = "Course Catalog"
@@ -303,14 +302,6 @@ struct TestIdentifiers {
 		/// data, so selecting it is what would fail if the map's campus parameter
 		/// were ignored.
 		static let aBuilding = "Buntrock Commons"
-	}
-
-	// MARK: - Balances
-
-	enum Balances {
-		static let iAgree = "I Agree"
-		static let balancesHeader = "Balances"
-		static let mealPlanHeader = "Meal Plan"
 	}
 
 	// MARK: - Student Work
