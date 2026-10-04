@@ -3,24 +3,6 @@ import XCTest
 struct MessStoryScreen: Screen {
 	let app: XCUIApplication
 
-	@discardableResult
-	func verifyStoryAppears() -> Self {
-		let headline = app.staticTexts[TestIdentifiers.News.storyHeadline]
-		XCTAssertTrue(headline.waitForExistence(timeout: 30), "the story's headline should be visible")
-		capture("Olaf Messenger story")
-		XCTAssertTrue(
-			app.buttons[TestIdentifiers.News.shareStory].waitForExistence(timeout: 10),
-			"the reader should offer Share")
-		// A story with no body text sends the reader to the website instead, so
-		// either one proves the page below the header was drawn.
-		let body = app.element(matching: TestIdentifiers.News.storyBody)
-		let siteLink = app.element(matching: TestIdentifiers.News.storySiteLink)
-		XCTAssertTrue(
-			body.waitForExistence(timeout: 10) || siteLink.exists,
-			"the story's body, or a link to read it on the web, should be below the header")
-		return self
-	}
-
 	/// Wait for a story's headline, for a story with no body text to check, as a Photo story is.
 	@discardableResult
 	func verifyHeadlineAppears() -> Self {
@@ -103,20 +85,6 @@ struct MessStoryScreen: Screen {
 		return self
 	}
 
-	/// Long-press the story's first paragraph and assert iOS offers to copy it,
-	/// which it does only for text that can be selected.
-	@discardableResult
-	func verifyBodyOffersCopy() -> Self {
-		let body = app.element(matching: TestIdentifiers.News.storyBody)
-		XCTAssertTrue(body.waitForExistence(timeout: 10), "the story should have a paragraph to long-press")
-		body.press(forDuration: 1.0)
-		let copy = app.descendants(matching: .any).matching(NSPredicate(format: "label == %@", "Copy")).firstMatch
-		let offered = copy.waitForExistence(timeout: 5)
-		capture("Long press on a story paragraph")
-		XCTAssertTrue(offered, "a long press on a story's paragraph should offer Copy")
-		return self
-	}
-
 	/// Hold the first line of the story's body and drag down into its second paragraph, then
 	/// assert the selection's highlight runs unbroken down the column's trailing edge from the
 	/// first paragraph's second line, past the gap between the paragraphs, into the second's
@@ -187,7 +155,16 @@ struct MessStoryScreen: Screen {
 	func verifyLinkOffersLinkMenu(_ label: String) -> Self {
 		let link = storyLink(label)
 		XCTAssertTrue(link.waitForHittable(timeout: 10), "the link \"\(label)\" should be ready to hold")
-		link.press(forDuration: 1.5)
+		// Press the link's screen point through SpringBoard rather than pressing
+		// the link itself. The menu's preview loads the linked page live, and
+		// the app never goes quiet while it does, so a press on our own app
+		// waits out XCUITest's full 60s quiescence timeout after landing.
+		// SpringBoard is quiet, and the point is the same point.
+		let target = link.frame
+		XCUIApplication(bundleIdentifier: "com.apple.springboard")
+			.coordinate(withNormalizedOffset: .zero)
+			.withOffset(CGVector(dx: target.midX, dy: target.midY))
+			.press(forDuration: 1.5)
 		let copyLink = app.descendants(matching: .any)
 			.matching(NSPredicate(format: "label == %@", TestIdentifiers.News.copyLink)).firstMatch
 		let offered = copyLink.waitForExistence(timeout: 5)

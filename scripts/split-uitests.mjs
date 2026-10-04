@@ -146,12 +146,14 @@ export function formatMatrix(shards, target) {
 /**
  * Read every Swift file under a directory, subfolders included, in the order
  * the planner packs them. Each file's name is its path relative to `dir`.
+ * A subfolder named in `skipDirs` is left out, tests and all.
  */
-export function readTestDir(dir) {
+export function readTestDir(dir, {skipDirs = []} = {}) {
 	return (
 		fs
 			.readdirSync(dir, {recursive: true})
 			.filter((name) => name.endsWith('.swift'))
+			.filter((name) => !skipDirs.some((skip) => name.startsWith(skip + path.sep)))
 			// By code unit, as a bare sort() would, so the packing order is the
 			// same on every machine whatever its locale.
 			.sort((a, b) => (a < b ? -1 : a > b ? 1 : 0))
@@ -170,9 +172,10 @@ function main() {
 	const shardCount = Number(valueOf('--shards', '2'))
 	const target = valueOf('--target', 'AllAboutOlafUITests')
 	const granularity = valueOf('--granularity', 'class')
+	const skipDirs = args.flatMap((arg, index) => (args[index - 1] === '--skip-dir' ? [arg] : []))
 
 	if (!testDir || !fs.existsSync(testDir)) {
-		console.error(`usage: split-uitests.mjs --test-dir <dir> [--shards N]`)
+		console.error(`usage: split-uitests.mjs --test-dir <dir> [--shards N] [--skip-dir <subdir>]...`)
 		process.exit(1)
 	}
 
@@ -192,7 +195,7 @@ function main() {
 		}
 	}
 
-	const classes = discoverTests(readTestDir(testDir))
+	const classes = discoverTests(readTestDir(testDir, {skipDirs}))
 	if (classes.length === 0) {
 		console.error(`Error: no test classes found in ${testDir}`)
 		process.exit(1)

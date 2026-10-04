@@ -23,10 +23,10 @@ class ModuleFilterTests: UITestCaseUnbooted {
 	/// from one that opened a menu over the screen. It is flipped back before
 	/// the menu, so Specials Only is as the Pause left it.
 	///
-	/// Then the other presentation, end to end: open the pull-down menu, toggle
-	/// one station, and find it applied to the list behind the menu. The sheet
-	/// tests prove a selection survives dismissal; this proves a selection made
-	/// through the other presentation actually reaches the data.
+	/// Then the other presentation, end to end: open the pull-down menu, tick
+	/// two stations in one opening, then untick one, and find each choice
+	/// applied to the list behind the menu. This proves a selection made
+	/// through the menu actually reaches the data.
 	func testTheToggleFlipsInPlaceAndAStationNarrowsTheList() throws {
 		MenusScreen(app: app)
 			.navigate()
@@ -60,16 +60,33 @@ class ModuleFilterTests: UITestCaseUnbooted {
 			app.buttons[TestIdentifiers.Menus.specialtyPizzaItem].waitForExistence(timeout: 30),
 			"the unfiltered menu should show an item from another station")
 
-		// Nothing starts selected, which shows every station. Ticking one is
-		// what narrows the list to it. The menu stays open afterwards -- that is
-		// what lets several stations be chosen at once -- so it has to be
-		// dismissed before the list behind it can be read.
+		// Nothing starts selected, which shows every station. The menu stays
+		// open as options are ticked -- that is what lets several stations be
+		// chosen at once -- so the second station is ticked without reopening
+		// it, which cannot work unless the menu survived the first tick: the
+		// tick that flips the filter from off to on, and so the one at risk.
+		// The menu has to be dismissed before the list behind it can be read.
+		let specialty = TestIdentifiers.Menus.specialtyPizzaStation
 		filters
 			.openFilter(Keys.stations, until: filters.menuItem(pizza))
 			.tapMenuItem(pizza)
-			.dismissMenu(waitingFor: pizza)
+			.tapMenuItem(specialty)
+			.dismissMenu(waitingFor: specialty)
 
 		filters.verifyTrigger(Keys.stations, isSelected: true)
+
+		XCTAssertTrue(
+			app.buttons[TestIdentifiers.Menus.pizzaItem].waitForExistence(timeout: 30),
+			"the first station's items should show")
+		XCTAssertTrue(
+			app.buttons[TestIdentifiers.Menus.specialtyPizzaItem].waitForExistence(timeout: 30),
+			"the second station's items should show, chosen without reopening the menu")
+
+		// Unticking one narrows the list to the station left.
+		filters
+			.openFilter(Keys.stations, until: filters.menuItem(specialty))
+			.tapMenuItem(specialty)
+			.dismissMenu(waitingFor: pizza)
 
 		XCTAssertTrue(
 			app.buttons[TestIdentifiers.Menus.pizzaItem].waitForExistence(timeout: 30),
@@ -80,34 +97,5 @@ class ModuleFilterTests: UITestCaseUnbooted {
 		XCTAssertFalse(
 			app.staticTexts[TestIdentifiers.Menus.specialtyPizzaStation].exists,
 			"the other stations' headers should be gone")
-	}
-
-	/// The point of a menu that stays open: several options chosen in one
-	/// opening. The second station is ticked without reopening the menu, so
-	/// this cannot pass unless the menu survived the first tick -- the tick
-	/// that flips the filter from off to on, and so the one at risk.
-	func testMenuSelectsSeveralOptionsInOneOpening() throws {
-		MenusScreen(app: app)
-			.navigate()
-			.verifyFoodRowsAppear()
-			.openCafe(TestIdentifiers.Menus.pause)
-			.revealFilters()
-
-		let filters = FilterScreen(app: app)
-		let pizza = TestIdentifiers.Menus.pizzaStation
-		let specialty = TestIdentifiers.Menus.specialtyPizzaStation
-
-		filters
-			.openFilter(Keys.stations, until: filters.menuItem(pizza))
-			.tapMenuItem(pizza)
-			.tapMenuItem(specialty)
-			.dismissMenu(waitingFor: specialty)
-
-		XCTAssertTrue(
-			app.buttons[TestIdentifiers.Menus.pizzaItem].waitForExistence(timeout: 30),
-			"the first station's items should show")
-		XCTAssertTrue(
-			app.buttons[TestIdentifiers.Menus.specialtyPizzaItem].waitForExistence(timeout: 30),
-			"the second station's items should show, chosen without reopening the menu")
 	}
 }

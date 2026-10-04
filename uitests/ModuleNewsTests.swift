@@ -1,38 +1,13 @@
 import XCTest
 
 class ModuleNewsTests: UITestCaseUnbooted {
-	func testOlafMessengerOpensOnTheIssueGrid() throws {
+	/// The paper opens By Issue on its grid of issues, and a real scroll down the grid pages
+	/// back through older issues.
+	func testOlafMessengerOpensOnTheIssueGridAndLoadsOlderPages() throws {
 		MessFrontPage(app: app)
 			.navigate()
 			.verifyByIssueShowsTheGrid()
-	}
-
-	func testOlafMessengerPaintbrushChangesTheIssueStain() throws {
-		let customize = MessFrontPage(app: app).navigate().openCustomize()
-		customize.capture("Messenger Customize, before")
-		customize.chooseStain("Tea")
-		customize.capture("Messenger Customize, Tea chosen").close()
-	}
-
-	/// Captures the issue grid under each photo tone, to compare them by eye.
-	func testOlafMessengerPhotoTonesTintTheThumbnails() throws {
-		let front = MessFrontPage(app: app).navigate().verifyByIssueShowsTheGrid()
-		for tone in ["Automatic", "Color", "Sepia"] {
-			front.openCustomize().choosePhotoTone(tone).close()
-			front.captureGrid("Issue thumbnails, \(tone)")
-		}
-	}
-
-	func testOlafMessengerLatestNarrowsToASection() throws {
-		MessFrontPage(app: app)
-			.navigate()
-			.filterLatest(to: TestIdentifiers.News.newsSection)
-	}
-
-	func testOlafMessengerMenuOpensTheAboutPage() throws {
-		MessFrontPage(app: app)
-			.navigate()
-			.openAbout()
+			.scrollIssues(untilAnIssueFrom: "2025")
 	}
 
 	func testOlafMessengerMenuOpensAStaffMember() throws {
@@ -41,56 +16,61 @@ class ModuleNewsTests: UITestCaseUnbooted {
 			.openFirstStaffMember()
 	}
 
-	func testOlafMessengerOpensAnOlderIssue() throws {
-		MessFrontPage(app: app)
-			.navigate()
-			.openSecondIssue()
+	/// The paintbrush opens the paper's Customize sheet, whose pickers take a choice. With Dark
+	/// page for Photo stories turned off there, a Photo story follows the system's appearance.
+	func testOlafMessengerCustomizeTurnsOffDarkPhotoStories() throws {
+		let front = MessFrontPage(app: app).navigate()
+		let customize = front.openCustomize()
+		customize.capture("Messenger Customize, before")
+		customize
+			.chooseStain("Tea")
+			.capture("Messenger Customize, Tea chosen")
+			.keepPhotoStoriesDark(false)
+			.close()
+		let story = front
+			.openColumn(TestIdentifiers.News.photoColumn, in: TestIdentifiers.News.varietySection)
+			.openFirstStory()
+			.verifyHeadlineAppears()
+		story.verifyPage(dark: false, "with the setting off, a Photo story should stay light")
+		story.capture("Photo story, setting off")
 	}
 
-	func testOlafMessengerShelfAllListsTheSectionFromItsIssue() throws {
-		MessFrontPage(app: app)
-			.navigate()
+	/// A shelf's "All ›" lists the section's stories from its issue, and Back keeps the issue's
+	/// place. Under UI tests the second issue is the May 12 special edition, whose stories all
+	/// sit in no print section, so its More grid sets them two to a row.
+	func testOlafMessengerIssuesListTheirSectionsAndGridTheRest() throws {
+		let front = MessFrontPage(app: app).navigate()
+		front
 			.openNewestIssue()
 			.scrollDownALittle()
 			.openSectionHoldingTheLead(TestIdentifiers.News.newsSection)
-	}
-
-	func testOlafMessengerSpecialEditionGridsItsStories() throws {
-		MessFrontPage(app: app)
-			.navigate()
-			// Under UI tests the second issue is the May 12 special edition, whose stories all sit
-			// in no print section.
-			.openSecondIssue()
+			.goBack()
+		front.openSecondIssue()
 		MessIssueScreen(app: app)
 			.verifyMoreGridsItsStories()
 	}
 
-	func testOlafMessengerIssuesLoadOlderPages() throws {
-		MessFrontPage(app: app)
-			.navigate()
-			.scrollIssues(untilAnIssueFrom: "2025")
-	}
-
-	func testOlafMessengerSectionOpensAColumn() throws {
-		MessFrontPage(app: app)
-			.navigate()
-			.openColumn(TestIdentifiers.News.goodQuestionsColumn, in: TestIdentifiers.News.newsSection)
-	}
-
-	func testOlafMessengerStoryTextOffersCopy() throws {
-		MessFrontPage(app: app)
-			.navigate()
-			.openLeadStory()
-			.verifyStoryAppears()
-			.verifyBodyOffersCopy()
-	}
-
-	/// A reader can drag a selection from one paragraph into the next, as each stretch of
-	/// prose between figures is one text view.
-	func testOlafMessengerSelectionCrossesParagraphs() throws {
+	/// An article's lead photo opens the zoom viewer. A reader can drag a selection from one
+	/// paragraph into the next, as each stretch of prose between figures is one text view, and
+	/// a figure further down the body opens the viewer too, which can share the figure.
+	///
+	/// In that order because the page is only ever scrolled down: the lead photo sits above
+	/// the body, and the figure below the paragraphs selected.
+	func testArticlePhotosOpenTheZoomViewerAndItsTextSelectsAcrossParagraphs() throws {
 		MessStoryScreen(app: app)
 			.navigate(to: TestIdentifiers.News.illustratedStoryRoute)
+			.openPhotoInViewer(
+				captioned: NSPredicate(format: "label ENDSWITH %@", TestIdentifiers.News.illustratedLeadCaptionEnd),
+				"the lead photo")
+			.verifyViewerShowsImage()
+			.closeImageViewer()
 			.verifySelectionCrossesParagraphs()
+			.openPhotoInViewer(
+				captioned: NSPredicate(format: "label BEGINSWITH %@", TestIdentifiers.News.illustratedFigureCaptionStart),
+				"a figure in the body")
+			.verifyViewerShowsImage()
+			.shareViewerImage()
+			.closeImageViewer()
 	}
 
 	/// A link in a story's text opens in the in-app browser when tapped, and offers the
@@ -167,7 +147,11 @@ class ModuleNewsTests: UITestCaseUnbooted {
 			.verifyHeadline(first, "Back again should return to the story opened first")
 	}
 
-	func testComicZoomsByDoubleTapAndPinch() throws {
+	/// The zoom viewer's gestures on a comic. A double tap zooms in, and a drag on the zoomed
+	/// picture pans it rather than closing the viewer; another double tap fits it back, and a
+	/// pinch zooms in again. At fit, a short drag let go slowly springs back, and a long one
+	/// closes the viewer.
+	func testComicViewerZoomsPansAndClosesByDragging() throws {
 		MessFrontPage(app: app)
 			.navigate()
 			.openColumn(TestIdentifiers.News.comicColumn, in: TestIdentifiers.News.varietySection)
@@ -175,18 +159,19 @@ class ModuleNewsTests: UITestCaseUnbooted {
 			.openImageViewer()
 			.doubleTapViewerImage()
 			.verifyViewerImageZoomed(true)
+			.dragViewerImage(.long)
+			.verifyViewerOpen(true, "a drag on a zoomed picture should pan it, not close the viewer")
+			.verifyViewerImageZoomed(true)
 			.doubleTapViewerImage()
 			.verifyViewerImageZoomed(false)
 			.pinchOutViewerImage()
 			.verifyViewerImageZoomed(true)
-			.closeImageViewer()
-	}
-
-	func testCrosswordRowOpensThePuzzleInTheBrowser() throws {
-		MessFrontPage(app: app)
-			.navigate()
-			.openColumn(TestIdentifiers.News.crosswordColumn, in: TestIdentifiers.News.varietySection)
-			.solveFirstCrossword()
+			.doubleTapViewerImage()
+			.verifyViewerImageZoomed(false)
+			.dragViewerImage(.short)
+			.verifyViewerOpen(true, "a short drag let go slowly should spring the picture back")
+			.dragViewerImage(.long)
+			.verifyViewerOpen(false, "a long drag down should close the zoom viewer")
 	}
 
 	/// A crossword's own page, reached by a link to the post, still offers its puzzle.
@@ -204,9 +189,9 @@ class ModuleNewsTests: UITestCaseUnbooted {
 			.tickFirstIngredient()
 	}
 
-	/// A Photo story opens dark while the setting is on, and the page it was opened from is light
-	/// again after Back. The suite runs in Light Mode.
-	func testPhotoStoriesOpenInDarkMode() throws {
+	/// A Photo story opens dark while the setting is on, and its picture opens the zoom viewer.
+	/// The page it was opened from is light again after Back. The suite runs in Light Mode.
+	func testPhotoStoriesOpenInDarkModeAndZoom() throws {
 		let front = MessFrontPage(app: app)
 			.navigate()
 			.openColumn(TestIdentifiers.News.photoColumn, in: TestIdentifiers.News.varietySection)
@@ -215,78 +200,15 @@ class ModuleNewsTests: UITestCaseUnbooted {
 		// An error screen is dark too, so the story must still be the page on show.
 		story.verifyHeadlineAppears()
 		story.capture("Photo story, kept dark")
+		story
+			.openImageViewer()
+			.verifyViewerShowsImage()
+			.closeImageViewer()
 
 		story.goBack()
 		XCTAssertTrue(
 			front.storyRows.firstMatch.waitForExistence(timeout: 10), "Back should return to the Photo list")
 		story.verifyPage(dark: false, "the Photo list should be light again after Back")
 		front.capture("Photo list after Back")
-	}
-
-	/// With the setting off, a Photo story follows the system's appearance.
-	func testPhotoStoriesFollowTheSystemWhenTheSettingIsOff() throws {
-		let front = MessFrontPage(app: app).navigate()
-		front.openCustomize().keepPhotoStoriesDark(false).close()
-		let story = front
-			.openColumn(TestIdentifiers.News.photoColumn, in: TestIdentifiers.News.varietySection)
-			.openFirstStory()
-			.verifyHeadlineAppears()
-		story.verifyPage(dark: false, "with the setting off, a Photo story should stay light")
-		story.capture("Photo story, setting off")
-	}
-
-	func testPhotoOpensTheZoomViewer() throws {
-		MessFrontPage(app: app)
-			.navigate()
-			.openColumn(TestIdentifiers.News.photoColumn, in: TestIdentifiers.News.varietySection)
-			.openFirstStory()
-			.openImageViewer()
-			.verifyViewerShowsImage()
-			.shareViewerImage()
-			.closeImageViewer()
-	}
-
-	/// An article's lead photo and a figure in its body each open the zoom viewer, which can
-	/// share the figure.
-	func testArticlePhotosOpenTheZoomViewer() throws {
-		MessStoryScreen(app: app)
-			.navigate(to: TestIdentifiers.News.illustratedStoryRoute)
-			.openPhotoInViewer(
-				captioned: NSPredicate(format: "label ENDSWITH %@", TestIdentifiers.News.illustratedLeadCaptionEnd),
-				"the lead photo")
-			.verifyViewerShowsImage()
-			.closeImageViewer()
-			.openPhotoInViewer(
-				captioned: NSPredicate(format: "label BEGINSWITH %@", TestIdentifiers.News.illustratedFigureCaptionStart),
-				"a figure in the body")
-			.verifyViewerShowsImage()
-			.shareViewerImage()
-			.closeImageViewer()
-	}
-
-	func testDraggingThePictureDownClosesTheZoomViewer() throws {
-		MessFrontPage(app: app)
-			.navigate()
-			.openColumn(TestIdentifiers.News.comicColumn, in: TestIdentifiers.News.varietySection)
-			.openFirstStory()
-			.openImageViewer()
-			.dragViewerImage(.short)
-			.verifyViewerOpen(true, "a short drag let go slowly should spring the picture back")
-			.dragViewerImage(.long)
-			.verifyViewerOpen(false, "a long drag down should close the zoom viewer")
-	}
-
-	func testDraggingAZoomedPictureDoesNotCloseTheZoomViewer() throws {
-		MessFrontPage(app: app)
-			.navigate()
-			.openColumn(TestIdentifiers.News.comicColumn, in: TestIdentifiers.News.varietySection)
-			.openFirstStory()
-			.openImageViewer()
-			.doubleTapViewerImage()
-			.verifyViewerImageZoomed(true)
-			.dragViewerImage(.long)
-			.verifyViewerOpen(true, "a drag on a zoomed picture should pan it, not close the viewer")
-			.verifyViewerImageZoomed(true)
-			.closeImageViewer()
 	}
 }

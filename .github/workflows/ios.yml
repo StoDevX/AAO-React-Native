@@ -428,10 +428,12 @@ jobs:
           restore-keys: |
             uitest-durations/e=${{ env.cache_epoch }}/ref=master/
 
+      # The chaos canaries test the chaos tool rather than the app, so a pull
+      # request leaves them to the merge queue and master.
       - name: Split tests across shards
         id: split
         run: |
-          echo "matrix=$(node scripts/split-uitests.mjs --test-dir uitests --shards 3 --granularity method --durations uitest-durations.json)" >> "$GITHUB_OUTPUT"
+          echo "matrix=$(node scripts/split-uitests.mjs --test-dir uitests --shards 3 --granularity method --durations uitest-durations.json ${{ github.event_name == 'pull_request' && '--skip-dir Chaos' || '' }})" >> "$GITHUB_OUTPUT"
 
   ios-uitest:
     name: Native UITest for iOS (${{ matrix.shard }})

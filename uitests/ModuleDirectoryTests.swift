@@ -86,6 +86,9 @@ class ModuleDirectoryTests: UITestCaseUnbooted {
 		DirectoryScreen(app: app)
 			.navigate()
 			.search(for: "testerson")
+			// Faces read faster than a column of names, so a search opens on the
+			// tile gallery unless the reader has switched away from it before.
+			.verifyResultsGalleried()
 			.openDepartment(
 				of: TestIdentifiers.Directory.fixtureEntry, named: department)
 			.capture("Directory opened from a department link")
@@ -102,15 +105,5 @@ class ModuleDirectoryTests: UITestCaseUnbooted {
 			.capture("Directory department screen after cancelling search")
 			.verifyDepartmentHeading(department)
 			.verifyResultsShown()
-	}
-
-	/// Faces read faster than a column of names, so a search opens on the tile
-	/// gallery unless the reader has switched away from it before.
-	func testSearchResultsOpenAsTiles() throws {
-		DirectoryScreen(app: app)
-			.navigate()
-			.search(for: "olaf")
-			.verifyResultsGalleried()
-			.capture("Directory search results as a tile gallery")
 	}
 }

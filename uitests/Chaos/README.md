@@ -188,6 +188,7 @@ repeating. Each action draws its values before it touches the UI.
 ## Canaries
 
 Chaos runs happen on your own machine; nothing runs them in CI. The
-`ChaosCanaryTests` do run in the ordinary UI test shards on every pull
-request. They plant a crash and a missing probe and check that the oracles
+`ChaosCanaryTests` do run in the ordinary UI test shards, in the merge
+queue and on master; pull requests leave them out to save shard time. They
+plant a crash and a missing probe and check that the oracles
 notice, so a change can't quietly blind the engine.

@@ -42,7 +42,10 @@ struct AppIconScreen: Screen {
 				&& tile.frame.maxY <= bottom
 		}
 		var lookingDown = true
-		for _ in 0..<32 where !isReachable() {
+		for _ in 0..<32 {
+			if isReachable() {
+				break
+			}
 			if tile.exists {
 				lookingDown = tile.frame.minY >= barBottom()
 			}

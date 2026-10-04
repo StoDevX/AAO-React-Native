@@ -322,7 +322,10 @@ struct MapScreen: Screen {
 	/// down is not there to find until the card reaches it -- and how far down
 	/// that is depends on the screen and on what the live feed puts above it.
 	private func scrollCard(toReach element: XCUIElement) {
-		for _ in 0..<6 where !(element.exists && element.isHittable) {
+		for _ in 0..<6 {
+			if element.exists && element.isHittable {
+				break
+			}
 			app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.8))
 				.press(forDuration: 0.05, thenDragTo: app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)))
 		}
@@ -692,7 +695,10 @@ struct MapScreen: Screen {
 		// Each drag is slow and held, so the list stops where the drag ends. A
 		// quick one flings it, and the check below then reads a row that is still
 		// moving -- one that looks in range can coast on under the header.
-		for _ in 0..<12 where !(row.exists && row.isHittable && row.frame.minY < upper) {
+		for _ in 0..<12 {
+			if row.exists && row.isHittable && row.frame.minY < upper {
+				break
+			}
 			app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.8))
 				.press(
 					forDuration: 0.05,
@@ -973,31 +979,6 @@ struct MapScreen: Screen {
 		return self
 	}
 
-	/// The card's section headings, in the order they appear from the top.
-	///
-	/// The card is a lazy list: a heading below the fold has no element until
-	/// it is scrolled into view. So the card is scrolled a screen at a time, and
-	/// each heading is placed by the scroll step it first appeared in, then by
-	/// its height within that step.
-	@discardableResult
-	func verifySectionOrder(_ expected: [String], among all: [String]) -> Self {
-		var seen: [String: (step: Int, y: CGFloat)] = [:]
-		for step in 0..<8 {
-			for title in all where seen[title] == nil {
-				let heading = app.staticTexts.matching(NSPredicate(format: "label == %@", title)).firstMatch
-				if heading.exists && heading.frame.minY > closeButton.frame.maxY {
-					seen[title] = (step, heading.frame.minY)
-				}
-			}
-			app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.75))
-				.press(forDuration: 0.05, thenDragTo: app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.35)))
-		}
-		let order = seen.sorted { ($0.value.step, $0.value.y) < ($1.value.step, $1.value.y) }.map(\.key)
-		XCTContext.runActivity(named: "Headings in order: \(order)") { _ in }
-		XCTAssertEqual(order, expected, "The card's sections should run in Maps' order")
-		return self
-	}
-
 	/// The card's Hours status row ("Open until 10 PM"), which only a card
 	/// showing some venue's hours has.
 	@discardableResult
@@ -1031,7 +1012,9 @@ struct MapScreen: Screen {
 			.withOffset(CGVector(dx: 0, dy: 30))
 			.press(forDuration: 1.0)
 		let copy = app.descendants(matching: .any).matching(NSPredicate(format: "label == %@", "Copy")).firstMatch
-		let offered = copy.waitForExistence(timeout: 5)
+		// Proving Copy absent needs a wait too, but a short one: the menu shows
+		// in well under a second when it shows at all.
+		let offered = copy.waitForExistence(timeout: expected ? 5 : 1.5)
 		capture("Long press on the card's About text")
 		XCTAssertEqual(
 			offered, expected,

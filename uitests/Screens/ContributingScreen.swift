@@ -36,4 +36,20 @@ struct ContributingScreen: Screen {
 		XCTAssertTrue(target.exists, "Contributing should offer \(title)")
 		return self
 	}
+
+	/// Tap Report a Problem and wait for its form. The tap is retried: the row
+	/// is hittable as soon as the screen mounts, before its action reaches
+	/// JavaScript, and a tap in between lands natively and does nothing.
+	@discardableResult
+	func openReportAProblem() -> Self {
+		let target = row(TestIdentifiers.Contributing.reportProblem)
+		XCTAssertTrue(target.waitForHittable(timeout: 10), "Contributing should offer Report a Problem")
+		let form = app.navigationBars[TestIdentifiers.Support.reportProblemTitle]
+		for _ in 0..<3 {
+			target.tap()
+			if form.waitForExistence(timeout: 10) { break }
+		}
+		XCTAssertTrue(form.exists, "Report a Problem should open its form")
+		return self
+	}
 }

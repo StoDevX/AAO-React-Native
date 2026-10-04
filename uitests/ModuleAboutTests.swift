@@ -1,27 +1,22 @@
 import XCTest
 
 class ModuleAboutTests: UITestCase {
-	func testAboutOffersEverySection() throws {
+	/// About, top to bottom: the version, the story's timeline of eras swiped
+	/// sideways, the credits stacked one above the other, then Privacy and
+	/// Legal each opening a screen of their own.
+	///
+	/// At the largest text sizes the header fills the first screen, so each
+	/// part is scrolled to before it is checked, and only ever downwards.
+	func testAboutFromTopToBottom() throws {
 		let about = HomeScreen(app: app).checkHomescreenExists().openAbout()
 		let ids = TestIdentifiers.About.self
 
-		// At the largest text sizes the header fills the first screen, so each
-		// section is scrolled to before it is checked.
 		// LabeledContent reads its label and value as one element, so match its start.
 		about.reveal(
 			app.descendants(matching: .any)
 				.matching(NSPredicate(format: "label BEGINSWITH %@", ids.version)).firstMatch)
 		about.capture("about")
 		about.reveal(about.text(ids.storyHeading))
-
-		about.reveal(about.row(ids.privacy))
-		XCTAssertTrue(about.row(ids.legal).exists, "About should offer Legal")
-		about.capture("about-bottom")
-	}
-
-	func testTimelineScrollsSideways() throws {
-		let about = HomeScreen(app: app).checkHomescreenExists().openAbout()
-		let ids = TestIdentifiers.About.self
 
 		let first = about.text(ids.firstEra)
 		let second = about.text(ids.secondEra)
@@ -40,11 +35,6 @@ class ModuleAboutTests: UITestCase {
 			XCTWaiter().wait(for: [onSecond], timeout: 5), .completed,
 			"The dots should follow the swipe to the second era")
 		about.capture("about-timeline-second")
-	}
-
-	func testCreditsStackTheirRows() throws {
-		let about = HomeScreen(app: app).checkHomescreenExists().openAbout()
-		let ids = TestIdentifiers.About.self
 
 		let contributors = about.text(ids.contributors)
 		let acknowledgements = about.text(ids.acknowledgements)
@@ -55,11 +45,6 @@ class ModuleAboutTests: UITestCase {
 			acknowledgements.frame.minY, contributors.frame.maxY,
 			"Acknowledgements should sit below Contributors")
 		about.capture("about-credits")
-	}
-
-	func testAboutOpensPrivacyAndLegal() throws {
-		let about = HomeScreen(app: app).checkHomescreenExists().openAbout()
-		let ids = TestIdentifiers.About.self
 
 		for page in [ids.privacy, ids.legal] {
 			about.reveal(about.row(page))

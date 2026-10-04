@@ -23,6 +23,11 @@ struct QuickActionsScreen: Screen {
 	private func reveal(_ element: XCUIElement) {
 		let swipes: [() -> Void] = [{ picker.swipeUp() }, { picker.swipeDown() }]
 		for swipe in swipes {
+			// Reading every row's label is a query per row, so skip it for a
+			// row that is already in the tree.
+			if element.exists {
+				break
+			}
 			var shown = visibleRows()
 			while !element.exists {
 				swipe()

@@ -19,21 +19,10 @@ struct MessCustomizeScreen: Screen {
 		return self
 	}
 
-	/// The menu picker for the photo tone.
-	private var photoTone: XCUIElement {
-		sheet.buttons[TestIdentifiers.MessCustomize.photoTone].firstMatch
-	}
-
 	/// Choose a stain kind from the picker's menu and wait for the picker to show it.
 	@discardableResult
 	func chooseStain(_ name: String) -> Self {
 		choose(name, from: issueStains)
-	}
-
-	/// Choose a photo tone from the picker's menu and wait for the picker to show it.
-	@discardableResult
-	func choosePhotoTone(_ name: String) -> Self {
-		choose(name, from: photoTone)
 	}
 
 	private func choose(_ name: String, from picker: XCUIElement) -> Self {

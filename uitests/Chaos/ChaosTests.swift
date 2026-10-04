@@ -61,8 +61,10 @@ final class ChaosCanaryTests: UITestCaseUnbooted {
 	}
 
 	/// In portrait the sheet's grabber is something to press, so it is no
-	/// trap; Back drags the sheet away by it.
-	func testBackLeavesASheetInPortrait() {
+	/// trap; Back drags the sheet away by it. Opened again in landscape, an
+	/// iPhone form sheet fills the screen and draws no grabber, so the monkey
+	/// has to rotate before it can leave.
+	func testLeavesASheetInPortraitAndEscapesItInLandscape() {
 		let trap = openSheetTrap(in: .portrait)
 		let monkey = ChaosMonkey(test: self, seed: 1, replay: false, faultRate: "0")
 		XCTAssertEqual(monkey.escapeTrap(), .notTrapped, "a sheet with a grabber is not a trap")
@@ -84,19 +86,15 @@ final class ChaosCanaryTests: UITestCaseUnbooted {
 		monkey.goBack(on: observation)
 
 		assertSheetIsGone(trap)
-	}
 
-	/// An iPhone form sheet fills the screen in landscape and draws no
-	/// grabber, so the monkey has to rotate before it can leave.
-	func testEscapesASheetInLandscape() {
-		let trap = openSheetTrap(in: .landscapeLeft)
-		let monkey = ChaosMonkey(test: self, seed: 1, replay: false, faultRate: "0")
-		XCTAssertEqual(monkey.escapeTrap(), .escaped, "an escape should have changed the screen")
+		let landscapeTrap = openSheetTrap(in: .landscapeLeft)
+		let landscapeMonkey = ChaosMonkey(test: self, seed: 1, replay: false, faultRate: "0")
+		XCTAssertEqual(landscapeMonkey.escapeTrap(), .escaped, "an escape should have changed the screen")
 
-		assertSheetIsGone(trap)
+		assertSheetIsGone(landscapeTrap)
 		XCTAssertTrue(
-			monkey.warnings.contains { $0.hasPrefix("no escape hatch: ") && $0.hasSuffix("(landscape)") },
-			"the monkey should report the sheet as having no escape hatch, got \(monkey.warnings)")
+			landscapeMonkey.warnings.contains { $0.hasPrefix("no escape hatch: ") && $0.hasSuffix("(landscape)") },
+			"the monkey should report the sheet as having no escape hatch, got \(landscapeMonkey.warnings)")
 	}
 
 	/// Opens the Dictionary's empty preview, a sheet with no Back or Close

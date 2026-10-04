@@ -8,8 +8,9 @@ class ModuleStudentOrgsTests: UITestCaseUnbooted {
 	/// Tapping a category has to land on a screen scoped to that category, not
 	/// the flat list -- the title naming the tapped category is the proof,
 	/// since which orgs happen to be in it is Presence.io's business, not
-	/// this test's.
-	func testTheLandingCategoriesOpenThemselves() throws {
+	/// this test's. Back on the landing, the layout menu draws the categories
+	/// as tiles.
+	func testTheLandingCategoriesOpenThemselvesAndBecomeTiles() throws {
 		let screen = StudentOrgsScreen(app: app)
 			.navigate()
 			.verifyStudentOrgsTitle()
@@ -17,12 +18,9 @@ class ModuleStudentOrgsTests: UITestCaseUnbooted {
 			.capture("Student Orgs categories")
 		let category = screen.openFirstCategory()
 
-		screen.verifyTitle(category)
-	}
-
-	func testTheLayoutMenuSwitchesTheCategoriesToTiles() throws {
-		StudentOrgsScreen(app: app)
-			.navigate()
+		screen
+			.verifyTitle(category)
+			.goBack()
 			.verifyCategoriesShown()
 			.chooseLayout(TestIdentifiers.Layout.grid)
 			.verifyCategoryGridShown()
@@ -32,7 +30,8 @@ class ModuleStudentOrgsTests: UITestCaseUnbooted {
 	/// The landing search bar searches every org, so it has to be able to
 	/// find something outside whatever category a reader happened to look
 	/// at last. Scrolling the results proves some appeared, not which ones,
-	/// since the org list is live data.
+	/// since the org list is live data. The first of the refined results then
+	/// opens its org's detail.
 	func testRefiningASearchFromFarDownTheResultsStartsAtTheTop() throws {
 		StudentOrgsScreen(app: app)
 			.navigate()
@@ -41,28 +40,7 @@ class ModuleStudentOrgsTests: UITestCaseUnbooted {
 			.scrollResultsDown()
 			.refineSearch(appending: "n")
 			.verifyResultsStartAtTheTop()
-	}
-
-	func testStudentOrgDetail() throws {
-		// Searching first, rather than tapping straight from the landing
-		// screen, is what disambiguates: the landing screen shows category
-		// rows before any query is typed, and "Academic" now names a real
-		// curated category as well as an org, so a bare label match there
-		// could resolve to the category instead of an org. Only the search
-		// results render org rows.
-		let screen = StudentOrgsScreen(app: app).navigate().search(for: "academic")
-
-		let firstOrg = app.buttons
-			.matching(NSPredicate(format: "label BEGINSWITH %@", "Academic"))
-			.firstMatch
-		XCTAssertTrue(firstOrg.waitForExistence(timeout: 30), "An org should be listed")
-		firstOrg.tap()
-
-		// Wait for a section of the pushed screen, not just the tap: a capture
-		// taken straight after lands mid-animation, with both screens on it.
-		let category = app.staticTexts["Category"].firstMatch
-		XCTAssertTrue(category.waitForExistence(timeout: 30), "The org detail should be shown")
-
-		screen.capture("Student Orgs - detail")
+			.openFirstResult()
+			.capture("Student Orgs - detail")
 	}
 }

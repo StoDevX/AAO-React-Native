@@ -104,6 +104,20 @@ struct StudentOrgsScreen: Screen {
 		return self
 	}
 
+	/// Taps the first org in the search results and waits for its detail to
+	/// show a section of its own: a capture taken straight after the tap lands
+	/// mid-animation, with both screens on it.
+	@discardableResult
+	func openFirstResult() -> Self {
+		let firstOrg = resultsList.buttons.firstMatch
+		XCTAssertTrue(firstOrg.waitForHittable(timeout: 30), "An org should be listed")
+		firstOrg.tap()
+		XCTAssertTrue(
+			app.staticTexts["Category"].firstMatch.waitForExistence(timeout: 30),
+			"The org detail should be shown")
+		return self
+	}
+
 	private var resultsList: XCUIElement {
 		app.collectionViews[TestIdentifiers.StudentOrgs.resultsList]
 	}

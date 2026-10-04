@@ -101,6 +101,18 @@ extension Screen {
 		return self
 	}
 
+	/// Close Report a Problem with its own close button, and wait for it to go.
+	@discardableResult
+	func closeProblemForm() -> Self {
+		let close = app.buttons[TestIdentifiers.Support.closeProblemForm].firstMatch
+		XCTAssertTrue(close.waitForHittable(timeout: 10), "Report a Problem should have a close button")
+		close.tap()
+		XCTAssertTrue(
+			app.navigationBars[TestIdentifiers.Support.reportProblemTitle].waitForNonExistence(timeout: 10),
+			"Report a Problem should close")
+		return self
+	}
+
 	/// Attach a screenshot of the whole screen to the test report, for as long
 	/// as `captureLifetime` says.
 	@discardableResult
