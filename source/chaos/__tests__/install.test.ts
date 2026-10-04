@@ -1,3 +1,4 @@
+import {reportFinding} from '../findings'
 import {installChaos, type ChaosHost} from '../install'
 import {memoryLineFile} from '../line-file'
 import {STALL_TICK_MS} from '../stall'
@@ -62,4 +63,11 @@ test('watches for stalls in a chaos run', () => {
 	let h = host()
 	installChaos(settings, h)
 	expect(h.stalls.setInterval).toHaveBeenCalledWith(expect.any(Function), STALL_TICK_MS)
+})
+
+test('records findings under the launch it was installed in', () => {
+	let h = host()
+	installChaos({...settings, launch: 6}, h)
+	reportFinding('console-error', 'boom')
+	expect(JSON.parse(h.findings.readLines()[0])).toMatchObject({launch: 6})
 })

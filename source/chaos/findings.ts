@@ -16,7 +16,14 @@ export type FindingKind =
 	| 'stall'
 
 /** One thing the probe saw, as written to the findings file. */
-export type Finding = {kind: FindingKind; message: string; stack: string | null; at: string}
+export type Finding = {
+	kind: FindingKind
+	message: string
+	stack: string | null
+	at: string
+	/** The launch it was made in, so the runner can tell a cold start's findings apart. */
+	launch: number
+}
 
 const STOPPING: ReadonlyArray<FindingKind> = ['fatal', 'unhandled-rejection', 'divergence']
 
@@ -29,14 +36,16 @@ type FindingsState = {
 	/** The first stopping finding, as the beacon shows it; empty while none. */
 	latest: string
 	file: LineFile | null
+	/** The launch findings are being made in. */
+	launch: number
 }
 
 /** The run's findings, for the beacon to show. */
-export const useChaosFindings = create<FindingsState>(() => ({latest: '', file: null}))
+export const useChaosFindings = create<FindingsState>(() => ({latest: '', file: null, launch: 0}))
 
-/** Where findings are written from now on. */
-export function setFindingsFile(file: LineFile): void {
-	useChaosFindings.setState({file})
+/** Where findings are written from now on, and the launch they are made in. */
+export function setFindingsFile(file: LineFile, launch = 0): void {
+	useChaosFindings.setState({file, launch})
 }
 
 /** A message and stack from whatever was thrown or logged. Never throws. */
@@ -68,8 +77,8 @@ export function describe(error: unknown): {message: string; stack: string | null
 /** Records a finding, and shows it on the beacon when it ends the run. */
 export function reportFinding(kind: FindingKind, error: unknown): void {
 	let {message, stack} = describe(error)
-	let finding: Finding = {kind, message, stack, at: new Date().toISOString()}
-	let {file, latest} = useChaosFindings.getState()
+	let {file, latest, launch} = useChaosFindings.getState()
+	let finding: Finding = {kind, message, stack, at: new Date().toISOString(), launch}
 	try {
 		file?.append(JSON.stringify(finding))
 	} catch {

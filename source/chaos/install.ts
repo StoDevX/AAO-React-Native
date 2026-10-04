@@ -36,7 +36,7 @@ export function installChaos(settings: ChaosSettings, host: ChaosHost): boolean 
 	if (!settings.isChaos) {
 		return false
 	}
-	setFindingsFile(host.findings)
+	setFindingsFile(host.findings, settings.launch)
 	installProbe(host.probe)
 	watchForStalls(host.stalls)
 	guardLinking(host.linking)

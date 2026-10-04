@@ -13,6 +13,13 @@ beforeEach(() => {
 })
 
 describe('reportFinding', () => {
+	test('records the launch a finding was made in', () => {
+		let file = memoryLineFile()
+		setFindingsFile(file, 4)
+		reportFinding('console-error', 'boom')
+		expect(JSON.parse(file.readLines()[0])).toMatchObject({kind: 'console-error', launch: 4})
+	})
+
 	test('writes every finding to the findings file', () => {
 		let file = memoryLineFile()
 		setFindingsFile(file)
