@@ -719,3 +719,37 @@ jobs:
         with:
           path: uitest-durations.json
           key: uitest-durations/e=${{ env.cache_epoch }}/ref=master/run=${{ github.run_id }}-${{ github.run_attempt }}
+
+  # One check to require instead of one per shard: a shard's name comes from
+  # the matrix, so the set of checks changes with the test split, while this
+  # job's name never does.
+  #
+  # `if: always()` is what makes it usable as a required check. A job skipped
+  # because a need failed reports as skipped, and GitHub counts a skipped
+  # required check as passing, so this has to run after anything that went
+  # wrong and say so itself.
+  #
+  # Every job the suite depends on is a need, so a failure anywhere upstream
+  # (the bundle, the cache check, the build, the plan, a shard) turns this red
+  # even though it skips the shards after it. What stays green is a skip nobody
+  # failed to cause: the gate found nothing to test, the `ci/skip-e2e` label is
+  # on, or a cache hit skipped the build. uitest-durations is left out; it only
+  # saves a timing table, on master.
+  uitest-conclusion:
+    name: UITest Conclusion
+    needs:
+      [uitest-gate, uitest-plan, ios-build, ios-bundle, ios-cache-check, ios-uitest]
+    runs-on: ubuntu-slim
+    if: always()
+    steps:
+      - name: Report what the suite did
+        env:
+          RESULTS: ${{ toJSON(needs) }}
+        run: |
+          echo "$RESULTS" | jq -r 'to_entries[] | "\(.key): \(.value.result)"'
+
+      - name: Fail if anything failed or was cancelled
+        if: contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')
+        run: |
+          echo "A job the UITests depend on failed or was cancelled." >&2
+          exit 1
