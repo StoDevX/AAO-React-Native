@@ -58,9 +58,12 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: mise run format:check
 
-  eslint:
-    name: oxlint
+  lint:
+    name: lint
     runs-on: ubuntu-26.04
+    env:
+      # zizmor's online audits read this.
+      GH_TOKEN: ${{ github.token }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -70,7 +73,7 @@ jobs:
           cache_key: mise-v2-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('mise.lock') }}
       - run: pnpm install --frozen-lockfile
       - run: mise run bundle-data
-      - run: mise run lint:oxlint
+      - run: mise run lint
 
   jest:
     name: Jest
