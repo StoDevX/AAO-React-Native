@@ -212,6 +212,10 @@ description = "Run TypeScript compiler"
 depends = ["bundle-data"]
 run = "tsc --noEmit"
 
+[tasks.changeset]
+description = "Add a changeset: a line for the release notes and how big a bump it is"
+run = "pnpm exec changeset"
+
 [tasks.test]
 description = "Run every test"
 depends = ["test:jest", "test:node"]
