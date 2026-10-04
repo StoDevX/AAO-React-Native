@@ -324,8 +324,14 @@ final class ChaosMonkey {
 		lastTargetsSeen += Date().timeIntervalSince(start)
 	}
 
-	private func tap(_ frame: CGRect) {
-		app.coordinate(withNormalizedOffset: .zero)
+	/// Taps the middle of `frame` through SpringBoard. A tap on the app does not
+	/// return until the app goes quiet, which it cannot while a SpringBoard
+	/// alert, such as the one an icon change raises, is up: the tap would cost a
+	/// minute or more after it had landed. SpringBoard is quiet, and the screen
+	/// point is the same, so the tap returns at once and the check after the
+	/// step dismisses the alert.
+	func tap(_ frame: CGRect) {
+		springboard.coordinate(withNormalizedOffset: .zero)
 			.withOffset(CGVector(dx: frame.midX, dy: frame.midY))
 			.tap()
 	}
@@ -425,7 +431,7 @@ final class ChaosMonkey {
 	/// the app. Checked after every step rather than left to an interruption
 	/// monitor, which only runs when the test touches an element, and the
 	/// monkey taps by coordinate.
-	private func dismissSystemAlert() {
+	func dismissSystemAlert() {
 		let alert = springboard.alerts.firstMatch
 		guard alert.exists else { return }
 		warnings.append("system alert: \(alert.label)")

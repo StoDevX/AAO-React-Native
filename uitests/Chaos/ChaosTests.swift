@@ -81,6 +81,31 @@ final class ChaosCanaryTests: UITestCaseUnbooted {
 		XCTAssertEqual(monkey.warnings.filter { $0.hasPrefix("small target: \(key) ") }.count, 1, "\(monkey.warnings)")
 	}
 
+	/// Changing the app icon raises SpringBoard's alert, which keeps the app
+	/// from going quiet: a tap that waits for the app costs a minute or more,
+	/// and the monkey sits on the screen. Its tap should return at once, and the
+	/// check after the step should dismiss the alert.
+	func testTapsPastTheIconChangeAlert() {
+		configureForChaos(seed: 1, launch: 0, replay: false, faultRate: "0", resetState: true)
+		app.launch()
+		let gallery = AppIconScreen(app: app).navigate()
+		let name = gallery.icon(named: "Big Ole").isSelected ? "Old Main" : "Big Ole"
+		let tile = gallery.icon(named: name)
+		gallery.scrollIntoView(tile)
+		let frame = tile.frame
+		let monkey = ChaosMonkey(test: self, seed: 1, replay: false, faultRate: "0")
+
+		let start = Date()
+		monkey.tap(frame)
+		XCTAssertLessThan(Date().timeIntervalSince(start), 15, "the tap should not wait for the app behind the alert")
+
+		let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
+		XCTAssertTrue(springboard.alerts.firstMatch.waitForExistence(timeout: 10), "the icon change should raise its alert")
+		monkey.dismissSystemAlert()
+		XCTAssertTrue(springboard.alerts.firstMatch.waitForNonExistence(timeout: 10), "the monkey should dismiss the alert")
+		XCTAssertTrue(monkey.warnings.contains { $0.hasPrefix("system alert: ") }, "\(monkey.warnings)")
+	}
+
 	/// In portrait the sheet's grabber is something to press, so it is no
 	/// trap; Back drags the sheet away by it. Opened again in landscape, an
 	/// iPhone form sheet fills the screen and draws no grabber, so the monkey

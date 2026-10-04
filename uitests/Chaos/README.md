@@ -93,7 +93,10 @@ Then decide whose bug it is:
 - `no escape hatch`: the monkey found a screen with nothing to press and had
   to rotate, drag or swipe its way out. A person may be stuck there.
 - `escaped the app`: something sent the app to the background.
-- `system alert`: a permission prompt appeared and the monkey dismissed it.
+- `system alert`: a SpringBoard alert, such as a permission prompt or the
+  icon-change notice, appeared and the monkey dismissed it. The monkey taps
+  through SpringBoard, so an alert that keeps the app from going quiet never
+  holds a tap up.
 - `unlabelled`: something to press that VoiceOver has no name for.
 - `small target`: something to press narrower or shorter than 44pt. XCUITest
   sees the frame, not a `hitSlop`, so a control that is bigger to the touch
