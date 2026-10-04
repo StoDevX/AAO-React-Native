@@ -21,23 +21,14 @@ class ModuleQuickActionsTests: UITestCase {
 			.verifyPicked("Calendar", false)
 	}
 
-	/// SpringBoard starts the app here, so this launch has none of the test's
-	/// arguments: no --uitesting, and so live menus rather than fixtures. It
-	/// asserts only which cafe is showing, which the data cannot change.
-	func testQuickActionLaunchesToItsScreen() throws {
-		HomeScreen(app: app).checkHomescreenExists()
-		let appName = app.label
-		app.terminate()
-
-		SpringBoardScreen(app: app)
-			.chooseQuickAction(TestIdentifiers.QuickActions.cageMenu, appName: appName)
-		XCTAssertTrue(app.wait(for: .runningForeground, timeout: 30), "the app should launch")
-		MenusScreen(app: app).verifyShowing(TestIdentifiers.QuickActions.cageTab)
-	}
-
 	/// A link that pushes a screen over the map must not leave the map's sheet
 	/// floating over that screen, and the sheet must come back with the map.
-	func testQuickActionFromMapLeavesTheMapSheetBehind() throws {
+	///
+	/// Then, from a cold start, SpringBoard starts the app on the action's
+	/// screen. That launch has none of the test's arguments: no --uitesting, and
+	/// so live menus rather than fixtures. It asserts only which cafe is
+	/// showing, which the data cannot change.
+	func testQuickActionOpensItsScreenWarmAndCold() throws {
 		let map = MapScreen(app: app).navigate().checkSheetPresented()
 		let appName = app.label
 
@@ -48,5 +39,11 @@ class ModuleQuickActionsTests: UITestCase {
 
 		MenusScreen(app: app).goBack()
 		map.checkSheetPresented()
+
+		app.terminate()
+		SpringBoardScreen(app: app)
+			.chooseQuickAction(TestIdentifiers.QuickActions.cageMenu, appName: appName)
+		XCTAssertTrue(app.wait(for: .runningForeground, timeout: 30), "the app should launch")
+		MenusScreen(app: app).verifyShowing(TestIdentifiers.QuickActions.cageTab)
 	}
 }

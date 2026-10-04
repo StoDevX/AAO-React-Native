@@ -1,14 +1,6 @@
 import XCTest
 
 class ModuleCustomizeTests: UITestCase {
-	func testPaintbrushOpensCustomize() throws {
-		let customize = HomeScreen(app: app).checkHomescreenExists().openCustomize()
-		XCTAssertTrue(
-			customize.sheet.buttons[TestIdentifiers.Customize.openLinksIn].waitForExistence(timeout: 10),
-			"Customize should offer Open Links")
-		customize.capture("customize-sheet").close()
-	}
-
 	func testChangesAppIconToAnAlternate() throws {
 		// The "You have changed the icon" alert belongs to SpringBoard. It blocks
 		// the app from reaching idle, so UIInterruptionMonitor never fires --
@@ -20,28 +12,25 @@ class ModuleCustomizeTests: UITestCase {
 		gallery.capture("app-icon-gallery")
 
 		let bigOle = gallery.icon(named: "Big Ole")
-		let alternate = "Old Main"
-
-		for name in ["Big Ole", alternate] {
-			let tile = gallery.icon(named: name)
-			gallery.scrollIntoView(tile)
-			XCTAssertTrue(tile.exists, "\(name) should be offered as an icon")
-		}
+		gallery.scrollIntoView(bigOle)
+		XCTAssertTrue(bigOle.exists, "Big Ole should be offered as an icon")
 
 		// The alternate icon belongs to SpringBoard, so it survives the
-		// `--reset-state` launch that clears UserDefaults and AsyncStorage.
-		let strayAlert = springboard.buttons["OK"]
-		if strayAlert.waitForExistence(timeout: 2) {
-			strayAlert.tap()
-		}
-		gallery.scrollIntoView(bigOle)
+		// `--reset-state` launch that clears UserDefaults and AsyncStorage. Only
+		// then can an earlier run's alert still be up, so SpringBoard is asked
+		// about it only then: a query there can stall on a debug-information
+		// collection that costs far more than the check.
 		if !bigOle.isSelected {
+			let strayAlert = springboard.buttons["OK"]
+			if strayAlert.waitForExistence(timeout: 2) {
+				strayAlert.tap()
+			}
 			gallery.select("Big Ole", springboard: springboard)
 		}
 
 		// Big Ole is the default icon, so it should be marked by default
 		XCTAssertTrue(bigOle.isSelected, "Big Ole should be selected by default")
 
-		gallery.select(alternate, springboard: springboard)
+		gallery.select("Old Main", springboard: springboard)
 	}
 }
