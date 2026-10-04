@@ -7,7 +7,6 @@ import {
 	font,
 	foregroundStyle,
 	frame,
-	id,
 	lineLimit,
 	multilineTextAlignment,
 } from '@expo/ui/swift-ui/modifiers'
@@ -29,8 +28,6 @@ const TEAM_MODIFIERS = [
 
 type Props = {
 	score: ProcessedScore
-	/** The row's SwiftUI id, when the list scrolls to it. */
-	scrollId?: string
 }
 
 function TeamLogo({uri}: {uri: string}): React.ReactNode {
@@ -58,19 +55,12 @@ function TeamLogo({uri}: {uri: string}): React.ReactNode {
  * announces six fragments and says very little; `gameSummary` builds the
  * sentence a reader actually wants.
  */
-export const AthleticsRow = React.memo(function AthleticsRow({
-	score,
-	scrollId,
-}: Props): React.ReactNode {
+export const AthleticsRow = React.memo(function AthleticsRow({score}: Props): React.ReactNode {
 	let summary = gameSummary(score)
 
 	return (
 		<VStack
-			modifiers={[
-				accessibilityElement('combine'),
-				accessibilityLabel(summary.accessibilityLabel),
-				...(scrollId ? [id(scrollId)] : []),
-			]}
+			modifiers={[accessibilityElement('combine'), accessibilityLabel(summary.accessibilityLabel)]}
 			spacing={4}
 		>
 			<Text modifiers={[font({textStyle: 'caption2', weight: 'bold'}), foregroundStyle(c.label)]}>
