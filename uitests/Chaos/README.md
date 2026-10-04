@@ -62,6 +62,9 @@ catch the bugs real users hit rather than the ones only hostile input reaches.
 | Network | 25% of requests faulted | offline windows of 5–30 s, and 5% faulted outside them |
 | Events | background; rotation with `--rotate` | background for 2–120 s; killed and cold-started with its saved state |
 
+After 40 steps without a new screen, a session opens a route by URL in the
+running app, as a widget's link does, rather than relaunching it.
+
 Every run writes `run.json` with its profile and rotation, and a replay takes
 both from it. A finding from a launch a kill began is summarised as its kind
 `(cold start)`: it came from restoring saved state.

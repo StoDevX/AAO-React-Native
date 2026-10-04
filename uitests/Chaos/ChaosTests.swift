@@ -65,6 +65,22 @@ final class ChaosCanaryTests: UITestCaseUnbooted {
 		XCTAssertEqual(silence?.reason, "probe silent: no \(TestIdentifiers.Chaos.beacon) element")
 	}
 
+	/// A session's teleport opens a screen in the running app, without the
+	/// relaunch that would throw the session's state away.
+	func testATeleportKeepsTheAppRunning() {
+		configureForChaos(seed: 1, launch: 0, replay: false, faultRate: "0", resetState: true, profile: .session)
+		app.launch()
+		_ = HomeScreen(app: app).checkHomescreenExists()
+		let pid = { self.app.debugDescription.firstMatch(of: /pid: (\d+)/).map { String($0.1) } }
+		let before = pid()
+		XCTAssertNotNil(before, "the app's description should name its pid")
+		let monkey = ChaosMonkey(test: self, seed: 1, replay: false, faultRate: "0", profile: .session)
+		monkey.teleport(to: "menus")
+		XCTAssertTrue(app.wait(for: .runningForeground, timeout: 10))
+		XCTAssertEqual(pid(), before, "the teleport should not relaunch the app")
+		XCTAssertFalse(XCUIApplication(bundleIdentifier: "com.apple.springboard").alerts.firstMatch.exists)
+	}
+
 	/// A kill keeps what the app saved, as iOS killing it overnight does.
 	func testAKillKeepsTheSavedSettings() {
 		configureForChaos(seed: 1, launch: 0, replay: false, faultRate: "0", resetState: true, profile: .session)

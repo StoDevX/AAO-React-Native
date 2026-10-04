@@ -57,4 +57,18 @@ final class ChaosSessionTests: XCTestCase {
 		_ = watch.observe(network: "online", hasSpinner: true, title: "Menus", at: start.addingTimeInterval(1))
 		XCTAssertNil(watch.observe(network: "online", hasSpinner: false, title: "Menus", at: start.addingTimeInterval(30)))
 	}
+
+	func testIsStuckAfterFortyStepsWithoutANewScreen() {
+		var novelty = ChaosNovelty()
+		novelty.see("Home")
+		for _ in 0..<39 { novelty.see("Home") }
+		XCTAssertFalse(novelty.isStuck)
+		novelty.see("Home")
+		XCTAssertTrue(novelty.isStuck)
+		novelty.moved()
+		XCTAssertFalse(novelty.isStuck)
+		novelty.see("Menus")
+		for _ in 0..<39 { novelty.see("Home") }
+		XCTAssertFalse(novelty.isStuck, "a new title resets the count")
+	}
 }

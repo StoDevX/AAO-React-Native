@@ -34,3 +34,18 @@ struct ChaosSpinnerWatch {
 		return hasSpinner ? "stuck spinner: \(title)" : nil
 	}
 }
+
+/// Counts the steps since a session saw a screen title it had not seen, to
+/// tell when it is stuck going round the same screens.
+struct ChaosNovelty {
+	private var seen: Set<String> = []
+	private var stale = 0
+
+	mutating func see(_ title: String) {
+		if seen.insert(title).inserted { stale = 0 } else { stale += 1 }
+	}
+
+	var isStuck: Bool { stale >= 40 }
+
+	mutating func moved() { stale = 0 }
+}

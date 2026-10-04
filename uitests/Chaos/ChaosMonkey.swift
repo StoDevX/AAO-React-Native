@@ -28,6 +28,8 @@ final class ChaosMonkey {
 	private var lastTyped = ""
 	/// Watches a session for a spinner left after an offline window.
 	private var spinnerWatch = ChaosSpinnerWatch()
+	/// Tells when a session keeps seeing the same screens.
+	private var novelty = ChaosNovelty()
 	private var random: ChaosRandom
 	private var launch = 0
 	private var steps: [String] = []
@@ -92,13 +94,17 @@ final class ChaosMonkey {
 		lastTargetsSeen = Date()
 
 		for step in 0..<budget where Date() < deadline {
-			let action = ChaosAction.pick(in: profile, rotate: rotate, using: &random)
-			lastTyped = ""
 			let observation: ChaosObservation
 			switch ChaosOracle(app: app).observe() {
 			case .failure(let stop): return fail(stop, step: step)
 			case .success(let observed): observation = observed
 			}
+			novelty.see(observation.title)
+			// The pick draws even when a teleport replaces it, so later steps do not shift.
+			var action = ChaosAction.pick(in: profile, rotate: rotate, using: &random)
+			// A session that keeps seeing the same screens goes somewhere new by URL.
+			if profile == .session && novelty.isStuck { action = .teleport }
+			lastTyped = ""
 			let target = perform(action, on: observation)
 			log(step: step, action: action, target: target)
 
@@ -186,7 +192,12 @@ final class ChaosMonkey {
 			pauseHangClock { kill() }
 			return ChaosTarget(identifier: "kill", label: "", type: .any, frame: .zero)
 		case .teleport:
-			return nil
+			let routes = ChaosRoutes.all.filter { !$0.contains("[") }
+			let route = pickWeighted(routes, uses: { self.routeOpens[$0, default: 0] }, using: &random)!
+			routeOpens[route, default: 0] += 1
+			teleport(to: route)
+			novelty.moved()
+			return ChaosTarget(identifier: "teleport", label: route, type: .any, frame: .zero)
 		case .rotate:
 			guard rotate else {
 				return ChaosTarget(identifier: "", label: "off", type: .any, frame: .zero)
@@ -205,6 +216,16 @@ final class ChaosMonkey {
 		test.configureForChaos(
 			seed: seed, launch: launch, replay: replay, faultRate: faultRate, resetState: false, profile: profile)
 		app.launch()
+	}
+
+	/// Opens `route` in the running app through the system, as a link from a
+	/// widget or a quick action arrives, accepting iOS's confirmation if it asks.
+	func teleport(to route: String) {
+		pauseHangClock {
+			XCUIDevice.shared.system.open(URL(string: "AllAboutOlaf://\(route)")!)
+			let open = springboard.buttons["Open"]
+			if open.waitForExistence(timeout: 3) { open.tap() }
+		}
 	}
 
 	/// Why a cold start after a kill failed, if it did: the bundle never
