@@ -8,11 +8,15 @@ extension XCUIApplication {
 		descendants(matching: .any)[identifier].firstMatch
 	}
 
-	/// Find a React Navigation bottom tab bar button by its visible label.
-	/// On iOS, tab labels include a suffix like ", tab, 1 of 3" in their
-	/// accessibility label, so an exact match on just the name won't work.
+	/// Find a tab bar button by its visible label.
+	///
+	/// A tab's accessibility label can carry a suffix like ", tab, 1 of 3", so
+	/// this matches on the start of the label rather than all of it. It looks
+	/// only inside the tab bar: Menus titles its screen with a meal picker
+	/// whose label also starts with the cafe's name ("The Cage, Sunday, ..."),
+	/// and that button, which is never selected, came first in the tree.
 	func tabButton(_ label: String) -> XCUIElement {
-		buttons.matching(NSPredicate(format: "label BEGINSWITH %@", label)).firstMatch
+		tabBars.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", label)).firstMatch
 	}
 
 	/// Find a button by the label UIKit gave it, matching on the label alone.
