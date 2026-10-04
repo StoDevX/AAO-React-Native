@@ -11,7 +11,11 @@ name: Release
 
 on:
   push: {branches: [master]}
-  pull_request:
+  # pull_request_target, not pull_request: changesets/action resets its branch to
+  # github.sha, which for pull_request is a merge commit the checkout never
+  # fetched. Here it is the head of master, which is what the action wants. No PR
+  # code is checked out or run; the job only reads the PR's labels.
+  pull_request_target:
     types: [labeled, unlabeled]
     branches: [master]
   workflow_dispatch:
@@ -32,17 +36,15 @@ jobs:
     name: Version or release
     runs-on: ubuntu-slim
     # A label event matters only on the Version PR itself.
-    if: github.event_name != 'pull_request' || github.head_ref == 'changeset-release/master'
+    if: github.event_name != 'pull_request_target' || github.head_ref == 'changeset-release/master'
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          # A label event would otherwise check out the PR's merge ref.
-          ref: master
       - uses: jdx/mise-action@94c60b39bc2d90ab2f9bab27f38d3cc4812c1834 # v5.1.0
         with:
           cache_key: mise-v2-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('mise.lock') }}
       - run: pnpm install --frozen-lockfile
-      - uses: changesets/action@ae32849d5ba541f9ae29e40e22a623bc13562f51 # v2.1.2
+      - id: changesets
+        uses: changesets/action@ae32849d5ba541f9ae29e40e22a623bc13562f51 # v2.1.2
         with:
           version-script: node scripts/changeset-version.mjs
           publish-script: node scripts/changeset-publish.mjs
@@ -59,3 +61,12 @@ jobs:
           github-token: ${{ secrets.RELEASE_TOKEN || github.token }}
         env:
           GH_TOKEN: ${{ secrets.RELEASE_TOKEN || github.token }}
+      # A release changes no screen the UI tests could catch, so the Version PR
+      # skips them. The labels API creates the label if the repo lacks it, where
+      # `gh pr edit --add-label` would fail.
+      - name: Label the Version PR to skip the UI tests
+        if: steps.changesets.outputs.pr-number != ''
+        run: gh api --method POST "repos/${GITHUB_REPOSITORY}/issues/${PR_NUMBER}/labels" -f 'labels[]=ci/skip-e2e'
+        env:
+          GH_TOKEN: ${{ secrets.RELEASE_TOKEN || github.token }}
+          PR_NUMBER: ${{ steps.changesets.outputs.pr-number }}
