@@ -203,17 +203,21 @@ func targetWarnings(_ observation: ChaosObservation) -> [(key: String, warning: 
 	for target in observation.targets {
 		let key = targetKey(target)
 		let size = "\(Int(target.frame.width))×\(Int(target.frame.height))"
+		// A target with no name is keyed by where it sits, which a scroll
+		// changes; it is reported once by its type and size instead.
+		let named = !target.identifier.isEmpty || !target.label.isEmpty
+		let once = named ? key : "\(target.type.rawValue)|\(size)"
 		let system =
 			target.identifier == TestIdentifiers.Navigation.backButton
 			|| target.label == TestIdentifiers.Navigation.sheetGrabber || target.inBar
 		if system { continue }
 		if target.label.isEmpty && labelledTypes.contains(target.type) {
-			found.append(("unlabelled|\(screen)|\(key)", "unlabelled: \(key) \(size) on \"\(screen)\""))
+			found.append(("unlabelled|\(screen)|\(once)", "unlabelled: \(key) \(size) on \"\(screen)\""))
 		}
 		let sized = ![.textField, .searchField, .switch].contains(target.type)
 			&& !TestIdentifiers.Chaos.smallTargetAllowList.contains(target.identifier)
 		if sized && (target.frame.width < 44 || target.frame.height < 44) {
-			found.append(("small|\(screen)|\(key)", "small target: \(key) \(size) on \"\(screen)\""))
+			found.append(("small|\(screen)|\(once)", "small target: \(key) \(size) on \"\(screen)\""))
 		}
 	}
 	return found

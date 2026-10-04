@@ -51,4 +51,15 @@ final class ChaosTargetCheckTests: XCTestCase {
 				target(.textField, label: "Search", width: 300, height: 36),
 			]), [])
 	}
+
+	func testReportsAScrolledRowOnceWhereverItSits() {
+		let observation = ChaosObservation(
+			beaconLabel: nil, errorScreen: nil,
+			targets: [
+				ChaosTarget(identifier: "", label: "", type: .cell, frame: CGRect(x: 10, y: 260, width: 370, height: 40)),
+				ChaosTarget(identifier: "", label: "", type: .cell, frame: CGRect(x: 10, y: 370, width: 370, height: 40)),
+			],
+			textFields: [], signature: "", sheet: nil, grabber: nil, title: "Sense")
+		XCTAssertEqual(Set(targetWarnings(observation).map(\.key)).count, 1, "\(targetWarnings(observation))")
+	}
 }
