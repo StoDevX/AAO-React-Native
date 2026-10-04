@@ -23,7 +23,7 @@ const MANIFEST = {
 	links: [
 		{
 			rel: REL_STUDENT_WAGES,
-			href: 'https://stolaf.dev/AAO-React-Native/student-wages.json',
+			href: 'student-work/wages',
 			type: 'application/vnd.frogpond.student-wages+json',
 			properties: {[ID_PROPERTY]: 'stolaf'},
 		},
