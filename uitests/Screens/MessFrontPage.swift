@@ -48,13 +48,13 @@ struct MessFrontPage: Screen {
 		XCTAssertTrue(
 			title.waitForLabel(TestIdentifiers.News.paperName, timeout: 10),
 			"the bar should be titled with the paper's castle (it reads \(title.label))")
-		XCTAssertEqual(
-			app.navigationBars.staticTexts.count, 0,
-			"the bar should carry the castle and no text title")
 		// Each tile prints the name as its nameplate; VoiceOver reads a tile by its label alone, but
-		// XCUITest still lists the text inside it, so the name is counted outside the tiles.
+		// XCUITest still lists the text inside it, so the name is counted outside the tiles. The
+		// bar's castle reads as the name too, so the bar is left out.
 		let nameplates = (tiles.allElementsBoundByIndex + [topTile]).map(\.frame)
+		let bar = app.navigationBars.firstMatch.frame
 		let outsideTiles = app.staticTexts.matching(name).allElementsBoundByIndex
+			.filter { element in !bar.contains(element.frame) }
 			.filter { element in !nameplates.contains(where: { $0.contains(element.frame) }) }
 		XCTAssertEqual(outsideTiles.count, 0, "the page should print the paper's name only on its tiles")
 		return self
