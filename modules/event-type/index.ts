@@ -22,6 +22,11 @@ export type EventType = {
 	 * "unsponsored" reads one way everywhere downstream.
 	 */
 	readonly organization?: readonly string[]
+	/**
+	 * A URL for the event's featured image. Absent, never empty, for an event
+	 * its source has no picture for: only Presence supplies one today.
+	 */
+	readonly image?: string
 	readonly config: {
 		readonly startTime: boolean
 		readonly endTime: boolean
