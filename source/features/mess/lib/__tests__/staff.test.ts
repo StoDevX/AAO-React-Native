@@ -188,8 +188,16 @@ describe('newestStaffYear', () => {
 		expect(newestStaffYear([...years].reverse())).toStrictEqual({id: 1147, name: '2026-2027'})
 	})
 
+	it('passes over a term not named as a year, which would sort after every year', () => {
+		expect(newestStaffYear([...years, {id: 7, name: 'Alumni'}])).toStrictEqual({
+			id: 1147,
+			name: '2026-2027',
+		})
+	})
+
 	it('gives none when the paper has no staff years', () => {
 		expect(newestStaffYear([])).toBeNull()
+		expect(newestStaffYear([{id: 7, name: 'Alumni'}])).toBeNull()
 	})
 })
 

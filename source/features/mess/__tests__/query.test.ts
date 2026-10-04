@@ -194,7 +194,7 @@ describe('messStaffOptions', () => {
 
 		expect(people).toHaveLength(27)
 		expect(fetchedHrefs()).toStrictEqual([
-			'https://olafmessenger.com/wp-json/wp/v2/staff_year?hide_empty=true&orderby=name&order=desc&per_page=1&_fields=id,name',
+			'https://olafmessenger.com/wp-json/wp/v2/staff_year?hide_empty=true&per_page=100&_fields=id,name',
 			'https://olafmessenger.com/wp-json/wp/v2/staff_profile?staff_year=1147&per_page=100&_embed=wp:featuredmedia,wp:term&_fields=id,title,content,excerpt,featured_media,_links,_embedded',
 		])
 	})

@@ -72,9 +72,18 @@ export function groupStaff(profiles: StaffProfile[]): StaffGroup[] {
 
 const YearsSchema = z.array(z.object({id: z.number(), name: z.string()}))
 
-/** The newest of the paper's staff years, or none when it lists none. Years read `2026-2027`, so they sort as text. */
+/** A staff year's name, such as `2026-2027`. */
+const YEAR_NAME = /^\d{4}-\d{4}$/u
+
+/**
+ * The newest of the paper's staff years, or none when it lists none. Years read `2026-2027`, so
+ * they sort as text; a term named otherwise, such as `Alumni`, is no year and would sort after
+ * every one, so it is passed over.
+ */
 export function newestStaffYear(body: unknown): {id: number; name: string} | null {
-	let [newest] = YearsSchema.parse(body).sort((a, b) => b.name.localeCompare(a.name))
+	let [newest] = YearsSchema.parse(body)
+		.filter((year) => YEAR_NAME.test(year.name))
+		.sort((a, b) => b.name.localeCompare(a.name))
 	return newest ?? null
 }
 
