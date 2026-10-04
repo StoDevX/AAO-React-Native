@@ -1,7 +1,5 @@
-import {getApiRoot} from '@frogpond/api'
 import type {ColorSchemeName} from 'react-native'
 import type {Campus} from '../building-hours/types'
-import {DEFAULT_URL} from '../../lib/constants'
 import type {Coordinate} from './types'
 /**
  * The MapLibre style JSON the campus map renders, self-hosted from
@@ -14,25 +12,6 @@ import type {Coordinate} from './types'
 export const MAP_STYLE_URL = 'https://carls-app.github.io/map-tiles/style.json'
 
 /**
- * St. Olaf's own basemap, themed for the campus rather than merely covering it:
- * 79 layers against Carleton's general-purpose tileset, with its tiles, glyphs
- * and sprites served from the same origin.
- *
- * Built from StoDevX/campus-map-data and fetched through ccc-server, which
- * passes the style on; the style itself names where its tiles, glyphs and
- * sprites are. The Carleton style does render St. Olaf -- its bounds cover all
- * of Northfield -- but it draws the campus as an anonymous cluster of grey
- * footprints.
- *
- * Read when the map is drawn, not when a module loads: the server address is a
- * setting read from storage after launch.
- */
-export function stolafMapStyleUrl(scheme: 'light' | 'dark'): string {
-	let root = getApiRoot() ?? new URL(DEFAULT_URL)
-	return new URL(scheme === 'dark' ? 'map/style-dark' : 'map/style', root).toString()
-}
-
-/**
  * The appearance a campus's basemap draws in. Dark only where the system is
  * dark and the campus has a dark style: Carleton's has none, so its map stays
  * light either way.
@@ -42,14 +21,6 @@ export function basemapScheme(
 	scheme: ColorSchemeName | undefined,
 ): 'light' | 'dark' {
 	return campus === 'stolaf' && scheme === 'dark' ? 'dark' : 'light'
-}
-
-/** The basemap each campus draws, in the system's appearance where it can. */
-export function mapStyleUrl(campus: Campus, scheme: ColorSchemeName | undefined): string {
-	if (campus !== 'stolaf') {
-		return MAP_STYLE_URL
-	}
-	return stolafMapStyleUrl(basemapScheme(campus, scheme))
 }
 
 /// A credit the map shows, and where it leads.

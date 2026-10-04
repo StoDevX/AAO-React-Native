@@ -1,5 +1,7 @@
 import {beforeEach, describe, expect, jest, test} from '@jest/globals'
 
+import {DEFAULT_URL} from '../../../lib/constants'
+
 const mockSteps: string[] = []
 const mockStored = {etag: 'old' as string | null, failToStore: false}
 const mockRunner = {
@@ -88,13 +90,16 @@ let CatalogRejectedError: RefreshModule['CatalogRejectedError']
 
 /** Every request the refresh made, by its headers. */
 let mockRequests: Array<Record<string, string>> = []
+/** The address of each of those requests. */
+let mockUrls: string[] = []
 
 /**
  * The server publishes a file with `etag`, and answers a request for the copy
  * it already has with 304 unless `ignoresIfNoneMatch`.
  */
 function publishedEtag(etag: string, {ignoresIfNoneMatch = false} = {}) {
-	global.fetch = jest.fn((_url: unknown, init?: {headers?: Record<string, string>}) => {
+	global.fetch = jest.fn((url: unknown, init?: {headers?: Record<string, string>}) => {
+		mockUrls.push(String(url))
 		let headers = init?.headers ?? {}
 		mockRequests.push(headers)
 		let known = (headers['If-None-Match'] ?? '').split(', ')
@@ -130,9 +135,18 @@ beforeEach(() => {
 	mockDisk.deleted = []
 	mockMoves.length = 0
 	mockRequests = []
+	mockUrls = []
 })
 
 describe('refreshCatalog', () => {
+	// The shipped manifest names the catalog on ccc-server, which redirects to
+	// the published file; a published manifest can name another address.
+	test("fetches the catalog from the manifest's address on the server", async () => {
+		publishedEtag('new')
+		await refreshCatalog()
+		expect(mockUrls).toEqual([`${DEFAULT_URL}courses/catalog.db`])
+	})
+
 	test('downloads nothing when the ETag is unchanged', async () => {
 		publishedEtag('old')
 		await expect(refreshCatalog()).resolves.toEqual({etag: 'old', changed: false})
