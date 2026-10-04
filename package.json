@@ -92,7 +92,7 @@
     "react": "catalog:",
     "react-native": "catalog:",
     "react-native-change-icon": "5.0.0",
-    "react-native-enriched-markdown": "1.0.2",
+    "react-native-enriched-markdown": "1.1.0",
     "react-native-keychain": "10.0.0",
     "react-native-network-logger": "3.0.0",
     "react-native-reanimated": "4.5.1",
