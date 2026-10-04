@@ -294,6 +294,19 @@ describe('readTestDir', () => {
 			[join('Chaos', 'ChaosTests.swift'), 'ModuleATests.swift'],
 		)
 	})
+
+	it('leaves out a skipped subfolder', () => {
+		const dir = mkdtempSync(join(tmpdir(), 'split-uitests-'))
+		mkdirSync(join(dir, 'Chaos'))
+		writeFileSync(join(dir, 'ModuleATests.swift'), 'class ModuleATests: UITestCase {}')
+		writeFileSync(join(dir, 'Chaos', 'ChaosTests.swift'), 'class ChaosTests: UITestCase {}')
+		writeFileSync(join(dir, 'ChaosModuleTests.swift'), 'class ChaosModuleTests: UITestCase {}')
+
+		assert.deepEqual(
+			readTestDir(dir, {skipDirs: ['Chaos']}).map((file) => file.name),
+			['ChaosModuleTests.swift', 'ModuleATests.swift'],
+		)
+	})
 })
 
 describe('the real suite', () => {
