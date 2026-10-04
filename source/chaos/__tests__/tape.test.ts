@@ -6,6 +6,7 @@ import {
 	requestKey,
 	stableUrl,
 	tapeFile,
+	tapeHoldsBody,
 	type TapeEntry,
 } from '../tape'
 
@@ -24,6 +25,33 @@ describe('tapeFile', () => {
 		expect(tapeFile(0)).toBe('chaos-tape-0.jsonl')
 		expect(tapeFile(12)).toBe('chaos-tape-12.jsonl')
 	})
+})
+
+describe('tapeHoldsBody', () => {
+	test.each([
+		'application/json',
+		'application/json; charset=utf-8',
+		'application/geo+json',
+		'text/html; charset=UTF-8',
+		'application/rss+xml',
+		'text/javascript',
+		'application/x-www-form-urlencoded',
+	])('holds a %s body, which is text', (contentType) => {
+		expect(tapeHoldsBody(contentType)).toBe(true)
+	})
+
+	// A body sent with no type is far likelier to be an API's text than a file.
+	test('holds a body with no content type', () => {
+		expect(tapeHoldsBody(null)).toBe(true)
+	})
+
+	// The course catalog is a SQLite file, sent as application/octet-stream.
+	test.each(['application/octet-stream', 'image/png', 'application/pdf', 'audio/mpeg'])(
+		'leaves out a %s body, which is bytes',
+		(contentType) => {
+			expect(tapeHoldsBody(contentType)).toBe(false)
+		},
+	)
 })
 
 describe('stableUrl', () => {

@@ -13,6 +13,18 @@ function server(body = '{"ok":true}', status = 200) {
 	)
 }
 
+// "SQL", then the NULs a string-backed body loses on its way to native code.
+const CATALOG_BYTES = new Uint8Array([83, 81, 76, 0, 255, 0, 1])
+
+/** A stand-in for a server sending a binary file, such as the course catalog. */
+function fileServer() {
+	return jest.fn(() =>
+		Promise.resolve(
+			new Response(CATALOG_BYTES, {headers: {'content-type': 'application/octet-stream'}}),
+		),
+	)
+}
+
 function options(overrides: Partial<ChaosFetchOptions> = {}): ChaosFetchOptions {
 	return {
 		mode: 'record',
@@ -79,6 +91,36 @@ describe('record mode', () => {
 		let wrapped = chaosFetch(network, options())
 		await expect(wrapped('https://papercut.stolaf.edu/rpc/api')).rejects.toBeInstanceOf(TypeError)
 		expect(network).not.toHaveBeenCalled()
+	})
+
+	// Read as text, rebuilt as a string, and then read as bytes, a binary body
+	// crashes the app on a device, so the app gets the real response instead.
+	test('passes a binary response through untouched, and leaves its body off the tape', async () => {
+		let tape = memoryLineFile()
+		let network = fileServer()
+		let wrapped = chaosFetch(network, options({tape}))
+		let response = await wrapped(URL_A)
+		expect(response).toBe(await network.mock.results[0].value)
+		expect(new Uint8Array(await response.arrayBuffer())).toEqual(CATALOG_BYTES)
+		let [entry] = parseLines<TapeEntry>(tape.readLines())
+		expect(entry).toMatchObject({status: 200, body: '', fault: 'none', live: true})
+	})
+
+	test('faults a binary response only in ways that leave its body alone', async () => {
+		let tape = memoryLineFile()
+		let wrapped = chaosFetch(fileServer(), options({tape, faultRate: 1}))
+		for (let i = 0; i < 50; i++) {
+			// Sequential, not parallel: each call's occurrence number depends on the one before it.
+			// oxlint-disable-next-line no-await-in-loop
+			await wrapped(URL_A).catch(() => undefined)
+		}
+		let entries = parseLines<TapeEntry>(tape.readLines())
+		let faults = new Set(entries.map((e) => e.fault))
+		expect([...faults].sort()).toEqual(['latency', 'network', 'none', 'status'])
+		for (let entry of entries.filter((e) => e.fault === 'status')) {
+			expect(entry).toMatchObject({body: ''})
+			expect(entry.live).toBeFalsy()
+		}
 	})
 
 	test('never reads the tape, which only a replay needs', async () => {
@@ -177,6 +219,16 @@ describe('replay mode', () => {
 		let player = chaosFetch(server(), options({tape, mode: 'replay'}))
 		await expect(player(URL_A)).rejects.toMatchObject({name: 'AbortError'})
 		expect(useChaosFindings.getState().latest).toBe('')
+	})
+
+	test('fetches a binary response again, since the tape left its body out', async () => {
+		let tape = memoryLineFile()
+		await chaosFetch(fileServer(), options({tape}))(URL_A)
+		let network = fileServer()
+		let player = chaosFetch(network, options({tape, mode: 'replay'}))
+		let response = await player(URL_A)
+		expect(network).toHaveBeenCalledTimes(1)
+		expect(new Uint8Array(await response.arrayBuffer())).toEqual(CATALOG_BYTES)
 	})
 
 	test('reports a request the tape has no answer for as a divergence', async () => {

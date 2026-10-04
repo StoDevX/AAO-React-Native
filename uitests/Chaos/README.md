@@ -111,6 +111,11 @@ Replay is best-effort. Timing, and anything that doesn't go through JS `fetch`
 - **Logged-in screens** are only ever seen logged out. The run never signs in
   to OleCard, and never reaches PaperCut.
 - **Native loads** (images, WebViews, map tiles) are never faulted.
+- **Binary responses**, such as the course catalog, are never damaged and
+  never taped. They can still fail, stall, or return a 404 or 500, but a
+  replay fetches them live. The tape holds text, and React Native cannot
+  rebuild a body with a NUL in it from a string: reading it back as bytes
+  crashes the app.
 - **Sheets in landscape** fill the screen on iPhone and ignore a drag down, so
   the monkey can only leave one by rotating.
 - **A fatal under a modal** can hide from the beacon until the modal closes.
