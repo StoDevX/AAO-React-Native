@@ -2,8 +2,8 @@
 export type RadioLogo = {
 	/** How VoiceOver tells this logo from the station's others. */
 	name: string
-	/** Read when drawn: the address depends on the server setting. */
-	readonly image: {uri: string}
+	/** The file's name in `images/streaming/`, without the extension. */
+	imageName: string
 	/** The player's fill, darkening downward, behind white text. */
 	tint: string
 	/** The paper of the record's centre label, behind the logo. */

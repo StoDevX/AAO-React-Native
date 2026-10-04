@@ -21,6 +21,7 @@ import {resolveCutoutFeature} from '../lib/find-building-feature'
 import type {BuildingType, Campus} from '../types'
 import {mapDataOptions} from '../../map/query'
 import {buildingPhoto} from '../lib/building-photo'
+import {useImageFailure} from '../../../lib/use-image-failure'
 import {HoursSection} from '../hours-section'
 import {LinkListSection} from '../../map/card/link-list-section'
 import {FILL_WIDTH} from '../../../components/tile-layout'
@@ -60,6 +61,8 @@ type Props = {
  */
 export function BuildingDetailSwiftUI({building, now, campus}: Props): React.ReactNode {
 	let photo = buildingPhoto(campus, building.image)
+	// A photo that cannot be fetched leaves its row out, as no photo does.
+	let [photoFailed, onPhotoError] = useImageFailure(photo?.uri)
 	// A picture is given the row's width outright, since 100% inside
 	// RNHostView resolves against the whole sheet, and the sheet itself can be
 	// narrower than the window -- an iPad's form sheet, or iOS 26's resting
@@ -127,12 +130,13 @@ export function BuildingDetailSwiftUI({building, now, campus}: Props): React.Rea
 					</Section>
 				) : null}
 
-				{photo ? (
+				{photo && !photoFailed ? (
 					<Section>
 						<VStack modifiers={pictureRow}>
 							<RNHostView matchContents={true}>
 								<Image
 									accessibilityIgnoresInvertColors={true}
+									onError={onPhotoError}
 									resizeMode="cover"
 									source={photo}
 									style={[styles.image, {width: pictureWidth}]}

@@ -190,9 +190,16 @@ which proxies GitHub Pages; `bundle-data` publishes `images/<group>/*.webp` to
 Keep an original in `images/<group>/source/`, run `mise run images` to write
 its WebP beside it, and commit both. The data names an image by its file name
 without the extension (`image: cage`), and `scripts/bundle-images.test.mjs`
-fails when a name has no WebP. Address images through `remoteImage` in
-`source/lib/remote-images.ts`, at render time, since the server is a setting
-that loads after launch; a module-level constant would read it too early.
+fails when a name has no WebP; `source/lib/__tests__/published-images.test.ts`
+does the same for the names written in code (radio logos, news sources).
+
+Address images through `remoteImage` in `source/lib/remote-images.ts`, at
+render time, since the server is a setting that loads after launch: keep a
+name in the data, never a URL in a module-level constant. A device keeps a
+fetched image and shows it offline without asking again, so publish a changed
+picture under a new name and point the data at it. Draw a fetched picture with
+`useImageFailure`, so one that cannot load leaves its row out instead of an
+empty frame.
 
 ### Custom Symbols
 

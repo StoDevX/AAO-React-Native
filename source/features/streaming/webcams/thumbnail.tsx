@@ -3,6 +3,7 @@ import {StyleSheet, View, Text, Image} from 'react-native'
 import {Touchable} from '@frogpond/touchable'
 import * as c from '@frogpond/colors'
 import {remoteImage} from '../../../lib/remote-images'
+import {useImageFailure} from '../../../lib/use-image-failure'
 import {trackedOpenUrl} from '@frogpond/open-url'
 import type {Webcam} from './types'
 
@@ -28,6 +29,8 @@ export const StreamThumbnail = (props: Props): React.ReactNode => {
 	let height = width / cellRatio
 
 	let img = thumbnailUrl ? {uri: thumbnailUrl} : remoteImage('webcams', thumbnail)
+	// A still that cannot be fetched leaves the cell as plain colour.
+	let [imageFailed, onImageError] = useImageFailure(img.uri)
 
 	return (
 		// do not remove this View; it is needed to prevent extra highlighting
@@ -38,12 +41,15 @@ export const StreamThumbnail = (props: Props): React.ReactNode => {
 			style={{width, height}}
 			underlayColor={baseColor}
 		>
-			<Image
-				accessibilityIgnoresInvertColors={true}
-				resizeMode="cover"
-				source={img}
-				style={[StyleSheet.absoluteFill, {width, height}]}
-			/>
+			{imageFailed ? null : (
+				<Image
+					accessibilityIgnoresInvertColors={true}
+					onError={onImageError}
+					resizeMode="cover"
+					source={img}
+					style={[StyleSheet.absoluteFill, {width, height}]}
+				/>
+			)}
 
 			<View style={styles.titleWrapper}>
 				<Text style={[styles.titleText, {color: textColor}]}>{name}</Text>

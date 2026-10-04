@@ -1,5 +1,4 @@
-import type {ImageSourcePropType} from 'react-native'
-import {remoteImage} from '../../../lib/remote-images'
+import {remoteImage, type RemoteImage} from '../../../lib/remote-images'
 import type {Campus} from '../types'
 
 /**
@@ -11,10 +10,7 @@ import type {Campus} from '../types'
  * is a different room entirely. So the campus gates the lookup rather than the
  * key alone.
  */
-export function buildingPhoto(
-	campus: Campus,
-	image: string | undefined,
-): ImageSourcePropType | null {
+export function buildingPhoto(campus: Campus, image: string | undefined): RemoteImage | null {
 	if (campus !== 'stolaf' || !image) {
 		return null
 	}

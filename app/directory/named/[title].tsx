@@ -21,7 +21,8 @@ import {
 
 import {SheetCloseButton} from '../../../source/components/sheet-close-button'
 import {contactByTitleOptions} from '../../../source/features/directory/contacts-query'
-import {remoteImage} from '../../../source/lib/remote-images'
+import {remoteImage, type RemoteImage} from '../../../source/lib/remote-images'
+import {useImageFailure} from '../../../source/lib/use-image-failure'
 import {Markdown} from '@frogpond/markdown'
 import {callPhone} from '../../../source/components/call-phone'
 import {openUrl} from '@frogpond/open-url'
@@ -126,9 +127,11 @@ function ContactBody({
 	onPress,
 }: {
 	contact: {text: string; buttonText: string; buttonLink?: string}
-	headerImage: React.ComponentProps<typeof Image>['source'] | null | undefined
+	headerImage: RemoteImage | null
 	onPress: () => void
 }): React.ReactNode {
+	// A photo that cannot be fetched leaves its row out, as no photo does.
+	let [imageFailed, onImageError] = useImageFailure(headerImage?.uri)
 	// A hosted view is given the row's width outright: 100% inside RNHostView
 	// resolves against the whole sheet, and a paragraph's own width is however
 	// long its longest line would be unwrapped. The row fills its width
@@ -145,7 +148,7 @@ function ContactBody({
 	return (
 		<Host style={styles.host}>
 			<List modifiers={[listStyle('plain'), scrollContentBackground('hidden')]}>
-				{headerImage ? (
+				{headerImage && !imageFailed ? (
 					<Section>
 						{/* On a wrapping stack because RNHostView takes no modifiers of
 						    its own. */}
@@ -153,6 +156,7 @@ function ContactBody({
 							<RNHostView matchContents={true}>
 								<Image
 									accessibilityIgnoresInvertColors={true}
+									onError={onImageError}
 									resizeMode="cover"
 									source={headerImage}
 									style={[styles.image, {width: rowWidth}]}

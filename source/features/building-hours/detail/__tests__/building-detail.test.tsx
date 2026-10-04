@@ -1,7 +1,7 @@
 import React from 'react'
 import moment from 'moment-timezone'
 import {describe, expect, test} from '@jest/globals'
-import {act, render, screen} from '@testing-library/react-native'
+import {act, fireEvent, render, screen} from '@testing-library/react-native'
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query'
 
 import type {BuildingType, Campus} from '../../types'
@@ -122,6 +122,19 @@ describe('BuildingDetailSwiftUI', () => {
 		let {getByTestId} = await renderDetail(building)
 
 		expect(getByTestId('building-photo')).toBeTruthy()
+	})
+
+	// The photo is fetched, so it can fail; the row then goes, as it does for a
+	// venue with no photo, rather than staying behind as an empty frame.
+	test('leaves the photo out when it cannot be fetched', async () => {
+		let building = makeBuilding({image: 'cage'})
+
+		let {getByTestId, queryByTestId} = await renderDetail(building)
+		await act(() => {
+			fireEvent(getByTestId('building-photo'), 'error')
+		})
+
+		expect(queryByTestId('building-photo')).toBeNull()
 	})
 
 	// The whole point of `building` -- Task 1's join key -- is a cutout that

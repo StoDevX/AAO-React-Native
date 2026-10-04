@@ -10,9 +10,14 @@
  * only version 6 is installed.
  */
 import {execFileSync} from 'node:child_process'
-import {existsSync, mkdirSync, readdirSync, rmSync} from 'node:fs'
+import {existsSync, mkdirSync, readdirSync} from 'node:fs'
 import {basename, extname, join} from 'node:path'
+import {fileURLToPath} from 'node:url'
 
+/**
+ * The same list as `IMAGE_GROUPS` in `source/lib/remote-images.ts`, which is
+ * the app's side of it; `published-images.test.ts` checks that they match.
+ */
 export const IMAGE_GROUPS = ['contacts', 'news-sources', 'spaces', 'streaming', 'webcams']
 
 /** Wider than a phone's screen at 3x gains nothing: 1290 is a 430pt-wide iPhone at 3x. */
@@ -61,7 +66,6 @@ export function plannedImages(root = 'images') {
 function main() {
 	let magick = findMagick()
 	for (let {from, to, lossless} of plannedImages()) {
-		rmSync(to, {force: true})
 		mkdirSync(join(to, '..'), {recursive: true})
 		execFileSync(magick, [
 			from,
@@ -78,6 +82,6 @@ function main() {
 	}
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (process.argv[1] === fileURLToPath(import.meta.url)) {
 	main()
 }

@@ -1,8 +1,5 @@
-import {imageUrl, remoteImage} from '../../../lib/remote-images'
+import {imageUrl, remoteImage, type RemoteImage} from '../../../lib/remote-images'
 import type {RadioLogo} from './theme'
-
-/** A logo or texture the player draws, fetched from ccc-server. */
-const streamingImage = (name: string) => remoteImage('streaming', name)
 
 export type StationId = 'ksto' | 'krlx'
 
@@ -60,45 +57,35 @@ export const STATIONS: Record<StationId, Station> = {
 		logos: [
 			{
 				name: 'cow badge',
-				get image() {
-					return streamingImage('ksto')
-				},
+				imageName: 'ksto',
 				tint: COW_TINT,
 				labelColor: '#e4d7f2',
 				labelScale: 0.86,
 			},
 			{
 				name: 'wordmark',
-				get image() {
-					return streamingImage('ksto-wordmark')
-				},
+				imageName: 'ksto-wordmark',
 				tint: WORDMARK_TINT,
 				labelColor: '#e8e0ef',
 				labelScale: 1,
 			},
 			{
 				name: 'dumpster fire',
-				get image() {
-					return streamingImage('ksto-dumpster')
-				},
+				imageName: 'ksto-dumpster',
 				tint: DUMPSTER_TINT,
 				labelColor: '#e5d4d9',
 				labelScale: 0.72,
 			},
 			{
 				name: 'narwhal',
-				get image() {
-					return streamingImage('ksto-narwhal')
-				},
+				imageName: 'ksto-narwhal',
 				tint: NARWHAL_TINT,
 				labelColor: '#494e73',
 				labelScale: 1,
 			},
 			{
 				name: 'cow sketch',
-				get image() {
-					return streamingImage('ksto-sketch')
-				},
+				imageName: 'ksto-sketch',
 				tint: SKETCH_TINT,
 				// A sheet of cream paper, for the ink drawing.
 				labelColor: '#f3ead6',
@@ -131,9 +118,7 @@ export const STATIONS: Record<StationId, Station> = {
 		logos: [
 			{
 				name: 'krlx 88.1',
-				get image() {
-					return streamingImage('krlx')
-				},
+				imageName: 'krlx',
 				tint: KRLX_TINT,
 				labelColor: '#f6f1e4',
 			},
@@ -153,8 +138,19 @@ export const STATIONS: Record<StationId, Station> = {
 	},
 }
 
-/** Every image the player draws for a station, for fetching before it opens. */
-export const stationImageUrls = (station: Station): string[] => [
-	...station.logos.map((logo) => logo.image.uri),
-	imageUrl('streaming', 'vinyl'),
+/** The record the logo sits on, in `images/streaming/`. */
+export const RECORD_IMAGE_NAME = 'vinyl'
+
+/** A logo as an `<Image source>`, fetched from the server when it is drawn. */
+export const logoImage = (logo: RadioLogo): RemoteImage => remoteImage('streaming', logo.imageName)
+
+/**
+ * Every image the player draws, for fetching before the sheet opens: each
+ * station's logos, and the record they turn on.
+ */
+export const allStationImageUrls = (): string[] => [
+	...Object.values(STATIONS).flatMap((station) =>
+		station.logos.map((logo) => imageUrl('streaming', logo.imageName)),
+	),
+	imageUrl('streaming', RECORD_IMAGE_NAME),
 ]

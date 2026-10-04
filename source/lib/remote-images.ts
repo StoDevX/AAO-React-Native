@@ -6,8 +6,18 @@ import {DEFAULT_URL} from './constants'
  * The folders ccc-server serves images from, one per kind of picture. They
  * are the folders of `images/` in this repo, which `bundle-data` publishes to
  * GitHub Pages and ccc-server proxies at `/v1/images/<group>/<name>.webp`.
+ *
+ * `IMAGE_GROUPS` in `scripts/make-images.mjs` and `IMAGE_GROUPS` in
+ * ccc-server's `source/ccc-lib/images.ts` are the same list; a group missing
+ * from either is never published or never served. `published-images.test.ts`
+ * checks this one against the script's.
  */
-export type ImageGroup = 'contacts' | 'news-sources' | 'spaces' | 'streaming' | 'webcams'
+export const IMAGE_GROUPS = ['contacts', 'news-sources', 'spaces', 'streaming', 'webcams'] as const
+
+export type ImageGroup = (typeof IMAGE_GROUPS)[number]
+
+/** An image fetched over the network, for an `<Image source>`. */
+export type RemoteImage = {uri: string; cache: 'force-cache'}
 
 /**
  * Where an image is fetched from.
@@ -21,9 +31,15 @@ export function imageUrl(group: ImageGroup, name: string): string {
 	return new URL(`images/${group}/${name}.webp`, root).toString()
 }
 
-/** An image for an `<Image source>`, fetched over the network. */
-export function remoteImage(group: ImageGroup, name: string): {uri: string} {
-	return {uri: imageUrl(group, name)}
+/**
+ * An image for an `<Image source>`, fetched over the network.
+ *
+ * A device keeps what it fetched and shows it with no network, rather than
+ * asking again once it is stale, so a picture that changes is published under
+ * a new name.
+ */
+export function remoteImage(group: ImageGroup, name: string): RemoteImage {
+	return {uri: imageUrl(group, name), cache: 'force-cache'}
 }
 
 /**
@@ -32,7 +48,7 @@ export function remoteImage(group: ImageGroup, name: string): {uri: string} {
  * visibly there if the network is still out.
  */
 export function prefetchImages(urls: readonly string[]): void {
-	for (let url of urls) {
+	for (let url of new Set(urls)) {
 		Image.prefetch(url).catch(() => undefined)
 	}
 }

@@ -11,8 +11,10 @@ describe('imageUrl', () => {
 		expect(imageUrl('streaming', 'ksto-wordmark')).toBe(
 			'https://example.test/v1/images/streaming/ksto-wordmark.webp',
 		)
+		// kept once fetched: the picture's name changes when the picture does
 		expect(remoteImage('contacts', 'sarn')).toStrictEqual({
 			uri: 'https://example.test/v1/images/contacts/sarn.webp',
+			cache: 'force-cache',
 		})
 	})
 })
@@ -22,13 +24,17 @@ describe('prefetchImages', () => {
 		jest.restoreAllMocks()
 	})
 
-	it('fetches every image, and shrugs off one that fails', () => {
+	it('fetches each image once, and shrugs off one that fails', () => {
 		let prefetch = jest
 			.spyOn(Image, 'prefetch')
 			.mockRejectedValueOnce(new Error('offline'))
 			.mockResolvedValue(true)
 
-		prefetchImages(['https://example.test/a.webp', 'https://example.test/b.webp'])
+		prefetchImages([
+			'https://example.test/a.webp',
+			'https://example.test/b.webp',
+			'https://example.test/a.webp',
+		])
 
 		expect(prefetch).toHaveBeenCalledTimes(2)
 		expect(prefetch).toHaveBeenNthCalledWith(2, 'https://example.test/b.webp')

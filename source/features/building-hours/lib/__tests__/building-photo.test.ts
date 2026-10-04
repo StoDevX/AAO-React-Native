@@ -4,6 +4,7 @@ describe('buildingPhoto', () => {
 	it('gives a St. Olaf venue the photograph its key names, fetched from the server', () => {
 		expect(buildingPhoto('stolaf', 'cage')).toStrictEqual({
 			uri: 'https://stolaf.api.frogpond.tech/v1/images/spaces/cage.webp',
+			cache: 'force-cache',
 		})
 	})
 

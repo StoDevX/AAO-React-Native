@@ -14,6 +14,7 @@ import Animated, {
 } from 'react-native-reanimated'
 import * as c from '@frogpond/colors'
 import {remoteImage} from '../../../lib/remote-images'
+import {RECORD_IMAGE_NAME} from './stations'
 
 import {
 	angleAround,
@@ -184,7 +185,7 @@ export function ScratchableLogo(props: Props): React.ReactNode {
 			onStartShouldSetResponder={() => true}
 		>
 			<Animated.View style={[{width: size, height: size}, turned]}>
-				<Image source={remoteImage('streaming', 'vinyl')} style={styles.disc} />
+				<Image source={remoteImage('streaming', RECORD_IMAGE_NAME)} style={styles.disc} />
 				<View style={[styles.label, {backgroundColor: labelColor}]}>
 					<Image
 						resizeMode="contain"
