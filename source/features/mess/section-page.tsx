@@ -1,9 +1,12 @@
 import * as React from 'react'
 import {useRouter} from 'expo-router'
 import {HStack, ScrollView} from '@expo/ui/swift-ui'
+import {padding} from '@expo/ui/swift-ui/modifiers'
 import {useQuery} from '@tanstack/react-query'
 import {Chip} from './chip'
 import {filterTree} from './lib/filter'
+import {columnGlyph} from './lib/row-glyph'
+import {PAGE_MARGIN} from './mess-page'
 import {PageLoading, PageMessage, PageNotice} from './page-notice'
 import {messCategoriesOptions} from './query'
 import {CategoryStories} from './story-list'
@@ -12,17 +15,25 @@ import type {MessCategory} from './types'
 /** Names every column chip, for a UI test; each is told apart by its label. */
 export const COLUMN_CHIP_ID = 'mess-column-chip'
 
-/** A section's columns, A–Z, as one row of chips that scrolls sideways. */
+/**
+ * The chip row reaches past the page's margins to the screen's edges, so a chip scrolls off the
+ * edge of the screen rather than being cut at the column's; the chips inside keep to the margin.
+ */
+const BLEED = [padding({horizontal: -PAGE_MARGIN})]
+const INSET = [padding({horizontal: PAGE_MARGIN})]
+
+/** A section's columns, A–Z, as one row of chips that scrolls sideways from edge to edge. */
 function ColumnChips({columns}: {columns: MessCategory[]}): React.ReactNode {
 	let router = useRouter()
 	return (
-		<ScrollView axes="horizontal" showsIndicators={false}>
-			<HStack spacing={8}>
+		<ScrollView axes="horizontal" modifiers={BLEED} showsIndicators={false}>
+			<HStack modifiers={INSET} spacing={8}>
 				{columns.map((column) => (
 					<Chip
 						identifier={COLUMN_CHIP_ID}
 						key={column.id}
 						label={column.name}
+						systemImage={columnGlyph(column.name)}
 						onPress={() =>
 							router.navigate({pathname: '/messenger/column', params: {id: String(column.id)}})
 						}
