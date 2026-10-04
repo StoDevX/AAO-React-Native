@@ -10,6 +10,8 @@ import crosswordPlaylist from './fixtures/crossword-playlist-posts.json'
 import springPosts from './fixtures/issue-posts.json'
 import galleryMedia from './fixtures/gallery-media-36238.json'
 import aboutPage from './fixtures/about-page.json'
+import staff from './fixtures/staff-2026-2027.json'
+import staffYears from './fixtures/staff-years.json'
 import {parseLightPosts} from '../lib/issues'
 import {parseMessCategories, parseMessPosts} from '../lib/posts'
 import {QueryClient, onlineManager} from '@tanstack/react-query'
@@ -17,6 +19,7 @@ import {queryClient} from '../../../init/tanstack-query'
 import {
 	MissingMessStoryError,
 	messAboutOptions,
+	messStaffOptions,
 	messCategoryOptions,
 	messFeedOptions,
 	messGalleryOptions,
@@ -177,6 +180,51 @@ describe('messAboutOptions', () => {
 		expect(fetchedHrefs()).toStrictEqual([
 			'https://olafmessenger.com/wp-json/wp/v2/pages?slug=about&_fields=content',
 		])
+	})
+})
+
+describe('messStaffOptions', () => {
+	test('asks for the newest staff year with anyone on it, then everyone on it', async () => {
+		mockManifest.mockResolvedValue({links: []} as unknown as Jrd)
+		mockBody.mockImplementation((href) =>
+			Promise.resolve(href.includes('/staff_year') ? staffYears : staff),
+		)
+
+		let people = await run<{year: string}[]>(messStaffOptions)
+
+		expect(people).toHaveLength(27)
+		expect(fetchedHrefs()).toStrictEqual([
+			'https://olafmessenger.com/wp-json/wp/v2/staff_year?hide_empty=true&per_page=100&_fields=id,name',
+			'https://olafmessenger.com/wp-json/wp/v2/staff_profile?staff_year=1147&per_page=100&_embed=wp:featuredmedia,wp:term&_fields=id,title,content,excerpt,featured_media,_links,_embedded',
+		])
+	})
+})
+
+describe('messStaffOptions, past the first page', () => {
+	test('lists nobody, rather than failing, when no staff year has anyone on it', async () => {
+		mockManifest.mockResolvedValue({links: []} as unknown as Jrd)
+		mockBody.mockResolvedValue([])
+
+		let people = await run<unknown[]>(messStaffOptions)
+
+		expect(people).toStrictEqual([])
+		expect(fetchedHrefs()).toHaveLength(1)
+	})
+
+	test('fetches the next page while a page comes back full', async () => {
+		mockManifest.mockResolvedValue({links: []} as unknown as Jrd)
+		let [first] = staff
+		let full = Array.from({length: 100}, (_, i) => ({...first, id: i + 1}))
+		mockBody.mockImplementation((href) =>
+			Promise.resolve(
+				href.includes('/staff_year') ? staffYears : href.endsWith('&page=2') ? [first] : full,
+			),
+		)
+
+		let people = await run<unknown[]>(messStaffOptions)
+
+		expect(people).toHaveLength(101)
+		expect(fetchedHrefs().at(-1)).toMatch(/&page=2$/u)
 	})
 })
 

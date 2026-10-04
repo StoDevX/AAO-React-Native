@@ -1,6 +1,6 @@
 import * as React from 'react'
-import {StyleSheet, Image} from 'react-native'
-import {Host, List, RNHostView, Section, Text, VStack} from '@expo/ui/swift-ui'
+import {StyleSheet} from 'react-native'
+import {Host, List, Section, Text, VStack} from '@expo/ui/swift-ui'
 import {
 	font,
 	foregroundStyle,
@@ -25,19 +25,8 @@ import {useImageFailure} from '../../../lib/use-image-failure'
 import {HoursSection} from '../hours-section'
 import {LinkListSection} from '../../map/card/link-list-section'
 import {FILL_WIDTH} from '../../../components/tile-layout'
-import {
-	CARD_INSET,
-	PICTURE_CORNER_RADIUS,
-	SECTION_GAP,
-} from '../../../components/place-card/card-style'
-
-/// A picture's row: on the sheet, inset from its sides like every other row,
-/// with a section's gap above it and no hairline.
-const PICTURE_ROW = [
-	listRowBackground('clear'),
-	listRowSeparator('hidden'),
-	listRowInsets({top: SECTION_GAP, leading: CARD_INSET, bottom: 0, trailing: CARD_INSET}),
-]
+import {CARD_INSET, SECTION_GAP, SHEET_ROW} from '../../../components/place-card/card-style'
+import {InsetImageRow} from '../../../components/inset-image-row'
 
 /// The formal name sits straight under the sheet's title, as the map card's
 /// subtitle sits under its name.
@@ -63,18 +52,18 @@ export function BuildingDetailSwiftUI({building, now, campus}: Props): React.Rea
 	let photo = buildingPhoto(campus, building.image)
 	// A photo that cannot be fetched leaves its row out, as no photo does.
 	let [photoFailed, onPhotoError] = useImageFailure(photo?.uri)
-	// A picture is given the row's width outright, since 100% inside
+	// The outline is given the row's width outright, since 100% inside
 	// RNHostView resolves against the whole sheet, and the sheet itself can be
 	// narrower than the window -- an iPad's form sheet, or iOS 26's resting
 	// sheet, inset from the screen's edges. The row fills its width whatever
-	// the picture's, so measuring it can't feed back on itself.
-	let [pictureWidth, setPictureWidth] = React.useState(0)
+	// the outline's, so measuring it can't feed back on itself.
+	let [outlineWidth, setOutlineWidth] = React.useState(0)
 	// The list's row modifiers go last: outside the frame, where the list
 	// reads them.
-	let pictureRow = [
+	let outlineRow = [
 		frame({maxWidth: FILL_WIDTH}),
-		onGeometryChange((box) => setPictureWidth(box.width)),
-		...PICTURE_ROW,
+		onGeometryChange((box) => setOutlineWidth(box.width)),
+		...SHEET_ROW,
 	]
 
 	let links = (building.links || []).map(({title, url}) => ({label: title, href: url}))
@@ -124,26 +113,15 @@ export function BuildingDetailSwiftUI({building, now, campus}: Props): React.Rea
 					<Section>
 						{/* On a wrapping stack because RNHostView takes no modifiers of
 						    its own. */}
-						<VStack modifiers={pictureRow}>
-							<BuildingCutout campus={campus} feature={feature} width={pictureWidth} />
+						<VStack modifiers={outlineRow}>
+							<BuildingCutout campus={campus} feature={feature} width={outlineWidth} />
 						</VStack>
 					</Section>
 				) : null}
 
 				{photo && !photoFailed ? (
 					<Section>
-						<VStack modifiers={pictureRow}>
-							<RNHostView matchContents={true}>
-								<Image
-									accessibilityIgnoresInvertColors={true}
-									onError={onPhotoError}
-									resizeMode="cover"
-									source={photo}
-									style={[styles.image, {width: pictureWidth}]}
-									testID="building-photo"
-								/>
-							</RNHostView>
-						</VStack>
+						<InsetImageRow onError={onPhotoError} source={photo} testID="building-photo" />
 					</Section>
 				) : null}
 
@@ -171,9 +149,5 @@ const styles = StyleSheet.create({
 	host: {
 		flex: 1,
 		backgroundColor: c.systemGroupedBackground,
-	},
-	image: {
-		height: 100,
-		borderRadius: PICTURE_CORNER_RADIUS,
 	},
 })

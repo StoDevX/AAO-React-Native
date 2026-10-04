@@ -20,6 +20,7 @@ import {Provider as ReduxProvider} from 'react-redux'
 import {PersistQueryClientProvider} from '@tanstack/react-query-persist-client'
 import {store, persistor} from '../source/redux'
 import {ChaosGuard} from '../source/chaos/guard'
+import {registerNavigationContainer} from '../source/lib/sheet-dismissal'
 import {navigationGuard} from '../source/lib/navigation-guard-install'
 import {LightTheme, DarkTheme} from '@frogpond/app-theme'
 import {ThemeProvider} from 'expo-router/react-navigation'
@@ -31,6 +32,7 @@ import {IS_PRODUCTION} from '@frogpond/constants'
 import {StatusBar, useColorScheme} from 'react-native'
 
 import {RootErrorBoundary} from '../source/components/root-error-boundary'
+import {ScreenErrorFallback} from '../source/components/screen-error-boundary'
 import {SHEET_RESTING_FRACTION} from '../source/lib/constants'
 import {RadioHost, RadioNowPlayingSheet} from '../source/features/streaming/radio'
 
@@ -81,6 +83,10 @@ function RootLayout(): React.ReactNode {
 		() => navigationContainerRef.addListener('state', navigationGuard.stateChanged),
 		[navigationContainerRef],
 	)
+	React.useEffect(() => {
+		registerNavigationContainer(navigationContainerRef)
+		return () => registerNavigationContainer(undefined)
+	}, [navigationContainerRef])
 	React.useEffect(() => watchQueryFailures(queryClient.getQueryCache(), track), [])
 	React.useEffect(() => startQuickActionSync(), [])
 	React.useEffect(() => {
@@ -107,7 +113,13 @@ function RootLayout(): React.ReactNode {
 							{/* Before the stack, so its hidden player sits beneath every screen. */}
 							<RadioHost />
 							<RadioNowPlayingSheet />
-							<Stack screenOptions={{headerBackButtonDisplayMode: 'minimal'}}>
+							{/* A screen that fails to render shows ScreenErrorFallback in its own place,
+							    so the stack, its headers, and every other screen carry on. Expo Router
+							    wraps each screen, nested stacks' included, in a boundary of its own. */}
+							<Stack
+								screenOptions={{headerBackButtonDisplayMode: 'minimal'}}
+								unstable_screenErrorBoundary={ScreenErrorFallback}
+							>
 								<Stack.Screen name="menus" options={{title: 'Menus'}} />
 								<Stack.Screen name="menu-item-detail" options={DETAIL_SHEET} />
 								<Stack.Screen name="streaming-media" options={{title: 'Streaming Media'}} />

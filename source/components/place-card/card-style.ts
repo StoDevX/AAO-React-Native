@@ -38,6 +38,14 @@ export const HEADING_ROW = [
 	listRowInsets({top: SECTION_GAP, leading: CARD_INSET, bottom: 0, trailing: CARD_INSET}),
 ]
 
+/// A row on the sheet, inset from its sides like the Hours sheet's, with a
+/// section's gap above it and no hairline.
+export const SHEET_ROW = [
+	listRowBackground('clear'),
+	listRowSeparator('hidden'),
+	listRowInsets({top: SECTION_GAP, leading: CARD_INSET, bottom: 0, trailing: CARD_INSET}),
+]
+
 /// A heading row holding a 44pt control beside its 24pt text: the control
 /// overhangs the text by 10pt above and below, so the row gives those back
 /// and the heading keeps its place.

@@ -340,7 +340,9 @@ const GALLERY: MessStory = {
 const PLAYLIST_PAGE = readFileSync(join(__dirname, 'fixtures/playlist-page-36532.html'), 'utf8')
 
 const PROFILE: StaffProfile = {
+	id: 1,
 	name: 'Kenzie Nguyen',
+	role: 'Staff Writer',
 	bio: 'Kenzie is a senior.',
 	photo: null,
 	year: '2025-2026',
