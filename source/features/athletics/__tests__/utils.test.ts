@@ -20,7 +20,7 @@ const makeFakeScore = (
 		date_utc: parsedDate.toISOString(),
 		sport: extra.sport ?? 'Baseball',
 		result: extra.result ?? '',
-		status: {indicator: 'A', value: '', ...extra.status},
+		status: {indicator: 'scheduled', value: '', ...extra.status},
 		parsedDate,
 		// minimal fields — only what utils needs
 	}) as ProcessedScore
@@ -136,9 +136,12 @@ describe('groupScoresByDate', () => {
 })
 
 describe('sectionsForTab', () => {
-	const ongoing = makeFakeScore(new Date(2026, 0, 15), {status: {indicator: 'O'}})
-	const finalized = makeFakeScore(new Date(2026, 0, 15), {status: {indicator: 'A'}, result: 'W'})
-	const upcomingGame = makeFakeScore(new Date(2026, 0, 15), {status: {indicator: 'A'}, result: ''})
+	const ongoing = makeFakeScore(new Date(2026, 0, 15), {status: {indicator: 'live'}})
+	const finalized = makeFakeScore(new Date(2026, 0, 15), {
+		status: {indicator: 'final'},
+		result: 'W',
+	})
+	const upcomingGame = makeFakeScore(new Date(2026, 0, 15), {status: {indicator: 'scheduled'}})
 
 	it('splits Today into Ongoing, Finalized, and Upcoming, omitting empty sections', () => {
 		const grouped: DateGroupedScores[] = [

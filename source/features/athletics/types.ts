@@ -6,8 +6,20 @@ export interface LocationInfo {
 	facility: string
 }
 
+/**
+ * Where a game stands, as ccc-server decides it from the scores feed, the
+ * livestats feed and the clock.
+ *
+ * - `scheduled`: not yet kicked off
+ * - `started`: past kickoff, but nothing reports a score yet
+ * - `live`: livestats reports the game under way, with a score
+ * - `unofficial-final`: livestats reports the game over; no official result yet
+ * - `final`: the scores feed has posted a result
+ */
+export type GameState = 'scheduled' | 'started' | 'live' | 'unofficial-final' | 'final'
+
 export interface StatusInfo {
-	indicator: 'O' | 'A'
+	indicator: GameState
 	value: string
 }
 

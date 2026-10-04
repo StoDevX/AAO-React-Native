@@ -3,7 +3,7 @@ import {isUITesting} from '@frogpond/launch-arguments'
 import {queryOptions} from '@tanstack/react-query'
 import {UITEST_SCORES} from './__fixtures__/scores'
 import {Score} from './types'
-import {toProcessedScores} from './utils'
+import {isInPlay, toProcessedScores} from './utils'
 
 export const keys = {
 	all: ['athletics', 'scores'] as const,
@@ -27,9 +27,6 @@ export const athleticsOptions = queryOptions({
 		if (!scores?.length) {
 			return IDLE_INTERVAL
 		}
-		// 'O' marks a game in progress, the same reading ccc-server's cache TTL
-		// uses; 'A' covers every game not being played, scheduled or final.
-		const hasOngoingGame = scores.some((score) => score.status.indicator === 'O')
-		return hasOngoingGame ? ACTIVE_GAME_INTERVAL : IDLE_INTERVAL
+		return scores.some(isInPlay) ? ACTIVE_GAME_INTERVAL : IDLE_INTERVAL
 	},
 })

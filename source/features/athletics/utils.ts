@@ -1,4 +1,11 @@
-import {DateGroupedScores, DateSection, ProcessedScore, Score, SportSection} from './types'
+import {
+	DateGroupedScores,
+	DateSection,
+	GameState,
+	ProcessedScore,
+	Score,
+	SportSection,
+} from './types'
 import {Constants} from './constants'
 import {isFilterActive} from './store'
 
@@ -17,6 +24,17 @@ const MONTH_NAMES = [
 	'November',
 	'December',
 ]
+
+/**
+ * States in which a game can change from one minute to the next -- the same
+ * set ccc-server re-reads the feeds every minute for.
+ */
+const IN_PLAY: ReadonlySet<GameState> = new Set(['started', 'live', 'unofficial-final'])
+
+/** True while a game is under way or waiting on its official result. */
+export function isInPlay(score: Score): boolean {
+	return IN_PLAY.has(score.status.indicator)
+}
 
 const MDY_DATE = /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/u
 
@@ -131,7 +149,8 @@ export function groupScoresByDate(
 
 /**
  * Derives the sections to render for a date-bucket tab. Today splits into
- * Ongoing/Finalized/Upcoming by game status; Yesterday shows every game with
+ * Ongoing/Finalized/Upcoming by game state, with a game livestats reports
+ * over counted as finalized while its official result is pending; Yesterday shows every game with
  * no result filter; Upcoming is the per-day sections with the fixed
  * Yesterday/Today buckets stripped. Empty sections are dropped throughout.
  */
@@ -147,16 +166,12 @@ export function sectionsForTab(
 
 		case Constants.TODAY: {
 			const scores = grouped.find((s) => s.title === Constants.TODAY)?.data ?? []
+			const inStates = (...states: GameState[]) =>
+				scores.filter((s) => states.includes(s.status.indicator))
 			return [
-				{title: Constants.ONGOING, data: scores.filter((s) => s.status.indicator === 'O')},
-				{
-					title: Constants.FINALIZED,
-					data: scores.filter((s) => s.status.indicator !== 'O' && s.result !== ''),
-				},
-				{
-					title: Constants.UPCOMING,
-					data: scores.filter((s) => s.status.indicator !== 'O' && s.result === ''),
-				},
+				{title: Constants.ONGOING, data: inStates('started', 'live')},
+				{title: Constants.FINALIZED, data: inStates('unofficial-final', 'final')},
+				{title: Constants.UPCOMING, data: inStates('scheduled')},
 			].filter((s) => s.data.length > 0)
 		}
 
@@ -241,7 +256,8 @@ export function shortSportName(sport: string): string {
 
 /** What a score row says about a game, and how it says it. */
 export interface GameSummary {
-	/** True before a game starts, when there is a kickoff time but no score. */
+	/** True while there is a kickoff time but no score: before a game starts,
+	 * and after kickoff until something reports a score. */
 	showsTime: boolean
 	/** The kickoff time, or the result and score once there is one. */
 	label: string
@@ -253,12 +269,12 @@ export interface GameSummary {
 /**
  * Decides whether a score row shows a kickoff time or a scoreline.
  *
- * A game that has not started (status `A`) and carries no result shows its
- * time; anything ongoing or finished shows the score, with the result letter
- * in front of it once there is one.
+ * A game that is scheduled, or has started with no score reported yet, shows
+ * its time -- ccc-server blanks the score for both. Anything live or finished
+ * shows the score, with the result letter in front of it once there is one.
  */
 export function gameSummary(score: ProcessedScore): GameSummary {
-	let showsTime = score.status.indicator === 'A' && score.result === ''
+	let showsTime = score.status.indicator === 'scheduled' || score.status.indicator === 'started'
 	// All-day and multi-day fixtures carry no `time` string.
 	let label = showsTime
 		? score.time || 'All day'

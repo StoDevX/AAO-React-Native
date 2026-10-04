@@ -14,13 +14,16 @@ const THIRTY_SECONDS = 30 * 1000
 const FIVE_MINUTES = 5 * 60 * 1000
 
 describe('athleticsOptions.refetchInterval', () => {
-	test('polls every thirty seconds while a game is ongoing', () => {
-		const data = [makeScore('O')]
-		expect(refetchInterval({state: {data}})).toBe(THIRTY_SECONDS)
-	})
+	test.each(['started', 'live', 'unofficial-final'] as const)(
+		'polls every thirty seconds while a game is %s',
+		(indicator) => {
+			const data = [makeScore('final'), makeScore(indicator)]
+			expect(refetchInterval({state: {data}})).toBe(THIRTY_SECONDS)
+		},
+	)
 
-	test('polls every five minutes when no game is ongoing', () => {
-		const data = [makeScore('A'), makeScore('A')]
+	test('polls every five minutes when no game is in play', () => {
+		const data = [makeScore('scheduled'), makeScore('final')]
 		expect(refetchInterval({state: {data}})).toBe(FIVE_MINUTES)
 	})
 
