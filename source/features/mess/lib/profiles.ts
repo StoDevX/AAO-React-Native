@@ -22,11 +22,16 @@ const MAX_ROLE_WORDS = 8
 
 /**
  * A profile's role, from its excerpt. WordPress fills a blank excerpt with the start of the bio,
- * cut off with an ellipsis, which is no role; so is any excerpt longer than a title runs.
+ * cut off with an ellipsis, which is no role; so is any excerpt longer than a title runs. A bio
+ * short enough to need no cutting becomes the whole excerpt, with no ellipsis, so an excerpt that
+ * is the bio is no role either.
  */
-function roleOf(excerptHtml: string): string {
+function roleOf(excerptHtml: string, bio: string): string {
 	let excerpt = fastGetTrimmedText(excerptHtml)
-	let made = TRAILING_ELLIPSIS.test(excerpt) || excerpt.split(' ').length > MAX_ROLE_WORDS
+	let made =
+		TRAILING_ELLIPSIS.test(excerpt) ||
+		excerpt.split(' ').length > MAX_ROLE_WORDS ||
+		(excerpt !== '' && excerpt === bio)
 	return made ? '' : excerpt
 }
 
@@ -69,7 +74,7 @@ export function parseStaffProfiles(body: unknown): StaffProfile[] {
 				{
 					id: profile.data.id,
 					name: decode(profile.data.title.rendered),
-					role: roleOf(profile.data.excerpt?.rendered ?? ''),
+					role: roleOf(profile.data.excerpt?.rendered ?? '', bio),
 					bio,
 					photo: medium
 						? {url: medium.source_url, width: medium.width, height: medium.height}

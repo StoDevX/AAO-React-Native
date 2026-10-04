@@ -86,6 +86,17 @@ describe('parseStaffProfiles', () => {
 		expect(parsed?.role).toBe('')
 	})
 
+	it('reads no role from an excerpt WordPress made from a bio too short to cut', () => {
+		let [parsed] = parseStaffProfiles([
+			{
+				...profile('<p>Sophomore English major from Northfield.</p>'),
+				excerpt: {rendered: '<p>Sophomore English major from Northfield.</p>\n'},
+			},
+		])
+		expect(parsed?.role).toBe('')
+		expect(parsed?.bio).toBe('Sophomore English major from Northfield.')
+	})
+
 	it('keeps a role that happens to open the bio', () => {
 		let [parsed] = parseStaffProfiles([
 			{
