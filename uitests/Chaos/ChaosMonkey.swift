@@ -405,25 +405,10 @@ final class ChaosMonkey {
 		return nil
 	}
 
-	/// Warns once per screen and target of a control VoiceOver cannot name, or
-	/// one smaller than 44pt a side. Text fields are exempt from the size check,
-	/// as is the navigation bar's Back button, which the system draws.
+	/// Warns once per run of each screen's target that `targetWarnings` calls out.
 	func checkTargets(_ observation: ChaosObservation) {
-		let screen = observation.title
-		for target in observation.targets {
-			let key = targetKey(target)
-			let size = "\(Int(target.frame.width))×\(Int(target.frame.height))"
-			if target.label.isEmpty, reportedTargets.insert("unlabelled|\(screen)|\(key)").inserted {
-				warnings.append("unlabelled: \(key) \(size) on \"\(screen)\"")
-			}
-			let exempt =
-				target.type == .textField || target.type == .searchField
-				|| target.identifier == TestIdentifiers.Navigation.backButton
-				|| TestIdentifiers.Chaos.smallTargetAllowList.contains(target.identifier)
-			let small = target.frame.width < 44 || target.frame.height < 44
-			if small && !exempt, reportedTargets.insert("small|\(screen)|\(key)").inserted {
-				warnings.append("small target: \(key) \(size) on \"\(screen)\"")
-			}
+		for (key, warning) in targetWarnings(observation) where reportedTargets.insert(key).inserted {
+			warnings.append(warning)
 		}
 	}
 

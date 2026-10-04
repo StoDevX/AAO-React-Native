@@ -344,10 +344,15 @@ function firstLine(text) {
 	return String(text).split('\n')[0].trim()
 }
 
-/** A monkey warning's kind and detail: `kind: detail`, or a bare line named by what comes before ` (`. */
+/**
+ * A monkey warning's kind and detail: `kind: detail`, with the detail possibly
+ * empty, or a bare line named by what comes before ` (`.
+ */
 function splitWarning(line) {
-	let colon = line.indexOf(': ')
-	if (colon > 0) return {kind: line.slice(0, colon), detail: line.slice(colon + 2)}
+	let colon = /:(?: |$)/u.exec(line)
+	if (colon && colon.index > 0) {
+		return {kind: line.slice(0, colon.index), detail: line.slice(colon.index + colon[0].length)}
+	}
 	let paren = line.indexOf(' (')
 	return {kind: paren > 0 ? line.slice(0, paren) : line, detail: line}
 }

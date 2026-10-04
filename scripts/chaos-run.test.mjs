@@ -784,3 +784,12 @@ test('cuts a long example short, so each group fits on a line', () => {
 	})
 	assert.equal(text.split('\n')[0], `  console-error ×1  ${'x'.repeat(99)}…`)
 })
+
+test('names a warning whose detail is empty by what comes before its colon', () => {
+	let summary = summarizeRun({
+		findings: [],
+		warnings: ['system alert: ', 'system alert:'],
+		ignore: [],
+	})
+	assert.deepEqual(summary.warnings, [{kind: 'system alert', count: 2, example: ''}])
+})

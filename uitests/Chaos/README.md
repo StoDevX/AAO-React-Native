@@ -97,8 +97,12 @@ Then decide whose bug it is:
   icon-change notice, appeared and the monkey dismissed it. The monkey taps
   through SpringBoard, so an alert that keeps the app from going quiet never
   holds a tap up.
-- `unlabelled`: something to press that VoiceOver has no name for.
-- `small target`: something to press narrower or shorter than 44pt. XCUITest
+- `unlabelled`: a button, link, switch, tab, segmented control or slider
+  that VoiceOver has no name for. Cells and layout read their children, so
+  they are not checked.
+- `small target`: something to press narrower or shorter than 44pt, other
+  than the system's own: bar items, the Back button, the sheet grabber and
+  switches. XCUITest
   sees the frame, not a `hitSlop`, so a control that is bigger to the touch
   is a false alarm: give it a 44pt frame, or add its identifier to
   `TestIdentifiers.Chaos.smallTargetAllowList` with a comment saying why.

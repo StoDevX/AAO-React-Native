@@ -6,6 +6,9 @@ struct ChaosTarget {
 	let label: String
 	let type: XCUIElement.ElementType
 	let frame: CGRect
+	/// Whether it sits in a navigation bar, toolbar or tab bar, whose items the
+	/// system draws and gives a 44pt hit area whatever their frame.
+	var inBar = false
 }
 
 /// What the screen looked like after a step, from one accessibility snapshot.
@@ -51,7 +54,7 @@ struct ChaosOracle {
 		var grabber: CGRect?
 		var title = ""
 
-		func visit(_ node: XCUIElementSnapshot) {
+		func visit(_ node: XCUIElementSnapshot, inBar: Bool) {
 			let id = node.identifier
 			if id == TestIdentifiers.Chaos.beacon {
 				beacon = node.label
@@ -80,15 +83,19 @@ struct ChaosOracle {
 			let pressable = Self.actionable.contains(node.elementType)
 				&& (node.elementType != .other || !id.isEmpty)
 			if onScreen && pressable && node.isEnabled {
-				let target = ChaosTarget(identifier: id, label: node.label, type: node.elementType, frame: frame)
+				let target = ChaosTarget(
+					identifier: id, label: node.label, type: node.elementType, frame: frame, inBar: inBar)
 				targets.append(target)
 				if node.elementType == .textField || node.elementType == .searchField {
 					fields.append(target)
 				}
 			}
-			node.children.forEach(visit)
+			let bars: Set<XCUIElement.ElementType> = [.navigationBar, .toolbar, .tabBar]
+			for child in node.children {
+				visit(child, inBar: inBar || bars.contains(node.elementType))
+			}
 		}
-		visit(snapshot)
+		visit(snapshot, inBar: false)
 
 		// Sorted by position so the same screen gives the same order on replay.
 		let byPosition: (ChaosTarget, ChaosTarget) -> Bool = {
@@ -175,4 +182,39 @@ struct ChaosOracle {
 struct ChaosStop: Error, Equatable {
 	let reason: String
 	init(_ reason: String) { self.reason = reason }
+}
+
+/// Controls VoiceOver names from their own label. A cell's text sits in its
+/// children, and an `.other` the oracle counts as pressable is mostly layout,
+/// so neither is checked for a label.
+private let labelledTypes: Set<XCUIElement.ElementType> = [
+	.button, .link, .switch, .tab, .segmentedControl, .slider,
+]
+
+/// The accessibility warnings the targets on screen deserve, each with the key
+/// that reports it once per run: a control VoiceOver cannot name, and one
+/// smaller than 44pt a side. The system's own controls are left alone: the
+/// Back button and the sheet grabber, a bar's items, whose hit area the system
+/// sets, and switches, which are as big as UIKit draws them. Text fields are
+/// exempt from the size check.
+func targetWarnings(_ observation: ChaosObservation) -> [(key: String, warning: String)] {
+	let screen = observation.title
+	var found: [(key: String, warning: String)] = []
+	for target in observation.targets {
+		let key = targetKey(target)
+		let size = "\(Int(target.frame.width))×\(Int(target.frame.height))"
+		let system =
+			target.identifier == TestIdentifiers.Navigation.backButton
+			|| target.label == TestIdentifiers.Navigation.sheetGrabber || target.inBar
+		if system { continue }
+		if target.label.isEmpty && labelledTypes.contains(target.type) {
+			found.append(("unlabelled|\(screen)|\(key)", "unlabelled: \(key) \(size) on \"\(screen)\""))
+		}
+		let sized = ![.textField, .searchField, .switch].contains(target.type)
+			&& !TestIdentifiers.Chaos.smallTargetAllowList.contains(target.identifier)
+		if sized && (target.frame.width < 44 || target.frame.height < 44) {
+			found.append(("small|\(screen)|\(key)", "small target: \(key) \(size) on \"\(screen)\""))
+		}
+	}
+	return found
 }
