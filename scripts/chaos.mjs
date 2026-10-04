@@ -11,6 +11,7 @@ import {
 	readdirSync,
 	readFileSync,
 	realpathSync,
+	renameSync,
 	rmSync,
 	writeFileSync,
 } from 'node:fs'
@@ -25,6 +26,7 @@ import {
 	recordedTapes,
 	tapeFiles,
 	parseChaosArgs,
+	readableAttachmentNames,
 	replayVerdict,
 	jsSourceProblem,
 	metroProblem,
@@ -32,6 +34,7 @@ import {
 	testFailureMessages,
 	stoppingFindings,
 	testEnv,
+	withRecordedRotation,
 	withReplayBudget,
 } from './chaos-run.mjs'
 import {
@@ -67,7 +70,7 @@ function main() {
 			}
 		: null
 	if (recorded) {
-		options = withReplayBudget(options, recorded.steps)
+		options = withRecordedRotation(withReplayBudget(options, recorded.steps), recorded.steps)
 	}
 
 	let problem = jsSourceProblem({env: process.env, hasEmbeddedBundle: builtAppHasBundle()})
@@ -161,6 +164,7 @@ function main() {
 		attachmentsError = error.stderr || error.message
 		console.warn(`could not export the run's attachments: ${attachmentsError}`)
 	}
+	nameAttachments(join(out, 'attachments'))
 
 	let steps = stepLines(join(out, 'attachments')) ?? []
 	let stop = stopReason(join(out, 'attachments'))
@@ -273,4 +277,22 @@ function stepLines(dir) {
 /** Why the monkey stopped the run, or null if it used up its budget. */
 function stopReason(dir) {
 	return attachmentText(dir, 'chaos-stop')?.trim() || null
+}
+
+/**
+ * Renames each exported attachment in `dir` from xcresulttool's UUID to the
+ * name it was attached under, and points the manifest at the new names, so
+ * `attachmentText` still finds them.
+ */
+function nameAttachments(dir) {
+	let manifestPath = join(dir, 'manifest.json')
+	if (!existsSync(manifestPath)) return
+	let manifest = JSON.parse(readFileSync(manifestPath, 'utf8'))
+	let names = readableAttachmentNames(manifest)
+	for (let attachment of manifest.flatMap((test) => test.attachments)) {
+		let name = names.get(attachment.exportedFileName)
+		renameSync(join(dir, attachment.exportedFileName), join(dir, name))
+		attachment.exportedFileName = name
+	}
+	writeFileSync(manifestPath, `${JSON.stringify(manifest, null, '\t')}\n`)
 }

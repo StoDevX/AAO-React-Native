@@ -47,6 +47,7 @@ export function parseChaosArgs(argv) {
 		replay: null,
 		prebuilt: false,
 		overwrite: false,
+		rotate: false,
 	}
 	for (let i = 0; i < argv.length; i++) {
 		let flag = argv[i]
@@ -75,6 +76,9 @@ export function parseChaosArgs(argv) {
 				break
 			case '--overwrite':
 				options.overwrite = true
+				break
+			case '--rotate':
+				options.rotate = true
 				break
 			default:
 				throw new Error(`unknown flag ${flag}`)
@@ -106,6 +110,19 @@ export function parseChaosArgs(argv) {
 /** A replay's options with its step budget, by default the recording's step count. */
 export function withReplayBudget(options, recordedSteps) {
 	return {...options, steps: options.steps ?? recordedSteps?.length ?? 0}
+}
+
+/**
+ * A replay's options with rotation as the recording had it, read from its
+ * rotate steps: one that did nothing is logged `off`. A recording with no
+ * rotate step replays the same either way, so the flag given stands.
+ */
+export function withRecordedRotation(options, recordedSteps) {
+	let rotations = (recordedSteps ?? [])
+		.map((line) => JSON.parse(line))
+		.filter((step) => step.action === 'rotate')
+	if (rotations.length === 0) return options
+	return {...options, rotate: rotations[0].label !== 'off'}
 }
 
 /**
@@ -205,7 +222,33 @@ export function testEnv(options) {
 		TEST_RUNNER_AAO_CHAOS_FAULT_RATE: options.faultRate,
 	}
 	if (options.replay) env.TEST_RUNNER_AAO_CHAOS_REPLAY = '1'
+	if (options.rotate) env.TEST_RUNNER_AAO_CHAOS_ROTATE = '1'
 	return env
+}
+
+/** XCTest's suffix on an exported attachment's suggested name: `_<index>_<UUID>` before the extension. */
+const ATTACHMENT_SUFFIX =
+	/_\d+_[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}(?=\.[^.]+$|$)/iu
+
+/**
+ * Each exported attachment's file name, mapped to the name it was attached
+ * under. A second attachment of one name is numbered, so neither is lost.
+ */
+export function readableAttachmentNames(manifest) {
+	let names = new Map()
+	let taken = new Set()
+	for (let attachment of manifest.flatMap((test) => test.attachments)) {
+		let name = attachment.suggestedHumanReadableName.replace(ATTACHMENT_SUFFIX, '')
+		let dot = name.lastIndexOf('.')
+		let [stem, extension] = dot > 0 ? [name.slice(0, dot), name.slice(dot)] : [name, '']
+		let candidate = name
+		for (let n = 2; taken.has(candidate); n++) {
+			candidate = `${stem} ${n}${extension}`
+		}
+		taken.add(candidate)
+		names.set(attachment.exportedFileName, candidate)
+	}
+	return names
 }
 
 /** The first step at which two step logs disagree, or null if one is a prefix of the other. */

@@ -19,7 +19,9 @@ import {
 	runOutcome,
 	stoppingFindings,
 	testEnv,
+	readableAttachmentNames,
 	testFailureMessages,
+	withRecordedRotation,
 	withReplayBudget,
 } from './chaos-run.mjs'
 
@@ -38,6 +40,7 @@ test('defaults to a random seed, 10 minutes and 0.25', () => {
 	assert.equal(options.faultRate, '0.25')
 	assert.equal(options.replay, null)
 	assert.equal(options.overwrite, false)
+	assert.equal(options.rotate, false)
 })
 
 test('reads every flag', () => {
@@ -53,6 +56,7 @@ test('reads every flag', () => {
 			'0.5',
 			'--prebuilt',
 			'--overwrite',
+			'--rotate',
 		]),
 		{
 			seed: 42,
@@ -62,6 +66,7 @@ test('reads every flag', () => {
 			replay: null,
 			prebuilt: true,
 			overwrite: true,
+			rotate: true,
 		},
 	)
 })
@@ -560,4 +565,74 @@ test('collects the failure messages from xcresulttool test results', () => {
 	}
 	assert.deepEqual(testFailureMessages(results), ['failed: caught error: "No Metro was named"'])
 	assert.deepEqual(testFailureMessages({}), [])
+})
+
+test('hands the run --rotate only when asked', () => {
+	let base = {seed: 1, steps: 10, duration: 60, faultRate: '0.25', replay: null}
+	assert.equal(testEnv({...base, rotate: false}).TEST_RUNNER_AAO_CHAOS_ROTATE, undefined)
+	assert.equal(testEnv({...base, rotate: true}).TEST_RUNNER_AAO_CHAOS_ROTATE, '1')
+})
+
+/** A recorded step log line for `action`, with `label`. */
+function step(action, label = '') {
+	return JSON.stringify({action, label})
+}
+
+test('a replay rotates as the recording did, whatever it was told', () => {
+	let turned = [step('tap'), step('rotate')]
+	let stayed = [step('tap'), step('rotate', 'off')]
+	assert.equal(withRecordedRotation({rotate: false}, turned).rotate, true)
+	assert.equal(withRecordedRotation({rotate: true}, stayed).rotate, false)
+})
+
+test('a replay of a recording that never rotated keeps the flag it was given', () => {
+	assert.equal(withRecordedRotation({rotate: true}, [step('tap')]).rotate, true)
+	assert.equal(withRecordedRotation({rotate: false}, null).rotate, false)
+})
+
+/** One test's attachments, as xcresulttool's manifest.json lists them. */
+function manifest(...names) {
+	return [
+		{
+			attachments: names.map((name, i) => ({
+				exportedFileName: `EXPORT-${i}.bin`,
+				suggestedHumanReadableName: name,
+			})),
+		},
+	]
+}
+
+test('names each attachment for what it is, without its UUID', () => {
+	let names = readableAttachmentNames(
+		manifest(
+			'chaos-steps_0_1AAFA218-54BB-42E5-B847-A2EB09C46066.jsonl',
+			'chaos stop screen (portrait)_0_369403D5-2FF0-496A-9162-D8310B06B0A2.png',
+			'chaos-stop_0_369403D5-2FF0-496A-9162-D8310B06B0A3.txt',
+		),
+	)
+	assert.deepEqual(
+		[...names],
+		[
+			['EXPORT-0.bin', 'chaos-steps.jsonl'],
+			['EXPORT-1.bin', 'chaos stop screen (portrait).png'],
+			['EXPORT-2.bin', 'chaos-stop.txt'],
+		],
+	)
+})
+
+test('numbers a second attachment of the same name rather than overwrite the first', () => {
+	let names = readableAttachmentNames(
+		manifest(
+			'chaos trapped screen (portrait)_0_369403D5-2FF0-496A-9162-D8310B06B0A2.png',
+			'chaos trapped screen (portrait)_1_469403D5-2FF0-496A-9162-D8310B06B0A2.png',
+		),
+	)
+	assert.deepEqual(
+		[...names.values()],
+		['chaos trapped screen (portrait).png', 'chaos trapped screen (portrait) 2.png'],
+	)
+})
+
+test('keeps a name that has no UUID to drop', () => {
+	assert.deepEqual([...readableAttachmentNames(manifest('notes.txt')).values()], ['notes.txt'])
 })

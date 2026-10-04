@@ -27,6 +27,7 @@ That runs a random seed for ten minutes and writes everything it saw to
 | `--replay logs/chaos/<seed>` | Replay a run against its recorded responses |
 | `--prebuilt` | Skip the build when nothing native changed |
 | `--overwrite` | Record over an earlier run of the same seed |
+| `--rotate` | Let the monkey turn the device; without it, a rotate step does nothing |
 
 A run refuses to record into a `logs/chaos/<seed>/` that already exists, so
 re-running a seed never deletes the evidence of the last one; pass
@@ -54,7 +55,7 @@ A run that exits 1 found something. In `logs/chaos/<seed>/`:
 1. **`outcome.json`** names the stop reason. `native crash`, `hang`,
    `error screen` and `js: <kind>: <message>` come from the monkey; a
    stopping line in the findings file can fail the run on its own.
-2. **`attachments/`** holds the evidence:
+2. **`attachments/`** holds the evidence, each file named for what it is:
    - the `chaos stop screen` screenshot, taken as the monkey stopped and named
      for its orientation. XCTest's own failure screenshot is taken after the
      device turns back to portrait, so trust this one;
