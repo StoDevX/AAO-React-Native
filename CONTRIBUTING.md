@@ -114,3 +114,4 @@ To promote a release candidate with nothing new to say, add an empty one with `m
 
 The Release workflow opens that pull request with `RELEASE_TOKEN` when the repository has it, and with the default token otherwise.
 A pull request the default token opens starts no other workflows, so Check will not run on it.
+The workflow also labels the Version PR `ci/skip-e2e`, so the UI tests skip it.
