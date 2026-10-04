@@ -60,6 +60,17 @@ struct HoursScreen: Screen {
 		return self
 	}
 
+	/// Type `more` after the query already in the field, and read the whole
+	/// query back. Returns it, for the no-results check that follows.
+	func refineSearch(adding more: String) -> String {
+		let before = searchField.value as? String ?? ""
+		searchField.typeText(more)
+		XCTAssertEqual(
+			searchField.value as? String, before + more,
+			"Typing should add to the query in the search field")
+		return before + more
+	}
+
 	/// Assert the screen reports that `query` matched nothing, as distinct from
 	/// the genuine no-data message -- a search with no matches should never
 	/// read as a data outage.
@@ -574,23 +585,6 @@ struct HoursScreen: Screen {
 		XCTAssertTrue(
 			app.navigationBars.staticTexts[name].waitForNonExistence(timeout: 15),
 			"The detail sheet, titled \(name), should have closed")
-		return self
-	}
-
-	/// Assert the detail sheet shows a cutout map framing `buildingName` --
-	/// `BuildingCutout`'s own accessibility label, not a testID, since the
-	/// element XCUITest gets back for a plain accessibility-labelled native
-	/// view carries no identifier. Scrolls first: short content (Registrar's,
-	/// say) can already show everything the smaller detent offers, but nothing
-	/// here assumes that -- the list is scrolled toward the cutout's expected
-	/// position the same way `scrollUntilExists` proves any lazily-built row.
-	@discardableResult
-	func verifyCutoutShown(for buildingName: String) -> Self {
-		let cutout = app.elementWithLabel(startingWith: TestIdentifiers.Hours.cutoutLabelPrefix + buildingName)
-		scrollUntilExists(cutout)
-		XCTAssertTrue(
-			cutout.waitForExistence(timeout: 30),
-			"The detail sheet should show a cutout map framing \(buildingName)")
 		return self
 	}
 }

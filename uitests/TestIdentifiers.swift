@@ -900,20 +900,6 @@ struct TestIdentifiers {
 		static let reportScreenTitle = reportAction
 		/// The report screen's own submit control, in the navigation bar.
 		static let submitReportAction = "Submit Report"
-
-		/// A St. Olaf venue whose `building` key (`toh`) resolves to a
-		/// differently-named feature -- Tomson Hall, not Registrar -- so a test
-		/// asserting the cutout frames `aBuildingWithCutoutFrames` only passes if
-		/// the join actually used the key. `The Cage`, whose key (`thecage`)
-		/// happens to share wording with its own name, would pass even with a
-		/// broken join that fell back to matching on name.
-		static let aBuildingWithCutout = "Registrar"
-		static let aBuildingWithCutoutFrames = "Tomson Hall"
-
-		/// The prefix `BuildingCutout` sets as its accessibility label, naming
-		/// the building it frames. Mirrors the template literal in
-		/// source/features/building-hours/detail/building-cutout.tsx.
-		static let cutoutLabelPrefix = "Map showing "
 	}
 
 	// MARK: - Course Catalog
