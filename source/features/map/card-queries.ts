@@ -37,7 +37,4 @@ export const cardDirectoryOptions = (campus: Campus) => ({
 	queryFn: ({signal}: {signal: AbortSignal}) => fetchDirectories(signal),
 	enabled: campus === 'stolaf',
 	staleTime: CARD_STALE_TIME,
-	// Offline, an online-only query pauses without calling its function, and
-	// the bundled copy -- the fallback inside it -- would never stand in.
-	networkMode: 'offlineFirst' as const,
 })
