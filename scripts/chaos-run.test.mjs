@@ -4,6 +4,7 @@ import {test} from 'node:test'
 
 import {
 	chaosOutputDir,
+	coldStartLaunches,
 	checkAppContainer,
 	checkOutputDir,
 	isRunFile,
@@ -19,6 +20,7 @@ import {
 	parseIgnoreList,
 	REPLAY_DURATION,
 	replayVerdict,
+	runSettings,
 	runOutcome,
 	stoppingFindings,
 	stopLaunch,
@@ -28,6 +30,7 @@ import {
 	readableAttachmentNames,
 	testFailureMessages,
 	withRecordedRotation,
+	withRecordedSettings,
 	withReplayBudget,
 } from './chaos-run.mjs'
 
@@ -63,6 +66,7 @@ test('reads every flag', () => {
 			'--prebuilt',
 			'--overwrite',
 			'--rotate',
+			'--session',
 		]),
 		{
 			seed: 42,
@@ -73,6 +77,7 @@ test('reads every flag', () => {
 			prebuilt: true,
 			overwrite: true,
 			rotate: true,
+			profile: 'session',
 		},
 	)
 })
@@ -798,4 +803,54 @@ test('names a warning whose detail is empty by what comes before its colon', () 
 test('a run stops in the launch of its last step, or the first launch when it took none', () => {
 	assert.equal(stopLaunch([JSON.stringify({launch: 0}), JSON.stringify({launch: 3})]), 3)
 	assert.equal(stopLaunch([]), 0)
+})
+
+test('reads --session, and defaults to fuzzing', () => {
+	assert.equal(parseChaosArgs([]).profile, 'fuzz')
+	assert.equal(parseChaosArgs(['--session']).profile, 'session')
+})
+
+test('hands a session its profile, and leaves a fuzzing run as it was', () => {
+	let base = {seed: 1, steps: 10, duration: 60, faultRate: '0.25', replay: null, rotate: false}
+	assert.equal(testEnv({...base, profile: 'session'}).TEST_RUNNER_AAO_CHAOS_PROFILE, 'session')
+	assert.equal(testEnv({...base, profile: 'fuzz'}).TEST_RUNNER_AAO_CHAOS_PROFILE, undefined)
+})
+
+test("records a run's settings, and a replay takes them", () => {
+	let settings = runSettings({profile: 'session', rotate: true, seed: 1})
+	assert.deepEqual(settings, {profile: 'session', rotate: true})
+	let replay = withRecordedSettings({profile: 'fuzz', rotate: false}, JSON.stringify(settings), [])
+	assert.equal(replay.profile, 'session')
+	assert.equal(replay.rotate, true)
+})
+
+test('a replay of a recording without run.json is a fuzzing run, its rotation read from its steps', () => {
+	let turned = [JSON.stringify({action: 'rotate', label: ''})]
+	let replay = withRecordedSettings({profile: 'session', rotate: false}, null, turned)
+	assert.equal(replay.profile, 'fuzz')
+	assert.equal(replay.rotate, true)
+})
+
+test('finds the launches a kill began', () => {
+	let steps = [
+		JSON.stringify({action: 'tap', launch: 0}),
+		JSON.stringify({action: 'kill', launch: 1}),
+		JSON.stringify({action: 'tap', launch: 1}),
+		JSON.stringify({action: 'openRoute', launch: 2}),
+	]
+	assert.deepEqual(coldStartLaunches(steps), new Set([1]))
+})
+
+test("marks a finding from a cold start's launch", () => {
+	let made = (kind, message, launch) => ({kind, message, stack: null, at: '', launch})
+	let summary = summarizeRun({
+		findings: [made('console-error', 'rehydrate failed', 1), made('console-error', 'later', 0)],
+		warnings: [],
+		ignore: [],
+		coldLaunches: new Set([1]),
+	})
+	assert.deepEqual(
+		summary.findings.map((group) => group.kind),
+		['console-error (cold start)', 'console-error'],
+	)
 })

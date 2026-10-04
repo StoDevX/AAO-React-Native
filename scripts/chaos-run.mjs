@@ -48,6 +48,7 @@ export function parseChaosArgs(argv) {
 		prebuilt: false,
 		overwrite: false,
 		rotate: false,
+		profile: 'fuzz',
 	}
 	for (let i = 0; i < argv.length; i++) {
 		let flag = argv[i]
@@ -79,6 +80,9 @@ export function parseChaosArgs(argv) {
 				break
 			case '--rotate':
 				options.rotate = true
+				break
+			case '--session':
+				options.profile = 'session'
 				break
 			default:
 				throw new Error(`unknown flag ${flag}`)
@@ -123,6 +127,34 @@ export function withRecordedRotation(options, recordedSteps) {
 		.filter((step) => step.action === 'rotate')
 	if (rotations.length === 0) return options
 	return {...options, rotate: rotations[0].label !== 'off'}
+}
+
+/** What a replay needs to know about how a run was made, written as its run.json. */
+export function runSettings(options) {
+	return {profile: options.profile, rotate: options.rotate}
+}
+
+/**
+ * A replay's options with the profile and rotation its recording was made
+ * with: from its run.json, or for a recording without one, a fuzzing run
+ * whose rotation is read from its steps.
+ */
+export function withRecordedSettings(options, runJsonText, recordedSteps) {
+	if (runJsonText !== null) {
+		let {profile, rotate} = JSON.parse(runJsonText)
+		return {...options, profile, rotate}
+	}
+	return {...withRecordedRotation(options, recordedSteps), profile: 'fuzz'}
+}
+
+/** The launches a kill began: a kill step is logged with the launch it started. */
+export function coldStartLaunches(steps) {
+	return new Set(
+		steps
+			.map((line) => JSON.parse(line))
+			.filter((step) => step.action === 'kill')
+			.map((step) => step.launch),
+	)
 }
 
 /**
@@ -223,6 +255,7 @@ export function testEnv(options) {
 	}
 	if (options.replay) env.TEST_RUNNER_AAO_CHAOS_REPLAY = '1'
 	if (options.rotate) env.TEST_RUNNER_AAO_CHAOS_ROTATE = '1'
+	if (options.profile === 'session') env.TEST_RUNNER_AAO_CHAOS_PROFILE = 'session'
 	return env
 }
 
@@ -371,9 +404,10 @@ function addTo(groups, key, kind, example) {
  * Everything a run saw that did not stop it, counted: the monkey's warnings by
  * kind, console errors and stalls by kind and first line with digits
  * collapsed, and mutations and attempts to leave the app as bare counts.
- * Anything the ignore list matches is counted as ignored instead.
+ * Anything the ignore list matches is counted as ignored instead. A finding
+ * from one of `coldLaunches` is grouped as its kind `(cold start)`.
  */
-export function summarizeRun({findings, warnings, ignore}) {
+export function summarizeRun({findings, warnings, ignore, coldLaunches = new Set()}) {
 	let ignored = 0
 	let isIgnored = (kind, text) =>
 		ignore.some((entry) => entry.kind === kind && text.includes(entry.match))
@@ -403,7 +437,9 @@ export function summarizeRun({findings, warnings, ignore}) {
 			continue
 		}
 		let line = firstLine(message)
-		addTo(findingGroups, `${finding.kind} ${line.replaceAll(/\d+/gu, '#')}`, finding.kind, line)
+		// A finding from a launch a kill began came from restoring saved state.
+		let kind = coldLaunches.has(finding.launch) ? `${finding.kind} (cold start)` : finding.kind
+		addTo(findingGroups, `${kind} ${line.replaceAll(/\d+/gu, '#')}`, kind, line)
 	}
 
 	return {

@@ -28,6 +28,7 @@ That runs a random seed for ten minutes and writes everything it saw to
 | `--prebuilt` | Skip the build when nothing native changed |
 | `--overwrite` | Record over an earlier run of the same seed |
 | `--rotate` | Let the monkey turn the device; without it, a rotate step does nothing |
+| `--session` | Run a realistic session instead of a fuzzer; see Sessions |
 
 A run refuses to record into a `logs/chaos/<seed>/` that already exists, so
 re-running a seed never deletes the evidence of the last one; pass
@@ -47,6 +48,23 @@ The exit code says what happened:
 | 0 | It ran and found nothing |
 | 1 | It found something |
 | 2 | It never started, or its result couldn't be read |
+
+## Sessions
+
+`mise run chaos -- --session` runs the same engine as a realistic session, to
+catch the bugs real users hit rather than the ones only hostile input reaches.
+
+| | Fuzzing | Session |
+| --- | --- | --- |
+| Start | fresh install | fresh once, then never reset |
+| Getting around | taps, and opening routes by URL, which relaunches | taps, and a link into the running app when no new screen has appeared in 40 steps |
+| Typed text | hostile strings | strings the app received, whole or a prefix |
+| Network | 25% of requests faulted | offline windows of 5–30 s, and 5% faulted outside them |
+| Events | background; rotation with `--rotate` | background for 2–120 s; killed and cold-started with its saved state |
+
+Every run writes `run.json` with its profile and rotation, and a replay takes
+both from it. A finding from a launch a kill began is summarised as its kind
+`(cold start)`: it came from restoring saved state.
 
 ## Reading a Finding
 

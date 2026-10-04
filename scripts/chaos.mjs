@@ -40,7 +40,9 @@ import {
 	stopMutations,
 	summarizeRun,
 	testEnv,
-	withRecordedRotation,
+	coldStartLaunches,
+	runSettings,
+	withRecordedSettings,
 	withReplayBudget,
 } from './chaos-run.mjs'
 import {
@@ -77,7 +79,12 @@ function main() {
 			}
 		: null
 	if (recorded) {
-		options = withRecordedRotation(withReplayBudget(options, recorded.steps), recorded.steps)
+		let runJson = join(options.replay, 'run.json')
+		options = withRecordedSettings(
+			withReplayBudget(options, recorded.steps),
+			existsSync(runJson) ? readFileSync(runJson, 'utf8') : null,
+			recorded.steps,
+		)
 	}
 
 	let problem = jsSourceProblem({env: process.env, hasEmbeddedBundle: builtAppHasBundle()})
@@ -120,6 +127,7 @@ function main() {
 
 	rmSync(out, {recursive: true, force: true})
 	mkdirSync(out, {recursive: true})
+	writeFileSync(join(out, 'run.json'), `${JSON.stringify(runSettings(options), null, '\t')}\n`)
 	let resultBundle = join(out, 'result.xcresult')
 	let testError = null
 	try {
@@ -210,6 +218,7 @@ function main() {
 		findings: parseFindingLines(findingLines),
 		warnings: (attachmentText(join(out, 'attachments'), 'chaos-warnings') ?? '').split('\n'),
 		ignore,
+		coldLaunches: coldStartLaunches(steps),
 	})
 	// The tape of the launch the run stopped in holds what that launch was fed.
 	let lastTape = join(out, `chaos-tape-${stopLaunch(steps)}.jsonl`)
