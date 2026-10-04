@@ -70,8 +70,9 @@ A run that exits 1 found something. In `logs/chaos/<seed>/`:
    included: one file per launch, since opening a route relaunches the app.
 5. **Mutations.** A `mutation` finding names the request, the JSON path and
    the change, e.g. `3 GET https://…/menu #0 $.items[2].label: "Lunch" → ""`.
-   A mutation keeps the body's shape, so a stop after one is data a server
-   could send; judge whether it would.
+   When a run stops, the summary lists the mutations from the launch that
+   stopped. A mutation keeps the body's shape, so a stop after one is data a
+   server could send; judge whether it would.
 
 Then decide whose bug it is:
 
@@ -92,6 +93,19 @@ Then decide whose bug it is:
   to rotate, drag or swipe its way out. A person may be stuck there.
 - `escaped the app`: something sent the app to the background.
 - `system alert`: a permission prompt appeared and the monkey dismissed it.
+
+### The Summary
+
+Under its outcome, a run prints everything it saw that did not stop it,
+counted: the monkey's warnings by kind, console errors and stalls by their
+first line, and mutations and attempts to leave the app as totals. The full
+summary is in `outcome.json`. When a run stops, the mutations fed to the
+launch that stopped are listed first.
+
+`scripts/chaos-ignore.json` hides a warning or finding the team has decided
+is not worth a look. It starts empty. Each entry names a `kind`, a `match`
+the text must contain, and `why`; a run refuses an entry without a reason.
+What it hides is still counted as `ignored`.
 
 ## Replaying a Run
 

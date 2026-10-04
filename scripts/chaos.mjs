@@ -22,10 +22,13 @@ import {
 	checkAppContainer,
 	checkOutputDir,
 	FINDINGS_FILE,
+	formatSummary,
 	isRunFile,
 	recordedTapes,
 	tapeFiles,
 	parseChaosArgs,
+	parseFindingLines,
+	parseIgnoreList,
 	readableAttachmentNames,
 	replayVerdict,
 	jsSourceProblem,
@@ -33,6 +36,8 @@ import {
 	runOutcome,
 	testFailureMessages,
 	stoppingFindings,
+	stopMutations,
+	summarizeRun,
 	testEnv,
 	withRecordedRotation,
 	withReplayBudget,
@@ -58,6 +63,7 @@ try {
 
 function main() {
 	let options = parseChaosArgs(process.argv.slice(2))
+	let ignore = parseIgnoreList(readFileSync(new URL('chaos-ignore.json', import.meta.url), 'utf8'))
 	let out = chaosOutputDir(options)
 	checkOutputDir({options, out, exists: existsSync(out)})
 
@@ -199,15 +205,39 @@ function main() {
 			console.error(message)
 		}
 	}
+	let summary = summarizeRun({
+		findings: parseFindingLines(findingLines),
+		warnings: (attachmentText(join(out, 'attachments'), 'chaos-warnings') ?? '').split('\n'),
+		ignore,
+	})
+	// The launch the run stopped in is the last step's; its tape holds what that launch was fed.
+	let lastLaunch = steps.length > 0 ? JSON.parse(steps.at(-1)).launch : null
+	let lastTape = lastLaunch === null ? null : join(out, `chaos-tape-${lastLaunch}.jsonl`)
+	let mutationsAtStop =
+		outcome.exitCode === 1 && lastTape && existsSync(lastTape)
+			? stopMutations(readFileSync(lastTape, 'utf8').split('\n'))
+			: []
 	writeFileSync(
 		join(out, 'outcome.json'),
-		`${JSON.stringify({...outcome, stopReason: stop, replay: verdict?.message ?? null}, null, '\t')}\n`,
+		`${JSON.stringify(
+			{...outcome, stopReason: stop, replay: verdict?.message ?? null, mutationsAtStop, summary},
+			null,
+			'\t',
+		)}\n`,
 	)
-	console.log(
+	let report = [
 		outcome.exitCode === 0
-			? `${outcome.message}: seed ${options.seed}`
+			? `chaos found nothing that stopped it: seed ${options.seed}, ${steps.length} steps`
 			: `${outcome.message}: see ${out}`,
-	)
+	]
+	if (mutationsAtStop.length > 0) {
+		report.push(
+			'  mutated in the launch that stopped',
+			...mutationsAtStop.map((line) => `    ${line}`),
+		)
+	}
+	report.push(formatSummary(summary))
+	console.log(report.join('\n'))
 	process.exitCode = outcome.exitCode
 }
 

@@ -314,6 +314,134 @@ export function stoppingFindings(lines) {
 	return parseFindingLines(lines).filter((finding) => STOPPING_FINDING_KINDS.has(finding.kind))
 }
 
+/**
+ * The run's ignore list from scripts/chaos-ignore.json's text. Each entry
+ * hides warnings or findings of `kind` whose text contains `match`, and must
+ * say `why`, so nothing is hidden without a reason someone can check.
+ */
+export function parseIgnoreList(text) {
+	let entries = JSON.parse(text)
+	if (!Array.isArray(entries)) {
+		throw new TypeError('scripts/chaos-ignore.json must hold a list')
+	}
+	for (let entry of entries) {
+		for (let field of ['kind', 'match', 'why']) {
+			if (typeof entry?.[field] !== 'string' || entry[field] === '') {
+				throw new Error(
+					`scripts/chaos-ignore.json: every entry needs a ${field}; ${JSON.stringify(entry)} has none`,
+				)
+			}
+		}
+	}
+	return entries
+}
+
+/** Findings that are counted, not listed: there are many, and none is a bug alone. */
+const COUNTED_KINDS = ['mutation', 'out-of-app']
+
+/** The first line of `text`. */
+function firstLine(text) {
+	return String(text).split('\n')[0].trim()
+}
+
+/** A monkey warning's kind and detail: `kind: detail`, or a bare line named by what comes before ` (`. */
+function splitWarning(line) {
+	let colon = line.indexOf(': ')
+	if (colon > 0) return {kind: line.slice(0, colon), detail: line.slice(colon + 2)}
+	let paren = line.indexOf(' (')
+	return {kind: paren > 0 ? line.slice(0, paren) : line, detail: line}
+}
+
+/** Adds one member to the group under `key`, keeping groups in first-seen order. */
+function addTo(groups, key, kind, example) {
+	let group = groups.get(key)
+	if (group) {
+		group.count++
+	} else {
+		groups.set(key, {kind, count: 1, example})
+	}
+}
+
+/**
+ * Everything a run saw that did not stop it, counted: the monkey's warnings by
+ * kind, console errors and stalls by kind and first line with digits
+ * collapsed, and mutations and attempts to leave the app as bare counts.
+ * Anything the ignore list matches is counted as ignored instead.
+ */
+export function summarizeRun({findings, warnings, ignore}) {
+	let ignored = 0
+	let isIgnored = (kind, text) =>
+		ignore.some((entry) => entry.kind === kind && text.includes(entry.match))
+
+	let warningGroups = new Map()
+	for (let line of warnings) {
+		if (!line.trim()) continue
+		let {kind, detail} = splitWarning(line.trim())
+		if (isIgnored(kind, line)) {
+			ignored++
+			continue
+		}
+		addTo(warningGroups, kind, kind, firstLine(detail))
+	}
+
+	let findingGroups = new Map()
+	let counts = {mutation: 0, 'out-of-app': 0}
+	for (let finding of findings) {
+		if (STOPPING_FINDING_KINDS.has(finding.kind)) continue
+		let message = String(finding.message)
+		if (isIgnored(finding.kind, message)) {
+			ignored++
+			continue
+		}
+		if (COUNTED_KINDS.includes(finding.kind)) {
+			counts[finding.kind]++
+			continue
+		}
+		let line = firstLine(message)
+		addTo(findingGroups, `${finding.kind} ${line.replaceAll(/\d+/gu, '#')}`, finding.kind, line)
+	}
+
+	return {
+		warnings: [...warningGroups.values()],
+		findings: [...findingGroups.values()],
+		counts,
+		ignored,
+	}
+}
+
+/** How many characters of a group's example the summary prints. */
+const EXAMPLE_LENGTH = 100
+
+/** `text`, cut to `EXAMPLE_LENGTH` with an ellipsis when it is longer. */
+function clip(text) {
+	return text.length > EXAMPLE_LENGTH ? `${text.slice(0, EXAMPLE_LENGTH - 1)}…` : text
+}
+
+/** `summary` as the lines printed under a run's outcome; `outcome.json` keeps the examples whole. */
+export function formatSummary(summary) {
+	let lines = []
+	if (summary.warnings.length > 0) {
+		lines.push('  warnings')
+		for (let group of summary.warnings) {
+			lines.push(`    ${group.kind} ×${group.count}  ${clip(group.example)}`)
+		}
+	}
+	for (let group of summary.findings) {
+		lines.push(`  ${group.kind} ×${group.count}  ${clip(group.example)}`)
+	}
+	lines.push(
+		`  mutations ×${summary.counts.mutation}   out-of-app ×${summary.counts['out-of-app']}   ignored ×${summary.ignored}`,
+	)
+	return lines.join('\n')
+}
+
+/** The mutations one launch's tape records, as `key path: change`; a torn line is skipped. */
+export function stopMutations(tapeLines) {
+	return parseFindingLines(tapeLines)
+		.filter((entry) => entry.mutation)
+		.map((entry) => `${entry.key} ${entry.mutation.path}: ${entry.mutation.change}`)
+}
+
 /** How the monkey reports a launch whose bundle never answered. */
 const PROBE_SILENT = 'probe silent'
 

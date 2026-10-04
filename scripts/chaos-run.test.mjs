@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict'
+import {readFileSync} from 'node:fs'
 import {test} from 'node:test'
 
 import {
@@ -9,15 +10,19 @@ import {
 	recordedTapes,
 	tapeFiles,
 	firstDivergence,
+	formatSummary,
 	jsSourceProblem,
 	metroProblem,
 	parseChaosArgs,
 	parseDuration,
 	parseFindingLines,
+	parseIgnoreList,
 	REPLAY_DURATION,
 	replayVerdict,
 	runOutcome,
 	stoppingFindings,
+	stopMutations,
+	summarizeRun,
 	testEnv,
 	readableAttachmentNames,
 	testFailureMessages,
@@ -635,4 +640,147 @@ test('numbers a second attachment of the same name rather than overwrite the fir
 
 test('keeps a name that has no UUID to drop', () => {
 	assert.deepEqual([...readableAttachmentNames(manifest('notes.txt')).values()], ['notes.txt'])
+})
+
+/** A finding as the app writes it. */
+function finding(kind, message) {
+	return {kind, message, stack: null, at: ''}
+}
+
+test('groups warnings by kind, counting each and keeping the first as its example', () => {
+	let summary = summarizeRun({
+		findings: [],
+		warnings: [
+			'dead end: Back changed nothing three times on a sheet: Sketchy',
+			'unlabelled: 9 24×24 at (330,58) on "Customize"',
+			'dead end: Back changed nothing three times on |All',
+			'escaped the app (state 3) after tap',
+			'escaped the app (state 3) after tap',
+			'',
+		],
+		ignore: [],
+	})
+	assert.deepEqual(summary.warnings, [
+		{kind: 'dead end', count: 2, example: 'Back changed nothing three times on a sheet: Sketchy'},
+		{kind: 'unlabelled', count: 1, example: '9 24×24 at (330,58) on "Customize"'},
+		{kind: 'escaped the app', count: 2, example: 'escaped the app (state 3) after tap'},
+	])
+})
+
+test('groups console errors and stalls by first line with digits collapsed', () => {
+	let summary = summarizeRun({
+		findings: [
+			finding('stall', 'JS stalled 1340ms'),
+			finding('console-error', 'VirtualizedLists should never be nested\n    in ScrollView'),
+			finding('stall', 'JS stalled 1210ms'),
+			finding('console-error', 'VirtualizedLists should never be nested\n    in FlatList'),
+			finding('console-error', 'Each child in a list should have a unique "key" prop.'),
+		],
+		warnings: [],
+		ignore: [],
+	})
+	assert.deepEqual(summary.findings, [
+		{kind: 'stall', count: 2, example: 'JS stalled 1340ms'},
+		{kind: 'console-error', count: 2, example: 'VirtualizedLists should never be nested'},
+		{
+			kind: 'console-error',
+			count: 1,
+			example: 'Each child in a list should have a unique "key" prop.',
+		},
+	])
+})
+
+test('counts mutations and attempts to leave the app, and leaves stopping findings to the outcome', () => {
+	let summary = summarizeRun({
+		findings: [
+			finding('mutation', '0 GET https://a.test/ #0 $.x: 1 → 0'),
+			finding('mutation', '0 GET https://a.test/ #1 $.y: true → false'),
+			finding('out-of-app', 'https://www.kstoradio.org/'),
+			finding('fatal', 'boom'),
+		],
+		warnings: [],
+		ignore: [],
+	})
+	assert.deepEqual(summary.counts, {mutation: 2, 'out-of-app': 1})
+	assert.deepEqual(summary.findings, [])
+})
+
+test('counts what the ignore list matches instead of showing it', () => {
+	let summary = summarizeRun({
+		findings: [finding('console-error', 'VirtualizedLists should never be nested')],
+		warnings: ['dead end: Back changed nothing on |All'],
+		ignore: [
+			{kind: 'console-error', match: 'VirtualizedLists', why: 'known'},
+			{kind: 'dead end', match: '|All', why: 'known'},
+		],
+	})
+	assert.deepEqual(summary.findings, [])
+	assert.deepEqual(summary.warnings, [])
+	assert.equal(summary.ignored, 2)
+})
+
+test('reads an ignore list, refusing an entry with no reason', () => {
+	assert.deepEqual(parseIgnoreList('[]'), [])
+	assert.deepEqual(parseIgnoreList('[{"kind":"stall","match":"JS","why":"debug build"}]'), [
+		{kind: 'stall', match: 'JS', why: 'debug build'},
+	])
+	assert.throws(() => parseIgnoreList('[{"kind":"stall","match":"JS"}]'), /why/u)
+	assert.throws(() => parseIgnoreList('[{"kind":"stall","match":"JS","why":""}]'), /why/u)
+	assert.throws(() => parseIgnoreList('{}'), /list/u)
+})
+
+test('the shipped ignore list is empty, so nothing is hidden by default', () => {
+	let text = readFileSync(new URL('chaos-ignore.json', import.meta.url), 'utf8')
+	assert.deepEqual(parseIgnoreList(text), [])
+})
+
+test('prints warnings, then findings, then the counts', () => {
+	let text = formatSummary({
+		warnings: [{kind: 'dead end', count: 2, example: 'Back changed nothing'}],
+		findings: [{kind: 'stall', count: 3, example: 'JS stalled 1200ms'}],
+		counts: {mutation: 31, 'out-of-app': 17},
+		ignored: 0,
+	})
+	assert.equal(
+		text,
+		[
+			'  warnings',
+			'    dead end ×2  Back changed nothing',
+			'  stall ×3  JS stalled 1200ms',
+			'  mutations ×31   out-of-app ×17   ignored ×0',
+		].join('\n'),
+	)
+})
+
+test('prints only the counts when nothing else was seen', () => {
+	let text = formatSummary({
+		warnings: [],
+		findings: [],
+		counts: {mutation: 0, 'out-of-app': 0},
+		ignored: 0,
+	})
+	assert.equal(text, '  mutations ×0   out-of-app ×0   ignored ×0')
+})
+
+test("lists the stopping launch's mutations from its tape", () => {
+	let lines = [
+		JSON.stringify({key: '4 GET https://a.test/ #0', fault: 'none'}),
+		JSON.stringify({
+			key: '4 GET https://a.test/m #0',
+			fault: 'mutated',
+			mutation: {path: '$.x', change: '1 → 0'},
+		}),
+		'{"torn',
+	]
+	assert.deepEqual(stopMutations(lines), ['4 GET https://a.test/m #0 $.x: 1 → 0'])
+})
+
+test('cuts a long example short, so each group fits on a line', () => {
+	let text = formatSummary({
+		warnings: [],
+		findings: [{kind: 'console-error', count: 1, example: 'x'.repeat(200)}],
+		counts: {mutation: 0, 'out-of-app': 0},
+		ignored: 0,
+	})
+	assert.equal(text.split('\n')[0], `  console-error ×1  ${'x'.repeat(99)}…`)
 })
