@@ -9,8 +9,11 @@ find the crashes and dead ends that no one thought to write a test for.
 Boot a simulator and start Metro for this checkout, then:
 
 ```bash
-TEST_RUNNER_AAO_JS_LOCATION=localhost:8081 mise run chaos
+mise run chaos:8081
 ```
+
+For a Metro on another port, name it:
+`TEST_RUNNER_AAO_JS_LOCATION=localhost:8091 mise run chaos`.
 
 That runs a random seed for ten minutes and writes everything it saw to
 `logs/chaos/<seed>/`. Useful flags:
@@ -86,7 +89,7 @@ Then decide whose bug it is:
 ## Replaying a Run
 
 ```bash
-TEST_RUNNER_AAO_JS_LOCATION=localhost:8081 mise run chaos -- --replay logs/chaos/1234
+mise run chaos:8081 -- --replay logs/chaos/1234
 ```
 
 A replay takes the seed from the directory's name and answers every request

@@ -338,6 +338,7 @@ export function jsSourceProblem({env, hasEmbeddedBundle}) {
 	let lines = [
 		'No JavaScript source for the run: name the Metro serving this checkout, e.g.',
 		'  TEST_RUNNER_AAO_JS_LOCATION=localhost:8081 mise run chaos',
+		'or, for the Metro on 8081, mise run chaos:8081',
 	]
 	if (env.AAO_JS_LOCATION) {
 		lines.push(

@@ -505,6 +505,7 @@ test('accepts a named Metro or an embedded bundle as the JavaScript source', () 
 test('refuses a run with no JavaScript source, naming the variable to set', () => {
 	let problem = jsSourceProblem({env: {}, hasEmbeddedBundle: false})
 	assert.match(problem, /TEST_RUNNER_AAO_JS_LOCATION=localhost:8081 mise run chaos/u)
+	assert.match(problem, /mise run chaos:8081/u)
 })
 
 test('points out an AAO_JS_LOCATION missing its TEST_RUNNER_ prefix', () => {
