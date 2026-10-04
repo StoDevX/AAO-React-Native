@@ -325,6 +325,16 @@ imported first in `app/_layout.tsx`, so `fetch` is wrapped before anything
 fetches, and they do nothing without the flag. Run `mise run chaos-routes`
 after adding a route.
 
+### Releases
+
+Versions come from Changesets. A change that belongs in the release notes adds
+a file with `mise run changeset` (a plain markdown file in `.changeset/`:
+`"all-about-olaf": patch|minor|major` in the frontmatter, the note below it).
+The Release workflow turns those into a "Version Packages" pull request, and a
+`prerelease:alpha|beta|rc|none` label on it picks the channel. Do not edit
+`version` in `package.json` or add to `CHANGELOG.md` by hand. The logic is in
+`scripts/release.mjs`; see CONTRIBUTING.md for the full flow.
+
 ## Agent Workflow
 
 **Session startup:** Always run `mise run agent:setup` at the start of every session. This installs dependencies and bundles data files.

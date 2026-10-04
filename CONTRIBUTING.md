@@ -79,22 +79,38 @@ This stuff is more of the documentation for maintainers.
 
 ### Deploying New Versions
 
+Releases are versioned with [Changesets](https://changesets.dev) and cut from the GitHub UI.
 All tag builds are uploaded as "betas," and must be promoted by hand in the appropriate app store console.
 Generally, we try to "beta" (used as a verb) as much as possible.
-After releasing a new version, the next version we beta is the next minor version, with a beta identifier.
-(`-beta.W` where `W` is a monotonically increasing number.)
-Technically this can be whatever you want.
 
-The bare minimum: `npm version <version>`, e.g. `npm version 2.7.0`.
-It is probably a good idea to run a beta before doing a full release, to ensure that all kinks in the uploading pipeline are worked out.
-This also lets you distribute beta builds to beta testers.
+#### Describing a change
 
-#### Committing a New Release
+A change that belongs in the release notes carries a changeset.
+Run `mise run changeset`, pick `patch`, `minor` or `major`, and write the line users will read.
+Commit the file it adds to `.changeset/` with your change.
+A change that needs no note (a CI tweak, a dependency bump) needs no changeset.
 
-1. First, `git checkout -b release/vX.Y.Z`.
-1. Change the heading of the `Unreleased` section in `CHANGELOG.md` to `X.Y.Z`, and add a link to where the tag will be.
-   (These go at the bottom of the file.)
-1. Update the version in `package.json` to `X.Y.Z`. then `pnpm install --frozen-lockfile && git commit -av`.
-1. Then `git tag vX.Y.Z`.
-1. Then `git push`, and finally `git push --tags`.
-1. Open a PR with the usual checklist, and congratulations!
+#### Cutting a release
+
+Every push to `master` runs the Release workflow, which gathers the changesets into one pull request, "Version Packages".
+It bumps `version` in `package.json` and writes the entries into `CHANGELOG.md`.
+Merging it creates the `vX.Y.Z` tag and GitHub release, and Xcode Cloud builds that tag.
+
+Add a label to the pull request to choose what kind of build it is:
+
+| Label | Next version |
+| --- | --- |
+| `prerelease:alpha` | `X.Y.Z-alpha.N` |
+| `prerelease:beta` | `X.Y.Z-beta.N` |
+| `prerelease:rc` | `X.Y.Z-rc.N` |
+| `prerelease:none` | `X.Y.Z`, the final release |
+| *(none)* | stays on whatever channel `master` is already on |
+
+Changing the label re-runs the workflow, which rebuilds the pull request in the new channel within a minute or so.
+Run as many rounds as you like: each merge bumps `N`, and the final release folds every round's entries into one.
+
+The Version PR needs a changeset to exist.
+To promote a release candidate with nothing new to say, add an empty one with `mise run changeset -- add --empty`.
+
+The Release workflow opens that pull request with `RELEASE_TOKEN` when the repository has it, and with the default token otherwise.
+A pull request the default token opens starts no other workflows, so Check will not run on it.

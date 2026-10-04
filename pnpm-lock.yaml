@@ -4956,6 +4956,7 @@ packages:
 
   react-native-zeroconf@0.16.1:
     resolution: {integrity: sha512-12bmmbuChI+8bx6J8UOUFjwpuIjUjpxOMd+Ej5GJT28DOpJF4VWTsT/OxwWQLUFPYurqGQGdzLtUisywKuO7gw==}
+    deprecated: '0.17 adds Windows support, subtypes, resolveService, updateService and live updates, plus Android fixes. Upgrade: npm i react-native-zeroconf@^0.17. Migration guide: https://zeroconf.balthazar.dev/Migration-Guide'
     peerDependencies:
       react: '*'
       react-native: '>=0.60'
