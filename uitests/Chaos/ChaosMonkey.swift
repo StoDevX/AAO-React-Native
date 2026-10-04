@@ -192,7 +192,7 @@ final class ChaosMonkey {
 			pauseHangClock { kill() }
 			return ChaosTarget(identifier: "kill", label: "", type: .any, frame: .zero)
 		case .teleport:
-			let routes = ChaosRoutes.all.filter { !$0.contains("[") }
+			let routes = teleportRoutes(ChaosRoutes.all)
 			let route = pickWeighted(routes, uses: { self.routeOpens[$0, default: 0] }, using: &random)!
 			routeOpens[route, default: 0] += 1
 			teleport(to: route)

@@ -49,3 +49,11 @@ struct ChaosNovelty {
 
 	mutating func moved() { stale = 0 }
 }
+
+/// Screens that open with nothing passed to them, the way a link from a
+/// widget or a quick action opens one: top-level routes only, since a nested
+/// or detail screen expects what the screen before it hands over, and opened
+/// bare it shows a state no person can reach.
+func teleportRoutes(_ routes: [String]) -> [String] {
+	routes.filter { !$0.contains("/") && !$0.contains("[") && !$0.hasSuffix("-detail") }
+}

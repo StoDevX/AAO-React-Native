@@ -71,4 +71,11 @@ final class ChaosSessionTests: XCTestCase {
 		for _ in 0..<39 { novelty.see("Home") }
 		XCTAssertFalse(novelty.isStuck, "a new title resets the count")
 	}
+
+	func testTeleportsOnlyToScreensThatNeedNothingPassedIn() {
+		XCTAssertEqual(
+			teleportRoutes(["menus", "calendar/event", "directory/[id]", "menu-item-detail", "transit", "hours/detail/report"]),
+			["menus", "transit"])
+		XCTAssertFalse(teleportRoutes(ChaosRoutes.all).isEmpty)
+	}
 }
