@@ -91,10 +91,10 @@ index e6cc8665ed24acc90e6b9acaf034a6bbc39afcc0..26ff12ef81061e9b1679d5f9f895a909
  export * from './Form';
  export * from './Gauge';
 diff --git a/build/swift-ui/modifiers/index.d.ts b/build/swift-ui/modifiers/index.d.ts
-index 9b6dba1653de433e8848b80f481f71dc8ef097d0..f7f672931780a8ad947d7c58c0bd0ca7dd106a40 100644
+index 9b6dba1653de433e8848b80f481f71dc8ef097d0..8a7d47529c810c25055c762a0958a730d8b36ba6 100644
 --- a/build/swift-ui/modifiers/index.d.ts
 +++ b/build/swift-ui/modifiers/index.d.ts
-@@ -1068,6 +1068,11 @@ export declare const font: (params: {
+@@ -1068,6 +1068,17 @@ export declare const font: (params: {
       * Dynamic Type setting.
       */
      textStyle?: "largeTitle" | "title" | "title2" | "title3" | "headline" | "subheadline" | "body" | "callout" | "footnote" | "caption" | "caption2";
@@ -103,6 +103,12 @@ index 9b6dba1653de433e8848b80f481f71dc8ef097d0..f7f672931780a8ad947d7c58c0bd0ca7
 +     * glyphs. Mirrors SwiftUI's `Font.smallCaps()`.
 +     */
 +    smallCaps?: boolean;
++    /**
++     * The space between lines of text in this font, relative to its standard
++     * leading. Mirrors SwiftUI's `Font.leading(_:)`, so it scales with Dynamic
++     * Type where a fixed `lineHeight` would not.
++     */
++    leading?: "standard" | "tight" | "loose";
  }) => ModifierConfig;
  /**
   * A standard size for Dynamic Type, from `xSmall` through the five
@@ -334,23 +340,51 @@ index 0000000000000000000000000000000000000000..2c04f3920f054dfca5fc76d612c1c524
 +  }
 +}
 diff --git a/ios/Modifiers/FontModifier.swift b/ios/Modifiers/FontModifier.swift
-index 094cee1a9b3ff97f38777c38d44f79391fa2c9db..08cf58b869acecbe476279341252554d03cba414 100644
+index 094cee1a9b3ff97f38777c38d44f79391fa2c9db..1d0781d4dbe23301fe16195c15d69b67748e89a8 100644
 --- a/ios/Modifiers/FontModifier.swift
 +++ b/ios/Modifiers/FontModifier.swift
-@@ -81,6 +81,7 @@ internal struct FontModifier: ViewModifier, Record {
+@@ -29,6 +29,20 @@ internal enum FontWeight: String, Enumerable {
+   }
+ }
+ 
++internal enum FontLeading: String, Enumerable {
++  case standard
++  case tight
++  case loose
++
++  func toSwiftUI() -> Font.Leading {
++    switch self {
++    case .standard: .standard
++    case .tight: .tight
++    case .loose: .loose
++    }
++  }
++}
++
+ internal enum FontDesign: String, Enumerable {
+   case `default`
+   case rounded
+@@ -81,6 +95,8 @@ internal struct FontModifier: ViewModifier, Record {
    @Field var weight: FontWeight?
    @Field var design: FontDesign?
    @Field var textStyle: FontTextStyle?
 +  @Field var smallCaps: Bool?
++  @Field var leading: FontLeading?
  
    func body(content: Content) -> some View {
      content.font(resolveFont())
-@@ -90,6 +91,11 @@ internal struct FontModifier: ViewModifier, Record {
+@@ -90,6 +106,17 @@ internal struct FontModifier: ViewModifier, Record {
    // same `Font` as the view path, instead of a fixed-size `Font.custom` that
    // drops `relativeTo` (Dynamic Type) and `weight`.
    func resolveFont() -> Font {
-+    let font = resolveBaseFont()
-+    return smallCaps == true ? font.smallCaps() : font
++    var font = resolveBaseFont()
++    if smallCaps == true {
++      font = font.smallCaps()
++    }
++    if let leading {
++      font = font.leading(leading.toSwiftUI())
++    }
++    return font
 +  }
 +
 +  private func resolveBaseFont() -> Font {

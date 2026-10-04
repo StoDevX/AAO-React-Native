@@ -44,8 +44,9 @@ const GLYPH = [
 	frame({width: THUMBNAIL, height: THUMBNAIL}),
 	background(wash),
 ]
+/** Tight leading, so a headline that wraps beside its photo reads as one block. */
 const HEADLINE = [
-	font({textStyle: 'headline', design: 'serif'}),
+	font({textStyle: 'headline', design: 'serif', leading: 'tight'}),
 	foregroundStyle(ink),
 	lineLimit(3),
 ]
