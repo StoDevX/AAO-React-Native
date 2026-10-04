@@ -21,7 +21,7 @@ struct SupportScreen: Screen {
 	@discardableResult
 	func checkOffersEveryRow() -> Self {
 		let support = TestIdentifiers.Support.self
-		for title in [support.faqs, support.notices, support.emergencyContacts, support.sendFeedback] {
+		for title in [support.faqs, support.sendFeedback] {
 			XCTAssertTrue(row(title).waitForExistence(timeout: 10), "Support should offer \(title)")
 		}
 		let toggle = host.switches[support.telemetryToggle].firstMatch

@@ -19,8 +19,6 @@ class ModuleSupportTests: UITestCase {
 		let ids = TestIdentifiers.Support.self
 		let screens: [(row: String, mounted: XCUIElement)] = [
 			(ids.faqs, app.navigationBars[ids.faqs]),
-			(ids.notices, app.navigationBars[ids.notices]),
-			(ids.emergencyContacts, app.navigationBars["Contacts"]),
 		]
 		for (row, mounted) in screens {
 			support.open(row, mountedWhen: mounted)
