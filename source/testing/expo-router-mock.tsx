@@ -3,7 +3,9 @@ import * as React from 'react'
 /// The `expo-router` `Stack` a dictionary screen renders through. `Title` and
 /// `Screen` configure the native header/screen options the same way the real
 /// components do -- they name something, rather than drawing it -- so, like
-/// the real components, they render nothing into the tree under test.
+/// the real components, they render nothing into the tree under test. A
+/// `Title` drawn `asChild` is the exception: its child is a view the bar
+/// shows, so it renders, for a query to read the title off.
 /// `Toolbar.Button` stands in for a native toolbar button: a `Pressable` a
 /// query can press, wrapping a `Text` a query can read its label off.
 ///
@@ -12,7 +14,8 @@ import * as React from 'react'
 /// same shape, and a hand-copied mock drifts the moment one of them gains a
 /// toolbar feature the other doesn't need yet.
 export const Stack = Object.assign(({children}: {children?: React.ReactNode}) => children ?? null, {
-	Title: () => null,
+	Title: (props: {asChild?: boolean; children?: React.ReactNode}) =>
+		props.asChild ? (props.children ?? null) : null,
 	Screen: () => null,
 	Toolbar: Object.assign(({children}: {children?: React.ReactNode}) => children ?? null, {
 		Button: (props: {accessibilityLabel: string; onPress: () => void; disabled?: boolean}) => {

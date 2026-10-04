@@ -28,9 +28,7 @@ import {splitCarousel} from '../../lib/split-carousel'
 import {cardKicker, sectionCredit} from './lib/byline'
 import {TAP_TARGET} from './lib/glyph-grid'
 import {rowsOf} from './lib/issue-grid'
-import {datelineText} from './lib/issues'
 import {leadStory, shelvesOf} from './lib/shelves'
-import {Masthead} from './masthead'
 import {PageLoading, PageNotice} from './page-notice'
 import {faded, ink, messRed, wash} from './palette'
 import {messIssueOptions} from './query'
@@ -140,7 +138,7 @@ type IssuePageProps = {
 	persist?: boolean
 }
 
-/** One issue laid out as its front page: its dateline, its lead story, then a shelf per section. */
+/** One issue laid out as its front page: its lead story, then a shelf per section. */
 export function IssuePage({
 	issue,
 	columnWidth,
@@ -148,10 +146,8 @@ export function IssuePage({
 	persist = false,
 }: IssuePageProps): React.ReactNode {
 	let stories = useQuery(messIssueOptions(issue, {persist}))
-	let dateline = datelineText(issue)
 	return (
 		<>
-			<Masthead dateline={dateline} heading="dateline" />
 			{stories.data ? (
 				<IssueStories
 					columnWidth={columnWidth}

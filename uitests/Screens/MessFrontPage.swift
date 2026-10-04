@@ -1,8 +1,8 @@
 import XCTest
 
-/// The Olaf Messenger's front page: a navigation bar with no title and a view menu at its right,
-/// over the paper's masthead; then the grid of issues with the newest on top, or Latest's stories,
-/// which the menu narrows to one section and its columns.
+/// The Olaf Messenger's front page: a navigation bar titled with the paper's castle, with a
+/// paintbrush and a view menu at its right; then the grid of issues with the newest on top, or
+/// Latest's stories, which the menu narrows to one section and its columns.
 struct MessFrontPage: Screen {
 	let app: XCUIApplication
 
@@ -17,7 +17,7 @@ struct MessFrontPage: Screen {
 	}
 
 	/// By Issue leads with the newest issue as the top tile, over older issues as tiles, under the
-	/// paper's masthead.
+	/// paper's castle.
 	@discardableResult
 	func verifyByIssueShowsTheGrid() -> Self {
 		XCTAssertTrue(topTile.waitForExistence(timeout: 30), "By Issue should lead with the newest issue")
@@ -40,17 +40,17 @@ struct MessFrontPage: Screen {
 		return MessCustomizeScreen(app: app).checkOpen()
 	}
 
-	/// The navigation bar has no title, and the paper's castle heads the page as its masthead,
-	/// read as the paper's name; the name is printed only on the issues' own nameplates.
+	/// The paper's castle alone titles the bar, read as the paper's name; past that, the name is
+	/// printed only on the issues' own nameplates.
 	@discardableResult
 	func verifyPaperNamedOnce() -> Self {
 		let name = NSPredicate(format: "label == %@", TestIdentifiers.News.paperName)
 		XCTAssertTrue(
-			app.images.matching(name).firstMatch.waitForExistence(timeout: 10),
-			"the page should carry the paper's castle as its masthead")
+			title.waitForLabel(TestIdentifiers.News.paperName, timeout: 10),
+			"the bar should be titled with the paper's castle (it reads \(title.label))")
 		XCTAssertEqual(
 			app.navigationBars.staticTexts.count, 0,
-			"the navigation bar should have no title; the masthead names the paper")
+			"the bar should carry the castle and no text title")
 		// Each tile prints the name as its nameplate; VoiceOver reads a tile by its label alone, but
 		// XCUITest still lists the text inside it, so the name is counted outside the tiles.
 		let nameplates = (tiles.allElementsBoundByIndex + [topTile]).map(\.frame)
@@ -73,15 +73,12 @@ struct MessFrontPage: Screen {
 		return self
 	}
 
-	/// Narrow Latest to a section from the view menu, and wait for the dateline to name the section.
+	/// Narrow Latest to a section from the view menu. The page names no section, so a caller shows
+	/// it took by finding what only that section offers, as `openColumn(_:inShown:)` does.
 	@discardableResult
 	func filterLatest(to section: String) -> Self {
 		choose(view: TestIdentifiers.News.latest)
 		pickFromViewMenu(section)
-		let dateline = app.staticTexts.matching(identifier: TestIdentifiers.News.dateline).firstMatch
-		XCTAssertTrue(
-			dateline.waitForLabel(section, timeout: 30),
-			"Latest should now show \(section) (its dateline reads \(dateline.label))")
 		capture("Latest narrowed to \(section)")
 		return self
 	}
@@ -135,10 +132,6 @@ struct MessFrontPage: Screen {
 	@discardableResult
 	func openColumn(_ column: String, inShown section: String) -> Self {
 		choose(view: TestIdentifiers.News.latest)
-		let dateline = app.staticTexts.matching(identifier: TestIdentifiers.News.dateline).firstMatch
-		XCTAssertTrue(
-			dateline.waitForLabel(section, timeout: 30),
-			"Latest should still show \(section) (its dateline reads \(dateline.label))")
 		let columns = app.buttons.matching(identifier: TestIdentifiers.News.columnChip)
 		let button = columns.matching(NSPredicate(format: "label == %@", column)).firstMatch
 		XCTAssertTrue(button.waitForExistence(timeout: 30), "\(section) should offer its \(column) column")
@@ -172,7 +165,7 @@ struct MessFrontPage: Screen {
 	}
 
 	/// Open the staff directory from the view menu, then the first person in it, and wait for
-	/// their page: titled with the name their tile showed, with their bio under About.
+	/// their page: the name their tile showed, with their bio under About.
 	@discardableResult
 	func openFirstStaffMember() -> Self {
 		pickFromViewMenu(TestIdentifiers.News.staffMenuItem)
@@ -189,8 +182,9 @@ struct MessFrontPage: Screen {
 		let name = tile.label
 		XCTAssertFalse(name.isEmpty, "a person's tile should name them")
 		tile.tap()
-		let title = app.navigationBars.staticTexts[name].firstMatch
-		XCTAssertTrue(title.waitForExistence(timeout: 30), "tapping \(name) should open their page")
+		XCTAssertTrue(tile.waitForNonExistence(timeout: 30), "tapping \(name) should open their page")
+		XCTAssertTrue(
+			app.staticTexts[name].firstMatch.waitForExistence(timeout: 30), "\(name)'s page should name them")
 		// The page decides to draw its About section when the person has a bio, as the fixture's
 		// first person does.
 		let bio = app.staticTexts[TestIdentifiers.News.staffBioHeading].firstMatch
@@ -210,8 +204,8 @@ struct MessFrontPage: Screen {
 		if item.exists { closeMenu() }
 	}
 
-	/// Close an open menu with a tap outside it, at the top left of the masthead, where a tap
-	/// opens nothing.
+	/// Close an open menu with a tap outside it, near the top left of the page, where a tap opens
+	/// nothing.
 	private func closeMenu() {
 		app.coordinate(withNormalizedOffset: CGVector(dx: 0.1, dy: 0.2)).tap()
 	}
@@ -270,6 +264,11 @@ struct MessFrontPage: Screen {
 
 	private func viewMenuLabel(_ view: String) -> String {
 		TestIdentifiers.News.viewMenuPrefix + view
+	}
+
+	/// The navigation bar's title: the paper's castle.
+	private var title: XCUIElement {
+		app.navigationBars.descendants(matching: .any).matching(identifier: TestIdentifiers.Navigation.title).firstMatch
 	}
 
 	/// An item of an open menu: anything but the text inside it, which shares its label.

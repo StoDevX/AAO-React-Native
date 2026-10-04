@@ -3,7 +3,6 @@ import categoriesJson from '../../__tests__/fixtures/categories.json'
 import springPosts from '../../__tests__/fixtures/issue-posts.json'
 import type {LightPost, MessIssue} from '../../types'
 import {
-	datelineText,
 	groupIssues,
 	issueDate,
 	issueName,
@@ -368,15 +367,6 @@ describe('issueName', () => {
 
 	it('names a special edition first', () => {
 		expect(issueName({day: '2026-05-12', isSpecial: true})).toBe('Special Edition · May 12, 2026')
-	})
-
-	it('counts the stories in the dateline', () => {
-		expect(datelineText({day: '2026-04-29', isSpecial: false, count: 35})).toBe(
-			'April 29, 2026 · 35 stories',
-		)
-		expect(datelineText({day: '2026-05-12', isSpecial: true, count: 11})).toBe(
-			'Special Edition · May 12, 2026 · 11 stories',
-		)
 	})
 })
 

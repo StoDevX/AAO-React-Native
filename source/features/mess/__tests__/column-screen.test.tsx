@@ -8,6 +8,7 @@ import {openUrl} from '@frogpond/open-url'
 import categoriesJson from './fixtures/categories.json'
 import postsJson from './fixtures/posts.json'
 import {queryClient as appQueryClient} from '../../../init/tanstack-query'
+import {navigationTitleLines} from '../../../testing/navigation-title'
 import {flushQueryNotifications, waitForQueriesToSettle} from '../../../testing/query-notifications'
 import {ColumnScreen} from '../column-screen'
 import {messKeys} from '../lib/keys'
@@ -86,6 +87,12 @@ function renderColumn() {
 }
 
 describe('ColumnScreen', () => {
+	test("is titled with the column's name alone", async () => {
+		await renderColumn()
+
+		expect(navigationTitleLines()).toStrictEqual(['Good Questions'])
+	})
+
 	test("lists the column's stories, and opens one in the reader", async () => {
 		await renderColumn()
 

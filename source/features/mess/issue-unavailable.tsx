@@ -1,5 +1,6 @@
 import * as React from 'react'
 import {Stack} from 'expo-router'
+import {PAPER_BAR} from './mess-page'
 import {StoryLookupNotice} from './story-lookup-notice'
 import type {MessIssuesQuery} from './use-mess-issues'
 
@@ -10,7 +11,7 @@ import type {MessIssuesQuery} from './use-mess-issues'
 export function IssueUnavailable({query}: {query: MessIssuesQuery}): React.ReactNode {
 	return (
 		<>
-			<Stack.Screen options={{title: ''}} />
+			<Stack.Screen options={{...PAPER_BAR, title: ''}} />
 			<StoryLookupNotice
 				query={{
 					data: undefined,
