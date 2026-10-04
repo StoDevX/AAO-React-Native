@@ -18,8 +18,26 @@ describe('pickFault', () => {
 			kinds.add(fault.kind === 'status' ? `status-${fault.status}` : fault.kind)
 		}
 		expect([...kinds].sort()).toEqual(
-			['empty', 'latency', 'malformed', 'network', 'status-404', 'status-500', 'truncated'].sort(),
+			[
+				'empty',
+				'latency',
+				'malformed',
+				'mutated',
+				'network',
+				'status-404',
+				'status-500',
+				'truncated',
+			].sort(),
 		)
+	})
+
+	test('makes half of all faults mutations', () => {
+		let random = seededRandom(11)
+		let mutated = 0
+		for (let i = 0; i < 10_000; i++) {
+			if (pickFault(random, 1).kind === 'mutated') mutated++
+		}
+		expect(mutated / 10_000).toBeCloseTo(0.5, 1)
 	})
 
 	test('faults about as often as the rate says', () => {

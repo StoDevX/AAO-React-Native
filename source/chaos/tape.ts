@@ -22,6 +22,8 @@ export type TapeEntry = {
 	fault: Fault['kind']
 	/** Set when the body was left off the tape, so a replay fetches it again. */
 	live?: boolean
+	/** Which value a `mutated` fault changed, and how. */
+	mutation?: {path: string; change: string}
 }
 
 /**

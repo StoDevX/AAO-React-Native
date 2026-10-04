@@ -66,6 +66,10 @@ A run that exits 1 found something. In `logs/chaos/<seed>/`:
    unhandled rejections, `console.error` calls, and attempts to leave the app.
 4. **`chaos-tape-<launch>.jsonl`** is every response the app received, faults
    included: one file per launch, since opening a route relaunches the app.
+5. **Mutations.** A `mutation` finding names the request, the JSON path and
+   the change, e.g. `3 GET https://…/menu #0 $.items[2].label: "Lunch" → ""`.
+   A mutation keeps the body's shape, so a stop after one is data a server
+   could send; judge whether it would.
 
 Then decide whose bug it is:
 
@@ -154,7 +158,8 @@ Two halves talk through one hidden view.
 | --- | --- |
 | `install.ts` | Wires everything up at launch; imported first in `app/_layout.tsx` |
 | `fetch.ts` | Wraps `fetch`: breaks some requests, and records or replays each answer |
-| `faults.ts` | Picks a fault per request: latency, a 404 or 500, a network failure, or an empty, malformed or truncated body |
+| `faults.ts` | Picks a fault per request: half the time a mutation, else latency, a 404 or 500, a network failure, or an empty, malformed or truncated body |
+| `mutate.ts` | Changes one value in a JSON body to another of the same type: an array emptied, cut to one or lengthened, a string made empty, long or unusual, a number made 0, negative or huge, a boolean flipped |
 | `tape.ts` | Names each launch's tape, and keys responses by launch, method and URL |
 | `probe.ts` | Catches fatal errors, unhandled rejections and `console.error` |
 | `findings.ts` | Writes findings to `chaos-findings.jsonl` and feeds the beacon |

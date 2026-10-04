@@ -3,6 +3,7 @@ import type {ChaosMode} from '@frogpond/launch-arguments'
 import {isBlockedUrl} from './blocked'
 import {corruptBody, faultStatus, pickFault, type Fault} from './faults'
 import {reportFinding} from './findings'
+import {mutateJson} from './mutate'
 import type {LineFile} from './line-file'
 import type {Random} from './random'
 import {readTape, RequestCounter, requestKey, tapeHoldsBody, type TapeEntry} from './tape'
@@ -41,6 +42,7 @@ async function answer(
 	request: Request,
 	key: string,
 	fault: Fault,
+	random: Random,
 ): Promise<Answer> {
 	let base = {key, headers: [] as Array<[string, string]>, body: '', status: 0, fault: fault.kind}
 	let delayMs = fault.kind === 'latency' ? fault.delayMs : 0
@@ -57,8 +59,17 @@ async function answer(
 			error: null,
 		}
 		if (tapeHoldsBody(response.headers.get('content-type'))) {
-			let body = corruptBody(fault, await response.text())
-			return {entry: {...entry, body}, passThrough: null}
+			let text = await response.text()
+			if (fault.kind === 'mutated') {
+				let mutation = mutateJson(text, random)
+				if (!mutation) {
+					return {entry: {...entry, fault: 'none', body: text}, passThrough: null}
+				}
+				let {path, change} = mutation
+				reportFinding('mutation', `${key} ${path}: ${change}`)
+				return {entry: {...entry, body: mutation.body, mutation: {path, change}}, passThrough: null}
+			}
+			return {entry: {...entry, body: corruptBody(fault, text)}, passThrough: null}
 		}
 		// A binary body cannot be rebuilt from the tape, so the real response
 		// goes through, dropping any fault that would touch its body. A status
@@ -137,6 +148,7 @@ export function chaosFetch(realFetch: typeof fetch, options: ChaosFetchOptions):
 			request,
 			key,
 			pickFault(options.random, options.faultRate),
+			options.random,
 		)
 		options.tape.append(JSON.stringify(entry))
 		if (passThrough) {

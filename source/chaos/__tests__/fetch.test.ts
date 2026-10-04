@@ -1,3 +1,4 @@
+import {pickFault} from '../faults'
 import {useChaosFindings} from '../findings'
 import {chaosFetch, type ChaosFetchOptions} from '../fetch'
 import {memoryLineFile} from '../line-file'
@@ -23,6 +24,14 @@ function fileServer() {
 			new Response(CATALOG_BYTES, {headers: {'content-type': 'application/octet-stream'}}),
 		),
 	)
+}
+
+/** The first seed whose first fault, at rate 1, is a mutation. */
+function mutatingSeed(): number {
+	for (let seed = 1; seed < 1000; seed++) {
+		if (pickFault(seededRandom(seed), 1).kind === 'mutated') return seed
+	}
+	throw new Error('no seed in the first thousand begins with a mutation')
 }
 
 function options(overrides: Partial<ChaosFetchOptions> = {}): ChaosFetchOptions {
@@ -151,9 +160,69 @@ describe('record mode', () => {
 		}
 		expect(sleep.mock.calls.some(([ms]) => ms >= 500)).toBe(true)
 	})
+
+	test('delivers a mutated body, tapes it, and reports what changed', async () => {
+		let tape = memoryLineFile()
+		let findings = memoryLineFile()
+		useChaosFindings.setState({latest: '', file: findings})
+		let body = '{"items":[{"label":"Lunch"}],"open":true}'
+		let wrapped = chaosFetch(
+			server(body),
+			options({tape, faultRate: 1, random: seededRandom(mutatingSeed())}),
+		)
+		let delivered = await (await wrapped(URL_A)).text()
+		let [entry] = parseLines<TapeEntry>(tape.readLines())
+		expect(entry.fault).toBe('mutated')
+		expect(entry.body).toBe(delivered)
+		expect(delivered).not.toBe(body)
+		expect(entry.mutation?.path).toMatch(/^\$/u)
+		let [finding] = parseLines<{kind: string; message: string}>(findings.readLines())
+		expect(finding).toMatchObject({
+			kind: 'mutation',
+			message: `${entry.key} ${entry.mutation?.path}: ${entry.mutation?.change}`,
+		})
+		expect(useChaosFindings.getState().latest).toBe('')
+	})
+
+	test('delivers a body it cannot mutate untouched, taped as no fault', async () => {
+		let tape = memoryLineFile()
+		let wrapped = chaosFetch(
+			server('{}'),
+			options({tape, faultRate: 1, random: seededRandom(mutatingSeed())}),
+		)
+		expect(await (await wrapped(URL_A)).text()).toBe('{}')
+		let [entry] = parseLines<TapeEntry>(tape.readLines())
+		expect(entry).toMatchObject({fault: 'none', body: '{}'})
+		expect(entry.mutation).toBeUndefined()
+	})
+
+	test('passes a binary body through when its fault is a mutation', async () => {
+		let tape = memoryLineFile()
+		let wrapped = chaosFetch(
+			fileServer(),
+			options({tape, faultRate: 1, random: seededRandom(mutatingSeed())}),
+		)
+		let bytes = new Uint8Array(await (await wrapped(URL_A)).arrayBuffer())
+		expect(bytes).toEqual(CATALOG_BYTES)
+		let [entry] = parseLines<TapeEntry>(tape.readLines())
+		expect(entry).toMatchObject({fault: 'none', live: true})
+	})
 })
 
 describe('replay mode', () => {
+	test('replays a mutated body byte for byte', async () => {
+		let tape = memoryLineFile()
+		let recorded = chaosFetch(
+			server('{"items":[1,2,3],"open":true}'),
+			options({tape, faultRate: 1, random: seededRandom(mutatingSeed())}),
+		)
+		let first = await (await recorded(URL_A)).text()
+		let network = server('{"something":"else"}')
+		let replayed = chaosFetch(network, options({tape, mode: 'replay'}))
+		expect(await (await replayed(URL_A)).text()).toBe(first)
+		expect(network).not.toHaveBeenCalled()
+	})
+
 	async function recordThenReplay(requests: (f: typeof fetch) => Promise<unknown>) {
 		let tape = memoryLineFile()
 		let recorder = chaosFetch(server(), options({tape, faultRate: 0.5}))

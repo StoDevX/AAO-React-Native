@@ -12,6 +12,8 @@ export type FindingKind =
 	| 'divergence'
 	| 'console-error'
 	| 'out-of-app'
+	| 'mutation'
+	| 'stall'
 
 /** One thing the probe saw, as written to the findings file. */
 export type Finding = {kind: FindingKind; message: string; stack: string | null; at: string}

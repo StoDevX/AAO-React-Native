@@ -9,6 +9,7 @@ export type Fault =
 	| {kind: 'empty'}
 	| {kind: 'malformed'}
 	| {kind: 'truncated'}
+	| {kind: 'mutated'}
 
 const CHOICES = [
 	'latency',
@@ -20,10 +21,17 @@ const CHOICES = [
 	'truncated',
 ] as const
 
-/** Whether a request is faulted, at `rate`, and how; every kind equally likely. */
+/**
+ * Whether a request is faulted, at `rate`, and how. Half of faults change a
+ * value in the body, since the transport faults all land in the same error
+ * branch; the rest are spread evenly over the transport kinds.
+ */
 export function pickFault(random: Random, rate: number): Fault {
 	if (random() >= rate) {
 		return {kind: 'none'}
+	}
+	if (random() < 0.5) {
+		return {kind: 'mutated'}
 	}
 	let choice = CHOICES[Math.floor(random() * CHOICES.length)]
 	switch (choice) {
