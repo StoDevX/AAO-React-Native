@@ -36,6 +36,7 @@ import {
 	runOutcome,
 	testFailureMessages,
 	stoppingFindings,
+	stopLaunch,
 	stopMutations,
 	summarizeRun,
 	testEnv,
@@ -210,11 +211,10 @@ function main() {
 		warnings: (attachmentText(join(out, 'attachments'), 'chaos-warnings') ?? '').split('\n'),
 		ignore,
 	})
-	// The launch the run stopped in is the last step's; its tape holds what that launch was fed.
-	let lastLaunch = steps.length > 0 ? JSON.parse(steps.at(-1)).launch : null
-	let lastTape = lastLaunch === null ? null : join(out, `chaos-tape-${lastLaunch}.jsonl`)
+	// The tape of the launch the run stopped in holds what that launch was fed.
+	let lastTape = join(out, `chaos-tape-${stopLaunch(steps)}.jsonl`)
 	let mutationsAtStop =
-		outcome.exitCode === 1 && lastTape && existsSync(lastTape)
+		outcome.exitCode === 1 && existsSync(lastTape)
 			? stopMutations(readFileSync(lastTape, 'utf8').split('\n'))
 			: []
 	writeFileSync(

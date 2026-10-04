@@ -440,6 +440,14 @@ export function formatSummary(summary) {
 	return lines.join('\n')
 }
 
+/**
+ * The launch a run stopped in: its last step's, or the first launch when it
+ * took no step, as when the app dies on what it was fed at launch.
+ */
+export function stopLaunch(steps) {
+	return steps.length > 0 ? JSON.parse(steps.at(-1)).launch : 0
+}
+
 /** The mutations one launch's tape records, as `key path: change`; a torn line is skipped. */
 export function stopMutations(tapeLines) {
 	return parseFindingLines(tapeLines)

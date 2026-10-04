@@ -21,6 +21,7 @@ import {
 	replayVerdict,
 	runOutcome,
 	stoppingFindings,
+	stopLaunch,
 	stopMutations,
 	summarizeRun,
 	testEnv,
@@ -792,4 +793,9 @@ test('names a warning whose detail is empty by what comes before its colon', () 
 		ignore: [],
 	})
 	assert.deepEqual(summary.warnings, [{kind: 'system alert', count: 2, example: ''}])
+})
+
+test('a run stops in the launch of its last step, or the first launch when it took none', () => {
+	assert.equal(stopLaunch([JSON.stringify({launch: 0}), JSON.stringify({launch: 3})]), 3)
+	assert.equal(stopLaunch([]), 0)
 })
