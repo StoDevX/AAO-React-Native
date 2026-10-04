@@ -116,7 +116,7 @@ function DirectoryDetail({index, query, type}: DirectoryDetailProps): React.Reac
 
 							{email ? (
 								<DetailRow
-									destination="action"
+									destination="external"
 									label="Email"
 									onPress={() => sendEmail({to: [email], subject: '', body: ''})}
 									value={email}
