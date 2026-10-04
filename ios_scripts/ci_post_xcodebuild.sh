@@ -22,7 +22,8 @@ cd ../../
 
 # ci_post_clone.sh installed mise and sentry-cli, but its PATH and exports end
 # with its process.
-export PATH="$(brew --prefix)/bin:$PATH"
+brew_prefix="$(brew --prefix)"
+export PATH="${brew_prefix}/bin:$PATH"
 
 export SENTRY_ORG='frog-pond-labs'
 export SENTRY_PROJECT='all-about-olaf'
