@@ -8,25 +8,6 @@ import XCTest
 /// which can state the mocked and unmocked cases alike.
 class ModuleStoPrintTests: UITestCaseUnbooted {
 
-	/// A job that is not pending release goes to the release screen rather than
-	/// the printer picker, which is the screen this reaches.
-	func testPrintReleaseScreen() throws {
-		let screen = StoPrintScreen(app: app).navigate()
-
-		// "test.pdf" is Sent to Printer in the fixtures, so tapping it opens the
-		// release screen; a Pending Release job would open the printer list.
-		let job = app.buttons
-			.matching(NSPredicate(format: "label BEGINSWITH %@", "test.pdf"))
-			.firstMatch
-		XCTAssertTrue(job.waitForExistence(timeout: 30), "A sent job should be listed")
-		job.tap()
-
-		let jobInfo = app.staticTexts["Job Info"].firstMatch
-		XCTAssertTrue(jobInfo.waitForExistence(timeout: 30), "The release screen should be shown")
-
-		screen.capture("Print release")
-	}
-
 	/// The job list, then a pending job released through the printer list.
 	///
 	/// The release screen with its actions available, which is a different
@@ -36,6 +17,9 @@ class ModuleStoPrintTests: UITestCaseUnbooted {
 	/// Choosing a printer means passing through the printer list, which only
 	/// a Pending Release job's row pushes to; every other status goes straight
 	/// to the release screen.
+	///
+	/// So first a job already sent, "test.pdf" in the fixtures, opens the
+	/// release screen with nothing to choose.
 	func testAPendingJobReleasesThroughThePrinterList() throws {
 		let screen = StoPrintScreen(app: app).navigate()
 
@@ -47,6 +31,16 @@ class ModuleStoPrintTests: UITestCaseUnbooted {
 			"Print Jobs should list the mocked jobs")
 
 		screen.capture("Print Jobs")
+
+		let sent = app.buttons
+			.matching(NSPredicate(format: "label BEGINSWITH %@", "test.pdf"))
+			.firstMatch
+		XCTAssertTrue(sent.waitForExistence(timeout: 30), "A sent job should be listed")
+		sent.tap()
+		XCTAssertTrue(
+			app.staticTexts["Job Info"].firstMatch.waitForExistence(timeout: 30),
+			"A sent job should open the release screen")
+		screen.capture("Print release").goBack()
 
 		let job = app.buttons
 			.matching(NSPredicate(format: "label BEGINSWITH %@", "IMG_2259-COLLAGE.jpg"))

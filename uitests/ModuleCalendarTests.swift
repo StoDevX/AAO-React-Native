@@ -21,6 +21,10 @@ class ModuleCalendarDayModeTests: UITestCaseUnbooted {
 	/// actually reach the screen in. The category submenu is opened last:
 	/// descending into an axis replaces what is on screen, so the top-level rows
 	/// have to be read while they are still the thing presented.
+	///
+	/// Then Upcoming, chosen from the mode menu, which offers no Timeline: it
+	/// has no strip, and an organisation narrows its list until Reset Filters
+	/// brings it back.
   func testDayModeAndFilters() throws {
 		let screen = CalendarScreen(app: app)
 
@@ -80,6 +84,39 @@ class ModuleCalendarDayModeTests: UITestCaseUnbooted {
       rows.count, unfilteredCount,
       "Clearing the filters should restore the list")
     screen.verifyRowPresent(TestIdentifiers.Calendar.unfilteredDayRow)
+
+    // Upcoming mode, which has no strip, narrows by organisation the same way
+    screen.openModeMenu()
+    screen.verifyModeAbsent(TestIdentifiers.Calendar.timelineMode)
+    screen.selectMode(TestIdentifiers.Calendar.upcomingMode)
+    screen.verifyStripAbsent()
+
+    let upcomingRows = app.buttons.matching(.beginsWith("event-row-"))
+    wait(for: [self.expectation(for: upcomingRows.count >= 1)], timeout: 10)
+    let unfilteredUpcoming = upcomingRows.count
+
+    screen
+      .openPicker()
+      .openSubmenu(TestIdentifiers.Calendar.organizationMenu)
+      .tapMenuItem(TestIdentifiers.Calendar.organization)
+      .dismissMenu()
+      .capture("34-filtered-by-organization")
+
+    let filteredUpcoming = upcomingRows.count
+
+    XCTAssertLessThan(
+      filteredUpcoming, unfilteredUpcoming,
+      "Choosing an organisation should narrow the list")
+    XCTAssertGreaterThan(
+      filteredUpcoming, 0,
+      "The organisation sponsors several events, so rows should remain")
+    screen.verifyRowAbsent(TestIdentifiers.Calendar.unfilteredUpcomingRow)
+
+    screen
+      .openPicker()
+      .tapResetFilters()
+
+    screen.verifyRowPresent(TestIdentifiers.Calendar.unfilteredUpcomingRow)
 	}
 
   func testDayPickerStrip() throws {
@@ -186,44 +223,4 @@ class ModuleCalendarDayModeTests: UITestCaseUnbooted {
 	}
 
   // TODO: assert that the event detail view opens and closes
-}
-
-class ModuleCalendarUpcomingModeTests: UITestCaseUnbooted {
-  func testFilteringByOrganizationNarrowsTheUpcomingList() throws {
-    let screen = CalendarScreen(app: app)
-    screen.navigate()
-
-    screen.openModeMenu()
-    screen.verifyModeAbsent(TestIdentifiers.Calendar.timelineMode)
-    screen.selectMode(TestIdentifiers.Calendar.upcomingMode)
-    screen.verifyStripAbsent()
-
-    let rows = app.buttons.matching(.beginsWith("event-row-"))
-    let expectation = expectation(for: rows.count >= 1)
-    wait(for: [expectation], timeout: 10)
-    let unfiltered = rows.count
-
-    screen
-      .openPicker()
-      .openSubmenu(TestIdentifiers.Calendar.organizationMenu)
-      .tapMenuItem(TestIdentifiers.Calendar.organization)
-      .dismissMenu()
-      .capture("34-filtered-by-organization")
-
-    let filtered = rows.count
-
-    XCTAssertLessThan(
-      filtered, unfiltered,
-      "Choosing an organisation should narrow the list")
-    XCTAssertGreaterThan(
-      filtered, 0,
-      "The organisation sponsors several events, so rows should remain")
-    screen.verifyRowAbsent(TestIdentifiers.Calendar.unfilteredUpcomingRow)
-
-    screen
-      .openPicker()
-      .tapResetFilters()
-
-    screen.verifyRowPresent(TestIdentifiers.Calendar.unfilteredUpcomingRow)
-  }
 }
