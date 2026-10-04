@@ -9,8 +9,8 @@ on:
 # the whole repository to publish sixteen JSON files.
 permissions:
   contents: read
-  pages: write
-  id-token: write
+  pages: write # zizmor: ignore[excessive-permissions] -- actions/deploy-pages needs it
+  id-token: write # zizmor: ignore[excessive-permissions] -- actions/deploy-pages needs it
 
 # One deployment at a time, and never cancel one that has started: a cancelled
 # deploy leaves the site serving whatever the last completed run published,
@@ -29,6 +29,8 @@ jobs:
     steps:
       - name: Check out the code
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       - uses: jdx/mise-action@94c60b39bc2d90ab2f9bab27f38d3cc4812c1834 # v5.1.0
         # Keyed on mise.lock rather than mise.toml -- see the note in check.yml.

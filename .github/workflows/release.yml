@@ -34,7 +34,7 @@ jobs:
     # A label event matters only on the Version PR itself.
     if: github.event_name != 'pull_request' || github.head_ref == 'changeset-release/master'
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1 # zizmor: ignore[artipacked] -- pushes the bot branch with the checkout credentials
         with:
           # A label event would otherwise check out the PR's merge ref.
           ref: master
