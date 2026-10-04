@@ -5,6 +5,7 @@ import {
 	currentChannel,
 	isPrerelease,
 	preCommands,
+	publishEvent,
 	requestedChannel,
 	tagFor,
 } from './release.mjs'
@@ -111,5 +112,17 @@ describe('versions', () => {
 
 	test('the tag is the version behind a v', () => {
 		assert.equal(tagFor('2.9.0-beta.1'), 'v2.9.0-beta.1')
+	})
+})
+
+describe('publishEvent', () => {
+	test('is one ndjson line in the shape changesets/action reads', () => {
+		let line = publishEvent('all-about-olaf', 'v2.9.0')
+		assert.ok(line.endsWith('\n'))
+		assert.deepEqual(JSON.parse(line), {
+			type: 'git-tag',
+			packageName: 'all-about-olaf',
+			tag: 'v2.9.0',
+		})
 	})
 })

@@ -1,4 +1,17 @@
 # Changelog
+
+## 2.9.0-rc.3
+
+### Minor Changes
+
+- 8153069: Versions and release notes now come from Changesets: a pull request gathers the changes, and its label picks an alpha, beta, release candidate or final build.
+
+### Patch Changes
+
+- 3fd7973: The Home list layout is one list in the same order as the tiles, and the Grouped layout is gone.
+- ef3947e: The Olaf Messenger's column chips now carry an icon each, and their row scrolls all the way to the edges of the screen.
+- 7178b59: The Olaf Messenger's pages now sit on the paper throughout, with its serif type and a titled bar on each screen, and the castle at the top of the front page. The FAQs share the grouped background of the rest of Support.
+- 35a6ec0: Olaf Messenger headlines in story lists sit closer together when they wrap.
 ## [Unreleased]
 
 ## [2.8.0] 2023-10-28

@@ -1,13 +1,23 @@
-import {Constants} from './constants'
-
 export interface LocationInfo {
 	location: string
 	homeAway?: 'H' | 'A' | 'N'
 	facility: string
 }
 
+/**
+ * Where a game stands, as ccc-server decides it from the scores feed, the
+ * livestats feed and the clock.
+ *
+ * - `scheduled`: not yet kicked off
+ * - `started`: past kickoff, but nothing reports a score yet
+ * - `live`: livestats reports the game under way, with a score
+ * - `unofficial-final`: livestats reports the game over; no official result yet
+ * - `final`: the scores feed has posted a result
+ */
+export type GameState = 'scheduled' | 'started' | 'live' | 'unofficial-final' | 'final'
+
 export interface StatusInfo {
-	indicator: 'O' | 'A'
+	indicator: GameState
 	value: string
 }
 
@@ -27,7 +37,7 @@ export interface Links {
 	streaming_video?: Link
 }
 
-export type GameResult = 'W' | 'L' | 'N' | ''
+export type GameResult = 'W' | 'L' | 'T' | 'N' | ''
 
 export interface Score {
 	id: string
@@ -55,18 +65,15 @@ export interface Score {
 	coverage: Coverage
 }
 
-export type DateSection =
-	| typeof Constants.YESTERDAY
-	| typeof Constants.TODAY
-	| typeof Constants.UPCOMING
-
-/** A tab in the athletics tab bar: a date bucket, or the Filter tab itself. */
-export type TabSection = DateSection | typeof Constants.FILTER
-
 export type ProcessedScore = Score & {parsedDate: Date}
 
-export interface DateGroupedScores {
+/** One day of games in the athletics list. */
+export interface DaySection {
+	/** Stable across renders and refetches: the day itself, as `YYYY-MM-DD`. */
+	key: string
+	/** "Yesterday", "Today", "Tomorrow", or the weekday and date. */
 	title: string
+	isToday: boolean
 	data: ProcessedScore[]
 }
 

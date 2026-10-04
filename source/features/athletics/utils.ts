@@ -1,4 +1,4 @@
-import {DateGroupedScores, DateSection, ProcessedScore, Score, SportSection} from './types'
+import {DaySection, GameState, ProcessedScore, Score, SportSection} from './types'
 import {Constants} from './constants'
 import {isFilterActive} from './store'
 
@@ -17,6 +17,29 @@ const MONTH_NAMES = [
 	'November',
 	'December',
 ]
+
+/**
+ * States in which a game can change from one minute to the next -- the same
+ * set ccc-server re-reads the feeds every minute for.
+ */
+const IN_PLAY: ReadonlySet<GameState> = new Set(['started', 'live', 'unofficial-final'])
+
+const ONE_DAY = 24 * 60 * 60 * 1000
+
+/**
+ * True while a game is under way or waiting on its official result, for at
+ * most a day after kickoff -- the same cap ccc-server applies. A result can go
+ * unposted for good, and that one game would otherwise hold the list to its
+ * fastest refresh indefinitely.
+ */
+export function isInPlay(score: Score, now: Date): boolean {
+	if (!IN_PLAY.has(score.status.indicator)) {
+		return false
+	}
+	// An all-day fixture has no kickoff to measure from.
+	const kickoff = score.date_utc.includes('T') ? Date.parse(score.date_utc) : Number.NaN
+	return Number.isNaN(kickoff) || now.getTime() - kickoff < ONE_DAY
+}
 
 const MDY_DATE = /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/u
 
@@ -67,115 +90,73 @@ export function formatDateString(date: Date): string {
 	return `${DAY_NAMES[date.getDay()]}, ${MONTH_NAMES[date.getMonth()]} ${date.getDate()}`
 }
 
-function isSameDay(a: Date, b: Date): boolean {
-	return (
-		a.getFullYear() === b.getFullYear() &&
-		a.getMonth() === b.getMonth() &&
-		a.getDate() === b.getDate()
-	)
-}
-
 function startOfDay(d: Date): Date {
 	return new Date(d.getFullYear(), d.getMonth(), d.getDate())
+}
+
+/** A local day as `YYYY-MM-DD`, which sorts the way the days do. */
+function dayKey(d: Date): string {
+	const month = String(d.getMonth() + 1).padStart(2, '0')
+	const day = String(d.getDate()).padStart(2, '0')
+	return `${String(d.getFullYear())}-${month}-${day}`
 }
 
 function byParsedDateAscending(a: ProcessedScore, b: ProcessedScore): number {
 	return a.parsedDate.getTime() - b.parsedDate.getTime()
 }
 
-export function groupScoresByDate(
-	scores: ProcessedScore[],
-	now: Date = new Date(),
-): DateGroupedScores[] {
-	const todayStart = startOfDay(now)
-	const yesterdayStart = new Date(todayStart)
-	yesterdayStart.setDate(yesterdayStart.getDate() - 1)
+/** "Yesterday", "Today" or "Tomorrow" for those days, else the weekday and date. */
+function dayTitle(day: Date, today: Date): string {
+	const yesterday = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 1)
+	const tomorrow = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1)
+	switch (dayKey(day)) {
+		case dayKey(yesterday):
+			return Constants.YESTERDAY
+		case dayKey(today):
+			return Constants.TODAY
+		case dayKey(tomorrow):
+			return Constants.TOMORROW
+		default:
+			return formatDateString(day)
+	}
+}
 
-	const yesterday: ProcessedScore[] = []
-	const today: ProcessedScore[] = []
-	const upcoming: Record<string, ProcessedScore[]> = {}
+/**
+ * Lays the games out one section per local day, earliest first, each day in
+ * kickoff order. Today always has a section, games or not: the list opens
+ * scrolled to it, with the days before above and the days after below.
+ */
+export function daySections(scores: ProcessedScore[], now: Date = new Date()): DaySection[] {
+	const today = startOfDay(now)
+	const byDay = new Map<string, {day: Date; data: ProcessedScore[]}>([
+		[dayKey(today), {day: today, data: []}],
+	])
 
 	for (const score of scores) {
-		const date = score.parsedDate
-		if (isSameDay(date, yesterdayStart)) {
-			yesterday.push(score)
-		} else if (isSameDay(date, todayStart)) {
-			today.push(score)
-		} else if (date > todayStart) {
-			const key = formatDateString(date)
-			if (!upcoming[key]) {
-				upcoming[key] = []
-			}
-			upcoming[key].push(score)
+		const day = startOfDay(score.parsedDate)
+		const key = dayKey(day)
+		const entry = byDay.get(key)
+		if (entry) {
+			entry.data.push(score)
+		} else {
+			byDay.set(key, {day, data: [score]})
 		}
-		// There's no bucket for anything older than Yesterday, so those games
-		// have nowhere to render and are dropped.
 	}
 
-	yesterday.sort(byParsedDateAscending)
-	today.sort(byParsedDateAscending)
-
-	const upcomingSections = Object.keys(upcoming)
-		.sort((a, b) => upcoming[a][0].parsedDate.getTime() - upcoming[b][0].parsedDate.getTime())
-		.map((title) => {
-			const data = upcoming[title].sort(byParsedDateAscending)
-			return {title, data}
-		})
-
-	return [
-		{title: Constants.YESTERDAY, data: yesterday},
-		{title: Constants.TODAY, data: today},
-		...upcomingSections,
-	]
+	return [...byDay.entries()]
+		.sort(([a], [b]) => a.localeCompare(b))
+		.map(([key, {day, data}]) => ({
+			key,
+			title: dayTitle(day, today),
+			isToday: key === dayKey(today),
+			data: data.sort(byParsedDateAscending),
+		}))
 }
 
 /**
- * Derives the sections to render for a date-bucket tab. Today splits into
- * Ongoing/Finalized/Upcoming by game status; Yesterday shows every game with
- * no result filter; Upcoming is the per-day sections with the fixed
- * Yesterday/Today buckets stripped. Empty sections are dropped throughout.
- */
-export function sectionsForTab(
-	tab: DateSection,
-	grouped: DateGroupedScores[],
-): DateGroupedScores[] {
-	switch (tab) {
-		case Constants.YESTERDAY: {
-			const data = grouped.find((s) => s.title === Constants.YESTERDAY)?.data ?? []
-			return data.length > 0 ? [{title: '', data}] : []
-		}
-
-		case Constants.TODAY: {
-			const scores = grouped.find((s) => s.title === Constants.TODAY)?.data ?? []
-			return [
-				{title: Constants.ONGOING, data: scores.filter((s) => s.status.indicator === 'O')},
-				{
-					title: Constants.FINALIZED,
-					data: scores.filter((s) => s.status.indicator !== 'O' && s.result !== ''),
-				},
-				{
-					title: Constants.UPCOMING,
-					data: scores.filter((s) => s.status.indicator !== 'O' && s.result === ''),
-				},
-			].filter((s) => s.data.length > 0)
-		}
-
-		case Constants.UPCOMING:
-			return grouped
-				.filter((s) => s.title !== Constants.YESTERDAY && s.title !== Constants.TODAY)
-				.filter((s) => s.data.length > 0)
-
-		default: {
-			const exhaustive: never = tab
-			throw new Error(`Unhandled tab: ${String(exhaustive)}`)
-		}
-	}
-}
-
-/**
- * Groups sport names into Women's, Men's, and Other filter sections. A sport
- * with neither prefix — Volleyball, for instance — belongs in Other Sports:
- * the filter screen must give every sport a place, gendered or not. Each
+ * Groups sport names into Women's, Men's, and Other. A sport with neither
+ * prefix — Volleyball, for instance — belongs in Other Sports: the filter must
+ * give every sport a place, gendered or not. Each
  * section is sorted, and a section with no sports in it is omitted.
  */
 export function sportFilterSections(scores: ProcessedScore[]): SportSection[] {
@@ -192,56 +173,23 @@ export function sportFilterSections(scores: ProcessedScore[]): SportSection[] {
 }
 
 /**
- * Applies the sport filter to date-grouped sections. Every section is kept
- * even when filtering leaves its data empty, so the caller decides what an
- * empty section means for rendering. An empty selection means "show
- * everything" — see `isFilterActive`.
+ * Narrows the games to the selected sports. An empty selection means "show
+ * everything" -- see `isFilterActive`.
  */
-export function filterSectionsBySport(
-	grouped: DateGroupedScores[],
+export function filterBySport(
+	scores: ProcessedScore[],
 	selectedSports: string[],
-): DateGroupedScores[] {
-	return grouped.map((section) => ({
-		...section,
-		data: section.data.filter(
-			(score) => !isFilterActive(selectedSports) || selectedSports.includes(score.sport),
-		),
-	}))
-}
-
-/** True when every sport in a filter section is already in the user's selection. */
-export function isSectionFullySelected(sectionSports: string[], selectedSports: string[]): boolean {
-	return sectionSports.every((sport) => selectedSports.includes(sport))
-}
-
-/**
- * The next selection after toggling a filter section's "All" control: when
- * every sport in the section is already selected, the toggle removes them;
- * otherwise it adds every sport in the section to the existing selection.
- */
-export function toggleSectionSelection(
-	sectionSports: string[],
-	selectedSports: string[],
-): string[] {
-	if (isSectionFullySelected(sectionSports, selectedSports)) {
-		return selectedSports.filter((sport) => !sectionSports.includes(sport))
+): ProcessedScore[] {
+	if (!isFilterActive(selectedSports)) {
+		return scores
 	}
-
-	return [...new Set([...selectedSports, ...sectionSports])]
-}
-
-/**
- * A sport's name without its division prefix, for use where the section header
- * already says which division it is -- "Men's Basketball" under a "Men's"
- * heading reads as a stutter.
- */
-export function shortSportName(sport: string): string {
-	return sport.replace(/^(Men's|Women's)\s/u, '')
+	return scores.filter((score) => selectedSports.includes(score.sport))
 }
 
 /** What a score row says about a game, and how it says it. */
 export interface GameSummary {
-	/** True before a game starts, when there is a kickoff time but no score. */
+	/** True while there is a kickoff time but no score: before a game starts,
+	 * and after kickoff until something reports a score. */
 	showsTime: boolean
 	/** The kickoff time, or the result and score once there is one. */
 	label: string
@@ -253,12 +201,12 @@ export interface GameSummary {
 /**
  * Decides whether a score row shows a kickoff time or a scoreline.
  *
- * A game that has not started (status `A`) and carries no result shows its
- * time; anything ongoing or finished shows the score, with the result letter
- * in front of it once there is one.
+ * A game that is scheduled, or has started with no score reported yet, shows
+ * its time -- ccc-server blanks the score for both. Anything live or finished
+ * shows the score, with the result letter in front of it once there is one.
  */
 export function gameSummary(score: ProcessedScore): GameSummary {
-	let showsTime = score.status.indicator === 'A' && score.result === ''
+	let showsTime = score.status.indicator === 'scheduled' || score.status.indicator === 'started'
 	// All-day and multi-day fixtures carry no `time` string.
 	let label = showsTime
 		? score.time || 'All day'

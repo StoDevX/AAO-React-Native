@@ -2,9 +2,13 @@ import type {Score} from '../types'
 
 /**
  * Scores for UI testing, anchored to `UITEST_FROZEN_DATE` -- the Saturday the
- * app's clock is frozen to under `--uitesting`. Between them they fill every
- * bucket the tabs can show: yesterday, today's ongoing/finalized/upcoming, and
- * a later fixture, so no tab is empty for want of a real game that day.
+ * app's clock is frozen to under `--uitesting`. Between them they put games on
+ * yesterday, on today in every state -- live, final and scheduled -- and on
+ * later days, so the list has something either side of Today to scroll to.
+ *
+ * Every kickoff is written in Central time but falls on the same date in UTC,
+ * which is what the UI test simulators run on: a 7 p.m. Central game is the
+ * next day there, and landed in the wrong section.
  *
  * Live scores are whatever St. Olaf played this week, which is nothing to
  * assert against -- see `source/features/dictionary/query.ts` for the same
@@ -28,7 +32,7 @@ function score(props: Partial<Score> & Pick<Score, 'id' | 'sport' | 'date_utc'>)
 		time: '',
 		timestamp: 0,
 		location: {location: 'Northfield, Minn.', facility: 'Manitou Field', homeAway: 'H'},
-		status: {indicator: 'A', value: ''},
+		status: {indicator: 'scheduled', value: ''},
 		hometeam: 'St. Olaf',
 		hometeam_logo: LOGO,
 		opponent: 'Carleton',
@@ -49,9 +53,10 @@ export const UITEST_SCORES: Score[] = [
 	score({
 		id: 'uitest-yesterday',
 		sport: "Women's Soccer",
-		date_utc: '2026-09-04T19:00:00-05:00',
-		time: '7:00 PM',
+		date_utc: '2026-09-04T13:00:00-05:00',
+		time: '1:00 PM',
 		result: 'L',
+		status: {indicator: 'final', value: ''},
 		team_score: '1',
 		opponent_score: '2',
 	}),
@@ -60,7 +65,7 @@ export const UITEST_SCORES: Score[] = [
 		sport: "Men's Soccer",
 		date_utc: '2026-09-05T14:00:00-05:00',
 		time: '2:00 PM',
-		status: {indicator: 'O', value: 'In Progress'},
+		status: {indicator: 'live', value: 'In Progress'},
 		team_score: '2',
 		opponent_score: '0',
 	}),
@@ -70,6 +75,7 @@ export const UITEST_SCORES: Score[] = [
 		date_utc: '2026-09-05T11:00:00-05:00',
 		time: '11:00 AM',
 		result: 'W',
+		status: {indicator: 'final', value: ''},
 		team_score: '3',
 		opponent_score: '1',
 		opponent: 'Gustavus Adolphus',
@@ -77,8 +83,8 @@ export const UITEST_SCORES: Score[] = [
 	score({
 		id: 'uitest-today-upcoming',
 		sport: 'Football',
-		date_utc: '2026-09-05T19:00:00-05:00',
-		time: '7:00 PM',
+		date_utc: '2026-09-05T16:00:00-05:00',
+		time: '4:00 PM',
 		opponent: 'Bethel',
 	}),
 	/// No `time` at all, which is how the feed sends an all-day fixture -- the

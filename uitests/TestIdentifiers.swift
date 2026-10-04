@@ -402,6 +402,9 @@ struct TestIdentifiers {
 			optionPrefix + title
 		}
 
+		/// Matches SPORTS_FILTER_KEY in source/features/athletics/sports-filter.ts.
+		static let athleticsSports = "sports"
+
 		/// Filter keys from modules/food-menu/lib/build-filters.ts.
 		enum MenusKeys {
 			static let specials = "specials"

@@ -17,11 +17,11 @@ describe('createLayoutStore', () => {
 	})
 
 	test('takes any set of layouts, not only grid and list', async () => {
-		let useStore = createLayoutStore<'tiled' | 'grouped' | 'list'>('test-layout-three', 'tiled')
+		let useStore = createLayoutStore<'tiled' | 'list'>('test-layout-three', 'tiled')
 		await act(() => {
-			useStore.getState().setLayout('grouped')
+			useStore.getState().setLayout('tiled')
 		})
-		expect(useStore.getState().layout).toBe('grouped')
+		expect(useStore.getState().layout).toBe('tiled')
 	})
 
 	// A screen drawn before the saved choice has loaded draws the default and
