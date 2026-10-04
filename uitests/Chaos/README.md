@@ -35,7 +35,8 @@ re-running a seed never deletes the evidence of the last one; pass
 **The `TEST_RUNNER_` prefix is required.** `xcodebuild` passes the test only
 variables with that prefix, and strips it on the way in, so a bare
 `AAO_JS_LOCATION` never arrives. With no Metro named and no bundle embedded in
-the built app, the run stops before building and says so. Name a simulator
+the built app, the run stops before building and says so. It stops too when
+the Metro it names serves another checkout, as 8081 may. Name a simulator
 with `SIMULATOR_UDID` when more than one is booted.
 
 The exit code says what happened:
@@ -93,7 +94,8 @@ mise run chaos:8081 -- --replay logs/chaos/1234
 ```
 
 A replay takes the seed from the directory's name and answers every request
-from the recorded tapes, so the app sees the same data and the same faults.
+from the recorded tapes, so the app sees the same data and the same faults,
+except a binary response, which it fetches live.
 Each launch reads only its own tape. The runner installs the built app first,
 so a simulator that has never run the app can replay too. It writes to
 `logs/chaos/1234-replay/` and never touches the original. A recording from
