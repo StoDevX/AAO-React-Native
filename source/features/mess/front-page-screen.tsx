@@ -28,22 +28,26 @@ function datelineOf(view: MessView): string | null {
 	return view.section ?? 'Latest stories'
 }
 
+/** The paper's pages the view menu leads to, beside its views. */
+type MessPagePath = '/messenger/about' | '/messenger/staff'
+
 /**
  * The glass buttons at the top right: the paintbrush, which opens the Messenger's Customize
- * sheet, and a menu to pick By Issue or Latest and, in Latest, the section to narrow it to, then a
- * way to the paper's About page. The menu's label names the view showing, since the icon alone does
- * not. Both sit at the right because a button at the left would replace the Back button.
+ * sheet, and a menu to pick By Issue or Latest and, in Latest, the section to narrow it to, then
+ * ways to the paper's Contact and Staff pages. The menu reads as More, as a ⋯ button does, then
+ * the view showing, since the icon alone does not say it. Both sit at the right because a button
+ * at the left would replace the Back button.
  */
 function ViewMenu({
 	view,
 	onChoose,
 	onCustomize,
-	onOpenAbout,
+	onOpen,
 }: {
 	view: MessView
 	onChoose: (view: MessView) => void
 	onCustomize: () => void
-	onOpenAbout: () => void
+	onOpen: (path: MessPagePath) => void
 }): React.ReactNode {
 	return (
 		<Stack.Toolbar placement="right">
@@ -52,7 +56,7 @@ function ViewMenu({
 				icon="paintbrush"
 				onPress={onCustomize}
 			/>
-			<Stack.Toolbar.Menu accessibilityLabel={`View: ${VIEW_NAMES[view.mode]}`} icon="ellipsis">
+			<Stack.Toolbar.Menu accessibilityLabel={`More, ${VIEW_NAMES[view.mode]}`} icon="ellipsis">
 				<Stack.Toolbar.Menu inline={true} title="View">
 					<Stack.Toolbar.MenuAction
 						isOn={view.mode === 'issues'}
@@ -86,9 +90,14 @@ function ViewMenu({
 						))}
 					</Stack.Toolbar.Menu>
 				) : null}
-				{/* Its own inline group, so the menu draws a divider between the views and it */}
+				{/* Their own inline group, so the menu draws a divider between the views and them */}
 				<Stack.Toolbar.Menu inline={true}>
-					<Stack.Toolbar.MenuAction onPress={onOpenAbout}>About</Stack.Toolbar.MenuAction>
+					<Stack.Toolbar.MenuAction onPress={() => onOpen('/messenger/about')}>
+						Contact
+					</Stack.Toolbar.MenuAction>
+					<Stack.Toolbar.MenuAction onPress={() => onOpen('/messenger/staff')}>
+						Staff
+					</Stack.Toolbar.MenuAction>
 				</Stack.Toolbar.Menu>
 			</Stack.Toolbar.Menu>
 		</Stack.Toolbar>
@@ -157,7 +166,7 @@ export function FrontPageScreen(): React.ReactNode {
 			<ViewMenu
 				onChoose={choose}
 				onCustomize={() => router.navigate('/messenger/customize')}
-				onOpenAbout={() => router.navigate('/messenger/about')}
+				onOpen={(path) => router.navigate(path)}
 				view={view}
 			/>
 			<MessPage

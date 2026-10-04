@@ -4,10 +4,10 @@ import {Stack} from 'expo-router'
 import {Host, List, Section, Text} from '@expo/ui/swift-ui'
 import {listStyle, refreshable} from '@expo/ui/swift-ui/modifiers'
 import {useQuery} from '@tanstack/react-query'
+import * as c from '@frogpond/colors'
 import {sendEmail} from '../../components/send-email'
 import {DisclosureRow} from '../../components/rows'
-import {MessPage} from './mess-page'
-import {PageLoading, PageNotice} from './page-notice'
+import {UnloadedPage} from './mess-page'
 import {messAboutOptions} from './query'
 import type {AboutSection} from './types'
 
@@ -40,7 +40,7 @@ export function AboutScreen(): React.ReactNode {
 
 	return (
 		<>
-			<Stack.Screen options={{title: 'About The Olaf Messenger'}} />
+			<Stack.Screen options={{title: 'Contact The Olaf Messenger'}} />
 			{about.data ? (
 				<Host style={styles.list}>
 					<List
@@ -57,13 +57,7 @@ export function AboutScreen(): React.ReactNode {
 					</List>
 				</Host>
 			) : (
-				<MessPage onRefresh={() => about.refetch()}>
-					{about.isError ? (
-						<PageNotice error={about.error} onRetry={() => about.refetch()} />
-					) : (
-						<PageLoading paused={about.fetchStatus === 'paused'} />
-					)}
-				</MessPage>
+				<UnloadedPage color={c.systemGroupedBackground} query={about} />
 			)}
 		</>
 	)

@@ -117,7 +117,11 @@ export type MessIssue = {
 
 /** A writer's profile for one staff year. */
 export type StaffProfile = {
+	/** The profile's own post id, not its writer's staff_name term */
+	id: number
 	name: string
+	/** The writer's role on the paper, such as `News Editor`; blank when the profile names none */
+	role: string
 	bio: string
 	photo: Photo | null
 	/** The staff_year term, such as `2025-2026` */

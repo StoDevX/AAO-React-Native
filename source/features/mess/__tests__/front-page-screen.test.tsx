@@ -196,29 +196,31 @@ describe('FrontPageScreen', () => {
 	test('names the menu by the view it shows, for VoiceOver', async () => {
 		seedTop()
 		await renderScreen()
-		expect(screen.getByLabelText('View: By Issue')).toBeTruthy()
+		expect(screen.getByLabelText('More, By Issue')).toBeTruthy()
 
 		await fireEvent.press(menuItem('Latest'))
-		expect(screen.getByLabelText('View: Latest')).toBeTruthy()
+		expect(screen.getByLabelText('More, Latest')).toBeTruthy()
 		// Latest has no feed cached, so it fetches one.
 		await waitForQueriesToSettle(queryClient)
 	})
 
-	test.each(['By Issue', 'Latest'])(
-		"opens the paper's About page from the menu in %s",
-		async (view) => {
-			seedTop()
-			queryClient.setQueryData(messKeys.feed, onePage(ISSUE_STORIES))
-			saveChoice(view)
-			await renderScreen()
+	test.each([
+		['Contact', '/messenger/about', 'By Issue'],
+		['Contact', '/messenger/about', 'Latest'],
+		['Staff', '/messenger/staff', 'By Issue'],
+		['Staff', '/messenger/staff', 'Latest'],
+	])("opens the paper's %s page, %s, from the menu in %s", async (item, route, view) => {
+		seedTop()
+		queryClient.setQueryData(messKeys.feed, onePage(ISSUE_STORIES))
+		saveChoice(view)
+		await renderScreen()
 
-			await fireEvent.press(menuItem('About'))
+		await fireEvent.press(menuItem(item))
 
-			expect(mockNavigate).toHaveBeenCalledWith('/messenger/about')
-			// The About page is not a view, so choosing it leaves the view as it was.
-			expect(savedChoice()).toBe(view)
-		},
-	)
+		expect(mockNavigate).toHaveBeenCalledWith(route)
+		// The page is not a view, so choosing it leaves the view as it was.
+		expect(savedChoice()).toBe(view)
+	})
 
 	test('offers the sections in Latest only, and remembers the view', async () => {
 		seedTop()

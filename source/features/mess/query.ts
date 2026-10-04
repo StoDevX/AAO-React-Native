@@ -7,6 +7,7 @@ import {parseGalleryPhotos} from './lib/gallery'
 import {bodyParagraphs} from './lib/issue-grid'
 import {ISSUE_PAGE_SIZE, parseLightPosts, parseMediaUrls, withPhotoUrls} from './lib/issues'
 import {latestProfile, parseStaffProfiles} from './lib/profiles'
+import {newestStaffYear} from './lib/staff'
 import {seriesKey, seriesName} from './lib/series'
 import {findSpotifyRef} from './lib/spotify'
 import {messFetch} from './lib/fixtures'
@@ -392,5 +393,44 @@ export const messAboutOptions = queryOptions({
 			'Olaf Messenger About page',
 		)
 		return parseAboutPage(body)
+	},
+})
+
+/** How many profiles a page of the staff asks for, WordPress's most. A shorter page is the last. */
+const STAFF_PAGE_SIZE = 100
+
+/** Everyone on the newest staff year, for the staff directory. */
+export const messStaffOptions = queryOptions({
+	queryKey: messKeys.staff,
+	// The paper adds its staff at the start of a year, and a new hire or two after.
+	staleTime: ONE_DAY_IN_MS,
+	queryFn: async ({signal}): Promise<StaffProfile[]> => {
+		// Assumes the resolved feed href is an absolute WordPress URL.
+		let origin = originOf(await feedHref())
+		// The newest year with anyone on it: a year the paper has made but not yet filled would
+		// otherwise hide last year's staff behind an empty page. Every year is asked for, not just
+		// the first by name, so a term not named as a year cannot stand in for the newest.
+		let years = await messFetch(
+			`${origin}/wp-json/wp/v2/staff_year?hide_empty=true&per_page=100&_fields=id,name`,
+			signal,
+			'Olaf Messenger staff years',
+		)
+		let year = newestStaffYear(years)
+		// No year with anyone on it lists nobody, which the directory says, rather than an error.
+		if (!year) return []
+		// _fields must name featured_media, _links and _embedded, or WordPress embeds no photo.
+		let href = `${origin}/wp-json/wp/v2/staff_profile?staff_year=${year.id}&per_page=${STAFF_PAGE_SIZE}&_embed=wp:featuredmedia,wp:term&_fields=id,title,content,excerpt,featured_media,_links,_embedded`
+		let people: StaffProfile[] = []
+		for (let page: number | undefined = 1; page !== undefined;) {
+			// Each page says whether there is another, so the pages are fetched one after another.
+			// oxlint-disable-next-line eslint/no-await-in-loop
+			let body = await messFetch(pageHref(href, page), signal, 'Olaf Messenger staff').catch(
+				emptyPastLastPage(page),
+			)
+			let list = Array.isArray(body) ? body : []
+			people.push(...parseStaffProfiles(list))
+			page = nextPage(list, page, STAFF_PAGE_SIZE)
+		}
+		return people
 	},
 })
