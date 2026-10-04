@@ -404,8 +404,11 @@ wait_for = ["prebuild"]
 # Keeps the UI-test fixtures a release bundle drops (metro.config.js): this bundle
 # serves the UI tests, and `mise run device` builds, which carry them unused.
 env = { KEEP_UITEST_FIXTURES = "1" }
+# --reset-cache: Metro caches in $TMPDIR, which neither a pnpm install nor
+# deleting ios/ clears, so a bundle can embed a package copy pnpm has replaced.
 run = """
 expo export:embed \
+  --reset-cache \
   --entry-file index.js \
   --dev false \
   --platform ios \
