@@ -41,7 +41,7 @@ export function RadioNowPlayingSheet(): React.ReactNode {
 	// sheet starts fetching them all, for either station the picker offers.
 	React.useEffect(() => {
 		if (open) {
-			prefetchImages(allStationImageUrls())
+			void prefetchImages(allStationImageUrls())
 		}
 	}, [open])
 

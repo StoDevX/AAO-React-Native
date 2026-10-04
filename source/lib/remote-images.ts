@@ -45,10 +45,9 @@ export function remoteImage(group: ImageGroup, name: string): RemoteImage {
 /**
  * Starts fetching images into the cache so they are there when drawn. A
  * failure is ignored: the image is fetched again when it is drawn, and fails
- * visibly there if the network is still out.
+ * visibly there if the network is still out. The promise settles once every
+ * fetch has, and never rejects, for a caller that wants to wait.
  */
-export function prefetchImages(urls: readonly string[]): void {
-	for (let url of new Set(urls)) {
-		Image.prefetch(url).catch(() => undefined)
-	}
+export async function prefetchImages(urls: readonly string[]): Promise<void> {
+	await Promise.all([...new Set(urls)].map((url) => Image.prefetch(url).catch(() => false)))
 }

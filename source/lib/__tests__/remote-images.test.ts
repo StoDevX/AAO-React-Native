@@ -24,17 +24,20 @@ describe('prefetchImages', () => {
 		jest.restoreAllMocks()
 	})
 
-	it('fetches each image once, and shrugs off one that fails', () => {
+	it('fetches each image once, and shrugs off one that fails', async () => {
 		let prefetch = jest
 			.spyOn(Image, 'prefetch')
 			.mockRejectedValueOnce(new Error('offline'))
 			.mockResolvedValue(true)
 
-		prefetchImages([
-			'https://example.test/a.webp',
-			'https://example.test/b.webp',
-			'https://example.test/a.webp',
-		])
+		// resolving, not rejecting, is the point: a failed fetch must not escape
+		await expect(
+			prefetchImages([
+				'https://example.test/a.webp',
+				'https://example.test/b.webp',
+				'https://example.test/a.webp',
+			]),
+		).resolves.toBeUndefined()
 
 		expect(prefetch).toHaveBeenCalledTimes(2)
 		expect(prefetch).toHaveBeenNthCalledWith(2, 'https://example.test/b.webp')
