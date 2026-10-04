@@ -174,7 +174,7 @@ export default function StudentOrgsDetailPage(): React.ReactNode {
 							{contacts.map((contact) => (
 								<DisclosureRow
 									key={contact.email}
-									destination="action"
+									destination="external"
 									detail={contact.title}
 									onPress={() => sendEmail({to: [contact.email], subject: orgName})}
 									title={showNameOrEmail(contact)}
@@ -188,7 +188,7 @@ export default function StudentOrgsDetailPage(): React.ReactNode {
 							{advisors.map((contact) => (
 								<DisclosureRow
 									key={contact.email}
-									destination="action"
+									destination="external"
 									onPress={() => sendEmail({to: [contact.email], subject: orgName})}
 									title={contact.name}
 								/>
