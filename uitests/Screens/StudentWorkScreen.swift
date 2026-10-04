@@ -99,17 +99,6 @@ struct StudentWorkScreen: Screen {
 		return self
 	}
 
-	/// The row's label carries its detail line after the title.
-	@discardableResult
-	func verifyPostingDetail(_ title: String, contains detail: String) -> Self {
-		let listed = row(title)
-		XCTAssertTrue(listed.waitForExistence(timeout: 30), "Student Work should list \(title)")
-		XCTAssertTrue(
-			listed.label.contains(detail),
-			"\(title)'s row should read \(detail), but its label is \(listed.label)")
-		return self
-	}
-
 	/// Chooses one option in a filter's pull-down menu, then closes it.
 	@discardableResult
 	func choose(_ option: String, inFilter key: String) -> Self {
@@ -118,31 +107,6 @@ struct StudentWorkScreen: Screen {
 			.openFilter(key, until: filters.menuItem(option))
 			.tapMenuItem(option)
 			.dismissMenu(waitingFor: option)
-		return self
-	}
-
-	private var postingsList: XCUIElement {
-		app.collectionViews[TestIdentifiers.StudentWork.postingsList]
-	}
-
-	/// Asserts the list has a section with this title, scrolling to reach it:
-	/// the list builds its rows only as they near the screen.
-	@discardableResult
-	func verifySection(_ title: String) -> Self {
-		let header = postingsList.staticTexts[title]
-		scrollUntilExists(header, in: postingsList)
-		XCTAssertTrue(header.exists, "The postings should have a \(title) section")
-		return self
-	}
-
-
-	/// Asserts an open posting shows this Details row. A `LabeledContent` row
-	/// reads as one element, its label and value joined by a comma.
-	@discardableResult
-	func verifyDetailRow(_ label: String, _ value: String) -> Self {
-		XCTAssertTrue(
-			app.staticTexts["\(label), \(value)"].firstMatch.waitForExistence(timeout: 10),
-			"The posting should show a \(label) row reading \(value)")
 		return self
 	}
 

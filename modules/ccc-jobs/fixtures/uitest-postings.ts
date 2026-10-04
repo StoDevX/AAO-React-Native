@@ -26,8 +26,7 @@ import type {JobCategory, JobDetail} from '../types'
 export const UITEST_WRAPPING_JOB_TITLE = 'Undergraduate Research Assistant'
 /// Mirrored by `TestIdentifiers.StudentWork.fixtureJobWithShortFields`.
 export const UITEST_SHORT_JOB_TITLE = 'Library Circulation Desk Assistant'
-/// Listed as `TestIdentifiers.StudentWork.fixtureCodedJob`, without its term
-/// prefix and pay code.
+/// Listed without its term prefix and pay code.
 export const UITEST_CODED_JOB_TITLE = 'AY Stav Student Server (WS-NST1)'
 
 const SITE = 'https://jobs.example.invalid/sites/CX_1'
