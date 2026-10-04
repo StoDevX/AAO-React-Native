@@ -2,17 +2,13 @@ import {LogBox} from 'react-native'
 import {isChaos, isUITesting} from '@frogpond/launch-arguments'
 
 /**
- * Hides LogBox's toasts from a UI-test or chaos launch.
+ * Hides LogBox's toasts from a UI-test launch.
  *
  * The toast sits over the bottom of the screen -- the Menus tab bar, the
  * Dictionary's search bar -- so a test that taps there taps the toast instead,
  * and fails for a warning that has nothing to do with it. Fatal errors still
  * show. Only a development bundle has LogBox at all, so this matters to UI
  * tests run against Metro; CI embeds a production bundle.
- *
- * A chaos launch needs this as well as `removeLogBoxForChaos`: uninstalling
- * leaves the native warning handler in place, so a native warning would still
- * raise a toast.
  */
 export function hideLogBoxForUITests(uiTesting: boolean): void {
 	if (uiTesting) {
@@ -26,13 +22,15 @@ export function hideLogBoxForUITests(uiTesting: boolean): void {
  * Its red screen covers the whole app, and with it the beacon a chaos run
  * reads after every step, so a render error looked like a screen with nothing
  * to press. Without LogBox the error reaches the chaos error boundary alone,
- * and the run stops on it at once.
+ * and the run stops on it at once. Uninstalling leaves LogBox's native warning
+ * handler in place, so its toasts are hidden as well.
  */
 export function removeLogBoxForChaos(chaos: boolean): void {
 	if (chaos) {
 		LogBox.uninstall()
+		LogBox.ignoreAllLogs(true)
 	}
 }
 
-hideLogBoxForUITests(isUITesting || isChaos)
+hideLogBoxForUITests(isUITesting)
 removeLogBoxForChaos(isChaos)
