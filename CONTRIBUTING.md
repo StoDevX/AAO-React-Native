@@ -1,9 +1,7 @@
 # Contributing
 
-Would you like to contribute?
-Great!
-Have a look at [React Native's "getting started" guide][rn-gs] to help you get your computer set up.
-Then, fork the repository, and make a pull request!
+Would you like to contribute? Great! Start with the [project README](README.md)
+to set up your environment, then fork the repository and open a pull request.
 
 If you are looking to get started with the project, issues tagged with [`good first issue`][gfi] are a great place to start.
 These issues are ones that the team has identified as simple, small changes that won't get too deep, and will be easy to approve for merging.
@@ -12,14 +10,15 @@ The rest of the issues need help, too, so if you are more experienced with React
 As always, please keep the [Code of Conduct][cc] in mind.
 
 [cc]: https://github.com/StoDevX/AAO-React-Native/blob/master/CODE_OF_CONDUCT.md
-[rn-gs]: http://facebook.github.io/react-native/docs/getting-started.html
 [gfi]: https://github.com/StoDevX/AAO-React-Native/issues?q=is%3Aissue+label%3A%22good+first+issue%22+is%3Aopen
 
 ## Table of Contents
 
 1. [Labels](#labels)
-2. [Keep It Running](#keep-it-running)
-3. [Maintainers](#maintainers)
+2. [Getting Started](#getting-started)
+3. [How the App Is Organized](#how-the-app-is-organized)
+4. [Checks](#checks)
+5. [Maintainers](#maintainers)
 
 ## Labels
 
@@ -38,7 +37,7 @@ Even though they may seem unorganized, there's a method to the madness.
 - <kbd>release-note-worthy</kbd> &ndash; Not entirely sure why this exists.
   I think it's so that we can use it to filter down the PRs that were merged when we write up the release notes?
 - <kbd>status/*</kbd> &ndash; The different states that an issue or PR can be in: blocked, dup, in progress, on hold(?), or pending an upstream update
-- <kbd>tool/*</kbd> &ndash; Issues/PRs that affect our various tools: Xcode Cloud, CircleCI, Danger, ESLint, Flow, Gradle, a custom script, or Testflight
+- <kbd>tool/*</kbd> &ndash; Issues/PRs that affect project tools such as Xcode Cloud, GitHub Actions, mise, pnpm, or build scripts
 - <kbd>triage</kbd> &ndash; Automatically applied to issues that are filed without any labels
 - <kbd>type/*</kbd>
   - <kbd>type/bugfix</kbd> &ndash; used for PRs that fix bugs
@@ -50,27 +49,41 @@ Even though they may seem unorganized, there's a method to the madness.
 - <kbd>view/*</kbd> &ndash; Used to scope an issue to a particular component in the app
 - <kbd>wontfix</kbd> &ndash; We won't fix anything with this label
 
-## Keep It Running
+## Getting Started
 
-We use a continuous-integration (CI) system to make sure that the project still works as we change things.
-Any submissions you make will be validated by [CircleCI][circle] and [TravisCI][travis].
+This iOS app requires Xcode and mise. Install the repository's tools and
+JavaScript dependencies, then launch it in the iOS simulator:
 
-[circle]: https://circleci.com/gh/StoDevX/AAO-React-Native
-[travis]: https://travis-ci.org/StoDevX/AAO-React-Native/builds
+```sh
+mise install
+pnpm install --frozen-lockfile
+mise run ios
+```
 
-We use a set of tools to enforce code style and find common bugs: [ESLint][eslint], [Flow][flow], [Jest][jest], and [Prettier][prettier].
+For a connected iPhone, use `mise run device "Phone"` with the device's name.
 
-- `npm run lint`: ESLint finds and flags things that might be typos, or unintentional bugs
-- `npm run flow`: Flow looks for type errors (in JS? yes!)
-- `npm run test`: Jest runs our unit tests
-- `npm run prettier`: Prettier enforces a common style on the JS code, without us needing to edit anything
+## How the App Is Organized
 
-Whenever commits are pushed, we have some GitHub Actions workflows that will run these commands (and a few others) to evaluate the changes.
+The app uses Expo Router: screens live in `app/`, feature implementation lives
+in `source/features/`, and reusable `@frogpond/*` workspace packages live in
+`modules/`.
 
-[eslint]: http://eslint.org/
-[flow]: https://flowtype.org/
-[jest]: https://facebook.github.io/jest/
-[prettier]: https://github.com/prettier/prettier
+## Checks
+
+GitHub Actions runs checks for pull requests and pushes to `master`. Before
+opening a pull request, run the relevant local checks:
+
+```sh
+mise run format:check
+mise run lint
+mise run tsc
+mise run test
+```
+
+`mise run test` runs both Jest and `node:test`; use `mise run test:jest` or
+`mise run test:node` to run one test suite. See the [Check workflow](.github/workflows/check.yml)
+for CI details, [`mise.toml`](mise.toml) for available tasks, and
+[`AGENTS.md`](AGENTS.md) for project-specific development guidance.
 
 
 ## Maintainers
