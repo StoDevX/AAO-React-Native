@@ -1,5 +1,7 @@
 import {router} from 'expo-router'
 
+import {useRadioStore} from '../source/features/streaming/radio'
+
 /** How long the router gets to run a queued dismissal before the link is routed. */
 const DISMISS_SETTLE_MS = 50
 
@@ -21,7 +23,14 @@ export function redirectSystemPath({
 	path: string
 	initial: boolean
 }): string | Promise<string> {
-	if (initial || !router.canDismiss()) {
+	if (initial) {
+		return path
+	}
+
+	// The radio's player is a sheet of its own, not a route, so the router cannot close it.
+	useRadioStore.getState().closeSheet()
+
+	if (!router.canDismiss()) {
 		return path
 	}
 
