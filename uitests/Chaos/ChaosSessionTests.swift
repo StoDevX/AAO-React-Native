@@ -36,4 +36,25 @@ final class ChaosSessionTests: XCTestCase {
 	func testFallsBackToTheFuzzingStringsWithNoWords() {
 		XCTAssertEqual(sessionText(vocab: [], choice: 1, fraction: 0), chaosStrings[1])
 	}
+
+	func testWarnsOfASpinnerLeftAfterTheNetworkCameBack() {
+		var watch = ChaosSpinnerWatch()
+		let start = Date()
+		XCTAssertNil(watch.observe(network: "offline", hasSpinner: true, title: "Menus", at: start))
+		XCTAssertNil(watch.observe(network: "online", hasSpinner: true, title: "Menus", at: start.addingTimeInterval(1)))
+		XCTAssertNil(watch.observe(network: "online", hasSpinner: true, title: "Menus", at: start.addingTimeInterval(20)))
+		XCTAssertEqual(
+			watch.observe(network: "online", hasSpinner: true, title: "Menus", at: start.addingTimeInterval(22)),
+			"stuck spinner: Menus")
+		XCTAssertNil(watch.observe(network: "online", hasSpinner: true, title: "Menus", at: start.addingTimeInterval(40)))
+	}
+
+	func testIgnoresASpinnerThatGoesAwayOrNeverHadAnOutage() {
+		var watch = ChaosSpinnerWatch()
+		let start = Date()
+		XCTAssertNil(watch.observe(network: "online", hasSpinner: true, title: "Menus", at: start.addingTimeInterval(60)))
+		_ = watch.observe(network: "offline", hasSpinner: false, title: "Menus", at: start)
+		_ = watch.observe(network: "online", hasSpinner: true, title: "Menus", at: start.addingTimeInterval(1))
+		XCTAssertNil(watch.observe(network: "online", hasSpinner: false, title: "Menus", at: start.addingTimeInterval(30)))
+	}
 }

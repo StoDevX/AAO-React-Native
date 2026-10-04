@@ -115,6 +115,8 @@ Then decide whose bug it is:
   icon-change notice, appeared and the monkey dismissed it. The monkey taps
   through SpringBoard, so an alert that keeps the app from going quiet never
   holds a tap up.
+- `stuck spinner`: in a session, a loading spinner still up 20 seconds after an
+  offline window ended.
 - `unlabelled`: a button, link, switch, tab, segmented control or slider
   that VoiceOver has no name for. Cells and layout read their children, so
   they are not checked.

@@ -26,6 +26,8 @@ final class ChaosMonkey {
 	private let profile: ChaosProfile
 	/// What the current step typed, for its log line.
 	private var lastTyped = ""
+	/// Watches a session for a spinner left after an offline window.
+	private var spinnerWatch = ChaosSpinnerWatch()
 	private var random: ChaosRandom
 	private var launch = 0
 	private var steps: [String] = []
@@ -436,6 +438,12 @@ final class ChaosMonkey {
 			return stop
 		}
 		checkTargets(observation)
+		if profile == .session,
+			let warning = spinnerWatch.observe(
+				network: observation.network, hasSpinner: observation.hasSpinner, title: observation.title, at: Date())
+		{
+			warnings.append(warning)
+		}
 
 		if observation.targets.isEmpty {
 			if Date().timeIntervalSince(lastTargetsSeen) > 15 {
