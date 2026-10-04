@@ -30,23 +30,6 @@ struct MessFrontPage: Screen {
 		return self
 	}
 
-	/// Wait for the thumbnails to show and stop changing, then attach a screenshot of them.
-	func captureGrid(_ name: String) {
-		XCTAssertTrue(topTile.waitForExistence(timeout: 30), "the grid should show its top tile")
-		// Tiles redraw their cached image after a setting changes, so the grid has settled once
-		// two screenshots of it in a row match.
-		var previous: Data?
-		let settled = NSPredicate { _, _ in
-			let current = topTile.screenshot().pngRepresentation
-			defer { previous = current }
-			return current == previous
-		}
-		let result = XCTWaiter().wait(
-			for: [XCTNSPredicateExpectation(predicate: settled, object: nil)], timeout: 15)
-		XCTAssertEqual(result, .completed, "the grid should stop redrawing after the setting changes")
-		capture(name)
-	}
-
 	/// Tap the paintbrush at the top right and wait for the Customize sheet.
 	@discardableResult
 	func openCustomize() -> MessCustomizeScreen {
@@ -177,16 +160,6 @@ struct MessFrontPage: Screen {
 		topTile.tap()
 		XCTAssertTrue(lead.waitForExistence(timeout: 30), "the newest issue should lead with a story")
 		return MessIssueScreen(app: app)
-	}
-
-	/// Open the newest issue from its tile, then its lead story in the reader.
-	@discardableResult
-	func openLeadStory() -> MessStoryScreen {
-		XCTAssertTrue(topTile.waitForHittable(), "the newest issue's tile should be ready to tap")
-		topTile.tap()
-		XCTAssertTrue(lead.waitForHittable(), "the newest issue should lead with a story")
-		lead.tap()
-		return MessStoryScreen(app: app)
 	}
 
 	/// Open the first story of a section's or column's list in the reader.

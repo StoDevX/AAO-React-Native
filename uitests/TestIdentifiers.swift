@@ -555,22 +555,12 @@ struct TestIdentifiers {
 		/// source/features/mess/story-list.tsx.
 		static let storyRowPrefix = "mess-row-"
 
-		/// A News column with stories in it, from olafmessenger.com.
-		static let goodQuestionsColumn = "Good Questions"
-
 		/// The reader's headline, in source/features/mess/story-header.tsx.
 		static let storyHeadline = "mess-story-headline"
 
 		/// Each stretch of a story's body between its figures, one text view holding its
 		/// paragraphs, quotes and lists, in source/features/mess/story-blocks.tsx.
 		static let storyBody = "mess-story-body"
-
-		/// The card that sends a story with no body, or an embed the reader
-		/// cannot play, to olafmessenger.com, in source/features/mess/story-blocks.tsx.
-		static let storySiteLink = "mess-story-site-link"
-
-		/// The reader's share button label, in source/features/mess/story-screen.tsx.
-		static let shareStory = "Share Story"
 
 		/// The Mess section whose columns the Variety templates draw, and the columns
 		/// the tests open, as the section chips and column chips in source/features/mess/
@@ -722,8 +712,6 @@ struct TestIdentifiers {
 		static let screen = "screen-mess-customize"
 		/// The Paper Stains picker, in source/features/mess/issue-stains-row.tsx.
 		static let issueStains = "issue-stains"
-		/// The photo tone picker, in source/features/mess/photo-tone-row.tsx.
-		static let photoTone = "photo-tone"
 		/// The Dark page for Photo stories switch, in app/messenger/customize/index.tsx.
 		static let keepPhotoStoriesDark = "keep-photo-stories-dark"
 	}
