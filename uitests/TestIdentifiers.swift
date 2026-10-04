@@ -16,10 +16,6 @@ struct TestIdentifiers {
 		/// `mise run update-mess-fixtures`. Added when the runner is started with
 		/// `TEST_RUNNER_AAO_RECORD_FIXTURES=1`.
 		static let recordFixtures = "--record-fixtures"
-		/// Adds one posting to the Student Work fixtures, read through
-		/// `NSUserDefaults` as EXTRA_POSTING_SETTING in
-		/// modules/ccc-jobs/fixtures/uitest-postings.ts.
-		static let extraJobPosting = ["-AAOUITestExtraJobPosting", "YES"]
 		/// The value half of `-UIPreferredContentSizeCategoryName`, UIKit's
 		/// command-line override for the app's Dynamic Type size. This is AX5,
 		/// the largest accessibility size, so a test launching with it proves a
@@ -324,12 +320,6 @@ struct TestIdentifiers {
 		static let fixtureCodedJobWage = "$13.50/hr"
 		/// Matches LEVEL_LABELS in source/features/sis/student-work/posting.ts.
 		static let entryLevel = "Entry-level"
-		/// The posting only a launch with `LaunchArguments.extraJobPosting`
-		/// has, as its row titles it. Mirrors UITEST_EXTRA_JOB_TITLE.
-		static let fixtureExtraJob = "Planetarium Student Guide"
-		/// What a new posting's row label leads with: the dot's label, from
-		/// NEW_DOT in source/features/sis/student-work/postings-list.tsx.
-		static let newPrefix = "New, "
 		/// The list's sections, from RECENCY_ORDER in
 		/// source/features/sis/student-work/recency.ts.
 		static let thisWeek = "This Week"
