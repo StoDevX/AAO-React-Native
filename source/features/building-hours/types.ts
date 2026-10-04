@@ -1,3 +1,5 @@
+import type {AuthoredSchedules, ResolvedSchedules} from '@frogpond/schedules'
+
 /** The two campuses that serve building hours through this feature. */
 export type Campus = 'stolaf' | 'carleton'
 
@@ -79,3 +81,11 @@ export type BuildingType = {
 	schedule: NamedBuildingScheduleType[]
 	breakSchedule?: BreakScheduleContainerType
 }
+
+/** Authored St. Olaf hours keep references separate from canonical responses. */
+export type AuthoredBuildingHours = Omit<BuildingType, 'schedule' | 'breakSchedule'> &
+	AuthoredSchedules<NamedBuildingScheduleType>
+
+/** Canonical hours for break-aware consumers; the current feed still uses BuildingType. */
+export type ResolvedBuildingHours = Omit<BuildingType, 'schedule' | 'breakSchedule'> &
+	ResolvedSchedules<NamedBuildingScheduleType>
