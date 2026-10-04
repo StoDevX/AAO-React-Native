@@ -11,7 +11,9 @@ permissions:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  # Never cancel a push to master: a cancelled run uploads no report, and
+  # every later PR needs one for each master commit to compare against.
+  cancel-in-progress: ${{ github.event_name != 'push' }}
 
 env:
   MISE_RUBY_COMPILE: 'false'
@@ -27,16 +29,22 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
+          # Need the merge commit's parent too, to record which master
+          # commit a pull request was based on.
+          fetch-depth: 2
       - uses: jdx/mise-action@94c60b39bc2d90ab2f9bab27f38d3cc4812c1834 # v5.1.0
         with:
           cache_key: mise-v2-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('mise.lock') }}
       - run: pnpm install --frozen-lockfile
+      - name: Record the master commit this PR is based on
+        if: github.event_name == 'pull_request'
+        run: echo "SIZE_REPORT_BASE_SHA=$(git rev-parse HEAD^1)" >> "$GITHUB_ENV"
       - name: Measure the production bundle
         run: mise run size-report
         env:
-          # A pull_request run checks out the merge commit; name the PR's
-          # head instead, so the report says which commit it measured.
-          SIZE_REPORT_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+          # The commit actually measured: on a pull_request this is the
+          # merge commit GitHub built for the run, not the PR's head.
+          SIZE_REPORT_SHA: ${{ github.sha }}
       - name: Upload the size report
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
@@ -46,14 +54,15 @@ jobs:
           retention-days: ${{ github.event_name == 'push' && 90 || 7 }}
 
   # The check to require. On a pull request it compares with master and posts
-  # the comment; in the merge queue it passes without measuring. `always()`
-  # keeps it running when js-size fails, so the PR says why, and keeps a
-  # skipped js-size from skipping it, since GitHub counts a skipped required
-  # check as passing.
+  # the comment; in the merge queue it passes without measuring. `!cancelled()`
+  # keeps it running when js-size failed (so the PR says why) or was skipped
+  # (the merge queue, where a skipped required check would otherwise count as
+  # passing), but not when this run itself was cancelled — a superseded run
+  # posts nothing, rather than a comment for a commit nobody cares about.
   report:
     name: PR report
     needs: [js-size]
-    if: always() && github.event_name != 'push'
+    if: ${{ !cancelled() && github.event_name != 'push' }}
     runs-on: ubuntu-slim
     permissions:
       contents: read
@@ -71,7 +80,8 @@ jobs:
       - uses: jdx/mise-action@94c60b39bc2d90ab2f9bab27f38d3cc4812c1834 # v5.1.0
         if: github.event_name == 'pull_request'
         with:
-          cache_key: mise-v2-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('mise.lock') }}
+          # -node: this job only installs node, unlike js-size's full toolchain.
+          cache_key: mise-v2-${{ runner.os }}-${{ runner.arch }}-node-${{ hashFiles('mise.lock') }}
           install_args: node
 
       - name: Download this commit's size report
@@ -81,34 +91,46 @@ jobs:
           name: size-report
           path: head/
 
-      - name: Download master's size report for the base commit
+      - name: Find and download master's baseline report
         if: github.event_name == 'pull_request'
         env:
           GH_TOKEN: ${{ github.token }}
-          BASE_SHA: ${{ github.event.pull_request.base.sha }}
         run: |
-          run_id=$(gh run list --repo "$GITHUB_REPOSITORY" --workflow pr-report.yml \
-            --branch master --event push --commit "$BASE_SHA" --status success \
-            --limit 1 --json databaseId --jq '.[0].databaseId // empty')
-          if [ -z "$run_id" ]; then
-            echo "No successful master run for $BASE_SHA."
+          mkdir -p baseline/
+          base_sha=$(jq -r '.baseSha // empty' head/size-report.json 2>/dev/null)
+          if [ -z "$base_sha" ]; then
+            echo "No base commit recorded for this run; nothing to compare."
             exit 0
           fi
+          found=$(scripts/pr-report/find-baseline.sh "$base_sha")
+          if [ -z "$found" ]; then
+            echo "No master baseline found for $base_sha."
+            exit 0
+          fi
+          run_id=${found%% *}
+          commit=${found#* }
+          echo "COMPARED_SHA=$commit" >> "$GITHUB_ENV"
           gh run download "$run_id" --repo "$GITHUB_REPOSITORY" --name size-report --dir baseline/ \
-            || echo "Master's report for $BASE_SHA could not be downloaded."
+            || echo "Master's report for $commit could not be downloaded."
 
       - name: Build the report
         id: build
         if: github.event_name == 'pull_request'
         env:
-          BASE_SHA: ${{ github.event.pull_request.base.sha }}
           LABELS: ${{ toJSON(github.event.pull_request.labels.*.name) }}
+          BASE_REF: ${{ github.base_ref }}
         run: |
           printf '%s' "$LABELS" > labels.json
           status=0
-          node scripts/pr-report/report.mjs head/size-report.json baseline/size-report.json \
-            "$BASE_SHA" labels.json comment.md || status=$?
-          cat comment.md >> "$GITHUB_STEP_SUMMARY"
+          node scripts/pr-report/report.mjs \
+            --head head/size-report.json \
+            --baseline baseline/size-report.json \
+            --compared-sha "${COMPARED_SHA:-}" \
+            --base-ref "$BASE_REF" \
+            --labels labels.json \
+            --comment-out comment.md \
+            --summary-out summary.md || status=$?
+          cat summary.md >> "$GITHUB_STEP_SUMMARY"
           echo "status=$status" >> "$GITHUB_OUTPUT"
 
       - name: Post the comment
