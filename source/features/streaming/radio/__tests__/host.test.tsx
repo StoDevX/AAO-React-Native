@@ -3,7 +3,7 @@ import {afterEach, beforeEach, describe, expect, jest, test} from '@jest/globals
 import {act, fireEvent, render} from '@testing-library/react-native'
 
 import {RadioHost} from '../host'
-import {STATIONS} from '../stations'
+import {STATIONS, logoImage} from '../stations'
 import {useRadioStore} from '../store'
 
 // The native module needs a device; its player is a stand-in that records the
@@ -110,7 +110,7 @@ describe('RadioHost', () => {
 		expect(mockUseAudioPlayer).toHaveBeenCalledWith('https://s3.voscast.com:10803/stream')
 		expect(mockPlayer.setActiveForLockScreen).toHaveBeenCalledWith(
 			true,
-			{title: '88.1 KRLX-FM', artworkUrl: STATIONS.krlx.logos[0].image.uri},
+			{title: '88.1 KRLX-FM', artworkUrl: logoImage(STATIONS.krlx.logos[0]).uri},
 			{isLiveStream: true},
 		)
 		expect(screen.toJSON()).toBeNull()

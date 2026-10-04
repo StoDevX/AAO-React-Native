@@ -1,10 +1,9 @@
-import type {ImageResolvedAssetSource} from 'react-native'
-
 /** One of a station's logos, and the colour the player takes while it shows. */
 export type RadioLogo = {
 	/** How VoiceOver tells this logo from the station's others. */
 	name: string
-	image: ImageResolvedAssetSource
+	/** The file's name in `images/streaming/`, without the extension. */
+	imageName: string
 	/** The player's fill, darkening downward, behind white text. */
 	tint: string
 	/** The paper of the record's centre label, behind the logo. */

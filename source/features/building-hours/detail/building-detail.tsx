@@ -20,8 +20,8 @@ import {BuildingCutout} from './building-cutout'
 import {resolveCutoutFeature} from '../lib/find-building-feature'
 import type {BuildingType, Campus} from '../types'
 import {mapDataOptions} from '../../map/query'
-import {images as buildingImages} from '../../../../images/spaces'
 import {buildingPhoto} from '../lib/building-photo'
+import {useImageFailure} from '../../../lib/use-image-failure'
 import {HoursSection} from '../hours-section'
 import {LinkListSection} from '../../map/card/link-list-section'
 import {FILL_WIDTH} from '../../../components/tile-layout'
@@ -49,7 +49,9 @@ type Props = {
  * the card draws them, then where it is, its photo, and any links for it.
  */
 export function BuildingDetailSwiftUI({building, now, campus}: Props): React.ReactNode {
-	let photo = buildingPhoto(campus, building.image, buildingImages)
+	let photo = buildingPhoto(campus, building.image)
+	// A photo that cannot be fetched leaves its row out, as no photo does.
+	let [photoFailed, onPhotoError] = useImageFailure(photo?.uri)
 	// The outline is given the row's width outright, since 100% inside
 	// RNHostView resolves against the whole sheet, and the sheet itself can be
 	// narrower than the window -- an iPad's form sheet, or iOS 26's resting
@@ -117,9 +119,9 @@ export function BuildingDetailSwiftUI({building, now, campus}: Props): React.Rea
 					</Section>
 				) : null}
 
-				{photo ? (
+				{photo && !photoFailed ? (
 					<Section>
-						<InsetImageRow source={photo} testID="building-photo" />
+						<InsetImageRow onError={onPhotoError} source={photo} testID="building-photo" />
 					</Section>
 				) : null}
 

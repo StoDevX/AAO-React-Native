@@ -1,4 +1,4 @@
-import * as logos from '../../../../images/streaming'
+import {imageUrl, remoteImage, type RemoteImage} from '../../../lib/remote-images'
 import type {RadioLogo} from './theme'
 
 export type StationId = 'ksto' | 'krlx'
@@ -57,35 +57,35 @@ export const STATIONS: Record<StationId, Station> = {
 		logos: [
 			{
 				name: 'cow badge',
-				image: logos.ksto,
+				imageName: 'ksto',
 				tint: COW_TINT,
 				labelColor: '#e4d7f2',
 				labelScale: 0.86,
 			},
 			{
 				name: 'wordmark',
-				image: logos.kstoWordmark,
+				imageName: 'ksto-wordmark',
 				tint: WORDMARK_TINT,
 				labelColor: '#e8e0ef',
 				labelScale: 1,
 			},
 			{
 				name: 'dumpster fire',
-				image: logos.kstoDumpster,
+				imageName: 'ksto-dumpster',
 				tint: DUMPSTER_TINT,
 				labelColor: '#e5d4d9',
 				labelScale: 0.72,
 			},
 			{
 				name: 'narwhal',
-				image: logos.kstoNarwhal,
+				imageName: 'ksto-narwhal',
 				tint: NARWHAL_TINT,
 				labelColor: '#494e73',
 				labelScale: 1,
 			},
 			{
 				name: 'cow sketch',
-				image: logos.kstoSketch,
+				imageName: 'ksto-sketch',
 				tint: SKETCH_TINT,
 				// A sheet of cream paper, for the ink drawing.
 				labelColor: '#f3ead6',
@@ -118,7 +118,7 @@ export const STATIONS: Record<StationId, Station> = {
 		logos: [
 			{
 				name: 'krlx 88.1',
-				image: logos.krlx,
+				imageName: 'krlx',
 				tint: KRLX_TINT,
 				labelColor: '#f6f1e4',
 			},
@@ -137,3 +137,12 @@ export const STATIONS: Record<StationId, Station> = {
 		title: 'Carleton College Radio',
 	},
 }
+
+/** A logo as an `<Image source>`, fetched from the server when it is drawn. */
+export const logoImage = (logo: RadioLogo): RemoteImage => remoteImage('streaming', logo.imageName)
+
+/** Every logo of every station, for fetching before the sheet opens. */
+export const allStationImageUrls = (): string[] =>
+	Object.values(STATIONS).flatMap((station) =>
+		station.logos.map((logo) => imageUrl('streaming', logo.imageName)),
+	)

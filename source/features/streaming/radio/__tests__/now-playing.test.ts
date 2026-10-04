@@ -1,7 +1,7 @@
 import {describe, expect, test} from '@jest/globals'
 
 import {parseStationNow, presentNowPlaying} from '../now-playing'
-import {STATIONS} from '../stations'
+import {STATIONS, logoImage} from '../stations'
 
 const SONG = {
 	title: 'River Run: Lvl 1',
@@ -106,7 +106,7 @@ describe('presentNowPlaying', () => {
 		expect(shown).toMatchObject({
 			title: 'River Run: Lvl 1',
 			isSong: true,
-			artworkUri: logo.image.uri,
+			artworkUri: logoImage(logo).uri,
 		})
 	})
 
@@ -114,7 +114,7 @@ describe('presentNowPlaying', () => {
 		expect(presentNowPlaying(null, station, logo, {title: 'Pitch Perfect'})).toStrictEqual({
 			title: 'Pitch Perfect',
 			artist: '88.1 KRLX-FM',
-			artworkUri: logo.image.uri,
+			artworkUri: logoImage(logo).uri,
 			isSong: false,
 		})
 	})
@@ -127,7 +127,7 @@ describe('presentNowPlaying', () => {
 	test('shows the station and its logo with no song', () => {
 		expect(presentNowPlaying(null, station, logo)).toStrictEqual({
 			title: '88.1 KRLX-FM',
-			artworkUri: logo.image.uri,
+			artworkUri: logoImage(logo).uri,
 			isSong: false,
 		})
 	})

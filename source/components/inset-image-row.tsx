@@ -52,6 +52,8 @@ function HostedRow({
 type BannerProps = RowProps & {
 	source: React.ComponentProps<typeof Image>['source']
 	testID?: string
+	/** Called when the picture cannot be loaded, for a screen to leave the row out. */
+	onError?: () => void
 }
 
 /**
@@ -59,12 +61,18 @@ type BannerProps = RowProps & {
  * rounded corners, as the Hours sheet lays out a building's photo: a banner of
  * fixed height, cropped to fill it.
  */
-export function InsetImageRow({source, testID, rowModifiers}: BannerProps): React.ReactNode {
+export function InsetImageRow({
+	source,
+	testID,
+	rowModifiers,
+	onError,
+}: BannerProps): React.ReactNode {
 	return (
 		<HostedRow rowModifiers={rowModifiers}>
 			{(rowWidth) => (
 				<Image
 					accessibilityIgnoresInvertColors={true}
+					onError={onError}
 					resizeMode="cover"
 					source={source}
 					style={[styles.banner, {width: rowWidth}]}

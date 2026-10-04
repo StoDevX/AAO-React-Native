@@ -6,6 +6,7 @@ import {Touchable} from '@frogpond/touchable'
 import {SymbolView} from 'expo-symbols'
 import {GlassView} from 'expo-glass-effect'
 import {NativeTabs} from 'expo-router/unstable-native-tabs'
+import {useImageFailure} from '../../../lib/use-image-failure'
 import {STATIONS, type Station} from './stations'
 import {useRadioStore} from './store'
 import {useRadioControl} from './use-radio-control'
@@ -114,7 +115,18 @@ function MiniControl({station}: {station: Station}): React.ReactNode {
 /** The station's logo, or the cover of the song on air. */
 function StationArtwork({station}: {station: Station}): React.ReactNode {
 	let {artworkUri} = useNowPlaying(station)
-	return <Image source={{uri: artworkUri}} style={styles.artwork} />
+	// Kept once fetched, as the logo is on the player's own screen; one that
+	// cannot be fetched leaves the blank tile the idle player draws.
+	let [failed, onError] = useImageFailure(artworkUri)
+	return failed ? (
+		<View style={[styles.artwork, styles.blankArtwork]} />
+	) : (
+		<Image
+			onError={onError}
+			source={{uri: artworkUri, cache: 'force-cache'}}
+			style={styles.artwork}
+		/>
+	)
 }
 
 /**

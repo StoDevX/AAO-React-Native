@@ -4,7 +4,7 @@ import type {EventType} from '@frogpond/event-type'
 import {TouchClaimView} from '@frogpond/touch-claim'
 
 import {ScratchableLogo} from '../scratchable-logo'
-import type {Station} from '../stations'
+import {logoImage, type Station} from '../stations'
 import {useStationPlayback} from '../store'
 import {useNowPlaying} from '../use-now-playing'
 import {useStationSchedule} from '../use-station-schedule'
@@ -60,7 +60,7 @@ export function FullLayout({
 	// The song's own cover fills the record's label, where it has one; a song
 	// without a cover, or none on air, leaves the station's logo.
 	let nowPlaying = useNowPlaying(station)
-	let songArtwork = nowPlaying.isSong && nowPlaying.artworkUri !== logo.image.uri
+	let songArtwork = nowPlaying.isSong && nowPlaying.artworkUri !== logoImage(logo).uri
 
 	return (
 		<View onLayout={onLayout} style={styles.screen}>
@@ -77,7 +77,7 @@ export function FullLayout({
 									? `${nowPlaying.title}, ${station.stationName}`
 									: `${station.stationName} logo, ${logo.name}`
 							}
-							image={songArtwork ? SONG_ARTWORK(nowPlaying.artworkUri) : logo.image}
+							image={songArtwork ? SONG_ARTWORK(nowPlaying.artworkUri) : logoImage(logo)}
 							labelColor={logo.labelColor}
 							labelScale={songArtwork ? 1 : (logo.labelScale ?? 0.8)}
 							onTap={showNextLogo}

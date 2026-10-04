@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {StyleSheet, Image, View} from 'react-native'
+import {StyleSheet, View} from 'react-native'
 import {Stack, useLocalSearchParams} from 'expo-router'
 import {useQuery} from '@tanstack/react-query'
 import {Button, Host, List, RNHostView, Section, Text, VStack} from '@expo/ui/swift-ui'
@@ -18,7 +18,8 @@ import {
 
 import {SheetCloseButton} from '../../../source/components/sheet-close-button'
 import {contactByTitleOptions} from '../../../source/features/directory/contacts-query'
-import {images as contactImages} from '../../../images/contacts'
+import {remoteImage, type RemoteImage} from '../../../source/lib/remote-images'
+import {useImageFailure} from '../../../source/lib/use-image-failure'
 import {Markdown} from '@frogpond/markdown'
 import {callPhone} from '../../../source/components/call-phone'
 import {openUrl} from '@frogpond/open-url'
@@ -91,8 +92,7 @@ export default function ContactsDetailPage(): React.ReactNode {
 		}
 	}
 
-	let headerImage =
-		contact.image && contactImages.has(contact.image) ? contactImages.get(contact.image) : null
+	let headerImage = contact.image ? remoteImage('contacts', contact.image) : null
 
 	return (
 		<>
@@ -113,9 +113,11 @@ function ContactBody({
 	onPress,
 }: {
 	contact: {text: string; buttonText: string; buttonLink?: string}
-	headerImage: React.ComponentProps<typeof Image>['source'] | null | undefined
+	headerImage: RemoteImage | null
 	onPress: () => void
 }): React.ReactNode {
+	// A photo that cannot be fetched leaves its row out, as no photo does.
+	let [imageFailed, onImageError] = useImageFailure(headerImage?.uri)
 	// A hosted view is given the row's width outright: 100% inside RNHostView
 	// resolves against the whole sheet, and a paragraph's own width is however
 	// long its longest line would be unwrapped. The row fills its width
@@ -132,9 +134,9 @@ function ContactBody({
 	return (
 		<Host style={styles.host}>
 			<List modifiers={[listStyle('plain'), scrollContentBackground('hidden')]}>
-				{headerImage ? (
+				{headerImage && !imageFailed ? (
 					<Section>
-						<InsetImageRow source={headerImage} />
+						<InsetImageRow onError={onImageError} source={headerImage} />
 					</Section>
 				) : null}
 

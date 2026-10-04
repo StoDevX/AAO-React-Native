@@ -2,7 +2,16 @@ import ky from 'ky'
 
 export let client: typeof ky
 
+/// The server the app was pointed at, for URLs that are not fetched through
+/// `client`, such as an image's `uri`. Unset until `setApiRoot` has run.
+let apiRoot: URL | undefined
+
+export function getApiRoot(): URL | undefined {
+	return apiRoot
+}
+
 export function setApiRoot(url: URL): void {
+	apiRoot = url
 	client = ky.create({baseUrl: url})
 }
 

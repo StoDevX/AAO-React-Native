@@ -183,6 +183,30 @@ on top. Keep both down:
 - Icon Composer ignores SVG filters without a word, so a blur or glow stays a
   raster layer.
 
+### Images the app fetches
+
+Contact, building, webcam, news-source and radio-station pictures are not in
+the app bundle. The app asks ccc-server for `/v1/images/<group>/<name>.webp`,
+which proxies GitHub Pages; `bundle-data` publishes `images/<group>/*.webp` to
+`docs/img/<group>/`. The map pin and the radio's record (`images/streaming/vinyl.png`)
+stay bundled: both are always drawn, so neither gets a failure state. The
+groups are listed in `images/groups.json`.
+
+Keep an original in `images/<group>/source/`, run `mise run images` to write
+its WebP beside it, and commit both; the run also removes a WebP whose
+original is gone, and a test fails on one that is left. The data names an image by its file name
+without the extension (`image: cage`), and `scripts/bundle-images.test.mjs`
+fails when a name has no WebP; `source/lib/__tests__/published-images.test.ts`
+does the same for the names written in code (radio logos, news sources).
+
+Address images through `remoteImage` in `source/lib/remote-images.ts`, at
+render time, since the server is a setting that loads after launch: keep a
+name in the data, never a URL in a module-level constant. A device keeps a
+fetched image and shows it offline without asking again, so publish a changed
+picture under a new name and point the data at it. Draw a fetched picture with
+`useImageFailure`, so one that cannot load leaves its row out instead of an
+empty frame.
+
 ### Custom Symbols
 
 A glyph iOS does not ship, like the Olaf Messenger's castle, is a custom SF

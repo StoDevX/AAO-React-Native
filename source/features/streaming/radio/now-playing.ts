@@ -1,4 +1,4 @@
-import type {Station} from './stations'
+import {logoImage, type Station} from './stations'
 import type {RadioLogo} from './theme'
 
 /** A song on the air. */
@@ -106,11 +106,11 @@ export function presentNowPlaying(
 ): NowPlayingPresentation {
 	if (song === null) {
 		return show === null
-			? {title: station.stationName, artworkUri: logo.image.uri, isSong: false}
+			? {title: station.stationName, artworkUri: logoImage(logo).uri, isSong: false}
 			: {
 					title: show.title,
 					artist: station.stationName,
-					artworkUri: logo.image.uri,
+					artworkUri: logoImage(logo).uri,
 					isSong: false,
 				}
 	}
@@ -118,7 +118,7 @@ export function presentNowPlaying(
 		title: song.title,
 		...(song.artist === null ? {} : {artist: song.artist}),
 		albumTitle: station.stationName,
-		artworkUri: song.artworkUri ?? logo.image.uri,
+		artworkUri: song.artworkUri ?? logoImage(logo).uri,
 		isSong: true,
 	}
 }
