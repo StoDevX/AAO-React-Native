@@ -99,3 +99,15 @@ export const isPrerelease = (version) => version.includes('-')
 
 /** Xcode Cloud starts a build for tags in this shape. */
 export const tagFor = (version) => `v${version}`
+
+/**
+ * The line changesets/action reads from `$CHANGESETS_OUTPUT` for each tag a
+ * publish made, which it turns into its `published` and `publishedPackages`
+ * outputs.
+ *
+ * @param {string} packageName
+ * @param {string} tag
+ * @returns {string}
+ */
+export const publishEvent = (packageName, tag) =>
+	`${JSON.stringify({type: 'git-tag', packageName, tag})}\n`
