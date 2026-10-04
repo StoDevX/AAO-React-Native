@@ -47,6 +47,8 @@ struct TestIdentifiers {
 		static let launch = "--chaos-launch"
 		static let replay = "--chaos-replay"
 		static let faultRate = "--chaos-fault-rate"
+		/// `fuzz` or `session`; see uitests/Chaos/README.md.
+		static let profile = "--chaos-profile"
 		/// The hidden element whose label is the latest stopping finding.
 		static let beacon = "chaos.findings"
 		/// The beacon's label while there is nothing to report.

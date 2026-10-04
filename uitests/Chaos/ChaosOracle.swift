@@ -27,6 +27,12 @@ struct ChaosObservation {
 	/// The navigation bar's title, or "" with none: names the screen without
 	/// the data on it, so two calendar events count as one screen.
 	let title: String
+	/// Strings the app has received, for a session to type.
+	var vocab: [String] = []
+	/// The app's network element: `online`, `offline`, or nil when it is not drawn.
+	var network: String?
+	/// Whether an activity indicator is on screen.
+	var hasSpinner = false
 }
 
 /// Reads one snapshot of the app and decides whether the run should stop.
@@ -53,6 +59,9 @@ struct ChaosOracle {
 		var signatureParts: [String] = []
 		var grabber: CGRect?
 		var title = ""
+		var vocab: [String] = []
+		var network: String?
+		var hasSpinner = false
 
 		func visit(_ node: XCUIElementSnapshot, inBar: Bool) {
 			let id = node.identifier
@@ -60,6 +69,15 @@ struct ChaosOracle {
 				beacon = node.label
 				return
 			}
+			if id == TestIdentifiers.Chaos.vocab {
+				vocab = node.label.split(separator: TestIdentifiers.Chaos.vocabSeparator).map(String.init)
+				return
+			}
+			if id == TestIdentifiers.Chaos.network {
+				network = node.label
+				return
+			}
+			if node.elementType == .activityIndicator && node.frame.width >= 2 { hasSpinner = true }
 			// The keyboard's keys are not the app's; the type action does the typing.
 			if node.elementType == .keyboard { return }
 			if node.elementType == .navigationBar && title.isEmpty {
@@ -110,7 +128,10 @@ struct ChaosOracle {
 				signature: signatureParts.joined(separator: "|"),
 				sheet: Self.topmostModal(in: snapshot),
 				grabber: grabber,
-				title: title))
+				title: title,
+				vocab: vocab,
+				network: network,
+				hasSpinner: hasSpinner))
 	}
 
 	/// The frame of the topmost presented modal. UIKit gives each sheet or

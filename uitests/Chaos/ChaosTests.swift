@@ -3,12 +3,15 @@ import XCTest
 extension UITestCaseUnbooted {
 	/// Sets the next launch's arguments for a chaos run: no `--uitesting`, so
 	/// features fetch live rather than from their fixtures.
-	func configureForChaos(seed: UInt64, launch: Int, replay: Bool, faultRate: String, resetState: Bool) {
+	func configureForChaos(
+		seed: UInt64, launch: Int, replay: Bool, faultRate: String, resetState: Bool, profile: ChaosProfile = .fuzz
+	) {
 		var arguments = [
 			TestIdentifiers.Chaos.flag,
 			TestIdentifiers.Chaos.seed, String(seed),
 			TestIdentifiers.Chaos.launch, String(launch),
 			TestIdentifiers.Chaos.faultRate, faultRate,
+			TestIdentifiers.Chaos.profile, profile.rawValue,
 		]
 		if replay { arguments.append(TestIdentifiers.Chaos.replay) }
 		if resetState { arguments.append(TestIdentifiers.LaunchArguments.resetState) }
@@ -30,7 +33,8 @@ final class ChaosTests: UITestCaseUnbooted {
 			seed: seed,
 			replay: env["AAO_CHAOS_REPLAY"] == "1",
 			faultRate: env["AAO_CHAOS_FAULT_RATE"] ?? "0.25",
-			rotate: env["AAO_CHAOS_ROTATE"] == "1")
+			rotate: env["AAO_CHAOS_ROTATE"] == "1",
+			profile: ChaosProfile(rawValue: env["AAO_CHAOS_PROFILE"] ?? "") ?? .fuzz)
 		monkey.run(
 			steps: env["AAO_CHAOS_STEPS"].flatMap(Int.init) ?? 500,
 			duration: env["AAO_CHAOS_DURATION"].flatMap(TimeInterval.init) ?? 600)
@@ -59,6 +63,21 @@ final class ChaosCanaryTests: UITestCaseUnbooted {
 			"Home should have mounted, so the beacon has had its chance to appear")
 		let silence = ChaosOracle(app: app).waitForProbe(timeout: 5)
 		XCTAssertEqual(silence?.reason, "probe silent: no \(TestIdentifiers.Chaos.beacon) element")
+	}
+
+	/// A kill keeps what the app saved, as iOS killing it overnight does.
+	func testAKillKeepsTheSavedSettings() {
+		configureForChaos(seed: 1, launch: 0, replay: false, faultRate: "0", resetState: true, profile: .session)
+		app.launch()
+		let customize = HomeScreen(app: app).checkHomescreenExists().openCustomize()
+		customize.toggleRadioPlayer()
+		let toggle = app.switches[TestIdentifiers.StreamingMedia.showRadioPlayer]
+		let before = toggle.value as? String
+		let monkey = ChaosMonkey(test: self, seed: 1, replay: false, faultRate: "0", profile: .session)
+		monkey.kill()
+		_ = HomeScreen(app: app).checkHomescreenExists().openCustomize()
+		XCTAssertTrue(toggle.waitForExistence(timeout: 10), "Customize should offer Radio Player after the kill")
+		XCTAssertEqual(toggle.value as? String, before, "the setting should survive the kill")
 	}
 
 	/// The monkey taps through SpringBoard with frames read from the app, so
