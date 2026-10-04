@@ -53,21 +53,13 @@ class ModuleMapTests: UITestCaseUnbooted {
 			.verifyClearHeaderWithCredits()
 	}
 
-	/// The largest text size, which all of these share as a launch argument.
-	///
-	/// The search field grows to fit its text, and the collapsed stop grows
+	/// At the largest text size the search field grows to fit its text, and the collapsed stop grows
 	/// with it, as Apple Maps' does: the whole field stays inside the sheet with
 	/// a margin above and below it.
 	///
 	/// The categories are then a list: a grid narrow enough to fit would leave
 	/// each label a word or two a line. A group's title wraps or shrinks beside
 	/// its back button rather than drawing under it.
-	///
-	/// Last, a card's header is taller than the collapsed stop. The card has to
-	/// keep its close button and the top of its name in view and let the rest
-	/// run off the bottom, as Apple Maps does, rather than centre the header
-	/// and cut off the close button. A card with a subtitle, because a one-line
-	/// header still fits the stop at this size, and a centred header would pass.
 	func testTheCollapsedSheetHoldsTheSearchFieldAtTheLargestTextSize() throws {
 		app.launchArguments += TestIdentifiers.LaunchArguments.contentSizeCategory(
 			TestIdentifiers.LaunchArguments.accessibilityExtraExtraExtraLarge)
@@ -86,13 +78,6 @@ class ModuleMapTests: UITestCaseUnbooted {
 			.openCategory(TestIdentifiers.Map.buildingsCategory)
 			.capture("St. Olaf map Buildings group at the largest text size")
 			.verifyGroupTitleClearsBackButton(TestIdentifiers.Map.buildingsCategory)
-			.focusSearch()
-			.typeIntoSearch(TestIdentifiers.Map.aSubtitledBuilding)
-			.selectBuilding(named: TestIdentifiers.Map.aSubtitledBuilding)
-			.collapseCard()
-			.verifyCardCollapsed()
-			.capture("St. Olaf map card collapsed at the largest text size")
-			.verifyCardHeaderTopWithinSheet()
 	}
 
 	/// The full sheet, and a row tapped from it, reached through the grid.
@@ -149,6 +134,28 @@ class ModuleMapTests: UITestCaseUnbooted {
 			.verifyCardCollapsed()
 			.capture("St. Olaf map card collapsed with a subtitle")
 			.verifyCardHeaderWithinSheet()
+	}
+
+	/// At the largest text size the header is taller than the collapsed stop.
+	/// The card has to keep its close button and the top of its name in view
+	/// and let the rest run off the bottom, as Apple Maps does, rather than
+	/// centre the header and cut off the close button.
+	///
+	/// A card with a subtitle, because a one-line header still fits the stop
+	/// at this size, and a centred header would pass.
+	func testTheCollapsedCardKeepsItsHeaderTopAtTheLargestTextSize() throws {
+		app.launchArguments += TestIdentifiers.LaunchArguments.contentSizeCategory(
+			TestIdentifiers.LaunchArguments.accessibilityExtraExtraExtraLarge)
+		MapScreen(app: app)
+			.navigate()
+			.checkSheetPresented()
+			.focusSearch()
+			.typeIntoSearch(TestIdentifiers.Map.aSubtitledBuilding)
+			.selectBuilding(named: TestIdentifiers.Map.aSubtitledBuilding)
+			.collapseCard()
+			.verifyCardCollapsed()
+			.capture("St. Olaf map card collapsed at the largest text size")
+			.verifyCardHeaderTopWithinSheet()
 	}
 
 	/// Once expanded, a card's About text can be selected and copied. Cut
@@ -247,7 +254,9 @@ class ModuleMapTests: UITestCaseUnbooted {
 	}
 
 	/// A search that finds one place frames its pin above the sheet, and the
-	/// pin opens that place -- not the building its point sits inside.
+	/// pin opens that place -- not the building its point sits inside. The
+	/// place is then listed under Recents on the root view, and a swipe takes
+	/// it off again.
 	func testASearchedPinOpensItsOwnCard() throws {
 		let name = TestIdentifiers.Map.aPointOnlyPlace
 		MapScreen(app: app)
@@ -261,6 +270,13 @@ class ModuleMapTests: UITestCaseUnbooted {
 			.tapMapCenterAboveSheet()
 			.capture("St. Olaf map after tapping the searched pin")
 			.verifyCardTitled(name)
+			.closeTopCard()
+			.cancelSearch()
+			.expandSheet()
+			.capture("St. Olaf map Recents")
+			.verifyRecentsList(name)
+			.removeRecent(name)
+			.verifyNoRecents()
 	}
 
 	/// The base map's own name for a place inside a building opens that place,
@@ -292,24 +308,5 @@ class ModuleMapTests: UITestCaseUnbooted {
 			.tapMap(at: spot)
 			.capture("St. Olaf map after tapping a place's label")
 			.verifyCardTitled(name)
-	}
-
-	/// A place opened from the map is listed under Recents on the root view,
-	/// and a swipe takes it off again.
-	func testAnOpenedPlaceIsListedUnderRecents() throws {
-		let name = TestIdentifiers.Map.aPointOnlyPlace
-		MapScreen(app: app)
-			.navigate()
-			.checkSheetPresented()
-			.focusSearch()
-			.typeIntoSearch(name)
-			.selectBuilding(named: name)
-			.closeTopCard()
-			.cancelSearch()
-			.expandSheet()
-			.capture("St. Olaf map Recents")
-			.verifyRecentsList(name)
-			.removeRecent(name)
-			.verifyNoRecents()
 	}
 }

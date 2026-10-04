@@ -1012,7 +1012,9 @@ struct MapScreen: Screen {
 			.withOffset(CGVector(dx: 0, dy: 30))
 			.press(forDuration: 1.0)
 		let copy = app.descendants(matching: .any).matching(NSPredicate(format: "label == %@", "Copy")).firstMatch
-		let offered = copy.waitForExistence(timeout: 5)
+		// Proving Copy absent needs a wait too, but a short one: the menu shows
+		// in well under a second when it shows at all.
+		let offered = copy.waitForExistence(timeout: expected ? 5 : 1.5)
 		capture("Long press on the card's About text")
 		XCTAssertEqual(
 			offered, expected,
