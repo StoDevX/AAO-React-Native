@@ -30,7 +30,7 @@ permissions:
 jobs:
   release:
     name: Version or release
-    runs-on: ubuntu-26.04
+    runs-on: ubuntu-slim
     # A label event matters only on the Version PR itself.
     if: github.event_name != 'pull_request' || github.head_ref == 'changeset-release/master'
     steps:
