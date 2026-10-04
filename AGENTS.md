@@ -100,7 +100,10 @@ pnpm is the package manager. npm and yarn both choke on the `workspace:*`
 protocol the modules use.
 
 ```bash
-mise run lint         # oxlint
+mise run lint         # all three below, in parallel
+mise run lint:oxlint  # oxlint
+mise run lint:shell   # shellcheck on every tracked .sh
+mise run lint:actions # zizmor on .github/workflows
 mise run format       # oxfmt; run `format:check` to validate instead
 mise run test         # every test
 mise run test:jest    # Jest: app, source, modules
@@ -339,7 +342,7 @@ The Release workflow turns those into a "Version Packages" pull request, and a
 
 **Session startup:** Always run `mise run agent:setup` at the start of every session. This installs dependencies and bundles data files.
 
-**Before committing:** Always run `mise run agent:pre-commit` before committing any changes. This formats code with oxfmt, runs oxlint, checks TypeScript types, runs Jest tests, and checks that every module's `@frogpond` dependencies and the lockfile match its package.json. Do not commit if any step fails.
+**Before committing:** Always run `mise run agent:pre-commit` before committing any changes. This formats code with oxfmt, runs oxlint, shellcheck and zizmor, checks TypeScript types, runs Jest tests, and checks that every module's `@frogpond` dependencies and the lockfile match its package.json. Do not commit if any step fails.
 
 **Dependency upgrades:** Whenever you upgrade a dependency whose version is mentioned in this file (e.g., React Native, React Navigation, React Query, Redux Toolkit, TypeScript, Jest), update the version reference in CLAUDE.md as part of the same change. Stale version references in this file mislead future sessions about the project's current state.
 
