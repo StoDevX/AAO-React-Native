@@ -9,9 +9,6 @@ enum ChaosRoutes {
 		"about/privacy",
 		"athletics",
 		"balances",
-		"cafes/stav-hall",
-		"cafes/the-cage",
-		"cafes/the-pause",
 		"calendar",
 		"calendar/event",
 		"carleton-burton-menu",
@@ -84,7 +81,6 @@ enum ChaosRoutes {
 		"st-olaf-news",
 		"streaming-media",
 		"streaming-media/webcams",
-		"streams",
 		"student-orgs",
 		"student-orgs/[name]",
 		"student-orgs/category/[category]",
@@ -97,6 +93,5 @@ enum ChaosRoutes {
 		"transit",
 		"transit/line/[line]",
 		"transit/line/stop",
-		"webcams",
 	]
 }
