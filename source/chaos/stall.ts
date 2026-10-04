@@ -21,11 +21,15 @@ export const STALL_THRESHOLD_MS = 1000
  * Its AppState change arrives about then, before or after the late tick, so a
  * late tick waits one more tick and is dropped if the app state changed at
  * any point since the stall began.
+ *
+ * The first tick is not judged: it waits on the rest of the bundle and the
+ * first render, so every launch would otherwise report a stall.
  */
 export function watchForStalls(host: StallHost): void {
 	let last = host.now()
 	let lastAppStateChange = Number.NEGATIVE_INFINITY
 	let pending: {started: number; late: number} | null = null
+	let first = true
 
 	host.onAppStateChange(() => {
 		lastAppStateChange = host.now()
@@ -38,9 +42,10 @@ export function watchForStalls(host: StallHost): void {
 		}
 		pending = null
 		let late = now - last - STALL_TICK_MS
-		if (late > STALL_THRESHOLD_MS && lastAppStateChange < last) {
+		if (!first && late > STALL_THRESHOLD_MS && lastAppStateChange < last) {
 			pending = {started: last, late: Math.round(late)}
 		}
 		last = now
+		first = false
 	}, STALL_TICK_MS)
 }

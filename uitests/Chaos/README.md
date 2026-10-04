@@ -194,7 +194,7 @@ Two halves talk through one hidden view.
 | `mutate.ts` | Changes one value in a JSON body to another of the same type: an array emptied, cut to one or lengthened, a string made empty, long or unusual, a number made 0, negative or huge, a boolean flipped |
 | `tape.ts` | Names each launch's tape, and keys responses by launch, method and URL |
 | `probe.ts` | Catches fatal errors, unhandled rejections and `console.error` |
-| `stall.ts` | Records a `stall` when a 250ms timer fires more than a second late, ignoring a return from the background |
+| `stall.ts` | Records a `stall` when a 250ms timer fires more than a second late, ignoring the launch and a return from the background |
 | `findings.ts` | Writes findings to `chaos-findings.jsonl` and feeds the beacon |
 | `guard.tsx` | An error boundary around the app, and the beacon: a 1×1 view labelled with the first stopping finding |
 | `blocked.ts` | URLs a run must never reach |

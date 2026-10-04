@@ -41,9 +41,19 @@ beforeEach(() => {
 })
 
 describe('watchForStalls', () => {
+	test('ignores the first tick, which waits on the bundle and first render', () => {
+		let clock = host()
+		watchForStalls(clock.host)
+		clock.tick(1400)
+		clock.tick()
+		clock.tick()
+		expect(stalls()).toEqual([])
+	})
+
 	test('reports a tick more than a second late, a tick after it', () => {
 		let clock = host()
 		watchForStalls(clock.host)
+		clock.tick()
 		clock.tick(STALL_THRESHOLD_MS + 200)
 		clock.tick()
 		expect(stalls()).toEqual([expect.objectContaining({message: 'JS stalled 1200ms'})])
@@ -70,6 +80,7 @@ describe('watchForStalls', () => {
 	test('ignores a late tick when the app state change arrives just after it', () => {
 		let clock = host()
 		watchForStalls(clock.host)
+		clock.tick()
 		clock.tick(5000)
 		clock.appStateChanged()
 		clock.tick()
@@ -79,6 +90,7 @@ describe('watchForStalls', () => {
 	test('never stops the run', () => {
 		let clock = host()
 		watchForStalls(clock.host)
+		clock.tick()
 		clock.tick(3000)
 		clock.tick()
 		expect(stalls()).toHaveLength(1)
