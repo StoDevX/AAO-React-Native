@@ -1,4 +1,4 @@
-import {Linking, Share} from 'react-native'
+import {AppState, Linking, Share} from 'react-native'
 import {
 	chaosFaultRate,
 	chaosLaunch,
@@ -40,6 +40,14 @@ if (isChaos) {
 			},
 			linking: Linking,
 			share: Share,
+			// Lives as long as the process, as the probe's own hooks do, so it is never removed.
+			stalls: {
+				setInterval: (tick, ms) => setInterval(tick, ms),
+				now: () => Date.now(),
+				onAppStateChange: (listener) => {
+					AppState.addEventListener('change', listener)
+				},
+			},
 			tape: documentLineFile(tapeFile(chaosLaunch)),
 			findings: documentLineFile(FINDINGS_FILE),
 		},

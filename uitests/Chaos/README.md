@@ -63,7 +63,8 @@ A run that exits 1 found something. In `logs/chaos/<seed>/`:
    - `chaos-steps.jsonl`, every action with its target and orientation;
    - `chaos-warnings.txt`, things worth a look that didn't stop the run.
 3. **`chaos-findings.jsonl`** is what the app's probe saw: fatal errors,
-   unhandled rejections, `console.error` calls, and attempts to leave the app.
+   unhandled rejections, `console.error` calls, attempts to leave the app,
+   mutations, and stalls, where the JS thread was busy for more than a second.
 4. **`chaos-tape-<launch>.jsonl`** is every response the app received, faults
    included: one file per launch, since opening a route relaunches the app.
 5. **Mutations.** A `mutation` finding names the request, the JSON path and
@@ -162,6 +163,7 @@ Two halves talk through one hidden view.
 | `mutate.ts` | Changes one value in a JSON body to another of the same type: an array emptied, cut to one or lengthened, a string made empty, long or unusual, a number made 0, negative or huge, a boolean flipped |
 | `tape.ts` | Names each launch's tape, and keys responses by launch, method and URL |
 | `probe.ts` | Catches fatal errors, unhandled rejections and `console.error` |
+| `stall.ts` | Records a `stall` when a 250ms timer fires more than a second late, ignoring a return from the background |
 | `findings.ts` | Writes findings to `chaos-findings.jsonl` and feeds the beacon |
 | `guard.tsx` | An error boundary around the app, and the beacon: a 1×1 view labelled with the first stopping finding |
 | `blocked.ts` | URLs a run must never reach |
