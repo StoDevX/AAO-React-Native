@@ -20,6 +20,7 @@ import {Provider as ReduxProvider} from 'react-redux'
 import {PersistQueryClientProvider} from '@tanstack/react-query-persist-client'
 import {store, persistor} from '../source/redux'
 import {ChaosGuard} from '../source/chaos/guard'
+import {registerNavigationContainer} from '../source/lib/sheet-dismissal'
 import {navigationGuard} from '../source/lib/navigation-guard-install'
 import {LightTheme, DarkTheme} from '@frogpond/app-theme'
 import {ThemeProvider} from 'expo-router/react-navigation'
@@ -81,6 +82,10 @@ function RootLayout(): React.ReactNode {
 		() => navigationContainerRef.addListener('state', navigationGuard.stateChanged),
 		[navigationContainerRef],
 	)
+	React.useEffect(() => {
+		registerNavigationContainer(navigationContainerRef)
+		return () => registerNavigationContainer(undefined)
+	}, [navigationContainerRef])
 	React.useEffect(() => watchQueryFailures(queryClient.getQueryCache(), track), [])
 	React.useEffect(() => startQuickActionSync(), [])
 	React.useEffect(() => {
