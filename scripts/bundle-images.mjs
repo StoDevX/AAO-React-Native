@@ -1,7 +1,7 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import {load as loadYaml} from 'js-yaml'
-import {IMAGE_GROUPS} from './make-images.mjs'
+import {IMAGE_GROUPS, IMAGES_DIR} from './make-images.mjs'
 
 /**
  * Where the published images live under the Pages site: `img/<group>/<name>.webp`.
@@ -9,13 +9,19 @@ import {IMAGE_GROUPS} from './make-images.mjs'
  */
 export const PUBLISHED_DIR = 'img'
 
-/** Copy each group's committed WebP files into `<toDir>/img/<group>/`. */
-export function bundleImages({fromDir, toDir}) {
+/**
+ * Copy each group's committed WebP files into `<toDir>/img/<group>/`. A group
+ * with no folder is an error: carrying on would publish a site with no images,
+ * and every device would then 404 every picture.
+ */
+export function bundleImages({fromDir = IMAGES_DIR, toDir}) {
 	let copied = 0
 	for (let group of IMAGE_GROUPS) {
 		let groupDir = path.join(fromDir, group)
 		if (!fs.existsSync(groupDir)) {
-			continue
+			throw new Error(
+				`bundle-images: ${groupDir} is missing, so the "${group}" images cannot be published`,
+			)
 		}
 		let outDir = path.join(toDir, PUBLISHED_DIR, group)
 		fs.mkdirSync(outDir, {recursive: true})
@@ -47,7 +53,7 @@ function slugsIn(dir, field) {
  * webcam's `thumbnail` -- that has no WebP to fetch. A missing one shows the
  * app a blank picture rather than an error, so the build catches it instead.
  */
-export function missingImages({dataDir, imagesDir}) {
+export function missingImages({dataDir, imagesDir = IMAGES_DIR}) {
 	let references = [
 		...slugsIn(path.join(dataDir, 'building-hours'), 'image').map((r) => ({...r, group: 'spaces'})),
 		...slugsIn(path.join(dataDir, 'contact-info'), 'image').map((r) => ({

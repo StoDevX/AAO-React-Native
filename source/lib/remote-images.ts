@@ -7,10 +7,11 @@ import {DEFAULT_URL} from './constants'
  * are the folders of `images/` in this repo, which `bundle-data` publishes to
  * GitHub Pages and ccc-server proxies at `/v1/images/<group>/<name>.webp`.
  *
- * `IMAGE_GROUPS` in `scripts/make-images.mjs` and `IMAGE_GROUPS` in
- * ccc-server's `source/ccc-lib/images.ts` are the same list; a group missing
- * from either is never published or never served. `published-images.test.ts`
- * checks this one against the script's.
+ * `images/groups.json`, which the publishing scripts read, and ccc-server's
+ * `IMAGE_GROUPS` in `source/ccc-lib/images.ts` are the same list; a group
+ * missing from either is never published or never served. This one is spelt
+ * out so that `ImageGroup` can be a union; `published-images.test.ts` checks
+ * it against the JSON.
  */
 export const IMAGE_GROUPS = ['contacts', 'news-sources', 'spaces', 'streaming', 'webcams'] as const
 

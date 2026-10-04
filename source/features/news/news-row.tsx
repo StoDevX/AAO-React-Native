@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {Alert, Image, StyleSheet, type ImageSourcePropType} from 'react-native'
+import {Alert, Image, StyleSheet} from 'react-native'
 import {Button, HStack, RNHostView, Spacer, Text, VStack} from '@expo/ui/swift-ui'
 import {
 	accessibilityIdentifier,
@@ -17,6 +17,8 @@ import {
 } from '@expo/ui/swift-ui/modifiers'
 import * as c from '@frogpond/colors'
 import {RowAccessory, destinationTraits} from '../../components/rows'
+import type {RemoteImage} from '../../lib/remote-images'
+import {useImageFailure} from '../../lib/use-image-failure'
 import type {StoryType} from './types'
 
 /**
@@ -79,7 +81,7 @@ type Props = {
 	/** Where a tap goes: the browser, or another screen in this app. */
 	destination: 'external' | 'push'
 	story: StoryType
-	thumbnail: false | ImageSourcePropType
+	thumbnail: false | RemoteImage
 	/** Whether this is the last row in the list -- it draws no bottom separator. */
 	isLast: boolean
 }
@@ -95,12 +97,16 @@ export const NewsRow = (props: Props): React.ReactNode => {
 
 	let {story} = props
 
-	let thumb =
+	let thumbSource: {uri: string; cache?: 'force-cache'} | null =
 		props.thumbnail !== false
 			? story.featuredImage
 				? {uri: story.featuredImage}
 				: props.thumbnail
 			: null
+	// A thumbnail that cannot be fetched takes its frame and its separator
+	// inset with it, so the row reads as one with no thumbnail.
+	let [thumbFailed, onThumbError] = useImageFailure(thumbSource?.uri)
+	let thumb = thumbFailed ? null : thumbSource
 
 	return (
 		<Button
@@ -124,7 +130,13 @@ export const NewsRow = (props: Props): React.ReactNode => {
 						    no constraints, and collapses the whole list rather than just
 						    this one row. */}
 						<RNHostView matchContents={false}>
-							<Image accessibilityIgnoresInvertColors={true} source={thumb} style={styles.image} />
+							<Image
+								accessibilityIgnoresInvertColors={true}
+								onError={onThumbError}
+								source={thumb}
+								style={styles.image}
+								testID="news-thumbnail"
+							/>
 						</RNHostView>
 					</VStack>
 				) : null}

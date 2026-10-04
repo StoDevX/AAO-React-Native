@@ -1,6 +1,6 @@
 import * as React from 'react'
 import {useCallback, useEffect, useRef} from 'react'
-import {GestureResponderEvent, Image, StyleSheet, View} from 'react-native'
+import {GestureResponderEvent, Image, StyleSheet, View, type ImageURISource} from 'react-native'
 import Animated, {
 	Easing,
 	cancelAnimation,
@@ -13,8 +13,8 @@ import Animated, {
 	withTiming,
 } from 'react-native-reanimated'
 import * as c from '@frogpond/colors'
-import {remoteImage} from '../../../lib/remote-images'
-import {RECORD_IMAGE_NAME} from './stations'
+import vinyl from '../../../../images/streaming/vinyl.png'
+import {useImageFailure} from '../../../lib/use-image-failure'
 
 import {
 	angleAround,
@@ -39,7 +39,7 @@ const DEGREES_PER_SECOND = 360 / (MS_PER_TURN / 1000)
 
 type Props = {
 	/** The logo, drawn on the record's centre label. */
-	image: {uri: string}
+	image: ImageURISource & {uri: string}
 	labelColor: string
 	/** How much of the label's width the logo takes. */
 	labelScale: number
@@ -59,6 +59,8 @@ type Props = {
  */
 export function ScratchableLogo(props: Props): React.ReactNode {
 	let {image, labelColor, labelScale, size, accessibilityLabel, playing} = props
+	// A logo that cannot be fetched leaves the label bare, and the record turning.
+	let [logoFailed, onLogoError] = useImageFailure(image.uri)
 	let {onTap} = props
 	let reduceMotion = useReducedMotion()
 	let spins = playing && !reduceMotion
@@ -185,13 +187,16 @@ export function ScratchableLogo(props: Props): React.ReactNode {
 			onStartShouldSetResponder={() => true}
 		>
 			<Animated.View style={[{width: size, height: size}, turned]}>
-				<Image source={remoteImage('streaming', RECORD_IMAGE_NAME)} style={styles.disc} />
+				<Image source={vinyl} style={styles.disc} />
 				<View style={[styles.label, {backgroundColor: labelColor}]}>
-					<Image
-						resizeMode="contain"
-						source={image}
-						style={{width: `${labelScale * 100}%`, height: `${labelScale * 100}%`}}
-					/>
+					{logoFailed ? null : (
+						<Image
+							onError={onLogoError}
+							resizeMode="contain"
+							source={image}
+							style={{width: `${labelScale * 100}%`, height: `${labelScale * 100}%`}}
+						/>
+					)}
 				</View>
 			</Animated.View>
 		</View>

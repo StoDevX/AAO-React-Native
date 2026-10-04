@@ -10,15 +10,20 @@
  * only version 6 is installed.
  */
 import {execFileSync} from 'node:child_process'
-import {existsSync, mkdirSync, readdirSync} from 'node:fs'
-import {basename, extname, join} from 'node:path'
+import {existsSync, mkdirSync, readFileSync, readdirSync, rmSync} from 'node:fs'
+import {basename, extname, join, relative} from 'node:path'
 import {fileURLToPath} from 'node:url'
 
+/** The repo's `images/`, wherever the script is run from. */
+export const IMAGES_DIR = fileURLToPath(new URL('../images', import.meta.url))
+
 /**
- * The same list as `IMAGE_GROUPS` in `source/lib/remote-images.ts`, which is
- * the app's side of it; `published-images.test.ts` checks that they match.
+ * The folders of `images/` that are published, listed in `images/groups.json`.
+ * The app's `IMAGE_GROUPS` (`source/lib/remote-images.ts`) and ccc-server's
+ * (`source/ccc-lib/images.ts`) are the same list, and a group missing from
+ * either is never published or never served.
  */
-export const IMAGE_GROUPS = ['contacts', 'news-sources', 'spaces', 'streaming', 'webcams']
+export const IMAGE_GROUPS = JSON.parse(readFileSync(join(IMAGES_DIR, 'groups.json'), 'utf-8'))
 
 /** Wider than a phone's screen at 3x gains nothing: 1290 is a 430pt-wide iPhone at 3x. */
 const MAX_WIDTH = 1290
@@ -41,7 +46,7 @@ const hasCommand = (name) => {
 const findMagick = () => (hasCommand('magick') ? 'magick' : 'convert')
 
 /** The `images/<group>/source/` originals, as the file names of the WebP each makes. */
-export function plannedImages(root = 'images') {
+export function plannedImages(root = IMAGES_DIR) {
 	let planned = []
 	for (let group of IMAGE_GROUPS) {
 		let sourceDir = join(root, group, 'source')
@@ -63,6 +68,24 @@ export function plannedImages(root = 'images') {
 	return planned
 }
 
+/**
+ * The WebP files in a group with no original in `source/`: what is left when an
+ * original is renamed or deleted. They stay published until removed.
+ */
+export function orphanedImages(root = IMAGES_DIR) {
+	let planned = new Set(plannedImages(root).map(({to}) => to))
+	return IMAGE_GROUPS.flatMap((group) => {
+		let dir = join(root, group)
+		if (!existsSync(dir)) {
+			return []
+		}
+		return readdirSync(dir)
+			.filter((file) => file.endsWith('.webp'))
+			.map((file) => join(dir, file))
+			.filter((file) => !planned.has(file))
+	})
+}
+
 function main() {
 	let magick = findMagick()
 	for (let {from, to, lossless} of plannedImages()) {
@@ -78,7 +101,11 @@ function main() {
 				: ['-quality', PHOTO_QUALITY, '-define', 'webp:method=6']),
 			to,
 		])
-		console.log(to)
+		console.log(relative(process.cwd(), to))
+	}
+	for (let orphan of orphanedImages()) {
+		rmSync(orphan)
+		console.log(`removed ${relative(process.cwd(), orphan)}, which has no original`)
 	}
 }
 

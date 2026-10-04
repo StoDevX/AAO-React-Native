@@ -1,10 +1,11 @@
 import * as React from 'react'
-import {StyleSheet, type ImageSourcePropType} from 'react-native'
+import {StyleSheet} from 'react-native'
 import {ContentUnavailableView, Host, List, VStack} from '@expo/ui/swift-ui'
 import {listStyle, refreshable} from '@expo/ui/swift-ui/modifiers'
 import * as c from '@frogpond/colors'
 import {LoadErrorView, LoadingView} from '@frogpond/notice'
 import {openUrl} from '@frogpond/open-url'
+import type {RemoteImage} from '../../lib/remote-images'
 import type {StoryType} from './types'
 import {NewsRow} from './news-row'
 import {filterByCategory} from './lib/util'
@@ -15,7 +16,7 @@ type Props = {
 	query: NewsFeedQuery
 	/** The selected source's stories, cleaned by the same pass that built the picker's categories */
 	entries: StoryType[]
-	thumbnail: false | ImageSourcePropType
+	thumbnail: false | RemoteImage
 	selectedCategory: string | null
 	/** Opens a story in the app. Without it, a story opens its link in the browser. */
 	onPressStory?: (story: StoryType) => void

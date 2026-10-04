@@ -138,19 +138,11 @@ export const STATIONS: Record<StationId, Station> = {
 	},
 }
 
-/** The record the logo sits on, in `images/streaming/`. */
-export const RECORD_IMAGE_NAME = 'vinyl'
-
 /** A logo as an `<Image source>`, fetched from the server when it is drawn. */
 export const logoImage = (logo: RadioLogo): RemoteImage => remoteImage('streaming', logo.imageName)
 
-/**
- * Every image the player draws, for fetching before the sheet opens: each
- * station's logos, and the record they turn on.
- */
-export const allStationImageUrls = (): string[] => [
-	...Object.values(STATIONS).flatMap((station) =>
+/** Every logo of every station, for fetching before the sheet opens. */
+export const allStationImageUrls = (): string[] =>
+	Object.values(STATIONS).flatMap((station) =>
 		station.logos.map((logo) => imageUrl('streaming', logo.imageName)),
-	),
-	imageUrl('streaming', RECORD_IMAGE_NAME),
-]
+	)

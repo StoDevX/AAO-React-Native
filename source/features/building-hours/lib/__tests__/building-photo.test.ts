@@ -1,11 +1,9 @@
+import {remoteImage} from '../../../../lib/remote-images'
 import {buildingPhoto} from '../building-photo'
 
 describe('buildingPhoto', () => {
-	it('gives a St. Olaf venue the photograph its key names, fetched from the server', () => {
-		expect(buildingPhoto('stolaf', 'cage')).toStrictEqual({
-			uri: 'https://stolaf.api.frogpond.tech/v1/images/spaces/cage.webp',
-			cache: 'force-cache',
-		})
+	it('gives a St. Olaf venue the photograph its key names', () => {
+		expect(buildingPhoto('stolaf', 'cage')).toStrictEqual(remoteImage('spaces', 'cage'))
 	})
 
 	it('has none for a venue that names no image', () => {

@@ -93,7 +93,7 @@ for (let [file, builder] of specialFiles.entries()) {
 // The images the app fetches through ccc-server, published beside the data
 let images = 0
 step(`bundle-images images ${toDir}`, () => {
-	images = bundleImages({fromDir: 'images', toDir})
+	images = bundleImages({toDir})
 })
 
 console.log(

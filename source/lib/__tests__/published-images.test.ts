@@ -1,9 +1,10 @@
-import {readFileSync, existsSync} from 'node:fs'
+import {existsSync} from 'node:fs'
 import {join} from 'node:path'
 import {describe, expect, it} from '@jest/globals'
 
+import groups from '../../../images/groups.json'
 import {OLAF_MESSENGER, STOLAF_NEWS} from '../../features/news/sources'
-import {RECORD_IMAGE_NAME, STATIONS} from '../../features/streaming/radio/stations'
+import {STATIONS} from '../../features/streaming/radio/stations'
 import {IMAGE_GROUPS} from '../remote-images'
 
 const IMAGES = join(__dirname, '..', '..', '..', 'images')
@@ -15,10 +16,9 @@ const published = (group: string, name: string): boolean =>
 // are the names written in code, which nothing else would catch a rename of.
 describe('the images the code names', () => {
 	it('are all published', () => {
-		let streaming = [
-			...Object.values(STATIONS).flatMap((station) => station.logos.map((logo) => logo.imageName)),
-			RECORD_IMAGE_NAME,
-		]
+		let streaming = Object.values(STATIONS).flatMap((station) =>
+			station.logos.map((logo) => logo.imageName),
+		)
 		let news = [OLAF_MESSENGER, STOLAF_NEWS].flatMap((source) =>
 			source.thumbnail === false ? [] : [source.thumbnail],
 		)
@@ -31,11 +31,7 @@ describe('the images the code names', () => {
 })
 
 describe('the image groups', () => {
-	it('are the same ones the publishing script has', () => {
-		let script = readFileSync(join(IMAGES, '..', 'scripts', 'make-images.mjs'), 'utf-8')
-		let listed = /IMAGE_GROUPS = \[([^\]]*)\]/u.exec(script)?.[1] ?? ''
-		let scriptGroups = [...listed.matchAll(/'([a-z-]+)'/gu)].map((match) => match[1])
-
-		expect([...IMAGE_GROUPS].toSorted()).toStrictEqual(scriptGroups.toSorted())
+	it('are the ones images/groups.json lists, which the publishing scripts read', () => {
+		expect([...IMAGE_GROUPS].toSorted()).toStrictEqual([...groups].toSorted())
 	})
 })
