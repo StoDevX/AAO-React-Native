@@ -1,4 +1,4 @@
-import type {AuthoredSchedules, ResolvedSchedules} from '@frogpond/schedules'
+import type {Schedules} from '@frogpond/schedules'
 
 /** The two campuses that serve building hours through this feature. */
 export type Campus = 'stolaf' | 'carleton'
@@ -10,16 +10,6 @@ export type Campus = 'stolaf' | 'carleton'
 export type BuildingStatusType = 'Open' | 'Almost Open' | 'Almost Closed' | 'Chapel' | 'Closed'
 
 export type DayOfWeekEnumType = 'Mo' | 'Tu' | 'We' | 'Th' | 'Fr' | 'Sa' | 'Su'
-
-export type BreakNameEnumType =
-	| 'fall'
-	| 'thanksgiving'
-	| 'christmasfest'
-	| 'winter'
-	| 'interim'
-	| 'spring'
-	| 'easter'
-	| 'summer'
 
 export type SingleBuildingScheduleType = {
 	days: DayOfWeekEnumType[]
@@ -35,23 +25,19 @@ export type NamedBuildingScheduleType = {
 	hours: SingleBuildingScheduleType[]
 }
 
-/**
- * Break schedules, keyed by break.
- *
- * Partial because neither campus publishes every break: both servers send seven
- * of the eight, omitting `christmasfest`. Requiring the full set made the type
- * a claim about the data that was never true.
- */
-export type BreakScheduleContainerType = Partial<
-	Record<BreakNameEnumType, NamedBuildingScheduleType[]>
->
+/** The array-based break schedules in server responses and persisted caches. */
+export type LegacyBreakSchedule = NamedBuildingScheduleType[]
 
 export type BuildingLinkType = {
 	title: string
 	url: string
 }
 
-export type BuildingType = {
+/** Shared building fields with break schedules parameterized for each consumer. */
+export type BuildingType<TBreakSchedule = LegacyBreakSchedule> = Schedules<
+	NamedBuildingScheduleType,
+	TBreakSchedule
+> & {
 	name: string
 	subtitle?: string
 	abbreviation?: string
@@ -78,14 +64,4 @@ export type BuildingType = {
 	 * found by search and listed on the All spaces screen. Absent means listed. */
 	listed?: boolean
 	links?: BuildingLinkType[]
-	schedule: NamedBuildingScheduleType[]
-	breakSchedule?: BreakScheduleContainerType
 }
-
-/** Authored St. Olaf hours keep references separate from canonical responses. */
-export type AuthoredBuildingHours = Omit<BuildingType, 'schedule' | 'breakSchedule'> &
-	AuthoredSchedules<NamedBuildingScheduleType>
-
-/** Canonical hours for break-aware consumers; the current feed still uses BuildingType. */
-export type ResolvedBuildingHours = Omit<BuildingType, 'schedule' | 'breakSchedule'> &
-	ResolvedSchedules<NamedBuildingScheduleType>

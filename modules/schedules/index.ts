@@ -1,18 +1,12 @@
 export {normalizeCalendarInterval} from './calendar.ts'
 export type {
-	AuthoredBreakCalendar,
-	AuthoredBreakEntry,
-	AuthoredCalendarBreak,
-	AuthoredSchedulePolicy,
-	AuthoredSchedules,
 	BreakCalendar,
 	BreakCalendarResponse,
 	CalendarBreak,
 	CalendarDate,
 	CalendarInterval,
 	NormalizedInterval,
-	NormalSchedule,
-	ResolvedSchedules,
+	Schedule,
 	ScheduleException,
-	SchedulePolicy,
+	Schedules,
 } from './types.ts'
