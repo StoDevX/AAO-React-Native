@@ -105,23 +105,12 @@ class ModuleHoursTests: UITestCaseUnbooted {
 	/// *formSheet* natively -- a level up from the report screen's own pushed
 	/// stack -- which `beforeRemove` alone cannot refuse. This is the scenario
 	/// that motivated moving the guard to `usePreventRemove`.
-	///
-	/// First, before any edit, the schedule editor comes up from the report
-	/// screen. It is a push inside the formSheet's own stack, next to the
-	/// report screen, so that the two can share the draft they both edit. It
-	/// used to be a `modal` on the OUTER stack -- a presentation that can
-	/// silently no-op on iOS while a formSheet is already up.
 	func testUnsavedChangesGuardSurvivesEveryWayToLeave() throws {
 		let screen = HoursScreen(app: app)
 			.navigate()
 			.tapRow(TestIdentifiers.Hours.anExcludedBuilding)
 			.verifyDetailSheetPresented(for: TestIdentifiers.Hours.anExcludedBuilding)
 			.tapReportAction()
-			.verifyReportScreenPresented()
-			.openScheduleEditorFromReportScreen()
-			.capture("Hours schedule editor opened from the report screen")
-			.verifyScheduleEditorPresented()
-			.goBack()
 			.verifyReportScreenPresented()
 			.makeUnsavedEditOnReportScreen()
 
@@ -151,5 +140,26 @@ class ModuleHoursTests: UITestCaseUnbooted {
 			.verifyDiscardChangesAlertPresented()
 			.chooseToDiscardChanges()
 			.verifyReportScreenGone(buildingName: TestIdentifiers.Hours.anExcludedBuilding)
+	}
+
+	/// The schedule editor is a push inside the formSheet's own stack, next to
+	/// the report screen it opens from, so that the two can share the draft
+	/// they both edit. It used to be a `modal` on the OUTER stack -- a
+	/// presentation that can silently no-op on iOS while a formSheet is
+	/// already up -- so this asserts the editor really does come up.
+	///
+	/// Kept apart from the guard test: opening the editor scrolls the report
+	/// screen, and an edit made after coming back does not reliably arm the
+	/// guard.
+	func testScheduleEditorPresentsFromWithinTheReportScreen() throws {
+		HoursScreen(app: app)
+			.navigate()
+			.tapRow(TestIdentifiers.Hours.anExcludedBuilding)
+			.verifyDetailSheetPresented(for: TestIdentifiers.Hours.anExcludedBuilding)
+			.tapReportAction()
+			.verifyReportScreenPresented()
+			.openScheduleEditorFromReportScreen()
+			.capture("Hours schedule editor opened from the report screen")
+			.verifyScheduleEditorPresented()
 	}
 }

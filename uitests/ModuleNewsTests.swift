@@ -85,12 +85,6 @@ class ModuleNewsTests: UITestCaseUnbooted {
 	/// A sign picked from the list scrolls the page up to it; one picked from the glyph grid,
 	/// which is already in view, leaves the page where it is. The post is reopened before the
 	/// grid is tapped, so the grid sits below the intro rather than at the top of the screen.
-	///
-	/// Then, at the largest text size, the chosen sign's section sits a long way above the
-	/// last rows, so the page has to scroll to a section it has not yet drawn. Latest stays
-	/// narrowed to Variety across the relaunch: at the largest size the section menu scrolls
-	/// to its chosen row as it opens, and XCUITest reads the rows' frames from before that
-	/// scroll, so a tap there lands on the wrong section.
 	func testHoroscopesOpenOnAChosenSign() throws {
 		let front = MessFrontPage(app: app)
 		front
@@ -105,7 +99,19 @@ class ModuleNewsTests: UITestCaseUnbooted {
 			.openFirstStory()
 			.verifySignChosen(TestIdentifiers.News.gemini)
 			.tapSignGlyphKeepingThePlace(TestIdentifiers.News.leo)
+	}
 
+	/// At the largest text size the chosen sign's section sits a long way above
+	/// the last rows, so the page has to scroll to a section it has not yet drawn.
+	///
+	/// The app is relaunched at AX5 before the column is opened.
+	func testHoroscopesScrollToASignPickedFromTheLastRow() throws {
+		// Latest is narrowed to Variety at the usual text size and kept across the relaunch: at the
+		// largest size the section menu scrolls to its chosen row as it opens, and XCUITest reads the
+		// rows' frames from before that scroll, so a tap there lands on the wrong section.
+		MessFrontPage(app: app)
+			.navigate()
+			.filterLatest(to: TestIdentifiers.News.varietySection)
 		keepStateForNextLaunch(
 			adding: TestIdentifiers.LaunchArguments.contentSizeCategory(
 				TestIdentifiers.LaunchArguments.accessibilityExtraExtraExtraLarge))
