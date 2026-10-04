@@ -85,6 +85,9 @@ struct TestIdentifiers {
 		/// The paintbrush on Home and the Messenger's front page. Mirrors CUSTOMIZE_LABEL in
 		/// source/features/customize/labels.ts.
 		static let customizeButton = "Customize"
+		/// A two-line title in a navigation bar, read as its two lines joined by a comma. Mirrors
+		/// NAVIGATION_TITLE_ID in source/components/navigation-title.tsx.
+		static let title = "navigation-title"
 		/// The label every back button carries. UIKit gives its own back
 		/// buttons this label too, so a query using it must be scoped to one
 		/// navigation bar -- `app.navigationBars.buttons[backButton]` matches
@@ -515,11 +518,9 @@ struct TestIdentifiers {
 		/// A section the view menu offers, as source/features/mess/lib/posts.ts names it.
 		static let newsSection = "News"
 
-		/// The paper's name: Latest's masthead, and By Issue's castle's label, in source/features/mess/masthead.tsx.
+		/// The paper's name: the first line of the front page's title, in
+		/// source/features/mess/front-page-screen.tsx, and each issue tile's nameplate.
 		static let paperName = "The Olaf Messenger"
-
-		/// A page's dateline, in source/features/mess/masthead.tsx.
-		static let dateline = "mess-dateline"
 
 		/// The lead story, and every card on a shelf, in source/features/mess/issue-page.tsx.
 		static let leadStory = "mess-lead-story"
@@ -735,8 +736,6 @@ struct TestIdentifiers {
 		/// The Support screen's host, set in app/support/index.tsx.
 		static let screen = "screen-support"
 		static let faqs = "FAQs"
-		static let notices = "Notices"
-		static let emergencyContacts = "PubSafe • SARN • 911"
 		static let sendFeedback = "Send Feedback"
 		/// ShareTelemetryToggle's label, in source/features/telemetry/consent-toggle.tsx.
 		static let telemetryToggle = "Share anonymous usage and crash data"

@@ -1,4 +1,5 @@
 import {DynamicColorIOS} from 'react-native'
+import type {Typeface} from '../../components/lib/typeface'
 
 /** Newsprint, and warm dark paper in dark mode. */
 export const paper = DynamicColorIOS({light: '#FBF9F4', dark: '#1C1A17'})
@@ -17,3 +18,11 @@ export const onMessRed = DynamicColorIOS({light: '#FFFFFF', dark: '#1C1A17'})
 export const printShadow = DynamicColorIOS({light: '#0000004D', dark: '#000000B3'})
 /** A tinted card or square, a shade off the paper. */
 export const wash = DynamicColorIOS({light: '#ECE7DC', dark: '#2A2723'})
+
+/** The paper's type, for a shared row or header set on the paper. */
+export const paperTypeface: Typeface = {
+	design: 'serif',
+	label: ink,
+	secondaryLabel: faded,
+	tint: messRed,
+}

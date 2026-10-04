@@ -683,7 +683,10 @@ export function VStack({
 	let onGeometryChange = modifierOf(modifiers, 'onGeometryChange')?.onGeometryChange
 	return (
 		<Appearing key={String(identity)} onAppear={handler}>
-			<ForwardingView onGeometryChange={onGeometryChange} testID={testID}>
+			<ForwardingView
+				onGeometryChange={onGeometryChange}
+				testID={identifierOf(modifiers) ?? testID}
+			>
 				{children}
 			</ForwardingView>
 		</Appearing>

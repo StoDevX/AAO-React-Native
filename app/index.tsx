@@ -146,11 +146,16 @@ function UnofficialAppNotice(): React.ReactNode {
 }
 
 /// A list row with nothing of a row's own: no fill, margins or divider, so the
-/// banner and the notice sit on the list's background rather than in a cell.
+/// spacer sits on the list's background rather than in a cell.
 const BARE_ROW_MODIFIERS = [
 	listRowBackground('clear'),
 	listRowInsets({top: 0, leading: 0, bottom: 0, trailing: 0}),
 	listRowSeparator('hidden'),
+]
+/// The notice as the list's footer: as wide as the card above it rather than
+/// indented to its text, and a little way below it.
+const NOTICE_FOOTER_MODIFIERS = [
+	listRowInsets({top: TILE_SPACING * 2, leading: 0, bottom: 0, trailing: 0}),
 ]
 
 /// Names the home's tile grid.
@@ -259,10 +264,15 @@ export default function HomePage(): React.ReactNode {
 							target={FAQ_TARGETS.HOME}
 						/>
 						<List modifiers={[listStyle('insetGrouped')]}>
-							<HomeListRows onOpen={openView} views={views} />
-							<VStack modifiers={BARE_ROW_MODIFIERS}>
-								<UnofficialAppNotice />
-							</VStack>
+							<HomeListRows
+								footer={
+									<VStack modifiers={NOTICE_FOOTER_MODIFIERS}>
+										<UnofficialAppNotice />
+									</VStack>
+								}
+								onOpen={openView}
+								views={views}
+							/>
 							{/* Room to scroll the last of the list clear of the Now Playing bar. */}
 							{barVisible ? (
 								<Spacer

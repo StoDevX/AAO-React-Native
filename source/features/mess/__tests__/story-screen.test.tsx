@@ -19,6 +19,7 @@ import categories from './fixtures/categories.json'
 import posts from './fixtures/posts.json'
 
 import {queryClient as appQueryClient} from '../../../init/tanstack-query'
+import {NAVIGATION_TITLE_ID} from '../../../components/navigation-title'
 import {flushQueryNotifications, waitForQueriesToSettle} from '../../../testing/query-notifications'
 import {AUTHOR_RULE_ID} from '../author-card'
 import {StoryScreen} from '../story-screen'
@@ -429,6 +430,15 @@ function renderStory(id: number) {
 }
 
 describe('StoryScreen', () => {
+	// The kicker names the section, and the headline the story, so the bar names neither.
+	test('leaves the navigation bar untitled', async () => {
+		await renderStory(36911)
+		await act(flushQueryNotifications)
+
+		expect(screen.getByText('Cows, Comments and Confessions')).toBeTruthy()
+		expect(screen.queryByTestId(NAVIGATION_TITLE_ID)).toBeNull()
+	})
+
 	test('reads a story in the cached feed without fetching the single post', async () => {
 		await renderStory(36911)
 		await act(flushQueryNotifications)
