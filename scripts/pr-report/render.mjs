@@ -65,6 +65,13 @@ export function renderComment({head, diff, baselineNote, gate}, limit = COMMENT_
 		return lines.join('\n')
 	}
 
+	// The tables below are unminified JS source bytes from the source map,
+	// not the Hermes bytecode the headline and gate measure.
+	lines.push(
+		'Package and feature sizes are unminified JS from the source map; the gate uses bytecode.',
+		'',
+	)
+
 	let movers = [
 		...diff.byPackage.map((change) => ({label: change.name, change})),
 		...diff.byFeature.map((change) => ({label: `feature: ${change.name}`, change})),

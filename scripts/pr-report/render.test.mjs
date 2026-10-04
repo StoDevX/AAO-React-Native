@@ -38,6 +38,8 @@ describe('renderComment', () => {
 				'',
 				'✅ Within the 50.0 KiB limit.',
 				'',
+				'Package and feature sizes are unminified JS from the source map; the gate uses bytecode.',
+				'',
 				'| Changed most | Before | After | Δ |',
 				'| --- | --- | --- | --- |',
 				'| date-fns | 80.0 KiB | 91.0 KiB | +11.0 KiB |',

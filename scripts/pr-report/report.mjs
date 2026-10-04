@@ -73,7 +73,11 @@ export function buildPrReport({head, baseline, comparedSha, baseRef, labels, lim
 	} else if (baseline === null) {
 		baselineNote = `No master report at or before \`${short}\`.`
 	} else if (baseline.version !== REPORT_VERSION) {
-		baselineNote = `Baseline format changed (master's report for \`${short}\` is version ${baseline.version}), so there is nothing to compare.`
+		// Name the commit the baseline actually came from, which can be an
+		// older ancestor than the PR's base (`short`) when find-baseline.sh
+		// fell back to one.
+		let comparedShort = (comparedSha || head.baseSha)?.slice(0, 7) ?? 'none'
+		baselineNote = `Baseline format changed (master's report for \`${comparedShort}\` is version ${baseline.version}), so there is nothing to compare.`
 	} else {
 		diff = diffReports(baseline, head)
 		if (comparedSha !== head.baseSha) {

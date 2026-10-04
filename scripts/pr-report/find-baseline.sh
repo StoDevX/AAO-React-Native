@@ -17,6 +17,12 @@ set -uo pipefail
 
 base_sha=$1
 
+# A SHA that doesn't look like one (empty, truncated, mixed case) is never a
+# valid commit to look up; print nothing rather than pass it to gh/git.
+if ! [[ $base_sha =~ ^[0-9a-f]{40}$ ]]; then
+	exit 0
+fi
+
 exact=$(gh run list --repo "$GITHUB_REPOSITORY" --workflow pr-report.yml \
 	--branch master --event push --commit "$base_sha" --status success \
 	--limit 1 --json databaseId --jq '.[0].databaseId // empty' 2>/dev/null)

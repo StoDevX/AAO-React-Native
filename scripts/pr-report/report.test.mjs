@@ -129,6 +129,48 @@ describe('buildPrReport', () => {
 		assert.match(result.comment, /Baseline format changed/u)
 	})
 
+	it('names the commit the baseline came from when its format version differs', () => {
+		let result = buildPrReport({
+			head: report(300),
+			baseline: report(100, {version: 0}),
+			comparedSha: 'older5678',
+			baseRef: 'master',
+			labels: [],
+			limit: 100,
+		})
+		assert.match(result.comment, /master's report for `older56` is version 0/u)
+	})
+
+	it("does not explain the gap when the baseline is exactly the PR's base", () => {
+		let result = buildPrReport({
+			head: report(300),
+			baseline: report(100),
+			comparedSha: 'abcdef1234',
+			baseRef: 'master',
+			labels: [],
+			limit: 1000,
+		})
+		assert.equal(result.pass, true)
+		assert.doesNotMatch(result.comment, /Compared with master/u)
+	})
+
+	it('passes with the no-comparison note when a non-master base also has no baseline', () => {
+		let result = buildPrReport({
+			head: report(300),
+			baseline: null,
+			comparedSha: null,
+			baseRef: 'feature/other',
+			labels: [],
+			limit: 100,
+		})
+		assert.equal(result.pass, true)
+		assert.match(
+			result.comment,
+			/No comparison: this PR is based on `feature\/other`, not master\./u,
+		)
+		assert.doesNotMatch(result.comment, /No master report at or before/u)
+	})
+
 	it('diffs against an older baseline and explains the gap, still failing on growth', () => {
 		let result = buildPrReport({
 			head: report(300, {baseSha: 'abcdef1234'}),

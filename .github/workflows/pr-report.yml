@@ -10,7 +10,10 @@ permissions:
   contents: read
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  # A push gets its own group (by commit), so a queued master run is never
+  # cancelled by a later push landing while it waits; a pull request shares
+  # one group per ref, so a stale run for the same PR is replaced.
+  group: ${{ github.workflow }}-${{ github.event_name == 'push' && github.sha || github.ref }}
   # Never cancel a push to master: a cancelled run uploads no report, and
   # every later PR needs one for each master commit to compare against.
   cancel-in-progress: ${{ github.event_name != 'push' }}
@@ -92,12 +95,17 @@ jobs:
           path: head/
 
       - name: Find and download master's baseline report
-        if: github.event_name == 'pull_request'
+        # Stacked PRs (base isn't master) have nothing to compare with, so
+        # skip the lookup entirely; report.mjs renders that explanation.
+        if: github.event_name == 'pull_request' && github.base_ref == 'master'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           mkdir -p baseline/
-          base_sha=$(jq -r '.baseSha // empty' head/size-report.json 2>/dev/null)
+          # head/size-report.json is missing when js-size failed; jq then
+          # exits non-zero, and `|| true` keeps that from failing the step
+          # under bash -e, so the report and comment steps still run.
+          base_sha=$(jq -r '.baseSha // empty' head/size-report.json 2>/dev/null || true)
           if [ -z "$base_sha" ]; then
             echo "No base commit recorded for this run; nothing to compare."
             exit 0
