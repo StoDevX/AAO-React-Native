@@ -2,9 +2,9 @@ import type {Score} from '../types'
 
 /**
  * Scores for UI testing, anchored to `UITEST_FROZEN_DATE` -- the Saturday the
- * app's clock is frozen to under `--uitesting`. Between them they fill every
- * bucket the tabs can show: yesterday, today's ongoing/finalized/upcoming, and
- * a later fixture, so no tab is empty for want of a real game that day.
+ * app's clock is frozen to under `--uitesting`. Between them they put games on
+ * yesterday, on today in every state -- live, final and scheduled -- and on
+ * later days, so the list has something either side of Today to scroll to.
  *
  * Live scores are whatever St. Olaf played this week, which is nothing to
  * assert against -- see `source/features/dictionary/query.ts` for the same

@@ -1,15 +1,13 @@
 import {
-	shortSportName,
 	toProcessedScores,
-	groupScoresByDate,
+	daySections,
 	formatDateString,
-	sectionsForTab,
 	sportFilterSections,
-	filterSectionsBySport,
-	toggleSectionSelection,
+	filterBySport,
+	isInPlay,
 } from '../utils'
 import {Constants} from '../constants'
-import {DateGroupedScores, GameResult, ProcessedScore, Score, StatusInfo} from '../types'
+import {GameResult, ProcessedScore, Score, StatusInfo} from '../types'
 
 const makeFakeScore = (
 	parsedDate: Date,
@@ -81,120 +79,100 @@ describe('formatDateString', () => {
 	})
 })
 
-describe('groupScoresByDate', () => {
-	// Fixed reference instant so bucket math never depends on the clock the
-	// test happens to run at.
+describe('daySections', () => {
+	// Fixed reference instant so day math never depends on the clock the test
+	// happens to run at.
 	const now = new Date(2026, 0, 15, 12, 0, 0) // Thursday, January 15 2026, noon
 
-	it('places a past game in the Yesterday bucket', () => {
-		const yesterday = new Date(2026, 0, 14, 9, 0, 0)
-		const score = makeFakeScore(yesterday)
-		const groups = groupScoresByDate([score], now)
-		const yGroup = groups.find((g) => g.title === Constants.YESTERDAY)
-		expect(yGroup?.data).toHaveLength(1)
-	})
+	it('lays the days out earliest first, naming the ones next to today', () => {
+		const lastWeek = makeFakeScore(new Date(2026, 0, 8, 9, 0, 0))
+		const yesterday = makeFakeScore(new Date(2026, 0, 14, 9, 0, 0))
+		const today = makeFakeScore(new Date(2026, 0, 15, 9, 0, 0))
+		const tomorrow = makeFakeScore(new Date(2026, 0, 16, 9, 0, 0))
+		const nextWeek = makeFakeScore(new Date(2026, 0, 22, 9, 0, 0))
 
-	it('places a same-day game in the Today bucket', () => {
-		const today = new Date(2026, 0, 15, 9, 0, 0)
-		const score = makeFakeScore(today)
-		const groups = groupScoresByDate([score], now)
-		const todayGroup = groups.find((g) => g.title === Constants.TODAY)
-		expect(todayGroup?.data).toHaveLength(1)
-	})
+		const sections = daySections([nextWeek, today, lastWeek, tomorrow, yesterday], now)
 
-	it('sorts games within a bucket chronologically, regardless of input order', () => {
-		const early = makeFakeScore(new Date(2026, 0, 15, 9, 0, 0))
-		const late = makeFakeScore(new Date(2026, 0, 15, 18, 0, 0))
-		// fed in reverse-chronological order
-		const groups = groupScoresByDate([late, early], now)
-		const todayGroup = groups.find((g) => g.title === Constants.TODAY)
-		expect(todayGroup?.data).toEqual([early, late])
-	})
-
-	it('orders upcoming day sections earliest-first, and each day chronologically', () => {
-		const laterDay = makeFakeScore(new Date(2026, 0, 20, 9, 0, 0))
-		const soonerDayLate = makeFakeScore(new Date(2026, 0, 17, 18, 0, 0))
-		const soonerDayEarly = makeFakeScore(new Date(2026, 0, 17, 9, 0, 0))
-		// fed with the later day first, and the sooner day's games reversed
-		const groups = groupScoresByDate([laterDay, soonerDayLate, soonerDayEarly], now)
-		const upcoming = groups.filter(
-			(g) => g.title !== Constants.YESTERDAY && g.title !== Constants.TODAY,
-		)
-		expect(upcoming).toEqual([
-			{title: formatDateString(new Date(2026, 0, 17)), data: [soonerDayEarly, soonerDayLate]},
-			{title: formatDateString(new Date(2026, 0, 20)), data: [laterDay]},
+		expect(sections.map((s) => s.title)).toEqual([
+			formatDateString(new Date(2026, 0, 8)),
+			Constants.YESTERDAY,
+			Constants.TODAY,
+			Constants.TOMORROW,
+			formatDateString(new Date(2026, 0, 22)),
+		])
+		expect(sections.map((s) => s.data)).toEqual([
+			[lastWeek],
+			[yesterday],
+			[today],
+			[tomorrow],
+			[nextWeek],
 		])
 	})
 
-	it('drops a game older than yesterday entirely', () => {
-		const twoDaysAgo = new Date(2026, 0, 13, 9, 0, 0)
-		const score = makeFakeScore(twoDaysAgo)
-		const groups = groupScoresByDate([score], now)
-		const allIds = groups.flatMap((g) => g.data)
-		expect(allIds).toHaveLength(0)
+	it('keys each day by its date, and marks only today as today', () => {
+		const sections = daySections([makeFakeScore(new Date(2026, 0, 14, 9, 0, 0))], now)
+
+		expect(sections.map((s) => [s.key, s.isToday])).toEqual([
+			['2026-01-14', false],
+			['2026-01-15', true],
+		])
+	})
+
+	it('keeps an empty Today, so the list always has a today to open at', () => {
+		const sections = daySections([makeFakeScore(new Date(2026, 0, 20, 9, 0, 0))], now)
+
+		expect(sections[0]).toEqual({
+			key: '2026-01-15',
+			title: Constants.TODAY,
+			isToday: true,
+			data: [],
+		})
+	})
+
+	it('sorts games within a day chronologically, regardless of input order', () => {
+		const early = makeFakeScore(new Date(2026, 0, 15, 9, 0, 0))
+		const late = makeFakeScore(new Date(2026, 0, 15, 18, 0, 0))
+
+		const today = daySections([late, early], now).find((s) => s.isToday)
+
+		expect(today?.data).toEqual([early, late])
+	})
+
+	it('places a game by its local day, not its UTC one', () => {
+		// 11pm local is the next day in UTC anywhere west of Greenwich.
+		const lateTonight = makeFakeScore(new Date(2026, 0, 15, 23, 0, 0))
+
+		expect(daySections([lateTonight], now).find((s) => s.isToday)?.data).toEqual([lateTonight])
 	})
 })
 
-describe('sectionsForTab', () => {
-	const ongoing = makeFakeScore(new Date(2026, 0, 15), {status: {indicator: 'live'}})
-	const finalized = makeFakeScore(new Date(2026, 0, 15), {
-		status: {indicator: 'final'},
-		result: 'W',
-	})
-	const upcomingGame = makeFakeScore(new Date(2026, 0, 15), {status: {indicator: 'scheduled'}})
+describe('isInPlay', () => {
+	const kickoff = '2026-01-15T18:00:00.000Z'
+	const makeScore = (indicator: StatusInfo['indicator'], date_utc = kickoff): Score =>
+		({id: '1', date_utc, status: {indicator, value: ''}}) as Score
+	const anHourIn = new Date('2026-01-15T19:00:00.000Z')
 
-	it('splits Today into Ongoing, Finalized, and Upcoming, omitting empty sections', () => {
-		const grouped: DateGroupedScores[] = [
-			{title: Constants.YESTERDAY, data: []},
-			{title: Constants.TODAY, data: [finalized, ongoing]},
-		]
-		const sections = sectionsForTab(Constants.TODAY, grouped)
-		expect(sections).toEqual([
-			{title: Constants.ONGOING, data: [ongoing]},
-			{title: Constants.FINALIZED, data: [finalized]},
-		])
+	it.each(['started', 'live', 'unofficial-final'] as const)(
+		'is true while a game is %s',
+		(state) => {
+			expect(isInPlay(makeScore(state), anHourIn)).toBe(true)
+		},
+	)
+
+	it.each(['scheduled', 'final'] as const)('is false for a game that is %s', (state) => {
+		expect(isInPlay(makeScore(state), anHourIn)).toBe(false)
 	})
 
-	it('includes all three Today sections when every bucket has a game', () => {
-		const grouped: DateGroupedScores[] = [
-			{title: Constants.YESTERDAY, data: []},
-			{title: Constants.TODAY, data: [ongoing, finalized, upcomingGame]},
-		]
-		const sections = sectionsForTab(Constants.TODAY, grouped)
-		expect(sections.map((s) => s.title)).toEqual([
-			Constants.ONGOING,
-			Constants.FINALIZED,
-			Constants.UPCOMING,
-		])
+	it('stops counting a game a day after kickoff, result or not', () => {
+		const aDayLater = new Date('2026-01-16T18:00:00.000Z')
+		const justUnder = new Date(aDayLater.getTime() - 60 * 1000)
+
+		expect(isInPlay(makeScore('started'), justUnder)).toBe(true)
+		expect(isInPlay(makeScore('started'), aDayLater)).toBe(false)
 	})
 
-	it('includes a Yesterday game with no posted result', () => {
-		const withResult = makeFakeScore(new Date(2026, 0, 14), {result: 'W'})
-		const noResult = makeFakeScore(new Date(2026, 0, 14), {result: ''})
-		const grouped: DateGroupedScores[] = [
-			{title: Constants.YESTERDAY, data: [withResult, noResult]},
-			{title: Constants.TODAY, data: []},
-		]
-		const sections = sectionsForTab(Constants.YESTERDAY, grouped)
-		expect(sections).toEqual([{title: '', data: [withResult, noResult]}])
-	})
-
-	it('returns no sections for Yesterday when the bucket is empty', () => {
-		const grouped: DateGroupedScores[] = [
-			{title: Constants.YESTERDAY, data: []},
-			{title: Constants.TODAY, data: []},
-		]
-		expect(sectionsForTab(Constants.YESTERDAY, grouped)).toEqual([])
-	})
-
-	it('strips the Yesterday and Today buckets for Upcoming', () => {
-		const upcomingSection = {title: 'Monday, January 19', data: [upcomingGame]}
-		const grouped: DateGroupedScores[] = [
-			{title: Constants.YESTERDAY, data: [finalized]},
-			{title: Constants.TODAY, data: [ongoing]},
-			upcomingSection,
-		]
-		expect(sectionsForTab(Constants.UPCOMING, grouped)).toEqual([upcomingSection])
+	it('counts an all-day fixture, which has no kickoff to measure from', () => {
+		expect(isInPlay(makeScore('live', '1/15/2026'), anHourIn)).toBe(true)
 	})
 })
 
@@ -235,72 +213,26 @@ describe('sportFilterSections', () => {
 	})
 })
 
-describe('filterSectionsBySport', () => {
-	// filterSectionsBySport only reads `sport`, so the date on each fake score
-	// is arbitrary — fixed here rather than built from `new Date()`.
+describe('filterBySport', () => {
+	// filterBySport only reads `sport`, so the date on each fake score is
+	// arbitrary — fixed here rather than built from `new Date()`.
 	const day = new Date(2026, 0, 15)
 	const baseball = makeFakeScore(day, {sport: 'Baseball'})
 	const golf = makeFakeScore(day, {sport: "Men's Golf"})
 	const soccer = makeFakeScore(day, {sport: "Women's Soccer"})
 
 	it('returns every game when the selection is empty', () => {
-		const grouped: DateGroupedScores[] = [{title: Constants.TODAY, data: [baseball, golf, soccer]}]
-		expect(filterSectionsBySport(grouped, [])).toEqual(grouped)
+		expect(filterBySport([baseball, golf, soccer], [])).toEqual([baseball, golf, soccer])
 	})
 
 	it('keeps only games whose sport is in a non-empty selection', () => {
-		const grouped: DateGroupedScores[] = [{title: Constants.TODAY, data: [baseball, golf, soccer]}]
-		const result = filterSectionsBySport(grouped, ['Baseball'])
-		expect(result).toEqual([{title: Constants.TODAY, data: [baseball]}])
+		expect(filterBySport([baseball, golf, soccer], ['Baseball', "Women's Soccer"])).toEqual([
+			baseball,
+			soccer,
+		])
 	})
 
-	it('keeps a section, with empty data, when filtering removes every game in it', () => {
-		const grouped: DateGroupedScores[] = [{title: Constants.TODAY, data: [golf]}]
-		const result = filterSectionsBySport(grouped, ['Baseball'])
-		expect(result).toEqual([{title: Constants.TODAY, data: []}])
-	})
-
-	it('leaves matching games untouched when the selection also names a sport absent from the data', () => {
-		const grouped: DateGroupedScores[] = [{title: Constants.TODAY, data: [baseball]}]
-		const result = filterSectionsBySport(grouped, ['Baseball', 'Fencing'])
-		expect(result).toEqual([{title: Constants.TODAY, data: [baseball]}])
-	})
-})
-
-describe('toggleSectionSelection', () => {
-	it('selects every sport in a section with none of its sports selected', () => {
-		const result = toggleSectionSelection(['Baseball', 'Softball'], [])
-		expect(result).toEqual(['Baseball', 'Softball'])
-	})
-
-	it('deselects exactly a fully-selected section, leaving other selections intact', () => {
-		const selected = ['Baseball', 'Softball', "Men's Golf"]
-		const result = toggleSectionSelection(['Baseball', 'Softball'], selected)
-		expect(result).toEqual(["Men's Golf"])
-	})
-
-	it('selects the rest of a partially-selected section rather than clearing it', () => {
-		const result = toggleSectionSelection(['Baseball', 'Softball'], ['Baseball'])
-		expect(result).toEqual(['Baseball', 'Softball'])
-	})
-
-	it('does not duplicate a sport that is already selected when adding the rest of the section', () => {
-		const result = toggleSectionSelection(['Baseball', 'Softball'], ['Baseball', "Men's Golf"])
-		expect(result).toEqual(['Baseball', "Men's Golf", 'Softball'])
-	})
-})
-
-describe('shortSportName', () => {
-	it('drops the division prefix, which the section header already states', () => {
-		expect(shortSportName("Men's Basketball")).toBe('Basketball')
-		expect(shortSportName("Women's Nordic Skiing")).toBe('Nordic Skiing')
-	})
-
-	it('leaves a sport with no division prefix alone', () => {
-		expect(shortSportName('Football')).toBe('Football')
-	})
-
-	it('only strips a prefix at the start of the name', () => {
-		expect(shortSportName("Cheer for Men's Hockey")).toBe("Cheer for Men's Hockey")
+	it('returns nothing when no game is in a selected sport', () => {
+		expect(filterBySport([baseball, golf], ['Volleyball'])).toEqual([])
 	})
 })

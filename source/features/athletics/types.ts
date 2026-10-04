@@ -1,5 +1,3 @@
-import {Constants} from './constants'
-
 export interface LocationInfo {
 	location: string
 	homeAway?: 'H' | 'A' | 'N'
@@ -39,7 +37,7 @@ export interface Links {
 	streaming_video?: Link
 }
 
-export type GameResult = 'W' | 'L' | 'N' | ''
+export type GameResult = 'W' | 'L' | 'T' | 'N' | ''
 
 export interface Score {
 	id: string
@@ -67,18 +65,15 @@ export interface Score {
 	coverage: Coverage
 }
 
-export type DateSection =
-	| typeof Constants.YESTERDAY
-	| typeof Constants.TODAY
-	| typeof Constants.UPCOMING
-
-/** A tab in the athletics tab bar: a date bucket, or the Filter tab itself. */
-export type TabSection = DateSection | typeof Constants.FILTER
-
 export type ProcessedScore = Score & {parsedDate: Date}
 
-export interface DateGroupedScores {
+/** One day of games in the athletics list. */
+export interface DaySection {
+	/** Stable across renders and refetches: the day itself, as `YYYY-MM-DD`. */
+	key: string
+	/** "Yesterday", "Today", "Tomorrow", or the weekday and date. */
 	title: string
+	isToday: boolean
 	data: ProcessedScore[]
 }
 

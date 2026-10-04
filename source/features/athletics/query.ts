@@ -27,6 +27,7 @@ export const athleticsOptions = queryOptions({
 		if (!scores?.length) {
 			return IDLE_INTERVAL
 		}
-		return scores.some(isInPlay) ? ACTIVE_GAME_INTERVAL : IDLE_INTERVAL
+		const now = new Date()
+		return scores.some((score) => isInPlay(score, now)) ? ACTIVE_GAME_INTERVAL : IDLE_INTERVAL
 	},
 })

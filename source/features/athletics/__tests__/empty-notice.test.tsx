@@ -2,7 +2,6 @@ import * as React from 'react'
 import {render} from '@testing-library/react-native'
 
 import {EmptyListNotice} from '../empty-notice'
-import {Constants} from '../constants'
 import {useFilterStore} from '../store'
 
 describe('EmptyListNotice', () => {
@@ -10,26 +9,14 @@ describe('EmptyListNotice', () => {
 		useFilterStore.setState({selectedSports: [], availableSports: []})
 	})
 
-	it('shows the yesterday/today phrasing for Yesterday', async () => {
-		let {getByText} = await render(<EmptyListNotice selectedSection={Constants.YESTERDAY} />)
+	it('says there are no games', async () => {
+		let {getByText} = await render(<EmptyListNotice />)
 
-		expect(getByText('No Games Yesterday')).toBeTruthy()
-	})
-
-	it('shows the yesterday/today phrasing for Today', async () => {
-		let {getByText} = await render(<EmptyListNotice selectedSection={Constants.TODAY} />)
-
-		expect(getByText('No Games Today')).toBeTruthy()
-	})
-
-	it('shows the upcoming phrasing for Upcoming', async () => {
-		let {getByText} = await render(<EmptyListNotice selectedSection={Constants.UPCOMING} />)
-
-		expect(getByText('No Upcoming Games')).toBeTruthy()
+		expect(getByText('No Games')).toBeTruthy()
 	})
 
 	it('omits the filter hint when the selector says not to show it', async () => {
-		let {queryByText} = await render(<EmptyListNotice selectedSection={Constants.TODAY} />)
+		let {queryByText} = await render(<EmptyListNotice />)
 
 		expect(queryByText(/Try changing the filters/u)).toBeNull()
 	})
@@ -40,9 +27,9 @@ describe('EmptyListNotice', () => {
 			availableSports: ['Baseball', 'Volleyball'],
 		})
 
-		let {getByText} = await render(<EmptyListNotice selectedSection={Constants.TODAY} />)
+		let {getByText} = await render(<EmptyListNotice />)
 
-		expect(getByText('No Games Today')).toBeTruthy()
+		expect(getByText('No Games')).toBeTruthy()
 		expect(getByText('Try changing the filters.')).toBeTruthy()
 	})
 })
