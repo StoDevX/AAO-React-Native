@@ -551,13 +551,6 @@ struct TestIdentifiers {
 		static let byIssue = "By Issue"
 		static let latest = "Latest"
 		static let viewMenuPrefix = "View: "
-		/// The view menu's way to the paper's About page, in source/features/mess/front-page-screen.tsx.
-		static let aboutMenuItem = "About"
-		/// The About page's title, in source/features/mess/about-screen.tsx.
-		static let aboutTitle = "About The Olaf Messenger"
-		/// The About page's last heading, as the paper writes it; the UI tests read the page from
-		/// source/features/mess/__fixtures__/mess.json, so a rename on the paper's site moves nothing.
-		static let submissionPolicy = "Submission Policy"
 
 		/// The newest issue's tile and every other issue's, in source/features/mess/issue-grid.tsx.
 		static let topTile = "mess-top-tile"
@@ -610,7 +603,6 @@ struct TestIdentifiers {
 		static let varietySection = "Variety"
 		static let horoscopesColumn = "Horoscopes"
 		static let comicColumn = "Comic"
-		static let crosswordColumn = "Crossword"
 		static let recipesColumn = "Recipes"
 		static let photoColumn = "Photo"
 
