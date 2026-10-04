@@ -73,6 +73,8 @@ enum ChaosRoutes {
 		"messenger/image",
 		"messenger/issue",
 		"messenger/issue-section",
+		"messenger/staff",
+		"messenger/staff/[id]",
 		"messenger/story",
 		"more",
 		"print-jobs",

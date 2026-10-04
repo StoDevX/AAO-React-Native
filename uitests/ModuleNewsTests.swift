@@ -35,6 +35,12 @@ class ModuleNewsTests: UITestCaseUnbooted {
 			.openAbout()
 	}
 
+	func testOlafMessengerMenuOpensAStaffMember() throws {
+		MessFrontPage(app: app)
+			.navigate()
+			.openFirstStaffMember()
+	}
+
 	func testOlafMessengerOpensAnOlderIssue() throws {
 		MessFrontPage(app: app)
 			.navigate()
