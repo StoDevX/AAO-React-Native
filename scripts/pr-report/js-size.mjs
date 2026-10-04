@@ -9,7 +9,7 @@
 import {readFileSync, statSync, writeFileSync} from 'node:fs'
 
 /** Bumped whenever the report's shape changes, so an older baseline is not misread. */
-export const REPORT_VERSION = 1
+export const REPORT_VERSION = 2
 
 const NODE_MODULES = '/node_modules/'
 
@@ -60,26 +60,29 @@ export function groupBundle(files) {
 }
 
 /** Builds `size-report.json` from the measured totals and source-map-explorer's output. */
-export function buildReport({sha, minifiedBytes, hermesBytes, explorer}) {
+export function buildReport({sha, baseSha, hermesBytes, explorer}) {
 	let {byPackage, byFeature} = groupBundle(explorer.results[0].files)
 	return {
 		version: REPORT_VERSION,
 		sha,
-		js: {minifiedBytes, hermesBytes, byPackage, byFeature},
+		baseSha,
+		js: {hermesBytes, byPackage, byFeature},
 	}
 }
 
 /**
- * Reads the bundle, bytecode and explorer output from `dir`, and writes
+ * Reads the bytecode and explorer output from `dir`, and writes
  * `dir/size-report.json`. The commit comes from SIZE_REPORT_SHA, which CI
- * sets; a run by hand records `local`.
+ * sets; a run by hand records `local`. `baseSha` is the master commit this
+ * one was built against (SIZE_REPORT_BASE_SHA), or null on a push to master.
  */
 function main() {
 	let dir = process.argv[2] ?? 'size-report'
 	let sha = process.env.SIZE_REPORT_SHA || 'local'
+	let baseSha = process.env.SIZE_REPORT_BASE_SHA || null
 	let report = buildReport({
 		sha,
-		minifiedBytes: statSync(`${dir}/main.jsbundle`).size,
+		baseSha,
 		hermesBytes: statSync(`${dir}/main.hbc`).size,
 		explorer: JSON.parse(readFileSync(`${dir}/explorer.json`, 'utf8')),
 	})

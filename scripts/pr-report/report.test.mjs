@@ -6,10 +6,11 @@ import {describe, it} from 'node:test'
 
 import {buildPrReport, readReport} from './report.mjs'
 
-let report = (hermesBytes, version = 1) => ({
+let report = (hermesBytes, version = 2) => ({
 	version,
 	sha: 'x',
-	js: {minifiedBytes: 100, hermesBytes, byPackage: {a: 1}, byFeature: {}},
+	baseSha: null,
+	js: {hermesBytes, byPackage: {a: 1}, byFeature: {}},
 })
 
 describe('readReport', () => {

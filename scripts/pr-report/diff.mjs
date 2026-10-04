@@ -27,7 +27,6 @@ export function diffReports(baseline, head) {
 		delta: head.js[key] - baseline.js[key],
 	})
 	return {
-		minified: total('minified', 'minifiedBytes'),
 		hermes: total('hermes', 'hermesBytes'),
 		byPackage: diffGroups(baseline.js.byPackage, head.js.byPackage),
 		byFeature: diffGroups(baseline.js.byFeature, head.js.byFeature),

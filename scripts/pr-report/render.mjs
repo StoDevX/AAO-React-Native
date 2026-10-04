@@ -52,13 +52,9 @@ export function renderComment({head, diff, baselineNote, gate}) {
 	if (head === null) {
 		lines.push('JS size unavailable: the `js-size` job did not produce a report.')
 	} else if (diff === null) {
-		lines.push(
-			`Hermes bytecode: **${formatBytes(head.js.hermesBytes)}** · minified JS: ${formatBytes(head.js.minifiedBytes)}`,
-		)
+		lines.push(`Hermes bytecode: **${formatBytes(head.js.hermesBytes)}**`)
 	} else {
-		lines.push(
-			`Hermes bytecode: ${total(diff.hermes, true)} · minified JS: ${total(diff.minified, false)}`,
-		)
+		lines.push(`Hermes bytecode: ${total(diff.hermes, true)}`)
 	}
 	if (baselineNote) {
 		lines.push('', baselineNote)

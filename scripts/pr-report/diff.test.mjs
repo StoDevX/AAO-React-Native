@@ -25,16 +25,16 @@ describe('diffGroups', () => {
 })
 
 describe('diffReports', () => {
-	it('diffs the totals and both groupings', () => {
-		let report = (minifiedBytes, hermesBytes) => ({
-			version: 1,
+	it('diffs the hermes total and both groupings', () => {
+		let report = (hermesBytes) => ({
+			version: 2,
 			sha: 'x',
-			js: {minifiedBytes, hermesBytes, byPackage: {a: minifiedBytes}, byFeature: {}},
+			baseSha: null,
+			js: {hermesBytes, byPackage: {a: hermesBytes}, byFeature: {}},
 		})
-		assert.deepEqual(diffReports(report(100, 200), report(110, 230)), {
-			minified: {name: 'minified', before: 100, after: 110, delta: 10},
+		assert.deepEqual(diffReports(report(200), report(230)), {
 			hermes: {name: 'hermes', before: 200, after: 230, delta: 30},
-			byPackage: [{name: 'a', before: 100, after: 110, delta: 10}],
+			byPackage: [{name: 'a', before: 200, after: 230, delta: 30}],
 			byFeature: [],
 		})
 	})

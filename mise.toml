@@ -465,10 +465,13 @@ run = """
 set -euo pipefail
 out=size-report
 rm -rf "$out" && mkdir -p "$out"
+# --minify false: expo/scripts/react-native-xcode.sh passes it whenever
+# Hermes is on in a Release build, so an unminified bundle is what ships.
 expo export:embed \
   --reset-cache \
   --entry-file index.js \
   --dev false \
+  --minify false \
   --platform ios \
   --bundle-output "$out/main.jsbundle" \
   --sourcemap-output "$out/main.jsbundle.map" \
@@ -478,7 +481,7 @@ case "$(uname -s)" in
   Darwin) bin="$hermes/hermesc/osx-bin/hermesc" ;;
   *) bin="$hermes/hermesc/linux64-bin/hermesc" ;;
 esac
-"$bin" -emit-binary -max-diagnostic-width=80 -O -out "$out/main.hbc" "$out/main.jsbundle" 2>"$out/hermesc.log"
+"$bin" -emit-binary -max-diagnostic-width=80 -O -out "$out/main.hbc" "$out/main.jsbundle" 2>"$out/hermesc.log" || { cat "$out/hermesc.log" >&2; exit 1; }
 source-map-explorer "$out/main.jsbundle" "$out/main.jsbundle.map" --json --no-border-checks > "$out/explorer.json"
 node scripts/pr-report/js-size.mjs "$out"
 """

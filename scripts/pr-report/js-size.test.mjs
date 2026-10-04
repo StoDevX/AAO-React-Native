@@ -85,17 +85,23 @@ describe('groupBundle', () => {
 })
 
 describe('buildReport', () => {
-	it('wraps the groups with the version, commit and totals', () => {
+	it('wraps the groups with the version, commit, base commit and totals', () => {
 		let explorer = {results: [{files: {'/index.js': {size: 50}}}]}
-		assert.deepEqual(buildReport({sha: 'abc', minifiedBytes: 60, hermesBytes: 90, explorer}), {
-			version: 1,
+		assert.deepEqual(buildReport({sha: 'abc', baseSha: 'def', hermesBytes: 90, explorer}), {
+			version: 2,
 			sha: 'abc',
+			baseSha: 'def',
 			js: {
-				minifiedBytes: 60,
 				hermesBytes: 90,
 				byPackage: {'(app)': 50},
 				byFeature: {'(other)': 50},
 			},
 		})
+	})
+
+	it('records no base commit as null, for a push to master', () => {
+		let explorer = {results: [{files: {'/index.js': {size: 50}}}]}
+		let report = buildReport({sha: 'abc', baseSha: null, hermesBytes: 90, explorer})
+		assert.equal(report.baseSha, null)
 	})
 })

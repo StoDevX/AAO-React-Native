@@ -7,16 +7,14 @@ import {COMMENT_LIMIT, MARKER, renderComment} from './render.mjs'
 let KiB = 1024
 let MiB = 1024 * KiB
 
-let report = (js) => ({version: 1, sha: 'x', js})
+let report = (js) => ({version: 2, sha: 'x', baseSha: null, js})
 
 let baseline = report({
-	minifiedBytes: 3 * MiB,
 	hermesBytes: 4 * MiB,
 	byPackage: {'date-fns': 80 * KiB, lodash: 10 * KiB, '(app)': 500 * KiB},
 	byFeature: {dining: 20 * KiB},
 })
 let head = report({
-	minifiedBytes: 3 * MiB + 10 * KiB,
 	hermesBytes: 4 * MiB + 12 * KiB,
 	byPackage: {'date-fns': 91 * KiB, '(app)': 500 * KiB, zod: 2 * KiB},
 	byFeature: {dining: 21 * KiB},
@@ -36,7 +34,7 @@ describe('renderComment', () => {
 			[
 				MARKER,
 				'### JS bundle',
-				'Hermes bytecode: **4.01 MiB** (+12.0 KiB, +0.3%) · minified JS: 3.01 MiB (+10.0 KiB, +0.3%)',
+				'Hermes bytecode: **4.01 MiB** (+12.0 KiB, +0.3%)',
 				'',
 				'✅ Within the 50.0 KiB limit.',
 				'',
@@ -94,7 +92,7 @@ describe('renderComment', () => {
 			baselineNote: 'No baseline for `abc1234`.',
 			gate: {pass: true, message: 'No baseline to compare with, so the size gate passes.'},
 		})
-		assert.match(markdown, /Hermes bytecode: \*\*4\.01 MiB\*\* · minified JS: 3\.01 MiB/u)
+		assert.match(markdown, /Hermes bytecode: \*\*4\.01 MiB\*\*/u)
 		assert.match(markdown, /No baseline for `abc1234`\./u)
 		assert.doesNotMatch(markdown, /Changed most/u)
 	})

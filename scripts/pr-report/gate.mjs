@@ -6,7 +6,7 @@ import {formatBytes} from './format.mjs'
 
 /**
  * How much Hermes bytecode one pull request may add before the gate fails.
- * Bytecode, not minified JS, because bytecode is what the app ships.
+ * Bytecode is what the app ships, so it is what the gate measures.
  */
 export const HERMES_GROWTH_LIMIT_BYTES = 50 * 1024
 
