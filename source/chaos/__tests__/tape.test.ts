@@ -35,6 +35,10 @@ describe('tapeHoldsBody', () => {
 		'text/html; charset=UTF-8',
 		'application/rss+xml',
 		'text/javascript',
+		'application/x-javascript',
+		'application/ecmascript',
+		'application/x-ndjson',
+		'application/yaml',
 		'application/x-www-form-urlencoded',
 	])('holds a %s body, which is text', (contentType) => {
 		expect(tapeHoldsBody(contentType)).toBe(true)

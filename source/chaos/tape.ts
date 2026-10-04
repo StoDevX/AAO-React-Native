@@ -31,7 +31,7 @@ export type TapeEntry = {
  * binary body cannot make that trip: React Native passes the string to native
  * code as a C string, which ends at the first NUL, so reading the rebuilt body
  * as bytes asks for more than native holds and crashes the app. The course
- * catalog's SQLite file did exactly that.
+ * catalog, a SQLite file, is one such body.
  */
 export function tapeHoldsBody(contentType: string | null): boolean {
 	if (contentType === null) {
@@ -40,7 +40,7 @@ export function tapeHoldsBody(contentType: string | null): boolean {
 	let type = contentType.split(';')[0].trim().toLowerCase()
 	return (
 		type.startsWith('text/') ||
-		/[/+](json|xml|javascript)$/u.test(type) ||
+		/(json|xml|javascript|ecmascript|yaml)$/u.test(type) ||
 		type === 'application/x-www-form-urlencoded'
 	)
 }
