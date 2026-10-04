@@ -143,6 +143,20 @@ export default function StudentOrgsDetailPage(): React.ReactNode {
 						</Section>
 					) : null}
 
+					{/* Presence's own order: officers write "see information above" in
+					    the meeting fields, meaning these two. */}
+					{description ? (
+						<Section title="Description">
+							<SelectableText text={decode(description)} />
+						</Section>
+					) : null}
+
+					{additionalInformation ? (
+						<Section title="More Information">
+							<SelectableText text={additionalInformation} />
+						</Section>
+					) : null}
+
 					{meetings.length > 0 ? (
 						<Section title="Meetings">
 							{meetings.map(({label, value}) => (
@@ -221,18 +235,6 @@ export default function StudentOrgsDetailPage(): React.ReactNode {
 									<SelectableText text={officeHours} />
 								</LabeledContent>
 							) : null}
-						</Section>
-					) : null}
-
-					{description ? (
-						<Section title="Description">
-							<SelectableText text={decode(description)} />
-						</Section>
-					) : null}
-
-					{additionalInformation ? (
-						<Section title="More Information">
-							<SelectableText text={additionalInformation} />
 						</Section>
 					) : null}
 
