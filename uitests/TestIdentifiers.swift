@@ -228,19 +228,10 @@ struct TestIdentifiers {
 		/// reads "Regents Hall of Natural Sciences, RNS"; `selectBuilding(named:)`
 		/// matches on the prefix. St. Olaf can rename it.
 		static let aSubtitledBuilding = "Regents Hall of Natural Sciences"
-		/// St. Olaf's fullest card: a long About, twenty-one departments (so
-		/// More appears), and Links. Its feed lists its offices as departments.
-		/// St. Olaf can rename it.
-		static let aBuildingWithManyDepartments = "Tomson Hall"
-		/// The section listing what else is at a place. Mirrors the title in
-		/// source/features/map/card/also-here-section.tsx.
-		static let alsoHereSection = "Also at This Location"
 		/// A building with points inside it: The Cage, Stav Hall and more.
 		static let aBuildingWithPoints = "Buntrock Commons"
 		/// A point inside `aBuildingWithPoints`.
 		static let aPointInside = "The Cage"
-		/// An office in the Hours data, keyed to `aBuildingWithManyDepartments`.
-		static let anOffice = "Registrar"
 		/// A St. Olaf building whose description runs well past five lines.
 		static let aBuildingWithALongAbout = "Holland Hall"
 		/// A group in the map sheet's category grid with a list long enough to
@@ -263,27 +254,15 @@ struct TestIdentifiers {
 		/// tap that reaches the footprint instead opens the wrong card.
 		/// St. Olaf can rename it.
 		static let aPointOnlyPlace = "Stav Hall"
-		/// The Outdoors category, and a pond and a trail in it: rows two and
-		/// three, so both show at the middle stop, where opening a group leaves
-		/// the sheet. St. Olaf can rename them; they come from
-		/// StoDevX/campus-map-data.
-		static let outdoorsCategory = "Outdoors"
-		static let aPond = "Baseball Pond"
-		static let aTrail = "Baseball Pond Loop"
 		/// The Recents section's title, and its rows' swipe action. Mirror
 		/// RecentsSection in source/features/map/building-picker.tsx.
 		static let recentsTitle = "Recents"
 		static let recentsRemove = "Remove"
 		/// Mirrors CATEGORY_GRID_ID in source/features/map/category-grid.tsx.
 		static let categoryGrid = "map-category-grid"
-		/// A St. Olaf place in no Dining group, found by search from inside it.
-		static let aPlaceOutsideDining = "Regents Hall of Natural Sciences"
 		/// A row two screens down `parkingCategory`, behind every Accessible
 		/// Parking space. St. Olaf can rename it.
 		static let aRowFarDownParking = "Alumni Hall Road"
-		/// A point inside a building with exactly one venue in the Hours data,
-		/// so its card shows that venue's hours as its own.
-		static let aPointWithItsOwnHours = "The Cage"
 		/// The About menu in the map's header. It carries the OpenStreetMap
 		/// credit, so it has to stay reachable. Mirrors the accessibilityLabel
 		/// in app/map/index.tsx.

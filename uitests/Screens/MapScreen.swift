@@ -979,31 +979,6 @@ struct MapScreen: Screen {
 		return self
 	}
 
-	/// The card's section headings, in the order they appear from the top.
-	///
-	/// The card is a lazy list: a heading below the fold has no element until
-	/// it is scrolled into view. So the card is scrolled a screen at a time, and
-	/// each heading is placed by the scroll step it first appeared in, then by
-	/// its height within that step.
-	@discardableResult
-	func verifySectionOrder(_ expected: [String], among all: [String]) -> Self {
-		var seen: [String: (step: Int, y: CGFloat)] = [:]
-		for step in 0..<8 {
-			for title in all where seen[title] == nil {
-				let heading = app.staticTexts.matching(NSPredicate(format: "label == %@", title)).firstMatch
-				if heading.exists && heading.frame.minY > closeButton.frame.maxY {
-					seen[title] = (step, heading.frame.minY)
-				}
-			}
-			app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.75))
-				.press(forDuration: 0.05, thenDragTo: app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.35)))
-		}
-		let order = seen.sorted { ($0.value.step, $0.value.y) < ($1.value.step, $1.value.y) }.map(\.key)
-		XCTContext.runActivity(named: "Headings in order: \(order)") { _ in }
-		XCTAssertEqual(order, expected, "The card's sections should run in Maps' order")
-		return self
-	}
-
 	/// The card's Hours status row ("Open until 10 PM"), which only a card
 	/// showing some venue's hours has.
 	@discardableResult
