@@ -100,11 +100,11 @@ const DARK_CARD_HEADLINE = [
 	font({textStyle: 'subheadline', design: 'serif', weight: 'semibold'}),
 	foregroundStyle(DARK_INK),
 	lineLimit(3),
-	padding({horizontal: 6, bottom: 6}),
 ]
-/** A card with a photo on dark paper, `width` wide. */
+/** A card with a photo set in a border of dark paper, `width` wide, inset like a text card. */
 function darkPhotoCard(width: number) {
 	return [
+		padding({all: CARD_PADDING}),
 		frame({width, alignment: 'leading'}),
 		background(DARK_PAPER),
 		contentShape(shapes.rectangle()),
@@ -405,6 +405,8 @@ function StoryCard({story, width = CARD_WIDTH, onPress}: StoryCardProps): React.
 	let kicker = cardKicker(story)
 	let keepPhotoStoriesDark = useMessStore((state) => state.keepPhotoStoriesDark)
 	let dark = keepsDarkMode(story, keepPhotoStoriesDark)
+	// A dark card insets its photo by the border, so the card stays `width` wide.
+	let photoWidth = dark ? width - CARD_PADDING * 2 : width
 	// A text card draws its column or section; a photo card draws its headline alone.
 	let label = !story.photo && kicker ? `${story.title}, ${kicker}` : story.title
 	return (
@@ -418,7 +420,11 @@ function StoryCard({story, width = CARD_WIDTH, onPress}: StoryCardProps): React.
 					modifiers={dark ? darkPhotoCard(width) : photoCard(width)}
 					spacing={6}
 				>
-					<RemotePhoto height={cardHeights(width).photo} url={story.photo.url} width={width} />
+					<RemotePhoto
+						height={cardHeights(photoWidth).photo}
+						url={story.photo.url}
+						width={photoWidth}
+					/>
 					<Text modifiers={dark ? DARK_CARD_HEADLINE : CARD_HEADLINE}>{story.title}</Text>
 				</VStack>
 			) : (
