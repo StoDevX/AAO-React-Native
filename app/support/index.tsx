@@ -44,7 +44,8 @@ export default function SupportPage(): React.ReactNode {
 	let router = useRouter()
 	let {data: contacts} = useQuery(contactsOptions)
 
-	let numberFor = (title: string) => contacts?.find((contact) => contact.title === title)?.phoneNumber
+	let numberFor = (title: string) =>
+		contacts?.find((contact) => contact.title === title)?.phoneNumber
 	let buttons: EmergencyButton[] = [
 		{title: PUBSAFE, phoneNumber: numberFor(PUBSAFE)},
 		{title: SARN, phoneNumber: numberFor(SARN)},
