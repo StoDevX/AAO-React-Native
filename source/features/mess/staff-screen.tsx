@@ -63,7 +63,7 @@ export function StaffScreen(): React.ReactNode {
 		<>
 			<Stack.Screen options={{title: 'Staff'}} />
 			{staff.data?.length === 0 ? (
-				<MessPage onRefresh={() => staff.refetch()}>
+				<MessPage color={c.systemBackground} onRefresh={() => staff.refetch()}>
 					<PageMessage text="The Messenger has listed no staff yet." />
 				</MessPage>
 			) : staff.data ? (
@@ -104,7 +104,7 @@ export function StaffScreen(): React.ReactNode {
 					</ScrollView>
 				</Host>
 			) : (
-				<UnloadedPage query={staff} />
+				<UnloadedPage color={c.systemBackground} query={staff} />
 			)}
 		</>
 	)
@@ -123,7 +123,7 @@ export function StaffMemberScreen({id}: {id: string}): React.ReactNode {
 		return (
 			<>
 				<Stack.Screen options={{title: ''}} />
-				<UnloadedPage query={staff} />
+				<UnloadedPage color={c.systemGroupedBackground} query={staff} />
 			</>
 		)
 	}

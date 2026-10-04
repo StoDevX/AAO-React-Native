@@ -200,6 +200,34 @@ describe('messStaffOptions', () => {
 	})
 })
 
+describe('messStaffOptions, past the first page', () => {
+	test('lists nobody, rather than failing, when no staff year has anyone on it', async () => {
+		mockManifest.mockResolvedValue({links: []} as unknown as Jrd)
+		mockBody.mockResolvedValue([])
+
+		let people = await run<unknown[]>(messStaffOptions)
+
+		expect(people).toStrictEqual([])
+		expect(fetchedHrefs()).toHaveLength(1)
+	})
+
+	test('fetches the next page while a page comes back full', async () => {
+		mockManifest.mockResolvedValue({links: []} as unknown as Jrd)
+		let [first] = staff
+		let full = Array.from({length: 100}, (_, i) => ({...first, id: i + 1}))
+		mockBody.mockImplementation((href) =>
+			Promise.resolve(
+				href.includes('/staff_year') ? staffYears : href.endsWith('&page=2') ? [first] : full,
+			),
+		)
+
+		let people = await run<unknown[]>(messStaffOptions)
+
+		expect(people).toHaveLength(101)
+		expect(fetchedHrefs().at(-1)).toMatch(/&page=2$/u)
+	})
+})
+
 describe('staffProfileOptions', () => {
 	test('asks for that writer and keeps the newest year', async () => {
 		mockManifest.mockResolvedValue({links: []} as unknown as Jrd)

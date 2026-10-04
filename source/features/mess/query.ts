@@ -396,6 +396,9 @@ export const messAboutOptions = queryOptions({
 	},
 })
 
+/** How many profiles a page of the staff asks for, WordPress's most. A shorter page is the last. */
+const STAFF_PAGE_SIZE = 100
+
 /** Everyone on the newest staff year, for the staff directory. */
 export const messStaffOptions = queryOptions({
 	queryKey: messKeys.staff,
@@ -412,12 +415,21 @@ export const messStaffOptions = queryOptions({
 			'Olaf Messenger staff years',
 		)
 		let year = newestStaffYear(years)
+		// No year with anyone on it lists nobody, which the directory says, rather than an error.
+		if (!year) return []
 		// _fields must name featured_media, _links and _embedded, or WordPress embeds no photo.
-		let body = await messFetch(
-			`${origin}/wp-json/wp/v2/staff_profile?staff_year=${year.id}&per_page=100&_embed=wp:featuredmedia,wp:term&_fields=id,title,content,excerpt,featured_media,_links,_embedded`,
-			signal,
-			'Olaf Messenger staff',
-		)
-		return parseStaffProfiles(body)
+		let href = `${origin}/wp-json/wp/v2/staff_profile?staff_year=${year.id}&per_page=${STAFF_PAGE_SIZE}&_embed=wp:featuredmedia,wp:term&_fields=id,title,content,excerpt,featured_media,_links,_embedded`
+		let people: StaffProfile[] = []
+		for (let page: number | undefined = 1; page !== undefined;) {
+			// Each page says whether there is another, so the pages are fetched one after another.
+			// oxlint-disable-next-line eslint/no-await-in-loop
+			let body = await messFetch(pageHref(href, page), signal, 'Olaf Messenger staff').catch(
+				emptyPastLastPage(page),
+			)
+			let list = Array.isArray(body) ? body : []
+			people.push(...parseStaffProfiles(list))
+			page = nextPage(list, page, STAFF_PAGE_SIZE)
+		}
+		return people
 	},
 })

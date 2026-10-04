@@ -17,14 +17,17 @@ const MediaSchema = z.object({
 /** A trailing ellipsis, as WordPress ends an excerpt it made: ` […]`, `…` or `...`. */
 const TRAILING_ELLIPSIS = /\s*\[?(?:…|\.\.\.)\]?$/u
 
+/** More words than any title the paper has used, which run to four, such as `Arts and Entertainment Editors`. */
+const MAX_ROLE_WORDS = 8
+
 /**
  * A profile's role, from its excerpt. WordPress fills a blank excerpt with the start of the bio,
- * which is no role, so an excerpt that only repeats the bio's opening words gives none.
+ * cut off with an ellipsis, which is no role; so is any excerpt longer than a title runs.
  */
-function roleOf(excerptHtml: string, bio: string): string {
+function roleOf(excerptHtml: string): string {
 	let excerpt = fastGetTrimmedText(excerptHtml)
-	let opening = excerpt.replace(TRAILING_ELLIPSIS, '')
-	return opening && bio.startsWith(opening) ? '' : excerpt
+	let made = TRAILING_ELLIPSIS.test(excerpt) || excerpt.split(' ').length > MAX_ROLE_WORDS
+	return made ? '' : excerpt
 }
 
 const ProfileSchema = z.object({
@@ -66,7 +69,7 @@ export function parseStaffProfiles(body: unknown): StaffProfile[] {
 				{
 					id: profile.data.id,
 					name: decode(profile.data.title.rendered),
-					role: roleOf(profile.data.excerpt?.rendered ?? '', bio),
+					role: roleOf(profile.data.excerpt?.rendered ?? ''),
 					bio,
 					photo: medium
 						? {url: medium.source_url, width: medium.width, height: medium.height}

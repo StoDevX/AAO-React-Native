@@ -4,6 +4,7 @@ import {Stack} from 'expo-router'
 import {Host, List, Section, Text} from '@expo/ui/swift-ui'
 import {listStyle, refreshable} from '@expo/ui/swift-ui/modifiers'
 import {useQuery} from '@tanstack/react-query'
+import * as c from '@frogpond/colors'
 import {sendEmail} from '../../components/send-email'
 import {DisclosureRow} from '../../components/rows'
 import {UnloadedPage} from './mess-page'
@@ -56,7 +57,7 @@ export function AboutScreen(): React.ReactNode {
 					</List>
 				</Host>
 			) : (
-				<UnloadedPage query={about} />
+				<UnloadedPage color={c.systemGroupedBackground} query={about} />
 			)}
 		</>
 	)

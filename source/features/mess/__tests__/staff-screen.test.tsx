@@ -57,6 +57,12 @@ function serveNoYears(): void {
 	mockBody.mockResolvedValue([])
 }
 
+/** Fails every Mess fetch, as the paper's site does when it is down. */
+function serveFailure(): void {
+	mockManifest.mockResolvedValue({links: []} as unknown as Jrd)
+	mockBody.mockRejectedValue(new Error('The paper is down'))
+}
+
 describe('StaffScreen', () => {
 	test('lists the staff as tiles in groups, each by name, keeping roles for their pages', async () => {
 		queryClient.setQueryData(messKeys.staff, people)
@@ -81,19 +87,20 @@ describe('StaffScreen', () => {
 		})
 	})
 
-	test('says so when the year lists nobody, rather than drawing an empty page', async () => {
-		queryClient.setQueryData(messKeys.staff, [])
+	test('says so when the paper lists nobody, rather than drawing an empty page', async () => {
+		serveNoYears()
 		await renderWithClient(<StaffScreen />)
+		await waitForQueriesToSettle(queryClient)
 
 		expect(screen.getByText('The Messenger has listed no staff yet.')).toBeTruthy()
 	})
 
 	test('says the staff failed to load, and offers to try again', async () => {
-		serveNoYears()
+		serveFailure()
 		await renderWithClient(<StaffScreen />)
 		await waitForQueriesToSettle(queryClient)
 
-		expect(screen.getByText(/The Olaf Messenger lists no staff years/u)).toBeTruthy()
+		expect(screen.getByText(/The paper is down/u)).toBeTruthy()
 		expect(screen.getByRole('button', {name: 'Try Again'})).toBeTruthy()
 	})
 })
@@ -116,11 +123,11 @@ describe('StaffMemberScreen', () => {
 	})
 
 	test('says the staff failed to load, and offers to try again', async () => {
-		serveNoYears()
+		serveFailure()
 		await renderWithClient(<StaffMemberScreen id={String(SOREN?.id)} />)
 		await waitForQueriesToSettle(queryClient)
 
-		expect(screen.getByText(/The Olaf Messenger lists no staff years/u)).toBeTruthy()
+		expect(screen.getByText(/The paper is down/u)).toBeTruthy()
 		expect(screen.getByRole('button', {name: 'Try Again'})).toBeTruthy()
 	})
 })

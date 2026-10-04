@@ -19,34 +19,46 @@ type GroupTitle = (typeof GROUPS)[number]
 
 /**
  * Which group a role belongs to, by the first rule it matches. The paper sets its own titles, so
- * each rule reads a word in one rather than a whole title, and a new title of a known kind still
- * finds its group. A rule's place also orders the people of its group: an executive editor comes
- * before a manager or director. Copy titles are read before any other Editor, since copy editors
- * are not section editors, and the paper's top editors before both.
+ * each rule reads a word in one, singular or plural, rather than a whole title, and a new title of
+ * a known kind still finds its group. A rule's place also orders the people of its group: the
+ * editor in chief comes first, then executive and managing editors, then managers and directors.
+ * Copy titles are read before any other Editor, since copy editors are not section editors, and
+ * the paper's top editors before both.
  */
 const RULES: Array<{pattern: RegExp; group: GroupTitle}> = [
-	{pattern: /\b(?:Executive|Managing) Editor\b|\bEditor-in-Chief\b/iu, group: 'Leadership'},
+	{pattern: /\bEditors?[- ]in[- ]Chief\b/iu, group: 'Leadership'},
+	{pattern: /\bExecutive Editors?\b/iu, group: 'Leadership'},
+	{pattern: /\bManaging Editors?\b/iu, group: 'Leadership'},
 	{pattern: /\bCopy\b/iu, group: 'Copy Desk'},
-	{pattern: /\b(?:Manager|Director)\b/iu, group: 'Leadership'},
-	{pattern: /\bEditor\b/iu, group: 'Section Editors'},
-	{pattern: /\b(?:Writer|Reporter|Correspondent)\b/iu, group: 'Writers'},
-	{pattern: /\b(?:Photographer|Illustrator)\b/iu, group: 'Visuals'},
+	{pattern: /\b(?:Manager|Director)s?\b/iu, group: 'Leadership'},
+	{pattern: /\bEditors?\b/iu, group: 'Section Editors'},
+	{pattern: /\b(?:Writer|Reporter|Correspondent)s?\b/iu, group: 'Writers'},
+	{pattern: /\b(?:Photographer|Illustrator)s?\b/iu, group: 'Visuals'},
 ]
+
+/** A title that assists another, as an Assistant Managing Editor does a Managing Editor. */
+const ASSISTING = /^(?:Assistant|Associate|Deputy)\b/iu
 
 /**
  * A year's staff in groups, as a masthead lists them: leadership, section editors, writers,
  * visuals and the copy desk, then anyone whose role none of them names. Within a group, people
- * are ordered by their rule, then their role, then their name. An empty group is left out.
+ * are ordered by their rule, then with anyone assisting after those they assist, then by their
+ * role and their name. An empty group is left out.
  */
 export function groupStaff(profiles: StaffProfile[]): StaffGroup[] {
 	// Each role is matched once; a role matching no rule ranks after every rule.
 	let ranked = profiles.map((person) => {
 		let rule = RULES.findIndex((r) => r.pattern.test(person.role))
-		return {person, rule: rule === -1 ? RULES.length : rule}
+		return {
+			person,
+			rule: rule === -1 ? RULES.length : rule,
+			assisting: ASSISTING.test(person.role) ? 1 : 0,
+		}
 	})
 	ranked.sort(
 		(a, b) =>
 			a.rule - b.rule ||
+			a.assisting - b.assisting ||
 			a.person.role.localeCompare(b.person.role) ||
 			a.person.name.localeCompare(b.person.name),
 	)
@@ -60,11 +72,10 @@ export function groupStaff(profiles: StaffProfile[]): StaffGroup[] {
 
 const YearsSchema = z.array(z.object({id: z.number(), name: z.string()}))
 
-/** The newest of the paper's staff years. Years read `2026-2027`, so they sort as text. */
-export function newestStaffYear(body: unknown): {id: number; name: string} {
+/** The newest of the paper's staff years, or none when it lists none. Years read `2026-2027`, so they sort as text. */
+export function newestStaffYear(body: unknown): {id: number; name: string} | null {
 	let [newest] = YearsSchema.parse(body).sort((a, b) => b.name.localeCompare(a.name))
-	if (!newest) throw new Error('The Olaf Messenger lists no staff years')
-	return newest
+	return newest ?? null
 }
 
 /** A suffix after a name, such as `Jr.` or `III`. */

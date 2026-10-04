@@ -66,6 +66,36 @@ describe('parseStaffProfiles', () => {
 		expect(parsed?.bio).toBe(bio)
 	})
 
+	it('reads no role from a made excerpt that no longer matches the bio word for word', () => {
+		let [parsed] = parseStaffProfiles([
+			{
+				...profile('<p>[caption]Ada at work[/caption] Ada Lin edits &#8220;the paper&#8221;.</p>'),
+				excerpt: {rendered: '<p>Ada Lin edits &#8220;the paper&#8221; and writes [&hellip;]</p>'},
+			},
+		])
+		expect(parsed?.role).toBe('')
+	})
+
+	it('reads no role from an excerpt longer than any title', () => {
+		let [parsed] = parseStaffProfiles([
+			{
+				...profile('<p>Bio</p>'),
+				excerpt: {rendered: '<p>Ada Lin is a junior from Northfield who edits the paper.</p>'},
+			},
+		])
+		expect(parsed?.role).toBe('')
+	})
+
+	it('keeps a role that happens to open the bio', () => {
+		let [parsed] = parseStaffProfiles([
+			{
+				...profile('<p>Photographer and junior Ada Lin shoots sports.</p>'),
+				excerpt: {rendered: '<p>Photographer</p>'},
+			},
+		])
+		expect(parsed?.role).toBe('Photographer')
+	})
+
 	it('draws the medium copy of a photo, not the full upload', () => {
 		let [parsed] = parseStaffProfiles([
 			{

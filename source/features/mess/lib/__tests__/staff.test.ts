@@ -54,6 +54,58 @@ describe('groupStaff', () => {
 		])
 	})
 
+	it('reads an editor in chief however it is written, and plural titles, as leadership', () => {
+		expect(
+			shape([
+				person('Al', 'Editor in Chief'),
+				person('Bo', 'Co-Editor in Chief'),
+				person('Cy', 'Executive Editors'),
+			]),
+		).toStrictEqual([
+			['Leadership', ['Bo (Co-Editor in Chief)', 'Al (Editor in Chief)', 'Cy (Executive Editors)']],
+		])
+	})
+
+	it('reads a plural title in the group of its singular', () => {
+		expect(shape([person('Di', 'Staff Writers'), person('Ed', 'Photographers')])).toStrictEqual([
+			['Writers', ['Di (Staff Writers)']],
+			['Visuals', ['Ed (Photographers)']],
+		])
+	})
+
+	it('puts the editor in chief first, then executive and managing editors', () => {
+		expect(
+			shape([
+				person('Max', 'Managing Editor'),
+				person('Eve', 'Executive Editor'),
+				person('Cy', 'Editor-in-Chief'),
+			]),
+		).toStrictEqual([
+			['Leadership', ['Cy (Editor-in-Chief)', 'Eve (Executive Editor)', 'Max (Managing Editor)']],
+		])
+	})
+
+	it('puts an assistant, associate or deputy after the title they assist', () => {
+		expect(
+			shape([
+				person('Ann', 'Assistant Managing Editor'),
+				person('Max', 'Managing Editor'),
+				person('Avi', 'Associate Director'),
+				person('Dee', 'Director'),
+			]),
+		).toStrictEqual([
+			[
+				'Leadership',
+				[
+					'Max (Managing Editor)',
+					'Ann (Assistant Managing Editor)',
+					'Dee (Director)',
+					'Avi (Associate Director)',
+				],
+			],
+		])
+	})
+
 	it('reads any copy title as the copy desk, not a section editor', () => {
 		expect(shape([person('Lu', 'Copy/Layout Editor'), person('Ry', 'Copy Chief')])).toStrictEqual([
 			['Copy Desk', ['Ry (Copy Chief)', 'Lu (Copy/Layout Editor)']],
@@ -136,8 +188,8 @@ describe('newestStaffYear', () => {
 		expect(newestStaffYear([...years].reverse())).toStrictEqual({id: 1147, name: '2026-2027'})
 	})
 
-	it('fails when the paper has no staff years, so the screen shows an error rather than nothing', () => {
-		expect(() => newestStaffYear([])).toThrow('The Olaf Messenger lists no staff years')
+	it('gives none when the paper has no staff years', () => {
+		expect(newestStaffYear([])).toBeNull()
 	})
 })
 
