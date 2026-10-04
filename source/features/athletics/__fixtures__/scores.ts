@@ -6,6 +6,10 @@ import type {Score} from '../types'
  * yesterday, on today in every state -- live, final and scheduled -- and on
  * later days, so the list has something either side of Today to scroll to.
  *
+ * Every kickoff is written in Central time but falls on the same date in UTC,
+ * which is what the UI test simulators run on: a 7 p.m. Central game is the
+ * next day there, and landed in the wrong section.
+ *
  * Live scores are whatever St. Olaf played this week, which is nothing to
  * assert against -- see `source/features/dictionary/query.ts` for the same
  * reasoning about entries.
@@ -49,8 +53,8 @@ export const UITEST_SCORES: Score[] = [
 	score({
 		id: 'uitest-yesterday',
 		sport: "Women's Soccer",
-		date_utc: '2026-09-04T19:00:00-05:00',
-		time: '7:00 PM',
+		date_utc: '2026-09-04T13:00:00-05:00',
+		time: '1:00 PM',
 		result: 'L',
 		status: {indicator: 'final', value: ''},
 		team_score: '1',
@@ -79,8 +83,8 @@ export const UITEST_SCORES: Score[] = [
 	score({
 		id: 'uitest-today-upcoming',
 		sport: 'Football',
-		date_utc: '2026-09-05T19:00:00-05:00',
-		time: '7:00 PM',
+		date_utc: '2026-09-05T16:00:00-05:00',
+		time: '4:00 PM',
 		opponent: 'Bethel',
 	}),
 	/// No `time` at all, which is how the feed sends an all-day fixture -- the

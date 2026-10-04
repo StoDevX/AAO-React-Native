@@ -14,6 +14,18 @@ describe('the UI test scores', () => {
 		expect(toProcessedScores(UITEST_SCORES)).toHaveLength(UITEST_SCORES.length)
 	})
 
+	/// Jest runs on Central time; the UI test simulators run on UTC. A kickoff
+	/// whose date differs between the two lands in a different section there.
+	it('fall on the day they are written for in UTC as well as Central', () => {
+		for (let score of UITEST_SCORES) {
+			let writtenDay = score.date_utc.slice(0, 10)
+			expect([score.id, new Date(score.date_utc).toISOString().slice(0, 10)]).toEqual([
+				score.id,
+				writtenDay,
+			])
+		}
+	})
+
 	it('put games on Yesterday, Today, and days after', () => {
 		let titles = sections.map((s) => s.title)
 		let todayIndex = titles.indexOf(Constants.TODAY)
