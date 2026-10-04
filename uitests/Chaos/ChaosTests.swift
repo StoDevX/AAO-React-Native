@@ -61,6 +61,29 @@ final class ChaosCanaryTests: UITestCaseUnbooted {
 		XCTAssertEqual(silence?.reason, "probe silent: no \(TestIdentifiers.Chaos.beacon) element")
 	}
 
+	/// The monkey taps through SpringBoard with frames read from the app, so
+	/// the two must agree on where a point is in landscape too, as under
+	/// `--rotate`: a tap on Customize's App Icon row should open the gallery.
+	func testTapsTheRightPlaceInLandscape() {
+		addTeardownBlock { XCUIDevice.shared.orientation = .portrait }
+		configureForChaos(seed: 1, launch: 0, replay: false, faultRate: "0", resetState: true)
+		app.launch()
+		_ = HomeScreen(app: app).checkHomescreenExists().openCustomize()
+		XCUIDevice.shared.orientation = .landscapeLeft
+		let rotated = Date().addingTimeInterval(5)
+		while app.frame.width <= app.frame.height && Date() < rotated {
+			Thread.sleep(forTimeInterval: 0.25)
+		}
+		XCTAssertGreaterThan(app.frame.width, app.frame.height, "the app should have turned to landscape")
+		let row = app.buttons[TestIdentifiers.Customize.appIconRow].firstMatch
+		XCTAssertTrue(row.waitForExistence(timeout: 10), "Customize should offer App Icon")
+		let monkey = ChaosMonkey(test: self, seed: 1, replay: false, faultRate: "0")
+		monkey.tap(row.frame)
+		XCTAssertTrue(
+			AppIconScreen(app: app).gallery.waitForExistence(timeout: 10),
+			"the monkey's tap on the App Icon row at \(row.frame) should have opened the gallery")
+	}
+
 	/// A screen with one tiny, unlabelled button: both oracles should warn,
 	/// once each, however often the monkey looks.
 	func testWarnsOfAnUnlabelledSmallTarget() {
