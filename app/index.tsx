@@ -156,11 +156,17 @@ function UnofficialAppNotice(): React.ReactNode {
 /// Names a group's tile grid.
 const groupGridId = (group: string): string => `home-group-grid-${group}`
 /// A list row with nothing of a row's own: no fill, margins or divider, so the
-/// banner and the notice sit on the list's background rather than in a cell.
+/// spacer sits on the list's background rather than in a cell.
 const BARE_ROW_MODIFIERS = [
 	listRowBackground('clear'),
 	listRowInsets({top: 0, leading: 0, bottom: 0, trailing: 0}),
 	listRowSeparator('hidden'),
+]
+/// The notice as the list's footer: as wide as the cards above it rather than
+/// indented to their text, and as far below them as the grouped layout's groups
+/// are apart.
+const NOTICE_FOOTER_MODIFIERS = [
+	listRowInsets({top: TILE_SPACING * 2, leading: 0, bottom: 0, trailing: 0}),
 ]
 
 /// Names the tiled home's tile grid.
@@ -321,10 +327,15 @@ export default function HomePage(): React.ReactNode {
 							target={FAQ_TARGETS.HOME}
 						/>
 						<List modifiers={[listStyle('insetGrouped')]}>
-							<HomeListSections onOpen={openView} sections={sections} />
-							<VStack modifiers={BARE_ROW_MODIFIERS}>
-								<UnofficialAppNotice />
-							</VStack>
+							<HomeListSections
+								footer={
+									<VStack modifiers={NOTICE_FOOTER_MODIFIERS}>
+										<UnofficialAppNotice />
+									</VStack>
+								}
+								onOpen={openView}
+								sections={sections}
+							/>
 							{/* Room to scroll the last of the list clear of the Now Playing bar. */}
 							{barVisible ? (
 								<Spacer
