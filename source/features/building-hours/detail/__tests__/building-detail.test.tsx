@@ -1,6 +1,6 @@
 import React from 'react'
 import moment from 'moment-timezone'
-import {afterEach, describe, expect, test} from '@jest/globals'
+import {describe, expect, test} from '@jest/globals'
 import {act, render, screen} from '@testing-library/react-native'
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query'
 
@@ -9,7 +9,6 @@ import {BuildingDetailSwiftUI} from '../building-detail'
 import {keys as mapKeys} from '../../../map/query'
 import {makeBuilding as makeFeature} from '../../../map/__tests__/fixtures'
 import type {Building, Feature} from '../../../map/types'
-import {images as buildingImages} from '../../../../../images/spaces'
 import {loadBeforeTests} from '../../../../testing/load-before-tests'
 
 loadBeforeTests('Image', 'useColorScheme')
@@ -19,13 +18,6 @@ jest.mock('@maplibre/maplibre-react-native', () => {
 	return require('../../../../testing/maplibre-mock') as typeof import('../../../../testing/maplibre-mock')
 })
 jest.mock('@frogpond/open-url', () => ({openUrl: jest.fn()}))
-
-// images/spaces imports every building photo through Metro's @2x/@3x density
-// resolution, which Jest's resolver does not implement -- mocked here so this
-// suite isn't the one to first trip over that unrelated gap. The mocked Map is
-// mutable, so tests that need a resolvable photo populate it directly rather
-// than re-mocking the module.
-jest.mock('../../../../../images/spaces', () => ({images: new Map()}))
 
 const NOW = moment('2026-09-07T12:00:00')
 
@@ -122,14 +114,9 @@ function makeFramedFeature(): Feature<Building> {
 }
 
 describe('BuildingDetailSwiftUI', () => {
-	afterEach(() => {
-		buildingImages.clear()
-	})
-
 	// `building-photo.test.ts` covers which venues resolve a photograph at all.
 	// This is the other half: that the screen draws the one it was given.
 	test('renders the building photo when the building has one', async () => {
-		buildingImages.set('cage', {uri: 'cage.jpg', width: 100, height: 100, scale: 1})
 		let building = makeBuilding({image: 'cage'})
 
 		let {getByTestId} = await renderDetail(building)

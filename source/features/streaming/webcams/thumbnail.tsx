@@ -2,8 +2,7 @@ import * as React from 'react'
 import {StyleSheet, View, Text, Image} from 'react-native'
 import {Touchable} from '@frogpond/touchable'
 import * as c from '@frogpond/colors'
-import {images as webcamImages} from '../../../../images/webcams'
-import {transparentPixel} from '../../../../images/transparent'
+import {remoteImage} from '../../../lib/remote-images'
 import {trackedOpenUrl} from '@frogpond/open-url'
 import type {Webcam} from './types'
 
@@ -28,7 +27,7 @@ export const StreamThumbnail = (props: Props): React.ReactNode => {
 	let cellRatio = 2.15625
 	let height = width / cellRatio
 
-	let img = thumbnailUrl ? {uri: thumbnailUrl} : (webcamImages.get(thumbnail) ?? transparentPixel)
+	let img = thumbnailUrl ? {uri: thumbnailUrl} : remoteImage('webcams', thumbnail)
 
 	return (
 		// do not remove this View; it is needed to prevent extra highlighting

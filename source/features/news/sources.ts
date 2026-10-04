@@ -1,22 +1,27 @@
-import type {ImageResolvedAssetSource} from 'react-native'
-import * as newsImages from '../../../images/news-sources/index'
+import type {ImageSourcePropType} from 'react-native'
+import {remoteImage} from '../../lib/remote-images'
 
 export type NewsSource = {
 	id: string
 	title: string
-	thumbnail: false | ImageResolvedAssetSource
+	/** Read when drawn, since the image's address depends on the server setting. */
+	readonly thumbnail: false | ImageSourcePropType
 }
 
 /** The student newspaper. */
 export const OLAF_MESSENGER: NewsSource = {
 	id: 'mess',
 	title: 'The Olaf Messenger',
-	thumbnail: newsImages.mess,
+	get thumbnail() {
+		return remoteImage('news-sources', 'mess')
+	},
 }
 
 /** The college's own news site. */
 export const STOLAF_NEWS: NewsSource = {
 	id: 'stolaf',
 	title: 'St. Olaf News',
-	thumbnail: newsImages.stolaf,
+	get thumbnail() {
+		return remoteImage('news-sources', 'stolaf')
+	},
 }

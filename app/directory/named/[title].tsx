@@ -21,7 +21,7 @@ import {
 
 import {SheetCloseButton} from '../../../source/components/sheet-close-button'
 import {contactByTitleOptions} from '../../../source/features/directory/contacts-query'
-import {images as contactImages} from '../../../images/contacts'
+import {remoteImage} from '../../../source/lib/remote-images'
 import {Markdown} from '@frogpond/markdown'
 import {callPhone} from '../../../source/components/call-phone'
 import {openUrl} from '@frogpond/open-url'
@@ -105,8 +105,7 @@ export default function ContactsDetailPage(): React.ReactNode {
 		}
 	}
 
-	let headerImage =
-		contact.image && contactImages.has(contact.image) ? contactImages.get(contact.image) : null
+	let headerImage = contact.image ? remoteImage('contacts', contact.image) : null
 
 	return (
 		<>

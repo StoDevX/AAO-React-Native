@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {StyleSheet, type ImageResolvedAssetSource} from 'react-native'
+import {StyleSheet, type ImageSourcePropType} from 'react-native'
 import {ContentUnavailableView, Host, List, VStack} from '@expo/ui/swift-ui'
 import {listStyle, refreshable} from '@expo/ui/swift-ui/modifiers'
 import * as c from '@frogpond/colors'
@@ -15,7 +15,7 @@ type Props = {
 	query: NewsFeedQuery
 	/** The selected source's stories, cleaned by the same pass that built the picker's categories */
 	entries: StoryType[]
-	thumbnail: false | ImageResolvedAssetSource
+	thumbnail: false | ImageSourcePropType
 	selectedCategory: string | null
 	/** Opens a story in the app. Without it, a story opens its link in the browser. */
 	onPressStory?: (story: StoryType) => void

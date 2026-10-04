@@ -6,6 +6,7 @@ import {bundleDataDir} from './bundle-data-dir.mjs'
 import {convertDataFile} from './convert-data-file.mjs'
 import {buildFaqs} from './build-faqs.mjs'
 import {buildSources} from './build-sources.mjs'
+import {bundleImages} from './bundle-images.mjs'
 
 const isDir = (pth) => fs.statSync(pth).isDirectory()
 const isFile = (pth) => fs.statSync(pth).isFile()
@@ -89,4 +90,12 @@ for (let [file, builder] of specialFiles.entries()) {
 	built += 1
 }
 
-console.log(`bundle-data: ${dirs.length} directories and ${files.length + built} files -> ${toDir}`)
+// The images the app fetches through ccc-server, published beside the data
+let images = 0
+step(`bundle-images images ${toDir}`, () => {
+	images = bundleImages({fromDir: 'images', toDir})
+})
+
+console.log(
+	`bundle-data: ${dirs.length} directories, ${files.length + built} files and ${images} images -> ${toDir}`,
+)

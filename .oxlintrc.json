@@ -427,7 +427,7 @@
       }
     },
     {
-      "files": ["images/**/index.ts", "images/transparent.ts"],
+      "files": ["images/**/index.ts"],
       "rules": {
         "typescript/no-unsafe-member-access": "off",
         "typescript/no-unsafe-return": "off"

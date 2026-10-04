@@ -1,12 +1,6 @@
 import * as React from 'react'
 import {useCallback, useEffect, useRef} from 'react'
-import {
-	GestureResponderEvent,
-	Image,
-	ImageResolvedAssetSource,
-	StyleSheet,
-	View,
-} from 'react-native'
+import {GestureResponderEvent, Image, StyleSheet, View} from 'react-native'
 import Animated, {
 	Easing,
 	cancelAnimation,
@@ -19,7 +13,7 @@ import Animated, {
 	withTiming,
 } from 'react-native-reanimated'
 import * as c from '@frogpond/colors'
-import * as logos from '../../../../images/streaming'
+import {remoteImage} from '../../../lib/remote-images'
 
 import {
 	angleAround,
@@ -44,7 +38,7 @@ const DEGREES_PER_SECOND = 360 / (MS_PER_TURN / 1000)
 
 type Props = {
 	/** The logo, drawn on the record's centre label. */
-	image: ImageResolvedAssetSource
+	image: {uri: string}
 	labelColor: string
 	/** How much of the label's width the logo takes. */
 	labelScale: number
@@ -190,7 +184,7 @@ export function ScratchableLogo(props: Props): React.ReactNode {
 			onStartShouldSetResponder={() => true}
 		>
 			<Animated.View style={[{width: size, height: size}, turned]}>
-				<Image source={logos.vinyl} style={styles.disc} />
+				<Image source={remoteImage('streaming', 'vinyl')} style={styles.disc} />
 				<View style={[styles.label, {backgroundColor: labelColor}]}>
 					<Image
 						resizeMode="contain"

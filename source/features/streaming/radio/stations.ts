@@ -1,5 +1,8 @@
-import * as logos from '../../../../images/streaming'
+import {imageUrl, remoteImage} from '../../../lib/remote-images'
 import type {RadioLogo} from './theme'
+
+/** A logo or texture the player draws, fetched from ccc-server. */
+const streamingImage = (name: string) => remoteImage('streaming', name)
 
 export type StationId = 'ksto' | 'krlx'
 
@@ -57,35 +60,45 @@ export const STATIONS: Record<StationId, Station> = {
 		logos: [
 			{
 				name: 'cow badge',
-				image: logos.ksto,
+				get image() {
+					return streamingImage('ksto')
+				},
 				tint: COW_TINT,
 				labelColor: '#e4d7f2',
 				labelScale: 0.86,
 			},
 			{
 				name: 'wordmark',
-				image: logos.kstoWordmark,
+				get image() {
+					return streamingImage('ksto-wordmark')
+				},
 				tint: WORDMARK_TINT,
 				labelColor: '#e8e0ef',
 				labelScale: 1,
 			},
 			{
 				name: 'dumpster fire',
-				image: logos.kstoDumpster,
+				get image() {
+					return streamingImage('ksto-dumpster')
+				},
 				tint: DUMPSTER_TINT,
 				labelColor: '#e5d4d9',
 				labelScale: 0.72,
 			},
 			{
 				name: 'narwhal',
-				image: logos.kstoNarwhal,
+				get image() {
+					return streamingImage('ksto-narwhal')
+				},
 				tint: NARWHAL_TINT,
 				labelColor: '#494e73',
 				labelScale: 1,
 			},
 			{
 				name: 'cow sketch',
-				image: logos.kstoSketch,
+				get image() {
+					return streamingImage('ksto-sketch')
+				},
 				tint: SKETCH_TINT,
 				// A sheet of cream paper, for the ink drawing.
 				labelColor: '#f3ead6',
@@ -118,7 +131,9 @@ export const STATIONS: Record<StationId, Station> = {
 		logos: [
 			{
 				name: 'krlx 88.1',
-				image: logos.krlx,
+				get image() {
+					return streamingImage('krlx')
+				},
 				tint: KRLX_TINT,
 				labelColor: '#f6f1e4',
 			},
@@ -137,3 +152,9 @@ export const STATIONS: Record<StationId, Station> = {
 		title: 'Carleton College Radio',
 	},
 }
+
+/** Every image the player draws for a station, for fetching before it opens. */
+export const stationImageUrls = (station: Station): string[] => [
+	...station.logos.map((logo) => logo.image.uri),
+	imageUrl('streaming', 'vinyl'),
+]

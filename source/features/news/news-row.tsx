@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {Alert, Image, StyleSheet, type ImageResolvedAssetSource} from 'react-native'
+import {Alert, Image, StyleSheet, type ImageSourcePropType} from 'react-native'
 import {Button, HStack, RNHostView, Spacer, Text, VStack} from '@expo/ui/swift-ui'
 import {
 	accessibilityIdentifier,
@@ -79,7 +79,7 @@ type Props = {
 	/** Where a tap goes: the browser, or another screen in this app. */
 	destination: 'external' | 'push'
 	story: StoryType
-	thumbnail: false | ImageResolvedAssetSource
+	thumbnail: false | ImageSourcePropType
 	/** Whether this is the last row in the list -- it draws no bottom separator. */
 	isLast: boolean
 }
