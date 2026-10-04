@@ -6,6 +6,18 @@ import {useRouter} from 'expo-router'
 import {useIsDevMode} from '../../lib/use-is-dev-mode'
 import {ServerUrlSection} from './server-url'
 import {ActionRow, NavigationRow} from '../../components/rows'
+import {refreshApp} from '../../lib/refresh'
+
+const onResetButton = () => {
+	Alert.alert('Reset Everything', 'Are you sure you want to clear everything?', [
+		{text: 'Nope!', style: 'cancel'},
+		{
+			text: 'Reset it!',
+			style: 'destructive',
+			onPress: () => refreshApp(),
+		},
+	])
+}
 
 export const DeveloperSection = (): React.ReactElement => {
 	let router = useRouter()
