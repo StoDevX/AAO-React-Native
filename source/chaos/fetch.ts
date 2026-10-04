@@ -62,7 +62,8 @@ async function answer(
 		}
 		// A binary body cannot be rebuilt from the tape, so the real response
 		// goes through, dropping any fault that would touch its body. A status
-		// fault replaces the body anyway, so it still applies, with none.
+		// fault cannot change a real response, so it is delivered from the tape
+		// with an empty body.
 		if (fault.kind === 'status') {
 			return {entry, passThrough: null}
 		}

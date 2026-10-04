@@ -94,7 +94,7 @@ describe('record mode', () => {
 	})
 
 	// Read as text, rebuilt as a string, and then read as bytes, a binary body
-	// crashes the app on a device, so the app gets the real response instead.
+	// crashes the app on a device, so the app gets the real response.
 	test('passes a binary response through untouched, and leaves its body off the tape', async () => {
 		let tape = memoryLineFile()
 		let network = fileServer()
