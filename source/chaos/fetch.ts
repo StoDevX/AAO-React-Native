@@ -1,9 +1,10 @@
-import type {ChaosMode} from '@frogpond/launch-arguments'
+import type {ChaosMode, ChaosProfile} from '@frogpond/launch-arguments'
 
 import {isBlockedUrl} from './blocked'
-import {corruptBody, faultStatus, pickFault, type Fault} from './faults'
+import {corruptBody, faultStatus, pickFault, pickSessionFault, type Fault} from './faults'
 import {reportFinding} from './findings'
 import {mutateJson} from './mutate'
+import {goOfflineFor} from './network'
 import type {LineFile} from './line-file'
 import type {Random} from './random'
 import {readTape, RequestCounter, requestKey, tapeHoldsBody, type TapeEntry} from './tape'
@@ -11,11 +12,14 @@ import {readTape, RequestCounter, requestKey, tapeHoldsBody, type TapeEntry} fro
 /** How the chaos fetch behaves for one launch. */
 export type ChaosFetchOptions = {
 	mode: ChaosMode
+	profile: ChaosProfile
 	launch: number
 	random: Random
 	faultRate: number
 	tape: LineFile
 	sleep?: (ms: number) => Promise<void>
+	/** The clock a session's offline windows are timed by. */
+	now?: () => number
 }
 
 const wait = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms))
@@ -113,6 +117,8 @@ async function deliver(entry: TapeEntry, sleep: (ms: number) => Promise<void>): 
 export function chaosFetch(realFetch: typeof fetch, options: ChaosFetchOptions): typeof fetch {
 	let counter = new RequestCounter()
 	let sleep = options.sleep ?? wait
+	let now = options.now ?? Date.now
+	let offlineUntil = 0
 	let recorded = options.mode === 'replay' ? readTape(options.tape) : null
 
 	return async (input, init) => {
@@ -135,6 +141,9 @@ export function chaosFetch(realFetch: typeof fetch, options: ChaosFetchOptions):
 				reportFinding('divergence', `no recorded answer for ${key}`)
 				throw networkError()
 			}
+			if (entry.offlineMs) {
+				goOfflineFor(entry.offlineMs)
+			}
 			if (entry.live) {
 				await delay(entry, sleep)
 				return realFetch(request)
@@ -142,12 +151,27 @@ export function chaosFetch(realFetch: typeof fetch, options: ChaosFetchOptions):
 			return deliver(entry, sleep)
 		}
 
-		let {entry, passThrough} = await answer(
-			realFetch,
-			request,
-			key,
-			pickFault(options.random, options.faultRate),
-		)
+		// A session draws only from its own picker, so each request takes the same draws.
+		let fault: Fault
+		let offline: Pick<TapeEntry, 'offline' | 'offlineMs'> = {}
+		if (options.profile === 'session') {
+			let at = now()
+			let picked = pickSessionFault(options.random, at, offlineUntil)
+			fault = picked.fault
+			if (picked.offline) {
+				let began = picked.offlineUntil !== offlineUntil
+				offline = began ? {offline: true, offlineMs: picked.offlineUntil - at} : {offline: true}
+				if (began) {
+					goOfflineFor(picked.offlineUntil - at)
+				}
+				offlineUntil = picked.offlineUntil
+			}
+		} else {
+			fault = pickFault(options.random, options.faultRate)
+		}
+		let answered = await answer(realFetch, request, key, fault)
+		let entry: TapeEntry = {...answered.entry, ...offline}
+		let passThrough = answered.passThrough
 		options.tape.append(JSON.stringify(entry))
 		if (passThrough) {
 			await delay(entry, sleep)

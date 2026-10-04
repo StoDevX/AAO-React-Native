@@ -75,4 +75,5 @@ test('the UI tests look for the beacon and boundary the app draws', () => {
 	assert.equal(tsString(identifiers, 'BEACON_ID'), swiftString('beacon'))
 	assert.equal(tsString(identifiers, 'BEACON_QUIET'), swiftString('beaconQuiet'))
 	assert.equal(tsString(identifiers, 'FATAL_BOUNDARY_ID'), swiftString('fatalBoundary'))
+	assert.equal(tsString(identifiers, 'NETWORK_ID'), swiftString('network'))
 })

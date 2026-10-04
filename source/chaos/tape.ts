@@ -24,6 +24,10 @@ export type TapeEntry = {
 	live?: boolean
 	/** Which value a `mutated` fault changed, and how. */
 	mutation?: {path: string; change: string}
+	/** Set when a session's offline window failed the request. */
+	offline?: true
+	/** How long the window this request began lasts, on the request that began it. */
+	offlineMs?: number
 }
 
 /**

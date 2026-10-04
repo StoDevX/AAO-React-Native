@@ -6,3 +6,6 @@ export const BEACON_QUIET = 'none'
 
 /** What the chaos error boundary draws; `TestIdentifiers.Chaos.fatalBoundary`. */
 export const FATAL_BOUNDARY_ID = 'chaos.fatal-boundary'
+
+/** The hidden element saying whether a session has the network; `TestIdentifiers.Chaos.network`. */
+export const NETWORK_ID = 'chaos.network'

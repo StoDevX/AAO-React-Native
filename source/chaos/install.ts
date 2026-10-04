@@ -1,5 +1,5 @@
 import type {Linking, Share} from 'react-native'
-import type {ChaosMode} from '@frogpond/launch-arguments'
+import type {ChaosMode, ChaosProfile} from '@frogpond/launch-arguments'
 
 import {chaosFetch} from './fetch'
 import {setFindingsFile} from './findings'
@@ -17,6 +17,7 @@ export type ChaosSettings = {
 	launch: number
 	mode: ChaosMode
 	faultRate: number
+	profile: ChaosProfile
 }
 
 /** What installing chaos changes. */
@@ -42,6 +43,7 @@ export function installChaos(settings: ChaosSettings, host: ChaosHost): boolean 
 	guardShare(host.share)
 	host.global.fetch = chaosFetch(host.global.fetch.bind(globalThis), {
 		mode: settings.mode,
+		profile: settings.profile,
 		launch: settings.launch,
 		random: seededRandom(launchSeed(settings.seed, settings.launch)),
 		faultRate: settings.faultRate,

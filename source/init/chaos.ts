@@ -3,6 +3,7 @@ import {
 	chaosFaultRate,
 	chaosLaunch,
 	chaosMode,
+	chaosProfile,
 	chaosSeed,
 	isChaos,
 } from '@frogpond/launch-arguments'
@@ -29,7 +30,14 @@ type HermesGlobal = {
 if (isChaos) {
 	let hermes = (globalThis as HermesGlobal).HermesInternal
 	installChaos(
-		{isChaos, seed: chaosSeed, launch: chaosLaunch, mode: chaosMode, faultRate: chaosFaultRate},
+		{
+			isChaos,
+			seed: chaosSeed,
+			launch: chaosLaunch,
+			mode: chaosMode,
+			faultRate: chaosFaultRate,
+			profile: chaosProfile,
+		},
 		{
 			global: globalThis,
 			probe: {

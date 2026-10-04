@@ -1,7 +1,8 @@
-import {pickFault} from '../faults'
+import {pickFault, pickSessionFault} from '../faults'
 import {useChaosFindings} from '../findings'
 import {chaosFetch, type ChaosFetchOptions} from '../fetch'
 import {memoryLineFile} from '../line-file'
+import {useChaosNetwork} from '../network'
 import {seededRandom} from '../random'
 import {parseLines, type TapeEntry} from '../tape'
 
@@ -37,6 +38,7 @@ function mutatingSeed(): number {
 function options(overrides: Partial<ChaosFetchOptions> = {}): ChaosFetchOptions {
 	return {
 		mode: 'record',
+		profile: 'fuzz',
 		launch: 0,
 		random: seededRandom(1),
 		faultRate: 0,
@@ -359,5 +361,59 @@ describe('replay mode', () => {
 		expect(useChaosFindings.getState().latest).toBe(
 			`divergence: no recorded answer for 0 GET ${URL_A} #0`,
 		)
+	})
+})
+
+describe('session profile', () => {
+	/** The first seed whose first session fault, online, starts an offline window. */
+	function offlineSeed(): number {
+		for (let seed = 1; seed < 5000; seed++) {
+			if (pickSessionFault(seededRandom(seed), 0, 0).offline) return seed
+		}
+		throw new Error('no seed in the first 5000 starts offline')
+	}
+
+	beforeEach(() => {
+		useChaosNetwork.setState({offline: false})
+	})
+
+	test('takes the network away for a window, failing every request in it', async () => {
+		let tape = memoryLineFile()
+		let clock = 0
+		let network = server()
+		let wrapped = chaosFetch(
+			network,
+			options({tape, profile: 'session', random: seededRandom(offlineSeed()), now: () => clock}),
+		)
+		await expect(wrapped(URL_A)).rejects.toThrow('Network request failed')
+		expect(useChaosNetwork.getState().offline).toBe(true)
+		clock = 4000
+		await expect(wrapped(URL_A)).rejects.toThrow('Network request failed')
+		expect(network).not.toHaveBeenCalled()
+		let [first, second] = parseLines<TapeEntry>(tape.readLines())
+		expect(first).toMatchObject({error: 'network', offline: true})
+		expect(first.offlineMs).toBeGreaterThanOrEqual(5000)
+		expect(second).toMatchObject({error: 'network', offline: true})
+		expect(second.offlineMs).toBeUndefined()
+	})
+
+	test('a replay takes the network away where the recording did', async () => {
+		let tape = memoryLineFile()
+		let recorded = chaosFetch(
+			server(),
+			options({tape, profile: 'session', random: seededRandom(offlineSeed()), now: () => 0}),
+		)
+		await recorded(URL_A).catch(() => undefined)
+		useChaosNetwork.setState({offline: false})
+		let replayed = chaosFetch(server(), options({tape, mode: 'replay', profile: 'session'}))
+		await expect(replayed(URL_A)).rejects.toThrow('Network request failed')
+		expect(useChaosNetwork.getState().offline).toBe(true)
+	})
+
+	test("keys a later launch's requests by its own number", async () => {
+		let tape = memoryLineFile()
+		let wrapped = chaosFetch(server(), options({tape, launch: 3, profile: 'session'}))
+		await wrapped(URL_A).catch(() => undefined)
+		expect(parseLines<TapeEntry>(tape.readLines())[0].key).toBe(`3 GET ${URL_A} #0`)
 	})
 })

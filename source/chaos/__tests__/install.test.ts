@@ -28,7 +28,14 @@ function host(): ChaosHost & {
 	}
 }
 
-let settings = {isChaos: true, seed: 1, launch: 0, mode: 'record' as const, faultRate: 0.25}
+let settings = {
+	isChaos: true,
+	seed: 1,
+	launch: 0,
+	mode: 'record' as const,
+	faultRate: 0.25,
+	profile: 'fuzz' as const,
+}
 
 test('does nothing outside a chaos run', () => {
 	let h = host()

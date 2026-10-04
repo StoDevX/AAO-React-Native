@@ -63,6 +63,8 @@ struct TestIdentifiers {
 		/// the canary that proves the monkey can leave one: the Dictionary's
 		/// preview, which has nothing to show without a draft.
 		static let sheetTrapRoute = "dictionary/entry/preview"
+		/// The hidden element labelled `online` or `offline`, as a session's network is.
+		static let network = "chaos.network"
 		/// A route drawing one small unlabelled button, for the target oracles' canary.
 		static let targetsCanaryRoute = "chaos-canary-targets"
 		/// The canary's button.

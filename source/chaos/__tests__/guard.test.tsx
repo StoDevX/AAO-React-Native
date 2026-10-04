@@ -1,9 +1,10 @@
 import * as React from 'react'
 import {Text} from 'react-native'
-import {render, screen} from '@testing-library/react-native'
+import {act, render, screen} from '@testing-library/react-native'
 
 import {useChaosFindings} from '../findings'
 import {ChaosGuardFor} from '../guard'
+import {useChaosNetwork} from '../network'
 
 function Throws(): React.ReactNode {
 	throw new Error('render failed')
@@ -54,4 +55,16 @@ test('catches a render error, reports it, and keeps the beacon', async () => {
 		expect.objectContaining({message: 'render failed'}),
 		expect.objectContaining({componentStack: expect.any(String)}),
 	)
+})
+
+test('shows the network as online, then offline, in a chaos run', async () => {
+	useChaosNetwork.setState({offline: false})
+	await render(
+		<ChaosGuardFor isChaos={true}>
+			<Text>home</Text>
+		</ChaosGuardFor>,
+	)
+	expect(screen.getByTestId('chaos.network').props.accessibilityLabel).toBe('online')
+	await act(() => useChaosNetwork.setState({offline: true}))
+	expect(screen.getByTestId('chaos.network').props.accessibilityLabel).toBe('offline')
 })
