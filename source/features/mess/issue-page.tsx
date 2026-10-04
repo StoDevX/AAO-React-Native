@@ -29,12 +29,14 @@ import {cardKicker, sectionCredit} from './lib/byline'
 import {TAP_TARGET} from './lib/glyph-grid'
 import {rowsOf} from './lib/issue-grid'
 import {datelineText} from './lib/issues'
+import {keepsDarkMode} from './lib/photo-story'
 import {leadStory, shelvesOf} from './lib/shelves'
 import {Masthead} from './masthead'
 import {PageLoading, PageNotice} from './page-notice'
 import {faded, ink, messRed, wash} from './palette'
 import {messIssueOptions} from './query'
 import {RemotePhoto} from './remote-photo'
+import {useMessStore} from './store'
 import {SECTION_HEADING} from './story-blocks'
 import type {MessIssue, MessStory} from './types'
 import {useOpenStory} from './use-open-story'
@@ -91,6 +93,23 @@ const CARD_HEADLINE = [
 	foregroundStyle(ink),
 	lineLimit(3),
 ]
+/** The dark paper and ink a Photo story's card keeps whatever the system's appearance. */
+const DARK_PAPER = '#1C1A17'
+const DARK_INK = '#EDE8DF'
+const DARK_CARD_HEADLINE = [
+	font({textStyle: 'subheadline', design: 'serif', weight: 'semibold'}),
+	foregroundStyle(DARK_INK),
+	lineLimit(3),
+	padding({horizontal: 6, bottom: 6}),
+]
+/** A card with a photo on dark paper, `width` wide. */
+function darkPhotoCard(width: number) {
+	return [
+		frame({width, alignment: 'leading'}),
+		background(DARK_PAPER),
+		contentShape(shapes.rectangle()),
+	]
+}
 /** A card with a photo, `width` wide. */
 function photoCard(width: number) {
 	return [frame({width, alignment: 'leading'}), contentShape(shapes.rectangle())]
@@ -384,6 +403,8 @@ type StoryCardProps = {
  */
 function StoryCard({story, width = CARD_WIDTH, onPress}: StoryCardProps): React.ReactNode {
 	let kicker = cardKicker(story)
+	let keepPhotoStoriesDark = useMessStore((state) => state.keepPhotoStoriesDark)
+	let dark = keepsDarkMode(story, keepPhotoStoriesDark)
 	// A text card draws its column or section; a photo card draws its headline alone.
 	let label = !story.photo && kicker ? `${story.title}, ${kicker}` : story.title
 	return (
@@ -392,9 +413,13 @@ function StoryCard({story, width = CARD_WIDTH, onPress}: StoryCardProps): React.
 			onPress={onPress}
 		>
 			{story.photo ? (
-				<VStack alignment="leading" modifiers={photoCard(width)} spacing={6}>
+				<VStack
+					alignment="leading"
+					modifiers={dark ? darkPhotoCard(width) : photoCard(width)}
+					spacing={6}
+				>
 					<RemotePhoto height={cardHeights(width).photo} url={story.photo.url} width={width} />
-					<Text modifiers={CARD_HEADLINE}>{story.title}</Text>
+					<Text modifiers={dark ? DARK_CARD_HEADLINE : CARD_HEADLINE}>{story.title}</Text>
 				</VStack>
 			) : (
 				<VStack alignment="leading" modifiers={textCard(width)} spacing={6}>
