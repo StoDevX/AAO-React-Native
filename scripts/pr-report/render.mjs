@@ -1,0 +1,97 @@
+/**
+ * Render the pull request report as the markdown of its bot comment.
+ */
+
+import {formatBytes, formatDelta, formatPercent} from './format.mjs'
+
+/** Finds the bot's comment among a pull request's comments. */
+export const MARKER = '<!-- aao-pr-report -->'
+
+/** GitHub rejects a comment over 65,536 characters; this leaves room for the footer. */
+export const COMMENT_LIMIT = 60000
+
+const TOP_MOVERS = 10
+
+/** A byte figure, or a dash for a side where the group does not exist. */
+function cell(bytes) {
+	return bytes === null ? '—' : formatBytes(bytes)
+}
+
+/** One table row for a change, labeled `name`. */
+function row(name, change) {
+	return `| ${name} | ${cell(change.before)} | ${cell(change.after)} | ${formatDelta(change.delta)} |`
+}
+
+/** A total with its change: `**4.01 MiB** (+12.0 KiB, +0.3%)`. */
+function total(change, bold) {
+	let size = bold ? `**${formatBytes(change.after)}**` : formatBytes(change.after)
+	return `${size} (${formatDelta(change.delta)}, ${formatPercent(change.delta, change.before)})`
+}
+
+/** A collapsed table of every group. */
+function fullTable(summary, heading, changes) {
+	return [
+		`<details><summary>${summary}</summary>`,
+		'',
+		`| ${heading} | Before | After | Δ |`,
+		'| --- | --- | --- | --- |',
+		...changes.map((change) => row(change.name, change)),
+		'',
+		'</details>',
+		'',
+	]
+}
+
+/**
+ * Renders the comment. `head` is null when this commit could not be
+ * measured; `diff` is null when there is no baseline, and `baselineNote`
+ * then says why.
+ */
+export function renderComment({head, diff, baselineNote, gate}) {
+	let lines = [MARKER, '### JS bundle']
+	if (head === null) {
+		lines.push('JS size unavailable: the `js-size` job did not produce a report.')
+	} else if (diff === null) {
+		lines.push(
+			`Hermes bytecode: **${formatBytes(head.js.hermesBytes)}** · minified JS: ${formatBytes(head.js.minifiedBytes)}`,
+		)
+	} else {
+		lines.push(
+			`Hermes bytecode: ${total(diff.hermes, true)} · minified JS: ${total(diff.minified, false)}`,
+		)
+	}
+	if (baselineNote) {
+		lines.push('', baselineNote)
+	}
+	lines.push('', `${gate.pass ? '✅' : '❌'} ${gate.message}`, '')
+	if (diff === null) {
+		return lines.join('\n')
+	}
+
+	let movers = [
+		...diff.byPackage.map((change) => ({label: change.name, change})),
+		...diff.byFeature.map((change) => ({label: `feature: ${change.name}`, change})),
+	]
+		.filter(({change}) => change.delta !== 0)
+		.sort((a, b) => Math.abs(b.change.delta) - Math.abs(a.change.delta))
+		.slice(0, TOP_MOVERS)
+	if (movers.length > 0) {
+		lines.push(
+			'| Changed most | Before | After | Δ |',
+			'| --- | --- | --- | --- |',
+			...movers.map(({label, change}) => row(label, change)),
+			'',
+		)
+	}
+
+	let tables = [
+		...fullTable('All packages', 'Package', diff.byPackage),
+		...fullTable('All features', 'Feature', diff.byFeature),
+	]
+	let full = [...lines, ...tables].join('\n')
+	if (full.length <= COMMENT_LIMIT) {
+		return full
+	}
+	lines.push('The full tables are in the job summary; they are too long for a comment.', '')
+	return lines.join('\n')
+}
