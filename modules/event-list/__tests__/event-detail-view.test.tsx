@@ -59,4 +59,24 @@ describe('EventDetail', () => {
 
 		expect(screen.queryByText('Links')).toBeNull()
 	})
+
+	test('it shows the featured image when the event has one', async () => {
+		await render(
+			<EventDetail
+				color="#ff0000"
+				event={makeEvent({image: 'https://example.com/featured.jpg'})}
+				poweredBy={POWERED_BY}
+			/>,
+		)
+
+		expect(screen.getByTestId('event-featured-image').props.source).toStrictEqual({
+			uri: 'https://example.com/featured.jpg',
+		})
+	})
+
+	test('it omits the featured image when the event has none', async () => {
+		await render(<EventDetail color="#ff0000" event={makeEvent()} poweredBy={POWERED_BY} />)
+
+		expect(screen.queryByTestId('event-featured-image')).toBeNull()
+	})
 })

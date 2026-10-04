@@ -6,6 +6,7 @@ import {
 	font,
 	foregroundStyle,
 	listRowBackground,
+	listRowInsets,
 	listRowSeparator,
 	multilineTextAlignment,
 	textSelection,
@@ -13,11 +14,20 @@ import {
 import * as c from '@frogpond/colors'
 import type {EventType} from '@frogpond/event-type'
 
+import {InsetImageRow} from '../../source/components/inset-image-row'
 import {EventDetailHeader} from './event-detail-header'
 import {EventTimeline} from './event-timeline'
 import {detailTimeLines} from './times'
 import type {TimelineBlock, TimelineWindow} from './timeline'
 import type {PoweredBy} from './types'
+
+/// The form already insets its rows from the sheet's sides, in line with its
+/// section cards, so the picture's row adds none of its own.
+const IMAGE_ROW = [
+	listRowBackground('clear'),
+	listRowSeparator('hidden'),
+	listRowInsets({top: 0, leading: 0, bottom: 0, trailing: 0}),
+]
 
 const styles = StyleSheet.create({
 	host: {
@@ -71,6 +81,16 @@ export function EventDetail({event, poweredBy, color, timeline}: Props): React.R
 				<VStack modifiers={[listRowBackground('clear'), listRowSeparator('hidden')]}>
 					<EventDetailHeader color={color} lines={lines} title={event.title} />
 				</VStack>
+
+				{event.image ? (
+					<SheetSection>
+						<InsetImageRow
+							rowModifiers={IMAGE_ROW}
+							source={{uri: event.image}}
+							testID="event-featured-image"
+						/>
+					</SheetSection>
+				) : null}
 
 				<TextSection content={event.location.trim()} header="Location" />
 				<TextSection content={event.description.trim()} header="Description" />
