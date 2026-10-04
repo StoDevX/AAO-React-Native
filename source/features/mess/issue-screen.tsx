@@ -3,11 +3,12 @@ import {Stack, useRouter} from 'expo-router'
 import {useQueryClient, type QueryClient} from '@tanstack/react-query'
 import {IssuePage} from './issue-page'
 import {IssueUnavailable} from './issue-unavailable'
-import {issueDate} from './lib/issues'
+import {issueDate, issueName} from './lib/issues'
 import {messKeys} from './lib/keys'
-import {MessPage, PAGE_MARGIN} from './mess-page'
+import {MessPage, PAGE_MARGIN, PAPER_BAR, PaperTitle} from './mess-page'
 import {useColumnWidth} from './use-column-width'
 import {useMessIssue} from './use-mess-issues'
+import {OLAF_MESSENGER} from '../news/sources'
 
 /**
  * Fetches the issue list again, then every issue on screen, for a page of an issue's pull to
@@ -38,12 +39,12 @@ export function IssueScreen({issueKey}: {issueKey: string}): React.ReactNode {
 
 	return (
 		<>
-			{/* As on the front page, the paper runs behind a clear bar and the SwiftUI scroll view
-			    still starts the issue below it. The bar keeps no title, since a titled bar draws
-			    a hard edge once the page scrolls; the dateline names the issue, and the screen's
-			    title is still what the Back button reads. */}
-			<Stack.Screen
-				options={{title: issueDate(issue.day), headerTitle: '', headerTransparent: true}}
+			{/* The Back button on a page opened from here reads the issue's date. */}
+			<Stack.Screen options={PAPER_BAR} />
+			<PaperTitle
+				backTitle={issueDate(issue.day)}
+				subtitle={issueName(issue)}
+				title={OLAF_MESSENGER.title}
 			/>
 			<MessPage onRefresh={() => refreshIssues(queryClient)}>
 				<IssuePage

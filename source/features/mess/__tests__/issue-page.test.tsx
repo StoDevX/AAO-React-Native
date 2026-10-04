@@ -111,11 +111,10 @@ function renderIssue(issue: MessIssue = ISSUE) {
 }
 
 describe('IssuePage', () => {
-	test('lays an issue out: its dateline, its lead, then a shelf per section', async () => {
+	test('lays an issue out: its lead, then a shelf per section', async () => {
 		queryClient.setQueryData(messKeys.issue(ISSUE), STORIES)
 		await renderIssue()
 
-		expect(screen.getByText('April 29, 2026 · 5 stories')).toBeTruthy()
 		// VoiceOver reads the lead's section and writers after its headline, as drawn.
 		expect(
 			screen.getByRole('button', {name: 'Student workers deliver petition, News · Maya Betti'}),
@@ -129,15 +128,14 @@ describe('IssuePage', () => {
 		expect(more).toBeGreaterThan(opinions)
 	})
 
-	// The issue view's bar has no title, so the dateline is the heading that names the issue; the
-	// nameplate above it is not a heading too, or the page would open on two in a row.
-	test("opens under the paper's nameplate, with its dateline as the page's first heading", async () => {
+	// The issue screen's navigation bar names the paper and the issue, so the page leads with the
+	// lead story rather than a masthead of its own.
+	test("leaves the paper's name to the navigation bar", async () => {
 		queryClient.setQueryData(messKeys.issue(ISSUE), STORIES)
 		await renderIssue()
 
-		expect(screen.getByText('The Olaf Messenger')).toBeTruthy()
-		expect(screen.queryByRole('header', {name: 'The Olaf Messenger'})).toBeNull()
-		expect(screen.getAllByRole('header')[0]).toHaveTextContent('April 29, 2026 · 5 stories')
+		expect(screen.getByRole('button', {name: /^Student workers deliver petition/u})).toBeTruthy()
+		expect(screen.queryByText('The Olaf Messenger')).toBeNull()
 	})
 
 	// The issue's tile names the lead from the light fields; the page must agree

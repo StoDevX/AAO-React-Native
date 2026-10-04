@@ -6,6 +6,7 @@ import {fetchManifest, fetchSourceBody, type Jrd} from '@frogpond/data-sources'
 
 import categoriesJson from './fixtures/categories.json'
 import {queryClient as appQueryClient, persistOptions} from '../../../init/tanstack-query'
+import {navigationTitleLines} from '../../../testing/navigation-title'
 import {flushQueryNotifications} from '../../../testing/query-notifications'
 import {IssueScreen} from '../issue-screen'
 import {messKeys} from '../lib/keys'
@@ -137,10 +138,10 @@ describe('IssueScreen', () => {
 		)
 	})
 
-	test('lays out the issue its key names, under its dateline alone', async () => {
+	test("lays out the issue its key names, titled with the paper's name over the issue's date", async () => {
 		await renderIssue('week:2026-03-23')
 
-		expect(screen.getByText('March 25, 2026 · 5 stories')).toBeTruthy()
+		expect(navigationTitleLines()).toStrictEqual(['The Olaf Messenger', 'March 25, 2026'])
 		expect(screen.getByRole('button', {name: 'March story 0, News'})).toBeTruthy()
 	})
 
