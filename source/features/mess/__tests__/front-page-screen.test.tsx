@@ -196,10 +196,10 @@ describe('FrontPageScreen', () => {
 	test('names the menu by the view it shows, for VoiceOver', async () => {
 		seedTop()
 		await renderScreen()
-		expect(screen.getByLabelText('View: By Issue')).toBeTruthy()
+		expect(screen.getByLabelText('More, By Issue')).toBeTruthy()
 
 		await fireEvent.press(menuItem('Latest'))
-		expect(screen.getByLabelText('View: Latest')).toBeTruthy()
+		expect(screen.getByLabelText('More, Latest')).toBeTruthy()
 		// Latest has no feed cached, so it fetches one.
 		await waitForQueriesToSettle(queryClient)
 	})

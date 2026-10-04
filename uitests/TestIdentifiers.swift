@@ -559,7 +559,7 @@ struct TestIdentifiers {
 		/// names the view shown; in source/features/mess/front-page-screen.tsx.
 		static let byIssue = "By Issue"
 		static let latest = "Latest"
-		static let viewMenuPrefix = "View: "
+		static let viewMenuPrefix = "More, "
 		/// The view menu's way to the paper's About page, in source/features/mess/front-page-screen.tsx.
 		static let aboutMenuItem = "Contact"
 		/// The About page's title, in source/features/mess/about-screen.tsx.
