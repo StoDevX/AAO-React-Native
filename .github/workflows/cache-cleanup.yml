@@ -32,13 +32,15 @@ jobs:
     runs-on: ubuntu-slim
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       - name: Clean up caches for the just-closed branch
         if: (github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch') && github.ref_name != 'master'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh cache list --ref "${{ github.ref }}" --limit 500 --json 'ref' -q '.[].ref' | while read ref; do
+          gh cache list --ref "${GITHUB_REF}" --limit 500 --json 'ref' -q '.[].ref' | while read ref; do
             echo "Deleting caches for ref: $ref"
             gh cache delete --all --succeed-on-no-caches --ref "$ref" \
               || echo "::warning::Could not delete caches for $ref -- a concurrent run may have taken them already"

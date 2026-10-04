@@ -21,9 +21,9 @@ on:
   workflow_dispatch:
 
 permissions:
-  actions: write
-  contents: write
-  pull-requests: write
+  actions: write # zizmor: ignore[excessive-permissions] -- the rerun job dispatches this workflow
+  contents: write # zizmor: ignore[excessive-permissions] -- the release job pushes the Version PR branch
+  pull-requests: write # zizmor: ignore[excessive-permissions] -- the release job opens the Version PR
 
 jobs:
   rerun:
@@ -51,7 +51,7 @@ jobs:
       group: release
       cancel-in-progress: false
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1 # zizmor: ignore[artipacked] -- pushes the bot branch with the checkout credentials
       - uses: jdx/mise-action@94c60b39bc2d90ab2f9bab27f38d3cc4812c1834 # v5.1.0
         with:
           cache_key: mise-v2-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('mise.lock') }}

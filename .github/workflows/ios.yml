@@ -26,6 +26,8 @@ jobs:
       cache-key: ${{ steps.jsbundle-cache.outputs.cache-matched-key || steps.jsbundle-cache.outputs.cache-primary-key }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       - name: Restore cached jsbundle
         uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
@@ -108,6 +110,8 @@ jobs:
       cache-key: ${{ steps.app-cache.outputs.cache-matched-key || steps.app-cache.outputs.cache-primary-key }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       # The cache holds what ios-build produced, so a change to how that job
       # builds has to invalidate it -- the compiler flags, the toolchain
@@ -167,6 +171,8 @@ jobs:
     if: needs.ios-cache-check.outputs.cache-matched-key == ''
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       - name: Select ${{ env.xcode_version }}
         run: sudo xcode-select -s /Applications/${{ env.xcode_version }}.app
@@ -354,6 +360,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
+          persist-credentials: false
 
       # Only a pull request gets to skip. A push to master and a merge-queue run
       # always run the whole suite, so a gate that is wrong is caught before it
@@ -408,6 +415,8 @@ jobs:
       matrix: ${{ steps.split.outputs.matrix }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       # A miss is not a failure: the planner falls back to one unit per test,
       # giving every test an equal share of the split.
@@ -452,6 +461,8 @@ jobs:
       - run: sudo xcode-select -s /Applications/${{ env.xcode_version }}.app
 
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       # Always an artifact now: ios-build publishes what it built, and
       # ios-cache-check republishes what the cache held when the build was
@@ -537,10 +548,14 @@ jobs:
           jq -rn --argjson devices "$DEVICES" '$devices | "udid=\(.udid)"' | tee "$GITHUB_OUTPUT"
 
       - name: Boot the simulator
-        run: xcrun simctl boot "${{ steps.udid.outputs.udid }}"
+        env:
+          SIMULATOR_UDID: ${{ steps.udid.outputs.udid }}
+        run: xcrun simctl boot "$SIMULATOR_UDID"
 
       - name: Wait for the simulator to be ready
-        run: xcrun simctl bootstatus "${{ steps.udid.outputs.udid }}" -b
+        env:
+          SIMULATOR_UDID: ${{ steps.udid.outputs.udid }}
+        run: xcrun simctl bootstatus "$SIMULATOR_UDID" -b
 
       # A re-run with "Enable debug logging" ticked sets runner.debug, and this
       # step then keeps what an ordinary run throws away: every test's
@@ -554,6 +569,10 @@ jobs:
         # TEST_RUNNER_-prefixed variables, with the prefix stripped.
         env:
           TEST_RUNNER_CI: ${{ runner.debug == '1' && 'false' || 'true' }}
+          # Read by the script below, which is written out and run as a separate
+          # process, so the values reach it through the environment.
+          SIMULATOR_UDID: ${{ steps.udid.outputs.udid }}
+          MATRIX_TESTS: ${{ matrix.tests }}
         run: |
           set -o pipefail
           # The jsbundle was moved into the .app above, so no Metro is involved
@@ -591,8 +610,8 @@ jobs:
           set -o pipefail
           NSUnbufferedIO=YES xcodebuild test-without-building \
             -xctestrun $(find ios/build/Build/Products -name '*.xctestrun' -print -quit) \
-            -destination "platform=iOS Simulator,id=${{ steps.udid.outputs.udid }}" \
-            ${{ matrix.tests }} \
+            -destination "platform=iOS Simulator,id=$SIMULATOR_UDID" \
+            $MATRIX_TESTS \
             -retry-tests-on-failure \
             -collect-test-diagnostics ${{ runner.debug == '1' && 'on-failure' || 'never' }} \
             -resultBundlePath uitest-results \
@@ -664,6 +683,8 @@ jobs:
     if: always() && github.ref == 'refs/heads/master' && needs.ios-uitest.result != 'skipped'
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       - name: Download every shard's durations
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
