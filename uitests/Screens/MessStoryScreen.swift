@@ -187,7 +187,16 @@ struct MessStoryScreen: Screen {
 	func verifyLinkOffersLinkMenu(_ label: String) -> Self {
 		let link = storyLink(label)
 		XCTAssertTrue(link.waitForHittable(timeout: 10), "the link \"\(label)\" should be ready to hold")
-		link.press(forDuration: 1.5)
+		// Press the link's screen point through SpringBoard rather than pressing
+		// the link itself. The menu's preview loads the linked page live, and
+		// the app never goes quiet while it does, so a press on our own app
+		// waits out XCUITest's full 60s quiescence timeout after landing.
+		// SpringBoard is quiet, and the point is the same point.
+		let target = link.frame
+		XCUIApplication(bundleIdentifier: "com.apple.springboard")
+			.coordinate(withNormalizedOffset: .zero)
+			.withOffset(CGVector(dx: target.midX, dy: target.midY))
+			.press(forDuration: 1.5)
 		let copyLink = app.descendants(matching: .any)
 			.matching(NSPredicate(format: "label == %@", TestIdentifiers.News.copyLink)).firstMatch
 		let offered = copyLink.waitForExistence(timeout: 5)

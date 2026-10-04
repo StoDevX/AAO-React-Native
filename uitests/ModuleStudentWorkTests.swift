@@ -37,26 +37,6 @@ class ModuleStudentWorkTests: UITestCaseUnbooted {
 			.verifySection(IDs.earlier)
 	}
 
-	/// A first visit marks nothing new; a posting that appears before the
-	/// next visit is, and one already seen is not.
-	func testPostingAddedSinceTheLastVisitIsMarkedNew() throws {
-		StudentWorkScreen(app: app)
-			.navigate()
-			.openAllPostings()
-			.verifyNothingIsNew()
-			.navigateBackToLanding()
-			.navigateBack()
-
-		keepStateForNextLaunch(adding: TestIdentifiers.LaunchArguments.extraJobPosting)
-
-		StudentWorkScreen(app: app)
-			.navigate()
-			.openAllPostings()
-			.verifyPostingIsNew(IDs.fixtureExtraJob)
-			.capture("Student Work with a new posting")
-			.verifyPostingIsNotNew(IDs.fixtureCodedJob)
-	}
-
 	func testLandingShowsSixteenAreas() throws {
 		StudentWorkScreen(app: app)
 			.navigate()

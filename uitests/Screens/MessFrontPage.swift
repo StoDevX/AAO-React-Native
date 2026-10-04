@@ -111,7 +111,10 @@ struct MessFrontPage: Screen {
 		let older = tiles.matching(NSPredicate(format: "label CONTAINS %@", ", \(year),")).firstMatch
 		let top = app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.3))
 		let bottom = app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.85))
-		for _ in 0..<60 where !older.exists {
+		for _ in 0..<60 {
+			if older.exists {
+				break
+			}
 			bottom.press(forDuration: 0.05, thenDragTo: top)
 		}
 		capture("The issue grid, paged back to \(year)")
@@ -195,48 +198,6 @@ struct MessFrontPage: Screen {
 		return MessStoryScreen(app: app)
 	}
 
-	/// Open the paper's About page from the view menu, and wait for it to list someone to write
-	/// to, by the address a row names, and its submission policy.
-	@discardableResult
-	func openAbout() -> Self {
-		pickFromViewMenu(TestIdentifiers.News.aboutMenuItem)
-		XCTAssertTrue(
-			viewMenu.waitForNonExistence(timeout: 30),
-			"About should open the About page on a page of its own")
-		let title = app.navigationBars.staticTexts[TestIdentifiers.News.aboutTitle].firstMatch
-		XCTAssertTrue(
-			title.waitForExistence(timeout: 30),
-			"the About page should be titled \(TestIdentifiers.News.aboutTitle)")
-		let contact = app.buttons.matching(NSPredicate(format: "label CONTAINS %@", "@stolaf.edu")).firstMatch
-		XCTAssertTrue(contact.waitForExistence(timeout: 30), "the About page should list someone to write to")
-		capture("The Messenger's About page")
-		XCTAssertTrue(contact.isHittable, "a contact's row should be ready to tap")
-		// The list is lazy, so the heading is in the tree only while near the screen: swipe until
-		// it is, rather than a fixed number of times, which can scroll past it.
-		let policy = app.staticTexts[TestIdentifiers.News.submissionPolicy].firstMatch
-		for _ in 0..<6 where !policy.exists {
-			app.swipeUp(velocity: .slow)
-		}
-		XCTAssertTrue(policy.waitForExistence(timeout: 10), "the About page should end with its submission policy")
-		capture("The Messenger's submission policy")
-		return self
-	}
-
-	/// Tap the first row of the Crossword column's list and assert it opens the puzzle in the
-	/// in-app browser, with no story page between.
-	@discardableResult
-	func solveFirstCrossword() -> Self {
-		let row = storyRows.firstMatch
-		XCTAssertTrue(row.waitForHittable(), "a crossword row should be ready to tap")
-		row.tap()
-		let done = app.buttons[TestIdentifiers.Directory.inAppBrowserDone].firstMatch
-		XCTAssertTrue(
-			done.waitForExistence(timeout: 30),
-			"a crossword's row should open its puzzle in the in-app browser")
-		capture("A crossword from its row, in the in-app browser")
-		return self
-	}
-
 	/// Open the view menu and tap its item named `label`.
 	private func pickFromViewMenu(_ label: String) {
 		XCTAssertTrue(viewMenu.waitForHittable(timeout: 30), "the view menu should be ready to tap")
@@ -284,7 +245,10 @@ struct MessFrontPage: Screen {
 		let origin = app.coordinate(withNormalizedOffset: CGVector(dx: 0, dy: 0))
 		let right = origin.withOffset(CGVector(dx: app.frame.width * 0.8, dy: rowY))
 		let left = origin.withOffset(CGVector(dx: app.frame.width * 0.2, dy: rowY))
-		for _ in 0..<10 where !app.frame.contains(button.frame) {
+		for _ in 0..<10 {
+			if app.frame.contains(button.frame) {
+				break
+			}
 			let (start, end) = button.frame.midX > app.frame.midX ? (right, left) : (left, right)
 			start.press(forDuration: 0.05, thenDragTo: end, withVelocity: .slow, thenHoldForDuration: 0.2)
 		}

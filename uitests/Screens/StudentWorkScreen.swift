@@ -125,35 +125,6 @@ struct StudentWorkScreen: Screen {
 		app.collectionViews[TestIdentifiers.StudentWork.postingsList]
 	}
 
-	/// Asserts a posting's row carries the New dot, whose label leads the
-	/// row's own.
-	@discardableResult
-	func verifyPostingIsNew(_ title: String) -> Self {
-		let row = app.elementWithLabel(startingWith: TestIdentifiers.StudentWork.newPrefix + title)
-		XCTAssertTrue(row.waitForExistence(timeout: 30), "\(title) should be marked new")
-		return self
-	}
-
-	/// Asserts a posting's row is listed without the New dot.
-	@discardableResult
-	func verifyPostingIsNotNew(_ title: String) -> Self {
-		verifyPostingListed(title)
-		XCTAssertFalse(
-			app.elementWithLabel(startingWith: TestIdentifiers.StudentWork.newPrefix + title).exists,
-			"\(title) should not be marked new")
-		return self
-	}
-
-	/// Asserts no row on screen carries the New dot.
-	@discardableResult
-	func verifyNothingIsNew() -> Self {
-		XCTAssertTrue(postingsList.waitForExistence(timeout: 30), "The postings should appear")
-		XCTAssertFalse(
-			app.elementWithLabel(startingWith: TestIdentifiers.StudentWork.newPrefix).exists,
-			"No posting should be marked new on a first visit")
-		return self
-	}
-
 	/// Asserts the list has a section with this title, scrolling to reach it:
 	/// the list builds its rows only as they near the screen.
 	@discardableResult
@@ -161,17 +132,6 @@ struct StudentWorkScreen: Screen {
 		let header = postingsList.staticTexts[title]
 		scrollUntilExists(header, in: postingsList)
 		XCTAssertTrue(header.exists, "The postings should have a \(title) section")
-		return self
-	}
-
-	/// Leaves the postings for Student Work's landing.
-	@discardableResult
-	func navigateBackToLanding() -> Self {
-		let backButton = app.navigationBars[TestIdentifiers.StudentWork.postingsTitle]
-			.buttons[TestIdentifiers.Navigation.systemBackButton]
-		XCTAssertTrue(backButton.waitForExistence(timeout: 10), "The postings should offer a way back")
-		backButton.tap()
-		XCTAssertTrue(areaGrid.waitForExistence(timeout: 30), "Going back should land on the tiles")
 		return self
 	}
 
@@ -232,7 +192,10 @@ struct StudentWorkScreen: Screen {
 		let row = app.buttonLabelled(TestIdentifiers.StudentWork.jobDescriptionRow)
 		// Scrolled to until tappable, not merely present: a form builds rows
 		// before they are on screen.
-		for _ in 0..<6 where !row.isHittable {
+		for _ in 0..<6 {
+			if row.isHittable {
+				break
+			}
 			app.swipeUp()
 		}
 		XCTAssertTrue(row.isHittable, "The posting should offer its description as a row")

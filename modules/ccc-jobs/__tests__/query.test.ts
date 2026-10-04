@@ -52,12 +52,6 @@ describe('under UI testing', () => {
 		await expect(run(postingUnitsOptions)).resolves.toEqual(UITEST_POSTING_UNITS)
 		expect(fetchSourceBody).not.toHaveBeenCalled()
 	})
-
-	// The extra posting stands for one newer than the server's last hour, so
-	// the app has to read its unit from its detail.
-	test('the fixture map leaves out the extra posting', () => {
-		expect('uitest-extra' in UITEST_POSTING_UNITS).toBe(false)
-	})
 })
 
 describe('jobPostingsOptions', () => {

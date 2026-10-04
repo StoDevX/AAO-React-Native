@@ -322,7 +322,10 @@ struct MapScreen: Screen {
 	/// down is not there to find until the card reaches it -- and how far down
 	/// that is depends on the screen and on what the live feed puts above it.
 	private func scrollCard(toReach element: XCUIElement) {
-		for _ in 0..<6 where !(element.exists && element.isHittable) {
+		for _ in 0..<6 {
+			if element.exists && element.isHittable {
+				break
+			}
 			app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.8))
 				.press(forDuration: 0.05, thenDragTo: app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)))
 		}
@@ -692,7 +695,10 @@ struct MapScreen: Screen {
 		// Each drag is slow and held, so the list stops where the drag ends. A
 		// quick one flings it, and the check below then reads a row that is still
 		// moving -- one that looks in range can coast on under the header.
-		for _ in 0..<12 where !(row.exists && row.isHittable && row.frame.minY < upper) {
+		for _ in 0..<12 {
+			if row.exists && row.isHittable && row.frame.minY < upper {
+				break
+			}
 			app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.8))
 				.press(
 					forDuration: 0.05,

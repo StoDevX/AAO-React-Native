@@ -1,4 +1,3 @@
-import {Settings} from 'react-native'
 import type {JobCategory, JobDetail} from '../types'
 
 /**
@@ -21,10 +20,6 @@ import type {JobCategory, JobDetail} from '../types'
  * They are all tier 2, so choosing Experienced keeps a list long enough to
  * have been scrolled. Their dates put some in each recency section against
  * the UI tests' frozen clock, 2026-09-05.
- *
- * Last, one posting that exists only when the app is launched with
- * `-AAOUITestExtraJobPosting YES`, so a test can add a posting between two
- * visits and see it marked new.
  */
 
 /// Mirrored by `TestIdentifiers.StudentWork.fixtureJobWithWrappingField`.
@@ -54,7 +49,6 @@ const FIXTURE_UNITS: Record<string, string> = {
 	'uitest-1': '16118', // Research (CURI)
 	'uitest-2': '14001', // Library & Technology
 	'uitest-3': '22005', // Dining & BonApp
-	'uitest-extra': '11280', // Sciences & Nursing
 }
 const FILLER_UNIT = '15141' // Residence Life
 
@@ -137,34 +131,7 @@ const FILLER_JOBS: JobDetail[] = Array.from({length: FILLER_COUNT}, (_, index) =
 	}
 })
 
-/// The `NSUserDefaults` key a launch argument sets, which React Native's
-/// `Settings` reads. Mirrored by `TestIdentifiers.LaunchArguments.extraJobPosting`.
-const EXTRA_POSTING_SETTING = 'AAOUITestExtraJobPosting'
-/// Mirrored by `TestIdentifiers.StudentWork.fixtureExtraJob`.
-export const UITEST_EXTRA_JOB_TITLE = 'AY Planetarium Student Guide (WS-ST1)'
-
-const EXTRA_JOB: JobDetail = {
-	id: 'uitest-extra',
-	title: UITEST_EXTRA_JOB_TITLE,
-	category: 'Student Work',
-	schedule: 'Part time',
-	location: 'Northfield, MN, United States',
-	postedDate: '2026-09-04T15:00:00+00:00',
-	fields: [],
-	unit: FIXTURE_UNITS['uitest-extra'] ?? null,
-	body: BODY,
-	url: `${SITE}/job/uitest-extra`,
-}
-
-const withExtraPosting = Boolean(Settings.get(EXTRA_POSTING_SETTING))
-
-export const UITEST_JOB_DETAILS: JobDetail[] = [
-	WRAPPING_JOB,
-	SHORT_JOB,
-	CODED_JOB,
-	...FILLER_JOBS,
-	...(withExtraPosting ? [EXTRA_JOB] : []),
-]
+export const UITEST_JOB_DETAILS: JobDetail[] = [WRAPPING_JOB, SHORT_JOB, CODED_JOB, ...FILLER_JOBS]
 
 export const UITEST_JOB_CATEGORIES: JobCategory[] = [
 	{
@@ -181,8 +148,7 @@ export const UITEST_JOB_CATEGORIES: JobCategory[] = [
 ]
 
 /// What ccc-server's `/student-work/units` would publish for the fixture
-/// board. The extra posting is left out, as one newer than the server's last
-/// hour would be, so a UI test covers the app reading a unit from a detail.
+/// board.
 export const UITEST_POSTING_UNITS: Record<string, string | null> = Object.fromEntries(
-	UITEST_JOB_DETAILS.filter((job) => job.id !== EXTRA_JOB.id).map((job) => [job.id, job.unit]),
+	UITEST_JOB_DETAILS.map((job) => [job.id, job.unit]),
 )
