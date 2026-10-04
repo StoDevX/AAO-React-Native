@@ -141,7 +141,7 @@ Replay is best-effort. Timing, and anything that doesn't go through JS `fetch`
   replay fetches them live. The tape holds text, and React Native cannot
   rebuild a body with a NUL in it from a string: reading it back as bytes
   crashes the app.
-- **Sheets in landscape** fill the screen on iPhone and ignore a drag down, so
+- **Sheets in landscape**, with `--rotate`, fill the screen on iPhone and ignore a drag down, so
   the monkey can only leave one by rotating.
 - **A fatal under a modal** can hide from the beacon until the modal closes.
   The findings file still catches it at the end of the run, but the stop
@@ -211,6 +211,7 @@ builds, runs the test, collects the files, and decides the exit code.
 | Recognise another error screen | `TestIdentifiers.Chaos.errorScreenIdentifiers`, or `errorScreenLabels` when it has no identifier |
 | Change how often an action happens | `weight` in `ChaosAction.swift`; the weights sum to 100 |
 | Add awkward text to type | `chaosStrings` in `ChaosAction.swift` |
+| Open a route the monkey skips | `SKIPPED` or `SKIPPED_PREFIXES` in `scripts/chaos-routes.mjs` |
 | Add a fault | `Fault` and `pickFault` in `source/chaos/faults.ts` |
 
 Run `mise run chaos-routes` after adding a route; a test fails until you do.

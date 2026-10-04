@@ -19,6 +19,9 @@ final class ChaosMonkey {
 	private let seed: UInt64
 	private let replay: Bool
 	private let faultRate: String
+	/// Whether `.rotate` turns the device. Off, it does nothing, but keeps its
+	/// place in the pick table, so a seed takes the same steps either way.
+	private let rotate: Bool
 	private var random: ChaosRandom
 	private var launch = 0
 	private var steps: [String] = []
@@ -44,11 +47,12 @@ final class ChaosMonkey {
 	/// Buttons that dismiss a system alert without granting anything, in order of preference.
 	private static let alertDismissals = ["Don’t Allow", "Don't Allow", "Not Now", "Cancel", "OK"]
 
-	init(test: UITestCaseUnbooted, seed: UInt64, replay: Bool, faultRate: String) {
+	init(test: UITestCaseUnbooted, seed: UInt64, replay: Bool, faultRate: String, rotate: Bool = false) {
 		self.test = test
 		self.seed = seed
 		self.replay = replay
 		self.faultRate = faultRate
+		self.rotate = rotate
 		self.random = ChaosRandom(seed: seed)
 	}
 
@@ -144,6 +148,9 @@ final class ChaosMonkey {
 			}
 			return nil
 		case .rotate:
+			guard rotate else {
+				return ChaosTarget(identifier: "", label: "off", type: .any, frame: .zero)
+			}
 			orientation = orientation == .portrait ? .landscapeLeft : .portrait
 			pauseHangClock { applyOrientation() }
 			return nil

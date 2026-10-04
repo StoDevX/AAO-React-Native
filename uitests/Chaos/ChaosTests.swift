@@ -29,7 +29,8 @@ final class ChaosTests: UITestCaseUnbooted {
 			test: self,
 			seed: seed,
 			replay: env["AAO_CHAOS_REPLAY"] == "1",
-			faultRate: env["AAO_CHAOS_FAULT_RATE"] ?? "0.25")
+			faultRate: env["AAO_CHAOS_FAULT_RATE"] ?? "0.25",
+			rotate: env["AAO_CHAOS_ROTATE"] == "1")
 		monkey.run(
 			steps: env["AAO_CHAOS_STEPS"].flatMap(Int.init) ?? 500,
 			duration: env["AAO_CHAOS_DURATION"].flatMap(TimeInterval.init) ?? 600)

@@ -67,3 +67,15 @@ test('the checked-in table is current', () => {
 	)
 	assert.equal(checkedIn, renderSwift(routesIn(appRouteFiles())), 'run mise run chaos-routes')
 })
+
+test('leaves out the developer tools, which only the team uses', () => {
+	assert.deepEqual(
+		routesIn([
+			'developer/index.tsx',
+			'developer/debug/[...path].tsx',
+			'developers.tsx',
+			'directory/index.tsx',
+		]),
+		['developers', 'directory'],
+	)
+})
