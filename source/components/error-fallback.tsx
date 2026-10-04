@@ -16,12 +16,15 @@ export type ErrorFallbackAction = {label: string; onPress: () => void}
 export function ErrorFallback({
 	message,
 	actions,
+	testID,
 }: {
 	message: string
 	actions: ReadonlyArray<ErrorFallbackAction>
+	/** How a UI test finds this screen. */
+	testID?: string
 }): React.ReactNode {
 	return (
-		<View style={styles.screen}>
+		<View style={styles.screen} testID={testID}>
 			<Text accessibilityRole="header" style={styles.title}>
 				Something went wrong
 			</Text>

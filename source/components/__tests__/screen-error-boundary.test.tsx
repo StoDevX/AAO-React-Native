@@ -137,6 +137,8 @@ describe('ScreenErrorBoundary', () => {
 		)
 
 		expect(useChaosFindings.getState().latest).toBe('fatal: The menu fell over')
+		// What the chaos oracle reads as an error screen, for when a sheet hides the beacon.
+		expect(screen.getByTestId('chaos.fatal-boundary')).toBeTruthy()
 	})
 
 	test('reports no finding outside a chaos run', async () => {
@@ -147,5 +149,6 @@ describe('ScreenErrorBoundary', () => {
 		)
 
 		expect(useChaosFindings.getState().latest).toBe('')
+		expect(screen.queryByTestId('chaos.fatal-boundary')).toBeNull()
 	})
 })

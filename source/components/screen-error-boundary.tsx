@@ -3,6 +3,7 @@ import * as Sentry from '@sentry/react-native'
 import {isChaos} from '@frogpond/launch-arguments'
 
 import {reportFinding} from '../chaos/findings'
+import {FATAL_BOUNDARY_ID} from '../chaos/identifiers'
 import {openEmail} from '../features/support/open-email'
 import {ErrorFallback, type ErrorFallbackAction} from './error-fallback'
 
@@ -16,7 +17,10 @@ import {ErrorFallback, type ErrorFallbackAction} from './error-fallback'
  *
  * Under chaos the error is reported as a fatal finding too: caught here, it
  * would otherwise never reach the chaos run's own boundary, and the run would
- * carry on past it.
+ * carry on past it. The fallback also carries that boundary's ID, which the
+ * chaos oracle reads as an error screen: in a form sheet or modal the beacon
+ * can drop out of the accessibility tree, and the fallback is then the only
+ * sign left that the run must stop.
  */
 export function ScreenErrorBoundary({
 	children,
@@ -46,6 +50,7 @@ export function ScreenErrorBoundary({
 				return (
 					<ErrorFallback
 						actions={actions}
+						testID={isChaos ? FATAL_BOUNDARY_ID : undefined}
 						message="This screen hit an error. Trying again often clears it, and the rest of the app still works."
 					/>
 				)
