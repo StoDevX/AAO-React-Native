@@ -63,12 +63,13 @@ describe('at launch', () => {
 		return {ignoreAllLogs, uninstall}
 	}
 
-	// Uninstalling LogBox already removes its toasts along with its red screen.
-	test('a chaos launch uninstalls LogBox rather than hiding its toasts', () => {
+	// Uninstalling leaves the native warning handler in place, so a native
+	// warning still raises a toast unless LogBox is also told to ignore it.
+	test('a chaos launch uninstalls LogBox and hides its toasts', () => {
 		let {ignoreAllLogs, uninstall} = launch({isUITesting: false, isChaos: true})
 
 		expect(uninstall).toHaveBeenCalled()
-		expect(ignoreAllLogs).not.toHaveBeenCalled()
+		expect(ignoreAllLogs).toHaveBeenCalledWith(true)
 	})
 
 	test('a UI-test launch hides the toasts and keeps LogBox', () => {
