@@ -739,8 +739,7 @@ jobs:
   # saves a timing table, on master.
   uitest-conclusion:
     name: UITest Conclusion
-    needs:
-      [uitest-gate, uitest-plan, ios-build, ios-bundle, ios-cache-check, ios-uitest]
+    needs: [uitest-gate, uitest-plan, ios-build, ios-bundle, ios-cache-check, ios-uitest]
     runs-on: ubuntu-slim
     if: always()
     steps:
