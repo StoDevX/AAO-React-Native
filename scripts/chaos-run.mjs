@@ -337,7 +337,7 @@ export function jsSourceProblem({env, hasEmbeddedBundle}) {
 	}
 	let lines = [
 		'No JavaScript source for the run: name the Metro serving this checkout, e.g.',
-		'  TEST_RUNNER_AAO_JS_LOCATION=localhost:8081 mise run chaos',
+		'  TEST_RUNNER_AAO_JS_LOCATION=localhost:8091 mise run chaos',
 		'or, for the Metro on 8081, mise run chaos:8081',
 	]
 	if (env.AAO_JS_LOCATION) {
@@ -347,6 +347,25 @@ export function jsSourceProblem({env, hasEmbeddedBundle}) {
 		)
 	}
 	return lines.join('\n')
+}
+
+/**
+ * Why the Metro at `location` cannot serve the run, or null when it serves
+ * this checkout.
+ *
+ * `projectRoot` is what Metro's /status reports in its
+ * X-React-Native-Project-Root header, or null when nothing answered. Port 8081
+ * belongs to whichever checkout started Metro first, so a run against another
+ * checkout's Metro would test that checkout's JavaScript and blame this one.
+ */
+export function metroProblem({location, projectRoot, checkout}) {
+	if (projectRoot === null) {
+		return `No Metro answered at ${location}; start Metro for this checkout, or name the one serving it.`
+	}
+	if (projectRoot !== checkout) {
+		return `The Metro at ${location} serves ${projectRoot}, not ${checkout}; name the Metro serving this checkout.`
+	}
+	return null
 }
 
 /** The failure messages in `xcresulttool get test-results tests` output, in order. */
