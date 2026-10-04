@@ -5,6 +5,7 @@ import {act, render, screen} from '@testing-library/react-native'
 import {useChaosFindings} from '../findings'
 import {ChaosGuardFor} from '../guard'
 import {useChaosNetwork} from '../network'
+import {useChaosVocab} from '../vocab'
 
 function Throws(): React.ReactNode {
 	throw new Error('render failed')
@@ -67,4 +68,14 @@ test('shows the network as online, then offline, in a chaos run', async () => {
 	expect(screen.getByTestId('chaos.network').props.accessibilityLabel).toBe('online')
 	await act(() => useChaosNetwork.setState({offline: true}))
 	expect(screen.getByTestId('chaos.network').props.accessibilityLabel).toBe('offline')
+})
+
+test('shows the received words in a chaos run', async () => {
+	useChaosVocab.setState({words: ['Cage', 'Stav']})
+	await render(
+		<ChaosGuardFor isChaos={true}>
+			<Text>home</Text>
+		</ChaosGuardFor>,
+	)
+	expect(screen.getByTestId('chaos.vocab').props.accessibilityLabel).toBe('Cage\u001FStav')
 })

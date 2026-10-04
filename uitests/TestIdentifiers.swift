@@ -65,6 +65,10 @@ struct TestIdentifiers {
 		static let sheetTrapRoute = "dictionary/entry/preview"
 		/// The hidden element labelled `online` or `offline`, as a session's network is.
 		static let network = "chaos.network"
+		/// The hidden element listing strings the app received, for a session to type.
+		static let vocab = "chaos.vocab"
+		/// What separates its words.
+		static let vocabSeparator: Character = "\u{1F}"
 		/// A route drawing one small unlabelled button, for the target oracles' canary.
 		static let targetsCanaryRoute = "chaos-canary-targets"
 		/// The canary's button.

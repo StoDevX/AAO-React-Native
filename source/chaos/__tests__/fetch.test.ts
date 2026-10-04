@@ -5,6 +5,7 @@ import {memoryLineFile} from '../line-file'
 import {useChaosNetwork} from '../network'
 import {seededRandom} from '../random'
 import {parseLines, type TapeEntry} from '../tape'
+import {useChaosVocab} from '../vocab'
 
 const URL_A = 'https://a.test/menu'
 
@@ -53,6 +54,16 @@ beforeEach(() => {
 })
 
 describe('record mode', () => {
+	test('publishes the strings in what it delivers, and in what a replay delivers', async () => {
+		useChaosVocab.setState({words: []})
+		let tape = memoryLineFile()
+		await chaosFetch(server('{"name":"Stav Hall"}'), options({tape}))(URL_A)
+		expect(useChaosVocab.getState().words).toEqual(['Stav Hall'])
+		useChaosVocab.setState({words: []})
+		await chaosFetch(server(), options({tape, mode: 'replay'}))(URL_A)
+		expect(useChaosVocab.getState().words).toEqual(['Stav Hall'])
+	})
+
 	test('passes an unfaulted response through and records it', async () => {
 		let tape = memoryLineFile()
 		let wrapped = chaosFetch(server(), options({tape}))

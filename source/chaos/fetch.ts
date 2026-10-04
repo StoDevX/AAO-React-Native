@@ -5,6 +5,7 @@ import {corruptBody, faultStatus, pickFault, pickSessionFault, type Fault} from 
 import {reportFinding} from './findings'
 import {mutateJson} from './mutate'
 import {goOfflineFor} from './network'
+import {addVocab} from './vocab'
 import type {LineFile} from './line-file'
 import type {Random} from './random'
 import {readTape, RequestCounter, requestKey, tapeHoldsBody, type TapeEntry} from './tape'
@@ -106,6 +107,9 @@ async function deliver(entry: TapeEntry, sleep: (ms: number) => Promise<void>): 
 	}
 	if (entry.error === 'network') {
 		throw networkError()
+	}
+	if (entry.body) {
+		addVocab(entry.body)
 	}
 	return new Response(entry.body, {status: entry.status, headers: entry.headers})
 }
