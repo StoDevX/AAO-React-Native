@@ -1,5 +1,3 @@
-import type {Random} from './random'
-
 /** A body after one of its values was changed, and which one and how. */
 export type Mutation = {body: string; path: string; change: string}
 
@@ -78,20 +76,16 @@ function brief(value: Json): string {
 /**
  * `body` with one array, string, number or boolean changed to another value of
  * the same type, or null when it is not JSON, holds nothing to change, or the
- * change chosen would leave it as it was.
- *
- * Always draws twice from `random` for JSON, so what it finds in a body does
- * not shift the faults drawn after it.
+ * change chosen would leave it as it was. `pick` and `roll`, each in [0, 1),
+ * choose the value and its replacement.
  */
-export function mutateJson(body: string, random: Random): Mutation | null {
+export function mutateJson(body: string, pick: number, roll: number): Mutation | null {
 	let root: {value: Json}
 	try {
 		root = {value: JSON.parse(body) as Json}
 	} catch {
 		return null
 	}
-	let pick = random()
-	let roll = random()
 	let slots = slotsIn(root.value, '$', (next) => (root.value = next), [])
 	if (slots.length === 0) {
 		return null

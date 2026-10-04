@@ -209,6 +209,59 @@ describe('record mode', () => {
 	})
 })
 
+describe('a seed repeats its faults', () => {
+	/** A server that answers each URL once its gate opens, in whatever order the gates open. */
+	function gatedServer() {
+		let gates = new Map<string, () => void>()
+		let network = jest.fn(
+			(input: Parameters<typeof fetch>[0]) =>
+				new Promise<Response>((resolve) => {
+					// chaosFetch always hands the network a Request.
+					gates.set((input as Request).url, () =>
+						resolve(
+							new Response('{"items":[{"label":"Lunch"},{"label":"Dinner"}],"open":true,"n":3}', {
+								headers: {'content-type': 'application/json'},
+							}),
+						),
+					)
+				}),
+		)
+		return {network, open: (url: string) => gates.get(url)?.()}
+	}
+
+	/** The tape of a seed's run of three concurrent requests, answered in `order`. */
+	async function tapeFor(order: string[]): Promise<Map<string, TapeEntry>> {
+		let urls = ['https://a.test/1', 'https://a.test/2', 'https://a.test/3']
+		let {network, open} = gatedServer()
+		let tape = memoryLineFile()
+		let wrapped = chaosFetch(network, options({tape, faultRate: 1, random: seededRandom(21)}))
+		let pending = urls.map((url) => wrapped(url).catch(() => undefined))
+		// Let every request reach the server before any answers.
+		await new Promise((resolve) => setTimeout(resolve, 0))
+		for (let url of order) {
+			open(url)
+			// One at a time, so each answer is handled before the next arrives.
+			// oxlint-disable-next-line no-await-in-loop
+			await new Promise((resolve) => setTimeout(resolve, 0))
+		}
+		await Promise.all(pending)
+		return new Map(parseLines<TapeEntry>(tape.readLines()).map((entry) => [entry.key, entry]))
+	}
+
+	test('whatever order the network answers in', async () => {
+		let forwards = await tapeFor(['https://a.test/1', 'https://a.test/2', 'https://a.test/3'])
+		let backwards = await tapeFor(['https://a.test/3', 'https://a.test/2', 'https://a.test/1'])
+		expect([...forwards.values()].some((entry) => entry.fault === 'mutated')).toBe(true)
+		for (let [key, entry] of forwards) {
+			expect([key, backwards.get(key)?.body, backwards.get(key)?.fault]).toEqual([
+				key,
+				entry.body,
+				entry.fault,
+			])
+		}
+	})
+})
+
 describe('replay mode', () => {
 	test('replays a mutated body byte for byte', async () => {
 		let tape = memoryLineFile()

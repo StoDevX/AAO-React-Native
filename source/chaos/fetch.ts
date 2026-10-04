@@ -42,7 +42,6 @@ async function answer(
 	request: Request,
 	key: string,
 	fault: Fault,
-	random: Random,
 ): Promise<Answer> {
 	let base = {key, headers: [] as Array<[string, string]>, body: '', status: 0, fault: fault.kind}
 	let delayMs = fault.kind === 'latency' ? fault.delayMs : 0
@@ -61,7 +60,7 @@ async function answer(
 		if (tapeHoldsBody(response.headers.get('content-type'))) {
 			let text = await response.text()
 			if (fault.kind === 'mutated') {
-				let mutation = mutateJson(text, random)
+				let mutation = mutateJson(text, fault.pick, fault.roll)
 				if (!mutation) {
 					return {entry: {...entry, fault: 'none', body: text}, passThrough: null}
 				}
@@ -148,7 +147,6 @@ export function chaosFetch(realFetch: typeof fetch, options: ChaosFetchOptions):
 			request,
 			key,
 			pickFault(options.random, options.faultRate),
-			options.random,
 		)
 		options.tape.append(JSON.stringify(entry))
 		if (passThrough) {

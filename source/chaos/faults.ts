@@ -9,7 +9,8 @@ export type Fault =
 	| {kind: 'empty'}
 	| {kind: 'malformed'}
 	| {kind: 'truncated'}
-	| {kind: 'mutated'}
+	/** `pick` and `roll` choose the value changed and how, drawn with the fault rather than once the body arrives. */
+	| {kind: 'mutated'; pick: number; roll: number}
 
 const CHOICES = [
 	'latency',
@@ -24,14 +25,17 @@ const CHOICES = [
 /**
  * Whether a request is faulted, at `rate`, and how. Half of faults change a
  * value in the body, since the transport faults all land in the same error
- * branch; the rest are spread evenly over the transport kinds.
+ * branch; the rest are spread evenly over the transport kinds. Every draw a
+ * fault needs is taken here, synchronously, so the faults follow request order.
  */
 export function pickFault(random: Random, rate: number): Fault {
 	if (random() >= rate) {
 		return {kind: 'none'}
 	}
 	if (random() < 0.5) {
-		return {kind: 'mutated'}
+		// Drawn now, in request order: drawn when the body arrives, they would
+		// follow the network's timing and a seed would not repeat its mutations.
+		return {kind: 'mutated', pick: random(), roll: random()}
 	}
 	let choice = CHOICES[Math.floor(random() * CHOICES.length)]
 	switch (choice) {

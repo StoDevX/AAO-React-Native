@@ -1,5 +1,5 @@
 import {mutateJson} from '../mutate'
-import {seededRandom} from '../random'
+import {seededRandom, type Random} from '../random'
 
 /** The JSON type of `value`, telling arrays and null from objects. */
 function typeOf(value: unknown): string {
@@ -20,6 +20,11 @@ function shape(value: unknown, path = '$', out = new Map<string, string>()): Map
 	return out
 }
 
+/** `mutateJson` with its two draws taken from `random`, as a fault takes them. */
+function mutate(body: string, random: Random) {
+	return mutateJson(body, random(), random())
+}
+
 const BODY = JSON.stringify({
 	name: 'Stav Hall',
 	open: true,
@@ -36,14 +41,14 @@ describe('mutateJson', () => {
 		let random = seededRandom(1)
 		let before = shape(JSON.parse(BODY))
 		for (let i = 0; i < 500; i++) {
-			let mutation = mutateJson(BODY, random)
+			let mutation = mutate(BODY, random)
 			if (!mutation) continue
 			expect(shape(JSON.parse(mutation.body))).toEqual(before)
 		}
 	})
 
 	test('changes the body, and names the path and the change', () => {
-		let mutation = mutateJson(BODY, seededRandom(3))
+		let mutation = mutate(BODY, seededRandom(3))
 		expect(mutation).not.toBeNull()
 		expect(mutation?.body).not.toBe(BODY)
 		expect(mutation?.path).toMatch(/^\$/u)
@@ -54,7 +59,7 @@ describe('mutateJson', () => {
 		let a = seededRandom(7)
 		let b = seededRandom(7)
 		for (let i = 0; i < 50; i++) {
-			expect(mutateJson(BODY, a)).toEqual(mutateJson(BODY, b))
+			expect(mutate(BODY, a)).toEqual(mutate(BODY, b))
 		}
 	})
 
@@ -62,7 +67,7 @@ describe('mutateJson', () => {
 		let random = seededRandom(4)
 		let changed = new Set<string>()
 		for (let i = 0; i < 500; i++) {
-			let path = mutateJson(BODY, random)?.path
+			let path = mutate(BODY, random)?.path
 			if (path) changed.add(path.replaceAll(/\[\d+\]/gu, '[]'))
 		}
 		expect(changed).toEqual(
@@ -74,7 +79,7 @@ describe('mutateJson', () => {
 		let random = seededRandom(5)
 		for (let body of ['[1,2,3]', '"ok"', '3', 'true']) {
 			for (let i = 0; i < 20; i++) {
-				let mutation = mutateJson(body, random)
+				let mutation = mutate(body, random)
 				if (!mutation) continue
 				expect(typeOf(JSON.parse(mutation.body))).toBe(typeOf(JSON.parse(body)))
 			}
@@ -83,23 +88,16 @@ describe('mutateJson', () => {
 
 	test('leaves a body that is not JSON, or has nothing to change, alone', () => {
 		let random = seededRandom(6)
-		expect(mutateJson('<html></html>', random)).toBeNull()
-		expect(mutateJson('', random)).toBeNull()
-		expect(mutateJson('{}', random)).toBeNull()
-		expect(mutateJson('null', random)).toBeNull()
-		expect(mutateJson('{"a":null}', random)).toBeNull()
+		expect(mutate('<html></html>', random)).toBeNull()
+		expect(mutate('', random)).toBeNull()
+		expect(mutate('{}', random)).toBeNull()
+		expect(mutate('null', random)).toBeNull()
+		expect(mutate('{"a":null}', random)).toBeNull()
 	})
 
-	test('draws twice from random for any JSON body, so the next fault is the same either way', () => {
-		let draws = 0
-		let counting = () => {
-			draws++
-			return 0.5
-		}
-		mutateJson('{}', counting)
-		expect(draws).toBe(2)
-		draws = 0
-		mutateJson(BODY, counting)
-		expect(draws).toBe(2)
+	test('is decided by its two draws alone', () => {
+		expect(mutateJson(BODY, 0, 0)).toEqual(mutateJson(BODY, 0, 0))
+		expect(mutateJson(BODY, 0, 0)?.path).toBe('$.name')
+		expect(mutateJson(BODY, 0, 0)?.change).toBe('"Stav Hall" → ""')
 	})
 })
