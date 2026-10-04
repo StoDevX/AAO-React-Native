@@ -24,6 +24,8 @@ const WireEventSchema = z.object({
 	// Absent, never empty: a source that names no sponsor omits the field, so
 	// nothing downstream has to read `[]` and a missing key as the same thing.
 	organization: z.array(z.string()).optional(),
+	// Absent, never empty, for the same reason as `organization`.
+	image: z.string().optional(),
 	config: z.object({
 		startTime: z.boolean(),
 		endTime: z.boolean(),

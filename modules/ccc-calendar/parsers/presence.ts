@@ -19,9 +19,26 @@ const PresenceEventSchema = z.object({
 	location: z.string().default(''),
 	startDateTimeUtc: z.string(),
 	endDateTimeUtc: z.string(),
+	hasCoverImage: z.boolean().default(false),
+	photoUriWithVersion: z.string().optional(),
 })
 
 const EVENT_PAGE = 'https://stolaf.presence.io/event/'
+
+/**
+ * Where Presence's own site loads an event's cover image from: its campus CDN
+ * and the campus's `apiId`, then the event's `photoUriWithVersion`. The
+ * feed's own `photoUri` names a file but not where it lives, and the
+ * `cdn.presence.io/eventphotos/` link on each event page's `og:image` 404s.
+ */
+const EVENT_PHOTOS =
+	'https://stolaf-cdn.presence.io/event-photos/09ddef77-5009-4348-8540-c9bfc6ade6bc/'
+
+function coverImage(event: z.infer<typeof PresenceEventSchema>): string | undefined {
+	return event.hasCoverImage && event.photoUriWithVersion
+		? `${EVENT_PHOTOS}${event.photoUriWithVersion}`
+		: undefined
+}
 
 function toWireEvent(event: z.infer<typeof PresenceEventSchema>, now: Date): WireEvent {
 	// Presence already emits ISO-8601 with a `Z`, unlike TEC's naive
@@ -37,6 +54,8 @@ function toWireEvent(event: z.infer<typeof PresenceEventSchema>, now: Date): Wir
 	let descriptionLinks = htmlToSegments(event.description).flatMap((segment) =>
 		segment.type === 'link' ? [segment.url] : [],
 	)
+
+	let image = coverImage(event)
 
 	let startOfToday = new Date(now)
 	startOfToday.setHours(0, 0, 0, 0)
@@ -61,6 +80,7 @@ function toWireEvent(event: z.infer<typeof PresenceEventSchema>, now: Date): Wir
 		// exactly one, so the list it fills is always a single name.
 		categories: [],
 		organization: [event.organizationName],
+		...(image && {image}),
 		config: {
 			startTime: true,
 			endTime: true,

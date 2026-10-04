@@ -29,6 +29,28 @@ test('carries the sponsoring organisation as the only one', () => {
 	expect(parsed.organization).toStrictEqual(['Office of Student Activities'])
 })
 
+test("builds the cover image URL the way Presence's own site does", () => {
+	let [parsed] = parsePresenceEvents([
+		event({hasCoverImage: true, photoUriWithVersion: 'b47c5342-2e64.jpeg?v=3'}),
+	])
+	expect(parsed.image).toBe(
+		'https://stolaf-cdn.presence.io/event-photos/09ddef77-5009-4348-8540-c9bfc6ade6bc/b47c5342-2e64.jpeg?v=3',
+	)
+})
+
+test('leaves the image absent when the event has no cover image', () => {
+	let [parsed] = parsePresenceEvents([
+		event({hasCoverImage: false, photoUriWithVersion: 'b47c5342-2e64.jpeg?v=0'}),
+	])
+	expect(parsed.image).toBeUndefined()
+	expect(parsed).not.toHaveProperty('image')
+})
+
+test('leaves the image absent when the feed predates the cover image fields', () => {
+	let [parsed] = parsePresenceEvents([event()])
+	expect(parsed).not.toHaveProperty('image')
+})
+
 test('strips the HTML out of the description', () => {
 	let [parsed] = parsePresenceEvents([event({description: '<p>Annual <b>training</b>.</p>'})])
 	// fastGetTrimmedText joins text runs split by a tag with a space -- see
