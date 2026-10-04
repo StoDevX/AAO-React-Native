@@ -15,7 +15,7 @@ export function showNameOrEmail(c: ContactPersonType): string {
  */
 export function withDetail(
 	org: StudentOrgType,
-	detail: StudentOrgDetailType | undefined,
+	detail: StudentOrgDetailType | null | undefined,
 ): StudentOrgDetailType {
 	return detail?.organizationUri === org.organizationUri ? {...org, ...detail} : org
 }
@@ -39,7 +39,8 @@ export function meetingRows(org: StudentOrgType): MeetingRow[] {
 		]
 	}
 
-	let meetings = org.meetings.trim()
+	// Typed as always present, but a cached record from an older server can lack it.
+	let meetings = org.meetings?.trim() ?? ''
 	return meetings ? [{label: 'Meets', value: meetings}] : []
 }
 

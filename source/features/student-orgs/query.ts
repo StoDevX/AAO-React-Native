@@ -1,4 +1,5 @@
 import {client} from '@frogpond/api'
+import {isHTTPError} from 'ky'
 import {queryOptions} from '@tanstack/react-query'
 import type {StudentOrgDetailType, StudentOrgType} from './types'
 
@@ -32,9 +33,21 @@ export const orgByNameOptions = (name: string) =>
 		select: (orgs) => orgs.find((org) => org.name === name),
 	})
 
-async function fetchOrgDetail(uri: string, {signal}: {signal: AbortSignal}) {
-	let response = await client.get(`orgs/uri/${encodeURIComponent(uri)}`, {signal}).json()
-	return response as StudentOrgDetailType
+/// `null` where the server has no such route yet, or no such org: the screen
+/// shows what `/orgs` gave it, and nothing went wrong.
+async function fetchOrgDetail(
+	uri: string,
+	{signal}: {signal: AbortSignal},
+): Promise<StudentOrgDetailType | null> {
+	try {
+		let response = await client.get(`orgs/uri/${encodeURIComponent(uri)}`, {signal}).json()
+		return response as StudentOrgDetailType
+	} catch (error) {
+		if (isHTTPError(error) && error.response.status === 404) {
+			return null
+		}
+		throw error
+	}
 }
 
 /**
@@ -47,7 +60,8 @@ async function fetchOrgDetail(uri: string, {signal}: {signal: AbortSignal}) {
 // oxlint-disable-next-line typescript/explicit-module-boundary-types
 export const orgDetailOptions = (uri: string) =>
 	queryOptions({
-		queryKey: [...keys.all, 'detail', uri] as const,
+		// Its own head, so a failure here is not reported as the org list's.
+		queryKey: ['org-detail', uri] as const,
 		queryFn: ({signal}) => fetchOrgDetail(uri, {signal}),
 		staleTime,
 		retry: false,

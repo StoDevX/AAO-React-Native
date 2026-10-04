@@ -13,8 +13,7 @@ import {type CalendarBodyHandle, DayView, EventList} from '@frogpond/event-list'
 import {useMomentTimer} from '@frogpond/timer'
 
 import {dayWindow, useFacets, useOccurrences} from '../../database/calendar/read'
-import {HIDDEN_FROM_CALENDAR} from './constants'
-import {calendarView, needsPresence, PRESENCE_SOURCE} from './scope'
+import {calendarView} from './scope'
 import {useCalendarFilterStore} from './store'
 
 type Props = {
@@ -30,25 +29,20 @@ export function CalendarScreen({organization}: Props): React.ReactNode {
 	let router = useRouter()
 	let {now} = useMomentTimer({intervalMs: 60000})
 	let {all, enabled, toggle} = useCalendarSources()
-	let {failed, isLoading, isRefetching, refetchAll} = useMergedEvents(enabled)
 	let bodyRef = React.useRef<CalendarBodyHandle>(null)
 
 	let saved = useCalendarFilterStore()
-	let {filter, mode, adjustable} = calendarView(saved, organization)
+	let {filter, mode, adjustable, sourceIds, exclude} = calendarView(saved, organization)
 
-	let enabledIds = useMemo(() => enabled.map((source) => source.id), [enabled])
-
-	// Once, as the screen opens: a reader who then turns Presence off here
-	// means it, and it stays off.
-	let checkedPresence = React.useRef(false)
-	let turnOnPresence = needsPresence(organization, enabledIds)
-	React.useEffect(() => {
-		if (checkedPresence.current) return
-		checkedPresence.current = true
-		if (turnOnPresence) {
-			toggle(PRESENCE_SOURCE)
-		}
-	}, [turnOnPresence, toggle])
+	// An organization's view reads its own calendars, never the reader's choice.
+	let sources = useMemo(
+		() => (sourceIds ? all.filter((source) => sourceIds.includes(source.id)) : enabled),
+		// `sourceIds` follows from `organization` alone, a fresh array each render.
+		// oxlint-disable-next-line react-hooks/exhaustive-deps
+		[all, enabled, organization],
+	)
+	let {failed, isLoading, isRefetching, refetchAll} = useMergedEvents(sources)
+	let enabledIds = useMemo(() => sources.map((source) => source.id), [sources])
 
 	// `dayWindow` floors to the day, so this recomputes every minute but keeps
 	// returning a window equal by value -- the read hooks below key their
@@ -63,19 +57,22 @@ export function CalendarScreen({organization}: Props): React.ReactNode {
 		window: readWindow,
 		sourceIds: enabledIds,
 		filters: filter ? [filter] : [],
-		exclude: HIDDEN_FROM_CALENDAR,
+		exclude,
 	})
+	// The filter menus' choices, which only the reader's own calendar offers.
 	let categories = useFacets({
 		axis: 'category',
 		window: readWindow,
 		sourceIds: enabledIds,
-		exclude: HIDDEN_FROM_CALENDAR,
+		exclude,
+		enabled: adjustable,
 	})
 	let organizations = useFacets({
 		axis: 'organization',
 		window: readWindow,
 		sourceIds: enabledIds,
-		exclude: HIDDEN_FROM_CALENDAR,
+		exclude,
+		enabled: adjustable,
 	})
 
 	// A database read that failed leaves every enabled calendar unreadable, so
@@ -84,7 +81,7 @@ export function CalendarScreen({organization}: Props): React.ReactNode {
 	// `useMergedEvents` cannot see this: as far as the network is concerned
 	// nothing went wrong. What actually went wrong goes to Sentry from
 	// `read.ts`; there is nothing on this screen a reader could do with it.
-	let unreadable = readFailed ? enabled : failed
+	let unreadable = readFailed ? sources : failed
 
 	// A read still going -- the first one, or a retry of one that failed, when
 	// React Query holds neither events nor an error -- is loading, not an empty
@@ -115,20 +112,25 @@ export function CalendarScreen({organization}: Props): React.ReactNode {
 				onPressEvent={onPressEvent}
 				onRefresh={refetchAll}
 				refreshing={isRefetching}
-				sources={enabled}
+				sources={sources}
 			/>
-			{adjustable ? <CalendarModePicker mode={mode} onSelectMode={saved.selectMode} /> : null}
-			<CalendarPicker
-				categories={categories}
-				enabledIds={enabledIds}
-				filter={filter}
-				onSelectFilter={saved.selectFilter}
-				onToggleSource={toggle}
-				onTodayPress={mode === 'day' ? onTodayPress : undefined}
-				organizations={organizations}
-				showsFilters={adjustable}
-				sources={all}
-			/>
+			{/* An organization's view has nothing for the reader to choose: its
+			    filter, mode and calendars are all its own. */}
+			{adjustable ? (
+				<>
+					<CalendarModePicker mode={mode} onSelectMode={saved.selectMode} />
+					<CalendarPicker
+						categories={categories}
+						enabledIds={enabledIds}
+						filter={filter}
+						onSelectFilter={saved.selectFilter}
+						onToggleSource={toggle}
+						onTodayPress={mode === 'day' ? onTodayPress : undefined}
+						organizations={organizations}
+						sources={all}
+					/>
+				</>
+			) : null}
 		</>
 	)
 }

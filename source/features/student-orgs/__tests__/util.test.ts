@@ -44,6 +44,10 @@ describe('withDetail', () => {
 		expect(withDetail(makeOrg(), undefined)).toEqual(makeOrg())
 	})
 
+	test("the list's record stands alone when the server has no record for it", () => {
+		expect(withDetail(makeOrg(), null)).toEqual(makeOrg())
+	})
+
 	test("another org's record is not mixed in", () => {
 		let other: StudentOrgDetailType = {
 			...makeOrg({organizationUri: 'chess-club'}),
@@ -76,6 +80,11 @@ describe('meetingRows', () => {
 		expect(meetingRows(makeOrg({meetings: 'Norway Room7pm-8pm'}))).toEqual([
 			{label: 'Meets', value: 'Norway Room7pm-8pm'},
 		])
+	})
+
+	test('a record without meetings at all has no rows', () => {
+		let org = {...makeOrg(), meetings: undefined} as unknown as StudentOrgType
+		expect(meetingRows(org)).toEqual([])
 	})
 
 	test('an org that never meets has no rows', () => {

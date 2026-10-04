@@ -6,8 +6,6 @@ import {
 	foregroundStyle,
 	frame,
 	listRowBackground,
-	listRowInsets,
-	listRowSeparator,
 	listStyle,
 	multilineTextAlignment,
 } from '@expo/ui/swift-ui/modifiers'
@@ -18,8 +16,7 @@ import {SelectableText} from '@frogpond/selectable-text'
 import * as c from '@frogpond/colors'
 import {openUrl} from '@frogpond/open-url'
 import {sendEmail} from '../../source/components/send-email'
-import {FittedImageRow} from '../../source/components/inset-image-row'
-import {PhotoViewerModal} from '../../source/features/map/card/photo-viewer-modal'
+import {ViewablePhotoRow} from '../../source/components/inset-image-row'
 import {
 	instagramHandle,
 	meetingRows,
@@ -58,17 +55,6 @@ const CREDIT_MODIFIERS = [
 	listRowBackground('clear'),
 ]
 
-/// The cover photo fills its row edge to edge, without a card behind it, as an
-/// event's featured image does.
-const IMAGE_ROW = [
-	listRowBackground('clear'),
-	listRowSeparator('hidden'),
-	listRowInsets({top: 0, leading: 0, bottom: 0, trailing: 0}),
-]
-
-/// The tallest the cover photo is drawn, in points, as for an event's.
-const IMAGE_MAX_HEIGHT = 250
-
 const styles = StyleSheet.create({
 	host: {
 		flex: 1,
@@ -86,7 +72,6 @@ export default function StudentOrgsDetailPage(): React.ReactNode {
 		...orgDetailOptions(listed?.organizationUri ?? ''),
 		enabled: Boolean(listed?.organizationUri),
 	})
-	let [viewingPhoto, setViewingPhoto] = React.useState(false)
 
 	let org = listed ? withDetail(listed, detail) : undefined
 
@@ -125,10 +110,10 @@ export default function StudentOrgsDetailPage(): React.ReactNode {
 
 	let {name: orgName, category, website, contacts, advisors, description} = org
 	let meetings = meetingRows(org)
-	let photoLabel = `Photo for ${orgName}`
-	let socialLinks = org.socialLinks ?? []
-	let officeHours = org.officeHours?.trim() ?? ''
-	let officeLocation = org.officeLocation?.trim() ?? ''
+	// The server keeps every handle the officers typed, repeats included.
+	let socialLinks = org.socialLinks ? [...new Set(org.socialLinks)] : []
+	let officeHours = decode(org.officeHours?.trim() ?? '')
+	let officeLocation = decode(org.officeLocation?.trim() ?? '')
 	let additionalInformation = org.additionalInformation?.trim() ?? ''
 	let openCalendar = () =>
 		router.navigate({pathname: '/calendar/organization', params: {name: orgName}})
@@ -144,19 +129,8 @@ export default function StudentOrgsDetailPage(): React.ReactNode {
 
 					{org.photoUrl ? (
 						<Section>
-							<FittedImageRow
-								beside={
-									<PhotoViewerModal
-										label={photoLabel}
-										onClose={() => setViewingPhoto(false)}
-										uri={org.photoUrl}
-										visible={viewingPhoto}
-									/>
-								}
-								label={photoLabel}
-								maxHeight={IMAGE_MAX_HEIGHT}
-								onPress={() => setViewingPhoto(true)}
-								rowModifiers={IMAGE_ROW}
+							<ViewablePhotoRow
+								label={`Photo for ${orgName}`}
 								testID="org-cover-photo"
 								uri={org.photoUrl}
 							/>
