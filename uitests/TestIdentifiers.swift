@@ -736,8 +736,6 @@ struct TestIdentifiers {
 		/// The Support screen's host, set in app/support/index.tsx.
 		static let screen = "screen-support"
 		static let faqs = "FAQs"
-		static let notices = "Notices"
-		static let emergencyContacts = "PubSafe • SARN • 911"
 		static let sendFeedback = "Send Feedback"
 		/// ShareTelemetryToggle's label, in source/features/telemetry/consent-toggle.tsx.
 		static let telemetryToggle = "Share anonymous usage and crash data"
