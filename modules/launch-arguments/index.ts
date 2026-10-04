@@ -6,6 +6,9 @@ export type FixtureMode = 'live' | 'serve' | 'record'
 /** Whether a chaos run records the responses it gets, or answers from a recording. */
 export type ChaosMode = 'record' | 'replay'
 
+/** Which kind of chaos run: a fuzzer, or a realistic session. */
+export type ChaosProfile = 'fuzz' | 'session'
+
 interface LaunchArgumentsModule extends NativeModule {
 	isUITesting: boolean
 	fixtureMode: FixtureMode
@@ -14,6 +17,7 @@ interface LaunchArgumentsModule extends NativeModule {
 	chaosLaunch: number
 	chaosMode: ChaosMode
 	chaosFaultRate: number
+	chaosProfile: ChaosProfile
 }
 
 const LaunchArguments = requireNativeModule<LaunchArgumentsModule>('LaunchArguments')
@@ -25,3 +29,4 @@ export const chaosSeed: number = LaunchArguments.chaosSeed
 export const chaosLaunch: number = LaunchArguments.chaosLaunch
 export const chaosMode: ChaosMode = LaunchArguments.chaosMode
 export const chaosFaultRate: number = LaunchArguments.chaosFaultRate
+export const chaosProfile: ChaosProfile = LaunchArguments.chaosProfile
