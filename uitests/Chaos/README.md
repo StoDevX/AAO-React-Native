@@ -128,7 +128,11 @@ Under it, the app:
 - never reaches the OleCard sign-in or PaperCut;
 - sends nothing to Sentry;
 - has no LogBox, whose red screen would cover the app and hide a render
-  error from the monkey; the chaos error boundary shows it instead.
+  error from the monkey; the chaos error boundary shows it instead. A
+  screen's render error is caught sooner, by the boundary each screen of
+  the root stack has. It reports the error as a `fatal` finding, and draws
+  its fallback with the chaos boundary's ID, so the run stops even in a
+  form sheet or modal that hides the beacon.
 
 ## How It Works
 

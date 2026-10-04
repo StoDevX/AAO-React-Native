@@ -540,7 +540,13 @@ struct TestIdentifiers {
 		/// names the view shown; in source/features/mess/front-page-screen.tsx.
 		static let byIssue = "By Issue"
 		static let latest = "Latest"
-		static let viewMenuPrefix = "View: "
+		static let viewMenuPrefix = "More, "
+		/// The view menu's way to the staff directory, in source/features/mess/front-page-screen.tsx.
+		static let staffMenuItem = "Staff"
+		/// The start of each staff tile's name, which ends in its profile's id, in source/features/mess/staff-screen.tsx.
+		static let staffTilePrefix = "mess-staff-tile-"
+		/// The heading over a staff member's bio, in source/features/mess/staff-screen.tsx.
+		static let staffBioHeading = "About"
 
 		/// The newest issue's tile and every other issue's, in source/features/mess/issue-grid.tsx.
 		static let topTile = "mess-top-tile"

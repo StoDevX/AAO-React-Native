@@ -11,7 +11,9 @@ import type {Byline, StaffProfile} from '../types'
 const WRITER: Byline = {id: 392, name: 'Kenzie Nguyen'}
 
 const PROFILE: StaffProfile = {
+	id: 1,
 	name: 'Kenzie Nguyen',
+	role: 'Staff Writer',
 	bio: 'Kenzie is a senior.',
 	photo: {url: 'https://x.test/kenzie.jpg', width: 300, height: 300},
 	year: '2025-2026',

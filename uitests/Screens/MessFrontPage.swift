@@ -198,6 +198,34 @@ struct MessFrontPage: Screen {
 		return MessStoryScreen(app: app)
 	}
 
+	/// Open the staff directory from the view menu, then the first person in it, and wait for
+	/// their page: titled with the name their tile showed, with their bio under About.
+	@discardableResult
+	func openFirstStaffMember() -> Self {
+		pickFromViewMenu(TestIdentifiers.News.staffMenuItem)
+		XCTAssertTrue(
+			viewMenu.waitForNonExistence(timeout: 30),
+			"Staff should open the directory on a page of its own")
+		let tile = app.buttons
+			.matching(NSPredicate(format: "identifier BEGINSWITH %@", TestIdentifiers.News.staffTilePrefix))
+			.firstMatch
+		XCTAssertTrue(tile.waitForExistence(timeout: 30), "the directory should show the staff as tiles")
+		capture("The Messenger's staff directory")
+		XCTAssertTrue(tile.waitForHittable(), "a person's tile should be ready to tap")
+		// A tile reads its person's name alone; their role waits for their page.
+		let name = tile.label
+		XCTAssertFalse(name.isEmpty, "a person's tile should name them")
+		tile.tap()
+		let title = app.navigationBars.staticTexts[name].firstMatch
+		XCTAssertTrue(title.waitForExistence(timeout: 30), "tapping \(name) should open their page")
+		// The page decides to draw its About section when the person has a bio, as the fixture's
+		// first person does.
+		let bio = app.staticTexts[TestIdentifiers.News.staffBioHeading].firstMatch
+		capture("A staff member's page")
+		XCTAssertTrue(bio.waitForExistence(timeout: 10), "\(name)'s page should show their bio under About")
+		return self
+	}
+
 	/// Open the view menu and tap its item named `label`.
 	private func pickFromViewMenu(_ label: String) {
 		XCTAssertTrue(viewMenu.waitForHittable(timeout: 30), "the view menu should be ready to tap")

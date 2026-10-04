@@ -29,6 +29,12 @@ class ModuleNewsTests: UITestCaseUnbooted {
 			.filterLatest(to: TestIdentifiers.News.newsSection)
 	}
 
+	func testOlafMessengerMenuOpensAStaffMember() throws {
+		MessFrontPage(app: app)
+			.navigate()
+			.openFirstStaffMember()
+	}
+
 	func testOlafMessengerOpensAnOlderIssue() throws {
 		MessFrontPage(app: app)
 			.navigate()
