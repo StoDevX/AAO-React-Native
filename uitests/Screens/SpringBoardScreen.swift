@@ -16,10 +16,12 @@ struct SpringBoardScreen: Screen {
 		// A freshly installed app lands past the first page, so page through
 		// until its icon is on screen. Each page is given a moment to settle:
 		// mid-slide the icon is not yet hittable, and swiping again then
-		// carries straight past it.
+		// carries straight past it. The first page gets longer, since the Home
+		// Screen is still sliding in from the app: two seconds there swiped
+		// past the icon and on into the App Library.
 		let icon = springboard.icons[appName].firstMatch
 		var pages = 0
-		while !icon.waitForHittable(timeout: 2) && pages < 3 {
+		while !icon.waitForHittable(timeout: pages == 0 ? 10 : 4) && pages < 3 {
 			springboard.swipeLeft()
 			pages += 1
 		}
