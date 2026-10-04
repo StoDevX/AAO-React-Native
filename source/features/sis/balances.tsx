@@ -1,6 +1,6 @@
 import * as React from 'react'
 import {StyleSheet} from 'react-native'
-import {Host, HStack, List, RNHostView, Section, Text, VStack} from '@expo/ui/swift-ui'
+import {Host, HStack, List, Section, Text, VStack} from '@expo/ui/swift-ui'
 import {
 	font,
 	foregroundStyle,
@@ -17,7 +17,7 @@ import {sto} from '../../lib/colors'
 import {useRouter} from 'expo-router'
 import {NoCredentialsError, credentialsOptions} from '../../lib/login'
 import {useQuery} from '@tanstack/react-query'
-import {FaqBannerGroup} from '../../features/faqs/banner'
+import {FaqBannerSlot} from '../../features/faqs/banner'
 import {FAQ_TARGETS} from '../../features/faqs/constants'
 import {DetailRow} from '../../components/rows'
 import {balanceValue} from './lib'
@@ -51,13 +51,11 @@ export const BalancesView = (): React.ReactNode => {
 				]}
 			>
 				<Section modifiers={[listRowBackground('clear')]}>
-					<RNHostView matchContents={true}>
-						<FaqBannerGroup
-							onPressFaq={(faqId) => router.navigate({pathname: '/faq', params: {faqId}})}
-							style={styles.banner}
-							target={FAQ_TARGETS.BALANCES}
-						/>
-					</RNHostView>
+					<FaqBannerSlot
+						onPressFaq={(faqId) => router.navigate({pathname: '/faq', params: {faqId}})}
+						style={styles.banner}
+						target={FAQ_TARGETS.BALANCES}
+					/>
 				</Section>
 
 				<Section footer={<Text>{DISCLAIMER}</Text>} title="Balances">
@@ -131,8 +129,8 @@ let styles = StyleSheet.create({
 		flex: 1,
 		backgroundColor: c.systemGroupedBackground,
 	},
+	// No horizontal margin: the list row already insets its content.
 	banner: {
-		marginHorizontal: 16,
 		marginTop: 16,
 	},
 })
