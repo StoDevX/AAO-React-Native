@@ -8,7 +8,7 @@ import {formatBytes} from './format.mjs'
  * How much Hermes bytecode one pull request may add before the gate fails.
  * Bytecode is what the app ships, so it is what the gate measures.
  */
-export const HERMES_GROWTH_LIMIT_BYTES = 50 * 1024
+export const HERMES_GROWTH_LIMIT_BYTES = 10 * 1024
 
 /** The label that lets intended growth through. */
 export const ACCEPT_LABEL = 'size/accepted'
