@@ -147,6 +147,12 @@ export function withRecordedSettings(options, runJsonText, recordedSteps) {
 	return {...withRecordedRotation(options, recordedSteps), profile: 'fuzz'}
 }
 
+/**
+ * How long after launch a finding still belongs to its cold start: the
+ * monkey waits up to 30 s for the bundle and 30 s more for something to press.
+ */
+export const COLD_START_MS = 60_000
+
 /** The launches a kill began: a kill step is logged with the launch it started. */
 export function coldStartLaunches(steps) {
 	return new Set(
@@ -288,9 +294,37 @@ export function readableAttachmentNames(manifest) {
 export function firstDivergence(before, after) {
 	let length = Math.min(before.length, after.length)
 	for (let i = 0; i < length; i++) {
-		if (before[i] !== after[i]) return i
+		if (!sameStep(before[i], after[i])) return i
 	}
 	return null
+}
+
+/**
+ * Whether a replayed step line did what the recorded one did. A recording
+ * made before steps logged what they typed has no `text`, so a replayed step
+ * is compared without its own.
+ */
+function sameStep(recorded, replayed) {
+	if (recorded === replayed) return true
+	let a = parseStep(recorded)
+	let b = parseStep(replayed)
+	if (!a || !b || 'text' in a) return false
+	let {text: _ignored, ...rest} = b
+	return sortedJson(a) === sortedJson(rest)
+}
+
+/** A step line's fields, or null for a line that is not JSON. */
+function parseStep(line) {
+	try {
+		return JSON.parse(line)
+	} catch {
+		return null
+	}
+}
+
+/** `step` as JSON with its keys in order, so two steps compare by content. */
+function sortedJson(step) {
+	return JSON.stringify(step, Object.keys(step).sort())
 }
 
 /**
@@ -405,7 +439,8 @@ function addTo(groups, key, kind, example) {
  * kind, console errors and stalls by kind and first line with digits
  * collapsed, and mutations and attempts to leave the app as bare counts.
  * Anything the ignore list matches is counted as ignored instead. A finding
- * from one of `coldLaunches` is grouped as its kind `(cold start)`.
+ * made in the first `COLD_START_MS` of one of `coldLaunches` is grouped as its
+ * kind `(cold start)`.
  */
 export function summarizeRun({findings, warnings, ignore, coldLaunches = new Set()}) {
 	let ignored = 0
@@ -437,8 +472,10 @@ export function summarizeRun({findings, warnings, ignore, coldLaunches = new Set
 			continue
 		}
 		let line = firstLine(message)
-		// A finding from a launch a kill began came from restoring saved state.
-		let kind = coldLaunches.has(finding.launch) ? `${finding.kind} (cold start)` : finding.kind
+		// Made while a launch a kill began was still starting, it came from restoring saved state.
+		let cold =
+			coldLaunches.has(finding.launch) && (finding.sinceLaunchMs ?? Infinity) < COLD_START_MS
+		let kind = cold ? `${finding.kind} (cold start)` : finding.kind
 		addTo(findingGroups, `${kind} ${line.replaceAll(/\d+/gu, '#')}`, kind, line)
 	}
 

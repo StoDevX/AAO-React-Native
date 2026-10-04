@@ -23,6 +23,8 @@ export type Finding = {
 	at: string
 	/** The launch it was made in, so the runner can tell a cold start's findings apart. */
 	launch: number
+	/** How long after the bundle loaded it was made, which tells a cold start from later. */
+	sinceLaunchMs: number
 }
 
 const STOPPING: ReadonlyArray<FindingKind> = ['fatal', 'unhandled-rejection', 'divergence']
@@ -31,6 +33,9 @@ const STOPPING: ReadonlyArray<FindingKind> = ['fatal', 'unhandled-rejection', 'd
 export function isStopping(kind: FindingKind): boolean {
 	return STOPPING.includes(kind)
 }
+
+/** When this bundle loaded: a launch's findings are timed from here. */
+const LOADED_AT = Date.now()
 
 type FindingsState = {
 	/** The first stopping finding, as the beacon shows it; empty while none. */
@@ -78,7 +83,14 @@ export function describe(error: unknown): {message: string; stack: string | null
 export function reportFinding(kind: FindingKind, error: unknown): void {
 	let {message, stack} = describe(error)
 	let {file, latest, launch} = useChaosFindings.getState()
-	let finding: Finding = {kind, message, stack, at: new Date().toISOString(), launch}
+	let finding: Finding = {
+		kind,
+		message,
+		stack,
+		at: new Date().toISOString(),
+		launch,
+		sinceLaunchMs: Date.now() - LOADED_AT,
+	}
 	try {
 		file?.append(JSON.stringify(finding))
 	} catch {

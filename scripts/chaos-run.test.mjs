@@ -842,9 +842,49 @@ test('finds the launches a kill began', () => {
 })
 
 test("marks a finding from a cold start's launch", () => {
-	let made = (kind, message, launch) => ({kind, message, stack: null, at: '', launch})
+	let made = (kind, message, launch) => ({
+		kind,
+		message,
+		stack: null,
+		at: '',
+		launch,
+		sinceLaunchMs: 0,
+	})
 	let summary = summarizeRun({
 		findings: [made('console-error', 'rehydrate failed', 1), made('console-error', 'later', 0)],
+		warnings: [],
+		ignore: [],
+		coldLaunches: new Set([1]),
+	})
+	assert.deepEqual(
+		summary.findings.map((group) => group.kind),
+		['console-error (cold start)', 'console-error'],
+	)
+})
+
+test('a step recorded before steps logged their text still matches its replay', () => {
+	let recorded = [JSON.stringify({step: 0, action: 'tap', label: 'Menus'})]
+	let replayed = [JSON.stringify({step: 0, action: 'tap', label: 'Menus', text: ''})]
+	assert.equal(firstDivergence(recorded, replayed), null)
+})
+
+test('a step that typed something else still diverges', () => {
+	let recorded = [JSON.stringify({step: 0, action: 'type', text: 'Stav'})]
+	let replayed = [JSON.stringify({step: 0, action: 'type', text: 'Cage'})]
+	assert.equal(firstDivergence(recorded, replayed), 0)
+})
+
+test("marks only a cold start's own findings, not the rest of its launch", () => {
+	let made = (message, sinceLaunchMs) => ({
+		kind: 'console-error',
+		message,
+		stack: null,
+		at: '',
+		launch: 1,
+		sinceLaunchMs,
+	})
+	let summary = summarizeRun({
+		findings: [made('rehydrate failed', 4000), made('much later', 400_000)],
 		warnings: [],
 		ignore: [],
 		coldLaunches: new Set([1]),
