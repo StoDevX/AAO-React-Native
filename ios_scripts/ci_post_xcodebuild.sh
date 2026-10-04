@@ -2,6 +2,11 @@
 set -ex
 echo "Running ci_post_xcodebuild.sh"
 
+# Tell Sentry about an archive once Xcode Cloud has built it: size analysis, then
+# a release with the commits it contains and a TestFlight deploy. A failed step
+# warns rather than failing the build, so a Sentry outage cannot hold up a
+# TestFlight build.
+
 # Only archive actions produce an .xcarchive; build and test actions have
 # nothing for size analysis.
 if [ -z "${CI_ARCHIVE_PATH:-}" ]; then
@@ -51,3 +56,35 @@ mise exec -- sentry-cli build upload "${CI_ARCHIVE_PATH}" \
   --build-configuration Release \
   "${vcs_args[@]}" \
   || echo "warning: Sentry size analysis upload failed"
+
+# A pull request build ships nowhere, so it gets no release.
+if [ -n "${CI_PULL_REQUEST_NUMBER:-}" ]; then
+  echo "A pull request build ships nowhere; skipping the Sentry release"
+  exit 0
+fi
+
+export SENTRY_ORG='frog-pond-labs'
+export SENTRY_PROJECT='all-about-olaf'
+
+# Read the release name from the archived app rather than rebuilding it, so it
+# is exactly what the SDK reports: <bundle id>@<version>+<build>, the default
+# when Sentry.init sets no release.
+app="$(find "${CI_ARCHIVE_PATH}/Products/Applications" -maxdepth 1 -name '*.app' | head -n 1)"
+plist="${app}/Info.plist"
+bundle_id="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' "${plist}")"
+version="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "${plist}")"
+build="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleVersion' "${plist}")"
+release="${bundle_id}@${version}+${build}"
+echo "Sentry release: ${release}"
+
+# Run one sentry-cli step, and turn a failure into a warning.
+sentry() {
+  mise exec -- sentry-cli "$@" || echo "warning: sentry-cli $1 $2 failed; continuing without it"
+}
+
+sentry releases new "${release}"
+# --ignore-missing: Xcode Cloud's clone may not reach back to the previous
+# release's commit, and a partial list beats none.
+sentry releases set-commits "${release}" --auto --ignore-missing
+sentry releases finalize "${release}"
+sentry deploys new --release "${release}" --env testflight
