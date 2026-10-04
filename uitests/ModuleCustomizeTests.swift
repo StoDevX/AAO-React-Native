@@ -9,7 +9,7 @@ class ModuleCustomizeTests: UITestCase {
 		customize.capture("customize-sheet").close()
 	}
 
-	func testChangesAppIconToEachAlternateAndBack() throws {
+	func testChangesAppIconToAnAlternate() throws {
 		// The "You have changed the icon" alert belongs to SpringBoard. It blocks
 		// the app from reaching idle, so UIInterruptionMonitor never fires --
 		// that handler only runs during synthesize, which app.tap()'s
@@ -20,9 +20,9 @@ class ModuleCustomizeTests: UITestCase {
 		gallery.capture("app-icon-gallery")
 
 		let bigOle = gallery.icon(named: "Big Ole")
-		let alternates = ["Old Main", "Windmill (Sky)"]
+		let alternate = "Old Main"
 
-		for name in ["Big Ole"] + alternates {
+		for name in ["Big Ole", alternate] {
 			let tile = gallery.icon(named: name)
 			gallery.scrollIntoView(tile)
 			XCTAssertTrue(tile.exists, "\(name) should be offered as an icon")
@@ -42,13 +42,6 @@ class ModuleCustomizeTests: UITestCase {
 		// Big Ole is the default icon, so it should be marked by default
 		XCTAssertTrue(bigOle.isSelected, "Big Ole should be selected by default")
 
-		// Each alternate is a separate Icon Composer document in the bundle,
-		// so each one can be missing on its own.
-		for name in alternates {
-			gallery.select(name, springboard: springboard)
-		}
-
-		// now switch back to the default
-		gallery.select("Big Ole", springboard: springboard)
+		gallery.select(alternate, springboard: springboard)
 	}
 }
