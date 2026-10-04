@@ -1,12 +1,10 @@
 import * as React from 'react'
-import {StyleSheet, useWindowDimensions} from 'react-native'
-import {useSafeAreaInsets} from 'react-native-safe-area-context'
+import {StyleSheet} from 'react-native'
 import {Stack, useRouter} from 'expo-router'
-import {Host, HStack, List, ScrollView, Section, Text, VStack} from '@expo/ui/swift-ui'
+import {Host, List, ScrollView, Section, Text, VStack} from '@expo/ui/swift-ui'
 import {
 	accessibilityAddTraits,
 	font,
-	foregroundStyle,
 	frame,
 	listStyle,
 	padding,
@@ -16,26 +14,21 @@ import {
 import {useQuery} from '@tanstack/react-query'
 import * as c from '@frogpond/colors'
 import {NoticeView} from '@frogpond/notice'
-import {TileGrid, useTileColumns} from '../../components/tile-grid'
+import {TileGrid, useTileColumns, useTileWidth} from '../../components/tile-grid'
 import {FILL_WIDTH, SCREEN_MARGIN, TILE_SPACING} from '../../components/tile-layout'
-import {PersonPhoto} from '../directory/person-photo'
+import {PersonHeader} from '../directory/person-header'
 import {PersonTile} from '../directory/person-tile'
 import {groupStaff, photoSubjectOf} from './lib/staff'
 import {MessPage, UnloadedPage} from './mess-page'
 import {PageMessage} from './page-notice'
 import {messStaffOptions} from './query'
+import type {StaffProfile} from './types'
 
 /** Begins the name of each tile of the staff directory, which ends in its profile's id, for a UI test. */
 export const STAFF_TILE_PREFIX = 'mess-staff-tile-'
 
-/** The photo on a person's page, at the college directory's width. */
-const PHOTO_WIDTH = 80
-
 const HEADING = [font({textStyle: 'headline'}), accessibilityAddTraits(['isHeader'])]
-const NAME = [font({textStyle: 'title2', weight: 'semibold'}), foregroundStyle(c.label)]
-const ROLE = [font({textStyle: 'subheadline'}), foregroundStyle(c.secondaryLabel)]
 const BIO = [textSelection(true)]
-const NAME_COLUMN = [frame({maxWidth: Infinity, alignment: 'leading'})]
 const COLUMN = [
 	padding({leading: SCREEN_MARGIN, trailing: SCREEN_MARGIN, top: SCREEN_MARGIN}),
 	frame({maxWidth: FILL_WIDTH}),
@@ -49,15 +42,8 @@ const COLUMN = [
 export function StaffScreen(): React.ReactNode {
 	let router = useRouter()
 	let staff = useQuery(messStaffOptions)
-	let {width: screenWidth} = useWindowDimensions()
-	// The scroll view keeps its content inside the safe area, so in landscape the columns share
-	// the width left once the notch's side insets are taken, as the directory's grid does.
-	let insets = useSafeAreaInsets()
 	let columns = useTileColumns()
-	let contentWidth = screenWidth - insets.left - insets.right
-	// A Grid sizes a cell to its content, so a lone tile in a short row would fill the screen;
-	// every tile is pinned to a column's width instead.
-	let tileWidth = (contentWidth - 2 * SCREEN_MARGIN - (columns - 1) * TILE_SPACING) / columns
+	let tileWidth = useTileWidth(columns)
 
 	return (
 		<>
@@ -117,7 +103,12 @@ export function StaffScreen(): React.ReactNode {
  */
 export function StaffMemberScreen({id}: {id: string}): React.ReactNode {
 	let staff = useQuery(messStaffOptions)
-	let person = staff.data?.find((p) => String(p.id) === id)
+	// A refetch can move the list on to a new year without this person, so the page keeps showing
+	// whom it last found rather than turning into Not Found while it is open.
+	let [lastFound, setLastFound] = React.useState<StaffProfile | null>(null)
+	let listed = staff.data?.find((p) => String(p.id) === id)
+	if (listed && listed !== lastFound) setLastFound(listed)
+	let person = listed ?? (lastFound && String(lastFound.id) === id ? lastFound : undefined)
 
 	if (!staff.data) {
 		return (
@@ -143,15 +134,7 @@ export function StaffMemberScreen({id}: {id: string}): React.ReactNode {
 			<Host style={styles.page}>
 				<List modifiers={[listStyle('insetGrouped')]}>
 					<Section>
-						{/* Name leading, photo trailing, both hung from the top, so a long name wraps
-						    down the left of the photo rather than pushing it about */}
-						<HStack alignment="top" spacing={12}>
-							<VStack alignment="leading" modifiers={NAME_COLUMN} spacing={2}>
-								<Text modifiers={NAME}>{person.name}</Text>
-								{person.role ? <Text modifiers={ROLE}>{person.role}</Text> : null}
-							</VStack>
-							<PersonPhoto person={photoSubjectOf(person)} width={PHOTO_WIDTH} />
-						</HStack>
+						<PersonHeader person={photoSubjectOf(person)} subtitle={person.role} />
 					</Section>
 					{person.bio ? (
 						<Section title="About">

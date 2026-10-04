@@ -1,13 +1,28 @@
 import * as React from 'react'
 import {useWindowDimensions} from 'react-native'
+import {useSafeAreaInsets} from 'react-native-safe-area-context'
 import {Grid, Spacer} from '@expo/ui/swift-ui'
 import {accessibilityElement, accessibilityIdentifier} from '@expo/ui/swift-ui/modifiers'
-import {columnsForFontScale, inRows, TILE_SPACING} from './tile-layout'
+import {columnsForFontScale, inRows, SCREEN_MARGIN, TILE_SPACING} from './tile-layout'
 
 /// The number of columns a tile grid has at the current Dynamic Type size.
 export function useTileColumns(): number {
 	let {fontScale} = useWindowDimensions()
 	return columnsForFontScale(fontScale)
+}
+
+/// The width of one tile in a full-screen grid of `columns`, inset by
+/// `SCREEN_MARGIN` on each side. `@expo/ui` has no `LazyVGrid`, and a `Grid`
+/// sizes a cell to its content -- so a lone tile in a short row would fill the
+/// screen. A grid pins every tile to this width instead.
+export function useTileWidth(columns: number): number {
+	let {width: screenWidth} = useWindowDimensions()
+	// SwiftUI's `ScrollView` keeps its content inside the safe area, so in
+	// landscape the columns share the width left once the notch's side insets
+	// are taken -- the grid's own padding is only the screen margin.
+	let insets = useSafeAreaInsets()
+	let contentWidth = screenWidth - insets.left - insets.right
+	return (contentWidth - 2 * SCREEN_MARGIN - (columns - 1) * TILE_SPACING) / columns
 }
 
 type Props<T> = {

@@ -1,10 +1,9 @@
 import * as React from 'react'
-import {StyleSheet, useWindowDimensions} from 'react-native'
-import {useSafeAreaInsets} from 'react-native-safe-area-context'
+import {StyleSheet} from 'react-native'
 import {Host, ScrollView, Text as UIText, VStack} from '@expo/ui/swift-ui'
 import {font, frame, padding, refreshable} from '@expo/ui/swift-ui/modifiers'
 import * as c from '@frogpond/colors'
-import {TileGrid, useTileColumns} from '../../components/tile-grid'
+import {TileGrid, useTileColumns, useTileWidth} from '../../components/tile-grid'
 import {FILL_WIDTH, SCREEN_MARGIN, TILE_SPACING} from '../../components/tile-layout'
 import {PersonTile} from './person-tile'
 import type {DirectoryItem} from './types'
@@ -29,18 +28,8 @@ export function DirectoryResultsGrid({
 	onSelectIndex,
 	onRefresh,
 }: Props): React.ReactNode {
-	let {width: screenWidth} = useWindowDimensions()
-	// SwiftUI's `ScrollView` keeps its content inside the safe area, so in
-	// landscape the columns share the width left once the notch's side insets
-	// are taken -- the padding below is only the screen margin.
-	let insets = useSafeAreaInsets()
-	let contentWidth = screenWidth - insets.left - insets.right
-
 	let columns = useTileColumns()
-	// `@expo/ui` has no `LazyVGrid`, and a `Grid` sizes a cell to its content --
-	// so a lone tile in a short row would fill the screen. Pin every tile to a
-	// column's width instead.
-	let tileWidth = (contentWidth - 2 * SCREEN_MARGIN - (columns - 1) * TILE_SPACING) / columns
+	let tileWidth = useTileWidth(columns)
 
 	let indexed = items.map((person, index) => ({person, index}))
 

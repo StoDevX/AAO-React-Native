@@ -1,6 +1,6 @@
 import * as React from 'react'
 import {afterEach, beforeEach, describe, expect, jest, test} from '@jest/globals'
-import {fireEvent, render, screen} from '@testing-library/react-native'
+import {act, fireEvent, render, screen} from '@testing-library/react-native'
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query'
 import {fetchManifest, fetchSourceBody, type Jrd} from '@frogpond/data-sources'
 
@@ -113,6 +113,21 @@ describe('StaffMemberScreen', () => {
 		expect(screen.getByText('Soren Gjesfjeld')).toBeTruthy()
 		expect(screen.getByText('Senior Reporter')).toBeTruthy()
 		expect(screen.getByText(/^Soren Gjesfjeld is a political science/u)).toBeTruthy()
+	})
+
+	test('keeps showing the person when a refetch moves the list on to a year without them', async () => {
+		queryClient.setQueryData(messKeys.staff, people)
+		await renderWithClient(<StaffMemberScreen id={String(SOREN?.id)} />)
+
+		await act(() => {
+			queryClient.setQueryData(
+				messKeys.staff,
+				people.filter((p) => p.id !== SOREN?.id),
+			)
+		})
+
+		expect(screen.getByText('Senior Reporter')).toBeTruthy()
+		expect(screen.queryByText('Staff Member Not Found')).toBeNull()
 	})
 
 	test('says so when nobody on the staff has that id', async () => {
