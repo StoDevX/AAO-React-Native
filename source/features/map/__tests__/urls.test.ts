@@ -6,6 +6,7 @@ import {
 	mapCredits,
 	mapStyleUrl,
 } from '../urls'
+import {DEFAULT_URL} from '../../../lib/constants'
 
 describe('buildingPhotoUrl', () => {
 	// ccc-server stores `photos` as bare filenames, so a record is useless
@@ -41,8 +42,8 @@ describe('mapStyleUrl', () => {
 	})
 
 	it("draws St. Olaf's dark basemap in dark mode", () => {
-		expect(mapStyleUrl('stolaf', 'dark')).toBe('https://stolaf.dev/campus-map-data/style-dark.json')
-		expect(mapStyleUrl('stolaf', 'light')).toBe('https://stolaf.dev/campus-map-data/style.json')
+		expect(mapStyleUrl('stolaf', 'dark')).toBe(`${DEFAULT_URL}map/style-dark`)
+		expect(mapStyleUrl('stolaf', 'light')).toBe(`${DEFAULT_URL}map/style`)
 	})
 
 	// Carleton's style has no dark variant.

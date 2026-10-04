@@ -1,5 +1,7 @@
+import {getApiRoot} from '@frogpond/api'
 import * as Sentry from '@sentry/react-native'
 
+import {DEFAULT_URL} from '../../lib/constants'
 import {getRunner} from '../client.ts'
 import {catalogFile, filePath, incomingCatalogFile} from './catalog-file.ts'
 import {checkCatalog} from './check.ts'
@@ -7,8 +9,18 @@ import {courseIndexBatches, isAttached, storedEtag, storeEtag} from './index-bui
 import {bumpCourseRevision} from './revision.ts'
 import {CATALOG_SCHEMA} from './schema.ts'
 
-/** The course catalog course-data-tools publishes nightly: every term from five years back. */
-export const CATALOG_URL = 'https://stolaf.dev/course-data/catalog-recent.db'
+/**
+ * The course catalog course-data-tools publishes nightly: every term from five
+ * years back. ccc-server redirects to the published file, so where it lives can
+ * change without an app release; the download is the same either way.
+ *
+ * Read when a refresh starts, not when a module loads: the server address is a
+ * setting read from storage after launch.
+ */
+export function catalogUrl(): string {
+	let root = getApiRoot() ?? new URL(DEFAULT_URL)
+	return new URL('courses/catalog.db', root).toString()
+}
 
 /** A published catalog that failed its check, and would fail it again. */
 export class CatalogRejectedError extends Error {
@@ -66,7 +78,7 @@ async function refresh(signal?: AbortSignal): Promise<{etag: string; changed: bo
 	// reads a whole body before it resolves, so asking is the only way to skip
 	// a download.
 	let known = [stored, rejectedEtag].filter((tag): tag is string => Boolean(tag))
-	let response = await fetch(CATALOG_URL, {
+	let response = await fetch(catalogUrl(), {
 		headers: known.length > 0 ? {'If-None-Match': known.join(', ')} : {},
 		signal,
 	})
