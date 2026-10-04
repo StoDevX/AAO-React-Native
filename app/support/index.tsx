@@ -18,8 +18,8 @@ const styles = StyleSheet.create({
 	host: {
 		flex: 1,
 	},
+	// No horizontal margin: the Form already insets its rows, so the banner lines up with the cards below.
 	banner: {
-		marginHorizontal: 20,
 		marginTop: 20,
 		marginBottom: 10,
 	},
