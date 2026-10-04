@@ -100,7 +100,8 @@ pnpm is the package manager. npm and yarn both choke on the `workspace:*`
 protocol the modules use.
 
 ```bash
-mise run lint         # oxlint
+mise run lint         # all three below, in parallel
+mise run lint:oxlint  # oxlint
 mise run lint:shell   # shellcheck on every tracked .sh
 mise run lint:actions # zizmor on .github/workflows
 mise run format       # oxfmt; run `format:check` to validate instead

@@ -196,7 +196,12 @@ run = [
 
 # --- Code quality ---
 
+# mise runs a task's dependencies in parallel.
 [tasks.lint]
+description = "Run oxlint, shellcheck and zizmor"
+depends = ["lint:oxlint", "lint:shell", "lint:actions"]
+
+[tasks."lint:oxlint"]
 description = "Run oxlint"
 run = "oxlint app/ source/ modules/ scripts/ images/ plugins/"
 
@@ -451,8 +456,6 @@ description = "Run pre-commit checks: format, lint, typecheck, test, deps, lockf
 depends = [
 	"format",
 	"lint",
-	"lint:shell",
-	"lint:actions",
 	"tsc",
 	"test",
 	"validate-catalog-refs",

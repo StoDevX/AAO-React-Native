@@ -70,7 +70,7 @@ jobs:
           cache_key: mise-v2-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('mise.lock') }}
       - run: pnpm install --frozen-lockfile
       - run: mise run bundle-data
-      - run: mise run lint
+      - run: mise run lint:oxlint
 
   jest:
     name: Jest
