@@ -36,6 +36,11 @@ function mutatingSeed(): number {
 	throw new Error('no seed in the first thousand begins with a mutation')
 }
 
+/** The answers on `tape`, without the line taped as each request started. */
+function answers(tape: ReturnType<typeof memoryLineFile>): TapeEntry[] {
+	return parseLines<TapeEntry>(tape.readLines()).filter((entry) => !entry.pending)
+}
+
 function options(overrides: Partial<ChaosFetchOptions> = {}): ChaosFetchOptions {
 	return {
 		mode: 'record',
@@ -69,7 +74,7 @@ describe('record mode', () => {
 		let wrapped = chaosFetch(server(), options({tape}))
 		let response = await wrapped(URL_A)
 		expect(await response.json()).toEqual({ok: true})
-		let [entry] = parseLines<TapeEntry>(tape.readLines())
+		let [entry] = answers(tape)
 		expect(entry).toMatchObject({
 			key: `0 GET ${URL_A} #0`,
 			status: 200,
@@ -86,7 +91,7 @@ describe('record mode', () => {
 			// oxlint-disable-next-line no-await-in-loop
 			await wrapped(URL_A).catch(() => undefined)
 		}
-		let entries = parseLines<TapeEntry>(tape.readLines())
+		let entries = answers(tape)
 		expect(entries).toHaveLength(20)
 		expect(entries.every((e) => e.fault !== 'none')).toBe(true)
 	})
@@ -124,7 +129,7 @@ describe('record mode', () => {
 		let response = await wrapped(URL_A)
 		expect(response).toBe(await network.mock.results[0].value)
 		expect(new Uint8Array(await response.arrayBuffer())).toEqual(CATALOG_BYTES)
-		let [entry] = parseLines<TapeEntry>(tape.readLines())
+		let [entry] = answers(tape)
 		expect(entry).toMatchObject({status: 200, body: '', fault: 'none', live: true})
 	})
 
@@ -136,7 +141,7 @@ describe('record mode', () => {
 			// oxlint-disable-next-line no-await-in-loop
 			await wrapped(URL_A).catch(() => undefined)
 		}
-		let entries = parseLines<TapeEntry>(tape.readLines())
+		let entries = answers(tape)
 		let faults = new Set(entries.map((e) => e.fault))
 		expect([...faults].sort()).toEqual(['latency', 'network', 'none', 'status'])
 		for (let entry of entries.filter((e) => e.fault === 'status')) {
@@ -160,7 +165,7 @@ describe('record mode', () => {
 		})
 		let wrapped = chaosFetch(aborting, options({tape}))
 		await expect(wrapped(URL_A)).rejects.toMatchObject({name: 'AbortError'})
-		expect(parseLines<TapeEntry>(tape.readLines())[0].error).toBe('abort')
+		expect(answers(tape)[0].error).toBe('abort')
 	})
 
 	test('waits out a latency fault', async () => {
@@ -184,7 +189,7 @@ describe('record mode', () => {
 			options({tape, faultRate: 1, random: seededRandom(mutatingSeed())}),
 		)
 		let delivered = await (await wrapped(URL_A)).text()
-		let [entry] = parseLines<TapeEntry>(tape.readLines())
+		let [entry] = answers(tape)
 		expect(entry.fault).toBe('mutated')
 		expect(entry.body).toBe(delivered)
 		expect(delivered).not.toBe(body)
@@ -204,7 +209,7 @@ describe('record mode', () => {
 			options({tape, faultRate: 1, random: seededRandom(mutatingSeed())}),
 		)
 		expect(await (await wrapped(URL_A)).text()).toBe('{}')
-		let [entry] = parseLines<TapeEntry>(tape.readLines())
+		let [entry] = answers(tape)
 		expect(entry).toMatchObject({fault: 'none', body: '{}'})
 		expect(entry.mutation).toBeUndefined()
 	})
@@ -217,7 +222,7 @@ describe('record mode', () => {
 		)
 		let bytes = new Uint8Array(await (await wrapped(URL_A)).arrayBuffer())
 		expect(bytes).toEqual(CATALOG_BYTES)
-		let [entry] = parseLines<TapeEntry>(tape.readLines())
+		let [entry] = answers(tape)
 		expect(entry).toMatchObject({fault: 'none', live: true})
 	})
 })
@@ -258,7 +263,7 @@ describe('a seed repeats its faults', () => {
 			await new Promise((resolve) => setTimeout(resolve, 0))
 		}
 		await Promise.all(pending)
-		return new Map(parseLines<TapeEntry>(tape.readLines()).map((entry) => [entry.key, entry]))
+		return new Map(answers(tape).map((entry) => [entry.key, entry]))
 	}
 
 	test('whatever order the network answers in', async () => {
@@ -407,7 +412,7 @@ describe('session profile', () => {
 		clock = 4000
 		await expect(wrapped(URL_A)).rejects.toThrow('Network request failed')
 		expect(network).not.toHaveBeenCalled()
-		let [first, second] = parseLines<TapeEntry>(tape.readLines())
+		let [first, second] = answers(tape)
 		expect(first).toMatchObject({error: 'network', offline: true})
 		expect(first.offlineMs).toBeGreaterThanOrEqual(5000)
 		expect(second).toMatchObject({error: 'network', offline: true})
@@ -431,6 +436,41 @@ describe('session profile', () => {
 		let tape = memoryLineFile()
 		let wrapped = chaosFetch(server(), options({tape, launch: 3, profile: 'session'}))
 		await wrapped(URL_A).catch(() => undefined)
-		expect(parseLines<TapeEntry>(tape.readLines())[0].key).toBe(`3 GET ${URL_A} #0`)
+		expect(answers(tape)[0].key).toBe(`3 GET ${URL_A} #0`)
+	})
+})
+
+describe('a request the app never saw answered', () => {
+	test('is taped as pending before it is answered', async () => {
+		let tape = memoryLineFile()
+		let release: () => void = () => undefined
+		let network = jest.fn(
+			() =>
+				new Promise<Response>((resolve) => {
+					release = () =>
+						resolve(new Response('{}', {headers: {'content-type': 'application/json'}}))
+				}),
+		)
+		let pending = chaosFetch(network, options({tape}))(URL_A)
+		await new Promise((resolve) => setTimeout(resolve, 0))
+		// The app is killed here, in a real run, before the answer arrives.
+		expect(parseLines<{key: string; pending?: true}>(tape.readLines())).toEqual([
+			{key: `0 GET ${URL_A} #0`, pending: true},
+		])
+		release()
+		await pending
+	})
+
+	test('stays unanswered on replay, rather than stopping the run as a divergence', async () => {
+		let tape = memoryLineFile()
+		tape.append(JSON.stringify({key: `0 GET ${URL_A} #0`, pending: true}))
+		let replayed = chaosFetch(server(), options({tape, mode: 'replay'}))
+		let settled = false
+		void replayed(URL_A).finally(() => {
+			settled = true
+		})
+		await new Promise((resolve) => setTimeout(resolve, 10))
+		expect(settled).toBe(false)
+		expect(useChaosFindings.getState().latest).toBe('')
 	})
 })

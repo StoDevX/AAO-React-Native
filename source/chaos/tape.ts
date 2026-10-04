@@ -28,6 +28,12 @@ export type TapeEntry = {
 	offline?: true
 	/** How long the window this request began lasts, on the request that began it. */
 	offlineMs?: number
+	/**
+	 * Set on the line taped when a request starts, which its answer's line
+	 * replaces. Left alone, it marks a request the app never saw answered,
+	 * because the app was killed first.
+	 */
+	pending?: true
 }
 
 /**

@@ -145,6 +145,10 @@ export function chaosFetch(realFetch: typeof fetch, options: ChaosFetchOptions):
 				reportFinding('divergence', `no recorded answer for ${key}`)
 				throw networkError()
 			}
+			// The recording was killed before this answered, so it never answers.
+			if (entry.pending) {
+				return new Promise<Response>(() => undefined)
+			}
 			if (entry.offlineMs) {
 				goOfflineFor(entry.offlineMs)
 			}
@@ -173,6 +177,8 @@ export function chaosFetch(realFetch: typeof fetch, options: ChaosFetchOptions):
 		} else {
 			fault = pickFault(options.random, options.faultRate)
 		}
+		// Taped now, so a kill before the answer leaves a mark a replay can follow.
+		options.tape.append(JSON.stringify({key, pending: true}))
 		let answered = await answer(realFetch, request, key, fault)
 		let entry: TapeEntry = {...answered.entry, ...offline}
 		let passThrough = answered.passThrough
