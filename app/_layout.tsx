@@ -31,6 +31,7 @@ import {IS_PRODUCTION} from '@frogpond/constants'
 import {StatusBar, useColorScheme} from 'react-native'
 
 import {RootErrorBoundary} from '../source/components/root-error-boundary'
+import {ScreenErrorBoundary} from '../source/components/screen-error-boundary'
 import {SHEET_RESTING_FRACTION} from '../source/lib/constants'
 import {RadioHost, RadioNowPlayingSheet} from '../source/features/streaming/radio'
 
@@ -71,6 +72,20 @@ export const unstable_settings = {
 	anchor: 'index',
 }
 
+/**
+ * Wraps each of the root stack's screens in a boundary of its own, so a screen
+ * that fails to render costs only itself: the stack, its headers, and every
+ * other screen carry on. A screen with a nested stack is caught here whole.
+ */
+const screenLayout: React.ComponentProps<typeof Stack>['screenLayout'] = ({
+	children,
+	navigation,
+}) => (
+	<ScreenErrorBoundary canGoBack={() => navigation.canGoBack()} goBack={() => navigation.goBack()}>
+		{children}
+	</ScreenErrorBoundary>
+)
+
 function RootLayout(): React.ReactNode {
 	const scheme = useColorScheme()
 	const theme = scheme === 'dark' ? DarkTheme : LightTheme
@@ -107,7 +122,10 @@ function RootLayout(): React.ReactNode {
 							{/* Before the stack, so its hidden player sits beneath every screen. */}
 							<RadioHost />
 							<RadioNowPlayingSheet />
-							<Stack screenOptions={{headerBackButtonDisplayMode: 'minimal'}}>
+							<Stack
+								screenLayout={screenLayout}
+								screenOptions={{headerBackButtonDisplayMode: 'minimal'}}
+							>
 								<Stack.Screen name="menus" options={{title: 'Menus'}} />
 								<Stack.Screen name="menu-item-detail" options={DETAIL_SHEET} />
 								<Stack.Screen name="streaming-media" options={{title: 'Streaming Media'}} />
