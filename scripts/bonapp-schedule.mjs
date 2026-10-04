@@ -91,7 +91,7 @@ let minutes = (time) => {
 
 /**
  * Renders rows as the `schedule:` block of a building-hours file, including the
- * blank line that separates it from `breakSchedule:`.
+ * blank line that separates it from any following field.
  *
  * Section order follows `venue.dayparts` rather than the page, because the page
  * leads the Cage with its Sunday breakfast while our file leads with its hours.
@@ -144,26 +144,35 @@ export function composeSchedule(rows, venue) {
 	return out
 }
 
-// Anchors the schedule block in a building-hours file. Both are top-level keys
-// in every file in data/building-hours, and `schedule` is always followed by
-// `breakSchedule`.
-const START = '\nschedule:\n'
-const END = '\nbreakSchedule:\n'
-
+/** Finds the schedule's byte range, preserving comments before the next field. */
 function anchors(fileText) {
-	let start = fileText.indexOf(START)
-	if (start < 0) {
+	let header = /^schedule:[\t ]*(?:\n|$)/mu.exec(fileText)
+	if (!header) {
 		throw new Error('bonapp: the file has no `schedule:` line')
 	}
-	let end = fileText.indexOf(END, start)
-	if (end < 0) {
-		throw new Error('bonapp: the file has no `breakSchedule:` line to stop at')
+	let start = header.index
+	let bodyStart = start + header[0].length
+	let lines = [...fileText.slice(bodyStart).matchAll(/[^\n]+\n?|\n/gu)]
+	let nextField = lines.findIndex((line) => /^[^\s#][^:\n]*:/u.test(line[0]))
+	let boundary = nextField < 0 ? lines.length : nextField
+	let end = nextField < 0 ? fileText.length : bodyStart + lines[nextField].index
+
+	// Trailing top-level comments belong to the following field or to the file
+	// at EOF. Blank lines before those comments stay with the schedule.
+	for (let i = boundary - 1; i >= 0; i--) {
+		let [line] = lines[i]
+		if (line.startsWith('#')) {
+			end = bodyStart + lines[i].index
+		} else if (line.trim() !== '') {
+			break
+		}
 	}
 	return [start, end]
 }
 
 /**
- * Replaces a file's `schedule:` block, leaving every other byte alone.
+ * Replaces a file's `schedule:` block, preserving existing fields and comments.
+ * Adds an empty `breakSchedule` mapping when the file has no break overrides.
  *
  * Text splicing rather than a YAML round-trip: js-yaml's dumper emits block
  * style, which would rewrite every `{days: ...}` line in both owned files into
@@ -172,7 +181,14 @@ function anchors(fileText) {
  */
 export function spliceSchedule(fileText, block) {
 	let [start, end] = anchors(fileText)
-	return fileText.slice(0, start + 1) + block + fileText.slice(end + 1)
+	let next = fileText.slice(0, start) + block + fileText.slice(end)
+	if (!/^breakSchedule:/mu.test(fileText)) {
+		if (!next.endsWith('\n')) {
+			next += '\n'
+		}
+		next += 'breakSchedule: {}\n'
+	}
+	return next
 }
 
 /**
@@ -183,5 +199,5 @@ export function spliceSchedule(fileText, block) {
  */
 export function extractSchedule(fileText) {
 	let [start, end] = anchors(fileText)
-	return fileText.slice(start + 1, end + 1)
+	return fileText.slice(start, end)
 }
