@@ -6,7 +6,8 @@ import * as c from '@frogpond/colors'
 import {toBuildingFootprints} from '../../map/lib/building-footprints'
 import {cutoutBounds} from '../../map/lib/cutout-bounds'
 import type {Building, Feature} from '../../map/types'
-import {basemapScheme, mapStyleUrl} from '../../map/urls'
+import {useMapStyleUrl} from '../../map/style-query'
+import {basemapScheme} from '../../map/urls'
 import type {Campus} from '../types'
 import {PICTURE_CORNER_RADIUS} from '../../../components/place-card/card-style'
 
@@ -68,6 +69,7 @@ type Props = {
  */
 export function BuildingCutout({campus, feature, width}: Props): React.ReactNode {
 	let scheme = useColorScheme()
+	let mapStyleUrl = useMapStyleUrl(campus, scheme)
 
 	// Framed on the same geometry the layers below draw, so the two cannot
 	// disagree. Callers are expected to have checked `hasFootprint` already --
@@ -100,7 +102,7 @@ export function BuildingCutout({campus, feature, width}: Props): React.ReactNode
 					doubleTapZoom={false}
 					dragPan={false}
 					logo={false}
-					mapStyle={mapStyleUrl(campus, scheme)}
+					mapStyle={mapStyleUrl}
 					scaleBar={false}
 					style={styles.map}
 					touchPitch={false}

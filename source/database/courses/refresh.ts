@@ -1,5 +1,8 @@
+import {fetchManifest, REL_COURSE_CATALOG, resolveSource} from '@frogpond/data-sources'
 import * as Sentry from '@sentry/react-native'
 
+import {queryClient} from '../../init/tanstack-query'
+import {apiUrl} from '../../lib/api-url'
 import {getRunner} from '../client.ts'
 import {catalogFile, filePath, incomingCatalogFile} from './catalog-file.ts'
 import {checkCatalog} from './check.ts'
@@ -7,8 +10,20 @@ import {courseIndexBatches, isAttached, storedEtag, storeEtag} from './index-bui
 import {bumpCourseRevision} from './revision.ts'
 import {CATALOG_SCHEMA} from './schema.ts'
 
-/** The course catalog course-data-tools publishes nightly: every term from five years back. */
-export const CATALOG_URL = 'https://stolaf.dev/course-data/catalog-recent.db'
+export const CATALOG_TYPE = 'application/vnd.sqlite3'
+
+/**
+ * Where the course catalog course-data-tools publishes nightly is -- every term
+ * from five years back -- as the published manifest says, so it can move
+ * without a release. A relative address names ccc-server, which is resolved
+ * against the configured server; read when a refresh starts, since the server
+ * address is a setting read from storage after launch.
+ */
+async function catalogUrl(): Promise<string> {
+	let manifest = await fetchManifest(queryClient)
+	let source = resolveSource(manifest, REL_COURSE_CATALOG, 'stolaf', [CATALOG_TYPE])
+	return apiUrl(source.href)
+}
 
 /** A published catalog that failed its check, and would fail it again. */
 export class CatalogRejectedError extends Error {
@@ -66,7 +81,7 @@ async function refresh(signal?: AbortSignal): Promise<{etag: string; changed: bo
 	// reads a whole body before it resolves, so asking is the only way to skip
 	// a download.
 	let known = [stored, rejectedEtag].filter((tag): tag is string => Boolean(tag))
-	let response = await fetch(CATALOG_URL, {
+	let response = await fetch(await catalogUrl(), {
 		headers: known.length > 0 ? {'If-None-Match': known.join(', ')} : {},
 		signal,
 	})

@@ -25,7 +25,7 @@ const MANIFEST = {
 	links: [
 		{
 			rel: REL_MAP_CATEGORIES,
-			href: 'https://stolaf.dev/AAO-React-Native/map-categories.json',
+			href: 'map/categories',
 			type: 'application/vnd.frogpond.map-categories+json',
 			properties: {[ID_PROPERTY]: 'stolaf'},
 		},
@@ -76,7 +76,7 @@ describe('mapCategoriesOptions', () => {
 		;(fetchSourceBody as jest.Mock<() => Promise<unknown>>).mockResolvedValue({data: PUBLISHED})
 		await expect(run()).resolves.toEqual(PUBLISHED)
 		expect(fetchSourceBody).toHaveBeenCalledWith(
-			'https://stolaf.dev/AAO-React-Native/map-categories.json',
+			'map/categories',
 			expect.anything(),
 			'Map categories',
 		)

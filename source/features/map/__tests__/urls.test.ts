@@ -4,7 +4,6 @@ import {
 	basemapScheme,
 	buildingPhotoUrl,
 	mapCredits,
-	mapStyleUrl,
 } from '../urls'
 
 describe('buildingPhotoUrl', () => {
@@ -30,24 +29,6 @@ describe('appleMapsSearchUrl', () => {
 		expect(appleMapsSearchUrl('1 Old Main Dr, #200')).toBe(
 			'https://maps.apple.com/?q=1%20Old%20Main%20Dr%2C%20%23200',
 		)
-	})
-})
-
-describe('mapStyleUrl', () => {
-	// Carleton's style does cover St. Olaf, but it draws the campus as an
-	// anonymous cluster of grey footprints.
-	it('gives each campus its own basemap', () => {
-		expect(mapStyleUrl('stolaf', 'light')).not.toBe(mapStyleUrl('carleton', 'light'))
-	})
-
-	it("draws St. Olaf's dark basemap in dark mode", () => {
-		expect(mapStyleUrl('stolaf', 'dark')).toBe('https://stolaf.dev/campus-map-data/style-dark.json')
-		expect(mapStyleUrl('stolaf', 'light')).toBe('https://stolaf.dev/campus-map-data/style.json')
-	})
-
-	// Carleton's style has no dark variant.
-	it("keeps Carleton's basemap in dark mode", () => {
-		expect(mapStyleUrl('carleton', 'dark')).toBe(mapStyleUrl('carleton', 'light'))
 	})
 })
 
