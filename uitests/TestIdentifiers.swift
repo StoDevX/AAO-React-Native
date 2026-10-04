@@ -63,6 +63,13 @@ struct TestIdentifiers {
 		/// the canary that proves the monkey can leave one: the Dictionary's
 		/// preview, which has nothing to show without a draft.
 		static let sheetTrapRoute = "dictionary/entry/preview"
+		/// A route drawing one small unlabelled button, for the target oracles' canary.
+		static let targetsCanaryRoute = "chaos-canary-targets"
+		/// The canary's button.
+		static let targetsCanaryButton = "chaos.canary-target"
+		/// Targets whose hit area is wider than their frame, through `hitSlop`,
+		/// so the small-target oracle passes them over. Each entry says why.
+		static let smallTargetAllowList: Set<String> = []
 	}
 
 	// MARK: - testID-based identifiers

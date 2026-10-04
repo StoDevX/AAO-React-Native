@@ -94,6 +94,11 @@ Then decide whose bug it is:
   to rotate, drag or swipe its way out. A person may be stuck there.
 - `escaped the app`: something sent the app to the background.
 - `system alert`: a permission prompt appeared and the monkey dismissed it.
+- `unlabelled`: something to press that VoiceOver has no name for.
+- `small target`: something to press narrower or shorter than 44pt. XCUITest
+  sees the frame, not a `hitSlop`, so a control that is bigger to the touch
+  is a false alarm: give it a 44pt frame, or add its identifier to
+  `TestIdentifiers.Chaos.smallTargetAllowList` with a comment saying why.
 
 ### The Summary
 
@@ -229,5 +234,5 @@ repeating. Each action draws its values before it touches the UI.
 Chaos runs happen on your own machine; nothing runs them in CI. The
 `ChaosCanaryTests` do run in the ordinary UI test shards, in the merge
 queue and on master; pull requests leave them out to save shard time. They
-plant a crash and a missing probe and check that the oracles
-notice, so a change can't quietly blind the engine.
+plant a crash, a missing probe and a small unlabelled button, and check
+that the oracles notice, so a change can't quietly blind the engine.

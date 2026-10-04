@@ -61,6 +61,26 @@ final class ChaosCanaryTests: UITestCaseUnbooted {
 		XCTAssertEqual(silence?.reason, "probe silent: no \(TestIdentifiers.Chaos.beacon) element")
 	}
 
+	/// A screen with one tiny, unlabelled button: both oracles should warn,
+	/// once each, however often the monkey looks.
+	func testWarnsOfAnUnlabelledSmallTarget() {
+		configureForChaos(seed: 1, launch: 0, replay: false, faultRate: "0", resetState: true)
+		app.open(URL(string: "AllAboutOlaf://\(TestIdentifiers.Chaos.targetsCanaryRoute)")!)
+		XCTAssertTrue(
+			app.descendants(matching: .any)[TestIdentifiers.Chaos.targetsCanaryButton].waitForExistence(timeout: 30),
+			"the canary screen never loaded")
+		let monkey = ChaosMonkey(test: self, seed: 1, replay: false, faultRate: "0")
+		for _ in 0..<3 {
+			guard case .success(let observation) = ChaosOracle(app: app).observe() else {
+				return XCTFail("the canary screen should give a snapshot")
+			}
+			monkey.checkTargets(observation)
+		}
+		let key = "id:\(TestIdentifiers.Chaos.targetsCanaryButton)"
+		XCTAssertEqual(monkey.warnings.filter { $0.hasPrefix("unlabelled: \(key) ") }.count, 1, "\(monkey.warnings)")
+		XCTAssertEqual(monkey.warnings.filter { $0.hasPrefix("small target: \(key) ") }.count, 1, "\(monkey.warnings)")
+	}
+
 	/// In portrait the sheet's grabber is something to press, so it is no
 	/// trap; Back drags the sheet away by it. Opened again in landscape, an
 	/// iPhone form sheet fills the screen and draws no grabber, so the monkey

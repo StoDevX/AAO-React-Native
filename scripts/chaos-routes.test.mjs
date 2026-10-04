@@ -79,3 +79,7 @@ test('leaves out the developer tools, which only the team uses', () => {
 		['developers', 'directory'],
 	)
 })
+
+test("leaves out the canaries' own screens", () => {
+	assert.deepEqual(routesIn(['chaos-crash.tsx', 'chaos-canary-targets.tsx', 'news.tsx']), ['news'])
+})
