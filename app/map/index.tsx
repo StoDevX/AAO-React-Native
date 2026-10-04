@@ -323,8 +323,8 @@ export default function MapPage(): React.ReactNode {
 	}, [selectedPlace])
 
 	// Framed only when the picker asks -- a tile tap or a finished search --
-	// never as results change while typing.
-	useFrameRequests(pins, (requested) => frameOn(requested.places))
+	// never as results change while typing, and never over an open card.
+	useFrameRequests(pins, covered, (requested) => frameOn(requested.places))
 
 	// A cluster frames the places it holds, so it opens up in the map above
 	// the sheet rather than around the middle of the screen, which at the
