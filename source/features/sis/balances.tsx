@@ -129,8 +129,8 @@ let styles = StyleSheet.create({
 		flex: 1,
 		backgroundColor: c.systemGroupedBackground,
 	},
+	// No horizontal margin: the list row already insets its content.
 	banner: {
-		marginHorizontal: 16,
 		marginTop: 16,
 	},
 })

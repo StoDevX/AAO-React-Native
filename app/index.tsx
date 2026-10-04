@@ -57,8 +57,14 @@ const styles = StyleSheet.create({
 	host: {
 		flex: 1,
 	},
+	// Above the list, which insets its sections by `SCREEN_MARGIN`.
 	banner: {
 		marginHorizontal: SCREEN_MARGIN,
+		marginTop: TILE_SPACING,
+		marginBottom: TILE_SPACING * 1.5,
+	},
+	// Inside the scrolling layouts' own `SCREEN_MARGIN` padding, so no side margin of its own.
+	paddedBanner: {
 		marginTop: TILE_SPACING,
 		marginBottom: TILE_SPACING * 1.5,
 	},
@@ -343,7 +349,7 @@ export default function HomePage(): React.ReactNode {
 						    spacing around an empty slot is a gap above the first group. */}
 							<FaqBannerSlot
 								onPressFaq={(faqId) => router.navigate({pathname: '/faq', params: {faqId}})}
-								style={styles.banner}
+								style={styles.paddedBanner}
 								target={FAQ_TARGETS.HOME}
 							/>
 
