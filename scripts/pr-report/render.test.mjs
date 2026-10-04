@@ -121,6 +121,27 @@ describe('renderComment', () => {
 		})
 		assert.ok(markdown.length <= COMMENT_LIMIT)
 		assert.doesNotMatch(markdown, /All packages/u)
-		assert.match(markdown, /full tables are in the job summary/u)
+		assert.match(markdown, /The full tables are in this run's job summary\./u)
+	})
+
+	it('takes a custom limit, in place of COMMENT_LIMIT', () => {
+		let markdown = renderComment(
+			{head, diff: diffReports(baseline, head), baselineNote: null, gate: pass},
+			10,
+		)
+		assert.doesNotMatch(markdown, /All packages/u)
+		assert.match(markdown, /The full tables are in this run's job summary\./u)
+	})
+
+	it('never drops the tables when the limit is Infinity', () => {
+		let huge = Object.fromEntries(
+			Array.from({length: 3000}, (_, i) => [`package-with-a-long-name-${i}`, i + 1]),
+		)
+		let big = report({...head.js, byPackage: huge})
+		let markdown = renderComment(
+			{head: big, diff: diffReports(baseline, big), baselineNote: null, gate: pass},
+			Infinity,
+		)
+		assert.match(markdown, /All packages/u)
 	})
 })

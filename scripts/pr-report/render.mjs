@@ -45,9 +45,10 @@ function fullTable(summary, heading, changes) {
 /**
  * Renders the comment. `head` is null when this commit could not be
  * measured; `diff` is null when there is no baseline, and `baselineNote`
- * then says why.
+ * then says why. `limit` caps the rendered length, so the full tables can
+ * be dropped from the PR comment but kept in the job summary (`Infinity`).
  */
-export function renderComment({head, diff, baselineNote, gate}) {
+export function renderComment({head, diff, baselineNote, gate}, limit = COMMENT_LIMIT) {
 	let lines = [MARKER, '### JS bundle']
 	if (head === null) {
 		lines.push('JS size unavailable: the `js-size` job did not produce a report.')
@@ -85,9 +86,9 @@ export function renderComment({head, diff, baselineNote, gate}) {
 		...fullTable('All features', 'Feature', diff.byFeature),
 	]
 	let full = [...lines, ...tables].join('\n')
-	if (full.length <= COMMENT_LIMIT) {
+	if (full.length <= limit) {
 		return full
 	}
-	lines.push('The full tables are in the job summary; they are too long for a comment.', '')
+	lines.push("The full tables are in this run's job summary.", '')
 	return lines.join('\n')
 }
