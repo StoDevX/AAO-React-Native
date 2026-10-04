@@ -61,7 +61,8 @@ A run that exits 1 found something. In `logs/chaos/<seed>/`:
      device turns back to portrait, so trust this one;
    - the `chaos trapped screen` screenshot, when the monkey found a screen with
      nothing to press;
-   - `chaos-steps.jsonl`, every action with its target and orientation;
+   - `chaos-steps.jsonl`, every action with its target, the target's type and
+     frame, and orientation;
    - `chaos-warnings.txt`, things worth a look that didn't stop the run.
 3. **`chaos-findings.jsonl`** is what the app's probe saw: fatal errors,
    unhandled rejections, `console.error` calls, attempts to leave the app,
@@ -127,6 +128,9 @@ record the seed again. A replay reports one of:
   for another reason.
 - `not reached`: its budget ran out first.
 - `diverged at step K`: it did something the recording did not.
+
+A run recorded before tap weighting and the developer routes' removal no
+longer replays step for step; record the seed again.
 
 Replay is best-effort. Timing, and anything that doesn't go through JS `fetch`
 (images, WebViews, map tiles), can still differ.
@@ -196,6 +200,7 @@ transparent view from the accessibility tree XCUITest reads.
 | `ChaosOracle.swift` | Reads the screen in one snapshot and decides whether to stop |
 | `ChaosAction.swift` | The actions and how often each is picked |
 | `ChaosRandom.swift` | The seeded random generator |
+| `ChaosWeighting.swift` | The weighted pick that favours targets and routes used least |
 | `ChaosRoutes.swift` | Every route in `app/`, generated |
 | `ChaosTests.swift` | `testChaos`, and the canaries that prove the oracles can see |
 
@@ -210,6 +215,7 @@ builds, runs the test, collects the files, and decides the exit code.
 | Stop another way out of the app | Guard it with `isChaos` and `reportOutOfApp`, as `openUrl` does |
 | Recognise another error screen | `TestIdentifiers.Chaos.errorScreenIdentifiers`, or `errorScreenLabels` when it has no identifier |
 | Change how often an action happens | `weight` in `ChaosAction.swift`; the weights sum to 100 |
+| Change how the monkey picks among targets or routes | `pickWeighted` in `ChaosWeighting.swift`: each is weighted by 1 / (1 + times used) |
 | Add awkward text to type | `chaosStrings` in `ChaosAction.swift` |
 | Open a route the monkey skips | `SKIPPED` or `SKIPPED_PREFIXES` in `scripts/chaos-routes.mjs` |
 | Add a fault | `Fault` and `pickFault` in `source/chaos/faults.ts` |

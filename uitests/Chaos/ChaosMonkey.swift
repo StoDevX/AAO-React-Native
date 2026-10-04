@@ -32,6 +32,10 @@ final class ChaosMonkey {
 	private var lastTargetsSeen = Date()
 	private var backsWithoutChange = 0
 	private var lastSignature = ""
+	/// How often each route has been opened this run, to favour the rest.
+	private var routeOpens: [String: Int] = [:]
+	/// How often each target has been tapped, keyed by screen title and target.
+	private var taps: [String: Int] = [:]
 	/// The orientation the monkey last turned the device to. `.rotate`
 	/// alternates from this rather than reading `XCUIDevice`, which does not
 	/// reliably report it after a relaunch or a trip to the home screen, so a
@@ -99,7 +103,12 @@ final class ChaosMonkey {
 	private func perform(_ action: ChaosAction, on observation: ChaosObservation) -> ChaosTarget? {
 		switch action {
 		case .tap:
-			guard let target = pick(from: observation.targets) else { return nil }
+			let screen = observation.title
+			guard
+				let target = pickWeighted(
+					observation.targets, uses: { self.taps["\(screen)|\(targetKey($0))", default: 0] }, using: &random)
+			else { return nil }
+			taps["\(screen)|\(targetKey(target))", default: 0] += 1
 			tap(target.frame)
 			return target
 		case .scroll:
@@ -112,7 +121,7 @@ final class ChaosMonkey {
 			app.coordinate(withNormalizedOffset: from).press(forDuration: 0.05, thenDragTo: app.coordinate(withNormalizedOffset: to))
 			return nil
 		case .type:
-			let field = pick(from: observation.textFields)
+			let field = pickWeighted(observation.textFields, uses: { _ in 0 }, using: &random)
 			let text = chaosStrings.randomElement(using: &random)!
 			let submit = Bool.random(using: &random)
 			guard let field else { return nil }
@@ -128,7 +137,8 @@ final class ChaosMonkey {
 			goBack(on: observation)
 			return nil
 		case .openRoute:
-			let route = ChaosRoutes.all.randomElement(using: &random)!
+			let route = pickWeighted(ChaosRoutes.all, uses: { self.routeOpens[$0, default: 0] }, using: &random)!
+			routeOpens[route, default: 0] += 1
 			let filled = route.replacingOccurrences(
 				of: #"\[(\.\.\.)?[^\]]+\]"#,
 				with: chaosSegmentValues.randomElement(using: &random)!,
@@ -305,12 +315,6 @@ final class ChaosMonkey {
 
 	private static func name(_ landscape: Bool) -> String { landscape ? "landscape" : "portrait" }
 
-	/// One of `items`, drawing from `random` even when there are none.
-	private func pick<Item>(from items: [Item]) -> Item? {
-		let choice = Int.random(in: 0..<Int.max, using: &random)
-		return items.isEmpty ? nil : items[choice % items.count]
-	}
-
 	/// Runs one of the monkey's own waits without counting it towards a hang.
 	private func pauseHangClock(_ wait: () -> Void) {
 		let start = Date()
@@ -419,6 +423,10 @@ final class ChaosMonkey {
 			"orientation": Self.name(orientation.isLandscape),
 			"identifier": target?.identifier ?? "",
 			"label": target?.label ?? "",
+			"type": Int(target?.type.rawValue ?? 0),
+			"frame": target.map {
+				"\(Int($0.frame.minX)),\(Int($0.frame.minY)),\(Int($0.frame.width)),\(Int($0.frame.height))"
+			} ?? "",
 		]
 		if let data = try? JSONSerialization.data(withJSONObject: entry, options: [.sortedKeys]),
 			let line = String(data: data, encoding: .utf8)

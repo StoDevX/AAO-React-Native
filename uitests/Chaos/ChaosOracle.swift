@@ -21,6 +21,9 @@ struct ChaosObservation {
 	/// The topmost sheet's grabber, which UIKit draws only on a sheet that
 	/// does not fill the screen.
 	let grabber: CGRect?
+	/// The navigation bar's title, or "" with none: names the screen without
+	/// the data on it, so two calendar events count as one screen.
+	let title: String
 }
 
 /// Reads one snapshot of the app and decides whether the run should stop.
@@ -46,12 +49,18 @@ struct ChaosOracle {
 		var fields: [ChaosTarget] = []
 		var signatureParts: [String] = []
 		var grabber: CGRect?
+		var title = ""
 
 		func visit(_ node: XCUIElementSnapshot) {
 			let id = node.identifier
 			if id == TestIdentifiers.Chaos.beacon {
 				beacon = node.label
 				return
+			}
+			// The keyboard's keys are not the app's; the type action does the typing.
+			if node.elementType == .keyboard { return }
+			if node.elementType == .navigationBar && title.isEmpty {
+				title = id.isEmpty ? node.label : id
 			}
 			if TestIdentifiers.Chaos.errorScreenIdentifiers.contains(id)
 				|| TestIdentifiers.Chaos.errorScreenLabels.contains(node.label)
@@ -93,7 +102,8 @@ struct ChaosOracle {
 				textFields: fields.sorted(by: byPosition),
 				signature: signatureParts.joined(separator: "|"),
 				sheet: Self.topmostModal(in: snapshot),
-				grabber: grabber))
+				grabber: grabber,
+				title: title))
 	}
 
 	/// The frame of the topmost presented modal. UIKit gives each sheet or
