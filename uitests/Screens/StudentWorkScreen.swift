@@ -232,7 +232,10 @@ struct StudentWorkScreen: Screen {
 		let row = app.buttonLabelled(TestIdentifiers.StudentWork.jobDescriptionRow)
 		// Scrolled to until tappable, not merely present: a form builds rows
 		// before they are on screen.
-		for _ in 0..<6 where !row.isHittable {
+		for _ in 0..<6 {
+			if row.isHittable {
+				break
+			}
 			app.swipeUp()
 		}
 		XCTAssertTrue(row.isHittable, "The posting should offer its description as a row")

@@ -209,7 +209,10 @@ struct StreamingMediaScreen: Screen {
 	func tapLogo(labelled prefix: String, until target: String) -> Self {
 		let logo = app.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", prefix)).firstMatch
 		XCTAssertTrue(logo.waitForExistence(timeout: 10), "A logo labelled \"\(prefix)…\" should be a button")
-		for _ in 0..<5 where !app.buttonLabelled(target).waitForExistence(timeout: 2) {
+		for _ in 0..<5 {
+			if app.buttonLabelled(target).waitForExistence(timeout: 2) {
+				break
+			}
 			logo.tap()
 		}
 		XCTAssertTrue(app.buttonLabelled(target).waitForExistence(timeout: 5), "Tapping the logo should reach \"\(target)\"")

@@ -111,7 +111,10 @@ struct MessFrontPage: Screen {
 		let older = tiles.matching(NSPredicate(format: "label CONTAINS %@", ", \(year),")).firstMatch
 		let top = app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.3))
 		let bottom = app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.85))
-		for _ in 0..<60 where !older.exists {
+		for _ in 0..<60 {
+			if older.exists {
+				break
+			}
 			bottom.press(forDuration: 0.05, thenDragTo: top)
 		}
 		capture("The issue grid, paged back to \(year)")
@@ -284,7 +287,10 @@ struct MessFrontPage: Screen {
 		let origin = app.coordinate(withNormalizedOffset: CGVector(dx: 0, dy: 0))
 		let right = origin.withOffset(CGVector(dx: app.frame.width * 0.8, dy: rowY))
 		let left = origin.withOffset(CGVector(dx: app.frame.width * 0.2, dy: rowY))
-		for _ in 0..<10 where !app.frame.contains(button.frame) {
+		for _ in 0..<10 {
+			if app.frame.contains(button.frame) {
+				break
+			}
 			let (start, end) = button.frame.midX > app.frame.midX ? (right, left) : (left, right)
 			start.press(forDuration: 0.05, thenDragTo: end, withVelocity: .slow, thenHoldForDuration: 0.2)
 		}
