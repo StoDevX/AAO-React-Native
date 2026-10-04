@@ -150,6 +150,7 @@
   },
   "packageManager": "pnpm@12.8.0",
   "enriched-markdown": {
+    "enableCodeHighlight": false,
     "enableMath": false
   }
 }
