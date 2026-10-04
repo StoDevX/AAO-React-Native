@@ -54,6 +54,7 @@ export const DeveloperSection = (): React.ReactElement => {
 	return (
 		<>
 			<Section>
+				<ActionRow onPress={onResetButton} title="Reset Everything" />
 				<NavigationRow onPress={onComponentsButton} title="Components" />
 				<NavigationRow onPress={onAPIButton} title="API Tester" />
 				<NavigationRow onPress={onBonAppButton} title="Bon Appetit Picker" />
