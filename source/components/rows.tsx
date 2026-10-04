@@ -38,6 +38,7 @@ import type {Gradient} from '@frogpond/colors'
 import {isAccessibilityTextSize} from '../lib/is-accessibility-text-size'
 import {GradientRoundedRectangle} from './gradient-tile'
 import {detailLinesOf, rowLabel, type RowDetail} from './lib/row-text'
+import {SYSTEM_TYPEFACE, type Typeface} from './lib/typeface'
 
 type RowProps = {
 	title: string
@@ -220,6 +221,8 @@ type DisclosureRowProps = {
 	/** A live status under the details, in its own colour, as a place's open
 	 * or closed state reads. */
 	status?: {text: string; color: ColorValue}
+	/** The type the title and details are set in, for a screen on a background of its own. */
+	typeface?: Typeface
 }
 
 /** A row's leading image: a tinted symbol, a gradient icon, or a thumbnail. */
@@ -296,6 +299,7 @@ export function DisclosureRow(props: DisclosureRowProps): React.ReactNode {
 		badge,
 		destination = 'push',
 		status,
+		typeface = SYSTEM_TYPEFACE,
 	} = props
 
 	let {fontScale} = useWindowDimensions()
@@ -315,14 +319,14 @@ export function DisclosureRow(props: DisclosureRowProps): React.ReactNode {
 
 	let details = detailLinesOf(detail)
 	let detailModifiers = [
-		font({textStyle: 'subheadline'}),
-		foregroundStyle(c.secondaryLabel),
+		font({textStyle: 'subheadline', design: typeface.design}),
+		foregroundStyle(typeface.secondaryLabel),
 		...(detailLines ? [lineLimit(detailLines), truncationMode('tail')] : []),
 	]
 
 	// External already carries `arrow.up.right`; tinting the title too would
 	// turn a long link list into a wall of blue.
-	let titleTint = destination === 'action' ? c.systemBlue : c.label
+	let titleTint = destination === 'action' ? typeface.tint : typeface.label
 
 	return (
 		<Button
@@ -339,7 +343,12 @@ export function DisclosureRow(props: DisclosureRowProps): React.ReactNode {
 				{image ? <LeadingImage image={image} /> : null}
 				<VStack alignment="leading" spacing={2}>
 					<Text
-						modifiers={[foregroundStyle(titleTint), lineLimit(titleLines), truncationMode('tail')]}
+						modifiers={[
+							font({textStyle: 'body', design: typeface.design}),
+							foregroundStyle(titleTint),
+							lineLimit(titleLines),
+							truncationMode('tail'),
+						]}
 					>
 						{title}
 					</Text>

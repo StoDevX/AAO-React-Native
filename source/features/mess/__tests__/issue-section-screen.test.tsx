@@ -5,6 +5,7 @@ import {QueryClient, QueryClientProvider} from '@tanstack/react-query'
 import {fetchManifest, fetchSourceBody, type Jrd} from '@frogpond/data-sources'
 
 import {queryClient as appQueryClient} from '../../../init/tanstack-query'
+import {navigationTitleLines} from '../../../testing/navigation-title'
 import {IssueSectionScreen} from '../issue-section-screen'
 import {messKeys} from '../lib/keys'
 import type {LightPost, MessStory} from '../types'
@@ -94,6 +95,12 @@ function renderSection(issueKey: string, section: string) {
 }
 
 describe('IssueSectionScreen', () => {
+	test("is titled with the section, over the issue's date", async () => {
+		await renderSection(KEY, 'News')
+
+		expect(navigationTitleLines()).toStrictEqual(['News', 'March 25, 2026'])
+	})
+
 	test("lists the issue's stories in the section, its lead among them, from the issue already loaded", async () => {
 		await renderSection(KEY, 'News')
 

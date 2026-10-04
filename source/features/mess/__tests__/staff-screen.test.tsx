@@ -6,6 +6,7 @@ import {fetchManifest, fetchSourceBody, type Jrd} from '@frogpond/data-sources'
 
 import staff from './fixtures/staff-2026-2027.json'
 import {queryClient as appQueryClient} from '../../../init/tanstack-query'
+import {navigationTitleLines} from '../../../testing/navigation-title'
 import {waitForQueriesToSettle} from '../../../testing/query-notifications'
 import {StaffMemberScreen, StaffScreen} from '../staff-screen'
 import {messKeys} from '../lib/keys'
@@ -64,6 +65,13 @@ function serveFailure(): void {
 }
 
 describe('StaffScreen', () => {
+	test('is titled Staff, over the year it lists', async () => {
+		queryClient.setQueryData(messKeys.staff, people)
+		await renderWithClient(<StaffScreen />)
+
+		expect(navigationTitleLines()).toStrictEqual(['Staff', '2026-2027'])
+	})
+
 	test('lists the staff as tiles in groups, each by name, keeping roles for their pages', async () => {
 		queryClient.setQueryData(messKeys.staff, people)
 		await renderWithClient(<StaffScreen />)

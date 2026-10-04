@@ -3,8 +3,9 @@ import {Stack} from 'expo-router'
 import {useQuery, useQueryClient} from '@tanstack/react-query'
 import {refreshIssues} from './issue-screen'
 import {IssueUnavailable} from './issue-unavailable'
+import {issueName} from './lib/issues'
 import {sectionStories} from './lib/shelves'
-import {MessPage} from './mess-page'
+import {MessPage, PAPER_BAR, PaperTitle} from './mess-page'
 import {PageLoading, PageNotice} from './page-notice'
 import {messIssueOptions} from './query'
 import {StoryRows} from './story-list'
@@ -15,7 +16,7 @@ type Props = {issueKey: string; section: string}
 
 /**
  * Every story one issue holds in a section, a row each, opened from the section's shelf on the
- * issue's page, and titled with the section's name.
+ * issue's page, and titled with the section's name over the issue's.
  */
 export function IssueSectionScreen({issueKey, section}: Props): React.ReactNode {
 	let queryClient = useQueryClient()
@@ -27,7 +28,8 @@ export function IssueSectionScreen({issueKey, section}: Props): React.ReactNode 
 
 	return (
 		<>
-			<Stack.Screen options={{title: section}} />
+			<Stack.Screen options={PAPER_BAR} />
+			<PaperTitle subtitle={issueName(issue)} title={section} />
 			<MessPage onRefresh={() => refreshIssues(queryClient)}>
 				<IssueSectionStories issue={issue} persist={persist} section={section} />
 			</MessPage>

@@ -1,7 +1,17 @@
 import * as React from 'react'
 import {useWindowDimensions} from 'react-native'
 import {Stack, useRouter} from 'expo-router'
+import {Host, Image} from '@expo/ui/swift-ui'
+import {
+	accessibilityAddTraits,
+	accessibilityIdentifier,
+	accessibilityLabel,
+	font,
+	foregroundStyle,
+} from '@expo/ui/swift-ui/modifiers'
 import {useInfiniteQuery, useQueryClient} from '@tanstack/react-query'
+import * as c from '@frogpond/colors'
+import {NAVIGATION_TITLE_ID, TITLE_HOST_STYLE} from '../../components/navigation-title'
 import {refetchFromFirstPage} from '../../lib/infinite-data'
 import {OLAF_MESSENGER} from '../news/sources'
 import {useNewsFilterStore} from '../news/store'
@@ -10,8 +20,7 @@ import {LatestPage} from './latest-page'
 import {viewKey, viewOf, type MessView} from './lib/front-view'
 import {messKeys} from './lib/keys'
 import {MAIN_SECTIONS} from './lib/posts'
-import {Masthead} from './masthead'
-import {MessPage} from './mess-page'
+import {MessPage, PAPER_BAR} from './mess-page'
 import {PageLoading, PageMessage, PageNotice} from './page-notice'
 import {messFeedOptions} from './query'
 import {CUSTOMIZE_LABEL} from '../customize/labels'
@@ -22,11 +31,14 @@ import {useMessIssues} from './use-mess-issues'
 /** The name each view goes by in the menu, and in the menu button's label. */
 const VIEW_NAMES = {issues: 'By Issue', latest: 'Latest'} as const
 
-/** Latest's dateline, naming what it lists; By Issue's tiles carry their own dates, so it has none. */
-function datelineOf(view: MessView): string | null {
-	if (view.mode === 'issues') return null
-	return view.section ?? 'Latest stories'
-}
+/** The paper's castle, alone in the title, read by VoiceOver as the paper's name. */
+const CASTLE = [
+	font({textStyle: 'title2'}),
+	foregroundStyle(c.label),
+	accessibilityLabel(OLAF_MESSENGER.title),
+	accessibilityAddTraits(['isHeader']),
+	accessibilityIdentifier(NAVIGATION_TITLE_ID),
+]
 
 /** The paper's pages the view menu leads to, beside its views. */
 type MessPagePath = '/messenger/about' | '/messenger/staff'
@@ -145,10 +157,9 @@ function SavedLatestStories(): React.ReactNode {
 }
 
 /**
- * The Mess's front page: a clear navigation bar with the view menu at its right, over the paper's
- * masthead and then the view's page. The bar keeps no title, so the masthead names the paper; the
- * screen's title is still what the Back button reads. The view and the section are remembered in
- * the news filter store.
+ * The Mess's front page: a navigation bar on the paper, titled with the paper's castle, with the
+ * paintbrush and the view menu at its right, over the view's page. The view and the section are
+ * remembered in the news filter store.
  */
 export function FrontPageScreen(): React.ReactNode {
 	let router = useRouter()
@@ -160,9 +171,15 @@ export function FrontPageScreen(): React.ReactNode {
 
 	return (
 		<>
-			<Stack.Screen
-				options={{title: OLAF_MESSENGER.title, headerTitle: '', headerTransparent: true}}
-			/>
+			<Stack.Screen options={PAPER_BAR} />
+			{/* `Stack.Title asChild` sets only `headerTitle`; the plain title is what the Back
+			    button reads. An explicit size, as a navigation bar gives its title view none. */}
+			<Stack.Screen options={{title: OLAF_MESSENGER.title}} />
+			<Stack.Title asChild={true}>
+				<Host style={TITLE_HOST_STYLE}>
+					<Image assetName="olaf-messenger-castle" modifiers={CASTLE} />
+				</Host>
+			</Stack.Title>
 			<ViewMenu
 				onChoose={choose}
 				onCustomize={() => router.navigate('/messenger/customize')}
@@ -174,8 +191,6 @@ export function FrontPageScreen(): React.ReactNode {
 				// refreshes that view alone.
 				onRefresh={() => refetchFromFirstPage(queryClient, messKeys.all)}
 			>
-				{/* By Issue's tiles each print the paper's name, so its masthead is the castle */}
-				<Masthead castle={view.mode === 'issues'} dateline={datelineOf(view)} />
 				{view.mode === 'issues' ? <ByIssuePage /> : <LatestPage section={view.section} />}
 			</MessPage>
 		</>

@@ -2,7 +2,7 @@ import * as React from 'react'
 import {Stack} from 'expo-router'
 import {useQuery} from '@tanstack/react-query'
 import {ColumnScreen} from './column-screen'
-import {MessPage} from './mess-page'
+import {MessPage, PAPER_BAR, PaperTitle} from './mess-page'
 import {PageLoading, PageMessage, PageNotice} from './page-notice'
 import {messCategoriesOptions} from './query'
 import {CROSSWORD_COLUMN, crosswordColumnId} from './lib/puzzle'
@@ -21,7 +21,8 @@ export function CrosswordsScreen(): React.ReactNode {
 
 	return (
 		<>
-			<Stack.Screen options={{title: CROSSWORD_COLUMN}} />
+			<Stack.Screen options={PAPER_BAR} />
+			<PaperTitle title={CROSSWORD_COLUMN} />
 			<MessPage onRefresh={() => categories.refetch()}>
 				{categories.isError ? (
 					<PageNotice error={categories.error} onRetry={() => categories.refetch()} />
