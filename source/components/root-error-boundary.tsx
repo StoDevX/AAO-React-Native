@@ -11,7 +11,8 @@ import {ErrorFallback} from './error-fallback'
  * writes to the team, since the problem report is a screen and every screen
  * is gone.
  *
- * A screen that fails to render is caught sooner, by `ScreenErrorBoundary`;
+ * A screen that fails to render is caught sooner, by the boundary Expo Router
+ * puts around each screen, which shows `ScreenErrorFallback`;
  * this one is left the failures outside any screen.
  */
 export function RootErrorBoundary({children}: {children: React.ReactNode}): React.ReactNode {

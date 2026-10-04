@@ -1,140 +1,119 @@
 import * as React from 'react'
 import {afterEach, beforeEach, describe, expect, jest, test} from '@jest/globals'
-import {Text} from 'react-native'
 import {fireEvent, render, screen} from '@testing-library/react-native'
+import * as Sentry from '@sentry/react-native'
 
 import {useChaosFindings} from '../../chaos/findings'
 import {openEmail} from '../../features/support/open-email'
-import {ScreenErrorBoundary} from '../screen-error-boundary'
+import {ScreenErrorFallback} from '../screen-error-boundary'
 
+// Named `mock…` so jest's hoisting of the factories above them is allowed.
 let mockIsChaos = false
+let mockCanGoBack = true
+let mockPathname = '/menus'
+let mockGoBack = jest.fn()
+let mockNavigate = jest.fn()
+
 jest.mock('@frogpond/launch-arguments', () => ({
 	get isChaos() {
 		return mockIsChaos
 	},
 }))
 
+jest.mock('expo-router', () => ({
+	useNavigation: () => ({canGoBack: () => mockCanGoBack, goBack: mockGoBack}),
+	usePathname: () => mockPathname,
+	useRouter: () => ({navigate: mockNavigate}),
+}))
+
+jest.mock('@sentry/react-native', () => ({captureException: jest.fn()}))
+
 jest.mock('../../features/support/open-email', () => ({openEmail: jest.fn()}))
 
-let broken = true
+const ERROR = new Error('The menu fell over')
 
-function Screen(): React.ReactNode {
-	if (broken) {
-		throw new Error('The menu fell over')
-	}
-	return <Text>All is well</Text>
+function renderFallback(retry: () => Promise<void> = () => Promise.resolve()) {
+	return render(<ScreenErrorFallback error={ERROR} retry={retry} />)
 }
 
-describe('ScreenErrorBoundary', () => {
+describe('ScreenErrorFallback', () => {
 	beforeEach(() => {
-		broken = true
 		mockIsChaos = false
+		mockCanGoBack = true
+		mockPathname = '/menus'
+		mockGoBack.mockClear()
+		mockNavigate.mockClear()
+		jest.mocked(openEmail).mockClear()
+		jest.mocked(Sentry.captureException).mockClear()
 		useChaosFindings.setState({latest: '', file: null})
-		// React logs the error it catches; the test expects that, so it is
-		// silenced here rather than left to bury the output.
-		jest.spyOn(console, 'error').mockImplementation(() => undefined)
 	})
 	afterEach(() => {
 		jest.restoreAllMocks()
 	})
 
-	test('shows what went wrong in place of a screen that fails to render', async () => {
-		await render(
-			<ScreenErrorBoundary canGoBack={() => true} goBack={() => undefined}>
-				<Screen />
-			</ScreenErrorBoundary>,
-		)
+	test('says what went wrong and offers Try Again', async () => {
+		await renderFallback()
 
 		expect(screen.getByText('Something went wrong')).toBeTruthy()
 		expect(screen.getByRole('button', {name: 'Try Again'})).toBeTruthy()
-		expect(screen.queryByText('All is well')).toBeNull()
+	})
+
+	test('renders the screen again when Try Again is pressed', async () => {
+		let retry = jest.fn(() => Promise.resolve())
+		await renderFallback(retry)
+
+		await fireEvent.press(screen.getByRole('button', {name: 'Try Again'}))
+
+		expect(retry).toHaveBeenCalledTimes(1)
+	})
+
+	test('reports the error to Sentry', async () => {
+		await renderFallback()
+
+		expect(Sentry.captureException).toHaveBeenCalledWith(ERROR, expect.anything())
 	})
 
 	test('leaves the broken screen when Go Back is pressed', async () => {
-		let goBack = jest.fn()
-		await render(
-			<ScreenErrorBoundary canGoBack={() => true} goBack={goBack}>
-				<Screen />
-			</ScreenErrorBoundary>,
-		)
+		await renderFallback()
 
 		await fireEvent.press(screen.getByRole('button', {name: 'Go Back'}))
 
-		expect(goBack).toHaveBeenCalledTimes(1)
+		expect(mockGoBack).toHaveBeenCalledTimes(1)
 	})
 
 	test('offers no Go Back on a screen with nothing behind it', async () => {
-		await render(
-			<ScreenErrorBoundary canGoBack={() => false} goBack={() => undefined}>
-				<Screen />
-			</ScreenErrorBoundary>,
-		)
+		mockCanGoBack = false
+		await renderFallback()
 
-		expect(screen.getByRole('button', {name: 'Try Again'})).toBeTruthy()
 		expect(screen.queryByRole('button', {name: 'Go Back'})).toBeNull()
 	})
 
 	test('opens the problem report when Report a Problem is pressed', async () => {
-		let reportProblem = jest.fn()
-		await render(
-			<ScreenErrorBoundary
-				canGoBack={() => true}
-				goBack={() => undefined}
-				reportProblem={reportProblem}
-			>
-				<Screen />
-			</ScreenErrorBoundary>,
-		)
+		await renderFallback()
 
 		await fireEvent.press(screen.getByRole('button', {name: 'Report a Problem'}))
 
-		expect(reportProblem).toHaveBeenCalledTimes(1)
+		expect(mockNavigate).toHaveBeenCalledWith('/report-problem')
 	})
 
-	test('offers no Report a Problem where there is no report to open', async () => {
-		await render(
-			<ScreenErrorBoundary canGoBack={() => true} goBack={() => undefined}>
-				<Screen />
-			</ScreenErrorBoundary>,
-		)
+	test('offers no Report a Problem when the report is what broke', async () => {
+		mockPathname = '/report-problem'
+		await renderFallback()
 
 		expect(screen.queryByRole('button', {name: 'Report a Problem'})).toBeNull()
 	})
 
 	test('writes to the team when Send Us an Email is pressed', async () => {
-		await render(
-			<ScreenErrorBoundary canGoBack={() => false} goBack={() => undefined}>
-				<Screen />
-			</ScreenErrorBoundary>,
-		)
+		await renderFallback()
 
 		await fireEvent.press(screen.getByRole('button', {name: 'Send Us an Email'}))
 
 		expect(openEmail).toHaveBeenCalledTimes(1)
 	})
 
-	test('renders the screen again when Try Again is pressed and the fault has passed', async () => {
-		await render(
-			<ScreenErrorBoundary canGoBack={() => true} goBack={() => undefined}>
-				<Screen />
-			</ScreenErrorBoundary>,
-		)
-
-		broken = false
-		await fireEvent.press(screen.getByRole('button', {name: 'Try Again'}))
-
-		expect(screen.getByText('All is well')).toBeTruthy()
-		expect(screen.queryByText('Something went wrong')).toBeNull()
-	})
-
 	test('reports the error as a fatal finding in a chaos run', async () => {
 		mockIsChaos = true
-
-		await render(
-			<ScreenErrorBoundary canGoBack={() => true} goBack={() => undefined}>
-				<Screen />
-			</ScreenErrorBoundary>,
-		)
+		await renderFallback()
 
 		expect(useChaosFindings.getState().latest).toBe('fatal: The menu fell over')
 		// What the chaos oracle reads as an error screen, for when a sheet hides the beacon.
@@ -142,11 +121,7 @@ describe('ScreenErrorBoundary', () => {
 	})
 
 	test('reports no finding outside a chaos run', async () => {
-		await render(
-			<ScreenErrorBoundary canGoBack={() => true} goBack={() => undefined}>
-				<Screen />
-			</ScreenErrorBoundary>,
-		)
+		await renderFallback()
 
 		expect(useChaosFindings.getState().latest).toBe('')
 		expect(screen.queryByTestId('chaos.fatal-boundary')).toBeNull()
