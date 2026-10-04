@@ -22,11 +22,13 @@ export function hideLogBoxForUITests(uiTesting: boolean): void {
  * Its red screen covers the whole app, and with it the beacon a chaos run
  * reads after every step, so a render error looked like a screen with nothing
  * to press. Without LogBox the error reaches the chaos error boundary alone,
- * and the run stops on it at once.
+ * and the run stops on it at once. Uninstalling leaves LogBox's native warning
+ * handler in place, so its toasts are hidden as well.
  */
 export function removeLogBoxForChaos(chaos: boolean): void {
 	if (chaos) {
 		LogBox.uninstall()
+		LogBox.ignoreAllLogs(true)
 	}
 }
 

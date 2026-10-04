@@ -39,12 +39,25 @@ describe('removeLogBoxForChaos', () => {
 		expect(uninstall).toHaveBeenCalled()
 	})
 
+	// Uninstalling leaves LogBox's native warning handler in place, so a native
+	// warning still raises a toast unless LogBox also ignores it.
+	test('hides the toasts of a chaos launch as well', () => {
+		jest.spyOn(LogBox, 'uninstall').mockReturnValue(undefined)
+		let ignoreAllLogs = jest.spyOn(LogBox, 'ignoreAllLogs').mockReturnValue(undefined)
+
+		removeLogBoxForChaos(true)
+
+		expect(ignoreAllLogs).toHaveBeenCalledWith(true)
+	})
+
 	test('leaves LogBox installed for any other launch', () => {
 		let uninstall = jest.spyOn(LogBox, 'uninstall').mockReturnValue(undefined)
+		let ignoreAllLogs = jest.spyOn(LogBox, 'ignoreAllLogs').mockReturnValue(undefined)
 
 		removeLogBoxForChaos(false)
 
 		expect(uninstall).not.toHaveBeenCalled()
+		expect(ignoreAllLogs).not.toHaveBeenCalled()
 	})
 })
 
@@ -63,12 +76,11 @@ describe('at launch', () => {
 		return {ignoreAllLogs, uninstall}
 	}
 
-	// Uninstalling LogBox already removes its toasts along with its red screen.
-	test('a chaos launch uninstalls LogBox rather than hiding its toasts', () => {
+	test('a chaos launch uninstalls LogBox and hides its toasts', () => {
 		let {ignoreAllLogs, uninstall} = launch({isUITesting: false, isChaos: true})
 
 		expect(uninstall).toHaveBeenCalled()
-		expect(ignoreAllLogs).not.toHaveBeenCalled()
+		expect(ignoreAllLogs).toHaveBeenCalledWith(true)
 	})
 
 	test('a UI-test launch hides the toasts and keeps LogBox', () => {

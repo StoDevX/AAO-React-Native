@@ -335,13 +335,15 @@ covers reading a finding, replaying a run, what the engine can't do, how it
 works, and how to extend it.
 
 ```bash
-TEST_RUNNER_AAO_JS_LOCATION=localhost:8081 mise run chaos -- --seed 1234 --duration 10m
-TEST_RUNNER_AAO_JS_LOCATION=localhost:8081 mise run chaos -- --replay logs/chaos/1234
+mise run chaos:8081 -- --seed 1234 --duration 10m
+mise run chaos:8081 -- --replay logs/chaos/1234
 ```
 
-Name the Metro serving this checkout with the `TEST_RUNNER_` prefix:
-`xcodebuild` passes the test only prefixed variables, so a bare
-`AAO_JS_LOCATION` never arrives. The run exits 0 when it found nothing, 1 when
+`chaos:8081` runs against the Metro on port 8081. For any other, name it with
+the `TEST_RUNNER_` prefix -- `TEST_RUNNER_AAO_JS_LOCATION=localhost:8091 mise
+run chaos` -- since `xcodebuild` passes the test only prefixed variables, so a
+bare `AAO_JS_LOCATION` never arrives. Either way, the run refuses a Metro
+serving another checkout. The run exits 0 when it found nothing, 1 when
 it found something, and 2 when it never started. Its evidence lands in
 `logs/chaos/<seed>/`, which a second run of the same seed won't replace
 without `--overwrite`.

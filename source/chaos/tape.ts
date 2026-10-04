@@ -20,6 +20,29 @@ export type TapeEntry = {
 	/** Set when the request failed rather than answered. */
 	error: 'network' | 'abort' | null
 	fault: Fault['kind']
+	/** Set when the body was left off the tape, so a replay fetches it again. */
+	live?: boolean
+}
+
+/**
+ * Whether a response with this content type has a body the tape can hold.
+ *
+ * The tape holds text, and the app is handed a `Response` rebuilt from it. A
+ * binary body cannot make that trip: React Native passes the string to native
+ * code as a C string, which ends at the first NUL, so reading the rebuilt body
+ * as bytes asks for more than native holds and crashes the app. The course
+ * catalog, a SQLite file, is one such body.
+ */
+export function tapeHoldsBody(contentType: string | null): boolean {
+	if (contentType === null) {
+		return true
+	}
+	let type = contentType.split(';')[0].trim().toLowerCase()
+	return (
+		type.startsWith('text/') ||
+		/(json|xml|javascript|ecmascript|yaml)$/u.test(type) ||
+		type === 'application/x-www-form-urlencoded'
+	)
 }
 
 /**

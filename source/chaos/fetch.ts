@@ -5,7 +5,7 @@ import {corruptBody, faultStatus, pickFault, type Fault} from './faults'
 import {reportFinding} from './findings'
 import type {LineFile} from './line-file'
 import type {Random} from './random'
-import {readTape, RequestCounter, requestKey, type TapeEntry} from './tape'
+import {readTape, RequestCounter, requestKey, tapeHoldsBody, type TapeEntry} from './tape'
 
 /** How the chaos fetch behaves for one launch. */
 export type ChaosFetchOptions = {
@@ -32,39 +32,61 @@ function isAbort(error: unknown): boolean {
 	return error instanceof Error && error.name === 'AbortError'
 }
 
+/** What the app gets for one request: the entry to tape, and a response to pass through untouched. */
+type Answer = {entry: TapeEntry; passThrough: Response | null}
+
 /** Fetches for real, applies `fault`, and returns what the app will get. */
 async function answer(
 	realFetch: typeof fetch,
 	request: Request,
 	key: string,
 	fault: Fault,
-): Promise<TapeEntry> {
+): Promise<Answer> {
 	let base = {key, headers: [] as Array<[string, string]>, body: '', status: 0, fault: fault.kind}
 	let delayMs = fault.kind === 'latency' ? fault.delayMs : 0
 	if (fault.kind === 'network') {
-		return {...base, delayMs, error: 'network'}
+		return {entry: {...base, delayMs, error: 'network'}, passThrough: null}
 	}
 	try {
 		let response = await realFetch(request)
-		let body = await response.text()
-		return {
+		let entry: TapeEntry = {
 			...base,
 			status: faultStatus(fault, response.status),
 			headers: [...response.headers.entries()],
-			body: corruptBody(fault, body),
 			delayMs,
 			error: null,
 		}
+		if (tapeHoldsBody(response.headers.get('content-type'))) {
+			let body = corruptBody(fault, await response.text())
+			return {entry: {...entry, body}, passThrough: null}
+		}
+		// A binary body cannot be rebuilt from the tape, so the real response
+		// goes through, dropping any fault that would touch its body. A status
+		// fault cannot change a real response, so it is delivered from the tape
+		// with an empty body.
+		if (fault.kind === 'status') {
+			return {entry, passThrough: null}
+		}
+		let kind: Fault['kind'] = fault.kind === 'latency' ? 'latency' : 'none'
+		return {entry: {...entry, fault: kind, live: true}, passThrough: response}
 	} catch (error) {
-		return {...base, delayMs, error: isAbort(error) ? 'abort' : 'network'}
+		return {
+			entry: {...base, delayMs, error: isAbort(error) ? 'abort' : 'network'},
+			passThrough: null,
+		}
+	}
+}
+
+/** Waits out the latency `entry` was recorded with. */
+async function delay(entry: TapeEntry, sleep: (ms: number) => Promise<void>): Promise<void> {
+	if (entry.delayMs > 0) {
+		await sleep(entry.delayMs)
 	}
 }
 
 /** Turns a tape entry back into what `fetch` would have done. */
 async function deliver(entry: TapeEntry, sleep: (ms: number) => Promise<void>): Promise<Response> {
-	if (entry.delayMs > 0) {
-		await sleep(entry.delayMs)
-	}
+	await delay(entry, sleep)
 	if (entry.error === 'abort') {
 		throw abortError()
 	}
@@ -103,11 +125,24 @@ export function chaosFetch(realFetch: typeof fetch, options: ChaosFetchOptions):
 				reportFinding('divergence', `no recorded answer for ${key}`)
 				throw networkError()
 			}
+			if (entry.live) {
+				await delay(entry, sleep)
+				return realFetch(request)
+			}
 			return deliver(entry, sleep)
 		}
 
-		let entry = await answer(realFetch, request, key, pickFault(options.random, options.faultRate))
+		let {entry, passThrough} = await answer(
+			realFetch,
+			request,
+			key,
+			pickFault(options.random, options.faultRate),
+		)
 		options.tape.append(JSON.stringify(entry))
+		if (passThrough) {
+			await delay(entry, sleep)
+			return passThrough
+		}
 		return deliver(entry, sleep)
 	}
 }

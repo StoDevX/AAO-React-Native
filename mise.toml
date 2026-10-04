@@ -329,6 +329,13 @@ run = "node scripts/chaos-routes.mjs"
 description = "Drive the app at random with network faults on a booted simulator"
 run = "node scripts/chaos.mjs"
 
+# The chaos task names no Metro, since 8081 is whichever checkout started Metro
+# first. This one names 8081, and the run refuses it if it serves another.
+[tasks."chaos:8081"]
+description = "Run chaos against the Metro on localhost:8081"
+run = "node scripts/chaos.mjs"
+env.TEST_RUNNER_AAO_JS_LOCATION = "localhost:8081"
+
 [tasks."scrape-student-wages"]
 description = "Update data/student-wages.yaml from St. Olaf's compensation page"
 run = "node scripts/scrape-student-wages.mjs"

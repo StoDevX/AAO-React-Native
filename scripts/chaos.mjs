@@ -10,6 +10,7 @@ import {
 	mkdirSync,
 	readdirSync,
 	readFileSync,
+	realpathSync,
 	rmSync,
 	writeFileSync,
 } from 'node:fs'
@@ -26,6 +27,7 @@ import {
 	parseChaosArgs,
 	replayVerdict,
 	jsSourceProblem,
+	metroProblem,
 	runOutcome,
 	testFailureMessages,
 	stoppingFindings,
@@ -71,6 +73,17 @@ function main() {
 	let problem = jsSourceProblem({env: process.env, hasEmbeddedBundle: builtAppHasBundle()})
 	if (problem) {
 		throw new Error(problem)
+	}
+	let location = process.env.TEST_RUNNER_AAO_JS_LOCATION
+	if (location) {
+		let metro = metroProblem({
+			location,
+			projectRoot: metroProjectRoot(location),
+			checkout: realpathSync(process.cwd()),
+		})
+		if (metro) {
+			throw new Error(metro)
+		}
 	}
 
 	let device = bootedSimulator()
@@ -235,6 +248,20 @@ function attachmentText(dir, prefix) {
 		.flatMap((test) => test.attachments)
 		.find((attachment) => attachment.suggestedHumanReadableName.startsWith(prefix))
 	return file ? readFileSync(join(dir, file.exportedFileName), 'utf8') : null
+}
+
+/** The checkout the Metro at `location` serves, or null when nothing answers there. */
+function metroProjectRoot(location) {
+	try {
+		let headers = run(
+			'curl',
+			['-s', '-D', '-', '-o', '/dev/null', '--max-time', '5', `http://${location}/status`],
+			{stdio: ['ignore', 'pipe', 'ignore']},
+		)
+		return headers.match(/^x-react-native-project-root: *(.+?)\r?$/imu)?.[1] ?? null
+	} catch {
+		return null
+	}
 }
 
 /** The steps the monkey took, from a run's exported attachments; null if it logged none. */
