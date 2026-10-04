@@ -3,6 +3,7 @@ import * as Sentry from '@sentry/react-native'
 import {isChaos} from '@frogpond/launch-arguments'
 
 import {reportFinding} from '../chaos/findings'
+import {openEmail} from '../features/support/open-email'
 import {ErrorFallback, type ErrorFallbackAction} from './error-fallback'
 
 /**
@@ -10,7 +11,8 @@ import {ErrorFallback, type ErrorFallbackAction} from './error-fallback'
  * `ErrorFallback` in that screen's place. The stack around it carries on, so
  * the header's Back button, a sheet's grabber, and every other screen still
  * work; Go Back leaves the broken screen from inside it, for a screen that
- * draws no header of its own.
+ * draws no header of its own. Report a Problem and Send Us an Email let the
+ * listener tell the team what they were doing when it broke.
  *
  * Under chaos the error is reported as a fatal finding too: caught here, it
  * would otherwise never reach the chaos run's own boundary, and the run would
@@ -20,10 +22,13 @@ export function ScreenErrorBoundary({
 	children,
 	canGoBack,
 	goBack,
+	reportProblem,
 }: {
 	children: React.ReactNode
 	canGoBack: () => boolean
 	goBack: () => void
+	/** Opens the problem report; left out where the report itself is what broke. */
+	reportProblem?: () => void
 }): React.ReactNode {
 	return (
 		<Sentry.ErrorBoundary
@@ -34,6 +39,10 @@ export function ScreenErrorBoundary({
 				if (canGoBack()) {
 					actions.push({label: 'Go Back', onPress: goBack})
 				}
+				if (reportProblem) {
+					actions.push({label: 'Report a Problem', onPress: reportProblem})
+				}
+				actions.push({label: 'Send Us an Email', onPress: openEmail})
 				return (
 					<ErrorFallback
 						actions={actions}

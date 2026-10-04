@@ -80,8 +80,15 @@ export const unstable_settings = {
 const screenLayout: React.ComponentProps<typeof Stack>['screenLayout'] = ({
 	children,
 	navigation,
+	route,
 }) => (
-	<ScreenErrorBoundary canGoBack={() => navigation.canGoBack()} goBack={() => navigation.goBack()}>
+	<ScreenErrorBoundary
+		canGoBack={() => navigation.canGoBack()}
+		goBack={() => navigation.goBack()}
+		reportProblem={
+			route.name === 'report-problem' ? undefined : () => navigation.navigate('report-problem')
+		}
+	>
 		{children}
 	</ScreenErrorBoundary>
 )

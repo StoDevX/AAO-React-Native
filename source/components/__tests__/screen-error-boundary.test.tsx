@@ -4,6 +4,7 @@ import {Text} from 'react-native'
 import {fireEvent, render, screen} from '@testing-library/react-native'
 
 import {useChaosFindings} from '../../chaos/findings'
+import {openEmail} from '../../features/support/open-email'
 import {ScreenErrorBoundary} from '../screen-error-boundary'
 
 let mockIsChaos = false
@@ -12,6 +13,8 @@ jest.mock('@frogpond/launch-arguments', () => ({
 		return mockIsChaos
 	},
 }))
+
+jest.mock('../../features/support/open-email', () => ({openEmail: jest.fn()}))
 
 let broken = true
 
@@ -69,6 +72,45 @@ describe('ScreenErrorBoundary', () => {
 
 		expect(screen.getByRole('button', {name: 'Try Again'})).toBeTruthy()
 		expect(screen.queryByRole('button', {name: 'Go Back'})).toBeNull()
+	})
+
+	test('opens the problem report when Report a Problem is pressed', async () => {
+		let reportProblem = jest.fn()
+		await render(
+			<ScreenErrorBoundary
+				canGoBack={() => true}
+				goBack={() => undefined}
+				reportProblem={reportProblem}
+			>
+				<Screen />
+			</ScreenErrorBoundary>,
+		)
+
+		await fireEvent.press(screen.getByRole('button', {name: 'Report a Problem'}))
+
+		expect(reportProblem).toHaveBeenCalledTimes(1)
+	})
+
+	test('offers no Report a Problem where there is no report to open', async () => {
+		await render(
+			<ScreenErrorBoundary canGoBack={() => true} goBack={() => undefined}>
+				<Screen />
+			</ScreenErrorBoundary>,
+		)
+
+		expect(screen.queryByRole('button', {name: 'Report a Problem'})).toBeNull()
+	})
+
+	test('writes to the team when Send Us an Email is pressed', async () => {
+		await render(
+			<ScreenErrorBoundary canGoBack={() => false} goBack={() => undefined}>
+				<Screen />
+			</ScreenErrorBoundary>,
+		)
+
+		await fireEvent.press(screen.getByRole('button', {name: 'Send Us an Email'}))
+
+		expect(openEmail).toHaveBeenCalledTimes(1)
 	})
 
 	test('renders the screen again when Try Again is pressed and the fault has passed', async () => {
